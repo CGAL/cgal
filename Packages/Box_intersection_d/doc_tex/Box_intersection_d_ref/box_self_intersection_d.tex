@@ -76,11 +76,11 @@ concept (see above for the value versus pointer nature of the box type).
 \ccFunction{template< class RandomAccessIterator, class Callback >
 void box_intersection_d(
     RandomAccessIterator begin, RandomAccessIterator end,
-    Callback& callback,
+    Callback callback,
     std::ptrdiff_t cutoff = 10,
     Box_intersection_d::Topology topology = Box_intersection_d::CLOSED);
 }{%
-    Invokation of box intersection with default box traits
+    Invocation of box intersection with default box traits
     \ccc{CGAL::Box_intersection_d::Box_traits_d<Box_type>}, where
     \ccc{Box_type} corresponds to the iterator value type  of
     \ccc{RandomAccessIterator}.}
@@ -89,7 +89,7 @@ void box_intersection_d(
             class Callback, class BoxTraits >
 void box_intersection_d(
     RandomAccessIterator begin, RandomAccessIterator end,
-    Callback& callback,
+    Callback callback,
     BoxTraits box_traits,
     std::ptrdiff_t cutoff = 10,
     Box_intersection_d::Topology topology = Box_intersection_d::CLOSED);
@@ -135,10 +135,20 @@ function on page~\ccRefPage{CGAL::box_intersection_d}.
 
 \ccExample
 
-We create a sequence of 100 three-dimensional random boxes, compute
-the pairwise intersecting boxes, and report them on \ccc{cout}.
+The box implementation provided with
+\ccc{CGAL::Box_intersection_d::Box_d<double,2>} has a special
+constructor for the \cgal\ bounding box type \ccc{CGAL::Bbox_2} (and
+the same holds also for dimension 3). We use this in the example to
+create $3 \times 3$ \ccc{boxes} in a grid layout.
 
-\ccIncludeExampleCode{Box_intersection_d/complete.C}
+The default policy of the box type implements the \ccc{id}-number with
+an explicit counter in the boxes, which is the default choice since it
+always works. We use the \ccc{id}-number in our callback function to
+report the result of the intersection algorithm call. The result will
+be 20 pairwise intersections, but the order in which they are reported
+is non-intuitive.
+
+\ccIncludeExampleCode{Box_intersection_d/minimal_self.C}
 
 \end{ccRefFunction}
 

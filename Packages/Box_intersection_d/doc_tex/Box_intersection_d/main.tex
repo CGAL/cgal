@@ -27,16 +27,15 @@ intersecting pairs for large numbers of iso-oriented boxes, i.e.,
 typically these will be bounding boxes of more complicated geometries.
 
 Computing information about complex geometric primitives is often
-expensive. While researchers in computational geometry have discovered
-many asymptotically efficient algorithms for such problems, the
-algorithms are often of theoretical interest only, as they are hard to
-implement or slow if implemented. One general approach is to reduce
-the problem size enough so that a brute force method is feasible and
-fast. By putting axis-aligned bounding boxes around complicated
-primitives, we can compute, in a short amount of time, an approximate
-answer in the form of a small set of pairs with potential interaction.
-We then refine our answer by looking inside the boxes, computing the
-exact answer for the original data.
+expensive. Asymptotically efficient algorithms are sometimes of
+theoretical interest only, as they are hard to implement or slow in
+practice if implemented. One general approach is to reduce the problem
+size enough so that a brute force method is feasible and fast. By
+putting axis-aligned bounding boxes around complicated primitives, we
+can compute, in a short amount of time, an approximate answer in the
+form of a small set of pairs with potential interaction.  We then
+refine our answer by looking inside the boxes, computing the exact
+answer for the original data.
 
 Many geometric problems can be restated in terms of box intersections
 since if the bounding boxes of two primitives intersect, we know that
@@ -47,101 +46,147 @@ performing proximity queries.
 
 
 % +------------------------------------------------------------------------+
-\section{Iso-oriented Box}
+\section{Definition}\label{sec:box-inters-def}
 
-The iso-oriented box, or bounding box, can have arbitrary dimension.
-An interval specifies the size of the box in each dimension. The
-number type used to represent the interval boundaries is a template
-parameter of the box. Useful instantiations are with the builtin
-\texttt{int}, \texttt{unsigned int}, \texttt{double} or \texttt{float}
-types.
+A $d$-dimensional iso-oriented box is defined as the Cartesian product
+of $d$ intervals. We call the box \emph{half-open} if the $d$
+intervals $\{ [lo_i,hi_i) | 0 \leq i < d\}$ are half-open intervals,
+and we call the box \emph{closed} if the $d$ intervals $\{ [lo_i,hi_i]
+| 0 \leq i < d\}$ are closed intervals. Note that closed boxes support
+zero-width boxes and they can intersect at their boundaries, while
+non-empty half-open boxes always have a positive volume and they only
+intersect iff their interiors overlap.  The distinction between closed
+or half-open boxes does not require a different representation of
+boxes, just a different interpretation when comparing boxes, which is
+selected with the \ccc{topology} parameter and its two values,
 
-We offer two topological interpretations of the box; it can be a
-half-open set or a closed set. The box is half open if its intervals
-$[lo_i,hi_i)$ are half open in each dimension $i$. Analogously, a box
-is closed if its intervals $[lo_i,hi_i]$ are closed in each dimension
-$i$. Note that closed boxes support zero-width boxes and they can
-intersect at their boundaries, while half-open boxes always have a
-positive volume and they only intersect iff their interiors overlap.
-The distinction between closed or half-open boxes does not require a
-different representation of boxes, just a different interpretation
-when comparing boxes. This is handled flexible inside the traits class
-parameter passed to the intersection algorithm.
-
-We need an arbitrary fixed order on the boxes to guarantee that a pair
-of intersecting boxes is reported only once in the algorithm, in
-particular, this is needed for the self-intersection test, i.e., when
-we use the algorithm to find all intersections in one set of boxes. In
-that case we need a second copy of the boxes that is distinguishable
-from the first set of boxes. We can achieve the fixed order, for
-example, by assigning unique numbers to each box. Assuming boxes are
-allocated at distinct memory locations we can use their memory address
-to define such unique numbers. However, that does not suffice in the
-self-intersection case where we would need an explicit second copy to
-get distinct memory addresses.
-
-We offer a default iso-oriented box type that
 \begin{itemize}
-  \item implements a standard bounding box,
-  \item is generic in terms of number type and dimension: \\
-  \texttt{template< class T, unsigned int DIM > struct Default\_box\_d},
-  \item provides an explicit unique numbering, and
-  \item can be used as a base class to derive a user defined box with
-  additional information, for example, the exact geometry
-  that was approximated with the bounding box.
+  \item \ccc{CGAL::Box_intersection_d::HALF_OPEN} and
+  \item \ccc{CGAL::Box_intersection_d::CLOSED}.
 \end{itemize}
 
-We require the box type to be assignable. Everything else is 
-factored into the following traits class.
+The number type of the interval boundaries must be one of the builtin
+types \texttt{int}, \texttt{unsigned int}, \texttt{double} or
+\texttt{float}. They are already supported in the
+\ccc{CGAL::Box_intersection_d::box_limits<NT>} traits class that
+determines \ccc{inf()} and \ccc{sup()} values for initializing the
+extreme ends of intervals. (This is probably subject to a better integration
+into \cgal.)
+
+In addition, a box has an \ccc{id}-number that is distinct for all
+boxes. It is needed in order to have a pair of intersecting boxes to
+be reported only once in the algorithm. This is necessary if boxes of
+identical geometry appear several times in the input sequences.  Boxes
+of equal \ccc{id}-number are not reported as intersecting pairs since
+they are always intersecting trivially.
+
+The box intersection algorithms come in two flavors: One set of
+algorithms is working on one sequence of boxes and computes all
+pairwise intersections, which is the \emph{complete\/} case, for
+example, used in the self-intersection test. The other set of
+algorithms is working on two sequences of boxes and computes the
+pairwise intersections between between boxes of the first sequence
+with boxes from the second sequence, which is the \emph{bipartite\/}
+case. For each pairwise intersection found a callback function is
+called with two arguments; the first argument is a box from the first
+sequence, the second argument a box from the second sequence. In the
+complete case, the second sequence is an internal copy of the first
+sequence.
+
 
 % +------------------------------------------------------------------------+
-\section{Traits Class for Iso-oriented Box}
+\section{Software Design}
 
-The access to the iso-oriented box is exclusively done using a 
-traits class, which serves as an adaptor. This adaptor hides the
-specific interface a box may have. As an example, we show the
-implementation of the default traits class for the
-\texttt{Default\_box\_d}:
+The box intersection algorithm is implemented as a family of generic
+functions; the functions for the complete case accept one iterator
+range, and the functions for the bipartite case accept two iterator
+ranges. The callback function for reporting the intersecting pairs is
+provided as a template parameter of the \ccc{BinaryFunction} concept.
+The two principle function calls utilizing all default arguments look
+as follows:
 
-\begin{ccExampleCode}
-template< class Box_ >
-struct Default_box_traits_d {
-    typedef const Box_&       Box;
-    typedef typename Box_::NT NT;
+\ccInclude{CGAL/box_intersection_d.h}
 
-    static NT          get_lo( Box b, std::size_t dim) { return b.get_lo(dim);  }
-    static NT          get_hi( Box b, std::size_t dim) { return b.get_hi(dim);  }
-    static std::size_t get_id( Box b)                  { return b.get_id();     }
-    static std::size_t get_dim()                       { return Box_::get_dim();}
-};
-\end{ccExampleCode}
+\ccThree{void}{box_inter}{}
+%\def\ccLongParamLayout{\ccTrue}
+\ccGlobalFunction{template< class RandomAccessIterator, class Callback >
+void box_intersection_d(
+    RandomAccessIterator begin, RandomAccessIterator end,
+    Callback callback);}
 
-This default traits class can be used for our \texttt{Default\_box\_d}
-or box classes derived from it. Therefore its chosen as default for
-the box intersection algorithm. If a different custom box class is
-used, the user has to provide a suitable traits class.
+\ccGlobalFunction{template< class RandomAccessIterator1, 
+                  class RandomAccessIterator2, 
+                  class Callback >
+void box_intersection_d(
+    RandomAccessIterator1 begin1, RandomAccessIterator1 end1,
+    RandomAccessIterator2 begin2, RandomAccessIterator2 end2,
+    Callback callback);}
 
-The requirements for the \ccc{BoxTraits_d} concept are:
-\begin{itemize}
-    \item 
-      \texttt{Box} is the box type used in passing box objects to the
-      functions.\LK{Why is const-ref part of Box}
-    \item
-      \texttt{NT} is the number type used for the interval
-      boundaries. It must support all comparison operators.
-      \LK{How about construction of min/max-inf}
-    \item 
-      \texttt{get\_lo} and \texttt{get\_hi} return the low and high
-      interval boundaries of the corresponding dimension argument
-      \texttt{dim}, where the first  dimension has the index zero.
-    \item 
-      \texttt{get\_num} returns the unique number of that box. The
-      return type is not required to be \texttt{std::size\_t}. Any
-      type supporting \texttt{==} and \texttt{<} operators for a total
-      order suffice.
-    \item
-      \texttt{get\_dim} returns the number of dimensions. 
-\end{itemize}
+
+Additional parameters to the functions calls are a \emph{cutoff\/}
+value to adjust performance tradeoffs, and a \emph{topology} parameter
+selecting between topologically closed boxes (the default) or
+topologically half-open boxes.
+
+The algorithm reorders the boxes in the course of the algorithm. Now,
+depending on the size of a box it can be faster to copy the boxes, or
+to work with pointers to boxes and copy only pointers. We offer
+automatic support for both options. We call the \ccc{value_type} of
+the iterator ranges the \emph{box type}, which is either the type of
+our boxes, or a pointer type to our type of boxes.
+
+
+In general, the algorithms treat the boxes as opaque type and just
+assume that they are models of the \ccc{Assignable} concept. The
+algorithms modify the input sequences and reorder the boxes. The
+access to the box dimension and coordinates is handled with a traits
+class of the \ccc{BoxIntersectionTraits_d} concept. A default traits
+class is provided that works under the assumption that the box type is
+a model of the \ccc{BoxIntersectionBox_d} concept, or a pointer to a
+model of that concept (see above for the value versus pointer nature
+of the box type).
+
+Two implementations of iso-oriented boxes are provided;
+\ccc{CGAL::Box_intersection_d::Box_d} as a plain box, and 
+\ccc{CGAL::Box_intersection_d::Box_with_handle_d} as a box plus a
+handle that can be used to point to the full geometry that is
+approximated by the box. Both implementations have the number type
+used for the interval bounds, the fixed dimension of the box, and a
+policy class \cite{cgal:a-mcdgp-01} for the \ccc{id}-number as
+template parameter. 
+
+So the full function signatures for the bipartite case look as
+follows. The signatures for the complete case with
+\ccc{box_self_intersection} function look the same except for the
+single iterator range.
+
+\ccInclude{CGAL/box_intersection_d.h}
+
+\ccThree{void}{box_inter}{}
+%\def\ccLongParamLayout{\ccTrue}
+\ccGlobalFunction{template< class RandomAccessIterator1, 
+            class RandomAccessIterator2, 
+            class Callback >
+void box_intersection_d(
+    RandomAccessIterator1 begin1, RandomAccessIterator1 end1,
+    RandomAccessIterator2 begin2, RandomAccessIterator2 end2,
+    Callback callback,
+    std::ptrdiff_t cutoff = 10,
+    Box_intersection_d::Topology topology = Box_intersection_d::CLOSED,
+    Box_intersection_d::Setting  setting  = Box_intersection_d::BIPARTITE);}
+ 
+\ccGlobalFunction{template< class RandomAccessIterator1,
+            class RandomAccessIterator2,
+            class Callback, class BoxTraits >
+void box_intersection_d(
+    RandomAccessIterator1 begin1, RandomAccessIterator1 end1,
+    RandomAccessIterator2 begin2, RandomAccessIterator2 end2,
+    Callback callback,
+    BoxTraits box_traits,
+    std::ptrdiff cutoff = 10,
+    Box_intersection_d::Topology topology = Box_intersection_d::CLOSED,
+    Box_intersection_d::Setting  setting  = Box_intersection_d::BIPARTITE);}
+
 
 \begin{ccAdvanced}
   A more detailed interface is provided with the box predicate traits
@@ -149,167 +194,323 @@ The requirements for the \ccc{BoxTraits_d} concept are:
   intersection algorithm. It is exchangeable and can be used by
   experts to fine tune the comparisons performed in this algorithm,
   e.g. utilizing machine instruction sets, see the
-  \ccc{BoxPredicateTraits_d} concept in the reference manual section
-  for more details. Note that the generic default model provided is
-  fully functional and efficient in all cases, thus usually there is
-  no need to look at this predicate traits. 
+  \ccc{BoxIntersectionPredicateTraits_d} concept in the reference
+  manual section for more details. Note that the generic default model
+  provided is fully functional and efficient in all cases, thus
+  usually there is no need to look at this predicate traits.
 \end{ccAdvanced}
 
 
-
 % +------------------------------------------------------------------------+
-\section{Intersection Algorithm}
+\section{Minimal Example for Intersecting Boxes}
+\label{sec:box-intersect-minimal}
 
-The conventional application of this algorithm will start from 
+The box implementation provided with
+\ccc{CGAL::Box_intersection_d::Box_d<double,2>} has a special
+constructor for the \cgal\ bounding box type \ccc{CGAL::Bbox_2} (and
+the same holds also for dimension 3). We use this in our minimal
+example to create easily nine two-dimensional \ccc{boxes} in a grid layout
+of $3 \times 3$ boxes. Additionally we pick the center box and the box
+in the upper-right corner as our second box sequence \ccc{query}. 
 
-First, for each geometric primitive, a bounding box has to be
-computed. Any bounding box class can be used, as long as a box adaptor
-exists for it. The bounding box sets have to be supplied to the
-algorithm by pairs of \ccc{Random Access Iterators}. While checking,
-each bounding box intersection is written to an output iterator as two
-boxes. The input box sets need not be sorted in any order.
-
-If the used box class is derived from the default bounding box (or at
-least has the same fields), there is no need to specify a box adaptor.
-When no box adaptor is given, it is assumed that the default box
-adaptor can be used to access the supplied boxes. A minimal example
-using just the defaults demonstrates the invocation:
+The default policy of the box type implements the \ccc{id}-number with
+an explicit counter in the boxes, which is the default choice since it
+always works, but it costs space that could potentially be avoidable,
+see the example in the next section. We use the \ccc{id}-number in our
+callback function to report the result of the intersection algorithm
+call. The result will be that the first \ccc{query} box intersects all
+nine \ccc{boxes} and the second \ccc{query} box intersects the four
+boxes in the upper-right quadrant. See Section
+\ref{sec:box-inters-params} for the change of the \ccc{topology}
+parameter and its effect.
 
 \ccIncludeExampleCode{Box_intersection_d/minimal.C}
 
-Here, the box type is exactly the default box using three dimensions
-and \texttt{double} as the underlying number type. A number of boxes
-is filled with random data and all box intersections are reported as
-pairs of numbers. The callback has to accept two boxes of type similar
-to the iterator's value type.
 
-Notice that the default box adaptor is a template with a box type
-argument. The box type needed for the adaptor is infered from the
-iterator's value type. It may be a class type or a pointer to a class.
-Default box traits templates exist for both kinds of types.
+% +------------------------------------------------------------------------+
+\section{Example for Finding Intersecting 3D Triangles}
 
-It may be surprising, but here using plain structures instead of
-pointers to boxes is actually faster. Copying pointers is of course
-much faster than copying a whole structure, which may be eight times
-larger. But accessing a set of structures is faster when they are
-grouped together, so that the range of memory already cached in some
-way. While processing, the boxes are sorted and partitioned so that
-cacheing becomes effective. Of course, if the used hardware has no
-cache capabilities at all, there is no point in prefering plain
-structures against pointers.
+The conventional application of the axis-aligned box intersection
+algorithm will start from the complex geometry, here 3D triangles,
+approximate them with their bounding box, compute the intersecting
+pairs of boxes, and check only for those if the original triangles
+intersect as well.
 
-% \subsubsection*{Performance Parameters}
+We start in the \ccc{main} function and create ten triangles with
+endpoints chosen randomly in a cube $[-1,+1)^3$. We store the
+triangles in a vector called \ccc{triangles}.
 
-Internally, the bounding box check uses a streamed segment tree. A
-cutoff threshold parameter specifies the minimum amount of boxes so
-that the segment tree is used. Below this minimum, a simpler algorithm
-is used that has less overhead and performs well only for low number
-of boxes and dimension. The choice of a cutoff parameter can have a
-significant effect on runtime. If the cutoff value is near to the
-overall number of boxes, the runtime may in extreme cases equal that
-of the simpler algorithm because it is invoked too early. Threshold
-values that are too low invoke the simpler algorithm too late and add
-some unneccessary overhead to the overall runtime.
+Next we create a vector for the bounding boxes of the triangles called
+\ccc{boxes}. For the boxes we choose the type
+\ccc{Box_with_handle_d<double,3,Iterator>} that also works nicely with
+the \cgal\ bounding boxes of type \ccc{CGAL::Bbox_3}. In addition, each
+box stores the iterator to the corresponding triangle. 
 
-Unfortunately, there is no general method to automatically determine
-an optimal cutoff parameter, since it depends on the used hardware,
-the callback runtime/segment tree runtime ratio and of course the
-number of boxes to be checked. In cases where the callback runtime is
-dominant, it may be best to set the threshold parameter to values near
-zero. Otherwise a formula like $cutoff=\sqrt{n}$ can lead to
-acceptable results. However, for optimal runtime some experiments to
-compare different cutoff parameters are required.
+The default policy of this box type uses for the \ccc{id}-number the 
+address of the value of the iterator, i.e., the address of the
+triangle. This is a good choice that works correctly iff the boxes
+have unique iterators, i.e., there is a one-to-one mapping between
+boxes and approximated geometry, which is the case here. It saves us
+the extra space that was needed for the explicit \ccc{id}-number in
+the previous example.
 
-In general:
+We run the self intersection algorithm with the \ccc{report_inters}
+function as callback. This callback reports the intersecting boxes. It
+uses the \ccc{handle} and the global \ccc{triangles} vector to
+calculate the triangle numbers. Then it checks the triangles
+themselves for intersection and reports if not only the boxes but also
+the triangles intersect. We take some precautions before the
+intersection test of triangles that we have not created degenerate
+triangles with the random process.
+
+\ccIncludeExampleCode{Box_intersection_d/triangle_self_intersect.C}
+
+
+% +------------------------------------------------------------------------+
+\section{Example for Using Pointers to Boxes}
+
+We modify the previous example, finding 3D triangles that intersect,
+and add an additional vector \ccc{ptr} storing pointers to the bounding
+boxes, so that the intersection algorithm will work on a sequence of
+pointers and not on a sequence of boxes. The change just affects the
+preparation of the additional vector and the call of the box intersection
+function. The box intersection function (actually its default traits
+class) detects automatically that the value type of the iterators is a
+pointer type and not a class type.
+
+\begin{ccExampleCode}
+    // Create the corresponding vector of pointers to bounding boxes
+    std::vector<Box *> ptr;
+    for ( std::vector<Box>::iterator i = boxes.begin(); i != boxes.end(); ++i)
+        ptr.push_back( &*i);
+    
+    // Run the self intersection algorithm with all defaults on the 
+    // indirect pointers to bounding boxes. Avoids copying the boxes.
+    CGAL::box_self_intersection_d( ptr.begin(), ptr.end(), report_inters);
+\end{ccExampleCode}
+
+In addition, the callback function \ccc{report_inters} needs to be
+changed to work with pointers to boxes. See the following file for the
+full example program.
+
+\begin{ccExampleCode}
+    examples/Box_intersection_d/triangle_self_intersect_pointers.C
+\end{ccExampleCode}
+
+A note on performance: The algorithm sorts and partitions the input
+sequences. It is clearly costly to copy a large box compared to a
+simple pointer. However, the algorithm benefits from memory locality
+in the later stages when it copies the boxes, while the pointers would
+refer to boxes that become wildly scattered in memory.  These two
+effects, copying costs and memory locality, counteract each other. For
+small dimensions, memory locality wins and one should work with boxes,
+while for larger dimensions one should work with pointers. The exact
+threshold depends on the memory hierarchy (caching) of the hardware
+platform and the size of the boxes, most notably the type used to
+represent the box coordinates. A concrete example; on a laptop with an
+Intel Mobile Pentium4 running at 1.80GHz with 512KB cache and 254MB
+main memory under Linux this version with pointers was 20\%
+faster than the version above that copies the boxes for 10000 boxes,
+but the picture reversed for 100000 boxes, where the version above
+that copies the boxes becomes 300\% faster.
+
+Note that switching to the builtin type \ccc{float} is supported by
+the box intersection algorithm, but the interfacing with the \cgal\ 
+bounding box \ccc{CGAL::Bbox_3} would not be that easy. In particular,
+just converting from the \ccc{double} to the \ccc{float}
+representation incurs rounding that needs to be controlled properly,
+otherwise the box might shrink and one might miss intersections.
+
+
+% +------------------------------------------------------------------------+
+\section{Example Using the \textit{topology} and the \textit{cutoff} 
+Parameters}\label{sec:box-inters-params}
+
+Boxes can be interpreted by the box intersection algorithm as closed
+or as half-open, see also Section~\ref{sec:box-inters-def}.  Closed
+boxes support zero-width boxes and they can intersect at their
+boundaries, while half-open boxes always have a positive volume and
+they only intersect iff their interiors overlap.  The choice between
+closed or half-open boxes is selected with the \ccc{topology}
+parameter and its two values,
 
 \begin{itemize}
-    \item
-      When using a reasonable cutoff parameter, the runtime is
-      $O((n+m)\log^{d}(n+m)+k)$, where $n$ and $m$ are the number of
-      boxes, $d$ is number of dimensions (starting with one) and $k$
-      is number of box intersections. 
-    \item
-      In cases of a badly chosen cutoff parameter, the runtime drops
-      to $O(n\log n+m\log m+k`)$ where $k`$ is the number of
-      intersections of a one dimensional interval set in which for
-      each box in the box set, only the interval in dimension $d$ is
-      considered. If all boxes are arranged in a row, so that in
-      dimension $d$ all intervals overlap, $k`=n*m$ which is much
-      higher than the usual $k=O(n+m)$. 
-    \item
-      Space requirement is $O(n+m)$ for the user provided boxes. No
-      new space is allocated while computing.  
+  \item \ccc{CGAL::Box_intersection_d::HALF_OPEN} and
+  \item \ccc{CGAL::Box_intersection_d::CLOSED}.
 \end{itemize}
 
-Of course, in the complete case $n+m$ has to be substituted with $n$.
+The example program uses a two-dimensional box with \ccc{int}
+coordinates and \ccc{id}-numbers that are by default explicitly
+stored. We create the same boxes as in the minimal example in
+Section~\ref{sec:box-intersect-minimal}. We create a $3 \times 3$ grid
+of \ccc{boxes}, and two boxes for the \ccc{query} sequence, namely the
+box at the center and the box from the upper-right corner of the grid.
+
+We write a more involved callback function object \ccc{Report} that
+stores an output iterator and writes the \ccc{id}-number of the 
+box in the first argument to the output iterator. We also provide a
+small helper function \ccc{report} that simplifies the use of the function
+object.
+
+We call the box intersection algorithm twice; once for the default
+\ccc{topology}, which is the closed box topology, and once for the
+half-open box topology. We sort the resulting output for better
+readability and verify its correctness with the \ccc{check1} and
+\ccc{check2} data.  For the closed box topology, the center box in
+\ccc{query} intersects all \ccc{boxes}, and the upper-right box in
+\ccc{query} intersects the four boxes of the upper-right quadrant in
+\ccc{boxes}. Almost all intersections are with the box boundaries,
+thus, for the half-open topology only one intersection remains per
+\ccc{query} box, namely its corresponding box in \ccc{boxes}. So, the
+output of the algorithm looks like:
+
+\begin{verbatim}
+    0 1 2 3 4 4 5 5 6 7 7 8 8 
+    4 8 
+\end{verbatim}
+
+For the second box intersection function call we have to specify the
+\ccc{cutoff} parameter explicitly. See the
+Section~\ref{sec:box-inters-performance} below for a detailed
+discussion.
+
+\ccIncludeExampleCode{Box_intersection_d/box_grid.C}
+
 
 % +------------------------------------------------------------------------+
-\section{Example Programs}
+\section{Runtime Performance}\label{sec:box-inters-performance}
 
-All examples use closed boxes. No cutoff parameter is specified, so
-the default of 10 is used.
+The implemented algorithm is described in~\cite{cgal:ze-fsbi-02} as
+version two.  Its performance depends on a \ccc{cutoff} parameter.
+When the size of both iterator ranges drops below the \ccc{cutoff}
+parameter the function switches from the streamed segment-tree
+algorithm to the two-way-scan algorithm, see~\cite{cgal:ze-fsbi-02}
+for the details.
 
-\subsection{Custom Box}
+The streamed segment-tree algorithm needs $O(n \log^3 (n) + k)$
+worst-case running time and $O(n)$ space, where $n$ is the number of
+boxes in both input sequences and $k$ the output complexity, i.e., the
+number of pairwise intersections of the boxes. The two-way-scan
+algorithm needs $O(n \log (n) + k^\prime)$
+worst-case running time and $O(n)$ space, where $k^\prime$ is the
+number of pairwise overlapping intervals in one dimensions (the
+dimension where the algorithm is used instead of the segment
+tree). Note that $k^\prime$ might have no relation to $k$ and using
+the two-way-scan algorithm is a pure heuristic.
 
-This shows how to use a custom box, together with the default box
-traits. For simplicity, the custom box inherits from the default box.
-A primitive field is added. Primitives intersect each other with a
-certain fixed probability. The point here is, that the box traits
-class need not be specified. If pointers to the custom box were stored
-inside the box container, the pointer specialization of the box traits
-template is used automatically, with the custom box as the template
-parameter.
+Unfortunately, we have no general method to automatically determine an
+optimal cutoff parameter, since it depends on the used hardware, the
+runtime ratio between callback runtime and segment-tree runtime, and
+of course the number of boxes to be checked and their distribution. In
+cases where the callback runtime is dominant, it may be best to make
+the threshold parameter small. Otherwise a \ccc{cutoff}$=\sqrt{n}$ can
+lead to acceptable results. For well distributed boxes the original
+paper~\cite{cgal:ze-fsbi-02} gives optimal cutoffs in the thousands.
+Anyway, for optimal runtime some experiments to compare different
+cutoff parameters are recommended.
 
-\ccIncludeExampleCode{Box_intersection_d/custombox.C}
-
-\subsection{Custom Box Traits }
-
-Here, a bounding box is a cube. This saves some space at the expense
-of precision. The custom box only contains a vector to the minimal
-point plus a size for all three dimensions. The primitive class is the
-same as in the custom box example above. Invocation differs only where
-the box traits must be supplied as an argument.
-
-\ccIncludeExampleCode{Box_intersection_d/customadaptor.C}
-
-% +------------------------------------------------------------------------+
-\section{Implementation}
-
-\cgal{} makes liberal use of exact number types, which often has a
-significant impact on performance. Many algorithms depend on the usage
-of exact number types. However, the bounding box intersection
-presented here only approximates some geometric primitives, and as
-such does not rely on exact representation of numbers. An important
-consequence is that \ccc{float} and \ccc{double} number types can be
-used, which are much faster, also because of hardware implementation.
 To demonstrate that box intersection can be done quite fast, different
-box sets are intersected in the range between 4 and 800000 boxes.
-Here, the size is the sum both set's sizes. Only plain default boxes
-are used, without carrying additional data fields. Boxes use closed
-topology, are of dimension three and as number type 32 bit
-\ccc{floats} are used. All boxes are stored as plain structures, not
-as pointers. Hardware used is a Xeon 2.4GHz equipped with 4GB of
-memory.
+box sequences are intersected in the range between 4 and 800000 boxes
+total.  We use three-dimensional default boxes of closed topology with
+\ccc{float} coordinates and without additional data fields.  The
+algorithm works directly on the boxes, not on pointer to boxes. Each
+box intersection is reported to an empty dummy callback.
 
 For each box set, a near-optimal cutoff parameter is determined using
 an adaptive approximation. The runtime required for streaming is
-compared against usual scanning. Each box intersection is reported to
-a dummy callback, which itself does nothing. Results can be seen in
-figure \ref{fig_benchmark}. As can be seen, for low numbers of boxes,
-pure scanning is still faster than streaming with optimal cutoff,
-which would just delegate the box sets to the scanning algorithm. As
-there are more and more boxes, the overhead becomes less important.
+compared against usual scanning.  Results on a Xeon 2.4GHz with 4GB
+main memory can be seen in Figure \ref{fig_benchmark}. For a small
+number of boxes, pure scanning is still faster than streaming with
+optimal cutoff, which would just delegate the box sets to the scanning
+algorithm. As there are more and more boxes, the overhead becomes less
+important. 
 
+\begin{figure}[htbp]
 \begin{ccTexOnly}
- \begin{figure}
-  \begin{center}
+\begin{center}
   \includegraphics[width=0.5\textwidth]{Box_intersection_d/fig/benchmark}
-  \caption{Runtime comparison scanning vs. streaming.}
-  \label{fig_benchmark}
-  \end{center}
- \end{figure}
+\end{center}
 \end{ccTexOnly}
+\begin{ccHtmlOnly}
+<center>
+\end{ccHtmlOnly}
+  \caption{Runtime comparison scanning vs.\ streaming.
+  \label{fig_benchmark}}
+
+\begin{ccHtmlOnly}
+<img border="0" src="./fig/benchmark.gif" align="center" alt="benchmark plot">
+</center>
+\end{ccHtmlOnly}
+\end{figure}
+
+% +------------------------------------------------------------------------+
+\section{Example Using a Custom Box Implementation}
+
+The example in the previous Section~\ref{sec:box-inters-params} used
+an array to provide the coordinates and then created another array for
+the boxes. In the following example we write our own box class
+\ccc{Box} that we can initialize directly with the four coordinates and
+create the array of boxes directly. We also omit the explicitly stored
+\ccc{id}-number and use the address of the box itself as
+\ccc{id}-number. This works only if the boxes do not change their
+position, i.e., we work with pointers to the boxes in the intersection
+algorithm.
+
+We follow with our own box class \ccc{Box} the
+\ccc{BoxIntersectionBox_d} concept, which allows us to rely on the
+default traits implementation, i.e., we can use the same default
+function call to compute all intersections. See the example in the
+next section for a self-written traits class. So, in principle, the
+remainder of the example stays the same, but we omit the part handling
+the half-open box topology for brevity.
+
+The requirements for the box implementation are best looked at on
+page~\ccRefPage{BoxIntersectionBox_d} in the Reference Manual. In a
+nutshell, we have to define the type \ccc{NT} for the box coordinates
+and the type \ccc{Id_type} for the \ccc{id}-number. Member functions
+give access to the coordinates and the \ccc{id}-number. A static
+member function returns the dimension.
+
+\ccIncludeExampleCode{Box_intersection_d/custom_box_grid.C}
 
 
+% +------------------------------------------------------------------------+
+\section{Example for Point Proximity Search with a Custom Traits Class}
+
+Given a set of 3D points, we want to find all pairs of points that are
+less than a certain distance apart. We use the box intersection
+algorithm to find good candidates, namely those that are less than
+this specified distance apart in the $L_\infty$ norm, which is a good
+approximation of the Euclidean norm.
+
+We use an unusual representation for the box, namely pointers to the 3D points
+themselves. We implement a special box traits class that interprets
+the point as a box of the dimensions $[-$\ccc{eps}$,+$\ccc{eps}$)^3$
+centered at this point. The value for \ccc{eps} is half the specified distance
+from above, i.e., points are reported if there distance is smaller
+than \ccc{2*eps}.
+
+The requirements for the box traits class are best looked at on
+page~\ccRefPage{BoxIntersectionTraits_d} in the Reference Manual. In a
+nutshell, we have to define the type \ccc{NT} for the box coordinates,
+the type \ccc{Id_type} for the \ccc{id}-number, and the type \ccc{Box}
+for the box type, here \ccc{Point_3*} since we work with the pointers.
+All member functions in the traits class are static. Two functions give
+access to the max and min coordinates that we compute from the point
+coordinates plus or minus the \ccc{eps} value, respectively. For the
+\ccc{id}-number function the address of the point itself is
+sufficient, since the points stay stable. Another function
+returns the dimension.
+
+The callback function \ccc{report} computes than the Euclidean
+distance and prints a message for points that are close enough.
+
+Note that we need to reserve sufficient space in the \ccc{points}
+vector to avoid reallocations while we create the \ccc{points} vector
+and the \ccc{boxes} vector in parallel, since otherwise the
+\ccc{points} vector might reallocate and invalidate all pointers
+stored in \ccc{boxes} so far.
+
+\ccIncludeExampleCode{Box_intersection_d/proximity_custom_box_traits.C}
 
 %% EOF %%
