@@ -60,8 +60,7 @@ bool square_root_test()
   };
   DEBUG( std::cout << i; )
   a -= 1;
-  return i==54
-      && a.sup() == - a.inf()
+  return i==54 && a.sup() == - a.inf()
       && a.sup() == 1/(1024.0*1024*1024*1024*1024*4);
 }
 
