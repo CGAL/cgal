@@ -39,32 +39,30 @@ inline bool diff_was_exact(double a, double b, double ab)
 // if to_double() does not add roundoff errors.
 // TODO :
 // - generalize it to other number types.
-// - should it be merged in one function with to_double() ?
-//   always ?  only when true ?  what if one of the values is false ?...
 // - promote it as a number type requirement ?
 // - naming : is_representable_in_double() ?
 //            is_representable<T>() for representable in T ?
 
-// Current semantics :  bool fit_in_double(const NT& n)
+// Current semantics :  bool fit_in_double(const NT& n, double &)
 //
 // - returns true means that "n" is exactly representable by a double,
-//   _and_ that to_double(n) returns this value.
+//   _and_ then "returns" it in the reference.
 // - it is fine to return false conservatively.
 
 template < typename T >
-inline bool fit_in_double(const T&) { return false; }
+inline bool fit_in_double(const T&, double&) { return false; }
 
-inline bool fit_in_double(const double&) { return true; }
+inline bool fit_in_double(const double& d, double& r) { r = d; return true; }
 
-inline bool fit_in_double(const float&) { return true; }
+inline bool fit_in_double(const float& f, double& r) { r = f; return true; }
 
-inline bool fit_in_double(const int&) { return true; }
+inline bool fit_in_double(const int& i, double& r) { r = i; return true; }
 
 template < typename ET >
 class Lazy_exact_nt;
 
 template < typename ET >
-inline bool fit_in_double(const Lazy_exact_nt<ET>&);
+inline bool fit_in_double(const Lazy_exact_nt<ET>&, double&);
 
 CGAL_END_NAMESPACE
 

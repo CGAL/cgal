@@ -1,5 +1,6 @@
 18 November 2004 Sylvain Pion
 - Static filters : protect against underflow.
+- Static filters : improve fit_in_double() interface.
 
 4 November 2004 Sylvain Pion
 - Static filters : yet another smallish re-optimisticization.

@@ -43,21 +43,14 @@ public:
   {
       CGAL_PROFILER("In_circle_2 calls");
 
-      if (fit_in_double(p.x()) && fit_in_double(p.y()) &&
-          fit_in_double(q.x()) && fit_in_double(q.y()) &&
-          fit_in_double(r.x()) && fit_in_double(r.y()) &&
-          fit_in_double(t.x()) && fit_in_double(t.y()))
+      double px, py, qx, qy, rx, ry, tx, ty;
+
+      if (fit_in_double(p.x(), px) && fit_in_double(p.y(), py) &&
+          fit_in_double(q.x(), qx) && fit_in_double(q.y(), qy) &&
+          fit_in_double(r.x(), rx) && fit_in_double(r.y(), ry) &&
+          fit_in_double(t.x(), tx) && fit_in_double(t.y(), ty))
       {
           CGAL_PROFILER("In_circle_2 semi-static attempts");
-
-          const double & px = CGAL_NTS to_double(p.x());
-          const double & py = CGAL_NTS to_double(p.y());
-          const double & qx = CGAL_NTS to_double(q.x());
-          const double & qy = CGAL_NTS to_double(q.y());
-          const double & rx = CGAL_NTS to_double(r.x());
-          const double & ry = CGAL_NTS to_double(r.y());
-          const double & tx = CGAL_NTS to_double(t.x());
-          const double & ty = CGAL_NTS to_double(t.y());
 
           double qpx = qx-px;
           double qpy = qy-py;

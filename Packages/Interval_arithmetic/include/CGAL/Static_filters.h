@@ -56,8 +56,7 @@
 //   - power_tests
 //   - others ?
 // - benchmark on more algorithms.
-// - improve fit_in_double() for other NTs (MP_Float, Lazy).
-//   possibly promote it to NT requirement ?
+// - improve fit_in_double() for other NTs (MP_Float, Lazy). cf tools.h.
 // - try to automatize : have a struct a la Static_filter_error, with one part
 //   which is runtime, and the other which can be constant-propagated by the
 //   compiler.  g++ 4.0 should be able to cprop the second part...

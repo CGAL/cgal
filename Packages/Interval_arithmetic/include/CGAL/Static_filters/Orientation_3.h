@@ -43,26 +43,28 @@ public:
   {
       CGAL_PROFILER("Orientation_3 calls");
 
-      if (fit_in_double(p.x()) && fit_in_double(p.y()) && fit_in_double(p.z()) &&
-          fit_in_double(q.x()) && fit_in_double(q.y()) && fit_in_double(q.z()) &&
-          fit_in_double(r.x()) && fit_in_double(r.y()) && fit_in_double(r.z()) &&
-          fit_in_double(s.x()) && fit_in_double(s.y()) && fit_in_double(s.z()))
+      double px, py, pz, qx, qy, qz, rx, ry, rz, sx, sy, sz;
+
+      if (fit_in_double(p.x(), px) && fit_in_double(p.y(), py) &&
+          fit_in_double(p.z(), pz) &&
+          fit_in_double(q.x(), qx) && fit_in_double(q.y(), qy) &&
+          fit_in_double(q.z(), qz) &&
+          fit_in_double(r.x(), rx) && fit_in_double(r.y(), ry) &&
+          fit_in_double(r.z(), rz) &&
+          fit_in_double(s.x(), sx) && fit_in_double(s.y(), sy) &&
+          fit_in_double(s.z(), sz))
       {
           CGAL_PROFILER("Orientation_3 semi-static attempts");
 
-          const double & px = CGAL_NTS to_double(p.x());
-          const double & py = CGAL_NTS to_double(p.y());
-          const double & pz = CGAL_NTS to_double(p.z());
-
-          double pqx = CGAL_NTS to_double(q.x()) - px;
-          double pqy = CGAL_NTS to_double(q.y()) - py;
-          double pqz = CGAL_NTS to_double(q.z()) - pz;
-          double prx = CGAL_NTS to_double(r.x()) - px;
-          double pry = CGAL_NTS to_double(r.y()) - py;
-          double prz = CGAL_NTS to_double(r.z()) - pz;
-          double psx = CGAL_NTS to_double(s.x()) - px;
-          double psy = CGAL_NTS to_double(s.y()) - py;
-          double psz = CGAL_NTS to_double(s.z()) - pz;
+          double pqx = qx - px;
+          double pqy = qy - py;
+          double pqz = qz - pz;
+          double prx = rx - px;
+          double pry = ry - py;
+          double prz = rz - pz;
+          double psx = sx - px;
+          double psy = sy - py;
+          double psz = sz - pz;
 
           // Then semi-static filter.
           double maxx = fabs(pqx);

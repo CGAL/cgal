@@ -44,36 +44,39 @@ public:
   {
       CGAL_PROFILER("In_sphere_3 calls");
 
-      if (fit_in_double(p.x()) && fit_in_double(p.y()) && fit_in_double(p.z()) &&
-          fit_in_double(q.x()) && fit_in_double(q.y()) && fit_in_double(q.z()) &&
-          fit_in_double(r.x()) && fit_in_double(r.y()) && fit_in_double(r.z()) &&
-          fit_in_double(s.x()) && fit_in_double(s.y()) && fit_in_double(s.z()) &&
-          fit_in_double(t.x()) && fit_in_double(t.y()) && fit_in_double(t.z()))
+      double px, py, pz, qx, qy, qz, rx, ry, rz, sx, sy, sz, tx, ty, tz;
+
+      if (fit_in_double(p.x(), px) && fit_in_double(p.y(), py) &&
+          fit_in_double(p.z(), pz) &&
+          fit_in_double(q.x(), qx) && fit_in_double(q.y(), qy) &&
+          fit_in_double(q.z(), qz) &&
+          fit_in_double(r.x(), rx) && fit_in_double(r.y(), ry) &&
+          fit_in_double(r.z(), rz) &&
+          fit_in_double(s.x(), sx) && fit_in_double(s.y(), sy) &&
+          fit_in_double(s.z(), sz) &&
+          fit_in_double(t.x(), tx) && fit_in_double(t.y(), ty) &&
+          fit_in_double(t.z(), tz))
       {
           CGAL_PROFILER("In_sphere_3 semi-static attempts");
 
-          const double & tx = CGAL_NTS to_double(t.x());
-          const double & ty = CGAL_NTS to_double(t.y());
-          const double & tz = CGAL_NTS to_double(t.z());
-
-          double ptx = CGAL_NTS to_double(p.x()) - tx;
-          double pty = CGAL_NTS to_double(p.y()) - ty;
-          double ptz = CGAL_NTS to_double(p.z()) - tz;
+          double ptx = px - tx;
+          double pty = py - ty;
+          double ptz = pz - tz;
           double pt2 = CGAL_NTS square(ptx) + CGAL_NTS square(pty)
 	             + CGAL_NTS square(ptz);
-          double qtx = CGAL_NTS to_double(q.x()) - tx;
-          double qty = CGAL_NTS to_double(q.y()) - ty;
-          double qtz = CGAL_NTS to_double(q.z()) - tz;
+          double qtx = qx - tx;
+          double qty = qy - ty;
+          double qtz = qz - tz;
           double qt2 = CGAL_NTS square(qtx) + CGAL_NTS square(qty)
 	             + CGAL_NTS square(qtz);
-          double rtx = CGAL_NTS to_double(r.x()) - tx;
-          double rty = CGAL_NTS to_double(r.y()) - ty;
-          double rtz = CGAL_NTS to_double(r.z()) - tz;
+          double rtx = rx - tx;
+          double rty = ry - ty;
+          double rtz = rz - tz;
           double rt2 = CGAL_NTS square(rtx) + CGAL_NTS square(rty)
 	             + CGAL_NTS square(rtz);
-          double stx = CGAL_NTS to_double(s.x()) - tx;
-          double sty = CGAL_NTS to_double(s.y()) - ty;
-          double stz = CGAL_NTS to_double(s.z()) - tz;
+          double stx = sx - tx;
+          double sty = sy - ty;
+          double stz = sz - tz;
           double st2 = CGAL_NTS square(stx) + CGAL_NTS square(sty)
 	             + CGAL_NTS square(stz);
 

@@ -318,10 +318,11 @@ public :
       relative_precision_of_to_double = d;
   }
 
-  bool fit_in_double() const
+  bool fit_in_double(double &r) const
   {
     // Returns true if the value is representable by a double and to_double()
     // would return it.  False means "don't know".
+    r = approx().inf();
     return approx().is_point();
   }
 
@@ -704,8 +705,8 @@ struct converter<ET, Lazy_exact_nt<ET> >
 
 template < typename ET >
 inline bool
-fit_in_double(const Lazy_exact_nt<ET>& l)
-{ return l.fit_in_double(); }
+fit_in_double(const Lazy_exact_nt<ET>& l, double& r)
+{ return l.fit_in_double(r); }
 
 CGAL_END_NAMESPACE
 

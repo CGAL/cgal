@@ -43,19 +43,18 @@ public:
   {
       CGAL_PROFILER("Orientation_2 calls");
 
-      if (fit_in_double(p.x()) && fit_in_double(p.y()) &&
-          fit_in_double(q.x()) && fit_in_double(q.y()) &&
-          fit_in_double(r.x()) && fit_in_double(r.y()))
+      double px, py, qx, qy, rx, ry;
+
+      if (fit_in_double(p.x(), px) && fit_in_double(p.y(), py) &&
+          fit_in_double(q.x(), qx) && fit_in_double(q.y(), qy) &&
+          fit_in_double(r.x(), rx) && fit_in_double(r.y(), ry))
       {
           CGAL_PROFILER("Orientation_2 semi-static attempts");
 
-          const double & px = CGAL_NTS to_double(p.x());
-          const double & py = CGAL_NTS to_double(p.y());
-
-          double pqx = CGAL_NTS to_double(q.x()) - px;
-          double pqy = CGAL_NTS to_double(q.y()) - py;
-          double prx = CGAL_NTS to_double(r.x()) - px;
-          double pry = CGAL_NTS to_double(r.y()) - py;
+          double pqx = qx - px;
+          double pqy = qy - py;
+          double prx = rx - px;
+          double pry = ry - py;
 
           double det = det2x2_by_formula(pqx, pqy,
                                          prx, pry);
