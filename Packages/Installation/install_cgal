@@ -52,8 +52,12 @@ _MENU_WIDTH=6
 # left indentation of menu
 _LEFTSPACE='  '             
 
-# installation logfile
+# installation logfile (verbose)
 INSTALL_LOGFILE=${CGAL_DIR}/install.log
+
+# installation logfile (only completed compile/test runs)
+# (Really Important Stuff)
+INSTALL_RIS_LOGFILE=${CGAL_DIR}/install_ris.log
 
 # compilation logfile
 COMPILE_LOGFILE=${CGAL_DIR}/compile.log
@@ -62,7 +66,7 @@ COMPILE_LOGFILE=${CGAL_DIR}/compile.log
 TMP_LOGFILE=${CGAL_DIR}/tmptmp.log
 
 # temporary C++ file for confidence tests
-TMP_CXX_FILE='tmp_test.C'
+TMP_CXX_FILE=${CGAL_DIR}/tmp_test.C
 
 # compiler to be used 
 COMPILER=''
@@ -77,10 +81,28 @@ SETUP_COMPLETE=''
 # does there exist a CGALlib for this compiler?
 LIB_COMPILED=''
 
+# Was there any successfull compile run during this session?
+ANY_LIB_COMPILED=''
 
 # ------------------------------------------------------------
 # system related functions:
 # ------------------------------------------------------------
+
+# (/usr)/bin/which is completely STUPID
+# it looks at ~/.cshrc and reports aliases 
+# that do not exist, if you run a shell other than csh
+# so it's us who have to do the work again :)
+# needs awk!
+real_which()
+{
+    _t=0
+    for i in `echo ${PATH} | ${_awk} 'BEGIN {RS=":"}{print $0}'`; do
+	if [ ${_t} = 0 -a -x ${i}/$1 ]; then
+	    echo ${i}/$1
+	    _t=1
+	fi
+    done
+}
 
 # checks for existency of program $1 
 # and set variable _$3 to its full path 
@@ -93,7 +115,8 @@ _check_for_util()
     if [ -x "$_tmp" ]; then
 	eval "_${3:-$1}=$_tmp" 
     elif [ "$2" = "y" ]; then
-	echo "ERROR: Couldn't find $1, exiting.\n"
+	echo
+	echo "ERROR: Couldn't find $1, exiting."
 	exit 1
     else
 	log_print "WARNING: Couldn't find $1." 
@@ -131,9 +154,47 @@ log_print()
     $_printf "$*\n" >>${INSTALL_LOGFILE}
 }
 
-# initialize the logfile
-init_logfile()
+# exit, if there is no directory $1 or it is not readable and executable
+_check_dir_exists()
 {
+    if [ ! -d $1 ]; then
+	echo
+	echo "ERROR: Directory $1 does not exist, exiting."
+	exit 1
+    fi
+    if [ ! -r $1 ]; then
+	echo
+	echo "ERROR: Cannot read from directory $1, exiting."
+	exit 1
+    fi
+    if [ ! -x $1 ]; then
+	echo
+	echo "ERROR: No execute permission for directory $1, exiting."
+	exit 1
+    fi
+}
+
+# exit, if you can't write to directory/file $1
+_check_write()
+{
+    if [ ! -w $1 ]; then
+	echo
+	echo "ERROR: Cannot write to $1, exiting."
+	exit 1
+    fi
+}
+
+# initialize the logfiles
+init_logfiles()
+{
+    _check_dir_exists ${CGAL_DIR}
+    _check_write ${CGAL_DIR}
+    if [ -f ${INSTALL_RIS_LOGFILE} -a ! -w ${INSTALL_RIS_LOGFILE} ]; then
+	/bin/rm -f ${INSTALL_RIS_LOGFILE} 
+    fi
+    if [ -f ${INSTALL_LOGFILE} -a ! -w ${INSTALL_LOGFILE} ]; then
+	/bin/rm -f ${INSTALL_LOGFILE} 
+    fi
     _check_for_sysutil printf y
     $_printf "----------------------------------------------------------\n" \
 	>${INSTALL_LOGFILE}
@@ -142,6 +203,12 @@ init_logfile()
     log_print "called by $LOGNAME on `date`" 
     log_print "CGAL_DIR is $CGAL_DIR" 
     log_print "----------------------------------------------------------" 
+    $_printf "${_LEFTSPACE}----------------------------------------------------------\n" \
+	>${INSTALL_RIS_LOGFILE}
+    $_printf "${_LEFTSPACE}You built CGAL ${CGAL_VERSION} on:\n" \
+	>>${INSTALL_RIS_LOGFILE}
+    $_printf "${_LEFTSPACE}----------------------------------------------------------\n" \
+	>>${INSTALL_RIS_LOGFILE}
 }
 
 # first do a confidence test, if ${CGAL_DIR} is really 
@@ -154,15 +221,14 @@ check_conf_dir()
 	CGAL*) 
 	    log_print "Confidence test passed.";;
 	    *)
-	    $_printf "ERROR: The name of this directory\n"
+	    $_printf "\nERROR: The name of this directory\n"
 	    $_printf "  does not start with \"CGAL\", exiting.\n"
 	    exit 1;;
     esac
-    if [ ! -d include -o ! -d make -o ! -d src ]; then
-	$_printf "ERROR: This directory does not contain an include,\n"
-	$_printf "  make and src subdirectory, exiting.\n"
-	exit 1
-    fi
+    _check_dir_exists ${CGAL_MAKE_DIR}
+    _check_dir_exists ${CGAL_SRC_DIR}
+    _check_dir_exists ${CGAL_INCL_DIR}
+    _check_dir_exists ${CGAL_LIB_DIR}
 
     # test for ${CGAL_CONF_DIR}
     if [ ! -d ${CGAL_CONF_DIR} ]; then
@@ -171,9 +237,16 @@ check_conf_dir()
 	mkdir ${CGAL_CONF_DIR}
     fi
     if [ ! -w ${CGAL_CONF_DIR} ]; then
-	$_printf "ERROR: cannot write to ${CGAL_CONF_DIR}, exiting.\n"
+	$_printf "\nERROR: cannot write to ${CGAL_CONF_DIR}, exiting.\n"
 	exit 1
     fi
+}
+
+# print the version number of this file
+# (in an RCS Revision string this is field nr two)
+_install_version_number()
+{
+    $_printf "${CGAL_INSTALL_VERSION}" | $_awk '{print $2}'
 }
 
 # check, if all needed utility programs are available
@@ -181,22 +254,24 @@ check_conf_dir()
 check_for_utils()
 {
     _which='which'
-    _check_for_sysutil which y
-    _check_for_sysutil uname y
+    _check_for_sysutil awk y
     _check_for_sysutil basename y
+    _which=real_which
+    _check_for_sysutil uname y
     _check_for_sysutil cat y
     _check_for_sysutil rm y
     _check_for_sysutil chmod y
     _check_for_sysutil mkdir y
     _check_for_sysutil tput y
     _check_for_sysutil fgrep y
-    _check_for_sysutil awk y
     _check_for_sysutil sed y
     if [ -n "${PAGER}" ]; then
 	_check_for_sysutil ${PAGER} y
 	PAGER=`eval "echo \$\_$PAGER"`
 	PAGER=`eval "echo ${PAGER}"`
     fi
+    CGAL_INSTALL_VERSION=`_install_version_number`
+    log_print "This is `basename $0` version ${CGAL_INSTALL_VERSION}."
 }
 
 # guess operating system, write logs via $1
@@ -224,7 +299,7 @@ guess_os()
 # since we don't want to make a difference between 2.7.2.*
 _gpp_version()
 {
-    _tmp="`$_gpp -v 2>&1 | $_fgrep version | $_awk '{print $3}' | $_awk 'BEGIN {FS="."}
+    _tmp="`$_gpp --version 2>&1 | $_awk '{print $1}' | $_awk 'BEGIN {FS="."}
 	{print $1"."$2"."$3}'`"
     log_print "GNU g++ version is $_tmp." 
     $_printf "$_tmp"
@@ -273,7 +348,7 @@ rpath_directive()
 }
 
 # return currently needed compiler flags for gcc rtti patch
-rtti_patch_cppflags()
+rtti_patch_cxxflags()
 {
     if [ -n "${GCC_RTTI_PATCH_EXT}" ]; then
 	$_printf "-frtti -L${GCC_RTTI_PATCH_DIR} `rpath_directive`${GCC_RTTI_PATCH_DIR}"
@@ -300,6 +375,17 @@ compiler_basename()
 compiler_version()
 {
     $_printf "${COMPILER}" | $_awk '{print $3}'
+}
+
+# return 0, iff current compiler needs rtti patch
+# (gcc2.7.2.*)
+show_rtti_options()
+{
+    if [ "`compiler_basename`" = "g++" -a \
+	 "`compiler_version`" = "2.7.2" ]; then
+	return 0
+    fi
+    return 1
 }
 
 # search for compiler 
@@ -338,7 +424,7 @@ search_for_compilers()
 	    ;;
     esac
     if [ ${_COMPILER_NUMBER} = 1 ]; then
-	$_printf "ERROR: Couldn't find any compiler, exiting.\n"
+	$_printf "\nERROR: Couldn't find any compiler, exiting.\n"
 	exit 1
     fi
 }
@@ -356,7 +442,7 @@ search_for_compilers()
 _let_expr()
 {
     if ! eval "let _result=$1$2$3"; then
-	$_printf "ERROR: cannot evaluate $1$2$3 in _let_expr()\n"
+	$_printf "\nERROR: cannot evaluate $1$2$3 in _let_expr()\n"
 	exit 1
     fi
 }
@@ -369,7 +455,7 @@ _expr_expr()
     # (since there can be only one `...` expression level)
     eval "_result=`/bin/expr $1 \"$2\" $3`"
     if [ $? != 0 ]; then
-	$_printf "ERROR: cannot evaluate $1 in _expr_expr()\n"
+	$_printf "\nERROR: cannot evaluate $1 in _expr_expr()\n"
 	exit 1
     fi
 }
@@ -382,7 +468,7 @@ _bc_expr()
     # (since there can be only one `...` expression level)
     eval "_result=`echo $1 \"$2\" $3 | /bin/bc`"
     if [ $? != 0 ]; then
-	$_printf "ERROR: cannot evaluate $1 in _bc_expr()\n"
+	$_printf "\nERROR: cannot evaluate $1 in _bc_expr()\n"
 	exit 1
     fi
 }
@@ -399,7 +485,7 @@ set_expr()
     elif [ -x /bin/bc ]; then
 	_EXPR=_bc_expr
     else
-	$_printf "ERROR: cannot find either of bc, dc and csh\n"
+	$_printf "\nERROR: cannot find either of bc, dc and csh\n"
 	$_printf "       nor does /bin/sh support let.\n"
 	exit 1
     fi
@@ -574,7 +660,7 @@ length()
     then
 	return ${#1}
     elif [ -x /bin/wc ]; then
-	return `$_printf "$1" | /bin/wc -m`
+	return `$_printf "$1" | /bin/wc -c`
     else
 	return 30
     fi
@@ -598,7 +684,9 @@ go_up_lines()
 # moves cursor down $1 lines
 go_down_lines()
 {
-    string_n_print "$_line_down" $1
+    if [ -n "${_line_down}" ]; then
+	string_n_print "$_line_down" $1
+    fi
 }
 
 # print a line containing string $1
@@ -627,6 +715,19 @@ print_prompt()
     flush_buffer
 }
 
+# print a centered line with text $1
+print_center_line()
+{
+    length "`echo "$1"`"
+    l=$?
+    eval "$_EXPR $_MENU_WIDTH \* 10"
+    eval "$_EXPR $_result - $l"
+    eval "$_EXPR $_result / 2"
+    write_buffer "$_MENU_LINE_EMPTY\r${_LEFTSPACE}**"
+    string_n_print " " $_result
+    write_buffer "$1\n"
+}
+
 # print a headline with text $1
 print_headline()
 {
@@ -648,7 +749,7 @@ print_headline()
 # wait until enter is pressed
 wait_for_enter()
 {
-    print_line "Please press <ENTER> to continue."
+    print_center_line "Please press <ENTER> to continue."
     print_filled_line
     flush_buffer
     read dummy
@@ -795,7 +896,7 @@ check_CGAL_INSTALL_VERSION()
 try_to_get_var_from_file()
 {
     if [ -r $2 ]; then
-	_awkprg="/$1/ { print \$3 }"
+	_awkprg="/$1/"'{print $3}'
 	_tmp=`$_awk "$_awkprg" $2`
 	log_print "got $1 from $2.\nset to \"$_tmp\"."
 	_tmp=\'$_tmp\'
@@ -818,20 +919,28 @@ try_to_get_var_from_file()
 # compiler menu
 #
 
+# cleanup after compilation
+cleanup_after_compile()
+{
+    # remove tmp C++ file 
+    $_rm -f ${TMP_CXX_FILE}
+    # remove sunpro template database
+    $_rm -rf Templates.DB
+    # remove irix mipspro template database
+    $_rm -rf ii_files
+}
+
 # run a compiler test named $1, return 0, iff ok
-# (use $2 as paramters for the compiler call)
+# (use $2 as parameters for the compiler call)
 # if $3 is non-zero, inform about eventually occurring problems
 _test_compiler()
 {
-    print_filled_line
-    print_line "Testing for $1, please wait ..."
-    print_filled_line
-    flush_buffer
+    $_printf "${_LEFTSPACE}Testing for $1 ..."
     $_printf 'Got the following error messages:\n\n' >${TMP_LOGFILE}
     eval "`compiler_bin` $2"
     i=$?
     j=1
-    $_rm -f ${TMP_CXX_FILE}
+    cleanup_after_compile
     if [ $i = 0 ]; then 
 	a.out >>${TMP_LOGFILE} 2>&1; 
 	j=$?
@@ -839,18 +948,25 @@ _test_compiler()
     fi
     if [ $j = 0 -a $i = 0 ]; then
 	log_print "$1 test passed."
-	# $_rm -f ${TMP_LOGFILE}
+	$_printf " ok.\n"
+	$_rm -f ${TMP_LOGFILE}
 	return 0
     else
-	log_print "ERROR: $1 test failed."
 	if [ -n "$3" ]; then
+	    log_print "ERROR: $1 test failed."
+	    write_buffer "\n"
+	    print_filled_line
+	    print_empty_line
 	    print_headline "Test failed"
-	    print_line "You will be shown a log now ..."
+	    print_center_line "You will be shown a log now ..."
 	    wait_for_enter
 	    $_cat ${TMP_LOGFILE} | ${PAGER:-$_cat}
 	    write_buffer "\n"
 	    print_filled_line
 	    wait_for_enter
+	else
+	    log_print "remark: $1 test -> no."
+	    $_printf " no.\n"
 	fi
 	$_rm -f ${TMP_LOGFILE}
 	return 1
@@ -869,14 +985,21 @@ test_leda()
 	if [ -n "${GCC_RTTI_PATCH_EXT}" ]; then
 	    $_printf "#include <typeinfo>\n" >> ${TMP_CXX_FILE}
 	fi
-	$_printf "#include <iostream.h>\n" >> ${TMP_CXX_FILE}
-	$_printf "#include <LEDA/integer.h>\n" >> ${TMP_CXX_FILE}
-	$_printf "#include <LEDA/REDEFINE_NAMES.h>\n" >> ${TMP_CXX_FILE}
-	$_printf "typedef integer I;\n" >> ${TMP_CXX_FILE}
-	$_printf "#include <LEDA/UNDEFINE_NAMES.h>\n" >> ${TMP_CXX_FILE}
-	$_printf "int main(){ I a( 123); I b( 456); cout<<a+b<<endl;}\n" \
-	    >> ${TMP_CXX_FILE}
-	_test_compiler LEDA "`rtti_patch_cppflags` -I${LEDA_INCL_DIR} -L${LEDA_LIB_DIR} `rpath_directive`${LEDA_LIB_DIR} `rtti_patch_ldflags` ${TMP_CXX_FILE} -lL >>${TMP_LOGFILE} 2>&1" $1
+	$_printf '#include <iostream.h>
+	#include <LEDA/integer.h>
+	#include <LEDA/REDEFINE_NAMES.h>
+	typedef integer I;
+	#include <LEDA/UNDEFINE_NAMES.h>
+	int main() {
+	  I a( 123); 
+	  I b( 456);
+
+	  cout << "leda test: " << a << " + " << b << " = " << a+b << endl;
+	  return 0;
+	}' >> ${TMP_CXX_FILE}
+	$_printf "\n" >> ${TMP_CXX_FILE}
+
+	_test_compiler LEDA "`rtti_patch_cxxflags` -I${LEDA_INCL_DIR} -L${LEDA_LIB_DIR} `rpath_directive`${LEDA_LIB_DIR} `rtti_patch_ldflags` ${TMP_CXX_FILE} -lL >>${TMP_LOGFILE} 2>&1" $1
 	return $?
     else
 	return 0
@@ -928,6 +1051,7 @@ _test_hp_1994_stl()
 	    assert( 42 == *(l.begin()));
 	    return 0;
 	}' > ${TMP_CXX_FILE}
+	$_printf "\n" >> ${TMP_CXX_FILE}
     
     _do_stl_test "HP STL" $1
     return $?
@@ -963,6 +1087,7 @@ _test_sgi_1996_stl()
 	    assert( check( l.begin()));
 	    return 0;
 	}' > ${TMP_CXX_FILE}
+	$_printf "\n" >> ${TMP_CXX_FILE}
     
     _do_stl_test "SGI 1996 STL" $1
     return $?
@@ -1028,6 +1153,7 @@ _test_stl_iterator_traits()
 	    assert( 42 == get_val( l.begin()));
 	    return 0;
 	}' > ${TMP_CXX_FILE}
+	$_printf "\n" >> ${TMP_CXX_FILE}
     
     _do_stl_test "ITERATOR TRAITS" $1
     return $?
@@ -1063,6 +1189,7 @@ _test_sgi_june_1997_stl()
 	    assert( check( l.begin()));
 	    return 0;
 	}' > ${TMP_CXX_FILE}
+	$_printf "\n" >> ${TMP_CXX_FILE}
     
     _do_stl_test "SGI 6/97 STL" $1
     return $?
@@ -1137,16 +1264,21 @@ test_gcc_rtti_patch()
     if [ -n "${GCC_RTTI_PATCH_EXT}" ]; then
 	$_printf '#include <typeinfo>
 	    #include <fstream.h>
+	    #include <iostream.h>
 
 	    int main() {
 		ifstream t;
 		t.open( "README");
 		int i;
+		cout << "If this is the last line you see,"
+		     << "the test failed." << endl;
 		t >> i;
+		cout << "test ok" << endl;
 		return 0;
 	    }' > ${TMP_CXX_FILE}
+	$_printf "\n" >> ${TMP_CXX_FILE}
 	    
-	_test_compiler 'RTTI patch' "`rtti_patch_cppflags` ${TMP_CXX_FILE} `rtti_patch_ldflags` >>${TMP_LOGFILE} 2>&1" $1
+	_test_compiler 'RTTI patch' "`rtti_patch_cxxflags` ${TMP_CXX_FILE} `rtti_patch_ldflags` >>${TMP_LOGFILE} 2>&1" $1
 	return $?
     fi
     return 0
@@ -1165,6 +1297,38 @@ set_ostype()
 full_ostype()
 {
     $_printf "${CGAL_OS_COMPILER}${GCC_RTTI_PATCH_EXT}${LEDA_EXT}"
+}
+
+# print information about LEDA support in current setup
+print_leda_support()
+{
+    if [ -n "${LEDA_EXT}" ]; then
+	$_printf "LEDA:\t\tsupported."
+    else
+	$_printf "LEDA:\t\tnot supported."
+    fi
+}
+
+# print information about rtti-patch support in current setup
+print_rtti_support()
+{
+    if show_rtti_options; then
+	if [ -n "${GCC_RTTI_PATCH_EXT}" ]; then
+	    $_printf "RTTI:\t\tsupported."
+	else
+	    $_printf "RTTI:\t\tnot supported."
+	fi
+    fi
+}
+
+# print the current os/compiler in a readable fashion
+print_os_setting()
+{
+    $_printf "${_LEFTSPACE}OS:\t\t${SYST}\n" 
+    $_printf "${_LEFTSPACE}COMPILER:\t${COMPILER}\n" 
+    $_printf "${_LEFTSPACE}STL:\t\t${CGAL_STL_VERSION}.\n" 
+    $_printf "${_LEFTSPACE}`print_leda_support`\n" 
+    $_printf "${_LEFTSPACE}`print_rtti_support`\n" 
 }
 
 set_lib_compiled_flag()
@@ -1197,21 +1361,28 @@ retrieve_compiler_settings()
     # these two have to be ok:
     if try_to_get_var_from_file LEDA_EXT "${_file}"; then
 	LEDA_EXT=''
-	SETUP_COMPLETE=''
     fi
     if try_to_get_var_from_file GCC_RTTI_PATCH_EXT "${_file}"; then
 	GCC_RTTI_PATCH_EXT=''
-	SETUP_COMPLETE=''
     fi
 
     if try_to_get_var_from_file LEDA_INCL_DIR "${_file}"; then
+	if [ -n "${LEDA_EXT}" ]; then
+	    SETUP_COMPLETE=''
+	fi
 	LEDA_EXT=''
     fi
     if try_to_get_var_from_file LEDA_LIB_DIR "${_file}"; then
+	if [ -n "${LEDA_EXT}" ]; then
+	    SETUP_COMPLETE=''
+	fi
 	LEDA_EXT=''
     fi
 
     if try_to_get_var_from_file GCC_RTTI_PATCH_DIR "${_file}"; then
+	if [ -n "${GCC_RTTI_PATCH_EXT}" ]; then
+	    SETUP_COMPLETE=''
+	fi
 	GCC_RTTI_PATCH_EXT=''
     fi
     if try_to_get_var_from_file STL_STATUS "${_file}"; then
@@ -1253,7 +1424,7 @@ store_compiler_settings()
 }
 
 # load the settings for $COMPILER,
-# if a config file exists, otherwise check for "builtin " STL
+# if a config file exists, otherwise check for "builtin" STL
 # and set STL_STATUS accordingly
 _choose_compiler()
 {
@@ -1261,7 +1432,8 @@ _choose_compiler()
     set_ostype
     retrieve_compiler_settings
     if [ -z "${SETUP_COMPLETE}" ]; then
-	go_down_lines 13
+	go_down_lines 15
+	flush_buffer
 	STL_STATUS='b'
 	if test_stl_general; then
 	    log_print "$COMPILER seems to have builtin STL."
@@ -1276,7 +1448,7 @@ _choose_compiler()
 _set_compiler()
 {
     if [ $1 -ge ${_COMPILER_NUMBER} ]; then
-	$_printf "ERROR: argument greater than expexted\n"
+	$_printf "\nERROR: argument greater than expexted\n"
 	$_printf "  ($1 >= ${_COMPILER_NUMBER}) in _set_compiler\n"
 	exit 1
     fi
@@ -1338,17 +1510,17 @@ compiler_menu()
 #
 
 # change directory variable $1 in dir_menu()
-# (go $2 lines up before queying for input)
+# (go $2 lines up before querying for input)
 change_dir()
 {
-    go_up_lines $2
-    print_prompt "   ? " 
+    go_up_lines 1
+    print_prompt "New $1: " 
     read DIR
     if [ -n "$DIR" ]; then
 	go_down_lines $2
 	print_filled_line
 	if [ ! -d $DIR ]; then
-	    print_line "ERROR: Directory does not exist." 
+	    print_center_line "ERROR: Directory does not exist." 
 	    wait_for_enter
 	else
 	    # store old value
@@ -1365,17 +1537,6 @@ change_dir()
     fi
 }
 
-# return 0, iff current compiler needs rtti patch
-# (gcc2.7.2.*)
-show_rtti_options()
-{
-    if [ "`compiler_basename`" = "g++" -a \
-	 "`compiler_version`" = "2.7.2" ]; then
-	return 0
-    fi
-    return 1
-}
-
 dir_menu()
 {
     _CHANGED=''
@@ -1384,6 +1545,7 @@ dir_menu()
 	print_filled_line
 	print_headline "CGAL $CGAL_VERSION Directory Setup"
 	print_line "Current setup:"
+	print_line "--------------"
 	if [ -z "${LEDA_EXT}" ]; then
 	    _tmp='not '
 	else
@@ -1505,16 +1667,16 @@ dir_menu()
 		;;
 	    q|Q|b|B)
 		if [ -n "$_CHANGED" -o -z "${SETUP_COMPLETE}" ]; then
-		    go_down_lines 1
+		    go_down_lines 3
+		    flush_buffer
 		    if test_leda v && test_stl_general v && \
 		      test_gcc_rtti_patch v; then
 			log_print "$COMPILER configured correctly."
 			set_stl_type 
-			print_filled_line
 			log_print "STL type seems to be ${CGAL_STL_VERSION}."
-			print_line "STL type seems to be ${CGAL_STL_VERSION}."
+			$_printf \
+			"${_LEFTSPACE}STL type seems to be ${CGAL_STL_VERSION}."
 			store_compiler_settings
-			wait_for_enter
 			SETUP_COMPLETE='ok'
 			set_lib_compiled_flag
 		    else
@@ -1565,7 +1727,7 @@ write_compiler_flags()
   fi
   echo >> $FILE
 
-  echo "CGAL_CPPFLAGS = \\" >> $FILE
+  echo "CGAL_CXXFLAGS = \\" >> $FILE
   echo "	-D${CGAL_COMPILER} \\" >> $FILE
   echo "	-D\$(CGAL_STL_VERSION) \\" >> $FILE
   if [ ! -z "$USE_LEDA" ] ; then
@@ -1577,8 +1739,8 @@ write_compiler_flags()
   if [ ! -z "$USE_STDEXCEPT" ] ; then
     echo "	-D__STDEXCEPT__ \\" >> $FILE
   fi
-  if [ ! -z "$ADDITIONAL_CPPFLAGS" ] ; then
-    echo "	$ADDITIONAL_CPPFLAGS \\" >> $FILE
+  if [ ! -z "$ADDITIONAL_CXXFLAGS" ] ; then
+    echo "	$ADDITIONAL_CXXFLAGS \\" >> $FILE
   fi
   echo "	\$(CGAL_STL_INCLUDE_DIRECTIVE) \\" >> $FILE
   if [ ! -z "$USE_LEDA" ] ; then
@@ -1671,7 +1833,7 @@ _create_include_makefile()
 
   header "compiler" >> $FILE
   echo >> $FILE
-  echo "CGAL_CPP = $CGAL_CPP" >> $FILE
+  echo "CGAL_CXX = $CGAL_CXX" >> $FILE
   echo >> $FILE
 
   write_compiler_flags
@@ -1680,12 +1842,12 @@ _create_include_makefile()
   header "commands and flags for creating libraries" >> $FILE
   echo >> $FILE
   echo "CGAL_LIB = libCGAL.a" >> $FILE
-  echo "CGAL_LIB_CPPFLAGS = \$(CGAL_CPPFLAGS) $CGAL_LIB_CPPFLAGS" >> $FILE
+  echo "CGAL_LIB_CXXFLAGS = \$(CGAL_CXXFLAGS) $CGAL_LIB_CXXFLAGS" >> $FILE
   echo "CGAL_LIB_LDFLAGS = $CGAL_LIB_LDFLAGS" >> $FILE
   echo "CGAL_LIB_CREATE = $CGAL_LIB_CREATE" >> $FILE
   echo >> $FILE
   echo "CGAL_SHARED_LIB = libCGAL.so" >> $FILE
-  echo "CGAL_SHARED_LIB_CPPFLAGS = \$(CGAL_CPPFLAGS) $CGAL_SHARED_LIB_CPPFLAGS" >> $FILE
+  echo "CGAL_SHARED_LIB_CXXFLAGS = \$(CGAL_CXXFLAGS) $CGAL_SHARED_LIB_CXXFLAGS" >> $FILE
   if [ -z "$USE_LEDA" ] ; then
     echo "CGAL_SHARED_LIB_LDFLAGS = $CGAL_SHARED_LIB_LDFLAGS" >> $FILE
   else
@@ -1776,12 +1938,12 @@ create_include_makefile()
 	    #### settings for sgi mipspro compiler on irix5
 	    OPERATING_SYSTEM="IRIX 5.3"
 	    CGAL_COMPILER="CGAL_SGI_MIPSPRO_CC_40"
-	    CGAL_CPP="CC"
-	    ADDITIONAL_CPPFLAGS=
-	    CGAL_LIB_CPPFLAGS=
+	    CGAL_CXX="CC"
+	    ADDITIONAL_CXXFLAGS=
+	    CGAL_LIB_CXXFLAGS=
 	    CGAL_LIB_LDFLAGS=
 	    CGAL_LIB_CREATE="ar cr"
-	    CGAL_SHARED_LIB_CPPFLAGS=
+	    CGAL_SHARED_LIB_CXXFLAGS=
 	    CGAL_SHARED_LIB_LDFLAGS="-lm"
 	    CGAL_SHARED_LIB_CREATE="CC -shared -o"
 	    WINDOW_DIR="/usr/lib/X11"
@@ -1792,12 +1954,12 @@ create_include_makefile()
 	    #### settings for sgi mipspro compiler on irix6
 	    OPERATING_SYSTEM="IRIX 6.2"
 	    CGAL_COMPILER="CGAL_SGI_MIPSPRO_CC_71"
-	    CGAL_CPP="CC"
-	    ADDITIONAL_CPPFLAGS=
-	    CGAL_LIB_CPPFLAGS=
+	    CGAL_CXX="CC"
+	    ADDITIONAL_CXXFLAGS=
+	    CGAL_LIB_CXXFLAGS=
 	    CGAL_LIB_LDFLAGS=
 	    CGAL_LIB_CREATE="ar cr"
-	    CGAL_SHARED_LIB_CPPFLAGS=
+	    CGAL_SHARED_LIB_CXXFLAGS=
 	    CGAL_SHARED_LIB_LDFLAGS="-lm"
 	    CGAL_SHARED_LIB_CREATE="CC -shared -o"
 	    WINDOW_DIR="/usr/lib/X11"
@@ -1808,12 +1970,12 @@ create_include_makefile()
 	    #### settings for GNU compiler on irix
 	    OPERATING_SYSTEM="IRIX ?.?"
 	    CGAL_COMPILER="CGAL_GNU_GCC_272"
-	    CGAL_CPP="g++"
-	    ADDITIONAL_CPPFLAGS="-frtti"
-	    CGAL_LIB_CPPFLAGS=
+	    CGAL_CXX="g++"
+	    ADDITIONAL_CXXFLAGS="-frtti"
+	    CGAL_LIB_CXXFLAGS=
 	    CGAL_LIB_LDFLAGS=
 	    CGAL_LIB_CREATE="ar cr"
-	    CGAL_SHARED_LIB_CPPFLAGS="-fpic"
+	    CGAL_SHARED_LIB_CXXFLAGS="-fpic"
 	    CGAL_SHARED_LIB_LDFLAGS="-lm"
 	    CGAL_SHARED_LIB_CREATE="g++ -shared -o"
 	    WINDOW_DIR="/usr/lib/X11"
@@ -1826,12 +1988,12 @@ create_include_makefile()
 	    #### settings for sunpro compiler on solaris
 	    OPERATING_SYSTEM="Sun Solaris 2.5"
 	    CGAL_COMPILER="CGAL_SUNPRO_CC_41"
-	    CGAL_CPP="CC"
-	    ADDITIONAL_CPPFLAGS="-pto"
-	    CGAL_LIB_CPPFLAGS=
+	    CGAL_CXX="CC"
+	    ADDITIONAL_CXXFLAGS="-pto"
+	    CGAL_LIB_CXXFLAGS=
 	    CGAL_LIB_LDFLAGS=
 	    CGAL_LIB_CREATE="CC -xar -o"
-	    CGAL_SHARED_LIB_CPPFLAGS="-pic"
+	    CGAL_SHARED_LIB_CXXFLAGS="-pic"
 	    CGAL_SHARED_LIB_LDFLAGS=""
 	    CGAL_SHARED_LIB_CREATE="CC -G -o"
 	    WINDOW_DIR="/usr/openwin/lib"
@@ -1842,12 +2004,12 @@ create_include_makefile()
 	    #### settings for GNU compiler on solaris
 	    OPERATING_SYSTEM="Sun Solaris 2.5"
 	    CGAL_COMPILER="CGAL_GNU_GCC_272"
-	    CGAL_CPP="g++"
-	    ADDITIONAL_CPPFLAGS="-frtti"
-	    CGAL_LIB_CPPFLAGS=
+	    CGAL_CXX="g++"
+	    ADDITIONAL_CXXFLAGS="-frtti"
+	    CGAL_LIB_CXXFLAGS=
 	    CGAL_LIB_LDFLAGS=
 	    CGAL_LIB_CREATE="ar cr"
-	    CGAL_SHARED_LIB_CPPFLAGS="-fpic"
+	    CGAL_SHARED_LIB_CXXFLAGS="-fpic"
 	    CGAL_SHARED_LIB_LDFLAGS=""
 	    CGAL_SHARED_LIB_CREATE="g++ -G -o"
 	    WINDOW_DIR="/usr/openwin/lib"
@@ -1860,12 +2022,12 @@ create_include_makefile()
 	    #### settings for GNU compiler on linux
 	    OPERATING_SYSTEM="Linux"
 	    CGAL_COMPILER="CGAL_GNU_GCC_272"
-	    CGAL_CPP="g++"
-	    ADDITIONAL_CPPFLAGS="-frtti"
-	    CGAL_LIB_CPPFLAGS=
+	    CGAL_CXX="g++"
+	    ADDITIONAL_CXXFLAGS="-frtti"
+	    CGAL_LIB_CXXFLAGS=
 	    CGAL_LIB_LDFLAGS=
 	    CGAL_LIB_CREATE="ar cr"
-	    CGAL_SHARED_LIB_CPPFLAGS="-fpic"
+	    CGAL_SHARED_LIB_CXXFLAGS="-fpic"
 	    CGAL_SHARED_LIB_LDFLAGS=""
 	    CGAL_SHARED_LIB_CREATE="g++ -G -o"
 	    WINDOW_DIR="/usr/openwin/lib"
@@ -1878,12 +2040,12 @@ create_include_makefile()
 	    #### settings for unknown compiler 
 	    OPERATING_SYSTEM="${SYST}"
 	    CGAL_COMPILER="CGAL_UNKNOWN_COMPILER"
-	    CGAL_CPP=${COMPILER}
-	    ADDITIONAL_CPPFLAGS=
-	    CGAL_LIB_CPPFLAGS=
+	    CGAL_CXX=${COMPILER}
+	    ADDITIONAL_CXXFLAGS=
+	    CGAL_LIB_CXXFLAGS=
 	    CGAL_LIB_LDFLAGS=
 	    CGAL_LIB_CREATE="ar cr"
-	    CGAL_SHARED_LIB_CPPFLAGS="-fpic"
+	    CGAL_SHARED_LIB_CXXFLAGS="-fpic"
 	    CGAL_SHARED_LIB_LDFLAGS=""
 	    CGAL_SHARED_LIB_CREATE="${COMPILER} -G -o"
 	    WINDOW_DIR="/usr/lib/X11"
@@ -1927,16 +2089,15 @@ generatemakefiles()
 	create_include_makefile
     fi
 
-
   replace_line $CGAL_MAKEFILE CGAL_DIRECTORIES "CGAL_DIRECTORIES = ${CGAL_DIRFILE}"
   replace_line $CGAL_MAKEFILE CGAL_OS_COMPILER \
        "CGAL_OS_COMPILER = ${CGAL_OS_COMPILER}${GCC_RTTI_PATCH_EXT}${LEDA_EXT}"
 
-  if [ ! -z "$LEDA_INCL_DIR" ] ; then
+  if [ -n "$LEDA_INCL_DIR" ] ; then
     replace_line $CGAL_MAKEFILE LEDA_INCL_DIR "LEDA_INCL_DIR = $LEDA_INCL_DIR"
   fi
 
-  if [ ! -z "$LEDA_LIB_DIR" ] ; then
+  if [ -n "$LEDA_LIB_DIR" ] ; then
     replace_line $CGAL_MAKEFILE LEDA_LIB_DIR "LEDA_LIB_DIR = $LEDA_LIB_DIR"
   fi
 
@@ -1976,27 +2137,23 @@ generatemakefiles()
 # return 0, iff success
 _do_compile()
 {
-    print_filled_line
-    print_empty_line
-    print_headline "BUILDING CGAL_$1 (just a moment ;)"
-    print_filled_line
-    flush_buffer 
+    $_printf "${_LEFTSPACE}Building CGAL_$1 ..."
+    if [ -f ${COMPILE_LOGFILE} -a ! -w ${COMPILE_LOGFILE} ]; then
+	/bin/rm -f ${COMPILE_LOGFILE} 
+    fi
     if make -f makefile_$1 >${COMPILE_LOGFILE} 2>&1; then
 	log_print "Compilation of $1 ${_libname} succeeded."
-	print_filled_line
-	print_empty_line
-	print_headline "Compilation of CGAL_$1 succeeded."
-	print_filled_line
+	$_printf " done.\n"
+	ANY_LIB_COMPILED='y'
 	return 0
     else
 	log_print "Compilation of $1 ${_libname} failed."
+	$_printf "\n${_LEFTSPACE}Compilation of CGAL_$1 failed.\n"
+	$_printf "${_LEFTSPACE}You will be shown a log now ...\n"
 	print_filled_line
-	print_headline "Compilation of CGAL_$1 failed."
-	print_line "You will be shown a log now ..."
 	wait_for_enter
 	$_cat ${COMPILE_LOGFILE} | ${PAGER:-$_cat}
 	write_buffer "\n"
-	print_filled_line
 	return 1
     fi
 }
@@ -2010,6 +2167,7 @@ make_lib_dir()
 	$_mkdir ${_libname}
     fi
     if [ ! -w ${_libname} ]; then
+	echo
 	echo "ERROR: Cannot write to ${_libname}, exiting."
 	exit 1
     fi
@@ -2021,14 +2179,10 @@ make_lib_dir()
 make_makefiles()
 {
     # generate directoryfile and makefile:
-    print_filled_line
-    print_empty_line
-    print_headline "Generating Makefiles"
-    print_filled_line
-    write_buffer "\n"
-    flush_buffer
+    $_printf "${_LEFTSPACE}Generating Makefiles ..."
     CGAL_MAKEFILE=${CGAL_MAKE_DIR}/makefile_${_libname}
     generatemakefiles log_print
+    $_printf " done.\n"
 }
 
 write_menu_information()
@@ -2036,23 +2190,12 @@ write_menu_information()
     clear_screen
     print_filled_line
     print_empty_line
-    print_headline "$1 CGAL $CGAL_VERSION"
-    if [ -n "${LEDA_EXT}" ]; then
-	_tmp=' with LEDA'
-	if [ -n "${GCC_RTTI_PATCH_EXT}" ]; then
-	    _tmp=${_tmp}' and RTTI'
-	fi
-    else
-	if [ -n "${GCC_RTTI_PATCH_EXT}" ]; then
-	    _tmp=' with RTTI'
-	else
-	    _tmp=''
-	fi
-    fi
-    print_headline "On $SYST with ${COMPILER}${_tmp}"
+    print_headline "$1 CGAL ${CGAL_VERSION}"
     print_filled_line
     write_buffer "\n"
     flush_buffer
+    print_os_setting
+    $_printf "\n"
 }
 
 lib_menu()
@@ -2066,9 +2209,14 @@ lib_menu()
     cd ${CGAL_SRC_DIR}
     if _do_compile lib; then
 	LIB_COMPILED='ok'
+	$_printf "`print_os_setting`" >>${INSTALL_RIS_LOGFILE}
+	$_printf \
+	"\n${_LEFTSPACE}----------------------------------------------------------\n" \
+	>>${INSTALL_RIS_LOGFILE}
 	_do_compile sharedlib
     fi
-    flush_buffer
+    write_buffer "\n"
+    print_filled_line
     wait_for_enter
     cd ${CGAL_DIR}
 }
@@ -2082,26 +2230,21 @@ test_menu()
 {
     write_menu_information "Testing"
 
-    if [ ! -x ${CGAL_TESTFILE} ]; then
-	echo "ERROR: Cannot execute ${CGAL_TESTFILE}, exiting."
-	exit 1
-    fi
+    $_printf "${_LEFTSPACE}Updating `$_basename ${CGAL_TESTFILE}` ..."
+    _check_write ${CGAL_TESTFILE}
     replace_line ${CGAL_TESTFILE} test_platform "test_platform=`full_ostype`"
     $_chmod 744 ${CGAL_TESTFILE}
+    $_printf " done.\n"
 
-    print_filled_line
-    print_empty_line
-    print_headline "TESTING (this may take some time)"
-    print_filled_line
-    flush_buffer 
-
+    $_printf "${_LEFTSPACE}Starting ${CGAL_TESTFILE} ...\n"
     cd ${CGAL_TEST_DIR}
     cgal_test 
+    cleanup_after_compile
     log_print "Test completed."
     print_filled_line
     print_empty_line
     print_headline "Test completed."
-    print_line "You will be shown a log now ..."
+    print_center_line "You will be shown a log now ..."
     wait_for_enter
     $_cat ${TEST_LOGFILE} | ${PAGER:-$_cat}
     write_buffer "\n"
@@ -2161,12 +2304,23 @@ main_menu()
 		fi
 		;;
 	    q|Q)
-		go_down_lines 1
-		print_filled_line
-		print_empty_line
-		print_headline "`$_basename $0` completed."
+		if [ -z "${ANY_LIB_COMPILED}" ]; then
+		    go_down_lines 1
+		    print_filled_line
+		    print_line \
+		    "WARNING: You did not build any libs during this session."
+		else
+		    go_down_lines 3
+		    flush_buffer
+		    $_cat ${INSTALL_RIS_LOGFILE}
+		    print_filled_line
+		    print_center_line "`$_basename $0` completed."
+		fi
+		print_center_line "If something went wrong, (or maybe also, if not:)"
+		print_center_line "have a look at `$_basename ${INSTALL_LOGFILE}`." 
 		print_filled_line
 		flush_buffer
+
 		return;;
 	esac
     done
@@ -2209,6 +2363,7 @@ case $* in
 	# check for spaces
 	case $* in
 	    *" "*) 
+		echo
 		echo "ERROR: Too many arguments, exiting."
 		exit 1;;
 		*)
@@ -2217,12 +2372,15 @@ case $* in
 		guess_os echo
 		_tmp=`${_basename} $* 2>/dev/null`
 		if [ -z "${_tmp}" ]; then
+		    echo
 		    echo "ERROR: basename returned empty string, exiting."
 		    exit 1
 		elif [ -z "$*" ]; then
+		    echo
 		    echo "ERROR: Missing argument, exiting."
 		    exit 1
 		elif [ ! -x $* ]; then
+		    echo
 		    echo "ERROR: Cannot execute $*, exiting."
 		    exit 1
 		fi
@@ -2251,7 +2409,7 @@ case $* in
       *)
 	# start interactive part
 	echo "initializing"
-	init_logfile
+	init_logfiles
 	$_printf "."
 	check_for_utils
 	$_printf "."
