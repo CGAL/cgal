@@ -35,7 +35,8 @@ public:
     Ray_repH2(const PointH2<R>& fp, const PointH2<R>& sp)
 	: start(fp), second(sp) {}
 
-    PointH2<R>  start, second;
+    PointH2<R>  start;
+    PointH2<R>  second;
 };
 
 template < class R >
@@ -46,7 +47,8 @@ public:
     Simple_Ray_repH2(const PointH2<R>& fp, const PointH2<R>& sp)
 	: start(fp), second(sp) {}
 
-    PointH2<R>  start, second;
+    PointH2<R>  start;
+    PointH2<R>  second;
 };
 
 template < class R_ >

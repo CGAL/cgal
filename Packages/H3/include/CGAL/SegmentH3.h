@@ -41,7 +41,8 @@ public:
    const PointH3<R> & end()   const { return endpoint; }
 
 private:
-   PointH3<R>  startpoint, endpoint;
+   PointH3<R>  startpoint;
+   PointH3<R>  endpoint;
 };
 
 template < class R >
@@ -56,7 +57,8 @@ public:
    const PointH3<R> & end()   const { return endpoint; }
 
 private:
-   PointH3<R>  startpoint, endpoint;
+   PointH3<R>  startpoint;
+   PointH3<R>  endpoint;
 };
 
 template < class R_ >

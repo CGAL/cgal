@@ -38,7 +38,8 @@ public:
     Segment_repH2(const PointH2<R>& sp, const PointH2<R>& ep)
 	: start(sp), end(ep) {}
 
-    PointH2<R>  start, end;
+    PointH2<R>  start;
+    PointH2<R>  end;
 };
 
 template < class R >
@@ -49,7 +50,8 @@ public:
     Simple_Segment_repH2(const PointH2<R>& sp, const PointH2<R>& ep)
 	: start(sp), end(ep) {}
 
-    PointH2<R>  start, end;
+    PointH2<R>  start;
+    PointH2<R>  end;
 };
 
 template < class R_ >
