@@ -27,6 +27,10 @@
 
 CGAL_BEGIN_NAMESPACE
 
+template < class GT > class Triangulation_vertex_base_3;
+template < class GT >
+std::istream& operator >> (std::istream&, Triangulation_vertex_base_3<GT>&);
+  
 template < class GT >
 class Triangulation_vertex_base_3
 {
@@ -119,6 +123,12 @@ std::ostream& operator<<
   //  }
   return os;
 }
+
+template < class GT >
+class Triangulation_vertex_base_pointer_3;
+template < class GT >
+std::istream& operator >> 
+(std::istream&, Triangulation_vertex_base_pointer_3<GT>&);
 
 template < class GT >
 class Triangulation_vertex_base_pointer_3

@@ -70,6 +70,12 @@ template <class TDS>
 class Triangulation_ds_facet_circulator_3;
 
 template <class Vb, class Cb>
+class Triangulation_data_structure_3;
+template <class Vb, class Cb>
+std::istream& operator >> 
+(std::istream&, Triangulation_data_structure_3<Vb,Cb>&);
+
+template <class Vb, class Cb>
 class Triangulation_data_structure_3
   :public Triangulation_utils_3
 {

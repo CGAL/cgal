@@ -33,6 +33,10 @@
 
 CGAL_BEGIN_NAMESPACE
 
+template < class Gt > class Triangulation_cell_base_3;
+template < class Gt > 
+std::istream& operator >> (std::istream&, Triangulation_cell_base_3<Gt>&);
+
 template < class Gt >
 class Triangulation_cell_base_3
 {

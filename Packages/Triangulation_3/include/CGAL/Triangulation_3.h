@@ -73,11 +73,14 @@ class Triangulation_facet_circulator_3;
 template < class GT, class Tds>
 class Triangulation_cell_3;
 
+template < class GT, class Tds > std::istream& operator>> 
+(std::istream& is, Triangulation_3<GT,Tds> &tr);
+ 
 template < class GT, class Tds >
 class Triangulation_3
   :public Triangulation_utils_3
 {
-  friend std::istream& operator >> CGAL_NULL_TMPL_ARGS
+  friend std::istream& operator>> CGAL_NULL_TMPL_ARGS
   (std::istream& is, Triangulation_3<GT,Tds> &tr);
 
   friend class Triangulation_cell_3<GT,Tds>;
@@ -791,7 +794,7 @@ public:
 
 template < class GT, class Tds >
 std::istream & 
-operator >> (std::istream& is, Triangulation_3<GT, Tds> &tr)
+operator>> (std::istream& is, Triangulation_3<GT, Tds> &tr)
   // reads
   // the dimension
   // the number of finite vertices
