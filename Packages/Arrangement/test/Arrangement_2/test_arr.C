@@ -115,7 +115,7 @@ typedef Traits::Point_2                                 Point;
 typedef Traits::X_monotone_curve_2                      X_curve;
 typedef Traits::Curve_2                                 Curve;
 
-typedef CGAL::Arr_base_node<X_curve>                    Base_node;
+typedef CGAL::Arr_base_node<Curve, X_curve>             Base_node;
 typedef CGAL::Arr_2_default_dcel<Traits>                Dcel;
 
 typedef CGAL::Arrangement_2<Dcel,Traits,Base_node>      Arr_2;
