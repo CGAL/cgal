@@ -146,7 +146,7 @@ class Intersect
     template <class T1, class T2>
     CGAL::Object
     operator()(const T1& t1, const T2& t2) const
-    { return intersection( t1, t2); }
+    { return CGAL::intersection( t1, t2); }
 };
 
 } // end namespace CGALi
