@@ -19,7 +19,7 @@
 //
 // ============================================================================
 
-// vertex of a combinatotial triangulation of any dimension <=3
+// vertex of a combinatorial triangulation of any dimension <=3
 
 #ifndef CGAL_TRIANGULATION_DS_VERTEX_3_H
 #define CGAL_TRIANGULATION_DS_VERTEX_3_H
@@ -34,61 +34,41 @@ template <class Vb, class Cb >
 class  Triangulation_ds_vertex_3 
   : public Vb
 {
-public:
-  typedef typename Vb::Point Point;
   typedef Triangulation_ds_vertex_3<Vb,Cb> Vertex;
   typedef Triangulation_ds_cell_3<Vb,Cb> Cell;
 
-  // CONSTRUCTORS
+public:
 
   Triangulation_ds_vertex_3()
     : Vb()
   { set_order_of_creation(); }
     
-  Triangulation_ds_vertex_3(const Point & p)
-    :  Vb(p)
-  { set_order_of_creation(); }
-    
-  Triangulation_ds_vertex_3(const Point & p, Cell * c)
-    :  Vb(p, c)
-  { set_order_of_creation(); }
-
-  Triangulation_ds_vertex_3(Cell * c)
-    :  Vb(c)
-  { set_order_of_creation(); }
-
-  // ACCESS
-
   Cell* cell() const
   {
     return (Cell *) (Vb::cell());
   }
     
-  // SETTING
-
   void set_cell(Cell* c)
   {
     Vb::set_cell(c);
   }
 
-  // CHECKING
-
   bool is_valid(bool verbose = false, int level = 0) const;
 
   // used for symbolic perturbation in remove_vertex for Delaunay
   // undocumented
+  int get_order_of_creation() const
+  {
+      return _order_of_creation;
+  }
+
+private:
   void set_order_of_creation()
   {
     static int nb=-1; 
     _order_of_creation = ++nb;
   }
 
-  int get_order_of_creation() const
-  {
-      return _order_of_creation;
-  }
-  
-private:
   int _order_of_creation;
 };
 

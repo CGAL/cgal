@@ -75,21 +75,6 @@ public:
       set_in_conflict_flag(0);
   }
 
-  Triangulation_ds_cell_3(Vertex* v0, Vertex* v1, 
-			  Vertex* v2, Vertex* v3)
-    : Cb(v0,v1,v2,v3)
-  {
-      set_in_conflict_flag(0);
-  }
-
-  Triangulation_ds_cell_3(Vertex* v0, Vertex* v1, 
-			  Vertex* v2, Vertex* v3,
-			  Cell* n0, Cell* n1, Cell* n2, Cell* n3)
-    : Cb(v0,v1,v2,v3,n0,n1,n2,n3)
-  {
-      set_in_conflict_flag(0);
-  }
-
   // SETTING
 
   void set_vertex(int i, Vertex* v)
@@ -150,7 +135,7 @@ public:
   {
     return Cb::has_neighbor(n,i);
   }
-    
+
   int index(const Cell* n) const
   {
     return Cb::cell_index(n);
@@ -161,20 +146,12 @@ public:
       CGAL_triangulation_precondition ( i>=0 && i<4 );
       return neighbor(i)->index(this);
   }
-      
-  // CHECKING
-    
+
   Vertex* mirror_vertex(int i) const
   {
       return neighbor(i)->vertex(mirror_index(i));
   }
 
-  bool is_valid(int dim = 3, bool verbose = false, int level = 0) const;
-
-private:
-
-  unsigned char _in_conflict_flag;
-  
   void set_in_conflict_flag(unsigned char f)
   {
       _in_conflict_flag = f;
@@ -184,6 +161,14 @@ private:
   {
       return _in_conflict_flag;
   }
+
+  // CHECKING
+
+  bool is_valid(int dim = 3, bool verbose = false, int level = 0) const;
+
+private:
+
+  unsigned char _in_conflict_flag;
 
   void error_orient( Cell * , int i ) const
   {

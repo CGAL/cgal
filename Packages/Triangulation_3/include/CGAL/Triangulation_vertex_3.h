@@ -30,10 +30,6 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template < class Gt, class Tds > class Triangulation_cell_3;
-template < class Gt, class Tds > class Triangulation_vertex_handle_3;
-template < class Gt, class Tds > class Triangulation_cell_handle_3;
-
 template<class Gt, class Tds >
 class Triangulation_vertex_3
   : public Tds::Vertex
@@ -47,19 +43,8 @@ class Triangulation_vertex_3
 
 public:
  
-  typedef typename Gt::Point_3 Point;
-
   Triangulation_vertex_3()
      : Vtds() {}
-
-  Triangulation_vertex_3(const Point & p)
-    :  Vtds(p) {}
-
-  Triangulation_vertex_3(const Point & p, Cell_handle c)
-    :  Vtds(p, &(*c)) {}
-
-  Triangulation_vertex_3(Cell_handle c)
-    :  Vtds(&(*c)) {}
 
   void set_cell(Cell_handle c)
   {
@@ -71,7 +56,7 @@ public:
     return (Cell *) Vtds::cell();
   }
 
-  Vertex_handle handle()
+  Vertex_handle handle() const
   {
     return Vertex_handle(this);
   }
