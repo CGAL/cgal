@@ -28,8 +28,8 @@ bool spiral_test()
 
   while (++i < 500)
   {
-    x_ip1 = x_i - y_i/sqrt((IA_nt)i);
-    y_ip1 = y_i + x_i/sqrt((IA_nt)i);
+    x_ip1 = x_i - y_i/sqrt(IA_nt(i));
+    y_ip1 = y_i + x_i/sqrt(IA_nt(i));
     x_i = x_ip1;
     y_i = y_ip1;
     length = square(x_i) + square(y_i);

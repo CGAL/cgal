@@ -75,6 +75,7 @@ PROGRAMS := $(SOURCES:.C=$(EXE_EXT))
 TEST_RUN := $(SOURCES:.C=.test)
 
 all: ../../src/Interval_arithmetic.o $(PROGRAMS)
+# all: $(PROGRAMS)
 
 test: $(TEST_RUN)
 
