@@ -46,7 +46,9 @@
 # CGAL specific:
 
 # ---------------------------------------------
-CGAL_VERSION='2.0'
+CGAL_VERSION='2.1'
+# ---------------------------------------------
+CGAL_INSTALL_CGAL="`basename ${0}`"
 # ---------------------------------------------
 CGAL_INSTALL_VERSION='$Revision$'
 # ---------------------------------------------
@@ -74,7 +76,6 @@ set_dirs_dependant_on_cgal_dir()
     CGAL_AUX_DIR=${CGAL_DIR}/auxiliary
     CGAL_INSTALL_CONF_DIR=${CGAL_CONF_DIR}/install
     CGAL_TEST_CONF_DIR=${CGAL_CONF_DIR}/testfiles
-    CGAL_DIRFILE=${CGAL_MAKE_DIR}/CGAL_directories
     CGAL_TESTFILE=${CGAL_TEST_DIR}/run_testsuite
 
     # ---------------------------------------------
@@ -99,7 +100,8 @@ set_dirs_dependant_on_cgal_dir()
     TMP_LOGFILE=${CGAL_DIR}/tmptmp.log
     
     # temporary file for confidence tests
-    TMP_CXX_FILE=${CGAL_DIR}/tmp_test
+#    TMP_CXX_FILE=${CGAL_DIR}/tmp_test [why?]
+    TMP_CXX_FILE=./tmp_test
 }
 
 # initialize once
@@ -226,18 +228,18 @@ CUSTOM_LDFLAGS=''
 print_general_information()
 {
     ${_printf} "%s\n\n" \
-"You can get a list of all options with \"`basename $0` --help\"
+"You can get a list of all options with \"${CGAL_INSTALL_CGAL} --help\"
 
 First-time-installers: 
 ----------------------
-Just type \"`basename $0` -i\" and follow the menus.
+Just type \"${CGAL_INSTALL_CGAL} -i\" and follow the menus.
 If you get stuck, please read the documentation."
 }
 
 print_usage_information()
 {
 	${_printf} "%s\n\n" \
-"usage: `basename $0`
+"usage: ${CGAL_INSTALL_CGAL}
       [--help | --version | -i | --interactive | -u <dir> | 
        --upgrade <dir> | --build-all | --rebuild-all |
        -ni <comp> | --non-interactive <comp> | -os <comp>]
@@ -251,7 +253,7 @@ print_usage_information()
   --verbose    give report for each test that fails
                (not generally recommended)
   --help       gives this message
-  --version    prints `basename $0` version number
+  --version    prints ${CGAL_INSTALL_CGAL} version number
   --interactive  
                runs the script in interactive mode
                (other options - except for --CGAL_DIR - are ignored)
@@ -327,7 +329,7 @@ real_which()
 {
     _t=0
     for i in `echo ${PATH} | ${_awk} 'BEGIN {RS=":"}{print $0}'`; do
-	if [ ${_t} = 0 -a -x ${i}/$1 ]; then
+	if [ ${_t} = 0 -a -x "${i}/$1" ]; then
 	    echo ${i}/$1
 	    _t=1
 	fi
@@ -564,7 +566,7 @@ check_for_utils()
 	PAGER=`eval "echo ${PAGER}"`
     fi
     CGAL_INSTALL_VERSION=`_install_version_number`
-    log_print "This is `basename $0` version ${CGAL_INSTALL_VERSION}."
+    log_print "This is ${CGAL_INSTALL_CGAL} version ${CGAL_INSTALL_VERSION}."
 }
 
 # guess operating system, write logs via $1
@@ -602,6 +604,22 @@ _gpp_version()
 	"`${*} --version 2>&1 | ${_awk} '{print $1}' | \
 	${_awk} 'BEGIN {FS=\".\"}
 		{print $1\".\"$2\".\"$3}'`"
+}
+
+# give version numbers for Borland C++
+# ($* is full path to executable)
+_borland_version()
+{
+    ${_printf} "%s" \
+    "`${*}|head -1 | ${_awk} '{print $3}'`"
+}
+
+# give version numbers for Microsoft Visual C++
+# ($* is full path to executable)
+_microsoft_vc_version()
+{
+    ${_printf} "%s" \
+    "`${*} 2>&1 |head -1 | ${_awk} '{print $8}'`"
 }
 
 # give version numbers for SUNPRO CC
@@ -668,92 +686,116 @@ rpath_directive()
 # for compiler/os combination CGAL_OS_COMPILER
 set_compiler_flags()
 {
-    # first, set some compiler/os specific variables
+    # set some compiler/os specific variables
+
+    # defaults:
+    ADDITIONAL_CXXFLAGS=
+    CGAL_LIB_CXXFLAGS=
+    CGAL_LIB_LDFLAGS=
+    CGAL_LIB_CREATE="ar cr "
+    CGAL_SHARED_LIB_CXXFLAGS="-fpic"
+    CGAL_SHARED_LIB_LDFLAGS=
+    CGAL_SHARED_LIB_CREATE="false"
+    WINDOW_DIR="/usr/lib/X11"
+    RUNTIME_LINKER_FLAG=''
+    LONG_NAME_PROBLEM_CXXFLAGS=
+    LONG_NAME_PROBLEM_LDFLAGS=
+    PRINT_STACKTRACE_PROGRAM=
+    WINDOWS_COMPILER=""
+    SUFFIX_LIST=
+    OBJ_EXT=".o"
+    OBJ_OPT="-c"
+    LIB_SFX=""
+    REMOVE_EXT_LIST=".o"
+    LIB_OPT="-l"
+    LIBPATH_OPT="-L"
+    DEBUG_OPT="-g"
+    EXE_OPT="-o "
+    EXE_EXT=
+    CGAL_LIBNAME="libCGAL.a"
+    MATH_LIB="m"
+    SEPARATE_LIBPATH=
+    START_LD_OPTIONS=
     CGAL_CXX="`compiler_bin`"
+
     case ${CGAL_OS_COMPILER} in
+	*bcc32.exe*|*BCC32*)
+	    #### settings Borland C++ compiler 
+	    ADDITIONAL_CXXFLAGS="-P -w-inl"
+	    CGAL_LIB_CXXFLAGS="-P"
+	    CGAL_LIB_CREATE="tlib "
+	    WINDOW_DIR=
+	    WINDOWS_COMPILER="y"
+	    SUFFIX_LIST=".obj .exe"
+	    OBJ_EXT=".obj"
+	    LIB_SFX=".lib"
+	    REMOVE_EXT_LIST=".obj .tds"
+	    LIB_OPT=
+	    DEBUG_OPT=
+	    EXE_OPT="-e"
+	    EXE_EXT=".exe"
+	    CGAL_LIBNAME="CGAL.lib"
+	    MATH_LIB=
+	    SEPARATE_LIBPATH="y"
+	    ;;
+	*CL.EXE*)
+	    #### settings Microsoft Visual C++ compiler 
+	    ADDITIONAL_CXXFLAGS="-TP -GX"
+	    CGAL_LIB_CXXFLAGS="-TP"
+	    CGAL_LIB_CREATE="LIB /OUT:"
+	    CGAL_SHARED_LIB_CXXFLAGS=
+	    CGAL_SHARED_LIB_CREATE=
+	    WINDOW_DIR=
+	    WINDOWS_COMPILER="y"
+	    SUFFIX_LIST=".obj .exe"
+	    OBJ_EXT=".obj"
+	    LIB_SFX=".lib"
+	    REMOVE_EXT_LIST=".obj"
+	    LIB_OPT=
+	    LIBPATH_OPT="-LIBPATH:"
+	    DEBUG_OPT="-Z7"
+	    EXE_OPT="-Fe"
+	    EXE_EXT=".exe"
+	    CGAL_LIBNAME="CGAL.lib"
+	    MATH_LIB=
+	    START_LD_OPTIONS="-link"
+	    ;;
 	*IRIX*5.*CC*)
 	    #### settings for sgi mipspro compiler on irix5
-	    ADDITIONAL_CXXFLAGS=
-	    CGAL_LIB_CXXFLAGS=
-	    CGAL_LIB_LDFLAGS=
-	    CGAL_LIB_CREATE="ar cr"
 	    CGAL_SHARED_LIB_CXXFLAGS=
 	    CGAL_SHARED_LIB_LDFLAGS="-lm"
 	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -shared"
-	    WINDOW_DIR="/usr/lib/X11"
 	    RUNTIME_LINKER_FLAG="-rpath "
-	    LONG_NAME_PROBLEM_CXXFLAGS=""
-	    LONG_NAME_PROBLEM_LDFLAGS=""
 	    PRINT_STACKTRACE_PROGRAM="dbx"
 	    ;;
 	*IRIX*6.*CC*)
 	    #### settings for sgi mipspro compiler on irix6
-	    ADDITIONAL_CXXFLAGS=
-	    CGAL_LIB_CXXFLAGS=
-	    CGAL_LIB_LDFLAGS=
-	    CGAL_LIB_CREATE="ar cr"
 	    CGAL_SHARED_LIB_CXXFLAGS=
-	    CGAL_SHARED_LIB_LDFLAGS=
 	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -shared"
-	    WINDOW_DIR="/usr/lib/X11"
 	    RUNTIME_LINKER_FLAG="-rpath "
-	    LONG_NAME_PROBLEM_CXXFLAGS=""
-	    LONG_NAME_PROBLEM_LDFLAGS=""
 	    PRINT_STACKTRACE_PROGRAM="dbx"
 	    ;;
-	*IRIX*g++-egcs*|*IRIX*g++-2.8*)
+	*IRIX*g++*)
 	    #### settings for egcs/gcc2.8 on irix
 	    ADDITIONAL_CXXFLAGS="-Wall -ftemplate-depth-25"
-	    CGAL_LIB_CXXFLAGS=
-	    CGAL_LIB_LDFLAGS=
-	    CGAL_LIB_CREATE="ar cr"
-	    CGAL_SHARED_LIB_CXXFLAGS="-fpic"
 	    CGAL_SHARED_LIB_LDFLAGS="-lm"
 	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -shared"
-	    WINDOW_DIR="/usr/lib/X11"
 	    RUNTIME_LINKER_FLAG="-rpath "
-	    LONG_NAME_PROBLEM_CXXFLAGS=""
-	    LONG_NAME_PROBLEM_LDFLAGS=""
-	    PRINT_STACKTRACE_PROGRAM=""
-	    ;;
-	*IRIX*g++-2*)
-	    #### settings for GCC2 on irix
-	    ADDITIONAL_CXXFLAGS=
-	    CGAL_LIB_CXXFLAGS=
-	    CGAL_LIB_LDFLAGS=
-	    CGAL_LIB_CREATE="ar cr"
-	    CGAL_SHARED_LIB_CXXFLAGS="-fpic"
-	    CGAL_SHARED_LIB_LDFLAGS="-lm"
-	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -shared"
-	    WINDOW_DIR="/usr/lib/X11"
-	    RUNTIME_LINKER_FLAG=''
-	    LONG_NAME_PROBLEM_CXXFLAGS=""
-	    LONG_NAME_PROBLEM_LDFLAGS=""
-	    PRINT_STACKTRACE_PROGRAM=""
+	    PRINT_STACKTRACE_PROGRAM="gdb"
 	    ;;
 	*SunOS*5.*CC*)
 	    #### settings for sunpro compiler on solaris
 	    ADDITIONAL_CXXFLAGS="-pto"
-	    CGAL_LIB_CXXFLAGS=
-	    CGAL_LIB_LDFLAGS=
 	    CGAL_LIB_CREATE="\$(CGAL_CXX) -xar -o"
 	    CGAL_SHARED_LIB_CXXFLAGS="-pic"
-	    CGAL_SHARED_LIB_LDFLAGS=""
 	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -G"
 	    WINDOW_DIR="/usr/openwin/lib"
 	    RUNTIME_LINKER_FLAG="-R "
-	    LONG_NAME_PROBLEM_CXXFLAGS=""
-	    LONG_NAME_PROBLEM_LDFLAGS=""
 	    PRINT_STACKTRACE_PROGRAM="dbx"
 	    ;;
-	*SunOS*5.*g++-egcs*|*SunOS*5.*g++-2.8*)
+	*SunOS*5.*g++*)
 	    #### settings for egcs/gcc2.8 on solaris
 	    ADDITIONAL_CXXFLAGS="-Wall -ftemplate-depth-25"
-	    CGAL_LIB_CXXFLAGS=
-	    CGAL_LIB_LDFLAGS=
-	    CGAL_LIB_CREATE="ar cr"
-	    CGAL_SHARED_LIB_CXXFLAGS="-fpic"
-	    CGAL_SHARED_LIB_LDFLAGS=""
 	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -G"
 	    WINDOW_DIR="/usr/openwin/lib"
 	    RUNTIME_LINKER_FLAG="-R "
@@ -761,65 +803,25 @@ set_compiler_flags()
 	    LONG_NAME_PROBLEM_LDFLAGS="-z nodefs -s"
 	    PRINT_STACKTRACE_PROGRAM="gdb"
 	    ;;
-	*SunOS*5.*g++*)
-	    #### settings for GNU compiler on solaris
-	    ADDITIONAL_CXXFLAGS=
-	    CGAL_LIB_CXXFLAGS=
-	    CGAL_LIB_LDFLAGS=
-	    CGAL_LIB_CREATE="ar cr"
-	    CGAL_SHARED_LIB_CXXFLAGS="-fpic"
-	    CGAL_SHARED_LIB_LDFLAGS=""
-	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -G"
-	    WINDOW_DIR="/usr/openwin/lib"
-	    RUNTIME_LINKER_FLAG="-R "
-	    LONG_NAME_PROBLEM_CXXFLAGS=""
-	    LONG_NAME_PROBLEM_LDFLAGS=""
-	    PRINT_STACKTRACE_PROGRAM="gdb"
-	    ;;
-	*Linux*g++-egcs*|*Linux*g++-2.8*)
+	*Linux*g++*)
 	    #### settings for egcs/gcc2.8 on linux
 	    ADDITIONAL_CXXFLAGS="-Wall -ftemplate-depth-25"
-	    CGAL_LIB_CXXFLAGS=
-	    CGAL_LIB_LDFLAGS=
-	    CGAL_LIB_CREATE="ar cr"
-	    CGAL_SHARED_LIB_CXXFLAGS="-fpic"
-	    CGAL_SHARED_LIB_LDFLAGS=""
 	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -Xlinker -shared"
 	    WINDOW_DIR="/usr/X11R6/lib"
 	    RUNTIME_LINKER_FLAG='-Wl,-R'
-	    LONG_NAME_PROBLEM_CXXFLAGS=""
-	    LONG_NAME_PROBLEM_LDFLAGS=""
 	    PRINT_STACKTRACE_PROGRAM="gdb"
 	    ;;
-	*Linux*g++*)
-	    #### settings for GNU compiler on linux
-	    ADDITIONAL_CXXFLAGS=
-	    CGAL_LIB_CXXFLAGS=
-	    CGAL_LIB_LDFLAGS=
-	    CGAL_LIB_CREATE="ar cr"
-	    CGAL_SHARED_LIB_CXXFLAGS="-fpic"
-	    CGAL_SHARED_LIB_LDFLAGS=""
+	*CYGWINNT*g++-egcs*)
+	    #### settings for egcs/gcc2.8 on linux
+	    ADDITIONAL_CXXFLAGS="-Wall -ftemplate-depth-25"
 	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -Xlinker -shared"
 	    WINDOW_DIR="/usr/X11R6/lib"
 	    RUNTIME_LINKER_FLAG='-Wl,-R'
-	    LONG_NAME_PROBLEM_CXXFLAGS=""
-	    LONG_NAME_PROBLEM_LDFLAGS=""
 	    PRINT_STACKTRACE_PROGRAM="gdb"
 	    ;;
 	*)
 	    #### settings for unknown compiler 
-	    ADDITIONAL_CXXFLAGS=
-	    CGAL_LIB_CXXFLAGS=
-	    CGAL_LIB_LDFLAGS=
-	    CGAL_LIB_CREATE="ar cr"
-	    CGAL_SHARED_LIB_CXXFLAGS="-fpic"
-	    CGAL_SHARED_LIB_LDFLAGS=""
 	    CGAL_SHARED_LIB_CREATE="`compiler_bin` -G"
-	    WINDOW_DIR="/usr/lib/X11"
-	    RUNTIME_LINKER_FLAG=''
-	    LONG_NAME_PROBLEM_CXXFLAGS=""
-	    LONG_NAME_PROBLEM_LDFLAGS=""
-	    PRINT_STACKTRACE_PROGRAM=""
 	    ;;
     esac
 }
@@ -886,7 +888,7 @@ create_replacement_header()
     if [ -z "${uncond}" ]; then
 	${_printf} "%s\n" "#include <$header_name>" > ${tmp_code_file}
 	${_printf} "%s\n" "int main() {return 0;}" >> ${tmp_code_file}
-	if `compiler_bin` ${tmp_code_file} >/dev/null 2>&1; then return; fi
+	if `compiler_bin` ${ADDITIONAL_CXXFLAGS} ${tmp_code_file} >/dev/null 2>&1; then return; fi
     fi
 #
 # The standard header does not exist.
@@ -898,7 +900,7 @@ create_replacement_header()
     for arg in $* ; do
         ${_printf} "%s\n" "#include <$arg>" > ${tmp_code_file}
 	${_printf} "%s\n" "int main() {return 0;}" >> ${tmp_code_file}
-	if `compiler_bin` ${tmp_code_file} >/dev/null 2>&1; then
+	if `compiler_bin` ${ADDITIONAL_CXXFLAGS} ${tmp_code_file} >/dev/null 2>&1; then
 	    ${_sed} "s/@CGAL@/${CGAL_VERSION}/;s@FILE@${_final_file};s/@VERSION@/${CGAL_INSTALL_VERSION}/" <<EOF3 >>${replacement_header}
 // Copyright (c) 1999 The CGAL Consortium
 //
@@ -981,7 +983,7 @@ create_standard_header_replacements()
     ${_printf} "%s\n" "#include <${tmp_header_file}>" > ${tmp_code_file}
     ${_printf} "%s\n" \
 	"int main() { CGAL_nt result = 0; return result;}" >> ${tmp_code_file}
-    if `compiler_bin` -I. ${tmp_code_file} >/dev/null 2>&1
+    if `compiler_bin` ${ADDITIONAL_CXXFLAGS} -I. ${tmp_code_file} >/dev/null 2>&1
     then
 	header_suffix=""
     else
@@ -1100,7 +1102,7 @@ test_compiler_specifica()
 	"// System: ${CGAL_OS_COMPILER}" \
 	>> ${_file}
     ${_printf} "%s\n" \
-	"// generated by `${_basename} $0` ${CGAL_INSTALL_VERSION}" \
+	"// generated by ${CGAL_INSTALL_CGAL} ${CGAL_INSTALL_VERSION}" \
 	>> ${_file}
     ${_printf} "%s\n" \
 	"// with install testsuite ${CGAL_INSTALL_CONF_VERSION}" \
@@ -1192,14 +1194,80 @@ _where_is()
     fi
 }
 
+filename_for_compiler()
+{
+    if [ -z "${WINDOWS_COMPILER}" ]; then
+	${_printf} "%s" "$1"
+    else
+	${_printf} "%s" "`cygpath -w $1`"
+    fi
+}
+
+include_dir_option()
+{
+    if [ -z "${WINDOWS_COMPILER}" ]; then
+	${_printf} "%s" "'-I$1'"
+    else
+	${_printf} "'-I%s'" `cygpath -w $1`
+    fi
+}
+
+object_file_name()
+{
+    if [ -z "${WINDOWS_COMPILER}" ]; then
+	${_printf} "%s" "$1${OBJ_EXT}"
+    else
+	${_printf} "%s" "'`cygpath -w $1`${OBJ_EXT}'"
+    fi
+}
+
+to_object_file_option()
+{
+    if [ -z "${WINDOWS_COMPILER}" ]; then
+	${_printf} "%s" "-o $1.o"
+    else
+	${_printf} "%s" "'-o`cygpath -w $1`'"
+    fi
+}
+
+output_file_option()
+{
+    if [ -z "${WINDOWS_COMPILER}" ]; then
+	${_printf} "%s" "${EXE_OPT}$1"
+    else
+	${_printf} "%s" "'${EXE_OPT}`cygpath -w $1`'"
+    fi
+}
+
+concat_path()
+{
+  if [ $# != 0 ] ; then
+    ${_printf} "%s" "$1"
+    shift
+    if [ -n "${WINDOWS_COMPILER}" ]; then
+        for elem in "$@"
+        do
+            ${_printf} "%s%s" '\' "${elem}"
+        done
+    else
+        for elem in "$@"
+        do
+            ${_printf} "/%s" "${elem}"
+        done
+    fi
+  fi
+}
+
 cgal_cxxflags()
 {
-    ${_printf} "%s" "-I`_where_is 'CGAL_INCL_DIR'` "
+    tmp_path_name=`_where_is 'CGAL_INCL_DIR'`
+    tmp_cxx_flags="${ADDITIONAL_CXXFLAGS} `include_dir_option ${tmp_path_name}`"
+    ${_printf} "%s" `include_dir_option ${tmp_path_name}`
 }
 
 cgal_ldflags()
 {
-    ${_printf} "%s" "-L`_where_is 'CGAL_LIB_DIR'`/`full_ostype` "
+    ${_printf} "%s" "${LIBPATH_OPT}`_where_is 'CGAL_LIB_DIR'`/`full_ostype` "
     ${_printf} "%s" "`rpath_directive 'CGAL_LIB_DIR'`"
     if [ -n "${RUNTIME_LINKER_FLAG}" ]; then
 	${_printf} "%s" "/`full_ostype` "
@@ -1212,7 +1280,7 @@ cgal_ldflags()
 compiler_test_cxxflags()
 {
     ${_printf} "%s" \
-	"${CUSTOM_CXXFLAGS} -I${CGAL_INCL_CONF_DIR}/${CGAL_OS_COMPILER} "
+	"${CUSTOM_CXXFLAGS} ${ADDITIONAL_CXXFLAGS} `include_dir_option ${CGAL_INCL_CONF_DIR}/${CGAL_OS_COMPILER}` "
 }
 
 compiler_test_ldflags()
@@ -1228,7 +1296,8 @@ gmp_cxxflags()
     if [ -n "${GMP_SUPPORT}" -a \
 	"${GMP_INSTALLATION}" != 'c' -a \
 	"${GMP_INSTALLATION}" != 's' ]; then
-	${_printf} "%s" "-I`_where_is 'GMP_INCL_DIR'` "
+	tmp_dir_name=`_where_is 'GMP_INCL_DIR'`
+	${_printf} "%s" "`include_dir_option ${tmp_dir_name}` "
     fi
 }
 
@@ -1237,7 +1306,7 @@ gmp_ldflags()
     if [ -n "${GMP_SUPPORT}" ]; then
 	if [ "${GMP_INSTALLATION}" != 'c' -a \
              "${GMP_INSTALLATION}" != 's' ]; then
-	    ${_printf} "%s" "-L`_where_is 'GMP_LIB_DIR'` "
+	    ${_printf} "%s" "${LIBPATH_OPT}`_where_is 'GMP_LIB_DIR'` "
 	    ${_printf} "%s" "`rpath_directive 'GMP_LIB_DIR'` "
 	fi
 	${_printf} "%s" "-lgmp "
@@ -1267,7 +1336,8 @@ gmp_test_ldflags()
 leda_cxxflags()
 {
     if [ -n "${LEDA_SUPPORT}" -a -n "${NEED_EXTRA_LEDA_IDIR}" ]; then
-	${_printf} "%s" "-I`_where_is 'LEDA_INCL_DIR'` "
+	tmp_dir_name=`_where_is 'LEDA_INCL_DIR'`
+	${_printf} "%s" "`include_dir_option ${tmp_dir_name}` "
     fi
 }
 
@@ -1275,7 +1345,7 @@ leda_ldflags()
 {
     if [ -n "${LEDA_SUPPORT}" ]; then
 	if [ -n "${NEED_EXTRA_LEDA_LDIR}" ]; then
-	    ${_printf} "%s" "-L`_where_is 'LEDA_LIB_DIR'` "
+	    ${_printf} "%s" "${LIBPATH_OPT}`_where_is 'LEDA_LIB_DIR'` "
 	    ${_printf} "%s" "`rpath_directive 'LEDA_LIB_DIR'` "
 	fi
 	${_printf} "%s" "-lP -lG -lL "
@@ -1322,6 +1392,10 @@ linker_flags_no_cgal_lib()
 get_compiler_version()
 {
     case `_real_basename ${1:-${COMPILER}}` in
+	*bcc32*|*BCC32*)
+		_borland_version "$*";;
+	*CL.EXE*)
+		_microsoft_vc_version "$*";;
 	*CC*)
 	    case ${SYST} in
 		*IRIX*)  _check_for_sysutil versions y
@@ -1341,6 +1415,10 @@ get_compiler_version()
 get_compiler_description()
 {
     case ${1:-${COMPILER}} in
+	*bcc32*)
+	    ${_printf} "%s" "Borland";;
+	*CL.EXE*)
+	    ${_printf} "%s" "VC++";;
 	*CC*-32*)
 	    ${_printf} "%s" "MIPSPRO (o32)";;
 	*CC*-n32*)
@@ -1515,6 +1593,11 @@ search_for_compilers()
 	*IRIX*|*SunOS*)
 	    _search_compiler gcc g++ ''
 	    _search_compiler cc CC ''
+	    ;;
+	*CYGWIN*)
+	    _search_compiler bcc32.exe bcc32.exe ''
+	    _search_compiler CL.EXE CL.EXE ''
+	    _search_compiler gcc g++ ''
 	    ;;
 	*)
 	    _search_compiler gcc g++ ''
@@ -2074,7 +2157,7 @@ cleanup_after_compile()
     # remove irix mipspro template database
     ${_rm} -rf ii_files
     # remove tmp object file 
-    ${_rm} -f ${TMP_CXX_FILE}.o
+    ${_rm} -f ${TMP_CXX_FILE}${OBJ_EXT}
     # remove log file 
     ${_rm} -f ${TMP_LOGFILE}
 }
@@ -2097,7 +2180,8 @@ _compile_test()
     else
 	_flags="$2"
     fi
-    _flags="${_flags} -c ${TMP_CXX_FILE}.C -o ${TMP_CXX_FILE}.o"
+    _flags="${_flags} -c '`filename_for_compiler ${TMP_CXX_FILE}.C`' \
+	`to_object_file_option ${TMP_CXX_FILE}`"
 
     # compile
     ${_printf} "%s\n%s\n" \
@@ -2160,7 +2244,7 @@ _link_run_test()
     else
 	_flags="$2"
     fi
-    _flags="-o ${TMP_CXX_FILE} ${TMP_CXX_FILE}.o ${_flags}"
+    _flags="`output_file_option ${TMP_CXX_FILE}` `object_file_name ${TMP_CXX_FILE}` ${_flags}"
 
     # link
     ${_printf} "%s\n%s\n" "Linker call:" "--------------" >${TMP_LOGFILE}
@@ -2474,7 +2558,7 @@ retrieve_compiler_settings()
     elif [ "${_tmp_version}" != "${CGAL_INSTALL_VERSION}" ]; then
 	# this config file was generated by an older install
 	log_print "WARNING: config file `$_basename ${_file}`" 
-	log_print "  was generated by another `$_basename $0` version."
+	log_print "  was generated by another ${CGAL_INSTALL_CGAL} version."
 	SETUP_COMPLETE=''
 	CGAL_INSTALL_VERSION=${_tmp_version}
     else
@@ -2569,7 +2653,7 @@ store_compiler_settings()
 	>>${_file}
     ${_printf} "%s%s\n" \
 	"** Automatically created by " \
-	"`${_basename} $0` ${CGAL_INSTALL_VERSION}." \
+	"${CGAL_INSTALL_CGAL} ${CGAL_INSTALL_VERSION}." \
 	>>${_file}
     ${_printf} "%s\n" \
 	"** Please do not edit." \
@@ -3297,6 +3381,14 @@ makefile_print_line()
     fi
 }
 
+# print args a s a continuation line, if not empty
+makefile_print_continuationline()
+{
+    if [ -n "${*}" ]; then
+	${_printf} " \\\\\n\t%s" "${*}"
+    fi
+}
+
 # write compiler flags for a CGAL include makefile
 write_compiler_flags()
 {
@@ -3313,9 +3405,9 @@ write_compiler_flags()
     "compiler specific configuration dir" \
     >> ${FILE}
   ${_printf} "%s\\\\\n" "CGAL_INCL_CONF_DIR = " >> ${FILE}
-  ${_printf} "\t%s\n\n" \
-    "\$(CGAL_INCL_DIR)/CGAL/config/${CGAL_OS_COMPILER}" \
-    >> ${FILE}
+  ${_printf} "\t" >>${FILE}
+  concat_path "\$(CGAL_INCL_DIR)" "CGAL" config "${CGAL_OS_COMPILER}" >> ${FILE}
+  ${_printf} "\n\n" >>${FILE}
 
   #
   # LEDA_INCL_DIR
@@ -3382,10 +3474,10 @@ write_compiler_flags()
     if [ "${GMP_INSTALLATION}" = 'x' -o \
 	 "${GMP_INSTALLATION}" = 'z' -o \
 	 "${GMP_INSTALLATION}" = 'e' ]; then
-	makefile_print_line "-I\$(GMP_INCL_DIR)" >> ${FILE}
+	makefile_print_line "'-I\$(GMP_INCL_DIR)'" >> ${FILE}
     fi
   fi
-  makefile_print_line "-I\$(CGAL_INCL_CONF_DIR)" >> ${FILE}
+  makefile_print_line "'-I\$(CGAL_INCL_CONF_DIR)'" >> ${FILE}
   if [ -n "${LEDA_SUPPORT}" ]; then
     case ${CGAL_OS_COMPILER} in
 	*g++-2.8*)
@@ -3395,20 +3487,24 @@ write_compiler_flags()
 	    makefile_print_line "-DCGAL_USE_LEDA -DLEDA_PREFIX" >> ${FILE};;
     esac
     if [ -n "${NEED_EXTRA_LEDA_IDIR}" ]; then
-	makefile_print_line "-I\$(CGAL_INCL_DIR)" >> ${FILE}
-	${_printf} "\t%s\n\n" "-I\$(LEDA_INCL_DIR)" >> ${FILE}
+	makefile_print_line "'-I\$(CGAL_INCL_DIR)'" >> ${FILE}
+	${_printf} "\t%s\n\n" "'-I\$(LEDA_INCL_DIR)'" >> ${FILE}
     else
-	${_printf} "\t%s\n\n" "-I\$(CGAL_INCL_DIR)" >> ${FILE}
+	${_printf} "\t%s\n\n" "'-I\$(CGAL_INCL_DIR)'" >> ${FILE}
     fi
   else
-    ${_printf} "\t%s\n\n" "-I\$(CGAL_INCL_DIR)" >> ${FILE}
+    ${_printf} "\t%s\n\n" "'-I\$(CGAL_INCL_DIR)'" >> ${FILE}
   fi
+  ${_printf} "%s%s\n" "DEBUG_OPT = " "${DEBUG_OPT}" >> ${FILE}
+  ${_printf} "%s%s\n" "OBJ_OPT = " "${OBJ_OPT}" >> ${FILE}
 }
 
 # write linker flags for a CGAL include makefile
 write_linker_flags()
 {
   makefile_header "linker flags" >> ${FILE}
+
+  ${_printf} "%s%s\n" "EXE_OPT = " "${EXE_OPT}" >> ${FILE}
 
   #
   # LEDA_LIB_DIR
@@ -3452,19 +3548,26 @@ write_linker_flags()
   print_as_shell_comment \
     "*** Fill in any additional linker flags you need ***" \
     >> ${FILE}
+  ${_printf} "%s\n\n" "CUSTOM_LIBPATH = ${CUSTOM_LIBPATH}" \
+    >> ${FILE}
   ${_printf} "%s\n\n" "CUSTOM_LDFLAGS = ${CUSTOM_LDFLAGS}" \
     >> ${FILE}
  
   #
   # LIBS
   #
-  LIB_PATH="-L\$(CGAL_LIB_DIR)/\$(CGAL_OS_COMPILER)"
-  RUNTIME_LIB_PATH="\$(CGAL_LIB_DIR)/\$(CGAL_OS_COMPILER)"
-  LIBS="-lCGAL"
-  WLIBS="-lCGAL"
+  if [ -n "${WINDOWS_COMPILER}" ]; then
+    LIB_PATH="'${LIBPATH_OPT}\$(CGAL_LIB_DIR)\\\$(CGAL_OS_COMPILER)'"
+    RUNTIME_LIB_PATH="\$(CGAL_LIB_DIR)\\\$(CGAL_OS_COMPILER)"
+  else
+    LIB_PATH="${LIBPATH_OPT}\$(CGAL_LIB_DIR)/\$(CGAL_OS_COMPILER)"
+    RUNTIME_LIB_PATH="\$(CGAL_LIB_DIR)/\$(CGAL_OS_COMPILER)"
+  fi
+  LIBS="${LIB_OPT}CGAL${LIB_SFX}"
+  WLIBS="${LIB_OPT}CGAL${LIB_SFX}"
   if [ -n "${LEDA_SUPPORT}" ] ; then
     if [ -n "${NEED_EXTRA_LEDA_LDIR}" ]; then
-	LIB_PATH="${LIB_PATH} -L\$(LEDA_LIB_DIR)"
+	LIB_PATH="${LIB_PATH} ${LIBPATH_OPT}\$(LEDA_LIB_DIR)"
 	RUNTIME_LIB_PATH="${RUNTIME_LIB_PATH}:\$(LEDA_LIB_DIR)"
     fi
     LIBS="${LIBS} -lP -lG -lL"
@@ -3474,14 +3577,16 @@ write_linker_flags()
     if [ "${GMP_INSTALLATION}" = 'x' -o \
 	 "${GMP_INSTALLATION}" = 'z' -o \
 	 "${GMP_INSTALLATION}" = 'e' ]; then
-	LIB_PATH="${LIB_PATH} -L\$(GMP_LIB_DIR)"
+	LIB_PATH="${LIB_PATH} ${LIBPATH_OPT}\$(GMP_LIB_DIR)"
 	RUNTIME_LIB_PATH="${RUNTIME_LIB_PATH}:\$(GMP_LIB_DIR)"
     fi
-    LIBS="${LIBS} -lgmp"
-    WLIBS="${WLIBS} -lgmp"
+    LIBS="${LIBS} ${LIB_OPT}gmp${LIB_SFX}"
+    WLIBS="${WLIBS} ${LIB_OPT}gmp${LIB_SFX}"
   fi
-  LIBS="${LIBS} -lm"
-  WLIBS="${WLIBS} -lm"
+  if [ -n "${MATH_LIB}" ]; then
+    LIBS="${LIBS} ${LIB_OPT}${MATH_LIB}${LIB_SFX}"
+    WLIBS="${WLIBS} ${LIB_OPT}${MATH_LIB}${LIB_SFX}"
+  fi
 
   #
   # LONG_NAME_PROBLEM_LDFLAGS
@@ -3495,31 +3600,56 @@ write_linker_flags()
     >> ${FILE}
 
   #
-  # CGAL_LDFLAGS
+  # CGAL_LIBPATH
   #
-  ${_printf} "%s\\\\\n" "CGAL_LDFLAGS = " >> ${FILE}
-  makefile_print_line "\$(CUSTOM_LDFLAGS)" >> ${FILE}
-  makefile_print_line "${LIB_PATH}" >> ${FILE}
+  if [ -n "${SEPARATE_LIBPATH}" ] ; then
+    ${_printf}  "CGAL_LD_LIBPATH =\n\n" >> ${FILE}
+    ${_printf}  "CGAL_LIBPATH =" >> ${FILE}
+  else
+    ${_printf}  "CGAL_LIBPATH =\n\n" >> ${FILE}
+    ${_printf}  "CGAL_LD_LIBPATH =" >> ${FILE}
+  fi
+  makefile_print_continuationline "\$(CUSTOM_LIBPATH)" >> ${FILE}
+  makefile_print_continuationline "${LIB_PATH}" >> ${FILE}
   if [ -n "${RUNTIME_LINKER_FLAG}" ]; then
-    makefile_print_line \
+    makefile_print_continuationline \
       "${RUNTIME_LINKER_FLAG}${RUNTIME_LIB_PATH}" \
       >> ${FILE}
   fi
+  ${_printf} "\n"  >> ${FILE}
+
+  #
+  # CGAL_LDFLAGS
+  #
+  ${_printf} "\n%s\\\\\n" "CGAL_LDFLAGS = " >> ${FILE}
+  makefile_print_line "${START_LD_OPTIONS} \$(CGAL_LD_LIBPATH)" >> ${FILE}
+  makefile_print_line "\$(CUSTOM_LDFLAGS)" >> ${FILE}
   ${_printf} "\t%s\n\n" "${LIBS}" >> ${FILE}
+
+  #
+  # CGAL_WINDOW_LIBPATH
+  #
+  if [ -n "${LEDA_SUPPORT}" ]; then
+    LIB_PATH="${LIB_PATH} ${LIBPATH_OPT}${WINDOW_DIR}"
+    RUNTIME_LIB_PATH="${RUNTIME_LIB_PATH}:${WINDOW_DIR}"
+    ${_printf} "CGAL_WINDOW_LIBPATH =" >> ${FILE}
+    makefile_print_continuationline "${CUSTOM_LIBPATH}" >> ${FILE}
+    makefile_print_continuationline "${LIB_PATH}" >> ${FILE}
+    if [ -n "${RUNTIME_LINKER_FLAG}" ]; then
+      makefile_print_continuationline "${RUNTIME_LINKER_FLAG}${RUNTIME_LIB_PATH}" \
+	>> ${FILE}
+    fi
+    ${_printf} "\n\n"  >> ${FILE}
+  fi
 
   #
   # CGAL_WINDOW_LDFLAGS
   #
   if [ -n "${LEDA_SUPPORT}" ]; then
-    LIB_PATH="${LIB_PATH} -L${WINDOW_DIR}"
+    LIB_PATH="${LIB_PATH} ${LIBPATH_OPT}${WINDOW_DIR}"
     RUNTIME_LIB_PATH="${RUNTIME_LIB_PATH}:${WINDOW_DIR}"
     ${_printf} "%s\\\\\n" "CGAL_WINDOW_LDFLAGS = " >> ${FILE}
     makefile_print_line "${CUSTOM_LDFLAGS}" >> ${FILE}
-    makefile_print_line "${LIB_PATH}" >> ${FILE}
-    if [ -n "${RUNTIME_LINKER_FLAG}" ]; then
-      makefile_print_line "${RUNTIME_LINKER_FLAG}${RUNTIME_LIB_PATH}" \
-	>> ${FILE}
-    fi
     ${_printf} "\t%s\n\n" "${WLIBS}" >> ${FILE}
   fi
 }
@@ -3538,11 +3668,12 @@ create_include_makefile()
   # 
   # CGAL_DIRECTORIES
   # 
-  makefile_header "include directory settings" \
+  makefile_header "include/lib directory settings" \
     >> ${FILE}
-  ${_printf} "%s\\\\\n" "CGAL_DIRECTORIES = " >> ${FILE}
-  ${_printf} "\t%s\n" "${CGAL_DIRFILE}" >> ${FILE}
-  ${_printf} "%s\n" "include \$(CGAL_DIRECTORIES)" >> ${FILE}
+  ${_printf} "%s\n" "CGAL_INCL_DIR = `filename_for_compiler ${CGAL_INCL_DIR}`" \
+    >> ${FILE}
+  ${_printf} "%s\n" "CGAL_LIB_DIR = `filename_for_compiler ${CGAL_LIB_DIR}`" \
+    >> ${FILE}
 
   # 
   # CGAL_OS_COMPILER
@@ -3550,6 +3681,27 @@ create_include_makefile()
   makefile_header "os/compiler description" \
     >> ${FILE}
   ${_printf} "%s\n" "CGAL_OS_COMPILER = `full_ostype`" >> ${FILE}
+
+  # 
+  # SUFFIXES
+  # 
+  makefile_header "suffixes and rules" >> ${FILE}
+  ${_printf} "%s\n" "OBJ_EXT = ${OBJ_EXT}" >> ${FILE}
+  ${_printf} "%s%s\n" "EXE_EXT = " "${EXE_EXT}" >> ${FILE}
+  ${_printf} "%s\n" ".SUFFIXES:  ${SUFFIX_LIST} .clean" >> ${FILE}
+  if [ -n "${EXE_EXT}" ]; then
+    ${_printf} "\n.C:\n" >> ${FILE}
+    ${_printf} "\t%s %s%s\n" "\$(MAKE)" '$*' "${EXE_EXT}" >> ${FILE}
+  fi
+  ${_printf} "\n.C.clean:\n" >> ${FILE}
+  ${_printf} "\trm -f \$*%s" "${EXE_EXT}" >> ${FILE}
+  if [ -n "${REMOVE_EXT_LIST}" ]; then
+      for extension in ${REMOVE_EXT_LIST}
+      do
+          ${_printf} " \$*%s" "${extension}" >> ${FILE}
+      done
+  fi
+  ${_printf} "\n\n" >> ${FILE}
 
   # 
   # CGAL_CXX
@@ -3583,7 +3735,7 @@ create_include_makefile()
   # 
   # CGAL_LIB
   # 
-  ${_printf} "%s\n" "CGAL_LIB = libCGAL.a" >> ${FILE}
+  ${_printf} "%s\n" "CGAL_LIB = ${CGAL_LIBNAME}" >> ${FILE}
 
   # 
   # CGAL_LIB_CXXFLAGS
@@ -3604,6 +3756,9 @@ create_include_makefile()
   # CGAL_LIB_CREATE
   # 
   ${_printf} "%s\n\n" "CGAL_LIB_CREATE = ${CGAL_LIB_CREATE}" >> ${FILE}
+  ${_printf} "%s" "CGAL_LIB_DESTINATION = " >> ${FILE}
+  concat_path "\$(CGAL_LIB_DIR)" "\$(CGAL_OS_COMPILER)" >> ${FILE}
+  ${_printf} "\n\n"  >> ${FILE}
 
   # 
   # CGAL_SHARED_LIB
@@ -3622,7 +3777,7 @@ create_include_makefile()
   # 
   if [ -n "${LEDA_SUPPORT}" -a -n "${NEED_EXTRA_LEDA_LDIR}" ]; then
     ${_printf} "%s\\\\\n" "CGAL_SHARED_LIB_LDFLAGS = " >> ${FILE}
-    makefile_print_line "-L\$(LEDA_LIB_DIR)" >> ${FILE}
+    makefile_print_line "${LIBPATH_OPT}\$(LEDA_LIB_DIR)" >> ${FILE}
     if [ -n "${RUNTIME_LINKER_FLAG}" ]; then
       makefile_print_line "${RUNTIME_LINKER_FLAG}\$(LEDA_LIB_DIR)" \
 	>> ${FILE}
@@ -3692,14 +3847,6 @@ generatemakefiles()
 {
   _check_dir_exists ${CGAL_MAKE_DIR}
   _check_write ${CGAL_MAKE_DIR}
-  _check_read ${CGAL_DIRFILE}
-  _check_write ${CGAL_DIRFILE}
-
-  replace_line ${CGAL_DIRFILE} CGAL_INCL_DIR \
-    "CGAL_INCL_DIR      = ${CGAL_INCL_DIR}"
-  replace_line ${CGAL_DIRFILE} CGAL_LIB_DIR \
-    "CGAL_LIB_DIR       = ${CGAL_LIB_DIR}"
-    
   # create ${CGAL_MAKEFILE}, if it does not exist
   if [ ! -r ${CGAL_MAKEFILE} ]; then
     $1 "remark: `${_basename} ${CGAL_MAKEFILE}` does not exist,"
@@ -4139,7 +4286,7 @@ finish_interactive()
 	flush_buffer
 	${_cat} ${INSTALL_RIS_LOGFILE}
 	print_filled_line
-	print_center_line "`${_basename} ${0}` completed."
+	print_center_line "${CGAL_INSTALL_CGAL} completed."
     fi
     print_center_line \
 	"If something went wrong, (or maybe also, if not:)"
@@ -4274,7 +4421,7 @@ while [ ${#} -gt 0 ]; do
 	    ;;
 	*--version*|-V*|-v*)
 	    # version
-	    ${_printf} "%s\n" "`basename $0` is ${CGAL_INSTALL_VERSION}."
+	    ${_printf} "%s\n" "${CGAL_INSTALL_CGAL} is ${CGAL_INSTALL_VERSION}."
 	    exit 0
 	    ;;
 	--rebuild-all*|-ra*|-RA*|-rba*|-RBA*)
