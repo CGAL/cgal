@@ -151,15 +151,6 @@ NEED_EXTRA_LEDA_LDIR='y'
 # did LEDA tests succeed ('' - no, 'y' - yep)
 LEDA_TEST_PASSED=''
 
-
-# ---------------------------------------------
-# STL specific:
-#
-
-# did STL tests succeed ('' - no, 'y' - yep)
-STL_TEST_PASSED=''
-
-
 # ---------------------------------------------
 # GMP specific:
 #
@@ -895,7 +886,7 @@ create_standard_header_replacements()
     ${_printf} "%s\n" "#include <${tmp_header_file}>" > ${tmp_code_file}
     ${_printf} "%s\n" \
 	"int main() { CGAL_nt result = 0; return result;}" >> ${tmp_code_file}
-    if `compiler_bin` -I . ${tmp_code_file} >/dev/null 2>&1
+    if `compiler_bin` -I. ${tmp_code_file} >/dev/null 2>&1
     then
 	header_suffix=""
     else
@@ -973,12 +964,14 @@ EOF2
 # ($1 nonzero indicates verbosity)
 test_compiler_specifica()
 {
+    cd ${CGAL_TEST_CONF_DIR}
     _check_dir_exists_create ${CGAL_INCL_CONF_DIR}
     _check_dir_exists_create ${CGAL_INCL_CONF_DIR}/${CGAL_OS_COMPILER}
+    create_standard_header_replacements
     _check_dir_exists_create ${CGAL_INCL_CONF_DIR}/${CGAL_OS_COMPILER}/CGAL
     _file=${CGAL_INCL_CONF_DIR}/${CGAL_OS_COMPILER}/CGAL/compiler_config.h
     ${_printf} "%s\n" \
-	"// Copyright (c) 1998 The CGAL Consortium" \
+	"// Copyright (c) 1998, 1999 The CGAL Consortium" \
 	> ${_file}
     ${_printf} "%s\n" \
 	"//" \
@@ -1019,7 +1012,30 @@ test_compiler_specifica()
     ${_printf} "%s\n\n" \
 	"//" \
 	>> ${_file}
-    cd ${CGAL_TEST_CONF_DIR}
+
+    # test for STL
+    ${_printf} "%s%s\n" \
+	"//+----------------------------------------------------------" \
+	"----------------" \
+	    >> ${_file}
+    ${_printf} "%s\n" \
+	"// The compiler has to provide a Standard Template Library" \
+	    >> ${_file}
+    ${_printf} "%s%s\n" \
+	"//+----------------------------------------------------------" \
+	"----------------" \
+	    >> ${_file}
+    if test_stl_general "${INSTALL_VERBOSE}" 'STL'; then
+	log_print "`extended_compiler_description` seems to have STL."
+	${_printf} "%s\n\n" "// STL test ok" >> ${_file}
+    else
+	log_print "`extended_compiler_description` seems NOT to have STL."
+	${_printf} "%s\n\n" \
+	    "#error \"This compiler does not have a working STL\"" \
+	    >> ${_file}
+    fi
+
+    # test for other compiler features/bugs
     for i in ${CGAL_TEST_CONF_DIR}/CGAL*.C; do
 	${_cat} ${i} > ${TMP_CXX_FILE}.C
 	${_printf} "%s%s\n" \
@@ -1042,12 +1058,12 @@ test_compiler_specifica()
 	fi
 	if _compile_test \
 	    "${_tmp_name}" \
-	    "${CUSTOM_CXXFLAGS} " \
+	    "`compiler_test_cxxflags` " \
 	    "$1" \
 	    "${_NO}" \
 	  && _link_run_test \
 	    "${_tmp_name}" \
-	    "${CUSTOM_LDFLAGS} " \
+	    "`compiler_test_ldflags` " \
 	    "$1" \
 	    "${_NO}"
 	then
@@ -1059,7 +1075,6 @@ test_compiler_specifica()
 	cleanup_after_compile
 	cleanup_after_link_run
     done
-    create_standard_header_replacements
     cd ${CGAL_DIR}
 }
 
@@ -1090,6 +1105,20 @@ cgal_ldflags()
     if [ -n "${RUNTIME_LINKER_FLAG}" ]; then
 	${_printf} "%s" "/`full_ostype` "
     fi
+}
+
+#---------------------------------------------------------
+# flags for the compiler tests
+
+compiler_test_cxxflags()
+{
+    ${_printf} "%s" \
+	"${CUSTOM_CXXFLAGS} -I${CGAL_INCL_CONF_DIR}/${CGAL_OS_COMPILER} "
+}
+
+compiler_test_ldflags()
+{
+    ${_printf} "%s" "${CUSTOM_LDFLAGS} -lm "
 }
 
 #---------------------------------------------------------
@@ -1156,13 +1185,13 @@ leda_ldflags()
 
 leda_test_cxxflags()
 {
-    ${_printf} "%s" "${CUSTOM_CXXFLAGS} "
+    ${_printf} "%s" "`compiler_test_cxxflags` "
     leda_cxxflags
 }
 
 leda_test_ldflags()
 {
-    ${_printf} "%s" "${CUSTOM_LDFLAGS} "
+    ${_printf} "%s" "`compiler_test_ldflags` "
     leda_ldflags
     ${_printf} "%s" "-lm "
 }
@@ -2156,11 +2185,7 @@ test_leda()
 {
     if [ -n "${LEDA_SUPPORT}" ]; then
 	${_printf} "%s\n" '
-	    #if defined(__sgi) && !defined(__GNUC__) && defined(_COMPILER_VERSION) && (_COMPILER_VERSION >= 721)
-	    #include <assert.h>
-	    #else
 	    #include <cassert>
-	    #endif
 	    #include <LEDA/integer.h>
 	    #include <LEDA/REDEFINE_NAMES.h>
 	    typedef integer I;
@@ -2200,17 +2225,10 @@ test_leda()
 test_stl_general()
 {
     ${_printf} "%s\n" '
-	#if defined(__sgi) && !defined(__GNUC__) && defined(_COMPILER_VERSION) && (_COMPILER_VERSION >= 721)
-	#include <algo.h>
-	#include <list.h>
-	#include <iterator.h>
-	#include <assert.h>
-	#else
 	#include <algorithm>
 	#include <list>
 	#include <iterator>
 	#include <cassert>
-	#endif
 
 	using std::list;
 
@@ -2228,43 +2246,14 @@ test_stl_general()
 	}' > ${TMP_CXX_FILE}.C
     
     if [ -z "$1" ]; then
-	_compile_test "${2}" "${CUSTOM_CXXFLAGS} " '' && \
-	    _link_run_test "${2}" "${CUSTOM_LDFLAGS} " ''
+	_compile_test "${2}" "`compiler_test_cxxflags` " '' && \
+	    _link_run_test "${2}" "`compiler_test_ldflags` " ''
     else
 	_compile_test "${2}" " " $1 && \
 	    _link_run_test "${2}" " " $1 
     fi
     return $?
 }
-
-# checks, if current compiler has a builtin STL (iff so, return 0) 
-test_for_builtin_stl()
-{
-    if test_stl_general "${INSTALL_VERBOSE}" 'STL'; then
-	log_print "`extended_compiler_description` seems to have STL."
-	test_compiler_specifica "${INSTALL_VERBOSE}"
-	STL_TEST_PASSED='y'
-	return 0
-    else
-	log_print "`extended_compiler_description` seems NOT to have STL."
-	STL_TEST_PASSED=''
-	return 1
-    fi
-}
-
-# test, if STL works
-# return 0, if it does, return 1 otherwise
-test_stl()
-{
-    if test_stl_general 'v' 'STL'; then
-	test_compiler_specifica "${INSTALL_VERBOSE}"
-	STL_TEST_PASSED='y'
-	return 0
-    fi
-    STL_TEST_PASSED=''
-    return 1
-}
-
 
 # ---------------------------------------------------------------------
 # GNU GMP TEST:
@@ -2522,15 +2511,6 @@ test_setup()
     SETUP_COMPLETE=''
     make_lib_dir
     link_gmp
-    # STL
-    if [ -z "${STL_TEST_PASSED}" ]; then
-	test_stl
-	if [ $? = 1 ]; then
-	    return 1
-	fi
-    else
-	_passed_message 'STL'
-    fi
 
     # LEDA
     if [ -z "${LEDA_TEST_PASSED}" ]; then
@@ -2563,7 +2543,6 @@ test_setup()
 # such that all previous test results are invalidated
 reset_all_test_variables()
 {
-    STL_TEST_PASSED=''
     LEDA_TEST_PASSED=''
     GMP_TEST_PASSED=''
 }
@@ -2580,14 +2559,10 @@ _choose_compiler()
     if [ -z "${SETUP_COMPLETE}" ]; then
 	# reset all TEST_PASSED variables
 	reset_all_test_variables
-	if test_for_builtin_stl; then
-	    test_setup
-    	else
-	    SETUP_COMPLETE=''
-	fi
+	test_compiler_specifica "${INSTALL_VERBOSE}"
+	test_setup
     else
 	# reset all TEST_PASSED variables
-	STL_TEST_PASSED='y'
 	if [ -n "${LEDA_SUPPORT}" ]; then
 	    LEDA_TEST_PASSED='y'
 	else
@@ -3945,7 +3920,7 @@ main_menu()
 		if [ -n "${GMP_SUPPORT}" ]; then
 		    search_gmp "${INSTALL_VERBOSE}"
 		fi
-		test_for_builtin_stl
+		test_compiler_specifica "${INSTALL_VERBOSE}"
 		test_setup;;
 	    t|T) 
 		go_down_lines 3
