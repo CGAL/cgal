@@ -45,7 +45,7 @@
 
 namespace CGALLA {
 
-#if defined(_MSC_VER) && ! defined(__INTEL_COMPILER)//  let's only do it  for Microsoft  
+#if defined(_MSC_VER) && !defined(__INTEL_COMPILER) && (_MSC_VER < 1310)
 #define CGAL_SIMPLE_INTERFACE
 #endif
 
