@@ -1578,12 +1578,12 @@ public:
 // 					 == CGAL_COPLANAR );
 	int i1,i2; // indices in the facet
 	// TBD: replace using nextposaroundij
-	if ( i == (inf+1)&3 ) {
+	if ( i == ((inf+1)&3) ) {
 	  i1 = (inf+2)&3;
 	  i2 = (inf+3)&3;
 	}
 	else {
-	  if ( i == (inf+2)&3 ) {
+	  if ( i == ((inf+2)&3) ) {
 	    i1 = (inf+3)&3;
 	    i2 = (inf+1)&3;
 	  }
@@ -1600,10 +1600,11 @@ public:
 	Cell_handle n = c->neighbor(inf);
 	// n must be a finite cell
 	CGAL_Orientation o =
-	  geom_traits().orientation_in_plane( p,
-				     v1->point(), 
-				     v2->point(), 
-				     n->vertex(n->index(c))->point() );
+	  geom_traits().orientation_in_plane
+	  ( v1->point(), 
+	    v2->point(), 
+	    n->vertex(n->index(c))->point(),
+	    p );
 	switch (o) {
 	case CGAL_POSITIVE:
 	  // p lies on the same side of v1v2 as vn, so not in f
