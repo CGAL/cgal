@@ -330,6 +330,10 @@ Packages/Polyhedron/doc_tex/deprecated_basic/Polyhedron/halfedge_small.gif -text
 Packages/Polyhedron/doc_tex/deprecated_basic/Polyhedron/poly_optional.gif -text svneol=unset#unset
 Packages/Polyhedron/doc_tex/deprecated_basic/Polyhedron/poly_optional_small.gif -text svneol=unset#unset
 Packages/Polyhedron/doc_tex/deprecated_basic/Polyhedron/shark.gif -text svneol=unset#unset
+Packages/Polyhedron/examples/Polyhedron/corner.off -text
+Packages/Polyhedron/examples/Polyhedron/corner_with_hole.off -text
+Packages/Polyhedron/examples/Polyhedron/corner_with_sharp_edge.off -text
+Packages/Polyhedron/examples/Polyhedron/cross.off -text
 Packages/Triangulation_2/doc_tex/Triangulation_2/Embedding.ipe -text
 Packages/Triangulation_2/doc_tex/Triangulation_2/Flip.gif -text svneol=unset#unset
 Packages/Triangulation_2/doc_tex/Triangulation_2/Flip.ipe -text
