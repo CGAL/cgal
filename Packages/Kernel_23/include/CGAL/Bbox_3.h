@@ -29,9 +29,9 @@
 
 CGAL_BEGIN_NAMESPACE
 
-class Bbox_3 : public Simple_Handle_for< Simple_Sixtuple<double> >
+class Bbox_3 : public Simple_Handle_for< Sixtuple<double> >
 {
-  typedef Simple_Handle_for< Simple_Sixtuple<double> > BBox_handle_3;
+  typedef Simple_Handle_for< Sixtuple<double> > BBox_handle_3;
   typedef BBox_handle_3::element_type                  BBox_ref_3;
 
 public:
