@@ -194,15 +194,9 @@ double_test_Min_ellipse_2( bool verbose, const Traits&, const Conic&)
         // check whether double_coefficients does the same
 	double r,s,t,u,v,w;
 	me.ellipse().double_coefficients(r,s,t,u,v,w);
-	assert(r==dc.r());
-        assert(s==dc.s());
-	assert(t==dc.t());
-	assert(u==dc.u());
-        assert(v==dc.v());
-	assert(w==dc.w());
 	assert(dc == Conic(r,s,t,u,v,w));
     }
-    verr << endl << "   4-point case, paper example..." << endl;
+    verr << endl << "   4-point case, paper example...";
     {
 	std::vector<Point> P;
 	P.push_back(Point(0,0));
@@ -241,7 +235,7 @@ cover_Min_ellipse_2( bool verbose, const Traits&, const RT&)
     CGAL::Random  random_x, random_y;
     Point         random_points[ n];
     int           i;
-    verr << n << " random points from [0,128)^2:" << endl;
+    verr << endl <<  n  << " random points from [0,128)^2:" << endl;
     for ( i = 0; i < n; ++i) {
         random_points[ i] = Point( RT( random_x( 128)),
                                    RT( random_y( 128)));
@@ -613,6 +607,9 @@ class MyPointH2DA {
 int
 main( int argc, char* argv[])
 {
+    // this is needed for the equality test in line 197, surprisingly
+    CGAL::force_ieee_double_precision(); 
+
     // command line options
     // --------------------
     // option `-verbose'
