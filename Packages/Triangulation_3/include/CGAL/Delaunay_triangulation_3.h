@@ -166,11 +166,7 @@ protected:
 
 public:
 
-  Delaunay_triangulation_3()
-    : Tr_Base()
-  {}
-  
-  Delaunay_triangulation_3(const Gt & gt)
+  Delaunay_triangulation_3(const Gt& gt = Gt())
     : Tr_Base(gt)
   {}
   
@@ -179,6 +175,14 @@ public:
     : Tr_Base(tr)
   { 
     CGAL_triangulation_postcondition( is_valid() );  
+  }
+
+  template < typename InputIterator >
+  Delaunay_triangulation_3(InputIterator first, InputIterator last,
+                           const Gt& gt = Gt())
+    : Tr_Base(gt)
+  {
+      insert(first, last);
   }
 
   template < class InputIterator >

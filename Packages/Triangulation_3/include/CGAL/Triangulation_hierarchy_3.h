@@ -66,6 +66,17 @@ public:
   Triangulation_hierarchy_3(const Geom_traits& traits = Geom_traits());
   Triangulation_hierarchy_3(const Triangulation_hierarchy_3& tr);
 
+  template < typename InputIterator >
+  Triangulation_hierarchy_3(InputIterator first, InputIterator last,
+                            const Geom_traits& traits = Geom_traits())
+    : Tr_Base(traits), random((long)0)
+  {
+      hierarchy[0] = this; 
+      for(int i=1; i<Triangulation_hierarchy_3__maxlevel; ++i)
+          hierarchy[i] = new Tr_Base(traits);
+      insert(first, last);
+  }
+ 
   Triangulation_hierarchy_3 &operator=(const  Triangulation_hierarchy_3& tr);
   ~Triangulation_hierarchy_3();
 
