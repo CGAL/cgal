@@ -74,13 +74,13 @@ int main(int argc, char** argv)
 
       conform.init(CGAL::Gabriel_conform_policy_2());
       
-      typedef Conform::cluster_vertices_iterator Vh_iterator;
+      typedef Conform::Cluster_vertices_iterator Vh_iterator;
       for(Vh_iterator it = conform.clusters_vertices_begin();
 	  it != conform.clusters_vertices_end();
 	  ++it)
 	{
-	  typedef std::pair<Conform::vertices_in_cluster_iterator,
-	    Conform::vertices_in_cluster_iterator> It_pair;
+	  typedef std::pair<Conform::Vertices_in_cluster_iterator,
+	    Conform::Vertices_in_cluster_iterator> It_pair;
 
 	  int n = conform.number_of_clusters_at_vertex(*it);
 
@@ -93,7 +93,7 @@ int main(int argc, char** argv)
 	      std::cout << "  cluster " << i << ":" << std::endl;
 	      const It_pair& it_pair =
 		conform.vertices_in_cluster_sequence(*it, i);
-	      for(Conform::vertices_in_cluster_iterator
+	      for(Conform::Vertices_in_cluster_iterator
 		    vic_it = it_pair.first;
 		  vic_it != it_pair.second;
 		  ++vic_it)
