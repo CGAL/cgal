@@ -23,11 +23,12 @@
 
 #include "Qt_widget_toolbar_layers.h"
 #include <CGAL/IO/Qt_layer_show_mouse_coordinates.h>
-#include <CGAL/IO/Qt_layer_show_polygon.h>
-#include <CGAL/IO/Qt_layer_show_greene_approximation.h>
-#include <CGAL/IO/Qt_layer_show_ymonotone.h>
-#include <CGAL/IO/Qt_layer_show_optimal_convex_partition.h>
-#include <CGAL/IO/Qt_layer_show_polygon_points.h>
+
+#include "Qt_layer_show_polygon.h"
+#include "Qt_layer_show_greene_approximation.h"
+#include "Qt_layer_show_ymonotone.h"
+#include "Qt_layer_show_optimal_convex_partition.h"
+#include "Qt_layer_show_polygon_points.h"
 
 // icons
 #include <CGAL/IO/pixmaps/mouse_coord.xpm>
