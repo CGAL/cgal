@@ -2,6 +2,10 @@
 //	Revision History for package Installation
 //=====================================================================
 
+21 July 2004 Radu Ursu
+- added psapi.lib for Windows compilers in CGAL_LDFLAGS, CGAL_QT_LDFLAGS,
+  CGAL_WINDOW_LDFLAGS needed for Memory_sizer
+
 12 July 2004 Radu Ursu
 - added corresponding files to build the modules in the Modules directory.
 - each module name ends with _module

@@ -6125,6 +6125,14 @@ write_linker_flags()
   fi
   ${_printf} "\n"  >> ${FILE}
 
+  if [ -n "${CYGWIN_COMPILER}" ]; then
+    #Adding psapi.lib only for Windows needed for Memory_sizer
+    LIBS="${LIBS} `lib_option psapi`"
+    QLIBS="${QLIBS} `lib_option psapi`"
+    WLIBS="${WLIBS} `lib_option psapi`"
+  fi
+
+
   #
   # CGAL_LDFLAGS
   #
