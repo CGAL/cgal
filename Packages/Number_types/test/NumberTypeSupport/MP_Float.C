@@ -55,7 +55,7 @@ int main(int argc, char **argv)
   CGAL::Quotient<CGAL::MP_Float> q1(1), q2(2);
   assert(q1+q1 == q2);
 
-  int loops = argc > 1 ? atoi(argv[1]) : 100;
+  int loops = argc > 1 ? CGAL_CLIB_STD::atoi(argv[1]) : 100;
   bench(loops);
 
   std::cout.precision(20);
@@ -63,7 +63,7 @@ int main(int argc, char **argv)
   for (; loops >= 0; loops--) {
     double d = CGAL::default_random.get_double();
     int exp = int((CGAL::default_random.get_double()-.5)*1024);
-    d = ::ldexp(d, exp);
+    d = CGAL_CLIB_STD::ldexp(d, exp);
     // d = 7.34766e-140; // Crash encore sur PC...
     // d = 1.9696110926449043849e+124;
     // d = 7.3074228557478900057e+47;

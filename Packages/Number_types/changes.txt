@@ -1,3 +1,7 @@
+4.44	 (24 January 02)
+- Fix Gmpz::operator=().
+- CodeWarrior fixes.
+
 4.43	 (18 January 02)
 - Fix memory leak in Gmpz.
 
