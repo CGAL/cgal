@@ -1,3 +1,6 @@
+Version 1.18 (22 oct 99)
+display changes in the doc
+
 Version 1.17 (18 oct 99)
 same contents, but lots of fixes in the doc following Susan's remarks.
 
