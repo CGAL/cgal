@@ -15,8 +15,14 @@ template < class R >
 Aff_transformationC2<R CGAL_CTAG>::
 Aff_transformationC2()
 {
-  PTR = new Aff_transformation_repC2<R>(FT(1), FT(0),
-                                        FT(0), FT(1));
+  PTR = new Aff_transformation_repC2<R>(FT(1), FT(0), FT(0), FT(1));
+}
+
+template < class R >
+Aff_transformationC2<R CGAL_CTAG>::
+Aff_transformationC2(const Identity)
+{
+  PTR = new Aff_transformation_repC2<R>(FT(1), FT(0), FT(0), FT(1));
 }
 
 template < class R >

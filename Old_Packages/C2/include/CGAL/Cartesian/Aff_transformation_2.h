@@ -102,6 +102,9 @@ public:
   Aff_transformationC2();
   Aff_transformationC2(const Self &t);
 
+  // Identity
+  Aff_transformationC2(const Identity);
+
   // Translation:
   Aff_transformationC2(const Translation,
                        const Vector_2 &v);
