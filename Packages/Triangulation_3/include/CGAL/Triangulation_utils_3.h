@@ -24,20 +24,32 @@
 class CGAL_Triangulation_utils_3
 {
 public:
-  inline unsigned int ccw(const unsigned int i) const
+//   inline unsigned int ccw(const unsigned int i) const
+//     {
+//       CGAL_precondition( i < 3 );
+//       static const unsigned int tab_ccw[] = {1,2,0};
+//       return tab_ccw[i];
+//     }
+  
+//   inline unsigned int cw(const unsigned int i) const
+//     {
+//       CGAL_precondition( i < 3 );
+//       static const unsigned int tab_cw[] = {2,0,1};
+//       return tab_cw[i];
+//     }
+
+  int ccw(const int i) const
     {
-      CGAL_precondition( i < 3 );
-      static const unsigned int tab_ccw[] = {1,2,0};
-      return tab_ccw[i];
+      CGAL_triangulation_precondition( ((unsigned int) i) < 3 );
+      return (i==2) ? 0 : i+1;
     }
   
-  inline unsigned int cw(const unsigned int i) const
+  int cw(const int i) const
     {
-      CGAL_precondition( i < 3 );
-      static const unsigned int tab_cw[] = {2,0,1};
-      return tab_cw[i];
-}
-  
+      CGAL_triangulation_precondition( ((unsigned int) i) < 3 );
+      return (i==0) ? 2 : i-1;
+    }
+
   inline unsigned int nextposaround(const unsigned int i, 
 				    const unsigned int j) const
 {
