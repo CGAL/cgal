@@ -62,7 +62,6 @@ int main()
   typedef CGAL::Triangulation_vertex_base_2<Gt2>                     Vb2;
   typedef CGAL::Constrained_triangulation_face_base_2<Gt2>           CFb2;
   typedef CGAL::Triangulation_default_data_structure_2<Gt2,Vb2,CFb2> Tds2;
-  //typedef CGAL::Constrained_triangulation_2<Gt2,Tds2>               Ctr2;
   typedef CGAL::Constrained_Delaunay_triangulation_2<Gt,Tds2>          CDt2;
 
   _test_cls_constrained_triangulation(CDt2());

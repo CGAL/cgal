@@ -105,10 +105,14 @@ public:
   }
 
   // INSERTION
-  Vertex_handle insert(const Point& a);
+  Vertex_handle insert(const Point& p, Face_handle start = Face_handle() );
   Vertex_handle insert(const Point& p,
 		       Locate_type lt,
 		       Face_handle loc, int li );
+//   template < class InputIterator >
+//   int insert(InputIterator first, InputIterator last);
+  Vertex_handle push_back(const Point& a);
+
   Vertex_handle special_insert_in_edge(const Point & a, Face_handle f, int i);
   void insert(Point a, Point b);
   void insert(Vertex_handle va, 
@@ -117,7 +121,6 @@ public:
 	      Vertex_handle  vb,
 	      List_edges& new_edges);
 
-  Vertex_handle push_back(const Point& a);
   void          push_back(const Constraint& c);
 
   void remove(Vertex_handle  v);
@@ -172,13 +175,25 @@ protected:
 
   void remove_1D(Vertex_handle v);
   void remove_2D(Vertex_handle v);
+
+public:
+  template < class InputIterator >
+  int insert(InputIterator first, InputIterator last)
+    {
+      int n = number_of_vertices();
+      while(first != last){
+	insert(*first);
+	++first;
+      }
+      return number_of_vertices() - n;
+    }
 };
     
 template < class Gt, class Tds >
 inline
 Constrained_triangulation_2<Gt,Tds>::Vertex_handle
 Constrained_triangulation_2<Gt,Tds>::
-insert(const Point& a)
+insert(const Point& a, Face_handle start)
 // inserts point a 
 // in addition to what is done for non constrained triangulations
 // constrained edges are updated
@@ -186,7 +201,7 @@ insert(const Point& a)
   Face_handle loc;
   int li;
   Locate_type lt;
-  loc = locate(a, lt, li);
+  loc = locate(a, lt, li, start);
   return insert(a,lt,loc,li);
 }
 

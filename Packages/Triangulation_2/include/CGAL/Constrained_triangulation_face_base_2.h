@@ -133,7 +133,7 @@ inline void
 Constrained_triangulation_face_base_2<Gt>::
 cw_permute()
 {
-  Fab::ccw_permute();
+  Fab::cw_permute();
   set_constraints(C[1],C[2],C[0]);
 }
   

@@ -29,7 +29,7 @@
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Triangulation_short_names_2.h>
 #include <CGAL/Constrained_triangulation_2.h>
-
+#include <CGAL/Dummy_output_iterator.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -103,10 +103,26 @@ public:
   void propagating_flip(List_edges & edges);
 
   // CONFLICTS
-  bool test_conflict(Face_handle fh, const Point& p) const;
-  void find_conflicts(Point p, std::list<Edge>& le, 
+  bool test_conflict(Face_handle fh, const Point& p) const; //deprecated
+  bool test_conflict(const Point& p, Face_handle fh) const;
+  void find_conflicts(Point p, std::list<Edge>& le,          //deprecated
 		      Face_handle hint= Face_handle()) const;
-  
+  //  //template member functions, declared and defined at the end 
+  // template <class Out_it1, class Out_it2> 
+  //   bool find_conflicts (const Point  &p, 
+  // 		       Out_it1 fit, 
+  // 		       Out_it2 eit,
+  // 		       Face_handle start) const;
+  //   template <class Out_it1> 
+  //   bool find_conflicts (const Point  &p, 
+  // 		       Out_it1 fit, 
+  // 		       Face_handle start ) const;
+  //   template <class Out_it2> 
+  //   bool boundary_of_conflict_zone (const Point  &p, 
+  // 				   Out_it2 eit, 
+  // 				   Face_handle start ) const;
+   
+
   // INSERTION-REMOVAL
   Vertex_handle insert(const Point & a);
   Vertex_handle insert(const Point& p,
@@ -160,6 +176,78 @@ public:
   void conform(List_edges & list_of_non_gabriel_constraints,
 	       List_faces & set_of_bad_faces,
 	       double lmax, double lmin, double angmin);
+
+  //template member functions
+public:
+  template <class Out_it1, class Out_it2> 
+  bool 
+  find_conflicts (const Point  &p, 
+		  Out_it1 fit, 
+		  Out_it2 eit,
+		  Face_handle start = Face_handle()) const
+    {
+      CGAL_triangulation_precondition( dimension() == 2);
+      int li;
+      Locate_type lt;
+      Face_handle fh = locate(p,lt,li, start);
+      switch(lt) {
+      case OUTSIDE_AFFINE_HULL:
+      case VERTEX:
+	return false;
+      case FACE:
+      case EDGE:
+      case OUTSIDE_CONVEX_HULL:
+	*fit++ = fh; //put fh in Out_it1
+	propagate_conflicts(p,fh,0,fit,eit);
+	propagate_conflicts(p,fh,1,fit,eit);
+	propagate_conflicts(p,fh,2,fit,eit);
+	return true;    
+      }
+      CGAL_triangulation_assertion(false);
+      return false;
+    }
+
+  template <class Out_it1> 
+  bool 
+  find_conflicts (const Point  &p, 
+		  Out_it1 fit, 
+		  Face_handle start= Face_handle()) const
+    {
+      Dummy_output_iterator eit;
+      return find_conflicts(p, fit, eit, start);
+    }
+
+  template <class Out_it2> 
+  bool 
+  boundary_of_conflict_zone (const Point  &p, 
+			      Out_it2 eit, 
+			      Face_handle start= Face_handle()) const
+    {
+      Dummy_output_iterator fit;
+      return find_conflicts(p, fit, eit, start);
+    }
+
+private:
+ template <class Out_it1, class Out_it2> 
+  void propagate_conflicts (const Point  &p,
+			    Face_handle fh, 
+			    int i,
+			    Out_it1 fit, 
+			    Out_it2 eit) const
+    {
+      Face_handle fn = fh->neighbor(i);
+      if ( fh->is_constrained(i) || ! test_conflict(p,fn)) {
+	*eit++ = Edge(fn, fn->index(fh));
+	return;
+      }
+      *fit++ = fn;
+      int j = fn->index(fh);
+      propagate_conflicts(p,fn,ccw(j),fit,eit);
+      propagate_conflicts(p,fn,cw(j),fit,eit);
+      return;
+    }
+
+
 };
 
 
@@ -343,44 +431,52 @@ propagating_flip(List_edges & edges)
 template < class Gt, class Tds >
 inline bool
 Constrained_Delaunay_triangulation_2<Gt,Tds>::
-test_conflict(Face_handle fh, const Point& p) const
+test_conflict(const Point& p, Face_handle fh) const
   // true if point P lies inside the circle circumscribing face fh
 {
   return ( side_of_oriented_circle(fh,p) == ON_POSITIVE_SIDE );
 }
 
-
-template < class Gt, class Tds >    
-void 
+template < class Gt, class Tds >
+inline bool
 Constrained_Delaunay_triangulation_2<Gt,Tds>::
-find_conflicts(Point p, std::list<Edge>& le, Face_handle hint) const
+test_conflict(Face_handle fh, const Point& p) const
+  // true if point P lies inside the circle circumscribing face fh
 {
-  // sets in le the counterclocwise list of the edges of the boundary of the 
-  // union of the faces in conflict with p
-  // an edge is represented by the incident face that is not in conflict with p
-  Face_handle fh= locate(p, hint);
-  le.push_back(Edge(fh->neighbor(0),fh->neighbor(0)->index(fh)));
-  le.push_back(Edge(fh->neighbor(1),fh->neighbor(1)->index(fh)));
-  le.push_back(Edge(fh->neighbor(2),fh->neighbor(2)->index(fh)));
-
-  typename std::list<Edge>::iterator lit=le.begin();
-  typename std::list<Edge>::iterator litt;
-  int ih;
-  while(lit != le.end()){
-    if ( !((*lit).first->is_constrained((*lit).second)) && 
-	 ( test_conflict((*lit).first, p)) ){
-      fh = (*lit).first;
-      ih = (*lit).second;
-      litt = lit; // this one has to be deleted
-      lit = le.insert(lit, Edge(fh->neighbor(cw(ih)),
-				fh->neighbor(cw(ih))->index(fh)) );
-      lit = le.insert(lit, Edge(fh->neighbor(ccw(ih)),
-				fh->neighbor(ccw(ih))->index(fh)) );
-      le.erase(litt);
-    }
-    else { ++lit;}
-  }
+  return test_conflict(p,fh);
 }
+
+// template < class Gt, class Tds >    
+// void 
+// Constrained_Delaunay_triangulation_2<Gt,Tds>::
+// find_conflicts(Point p, std::list<Edge>& le, Face_handle hint) const
+// {
+//   // sets in le the counterclocwise list of the edges of the boundary of the 
+//   // union of the faces in conflict with p
+//   // an edge is represented by the incident face that is not in conflict with p
+//   Face_handle fh= locate(p, hint);
+//   le.push_back(Edge(fh->neighbor(0),fh->neighbor(0)->index(fh)));
+//   le.push_back(Edge(fh->neighbor(1),fh->neighbor(1)->index(fh)));
+//   le.push_back(Edge(fh->neighbor(2),fh->neighbor(2)->index(fh)));
+
+//   typename std::list<Edge>::iterator lit=le.begin();
+//   typename std::list<Edge>::iterator litt;
+//   int ih;
+//   while(lit != le.end()){
+//     if ( !((*lit).first->is_constrained((*lit).second)) && 
+// 	 ( test_conflict((*lit).first, p)) ){
+//       fh = (*lit).first;
+//       ih = (*lit).second;
+//       litt = lit; // this one has to be deleted
+//       lit = le.insert(lit, Edge(fh->neighbor(cw(ih)),
+// 				fh->neighbor(cw(ih))->index(fh)) );
+//       lit = le.insert(lit, Edge(fh->neighbor(ccw(ih)),
+// 				fh->neighbor(ccw(ih))->index(fh)) );
+//       le.erase(litt);
+//     }
+//     else { ++lit;}
+//   }
+// }
   
 template < class Gt, class Tds >  
 inline 

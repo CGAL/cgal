@@ -23,16 +23,13 @@
 // ============================================================================
 
 #include <list>
-#include <CGAL/_test_cls_triangulation_2.C>
+#include <CGAL/_test_cls_triangulation_short_2.C>
 
 template <class Triangulation>
 void 
 _test_cls_constrained_triangulation(const Triangulation &)
 {
   typedef Triangulation                       Cls;
-
-  // We assume the traits class has been tested already
-  // actually, any traits is good if it has been tested
   typedef typename Cls::Geom_traits          Gt;
 
 
@@ -50,6 +47,9 @@ _test_cls_constrained_triangulation(const Triangulation &)
   typedef std::list<Constraint>                    list_constraints;
   typedef typename list_constraints::iterator list_iterator;
 
+  /***********************/
+  /***** SUBCLASSE ******/
+   _test_cls_triangulation_short_2( Cls() );
 
   // Constructors
   std::cout << "    constructors    " << std::endl;
@@ -67,31 +67,28 @@ _test_cls_constrained_triangulation(const Triangulation &)
   assert( T0_2.dimension() == 0 );
   assert( T0_2.number_of_vertices() == 1 );
   assert( T0_2.is_valid() );
-  //l.clear();
   l.erase(l.begin(),l.end());
 
-  // Build dummy triangulations, 1-dimensional
-
-     std::cout << "    1-Dim "<<std::endl;
-     int m;
+  // Build triangulations, 1-dimensional
+  std::cout << "    1-Dim "<<std::endl;
+  int m;
   for (m=0; m<4; m++)
-      l.push_back(Constraint(Point(3*m, 2*m),Point(3*m,2*m) ));
-    Cls T1_1(l);
+    l.push_back(Constraint(Point(3*m, 2*m),Point(3*m,2*m) ));
+  Cls T1_1(l);
   assert( T1_1.dimension() == 1 );
   assert( T1_1.number_of_vertices() == 4 );
   assert( T1_1.is_valid() );
   
   l.erase(l.begin(),l.end());
   for (m=0; m<4; m++)
-      l.push_back(Constraint(Point(3*m, 2*m),Point(3*(m+1),2*(m+1)) ));
-    Cls T1_2(l);
+    l.push_back(Constraint(Point(3*m, 2*m),Point(3*(m+1),2*(m+1)) ));
+  Cls T1_2(l);
   assert( T1_2.dimension() == 1 );
   assert( T1_2.number_of_vertices() == 5);
   assert( T1_2.is_valid() );
   l.erase(l.begin(),l.end());
 
   // Build triangulations, 2-dimensional
-
   std::cout << "    2-Dim "<< std::endl;
   Point lp[5]= {Point(0,0),Point(1,0),Point(0,1),Point(-1,0),Point(0,-1)};
   for (m=1;m<5;m++)
@@ -100,8 +97,7 @@ _test_cls_constrained_triangulation(const Triangulation &)
   assert( T2_1.dimension() == 2 );
   assert( T2_1.number_of_vertices() == 5);
   assert( T2_1.is_valid() );
-  
-  //l.clear();
+ 
   l.erase(l.begin(),l.end());
 
   Point lpt[20] = {
@@ -132,124 +128,124 @@ _test_cls_constrained_triangulation(const Triangulation &)
     assert( Taux.number_of_vertices() == 20);
     assert( Taux.is_valid() );
 
-  // Points locations
-    //to check  if functionnality is accessible
-    // 1-dimensional
-   std::cout << "    point locations 1-dim" << std::endl;
-   Locate_type lt; 
-   int            li;
-   Face_handle    f;
-   f = T1_1.locate(Point(0,0),lt,li); assert( lt == Cls::VERTEX );
-   assert( T1_1.xy_equal(f->vertex(li)->point(),   Point(0,0)) );
-      f = T1_1.locate(Point(9,6),lt,li); assert( lt == Cls::VERTEX );
-   assert( T1_1.xy_equal(f->vertex(li)->point(), Point(9,6)) );
-   f = T1_1.locate(Point(3,2,2),lt,li); assert( lt == Cls::EDGE );
-  assert( (T1_1.xy_equal(f->vertex(f->ccw(li))->point(), Point(0,0))
-        && T1_1.xy_equal(f->vertex(f->cw(li))->point(), Point(3,2)))
-       || (T1_1.xy_equal(f->vertex(f->ccw(li))->point(), Point(3,2))
-        && T1_1.xy_equal(f->vertex(f->cw(li))->point(), Point(0,0))));
-  f = T1_1.locate(Point(-3,-2),lt,li); assert( lt == Cls::OUTSIDE_CONVEX_HULL );
-  assert( li == f->index(T1_1.infinite_vertex()));
-  f = T1_1.locate(Point(0,100),lt,li); assert( lt == Cls::OUTSIDE_AFFINE_HULL );
+//   // Points locations
+//     //to check  if functionnality is accessible
+//     // 1-dimensional
+//    std::cout << "    point locations 1-dim" << std::endl;
+//    Locate_type lt; 
+//    int            li;
+//    Face_handle    f;
+//    f = T1_1.locate(Point(0,0),lt,li); assert( lt == Cls::VERTEX );
+//    assert( T1_1.xy_equal(f->vertex(li)->point(),   Point(0,0)) );
+//       f = T1_1.locate(Point(9,6),lt,li); assert( lt == Cls::VERTEX );
+//    assert( T1_1.xy_equal(f->vertex(li)->point(), Point(9,6)) );
+//    f = T1_1.locate(Point(3,2,2),lt,li); assert( lt == Cls::EDGE );
+//   assert( (T1_1.xy_equal(f->vertex(f->ccw(li))->point(), Point(0,0))
+//         && T1_1.xy_equal(f->vertex(f->cw(li))->point(), Point(3,2)))
+//        || (T1_1.xy_equal(f->vertex(f->ccw(li))->point(), Point(3,2))
+//         && T1_1.xy_equal(f->vertex(f->cw(li))->point(), Point(0,0))));
+//   f = T1_1.locate(Point(-3,-2),lt,li); assert( lt == Cls::OUTSIDE_CONVEX_HULL );
+//   assert( li == f->index(T1_1.infinite_vertex()));
+//   f = T1_1.locate(Point(0,100),lt,li); assert( lt == Cls::OUTSIDE_AFFINE_HULL );
   
 
-   // 2-dimensional
-   std::cout << "    point locations 2-dim" << std::endl;
-   f = T2_2.locate(Point(0,0),lt,li); assert( lt == Cls::VERTEX );
-   assert( T2_2.xy_equal(f->vertex(li)->point(), Point(0,0)) );
-   f = T2_2.locate(Point(3,2),lt,li); assert( lt == Cls::VERTEX );
-   assert( T2_2.xy_equal(f->vertex(li)->point(), Point(3,2)) );
-   f = T2_2.locate(Point(1,0,2),lt,li); assert( lt == Cls::EDGE );
-   assert( (T2_2.xy_equal(f->vertex(f->ccw(li))->point(),lpt[1])
-        && T2_2.xy_equal(f->vertex(f->cw(li))->point(),lpt[0]))
-       || (T2_2.xy_equal(f->vertex(f->ccw(li))->point(), lpt[0])
-        && T2_2.xy_equal(f->vertex(f->cw(li))->point(),lpt[1])));
-   f = T2_2.locate(Point(10,10),lt,li); assert( lt == Cls::OUTSIDE_CONVEX_HULL );
-   li = f->index(T2_2.infinite_vertex());
-   f = T2_2.locate(Point(-1,3),lt,li); assert( lt == Cls::OUTSIDE_CONVEX_HULL );
-   li = f->index(T2_2.infinite_vertex());
+//    // 2-dimensional
+//    std::cout << "    point locations 2-dim" << std::endl;
+//    f = T2_2.locate(Point(0,0),lt,li); assert( lt == Cls::VERTEX );
+//    assert( T2_2.xy_equal(f->vertex(li)->point(), Point(0,0)) );
+//    f = T2_2.locate(Point(3,2),lt,li); assert( lt == Cls::VERTEX );
+//    assert( T2_2.xy_equal(f->vertex(li)->point(), Point(3,2)) );
+//    f = T2_2.locate(Point(1,0,2),lt,li); assert( lt == Cls::EDGE );
+//    assert( (T2_2.xy_equal(f->vertex(f->ccw(li))->point(),lpt[1])
+//         && T2_2.xy_equal(f->vertex(f->cw(li))->point(),lpt[0]))
+//        || (T2_2.xy_equal(f->vertex(f->ccw(li))->point(), lpt[0])
+//         && T2_2.xy_equal(f->vertex(f->cw(li))->point(),lpt[1])));
+//    f = T2_2.locate(Point(10,10),lt,li); assert( lt == Cls::OUTSIDE_CONVEX_HULL );
+//    li = f->index(T2_2.infinite_vertex());
+//    f = T2_2.locate(Point(-1,3),lt,li); assert( lt == Cls::OUTSIDE_CONVEX_HULL );
+//    li = f->index(T2_2.infinite_vertex());
    
-   f = T2_1.locate(Point(2,5,10),lt,li); assert( lt == Cls::FACE);
+//    f = T2_1.locate(Point(2,5,10),lt,li); assert( lt == Cls::FACE);
 
 
-   /*************************/
-  /******* Iterators *******/
-   std::cout << "    iterators" << std::endl;
-   _test_iterators(T1_1);
-    _test_iterators(T1_2);
-   _test_iterators(T2_1);
-   _test_iterators(T2_2);
+//    /*************************/
+//   /******* Iterators *******/
+//    std::cout << "    iterators" << std::endl;
+//    _test_iterators(T1_1);
+//     _test_iterators(T1_2);
+//    _test_iterators(T2_1);
+//    _test_iterators(T2_2);
 
-   /***************************/
-  /******* Circulators *******/
-   std::cout << "    circulators" << std::endl;
-   _test_circulators(T1_1);
-   _test_circulators(T1_2);
-   _test_circulators(T2_1);
-   _test_circulators(T2_2);
+//    /***************************/
+//   /******* Circulators *******/
+//    std::cout << "    circulators" << std::endl;
+//    _test_circulators(T1_1);
+//    _test_circulators(T1_2);
+//    _test_circulators(T2_1);
+//    _test_circulators(T2_2);
 
 
-// Line_face_circulator
-  std::cout << "    line face circulator  " << std::endl;
-  typedef typename Cls::Line_face_circulator LFC;
+// // Line_face_circulator
+//   std::cout << "    line face circulator  " << std::endl;
+//   typedef typename Cls::Line_face_circulator LFC;
  
-  LFC fc= T2_2.line_walk(Point(-1,-1),Point(10,10));
-  assert(fc.ptr()!=NULL);
-  assert(!fc.is_empty());
-  LFC fc2=fc;
-  assert(fc==fc2);
-  fc++;
-  fc--;
-  ++fc;
-  --fc;
-  Point pp(0.5,0.2);
-  f = T2_2.locate(pp,lt,li);
-  assert(lt==Cls::FACE);
-  fc= T2_2.line_walk(pp,Point(10,10),f);
-  fc2=fc;
-  assert(fc==fc2);
-  fc++;
-  fc--;
-  ++fc;
-  --fc;
-  int n=0;
-  do {fc2++ ; n = n+1;} while (fc2 != fc);
-  // testing with dummy triangulations
-  assert(T2_1.number_of_vertices()==5);
-  assert(T2_1.is_valid());
-  fc= T2_1.line_walk(Point(-5,-5),Point(5,5));
-  fc2=fc;
-  n=0;
-  assert(fc==fc2);
-  do {fc2++ ; n = n+1;} while (fc2 != fc);
-  assert(n==4);
-  fc= T2_1.line_walk(Point(0,-1),Point(1,0));
-  fc2=fc;
-  n=0;
-  assert(fc==fc2);
-  do {fc2++ ; n = n+1;} while (fc2 != fc);
-  assert(n==3);
-  fc= T2_1.line_walk(Point(-1,0),Point(0,1));
-  assert(fc.ptr()==NULL);
-  assert(fc.is_empty());
+//   LFC fc= T2_2.line_walk(Point(-1,-1),Point(10,10));
+//   assert(fc.ptr()!=NULL);
+//   assert(!fc.is_empty());
+//   LFC fc2=fc;
+//   assert(fc==fc2);
+//   fc++;
+//   fc--;
+//   ++fc;
+//   --fc;
+//   Point pp(0.5,0.2);
+//   f = T2_2.locate(pp,lt,li);
+//   assert(lt==Cls::FACE);
+//   fc= T2_2.line_walk(pp,Point(10,10),f);
+//   fc2=fc;
+//   assert(fc==fc2);
+//   fc++;
+//   fc--;
+//   ++fc;
+//   --fc;
+//   int n=0;
+//   do {fc2++ ; n = n+1;} while (fc2 != fc);
+//   // testing with dummy triangulations
+//   assert(T2_1.number_of_vertices()==5);
+//   assert(T2_1.is_valid());
+//   fc= T2_1.line_walk(Point(-5,-5),Point(5,5));
+//   fc2=fc;
+//   n=0;
+//   assert(fc==fc2);
+//   do {fc2++ ; n = n+1;} while (fc2 != fc);
+//   assert(n==4);
+//   fc= T2_1.line_walk(Point(0,-1),Point(1,0));
+//   fc2=fc;
+//   n=0;
+//   assert(fc==fc2);
+//   do {fc2++ ; n = n+1;} while (fc2 != fc);
+//   assert(n==3);
+//   fc= T2_1.line_walk(Point(-1,0),Point(0,1));
+//   assert(fc.ptr()==NULL);
+//   assert(fc.is_empty());
 
-   /*****************************/
-  /******** Miscellaneaous *****/
-  std::cout << "    misc." << std::endl;
-  assert( T0_1.ccw(0) == 1 );
-  assert( T0_1.ccw(1) == 2 );
-  assert( T0_1.ccw(2) == 0 );
-  assert( T0_1.cw(0) == 2 );
-  assert( T0_1.cw(1) == 0 );
-  assert( T0_1.cw(2) == 1 );
+//    /*****************************/
+//   /******** Miscellaneaous *****/
+//   std::cout << "    misc." << std::endl;
+//   assert( T0_1.ccw(0) == 1 );
+//   assert( T0_1.ccw(1) == 2 );
+//   assert( T0_1.ccw(2) == 0 );
+//   assert( T0_1.cw(0) == 2 );
+//   assert( T0_1.cw(1) == 0 );
+//   assert( T0_1.cw(2) == 1 );
 
 
-  f = T2_1.locate(Point(2,5,10),lt,li); assert( lt == Cls::FACE);
-  Triangle t = T2_1.triangle(f); assert( &t == &t );
-  Segment  s = T2_1.segment(f,0); assert( &s == &s );
-  s = T2_1.segment(Edge(f,0)); assert( &s == &s );
-  s = T2_1.segment(T2_1.finite_vertex()->incident_edges()); assert( &s == &s );
-  s = T2_1.segment(T2_1.finite_edges_begin()); assert( &s == &s );
+//   f = T2_1.locate(Point(2,5,10),lt,li); assert( lt == Cls::FACE);
+//   Triangle t = T2_1.triangle(f); assert( &t == &t );
+//   Segment  s = T2_1.segment(f,0); assert( &s == &s );
+//   s = T2_1.segment(Edge(f,0)); assert( &s == &s );
+//   s = T2_1.segment(T2_1.finite_vertex()->incident_edges()); assert( &s == &s );
+//   s = T2_1.segment(T2_1.finite_edges_begin()); assert( &s == &s );
 
 
    /********************/
@@ -305,6 +301,8 @@ _test_cls_constrained_triangulation(const Triangulation &)
   Face_handle fh;
   int ih;
   Vertex_handle vha, vhb;
+  Locate_type lt; 
+  int li;
   fh  =  T1_2.locate(Point(0,0),lt,li); assert( lt == Cls::VERTEX );
   vha = fh->vertex(li);
   fh  =  T1_2.locate(Point(3,2),lt,li); assert( lt == Cls::VERTEX );
