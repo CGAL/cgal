@@ -399,6 +399,8 @@ void Mesh<Gt, Tds, Mtraits>::
 process_facette_map()
 {
   if(Bad_faces.empty())
+    {
+    }
   while( !Bad_faces.empty())
     {
       Face_handle Bf = (*(Bad_faces.begin())).second;
