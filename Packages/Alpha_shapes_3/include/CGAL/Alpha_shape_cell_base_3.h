@@ -26,13 +26,21 @@
 
 #include <vector>
 #include <CGAL/utility.h>
+#include <CGAL/Triangulation_cell_base_3.h>
 
 CGAL_BEGIN_NAMESPACE
 
-template < class Gt, class Df >
-class Alpha_shape_cell_base_3 : public Df
+template < class Gt, class Cb = Triangulation_cell_base_3<Gt> >
+class Alpha_shape_cell_base_3
+  : public Cb
 {
 public:
+
+  template < typename TDS2 >
+  struct Rebind_TDS {
+    typedef typename Cb::template Rebind_TDS<TDS2>::Other   Cb2;
+    typedef Alpha_shape_cell_base_3<Gt, Cb2>                Other;
+  };
 
   typedef typename Gt::FT                            Coord_type;
   typedef Triple<Coord_type, Coord_type, Coord_type> Interval3;
@@ -48,16 +56,16 @@ private:
 public:
   
   Alpha_shape_cell_base_3() 
-    : Df()
+    : Cb()
     {}
   
   Alpha_shape_cell_base_3(void* v0, void* v1, void* v2, void* v3)
-    : Df( v0, v1, v2, v3)
+    : Cb( v0, v1, v2, v3)
     {}
   
   Alpha_shape_cell_base_3(void* v0, void* v1, void* v2, void* v3,
 			  void* n0, void* n1, void* n2, void* n3)
-    : Df(v0,  v1,  v2, v3,
+    : Cb(v0,  v1,  v2, v3,
 	 n0,  n1,  n2, n3)
     {}
 

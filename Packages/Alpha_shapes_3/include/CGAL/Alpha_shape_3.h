@@ -799,22 +799,15 @@ template <class Dt>
 void 
 Alpha_shape_3<Dt>::initialize_interval_cell_map()
 {  
-  Finite_cells_iterator cell_it;
-  Cell_handle pCell;
+  Finite_cells_iterator cell_it, done = finite_cells_end();
   Coord_type alpha_f;
 
-  for( cell_it = finite_cells_begin(); 
-       cell_it != finite_cells_end(); 
-       ++cell_it)
-    {
-      pCell = cell_it->handle();
-      
-      alpha_f = squared_radius(pCell);
-
-      _interval_cell_map.insert(Interval_cell(alpha_f, (pCell)));
+  for( cell_it = finite_cells_begin(); cell_it != done; ++cell_it) {
+      alpha_f = squared_radius(cell_it);
+      _interval_cell_map.insert(Interval_cell(alpha_f, cell_it));
 
       // cross references
-      pCell->set_alpha(alpha_f);
+      cell_it->set_alpha(alpha_f);
     }
 }
 
@@ -1047,12 +1040,8 @@ Alpha_shape_3<Dt>::initialize_interval_vertex_map()
        vertex_it != finite_vertices_end(); 
        ++vertex_it)
     {
-      Vertex_handle v = vertex_it->handle();
-
-      if (!is_infinite(v))         // TBC
+      if (!is_infinite(vertex_it))         // TBC
 	{
-	  Cell_handle s;
-
 	  alpha_max_v = 0;    
 	  alpha_mid_v = (!_interval_cell_map.empty() ?
 			 (--_interval_cell_map.end())->first :
@@ -1064,7 +1053,7 @@ Alpha_shape_3<Dt>::initialize_interval_vertex_map()
 	  // regular means incident to a 3-dimensional face
 
 	  //--------------------------------------------------------------
-// 	  Cell_circulator cell_circ = v->incident_simplices(),
+// 	  Cell_circulator cell_circ = vertex_it->incident_simplices(),
 // 	    done(cell_circ);
 
 // 	  if ((*cell_circ) != NULL)
@@ -1096,13 +1085,11 @@ Alpha_shape_3<Dt>::initialize_interval_vertex_map()
 	  // TBC if cell_circulator become available
 	  // at the moment takes v*s time
 
-	  Cell_iterator cell_it;
-	    for( cell_it = cells_begin(); 
-		 cell_it != cells_end(); 
-		 ++cell_it)
+	  Cell_iterator cell_it, done = cells_end();
+	    for( cell_it = cells_begin(); cell_it != done; ++cell_it)
 	      {
-		s = cell_it->handle();
-		if (s->has_vertex(vertex_it->handle()))
+		Cell_handle s = cell_it;
+		if (s->has_vertex(vertex_it))
 		  {
 		    if (is_infinite(s))
 		      {
@@ -1124,11 +1111,10 @@ Alpha_shape_3<Dt>::initialize_interval_vertex_map()
 	      }
 
 	  Interval2 interval = std::make_pair(alpha_mid_v, alpha_max_v);
-	  _interval_vertex_map.insert(Interval_vertex(interval, 
-						      vertex_it->handle()));
+	  _interval_vertex_map.insert(Interval_vertex(interval, vertex_it));
 
 	  // cross references
-	  vertex_it->handle()->set_range(interval);
+	  vertex_it->set_range(interval);
 	}
     }
 }
@@ -1736,15 +1722,13 @@ Alpha_shape_3<Dt>::number_of_solid_components(const Coord_type& alpha) const
     //            O(#alpha_shape log n) otherwise
 {
   Marked_cell_set marked_cell_set;
-  Finite_cells_iterator cell_it;
+  Finite_cells_iterator cell_it, done = finite_cells_end();
   int nb_solid_components = 0;
 
   // only finite simplices
-  for( cell_it = finite_cells_begin(); 
-       cell_it != finite_cells_end(); 
-       ++cell_it)
+  for( cell_it = finite_cells_begin(); cell_it != done; ++cell_it)
     {
-      Cell_handle pCell = cell_it->handle();
+      Cell_handle pCell = cell_it;
       assert(pCell != NULL);
 
       if (classify(pCell, alpha) == INTERIOR &&
@@ -1847,14 +1831,12 @@ Alpha_shape_3<Dt>::find_alpha_solid() const
 {
   Coord_type alpha_solid = 0;
 
-  Vertex_iterator vertex_it;
+  Vertex_iterator vertex_it, done = vertices_end();
   
   // at the moment all finite + infinite vertices
-  for( vertex_it = vertices_begin(); 
-       vertex_it != vertices_end();
-       ++vertex_it)
+  for( vertex_it = vertices_begin(); vertex_it != done; ++vertex_it)
     {
-      if (!is_infinite(vertex_it->handle()))
+      if (!is_infinite(vertex_it))
 	{
 	  // consider only finite vertices
 	  Coord_type alpha_min_v = (--_interval_cell_map.end())->first;
@@ -1876,20 +1858,12 @@ Alpha_shape_3<Dt>::find_alpha_solid() const
 	  // TBC if cell_circulator become available
 	  // at the moment takes v*s time
 	    
-	  Cell_iterator cell_it;
-	  for( cell_it = cells_begin(); 
-	       cell_it != cells_end(); 
-	       ++cell_it)
+	  Cell_iterator cell_it, done = cells_end();
+	  for( cell_it = cells_begin(); cell_it != done; ++cell_it)
 	    {
-	      Cell_handle s = cell_it->handle();
-	      if (s->has_vertex(vertex_it->handle()))
-		{
-		  if (! is_infinite(s))
-		    {
-		      alpha_min_v = CGAL::min(find_interval(s),
-					      alpha_min_v);
-		    }
-		}
+	      Cell_handle s = cell_it;
+	      if (s->has_vertex(vertex_it) && ! is_infinite(s))
+	        alpha_min_v = CGAL::min(find_interval(s), alpha_min_v);
 	    }
 	    
 	  alpha_solid = CGAL::max(alpha_min_v, alpha_solid);

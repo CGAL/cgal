@@ -32,34 +32,36 @@
 CGAL_BEGIN_NAMESPACE
 //-------------------------------------------------------------------
 
-template <class Gt>
-class Alpha_shape_vertex_base_3 : public Triangulation_vertex_base_3<Gt>
+template <class Gt, class Vb = Triangulation_vertex_base_3<Gt> >
+class Alpha_shape_vertex_base_3
+  : public Vb
 {
 public:
+
+  template < typename TDS2 >
+  struct Rebind_TDS {
+    typedef typename Vb::template Rebind_TDS<TDS2>::Other   Vb2;
+    typedef Alpha_shape_vertex_base_3<Gt, Vb2>              Other;
+  };
 
   typedef typename Gt::Coord_type Coord_type;
   typedef std::pair< Coord_type, Coord_type > Interval2;  
   typedef typename Gt::Point Point;
 
-  //-------------------------------------------------------------------
 private:
 
   Interval2 I;
 
-  //-------------------------------------------------------------------
 public:
 
   Alpha_shape_vertex_base_3()
-    : Triangulation_vertex_base_3<Gt>()
-    {}
+    : Vb() {}
   
   Alpha_shape_vertex_base_3(const Point& p)
-    : Triangulation_vertex_base_3<Gt>(p)
-    {}
+    : Vb(p) {}
   
   Alpha_shape_vertex_base_3(const Point& p, void* f)
-    : Triangulation_vertex_base_3<Gt>(p, f) 
-    {}
+    : Vb(p, f) {}
 
   //-------------------------------------------------------------------
 

@@ -1,3 +1,7 @@
+version 3.18 (25/05/03)
+- Upgrade to Triangulation_3's new design.
+- Remove calls to undocumented .handle().
+
 version 3.17 (22/08/02) MY
 - fixed a bug in function classify(Point p, ..) of Alpha_shapes_3.h
 
