@@ -69,7 +69,8 @@ Window_stream& operator<<(Window_stream& os, Pmwx_2 &A)
 }
 CGAL_END_NAMESPACE
 
-// Redraw function for the LEDA window: used automatically when window reappears
+// Redraw function for the LEDA window: used automatically when 
+// the window reappears
 void redraw(CGAL::Window_stream * wp) 
 { wp->start_buffering();
   wp->clear();
