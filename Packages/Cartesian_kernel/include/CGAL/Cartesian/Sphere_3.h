@@ -64,8 +64,6 @@ public:
            const Orientation& o = COUNTERCLOCKWISE);
   // Sphere centered at p, radius 0, orientation o
 
-  ~SphereC3() {}
-
   bool operator==(const Self &) const;
   bool operator!=(const Self &) const;
 

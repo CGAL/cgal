@@ -67,7 +67,6 @@ public:
   PointC2(const FT &x, const FT &y);
   PointC2(const FT &hx, const FT &hy, const FT &hw);
   PointC2(const Vector_2 &v);
-  ~PointC2() {}
 
   FT x() const
   {

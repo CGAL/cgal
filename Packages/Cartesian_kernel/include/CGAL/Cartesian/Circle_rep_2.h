@@ -46,8 +46,6 @@ public:
 
   Circle_repC2(const Point_2 & c, const FT & r, const Orientation &o)
     : center(c), squared_radius(r), orient(o) {}
-
-  ~Circle_repC2() {}
 };
 
 CGAL_END_NAMESPACE

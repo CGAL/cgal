@@ -53,7 +53,6 @@ public:
   PointC3(const Vector_3 &v);
   PointC3(const FT &x, const FT &y, const FT &z);
   PointC3(const FT &x, const FT &y, const FT &z, const FT &hw);
-  ~PointC3() {}
 
   bool operator==(const Self &p) const
   {

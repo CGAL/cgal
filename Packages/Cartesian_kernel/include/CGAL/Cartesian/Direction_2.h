@@ -63,7 +63,6 @@ public:
   DirectionC2(const Self &d);
   DirectionC2(const Vector_2 &v);
   DirectionC2(const FT &x, const FT &y);
-  ~DirectionC2() {}
 
   bool operator==(const Self &d) const;
   bool operator!=(const Self &d) const;

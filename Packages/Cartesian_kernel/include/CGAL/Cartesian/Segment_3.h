@@ -52,7 +52,6 @@ public:
   SegmentC3();
   SegmentC3(const Self  &s);
   SegmentC3(const Point_3 &sp, const Point_3 &ep);
-  ~SegmentC3() {}
 
   bool        has_on(const Point_3 &p) const;
   bool        collinear_has_on(const Point_3 &p) const;

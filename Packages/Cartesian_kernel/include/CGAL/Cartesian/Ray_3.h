@@ -53,7 +53,6 @@ public:
   RayC3(const Self &r);
   RayC3(const Point_3 &sp, const Point_3 &secondp);
   RayC3(const Point_3 &sp, const Direction_3 &d);
-  ~RayC3() {}
 
   bool        operator==(const Self &r) const;
   bool        operator!=(const Self &r) const;

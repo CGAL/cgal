@@ -56,7 +56,6 @@ public:
                 const Point_3 &q,
                 const Point_3 &r,
                 const Point_3 &s);
-  ~TetrahedronC3() {}
 
   Point_3    vertex(int i) const;
   Point_3    operator[](int i) const;

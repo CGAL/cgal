@@ -5,21 +5,26 @@ Stuff to look at, as time permits:
   - M$VC++ before submitting (especially for CGAL_TYPENAME_BUG).
   - GCOV
   - G++ 2.97.
+  - Write a Checker for full kernels, like Pm_traits_checker.h ?
 
 - Handles :
   - Having a proper Handle_for_virtual<> is becoming important...
     - It must have the same interface than Handle_for<>
     - Must use the allocator, see Stefan's mail.
-  - Aff_tranformations can't use Handle_for<> yet.
   - Replace ptr by ptr() ?
-  - Provide dummy_Handle_for<>.
+  - Provide a Dummy_Handle_for<>.
 
-- Finish merging .C files in corresponding .h files.
-- Write a Checker for full kernels, like Pm_traits_checker.h ?
+- Aff_transformations :
+  - Finish merging .C files in corresponding .h files.
+  - Use Handle_for_virtual<>.
+
+- Advanced Kernel :
+  - Rename CGAL_CFG_NO_ADVANCED_KERNEL to CGAL_USE_ADVANCED_KERNEL, definable
+    on the command line, and not in config.h...
+  - Have a separate (top-level) kernel for the advanced cartesian ? 
+
 - Use CGAL_TYPENAME_MSVC_NULL instead of "#define typename".
   Only in the template parameters, right ?
-- Rename CGAL_CFG_NO_ADVANCED_KERNEL to CGAL_USE_ADVANCED_KERNEL, definable on
-  the command line, and not in config.h...
 - Merging Cartesian and SimpleCartesian :
   Currently, there are 10000 lines of code in SimpleCartesian kernel, mostly
   copy-pasted and adapted from the Cartesian kernel.  This is evil in itself
@@ -74,9 +79,8 @@ Stuff to look at, as time permits:
   return Bbox_2(CGAL::to_interval(x()), CGAL::to_interval(y()));
 }
 - Why can't we simply have : typedef Iso_rectangleC2<double> Bbox_2;  ?
-- Iso_rectangleC2 stores a Twotuple<Point_2>, which means they are
-  ref-counted, which is sub-optimal...  See above.
-- Have a separate (top-level) kernel for the advanced cartesian ? 
+  - Iso_rectangleC2 stores a Twotuple<Point_2>, which means they are
+    ref-counted, which is sub-optimal...  See above.
 - Getting rid of the partial kernels Cartesian_2 and Cartesian_3 ?  This is a
   lot (1Kloc) of redundant code, and this is something only aimed at reducing
   compile time, for which I have some serious doubts anyway.  So:
@@ -87,11 +91,6 @@ Stuff to look at, as time permits:
   - Check it's not documented.  Grep it's not used.
   - Ask on cgal-develop if anyone uses/needs this.
   - Remove.
-- Can I get rid of the empty destructors of the kernel classes ?
-  The homogeneous kernel defines them too.  Why ?
-  Was it useful when they derived from a virtual base having a virtual
-  destructor, and thus needing this destructor ?  It's not the case anymore,
-  so maybe it's time to gain a few lines :)
 - Factorize all the new kernel traits stuff of the different kernels in a
   separate .def file, included by all kernels ?
 - Orientation of Circle_2 and Sphere_3.  I wonder if it's used anywhere.

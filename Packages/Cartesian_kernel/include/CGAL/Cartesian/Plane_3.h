@@ -67,7 +67,6 @@ public:
   PlaneC3(const Line_3 &l, const Point_3 &p);
   PlaneC3(const Segment_3 &s, const Point_3 &p);
   PlaneC3(const Ray_3 &r, const Point_3 &p);
-  ~PlaneC3() {}
 
   bool         operator==(const Self &p) const;
   bool         operator!=(const Self &p) const;

@@ -63,7 +63,6 @@ public:
   SegmentC2();
   SegmentC2(const Self  &s);
   SegmentC2(const Point_2 &sp, const Point_2 &ep);
-  ~SegmentC2() {}
 
   bool        is_horizontal() const;
   bool        is_vertical() const;

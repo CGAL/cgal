@@ -68,7 +68,6 @@ public:
   CircleC2(const Point_2 &p, const Point_2 &q,
            const Orientation &orient = COUNTERCLOCKWISE); // And this too?
   CircleC2(const Point_2 &p, const Point_2 &q, const Point_2 &r);
-  ~CircleC2() {}
 
   bool           operator==(const Self &s) const;
   bool           operator!=(const Self &s) const;

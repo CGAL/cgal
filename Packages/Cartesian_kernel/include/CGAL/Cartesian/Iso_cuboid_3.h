@@ -51,7 +51,6 @@ public:
   Iso_cuboidC3();
   Iso_cuboidC3(const Self& );
   Iso_cuboidC3(const Point_3& p, const Point_3& q);
-  ~Iso_cuboidC3() {}
 
   bool operator==(const Self& s) const;
   bool operator!=(const Self& s) const;

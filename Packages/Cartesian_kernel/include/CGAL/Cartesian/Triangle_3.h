@@ -52,7 +52,6 @@ public:
   TriangleC3();
   TriangleC3(const Self &t);
   TriangleC3(const Point_3 &p, const Point_3 &q, const Point_3 &r);
-  ~TriangleC3() {}
 
   bool       operator==(const Self &t) const;
   bool       operator!=(const Self &t) const;

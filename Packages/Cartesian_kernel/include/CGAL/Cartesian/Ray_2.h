@@ -63,7 +63,6 @@ public:
   RayC2(const Self &r);
   RayC2(const Point_2 &sp, const Point_2 &secondp);
   RayC2(const Point_2 &sp, const Direction_2 &d);
-  ~RayC2() {}
 
   bool        operator==(const Self &r) const;
   bool        operator!=(const Self &r) const;

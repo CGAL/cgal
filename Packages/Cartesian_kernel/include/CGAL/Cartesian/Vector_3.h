@@ -55,7 +55,6 @@ public:
   VectorC3(const Direction_3 &p);
   VectorC3(const FT &x, const FT &y, const FT &z);
   VectorC3(const FT &x, const FT &y, const FT &z, const FT &w);
-  ~VectorC3() {}
 
   bool operator==(const Self &p) const;
   bool operator!=(const Self &p) const;

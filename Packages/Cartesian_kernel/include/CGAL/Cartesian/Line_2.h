@@ -67,7 +67,6 @@ public:
   LineC2(const Segment_2 &s);
   LineC2(const Ray_2 &r);
   LineC2(const Point_2 &p, const Direction_2 &d);
-  ~LineC2() {}
 
   bool            operator==(const Self &l) const;
   bool            operator!=(const Self &l) const;

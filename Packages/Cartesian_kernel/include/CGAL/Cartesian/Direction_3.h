@@ -49,7 +49,6 @@ public:
   DirectionC3(const Self &d);
   DirectionC3(const Vector_3 &v);
   DirectionC3(const FT &x, const FT &y, const FT &z);
-  ~DirectionC3() {}
 
   bool           operator==(const Self &d) const;
   bool           operator!=(const Self &d) const;

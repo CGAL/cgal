@@ -62,7 +62,6 @@ public:
   Iso_rectangleC2();
   Iso_rectangleC2(const Self &);
   Iso_rectangleC2(const Point_2 &p, const Point_2 &q);
-  ~Iso_rectangleC2() {}
 
   bool            operator==(const Self &s) const;
   bool            operator!=(const Self &s) const;
