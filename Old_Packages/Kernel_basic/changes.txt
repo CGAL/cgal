@@ -1,3 +1,6 @@
+3.72   (14 December 2001)
+- VC++ 7 support by Radu.
+
 3.71   (5 December 2001)
 - Just resubmit.
 
