@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (c) 1998 The CGAL Consortium
+// Copyright (c) 1998,1999 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -28,10 +28,9 @@
 // conversion.  Since LEDA types (except real) don't give information on the
 // precision of to_double(), we can't do much...
 
-template <>
 inline
 CGAL_Interval_nt_advanced
-CGAL_convert_to <CGAL_Interval_nt_advanced> (const leda_rational &z)
+CGAL_convert_to (const leda_rational &z, const CGAL_Interval_nt_advanced &)
 {
 #ifdef CGAL_IA_DEBUG
     CGAL_assertion(CGAL_FPU_get_rounding_mode() == CGAL_FPU_PLUS_INFINITY);

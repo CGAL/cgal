@@ -35,8 +35,8 @@ CGAL_convert_to (const CGAL_Quotient<RT> &z, const CGAL_Interval_nt_advanced &)
 #ifdef CGAL_IA_DEBUG
     CGAL_assertion(CGAL_FPU_get_rounding_mode() == CGAL_FPU_PLUS_INFINITY);
 #endif
-    return CGAL_convert_to(z.numerator(),   CGAL_Interval_nt_advanced(0)) /
-	   CGAL_convert_to(z.denominator(), CGAL_Interval_nt_advanced(0));
+    return CGAL_convert_to(z.numerator(),   CGAL_Interval_nt_advanced()) /
+	   CGAL_convert_to(z.denominator(), CGAL_Interval_nt_advanced());
 }
 
 #endif	 // CGAL_IA_QUOTIENT_H

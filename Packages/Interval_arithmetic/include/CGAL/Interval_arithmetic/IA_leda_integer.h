@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (c) 1998 The CGAL Consortium
+// Copyright (c) 1998,1999 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -30,10 +30,9 @@
 // LEDA integer's internal representation, which is not possible without
 // modifying LEDA.
 
-template <>
 inline
 CGAL_Interval_nt_advanced
-CGAL_convert_to <CGAL_Interval_nt_advanced> (const leda_integer &z)
+CGAL_convert_to (const leda_integer &z, const CGAL_Interval_nt_advanced &)
 {
 #ifdef CGAL_IA_DEBUG
     CGAL_assertion(CGAL_FPU_get_rounding_mode() == CGAL_FPU_PLUS_INFINITY);
