@@ -57,9 +57,9 @@ compare_x(const LineH2<R>& l1,
 template < class R >
 inline
 Comparison_result
-compare_x(const Line_2<R> &l,
-	  const Line_2<R> &h1,
-	  const Line_2<R> &h2)
+compare_x(const LineH2<R> &l,
+	  const LineH2<R> &h1,
+	  const LineH2<R> &h2)
 {
     return compare_x(l, h1, l, h2);
 }
@@ -91,9 +91,9 @@ compare_y(const LineH2<R>& l1,
 template < class R >
 inline
 Comparison_result
-compare_y(const Line_2<R> &l,
-	  const Line_2<R> &h1,
-	  const Line_2<R> &h2)
+compare_y(const LineH2<R> &l,
+	  const LineH2<R> &h1,
+	  const LineH2<R> &h2)
 {
     return compare_y(l, h1, l, h2);
 }
