@@ -168,9 +168,9 @@ public:
   bool includes_edge(Vertex_handle va, Vertex_handle vb,
 		     Vertex_handle& vbb,
 		     Face_handle& fr, int & i) const;
-  //bool is_face(Vertex_handle v1, Vertex_handle v2, Vertex_handle v3) const;
-  //bool is_face(Vertex_handle v1, Vertex_handle v2, Vertex_handle v3,
-  //     Face_handle &fr) const;
+  bool is_face(Vertex_handle v1, Vertex_handle v2, Vertex_handle v3) const;
+  bool is_face(Vertex_handle v1, Vertex_handle v2, Vertex_handle v3,
+       Face_handle &fr) const;
 
  // GEOMETRIC FEATURES AND CONSTRUCTION
   Triangle triangle(const Face_handle& f) const;
@@ -622,6 +622,27 @@ includes_edge(Vertex_handle va, Vertex_handle vb,
   return false;
 }
 
+template <class Gt, class Tds >
+inline bool 
+Triangulation_2<Gt, Tds>::
+is_face(Vertex_handle v1, Vertex_handle v2, Vertex_handle v3) const
+{
+  return _tds.is_face( &(*(v1)), &(*(v2)), &(*(v3)) );
+}
+
+template <class Gt, class Tds >
+inline bool 
+Triangulation_2<Gt, Tds>::
+is_face(Vertex_handle v1, 
+	Vertex_handle v2, 
+	Vertex_handle v3,
+	Face_handle &fr) const
+{
+  typename Tds::Face* f ;
+  bool b = _tds.is_face( &(*(v1)), &(*(v2)), &(*(v3)), f);
+  fr = Face_handle(static_cast<Face*>(f));
+  return b;
+}
 
 
 template <class Gt, class Tds >

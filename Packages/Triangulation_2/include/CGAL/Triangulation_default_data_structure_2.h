@@ -126,9 +126,9 @@ public:
   bool is_vertex(const Vertex* v) const;
   bool is_edge(const Vertex* va, const Vertex* vb) const;
   bool is_edge(const Vertex* va, const Vertex* vb, Face* &fr,  int &i) const;
-  //bool is_face(const Vertex* v1, const Vertex* v2, const Vertex* v3) const;
-  //bool is_face(const Vertex* v1, const Vertex* v2, const Vertex* v3,
-  //     Face* &fr) const;
+  bool is_face(const Vertex* v1, const Vertex* v2, const Vertex* v3) const;
+  bool is_face(const Vertex* v1, const Vertex* v2, const Vertex* v3,
+      Face* &fr) const;
 
   // ITERATORS AND CIRCULATORS
   inline Iterator_base iterator_base_begin() const    {
@@ -337,6 +337,32 @@ is_edge(const Vertex* va, const Vertex* vb, Face* &fr,  int & i) const
   } while (fc != start);
   return false;
 }
+
+template <class Gt , class Vb, class Fb>
+inline bool 
+Triangulation_default_data_structure_2<Gt,Vb,Fb>::
+is_face(const Vertex* v1, const Vertex* v2, const Vertex* v3) const
+{
+  Face* f;
+  return is_face(v1,v2,v3,f);
+}
+
+template <class Gt , class Vb, class Fb>
+bool
+Triangulation_default_data_structure_2<Gt,Vb,Fb>::
+is_face(const Vertex* v1, const Vertex* v2, const Vertex* v3,
+      Face* &f) const
+{
+  if (dimension() != 2) return false;
+  int i;
+  bool b = is_edge(v1,v2,f,i);
+  if (!b) return false;
+  else if (v3== f->vertex(i)) return true;
+  f = f-> neighbor(i);
+  if (v3 == f->vertex(3 - f->index(v1)- f->index(v2))) {return true;}
+  return false;  
+}
+
 
 
 template < class Gt , class Vb, class Fb>
