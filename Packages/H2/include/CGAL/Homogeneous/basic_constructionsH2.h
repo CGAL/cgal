@@ -225,17 +225,29 @@ squared_radius( const PointH2<R>& p,
 template <class R>
 CGAL_KERNEL_LARGE_INLINE
 typename R::FT
+area(const PointH2<R>& p, const PointH2<R>& q, const PointH2<R>& r)
+{
+    typedef typename R::Vector_2  Vector_2;
+    typedef typename R::RT        RT;
+    typedef typename R::FT        FT;
+
+    Vector_2 v1 = q - p;
+    Vector_2 v2 = r - p;
+
+    RT num = v1.hx()*v2.hy() - v2.hx()*v1.hy();
+    RT den = RT(2) * v1.hw() * v2.hw();
+    return FT(num)/FT(den);
+}
+
+/*  I believe it's undocumented, so I comment it.
+template <class R>
+inline
+typename R::FT
 area(const TriangleH2<R>& t)
 {
-  typedef typename R::RT RT;
-  typedef typename R::FT FT;
-  RT num = determinant_3x3_by_formula(
-               t.vertex(0).hx(), t.vertex(0).hy(), t.vertex(0).hw(),
-               t.vertex(1).hx(), t.vertex(1).hy(), t.vertex(1).hw(),
-               t.vertex(2).hx(), t.vertex(2).hy(), t.vertex(2).hw() );
-  RT den = t.vertex(0).hw() * t.vertex(1).hw() * t.vertex(2).hw();
-  return FT(num) / FT(den);
+    return area(t.vertex(0), t.vertex(1), t.vertex(2));
 }
+*/
 
 CGAL_END_NAMESPACE
 
