@@ -836,6 +836,7 @@ set_compiler_flags()
 	    GMP_LIBNAME="gmp.lib"
 	    GMPXX_LIBNAME="gmpxx.lib"
             MPFR_LIBNAME="mpfr.lib"
+            MPFR_GCC_LIBNAME="gcc.lib"
 	    MATH_LIB=
 	    OPENGL_LIBS="Opengl32.lib Glu32.lib"
 	    START_LD_OPT="-link "
@@ -870,6 +871,7 @@ set_compiler_flags()
 	    GMP_LIBNAME="gmp.lib"
 	    GMPXX_LIBNAME="gmpxx.lib"
             MPFR_LIBNAME="mpfr.lib"
+            MPFR_GCC_LIBNAME="gcc.lib"
 	    MATH_LIB=
 	    OPENGL_LIBS="Opengl32.lib Glu32.lib"
 	    START_LD_OPT="-link "
@@ -992,6 +994,7 @@ set_compiler_flags()
 	    GMP_LIBNAME="gmp.lib"
 	    GMPXX_LIBNAME="gmpxx.lib"
             MPFR_LIBNAME="mpfr.lib"
+            MPFR_GCC_LIBNAME="gcc.lib"
 	    MATH_LIB=""
 	    SEPARATE_LIBPATH="y"
 	    ;;
@@ -4988,18 +4991,22 @@ install_gmp()
 		*VC++*)    _tmp_name=msvc
 			   _tmp_lib=gmp.lib
                            _tmp_mpfr_lib=mpfr.lib
+                           _tmp_mpfr_gcc_lib=gcc.lib
 			   ;;
 		*Intel*)    _tmp_name=msvc
 			   _tmp_lib=gmp.lib
                            _tmp_mpfr_lib=mpfr.lib
+                           _tmp_mpfr_gcc_lib=gcc.lib
 			   ;;
 		*Borland*) _tmp_name=bcc
 			   _tmp_lib=gmp.lib
                            _tmp_mpfr_lib=mpfr.lib
+                           _tmp_mpfr_gcc_lib=gcc.lib
 			   ;;
 		*)         _tmp_name=gcc
 			   _tmp_lib=libgmp.a
                            _tmp_mpfr_lib=libmpfr.a
+                           _tmp_mpfr_gcc_lib=libgcc.a
 			   ;;
 	    esac
 	    ${_cp} "${gmpdir}/${_tmp_name}/gmp.h" \
@@ -5011,6 +5018,8 @@ install_gmp()
 	    ${_cp} "${gmpdir}/${_tmp_name}/${_tmp_lib}" \
 	       "${CGAL_LIB_DIR}/${CGAL_OS_COMPILER}"
             ${_cp} "${gmpdir}/${_tmp_name}/${_tmp_mpfr_lib}" \
+               "${CGAL_LIB_DIR}/${CGAL_OS_COMPILER}"
+            ${_cp} "${gmpdir}/${_tmp_name}/${_tmp_mpfr_gcc_lib}" \
                "${CGAL_LIB_DIR}/${CGAL_OS_COMPILER}"
 	    GMP_INSTALLATION='c'
 	    ;;
@@ -5424,6 +5433,13 @@ write_linker_flags()
     GEOWLIBS="${GEOWLIBS} `lib_option gmp` "
     WLIBS="${WLIBS}  `lib_option gmp`"
     QLIBS="${QLIBS}  `lib_option gmp`"
+
+    if [ -n "${CYGWIN_COMPILER}" ]; then
+        #Adding gcc.lib only for Windows needed for mpfr
+        LIBS="${LIBS} `lib_option gcc`"
+        QLIBS="${QLIBS} `lib_option gcc`"
+        WLIBS="${WLIBS} `lib_option gcc`"
+  fi
   fi
 
   LIBS="${LIBS} `math_ldflags`"
