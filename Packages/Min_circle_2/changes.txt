@@ -1,5 +1,9 @@
 Changes done to the `Min_circle_2' package
 
+Version 3.16 on 7-May-2003
+- Removed old workarounds
+- Fixed constructor problem on intel7/vc1300
+
 Version 3.15 on 13-Apr-2002
 - Missing typename.
 
