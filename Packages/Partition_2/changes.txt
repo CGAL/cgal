@@ -1,3 +1,6 @@
+1.53 (11 July 2003) [af]
+- Replaced wrong #ifdef
+
 1.52 (10 July 2003) [af]
 - Added missing typename
 - Made it work on Sun Pro which disables member template functions
