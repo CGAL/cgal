@@ -186,9 +186,11 @@ public:
     : _tds(tds), index(0)
     {
       //      if ( _tds->number_of_vertices() == 0 ) { pos = NULL; }
-      if ( _tds->number_of_vertices() == 0 ) { pos = tds->past_end_cell(); }
+      if ( _tds->number_of_vertices() == 0 ) { 
+	pos = _tds->past_end_cell(); 
+      }
       else { 
-	pos = tds->list_of_cells()._next_cell; 
+	pos = _tds->list_of_cells()._next_cell; 
 	while ( (pos != _tds->past_end_cell())
 		  && (pos->vertex(index)->cell() != pos) ) {
 	  increment();
