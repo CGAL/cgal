@@ -1,4 +1,8 @@
-//examples/Arrangement_2/example7.C
+// examples/Arrangement_2/example7.C
+// ---------------------------------
+
+#include "short_names.h"
+
 #include <CGAL/Cartesian.h>
 #include <CGAL/MP_Float.h>
 #include <CGAL/Quotient.h>
@@ -10,9 +14,8 @@
 typedef CGAL::Quotient<CGAL::MP_Float>                NT;
 typedef CGAL::Cartesian<NT>                           Kernel;
 typedef CGAL::Arr_segment_exact_traits<Kernel>        Traits;
-
-typedef Traits::Point                                 Point;
-typedef Traits::Curve                                 Curve;
+typedef Traits::Point_2                               Point;
+typedef Traits::Curve_2                               Curve;
 
 // A global variable to keep track of when we inserted the edges.
 int global_int = 0;
@@ -42,11 +45,11 @@ struct My_halfedge : public CGAL::Arr_2_halfedge_base<My_base_node> {
   Info info; // Will be initialized with the default ctr.
 };
 
-typedef CGAL::Pm_dcel<CGAL::Arr_2_vertex_base< Point >,  
+typedef CGAL::Pm_dcel<CGAL::Arr_2_vertex_base<Point>,  
                       My_halfedge, 
-                      CGAL::Arr_2_face_base >             Dcel;
+                      CGAL::Arr_2_face_base>            Dcel;
 
-typedef CGAL::Arrangement_2<Dcel,Traits,My_base_node >    Arr_2;
+typedef CGAL::Arrangement_2<Dcel,Traits,My_base_node>   Arr_2;
 
 int main() 
 {
@@ -64,16 +67,16 @@ int main()
   global_int=1;
 
   arr.set_update(true);
-  CGAL_assertion(arr.number_of_halfedges()==8);
+  CGAL_assertion(arr.number_of_halfedges() == 8);
 
   // Traversal of the curves
   Arr_2::Edge_iterator eit;
-  for (cit=arr.curve_node_begin(); cit!=arr.curve_node_end(); ++cit) 
+  for (cit = arr.curve_node_begin(); cit!=arr.curve_node_end(); ++cit) 
   {
     std::cout << std::endl << "Curve level info:" << std::endl 
-	      << cit->info.num() << std::endl ;
+              << cit->info.num() << std::endl ;
     std::cout << "Edge level info:" << std::endl;
-    for (eit=cit->edges_begin(); eit!=cit->edges_end(); ++eit) 
+    for (eit = cit->edges_begin(); eit!=cit->edges_end(); ++eit) 
     {
       std::cout << eit->info.num() << std::endl ;
     }

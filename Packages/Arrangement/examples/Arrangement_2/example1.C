@@ -1,4 +1,7 @@
 // examples/Arrangement_2/example1.C
+// ---------------------------------
+
+#include "short_names.h"
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/MP_Float.h>

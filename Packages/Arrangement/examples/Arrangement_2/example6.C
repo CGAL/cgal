@@ -1,10 +1,7 @@
-//examples/Arrangement_2/example6.C
+// examples/Arrangement_2/example6.C
+// ---------------------------------
 
-// Define shorter names to please linker (g++/egcs)
-#define Arrangement_2 Ar
-#define _In_place_list_iterator IPLI
-#define Homogeneous Ho
-#define Arr_segment_exact_traits ASET
+#include "short_names.h"
 
 #include <CGAL/Homogeneous.h>
 #include <CGAL/MP_Float.h>
@@ -17,13 +14,11 @@
 typedef CGAL::MP_Float                               NT;
 typedef CGAL::Homogeneous<NT>                        Kernel;
 typedef CGAL::Arr_segment_exact_traits<Kernel>       Traits;
-
-typedef Traits::Point                                Point;
-typedef Traits::Curve                                Curve;
-
+typedef Traits::Point_2                              Point;
+typedef Traits::Curve_2                              Curve;
 typedef CGAL::Arr_base_node<Curve>                   Base_node;
 typedef CGAL::Arr_2_default_dcel<Traits>             Dcel;
-typedef CGAL::Arrangement_2<Dcel,Traits,Base_node >  Arr_2;
+typedef CGAL::Arrangement_2<Dcel,Traits,Base_node>   Arr_2;
 
 int main() 
 {
@@ -32,11 +27,11 @@ int main()
   Arr_2 arr(&pl);
 
   // Insertion of the curves
-  arr.insert(Curve(Point(0,0),Point(3,3)));
-  arr.insert(Curve(Point(0,3),Point(3,0))); 
-  arr.insert(Curve(Point(0,1),Point(3,1)));
+  arr.insert(Curve(Point(0, 0), Point(3, 3)));
+  arr.insert(Curve(Point(0, 3), Point(3, 0))); 
+  arr.insert(Curve(Point(0, 1), Point(3, 1)));
 
-  CGAL_assertion(arr.number_of_halfedges()==18);
+  CGAL_assertion(arr.number_of_halfedges() == 18);
   
   // Traversal of the curves
   Arr_2::Curve_iterator cit;

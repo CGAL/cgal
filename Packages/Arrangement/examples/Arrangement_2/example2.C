@@ -1,4 +1,8 @@
-//examples/Arrangement_2/example2.C
+// examples/Arrangement_2/example2.C
+// ---------------------------------
+
+#include "short_names.h"
+
 #include <CGAL/Cartesian.h>
 #include <CGAL/MP_Float.h>
 #include <CGAL/Quotient.h>
@@ -7,43 +11,41 @@
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/circulator.h>
 
-typedef CGAL::Quotient<CGAL::MP_Float>                NT;
-typedef CGAL::Cartesian<NT>                           Kernel;
-typedef CGAL::Arr_segment_exact_traits<Kernel>        Traits;
-
-typedef Traits::Point                                 Point;
-typedef Traits::Curve                                 Curve;
-
-typedef CGAL::Arr_base_node<Curve>                    Base_node;
-typedef CGAL::Arr_2_default_dcel<Traits>              Dcel;
-typedef CGAL::Arrangement_2<Dcel, Traits, Base_node>  Arr_2;
+typedef CGAL::Quotient<CGAL::MP_Float>                  NT;
+typedef CGAL::Cartesian<NT>                             Kernel;
+typedef CGAL::Arr_segment_exact_traits<Kernel>          Traits;
+typedef Traits::Point_2                                 Point_2;
+typedef Traits::Curve_2                                 Curve_2;
+typedef CGAL::Arr_base_node<Curve_2>                    Base_node;
+typedef CGAL::Arr_2_default_dcel<Traits>                Dcel;
+typedef CGAL::Arrangement_2<Dcel,Traits,Base_node>      Arr_2;
 
 int main() 
 {
-   Arr_2 arr;
+  Arr_2 arr;
 
-   // Insertion of the curves
-   arr.insert(Curve(Point(0,0),Point(2,2)));
-   arr.insert(Curve(Point(1,1),Point(3,3)));
+  // Insertion of the curves
+  arr.insert(Curve_2(Point_2(0, 0), Point_2(2, 2)));
+  arr.insert(Curve_2(Point_2(1, 1), Point_2(3, 3)));
 
-   // Traversal of the halfedges
-   Arr_2::Halfedge_const_iterator hit     = arr.halfedges_begin(),
-                                  hit_end = arr.halfedges_end();
+  // Traversal of the halfedges
+  Arr_2::Halfedge_const_iterator hit = arr.halfedges_begin(),
+      hit_end = arr.halfedges_end();
 
-   for (; hit != hit_end; ++hit, ++hit)
-   {
-     // We skip the adjacent twin halfedge
-     Arr_2::Overlap_const_circulator occ = hit->overlap_edges(), occ_end = occ;
-     int count = 0;
-     CGAL_For_all(occ, occ_end) { ++count; }
+  for (; hit != hit_end; ++hit, ++hit)
+  {
+    // We skip the adjacent twin halfedge
+    Arr_2::Overlap_const_circulator occ = hit->overlap_edges(), occ_end = occ;
+    int count = 0;
+    CGAL_For_all(occ, occ_end) { ++count; }
 
-     if (count == 1) 
-       std::cout << "Edge " << occ->curve() << " is covered by a single edge."
-		 << std::endl;
-     else
-       std::cout << "Edge " << occ->curve() << " is covered by " << count
-		 << " edges." << std::endl;
-   }
+    if (count == 1) 
+      std::cout << "Edge " << occ->curve() << " is covered by a single edge."
+                << std::endl;
+    else
+      std::cout << "Edge " << occ->curve() << " is covered by " << count
+                << " edges." << std::endl;
+  }
 
-   return 0;
+  return 0;
 }

@@ -1,4 +1,5 @@
-//examples/Arrangement_2/example12
+// examples/Arrangement_2/example12
+// --------------------------------
 
 // Shorten long names for problematic compilers (e.g., MSVC):
 #include "short_names.h"

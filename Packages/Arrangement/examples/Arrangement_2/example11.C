@@ -1,12 +1,7 @@
 // examples/Arrangement_2/example11
+// --------------------------------
 
-// Shorten long names for problematic compilers (e.g., MSVC):
-#if defined(CGAL_CFG_NO_LONGNAME_PROBLEM) || defined(_MSC_VER)
-#define Quotient                        Qt
-#define Cartesian                       Cn
-#define Arr_segment_exact_traits        AST
-#define Arr_2_default_dcel              ADD
-#endif
+#include "short_names.h"
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/MP_Float.h>
@@ -56,6 +51,3 @@ int main()
 
   return 0;
 }
-
-
-

@@ -1,10 +1,7 @@
-//examples/Arrangement_2/example8.C
+// examples/Arrangement_2/example8.C
+// ---------------------------------
 
-// Define shorter names to please linker (g++/egcs)
-#define Arrangement_2 Ar
-#define _In_place_list_iterator IPLI
-#define Homogeneous Ho
-#define Arr_segment_exact_traits ASET
+#include "short_names.h"
 
 #include <CGAL/Homogeneous.h>
 #include <CGAL/MP_Float.h>
@@ -12,18 +9,16 @@
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Arr_segment_exact_traits.h>
 
-typedef CGAL::MP_Float                              NT;
-typedef CGAL::Homogeneous<NT>                       Kernel;
-typedef CGAL::Arr_segment_exact_traits<Kernel>      Traits;
+typedef CGAL::MP_Float                                  NT;
+typedef CGAL::Homogeneous<NT>                           Kernel;
+typedef CGAL::Arr_segment_exact_traits<Kernel>          Traits;
+typedef Traits::Point_2                                 Point;
+typedef Traits::X_curve_2                               X_curve;
+typedef CGAL::Arr_base_node<X_curve>                    Base_node;
+typedef CGAL::Arr_2_default_dcel<Traits>                Dcel;
+typedef CGAL::Arrangement_2<Dcel,Traits,Base_node>      Arr_2;
 
-typedef Traits::Point                               Point;
-typedef Traits::X_curve                             X_curve;
-
-typedef CGAL::Arr_base_node<X_curve>                Base_node;
-typedef CGAL::Arr_2_default_dcel<Traits>            Dcel;
-typedef CGAL::Arrangement_2<Dcel,Traits,Base_node>  Arr_2;
-
-int main(int argc, char* argv[])
+int main()
 {
   Arr_2 arr; 
 
@@ -37,13 +32,13 @@ int main(int argc, char* argv[])
   {
     std::cout << "Enter source coordinates (2 integers): " ;
     std::cin >> x >> y;
-    Point s(x,y);
+    Point s(x, y);
 
     std::cout << "Enter target coordinates (2 integers): " ;
     std::cin >> x >> y;
-    Point t(x,y);
+    Point t(x, y);
 
-    X_curve seg(s,t);
+    X_curve seg(s, t);
     arr.insert(seg);
   }
 
@@ -51,11 +46,11 @@ int main(int argc, char* argv[])
 
   std::cout << "Enter point for ray shooting (2 integers): " ;
   std::cin >> x >> y;
-  Point p(x,y);
+  Point p(x, y);
 
-  Arr_2::Halfedge_handle e=arr.halfedges_begin();
+  Arr_2::Halfedge_handle e = arr.halfedges_begin();
   Arr_2::Locate_type lt;
-  e = arr.vertical_ray_shoot(p,lt,true);
+  e = arr.vertical_ray_shoot(p, lt, true);
   
   // Check the location type
   if (lt == Arr_2::UNBOUNDED_FACE) 
