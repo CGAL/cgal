@@ -13,7 +13,6 @@
 #include <CGAL/Delaunay_mesh_2.h>
 #include <CGAL/Delaunay_mesh_face_base_2.h>
 #include <CGAL/Delaunay_mesh_area_traits_2.h>
-#include <CGAL/Read_write.h>
 
 typedef CGAL::Simple_cartesian<double> K1;
 typedef CGAL::Filtered_kernel<K1> K2;
@@ -35,8 +34,6 @@ typedef CGAL::Delaunay_mesh_2<Tr> Mesh;
 
 typedef K::Point_2 Point;
 
-Mesh* mesh;
-
 void usage(char** argv)
 {
   std::cerr << "Usage: " << std::endl
@@ -47,6 +44,9 @@ int main(int argc, char** argv)
 {
   int arg_count = 1;
   bool terminal_output = true;
+
+  Mesh mesh;
+
   Meshtraits traits;
 
   if(argc < 2)
@@ -95,19 +95,17 @@ int main(int argc, char** argv)
   std::ifstream input(argv[arg_count]);
   if(input)
     {
-      Mesh delaunay;
       CGAL::Timer t;
       t.start();
-      CGAL::read_poly(delaunay, input);
+      CGAL::read_poly(mesh, input);
       t.stop();
       if(terminal_output)
 	std::cout << "Delaunay time: " << t.time() << std::endl;
       
-      mesh = new Mesh(delaunay, traits, true);
-      mesh->set_geom_traits(traits);
+      mesh.set_geom_traits(traits);
       
       t.reset(); t.start();
-      mesh->refine_mesh();
+      mesh.refine_mesh();
       t.stop();
       if(terminal_output)
 	std::cout << "Meshing time: " << t.time() << std::endl;
@@ -125,12 +123,12 @@ int main(int argc, char** argv)
   else
     {
       std::ofstream output(argv[arg_count+1]);
-      CGQL::write_poly(mesh, output);
+      CGAL::write_poly(mesh, output);
     }
   if(terminal_output)
     std::cout 
-      << "Mesh points: " << mesh->number_of_vertices() << std::endl
-      << "Mesh triangles: " << mesh->number_of_faces () << std::endl;
+      << "Mesh points: " << mesh.number_of_vertices() << std::endl
+      << "Mesh triangles: " << mesh.number_of_faces () << std::endl;
 
   return 0;
 };
