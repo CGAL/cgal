@@ -40,6 +40,8 @@ int main(int, char*)
 #include <iostream>
 #include <fstream>
 
+#include <CGAL/IO/pixmaps/demoicon.xpm>
+
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Polygon_2.h>
@@ -70,6 +72,7 @@ int main(int, char*)
 
 #include <qapplication.h>
 #include <qmainwindow.h>
+#include <qcolor.h>
 #include <qtoolbutton.h>
 #include <qlayout.h>
 #include <qvbox.h>
@@ -1359,6 +1362,7 @@ private:
   int menu_id;
 
   CGAL::Qt_widget* widget;
+  QColor background_color;
   CGAL::Qt_widget_get_point<K>* get_point;
   CGAL::Qt_widget_get_point<K>* get_seed;
   CGAL::Qt_widget_get_polygon<CGALPolygon>* get_polygon;
@@ -1450,6 +1454,10 @@ int main(int argc, char** argv)
   QApplication app( argc, argv );
   MyWindow* W = new MyWindow();
   app.setMainWidget(W);
+#if !defined (__POWERPC__)
+  QPixmap cgal_icon = QPixmap((const char**)demoicon_xpm);
+  W->setIcon(cgal_icon);
+#endif
   W->show();
 
   if( argc == 2 )

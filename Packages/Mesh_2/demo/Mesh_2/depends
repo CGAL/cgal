@@ -1,36 +1,6 @@
 
 
-Qt_widget_style_editor.o: \
-
-
-Qt_widget_styled_layer.o: \
-
-
-Show_points.o: \
-
-
-Show_segments_base.o: \
-
-
 conform.o: \
-  ../../../Triangulation_2/include/CGAL/Constrained_Delaunay_triangulation_2.h \
-  ../../../Triangulation_2/include/CGAL/triangulation_assertions.h \
-  ../../../Triangulation_2/include/CGAL/Triangulation_short_names_2.h \
-  ../../../Triangulation_2/include/CGAL/Constrained_triangulation_2.h \
-  ../../../Triangulation_2/include/CGAL/Triangulation_2.h \
-  ../../../Triangulation_2/include/CGAL/Triangulation_utils_2.h \
-  ../../../Triangulation_2/include/CGAL/Triangulation_data_structure_2.h \
-  ../../../Triangulation_2/include/CGAL/Triangulation_ds_face_base_2.h \
-  ../../../Triangulation_2/include/CGAL/Dummy_tds_2.h \
-  ../../../Triangulation_2/include/CGAL/Triangulation_ds_vertex_base_2.h \
-  ../../../Triangulation_2/include/CGAL/Triangulation_ds_face_2.h \
-  ../../../Triangulation_2/include/CGAL/Triangulation_ds_vertex_2.h \
-  ../../../Triangulation_2/include/CGAL/Triangulation_ds_iterators_2.h \
-  ../../../Triangulation_2/include/CGAL/Triangulation_ds_circulators_2.h \
-  ../../../Triangulation_2/include/CGAL/Triangulation_vertex_base_2.h \
-  ../../../Triangulation_2/include/CGAL/Triangulation_face_base_2.h \
-  ../../../Triangulation_2/include/CGAL/Triangulation_line_face_circulator_2.h \
-  ../../../Triangulation_2/include/CGAL/Constrained_triangulation_face_base_2.h \
   ../../include/CGAL/Triangulation_conformer_2.h \
   ../../include/CGAL/Mesh_2/Refine_edges_with_clusters.h \
   ../../include/CGAL/Mesh_2/Refine_edges.h \
@@ -46,24 +16,6 @@ icons.o: \
 
 
 mesh.o: \
-  ../../../Triangulation_2/include/CGAL/Constrained_Delaunay_triangulation_2.h \
-  ../../../Triangulation_2/include/CGAL/triangulation_assertions.h \
-  ../../../Triangulation_2/include/CGAL/Triangulation_short_names_2.h \
-  ../../../Triangulation_2/include/CGAL/Constrained_triangulation_2.h \
-  ../../../Triangulation_2/include/CGAL/Triangulation_2.h \
-  ../../../Triangulation_2/include/CGAL/Triangulation_utils_2.h \
-  ../../../Triangulation_2/include/CGAL/Triangulation_data_structure_2.h \
-  ../../../Triangulation_2/include/CGAL/Triangulation_ds_face_base_2.h \
-  ../../../Triangulation_2/include/CGAL/Dummy_tds_2.h \
-  ../../../Triangulation_2/include/CGAL/Triangulation_ds_vertex_base_2.h \
-  ../../../Triangulation_2/include/CGAL/Triangulation_ds_face_2.h \
-  ../../../Triangulation_2/include/CGAL/Triangulation_ds_vertex_2.h \
-  ../../../Triangulation_2/include/CGAL/Triangulation_ds_iterators_2.h \
-  ../../../Triangulation_2/include/CGAL/Triangulation_ds_circulators_2.h \
-  ../../../Triangulation_2/include/CGAL/Triangulation_vertex_base_2.h \
-  ../../../Triangulation_2/include/CGAL/Triangulation_face_base_2.h \
-  ../../../Triangulation_2/include/CGAL/Triangulation_line_face_circulator_2.h \
-  ../../../Triangulation_2/include/CGAL/Constrained_triangulation_face_base_2.h \
   ../../include/CGAL/Delaunay_mesher_2.h \
   ../../include/CGAL/Mesh_2/Refine_edges_with_clusters.h \
   ../../include/CGAL/Mesh_2/Refine_edges.h \
@@ -84,24 +36,6 @@ mesh.o: \
 
 
 mesh_demo.o: \
-  ../../../Triangulation_2/include/CGAL/Constrained_Delaunay_triangulation_2.h \
-  ../../../Triangulation_2/include/CGAL/triangulation_assertions.h \
-  ../../../Triangulation_2/include/CGAL/Triangulation_short_names_2.h \
-  ../../../Triangulation_2/include/CGAL/Constrained_triangulation_2.h \
-  ../../../Triangulation_2/include/CGAL/Triangulation_2.h \
-  ../../../Triangulation_2/include/CGAL/Triangulation_utils_2.h \
-  ../../../Triangulation_2/include/CGAL/Triangulation_data_structure_2.h \
-  ../../../Triangulation_2/include/CGAL/Triangulation_ds_face_base_2.h \
-  ../../../Triangulation_2/include/CGAL/Dummy_tds_2.h \
-  ../../../Triangulation_2/include/CGAL/Triangulation_ds_vertex_base_2.h \
-  ../../../Triangulation_2/include/CGAL/Triangulation_ds_face_2.h \
-  ../../../Triangulation_2/include/CGAL/Triangulation_ds_vertex_2.h \
-  ../../../Triangulation_2/include/CGAL/Triangulation_ds_iterators_2.h \
-  ../../../Triangulation_2/include/CGAL/Triangulation_ds_circulators_2.h \
-  ../../../Triangulation_2/include/CGAL/Triangulation_vertex_base_2.h \
-  ../../../Triangulation_2/include/CGAL/Triangulation_face_base_2.h \
-  ../../../Triangulation_2/include/CGAL/Triangulation_line_face_circulator_2.h \
-  ../../../Triangulation_2/include/CGAL/Constrained_triangulation_face_base_2.h \
   ../../include/CGAL/Triangulation_conformer_2.h \
   ../../include/CGAL/Mesh_2/Refine_edges_with_clusters.h \
   ../../include/CGAL/Mesh_2/Refine_edges.h \
@@ -120,4 +54,15 @@ mesh_demo.o: \
   ../../include/CGAL/Delaunay_mesh_criteria_2.h \
   ../../include/CGAL/Delaunay_mesh_face_base_2.h \
   ../../include/CGAL/IO/File_poly.h \
-  ../../../Triangulation_2/include/CGAL/Delaunay_triangulation_2.h \
+
+
+Qt_widget_styled_layer.o: \
+
+
+Qt_widget_style_editor.o: \
+
+
+Show_points.o: \
+
+
+Show_segments_base.o: \

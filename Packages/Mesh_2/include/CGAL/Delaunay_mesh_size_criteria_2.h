@@ -156,7 +156,7 @@ public:
       q.second = 0;
       if( squared_size_bound != 0 )
 	{
-	  std::cerr << squared_size_bound << std::endl;
+          //	  std::cerr << squared_size_bound << std::endl;
 	  q.second = max_length / squared_size_bound;
 	    // normalized by size bound to deal
 	    // with size field

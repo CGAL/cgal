@@ -1,4 +1,4 @@
-// Copyright (c) 2004  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2004-2005  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -82,7 +82,7 @@ public:
   }
 
 
-  /*\name FUNCTIONS NEEDED BY \c Mesher_level OVERIDDEN BY THIS CLASS. */
+  /** \name FUNCTIONS NEEDED BY Mesher_level OVERIDDEN BY THIS CLASS. */
 
   Point get_refinement_point(const Edge& edge)
   {
@@ -92,8 +92,8 @@ public:
     this->va = edge.first->vertex(Tr::cw (edge.second));
     this->vb = edge.first->vertex(Tr::ccw(edge.second));
 
-    std::cerr << "get_refinement_point\n" << this->va->point() << " / "
-              << this->vb->point() << std::endl;
+//     std::cerr << "get_refinement_point\n" << this->va->point() << " / "
+//               << this->vb->point() << std::endl;
 
     va_has_a_cluster = false;
     vb_has_a_cluster = false;

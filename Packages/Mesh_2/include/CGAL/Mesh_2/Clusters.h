@@ -1,4 +1,4 @@
-// Copyright (c) 2004  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2004-2005  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -34,15 +34,16 @@ namespace Mesh_2
   {
     template <class Tr>
     class Is_edge_constrained {
+      const Tr& tr_;
     public:
       typedef typename Tr::Edge_circulator Edge_circulator;
       
-      Is_edge_constrained()
+      Is_edge_constrained(const Tr& tr)
       {}
 
       bool operator()(const Edge_circulator& ec) const
       {
-        return ec->first->is_constrained(ec->second);
+        return tr_.is_constrained(ec);
       }
     };
   } // end namespace details
@@ -383,7 +384,7 @@ template <typename Tr>
 void Clusters<Tr>::
 create_clusters_of_vertex(const Vertex_handle v)
 {
-  details::Is_edge_constrained<Tr> test;
+  details::Is_edge_constrained<Tr> test(tr);
 
   Constrained_edge_circulator begin(tr.incident_edges(v),test);
 

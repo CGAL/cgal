@@ -5,6 +5,8 @@
 
 - Histograms in the demo
 
+- do not use default constructor of Geom_traits
+
 Before CGAL-3.1:
 
 - Update the hierachy if CDT is a CT_plus_2. [DELAYED]
