@@ -64,10 +64,10 @@ int main()
   TESTIT(unsigned int, "unsigned int")
   TESTIT(unsigned long int, "unsigned long int")
   TESTIT(unsigned short int, "unsigned short int")
-#ifdef LONG_LONG
+#ifdef CGAL_USE_LONG_LONG
   TESTIT(long long, "long long")
   TESTIT(unsigned long long, "unsigned long long")
-#endif // LONG_LONG
+#endif
   TESTIT(float, "float")
   TESTIT(double, "double")
 

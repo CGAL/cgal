@@ -1,3 +1,6 @@
+4.62      (12 August 02)
+- Use CGAL_USE_LONG_LONG
+
 4.61      (7 August 02)
 - Added files Rational_traits.h, to_rational.h, Gmpq.h,
   and simplest_rational_in_interval.h
