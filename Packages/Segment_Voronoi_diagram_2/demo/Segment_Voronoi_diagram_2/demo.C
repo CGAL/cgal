@@ -89,14 +89,17 @@ public:
     //    setUsesBigPixmaps(TRUE);
 
     //How to attach the standard toolbar
-    stoolbar = new CGAL::Qt_widget_standard_toolbar(widget, this);
-    this->addToolBar(stoolbar->toolbar(), Top, FALSE);
+    stoolbar = new CGAL::Qt_widget_standard_toolbar(widget, this,
+						    this, FALSE, "");
 
-    file_toolbar = new File_toolbar(this);
-    this->addToolBar(file_toolbar->toolbar(), Top, FALSE);
+    file_toolbar = new File_toolbar("File operations",
+				    this, this, FALSE,
+				    "File operations");
 
-    layers_toolbar = new Layers_toolbar(widget, this, svd);
-    this->addToolBar(layers_toolbar->toolbar(), Top, FALSE);
+    layers_toolbar = new Layers_toolbar(widget, svd,
+					"Geometric Operations",
+					this, this, FALSE,
+					"Geometric Operations");
 
     connect(widget, SIGNAL(new_cgal_object(CGAL::Object)), this,
 	    SLOT(get_object(CGAL::Object)));

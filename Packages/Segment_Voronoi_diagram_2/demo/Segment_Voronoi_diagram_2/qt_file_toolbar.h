@@ -24,11 +24,10 @@
 #include "fileprint.xpm"
 
 
-class File_toolbar : public QObject
+class File_toolbar : public QToolBar
 {
   Q_OBJECT
 private:
-  QToolBar     *fileToolbar;
   QMainWindow  *window;
 
   QAction *fileNew;
@@ -39,12 +38,15 @@ private:
   QAction *filePrint;
 public:
   /** construtor */
-  File_toolbar(QMainWindow *mw)
-    {
-      window = mw;
-      initActions();
-      initToolBar();
-    }
+  File_toolbar(const QString& label, QMainWindow* mainWindow,
+	       QWidget* parent, bool newLine = FALSE,
+	       const char* name = 0, WFlags f = 0 )
+    : QToolBar(label, mainWindow, parent, newLine, name, f),
+      window(mainWindow)
+  {
+    initActions();
+    initToolBar();
+  }
 
   ~File_toolbar()
     {
@@ -54,12 +56,10 @@ public:
       delete fileSaveAs;
       delete fileClose;
       delete filePrint;
-
-      delete fileToolbar;
     }
 
 
-  inline QToolBar* toolbar() { return fileToolbar; }
+  inline QToolBar* toolbar() { return this; }
 
 signals:
   void fileToRead(const QString& f);
@@ -70,6 +70,7 @@ signals:
 private:
   void initActions()
     {
+      QString str;
       QPixmap openIcon, saveIcon, newIcon, printIcon;
       newIcon = QPixmap(filenew);
       openIcon = QPixmap(fileopen);
@@ -96,15 +97,11 @@ private:
 
       fileSaveAs = new QAction(tr("Save File As"), saveIcon, tr("Save &as..."),
 			       0, this);
-      fileSaveAs->setStatusTip(tr("Saves the actual document under a new filename"));
-      fileSaveAs->setWhatsThis(tr("Save As\n\nSaves the actual document under a new filename"));
+      str = "Saves the actual document under a new filename";
+      fileSaveAs->setStatusTip(tr(str));
+      str = "Save As\n\nSaves the actual document under a new filename";
+      fileSaveAs->setWhatsThis(tr(str));
       connect(fileSaveAs, SIGNAL(activated()), this, SLOT(slotFileSaveAs()));
-#if 0
-      fileSaveAs = new QAction(tr("Save File As"), tr("Save &as..."), 0, this);
-      fileSaveAs->setStatusTip(tr("Saves the actual document under a new filename"));
-      fileSaveAs->setWhatsThis(tr("Save As\n\nSaves the actual document under a new filename"));
-      connect(fileSaveAs, SIGNAL(activated()), this, SLOT(slotFileSave()));
-#endif
 
       fileClose = new QAction(tr("Close File"), tr("&Close"),
 			      0, this);
@@ -115,19 +112,19 @@ private:
       filePrint = new QAction(tr("Print File"), printIcon, tr("&Print"),
 			      0, this);
       filePrint->setStatusTip(tr("Prints out the actual document"));
-      filePrint->setWhatsThis(tr("Print File\n\nPrints out the actual document"));
+      str = "Print File\n\nPrints out the actual document";
+      filePrint->setWhatsThis(tr(str));
       connect(filePrint, SIGNAL(activated()), this, SLOT(slotFilePrint()));
     }
 
   void initToolBar()
     {
-      fileToolbar = new QToolBar(window, "file operations");
-      fileNew->addTo(fileToolbar);
-      fileOpen->addTo(fileToolbar);
-      fileSaveAs->addTo(fileToolbar);
-      filePrint->addTo(fileToolbar);
-      fileToolbar->addSeparator();
-      QWhatsThis::whatsThisButton(fileToolbar);
+      fileNew->addTo(this);
+      fileOpen->addTo(this);
+      fileSaveAs->addTo(this);
+      filePrint->addTo(this);
+      this->addSeparator();
+      QWhatsThis::whatsThisButton(this);
     }
   
   /** setup the statusbar */

@@ -12,8 +12,6 @@
 
 #include "qt_layers.h"
 
-#include <CGAL/IO/Qt_layer_show_mouse_coordinates.h>
-
 // icons
 #include <CGAL/IO/pixmaps/points.xpm>
 #include <CGAL/IO/pixmaps/point.xpm>
@@ -28,34 +26,37 @@
 
 typedef enum { SVD_POINT, SVD_SEGMENT, SVD_POLYGON } Input_mode;
 
-class Layers_toolbar : public QObject
+class Layers_toolbar : public QToolBar
 {
   Q_OBJECT
 public:
-  Layers_toolbar(CGAL::Qt_widget *w, QMainWindow *mw, SVD_2& svd)
-    : nr_of_buttons(0), input_mode(SVD_SEGMENT) {
-
+  Layers_toolbar(CGAL::Qt_widget *widget, SVD_2& svd,
+		 const QString& label, QMainWindow* mainWindow,
+		 QWidget* parent, bool newLine = FALSE,
+		 const char* name = 0, WFlags f = 0 )
+    : QToolBar(label, mainWindow, parent, newLine, name, f),
+      nr_of_buttons(0), input_mode(SVD_SEGMENT)
+  {
     showVD = new Voronoi_diagram_layer<SVD_2>(svd);
     showSI = new Sites_layer<SVD_2>(svd);
     showSK = new Skeleton_layer<SVD_2>(svd);
 
     // set the widget
-    widget = w;
-    window = mw;
+    this->widget = widget;
+    window = mainWindow;
     window->statusBar();
 
     widget->attach(showVD);
     widget->attach(showSK);
     widget->attach(showSI);
 
-    maintoolbar = new QToolBar("tools", mw, QMainWindow::Top, TRUE, "Tools");
 
     but[0] = new QToolButton(QPixmap( (const char**)points_xpm ),
 			     "Show sites", 
 			     0, 
 			     this, 
 			     SLOT(show_sites()), 
-			     maintoolbar, 
+			     this, 
 			     "Show sites");
 
     but[1] = new QToolButton(QPixmap( (const char**)voronoi_xpm ),
@@ -63,7 +64,7 @@ public:
 			     0, 
 			     this, 
 			     SLOT(show_voronoi()), 
-			     maintoolbar, 
+			     this, 
 			     "Show Voronoi diagram");
 
     but[2] = new QToolButton(QPixmap( (const char**)triangulation_xpm ),
@@ -71,7 +72,7 @@ public:
 			     0, 
 			     this, 
 			     SLOT(show_skeleton()), 
-			     maintoolbar, 
+			     this, 
 			     "Show skeleton");
     
     but[3] = new QToolButton(QPixmap( (const char**)point_xpm ),
@@ -79,7 +80,7 @@ public:
 			     0, 
 			     this, 
 			     SLOT(input_points_mode()), 
-			     maintoolbar, 
+			     this, 
 			     "Input points");
 
     
@@ -88,14 +89,14 @@ public:
 			     0, 
 			     this, 
 			     SLOT(input_segments_mode()), 
-			     maintoolbar, 
+			     this, 
 			     "Input segments");
     but[5] = new QToolButton(QPixmap( (const char**)polygon_xpm ),
 			     "Input polygons", 
 			     0, 
 			     this, 
 			     SLOT(input_polygons_mode()), 
-			     maintoolbar, 
+			     this, 
 			     "Input polygons");
 #if 1
     but[6] = new QToolButton(QPixmap( (const char**)notool_xpm ),
@@ -103,7 +104,7 @@ public:
 			     0, 
 			     this, 
 			     SLOT(remove_mode()), 
-			     maintoolbar, 
+			     this, 
 			     "Remove site");
 #else
     but[6] = new QToolButton(QPixmap( (const char**)remove_xpm ),
@@ -111,7 +112,7 @@ public:
 			     0, 
 			     this, 
 			     SLOT(remove_mode()), 
-			     maintoolbar, 
+			     this, 
 			     "Remove site");
 #endif
     but[7] = new QToolButton(QPixmap( (const char**)holddown_xpm ),
@@ -119,7 +120,7 @@ public:
 			     0, 
 			     this, 
 			     SLOT(snap_mode()), 
-			     maintoolbar, 
+			     this, 
 			     "Snap mode");
 
     showSK->deactivate();
@@ -145,7 +146,7 @@ public:
     delete showSK;
   }
 
-  inline QToolBar* toolbar() { return maintoolbar; };
+  inline QToolBar* toolbar() { return this; };
 
 signals:
   void new_object(CGAL::Object);
@@ -236,7 +237,6 @@ private slots:
   }
 
 private:
-  QToolBar		*maintoolbar;
   QToolButton		*but[15];
   CGAL::Qt_widget	*widget;
   QMainWindow		*window;	
