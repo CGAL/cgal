@@ -245,7 +245,7 @@ struct Remove : public std::unary_function<Vertex_handle, bool>
       { 
 	swap_selected_facets_on_conflict_boundary(T, vh);
 	re_init_for_free_cells_cache(T, vh);
-	Point p = convert()(vh->point());
+	const Point& p = vh->point();
 	if (!T.remove(vh)) {
 	  std::cerr << "+++Delaunay_triangulation_3.remove(Vertex_handle) failed."  <<
 	    p << std::endl;
@@ -260,7 +260,7 @@ struct Remove : public std::unary_function<Vertex_handle, bool>
 	retract_border_for_incident_facets(vh);
 	re_init_for_free_cells_cache(T, vh);
 	_vh_number--;
-	Point p = convert()(vh->point());
+	const Point& p = vh->point();
 	if (!T.remove(vh)){
 	  std::cerr << "+++Delaunay_triangulation_3.remove(Vertex_handle) failed." <<
 	    p << std::endl;

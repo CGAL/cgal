@@ -23,10 +23,7 @@
 #include <CGAL/Static_filters.h>
 #endif
 
-#include <CGAL/Cartesian_converter.h>
-
 #include <CGAL/Triangulation_data_structure_3.h>
-#include <CGAL/Triangulation_geom_traits_3.h>
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Triangulation_hierarchy_3.h>
 
@@ -54,44 +51,8 @@ struct Rep : public CGAL::Filtered_kernel<CGAL::Simple_cartesian<NT> > {};
 struct Rep : public CGAL::Static_filters<CGAL::Simple_cartesian<NT> > {};
 #endif
 
-//---
-// struct leda_real_NT_converter
-// {
-//     leda_real
-//     operator()(const NT &a) const
-//     {
-//         return a.exact();
-//     }
-// };
-
-// typedef leda_real ENT;
-// typedef CGAL::Simple_cartesian<NT> F_Rep;
-// typedef CGAL::Simple_cartesian<ENT> E_Rep;
-// typedef CGAL::Cartesian_converter<F_Rep, E_Rep, leda_real_NT_converter > TMP_Conv;
-// typedef CGAL::Kernel_checker<F_Rep, E_Rep, TMP_Conv > Rep;
-//---
 
 
-struct D_Rep : public CGAL::Simple_cartesian<coord_type> {};
-
-//conversion de coord_type en Filtered_exact
-struct coord_type_NT_converter
-{
-    coord_type
-    operator()(const NT &a) const
-    {
-        return CGAL::to_double(a);
-    }
-};
-
-//==========================================
-
-typedef CGAL::Cartesian_converter<Rep, D_Rep, coord_type_NT_converter > convert;
-
-// af: does this make sense when the two kernels are the same:
-//struct convert {
-//  Rep::Point_3& operator()(Rep::Point_3& p) {return p;}
-//};
 
 
 typedef Rep::Point_3  Point;
@@ -102,13 +63,6 @@ typedef Rep::Ray_3  Ray;
 typedef Rep::Line_3  Line;
 typedef Rep::Triangle_3  Triangle;
 
-typedef D_Rep::Point_3  D_Point;
-typedef D_Rep::Vector_3 D_Vector;
-typedef D_Rep::Sphere_3  D_Sphere;
-typedef D_Rep::Segment_3  D_Segment;
-typedef D_Rep::Ray_3  D_Ray;
-typedef D_Rep::Line_3  D_Line;
-typedef D_Rep::Triangle_3  D_Triangle;
 
 
 typedef Rep Gt; // af
@@ -228,26 +182,16 @@ coord_type get_smallest_radius_delaunay_sphere(const Triangulation_3 & A,
   coord_type value = c->get_smallest_radius(index);
   if ((value >= 0)&&(n->get_smallest_radius(n->index(c)) == value))
     return value;
-  /*
-  D_Point cp0 = convert()(c->vertex(index)->point());
-  D_Point cp1 = convert()(c->vertex((index+1) & 3)->point());
-  D_Point cp2 = convert()(c->vertex((index+2) & 3)->point());
-  D_Point cp3 = convert()(c->vertex((index+3) & 3)->point());
 
-  D_Point np0=  convert()(n->vertex(0)->point());
-  D_Point np1 = convert()(n->vertex(1)->point());
-  D_Point np2 = convert()(n->vertex(2)->point());
-  D_Point np3 = convert()(n->vertex(3)->point());
-  */
-  const D_Point& cp0 = c->vertex(index)->point();
-  const D_Point& cp1 = c->vertex((index+1) & 3)->point();
-  const D_Point& cp2 = c->vertex((index+2) & 3)->point();
-  const D_Point& cp3 = c->vertex((index+3) & 3)->point();
+  const Point& cp0 = c->vertex(index)->point();
+  const Point& cp1 = c->vertex((index+1) & 3)->point();
+  const Point& cp2 = c->vertex((index+2) & 3)->point();
+  const Point& cp3 = c->vertex((index+3) & 3)->point();
 
-  const D_Point& np0 = n->vertex(0)->point();
-  const D_Point& np1 = n->vertex(1)->point();
-  const D_Point& np2 = n->vertex(2)->point();
-  const D_Point& np3 = n->vertex(3)->point();
+  const Point& np0 = n->vertex(0)->point();
+  const Point& np1 = n->vertex(1)->point();
+  const Point& np2 = n->vertex(2)->point();
+  const Point& np3 = n->vertex(3)->point();
 
   bool c_is_plane(my_coplanar(cp0, cp1, cp2, cp3));
   bool n_is_plane(my_coplanar(np0, np1, np2, np3));
@@ -278,18 +222,13 @@ coord_type get_smallest_radius_delaunay_sphere(const Triangulation_3 & A,
 	  i1 = (ind+1) & 3;
 	  i2 = (ind+2) & 3;
 	  i3 = (ind+3) & 3;
-	  /*
-	  D_Point pp0 = convert()(cc->vertex(ind)->point());
-	  D_Point pp1 = convert()(cc->vertex(i1)->point());
-	  D_Point pp2 = convert()(cc->vertex(i2)->point());
-	  D_Point pp3 = convert()(cc->vertex(i3)->point());
-	  */
-	  const D_Point& pp0 = cc->vertex(ind)->point();
-	  const D_Point& pp1 = cc->vertex(i1)->point();
-	  const D_Point& pp2 = cc->vertex(i2)->point();
-	  const D_Point& pp3 = cc->vertex(i3)->point();
+	
+	  const Point& pp0 = cc->vertex(ind)->point();
+	  const Point& pp1 = cc->vertex(i1)->point();
+	  const Point& pp2 = cc->vertex(i2)->point();
+	  const Point& pp3 = cc->vertex(i3)->point();
 
-	  D_Sphere facet_sphere(pp1, pp2, pp3);
+	  Sphere facet_sphere(pp1, pp2, pp3);
 	  if (CGAL::squared_distance(facet_sphere.center(), pp0) <
 	      facet_sphere.squared_radius())
 	    {
@@ -304,7 +243,7 @@ coord_type get_smallest_radius_delaunay_sphere(const Triangulation_3 & A,
 	}
       else
 	{
-	  D_Point cc, cn;
+	  Point cc, cn;
 #ifndef NOLAZY
 	  cc = get_lazy_circumcenter(c);
 	  cn = get_lazy_circumcenter(n);
@@ -313,7 +252,7 @@ coord_type get_smallest_radius_delaunay_sphere(const Triangulation_3 & A,
 	  cn = CGAL::circumcenter(np0, np1, np2, np3);
 #endif //NOLAZY
 	  // calcul de la distance de cp1 au segment dual cc, cn...
-	  D_Vector V(cc - cn), Vc(cc - cp1), Vn(cp1 - cn);
+	  Vector V(cc - cn), Vc(cc - cp1), Vn(cp1 - cn);
 	  coord_type ac(V * Vc), an(V * Vn), norm_V(V * V);
 	  if ((ac > 0) && (an > 0))
 	    {
@@ -355,18 +294,13 @@ Radius_edge_type compute_value(const Edge_IFacet& e, const Triangulation_3& A)
 
   coord_type pscal;//, prec_pliure = e.third;
 
-/*
-  D_Point p1 = convert()(c->vertex(i1)->point());
-  D_Point p2 = convert()(c->vertex(i2)->point());
-  D_Point pc = convert()(c->vertex(i3)->point());
-*/
-  const D_Point& p1 = c->vertex(i1)->point();
-  const D_Point& p2 = c->vertex(i2)->point();
-  const D_Point& pc = c->vertex(i3)->point();
+  const Point& p1 = c->vertex(i1)->point();
+  const Point& p2 = c->vertex(i2)->point();
+  const Point& pc = c->vertex(i3)->point();
   
-  D_Vector P2P1 = p1-p2, P2Pn, PnP1;
+  Vector P2P1 = p1-p2, P2Pn, PnP1;
 
-  D_Vector v2, v1 = CGAL::cross_product(pc-p2, P2P1);
+  Vector v2, v1 = CGAL::cross_product(pc-p2, P2P1);
 
   coord_type norm, norm1 = v1*v1;
   coord_type norm12 = P2P1*P2P1;
@@ -405,7 +339,7 @@ Radius_edge_type compute_value(const Edge_IFacet& e, const Triangulation_3& A)
 	      neigh->vertex(n_i3)->not_interior()&&
 	      (!is_interior_edge(el1))&&(!is_interior_edge(el2)))
 	    {
-	      D_Point pn = convert()(neigh->vertex(n_i3)->point());
+	      const Point& pn = neigh->vertex(n_i3)->point();
 	 
 	      P2Pn = pn-p2;
 	      v2 = CGAL::cross_product(P2P1,P2Pn);
@@ -470,7 +404,8 @@ Radius_edge_type compute_value(const Edge_IFacet& e, const Triangulation_3& A)
       else
 	{
 	  //on refuse une trop grande non-uniformite
-	  if (min_valueA <= K*get_smallest_radius_delaunay_sphere(A, c, i))
+	  coord_type tmp = get_smallest_radius_delaunay_sphere(A, c, i);
+	  if (min_valueA <= K * tmp)
 	    value = - min_valueP;
 	  else
 	    {
@@ -478,7 +413,7 @@ Radius_edge_type compute_value(const Edge_IFacet& e, const Triangulation_3& A)
 	      // + grand alpha... a traiter plus tard....
 	      min_K = 
 		std::min(min_K,
-			 min_valueA/get_smallest_radius_delaunay_sphere(A, c, i));
+			 min_valueA/tmp);
 	    }
 	}
     }
@@ -582,15 +517,10 @@ test_merge(const Triangulation_3& A,
 	   const Vertex_handle& v, const coord_type& ear_alpha)
 {
   Edge_IFacet Ifacet = result.first.second.first;
-  /*
-  D_Point p1 = convert()((ordered_key.first)->point());
-  D_Point p2 = convert()((ordered_key.second)->point());
-  D_Point pc = convert()(v->point());
-  */
   
-  const D_Point& p1 = (ordered_key.first)->point();
-  const D_Point& p2 = (ordered_key.second)->point();
-  const D_Point& pc = v->point();
+  const Point& p1 = (ordered_key.first)->point();
+  const Point& p2 = (ordered_key.second)->point();
+  const Point& pc = v->point();
 
   Cell_handle neigh = (Cell*) Ifacet.first.first;
   int n_ind = Ifacet.second;
@@ -598,8 +528,8 @@ test_merge(const Triangulation_3& A,
   int n_i2 = Ifacet.first.third;
   int n_i3 = (6 - n_ind - n_i1 - n_i2);
 
-  D_Point pn = convert()(neigh->vertex(n_i3)->point());
-  D_Vector v1 = CGAL::cross_product(pc-p2,p1-p2),
+  const Point& pn = neigh->vertex(n_i3)->point();
+  Vector v1 = CGAL::cross_product(pc-p2,p1-p2),
     v2 = CGAL::cross_product(p1-p2,pn-p2);
   coord_type norm = CGAL::sqrt((v1*v1)*(v2*v2));
 
@@ -612,37 +542,6 @@ test_merge(const Triangulation_3& A,
   return 0; //sinon oreille a rejeter...
 }
 
-//---------------------------------------------------------------------
-// test de reciprocite avant de recoller une oreille 
-// controle de la propagation par rampe
-// inline bool
-// test_merge_ear(const Edge_like& ordered_key, const Border_elt& result, 
-// 	       const Vertex_handle& v, const coord_type& ear_alpha)
-// {
-//   Edge_IFacet Ifacet = result.first.second.first;
-//   D_Point p1 = convert()((ordered_key.first)->point());
-//   D_Point p2 = convert()((ordered_key.second)->point());
-//   D_Point pc = convert()(v->point());
-  
-//   Cell_handle neigh = (Cell*) Ifacet.first.first;
-//   int n_ind = Ifacet.second;
-//   int n_i1 = Ifacet.first.second;
-//   int n_i2 = Ifacet.first.third;
-//   int n_i3 = (6 - n_ind - n_i1 - n_i2);
-
-//   D_Point pn = convert()(neigh->vertex(n_i3)->point());
-//   D_Vector v1 = CGAL::cross_product(pc-p2,p1-p2),
-//     v2 = CGAL::cross_product(p1-p2,pn-p2);
-
-//   if (v1*v2 > 0)      
-//     return true;
-
-//   // si ca courbe plus que pi/2 il faut un tres bon echantillon
-//   if (ear_alpha <= K*neigh->get_smallest_radius(n_ind))
-//     return true;
-    
-//   return false;
-// }
 
 //---------------------------------------------------------------------
 

@@ -83,15 +83,14 @@ inline bool is_border_elt(Edge_like& key, Border_elt& result)
   if (it21 != NULL)
     {    
       result = it21->second;
-      key = Edge_like(key.second, key.first); // why not std::swap(key.first, key.second)?
+      std::swap(key.first, key.second);
       return true;
     }
   return false;
 }
 
 //---------------------------------------------------------------------
-inline bool is_border_elt(Edge_like& key)
-{
+inline bool is_border_elt(Edge_like& key){
   Next_border_elt* it12 =  key.first->get_border_elt((void*) &(*key.second));
   if (it12 != NULL)
     {    
@@ -102,7 +101,7 @@ inline bool is_border_elt(Edge_like& key)
   Next_border_elt* it21 =  key.second->get_border_elt((void*) &(*key.first));
   if (it21 != NULL)
     {    
-      key = Edge_like(key.second, key.first); // why not std::swap(key.first, key.second)?
+      std::swap(key.first, key.second);
       return true;
     }
   return false;
@@ -172,13 +171,7 @@ inline coord_type get_lazy_squared_radius(const Cell_handle& c)
 {
   if (c->get_lazy_squared_radius() != NULL)
     return *(c->get_lazy_squared_radius());
-  /*
-  c->set_lazy_squared_radius
-    (CGAL::squared_radius(convert()(c->vertex(0)->point()),
-			  convert()(c->vertex(1)->point()),
-			  convert()(c->vertex(2)->point()),
-			  convert()(c->vertex(3)->point())));
-  */
+
   c->set_lazy_squared_radius
     (CGAL::squared_radius(c->vertex(0)->point(),
 			  c->vertex(1)->point(),
@@ -187,17 +180,11 @@ inline coord_type get_lazy_squared_radius(const Cell_handle& c)
   return *(c->get_lazy_squared_radius());
 }
 
-inline D_Point get_lazy_circumcenter(const Cell_handle& c)
+inline Point get_lazy_circumcenter(const Cell_handle& c)
 {
   if (c->get_lazy_circumcenter() != NULL)
     return *(c->get_lazy_circumcenter());
-  /*
-  c->set_lazy_circumcenter
-    (CGAL::circumcenter(convert()(c->vertex(0)->point()),
-			convert()(c->vertex(1)->point()),
-			convert()(c->vertex(2)->point()),
-			convert()(c->vertex(3)->point())));
-  */
+
   c->set_lazy_circumcenter
     (CGAL::circumcenter(c->vertex(0)->point(),
 			c->vertex(1)->point(),
@@ -241,8 +228,8 @@ inline Edge_IFacet dec_facet_circ(const Edge_IFacet& e)
 //---------------------------------------------------------------------
 
 inline bool
-my_coplanar(const D_Point& p, const D_Point& q, 
-	    const D_Point& r, const D_Point& s)
+my_coplanar(const Point& p, const Point& q, 
+	    const Point& r, const Point& s)
 {
   coord_type qpx = q.x()-p.x();
   coord_type qpy = q.y()-p.y();
@@ -264,7 +251,7 @@ my_coplanar(const D_Point& p, const D_Point& q,
 
 
 inline bool
-my_collinear(const D_Point& p, const D_Point& q, const D_Point& s)
+my_collinear(const Point& p, const Point& q, const Point& s)
 {
   coord_type psx = p.x()-s.x();
   coord_type psy = p.y()-s.y();
@@ -292,91 +279,7 @@ visu_facet(const Cell_handle& c, const int& i)
   _facet_number++;
 }
 
-//=====================================================================
-//=====================================================================
-#ifndef BLIND
-void
-show_selected_facets(CGAL::Geomview_stream &gv, const Triangulation_3& T)
-{ 
 
-  // Header.
-  bool ascii_bak = gv.get_ascii_mode();
-  bool raw_bak = gv.set_raw(true);
-  _vh_number = 0;
-  for (Finite_vertices_iterator v_it = T.finite_vertices_begin();
-       v_it != T.finite_vertices_end();
-       v_it++)
-   if (!v_it->is_exterior())
-     {
-       _vh_number++;
-     }
-
-  gv.set_binary_mode();
-  gv << "(geometry " << gv.get_new_id("object")
-     << " {appearance {}{ OFF BINARY\n"
-     << _vh_number << _facet_number << 0;
-
-  CGAL::Unique_hash_map<Vertex*, int> vertex_index_map(-1, T.number_of_vertices());
-
-  int count(0);
-  for (Finite_vertices_iterator v_it = T.finite_vertices_begin();
-       v_it != T.finite_vertices_end();
-       v_it++){
-    CGAL::Unique_hash_map<Vertex*, int>::Data& d = vertex_index_map[&(*v_it)];
-    if ((!v_it->is_exterior()) && d == -1){
-      d = count;
-      count++;
-      gv << convert()(v_it->point())  << " \n";
-    }
-  }
-
-  for(Finite_facets_iterator f_it = T.finite_facets_begin(); 
-      f_it != T.finite_facets_end(); 
-      f_it++)
-    {
-      Cell_handle n, c = (*f_it).first;
-      int ni, ci = (*f_it).second;
-      n = c->neighbor(ci);
-      ni = n->index(c);
-      int i1, i2 ,i3;
-
-      if (c->is_selected_facet(ci))
-	{
-	  i1 = (ci+1) & 3;
-	  i2 = (ci+2) & 3;
-	  i3 = (ci+3) & 3;
-	  gv << 3;
-	  gv << vertex_index_map[&(*c->vertex(i1))];
-	  gv << vertex_index_map[&(*c->vertex(i2))];
-	  gv << vertex_index_map[&(*c->vertex(i3))];
-	  gv << 0; // without color.
-	  // gv << 4 << drand48() << drand48() << drand48() << 1.0; // random
-	  // color
-	}
-
-       if (n->is_selected_facet(ni))
-	{
-	  i1 = (ni+1) & 3;
-	  i2 = (ni+2) & 3;
-	  i3 = (ni+3) & 3;
-	  gv << 3;
-	  gv << vertex_index_map[&(*n->vertex(i1))];
-	  gv << vertex_index_map[&(*n->vertex(i2))];
-	  gv << vertex_index_map[&(*n->vertex(i3))];
-	  gv << 0; // without color.
-	  // gv << 4 << drand48() << drand48() << drand48() << 1.0; // random
-	  // color 
-	}
-    }
-  // Footer.
-  gv << "}})";
-      
-  gv.set_raw(raw_bak);
-  gv.set_ascii_mode(ascii_bak);
-}
-#endif
-//=====================================================================
-//=====================================================================
 
 int border_counter(const Triangulation_3& T)
 {

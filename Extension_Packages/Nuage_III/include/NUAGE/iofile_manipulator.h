@@ -215,7 +215,7 @@ dump_in_file_medit_selected_facets(char* foutput, const Triangulation_3& A)
     if ((!v_it->is_exterior()) && d == -1){
       d = count;
       count++;
-      os_points << convert()(v_it->point()) << " 0" << std::endl;
+      os_points << v_it->point() << " 0" << std::endl;
     }
   }
   
@@ -305,7 +305,7 @@ dump_in_file_gv_selected_facets(char* foutput, const Triangulation_3& A)
     if ((!v_it->is_exterior()) && d == -1){
       d = count;
       count++;
-      os << convert()(v_it->point())  << " \n";
+      os << v_it->point()  << " \n";
     }
   }
      
@@ -408,7 +408,7 @@ dump_in_file_ply_selected_facets(char* foutput, const Triangulation_3& A)
     if ((!v_it->is_exterior()) && d == -1){
       d = count;
       count++;
-      os << convert()(v_it->point())  << std::endl;
+      os << v_it->point()  << std::endl;
     }
   }
      
@@ -506,7 +506,7 @@ dump_in_file_iv_border_edges(const Triangulation_3& A, std::ofstream& os)
 "		         ";
       else
 	first=false;
-      os << convert()(*points_tab[vh_i]);
+      os << *points_tab[vh_i];
     }
   os << " ]" << std::endl <<
 "		}" << std::endl <<
@@ -579,7 +579,7 @@ dump_in_file_iv_remaining_points(const Triangulation_3& A, std::ofstream& os)
 "		         ";
       else
 	first=false;
-      os << convert()(*points_tab[vh_i]);
+      os << *points_tab[vh_i];
     }
   os << " ]" << std::endl <<
 "		}" << std::endl <<
@@ -642,7 +642,7 @@ dump_in_file_iv_border_facets(const Triangulation_3& A, std::ofstream& os)
 "		         ";
       else
 	first=false;
-      os << convert()(*points_tab[vh_i]);
+      os << *points_tab[vh_i];
     }
   os << " ]" << std::endl <<
 "		}" << std::endl <<
@@ -773,7 +773,7 @@ dump_in_file_iv_selected_facets(char* foutput, const Triangulation_3& A,
     if ((!v_it->is_exterior()) && d == -1){
       d = count;
       count++;
-      os << convert()(v_it->point())  << " ,\n";
+      os << v_it->point()  << " ,\n";
     }
   }
   os << " ]" << std::endl <<
@@ -950,7 +950,7 @@ dump_in_file_vrml2_selected_facets(char* foutput, const Triangulation_3& A,
     if ((!v_it->is_exterior()) && d == -1){
       d = count;
       count++;
-      os << convert()(v_it->point())  << " ,\n";
+      os << v_it->point()  << " ,\n";
     }
   }
   _vh_number = count; // needed for the statistics
