@@ -1,3 +1,6 @@
+1.43 (20 June 2003)
+- Fixes for HTML index.
+
 1.42 (17 June 2003)
 - Include Origin.h in function_objects.h.
 
