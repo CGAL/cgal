@@ -72,7 +72,7 @@ typedef CGAL::Constrained_Delaunay_triangulation_2<Meshtraits, Tds,
 
 typedef K::Point_2 Point;
 typedef K::Circle_2 Circle;
-typedef CGAL::Polygon_2<K> Polygon;
+typedef CGAL::Polygon_2<K> CGALPolygon;
 
 typedef CGAL::Mesh_2<Tr> Mesh;
 
@@ -157,29 +157,35 @@ public:
       mesh = 0;
       seeds = new Seeds();
 
-      QFrame* mainframe = new QFrame(this); 
-      QHBoxLayout *hbox = new QHBoxLayout(mainframe);
-      //      hbox->setAutoAdd(true);
+      QFrame* mainframe = new QFrame(this, "mainframe"); 
+      QHBoxLayout *hbox = new QHBoxLayout(mainframe, 0, 0,
+					  "mainlayout");
+
       widget = new CGAL::Qt_widget(mainframe, "Main widget");
       widget->setSizePolicy(QSizePolicy( QSizePolicy::Expanding,
 					 QSizePolicy::Expanding ));
       hbox->addWidget(widget);
 
-      QSlider* slider = new QSlider ( 0, 360, 60, 0, QSlider::Vertical, mainframe, "xsl" );
-      slider->setTickmarks( QSlider::Left );
-      hbox->addWidget(slider);
+      QFrame* infoframe = new QFrame(mainframe, "infoframe");
+      infoframe->setFrameStyle( QFrame::Box | QFrame::Raised );
+      infoframe->setLineWidth(2);
 
+      hbox->addWidget(infoframe);
+
+      QGridLayout *vbox = new QGridLayout(infoframe, 1, 2, 10, 5, 
+					  "infolayout");
+      vbox->setMargin(10);
+
+      QLabel *nbre_de_points_label = new QLabel(infoframe);
+      nbre_de_points_label->setText("Number of points: ");
+      vbox->addWidget(nbre_de_points_label, 0, 0, AlignRight | AlignTop );
+
+      nbre_de_points = new QLabel("0", infoframe);
+      vbox->addWidget(nbre_de_points, 0, 1, AlignLeft | AlignTop );
+      
       setCentralWidget(mainframe);
       resize(700,500);
       mainframe->show();
-
-      QVBox* info = new QVBox(mainframe);
-//       QLabel* label = new QLabel("essai", info);
-//       new QLineEdit("prout", info);
-//       label->setText("Prout");
-//       label->show();
-      info->show();
-      info->adjustSize();
 
       // STATUSBAR
       statusBar();
@@ -219,7 +225,7 @@ public:
       widget->attach(get_point);
       get_point->deactivate();
 
-      get_polygon = new CGAL::Qt_widget_get_polygon<Polygon>();
+      get_polygon = new CGAL::Qt_widget_get_polygon<CGALPolygon>();
       widget->attach(get_polygon);
       get_polygon->deactivate();
 
@@ -429,7 +435,7 @@ public:
 				       this, SLOT(setLocal()),
 				       CTRL+Key_L );
 
-      widget->set_window(-500.,500.,-500.,500.);
+      widget->set_window(-1.,1.,-1.,1.);
       widget->setMouseTracking(TRUE);
     };
 
@@ -474,7 +480,6 @@ public:
 	  triangulation->swap(*mesh); // swap *triangulation and *mesh
 	  // *mesh is now empty
 	  delete mesh;
-	  std::cerr << triangulation->number_of_vertices() << std::endl;
 	  mesh = 0; // in case delete does not the job
 	};
     }
@@ -485,7 +490,7 @@ public slots:
   void get_cgal_object(CGAL::Object obj)
     { // TODO: when inputs arise, seeds should be cleared
       Point p;
-      Polygon poly;
+      CGALPolygon poly;
       
       if(CGAL::assign(p,obj))
 	if(follow_mouse->is_active())
@@ -529,7 +534,7 @@ public slots:
 	if (CGAL::assign(poly,obj))
 	  {
 	    switch_to_triangulation();
-	    for(Polygon::Edge_const_iterator it=poly.edges_begin();
+	    for(CGALPolygon::Edge_const_iterator it=poly.edges_begin();
 		it!=poly.edges_end();
 		it++)
 	      triangulation->insert((*it).source(),(*it).target());
@@ -537,6 +542,7 @@ public slots:
 	    mesh->mark_facets(seeds->begin(), seeds->end());
 	    is_mesh_initialized = false;
 	  }
+      updatePointCouter();
       widget->redraw();
     }
 
@@ -588,12 +594,18 @@ public slots:
       widget->redraw();
     }
 
+  void updatePointCouter()
+    {
+      nbre_de_points->setNum(triangulation->number_of_vertices());
+    }
+
   void refineMesh()
     {
       switch_to_mesh();
       saveTriangulationUrgently("last_input.edg");
       mesh->refine(seeds->begin(), seeds->end());
       is_mesh_initialized=true;
+      updatePointCouter();
       widget->redraw();
     }
 
@@ -607,6 +619,7 @@ public slots:
 	  is_mesh_initialized=true;
 	}
       mesh->conform();
+      updatePointCouter();
       widget->redraw();
     }
 
@@ -621,6 +634,7 @@ public slots:
 	}
       if(!mesh->refine_step())
 	pbMeshTimer->setOn(false);
+      updatePointCouter();
       widget->redraw();
     }
 
@@ -651,6 +665,7 @@ public slots:
       seeds->clear();
       is_mesh_initialized=false;
       switch_to_triangulation();
+      updatePointCouter();
       widget->redraw();
     }
 
@@ -696,6 +711,7 @@ public slots:
       widget->set_window(xmin-1.1*xspan, xmax+1.1*xspan, 
 			 ymin-1.1*yspan, ymax+1.1*yspan);
 
+      updatePointCouter();
       widget->redraw();
     }
 
@@ -773,7 +789,7 @@ private:
   CGAL::Qt_widget* widget;
   CGAL::Qt_widget_get_point<K>* get_point;
   CGAL::Qt_widget_get_point<K>* get_seed;
-  CGAL::Qt_widget_get_polygon<Polygon>* get_polygon;
+  CGAL::Qt_widget_get_polygon<CGALPolygon>* get_polygon;
   Follow_mouse* follow_mouse;
 
   CGAL::Qt_layer_show_points<Tr>* show_points;
@@ -785,6 +801,7 @@ private:
   Show_marked_faces<Tr>* show_marked;
 
   //  QLabel* aspect_ratio_label;
+  QLabel *nbre_de_points;
   QTimer* timer;
   QPushButton *pbMeshTimer;
   int timer_interval;
