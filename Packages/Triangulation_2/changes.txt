@@ -1,6 +1,13 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+Ver 4.66 (14 september 00)
+- temporary modified the test of triangulation hierarchy
+to try to find out why it loops on VC++ :
+suppress the insertion of random points
+add a cout in  insert() of 
+Triangulation_hierarchy_2 to ouput the insertion level of each point.
+
 Ver 4.65 (12 September 00)
 -fixes in copy_triangulation of Triangulation_hierarchy_2
 for VCC (redefinition of variables in loops).
