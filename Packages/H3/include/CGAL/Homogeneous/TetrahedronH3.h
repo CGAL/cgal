@@ -26,6 +26,7 @@
 #include <vector>
 #include <functional>
 #include <CGAL/Fourtuple.h>
+#include <CGAL/Homogeneous/predicates_on_pointsH3.h>
 
 CGAL_BEGIN_NAMESPACE
 

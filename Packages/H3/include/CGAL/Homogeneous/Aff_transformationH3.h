@@ -36,6 +36,11 @@ template < class R >
 class Aff_transformation_repH3;
 
 template < class R >
+std::ostream &
+operator<< ( std::ostream & out,
+             const Aff_transformationH3<R>& t);
+
+template < class R >
 Aff_transformationH3<R>
 _general_transformation_composition (
                            Aff_transformation_repH3<R> l,
@@ -46,9 +51,9 @@ class Aff_transformation_rep_baseH3 : public Ref_counted_virtual
 // abstract base class of aff transformation representations
 {
 public:
-  typedef R_                       R;
-  typedef typename R::FT           FT;
-  typedef typename R::RT           RT;
+  typedef R_                         R;
+  typedef typename R::FT             FT;
+  typedef typename R::RT             RT;
   typedef typename R::Point_3        Point_3;
   typedef typename R::Vector_3       Vector_3;
   typedef typename R::Direction_3    Direction_3;

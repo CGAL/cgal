@@ -24,6 +24,7 @@
 #define CGAL_SPHEREH3_H
 
 #include <CGAL/utility.h>
+#include <CGAL/Homogeneous/predicates_on_pointsH3.h>
 
 CGAL_BEGIN_NAMESPACE
 
