@@ -31,7 +31,7 @@
 #include <CGAL/Nef_S2/debug.h>
 #include <CGAL/Nef_S2/SM_decorator_traits.h>
 #include <CGAL/Nef_S2/Sphere_map.h>
-#include <CGAL/Nef_3/Normalizing.h>
+#include <CGAL/Nef_S2/Normalizing.h>
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/IO/Verbose_ostream.h>
 
