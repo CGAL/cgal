@@ -1,4 +1,4 @@
-3.14    (20 Jul 2001)
+3.15    (20 Jul 2001)
 - removed constructive predicates
 
 3.14    (17 Jul 2001)
