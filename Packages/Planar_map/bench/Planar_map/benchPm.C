@@ -1,4 +1,6 @@
-#include "short_names.h"
+#include <CGAL/config.h>
+
+#include "CGAL/Short_names.h"
 
 #include <CGAL/basic.h>
 #include <CGAL/leda_rational.h>
@@ -17,14 +19,12 @@
 #include <CGAL/Planar_map_2.h>
 #include <CGAL/Pm_segment_traits_2.h>
 #include <CGAL/IO/Window_stream.h>
-#include <CGAL/IO/Planar_map_iostream.h>
-#include "CGAL/bench.h"
+#include <CGAL/IO/Pm_iostream.h>
+#include <CGAL/IO/Pm_Window_stream.h>
+#include "CGAL/Bench.h"
+#include "CGAL/Dir_search.h"
 
 #include <stdlib.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
-
 #include <iostream>
 #include <fstream>
 #include <list>
@@ -49,7 +49,37 @@ typedef CGAL::Planar_map_2<Dcel,Traits>                 Planar_map;
 typedef Traits::Point_2                                 Point;
 typedef Traits::X_curve_2                               Curve;
 typedef std::list<Curve>                                CurveList;
-typedef std::list<std::string>                          Dirs;
+
+// Global variable declarations:
+static
+#if (defined _MSC_VER)
+const
+#endif
+char * IOOpts[] = {
+  "format", "f", NULL
+};
+
+enum IOId  {
+  IO_FORMAT = 0,
+  IO_F
+};
+
+static
+#if (defined _MSC_VER)
+const
+#endif
+char * FormatOpts[] = {
+  "rat", "int", "float", "r", "i", "f", NULL
+};
+
+enum FormatId  {
+  FORMAT_RAT = 0,
+  FORMAT_INT,
+  FORMAT_FLT,
+  FORMAT_R,
+  FORMAT_I,
+  FORMAT_F
+};
 
 static
 #if (defined _MSC_VER)
@@ -59,13 +89,15 @@ char * BenchOpts[] = {
   "construct", "display", "co", "di", NULL
 };
 
-#define BENCH_CONSTRUCT 0
-#define BENCH_DISPLAY   1
-#define BENCH_CO        2
-#define BENCH_DI        3
-#define NUM_BENCHS      2
+enum BenchId  {
+  BENCH_CONSTRUCT = 0,
+  BENCH_DISPLAY,
+  BENCH_CO,
+  BENCH_DI,
+  BENCH_ALL
+};
 
-static char OptionStr[] = "b:hs:t:v";
+static char OptionStr[] = "b:hi:s:t:v";
 
 /*
  */
@@ -83,6 +115,26 @@ public:
 
   /*
    */
+  void setExtreme(double x, double y)
+  {
+    m_x0 = x;
+    m_y0 = y;
+    m_x1 = x;
+    m_y1 = y;
+  }
+
+  /*
+   */
+  void compareExtreme(double x, double y)
+  {
+    if (x < m_x0) m_x0 = x;
+    if (y < m_y0) m_y0 = y;
+    if (m_x1 < x) m_x1 = x;
+    if (m_y1 < y) m_y1 = y;
+  }
+    
+  /*
+   */
   int init()
   {
     std::ifstream inp(m_filename);
@@ -95,39 +147,43 @@ public:
     
     int i;
     for (i = 0; i < count; i++) {
-      NT x, y;
-      inp >> x >> y;
-      double dx = CGAL::to_double(x);
-      double dy = CGAL::to_double(y);
-      if (i == 0) {
-        m_x0 = dx;
-        m_y0 = dy;
-        m_x1 = dx;
-        m_y1 = dy;
+      leda_rational x0, y0, x1, y1;
+      if (m_format == FORMAT_RAT) {
+        inp >> x0 >> y0 >> x1 >> y1;
+      } else if (m_format == FORMAT_INT) {
+        int ix0, iy0, ix1, iy1;
+        inp >> ix0 >> iy0 >> ix1 >> iy1;
+        x0 = ix0; y0 = iy0; x1 = ix1; y1 = iy1;
+      } else if (m_format == FORMAT_FLT) {
+        float ix0, iy0, ix1, iy1;
+        inp >> ix0 >> iy0 >> ix1 >> iy1;
+        x0 = ix0; y0 = iy0; x1 = ix1; y1 = iy1;
       } else {
-        if (dx < m_x0) m_x0 = dx;
-        if (dy < m_y0) m_y0 = dy;
-        if (m_x1 < dx) m_x1 = dx;
-        if (m_y1 < dy) m_y1 = dy;
+        std::cerr << "Illegal format!" << std::endl;
+        return -1;
       }
-      Point p1(x,y);
-      inp >> x >> y;
-      Point p2(x,y);
+
+      Point p1(x0, y0);
+      Point p2(x1, y1);
       // if (p1 == p2) continue;
       Curve curve(p1, p2);
       m_curveList.push_back(curve);
+      if (i == 0) setExtreme(CGAL::to_double(x0), CGAL::to_double(y0));
+      else compareExtreme(CGAL::to_double(x0), CGAL::to_double(y0));
+      compareExtreme(CGAL::to_double(x1), CGAL::to_double(y1));
     }
     inp.close();
     if (m_verbose) std::cout << m_curveList.size() << std::endl;
 
     return 0;
   }
-
+    
   /*
    */
   void clean() { m_curveList.clear(); }
   void sync(){}
 
+  void setFormat(FormatId format) { m_format = format; }
   void setFilename(const char * filename) { m_filename = filename; }
   void setVerbose(const bool verbose) { m_verbose = verbose; }
 
@@ -135,6 +191,7 @@ protected:
   const char * m_filename;
   CurveList m_curveList;
   bool m_verbose;
+  FormatId m_format;
 
   double m_x0;
   double m_x1;
@@ -170,9 +227,7 @@ CGAL::Window_stream & operator<<(CGAL::Window_stream & os, const Curve & c)
  */
 class Display_Pm : public Basic_Pm {
 private:
-  typedef CGAL::Window_stream           Window_stream;
-  typedef Planar_map::Vertex_iterator   Vertex_iterator;
-  typedef Planar_map::Edge_iterator     Edge_iterator;
+  typedef CGAL::Window_stream Window_stream;
 
 public:
   /*!
@@ -182,18 +237,7 @@ public:
     Planar_map pm;
     pm.insert(m_curveList.begin(), m_curveList.end());
     m_window->set_flush(0);
-    Vertex_iterator vi;
-    for (vi = pm.vertices_begin(); vi != pm.vertices_end(); vi++) {
-      (*m_window) << CGAL::GREEN;
-      (*m_window) << (*vi).point();
-    }
-
-    Edge_iterator ei;
-    for (ei = pm.edges_begin(); ei != pm.edges_end(); ei++) {
-      (*m_window) << CGAL::BLUE;
-      (*m_window) << ((*ei).curve());
-    }
-
+    (*m_window) << pm;
     m_window->set_flush(1);
     m_window->flush();
   }
@@ -226,6 +270,8 @@ public:
     m_window->set_redraw(&Display_Pm::redraw);
     m_window->set_mode(leda_src_mode);
     m_window->set_node_width(3);
+    m_window->set_point_style(leda_cross_point);
+    m_window->set_line_width(1);
     m_window->display(leda_window::center, leda_window::center);
     return 0;
   }
@@ -267,30 +313,72 @@ static void printHelp(void)
 
 /*!
  */
-class Dir_search {
-public:
-  Dir_search() {}
-  Dir_search(const char * dir) { add(dir); }
-  void add(const char * dir) { m_dirs.push_back(dir); }
-  void add(const std::string & dir) { m_dirs.push_back(dir); }
-  bool find(const char * filename, std::string & fullname)
-  {
-    Dirs::const_iterator di;
-    struct stat buf;
-    for (di = m_dirs.begin(); di != m_dirs.end(); di++) {
-      fullname = (*di);
-      fullname.append("/");
-      fullname.append(std::string(filename));
-      int rc = stat(fullname.c_str(), &buf);
-      if (rc < 0 || S_ISDIR(buf.st_mode)) continue;
-      if (rc == 0) return true;
-    }
-    return false;
+int getFormat(FormatId & format, char * value)
+{
+  char * subvalue;
+  switch (getsubopt(&value, FormatOpts, &subvalue)) {
+    case FORMAT_INT:
+    case FORMAT_I: format = FORMAT_INT; break;
+    case FORMAT_RAT:
+    case FORMAT_R: format = FORMAT_RAT; break;
+    case FORMAT_FLT:
+    case FORMAT_F: format = FORMAT_FLT; break;
+    default:
+      std::cerr << "Unrecognized Format option '" << optarg << "'!"
+                << std::endl;
+      std::cerr << "Try `" << progName << " -h' for more information."
+                << std::endl;
+      return -1;
   }
+  return 0;
+}
 
-private:
-  Dirs m_dirs;
-};
+/*!
+ */
+int getIOParm(FormatId & format, char * optarg)
+{
+  char * options = optarg;
+  char * value;
+  if (*options == '\0') return 0;
+  while (*options != '\0') {
+    switch (getsubopt(&options, IOOpts, &value)) {
+      case IO_FORMAT:
+      case IO_F: if (getFormat(format, value) < 0) return -1; break;
+      default:
+        std::cerr << "Unrecognized IO option '" << optarg << "'!" << std::endl;
+        std::cerr << "Try `" << progName << " -h' for more information."
+                  << std::endl;
+        return -1;
+    }
+  }
+  return 0;
+}
+
+/*!
+ */
+int getBenchParam(BenchId & benchId, char * optarg)
+{
+  char * options = optarg;
+  char * value;
+  if (*options == '\0') return 0;
+  while (*options != '\0') {
+    switch(getsubopt(&options, BenchOpts, &value)) {
+      case BENCH_CONSTRUCT:
+      case BENCH_CO:
+        benchId = BENCH_CONSTRUCT; break;
+      case BENCH_DISPLAY:
+      case BENCH_DI:
+        benchId = BENCH_DISPLAY; break;
+      default:
+        std::cerr << "Unrecognized Bench option '" << optarg << "'!"
+                  << std::endl;
+        std::cerr << "Try `" << progName << " -h' for more information."
+                  << std::endl;
+        return -1;
+    }
+  }
+  return 0;
+}
 
 /*
  */
@@ -300,7 +388,8 @@ int main(int argc, char * argv[])
   progName = (progName) ? progName+1 : argv[0];
 
   bool verbose = false;
-  int benchId = -1;
+  BenchId benchId = BENCH_ALL;
+  FormatId inputFormat = FORMAT_RAT;
 
   Dir_search dirs(".");
   const char * root = getenv("ROOT");
@@ -314,30 +403,19 @@ int main(int argc, char * argv[])
   
   int seconds = 0;
   int c;
-  char * options, * value;
   while ((c = getopt(argc, argv, OptionStr)) != EOF) {
     switch (c) {
-      case 'b':
-	options = optarg;
-	if (*options == '\0') break;
-	while (*options != '\0') {
-          switch(getsubopt(&options, BenchOpts, &value)) {
-            case BENCH_CONSTRUCT:
-            case BENCH_CO:
-              benchId = BENCH_CONSTRUCT; break;
-            case BENCH_DISPLAY:
-            case BENCH_DI:
-              benchId = BENCH_DISPLAY; break;
-          }
-        }
-        break;
+      case 'b': if (getBenchParam(benchId, optarg) < 0) return -1; break;
       case 'h': printHelp(); return 0;
+      case 'i': if (getIOParm(inputFormat, optarg)) return -1; break;
       case 's': samples = atoi(optarg); break;
       case 't': seconds = atoi(optarg); break;
       case 'v': verbose = !verbose; break;
       default:
-        fprintf(stderr, "%s: invalid option -- %c\n", progName, c);
-        fprintf(stderr, "Try `%s -h' for more information.\n", progName);
+        std::cerr << progName << ": invalid option -- "
+                  << static_cast<char>(c) << std::endl;
+        std::cerr << "Try `" << progName << " -h' for more information."
+                  << std::endl;
         return -1;
     }
   }
@@ -359,6 +437,7 @@ int main(int argc, char * argv[])
                                   " PM (" + std::string(filename) + ")"),
                                   seconds, true);
   Construct_Pm & construct_pm = benchConstruct.getBenchUser();
+  construct_pm.setFormat(inputFormat);
   construct_pm.setFilename(fullname.c_str());
   construct_pm.setVerbose(verbose);
 
@@ -367,6 +446,7 @@ int main(int argc, char * argv[])
                                " PM (" + std::string(filename) + ")"),
                               seconds, false);
   Display_Pm & display_pm = benchDisplay.getBenchUser();
+  display_pm.setFormat(inputFormat);
   display_pm.setFilename(fullname.c_str());
   display_pm.setVerbose(verbose);
 
@@ -375,7 +455,7 @@ int main(int argc, char * argv[])
     benchDisplay.setSamples(samples);
   }
 
-  if (benchId == -1) {
+  if (benchId == BENCH_ALL) {
     benchConstruct();
     benchDisplay();
   } else switch(benchId) {
