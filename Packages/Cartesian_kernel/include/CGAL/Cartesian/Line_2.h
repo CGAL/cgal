@@ -25,6 +25,7 @@
 #define CGAL_CARTESIAN_LINE_2_H
 
 #include <CGAL/Threetuple.h>
+#include <CGAL/predicates/kernel_ftC2.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -121,7 +122,7 @@ LineC2<R>::operator==(const LineC2<R> &l) const
 {
   if (CGAL::identical(base, l.base))
       return true;
-  return equal_line(*this, l);
+  return equal_lineC2(a(), b(), c(), l.a(), l.b(), l.c());
 }
 
 template < class R >
@@ -129,7 +130,7 @@ inline
 bool
 LineC2<R>::operator!=(const LineC2<R> &l) const
 {
-  return !(*this == l);
+  return ! (*this == l);
 }
 
 template < class R >
