@@ -1,4 +1,4 @@
-3.22   (?? Feb 2001)
+3.22   (14 Feb 2001)
 
 - moved Kernel_traits_common.h from Cartesian_kernel package
 - moved predicate_objects_on_points.h from Convex_hull_2(?!) package.

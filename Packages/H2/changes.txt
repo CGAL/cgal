@@ -1,4 +1,4 @@
-2.16   (?? Feb 2001)
+2.16   (14 Feb 2001)
 - Add forgotten typedefs in IdentityH2.
 - added min_coord(), max_coord() in Iso_rectangle_2 and new constructor
 - Remove useless destructors in PointH2, VectorH2, DirectionH2.

@@ -1,4 +1,4 @@
-Version 6.6 (?? February 2001)
+Version 6.6 (14 February 2001)
 - moved Kernel_traits_common.h file to Kernel_basic package
 - added .min_coord(), .max_coord() in Iso_cuboid and Iso_rectangle and
   new constructor in both classes

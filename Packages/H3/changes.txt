@@ -1,4 +1,4 @@
-2.17   (?? Feb 2001)
+2.17   (14 Feb 2001)
 - added min_coord(), max_coord() in Iso_cuboid_3 and new constructor
 
 2.16   (13 Feb 2001)
