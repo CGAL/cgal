@@ -58,7 +58,7 @@ int main(int argc, char **argv) {
   crit_vect[1] = &a_r_crit;
   Criteria C (crit_vect);
 
-  Tets_criteria tets_criteria(0.5);
+  Tets_criteria tets_criteria(0.1);
 
   std::cout << "Initial number of points: " << T.number_of_vertices() 
             << std::endl;

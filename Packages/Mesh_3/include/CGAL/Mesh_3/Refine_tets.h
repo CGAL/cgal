@@ -16,6 +16,7 @@ namespace Mesh_3 {
 
 template <class Tr,
           class Criteria,
+          class Oracle,
           class Container = 
           Double_map_container<typename Tr::Cell_handle,
                                typename Criteria::Quality>
@@ -43,13 +44,15 @@ public:
 public:
   /** \name CONSTRUCTORS */
 
-  Refine_tets_base(Tr& t, Criteria crit) : tr(t), criteria(crit) {}
+  Refine_tets_base(Tr& t, Criteria crit, Oracle& o) 
+    : tr(t), criteria(crit), oracle(o) {}
 
 private:
   /* --- private datas --- */
   Tr& tr; /**< The triangulation itself. */
   Triangulation_mesher_level_traits_3<Tr> traits;
   Criteria criteria; /**< Meshing criteria for tetrahedra. */
+  Oracle& oracle;
   Container tets_to_refine; /**< The set of tets to refine. */
 
   bool should_be_refined(const Cell_handle c, Quality& qual) const
@@ -134,8 +137,10 @@ public:
     return circumcenter(p, q, r, s);
   }
 
-  void do_before_conflicts(const Cell_handle&, const Point&)
-  {}
+  void do_before_conflicts(const Cell_handle&, const Point& p)
+  {
+    std::cerr << "Refine_tets: before conflicts of " << p;
+  }
 
   std::pair<bool, bool> do_private_test_point_conflict(const Point&,
 						       Zone& )
@@ -149,18 +154,19 @@ public:
     return std::make_pair(true, true);
   }
 
-  void do_before_insertion(const Cell_handle&, const Point& p,
+  void do_before_insertion(const Cell_handle& c, const Point&,
                            Zone& zone)
   {
-    std::cerr << "Refine_tets: before insertion of " << p << std::endl;
     for(typename Zone::Cells_iterator cit = zone.cells.begin();
 	cit != zone.cells.end();
 	++cit)
-      tets_to_refine.remove_element(*cit);
+      if(*cit != c)
+        tets_to_refine.remove_element(*cit);
   }
 
   void do_after_insertion(const Vertex_handle& v)
   {
+    std::cerr << "  INSERTED." << std::endl;
     // scan tets
     typedef std::list<Cell_handle> Cells;
     typedef typename Cells::iterator Cell_iterator;
@@ -172,7 +178,13 @@ public:
         cit != incident_cells.end();
         ++cit)
       {
-	(*cit)->set_in_domain(true);
+	const Point& p = (*cit)->vertex(0)->point();
+	const Point& q = (*cit)->vertex(1)->point();
+	const Point& r = (*cit)->vertex(2)->point();
+	const Point& s = (*cit)->vertex(3)->point();
+
+	(*cit)->set_in_domain(oracle.surf_equation(circumcenter(p,q,r,s))<0.);
+
 	test_if_cell_is_bad(*cit);
       }
   }
@@ -180,6 +192,7 @@ public:
   void do_after_no_insertion(const Cell_handle&, const Point&,
                              const Zone& )
   {
+    std::cerr << "  REJECTED!" << std::endl;
   }
 }; // end Refine_tets_base  
 
@@ -273,28 +286,29 @@ public:
   
 template <typename Tr,
           typename Criteria,
-          typename Base = Refine_tets_base<Tr, Criteria>,
+          typename Oracle,
+          typename Base = Refine_tets_base<Tr, Criteria, Oracle>,
           typename Facets_level = Refine_facets<Tr>
  >
 class Refine_tets : 
   public Base, 
   public Mesher_level <
     Triangulation_mesher_level_traits_3<Tr>,
-    Refine_tets<Tr, Criteria, Base, Facets_level>,
+    Refine_tets<Tr, Criteria, Oracle, Base, Facets_level>,
     typename Tr::Cell_handle,
     Facets_level
   >
 {
 public:
-  typedef Refine_tets<Tr, Criteria, Base, Facets_level> Self;
+  typedef Refine_tets<Tr, Criteria, Oracle, Base, Facets_level> Self;
   typedef Mesher_level <
     Triangulation_mesher_level_traits_3<Tr>,
-    Refine_tets<Tr, Criteria, Base, Facets_level>,
+    Refine_tets<Tr, Criteria, Oracle, Base, Facets_level>,
     typename Tr::Cell_handle,
     Facets_level
   > Mesher;
-  Refine_tets(Tr& t, Criteria crit, Facets_level& facets_level)
-    : Base(t, crit), Mesher(facets_level) {}
+  Refine_tets(Tr& t, Criteria crit, Oracle& oracle, Facets_level& facets_level)
+    : Base(t, crit, oracle), Mesher(facets_level) {}
 };
 
 }; // end namespace Mesh_3

@@ -20,6 +20,7 @@ essai.o: \
   ../../../Triangulation_3/include/CGAL/predicates/Regular_triangulation_ftC3.h \
   ../../../Triangulation_3/include/CGAL/predicates/Regular_triangulation_rtH3.h \
   ../../../Triangulation_3/include/CGAL/predicates/predicates_on_weighted_points_cartesian_3.h \
+  ../../../Triangulation_3/include/CGAL/constructions/constructions_on_weighted_points_cartesian_3.h \
   ../../../Triangulation_3/include/CGAL/Regular_triangulation_filtered_traits_3.h \
   ../../include/CGAL/Constrained_regular_triangulation_3.h \
   ../../../Mesh_2/include/CGAL/Delaunay_mesher_2.h \
@@ -44,7 +45,7 @@ essai.o: \
   ../../include/CGAL/Mesh_3/Complex_2_in_triangulation_3.h \
   ../../include/CGAL/Mesh_3/Simple_set_container.h \
   ../../include/CGAL/Conforming_Delaunay_triangulation_2_traits_3.h \
-  ../../../Mesh_2/include/CGAL/Delaunay_mesh_face_base_2.h \
+  ../../../Mesh_2/include/CGAL/Delaunay_mesh_face_base_2.h
 
 
 implicit_function.o: \
@@ -80,10 +81,9 @@ implicit_surface_mesher_3.o: \
   ../../include/CGAL/Mesh_3/Double_map_container.h \
   ../../../Mesh_2/include/CGAL/Double_map.h \
   ../../../Chew_4_surfaces/include/CGAL/Chew_4_surfaces/Chew_4_surfaces.h \
-  ../../../Chew_4_surfaces/include/CGAL/Triangulation_mesher_level_traits_3.h \
   ../../../Chew_4_surfaces/include/CGAL/Complex_2_in_triangulation_3.h \
   ../../../Chew_4_surfaces/include/CGAL/Complex_2_in_triangulation_3_surface_mesh.h \
   ../../../Chew_4_surfaces/include/CGAL/Chew_4_surfaces/Criteria/Standard_criteria.h \
   ../../../Chew_4_surfaces/include/CGAL/IO/Complex_2_in_triangulation_3_file_writer.h \
   ../../../Chew_4_surfaces/include/CGAL/Chew_4_surfaces/Oracles/Implicit_oracle.h \
-  ../../include/CGAL/Mesh_criteria_3.h implicit_function.h \
+  ../../include/CGAL/Mesh_criteria_3.h implicit_function.h

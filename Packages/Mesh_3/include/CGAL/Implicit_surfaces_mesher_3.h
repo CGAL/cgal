@@ -47,8 +47,10 @@ public:
 
   typedef typename Mesh_3::Refine_tets<Tr,
                                        Tets_criteria,
+                                       Oracle,
                                        Mesh_3::Refine_tets_base<Tr,
-                                                                Tets_criteria>,
+                                                                Tets_criteria,
+                                                                Oracle>,
                                        Facets_level> Tets_level;
 
   typedef Complex_2_in_triangulation_3_surface_mesh<Tr> C2t3;
@@ -69,7 +71,7 @@ public:
                              Facets_criteria& c,
                              Tets_criteria tets_crit)
     : c2t3(t), oracle(o), 
-      facets(t, c2t3, oracle, c), tets(t, tets_crit, facets),
+      facets(t, c2t3, oracle, c), tets(t, tets_crit, oracle, facets),
       initialized(false)
   {}
 
