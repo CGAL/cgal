@@ -1,3 +1,6 @@
+2.1.34(15/09/03)  rursu: added C2vcproj script to generate the VC++7.0 projects
+		  for CGAL examples
+
 2.1.33(19/06/03)  rursu: put back Alpha_shapes_3 projects 
 
 2.1.32(18/06/03)  rursu: removed projects for Leda demos
