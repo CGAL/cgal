@@ -6,6 +6,18 @@
 
 -------------- POUR DES QU'ON PEUT
 
+- nettoyer hierarchie
+cf mail Mariette 
+la hierarchie surcharge correctement certianes
+versions du insert() et locate()
+et fait n'importe quoi pour les autres....
+(c'est tout ce qui se trouve  apres
+  // added to make the test program of usual triangulations work
+  // undocumented
+public: 
+.....
+)
+
 - Finir de decider pour find_conflicts, si on veut les facettes du bord du
   trou vues de l'interieur ou de l'exterieur. 
   Fournir un output iterator adaptator pour transformer l'iterateur de 
