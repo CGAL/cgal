@@ -98,8 +98,8 @@ public:
     typedef void                                   iterator_category;
 
     Vertex_handle() : _v() {}
-    Vertex_handle(Vertex_iterator v) : _v(v) {}
-    Vertex_handle(Vertex_circulator v) : _v(v.base()._v) {}
+    Vertex_handle(const Vertex_iterator& v) : _v(v) {}
+    Vertex_handle(const Vertex_circulator& v) : _v(v.base()._v) {}
     Vertex_handle(void * n) : _v() 
     { CGAL_triangulation_precondition(n == NULL); }
 
@@ -131,8 +131,8 @@ public:
     typedef void                                   iterator_category;
 
     Face_handle() : _f() {}
-    Face_handle(Face_iterator f) : _f(f) {}
-    Face_handle(Face_circulator f) : _f(f.base()._f) {}
+    Face_handle(const Face_iterator& f) : _f(f) {}
+    Face_handle(const Face_circulator& f) : _f(f.base()._f) {}
     //Face_handle(Face_circulator f) : _f(f.base()._f) {}
     Face_handle(void * n) : _f()
     { CGAL_triangulation_precondition(n == NULL); }
