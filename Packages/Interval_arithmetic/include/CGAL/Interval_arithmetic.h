@@ -15,9 +15,9 @@
 // revision      : $Revision$
 // revision_date : $Date$
 // package       : Interval Arithmetic
-// author(s)     : Sylvain Pion <Sylvain.Pion@sophia.inria.fr>
-//
+// author(s)     : Sylvain Pion
 // coordinator   : INRIA Sophia-Antipolis (<Mariette.Yvinec@sophia.inria.fr>)
+//
 // ============================================================================
 
 #ifndef CGAL_INTERVAL_ARITHMETIC_H
@@ -29,18 +29,14 @@
 //                       Interval_nt_advanced for backward compatibility.
 // - Interval_nt<true>   Same but it does the rounding mode itself so you
 //                       don't have to worry about it.  But it's slower.
-// - Interval_base       Base class of the 2 previous to share common code.
-//
-// - Protect_FPU_rounding<> A helper class which is the best way to protect
-//                          blocks of code needing a particular rounding mode.
 //
 // Note: When rounding is towards +infinity, to make an operation rounded
 // towards -infinity, it's enough to take the opposite of some of the operand,
 // and the opposite of the result (see operator+, operator*,...).
 
 #include <CGAL/basic.h>
-#include <CGAL/Interval_arithmetic/_FPU.h>	// FPU rounding mode functions.
-#include <utility>				// Relational operators.
+#include <CGAL/Interval_arithmetic/_FPU.h>
+#include <CGAL/Interval_base.h>
 
 // sqrt(double) on M$ is buggy.
 #if defined _MSC_VER || defined __CYGWIN__
@@ -51,126 +47,6 @@ extern "C" { double CGAL_ms_sqrt(double); }
 #endif
 
 CGAL_BEGIN_NAMESPACE
-
-// A class whose constructor sets the FPU mode to +inf, saves a backup of it,
-// and whose destructor resets it back to the saved state.
-//  
-// Next step: add this in the filtered predicates.  It'll be even funnier with
-// the exceptions => function-try-blocks.  And don't forget the test-suite.
-
-template <bool Protected> class Protect_FPU_rounding;
-
-template <>
-struct Protect_FPU_rounding<true>
-{
-  Protect_FPU_rounding(FPU_CW_t r = CGAL_FE_UPWARD)
-    : backup( FPU_get_and_set_cw(r) ) {}
-
-  ~Protect_FPU_rounding()
-  {
-    FPU_set_cw(backup);
-  }
-
-private:
-  FPU_CW_t backup;
-};
-
-template <>
-struct Protect_FPU_rounding<false>
-{
-  Protect_FPU_rounding(FPU_CW_t CGAL_expensive_assertion_code(r)
-		                = CGAL_FE_UPWARD)
-  {
-    CGAL_expensive_assertion(FPU_empiric_test() == r);
-  }
-
-  ~Protect_FPU_rounding() {}
-  // just to shut up a warning, but it has a performance issue with GCC 2.95,
-  // so I should disable it for the moment.  Use __attribute__((unused)) ?
-};
-
-// Gather common functionality
-struct Interval_base
-{
-  typedef Interval_base IA;
-  struct unsafe_comparison {};		// Exception class.
-  static unsigned number_of_failures;	// Number of filter failures.
-  static const IA Smallest, Largest;	// Useful constant intervals.
-
-  Interval_base () {}
-
-  // To stop constant propagation, I need these CGAL_IA_STOP_CPROP().
-  // Ideally, these barriers should be placed just before the critical
-  // operations.
-  Interval_base (const double d)
-  {
-    _inf = _sup = CGAL_IA_STOP_CPROP(d);
-  }
-
-  Interval_base (const double i, const double s)
-  {
-    CGAL_assertion_msg(i<=s,
-	      " Variable used before being initialized (or CGAL bug)");
-    _inf = CGAL_IA_STOP_CPROP(i);
-    _sup = CGAL_IA_STOP_CPROP(s);
-  }
-
-  static void overlap_action() // throw (unsafe_comparison)
-  {
-    number_of_failures++;
-    throw unsafe_comparison();
-  }
-
-  bool operator<  (const IA &d) const
-  {
-    if (_sup  < d._inf) return true;
-    if (_inf >= d._sup) return false;
-    overlap_action();
-    return false;
-  }
-
-  bool operator<= (const IA &d) const
-  {
-    if (_sup <= d._inf) return true;
-    if (_inf >  d._sup) return false;
-    overlap_action();
-    return false;
-  }
-
-  bool operator>= (const IA &d) const
-  {
-    return d <= *this;
-  }
-
-  bool operator== (const IA &d) const
-  {
-    if (d._inf >  _sup || d._sup  < _inf) return false;
-    if (d._inf == _sup && d._sup == _inf) return true;
-    overlap_action();
-    return false;
-  }
-
-  bool is_point() const
-  {
-    return _sup == _inf;
-  }
-
-  bool is_same (const IA & d) const
-  {
-    return _inf == d._inf && _sup == d._sup;
-  }
-
-  bool overlap (const IA & d) const
-  {
-    return !(d._inf > _sup || d._sup < _inf);
-  }
-
-  double inf() const { return _inf; }
-  double sup() const { return _sup; }
-
-// protected:
-  double _inf, _sup;	// "_inf" stores the lower bound, "_sup" the upper.
-};
 
 // bool or Tag_true/false, I don't know yet.
 // Note that later, other behaviours might arise, such as "nothrow" => bool is
@@ -220,7 +96,7 @@ struct Interval_nt : public Interval_base
   IA operator* (const IA &) const;
   IA operator/ (const IA &) const;
 
-  IA  operator-() const { return IA (-_sup, -_inf); }
+  IA operator-() const { return IA (-_sup, -_inf); }
 
   IA & operator+= (const IA &d) { return *this = *this + d; }
   IA & operator-= (const IA &d) { return *this = *this - d; }
@@ -230,13 +106,15 @@ struct Interval_nt : public Interval_base
   // The (join, union, ||) operator.
   IA operator|| (const IA & d) const
   {
-    return Interval_nt<Protected>(min(_inf, d._inf), max(_sup, d._sup));
+    return Interval_nt<Protected>(std::min(_inf, d._inf),
+                                  std::max(_sup, d._sup));
   }
 
   // The (meet, intersection, &&) operator.  Valid if intervals overlap.
   IA operator&& (const IA & d) const
   {
-    return Interval_nt<Protected>(max(_inf, d._inf), min(_sup, d._sup));
+    return Interval_nt<Protected>(std::max(_inf, d._inf),
+		                  std::min(_sup, d._sup));
   }
 };
 
@@ -291,7 +169,7 @@ Interval_nt<Protected>::operator* (const Interval_nt<Protected> & d) const
     double tmp2 = CGAL_IA_FORCE_TO_DOUBLE(_sup*(-d._inf));
     double tmp3 = CGAL_IA_FORCE_TO_DOUBLE(_inf*d._inf);
     double tmp4 = CGAL_IA_FORCE_TO_DOUBLE(_sup*d._sup);
-    return Interval_nt<Protected>(-max(tmp1,tmp2), max(tmp3,tmp4));
+    return Interval_nt<Protected>(-std::max(tmp1,tmp2), std::max(tmp3,tmp4));
   };
 }
 
@@ -361,7 +239,8 @@ inline
 Interval_nt<Protected>
 min (const Interval_nt<Protected> & d, const Interval_nt<Protected> & e)
 {
-  return Interval_nt<Protected>(min(d._inf, e._inf), min(d._sup, e._sup));
+  return Interval_nt<Protected>(std::min(d._inf, e._inf),
+		                std::min(d._sup, e._sup));
 }
 
 template <bool Protected>
@@ -369,11 +248,13 @@ inline
 Interval_nt<Protected>
 max (const Interval_nt<Protected> & d, const Interval_nt<Protected> & e)
 {
-  return Interval_nt<Protected>(max(d._inf, e._inf), max(d._sup, e._sup));
+  return Interval_nt<Protected>(std::max(d._inf, e._inf),
+		                std::max(d._sup, e._sup));
 }
 
 namespace NTS {
 
+#ifndef CGAL_CFG_MATCHING_BUG_2
 template <bool Protected>
 inline
 Interval_nt<Protected>
@@ -387,7 +268,7 @@ square (const Interval_nt<Protected> & d)
       return Interval_nt<Protected>(-CGAL_IA_FORCE_TO_DOUBLE(d._sup*(-d._sup)),
 	     			     CGAL_IA_FORCE_TO_DOUBLE(d._inf*d._inf));
   return Interval_nt<Protected>(0.0,
-	  CGAL_IA_FORCE_TO_DOUBLE(CGAL_NTS square(max(-d._inf, d._sup))));
+	  CGAL_IA_FORCE_TO_DOUBLE(CGAL_NTS square(std::max(-d._inf, d._sup))));
 }
 
 template <bool Protected>
@@ -397,7 +278,7 @@ abs (const Interval_nt<Protected> & d)
 {
   if (d._inf >= 0.0) return d;
   if (d._sup <= 0.0) return -d;
-  return Interval_nt<Protected>(0.0, max(-d._inf, d._sup));
+  return Interval_nt<Protected>(0.0, std::max(-d._inf, d._sup));
 }
 
 template <bool Protected>
@@ -423,51 +304,104 @@ compare (const Interval_nt<Protected> & d, const Interval_nt<Protected> & e)
   Interval_nt<Protected>::overlap_action();
   return EQUAL;
 }
+#else // CGAL_CFG_MATCHING_BUG_2
+// For crappy "compilers", we have to define complete overloaded functions.
+// First we overload for true.
+inline
+Interval_nt<true>
+square (const Interval_nt<true> & d)
+{
+  Protect_FPU_rounding<true> P;
+  if (d._inf>=0.0)
+      return Interval_nt<true>(-CGAL_IA_FORCE_TO_DOUBLE(d._inf*(-d._inf)),
+	     			     CGAL_IA_FORCE_TO_DOUBLE(d._sup*d._sup));
+  if (d._sup<=0.0)
+      return Interval_nt<true>(-CGAL_IA_FORCE_TO_DOUBLE(d._sup*(-d._sup)),
+	     			     CGAL_IA_FORCE_TO_DOUBLE(d._inf*d._inf));
+  return Interval_nt<true>(0.0,
+	  CGAL_IA_FORCE_TO_DOUBLE(CGAL_NTS square(std::max(-d._inf, d._sup))));
+}
+
+inline
+Interval_nt<true>
+abs (const Interval_nt<true> & d)
+{
+  if (d._inf >= 0.0) return d;
+  if (d._sup <= 0.0) return -d;
+  return Interval_nt<true>(0.0, std::max(-d._inf, d._sup));
+}
+
+inline
+Sign
+sign (const Interval_nt<true> & d)
+{
+  if (d._inf > 0.0) return POSITIVE;
+  if (d._sup < 0.0) return NEGATIVE;
+  if (d._inf == d._sup) return ZERO;
+  Interval_nt<true>::overlap_action();
+  return ZERO;
+}
+
+inline
+Comparison_result
+compare (const Interval_nt<true> & d, const Interval_nt<true> & e)
+{
+  if (d._inf > e._sup) return LARGER;
+  if (e._inf > d._sup) return SMALLER;
+  if (e._inf == d._sup && d._inf == e._sup) return EQUAL;
+  Interval_nt<true>::overlap_action();
+  return EQUAL;
+}
+
+// Then we overload for false.
+inline
+Interval_nt<false>
+square (const Interval_nt<false> & d)
+{
+  Protect_FPU_rounding<false> P;
+  if (d._inf>=0.0)
+      return Interval_nt<false>(-CGAL_IA_FORCE_TO_DOUBLE(d._inf*(-d._inf)),
+	     			     CGAL_IA_FORCE_TO_DOUBLE(d._sup*d._sup));
+  if (d._sup<=0.0)
+      return Interval_nt<false>(-CGAL_IA_FORCE_TO_DOUBLE(d._sup*(-d._sup)),
+	     			     CGAL_IA_FORCE_TO_DOUBLE(d._inf*d._inf));
+  return Interval_nt<false>(0.0,
+	  CGAL_IA_FORCE_TO_DOUBLE(CGAL_NTS square(std::max(-d._inf, d._sup))));
+}
+
+inline
+Interval_nt<false>
+abs (const Interval_nt<false> & d)
+{
+  if (d._inf >= 0.0) return d;
+  if (d._sup <= 0.0) return -d;
+  return Interval_nt<false>(0.0, std::max(-d._inf, d._sup));
+}
+
+inline
+Sign
+sign (const Interval_nt<false> & d)
+{
+  if (d._inf > 0.0) return POSITIVE;
+  if (d._sup < 0.0) return NEGATIVE;
+  if (d._inf == d._sup) return ZERO;
+  Interval_nt<false>::overlap_action();
+  return ZERO;
+}
+
+inline
+Comparison_result
+compare (const Interval_nt<false> & d, const Interval_nt<false> & e)
+{
+  if (d._inf > e._sup) return LARGER;
+  if (e._inf > d._sup) return SMALLER;
+  if (e._inf == d._sup && d._inf == e._sup) return EQUAL;
+  Interval_nt<false>::overlap_action();
+  return EQUAL;
+}
+#endif // CGAL_CFG_MATCHING_BUG_2
 
 } // namespace NTS
-
-inline
-double
-to_double (const Interval_base & d)
-{
-  return (d._sup + d._inf) * 0.5;
-}
-
-inline
-bool
-is_valid (const Interval_base & d)
-{
-#if defined _MSC_VER || defined __sgi || defined __BORLANDC__
-  return is_valid(d._inf) && is_valid(d._sup) && d._inf <= d._sup;
-#else
-  // The 2 first is_valid() are implicitely done by the 3rd test ;-)
-  return d._inf <= d._sup;
-#endif
-}
-
-inline
-bool
-is_finite (const Interval_base & d)
-{
-  return is_finite(d._inf) && is_finite(d._sup);
-}
-
-inline
-io_Operator
-io_tag (const Interval_base &)
-{
-  return io_Operator();
-}
-
-inline
-Number_tag
-number_type_tag (const Interval_base &)
-{
-  return Number_tag();
-}
-
-std::ostream & operator<< (std::ostream &, const Interval_base &);
-std::istream & operator>> (std::istream &, Interval_base &);
 
 typedef Interval_nt<false> Interval_nt_advanced;  // for back-compatibility
 
