@@ -1,3 +1,6 @@
+28 June 2004:  Menelaos Karavelas
+- made the primal(...) methods public (they were protected).
+
 27 June 2004:  Menelaos Karavelas
 - added hack for G++ 3.4 on PowerPC about initialized static variables
   in methods
