@@ -1,4 +1,4 @@
-# Pmwx Test Data File
+# Arr_polyline_traits Test Data File
 # Big Overlap
 #
 # No. of polylines:
@@ -10,9 +10,9 @@
 # Points:
 0 0  20 0  30 20  40 0  60 0
 # No. of points:
-5
+6
 # Points:
-10 10  25 10  30 20  40 0  50 0
+10 10  25 10  30 20  40 0  50 0  50 -10
 #
 # No. of test points:
 1
@@ -23,9 +23,9 @@
  1  1  6
 #
 # No. of expected vertices :
-7
+8
 # No. of expected halfedges:
-6
+7
 # No. of expected faces    :
 1
 # No. of expected overlaps :
