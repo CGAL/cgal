@@ -89,12 +89,19 @@ void bench()
   std::cout << (int) result << "\t" << t.time()-dt << std::endl;
 }
 
+namespace CGAL {
+NT my_abs (const NT &n)
+{
+  return CGAL_NTS abs(n);
+}
+} // namespace CGAL
+
 // The program code is 100% generic/templated, as usual.
 int test()
 {
   NT px, py, la, lb, lc;
   NT a (1);
-  // a = CGAL::abs(a); // Breaks VC++... why ???
+  a = my_abs(a);
 #ifndef CGAL_CFG_MATCHING_BUG_2
 #ifdef CGAL_USE_GMP
   CGAL::Filtered_exact< CGAL::Quotient<CGAL::Gmpz>, CGAL::Quotient<CGAL::Gmpz> > qq (3,5);
