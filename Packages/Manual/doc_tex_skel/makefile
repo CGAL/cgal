@@ -154,7 +154,7 @@ kernel_update:
            gzip -f kernel.ps; \
            cp kernel.ps.gz $(DOC_PS_DESTINATION)/doc_ps/doc_ps_a4/. ;\
            gzip -f kernel_letter.ps; \
-           cp kernel_letter.ps.gz $(DOC_PS_DESTINATION)/doc_ps/doc_ps_letter/kernel.ps.gz \
+           cp kernel_letter.ps.gz $(DOC_PS_DESTINATION)/doc_ps/doc_ps_letter/kernel.ps.gz; \
            cp kernel.pdf $(DOC_PDF_DESTINATION)/doc_pdf 
 	cd kernel/html; \
            cp -R * $(DOC_HTML_DESTINATION)/doc_html/kernel/.
@@ -169,7 +169,7 @@ kernel_d_update:
            gzip -f kernel_d.ps; \
            cp kernel_d.ps.gz $(DOC_PS_DESTINATION)/doc_ps/doc_ps_a4/. ;\
            gzip -f kernel_d_letter.ps; \
-           cp kernel_d_letter.ps.gz $(DOC_PS_DESTINATION)/doc_ps/doc_ps_letter/kernel_d.ps.gz \
+           cp kernel_d_letter.ps.gz $(DOC_PS_DESTINATION)/doc_ps/doc_ps_letter/kernel_d.ps.gz; \
            cp kernel_d.pdf $(DOC_PDF_DESTINATION)/doc_pdf 
 	cd kernel_d/html; \
            cp -R * $(DOC_HTML_DESTINATION)/doc_html/kernel_d/.
@@ -184,7 +184,7 @@ deprecated_basic_update:
            gzip -f basic_lib.ps; \
            cp basic.ps.gz $(DOC_PS_DESTINATION)/doc_ps/doc_ps_a4/deprecated_basic_lib.ps.gz. ;\
            gzip -f basic_lib_letter.ps; \
-           cp basic_lib_letter.ps.gz $(DOC_PS_DESTINATION)/doc_ps/doc_ps_letter/deprecated_basic_lib_letter.ps.gz \
+           cp basic_lib_letter.ps.gz $(DOC_PS_DESTINATION)/doc_ps/doc_ps_letter/deprecated_basic_lib_letter.ps.gz; \
            cp basic.pdf $(DOC_PDF_DESTINATION)/doc_pdf/deprecated_basic_lib.pdf
 	cd deprecated_basic/html; \
            cp -R * $(DOC_HTML_DESTINATION)/doc_html/deprecated_basic_lib/.
@@ -231,7 +231,7 @@ use_of_stl_update:
            gzip -f use_of_stl.ps; \
            cp use_of_stl.ps.gz $(DOC_PS_DESTINATION)/doc_ps/doc_ps_a4 ; \
 	   gzip -f use_of_stl_letter.ps; \
-           cp use_of_stl_letter.ps.gz $(DOC_PS_DESTINATION)/doc_ps/doc_ps_letteruse_of_stl.ps.gz ;
+           cp use_of_stl_letter.ps.gz $(DOC_PS_DESTINATION)/doc_ps/doc_ps_letteruse_of_stl.ps.gz ; \
 	   cp use_of_stl.pdf $(DOC_PDF_DESTINATION)/doc_pdf/. 
 	cd use_of_stl/html; \
            cp -R * $(DOC_HTML_DESTINATION)/doc_html/use_of_stl/.
