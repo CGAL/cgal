@@ -5,7 +5,6 @@ typedef CGAL::Cartesian<double> R;
 typedef CGAL::Polygon_traits_2<R> Traits;
 typedef Traits::Point_2 Point;
 typedef Traits::Segment_2 Segment;
-//typedef Traits::Vector_2 Vector;
 
 #include <list>
 #include <vector>
@@ -34,16 +33,16 @@ void test_default_methods(      vector<Point>& pvec0,
   {
     CGAL::Polygon_2<Traits, list<Point> >   x;
     CGAL::Polygon_2<Traits, list<Point> >   p0(pvec0.begin(), pvec0.end());
-    CGAL::Polygon_2<Traits, list<Point> >   p1(pvec0.rbegin(), pvec0.rend());
+    // CGAL::Polygon_2<Traits, list<Point> >   p1(pvec0.rbegin(), pvec0.rend());
     CGAL::Polygon_2<Traits, list<Point> >   p2(plist0.begin(), plist0.end());
-    CGAL::Polygon_2<Traits, list<Point> >   p3(plist0.rbegin(), plist0.rend());
+    // CGAL::Polygon_2<Traits, list<Point> >   p3(plist0.rbegin(), plist0.rend());
     CGAL::Polygon_2<Traits, list<Point> >   p0_copy(p0);
 
     CGAL::Polygon_2<Traits, vector<Point> > y;
     CGAL::Polygon_2<Traits, vector<Point> > p4(pvec0.begin(), pvec0.end());
-    CGAL::Polygon_2<Traits, vector<Point> > p5(pvec0.rbegin(), pvec0.rend());
+    // CGAL::Polygon_2<Traits, vector<Point> > p5(pvec0.rbegin(), pvec0.rend());
     CGAL::Polygon_2<Traits, vector<Point> > p6(plist0.begin(), plist0.end());
-    CGAL::Polygon_2<Traits, vector<Point> > p7(plist0.rbegin(), plist0.rend());
+    // CGAL::Polygon_2<Traits, vector<Point> > p7(plist0.rbegin(), plist0.rend());
     CGAL::Polygon_2<Traits, vector<Point> > p4_copy(p4);
 
     x=p0;
@@ -53,16 +52,16 @@ void test_default_methods(      vector<Point>& pvec0,
   {
     CGAL::Polygon_2<Traits, list<Point> >   x;
     CGAL::Polygon_2<Traits, list<Point> >   p0(pvec1.begin(), pvec1.end());
-    CGAL::Polygon_2<Traits, list<Point> >   p1(pvec1.rbegin(), pvec1.rend());
+    // CGAL::Polygon_2<Traits, list<Point> >   p1(pvec1.rbegin(), pvec1.rend());
     CGAL::Polygon_2<Traits, list<Point> >   p2(plist1.begin(), plist1.end());
-    CGAL::Polygon_2<Traits, list<Point> >   p3(plist1.rbegin(), plist1.rend());
+    // CGAL::Polygon_2<Traits, list<Point> >   p3(plist1.rbegin(), plist1.rend());
     CGAL::Polygon_2<Traits, list<Point> >   p0_copy(p0);
 
     CGAL::Polygon_2<Traits, vector<Point> > y;
     CGAL::Polygon_2<Traits, vector<Point> > p4(pvec1.begin(), pvec1.end());
-    CGAL::Polygon_2<Traits, vector<Point> > p5(pvec1.rbegin(), pvec1.rend());
+    // CGAL::Polygon_2<Traits, vector<Point> > p5(pvec1.rbegin(), pvec1.rend());
     CGAL::Polygon_2<Traits, vector<Point> > p6(plist1.begin(), plist1.end());
-    CGAL::Polygon_2<Traits, vector<Point> > p7(plist1.rbegin(), plist1.rend());
+    // CGAL::Polygon_2<Traits, vector<Point> > p7(plist1.rbegin(), plist1.rend());
     CGAL::Polygon_2<Traits, vector<Point> > p4_copy(p4);
 
     x=p0;

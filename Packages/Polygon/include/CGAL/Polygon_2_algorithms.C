@@ -43,7 +43,7 @@ CGAL_BEGIN_NAMESPACE
 
 
 template <class ForwardIterator, class PolygonTraits>
-inline bool is_simple_2(ForwardIterator first,
+bool is_simple_2(ForwardIterator first,
                       ForwardIterator last,
                       const PolygonTraits& traits)
 {
