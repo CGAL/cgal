@@ -1,6 +1,15 @@
 Changes done to the Interval Arithmetic package.
 
-Version 4.15 on 25 May 1999
+Version 4.16 on 24 June 1999
+- Added specializations for the regular triangulation predicates.
+- The script now adds "CGAL::", so that it works for the predicates
+  outside namespace CGAL.
+- IO operators are now in libCGAL, not inlined anymore.
+- Preliminary not-working-yet Linux/PowerPC support contributed
+  by Pierre Angelier.
+- Removed the old FPU_set_rounding_to_{zero|nearest|...} functions.
+
+Version 4.15 on 25 May 1999 [CGAL release 2.0]
 - fixed the test-suite for MipsPro.
 
 Version 4.14 on 25 May 1999

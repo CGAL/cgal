@@ -1,5 +1,5 @@
 - CLN: finish the wrapper(s) [and add the converters]. (+doc)
-- Real/Expr: idem.  See also http://www.cs.nyu.edu/exact/core/.
+- Real/Expr: idem (?).  See also http://www.cs.nyu.edu/exact/core/.
 - Implanter les optimisations suivantes compatibles IEEE 754 dans egcs:
   - (-a)*(-b) => a*b  (idem pour /)
   - (-a)>0    => a<0
@@ -7,13 +7,18 @@
   - (-a)*b    => -(a*b) ssi -ffast-math
   - bug à fixer: cf get_empiric_rounding_mode(), où "volatile" est nécessaire.
 - Comment intégrer ces foutus pré-calculs ?  Faire un draft de propal.
-- Faire aussi une propal précise pour include/CGAL/Predicates/*.
-- Faire une propal pour modular (après avoir vu/benché leda_modular).
-- Voir si on pourrait faire un filtre static avec le NT d'Olivier, et mes
-  scripts (voir si y'a pas trop de branches, etc...).
+- Implanter la propal pour modular ?
+  Ça devra se faire un jour anyway, de porter le code au C++...
+- Voir si on pourrait faire un filtre "static adaptatif" avec le NT d'Olivier
+  qui calcule la borne d'erreur, et mes scripts (voir si y'a pas trop de
+  branches, etc...).
 
 Concerning the code itself:
 
+- Vérifier si la version PPC contribuée par Pierre peut marcher sur
+  Linux/glibc/*.
+- Est-ce que les spécialisations doivent être sous CVS ?
+- Essayer de bencher avec -fbranch-probabilities ?  Ça pourrait être pas mal.
 - Expertiser le bench de Stefan.
 - Stop constant propagation (could be considered a compiler bug, or at least
   misfeature).  It's not specific to Intel, it would be nice if egcs had
@@ -31,17 +36,14 @@ Concerning the code itself:
   mais ça prend un chouia plus de place... mais en comparaison du reste...)
   Utiliser plutôt Tag_true/Tag_false si possible.
 - sign_det_2x2() optimisé pour l'IA (+ bench de triangulation).
-  (et régler le sort de include/CGAL/Interval_arithmetic/determinant.h.)
-	include/CGAL/Interval_arithmetic/determinant.h has no header.
-	Header check failed for include/CGAL/Interval_arithmetic/determinant.h.
-	Creating a default header.
+  (ça a l'air bien chiant, plutôt décrire vaguement dans la thèse, et
+  implanter les filtres "statiques adaptatifs").
 - Workarounds (pour MipsPro [et M$VC]):
   - specializations partielles: vérifier que c'est bien le bon CGAL_CFG_..
                                 que j'utilise.
 				NB: si on linke 2 .o comme ça => multiple def...
   - The convert_to workaround could be enabled even for all compilers ?
     It would simplify the code, but:  slow down ?  still work for Quotient ?
-- g++ 2.8.1 n'a pas l'air de supporter: Filter<Quotient<Gmpz>,Quotient<Gmpz>>.
 - Vérifier que EGCS optimise les expressions x*IA(1), IA(1)*x, x*IA(0), etc...
   C'est apparemment loin d'être le cas.  Il inline, mais laisse les tests...
   Il n'a pas l'air de propager les constantes à travers IA(1), même s'il
@@ -63,9 +65,21 @@ Concerning the code itself:
   /usr/ccs/bin/as: "/var/tmp/ccBHnU0T.s", line 861: warning: 3 instructions
   required between ldfsr and next FBfcc; nops inserted
   In which case is it produced ?  I can't see it anymore.
+- Sparc 64 support: dans glibc-2.1.1, il y a le patch suivant, qu'il
+  conviendrait d'adapter (?):
+    +#if __WORDSIZE == 64
+    +/* Type of the control word.  */
+    +typedef unsigned long fpu_control_t;
+    +
+    +#define _FPU_GETCW(cw) __asm__ ("stx %%fsr,%0" : "=m" (*&cw))
+    +#define _FPU_SETCW(cw) __asm__ ("ldx %0,%%fsr" : : "m" (*&cw))
+    +#else
+- In the future: see the C++ Standard numeric_limits<>, section 18.2.
 
 Concerning the script:
 
+- Try to match the types "CGAL::Sign" ?
+  et ne pas être pédantic sur les espaces qui manquent...
 - Add a warning/check to the argument being "const".
 - Add determinant_signs.h to the list of filtered files ?  And send the 3
   lines to Stefan to add to the end of the original determinant.h.
@@ -79,6 +93,13 @@ Concerning the script:
 
 Concerning the doc:
 
+- Dans la doc html de CGAL-2.0, mes enums sont répertoriés 2 fois dans
+  l'index, sûrement un bug de cc_manual compliance de ma part.
+  de même plus loin, ma fct to_double(Ia) n'est pas pareille que les autres.
+- documenter une fonction CGAL::force_ieee_754_double_precision(), dans la
+  doc, pour que le user puisse forcer sur __i386 si ça lui chante.  Dans la
+  doc, à l'endroit de l'intro de la support library (rajouter un
+  include/CGAL/FPU.h qui fasse juste ça ?)
 - documenter le mécanisme pour les prédicats? Il me semblerait utile de
   rajouter une section d'introduction ou bien à la fin du chapitre, pour
   expliquer comment utiliser les filtres. Peut-être une référence à ton
@@ -87,7 +108,7 @@ Concerning the doc:
 - add a pointer to my MISC'99 paper.
 - Document "IA::number_of_failures".
 - Documenter le mécanisme de cache.
-- Documenter .exact() et .interval().
+- Documenter .exact(), .interval() et .value().
 - Passer au nouveau format de doc.
 
 Concerning the test-suite:
