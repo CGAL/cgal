@@ -18,8 +18,6 @@
 #include <CGAL/circulator.h>
 #include <CGAL/Vector_3.h>
 
-SURFLAB_BEGIN_NAMESPACE
-
 // ======================================================================
 /**
  * All rule (for Polyhedron_subdivision::quadralize_polyhedron<RULE>(...))
@@ -574,8 +572,5 @@ public:
   //}
 //@}
 };
-
-
-SURFLAB_END_NAMESPACE
 
 #endif //_POLYHEDRON_SUBDIVISION_RULES_H_01292002

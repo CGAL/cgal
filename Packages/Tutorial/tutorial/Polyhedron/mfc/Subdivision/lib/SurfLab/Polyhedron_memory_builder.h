@@ -18,16 +18,12 @@
 #ifndef _POLYHEDRON_MEMORY_BUILDER_H_01312002
 #define _POLYHEDRON_MEMORY_BUILDER_H_01312002
 
-#include <SurfLab/config.h>
-
 #include <CGAL/Cartesian.h>
 //#include <CGAL/Polyhedron_default_traits_3.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Polyhedron_incremental_builder_3.h>
 
 #include <sstream>
-
-SURFLAB_BEGIN_NAMESPACE
 
 /**
  * Polyhedron_memory_builder is a modifier (check CGAL ref.) creating 
@@ -127,7 +123,5 @@ void Polyhedron_memory_builder<HDS>::buildPolyhedron_pt(PIB& pb) {
   }
   pb.end_surface();
 }
-
-SURFLAB_END_NAMESPACE
 
 #endif //_POLYHEDRON_MEMORY_BUILDER_H_01312002

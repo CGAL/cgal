@@ -18,11 +18,9 @@
 
 #include <CGAL/circulator.h>
 
-#include <SurfLab/Polyhedron_decorator.h>
-#include <SurfLab/Polyhedron_subdivision_rules.h>
-#include <SurfLab/Polyhedron_memory_builder.h>
-
-SURFLAB_BEGIN_NAMESPACE
+#include "Polyhedron_decorator.h"
+#include "Polyhedron_subdivision_rules.h"
+#include "Polyhedron_memory_builder.h"
 
 // ======================================================================
 ///
@@ -638,7 +636,5 @@ void Polyhedron_subdivision<_P>::sqrt3refine_1step(_P& p, RULE<_P> rule) {
 
   CGAL_postcondition(p.is_valid());
 }
-
-SURFLAB_END_NAMESPACE
 
 #endif //_POLYHEDRON_SUBDIVISION_H_01292002

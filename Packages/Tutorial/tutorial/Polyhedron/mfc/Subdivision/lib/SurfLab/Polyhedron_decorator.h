@@ -18,10 +18,6 @@
 #ifndef _POLYHEDRON_DECORATOR_H_01282002
 #define _POLYHEDRON_DECORATOR_H_01282002
 
-#include <SurfLab/config.h>
-
-SURFLAB_BEGIN_NAMESPACE
-
 template <class _Poly>
 class Polyhedron_decorator {
   typedef _Poly                                        Polyhedron;
@@ -187,7 +183,5 @@ Polyhedron_decorator<_Poly>::insert_edge(Polyhedron& p,
   CGAL_precondition_msg(0, "vertex a and b must share the same face");  
   return Halfedge_handle(NULL);
 }
-
-SURFLAB_END_NAMESPACE
 
 #endif //_POLYHEDRON_DECORATOR_H_01282002
