@@ -1,9 +1,9 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
-Ver 7.15 ()
+Ver 7.15 (03/04/02)
 - fixed Constrained triangulation so that default is with No_intersection_tag
-- and does not require intersection from the traits class
+- and does not require intersection types from the traits class
 - fixed Triangulation_euclidean_traits* to work with Kernel traits
 
 Ver 7.14 (25/03/02)
