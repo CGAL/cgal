@@ -23,7 +23,7 @@ extern const char* prog_name;
 extern char* current_filename;
 
 
-extern char* cgal_lib_dir;
+extern char* header_dir;
 
 /* An object storing the current font */
 /* ================================== */
