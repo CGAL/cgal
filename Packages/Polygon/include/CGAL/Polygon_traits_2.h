@@ -73,8 +73,8 @@ class Polygon_traits_2_aux : public _R
   public:
     typedef _FT                           FT;
     typedef _Point                        Point_2;
-    typedef Segment_2<_R>            Segment_2;
-    typedef Vector_2<_R>             Vector_2;
+    typedef ::CGAL::Segment_2<_R>            Segment_2;
+    typedef ::CGAL::Vector_2<_R>             Vector_2;
 
     typedef Less_xy_2<Point_2>       Less_xy;
     typedef Less_yx_2<Point_2>       Less_yx;

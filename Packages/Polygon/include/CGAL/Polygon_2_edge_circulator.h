@@ -88,6 +88,13 @@ class Polygon_2_const_edge_circulator {
       return first_vertex == x.first_vertex;
     }
 
+    bool
+    operator!=(
+      const Polygon_2_const_edge_circulator<_Traits, _Container>& x) const
+    {
+      return !(first_vertex == x.first_vertex);
+    }
+
     Segment_2 operator*()
     {
       Vertex_const_circulator second_vertex = first_vertex;
