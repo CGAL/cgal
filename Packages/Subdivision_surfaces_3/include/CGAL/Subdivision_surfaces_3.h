@@ -1,6 +1,6 @@
 // ======================================================================
 //
-// Copyright (c) 2002 SurfLab of CISE of University of Florida
+// Copyright (c) 2005 by Le-Jeng Shiue.  All Rights Reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
 // the terms of the Q Public License version 1.0.
@@ -16,7 +16,8 @@
 // $Revision$ $Date$
 // $Name$
 //
-// Author(s)     : Le-Jeng Shiue <sle-jeng@cise.ufl.edu>
+// Author(s): Le-Jeng Shiue <sle-jeng@cise.ufl.edu>
+//                          <SurfLab, CISE, University of Florida>
 //
 // ======================================================================
 
@@ -329,12 +330,16 @@ void Subdivision_surfaces_3<_P>::DQQ_1step(_P& p, _S<_P> rule) {
   int num_e = p.size_of_halfedges()/2;
   int num_f = p.size_of_facets();
 
+	int num_be = p.size_of_border_edges();
+
   Point* point_buffer = new Point[num_e*2];
 
   //
 #ifdef _EULER_DQQ_SPLITTING
   //
   // Splitting
+
+	// Splitting is not imlemented to support border
 
   // build the point_buffer
   Facet_iterator fitr, fitr_end = p.facets_end();
@@ -414,7 +419,7 @@ void Subdivision_surfaces_3<_P>::DQQ_1step(_P& p, _S<_P> rule) {
   for (vitr = p.vertices_begin(); vitr != vitr_end; ++vitr) {
     Halfedge_around_vertex_circulator cir = vitr->vertex_begin();
     do {
-      rule.corner_node(cir, point_buffer[pi++]);
+			if (!cir->is_border()) rule.corner_node(cir, point_buffer[pi++]);
     } while (++cir != vitr->vertex_begin());
   }
   
@@ -434,28 +439,68 @@ void Subdivision_surfaces_3<_P>::DQQ_1step(_P& p, _S<_P> rule) {
     for (int j = 0; j < vn; ++j) {
       Halfedge_handle e = vcir;
       ++vcir;
-      Vertex_handle v = insert_vertex(p, e);
-      v->point() = point_buffer[pi++];
+			if (!e->is_border()) {
+				Vertex_handle v = insert_vertex(p, e);
+				v->point() = point_buffer[pi++];
+			}
     }
+
     vcir = vh->vertex_begin();
-    for (int j = 0; j < vn; ++j) {
-      Halfedge_handle e1 = vcir->prev();
-      ++vcir;
-      Halfedge_handle e2 = vcir->opposite();
-      insert_edge(p, e1, e2);
-    }
-    p.erase_center_vertex(vh->vertex_begin());
+		for (int j = 0; j < vn; ++j) {
+			if (!vcir->is_border()) {
+				Halfedge_handle e1 = vcir->prev();
+				++vcir;
+				if (!vcir->is_border()) {
+					Halfedge_handle e2 = vcir->opposite();
+					insert_edge(p, e1, e2);
+				}
+			} else ++vcir;
+		}
+    //p.erase_center_vertex(vh->vertex_begin());
   }
 
   Edge_iterator eitr = p.edges_begin();
   for (int i = 0; i < num_e; ++i) {
-    Halfedge_handle eh = eitr;
-    ++eitr;
-    insert_edge(p, eh, eh->prev()->prev());
-    eh = eh->opposite();
-    insert_edge(p, eh, eh->prev()->prev());
-    p.join_facet(eh);
+		Halfedge_handle eh = eitr;
+		++eitr;
+		if (!eh->is_border_edge()) {
+			insert_edge(p, eh, eh->prev()->prev());
+			eh = eh->opposite();
+			insert_edge(p, eh, eh->prev()->prev());
+			p.join_facet(eh);
+		} else {
+			if (eh->is_border()) {
+				eh = eh->opposite();
+				insert_edge(p, eh, eh->prev()->prev());
+			} else 
+				insert_edge(p, eh, eh->prev()->prev());
+		}
   }
+
+	// after this point, the original border edges are in front!
+	eitr = p.edges_begin();
+	for (int i = 0; i < num_be; ++i) {
+		Halfedge_handle eh = eitr;
+		++eitr;
+
+		if (eh->is_border()) eh = eh->opposite();
+		Halfedge_handle ehe = eh;
+		eh = eh->prev()->opposite();
+		while (!eh->is_border()) {
+			p.erase_facet(ehe);
+			ehe = eh;
+			eh = eh->prev()->opposite();
+		}
+		p.erase_facet(ehe);
+	}
+
+	vitr = p.vertices_begin();
+	for (int i = 0; i < num_v-num_be; ++i) {
+	  Vertex_handle vh = vitr;
+    ++vitr;
+    p.erase_center_vertex(vh->vertex_begin());
+	}
+
 #endif //_EULER_DQQ_SPLITTING
 
   delete []point_buffer;
@@ -479,7 +524,7 @@ void Subdivision_surfaces_3<_P>::Sqrt3_1step(_P& p, _S<_P> rule) {
   Point* cpt = new Point[num_f]; 
   Facet_iterator fitr = p.facets_begin();
   for (int i = 0; i < num_f; ++i, ++fitr) {
-    ASSERTION_MSG(circulator_size(fitr->facet_begin())==3, "(ERROR) Non-triangle facet!");
+    //ASSERTION_MSG(circulator_size(fitr->facet_begin())==3, "(ERROR) Non-triangle facet!");
     rule.facet_node(fitr, cpt[i]);
   }
 
