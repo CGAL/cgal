@@ -30,7 +30,6 @@ namespace CGAL {
 template <class T>
 class Qt_view_show_voronoi : public Qt_widget_view
 {
-    //Q_OBJECT
 public:
   Qt_view_show_voronoi(T &t1) : tr(t1){};
 

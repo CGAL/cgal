@@ -47,7 +47,6 @@ namespace CGAL {
   template <class T>
   class Qt_widget_movepoint : public Qt_widget_movepoint_helper
   {
-    //Q_OBJECT
   public:
 	
     typedef typename T::Point			Point;

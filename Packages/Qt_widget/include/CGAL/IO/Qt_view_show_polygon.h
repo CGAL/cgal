@@ -32,7 +32,6 @@ namespace CGAL {
 template <class T>
 class Qt_view_show_polygon : public Qt_widget_view
 {
-    //Q_OBJECT
 public:
   
   Qt_view_show_polygon(T &p) : polygon(p){};

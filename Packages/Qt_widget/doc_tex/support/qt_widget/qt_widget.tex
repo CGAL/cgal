@@ -5,13 +5,13 @@
 % | 
 % |
 % |
-% | 12.12.2001	Radu Ursu
+% | 12.12.2001  Radu Ursu
 % | 
 \RCSdef{\qtwidgetRev}{$Revision$}
 \RCSdefDate{\qtwidgetDate}{$Date$}
 % +------------------------------------------------------------------------+
 
-\newcommand{\qt}{{\em Qt}}	%QT abbreviation
+\newcommand{\qt}{{\em Qt}}      %QT abbreviation
 
 \gdef\lciIfHtmlClassLinks{\lcFalse}
 \gdef\lciIfHtmlRefLinks{\lcFalse}
@@ -118,8 +118,8 @@ draws the Delaunay triangulation of the point set.
 
 #include <qapplication.h>
 
-typedef CGAL::Cartesian<double>		    Rep;
-typedef CGAL::Point_2<Rep>		    Point;
+typedef CGAL::Cartesian<double>             Rep;
+typedef CGAL::Point_2<Rep>                  Point;
 typedef CGAL::Delaunay_triangulation_2<Rep> Delaunay;
 
 Delaunay dt;
@@ -213,7 +213,6 @@ namespace CGAL {
 template <class T>
 class Qt_view_show_voronoi : public Qt_widget_view
 {
-    //Q_OBJECT
 public:
   Qt_view_show_voronoi(T &t1) : tr(t1){};
 
@@ -222,9 +221,9 @@ public:
     widget << CGAL::RED ;
     tr.draw_dual(widget);
   };
-	
+        
 private:
-  T	&tr;
+  T     &tr;
 };//end class 
 
 \end{ccExampleCode}
@@ -263,8 +262,8 @@ to the connected slot \ccc{My_Window::get_new_object(CGAL::Object)}.
 
 #include <qapplication.h>
 
-typedef CGAL::Cartesian<double>		    Rep;
-typedef CGAL::Point_2<Rep>		    Point;
+typedef CGAL::Cartesian<double>             Rep;
+typedef CGAL::Point_2<Rep>                  Point;
 typedef CGAL::Delaunay_triangulation_2<Rep> Delaunay;
 
 Delaunay dt;
@@ -315,10 +314,9 @@ namespace CGAL {
 template <class R>
 class Qt_widget_get_point : public Qt_widget_tool
 {
-  //  Q_OBJECT
 public:
-  typedef typename R::Point_2	Point;
-  typedef typename R::FT	FT;
+  typedef typename R::Point_2   Point;
+  typedef typename R::FT        FT;
   
   Qt_widget_get_point(const QCursor c=QCursor(Qt::crossCursor)) :
     cursor(c) {};
@@ -392,7 +390,7 @@ public:
   }
   ....
 private:
-  CGAL::Qt_widget	  win;
+  CGAL::Qt_widget         win;
   CGAL::Standard_toolbar  *stoolbar;
   ....
 };

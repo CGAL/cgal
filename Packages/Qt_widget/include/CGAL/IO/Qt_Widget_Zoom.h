@@ -31,7 +31,6 @@ namespace CGAL {
 
 class Qt_widget_zoom : public Qt_widget_tool
 {
-  //  Q_OBJECT
 private:
   int	x2, y2;
   bool	circle_already_drawn;

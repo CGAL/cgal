@@ -30,7 +30,6 @@ namespace CGAL {
 template <class T>
 class Qt_view_show_polygon_points : public Qt_widget_view
 {
-    //Q_OBJECT
   typedef typename T::Point_2	Point_2;
 public:
   

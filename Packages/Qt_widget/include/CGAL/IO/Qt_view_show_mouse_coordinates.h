@@ -31,7 +31,6 @@ namespace CGAL {
 
 class Qt_view_mouse_coordinates : public Qt_widget_view
 {
-    //Q_OBJECT
 public:
 	
   Qt_view_mouse_coordinates(QMainWindow &mw) : qmw(mw){};

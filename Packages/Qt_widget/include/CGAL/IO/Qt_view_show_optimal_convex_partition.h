@@ -32,7 +32,6 @@ namespace CGAL {
 template <class T>
 class Qt_view_show_optimal_convex : public Qt_widget_view
 {
-    //Q_OBJECT
 public:
   typedef typename T::FT	      FT;
   typedef CGAL::Cartesian<FT>	      K;

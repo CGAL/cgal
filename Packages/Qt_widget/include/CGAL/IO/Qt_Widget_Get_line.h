@@ -34,7 +34,6 @@ namespace CGAL {
 template <class R>
 class Qt_widget_get_line : public Qt_widget_tool
 {
-  //  Q_OBJECT
 public:
   typedef Point_2<R>			Point;
   typedef Line_2<R>				Line;

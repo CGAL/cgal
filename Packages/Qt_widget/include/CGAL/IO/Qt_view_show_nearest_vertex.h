@@ -30,7 +30,6 @@ namespace CGAL {
 template <class T>
 class Qt_view_nearest_vertex : public Qt_widget_view
 {
-    //Q_OBJECT
 public:
   typedef typename T::Point			Point;
   typedef typename T::Segment			Segment;

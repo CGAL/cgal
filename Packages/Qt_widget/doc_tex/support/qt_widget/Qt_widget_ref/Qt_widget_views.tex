@@ -2,7 +2,7 @@
 % | CGAL Reference Manual: Reference manual for Qt_widget.tex
 % +------------------------------------------------------------------------+
 % |
-% | 03.01.2001	Radu Ursu
+% | 03.01.2001  Radu Ursu
 % | 
 % | \RCSdef{\qtwidgetRev}{$Revision$}
 % | \RCSdefDate{\qtwidgetDate}{$Date$}
@@ -71,12 +71,11 @@ namespace CGAL {
 
 template <class T>
 class Qt_view_show_points : public Qt_widget_view {
-    //Q_OBJECT
 public:
-  typedef typename T::Point		Point;
-  typedef typename T::Segment		Segment;
-  typedef typename T::Vertex		Vertex;
-  typedef typename T::Vertex_iterator	Vertex_iterator;
+  typedef typename T::Point             Point;
+  typedef typename T::Segment           Segment;
+  typedef typename T::Vertex            Vertex;
+  typedef typename T::Vertex_iterator   Vertex_iterator;
 
   Qt_view_show_points(T &t) : tr(t){};
 
@@ -84,7 +83,7 @@ public:
   {
     Vertex v;
     Vertex_iterator it = tr.vertices_begin(), 
-		beyond = tr.vertices_end();
+                beyond = tr.vertices_end();
     widget << CGAL::GREEN << CGAL::PointSize (3) << CGAL::PointStyle (CGAL::DISC);
     while(it != beyond)
     {
@@ -94,7 +93,7 @@ public:
     }
   };
 private:
-  T	&tr;
+  T     &tr;
 };//end class 
 } // namespace CGAL
 \end{ccExampleCode}

@@ -33,7 +33,6 @@ namespace CGAL {
 template <class R>
 class Qt_widget_get_point : public Qt_widget_tool
 {
-  //  Q_OBJECT
 public:
   typedef typename R::Point_2	Point;
   typedef typename R::FT	FT;
