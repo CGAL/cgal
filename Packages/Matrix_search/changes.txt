@@ -9,6 +9,7 @@
 
 ALL : Fixed sunpro problems.
 ALL : Some fixes for sunpro 5.3.
+SRC : Fixed rectangle construction bug.
 
 //---------------------------------------------------------------------
 //	 CGAL 2.3
