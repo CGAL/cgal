@@ -1413,16 +1413,22 @@ Packages/Nef_S2/doc_tex/Nef_S2/halfspace.gif -text svneol=unset#unset
 Packages/Nef_S2/doc_tex/Nef_S2/halfspace.ps -text
 Packages/Optimisation_doc/doc_tex/Optimisation/annulus.eps -text
 Packages/Optimisation_doc/doc_tex/Optimisation/annulus.gif -text svneol=unset#unset
+Packages/Optimisation_doc/doc_tex/Optimisation/annulus.pdf -text svneol=unset#unset
 Packages/Optimisation_doc/doc_tex/Optimisation/ball.eps -text
 Packages/Optimisation_doc/doc_tex/Optimisation/ball.gif -text svneol=unset#unset
+Packages/Optimisation_doc/doc_tex/Optimisation/ball.pdf -text svneol=unset#unset
 Packages/Optimisation_doc/doc_tex/Optimisation/largestEmptyRect.eps -text
 Packages/Optimisation_doc/doc_tex/Optimisation/largestEmptyRect.gif -text svneol=unset#unset
+Packages/Optimisation_doc/doc_tex/Optimisation/largestEmptyRect.pdf -text svneol=unset#unset
 Packages/Optimisation_doc/doc_tex/Optimisation/max_triangle.eps -text
 Packages/Optimisation_doc/doc_tex/Optimisation/max_triangle.gif -text svneol=unset#unset
+Packages/Optimisation_doc/doc_tex/Optimisation/max_triangle.pdf -text svneol=unset#unset
 Packages/Optimisation_doc/doc_tex/Optimisation/pcenter.eps -text
 Packages/Optimisation_doc/doc_tex/Optimisation/pcenter.gif -text svneol=unset#unset
+Packages/Optimisation_doc/doc_tex/Optimisation/pcenter.pdf -text svneol=unset#unset
 Packages/Optimisation_doc/doc_tex/Optimisation/polydist.eps -text
 Packages/Optimisation_doc/doc_tex/Optimisation/polydist.gif -text svneol=unset#unset
+Packages/Optimisation_doc/doc_tex/Optimisation/polydist.pdf -text svneol=unset#unset
 Packages/PS_Stream/doc_tex/PS_Stream/exemple.ps -text
 Packages/PS_Stream/doc_tex/PS_Stream/style.ps -text
 Packages/Partition_2/demo/Partition_2/partition_2.vcproj -text
