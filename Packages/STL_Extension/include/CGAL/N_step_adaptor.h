@@ -1,6 +1,3 @@
-#line 169 "stl_extension.aw"
-
-#line 20 "cgal_header.awi"
 // ============================================================================
 //
 // Copyright (c) 1997, 1998, 1999 The CGAL Consortium
@@ -18,7 +15,6 @@
 // chapter       : $CGAL_Chapter: STL Extensions for CGAL $
 // package       : $CGAL_Package: STL_Extension $
 // source        : stl_extension.fw
-#line 37 "cgal_header.awi"
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
@@ -29,10 +25,8 @@
 // An iterator/circulator adaptor doing n-steps per increment.
 // ============================================================================
 
-#line 173 "stl_extension.aw"
 #ifndef CGAL_N_STEP_ADAPTOR_H
 #define CGAL_N_STEP_ADAPTOR_H 1
-#line 3357 "stl_extension.aw"
 #ifndef CGAL_CIRCULATOR_H
 #include <CGAL/circulator.h>
 #endif
@@ -179,6 +173,5 @@ operator+( D n, N_step_adaptor<I,N,Ref,Ptr,Val,Dist,Ctg> i) {
 #endif // CGAL_CFG_NO_CONSTANTS_IN_FUNCTION_TEMPLATES //
 
 CGAL_END_NAMESPACE
-#line 176 "stl_extension.aw"
 #endif // CGAL_N_STEP_ADAPTOR_H //
 // EOF //

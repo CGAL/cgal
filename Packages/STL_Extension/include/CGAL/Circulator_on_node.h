@@ -1,6 +1,3 @@
-#line 145 "stl_extension.aw"
-
-#line 20 "cgal_header.awi"
 // ============================================================================
 //
 // Copyright (c) 1997, 1998, 1999 The CGAL Consortium
@@ -18,7 +15,6 @@
 // chapter       : $CGAL_Chapter: STL Extensions for CGAL $
 // package       : $CGAL_Package: STL_Extension $
 // source        : stl_extension.fw
-#line 37 "cgal_header.awi"
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
@@ -29,27 +25,20 @@
 // An circulator built over a linked node structure.
 // ============================================================================
 
-#line 149 "stl_extension.aw"
 #ifndef CGAL_CIRCULATOR_ON_NODE_H
 #define CGAL_CIRCULATOR_ON_NODE_H 1
-#line 3127 "stl_extension.aw"
 #ifndef CGAL_CIRCULATOR_H
 #include <CGAL/circulator.h>
 #endif
 
 CGAL_BEGIN_NAMESPACE
 
-#ifdef CGAL_CFG_NO_DEFAULT_PREVIOUS_TEMPLATE_ARGUMENTS
-template < class Node, class Next, class Prev, class Ref, class Ptr,
-           class Ctg>
-#else
 template < class Node,
            class Next,
            class Prev,
            class Ref = Node&,
            class Ptr = Node*,
            class Ctg = Bidirectional_circulator_tag>
-#endif
 class Circulator_on_node {
 protected:
   Ptr      nt;    // The internal node ptr.
@@ -121,6 +110,5 @@ public:
 };
 
 CGAL_END_NAMESPACE
-#line 152 "stl_extension.aw"
 #endif // CGAL_CIRCULATOR_ON_NODE_H //
 // EOF //

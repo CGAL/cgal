@@ -1,6 +1,3 @@
-#line 109 "stl_extension.aw"
-
-#line 20 "cgal_header.awi"
 // ============================================================================
 //
 // Copyright (c) 1997, 1998, 1999 The CGAL Consortium
@@ -18,7 +15,6 @@
 // chapter       : $CGAL_Chapter: STL Extensions for CGAL $
 // package       : $CGAL_Package: STL_Extension $
 // source        : stl_extension.fw
-#line 37 "cgal_header.awi"
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
@@ -29,23 +25,17 @@
 // An circulator adaptor for the identity function.
 // ============================================================================
 
-#line 113 "stl_extension.aw"
 #ifndef CGAL_CIRCULATOR_IDENTITY_H
 #define CGAL_CIRCULATOR_IDENTITY_H 1
-#line 2227 "stl_extension.aw"
 #ifndef CGAL_CIRCULATOR_H
 #include <CGAL/circulator.h>
 #endif
 
 CGAL_BEGIN_NAMESPACE
 
-#ifdef CGAL_CFG_NO_DEFAULT_PREVIOUS_TEMPLATE_ARGUMENTS
-template < class C, class Ref, class Ptr>
-#else
 template < class C,
            class Ref = typename C::reference,
            class Ptr = typename C::pointer>
-#endif
 class Circulator_identity {
 private:
   C        nt;    // The internal circulator.
@@ -162,6 +152,5 @@ operator+( Dist n, Circulator_identity<C,Ref,Ptr> i) {
 }
 
 CGAL_END_NAMESPACE
-#line 116 "stl_extension.aw"
 #endif // CGAL_CIRCULATOR_IDENTITY_H //
 // EOF //

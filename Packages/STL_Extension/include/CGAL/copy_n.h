@@ -1,6 +1,3 @@
-#line 73 "stl_extension.aw"
-
-#line 20 "cgal_header.awi"
 // ============================================================================
 //
 // Copyright (c) 1997, 1998, 1999 The CGAL Consortium
@@ -18,7 +15,6 @@
 // chapter       : $CGAL_Chapter: STL Extensions for CGAL $
 // package       : $CGAL_Package: STL_Extension $
 // source        : stl_extension.fw
-#line 37 "cgal_header.awi"
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
@@ -29,10 +25,8 @@
 // STL like copy that copies n elements
 // ============================================================================
 
-#line 77 "stl_extension.aw"
 #ifndef CGAL_COPY_N_H
 #define CGAL_COPY_N_H 1
-#line 1543 "stl_extension.aw"
 #ifndef CGAL_PROTECT_CSTDDEF
 #include <cstddef>
 #define CGAL_PROTECT_CSTDDEF
@@ -59,6 +53,5 @@ OutputIterator copy_n( InputIterator first,
 }
 CGAL_END_NAMESPACE
 #endif // CGAL_CFG_NO_NAMESPACE //
-#line 80 "stl_extension.aw"
 #endif // CGAL_COPY_N_H //
 // EOF //

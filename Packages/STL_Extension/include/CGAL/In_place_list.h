@@ -1,6 +1,3 @@
-#line 49 "stl_extension.aw"
-
-#line 20 "cgal_header.awi"
 // ============================================================================
 //
 // Copyright (c) 1997, 1998, 1999 The CGAL Consortium
@@ -18,7 +15,6 @@
 // chapter       : $CGAL_Chapter: STL Extensions for CGAL $
 // package       : $CGAL_Package: STL_Extension $
 // source        : stl_extension.fw
-#line 37 "cgal_header.awi"
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
@@ -29,10 +25,8 @@
 // A doubly linked list managing items in place.
 // ============================================================================
 
-#line 53 "stl_extension.aw"
 #ifndef CGAL_IN_PLACE_LIST_H
 #define CGAL_IN_PLACE_LIST_H 1
-#line 222 "stl_extension.aw"
 #ifndef CGAL_BASIC_H
 #include <CGAL/basic.h>
 #endif
@@ -68,10 +62,9 @@
 CGAL_BEGIN_NAMESPACE
 
 // Define shorter names to please linker (g++/egcs)
-#define _In_place_list_iterator             _Ipli
-#define _In_place_list_const_iterator       _Iplci
+//#define _In_place_list_iterator             _Ipli
+//#define _In_place_list_const_iterator       _Iplci
 
-#line 274 "stl_extension.aw"
 // Forward declarations
 template <class T> class _In_place_list_iterator;
 template <class T> class _In_place_list_const_iterator;
@@ -93,8 +86,6 @@ public:
   friend  class In_place_list<T,false>;
   friend  class In_place_list<T,true>;
 };
-#line 261 "stl_extension.aw"
-#line 302 "stl_extension.aw"
 template <class T>
 class _In_place_list_iterator {
   // protected:  // Made public for g++ 2.8 and egcs 2.90. They don't
@@ -381,8 +372,6 @@ public:
     insert( iterator(pos), n, x);
   }
 
-#ifndef CGAL_CFG_NO_MEMBER_TEMPLATES
-
   template <class InputIterator>
   void insert(iterator pos, InputIterator first, InputIterator last) {
     // inserts the range [`first, last') in front of iterator `pos'.
@@ -396,16 +385,6 @@ public:
     while (first != last)
       insert(pos, *get_node(*first++));
   }
-
-#else // CGAL_CFG_NO_MEMBER_TEMPLATES //
-
-  // non-member-template version.
-  void insert(iterator pos, const_iterator first, const_iterator last);
-
-  void insert(iterator pos, const T* first, const T* last) {
-    insert( pos, const_iterator(first), const_iterator(last));
-  }
-#endif // CGAL_CFG_NO_MEMBER_TEMPLATES //
 
   void insert(T* pos, const T* first, const T* last) {
     insert( iterator(pos), const_iterator(first),
@@ -455,7 +434,6 @@ public:
     insert(begin(), n, value);
   }
 
-#ifndef CGAL_CFG_NO_MEMBER_TEMPLATES
   template <class InputIterator>
   In_place_list( InputIterator first, InputIterator last) : length(0) {
     // a list with copies from the range [`first,last').
@@ -464,15 +442,6 @@ public:
     (*node).prev_link = node;
     insert( begin(), first, last);
   }
-#else // CGAL_CFG_NO_MEMBER_TEMPLATES //
-  In_place_list( const_iterator first, const_iterator last) : length(0) {
-    // a list with copies from the range [`first,last').
-    node = get_node();
-    (*node).next_link = node;
-    (*node).prev_link = node;
-    insert( begin(), first, last);
-  }
-#endif // CGAL_CFG_NO_MEMBER_TEMPLATES //
 
   In_place_list(const T* first, const T* last) : length(0) {
     // a list with copies from the range [`first,last').
@@ -497,18 +466,11 @@ public:
 
   void destroy();
 
-#ifndef CGAL_CFG_NO_MEMBER_TEMPLATES
   template <class InputIterator>
   void assign( InputIterator first, InputIterator last) {
     erase( begin(), end());
     insert( begin(), first, last);
   }
-#else // CGAL_CFG_NO_MEMBER_TEMPLATES //
-  void assign( const_iterator first, const_iterator last) {
-    erase( begin(), end());
-    insert( begin(), first, last);
-  }
-#endif // CGAL_CFG_NO_MEMBER_TEMPLATES //
 
   void assign( size_type n, const T& t) {
     erase( begin(), end());
@@ -628,17 +590,6 @@ public:
   // log n) where `n = size()'. It is stable. Precondition: a
   // suitable `operator<' for the type T.
 };
-
-#ifdef CGAL_CFG_NO_MEMBER_TEMPLATES
-template <class T, bool managed>
-void In_place_list<T,managed>::
-insert(_In_place_list_iterator<T> position,
-       _In_place_list_const_iterator<T> first,
-       _In_place_list_const_iterator<T> last) {
-  while (first != last)
-    insert(position, *get_node(*first++));
-}
-#endif // CGAL_CFG_NO_MEMBER_TEMPLATES //
 
 template <class T, bool managed>
 void In_place_list<T,managed>::
@@ -781,13 +732,11 @@ void In_place_list<T,managed>::sort() {
   swap(counter[fill-1]);
 }
 
-#line 262 "stl_extension.aw"
 
 // Undef shorter names (g++/egcs)
-#undef _In_place_list_iterator
-#undef _In_place_list_const_iterator
+//#undef _In_place_list_iterator
+//#undef _In_place_list_const_iterator
 
 CGAL_END_NAMESPACE
-#line 56 "stl_extension.aw"
 #endif // CGAL_IN_PLACE_LIST_H //
 // EOF //
