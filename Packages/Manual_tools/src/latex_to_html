@@ -344,9 +344,10 @@ convert() {
         ${MakePath} ${TmpDir}/${PathName}
     fi
 
-    # derive LogFile from rootname
+    # derive LogFile from rootname, and copy existing 'latex_to_html.hlg' to it
     LogFile=$CurrentDir/${RootName}.hlg
     if [ -r $LogFile ]; then rm $LogFile; fi
+    if [ -r latex_to_html.hlg ]; then mv latex_to_html.hlg $LogFile; fi
     lgout "[$ProgName: Revision `version_no` [`version_date`] "
 
     # check for <rootname>.aux files automatically
@@ -427,7 +428,7 @@ convert() {
     # Compile the anchor filter for creating all crosslinks
     # -------------------------------------------------------------
     lgout -n ", "
-    lgout -n "[creating anchor filter stage 1,2 and 3 "
+    lgout -n "[creating cross linker programs stage 1,2 and 3 "
     for dir in ${AllSubDirs} ; do
         lgout -n "[$dir"
         cd $dir
@@ -442,7 +443,7 @@ convert() {
     # Apply anchor filter to all HTML files creating the crosslinks
     # ---------------------------------------------------------------------
     lgout -n ", "
-    lgout -n "[applying anchor filter "
+    lgout -n "[applying cross linker programs "
     for dir in ${AllSubDirs} ; do
         lgout -n "[$dir"
         cd $dir
