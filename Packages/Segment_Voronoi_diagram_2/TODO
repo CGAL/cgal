@@ -1,4 +1,12 @@
-- replace std::list by std::set in the spec (for the point container)
+- For release:
+  * add example that demostrates how to get edge info
+  * remove enumeration type Arrangment_type as an enum type and add small
+    is_*() methods that query the type
+  * add test suites for {insert,remove}_degree_2 in TDS_2
+  * add test suites for join_vertices & split_vertex in TDS_2
+  * customize traits with predefined kernels, as well as add something
+    in the doc for that
+
 - remove test_svd2.C from the test directory
 - add hierarchy specific tests in the hierarchy test suite
 - make sure that the assignment operator and copy constructor for the
