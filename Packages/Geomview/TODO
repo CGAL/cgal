@@ -18,6 +18,10 @@
   job ?  Discretisation for Sphere and Circle should be configurable for the
   stream.
 - Add test programs for operator<< (Polyhedron, T2D, T3D).
+- Is there a way to have some kind of transparency with Geomview ?
+  Enhance CGAL::Color for that ?
+- Is there a way to see edges like cylinders somewhat (possibly generate them
+  ourselves), so that we know which one is in front of which other one ?
 
 - Make a testsuite (words from Herve):
 <<<<<<<<<<<<<<<<
