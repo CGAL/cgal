@@ -124,14 +124,14 @@ public:
     operator()(const typename K1::Point_3 &a) const
     {
 	return k.construct_point_3_object()(rc(a.hx()), rc(a.hy()),
-		rc(a.hz()));
+		rc(a.hz()), rc(a.hw()));
     }
 
     typename K2::Vector_3
     operator()(const typename K1::Vector_3 &a) const
     {
 	return k.construct_vector_3_object()(rc(a.hx()), rc(a.hy()),
-		rc(a.hz()));
+		rc(a.hz()), rc(a.hw()));
     }
 
     typename K2::Direction_3
