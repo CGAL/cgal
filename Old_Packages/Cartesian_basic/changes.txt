@@ -1,3 +1,6 @@
+Version 3.3.1 (September 9 1999)
+- Removed <CGAL/Kernel/function_objects.h> which bazooked H2 and H3
+
 Version 3.3 (September 3 1999)
 - Added Point_d to Cartesian
 
