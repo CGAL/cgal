@@ -47,8 +47,9 @@ CGAL_END_NAMESPACE
 
 #include <CGAL/Number_type_traits.h>
 #include <CGAL/number_utils.h>
-#include <CGAL/double.h>
 #include <CGAL/float.h>
+#include <CGAL/double.h>
+#include <CGAL/long_double.h>
 #include <CGAL/int.h>
 
 // Including all number type files is necessary for compilers implementing

@@ -1,4 +1,4 @@
-// Copyright (c) 2001-2004  Utrecht University (The Netherlands),
+// Copyright (c) 2001-2005  Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
 // INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
 // (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
@@ -41,6 +41,19 @@ const double trunc_min = double(-base)*(base/2)/double(base-1);
 
 inline
 int
+my_rint(float d)
+{
+#if defined __BORLANDC__ || defined _MSC_VER
+  return int(d<0 ? d-0.5f : d+0.5f);
+#elif defined __MWERKS__
+  return (int) std::rintf(d);
+#else
+  return (int) ::rintf(d);
+#endif
+}
+
+inline
+int
 my_rint(double d)
 {
 #if defined __BORLANDC__ || defined _MSC_VER
@@ -52,8 +65,22 @@ my_rint(double d)
 #endif
 }
 
-MP_Float::MP_Float(double d)
-  : exp(0)    // (to shut up valgrind)
+inline
+int
+my_rint(const long double & d)
+{
+#if defined __BORLANDC__ || defined _MSC_VER
+  return int(d<0 ? d-0.5l : d+0.5l);
+#elif defined __MWERKS__
+  return (int) std::rintl(d);
+#else
+  return (int) ::rintl(d);
+#endif
+}
+
+template < typename T >
+inline
+void MP_Float::construct_from_builtin_fp_type(T d)
 {
     // Protection against rounding mode != nearest, and extended precision.
     Protect_FPU_rounding<> P(CGAL_FE_TONEAREST);
@@ -61,47 +88,64 @@ MP_Float::MP_Float(double d)
       return;
 
     CGAL_assertion(is_finite(d) && is_valid(d));
-    CGAL_expensive_assertion_code(double bak = d;)
 
     // This is subtle, because ints are not symetric against 0.
 
-    // First, find the exponent.
-    exp = 1 - (int) limbs_per_double;
+    // First, scale d, and adjust exp accordingly.
+    exp = 0;
     while (d < trunc_min || d > trunc_max) {
-      exp++;
-      d *= 1.0/base;
+      ++exp;
+      d /= base;
     }
 
     while (d >= trunc_min/base && d <= trunc_max/base) {
-      exp--;
+      --exp;
       d *= base;
     }
 
     // Then, compute the limbs.
-    v.resize(limbs_per_double);
-    double orig = d, sum = 0;
-    for (int i = limbs_per_double - 1; i > 0; i--) {
-      v[i] = my_rint(d);
-      if (d-v[i] >= double(base/2-1)/(base-1))
-        v[i]++;
-      // We used to do simply "d -= v[i];", but when the most significant limb
-      // is 1 and the second is -32768, then it can happen that |d-v[i]|>|d|,
-      // hence a bit of precision can be lost.  Hence the need for sum/orig.
-      sum += v[i];
+    // Put them in v (in reverse order temporarily).
+    T orig = d, sum = 0;
+    while (true) {
+      v.push_back(my_rint(d));
+      if (d-v.back() >= T(base/2-1)/(base-1))
+        ++v.back();
+      // We used to do simply "d -= v.back();", but when the most significant
+      // limb is 1 and the second is -32768, then it can happen that
+      // |d - v.back()| > |d|, hence a bit of precision can be lost.
+      //  Hence the need for sum/orig.
+      sum += v.back();
       d = orig-sum;
+      if (d == 0)
+        break;
       sum *= base;
       orig *= base;
       d *= base;
+      --exp;
     }
 
-    // The last limb fits directly.
-    v[0] = (limb) d;
+    // Reverse v.
+    std::reverse(v.begin(), v.end());
 
-    remove_trailing_zeros();
-
-    CGAL_expensive_assertion(d == my_rint(d));
     CGAL_assertion(v.back() != 0);
-    CGAL_expensive_assertion(CGAL::to_double(*this) == bak);
+}
+
+MP_Float::MP_Float(float d)
+{
+    construct_from_builtin_fp_type(d);
+    CGAL_expensive_assertion(CGAL::to_double(*this) == d);
+}
+
+MP_Float::MP_Float(double d)
+{
+    construct_from_builtin_fp_type(d);
+    CGAL_expensive_assertion(CGAL::to_double(*this) == d);
+}
+
+MP_Float::MP_Float(long double d)
+{
+    construct_from_builtin_fp_type(d);
+    // CGAL_expensive_assertion(CGAL::to_double(*this) == d);
 }
 
 Comparison_result

@@ -143,15 +143,51 @@ int main(int argc, char **argv)
 
   std::cout.precision(20);
 
-  for (; loops >= 0; loops--) {
+  std::cout << "Checking MP_Float(float) constructor." << std::endl;
+  for (int i = 0; i < loops; ++i) {
+    float d = CGAL::default_random.get_double();
+    int exp = int((CGAL::default_random.get_double()-.5)*256);
+    d = CGAL_CLIB_STD::ldexp(d, exp);
+    // std::cout << d << std::endl;
+    // std::cout << MPF(d) << std::endl;
+    // std::cout << CGAL::to_double(MPF(d)) << std::endl;
+    if (CGAL::to_double(MPF(d)) != (double) d) {
+      std::cerr << "CONVERSION ERROR with float : " << d << std::endl;
+      abort();
+    }
+  }
+
+  std::cout << "Checking MP_Float(double) constructor." << std::endl;
+  for (int i = 0; i < loops; ++i) {
     double d = CGAL::default_random.get_double();
     int exp = int((CGAL::default_random.get_double()-.5)*1024);
     d = CGAL_CLIB_STD::ldexp(d, exp);
     // std::cout << d << std::endl;
     // std::cout << MPF(d) << std::endl;
     // std::cout << CGAL::to_double(MPF(d)) << std::endl;
-    if (CGAL::to_double(MPF(d)) != d)
+    if (CGAL::to_double(MPF(d)) != d) {
       std::cerr << "CONVERSION ERROR with double : " << d << std::endl;
+      abort();
+    }
+  }
+
+  std::cout << "Checking MP_Float(long double) constructor." << std::endl;
+  for (int i = 0; i < loops; ++i) {
+    long double d = CGAL::default_random.get_double();
+    d = d*d; // to get more bits
+    int exp = int((CGAL::default_random.get_double()-.5)*1024);
+    d = d * CGAL_CLIB_STD::ldexp(1.0, exp);
+    //std::cout << d << std::endl;
+    //std::cout << MPF(d) << std::endl;
+    //std::cout << CGAL::to_double(MPF(d)) << std::endl;
+
+    // Here we have to use a lesser test.
+    MPF res = d;
+    std::pair<double, double> ia = CGAL::to_interval(res);
+    if ( MPF(ia.first) > res || MPF(ia.second) < res) {
+      std::cerr << "CONVERSION ERROR with long double : " << d << std::endl;
+      abort();
+    }
   }
 
   // Test-cases for specific bugs found :

@@ -69,6 +69,7 @@ int main()
 #endif
   TESTIT(float, "float")
   TESTIT(double, "double")
+  TESTIT(long double, "long double")
 
   // CGAL number types
   TESTIT(CGAL::Fixed_precision_nt, "Fixed_precision_nt")

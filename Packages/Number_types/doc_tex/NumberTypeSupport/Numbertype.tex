@@ -66,16 +66,16 @@ But if you have a better implementation for any of them, you can provide a
 corresponding overloading function with the same name for your number types,
 which will get preference over the template functions listed above.
 
-For the number types \ccc{int}, and \ccc{double} there is
+For the number types \ccc{int} and \ccc{double} there is
 also a random numbers generator \ccc{CGAL::Random}.
 
 \section{Built-in Number Types}
 
-The built-in number types \ccc{float} and \ccc{double} have the
-required arithmetic and comparison operators. They lack some required
+The built-in number types \ccc{float}, \ccc{double} and \ccc{long double} have
+the required arithmetic and comparison operators. They lack some required
 routines though which are automatically included by \cgal.
 \ccTexHtml{\footnote{ The functions can be found in the header files 
-\ccc{<CGAL/double.h>} and \ccc{<CGAL/float.h>}.}}{}
+\ccc{<CGAL/float.h>}, \ccc{<CGAL/double.h>} and \ccc{<CGAL/long_double.h>}.}}{}
 
 All built-in number types of \CC\ can represent a discrete (bounded)
 subset of the rational numbers only.  We assume that the

@@ -114,6 +114,11 @@ private:
       short s;
   };
 
+  // The constructors from float/double/long_double are factorized in the
+  // following template :
+  template < typename T >
+  void construct_from_builtin_fp_type(T d);
+
 public:
 
   // Splits a limb2 into 2 limbs (high and low).
@@ -164,7 +169,11 @@ public:
     canonicalize();
   }
 
+  MP_Float(float d);
+
   MP_Float(double d);
+
+  MP_Float(long double d);
 
   MP_Float operator-() const
   {

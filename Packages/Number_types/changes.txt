@@ -1,3 +1,9 @@
+29 January 2005 Sylvain Pion
+- Make "long double" a model of number type.
+- Add MP_Float constructors from float and long double.
+
+=========================== CGAL 3.1 ============================
+
 24 November 2004 Sylvain Pion
 - Remove useless (and potentially misleading) reference to the obsolete
   BigNum package (by Serpette, Vuillemin, Herve).
