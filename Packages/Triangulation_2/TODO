@@ -1,4 +1,5 @@
-
+- Check if copy constructor and assignement operator of
+  constrained riangulation transfers the contrained marks.
 - Something still tobe done for remove in Constrained
   Delaunay_constrained and  Constrained_triangulation_plus
 - Mettre la doc a jour
