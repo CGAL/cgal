@@ -33,7 +33,7 @@ and \ccc{Ray_2} and the constructor objects
 \ccc{Construct_midpoint}
 are used to build the dual Voronoi diagram
 and are required only if the dual functions are called.
-The additional predicate type \ccc{Less_distance_to_point_2} is o
+The additional predicate type \ccc{Compare_distance_2} is 
 required if calls to 
 \ccc{nearest_vertex(..)} are issued.
 
@@ -59,14 +59,12 @@ which takes four points $p, q, r, s$ as arguments and returns
 with respect to the oriented circle through  through $p,q$
 and $r$.}
 \ccGlue
-\ccNestedType{Less_distance_to_point_2} {Predicate type. Must provide
-the constructor
-\ccc{Less_distance_to_point_2( Point_2 p)}
-and the operator
-\ccc{bool operator()(Point_2 q, Point_2 r)}
+\ccNestedType{Compare_distance_2} {Predicate type. Must provide
+ the operator
+\ccc{bool operator()(Point_2 p, Point_2 q, Point_2 r)}
 which returns \ccc{true}
-iff the distance between q and p is smaller
-than the distance between r and p.  This type is only require if
+iff the distance between p and q is smaller
+than the distance between p and r.  This type is only require if
 \ccc{nearest_vertex} queries are issued.}
 
 \ccNestedType{Construct_circumcenter_2}{Constructor object. Provides
@@ -108,12 +106,10 @@ operator=(Delaunay_triangulation_traits_2);}{Assignment operator.}
 \ccMethod{Side_of_oriented_circle_2
 side_of_oriented_circle_2_object();}{}
 \ccGlue
-\ccMethod{Less_distance_to_point_2
-less_distance_to_point_2_object(Point_2 p);}
+\ccMethod{Compare_distance_2
+compare_distance_2_object();}
 {This function is required only if
-\ccc{nearest_vertex} queries are issued.
-It forwards its argument $p$ to the constructor
-of \ccc{Less_distance_to_point_2}.}
+\ccc{nearest_vertex} queries are issued.}
 \ccGlue
 \ccMethod{Construct_circumcenter_2 construct_circumcenter_2_object();}
 {Required only if  functions

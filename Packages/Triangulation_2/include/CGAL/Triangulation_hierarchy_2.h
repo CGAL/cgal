@@ -394,8 +394,10 @@ locate(const Point& p,
   Face_handle position;
   Vertex_handle nearest;
   int level  = Triangulation_hierarchy_2__maxlevel;
-  typename Geom_traits::Less_distance_to_point_2 
-    closer = geom_traits().less_distance_to_point_2_object(p);
+//   typename Geom_traits::Less_distance_to_point_2 
+//     closer = geom_traits().less_distance_to_point_2_object(p);
+  typename Geom_traits::Compare_distance_2 
+    closer = geom_traits().compare_distance__2_object();
 
   // find the highest level with enough vertices
   while (hierarchy[--level]->number_of_vertices() 
@@ -412,14 +414,16 @@ locate(const Point& p,
       nearest = position->vertex(1);
     else if (hierarchy[level]->is_infinite(position->vertex(1)))
       nearest = position->vertex(0);
-     else if ( closer(position->vertex(0)->point(),
+     else if ( closer(p,
+		      position->vertex(0)->point(),
 		      position->vertex(1)->point()))
       nearest = position->vertex(0);
     else
       nearest = position->vertex(1);
     // compare to vertex 2
     if ( !  hierarchy[level]->is_infinite(position->vertex(2)))
-      if ( closer( position->vertex(2)->point(),
+      if ( closer( p, 
+		   position->vertex(2)->point(),
 		   nearest->point()))
 	nearest = position->vertex(2);
     // go at the same vertex on level below

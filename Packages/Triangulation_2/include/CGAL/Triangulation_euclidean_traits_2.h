@@ -58,7 +58,7 @@ public:
   typedef typename R::Construct_circumcenter_2   Construct_circumcenter_2;
   typedef typename R::Construct_bisector_2       Construct_bisector_2;
   //typedef typename R::Construct_midpoint         Construct_midpoint;
-  typedef typename R::Less_distance_to_point_2   Less_distance_to_point_2;
+  typedef typename R::Compare_distance_2         Compare_distance_2;
   typedef typename R::Construct_segment_2        Construct_segment_2;
   typedef typename R::Construct_triangle_2       Construct_triangle_2;
   //typedef typename R::Construct_direction_2      Construct_direction_2;
@@ -109,9 +109,9 @@ public:
 //     {return Construct_midpoint();}
 
 
-  Less_distance_to_point_2
-  less_distance_to_point_2_object(const Point_2& p) const
-    {return Less_distance_to_point_2(p);}
+  Compare_distance_2
+  Compare_distance_2_object() const
+    {return Compare_distance_2();}
 
   Construct_direction_of_line_2
   construct_direction_of_line_2_object() const
