@@ -25,8 +25,6 @@
 // implementation: 3D Width of a Point Set
 // ============================================================================
 
-#define CGAL_USE_POLYHEDRON_DESIGN_ONE 1
-
 // short cuts for M$-VC++
 #ifdef _MSC_VER
 #  define Polyhedron_facet_base_3  Pfb3

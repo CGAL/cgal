@@ -133,12 +133,9 @@ private:
     WT tco;
 public:
     typedef typename Traits::Point_3 Point_3;
+    typedef CGAL::HalfedgeDS_vertex_base< Refs, Tag_true, Point_3> Vertex_base;
     Width_vertex_default_base() {}
-    Width_vertex_default_base( const Point_3& p){
-        RT px,py,pz,ph;
-        tco.get_point_coordinates(p,px,py,pz,ph);
-        pt=tco.make_point(px,py,pz,ph);
-    }
+    Width_vertex_default_base( const Point_3& p) : Vertex_base(p) {}
 };
 
 struct Width_polyhedron_items_3 {
@@ -152,8 +149,8 @@ struct Width_polyhedron_items_3 {
     };
     template < class Refs, class Traits>
     struct Face_wrapper {
-        typedef typename Traits::Plane Plane;
-        typedef CGAL::HalfedgeDS_face_base< Refs, Plane>  Face;
+        typedef typename Traits::Plane_3 Plane;
+        typedef CGAL::HalfedgeDS_face_base< Refs, CGAL::Tag_true, Plane>  Face;
     };
 };
 

@@ -1,3 +1,7 @@
+1.10 (12 Jul 2001)
+
+- Revised tests to work for both designs of polyhedral surfaces.
+
 1.9 (12 Jul 2001)
 - Adapted to new polyhedral surface design (release 3).
 - Ported from dd_geo/chull to convex_hull_3.
