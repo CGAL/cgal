@@ -168,10 +168,11 @@ intersection(const typename CGAL_WRAP(K)::Point_2 &pt,
 }
 
 template <class K>
+inline
 Object
 intersection(const typename CGAL_WRAP(K)::Triangle_2 &tr,
 	     const typename CGAL_WRAP(K)::Point_2 &pt, 
-	     const K&)
+	     const K&k)
 {
   return CGALi::intersection(pt, tr, k);
 }
