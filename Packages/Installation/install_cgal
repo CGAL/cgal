@@ -1637,6 +1637,8 @@ get_compiler_description()
     case ${1:-${COMPILER}} in
 	*bcc32*)
 	    ${_printf} "%s" "Borland";;
+	*KCC*)
+	    ${_printf} "%s" "KAI CC";;
 	*CL*|*cl*)
 	    ${_printf} "%s" "VC++";;
 	*CC*-32*)
@@ -1803,6 +1805,7 @@ search_for_compilers()
 		fi
 	    fi
 	    _search_compiler gcc g++ ''
+	    _search_compiler cc KCC ''
 	    ;;
 	*IRIX*-6*)
 	    if _search_compiler cc CC 'n'; then
@@ -1812,9 +1815,11 @@ search_for_compilers()
 		    "`_add_flags \"${COMPILER}\" '-32' ' (o32)' ' -32'`"
 	    fi
 	    _search_compiler gcc g++ ''
+	    _search_compiler cc KCC ''
 	    ;;
 	*IRIX*|*SunOS*)
 	    _search_compiler gcc g++ ''
+	    _search_compiler cc KCC ''
 	    _search_compiler cc CC ''
 	    ;;
 	*CYGWIN*)
@@ -1824,6 +1829,7 @@ search_for_compilers()
 	    ;;
 	*)
 	    _search_compiler gcc g++ ''
+	    _search_compiler cc KCC ''
 	    ;;
     esac
     if [ ${_COMPILER_NUMBER} = 1 ]; then
@@ -3187,6 +3193,12 @@ _choose_compiler()
 _set_support()
 {
     case `compiler_description` in
+	*Borland*)
+	    case `compiler_version` in
+		5.5*) CGAL_SUPPORT_COMPILER='y';;
+		*) CGAL_SUPPORT_COMPILER='';;
+	    esac
+	    ;;
 	*SUNPRO*) CGAL_SUPPORT_COMPILER='';;
 	*MIPSPRO*n32*) 
 	    case `compiler_version` in
@@ -3204,6 +3216,7 @@ _set_support()
 	*VC++*)
 	    case `compiler_version` in
 		12.00.8168*) CGAL_SUPPORT_COMPILER='y';;
+		12.00.8804*) CGAL_SUPPORT_COMPILER='y';;
 		*) CGAL_SUPPORT_COMPILER='';;
 	    esac
 	    ;;
