@@ -245,7 +245,7 @@ find_visible_set(const typename Traits::Point_3& point,
                visible.push_back(f);
              }
           }
-          hdl_curr = hdl_curr->next();
+          hdl_curr++;
       }
       while (hdl_curr != hdl_init);
    }

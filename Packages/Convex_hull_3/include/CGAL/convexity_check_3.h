@@ -57,7 +57,7 @@ bool is_locally_convex(Facet_handle f_hdl, const Traits& traits)
      // Point must be on the plane or on the negative side 
      if (has_on_positive_side((*f_hdl).plane(), point))
           return false;
-     h_circ = h_circ->next();
+     h_circ++;
   }
   while ( h_circ != (*f_hdl).facet_begin());
   return true;
