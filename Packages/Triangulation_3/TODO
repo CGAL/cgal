@@ -6,10 +6,7 @@ penser a enlever -I../../include\ dans demo/Triangulation_3/makefile
 
 General
 - mettre a jour les noms d'auteurs
-- void a la place de GT dans cell_base
 - new Vertex/Cell
-	create_cell T3 pour remove
-	etc
 - trouver une interface avec T_2 qui permette d'eviter de reprogrammer 
   tout le 2d dans le 3d
 - purify
