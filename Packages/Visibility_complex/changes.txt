@@ -1,0 +1,6 @@
+- CGAL:: missing in shortest_path.C in testsuite and demo
+- std::missing for copy and back_inserter
+- leftturn is deprecated and replaced by left_turn  (g++ warns about that)
+  Shouldn't that be function objects anyway?
+- the same for rightturn
+- made a Point_2    const Point_2&
