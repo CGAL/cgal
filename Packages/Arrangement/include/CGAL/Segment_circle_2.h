@@ -760,10 +760,16 @@ class Segment_circle_2
 
     }
     else if (arc._is_between_endpoints(_source) &&
-             arc._is_between_endpoints(_target))
+             arc._is_between_endpoints(_target) &&
+	     (arc._is_strictly_between_endpoints(_source) ||
+              arc._is_strictly_between_endpoints(_target)))
     {
       // Case 4 - *this:     +----------->     
       //            arc:   +================>
+      // Notice the end-points of *this may be strictly contained in the other
+      // arc, or one of them can be an end-point in arc - but not both (this
+      // implies that there is no overlap since the two curves have opposite
+      // orientations).
       ovlp_arcs[0] = *this;
       return (1);
     }
