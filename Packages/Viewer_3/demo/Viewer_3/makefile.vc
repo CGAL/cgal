@@ -1,6 +1,6 @@
 DEVEL_DIR_INCL = '-I..\..\include'
-PHTREAD_DIR = d:\tmp\cgal\pthreads-snap-2000-12-29
-PHTREAD_DIR_INCL = '-I$(PHTREAD_DIR)'
+PTHREAD_DIR = d:\tmp\cgal\pthreads-snap-2000-12-29
+PTHREAD_DIR_INCL = '-I$(PTHREAD_DIR)'
 # msvc settings.
 
 FLTK_DIR = d:\tmp\cgal\fltk\vc\fltk-1.0.10
@@ -8,7 +8,7 @@ FLTK_LIBDIR = d:\tmp\cgal\fltk\vc\fltk-1.0.10\lib
 FLTK_LIBPATH = '-LIBPATH:$(FLTK_LIBDIR)'
 PTHREAD_LIBPATH = '-LIBPATH:$(PTHREAD_DIR)'
 
-FLTK_LIBS = /nodefaultlib:LIBC \
+FLTK_LIBS = \
 opengl32.lib glu32.lib fltk.lib wsock32.lib kernel32.lib user32.lib \
 gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib \
 oleaut32.lib uuid.lib \
@@ -32,7 +32,7 @@ CHECKS_OFF = -DCGAL_NO_PRECONDITIONS -DCGAL_NO_POSTCONDITIONS \
 	    -DCGAL_NO_ASSERTIONS -DCGAL_NO_WARNINGS
 
 
-CXXFLAGS = $(DEVEL_DIR_INCL) $(PHTREAD_DIR_INCL) '-I$(FLTK_DIR)' \
+CXXFLAGS = $(DEVEL_DIR_INCL) $(PTHREAD_DIR_INCL) '-I$(FLTK_DIR)' \
 	$(CGAL_CXXFLAGS) $(DEBUG_OPT)  \
 	$(CHECKS_OFF) \
 	-DUSE_THREAD \
