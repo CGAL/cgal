@@ -188,7 +188,7 @@ inline
 Sign
 svd_vertex_conflict_ftC2(const std::vector< 
 			 Filtered_exact<CT,ET,Dynamic,Protected,Cache> >& v,
-			 char site_types[], int num_sites,
+			 char site_types[], unsigned int num_sites,
 			 Method_tag method_tag)
 {
   try {
@@ -206,30 +206,6 @@ svd_vertex_conflict_ftC2(const std::vector<
     Protect_FPU_rounding<!Protected> Protection(CGAL_FE_TONEAREST);
 
     num_failures_vertex_conflict++;
-
-    //    std::cerr << "inside svd_vertex_conflict_ftC2 after exception"
-    //	      << std::endl;
-
-#if 0
-    {
-      int k = 0;
-      for (int i = 0; i < num_sites; i++) {
-	if ( site_types[i] == 'p' ) {
-	  std::cerr << "p " << CGAL::to_double(v[k].exact())
-		    << " " << CGAL::to_double(v[k+1].exact())
-		    << std::endl;
-	  k += 2;
-	} else {
-	  std::cerr << "s " << CGAL::to_double(v[k].exact())
-		    << " " << CGAL::to_double(v[k+1].exact())
-		    << " " << CGAL::to_double(v[k+2].exact())
-		    << " " << CGAL::to_double(v[k+3].exact())
-		    << std::endl;
-	  k += 4;
-	}
-      }
-    }
-#endif
 
     std::vector<ET> v_ET(v.size());
 
@@ -252,7 +228,8 @@ bool
 svd_finite_edge_conflict_ftC2(const std::vector< 
 			      Filtered_exact<CT,ET,Dynamic,
 			      Protected,Cache> >& v,
-			      Sign sgn, char site_types[], int num_sites,
+			      Sign sgn, char site_types[],
+			      unsigned int num_sites,
 			      Method_tag method_tag)
 {
   try {
@@ -292,7 +269,8 @@ bool
 svd_infinite_edge_conflict_ftC2(const std::vector< 
 				Filtered_exact<CT,ET,Dynamic,
 				Protected,Cache> >& v,
-				Sign sgn, char site_types[], int num_sites,
+				Sign sgn, char site_types[],
+				unsigned int num_sites,
 				Method_tag method_tag)
 {
   try {
