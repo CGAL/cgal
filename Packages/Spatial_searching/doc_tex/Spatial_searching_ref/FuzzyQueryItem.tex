@@ -42,8 +42,8 @@ The concept \ccRefName\ describes the requirements for fuzzy $d$-dimensional spa
 {test whether the inner approximation of the spatial object intersects a rectangle
 associated with a node of a tree. }
 
-\ccMethod{bool outer_range_is_contained_by(const Kd_tree_rectangle<Traits>& rectangle); const}
-{test whether the outer approximation of the spatial object is enclosed by a rectangle
+\ccMethod{bool outer_range_contains(const Kd_tree_rectangle<Traits>& rectangle); const}
+{test whether the outer approximation of the spatial object encloses the rectangle
 associated with a node of a tree.}
 
 

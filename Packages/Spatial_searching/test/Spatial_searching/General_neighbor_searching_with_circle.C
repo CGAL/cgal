@@ -1,6 +1,6 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/Kd_tree.h>
-#include <CGAL/Kd_tree_traits_point_2.h>
+#include <CGAL/Search_traits_2.h>
 #include <CGAL/Euclidean_distance_sphere_point.h>
 #include <CGAL/K_neighbor_search.h>
 #include <CGAL/Random.h>
@@ -13,8 +13,8 @@ typedef R::FT NT;
 
 typedef R::Circle_2 Circle;
 
-typedef CGAL::Kd_tree_traits_point_2<R> TreeTraits;
-typedef CGAL::Euclidean_distance_sphere_point<TreeTraits, Circle> Distance;
+typedef CGAL::Search_traits_2<R> TreeTraits;
+typedef CGAL::Euclidean_distance_sphere_point<TreeTraits> Distance;
 typedef CGAL::K_neighbor_search<TreeTraits, Distance> Neighbor_search;
 typedef Neighbor_search::Tree Tree;
 typedef Neighbor_search::Splitter Splitter;
@@ -54,7 +54,7 @@ int main() {
 
   Circle query_item(cc,squared_radius);
 
-  std::vector<Neighbor_search::Point_with_distance> neighbors1;
+  std::vector<Neighbor_search::Point_with_transformed_distance> neighbors1;
 
   Distance tr_dist;
 
@@ -71,7 +71,7 @@ int main() {
      " nn= " << neighbors1[i].first<< std::endl; 
   }
 
-  std::vector<Neighbor_search::Point_with_distance> neighbors2;
+  std::vector<Neighbor_search::Point_with_transformed_distance> neighbors2;
 
   Neighbor_search N2(d, query_item, neighbor_number, 0.0, true);
  

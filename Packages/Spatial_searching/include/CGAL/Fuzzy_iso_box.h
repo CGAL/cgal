@@ -88,7 +88,7 @@ namespace CGAL {
 	}
 
 
-	bool outer_range_is_contained_by(const Kd_tree_rectangle<SearchTraits>& rectangle) const {  
+	bool outer_range_contains(const Kd_tree_rectangle<SearchTraits>& rectangle) const {  
 	  Cartesian_const_iterator_d minit= min_begin, maxit = max_begin;   
     		for (unsigned int i = 0; i < dim; ++i, ++minit, ++maxit) {
         		if (  ((*maxit)+eps < rectangle.max_coord(i) ) 

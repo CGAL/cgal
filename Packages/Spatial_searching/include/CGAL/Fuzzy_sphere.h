@@ -94,7 +94,7 @@ namespace CGAL {
 	}
 
 
-	bool outer_range_is_contained_by(const Kd_tree_rectangle<SearchTraits>& rectangle) const { 
+	bool outer_range_contains(const Kd_tree_rectangle<SearchTraits>& rectangle) const { 
         // test whether the interior of a sphere
 	// with radius (r+eps) is contained by r, i.e.
         // if the minimal distance of the boundary of r 

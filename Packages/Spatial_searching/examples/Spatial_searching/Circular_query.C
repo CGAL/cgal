@@ -21,7 +21,7 @@ int main() {
   points.push_back(Point_d(0,0));
 
   Tree tree(points.begin(), points.end());
- 
+
   // define exact circular range query  (fuzziness=0)
   Point_d center(0.2, 0.2);
   Fuzzy_circle exact_range(center, 0.2);

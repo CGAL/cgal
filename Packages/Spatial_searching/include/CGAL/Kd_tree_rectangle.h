@@ -211,8 +211,8 @@ namespace CGAL {
     void
     split(Kd_tree_rectangle& r, int d, FT value)
     {
-      // assert(d >= 0 && d < dim);
-      // assert(lower_[d] <= value && value <= upper_[d]);
+      assert(d >= 0 && d < dim);
+      assert(lower_[d] <= value && value <= upper_[d]);
       
       //Kd_tree_rectangle* r = new Kd_tree_rectangle(*this);
       upper_[d]=value;
@@ -239,6 +239,7 @@ namespace CGAL {
     Kd_tree_rectangle<SearchTraits>& 
     operator=(const Kd_tree_rectangle<SearchTraits>& r) 
     {
+      assert(dimension() == r.dimension());
       if (this != &r) {
         std::copy(r.lower_, r.lower_+dim, lower_);
 	std::copy(r.upper_, r.upper_+dim, upper_);

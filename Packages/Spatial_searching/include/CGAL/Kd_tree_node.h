@@ -231,6 +231,7 @@ namespace CGAL {
       }
     }
 
+
     void 
     print(int d = 0) const 
     {
@@ -245,7 +246,11 @@ namespace CGAL {
       else {
 	indent(d);
 	std::cout << "lower tree" << std::endl;
-	lower_ch->print(d+1);  
+	lower_ch->print(d+1);
+	indent(d);
+	std::cout << "separator: dim = " << sep.cutting_dimension() << "  val = " << sep.cutting_value() << std::endl;
+	indent(d);
+	std::cout << "upper tree" << std::endl;
 	upper_ch->print(d+1); 
       }
     }
@@ -267,12 +272,12 @@ namespace CGAL {
 	b.split(b_upper, sep.cutting_dimension(),
 		sep.cutting_value());
                              
-	if (q.outer_range_is_contained_by(b)) 	
+	if (q.outer_range_contains(b)) 	
 	  it=lower_ch->tree_items(it);
 	else
 	  if (q.inner_range_intersects(b)) 
 	    it=lower_ch->search(it,q,b);
-	if  (q.outer_range_is_contained_by(b_upper))     
+	if  (q.outer_range_contains(b_upper))     
 	  it=upper_ch->tree_items(it);
 	else
 	  if (q.inner_range_intersects(b_upper)) 

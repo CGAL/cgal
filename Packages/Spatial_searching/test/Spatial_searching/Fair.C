@@ -18,10 +18,10 @@ typedef CGAL::Kd_tree_traits_point<double, Point, const double*, Construct_coord
 #else
 
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Kd_tree_traits_point_3.h>
+#include <CGAL/Search_traits_3.h>
 typedef CGAL::Simple_cartesian<double> K;
 typedef K::Point_3 Point;
-typedef CGAL::Kd_tree_traits_point_3<K> Traits;
+typedef CGAL::Search_traits_3<K> Traits;
 typedef CGAL::Euclidean_distance<Traits> Distance;
 #endif
 
@@ -64,12 +64,12 @@ int main() {
   q[0]=0.5; q[1]=0.5; q[2]=0.5;
   Point query_item(q[0], q[1], q[2]);
 
-  std::vector<NN_priority_search::Point_with_distance> nearest_neighbours; 
+  std::vector<NN_priority_search::Point_with_transformed_distance> nearest_neighbours; 
   nearest_neighbours.reserve(nearest_neighbour_number);
 
   NN_priority_search NN(d, query_item, 0.0, true);
 
-  std::vector<NN_priority_search::Point_with_distance>::iterator 
+  std::vector<NN_priority_search::Point_with_transformed_distance>::iterator 
   it = nearest_neighbours.begin();
 
   CGAL::copy_n(NN.begin(), nearest_neighbour_number, it);
