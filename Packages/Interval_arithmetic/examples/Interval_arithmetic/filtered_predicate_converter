@@ -12,15 +12,23 @@
 #
 # See the CGAL documentation: Support Library, Number Types, Filtered_exact.
 
+# List of restriction
+
 require 'getopt.pl';
 
 # Global variables
 $old_protect_name="";	# contains the protect macro name, e.g. CGAL_BASIC_H:
 $new_protect_name="";	# equivalent to CGAL_ARITHMETIC_FILTER_BASIC_H.
 $line=0;		# current line number.
-$CGAL="CGAL::";		# By default, we are outside namespace CGAL.
+$CGAL="CGAL::";		# by default, we are outside namespace CGAL.
 @CGAL_enum_types=("Sign", "Comparison_result", "Orientation", "Oriented_side",
                   "Bounded_side"); # List of CGAL's enum types.
+@predicates=(		# list of predicates.
+# fct_name, template_type, result_type, inline, CGAL::, body, arguments
+    [ "compare", "NT", "Comparison_result", "inline", "",
+      "return (a < b) ? SMALLER : (b < a) ? LARGER : EQUAL;", "a", "b" ],
+    [ "sign", "NT", "Sign", "inline", "",
+      "return (x < NT(0)) ? NEGATIVE : (NT(0) < x) ? POSITIVE : ZERO;", "x"] );
 
 # Parse the command line options.
 sub parse_command_line {
@@ -100,7 +108,9 @@ sub skip_no_filter_section {
 
 # Skips the old body of the function.
 sub skip_old_body {
-  while (<FI>) { $line++; last if /^}$/; }
+  my ($b);
+  while (<FI>) { $line++; last if /^}\s*$/; $b = "$b$_"; }
+  return $b;
 }
 
 # Warns if the return type is not known
@@ -205,8 +215,9 @@ sub main_loop {
       next;
     }
   
-    # Treat next template function.
-    if (/^template/) {
+    # Treat next template function declaration.
+    if (/^\s*template\s*\<\s*(\S*)\s*(\S*)\s*\>/) {
+      $template_type = $2;
       ($inline_decl, $result_type, $function_name, @arguments)
                                   = parse_function_declaration();
       put_new_function_declaration($inline_decl, $result_type,
@@ -215,8 +226,8 @@ sub main_loop {
     }
   
     # Treat the body of a function.
-    if (/^{/) {
-      skip_old_body();
+    if (/^{\s*/) {
+      $body = skip_old_body();
       put_new_body($result_type, $function_name, @arguments);
       next;
     }
