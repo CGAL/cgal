@@ -197,23 +197,7 @@ halfedge around its incident face (see Figure~\ref{fig:DCEL}). In
 addition, for each halfedge the DCEL stores a pointer to the incident
 face and the target vertex.
 For each face the DCEL stores a pointer to a halfedge representing
-its outer CCB and an iterator over pointers to halfedges representing
-its inner CCBs (traversing over a CCB is thus done with repetitive
-calls to the next halfedge pointer).
-For each vertex the DCEL stores a pointer to an incident halfedge. 
-For more information about the DCEL
-representation see ~\cite{bkos-cgaa-97} and Chapter~\ref{chapterHds}
-on \ccStyle{Halfedge_data_structure}.
-The DCEL is a low-level container class that stores the objects.
-The topological map layer adds high-level functions and protection of
-combinatorial validity. Iterators, handles and circulators are also
-introduced in this layer (pointers are no longer visible in this layer).
-
-The subdivision is implemented by a \ccc{DCEL}.
-Read about the concept
-\ccc{Topological_map_DCEL} in the reference pages \lcTex{
-(\ccRefPage{Topological_map_DCEL})}
-for a specification of the requirements for a DCEL in our implementation.
+iwion of the requirements for a DCEL in our implementation.
 
 \subsection*{Functionality}
 

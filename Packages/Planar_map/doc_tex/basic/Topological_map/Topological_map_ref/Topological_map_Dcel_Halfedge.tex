@@ -11,7 +11,7 @@
 %%RefPage: end of header, begin of main body
 % +------------------------------------------------------------------------+
 
-\begin{ccRefConcept}[Topological_map_DCEL::]{Halfedge}  
+\begin{ccRefConcept}{TopologicalMapDcelHalfedge}  
 \label{DCEL:Halfedge}
 \ccDefinition A halfedge stores pointers to the next halfedge along the
      same face and to its
@@ -33,7 +33,9 @@
   
 %  \ccNestedType{Curve}{a curve associated with the edge.}
   
-  \ccAccessFunctions
+  \ccThree{const Halfedge*}{set_next(Halfedge* next)_bla;}{}
+
+\ccAccessFunctions
 
   \ccMethod{Halfedge* opposite();}{the twin halfedge.}
   \ccGlue
@@ -58,6 +60,15 @@
   \ccMethod{void set_vertex(Vertex* v);}{set incident vertex}
   \ccGlue
   \ccMethod{void set_face(Face* f);}{set incident face}
+
+\ccSeeAlso
+     \ccc{TopologicalMapDcel}\lcTex{ 
+     (\ccRefPage{TopologicalMapDcel})}\\
+     \ccc{TopologicalMapDcelVertex}\lcTex{
+     (\ccRefPage{TopologicalMapDcelVertex})}\\
+     \ccc{TopologicalMapDcelFace}\lcTex{
+     (\ccRefPage{TopologicalMapDcelFace})}
+
 
 \end{ccRefConcept}
 
