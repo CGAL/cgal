@@ -1,3 +1,8 @@
+03 August 2004 Radu Ursu
+- create_internal_release:
+  -fixed small bug introduced by the latest changes: put "test_" in front 
+   of each target.
+
 02 August 2004 Radu Ursu
 - create_internal_release:
   - added create_global_makefile procedure which creates the global makefile 

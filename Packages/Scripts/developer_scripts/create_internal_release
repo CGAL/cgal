@@ -161,7 +161,7 @@ sub create_global_makefile{
     print TEMPFILE "testsuite: ";
     foreach $dir (@dirs){
 	if ( -d $dir){
-	    print TEMPFILE "$dir ";
+	    print TEMPFILE "test_$dir ";
 	}
     }
     print TEMPFILE "\n";
