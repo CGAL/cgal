@@ -40,13 +40,13 @@ Qt_widget_toolbar$(OBJ_EXT): Qt_widget_toolbar.C Qt_widget_toolbar.moc
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) Qt_widget_toolbar.C
 
 Qt_widget_toolbar.moc: Qt_widget_toolbar.h
-	$(QT_MOC) -o Qt_widget_toolbar.moc $<
+	$(QT_MOC) -o Qt_widget_toolbar.moc Qt_widget_toolbar.h
 
 Qt_widget_move_list_point$(OBJ_EXT): Qt_widget_move_list_point.moc \
 					Qt_widget_move_list_point.C
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) Qt_widget_move_list_point.C
 Qt_widget_move_list_point.moc: Qt_widget_move_list_point.h
-	$(QT_MOC) -o Qt_widget_move_list_point.moc $<
+	$(QT_MOC) -o Qt_widget_move_list_point.moc Qt_widget_move_list_point.h
 
 min_ellipse_2.moc: min_ellipse_2.C Qt_widget_toolbar$(OBJ_EXT) 
 	${QT_MOC} -o min_ellipse_2.moc min_ellipse_2.C

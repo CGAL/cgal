@@ -34,7 +34,7 @@ create_makefile_entry_cpp()
             END{ exit COUNT==0 }' $CFILE`; then
       MOCFILE=$1.moc
       echo "$MOCFILE: $MOC_FROM"
-      echo "	\$(QT_MOC) -o $MOCFILE \$<"
+      echo "	\$(QT_MOC) -o $MOCFILE $MOC_FROM"
       echo
       echo "$1\$(OBJ_EXT): $MOCFILE"
       echo
@@ -61,7 +61,7 @@ create_makefile_entry()
             END{ exit COUNT==0 }' $CFILE`; then
       MOCFILE=$1.moc
       echo "$MOCFILE: $MOC_FROM"
-      echo "	\$(QT_MOC) -o $MOCFILE \$<"
+      echo "	\$(QT_MOC) -o $MOCFILE $MOC_FROM"
       echo
       echo "$1\$(OBJ_EXT): $MOCFILE"
       echo
