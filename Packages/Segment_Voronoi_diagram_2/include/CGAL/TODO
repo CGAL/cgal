@@ -1,0 +1,11 @@
+- make correct the computation of the voronoi vertex for three
+  segments
+- check the various cases on the infinite_edge_test_2
+- check for degeneracies in general
+- check the case where a loop in the conflict region is created; such
+  a case is when a point is adjacent to three segments forming a star;
+  it is also possible that this case produces no conflict...
+- change the svd_compare_distance function so that points outside the
+  band of the segment have infinite distance; this creates however
+  problems when we compare distance of a point from a segment and a
+  point, and the point is not an endpoint of the segment...
