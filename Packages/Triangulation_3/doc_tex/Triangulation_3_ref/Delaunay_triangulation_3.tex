@@ -202,13 +202,9 @@ specifying where to start the search.
 }
 
 \ccMethod{Vertex_handle nearest_vertex_in_cell(Point p,
-                                       Cell_handle c = Cell_handle());}
-{Returns the  vertex  of the cell including $p$ that is
+                                       Cell_handle c);}
+{Returns the  vertex  of the cell \ccc{c} that is
 nearest to $p$.
-The default constructed handle is returned
-if the triangulation is empty.  The optional argument \ccc{c} is a hint
-specifying where to start the search.
-\ccPrecond{\ccc{c} is a cell of \ccVar.}
 }
 
 A point \ccc{p} is said to be in conflict with a cell \ccc{c} in dimension 3
