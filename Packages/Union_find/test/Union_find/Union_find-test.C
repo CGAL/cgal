@@ -4,7 +4,7 @@
 
 typedef CGAL::Union_find<int> Union_find;
 typedef Union_find::handle handle;
-typedef Union_find::iterator iterator;
+typedef Union_find::iterator Iterator;
 typedef Union_find::const_handle const_handle;
 typedef Union_find::const_iterator const_iterator;
 
@@ -29,7 +29,7 @@ int main() {
   CGAL_TEST(P.size()==3);
   CGAL_TEST(P.bytes()>0);
   int i = 0;
-  for(iterator it = P.begin(); it != P.end(); ++it) *it = i++;
+  for(Iterator it = P.begin(); it != P.end(); ++it) *it = i++;
   int A[] = {1,2,3};
   P.insert(A,A+3);
   CGAL_TEST_END;

@@ -1,3 +1,6 @@
+17 April 2004  Sylvain Pion
+- Rename iterator to Iterator in test program to workaround a PGCC bug.
+
 1.10 (18 Jan 2004)
 - Remove obsolete workaround CGAL_MSVC_DUMMY_ARGUMENT (VC++ <= 7.0).
 
