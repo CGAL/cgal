@@ -153,6 +153,23 @@ public:
     return compare_y_at_x_2_object()(q, cv1, cv2);
   }
 
+
+  /*! curve_compare_at_x_left() compares the y value of two curves in an
+   * epsilon environment to the left of the x value of the input point
+   */
+  Comparison_result curve_compare_at_x_left(const X_curve_2 & cv1,
+                                            const X_curve_2 & cv2, 
+                                            const Point_2 & q) const 
+  {
+    // since the curve is continous 
+    Comparison_result r = compare_y_at_x_2_object()(q, cv1, cv2);
+    if (r != EQUAL) return r;     
+    
+    // <cv2> and <cv1> meet at a point with the same x-coordinate as q
+    // compare their derivatives
+    return compare_slope_2_object()(cv2, cv1);
+  }
+
   /*! curve_compare_at_x_right() compares the y value of two curves in an
    * epsilon environment to the right of the x value of the input point
    */
@@ -160,6 +177,7 @@ public:
                                              const X_curve_2 & cv2, 
                                              const Point_2 & q) const 
   {
+    
     // since the curve is continous (?)
     Comparison_result r = curve_compare_at_x(cv1, cv2, q);
     if (r != EQUAL) return r;     
