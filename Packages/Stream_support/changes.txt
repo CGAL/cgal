@@ -1,5 +1,9 @@
 Stream_support Package: Release changes:
 ---------------------------------------------------------------------
+2.16 (29 Aug 01)
+- Susan changed ccSection to section commands since pdf converter can't handle
+  the former
+
 2.15 (20 June 01)
 - Patches from Matthias to use the CGAL window in the demo.
 - Update header inclusion orders.
