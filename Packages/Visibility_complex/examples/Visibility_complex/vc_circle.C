@@ -2,8 +2,8 @@
 #include <list>
 #include <CGAL/basic.h>
 #include <CGAL/Simple_cartesian.h>
-#include <CEP/Visibility_complex/Visibility_complex_2.h>
-#include <CEP/Visibility_complex/Visibility_complex_circle_traits.h>
+#include <CGAL/Visibility_complex_2.h>
+#include <CGAL/Visibility_complex_circle_traits.h>
 
 typedef CGAL::Simple_cartesian<double>              Rep;
 typedef CGAL::Visibility_complex_circle_traits<Rep> Traits;

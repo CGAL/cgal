@@ -1,10 +1,11 @@
 #include <list>
+#include <fstream>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Visibility_complex_2.h>
-#include <CGALVisibility_complex_segment_traits.h>
+#include <CGAL/Visibility_complex_segment_traits.h>
 
-typedef CGAL::Simple_cartesian<int>                  Rep;
-typedef CGAL::Visibility_complex_segment_traits<Rep> Gt;
+typedef CGAL::Simple_cartesian<int>                  K;
+typedef CGAL::Visibility_complex_segment_traits<K>  Gt;
 typedef Gt::Disk                                     Segment;
 typedef CGAL::Visibility_complex_2<Gt>               Visibility_complex;
 typedef Visibility_complex::Antichain                Antichain;
@@ -24,10 +25,10 @@ int main()
     Antichain A(D.begin(),D.end(),V.begin(),V.end());
 
     // Sweep of the visibility complex using an iterator
-    Linear_sweep_iterator v = A.sweep_begin();
-
-    for ( ; v != A.sweep_end() ; ++v) 
-	std::cout << *v << std::endl;
+    for (Linear_sweep_iterator v = A.sweep_begin();
+	 v != A.sweep_end();
+	 ++v) 
+      std::cout << *v << std::endl;
 
     return 0;
 }
