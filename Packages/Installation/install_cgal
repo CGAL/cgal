@@ -4652,12 +4652,15 @@ prepare_lib_makefiles()
 {
     for FILE in ${CGAL_SRC_DIR}/makefile_lib \
 	${CGAL_SRC_DIR}/makefile_sharedlib \
-	${CGAL_SRC_DIR}/CGALWin/makefile_Win \
 	${CGAL_EXAMPLE_DIR}/makefile
     do
 	replace_line ${FILE} CGAL_MAKEFILE \
 	    "CGAL_MAKEFILE = ${CGAL_MAKEFILE}"
     done
+    if [ -d ${CGAL_SRC_DIR}/CGALWin ]; then
+	replace_line ${CGAL_SRC_DIR}/CGALWin/makefile_Win \
+	    CGAL_MAKEFILE "CGAL_MAKEFILE = ${CGAL_MAKEFILE}"
+    fi
 }
 
 # log via $1
