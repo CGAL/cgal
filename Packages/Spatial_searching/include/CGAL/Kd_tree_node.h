@@ -142,21 +142,20 @@ namespace CGAL {
                 }
 		else {
                         // after splitting b denotes the lower part of b
-			Kd_tree_rectangle<TreeTraits>* 
-			b_upper=b.split(sep.cutting_dimension(),
-					sep.cutting_value());
+		  Kd_tree_rectangle<TreeTraits> b_upper(b);
+		  b.split(b_upper, sep.cutting_dimension(),
+			  sep.cutting_value());
                              
 			if (q.outer_range_is_contained_by(b)) 	
 			   it=lower_ch->tree_items(it);
 			else
 		           if (q.inner_range_intersects(b)) 
 			   it=lower_ch->search(it,q,b);
-                        if  (q.outer_range_is_contained_by(*b_upper))     
+                        if  (q.outer_range_is_contained_by(b_upper))     
 			    it=upper_ch->tree_items(it);
 			else
-			    if (q.inner_range_intersects(*b_upper)) 
-			    it=upper_ch->search(it,q,*b_upper);
-		        delete b_upper;
+			    if (q.inner_range_intersects(b_upper)) 
+			    it=upper_ch->search(it,q,b_upper);
 		};
 	        return it;				
 	}

@@ -242,7 +242,7 @@ template <class InputIterator>
 
   Node_handle root()const { return tree_root; }
 
-  Kd_tree_rectangle<GeomTraits>* bounding_box() const {return bbox; }
+  const Kd_tree_rectangle<GeomTraits>& bounding_box() const {return *bbox; }
 
   int size() const {return the_item_number;}
 

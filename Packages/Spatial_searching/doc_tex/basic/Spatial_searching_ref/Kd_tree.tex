@@ -82,8 +82,8 @@ The types \ccc{FuzzyQueryItem::Point} and \ccc{Point} must be equivalent.}
 \ccMethod{Node_handle root();}
 {Returns a handle to the root node of the tree.}
 
-\ccMethod{Kd_tree_rectangle<PointTraits>* bounding_box();}{returns a pointer to the bounding box 
-of the root node of the tree.}
+\ccMethod{const Kd_tree_rectangle<PointTraits>& bounding_box();}{returns a const reference
+to the bounding box of the root node of the tree.}
 
 \ccMethod{std::ostream& statistics(std::ostream& s);}
 {

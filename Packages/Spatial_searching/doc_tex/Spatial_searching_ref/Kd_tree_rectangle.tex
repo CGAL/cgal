@@ -73,15 +73,13 @@ void update_from_point_pointers(PointPointerIter begin, PointPointerIter end, bo
 \ccMethod{int dimension();}
 {Returns the dimension of the rectangle.}
 
-\ccMethod{Kd_tree_rectangle<PointTraits>* split(int d, NT value);}
+\ccMethod{void split(Kd_tree_rectangle<PointTraits>& r, int d, NT value);}
 {Splits rectangle in dimension \ccc{d} at coordinate-value \ccc{value} 
- by modifying itself to lower half and returning the upper half.
-Note that the \ccc{Kd_tree} datastructure is responsible for the
-deletion of the pointers to the instances of \ccc{Kd_tree_rectangle}.} 
+ by modifying itself to lower half and by modifying \ccc{r} to upper half.} 
 
 \ccHeading{Output Routines}
 
-\ccGlobalFunction{ template<class NT>
+\ccFunction{ template<class NT>
 std::ostream& operator<<(std::ostream& s, Kd_tree_rectangle<PointTraits>& b);} 
 {Prints the rectangle \ccc{b} to the output stream \ccc{s} and returns \ccc{s}.}
 

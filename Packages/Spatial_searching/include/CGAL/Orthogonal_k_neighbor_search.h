@@ -53,8 +53,6 @@ public:
   typedef typename Tree::Node_handle Node_handle;
   
   typedef typename Tree::Point_iterator Point_iterator;
-  // af was: typedef typename Kd_tree<GeomTraits, Splitter>::Point_iterator Point_iterator;
-  typedef Kd_tree_rectangle<GeomTraits> Rectangle; 
 
 private:
 
@@ -138,12 +136,11 @@ Distance* distance_instance;
 		
         // if (search_nearest) 
 		distance_to_root=
-        	d.min_distance_to_queryitem(q,
-						*(tree.bounding_box()));
+        	d.min_distance_to_queryitem(q, tree.bounding_box());
         // else 
 	//	distance_to_root=
         //	distance_instance->max_distance_to_queryitem(q,
-	//					*(tree.bounding_box()));
+	//					tree.bounding_box());
 
         query_object = q;
 

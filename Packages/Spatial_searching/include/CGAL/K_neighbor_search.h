@@ -170,19 +170,18 @@ public:
     private:
    
 
-  void compute_neighbors_general(Node_handle N, Kd_tree_rectangle<GeomTraits>* r) {
+  void compute_neighbors_general(Node_handle N, const Kd_tree_rectangle<GeomTraits>& r) {
 		
                 if (!(N->is_leaf())) {
                         number_of_internal_nodes_visited++;
                         int new_cut_dim=N->cutting_dimension();
 			NT  new_cut_val=N->cutting_value();
 
-			Kd_tree_rectangle<GeomTraits>* r_lower =
-			  new Kd_tree_rectangle<GeomTraits>(*r);
+			Kd_tree_rectangle<GeomTraits> r_lower(r);
 
 			// modifies also r_lower to lower half
-			Kd_tree_rectangle<GeomTraits>* r_upper =
-			r_lower->split(new_cut_dim, new_cut_val);
+			Kd_tree_rectangle<GeomTraits> r_upper(r_lower);
+			r_lower.split(r_upper, new_cut_dim, new_cut_val);
 
                         NT distance_to_lower_half;
                         NT distance_to_upper_half;
@@ -192,12 +191,12 @@ public:
                         	distance_to_lower_half = 
                         	distance_instance -> 
 				min_distance_to_queryitem(query_object, 
-							  *r_lower);
+							  r_lower);
 				
                         	distance_to_upper_half = 
                         	distance_instance -> 
 				min_distance_to_queryitem(query_object, 
-							  *r_upper);
+							  r_upper);
 			
 
 			} 
@@ -207,12 +206,12 @@ public:
                         	distance_to_lower_half = 
                         	distance_instance -> 
 				max_distance_to_queryitem(query_object, 
-							  *r_lower);
+							  r_lower);
 
                         	distance_to_upper_half = 
                         	distance_instance -> 
 				max_distance_to_queryitem(query_object, 
-							  *r_upper);
+							  r_upper);
 
 			}
  
@@ -234,7 +233,7 @@ public:
 							    r_lower);
 			}
 
-			delete r_lower; delete r_upper; 
+			//delete r_lower; delete r_upper; 
                 }
                 else
 				{

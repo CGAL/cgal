@@ -203,14 +203,16 @@ namespace CGAL {
 
     // Splits rectangle by modifying itself to lower half 
     // and returns upper half
-    Kd_tree_rectangle* split(int d, NT value) {
+    //    Kd_tree_rectangle* 
+void
+split(Kd_tree_rectangle& r, int d, NT value) {
 		// assert(d >= 0 && d < dim);
 		// assert(lower_[d] <= value && value <= upper_[d]);
                 
-		Kd_tree_rectangle* r = new Kd_tree_rectangle(*this);
+  //Kd_tree_rectangle* r = new Kd_tree_rectangle(*this);
 		upper_[d]=value;
-                r->lower_[d]=value;
-		return r;
+                r.lower_[d]=value;
+		//return r;
     }
                       
 
