@@ -91,19 +91,19 @@ LINK32=link.exe
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Source File
 
-SOURCE=..\..\..\src\Qt_widget.C
+SOURCE=..\..\..\src\CGALQt\Qt_widget.C
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\src\Qt_widget_move_point.C
+SOURCE=.\Qt_widget_move_point.C
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\src\Qt_widget_standard_toolbar.C
+SOURCE=..\..\..\src\CGALQt\Qt_widget_standard_toolbar.C
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\src\Qt_widget_tool.C
+SOURCE=..\..\..\src\CGALQt\Qt_widget_tool.C
 # End Source File
 # Begin Source File
 
@@ -115,7 +115,7 @@ SOURCE=.\Qt_widget_toolbar_views.C
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\src\Qt_widget_view.C
+SOURCE=..\..\..\src\CGALQt\Qt_widget_view.C
 # End Source File
 # Begin Source File
 
@@ -136,8 +136,8 @@ SOURCE=..\..\..\include\CGAL\IO\Qt_widget.h
 # Begin Custom Build
 InputPath=..\..\..\include\CGAL\IO\Qt_widget.h
 
-"../../../src/Qt_widget.moc" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	$(QTDIR)\bin\moc.exe -o "../../../src/Qt_widget.moc" "../../../Include/CGAL/IO/Qt_widget.h"
+"../../../src/CGALQt/Qt_widget.moc" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	$(QTDIR)\bin\moc.exe -o "../../../src/CGALQt/Qt_widget.moc" "../../../Include/CGAL/IO/Qt_widget.h"
 
 # End Custom Build
 
@@ -146,17 +146,17 @@ InputPath=..\..\..\include\CGAL\IO\Qt_widget.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\include\CGAL\IO\Qt_widget_move_point.h
+SOURCE=.\Qt_widget_move_point.h
 
 !IF  "$(CFG)" == "demo - Win32 Release"
 
 !ELSEIF  "$(CFG)" == "demo - Win32 Debug"
 
 # Begin Custom Build
-InputPath=..\..\..\include\CGAL\IO\Qt_widget_move_point.h
+InputPath=.\Qt_widget_move_point.h
 
-"../../../src/Qt_widget_move_point.moc" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	$(QTDIR)\bin\moc.exe -o "../../../src/Qt_widget_move_point.moc" "../../../Include/CGAL/IO/Qt_widget_move_point.h"
+"Qt_widget_move_point.moc" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	$(QTDIR)\bin\moc.exe -o "Qt_widget_move_point.moc" "Qt_widget_move_point.h"
 
 # End Custom Build
 
@@ -174,8 +174,8 @@ SOURCE=..\..\..\include\CGAL\IO\Qt_widget_standard_toolbar.h
 # Begin Custom Build
 InputPath=..\..\..\include\CGAL\IO\Qt_widget_standard_toolbar.h
 
-"../../../src/Qt_widget_standard_toolbar.moc" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	$(QTDIR)\bin\moc.exe -o "../../../src/Qt_widget_standard_toolbar.moc" "../../../Include/CGAL/IO/Qt_widget_standard_toolbar.h"
+"../../../src/CGALQt/Qt_widget_standard_toolbar.moc" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	$(QTDIR)\bin\moc.exe -o "../../../src/CGALQt/Qt_widget_standard_toolbar.moc" "../../../Include/CGAL/IO/Qt_widget_standard_toolbar.h"
 
 # End Custom Build
 
@@ -193,8 +193,8 @@ SOURCE=..\..\..\include\CGAL\IO\Qt_widget_tool.h
 # Begin Custom Build
 InputPath=..\..\..\include\CGAL\IO\Qt_widget_tool.h
 
-"../../../src/Qt_widget_tool.moc" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	$(QTDIR)\bin\moc.exe -o "../../../src/Qt_widget_tool.moc" "../../../Include/CGAL/IO/Qt_widget_tool.h"
+"../../../src/CGALQt/Qt_widget_tool.moc" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	$(QTDIR)\bin\moc.exe -o "../../../src/CGALQt/Qt_widget_tool.moc" "../../../Include/CGAL/IO/Qt_widget_tool.h"
 
 # End Custom Build
 
@@ -250,8 +250,8 @@ SOURCE=..\..\..\include\CGAL\IO\Qt_widget_view.h
 # Begin Custom Build
 InputPath=..\..\..\include\CGAL\IO\Qt_widget_view.h
 
-"../../../src/Qt_widget_view.moc" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	$(QTDIR)\bin\moc.exe -o "../../../src/Qt_widget_view.moc" "../../../Include/CGAL/IO/Qt_widget_view.h"
+"../../../src/CGALQt/Qt_widget_view.moc" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	$(QTDIR)\bin\moc.exe -o "../../../src/CGALQt/Qt_widget_view.moc" "../../../Include/CGAL/IO/Qt_widget_view.h"
 
 # End Custom Build
 

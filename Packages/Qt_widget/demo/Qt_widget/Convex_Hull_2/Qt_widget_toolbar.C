@@ -40,12 +40,12 @@ namespace CGAL {
     is_active = FALSE;
 
 #if QT_VERSION < 300
-		// for Qt 2.3 and before
-    maintoolbar = new QToolBar("tools", mw, QMainWindow::Top, TRUE, "Tools");
+  // for Qt 2.3 and before
+  maintoolbar = new QToolBar("tools", mw, QMainWindow::Top, TRUE, "Tools");
 #else
-		// from Qt 3.0
-		maintoolbar = new QToolBar(mw, "Tools");
-		mw->addDockWindow (maintoolbar, "tools", DockTop, TRUE );
+  // from Qt 3.0
+  maintoolbar = new QToolBar(mw, "Tools");
+  mw->addDockWindow (maintoolbar, "tools", DockTop, TRUE );
 #endif
 		
 
@@ -65,25 +65,15 @@ namespace CGAL {
 			     maintoolbar, 
 			     "Point Tool");
 
-  but[2] = new QToolButton(QPixmap( (const char**)movepoint_xpm ),
-			     "Move selected point", 
-			     0, 
-			     this, 
-			     SLOT(movepoint()), 
-			     maintoolbar, 
-			     "Move point");
-
   
   but[1]->setToggleButton(TRUE);
-  but[2]->setToggleButton(TRUE);
 
-  nr_of_buttons = 3;
+  nr_of_buttons = 2;
 
   connect(w, SIGNAL(detached_tool()), this, SLOT(toggle_button()));
 };
 
       
-	
   //the definition of the slots
   void Tools_toolbar::toggle_button ()
   {
@@ -99,21 +89,6 @@ namespace CGAL {
     {
       widget->attach(pointbut);
       activebutton = 1;
-      is_active = true;
-    }
-    else
-    {
-      is_active = false;
-      widget->detach_current_tool();
-    }
-  }
-  void Tools_toolbar::movepoint()
-  {
-    if (but[2]->isOn())
-    {
-      widget->attach(movepointbut);
-      movepointbut.set_list(my_toolbar_list);
-      activebutton = 2;
       is_active = true;
     }
     else

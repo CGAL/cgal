@@ -29,7 +29,7 @@
 
 // TODO: check if some of those includes shouldn't be in the .C file
 #include <CGAL/IO/Qt_widget.h>
-#include <CGAL/IO/Qt_widget_move_point.h>
+#include "Qt_widget_move_point.h"
 #include <CGAL/IO/Qt_widget_get_line.h>
 #include <CGAL/IO/Qt_widget_get_point.h>
 

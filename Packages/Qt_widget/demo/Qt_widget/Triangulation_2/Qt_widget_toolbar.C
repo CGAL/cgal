@@ -43,9 +43,9 @@ namespace CGAL {
 		// for Qt 2.3 and before
     maintoolbar = new QToolBar("tools", mw, QMainWindow::Top, TRUE, "Tools");
 #else
-		// from Qt 3.0
-		maintoolbar = new QToolBar(mw, "Tools");
-		mw->addDockWindow (maintoolbar, "tools", DockTop, TRUE );
+    // from Qt 3.0
+    maintoolbar = new QToolBar(mw, "Tools");
+    mw->addDockWindow (maintoolbar, "tools", DockTop, TRUE );
 #endif
 		
 

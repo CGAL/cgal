@@ -29,7 +29,6 @@
 // TODO: check if some of those includes shouldn't be in the .C file
 #include <CGAL/IO/Qt_Widget.h>
 #include <CGAL/IO/Qt_Widget_Get_point.h>
-#include "Qt_Widget_MovePoint.h"
 
 #include <qobject.h>
 #include <qtoolbutton.h>
@@ -59,7 +58,6 @@ signals:
 private slots:
   void get_new_object(CGAL::Object obj) { emit(new_object(obj)); }
 
-  void movepoint();
   void pointtool();
   void notool();
   
@@ -77,7 +75,6 @@ private:
   std::list<Point>	my_toolbar_list;
 
   CGAL::Qt_widget_get_point<Rp>	    pointbut;
-  CGAL::Qt_widget_movepoint<Rp>	    movepointbut;
 };//end class
 
 };//end namespace
