@@ -239,6 +239,10 @@ int utility_test()
   return flag;
 }
 
+void print_res (bool res)
+{
+  cout << (res ? "ok" : "ERROR") << endl;
+}
 
 int main()
 {
@@ -258,40 +262,40 @@ int main()
 
   cout << "Do square_root_test()   \t";
   tmpflag = square_root_test();
-  cout << (int) tmpflag << endl;
+  print_res(tmpflag);
   flag = tmpflag && flag;
 
   cout << "Do spiral_test()        \t";
   tmpflag = spiral_test();
-  cout << (int) tmpflag << endl;
+  print_res(tmpflag);
   flag = tmpflag && flag;
 
   cout << "Do overflow_test()      \t";
   tmpflag = overflow_test();
-  cout << (int) tmpflag << endl;
+  print_res(tmpflag);
   flag = tmpflag && flag;
 
   cout << "Do underflow_test()     \t";
   tmpflag = underflow_test();
-  cout << (int) tmpflag << endl;
+  print_res(tmpflag);
   flag = tmpflag && flag;
 
   cout << "Do division_test()      \t";
   tmpflag = division_test();
-  cout << (int) tmpflag << endl;
+  print_res(tmpflag);
   flag = tmpflag && flag;
 
   cout << "Do multiplication_test()\t";
   tmpflag = multiplication_test();
-  cout << (int) tmpflag << endl;
+  print_res(tmpflag);
   flag = tmpflag && flag;
 
   cout << "Do utility_test()       \t";
   tmpflag = utility_test();
-  cout << (int) tmpflag << endl;
+  print_res(tmpflag);
   flag = tmpflag && flag;
 
-  cout << (int) (0.0 < IA_nt(1)) << endl;
+  print_res(0.0 < IA_nt(1));
 
 #ifdef ADVANCED
   FPU_set_cw(backup);

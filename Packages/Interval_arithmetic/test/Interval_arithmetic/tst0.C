@@ -20,6 +20,9 @@ Interval_nt_advanced triv_1_mul (Interval_nt_advanced x)
 Interval_nt_advanced triv (Interval_nt_advanced x)
 { return x; }
 
+void print_res (bool res)
+{ cout << (res ? "ok" : "ERROR") << endl; }
+
 // Rounding mode empiric testing.
 
 // The results of 1-epsilon and -1+epsilon are enough
@@ -81,36 +84,42 @@ int main()
    bool flag = true;
 
    flag = flag && (FPU_empiric_test() == FPU_cw_near);
-   cout << "default: " << (int) flag << endl;
+   cout << "default: ";
+   print_res(flag);
 
    // Should be a no-op.
    FPU_set_cw(FPU_get_cw());
    flag = flag && (FPU_empiric_test() == FPU_cw_near);
-   cout << "get/set: " << (int) flag << endl;
+   cout << "get/set: ";
+   print_res(flag);
    if (!flag) print_rounding_name(FPU_empiric_test());
 
    // Rounding to zero.
    FPU_set_cw(FPU_cw_zero);
    flag = flag && (FPU_empiric_test() == FPU_cw_zero);
-   cout << "zero   : " << (int) flag << endl;
+   cout << "zero   : ";
+   print_res(flag);
    if (!flag) print_rounding_name(FPU_empiric_test());
 
    // Rounding to infinity.
    FPU_set_cw(FPU_cw_up);
    flag = flag && (FPU_empiric_test() == FPU_cw_up);
-   cout << "+inf   : " << (int) flag << endl;
+   cout << "+inf   : ";
+   print_res(flag);
    if (!flag) print_rounding_name(FPU_empiric_test());
 
    // Rounding to minus infinity.
    FPU_set_cw(FPU_cw_down);
    flag = flag && (FPU_empiric_test() == FPU_cw_down);
-   cout << "-inf   : " << (int) flag << endl;
+   cout << "-inf   : ";
+   print_res(flag);
    if (!flag) print_rounding_name(FPU_empiric_test());
 
    // Rounding to nearest.
    FPU_set_cw(FPU_cw_near);
    flag = flag && (FPU_empiric_test() == FPU_cw_near);
-   cout << "near   : " << (int) flag << endl;
+   cout << "near   : ";
+   print_res(flag);
    if (!flag) print_rounding_name(FPU_empiric_test());
 
    return (int) !flag;
