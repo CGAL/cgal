@@ -28,35 +28,60 @@
 
 #ifndef CGAL_ITERATOR_PROJECT_H
 #define CGAL_ITERATOR_PROJECT_H 1
-#include <CGAL/circulator.h>
 
 CGAL_BEGIN_NAMESPACE
 
-#if defined(CGAL_CFG_NO_ITERATOR_TRAITS) && \
-!defined(CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT)
-template < class I, class Fct, class Ref, class Ptr, class Dist, class Ctg>
-#else
-template < class I,
-           class Fct,
-           class Ref  = typename std::iterator_traits<I>::reference,
-           class Ptr  = typename std::iterator_traits<I>::pointer,
-           class Dist = typename std::iterator_traits<I>::difference_type,
-           class Ctg = typename std::iterator_traits<I>::iterator_category>
+// Relies on iterator traits. Quite simplified compared to earlier version.
+
+// The pointer type and the reference type in the Iterator_project
+// are based on the value type from the projector, but the base iterator
+// determines whether they are const or mutable. The following template
+// class and its partial specialization helps creating the derived types.
+//    If partial specification isn't working, we make this adaptor always
+// mutable (using const_cast). So, it will always work where the correct
+// version would work, but it would allow assignments where the correct
+// version would flag a correct compilation error. This workaround thus
+// provides full functionality, but less protection.
+
+// If T === T1 return R1 else return R2
+template <class T, class T1, class R1, class R2>
+struct I_TYPE_MATCH_IF { typedef R2 Result; };  // else clause
+
+#ifndef CGAL_CFG_NO_PARTIAL_CLASS_TEMPLATE_SPECIALISATION
+template <class T, class R1, class R2>
+struct I_TYPE_MATCH_IF<T,T,R1,R2> { typedef R1 Result; }; // then clause
 #endif
+
+// keep 4 dummy template parameters around for backwards compatibility
+template < class I, class Fct,
+           class D1 = int, class D2 = int, class D3 = int, class D4 = int >
 class Iterator_project {
 protected:
   I        nt;    // The internal iterator.
 public:
-  typedef  I  Iterator;
-  typedef  Iterator_project<I,Fct,Ref,Ptr,Dist,Ctg> Self;
+  typedef Iterator_project<I,Fct,D1,D2,D3,D4> Self;
+  typedef I                                   Iterator; // base iterator
+  typedef std::iterator_traits<I>             traits;
+  typedef typename traits::difference_type    difference_type;
+  typedef typename traits::iterator_category  iterator_category;
+  typedef typename traits::value_type         base_value_type;
+  typedef typename traits::pointer            base_pointer;
+  typedef typename traits::reference          base_reference;
 
-  typedef  Ctg                          iterator_category;
-  typedef  typename Fct::argument_type  argument_type;
-  typedef  typename Fct::result_type    value_type;
-  typedef  Ref                          reference;
-  typedef  Ptr                          pointer;
-  typedef  Dist                         difference_type;
+  typedef typename Fct::argument_type         argument_type;
+  typedef typename Fct::result_type           value_type;
 
+  // Use I_TYPE_MATCH_IF to find correct pointer and reference type.
+  // Make it a mutable iterator if partial specialization doesn't
+  // work. In that case, the I_TYPE_MATCH_IF returns the else type.
+
+  typedef I_TYPE_MATCH_IF< base_reference, const base_value_type &,
+    const value_type &, value_type &> Match1;
+  typedef typename Match1::Result             reference;
+
+  typedef I_TYPE_MATCH_IF< base_pointer, const base_value_type *,
+    const value_type *, value_type *> Match2;
+  typedef typename Match2::Result             pointer;
 
   // CREATION
   // --------
@@ -64,169 +89,40 @@ public:
   Iterator_project() {}
   Iterator_project( I j) : nt(j) {}
 
+  // make two iterators assignable if the underlying iterators are
+  template <class I2, class Q1, class Q2, class Q3, class Q4>
+  Iterator_project( const Iterator_project<I2,Fct,Q1,Q2,Q3,Q4>& i2)
+  : nt( i2.current_iterator()) {}
+
+  template <class I2, class Q1, class Q2, class Q3, class Q4>
+  Self& operator= ( const Iterator_project<I2,Fct,Q1,Q2,Q3,Q4>& i2) {
+    nt = i2.current_iterator();
+    return *this;
+  }
+
   // OPERATIONS Forward Category
   // ---------------------------
 
   Iterator  current_iterator() const { return nt;}
-  Ptr       ptr() const {
+  pointer   ptr() const {
     Fct fct;
+    // Use a const_cast to make the adaptor work for compilers
+    // lacking partial specialization. See also comments above.
+#ifndef CGAL_CFG_NO_PARTIAL_CLASS_TEMPLATE_SPECIALISATION
     return &(fct(*nt));
-  }
-  bool  operator==( const Self& i) const { return ( nt == i.nt); }
-  bool  operator!=( const Self& i) const { return !(*this == i); }
-  Ref   operator*()  const { return *ptr(); }
-  Ptr   operator->() const { return ptr(); }
-  Self& operator++() {
-    ++nt;
-    return *this;
-  }
-  Self  operator++(int) {
-    Self tmp = *this;
-    ++*this;
-    return tmp;
-  }
-
-  // OPERATIONS Bidirectional Category
-  // ---------------------------------
-
-  Self& operator--() {
-    --nt;
-    return *this;
-  }
-  Self  operator--(int) {
-    Self tmp = *this;
-    --*this;
-    return tmp;
-  }
-
-  // OPERATIONS Random Access Category
-  // ---------------------------------
-
-  Self& operator+=( difference_type n) {
-    nt += n;
-    return *this;
-  }
-  Self  operator+( difference_type n) const {
-    Self tmp = *this;
-    return tmp += n;
-  }
-  Self& operator-=( difference_type n) {
-    return operator+=( -n);
-  }
-  Self  operator-( difference_type n) const {
-    Self tmp = *this;
-    return tmp += -n;
-  }
-  difference_type  operator-( const Self& i) const {
-    return nt - i.nt;
-  }
-  Ref  operator[]( difference_type n) const {
-    Self tmp = *this;
-    tmp += n;
-    return tmp.operator*();
-  }
-  bool operator<( const Self& i) const {
-    return ( nt < i.nt);
-  }
-  bool operator>( const Self& i) const {
-    return i < *this;
-  }
-  bool operator<=( const Self& i) const {
-    return !(i < *this);
-  }
-  bool operator>=( const Self& i) const {
-    return !(*this < i);
-  }
-#ifdef CGAL_CFG_NO_ITERATOR_TRAITS
-  friend inline  value_type*
-  value_type( const Self&) { return (value_type*)(0); }
-#endif // CGAL_CFG_NO_ITERATOR_TRAITS //
-};
-
-template < class Fct, class I, class Ref, class Ptr,
-           class Dist, class Ctg>
-inline
-Iterator_project<I,Fct,Ref,Ptr,Dist,Ctg>
-operator+( Dist n, Iterator_project<I,Fct,Ref,Ptr,Dist,Ctg> i)
-{ return i += n; }
-
-#ifdef CGAL_CFG_NO_ITERATOR_TRAITS
-#ifndef CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT
-template < class I, class Fct, class Ref, class Ptr, class Dist, class Ctg>
-inline  Ctg
-iterator_category( const Iterator_project<I,Fct,Ref,Ptr,Dist,Ctg>&) {
-  return Ctg();
-}
-template < class I, class Fct, class Ref, class Ptr, class Dist, class Ctg>
-inline  Dist*
-distance_type( const Iterator_project<I,Fct,Ref,Ptr,Dist,Ctg>&) {
-  return (Dist*)(0);
-}
-template < class I, class Fct, class Ref, class Ptr, class Dist, class Ctg>
-inline  Iterator_tag
-query_circulator_or_iterator(
-  const Iterator_project<I,Fct,Ref,Ptr,Dist,Ctg>&) {
-  return Iterator_tag();
-}
-#endif // CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT
-#endif // CGAL_CFG_NO_ITERATOR_TRAITS //
-
-
-#if defined(CGAL_CFG_NO_ITERATOR_TRAITS) && \
-!defined(CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT)
-template < class I, class II, class Fct, class Dist, class Ctg>
 #else
-template < class I,
-           class II,
-           class Fct,
-           class Dist = typename std::iterator_traits<I>::difference_type,
-           class Ctg = typename std::iterator_traits<I>::iterator_category>
+    return const_cast<pointer>(&(fct(*nt)));
 #endif
-class Iterator_const_project {
-protected:
-  I        nt;    // The internal iterator.
-public:
-  typedef  I  Iterator;
-  typedef  Iterator_const_project<I,II,Fct,Dist,Ctg> Self;
-
-  typedef  Ctg                          iterator_category;
-  typedef  typename Fct::argument_type  argument_type;
-  typedef  typename Fct::result_type    value_type;
-  typedef  const value_type&            reference;
-  typedef  const value_type*            pointer;
-  typedef  Dist                         difference_type;
-
-  typedef  reference                    Ref;
-  typedef  pointer                      Ptr;
-
-  typedef  Iterator_project<II,Fct,value_type&,value_type*,Dist,Ctg>
-    mutable_iterator;
-
-  // CREATION
-  // --------
-
-  Iterator_const_project() {}
-  Iterator_const_project( Iterator j) : nt(j) {}
-  Iterator_const_project( mutable_iterator j) : nt( &*j) {}
-
-  // OPERATIONS Forward Category
-  // ---------------------------
-
-  Iterator  current_iterator() const { return nt;}
-  Ptr       ptr() const {
-    Fct fct;
-    return &(fct(*nt));
   }
-
-  bool  operator==( const Self& i) const { return ( nt == i.nt); }
-  bool  operator!=( const Self& i) const { return !(*this == i); }
-  Ref   operator*()  const { return *ptr(); }
-  Ptr   operator->() const { return ptr(); }
-  Self& operator++() {
+  bool      operator==( const Self& i) const { return ( nt == i.nt); }
+  bool      operator!=( const Self& i) const { return !(*this == i); }
+  reference operator* ()               const { return *ptr(); }
+  pointer   operator->()               const { return ptr(); }
+  Self&     operator++() {
     ++nt;
     return *this;
   }
-  Self  operator++(int) {
+  Self      operator++(int) {
     Self tmp = *this;
     ++*this;
     return tmp;
@@ -263,60 +159,25 @@ public:
     Self tmp = *this;
     return tmp += -n;
   }
-  difference_type  operator-( const Self& i) const {
-    return nt - i.nt;
-  }
-  Ref  operator[]( difference_type n) const {
+  difference_type  operator-( const Self& i) const { return nt - i.nt; }
+  reference  operator[]( difference_type n) const {
     Self tmp = *this;
     tmp += n;
     return tmp.operator*();
   }
-  bool operator<( const Self& i) const {
-    return ( nt < i.nt);
-  }
-  bool operator>( const Self& i) const {
-    return i < *this;
-  }
-  bool operator<=( const Self& i) const {
-    return !(i < *this);
-  }
-  bool operator>=( const Self& i) const {
-    return !(*this < i);
-  }
-#ifdef CGAL_CFG_NO_ITERATOR_TRAITS
-#ifndef CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT
-  friend inline  value_type*
-  value_type( const Self&) { return (value_type*)(0); }
-#endif // CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT
-#endif // CGAL_CFG_NO_ITERATOR_TRAITS //
+  bool operator< ( const Self& i) const { return ( nt < i.nt); }
+  bool operator> ( const Self& i) const { return i < *this; }
+  bool operator<=( const Self& i) const { return !(i < *this); }
+  bool operator>=( const Self& i) const { return !(*this < i); }
 };
 
-template < class Fct, class I, class II, class Dist, class Ctg>
+template < class Dist, class Fct, class I,
+           class D1, class D2, class D3, class D4>
 inline
-Iterator_const_project<I,II,Fct,Dist,Ctg>
-operator+( Dist n, Iterator_const_project<I,II,Fct,Dist,Ctg> i)
-{ return i += n; }
-
-#ifdef CGAL_CFG_NO_ITERATOR_TRAITS
-#ifndef CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT
-template < class I, class II, class Fct, class Dist, class Ctg>
-inline  Ctg
-iterator_category( const Iterator_const_project<I,II,Fct,Dist,Ctg>&) {
-  return Ctg();
+Iterator_project<I,Fct,D1,D2,D3,D4>
+operator+( Dist n, Iterator_project<I,Fct,D1,D2,D3,D4> i) {
+  return i += n;
 }
-template < class I, class II, class Fct, class Dist, class Ctg>
-inline  Dist*
-distance_type( const Iterator_const_project<I,II,Fct,Dist,Ctg>&) {
-  return (Dist*)(0);
-}
-template < class I, class II, class Fct, class Dist, class Ctg>
-inline  Iterator_tag
-query_circulator_or_iterator(
-  const Iterator_const_project<I,II,Fct,Dist,Ctg>&) {
-  return Iterator_tag();
-}
-#endif // CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT
-#endif // CGAL_CFG_NO_ITERATOR_TRAITS //
 
 CGAL_END_NAMESPACE
 #endif // CGAL_ITERATOR_PROJECT_H //
