@@ -820,14 +820,14 @@ class Width_3 {
     DEBUGMSG(CHECK_ABOUT_VF_PAIRS,"Check, if f has antipodal vertices in "
 	     <<"a set.");
     RT a,b,c,d,k;
-    typename std::vector<CGAL_TYPENAME_MSVC_NULL InputDA::Vertex_handle>
+    typename std::vector<typename InputDA::Vertex_handle>
       ::const_iterator  vtxit=V.begin();
-    std::vector<CGAL_TYPENAME_MSVC_NULL InputDA::Vertex_handle> W;
-    typename std::vector<CGAL_TYPENAME_MSVC_NULL InputDA::Vertex_handle>
+    std::vector<typename InputDA::Vertex_handle> W;
+    typename std::vector<typename InputDA::Vertex_handle>
       ::iterator neighborit;
     bool feasible=false;
-    std::vector<CGAL_TYPENAME_MSVC_NULL InputDA::Vertex_handle> apv;
-    std::vector<CGAL_TYPENAME_MSVC_NULL InputDA::Vertex_handle> visited_points;
+    std::vector<typename InputDA::Vertex_handle> apv;
+    std::vector<typename InputDA::Vertex_handle> visited_points;
     while (vtxit!=V.end()) {
       RT vx,vy,vz,vh;
       tco.get_point_coordinates((*vtxit)->point(),vx,vy,vz,vh);
@@ -885,12 +885,12 @@ class Width_3 {
 	    apv.push_back(*neighborit);
 	    //There could now be more witnesses that give violating
 	    //restrictions. Therefore compute the new neighbors of n
-	    std::vector<CGAL_TYPENAME_MSVC_NULL InputDA::Vertex_handle> Wnew;
+	    std::vector<typename InputDA::Vertex_handle> Wnew;
 	    neighbors_of((*neighborit)->halfedge(),Wnew);
 	    
 	    //Erase v from the vertices to be considered as new witnesses
 	    typename
-	      std::vector<CGAL_TYPENAME_MSVC_NULL InputDA::Vertex_handle>
+	      std::vector<typename InputDA::Vertex_handle>
 	      ::iterator  res= std::find(Wnew.begin(),Wnew.end(),*vtxit);
 	    if ( res!=Wnew.end() ) 
 	      Wnew.erase(res);
@@ -1024,15 +1024,15 @@ class Width_3 {
 
     //prepare for the rotating procedure
     Nnew.clear();
-    typename std::vector<CGAL_TYPENAME_MSVC_NULL InputDA::Vertex_handle>
+    typename std::vector<typename InputDA::Vertex_handle>
       ::iterator  vtxit=V.begin();
 
     //Consider all the vertices in V. EE-pairs consist of p,q and the 
     //vertex v in V and another neighbor vertex of v
     while(vtxit != V.end() ) {
-      std::vector<CGAL_TYPENAME_MSVC_NULL InputDA::Vertex_handle> R;
+      std::vector<typename InputDA::Vertex_handle> R;
       neighbors_of((*vtxit)->halfedge(),R);
-      std::vector<CGAL_TYPENAME_MSVC_NULL InputDA::Vertex_handle> Witnesses;
+      std::vector<typename InputDA::Vertex_handle> Witnesses;
       //The set of witnesses are all neighbor vertices of v (=R) and the
       //two vertices "on the other side" that ensure not rotating too far
       Witnesses.push_back(w1);
@@ -1044,7 +1044,7 @@ class Width_3 {
       //The set of all vertices we have already visited is also of no interest
       setminus(R,Visited);
 
-      typename std::vector<CGAL_TYPENAME_MSVC_NULL InputDA::Vertex_handle>
+      typename std::vector<typename InputDA::Vertex_handle>
 	::iterator rit=R.begin();
       //Now look at the modified set of neighbor vertices. For each neighbor r
       //we assume (p,q) and (v,r) to be an EE-pair and want then to find
@@ -1092,15 +1092,15 @@ class Width_3 {
 	    //Now we look if we are in a special case, that is we look if
 	    //other restrictions according to  neighboring vertices of r 
 	    //are also active. If so Nnew is expanded we them.
-	    std::vector<CGAL_TYPENAME_MSVC_NULL InputDA::Vertex_handle> S;
+	    std::vector<typename InputDA::Vertex_handle> S;
 	    neighbors_of((*rit)->halfedge(),S);
 	    //Because we only go forward we exclude v from the neighbor set S
-	    std::vector<CGAL_TYPENAME_MSVC_NULL InputDA::Vertex_handle> vtemp;
+	    std::vector<typename InputDA::Vertex_handle> vtemp;
 	    vtemp.push_back(*vtxit);
 	    setminus(S,vtemp);
 	    //The check of more than 4 active restrictions begins
 	    typename
-	      std::vector<CGAL_TYPENAME_MSVC_NULL InputDA::Vertex_handle>
+	      std::vector<typename InputDA::Vertex_handle>
 	      ::iterator sit; 
 	    while(!S.empty()) {
 	      sit=S.begin();
@@ -1112,7 +1112,7 @@ class Width_3 {
 		//In the neighborhood of this new active vertex could
 		//also be other new active vertices but we are only interested
 		//in new ones
-		std::vector<CGAL_TYPENAME_MSVC_NULL InputDA::Vertex_handle> T;
+		std::vector<typename InputDA::Vertex_handle> T;
 		neighbors_of((*sit)->halfedge(),T);
 		S.erase(sit);
 		setunion(S,T);
@@ -1160,28 +1160,28 @@ class Width_3 {
     typename InputDA::Vertex_handle w2=e->opposite()->next()->vertex();
     typename InputDA::Facet_handle f1=e->facet();
     typename InputDA::Facet_handle f2=e->opposite()->facet();
-    std::vector<CGAL_TYPENAME_MSVC_NULL InputDA::Vertex_handle> V1;
-    std::vector<CGAL_TYPENAME_MSVC_NULL InputDA::Vertex_handle> V2;
+    std::vector<typename InputDA::Vertex_handle> V1;
+    std::vector<typename InputDA::Vertex_handle> V2;
     dao.get_antipodal_vertices(f1,V1);
     dao.get_antipodal_vertices(f2,V2);
-    std::vector<CGAL_TYPENAME_MSVC_NULL InputDA::Vertex_handle> N,V,Visited;
+    std::vector<typename InputDA::Vertex_handle> N,V,Visited;
     V=V1;
     bool do_break = false;
 
     while (!setcut(V,V2)) {
       do_break = false;
-      typename std::vector<CGAL_TYPENAME_MSVC_NULL InputDA::Vertex_handle>
+      typename std::vector<typename InputDA::Vertex_handle>
 	::iterator  vtxit=V.begin();
-      std::vector<CGAL_TYPENAME_MSVC_NULL InputDA::Vertex_handle> R;
+      std::vector<typename InputDA::Vertex_handle> R;
       while (vtxit!=V.end()) {
 	neighbors_of((*vtxit)->halfedge(),R);
-	std::vector<CGAL_TYPENAME_MSVC_NULL InputDA::Vertex_handle> Witnesses;
+	std::vector<typename InputDA::Vertex_handle> Witnesses;
 	Witnesses.push_back(w1);
 	Witnesses.push_back(w2);
 	setunion(Witnesses,R);
 	setminus(R,V);
 	setminus(R,Visited);
-	typename std::vector<CGAL_TYPENAME_MSVC_NULL InputDA::Vertex_handle>
+	typename std::vector<typename InputDA::Vertex_handle>
 	  ::iterator  rit=R.begin();
 	while (rit!=R.end()) {
 	  RT a,b,c,d,k;
@@ -1192,11 +1192,11 @@ class Width_3 {
 	    if (check_feasibility(InputDA(),a,b,c,d,k,Witnesses)) {
 	      update_width(a,b,c,d,k);
 	      N.push_back(*rit);
-	      std::vector<CGAL_TYPENAME_MSVC_NULL InputDA::Vertex_handle> S;
+	      std::vector<typename InputDA::Vertex_handle> S;
 	      neighbors_of((*rit)->halfedge(),S);
 	      setminus(S,V);
 	      typename 
-		std::vector<CGAL_TYPENAME_MSVC_NULL InputDA::Vertex_handle>
+		std::vector<typename InputDA::Vertex_handle>
 		::iterator sit; 
 	      while(!S.empty()) {
 		sit=S.begin();
@@ -1204,7 +1204,7 @@ class Width_3 {
 		tco.get_point_coordinates((*sit)->point(),sx,sy,sz,sh);
 		if (a*sx+b*sy+c*sz+d*sh== 0) {
 		  N.push_back(*sit);
-		  std::vector<CGAL_TYPENAME_MSVC_NULL InputDA::Vertex_handle>
+		  std::vector<typename InputDA::Vertex_handle>
 		    T;
 		  neighbors_of((*sit)->halfedge(),T);
 		  S.erase(sit);

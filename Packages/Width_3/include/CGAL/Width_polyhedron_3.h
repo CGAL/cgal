@@ -110,7 +110,7 @@ class Width_facet_default_base : public CGAL::Facet_max_base {
 template <class Refs, class Traits>
 class Width_vertex_default_base 
     : public CGAL::HalfedgeDS_vertex_base< 
-        Refs, Tag_true, CGAL_TYPENAME_MSVC_NULL Traits::Point_3> {
+        Refs, Tag_true, typename Traits::Point_3> {
 private:
     typedef Traits          WT;
     typedef typename WT::RT RT;

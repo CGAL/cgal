@@ -1,3 +1,6 @@
+1.71 (18 Jan 2004)
+- Rename CGAL_TYPENAME_MSVC_NULL to typename.
+
 1.70 (28 Nov 2003) [rursu]
 - I_Polyhedron_iterator -> I_HalfedgeDS_iterator
 - I_Polyhedron_const_iterator -> I_HalfedgeDS_const_iterator
