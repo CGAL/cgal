@@ -864,7 +864,7 @@ bool is_halfedge_on_outer_ccb(const typename Dcel::Halfedge* e,
 //prev1->target() is v1
 
 template<class Dcel>
-Topological_map<Dcel>::Halfedge_handle
+typename Topological_map<Dcel>::Halfedge_handle
 Topological_map<Dcel>::
 insert_at_vertices(Halfedge_handle previous1, Halfedge_handle previous2)  
 {
@@ -1002,7 +1002,7 @@ move_hole(Holes_iterator e, Face_handle f1, Face_handle f2)
 
 //returns halfedge which is previous->next
 template<class Dcel>
-Topological_map<Dcel>::Halfedge_handle
+typename Topological_map<Dcel>::Halfedge_handle
 Topological_map<Dcel>::
 insert_from_vertex(Halfedge_handle previous)
 {
@@ -1034,7 +1034,7 @@ insert_from_vertex(Halfedge_handle previous)
 
 
 template<class Dcel>
-Topological_map<Dcel>::Halfedge_handle
+typename Topological_map<Dcel>::Halfedge_handle
 Topological_map<Dcel>::
 insert_in_face_interior(Face_handle f)
 {
@@ -1064,7 +1064,7 @@ insert_in_face_interior(Face_handle f)
 
 
 template<class Dcel>
-Topological_map<Dcel>::Halfedge_handle
+typename Topological_map<Dcel>::Halfedge_handle
 Topological_map<Dcel>::
 split_edge (Halfedge_handle e)
 {
@@ -1106,7 +1106,7 @@ split_edge (Halfedge_handle e)
 }
 
 template<class Dcel>
-Topological_map<Dcel>::Halfedge_handle
+typename Topological_map<Dcel>::Halfedge_handle
 Topological_map<Dcel>::
 merge_edge (Halfedge_handle e1, Halfedge_handle e2) 
 {
@@ -1164,7 +1164,7 @@ merge_edge (Halfedge_handle e1, Halfedge_handle e2)
 
 
 template<class Dcel>
-Topological_map<Dcel>::Face_handle
+typename Topological_map<Dcel>::Face_handle
 Topological_map<Dcel>::
 remove_edge(Halfedge_handle e)
 {
