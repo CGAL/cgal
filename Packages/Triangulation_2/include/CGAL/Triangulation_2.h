@@ -166,12 +166,16 @@ public:
   typedef const value_type&    const_reference; 
   typedef value_type&          reference;
   
-
+  
   enum Locate_type {VERTEX=0, 
 		    EDGE, //1
 		    FACE, //2
 		    OUTSIDE_CONVEX_HULL, //3
 		    OUTSIDE_AFFINE_HULL}; //4
+
+  //Tag to distinguish Regular triangulations from others;
+  typedef Tag_false  Weighted_tag;
+  
 
 protected:
   Gt  _gt;

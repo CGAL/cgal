@@ -163,7 +163,9 @@ public:
   typedef Finite_edges_iterator                Edge_iterator;
   typedef Finite_vertices_iterator             Vertex_iterator;
 
- 
+ //Tag to distinguish Delaunay from Regular triangulations
+  typedef Tag_true  Weighted_tag;
+
 private:
   size_type _hidden_vertices;
 
@@ -531,8 +533,7 @@ public:
 						       start);
       return pp.third;
     }
- 
- 
+
 };
 
 template < class Gt, class Tds >

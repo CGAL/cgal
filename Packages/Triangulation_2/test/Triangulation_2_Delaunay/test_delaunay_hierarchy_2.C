@@ -45,7 +45,8 @@ typedef CGAL::Triangulation_face_base_2<Gt>  Fb;
 typedef CGAL::Triangulation_data_structure_2<Vb,Fb>  Tds;
 typedef CGAL::Delaunay_triangulation_2<Gt,Tds>  Dt;
 // Explicit instantiation of the whole class :
-template class CGAL::Triangulation_hierarchy_2<Dt>;
+// does not work anymore because of the tag dependant copy
+//template class CGAL::Triangulation_hierarchy_2<Dt>;
 
 
 int main()
