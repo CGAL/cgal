@@ -435,7 +435,9 @@ operator>>(CGAL::window& w, Triangle_2<R>& t)
   CGAL::color cl = w.get_fill_color();
   
   if (cl != CGAL::invisible) { // draw filled triangle ...
-    w.draw_filled_triangle(CGAL::window_point(x0,y0), CGAL::window_point(x1,y1), CGAL::window_point(x2,y2), cl); 
+    w.draw_filled_triangle(CGAL::window_point(x0,y0), 
+                           CGAL::window_point(x1,y1), 
+                           CGAL::window_point(x2,y2), cl); 
   }  
   
   w.draw_segment(x0,y0, x1, y1);
