@@ -63,6 +63,6 @@ touch $ERRORFILE
 #                    compile and run the tests
 #---------------------------------------------------------------------#
 
-compile_and_run Sphere_geometry-test.C
+compile_and_run Sphere_geometry-test
 compile_and_run Nef_polyhedron_S2-test
 
