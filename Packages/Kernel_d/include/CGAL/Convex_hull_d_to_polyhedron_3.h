@@ -105,13 +105,13 @@ private:
 include |<CGAL/Convex_hull_d_to_polyhedron_3.h>|
 \setopdims{2cm}{3cm}}*/
 
-template <class R, class T>
+template <class R, class Polyhedron_3>
 void convex_hull_d_to_polyhedron_3(
-  const Convex_hull_d<R>& C, Polyhedron_3<T>& P)
+  const Convex_hull_d<R>& C, Polyhedron_3& P)
 /*{\Mfunc converts the convex hull |C| to polyedral surface stored in 
    |P|.\\ \precond |dim == 3| and |dcur == 3|. }*/
 { typedef Convex_hull_d<R> ChullType;
-  typedef typename Polyhedron_3<T>::HalfedgeDS  HDS;
+  typedef typename Polyhedron_3::HalfedgeDS  HDS;
   CGAL_assertion_msg(C.dimension()==3&&C.current_dimension()==3,
   "convex_hull_d_to_polyhedron_3: only full manifold can be transformed.");
   Build_polyhedron_from_chull<HDS,ChullType> get_surface(C);
