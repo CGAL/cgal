@@ -34,7 +34,7 @@
 #include <utility>
 
 #include <CGAL/Triangulation_utils_3.h>
-#include <CGAL/Random.h>
+// #include <CGAL/Random.h>
 #include <CGAL/triple.h>
 
 #include <CGAL/Pointer.h>
@@ -1462,7 +1462,11 @@ locate(const Point & p,
   // separating p from the rest of the triangulation
   // lt = OUTSIDE_AFFINE_HULL if p is not coplanar with the triangulation
 {
-  static Random rand( (long) 0 );
+  //  static Random rand( (long) 0 );
+  static int rand = 0;
+  const int rand_a = 421;
+  const int rand_b = 2073;
+  const int rand_c = 32749;
   int i, inf;
   Point p0,p1,p2,p3;
   switch (dimension()) {
@@ -1484,7 +1488,9 @@ locate(const Point & p,
 	// else c is finite
 	// we test its facets in a random order until we find a
 	// neighbor to go further
-	i = rand.get_int(0,4);
+	//	i = rand.get_int(0,4);
+	rand = ( rand_a * rand + rand_b ) % rand_c;
+	i = rand &3;
 	p0 = c->vertex( i )->point();
 	p1 = c->vertex( (i+1)&3 )->point();
 	p2 = c->vertex( (i+2)&3 )->point();
@@ -1624,7 +1630,9 @@ locate(const Point & p,
 	// else c is finite
 	// we test its edges in a random order until we find a
 	// neighbor to go further
-	i = rand.get_int(0,3);
+	//	i = rand.get_int(0,3);
+	rand = ( rand_a * rand + rand_b ) % rand_c;
+	i = rand %3;
 	p0 = c->vertex( i )->point();
 	p1 = c->vertex( ccw(i) )->point();
 	p2 = c->vertex( cw(i) )->point();
