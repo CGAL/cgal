@@ -1,6 +1,11 @@
 Nef_2 Package: Release changes
 ----------------------------------------------------------------------
 
+1.23 (?? ???? 2002)
+     - replaced deprecated Construct_direction_of_line_2, 
+       Construct_source_point_2, Construct_target_point_2, with non-deprepcated
+       counterparts.
+
 1.22 (22 July 2002)
      - fixed doc of Extended_cartesian
      - moved specialization of Polynomial operators to src to allow

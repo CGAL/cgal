@@ -338,15 +338,13 @@ on the extended geometric objects.}*/
 
   Point_2 source(const Segment_2& s) const
   /*{\Mop returns the source point of |s|.}*/
-  { typename Base::Construct_source_point_2 _source =
-      construct_source_point_2_object();
-    return _source(s); }
+  { typename Base::Construct_vertex_2 _source = construct_vertex_2_object();
+    return _source(s,0); }
 
   Point_2 target(const Segment_2& s) const
   /*{\Mop returns the target point of |s|.}*/
-  { typename Base::Construct_target_point_2 _target =
-      construct_target_point_2_object();
-    return _target(s); }
+  { typename Base::Construct_vertex_2 _target = construct_vertex_2_object();
+    return _target(s,1); }
 
   Segment_2 construct_segment(const Point_2& p, const Point_2& q) const
   /*{\Mop constructs a segment |pq|.}*/
@@ -449,8 +447,8 @@ on the extended geometric objects.}*/
   Direction_2 construct_direction(
     const Point_2& p1, const Point_2& p2) const
   /*{\Mop returns the direction of the vector |p2| - |p1|.}*/
-  { typename Base::Construct_direction_of_line_2 _direction =
-      construct_direction_of_line_2_object();
+  { typename Base::Construct_direction_2 _direction =
+      construct_direction_2_object();
     return _direction(construct_line(p1,p2)); }
 
   bool strictly_ordered_ccw(const Direction_2& d1, 
