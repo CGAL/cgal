@@ -63,66 +63,56 @@ operators. 2D objects are embedded in the \ccc{xy}-plane.
 
 \ccFunction{template <class R>
             Geomview_stream&
-            operator<<(Geomview_stream& G,
-                       const Point_2<R>& p);}
+            operator<<(Geomview_stream& G, const Point_2<R>& p);}
 {Inserts the point \ccc{p} into the stream \ccVar.}
 
 \newpage
 \ccFunction{template <class R>
             Geomview_stream&
-            operator<<(Geomview_stream& G,
-                       const Point_3<R>& p);}
+            operator<<(Geomview_stream& G, const Point_3<R>& p);}
 {Inserts the point \ccc{p} into the stream \ccVar.}
 
 
 \ccFunction{template <class R>
             Geomview_stream&
-            operator<<(Geomview_stream& G,
-                       const Segment_2<R>& s);}
+            operator<<(Geomview_stream& G, const Segment_2<R>& s);}
 {Inserts the segment \ccc{s} into the stream \ccVar.}
 
 \ccFunction{template <class R>
             Geomview_stream&
-            operator<<(Geomview_stream& G,
-                       const Segment_3<R>& s);}
+            operator<<(Geomview_stream& G, const Segment_3<R>& s);}
 {Inserts the segment \ccc{s} into the stream \ccVar.}
 
 
 \ccFunction{template <class R>
             Geomview_stream&
-            operator<<(Geomview_stream& G,
-                       const Triangle_2<R>& t);}
+            operator<<(Geomview_stream& G, const Triangle_2<R>& t);}
 {Inserts the triangle \ccc{t} into the stream \ccVar.}
 
 
 \ccFunction{template <class R>
             Geomview_stream&
-            operator<<(Geomview_stream& G,
-                       const Triangle_3<R>& t);}
+            operator<<(Geomview_stream& G, const Triangle_3<R>& t);}
 {Inserts the triangle \ccc{t} into the stream \ccVar.}
 
 
 \ccFunction{template <class R>
             Geomview_stream&
-            operator<<(Geomview_stream& G,
-                       const Tetrahedron_3<R>& t);}
+            operator<<(Geomview_stream& G, const Tetrahedron_3<R>& t);}
 {Inserts the tetrahedron \ccc{t} into the stream \ccVar.}
 
 \ccFunction{template <class R>
             Geomview_stream&
-            operator<<(Geomview_stream& G,
-                       const Sphere_3<R>& s);}
+            operator<<(Geomview_stream& G, const Sphere_3<R>& s);}
 {Inserts the sphere \ccc{s} into the stream \ccVar.}
 
 
 \ccFunction{Geomview_stream&
-          operator<<(Geomview_stream& G,
-	             const Bbox_2& b);}
+          operator<<(Geomview_stream& G, const Bbox_2& b);}
 {Inserts the bounding box \ccc{b} into the stream \ccVar.}
 
 \ccFunction{Geomview_stream&
-          operator<<(Geomview_stream& G,
-                     const Bbox_3& b);}
+          operator<<(Geomview_stream& G, const Bbox_3& b);}
 {Inserts the bounding box \ccc{b} into the stream \ccVar.}
 
 
@@ -134,8 +124,7 @@ can be moved anywhere with the left mouse button, before a point is entered.
 
 \ccFunction{template <class R>
             Geomview_stream&
-            operator>>(Geomview_stream& G,
-                       Point_3<R>& p);}
+            operator>>(Geomview_stream& G, Point_3<R>& p);}
 {Extracts the point \ccc{p} from the stream \ccVar. The point is
  echoed.}
 
@@ -145,8 +134,7 @@ can be moved anywhere with the left mouse button, before a point is entered.
 
 \ccFunction{template <class Traits, class HDS>
 Geomview_stream&
-operator<<(Geomview_stream &G,
-           const Polyhedron_3<Traits,HDS> &P);}
+operator<<(Geomview_stream &G, const Polyhedron_3<Traits,HDS> &P);}
 {Inserts the polyhedron \ccc{P} into the stream \ccVar.}
 
 \ccHeading{Colors}
@@ -154,61 +142,48 @@ operator<<(Geomview_stream &G,
 Geomview distinguishes between edge and face colors. The edge color
 is at the same time the color of vertices. 
 
-\ccMethod{Geomview_stream&
-            operator<<(const Color& c);}
+\ccMethod{Geomview_stream& operator<<(const Color& c);}
 {Makes \ccc{c} the color of vertices, edges and faces in subsequent IO 
  operations.}
 
-\ccMethod{Color
-          set_bg_color(const Color& c);}
+\ccMethod{Color set_bg_color(const Color& c);}
 {Changes the background color. Returns the old value.}
 
-\ccMethod{Color
-          set_vertex_color(const Color& c);}
+\ccMethod{Color set_vertex_color(const Color& c);}
 {Changes the vertex color. Returns the old value.}
 
-\ccMethod{Color
-          set_edge_color(const Color& c);}
+\ccMethod{Color set_edge_color(const Color& c);}
 {Changes the edge color. Returns the old value.}
 
 
-\ccMethod{Color
-          set_face_color(const Color& c);}
+\ccMethod{Color set_face_color(const Color& c);}
 {Changes the face color. Returns the old value.}
 
 
 \ccHeading{Miscellaneous}
 
-\ccMethod{void
-	  clear();}
+\ccMethod{void clear();}
 {Deletes all objects.}
 
-\ccMethod{void
-	  look_recenter();}
+\ccMethod{void look_recenter();}
 {Positions the camera in a way that all objects can be seen.}
 
-\ccMethod{int
-          get_line_width() const;}
+\ccMethod{int get_line_width() const;}
 {Returns the line width.}
 
-\ccMethod{int
-          set_line_width(int w);}
+\ccMethod{int set_line_width(int w);}
 {Sets the line width to \ccc{w}. Returns the previous value.}
 
-\ccMethod{double
-          get_vertex_radius() const;}
+\ccMethod{double get_vertex_radius() const;}
 {Returns the radius of vertices.}
 
-\ccMethod{double
-          set_vertex_radius(double r) const;}
+\ccMethod{double set_vertex_radius(double r) const;}
 {Sets the radius of vertices to \ccc{d}. Returns the previous value.}
 
-\ccMethod{bool
-          get_trace();}
+\ccMethod{bool get_trace();}
 {Returns \ccc{true} iff tracing is on.}
 
-\ccMethod{bool
-          set_trace(bool b);} 
+\ccMethod{bool set_trace(bool b);} 
 {Sets tracing on. The data that are sent to \ccc{Geomview} are also
  sent to \ccc{cerr}.  Returns the previous value. By default tracing is
  off.}
@@ -224,24 +199,20 @@ The following functions are helpful if you develop your own insert
 and extract functions. The following functions allow to pass a string
 from Geomview and to read data sent back by Geomview.
 
-\ccMethod{Geomview_stream&
-            operator<<(std::string s);}
+\ccMethod{Geomview_stream& operator<<(std::string s);}
 {Inserts string \ccc{s} into the stream.}
 
 
-\ccMethod{Geomview_stream&
-            operator>>(char* s);}
+\ccMethod{Geomview_stream& operator>>(char* s);}
 {Extracts a string \ccc{s} from the stream.
 \ccPrecond You have to allocate enough memory.}
 
-\ccMethod{Geomview_stream&
-            operator<<(int i);}
+\ccMethod{Geomview_stream& operator<<(int i);}
 {Inserts integer \ccc{i} into the stream. Puts whitespace around if the
 stream is in ascii mode.}
 
 
-\ccMethod{Geomview_stream&
-            operator<<(double d);}
+\ccMethod{Geomview_stream& operator<<(double d);}
 {Inserts double \ccc{d} into the stream. Puts whitespace around if the
 stream is in ascii mode.}
 
