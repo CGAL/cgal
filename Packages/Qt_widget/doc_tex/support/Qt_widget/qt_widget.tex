@@ -381,8 +381,6 @@ reorganize your code, to first add layers, and later add tools.
 
 
 
-
-
 \section{Tutorial}
 
 In the directories \ccc{demo/Qt_widget/basic/tutorial*} we provide some examples that illustrate the widget, layers, tools, and the standard toolbar.
@@ -396,8 +394,8 @@ can pass this tutorials without having strong skills of Qt
 programming. Anyway, the code that belongs to Qt it is explained in
 this tutorials.
 
-The following is a typical template of how to create a window using Qt
-and Qt\_widget.
+The following is a typical template of how to create a window using
+\ccStyle{Qt} and \ccStyle{Qt\_widget.}
 
 \begin{ccExampleCode}
 #include <CGAL/IO/Qt_widget.h>
@@ -416,37 +414,32 @@ int main( int argc, char **argv )
 }
 \end{ccExampleCode}
 
-You'll allways need to include the header:
-#include <qapplication.h>
+You'll allways need to include the header:\\
+\#include $< qapplication.h >$
 
 The entry point for a typical Qt application is the function main. In
-this function you should define an application object of Qt:
+this function you should define an application object of Qt:\\
+QApplication app( argc, argv );
 
-    QApplication app( argc, argv );
+You will run the Qt application with the line:\\
+return app.exec();
 
-You will run the Qt application with the line:
+To use \ccStyle{Qt\_widget} you need an instance and tell the
+application to use that instance:\\
+CGAL::Qt\_widget *W = new CGAL::Qt\_widget();\\
+app.setMainWidget( W );
 
-    return app.exec();
+To resize and set the scales of the window you'll use:\\
+W$->$resize(600, 600);\\
+W$->$set\_window(0, 600, 0, 600);
 
-To use Qt_widget you need an instance and tell the application to use
-that instance:
+At the end you need to show the window when the initialization have been done:\\
+W$->$show();
 
-    CGAL::Qt_widget *W = new CGAL::Qt_widget();
-    app.setMainWidget( W );
-
-To resize and set the scales of the window you'll use:
-
-    W->resize(600, 600);
-    W->set_window(0, 600, 0, 600);
-
-At the end you need to show the window when the initialization have been done:
-
-    W->show();
-
-All the drawing code should be put betwen Qt_Widget's lock() and
-unlock() functions. See the manual reference pages of Qt_widget. Doing
-like this, the window will be updated only once, when Qt_widget find
-the last unlock(). This way you can avoid the window flickering.
+All the drawing code should be put betwen \ccStyle{Qt\_Widget}'s lock() and
+unlock() functions. See the manual reference pages of
+\ccStyle{Qt\_widget}. Doing like this, the window will be updated only
+once, when \ccStyle{Qt\_widget} find the last unlock(). This way you can avoid the window flickering.
 
 As you'll notice, this tutorial has some limitations. If you try to
 resize the window you'll see that what you have been painted will
@@ -455,6 +448,7 @@ next tutorial how you can solve this problem.
 
 Applications following this approach are only usefull when you quickly
 want to see how the output of a computation looks like.
+
 \subsection*{Tutorial 2}
 \subsection*{Tutorial 3}
 \subsection*{Tutorial 4}
