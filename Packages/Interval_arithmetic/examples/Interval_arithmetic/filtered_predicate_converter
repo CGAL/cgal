@@ -321,7 +321,8 @@ sub match_calls_in_body {
   while (/(\W)($pred_list_re)(\s*\()/sm) {
     my $predicate_name = $2;
     my ($num_args, $before, $after) = extract_balanced ("(", ")", "(".$');
-    $new_body .= "$`$1$2_SAF$before, epsilon_"; # We add "_SAF" to the predicate name
+    # We add "_SAF" to the predicate name
+    $new_body .= "$`$1$2_SAF$before,\n\t\tepsilon_";
 
     # Recognize the actual predicate, with same number of arguments.
     my $p;
@@ -336,7 +337,7 @@ sub match_calls_in_body {
     # We add the epsilon arguments to the call in $new_body.
     my $old_num_eps = $num_eps;
     $num_eps += @$p[$eps_pos];
-    $new_body.= join(", epsilon_", $old_num_eps..$num_eps-1);
+    $new_body.= join(",\n\t\tepsilon_", $old_num_eps..$num_eps-1);
     $_ = $after;
   }
 
