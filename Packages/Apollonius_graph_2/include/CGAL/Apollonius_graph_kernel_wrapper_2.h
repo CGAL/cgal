@@ -90,9 +90,9 @@ private:
 
 
 public:
-  bool
-  operator()(const bool& b) const {
-    return b;
+#ifdef CGAL_CFG_USING_BASE_MEMBER_BUG
+  bool operator()(bool b) const {
+    return Base::operator()(b);
   }
 
   K2_Point_2
@@ -100,6 +100,9 @@ public:
   {
     return Base::operator()(p);
   }
+#else
+  using Base::operator();
+#endif
 
   K2_Site_2
   operator()(const typename K1::Site_2& t) const
