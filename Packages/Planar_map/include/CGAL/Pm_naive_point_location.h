@@ -27,14 +27,8 @@
 #ifndef CGAL_PM_NAIVE_POINT_LOCATION_H
 #define CGAL_PM_NAIVE_POINT_LOCATION_H
 
-#ifndef CGAL_PM_POINT_LOCATION_BASE_H
 #include <CGAL/Pm_point_location_base.h>
-#endif
-
-#ifndef CGAL_PLANAR_MAP_MISC_H
 #include <CGAL/Planar_map_2/Planar_map_misc.h>
-#endif
-
 
 CGAL_BEGIN_NAMESPACE
 
@@ -64,7 +58,7 @@ public:
   typedef typename Base::Halfedge_handle_iterator Halfedge_handle_iterator;
   typedef typename Base::Token Token;
 
-public:	
+public:
   // Constructors
   Pm_naive_point_location() : 
     Pm_point_location_base<Planar_map>(),
@@ -72,10 +66,10 @@ public:
     traits(0) 
   {}
 
-  Pm_naive_point_location(Planar_map* _pm,Traits_wrap* _traits) : 
-    Pm_point_location_base<Planar_map>(),traits(_traits),pm(_pm) {}
+  Pm_naive_point_location(Planar_map * _pm,Traits_wrap * _traits) : 
+    Pm_point_location_base<Planar_map>(), traits(_traits), pm(_pm) {}
 
-  inline void init(Planar_map& pmp, Traits& tr) 
+  inline void init(Planar_map & pmp, Traits & tr) 
   {
     CGAL_precondition_msg(pm == NULL,
     "Point location instance should be uninitialized "
@@ -85,57 +79,51 @@ public:
     traits = (Traits_wrap*)(&tr);
   }
   
-  inline void insert(Halfedge_handle h
-                     ,const X_curve& cv
-                     ) {}
+  inline void insert(Halfedge_handle, const X_curve &) {}
   
-  Halfedge_handle locate(const Point& p, Locate_type& lt) const;
-  Halfedge_handle locate(const Point& p, Locate_type& lt);
+  Halfedge_handle locate(const Point & p, Locate_type & lt) const;
+  Halfedge_handle locate(const Point & p, Locate_type & lt);
   
-  Halfedge_handle vertical_ray_shoot(const Point& p, Locate_type& lt, bool up)
-    const;
-  Halfedge_handle vertical_ray_shoot(const Point& p, Locate_type& lt, bool up);
+  Halfedge_handle vertical_ray_shoot(const Point & p,
+                                     Locate_type & lt, bool up) const;
+  Halfedge_handle vertical_ray_shoot(const Point & p,
+                                     Locate_type & lt, bool up);
   
-  inline void split_edge(const X_curve &cv,
-                         Halfedge_handle e1,
-                         Halfedge_handle e2
-                         ,const X_curve& cv1, const X_curve& cv2
-                         ) {}
+  inline void split_edge(const X_curve &,
+                         Halfedge_handle, Halfedge_handle,
+                         const X_curve &, const X_curve &) {}
   
-  inline void merge_edge(const X_curve &cv1,
-                         const X_curve &cv2,
-                         Halfedge_handle e
-                         ,const X_curve& cv
-                         ) {}
+  inline void merge_edge(const X_curve &, const X_curve &,
+                         Halfedge_handle, const X_curve &) {}
   
   inline void remove_edge(Halfedge_handle e) {}
-  inline void remove_edge(const Halfedge_handle_iterator& begin,
-		const Halfedge_handle_iterator& end) {};
+  inline void remove_edge(const Halfedge_handle_iterator &,
+                          const Halfedge_handle_iterator &) {};
   inline void clear() {}
-  inline void update(const Halfedge_handle_iterator&,
-                     const Halfedge_handle_iterator&,
-                     const Token& token)
+  inline void update(const Halfedge_handle_iterator &,
+                     const Halfedge_handle_iterator &,
+                     const Token & token)
   { token.rebuild_bounding_box(this); }
 
 public:
-  inline const Bounding_box* get_bounding_box() const 
-  {return pm->get_bounding_box();}	
+  inline const Bounding_box * get_bounding_box() const 
+  {return pm->get_bounding_box();}
   inline const Traits* get_traits() const {return traits;}
   
 protected:
-  Halfedge_handle find_lowest(Vertex_handle v,Traits_wrap *traits, 
-			      bool highest) const;
+  Halfedge_handle find_lowest(Vertex_handle v, Traits_wrap * traits, 
+                              bool highest) const;
   
 #ifdef CGAL_PM_DEBUG
   void debug(){}
 #endif
 
 protected:
-  typedef const Self* cPLp;
+  typedef const Self * cPLp;
   
 protected:
-  Planar_map* pm;
-  Traits_wrap* traits;
+  Planar_map * pm;
+  Traits_wrap * traits;
 };
 
 CGAL_END_NAMESPACE
@@ -145,11 +133,3 @@ CGAL_END_NAMESPACE
 #endif
 
 #endif //CGAL_PM_NAIVE_POINT_LOCATION_H
-
-
-
-
-
-
-
-
