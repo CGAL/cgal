@@ -15,7 +15,7 @@
 // package       : Point_set_2 (2.2.1)
 // maintainer    : Matthias Baesken <baesken@informatik.uni-trier.de>
 // revision      : 2.2.1
-// revision_date : 21 June 2001 
+// revision_date : 10 July 2001 
 // author(s)     : Matthias Baesken
 //
 // coordinator   : Matthias Baesken, Trier  (<baesken@informatik.uni-trier.de>)
