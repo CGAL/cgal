@@ -28,7 +28,7 @@
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="TRUE"
+				Detect64BitPortabilityProblems="FALSE"
 				DebugInformationFormat="4"
 				CompileAs="2"/>
 			<Tool
@@ -77,7 +77,7 @@
 				EnableFunctionLevelLinking="TRUE"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="TRUE"
+				Detect64BitPortabilityProblems="FALSE"
 				DebugInformationFormat="3"
 				CompileAs="2"/>
 			<Tool
@@ -177,14 +177,16 @@
 					Name="Debug|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o Qt_widget_move_point.moc Qt_widget_move_point.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o Qt_widget_move_point.moc Qt_widget_move_point.h
+"
 						Outputs="Qt_widget_move_point.moc"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o Qt_widget_move_point.moc Qt_widget_move_point.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o Qt_widget_move_point.moc Qt_widget_move_point.h
+"
 						Outputs="Qt_widget_move_point.moc"/>
 				</FileConfiguration>
 			</File>
@@ -202,7 +204,8 @@
 					Name="Release|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o Qt_widget_toolbar.moc Qt_widget_toolbar.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o Qt_widget_toolbar.moc Qt_widget_toolbar.h
+"
 						Outputs="Qt_widget_toolbar.moc"/>
 				</FileConfiguration>
 			</File>
@@ -220,7 +223,8 @@
 					Name="Release|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o Qt_widget_toolbar_layers.moc Qt_widget_toolbar_layers.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o Qt_widget_toolbar_layers.moc Qt_widget_toolbar_layers.h
+"
 						Outputs="Qt_widget_toolbar_layers.moc"/>
 				</FileConfiguration>
 			</File>
@@ -230,14 +234,16 @@
 					Name="Debug|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o alpha_shapes_2.moc alpha_shapes_2.C"
+						CommandLine="$(QTDIR)/bin/moc.exe -o alpha_shapes_2.moc alpha_shapes_2.C
+"
 						Outputs="alpha_shapes_2.moc"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o alpha_shapes_2.moc alpha_shapes_2.C"
+						CommandLine="$(QTDIR)/bin/moc.exe -o alpha_shapes_2.moc alpha_shapes_2.C
+"
 						Outputs="alpha_shapes_2.moc"/>
 				</FileConfiguration>
 			</File>

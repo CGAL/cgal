@@ -186,7 +186,7 @@ public:
   *widget << CGAL::LineWidth(2) << CGAL::BackgroundColor (CGAL::BLACK);
 
   resize(w,h);
-  widget->show();
+  widget->set_window(-1, 1, -1, 1);
   widget->setMouseTracking(TRUE);  
 
   //connect the widget to the main function that receives the objects
@@ -216,10 +216,6 @@ signals:
   void was_repainted();
   
 public slots:
-  void set_window(double xmin, double xmax, double ymin, double ymax)
-  {
-    widget->set_window(xmin, xmax, ymin, ymax);
-  }
   void new_instance()
   {
     widget->lock();
@@ -313,7 +309,6 @@ private slots:
   void new_window(){
     MyWindow *ed = new MyWindow(500, 500);
     ed->setCaption("Layer");
-    ed->show();
     if(tr1.number_of_vertices() > 1){
       Vertex_iterator it = tr1.vertices_begin();
       xmin = xmax = (*it).point().x();
@@ -321,17 +316,19 @@ private slots:
       while(it != tr1.vertices_end()) {
         L.push_back((*it).point());
         if(xmin > (*it).point().x())
-	  xmin = (*it).point().x();
+          xmin = (*it).point().x();
         if(xmax < (*it).point().x())
-	  xmax = (*it).point().x();
+          xmax = (*it).point().x();
         if(ymin > (*it).point().y())
-	  ymin = (*it).point().y();
+          ymin = (*it).point().y();
         if(ymax < (*it).point().y())
-	  ymax = (*it).point().y();
+          ymax = (*it).point().y();
         it++;
       }
     }
-    ed->set_window(xmin, xmax, ymin, ymax);
+    ed->widget->clear_history();
+    ed->widget->set_window(xmin, xmax, ymin, ymax);
+    ed->show();
     something_changed();
   }
 
@@ -381,13 +378,13 @@ private slots:
     while(it != tr1.vertices_end()) {
       L.push_back((*it).point());
       if(xmin > (*it).point().x())
-	xmin = (*it).point().x();
+        xmin = (*it).point().x();
       if(xmax < (*it).point().x())
-	xmax = (*it).point().x();
+        xmax = (*it).point().x();
       if(ymin > (*it).point().y())
-	ymin = (*it).point().y();
+        ymin = (*it).point().y();
       if(ymax < (*it).point().y())
-	ymax = (*it).point().y();
+        ymax = (*it).point().y();
       it++;
     }
     widget->clear_history();
@@ -427,13 +424,13 @@ private slots:
     while(it != tr1.vertices_end()) {
       L.push_back((*it).point());
       if(xmin > (*it).point().x())
-	xmin = (*it).point().x();
+        xmin = (*it).point().x();
       if(xmax < (*it).point().x())
-	xmax = (*it).point().x();
+        xmax = (*it).point().x();
       if(ymin > (*it).point().y())
-	ymin = (*it).point().y();
+        ymin = (*it).point().y();
       if(ymax < (*it).point().y())
-	ymax = (*it).point().y();
+        ymax = (*it).point().y();
       it++;
     }
     widget->clear_history();
@@ -477,7 +474,6 @@ main(int argc, char **argv)
   win.show();
   // because Qt send resizeEvent only on show.
   win.init_coordinates();
-  win.set_window(-1, 1, -1, 1);
   current_state = -1;
   return app.exec();
 }
