@@ -579,6 +579,10 @@ private:
   //------------------------------------------------------------------------
 
 public:
+  typedef bool              result_type;
+  typedef Site_2            argument_type;
+  struct Arity {};
+
   bool operator()(const Site_2& p, const Site_2& q, const Site_2& r,
 		  const Site_2& s, const Site_2& t, Sign sgn) const
   {

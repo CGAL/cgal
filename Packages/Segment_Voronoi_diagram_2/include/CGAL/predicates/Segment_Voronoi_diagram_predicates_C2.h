@@ -24,6 +24,9 @@
 #define CGAL_SEGMENT_VORONOI_DIAGRAM_PREDICATES_2_H
 
 #include <CGAL/predicates/Segment_Voronoi_diagram_vertex_C2.h>
+#include <CGAL/predicates/Svd_compare_x_2.h>
+#include <CGAL/predicates/Svd_compare_y_2.h>
+#include <CGAL/predicates/Svd_are_parallel_C2.h>
 #include <CGAL/predicates/Svd_are_same_points_C2.h>
 #include <CGAL/predicates/Svd_are_same_segments_C2.h>
 #include <CGAL/predicates/Svd_orientation_C2.h>

@@ -40,6 +40,10 @@ public:
   typedef Svd_are_same_points_C2<K>    Are_same_points_2;
   typedef Svd_are_same_segments_C2<K>  Are_same_segments_2;
 
+  typedef bool                         result_type;
+  struct argument_type {};
+  typedef Arity_tag<5>                 Arity;
+
 private:
   Are_same_points_2    same_points;
   Are_same_segments_2  same_segments;
