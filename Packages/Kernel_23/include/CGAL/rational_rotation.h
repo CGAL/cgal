@@ -18,7 +18,7 @@
 // author(s)     : Stefan Schirra
 //
 //
-// coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
+// coordinator   : MPI, Saarbruecken  
 // ======================================================================
  
 
@@ -135,8 +135,7 @@ rational_rotation_approximation( const NT &  dirx,     // dir.x()
   dx = dirx;
   dy = diry;
 
-
-  if (dy > dx ) { swap (sin,cos); }
+  if (dy > dx ) { std::swap (sin,cos); }
 
   if (dx < NT0) { cos = - cos; }
 
@@ -157,9 +156,6 @@ rational_rotation_approximation( const double& angle,
                                       const NT &  eps_num,  // quality_bound
                                       const NT &  eps_den )
 {
-#ifndef CGAL_CFG_NO_NAMESPACE
-  using std::swap;
-#endif // CGAL_CFG_NO_NAMESPACE
 
   const NT& n   = eps_num;
   const NT& d   = eps_den;
@@ -187,7 +183,7 @@ rational_rotation_approximation( const double& angle,
   if (dsin > dcos)
   {
      swapped = true;
-     swap (dsin,dcos);
+     std::swap (dsin,dcos);
   }
   if ( dsin < eps )
   {
@@ -255,7 +251,7 @@ rational_rotation_approximation( const double& angle,
       } // for(;;)
   }
 
-  if ( swapped ) { swap (isin,icos); }
+  if ( swapped ) { std::swap (isin,icos); }
 
   dsin = sin( angle);
   dcos = cos( angle);
