@@ -70,11 +70,12 @@ int  main()
   //            std::back_inserter(curves),
   //            std::back_inserter(points));
  
-  cout<<"The number of resulting polygons: "<<polygons.size()<<endl;
+  cout<<"The number of resulting polygons: "<<
+    polygons.size()<<endl;
   
   for (std::list<Polygon>::iterator iter = polygons.begin();
        iter != polygons.end(); ++iter)
-    cout << *iter;
+    cout << *iter << endl;
   
   cout<<endl;
   
