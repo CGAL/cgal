@@ -48,7 +48,7 @@ planar_map.moc: planar_map.C
 	${QT_MOC} -o planar_map.moc planar_map.C
 
 planar_map$(EXE_EXT): planar_map$(OBJ_EXT) Qt_widget_toolbar$(OBJ_EXT) 
-	$(CGAL_CXX) $(EXE_OPT)demo \
+	$(CGAL_CXX) $(EXE_OPT)planar_map \
 	planar_map$(OBJ_EXT) \
 	 Qt_widget_toolbar$(OBJ_EXT) \
 	$(LDFLAGS)
