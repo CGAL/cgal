@@ -66,15 +66,21 @@ The template declaration of the \ccc{Snap_rounding_2} function has one parameter
 \ccCreation
     \ccCreationVariable{Snap_rounding_2}
 
-\ccConstructor{snap_rounding(typename std::list<Segment_2>::const_iterator first,typename std::list<Segment_2>::const_iterator beyond,NT pixel_size,bool do_isr = true,int 
+\ccConstructor{snap_rounding(typename std::list<Segment_2>::const_iterator first,typename std::list<Segment_2>::const_iterator beyond,NT pixel_size,bool do_isr = true,bool use_integer_mode = true, int 
 inp_number_of_kd_trees = 1);}{
 The first two parameters denote the first and after-the-last iterators of a list of Segment\_2 which are the input of Snap Rounding.
 The third parameter denotes the pixel size. The forth parameter determines whether to apply Iterated Snap Rounding
-or Snap Rounding. The forth parameter denotes the number of KD trees to use (see cite ISR for details). The default,
-$1$, is ussually the best one to use.
+or Snap Rounding. The fifth parameter determines the output representation. If the
+parameter value is {\ccc true}, then the output is represented in an integer
+grid just as defined by the Snap Rounding algorithm. Note that the number type of
+the representation remains {\ccc NT}. Otherwise, the plane is tiled
+with unit pixels with size {\ccc pixel\_size} and each vertice of the output is
+represented by the coordinates of the cenetr of the hot pixel that includes it.
+The sixth parameter denotes the number of KD trees to use (see cite ISR for details).
+The default, $1$, is ussually the best one to use.
 }
 
-\ccConstructor{snap_rounding(NT pixel_size,bool do_isr = true,int 
+\ccConstructor{snap_rounding(NT pixel_size,bool do_isr = true,bool use_integer_mode = true,int 
 inp_number_of_kd_trees = 1);}{
 The same as the constructor above but here the instance is initialized with no segments.
 }
@@ -150,6 +156,10 @@ or Snap Rounding (when \ccc{b} is false).}
 \ccMethod{bool change_pixel_size(NT pixel_size);}
 {Change the pixel size.
 Return false if the size is not valid (e.g. negative). }
+
+\ccMethod{bool use_integer_mode(bool b);}
+{Determine which mode of output representation to use (see the explanation of
+the first constructor for details).}
 
 \ccMethod{bool change_number_of_kd_trees(int number_of_kd_trees);}
 {Change the number of kd-trees used for segment-hot pixel queries.
