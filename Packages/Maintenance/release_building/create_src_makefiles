@@ -43,10 +43,12 @@ print MFLIB <<'EOF';
 #                    target entries
 #---------------------------------------------------------------------#
 
-lib: $(CGAL_OBJECTS) $(CGAL_EXTRA_OBJECTS)
+lib: lib_no_install
+	mv $(CGAL_LIB) $(CGAL_LIB_DESTINATION)
+
+lib_no_install: $(CGAL_OBJECTS) $(CGAL_EXTRA_OBJECTS)
 	$(CGAL_LIB_CREATE)$(CGAL_LIB) $(CGAL_OBJECTS) $(CGAL_EXTRA_OBJECTS) \
 		$(CGAL_LIB_LDFLAGS)
-	mv $(CGAL_LIB) $(CGAL_LIB_DESTINATION)
 	rm $(CGAL_OBJECTS) $(CGAL_EXTRA_OBJECTS)
 
 workaround_4_irix.o:
@@ -54,6 +56,9 @@ workaround_4_irix.o:
 
 workaround_4_irix6.o:
 	$(CGAL_CC) $(CXXFLAGS) -c Interval_arithmetic/workaround_4_irix6.s
+
+clean:
+	rm -f $(CGAL_LIB) $(CGAL_OBJECTS) $(CGAL_EXTRA_OBJECTS)
 
 #---------------------------------------------------------------------#
 #                    suffix rules
