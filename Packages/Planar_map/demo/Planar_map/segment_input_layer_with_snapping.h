@@ -46,6 +46,7 @@ private:
   using Base::widget;  
   using Base::firstpoint;
   using Base::oldcursor;
+  using Base::XorROP;
 #endif
   
 public:

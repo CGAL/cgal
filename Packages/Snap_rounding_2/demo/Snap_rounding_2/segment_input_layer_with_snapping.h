@@ -20,6 +20,7 @@ private:
   using Base::y2;
   using Base::firstpoint;
   using Base::oldcursor;
+  using Base::XorROP;
 #endif
 
   std::list<Segment_2>          *seg_list;
