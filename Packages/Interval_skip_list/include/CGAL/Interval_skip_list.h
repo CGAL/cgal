@@ -309,7 +309,11 @@ namespace CGAL {
 
     void empty();  // delete elements of self to make self an empty list.
 
-    int isEmpty(){return(header==0);} // return true if list is empty
+    // return true if list is empty
+    int isEmpty()
+    {
+      return header==0;
+    }
 
     void print(std::ostream& os) const;
 
@@ -323,6 +327,7 @@ namespace CGAL {
     typedef std::list<Interval>::iterator Interval_handle;
     Interval_handle I;
     IntervalListElt* next;
+
   public:
     friend class IntervalList<Interval>;
 
@@ -399,27 +404,22 @@ namespace CGAL {
   template <class Interval>
   Interval_skip_list<Interval>::~Interval_skip_list()
   {
-    /*
-    for (int i = 0; i< MAX_FORWARD; i++) {
-      if(header->forward[i] != 0){
-	delete header->forward[i];
-      }
+    while(header != 0){
+      IntervalSLnode<Interval>* next = header->get_next();
+      delete header;
+      header = next;
     }
-    delete header;
-    */
   }
 
   template <class Interval>
   void
   Interval_skip_list<Interval>::clear()
   {
-    for (int i = 0; i< MAX_FORWARD; i++) {
-      if(header->forward[i] != 0){
-	delete header->forward[i];
-	header->forward[i] = 0;
-      }
+    while(header != 0){
+      IntervalSLnode<Interval>* next = header->get_next();
+      delete header;
+      header = next;
     }
-    delete header;
     header = new IntervalSLnode<Interval>(MAX_FORWARD);
     maxLevel = 0;
 
@@ -505,8 +505,8 @@ template <class Interval>
       if (newLevel > maxLevel){
 	for(i=maxLevel+1; i<=newLevel; i++){
 	  update[i] = header;
-	  header->markers[i] = new IntervalList<Interval>(); // initialize new
-	  // mark list
+	  delete header->markers[i];
+	  header->markers[i] = new IntervalList<Interval>();
 	}
 	maxLevel = newLevel;
       }
@@ -787,7 +787,7 @@ template <class Interval>
       delete markers[i];
     delete forward;
     delete markers;
-    //delete eqMarkers; // af: this line was not there
+    delete eqMarkers; // af: this line was not there
   }
 
   template <class Interval>
@@ -834,6 +834,9 @@ template <class Interval>
     // now splice out x.
     for(int i=0; i<=x->level()-1; i++)
       update[i]->forward[i] = x->forward[i];
+
+    // and finally deallocate it
+    delete x;
   }
 
 
