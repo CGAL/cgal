@@ -72,7 +72,9 @@ sub add_files()
 		push @conflicts, $curfilename, $filename_map{$lowercasename};
 	    }
 	} else {
-	    $filename_map{$lowercasename} = "$curfilename:$cgal_package_name";
+	    if ( $curfilename !~ '^./tmpmsg.\d+$' ) {
+	      $filename_map{$lowercasename} = "$curfilename:$cgal_package_name";
+	    }
 	}
     }
 }
