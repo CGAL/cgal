@@ -1,3 +1,6 @@
+version 1.5 [af]
+- moved reference pages to doc_tex/basic/Optimization_ref/
+
 version 1.4 [af]
 - put bodies of member functions in class scope to please Sun CC
 - made makefile usable in test and demo
