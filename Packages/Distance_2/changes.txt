@@ -1,13 +1,18 @@
-# Changes in version 2.2
-
-Fixed two forward declarations.
+-----
+* 2.3 *
++Replaced R_FT_return and R_FT_return macros by R::RT and R::FT.
++Reordered the code so that no forward declarations are necessary any more,
+ in order to circumvent a bug in the MSVC compiler.
 
 -----
-# Changes in version 2.1.3
+* 2.2 *
++Fixed two forward declarations.
 
-Adapted cgal_test and makefile in test directory to new install_cgal script.
+-----
+* 2.1.3 *
++Adapted cgal_test and makefile in test directory to new install_cgal script.
 
-# Changes in version 2.1.2
-
-Added std prefix to test programs.
-Minor changes in cgal_test script.
+-----
+* 2.1.2 *
++Added std prefix to test programs.
++Minor changes in cgal_test script.
