@@ -43,11 +43,7 @@ Test:
 	cd test/Triangulation_2_constrained; make clean
 	cd test/Triangulation_2_newd; make -f Makefile realclean;
 	cd test/Triangulation_2_Delaunay; mv makefile.submitted makefile
-	cd test/Triangulation_2_constrained; mv makefile.submitted makefile
-
-
-clean:
-	rm -f $(PACKAGE).tar.gz
+	cd test/Triangulation_2_constrained; mv makefi	rm -f $(PACKAGE).tar.gz
 	cd test/Triangulation_2 ; make -f Makefile realclean;
 	cd test/Triangulation_2_Delaunay; make -f Makefile realclean
 	cd test/Triangulation_2_constrained; make -f Makefile realclean

@@ -1,6 +1,14 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+Ver 5.09 (13/7/01)
+- fixed test of triangulation data structure so that it does not
+  output to a file non initialized points
+- fixed demo/Triangulation_2/constrained.C
+- change in types.h the numerical types of some test
+  when niether LEDA nor GMP is used from double to CGAL::MP_float
+- add the missing file for the doc 
+
 Ver 5.08 (10/7/01)
 - fixed typos in the doc
 

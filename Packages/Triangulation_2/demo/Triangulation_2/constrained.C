@@ -41,7 +41,7 @@ void
 any_button(Window_stream &win)
 {
     double x, y;
-    std::cerr << "Press any button to continue" << endl;
+    std::cerr << "Press any button to continue" << std::endl;
     win.read_mouse(x,y);
 }
 
