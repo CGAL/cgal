@@ -1,3 +1,7 @@
+Version 1.13 (28 sept 99)
+cleaning typedefs, friend declarations
+test suite modified for regular triangulation
+
 Version 1.12 (23 sept 99)
 Facet_circulator added
 changes in the internal representation of Cell_circulator
