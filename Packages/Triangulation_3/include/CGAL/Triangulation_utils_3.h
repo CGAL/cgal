@@ -33,7 +33,7 @@ template < class T = void >
 struct Triangulation_utils_base_3
 {
   static const char tab_next_around_edge[4][4];
-  static const int vertex_triple_index[4][3];
+  static const int tab_vertex_triple_index[4][3];
 };
 
 template < class T >
@@ -72,9 +72,9 @@ struct Triangulation_utils_3
 
   static int vertex_triple_index(const int i, const int j)
   {
-    // index of the next cell when turning around the
-    // oriented edge vertex(i) vertex(j) in 3d
-    CGAL_triangulation_precondition( ( i >= 0 && i < 4 ) &&
+    // indexes of the  jth vertex  of the facet of a cell
+    // opposite to vertx i
+      CGAL_triangulation_precondition( ( i >= 0 && i < 4 ) &&
 		                     ( j >= 0 && j < 3 ) );
     return tab_vertex_triple_index[i][j];
   }

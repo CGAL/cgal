@@ -561,9 +561,9 @@ is_Gabriel(Cell_handle c, int i) const
 
   if ((!is_infinite(c->vertex(i))) &&
       side_of_bounded_orthogonal_sphere(
-	 c->vertex(vertex_triple_index[i][0])->point(),
-	 c->vertex(vertex_triple_index[i][1])->point(),
-	 c->vertex(vertex_triple_index[i][2])->point(),
+	 c->vertex(vertex_triple_index(i,0))->point(),
+	 c->vertex(vertex_triple_index(i,1))->point(),
+	 c->vertex(vertex_triple_index(i,2))->point(),
 	 c->vertex(i)->point()) == ON_BOUNDED_SIDE ) return false;
 
   Cell_handle neighbor = c->neighbor(i);
@@ -571,9 +571,9 @@ is_Gabriel(Cell_handle c, int i) const
 
   if ((!is_infinite(neighbor->vertex(in))) &&
       side_of_bounded_orthogonal_sphere(
-	 c->vertex(vertex_triple_index[i][0])->point(),
-	 c->vertex(vertex_triple_index[i][1])->point(),
-	 c->vertex(vertex_triple_index[i][2])->point(),	
+	 c->vertex(vertex_triple_index(i,0))->point(),
+	 c->vertex(vertex_triple_index(i,1))->point(),
+	 c->vertex(vertex_triple_index(i,2))->point(),	
 	 neighbor->vertex(in)->point()) == ON_BOUNDED_SIDE ) return false;
  
   return true;
