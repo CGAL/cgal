@@ -34,6 +34,7 @@ public:
   typedef typename Polygon::Point_2   Point_2;
   typedef typename Polygon::Segment_2 Segment_2;
   typedef typename Polygon::Edge_const_iterator  ECI;
+  typedef typename Polygon::Vertex_iterator VI;
   typedef typename Polygon::FT	      FT;
   
   Qt_widget_get_polygon()
@@ -43,19 +44,21 @@ public:
   {
     if(poly.size() > 1)
     {
-      ECI  it;
       widget->lock();
       RasterOp old_rasterop=widget->rasterOp();
       widget->get_painter().setRasterOp(XorROP);
       *widget << CGAL::GREEN;
-      for(it = poly.edges_begin(); it != --poly.edges_end(); it++)
+      ECI before_end = poly.edges_end();
+      --before_end; // --poly.edges_end() doesn't work on g++-2.95
+		    // with std::vector as the container for the polygon
+      for(ECI it = poly.edges_begin(); it != before_end; it++)
         *widget << *it;
       widget->setRasterOp(old_rasterop);
       widget->unlock();
     }
     return;
   };
-private:
+protected:
 
   bool is_pure(Qt::ButtonState s){
     if((s & Qt::ControlButton) ||
@@ -119,14 +122,22 @@ private:
               RasterOp old_rasterop=widget->rasterOp();
               widget->get_painter().setRasterOp(XorROP);
               *widget << CGAL::GREEN;
-              *widget << Segment_2(*(----poly.vertices_end()), last_of_poly);
+
+	      // g++-2.95 doesn't like --poly.vertices_end() if the
+	      // container of the polygon is std::vector
+	      VI last_of_poly_it = poly.vertices_end();
+	      --last_of_poly_it;
+	      VI before_last_of_poly_it = last_of_poly_it;
+	      --before_last_of_poly_it;
+
+              *widget << Segment_2(*before_last_of_poly_it, last_of_poly);
               *widget << CGAL::WHITE;
               *widget << Segment_2(rubber, last_of_poly);
-              *widget << Segment_2(rubber, *(----poly.vertices_end()));
+              *widget << Segment_2(rubber, *before_last_of_poly_it);
               widget->setRasterOp(old_rasterop);
             widget->unlock();
-            poly.erase(--poly.vertices_end());
-            last_of_poly = *(--poly.vertices_end());
+            last_of_poly = *before_last_of_poly_it; 
+            poly.erase(last_of_poly_it);
           }
           break;
     }//endswitch
@@ -185,7 +196,7 @@ private:
     }
   }
 private:
-  bool is_simple()
+  virtual bool is_simple()
   {
     return true;
   }
