@@ -51,8 +51,6 @@ typedef typename Tree_traits::Item_with_distance Item_with_distance;
 typedef std::pair<Node*,NT> Node_with_distance;
 
 class iterator;
-
-private:
     
 class Priority_higher
     {
@@ -211,7 +209,7 @@ class Distance_smaller
     int number_of_leaf_nodes_visited;
     int number_of_items_visited;
 
-	private:
+    private:
 
     NT multiplication_factor;
 

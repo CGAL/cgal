@@ -44,7 +44,7 @@ class Splitter {
 public:
   typedef typename Kernel_traits<P>::Kernel K;
   typedef typename K::FT NT;
-  // virtual void rule(Points_container<P>& c, Plane_separator<NT>* sep) {}
+  
 };
 
 template <class P>

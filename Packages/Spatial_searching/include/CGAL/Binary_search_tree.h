@@ -62,9 +62,9 @@ public:
     int dim = first->dimension();
     std::copy(first, beyond, std::back_inserter(pts));
     Points_container<Item> c(dim, pts.begin(), pts.end());
-    if (check_validity) {
-		std::cout << "validity of container used to store points:" 
-			    <<  c.is_valid() << std::endl;}
+    if (check_validity) { assert(c.is_valid()); }
+		// std::cout << "validity of container used to store points:" 
+		//	    <<  c.is_valid() << std::endl;}
     bbox = new Box<NT>(c.bounding_box());
     the_item_number=c.size();
     if (c.size() <= t.bucket_size())
@@ -78,9 +78,9 @@ public:
 		 std::cout << "not using extended internal nodes" 
 			   << std::endl;}
 	}
-	if (check_validity) {
-		std::cout << "validity of constructed binary tree:" 
-		<<  is_valid() << std::endl;
+	if (check_validity) { assert(is_valid()); 
+		// std::cout << "validity of constructed binary tree:" 
+		// <<  is_valid() << std::endl;
 	}
   }
 
@@ -126,8 +126,8 @@ public:
     std::cout << "Number of items stored: " 
 		  << tree_root->num_items() << std::endl;
     std::cout << " Tree depth: " << tree_root->depth() << std::endl;
-    if (check_validity) {
-        std::cout << " Calling is_valid: " << is_valid() << std::endl;
+    if (check_validity) { assert(is_valid);
+        // std::cout << " Calling is_valid: " << is_valid() << std::endl;
     }
 
   }

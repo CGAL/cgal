@@ -52,8 +52,6 @@ typedef std::pair<Node*,NT> Node_with_distance;
 
 class iterator;
 
-private:
-
 class Priority_higher
     {
     public:

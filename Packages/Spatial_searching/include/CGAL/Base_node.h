@@ -33,7 +33,7 @@ namespace CGAL {
 	template < class Traits > // = Kd_tree_traits_point >
 	class Base_node {
 	public:
-		typedef typename Traits::Item typename Item;
+		typedef typename Traits::Item Item;
 		typedef typename Traits::Item_iterator Item_iterator;
 		typedef Base_node<Traits> Node;
 		typedef typename Traits::NT NT;

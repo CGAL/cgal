@@ -53,8 +53,6 @@ typedef Binary_search_tree<Tree_traits> Tree;
 typedef typename Tree_traits::Item_with_distance Item_with_distance;
 typedef std::pair<Node*,NT> Node_with_distance;
 
-
-
 class iterator;
 
 class Priority_higher

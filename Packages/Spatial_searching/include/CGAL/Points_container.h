@@ -48,7 +48,7 @@ namespace CGAL {
   template <class Item>
     std::ostream& operator<< (std::ostream& s, Points_container<Item>& c) {
     return c.print(s);
-  };
+  }
 
   template <class Item> class Points_container {
   public:
@@ -226,11 +226,9 @@ namespace CGAL {
 	}
 
 	void add_points_from_container(Points_container<Item>& c) {
-	  assert(built_coord=c.built_coord);
+	  assert(built_coord==c.built_coord);
 	  merge(p_list[built_coord], c.p_list[built_coord], 
-Less_lexicographically_d());
-	 );
-
+		Less_lexicographically_d());
 	}
 
     void recompute_tight_bounding_box() {
@@ -272,7 +270,8 @@ Less_lexicographically_d());
                 // find iterator to split the list
 				// avoid empty list by moving first 
 				c.p_list[i].clear();
-                for (typename Points_list::iterator pt = p_list[i].begin();
+		typename Points_list::iterator pt;
+                for (pt = p_list[i].begin();
 				( (sep->side(*(*pt)) == ON_NEGATIVE_SIDE) 
 				&&
 				(pt != p_list[i].end())
@@ -290,23 +289,6 @@ Less_lexicographically_d());
 				}
 		} // end of for
 		
-        assert(! p_list[built_coord].empty());
-		assert(! c.p_list[built_coord].empty());
-		{ for (int i = 0; i < dimension(); ++i)
-			if (! c.p_list[i].empty()) { 
-				if (c.p_list[i].size() != c.size()) {
-					std::cout << "error: c.size()=" 
-						  << c.size() << std::endl;
-					std::cout << "error c.p_list[i].size=" 
-						  << c.p_list[i].size() 
-						  << std::endl;
-				}
-			assert(c.p_list[i].size() == c.size());
-		 }
-        }
-		// }
-
-		// Alternatively split list only in two for i == split_coord
 		// adjusting boxes
 		bbox.set_lower(split_coord, cutting_value);
 		tbox.update_from_point_pointers(p_list[built_coord].begin(),
@@ -315,7 +297,9 @@ Less_lexicographically_d());
 		c.tbox.update_from_point_pointers(
 		c.p_list[c.built_coord].begin(),
 		c.p_list[c.built_coord].end(),c.p_list[c.built_coord].empty());
-        if (true) {is_valid(); c.is_valid();};
+        
+        assert(is_valid()); 
+        assert(c.is_valid());
 	}
 
 	NT median(const int split_coord) {
@@ -341,6 +325,9 @@ Less_lexicographically_d());
     inline bool empty() const { return size() == 0;}
 
      bool is_valid() {
+
+	 assert(! p_list[built_coord].empty());
+
       // checking that all the lists are of the same size
      for (int i = 0; i < dimension(); ++i)
 	 if (! p_list[i].empty()) assert(p_list[i].size() == size());
