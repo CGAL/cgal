@@ -835,6 +835,23 @@ set_compiler_flags()
 tmp_code_file=redirect_tmpfile.C
 tmp_header_file=redirect_tmpfile
 
+# this function is used to add symbols to namespace std
+# (that should be present, but are not due to compiler/stdlib bugs)
+print_using()
+{
+    _tmp=${1}
+    shift
+    ${_printf} "\n%s\n" \
+	"#if defined(CGAL_CFG_NO_STD${_tmp}_NAMESPACE) && !defined(CGAL_NO_STD${_tmp}_NAMESPACE)"
+    ${_printf} "\n%s\n" "namespace std {"
+    for i in ${*}; do
+	${_printf} "\t%s\n" "using ::${i};"
+    done
+    ${_printf} "%s\n" "}"
+    ${_printf} "\n%s\n" \
+	"#endif // CGAL_CFG_NO_STD${_tmp}_NAMESPACE && !CGAL_NO_STD${_tmp}_NAMESPACE"
+}
+
 create_replacement_header()
 #
 # Create one header as a replacement for a standard header, if necessary.
@@ -846,6 +863,7 @@ create_replacement_header()
     header_name=$1
     header_suffix=$2
     shift 2
+    _final_file="${CGAL_INCL_CONF_DIR}/${CGAL_OS_COMPILER}/${header_name}${header_suffix}"
 #
 # Test if the standard header exists. Return if it does.
 #
@@ -863,16 +881,66 @@ create_replacement_header()
         ${_printf} "%s\n" "#include <$arg>" > ${tmp_code_file}
 	${_printf} "%s\n" "int main() {return 0;}" >> ${tmp_code_file}
 	if `compiler_bin` ${tmp_code_file} >/dev/null 2>&1; then
+	    ${_sed} "s/@CGAL@/${CGAL_VERSION}/;s@FILE@${_final_file};s/@VERSION@/${CGAL_INSTALL_VERSION}/" <<EOF3 >>${replacement_header}
+// Copyright (c) 1999 The CGAL Consortium
+//
+// This software and related documentation is part of the
+// Computational Geometry Algorithms Library (CGAL).
+//
+// release       : @CGAL@
+// file          : @FILE@
+// package       : Installation (@VERSION@)
+//
+// This file was automatically generated during installation.
+// It wraps a standard header file that did not exist for this compiler
+// and adds its symbols to namespace std.
+// The existence of this file indicates that your compiler does not
+// conform to the ISO/IEC standard 14822 for C++.
+
+EOF3
 	    ${_printf} "%s\n" "#include <$arg>" >> ${replacement_header}
 	fi
     done
+
+
+
 #
 # Move the replacement header to the platform specific config directory.
 # This directory should be created first.
 #
     if [ -s ${replacement_header} ]
     then
-	mv ${replacement_header} "${CGAL_INCL_CONF_DIR}/${CGAL_OS_COMPILER}/${header_name}${header_suffix}"
+#
+# this is just an ugly list of additions to namespace std
+#  
+	case ${header_name} in
+	    iosfwd|ios) 
+		print_using IO ios >> ${replacement_header};;
+	    fstream) print_using IO filebuf ifstream ofstream fstream >> ${replacement_header};;
+	    streambuf) print_using IO streampos streamoff streambuf >> ${replacement_header};;
+	    iomanip) print_using IO setbase resetiosflags setiosflags setfill setprecision setw >> ${replacement_header};;
+	    iostream) print_using IO cin cout cerr clog endl ends flush ios streampos streamoff streambuf ostream istream iostream istream_withassign ostream_withassign iostream_withassign >> ${replacement_header};;
+# those do not exist e.g. on mipspro: wcin wcout wcerr wclog
+ 	    istream) print_using IO istream istream_withassign >> ${replacement_header};;
+	    ostream) print_using IO ostream ostream_withassign >> ${replacement_header};;
+	    csetjmp) print_using C longjmp jmp_buf >> ${replacement_header};;
+	    cstdarg) print_using C va_list >> ${replacement_header};;
+	    ctime) print_using C size_t time_t clock_t tm asctime ctime clock difftime gmtime localtime mktime time strftime >> ${replacement_header};;
+	    csignal) print_using C sig_atomic_t raise signal >> ${replacement_header};;
+	    cstdlib) print_using C abort atexit exit getenv system calloc malloc free realloc atof atoi atol mblen mbstowcs mbtowc strtod strtol strtoul wcstombs wctomb bsearch qsort div_t ldiv_t abs div labs ldiv rand srand >> ${replacement_header};;
+	    cctype) print_using C isalnum isalpha iscntrl isdigit isgraph islower isprint ispunct isspace isupper isxdigit >> ${replacement_header};;
+	    cwctype) print_using C wctrans_t wctype_t wint_t iswalnum iswalpha iswcntrl iswctype iswdigit iswgraph iswlower iswprint iswpunct iswspace iswupper iswxdigit towctrans towlower towupper wctrans wctype >> ${replacement_header};;
+	    cstring) print_using C size_t memchr memcmp memcpy memmove memset strcat strchr strcmp strcoll strcpy strcspn strerror strlen strncat strncmp strncpy strpbrk strrchr strspn strstr strtok strxfrm >> ${replacement_header};;
+	    cwchar) print_using C wint_t size_t fgetwc fgetws fputwc fputws getwc getwchar putwc putwchar ungetwc wcscat wcschr wcscmp wcscoll wcscpy wcscspn wcsftime wcslen wcsncat wcsncmp wcsncpy wcspbrk wcsrchr wcsspn wcstod wcstok wcstol wcstoul wcsxfrm >> ${replacement_header};;
+	    cstdio) print_using C FILE fpos_t size_t clearerr fclose feof ferror fflush fgetc fgetpos fgets fopen fprintf fputc fputs fread freopen fscanf fseek fsetpos ftell fwrite getc getchar gets perror printf putc putchar puts remove rename rewind scanf setbuf setvbuf sprintf sscanf tmpfile tmpnam ungetc vfprintf vprintf vsprintf >> ${replacement_header};;
+	    cmath) print_using C acos asin atan2 atan ceil cos cosh exp fabs floor fmod frexp ldexp log10 log modf pow sin sinh sqrt tan tanh >> ${replacement_header};;
+	    cstddef) print_using C ptrdiff_t size_t >> ${replacement_header};;
+	esac
+#
+# end of ugly list of additions to namespace std :)
+#  
+	${_printf} "\n%s\n" "// EOF //" >> ${replacement_header}
+	mv ${replacement_header} "${_final_file}"
     fi
 }
 
