@@ -1,3 +1,6 @@
+4.3      (15 Jan 01)
+- Removed gnu_integer and Double_eps.
+
 4.2      (13 Dec 00)
 
 - #inlcude <CGAL/double.h> replaced by #include <CGAL/basic.h> in src/Double.C
