@@ -1,6 +1,14 @@
 // Triangulation_3/example_simple.C
 #include <CGAL/Cartesian.h>
 
+// Workaround for buggy compilers.
+#ifdef CGAL_CFG_MATCHING_BUG_2
+#  define CGAL_IA_CT double
+#  define CGAL_IA_PROTECTED true
+#  define CGAL_IA_CACHE No_Filter_Cache
+#  define CGAL_IA_ET CGAL::MP_Float
+#endif
+
 #include <CGAL/Triangulation_3.h>
 #include <CGAL/Filtered_exact.h>
 #include <CGAL/MP_Float.h>
