@@ -50,9 +50,9 @@ public:
   typedef Repres Rep;
   typedef Point_3<Repres>  Point_3;
   typedef Point_2< Cartesian< typename Repres::FT> >  Point2;
-  typedef Segment_3<Repres> Segment;
-  typedef Triangle_3<Repres> Triangle;
-  typedef Tetrahedron_3<Repres> Tetrahedron;
+  typedef Segment_3<Repres> Segment_3;
+  typedef Triangle_3<Repres> Triangle_3;
+  typedef Tetrahedron_3<Repres> Tetrahedron_3;
 
   Triangulation_geom_traits_3()
     {}

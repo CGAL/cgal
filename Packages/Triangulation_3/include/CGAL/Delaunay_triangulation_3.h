@@ -44,9 +44,9 @@ class Delaunay_triangulation_3 : public Triangulation_3<Gt,Tds>
 public:
 
   typedef typename Gt::Point_3 Point;
-  typedef typename Gt::Segment Segment;
-  typedef typename Gt::Triangle Triangle;
-  typedef typename Gt::Tetrahedron Tetrahedron;
+  typedef typename Gt::Segment_3 Segment;
+  typedef typename Gt::Triangle_3 Triangle;
+  typedef typename Gt::Tetrahedron_3 Tetrahedron;
 
   typedef typename Triangulation_3<Gt,Tds>::Cell_handle Cell_handle;
   typedef typename Triangulation_3<Gt,Tds>::Vertex_handle Vertex_handle;
