@@ -2580,7 +2580,7 @@ clear_cells_only(std::vector< CGAL_TYPENAME_MSVC_NULL
 
     // then _list_of_cells points on itself, nothing more to do
     set_dimension(-2);
-    return std::vector<Vertex *>();
+    return;
   }
 
   // We must save all vertices because we're going to delete the cells.
@@ -2602,8 +2602,6 @@ clear_cells_only(std::vector< CGAL_TYPENAME_MSVC_NULL
   // then _list_of_cells points on itself, nothing more to do
   CGAL_triangulation_assertion(_list_of_cells._next_cell == &_list_of_cells);
   CGAL_triangulation_assertion(_list_of_cells._previous_cell==&_list_of_cells);
-
-  return Vertices;
 }
 
 template <class Vb, class Cb >
