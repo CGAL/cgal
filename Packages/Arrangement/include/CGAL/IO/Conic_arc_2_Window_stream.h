@@ -1,3 +1,23 @@
+// ======================================================================
+//
+// Copyright (c) 2001 The CGAL Consortium
+//
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
+//
+// ----------------------------------------------------------------------
+//
+// release       : $CGAL_Revision: CGAL-2.4-I-5 $
+// release_date  : $CGAL_Date: 2001/08/31 $
+//
+// file          : include/CGAL/Conic_arc_2_Window_stream.h
+// package       : Arrangement (2.19)
+// maintainer    : Eyal Flato <flato@math.tau.ac.il>
+// author(s)     : Ron Wein <wein@post.tau.ac.il>
+// coordinator   : Tel-Aviv University (Dan Halperin <halperin@math.tau.ac.il>)
+//
+// ======================================================================
 #ifndef CONIC_ARC_WINDOW_STREAM_H
 #define CONIC_ARC_WINDOW_STREAM_H
 

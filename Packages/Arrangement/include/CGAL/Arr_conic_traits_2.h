@@ -1,10 +1,30 @@
+// ======================================================================
+//
+// Copyright (c) 2001 The CGAL Consortium
+//
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
+//
+// ----------------------------------------------------------------------
+//
+// release       : $CGAL_Revision: CGAL-2.4-I-5 $
+// release_date  : $CGAL_Date: 2001/08/31 $
+//
+// file          : include/CGAL/Arr_conic_traits_2.h
+// package       : Arrangement (2.19)
+// maintainer    : Eyal Flato <flato@math.tau.ac.il>
+// author(s)     : Ron Wein <wein@post.tau.ac.il>
+// coordinator   : Tel-Aviv University (Dan Halperin <halperin@math.tau.ac.il>)
+//
+// ======================================================================
 #ifndef CGAL_ARR_CONIC_TRAITS_H
 #define CGAL_ARR_CONIC_TRAITS_H
 
 #include <CGAL/basic.h>
 #include <list>
 
-#include "Conic_arc_2.h"
+#include <CGAL/Conic_arc_2.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -13,7 +33,7 @@ CGAL_BEGIN_NAMESPACE
 //
 
 template <class _NT>
-class Arr_conic_traits_2 
+class Arr_conic_traitrr_s_2 
 {
  public:
   
