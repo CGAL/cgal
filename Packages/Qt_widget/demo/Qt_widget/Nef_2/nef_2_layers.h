@@ -26,9 +26,9 @@ public:
   Qt_layer_nef_gray(Nef_polyhedron &n): Nef(n){}
   void draw()
   {
-    //*widget << CGAL::FillColor(CGAL::GRAY) << CGAL::WHITE;
-    //widget->setRasterOp(XorROP);
-    //*widget << Nef;
+    *widget << CGAL::FillColor(CGAL::GRAY) << CGAL::WHITE;
+    widget->setRasterOp(XorROP);
+    *widget << Nef;
   }
 private:
   Nef_polyhedron &Nef;
