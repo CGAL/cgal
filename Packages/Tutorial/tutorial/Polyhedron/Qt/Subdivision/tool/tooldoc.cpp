@@ -33,9 +33,11 @@ using namespace std;
 #include "toolview.h"
 
 // cgal
-#include "quad-triangle.h"
 #include <CGAL/basic.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
+#include "quad-triangle.h"
+#include "sqrt3.h"
+#include "SurfLab/Polyhedron_subdivision.h"
 
 //***************************************
 // life cycle
@@ -48,6 +50,7 @@ ToolDoc::ToolDoc()
 ToolDoc::~ToolDoc()
 {
   delete pViewList;
+  delete m_pMesh;
   pViewList = NULL; // fix
 }
 
@@ -162,15 +165,17 @@ bool ToolDoc::openDocument(const QString &filename,
 
 
     // eat the mesh
+  	// alloc a new mesh
+    m_pMesh = new Enriched_polyhedron<My_kernel,Enriched_items>;
     fprintf(stderr,"ok\nfill mesh...");
-    stream >> m_Mesh;
+    stream >> *m_pMesh;
 
     // print mesh info
-    fprintf(stderr,"(%d faces, ",m_Mesh.size_of_facets());
-    fprintf(stderr,"%d vertices)\n",m_Mesh.size_of_vertices());
+    fprintf(stderr,"(%d faces, ",m_pMesh->size_of_facets());
+    fprintf(stderr,"%d vertices)\n",m_pMesh->size_of_vertices());
 
     // compute normals
-    m_Mesh.compute_normals();
+    m_pMesh->compute_normals();
   }
   else
     fprintf(stderr,"unknown extension\n");
@@ -199,7 +204,7 @@ bool ToolDoc::saveDocument(const QString &filename,
   {
     // push the mesh in a .off file
     fprintf(stderr,"saving to %s...",filename.latin1());
-    stream << m_Mesh;
+    stream << *m_pMesh;
     fprintf(stderr,"ok");
     modified = false;
     m_filename = filename;
@@ -283,15 +288,112 @@ void ToolDoc::drawScene(bool move,
     ::glEnable(GL_POLYGON_OFFSET_FILL);
     ::glPolygonOffset(2.0,3.0);
   }
-  m_Mesh.gl_draw(smooth, use_normals);
+  m_pMesh->gl_draw(smooth, use_normals);
   
   if(superimpose)
     ::glDisable(GL_POLYGON_OFFSET_FILL);
 
     glColor3f(0.0f,0.0f,0.0f);
   if(superimpose)
-    m_Mesh.superimpose_edges();
+    m_pMesh->superimpose_edges();
   glColor3f(r, g, b); //restore the color
 }
 
+//***********************************************
+// quad-triangle subdivision
+//***********************************************
+void ToolDoc::subdivisionStamLoop()
+{
+	// subdivision engine
+	CSubdivider_quad_triangle<Enriched_polyhedron<My_kernel,Enriched_items>,My_kernel> subdivider;
+
+	// alloc a new mesh
+  Enriched_polyhedron<My_kernel,Enriched_items> *pNewMesh =
+		new Enriched_polyhedron<My_kernel,Enriched_items>;
+
+	// subdivide once
+	subdivider.subdivide(*m_pMesh,*pNewMesh,true);
+
+	// copy bounding box (approximate, but fast)
+	pNewMesh->copy_bounding_box(m_pMesh);
+
+	// delete previous mesh
+	delete m_pMesh;
+
+	// set new mesh
+	m_pMesh = pNewMesh;
+
+	// compute normals
+	m_pMesh->compute_normals();
+}
+
+//***********************************************
+// sqrt3 subdivision
+//***********************************************
+void ToolDoc::subdivisionSqrt3()
+{
+	// subdivision engine
+	CSubdivider_sqrt3<Enriched_polyhedron<My_kernel,Enriched_items>,My_kernel> subdivider;
+	subdivider.subdivide(*m_pMesh,1); // one iteration
+	m_pMesh->compute_normals();
+
+	// compute normals
+	m_pMesh->compute_normals();
+}
+
+//***********************************************
+// sqrt3 subdivision
+//***********************************************
+void ToolDoc::subdivisionSqrt3Twice()
+{
+	// subdivision engine
+	CSubdivider_sqrt3<Enriched_polyhedron<My_kernel,Enriched_items>,My_kernel> subdivider;
+	subdivider.subdivide(*m_pMesh,2); // two iterations
+	m_pMesh->compute_normals();
+
+	// compute normals
+	m_pMesh->compute_normals();
+}
+
+//***********************************************
+// Doo-Sabin subdivision
+//***********************************************
+void ToolDoc::subdivisionDooSabin()
+{
+	// subdivision engine
+  Polyhedron_subdivision<Enriched_polyhedron<My_kernel,Enriched_items> >::DooSabin_subdivision(*m_pMesh,1);
+
+	// compute normals
+	m_pMesh->compute_normals();
+}
+
+//***********************************************
+// Loop subdivision
+//***********************************************
+void ToolDoc::subdivisionLoop()
+{
+	// subdivision engine
+  Polyhedron_subdivision<Enriched_polyhedron<My_kernel,Enriched_items> >::Loop_subdivision(*m_pMesh,1);
+
+	// compute normals
+	m_pMesh->compute_normals();
+}
+
+//***********************************************
+// Catmull-Clark subdivision
+//***********************************************
+void ToolDoc::subdivisionCatmullClark()
+{
+	// subdivision engine
+  Polyhedron_subdivision<Enriched_polyhedron<My_kernel,Enriched_items> >::CatmullClark_subdivision(*m_pMesh,1);
+
+	// compute normals
+	m_pMesh->compute_normals();
+}
+
+
+
+
+
 #include "tooldoc.moc"
+

@@ -1,28 +1,18 @@
 ///////////////////////////////////////////////////////////////////////////
 //																																			 //
-//	Class: My_polyhedron																								 //
+//	Class: Enriched_polyhedron                                                 //
 //																																			 //
 ///////////////////////////////////////////////////////////////////////////
 
 #ifndef	_POLYGON_MESH_
 #define	_POLYGON_MESH_
 
-#define PI 3.14159265358979323846
-
-#ifdef _MSC_VER
-#include <windows.h>
-#endif
-
-#include <GL/gl.h>
-
 // CGAL	stuff
-#include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Polyhedron_3.h>
 #include <list>
 #include <fstream>
-
-
+#include <qgl.h>
 
 // compute facet normal
 struct Facet_normal	// (functor)
@@ -59,8 +49,8 @@ struct Vertex_normal //	(functor)
 		void operator()(Vertex&	v)
 		{
 				typename Vertex::Normal_3	normal = CGAL::NULL_VECTOR;
-				typename Vertex::Halfedge_around_vertex_circulator	pHalfedge =	v.vertex_begin();
-				typename Vertex::Halfedge_around_vertex_circulator	begin =	pHalfedge;
+        typename Vertex::Halfedge_around_vertex_const_circulator	pHalfedge = v.vertex_begin();
+        typename Vertex::Halfedge_around_vertex_const_circulator	begin = pHalfedge;
 				CGAL_For_all(pHalfedge,begin)
 					if(!pHalfedge->is_border())
 						normal = normal	+	pHalfedge->facet()->normal();
@@ -73,8 +63,9 @@ struct Vertex_normal //	(functor)
 };
 
 
+// a refined facet with a normal and a tag
 template <class	Refs,	class	T, class P,	class	Norm>
-class	My_facet : public	CGAL::HalfedgeDS_face_base<Refs, T>
+class	Enriched_facet : public	CGAL::HalfedgeDS_face_base<Refs, T>
 {
 	// tag
 	int	m_tag; 
@@ -88,7 +79,7 @@ public:
 	// no	constructors to	repeat,	since	only
 	// default constructor mandatory
 
-	My_facet()
+	Enriched_facet()
 	{
 	}
 
@@ -102,8 +93,11 @@ public:
 	const	Normal_3&	normal() const { return	m_normal;	}
 };
 
+// a refined halfedge with a general tag and 
+// a binary tag to indicate wether it belongs 
+// to the control mesh or not
 template <class	Refs,	class	Tprev, class Tvertex,	class	Tface, class Norm>
-class	My_halfedge	:	public CGAL::HalfedgeDS_halfedge_base<Refs,Tprev,Tvertex,Tface>
+class	Enriched_halfedge	:	public CGAL::HalfedgeDS_halfedge_base<Refs,Tprev,Tvertex,Tface>
 {
 private:
 
@@ -116,7 +110,7 @@ private:
 public:
 
 	// life	cycle
-	My_halfedge()
+	Enriched_halfedge()
 	{
 		m_control_edge = true;
 	}
@@ -126,23 +120,17 @@ public:
 	int& tag() { return m_tag;	}
 	void tag(const int& t)	{	m_tag	=	t; }
 
-	// edge	superimposing
+	// control edge	
 	bool& control_edge()	{ return m_control_edge; }
 	const bool& control_edge()	const { return m_control_edge; }
 	void control_edge(const bool& flag) { m_control_edge	=	flag;	}
 };
 
 
-// A redefined items class for the Polyhedron_3	
-// with	a	refined	vertex class that	contains a 
-// member	for	the	normal vector	and	a	refined
-// facet with	a	normal vector	instead	of the 
-// plane equation	(this	is an	alternative	
-// solution	instead	of using 
-// Polyhedron_traits_with_normals_3).
 
+// a refined vertex with a normal and a tag
 template <class	Refs,	class	T, class P,	class	Norm>
-class	My_vertex	:	public CGAL::HalfedgeDS_vertex_base<Refs,	T, P>
+class	Enriched_vertex	:	public CGAL::HalfedgeDS_vertex_base<Refs,	T, P>
 {
 	// tag
 	int	m_tag; 
@@ -152,9 +140,9 @@ class	My_vertex	:	public CGAL::HalfedgeDS_vertex_base<Refs,	T, P>
 
 public:
 	// life	cycle
-	My_vertex()	 {}
+	Enriched_vertex()	 {}
 	// repeat	mandatory	constructors
-	My_vertex(const	P& pt)
+	Enriched_vertex(const	P& pt)
 		:	CGAL::HalfedgeDS_vertex_base<Refs, T,	P>(pt)
 	{
 	}
@@ -170,7 +158,15 @@ public:
 	void tag(const int& t)	{	m_tag	=	t; }
 };
 
-struct My_items	:	public CGAL::Polyhedron_items_3
+// A redefined items class for the Polyhedron_3	
+// with	a	refined	vertex class that	contains a 
+// member	for	the	normal vector	and	a	refined
+// facet with	a	normal vector	instead	of the 
+// plane equation	(this	is an	alternative	
+// solution	instead	of using 
+// Polyhedron_traits_with_normals_3).
+
+struct Enriched_items	:	public CGAL::Polyhedron_items_3
 {
 		// wrap	vertex
 		template <class	Refs,	class	Traits>
@@ -178,7 +174,7 @@ struct My_items	:	public CGAL::Polyhedron_items_3
 		{
 				typedef	typename Traits::Point_3	Point;
 				typedef	typename Traits::Vector_3	Normal;
-				typedef	My_vertex<Refs,
+				typedef	Enriched_vertex<Refs,
 													CGAL::Tag_true,
 													Point,
 													Normal>	Vertex;
@@ -190,7 +186,7 @@ struct My_items	:	public CGAL::Polyhedron_items_3
 		{
 				typedef	typename Traits::Point_3	Point;
 				typedef	typename Traits::Vector_3	Normal;
-				typedef	My_facet<Refs,
+				typedef	Enriched_facet<Refs,
 												 CGAL::Tag_true,
 												 Point,
 												 Normal> Face;
@@ -201,7 +197,7 @@ struct My_items	:	public CGAL::Polyhedron_items_3
 		struct Halfedge_wrapper
 		{
 				typedef	typename Traits::Vector_3	Normal;
-				typedef	My_halfedge<Refs,
+				typedef	Enriched_halfedge<Refs,
 														CGAL::Tag_true,
 														CGAL::Tag_true,
 														CGAL::Tag_true,
@@ -209,8 +205,9 @@ struct My_items	:	public CGAL::Polyhedron_items_3
 		};
 };
 
+//*********************************************************
 template <class	kernel,	class	items>
-class	My_polyhedron	:	public CGAL::Polyhedron_3<kernel,items>
+class	Enriched_polyhedron	:	public CGAL::Polyhedron_3<kernel,items>
 {
 public :
 	typedef	typename kernel::FT	FT;
@@ -218,11 +215,6 @@ public :
 	typedef	typename kernel::Vector_3	Vector;
 
 private	:
-	// opengl	(display-lists)
-	unsigned int m_display_list;
-	bool m_list_done;
-	bool m_modified;
-
 	// bounding box
 	FT m_min[3];
 	FT m_max[3];
@@ -233,24 +225,16 @@ private	:
 
 public :
 
+
 	// life	cycle
-	My_polyhedron()	
+	Enriched_polyhedron()	
 	{
-		m_modified = true;
-		m_list_done	=	false;
-		m_display_list = 0;
 		m_pure_quad = false;
 		m_pure_triangle = false;
 	}
-	virtual	~My_polyhedron() 
+	virtual	~Enriched_polyhedron() 
 	{
-		::glDeleteLists(m_display_list,1);
 	}
-
-	// modified
-	const bool& modified() const { return m_modified; }
-	bool& modified() { return m_modified; }
-	void modified(const bool& modified) { m_modified	=	modified;	}
 
 	// type
 	bool is_pure_triangle() { return m_pure_triangle; }
@@ -265,7 +249,6 @@ public :
 	{
 		std::for_each(vertices_begin(),vertices_end(),Vertex_normal());
 	}
-
 	void compute_normals()
 	{
 		compute_normals_per_facet();
@@ -309,7 +292,7 @@ public :
 	FT zmax() { return m_max[2]; }
 
 	// copy bounding box
-	void copy_bounding_box(My_polyhedron<kernel,items> *pMesh)
+	void copy_bounding_box(Enriched_polyhedron<kernel,items> *pMesh)
 	{
 		m_min[0] = pMesh->xmin(); m_max[0] = pMesh->xmax();
 		m_min[1] = pMesh->ymin(); m_max[1] = pMesh->ymax();
@@ -319,13 +302,13 @@ public :
 	// degree	of a face
 	static unsigned int degree(Facet_handle pFace)
 	{
-		return circulator_size(pFace->facet_begin());
+    return CGAL::circulator_size(pFace->facet_begin());    
 	}
 
 	// valence of	a	vertex
 	static unsigned int valence(Vertex_handle pVertex)
 	{
-		return circulator_size(pVertex->vertex_begin());
+    return CGAL::circulator_size(pVertex->vertex_begin());
 	}
 
 	// check wether	a	vertex is	on a boundary	or not
@@ -347,8 +330,8 @@ public :
 		Halfedge_around_vertex_circulator	pHalfEdge	=	pVertex->vertex_begin();
 		Halfedge_around_vertex_circulator	d	=	pHalfEdge;
 		CGAL_For_all(pHalfEdge,d)
-			if(pHalfEdge->next()->is_border())
-				return pHalfEdge->next();
+			if(pHalfEdge->is_border())
+				return pHalfEdge;
 		return NULL;
 	}
 
@@ -405,13 +388,14 @@ public :
 		Halfedge_around_facet_circulator pHalfEdge = pFace->facet_begin();
 		Halfedge_around_facet_circulator end = pHalfEdge;
 		Vector vec(0.0,0.0,0.0);
+    typedef typename kernel::FT FT;
 		int	degree = 0;
 		CGAL_For_all(pHalfEdge,end)
 		{
 			vec	=	vec	+	(pHalfEdge->vertex()->point()-CGAL::ORIGIN);
 			degree++;
     }
-		center = (CGAL::ORIGIN + vec/(FT)degree);
+    center = CGAL::ORIGIN + (vec/(FT)degree);
   }
 
 	// compute average edge length around a vertex
@@ -440,7 +424,6 @@ public :
 		Facet_iterator pFacet	=	facets_begin();
 		for(;pFacet	!= facets_end();pFacet++)
 		{
-
 			// begin polygon assembly
 			::glBegin(GL_POLYGON);
 				gl_draw_facet(pFacet,smooth_shading,use_normals);
@@ -456,7 +439,7 @@ public :
 		// one normal	per	face
 		if(use_normals &&	!smooth_shading)
 		{
-		  const Vector &normal = pFacet->normal();
+      const typename Facet::Normal_3& normal = pFacet->normal();
 			::glNormal3f(normal[0],normal[1],normal[2]);
 		}
 
@@ -467,7 +450,7 @@ public :
 			// one normal	per	vertex
 			if(use_normals &&	smooth_shading)
 			{
-				const Vector &normal = pHalfedge->vertex()->normal();
+				const typename Facet::Normal_3& normal	=	pHalfedge->vertex()->normal();
 				::glNormal3f(normal[0],normal[1],normal[2]);
 			}
 
@@ -563,9 +546,9 @@ public :
 
 	// write in	obj	file format	(OBJ).
 	void write_obj(char	*pFilename,
-	               int incr	=	1)
+									int incr	=	1) //	1-based	by default
 	{
-		std::ofstream	stream(pFilename);
+	  std::ofstream stream(pFilename);
 
 		// output	vertices
 		for(Point_iterator pPoint	=	points_begin();
@@ -635,7 +618,6 @@ public :
 		while((seed_halfedge = get_border_halfedge_tag(0)) !=	NULL)
 		{
 			nb++;
-
 			seed_halfedge->tag(1);
 			Vertex_handle	seed_vertex	=	seed_halfedge->prev()->vertex();
 			Halfedge_handle	current_halfedge = seed_halfedge;

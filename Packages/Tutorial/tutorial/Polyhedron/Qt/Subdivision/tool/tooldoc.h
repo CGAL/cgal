@@ -58,10 +58,10 @@ class ToolDoc : public QObject
   friend ToolView;
 
   private:
-	  My_polyhedron<My_kernel,My_items> m_Mesh;
+	  Enriched_polyhedron<My_kernel,Enriched_items> *m_pMesh;
   	
   public:
-  	My_polyhedron<My_kernel,My_items>* mesh() { return &m_Mesh; }
+  	Enriched_polyhedron<My_kernel,Enriched_items>* mesh() { return m_pMesh; }
 
   public:
     bool m_showNormals;
@@ -75,6 +75,14 @@ class ToolDoc : public QObject
     void transformScaleIncrease();
     void transformScaleDecrease();
     void rescale();
+
+    // SUBDIVISION
+    void subdivisionStamLoop();
+    void subdivisionSqrt3();
+    void subdivisionSqrt3Twice();
+    void subdivisionDooSabin();
+    void subdivisionLoop();
+    void subdivisionCatmullClark();
     
     // dumping
     void dumpMesh();

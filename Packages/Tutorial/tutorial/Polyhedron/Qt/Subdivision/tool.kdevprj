@@ -8,7 +8,7 @@ ldadd=\s$(LIB_QT)
 ldflags=-static      -L/usr/X11R6/lib -L/0/prisme_util/CGAL/CGAL-2.4/lib/i686_Linux-2.2.18_g++-2.95.3 -L/usr/local/gmp/lib -L/net/home/prisme/CLN/CLN-1.0.2/Linux_g++/lib -Wl,-R/0/prisme_util/CGAL/CGAL-2.4/lib/i686_Linux-2.2.18_g++-2.95.3:/usr/local/gmp/lib -lCGAL  -lgmp -lm -lGL -lGLU  -L$HOME/usr/lib -lm -lgslcblas -lgsl -lF77 -lI77 -lblas -lclapack -ltmglib_LINUX -static -static -static
 
 [General]
-AMChanged=true
+AMChanged=false
 author=Pierre Alliez
 configure_args=\s--build=i386-linux --host=i386-linux --target=i386-linux --with-qt-dir=/usr/local/qt2\s
 email=pierre.alliez@sophia.inria.fr

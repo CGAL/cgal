@@ -5,12 +5,12 @@ c++ wrapper for Lutz Kettner CGAL code
 begin                : march 2003
 copyright            : (C) 2003 by GEOMETRICA / INRIA
 email                : pierre.alliez@sophia.inria.fr
-/**************************************************************************/
+***************************************************************************/
 
 #ifndef SQRT3_H
 #define SQRT3_H
 
-#include "Enriched_polyhedron.h"
+#include "enriched_polyhedron.h"
 
 template <class Polyhedron,class kernel>
 class CSubdivider_sqrt3
@@ -24,6 +24,7 @@ class CSubdivider_sqrt3
 	typedef typename Polyhedron::Facet_iterator                           Facet_iterator;
 	typedef typename Polyhedron::Halfedge_around_vertex_const_circulator  HV_circulator;
 	typedef typename Polyhedron::Halfedge_around_facet_circulator         HF_circulator;
+  typedef typename kernel::FT                                           FT;
 	#define PI 3.1415926535897932
 
 	public:
@@ -187,11 +188,11 @@ class CSubdivider_sqrt3
 					++ order;
 			} while ( ++h != f->facet_begin());
 			CGAL_assertion( order >= 3); // guaranteed by definition of Polyhedron
-			Point center =  CGAL::ORIGIN + (vec / (kernel::FT)order);
+			Point center =  CGAL::ORIGIN + (vec / (FT)order);
 			Halfedge_handle new_center = P.create_center_vertex( f->halfedge());
 			new_center->vertex()->point() = center;
 		}
-		
+
 		struct Smooth_old_vertex
 		{
 				Point operator()( const Vertex& v) const
@@ -200,7 +201,7 @@ class CSubdivider_sqrt3
 						if ( degree & 1) // odd degree only at border vertices
 								return v.point();
 						degree = degree / 2;
-						kernel::FT alpha = (4.0f - 2.0f * (kernel::FT)cos( 2.0f * PI / (kernel::FT)degree)) / 9.0f;
+						FT alpha = (4.0f - 2.0f * (FT)cos( 2.0f * PI / (FT)degree)) / 9.0f;
 						Vector vec = (v.point() - CGAL::ORIGIN) * ( 1.0f - alpha);
 						HV_circulator h = v.vertex_begin();
 						do {
@@ -213,7 +214,7 @@ class CSubdivider_sqrt3
 										return v.point();
 								}
 								vec = vec + ( h->opposite()->vertex()->point() - CGAL::ORIGIN)
-									* alpha / (kernel::FT)degree;
+									* alpha / (FT)degree;
 								++ h;
 								CGAL_assertion( h != v.vertex_begin()); // even degree guaranteed
 								++ h;
@@ -223,8 +224,7 @@ class CSubdivider_sqrt3
 		};		
 
 		template <class OutputIterator>
-		void smooth_border_vertices(typename Halfedge_handle e,
-																OutputIterator out)
+    void smooth_border_vertices(Halfedge_handle e,OutputIterator out)
 		{
 				CGAL_precondition( e->is_border());
 				// We know that the vertex at this edge is from the unrefined mesh.

@@ -93,13 +93,8 @@ void ToolApp::initActions()
   QPixmap antialiasingIcon = QPixmap(antialiasing_xpm);
   QPixmap smoothIcon = QPixmap(smooth_xpm);
 
+  // subdivision pixmaps
   QPixmap quadtriangleIcon = QPixmap(quadtriangle_xpm);
-
-  //fileNew = new QAction(tr("New File"), newIcon, tr("&New"),
-  //QAccel::stringToKey(tr("Ctrl+N")), this);
-  //fileNew->setStatusTip(tr("Creates a new document"));
-  //fileNew->setWhatsThis(tr("New File\n\nCreates a new document"));
-  //connect(fileNew, SIGNAL(activated()), this, SLOT(slotFileNew()));
 
   fileOpen = new QAction(tr("Open File"), openIcon, tr("&Open..."), 0, this);
   fileOpen->setStatusTip(tr("Opens an existing document"));
@@ -211,11 +206,8 @@ void ToolApp::initActions()
   helpAboutApp->setWhatsThis(tr("About\n\nAbout the application"));
   connect(helpAboutApp, SIGNAL(activated()), this, SLOT(slotHelpAbout()));
 
-  // ALGORITHMS
-
 
   // RENDER
-  
   renderWireframe = new QAction(tr("Wireframe"), wireframeIcon, tr("&Wireframe"),QAccel::stringToKey(tr("w")),this, 0, true);
   connect(renderWireframe,SIGNAL(activated()), this, SLOT(slotRenderWireframe()));
 
@@ -237,9 +229,6 @@ void ToolApp::initActions()
   renderLighting = new QAction(tr("Lighting"), lightIcon, tr("&Lighting"),QAccel::stringToKey(tr("l")),this, 0, true);
   connect(renderLighting,SIGNAL(activated()), this, SLOT(slotRenderLighting()));
 
-  //renderNormals = new QAction(tr("Normals"), tr("&Normals"),QAccel::stringToKey("n"),this, 0, true);
-  //connect(renderNormals,SIGNAL(activated()), this, SLOT(slotRenderNormals()));
-
   renderAntialiasing = new QAction(tr("Antialiasing"), antialiasingIcon, tr("&Antialiasing"),QAccel::stringToKey("a"),this, 0, true);
   connect(renderAntialiasing,SIGNAL(activated()), this, SLOT(slotRenderAntialiasing()));
 
@@ -256,11 +245,24 @@ void ToolApp::initActions()
   renderActionGroup->add(renderAntialiasing);
   renderActionGroup->add(renderSuperimpose);
 
-  //Algorithmes
+  // Subdivision schemes
+  algoSubdivisionStamLoop = new QAction(tr("Quad/Triangle"), quadtriangleIcon, tr("&Quad/Triangle"), 0, this);
+  connect(algoSubdivisionStamLoop, SIGNAL(activated()), this, SLOT(slotSubdivisionStamLoop()));
+  
+  algoSubdivisionSqrt3 = new QAction(tr("Sqrt3"), "&Sqrt3", 0, this);
+  connect(algoSubdivisionSqrt3, SIGNAL(activated()), this, SLOT(slotSubdivisionSqrt3()));
 
-  algorithm_quadt = new QAction(tr("Quad/Triangle"), quadtriangleIcon, tr("&Quad/Triangle"), 0, this);
-  connect(algorithm_quadt, SIGNAL(activated()), this, SLOT(slotAlgorithm_quadt()));
+  algoSubdivisionSqrt3_twice = new QAction("Sqrt3 (apply twice)", "&Sqrt3 (apply twice)", 0, this);
+  connect(algoSubdivisionSqrt3_twice, SIGNAL(activated()), this, SLOT(slotSubdivisionSqrt3_twice()));
 
+  algoSubdivisionLoop = new QAction("Loop", "&Loop", 0, this);
+  connect(algoSubdivisionLoop, SIGNAL(activated()), this, SLOT(slotSubdivisionLoop()));
+
+  algoSubdivisionCatmullClark = new QAction("Catmull-Clark", "&Catmull-Clark", 0, this);
+  connect(algoSubdivisionCatmullClark, SIGNAL(activated()), this, SLOT(slotSubdivisionCatmullClark()));
+
+  algoSubdivisionDooSabin = new QAction("Doo-Sabin", "&Doo-Sabin", 0, this);
+  connect(algoSubdivisionDooSabin, SIGNAL(activated()), this, SLOT(slotSubdivisionDooSabin()));
 }
 
 void ToolApp::initMenuBar()
@@ -269,8 +271,6 @@ void ToolApp::initMenuBar()
 
   // menuBar entry pFileMenu
   pFileMenu = new QPopupMenu();
-  //pFileMenu->setFont(QFont("Helvetica",8));
-  //fileNew->addTo(pFileMenu);
   fileOpen->addTo(pFileMenu);
   fileClose->addTo(pFileMenu);
   pFileMenu->insertSeparator();
@@ -283,23 +283,11 @@ void ToolApp::initMenuBar()
 
   // menuBar entry editMenu
   pEditMenu=new QPopupMenu();
-  //pEditMenu->setFont(QFont("Helvetica",8));
   editUndo->addTo(pEditMenu);
   pEditMenu->insertSeparator();
   editCut->addTo(pEditMenu);
   editCopy->addTo(pEditMenu);
   editPaste->addTo(pEditMenu);
-
-  ///////////////////////////////////////////////////////////////////
-  ///////////////////////////////////////////////////////////////////
-  ///////////////////////////////////////////////////////////////////
-  // ALGORITHMS
-  ///////////////////////////////////////////////////////////////////
-  ///////////////////////////////////////////////////////////////////
-  ///////////////////////////////////////////////////////////////////
-
-  pAlgoMenu = new QPopupMenu();
-  algorithm_quadt->addTo(pAlgoMenu);
 
   // RENDER
   pRenderMenu = new QPopupMenu();
@@ -315,7 +303,6 @@ void ToolApp::initMenuBar()
   renderCulling->addTo(pRenderMenu);
   renderSmooth->addTo(pRenderMenu);
   renderLighting->addTo(pRenderMenu);
-  //renderNormals->addTo(pRenderMenu);
 
   ///////////////////////////////////////////////////////////////////
   // menuBar entry viewMenu
@@ -348,12 +335,19 @@ void ToolApp::initMenuBar()
   menuBar()->insertItem(tr("&File"),       pFileMenu);
   menuBar()->insertItem(tr("&Edit"),       pEditMenu);
 
-  // ALGORITHMS
-  menuBar()->insertItem(tr("&Algorithms"), pAlgoMenu);
+  // SUBDIVISION
+  pAlgoMenu = new QPopupMenu();
+  menuBar()->insertItem(tr("&Subdivision"), pAlgoMenu);
+  algoSubdivisionStamLoop->addTo(pAlgoMenu);
+  algoSubdivisionSqrt3->addTo(pAlgoMenu);
+  algoSubdivisionSqrt3_twice->addTo(pAlgoMenu);
+  algoSubdivisionDooSabin->addTo(pAlgoMenu);
+  algoSubdivisionCatmullClark->addTo(pAlgoMenu);
+  algoSubdivisionLoop->addTo(pAlgoMenu);
 
   // RENDERING OPTIONS
   menuBar()->insertItem(tr("&Render"),     pRenderMenu);
-  pRenderMenu->insertItem(tr("&Mode"),   pRenderModeMenu);
+  pRenderMenu->insertItem(tr("&Mode"),     pRenderModeMenu);
 
   menuBar()->insertItem(tr("&View"),       pViewMenu);
   menuBar()->insertItem(tr("&Window"),     pWindowMenu);
@@ -366,7 +360,6 @@ void ToolApp::initToolBar()
   // TOOLBAR FILE OPERATIONS
   //////////////////////////////////////////////////////////////////
   fileToolbar = new QToolBar(this, "file operations");
-  //fileNew->addTo(fileToolbar);
   fileOpen->addTo(fileToolbar);
   fileSave->addTo(fileToolbar);
   filePrint->addTo(fileToolbar);
@@ -404,12 +397,17 @@ void ToolApp::initToolBar()
   renderAntialiasing->addTo(renderingToolbar);
 
   /////////////////////////////////////////////////////////////////
-  // TOOLBAR ALGORITHMES
+  // SUBDIVISION TOOLBAR
   //////////////////////////////////////////////////////////////////
 
-  algorithmesToolbar = new QToolBar(this, "algorithmes toolbar");
-  algorithm_quadt->addTo(algorithmesToolbar);
-
+  subdivisionToolbar = new QToolBar(this,"subdivision toolbar");
+  algoSubdivisionStamLoop->addTo(subdivisionToolbar);
+  //algoSubdivisionSqrt3->addTo(subdivisionToolbar);
+  //algoSubdivisionSqrt3_twice->addTo(subdivisionToolbar);
+  //algoSubdivisionDooSabin->addTo(subdivisionToolbar);
+  //algoSubdivisionDooSabin->addTo(subdivisionToolbar);
+  //algoSubdivisionCatmullClark->addTo(subdivisionToolbar);
+  //algoSubdivisionLoop->addTo(subdivisionToolbar);
 }
 
 void ToolApp::initStatusBar()
@@ -956,9 +954,6 @@ void ToolApp::slotRenderVertex()
   }
 }
 
-void ToolApp::slotAlgorithm_quadt()
-{
-}
 
 
 void ToolApp::slotRenderEdges()
@@ -1009,6 +1004,81 @@ void ToolApp::slotRenderLighting()
     doc->updateAllViews(NULL);
   }
 }
+
+// Stam-Loop subdivision
+void ToolApp::slotSubdivisionStamLoop()
+{
+  ToolView* pView = (ToolView*)pWorkspace->activeWindow();
+  if(pView)
+  {
+    ToolDoc* doc = pView->getDocument();
+    doc->subdivisionStamLoop();
+    doc->updateAllViews(NULL);
+  }
+}
+
+// sqrt3 subdivision
+void ToolApp::slotSubdivisionSqrt3()
+{
+  ToolView* pView = (ToolView*)pWorkspace->activeWindow();
+  if(pView)
+  {
+    ToolDoc* doc = pView->getDocument();
+    doc->subdivisionSqrt3();
+    doc->updateAllViews(NULL);
+  }
+}
+
+// sqrt3 subdivision
+void ToolApp::slotSubdivisionSqrt3_twice()
+{
+  ToolView* pView = (ToolView*)pWorkspace->activeWindow();
+  if(pView)
+  {
+    ToolDoc* doc = pView->getDocument();
+    doc->subdivisionSqrt3Twice();
+    doc->updateAllViews(NULL);
+  }
+}
+
+// Doo-Sabin subdivision
+void ToolApp::slotSubdivisionDooSabin()
+{
+  ToolView* pView = (ToolView*)pWorkspace->activeWindow();
+  if(pView)
+  {
+    ToolDoc* doc = pView->getDocument();
+    doc->subdivisionDooSabin();
+    doc->updateAllViews(NULL);
+  }
+}
+
+// Catmull-Clark subdivision
+void ToolApp::slotSubdivisionCatmullClark()
+{
+  ToolView* pView = (ToolView*)pWorkspace->activeWindow();
+  if(pView)
+  {
+    ToolDoc* doc = pView->getDocument();
+    doc->subdivisionCatmullClark();
+    doc->updateAllViews(NULL);
+  }
+}
+
+// Loop subdivision
+void ToolApp::slotSubdivisionLoop()
+{
+  ToolView* pView = (ToolView*)pWorkspace->activeWindow();
+  if(pView)
+  {
+    ToolDoc* doc = pView->getDocument();
+    doc->subdivisionLoop();
+    doc->updateAllViews(NULL);
+  }
+}
+
+
+
 
 #include "tool.moc"
 

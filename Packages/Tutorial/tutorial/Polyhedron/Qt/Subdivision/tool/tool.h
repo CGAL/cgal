@@ -143,8 +143,15 @@ class ToolApp : public QMainWindow
     void slotRenderLighting();
     void slotRenderVertex();
     void slotRenderSuperimposing();
-    void slotAlgorithm_quadt();
 		void slotRenderAntialiasing();
+
+    // SUBDIVISION
+    void slotSubdivisionStamLoop();
+    void slotSubdivisionSqrt3();
+    void slotSubdivisionSqrt3_twice();
+    void slotSubdivisionDooSabin();
+    void slotSubdivisionCatmullClark();
+    void slotSubdivisionLoop();
 
     /** creates a new view for the current document */
     void slotWindowNewWindow();
@@ -190,7 +197,7 @@ class ToolApp : public QMainWindow
 
     QToolBar *fileToolbar;
     QToolBar *renderingToolbar;
-    QToolBar *algorithmesToolbar;
+    QToolBar *subdivisionToolbar;
 
     /** pWorkspace is the MDI frame widget that handles MDI child widgets.
       Inititalized in
@@ -241,6 +248,11 @@ class ToolApp : public QMainWindow
 
     QPopupMenu *pAlgoSubdivisionMenu;
     QAction *algoSubdivisionStamLoop;
+    QAction *algoSubdivisionSqrt3;
+    QAction *algoSubdivisionSqrt3_twice;
+    QAction *algoSubdivisionDooSabin;
+    QAction *algoSubdivisionCatmullClark;
+    QAction *algoSubdivisionLoop;
 
     // RENDER
     QPopupMenu *pRenderMenu;
@@ -255,8 +267,7 @@ class ToolApp : public QMainWindow
     QAction *renderLighting;
     QAction *renderNormals;
     QAction *renderAntialiasing;
-    QAction *algorithm_quadt;
-
+    
     QToolButton *bgcolor_button;
     QToolButton *fgcolor_button;
 

@@ -230,7 +230,7 @@ tooldoc.o : \
  /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/Kernel_traits_common.h \
  /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/Kernel/interface_macros.h \
  /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/iterator_traits_pointer_specs_for_simple_cartesian_kernel.h \
- enriched_polyhedron.h /usr/X11R6/include/GL/gl.h \
+ enriched_polyhedron.h \
  /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/Cartesian.h \
  /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/iterator_traits_pointer_specs_for_cartesian_kernel.h \
  /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/Polyhedron_3.h \
@@ -260,8 +260,10 @@ tooldoc.o : \
  /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/HalfedgeDS_decorator.h \
  /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/Modifier_base.h \
  /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/Polyhedron_traits_3.h \
- tool.h /usr/local/qt3/include/qaction.h \
- /usr/local/qt3/include/qiconset.h /usr/local/qt3/include/qpixmap.h \
+ /usr/local/qt3/include/qgl.h /usr/local/qt3/include/qglcolormap.h \
+ /usr/X11R6/include/GL/gl.h /usr/X11R6/include/GL/glu.h tool.h \
+ /usr/local/qt3/include/qaction.h /usr/local/qt3/include/qiconset.h \
+ /usr/local/qt3/include/qpixmap.h \
  /usr/local/qt3/include/qkeysequence.h /usr/local/qt3/include/qaccel.h \
  /usr/local/qt3/include/qapp.h /usr/local/qt3/include/qapplication.h \
  /usr/local/qt3/include/qdesktopwidget.h \
@@ -279,10 +281,7 @@ tooldoc.o : \
  /usr/local/qt3/include/qwhatsthis.h /usr/local/qt3/include/qcursor.h \
  /usr/local/qt3/include/qworkspace.h \
  /usr/local/qt3/include/qwidgetlist.h Arcball.h Camera.h Quaternion.h \
- Matrix44.h Vector3d.h Viewport.h toolview.h \
- /usr/local/qt3/include/qgl.h /usr/local/qt3/include/qglcolormap.h \
- /usr/X11R6/include/GL/glu.h glview.h quad-triangle.h builder.h \
- /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/Random_access_adaptor.h \
+ Matrix44.h Vector3d.h Viewport.h toolview.h glview.h \
  /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/IO/Polyhedron_iostream.h \
  /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/IO/print_OFF.h \
  /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/IO/File_writer_OFF.h \
@@ -295,6 +294,16 @@ tooldoc.o : \
  /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/IO/Polyhedron_scan_OFF.h \
  /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/IO/File_scanner_OFF.h \
  /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/Polyhedron_incremental_builder_3.h \
+ /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/Random_access_adaptor.h \
+ quad-triangle.h builder.h sqrt3.h SurfLab/Polyhedron_subdivision.h \
+ SurfLab/Polyhedron_decorator.h SurfLab/config.h \
+ /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/cassert \
+ SurfLab/Polyhedron_subdivision_rules.h \
+ SurfLab/Polyhedron_memory_builder.h \
+ /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/Polyhedron_default_traits_3.h \
+ /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/strstream \
+ /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/strstream.h \
+ /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/strfile.h \
  tooldoc.moc /usr/local/qt3/include/qmetaobject.h \
  /usr/local/qt3/include/qconnection.h \
  /usr/local/qt3/include/private/qucomextra_p.h \
@@ -574,7 +583,6 @@ tooldoc.h :
 /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/Kernel/interface_macros.h :
 /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/iterator_traits_pointer_specs_for_simple_cartesian_kernel.h :
 enriched_polyhedron.h :
-/usr/X11R6/include/GL/gl.h :
 /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/Cartesian.h :
 /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/iterator_traits_pointer_specs_for_cartesian_kernel.h :
 /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/Polyhedron_3.h :
@@ -604,6 +612,10 @@ enriched_polyhedron.h :
 /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/HalfedgeDS_decorator.h :
 /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/Modifier_base.h :
 /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/Polyhedron_traits_3.h :
+/usr/local/qt3/include/qgl.h :
+/usr/local/qt3/include/qglcolormap.h :
+/usr/X11R6/include/GL/gl.h :
+/usr/X11R6/include/GL/glu.h :
 tool.h :
 /usr/local/qt3/include/qaction.h :
 /usr/local/qt3/include/qiconset.h :
@@ -642,13 +654,7 @@ Matrix44.h :
 Vector3d.h :
 Viewport.h :
 toolview.h :
-/usr/local/qt3/include/qgl.h :
-/usr/local/qt3/include/qglcolormap.h :
-/usr/X11R6/include/GL/glu.h :
 glview.h :
-quad-triangle.h :
-builder.h :
-/0/prisme_util/CGAL/CGAL-2.4/include/CGAL/Random_access_adaptor.h :
 /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/IO/Polyhedron_iostream.h :
 /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/IO/print_OFF.h :
 /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/IO/File_writer_OFF.h :
@@ -661,6 +667,20 @@ builder.h :
 /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/IO/Polyhedron_scan_OFF.h :
 /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/IO/File_scanner_OFF.h :
 /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/Polyhedron_incremental_builder_3.h :
+/0/prisme_util/CGAL/CGAL-2.4/include/CGAL/Random_access_adaptor.h :
+quad-triangle.h :
+builder.h :
+sqrt3.h :
+SurfLab/Polyhedron_subdivision.h :
+SurfLab/Polyhedron_decorator.h :
+SurfLab/config.h :
+/usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/cassert :
+SurfLab/Polyhedron_subdivision_rules.h :
+SurfLab/Polyhedron_memory_builder.h :
+/0/prisme_util/CGAL/CGAL-2.4/include/CGAL/Polyhedron_default_traits_3.h :
+/usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/strstream :
+/usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/strstream.h :
+/usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/strfile.h :
 tooldoc.moc :
 /usr/local/qt3/include/qmetaobject.h :
 /usr/local/qt3/include/qconnection.h :
