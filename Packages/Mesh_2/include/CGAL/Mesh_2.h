@@ -860,25 +860,21 @@ is_encroached(const Vertex_handle va, const Vertex_handle vb,
   return angle(va->point(), p, vb->point())==OBTUSE;
 }
 
-// WARNING, TODO: NOT ALL VERTICES, ONLY THE TWO NEIGHBORS
 // TODO: si les graines sont utilisées, il faut tester uniquement avec 
 // les vertex dans les faces marquées.
 template <class Tr>
 bool Mesh_2<Tr>::
 is_encroached(const Vertex_handle va, const Vertex_handle vb) const
 {
-  Finite_vertices_iterator vi = finite_vertices_begin();
-  while(vi!=finite_vertices_end())
-    {
-      if(is_encroached(va, vb, vi->point()) &&
-	 va!=Vertex_handle(vi) &&
-	 vb!=Vertex_handle(vi))
-	{
-	  return true;
-	}
-      vi++;
-    }
-  return false;
+  Face_handle fh;
+  int i;
+  is_edge(va,vb,fh,i);
+
+  Point candidat_1 = fh->vertex(i)->point();
+  Point candidat_2 = fh->mirror_vertex(i)->point();
+
+  return ( is_encroached(va, vb, candidat_1) ||
+	   is_encroached(va, vb, candidat_2) );
 }
 
 // ?????????????
