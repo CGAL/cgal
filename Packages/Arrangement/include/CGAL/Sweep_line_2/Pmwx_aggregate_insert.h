@@ -167,17 +167,12 @@ public:
 
     // splitting all curves to x-monotone curves.
     for (cv_iter = curves_begin; cv_iter != curves_end; ++cv_iter){
-      if (!traits->is_x_monotone(*cv_iter)) {
-        X_curve_list x_monotone_subcurves;
-        traits->make_x_monotone(*cv_iter, x_monotone_subcurves);
+      X_curve_list x_monotone_subcurves;
+      traits->make_x_monotone(*cv_iter, x_monotone_subcurves);
 
-        for(X_curve_list_iterator iter = x_monotone_subcurves.begin(); 
-            iter != x_monotone_subcurves.end(); ++iter){
-          x_monotone_curves.push_back(*iter);  
-        }
-      }
-      else {
-        x_monotone_curves.push_back(*cv_iter);
+      for(X_curve_list_iterator iter = x_monotone_subcurves.begin(); 
+          iter != x_monotone_subcurves.end(); ++iter) {
+        x_monotone_curves.push_back(*iter);  
       }
     }
 
