@@ -1273,6 +1273,419 @@ computes the index \ccc{i} of the neighbor.}
 	\end{ccClassTemplate} 
 
 
+
+\begin{ccClassTemplate}{Delaunay_triangulation_3<Traits,Tds>}
+\section{The Delaunay Triangulation Class\\ \protect
+\ccClassTemplateName}  
+
+\ccDefinition
+\ccInclude{CGAL/Delaunay_triangulation_3.h}
+
+\ccInheritsFrom{\ccc{Triangulation_3<Traits,Tds>}}
+
+\ccCreationVariable{dt}
+
+\ccTypes
+
+Inherits the types of \ccc{Triangulation_3<Traits,Tds>}.
+
+\ccCreation
+\ccThree{Vertex_handle}{dt.remove(Pont p)toto}{}
+
+\ccConstructor{\ccClassName()}
+{Creates an empty Delaunay triangulation.}
+
+\ccConstructor{\ccClassName(const Traits & traits)}
+{Creates an empty Delaunay triangulation with traits class
+\ccc{traits}.}
+
+\ccConstructor{\ccClassName(const Delaunay_triangulation_3<Traits,Tds> & dt1)}
+{Copy constructor.}
+
+\ccModifiers
+
+\ccHeading{Insertion}
+
+The following methods, which already exist in triangulations, are
+overloaded to ensure the empty sphere property of Delaunay
+triangulations.
+
+\ccMethod{Vertex_handle insert(const Point & p );}
+{Inserts point \ccc{p} in the triangulation and returns the corresponding
+ vertex. Similar to the insertion in a triangulation, but insures in
+addition the empty sphere property of all the created faces.}
+
+\ccMethod{Vertex_handle insert(const Point & p, Cell_handle start);}
+{Same as the previous method, \ccc{start} is used as a starting
+place for the location done within the insertion.}
+
+The following method allows to insert several points. It returns the
+number of inserted points. 
+
+\ccMethod{template < class InputIterator >
+          int
+          insert(InputIterator first, InputIterator last);}
+{Inserts the points in the range $\left[\right.$\ccc{first},
+\ccc{last}$\left.\right)$. 
+\ccPrecond{The \ccc{value_type} of \ccc{first} and \ccc{last} is
+\ccc{Point}.}}
+%\ccMethod{int insert(list<Point>::const_iterator first,
+%	     list<Point>::const_iterator last);}
+%{}
+%\ccGlue
+%\ccMethod{int insert(vector<Point>::const_iterator first,
+%	     vector<Point>::const_iterator last);}
+%{}
+%\ccGlue
+%\ccMethod{int insert(istream_iterator<Point, ptrdiff_t> first,
+%	     istream_iterator<Point, ptrdiff_t> last);}
+%{}
+%\ccGlue
+%\ccMethod{int insert(Point* first,
+%	     Point* last);}
+%{}
+
+\ccHeading{Removal}
+
+\ccMethod{void remove(Point p);}
+{Removes the vertex associated with \ccc{p}.
+\ccPrecond{There is a vertex of the triangulation associated with \ccc{p}.}\\
+\textit{not yet implemented}}
+
+\ccHeading{Queries}
+
+\ccMethod{Bounded_side
+          side_of_sphere(Cell_handle c, const Point & p) const;}
+{Returns on which side of the circumscribed sphere of \ccc{c} lies 
+the point \ccc{p}. More precisely, it returns:\\
+- \ccc{ON_BOUNDED_SIDE} if \ccc{p} is inside the sphere (for an infinite
+cell this means that \ccc{p} lies strictly either in the half space
+limited by its finite facet, or in the interior of the disk
+circumscribing the *finite* facet) \\ 
+- \ccc{ON_BOUNDARY} if p on the boundary of the sphere (for an infinite
+cell this means that \ccc{p} lies on the circle circumscribing
+the *finite* facet)\\ 
+- \ccc{ON_UNBOUNDED_SIDE} if \ccc{p} lies outside the sphere (for an
+infinite cell this means that \ccc{p} is not in the preceding two
+cases).
+\ccPrecond{\ccc{\ccVar.dimension()} $=3$.}}
+\ccMethod{Bounded_side
+	  side_of_circle(const Facet & f, const Point & p) const;}
+{Returns on which side of the circumscribed circle of \ccc{f} lies 
+the point \ccc{p}. More precisely, it returns:\\
+- in dimension~3:\\
+-- for a finite facet, \ccc{ON_BOUNDARY} if \ccc{p} lies
+on the circle, \ccc{ON_UNBOUNDED_SIDE} when it lies in the exterior of
+the disk, \ccc{ON_BOUNDED_SIDE} when it lies in its interior.\\
+-- for an infinite facet, it considers the plane defined by the finite
+facet of the same cell, and does the same as in dimension~2 in this
+plane.\\
+- in dimension~2:\\
+-- for a finite facet, \ccc{ON_BOUNDARY} if \ccc{p} lies
+on the circle, \ccc{ON_UNBOUNDED_SIDE} when it lies in the exterior of
+the disk, \ccc{ON_BOUNDED_SIDE} when it lies in its interior.\\
+-- for an infinite facet, \ccc{ON_BOUNDARY} if the
+point lies on the finite edge of \ccc{f} (endpoints included),
+\ccc{ON_BOUNDED_SIDE} for a point in the open half-plane defined
+by \ccc{f}, \ccc{ON_UNBOUNDED_SIDE} elsewhere.
+\ccPrecond{\ccc{\ccVar.dimension()} $\geq 2$.}}
+
+\ccMethod{Bounded_side
+	  side_of_circle(Cell_handle c, int i, const Point & p);}
+{Same as the previous method for facet \ccc{i} of cell \ccc{c}.}
+
+\begin{ccAdvanced}
+\ccHeading{Checking}
+\ccMethod{bool
+          is_valid(bool verbose = false) const;}
+{Checks the combinatorial validity of the triangulation and the
+validity of its geometric embedding (see
+Section~\ref{Triangulation3-sec-Valid}). Also checks that all the spheres
+(resp. circles in dimension~2) circumscribing cells (resp. facets in
+dimension~2) are empty. When \ccc{verbose} is set to true, 
+messages describing the first invalidity encountered are printed.\\
+This method is  mainly a debugging help for the users of advanced features.
+}
+\end{ccAdvanced}
+
+\end{ccClassTemplate}
+
+\begin{ccClassTemplate}{Delaunay_hierarchic_triangulation_3<Traits,Tds>}
+\section{The Hierarchic Delaunay Triangulation Class\\ \protect
+\ccClassTemplateName}  
+
+\textit{Not yet implemented}
+
+\end{ccClassTemplate}
+
+\begin{ccClassTemplate}{Regular_triangulation_3<Traits,Tds>}
+\section{The Regular Triangulation Class\\ \protect
+\ccClassTemplateName}  
+\label{Triangulation3-sec-class-Regulartriangulation}
+
+\ccDefinition
+
+Let $\widehat{S}$ be a set of weighted points in $\R^3$. Let
+$\widehat{p}=(p,w_p), p\in\R^3, w_p\in\R$ and 
+$\widehat{z}=(z,w_z), z\in\R^3, w_z\in\R$ be two weighted points. 
+A weighted point
+$\widehat{p}=(p,w_p)$ can also be seen as a sphere of center $p$ and
+radius $w_p$. 
+The \textit{power product} between $\widehat{p}$ and $\widehat{z}$ is
+defined as 
+\[\Pi(\widehat{p},\widehat{z}) = {\|{p-z}\|^2-w_p^2-w_z^2}\]
+where $\|{p-z}\|$ is the Euclidean distance between $p$ and $z$. 
+ $\widehat{p}$ and $\widehat{z}$
+are said to be \textit{orthogonal} if $\Pi{(\widehat{p}-\widehat{z})}
+= 0$ (see Figure~\ref{Triangulation3-fig-ortho}).
+
+\begin{ccTexOnly}
+\begin{figure}[htbp]
+\begin{center} 
+\includegraphics{ortho.eps} 
+\end{center}
+\caption{Orthogonal weighted points (picture in 2D)
+\label{Triangulation3-fig-ortho}}
+\end{figure} 
+\end{ccTexOnly}
+
+\begin{ccHtmlOnly}
+<img border=0 src="./ortho.gif" align=center alt="Orthogonal weighted
+points (picture in 2D)"> 
+\end{ccHtmlOnly}
+
+Four weighted points have a unique common orthogonal weighted point called
+\textit{power sphere}. A sphere $\widehat{z}$ is said to be
+\textit{regular} if $\forall \widehat{p}\in\widehat{S},
+\Pi{(\widehat{p}-\widehat{z})}\geq 0$.
+
+A triangulation of $\widehat{S}$ is \textit{regular} if the power spheres
+of all simplices are regular. 
+
+The regular triangulation of
+$\widehat{S}$ is in fact the projection onto $\R^3$ of the convex hull 
+of the four-dimensional points $(p,\|p-O\|^2-w_p),
+\widehat{p}=(p,w_p)\in\widehat{S}$. 
+Note that all points of $\widehat{S}$ do not
+necessarily appear as vertices of the regular
+triangulation. To know more about regular triangulations, see for
+example \cite{es-itfwr-96}. 
+
+When all weights are 0, power spheres are nothing else than
+circumscribed spheres, and the regular triangulation is exactly the
+Delaunay triangulation.
+
+We will call \textit{power circle} the
+weighted point orthogonal to three weighted points in the plane
+defined by these three points. The \textit{power segment} will denote
+the weighted point orthogonal to two weighted points on the line
+defined by these two points.
+
+To simplify notation, $p$ will often denote in the sequel either the
+point $p\in\R^3$ or the weighted point $\widehat{p}=(p,w_p)$.
+
+\ccInclude{CGAL/Regular_triangulation_3.h}
+
+\ccInheritsFrom{\ccc{Triangulation_3<Traits,Tds>}}
+
+\ccCreationVariable{rt}
+
+\ccTypes
+\ccThree{typedef Traits::Weighted_point}{Weighted_point}{}
+
+Inherits the types of \ccc{Triangulation_3<Traits,Tds>}.
+
+\ccTypedef{typedef Traits::Bare_point Bare_point;}{The type for points
+\ccc{p} of weighted points $\widehat{p}=(p,w_p)$}
+\ccGlue
+\ccTypedef{typedef Traits::Weighted_point Weighted_point;}{}
+
+\ccCreation
+\ccThree{Regular_triangulation_3<Traits,Tds>}{rt( Traits traits );xxx}{}
+
+\ccConstructor{\ccClassName()}
+{Creates an empty regular triangulation.}
+
+\ccConstructor{\ccClassName(const Traits & traits)}
+{Creates an empty regular triangulation with traits class
+\ccc{traits}.}
+
+\ccConstructor{\ccClassName(const Regular_triangulation_3<Traits,Tds> & dt1)}
+{Copy constructor.}
+
+\ccModifiers
+
+\ccHeading{Insertion}
+\ccThree{Vertex_handle}{dt.insertxx}{}
+
+The following methods, which already exist in triangulations, are
+overloaded to ensure the property that all power spheres are regular.
+
+\ccMethod{Vertex_handle insert(const Weighted_point & p );}
+{Inserts weighted point \ccc{p} in the triangulation. If this
+insertion creates a vertex, this vertex is returned. Otherwise, this
+method returns \ccc{NULL}.}
+
+\ccMethod{Vertex_handle insert(const Weighted_point & p, Cell_handle start);}
+{Same as the previous method, \ccc{start} is used as a starting
+place for the location done within the insertion.}
+
+The following method allows to insert several points. It returns the
+number of inserted points. 
+
+\ccMethod{template < class InputIterator >
+          int
+          insert(InputIterator first, InputIterator last);}
+{Inserts the points in the range $\left[\right.$\ccc{first},
+\ccc{last}$\left.\right)$. 
+\ccPrecond{The \ccc{value_type} of \ccc{first} and \ccc{last} is
+\ccc{Point}.}}
+
+\ccHeading{Queries}
+\ccThree{Bounded_side}{rt.side of powerxx}{}
+
+Let us remark that 
+\[\Pi(\widehat{p}-\widehat{z}) > 0\]
+is equivalent to\\
+\centerline{\ccc{p} lies outside the sphere of center \ccc{z} and radius
+$\sqrt{w_p^2+w_z^2}$.}\\
+This remark helps to have an intuition about the following predicates.
+
+\begin{ccTexOnly}
+\begin{figure}[htbp]
+\begin{center} 
+\includegraphics{sidedim2.eps} 
+\end{center}
+\caption{side\_of\_power\_circle \label{Triangulation3-fig-sidedim2}}
+\end{figure} 
+\end{ccTexOnly}
+
+\begin{ccHtmlOnly}
+<img border=0 src="./sidedim2.gif" align=center
+alt="side\_of\_power\_circle"> 
+\end{ccHtmlOnly}
+
+\ccMethod{Bounded_side
+          side_of_power_sphere(Cell_handle c, const Weighted_point & p) const;}
+{Returns the position of the weighted point $p$ with respect to the
+power sphere of \ccc{c}. More precisely, it returns:\\
+- \ccc{ON_BOUNDED_SIDE} if $\Pi(\widehat{p}-\widehat{z(c)})<0$ where
+$\widehat{z(c)}$ is the power sphere of \ccc{c}. For an
+infinite cell this means either that \ccc{p} lies strictly in the half
+space limited by its finite facet, or that the angle
+between \ccc{p} and the power circle of the *finite* facet of \ccc{c}
+is greater than $\pi/2$. \\  
+- \ccc{ON_BOUNDARY} if p is orthogonal to the power sphere of \ccc{c}
+i.e. $\Pi(\widehat{p}-\widehat{z(c)})=0$. For an infinite cell this means
+that \ccc{p} is orthogonal to the power circle of its *finite* facet.\\ 
+- \ccc{ON_UNBOUNDED_SIDE} if $\Pi(\widehat{p}-\widehat{z(c)})>0$
+i.e. the angle between the weighted point \ccc{p} and the power sphere
+of \ccc{c} is less than $\pi/2$ or if they do not intersect (for an
+infinite cell this means that \ccc{p} is not in the preceding two cases).
+\ccPrecond{\ccc{\ccVar.dimension()} $=3$.}}
+
+\ccMethod{Bounded_side
+	  side_of_power_circle(const Facet & f, 
+			const Weighted_point & p) const;}
+{Returns the position of the point \ccc{p} with respect to the
+power circle of \ccc{f}. More precisely, it returns:\\
+--- in dimension~3:\\
+-- for a finite facet,\\
+\ccc{ON_BOUNDARY} if \ccc{p} is orthogonal to the power circle in the
+plane of the facet,\\ 
+\ccc{ON_UNBOUNDED_SIDE} when their angle is less than $\pi/2$,\\
+\ccc{ON_BOUNDED_SIDE} when it is greater than $\pi/2$ (see
+Figure~\ref{Triangulation3-fig-sidedim2}).\\ 
+-- for an infinite facet, it considers the plane defined by the finite
+facet of the same cell, and does the same as in dimension~2 in this
+plane.\\
+--- in dimension~2:\\
+-- for a finite facet,\\
+\ccc{ON_BOUNDARY} if \ccc{p} is orthogonal to the circle,\\
+\ccc{ON_UNBOUNDED_SIDE} when their angle is less than $\pi/2$,
+\ccc{ON_BOUNDED_SIDE} when it is greater than $\pi/2$.\\ 
+-- for an infinite facet,\\
+\ccc{ON_BOUNDED_SIDE} for a point in the open half-plane defined by
+\ccc{f},\\
+\ccc{ON_UNBOUNDED_SIDE} in the other open half-plane.\\
+If the point \ccc{p} is collinear with the finite edge \ccc{e} of
+\ccc{f}, it returns:\\
+\ccc{ON_BOUNDED_SIDE} if $\Pi(\widehat{p}-\widehat{z(e)})<0$, where
+$\widehat{z(e)}$ is the power segment of \ccc{e} in the line supporting
+\ccc{e},\\ 
+\ccc{ON_BOUNDARY} if $\Pi(\widehat{p}-\widehat{z(e)})=0$,\\
+\ccc{ON_UNBOUNDED_SIDE} if $\Pi(\widehat{p}-\widehat{z(e)})>0$ .
+\ccPrecond{\ccc{\ccVar.dimension()} $\geq 2$.}}
+
+\ccMethod{Bounded_side
+	  side_of_power_circle(Cell_handle c, int i, 
+			const Weighted_point & p) const;}
+{Same as the previous method for facet \ccc{i} of cell \ccc{c}.}
+
+\ccMethod{Bounded_side
+	  side_of_power_segment(Cell_handle c, const Weighted_point & p)
+const;}
+{In dimension~1, returns\\
+\ccc{ON_BOUNDED_SIDE} if $\Pi(\widehat{p}-\widehat{z(c)})<0$, where
+$\widehat{z(c)}$ is the power segment of the edge represented by
+\ccc{c},\\
+\ccc{ON_BOUNDARY} if $\Pi(\widehat{p}-\widehat{z(c)})=0$,\\
+\ccc{ON_UNBOUNDED_SIDE} if $\Pi(\widehat{p}-\widehat{z(c)})>0$ .
+\ccPrecond{\ccc{\ccVar.dimension()} $= 1$.}}
+
+\begin{ccAdvanced}
+\ccHeading{Checking}
+\ccMethod{bool
+          is_valid(bool verbose = false) const;}
+{Checks the combinatorial validity of the triangulation and the
+validity of its geometric embedding (see
+Section~\ref{Triangulation3-sec-Valid}). Also checks that all the
+power spheres (resp. power circles in dimension~2, power segment in
+dimension~1) of cells (resp. facets in dimension~2, edges in
+dimension~1) are regular. When \ccc{verbose}
+is set to true, messages describing the first invalidity encountered
+are printed.\\ This method is mainly a debugging help for the users of
+advanced features.
+}
+\end{ccAdvanced}
+
+\end{ccClassTemplate}
+
+%\section{Debugging}
+
+%	\subsection{Pretty print}	
+% \textit{to be written}
+
+%	\subsection{Debugging with handles} 
+%Most debuggers cannot understand \ccc{handles} well. Under the
+%debugger, an instruction such as
+
+%\texttt{(dbx) print -r c->vertex(0)}
+
+%where \ccc{c} is a \ccc{Cell_handle}, is answered by:
+
+%\texttt{can't find field "vertex" in "c"}
+
+%To work around this problem, two functions have been defined to transform 
+%\ccc{handles} into usual $C^{++}$ pointers for debugging purposes.
+
+%\ccFunction{template <class Traits, class Tds>
+%	Triangulation_vertex_3<Traits,Tds> * 
+%debug(const Triangulation_vertex_handle_3<Traits,Tds> v);}
+%{}
+
+%\ccFunction{template <class Traits, class Tds>
+%	Triangulation_cell_3<Traits,Tds> * 
+%	debug(const Triangulation_cell_handle_3<Traits,Tds>
+%c);}
+%{}
+
+%This allows the following:\\
+%\texttt{(dbx) print -r CGAL\_debug(c)->vertex(0)\\
+%CGAL\_debug(c)->vertex(0) = \{\\\
+%\ldots\\
+%\} }
+
 \section{The Geometric Traits}
 \label{Triangulation3-sec-Traits}
 
@@ -1406,6 +1819,59 @@ circumscribing \ccc{p,q,r}.
 
 \textit{Not yet implemented}
 
+\subsubsection{To be used by \protect 
+\ccc{Regular_triangulation_3<Traits, Tds>}}
+
+To be used as the traits class for the regular triangulation proposed
+by \cgal, a class must satisfy additional requirements.
+
+We use here the same notation as in
+Section~\ref{Triangulation3-sec-class-Regulartriangulation}. 
+
+\ccMethod{Oriented_side power_test(const Weighted_point &p,
+			   const Weighted_point &q,
+			   const Weighted_point &r,
+			   const Weighted_point &s,
+			   const Weighted_point &t) const;}
+{Let $\widehat{z(p,q,r,s)}$ be the power sphere of the weighted points 
+$(p,q,r,s)$. Returns \\
+\ccc{ON_ORIENTED_BOUNDARY} if \ccc{t} is orthogonal to
+$\widehat{z(p,q,r,s)}$,\\ 
+\ccc{ON_NEGATIVE_SIDE} if \ccc{t} lies outside the oriented sphere of
+center $z(p,q,r,s)$ and radius $\sqrt{ w_{z(p,q,r,s)}^2 + w_t^2 }$
+(which is equivalent to $\Pi(\widehat{t},\widehat{z(p,q,r,s)} >0$)),\\
+\ccc{ON_POSITIVE_SIDE} if \ccc{t} lies inside this oriented sphere.
+\ccPrecond{\ccc{p,q,r,s} are not coplanar.}}
+
+Note that with this definition, if all the points have a weight equal
+to 0, then
+\ccc{power_test(p,q,r,s,t)} = \ccc{side_of_oriented_sphere(p,q,r,s,t)}.
+
+\ccMethod{Oriented_side power_test(const Weighted_point &p,
+			   const Weighted_point &q,
+			   const Weighted_point &r,
+			   const Weighted_point &t) const;}
+{Analogous definition as the previous method, for coplanar points,
+with the power circle $\widehat{z(p,q,r)}$.
+\ccPrecond{\ccc{p,q,r} are not collinear and \ccc{p,q,r,t} are
+coplanar.}}
+
+If all the points have a weight equal to 0, then
+\ccc{power_test(p,q,r,s,t)} = \ccc{side_of_oriented_circle(p,q,r,s,t)}.
+
+\ccMethod{Oriented_side power_test(const Weighted_point &p,
+			   const Weighted_point &q,
+			   const Weighted_point &t) const;}
+{Same for collinear points, where $\widehat{z(p,q)}$ is the
+power segment of \ccc{p} and \ccc{q}.
+\ccPrecond{\ccc{p} and \ccc{q} have different Bare\_points, and
+\ccc{p,q,t} are collinear.}}
+
+If all the points have a weight equal to 0, then
+\ccc{power_test(p,q,t)} gives the same answer as the kernel predicate
+\ccc{s(p,q).collinear_has_on(t)}, where  \ccc{s(p,q)} denotes the
+segment with endpoints \ccc{p} and \ccc{q}.
+
 	\end{ccClass} 
 
 	\begin{ccClassTemplate}{Triangulation_geom_traits_3<R>}
@@ -1436,6 +1902,76 @@ Section~\ref{Triangulation3-sec-concept-Traits}.
 
 	\end{ccClassTemplate} 
 
+	\begin{ccClassTemplate}{Regular_triangulation_euclidean_traits_3<R,Weight>}
+	\subsection{The Class \protect \ccClassTemplateName}
+	\label{Triangulation3-sec-class-Regulartraits}
+
+This traits class is designed to be used by the class
+\ccc{Regular_triangulation_3<Traits,Tds>}. It provides
+\ccc{Weighted_point}, a class for weighted points
+provided by the class, which derives from the \cgal\ three dimensional
+point class (see
+Section~\ref{Triangulation3-sec-class-Weightedpoints}). It supplies
+the user with all the functionalities 
+described in Section~\ref{Triangulation3-sec-concept-Traits}.
+
+\ccInclude{CGAL/Regular_triangulation_euclidean_traits_3.h}
+
+\ccInheritsFrom{\ccc{Triangulation_geom_traits_3<R>}}
+
+\ccTypes
+\ccThree{typedef Triangulation_geom_traits_3::Point}{Weighted_point;}{}
+
+\ccTypedef{typedef Triangulation_geom_traits_3::Point Bare_point;}{The
+type for point $p$ of a weighted point $\widehat{p}=(p,w_p)$.}
+\ccGlue
+\ccTypedef{typedef Weighted_point <Bare_point, Weight> Weighted_point;}{}
+
+Unless specified, the type \ccc{Weight} for weights is \ccc{R::RT}. 
+
+As \ccClassTemplateName\ inherits from
+\ccc{Triangulation_geom_traits_3<R>}, the \ccc{Bare_point} type is in
+fact \ccc{Point_3<R>}.
+
+	\end{ccClassTemplate}
+
+		\begin{ccClass}{Weighted points}
+		\subsection{Weighted points}	
+		\label{Triangulation3-sec-class-Weightedpoints}
+
+		\subsubsection{Concept for a weighted point class}
+
+The weighted point class must fulfill the following requirements:
+
+\ccTypes
+\ccThree{typedef Point::RT}{RTxxxx}{}
+\ccNestedType{Point Point}{The point type}
+\ccGlue
+\ccNestedType{Weight Weight}{The weight type}
+\ccGlue
+\ccTypedef{typedef Point::RT RT;}{The ring type}
+
+\ccCreation
+\ccCreationVariable{wp}
+
+\ccConstructor{Weighted_point(const Point &p=Point(), const Weight &w
+= Weight(0))}{}
+
+\ccAccessFunctions
+\ccMethod{Point point() const;}{}
+\ccMethod{Weight weight() const;}{}
+
+		\subsubsection{The class Weighted\_point<Point,Weight>}
+
+This class provides \ccc{Regular_triangulation_euclidean_traits_3}
+with all the required functionalities.
+
+\ccInclude{CGAL/Weighted_point.h}
+
+\ccInheritsFrom{\ccc{Point}}
+
+		\end{ccClass}
+
 \section{The Triangulation Data Structure Parameter}
 \label{Triangulation3-sec-tds}
 
@@ -1451,182 +1987,3 @@ template parameter of \ccc{Triangulation_3<Traits,Tds>}.
 A model of this triangulation data structure is
 \ccc{Triangulation_data_structuree_3} presented in
 Section~\ref{TDS3-sec-class}. 
-
-\begin{ccClassTemplate}{Delaunay_triangulation_3<Traits,Tds>}
-\section{The Delaunay Triangulation Class\\ \protect
-\ccClassTemplateName}  
-
-\ccDefinition
-\ccInclude{CGAL/Delaunay_triangulation_3.h}
-
-\ccInheritsFrom{\ccc{Triangulation_3<Traits,Tds>}}
-
-\ccCreationVariable{dt}
-
-\ccTypes
-
-Inherits the types of \ccc{Triangulation_3<Traits,Tds>}.
-
-\ccCreation
-\ccThree{Bounded_side}{dt.remove(Pont p)toto}{}
-
-\ccConstructor{\ccClassName()}
-{Creates an empty Delaunay triangulation.}
-
-\ccConstructor{\ccClassName(const Traits & traits)}
-{Creates an empty Delaunay triangulation with traits class
-\ccc{traits}.}
-
-\ccConstructor{\ccClassName(const Delaunay_triangulation_3<Traits,Tds> & dt1)}
-{Copy constructor.}
-
-\ccModifiers
-
-\ccHeading{Insertion}
-
-The following methods, which already exist in triangulations, are
-overloaded to ensure the empty sphere property of Delaunay
-triangulations.
-
-\ccMethod{Vertex_handle insert(const Point & p );}
-{Inserts point \ccc{p} in the triangulation and returns the corresponding
- vertex. Similar to the insertion in a triangulation, but insures in
-addition the empty sphere property of all the created faces.}
-
-\ccMethod{Vertex_handle insert(const Point & p, Cell_handle start);}
-{Same as the previous method, \ccc{start} is used as a starting
-place for the location done within the insertion.}
-
-The following method allows to insert several points. It returns the
-number of inserted points. 
-\ccMethod{template < class InputIterator >
-          int
-          insert(InputIterator first, InputIterator last);}
-{Inserts the points in the range $\left[\right.$\ccc{first},
-\ccc{last}$\left.\right)$. 
-\ccPrecond{The \ccc{value_type} of \ccc{first} and \ccc{last} is
-\ccc{Point}.}}
-%\ccMethod{int insert(list<Point>::const_iterator first,
-%	     list<Point>::const_iterator last);}
-%{}
-%\ccGlue
-%\ccMethod{int insert(vector<Point>::const_iterator first,
-%	     vector<Point>::const_iterator last);}
-%{}
-%\ccGlue
-%\ccMethod{int insert(istream_iterator<Point, ptrdiff_t> first,
-%	     istream_iterator<Point, ptrdiff_t> last);}
-%{}
-%\ccGlue
-%\ccMethod{int insert(Point* first,
-%	     Point* last);}
-%{}
-
-\ccHeading{Removal}
-
-\ccMethod{void remove(Point p);}
-{Removes the vertex associated with \ccc{p}.
-\ccPrecond{There is a vertex of the triangulation associated with \ccc{p}.}\\
-\textit{not yet implemented}}
-
-\ccHeading{Queries}
-
-\ccMethod{Bounded_side
-          side_of_sphere(Cell_handle c, const Point & p) const;}
-{Returns on which side of the circumscribed sphere of \ccc{c} lies 
-the point \ccc{p}. More precisely, it returns:\\
-- \ccc{ON_BOUNDED_SIDE} if \ccc{p} is inside the sphere (for an infinite
-cell this means that \ccc{p} lies strictly either in the half space
-limited by its finite facet, or in the interior of the disk
-circumscribing the *finite* facet) \\ 
-- \ccc{ON_BOUNDARY} if p on the boundary of the sphere (for an infinite
-cell this means that \ccc{p} lies on the circle circumscribing
-the *finite* facet)\\ 
-- \ccc{ON_UNBOUNDED_SIDE} if \ccc{p} lies outside the sphere (for an
-infinite cell this means that \ccc{p} is not in the preceding two
-cases).
-\ccPrecond{\ccc{\ccVar.dimension()} $=3$.}}
-\ccMethod{Bounded_side
-	  side_of_circle(const Facet & f, const Point & p) const;}
-{Returns on which side of the circumscribed circle of \ccc{f} lies 
-the point \ccc{p}. More precisely, it returns:\\
-- in dimension~3:\\
--- for a finite facet, \ccc{ON_BOUNDARY} if \ccc{p} lies
-on the circle, \ccc{ON_UNBOUNDED_SIDE} when it lies in the exterior of
-the disk, \ccc{ON_BOUNDED_SIDE} when it lies in its interior.\\
--- for an infinite facet, it considers the plane defined by the finite
-facet of the same cell, and does the same as in dimension~2 in this
-plane.\\
-- in dimension~2:\\
--- for a finite facet, \ccc{ON_BOUNDARY} if \ccc{p} lies
-on the circle, \ccc{ON_UNBOUNDED_SIDE} when it lies in the exterior of
-the disk, \ccc{ON_BOUNDED_SIDE} when it lies in its interior.\\
--- for an infinite facet, \ccc{ON_BOUNDARY} if the
-point lies on the finite edge of \ccc{f} (endpoints included),
-\ccc{ON_BOUNDED_SIDE} for a point in the open half-plane defined
-by \ccc{f}, \ccc{ON_UNBOUNDED_SIDE} elsewhere.
-\ccPrecond{\ccc{\ccVar.dimension()} $\geq 2$.}}
-
-\ccMethod{Bounded_side
-	  side_of_circle(Cell_handle c, int i, const Point & p);}
-{Same as the previous method for facet \ccc{i} of cell \ccc{c}.}
-
-\begin{ccAdvanced}
-\ccHeading{Checking}
-\ccMethod{bool
-          is_valid(bool verbose = false) const;}
-{Checks the combinatorial validity of the triangulation and the
-validity of its geometric embedding (see
-Section~\ref{Triangulation3-sec-Valid}). Also checks that all the spheres
-(resp. circles in dimension~2) circumscribing cells (resp. facets in
-dimension~2) are empty. When \ccc{verbose} is set to true, 
-messages describing the first invalidity encountered are printed.\\
-This method is  mainly a debugging help for the users of advanced features.
-}
-\end{ccAdvanced}
-
-\end{ccClassTemplate}
-
-\begin{ccClassTemplate}{Delaunay_hierarchic_triangulation_3<Traits,Tds>}
-\section{The Hierarchic Delaunay Triangulation Class\\ \protect
-\ccClassTemplateName}  
-
-\textit{Not yet implemented}
-
-\end{ccClassTemplate}
-
-%\section{Debugging}
-
-%	\subsection{Pretty print}	
-% \textit{to be written}
-
-%	\subsection{Debugging with handles} 
-%Most debuggers cannot understand \ccc{handles} well. Under the
-%debugger, an instruction such as
-
-%\texttt{(dbx) print -r c->vertex(0)}
-
-%where \ccc{c} is a \ccc{Cell_handle}, is answered by:
-
-%\texttt{can't find field "vertex" in "c"}
-
-%To work around this problem, two functions have been defined to transform 
-%\ccc{handles} into usual $C^{++}$ pointers for debugging purposes.
-
-%\ccFunction{template <class Traits, class Tds>
-%	Triangulation_vertex_3<Traits,Tds> * 
-%debug(const Triangulation_vertex_handle_3<Traits,Tds> v);}
-%{}
-
-%\ccFunction{template <class Traits, class Tds>
-%	Triangulation_cell_3<Traits,Tds> * 
-%	debug(const Triangulation_cell_handle_3<Traits,Tds>
-%c);}
-%{}
-
-%This allows the following:\\
-%\texttt{(dbx) print -r CGAL\_debug(c)->vertex(0)\\
-%CGAL\_debug(c)->vertex(0) = \{\\\
-%\ldots\\
-%\} }
-
