@@ -113,8 +113,23 @@ where |++it == ite| and |NT| is the value type of |Forward_iterator|.
   if (res==0) res = 1;
   return res;
 }
+#else
 
-#endif //CGAL_SIMPLE_NEF_INTERFACE
+template <class NT>
+NT
+get_gcd(const NT& n1, const NT& n2, Tag_true)
+{
+   return CGAL_NTS gcd(n1, n2);
+}
+
+template <class NT>
+NT
+get_gcd(const NT& n1, const NT& n2, Tag_false)
+{
+   return NT(1);
+}
+
+#endif // CGAL_SIMPLE_NEF_INTERFACE
 
 
 template <class NT>  /*CGAL_KERNEL_MEDIUM_INLINE*/ Polynomial<NT>
@@ -416,7 +431,7 @@ determines the sign for the limit process $x \rightarrow \infty$.
     const_iterator its=ptr()->coeff.begin(),ite=ptr()->coeff.end();
     NT res = *its++;
     for(; its!=ite; ++its) res = 
-      (*its==0 ? res : CGAL_NTS gcd(res, *its));
+      (*its==0 ? res : get_gcd(res, *its, Number_type_traits<NT>::Has_gcd()));
     if (res==0) res = 1;
     return res;
   }
@@ -756,7 +771,7 @@ determines the sign for the limit process $x \rightarrow \infty$.
     const_iterator its=ptr()->coeff.begin(),ite=ptr()->coeff.end();
     int res = *its++;
     for(; its!=ite; ++its) res = 
-      (*its==0 ? res : CGAL_NTS gcd(res, *its));
+      (*its==0 ? res : get_gcd(res, *its, Number_type_traits<NT>::Has_gcd()));
     if (res==0) res = 1;
     return res;
   }
@@ -1077,7 +1092,7 @@ determines the sign for the limit process $x \rightarrow \infty$.
     const_iterator its=ptr()->coeff.begin(),ite=ptr()->coeff.end();
     double res = *its++;
     for(; its!=ite; ++its) res = 
-      (*its==0 ? res : CGAL_NTS gcd(res, *its));
+      (*its==0 ? res : get_gcd(res, *its, Number_type_traits<NT>::Has_gcd()));
     if (res==0) res = 1;
     return res;
   }
@@ -1836,7 +1851,7 @@ void Polynomial<int>::euclidean_div(
   r = f; r.copy_on_write();
   int rd=r.degree(), gd=g.degree(), qd(0);
   if ( rd < gd ) { q = Polynomial<int>(int(0)); }
-  else { qd = rd-gd+1; q = Polynomial<int>(size_t(qd)); }
+  else { qd = rd-gd+1; q = Polynomial<int>(std::size_t(qd)); }
   while ( rd >= gd ) {
     int S = r[rd] / g[gd];
     qd = rd-gd;
@@ -1861,7 +1876,7 @@ void Polynomial<int>::pseudo_div(
   }
   // now we know fd >= gd and f>=g
   int qd=fd-gd, delta=qd+1, rd=fd;
-  q = Polynomial<int>( size_t(delta) );
+  q = Polynomial<int>( std::size_t(delta) );
   int G = g[gd]; // highest order coeff of g
   D = G; while (--delta) D*=G; // D = G^delta
   Polynomial<int> res = Polynomial<int>(D)*f;
@@ -1920,7 +1935,7 @@ void Polynomial<double>::euclidean_div(
   r = f; r.copy_on_write();
   int rd=r.degree(), gd=g.degree(), qd(0);
   if ( rd < gd ) { q = Polynomial<double>(double(0)); }
-  else { qd = rd-gd+1; q = Polynomial<double>(size_t(qd)); }
+  else { qd = rd-gd+1; q = Polynomial<double>(std::size_t(qd)); }
   while ( rd >= gd ) {
     double S = r[rd] / g[gd];
     qd = rd-gd;
@@ -1945,7 +1960,7 @@ void Polynomial<double>::pseudo_div(
   }
   // now we know fd >= gd and f>=g
   int qd=fd-gd, delta=qd+1, rd=fd;
-  q = Polynomial<double>( size_t(delta) );
+  q = Polynomial<double>( std::size_t(delta) );
   double G = g[gd]; // highest order coeff of g
   D = G; while (--delta) D*=G; // D = G^delta
   Polynomial<double> res = Polynomial<double>(D)*f;
@@ -2001,7 +2016,7 @@ void Polynomial<NT>::euclidean_div(
   r = f; r.copy_on_write();
   int rd=r.degree(), gd=g.degree(), qd(0);
   if ( rd < gd ) { q = Polynomial<NT>(NT(0)); }
-  else { qd = rd-gd+1; q = Polynomial<NT>(size_t(qd)); }
+  else { qd = rd-gd+1; q = Polynomial<NT>(std::size_t(qd)); }
   while ( rd >= gd ) {
     NT S = r[rd] / g[gd];
     qd = rd-gd;
@@ -2026,7 +2041,7 @@ void Polynomial<NT>::pseudo_div(
   }
   // now we know fd >= gd and f>=g
   int qd=fd-gd, delta=qd+1, rd=fd;
-  q = Polynomial<NT>( size_t(delta) );
+  q = Polynomial<NT>( std::size_t(delta) );
   NT G = g[gd]; // highest order coeff of g
   D = G; while (--delta) D*=G; // D = G^delta
   Polynomial<NT> res = Polynomial<NT>(D)*f;
