@@ -62,7 +62,7 @@ private:
 	x=static_cast<FT>(widget->x_real(e->x())),
 	y=static_cast<FT>(widget->y_real(e->y()));
 	widget->new_object(make_object(Circle(Point(x1,y1),
-				squared_distance(Point(x1, y1), Point(x,y)))));
+		  squared_distance(Point(x1, y1), Point(x,y)))));
 	firstpoint = FALSE;
     }
   };
@@ -72,7 +72,7 @@ private:
     if(firstpoint)
     {
       QColor old_color = widget->color();
-      RasterOp old_raster = widget->rasterOp();	//save the initial raster mode
+      RasterOp old_raster = widget->rasterOp();//save the initial raster mode
       
       widget->lock();
 	widget->setRasterOp(XorROP);
@@ -94,7 +94,7 @@ private:
 	x=static_cast<FT>(widget->x_real(e->x())),
 	y=static_cast<FT>(widget->y_real(e->y()));
       QColor old_color = widget->color();
-      RasterOp old_raster = widget->rasterOp();	//save the initial raster mode		
+      RasterOp old_raster = widget->rasterOp();//save the initial raster mode		
       widget->setRasterOp(XorROP);
       widget->lock();
       *widget << CGAL::GREEN;
