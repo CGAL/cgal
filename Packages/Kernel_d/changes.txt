@@ -1,5 +1,8 @@
 Kernel_d Package: Release changes
 ----------------------------------------------------------------------
+0.9.80 (8 May 2003)
+  - no simple interface anymore in vector__
+
 0.9.79 (7 May 2003)
   - no simple interface for vc1310 in vector__
 
