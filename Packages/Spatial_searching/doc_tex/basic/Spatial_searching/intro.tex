@@ -1,24 +1,27 @@
-\chapter{Approximate Spatial Searching}
+\chapter{Spatial Searching}
 
 \section{Introduction}
 
-The {\bf approximate spatial searching} package implements
+The {\bf spatial searching} package implements
 exact and approximate distance browsing
 by providing implementations of algorithms supporting
 
 \begin{itemize} 
 
 \item
-both nearest and furthest neighbour searching
+both nearest and furthest neighbor searching
 
 \item
 both exact and approximate searching
 
-\item 
-(approximate) $k$-nearest and $k$-furthest neighbour searching
+\item
+(approximate) range searching
 
 \item 
-(approximate) incremental nearest and incremental furthest neighbour searching
+(approximate) $k$-nearest and $k$-furthest neighbor searching
+
+\item 
+(approximate) incremental nearest and incremental furthest neighbor searching
 
 \item
 query items representing points and spatial objects.
@@ -27,7 +30,7 @@ query items representing points and spatial objects.
 
 In these searching problems a set $P$ of data points in $d$-dimensional
 space is given.
-The points can be represented as Cartesian points or homogeneous points.
+The points can be represented by Cartesian coordinates or homogeneous coordinates.
 These points are preprocessed into a $k$-$d$ tree data structure, so that given
 any query item $q$ the points of $P$ can be browsed efficiently.
 The approximate spatial searching package is designed for data sets that are small enough to store
@@ -40,15 +43,15 @@ Spatial searching supports browsing through a collection of spatial objects
 stored in a spatial data structure on the basis of their distances to an arbitrary spatial
 query object.
 Spatial searching is supported in several ways. 
-The first approach is $k$-{\bf nearest neighbour searching} that makes use of a $k$-nearest neighbour
+The first approach is $k$-{\bf nearest neighbor searching} that makes use of a $k$-nearest neighbor
 algorithm, where $k$ is known prior to the invocation of the algorithm.
-Hence, the number of nearest neighbours has to be
+Hence, the number of nearest neighbors has to be
 guessed. If the guess is too large redundant computations are performed.
 If the number is too small the computation has to be  
-reinvoked for a larger number of neighbours, thereby performing redundant computations.
-The second approach is {\bf incremental nearest neighbour searching} in the sense that having obtained
-the $k$ nearest neighbours, the $k$ + 1$^{st}$ neighbour can be obtained without
-having to calculate the $k$ + 1 nearest neighbour from scratch.
+reinvoked for a larger number of neighbors, thereby performing redundant computations.
+The second approach is {\bf incremental nearest neighbor searching} in the sense that having obtained
+the $k$ nearest neighbors, the $k$ + 1$^{st}$ neighbor can be obtained without
+having to calculate the $k$ + 1 nearest neighbor from scratch.
 The incremental approach is useful when processing queries where
 one but not all of the conditions involves spatial proximity (e.g. the nearest city to Paris with
 population greater than a million).
@@ -60,19 +63,19 @@ one makes the queries.
 In the preprocessing phase the user builds a $k$-$d$ tree data structure storing the spatial data.
 In the searching phase the user invokes a searching method to browse the spatial data.
 
-With relatively minor modifications, nearest neighbour searching algorithms can be
+With relatively minor modifications, nearest neighbor searching algorithms can be
 used to find the furthest object from the query object. 
-Therefore, {\bf Furthest neighbour searching} is also supported
+Therefore, {\bf Furthest neighbor searching} is also supported
 by the approximate spatial searching package.
 
 {\bf Range searching}
-is supported for $d$-dimensional rectangles and spheres using incremental nearest neighbour search. 
+is supported for $d$-dimensional rectangles and spheres using incremental nearest neighbor search. 
 Rectangular range queries are supported by 
 using iso-rectangles as query item, and using a $L1$-distance between iso-rectangles and points.
 Spherical range queries are supported by using spheres as query item, and using a $L2$-distance
 between spheres and points.
 In both cases the distance is defined such that all points contained in a query item have distance zero
-to the query item. Hence, an incremental nearest neighbour search will report first all points
+to the query item. Hence, an incremental nearest neighbor search will report first all points
 contained in the query item.  
 
 {\bf Approximate searching}, is supported by
@@ -102,23 +105,23 @@ are called {\it buckets}, and they define a subdivision of the space into rectan
 Data points are only stored in the leaf nodes of the tree, not in the internal nodes.
 
 Friedmann, Bentley and Finkel \cite{fbf-afbml-77} described the standard
-search algorithm to find the $k$th nearest neighbour by searching a $k$-$d$ tree recursively.
+search algorithm to find the $k$th nearest neighbor by searching a $k$-$d$ tree recursively.
 
 When encountering a node of the  the algorithm first visits the child that is closest
 to the query point. On return, if the rectangle containing  the other child lies within
-1/ (1+$\epsilon$) times the distance to the $k$th nearest neighbours so far, then
+1/ (1+$\epsilon$) times the distance to the $k$th nearest neighbors so far, then
 the other child is visited recursively.
 Priority search \cite{am-annqf-93} visits the nodes in increasing order of distance from
 the queue with help of a priority queue.
 The search stops when the distance of the query point to the nearest nodes
 exceeds the distance to the nearest point found with a factor 1/ (1+$\epsilon$).
-Priority search supports next neighbour search, standard search does not.
+Priority search supports next neighbor search, standard search does not.
 
-In order to speed-up the internal distance computations in nearest neighbour searching
+In order to speed-up the internal distance computations in nearest neighbor searching
 in high dimensional space, the approximate searching package supports orthogonal searching. Orthogonal
 searching implements the efficient incremental distance computation
 technique introduced by Arya and Mount \cite{am-afvq-93}.
-Orthogonal searching works only for nearest neighbour queries using query items representing
+Orthogonal searching works only for nearest neighbor queries using query items representing
 points. Also the use of a Minkowski distance is required.
 
 To speed up distance computations also transformed
@@ -129,28 +132,28 @@ of square roots, squared distances are used instead of the Euclidean distance it
 \section{Example Programs}
 
 We give five examples. 
-The first example illustrates nearest neighbour searching.
+The first example illustrates nearest neighbor searching.
 Approximate searching is illustrated by the second example and range
 searching is illustrated by the third example.
 The fourth example illustrates distance browsing and the last example illustrates using
 a user defined point and distance class.
 
-\subsection{Example of Nearest Neighbour Searching}
+\subsection{Example of Nearest neighbor Searching}
 
-The first example illustrates nearest neighbour searching. The random data points are preprocessed
-in a $k$-$d$ tree. For each of the random query points its nearest neighbour is obtained.
+The first example illustrates nearest neighbor searching. The random data points are preprocessed
+in a $k$-$d$ tree. For each of the random query points its nearest neighbor is obtained.
 For the Euclidean distance used in this example \ccc{inverse_of_transformed_distance}
 implements taking the square root. (See also the last remark at the end of section~\ref{KDT_section}.)
 
 
 \ccIncludeExampleCode{ExampleA.C}
 
-\subsection{Example of Approximate Nearest and Furthest Neighbour Searching}
+\subsection{Example of Approximate Nearest and Furthest neighbor Searching}
 
-The second example program illustrates approximate nearest neighbour searching
+The second example program illustrates approximate nearest neighbor searching
 using 4-dimensional Cartesian coordinates.
 In this example the \ccc{MEDIAN_OF_MAX_SPREAD} splitting rule instead of the default splitting
-rule is used to build the $k$-$d$ tree. Five approximate nearest and furthest neighbours of
+rule is used to build the $k$-$d$ tree. Five approximate nearest and furthest neighbors of
 the query point (0.0, 0.0, 0.0, 0.0) are computed.
  
 \ccIncludeExampleCode{ExampleB.C}
@@ -161,7 +164,7 @@ The third example program illustrates range querying using homogeneous 3-dimensi
 A range query is defined by an instance of \ccc {CGAL::Iso_cuboid_3}. 
 All items in a range query are retrieved by 
 \ccc{get_elements_in_query}, which computes all items in
-the range query by appling incremental nearest neighbour searching. 
+the range query by appling incremental nearest neighbor searching. 
 
 \ccIncludeExampleCode{ExampleC.C}
 
@@ -174,7 +177,7 @@ and the distance class \ccc{CGAL::Weighted_Minkowski_distance}.
 
 \ccIncludeExampleCode{ExampleD.C}
 
-This example illustrates distance browsing to find the first 10 nearest neighbours of which
+This example illustrates distance browsing to find the first 10 nearest neighbors of which
 the first coordinate is positive. 
 
 \subsection{Example illustrating use of user defined point and distance class}
@@ -219,13 +222,13 @@ like the $L1$ distance for iso-rectangles.
 \item
 The class \ccc{Orthogonal_standard_search} implementing the standard search strategy for orthogonal distances
 like a weighted $L_p$ distance. Requires the use of extended nodes in the $k$-$d$ tree and supports
-only approximate nearest neighbour searching for point queries.
+only approximate nearest neighbor searching for point queries.
 
 \item
 The class \ccc{Orthogonal_priority_search} implementing the priority search strategy for general distances
 like the $L1$ distance for iso-rectangles. Requires the use of extended nodes in the $k$-$d$ tree
 and supports
-only approximate nearest neighbour searching for point queries.
+only approximate nearest neighbor searching for point queries.
 
 \item
 If a user wants to define a distance class the part of the reference page of the class
@@ -277,7 +280,7 @@ The parameter \ccc{Traits} should provide an implementation of the concept \ccc{
 specifying the parameters and the splitting rule used in the construction of a $k$-$d$ tree.
 
 The parameter \ccc{Distance} should provide an implementation of a distance.
-For the implementation of nearest neighbour searching with efficient incremental
+For the implementation of nearest neighbor searching with efficient incremental
 distance computation this distance class should meet the requirements of the concept
 \ccc{CGAL::OrthogonalDistance}. Otherwise the distance class has only to meet the
 requirements of the concept \ccc{CGAL::GeneralDistance}.

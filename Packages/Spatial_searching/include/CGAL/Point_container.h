@@ -8,15 +8,15 @@
 //
 // ----------------------------------------------------------------------
 //
-// release       :
-// release_date  :
+// release       : $CGAL_Revision: CGAL-2.5-I-99 $
+// release_date  : $CGAL_Date: 2003/05/23 $
 //
 // file          : include/CGAL/Point_container.h
-// package       : ASPAS
+// package       : ASPAS (3.12)
+// maintainer    : Hans Tangelder <hanst@cs.uu.nl>
 // revision      : 2.4 
 // revision_date : 2002/16/08 
 // authors       : Hans Tangelder (<hanst@cs.uu.nl>)
-// maintainer    : Hans Tangelder (<hanst@cs.uu.nl>)
 // coordinator   : Utrecht University
 //
 // ======================================================================
@@ -51,6 +51,7 @@ namespace CGAL {
   template <class Item> class Point_container {
   public:
     typedef std::list<Item*> Point_list; 
+    typedef std::vector<Item*> Point_vector;
     typedef typename Item::R::FT NT;
     typedef Point_container<Item> Self;
 
@@ -362,6 +363,16 @@ template <class Item_, class Value>
      
         
       p_list.sort(comp_coord_val<Item,int>(split_coord));
+
+      #ifdef CGAL_CFG_RWSTD_NO_MEMBER_TEMPLATES
+        Point_vector p_vector;
+    	std::copy(p_list.begin(), p_list.end(), std::back_inserter(p_vector));
+    	std::sort(p_vector.begin(),p_vector.end(),comp_coord_val<Item,int>(split_coord));
+    	p_list.clear();
+    	std::copy(p_vector.begin(), p_vector.end(), std::back_inserter(p_list));
+    #else
+        p_list.sort(comp_coord_val<Item,int>(split_coord));
+    #endif 
       
       typename Point_list::iterator 
       median_point_ptr=p_list.begin();
