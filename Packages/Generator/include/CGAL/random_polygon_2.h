@@ -31,8 +31,7 @@
 #include <set>
 #include <vector>
 #include <assert.h>
-#include <CGAL/Simplicity_sweep_2.h>
-#include <CGAL/Random_polygon_traits_2.h>
+#include <CGAL/Random_polygon_2_sweep.h>
 
 namespace CGAL {
 
@@ -53,7 +52,6 @@ OutputIterator random_polygon_2(int n,  OutputIterator result,
    typedef std::vector<Point_2>               Vertex_list;
    typedef typename Vertex_list::iterator     Iterator;
 
-   std::pair<Iterator, Iterator>  reverse_range;
    Vertex_list  vertices;
 
    copy_n_unique(pg, n, std::back_inserter(vertices), traits);
@@ -61,19 +59,7 @@ OutputIterator random_polygon_2(int n,  OutputIterator result,
 
    std::random_shuffle(vertices.begin(), vertices.end());
 
-   bool changing = true;
-
-   Simplicity_sweep_2<Iterator,Traits>  S(traits);
-
-   while (changing)
-   {
-      changing = S.sweep(vertices.begin(), vertices.end(), reverse_range);
-     
-     // gets rid of an intersection by reversing the order of the vertices 
-     // between the endpoints of two intersecting edges 
-      if (changing)
-         std::reverse(reverse_range.first, ++reverse_range.second);
-   }
+   make_simple_polygon(vertices.begin(), vertices.end(), traits);
 
    if (orientation_2(vertices.begin(), vertices.end()) == CLOCKWISE)
       std::reverse(vertices.begin(), vertices.end());
@@ -102,7 +88,7 @@ inline
 OutputIterator _random_polygon_2( int n,  OutputIterator result, 
                                  const PointGenerator& pg, Point_2<R>*)
 {
-   return random_polygon_2(n, result, pg, Random_polygon_traits_2<R>());
+   return random_polygon_2(n, result, pg, R());
 }
 
 
@@ -111,8 +97,8 @@ bool duplicate_points(ForwardIterator first, ForwardIterator beyond,
                       const Traits& )
 {
    typedef typename Traits::Point_2      Point_2;
-   typedef typename Traits::Less_yx_2    Less_yx_2;
-   std::set<Point_2,Less_yx_2>  point_set;
+   typedef typename Traits::Less_xy_2    Less_xy_2;
+   std::set<Point_2,Less_xy_2>  point_set;
    int i = 0;
    for (; first != beyond; first++, i++)
       if (!(point_set.insert(*first)).second) return true;
@@ -130,7 +116,7 @@ template <class ForwardIterator, class R>
 bool _duplicate_points(ForwardIterator first, ForwardIterator beyond,
                        Point_2<R>*)
 {
-   return duplicate_points(first, beyond, Random_polygon_traits_2<R>());
+   return duplicate_points(first, beyond, R());
 }
 
 // Copies the first n points from the input iterator to the output iterator,
@@ -142,9 +128,9 @@ OutputIterator copy_n_unique(InputIterator first, Size n,
                              const Traits& )
 {
    typedef typename Traits::Point_2    Point_2;
-   typedef typename Traits::Less_yx_2  Less_yx_2;
+   typedef typename Traits::Less_xy_2  Less_xy_2;
 
-   std::set<Point_2, Less_yx_2>    sorted_point_set;
+   std::set<Point_2, Less_xy_2>    sorted_point_set;
    int i;
    for (i = 0; i < n; i++)
    {
@@ -172,7 +158,7 @@ inline
 OutputIterator _copy_n_unique(InputIterator first, Size n, 
                               OutputIterator result, Point_2<R>*)
 {
-   return copy_n_unique(first, n, result, Random_polygon_traits_2<R>());
+   return copy_n_unique(first, n, result, R());
 }
 
 } // namespace CGAL

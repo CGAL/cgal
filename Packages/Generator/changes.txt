@@ -1,5 +1,9 @@
 Generator Package: Release changes:
 ---------------------------------------------------------------------
+2.42 (30 Oct 2001)
+   - updated to use of new polygon simplicity sweep and thus also to the
+     use of kernel traits.
+
 2.41 (29 Aug 2001)
    - changed ccSection commands to section commands since pdf converter that
      creates bookmarks can't handle the former

@@ -1,7 +1,7 @@
 //
 // file : examples/Generator/random_polygon_ex.C
 //
-#include <CGAL/Homogeneous.h>
+#include <CGAL/Cartesian.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/random_polygon_2.h>
@@ -25,7 +25,7 @@ typedef double RT;
 #include <fstream>
 #include <list>
 
-typedef CGAL::Homogeneous<RT>                             K;
+typedef CGAL::Cartesian<RT>                             K;
 typedef CGAL::Polygon_traits_2<K>                         Traits;
 typedef Traits::Point_2                                   Point_2;
 typedef std::list<Point_2>                                Container;
