@@ -1,3 +1,5 @@
+2.2.5  Susan moved Point_set_2_ref directory up one level
+
 2.2.4  Susan made changes necessary for manual split
 
 2.2.3  chapter name changed
