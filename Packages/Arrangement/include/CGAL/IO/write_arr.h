@@ -8,54 +8,22 @@
 //
 // ----------------------------------------------------------------------
 //
-// release       : $CGAL_Revision: CGAL-2.3-I-62 $
-// release_date  : $CGAL_Date: 2001/05/11 $
+// release       : $$
+// release_date  : $$
 //
-// file          : include/CGAL/IO/write_arr.h
-// package       : Arrangement (1.82)
+// file          : include/CGAL/Conic_arc_2_Window_stream.h
+// package       : Arrangement (2.19)
 // maintainer    : Eyal Flato <flato@math.tau.ac.il>
 // author(s)     : Eti Ezra <estere@post.tau.ac.il>
 // coordinator   : Tel-Aviv University (Dan Halperin <halperin@math.tau.ac.il>)
 //
 // ======================================================================
-
-// ======================================================================
-//
-// Copyright (c) 1997 The CGAL Consortium
-//
-// This software and related documentation is part of an INTERNAL release
-// of the Computational Geometry Algorithms Library (CGAL). It is not
-// intended for general use.
-//
-// ----------------------------------------------------------------------
-//
-// release       : $CGAL_Revision: CGAL-2.3-I-44 $
-// release_date  : $CGAL_Date: 2001/03/09 $
-//
-// file          : include/CGAL/IO/write_arr.h
-// package       : pm (1.81)
-// maintainer    : Eyal Flato <flato@math.tau.ac.il>
-// source        : 
-// revision      : 
-// revision_date : 
-// author(s)     : Eti Ezra <estere@post.tau.ac.il>
-//
-//
-// coordinator   : Tel-Aviv University (Dan Halperin <halperin@math.tau.ac.il>)
-//
-// Chapter       : 
-// ======================================================================
-
 #ifndef CGAL_IO_WRITE_ARR_H
 #define CGAL_IO_WRITE_ARR_H 
 
 #ifndef CGAL_BASIC_H
 #include <CGAL/basic.h>
 #endif
-
-//#ifndef CGAL_ARRANGEMENT_2_H
-//#include <CGAL/Arrangement_2.h>
-//#endif
 
 #include <CGAL/Inverse_index.h>
 #include <CGAL/IO/write_pm.h>
