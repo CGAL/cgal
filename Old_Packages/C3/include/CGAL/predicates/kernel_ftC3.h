@@ -25,39 +25,6 @@ compare_lexicographically_xyzC3(const FT &px, const FT &py, const FT &pz,
   return CGAL::compare(pz, qz);
 }
 
-// template < class FT >
-// /*CGAL_NO_FILTER*/
-// CGAL_KERNEL_MEDIUM_INLINE
-// Comparison_result
-// compare_dominanceC3(const FT &px, const FT &py, const FT &pz,
-//                     const FT &qx, const FT &qy, const FT &qz)
-// {
-//   Comparison_result cx = CGAL::compare(px, qx);
-//   if (cx == SMALLER) return SMALLER;
-//   Comparison_result cy = CGAL::compare(py, qy);
-//   if (cy == SMALLER) return SMALLER;
-//   Comparison_result cz = CGAL::compare(pz, qz);
-//   if (cz == SMALLER) return SMALLER;
-//   if (cx == LARGER && cy == LARGER && cz == LARGER) return LARGER;
-//   return EQUAL;
-// }
-
-// template < class FT >
-// /*CGAL_NO_FILTER*/
-// CGAL_KERNEL_MEDIUM_INLINE
-// Comparison_result
-// compare_submittanceC3(const FT &px, const FT &py, const FT &pz,
-//                       const FT &qx, const FT &qy, const FT &qz)
-// {
-//   Comparison_result cx = CGAL::compare(px, qx);
-//   if (cx == LARGER) return LARGER;
-//   Comparison_result cy = CGAL::compare(py, qy);
-//   if (cy == LARGER) return LARGER;
-//   Comparison_result cz = CGAL::compare(pz, qz);
-//   if (cz == LARGER) return LARGER;
-//   if (cx == SMALLER && cy == SMALLER && cz == SMALLER) return SMALLER;
-//   return EQUAL;
-// }
 
 template < class FT >
 CGAL_KERNEL_MEDIUM_INLINE
