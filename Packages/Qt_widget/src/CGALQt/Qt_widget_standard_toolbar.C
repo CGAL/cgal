@@ -159,7 +159,7 @@ namespace CGAL {
     showcoordBt->setPixmap(QPixmap( (const char**)mouse_coord_xpm) );
     showcoordBt->setTextLabel("Mouse Coordinates");
 
-    QButtonGroup* button_group = new QButtonGroup(0, "My_group");
+    button_group = new QButtonGroup(0, "My_group");
     // this button has no parent and is destroyed manually in the
     // destructor
 
@@ -189,8 +189,7 @@ namespace CGAL {
 
 
     // history setting
-    Qt_widget_history* history = 
-      new Qt_widget_history(widget, "standard history");
+    history = new Qt_widget_history(widget, "standard history");
     connect(backBt, SIGNAL(clicked()),
 	    history, SLOT(backward()));
     connect(forwardBt, SIGNAL(clicked()),

@@ -30,6 +30,7 @@
 namespace CGAL {
 
 class Qt_widget;
+class Qt_widget_history;
 
 class Qt_widget_standard_toolbar : public QToolBar
 {
@@ -60,6 +61,7 @@ private:
   
 private:
   Qt_widget	  *widget;
+  Qt_widget_history* history;
   QButtonGroup* button_group; 
     // this button has no parent and is destroyed manually in the
     // destructor
