@@ -117,11 +117,11 @@ template <class Circulator>
 class Construct_indirect_segment_2
 {
 public:
-   typedef Indirect_segment<Circulator>   Indirect_segment;
+   typedef Indirect_segment<Circulator>   I_segment;
 
    Indirect_segment operator()(Circulator p1, Circulator p2)
    {
-      return Indirect_segment(p1, p2);
+      return I_segment(p1, p2);
    }
 };
 
