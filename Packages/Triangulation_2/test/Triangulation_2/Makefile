@@ -5,8 +5,7 @@
 # Choose the right include file from the <cgalroot>/make directory.
 
 
-#
-CGAL_MAKEFILE = /0/prisme_util/CGAL/CGAL-I/make/makefile_i586_Linux-2.2.14_g++-2.95.3_LEDA
+CGAL_MAKEFILE = /0/prisme_util/CGAL/CGAL-2.3-I-79/make/makefile_sparc_SunOS-5.6_g++-3.0.
 
 include $(CGAL_MAKEFILE)
 

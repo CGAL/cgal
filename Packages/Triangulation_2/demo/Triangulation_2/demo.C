@@ -17,7 +17,7 @@ int main(int argc, char* argv[])
 #define leda_xor_mode CGAL::xor_mode
 #define leda_src_mode CGAL::src_mode
 #define leda_red      CGAL::red
-$define leda_pink     CGAL::pink
+#define leda_pink     CGAL::pink
 #endif //CGAL_USE_CGAL_WINDOW
 
 //to get shorter names

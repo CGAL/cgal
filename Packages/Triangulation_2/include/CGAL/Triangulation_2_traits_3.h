@@ -59,18 +59,19 @@ public:
 			 const Point& q,
 			 const Point& r)
     {
-      Orientation ori;
-      Point O(0.1111,0.1111,0.1111); 
-      Point A(1.1111,0,0);
-      Point B(0,1.1111,0);
-      Point C(0,0,1.1111);
+//       Orientation ori;
+//       Point O(0.1111,0.1111,0.1111); 
+//       Point A(1.1111,0,0);
+//       Point B(0,1.1111,0);
+//       Point C(0,0,1.1111);
 
-      Point P = ((ori = CGAL::orientation(p,q,r,O)) != ZERO) ? O:
-                ((ori = CGAL::orientation(p,q,r,A)) != ZERO) ? A:
-                ((ori = CGAL::orientation(p,q,r,B)) != ZERO) ? B:
-                ((ori = CGAL::orientation(p,q,r,C)) != ZERO) ? C: C;
-      return CGAL::orientation(p,q,r,P);
+//       Point P = ((ori = CGAL::orientation(p,q,r,O)) != ZERO) ? O:
+//                 ((ori = CGAL::orientation(p,q,r,A)) != ZERO) ? A:
+//                 ((ori = CGAL::orientation(p,q,r,B)) != ZERO) ? B:
+//                 ((ori = CGAL::orientation(p,q,r,C)) != ZERO) ? C: C;
+//       return CGAL::orientation(p,q,r,P);
     }
+  
 };
 
 template <class R>
@@ -83,25 +84,26 @@ public:
 				  const Point &r, 
 				  const Point &s)
     {
-      //CGAL_triangulation_precondition( 
-      //              CGAL::orientation(p,q,r,s) == COPLANAR );
-      CGAL_triangulation_precondition( !CGAL::collinear(p,q,r) );
+//       //CGAL_triangulation_precondition( 
+//       //              CGAL::orientation(p,q,r,s) == COPLANAR );
+//       CGAL_triangulation_precondition( !CGAL::collinear(p,q,r) );
 
-      // test belongs to the circle if and only if it belongs to a
-      // sphere passing through pqr
-      Orientation ori;
-      Point O(0.1111,0.1111,0.1111); 
-      Point A(1.1111,0,0);
-      Point B(0,1.1111,0);
-      Point C(0,0,1.1111);
+//       // test belongs to the circle if and only if it belongs to a
+//       // sphere passing through pqr
+//       Orientation ori;
+//       Point O(0.1111,0.1111,0.1111); 
+//       Point A(1.1111,0,0);
+//       Point B(0,1.1111,0);
+//       Point C(0,0,1.1111);
 
-      Point P = ((ori = CGAL::orientation(p,q,r,O)) != ZERO) ? O:
-                ((ori = CGAL::orientation(p,q,r,A)) != ZERO) ? A:
-                ((ori = CGAL::orientation(p,q,r,B)) != ZERO) ? B:
-                ((ori = CGAL::orientation(p,q,r,C)) != ZERO) ? C: C;
+//       Point P = ((ori = CGAL::orientation(p,q,r,O)) != ZERO) ? O:
+//                 ((ori = CGAL::orientation(p,q,r,A)) != ZERO) ? A:
+//                 ((ori = CGAL::orientation(p,q,r,B)) != ZERO) ? B:
+//                 ((ori = CGAL::orientation(p,q,r,C)) != ZERO) ? C: C;
 
-      return Oriented_side( ori *
-	      CGAL::side_of_oriented_sphere(p, q, r, P, s));
+//       return Oriented_side( ori *
+// 	      CGAL::side_of_oriented_sphere(p, q, r, P, s));
+      return CGAL::coplanar_side_of_bounded_circle(p,q,r,s);
     }
 };
 
@@ -118,7 +120,8 @@ public:
   typedef typename R::Compare_x_3         Compare_x_2;
   typedef Compare_yz_3<R>                 Compare_y_2;
   typedef Orientation_2_3<R>              Orientation_2;
-  typedef Side_of_oriented_circle_2_3<R>  Side_of_oriented_circle_2;
+  typedef R::Coplanar_side_of_bounded_circle_3 
+                                          Side_of_oriented_circle_2;
   
   typedef typename R::Construct_segment_3        Construct_segment_2;
   typedef typename R::Construct_triangle_3       Construct_triangle_2;

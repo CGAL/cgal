@@ -300,13 +300,20 @@ _test_cls_tds_2( const Tds &, const Gt &)
   std::ifstream if0("file_tds0"); CGAL::set_ascii_mode(if0);
   Tds tds0f; if0 >> tds0f ;   assert( tds0f.is_valid());
   std::ifstream if1("file_tds1"); CGAL::set_ascii_mode(if1);
-  Tds tds1f; if1 >> tds1f;  assert( tds1f.is_valid());
-  std::ifstream if2("file_tds2"); CGAL::set_ascii_mode(if2);
-  Tds tds2f; if2 >> tds2f ;   assert( tds2f.is_valid());
-  std::ifstream if3("file_tds3"); CGAL::set_ascii_mode(if3);
-  Tds tds3f; if3 >> tds3f ;   assert( tds3f.is_valid());
-  std::ifstream if4("file_tds4"); CGAL::set_ascii_mode(if4);
-  Tds tds4f; if4 >> tds4f ;   assert( tds4f.is_valid());
+  Tds tds1f; if1 >> tds1f;  
+  assert( tds1f.is_valid());
+  std::ifstream if2("file_tds2"); 
+  CGAL::set_ascii_mode(if2);
+  Tds tds2f; if2 >> tds2f ;   
+  assert( tds2f.is_valid());
+  std::ifstream if3("file_tds3"); 
+  CGAL::set_ascii_mode(if3);
+  Tds tds3f; if3 >> tds3f ;   
+  assert( tds3f.is_valid());
+  std::ifstream if4("file_tds4"); 
+  CGAL::set_ascii_mode(if4);
+  Tds tds4f; if4 >> tds4f ;   
+  assert( tds4f.is_valid());
 
   // test destructor and return
   std::cout << "    destructors and return" << std::endl;

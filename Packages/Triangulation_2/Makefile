@@ -82,7 +82,7 @@ Doc : Doc_ps Doc_html
 
 
 Doc_ps:
-	rm -f doc_ps/Triangulation_2.ps.gz;
+	cd doc_ps; rm -f Triangulation_2.ps.gz;
 	cd doc_tex/basic/Triangulation_2;\
 	latex wrapper.tex; bibtex wrapper; \
 	latex wrapper.tex; latex wrapper.tex; \
@@ -90,7 +90,7 @@ Doc_ps:
 	gzip Triangulation_2.ps;\
 	rm -f *.aux *.log *.dvi *.ps *.blg *.bbl *.toc ;
 	mv doc_tex/basic/Triangulation_2/Triangulation_2.ps.gz doc_ps ; 
-	rm -f doc_ps/pointer.ps.gz;
+	cd doc_ps; rm -f pointer.ps.gz;
 	cd doc_tex/support/Handle;\
 	latex wrapper.tex; bibtex wrapper; \
 	latex wrapper.tex; latex wrapper.tex; \

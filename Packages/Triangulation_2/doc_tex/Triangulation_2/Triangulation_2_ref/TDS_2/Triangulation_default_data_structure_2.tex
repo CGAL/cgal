@@ -57,12 +57,11 @@ and does not require any additional memory.
 
 The requirements concerning the geometric traits \ccc{Traits} of
 \ccc{Triangulation_default_data_structure_2}
- are very light and form a subset of the requirements needed
-for the geometric traits of the triangulations. 
+ are very light and form a subset of the concept
+\ccc{TriangulationTraits_2}.
 This class is required  to provide a type \ccc{Point}
 and the coordinate comparison functions \ccc{compare_x(Point p0, Point p1)} and
-\ccc{compare_y(Point p0, Point p1)}
-described in section~\ref{I1_Sect_Geom_traits}. The point type
+\ccc{compare_y(Point p0, Point p1)}. The point type
 defined by the geometric traits class of the triangulation data structure
 has to be the same 
 as the point type defined by the geometric traits of the triangulation.
