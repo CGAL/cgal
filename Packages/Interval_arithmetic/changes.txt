@@ -1,5 +1,9 @@
 Changes done to the Interval Arithmetic package.
 
+Version 4.47 on ?? June 2000
+- Removed useless "template <>" before full specializations of function
+  templates.
+
 Version 4.46 on 12 June 2000
 - Debuggued Lazy_exact_nt<>.
 

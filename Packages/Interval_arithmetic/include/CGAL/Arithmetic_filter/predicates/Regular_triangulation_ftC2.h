@@ -26,8 +26,6 @@ CGAL_BEGIN_NAMESPACE
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
-#else
-template <>
 #endif
 /*  */
 Oriented_side
@@ -85,8 +83,6 @@ power_testC2(
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
-#else
-template <>
 #endif
 /*  */
 Oriented_side
@@ -237,8 +233,6 @@ struct Static_Filtered_power_testC2_12
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
-#else
-template <>
 #endif
 /*  */
 Oriented_side
@@ -335,8 +329,6 @@ power_testC2(
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
-#else
-template <>
 #endif
 /*  */
 Oriented_side
@@ -410,8 +402,6 @@ power_testC2(
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
-#else
-template <>
 #endif
 /*  */
 Oriented_side
@@ -460,8 +450,6 @@ power_testC2(
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
-#else
-template <>
 #endif
 /*  */
 Oriented_side
@@ -609,8 +597,6 @@ struct Static_Filtered_power_testC2_9
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
-#else
-template <>
 #endif
 /*  */
 Oriented_side
@@ -695,8 +681,6 @@ power_testC2(
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
-#else
-template <>
 #endif
 /*  */
 Oriented_side
