@@ -29,13 +29,13 @@ public Base_traits_test<Traits_class, Number_type>
   {}
 
   // Read a curve.
-  virtual void read_curve (ifstream& is, Curve& cv);
+  virtual void read_curve (std::ifstream& is, Curve& cv);
   
   // Test the make_x_monotone function.
-  virtual bool make_x_monotone_wrapper (istrstream& str_line);
+  virtual bool make_x_monotone_wrapper (std::istrstream& str_line);
   
   // Test the curve_split function.
-  virtual bool curve_split_wrapper (istrstream& str_line);
+  virtual bool curve_split_wrapper (std::istrstream& str_line);
 };
 
 //---------------------------------------------------------------------
@@ -43,13 +43,13 @@ public Base_traits_test<Traits_class, Number_type>
 //
 template <class Traits_class, class Number_type>
 void Conic_traits_test<Traits_class, Number_type>::
-read_curve (ifstream& is, Curve& cv)
+read_curve (std::ifstream& is, Curve& cv)
 {
   // Read a line from the input file.
   char one_line[128];
 
   skip_comments (is, one_line);
-  istrstream str_line( one_line, 128 );
+  std::istrstream str_line( one_line, 128 );
 
   // Get the arc type.
   char  type;
@@ -152,7 +152,7 @@ read_curve (ifstream& is, Curve& cv)
 
   else
   {
-    cerr << "Illegal conic type specification: " << type << "." << endl;
+    std::cerr << "Illegal conic type specification: " << type << "." << std::endl;
     return;
   }
 
@@ -180,7 +180,7 @@ read_curve (ifstream& is, Curve& cv)
 //
 template<class Traits_class, class Number_type>
 bool Conic_traits_test<Traits_class, Number_type>::
-make_x_monotone_wrapper (istrstream& str_line)
+make_x_monotone_wrapper (std::istrstream& str_line)
 {
   // Read the inputs.
   int        cv_index;
@@ -188,24 +188,24 @@ make_x_monotone_wrapper (istrstream& str_line)
 
   str_line >> cv_index >> n_exp_curves;
 
-  cout << "Test: make_x_monotone( Curve" << cv_index << " ) ? " << endl;
+  std::cout << "Test: make_x_monotone( Curve" << cv_index << " ) ? " << std::endl;
 
   // Make x-monotone !
-  list<X_curve> x_curves;
+  std::list<X_curve> x_curves;
 
   tr.make_x_monotone (all_curves_vec[cv_index], x_curves);
 
   int           n_act_curves = static_cast<int>(x_curves.size()); 
   if (n_act_curves == n_exp_curves)
   {
-    cout << "Was successful" << endl;
+    std::cout << "Was successful" << std::endl;
     return (true);
   }
   else
   {
-    cout << "Was NOT successful" << endl;
-    cout << "Expected " << n_exp_curves << " x-monotone curves, "
-	 << "recieved " << n_act_curves << endl;
+    std::cout << "Was NOT successful" << std::endl;
+    std::cout << "Expected " << n_exp_curves << " x-monotone curves, "
+	 << "recieved " << n_act_curves << std::endl;
     return (false);
   }
 }
@@ -219,38 +219,40 @@ make_x_monotone_wrapper (istrstream& str_line)
 //
 template<class Traits_class, class Number_type>
 bool Conic_traits_test<Traits_class, Number_type>::
-curve_split_wrapper (istrstream& str_line)
+curve_split_wrapper (std::istrstream& str_line)
 {
   // Read the inputs.
   int     cv_index, pt_index;
 
   str_line >> cv_index >> pt_index;
-  cout << "Test: curve_split( Curve" << cv_index 
+  std::cout << "Test: curve_split( Curve" << cv_index 
        << ", " << all_points_vec[pt_index]
-       << " ) ? " << endl;
+       << " ) ? " << std::endl;
 
   // Check some preconditions.
   if (! tr.is_x_monotone(all_curves_vec[cv_index]))
   {
-    cout << "Was NOT successful" << endl;
-    cout << "Precondition fault: Input curve is not x-monotone" << endl;
+    std::cout << "Was NOT successful" << std::endl;
+    std::cout << "Precondition fault: Input curve is not x-monotone" 
+	      << std::endl;
     return (false);
   }
 
   if (tr.curve_get_point_status (all_curves_vec[cv_index], 
                                  all_points_vec[pt_index]) != tr.ON_CURVE)
   {
-    cout << "Was NOT successful" << endl;
-    cout << "Precondition fault: Split point is not on the curve" << endl;
+    std::cout << "Was NOT successful" << std::endl;
+    std::cout << "Precondition fault: Split point is not on the curve" 
+	      << std::endl;
     return (false);
   }
 
   if (all_curves_vec[cv_index].source() == all_points_vec[pt_index] ||
       all_curves_vec[cv_index].target() == all_points_vec[pt_index])
   {
-    cout << "Was NOT successful" << endl;
-    cout << "Precondition fault: Split point is an end point of the curve" 
-	 << endl;
+    std::cout << "Was NOT successful" << std::endl;
+    std::cout << "Precondition fault: Split point is an end point of the curve" 
+	 << std::endl;
     return (false);
   }
 
@@ -264,33 +266,33 @@ curve_split_wrapper (istrstream& str_line)
   // Check the results.
   if (cv1.source() != all_curves_vec[cv_index].source())
   {
-    cout << "Was NOT successful" << endl;
-    cout << "Source points of first parts are different" << endl;
+    std::cout << "Was NOT successful" << std::endl;
+    std::cout << "Source points of first parts are different" << std::endl;
     return (false);
   }
 
   if (cv1.target() != all_points_vec[pt_index])
   {
-    cout << "Was NOT successful" << endl;
-    cout << "Target points of first parts are different" << endl;
+    std::cout << "Was NOT successful" << std::endl;
+    std::cout << "Target points of first parts are different" << std::endl;
     return (false);
   }
 
   if (cv2.source() != all_points_vec[pt_index])
   {
-    cout << "Was NOT successful" << endl;
-    cout << "Source points of second parts are different" << endl;
+    std::cout << "Was NOT successful" << std::endl;
+    std::cout << "Source points of second parts are different" << std::endl;
     return (false);
   }
 
   if( cv2.target() != all_curves_vec[cv_index].target())
   {
-    cout << "Was NOT successful" << endl;
-    cout << "Target points of second are different" << endl;
+    std::cout << "Was NOT successful" << std::endl;
+    std::cout << "Target points of second are different" << std::endl;
     return (false);
   }
 
-  cout << "Was successfull" << endl;
+  std::cout << "Was successfull" << std::endl;
   return (true);
 }
 
