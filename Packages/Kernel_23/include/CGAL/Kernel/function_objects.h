@@ -23,6 +23,7 @@
 
 #include <CGAL/functional_base.h>
 #include <CGAL/Quotient.h>
+#include <CGAL/Origin.h>
 
 CGAL_BEGIN_NAMESPACE
 namespace CGALi {
