@@ -109,6 +109,14 @@ equal_xy(const PointC3<R CGAL_CTAG> &p, const PointC3<R CGAL_CTAG> &q)
 
 template < class R >
 inline
+bool
+equal_xyz(const PointC3<R CGAL_CTAG> &p, const PointC3<R CGAL_CTAG> &q)
+{
+  return p.x() == q.x() && p.y() == q.y() && p.z() == q.z();
+}
+
+template < class R >
+inline
 Comparison_result
 compare_xy(const PointC3<R CGAL_CTAG> &p, 
 	   const PointC3<R CGAL_CTAG> &q)
@@ -141,14 +149,6 @@ lexicographically_xy_smaller(const PointC3<R CGAL_CTAG> &p,
 			     const PointC3<R CGAL_CTAG> &q)
 { 
   return compare_lexicographically_xy(p,q) == SMALLER;
-}
-
-template < class R >
-inline
-bool
-equal_xyz(const PointC3<R CGAL_CTAG> &p, const PointC3<R CGAL_CTAG> &q)
-{
-  return p.x() == q.x() && p.y() == q.y() && p.z() == q.z();
 }
 
 template < class R >
