@@ -1,4 +1,7 @@
 09   February 2005 Mariette
+- removed the doc of the destructor of Tds_2
+
+09   February 2005 Mariette
 - removed the doc of the destructor of Triangulation_2
 - fixed the precondition in the doc of the Line_face_circulator
 
