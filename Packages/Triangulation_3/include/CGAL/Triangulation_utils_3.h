@@ -35,5 +35,19 @@ inline unsigned int cw(const unsigned int i)
   return tab_cw[i];
 }
 
+inline unsigned int nextposaroundij(const unsigned int i, 
+				    const unsigned int j)
+{
+  // index of the next cell when turning around the
+  // oriented edge vertex(i) vertex(j) in 3d
+  CGAL_precondition( ( i < 4 ) && ( j < 4 ) && ( i != j ) );
+  static const unsigned int tab_nextposaroundij[4][4] = {
+    5, 2, 3, 1,
+    3, 5, 0, 2,
+    1, 3, 5, 0,
+    2, 0, 1, 5 }; // the diagonal has no meaning
+  return tab_nextposaroundij[i][j];
+}
+
 #endif CGAL_TRIANGULATION_CW_2_H
 
