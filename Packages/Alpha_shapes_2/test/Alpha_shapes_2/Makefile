@@ -41,32 +41,34 @@ CXXFLAGS =  -I$(HOME)/Cgal-2.0/To_submit/Alpha_shapes_2/include \
 #---------------------------------------------------------------------#
 #                    linker flags
 #---------------------------------------------------------------------#
-LDFLAGS = $(CGAL_WINDOW_LIBPATH) \
-          $(CGAL_WINDOW_LDFLAGS)
+
+LIBPATH = $(CGAL_LIBPATH)
+
+LDFLAGS = $(CGAL_WINDOW_LDFLAGS)
 
 #---------------------------------------------------------------------#
 #                    target entries
 #---------------------------------------------------------------------#
 
-all: test_alpha test_weight
+all: test_alpha$(EXE_EXT) test_weight$(EXE_EXT)
 
-test_alpha: test_alpha.o
-	$(CGAL_CXX) -o test_alpha  test_alpha.o $(LDFLAGS)
+test_alpha$(EXE_EXT): test_alpha$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_alpha  test_alpha$(OBJ_EXT) $(LDFLAGS)
 
-test_weight: test_weight.o
-	$(CGAL_CXX) -o test_weight  test_weight.o $(LDFLAGS)
+test_weight$(EXE_EXT): test_weight$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_weight  test_weight$(OBJ_EXT) $(LDFLAGS)
 
 clean:
 	\rm -f *.o  *.obj *.exe \
-                   test_alpha  test_weight \
+                   test_alpha$(EXE_EXT)  test_weight$(EXE_EXT) \
                    core
 
 #---------------------------------------------------------------------#
 #                    suffix rules
 #---------------------------------------------------------------------#
 
-.C.o:
-	$(CGAL_CXX) $(CXXFLAGS) -c  $<
+.C$(OBJ_EXT):
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
 
 
 

@@ -31,7 +31,19 @@ correspondant a l'Alpha Shape ponderee.
 #include <CGAL/Regular_triangulation_2.h>
 #include <CGAL/Alpha_shape_2.h>
 
-typedef int coord_type;
+//Choose the better number type as possible
+#ifdef CGAL_USE_LEDA
+#include <CGAL/leda_integer.h>
+typedef leda_integer coord_type;
+#else//CGAL_USE_LEDA
+#ifdef CGAL_USE_GMP
+#include <CGAL/Gmpz.h>
+typedef CGAL::Gmpz coord_type;
+#else//CGAL_USE_GMP
+#include <CGAL/double.h>
+typedef double coord_type;
+#endif//CGAL_USE_GMP
+#endif//CGAL_USE_LEDA
 
 typedef CGAL::Cartesian<coord_type>  CRep;
 typedef CGAL::Point_2<CRep> Point_base;
