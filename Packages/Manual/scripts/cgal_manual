@@ -560,7 +560,7 @@ report_latex() {
 
 #---------------------------------------------------------------------#
 # cleanup_latex <wrapper-rootname>
-#     - Removes all temporaries
+#     - Removes all temporaries, called after LaTeX and PDFLaTeX
 #---------------------------------------------------------------------#
 
 cleanup_latex() {
@@ -765,7 +765,11 @@ run_latex() {
         fi 
     fi
     report_latex $1
-    if [ ${MakePDF} -eq 0 ] ; then cleanup_latex $1; fi
+    if [ ${MakePDF} -eq 0 ] ; then 
+        cleanup_latex $1
+    else
+        rm -f $1.aux
+    fi
     return $RetCode
 }
 

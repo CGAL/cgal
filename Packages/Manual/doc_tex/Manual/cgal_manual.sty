@@ -16,6 +16,7 @@
 
 % used with LaTeX but _not_ understood by the converter
 \lcTex{
+  \usepackage{ifpdf}
   \usepackage{makeidx}
   \usepackage{amssymb}
   \usepackage{graphicx}
@@ -52,12 +53,6 @@
   \lciIfDefined{\cgalversiondate}{}{\gdef\cgalversiondate{\today}}}
 
 
-% set this to true for generating the pdf version of the manual (using
-% ps2pdf from ghostscript).  If this is true when creating postscript,
-% the table of contents (and several other things) will be blue.
-\newboolean{usehyperref}
-\setboolean{usehyperref}{false}
-
 % minitoc and hyperref do not seem to work together so they should not both
 % be true
 \newboolean{useminitoc}
@@ -72,19 +67,20 @@
 % ... end configuration section.
 % +------------------------------------------------------------------------+
 
-% include hypperref for PDF documents if selected above
-\ifthenelse{\boolean{usehyperref}}{
-  \lcTex{
-  \usepackage[ps2pdf=true,
-              colorlinks=true,
+% include hypperref for PDF documents
+\lcTex{\ifpdf
+  \pdfinfo{
+    /Author   (CGAL Editorial Committee)
+    /Title    (CGAL Library Manuals)
+    /Keywords (computational geometry;generic programming;algorithms;software library;C++)
+  }
+  \usepackage[colorlinks=true,
               linkcolor=blue,
               bookmarksnumbered=true,
-              pdftitle={CGAL Library Manuals},
-              pdfkeywords={computational geometry, generic programming,
-                           algorithms, software library, C++},
               pdfborder={0 0 0}]{hyperref}%
-  }
-}{}
+\fi
+}
+
 
 % include minitoc if selected above
 \ifthenelse{\boolean{useminitoc}}{\lcTex{\usepackage{minitoc}}}
@@ -95,7 +91,7 @@
 \lcTex{
   \textwidth 15.6cm 
   \textheight 23 cm
-  \ifthenelse{\boolean{usehyperref}}{}{\topmargin -14mm}
+  \topmargin -14mm
   \evensidemargin 3mm 
   \oddsidemargin 3mm
   \marginparsep10mm   % needed for the tab-markers of reference pages
