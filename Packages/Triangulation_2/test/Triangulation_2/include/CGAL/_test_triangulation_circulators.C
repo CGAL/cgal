@@ -38,20 +38,33 @@ _test_circulators( const Triangulation &T )
   typedef typename Triangulation::Edge_circulator   Edge_circulator;
 
   int nvi = 0;
+  int nvi_r = 0;
   All_vertices_iterator vit;
   Vertex_circulator vc, vc0;
   for (vit = T.all_vertices_begin(); vit != T.all_vertices_end(); ++vit)
     {
       vc0 = vc = T.incident_vertices( vit, vit->face() );
-      //if( !vc.is_empty()){
-      if( vc != CGAL_CIRC_NULL){
-	do {
-	  vc++; nvi++;
-	} while (vc != vc0);
+      if( !vc.is_empty()){
+	if( vc != CGAL_CIRC_NULL){
+	  do {
+	    vc++; nvi++;
+	  } while (vc != vc0);
+	}
       }
+      //test operator --()
+       vc0 = vc = T.incident_vertices( vit, vit->face() );
+      if( !vc.is_empty()){
+	if( vc != CGAL_CIRC_NULL){
+	  do {
+	    vc--; nvi_r++;
+	  } while (vc != vc0);
+	}
+      }
+      assert(nvi_r == nvi);
     }
   
   int nfi = 0;
+  int nfi_r = 0;
   Face_circulator fc, fc0;
   for (vit = T.all_vertices_begin(); vit != T.all_vertices_end(); ++vit)
     {
@@ -61,10 +74,19 @@ _test_circulators( const Triangulation &T )
 	  fc++; nfi++;
 	} while (fc != fc0);
       }
+      //test operator --()
+      fc0 = fc = T.incident_faces( vit, vit->face() );
+      if( !fc.is_empty()){
+	do {
+	  fc--; nfi_r++;
+	} while (fc != fc0);
+      }
+      assert(nfi_r == nfi);
     }
   
 
   int nei = 0;
+  int nei_r = 0;
   Edge_circulator ec, ec0;
   for (vit = T.all_vertices_begin(); vit != T.all_vertices_end(); ++vit)
     {
@@ -74,14 +96,23 @@ _test_circulators( const Triangulation &T )
 	   ec++; nei++;
 	 } while (ec != ec0);
        }
+       //test operator --()
+       ec0 = ec = T.incident_edges( vit, vit->face() );
+       if( !ec.is_empty()){
+	 do {
+	   ec--; nei_r++;
+	 } while (ec != ec0);
+       }
+       assert(nei_r == nei);
     }
   
   //Traverse convex_hull- this count infinite
+  //using pre incrementation to test it
   int nch = 0;
   fc = fc0 = T.incident_faces(T.infinite_vertex());
   if( !fc.is_empty()){
     do {
-      fc++; nch++;
+      ++fc; nch++;
     } while (fc != fc0);
   }
   
@@ -95,7 +126,7 @@ _test_circulators( const Triangulation &T )
   assert ( nvi ==  nei);
   assert ( nvi == 2*me);
   assert ( nfi == 3*mf);
- 
+
 }
 
 
