@@ -170,7 +170,7 @@ namespace CGAL {
 	int depth() { return depth(1); }
 
 	template <class OutputIterator>
-	void tree_items(OutputIterator& it) {
+	OutputIterator tree_items(OutputIterator& it) {
             	if (is_leaf()) 
                         { 
 		          if (n>0) 
@@ -180,11 +180,12 @@ namespace CGAL {
 		else {
 			lower_ch->tree_items(it);  
 			upper_ch->tree_items(it); 
-		}
+		};
+		return it;
 	}
 
         template <class OutputIterator, class Rectangle>
-	void tree_items_in_rectangle(OutputIterator& it, 
+	OutputIterator tree_items_in_rectangle(OutputIterator& it, 
 	Rectangle& r, Kd_tree_rectangle<NT>* b, NT eps) {
             	if (is_leaf()) { 
 			if (n>0) 
@@ -211,11 +212,12 @@ namespace CGAL {
 			    upper_ch->tree_items_in_rectangle(it,r,b_upper,eps);
 
 		        delete b_upper;
-		}
+		};
+	        return it;				
 	}
 
    template <class OutputIterator>
-	void tree_items_in_sphere(OutputIterator& it, Item& center, 
+	OutputIterator tree_items_in_sphere(OutputIterator& it, Item& center, 
 		NT min_squared_radius, NT squared_radius, 
 		NT max_squared_radius, Kd_tree_rectangle<NT>* b) {
             	if (is_leaf()) { 
@@ -272,7 +274,9 @@ namespace CGAL {
 				
 			     delete b_upper;
 		}
-	}
+	return it;
+	};
+	
 
    };
 
