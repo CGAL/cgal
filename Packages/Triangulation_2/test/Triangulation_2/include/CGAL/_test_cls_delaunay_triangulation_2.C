@@ -20,19 +20,19 @@
 // coordinator   : INRIA Sophia-Antipolis
 // ============================================================================
 
-#include <iostream.h>
-#include <fstream.h>
+#include <iostream>
+#include <fstream>
 
-#include <pair.h>
-#include <list.h>
-#include <vector.h>
+#include <utility>
+#include <list>
+#include <vector>
 
 #include <CGAL/_test_fct_delaunay_duality.C>
 #include <CGAL/_test_cls_triangulation_2.C>
 
 template <class Triangulation>
 void
-CGAL__test_cls_delaunay_triangulation_2( const Triangulation & )
+CGAL::_test_cls_delaunay_triangulation_2( const Triangulation & )
 {
   typedef Triangulation                      Cls;
 
@@ -71,7 +71,7 @@ CGAL__test_cls_delaunay_triangulation_2( const Triangulation & )
   
   /***********************/
   /***** SUBCLASSES ******/
-  CGAL__test_cls_triangulation_2( Cls() );
+  CGAL::_test_cls_triangulation_2( Cls() );
 
   // Constructors
   cout << "    constructors(3)" << endl;
@@ -108,7 +108,7 @@ CGAL__test_cls_delaunay_triangulation_2( const Triangulation & )
   /********************/
   /***** Duality ******/
   cout << "    duality" << endl;
-  CGAL__test_delaunay_duality(T1);
-  CGAL__test_delaunay_duality(T2);
-  CGAL__test_delaunay_duality(T3);
+  CGAL::_test_delaunay_duality(T1);
+  CGAL::_test_delaunay_duality(T2);
+  CGAL::_test_delaunay_duality(T3);
 }

@@ -8,14 +8,16 @@ ERROR: could not execute the script CVS/cgal_test
 
 DIRECTORY Triangulation:
 
-   compilation of test_triangulation_tds succeeded
-   execution of test_triangulation_tds succeeded
-   compilation of test_triangulation_geom_traits succeeded
-   execution of test_triangulation_geom_traits succeeded
-   compilation of test_triangulation_2 succeeded
-   execution of test_triangulation_2 succeeded
-   compilation of test_delaunay_triangulation_2 succeeded
-   execution of test_delaunay_triangulation_2 succeeded
-   compilation of test_constrained_triangulation_2 succeeded
-   execution of test_constrained_triangulation_2 succeeded
+   ERROR: compilation of test_triangulation_tds failed
+   ERROR: could not execute test_triangulation_tds
+   ERROR: compilation of test_triangulation_geom_traits failed
+   ERROR: could not execute test_triangulation_geom_traits
+   ERROR: compilation of test_triangulation_2 failed
+   ERROR: could not execute test_triangulation_2
+   ERROR: compilation of test_delaunay_triangulation_2 failed
+   ERROR: could not execute test_delaunay_triangulation_2
+   ERROR: compilation of test_constrained_triangulation_2 failed
+   ERROR: could not execute test_constrained_triangulation_2
+   ERROR: compilation of test_regular_triangulation_2 failed
+   ERROR: could not execute test_regular_triangulation_2
 

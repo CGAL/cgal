@@ -5,10 +5,11 @@
 # Choose the right include file from the <cgalroot>/make directory.
 
 
-CGAL_MAKEFILE = /u/alcor/0/prisme_util/CGAL/CGAL-last/make/makefile_sparc_SunOS-5.6_eg++-egcs-2.91.60_LEDA
+#CGAL_MAKEFILE = /u/alcor/0/prisme_util/CGAL/CGAL-1.2-I-13/make/makefile_sparc_SunOS-5.6_CC-4.2_LEDA
+#CGAL_MAKEFILE = /u/alcor/0/prisme_util/CGAL/CGAL-last/make/makefile_sparc_SunOS-5.6_eg++-egcs-2.91.60_LEDA
 #CGAL_MAKEFILE = /u/alcor/0/prisme_util/CGAL/CGAL-1.2-I-13/make/makefile_mips_IRIX-6.2_CC-n32-7.20_LEDA
 #CGAL_MAKEFILE = /u/alcor/0/prisme_util/CGAL/CGAL-1.2-I-13/make/makefile_sparc_SunOS-5.6_eg++-egcs-2.91.57_LEDA
-
+CGAL_MAKEFILE = /u/alcor/0/prisme_util/CGAL/CGAL-2.0-I-1/make/makefile_sparc_SunOS-5.6_eg++-egcs-2.91.60_LEDA
 include $(CGAL_MAKEFILE)
 
 

@@ -23,7 +23,7 @@
 
 template <class Triangulation>
 void
-CGAL__test_delaunay_duality( const Triangulation &T )
+CGAL::_test_delaunay_duality( const Triangulation &T )
 {
   typedef Triangulation                      Cls;
 
@@ -64,23 +64,23 @@ CGAL__test_delaunay_duality( const Triangulation &T )
   Face_iterator fit;
   for (fit = T.faces_begin(); fit !=  T.faces_end(); ++fit)
     {
-      assert( T.side_of_oriented_circle(fit, T.dual(fit)) == CGAL_ON_POSITIVE_SIDE );
+      assert( T.side_of_oriented_circle(fit, T.dual(fit)) == CGAL::ON_POSITIVE_SIDE );
     }
   
   // Test dual(edge iterator)
   Edge_iterator eit;
   for (eit =  T.edges_begin(); eit !=  T.edges_end(); ++eit)
     {
-      CGAL_Object o = T.dual(eit);
+      CGAL::Object o = T.dual(eit);
       Segment s; Ray r; Line l;
-      if ( CGAL_assign(s,o) ) {
+      if ( CGAL::assign(s,o) ) {
         assert(  ! T.is_infinite((*eit).first) );
 	assert( ! T.is_infinite(((*eit).first)->neighbor((*eit).second )) );
-      } else if ( CGAL_assign(l,o) ) {
+      } else if ( CGAL::assign(l,o) ) {
         assert( T.is_infinite((*eit).first) );
 	assert( T.is_infinite(((*eit).first)->neighbor((*eit).second )) );
       } else
-        assert( CGAL_assign(r,o) );
+        assert( CGAL::assign(r,o) );
     }
 
   // Test dual(edge circulator)
@@ -89,9 +89,9 @@ CGAL__test_delaunay_duality( const Triangulation &T )
   do  
     {
       if (! T.is_infinite(ec)){
-	CGAL_Object o = T.dual(ec);
+	CGAL::Object o = T.dual(ec);
 	Segment s; Ray r; Line l;
-	assert( CGAL_assign(s,o) || CGAL_assign(r,o) || CGAL_assign(l,o) );
+	assert( CGAL::assign(s,o) || CGAL::assign(r,o) || CGAL::assign(l,o) );
       }
       ++ec;
     } while ( ec == done);

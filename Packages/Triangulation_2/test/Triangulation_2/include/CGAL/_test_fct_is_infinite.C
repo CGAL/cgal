@@ -23,7 +23,7 @@
 
 template <class Triangulation>
 void
-CGAL__test_fct_is_infinite( const Triangulation &T )
+CGAL::_test_fct_is_infinite( const Triangulation &T )
 {
   typedef typename Triangulation::Edge    Edge;
 

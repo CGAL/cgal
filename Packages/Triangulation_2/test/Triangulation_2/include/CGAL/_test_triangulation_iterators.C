@@ -27,11 +27,11 @@
 
 template < class Triangulation >
 void
-CGAL__test_iterators( const Triangulation &T )
+CGAL::_test_iterators( const Triangulation &T )
 {
-  int nv = CGAL__test_cls_vertex_iterator(T);
-  int ne = CGAL__test_cls_edge_iterator(T);
-  int nf = CGAL__test_cls_face_iterator(T);
+  int nv = CGAL::_test_cls_vertex_iterator(T);
+  int ne = CGAL::_test_cls_edge_iterator(T);
+  int nf = CGAL::_test_cls_face_iterator(T);
   // cout << "Euler's relation: " << nv -ne + nf << endl;
   assert( nv -ne + nf == 1); // Euler's relation
 }

@@ -21,11 +21,11 @@
 // ============================================================================
 
 
-#include <assert.h>
+#include <cassert>
 
 template <class Vertex>
 void
-CGAL__test_cls_triangulation_vertex( const Vertex & )
+CGAL::_test_cls_triangulation_vertex( const Vertex & )
 {
   cout << "    vertex" << endl;
 

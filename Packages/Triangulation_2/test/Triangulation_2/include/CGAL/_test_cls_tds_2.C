@@ -21,14 +21,14 @@
 // ============================================================================
 
 
-#include <assert.h>
+#include <cassert>
 
 #include <CGAL/_test_cls_tds_vertex.C>
 #include <CGAL/_test_cls_tds_face.C>
 
 template <class Tds, class Gt>
 void
-CGAL__test_cls_tds_2( const Tds &, const Gt & )
+CGAL::_test_cls_tds_2( const Tds &, const Gt & )
 {
   // Since tds is extensively used by Triangulation_2,
   // there is no real need to test the functionality
@@ -49,8 +49,8 @@ CGAL__test_cls_tds_2( const Tds &, const Gt & )
   typedef typename Tds::Edge_circulator   Edge_circulator;
 
   // Test subclasses
-  CGAL__test_cls_tds_vertex( Vertex(), Gt() );
-  CGAL__test_cls_tds_face( Face(), Gt() );
+  CGAL::_test_cls_tds_vertex( Vertex(), Gt() );
+  CGAL::_test_cls_tds_face( Face(), Gt() );
 
   // Test constructors
   cout << "    constructors" << endl;
@@ -85,7 +85,7 @@ CGAL__test_cls_tds_2( const Tds &, const Gt & )
   assert( tds1.infinite_vertex() == vt2 );
   assert( tds1.finite_vertex() == vt1 );
 
-  // The other functions are tested in CGAL__test_cls_triangulation_2()
+  // The other functions are tested in CGAL::_test_cls_triangulation_2()
   cout << "    insert... and remove... are tested by test_triangulation_2" << endl;
   cout << "    iterators and circulators are tested by test_triangulation_2" << endl;
   

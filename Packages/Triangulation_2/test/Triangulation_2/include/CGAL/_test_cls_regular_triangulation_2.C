@@ -22,8 +22,8 @@
 // ============================================================================
 
 
-#include <iostream.h>
-#include <fstream.h>
+#include <iostream>
+#include <fstream>
 
 //#include <pair.h>
 
@@ -37,7 +37,7 @@
 
 template < class Triangulation, class Point, class Face_handle >
 bool
-CGAL__test_is_to_the_left( const Triangulation &T,
+CGAL::_test_is_to_the_left( const Triangulation &T,
                            const Point &p,
 		           const Face_handle &f,
 		           const int li)
@@ -46,12 +46,12 @@ CGAL__test_is_to_the_left( const Triangulation &T,
               (f->vertex(f->ccw(li))->point(),
 	       f->vertex(f->cw(li))->point(),
 	       p)
-	  == CGAL_LEFTTURN );
+	  == CGAL::LEFTTURN );
 }
 
 template <class Triangulation>
 void 
-CGAL__test_cls_reg_triangulation_2( const Triangulation & )
+CGAL::_test_cls_reg_triangulation_2( const Triangulation & )
 {
   typedef Triangulation                      Cls;
 
@@ -419,14 +419,14 @@ Cls T0_2;
   /****** FINITE/INFINITE VERTICES/FACES *******/
 
   cout << "    finite/infinite vertices/faces" << endl;
-  CGAL__test_fct_is_infinite( T0_0 );
-  CGAL__test_fct_is_infinite( T0_1 );
-  CGAL__test_fct_is_infinite( T1_2 );
-  CGAL__test_fct_is_infinite( T1_5 );
-  CGAL__test_fct_is_infinite( T2_1 );
-  CGAL__test_fct_is_infinite( T2_3 );
-  CGAL__test_fct_is_infinite( T2_5 );
-  CGAL__test_fct_is_infinite( T2_6 );
+  CGAL::_test_fct_is_infinite( T0_0 );
+  CGAL::_test_fct_is_infinite( T0_1 );
+  CGAL::_test_fct_is_infinite( T1_2 );
+  CGAL::_test_fct_is_infinite( T1_5 );
+  CGAL::_test_fct_is_infinite( T2_1 );
+  CGAL::_test_fct_is_infinite( T2_3 );
+  CGAL::_test_fct_is_infinite( T2_5 );
+  CGAL::_test_fct_is_infinite( T2_6 );
 
 
 
@@ -461,19 +461,19 @@ Cls T0_2;
   assert( T1_3_2.geom_traits().compare(f->vertex(li)->point(), p9) );
   f = T1_3_2.locate(p0,lt,li); assert( lt == Cls::OUTSIDE );
   li = f->index(T1_3_2.infinite_vertex());
-  assert( CGAL__test_is_to_the_left(T1_3_2,p0,f,li) );
+  assert( CGAL::_test_is_to_the_left(T1_3_2,p0,f,li) );
   f = T1_3_2.locate(p7,lt,li); assert( lt == Cls::OUTSIDE );
   li = f->index(T1_3_2.infinite_vertex());
-  assert( CGAL__test_is_to_the_left(T1_3_2,p7,f,li) );
+  assert( CGAL::_test_is_to_the_left(T1_3_2,p7,f,li) );
   f = T1_3_2.locate(p5,lt,li); assert( lt == Cls::OUTSIDE );
   li = f->index(T1_3_2.infinite_vertex());
-  assert( CGAL__test_is_to_the_left(T1_3_2,p5,f,li) );
+  assert( CGAL::_test_is_to_the_left(T1_3_2,p5,f,li) );
   f = T1_3_2.locate(p4,lt,li); assert( lt == Cls::OUTSIDE );
   li = f->index(T1_3_2.infinite_vertex());
-  assert( CGAL__test_is_to_the_left(T1_3_2,p4,f,li) );
+  assert( CGAL::_test_is_to_the_left(T1_3_2,p4,f,li) );
   f = T1_3_2.locate(p6,lt,li); assert( lt == Cls::OUTSIDE );
   li = f->index(T1_3_2.infinite_vertex());
-  assert( CGAL__test_is_to_the_left(T1_3_2,p6,f,li) );
+  assert( CGAL::_test_is_to_the_left(T1_3_2,p6,f,li) );
 
   // Check point location in 2-dimensional triangulations
   cout << "    point locations 2-dim" << endl;
@@ -506,49 +506,49 @@ Cls T0_2;
        || (T2_1.geom_traits().compare(f->vertex(f->ccw(li))->point(), p0)
         && T2_1.geom_traits().compare(f->vertex(f->cw(li))->point(), p1)));
   f = T2_1.locate(p12,lt,li); assert( lt == Cls::FACE );
-  assert( T2_1.oriented_side(f,p12) == CGAL_ON_POSITIVE_SIDE );
+  assert( T2_1.oriented_side(f,p12) == CGAL::ON_POSITIVE_SIDE );
   f = T2_1.locate(p13,lt,li,f); assert( lt == Cls::OUTSIDE );
   li = f->index(T2_1.infinite_vertex());
-  assert( CGAL__test_is_to_the_left(T2_1,p13,f,li) );
+  assert( CGAL::_test_is_to_the_left(T2_1,p13,f,li) );
   f = T2_1.locate(p14,lt,li); assert( lt == Cls::OUTSIDE );
   li = f->index(T2_1.infinite_vertex());
-  assert( CGAL__test_is_to_the_left(T2_1,p14,f,li) );
+  assert( CGAL::_test_is_to_the_left(T2_1,p14,f,li) );
   f = T2_1.locate(p15,lt,li); assert( lt == Cls::OUTSIDE );
   li = f->index(T2_1.infinite_vertex());
-  assert( CGAL__test_is_to_the_left(T2_1,p15,f,li) );
+  assert( CGAL::_test_is_to_the_left(T2_1,p15,f,li) );
 
 
   /*************************/
   /******* Iterators *******/
   cout << "    iterators" << endl;
-  // CGAL__test_iterators(T0_0);
-  // CGAL__test_iterators(T0_1);
-  CGAL__test_iterators(T1_2);
-  CGAL__test_iterators(T1_3_0);
-  CGAL__test_iterators(T1_3_1);
-  CGAL__test_iterators(T1_5);
-  CGAL__test_iterators(T1_6);
-  CGAL__test_iterators(T2_1);
-  CGAL__test_iterators(T2_3);
-  CGAL__test_iterators(T2_5);
-  CGAL__test_iterators(T2_6);
-  CGAL__test_iterators(T2_7);
+  // CGAL::_test_iterators(T0_0);
+  // CGAL::_test_iterators(T0_1);
+  CGAL::_test_iterators(T1_2);
+  CGAL::_test_iterators(T1_3_0);
+  CGAL::_test_iterators(T1_3_1);
+  CGAL::_test_iterators(T1_5);
+  CGAL::_test_iterators(T1_6);
+  CGAL::_test_iterators(T2_1);
+  CGAL::_test_iterators(T2_3);
+  CGAL::_test_iterators(T2_5);
+  CGAL::_test_iterators(T2_6);
+  CGAL::_test_iterators(T2_7);
 
   /***************************/
   /******* Circulators *******/
   cout << "    circulators" << endl;
-  // CGAL__test_circulators(T0_0);
-  // CGAL__test_circulators(T0_1);
-  CGAL__test_circulators(T1_2);
-  CGAL__test_circulators(T1_3_0);
-  CGAL__test_circulators(T1_3_1);
-  CGAL__test_circulators(T1_5);
-  CGAL__test_circulators(T1_6);
-  CGAL__test_circulators(T2_1);
-  CGAL__test_circulators(T2_3);
-  CGAL__test_circulators (T2_5);
-  CGAL__test_circulators(T2_6);
-  CGAL__test_circulators(T2_7);
+  // CGAL::_test_circulators(T0_0);
+  // CGAL::_test_circulators(T0_1);
+  CGAL::_test_circulators(T1_2);
+  CGAL::_test_circulators(T1_3_0);
+  CGAL::_test_circulators(T1_3_1);
+  CGAL::_test_circulators(T1_5);
+  CGAL::_test_circulators(T1_6);
+  CGAL::_test_circulators(T2_1);
+  CGAL::_test_circulators(T2_3);
+  CGAL::_test_circulators (T2_5);
+  CGAL::_test_circulators(T2_6);
+  CGAL::_test_circulators(T2_7);
 
 
   // Line_face_circulator

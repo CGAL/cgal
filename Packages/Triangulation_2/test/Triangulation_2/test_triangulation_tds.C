@@ -20,6 +20,7 @@
 // coordinator   : INRIA Sophia-Antipolis
 // ============================================================================
 
+#include <CGAL/config.h>
 #include <CGAL/_test_types.h>
 
 #include <CGAL/Triangulation_vertex_base_2.h>
@@ -33,12 +34,12 @@ int
 main()
 {
   cout << "Testing Triangulation_defaut_data_structure_2" << endl;
-  typedef CGAL__Triangulation_test_traits Gt;
-  typedef CGAL_Triangulation_vertex_base_2<Gt> Vb;
-  typedef CGAL_Triangulation_face_base_2<Gt>  Fb;
-  typedef CGAL_Triangulation_default_data_structure_2<Gt,Vb,Fb> Cls;
+  typedef CGAL::_Triangulation_test_traits Gt;
+  typedef CGAL::Triangulation_vertex_base_2<Gt> Vb;
+  typedef CGAL::Triangulation_face_base_2<Gt>  Fb;
+  typedef CGAL::Triangulation_default_data_structure_2<Gt,Vb,Fb> Cls;
 
-  CGAL__test_cls_tds_2( Cls(), Gt() );
+  CGAL::_test_cls_tds_2( Cls(), Gt() );
   
   return 0;
 }

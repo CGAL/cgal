@@ -36,12 +36,12 @@ int main()
 {
   cout << "Testing constrained_triangulation with Gmpz "<< endl;
 
-  typedef CGAL__Triangulation_test_traits                       Gt;
-  typedef CGAL_Triangulation_vertex_base_2<Gt>                  Vb;
-  typedef CGAL_Constrained_triangulation_face_base_2<Gt>        CFb;
-  typedef CGAL_Triangulation_default_data_structure_2<Gt,Vb,CFb> Tds;
-  typedef CGAL_Constrained_triangulation_2<Gt,Tds>              CCls;
+  typedef CGAL::_Triangulation_test_traits                       Gt;
+  typedef CGAL::Triangulation_vertex_base_2<Gt>                  Vb;
+  typedef CGAL::Constrained_triangulation_face_base_2<Gt>        CFb;
+  typedef CGAL::Triangulation_default_data_structure_2<Gt,Vb,CFb> Tds;
+  typedef CGAL::Constrained_triangulation_2<Gt,Tds>              CCls;
 
-  CGAL__test_cls_constrained_triangulation(CCls());
+  CGAL::_test_cls_constrained_triangulation(CCls());
   return 0;
 }

@@ -21,11 +21,11 @@
 // ============================================================================
 
 
-#include <assert.h>
+#include <cassert>
 
 template <class Face>
 void
-CGAL__test_cls_triangulation_face( const Face & )
+CGAL::_test_cls_triangulation_face( const Face & )
 {
   cout << "    face" << endl;
   typedef typename Face::Geom_traits          Gt;

@@ -21,11 +21,11 @@
 // ============================================================================
 
 
-#include <assert.h>
+#include <cassert>
 
 template <class Face, class Gt>
 void
-CGAL__test_cls_tds_face( const Face &, const Gt & )
+CGAL::_test_cls_tds_face( const Face &, const Gt & )
 {
   cout << "    face" << endl;
 

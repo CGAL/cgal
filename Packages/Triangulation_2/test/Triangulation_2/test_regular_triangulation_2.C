@@ -36,15 +36,15 @@
 
 int main()
 {
-  cout << " with CGAL_Regular_triangulation_euclidean_traits_2 : " << endl;
-  typedef CGAL_Regular_triangulation_euclidean_traits_2
+  cout << " with CGAL::Regular_triangulation_euclidean_traits_2 : " << endl;
+  typedef CGAL::Regular_triangulation_euclidean_traits_2
     <Test_rep_cartesian, double>           RGt2;
-  typedef CGAL_Triangulation_vertex_base_2<RGt2>                     RVb2;
-  typedef CGAL_Regular_triangulation_face_base_2<RGt2>               RFb2;
-  typedef CGAL_Triangulation_default_data_structure_2<RGt2,RVb2,RFb2>  RTds2;
-  typedef CGAL_Regular_triangulation_2<RGt2,RTds2>                    RCls2;
+  typedef CGAL::Triangulation_vertex_base_2<RGt2>                     RVb2;
+  typedef CGAL::Regular_triangulation_face_base_2<RGt2>               RFb2;
+  typedef CGAL::Triangulation_default_data_structure_2<RGt2,RVb2,RFb2>  RTds2;
+  typedef CGAL::Regular_triangulation_2<RGt2,RTds2>                    RCls2;
 
-    CGAL__test_cls_reg_triangulation_2( RCls2() );
+    CGAL::_test_cls_reg_triangulation_2( RCls2() );
 
   return 0;
 }

@@ -23,11 +23,11 @@
 // coordinator   : INRIA Sophia-Antipolis
 // ============================================================================
 
-#include <assert.h>
+#include <cassert>
 
 template<class Traits, class Point>
 void
-CGAL__test_cls_distance(Point p[34],const Traits &)
+CGAL::_test_cls_distance(Point p[34],const Traits &)
 {
 
   typedef typename Traits::Distance Distance;
@@ -38,7 +38,7 @@ CGAL__test_cls_distance(Point p[34],const Traits &)
   Distance d2(p[0],p[1]); 
   Distance d3(p[0],p[1],p[2]);
   // try to apply compare to a valid objects
-   assert(d3.compare()==CGAL_SMALLER);
+   assert(d3.compare()==CGAL::SMALLER);
    // test accessors
    assert(d1.get_point(0)==p[0]);
    assert(d3.get_point(0)==p[0]);
@@ -49,14 +49,14 @@ CGAL__test_cls_distance(Point p[34],const Traits &)
    d0.set_point(0,p[0]);
    d0.set_point(1,p[1]);
    d0.set_point(2,p[2]);
-   assert(d0.compare()==CGAL_SMALLER);
+   assert(d0.compare()==CGAL::SMALLER);
    d1.set_point(1,p[1]);
    d1.set_point(2,p[2]);
-   assert(d1.compare()==CGAL_SMALLER);
+   assert(d1.compare()==CGAL::SMALLER);
    // test a degenerate case p1=p2
    d3.set_point(2,p[1]);
-   assert(d3.compare()==CGAL_EQUAL);
+   assert(d3.compare()==CGAL::EQUAL);
    // test a degenerate case p0=p1=p2
    d3.set_point(0,p[1]);
-   assert(d3.compare()==CGAL_EQUAL);
+   assert(d3.compare()==CGAL::EQUAL);
  }

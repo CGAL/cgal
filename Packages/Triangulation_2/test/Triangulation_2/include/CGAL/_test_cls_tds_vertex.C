@@ -21,11 +21,11 @@
 // ============================================================================
 
 
-#include <assert.h>
+#include <cassert>
 
 template <class Vertex, class Gt>
 void
-CGAL__test_cls_tds_vertex( const Vertex &, const Gt & )
+CGAL::_test_cls_tds_vertex( const Vertex &, const Gt & )
 {
   cout << "    vertex" << endl;
 
