@@ -458,7 +458,8 @@ public:
     return h;
   }
 
-  void init_marks_of_halfspheres(std::vector<Mark>& mohs, int offset);
+  void init_marks_of_halfspheres(std::vector<Mark>& mohs, int offset, 
+				 int axis);
   /*{\Mop initializes the default marks of the sphere map.}*/
 
   // C++ is really friendly:
@@ -485,10 +486,17 @@ public:
 
 
 template <typename D>
-void SNC_SM_point_locator<D>::init_marks_of_halfspheres(std::vector<Mark>& mohs, int offset)
-{ TRACEN("init_marks_of_halfspheres " << center_vertex()->point());
+void SNC_SM_point_locator<D>::
+init_marks_of_halfspheres(std::vector<Mark>& mohs, int offset, 
+			  int axis) { 
+
+  TRACEN("init_marks_of_halfspheres " << center_vertex()->point());
   
-  Sphere_point y_minus(0,-1,0);
+  Sphere_point y_minus;
+  if(axis!=1) 
+    y_minus = Sphere_point(0,-1,0);
+  else
+    y_minus = Sphere_point(0,0,1);
   SObject_handle h = locate(y_minus);
   SFace_const_handle f;
   if ( assign(f,h) ) { 
@@ -503,11 +511,12 @@ void SNC_SM_point_locator<D>::init_marks_of_halfspheres(std::vector<Mark>& mohs,
     CGAL_nef3_assertion(circle(e).has_on(y_minus));
     Sphere_point op(CGAL::ORIGIN+circle(e).orthogonal_vector());
     TRACEN("on edge "<<op);
-    if ( (op.x() > 0) || (op.x() == 0) && (op.z() < 0) ) e = twin(e);
-    // if ( (op.z() < 0) || (op.z() == 0) && (op.x() > 0) ) e = twin(e);
+    if (axis==0 && ((op.z() < 0) || (op.z() == 0) && (op.x() < 0))) e = twin(e);
+    if (axis==1 && ((op.x() > 0) || (op.x() == 0) && (op.y() < 0))) e = twin(e);
+    if (axis==2 && ((op.x() > 0) || (op.x() == 0) && (op.z() < 0))) e = twin(e);
     mohs[offset+1] = mark(face(e));
     mohs[offset] = mark(face(twin(e)));
-    //    TRACEN(mark(face(e)) << " " << mark(face(twin(e)));
+    TRACEN(mohs[offset] << " " << mohs[offset+1]);
     return;
   }
 
@@ -516,15 +525,21 @@ void SNC_SM_point_locator<D>::init_marks_of_halfspheres(std::vector<Mark>& mohs,
     CGAL_nef3_assertion(circle(l).has_on(y_minus));
     Sphere_point op(CGAL::ORIGIN+circle(l).orthogonal_vector());
     TRACEN("on loop "<<op);
-    if ( (op.x() > 0) || ((op.x() == 0) && (op.z() < 0)) ) l = twin(l);
-    // if ( (op.z() < 0) || (op.z() == 0) && (op.x() > 0) ) l = twin(l);
+    if (axis==0 && ((op.z() < 0) || (op.z() == 0) && (op.x() < 0))) l = twin(l);
+    if (axis==1 && ((op.x() > 0) || (op.x() == 0) && (op.y() < 0))) l = twin(l);
+    if (axis==2 && ((op.x() > 0) || (op.x() == 0) && (op.z() < 0))) l = twin(l);
     mohs[offset+1] = mark(face(l));
     mohs[offset] = mark(face(twin(l)));
     //    TRACEN(mark_of_halfsphere(-1) << " " << mark_of_halfsphere(+1));
     return;
   }
 
-  Sphere_circle c(0,0,1);
+  Sphere_circle c;
+  switch(axis) {
+  case 0: c = Sphere_circle(1,0,0); break;
+  case 1: c = Sphere_circle(0,1,0); break;
+  case 2: c = Sphere_circle(0,0,1); break;
+  }
   Sphere_direction right(c),left(c.opposite());
   bool collinear(false);
   SVertex_const_handle v;
