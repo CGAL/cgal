@@ -355,11 +355,12 @@ value_of_without()
 # needs awk!
 real_which()
 {
-    _t=0
-    for i in `echo ${PATH} | ${_awk} 'BEGIN {RS=":"}{print $0}'`; do
-	if [ ${_t} = 0 -a -x "${i}/$1" ]; then
+    for i in `echo ${PATH} | sed 's/ //g' | awk 'BEGIN {RS=":"}{print $0}'`
+    do
+	i=`echo $i | sed 's// /g'`
+	if [ -x "${i}/$1" ]; then
 	    echo ${i}/$1
-	    _t=1
+	    return 
 	fi
     done
 }
@@ -777,7 +778,7 @@ set_compiler_flags()
 	*CL*|*cl*)
 	    #### settings Microsoft Visual C++ compiler 
 	    WINDOWS_COMPILER="y"
-	    ADDITIONAL_CXXFLAGS="-TP -GR -GX -Zm900 -nologo -DCGAL_LIMITED_ITERATOR_TRAITS_SUPPORT `include_dir_option ${CGAL_DIR}/stlport`"
+	    ADDITIONAL_CXXFLAGS="-TP -GR -GX -Zm900 -nologo `include_dir_option ${CGAL_DIR}/stlport`"
 	    ADDITIONAL_LDFLAGS="-nologo"
 #	    CGAL_LIB_CXXFLAGS="-TP"
 	    CGAL_LIB_CREATE="LIB /OUT:"
@@ -3484,12 +3485,7 @@ gmp_menu()
 {
     while [ 0 ]; do
 	menu_header 'GMP'
-	case ${CGAL_OS_COMPILER} in 
-	    *CYGWIN*) print_line ""
-	    ;;
-	    *) print_line "${_bold_on}<C>${_bold_off}  Install GMP in CGAL tree"
-	    ;;
-	esac
+	print_line "${_bold_on}<C>${_bold_off}  Install GMP in CGAL tree"
 	print_line "${_bold_on}<G>${_bold_off}  Toggle GMP support" 
 	if [ -n "${GMP_SUPPORT}" ]; then
 	    print_line "${_bold_on}<I>${_bold_off}  GMP  include directory" 
@@ -3519,12 +3515,7 @@ gmp_menu()
 	menu_tailer 'Main Menu'
 
 	case $KEY in
-	    c|C)
-		case ${CGAL_OS_COMPILER} in 
-		    *CYGWIN*) ${_printf} "\n";;
-		    *) install_gmp;;
-		esac
-		;;
+	    c|C) install_gmp;;
 	    g|G)
 		if [ -z "${GMP_SUPPORT}" ]; then 
 		    SETUP_COMPLETE=''
@@ -3758,46 +3749,9 @@ link_gmp()
     done
 }
 
-# install GNU GMP in the CGAL directory tree
-install_gmp()
+# used by install_gmp
+install_gmp_sub()
 {
-    make_lib_dir
-    if [ -r ${CGAL_LIB_DIR}/${CGAL_OS_COMPILER}/libgmp.a -o \
-	 -r ${CGAL_LIB_DIR}/${CGAL_OS_COMPILER}/libgmp.so ]; then
-	if [ "${GMP_INSTALLATION}" != "c" ]; then
-	    GMP_INSTALLATION='c'
-	    GMP_TEST_PASSED=''
-	fi
-	go_down_lines 2
-	print_line "There already exists a GMP installation"
-	print_line "for this os/compiler in the CGAL tree."
-	print_empty_line
-	print_empty_line
-	print_filled_line
-	go_up_lines 2
-	print_prompt "Do you want to proceed anyway (y/N)? "
-	_read
-	if [ "${KEY}" != 'y' ]; then 
-	    return
-	fi
-    fi
-
-    # remove all os/compiler specific stuff
-    SAVE_LEDA="${LEDA_SUPPORT}"
-    LEDA_SUPPORT=''
-    make_lib_dir
-
-    clear_screen
-    print_filled_line
-    print_empty_line
-    print_headline "Installing GNU GMP in the CGAL tree"
-    print_filled_line
-    write_buffer "\n"
-    flush_buffer
-    ${_printf} "%s\t\t%s\n" "${_LEFTSPACE}OS:" "${SYST}" 
-    ${_printf} "%s\t%s\n\n" \
-	"${_LEFTSPACE}COMPILER:" "`extended_compiler_description`" 
-
     if [ ! -d ${GMP_VERSION} ]; then
 	# unzip
 	gmpfile=${CGAL_AUX_DIR}/${GMP_VERSION}.tar.gz
@@ -3839,6 +3793,72 @@ install_gmp()
 	fi
     fi
     cd ..
+}
+
+
+# install GNU GMP in the CGAL directory tree
+install_gmp()
+{
+    make_lib_dir
+    if [ -r ${CGAL_LIB_DIR}/${CGAL_OS_COMPILER}/libgmp.a -o \
+	 -r ${CGAL_LIB_DIR}/${CGAL_OS_COMPILER}/libgmp.so ]; then
+	if [ "${GMP_INSTALLATION}" != "c" ]; then
+	    GMP_INSTALLATION='c'
+	    GMP_TEST_PASSED=''
+	fi
+	go_down_lines 2
+	print_line "There already exists a GMP installation"
+	print_line "for this os/compiler in the CGAL tree."
+	print_empty_line
+	print_empty_line
+	print_filled_line
+	go_up_lines 2
+	print_prompt "Do you want to proceed anyway (y/N)? "
+	_read
+	if [ "${KEY}" != 'y' ]; then 
+	    return
+	fi
+    fi
+
+    # remove all os/compiler specific stuff
+    SAVE_LEDA="${LEDA_SUPPORT}"
+    LEDA_SUPPORT=''
+    make_lib_dir
+
+    clear_screen
+    print_filled_line
+    print_empty_line
+    print_headline "Installing GNU GMP in the CGAL tree"
+    print_filled_line
+    write_buffer "\n"
+    flush_buffer
+    ${_printf} "%s\t\t%s\n" "${_LEFTSPACE}OS:" "${SYST}" 
+    ${_printf} "%s\t%s\n\n" \
+	"${_LEFTSPACE}COMPILER:" "`extended_compiler_description`" 
+
+    case ${CGAL_OS_COMPILER} in 
+	*CYGWIN*) 
+	    gmpdir="${CGAL_AUX_DIR}/wingmp/gmp-2.0.2"
+	    case `compiler_description` in
+		*VC++*) 
+		    _check_write ${CGAL_INCL_DIR}
+		    ${_cp} "${gmpdir}/gmp.h" "${CGAL_INCL_DIR}"
+		    GMP_INSTALLATION='c'
+		    ${_cp} "${gmpdir}/msvc/gmp.lib" \
+			"${CGAL_LIB_DIR}/${CGAL_OS_COMPILER}"
+		    ;;
+		*Borland*) 
+		    _check_write ${CGAL_INCL_DIR}
+		    ${_cp} "${gmpdir}/gmp.h" "${CGAL_INCL_DIR}"
+		    GMP_INSTALLATION='c'
+		    ${_cp} "${gmpdir}/bcc/gmp.lib" \
+			"${CGAL_LIB_DIR}/${CGAL_OS_COMPILER}"
+		    ;;
+		*) install_gmp_sub;;
+	    esac
+	    ;;
+	*) install_gmp_sub;;
+    esac
     write_buffer "\n"
     print_filled_line
     wait_for_enter
