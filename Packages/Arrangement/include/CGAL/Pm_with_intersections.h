@@ -844,7 +844,7 @@ public:
     X_monotone_curve_2 orig_cv = cv;
     X_monotone_curve_2 split1, split2;
     Point_2 overlap_end_pt;
-    Halfedge_handle inserted_he, prev_halfedge, he_split, last_edge;
+    Halfedge_handle inserted_he, prev_halfedge, last_edge;
     bool is_overlap;
     bool next_face_valid = false;
     bool remaining_curve_trivial = false; 
