@@ -432,8 +432,8 @@ _test_cls_delaunay_3(const Triangulation &)
       vertices[i++] = vi;
     }
     int n = Tdel.number_of_vertices();
-    for(int i = 0; i < n; i++) {
-      assert(Tdel.remove(Vertex_handle(vertices[i])));
+    for(int j = 0; j < n; j++) {
+      assert(Tdel.remove(Vertex_handle(vertices[j])));
     }
     assert(Tdel.is_valid(false));
     std::cout << "    successfull" << std::endl; 
