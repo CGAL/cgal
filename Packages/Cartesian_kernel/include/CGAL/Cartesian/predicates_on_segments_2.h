@@ -36,6 +36,7 @@ compare_slopes(const SegmentC2<R CGAL_CTAG> &s1,
    return compare_slopesC2(s1.source().x(), s1.source().y(),
                            s1.target().x(), s1.target().y(),
                            s2.source().x(), s2.source().y(),
+                           s2.target().x(), s2.target().y());
 }
 
 
