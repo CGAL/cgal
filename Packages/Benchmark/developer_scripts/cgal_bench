@@ -1,0 +1,452 @@
+#!/usr/local/bin/perl -w
+
+package Elinfo;
+
+sub new {
+    bless { MINLEV  => undef,
+            ATAB    => {} }, shift;
+}
+
+package main;
+
+use English;
+use Getopt::Long;
+use XML::Parser;
+use Config;
+
+my $benchFailed=0;
+format =
+-------------------------
+	@<<<<< bench failed
+	$benchFailed
+.
+
+my $help = 0;
+my $verboseLevel = 0;
+my $root = $ENV{ROOT};
+my $benchDir = $root . '/bench';
+my $dataDir = $benchDir . '/data';
+my $databaseFile = $dataDir . '/benchDb.xml';
+
+my $os = 'linux';
+my $version = '2_4';
+my %filter = ();
+
+my $maxSlept = 30;
+
+my $indentCnt = 0;
+my $indentInc = 2;
+my $statusCol = 73;
+my $lineLength = 0;
+my $seenEOL = 1;
+
+my $isLog = 0;
+my $isGenerate = 0;
+
+$Getopt::Long::ignorecase = 0;
+die
+    unless GetOptions("databaseFile=s" => \$databaseFile,
+		      "generate!" => \$isGenerate,
+		      "help" => \$help,
+		      "indent=i" => \$indentInc,
+		      "log!" => \$isLog,
+		      "filterName=s" => \$filter{'name'},
+		      "os=s" => \$os,
+		      "verbose=i" => \$verboseLevel,
+		      "version=s" => \$version);
+
+usage() if $help;
+
+# Set destination directory:
+if ($verboseLevel > 1) {
+    printf "OS: $os\n";
+}
+
+# Severity enumeration:
+# 0 - stop execution
+# 1 - 
+# 2 - 
+# 3 - stop bench
+# 4 - failure
+# 5 - warning
+# 6 - information
+my @errors =
+(
+ {'code' => 0, svr => 6, usr => 0, msg => 'Really nothing!'},
+ {'code' => 1, svr => 0, usr => 0, msg => 'reserved'},
+ {'code' => 2, svr => 0, usr => 0, msg => 'reserved'},
+ {'code' => 3, svr => 3, usr => 0, msg => 'reserved'},
+ {'code' => 4, svr => 3, usr => 0, msg => 'reserved'},
+ {'code' => 5, svr => 3, usr => 0, msg => 'Time elapsed!'},
+ {'code' => 6, svr => 3, usr => 0, msg => 'Source file does not exist!'},
+ {'code' => 7, svr => 3, usr => 0, msg => 'Destination file does not exist!'},
+ {'code' => 8, svr => 4, usr => 1, msg => 'Snapshot is different than golden!'},
+ {'code' => 9, svr => 4, usr => 1, msg => 'At least one bench failed!'},
+ {'code' => 10, svr => 5, usr => 0, msg => 'Cannot read temporary file!'}
+ );
+my ($errn, $errt, $ie);
+my $maxSvr = 10;
+my $curSvr = $maxSvr;
+
+my @Attrs;
+my %Files;
+my $elementRoot;
+
+my $subform = '      @<<<<<<<<<<<<<<<<<<<<<<<  @>>>>';
+
+$databaseFile =$dataDir . '/' . $databaseFile unless -f $databaseFile;
+die "Can't find file \"$databaseFile\"" unless -f $databaseFile;
+
+doStart();
+
+my $parser = new XML::Parser(ErrorContext => 2,
+			     Handlers     => {Start      => \&start_handler,
+					      End        => \&end_handler,
+					      Char       => \&char_handler,
+					      CdataStart => \&cdata_start,
+					      CdataEnd   => \&cdata_end
+					      }
+			     );
+
+$parser->parsefile($databaseFile);
+
+doExit(0);
+
+################
+## End of main
+################
+
+#
+#
+#
+sub start_handler
+{
+  my $xp = shift;
+  my $currentElement = shift;		# innermost currently opened element
+  my $element;
+  my $parentEnable = 'true';
+  my $parentAttrTable = 0;
+
+  if (defined($xp->current_element)) {
+    $parentAttrTable = $Attrs[$#Attrs];
+    $parentEnable = $parentAttrTable->{'enable'};
+  }
+
+  # Initialize attributes:
+  $attrTable = {};
+  $attrTable->{'enable'} = $parentEnable;
+  $attrTable->{'samples'} = $parentAttrTable->{'samples'}
+    if ($parentAttrTable && exists($parentAttrTable->{'samples'}));
+  $attrTable->{'name_length'} = $parentAttrTable->{'name_length'}
+    if ($parentAttrTable && exists($parentAttrTable->{'name_length'}));
+  $attrTable->{'header'} = $parentAttrTable->{'header'}
+    if ($parentAttrTable && exists($parentAttrTable->{'header'}));
+  $attrTable->{'type_mask'} = $parentAttrTable->{'type_mask'}
+    if ($parentAttrTable && exists($parentAttrTable->{'type_mask'}));
+  $attrTable->{'strategy_mask'} = $parentAttrTable->{'strategy_mask'}
+    if ($parentAttrTable && exists($parentAttrTable->{'strategy_mask'}));
+
+  push @Attrs, $attrTable;
+  
+  # Update attributes:
+  while (@_) {
+    my $id = shift;
+    my $val = shift;
+    $val = $xp->xml_escape($val, "'");
+    $attrTable->{$id} = $val;
+  }
+
+  if ($currentElement eq 'file') {
+    processStartFile($attrTable);
+    return;
+  }
+
+  # Don't process if bench is disable:
+  return if ($attrTable->{'enable'} ne 'true');
+
+  # Process 'bench':
+  if ($currentElement eq 'bench') {
+    processStartBench($attrTable);
+    return;
+  }
+
+  # Disable it, if filter{name} has been specified and there is no match:
+  return if (defined($filter{'name'}) &&
+	     ($element !~ m/(?:^|\/)$filter{'name'}(?:$|\/)/));
+
+  # run the command
+  processStartCmd($currentElement, $attrTable);
+}
+
+#
+#
+#
+sub end_handler
+{
+  my $xp = shift;
+  my $currentElement = shift;
+  my $element = $currentElement;
+
+  my $attrTable = pop @Attrs;
+  my $parentAttrTable = 0;
+  $parentAttrTable = $Attrs[$#Attrs] if (defined($xp->current_element));
+
+  return if ($currentElement eq 'file');
+  return if ($attrTable->{'enable'} ne 'true');
+
+  # Process 'bench':
+  if ($currentElement eq 'bench') {
+    processEndBench($parentAttrTable, $attrTable);
+    return;
+  }
+
+  # Disable it, if filter{name} has been specified and there is no match:
+  return if (defined($filter{'name'}) &&
+	     ($element !~ m/(?:^|\/)$filter{'name'}(?:$|\/)/));
+
+  # Process the command:
+  processEndCmd($currentElement, $parentAttrTable, $attrTable);
+}
+
+#
+sub char_handler
+{
+  my ($xp, $data) = @_;
+}
+
+#
+sub cdata_start
+{
+  my $xp = shift;
+}
+
+#
+sub cdata_end
+{
+  my $xp = shift;
+}
+
+#
+sub showtab
+{
+  my ($title, $table, $dosum) = @_;
+  my @list = sort keys %{$table};
+  if (@list) {
+    print "\n   $title:\n";
+    my $item;
+    my $sum = 0;
+    foreach $item (@list) {
+      my $cnt = $table->{$item};
+      formline($subform, $item, $cnt);
+      print $ACCUMULATOR, "\n";
+      $ACCUMULATOR = '';
+    }
+    if ($dosum and @list > 1) {
+      print  "                                =====\n";
+      formline($subform, '', $sum);
+      print $ACCUMULATOR, "\n";
+      $ACCUMULATOR = '';
+    }
+  }
+}
+
+#
+sub usage {
+  printf "Usage: MakeHtmlPage [options]\n";
+printf "\t-help\t\t\tprint this help message
+\t-verbose <level>\tset verbose level to <level> on
+\t-databaseFile <file>\tset database xml file to <file>
+\t-filterName <name>\tselect <name> bench (and sub benches).\n";
+    
+  exit(0);
+}
+
+#
+sub processError
+{
+  my ($errCode, $errMsg, $attrTable) = @_;
+  if (!$errors[$errCode]{usr} || $verboseLevel > 1) {
+    printInfo("$errMsg", 1) if $errMsg;
+    printInfo("$errors[$errCode]{msg}", 1);
+  }
+  my $svr = $errors[$errCode]{svr};
+  $attrTable->{'status'} = 'failed' if ($svr <= 4);
+  doExit($errCode) if ($svr == 0);
+  return $svr;
+}
+
+#
+sub printStatus
+{
+  my ($attrTable) = @_;
+  printInfo("Bench status", 0) if ($seenEOL);
+  my $statusIndentCnt = $statusCol - $lineLength;
+  my $fmt = '%' . $statusIndentCnt . 's';
+  my $spacing = sprintf($fmt, ' ');
+  printInfo($spacing . $attrTable->{'status'}, 1);
+}
+
+#
+sub doStart
+{
+  print scalar localtime; printf "\n";
+}
+
+#
+sub doExit
+{
+  print scalar localtime; printf "\n";
+  my $rc = shift;
+  write() if ($verboseLevel > 1 && $benchFailed > 0);
+  exit($rc);
+}
+
+#
+sub printInfo
+{
+  my ($line, $endOfLine) = @_;
+  return unless $verboseLevel;
+    
+  if ($seenEOL && $indentCnt) {
+    my $fmt = '%' . $indentCnt . 's';
+    printf ($fmt, ' ');
+    $lineLength += $indentCnt;
+  }
+  print $line;
+  if ($endOfLine) {
+    printf "\n";	
+    $seenEOL = 1;
+    $lineLength = 0;
+  } else {
+    $seenEOL = 0;
+    $lineLength += length $line;
+  }
+}
+
+#
+sub processStartFile
+{
+  my ($attrTable) = @_;
+  return if ($curSvr <= 1);
+  printInfo("Adding file $attrTable->{'name'}", 1) if ($verboseLevel > 1);
+  $Files{$attrTable->{'name'}} = $attrTable;
+}
+
+#
+sub processStartBench
+{
+  my ($attrTable) = @_;
+  return if ($curSvr <= 1);
+  printInfo("Performing bench", 1);
+  $attrTable->{'status'} = 'passed';
+  $indentCnt += $indentInc;	
+}
+
+#
+sub processStartCmd
+{
+  my ($currentElement, $attrTable) = @_;
+  return if ($curSvr <= 3);
+  printInfo("Performing $currentElement ($attrTable->{'file'}) ", 0);
+  $attrTable->{'status'} = 'unknow';
+  $indentCnt += $indentInc;	
+
+  my $fileAttrTable = $Files{$attrTable->{'file'}};
+  my $filename = $fileAttrTable->{'name'};
+  my $format = $fileAttrTable->{'format'};
+  my $samples = $attrTable->{'samples'} if exists($attrTable->{'samples'});
+  my $nameLength = $attrTable->{'name_length'}
+    if exists($attrTable->{'name_length'});
+  my $header = $attrTable->{'header'} if exists($attrTable->{'header'});
+  my $type_mask = $attrTable->{'type_mask'}
+    if exists($attrTable->{'type_mask'});
+  my $strategy_mask = $attrTable->{'strategy_mask'}
+    if exists($attrTable->{'strategy_mask'});
+  
+  my $command = $currentElement;
+  @args = ();
+  push @args, $command;
+  push @args, '-If=' . $format;
+  push @args, '-s' . $samples if defined($samples);
+  push @args, '-bh=' . $header if defined($header);
+  push @args, '-bnl=' . $nameLength if defined($nameLength);
+  push @args, '-btype_mask=' . $type_mask if defined($type_mask);
+  push @args, '-bstrategy_mask=' . $strategy_mask if defined($strategy_mask);
+  push @args, $filename;
+
+  # print command
+  printInfo("@args", 1) if ($verboseLevel > 1);
+
+  printInfo('.', 0);
+  
+  if (1) {
+  $rc = 0xffff & system @args;
+  print("system(%s) returned %#04x: ", "@args", $rc) if ($verboseLevel > 1);
+  if ($rc == 0) {
+    print("ran with normal exit\n") if ($verboseLevel > 1);
+  } elsif ($rc == 0xff00) {
+    print "command failed : $!\n";
+  } elsif ($rc > 0x80) {
+    $rc >>= 8;
+    print "ran with non-zero exit status $rc\n";
+  } else {
+    print "ran with ";
+    if ($rc & 0x80) {
+      $rc &= ~0x80;
+      print "coredump from ";
+    }
+    print "signal $rc\n";
+  }
+  $attrTable->{'status'} = ($rc == 0) ? 'passed' : 'failed';
+  }
+
+  printInfo("", 1) if ($verboseLevel > 1);
+}
+
+#
+sub updateParentStatus
+{
+  my ($parentAttrTable, $attrTable) = @_;
+  $parentAttrTable->{'status'} = 'failed'
+    if ($attrTable->{'status'} eq 'failed');
+  $parentAttrTable->{'status'} = 'unknow'
+    if ($parentAttrTable->{'status'} eq 'passed') &&
+    ($attrTable->{'status'} eq 'unknow');
+}
+
+#
+sub processEndBench
+{
+  my ($parentAttrTable, $attrTable) = @_;
+  return if ($curSvr < 1);
+  printInfo("Analyzing bench ", 0) if ($verboseLevel > 2);
+  printStatus($attrTable);
+  updateParentStatus($parentAttrTable, $attrTable) if ($parentAttrTable);
+  $curSvr = $maxSvr;
+  $indentCnt -= $indentInc;
+}
+
+#
+sub processEndCmd
+{
+  my ($currentElement, $parentAttrTable, $attrTable) = @_;
+  return if ($curSvr < 3);
+  printInfo("Analyzing $currentElement $attrTable->{'file'}", 1)
+    if ($verboseLevel > 2);
+
+  if ($attrTable->{'status'} ne 'failed') {
+    # do something
+  }
+  
+  printStatus($attrTable);
+  updateParentStatus($parentAttrTable, $attrTable);
+
+  $benchFailed++  if ($attrTable->{'status'}  eq 'failed');
+  $indentCnt -= $indentInc;
+  $curSvr = $maxSvr;
+}
+
+# Tell Emacs that this is really a perl script
+# Local Variables:
+# mode:perl
+# End:
