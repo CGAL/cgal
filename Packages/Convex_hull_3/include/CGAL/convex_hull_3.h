@@ -31,16 +31,16 @@
 #define CGAL_CONVEX_HULL_3_H
 
 #include <CGAL/basic.h>
-#include <iostream>
-#include <algorithm>
-#include <utility>
-#include <list>
-#include <vector>
 #include <CGAL/Hash_map.h>
 #include <CGAL/algorithm.h> 
 #include <CGAL/convex_hull_2.h>
 #include <CGAL/Polyhedron_incremental_builder_3.h>
 #include <CGAL/Convex_hull_traits_3.h>
+#include <iostream>
+#include <algorithm>
+#include <utility>
+#include <list>
+#include <vector>
 
 #ifndef CH_NO_POSTCONDITIONS
 #include <CGAL/convexity_check_3.h>
@@ -169,7 +169,7 @@ find_visible_set(const typename Traits::Point_3& point,
             traits.has_on_positive_side_3_object();
 
    visible.clear();
-   std::list<Facet_handle>::iterator  vis_it;
+   typename std::list<Facet_handle>::iterator  vis_it;
    CGAL::Hash_map<Facet_handle, bool> visited(false);
    visible.push_back(start_facet);
    visited[start_facet] = true;
@@ -242,8 +242,8 @@ partition_outside_sets(const std::list<Facet_handle>& new_facets,
         std::list<Facet_handle>& pending_facets, 
         const Traits& traits, const typename Traits::Point_3& farthest_pt)
 {
-   std::list<Facet_handle>::const_iterator        f_list_it;
-   std::list<typename Traits::Point_3>::iterator  point_it;
+   typename std::list<Facet_handle>::const_iterator        f_list_it;
+   typename std::list<typename Traits::Point_3>::iterator  point_it;
 
    typename Traits::Has_on_positive_side_3 has_on_positive_side =
            traits.has_on_positive_side_3_object();
@@ -292,11 +292,11 @@ ch_quickhull_3_scan(
   typedef std::list<Point_3>                              Outside_set;
   typedef typename std::list<Point_3>::iterator           Outside_set_iterator;
 
-  std::list<Facet_handle>                visible_set;
-  std::list<Facet_handle>::iterator      vis_set_it;
-  Outside_set                            vis_outside_set;
-  Halfedge_iterator                      hole_halfedge;
-  Halfedge_handle                        new_pt_halfedge;
+  std::list<Facet_handle>                     visible_set;
+  typename std::list<Facet_handle>::iterator  vis_set_it;
+  Outside_set                                 vis_outside_set;
+  Halfedge_iterator                           hole_halfedge;
+  Halfedge_handle                             new_pt_halfedge;
 
 
   while (!pending_facets.empty())
