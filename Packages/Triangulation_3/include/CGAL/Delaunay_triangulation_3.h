@@ -1000,8 +1000,8 @@ Delaunay_triangulation_3<Gt,Tds>::
 fill_hole_3D_ear(const std::vector<Facet> & boundhole)
 {
   typedef Delaunay_remove_tds_3_2<Delaunay_triangulation_3> Surface;
-  typedef typename Surface::Face_3_2 Face_3_2;
-  typedef typename Surface::Vertex_3_2 Vertex_3_2;
+  typedef typename Surface::Face_handle_3_2 Face_handle_3_2;
+  typedef typename Surface::Vertex_handle_3_2 Vertex_handle_3_2;
 
   // The list of cells that gets created, so that we know what
   // we have to delete, in case that we cannot fill the hole
@@ -1010,10 +1010,9 @@ fill_hole_3D_ear(const std::vector<Facet> & boundhole)
 
   Surface surface(boundhole);
 
-  Face_3_2 *f = &(* surface.faces_begin());
-  //  Face_3_2 *last_op = NULL; // This is where the last ear was inserted
-  Face_3_2 *last_op = &(* surface.faces_begin()); // This is where the last
-                                                  // ear was inserted
+  Face_handle_3_2 f = &* surface.faces_begin();
+  Face_handle_3_2 last_op = f; // This is where the last ear was inserted
+
   int k = -1;
 
   // This is a loop over the halfedges of the surface of the hole
@@ -1025,7 +1024,7 @@ fill_hole_3D_ear(const std::vector<Facet> & boundhole)
     k++;
     if(k == 3) {
       // The faces form a circular list. With f->n() we go to the next face.
-      f = (Face_3_2*)f->n();
+      f = (Face_handle_3_2)f->n();
       if(f == last_op) {
 	// We looked at all edges without doing anything, that is we are
 	// in an infinite loop. ==> Panic mode, delete created cells.
@@ -1041,11 +1040,11 @@ fill_hole_3D_ear(const std::vector<Facet> & boundhole)
     // This saves time, for example an edge gets not considered
     // from both adjacent faces.
     if(f->is_halfedge_marked(k)) {
-      Vertex_3_2 *w0, *w1, *w2, *w3;
+      Vertex_handle_3_2 w0, w1, w2, w3;
       Vertex_handle v0, v1, v2, v3;
       int i = ccw(k);
       int j = cw(k);
-      Face_3_2 *n = f->neighbor(k);
+      Face_handle_3_2 n = f->neighbor(k);
       int fi = n->index(f);
 
       w1 = f->vertex(i);
@@ -1098,8 +1097,8 @@ fill_hole_3D_ear(const std::vector<Facet> & boundhole)
 
 	// we looked at all vertices
 
-	Face_3_2 *m_i = f->neighbor(i);
-	Face_3_2 *m_j = f->neighbor(j); 
+	Face_handle_3_2 m_i = f->neighbor(i);
+	Face_handle_3_2 m_j = f->neighbor(j); 
 	bool neighbor_i = m_i == n->neighbor(cw(fi));
 	bool neighbor_j = m_j == n->neighbor(ccw(fi));
 

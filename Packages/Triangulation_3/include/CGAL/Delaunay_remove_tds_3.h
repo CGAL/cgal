@@ -240,26 +240,30 @@ private:
             Delaunay_remove_tds_vertex_3_2<typename T::Vertex_handle>,
             Delaunay_remove_tds_face_3_2<typename T::Facet> > TDSUL2;
 
-public:
-  typedef typename TDSUL2::Vertex Vertex_3_2;
   typedef typename TDSUL2::Face Face_3_2;
+public:
   typedef typename TDSUL2::Face_iterator Face_iterator;
+
+  // At the moment, these handles are pointers.
+  typedef typename TDSUL2::Vertex*  Vertex_handle_3_2;
+  typedef typename TDSUL2::Face*    Face_handle_3_2;
 
   // FIXME : similar to operator>>(), isn't it ?  Should we try to factorize ?
   Delaunay_remove_tds_3_2(const std::vector<Facet> & boundhole ) {
 
-    typedef quadruple<void*, void*, Face_3_2*, int> Halfedge;
+    typedef quadruple<Vertex_handle_3_2, Vertex_handle_3_2,
+                      Face_handle_3_2, int> Halfedge;
 
     std::vector<Halfedge> halfedges;
     halfedges.reserve(3*boundhole.size());
 
-    std::map<Vertex_handle, Vertex_3_2*>  vertex_map;
-    typename std::map<Vertex_handle, Vertex_3_2*>::iterator map_it;
+    std::map<Vertex_handle, Vertex_handle_3_2>  vertex_map;
+    typename std::map<Vertex_handle, Vertex_handle_3_2>::iterator map_it;
 
     for(typename std::vector<Facet>::const_iterator fit = boundhole.begin();
 	    fit != boundhole.end(); ++fit)
     {
-      Face_3_2 * f = create_face();
+      Face_handle_3_2 f = create_face();
 
       Facet facet = *fit;
       Cell_handle h = facet.first;
@@ -277,7 +281,7 @@ public:
       }
 
       // We create as many 2d vertices as there are 3d vertices.
-      Vertex_3_2 *v0, *v1, *v2;
+      Vertex_handle_3_2 v0, v1, v2;
 
       Vertex_handle w0 = h->vertex(i0);
 
@@ -315,8 +319,8 @@ public:
       f->set_info(facet);
 
       for(int j = 0; j < 3; j++) {
-	void* v = f->vertex(j); 
-	void* w = f->vertex(cw(j));
+	Vertex_handle_3_2 v = f->vertex(j); 
+	Vertex_handle_3_2 w = f->vertex(cw(j));
 	halfedges.push_back((v < w) ? Halfedge(v, w, f, ccw(j))
 	                            : Halfedge(w, v, f, ccw(j)));
       }
@@ -342,12 +346,12 @@ public:
 
     Face_3_2 dummy;
 
-    Face_3_2 *f = &dummy;
+    Face_handle_3_2 f = &dummy;
 
     for( Face_iterator fit2 = faces_begin(); fit2 != faces_end(); ++fit2) {
-      f->set_n(&(*fit2));
+      f->set_n(&*fit2);
       fit2->set_p(f);
-      f = &(*fit2);
+      f = &*fit2;
       for(int i = 0; i < 3; i++) {
 	// we mark an edge only on one side
 	f->set_edge(i, (f < (f->neighbor(i))));
@@ -355,10 +359,10 @@ public:
     }
     // f points to the last face
     f->set_n(dummy.n());
-    ((Face_3_2*)dummy.n())->set_p(f);
+    ((Face_handle_3_2)dummy.n())->set_p(f);
   }
 
-  void remove_degree_3(Vertex_3_2* v, Face_3_2* f) 
+  void remove_degree_3(Vertex_handle_3_2 v, Face_handle_3_2 f) 
   {
     int i = f->index(v);
     // As f->neighbor(cw(i)) and f->neighbor(ccw(i)) will be removed,
