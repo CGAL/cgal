@@ -1304,11 +1304,10 @@ March 2000, probably \cgal\ will be upgraded to use it then.
 \begin{itemize}
 \item When \leda\ is used, the flags \texttt{CGAL\_USE\_LEDA} and
   \texttt{LEDA\_PREFIX} will be set.
-\item When \leda\ is used, the \leda\ memory management (\leda\ 
-  handles) will be used for geometric primitives in \cgal. This can be
-  turned of by setting the flag \texttt{CGAL\_NO\_LEDA\_HANDLE}. In
-  that case \cgal\ memory management will be used (see
-  \texttt{<CGAL/Handle.h>}).
+\item When \leda\ is used, the \leda\ handles and memory management
+  will be used in \cgal.  This can be turned off by setting the flag
+  \texttt{CGAL\_NO\_LEDA\_HANDLE}. In that case, \cgal\ handles will
+  be used (see \texttt{<CGAL/Handle.h>}).
 \end{itemize}
 \end{enumerate}
 
