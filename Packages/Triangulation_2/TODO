@@ -36,10 +36,6 @@
   les mettre dans un fichier separe
   pour ne pas etre oblige d'inclure iostream obligatoirement
 
-- Constraint_hierarchy_3 
-  to be done or redone : copy swap and delete
-
-	
 - k orderVoronoi diagram (code de Julia)
 - Natural neighbor (code de Franck)
 - Constrained_triangulation_3 (stage de Douc)

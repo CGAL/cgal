@@ -42,13 +42,13 @@ typedef CGAL::Simple_cartesian<Ftype>         Test_rep_cartesian;
 typedef CGAL::Homogeneous<Rtype>              Test_rep_homogeneous;
 
 #include <CGAL/Simple_cartesian.h>
-// #include <CGAL/Filtered_kernel.h>
-// typedef CGAL::Simple_cartesian<double>  K1;
-// typedef CGAL::Filtered_kernel<K1>       K;
-// struct TestK : public K {}; 
-#include <CGAL/Filtered_exact.h>
-typedef CGAL::Filtered_exact<double, CGAL::MP_Float> NT;
-struct TestK : public CGAL::Simple_cartesian<NT> {};
+#include <CGAL/Filtered_kernel.h>
+typedef CGAL::Simple_cartesian<double>  K1;
+typedef CGAL::Filtered_kernel<K1>       K;
+struct TestK : public K {}; 
+// #include <CGAL/Filtered_exact.h>
+// typedef CGAL::Filtered_exact<double, CGAL::MP_Float> NT;
+// struct TestK : public CGAL::Simple_cartesian<NT> {};
 
 typedef CGAL::Quotient<Ftype>                       Exact_type;
 typedef CGAL::Simple_cartesian<Exact_type>          Exact_kernel;

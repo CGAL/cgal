@@ -201,7 +201,7 @@ public:
       pit = propagate_conflicts(p,fh,0,pit);
       pit = propagate_conflicts(p,fh,1,pit);
       pit = propagate_conflicts(p,fh,2,pit);
-      return std::make_pair(fit,eit);    
+      return pit;
     }
     CGAL_triangulation_assertion(false);
     return std::make_pair(fit,eit);

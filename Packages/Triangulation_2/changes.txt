@@ -1,6 +1,11 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+ver 8.38
+- fixed the return of get_conflicts_and_boundary member functions
+- suppressed the using Tds::cw[ccw]
+   added by Menelaus in Delaunnay_triangulation_2
+
 10 February 2004 Radu Ursu
 -Updated headers in examples
 
