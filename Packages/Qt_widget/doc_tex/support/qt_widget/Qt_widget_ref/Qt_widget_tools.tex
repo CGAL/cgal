@@ -22,7 +22,6 @@ for zoomIn, zoomOut, translate.
 
 There is a base class for tools called Qt\_widget\_tool, all the tools should 
 be derived from this base class.
-
 \begin{ccExampleCode}
 namespace CGAL {
 class Qt_widget_zoomrect : public Qt_widget_tool
@@ -33,15 +32,14 @@ protected:
 	....
 private:
 	....
-}
+}//endclass
+}//endnamespace
 \end{ccExampleCode}
-
 In order to attach a tool to Qt\_widget all you have to do is to declare and 
 define the tool and then use the \(>>\) operator. The Qt\_widget and the tool
 mechanism is designed to use only one tool at one moment of time. You can't
 use two tools at the same time. When a tool is attached, both the tool and the
 Qt\_widget will receive the events from the Window System.
-
 \begin{ccExampleCode}
 CGAL::Qt_widget_zoomrect	zoomrectbut;
 CGAL::Qt_widget			*widget;
@@ -52,7 +50,6 @@ The events are declared in the base class as virtual functions. Your tool class
 has to overload this functions in order to receive the events from the main 
 widget. Only the tool that is attached at the moment will receive the events
 from the widget.
-
 \begin{ccExampleCode}
 namespace CGAL {
 class Qt_widget_zoomrect : public Qt_widget_tool
@@ -72,7 +69,170 @@ private:
     }
   };
 ......
-}
+}//endclass
+}//endnamespace
+\end{ccExampleCode}
+
+\begin{ccRefClass}{Qt_widget_tool}
+
+\ccInclude{CGAL/Qt_widget_tool.h}
+\ccGlue
+
+\ccCreation
+\ccCreationVariable{tool}
+\ccSetTwoColumns{Qt_widget_tool}{}
+
+\ccConstructor{Qt_widget_tool();}{The constructor does nothing.}
+
+\ccOperations
+\ccSetThreeColumns{const_iterator}{container.begin() const;}{}
+
+\ccMethod{void attach(Qt_widget *w);}{Attach the tool to the Qt\_widget. The 
+pointer from the Qt\_widget class becomes equal with the pointer of the 
+current tool's class. This way the tool attached become the current tool.}
+\ccMethod{void detach();}{Detach the current tool.}
+\ccMethod{bool is_attached() const;}{Return true if this tool is currently 
+attached to the Qt\_widget.}
+\ccMethod{virtual void mousePressEvent(QMouseEvent *);}{}
+\ccGlue
+\ccMethod{virtual void mouseReleaseEvent(QMouseEvent *);}{}
+\ccGlue
+\ccMethod{virtual void wheelEvent(QMouseEvent *);}{}
+\ccGlue
+\ccMethod{virtual void mouseDoubleClickEvent(QMouseEvent *);}{}
+\ccGlue
+\ccMethod{virtual void mouseMoveEvent(QMouseEvent *);}{}
+\ccGlue
+\ccMethod{virtual void keyPressEvent(QKeyEvent *);}{}
+\ccGlue
+\ccMethod{virtual void keyReleaseEvent(QKeyEvent *);}{}
+\ccGlue
+\ccMethod{virtual void enterEvent(QEvent *);}{}
+\ccGlue
+\ccMethod{virtual void leaveEvent(QEvent *);}{This virtual functions should be
+overloaded in the child tool classes and declared as private members. This 
+functions are called by the Qt\_widget every time a event is received by the 
+widget.}
+\ccHeading{protected}
+\ccMethod{virtual void attaching();}{}
+\ccGlue
+\ccMethod{virtual void detaching();}{You have to overload this functions to
+provide your tool with initialization and destruction code.}
+\ccHeading{signals}
+\ccMethod{void new_object(CGAL::Object);}{Emited when a tool creates a new 
+\cgal\ object.}
+\ccMethod{void redraw();}{Emited when a tool needs that Qt\_widget refresh the
+screen. For example after a tool modified an object, the screen should reflect
+the change.}
+\ccHeading{public slots}
+\ccMethod{virtual void widget_repainted();}{Called every time by Qt\_widget
+when the widget have been repainted.}
+\end{ccRefClass}
+\ccExample
+An example of a tool that is working as a magnifying glass.
+\begin{ccExampleCode}
+#ifndef CGAL_QT_WINDOW_ZOOM_H
+#define CGAL_QT_WINDOW_ZOOM_H
+
+#include <CGAL/IO/Qt_Widget.h>
+#include <CGAL/IO/Qt_Widget_tool.h>
+#include <qcolor.h>
+
+namespace CGAL {
+
+class Qt_widget_zoom : public Qt_widget_tool
+{
+  //  Q_OBJECT
+private:
+	int									    x2, y2;
+	bool circle_already_drawn;
+	bool oldMouseTracking;
+
+public:
+  Qt_widget_zoom() : circle_already_drawn(false) {};
+
+	void draw_circle(int x,int y)
+	{
+		const int
+			d=100, // diameter
+			r=50;  // radius (should be d/2 :-)
+
+		RasterOp oldRasterOp = widget->rasterOp();	//save the initial raster mode
+		widget->setRasterOp(XorROP);
+		QColor oldColor=widget->color(); // save the initial color
+		widget->setColor(Qt::green);
+		widget->painter().drawEllipse(x-r, y-r, d, d);
+		widget->setColor(oldColor);
+		widget->setRasterOp(oldRasterOp);
+		widget->do_paint();
+	};
+
+	void leaveEvent(QEvent*)
+	{
+		if(circle_already_drawn)
+			draw_circle(x2,y2);
+		circle_already_drawn=false;
+	};
+
+	void widget_repainted(){
+		circle_already_drawn=false;
+	};
+
+  void mousePressEvent(QMouseEvent *e)
+  {
+		const double ratios=2.0;
+		double
+			x=widget->x_real(e->x()),
+			y=widget->y_real(e->y());
+		
+    if(e->button() == Qt::LeftButton)
+			widget->zoom_in(ratios, x, y);
+    if(e->button() == Qt::RightButton)
+			widget->zoom_out(ratios, x, y);
+		
+		widget->redraw();
+		emit(redraw()); 
+	};
+
+  void mouseMoveEvent(QMouseEvent *e)
+  {
+		int
+			x = e->x(),
+			y = e->y();
+
+		widget->lock();
+		draw_circle(x,y); // draw the new circle
+		if(circle_already_drawn) // erase the old one if needed
+			draw_circle(x2,y2);
+		widget->unlock();
+		
+		//save the last coordinates to redraw the screen
+		x2 = x;
+		y2 = y;
+		circle_already_drawn=true;
+	};
+
+	void attaching()
+	{
+		oldMouseTracking=widget->hasMouseTracking();
+		widget->setMouseTracking(TRUE);
+		oldcursor = widget->cursor();
+		widget->setCursor(crossCursor);
+		circle_already_drawn=false;
+	};
+
+	void detaching()
+	{
+		if(circle_already_drawn)
+			draw_circle(x2,y2); // erase the circle if needed
+		widget->setCursor(oldcursor);
+		widget->setMouseTracking(oldMouseTracking);
+	};
+};//end class 
+
+} // namespace CGAL
+
+#endif // CGAL_QT_WINDOW_ZOOM_H
 \end{ccExampleCode}
 
 % +-----------------------------------------------------+
