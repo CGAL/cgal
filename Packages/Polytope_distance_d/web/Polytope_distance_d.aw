@@ -107,7 +107,7 @@
 
 \newlength{\defaultparskip}
 \setlength{\defaultparskip}{\parskip}
-\setlength{\parskip}{.7ex}
+\setlength{\parskip}{1ex}
 
 \tableofcontents
 
@@ -171,7 +171,7 @@ value of the objective function at $x^*$.
 \emph{Note:} Below some references are undefined, they refer to sections
 in the \cgal\ Reference Manual.
 
-@p maximum_input_line_length = 87
+@p maximum_input_line_length = 102
 
 @! ----------------------------------------------------------------------------
 @! Class: Polytope_distance_d
@@ -181,35 +181,11 @@ in the \cgal\ Reference Manual.
 \input{../doc_tex/basic/Optimisation/Optimisation_ref/Polytope_distance_d.tex}
 
 @! ----------------------------------------------------------------------------
-@! Class: Polytope_distance_d_traits_2
+@! Concept: Optimisation_d_traits
 @! ----------------------------------------------------------------------------
 
-\subsectionRef{Class}{%
-  CGAL::Polytope\_distance\_d\_traits\_2\texttt{<}R,ET,NT\texttt{>}}
-\input{../doc_tex/basic/Optimisation/Optimisation_ref/Polytope_distance_d_traits_2.tex}
-
-@! ----------------------------------------------------------------------------
-@! Class: Polytope_distance_d_traits_3
-@! ----------------------------------------------------------------------------
-
-\subsectionRef{Class}{%
-  CGAL::Polytope\_distance\_d\_traits\_3\texttt{<}R,ET,NT\texttt{>}}
-\input{../doc_tex/basic/Optimisation/Optimisation_ref/Polytope_distance_d_traits_3.tex}
-
-@! ----------------------------------------------------------------------------
-@! Class: Polytope_distance_d_traits_d
-@! ----------------------------------------------------------------------------
-
-\subsectionRef{Class}{%
-  CGAL::Polytope\_distance\_d\_traits\_d\texttt{<}R,ET,NT\texttt{>}}
-\input{../doc_tex/basic/Optimisation/Optimisation_ref/Polytope_distance_d_traits_d.tex}
-
-@! ----------------------------------------------------------------------------
-@! Concept: Polytope_distance_d_traits
-@! ----------------------------------------------------------------------------
-
-\subsectionRef{Concept}{Polytope\_distance\_d\_traits}
-\input{../doc_tex/basic/Optimisation/Optimisation_ref/Polytope_distance_d_traits.tex}
+\subsectionRef{Concept}{Optimisation\_d\_traits}
+\input{../../Optimisation_basic/doc_tex/basic/Optimisation/Optimisation_ref/Optimisation_d_traits.tex}
 
 @p maximum_input_line_length = 80
 
@@ -229,12 +205,8 @@ in the \cgal\ Reference Manual.
   CGAL::Polytope\_distance\_d\texttt{<}Traits\texttt{>}}
 
 The class template \ccc{Polytope_distance_d} expects a model of the concept
-\ccc{Polytope_distance_d_traits} (see
-Section~\ref{ccRef_Polytope_distance_d_traits}.1) as its template argument.
-Available models are described in
-Sections~\ref{sec:Polytope_distance_d_traits_2},
-\ref{sec:Polytope_distance_d_traits_3},
-and~\ref{sec:Polytope_distance_d_traits_d} below.
+\ccc{Optimisation_d_traits} (see
+Section~\ref{ccRef_Optimisation_d_traits}.2) as its template argument.
 
 @macro <Poly_dist_d declarations> += @begin
     template < class Traits_ >
@@ -242,8 +214,8 @@ and~\ref{sec:Polytope_distance_d_traits_d} below.
 @end
 
 The interface consists of the public types and member functions described
-in Section~\ref{ccRef_CGAL::Polytope_distance_d<Traits>}.2 and of some private
-types, private member functions, and data members.
+in Section~\ref{ccRef_CGAL::Polytope_distance_d<Traits>}.1 and of some
+private types, private member functions, and data members.
 
 @macro <Poly_dist_d interface> = @begin
     template < class Traits_ >
@@ -1416,222 +1388,6 @@ realizing the distance.
 
 
 @! ============================================================================
-@! Traits Class Models
-@! ============================================================================
-
-\clearpage
-\section{Traits Class Models} \label{sec:traits_class_models}
-
-@! ----------------------------------------------------------------------------
-@! The Class Template CGAL::Polytope_distance_d_traits_2<R,ET,NT>
-@! ----------------------------------------------------------------------------
-
-\subsection{The Class Template \ccFont
-  CGAL::Polytope\_distance\_d\_traits\_2\texttt{<}R,ET,NT\texttt{>}}
-\label{sec:Polytope_distance_d_traits_2}
-
-The first template argument of \ccc{Polytope_distance_d_traits_2} is
-expected to be a \cgal\ representation class. The second and third
-template argument are expected to be number types fulfilling the
-requirements of a \cgal\ number type. They have default type
-\ccc{R::RT}.
-
-@macro <Poly_dist_d_traits_2 declaration> = @begin
-    template < class R_, class ET_ = CGAL_TYPENAME_MSVC_NULL R_::RT,
-                         class NT_ = CGAL_TYPENAME_MSVC_NULL R_::RT >
-    class Polytope_distance_d_traits_2;
-@end
-
-The interface consists of the types and member functions described in
-Section~\ref{ccRef_CGAL::Polytope_distance_d_traits_2<R,ET,NT>}.3.
-
-@macro <Poly_dist_d_traits_2 interface> = @begin
-    template < class R_, class ET_, class NT_>
-    class Polytope_distance_d_traits_2 {
-      public:
-        // self
-        typedef  R_                         R;
-        typedef  ET_                        ET;
-        typedef  NT_                        NT;
-        typedef  Polytope_distance_d_traits_2<R,ET,NT>
-                                            Self;
-
-        // types
-        typedef  typename R::Point_2        Point_d;
-
-        typedef  typename R::Rep_tag        Rep_tag;
-
-        typedef  typename R::RT             RT;
-        typedef  typename R::FT             FT;
-
-        typedef  Access_dimension_2<R>      Access_dimension_d;
-        typedef  Access_coordinates_begin_2<R>
-                                            Access_coordinates_begin_d;
-
-        typedef  typename R::Construct_point_2
-                                            Construct_point_d;
-
-        // creation
-        Polytope_distance_d_traits_2( ) { }
-        Polytope_distance_d_traits_2(
-            const Polytope_distance_d_traits_2<R_,ET_,NT_>&) { }
-
-        // operations
-        Access_dimension_d
-        access_dimension_d_object( ) const
-            { return Access_dimension_d(); }
-
-        Access_coordinates_begin_d
-        access_coordinates_begin_d_object( ) const
-            { return Access_coordinates_begin_d(); }
-
-        Construct_point_d
-        construct_point_d_object( ) const
-            { return Construct_point_d(); }
-    };
-@end
-
-
-@! ----------------------------------------------------------------------------
-@! The Class Template CGAL::Polytope_distance_d_traits_3<R,ET,NT>
-@! ----------------------------------------------------------------------------
-
-\subsection{The Class Template \ccFont
-  CGAL::Polytope\_distance\_d\_traits\_3\texttt{<}R,ET,NT\texttt{>}}
-\label{sec:Polytope_distance_d_traits_3}
-
-The first template argument of \ccc{Polytope_distance_d_traits_3} is
-expected to be a \cgal\ representation class. The second and third
-template argument are expected to be number types fulfilling the
-requirements of a \cgal\ number type. They have default type
-\ccc{R::RT}.
-
-@macro <Poly_dist_d_traits_3 declaration> = @begin
-    template < class R_, class ET_ = CGAL_TYPENAME_MSVC_NULL R_::RT,
-                         class NT_ = CGAL_TYPENAME_MSVC_NULL R_::RT >
-    class Polytope_distance_d_traits_3;
-@end
-
-The interface consists of the types and member functions described in
-Section~\ref{ccRef_CGAL::Polytope_distance_d_traits_3<R,ET,NT>}.4.
-
-@macro <Poly_dist_d_traits_3 interface> = @begin
-    template < class R_, class ET_, class NT_>
-    class Polytope_distance_d_traits_3 {
-      public:
-        // self
-        typedef  R_                         R;
-        typedef  ET_                        ET;
-        typedef  NT_                        NT;
-        typedef  Polytope_distance_d_traits_3<R,ET,NT>
-                                            Self;
-
-        // types
-        typedef  typename R::Point_3        Point_d;
-
-        typedef  typename R::Rep_tag        Rep_tag;
-
-        typedef  typename R::RT             RT;
-        typedef  typename R::FT             FT;
-
-        typedef  Access_dimension_3<R>      Access_dimension_d;
-        typedef  Access_coordinates_begin_3<R>
-                                            Access_coordinates_begin_d;
-
-        typedef  typename R::Construct_point_3
-                                            Construct_point_d;
-
-        // creation
-        Polytope_distance_d_traits_3( ) { }
-        Polytope_distance_d_traits_3(
-            const Polytope_distance_d_traits_3<R_,ET_,NT_>&) { }
-
-        // operations
-        Access_dimension_d
-        access_dimension_d_object( ) const
-            { return Access_dimension_d(); }
-
-        Access_coordinates_begin_d
-        access_coordinates_begin_d_object( ) const
-            { return Access_coordinates_begin_d(); }
-
-        Construct_point_d
-        construct_point_d_object( ) const
-            { return Construct_point_d(); }
-    };
-@end
-
-
-@! ----------------------------------------------------------------------------
-@! The Class Template CGAL::Polytope_distance_d_traits_d<R,ET,NT>
-@! ----------------------------------------------------------------------------
-
-\subsection{The Class Template \ccFont
-  CGAL::Polytope\_distance\_d\_traits\_d\texttt{<}R,ET,NT\texttt{>}}
-\label{sec:Polytope_distance_d_traits_d}
-
-The first template argument of \ccc{Polytope_distance_d_traits_d} is
-expected to be a \cgal\ representation class. The second and third
-template argument are expected to be number types fulfilling the
-requirements of a \cgal\ number type. They have default type
-\ccc{R::RT}.
-
-@macro <Poly_dist_d_traits_d declaration> = @begin
-    template < class R_, class ET_ = CGAL_TYPENAME_MSVC_NULL R_::RT,
-                         class NT_ = CGAL_TYPENAME_MSVC_NULL R_::RT >
-    class Polytope_distance_d_traits_d;
-@end
-
-The interface consists of the types and member functions described in
-Section~\ref{ccRef_CGAL::Polytope_distance_d_traits_d<R,ET,NT>}.5.
-
-@macro <Poly_dist_d_traits_d interface> = @begin
-    template < class R_, class ET_, class NT_>
-    class Polytope_distance_d_traits_d {
-      public:
-        // self
-        typedef  R_                         R;
-        typedef  ET_                        ET;
-        typedef  NT_                        NT;
-        typedef  Polytope_distance_d_traits_d<R,ET,NT>
-                                            Self;
-
-        // types
-        typedef  typename R::Point_d        Point_d;
-
-        typedef  typename R::Rep_tag        Rep_tag;
-
-        typedef  typename R::RT             RT;
-        typedef  typename R::FT             FT;
-
-        typedef  Access_dimension_d<R>      Access_dimension_d;
-        typedef  Access_coordinates_begin_d<R>
-                                            Access_coordinates_begin_d;
-
-        typedef  Construct_point_d<R>       Construct_point_d;
-
-        // creation
-        Polytope_distance_d_traits_d( ) { }
-        Polytope_distance_d_traits_d(
-            const Polytope_distance_d_traits_d<R_,ET_,NT_>&) { }
-
-        // operations
-        Access_dimension_d
-        access_dimension_d_object( ) const
-            { return Access_dimension_d(); }
-
-        Access_coordinates_begin_d
-        access_coordinates_begin_d_object( ) const
-            { return Access_coordinates_begin_d(); }
-
-        Construct_point_d
-        construct_point_d_object( ) const
-            { return Construct_point_d(); }
-    };
-@end
-
-
-@! ============================================================================
 @! Test Programs
 @! ============================================================================
 
@@ -1806,11 +1562,15 @@ standard error stream.
 
 \subsection{Traits Class Models}
 
-All three traits class models are tested twice, firstly with one exact
-number type (the ``default'' use) and secondly with three different number
-types (the ``advanced'' use). Since the current implementation of the
-underlying quadratic programming solver can only handle input points with
-Cartesian representation, we use \cgal's Cartesian kernel for testing.
+We perform the tests with the traits class models
+\ccc{Optimisation_d_traits_2}, \ccc{Optimisation_d_traits_3}, and
+\ccc{Optimisation_d_traits_d} based on the two-, three-, and
+$d$-dimensional \cgal~kernel. All three traits class models are used twice,
+firstly with one exact number type (the ``default'' use) and secondly with
+three different number types (the ``advanced'' use). Since the current
+implementation of the underlying linear programming solver can only handle
+input points with Cartesian representation, we use \cgal's Cartesian kernel
+for testing.
 
 Some of the following macros are parameterized with the dimension,
 e.g.~with $2$, $3$, or $d$.
@@ -1819,7 +1579,7 @@ e.g.~with $2$, $3$, or $d$.
     #include <CGAL/Cartesian.h>
     #include <CGAL/Point_@1.h>
     #include <CGAL/Polytope_distance_d.h>
-    #include <CGAL/Polytope_distance_d_traits_@1.h>
+    #include <CGAL/Optimisation_d_traits_@1.h>
 @end
 
 We use the number type \ccc{leda_integer} from \leda{} for the first
@@ -1830,10 +1590,10 @@ variant.
     // test variant 1 (needs LEDA)
     #ifdef CGAL_USE_LEDA
     # include <CGAL/leda_integer.h>
-      typedef  CGAL::Cartesian<leda_integer>             R_1;
-      typedef  CGAL::Polytope_distance_d_traits_@1<R_1>   Traits_1;
+      typedef  CGAL::Cartesian<leda_integer>       R_1;
+      typedef  CGAL::Optimisation_d_traits_@1<R_1>  Traits_1;
     # define TEST_VARIANT_1 \
-        "Polytope_distance_d_traits_@1< Cartesian<leda_integer> >"
+        "Optimisation_d_traits_@1< Cartesian<leda_integer> >"
       CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC( leda_integer)
     #endif
 @end
@@ -1849,11 +1609,10 @@ arithmetic.
     // test variant 2 (needs GMP)
     #ifdef CGAL_USE_GMP
     # include <CGAL/_QP_solver/Double.h>
-      typedef  CGAL::Cartesian< int >                    R_2;
-      typedef  CGAL::Polytope_distance_d_traits_@1<R_2,GMP::Double,double>
-                                                         Traits_2;
+      typedef  CGAL::Cartesian< int >                                 R_2;
+      typedef  CGAL::Optimisation_d_traits_@1<R_2,GMP::Double,double>  Traits_2;
     # define TEST_VARIANT_2 \
-        "Polytope_distance_d_traits_@1< Cartesian<int>, GMP::Double, double >"
+        "Optimisation_d_traits_@1< Cartesian<int>, GMP::Double, double >"
     #endif
 @end
 
@@ -2119,126 +1878,6 @@ can be enabled by giving a number between 0 and 3 at the command line.
     @<namespace end>("CGAL")
     
     #endif // CGAL_POLYTOPE_DISTANCE_D_H
-
-    @<end of file line>
-@end
-
-@! ----------------------------------------------------------------------------
-@! Polytope_distance_d_traits_2.h
-@! ----------------------------------------------------------------------------
-
-\subsection{include/CGAL/Polytope\_distance\_d\_traits\_2.h}
-
-@file <include/CGAL/Polytope_distance_d_traits_2.h> = @begin
-    @<file header>(
-        "include/CGAL/Polytope_distance_d_traits_2.h",
-        "Traits class (2D) for polytope distance")
-
-    #ifndef CGAL_POLYTOPE_DISTANCE_D_TRAITS_2_H
-    #define CGAL_POLYTOPE_DISTANCE_D_TRAITS_2_H
-
-    // includes
-    #ifndef CGAL_OPTIMISATION_ACCESS_DIMENSION_2_H
-    #  include <CGAL/Optimisation/Access_dimension_2.h>
-    #endif
-    #ifndef CGAL_OPTIMISATION_ACCESS_COORDINATES_BEGIN_2_H
-    #  include <CGAL/Optimisation/Access_coordinates_begin_2.h>
-    #endif
-
-    @<namespace begin>("CGAL")
-
-    // Class declaration
-    // =================
-    @<Poly_dist_d_traits_2 declaration>
-    
-    // Class interface
-    // ===============
-    @<Poly_dist_d_traits_2 interface>
-
-    @<namespace end>("CGAL")
-    
-    #endif // CGAL_POLYTOPE_DISTANCE_D_TRAITS_2_H
-
-    @<end of file line>
-@end
-
-@! ----------------------------------------------------------------------------
-@! Polytope_distance_d_traits_3.h
-@! ----------------------------------------------------------------------------
-
-\subsection{include/CGAL/Polytope\_distance\_d\_traits\_3.h}
-
-@file <include/CGAL/Polytope_distance_d_traits_3.h> = @begin
-    @<file header>(
-        "include/CGAL/Polytope_distance_d_traits_3.h",
-        "Traits class (3D) for polytope distance")
-
-    #ifndef CGAL_POLYTOPE_DISTANCE_D_TRAITS_3_H
-    #define CGAL_POLYTOPE_DISTANCE_D_TRAITS_3_H
-
-    // includes
-    #ifndef CGAL_OPTIMISATION_ACCESS_DIMENSION_3_H
-    #  include <CGAL/Optimisation/Access_dimension_3.h>
-    #endif
-    #ifndef CGAL_OPTIMISATION_ACCESS_COORDINATES_BEGIN_3_H
-    #  include <CGAL/Optimisation/Access_coordinates_begin_3.h>
-    #endif
-
-    @<namespace begin>("CGAL")
-
-    // Class declaration
-    // =================
-    @<Poly_dist_d_traits_3 declaration>
-    
-    // Class interface
-    // ===============
-    @<Poly_dist_d_traits_3 interface>
-
-    @<namespace end>("CGAL")
-    
-    #endif // CGAL_POLYTOPE_DISTANCE_D_TRAITS_3_H
-
-    @<end of file line>
-@end
-
-@! ----------------------------------------------------------------------------
-@! Polytope_distance_d_traits_d.h
-@! ----------------------------------------------------------------------------
-
-\subsection{include/CGAL/Polytope\_distance\_d\_traits\_d.h}
-
-@file <include/CGAL/Polytope_distance_d_traits_d.h> = @begin
-    @<file header>(
-        "include/CGAL/Polytope_distance_d_traits_d.h",
-        "Traits class (dD) for polytope distance")
-
-    #ifndef CGAL_POLYTOPE_DISTANCE_D_TRAITS_D_H
-    #define CGAL_POLYTOPE_DISTANCE_D_TRAITS_D_H
-
-    // includes
-    #ifndef CGAL_OPTIMISATION_ACCESS_DIMENSION_D_H
-    #  include <CGAL/Optimisation/Access_dimension_d.h>
-    #endif
-    #ifndef CGAL_OPTIMISATION_ACCESS_COORDINATES_BEGIN_D_H
-    #  include <CGAL/Optimisation/Access_coordinates_begin_d.h>
-    #endif
-    #ifndef CGAL_OPTIMISATION_CONSTRUCT_POINT_D_H
-    #  include <CGAL/Optimisation/Construct_point_d.h>
-    #endif
-
-    @<namespace begin>("CGAL")
-
-    // Class declaration
-    // =================
-    @<Poly_dist_d_traits_d declaration>
-    
-    // Class interface
-    // ===============
-    @<Poly_dist_d_traits_d interface>
-
-    @<namespace end>("CGAL")
-    
-    #endif // CGAL_POLYTOPE_DISTANCE_D_TRAITS_D_H
 
     @<end of file line>
 @end
