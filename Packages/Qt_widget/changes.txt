@@ -1,3 +1,15 @@
+1.3.61 - 19/11/2003
+----------------------------------------
+	I want the latest changes in the testsuite
+    This version of Qt_widget knows how to use rotations.
+    This is achieved using Aff_transformation_2 of CGAL.
+    x_real, y_real, x_pixel, y_pixel in all kind of versions (templated or not) are deprecated.
+    xy_real, xy_pixel version were added.
+    added a new rotation layer in the standard toolbar, but is only experimental.
+    The only operator that is working well with rotations is the point output operator. The others are not modified. It is more complicated for geometric entities that intersects the boundaaries of the screen. I will do it one by one in time.
+    I will update demos as soon as I make it work with all the ouput operators.
+
+
 1.3.60 - 22/10/2003
 ----------------------------------------
 	- chnaged the license headers
