@@ -1,3 +1,11 @@
+1.3.28 - 03/04/2003 (rursu)
+-------------------
+	radu:
+	- removed addToolBar method from demos (it is obsolete in Qt 3)
+	- demos toolbars are now real QToolBar classes
+	- documented well the standard toolbar
+	- docummented well the Qt_widget_layer class
+
 1.3.27 - 28/03/2003 (rursu)
 -------------------
 	radu:
