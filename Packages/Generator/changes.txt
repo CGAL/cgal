@@ -1,5 +1,8 @@
 Generator Package: Release changes:
 ---------------------------------------------------------------------
+2.75 (3 Oct 2003)
+- New gifs
+
 2.74 (2 Oct 2003)
 - Changed code that gets included in the user manual
 - Added random segments to the demo
