@@ -24,8 +24,10 @@
 #ifndef CGAL_TRIANGLE_2_TRIANGLE_2_DO_INTERSECT_H
 #define CGAL_TRIANGLE_2_TRIANGLE_2_DO_INTERSECT_H
 
+#include <CGAL/Triangle_2.h>
 
 CGAL_BEGIN_NAMESPACE
+
 namespace CGALi {
 
 template <class K>
