@@ -20,8 +20,8 @@ int main(int argc, char* argv[]) {
   std::cin >> N;
 
   QApplication a(argc, argv);
-  Qt_widget_Nef_3<Nef_polyhedron_3>* w = 
-    new Qt_widget_Nef_3<Nef_polyhedron_3>(N);
+  CGAL::Qt_widget_Nef_3<Nef_polyhedron_3>* w = 
+    new CGAL::Qt_widget_Nef_3<Nef_polyhedron_3>(N);
   a.setMainWidget(w);
   w->show();
   return a.exec();

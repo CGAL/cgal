@@ -356,8 +356,8 @@ int eval( int argc, char* argv[]) {
 
 #ifdef CGAL_USE_QT
 	    QApplication a(argc, argv);
-	    Qt_widget_Nef_3<Nef_polyhedron>* w = 
-	      new Qt_widget_Nef_3<Nef_polyhedron>(nef.back());
+	    CGAL::Qt_widget_Nef_3<Nef_polyhedron>* w = 
+	      new CGAL::Qt_widget_Nef_3<Nef_polyhedron>(nef.back());
 	    a.setMainWidget(w);
 	    w->show();
 	    a.exec();

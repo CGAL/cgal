@@ -14,7 +14,7 @@ include $(CGAL_MAKEFILE)
 #---------------------------------------------------------------------#
 
 CXXFLAGS = \
-           $(CGAL_CXXFLAGS) \
+	   $(CGAL_CXXFLAGS) \
            -Iinclude \
            $(LONG_NAME_PROBLEM_CXXFLAGS) \
            $(DEBUG_OPT)
@@ -23,14 +23,13 @@ CXXFLAGS = \
 #                    linker flags
 #---------------------------------------------------------------------#
 
-CUSTOM_LDFLAGS = -lGL -lGLU
-
 LIBPATH = \
           $(CGAL_WINDOW_LIBPATH)
 
 LDFLAGS = \
           $(LONG_NAME_PROBLEM_LDFLAGS) \
-          $(CGAL_QT_LDFLAGS) 
+          $(CGAL_QT_LDFLAGS)  \
+	  $(CGAL_OPENGL_LIBS)
 
 #---------------------------------------------------------------------#
 #                    target entries

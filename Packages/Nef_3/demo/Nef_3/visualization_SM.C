@@ -24,8 +24,8 @@ int main(int argc, char* argv[]) {
   Nef_polyhedron_S2 S(N.get_sphere_map(v));
 
   QApplication a(argc, argv);
-  Qt_widget_Nef_S2<Nef_polyhedron_S2>* w = 
-    new Qt_widget_Nef_S2<Nef_polyhedron_S2>(S);
+  CGAL::Qt_widget_Nef_S2<Nef_polyhedron_S2>* w = 
+    new CGAL::Qt_widget_Nef_S2<Nef_polyhedron_S2>(S);
   a.setMainWidget(w);
   w->show();
   return a.exec();
