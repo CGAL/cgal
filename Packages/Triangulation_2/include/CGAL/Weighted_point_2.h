@@ -89,7 +89,7 @@ public:
 	}
 
 	Weight power(const Point &p)
-	{	return ((p.x()-x())*(p.x()-x())+(p.y()-y())*(p.y()-y())-weight()*weight());
+	{	return ((p.x()-x())*(p.x()-x())+(p.y()-y())*(p.y()-y())-weight());
 	}
 
 };
