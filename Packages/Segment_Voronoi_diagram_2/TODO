@@ -1,4 +1,5 @@
-- replace segment arguments in constructors of sites with points
+- The type Segment_2 should not be required in the segment Voronoi
+  diagram and hierarchy classes
 - in the doc change the name of the template parameter for the
   point container from SC to PC.
 - in the hierarchy use the Intersections_tag tag to decide whether or
@@ -7,11 +8,6 @@
   must be removed.
 - add boolean in the hierarchy class that indicates whether to insert segments
   in the upper levels of the hierarchy or not
-- create the class Triangulation_face_base_with_edges_2 and move the
-  functionality there; this class should also be (or not be used)
-  in the Apollonius_graph_2 package); actually the best way to do this
-  is to use the face base with info class, where info is a small class
-  with the 6 edges.
 - change the doc so that the requirement for the face base is the
   Triangulation_face_base_2 class
 - replace the vertex base class of both the Apollonius_graph_2 and
