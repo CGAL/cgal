@@ -44,6 +44,7 @@
 #define Delaunay_remove_tds_vertex_3_2              DRv32
 
 #define Regular_triangulation_euclidean_traits_3    R_gt3
+#define Regular_triangulation_filtered_traits_3     R_ft3
 #define Regular_triangulation_3                     RT3
 
 #define Triangulation_hierarchy_3                   TH3
