@@ -140,16 +140,16 @@ public:
   Segment_Voronoi_diagram_hierarchy_2
   (const Geom_traits& traits = Geom_traits());
   Segment_Voronoi_diagram_hierarchy_2
-  (const Segment_Voronoi_diagram_hierarchy_2& awvd);
+  (const Segment_Voronoi_diagram_hierarchy_2& svd);
 
   Segment_Voronoi_diagram_hierarchy_2 &operator=
-  (const  Segment_Voronoi_diagram_hierarchy_2& awvd);
+  (const  Segment_Voronoi_diagram_hierarchy_2& svd);
 
   ~Segment_Voronoi_diagram_hierarchy_2();
 
   //Helping
   void copy_triangulation
-  (const Segment_Voronoi_diagram_hierarchy_2 &awvd);
+  (const Segment_Voronoi_diagram_hierarchy_2 &svd);
 
   void clear();
 
@@ -180,7 +180,7 @@ public:
 private:
   void 
   find_nearest_neighbor(const Point& p,
-			Vertex_handle vnear[awvd_hierarchy_2__maxlevel],
+			Vertex_handle vnear[svd_hierarchy_2__maxlevel],
 			bool force_point) const; 
   int random_level();
 };
@@ -249,7 +249,7 @@ copy_triangulation
     }
   }
   {
-    for(int i = 1; i < awvd_hierarchy_2__maxlevel; ++i) {
+    for(int i = 1; i < svd_hierarchy_2__maxlevel; ++i) {
       for(All_vertices_iterator it = hierarchy[i]->all_vertices_begin(); 
 	  it != hierarchy[i]->all_vertices_end(); ++it) {
 	// down pointer goes in original instead in copied triangulation
@@ -419,7 +419,7 @@ template <class Gt, class Tds>
 void
 Segment_Voronoi_diagram_hierarchy_2<Gt,Tds>::
 find_nearest_neighbor(const Point& p,
-		      Vertex_handle vnear[awvd_hierarchy_2__maxlevel],
+		      Vertex_handle vnear[svd_hierarchy_2__maxlevel],
 		      bool force_point)
   const
 {
