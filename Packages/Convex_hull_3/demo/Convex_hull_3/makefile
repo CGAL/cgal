@@ -1,3 +1,4 @@
+# Created by the script create_makefile
 # This is the makefile for compiling a CGAL application.
 
 #---------------------------------------------------------------------#
@@ -14,13 +15,18 @@ include $(CGAL_MAKEFILE)
 
 CXXFLAGS = \
            $(CGAL_CXXFLAGS) \
-           -g
+           $(LONG_NAME_PROBLEM_CXXFLAGS) \
+           $(DEBUG_OPT)
 
 #---------------------------------------------------------------------#
 #                    linker flags
 #---------------------------------------------------------------------#
 
+LIBPATH = \
+          $(CGAL_LIBPATH)
+
 LDFLAGS = \
+          $(LONG_NAME_PROBLEM_LDFLAGS) \
           $(CGAL_LDFLAGS)
 
 #---------------------------------------------------------------------#
@@ -28,23 +34,23 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:            \
-                incremental_hull_3_demo \
-                quickhull_3_demo 
+                incremental_hull_3_demo$(EXE_EXT) \
+                quickhull_3_demo$(EXE_EXT) 
 
-incremental_hull_3_demo: incremental_hull_3_demo.o
-	$(CGAL_CXX) -o incremental_hull_3_demo incremental_hull_3_demo.o $(LDFLAGS)
+incremental_hull_3_demo$(EXE_EXT): incremental_hull_3_demo$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)incremental_hull_3_demo incremental_hull_3_demo$(OBJ_EXT) $(LDFLAGS)
 
-quickhull_3_demo: quickhull_3_demo.o
-	$(CGAL_CXX) -o quickhull_3_demo quickhull_3_demo.o $(LDFLAGS)
+quickhull_3_demo$(EXE_EXT): quickhull_3_demo$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)quickhull_3_demo quickhull_3_demo$(OBJ_EXT) $(LDFLAGS)
 
 clean: \
-       incremental_hull_3_demo.clean \
-       quickhull_3_demo.clean 
+                   incremental_hull_3_demo.clean \
+                   quickhull_3_demo.clean 
 
 #---------------------------------------------------------------------#
 #                    suffix rules
 #---------------------------------------------------------------------#
 
-.C.o:
-	$(CGAL_CXX) $(CXXFLAGS) -c $<
+.C$(OBJ_EXT):
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
 
