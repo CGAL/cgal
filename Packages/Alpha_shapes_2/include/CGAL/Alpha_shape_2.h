@@ -1463,7 +1463,7 @@ Alpha_shape_2<Dt>::op_ostream(std::ostream& os) const
 	      // we would write too many vertices
 
 	      V[Key(&*v)] = number_of_vertices++;
-	      os << v->point() << endl;
+	      os << v->point() << std::endl;
 	    }
 	}
       // the vertices are oriented counterclockwise
@@ -1514,7 +1514,7 @@ Alpha_shape_2<Dt>::op_ostream(std::ostream& os) const
 			       Alpha_shape_2<Dt>::REGULAR));
 
 	      os << V[Key(&*(f->vertex(f->ccw(i))))] << ' ' 
-		 << V[Key(&*(f->vertex(f->cw(i))))] << endl;
+		 << V[Key(&*(f->vertex(f->cw(i))))] << std::endl;
 	    }
 	}
     }
@@ -1545,7 +1545,7 @@ Alpha_shape_2<Dt>::op_ostream(std::ostream& os) const
  CGAL_triangulation_assertion((classify(v) == 
 			       Alpha_shape_2<Dt>::REGULAR));
 	      V[Key(&*v)] = number_of_vertices++;
-	      os << v->point() << endl;
+	      os << v->point() << std::endl;
 	    }
 	}
  
@@ -1560,7 +1560,7 @@ Alpha_shape_2<Dt>::op_ostream(std::ostream& os) const
 			       Alpha_shape_2<Dt>::SINGULAR));
 
 	  V[Key(&*v)] = number_of_vertices++;
-	  os << v->point() << endl;
+	  os << v->point() << std::endl;
 	}
  
       // the vertices are oriented counterclockwise
@@ -1621,7 +1621,7 @@ Alpha_shape_2<Dt>::op_ostream(std::ostream& os) const
 			       Alpha_shape_2<Dt>::INTERIOR));
 
 		  os << V[Key(&*(f->vertex(f->ccw(i))))] << ' ' 
-		     << V[Key(&*(f->vertex(f->cw(i))))] << endl;
+		     << V[Key(&*(f->vertex(f->cw(i))))] << std::endl;
 		  
 		}
 	      else 
@@ -1636,7 +1636,7 @@ Alpha_shape_2<Dt>::op_ostream(std::ostream& os) const
  CGAL_triangulation_assertion((classify(f, i) == 
 			       Alpha_shape_2<Dt>::SINGULAR));
 		      os << V[Key(&*(f->vertex(f->ccw(i))))] << ' ' 
-			 << V[Key(&*(f->vertex(f->cw(i))))] << endl;
+			 << V[Key(&*(f->vertex(f->cw(i))))] << std::endl;
 	
 		    }	
 		}
