@@ -71,11 +71,6 @@ public:
   }
 
   result_type operator()(const Point_2& p0, const Point_2& p1,
-			 const Point_2& q0, const Point_2& q1) const {
-    return Site_2(p0, p1, q0, q1);
-  }
-
-  result_type operator()(const Point_2& p0, const Point_2& p1,
 			 const Point_2& q0, const Point_2& q1,
 			 bool b) const {
     return Site_2(p0, p1, q0, q1, b);
