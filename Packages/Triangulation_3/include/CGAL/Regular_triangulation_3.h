@@ -54,12 +54,13 @@ public:
   typedef typename Tr_Base::Cell_iterator       Cell_iterator;
   typedef typename Tr_Base::Facet_iterator      Facet_iterator;
   typedef typename Tr_Base::Edge_iterator       Edge_iterator;
+  typedef typename Tr_Base::Facet_circulator    Facet_circulator;
 
   typedef typename Tr_Base::Finite_vertices_iterator Finite_vertices_iterator;
   typedef typename Tr_Base::Finite_cells_iterator   Finite_cells_iterator;
   typedef typename Tr_Base::Finite_facets_iterator  Finite_facets_iterator;
-  typedef typename Tr_Base::Finite_edges_iterator   Finite_edges_iterator;
-
+  typedef typename Tr_Base::Finite_edges_iterator  Finite_edges_iterator;
+  
   typedef typename Gt::Weighted_point              Weighted_point;
   typedef typename Gt::Bare_point                  Bare_point;
   typedef typename Gt::Segment_3     Segment;
@@ -83,6 +84,7 @@ public:
   using Tr_Base::tds;
   using Tr_Base::infinite_vertex;
   using Tr_Base::next_around_edge;
+  using Tr_Base::vertex_triple_index;
 
   Regular_triangulation_3(const Gt & gt = Gt())
     : Tr_Base(gt)
@@ -95,6 +97,7 @@ public:
       CGAL_triangulation_postcondition( is_valid() );
   }
 
+  //insertion
   template < typename InputIterator >
   Regular_triangulation_3(InputIterator first, InputIterator last,
                           const Gt & gt = Gt())
@@ -121,6 +124,7 @@ public:
   Vertex_handle insert(const Weighted_point & p, Locate_type lt,
 	               Cell_handle c, int li, int);
 
+  // Queries
   Bounded_side
   side_of_power_sphere( Cell_handle c, const Weighted_point &p) const;
 
@@ -145,6 +149,13 @@ public:
   nearest_power_vertex(const Bare_point& p, Cell_handle c =
 		       Cell_handle()) const;
 
+  bool is_Gabriel(Cell_handle c, int i) const;
+  bool is_Gabriel(Cell_handle c, int i, int j) const;
+  bool is_Gabriel(const Facet& f)const ;
+  bool is_Gabriel(const Edge& e) const;
+
+
+  // Dual functions
   Bare_point dual(Cell_handle c) const;
 
 //   Object dual(const Facet & f) const
@@ -529,6 +540,84 @@ side_of_power_segment( Cell_handle c, const Weighted_point &p) const
   return Bounded_side( power_test( finite_neighbor->vertex(0)->point(),
 			           finite_neighbor->vertex(1)->point(), p ) );
 }
+
+template < class Gt, class Tds >
+bool
+Regular_triangulation_3<Gt,Tds>::
+is_Gabriel(const Facet& f) const
+{
+  return is_Gabriel(f.first, f.second);
+}
+
+template < class Gt, class Tds >
+bool
+Regular_triangulation_3<Gt,Tds>::
+is_Gabriel(Cell_handle c, int i) const
+{
+  CGAL_triangulation_precondition(dimension() == 3 && !is_infinite(c,i));
+  typename Geom_traits::In_smallest_orthogonal_sphere_3
+    in_smallest_orthogonal_sphere = 
+    geom_traits().in_smallest_orthogonal_sphere_3_object();
+
+  if ((!is_infinite(c->vertex(i))) &&
+      in_smallest_orthogonal_sphere(
+	 c->vertex(vertex_triple_index[i][0])->point(),
+	 c->vertex(vertex_triple_index[i][1])->point(),
+	 c->vertex(vertex_triple_index[i][2])->point(),
+	 c->vertex(i)->point()) == NEGATIVE ) return false;
+
+  Cell_handle neighbor = c->neighbor(i);
+  int in = neighbor->index(c);
+
+  if ((!is_infinite(neighbor->vertex(in))) &&
+      in_smallest_orthogonal_sphere(
+	 c->vertex(vertex_triple_index[i][0])->point(),
+	 c->vertex(vertex_triple_index[i][1])->point(),
+	 c->vertex(vertex_triple_index[i][2])->point(),	
+	 neighbor->vertex(in)->point()) == NEGATIVE ) return false;
+ 
+  return true;
+}
+  
+
+
+template < class Gt, class Tds >
+bool
+Regular_triangulation_3<Gt,Tds>::
+is_Gabriel(const Edge& e) const
+{
+  return is_Gabriel(e.first, e.second, e.third);
+}
+
+template < class Gt, class Tds >
+bool
+Regular_triangulation_3<Gt,Tds>::
+is_Gabriel(Cell_handle c, int i, int j) const
+{
+  CGAL_triangulation_precondition(dimension() == 3 && !is_infinite(c,i,j));
+  typename Geom_traits::In_smallest_orthogonal_sphere_3
+    in_smallest_orthogonal_sphere = 
+    geom_traits().in_smallest_orthogonal_sphere_3_object();
+
+  Facet_circulator fcirc = incident_facets(c,i,j),
+                   fdone(fcirc);
+  Vertex_handle v1 = c->vertex(i);
+  Vertex_handle v2 = c->vertex(j);
+  do {
+      // test whether the vertex of cc opposite to *fcirc
+      // is inside the sphere defined by the edge e = (s, i,j)
+      Cell_handle cc = (*fcirc).first;
+      int ii = (*fcirc).second;
+      if (!is_infinite(cc->vertex(ii)) &&
+	  in_smallest_orthogonal_sphere( v1->point(), 
+					 v2->point(),
+					 cc->vertex(ii)->point())  
+	  == NEGATIVE ) return false;
+  } while(++fcirc != fdone);
+  return true;
+}
+
+
 
 template < class Gt, class Tds >
 typename Regular_triangulation_3<Gt,Tds>::Vertex_handle

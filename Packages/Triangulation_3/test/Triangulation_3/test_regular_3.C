@@ -16,6 +16,7 @@
 // $Name$
 //
 // Author(s)     : Monique Teillaud (Monique.Teillaud@sophia.inria.fr)
+//               : Mariette Yvinec (Mariette.Yvinec@sophia.inria.fr
 
 #include <CGAL/Regular_triangulation_3.h>
 #include <CGAL/Regular_triangulation_euclidean_traits_3.h>
@@ -44,9 +45,12 @@ int main()
   typedef traits::Bare_point Point;
   typedef traits::Weighted_point Weighted_point;
 
-  typedef Cls::Vertex_handle                             Vertex_handle;
-
-  typedef std::list<Weighted_point>                        list_point;
+  typedef Cls::Vertex_handle                         Vertex_handle;
+  typedef Cls::Cell_handle                           Cell_handle; 
+  typedef Cls::Facet                                 Facet;
+  typedef Cls::Edge                                  Edge;
+  
+  typedef std::list<Weighted_point>                  list_point;
   typedef Cls::Finite_cells_iterator                 Finite_cells_iterator;
 
   // temporary version
@@ -362,6 +366,47 @@ int main()
     Vertex_handle ncc = T3.nearest_power_vertex(cc);
     assert(fcit->has_vertex(ncc));
   }
+
+  // test Gabriel
+  std::cout << " test is_Gabriel " << std::endl;
+  Point q0(0.,0.,0.);
+  Point q1(2.,0.,0.);
+  Point q2(0.,2.,0.);
+  Point q3(0.,0.,2.);
+  Point q4(2.,2.,2.);
+
+  Weighted_point wq0(q0,0.);
+  Weighted_point wq1(q1,0.);
+  Weighted_point wq2(q2,0.);
+  Weighted_point wq3(q3,0.);
+  Weighted_point wq4(q4,0.);
+  Weighted_point wq01(q0,2.);
+  
+  Cls T4;
+  Vertex_handle v0 = T4.insert(wq0);
+  Vertex_handle v1 = T4.insert(wq1);
+  v2 = T4.insert(wq2);
+  Vertex_handle v3 = T4.insert(wq3);
+  Cell_handle c;
+  int i,j,k,l;
+  assert(T4.is_facet(v0,v1,v2,c,j,k,l));
+  i = 6 - (j+k+l);
+  Facet f = std::make_pair(c,i);
+  assert(T4.is_Gabriel(c,i));
+  assert(T4.is_Gabriel(f));
+  assert(T4.is_facet(v1,v2,v3,c,j,k,l));
+  i = 6 - (j+k+l);
+  assert(!T4.is_Gabriel(c,i));
+  assert(T4.is_edge(v0,v1,c,i,j));
+  assert(T4.is_Gabriel(c,i,j));
+  Edge e = make_triple(c,i,j);
+  assert(T4.is_Gabriel(e));
+  assert(T4.is_edge(v2,v3,c,i,j));
+  assert(T4.is_Gabriel(c,i,j));
+  
+  Vertex_handle v01 = T4.insert(wq01);
+  assert(T4.is_edge(v2,v3,c,i,j));
+  assert(!T4.is_Gabriel(c,i,j));
 
   std::cout << " quit " << std::endl;
   return 0;

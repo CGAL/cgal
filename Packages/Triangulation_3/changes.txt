@@ -1,4 +1,10 @@
 
+6 Mars 2004 Mariette Yvinec
+- move vertex_triple_index[4][3] to Triangulation_utils_base_3
+- added is_Gabriel + test in Regular triangulation
+  still to be done : add is_Gabriel in Delaunay 
+                     use it in Alpha_shape
+
 5 Mars 2004 Mariette Yvinec
 - added predicates and constructions for weighted points in
    Regular_triangulation_euclidean_traits_3.h + testsuite

@@ -105,6 +105,7 @@ public:
   using Tr_Base::tds;
   using Tr_Base::infinite_vertex;
   using Tr_Base::next_around_edge;
+  using Tr_Base::vertex_triple_index;
 
 protected:
 
@@ -781,8 +782,8 @@ typename Delaunay_triangulation_3<Gt,Tds>::Vertex_triple
 Delaunay_triangulation_3<Gt,Tds>::
 make_vertex_triple(const Facet& f) const
 {
-  static const int vertex_triple_index[4][3] = { {1, 3, 2}, {0, 2, 3},
-                                                 {0, 3, 1}, {0, 1, 2} };
+  // static const int vertex_triple_index[4][3] = { {1, 3, 2}, {0, 2, 3},
+//                                                  {0, 3, 1}, {0, 1, 2} };
   Cell_handle ch = f.first;
   int i = f.second;
   

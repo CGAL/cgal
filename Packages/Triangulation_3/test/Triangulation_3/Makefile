@@ -19,9 +19,9 @@ CXXFLAGS = \
            $(TESTSUITE_CXXFLAGS) \
            $(CGAL_CXXFLAGS) \
 	   -W -Wall \
-           -DCGAL_CHECK_EXPENSIVE
+           -DCGAL_CHECK_EXPENSIVE 
+	 #  -g
 
-	# -g
 	# -DCGAL_NO_DEPRECATED_CODE \
 
 	# -fprofile-arcs -ftest-coverage # pour Gcov
