@@ -201,8 +201,9 @@ working on the indices of vertices in cells\lcTex{
 
 \ccc{Triangulation_3<TriangulationTraits_3,TriangulationDataStructure_3>} expects a model of a 
 \textit{geometric traits class} as its first template argument and a model 
-of a \textit{triangulation data structure} as its second argument. The
-requirements and defaults for these classes are described in
+of a \textit{triangulation data structure} as its second argument.
+
+The requirements and defaults for the traits classes are described in
 the reference pages for 
 \ccc{TriangulationTraits_3}\lcTex{
 (\ccRefPage{TriangulationTraits_3})},
@@ -215,6 +216,13 @@ the reference pages for
 and
 \ccc{CGAL::Regular_triangulation_euclidean_traits_3<R,Weight>}\lcTex{
 (\ccRefPage{CGAL::Regular_triangulation_euclidean_traits_3<R,Weight>})}.
+
+The requirements and default for the triangulation data structure are
+described in Chapter~/ref{chapter-TDS3}. However, a default parameter
+is defined in \ccc{Triangulation_3}, so that the user who 
+has no additional needs can use
+\ccc{Triangulation_3<TriangulationTraits_3>} without specifying the 
+second argument.
 
 
 %\subsection{The Vertex of a Triangulation} 
@@ -467,6 +475,9 @@ cells and vertices maintaining incidence and adjacency relations (see
 Chapter~\ref{chapter-TDS3}).  A model of this triangulation data
 structure is \ccc{Triangulation_data_structure_3}\lcTex{ 
 (\ccRefPage{CGAL::Triangulation_data_structure_3<TriangulationVertexBase_3,TriangulationCellBase_3>})}.
+
+A default parameter is defined in all the triangulation classes, so, it 
+need not be specified by the user. 
 
 \section{Examples}
 \label{Triangulation3-sec-examples}
