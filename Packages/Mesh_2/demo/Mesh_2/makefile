@@ -15,7 +15,7 @@ include $(CGAL_MAKEFILE)
 
 OPTIM_OPT = 
 
-OTHER_CXXFLAGS = 
+OTHER_CXXFLAGS?= 
 
 CXXFLAGS = -I../../include \
            $(CGAL_CXXFLAGS) \
