@@ -1,3 +1,6 @@
+1.48 (20 June 2003)
+  - Fixes for HTML index.
+
 1.47 (20 June 2003) [ru]
   -replaced Leda_window based demo with Qt_widget based demo
 

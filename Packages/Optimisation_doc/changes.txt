@@ -1,5 +1,8 @@
 Changes done to the `Optimisation_doc' package
 
+Version 1.0.13 on 20-Jun-2003
+- Fixes for HTML index.
+
 Version 1.0.10 on 14-Jan-2002
 - Fixed cgalRefertoAssertions.
 
