@@ -1,3 +1,6 @@
+Version 11.31 (25/06/03) [af]
+- bugfix in demo: we forgot to blend in the Regular_triangulation_vertex_base_2
+
 Version 11.31 (20/06/03)
 - The same as before (I had to resubmit because the server 
   in Ultrecht was down and the changes were not taken into 
