@@ -43,10 +43,10 @@ int main()
 // Choose traits
 
 #if CGAL_ARR_TEST_TRAITS==CGAL_SEGMENT_TRAITS 
-  #include <CGAL/Arr_segment_exact_traits.h>
+  #include <CGAL/Arr_segment_traits_2.h>
 #elif CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS
   #include <CGAL/leda_rational.h>
-  #include <CGAL/Arr_leda_segment_exact_traits.h>
+  #include <CGAL/Arr_leda_segment_traits_2.h>
 #elif CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_TRAITS
   #include <CGAL/Arr_polyline_traits.h>
 #elif CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_LEDA_TRAITS
@@ -89,35 +89,35 @@ int main()
 #include <string>
 
 #if CGAL_ARR_TEST_TRAITS==CGAL_SEGMENT_TRAITS 
-  typedef CGAL::Quotient<int>                  NT;
-  typedef CGAL::Cartesian<NT>                  R;
-  typedef CGAL::Arr_segment_exact_traits<R>    Traits;
+  typedef CGAL::Quotient<int>                   NT;
+  typedef CGAL::Cartesian<NT>                   R;
+  typedef CGAL::Arr_segment_traits_2<R>         Traits;
 
 #elif CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS
-  typedef leda_rational                                 NT;
-  typedef CGAL::Arr_leda_segment_exact_traits           Traits;
+  typedef leda_rational                         NT;
+  typedef CGAL::Arr_leda_segment_traits_2       Traits;
 
 #elif CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_TRAITS
-  typedef CGAL::Quotient<int>                  NT;
-  typedef CGAL::Cartesian<NT>                  R;
-  typedef CGAL::Arr_polyline_traits<R>         Traits;
+  typedef CGAL::Quotient<int>                   NT;
+  typedef CGAL::Cartesian<NT>                   R;
+  typedef CGAL::Arr_polyline_traits<R>          Traits;
 
 #elif CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_LEDA_TRAITS
-  typedef leda_rational                                 NT;
-  typedef CGAL::Arr_leda_polyline_traits<NT>            Traits;
+  typedef leda_rational                         NT;
+  typedef CGAL::Arr_leda_polyline_traits<NT>    Traits;
 
 #endif
 
-typedef Traits::Point_2                      Point_2;
-typedef Traits::X_curve_2                    X_curve_2;
-typedef Traits::Curve_2                      Curve_2;
-typedef CGAL::Arr_base_node<X_curve_2>         Base_node;
-//typedef CGAL::Arr_2_default_dcel<Traits>     Dcel;
-typedef CGAL::Pm_default_dcel<Traits>        Dcel;
+typedef Traits::Point_2                         Point_2;
+typedef Traits::X_curve_2                       X_curve_2;
+typedef Traits::Curve_2                         Curve_2;
+typedef CGAL::Arr_base_node<X_curve_2>          Base_node;
+//typedef CGAL::Arr_2_default_dcel<Traits>      Dcel;
+typedef CGAL::Pm_default_dcel<Traits>           Dcel;
 
-typedef CGAL::Planar_map_2<Dcel,Traits>                    Planar_map;
+typedef CGAL::Planar_map_2<Dcel,Traits>         Planar_map;
 typedef CGAL::Planar_map_with_intersections_2<Planar_map>  Subdivision;
-//typedef Subdivision::Planar_map                           Planar_map;
+//typedef Subdivision::Planar_map               Planar_map;
  
 
 // we use the namespace std for compatability with MSVC

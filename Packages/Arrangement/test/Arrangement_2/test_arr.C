@@ -44,7 +44,7 @@ int main()
   #include <CGAL/Arr_segment_traits_2.h>
 #elif CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS
   #include <CGAL/leda_rational.h>
-  #include <CGAL/Arr_leda_segment_exact_traits.h>
+  #include <CGAL/Arr_leda_segment_traits_2.h>
 #elif CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_TRAITS
   #include <CGAL/Arr_polyline_traits.h>
 #elif CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_LEDA_TRAITS
@@ -93,11 +93,11 @@ int main()
 #if CGAL_ARR_TEST_TRAITS==CGAL_SEGMENT_TRAITS 
   typedef CGAL::Quotient<int>                           NT;
   typedef CGAL::Cartesian<NT>                           R;
-  typedef CGAL::Arr_segment_exact_traits<R>             Traits;
+  typedef CGAL::Arr_segment_traits_2<R>                 Traits;
 
 #elif CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS
   typedef leda_rational                                 NT;
-  typedef CGAL::Arr_leda_segment_exact_traits           Traits;
+  typedef CGAL::Arr_leda_segment_traits_2               Traits;
 
 #elif CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_TRAITS
   typedef CGAL::Quotient<int>                           NT;
