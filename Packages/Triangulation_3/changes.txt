@@ -1,5 +1,7 @@
+Version 1.118 (30 Aug 02)
+- Derive from Quadruple.  This cuts the template chain, which helps VC++7.
 
-Version 1.117 (27 Aug 02))
+Version 1.117 (27 Aug 02)
 - Changed typedef for Cell_handle and Vertex_handle in TDS_3
   following a workaround in Trivial_iterator.h for MSC
 
