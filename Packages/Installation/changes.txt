@@ -2,6 +2,9 @@
 //	Revision History for package Installation
 //=====================================================================
 
+18 AUgust 2004 Radu Ursu
+- install GMP in the CGAL tree copies also mpfr.h and mpf2mpfr.h
+
 13 August 2004 Sylvain Pion
 - Remove the last 2 "-Xlinker -shared" from alpha-linux-g++ and Cygwin-g++.
 

@@ -5614,6 +5614,10 @@ install_gmp()
 	    esac
 	    ${_cp} "${gmpdir}/${_tmp_name}/gmp.h" \
                "${CGAL_INCL_CONF_DIR}/${CGAL_OS_COMPILER}"
+            ${_cp} "${gmpdir}/${_tmp_name}/mpfr.h" \
+               "${CGAL_INCL_CONF_DIR}/${CGAL_OS_COMPILER}"
+            ${_cp} "${gmpdir}/${_tmp_name}/mpf2mpfr.h" \
+               "${CGAL_INCL_CONF_DIR}/${CGAL_OS_COMPILER}"
 	    ${_cp} "${gmpdir}/${_tmp_name}/${_tmp_lib}" \
 	       "${CGAL_LIB_DIR}/${CGAL_OS_COMPILER}"
             ${_cp} "${gmpdir}/${_tmp_name}/${_tmp_mpfr_lib}" \
