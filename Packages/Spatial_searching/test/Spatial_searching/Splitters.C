@@ -29,6 +29,8 @@ typedef CGAL::Euclidean_distance<TreeTraits> Distance;
 
   typedef std::vector<Point>               Vector;
 
+
+
 template <class S>
 struct Splitter_test {
 
@@ -92,6 +94,9 @@ struct Splitter_test {
 
 int 
 main() {
+
+  CGAL::force_ieee_double_precision();
+
   Vector points;
   Random_points g( 150.0);
   CGAL::copy_n( g, 1000, std::back_inserter(points));

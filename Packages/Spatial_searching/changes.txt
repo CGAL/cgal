@@ -1,3 +1,6 @@
+17 September
+- Added CGAL::force_ieee_double_precision() to see, if this makes that Euclidean_distance and squared_distance compute the same
+
 14 September
 - Added testsuite for Orthogonal_k_neighbor_search
 - Replaced Orthogonal_priority_search.C with Orthogonal_incremental_neighbor_search.C
