@@ -16,8 +16,8 @@
 // chapter       : Geometric Optimisation
 //
 // source        : web/Min_sphere_d.aw
-// revision      : 1.19
-// revision_date : 2001/03/21
+// revision      : $Revision$
+// revision_date : $Date$
 //
 // author(s)     : Bernd Gärtner, Sven Schönherr <sven@inf.ethz.ch>
 // coordinator   : ETH Zürich (Bernd Gärtner <gaertner@inf.ethz.ch>)
@@ -29,7 +29,6 @@
 // --------
 #include <CGAL/Cartesian.h>
 #include <CGAL/Homogeneous.h>
-#include <CGAL/Point_3.h>
 #include <CGAL/Min_sphere_d_new.h>
 #include <CGAL/Optimisation_d_traits_3.h>
 
@@ -54,8 +53,8 @@
 // test variant 1 (needs LEDA)
 #ifdef CGAL_USE_LEDA
 # include <CGAL/leda_integer.h>
-  typedef  CGAL::Cartesian<leda_integer>       R_1;
-  typedef  CGAL::Optimisation_d_traits_3<R_1>  Traits_1;
+  typedef  CGAL::Cartesian<leda_integer>       K_1;
+  typedef  CGAL::Optimisation_d_traits_3<K_1>  Traits_1;
 # define TEST_VARIANT_1 \
     "Optimisation_d_traits_3< Cartesian<leda_integer> >"
   CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC( leda_integer)
@@ -64,8 +63,8 @@
 // test variant 2 (needs GMP)
 #ifdef CGAL_USE_GMP
 # include <CGAL/_QP_solver/Double.h>
-  typedef  CGAL::Cartesian< int >                                 R_2;
-  typedef  CGAL::Optimisation_d_traits_3<R_2,GMP::Double,double>  Traits_2;
+  typedef  CGAL::Cartesian< int >                                 K_2;
+  typedef  CGAL::Optimisation_d_traits_3<K_2,GMP::Double,double>  Traits_2;
 # define TEST_VARIANT_2 \
     "Optimisation_d_traits_3< Cartesian<int>, GMP::Double, double >"
 #endif
@@ -73,7 +72,7 @@
 
 // comparing (needs LEDA)
 #ifdef CGAL_USE_LEDA
-  typedef  CGAL::Homogeneous<leda_integer>     R_3;
+  typedef  CGAL::Homogeneous<leda_integer>     K_3;
   typedef  CGAL::Optimisation_d_traits_3<R_3>  Traits_3;
   typedef  CGAL::Min_sphere_d<Traits_1>        Min_sphere_d;
   typedef  CGAL::Min_sphere_d<Traits_3>        O_Min_sphere_d;
@@ -89,7 +88,7 @@ main( int argc, char* argv[])
     // command line arguments
     int verbose = -1;
     if ( argc > 1) verbose = atoi( argv[ 1]);
-    CGAL::Verbose_ostream  verr ( verbose >= 0);
+    CGAL::Verbose_ostream  verr ( verbose >= 0); verr  << "";
     CGAL::Verbose_ostream  verr0( verbose == 0); verr0 << "";
     CGAL::Verbose_ostream  verrX( verbose >  0); verrX << "";
 
@@ -106,9 +105,9 @@ main( int argc, char* argv[])
              << endl;
     
         // generate point set
-        std::vector<R_1::Point_3>  points_1;
+        std::vector<K_1::Point_3>  points_1;
         points_1.reserve( 100);
-        CGAL::copy_n( CGAL::Random_points_on_sphere_3<R_1::Point_3>( 0x100000),
+        CGAL::copy_n( CGAL::Random_points_on_sphere_3<K_1::Point_3>( 0x100000),
                       100, std::back_inserter( points_1));
     
         // call test function
@@ -127,9 +126,9 @@ main( int argc, char* argv[])
              << endl;
     
         // generate point set
-        std::vector<R_2::Point_3>  points_2;
+        std::vector<K_2::Point_3>  points_2;
         points_2.reserve( 100);
-        CGAL::copy_n( CGAL::Random_points_on_sphere_3<R_2::Point_3>( 0x100000),
+        CGAL::copy_n( CGAL::Random_points_on_sphere_3<K_2::Point_3>( 0x100000),
                       100, std::back_inserter( points_2));
     
         // call test function
@@ -150,12 +149,12 @@ main( int argc, char* argv[])
              << endl;
     
         // convert point set
-        std::vector<R_3::Point_3>  points_3;
+        std::vector<K_3::Point_3>  points_3;
         points_3.reserve( points_1.size());
         {
             unsigned int i;
             for ( i = 0; i < points_1.size(); ++i) {
-                points_3.push_back( R_3::Point_3( points_1[ i][ 0],
+                points_3.push_back( K_3::Point_3( points_1[ i][ 0],
                                                   points_1[ i][ 1],
                                                   points_1[ i][ 2]));
             }
