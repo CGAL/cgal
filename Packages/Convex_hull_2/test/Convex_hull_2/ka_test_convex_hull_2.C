@@ -1,3 +1,25 @@
+// ============================================================================
+//
+// Copyright (c) 2003 The CGAL Consortium
+//
+// 
+// 
+// 
+//
+// ----------------------------------------------------------------------------
+// release       :
+// release_date  :
+//
+// file          : ka_test_convex_hull_2.C
+// revision      : $Revision$
+// revision_date : $Date$
+// author(s)     : Matthias Baesken
+//
+// coordinator   : MPI, Saarbruecken
+// ============================================================================
+
+
+
 /*
 test the different convex_hull algorithm implementations
 with the kernel archetype ...
