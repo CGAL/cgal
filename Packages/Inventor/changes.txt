@@ -1,3 +1,6 @@
+Ver 2.10 (17 Oct 2003)
+- remove top-level makefile.
+
 Ver 2.9 (13 Oct 2003)
 - submit again !
 
