@@ -48,15 +48,13 @@ public:
   
   result_type operator()(const T& p, const T& q, const T& r)
     {
-      return
-	std::max
+      return std::max
 	(return_type(0), CGAL::squared_radius_orthogonalcircle(p, q, r));
     }
 
   result_type operator()(const T& p, const T& q)
     {
-      return
-	std::max
+      return std::max
 	(return_type(0), CGAL::squared_radius_smallest_orthogonalcircle(p, q));
     }
 };
@@ -71,8 +69,7 @@ public:
   
    result_type operator()(const T& p, const T& q, const T& t)
     {  
-      return
-	CGAL::in_smallest_orthogonalcircle(p, q, t);
+      return CGAL::in_smallest_orthogonalcircle(p, q, t);
     }
 };
 
@@ -90,9 +87,9 @@ public:
    Regular_triangulation_euclidean_traits_2<R, typename R::FT>::Weighted_point 
      Point;
 
-  typedef Compute_squared_radius_orthogonalcircle_2<Coord_type, Point>
+  typedef CGAL::Compute_squared_radius_orthogonalcircle_2<Coord_type, Point>
   Compute_squared_radius_orthogonalcircle_2;
-  typedef Side_of_bounded_orthogonalcircle_2<Point>
+  typedef CGAL::Side_of_bounded_orthogonalcircle_2<Point>
   Side_of_bounded_orthogonalcircle_2;
   
   //------------------------------------------------------------------
