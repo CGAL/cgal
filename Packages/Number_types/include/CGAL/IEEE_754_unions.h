@@ -1,4 +1,3 @@
-
 // ======================================================================
 //
 // Copyright (c) 1999 The CGAL Consortium
@@ -22,12 +21,10 @@
 // coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
 // ======================================================================
  
-
-#include <iomanip>
-
 #ifndef CGAL_IEEE_754_UNIONS_H
 #define CGAL_IEEE_754_UNIONS_H
 
+#include <iomanip>
 
 union IEEE_754_double
 {
@@ -82,7 +79,5 @@ show( IEEE_754_float* p)
   std::cout << std::hex << std::setw(8) << std::setfill('0') << p->c;
   std::cout << std::endl;
 }
-
-
 
 #endif // CGAL_IEEE_754_UNIONS_H

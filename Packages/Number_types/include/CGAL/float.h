@@ -27,9 +27,12 @@
 #include <CGAL/basic.h>
 #include <CGAL/tags.h>
 #include <cmath>
-#include <CGAL/IEEE_754_unions.h>
+#if defined(_MSC_VER) || defined(__BORLANDC__) || \
+    defined(CGAL_MASK_FINITE_VALID)
+#  include <CGAL/IEEE_754_unions.h>
+#endif
 #ifdef __sgi
-#include <fp_class.h>
+#  include <fp_class.h>
 #endif
 
 CGAL_BEGIN_NAMESPACE

@@ -23,6 +23,7 @@
  
 
 #include <cmath>
+#include <CGAL/IEEE_754_unions.h>
 
 bool
 _test_valid_finite( const float& )

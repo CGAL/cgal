@@ -1,3 +1,6 @@
+4.21     (14 June 01)
+- Include IEEE_754_unions.h only for VC++ and BCC.
+
 4.20     (7 June 01)
 - Add MP_Float code, test and doc.
 

@@ -1,4 +1,3 @@
-
 // ============================================================================
 //
 // Copyright (c) 1999 The CGAL Consortium
@@ -23,6 +22,7 @@
  
 
 #include <cmath>
+#include <CGAL/IEEE_754_unions.h>
 
 bool
 _test_valid_finite( const double& )
