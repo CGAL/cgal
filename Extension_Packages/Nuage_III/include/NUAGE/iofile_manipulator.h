@@ -1024,7 +1024,7 @@ write_in_file_stl_selected_facets(char* foutput, const Surface& S)
 
   os << "endsolid" << std::endl;
 
-  std::cout << "-- wrl result written." << std::endl;
+  std::cout << "-- stl result written." << std::endl;
 }
 
 
