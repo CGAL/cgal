@@ -1,0 +1,9 @@
+
+The Planar map and Topological map packages. 
+Contains the Planar map files, default traits classes, dcel
+class and point location strategies . 
+Also contains an examples directory with examples for checking different
+functions and different traits , and a demo directory with a 
+graphic demo.
+
+

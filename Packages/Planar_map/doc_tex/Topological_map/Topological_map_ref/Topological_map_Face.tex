@@ -1,0 +1,71 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Topological_map_Face.tex
+% +------------------------------------------------------------------------+
+% | 
+% | Package: pm (Planar Map)
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\begin{ccRefClass}[Topological_map<Dcel>::]{Face}
+\ccRefLabel{tpm_face} % label added to avoid ambiguity of the name Vertex    
+
+\ccDefinition An object \ccStyle{f} of the class
+    \ccRefName\ is a face in a topological map. 
+
+\ccInheritsFrom
+    % we use NoLinksFrom because ``Face'' is linked to hds::face
+    \ccHtmlNoLinksFrom{\ccc{Dcel::Face}}
+
+\ccCreation 
+\ccCreationVariable{f}
+    
+    \ccConstructor{Face();}{default constructor.}    	      
+
+\ccOperations 
+    
+    \ccMethod{bool is_unbounded();} 
+    {returns \ccStyle{true} if the face is unbounded.}    
+    
+    \ccMethod{Holes_iterator holes_begin() const;}{
+       returns an iterator for traversing all the holes (inner CCBs) of 
+       \ccVar{}.}
+
+    \ccMethod{Holes_iterator holes_end() const;}{
+       returns the past-the-end iterator of the holes of \ccVar{}.}
+
+    \ccMethod{Halfedge_handle halfedge_on_outer_ccb() const;}
+    {returns a halfedge on the outer boundary of \ccVar{}.
+       \ccPrecond{The face has an outer CCB; namely \ccVar{} is a bounded
+          face.}}
+
+    \ccMethod{Ccb_halfedge_circulator outer_ccb() const;}
+    {returns a circulator for traversing the outer boundary of \ccVar{}.
+       \ccPrecond{The face has an outer CCB; namely \ccVar{}  is a bounded
+          face.}}
+
+
+
+    \ccMethod{bool is_halfedge_on_inner_ccb( Halfedge_const_handle e ) const;}
+    {returns \ccStyle{true} if \ccStyle{e} belongs to an inner CCB of 
+       \ccVar{}.}
+
+    \ccMethod{bool is_halfedge_on_outer_ccb( Halfedge_const_handle e ) const;}
+    {returns \ccStyle{true} if \ccStyle{e} belongs to the outer CCB of 
+       \ccVar{}.}
+
+    \ccMethod{bool does_outer_ccb_exist() const;}
+    {returns \ccStyle{true} if \ccVar{} has an outer CCB.}
+
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+

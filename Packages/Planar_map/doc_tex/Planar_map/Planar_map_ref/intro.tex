@@ -1,0 +1,220 @@
+% +------------------------------------------------------------------------+
+% | Reference manual chapter: planar_ref.tex (Planar Map)
+% +------------------------------------------------------------------------+
+% | 
+% | Package: pm (Planar Map)
+% | 
+% +------------------------------------------------------------------------+
+
+%+----------------------------------------------------------------------------80
+%| update log
+%|
+%| 01 Jun 2000 - Shai Hirsch
+%|    Separated from planar.tex (See previous changes in change log there).
+%|     
+%+----------------------------------------------------------------------------80
+
+
+% +========================================================================+
+%   Introduction
+% +========================================================================+
+\clearpage
+\section{Planar Map Reference Pages}
+\ccRefLabel{Pm_Ref_intro}
+
+\subsection*{Introduction}
+
+A planar subdivision (or planar map) is an embedding of a planar 
+topological map $T$ 
+into the plane, such that each edge of $T$ is embedded as a
+bounded $x$-monotone curve and each vertex is embedded as a planar point.
+In this embedding no
+edge intersects another edge interior.
+
+A {\em face} of the subdivision is a maximal connected region of the
+plane that does not contain any vertex or edge. 
+We consider a face to be open, and its boundary is
+formed by vertices and halfedges of the subdivision.
+The halfedges are oriented around a face so that the face they bound
+is to their left. This means that halfedges on the outer boundary
+of a face are traversed in counterclockwise order, and halfedges on the inner
+boundaries (holes) of a face are traversed in clockwise order. Edges around a
+vertex are also traversed in clockwise order. 
+
+\subsection*{Planar Map Traits}
+The planar map class is parameterized with the
+interface class \ccStyle{Planar_map_traits} which defines the abstract interface
+between planar maps and the primitives they use. 
+
+We supply a default traits class for exact arithmetic ---
+\ccStyle{Pm_segment_exact_traits<R>} % and a class for finite
+%precision arithmetic --- \ccStyle{Pm_segment_epsilon_traits<R>},
+where \ccStyle{R} is the kernel representation type
+(\ccc{Homogeneous} or \ccc{Cartesian}).  There is also a class
+for finite precision arithmetic --- \ccStyle{Pm_segment_epsilon_traits<R>},
+which is not recommended unless it is known that robustness issues will not
+arise. 
+Both traits handle
+finite line segments in the plane
+and use the CGAL kernel (\ccStyle{Point} is of type 
+\ccStyle{Point_2<R>} and \ccStyle{X_curve} is of type
+\ccStyle{Segment_2<R>}).
+We also supply a traits class that uses LEDA's rational kernel and makes use
+of its efficient predicates. The different supplied traits classes are described at the end of this chapter.
+
+The \ccc{Arrangement_2_traits} 
+concept\lcTex{ (\ccRefPage{Arrangement_2_traits})} is a refinement of the \ccc{Planar_map_traits} concept.
+Therefore, all models of the former are models of the latter. 
+There are several supplied traits classes for the \ccc{Arrangement} which the user can use. 
+These classes are described at the end of Chapter \ref{I1_ChapterArrangement_2}
+(\ccc{2D Arrangements}).
+
+\begin{ccAdvanced}
+\subsection*{Point Location Strategies}
+The \ccClassTemplateName\ class has a point location function
+(namely, the \ccc{locate} function that determines which feature of the map 
+contains a given query point)
+which is also used internally in the \ccc{insert} function.
+The planar map users can define which algorithm to use in the
+point location queries. This is done with a {\em point location class}
+passed to the map in the constructor. The class passed should be derived
+from the base class \ccc{Pm_point_location_base} which is a
+(\ccc{pure virtual}) base class that defines the interface between the 
+algorithm
+implemented by the users and the planar map. This follows the 
+known {\it Strategy}
+pattern ~\cite{ghjv-dpero-95}. The indirection overhead due to the virtual functions is
+negligible since the optimal point location algorithm 
+(e.g., the one implemented in our default strategy) takes $\Theta(\log n)$ time.  
+
+We have derived three concrete classes for point location strategies,
+the {\it default\/} strategy, based on trapezoidal decomposition of the map,
+the {\it naive\/} strategy, which goes over all the vertices and halfedges
+of the planar map and the {\it walk-along-a-line strategy\/}, which improves
+the {\it naive\/} one by ``walking'' only along the zone of the vertical ray emanating
+from the query point. All three strategies are classes
+that inherit \ccc{Pm_point_location_base<Planar_map>}.
+More details are give in sections 
+  \ccc{Pm_default_point_location<Planar_map>}\lcTex{
+  (\ccRefPage{CGAL::Pm_default_point_location<Planar_map>})}, 
+  \ccc{Pm_naive_point_location<Planar_map>}\lcTex{ 
+  (\ccRefPage{CGAL::Pm_naive_point_location<Planar_map>})} and
+  \ccc{Pm_walk_along_a_line_point_location<Planar_map>}\lcTex{
+  (\ccRefPage{CGAL::Pm_walk_along_a_line_point_location<Planar_map>})}.
+
+In order for the advanced user to write a model of a~\ccRefName\ the user's class should inherit the \cgal\/ supplied class 
+\ccc{Pm_point_location_base<Planar_map>}.
+
+\paragraph{Trade-off Issues}
+The main trade-off among the three strategies implemented, is between
+time and storage. Using the naive or walk strategies takes more
+time but saves storage space.
+
+Another trade-off depends on the need for point location queries compared
+to the need for other functions. If the users do not need point location 
+queries, but do need other modifying functions (e.g., \ccc{remove_edge}, 
+\ccc{split_edge} and \ccc{merge_edge}) then using the naive or walk strategies
+is preferable. Note that using the \ccc{insert} function invokes the
+point location query, therefore when using the naive or walk strategies it
+is recommended to use the specialized insertion functions : 
+\ccc{insert_in_face_interior}, \ccc{insert_from_vertex} and 
+\ccc{insert_at_vertices}.
+For example, when using the planar map to represent polygons (e.g., when
+computing boolean operations on polygons) it might be preferable to use
+the walk strategy with the specialized insertion functions. 
+
+There are two modes of the {\it default\/} strategy which enables the user
+to choose whether preprocessing should be performed or not (read more in
+the section stated above).
+There is a trade-off between the those two modes. If
+preprocessing is not used, the building of the structure is faster. However,
+for some input sequences the structure might be unbalanced and therefore 
+queries and updates might take longer, especially, if many removal and split 
+operation are performed.
+\end{ccAdvanced}
+
+\begin{ccAdvanced}
+\subsection*{Bounding box strategies}
+The planar map can support infinite objects. In such cases a special utility, namely a \ccc{bounding box} is used. 
+Analogous to the point location strategy the users can define which algorithm 
+will be used to update and query the map's bounding box. However, if such a
+behavior is not expected or wanted the user can ignore the bounding box
+or choose the \ccStyle{Pm_unbounding_box}, which is also the default one used by the planar map.
+
+Defining the bounding box algorithm is done with a {\em bounding box} class
+passed to the map in the constructor. The class passed should be a model of the
+concept \ccc{Planar_map_bounding_box}. The \ccc{bounding box} class should be
+derived from the base class \ccStyle{Pm_bounding_box_base<Planar_map>} which is a
+(\ccc{pure virtual}) base class that defines the interface between the algorithm
+implemented and the planar map according to the requirements of the above concept.
+All concrete classes for bounding box strategies, namely the
+{\em unbounding box strategy} and the {\em dynamic open strategy} 
+stand up to these criteria 
+%are models of the concept \ccc{Planar_map_bounding_box}. These classes were
+%implemented as classes that inherit from the base class
+% \ccc{Pm_bounding_box_base<Planar_map>}.
+
+The following sections list and describe the \ccc{Planar_map_bounding_box}
+concept and the supplied bounding box strategies which model this concept:
+\ccc{Planar_map_bounding_box}\lcTex{ (\ccRefPage{Planar_map_bounding_box})}, 
+\ccc{Pm_unbounding_box<Planar_map>}\lcTex{ (\ccRefPage{CGAL::Pm_unbounding_box<Planar_map>})}
+and
+\ccc{Pm_dynamic_open_bounding_box<Planar_map>}\lcTex{
+(\ccRefPage{CGAL::Pm_dynamic_open_bounding_box<Planar_map>})}.
+
+\paragraph{Trade-off Issues}
+The main trade-off issues between the different strategies
+implemented are concerned with functionality and time efficiency. 
+
+The unbounding box is efficient in time though compared to 
+the others it is limited to bounded curves traits, e.g., circle traits or
+line segment traits.
+This means that if the users want to work with, say, straight lines the unbounding
+box will not work.
+To the other extreme, if one chooses the dynamic bounding box and queries a 
+point 
+outside the bounded area then this might cause the whole bounding box to be 
+modified. The requirement may be of a linear time (in the number of curves).
+In addition to that, in order to ensure that the bounding box is
+large enough, the traits has to supply 
+additional functions, namely to model the \ccc{Pm_bounding_box_traits} concept
+(which is a refinement of the \ccc{Planar_map_traits} concept).
+%, namely to model the planar ray shoot traits concept.
+
+%% add \ccInheritFrom{Pm_bounding_box_base<Planar_map>} to each
+%% of these classes
+
+\end{ccAdvanced}
+
+\begin{ccTexOnly}
+
+\subsection*{Concepts}
+\ccRefConceptPage{Planar_map_point_location}\\
+\ccRefConceptPage{Planar_map_bounding_box}\\
+\ccRefConceptPage{Planar_map_DCEL}\\
+\ccRefConceptPage{Planar_map_DCEL::Vertex}\\
+\ccRefConceptPage{Planar_map_DCEL::Halfedge}\\
+\ccRefConceptPage{Planar_map_traits}\\
+\ccRefConceptPage{Pm_bounding_box_traits}
+
+\subsection*{Classes}
+
+\ccRefIdfierPage{CGAL::Planar_map_2<Dcel,Traits>}\\
+\ccRefIdfierPage{CGAL::Pm_default_point_location<Planar_map>}\\
+\ccRefIdfierPage{CGAL::Pm_naive_point_location<Planar_map>}\\
+\ccRefIdfierPage{CGAL::Pm_walk_along_a_line_point_location<Planar_map>}\\
+%\ccc{Planar_map_2<Dcel, Traits>::Vertex}\\
+%\ccc{Planar_map_2<Dcel, Traits>::Halfedge}\\
+%\ccc{Planar_map_2<Dcel, Traits>::Face}\\
+\ccRefIdfierPage{CGAL::Pm_unbounding_box<Planar_map>}\\
+\ccRefIdfierPage{CGAL::Pm_dynamic_open_bounding_box<Planar_map>}\\
+\ccRefIdfierPage{CGAL::Pm_dcel<V,H,F>}\\
+\ccRefIdfierPage{CGAL::Pm_segment_exact_traits<R>}\\
+\ccRefIdfierPage{CGAL::Pm_segment_epsilon_traits<R>}\\
+\ccRefIdfierPage{CGAL::Pm_leda_segment_exact_traits}\\
+\ccRefIdfierPage{CGAL::Pm_straight_exact_traits<R>}
+%\ccc{Topological_map<Dcel>}\\
+%\ccc{Tpm_face_base}
+
+\end{ccTexOnly}    
+
