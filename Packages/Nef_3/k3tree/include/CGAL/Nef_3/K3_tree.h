@@ -16,6 +16,42 @@
 
 CGAL_BEGIN_NAMESPACE
 
+template <typename Triangle_3>
+void sort_triangle_by_lexicographically_smaller_vertex
+(const Triangle_3& t, int& a, int& b, int& c) {
+  typedef typename Triangle_3::R Kernel;
+  a = 0;
+  for( int i = 1; i < 3; ++i) {
+    if( compare_xyz<Kernel>( t[a], t[i]) == SMALLER)
+      a = i;
+  }
+  b = (a + 1) % 3;
+  c = (b + 1) % 3;
+  if( compare_xyz<Kernel>( t[b], t[c]) == LARGER)
+    std::swap( b, c);
+  return;
+}
+
+template <typename Triangle_3>
+struct Compare_triangle_3 {
+  typedef typename Triangle_3::R Kernel;
+  bool operator()( const Triangle_3& t1, const Triangle_3& t2) {
+    int v1[3], v2[3];
+    sort_triangle_by_lexicographically_smaller_vertex
+      ( t1, v1[0], v1[1], v1[2]);
+    sort_triangle_by_lexicographically_smaller_vertex
+      ( t2, v2[0], v2[1], v2[2]);
+    for( int i = 0; i < 3; ++i) {
+      Comparison_result c = compare_xyz<Kernel>( t1[v1[i]], t2[v2[i]]);
+      if( c == SMALLER)
+	return true;
+      else if( c == LARGER)
+	return false;
+    }
+    return false; // the two triangles are equivalent
+  }
+};
+
 template <class Traits>
 class K3_tree
 {
@@ -25,11 +61,12 @@ class K3_tree
   friend class Objects_around_segment;
 public:
   
-#line 194 "k3_tree.nw"
+#line 230 "k3_tree.nw"
 typedef typename Traits::Infimaximal_box Infimaximal_box;
 typedef typename Traits::Vertex_handle Vertex_handle;
 typedef typename Traits::Halfedge_handle Halfedge_handle;
 typedef typename Traits::Halffacet_handle Halffacet_handle;
+typedef typename Traits::Halffacet_triangle_handle Halffacet_triangle_handle;
 typedef typename Traits::Explorer Explorer;
 
 typedef typename Traits::Object_handle Object_handle;
@@ -41,10 +78,10 @@ typedef typename Object_list::size_type size_type;
 typedef typename Traits::Point_3 Point_3;
 typedef typename Traits::Segment_3 Segment_3;
 typedef typename Traits::Ray_3 Ray_3;
-
 typedef typename Traits::Vector_3 Vector_3;
 typedef typename Traits::Direction_3 Direction_3;
 typedef typename Traits::Plane_3 Plane_3;
+typedef typename Traits::Triangle_3 Triangle_3;
 
 typedef typename Traits::Bounding_box_3 Bounding_box_3;
 typedef typename Traits::Side_of_plane Side_of_plane;
@@ -54,7 +91,7 @@ typedef typename Traits::Kernel Kernel;
 typedef typename Kernel::FT FT;
 typedef typename Kernel::RT RT;
 
-#line 368 "k3_tree.nw"
+#line 405 "k3_tree.nw"
 class Node {
   friend class K3_tree<Traits>;
 public:
@@ -72,7 +109,7 @@ public:
   const Plane_3& plane() const { return splitting_plane; }
   const Object_list& objects() const { return object_list; }
   
-#line 677 "k3_tree.nw"
+#line 720 "k3_tree.nw"
 friend std::ostream& operator<<
   (std::ostream& os, const Node* node) {
   CGAL_assertion( node != 0);
@@ -90,9 +127,9 @@ friend std::ostream& operator<<
   return os;
 }
 
-#line 385 "k3_tree.nw"
+#line 422 "k3_tree.nw"
   
-#line 459 "k3_tree.nw"
+#line 497 "k3_tree.nw"
 ~Node() {
   TRACEN("~Node: deleting node...");
   if( !is_leaf()) {
@@ -101,7 +138,7 @@ friend std::ostream& operator<<
   }
 }
 
-#line 386 "k3_tree.nw"
+#line 423 "k3_tree.nw"
 private:
   Node* parent_node;
   Node* left_node;
@@ -111,7 +148,7 @@ private:
 };
 
 
-#line 41 "k3_tree.nw"
+#line 77 "k3_tree.nw"
 private:
   Traits traits;
   Node* root;
@@ -120,7 +157,7 @@ private:
 public:
   K3_tree( const Object_list& objects) {
     
-#line 173 "k3_tree.nw"
+#line 209 "k3_tree.nw"
 size_type n_vertices = 0;
 for( Object_const_iterator o = objects.begin(); o != objects.end(); ++o) {
   Vertex_handle v;
@@ -129,15 +166,15 @@ for( Object_const_iterator o = objects.begin(); o != objects.end(); ++o) {
 }
 frexp( n_vertices, &max_depth);
 
-#line 49 "k3_tree.nw"
+#line 85 "k3_tree.nw"
     
-#line 185 "k3_tree.nw"
+#line 221 "k3_tree.nw"
 // TODO: in the presence of a infimaximal bounding box, the bounding box does not have to be computed
 Objects_bbox objects_bbox = traits.objects_bbox_object();
 bounding_box = objects_bbox(objects);
 //TRACEN("bounding box:"<<objects_bbox);
 
-#line 50 "k3_tree.nw"
+#line 86 "k3_tree.nw"
     root = build_kdtree( objects, 0);
   }
   const Object_list& objects_around_point( const Point_3& p) const {
@@ -149,19 +186,20 @@ bounding_box = objects_bbox(objects);
   Object_list objects_around_segment( const Segment_3& s) const {
     Object_list O;
     
-#line 701 "k3_tree.nw"
+#line 744 "k3_tree.nw"
 Objects_around_segment objects( *this, s);
 Unique_hash_map< Vertex_handle, bool> v_mark(false);
 Unique_hash_map< Halfedge_handle, bool> e_mark(false);
 Unique_hash_map< Halffacet_handle, bool> f_mark(false);
+std::map< Triangle_3, bool, Compare_triangle_3<Triangle_3> > t_mark;
 for( typename Objects_around_segment::Iterator oar = objects.begin(); 
      oar != objects.end(); ++oar) {
-  
   for( typename Object_list::const_iterator o = (*oar).begin();
        o != (*oar).end(); ++o) { // TODO: implement operator->(...)
     Vertex_handle v;
     Halfedge_handle e;
     Halffacet_handle f;
+    Halffacet_triangle_handle t;
     if( assign( v, *o)) {
       if( !v_mark[v]) {
         O.push_back(*o);
@@ -180,12 +218,19 @@ for( typename Objects_around_segment::Iterator oar = objects.begin();
         f_mark[f] = true;
       }
     }
+    else if( assign( t, *o)) {
+      Triangle_3 tr = t.get_triangle();
+      if( !t_mark[tr]) {
+	O.push_back(*o);
+	t_mark[tr] = true;
+      }
+    }
     else
       CGAL_assertion_msg( 0, "wrong handle");
   }
 }
 
-#line 61 "k3_tree.nw"
+#line 97 "k3_tree.nw"
     return O;
   }
   bool is_point_on_cell( const Point_3& p, const typename Objects_around_segment::Iterator& target) const {
@@ -244,7 +289,7 @@ for( typename Objects_around_segment::Iterator oar = objects.begin();
       }
       Self& operator++() {
         
-#line 737 "k3_tree.nw"
+#line 788 "k3_tree.nw"
 if( S.empty())
   node = 0; // end of the iterator
 else {
@@ -292,7 +337,7 @@ else {
   }
 }
 
-#line 119 "k3_tree.nw"
+#line 155 "k3_tree.nw"
         return *this;
       }
       bool operator==(const Self& i) const { 
@@ -307,7 +352,7 @@ else {
         return node;
       }
       
-#line 615 "k3_tree.nw"
+#line 653 "k3_tree.nw"
 inline 
 const Node* get_child_by_side( const Node* node, Oriented_side side) {
   CGAL_assertion( node != NULL);
@@ -333,7 +378,7 @@ void divide_segment_by_plane( Segment_3 s, Plane_3 pl,
   CGAL_assertion( s2.direction() == s.direction());
 }
 
-#line 133 "k3_tree.nw"
+#line 169 "k3_tree.nw"
     };
   };
   class Objects_along_ray : public Objects_around_segment
@@ -359,7 +404,7 @@ void divide_segment_by_plane( Segment_3 s, Plane_3 pl,
     }
   };
   
-#line 641 "k3_tree.nw"
+#line 679 "k3_tree.nw"
 #ifdef CODE_DOES_NOT_WORK_WITH_BOTH_KERNELS_AT_THE_SAME_TIME
 template <typename T>
 friend std::ostream& operator<<
@@ -370,13 +415,14 @@ friend std::ostream& operator<<
 #endif
 std::string dump_object_list( const Object_list& O, int level = 0) {
   std::stringstream os; 
-  typename Object_list::size_type v_count = 0, e_count = 0, f_count = 0;
+  typename Object_list::size_type v_count = 0, e_count = 0, f_count = 0, t_count = 0;
   typename Object_list::const_iterator o;
   for( o = O.begin(); o != O.end(); ++o) {
     Explorer D;
     Vertex_handle v;
     Halfedge_handle e;
     Halffacet_handle f;
+    Halffacet_triangle_handle t;
     if( assign( v, *o)) {
       if( level) os << D.point(v) << std::endl;
       v_count++;
@@ -389,20 +435,25 @@ std::string dump_object_list( const Object_list& O, int level = 0) {
       if( level) os << "facet" << std::endl;
       f_count++;
     }
+    else if( assign( t, *o)) {
+      if( level) os << "triangle" << std::endl;
+      t_count++;
+    }
     else CGAL_assertion_msg( 0, "wrong handle");
   }
-  os << v_count << "v " << e_count << "e " << f_count << "f";
+  os << v_count << "v " << e_count << "e " << f_count << "f " << t_count << "t ";
   return os.str();
 }
 
-#line 158 "k3_tree.nw"
+#line 194 "k3_tree.nw"
   
-#line 398 "k3_tree.nw"
+#line 435 "k3_tree.nw"
 bool update( Unique_hash_map<Vertex_handle, bool>& V, 
              Unique_hash_map<Halfedge_handle, bool>& E, 
              Unique_hash_map<Halffacet_handle, bool>& F) {
   return update( root, V, E, F);
 }
+
 bool update( Node* node,
              Unique_hash_map<Vertex_handle, bool>& V, 
              Unique_hash_map<Halfedge_handle, bool>& E, 
@@ -449,18 +500,18 @@ bool update( Node* node,
   return (left_updated || right_updated);
 }
 
-#line 159 "k3_tree.nw"
+#line 195 "k3_tree.nw"
   
-#line 453 "k3_tree.nw"
+#line 491 "k3_tree.nw"
 ~K3_tree() {
   TRACEN("~K3_tree: deleting root...");
   delete root;
 }
 
-#line 160 "k3_tree.nw"
+#line 196 "k3_tree.nw"
 private:
   
-#line 230 "k3_tree.nw"
+#line 267 "k3_tree.nw"
 template <typename Depth>
 Node* build_kdtree( const Object_list& O, Depth depth, Node* parent=0, int non_efective_splits=0) {
   CGAL_precondition( depth >= 0);
@@ -498,7 +549,7 @@ Node* build_kdtree( const Object_list& O, Depth depth, Node* parent=0, int non_e
   return node;
 }
 
-#line 271 "k3_tree.nw"
+#line 308 "k3_tree.nw"
 template <typename Depth>
 bool can_set_be_divided( const Object_list& O, Depth depth) {
   if( O.size() < 2)
@@ -518,7 +569,7 @@ bool can_set_be_divided( const Object_list& O, Depth depth) {
   return (number_of_vertices > 1);
 }
 
-#line 296 "k3_tree.nw"
+#line 333 "k3_tree.nw"
 template <typename OutputIterator>
 bool classify_objects( const Object_list& O, Plane_3 partition_plane,
                         OutputIterator o1, OutputIterator o2) {
@@ -540,7 +591,7 @@ bool classify_objects( const Object_list& O, Plane_3 partition_plane,
   return (on_oriented_boundary != O.size());
 }
 
-#line 321 "k3_tree.nw"
+#line 358 "k3_tree.nw"
 template < typename Vertex, typename Explorer, typename Coordinate>
 class Vertex_smaller_than
 {
@@ -584,9 +635,9 @@ Plane_3 construct_splitting_plane( const Object_list& O, Depth depth) {
   return Plane_3();
 }
 
-#line 162 "k3_tree.nw"
+#line 198 "k3_tree.nw"
   
-#line 473 "k3_tree.nw"
+#line 511 "k3_tree.nw"
 const Node *locate_cell_containing( const Point_3& p, const Node* node) const {
   CGAL_precondition( node != 0);
   if( node->is_leaf())
@@ -621,7 +672,7 @@ bool is_point_on_cell( const Point_3& p, const Node* target, const Node* current
           is_point_on_cell( p, target, current->right()));
 }
 
-#line 163 "k3_tree.nw"
+#line 199 "k3_tree.nw"
 };
 
 CGAL_END_NAMESPACE
