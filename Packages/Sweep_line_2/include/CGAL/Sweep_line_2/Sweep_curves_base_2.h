@@ -1145,7 +1145,7 @@ protected:
                                   const Point &event_point,
                                   Intersection_point_node& point_node)
   {
-    bool         event_overlap_terminated = true;
+    // bool event_overlap_terminated = true;
     
     for (Curve_node_iterator cv_iter = point_node.curves_begin(); 
          cv_iter != point_node.curves_end(); ++cv_iter) {
@@ -1188,7 +1188,7 @@ protected:
                                                      event_point))
               // Edge case of tangency in the event point, 
               // if it is this event will be taked cared again.
-              event_overlap_terminated = false;
+              // event_overlap_terminated = false;
             
             if (curr_cv_node != status.begin()){
               --curr_cv_node;
@@ -1198,7 +1198,7 @@ protected:
                                                        event_point))
                 // Edge case of tangency in the event point, 
                 // if it is - this event will be taked cared again.
-                event_overlap_terminated = false;
+                // event_overlap_terminated = false;
               ++curr_cv_node;
             }
             
@@ -1227,7 +1227,8 @@ protected:
                                                          event_point))
                   // Edge case of tangency in the event point, if it
                   // is this event will be taked cared again.
-                  event_overlap_terminated = false;
+                  // event_overlap_terminated = false;
+                    ;
               }
             } 
           }
@@ -1272,8 +1273,8 @@ protected:
                                                    curr_cv_node, 
                                                    event_point))
             // Edge case of tangency in the event point, 
-              // if it is this event will be taked cared again.
-            event_overlap_terminated = false;
+            // if it is this event will be taked cared again.
+            // event_overlap_terminated = false;
           
           if (curr_cv_node != status.begin()){
             --curr_cv_node;
@@ -1283,7 +1284,7 @@ protected:
                                                      event_point))
               // Edge case of tangency in the event point, 
               // if it is - this event will be taked cared again.
-              event_overlap_terminated = false;
+              // event_overlap_terminated = false;
             
             ++curr_cv_node;
           }
@@ -1313,7 +1314,8 @@ protected:
                                                        event_point))
                 // Edge case of tangency in the event point, 
                 // if it is this event will be taked cared again.
-                event_overlap_terminated = false;
+                // event_overlap_terminated = false;
+                  ;
             }
           } 
         }
