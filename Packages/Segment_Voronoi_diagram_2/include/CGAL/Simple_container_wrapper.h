@@ -40,7 +40,8 @@ private:
   typedef Simple_container_wrapper<Container> Self;
 
 public:
-  Simple_container_wrapper() {}
+  Simple_container_wrapper(const Container& c = Container())
+    : c(c) {}
 
   iterator insert(const value_type& t)
   {

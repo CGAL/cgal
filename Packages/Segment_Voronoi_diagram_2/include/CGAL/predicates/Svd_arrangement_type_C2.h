@@ -62,9 +62,52 @@ struct Svd_arrangement_enum {
 			 // identical and p1 is an interior point of (q1,q2)
     TOUCH_22_INTERIOR_1, // (p1,p2) and (q1,q2), and p2, q2 are
 			 // identical and q1 is an interior point of (p1,p2)
-    TOUCH_22_INTERIOR_2  // (p1,p2) and (q1,q2), and p2, q2 are
+    TOUCH_22_INTERIOR_2, // (p1,p2) and (q1,q2), and p2, q2 are
 		         // identical and p1 is an interior point of (q1,q2)
+    OVERLAPPING_11, // (p1,p2) and (q1,q2), and q1 is an interior point
+		    // of (p1,p2) and p1 is an interior point of (q1,q2)
+    OVERLAPPING_12, // (p1,p2) and (q1,q2), and q1 is an interior point
+		    // of (p1,p2) and p2 is an interior point of (q1,q2)
+    OVERLAPPING_21, // (p1,p2) and (q1,q2), and q2 is an interior point
+		    // of (p1,p2) and p1 is an interior point of (q1,q2)
+    OVERLAPPING_22  // (p1,p2) and (q1,q2), and q2 is an interior point
+		    // of (p1,p2) and p2 is an interior point of (q1,q2)
   };
+
+  static Arrangement_type opposite(const Arrangement_type& at) {
+    // this returns the result if we swap the order of the arguments...
+    if ( at == TOUCH_12 ) {
+      return TOUCH_21;
+    } else if ( at == TOUCH_21 ) {
+      return TOUCH_12;
+    } else if ( at == INTERIOR_1 ) {
+      return INTERIOR_2;
+    } else if ( at == INTERIOR_2 ) {
+      return INTERIOR_1;
+    } else if ( at == TOUCH_11_INTERIOR_1 ) {
+      return TOUCH_11_INTERIOR_2;
+    } else if ( at == TOUCH_11_INTERIOR_2 ) {
+      return TOUCH_11_INTERIOR_1;
+    } else if ( at == TOUCH_12_INTERIOR_1 ) {
+      return TOUCH_21_INTERIOR_2;
+    } else if ( at == TOUCH_12_INTERIOR_2 ) {
+      return TOUCH_21_INTERIOR_1;
+    } else if ( at == TOUCH_21_INTERIOR_1 ) {
+      return TOUCH_12_INTERIOR_2;
+    } else if ( at == TOUCH_21_INTERIOR_2 ) {
+      return TOUCH_12_INTERIOR_1;
+    } else if ( at == TOUCH_22_INTERIOR_1 ) {
+      return TOUCH_22_INTERIOR_2;
+    } else if ( at == TOUCH_22_INTERIOR_2 ) {
+      return TOUCH_22_INTERIOR_1;
+    } else if ( at == OVERLAPPING_12 ) {
+      return OVERLAPPING_21;
+    } else if ( at == OVERLAPPING_21 ) {
+      return OVERLAPPING_12;
+    }
+    return at;
+  }
+
 };
 
 //---------------------------------------------------------------------
