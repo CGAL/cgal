@@ -371,17 +371,14 @@ side_of_sphere(Cell_handle c, const Point & p) const
 				  c->vertex(i1)->point(),
 				  c->vertex(i2)->point(),
 				  p);
-  switch (o) {
-  case POSITIVE:
-    return ON_BOUNDED_SIDE;
-  case NEGATIVE:
-    return ON_UNBOUNDED_SIDE;
-  case ZERO:
-    return Bounded_side( geom_traits().side_of_oriented_circle
-			 ( c->vertex(i0)->point(), 
-			   c->vertex(i1)->point(),
-			   c->vertex(i2)->point(),
-			   p ) );
+  if (o != ZERO)
+    return Bounded_side(o);
+
+  return Bounded_side( geom_traits().side_of_oriented_circle
+		       ( c->vertex(i0)->point(), 
+			 c->vertex(i1)->point(),
+			 c->vertex(i2)->point(),
+			 p ) );
 //     {
 //       Oriented_side s = 
 // 	geom_traits().side_of_oriented_circle
@@ -393,8 +390,6 @@ side_of_sphere(Cell_handle c, const Point & p) const
 // 	       (s == ON_POSITIVE_SIDE) ? ON_BOUNDED_SIDE :
 // 	       ON_BOUNDARY );
 //     }
-  }
-  return ON_UNBOUNDED_SIDE;// to avoid warning with egcs
 }// end side of sphere
 
 template < class Gt, class Tds >

@@ -771,7 +771,7 @@ operator>> (std::istream& is, Triangulation_3<GT, Tds> &tr)
   typedef typename Tds::Cell TdsCell;
 
   tr._tds.clear(); // infinite vertex created
-  tr.infinite = new Vertex(Point(500,500,500)); // ?? debug
+  tr.infinite = new Vertex(); 
 
   int i;
   int n, m, d;
@@ -2278,7 +2278,8 @@ side_of_edge(const Point & p,
   // ON_BOUNDARY if p equals one of the vertices
   // ON_UNBOUNDED_SIDE if p lies outside the edge
   // (for an infinite edge this means that p lies on the other half line)
-  // lt has a meaning when ON_BOUNDED_SIDE and ON_BOUNDARY  // li refer to indices in the cell c 
+  // lt has a meaning when ON_BOUNDED_SIDE and ON_BOUNDARY  
+  // li refer to indices in the cell c 
 {//side_of_edge
   CGAL_triangulation_precondition( dimension() == 1 );
   if ( ! is_infinite(c,0,1) ) 
@@ -2399,14 +2400,14 @@ insert_in_cell(const Point & p, Cell_handle c)
   CGAL_triangulation_precondition( dimension() == 3 );
   CGAL_triangulation_precondition_code
     ( Locate_type lt;
-      int i; int j; )
-    CGAL_triangulation_precondition
-      ( side_of_tetrahedron( p, 
-			     c->vertex(0)->point(),
-			     c->vertex(1)->point(),
-			     c->vertex(2)->point(),
-			     c->vertex(3)->point(),
-			     lt,i,j ) == ON_BOUNDED_SIDE );
+      int i; int j; );
+  CGAL_triangulation_precondition
+    ( side_of_tetrahedron( p, 
+			   c->vertex(0)->point(),
+			   c->vertex(1)->point(),
+			   c->vertex(2)->point(),
+			   c->vertex(3)->point(),
+			   lt,i,j ) == ON_BOUNDED_SIDE );
 
     return (Vertex*)_tds.insert_in_cell( Vertex(p), &(*c) );
 }
@@ -2434,19 +2435,18 @@ insert_in_facet(const Point & p, Cell_handle c, int i)
   }
   CGAL_triangulation_precondition_code
     ( Locate_type lt;
-      int li; int lj; )
-    CGAL_triangulation_precondition
-      ( (geom_traits().orientation( p, 
-				    c->vertex((i+1)&3)->point(),
-				    c->vertex((i+2)&3)->point(),
-				    c->vertex((i+3)&3)->point() ) == COPLANAR)
-	&& 
-	(side_of_triangle(p, 
-			  c->vertex((i+1)&3)->point(),
-			  c->vertex((i+2)&3)->point(),
-			  c->vertex((i+3)&3)->point(),
-			  lt,li,lj) == ON_BOUNDED_SIDE)
-	);
+      int li; int lj; );
+  CGAL_triangulation_precondition
+    ( (geom_traits().orientation( p, 
+				  c->vertex((i+1)&3)->point(),
+				  c->vertex((i+2)&3)->point(),
+				  c->vertex((i+3)&3)->point() ) == COPLANAR)
+      && 
+      (side_of_triangle(p, 
+			c->vertex((i+1)&3)->point(),
+			c->vertex((i+2)&3)->point(),
+			c->vertex((i+3)&3)->point(),
+			lt,li,lj) == ON_BOUNDED_SIDE) );
 
     return (Vertex*) _tds.insert_in_facet( Vertex(p), &(*c), i);
 }
@@ -2466,18 +2466,17 @@ insert_in_edge(const Point & p, Cell_handle c, int i, int j)
       CGAL_triangulation_precondition( ! is_infinite(c,i,j) );
       CGAL_triangulation_precondition_code
 	( Locate_type lt;
-	  int li; )
-	CGAL_triangulation_precondition
-	  ( geom_traits().collinear( c->vertex(i)->point(),
-				     p,
-				     c->vertex(j)->point() )
-	    &&
-	    ( side_of_segment( p,
-			       c->vertex(i)->point(),
-			       c->vertex(j)->point(),
-			       lt,li ) == ON_BOUNDED_SIDE )
-	    );
-   	break;
+	  int li; );
+      CGAL_triangulation_precondition
+	( geom_traits().collinear( c->vertex(i)->point(),
+				   p,
+				   c->vertex(j)->point() )
+	  &&
+	  ( side_of_segment( p,
+			     c->vertex(i)->point(),
+			     c->vertex(j)->point(),
+			     lt,li ) == ON_BOUNDED_SIDE ) );
+      break;
     }
   case 2:
     {
