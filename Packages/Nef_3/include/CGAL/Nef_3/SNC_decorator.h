@@ -463,7 +463,6 @@ public:
 	//	CGAL_nef3_assertion_msg(0,"Damn wrong handle");
       return Halffacet_handle();
     }
-    TRACEN("return");
     return f_visible;
   }
   
@@ -644,7 +643,7 @@ public:
     O1.print();
 #endif // CGAL_NEF3_DUMP_SNC_OPERATORS
 
-    SETDTHREAD(131*19*43);
+    // SETDTHREAD(131*19*43);
 
     TRACEN("=> for all v0 in snc0, qualify v0 with respect snc1");
 
@@ -906,7 +905,6 @@ visit_shell_objects(SFace_handle f, Visitor& V) const
   while ( true ) {
     if ( SFaceCandidates.empty() && FacetCandidates.empty() ) break;
     if ( !FacetCandidates.empty() ) {
-      TRACEN("Facet");
       Halffacet_handle f = *FacetCandidates.begin();
       FacetCandidates.pop_front();
       V.visit(f); // report facet
@@ -914,7 +912,6 @@ visit_shell_objects(SFace_handle f, Visitor& V) const
       CGAL_nef3_forall_facet_cycles_of(fc,f) {
         SHalfedge_handle e; SHalfloop_handle l;
         if ( assign(e,fc) ) {
-	  TRACEN("Sedge assigned");
           SHalfedge_around_facet_circulator ec(e),ee(e);
           CGAL_For_all(ec,ee) { e = twin(ec);
             if ( Done[sface(e)] ) continue;
@@ -922,7 +919,6 @@ visit_shell_objects(SFace_handle f, Visitor& V) const
             Done[sface(e)] = true;
           }
         } else if ( assign(l,fc) ) { 
-	  TRACEN("sloop assigned");
 	  l = twin(l);
           if ( Done[sface(l)] ) continue;
           SFaceCandidates.push_back(sface(l));
@@ -931,7 +927,6 @@ visit_shell_objects(SFace_handle f, Visitor& V) const
       }
     }
     if ( !SFaceCandidates.empty() ) {
-      TRACEN("Sface");
       SFace_handle sf = *SFaceCandidates.begin();
       SFaceCandidates.pop_front();
       V.visit(sf);
@@ -947,7 +942,6 @@ visit_shell_objects(SFace_handle f, Visitor& V) const
       CGAL_nef3_forall_sface_cycles_of(fc,sf) {
         SVertex_handle v; SHalfedge_handle e; SHalfloop_handle l;
         if ( assign(e,fc) ) {
-	  TRACEN("sedge assigned2");
 	  SHalfedge_around_sface_circulator ec(e),ee(e);
           CGAL_For_all(ec,ee) { 
             v = starget(ec);
@@ -960,7 +954,6 @@ visit_shell_objects(SFace_handle f, Visitor& V) const
             FacetCandidates.push_back(f); Done[f] = true;
           }
         } else if ( assign(v,fc) ) {
-	  TRACEN("svertex assigned");
           if ( Done[v] ) continue; 
           V.visit(v); // report edge
           Done[v] = Done[twin(v)] = true;
@@ -974,7 +967,6 @@ visit_shell_objects(SFace_handle f, Visitor& V) const
 	  if ( Done[fo] ) continue;
           SFaceCandidates.push_back(fo); Done[fo] = true;
         } else if ( assign(l,fc) ) {
-	  TRACEN("sloop assigned");
           Halffacet_handle f = facet(twin(l));
           if ( Done[f] ) continue;
           FacetCandidates.push_back(f);  Done[f] = true;
