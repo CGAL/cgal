@@ -19,10 +19,10 @@ OBJECTS = predicates_on_ftC2.h \
 #### Don't touch below.
 
 % :: $(CGAL)/include/CGAL/% $(SCRIPT)
-	$(SCRIPT) < $< > $@
+	$(SCRIPT) -p < $< > $@
 
 predicates/% : $(CGAL)/include/CGAL/predicates/% $(SCRIPT)
-	$(SCRIPT) < $< > $@
+	$(SCRIPT) -p < $< > $@
 
 all: $(OBJECTS)
 
