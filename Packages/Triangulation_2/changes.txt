@@ -1,6 +1,12 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+ver 7.72 (5/05/03)
+- fixes in Triangulation_face_base_2.h
+- added typedef to Vertex_handle and Face_handle in 
+  Triangulation_ds_vertex_base_2<void> and
+  Triangulation_ds_face_base_2<void>
+
 ver 7.71 (2/05/03)
 - fixes in Triangulation_face_base_2.h
 
