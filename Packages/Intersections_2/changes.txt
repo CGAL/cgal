@@ -1,3 +1,7 @@
+2.6 (17 Apr 2000)
++ Made a few chnges to Straight_2.
+
+-----
 2.5.3 (12 April 2000)
 + Changed leading underscores in trailing underscores.
 
