@@ -20,7 +20,7 @@ y_monotone_partition_is_valid_2 (InputIterator1 point_first,
 }
 {
 determines if the polygons in the range [\ccc{poly_first}, \ccc{poly_last})
-define a valid $y$-monotone partition of the polygon defined by the points 
+define a valid $y$-monotone partition of the polygon reprsented by the points 
 in the 
 range [\ccc{point_first}, \ccc{point_last}), where a valid partition is one in
 which the polygons are nonoverlapping and the union of the polygons is the 
@@ -51,7 +51,8 @@ The default traits class \ccc{Default_traits} is \ccc{Partition_traits_2}.%
 
 \ccc{y_monotone_partition_2},
 \ccc{is_y_monotone_2},
-\ccc{partition_is_valid_2}
+\ccc{partition_is_valid_2},
+\ccc{Partition_is_valid_traits_2}
 
 \ccExample
 
@@ -64,6 +65,12 @@ done in \ccc{y_monotone_partition_2} has been turned off during
 compilation.)
 
 \begin{verbatim}
+   #include <CGAL/basic.h>
+   #include <CGAL/Cartesian.h>
+   #include <CGAL/Partition_traits_2.h>
+   #include <CGAL/partition_2.h>
+   #include <list>
+
    typedef CGAL::Cartesian<double>                           R;
    typedef CGAL::Partition_traits_2<R>                       Traits;
    typedef Traits::Polygon_2                                 Polygon_2;

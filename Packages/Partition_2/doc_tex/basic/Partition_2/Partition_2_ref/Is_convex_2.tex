@@ -24,8 +24,8 @@ PolygonIsValid\ccIndexSubitem[c]{PolygonIsValid}{model}
 \ccCreation
 \ccCreationVariable{f}  %% choose variable name
 
-\ccConstructor{Is_convex_2(const Traits& t);}{\ccc{Traits} is a model of
-the concept IsConvexTraits\_2}
+\ccConstructor{Is_convex_2(const Traits& t);}{\ccc{Traits} satisfies the
+requriements of hte function \ccc{is_convex_2}}
 
 \ccOperations
 
@@ -39,7 +39,8 @@ bool operator()(InputIterator first, InputIterator last);}
 
 \ccSeeAlso
 
-\ccc{convex_partition_is_valid_2}
+\ccc{convex_partition_is_valid_2},
+\ccc{Partition_is_valid_traits_2}
 
 \end{ccRefFunctionObjectClass}
 

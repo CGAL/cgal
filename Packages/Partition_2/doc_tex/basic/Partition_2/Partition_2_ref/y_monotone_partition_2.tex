@@ -26,9 +26,9 @@ the resulting sequence of polygons is returned.
 \ccHeading{Preconditions}
 \ccIndexSubitem[C]{y_monotone_partition_2}{preconditions}
 \begin{enumerate}
-    \item \ccc{Traits} is a model of the concept YMonotonePartitionTraits\_2.%
+    \item \ccc{Traits} is a model of the concept YMonotonePartitionTraits\_2%
           \ccIndexMainItem[c]{YMonotonePartitionTraits_2} and, for the purposes
-          of checking the postcondition that the partitionis valid, it should 
+          of checking the postcondition that the partition is valid, it should 
           also be a model of YMonotonePartitionIsValidTraits\_2%
           \ccIndexMainItem[c]{YMonotonePartitionIsValidTraits_2}.
     \item \ccc{OutputIterator::value_type} should be 
@@ -59,6 +59,12 @@ traits class and store the partition polygons in the list
 \ccc{partition_polys}.
 
 \begin{verbatim}
+   #include <CGAL/basic.h>
+   #include <CGAL/Cartesian.h>
+   #include <CGAL/Polygon_traits_2.h>
+   #include <CGAL/partition_2.h>
+   #include <list>
+
    typedef CGAL::Cartesian<double>                           R;
    typedef CGAL::Polygon_traits_2<R>                         Traits;
    typedef Traits::Point_2                                   Point_2;

@@ -66,6 +66,12 @@ traits class and store the partition polygons in the list
 \ccc{partition_polys}.
 
 \begin{verbatim}
+   #include <CGAL/basic.h>
+   #include <CGAL/Cartesian.h>
+   #include <CGAL/Polygon_traits_2.h>
+   #include <CGAL/partition_2.h>
+   #include <list>
+
    typedef CGAL::Cartesian<double>                           R;
    typedef CGAL::Polygon_traits_2<R>                         Traits;
    typedef Traits::Point_2                                   Point_2;
