@@ -1,4 +1,5 @@
-
+2.83 17/10/2003
+- include/CGAL/config.h replaced global min/max by std::min, std::max
 - Iterator specializations are NOT needed for Intel together with .net 2003
 
 2.82 15/10/2003
