@@ -237,11 +237,6 @@ protected:
   void          insert_point(const Site_2& t, const Storage_site_2& ss,
 			     int low, int high, Vertex_handle vbelow,
 			     Vertex_handle* vertices);
-#if 0
-  // not implemented yet
-  void          insert_point(const Site_2& p, int level,
-			     Vertex_handle* vertices);
-#endif
 
   Vertex_handle insert_segment(const Point_2& p0, const Point_2& p1,
 			       int level); 
@@ -265,13 +260,15 @@ protected:
 
   Vertex_handle insert_segment_on_point(const Storage_site_2& ss,
 					const Vertex_handle& v,
-					int level, Tag_false stag) {
+					int level, Tag_false stag,
+					int which) {
     return Vertex_handle();
   }
 
   Vertex_handle insert_segment_on_point(const Storage_site_2& ss,
 					const Vertex_handle& v,
-					int level, Tag_true stag);
+					int level, Tag_true stag,
+					int which);
 
   template<class Tag>
   Vertex_handle
@@ -357,7 +354,6 @@ protected:
     return level;
   }
 
-#if 0
   Vertex_handle
   vertex_at_level(const Vertex_handle& v, size_type k) const
   {
@@ -371,7 +367,6 @@ protected:
     }
     return v_at_level;
   }
-#endif
 
   void print_error_message() const;
 };
@@ -383,17 +378,6 @@ CGAL_END_NAMESPACE
 
 #ifdef CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
 #  include <CGAL/Segment_Voronoi_diagram_hierarchy_2.C>
-#endif
-
-
-#if 0
-CGAL_BEGIN_NAMESPACE
-
-template<class Gt, class STag, class DS, class LTag>
-const int
-Segment_Voronoi_diagram_hierarchy_2<Gt,STag,DS,LTag>::UNDEFINED_LEVEL = -1;
-
-CGAL_END_NAMESPACE
 #endif
 
 #endif // CGAL_SEGMENT_VORONOI_DIAGRAM_HIERARCHY_2_H

@@ -116,6 +116,11 @@ insert_point(const Point_2& p, int level, Vertex_handle* vertices)
   size_type n = hierarchy[0]->number_of_vertices();
   if ( n > 2 ) {
     Arrangement_type at_res = this->arrangement_type(t, vnear[0]);
+
+    CGAL_assertion( at_res == AT2::DISJOINT ||
+		    at_res == AT2::INTERIOR ||
+		    at_res == AT2::IDENTICAL );
+
     if ( vnear[0]->is_point() ) {
       if ( at_res == AT2::IDENTICAL ) {
 	vertex = vnear[0];
@@ -349,9 +354,58 @@ insert_segment_interior(const Site_2& t, const Storage_site_2& ss,
       } else if ( at_res == AT2::CROSSING ) {
 	return insert_intersecting_segment_with_tag(ss, t, vv, level,
 						    itag, stag);
+      } else if ( at_res == AT2::TOUCH_11_INTERIOR_1 ) {
+#if 1
+	Vertex_handle vp = second_endpoint_of_segment(vv);
+	return insert_segment_on_point(ss, vp, level, stag, 1);
+#else
+	Vertex_handle vp = second_endpoint_of_segment(vv);
+	Storage_site_2 ssvp = vp->storage_site();
+	Site_2 svp = ssvp.site();
+
+	Vertex_handle vp_vnear[svd_hierarchy_2__maxlevel];
+
+	nearest_neighbor(svp, vp_near, false);
+
+	int vp_level = find_level(vp);
+
+	if ( vp_level < level ) {
+	  Vertex_handle vbelow = vp_vertices[vp_level];
+
+	  insert_point(svp, ssvp, vp_level + 1,	level, vbelow, vp_vnear);
+	}
+
+	Storage_site_2 sss = split_storage_site(ss, svp, 1, itag);
+	return insert_segment_interior(sss.site(), sss, vp_vnear, level);
+#endif
+      } else if ( at_res == AT2::TOUCH_12_INTERIOR_1 ) {
+#if 1
+	Vertex_handle vp = first_endpoint_of_segment(vv);
+	return insert_segment_on_point(ss, vp, level, stag, 0);
+#else
+	Vertex_handle vp = first_endpoint_of_segment(vv);
+	Storage_site_2 ssvp = vp->storage_site();
+	Site_2 svp = ssvp.site();
+
+	Vertex_handle vp_vnear[svd_hierarchy_2__maxlevel];
+
+	nearest_neighbor(svp, vp_near, false);
+
+	int vp_level = find_level(vp);
+
+	if ( vp_level < level ) {
+	  Vertex_handle vbelow = vp_vertices[vp_level];
+
+	  insert_point(svp, ssvp, vp_level + 1, level, vbelow, vp_vnear);
+	}
+
+	Storage_site_2 sss = split_storage_site(ss, ssvp, 0, itag);
+	return insert_segment_interior(sss.site(), sss, vp_vnear, level);
+#endif
       } else {
-	// MK::ERROR:: not ready yet
-	std::cout << "at: " << at_res << std::endl;
+	// this should never be reached; the only possible values for
+	// at_res are DISJOINT, CROSSING, TOUCH_11_INTERIOR_1
+	// and TOUCH_12_INTERIOR_1
 	CGAL_assertion( false );
       }
     } else {
@@ -360,7 +414,7 @@ insert_segment_interior(const Site_2& t, const Storage_site_2& ss,
 	Storage_site_2 svv = vv->storage_site();
 	if ( svv.is_exact() ) {
 #if 1
-	  return insert_segment_on_point(ss, vv, level, stag);
+	  return insert_segment_on_point(ss, vv, level, stag, 2);
 #else
 	  //************************************************************
 	  //************************************************************
@@ -426,6 +480,10 @@ insert_segment_interior(const Site_2& t, const Storage_site_2& ss,
   hierarchy[0]->expand_conflict_region(start_f, t, ss, l, fm,
 				       sign_map, vcross);
 
+  CGAL_assertion( vcross.third == AT2::DISJOINT ||
+		  vcross.third == AT2::CROSSING ||
+		  vcross.third == AT2::INTERIOR );
+
   // the following condition becomes true only if intersecting
   // segments are found
   if ( vcross.first ) {
@@ -436,7 +494,7 @@ insert_segment_interior(const Site_2& t, const Storage_site_2& ss,
 						    level, itag, stag);
       } else if ( vcross.third == AT2::INTERIOR ) {
 #if 1
-	return insert_segment_on_point(ss, vcross.second, level, stag);
+	return insert_segment_on_point(ss, vcross.second, level, stag, 2);
 #else
 	Storage_site_2 ssvv = vcross.second->storage_site();
 	Intersections_tag itag;
@@ -458,6 +516,10 @@ insert_segment_interior(const Site_2& t, const Storage_site_2& ss,
 	//	insert_segment_interior(ss1.site(), ss1, vcross.second);
 	//	return insert_segment_interior(ss2.site(), ss2, vcross.second);
 #endif
+      } else {
+	// this should never be reached; the only possible values for
+	// vcross.third are CROSSING, INTERIOR and DISJOINT
+	CGAL_assertion( false );
       }
     }
   }
@@ -518,7 +580,7 @@ Segment_Voronoi_diagram_hierarchy_2<Gt,STag,DS,LTag>::Vertex_handle
 Segment_Voronoi_diagram_hierarchy_2<Gt,STag,DS,LTag>::
 insert_segment_on_point(const Storage_site_2& ss,
 			const Vertex_handle& v,
-			int level, Tag_true stag)
+			int level, Tag_true stag, int which)
 {  
   // inserts the segment represented by ss in the case where this
   // segment goes through a point which has already been inserted and
@@ -526,26 +588,33 @@ insert_segment_on_point(const Storage_site_2& ss,
   CGAL_precondition( ss.is_segment() );
   CGAL_precondition( v->is_point() );
 
-  int v_level = find_level(v);
-
   Storage_site_2 ssv = v->storage_site();
   Site_2 sv = ssv.site();
 
   Vertex_handle vnear[svd_hierarchy_2__maxlevel];
 
   nearest_neighbor(sv, vnear, false);
-  Vertex_handle vbelow = vnear[v_level];
+
+  int v_level = find_level(v);
 
   if ( v_level < level ) {
+    Vertex_handle vbelow = vnear[v_level];
+
     insert_point(sv, ssv, v_level + 1, level, vbelow, vnear);
   }
 
   Intersections_tag itag;
-  Storage_site_2 ss1 = this->split_storage_site(ss, ssv, 0, itag);
-  Storage_site_2 ss2 = this->split_storage_site(ss, ssv, 1, itag);
+  if ( which == 2 ) {
+    Storage_site_2 ss1 = this->split_storage_site(ss, ssv, 0, itag);
+    Storage_site_2 ss2 = this->split_storage_site(ss, ssv, 1, itag);
 
-  insert_segment_interior(ss1.site(), ss1, vnear, level);
-  return insert_segment_interior(ss2.site(), ss2, vnear, level);
+    insert_segment_interior(ss1.site(), ss1, vnear, level);
+    return insert_segment_interior(ss2.site(), ss2, vnear, level);
+  } else {
+    Storage_site_2 ss1 = this->split_storage_site(ss, ssv, which, itag);
+
+    return insert_segment_interior(ss1.site(), ss1, vnear, level);
+  }
 }
 
 //--------------------------------------------------------------------
@@ -841,11 +910,11 @@ is_valid(bool verbose, int level) const
   //verify correctness of triangulation at all levels
   for(unsigned int i = 0; i < svd_hierarchy_2__maxlevel; ++i) {
     if ( verbose ) {
-      std::cout << "Level " << i << ": " << std::flush;
+      std::cerr << "Level " << i << ": " << std::flush;
     }
     result = result && hierarchy[i]->is_valid(verbose, level);
     if ( verbose ) {
-      std::cout << std::endl;
+      std::cerr << std::endl;
     }
   }
   //verify that lower level has no down pointers
