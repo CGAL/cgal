@@ -534,8 +534,8 @@ namespace OGL {
     
     static void draw(Halfedge_const_handle e, const Nef_polyhedron& N,
 		     CGAL::OGL::Polyhedron& P) { 
-      Vertex_const_handle s = N.source(e);
-      Vertex_const_handle t = N.source(N.twin(e));
+      Vertex_const_handle s = e->source();
+      Vertex_const_handle t = e->twin()->source();
       Segment_3 seg(N.point(s),N.point(t));
       //    TRACEN("edge " << seg);
       P.push_back(double_segment(seg), N.mark(e)); 
@@ -551,7 +551,7 @@ namespace OGL {
 	  SHalfedge_const_handle h = fc;
 	  SHalfedge_around_facet_const_circulator hc(h), he(hc);
 	  CGAL_For_all(hc,he){ // all vertex coordinates in facet cycle
-	    Point_3 sp = N.point(N.source(hc));
+	    Point_3 sp = hc->source()->point();
 	    //	      TRACEN(" ");TRACEN("facet" << sp);
 	    g.push_back_vertex(double_point(sp));
 	  }
