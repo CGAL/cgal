@@ -18,24 +18,24 @@
 // coordinator   : Tel-Aviv University (Dan Halperin <halperin@math.tau.ac.il>)
 //
 // ======================================================================
-#ifndef SEGMENT_CIRCLE_2_H
-#define SEGMENT_CIRCLE_2_H
+#ifndef CGAL_SEGMENT_CIRCLE_2_H
+#define CGAL_SEGMENT_CIRCLE_2_H
 
 // Segment_circle_2.h
 //
 // A modified version that specializes in segments and circular arcs.
 // This class does NOT support general conic arcs
 
-#include <CGAL/basic.h>
-#include <list>
-
+#ifndef CGAL_CARTESIAN_H
 #include <CGAL/Cartesian.h>
-#include <CGAL/Point_2.h>
+#endif // CGAL_CARTESIAN_H
+
+#ifndef CGAL_CONIC_2_H
 #include <CGAL/Conic_2.h>
-#include <CGAL/Circle_2.h>
-#include <CGAL/Segment_2.h>
-#include <CGAL/predicates_on_points_2.h>
+#endif // CGAL_CONIC_2_H
+
 #include <fstream>
+#include <list>
 
 
 CGAL_BEGIN_NAMESPACE
@@ -911,4 +911,4 @@ std::ostream& operator<< (std::ostream& os, const Segment_circle_2<NT>& arc)
 
 CGAL_END_NAMESPACE
 
-#endif // SEGMENT_CIRCLE_2_H
+#endif // CGAL_SEGMENT_CIRCLE_2_H
