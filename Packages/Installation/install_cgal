@@ -917,6 +917,8 @@ set_compiler_flags()
 	    CGAL_SHARED_LIB_CREATE="`compiler_bin` -G"
 	    ;;
     esac
+    # Remove *.moc files too, on all platforms
+    REMOVE_EXT_LIST="${REMOVE_EXT_LIST} .moc"
     # version specific adjustments for gcc
     case `compiler_description` in
 	*GNU*) 
