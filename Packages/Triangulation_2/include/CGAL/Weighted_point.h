@@ -29,9 +29,15 @@ class Weighted_point : public Pt
 public:
   typedef We Weight;
   typedef Pt Point;
-  //typedef typename Point::RT RT;
 
-  Weighted_point (const Point &p=Point(), const Weight &w = Weight(0))
+  Weighted_point ()
+      : Point(), _weight(0) {}
+
+  //explicit
+  Weighted_point (const Point &p)
+      : Point(p), _weight(0) {}
+
+  Weighted_point (const Point &p, const Weight &w)
       : Point(p), _weight(w) {}
 
   const Point & point() const
