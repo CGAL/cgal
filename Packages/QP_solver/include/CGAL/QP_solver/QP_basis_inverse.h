@@ -159,6 +159,7 @@ class QPE_basis_inverse {
     typename std::iterator_traits<InputIterator1>::value_type
     inner_product_x( InputIterator1 u_x_it, InputIterator2 v_x_it) const
         { return inner_product( u_x_it, v_x_it, b); }
+	
     
     // update functions
     // ----------------
@@ -326,11 +327,13 @@ class QPE_basis_inverse {
 
 	// compute new basis inverse [ upper-left part: -(Q^T * 2 D_B * Q) ]
 	// -----------------------------------------------------------------
-	// compute 'Q^T * 2 D_B' ( Q = A_B^-1 )
-	p_begin = M.begin(); ++p_begin;
-	r_begin = M.begin();   r_begin += l+s-1;
-	for ( col = 0; col < b; ++col, ++twice_D_it, ++p_begin) {
-
+	// compute 'Q^T * 2 D_B' ( Q = A_B^-1 )	
+	p_begin = M.begin();
+	r_begin = M.begin();
+	if (b > 0) r_begin += l+s-1;   	// initialize only if for loops 
+					// are entered
+	for ( col = 0; col < b; ++col, ++twice_D_it) {
+            ++p_begin;
 	    // get column of D (D symmetric)
 	    std::copy( *twice_D_it, *twice_D_it+b, x_l.begin());
 
@@ -980,6 +983,20 @@ class QPE_basis_inverse {
             }
         }
     }
+    
+    template < class RandomAccessIterator >
+    typename std::iterator_traits<RandomAccessIterator>::value_type 
+    inv_M_B_row_dot_col( int row, RandomAccessIterator u_l_it) const
+    {
+	typename Row::const_iterator row_it;
+	if ( is_QP) {
+	    row_it = M[l + row].begin();
+	} else {
+	    row_it = M[row].begin();
+	}
+	return inner_product(row_it, u_l_it, b);	
+    }
+
 };
 
 // ----------------------------------------------------------------------------
