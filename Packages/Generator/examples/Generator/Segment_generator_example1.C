@@ -1,13 +1,11 @@
 // examples/Generator/Segment_generator_example1.C
 // --------------------------------------------------------------
 // CGAL example program for the generic segment generator.
-// Derived from Segment_generator_prog1.C, without visualization.
 
-#include <CGAL/basic.h>
+#include <CGAL/Simple_cartesian.h>
 #include <cassert>
 #include <vector>
 #include <algorithm>
-#include <CGAL/Cartesian.h>
 #include <CGAL/Point_2.h>
 #include <CGAL/Segment_2.h>
 #include <CGAL/point_generators_2.h>
@@ -17,10 +15,10 @@
 
 using namespace CGAL;
 
-typedef Cartesian<double>                R;
-typedef Point_2<R>                       Point;
+typedef Simple_cartesian<double>         R;
+typedef R::Point_2                       Point;
 typedef Creator_uniform_2<double,Point>  Pt_creator;
-typedef Segment_2<R>                     Segment;
+typedef R::Segment_2                     Segment;
 typedef std::vector<Segment>             Vector;
 
 

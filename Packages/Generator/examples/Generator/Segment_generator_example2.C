@@ -2,14 +2,10 @@
 // --------------------------------------------------------------
 // CGAL example program for the generic segment generator
 // using precomputed point locations.
-// Derived from Segment_generator_prog2.C, without visualization.
 
-#include <CGAL/basic.h>
+#include <CGAL/Simple_cartesian.h>
 #include <algorithm>
 #include <vector>
-#include <CGAL/Cartesian.h>
-#include <CGAL/Point_2.h>
-#include <CGAL/Segment_2.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/function_objects.h>
 #include <CGAL/Join_input_iterator.h>
@@ -17,14 +13,14 @@
 
 using namespace CGAL;
 
-typedef Cartesian<double>                            R;
-typedef Point_2<R>                                   Point;
-typedef Segment_2<R>                                 Segment;
-typedef Points_on_segment_2<Point>                   PG;
-typedef Creator_uniform_2< Point, Segment>           Creator;
-typedef Join_input_iterator_2< PG, PG, Creator>      Segm_iterator;
-typedef Counting_iterator<Segm_iterator,Segment>     Count_iterator;
-typedef std::vector<Segment>             Vector;
+typedef Simple_cartesian<double>                  R;
+typedef R::Point_2                                Point;
+typedef R::Segment_2                              Segment;
+typedef Points_on_segment_2<Point>                PG;
+typedef Creator_uniform_2< Point, Segment>        Creator;
+typedef Join_input_iterator_2< PG, PG, Creator>   Segm_iterator;
+typedef Counting_iterator<Segm_iterator,Segment>  Count_iterator;
+typedef std::vector<Segment>                      Vector;
 
 int main() {
     // Create test segment set. Prepare a vector for 100 segments.

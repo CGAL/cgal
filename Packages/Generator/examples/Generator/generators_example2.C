@@ -1,21 +1,18 @@
 // examples/Generator/generators_example2.C
 // ------------------------------------------------------------------
 // CGAL example program for point generators creating integer points.
-// Derived from generators_prog2.C, without visualization.
 
-#include <CGAL/basic.h>
+#include <CGAL/Simple_cartesian.h>
 #include <cassert>
 #include <vector>
 #include <algorithm>
-#include <CGAL/Cartesian.h>
-#include <CGAL/Point_2.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/copy_n.h>
 
 using namespace CGAL;
 
-typedef Cartesian<int>                R;
-typedef Point_2<R>                    Point;
+typedef Simple_cartesian<int>         R;
+typedef R::Point_2                    Point;
 typedef Creator_uniform_2<int,Point>  Creator;
 
 int main() {

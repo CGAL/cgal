@@ -1,22 +1,19 @@
 // examples/Generator/generators_example1.C          
 // -------------------------------------------------------
 // CGAL example program for point generators.
-// Derived from generators_prog1.C, without visualization.
 
-#include <CGAL/basic.h>
+#include <CGAL/Simple_cartesian.h>
 #include <cassert>
 #include <vector>
 #include <algorithm>
-#include <CGAL/Cartesian.h>
-#include <CGAL/Point_2.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/copy_n.h>
 #include <CGAL/random_selection.h>
 
 using namespace CGAL;
 
-typedef Cartesian<double>                R;
-typedef Point_2<R>                       Point;
+typedef Simple_cartesian<double>         R;
+typedef R::Point_2                       Point;
 typedef Creator_uniform_2<double,Point>  Creator;
 typedef std::vector<Point>               Vector;
 
