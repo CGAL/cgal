@@ -4,6 +4,7 @@ Version 1.56 (?? May 01)
 - Hierarchy traits now uses Compare_distance_3.
 - One more VC++ for()-scope workaround.
 - Change function order to try to fix BCC.
+- Remove traces of geometry in Delaunay_remove_tds.
 
 Version 1.55 (29 May 01)
 - warning bcc fixed (unused variable)

@@ -32,28 +32,21 @@
 
 CGAL_BEGIN_NAMESPACE
 
-// Instead of deriving from Triangulation_vertex_base_2<Gt> we copy the code
-// Then we don't have the Point_2 problem
-
-template <class Gt, class I>
-class Delaunay_remove_tds_vertex_3_2  {
+template <class I>
+class Delaunay_remove_tds_vertex_3_2
+{
 public :
-  typedef typename Gt::Point_3  Point;
+  struct Point {}; // Because the TDS_2::Vertex requires it (unfortunately).
 
   Delaunay_remove_tds_vertex_3_2() 
-    : _f(NULL) 
-    {}
+    : _f(NULL) {}
 
   Delaunay_remove_tds_vertex_3_2(const I & i)
-    : _info(i)
-    {}
+    : _info(i) {}
 
-  Delaunay_remove_tds_vertex_3_2(const Point & p, void * f = NULL) 
-    : _f(f) 
-    {}
-  
   void* 
-  face() const {     return _f;
+  face() const {
+      return _f;
   }
 
   void 
@@ -64,7 +57,7 @@ public :
   bool
   is_valid(bool /* verbose */ = false, int /* level */ = 0) const {
       return true;
-    }
+  }
 
   void 
   set_info(I i) { 
@@ -76,11 +69,6 @@ public :
     return _info; 
   }
   
-  Point 
-  point() {
-    return _info->point();
-  }
-
 private:
   I _info;
   void * _f;
@@ -99,18 +87,19 @@ private:
    are traversed to reach them.
 */
 
-template < class Gt,class I >
-class Delaunay_remove_tds_face_3_2 :public Triangulation_face_base_2<Gt> {
-
+template < class I >
+class Delaunay_remove_tds_face_3_2
+  : public Triangulation_face_base_2<void>
+{
 public:
   Delaunay_remove_tds_face_3_2() {}
 
-  Delaunay_remove_tds_face_3_2(void* v0, void* v1, void* v2) :
-    Triangulation_face_base_2<void*>(v0, v1, v2) {}
+  Delaunay_remove_tds_face_3_2(void* v0, void* v1, void* v2)
+      : Triangulation_face_base_2<void>(v0, v1, v2) {}
 
   Delaunay_remove_tds_face_3_2(void* v0, void* v1, void* v2, 
-			       void* n0, void* n1, void* n2) :
-    Triangulation_face_base_2<void*>(v0, v1, v2, n0, n1, n2) {}
+			       void* n0, void* n1, void* n2)
+      : Triangulation_face_base_2<void>(v0, v1, v2, n0, n1, n2) {}
 
   void 
   set_info(I i) { 
@@ -126,15 +115,12 @@ public:
   // and the tds should be declared friend. 
 
   // Returns the sucessor
-  Delaunay_remove_tds_face_3_2* 
-  n() const {return _n;}
-
+  Delaunay_remove_tds_face_3_2* n() const {return _n;}
 
   // Returns the predecessor
-  Delaunay_remove_tds_face_3_2* 
-  p() const {return _p;}
+  Delaunay_remove_tds_face_3_2* p() const {return _p;}
 
-  void  
+  void
   set_p(Delaunay_remove_tds_face_3_2* f) {_p = f;};
 
   void
@@ -157,6 +143,7 @@ public:
       _n->set_p(_p);
     }
   }
+
  public:
   // Remove neighbor cw(i) and ccw(i) from the list
   void 
@@ -168,8 +155,6 @@ public:
     n->remove_from_list();
   }
 
-
-public:
   // Marks edge i, that is marks one of the two half-edges,
   // namely the one in the face with the smaller address,
   // of the faces this and neighbor(i)
@@ -216,7 +201,6 @@ public:
   is_halfedge_marked(int i) const {
     return _edge[i];
   }
-    
 
   void 
   set_edge(int i, bool b) {
@@ -253,14 +237,12 @@ private:
     _edge[i] = true;
   }
 
-
   I inf;
  
   Delaunay_remove_tds_face_3_2* _p;
   Delaunay_remove_tds_face_3_2* _n;
 
   bool _edge[3];
-
 };
 
 
@@ -281,12 +263,9 @@ public:
 
 template <class T>
 class Delaunay_remove_tds_3_2 
-: 
-  public Triangulation_data_structure_using_list_2< 
-           Delaunay_remove_tds_vertex_3_2<typename T::Geom_traits,
-                                          typename T::Vertex*>,
-	   Delaunay_remove_tds_face_3_2<typename T::Geom_traits, 
-	                                typename T::Facet> > 
+  : public Triangulation_data_structure_using_list_2< 
+           Delaunay_remove_tds_vertex_3_2<typename T::Vertex*>,
+	   Delaunay_remove_tds_face_3_2<typename T::Facet> > 
 {
 public:
   typedef typename T::Facet Facet;
@@ -296,18 +275,14 @@ public:
 
 private:
   typedef Triangulation_data_structure_using_list_2< 
-            Delaunay_remove_tds_vertex_3_2<typename T::Geom_traits,
-	                                   typename T::Vertex*>,
-            Delaunay_remove_tds_face_3_2<typename T::Geom_traits,
-	                                 typename T::Facet> > TDSUL2;
+            Delaunay_remove_tds_vertex_3_2<typename T::Vertex*>,
+            Delaunay_remove_tds_face_3_2<typename T::Facet> > TDSUL2;
 
 public:
   typedef typename TDSUL2::Vertex Vertex_3_2;
   typedef typename TDSUL2::Face Face_3_2;
   typedef typename TDSUL2::Face_iterator Face_iterator;
   typedef quadruple<void*, void*, Face_3_2*, int> Halfedge;
-
-
 
   Delaunay_remove_tds_3_2( std::list<Facet> & boundhole ) {
 
