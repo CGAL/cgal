@@ -63,7 +63,10 @@
 template <class Triangulation_2>
 class Node_terrain : public SoNonIndexedShape{
   
-  //SO_NODE_HEADER(Node_terrain<Triangulation_2>);  //defined in Inventor/nodes/SoSubNode.h
+  //SO_NODE_HEADER(Node_terrain<Triangulation_2>);  
+  //defined in Inventor/nodes/SoSubNode.h
+  //it's not working with this node because this node
+  //it's a template class
 
 public:
   
@@ -89,12 +92,15 @@ public:
   static void initClass(){
     do {
       const char * classname = SO__QUOTE(Node_terrain);
-      //PRIVATE_COMMON_INIT_CODE(_class_, classname, &_class_::createInstance, _parentclass_);
+      //PRIVATE_COMMON_INIT_CODE(_class_, classname, 
+      // &_class_::createInstance, _parentclass_);
       do {
         // Make sure we only initialize once.
-        assert(Node_terrain::classTypeId == SoType::badType() && "don't init() twice!");
+        assert(Node_terrain::classTypeId == SoType::badType() 
+          && "don't init() twice!");
         // Make sure superclass gets initialized before subclass.
-        assert(SoShape::getClassTypeId() != SoType::badType() && "you forgot init() on parentclass!");
+        assert(SoShape::getClassTypeId() != SoType::badType() 
+          && "you forgot init() on parentclass!");
 
         // Set up entry in the type system.
         Node_terrain::classTypeId =
@@ -113,7 +119,8 @@ public:
     do {
       Node_terrain::classinstances++;
       // Catch attempts to use a node class which has not been initialized.
-      assert(Node_terrain::classTypeId != SoType::badType() && "you forgot init()!");
+      assert(Node_terrain::classTypeId != SoType::badType() 
+        && "you forgot init()!");
       // Initialize a fielddata container for the class only once. 
       if (!Node_terrain::fieldData) {
         Node_terrain::fieldData =
@@ -132,7 +139,8 @@ public:
       compute_normals_for_vertices();
       Node_terrain::classinstances++;
       // Catch attempts to use a node class which has not been initialized.
-      assert(Node_terrain::classTypeId != SoType::badType() && "you forgot init()!");
+      assert(Node_terrain::classTypeId != SoType::badType() 
+        && "you forgot init()!");
       // Initialize a fielddata container for the class only once. 
       if (!Node_terrain::fieldData) {
         Node_terrain::fieldData =
@@ -149,8 +157,8 @@ public:
   void compute_normals_for_faces(){
     lock();
     faces_normals.erase(faces_normals.begin(), faces_normals.end());
-    QProgressDialog progress( "Computing normals for faces...", "Cancel computing", t.number_of_faces(),
-                          NULL, "progress", true );
+    QProgressDialog progress( "Computing normals for faces...", "Cancel computing", 
+                                t.number_of_faces(), NULL, "progress", true );
     progress.setMinimumDuration(0);
     int faces_count = 0;
     Finite_faces_iterator fit;
@@ -180,8 +188,8 @@ public:
   void compute_normals_for_vertices(){
     lock();
     vertices_normals.erase(vertices_normals.begin(), vertices_normals.end());
-    QProgressDialog progress( "Computing normals for vertices...", "Cancel computing", t.number_of_vertices(),
-                          NULL, "progress", true );
+    QProgressDialog progress( "Computing normals for vertices...", "Cancel computing", 
+      t.number_of_vertices(), NULL, "progress", true );
     progress.setMinimumDuration(0);
     int vertices_count = 0;
     Finite_vertices_iterator vit;      
@@ -210,7 +218,8 @@ public:
     if(LOCK>0)
       LOCK--;
     else
-      assert( LOCK != 0 && "lock is already 0. Be sure you have the same number of locks as the number of unlocks");
+      assert( LOCK != 0 && "lock is already 0. Be sure you have the same \
+      number of locks as the number of unlocks");
   }
 
 
@@ -304,7 +313,8 @@ protected:
       Finite_vertices_iterator vit;
       glBegin(GL_POINTS);
       for (vit = t.finite_vertices_begin(); vit != t.finite_vertices_end(); ++vit)
-        glVertex3f(CGAL::to_double((*vit).point().x()), CGAL::to_double((*vit).point().y()), CGAL::to_double((*vit).point().z()));
+        glVertex3f(CGAL::to_double((*vit).point().x()), 
+            CGAL::to_double((*vit).point().y()), CGAL::to_double((*vit).point().z()));
       glEnd();
     } else if(complexity==1){ //render smooth      
       Finite_faces_iterator fit;
@@ -312,13 +322,16 @@ protected:
       for (fit = t.finite_faces_begin(); fit != t.finite_faces_end(); ++fit){
         CPoint3 pn = CPoint3(0, 0, 0) + vertices_normals[(*fit).vertex(0)];
         glNormal3f(pn.x(), pn.y(), pn.z());
-        glVertex3f(CGAL::to_double((*(*fit).vertex(0)).point().x()), CGAL::to_double((*(*fit).vertex(0)).point().y()), CGAL::to_double((*(*fit).vertex(0)).point().z()));
+        glVertex3f(CGAL::to_double((*(*fit).vertex(0)).point().x()), 
+          CGAL::to_double((*(*fit).vertex(0)).point().y()), CGAL::to_double((*(*fit).vertex(0)).point().z()));
         pn = CPoint3(0, 0, 0) + vertices_normals[(*fit).vertex(1)];
         glNormal3f(pn.x(), pn.y(), pn.z());
-        glVertex3f(CGAL::to_double((*(*fit).vertex(1)).point().x()), CGAL::to_double((*(*fit).vertex(1)).point().y()), CGAL::to_double((*(*fit).vertex(1)).point().z()));
+        glVertex3f(CGAL::to_double((*(*fit).vertex(1)).point().x()), 
+          CGAL::to_double((*(*fit).vertex(1)).point().y()), CGAL::to_double((*(*fit).vertex(1)).point().z()));
         pn = CPoint3(0, 0, 0) + vertices_normals[(*fit).vertex(2)];
         glNormal3f(pn.x(), pn.y(), pn.z());
-        glVertex3f(CGAL::to_double((*(*fit).vertex(2)).point().x()), CGAL::to_double((*(*fit).vertex(2)).point().y()), CGAL::to_double((*(*fit).vertex(2)).point().z()));
+        glVertex3f(CGAL::to_double((*(*fit).vertex(2)).point().x()), 
+          CGAL::to_double((*(*fit).vertex(2)).point().y()), CGAL::to_double((*(*fit).vertex(2)).point().z()));
       }
       glEnd();
     } else {
@@ -328,9 +341,12 @@ protected:
         CPoint3 pn = CPoint3(0, 0, 0) + faces_normals[&(*fit)];
         glNormal3f(pn.x(), pn.y(), pn.z());
 
-        glVertex3f(CGAL::to_double((*(*fit).vertex(0)).point().x()), CGAL::to_double((*(*fit).vertex(0)).point().y()), CGAL::to_double((*(*fit).vertex(0)).point().z()));
-        glVertex3f(CGAL::to_double((*(*fit).vertex(1)).point().x()), CGAL::to_double((*(*fit).vertex(1)).point().y()), CGAL::to_double((*(*fit).vertex(1)).point().z()));
-        glVertex3f(CGAL::to_double((*(*fit).vertex(2)).point().x()), CGAL::to_double((*(*fit).vertex(2)).point().y()), CGAL::to_double((*(*fit).vertex(2)).point().z()));      
+        glVertex3f(CGAL::to_double((*(*fit).vertex(0)).point().x()), 
+          CGAL::to_double((*(*fit).vertex(0)).point().y()), CGAL::to_double((*(*fit).vertex(0)).point().z()));
+        glVertex3f(CGAL::to_double((*(*fit).vertex(1)).point().x()), 
+          CGAL::to_double((*(*fit).vertex(1)).point().y()), CGAL::to_double((*(*fit).vertex(1)).point().z()));
+        glVertex3f(CGAL::to_double((*(*fit).vertex(2)).point().x()), 
+          CGAL::to_double((*(*fit).vertex(2)).point().y()), CGAL::to_double((*(*fit).vertex(2)).point().z()));      
       }
       glEnd();
     }
