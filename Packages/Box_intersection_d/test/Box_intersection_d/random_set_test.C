@@ -59,7 +59,7 @@ test_n( unsigned int n,
     if( n < allpairs_max ) {
         std::cout << "all pairs ... " << std::flush;
         timer.start();
-        CGAL::box_intersection_all_pairs_custom_predicates_d( 
+        CGAL::Box_intersection_d::all_pairs( 
                         boxes1.begin(), boxes1.end(),
                         boxes2.begin(), boxes2.end(),
                         callback0, typename Uti1::Traits() );

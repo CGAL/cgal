@@ -67,7 +67,7 @@ operator()( const char* filename1, const char* filename2 )
     std::cout << "all pairs ......... " << std::flush;
     CGAL::Timer timer;
     timer.start();
-    CGAL::box_intersection_all_pairs_custom_predicates_d( 
+    CGAL::Box_intersection_d::all_pairs( 
                 boxes1.begin(), boxes1.end(),
                 boxes2.begin(), boxes2.end(),
                 callback1, typename Uti1::Traits() );
