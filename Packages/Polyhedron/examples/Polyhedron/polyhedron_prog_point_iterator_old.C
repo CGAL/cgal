@@ -2,27 +2,23 @@
 // --------------------------------------------------------
 #define CGAL_USE_POLYHEDRON_DESIGN_ONE 1
 #include <CGAL/Cartesian.h>
-#include <CGAL/Halfedge_data_structure_polyhedron_default_3.h>
-#include <CGAL/Polyhedron_default_traits_3.h>
 #include <CGAL/Polyhedron_3.h>
 #include <iostream>
 #include <iterator>
 #include <algorithm>
 
-typedef CGAL::Cartesian<double>                               R;
-typedef CGAL::Halfedge_data_structure_polyhedron_default_3<R> HDS;
-typedef CGAL::Polyhedron_default_traits_3<R>                  Traits;
-typedef CGAL::Polyhedron_3<Traits,HDS>                        Polyhedron;
+typedef CGAL::Cartesian<double>                              Kernel;
+typedef Kernel::Point_3                                      Point;
+typedef CGAL::Polyhedron_3<Kernel>                           Polyhedron;
 
 // The declaration of a point iterator for a given Polyhedron
 #include <CGAL/Iterator_project.h>
 #include <CGAL/function_objects.h>
 
-typedef Polyhedron::Vertex                                   Vertex;
-typedef Polyhedron::Vertex_iterator                          Vertex_iterator;
-typedef Polyhedron::Point                                    Point;
-typedef CGAL::Project_point<Vertex>                          Project;
-typedef CGAL::Iterator_project<Vertex_iterator, Project>     Point_iterator;
+typedef Polyhedron::Vertex                                Vertex;
+typedef Polyhedron::Vertex_iterator                       Vertex_iterator;
+typedef CGAL::Project_point<Vertex>                       Project;
+typedef CGAL::Iterator_project<Vertex_iterator, Project>  Point_iterator;
 
 int main() {
     Point p( 0.0, 0.0, 0.0);

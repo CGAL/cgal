@@ -82,9 +82,9 @@ class _Polyhedron_halfedge : public HDS::Halfedge {
         typedef typename HDS::Facet               F;
     
     public:
-        typedef _Polyhedron_vertex<HDS>       Vertex_;
-        typedef _Polyhedron_halfedge<HDS>     Halfedge_;
-        typedef _Polyhedron_facet<HDS>        Facet_;
+        typedef _Polyhedron_vertex<HDS>           Vertex_;
+        typedef _Polyhedron_halfedge<HDS>         Halfedge_;
+        typedef _Polyhedron_facet<HDS>            Facet_;
     
         typedef typename  HDS::Size               Size;
         typedef typename  HDS::Difference         Difference;
@@ -93,8 +93,9 @@ class _Polyhedron_halfedge : public HDS::Halfedge {
     // the specific item is not supported the type is `void*'.
     
         typedef typename  HDS::Point              Point;
-        typedef typename  HDS::Normal             Normal;
-        typedef typename  HDS::Plane              Plane;
+        typedef typename  HDS::Point              Point_3;
+        typedef typename  F::Vector_3             Vector_3;
+        typedef typename  F::Plane_3              Plane_3;
     
     // The following types are equal to either `Tag_true' or
     // `Tag_false', dependant whether the named feature is
@@ -291,6 +292,8 @@ private:
     void  set_vertex( Vertex* v)   { H::set_vertex(v);}
     void  set_facet( Facet* f)     { H::set_facet(f);}
 };
+
+
 template <class HDS>
 class _Polyhedron_vertex  : public HDS::Vertex  {
     public:
@@ -302,9 +305,9 @@ class _Polyhedron_vertex  : public HDS::Vertex  {
         typedef typename HDS::Facet               F;
     
     public:
-        typedef _Polyhedron_vertex<HDS>       Vertex_;
-        typedef _Polyhedron_halfedge<HDS>     Halfedge_;
-        typedef _Polyhedron_facet<HDS>        Facet_;
+        typedef _Polyhedron_vertex<HDS>           Vertex_;
+        typedef _Polyhedron_halfedge<HDS>         Halfedge_;
+        typedef _Polyhedron_facet<HDS>            Facet_;
     
         typedef typename  HDS::Size               Size;
         typedef typename  HDS::Difference         Difference;
@@ -313,8 +316,9 @@ class _Polyhedron_vertex  : public HDS::Vertex  {
     // the specific item is not supported the type is `void*'.
     
         typedef typename  HDS::Point              Point;
-        typedef typename  HDS::Normal             Normal;
-        typedef typename  HDS::Plane              Plane;
+        typedef typename  HDS::Point              Point_3;
+        typedef typename  F::Vector_3             Vector_3;
+        typedef typename  F::Plane_3              Plane_3;
     
     // The following types are equal to either `Tag_true' or
     // `Tag_false', dependant whether the named feature is
@@ -457,6 +461,8 @@ private:
     // Hide some other functions of V.
     void      set_halfedge( Halfedge* h) { V::set_halfedge(h);}
 };
+
+
 template <class HDS>
 class _Polyhedron_facet : public HDS::Facet {
     public:
@@ -468,9 +474,9 @@ class _Polyhedron_facet : public HDS::Facet {
         typedef typename HDS::Facet               F;
     
     public:
-        typedef _Polyhedron_vertex<HDS>       Vertex_;
-        typedef _Polyhedron_halfedge<HDS>     Halfedge_;
-        typedef _Polyhedron_facet<HDS>        Facet_;
+        typedef _Polyhedron_vertex<HDS>           Vertex_;
+        typedef _Polyhedron_halfedge<HDS>         Halfedge_;
+        typedef _Polyhedron_facet<HDS>            Facet_;
     
         typedef typename  HDS::Size               Size;
         typedef typename  HDS::Difference         Difference;
@@ -479,8 +485,9 @@ class _Polyhedron_facet : public HDS::Facet {
     // the specific item is not supported the type is `void*'.
     
         typedef typename  HDS::Point              Point;
-        typedef typename  HDS::Normal             Normal;
-        typedef typename  HDS::Plane              Plane;
+        typedef typename  HDS::Point              Point_3;
+        typedef typename  F::Vector_3             Vector_3;
+        typedef typename  F::Plane_3              Plane_3;
     
     // The following types are equal to either `Tag_true' or
     // `Tag_false', dependant whether the named feature is
@@ -605,15 +612,9 @@ public:
     }
 
     // Avoids unnecessary matchings with base class. (g++ bug)
-#ifdef CGAL_POLYHEDRON_3
-    Normal          normal() const { return F::normal();}
-#else // CGAL_POLYHEDRON_3 //
-    // Stuff for a local project, not part of CGAL.
-    Normal&         normal()       { return F::normal();}
-    const Normal&   normal() const { return F::normal();}
-#endif // CGAL_POLYHEDRON_3 //
-    Plane&          plane()        { return F::plane();}
-    const Plane&    plane() const  { return F::plane();}
+    Vector_3        normal() const { return F::normal();}
+    Plane_3&        plane()        { return F::plane();}
+    const Plane_3&  plane() const  { return F::plane();}
 
 // Derived Access Functions (not present in F).
 
@@ -635,9 +636,7 @@ private:
 
 
 template < class TR, class HDS 
-    = CGAL::Halfedge_data_structure_polyhedron_default_3< 
-          CGAL_TYPENAME_MSVC_NULL TR::R>
->
+    = CGAL::Halfedge_data_structure_polyhedron_default_3< TR> >
 class Polyhedron_3 {
     //
     // DEFINITION
@@ -660,6 +659,7 @@ class Polyhedron_3 {
 
     public:
         typedef HDS                               Halfedge_data_structure;
+        typedef HDS                               HalfedgeDS;
     
     protected:
         typedef typename HDS::Vertex              V;
@@ -667,9 +667,9 @@ class Polyhedron_3 {
         typedef typename HDS::Facet               F;
     
     public:
-        typedef _Polyhedron_vertex<HDS>       Vertex_;
-        typedef _Polyhedron_halfedge<HDS>     Halfedge_;
-        typedef _Polyhedron_facet<HDS>        Facet_;
+        typedef _Polyhedron_vertex<HDS>           Vertex_;
+        typedef _Polyhedron_halfedge<HDS>         Halfedge_;
+        typedef _Polyhedron_facet<HDS>            Facet_;
     
         typedef typename  HDS::Size               Size;
         typedef typename  HDS::Difference         Difference;
@@ -678,8 +678,9 @@ class Polyhedron_3 {
     // the specific item is not supported the type is `void*'.
     
         typedef typename  HDS::Point              Point;
-        typedef typename  HDS::Normal             Normal;
-        typedef typename  HDS::Plane              Plane;
+        typedef typename  HDS::Point              Point_3;
+        typedef typename  F::Vector_3             Vector_3;
+        typedef typename  F::Plane_3              Plane_3;
     
     // The following types are equal to either `Tag_true' or
     // `Tag_false', dependant whether the named feature is
@@ -809,7 +810,7 @@ public:
     Polyhedron_3( const Traits& traits = Traits())
     : m_traits(traits) {
         // the empty polyhedron `P'.
-        typedef typename Traits::Point  Traits_point;
+        typedef typename Traits::Point_3  Traits_point;
         assert_equal_types( Point(), Traits_point());
     }
     Polyhedron_3( Size v, Size h, Size f, const Traits&
@@ -818,7 +819,7 @@ public:
         // a polyhedron `P' with storage reserved for v vertices, h
         // halfedges, and f facets. The reservation sizes are a hint for
         // optimizing storage allocation.
-        typedef typename Traits::Point  Traits_point;
+        typedef typename Traits::Point_3  Traits_point;
         assert_equal_types( Point(), Traits_point());
     }
 
@@ -2202,21 +2203,19 @@ join_loop( Halfedge_handle h,
 template < class TR, class HDS >  CGAL_LARGE_INLINE
 void                               // Supports: normals,      planes
 Polyhedron_3<TR,HDS>::inside_out_geometry(Tag_true,Tag_false) {
-    Facet_iterator begin = facets_begin();
-    Facet_iterator end   = facets_end();
-    for( ; begin != end; ++begin) {
-        m_traits.reverse_normal((*begin).normal());
-    }
+    typename Traits::Construct_opposite_vector_3 opposite
+        = traits().construct_opposite_vector_3_object();
+    for ( Facet_iterator i = facets_begin(); i != facets_end(); ++i)
+        i->normal() = opposite( i->normal());
 }
 
 template < class TR, class HDS >  CGAL_LARGE_INLINE
 void                               // Supports: normals,      planes
 Polyhedron_3<TR,HDS>::inside_out_geometry(Tag_true,Tag_true) {
-    Facet_iterator begin = facets_begin();
-    Facet_iterator end   = facets_end();
-    for( ; begin != end; ++begin) {
-        m_traits.reverse_plane((*begin).plane());
-    }
+    typename Traits::Construct_opposite_plane_3 opposite
+        = traits().construct_opposite_plane_3_object();
+    for ( Facet_iterator i = facets_begin(); i != facets_end(); ++i)
+        i->plane() = opposite( i->plane());
 }
 
 template < class TR, class HDS >

@@ -35,6 +35,16 @@ files. The old design is selected with the
 is selected with the 
 \texttt{CGAL\_USE\_POLYHEDRON\_DESIGN\_TWO} macro.
 
+The new design differs from the old design in the following ways: The
+\ccc{Polyhedron_3} has a different number of template parameters that
+require different concepts, such as the new \ccc{HalfedgeDS} concept,
+the new \ccc{PolyhedronItems_3} concept, and the new
+\ccc{PolyhedronTraits_3} concept. The \ccc{Polyhedron_3} interface is
+backwards compatible with the old design except that the
+\ccc{normal} member function in the facet and related types disappear.
+Please use the plane equation instead, see also
+\ccc{Polyhedron_traits_with_normals_3}.
+
 \ccDefinition
   
 A polyhedral surface \ccClassTemplateName\ consists of vertices $V$,
@@ -602,7 +612,8 @@ unchanged.
      polyhedral surface if they were already border edges.
      If this creates isolated vertices they get removed as well.
      See \ccc{make_hole(h)} for a more specialized variant.    
-     \ccPrecond \ccc{Supports_removal} $\equiv$ \ccc{CGAL::Tag_true}.}
+     \ccPrecond \ccc{h->is_border() == false}. 
+     \ccc{Supports_removal} $\equiv$ \ccc{CGAL::Tag_true}.}
 
 \ccMethod{void erase_connected_component( Halfedge_handle h);}
     {removes the  vertices, halfedges, and facets that belong to the 

@@ -2,15 +2,13 @@
 // -----------------------------------------------
 #define CGAL_USE_POLYHEDRON_DESIGN_ONE 1
 #include <CGAL/Cartesian.h>
-#include <CGAL/Polyhedron_default_traits_3.h>
 #include <CGAL/Polyhedron_3.h>
 #include <iostream>
 
-typedef CGAL::Cartesian<double>               R;
-typedef CGAL::Polyhedron_default_traits_3<R>  Traits;
-typedef CGAL::Polyhedron_3<Traits>            Polyhedron;
-typedef Polyhedron::Point                     Point;
-typedef Polyhedron::Vertex_iterator           Vertex_iterator;
+typedef CGAL::Cartesian<double>      Kernel;
+typedef Kernel::Point_3              Point;
+typedef CGAL::Polyhedron_3<Kernel>   Polyhedron;
+typedef Polyhedron::Vertex_iterator  Vertex_iterator;
 
 int main() {
     Point p( 1.0, 0.0, 0.0);

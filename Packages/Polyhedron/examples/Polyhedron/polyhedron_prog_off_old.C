@@ -2,22 +2,17 @@
 // ---------------------------------------------
 #define CGAL_USE_POLYHEDRON_DESIGN_ONE 1
 #include <CGAL/Cartesian.h>
-#include <iostream>
-#include <CGAL/Halfedge_data_structure_polyhedron_default_3.h>
-#include <CGAL/Polyhedron_default_traits_3.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Iterator_project.h>
 #include <CGAL/function_objects.h>
+#include <iostream>
 
-typedef CGAL::Cartesian<double>                               R;
-typedef CGAL::Halfedge_data_structure_polyhedron_default_3<R> HDS;
-typedef CGAL::Polyhedron_default_traits_3<R>                  Traits;
-typedef CGAL::Polyhedron_3<Traits,HDS>                        Polyhedron;
-typedef Polyhedron::Difference                                Difference;
-typedef Polyhedron::Point                                     Point;
-typedef Polyhedron::Vertex                                    Vertex;
-typedef Polyhedron::Vertex_iterator                           Vertex_iterator;
-typedef Polyhedron::Facet_iterator                            Facet_iterator;
+typedef CGAL::Cartesian<double>                          Kernel;
+typedef Kernel::Point_3                                  Point;
+typedef CGAL::Polyhedron_3<Kernel>                       Polyhedron;
+typedef Polyhedron::Vertex                               Vertex;
+typedef Polyhedron::Vertex_iterator                      Vertex_iterator;
+typedef Polyhedron::Facet_iterator                       Facet_iterator;
 typedef Polyhedron::Halfedge_around_facet_circulator
                                             Halfedge_around_facet_circulator;
 

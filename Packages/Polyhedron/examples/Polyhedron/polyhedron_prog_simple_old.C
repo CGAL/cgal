@@ -2,12 +2,10 @@
 // ------------------------------------------------
 #define CGAL_USE_POLYHEDRON_DESIGN_ONE 1
 #include <CGAL/Cartesian.h>
-#include <CGAL/Polyhedron_default_traits_3.h>
 #include <CGAL/Polyhedron_3.h>
 
-typedef CGAL::Cartesian<double>               R;
-typedef CGAL::Polyhedron_default_traits_3<R>  Traits;
-typedef CGAL::Polyhedron_3<Traits>            Polyhedron;
+typedef CGAL::Cartesian<double>               Kernel;
+typedef CGAL::Polyhedron_3<Kernel>            Polyhedron;
 typedef Polyhedron::Halfedge_handle           Halfedge_handle;
 
 int main() {

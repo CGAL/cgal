@@ -1,6 +1,11 @@
 Polyhedron Package: Release changes:
 ---------------------------------------------------------------------
 
+3.14 (05 Jul 2001)
+
+     - Fixed bug with 'typename A::template B<..>' syntax.
+     - New kernel traits introduced in old design.
+
 3.13 (02 Jul 2001)
 
      - Updated user manual for polyhedron_prog_subdiv example.

@@ -26,30 +26,36 @@
 
 #ifndef CGAL_POLYHEDRON_OLD_POLYHEDRON_DEFAULT_TRAITS_3_H
 #define CGAL_POLYHEDRON_OLD_POLYHEDRON_DEFAULT_TRAITS_3_H 1
-#ifndef CGAL_BASIC_H
+
 #include <CGAL/basic.h>
-#endif
-#ifndef CGAL_POINT_3_H
-#include <CGAL/Point_3.h>
-#endif
-#ifndef CGAL_VECTOR_3_H
-#include <CGAL/Vector_3.h>
-#endif
-#ifndef CGAL_PLANE_3_H
-#include <CGAL/Plane_3.h>
-#endif
 
 CGAL_BEGIN_NAMESPACE
 
-template < class Rep >
+template < class Kernel_ >
 class Polyhedron_default_traits_3 {
 public:
-    typedef Rep              R;
-    typedef Point_3<Rep>     Point;
-    typedef Vector_3<Rep>    Normal;
-    typedef Plane_3<Rep>     Plane;
-    void reverse_normal( Normal& normal) const { normal = - normal; }
-    void reverse_plane( Plane& plane) const { plane  = plane.opposite(); }
+    typedef Kernel_                    Kernel;
+    // typedef Kernel            R;  // maybe for backwards compatibility
+    typedef typename Kernel::Point_3   Point_3;
+    typedef typename Kernel::Vector_3  Vector_3;
+    typedef typename Kernel::Plane_3   Plane_3;
+    typedef typename Kernel::Construct_opposite_vector_3 
+                                       Construct_opposite_vector_3;
+    typedef typename Kernel::Construct_opposite_plane_3 
+                                       Construct_opposite_plane_3;
+private:
+    Kernel m_kernel;
+
+public:
+    Polyhedron_default_traits_3() {}
+    Polyhedron_default_traits_3( const Kernel& kernel) : m_kernel(kernel) {}
+
+    Construct_opposite_vector_3 construct_opposite_vector_3_object() const {
+        return m_kernel.construct_opposite_vector_3_object();
+    }
+    Construct_opposite_plane_3  construct_opposite_plane_3_object()  const {
+        return m_kernel.construct_opposite_plane_3_object();
+    }
 };
 
 CGAL_END_NAMESPACE

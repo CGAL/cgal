@@ -2,21 +2,17 @@
 // -------------------------------------------------
 #define CGAL_USE_POLYHEDRON_DESIGN_ONE 1
 #include <CGAL/Homogeneous.h>
+#include <CGAL/Polyhedron_3.h>
 #include <iostream>
 #include <algorithm>
-#include <CGAL/Halfedge_data_structure_polyhedron_default_3.h>
-#include <CGAL/Polyhedron_default_traits_3.h>
-#include <CGAL/Polyhedron_3.h>
 
-typedef CGAL::Homogeneous<int>                                R;
-typedef CGAL::Halfedge_data_structure_polyhedron_default_3<R> HDS;
-typedef CGAL::Polyhedron_default_traits_3<R>                  Traits;
-typedef CGAL::Polyhedron_3<Traits,HDS>                        Polyhedron;
-typedef Polyhedron::Point                                     Point;
-typedef Polyhedron::Plane                                     Plane;
-typedef Polyhedron::Halfedge_handle                           Halfedge_handle;
-typedef Polyhedron::Facet                                     Facet;
-typedef Polyhedron::Facet_iterator                            Facet_iterator;
+typedef CGAL::Homogeneous<int>       Kernel;
+typedef Kernel::Point_3              Point;
+typedef Kernel::Plane_3              Plane;
+typedef CGAL::Polyhedron_3<Kernel>   Polyhedron;
+typedef Polyhedron::Halfedge_handle  Halfedge_handle;
+typedef Polyhedron::Facet            Facet;
+typedef Polyhedron::Facet_iterator   Facet_iterator;
 
 void compute_plane_equations( Facet& f) {
     Halfedge_handle h = f.halfedge();
