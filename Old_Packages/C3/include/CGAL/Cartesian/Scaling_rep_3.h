@@ -29,22 +29,7 @@
 #define typename
 #endif
 
-#include <CGAL/Cartesian/distance_computations_3.h>
-
-#ifndef CGAL_CARTESIAN_SEGMENT_3_C
-#define CGAL_CARTESIAN_SEGMENT_3_C
-
-CGAL_BEGIN_NAMESPACE
-
-template < class R >
-inline
-_Twotuple< typename SegmentC3<R CGAL_CTAG>::Point_3 > *
-SegmentC3<R CGAL_CTAG>::ptr() const
-{
-  return (_Twotuple< Point_3 >*)PTR;
-}
-
-t#ifndef CGAL_CARTESIAN_SCALING_REP_3_H
+#ifndef CGAL_CARTESIAN_SCALING_REP_3_H
 #define CGAL_CARTESIAN_SCALING_REP_3_H
 
 #ifndef CGAL_CARTESIAN_REDEFINE_NAMES_3_H
