@@ -42,6 +42,7 @@ CGAL_BEGIN_NAMESPACE
 template <typename K, typename M> class SNC_items;
 template <typename I> class SNC_structure;
 template <typename R> class SNC_decorator;
+template <typename R> class SNC_constructor;
 template <typename R> class SNC_io_parser;
 template <typename R> class SNC_SM_decorator;
 template <typename R> class SNC_SM_const_decorator;
@@ -79,6 +80,7 @@ public:
     friend class SNC_structure<Items>;
     friend class SNC_decorator<Refs>;
     friend class SNC_io_parser<Refs>;
+    friend class SNC_constructor<Refs>;
     friend class SNC_SM_decorator<Refs>;
     friend class SNC_SM_const_decorator<Refs>;
     typedef typename Refs::SVertex_iterator SVertex_iterator;
@@ -297,6 +299,7 @@ public:
     friend class SNC_structure<Items>;
     friend class SNC_decorator<Refs>;
     friend class SNC_io_parser<Refs>;
+    friend class SNC_constructor<Refs>;
     friend class SNC_SM_decorator<Refs>;
     friend class SNC_SM_const_decorator<Refs>;
     typedef typename Refs::Vertex_handle    Vertex_handle;
@@ -376,6 +379,7 @@ public:
     friend class SNC_structure<Items>;
     friend class SNC_decorator<Refs>;
     friend class SNC_io_parser<Refs>;
+    friend class SNC_constructor<Refs>;
     friend class SNC_SM_decorator<Refs>;
     friend class SNC_SM_const_decorator<Refs>;
     friend class SNC_FM_decorator<Refs>;
@@ -451,6 +455,7 @@ public:
     friend class SNC_structure<Items>;
     friend class SNC_decorator<Refs>;
     friend class SNC_io_parser<Refs>;
+    friend class SNC_constructor<Refs>;
     friend class SNC_SM_decorator<Refs>;
     friend class SNC_SM_const_decorator<Refs>;
     typedef typename Refs::Object_handle  Object_handle;
@@ -516,6 +521,7 @@ public:
     friend class SNC_structure<Items>;
     friend class SNC_decorator<Refs>;
     friend class SNC_io_parser<Refs>;
+    friend class SNC_constructor<Refs>;
     friend class SNC_SM_decorator<Refs>;
     friend class SNC_SM_const_decorator<Refs>;
     friend class move_shalfedge_around_svertex<SHalfedge_handle>;
@@ -615,6 +621,7 @@ public:
     friend class SNC_structure<Items>;
     friend class SNC_decorator<Refs>;
     friend class SNC_io_parser<Refs>;
+    friend class SNC_constructor<Refs>;
     friend class SNC_SM_decorator<Refs>;
     friend class SNC_SM_const_decorator<Refs>;
     friend class Self::Vertex<Refs>;
@@ -682,6 +689,7 @@ public:
     friend class SNC_structure<Items>;
     friend class SNC_decorator<Refs>;
     friend class SNC_io_parser<Refs>;
+    friend class SNC_constructor<Refs>;
     friend class SNC_SM_decorator<Refs>;
     friend class SNC_SM_const_decorator<Refs>;
     typedef typename Refs::Vertex_handle  Vertex_handle;

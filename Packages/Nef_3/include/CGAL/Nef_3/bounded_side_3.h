@@ -34,6 +34,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Polygon_2_algorithms.h>
 #include <CGAL/Iterator_project.h>
+#include <vector>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -62,6 +63,8 @@ Bounded_side bounded_side_3(ForwardIterator first,
   typedef typename R::Vector_3 Vector_3;
   typedef typename R::Direction_3 Direction_3;
   typedef typename R::Plane_3 Plane_3;
+
+  CGAL_assertion( !is_empty_range(first, last));
 
   if(plane == Plane_3()) {
     ForwardIterator p(first);

@@ -47,6 +47,8 @@
 #define _DEBUG 43
 #include <CGAL/Nef_3/debug.h>
 
+#define IMMN 999999
+
 CGAL_BEGIN_NAMESPACE
 
 template < class Node, class Object, class DClass>
@@ -296,84 +298,105 @@ public:
   volumes.  \precond |categorize_facet_cycles_and_creating_facets()| was
   called before.}*/
 
-  Volume_handle determine_volume( const SFace_handle f, 
-    const std::vector<Vertex_handle>& MinimalVertex, 
-    const Shell_number_hash&  Shell ) const {
-    Vertex_handle v_min = MinimalVertex[Shell[f]];
+  Volume_handle determine_volume( SFace_handle sf, 
+                const std::vector< Vertex_handle>& MinimalVertex, 
+                const Shell_number_hash&  Shell ) const {
+    Vertex_handle v_min = MinimalVertex[Shell[sf]];
     Halffacet_handle f_below = get_facet_below(v_min);
     if ( f_below == Halffacet_handle())
       // return volumes_begin();  //qualifiers discarded?
       return Base(*this).volumes_begin();
     Volume_handle c = volume(f_below);
-    if(c != Volume_handle())
+    if( c != Volume_handle()) {
+      TRACE( "Volume " << &*c << " hit ");
+      TRACEN("(Shell #" << Shell[adjacent_sface(f_below)] << ")");
       return c;
-    SFace_handle sf = sface(f_below);
-    c = determine_volume(sf, MinimalVertex, Shell);
-    link_as_inner_shell(sf, c);
+    }
+    SFace_handle sf_below = adjacent_sface(f_below);
+    TRACEN( "Shell not assigned to a volume hit ");
+    TRACEN( "(Inner shell #" << Shell[sf] << ")");
+    c = determine_volume( sf_below, MinimalVertex, Shell);
+    link_as_inner_shell( sf_below, c);
     return c;
   }
 
-  Halffacet_handle get_facet_below(const Vertex_handle vi) const {
-    // Segment_3 s(point(v), point(vertices_begin())), // qualifiers discarded?
-    Segment_3 s(point(vi), point(Base(*this).vertices_begin())),
-      so(s.opposite());
-    Object_handle closest;
-    Vertex_handle v;
-    Halfedge_handle e;
-    Halffacet_handle f;
-    CGAL_forall_vertices(v,*sncp()) {
-      SFace_iterator sf = v->sfaces_begin();
-      if (sf != 0 && volume(sf) != Volume_handle() 
-	  && contains_internally(s,point(v))) {
-	shorten(s,point(v));
-	closest = Object_handle(v);
+  Halffacet_handle get_visible_facet( Vertex_handle v, Sphere_point p) const {
+    TRACEN( "Locating " << p <<" in " << point(v));
+    SM_point_locator L(v);
+    SObject_handle o = L.locate(p);
+    SFace_const_handle sf;
+    CGAL_assertion( assign( sf, o));
+    assign( sf, o);
+    SFace_cycle_const_iterator fc;
+    CGAL_forall_sface_cycles_of( fc, sf) {
+      SHalfedge_handle se; 
+      if ( assign( se, fc) ) {
+	TRACEN( "adjacent facet found.");
+	return facet(twin(se));
       }
     }
-    CGAL_forall_edges(e,*sncp()) {
-      Point_3 q;
-      SFace_handle sf = sface(e);
-      if (sf != SFace_handle() && volume(sf) != Volume_handle()
-	  && do_intersect(s,e,q) ) { 
-	shorten(s,q); 
-	closest = Object_handle(e);
-      }
-    }
-    CGAL_forall_halffacets(f,*sncp()) {
-      Point_3 q;
-      SFace_handle sf = sface(f);
-      if (sf != SFace_handle() && volume(sf) != Volume_handle()
-	  && do_intersect(s,f,q) ) { 
-	shorten(s,q); 
-	closest = Object_handle(f); 
-      }
-    }
-    if( assign(closest, v) ) {
-      SHalfedge_handle se = v->shalfedges_begin();
-      if( se != SHalfedge_handle() )
-	return facet(se);
-      SHalfloop_handle sl = v->shalfloop();
-      if( sl != SHalfloop_handle() )
-	return facet(sl);
-      CGAL_assertion_msg(0, "Empty local map.");
-    } 
-    else if( assign( closest, e ) ) {
-      SM_decorator SD(vertex(e));
-      CGAL_assertion( SD.first_out_edge(e) != SHalfedge_handle() );
-      return facet(SD.first_out_edge(e));
-    }
-    else if( assign( closest, f ) )
-      return f;
-    else
-      TRACEN("no facet below found");
+    TRACEN( "no adjacent facet found.");
     return Halffacet_handle();
   }
 
-  /* following 4 functions were copied from SNC_point_locator.h */
-  void shorten(Segment_3& s, const Point_3& p) const
-  { s = Segment_3(s.source(),p); }
+  Halffacet_handle get_facet_below( Vertex_handle vi) const {
+    Segment_3 s(point(vi), Point_3( 0, 0, -IMMN)); 
+    /* TODO: replace IMMN constant for a real infimaximal number */
+    TRACEN( "Shoting ray " << s);
+    Halffacet_handle f_below;
+    Vertex_handle v;
+    CGAL_forall_vertices( v, *sncp()) {
+      if ( contains_internally( s, point(v))) {
+	TRACEN("ray hit vertex case");
+	Sphere_point sp(point(vi)-point(v));
+	Halffacet_handle f_visible = get_visible_facet(v, sp);
+	if ( f_visible != Halffacet_handle()) {
+	  shorten( s, point(v));
+	  f_below = f_visible;
+	}
+      }
+    }
+    Halfedge_handle e;
+    CGAL_forall_edges( e, *sncp()) {
+      Point_3 q;
+      if ( do_intersect( s, e, q) ) { // internally only?
+	TRACEN("ray hit edge case");
+	v = vertex(e);
+	Sphere_point sp(point(vi)-point(v));
+	Halffacet_handle f_visible = get_visible_facet(v, sp);
+	if ( f_visible != Halffacet_handle()) {
+	  shorten( s, q); 
+	  f_below = f_visible;
+	}
+      }
+    }
+    Halffacet_handle f;
+    CGAL_forall_halffacets( f, *sncp()) { // internally only?
+      Point_3 q;
+      if ( do_intersect( s, f, q) ) { 
+	TRACEN("ray hit facet case");
+	Halffacet_cycle_iterator fc(f->facet_cycles_begin());
+	CGAL_assertion( fc != f->facet_cycles_end());
+	SHalfedge_handle se;
+	CGAL_assertion( assign( se, fc) );
+	v = vertex(se);
+	Sphere_point sp(point(vi)-point(v));
+	Halffacet_handle f_visible = get_visible_facet(v, sp);
+	if ( f_visible != Halffacet_handle()) {
+	  shorten( s, q); 
+	  f_below = f_visible;
+	}
+      }
+    }
+    return f_below;
+  }
 
-  bool contains_internally(const Segment_3& s, const Point_3& p) const
-  { if(!s.has_on(p))
+  void shorten(Segment_3& s, const Point_3& p) const { 
+    s = Segment_3( s.source(), p); 
+  }
+
+  bool contains_internally(const Segment_3& s, const Point_3& p) const {
+    if(!s.has_on(p))
       return false;
     Comparison_result r1 = compare_xyz(s.source(),p); 
     Comparison_result r2 = compare_xyz(s.target(),p); 
@@ -405,23 +428,22 @@ public:
 		     const Segment_3& r, 
 		     Point_3& p) const 
   {
-    if(s.is_degenerate() || r.is_degenerate())
+    if ( s.is_degenerate() || r.is_degenerate())
       return false;
     /* at least one of the segments is degenerate so 
        there is not internal intersection */
-    if(orientation(s.source(),s.target(),r.source(),r.target()) != COPLANAR)
+    if ( orientation(s.source(),s.target(),r.source(),r.target()) != COPLANAR)
       return false;
     /* the segments doesn't define a plane */
-    if(collinear(s.source(),s.target(),r.source()) &&
-       collinear(s.source(),s.target(),r.target()) )
+    if ( collinear(s.source(),s.target(),r.source()) &&
+	 collinear(s.source(),s.target(),r.target()) )
       return false;
     /* the segments are collinear */
     Line_3 ls(s), lr(r);
-    if(ls.direction() ==  lr.direction() ||
-       ls.direction() == -lr.direction() )
+    if ( ls.direction() ==  lr.direction() ||
+	 ls.direction() == -lr.direction() )
       return false;
     /* the segments are parallel */
-
     Oriented_side os1, os2;
     Vector_3 vs(s.direction()), vr(r.direction()), vt(cross_product(vs, vr)), 
       ws(cross_product(vt, vs)), wr(cross_product(vt, vr));
@@ -439,13 +461,12 @@ public:
     os2 = hr.oriented_side(s.target());
     if(os1 != opposite(os2))
       return false;
-
     Object o = intersection(hs, lr);
     CGAL_assertion(assign(p,o));
     /* since line(s) and line(r) are not parallel they intersects in only
        one point */
     assign(p,o);
-    if( !contains_internally(s, p) || !contains_internally(r, p) )
+    if ( !contains_internally(s, p) || !contains_internally(r, p) )
       return false;
     return true;
   }
@@ -455,31 +476,36 @@ public:
 		    Halffacet_handle f,
 		    Point_3& p) const { 
     Plane_3 h(plane(f));
+    // TRACEN("intersecting "<<Line_3(s)<<" "<<h);
     Object o = intersection(h, Line_3(s));
     if ( !CGAL::assign(p,o) ) 
       return false;
     Oriented_side os1 = h.oriented_side(s.source());
     Oriented_side os2 = h.oriented_side(s.target());
+    // TRACEN("source side: "<<os1<<", target side: "<<os2);
     if (os1 != opposite(os2))
       return false;
+    TRACEN( "Point in facet result = "<<locate_point_in_halffacet(p, f));
     return (locate_point_in_halffacet(p, f) == CGAL::ON_BOUNDED_SIDE);
   }
 
   Bounded_side locate_point_in_halffacet( const Point_3& p, 
 					  const Halffacet_handle& f) const {
-    typedef Project_halfedge_point< SHalfedge, const Point_3, SNC_decorator> 
-      Project;
-    typedef Iterator_project< SHalfedge_handle, Project,
-      const Point_3, const Point_3*> Circulator;
+    typedef Project_halfedge_point
+      < SHalfedge, const Point_3, SNC_decorator> Project;
+    typedef Iterator_project
+      < SHalfedge_handle, Project, const Point_3, const Point_3*> Circulator;
+    typedef Container_from_circulator<Circulator> Container;
     Plane_3 h(plane(f));
     CGAL_assertion(h.has_on(p));
     Halffacet_cycle_iterator fc = f->facet_cycles_begin();
     SHalfedge_handle e;
     Bounded_side outer_bound_pos;
     if ( assign(e,fc) ) {
-      Circulator first(e), beyond(e);
-      outer_bound_pos = bounded_side_3(first, beyond, p, h);
-    } else 
+      Container pts(Circulator(e));
+      outer_bound_pos = bounded_side_3(pts.begin(), pts.end(), p, h);
+    } 
+    else 
       CGAL_assertion_msg(0, "facet's first cycle is a SHalfloop?");
     if( outer_bound_pos != CGAL::ON_BOUNDED_SIDE )
       return outer_bound_pos;
@@ -498,10 +524,14 @@ public:
 	  inner_bound_pos = CGAL::ON_BOUNDARY;
 	else
 	  inner_bound_pos = CGAL::ON_UNBOUNDED_SIDE;
-      } else if ( assign(e,fc) ) {
-	Circulator first(e), beyond(e);
-	inner_bound_pos = bounded_side_3(first, beyond, p, h.opposite());
-      } else CGAL_assertion_msg(0, "Damn wrong handle.");
+      } 
+      else if ( assign(e,fc) ) {
+	Container pts(Circulator(e));
+	inner_bound_pos = bounded_side_3(pts.begin(), pts.end(), p, 
+					 h.opposite());
+      } 
+      else 
+	CGAL_assertion_msg(0, "Damn wrong handle.");
       if( inner_bound_pos != CGAL::ON_UNBOUNDED_SIDE )
 	return opposite(inner_bound_pos);
       /* At this point the point p belongs to relative interior of the facet's
@@ -805,30 +835,34 @@ create_volumes() const
   }
 
   Volume_handle outer_volume = sncp()->new_volume();
+  //link_as_outer_shell( SFace_handle(), outer_volume); // dummy outer shell
   for (unsigned i = 0; i < MinimalVertex.size(); ++i) {
-    TRACEN("minimal vertex "<<i<<" "<<point(MinimalVertex[i]));
     Vertex_handle v = MinimalVertex[i];
-
+    TRACEN("Shell #"<<i<<" minimal vertex: "<<point(v));
     if(true) { // v is not a bounding box vertex, TODO
       bool create_shell = false;
       SM_point_locator D(v);
       SObject_handle o = D.locate(Sphere_point(-1,0,0));
       SFace_const_handle sfc;
       if( !assign(sfc, o)) {
-	TRACEN( "outer shell (no sface case)? #" << i);
+	TRACEN( "Shell #"<<i<<" is outer candidate (sface not hit case)");
 	create_shell = true;
       }
       else {
-	TRACEN( "outer shell (sface case)? #" << i);
-	if( Shell[sfc] != i)
+	if( Shell[sfc] != i) {
+	  TRACEN( "Shell #"<<i<<" is outer candidate (sface hit case)");
 	  create_shell = true;
+	}
       }
       if ( create_shell ) {
 	SFace_handle f = EntrySFace[i];
-	TRACEN( "closed shell? " << Closed[f]);
+	CGAL_assertion( Shell[EntrySFace[i]] == i );
+	TRACEN( "is outer shell #" << i <<" closed? " << Closed[f]);
 	if( Closed[f] ) {
 	  Volume_handle c = sncp()->new_volume();
 	  link_as_outer_shell(f, c );
+	  TRACEN( "Shell #" << i <<" linked as outer shell ("<<
+		  (c == volume(f))<<")");
 	}
       }
     }
@@ -837,6 +871,7 @@ create_volumes() const
   CGAL_forall_sfaces(f,*sncp()) {
     if ( volume(f) != Volume_handle() ) 
       continue;
+    TRACEN( "Inner shell #" << Shell[f] <<" visited");
     Volume_handle c = determine_volume( f, MinimalVertex, Shell );
     link_as_inner_shell( f, c );
   }

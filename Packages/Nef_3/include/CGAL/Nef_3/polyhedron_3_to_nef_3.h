@@ -1,4 +1,4 @@
-#define CGAL_P2NEF3_USE_SM_OVERLAY
+//#define CGAL_P2NEF3_USE_SM_OVERLAY
 // ============================================================================
 //
 // Copyright (c) 1997-2002 The CGAL Consortium

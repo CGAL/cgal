@@ -11,4 +11,5 @@ Nef_3 Package: TODO
 - Find all intersections between two SNC's.
 - Binary operations
 - Extended kernel with infimaximal box
-
+- Define endpoint of segments used for ray shoting to be in the 
+  infimaximal box.

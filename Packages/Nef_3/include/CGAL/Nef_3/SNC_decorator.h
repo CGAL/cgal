@@ -36,6 +36,10 @@
 #include <CGAL/Nef_3/SNC_iteration.h>
 #include <CGAL/Nef_3/SNC_SM_decorator.h>
 
+#undef _DEBUG
+#define _DEBUG 13
+#include <CGAL/Nef_3/debug.h>
+
 CGAL_BEGIN_NAMESPACE
 
 template <typename SNC_structure_>
@@ -96,17 +100,17 @@ public:
   SNC_decorator(SNC_structure& W) : sncp_(&W) {}
   SNC_structure* sncp() const { return sncp_; }
 
-  Vertex_handle vertex(const Halfedge_handle e) const
+  Vertex_handle vertex( Halfedge_handle e) const
   { return e->center_vertex_; }
-  Halfedge_handle twin(const Halfedge_handle e) const
+  Halfedge_handle twin( Halfedge_handle e) const
   { return e->twin_; }
-  Vertex_handle source(const Halfedge_handle e) const
+  Vertex_handle source( Halfedge_handle e) const
   { return e->center_vertex_; }
-  Vertex_handle target(const Halfedge_handle e) const
+  Vertex_handle target( Halfedge_handle e) const
   { return source(twin(e)); }
-  SFace_handle sface(const Halfedge_handle e) const
+  SFace_handle sface( Halfedge_handle e) const
   { return e->incident_sface_; }
-  SFace_const_handle sface(const Halfedge_const_handle e) const
+  SFace_const_handle sface( Halfedge_const_handle e) const
   { return e->incident_sface_; }
   /* SVertex queries*/
 
@@ -150,15 +154,15 @@ public:
     std::string res(os.str()); os.freeze(0); return res; 
   }
 
-  SHalfloop_handle twin(const SHalfloop_handle l) const
+  SHalfloop_handle twin( SHalfloop_handle l) const
   { return l->twin_; }
-  Halffacet_handle facet(const SHalfloop_handle l) const
+  Halffacet_handle facet( SHalfloop_handle l) const
   { return l->incident_facet_; }
-  Vertex_handle vertex(const SHalfloop_handle l) const
+  Vertex_handle vertex( SHalfloop_handle l) const
   { return l->incident_sface_->center_vertex_; }
-  SFace_handle sface(const SHalfloop_handle l) const
+  SFace_handle sface( SHalfloop_handle l) const
   { return l->incident_sface_; }
-  SFace_const_handle sface(const SHalfloop_const_handle l) const
+  SFace_const_handle sface( SHalfloop_const_handle l) const
   { return l->incident_sface_; }
   /* SHalfloop queries */
 
@@ -171,23 +175,24 @@ public:
   Halffacet_handle twin(Halffacet_handle f) const
   { return f->twin_; }
   Volume_handle volume(Halffacet_handle f) const
-  { return f->volume_; }
-  SFace_handle sface(Halffacet_handle f) const {
-    Halffacet_cycle_iterator fc(f->facet_cycles_begin());
-    CGAL_assertion( fc != f->facet_cycles_end() );
-    SHalfedge_handle e;
-    SHalfloop_handle l;
-    if ( assign(e, fc) ) { 
-      SHalfedge_around_facet_circulator se(e);
-      CGAL_assertion( se != 0 );
-      return sface(se);
-    } else if ( assign(l, fc) ) {
-      return sface(l);
-    } else CGAL_assertion_msg(0, "Damn wrong handle.");
-    return SFace_handle(); // never reached
-  }
+    { return f->volume_; }
   /* Halffacet queries */
 
+  SFace_handle adjacent_sface(Halffacet_handle f) const {
+    Halffacet_cycle_iterator fc(f->facet_cycles_begin());
+    CGAL_assertion( fc != f->facet_cycles_end());
+    SHalfedge_handle se;
+    if ( assign(se, fc) ) { 
+      CGAL_assertion( facet(se) == f);
+      CGAL_assertion( sface(se) != SFace_handle());
+      CGAL_assertion( volume(sface(twin(se))) == volume(f));
+      return sface(twin(se));
+    } 
+    else 
+      CGAL_assertion_msg( 0, "Facet outer cycle entry point"
+			     "is not an SHalfedge? ");
+    return SFace_handle(); // never reached
+  }
 
   // attributes::
   Point_3& point(Vertex_handle v) const
@@ -273,33 +278,41 @@ public:
     Volume_handle c;
     Shell_volume_setter(const SNC_decorator& Di, Volume_handle& ci) 
       : D(Di), c(ci) {}
-    void visit(SFace_handle h) { D.set_volume(h, c); }
+    void visit(SFace_handle h) { 
+      // TRACEN("volume assigned to SFace "<<&*h);
+      D.set_volume(h, c); 
+    }
     void visit(Vertex_handle h) { /* empty */ }
     void visit(Halfedge_handle h) { /* empty */ }
-    void visit(Halffacet_handle h ) { D.set_volume(h, c); }
+    void visit(Halffacet_handle h ) { 
+      // TRACEN("volume assigned to Halffacet "<<&*h);
+      D.set_volume(h, c); 
+    }
     void set_volume(Volume_handle ci) { c = ci; }
   };
 
   void link_as_outer_shell( SFace_handle f, Volume_handle c ) const {
     CGAL_assertion(c->shell_entry_objects_.size() == 0);
     Shell_volume_setter Setter(*this, c);
+    // TRACEN("Setting volume pointer to shell items...");
     visit_shell_objects( f, Setter );
+    // TRACEN("Done");
+    TRACEN("Volume "<<&*c<<", outer shell "<<&*f);
     store_boundary_object( f, c );
   }
 
   void link_as_inner_shell( SFace_handle f, Volume_handle c ) const {
-    // CGAL_assertion(c->shell_entry_objects_.size() > 0);
-    // the bounding infimaximal box is not yet stored so its entry objects
-    // list could be empty
+    //CGAL_assertion(c->shell_entry_objects_.size() > 0);
     Shell_volume_setter Setter(*this, c);
     visit_shell_objects( f, Setter );
+    TRACEN("Volume "<<&*c<<", inner shell "<<&*f);
     store_boundary_object( f, c );
   }
 
-  void set_volume(Halffacet_handle& h, Volume_handle& c) const
-  { h->volume_ = c; }
-  void set_volume(SFace_handle& h, Volume_handle& c) const 
-  { h->incident_volume_ = c; }
+  void set_volume(Halffacet_handle h, Volume_handle c) const
+  { h->volume_ = c; CGAL_assertion(h->volume_ == c); }
+  void set_volume(SFace_handle h, Volume_handle c) const 
+  { h->incident_volume_ = c; CGAL_assertion(h->incident_volume_ == c); }
 
   template <typename Visitor>
   void visit_shell_objects(SFace_handle f, Visitor& V) const;
