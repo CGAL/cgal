@@ -823,15 +823,18 @@ operator >> (std::istream& is, Triangulation_3<GT, Tds> &tr)
   tr._tds.set_dimension(d);
   tr.set_number_of_vertices(n);
 
-  Point p;
+  //  Point p;
   //  std::vector<Vertex_handle> V(n+1);
   std::map< int, TdsVertex*, std::less<int> > V;
   V[0] = &*(tr.infinite_vertex());
   // the infinite vertex is numbered 0
 
   for (i=1; i <= n; i++) {
-    is >> p;
-    V[i] = new Vertex(p);
+//     is >> p;
+//     V[i] = new Vertex();
+//     V[i]->set_point(p);
+    V[i] = new Vertex();
+    is >> *V[i];
   }
 
   std::map< int, TdsCell*, std::less<int> > C;
