@@ -1,3 +1,6 @@
+4.29 (22 October 2003) [af]
+- new headers
+
 4.28 (30 September 2003) [af]
 - moved \chapter from polygon.tex to main.tex
 
