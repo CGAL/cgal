@@ -1,5 +1,11 @@
 Nef_2 Package: Release changes
 ----------------------------------------------------------------------
+1.38 (31. Jul 2003) [af]
+- Added friend declarations (for g++-3.2, g++-3.3)
+
+1.34-1.27
+- cgal_submit problems
+
 1.33 (28. Jul 2003) [af]
 - Added operator< for SPolynomial with int in Filtered_extended_homogeneous.h
 - Added workaround in Polynomial.h for VC7
