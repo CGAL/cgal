@@ -64,7 +64,7 @@ typedef CGAL::SNC_items<Kernel, bool>      SNC_items;
 typedef CGAL::SNC_structure<SNC_items>     SNC_structure;
 typedef CGAL::Nef_polyhedron_3<SNC_items>  Nef_polyhedron;
 // typedef CGAL::NPX<SNC_items>  Nef_polyhedron;
-typedef Nef_polyhedron::Explorer           Explorer;
+// typedef Nef_polyhedron::Explorer           Explorer;
 typedef std::vector< Nef_polyhedron>       Nef_vector;
 typedef Nef_vector::iterator               Iterator;
 
@@ -87,6 +87,7 @@ void help_message( std::ostream& out) {
 "    swapn <n>              swaps <n>-th element with top (top = 1st element).\n"
 "    clear                  clears stack\n"
 "    size                   prints stack and top polyhedron size to stdout.\n"
+"    bytes                  prints the number of bytes used by top.\n"
 "    simple                 tests if top is convertible to Polyhedron_2.\n"
 "    valid                  tests if the data structure of top is valid.\n"
 "    plane <a> <b> <c> <d>  creates a halfspace bounded by the plane ax+by+cz+d=0.\n"
@@ -183,7 +184,7 @@ int eval( int argc, char* argv[]) {
             }
         } else if ( strcmp( argv[i], "clear") == 0) {
             nef.clear();
-        } else if ( strcmp( argv[i], "size") == 0) {
+	    /*        } else if ( strcmp( argv[i], "size") == 0) {
             cout << "Size of stack = " << nef.size() << endl;
             Explorer exp = nef.back().explorer();
             cout << "Top: Number of vertices = " << exp.number_of_vertices()
@@ -193,7 +194,21 @@ int eval( int argc, char* argv[]) {
             cout << "Top: Number of facets   = " << exp.number_of_facets()
                  << endl;
             cout << "Top: Number of volumes  = " << exp.number_of_volumes()
-                 << endl;
+	    << endl;*/
+	} else if ( strcmp( argv[i], "bytes") == 0) {
+	  if ( nef.size() == 0) {
+	    cerr << "Error: '" << argv[i] << "' on empty stack." << endl;
+	    error = 2;
+	    continue;
+	  }
+	  cout << "Top uses " << nef.back().bytes() << " bytes" << std::endl; 
+	} else if ( strcmp( argv[i], "bytes_reduced") == 0) {
+	  if ( nef.size() == 0) {
+	    cerr << "Error: '" << argv[i] << "' on empty stack." << endl;
+	    error = 2;
+	    continue;
+	  }
+	  cout << "Reduced Version of top uses " << nef.back().bytes_reduced() << " bytes" << std::endl; 
         } else if ( strcmp( argv[i], "simple") == 0) {
             if ( nef.size() == 0) {
                 cerr << "Error: '" << argv[i] << "' on empty stack." << endl;
@@ -221,6 +236,14 @@ int eval( int argc, char* argv[]) {
 	    } else {
 	      error = 4;
 	    }
+        } else if ( strcmp( argv[i], "loadnef3") == 0) {
+            if ( assert_argc( argv[i], 1, argc - i - 1)) {
+	      Nef_polyhedron nf(argv[i+1]);
+	      nef.push_back( nf);
+	      ++i;
+            } else {
+	      error = 4;
+            }
         } else if ( strcmp( argv[i], "loadoff") == 0) {
             if ( assert_argc( argv[i], 1, argc - i - 1)) {
                 std::ifstream in( argv[i+1]);
