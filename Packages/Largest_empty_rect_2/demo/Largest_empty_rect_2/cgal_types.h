@@ -6,7 +6,6 @@
 typedef double                      Coord_type;
 typedef CGAL::Cartesian<Coord_type> Rep;
 
-//typedef CGAL::Polygon_traits_2<Rep> Traits;
 typedef Rep::Point_2             Point;
 typedef Rep::Segment_2           Segment;
 typedef Rep::Iso_rectangle_2     Iso_rectangle_2;
