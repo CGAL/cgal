@@ -3,6 +3,9 @@ VRML_1_ostream and VRML_2_ostream based on popular formats
 OpenInventor and VRML (Virtual Reality Markup Language)
 
 CHANGES:
+Ver 2.2 (29 Nov 1999)
+added std:: in front of endl everywhere
+
 Ver 2.1 (29 july 1999)
 changed <iostream.h> to <iostream> in include lines
 

@@ -5,6 +5,7 @@ WWW_CGAL=$(WWW)/CGAL/DR:/Members
 WWW_dir=$(WWW_CGAL)/Inventor
 TMP_file=/tmp/submit-mail
 
+.PHONY: version test
 
 package:
 	@echo "----------------------------------"
@@ -15,15 +16,19 @@ package:
 	@echo "---- cvs update; cvs commit ------"
 	@echo "---- more version ----------------"
 	@echo "---- VERSION=   ; export VERSION -"
-	@echo "---- make Version ----------------"
-	@echo "---- make tag --------------------"
+	@echo "---- make version ----------------"
+	@echo "---- make rtag --------------------"
 	@echo "---- make submit -----------------"
 	@echo "----------------------------------"
 
-Version:
+version:
 	echo "$(VERSION) (`date '+%e %b %Y'`)" > version
 
-tag:
+commit: changes.txt
+	vim changes.txt
+	cvs commit
+
+rtag:
 	cvs tag v`echo $(VERSION) | sed -e "s/\./_/g"`
 
 submit:	
@@ -41,6 +46,3 @@ submit:
 	echo "/Inventor/Inventor.tar.gz" >> $(TMP_file)
 	mail -s autohandle cgal-submit@cs.uu.nl yvinec < $(TMP_file)
 	rm -f $(TMP_file)
-
-
-
