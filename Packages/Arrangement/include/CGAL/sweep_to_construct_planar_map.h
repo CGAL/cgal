@@ -40,12 +40,17 @@ CGAL_BEGIN_NAMESPACE
 
 template <class Curve_iterator, class PM>
 void  sweep_to_construct_planar_map(Curve_iterator curves_begin, 
-                                           Curve_iterator curves_end, 
-                                           PM &result)
+                                    Curve_iterator curves_end, 
+                                    PM &result,
+                                    typename PM::Change_notification* change_notification=0)
 {
-  Sweep_curves_to_planar_map<Curve_iterator, PM>  sweep_line;
+  Sweep_curves_to_planar_map<Curve_iterator, PM, typename PM::Change_notification>  
+    sweep_line;
   
-  sweep_line.sweep_curves_to_planar_map(curves_begin, curves_end, result);
+  sweep_line.sweep_curves_to_planar_map(curves_begin, 
+                                        curves_end, 
+                                        result,
+                                        change_notification);
 }
 
 /*template <class Curve_iterator, class PM, class Notifier>
