@@ -62,9 +62,9 @@ template <class NT> class Polynomial_3_rep;
 // CLASS TEMPLATE NT: 
 template <class NT> class Polynomial_3;
 // CLASS TEMPLATE int: 
-CGAL_TEMPLATE_NULL class Polynomial_3<int> ;
+template <> class Polynomial_3<int> ;
 // CLASS TEMPLATE double: 
-CGAL_TEMPLATE_NULL class Polynomial_3<double> ;
+template <> class Polynomial_3<double> ;
 // SPECIALIZE_CLASS(NT,int double) END
 
 #ifndef CGAL_SIMPLE_NEF_INTERFACE
@@ -248,7 +248,7 @@ template <class pNT> class Polynomial_3_rep {
   friend class Polynomial_3<pNT>;
   friend class Polynomial_3<int>;
   friend class Polynomial_3<double>;
-  friend std::istream& operator >> CGAL_NULL_TMPL_ARGS  
+  friend std::istream& operator >> <>  
          (std::istream&, Polynomial_3<NT>&);
 
 
@@ -258,7 +258,7 @@ template <class pNT> class Polynomial_3_rep {
 // CLASS TEMPLATE NT: 
 /*{\Msubst 
 typename iterator_traits<Forward_iterator>::value_type#NT
-CGAL_NULL_TMPL_ARGS#
+<>#
 }*/
 
 /*{\Manpage{Polynomial_3}{NT}{Polynomial_3s in one variable}{p}}*/
@@ -443,22 +443,22 @@ determines the sign for the limit process $x \rightarrow \infty$.
   to the requirements of CGAL number types. \setopdims{3cm}{2cm}}*/
 
   friend Polynomial_3<NT>
-    operator - CGAL_NULL_TMPL_ARGS  (const Polynomial_3<NT>&);   
+    operator - <>  (const Polynomial_3<NT>&);   
                           
   friend Polynomial_3<NT>
-    operator + CGAL_NULL_TMPL_ARGS (const Polynomial_3<NT>&, 
+    operator + <> (const Polynomial_3<NT>&, 
                                     const Polynomial_3<NT>&);
 
   friend Polynomial_3<NT>
-    operator - CGAL_NULL_TMPL_ARGS (const Polynomial_3<NT>&, 
+    operator - <> (const Polynomial_3<NT>&, 
                                     const Polynomial_3<NT>&);
 
   friend Polynomial_3<NT>
-    operator * CGAL_NULL_TMPL_ARGS (const Polynomial_3<NT>&, 
+    operator * <> (const Polynomial_3<NT>&, 
                                     const Polynomial_3<NT>&);
 
   friend 
-  Polynomial_3<NT>  operator / CGAL_NULL_TMPL_ARGS 
+  Polynomial_3<NT>  operator / <> 
   (const Polynomial_3<NT>& p1, const Polynomial_3<NT>& p2);
   /*{\Mbinopfunc implements polynomial division of |p1| and |p2|. if
   |p1 = p2 * p3| then |p2| is returned. The result is undefined if |p3|
@@ -498,7 +498,7 @@ determines the sign for the limit process $x \rightarrow \infty$.
   there exists a division operation on |NT|.  }*/
 
   friend double to_double
-  CGAL_NULL_TMPL_ARGS (const Polynomial_3<NT>& p);
+  <> (const Polynomial_3<NT>& p);
 
 
   Polynomial_3<NT>& operator += (const Polynomial_3<NT>& p1)
@@ -604,12 +604,12 @@ operation on two instances of the ring type.}*/
 // CLASS TEMPLATE int: 
 /*{\Xsubst 
  iterator_traits<Forward_iterator>::value_type#int
-CGAL_NULL_TMPL_ARGS#
+<>#
 }*/
 
 /*{\Xanpage{Polynomial_3}{int}{Polynomial_3s in one variable}{p}}*/
 
-CGAL_TEMPLATE_NULL class Polynomial_3<int> : 
+template <> class Polynomial_3<int> : 
   public Handle_for< Polynomial_3_rep<int> >
 {
 /*{\Xdefinition An instance |\Mvar| of the data type |\Mname| represents
@@ -782,23 +782,23 @@ determines the sign for the limit process $x \rightarrow \infty$.
   to the requirements of CGAL number types. \setopdims{3cm}{2cm}}*/
 
   friend  Polynomial_3<int>
-    operator - CGAL_NULL_TMPL_ARGS  (const Polynomial_3<int>&);   
+    operator - <>  (const Polynomial_3<int>&);   
                           
   friend Polynomial_3<int>
-    operator + CGAL_NULL_TMPL_ARGS (const Polynomial_3<int>&, 
+    operator + <> (const Polynomial_3<int>&, 
                                     const Polynomial_3<int>&);
 
   friend Polynomial_3<int>
-    operator - CGAL_NULL_TMPL_ARGS (const Polynomial_3<int>&, 
+    operator - <> (const Polynomial_3<int>&, 
                                     const Polynomial_3<int>&);
 
   friend Polynomial_3<int>
-    operator * CGAL_NULL_TMPL_ARGS (const Polynomial_3<int>&, 
+    operator * <> (const Polynomial_3<int>&, 
                                     const Polynomial_3<int>&);
 
   friend 
 
-  Polynomial_3<int>  operator / CGAL_NULL_TMPL_ARGS 
+  Polynomial_3<int>  operator / <> 
   (const Polynomial_3<int>& p1, const Polynomial_3<int>& p2);
   /*{\Xbinopfunc implements polynomial division of |p1| and |p2|. if
   |p1 = p2 * p3| then |p2| is returned. The result is undefined if |p3|
@@ -838,7 +838,7 @@ determines the sign for the limit process $x \rightarrow \infty$.
   there exists a division operation on |int|.  }*/
 
   friend double to_double
-  CGAL_NULL_TMPL_ARGS (const Polynomial_3<int>& p);
+  <> (const Polynomial_3<int>& p);
 
 
   Polynomial_3<int>& operator += (const Polynomial_3<int>& p1)
@@ -925,12 +925,12 @@ operation on two instances of the ring type.}*/
 // CLASS TEMPLATE double: 
 /*{\Xsubst 
  iterator_traits<Forward_iterator>::value_type#double
-CGAL_NULL_TMPL_ARGS#
+<>#
 }*/
 
 /*{\Xanpage{Polynomial_3}{double}{Polynomial_3s in one variable}{p}}*/
 
-CGAL_TEMPLATE_NULL class Polynomial_3<double> : 
+template <> class Polynomial_3<double> : 
   public Handle_for< Polynomial_3_rep<double> >
 {
 /*{\Xdefinition An instance |\Mvar| of the data type |\Mname| represents
@@ -1103,23 +1103,23 @@ determines the sign for the limit process $x \rightarrow \infty$.
   to the requirements of CGAL number types. \setopdims{3cm}{2cm}}*/
 
   friend  Polynomial_3<double>
-    operator - CGAL_NULL_TMPL_ARGS  (const Polynomial_3<double>&);   
+    operator - <>  (const Polynomial_3<double>&);   
                           
   friend Polynomial_3<double>
-    operator + CGAL_NULL_TMPL_ARGS (const Polynomial_3<double>&, 
+    operator + <> (const Polynomial_3<double>&, 
                                     const Polynomial_3<double>&);
 
   friend Polynomial_3<double>
-    operator - CGAL_NULL_TMPL_ARGS (const Polynomial_3<double>&, 
+    operator - <> (const Polynomial_3<double>&, 
                                     const Polynomial_3<double>&);
 
   friend Polynomial_3<double>
-    operator * CGAL_NULL_TMPL_ARGS (const Polynomial_3<double>&, 
+    operator * <> (const Polynomial_3<double>&, 
                                     const Polynomial_3<double>&);
 
   friend 
 
-  Polynomial_3<double>  operator / CGAL_NULL_TMPL_ARGS 
+  Polynomial_3<double>  operator / <> 
   (const Polynomial_3<double>& p1, const Polynomial_3<double>& p2);
   /*{\Xbinopfunc implements polynomial division of |p1| and |p2|. if
   |p1 = p2 * p3| then |p2| is returned. The result is undefined if |p3|
@@ -1159,7 +1159,7 @@ determines the sign for the limit process $x \rightarrow \infty$.
   there exists a division operation on |double|.  }*/
 
   friend double to_double
-  CGAL_NULL_TMPL_ARGS (const Polynomial_3<double>& p);
+  <> (const Polynomial_3<double>& p);
 
 
   Polynomial_3<double>& operator += (const Polynomial_3<double>& p1)
