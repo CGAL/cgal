@@ -1,5 +1,8 @@
 Changes done to the `_QP_solver' package
 
+Version 0.9.2 on 21-Mar-2001
+- removed 'maintainer' line from file header
+
 Version 0.9.1 on 21-Mar-2001
 - no changes (moved to cvs-server)
 
