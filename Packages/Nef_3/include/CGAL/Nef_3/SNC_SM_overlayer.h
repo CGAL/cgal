@@ -752,7 +752,7 @@ subdivide(Vertex_handle v0, Vertex_handle v1)
         L.push_back(p.second);
         From[--L.end()] = From[--(--L.end())] = Seg_info(e,i);
       } else {
-	TRACEN("normale Kante " << PH(e));
+	TRACEN(i << " normale Kante " << PH(e));
         L.push_back(segment(PI[i],e));
         From[--L.end()] = Seg_info(e,i);
       }
@@ -1014,7 +1014,8 @@ complete_face_support(SVertex_iterator v_start, SVertex_iterator v_end,
     Mark m_buffer[2];
     SHalfedge_handle e_below = halfedge_below(v);
     if ( v == v_start ) {     
-      for (int i=0; i<2; ++i){ 
+      for (int i=0; i<2; ++i){
+	/* 
 	SHalfedge_around_sface_circulator e(first_out_edge(v)), end(e);
 	CGAL_For_all(e,end) {
 	  if(supp_object(e,i) != NULL)
@@ -1039,7 +1040,8 @@ complete_face_support(SVertex_iterator v_start, SVertex_iterator v_end,
 	  m_buffer[i] = PI[i].mark_of_halfsphere(-pos);
 	  TRACEN("no initial support");
 	}
-	//	m_buffer[i] = PI[i].mark_of_halfsphere(-pos);
+	*/
+	m_buffer[i] = PI[i].mark_of_halfsphere(-pos);
       }
     } else if ( e_below != SHalfedge_handle() ) {
       for (int i=0; i<2; ++i) {
@@ -1134,13 +1136,13 @@ complete_face_support(SVertex_iterator v_start, SVertex_iterator v_end,
     TRACEN(PH(v) << " " << mark(v,0));
   TRACEN(" ");
   CGAL_nef3_forall_svertices(v,PI[0])
-    TRACEN(PH(v));
+    TRACEN(PH(v) << " " << PI[0].mark(v));
   TRACEN(" ");
   CGAL_nef3_forall_svertices(v,*this)
     TRACEN(PH(v) << " " << mark(v,1));
   TRACEN(" ");
   CGAL_nef3_forall_svertices(v,PI[1])
-    TRACEN(PH(v));
+    TRACEN(PH(v) << " " << PI[0].mark(v));
   TRACEN(" ");
 
   SHalfedge_handle e;
@@ -1189,7 +1191,7 @@ merge_nodes(SHalfedge_handle e1, SHalfedge_handle e2,
   CGAL_For_all(eav,ee) { set_source(eav,v1); }
   link_as_prev_next_pair(e2,e1);  
   link_as_prev_next_pair(ep1,en2); 
-  //D.assert_equal_marks(v1,v2);
+  D.assert_equal_marks(v1,v2);
   mark(v1,0) = mark(v1,0) || mark(v2,0);
   mark(v1,1) = mark(v1,1) || mark(v2,1);
   D.discard_info(v2);

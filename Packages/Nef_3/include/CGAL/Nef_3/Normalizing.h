@@ -60,7 +60,7 @@ CGAL::Sphere_point<R> normalized(CGAL::Sphere_point<R>& p)
   
   if(p.hy() != 0) g = gcd(g,p.hy());
   if(p.hz() != 0) g = gcd(g,p.hz());
-	  
+
   if(g<0) g = -g;
 
   RT x = p.hx()/g;

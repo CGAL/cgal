@@ -1628,6 +1628,8 @@ public:
       OK = OK && test_string("Nef", in);
       OK = OK && test_string("Complex", in);
 
+      if(!OK) return false;
+
       int v;
       OK = OK && test_string("vertices", in);
       in >> v;

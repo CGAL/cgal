@@ -29,9 +29,42 @@
 #include <CGAL/Nef_3/SNC_structure.h>
 #include <CGAL/Nef_3/SNC_decorator.h>
 #include <CGAL/Nef_2/Object_index.h>
+#include <CGAL/Nef_3/Normalizing.h>
 #include <vector>
 
 CGAL_BEGIN_NAMESPACE
+
+template<typename T>
+class moreLeft {
+  
+  typedef typename T::Vector_3  Vector_3;
+  typedef typename T::FT        FT;
+  typedef typename T::RT        RT;
+ 
+ public:
+  moreLeft() {}
+  
+  bool operator()(Vector_3 vec1, Vector_3 vec2) {
+
+    if(vec1.x() == RT(0) && vec2.x() == RT(0)) {
+      if(vec1.y() != vec2.y())
+	return vec1.y() < vec2.y();
+      return vec1.z() < vec2.z();
+    }
+
+    Vector_3 minus(-1,0,0);
+    FT sk1(minus*vec1),  sk2(minus*vec2);
+    if((sk1 >= FT(0) && sk2 <= FT(0)) ||
+       (sk1 <= FT(0) && sk2 >= FT(0)))
+      return (sk1 > FT(0) || sk2 < FT(0));
+    
+    FT len1 = vec1.x()*vec1.x()+vec1.y()*vec1.y()+vec1.z()*vec1.z();
+    FT len2 = vec2.x()*vec2.x()+vec2.y()*vec2.y()+vec2.z()*vec2.z();
+    FT diff = len1*sk2*sk2 - len2*sk1*sk1;
+    
+    return ((sk1>FT(0) && diff<FT(0)) || (sk1<FT(0) && diff>FT(0)));
+  }
+};
 
 template <typename T>
 class sort_vertices : public SNC_decorator<T> {
@@ -45,12 +78,7 @@ class sort_vertices : public SNC_decorator<T> {
   sort_vertices(T& D) : Base(D) {}
   
   bool operator() (Vertex_handle v1, Vertex_handle v2) const {
-    Point_3 p1(point(v1)), p2(point(v2));
-    if(p1.x() != p2.x())
-      return p1.x() < p2.x();
-    else if(p1.y() != p2.y())
-      return p1.y() < p2.y();
-    return p1.z() < p2.z();
+    return lexicographically_xyz_smaller(point(v1), point(v2));
   }
 };
   
@@ -79,20 +107,23 @@ class sort_facets : public SNC_decorator<T> {
   typedef SNC_decorator<T>            Base;
   typedef typename T::Halffacet_handle Halffacet_handle;
   typedef typename T::Vector_3        Vector_3;
-  
+  typedef typename T::Plane_3         Plane_3;
  public:
   sort_facets(T& D) : Base(D) {}
   
   bool operator() (Halffacet_handle f1, Halffacet_handle f2) const {
     
-    Vector_3 vec1(plane(f1).orthogonal_vector());
-    Vector_3 vec2(plane(f2).orthogonal_vector());
-    if(vec1.x() != vec2.x())
-      return vec1.x() < vec2.x();
-    else if(vec1.y() != vec2.y())
-      return vec1.y() < vec2.y();
-    else if(vec1.z() != vec2.z())
-      return vec1.z() < vec2.z();    
+    Plane_3 p1(normalized(plane(f1)));
+    Plane_3 p2(normalized(plane(f2)));
+    
+    if(p1.d() != p2.d())
+      return p1.d() < p2.d();
+    else if(p1.a() != p2.a())
+      return p1.a() < p2.a();
+    else if(p1.b() != p2.b())
+      return p1.b() < p2.b();    
+    else if(p1.c() != p2.c())
+      return p1.c() < p2.c();    
 
     SHalfedge_handle se1 = SHalfedge_handle(f1->facet_cycles_begin());
     SHalfedge_handle se2 = SHalfedge_handle(f2->facet_cycles_begin());
@@ -115,6 +146,7 @@ class sort_sedges : public SNC_decorator<T> {
   
   typedef T SNC_structure;  
   typedef SNC_decorator<T>             Base;
+  typedef typename T::Vertex_handle    Vertex_handle;
   typedef typename T::SHalfedge_handle SHalfedge_handle;
   
  public:
@@ -124,7 +156,18 @@ class sort_sedges : public SNC_decorator<T> {
     sort_vertices<T> SORT(*sncp());
     if(source(se1) != source(se2))
       return SORT(source(se1),source(se2));
-    return SORT(target(se1), target(se2));
+    if(se1 == twin(se2))
+      return SORT(vertex(twin(ssource(se1))), vertex(twin(ssource(se2))));
+    if(SORT(vertex(twin(ssource(twin(se1)))), 
+	    vertex(twin(ssource(se1)))))
+      se1 = twin(se1);
+    if(SORT(vertex(twin(ssource(twin(se2)))), 
+	    vertex(twin(ssource(se2)))))
+      se2 = twin(se2);      
+    if(ssource(se1) != ssource(se2))
+      return SORT(vertex(twin(ssource(se1))), vertex(twin(ssource(se2))));
+    else
+      return SORT(target(se1), target(se2));
   }
 };
 
@@ -158,54 +201,73 @@ class sort_sfaces : public SNC_decorator<T> {
   
  public:
   sort_sfaces(T& D) : Base(D) {}
-  
+
   bool operator() (SFace_handle sf1, SFace_handle sf2) const {
 
     sort_vertices<T> SORT(*sncp());
-
-    //    if(vertex(sf1) != vertex(sf2))
+    
+    if(vertex(sf1) != vertex(sf2))
       return SORT(vertex(sf1), vertex(sf2));
+    
+    SM_decorator SD(vertex(sf1));
+    moreLeft<T> ml;
+    Vector_3 plus(1,0,0);
 
-    /*
-    //    SVertex_handle sv;
+    SVertex_handle sv;
     SHalfedge_handle se;
-    SHalfloop_handle sl;
-    
-    SFace_cycle_iterator fc = sf1->sface_cycles_begin();
-    if(assign(sl,fc)) {
-      SHalfloop_handle sl2;
-      CGAL_assertion(assign(sl2,sf2->sface_cycles_begin()));
-      SM_decorator D(vertex(sl));
-      Vector_3 vec(D.circle(sl).orthogonal_vector());
-      if(vec.x() != RT(0))
-	return vec.x() < RT(0);
-      else if(vec.y() != RT(0))
-	return vec.y() < RT(0);
-      return vec.z() < RT(0);     
-    }
-    
-    CGAL_nef3_assertion(assign(se,fc));    
-    assign(se,fc);
-    Vertex_handle v1 = target(se);
-    SHalfedge_around_sface_circulator ec(se),ee(se);
-    CGAL_For_all(ec,ee) { 
-      if( lexicographically_xyz_smaller( point(target(ec)), point(v1)))
-	v1 = target(ec);
+    SFace_cycle_iterator fc;
+
+    Vector_3 vec1 = plus;
+    SHalfloop_handle sl1;
+    CGAL_nef3_forall_sface_cycles_of(fc,sf1) {
+      
+      if(assign(se,fc)) {
+	SHalfedge_around_sface_circulator ec(se),ee(se);
+	CGAL_For_all(ec,ee) { 
+	  if(ml(SD.circle(ec).orthogonal_vector(), vec1))
+	    vec1 = SD.circle(ec).orthogonal_vector();
+	}
+      }
+      else if(!assign(sl1,fc))
+	CGAL_nef3_assertion(assign(sv,fc));
     }
 
-    fc = sf2->sface_cycles_begin();
-    CGAL_nef3_assertion(assign(se,fc));
-    assign(se,fc);
-    Vertex_handle v2 = target(se);
-    ec = se;
-    ee = se;
-    CGAL_For_all(ec,ee) { 
-      if( lexicographically_xyz_smaller( point(target(ec)), point(v2)))
-	v2 = vertex(ec);
+    Vector_3 vec2 = plus;
+    SHalfloop_handle sl2;
+    CGAL_nef3_forall_sface_cycles_of(fc,sf2) {
+      
+      if(assign(se,fc)) {
+	SHalfedge_around_sface_circulator ec(se),ee(se);
+	CGAL_For_all(ec,ee) { 
+	  if(ml(SD.circle(ec).orthogonal_vector(), vec2))
+	    vec2 = SD.circle(ec).orthogonal_vector();
+	}
+      }
+      else if(!assign(sl2,fc))
+	CGAL_nef3_assertion(assign(sv,fc));
     }
-    */
-      //    return SORT(v1, v2);
+    
+    if(vec1 != plus && vec2 == plus)
+      return true;
+    if(vec1 == plus && vec2 != plus)
+      return false;  
+    
+    if(vec1 == plus && vec2 == plus) {
+      vec1 = SD.circle(sl1).orthogonal_vector();
+      vec2 = SD.circle(sl2).orthogonal_vector();
+      if(vec1.x() != vec2.x())
+	return vec1.x() < vec2.x();
+      else if(vec1.y() != vec2.y())
+	return vec1.y() < vec2.y();
+      else if(vec1.z() != vec2.z())
+	return vec1.z() < vec2.z();     
+    }
+
+    CGAL_assertion(vec1 != plus && vec2 != plus);
+  
+    return ml(vec1, vec2);
   }
+
 };
 
 template <typename T>
@@ -228,10 +290,127 @@ class sort_volumes : public SNC_decorator<T> {
 };
 
 template <typename T>
+class sort_facet_cycle_entries : public T {
+  
+  typedef typename T::SNC_structure     SNC_structure;
+  typedef typename T::SM_decorator      SM_decorator;
+  typedef typename T::Object_handle     Object_handle;
+  typedef typename T::SHalfedge_handle  SHalfedge_handle;
+  typedef typename T::SHalfloop_handle  SHalfloop_handle;
+  typedef typename T::SFace_handle      SFace_handle;
+  typedef typename T::Point_3           Point_3;
+  typedef typename T::Vector_3          Vector_3;
+  
+ public:
+  sort_facet_cycle_entries(T D) : T(D) {}
+  
+  bool operator() (Object_handle o1, Object_handle o2) const {
+    
+    SHalfedge_handle se1, se2;
+    SHalfloop_handle sl1, sl2;
+
+    if(!assign(se1,o1) && !assign(sl1,o1))
+      CGAL_nef3_assertion_msg(0,"wrong handle");
+    
+    if(!assign(se2,o2) && !assign(sl2,o2))
+      CGAL_nef3_assertion_msg(0,"wrong handle");    
+    
+    if(se1 != SHalfedge_handle() && se2 != SHalfedge_handle()) {
+      sort_vertices<SNC_structure> SORT(*sncp());
+      return SORT(source(se1), source(se2));
+    }
+
+    if(se1 != SHalfedge_handle())
+      return true;
+    if(se2 != SHalfedge_handle())
+      return false;
+
+    CGAL_nef3_assertion(sl1 != SHalfloop_handle() && 
+			sl2 != SHalfloop_handle());
+
+    SM_decorator SD(vertex(sl1));
+    Vector_3 vec1(SD.circle(sl1).orthogonal_vector());
+    Vector_3 vec2(SD.circle(sl2).orthogonal_vector());
+    //    CGAL_nef3_assertion(vec1 == vec2.antipode());
+    if(vec1.x() != vec2.x())
+      return vec1.x() < vec2.x();
+    else if(vec1.y() != vec2.y())
+      return vec1.y() < vec2.y();
+    else
+      return vec1.z() < vec2.z();          
+  }
+};
+
+template <typename T>
+class sort_sface_cycle_entries : public T {
+  
+  typedef typename T::SNC_structure     SNC_structure;
+  typedef typename T::SM_decorator      SM_decorator;
+  typedef typename T::Object_handle Object_handle;
+  typedef typename T::SVertex_handle  SVertex_handle;
+  typedef typename T::SHalfedge_handle  SHalfedge_handle;
+  typedef typename T::SHalfloop_handle  SHalfloop_handle;
+  typedef typename T::SFace_handle  SFace_handle;
+  typedef typename T::Point_3       Point_3;
+  typedef typename T::Vector_3       Vector_3;
+  
+ public:
+  sort_sface_cycle_entries(T D) : T(D) {}
+  
+  bool operator() (Object_handle o1, Object_handle o2) const {
+    
+    SVertex_handle sv1, sv2;
+    SHalfedge_handle se1, se2;
+    SHalfloop_handle sl1, sl2;
+
+    if(!assign(se1,o1) && !assign(sl1,o1) && !assign(sv1,o1))
+      CGAL_nef3_assertion_msg(0,"wrong handle");
+    
+    if(!assign(se2,o1) && !assign(sl2,o2) && !assign(sv2,o2))
+      CGAL_nef3_assertion_msg(0,"wrong handle");    
+    
+    if(se1 != SHalfedge_handle() && se2 == SHalfedge_handle())
+      return true;
+
+    if(se1 == SHalfedge_handle() && se2 != SHalfedge_handle())
+      return false;
+
+    if(sl1 != SHalfloop_handle() && sv2 != SVertex_handle())
+      return true;
+
+    if(sl2 != SHalfloop_handle() && sv1 != SVertex_handle())
+      return false;
+
+    if(se1 != SHalfedge_handle() && se2 != SHalfedge_handle()) {
+      sort_vertices<SNC_structure> SORT(*sncp());
+      if(ssource(se1) != ssource(se2))
+	return SORT(vertex(twin(ssource(se1))), vertex(twin(ssource(se2))));
+      else
+	return SORT(target(se1), target(se2));
+    }
+
+    if(sl1 != SHalfloop_handle() && sl2 != SHalfloop_handle()) {
+      SM_decorator SD(vertex(sl1));
+      Vector_3 vec1(SD.circle(sl1).orthogonal_vector());
+      Vector_3 vec2(SD.circle(sl2).orthogonal_vector());
+      //      CGAL_nef3_assertion(vec1 == vec2.antipode());
+      if(vec1.x() != vec2.x())
+	return vec1.x() < vec2.x();
+      else if(vec1.y() != vec2.y())
+	return vec1.y() < vec2.y();
+      else if(vec1.z() != vec2.z())
+	return vec1.z() < vec2.z();          
+    }
+
+    CGAL_nef3_assertion(sv1 != SVertex_handle() && sv2 != SVertex_handle());
+    sort_vertices<SNC_structure> SORT(*sncp());
+    return SORT(target(sv1), target(sv2));
+  }
+};
+
+template <typename T>
 class sort_shell_entries : public T {
   
-  //  typedef T                         SNC_structure;
-  //  typedef SNC_decorator<T>          Base;
   typedef typename T::Object_handle Object_handle;
   typedef typename T::Shell_entry_iterator  Shell_entry_iterator;
   typedef typename T::SFace_handle  SFace_handle;
@@ -455,27 +634,26 @@ SNC_io_parser<EW>::SNC_io_parser(std::ostream& os, SNC_structure& W,
   reduce = false; 
   sorted = sort;
 
+  if(sorted && Infi_box::extended_Kernel()) {
+    int i = 0;
+    Halffacet_handle hf;
+    CGAL_nef3_forall_facets(hf, *sncp()) {
+      if(!Infi_box::is_standard(plane(hf)))
+	i ++;
+    }
+    //    TRACEN("There are " << i  << " extended facets");
+    if(i < 7)
+      reduce = true;
+  }
+  
   Vertex_iterator vi; 
-  CGAL_nef3_forall_vertices(vi, *sncp())
+  CGAL_nef3_forall_vertices(vi, *sncp()) {
     VL.push_back(vi);
+    if(sorted)
+      point(vi) = normalized(point(vi));
+  }
   if(sorted) {
     VL.sort(sort_vertices<SNC_structure>(*sncp()));
-    if(Infi_box::extended_Kernel()) {
-      CGAL_assertion(VL.size() > 7);
-      typename std::list<Vertex_iterator>::iterator beg = VL.begin();
-      typename std::list<Vertex_iterator>::iterator end = VL.end();
-      CGAL_assertion(!Infi_box::is_standard(point(*(beg++))));
-      CGAL_assertion(!Infi_box::is_standard(point(*(beg++))));
-      CGAL_assertion(!Infi_box::is_standard(point(*(beg++))));
-      CGAL_assertion(!Infi_box::is_standard(point(*(beg++))));
-      CGAL_assertion(!Infi_box::is_standard(point(*(--end))));
-      CGAL_assertion(!Infi_box::is_standard(point(*(--end))));
-      CGAL_assertion(!Infi_box::is_standard(point(*(--end))));
-      CGAL_assertion(!Infi_box::is_standard(point(*(--end))));
-      if(Infi_box::is_standard(point(*(beg++))) &&
-	 Infi_box::is_standard(point(*(--end))))
-	reduce = true;
-    }
   }  
   if(reduce)
     for(int k=0; k<4; k++){
@@ -487,8 +665,23 @@ SNC_io_parser<EW>::SNC_io_parser(std::ostream& os, SNC_structure& W,
     VI[*vl] = i++;
   
   Halfedge_iterator ei; 
-  CGAL_nef3_forall_halfedges(ei, *sncp())
+  CGAL_nef3_forall_halfedges(ei, *sncp()) {
     EL.push_back(ei);
+    if(sorted) {
+      //      std::cerr << tmp_point(ei) << " | " << normalized(tmp_point(ei)) << " |";
+      ei->tmp_point() = normalized(ei->tmp_point());
+      //      std::cerr << tmp_point(ei) << std::endl;
+      SHalfedge_handle new_outedge = ei->out_sedge_;
+      SHalfedge_around_svertex_circulator cb(new_outedge), ce(cb);
+      CGAL_For_all(cb,ce) {
+	if(lexicographically_xyz_smaller(point(vertex(twin(ssource(cb)))), 
+					 point(vertex(twin(ssource(new_outedge))))) ||
+	   lexicographically_xyz_smaller(point(target(cb)), point(target(new_outedge))))													
+	  new_outedge = cb;
+      }
+      ei->out_sedge_ = new_outedge;
+    }
+  }
   if(sorted) EL.sort(sort_edges<SNC_structure>(*sncp()));
   if(reduce)
     for(int k=0; k<12; k++){
@@ -500,14 +693,19 @@ SNC_io_parser<EW>::SNC_io_parser(std::ostream& os, SNC_structure& W,
     EI[*el] = i++;
 
   Halffacet_iterator fi; 
-  CGAL_nef3_forall_halffacets(fi, *sncp())
+  CGAL_nef3_forall_halffacets(fi, *sncp()){
+    if(sorted) {
+      plane(fi) = normalized(plane(fi));
+      fi->boundary_entry_objects_.sort(sort_facet_cycle_entries<Base>((Base) *this));
+    }
     FL.push_back(fi);
+  }
   if(sorted) FL.sort(sort_facets<SNC_structure>(*sncp()));
   if(reduce) {
-    for(int k=0; k<10; k++){
+    for(int k=0; k<6; k++){
       FL.pop_front();
+      FL.pop_back();
     }
-    FL.pop_back();FL.pop_back();
   }
   i = 0;
   typename std::list<Halffacet_iterator>::iterator fl;
@@ -518,7 +716,8 @@ SNC_io_parser<EW>::SNC_io_parser(std::ostream& os, SNC_structure& W,
   Volume_iterator nirv;
   Volume_iterator ci; 
   CGAL_nef3_forall_volumes(ci, *sncp()) {
-    ci->shell_entry_objects_.sort(sort_shell_entries<Base>((Base)*this));
+    if(sorted) 
+      ci->shell_entry_objects_.sort(sort_shell_entries<Base>((Base)*this));
     if(!first)
       CL.push_back(ci);
     else {
@@ -535,8 +734,11 @@ SNC_io_parser<EW>::SNC_io_parser(std::ostream& os, SNC_structure& W,
     CI[*cl] = i++;
 
   SHalfedge_iterator sei; 
-  CGAL_nef3_forall_shalfedges(sei, *sncp())
+  CGAL_nef3_forall_shalfedges(sei, *sncp()) {
     SEL.push_back(sei);
+    if(sorted)
+      sei->tmp_circle() = normalized(sei->tmp_circle());
+  }
   if(sorted) SEL.sort(sort_sedges<SNC_structure>(*sncp()));
   if(reduce)
     for(int k=0; k<24; k++){
@@ -548,8 +750,11 @@ SNC_io_parser<EW>::SNC_io_parser(std::ostream& os, SNC_structure& W,
     SEI[*sel] = i++;
 
   SHalfloop_iterator sli; 
-  CGAL_nef3_forall_shalfloops(sli, *sncp())
+  CGAL_nef3_forall_shalfloops(sli, *sncp()) {
     SLL.push_back(sli);
+    if(sorted)
+      sli->tmp_circle() = normalized(sli->tmp_circle());
+  }
   if(sorted) SLL.sort(sort_sloops<SNC_structure>(*sncp()));
   i = 0;
   typename std::list<SHalfloop_iterator>::iterator sll;
@@ -557,8 +762,30 @@ SNC_io_parser<EW>::SNC_io_parser(std::ostream& os, SNC_structure& W,
     SLI[*sll] = i++;
 
   SFace_iterator sfi; 
-  CGAL_nef3_forall_sfaces(sfi, *sncp())
+  CGAL_nef3_forall_sfaces(sfi, *sncp()) {
+    if(sorted) {
+      SFace_cycle_iterator fc;
+      CGAL_nef3_forall_sface_cycles_of(fc, sfi) {
+	SHalfedge_handle se;
+	if(assign(se,fc)) {
+	  SHalfedge_around_sface_circulator cb(se), ce(cb);
+	  CGAL_For_all(cb,ce) {
+	    if(ssource(cb) != ssource(se)) {
+	      if(lexicographically_xyz_smaller(point(vertex(twin(ssource(cb)))), 
+					       point(vertex(twin(ssource(se))))))
+		se = cb;
+	    }
+	    else 
+	      if(lexicographically_xyz_smaller(point(target(cb)), point(target(se))))
+		se = cb;
+	  }
+	  *fc = se;
+	}
+      }
+      sfi->boundary_entry_objects_.sort(sort_sface_cycle_entries<Base>((Base) *this));
+    }
     SFL.push_back(sfi);
+  }
   if(sorted) SFL.sort(sort_sfaces<SNC_structure>(*sncp()));
   if(reduce)
     for(int k=0; k<8; k++){

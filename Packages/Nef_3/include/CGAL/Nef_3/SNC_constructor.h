@@ -386,12 +386,12 @@ public:
 
   void build_external_structure() {
     //    SETDTHREAD(43);
-    /*debug*/ sncp()->print_statistics();
+    //    /*debug*/ sncp()->print_statistics();
     pair_up_halfedges();
     link_shalfedges_to_facet_cycles();
     categorize_facet_cycles_and_create_facets();
     create_volumes();
-    /*debug*/ sncp()->print_statistics();
+    //    /*debug*/ sncp()->print_statistics();
   }
 }; // SNC_constructor<SNC>
 
@@ -1155,12 +1155,12 @@ pair_up_halfedges() const
   Pluecker_line_map M;
   Pluecker_line_map M2;
 
-  Progress_indicator_cout progress( 2*sncp()->number_of_halfedges(), 
-				    "SNC_constructor: pairing up edges...");
+  //  Progress_indicator_cout progress( 2*sncp()->number_of_halfedges(), 
+  //			    "SNC_constructor: pairing up edges...");
   
   Halfedge_iterator e;
   CGAL_nef3_forall_halfedges(e,*sncp()) {
-    progress++;
+    //    progress++;
     Point_3 p = point(vertex(e));
     Pluecker_line_3 l(Infi_box::standard_point(p), 
 		      Infi_box::standard_point(p + Vector_3(tmp_point(e))));
@@ -1178,7 +1178,7 @@ pair_up_halfedges() const
   typename Pluecker_line_map::iterator it;
  
   CGAL_nef3_forall_iterators(it,M2) {
-    progress++;
+    //    progress++;
     it->second.sort(Halfedge_key_lt());
     TRACEN("search opposite  "<<it->first); 
     typename Halfedge_list::iterator itl;
@@ -1198,7 +1198,7 @@ pair_up_halfedges() const
   }
 
   CGAL_nef3_forall_iterators(it,M) {
-    progress++;
+    //    progress++;
     it->second.sort(Halfedge_key_lt());
     TRACEN("search opposite  "<<it->first); 
     typename Halfedge_list::iterator itl;
@@ -1208,11 +1208,11 @@ pair_up_halfedges() const
       CGAL_nef3_assertion(itl != it->second.end());
       Halfedge_handle e2 = itl->e;
       TRACEN("    " << point(vertex(e1)) << " -> " << point(vertex(e2)));
-      TRACEN(point(vertex(e1)) << " -> " << point(vertex(e2)));
       TRACEN(tmp_point(e1)<<" -> "<<tmp_point(e2).antipode());
+      CGAL_nef3_assertion(point(vertex(e1)) != point(vertex(e2)));
       CGAL_nef3_assertion(tmp_point(e1)==tmp_point(e2).antipode());
-      make_twins(e1,e2);
       CGAL_nef3_assertion(mark(e1)==mark(e2));
+      make_twins(e1,e2);
 
       // discard temporary sphere_point ?
     }
@@ -1230,13 +1230,13 @@ link_shalfedges_to_facet_cycles() const
   // SETDTHREAD(43*31);
   TRACEN(">>>>>link_shalfedges_to_facet_cycles");
   
-  Progress_indicator_cout progress
-    (sncp()->number_of_halfedges(), 
-     "SNC_constructor: building facet cycles...");
+  //  Progress_indicator_cout progress
+  //    (sncp()->number_of_halfedges(), 
+  //     "SNC_constructor: building facet cycles...");
 
   Halfedge_iterator e;
   CGAL_nef3_forall_edges(e,*sncp()) {
-    progress++;
+    //    progress++;
     TRACEN("");
     TRACEN(PH(e));
     Halfedge_iterator et = twin(e);
@@ -1317,14 +1317,14 @@ categorize_facet_cycles_and_create_facets() const
   typedef std::map<Plane_3, SObject_list, Plane_lt> 
     Map_planes;
 
-  Progress_indicator_cout progress
-    (sncp()->number_of_shalfedges()+sncp()->number_of_shalfloops(), 
-     "SNC_constructor: categorizing facet cycles...");
+  //  Progress_indicator_cout progress
+  //    (sncp()->number_of_shalfedges()+sncp()->number_of_shalfloops(), 
+  //     "SNC_constructor: categorizing facet cycles...");
 
   Map_planes M;
   SHalfedge_iterator e;
   CGAL_nef3_forall_shalfedges(e,*sncp()) {
-    progress++;
+    //    progress++;
     Sphere_circle c(tmp_circle(e));
     Plane_3 h = c.plane_through(point(vertex(e)));
     SM_decorator SD(vertex(e));
@@ -1346,12 +1346,12 @@ categorize_facet_cycles_and_create_facets() const
     M[normalized(h)].push_back(SObject_handle(twin(l)));
   }
 
-  Progress_indicator_cout progress2 
-    ( M.size(), "SNC_constructor: creating facets...");
+  //  Progress_indicator_cout progress2 
+  //    ( M.size(), "SNC_constructor: creating facets...");
 
   typename Map_planes::iterator it;
   CGAL_nef3_forall_iterators(it,M) { 
-    progress2++;
+    //    progress2++;
     TRACEN("  plane "<<it->first<<"             "<<(it->first).point());
     FM_decorator D(*sncp());
     D.create_facet_objects(it->first,it->second.begin(),it->second.end());
@@ -1366,8 +1366,7 @@ template <typename SNC_>
 void SNC_constructor<SNC_>::
 create_volumes()
 { 
-  SETDTHREAD(37*43*19*47);
-  
+  //  SETDTHREAD(37*43*19*47);
 
   TRACEN(">>>>>create_volumes");
   Sface_shell_hash     ShellSf(-1);
@@ -1378,15 +1377,15 @@ create_volumes()
   std::vector<SFace_handle> EntrySFace;
   std::vector<bool> Closed;
 
-  Progress_indicator_cout progress
-    (sncp()->number_of_sfaces(), "SNC_construction: building shells...");
+  //  Progress_indicator_cout progress
+  //    (sncp()->number_of_sfaces(), "SNC_construction: building shells...");
 
   SFace_iterator f;
 // First, we classify all the Shere Faces per Shell.  For each Shell we
 //     determine its minimum lexicographyly vertex and we check wheter the
 //     Shell encloses a region (closed surface) or not. 
   CGAL_nef3_forall_sfaces(f,*sncp()) {
-    progress++;
+    //    progress++;
     TRACEN("sface in " << ShellSf[f]);
     if ( Done[f] ) 
       continue;
@@ -1412,8 +1411,8 @@ create_volumes()
   CGAL_nef3_assertion( pl() != NULL);
   pl()->initialize(sncp()); // construct the point locator 
 
-  Progress_indicator_cout progress2
-    ( MinimalSFace.size(), "SNC_constructor: creating outer volumes...");
+  //  Progress_indicator_cout progress2
+  //    ( MinimalSFace.size(), "SNC_constructor: creating outer volumes...");
 
 //   then, we determine the Shells which correspond to Volumes via a ray
 //   shootting in the direction (-1,0,0) over the Sphere_map of the minimal 
@@ -1423,7 +1422,7 @@ create_volumes()
   sncp()->new_volume(); // outermost volume (nirvana)
   Vertex_handle v_min = vertex(MinimalSFace[0]);
   for( unsigned int i = 0; i < MinimalSFace.size(); ++i) {
-    progress2++;
+    //    progress2++;
     Vertex_handle v = vertex(MinimalSFace[i]);
     if(CGAL::lexicographically_xyz_smaller(point(v),point(v_min)))
        v_min=v;
@@ -1453,12 +1452,12 @@ create_volumes()
 //     and we assign them to its enclosing Volume determined via a facet below
 //     check. 
 
-  Progress_indicator_cout progress3
-    ( sncp()->number_of_sfaces(), 
-      "SNC_constructor: finding nesting structure...");
+//  Progress_indicator_cout progress3
+//    ( sncp()->number_of_sfaces(), 
+//      "SNC_constructor: finding nesting structure...");
 
   CGAL_nef3_forall_sfaces(f,*sncp()) {
-    progress3++;
+    //    progress3++;
     if ( volume(f) != Volume_handle() ) 
       continue;
     TRACEN( "Outer shell #" << ShellSf[f] << " volume?");
