@@ -207,7 +207,7 @@ curve_split_wrapper( std::istringstream & strLine )
     return false;
   }
   tr.curve_split( all_curves_vec[index1], cv1, cv2, all_points_vec[index2] );
-  unsigned int i = 0,j = 0;
+  int i = 0, j = 0;
   for( ; i < _points(cv1) - 1; i++ ){ //without the end point of cv1
     if( _point(all_curves_vec[index1], i) != _point(cv1, i) )
     {
