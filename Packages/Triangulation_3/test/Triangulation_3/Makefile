@@ -26,7 +26,8 @@ CXXFLAGS = \
         -B$(UTIL)/Binutils/$(UNAME)/bin/ \
 	 $(CGAL_CXXFLAGS)\
 	 $(TESTSUITE_CXXFLAGS) \
-         -gdwarf-2
+	-g
+#         -gdwarf-2
 #	-O2 -fno-default-inline \
 #	-DCGAL_NO_PRECONDITIONS -DCGAL_NO_POSTCONDITIONS -DCGAL_NO_ASSERTIONS
 #         -g
