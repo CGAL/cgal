@@ -452,8 +452,8 @@ void Qt_widget::setPointStyle(const PointStyle ps)
 template <class R>
 Qt_widget& operator<<(Qt_widget& w, const Point_2<R>& p)
 {
-  int x = w.x_pixel(to_double(p.x()));
-  int y = w.y_pixel(to_double(p.y()));
+  int x = w.x_pixel(CGAL::to_double(p.x()));
+  int y = w.y_pixel(CGAL::to_double(p.y()));
 
   uint size=w.pointSize();
   PointStyle ps=w.pointStyle();
@@ -561,10 +561,10 @@ Qt_widget& operator<<(Qt_widget& w, const Segment_2<R>& s)
     else
       CGAL::assign(sr, obj);
   }
-  x1 = w.x_pixel(to_double(sr.source().x()));
-  x2 = w.x_pixel(to_double(sr.target().x()));
-  y1 = w.y_pixel(to_double(sr.source().y()));
-  y2 = w.y_pixel(to_double(sr.target().y()));
+  x1 = w.x_pixel(CGAL::to_double(sr.source().x()));
+  x2 = w.x_pixel(CGAL::to_double(sr.target().x()));
+  y1 = w.y_pixel(CGAL::to_double(sr.source().y()));
+  y2 = w.y_pixel(CGAL::to_double(sr.target().y()));
   w.get_painter().drawLine(x1, y1, x2, y2);
   w.do_paint();
   return w;
@@ -584,8 +584,8 @@ Qt_widget& operator<<(Qt_widget& w, const Line_2<R>& l)
     p2=p1+l.direction().vector();
 
   const Point
-    p1d=Point(to_double(p1.x()),to_double(p1.y())),
-    p2d=Point(to_double(p2.x()),to_double(p2.y()));
+    p1d=Point(CGAL::to_double(p1.x()),CGAL::to_double(p1.y())),
+    p2d=Point(CGAL::to_double(p2.x()),CGAL::to_double(p2.y()));
 
   double
     x1=w.x_min(),
@@ -629,8 +629,8 @@ Qt_widget& operator<<(Qt_widget& w, const Ray_2<R>& r)
     p2=r.point(1);
 
   const Point
-    p1d=Point(to_double(p1.x()),to_double(p1.y())),
-    p2d=Point(to_double(p2.x()),to_double(p2.y()));
+    p1d=Point(CGAL::to_double(p1.x()),CGAL::to_double(p1.y())),
+    p2d=Point(CGAL::to_double(p2.x()),CGAL::to_double(p2.y()));
 
 
   const double
@@ -685,12 +685,12 @@ operator<<(Qt_widget& w, const Triangle_2<R>& t)
   if(CGAL::assign(ti, obj))
   {
     QPointArray array(3);
-    array[0] = QPoint(w.x_pixel(to_double(t.vertex(0).x())), 
-                                w.y_pixel(to_double(t.vertex(0).y())));
-    array[1] = QPoint(w.x_pixel(to_double(t.vertex(1).x())), 
-                                w.y_pixel(to_double(t.vertex(1).y())));
-    array[2] = QPoint(w.x_pixel(to_double(t.vertex(2).x())), 
-                                w.y_pixel(to_double(t.vertex(2).y())));
+    array[0] = QPoint(w.x_pixel(CGAL::to_double(t.vertex(0).x())), 
+                                w.y_pixel(CGAL::to_double(t.vertex(0).y())));
+    array[1] = QPoint(w.x_pixel(CGAL::to_double(t.vertex(1).x())), 
+                                w.y_pixel(CGAL::to_double(t.vertex(1).y())));
+    array[2] = QPoint(w.x_pixel(CGAL::to_double(t.vertex(2).x())), 
+                                w.y_pixel(CGAL::to_double(t.vertex(2).y())));
     w.get_painter().drawPolygon(array);
   }   
   if(CGAL::assign(vi, obj)){
@@ -698,8 +698,8 @@ operator<<(Qt_widget& w, const Triangle_2<R>& t)
     std::vector<Point>::const_iterator it = vi.begin();
     int pos = 0;
     while(it != vi.end()){
-      array[pos] = QPoint(w.x_pixel(to_double((*it).x())), 
-                          w.y_pixel(to_double((*it).y())));
+      array[pos] = QPoint(w.x_pixel(CGAL::to_double((*it).x())), 
+                          w.y_pixel(CGAL::to_double((*it).y())));
       pos++;
       it++;
     }  
@@ -715,10 +715,10 @@ template < class R>
 Qt_widget& operator<<(Qt_widget& w, const Circle_2<R>& c)
 {
   int 
-    cx=w.x_pixel(to_double(c.center().x())),
-    cy=w.y_pixel(to_double(c.center().y())),
-    rx=w.x_pixel_dist((std::sqrt(to_double(c.squared_radius())))),
-    ry=w.y_pixel_dist((std::sqrt(to_double(c.squared_radius()))));
+    cx=w.x_pixel(CGAL::to_double(c.center().x())),
+    cy=w.y_pixel(CGAL::to_double(c.center().y())),
+    rx=w.x_pixel_dist((std::sqrt(CGAL::to_double(c.squared_radius())))),
+    ry=w.y_pixel_dist((std::sqrt(CGAL::to_double(c.squared_radius()))));
 
   w.get_painter().drawEllipse(cx-rx,cy-ry,2*rx,2*ry);
   w.do_paint();
@@ -731,10 +731,10 @@ template< class R >
 Qt_widget&
 operator<<(Qt_widget& w, const Iso_rectangle_2<R>& r)
 {
-  int xmin = w.x_pixel(to_double(r.xmin()));
-  int ymin = w.y_pixel(to_double(r.ymin()));
-  int xmax = w.x_pixel(to_double(r.xmax()));
-  int ymax = w.y_pixel(to_double(r.ymax()));
+  int xmin = w.x_pixel(CGAL::to_double(r.xmin()));
+  int ymin = w.y_pixel(CGAL::to_double(r.ymin()));
+  int xmax = w.x_pixel(CGAL::to_double(r.xmax()));
+  int ymax = w.y_pixel(CGAL::to_double(r.ymax()));
   w.get_painter().drawRect(xmin,ymin,xmax-xmin,ymax-ymin);
   w.do_paint();
   return w;
