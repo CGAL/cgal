@@ -44,26 +44,23 @@ PM_explorer#Explorer
 /*{\Mdefinition An instance |\Mvar| of the data type |\Mname| is a
 decorator to explore the structure of the plane map underlying the
 Nef polyhedron. It inherits all topological adjacency exploration
-operations from |PM_const_decorator|. |\Mname| additionally allows
-to explore the geometric embedding.
+operations from |PMConstDecorator|. |\Mname| additionally allows
+one to explore the geometric embedding.
 
 The position of each vertex is given by a so-called extended point,
 which is either a standard affine point or the tip of a ray touching
 an infinimaximal square frame centered at the origin. A vertex |v| is
 called a \emph{standard} vertex if its embedding is a \emph{standard}
 point and \emph{non-standard} if its embedding is a
-\emph{non-standard} point. By the embedding of their source and target
-vertices edges correspond to either affine segments, rays or lines or
-are part of the bounding frame.
-%\providecommand{\displayeps}[3]{}
-%\providecommand{\manfigref}[1]{}
-%\manfigref{See figure \figref{extsegs}.}
+\emph{non-standard} point. By the straightline embedding of their
+source and target vertices, edges correspond to either affine segments,
+rays or lines or are part of the bounding frame.
 
 \displayeps{extsegs}{Extended geometry: standard vertices are marked
 by S, non-standard vertices are marked by N. \textbf{A}: The possible
 embeddings of edges: an affine segment s1, an affine ray s2, an affine
 line s3. \textbf{B}: A plane map embedded by extended geometry: note
-that the frame is arbitrary large, the 6 vertices on the frame are at
+that the frame is arbitrarily large, the 6 vertices on the frame are at
 infinity, the two faces represent a geometrically unbounded area,
 however they are topologically closed by the frame edges. No standard
 point can be placed outside the frame.}{10cm}

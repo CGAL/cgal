@@ -127,7 +127,6 @@ CGAL_TEMPLATE_NULL class RPolynomial<double> ;
 // SPECIALIZE_CLASS(NT,int double) END
 
 /*{\Mtext \headerline{Range template}}*/
-
 #ifndef CGAL_SIMPLE_NEF_INTERFACE
 
 template <class Forward_iterator>
@@ -147,7 +146,7 @@ where |++it == ite| and |NT| is the value type of |Forward_iterator|.
   return res;
 }
 
-#endif
+#endif //CGAL_SIMPLE_NEF_INTERFACE
 
 
 template <class NT>  /*CGAL_KERNEL_MEDIUM_INLINE*/ RPolynomial<NT>
@@ -237,7 +236,7 @@ template <class pNT> class RPolynomial_rep : public Ref_counted
   #else
   typedef CGAL::vector_MSC<NT> Vector;
   #endif
-  typedef typename Vector::size_type      Size_type;
+  typedef typename Vector::size_type      size_type;
   typedef typename Vector::iterator       iterator;
   typedef typename Vector::const_iterator const_iterator;
   Vector coeff;
@@ -248,7 +247,7 @@ template <class pNT> class RPolynomial_rep : public Ref_counted
     { coeff[0]=n; coeff[1]=m; }
   RPolynomial_rep(const NT& a, const NT& b, const NT& c) : coeff(3)
     { coeff[0]=a; coeff[1]=b; coeff[2]=c; }
-  RPolynomial_rep(Size_type s) : coeff(s,NT(0)) {}
+  RPolynomial_rep(size_type s) : coeff(s,NT(0)) {}
 
   #ifndef CGAL_SIMPLE_NEF_INTERFACE
 
@@ -305,7 +304,7 @@ determines the sign for the limit process $x \rightarrow \infty$.
   typedef Handle_for< RPolynomial_rep<NT> > Base;
   typedef RPolynomial_rep<NT> Rep;
   typedef typename Rep::Vector    Vector;
-  typedef typename Rep::Size_type Size_type;
+  typedef typename Rep::size_type size_type;
   typedef typename Rep::iterator  iterator;
 
   typedef typename Rep::const_iterator const_iterator;
@@ -316,7 +315,7 @@ determines the sign for the limit process $x \rightarrow \infty$.
   void reduce() { ptr->reduce(); }
   Vector& coeffs() { return ptr->coeff; }
   const Vector& coeffs() const { return ptr->coeff; }
-  RPolynomial(Size_type s) : Base( RPolynomial_rep<NT>(s) ) {}
+  RPolynomial(size_type s) : Base( RPolynomial_rep<NT>(s) ) {}
   // creates a polynomial of degree s-1
 
   static NT R_; // for visualization only
@@ -381,7 +380,19 @@ determines the sign for the limit process $x \rightarrow \infty$.
   // KILL int END
 
   RPolynomial(const RPolynomial<NT>& p) : Base(p) {}
+
+  protected: // accessing coefficients internally:
+  NT& coeff(unsigned int i) 
+  { CGAL_assertion(!ptr->is_shared() && i<(ptr->coeff.size()));
+    return ptr->coeff[i]; 
+  }
+  public:
+
   /*{\Moperations 3 3 }*/
+  const_iterator begin() const { return ptr->coeff.begin(); }
+  /*{\Mop a random access iterator pointing to $a_0$.}*/
+  const_iterator end()   const { return ptr->coeff.end(); }
+  /*{\Mop a random access iterator pointing beyond $a_d$.}*/
 
   int degree() const 
   { return ptr->coeff.size()-1; } 
@@ -396,25 +407,10 @@ determines the sign for the limit process $x \rightarrow \infty$.
   { CGAL_assertion( i<(ptr->coeff.size()) );
     return ptr->coeff[i]; }
 
-  protected: // accessing coefficients internally:
-  NT& coeff(unsigned int i) 
-  { CGAL_assertion(!ptr->is_shared()); 
-    CGAL_assertion(i<(ptr->coeff.size()));
-    return ptr->coeff[i]; 
-  }
-  public:
-
-  const_iterator begin() const { return ptr->coeff.begin(); }
-  /*{\Mop a random access iterator pointing to $a_0$.}*/
-
-  const_iterator end() const { return ptr->coeff.end(); }
-  /*{\Mop a random access iterator pointing beyond $a_d$.}*/
-
   NT eval_at(const NT& r) const
   /*{\Mop evaluates the polynomial at |r|.}*/
   { CGAL_assertion( degree()>=0 );
-    NT res = ptr->coeff[0];
-    NT x = r;
+    NT res = ptr->coeff[0], x = r;
     for(int i=1; i<=degree(); ++i) 
     { res += ptr->coeff[i]*x; x*=r; }
     return res; 
@@ -423,9 +419,9 @@ determines the sign for the limit process $x \rightarrow \infty$.
   CGAL::Sign sign() const
   /*{\Mop returns the sign of the limit process for $x \rightarrow \infty$
   (the sign of the leading coefficient).}*/
-  { const_iterator it = (ptr->coeff.end()); --it;
-    if (*it < NT(0)) return (CGAL::NEGATIVE);
-    if (*it > NT(0)) return (CGAL::POSITIVE);
+  { const NT& leading_coeff = ptr->coeff.back();
+    if (leading_coeff < NT(0)) return (CGAL::NEGATIVE);
+    if (leading_coeff > NT(0)) return (CGAL::POSITIVE);
     return CGAL::ZERO;
   }
 
@@ -447,7 +443,7 @@ determines the sign for the limit process $x \rightarrow \infty$.
     return gcd_of_range(ptr->coeff.begin(),ptr->coeff.end());
   }
 
-  #else
+  #else // CGAL_SIMPLE_NEF_INTERFACE
 
   NT content() const
   { CGAL_assertion( degree()>=0 );
@@ -614,7 +610,7 @@ determines the sign for the limit process $x \rightarrow \infty$.
 
   void minus_offsetmult(const RPolynomial<NT>& p, const NT& b, int k)
   { CGAL_assertion(!ptr->is_shared());
-    RPolynomial<NT> s(Size_type(p.degree()+k+1)); // zero entries
+    RPolynomial<NT> s(size_type(p.degree()+k+1)); // zero entries
     for (int i=k; i <= s.degree(); ++i) s.coeff(i) = b*p[i-k];
     operator-=(s);
   }
@@ -657,7 +653,7 @@ determines the sign for the limit process $x \rightarrow \infty$.
   typedef Handle_for< RPolynomial_rep<int> > Base;
   typedef RPolynomial_rep<int> Rep;
   typedef  Rep::Vector    Vector;
-  typedef  Rep::Size_type Size_type;
+  typedef  Rep::size_type size_type;
   typedef  Rep::iterator  iterator;
 
   typedef  Rep::const_iterator const_iterator;
@@ -668,7 +664,7 @@ determines the sign for the limit process $x \rightarrow \infty$.
   void reduce() { ptr->reduce(); }
   Vector& coeffs() { return ptr->coeff; }
   const Vector& coeffs() const { return ptr->coeff; }
-  RPolynomial(Size_type s) : Base( RPolynomial_rep<int>(s) ) {}
+  RPolynomial(size_type s) : Base( RPolynomial_rep<int>(s) ) {}
   // creates a polynomial of degree s-1
 
   static int R_; // for visualization only
@@ -724,7 +720,19 @@ determines the sign for the limit process $x \rightarrow \infty$.
   // KILL double END
 
   RPolynomial(const RPolynomial<int>& p) : Base(p) {}
+
+  protected: // accessing coefficients internally:
+  int& coeff(unsigned int i) 
+  { CGAL_assertion(!ptr->is_shared() && i<(ptr->coeff.size()));
+    return ptr->coeff[i]; 
+  }
+  public:
+
   /*{\Xoperations 3 3 }*/
+  const_iterator begin() const { return ptr->coeff.begin(); }
+  /*{\Xop a random access iterator pointing to $a_0$.}*/
+  const_iterator end()   const { return ptr->coeff.end(); }
+  /*{\Xop a random access iterator pointing beyond $a_d$.}*/
 
   int degree() const 
   { return ptr->coeff.size()-1; } 
@@ -739,25 +747,10 @@ determines the sign for the limit process $x \rightarrow \infty$.
   { CGAL_assertion( i<(ptr->coeff.size()) );
     return ptr->coeff[i]; }
 
-  protected: // accessing coefficients internally:
-  int& coeff(unsigned int i) 
-  { CGAL_assertion(!ptr->is_shared()); 
-    CGAL_assertion(i<(ptr->coeff.size()));
-    return ptr->coeff[i]; 
-  }
-  public:
-
-  const_iterator begin() const { return ptr->coeff.begin(); }
-  /*{\Xop a random access iterator pointing to $a_0$.}*/
-
-  const_iterator end() const { return ptr->coeff.end(); }
-  /*{\Xop a random access iterator pointing beyond $a_d$.}*/
-
   int eval_at(const int& r) const
   /*{\Xop evaluates the polynomial at |r|.}*/
   { CGAL_assertion( degree()>=0 );
-    int res = ptr->coeff[0];
-    int x = r;
+    int res = ptr->coeff[0], x = r;
     for(int i=1; i<=degree(); ++i) 
     { res += ptr->coeff[i]*x; x*=r; }
     return res; 
@@ -766,9 +759,9 @@ determines the sign for the limit process $x \rightarrow \infty$.
   CGAL::Sign sign() const
   /*{\Xop returns the sign of the limit process for $x \rightarrow \infty$
   (the sign of the leading coefficient).}*/
-  { const_iterator it = (ptr->coeff.end()); --it;
-    if (*it < int(0)) return (CGAL::NEGATIVE);
-    if (*it > int(0)) return (CGAL::POSITIVE);
+  { const int& leading_coeff = ptr->coeff.back();
+    if (leading_coeff < int(0)) return (CGAL::NEGATIVE);
+    if (leading_coeff > int(0)) return (CGAL::POSITIVE);
     return CGAL::ZERO;
   }
 
@@ -790,7 +783,7 @@ determines the sign for the limit process $x \rightarrow \infty$.
     return gcd_of_range(ptr->coeff.begin(),ptr->coeff.end());
   }
 
-  #else
+  #else // CGAL_SIMPLE_NEF_INTERFACE
 
   int content() const
   { CGAL_assertion( degree()>=0 );
@@ -938,7 +931,7 @@ determines the sign for the limit process $x \rightarrow \infty$.
 
   void minus_offsetmult(const RPolynomial<int>& p, const int& b, int k)
   { CGAL_assertion(!ptr->is_shared());
-    RPolynomial<int> s(Size_type(p.degree()+k+1)); // zero entries
+    RPolynomial<int> s(size_type(p.degree()+k+1)); // zero entries
     for (int i=k; i <= s.degree(); ++i) s.coeff(i) = b*p[i-k];
     operator-=(s);
   }
@@ -981,7 +974,7 @@ determines the sign for the limit process $x \rightarrow \infty$.
   typedef Handle_for< RPolynomial_rep<double> > Base;
   typedef RPolynomial_rep<double> Rep;
   typedef  Rep::Vector    Vector;
-  typedef  Rep::Size_type Size_type;
+  typedef  Rep::size_type size_type;
   typedef  Rep::iterator  iterator;
 
   typedef  Rep::const_iterator const_iterator;
@@ -992,7 +985,7 @@ determines the sign for the limit process $x \rightarrow \infty$.
   void reduce() { ptr->reduce(); }
   Vector& coeffs() { return ptr->coeff; }
   const Vector& coeffs() const { return ptr->coeff; }
-  RPolynomial(Size_type s) : Base( RPolynomial_rep<double>(s) ) {}
+  RPolynomial(size_type s) : Base( RPolynomial_rep<double>(s) ) {}
   // creates a polynomial of degree s-1
 
   static double R_; // for visualization only
@@ -1048,7 +1041,19 @@ determines the sign for the limit process $x \rightarrow \infty$.
   // KILL int END
 
   RPolynomial(const RPolynomial<double>& p) : Base(p) {}
+
+  protected: // accessing coefficients internally:
+  double& coeff(unsigned int i) 
+  { CGAL_assertion(!ptr->is_shared() && i<(ptr->coeff.size()));
+    return ptr->coeff[i]; 
+  }
+  public:
+
   /*{\Xoperations 3 3 }*/
+  const_iterator begin() const { return ptr->coeff.begin(); }
+  /*{\Xop a random access iterator pointing to $a_0$.}*/
+  const_iterator end()   const { return ptr->coeff.end(); }
+  /*{\Xop a random access iterator pointing beyond $a_d$.}*/
 
   int degree() const 
   { return ptr->coeff.size()-1; } 
@@ -1063,25 +1068,10 @@ determines the sign for the limit process $x \rightarrow \infty$.
   { CGAL_assertion( i<(ptr->coeff.size()) );
     return ptr->coeff[i]; }
 
-  protected: // accessing coefficients internally:
-  double& coeff(unsigned int i) 
-  { CGAL_assertion(!ptr->is_shared()); 
-    CGAL_assertion(i<(ptr->coeff.size()));
-    return ptr->coeff[i]; 
-  }
-  public:
-
-  const_iterator begin() const { return ptr->coeff.begin(); }
-  /*{\Xop a random access iterator pointing to $a_0$.}*/
-
-  const_iterator end() const { return ptr->coeff.end(); }
-  /*{\Xop a random access iterator pointing beyond $a_d$.}*/
-
   double eval_at(const double& r) const
   /*{\Xop evaluates the polynomial at |r|.}*/
   { CGAL_assertion( degree()>=0 );
-    double res = ptr->coeff[0];
-    double x = r;
+    double res = ptr->coeff[0], x = r;
     for(int i=1; i<=degree(); ++i) 
     { res += ptr->coeff[i]*x; x*=r; }
     return res; 
@@ -1090,9 +1080,9 @@ determines the sign for the limit process $x \rightarrow \infty$.
   CGAL::Sign sign() const
   /*{\Xop returns the sign of the limit process for $x \rightarrow \infty$
   (the sign of the leading coefficient).}*/
-  { const_iterator it = (ptr->coeff.end()); --it;
-    if (*it < double(0)) return (CGAL::NEGATIVE);
-    if (*it > double(0)) return (CGAL::POSITIVE);
+  { const double& leading_coeff = ptr->coeff.back();
+    if (leading_coeff < double(0)) return (CGAL::NEGATIVE);
+    if (leading_coeff > double(0)) return (CGAL::POSITIVE);
     return CGAL::ZERO;
   }
 
@@ -1114,7 +1104,7 @@ determines the sign for the limit process $x \rightarrow \infty$.
     return gcd_of_range(ptr->coeff.begin(),ptr->coeff.end());
   }
 
-  #else
+  #else // CGAL_SIMPLE_NEF_INTERFACE
 
   double content() const
   { CGAL_assertion( degree()>=0 );
@@ -1262,7 +1252,7 @@ determines the sign for the limit process $x \rightarrow \infty$.
 
   void minus_offsetmult(const RPolynomial<double>& p, const double& b, int k)
   { CGAL_assertion(!ptr->is_shared());
-    RPolynomial<double> s(Size_type(p.degree()+k+1)); // zero entries
+    RPolynomial<double> s(size_type(p.degree()+k+1)); // zero entries
     for (int i=k; i <= s.degree(); ++i) s.coeff(i) = b*p[i-k];
     operator-=(s);
   }
@@ -1314,14 +1304,13 @@ template <class NT> /*CGAL_KERNEL_MEDIUM_INLINE*/
 RPolynomial<NT> operator + (const RPolynomial<NT>& p1, 
                             const RPolynomial<NT>& p2)
 { 
-  typedef typename RPolynomial<NT>::Size_type Size_type;
-  CGAL_assertion(p1.degree()>=0);
-  CGAL_assertion(p2.degree()>=0);
+  typedef typename RPolynomial<NT>::size_type size_type;
+  CGAL_assertion(p1.degree()>=0 && p2.degree()>=0);
   bool p1d_smaller_p2d = p1.degree() < p2.degree();
   int min,max,i;
   if (p1d_smaller_p2d) { min = p1.degree(); max = p2.degree(); }
   else                 { max = p1.degree(); min = p2.degree(); }
-  RPolynomial<NT>  p( (Size_type)(max + 1));
+  RPolynomial<NT>  p( size_type(max + 1));
   for (i = 0; i <= min; ++i ) p.coeff(i) = p1[i]+p2[i];
   if (p1d_smaller_p2d)  for (; i <= max; ++i ) p.coeff(i)=p2[i];
   else /* p1d >= p2d */ for (; i <= max; ++i ) p.coeff(i)=p1[i];
@@ -1333,14 +1322,13 @@ template <class NT> /*CGAL_KERNEL_MEDIUM_INLINE*/
 RPolynomial<NT> operator - (const RPolynomial<NT>& p1, 
                             const RPolynomial<NT>& p2)
 { 
-  typedef typename RPolynomial<NT>::Size_type Size_type;
-  CGAL_assertion(p1.degree()>=0);
-  CGAL_assertion(p2.degree()>=0);
+  typedef typename RPolynomial<NT>::size_type size_type;
+  CGAL_assertion(p1.degree()>=0 && p2.degree()>=0);
   bool p1d_smaller_p2d = p1.degree() < p2.degree();
   int min,max,i;
   if (p1d_smaller_p2d) { min = p1.degree(); max = p2.degree(); }
   else                 { max = p1.degree(); min = p2.degree(); }
-  RPolynomial<NT>  p( (Size_type)(max+1) );
+  RPolynomial<NT>  p( size_type(max+1) );
   for (i = 0; i <= min; ++i ) p.coeff(i)=p1[i]-p2[i];
   if (p1d_smaller_p2d)  for (; i <= max; ++i ) p.coeff(i)= -p2[i];
   else /* p1d >= p2d */ for (; i <= max; ++i ) p.coeff(i)=  p1[i];
@@ -1352,14 +1340,13 @@ template <class NT> /*CGAL_KERNEL_MEDIUM_INLINE*/
 RPolynomial<NT> operator * (const RPolynomial<NT>& p1, 
                             const RPolynomial<NT>& p2)
 {
-  typedef typename RPolynomial<NT>::Size_type Size_type;
-  CGAL_assertion(p1.degree()>=0);
-  CGAL_assertion(p2.degree()>=0);
-  RPolynomial<NT>  p( (Size_type)(p1.degree()+p2.degree()+1)); 
-  // initialize with zeros
+  typedef typename RPolynomial<NT>::size_type size_type;
+  CGAL_assertion(p1.degree()>=0 && p2.degree()>=0);
+  RPolynomial<NT>  p( size_type(p1.degree()+p2.degree()+1) ); 
+  // initialized with zeros
   for (int i=0; i <= p1.degree(); ++i)
     for (int j=0; j <= p2.degree(); ++j)
-    { p.coeff(i+j) += (p1[i]*p2[j]); }
+      p.coeff(i+j) += (p1[i]*p2[j]); 
   p.reduce();
   return p;
 }
@@ -1899,7 +1886,7 @@ void RPolynomial<int>::euclidean_div(
 {
   r = f; r.copy_on_write();
   int rd=r.degree(), gd=g.degree(), qd(0);
-  if ( rd < gd ) { q = RPolynomial<int>(size_t(0)); }
+  if ( rd < gd ) { q = RPolynomial<int>(int(0)); }
   else { qd = rd-gd+1; q = RPolynomial<int>(size_t(qd)); }
   while ( rd >= gd ) {
     int S = r[rd] / g[gd];
@@ -1983,7 +1970,7 @@ void RPolynomial<double>::euclidean_div(
 {
   r = f; r.copy_on_write();
   int rd=r.degree(), gd=g.degree(), qd(0);
-  if ( rd < gd ) { q = RPolynomial<double>(size_t(0)); }
+  if ( rd < gd ) { q = RPolynomial<double>(double(0)); }
   else { qd = rd-gd+1; q = RPolynomial<double>(size_t(qd)); }
   while ( rd >= gd ) {
     double S = r[rd] / g[gd];
@@ -2067,7 +2054,7 @@ void RPolynomial<NT>::euclidean_div(
 {
   r = f; r.copy_on_write();
   int rd=r.degree(), gd=g.degree(), qd(0);
-  if ( rd < gd ) { q = RPolynomial<NT>(size_t(0)); }
+  if ( rd < gd ) { q = RPolynomial<NT>(NT(0)); }
   else { qd = rd-gd+1; q = RPolynomial<NT>(size_t(qd)); }
   while ( rd >= gd ) {
     NT S = r[rd] / g[gd];

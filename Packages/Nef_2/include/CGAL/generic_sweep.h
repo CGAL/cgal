@@ -11,11 +11,11 @@
 // release       : $CGAL_Revision$
 // release_date  : $CGAL_Date$
 //
-// file          : include/CGAL/gen_plane_sweep.h
+// file          : include/CGAL/generic_sweep.h
 // package       : Nef_2 
 // chapter       : Nef Polyhedra
 //
-// source        : nef_2d/gen_plane_sweep.lw
+// source        : nef_2d/generic_sweep.lw
 // revision      : $Revision$
 // revision_date : $Date$
 //
@@ -25,8 +25,8 @@
 //
 // implementation: generic plane sweep framework
 // ============================================================================
-#ifndef GEN_PLANE_SWEEP_H
-#define GEN_PLANE_SWEEP_H
+#ifndef CGAL_GENERIC_SWEEP_H
+#define CGAL_GENERIC_SWEEP_H
 
 /*{\Moptions print_title=yes}*/
 /*{\Moptions section=subsection}*/
@@ -34,12 +34,14 @@
 #ifndef _MSC_VER
 #include <CGAL/sweep_observer.h>
 
-/*{\Manpage {gen_plane_sweep}{T}{A Generic Plane Sweep Framework}{PS}}*/
+namespace CGAL {
+
+/*{\Manpage {generic_sweep}{T}{A Generic Plane Sweep Framework}{PS}}*/
 
 template <typename T>
-class gen_plane_sweep {
+class generic_sweep {
 
-typedef gen_plane_sweep<T>  Self;
+typedef generic_sweep<T>  Self;
 
 /*{\Mdefinition
 The data type |\Mname| provides a general framework for algorithms
@@ -149,7 +151,7 @@ object which maintains the sweep status.}*/
 
 /*{\Mcreation PS}*/
 
-gen_plane_sweep(const INPUT& input, OUTPUT& output, 
+generic_sweep(const INPUT& input, OUTPUT& output, 
   const GEOMETRY& geometry = GEOMETRY()) : 
   traits(input,output,geometry) {}
 
@@ -161,7 +163,7 @@ methods used by |\Mname|. At this point, it suffices to say that
 result data type. The |geometry| is an object providing object bound,
 geometry traits access.}*/
 
-gen_plane_sweep(OUTPUT& output, const GEOMETRY& geometry = GEOMETRY()) : 
+generic_sweep(OUTPUT& output, const GEOMETRY& geometry = GEOMETRY()) : 
   traits(output,geometry) {}
 /*{\Mcreate a simpler call of the above where |output| carries also
 the input.}*/
@@ -196,18 +198,21 @@ program:
   typedef std::pair<iterator,iterator> iterator_pair;
   std::list<POINT>  P; // fill input
   GRAPH<POINT,LINE> G; // the output
-  gen_plane_sweep<triang_sweep_traits> 
+  generic_sweep<triang_sweep_traits> 
     triangulation(iterator_pair(P.begin(),P.end()),G);
   triangulation.sweep();
 \end{Mverb}}*/
 
-};
+}; // generic_sweep<T>
+} // namespace CGAL
 
 #else // _MSC_VER
 
+namespace CGAL {
+
 template <typename T>
-class gen_plane_sweep {
-  typedef gen_plane_sweep<T>  Self;
+class generic_sweep {
+  typedef generic_sweep<T>  Self;
   T traits;
 public :
 
@@ -216,11 +221,11 @@ typedef typename TRAITS::INPUT  INPUT;
 typedef typename TRAITS::OUTPUT OUTPUT;
 typedef typename TRAITS::GEOMETRY GEOMETRY;
 
-gen_plane_sweep(const INPUT& input, OUTPUT& output, 
+generic_sweep(const INPUT& input, OUTPUT& output, 
   const GEOMETRY& geometry = GEOMETRY()) : 
   traits(input,output,geometry) {}
 
-gen_plane_sweep(OUTPUT& output, const GEOMETRY& geometry = GEOMETRY()) : 
+generic_sweep(OUTPUT& output, const GEOMETRY& geometry = GEOMETRY()) : 
   traits(output,geometry) {}
 
 void sweep()
@@ -236,8 +241,10 @@ void sweep()
   traits.check_final();
 }
 
-};
+}; // generic_sweep<T>
+
+} // namespace CGAL
 
 #endif // _MSC_VER
 
-#endif // GEN_PLANE_SWEEP_H
+#endif // CGAL_GENERIC_SWEEP_H

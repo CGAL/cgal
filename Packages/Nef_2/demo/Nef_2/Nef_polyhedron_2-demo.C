@@ -122,12 +122,20 @@ void create(int i)
     case HOPEN: 
       pW->message("Insert Halfspace by Line");
       (*pW) >> l; sos << '(' << l << ')' << '\0';
-      store_new(Nef_polyhedron(l,Nef_polyhedron::EXCLUDED),sos.str());
+      if ( l.is_degenerate() ) {
+        (*pW).acknowledge("Please enter non-degenerate line."); 
+        win_redraw_handler(pW);
+      } else 
+        store_new(Nef_polyhedron(l,Nef_polyhedron::EXCLUDED),sos.str());
       break;
     case HCLOSED: 
       pW->message("Insert Halfspace by Line");
       (*pW) >> l; sos << '[' << l << ']' << '\0';
-      store_new(Nef_polyhedron(l,Nef_polyhedron::INCLUDED),sos.str());
+      if ( l.is_degenerate() ) {
+        (*pW).acknowledge("Please enter non-degenerate line.");
+        win_redraw_handler(pW);
+      } else 
+        store_new(Nef_polyhedron(l,Nef_polyhedron::INCLUDED),sos.str());
       break;
     case POPEN: 
       pW->message("Insert Polygon by Point Sequence");
@@ -263,7 +271,7 @@ void unop(int i)
 
 void draw(Object_handle h)
 { CGAL::PM_visualizor<TExplorer,EKernel> 
-    PMV(*pW,pN->explorer(),pN->EPD,
+    PMV(*pW,pN->explorer(),pN->EK,
         CGAL::PM_DefColor<TExplorer>(CGAL::RED,CGAL::RED,6,6) );
   leda_drawing_mode prev = pW->set_mode(leda_xor_mode);
   Vertex_const_handle vh; Halfedge_const_handle eh; Face_const_handle fh; 
@@ -285,7 +293,7 @@ int main(int argc, char* argv[])
   SETDTHREAD(71); 
   CGAL::set_pretty_mode ( std::cerr );
   std::cerr << "using " << CGAL::pointlocationversion << std::endl;
-  std::cerr << "using " << PMNS sweepversion << std::endl;
+  std::cerr << "using " << CGAL::sweepversion << std::endl;
 
   CGAL::Window_stream W(600,600); pW = &W;
   Nef_polyhedron N_display; pN = &N_display;

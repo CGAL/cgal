@@ -33,6 +33,7 @@
 #include <CGAL/Hash_map.h>
 #include <CGAL/Partition.h>
 #include <CGAL/Nef_2/Segment_overlay_traits.h>
+#include <CGAL/Nef_2/geninfo.h>
 #undef _DEBUG
 #define _DEBUG 13
 #include <CGAL/Nef_2/debug.h>
@@ -174,11 +175,12 @@ struct PMO_from_pm {
 
 }; // PMO_from_pm
 
+/*{\Moptions print_title=yes }*/ 
 /*{\Msubst 
 PM_decorator_#PMD
 Geometry_#GEO
 }*/
-/*{\Manpage {PM_overlayer}{PMD,GEO}{A HDS overlay calculator}{O}}*/
+/*{\Manpage {PM_overlayer}{PMD,GEO}{Planar Map Overlay}{O}}*/
 template <typename PM_decorator_, typename Geometry_>
 class PM_overlayer : public PM_decorator_ {
   typedef PM_decorator_ Base;
@@ -346,7 +348,7 @@ created vertex |v|.
     Output_from_segments;
   typedef Segment_overlay_traits<
     Forward_iterator, Output_from_segments, Geometry> seg_overlay;
-  typedef gen_plane_sweep< seg_overlay > seg_overlay_sweep;
+  typedef generic_sweep< seg_overlay > seg_overlay_sweep;
   typedef typename seg_overlay::INPUT input_range;
   Output_from_segments Out(*this, A);
   seg_overlay_sweep SOS( input_range(start, end), Out, K);
@@ -389,7 +391,7 @@ and |\Mvar.mark(v,1) = D1.mark(f1)|.}*/
   typedef PMO_from_pm<Self,Seg_iterator,Seg_info> Output_from_plane_maps;
   typedef Segment_overlay_traits<
     Seg_iterator, Output_from_plane_maps, Geometry> pm_overlay;
-  typedef gen_plane_sweep< pm_overlay > pm_overlay_sweep;
+  typedef generic_sweep< pm_overlay > pm_overlay_sweep;
   Output_from_plane_maps Out(*this,&PI[0],&PI[1],From);
   pm_overlay_sweep SOS(Seg_it_pair(Segments.begin(),Segments.end()),Out,K);
   SOS.sweep();

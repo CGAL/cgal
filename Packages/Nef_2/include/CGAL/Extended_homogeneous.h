@@ -74,7 +74,7 @@ of $r$ then let $p(R)$ be the intersection of $r$ with the frame $F$,
 if $F$ does not contain the source of $r$ then $p(R)$ is undefined.
 For a standard point let $p(R)$ be equal to $p$ if $p$ is contained in
 the frame $F$ and let $p(R)$ be undefined otherwise. Clearly, for any
-standard or non-standard point $p$ $p(R)$ is defined for any
+standard or non-standard point $p$, $p(R)$ is defined for any
 sufficiently large $R$. Let $f$ be any function on standard points,
 say with $k$ arguments. We call $f$ {\em extensible} if for any $k$
 points $p_1$, \ldots, $p_k$ the function value
@@ -202,7 +202,7 @@ on the extended geometric objects.}*/
   /*{\Mtext \headerline{Interfacing the affine kernel types}}*/
 
   Point_2 construct_point(const Standard_point_2& p) const
-  /*{\Mop creates an extended point |Point_2| and initializes it to the 
+  /*{\Mop creates an extended point and initializes it to the 
   standard point |p|.}*/
   { return Point_2(p.hx(), p.hy(), p.hw()); }
 
@@ -306,16 +306,16 @@ on the extended geometric objects.}*/
   }
 
   Point_2 NE() const { return construct_point(Standard_line_2(-1, 1,0)); }
-  /*{\Mop returns the point on the north east frame corner.}*/
+  /*{\Mop returns the point on the northeast frame corner.}*/
 
   Point_2 SE() const { return construct_point(Standard_line_2( 1, 1,0)); }
-  /*{\Mop returns the point on the south east frame corner.}*/
+  /*{\Mop returns the point on the southeast frame corner.}*/
 
   Point_2 NW() const { return construct_point(Standard_line_2(-1,-1,0)); }
-  /*{\Mop returns the point on the north west frame corner.}*/
+  /*{\Mop returns the point on the northwest frame corner.}*/
 
   Point_2 SW() const { return construct_point(Standard_line_2( 1,-1,0)); }
-  /*{\Mop returns the point on the south west frame corner.}*/
+  /*{\Mop returns the point on the southwest frame corner.}*/
 
 
   Line_2 upper() const { return construct_line(NW(),NE()); }
@@ -426,11 +426,10 @@ on the extended geometric objects.}*/
     return static_cast<int>( _compare_y(p1,p2) );
   }
 
-
   Point_2 intersection(
     const Segment_2& s1, const Segment_2& s2) const
   /*{\Mop returns the point of intersection of the lines supported by 
-  |s1| and |s2|. The algorithm asserts that this intersection point exists.}*/
+  |s1| and |s2|. \precond the intersection point exists.}*/
   { typename Base::Intersect_2 _intersect =
       intersect_2_object();
     typename Base::Construct_line_2 _line =

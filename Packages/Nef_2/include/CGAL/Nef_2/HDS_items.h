@@ -52,6 +52,8 @@ public:
 struct HDS_items {
   /*{\Moptions outfile=epm_vertex.man }*/
   /*{\Moptions constref=yes}*/
+  /*{\Moptions print_title=yes }*/ 
+  /*{\Moptions section=subsection}*/
   /*{\Manpage{Vertex}{}{The HDS vertex base class}{v}}*/    
 
   template <typename Refs, typename Traits>
@@ -148,6 +150,8 @@ struct HDS_items {
 
   /*{\Moptions outfile=epm_halfedge.man}*/
   /*{\Moptions constref=yes}*/
+  /*{\Moptions print_title=yes }*/ 
+  /*{\Moptions section=subsection}*/
   /*{\Manpage{Halfedge}{}{The HDS halfedge base class}{e}}*/ 
 
   template <typename Refs, typename Traits>
@@ -257,6 +261,8 @@ struct HDS_items {
 
   /*{\Moptions outfile=epm_face.man}*/
   /*{\Moptions constref=yes}*/
+  /*{\Moptions print_title=yes }*/ 
+  /*{\Moptions section=subsection}*/
   /*{\Manpage{Face}{}{The HDS face base class}{f}}*/    
 
   template <typename Refs, typename Traits>

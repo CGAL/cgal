@@ -25,19 +25,8 @@
 //
 // implementation: generic segment intersection sweep
 // ============================================================================
-#ifndef CGAL_PM_SEGMENT_OVERLAY_TRAITS_H
-#define CGAL_PM_SEGMENT_OVERLAY_TRAITS_H
-
-#define USE_PMNS
-#ifdef USE_PMNS
-#define PM_BEGIN_NAMESPACE namespace CGAL {
-#define PM_END_NAMESPACE   }
-#define PMNS CGAL::
-#else
-#define PM_BEGIN_NAMESPACE 
-#define PM_END_NAMESPACE 
-#define PMNS 
-#endif
+#ifndef CGAL_SEGMENT_OVERLAY_TRAITS_H
+#define CGAL_SEGMENT_OVERLAY_TRAITS_H
 
 #include <assert.h>
 #undef _DEBUG
@@ -56,7 +45,7 @@
 #include <utility>
 #include <strstream>
 
-PM_BEGIN_NAMESPACE
+namespace CGAL {
 #ifdef _DEBUG
 #define PIS(s) (s->first())
 #endif
@@ -287,7 +276,7 @@ public:
          contains p_sweep sit_pred and sit_succ are set below when
          determining the bundle.*/
 
-      if (sit != nil) {    // key(sit) is an ending or passing segment
+      if (sit != nil) { // key(sit) is an ending or passing segment
         TRACEN("ending/passing segs");
         while ( YS.inf(sit) == event ||
                 YS.inf(sit) == YS.succ(sit) ) // overlapping
@@ -434,7 +423,7 @@ public:
 
 }; // leda_seg_overlay_traits
 
-PM_END_NAMESPACE
+} // namespace CGAL
 
 #endif // defined(CGAL_USE_LEDA) || defined(INCLUDEBOTH)
 #if !defined(CGAL_USE_LEDA) || defined(INCLUDEBOTH)
@@ -443,7 +432,8 @@ PM_END_NAMESPACE
 #include <string>
 #include <strstream>
 
-PM_BEGIN_NAMESPACE
+namespace CGAL {
+
 template <typename IT, typename PMDEC, typename GEOM>
 class stl_seg_overlay_traits {
 public:
@@ -578,6 +568,7 @@ public:
     return ( orientation(sit1,ps)==0 &&
              orientation(sit1,pt)==0 );
   }
+
   void compute_intersection(ss_iterator sit0)
   {    
     // Given an item |sit0| in the Y-structure compute the point of 
@@ -795,11 +786,12 @@ public:
 
 
 }; // stl_seg_overlay_traits
-PM_END_NAMESPACE
+
+} // namespace CGAL
 
 #endif // !defined(CGAL_USE_LEDA) || defined(INCLUDEBOTH)
 
-PM_BEGIN_NAMESPACE
+namespace CGAL {
 #ifdef CGAL_USE_LEDA
 #define Segment_overlay_traits leda_seg_overlay_traits
 static const char* sweepversion = "LEDA segment overlay sweep";
@@ -807,8 +799,8 @@ static const char* sweepversion = "LEDA segment overlay sweep";
 #define Segment_overlay_traits stl_seg_overlay_traits
 static const char* sweepversion = "STL segment overlay sweep";
 #endif
-PM_END_NAMESPACE
+} // namespace CGAL
 
-#include <CGAL/gen_plane_sweep.h>
-#endif // CGAL_PM_SEGMENT_OVERLAY_TRAITS_H
+#include <CGAL/generic_sweep.h>
+#endif // CGAL_SEGMENT_OVERLAY_TRAITS_H
 

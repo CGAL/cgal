@@ -141,8 +141,12 @@ public:
 
 /*{\Moptions print_title=yes}*/ 
 /*{\Moptions constref=yes}*/ 
-/*{\Moptions outfile=PM_const_decorator.man }*/
-/*{\Manpage {PM_const_decorator}{}{Topological plane map exploration}{D}}*/
+/*{\Msubst 
+PM_const_decorator#PMConstDecorator
+PM_decorator#PMDecorator
+}*/ 
+/*{\Moptions outfile=PMConstDecorator.man }*/
+/*{\Manpage {PMConstDecorator}{}{Topological plane map exploration}{D}}*/
 
 template <typename HDS> class PM_decorator;
 

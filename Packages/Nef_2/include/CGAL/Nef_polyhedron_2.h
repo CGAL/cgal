@@ -105,10 +105,10 @@ public:
 };
 
 /*{\Moptions print_title=yes }*/ 
-/*{\Manpage {Nef_polyhedron_2} {T} {Nef Polyhedra in the Plane}{N}}*/
+/*{\Manpage {Nef_polyhedron_2}{T}{Nef Polyhedra in the Plane}{N}}*/
 
 /*{\Mdefinition
-An instance of data type |\Mname| is a subset of the plane which is
+An instance of data type |\Mname| is a subset of the plane that is
 the result of forming complements and intersections starting from a
 finite set |H| of halfspaces. |\Mtype| is closed under all binary set
 operations |intersection|, |union|, |difference|, |complement| and
@@ -124,13 +124,13 @@ class Nef_polyhedron_2 : public Handle_for< Nef_polyhedron_2_rep<T> >
 { 
 public:
 typedef T Extended_kernel;
-static T EPD; // static extended kernel
+static  T EK; // static extended kernel
 
   /*{\Mtypes 7}*/
   typedef Nef_polyhedron_2<T> Self;
   typedef Handle_for< Nef_polyhedron_2_rep<T> > Base;
-  typedef typename T::Point_2 EPoint;
-  typedef typename T::Segment_2 ESegment;
+  typedef typename T::Point_2   Extended_point;
+  typedef typename T::Segment_2 Extended_segment;
 
   typedef typename T::Standard_line_2 Line;
   /*{\Mtypemember the oriented lines modeling halfplanes}*/
@@ -191,16 +191,16 @@ protected:
   typedef typename Const_decorator::Face_const_iterator     
                                                     Face_const_iterator;
 
-  typedef std::list<ESegment>              ES_list;
+  typedef std::list<Extended_segment>      ES_list;
   typedef typename ES_list::const_iterator ES_iterator;
 
   void fill_with_frame_segs(ES_list& L) const
   /*{\Xop fills the list with the four segments which span our frame,
      the convex hull of SW,SE,NW,NE.}*/
-  { L.push_back(ESegment(EPD.SW(),EPD.NW()));
-    L.push_back(ESegment(EPD.SW(),EPD.SE()));
-    L.push_back(ESegment(EPD.NW(),EPD.NE()));
-    L.push_back(ESegment(EPD.SE(),EPD.NE()));
+  { L.push_back(Extended_segment(EK.SW(),EK.NW()));
+    L.push_back(Extended_segment(EK.SW(),EK.SE()));
+    L.push_back(Extended_segment(EK.NW(),EK.NE()));
+    L.push_back(Extended_segment(EK.SE(),EK.NE()));
   }
 
   struct Link_to_iterator {
@@ -257,15 +257,15 @@ public:
   {   TRACEN("Nconstruction from line "<<l);
     ES_list L;
     fill_with_frame_segs(L);
-    EPoint ep1 = EPD.construct_opposite_point(l);
-    EPoint ep2 = EPD.construct_point(l);
-    L.push_back(EPD.construct_segment(ep1,ep2));
+    Extended_point ep1 = EK.construct_opposite_point(l);
+    Extended_point ep2 = EK.construct_point(l);
+    L.push_back(EK.construct_segment(ep1,ep2));
     Overlayer D(pm());
     Link_to_iterator I(D, --L.end(), false);
     D.create(L.begin(),L.end(),I);
     CGAL_assertion( I._e != Halfedge_handle() );
     Halfedge_handle el = I._e;
-    if ( D.point(D.target(el)) != EPD.target(L.back()) )
+    if ( D.point(D.target(el)) != EK.target(L.back()) )
       el = D.twin(el);
     D.mark(D.face(el)) = true;
     D.mark(el) = bool(line);
@@ -277,8 +277,8 @@ public:
     Boundary b = INCLUDED) : Base(Nef_rep())
   /*{\Mcreate creates a Nef polyhedron |\Mvar| from the simple polygon
   |P| spanned by the list of points in the iterator range |[it,end)| and
-  including its boundary if |b = INCLUDED| otherwise
-  |EXCLUDED|. |Forward_iterator| has to be an iterator with value type
+  including its boundary if |b = INCLUDED| and excluding the boundary
+  otherwise. |Forward_iterator| has to be an iterator with value type
   |Point|. This construction expects that |P| is simple. The degenerate
   cases where |P| contains no point, one point or spans just one segment
   (two points) are correctly handled. In all degenerate cases there's
@@ -291,17 +291,17 @@ public:
     bool empty = false;  
     if (it != end) 
       {
-        EPoint ef, ep = ef = EPD.construct_point(*it);
+        Extended_point ef, ep = ef = EK.construct_point(*it);
         Forward_iterator itl=it; ++itl;
         if (itl == end) // case only one point
-          L.push_back(EPD.construct_segment(ep,ep));
+          L.push_back(EK.construct_segment(ep,ep));
         else { // at least one segment
           while( itl != end ) {
-            EPoint en = EPD.construct_point(*itl);
-            L.push_back(EPD.construct_segment(ep,en));
+            Extended_point en = EK.construct_point(*itl);
+            L.push_back(EK.construct_segment(ep,en));
             ep = en; ++itl;
           }
-          L.push_back(EPD.construct_segment(ep,ef));
+          L.push_back(EK.construct_segment(ep,ef));
         }
       }
 
@@ -312,12 +312,12 @@ public:
     if ( empty ) {
       D.mark(++D.faces_begin()) = !bool(b); return; }
     CGAL_assertion( I._e != Halfedge_handle() || I._v != Vertex_handle() );
-    if ( EPD.is_degenerate(L.back()) ) {
+    if ( EK.is_degenerate(L.back()) ) {
       CGAL_assertion(I._v != Vertex_handle());
       D.mark(D.face(I._v)) = !bool(b); D.mark(I._v) = b;
     } else {
       Halfedge_handle el = I._e;
-      if ( D.point(D.target(el)) != EPD.target(L.back()) )
+      if ( D.point(D.target(el)) != EK.target(L.back()) )
         el = D.twin(el);  
       D.set_marks_in_face_cycle(el,bool(b));
       if ( D.number_of_faces() > 2 ) D.mark(D.face(el)) = true;
@@ -525,8 +525,8 @@ public:
   /*{\Mtext Additionally there are operators |*,+,-,^,!| which
   implement the binary operations \emph{intersection}, \emph{union},
   \emph{difference}, \emph{symmetric difference}, and the unary
-  operation \emph{complement}. There are also the corresponding
-  modification operations |*=,+=,-=,^=|.}*/
+  operation \emph{complement} respectively. There are also the
+  corresponding modification operations |*=,+=,-=,^=|.}*/
 
   Nef_polyhedron_2<T>  operator*(const Nef_polyhedron_2<T>& N1) const
   { return intersection(N1); }
@@ -557,7 +557,7 @@ public:
 
   /*{\Mtext There are also comparison operations like |<,<=,>,>=,==,!=|
   which implement the relations subset, subset or equal, superset, superset
-  or equal, equality, inequality.}*/
+  or equal, equality, inequality, respectively.}*/
 
   bool operator==(const Nef_polyhedron_2<T>& N1) const
   { return symmetric_difference(N1).is_empty(); }
@@ -580,14 +580,15 @@ public:
 
   /*{\Mtext \headerline{Exploration - Point location - Ray shooting}
   As Nef polyhedra are the result of forming complements 
-  and intersections starting from a set |H| of halfspaces which are
-  defined by oriented lines in the plane they can be represented by
+  and intersections starting from a set |H| of halfspaces that are
+  defined by oriented lines in the plane, they can be represented by
   an attributed plane map $M = (V,E,F)$. For topological queries
   within |M| the following types and operations allow exploration
   access to this structure.}*/
 
   /*{\Mtypes 3}*/
   typedef Const_decorator Topological_explorer;
+
   typedef CGAL::PM_explorer<Const_decorator,T> Explorer;
   /*{\Mtypemember a decorator to examine the underlying plane map. 
   See the manual page of |Explorer|.}*/
@@ -631,18 +632,19 @@ public:
 
   Object_handle locate(const Point& p, Location_mode m = DEFAULT) const
   /*{\Mop  returns a generic handle |h| to an object (face, halfedge, vertex) 
-  of the underlying plane map which contains the point |p| in its relative 
+  of the underlying plane map that contains the point |p| in its relative 
   interior. The point |p| is contained in the set represented by |\Mvar| if 
-  |\Mvar.contains(h)| is true. The location mode flag |m| allows to choose
+  |\Mvar.contains(h)| is true. The location mode flag |m| allows one to choose
   between different point location strategies.}*/
   { 
     if (m == DEFAULT || m == LMWT) {
       ptr->init_locator();
-      EPoint ep = EPD.construct_point(p);
+      Extended_point ep = EK.construct_point(p);
       return locator().locate(ep);
     } else if (m == NAIVE) {
-      Slocator PL(pm(),EPD);
-      ESegment s(EPD.construct_point(p),PL.point(PL.vertices_begin()));
+      Slocator PL(pm(),EK);
+      Extended_segment s(EK.construct_point(p),
+                         PL.point(PL.vertices_begin()));
       return PL.locate(s); 
     }
     CGAL_assertion_msg(0,"location mode not implemented.");
@@ -659,26 +661,26 @@ public:
 
   Object_handle ray_shoot(const Point& p, const Direction& d, 
                           Location_mode m = DEFAULT) const
-  /*{\Mop returns a handle |h| with |\Mvar.contains(h)| which can be
+  /*{\Mop returns a handle |h| with |\Mvar.contains(h)| that can be
   converted to a |Vertex_/Halfedge_/Face_const_handle| as described
   above. The object returned is intersected by the ray starting in |p|
   with direction |d| and has minimal distance to |p|.  The operation
   returns the null handle |NULL| if the ray shoot along |d| does not hit
   any object |h| of |\Mvar| with |\Mvar.contains(h)|. The location mode
-  flag |m| allows to choose between different point location
+  flag |m| allows one to choose between different point location
   strategies.}*/
   { 
     if (m == DEFAULT || m == LMWT) {
       ptr->init_locator();
-      EPoint ep = EPD.construct_point(p), 
-             eq = EPD.construct_point(p,d);
-      return locator().ray_shoot(EPD.construct_segment(ep,eq),
+      Extended_point ep = EK.construct_point(p), 
+                     eq = EK.construct_point(p,d);
+      return locator().ray_shoot(EK.construct_segment(ep,eq),
                                  INSET(locator())); 
     } else if (m == NAIVE) {
-      Slocator PL(pm(),EPD);
-      EPoint ep = EPD.construct_point(p), 
-             eq = EPD.construct_point(p,d);
-      return PL.ray_shoot(EPD.construct_segment(ep,eq),INSET(PL));
+      Slocator PL(pm(),EK);
+      Extended_point ep = EK.construct_point(p), 
+                     eq = EK.construct_point(p,d);
+      return PL.ray_shoot(EK.construct_segment(ep,eq),INSET(PL));
     }
     CGAL_assertion_msg(0,"location mode not implemented.");
     return Object_handle();
@@ -692,32 +694,32 @@ public:
 
   Object_handle ray_shoot_to_boundary(const Point& p, const Direction& d, 
                 Location_mode m = DEFAULT) const
-  /*{\Mop returns a handle |h| which can be converted to a
+  /*{\Mop returns a handle |h| that can be converted to a
   |Vertex_/Halfedge_const_handle| as described above. The object
   returned is part of the $1$-skeleton of |\Mvar|, intersected by the
   ray starting in |p| with direction |d| and has minimal distance to
   |p|.  The operation returns the null handle |NULL| if the ray shoot
   along |d| does not hit any $1$-skeleton object |h| of |\Mvar|. The
-  location mode flag |m| allows to choose between different point
+  location mode flag |m| allows one to choose between different point
   location strategies.}*/
   { 
     if (m == DEFAULT || m == LMWT) {
       ptr->init_locator();
-      EPoint ep = EPD.construct_point(p), 
-             eq = EPD.construct_point(p,d);
-      return locator().ray_shoot(EPD.construct_segment(ep,eq),INSKEL()); 
+      Extended_point ep = EK.construct_point(p), 
+                     eq = EK.construct_point(p,d);
+      return locator().ray_shoot(EK.construct_segment(ep,eq),INSKEL()); 
     } else if (m == NAIVE) {
-      Slocator PL(pm(),EPD);
-      EPoint ep = EPD.construct_point(p), 
-             eq = EPD.construct_point(p,d);
-      return PL.ray_shoot(EPD.construct_segment(ep,eq),INSKEL()); 
+      Slocator PL(pm(),EK);
+      Extended_point ep = EK.construct_point(p), 
+                     eq = EK.construct_point(p,d);
+      return PL.ray_shoot(EK.construct_segment(ep,eq),INSKEL()); 
     }
     CGAL_assertion_msg(0,"location mode not implemented.");
     return Object_handle();
   }
 
 
-  Explorer explorer() const { return Explorer(pm(),EPD); }
+  Explorer explorer() const { return Explorer(pm(),EK); }
   /*{\Mop returns a decorator object which allows read-only access of
   the underlying plane map. See the manual page |Explorer| for its 
   usage.}*/
@@ -729,12 +731,12 @@ public:
   |CGAL/IO/Nef_\-poly\-hedron_2_\-Win\-dow_\-stream.h|.
   }*/
 
-  /*{\Mimplementation Nef polyhedra are implemented on top of a half edge
+  /*{\Mimplementation Nef polyhedra are implemented on top of a halfedge
   data structure and use linear space in the number of vertices, edges
-  and facets.  Operations like empty take constant time. The
-  operations clear, complement, interior, closure, boundary,
-  regularization, input and output take linear time. All binary set
-  operations and comparison operations take time $O(N \log N)$ where $N$
+  and facets.  Operations like |empty| take constant time. The
+  operations |clear|, |complement|, |interior|, |closure|, |boundary|,
+  |regularization|, input and output take linear time. All binary set
+  operations and comparison operations take time $O(n \log n)$ where $n$
   is the size of the output plus the size of the input.
 
   The point location and ray shooting operations are implemented in
@@ -744,27 +746,31 @@ public:
   operation. Preprocessing takes time $O(N^2)$, the sub-linear point
   location time is either logarithmic when LEDA's persistent
   dictionaries are present or if not then the point location time is
-  worst case linear, but experiments show often sublinear runtimes.
-  Rayshooting equals point location plus a walk in the constrained
-  triangulation overlayed the plane map representation. The cost of the
-  walk is proportional to the number of triangles passed in direction
-  |d| until an obstacle is met. In a minimum weight triangulation of the
-  obstacles (the plane map representing the polyhedron) the theory
-  provides a $O(\sqrt{n})$ bound for the number of steps. Our locally
-  minimum weight triangulation approximates the minimum weight
-  triangulation only heuristically (the calculation of the minimum
-  weight triangulation is conjectured to be NP hard). Thus we have no
-  runtime guarantee but a strong experimental motivation for its
-  approximation.}*/
+  worst-case linear, but experiments show often sublinear runtimes.  Ray
+  shooting equals point location plus a walk in the constrained
+  triangulation overlayed on the plane map representation. The cost of
+  the walk is proportional to the number of triangles passed in
+  direction |d| until an obstacle is met. In a minimum weight
+  triangulation of the obstacles (the plane map representing the
+  polyhedron) the theory provides a $O(\sqrt{n})$ bound for the number
+  of steps. Our locally minimum weight triangulation approximates the
+  minimum weight triangulation only heuristically (the calculation of
+  the minimum weight triangulation is conjectured to be NP hard). Thus
+  we have no runtime guarantee but a strong experimental motivation for
+  its approximation.}*/
 
-  /*{\Mexample Nef polyhedra are parameterized by a so called extended
-  geometric kernel. There are two kernels, one based on a homogeneous
+  /*{\Mexample Nef polyhedra are parameterized by a so-called extended
+  geometric kernel. There are three kernels, one based on a homogeneous
   representation of extended points called |Extended_homogeneous<RT>|
   where |RT| is a ring type providing additionally a |gcd| operation and
   one based on a cartesian representation of extended points called
-  |Extended_cartesian<NT>| where |NT| is a field type. The member types
-  of |Nef_polyhedron_2< Extended_homogeneous<NT> >| map to corresponding
-  types of the CGAL geometry kernel (e.g. |Nef_polyhedron::Line| equals
+  |Extended_cartesian<NT>| where |NT| is a field type, and finally
+  |Filtered_extended_homogeneous<RT>| (an optimized version of the
+  first).
+
+  The member types of |Nef_polyhedron_2< Extended_homogeneous<NT> >|
+  map to corresponding types of the CGAL geometry kernel
+  (e.g. |Nef_polyhedron::Line| equals
   |CGAL::Homogeneous<leda_integer>::Line_2| in the example below).
   \begin{Mverb}
   #include <CGAL/basic.h>
@@ -791,14 +797,14 @@ public:
 }; // end of Nef_polyhedron_2
 
 template <typename T>
-T Nef_polyhedron_2<T>::EPD;
+T Nef_polyhedron_2<T>::EK;
 
 
 template <typename T>
 std::ostream& operator<<
  (std::ostream& os, const Nef_polyhedron_2<T>& NP)
 {
-  os << "Nef_polyhedron_2<" << NP.EPD.output_identifier() << ">\n";
+  os << "Nef_polyhedron_2<" << NP.EK.output_identifier() << ">\n";
   typedef typename Nef_polyhedron_2<T>::Decorator Decorator;
   CGAL::PM_io_parser<Decorator> O(os, NP.pm()); O.print();
   return os;
@@ -811,7 +817,7 @@ std::istream& operator>>
   typedef typename Nef_polyhedron_2<T>::Decorator Decorator;
   CGAL::PM_io_parser<Decorator> I(is, NP.pm()); 
   if (I.check_sep("Nef_polyhedron_2<") &&
-      I.check_sep(NP.EPD.output_identifier()) &&
+      I.check_sep(NP.EK.output_identifier()) &&
       I.check_sep(">")) I.read();
   else {
     std::cerr << "Nef_polyhedron_2 input corrupted." << std::endl;

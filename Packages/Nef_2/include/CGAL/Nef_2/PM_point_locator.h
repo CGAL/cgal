@@ -31,7 +31,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Hash_map.h>
 #include <CGAL/Object.h>
-#include <CGAL/Nef_2/PM_constr_triang_traits.h>
+#include <CGAL/Nef_2/Constrained_triang_traits.h>
 #undef _DEBUG
 #define _DEBUG 17
 #include <CGAL/Nef_2/debug.h>
@@ -57,11 +57,12 @@ Geometry_#GEO
 encapsulates naive point location queries within a plane map |P|.  The
 two template parameters are specified via concepts. |PM_decorator_|
 must be a model of the concept |PMDecorator| as described in the
-appendix.  |Geometry_| must be a model of the concept |AffineGeometry| as
-described in the appendix. For a specification of plane maps see also
-the concept of |PMConstDecorator|.}*/
+appendix.  |Geometry_| must be a model of the concept
+|AffineGeometryTraits_2| as described in the appendix. For a
+specification of plane maps see also the concept of
+|PMConstDecorator|.}*/
 
-/*{\Mgeneralization PM_decorator}*/
+/*{\Mgeneralization PMD}*/
 
 template <typename PM_decorator_, typename Geometry_>
 class PM_naive_point_locator : public PM_decorator_ {
@@ -71,7 +72,7 @@ protected:
 
   const Geometry_& K;
 public:
-  /*{\Mtypes 3}*/
+  /*{\Mtypes 5}*/
   typedef PM_decorator_                 Decorator;
   /*{\Mtypemember equals |PM_decorator_|.}*/
   typedef typename Decorator::Plane_map Plane_map;
@@ -83,8 +84,8 @@ public:
   typedef Geometry_                       Geometry;
   /*{\Mtypemember equals |Geometry_|.}*/
   typedef typename Geometry_::Point_2     Point;
-  /*{\Mtypemember the point type of the geometry kernel,
-  \precond |Point| equals |Plane_map::Point_2|.}*/
+  /*{\Mtypemember the point type of the geometry kernel.\\
+  \require |Geometry::Point_2| equals |Plane_map::Point|.}*/
   typedef typename Geometry_::Segment_2   Segment;
   /*{\Mtypemember the segment type of the geometry kernel.}*/
   typedef typename Geometry_::Direction_2 Direction;
@@ -270,9 +271,9 @@ public:
       return make_object((Face_const_handle)(face(v_res)));
   }
 
+  
   template <typename Object_predicate>
-  Object_handle ray_shoot(const Segment& s, 
-                          const Object_predicate& M) const
+  Object_handle ray_shoot(const Segment& s, const Object_predicate& M) const
   /*{\Mop returns an |Object_handle o| which can be converted to a
   |Vertex_const_handle|, |Halfedge_const_handle|, |Face_const_handle|
   |h| as described above.  The object predicate |M| has to have function
@@ -373,15 +374,15 @@ Geometry_#GEO
 }*/
 /*{\Manpage {PM_point_locator}{PMD,GEO} 
 {Point location in plane maps via LMWT}{PL}}*/ 
-/*{\Mdefinition An instance |\Mvar| of data type |\Mname| encapsulates
-point location queries within a plane map |P|. The two template
-parameters are specified via concepts. |PMDEC| must be a model of the
-concept |PM_decorator| as described in the appendix.  |GEOM| must be a
-model of the concept |Affine_geometry| as described in the
+/*{\Mdefinition An instance |\Mvar| of data type |\Mname|
+encapsulates point location queries within a plane map |P|. The two
+template parameters are specified via concepts. |PMD| must be a model
+of the concept |PMDecorator| as described in the appendix.  |GEO| must
+be a model of the concept |AffineGeometryTraits_2| as described in the
 appendix. For a specification of plane maps see also the concept of
-|PM_const_decorator|.}*/
+|PMConstDecorator|.}*/
 
-/*{\Mgeneralization PM_decorator^#PM_naive_point_locator<PMDEC,GEOM>}*/
+/*{\Mgeneralization PMD^#PM_naive_point_locator<PMD,GEO>}*/
 
 template <typename PM_decorator_, typename Geometry_>
 class PM_point_locator : public 
@@ -472,30 +473,35 @@ protected:
     return make_object( input_face(e) );
   }
 
-  /*{\Mimplementation The query operations take up to linear time
-  $T(n)$ for subsequent query operations, but trigger a one-time
+  /*{\Mimplementation 
+  The efficiency of this point location module is mostly based on
+  heuristics. Therefore worst case bounds are not very expressive. The
+  query operations take up to linear time for subsequent query
+  operations though they are better in practise. They trigger a one-time
   initialization which needs worst case $O(n^2)$ time though runtime
   tests often show subquadratic results. The necessary space for the
   query structure is subsumed in the storage space $O(n)$ of the input
-  plane map. $T(n)$ is configuration dependent. If LEDA is present then
-  point location is done via the slap method based on persistent
-  dictionaries.  Then $T_{pl}(n) = O( \log(n) )$. If CGAL is not
-  configured to use LEDA then point location is done via a segment walk
-  in the underlying convex subdivision of $P$. In this case $T(n)$ is
-  the number of triangles crossed by a walk from the boundary of the
-  structure to the query point. The time for the ray shooting operation
-  $T_{rs}$ is the time for the point location $T_{pl}(n)$ plus the time
-  for the walk in the triangulation that is superimposed to the plane
-  map. Let's consider the plane map edges as obstacles and the
-  additional triangulation edges as non-obstacle edges. Let's call the
-  sum of the lengths of all edges of the triangulation its weight. If
-  the calculated triangulation approximates\footnote{The calculation of
-  general minimum-weight-triangulations is conjectured to be NP-complete
-  and locally-minimum-weight-triangulations that we use are considered
-  good approximations.} the minimum weight triangulation of the obstacle
-  set then the stepping quotient\footnote {The number of non-obstacle
-  edges crossed until an obstacle edge is hit.} for a random direction
-  of the ray shot is expected to be $O( \sqrt{n} )$.}*/
+  plane map. The query times are configuration dependent. If LEDA is
+  present then point location is done via the slap method based on
+  persistent dictionaries.  Then $T_{pl}(n) = O( \log(n) )$. If CGAL is
+  not configured to use LEDA then point location is done via a segment
+  walk in the underlying convex subdivision of $P$. In this case
+  $T_{pl}(n)$ is the number of triangles crossed by a walk from the
+  boundary of the structure to the query point. The time for the ray
+  shooting operation $T_{rs}(n)$ is the time for the point location
+  $T_{pl}(n)$ plus the time for the walk in the triangulation that is
+  superimposed to the plane map. Let's consider the plane map edges as
+  obstacles and the additional triangulation edges as non-obstacle
+  edges. Let's call the sum of the lengths of all edges of the
+  triangulation its weight. If the calculated triangulation
+  approximates\footnote{The calculation of general
+  minimum-weight-triangulations is conjectured to be NP-complete and
+  locally-minimum-weight-triangulations that we use are considered good
+  approximations.} the minimum weight triangulation of the obstacle set
+  then the stepping quotient\footnote {The number of non-obstacle edges
+  crossed until an obstacle edge is hit.} for a random direction of the
+  ray shot is expected to be $O( \sqrt{n} )$.}*/
+
 
   struct CT_new_edge : Decorator { 
     const Decorator& _DP;
@@ -525,12 +531,11 @@ protected:
   void triangulate_CT() const
   {
     TRACEN("triangulate_CT");
-    typedef CGAL::PM_constr_triang_traits<
+    typedef CGAL::Constrained_triang_traits<
       Decorator,Geometry,CT_new_edge> NCTT;
-    typedef gen_plane_sweep<NCTT> PM_constr_triang_sweep;
+    typedef CGAL::generic_sweep<NCTT> Constrained_triang_sweep;
     CT_new_edge NE(CT,*this);
-    PM_constr_triang_sweep T(NE,CT.plane_map(),K);
-    T.sweep();
+    Constrained_triang_sweep T(NE,CT.plane_map(),K); T.sweep();
   }
 
   void minimize_weight_CT() const
@@ -631,9 +636,9 @@ public:
     assert(0); return h; // compiler warning
   }
 
+  
   template <typename Object_predicate>
-  Object_handle ray_shoot(const Segment& s, 
-                          const Object_predicate& M) const
+  Object_handle ray_shoot(const Segment& s, const Object_predicate& M) const
   /*{\Mop returns an |Object_handle o| which can be converted to a
   |Vertex_const_handle|, |Halfedge_const_handle|, |Face_const_handle|
   |h| as described above.  The object predicate |M| has to have 

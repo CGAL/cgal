@@ -25,7 +25,6 @@
 //
 // implementation: Filtered extended homogeneous kernel
 // ============================================================================
-
 #ifndef CGAL_FILTERED_EXTENDED_HOMOGENEOUS_H
 #define CGAL_FILTERED_EXTENDED_HOMOGENEOUS_H
 

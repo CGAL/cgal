@@ -34,8 +34,12 @@
 #define HDSUSING(t) typedef typename HDS::t t
 CGAL_BEGIN_NAMESPACE
 
-/*{\Moptions outfile=PM_decorator.man }*/
-/*{\Manpage {PM_decorator}{}{Plane map manipulation}{D}}*/
+/*{\Moptions outfile=PMDecorator.man }*/
+/*{\Msubst 
+PM_decorator#PMDecorator
+PM_const_decorator#PMConstDecorator
+}*/
+/*{\Manpage {PMDecorator}{}{Plane map manipulation}{D}}*/
 
 template <typename HDS>
 class PM_decorator : public PM_const_decorator<HDS>
@@ -56,7 +60,7 @@ public:
   HDSUSING(Vertex_handle);    HDSUSING(Vertex_iterator);
   HDSUSING(Halfedge_handle);  HDSUSING(Halfedge_iterator);
   HDSUSING(Face_handle);      HDSUSING(Face_iterator);
-  HDSUSING(Vertex_const_handle); 
+  HDSUSING(Vertex_const_handle);
   HDSUSING(Halfedge_const_handle); 
   HDSUSING(Face_const_handle); 
   HDSUSING(Vertex_const_iterator); 

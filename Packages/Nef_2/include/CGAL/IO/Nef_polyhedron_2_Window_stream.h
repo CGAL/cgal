@@ -51,7 +51,7 @@ const Nef_polyhedron_2<T>& P)
   typedef CGAL::PM_visualizor<TExplorer,T,BooleColor> Visualizor;
 
   TExplorer D = P.explorer();
-  const T& E = Nef_polyhedron_2<T>::EPD;
+  const T& E = Nef_polyhedron_2<T>::EK;
 
   Standard_RT frame_radius = frame_default;
   E.determine_frame_radius(D.points_begin(),D.points_end(),frame_radius);

@@ -40,7 +40,7 @@ int main()
   SETDTHREAD(41);
   CGAL::set_pretty_mode ( std::cerr );
   std::cerr << "using " << CGAL::pointlocationversion << std::endl;
-  std::cerr << "using " << PMNS sweepversion << std::endl;
+  std::cerr << "using " << CGAL::sweepversion << std::endl;
   CGAL_TEST_START;
 {
   typedef  CGAL::Extended_homogeneous<Integer> EKernel;
@@ -287,7 +287,7 @@ int main()
 
 
 
-  Nef_polyhedron::EPD.print_statistics();
+  Nef_polyhedron::EK.print_statistics();
 }
   CGAL_TEST_END;
 }

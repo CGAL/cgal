@@ -15,7 +15,7 @@
 // package       : Nef_2 
 // chapter       : Nef Polyhedra
 //
-// source        : nef_2d/gen_plane_sweep.lw
+// source        : nef_2d/generic_sweep.lw
 // revision      : $Revision$
 // revision_date : $Date$
 //
@@ -25,14 +25,12 @@
 //
 // implementation: generic plane sweep framework
 // ============================================================================
-#ifndef SWEEP_OBSERVER_H
-#define SWEEP_OBSERVER_H
+#ifndef CGAL_SWEEP_OBSERVER_H
+#define CGAL_SWEEP_OBSERVER_H
 
-#if defined(list) && defined(LEDA_LIST_H)
-#define UNDEFINED_LIST
-#undef list
-#endif
 #include <list>
+
+namespace CGAL {
 
 // TR is traits
 template <typename TR>
@@ -102,7 +100,7 @@ inline void attach(Event_hook<TR>& h,
 {Observing the plane sweep class}{Obs}}*/  
 /*{\Mdefinition The data type |\Mname| provides an observer approach
 to the visualization of a sweep algorithm realized by |GPS =
-gen_plane_sweep<T>| by means of an event mechanism. It allows to
+generic_sweep<T>| by means of an event mechanism. It allows to
 connect the events of an instance of |GPS| to the visualization
 operations provided by the traits class |VT|.}*/
  
@@ -153,7 +151,7 @@ public :
 A typical sweep observation based on |\Mname| looks like the following 
 little program:
 \begin{Mverb}
-  typedef gen_plane_sweep<triang_sweep_traits> triang_sweep;
+  typedef generic_sweep<triang_sweep_traits> triang_sweep;
   triang_sweep Ts(...);
   sweep_observer< triang_sweep, 
                   cgal_window_stream_ts_visualization > Obs(Ts);
@@ -173,14 +171,14 @@ template <class GPS, class VT>
 void 
 sweep_observer<GPS,VT>::attach(GPS& gps) 
 {
-  ::attach(gps.post_init_hook, *this, 
-        &sweep_observer::post_init_animation); 
-  ::attach(gps.pre_event_hook, *this, 
-        &sweep_observer::pre_event_animation); 
-  ::attach(gps.post_event_hook, *this, 
-        &sweep_observer::post_event_animation); 
-  ::attach(gps.post_completion_hook, *this, 
-        &sweep_observer::post_completion_animation); 
+  CGAL::attach(gps.post_init_hook, *this, 
+	       &sweep_observer::post_init_animation); 
+  CGAL::attach(gps.pre_event_hook, *this, 
+	       &sweep_observer::pre_event_animation); 
+  CGAL::attach(gps.post_event_hook, *this, 
+	       &sweep_observer::post_event_animation); 
+  CGAL::attach(gps.post_completion_hook, *this, 
+	       &sweep_observer::post_completion_animation); 
 }
 
 #ifdef THIS_IS_JUST_A_CONCEPT_DEFINITION
@@ -229,9 +227,7 @@ actions via its visualization methods.}*/
 
 #endif // THIS_IS_JUST_A_CONCEPT_DEFINITION
 
+} // namespace CGAL
 
-#if defined(UNDEFINED_LIST)
-#define list leda_list
-#endif
-#endif // SWEEP_OBSERVER_H
+#endif // CGAL_SWEEP_OBSERVER_H
 
