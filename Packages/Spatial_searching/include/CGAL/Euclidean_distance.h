@@ -1,26 +1,21 @@
-// ======================================================================
+// Copyright (c) 2002 Utrecht University (The Netherlands).
+// All rights reserved.
 //
-// Copyright (c) 2002 The CGAL Consortium
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
 //
-// This software and related documentation is part of an INTERNAL release
-// of the Computational Geometry Algorithms Library (CGAL). It is not
-// intended for general use.
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
 //
-// ----------------------------------------------------------------------
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// release       : $CGAL_Revision: CGAL-2.5-I-99 $
-// release_date  : $CGAL_Date: 2003/05/23 $
+// $Source$
+// $Revision$ $Date$
+// $Name$
 //
-// file          : include/CGAL/Euclidean_distance.h
-// package       : ASPAS (3.12)
-// maintainer    : Hans Tangelder <hanst@cs.uu.nl>
-// revision      : 2.4 
-// revision_date : 2002/16/08 
-// authors       : Hans Tangelder (<hanst@cs.uu.nl>)
-// coordinator   : Utrecht University
-//
-// ======================================================================
-
+// Author(s)     : Hans Tangelder (<hanst@cs.uu.nl>)
 
 
 #ifndef CGAL_EUCLIDEAN_DISTANCE_H
