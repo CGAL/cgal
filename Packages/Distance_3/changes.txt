@@ -1,3 +1,6 @@
+2.9 (04 September 2003) [af]
+- Simplified template parameter. As side effect we avoid an ICE of SunPro CC 5.4
+
 2.8 (12 August 2003)
 - Bug fix in squared_distance_3_0.h [af]
 
