@@ -185,21 +185,21 @@ namespace OGL {
     Coord_iterator facet_cycle_begin(unsigned i) 
     { CGAL_nef3_assertion(i<number_of_facet_cycles());
       if (i==0) return coords_.begin();
-      else return coords_.begin()+fc_ends_[i-1]; }
+      else return coords_.begin()+fc_ends_[i]; }
 
     Coord_iterator facet_cycle_end(unsigned i) 
     { CGAL_nef3_assertion(i<number_of_facet_cycles());
-      if (i<fc_ends_.size()-1) return coords_.begin()+fc_ends_[i];
+      if (i<fc_ends_.size()-1) return coords_.begin()+fc_ends_[i+1];
       else return coords_.end(); }
 
     Coord_const_iterator facet_cycle_begin(unsigned i) const
     { CGAL_nef3_assertion(i<number_of_facet_cycles());
       if (i==0) return coords_.begin();
-      else return coords_.begin()+fc_ends_[i-1]; }
+      else return coords_.begin()+fc_ends_[i]; }
 
     Coord_const_iterator facet_cycle_end(unsigned i) const
     { CGAL_nef3_assertion(i<number_of_facet_cycles());
-      if (i<fc_ends_.size()-1) return coords_.begin()+fc_ends_[i];
+      if (i<fc_ends_.size()-1) return coords_.begin()+fc_ends_[i+1];
       else return coords_.end(); }
 
     void debug(std::ostream& os = std::cerr) const
@@ -246,8 +246,16 @@ namespace OGL {
 
   inline void combineCallback(GLdouble coords[3], void *vertex_data[4], GLfloat weight[4], void **outData)
   {
-    
-    *outData = vertex_data;
+    CGAL_msg("combineCallback was called. This should not happen. Tessellation is erroneous!!");
+    double* temp = new double[3];  
+    TRACE("combineCallback ");
+    for(int i=0;i<3;++i) {
+      temp[i] = coords[i];
+      TRACE(coords[i]);
+    }
+    TRACEN(" ");
+ 
+    *outData = temp;
   }
 
   class Polyhedron {
@@ -337,19 +345,24 @@ namespace OGL {
       CGAL::Color c = (f->mark() ? ct : cf);
       glColor3ub(c.red(),c.green(),c.blue());
       gluTessBeginPolygon(tess_,f->normal());
+      TRACEN(" ");
+      TRACEN("Begin Polygon");
       gluTessNormal(tess_,f->dx(),f->dy(),f->dz());
       // forall facet cycles of f:
       for(unsigned i = 0; i < f->number_of_facet_cycles(); ++i) {
         gluTessBeginContour(tess_);
+	TRACEN("  Begin Contour");
 	// put all vertices in facet cycle into contour:
 	for(cit = f->facet_cycle_begin(i); 
 	    cit != f->facet_cycle_end(i); ++cit) {
 	  gluTessVertex(tess_, *cit, *cit);
+	  TRACEN("    add Vertex");
 	}
         gluTessEndContour(tess_);
+	TRACEN("  End Contour");
       }
       gluTessEndPolygon(tess_);
-      TRACEN("END drawing facet ");
+      TRACEN("End Polygon");
       gluDeleteTess(tess_);
     }
 

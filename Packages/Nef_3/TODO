@@ -3,8 +3,6 @@ Nef_3 Package: TODO
 
 See also demo/Nef_3/README for more todo items.
 
-- Rename ray shoting to ray shooting (file and class etc...)
-
 - Add SNC_const_decorator that can be used as Explorer (i.e. the
   interface for the external user of the Nef_polyhedron_3 class).
   See the Nef_polyhedron_2 for the Explorer.
