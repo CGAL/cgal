@@ -8,29 +8,26 @@
 //
 // ----------------------------------------------------------------------
 //
-// release       : $CGAL_Revision: CGAL-2.0-I-20 $
-// release_date  : $CGAL_Date: 1999/06/02 $
+// release       :
+// release_date  :
 //
 // file          : include/CGAL/Alpha_shape_vertex_base_3.h
-// package       : Alpha_shapes_3(1.0)
-// source        : $RCSfile$
+// package       : Alpha_shapes_3
 // revision      : $Revision$
 // revision_date : $Date$
-// author(s)     : Tran Kai Frank DA <Frank.Da@sophia.inria.fr>
+// author(s)     : Tran Kai Frank DA
 //
 // coordinator   : INRIA Sophia-Antipolis (<Mariette.Yvinec@sophia.inria.fr>)
 //
 // ======================================================================
 
-#ifndef ALPHA_SHAPE_VERTEX_BASE_3_H
-#define ALPHA_SHAPE_VERTEX_BASE_3_H
+#ifndef CGAL_ALPHA_SHAPE_VERTEX_BASE_3_H
+#define CGAL_ALPHA_SHAPE_VERTEX_BASE_3_H
 
 #include <utility>
 #include <CGAL/Triangulation_vertex_base_3.h>
 
-//-------------------------------------------------------------------
 CGAL_BEGIN_NAMESPACE
-//-------------------------------------------------------------------
 
 template <class Gt, class Vb = Triangulation_vertex_base_3<Gt> >
 class Alpha_shape_vertex_base_3
@@ -38,15 +35,17 @@ class Alpha_shape_vertex_base_3
 {
 public:
 
+  typedef typename Vb::Cell_handle    Cell_handle;
+
   template < typename TDS2 >
   struct Rebind_TDS {
     typedef typename Vb::template Rebind_TDS<TDS2>::Other   Vb2;
     typedef Alpha_shape_vertex_base_3<Gt, Vb2>              Other;
   };
 
-  typedef typename Gt::Coord_type Coord_type;
-  typedef std::pair< Coord_type, Coord_type > Interval2;  
-  typedef typename Gt::Point Point;
+  typedef typename Gt::Point                   Point;
+  typedef typename Gt::Coord_type              Coord_type;
+  typedef std::pair< Coord_type, Coord_type >  Interval2;  
 
 private:
 
@@ -60,25 +59,21 @@ public:
   Alpha_shape_vertex_base_3(const Point& p)
     : Vb(p) {}
   
-  Alpha_shape_vertex_base_3(const Point& p, void* f)
-    : Vb(p, f) {}
+  Alpha_shape_vertex_base_3(const Point& p, Cell_handle c)
+    : Vb(p, c) {}
 
-  //-------------------------------------------------------------------
 
-  inline Interval2 get_range()
+  const Interval2 & get_range()
     {
       return I;
     }
 
-  inline void set_range(Interval2 Inter)
+  void set_range(const Interval2 & Inter)
     {
       I = Inter;
     }
-
 };
 
-//-------------------------------------------------------------------
 CGAL_END_NAMESPACE
-//-------------------------------------------------------------------
 
-#endif //ALPHA_SHAPE_VERTEX_BASE_3_H
+#endif // CGAL_ALPHA_SHAPE_VERTEX_BASE_3_H

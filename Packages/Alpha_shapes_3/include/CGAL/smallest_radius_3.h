@@ -8,28 +8,25 @@
 //
 // ----------------------------------------------------------------------
 //
-// release       : $CGAL_Revision: CGAL-2.0-I-20 $
-// release_date  : $CGAL_Date: 1999/06/02 $
+// release       :
+// release_date  :
 //
 // file          : include/CGAL/smallest_radius_3.h
-// package       : Alpha_shapes_3(1.0)
-// source        : $RCSfile$
+// package       : Alpha_shapes_3
 // revision      : $Revision$
 // revision_date : $Date$
-// author(s)     : Tran Kai Frank DA <Frank.Da@sophia.inria.fr>
+// author(s)     : Tran Kai Frank DA
 //
 // coordinator   : INRIA Sophia-Antipolis (<Mariette.Yvinec@sophia.inria.fr>)
 //
 // ======================================================================
 
-#ifndef SMALLEST_RADIUS_3_H
-#define SMALLEST_RADIUS_3_H
+#ifndef CGAL_SMALLEST_RADIUS_3_H
+#define CGAL_SMALLEST_RADIUS_3_H
 
 #include <CGAL/Point_3.h>
 
-//-------------------------------------------------------------------
 CGAL_BEGIN_NAMESPACE
-//-------------------------------------------------------------------
 
 template <class R >
 CGAL_KERNEL_MEDIUM_INLINE
@@ -41,8 +38,6 @@ squared_radius_smallest_circumsphere(const Point_3<R> &p,
   return typename R::FT ((v*v)/R::FT(4));
 }
 
-//-------------------------------------------------------------------
 CGAL_END_NAMESPACE
-//-------------------------------------------------------------------
 
-#endif // SMALLEST_RADIUS_3_H
+#endif // CGAL_SMALLEST_RADIUS_3_H

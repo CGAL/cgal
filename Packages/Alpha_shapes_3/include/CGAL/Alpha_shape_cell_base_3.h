@@ -35,6 +35,8 @@ class Alpha_shape_cell_base_3
   : public Cb
 {
 public:
+  typedef typename Cb::Vertex_handle   Vertex_handle;
+  typedef typename Cb::Cell_handle     Cell_handle;
 
   template < typename TDS2 >
   struct Rebind_TDS {
@@ -45,31 +47,27 @@ public:
   typedef typename Gt::FT                            Coord_type;
   typedef Triple<Coord_type, Coord_type, Coord_type> Interval3;
 
-  //-------------------------------------------------------------------
 private:
 
   Interval3 vec_facet[4];
   Interval3 vec_edge[4][4];
   Coord_type A;
 
-  //-------------------------------------------------------------------
 public:
   
   Alpha_shape_cell_base_3() 
-    : Cb()
-    {}
+    : Cb() {}
   
-  Alpha_shape_cell_base_3(void* v0, void* v1, void* v2, void* v3)
-    : Cb( v0, v1, v2, v3)
-    {}
+  Alpha_shape_cell_base_3(Vertex_handle v0, Vertex_handle v1,
+                          Vertex_handle v2, Vertex_handle v3)
+    : Cb(v0, v1, v2, v3) {}
   
-  Alpha_shape_cell_base_3(void* v0, void* v1, void* v2, void* v3,
-			  void* n0, void* n1, void* n2, void* n3)
-    : Cb(v0,  v1,  v2, v3,
-	 n0,  n1,  n2, n3)
-    {}
+  Alpha_shape_cell_base_3(Vertex_handle v0, Vertex_handle v1,
+                          Vertex_handle v2, Vertex_handle v3,
+                          Cell_handle n0, Cell_handle n1,
+                          Cell_handle n2, Cell_handle n3)
+    : Cb(v0, v1, v2, v3, n0, n1, n2, n3) {}
 
-  //-------------------------------------------------------------------
 
   const Coord_type & get_alpha() const
     {
