@@ -28,7 +28,6 @@
 #include <CGAL/Sweep_line_2/Point_plus_handle.h>
 #endif
 
-#include <CGAL/IO/leda_window.h>  //used for visualization -
 
 CGAL_BEGIN_NAMESPACE
 
@@ -964,13 +963,13 @@ private:
   
   Halfedge_handle find_halfedge(const X_curve& cv, PM& pm)
   {
-    cout<<"In find_halfedge"<<endl;
+    //cout<<"In find_halfedge"<<endl;
     
     Locate_type lt;
     Halfedge_handle h = pm.locate(traits.curve_source(cv),lt);
 
-    cout<<"cv="<<cv<<endl;
-    cout<<"h->curve()="<<h->curve()<<endl;
+    //cout<<"cv="<<cv<<endl;
+    //cout<<"h->curve()="<<h->curve()<<endl;
     
     //if (h->curve() == cv || h->curve() == traits.curve_flip(cv))
     //  return h;
@@ -988,7 +987,7 @@ private:
     typename PM::Halfedge_around_vertex_circulator circ = v->incident_halfedges();
 
     do {
-      cout<<"circ->curve()="<<circ->curve()<<endl;
+      //cout<<"circ->curve()="<<circ->curve()<<endl;
       if (traits.curve_is_same(circ->curve(),cv) || 
           traits.curve_is_same(circ->curve(),traits.curve_flip(cv)))
         return Halfedge_handle(circ);
