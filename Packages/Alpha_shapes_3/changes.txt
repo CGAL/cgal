@@ -1,4 +1,11 @@
 
+11 August 2004 Mariette
+- fixed multiple declaration of Alpha_status_const_iterator
+  in Alpha_shape_cell_base_3.h and Alpha_shape_vertex_base_3.h
+- Fixed (that is removed) default argument 
+  in get_alpha_shapes_cells and the like. 
+
+
 10 August 2004 Mariette
    merge major changes from branch tmp-my-2
 - use a compact container to store alpha_status of facets and edges

@@ -744,7 +744,7 @@ public:
   template<class OutputIterator>
   OutputIterator get_alpha_shape_cells(OutputIterator it, 
 				       Classification_type type,
-				       const NT& alpha = get_alpha()) const
+				       const NT& alpha) const
   {
     Finite_cells_iterator cit = finite_cells_begin();
     for( ; cit != finite_cells_end() ; ++cit){
@@ -756,7 +756,7 @@ public:
   template<class OutputIterator>
   OutputIterator get_alpha_shape_facets(OutputIterator it, 
 					Classification_type type,
-					const NT& alpha = get_alpha()) const
+					const NT& alpha) const
   {
     Finite_facets_iterator fit = finite_facets_begin();
     for( ; fit != finite_facets_end() ; ++fit){
@@ -768,7 +768,7 @@ public:
   template<class OutputIterator>
   OutputIterator get_alpha_shape_edges(OutputIterator it, 
 				       Classification_type type,
-				       const NT& alpha = get_alpha()) const
+				       const NT& alpha) const
   {
     Finite_edges_iterator eit = finite_edges_begin();
     for( ; eit != finite_edges_end() ; ++eit){
@@ -780,7 +780,7 @@ public:
   template<class OutputIterator>
    OutputIterator get_alpha_shape_vertices(OutputIterator it, 
 					   Classification_type type,
-				   const NT& alpha = get_alpha()) const
+					   const NT& alpha) const
   {
     Finite_vertices_iterator vit = finite_vertices_begin();
     for( ; vit != finite_vertices_end() ; ++vit){

@@ -49,8 +49,7 @@ public:
                                             Alpha_status_const_iterator;
   typedef typename Alpha_status_container::iterator 
                                             Alpha_status_iterator;
-  typedef typename Alpha_status_container::const_iterator 
-                                            Alpha_status_const_iterator;
+  
 private:
   Alpha_status  _as;
 

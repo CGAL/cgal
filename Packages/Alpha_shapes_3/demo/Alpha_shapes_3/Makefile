@@ -31,7 +31,8 @@ include $(CGAL_MAKEFILE)
 
 CXXFLAGS =  -I../../include \
 	    -I../../../Triangulation_3/include \
-	    $(CGAL_CXXFLAGS)
+	    $(CGAL_CXXFLAGS) \
+	    -g 
 
 # -mcpu=ultrasparc -mtune=ultrasparc \
 # -B /u/alcor/0/prisme_util/Binutils/SunOS/bin/

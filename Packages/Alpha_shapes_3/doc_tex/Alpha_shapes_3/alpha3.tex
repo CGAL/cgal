@@ -58,10 +58,39 @@ http://www.stanford.edu/\~wluh/cs448b/alphashapes.html.}
 % as soon as a sphere of radius $\sqrt{\alpha}$ can be put inside.
 % Finally, for $\alpha = 0$, the $\alpha$-shape is the set $S$ itself.
 
-We distinguish two versions of alpha shapes.  {\em Basic alpha shapes}
-are based on the Delaunay triangulation.  {\em Weighted alpha shapes}
-are based on its generalization, the regular triangulation, replacing
-the euclidean distance by the power to weighted points. 
+More precisely, the definition of alpha shapes is based on an underlying
+triangulation that may be a Delaunay triangulation 
+in case of basic alpha shapes 
+or a regular triangulation 
+(cf. \ref{Triangulation3-sec-class-Regulartriangulation})
+in case of weighted alpha shapes.
+
+Let us consider the basic case with a Delaunay triangulation.
+We first define the alpha-complex as a subcomplex 
+of the Delaunay triangulation of the set $S$
+depending on the real parameter $\alpha$.
+For a given value of $\alpha$, the alpha-complex includes
+all the simplices in the Delaunay triangulation which have
+an empty  circumsphere with squared radius equal or smaller than $\alpha$.
+Here ``empty'' means  that the open sphere 
+do not include  any points of $S$.
+The alpha shape is then simply the domain covered by the simplices
+of the alpha complex (see \cite{em-tdas-94}).
+
+In general, an alpha complex is a non-connected and non-pure complex.
+This means in particular that the alpha complex may have
+singular faces. A
+$k$-simplex, for $0 \leq k \leq d-1$ is said to be
+singular if it is not a facet of a $(k+1)$-simplex.
+CGAL provides two versions of the alpha shapes. In the GENERAL mode,
+the alpha shapes correspond strictly to the above definition.
+The REGULARIZED mode provides a regularized version of the alpha shapes
+corresponding to the domain covered by a regularized version
+of the alpha complex where singular faces are removed.
+
+
+
+
 
 % The {\em basic alpha shapes} (cf. \ref{I1_SectClassicAS2D}) associated
 % with the Delaunay triangulations (cf. \ref{I1_Sect_Delaunay}), in the
@@ -69,31 +98,33 @@ the euclidean distance by the power to weighted points.
 % (cf. \ref{I1_SectWeightedAS2D}) associated with the regular
 % triangulations (cf. \ref{I1_Sect_Regular}).
 
-There is a close connection between alpha shapes and the underlying
-triangulations. More precisely, the $\alpha$-complex of $S$ is a
-subcomplex of this triangulation of $S$, containing the $\alpha$-exposed
-$k$-simplices, $0 \leq k \leq d$. A simplex is $\alpha$-exposed, if there is an
-open disk (resp.\ ball) of radius $\sqrt{\alpha}$ through the vertices of the
-simplex that does not contain any other point of $S$, for the metric used in
-the computation of the underlying triangulation.  The corresponding
-$\alpha$-shape is defined as the underlying interior space of the
-$\alpha$-complex (see \cite{em-tdas-94}). 
-
-In general, an $\alpha$-complex is a non-connected and non-pure polytope, it
-means, that one $k$-simplex, $0 \leq k \leq d-1$ is not necessary adjacent to
-a $(k+1)$-simplex.
-
-The $\alpha$-shapes of $S$ form a discrete family, even though they
-are defined for all real numbers $\alpha$ with $0 \leq \alpha
-\leq \infty$. Thus, we can represent the entire family of $\alpha$-shapes
-of $S$ by the underlying triangulation of $S$. In this representation
+The alpha shapes of a  set of points 
+$S$ form a discrete family, even though they
+are defined for all real numbers $\alpha$.
+The entire family of alpha shapes can be represented 
+through  the underlying triangulation of $S$. In this representation
 each $k$-simplex of the underlying triangulation is associated with an
 interval that specifies for which values of $\alpha$ the $k$-simplex
-belongs to the $\alpha$-shape. Relying on this fact, the family of
-$\alpha$-shapes can be computed efficiently and relatively
-easily. Furthermore, we can select an appropriate $\alpha$-shape from a
-finite number of different $\alpha$-shapes and corresponding
-$\alpha$-values.
+belongs to the alpha complex. Relying on this fact, the family of
+ alpha shapes can be computed efficiently and relatively
+easily. Furthermore, we can select the optimal value
+of  $\alpha$ to get an alpha shape including all data points
+and having   less than a given number of connected components.
+
+
+The definition is analog in the case of weigthed alpha shapes.
+The input set is now a set of weighted points (which can be regarded
+as spheres) and the underlying triangulation 
+is the regular triangulation of this set.
+Two sphere, or two weighted points , with centers $C_1, C_2$
+and  radii $r_1, r_2 $ are said to be orthogonal when 
+$ C_1C_2 ^2 = r_1^2 + r_2^2$ and suborthogonal
+when  $ C_1C_2 ^2 < r_1^2 + r_2^2$.
+The alpha complex is formed with the simplices of this triangulation
+such that there is a sphere orthogonal to the spheres associated
+with the vertices of the simplex  and suborthogonal to all the other
+input weighted points. 
+
 
 
 
@@ -101,36 +132,39 @@ $\alpha$-values.
 
 \section{Functionality \label{I1_SectAlpha_Shape_3}}
 
-The class \ccc{CGAL::Alpha_shape_3<Dt>} represents the family of
-$\alpha$-shapes of points in a plane for {\em all} positive
-$\alpha$. It maintains the underlying triangulation \ccc{Dt} which
-represents connectivity and order among squared radius of its faces. Each
-$k$-dimensional face of the \ccc{Dt} is associated with an interval
-that specifies for which values of $\alpha$ the cell belongs to the
-$\alpha$-shape. There are links between the intervals and the
-$k$-dimensional faces of the triangulation.
+The class \ccc{CGAL::Alpha_shape_3<Dt>} represents the whole
+family of alpha shapes for a given set of points.
+The class includes  the underlying triangulation \ccc{Dt}
+of the set,  and associates to each $k$-face of this triangulation
+ an interval specifying 
+for which values of $\alpha$ the face belongs to the
+alpha complex. 
 
 
 The class \ccc{CGAL::Alpha_shape_3<Dt>} provides functions to set and
 get the current $\alpha$-value, as well as an iterator that enumerates
-the $\alpha$-values where the $\alpha$-shape changes.
+the $\alpha$ values where the alpha shape changes.
+
+The class provides member functions to classify for a given value
+of $alpha$ the different faces of the triangulation as
+\ccc{EXTERIOR}, \ccc{SINGULAR}, \ccc{REGULAR} or 
+\ccc{INTERIOR} with respect
+to the alpha shape. A  boundary $k$ face is said to be
+\ccc{REGULAR}  if it a subface of some $k+1$ face of the alpha complex
+and \ccc{SINGULAR} otherwise.
+
+It also provides output iterators  to  get for a given $alpha$ value
+the vertices, edges, facets and cells of the different types
+\ccc{EXTERIOR}, \ccc{SINGULAR}, \ccc{REGULAR} or 
+\ccc{INTERIOR}.
 
 
-It provides iterators to enumerate the vertices and facets that are in
-the $\alpha$-shape, and functions that allow to classify vertices,
-edges, facets and cells with respect to the $\alpha$-shape. They can be in
-the interior of a cell that belongs or does not belong to the $\alpha$-shape.
-They can be singular/regular, that is be on the boundary of the $\alpha$-shape,
-but not incident/incident to a tetrahedron of the $\alpha$-complex.
-
-Finally, it provides a function to determine the $\alpha$-value
-such that the $\alpha$-shape  satisfies the following two properties,
-or at least the second one if there is no such $\alpha$ that both
-are satisfied:
-
-(i) The number of components equals the number of your choice and\\
-(ii) all data points are either on the boundary or in the interior of the regularized version of 
-the $\alpha$-shape (no singular facets and edges).
+Finally, it provides a function to determine 
+the smallest $\alpha$-value
+such that the $\alpha$-shape  satisfies the following two properties
+(ii) all data points are either on the boundary or in the interior 
+   of the regularized version of the $\alpha$-shape (no singular faces).
+(i) The number of components is equal or less  than a given  number .
 
 \smallskip
 The current implementation is static, that is after its construction
@@ -157,9 +191,10 @@ in the weighted case.
 There are no requirements on the triangulation data structure.
 However it must be parameterized with 
 vertex and cell classes, which are model of the concepts
-\ccc{AlphaShapeVertex_3} and \ccc{AlphaShapeCell_3},
+\ccc{AlphaShapeVertex_3} and \ccc{AlphaShapeCell_3}.
+The package provides
 by default the classes \ccc{CGAL::Alpha_shape_vertex_base_3<Gt>} 
-and \ccc{CGAL::Alpha_shape_Cell_base_3<Tf>}.
+and \ccc{CGAL::Alpha_shape_Cell_base_3<Gt>}.
 
 
 
@@ -169,80 +204,26 @@ and \ccc{CGAL::Alpha_shape_Cell_base_3<Tf>}.
 \section{Examples}
 \subsection{Example for Basic Alpha-Shapes\label{I1_SectClassicAS3D}}
 
-The basic alpha shape needs a Delaunay triangulation as
-underlying triangulation \ccc{Dt}.  The Delaunay triangulation class is
-parameterized with a geometric and a triangulation data structure traits.
-
-For the geometric traits class we can use a \cgal\ kernel.
-
-For the triangulation data structure traits, we have to
-choose the vertex and cell classes needed for alpha shapes,
-namely \ccc{CGAL::Alpha_shape_vertex_base_3<Gt, Dv>} and \ccc{CGAL::Alpha_shape_cell_base_3<Gt,Df>}.
-As default vertex and cell type they use \ccc{CGAL::Triangulation_vertex_base_3<Gt>}
-and  \ccc{CGAL::Triangulation_cell_base_3<Gt>} respectively. 
+This example builds a basic alpha shape using a  Delaunay triangulation
+as underlying triangulation.
 
 
-
-The following code sniplet shows how to obtain a basic
-alpha shape type.
-
-\begin{cprog}
-typedef CGAL::Cartesian<double> K;
-
-typedef CGAL::Alpha_shape_vertex_base_3<K> Av;
-
-typedef CGAL::Triangulation_cell_base_3<K> Tc;
-typedef CGAL::Alpha_shape_cell_base_3<K,Tc> Ac;
-
-typedef CGAL::Triangulation_data_structure_3<Av,Ac> Tds;
-typedef CGAL::Delaunay_triangulation_3<K,Tds> Dt;
-typedef CGAL::Alpha_shape_3<Dt> Alpha_shape_3;
-\end{cprog}
+\ccIncludeExampleCode{Alpha_shapes_3/example_alpha.C}
 
 
-\subsection{Example for Basic Alpha-Shapes with Many Points
-         \label{I1_SectClassicAS3DHier}}
+\subsection{Building Basic Alpha Shapes for Many Points}
+When many points are input in the alpha shape, say more than 10 000,
+it pays off to use a triangulation hierarchy as underlying triangulation
+(cf. ref{T3-concept-hierarchy}).
 
-When the input data set is huge, say more than 10.000 points, it pays
-off to use a triangulation hierarchy. It has the same API as the
-Delaunay triangulation and differs only in the types of the vertices
-and cells. Therefore, the only part that changes are the typedefs in the beginning.
-
-\begin{cprog}
-typedef CGAL::Cartesian<double> K;
-
-typedef CGAL::Alpha_shape_vertex_base_3<K> Avb;
-typedef CGAL::Triangulation_hierarchy_vertex_base_3<Avb> Av 
-
-typedef CGAL::Triangulation_cell_base_3<K> Tc;
-typedef CGAL::Alpha_shape_cell_base_3<K,Tc> Ac;
-
-typedef CGAL::Triangulation_data_structure_3<Av,Ac> Tds;
-typedef CGAL::Delaunay_triangulation_3<K,Tds> Dt;
-typedef CGAL::Triangulation_hierarchy_3<Dt> Ht;
-typedef CGAL::Alpha_shape_3<Ht> Alpha_shape_3;
-\end{cprog}
-
-
+\ccIncludeExampleCode{Alpha_shapes_3/example_big_alpha.C}
 %----------------------------------------------------------------------
 
 \subsection{Example for Weighted Alpha-Shapes\label{I1_SectWeightedAS3D}}
 
-A weighted alpha shape\ccIndexMainItem[f]{Weighted Alpha Shapes 3}, needs a regular triangulation as
-underlying triangulation \ccc{Dt}, and it needs a particular
-cell class, namely \ccc{CGAL::Regular_triangulation_cell_base_3<Gt>}.
-Note that there is no special weighted alpha shape class.
+The following examples build a weighted alpha shape requiring a
+regular triangulation as underlying triangulation.
+The alpha shape is build in \ccc{GENERAL} mode.
 
-\begin{cprog}
-typedef CGAL::Cartesian<double> K;
-typedef CGAL::Weighted_alpha_shape_euclidean_traits_3<K> Gt;
 
-typedef CGAL::Alpha_shape_vertex_base_3<Gt> Av;
-
-typedef CGAL::Regular_triangulation_cell_base_3<Gt> Rc;
-typedef CGAL::Alpha_shape_cell_base_3<Gt,Rc>  Ac;
-
-typedef CGAL::Triangulation_data_structure_3<Av,Ac> Tds;
-typedef CGAL::Regular_triangulation_3<Gt,Tds> Rt;
-typedef CGAL::Alpha_shape_3<Rt> Alpha_shape_3;
-\end{cprog}
+\ccIncludeExampleCode{Alpha_shapes_3/example_weight.C}
