@@ -82,10 +82,14 @@ void show_results(Polyline_2_list& polyline_list,
     bool seg_painted = false;
 
     if(show_hp)
-      w << CGAL::GREEN << Iso_rectangle_2(Point_2(i2->x() - prec / Number_type(2.0),
-					          i2->y() - prec / Number_type(2.0)),
-                                          Point_2(i2->x() + prec / Number_type(2.0),
-					          i2->y() + prec / Number_type(2.0)));
+      w << CGAL::GREEN << Iso_rectangle_2(Point_2(i2->x() -
+                                                  prec / Number_type(2.0),
+					          i2->y() -
+                                                  prec / Number_type(2.0)),
+                                          Point_2(i2->x() +
+                                                  prec / Number_type(2.0),
+					          i2->y() +
+                                                  prec / Number_type(2.0)));
     for(++i2;
         i2 != i->end();
         ++i2) {
