@@ -535,8 +535,6 @@ bool Hot_Pixel<Rep_>::intersect_top(Segment_2 &seg) const
 
     if(CGAL::assign(p,result)) {
       // corner points was checked in intersect_bot
-      NT tar_y = seg.target().y(),sou_y = seg.source().y();
-
       Point_2 tmp1(x - pixel_size / 2.0,0);
       Point_2 tmp2(x + pixel_size / 2.0,0);
       Point_2 tmp3(0,y + pixel_size / 2.0);
