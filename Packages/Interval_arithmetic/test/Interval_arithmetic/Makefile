@@ -38,7 +38,8 @@ LDFLAGS = \
 
 all: test bench
 
-test:  tst1 tst2 tst5
+test:  tst0 tst1 tst2 tst5
+	./tst0
 	./tst1
 	./tst2
 	./tst5
@@ -47,6 +48,8 @@ bench: tst3 tst4
 	./tst3
 	./tst4
 
+tst0.o: tst0.C
+
 tst1.o: tst1.C include/tst_generic.C
 
 tst2.o: tst2.C include/tst_generic.C
@@ -54,6 +57,9 @@ tst2.o: tst2.C include/tst_generic.C
 tst3.o: tst3.C include/bench_generic.C
 
 tst4.o: tst4.C include/bench_generic.C
+
+tst0: tst0.o
+	$(CGAL_CXX) -o tst0 tst0.o $(LDFLAGS)
 
 tst1: tst1.o
 	$(CGAL_CXX) -o tst1 tst1.o $(LDFLAGS)
