@@ -1723,26 +1723,30 @@ int main()
 #ifdef __GNUC__
   // GNU cc
   CGAL_STDCOUT << "GNU@" << __GNUC__ << "." << __GNUC_MINOR__;
-#ifdef __GNUC_PATCHLEVEL__
-  CGAL_STDCOUT << "." << __GNUC_PATCHLEVEL__;
-#endif
+# ifdef __GNUC_PATCHLEVEL__
+    CGAL_STDCOUT << "." << __GNUC_PATCHLEVEL__;
+# endif
   CGAL_STDCOUT << CGAL_STDENDL;
 #elif defined(__sgi) && defined(_COMPILER_VERSION)
   // SGI mipspro
   CGAL_STDCOUT << "MIPSPRO";
-#if (_MIPS_SIM == _OABI32)
-  CGAL_STDCOUT << " (o32)";
-#elif (_MIPS_SIM == _NABI32)
-  CGAL_STDCOUT << " (n32)";
-#elif (_MIPS_SIM == _ABI64)
-  CGAL_STDCOUT << " (64)";
-#endif // _MIPS_SIM
+# if (_MIPS_SIM == _OABI32)
+    CGAL_STDCOUT << " (o32)";
+# elif (_MIPS_SIM == _NABI32)
+    CGAL_STDCOUT << " (n32)";
+# elif (_MIPS_SIM == _ABI64)
+    CGAL_STDCOUT << " (64)";
+# endif // _MIPS_SIM
   CGAL_STDCOUT << "@";
   output_first_ciff_separate(_COMPILER_VERSION, 10);
   CGAL_STDCOUT << CGAL_STDENDL;
 #elif defined(__sun) && defined(__SUNPRO_CC)
   // SUN workshop
-  CGAL_STDCOUT << "SUNPRO@" << std::hex;
+  CGAL_STDCOUT << "SUNPRO";
+# ifdef __sparcv9
+    CGAL_STDCOUT << " (v9)";
+# endif // __sparcv9
+  CGAL_STDCOUT << "@" << std::hex;
   output_first_ciff_separate(__SUNPRO_CC, 16);
   CGAL_STDCOUT << CGAL_STDENDL;
 #elif defined(__BORLANDC__)
@@ -1753,12 +1757,12 @@ int main()
 #elif defined(__MWERKS__)
   // Metrowerks
   CGAL_STDCOUT << "Metrowerks@" << std::hex;
-#if (__MWERKS__ == 1)
-  CGAL_STDCOUT << "precw7" << CGAL_STDENDL;
-#else
-  output_first_ciff_separate(__MWERKS__, 16);
-  CGAL_STDCOUT << CGAL_STDENDL;
-#endif // (__MWERKS__ == 1)
+# if (__MWERKS__ == 1)
+    CGAL_STDCOUT << "precw7" << CGAL_STDENDL;
+# else
+    output_first_ciff_separate(__MWERKS__, 16);
+    CGAL_STDCOUT << CGAL_STDENDL;
+# endif // (__MWERKS__ == 1)
 #elif defined(__KCC)
   // KAI CC
   CGAL_STDCOUT << "KAI CC@";
@@ -4811,8 +4815,15 @@ install_gmp_sub()
     fi
     
     cd ${GMP_VERSION}
-    _host=''
-    if _do_command_may_fail "./configure ${_host}" Configuring; then
+    _opts=''
+    _optenv=''
+    case `compiler_description` in
+	*SUNPRO*) 
+	    _opts='ABI=32'
+	    _optenv='CFLAGS="-xarch=v8plus"'
+	;;
+    esac
+    if _do_command_may_fail "${_optenv} ./configure ${_opts}" Configuring; then
 	if _do_command_may_fail "make CC=\"`c_compiler_bin`\"" Building
 	then
 	    ${_printf} "%s" "${_LEFTSPACE}Installing ..."
