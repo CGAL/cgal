@@ -476,7 +476,7 @@ Curve read_polyline_curve(std::ifstream& file, bool reverse_order)
       input_file >> arr;
       arr_file << arr;
       
-      cout<<arr;
+      std::cout<<arr;
       //input_file.close();
       //arr_file.close();
       //arr_file.open("temp", _IO_INPUT);
