@@ -96,7 +96,7 @@ public:
   inline void merge_edge(const X_curve &, const X_curve &,
                          Halfedge_handle, const X_curve &) {}
   
-  inline void remove_edge(Halfedge_handle e) {}
+  inline void remove_edge(Halfedge_handle) {}
   inline void remove_edge(const Halfedge_handle_iterator &,
                           const Halfedge_handle_iterator &) {};
   inline void clear() {}

@@ -34,25 +34,23 @@ public:
   typedef Planar_map_ Planar_map;
   typedef typename Planar_map::Traits Traits;
   
-  virtual void add_edge(
-			const typename Traits::X_curve& cv, 
-			typename Planar_map::Halfedge_handle e, 
-			bool original_direction, bool overlap=false)
+  virtual void add_edge(const typename Traits::X_curve &, 
+                        typename Planar_map::Halfedge_handle, 
+                        bool /* original_direction */, bool overlap = false)
+  {
+      (void) overlap;
+  }
+
+  virtual void split_edge(typename Planar_map::Halfedge_handle /* org */,
+                          typename Planar_map::Halfedge_handle /* new */,
+                          const typename Traits::X_curve &,
+                          const typename Traits::X_curve &)
   {
   }
 
-  virtual void split_edge(
-			  typename Planar_map::Halfedge_handle orig_edge, 
-			  typename Planar_map::Halfedge_handle new_edge,
-			  const typename Traits::X_curve& c1,
-			  const typename Traits::X_curve& c2)
-  {
-  }
-
-  //  virtual void merge_edge(
-  //  			  typename Planar_map::Halfedge_handle orig_edge, 
-  //  			  typename Planar_map::Halfedge_handle new_edge,
-  //  			  const typename Traits::X_curve& c)
+  //  virtual void merge_edge(typename Planar_map::Halfedge_handle orig_edge, 
+  //                          typename Planar_map::Halfedge_handle new_edge,
+  //                          const typename Traits::X_curve & c)
   //    {
   //    }
 
@@ -60,19 +58,17 @@ public:
   //    {
   //    }
 
-  virtual void split_face(
-			  typename Planar_map::Face_handle orig_face, 
-			  typename Planar_map::Face_handle new_face)
-  {
-  }
-	
-  virtual void add_hole(
-			typename Planar_map::Face_handle in_face, 
-			typename Planar_map::Halfedge_handle new_hole)
+  virtual void split_face(typename Planar_map::Face_handle /* org */, 
+                          typename Planar_map::Face_handle /* new */)
   {
   }
 
-  virtual const typename Traits::X_curve&
+  virtual void add_hole(typename Planar_map::Face_handle /* in_face */, 
+                        typename Planar_map::Halfedge_handle /* new_hole */)
+  {
+  }
+
+  virtual const typename Traits::X_curve &
   edge_support_curve(typename Planar_map::Halfedge_handle edge)
   {
     return edge->curve();
@@ -88,13 +84,3 @@ public:
 CGAL_END_NAMESPACE
 
 #endif  // PM_CHANGE_NOTIFICATION
-
-
-
-
-
-
-
-
-
-

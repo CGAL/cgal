@@ -34,7 +34,7 @@ typedef Planar_map::Halfedge_iterator       Halfedge_iterator;
 typedef Planar_map::Locate_type             Locate_type;
 #endif //VOID_TEST
 
-int main(int argc, char *argv[])
+int main()
 {
 #ifndef VOID_TEST
 #if STRATEGY == 3

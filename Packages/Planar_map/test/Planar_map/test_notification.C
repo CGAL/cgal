@@ -215,10 +215,11 @@ private:
 
 public:
 
-  virtual void add_edge(const typename Traits::X_curve& cv, 
+  virtual void add_edge(const typename Traits::X_curve &, 
                         typename Planar_map::Halfedge_handle e, 
-                        bool original_direction, bool overlap=false)
+                        bool /* original_direction */, bool overlap = false)
   {
+    (void) overlap;
     e->length() = squared_distance(e->source()->point(), e->target()->point());
     e->twin()->length() = e->length();
   }
@@ -312,7 +313,7 @@ void  check_lengths(const Planar_map& pm)
     CGAL_assertion(f_iter->area() == face_area(f_iter));
 }*/
 
-int main(int argc, char *argv[])
+int main()
 {
   Planar_map Pm;
   CGAL::Notification<Planar_map, R>  notf;

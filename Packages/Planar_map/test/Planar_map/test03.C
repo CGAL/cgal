@@ -40,7 +40,7 @@ typedef Planar_map::Halfedge_around_vertex_circulator
 typedef Planar_map::Ccb_halfedge_circulator Ccb_halfedge_circulator;
 #endif //VOID_TEST
 
-int main(int argc, char *argv[])
+int main()
 {
 #ifndef VOID_TEST
 #if STRATEGY == 3

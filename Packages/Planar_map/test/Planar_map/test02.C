@@ -32,7 +32,7 @@ typedef Planar_map::Halfedge_handle Halfedge_handle;
 typedef Planar_map::Face_iterator Face_iterator;
 #endif //VOID_TEST
 
-int main(int argc, char *argv[])
+int main()
 {
 #ifndef VOID_TEST
 #if STRATEGY == 3
