@@ -1,4 +1,4 @@
-#!/sw/bin/perl5 -w
+#!/sw/bin/perl -w
 
 use strict;
 
@@ -68,7 +68,7 @@ sub install_results()
     unlink $tarname;
 
     open NOTICE,
-    "|$mail_prog \"New test results ($cgal_version)\" 'cgal-develop\@cs.uu.nl'";
+    "|$mail_prog \"New test results ($cgal_version)\" 'cgal-develop-l\@postino.mpi-sb.mpg.de'";
     print NOTICE <<"TOTHIER";
 Results for the following platforms have been installed on
 http://www.cs.uu.nl/CGAL/Members/Develop/testsuite/results.html 
