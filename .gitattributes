@@ -869,7 +869,6 @@ Packages/ExternalMemoryStructures/doc_tex/basic/ExternalMemoryStructures/rtree-c
 Packages/ExternalMemoryStructures/doc_tex/basic/ExternalMemoryStructures/rtree-classes4.fig -text
 Packages/ExternalMemoryStructures/doc_tex/basic/ExternalMemoryStructures/rtree-classes4.gif -text svneol=unset#unset
 Packages/Generator/demo/Generator/generator.vcproj -text
-Packages/Generator/doc_ps/Generator.ps.gz svneol=native#unset
 Packages/Generator/doc_tex/Generator/Segment_generator_prog1.gif -text svneol=unset#unset
 Packages/Generator/doc_tex/Generator/Segment_generator_prog1.ps -text
 Packages/Generator/doc_tex/Generator/Segment_generator_prog1_small.gif -text svneol=unset#unset
