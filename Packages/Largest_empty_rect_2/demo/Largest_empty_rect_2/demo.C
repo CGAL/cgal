@@ -5,7 +5,7 @@
 
 #include <CGAL/Polygon_2.h>
 #include <CGAL/IO/Window_stream.h>
-#include "../../include/CGAL/Largest_empty_iso_rectangle_2.h"
+#include <CGAL/Largest_empty_iso_rectangle_2.h>
 
 #define MIN_X 0
 #define MIN_Y 0
