@@ -360,13 +360,36 @@ private slots:
     A.clear();
     AW.clear();
     Wpoint pw;
-    CGAL::Random_points_in_disc_2<Point> g(0.5);
+    CGAL::Random_points_in_disc_2<Point> g(0.2);
     for(int count=0; count<200; count++) {
       tr1.insert(*g);
       pw = *g;
       L.push_back(*g++);
       LW.push_back(pw);
     }
+
+    {
+      CGAL::Random_points_on_circle_2<Point> g(0.3);
+
+      for(int count=0; count<100; count++) {
+	tr1.insert(*g);
+	pw = *g;
+	L.push_back(*g++);
+	LW.push_back(pw);
+      }
+    }
+
+    {
+      CGAL::Random_points_on_circle_2<Point> g(0.45);
+
+      for(int count=0; count<60; count++) {
+	tr1.insert(*g);
+	pw = *g;
+	L.push_back(*g++);
+	LW.push_back(pw);
+      }
+    }
+
     Vertex_iterator it = tr1.vertices_begin();
     xmin = xmax = (*it).point().x();
     ymin = ymax = (*it).point().y();
@@ -441,7 +464,8 @@ private slots:
 		   QString::number(alpha_index));
     A.set_alpha(alpha_index);
     A.set_mode(Alpha_shape::GENERAL);
-    widget->redraw();   
+    something_changed();
+    //widget->redraw();   
   }
 
 private:
