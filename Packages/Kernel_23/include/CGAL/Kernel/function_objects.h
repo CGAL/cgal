@@ -1254,15 +1254,15 @@ namespace CommonKernelFunctors {
     typedef Point_2          result_type;
     typedef Arity_tag< 2 >   Arity;
 
-    Point_2
+    Point_2 &
     operator()( const Segment_2& s, int i) const
     { return s.vertex(i); }
 
-    Point_2
+    Point_2 &
     operator()( const Triangle_2& t, int i) const
     { return t.vertex(i); }
 
-    Point_2
+    Point_2 &
     operator()( const Iso_rectangle_2& r, int i) const
     { return r.vertex(i); }
   };
@@ -1279,19 +1279,19 @@ namespace CommonKernelFunctors {
     typedef Point_3          result_type;
     typedef Arity_tag< 2 >   Arity;
 
-    Point_3
+    Point_3 &
     operator()( const Segment_3& s, int i) const
     { return s.vertex(i); }
 
-    Point_3
+    Point_3 &
     operator()( const Triangle_3& t, int i) const
     { return t.vertex(i); }
 
-    Point_3
+    Point_3 &
     operator()( const Iso_cuboid_3& r, int i) const
     { return r.vertex(i); }
 
-    Point_3
+    Point_3 &
     operator()( const Tetrahedron_3& t, int i) const
     { return t.vertex(i); }
   };
