@@ -31,19 +31,19 @@ struct converter<Interval_nt_advanced,leda_real>
     static inline Interval_nt_advanced do_it (const leda_real & z)
     {
 #ifdef CGAL_IA_DEBUG
-    CGAL_assertion(FPU_get_rounding_mode() == FPU_PLUS_INFINITY);
+    CGAL_assertion(FPU_get_cw() == FPU_cw_up);
 #endif
-    FPU_set_rounding_to_nearest();
+    FPU_set_cw(FPU_cw_near);
     double approx = to_double(z);
     double rel_error = z.get_double_error();
-    FPU_set_rounding_to_infinity();
+    FPU_set_cw(FPU_cw_up);
     Interval_nt_advanced result = approx
 	* ( Interval_nt_advanced(-rel_error,rel_error) + 1 );
 #ifdef CGAL_IA_DEBUG
-    FPU_set_rounding_to_nearest();
+    FPU_set_cw(FPU_cw_near);
     CGAL_assertion( leda_real(result.lower_bound()) <= z &&
 		    leda_real(result.upper_bound()) >= z );
-    FPU_set_rounding_to_infinity();
+    FPU_set_cw(FPU_cw_up);
 #endif
     return result;
     }

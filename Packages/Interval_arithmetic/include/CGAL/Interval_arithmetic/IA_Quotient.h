@@ -35,7 +35,7 @@ struct converter<Interval_nt_advanced,Quotient<RT> >
     static inline Interval_nt_advanced do_it (const Quotient<RT> & z)
     {
 #ifdef CGAL_IA_DEBUG
-	CGAL_assertion(FPU_get_rounding_mode() == FPU_PLUS_INFINITY);
+	CGAL_assertion(FPU_get_cw() == FPU_cw_up);
 #endif
 	return  convert_to<Interval_nt_advanced>(z.numerator()) /
 		convert_to<Interval_nt_advanced>(z.denominator());
