@@ -29,7 +29,7 @@
 #ifndef CGAL_USE_LEDA
 int main()
 {
-  cout << "Sorry.  This demo needs LEDA for visualization" << endl;
+  std::cout << "Sorry.  This demo needs LEDA for visualization" << std::endl;
   return 0;
 }
 #else
@@ -77,10 +77,11 @@ int main()
   std::vector<Segment> Vs;
   CGAL::copy_n( g, 30, std::back_inserter( Vs) );
   W << CGAL::GREEN;
-  cout << "Generating random segments." << endl;
+  std::cout << "Generating random segments." << std::endl;
   std::copy( Vs.begin(), Vs.end(),
              CGAL::Ostream_iterator<Segment,CGAL::Window_stream>( W) );
-  cout << "Click in the window to see the intersection points." << endl;
+  std::cout << "Click in the window to see the intersection points." 
+            << std::endl;
   W.read_mouse();
 
   std::vector<Point>   Vip;
@@ -94,8 +95,8 @@ int main()
   std::copy( Vip.begin(), Vip.end(),
              CGAL::Ostream_iterator<Point,CGAL::Window_stream>( W) );
 
-  cout << "Click in the window to see the convex hull of the intersection"
-       << " points." << endl;
+  std::cout << "Click in the window to see the convex hull of the intersection"
+            << " points." << std::endl;
   W.read_mouse();
 
   Polygon Pol;
@@ -104,7 +105,7 @@ int main()
   W << CGAL::RED;
   W.set_line_width(2);
   W << Pol;
-  cout << "Click in the window to exit." << endl; 
+  std::cout << "Click in the window to exit." << std::endl; 
   W.read_mouse();
 }
 #endif // CGAL_USE_LEDA

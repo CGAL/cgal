@@ -12,7 +12,7 @@ typedef CGAL::Polygon_2<R, std::list<Point_2> >     Polygon_2;
 int main()
 {
   Polygon_2                         CH;
-  std::istream_iterator< Point_2 >  in_start( cin );
+  std::istream_iterator< Point_2 >  in_start( std::cin );
   std::istream_iterator< Point_2 >  in_end;
 
   CGAL::convex_hull_points_2( in_start, in_end,
