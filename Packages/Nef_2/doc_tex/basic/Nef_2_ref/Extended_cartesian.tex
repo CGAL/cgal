@@ -31,16 +31,9 @@ representation based on a field number type \ccc{FT}.
 
 \ccHeading{Requirements} 
 
-To make a field number type \ccc{FT_model} work with this class you
-have to provide the following number type traits class in global
-namespace.
-
-\begin{ccExampleCode}
-template <>
-struct ring_or_field<FT_model> {
-  typedef field_with_div kind;
-};    
-\end{ccExampleCode}
+To make a field number type \ccc{FT_model} work with this class, you
+must provide a traits class for this number type:
+\ccc{CGAL::Number_type_traits<FT_model>} (See the support library manual.)
 
 \ccOperations
 
