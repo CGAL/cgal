@@ -1,0 +1,136 @@
+% =============================================================================
+% The CGAL Reference Manual
+% Chapter: Geometric Optimisation
+% Class  : CGAL::Width_default_traits_3<Traits>
+% -----------------------------------------------------------------------------
+% file  : doc_tex/basic/Optimisation/..._ref/Width_default_traits_3.tex
+% author: Thomas Herrmann, Sven Schönherr <herrmann@ifor.math.ethz.ch>
+% -----------------------------------------------------------------------------
+% $CGAL_Chapter: Geometric Optimisation $
+% $CGAL_Package: Width_3 $
+% $Revision$
+% $Date$
+% =============================================================================
+
+\ccAutoIndexingOff
+
+\begin{ccRefClass}{Width_default_traits_3<R>}
+\ccIndexTraitsClassBegin{Width_default_traits_3}{Width_3}{}
+
+\ccAutoIndexingOn
+
+% -----------------------------------------------------------------------------
+\ccDefinition
+
+The class \ccRefName\ is a traits class for \ccc{Width_3<Traits>}
+using the three-dimensional \cgal\ kernel.
+ 
+\ccInclude{CGAL/Width_default_traits_3.h}
+
+% -----------------------------------------------------------------------------
+\ccRequirements
+
+The template parameter \ccc{R} is a model for \ccc{Kernel}
+
+% -----------------------------------------------------------------------------
+\ccIsModel
+
+\ccRefConceptPage{Width_traits_3}
+
+% -----------------------------------------------------------------------------
+\ccTypes
+
+\ccSaveThreeColumns
+\ccSetTwoColumns{Width_default_traits_3<R>:: ChullTraits;}{}
+
+\ccGlueBegin
+\ccNestedType{Point}{typedef to \ccc{CGAL::Point_3<R>}.}
+\ccNestedType{Plane}{typedef to \ccc{CGAL::Plane_3<R>}.}
+\ccNestedType{Vector}{typedef to \ccc{CGAL::Vector_3<R>}.}
+\ccNestedType{RT}{typedef to \ccc{R::RT}.}
+\ccNestedType{ChullTraits}{typedef to \ccc{chull_traits_3<R>}.}
+\ccGlueEnd
+
+% -----------------------------------------------------------------------------
+\ccCreation
+\ccCreationVariable{traits}
+
+\ccConstructor{ Width_default_traits_3( );}{default constructor.}
+
+% -----------------------------------------------------------------------------
+\ccOperations
+
+\ccSetThreeColumns{Vector}{get_point_coefficients();}{}
+\ccGlueBegin
+\ccMemberFunction{ RT get_hx(const Point& p) const;}{returns the
+  homogeneous $x$-coordinate of point $p$.}  
+
+\ccMemberFunction{ RT get_hy(const Point& p) const;}{returns the
+  homogeneous $y$-coordinate of point $p$.}  
+
+\ccMemberFunction{ RT get_hz(const Point& p) const;}{returns the
+  homogeneous $z$-coordinate of point $p$.}  
+
+\ccMemberFunction{ RT get_hw(const Point& p) const;}{returns the
+  homogenizing coordinate of point $p$.}  
+
+\ccMemberFunction{ void get_point_coordinates(const Point& p, RT& px,
+  RT& py, RT& pz, RT& ph) const;}{returns all homogeneous coordinates
+  of point $p$ at once.}
+\ccGlueEnd
+
+\ccGlueBegin
+\ccMemberFunction{ RT get_a(const Plane& f) const;}{returns the first
+  coefficient of plane $f$.}
+\ccMemberFunction{ RT get_b(const Plane& f) const;}{returns the second
+  coefficient of plane $f$.}
+\ccMemberFunction{ RT get_c(const Plane& f) const;}{returns the third
+  coefficient of plane $f$.}
+\ccMemberFunction{ RT get_d(const Plane& f) const;}{returns the fourth
+  coefficient of plane $f$.}
+\ccMemberFunction{ void get_plane_coefficients(const Plane& f, 
+  RT& a, RT& b, RT& c, RT& d)
+  const;}{returns all four plane coefficients of $f$ at once.}
+\ccGlueEnd
+
+\ccGlueBegin
+\ccMemberFunction{ Point make_point(const RT& hx, const RT& hy, const RT& hz, 
+  const RT& hw) const;}{returns a point of type
+  \ccc{Point} with homogeneous coordinates $hx$, $hy$, $hz$ and $hw$.}
+\ccMemberFunction{ Plane make_plane(const RT& a, const RT& b, const
+  RT& c, const RT& d) const;}{returns a plane of type \ccc{Plane}
+  whose coefficients are $a$, $b$, $c$ and $d$.}
+\ccMemberFunction{ Vector make_vector(const RT& a, const RT& b, const
+  RT& c) const;}{returns a vector of type \ccc{Vector} with the four 
+  coefficients $a$, $b$, $c$ and 1.}
+\ccGlueEnd
+
+\ccGlueBegin
+\ccMemberFunction{ void inverse_normal(Vector& normal);}{inverts the
+  vector \ccc{normal}, \ie \ccc{normal} becomes \ccc{-normal}.}
+\ccMemberFunction{ void opposite_plane(Plane& pl);}{computes the
+  opposite plane of \ccc{pl}, \ie the orientation of plane \ccc{pl} is
+  inverted.}
+\ccMemberFunction{ Vector orthogonal_vector(Plane& pl);} {returns the
+  vector, that is orthogonal to the plane \ccc{pl} and that points to
+  the positive side of \ccc{pl}.}
+\ccGlueEnd
+
+\ccRestoreThreeColumns
+
+% -----------------------------------------------------------------------------
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Width_3<Traits>}\\[1ex]
+\ccRefConceptPage{Width_traits_3}
+
+% -----------------------------------------------------------------------------
+
+\ccAutoIndexingOff
+
+\ccIndexTraitsClassEnd
+\end{ccRefClass}
+
+\ccAutoIndexingOn
+
+% ===== EOF ===================================================================
