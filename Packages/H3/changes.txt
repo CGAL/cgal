@@ -1,3 +1,6 @@
+2.42   (12 December 2001)
+- Add IO operators for SphereH3.
+
 2.41   (1 December 2001)
 - operator<< of various kernel object required more than R to be public.        
 
