@@ -98,8 +98,9 @@ public:
     // CGAL_POSITIVE if qrp and qrs have the same orientation
     // CGAL_NEGATIVE if qrp and qrs have opposite orientations
   {
-    // no precondition but should be used only when p,q,r,s are coplanar
-
+    // should be used only when p,q,r,s are coplanar
+    CGAL_triangulation_precondition( orientation(p,q,r,s) ==
+				     CGAL_COPLANAR );
     // projection on the x,y-plane
     Point2 pxy(p.hx(), p.hy(), p.hw());
     Point2 qxy(q.hx(), q.hy(), q.hw());
@@ -115,7 +116,7 @@ public:
 	return CGAL_POSITIVE;
       }
       else {
-	if ( oxy_qrp == CGAL_COLLINEAR ) { return CGAL_COLLINEAR;	}
+	if ( oxy_qrp == CGAL_COLLINEAR ) { return CGAL_COLLINEAR; }
 	else { return CGAL_NEGATIVE; }
       }
     }
@@ -179,13 +180,48 @@ public:
     }
 
   CGAL_Oriented_side 
-  side_of_oriented_circle_in_plane(const Point & p,
-				   const Point & q,
-				   const Point & r,
-				   const Point & test) const
+  side_of_oriented_circle(const Point & p,
+			  const Point & q,
+			  const Point & r,
+			  const Point & test) const
     {
-      cerr<< "side_of_oriented_circle_in_plane not yet implemented" << endl;
-      CGAL_triangulation_assertion(false);
+      CGAL_triangulation_precondition( orientation(p,q,r,test) ==
+				       CGAL_COPLANAR );
+
+      // test belongs to the circle if and only if it belongs to a
+      // sphere passing through pqr
+      Point O(0,0,0);
+      switch ( orientation( p,q,r,O ) ) {
+      case CGAL_POSITIVE:
+	return CGAL_side_of_oriented_sphere(p, q, r, O, test); 
+      case CGAL_NEGATIVE:
+	return CGAL_side_of_oriented_sphere(O, p, q, r, test);
+      }
+      // if O coplanar, use A
+      Point A(1,0,0);
+      switch ( orientation( p,q,r,A ) ) {
+      case CGAL_POSITIVE:
+	return CGAL_side_of_oriented_sphere(p, q, r, A, test); 
+      case CGAL_NEGATIVE:
+	return CGAL_side_of_oriented_sphere(A, p, q, r, test);
+      }
+      // if A is coplanar, use B
+      Point B(0,1,0);
+      switch ( orientation( p,q,r,B ) ) {
+      case CGAL_POSITIVE:
+	return CGAL_side_of_oriented_sphere(p, q, r, B, test); 
+      case CGAL_NEGATIVE:
+	return CGAL_side_of_oriented_sphere(B, p, q, r, test);
+      }
+      // if B also coplanar, use C
+      Point C(0,0,1);
+      switch ( orientation( p,q,r,C ) ) {
+      case CGAL_POSITIVE:
+	return CGAL_side_of_oriented_sphere(p, q, r, C, test); 
+      case CGAL_NEGATIVE:
+	return CGAL_side_of_oriented_sphere(C, p, q, r, test);
+      }
+      // impossible, only to avoid compilation warnings :
       return CGAL_ON_POSITIVE_SIDE;
     }
 
