@@ -39,7 +39,7 @@ CGAL_BEGIN_NAMESPACE
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
-// CGAL_KERNEL_MEDIUM_INLINE
+/* CGAL_KERNEL_MEDIUM_INLINE */
 Comparison_result
 compare_xC2(
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &px,
@@ -83,7 +83,7 @@ compare_xC2(
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
-// CGAL_KERNEL_MEDIUM_INLINE
+/* CGAL_KERNEL_MEDIUM_INLINE */
 Comparison_result
 compare_xC2(
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l1a, 
@@ -143,7 +143,7 @@ compare_xC2(
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
-// CGAL_KERNEL_MEDIUM_INLINE
+/* CGAL_KERNEL_MEDIUM_INLINE */
 Comparison_result
 compare_y_at_xC2(
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &px, 
@@ -180,7 +180,7 @@ compare_y_at_xC2(
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
-// CGAL_KERNEL_MEDIUM_INLINE
+/* CGAL_KERNEL_MEDIUM_INLINE */
 Comparison_result
 compare_y_at_xC2(
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &px,
@@ -224,7 +224,7 @@ compare_y_at_xC2(
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
-// CGAL_KERNEL_LARGE_INLINE
+/* CGAL_KERNEL_LARGE_INLINE */
 Comparison_result
 compare_y_at_xC2(
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l1a, 
@@ -274,7 +274,7 @@ compare_y_at_xC2(
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
-// CGAL_KERNEL_LARGE_INLINE
+/* CGAL_KERNEL_LARGE_INLINE */
 Comparison_result
 compare_y_at_xC2(
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l1a, 
@@ -334,7 +334,7 @@ compare_y_at_xC2(
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
-// inline
+/* inline */
 Comparison_result
 compare_deltax_deltayC2(
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &px, 
@@ -368,7 +368,7 @@ compare_deltax_deltayC2(
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
-// inline
+/* inline */
 Comparison_result
 compare_lexicographically_xyC2(
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &px, 
@@ -402,7 +402,7 @@ compare_lexicographically_xyC2(
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
-// inline
+/* inline */
 Orientation
 orientationC2(
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &px, 
@@ -443,7 +443,7 @@ orientationC2(
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
-// CGAL_KERNEL_MEDIUM_INLINE
+/* CGAL_KERNEL_MEDIUM_INLINE */
 bool
 collinear_are_ordered_along_lineC2(
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &px, 
@@ -484,7 +484,7 @@ collinear_are_ordered_along_lineC2(
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
-// CGAL_KERNEL_MEDIUM_INLINE
+/* CGAL_KERNEL_MEDIUM_INLINE */
 bool
 collinear_are_strictly_ordered_along_lineC2(
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &px, 
@@ -525,7 +525,7 @@ collinear_are_strictly_ordered_along_lineC2(
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
-// CGAL_KERNEL_LARGE_INLINE
+/* CGAL_KERNEL_LARGE_INLINE */
 Oriented_side
 side_of_oriented_circleC2(
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &px, 
@@ -573,7 +573,7 @@ side_of_oriented_circleC2(
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
-// CGAL_KERNEL_LARGE_INLINE
+/* CGAL_KERNEL_LARGE_INLINE */
 Bounded_side
 side_of_bounded_circleC2(
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &px, 
@@ -621,7 +621,7 @@ side_of_bounded_circleC2(
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
-// inline
+/* inline */
 Comparison_result
 cmp_dist_to_pointC2(
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &px, 
@@ -662,7 +662,7 @@ cmp_dist_to_pointC2(
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
-// inline
+/* inline */
 bool
 has_larger_dist_to_pointC2(
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &px, 
@@ -703,7 +703,7 @@ has_larger_dist_to_pointC2(
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
-// inline
+/* inline */
 bool
 has_smaller_dist_to_pointC2(
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &px, 
@@ -744,7 +744,7 @@ has_smaller_dist_to_pointC2(
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
-// inline
+/* inline */
 Comparison_result
 cmp_signed_dist_to_lineC2(
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &la, 
@@ -788,7 +788,7 @@ cmp_signed_dist_to_lineC2(
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
-// inline
+/* inline */
 bool
 has_larger_signed_dist_to_lineC2(
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &la, 
@@ -832,7 +832,7 @@ has_larger_signed_dist_to_lineC2(
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
-// inline
+/* inline */
 bool
 has_smaller_signed_dist_to_lineC2(
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &la, 
@@ -875,7 +875,7 @@ has_smaller_signed_dist_to_lineC2(
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
-// inline
+/* inline */
 Comparison_result
 cmp_signed_dist_to_lineC2(
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &px, 
@@ -923,7 +923,7 @@ cmp_signed_dist_to_lineC2(
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
-// inline
+/* inline */
 bool
 has_larger_signed_dist_to_lineC2(
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &px, 
@@ -971,7 +971,7 @@ has_larger_signed_dist_to_lineC2(
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
-// inline
+/* inline */
 bool
 has_smaller_signed_dist_to_lineC2(
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &px, 
