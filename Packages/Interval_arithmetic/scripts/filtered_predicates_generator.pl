@@ -123,6 +123,8 @@ sub print_dynamic {
   print FO
 "#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#else
+template <>
 #endif
 /* $inline */
 $ret_type
@@ -239,6 +241,8 @@ sub print_static {
   print FO
 "#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#else
+template <>
 #endif
 /* $inline */
 $ret_type
