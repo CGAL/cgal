@@ -278,9 +278,14 @@ namespace CommonKernelFunctors {
   {
     typedef typename K::FT          FT;
     typedef typename K::Segment_2   Segment_2;
+    typedef typename K::Vector_2    Vector_2;
   public:
     typedef FT               result_type;
     typedef Arity_tag< 1 >   Arity;
+
+    FT
+    operator()( const Vector_2& v) const
+    { return v.squared_length(); }
 
     FT
     operator()( const Segment_2& s) const
@@ -292,9 +297,14 @@ namespace CommonKernelFunctors {
   {
     typedef typename K::FT          FT;
     typedef typename K::Segment_3   Segment_3;
+    typedef typename K::Vector_3    Vector_3;
   public:
     typedef FT               result_type;
     typedef Arity_tag< 1 >   Arity;
+
+    FT
+    operator()( const Vector_3& v) const
+    { return v.squared_length(); }
 
     FT
     operator()( const Segment_3& s) const

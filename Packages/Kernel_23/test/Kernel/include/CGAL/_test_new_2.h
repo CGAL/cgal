@@ -383,7 +383,8 @@ test_new_2(const R& rep)
 
   typename R::Compute_squared_length_2 Compute_squared_length
         = rep.compute_squared_length_2_object();
-  FT tmp23 = Compute_squared_length(s2);
+  FT tmp23 = Compute_squared_length(v2);
+     tmp23 = Compute_squared_length(s2);
 
   typename R::Compute_squared_radius_2 Compute_squared_radius
         = rep.compute_squared_radius_2_object();
