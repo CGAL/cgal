@@ -1,3 +1,6 @@
+3.13 (19 June 2001)
+- added centroid
+
 3.12 (1 May 2001)
 - added compare_x_at_y
 

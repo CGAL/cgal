@@ -1,3 +1,6 @@
+3.17 (19 Jun 2001)
+- added centroid
+
 3.16 (?? Mar 2001)
 - Fix too long lines.
 
