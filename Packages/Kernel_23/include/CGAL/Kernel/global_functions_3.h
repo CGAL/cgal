@@ -103,7 +103,9 @@ midpoint(const Point_3<K> &p, const Point_3<K> &q)
 template <class K >
 inline
 typename K::Vector_3
-orthogonal_vector(const Point_3<K>& p, const Point_3<K>& q, const Point_3<K>& r)
+orthogonal_vector(const Point_3<K>& p,
+		  const Point_3<K>& q,
+		  const Point_3<K>& r)
 {
   return CGALi::orthogonal_vector(p, q, r, K());
 }
