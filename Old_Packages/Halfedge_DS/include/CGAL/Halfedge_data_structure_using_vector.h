@@ -533,9 +533,13 @@ pointer_update( Vertex_const_iterator   v_old,
         D.set_prev( &*h, CGAL_H_UPDATE( D.get_prev( &*h)));
         D.set_vertex( &*h, CGAL_V_UPDATE( D.get_vertex( &*h)));
         D.set_vertex_halfedge( &*h);
-        D.set_facet( &*h, CGAL_F_UPDATE( D.get_facet( &*h)));
-        if ( ! h->is_border())
+        Facet* f = D.get_facet( &*h );
+        if ( f ) {
+            D.set_facet( &*h, CGAL_F_UPDATE( f ) );
             D.set_facet_halfedge( &*h);
+        } else {
+            D.set_facet( &*h, NULL );
+        }
     }
     border_halfedges = CGAL_H_UPDATE_I( border_halfedges);
 }
