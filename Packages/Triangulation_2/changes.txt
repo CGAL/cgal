@@ -2,7 +2,7 @@ Package triangulation: provides triangulations Delaunay triangulations,
 constrained and regular triangulations with  tests and examples.
 
 
-Ver 5.19 (??)
+Ver 5.19 (14/8/01)
 - fixed Side_of_oriented_circle_2 in Triangulation_2_traits_3.h
 - merge with the branch wi_branch :
   different versions of Constrained_triangulation_plus_2.h
