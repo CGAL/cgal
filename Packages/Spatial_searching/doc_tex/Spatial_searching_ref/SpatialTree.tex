@@ -36,7 +36,7 @@ both neighbor searching and approximate range searching.
 \ccConstructor{template <class InputIterator> Tree(InputIterator first, InputIterator beyond, PointTraits t);}
 {
 Constructs a tree on the elements from the sequence 
-\ccc{first, beyond}. 
+\ccc{[first,beyond)}. 
 }
 
 \ccOperations
@@ -44,7 +44,7 @@ Constructs a tree on the elements from the sequence
 \ccMethod{
 template <class OutputIterator, class FuzzyQueryItem>
 OutputIterator search(OutputIterator it, FuzzyQueryItem q);}
-{Reports the points that are approximately contained by \ccc{q}.} 
+{Reports the points that are approximately contained by~\ccc{q}.} 
 
 \ccMethod{
 OutputIterator report_all_points(OutputIterator it);}

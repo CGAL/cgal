@@ -38,9 +38,11 @@ tree shall be built with extended nodes, and \ccc{CGAL::Tag_false} else.
 \ccTypedef{PointTraits::NT NT;}{Number type.}
 \ccNestedType{Splitter;}{Splitter type.}
 
+\ccNestedType{iterator;}{Bidirectional iterator with value type \ccc{Point} that allows
+	to enumerate all points in the tree.}
+
 \begin{ccAdvanced}
-\ccTypedef{Kd_tree_node<PointTraits, Splitter> Node;}{Node type.}
-\ccNestedType{Node_handle;}{A handle with value type \ccc{Node}.}
+\ccNestedType{Node_handle;}{A handle with value type \ccc{Kd_tree_node<PointTraits,Splitter>}.}
 \ccNestedType{Point_iterator;} {Random access iterator 
 with value type \ccc{Point*}.}
 \end{ccAdvanced}
@@ -63,13 +65,11 @@ The value type of the \ccc{InputIterator} must be \ccc{Point}.
 template <class OutputIterator, class FuzzyQueryItem>
 OutputIterator search(OutputIterator it, FuzzyQueryItem q);}
 {Reports the points that are approximately contained by~\ccc{q}.
-The type \ccc{FuzzyQueryItem} and \ccc{Point} must fit.} 
+The types \ccc{FuzzyQueryItem::Point} and \ccc{Point} must be equivalent.} 
 
-\ccMethod{
-template <class OutputIterator>
-OutputIterator report_all_points(OutputIterator it);}
-{Reports all the points contained by the $k$-$d$ tree. The value type of \ccc{OutputIterator} must
-be \ccc{Point}.} 
+\ccMethod{iterator begin();}{Returns an iterator to the first point in the tree.}
+\ccMethod{iterator end();}{Returns the corresponding past-the-end iterator.}
+
 
 
 

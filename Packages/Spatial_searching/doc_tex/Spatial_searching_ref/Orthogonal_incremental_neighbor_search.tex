@@ -44,7 +44,8 @@ kd tree nodes.
 \ccTypedef{PointTraits::Point Point;}{Point type.}
 \ccTypedef{PointTraits::NT NT;}{Number type.}
 \ccTypedef{std::pair<Pair,NT> Point_with_distance;}{Pair of point and distance.}
-\ccNestedType{iterator}{Forward iterator for enumerating approximate neighbors.}
+\ccNestedType{iterator}{Forward iterator with value type \ccc{Point_with_distance}
+for enumerating approximate neighbors.}
 
 \ccTypedef{SpatialTree Tree;}{The tree type.}
 \ccCreation
@@ -61,7 +62,7 @@ in the points stored \ccc{tree} using a distance \ccc{d} and approximation facto
 
 \ccMethod{iterator begin();}{Returns an iterator to the approximate neighbor.}
 
-\ccMethod{iterator end();}{Past-the-end iterator.}
+\ccMethod{iterator end();}{Returns the corresponding past-the-end iterator.}
 
 \
 \begin{ccAdvanced}

@@ -19,7 +19,8 @@
 \ccDefinition
   
 The class \ccRefName\ implements approximate $k$-nearest and $k$-furthest neighbor searching
-using standard search on a tree using a general distance class. 
+using standard search on a tree using a general distance class. The tree may be built with 
+extended or unextended nodes.
 
 \ccInclude{CGAL/K_neighbor_search.h}
 
@@ -63,7 +64,7 @@ distance class $d$ and approximation factor \ccc{eps}.}
 
 \ccMethod{template <class OutputIterator>
 OutputIterator  the_k_neighbors(OutputIterator res);}
-{Writes a sequence of $k$ elements of type \ccc{Point_with_distance}.} 
+{Writes \ccc{k} elements of type \ccc{Point_with_distance} to \ccc{res}.} 
 
 \begin{ccAdvanced}
 \ccMethod{std::ostream& statistics(std::ostream& s);}

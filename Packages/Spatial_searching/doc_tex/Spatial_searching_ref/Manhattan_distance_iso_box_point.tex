@@ -49,8 +49,7 @@ GeneralDistance
 \ccCreation
 \ccCreationVariable{d}  %% choose variable name
 
-\ccConstructor{Manhattan_distance_iso_box_point();}{Default constructor implementing Manhattan distance for
-two-dimensional iso-boxs.}
+\ccConstructor{Manhattan_distance_iso_box_point();}{Default constructor.}
 
 \ccOperations
 
@@ -60,13 +59,13 @@ two-dimensional iso-boxs.}
 
 \ccMethod{NT distance(IsoBox b, Point p);}{Returns the distance between \ccc{b} and \ccc{p}.}
 
-\ccMethod{NT min_distance_to_queryitem(IsoBox b, Kd_tree_rectangle<PointTraits> r;);}
+\ccMethod{NT min_distance_to_queryitem(IsoBox b, Kd_tree_rectangle<PointTraits> r);}
 {Returns the minimal distance between a point from \ccc{b} and a point from
 \ccc{r}.}
 
-\ccMethod{NT max_distance_to_queryitem(IsoBox b q, Kd_tree_rectangle<PointTraits> r;);}
+\ccMethod{NT max_distance_to_queryitem(IsoBox b, Kd_tree_rectangle<PointTraits> r);}
 {Returns the maximal distance between the iso-box \ccc{b} and
-a point from \ccc{r} furthest to \ccc{q}.}
+a point from \ccc{r} furthest to \ccc{b}.}
 
 
 \ccSeeAlso

@@ -20,19 +20,19 @@
 
 \ccDefinition
   
-The class \ccRefName\ implements \ccc{d}-dimensional iso-rectangles and related operations.
-E.g. constructors and methods to compute bounding boxes of point sets are provided. 
+The class \ccRefName\ implements \ccc{d}-dimensional iso-rectangles and related operations,
+e.g., methods to compute bounding boxes of point sets. 
 
 
 \ccInclude{CGAL/Kd_tree_rectangle.h}
 
-\ccCreation
-\ccCreationVariable{r}  %% choose variable name
 
 \ccTypes
 
 \ccTypedef{PointTraits::NT NT;}{Number type.}
 
+\ccCreation
+\ccCreationVariable{r}  %% choose variable name
 
 \ccConstructor{Kd_tree_rectangle(int d);}
 {Constructs a $d$-dimensional rectangle \ccc{r} with lower bound and upper bound set to zero 

@@ -40,7 +40,7 @@ template <class InputIterator>
 PointContainer(int d, InputIterator begin, InputIterator end);}
 {
 Construct the container of $d$-dimensional points of type \ccc{Point}
-given by the iterator sequence \ccc{begin}, \ccc{end}.
+given by the iterator sequence \ccc{[begin,end)}.
 }
 
 \ccOperations
@@ -48,8 +48,8 @@ given by the iterator sequence \ccc{begin}, \ccc{end}.
 \ccMethod{template <class SpatialSeparator>
 void split(PointContainer& C, SpatialSeparator sep, bool sliding=false);}
 {Given an empty container \ccc{C} with the same dimension as \ccc{c}, splits \ccc{c} into
-\ccc{c} and \ccc{C} using the separator \ccc{sep}. If sliding is true after splitting 
-each container contains at least one point. \ccc{c} should contain at least two points.}
+\ccc{c} and \ccc{C} using the separator \ccc{sep}. If sliding is \ccc{true}, after splitting 
+each container contains at least one point. Container \ccc{c} should contain at least two points.}
 
 \ccHasModels
 
