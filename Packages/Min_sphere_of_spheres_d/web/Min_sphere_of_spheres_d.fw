@@ -704,7 +704,7 @@ int main(int,char **) {
   Minsphere mb(S.begin(),S.end());
 
   // measure time:
-  bool e = mb.is_empty();
+  mb.is_empty();
   time = clock() - time;
 
   // output running time:
