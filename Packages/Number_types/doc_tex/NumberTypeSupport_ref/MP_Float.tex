@@ -11,6 +11,7 @@ An object of the class \ccc{MP_Float} is able to represent a floating point
 value with arbitrary precision.  This number type has the property that
 additions, subtractions and multiplications are computed exactly, as well as
 the construction from \ccc{float}, \ccc{double} and \ccc{long double}.
+
 Division and square root are computed approximately, so we suggest that you use
 rationals like \ccc{Quotient<MP_Float>} when you need exact divisions.
 
@@ -22,7 +23,7 @@ plan to also have a multiprecision exponent to fix this issue.
 \ccInclude{CGAL/MP_Float.h}
 
 \ccIsModel
-FieldNumberType
+SqrtFieldNumberType
 
 \ccCreation
 \ccCreationVariable{m}
