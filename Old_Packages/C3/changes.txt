@@ -1,5 +1,9 @@
 Version 4.1 (October ?? 1999)
 - Filter related typo in kernel_ftC3.h [Sylvain]
+- Changed cmp_signed_dist_to_planeC3() to cmp_signed_dist_to_directionC3()
+  and related has_...().
+- Optimized cmp_signed_dist_to_planeC3(5 points) [Syl].
+- Cartesian/distance_predicates_3.h cleanup [Syl].
 
 Version 4.0 (October 21 1999)
 - Cosmetic changes (indentation) for cgal-submit scripts
