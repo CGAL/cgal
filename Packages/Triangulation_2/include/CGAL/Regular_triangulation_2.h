@@ -487,7 +487,7 @@ insert(const Weighted_point &p, Locate_type lt, Face_handle loc, int li)
 {
   if (number_of_vertices() <= 1) return Triangulation::insert(p);
  
-  Vertex_handle v;
+  Vertex_handle v(NULL);
   Oriented_side os;
   switch (lt) {
   case VERTEX:
