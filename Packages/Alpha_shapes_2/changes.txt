@@ -1,5 +1,5 @@
 24 March 2004 Radu Ursu
-- made doc work with our current tools
+- made doc work with our current tools 
 
 22 February 2004 [af]
 - Replaced tail recursion of Alpha_shape_2::traverse()
