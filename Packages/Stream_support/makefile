@@ -4,7 +4,7 @@ WWW=/u/www/0/www/htdocs/files/equipes/prisme
 WWW_CGAL=$(WWW)/CGAL/DR:/Members
 WWW_dir=$(WWW_CGAL)/Stream_support
 TMP_file=/tmp/submit-mail
-
+MAINTAINER=Mariette Yvinec <Mariette.Yvinec@sophia.inria.fr>
 
 package:
 	@echo "----------------------------------"
@@ -23,6 +23,7 @@ package:
 
 Version:
 	echo "$(VERSION) (`date '+%e %b %Y'`)" > version
+	echo  "maintainer : $(MAINTAINER)" >> version
 
 tag:
 	cvs tag v`echo $(VERSION) | sed -e "s/\./_/g"`

@@ -1,5 +1,9 @@
 Stream_support Package: Release changes:
 ---------------------------------------------------------------------
+2.9 (30 May 00)
+added to Istream_iterator
+operator!=( const Self& i)
+
 2.8 (10 Dec 99)
 fixes some bugs in Stream_support/demo/Stream_support_LEDA
 now, it works at least  on Linux 
