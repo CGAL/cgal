@@ -37,10 +37,10 @@
 CGAL_BEGIN_NAMESPACE
 
 template < class NT1, class NT2 >
-class NT_converter
+struct NT_converter
 {
     NT2
-    operator()(const NT1 &a)
+    operator()(const NT1 &a) const
     {
 	return NT2(a);
     }
@@ -53,45 +53,45 @@ class Cartesian_converter
 public:
 
     typename K2::Point_2
-    operator()(const typename K1::Point_2 &a)
+    operator()(const typename K1::Point_2 &a) const
     {
 	return k.construct_point_2_object()(c(a.x()), c(a.y()));
     }
 
     typename K2::Vector_2
-    operator()(const typename K1::Vector_2 &a)
+    operator()(const typename K1::Vector_2 &a) const
     {
 	return k.construct_vector_2_object()(c(a.x()), c(a.y()));
     }
 
     typename K2::Direction_2
-    operator()(const typename K1::Direction_2 &a)
+    operator()(const typename K1::Direction_2 &a) const
     {
 	return k.construct_direction_2_object()(c(a.dx()), c(a.dy()));
     }
 
     typename K2::Segment_2
-    operator()(const typename K1::Segment_2 &a)
+    operator()(const typename K1::Segment_2 &a) const
     {
 	return k.construct_segment_2_object()(operator()(a.source()),
 		                              operator()(a.target()));
     }
 
     typename K2::Line_2
-    operator()(const typename K1::Line_2 &a)
+    operator()(const typename K1::Line_2 &a) const
     {
 	return k.construct_line_2_object()(c(a.a()), c(a.b()), c(a.c()));
     }
 
     typename K2::Ray_2
-    operator()(const typename K1::Ray_2 &a)
+    operator()(const typename K1::Ray_2 &a) const
     {
 	return k.construct_ray_2_object()(operator()(a.source()),
 		                          operator()(a.second_point()));
     }
 
     typename K2::Circle_2
-    operator()(const typename K1::Circle_2 &a)
+    operator()(const typename K1::Circle_2 &a) const
     {
 	return k.construct_circle_2_object()(operator()(a.center()),
 		                             c(a.squared_radius()),
@@ -99,7 +99,7 @@ public:
     }
 
     typename K2::Triangle_2
-    operator()(const typename K1::Triangle_2 &a)
+    operator()(const typename K1::Triangle_2 &a) const
     {
 	return k.construct_triangle_2_object()(operator()(a.vertex(0)),
 		                               operator()(a.vertex(1)),
@@ -107,54 +107,54 @@ public:
     }
 
     typename K2::Iso_rectangle_2
-    operator()(const typename K1::Iso_rectangle_2 &a)
+    operator()(const typename K1::Iso_rectangle_2 &a) const
     {
 	return k.construct_iso_rectangle_2_object()(operator()(a.min()),
 		                                    operator()(a.max()));
     }
 
     typename K2::Point_3
-    operator()(const typename K1::Point_3 &a)
+    operator()(const typename K1::Point_3 &a) const
     {
 	return k.construct_point_3_object()(c(a.x()), c(a.y()), c(a.z()));
     }
 
     typename K2::Vector_3
-    operator()(const typename K1::Vector_3 &a)
+    operator()(const typename K1::Vector_3 &a) const
     {
 	return k.construct_vector_3_object()(c(a.x()), c(a.y()), c(a.z()));
     }
 
     typename K2::Direction_3
-    operator()(const typename K1::Direction_3 &a)
+    operator()(const typename K1::Direction_3 &a) const
     {
 	return k.construct_direction_3_object()(c(a.dx()), c(a.dy()),
 		                                c(a.dz()));
     }
 
     typename K2::Segment_3
-    operator()(const typename K1::Segment_3 &a)
+    operator()(const typename K1::Segment_3 &a) const
     {
 	return k.construct_segment_3_object()(operator()(a.source()),
 		                              operator()(a.target()));
     }
 
     typename K2::Line_3
-    operator()(const typename K1::Line_3 &a)
+    operator()(const typename K1::Line_3 &a) const
     {
 	return k.construct_line_3_object()(operator()(a.point()),
 		                           operator()(a.direction()));
     }
 
     typename K2::Ray_3
-    operator()(const typename K1::Ray_3 &a)
+    operator()(const typename K1::Ray_3 &a) const
     {
 	return k.construct_ray_3_object()(operator()(a.source()),
 		                          operator()(a.second_point()));
     }
 
     typename K2::Sphere_3
-    operator()(const typename K1::Sphere_3 &a)
+    operator()(const typename K1::Sphere_3 &a) const
     {
 	return k.construct_sphere_3_object()(operator()(a.center()),
 		                             c(a.squared_radius()),
@@ -162,7 +162,7 @@ public:
     }
 
     typename K2::Triangle_3
-    operator()(const typename K1::Triangle_3 &a)
+    operator()(const typename K1::Triangle_3 &a) const
     {
 	return k.construct_triangle_3_object()(operator()(a.vertex(0)),
 		                               operator()(a.vertex(1)),
@@ -170,7 +170,7 @@ public:
     }
 
     typename K2::Tetrahedron_3
-    operator()(const typename K1::Tetrahedron_3 &a)
+    operator()(const typename K1::Tetrahedron_3 &a) const
     {
 	return k.construct_tetrahedron_3_object()(operator()(a.vertex(0)),
 		                                  operator()(a.vertex(1)),
@@ -179,14 +179,14 @@ public:
     }
 
     typename K2::Plane_3
-    operator()(const typename K1::Plane_3 &a)
+    operator()(const typename K1::Plane_3 &a) const
     {
 	return k.construct_plane_3_object()(c(a.a()), c(a.b()), c(a.c()),
 		                            c(a.d()));
     }
 
     typename K2::Iso_cuboid_3
-    operator()(const typename K1::Iso_cuboid_3 &a)
+    operator()(const typename K1::Iso_cuboid_3 &a) const
     {
 	return k.construct_iso_cuboid_3_object()(operator()(a.min()),
 		                                 operator()(a.max()));
