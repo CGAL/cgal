@@ -24,8 +24,8 @@
 // Predefined Traits classes for Extremal Polygon Computation
 // ============================================================================
 
-#if ! (EXTREMAL_POLYGON_TRAITS_2_H)
-#define EXTREMAL_POLYGON_TRAITS_2_H 1
+#if ! (CGAL_EXTREMAL_POLYGON_TRAITS_2_H)
+#define CGAL_EXTREMAL_POLYGON_TRAITS_2_H 1
 
 #ifndef CGAL_OPTIMISATION_ASSERTIONS_H
 #include <CGAL/optimisation_assertions.h>
@@ -385,7 +385,7 @@ maximum_area_inscribed_k_gon(
 // of $P_k$'s vertices to o and
 // returns the past-the-end iterator of that sequence.
 {
-  return _CGAL_maximum_area_inscribed_k_gon(
+  return CGAL_maximum_area_inscribed_k_gon(
     points_begin,
     points_end,
     k,
@@ -398,7 +398,7 @@ template < class RandomAccessIC,
            class R >
 inline
 OutputIterator
-_CGAL_maximum_area_inscribed_k_gon(
+CGAL_maximum_area_inscribed_k_gon(
   RandomAccessIC points_begin,
   RandomAccessIC points_end,
   int k,
@@ -431,7 +431,7 @@ _CGAL_maximum_area_inscribed_k_gon(
     k,
     o,
     Kgon_area_traits< R >());
-} // _CGAL_maximum_area_inscribed_k_gon( ... )
+} // CGAL_maximum_area_inscribed_k_gon( ... )
 
 template < class RandomAccessIC,
            class OutputIterator >
@@ -463,7 +463,7 @@ maximum_perimeter_inscribed_k_gon(
 // of $P_k$'s vertices to o and
 // returns the past-the-end iterator of that sequence.
 {
-  return _CGAL_maximum_perimeter_inscribed_k_gon(
+  return CGAL_maximum_perimeter_inscribed_k_gon(
     points_begin,
     points_end,
     k,
@@ -476,7 +476,7 @@ template < class RandomAccessIC,
            class R >
 inline
 OutputIterator
-_CGAL_maximum_perimeter_inscribed_k_gon(
+CGAL_maximum_perimeter_inscribed_k_gon(
   RandomAccessIC points_begin,
   RandomAccessIC points_end,
   int k,
@@ -509,11 +509,11 @@ _CGAL_maximum_perimeter_inscribed_k_gon(
     k,
     o,
     Kgon_perimeter_traits< R >());
-} // _CGAL_maximum_perimeter_inscribed_k_gon( ... )
+} // CGAL_maximum_perimeter_inscribed_k_gon( ... )
 
 CGAL_END_NAMESPACE
 
-#endif // ! (EXTREMAL_POLYGON_TRAITS_2_H)
+#endif // ! (CGAL_EXTREMAL_POLYGON_TRAITS_2_H)
 
 // ----------------------------------------------------------------------------
 // ** EOF

@@ -24,8 +24,8 @@
 // A Representation for Cartesian Matrices
 // ============================================================================
 
-#if ! (CARTESIAN_MATRIX_H)
-#define CARTESIAN_MATRIX_H 1
+#if ! (CGAL_CARTESIAN_MATRIX_H)
+#define CGAL_CARTESIAN_MATRIX_H 1
 
 #ifndef CGAL_BASIC_H
 #include <CGAL/basic.h>
@@ -119,7 +119,7 @@ cartesian_matrix( RandomAccessIC_row r_f,
 
 CGAL_END_NAMESPACE
 
-#endif // ! (CARTESIAN_MATRIX_H)
+#endif // ! (CGAL_CARTESIAN_MATRIX_H)
 
 // ----------------------------------------------------------------------------
 // ** EOF

@@ -24,8 +24,8 @@
 // Compute all furthest neighbors for the vertices of a convex polygon
 // ============================================================================
 
-#if ! (ALL_FURTHEST_NEIGHBORS_TRAITS_2_H)
-#define ALL_FURTHEST_NEIGHBORS_TRAITS_2_H 1
+#if ! (CGAL_ALL_FURTHEST_NEIGHBORS_TRAITS_2_H)
+#define CGAL_ALL_FURTHEST_NEIGHBORS_TRAITS_2_H 1
 
 #ifndef CGAL_BASIC_H
 #include <CGAL/basic.h>
@@ -103,7 +103,7 @@ all_furthest_neighbors( RandomAccessIC points_begin,
                         OutputIterator o)
 {
   return
-  _CGAL_all_furthest_neighbors(
+  CGAL_all_furthest_neighbors(
     points_begin,
     points_end,
     o,
@@ -115,7 +115,7 @@ template < class RandomAccessIC,
            class R >
 inline
 OutputIterator
-_CGAL_all_furthest_neighbors( RandomAccessIC points_begin,
+CGAL_all_furthest_neighbors( RandomAccessIC points_begin,
                               RandomAccessIC points_end,
                               OutputIterator o,
                               Point_2< R >*)
@@ -126,11 +126,11 @@ _CGAL_all_furthest_neighbors( RandomAccessIC points_begin,
     points_end,
     o,
     All_furthest_neighbors_traits< R >());
-} // _CGAL_all_furthest_neighbors( ... )
+} // CGAL_all_furthest_neighbors( ... )
 
 CGAL_END_NAMESPACE
 
-#endif // ! (ALL_FURTHEST_NEIGHBORS_TRAITS_2_H)
+#endif // ! (CGAL_ALL_FURTHEST_NEIGHBORS_TRAITS_2_H)
 
 // ----------------------------------------------------------------------------
 // ** EOF

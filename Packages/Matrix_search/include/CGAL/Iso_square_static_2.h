@@ -24,8 +24,8 @@
 // 2D Iso-squares with static radius
 // ============================================================================
 
-#if ! (ISO_SQUARE_STATIC_2_H)
-#define ISO_SQUARE_STATIC_2_H 1
+#if ! (CGAL_ISO_SQUARE_STATIC_2_H)
+#define CGAL_ISO_SQUARE_STATIC_2_H 1
 
 #ifndef CGAL_OPTIMISATION_ASSERTIONS_H
 #include <CGAL/optimisation_assertions.h>
@@ -102,8 +102,8 @@ private:
 
 // for output to ostream:
 template< class R >
-ostream& operator<<( ostream& os,
-                     const Iso_square_static_2< R >& s)
+std::ostream& operator<<(std::ostream& os,
+                         const Iso_square_static_2< R >& s)
 {
   switch(os.iword(IO::mode)) {
   case IO::ASCII :
@@ -120,9 +120,9 @@ ostream& operator<<( ostream& os,
 
 // for input from istream:
 template < class R >
-istream&
-operator>>( istream& is,
-            Iso_square_static_2< R >& s)
+std::istream&
+operator>>(std::istream& is,
+           Iso_square_static_2< R >& s)
 {
   typename R::Point_2  c;
   typename R::FT       r;
@@ -199,7 +199,7 @@ Iso_square_static_2< R >::_radius;
 CGAL_END_NAMESPACE
 
 
-#endif // ! (ISO_SQUARE_STATIC_2_H)
+#endif // ! (CGAL_ISO_SQUARE_STATIC_2_H)
 
 // ----------------------------------------------------------------------------
 // ** EOF

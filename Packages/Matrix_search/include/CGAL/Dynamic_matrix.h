@@ -24,8 +24,8 @@
 // A Representation for Dynamic Matrices
 // ============================================================================
 
-#if ! (DYNAMIC_MATRIX_H)
-#define DYNAMIC_MATRIX_H 1
+#if ! (CGAL_DYNAMIC_MATRIX_H)
+#define CGAL_DYNAMIC_MATRIX_H 1
 
 #ifndef CGAL_OPTIMISATION_ASSERTIONS_H
 #include <CGAL/optimisation_assertions.h>
@@ -125,7 +125,7 @@ dynamic_matrix( const Matrix& m)
 
 CGAL_END_NAMESPACE
 
-#endif // ! (DYNAMIC_MATRIX_H)
+#endif // ! (CGAL_DYNAMIC_MATRIX_H)
 
 // ----------------------------------------------------------------------------
 // ** EOF

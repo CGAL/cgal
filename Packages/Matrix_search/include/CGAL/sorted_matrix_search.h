@@ -24,8 +24,8 @@
 // Frederickson-Johnson matrix search
 // ============================================================================
 
-#if ! (SORTED_MATRIX_SEARCH_H)
-#define SORTED_MATRIX_SEARCH_H 1
+#if ! (CGAL_SORTED_MATRIX_SEARCH_H)
+#define CGAL_SORTED_MATRIX_SEARCH_H 1
 
 #ifndef CGAL_BASIC_H
 #include <CGAL/basic.h>
@@ -115,12 +115,12 @@ public:
   { return base_matrix; }
 
   void
-  output( ostream& o, int dim) const
+  output( std::ostream& o, int dim) const
   {
     for ( int i = 0; i < dim; ++i) {
       for ( int j = 0; j < dim; ++j)
         o << base_matrix( x + i, y + j) << " ";
-      o << endl;
+      o << std::endl;
     }
   }
 
@@ -215,9 +215,9 @@ sorted_matrix_search( InputIterator f,
     CGAL_expensive_precondition(
       PaddedMatrix( *i).is_sorted());
     active_cells.push_back( Cell( PaddedMatrix( *i)));
-    maxdim = max( max( (*i).number_of_columns(),
-                       (*i).number_of_rows()),
-                  maxdim);
+    maxdim = std::max( std::max( (*i).number_of_columns(),
+                                 (*i).number_of_rows()),
+                       maxdim);
     ++i;
   }
   CGAL_precondition( maxdim > 0);
@@ -481,7 +481,7 @@ sorted_matrix_search( InputIterator f,
 }
 CGAL_END_NAMESPACE
 
-#endif // ! (SORTED_MATRIX_SEARCH_H)
+#endif // ! (CGAL_SORTED_MATRIX_SEARCH_H)
 
 // ----------------------------------------------------------------------------
 // ** EOF

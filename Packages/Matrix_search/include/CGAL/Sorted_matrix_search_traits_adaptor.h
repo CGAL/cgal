@@ -24,8 +24,8 @@
 // Frederickson-Johnson matrix search: traits class adaptor
 // ============================================================================
 
-#if ! (SORTED_MATRIX_SEARCH_TRAITS_ADAPTOR_H)
-#define SORTED_MATRIX_SEARCH_TRAITS_ADAPTOR_H 1
+#if ! (CGAL_SORTED_MATRIX_SEARCH_TRAITS_ADAPTOR_H)
+#define CGAL_SORTED_MATRIX_SEARCH_TRAITS_ADAPTOR_H 1
 
 CGAL_BEGIN_NAMESPACE
 
@@ -74,7 +74,7 @@ sorted_matrix_search_traits_adaptor(
 
 CGAL_END_NAMESPACE
 
-#endif // ! (SORTED_MATRIX_SEARCH_TRAITS_ADAPTOR_H)
+#endif // ! (CGAL_SORTED_MATRIX_SEARCH_TRAITS_ADAPTOR_H)
 
 // ----------------------------------------------------------------------------
 // ** EOF

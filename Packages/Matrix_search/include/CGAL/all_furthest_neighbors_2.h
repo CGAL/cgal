@@ -24,8 +24,8 @@
 // Compute all furthest neighbors for the vertices of a convex polygon
 // ============================================================================
 
-#if ! (ALL_FURTHEST_NEIGHBORS_2_H)
-#define ALL_FURTHEST_NEIGHBORS_2_H 1
+#if ! (CGAL_ALL_FURTHEST_NEIGHBORS_2_H)
+#define CGAL_ALL_FURTHEST_NEIGHBORS_2_H 1
 
 #ifndef CGAL_OPTIMISATION_ASSERTIONS_H
 #include <CGAL/optimisation_assertions.h>
@@ -76,7 +76,7 @@ public:
   number_of_columns() const
   { return 2 * number_of_rows() - 1; }
 
-  Value
+  typename BaseClass::Value
   operator()( int r, int c) const
   {
     CGAL_optimisation_precondition( r >= 0 && r < number_of_rows());
@@ -214,7 +214,7 @@ all_furthest_neighbors( RandomAccessIC points_begin,
 
 CGAL_END_NAMESPACE
 
-#endif // ! (ALL_FURTHEST_NEIGHBORS_2_H)
+#endif // ! (CGAL_ALL_FURTHEST_NEIGHBORS_2_H)
 
 // ----------------------------------------------------------------------------
 // ** EOF

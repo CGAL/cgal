@@ -24,8 +24,8 @@
 // Monotone Matrix Search
 // ============================================================================
 
-#if ! (MONOTONE_MATRIX_SEARCH_H)
-#define MONOTONE_MATRIX_SEARCH_H 1
+#if ! (CGAL_MONOTONE_MATRIX_SEARCH_H)
+#define CGAL_MONOTONE_MATRIX_SEARCH_H 1
 
 #ifndef CGAL_OPTIMISATION_ASSERTIONS_H
 #include <CGAL/optimisation_assertions.h>
@@ -286,7 +286,7 @@ _reduce_matrix(
 } // _reduce_matrix( M, t)
 CGAL_END_NAMESPACE
 
-#endif // ! (MONOTONE_MATRIX_SEARCH_H)
+#endif // ! (CGAL_MONOTONE_MATRIX_SEARCH_H)
 
 // ----------------------------------------------------------------------------
 // ** EOF

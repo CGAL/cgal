@@ -24,8 +24,8 @@
 // 2-4-Piercing Axis-Parallel 2D-Rectangles
 // ============================================================================
 
-#if ! (PIERCE_RECTANGLES_2_H)
-#define PIERCE_RECTANGLES_2_H 1
+#if ! (CGAL_PIERCE_RECTANGLES_2_H)
+#define CGAL_PIERCE_RECTANGLES_2_H 1
 
 #ifndef CGAL_OPTIMISATION_ASSERTIONS_H
 #include <CGAL/optimisation_assertions.h>
@@ -39,6 +39,9 @@
 #ifndef CGAL_TRANSFORM_ITERATOR_H
 #include <CGAL/Transform_iterator.h>
 #endif // CGAL_TRANSFORM_ITERATOR_H
+#ifndef CGAL_ALGORITHM_H
+#include <CGAL/algorithm.h>
+#endif // CGAL_ALGORITHM_H
 #include <algorithm>
 #include <vector>
 #ifdef CGAL_PCENTER_WINDOW_TRACE
@@ -152,42 +155,6 @@ remove_if_adjacent( ForwardIterator first,
       compose1( logical_not< bool >(),
                 bind1st( pred, *save_first)));
   return remove_copy_if_adjacent( next, last, ++save_first, pred);
-}
-template < class ForwardIterator >
-std::pair< ForwardIterator, ForwardIterator >
-min_max_element( ForwardIterator first, ForwardIterator last)
-{
-  typedef std::pair< ForwardIterator, ForwardIterator > FP;
-  if ( first == last)
-    return FP( first, first);
-  FP result( first, first);
-  while ( ++first != last) {
-    if ( *first < *(result.first))
-      result.first = first;
-    if ( *first > *(result.second))
-      result.second = first;
-  }
-  return result;
-}
-
-template < class ForwardIterator, class CompareMin, class CompareMax >
-std::pair< ForwardIterator, ForwardIterator >
-min_max_element( ForwardIterator first,
-                 ForwardIterator last,
-                 CompareMin comp_min,
-                 CompareMax comp_max)
-{
-  typedef std::pair< ForwardIterator, ForwardIterator > FP;
-  if ( first == last)
-    return FP( first, first);
-  FP result( first, first);
-  while ( ++first != last) {
-    if ( comp_min( *first, *(result.first)))
-      result.first = first;
-    if ( comp_max( *first, *(result.second)))
-      result.second = first;
-  }
-  return result;
 }
 
 template < class _Traits, class _RandomAccessIC >
@@ -1167,6 +1134,7 @@ four_pierce_rectangles(
   using std::greater;
   using std::less;
   using std::find_if;
+  using std::bind2nd;
   #endif
   
   typedef typename Traits::Iso_rectangle_2     Iso_rectangle_2;
@@ -1310,7 +1278,7 @@ four_pierce_rectangles(
                             compose2_2(
                               less< FT >(), Xmax(), Xmax()),
                             compose2_2(
-                              greater< FT >(), Xmin(), Xmin()));
+                              less< FT >(), Xmin(), Xmin()));
     
       I_B = Intervall( Xmin()(*(ip.second)), Xmax()(*(ip.first)));
       CGAL_optimisation_assertion(
@@ -1333,7 +1301,7 @@ four_pierce_rectangles(
                             compose2_2(
                               less< FT >(), Ymax(), Ymax()),
                             compose2_2(
-                              greater< FT >(), Ymin(), Ymin()));
+                              less< FT >(), Ymin(), Ymin()));
     
       I_L = Intervall( Ymin()(*(ip.second)), Ymax()(*(ip.first)));
       CGAL_optimisation_assertion(
@@ -1356,7 +1324,7 @@ four_pierce_rectangles(
                             compose2_2(
                               less< FT >(), Xmax(), Xmax()),
                             compose2_2(
-                              greater< FT >(), Xmin(), Xmin()));
+                              less< FT >(), Xmin(), Xmin()));
     
       I_T = Intervall( Xmin()(*(ip.second)), Xmax()(*(ip.first)));
       CGAL_optimisation_assertion(
@@ -1379,7 +1347,7 @@ four_pierce_rectangles(
                             compose2_2(
                               less< FT >(), Ymax(), Ymax()),
                             compose2_2(
-                              greater< FT >(), Ymin(), Ymin()));
+                              less< FT >(), Ymin(), Ymin()));
     
       I_R = Intervall( Ymin()(*(ip.second)), Ymax()(*(ip.first)));
       CGAL_optimisation_assertion(
@@ -2087,7 +2055,7 @@ public:
 }; // class Four_piercing_algorithm
 CGAL_END_NAMESPACE
 
-#endif // ! (PIERCE_RECTANGLES_2_H)
+#endif // ! (CGAL_PIERCE_RECTANGLES_2_H)
 
 // ----------------------------------------------------------------------------
 // ** EOF

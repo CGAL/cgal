@@ -24,8 +24,8 @@
 // Compute extremal polygons of a convex polygon
 // ============================================================================
 
-#if ! (EXTREMAL_POLYGON_2_H)
-#define EXTREMAL_POLYGON_2_H 1
+#if ! (CGAL_EXTREMAL_POLYGON_2_H)
+#define CGAL_EXTREMAL_POLYGON_2_H 1
 
 #ifndef CGAL_MONOTONE_MATRIX_SEARCH_H
 #include <CGAL/monotone_matrix_search.h>
@@ -204,7 +204,7 @@ template < class RandomAccessIC,
            class _FT >
 #endif
 Outputiterator
-_CGAL_maximum_inscribed_rooted_k_gon(
+CGAL_maximum_inscribed_rooted_k_gon(
   RandomAccessIC points_begin,
   RandomAccessIC points_end,
   int k,
@@ -270,7 +270,7 @@ _CGAL_maximum_inscribed_rooted_k_gon(
   #endif
     if ( ++i >= k)
       break;
-    _CGAL_maximum_inscribed_rooted_k_gon(
+    CGAL_maximum_inscribed_rooted_k_gon(
       points_begin,
       points_end,
       0,
@@ -283,7 +283,7 @@ _CGAL_maximum_inscribed_rooted_k_gon(
       t);
   } // for (;;)
   
-  return _CGAL_maximum_inscribed_rooted_k_gon(
+  return CGAL_maximum_inscribed_rooted_k_gon(
     points_begin,
     points_end,
     0,
@@ -295,7 +295,7 @@ _CGAL_maximum_inscribed_rooted_k_gon(
     o,
     t);
 
-} // _CGAL_maximum_inscribed_rooted_k_gon( ... )
+} // CGAL_maximum_inscribed_rooted_k_gon( ... )
 #ifndef CGAL_CFG_MATCHING_BUG_1
 template < class RandomAccessIC_point,
            class RandomAccessIC_int,
@@ -309,7 +309,7 @@ template < class RandomAccessIC_point,
            class _FT >
 #endif
 OutputIterator
-_CGAL_maximum_inscribed_rooted_k_gon(
+CGAL_maximum_inscribed_rooted_k_gon(
   RandomAccessIC_point points_begin,
   RandomAccessIC_point points_end,
   int root,
@@ -529,7 +529,7 @@ _CGAL_maximum_inscribed_rooted_k_gon(
   return o;
   
 
-} // _CGAL_maximum_inscribed_rooted_k_gon( p, k, result)
+} // CGAL_maximum_inscribed_rooted_k_gon( p, k, result)
 
 
 template < class RandomAccessIC,
@@ -575,7 +575,7 @@ extremal_polygon(
     t.is_convex( points_begin, points_end));
 
   typedef typename Traits::Point_2 Point_2;
-  return _CGAL_maximum_inscribed_k_gon(
+  return CGAL_maximum_inscribed_k_gon(
     points_begin,
     points_end,
     k,
@@ -590,7 +590,7 @@ template < class RandomAccessIC,
            class OutputIterator,
            class Traits >
 OutputIterator
-_CGAL_maximum_inscribed_k_gon(
+CGAL_maximum_inscribed_k_gon(
   RandomAccessIC points_begin,
   RandomAccessIC points_end,
   int k,
@@ -641,7 +641,7 @@ _CGAL_maximum_inscribed_k_gon(
   #endif
   Index_cont P_0( k + 1);
   FT area_0;
-  _CGAL_maximum_inscribed_rooted_k_gon(
+  CGAL_maximum_inscribed_rooted_k_gon(
     points_begin,
     points_end,
     k,
@@ -657,7 +657,7 @@ _CGAL_maximum_inscribed_k_gon(
   Index_cont P_1( k);
   FT area_1;
   
-  _CGAL_maximum_inscribed_rooted_k_gon(
+  CGAL_maximum_inscribed_rooted_k_gon(
     points_begin,
     points_end,
     P_0[1],
@@ -686,7 +686,7 @@ _CGAL_maximum_inscribed_k_gon(
   FT area_r( 0);
   Index_cont P_r( k);
   if ( P_0[1] - P_0[0] > 1) {
-    _CGAL_maximum_inscribed_k_gon(
+    CGAL_maximum_inscribed_k_gon(
       points_begin,
       points_end,
       P_0[0] + 1,
@@ -719,7 +719,7 @@ _CGAL_maximum_inscribed_k_gon(
     copy( P_1.begin(), P_1.end(), o);
 
   return o;
-} // _CGAL_maximum_inscribed_k_gon( ... )
+} // CGAL_maximum_inscribed_k_gon( ... )
 #ifndef CGAL_CFG_MATCHING_BUG_1
 template < class RandomAccessIC_point,
            class RandomAccessIC_int,
@@ -733,7 +733,7 @@ template < class RandomAccessIC_point,
            class _FT >
 #endif
 OutputIterator
-_CGAL_maximum_inscribed_k_gon(
+CGAL_maximum_inscribed_k_gon(
   RandomAccessIC_point points_begin,
   RandomAccessIC_point points_end,
   int left_index,
@@ -825,7 +825,7 @@ _CGAL_maximum_inscribed_k_gon(
   int middle_index( (left_index + right_index) >> 1);
   Index_cont P_m( k);
   FT area_middle;
-  _CGAL_maximum_inscribed_rooted_k_gon(
+  CGAL_maximum_inscribed_rooted_k_gon(
     points_begin,
     points_end,
     middle_index,
@@ -841,7 +841,7 @@ _CGAL_maximum_inscribed_k_gon(
   FT area_left( 0);
   Index_cont P_l( k);
   if ( left_index < middle_index) {
-    _CGAL_maximum_inscribed_k_gon(
+    CGAL_maximum_inscribed_k_gon(
       points_begin,
       points_end,
       left_index,
@@ -861,7 +861,7 @@ _CGAL_maximum_inscribed_k_gon(
   FT area_right( 0);
   Index_cont P_r( k);
   if ( right_index > middle_index) {
-    _CGAL_maximum_inscribed_k_gon(
+    CGAL_maximum_inscribed_k_gon(
       points_begin,
       points_end,
       middle_index + 1,
@@ -901,12 +901,12 @@ _CGAL_maximum_inscribed_k_gon(
   }
 
   return o;
-} // _CGAL_maximum_inscribed_k_gon( ... )
+} // CGAL_maximum_inscribed_k_gon( ... )
 
 CGAL_END_NAMESPACE
 
 
-#endif // ! (EXTREMAL_POLYGON_2_H)
+#endif // ! (CGAL_EXTREMAL_POLYGON_2_H)
 
 // ----------------------------------------------------------------------------
 // ** EOF

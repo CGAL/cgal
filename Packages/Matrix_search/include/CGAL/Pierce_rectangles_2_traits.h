@@ -24,8 +24,8 @@
 // 2-4-Piercing Axis-Parallel 2D-Rectangles
 // ============================================================================
 
-#if ! (PIERCE_RECTANGLES_2_TRAITS_H)
-#define PIERCE_RECTANGLES_2_TRAITS_H 1
+#if ! (CGAL_PIERCE_RECTANGLES_2_TRAITS_H)
+#define CGAL_PIERCE_RECTANGLES_2_TRAITS_H 1
 
 #ifndef CGAL_POINT_2_H
 #include <CGAL/Point_2.h>
@@ -173,7 +173,8 @@ struct Piercing_squares_traits_cartesian
 : public Piercing_traits_cartesian< _R >
 {
   typedef Piercing_traits_cartesian< _R >  Base;
-  typedef Base::Point_2                    Point_2;
+  typedef typename Base::FT                FT;
+  typedef typename Base::Point_2           Point_2;
   typedef CGAL::Iso_square_static_2< _R >  Iso_rectangle_2;
 
   struct Xmin : public CGAL_STD::unary_function< Iso_rectangle_2, FT >
@@ -216,7 +217,8 @@ struct Piercing_squares_traits_homogeneous
 : public Piercing_traits_homogeneous< _R >
 {
   typedef Piercing_traits_homogeneous< _R >  Base;
-  typedef Base::Point_2                      Point_2;
+  typedef typename Base::FT                  FT;
+  typedef typename Base::Point_2             Point_2;
   typedef CGAL::Iso_square_static_2< _R >    Iso_rectangle_2;
 
   struct Xmin : public CGAL_STD::unary_function< Iso_rectangle_2, FT >
@@ -257,7 +259,7 @@ struct Piercing_squares_traits_homogeneous
 CGAL_END_NAMESPACE
 
 
-#endif // ! (PIERCE_RECTANGLES_2_TRAITS_H)
+#endif // ! (CGAL_PIERCE_RECTANGLES_2_TRAITS_H)
 
 // ----------------------------------------------------------------------------
 // ** EOF

@@ -24,8 +24,8 @@
 // An OutputIterator Adaptor applying an unary function
 // ============================================================================
 
-#if ! (TRANSFORM_ITERATOR_H)
-#define TRANSFORM_ITERATOR_H 1
+#if ! (CGAL_TRANSFORM_ITERATOR_H)
+#define CGAL_TRANSFORM_ITERATOR_H 1
 
 #ifndef CGAL_OPTIMISATION_ASSERTIONS_H
 #include <CGAL/optimisation_assertions.h>
@@ -96,7 +96,7 @@ query_circulator_or_iterator(
 
 CGAL_END_NAMESPACE
 
-#endif // ! (TRANSFORM_ITERATOR_H)
+#endif // ! (CGAL_TRANSFORM_ITERATOR_H)
 
 // ----------------------------------------------------------------------------
 // ** EOF

@@ -24,8 +24,8 @@
 // 2-4-Center Computation for Axis-Parallel 2D-Rectangles
 // ============================================================================
 
-#if ! (RECTANGULAR_P_CENTER_2_H)
-#define RECTANGULAR_P_CENTER_2_H 1
+#if ! (CGAL_RECTANGULAR_P_CENTER_2_H)
+#define CGAL_RECTANGULAR_P_CENTER_2_H 1
 
 #ifndef CGAL_PIERCE_RECTANGLES_2_H
 #include <CGAL/pierce_rectangles_2.h>
@@ -36,11 +36,14 @@
 #ifndef CGAL_SORTED_MATRIX_SEARCH_H
 #include <CGAL/sorted_matrix_search.h>
 #endif // CGAL_SORTED_MATRIX_SEARCH_H
+#ifndef CGAL_RECTANGULAR_3_CENTER_2_H
+#include <CGAL/rectangular_3_center_2.h>
+#endif // CGAL_RECTANGULAR_3_CENTER_2_H
 #include <algorithm>
 #ifdef CGAL_REP_CLASS_DEFINED
-#ifndef CGAL_RECTANGULAR_P_CENTER_2_TRAITS_H
-#include <CGAL/rectangular_p_center_2_traits.h>
-#endif // CGAL_RECTANGULAR_P_CENTER_2_TRAITS_H
+#ifndef CGAL_RECTANGULAR_P_CENTER_TRAITS_2_H
+#include <CGAL/Rectangular_p_center_traits_2.h>
+#endif // CGAL_RECTANGULAR_P_CENTER_TRAITS_2_H
 #endif // CGAL_REP_CLASS_DEFINED
 
 CGAL_BEGIN_NAMESPACE
@@ -66,6 +69,8 @@ public:
                            RandomAccessIC_row,
                            RandomAccessIC_column >
   Base;
+  typedef typename Base::Value      Value;
+
 
   /*
   Cartesian_matrix_horizontally_flipped(
@@ -317,9 +322,9 @@ rectangular_p_center_2_matrix_search(
 {
   int number_of_points( iterator_distance( f, l));
   CGAL_optimisation_precondition( number_of_points > 0);
-  #ifdef CGAL_PCENTER_TRACE
+#ifdef CGAL_PCENTER_TRACE
   cerr << "Pcenter matrix search" << endl;
-  #endif
+#endif
 
 #ifndef CGAL_CFG_NO_NAMESPACE
   using std::minus;
@@ -399,8 +404,8 @@ rectangular_p_center_2_matrix_search(
 
   // do the actual search:
   r = sorted_matrix_search( matrices.begin(),
-                                 matrices.end(),
-                                 search_it);
+                            matrices.end(),
+                            search_it);
 
   // return result:
   OutputIterator o_return( pierce_it( r, o, ok));
@@ -418,7 +423,7 @@ template < class ForwardIterator,
            class Traits >
 inline
 OutputIterator
-rectangular_p_center_2(
+rectangular_4_center_2(
   ForwardIterator f,
   ForwardIterator l,
   OutputIterator o,
@@ -427,51 +432,38 @@ rectangular_p_center_2(
 #else
   FT& r,
 #endif
-  int p,
-  const Traits&)
+  Traits& t)
 {
-  CGAL_optimisation_precondition( p >= 2 && p <= 4);
-  if ( p == 2)
-    return rectangular_p_center_2_matrix_search(
-      f,
-      l,
-      o,
-      r,
-      Two_piercing_algorithm< Traits >());
-  else if ( p == 3)
-    return rectangular_p_center_2_matrix_search(
-      f,
-      l,
-      o,
-      r,
-      Three_piercing_algorithm< Traits >());
-  else
-    return rectangular_p_center_2_matrix_search(
-      f,
-      l,
-      o,
-      r,
-      Four_piercing_algorithm< Traits >());
+  return rectangular_p_center_2_matrix_search(
+    f,
+    l,
+    o,
+    r,
+    Four_piercing_algorithm< Traits >());
+} // rectangular_4_center_2( ... )
+
+template < class ForwardIterator, class OutputIterator, class FT >
+inline OutputIterator
+rectangular_p_center_2(ForwardIterator f,
+                       ForwardIterator l,
+                       OutputIterator o,
+                       FT& r,
+                       int p)
+{
+  if (p == 2)
+    return rectangular_2_center_2(f, l, o, r);
+  else if (p == 3)
+    return rectangular_3_center_2(f, l, o, r);
+
+  typedef typename
+    std::iterator_traits< ForwardIterator >::value_type Point;
+  return CGAL_rectangular_4_center_2(f, l, o, r, (Point*)(0));
 } // rectangular_p_center_2( ... )
 
-template < class ForwardIterator,
-           class OutputIterator,
-           class FT >
-inline
-OutputIterator
-rectangular_p_center_2( ForwardIterator f,
-                             ForwardIterator l,
-                             OutputIterator o,
-                             FT& r,
-                             int p)
-{
-  return _CGAL_rectangular_p_center_2(
-    f, l, o, r, p, std::value_type( f));
-} // rectangular_p_center_2( ... )
 
 CGAL_END_NAMESPACE
 
-#endif // ! (RECTANGULAR_P_CENTER_2_H)
+#endif // ! (CGAL_RECTANGULAR_P_CENTER_2_H)
 
 // ----------------------------------------------------------------------------
 // ** EOF
