@@ -1,14 +1,37 @@
 Concerning the code itself:
 
-- make a base class with virtual functions to be redefined in the current 2
-  sub-classes ?  Cleaner, doesn't need to redefine operator*=...
-  can put CGAL_FPU* in it...
-- add operators like (double * Interval) -> Interval.
-  (double * double) -> Interval, is not overloadable, and doesn't gain much.
-- shall I protect ostream operator<<() by CGAL_FPU... ?
-  it seems there's a pb with Linux here.
-- template by float/double ? (=> must provide CGAL_FPU... for floats...)
+- Try to fix that warning:
+  /usr/ccs/bin/as: "/var/tmp/ccBHnU0T.s", line 861: warning: 3 instructions
+  required between ldfsr and next FBfcc; nops inserted
+- include "Fixed" support (CGAL_to_interval_nt).
+- go on with "typedef CGAL_Interval_nt IA", if the test-suite is ok.
+? overwrite overlap_action() so that it differs between IA and IA_advanced.
+  This implies declaring it as virtual...  It first needs a bench on
+  predicates.
+? template by float/double ? (=> must provide CGAL_FPU... for floats...)
+? implement operator{<,>,<=,>=}(double) -> the current operators will be
+  implemented using them, and the tests (IA) > 0 will be faster ?
+  Also, this would simplify the *() and /() code.
+  But be careful with exceptions... => 2 different semantics.
+? shall I protect ostream operator<<() by CGAL_FPU... ?
+  it seems there's a pb with Linux here.  Hum... it's not MY fault.
+
+Concerning the script:
+
+- It also has to fix the headers, the "#define"s, and add #include <IA>.
+  I've done it by hand for the moment.
+
+Concerning the doc:
+
+- re-read the doc carefully.
+- document the change of behaviour in the comparison operators, and the effect
+  of CGAL_IA_DONT_THROW_EXCEPTION...
+- describe the filtering scheme (new class CGAL_Filter -> new paragraph).
+? document the speed up with (double * IA).
+? document is_same().
 
 Concerning the test-suite:
 
-- test cast functions.
+- small benchs on a few predicates.
+- test cast functions (are they dependant on rounding modes).
+- test NaNs (and Infs?).  Comparisons with these should throw the exception.
