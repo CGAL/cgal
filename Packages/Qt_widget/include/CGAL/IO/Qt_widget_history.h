@@ -77,8 +77,10 @@ namespace CGAL {
     History_atom* get_atom(){
       return &(*it);
     }
-    void add_to_history(double xmin, double xmax, double ymin, double ymax,
-                        double xcenter, double ycenter, double xscal, double yscal)
+    void add_to_history(double xmin, double xmax, 
+		                double ymin, double ymax,
+                        double xcenter, double ycenter,
+						double xscal, double yscal)
     {
       if(nr_of_items > 1){
         it++;
