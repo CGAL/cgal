@@ -54,10 +54,8 @@ void test_polygon(const R&, const Point&, const char* FileName)
 	CGAL::is_simple_2(polygon.begin(), polygon.end());
     bool convex =
 	CGAL::is_convex_2(polygon.begin(), polygon.end());
-#if 0
     CGAL::Bbox_2 bbox =
 	CGAL::bbox_2(polygon.begin(), polygon.end());
-#endif
     typename R::FT area = 0, area2;
     CGAL::area_2(polygon.begin(), polygon.end(), area, R());
     area2 = CGAL::polygon_area_2(polygon.begin(), polygon.end(), R());
@@ -78,10 +76,10 @@ void test_polygon(const R&, const Point&, const char* FileName)
     cout << "the polygon is ";
     if (!convex) cout << "not ";
     cout << "convex" << endl;
-#if 0
     cout << "the bounding box is " << bbox << endl;
     cout << "the area is " << area << endl;
-#endif
+    if (area != area2)
+        cout << "but according to polygon_area_2 it is " << area2 << endl;
 
     switch (bside) {
     case CGAL::ON_BOUNDED_SIDE:
