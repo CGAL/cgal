@@ -31,6 +31,7 @@ The reported subcurves will be inserted to a container defined by the user.
    sweep_to_produce_planar_map_subcurves(
    Curve_iterator curves_begin, 
    Curve_iterator curves_end, 
+   Traits& traits, 
    Container &subcurves, 
    bool overlapping = false);
 }
@@ -46,7 +47,7 @@ overlapping subcurve per each original curve it created of.
 The default choice provides the first possibility.
 
 \ccSeeAlso
-\ccRefPage{CGAL::sweep_to_construct_planar_map}
+\ccc{sweep_to_construct_planar_map} (\ccRefPage{CGAL::sweep_to_construct_planar_map})
 
 \ccImplementation 
 The implementation uses the container $map$ defined in STL for implementing 
@@ -58,11 +59,11 @@ The complexity of this algorithm is $O(nlogn + k)$ where $n$ is the number of th
 and $k$ is the number of intersection points induced by these curves.
 
 
-\label{ssec:example2}
+\label{ssec:example3_sweep}
 The following example is a demonstration of the usage of the \ccc {Sweep line} algorithm. 
 In this example we shall present the usage of the sweep line technique 
 when inserting the resulting disjoint interior subcurves to a container. 
-The input segments are just like as in ~\ref{ssec:example1} , 
+The input segments are just like as in ~\ref{ssec:example1_sweep} , 
 and the result we are interested with is only reporting the sub segments 
 obtained by the \ccc{Sweep line} algorithm.
 
