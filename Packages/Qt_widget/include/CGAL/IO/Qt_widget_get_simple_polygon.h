@@ -21,23 +21,39 @@
 #ifndef CGAL_QT_WIDGET_GET_SIMPLE_POLYGON_H
 #define CGAL_QT_WIDGET_GET_SIMPLE_POLYGON_H
 
-#include <CGAL/IO/Qt_widget.h>
+
 #include <CGAL/IO/Qt_widget_tool.h>
+#include <CGAL/Segment_2_Segment_2_intersection.h>  
 #include <list>
 
 
 namespace CGAL {
-
 template <class Polygon>
 class Qt_widget_get_simple_polygon : public Qt_widget_tool
 {
 public:
-  typedef typename Polygon::Point_2 Point_2;
-  typedef typename Polygon::FT FT;
+  typedef typename Polygon::Point_2   Point_2;
+  typedef typename Polygon::Segment_2 Segment_2;
+  typedef typename Polygon::FT	      FT;
   
   Qt_widget_get_simple_polygon()
-    : active(false), lastx(0), lasty(0), num_points(0), poly(),
-      qpoints(0), qpoints_old(0) {};
+    : active(false), first_time(true) {};
+
+  void widget_repainted()
+  {
+    if(poly.size() > 1)
+    {
+      Polygon::Edge_const_iterator  it;
+      widget->lock();
+	RasterOp old_rasterop=widget->rasterOp();
+	widget->painter().setRasterOp(CopyROP);
+	*widget << CGAL::YELLOW;
+	for(it = poly.edges_begin(); it != --poly.edges_end(); it++)
+	  *widget << *it;
+	widget->setRasterOp(old_rasterop);
+      widget->unlock();
+    }
+  };
 
   void mousePressEvent(QMouseEvent *e)
   {
@@ -46,15 +62,27 @@ public:
       FT
 	x=static_cast<FT>(widget->x_real(e->x())),
 	y=static_cast<FT>(widget->y_real(e->y()));
-      poly.push_back(Point_2(x,y));
-      if (!poly.is_simple())
-	poly.erase(--poly.vertices_end());
-      else {
-	qpoints.putPoints(num_points, 1, e->x(), e->y());
-	qpoints_old.putPoints(num_points, 1, e->x(), e->y());
-	++num_points;
+      if(!active)
+      {
 	active=true;
 	widget->setMouseTracking(TRUE);
+      } else{
+	if (last_of_poly == Point_2(x,y))
+	  return;
+      }
+      
+      rubber_old = Point_2(x, y);
+      if(is_simple()){
+	poly.push_back(Point_2(x,y));	
+	//show the last rubber as edge of the polygon
+	widget->lock();
+	  RasterOp old_rasterop=widget->rasterOp();
+	  widget->painter().setRasterOp(CopyROP);
+	  *widget << CGAL::YELLOW;
+	  *widget << Segment_2(rubber, last_of_poly);
+	  widget->setRasterOp(old_rasterop);
+	widget->unlock();
+	last_of_poly = Point_2(x, y);
       }
       return;
     };
@@ -62,23 +90,12 @@ public:
     {
       if (active)
       {
-	RasterOp old_rasterop=widget->rasterOp();
-	widget->painter().setRasterOp(NotROP);
-	widget->painter().drawPolyline(qpoints_old);
-	widget->setRasterOp(old_rasterop);
-	widget->do_paint();
-	
 	widget->new_object(make_object(poly));
-
-	// TODO: have we something better to clear a polygon?
-	while(!poly.is_empty())
-	  poly.erase(--poly.vertices_end());
-
-	qpoints.resize(0);
-	qpoints_old.resize(0);
-	num_points=0;
-	active=false;
-	};
+	active = false;
+	first_time = true;
+	poly.erase(poly.vertices_begin(), poly.vertices_end());
+	widget->redraw();
+      }
     };
   };
 
@@ -86,23 +103,22 @@ public:
   {
     if (active)
     {
-      int 
-	x=(e->pos()).x(),
-	y=(e->pos()).y();
-      if ((lastx != x) || (lasty != y)) {
-        widget->lock();
+      FT
+	x=static_cast<FT>(widget->x_real(e->x())),
+	y=static_cast<FT>(widget->y_real(e->y()));
+
+      rubber = Point_2(x, y);
+      widget->lock();
 	RasterOp old_rasterop=widget->rasterOp();
-	widget->painter().setRasterOp(NotROP);
-	qpoints.putPoints(num_points,1,x,y);
-	widget->painter().drawPolyline(qpoints);
-	// Erase old polyline
-	widget->painter().drawPolyline(qpoints_old);
+	widget->painter().setRasterOp(XorROP);
+	*widget << CGAL::WHITE;      	
+	if(!first_time)
+	  *widget << Segment_2(rubber_old, last_of_poly);
+	*widget << Segment_2(rubber, last_of_poly);
+	first_time = false;
+	rubber_old = rubber;
 	widget->setRasterOp(old_rasterop);
-	widget->unlock();
-	lastx= x;
-	lasty= y;
-	qpoints_old.putPoints(num_points,1,x,y);
-      }
+      widget->unlock();
     }
   };
   void attaching()
@@ -113,27 +129,59 @@ public:
   
   void detaching()
   {
-    //erasing the old polygon if exists one
-    RasterOp old_rasterop=widget->rasterOp();
-    widget->painter().setRasterOp(NotROP);
-    widget->painter().drawPolyline(qpoints_old);
-    widget->setRasterOp(old_rasterop);
-    widget->do_paint();
     poly.erase(poly.vertices_begin(), poly.vertices_end());
-    qpoints.resize(0);
-    qpoints_old.resize(0);
-    num_points=0;
-    active=false;
+    active = false;
+    first_time = true;
     widget->setCursor(oldcursor);
+    widget->redraw();
   };
+  void leaveEvent(QEvent *e)
+  {
+    if (active)
+    {
+      widget->lock();
+	RasterOp old_rasterop=widget->rasterOp();
+	widget->painter().setRasterOp(XorROP);
+	*widget << CGAL::WHITE;
+	*widget << Segment_2(rubber_old, last_of_poly);
+	widget->setRasterOp(old_rasterop);
+      widget->unlock();
+      first_time = true;
+    }
+  }
+private:
+  bool is_simple()
+  {
+    Segment_2 rubber_segment(rubber, last_of_poly);
+    if(poly.size() > 1)
+    {
+      Polygon::Edge_const_iterator  it;
+      for(it = poly.edges_begin(); it != ----poly.edges_end(); it++)
+      {
+	if(do_intersect(*it, rubber_segment))
+	  return false;
+      }
+      //if I'm out of this means that all the edges, 
+      //didn't intersect the last one
+      ++it;
+      Object o = intersection(*it, rubber_segment);
+      Point_2 p;
+      if(assign(p, o))
+	return true;
+      else
+	return false;
+    }
+    return true;
+  }
   
 protected:
-  bool active;
-  int lastx, lasty;
-  int num_points;
-  Polygon poly;
-  QPointArray qpoints;
-  QPointArray qpoints_old;
+  bool	  active,     //true if the first point was inserted
+	  first_time; //true if it is the first time when 
+		      //draw the rubber band
+  Point_2 rubber,     //the new point of the rubber band
+	  last_of_poly,	//the last point of the polygon
+	  rubber_old; //the old point of the rubber band
+  Polygon poly;	      //the polygon
 };
 
 } // namespace CGAL
