@@ -28,6 +28,7 @@
 #include <CGAL/ch_assertions.h>
 #include <CGAL/convex_hull_3.h>
 #include <vector>
+#include <fstream>
 
 typedef double                                                      NumberType;
 
