@@ -1,10 +1,16 @@
 //-----------------------------------------------------------------------//
+// 2.9
++ Demo checks if LEDA is available. If not, it compiles but just gives
+  an informative message at runtime.
++ Adapted template parameter names in CGAL/Polygon_2.C.
+
+//-----------------------------------------------------------------------//
 // 2.8.2
 + Slight change to the documentation.
 
 //-----------------------------------------------------------------------//
 // 2.8.1
-+ Added typedef for pointer, reference and const_refernce in Polygon.
++ Added typedef for pointer, reference and const_reference in Polygon.
 + Renamed some template parameters (reserved names).
 
 //-----------------------------------------------------------------------//
