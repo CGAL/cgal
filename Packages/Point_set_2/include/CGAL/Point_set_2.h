@@ -12,10 +12,10 @@
 // release_date  : 
 //
 // file          : include/CGAL/Point_set_2.h
-// package       : Point_set_2 (2.0)
+// package       : Point_set_2 (2.0.1)
 // maintainer    : Matthias Baesken <baesken@informatik.uni-trier.de>
-// revision      : 2.0
-// revision_date : 30 May 2001 
+// revision      : 2.0.1
+// revision_date : 05 June 2001 
 // author(s)     : Matthias Baesken
 //
 // coordinator   : Matthias Baesken, Trier  (<baesken@informatik.uni-trier.de>)
@@ -85,6 +85,7 @@ public:
   typedef typename Triangulation::Edge_circulator           Edge_circulator;
   typedef typename Triangulation::Finite_edges_iterator     Finite_edges_iterator;
   typedef typename Triangulation::Vertex_iterator           Vertex_iterator;
+  typedef typename Triangulation::Vertex_circulator         Vertex_circulator;  
   typedef typename Triangulation::Edge_iterator             Edge_iterator;
 
   // now the types from Str
@@ -303,7 +304,7 @@ public:
      remove(vh);
     }
     
-    std::list<Vertex_handle>::iterator it = res_list.begin();
+    typename std::list<Vertex_handle>::iterator it = res_list.begin();
     
     for (; it != res_list.end(); it++) { *res= *it; res++; }
 
@@ -323,7 +324,7 @@ public:
    std::list<Vertex_handle> res_list;
    nearest_neighbors_list(v, k, res_list); 
    
-   std::list<Vertex_handle>::iterator it = res_list.begin();
+   typename std::list<Vertex_handle>::iterator it = res_list.begin();
     
    for (; it != res_list.end(); it++) { *res= *it; res++; }
 
@@ -481,7 +482,7 @@ public:
        remove(v);
      }
      
-     std::list<Vertex_handle>::const_iterator iter = L.begin();
+     typename std::list<Vertex_handle>::const_iterator iter = L.begin();
      for(;iter != L.end() ;iter++){ *res= *iter; res++; }
      return res;        
    }
@@ -494,7 +495,7 @@ public:
      std::list<Vertex_handle> L;
      range_search(C,std::back_inserter(L));
       
-     std::list<Vertex_handle>::const_iterator it = L.begin();
+     typename std::list<Vertex_handle>::const_iterator it = L.begin();
       
      for(;it != L.end();it++)
      { Point p = (*it)->point();
@@ -526,7 +527,7 @@ public:
      
      std::list<Vertex_handle> L;
      range_search(C,std::back_inserter(L));
-     std::list<Vertex_handle>::const_iterator it = L.begin();     
+     typename std::list<Vertex_handle>::const_iterator it = L.begin();     
 
      for(;it != L.end();it++)
      { Point p = (*it)->point();
