@@ -7,7 +7,7 @@
    #define Gmpz Gz
    #define Cartesian Ca
    #define Homogeneous Hg
-   #define Quotient Qt
+//   #define Quotient Qt
    #define Filtered_exact Fe
 
    #define Triangulation_test_point Ttp
