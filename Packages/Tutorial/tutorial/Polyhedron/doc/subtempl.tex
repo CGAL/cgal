@@ -3,7 +3,7 @@ sections, we now show how to design and implement a subdivision
 library for a generic CGAL polyhedron. This library is named
 \emph{C}ombinatorial \emph{S}ubdivision
 \emph{L}ibrary, short CSL. CSL contains a set of refinement 
-functions and geometry smoothing rules that is user-customizable.
+functions and geometry smoothing rules that are user-customizable.
 Subdivisions in CSL are specialized as a proper combination of the
 refinement functions and the geometry smoothing rules.
 %The goal of CSL are the 
@@ -12,12 +12,12 @@ refinement functions and the geometry smoothing rules.
 %\emph{user-customizable subdivisions}, and a
 %\emph{extendible library}. 
 
-CSL is designed based on the policy-based design 
+CSL follows in its desing the ideas of policy-based design 
 \cite{Alexandrescu:2001:MCD}. The policy-based design assembles a class
 (called \emph{host}) with complex behavior out of many small and
 generic behaviors (called \emph{policies}).  Each policy defines an
 \emph{interface} for a specific behavior and is customizable by the
-user.  Policies are usually implemented as the functions or functors.
+user.  Policies are usually implemented as functions or functors.
 One gentle example is the \CodeFmt{for\_each} algorithm in STL
 \footnote{\path|http://www.sgi.com/tech/stl/for_each.html|}. 
 \begin{lstlisting}
@@ -26,24 +26,24 @@ UnaryFunction for_each(InputIterator first, InputIterator last, UnaryFunction f)
 \end{lstlisting}
 The \CodeFmt{for\_each} is the algorithm host and the 
 \CodeFmt{UnaryFunction f} is the generic behavior customizable 
-by the user. To use it, user need to provide a policy functor
-or function met the interface requirement of a unary function.
+by the user. To use it, one has to provide a policy functor
+or function that meets the interface requirement of an unary function.
 
 Based on the policy-based design, CSL
-is designed to support both the \emph{generic types}, i.e.\ the polyhedron,
-and the \emph{generic behaviors}, i.e.\ the subdivisions.
+is designed to support both \emph{generic types}, i.e.\ the polyhedron,
+and \emph{generic behaviors}, i.e.\ the subdivisions.
 %This means users can customize the subdivisions at compile time. 
-The interface of the generic types is specified as a \cgalpoly \ that
-specifies both the connectivity and geometry interface.
-The connectivity interface is required as primitive circulators or
-the adjacency pointers of a halfedge. The geometry interface
-is specified as \CodeFmt{Point} type of vertex items. The operational 
+The generic type is specified to follow the interface of the \cgalpoly \ that
+specifies both the connectivity and the geometry interface.
+The connectivity interface has to support the circulators over primitives, or
+the adjacency pointers of an halfedge. The geometry interface
+has to provide the  \CodeFmt{Point} type of a vertex item. The operational 
 interface of the \CodeFmt{Point} is not specified by CSL and can 
-be non-CGAL style. For non-CGAL \CodeFmt{Point}, users should
-provide the user-defined policies that perform the point operations.
+be non-CGAL style. For a non-CGAL \CodeFmt{Point} type, users should
+provide user-defined policies that perform the point operations.
 
 A subdivision algorithm has three key behaviors: \emph{refinement}, 
-\emph{smoothing} and \emph{stencil correspondence}. The refinement is
+\emph{smoothing}, and \emph{stencil correspondence}. The refinement is
 acted as a \CodeFmt{for\_each} algorithm on the source \emph{and}
 the refined polyhedron while applying the smoothing behaviors. CSL
 implement the refinements as the host functions with the smoothing
@@ -183,8 +183,8 @@ of the halfedge item.
     face_point_rule(edge->facet(), f1);
     face_point_rule(edge->opposite()->facet(), f2);
     pt = Point((p1[0]+p2[0]+f1[0]+f2[0])/4,
-	       (p1[1]+p2[1]+f1[1]+f2[1])/4,
-	       (p1[2]+p2[2]+f1[2]+f2[2])/4 );
+               (p1[1]+p2[1]+f1[1]+f2[1])/4,
+               (p1[2]+p2[2]+f1[2]+f2[2])/4 );
   }
 \end{lstlisting}
 The \CodeFmt{edge->opposite()} is used to locate the opposite point
@@ -223,8 +223,8 @@ a vertex circulation.
       
     // Assign the smoothing point.
     pt = Point((Q[0] + 2*R[0] + S[0]*(n-3))/n,
-	       (Q[1] + 2*R[1] + S[1]*(n-3))/n,
-	       (Q[2] + 2*R[2] + S[2]*(n-3))/n );
+               (Q[1] + 2*R[1] + S[1]*(n-3))/n,
+               (Q[2] + 2*R[2] + S[2]*(n-3))/n );
   }
 \end{lstlisting}
 \vspace{0.5cm}
@@ -465,9 +465,9 @@ public:
     } else { // Extraordinary facet.
       double a;
       for (int k = 0; k < n; ++k, he = he->next()) {
-	if (k == 0) a = ((double)5/n) + 1;
-	else a = (3+2*std::cos(2*k*3.141593/n))/n;
-	cv = cv + (he->vertex()->point()-CGAL::ORIGIN)*a;
+        if (k == 0) a = ((double)5/n) + 1;
+        else a = (3+2*std::cos(2*k*3.141593/n))/n;
+        cv = cv + (he->vertex()->point()-CGAL::ORIGIN)*a;
       }
       cv = cv/4;
     }
@@ -552,7 +552,7 @@ void Polyhedron_subdivision<_P>::dualize_1step(_P& p, RULE<_P> rule) {
     facet_buffer[i][0] = n;
     for (int j = 1; j < n+1; ++j, ++cir)
       facet_buffer[i][j] = 
-	std::distance(he_itr, Halfedge_handle(cir.operator->())); 
+        std::distance(he_itr, Halfedge_handle(cir.operator->())); 
   }
   // Construct the edge-facet.
   Halfedge_iterator eitr = p.halfedges_begin();
@@ -575,13 +575,13 @@ void Polyhedron_subdivision<_P>::dualize_1step(_P& p, RULE<_P> rule) {
 
     for (int j = 1; j < n+1; ++j, --cir)
       facet_buffer[i][j] = 
-	std::distance(he_itr, Halfedge_handle(cir.operator->())); 
+        std::distance(he_itr, Halfedge_handle(cir.operator->())); 
   }
   
   // Rebuild the refined polyhedron. 
   p.clear();
   Polyhedron_memory_builder<Polyhedron> pb(num_e*2, point_buffer, 
-					   num_f+num_e+num_v, facet_buffer);
+                                           num_f+num_e+num_v, facet_buffer);
   p.delegate(pb);
   
   // release the buffer of the new level
@@ -596,11 +596,11 @@ modifier and the incremental builder.
 \begin{lstlisting}
   Point* p = (Point*) point_buffer;
   pb.begin_surface(num_point, num_facet); {
-    for (int i = 0; i < num_point; ++i) pb.add_vertex(p[i]);	
+    for (int i = 0; i < num_point; ++i) pb.add_vertex(p[i]);    
     for (int i = 0; i < num_facet; ++i) {
       pb.begin_facet(); {
-	for (int n = 0; n < facet_buffer[i][0]; ++n)
-	  pb.add_vertex_to_facet(facet_buffer[i][n+1]);
+        for (int n = 0; n < facet_buffer[i][0]; ++n)
+          pb.add_vertex_to_facet(facet_buffer[i][n+1]);
       }
       pb.end_facet();
     }
