@@ -154,15 +154,14 @@ io_tag(double)
 { return io_Operator(); }
 
 namespace NTS {
-#ifndef CGAL_NUMBER_UTILS_H
-template <class NT> NT abs(const NT &x);
-#endif // CGAL_NUMBER_UTILS_H
 
-CGAL_TEMPLATE_NULL
+// GCC is faster with std::fabs().
+#ifdef __GUNG__
 inline
 double
 abs(const double& d)
 { return CGAL_CLIB_STD::fabs(d); }
+#endif
 
 } // namespace NTS
 
