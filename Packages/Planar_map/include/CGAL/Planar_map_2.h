@@ -1,4 +1,4 @@
-// Copyright (c) 1997  Tel-Aviv University (Israel).
+// Copyright (c) 2001  Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -1909,7 +1909,7 @@ update_subdivision(Point_node& point_node,
     // if the point is the source of the curve, we ignore it for now.
     // the curve will be handled when we get to its target
       if (traits->point_equal(traits->curve_source(cv_iter->get_curve()),
-                                point_node.get_point().point()))  {
+                              point_node.get_point().point()))  {
       continue;
     }
 

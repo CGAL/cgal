@@ -11,25 +11,23 @@
 #endif
 //#endif
 
-#include <iostream>
 #include <CGAL/basic.h>
-#include <CGAL/Pm_default_dcel.h>
-#include <CGAL/Pm_segment_traits_2.h>
-#include <CGAL/Planar_map_2.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/MP_Float.h>
 #include <CGAL/Quotient.h>
 #include <CGAL/Planar_map_2.h>
-#include <CGAL/assertions.h>
-#include <CGAL/Polygon_2.h>
-#include <set> 
+#include <CGAL/Pm_default_dcel.h>
+#include <CGAL/Pm_segment_traits_2.h>
 #include <CGAL/Planar_map_2/Pm_traits_wrap_2.h>
+#include <CGAL/assertions.h>
+#include <iostream>
+#include <set> 
 
 typedef CGAL::Quotient<CGAL::MP_Float>          NT;
-typedef CGAL::Cartesian<NT>                     R;
-typedef CGAL::Pm_segment_traits_2<R>             Traits;
+typedef CGAL::Cartesian<NT>                     Kernel;
+typedef CGAL::Pm_segment_traits_2<Kernel>       Traits;
 typedef CGAL::Pm_default_dcel<Traits>           Dcel;
-typedef CGAL::Planar_map_2< Dcel, Traits >      Planar_map;
+typedef CGAL::Planar_map_2<Dcel, Traits>        Planar_map;
 typedef CGAL::Pm_traits_wrap_2<Traits>          Traits_wrap;
 typedef Traits::Point_2                         Point_2;
 typedef Traits::X_monotone_curve_2              X_monotone_curve_2;
@@ -46,13 +44,13 @@ int main()
   std::cout << "HAS_REFLECT" << std::endl;
 #endif
   
-  //create wrapper 
+  // create wrapper 
   Traits_wrap Tw;
 
-  //create planar map
+  // create planar map
   Planar_map Pm;
 
-  //create points:
+  // create points:
   Point_2 a1(1, 3), a2(4, 3), a3(3, 5);
 
   // Create the curves:
@@ -61,16 +59,14 @@ int main()
   cv[0]  = X_monotone_curve_2(a1, a2);
   cv[1]  = X_monotone_curve_2(a2, a3);
 
-  //curves_compare_y_at_x_left test - for categoris
-  CGAL::Comparison_result l_res = Tw.curves_compare_y_at_x_left (cv[0], cv[1], a2);
+  //c urves_compare_y_at_x_left test - for categories
+  CGAL::Comparison_result l_res =
+    Tw.curves_compare_y_at_x_left (cv[0], cv[1], a2);
   std::cout << "l-res = " << l_res <<  std::endl;  
   l_res = Tw.curves_compare_y_at_x_left (cv[1], cv[0], a2);
   std::cout << "l-res = " << l_res <<  std::endl;  
   l_res = Tw.curves_compare_y_at_x_left (cv[0], cv[0], a2);
   std::cout << "l-res = " << l_res <<  std::endl; 
-
-  //check if the results are o.k.
-  
 
   return 0;
 }

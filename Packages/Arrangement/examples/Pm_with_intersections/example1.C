@@ -32,7 +32,7 @@ int main() {
   //traversal of the curves
   std::cout << "Edges of the planar map:" << std::endl;
 
-  Pmwx::Halfedge_iterator eit;
+  Pmwx::Halfedge_const_iterator eit;
   for (eit = pm.halfedges_begin(); eit != pm.halfedges_end(); ++eit, ++eit) {
     std::cout << eit->source()->point()
               << " --- " << eit->target()->point() << std::endl;
