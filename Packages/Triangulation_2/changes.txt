@@ -1,24 +1,24 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
-Ver 6.01 ()
+Ver 6.01 (21/1/02)
 - major change in Triangulation package :
   -suppression of Triangulation_face_2 and Triangulation_vertex_2 classes
    the TDS and Triangulation now have the same faces and vertices
    defined in TDS class
-   as well as Face_handle and Vertex_handle
+   as well as Face_handle and Vertex_handle classes
   -supression of Triangulation_default_data_structure_2
    and Triangulation_data_structure_using_list_2. There is now only
    one Triangulation_data_structure_2 (which for the moment is still
-   using list.
+   using list).
 
-Ver 5.24 (14/1/01)
+Ver 5.24 (14/1/02)
 - overloaded star_hole() in Constrained_triangulation_2 to restore
   constraint status of edges
 - fixes demo Delaunay
 - fixes a bug in star_hole() 
 
-Ver 5.23 (8/1/01)
+Ver 5.23 (8/1/02)
 - changes prefixes to CGAL_CLIB_STD in front of ptrdiff_t and size_t
 - prevent insertion of twice the very same constraint in 
   Constrained_triangulation_plus_2
