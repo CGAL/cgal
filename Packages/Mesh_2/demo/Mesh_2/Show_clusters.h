@@ -18,6 +18,9 @@
 //
 // ============================================================================
 
+#ifndef MESH_2_SHOW_CLUSTERS_H
+#define MESH_2_SHOW_CLUSTERS_H
+
 #include <CGAL/IO/Qt_widget.h>
 #include <CGAL/IO/Qt_widget_layer.h>
 
@@ -25,7 +28,7 @@ class Show_clusters_aux : public CGAL::Qt_widget_layer
 {
   Q_OBJECT
 private:
-  virtual voir reinit_clusters() {}
+  virtual void reinit_clusters() {}
 
 public slots:
   void reinitClusters()
@@ -45,17 +48,17 @@ public:
   typedef typename Conform::Vertex_handle	Vertex_handle;
   typedef typename Conform::Geom_traits::FT	FT;
   typedef typename Conform::Cluster_vertices_iterator CVIt;
-  typedef typename Conform::Vertices_in_cluster_iterator ViCIt
+  typedef typename Conform::Vertices_in_cluster_iterator ViCIt;
   typedef std::list<Point> List_of_points;
   typedef typename List_of_points::const_iterator Point_iterator;
 
   Show_clusters(Conform &conform,
-			 Color c = CGAL::GREEN,
-			 int pointsize = 3,
-			 PointStyle pointstyle = CGAL::DISC,
-			 Color lc = CGAL::RED,
-			 int linewidth = 2)
-    : c(conform), first_time(true),  dt(), _color(c),
+		CGAL::Color c = CGAL::GREEN,
+		int pointsize = 3,
+		CGAL::PointStyle pointstyle = CGAL::DISC,
+		CGAL::Color lc = CGAL::RED,
+		int linewidth = 2)
+    : c(conform), dt(), first_time(true), _color(c),
       size(pointsize), style(pointstyle), _line_color(lc),
       width(linewidth) {}
 
@@ -111,7 +114,7 @@ public:
 
     for(int j = 0; j < n; ++j)
       {
-	std::pair<ViCIt> seq = c.vertices_in_cluster_sequence(v2, j);
+	std::pair<ViCIt,ViCIt> seq = c.vertices_in_cluster_sequence(v2, j);
 	for(ViCIt it = seq.first;
 	    it != seq.second;
 	    ++it)
@@ -148,12 +151,11 @@ private:
   Point oldPoint, newPoint;
   List_of_points oldPoints;
   bool  first_time;
-  Color _color;
+  CGAL::Color _color;
   int size;
-  PointStyle style;
-  Color _line_color;
+  CGAL::PointStyle style;
+  CGAL::Color _line_color;
   int width;
 };
 
-// moc_source_file: Show_clusters.h
-#include "Show_clusters.moc"
+#endif

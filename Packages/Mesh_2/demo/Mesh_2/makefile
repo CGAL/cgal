@@ -13,7 +13,9 @@ include $(CGAL_MAKEFILE)
 #                    compiler flags
 #---------------------------------------------------------------------#
 
-CXXFLAGS = -I../../include \
+CXXFLAGS = -I../../../Qt_widget/include \
+           -I../../include \
+           -DCGAL_USE_BOOST \
            $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS) \
            $(DEBUG_OPT)
@@ -34,7 +36,6 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:            \
-                icons$(EXE_EXT) \
                 mesh_demo$(EXE_EXT) 
 
 icons$(EXE_EXT): icons$(OBJ_EXT)
@@ -46,8 +47,7 @@ mesh_demo.moc:  mesh_demo.C
 Show_clusters.moc: Show_clusters.h
 	$(QT_MOC) -o Show_clusters.moc $<
 
-mesh_demo$(OBJ_EXT): mesh_demo.moc \
-	Show_clusters.moc \
+mesh_demo$(OBJ_EXT): mesh_demo.moc Show_clusters.moc \
 	../../include/CGAL/Double_map.h \
 	../../include/CGAL/Filter_circulator.h \
 	../../include/CGAL/Filtered_container.h \
