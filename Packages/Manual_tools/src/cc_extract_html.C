@@ -985,16 +985,19 @@ bool is_html_multi_character( char c) {
     return c == '"' || c == '&' || c == '<' || c == '>';
 }
 
+char multi_char_default[2];
+
 const char* html_multi_character( char c) {
-    static char *s = " ";
     switch ( c) {
     case '"': return "&quot;";
     case '&': return "&amp;";
     case '<': return "&lt;";
     case '>': return "&gt;";
-    default:  *s = c;
+    default:  
+	multi_char_default[0] = c;
+	multi_char_default[1] = '\0';
     }
-    return s;
+    return multi_char_default;
 }
 
 void print_ascii_to_html( ostream& out, const char* txt) {
@@ -1553,9 +1556,18 @@ void split_function_declaration( const char* signature,
         --s;
     while ( s != s_end && ( isalnum( *s) || *s == '_' || *s == '\\'))
         --s;
-    if ( strncmp( s + 1, "operator", 8) != 0)
-        // it's not the cast operator, restore old positiom
-        s = p;
+    // check for conversion operators with template classes like
+    // operator A<int>(...)
+    const char* pp = signature;
+    while ( isspace( *pp))
+	pp++;
+    if ( strncmp( pp, "operator", 8) == 0)
+	s = pp - 1;
+    else {
+	if ( strncmp( s + 1, "operator", 8) != 0)
+	    // it's not the cast operator, restore old position
+	    s = p;
+    }
     if ( q - s) {
         function_name = new char[ q - s + 1];
         strncpy( function_name, s + 1, q - s);
@@ -1776,18 +1788,31 @@ void remove_own_classname( char* s, const char* classname) {
         return;
     // An easy algorithm (quadratic runtime worst case).
     // The classname has to match exactly (and is removed at most once).
-    int l = strlen( s) - strlen( classname);
+    // If the result is an empty string, the classname is not removed.
+    int l  = strlen( s) - strlen( classname);
     int l2 = strlen( classname);
     int i;
+    bool is_empty = true;
     for ( i = 0; i <= l; i++) {
         if ( strncmp( s, classname, l2) == 0)
 	    break;
+	if ( ! isspace( *s))
+	    is_empty = false;
 	s++;
     }
     if ( i <= l) {
-        // Classname found. Remove it.
-	for( ; l2 > 0; l2--)
-	    *s++ = ' ';
+        // Classname found. Test non-empty result.
+	char* p = s + l2;
+	while ( *p) {
+	    if ( ! isspace( *p))
+		is_empty = false;
+	    p++;
+	}
+	if ( ! is_empty) {
+	    // Remove it.
+	    for( ; l2 > 0; l2--)
+		*s++ = ' ';
+	}
     }
 }
 
@@ -1967,6 +1992,9 @@ bool format_operators( int n, int& modifiable_n,
 	    default:
 		return false;
 	    }
+	} else if (op[0] == '(' && op[1] == ')') {
+	    infix   = "(";
+	    postfix = ")";
 	} else
 	    return false;
     } else {  // three or more character operators
@@ -2288,7 +2316,7 @@ void format_variable( const char* signature,
 	filter_for_index_comment( *index_stream, variable_name);
 	*index_stream << "!><UL><LI><I>" << formatted_var
 		      << "</I></UL>" << endl;
-    } else {
+    } else  if ( ! html_no_class_index) {
 	// index
 	char* scrambled_var = convert_ascii_to_scrambled_html( variable_name);
 	*index_stream << (is_typedef ? sort_key_typedef :
@@ -2329,7 +2357,8 @@ void format_variable( const char* signature,
 	);
     if ( scope)
         print_ascii_to_html_spc( *current_stream, scope);
-    *current_stream << formatted_var;
+    print_ascii_to_html_spc( *current_stream, variable_name);
+    // *current_stream << formatted_var;
     if ( rest) {
         *current_stream << ' ';
         print_ascii_to_html_spc( *current_stream, rest);
@@ -2368,9 +2397,10 @@ void format_constructor( const char* signature, const Text& T) {
 
     two_cols_html_begin( *current_stream);
     // first, estimate size
-    double exp_size = 0.0;
-    if ( scope)
-	exp_size += estimate_html_size( scope);
+    double exp_size = 1.0;
+    // Of no use here!
+    // if ( scope)
+    //	exp_size += estimate_html_size( scope);
     exp_size += estimate_html_size( creationvariable) 
               + estimate_html_size( template_class_name) 
               + width_per_character;
@@ -2391,20 +2421,21 @@ void format_constructor( const char* signature, const Text& T) {
     if ( exp_size > table_width && parameter_list) {
 	*current_stream << store_remember_font();
         *current_stream << "<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=0>"
-	                   "<TR><TD ALIGN=LEFT VALIGN=TOP NOWRAP>" ;
+	                   "<TR><TD ALIGN=LEFT VALIGN=TOP NOWRAP><I>" ;
 	*current_stream << get_remember_font() << indNewline;
     }
-    if ( scope)
-        print_ascii_to_html_spc( *current_stream, scope);
+    // Of no use here!
+    // if ( scope)
+    //    print_ascii_to_html_spc( *current_stream, scope);
     print_ascii_to_html_spc( *current_stream, template_class_name);
-    *current_stream << ' ';
+    *current_stream << ' ';  // More space would be a good idea here.
     print_ascii_to_html_spc( *current_stream, creationvariable);
 
     if ( parameter_list) {
         *current_stream << " ( ";
 	if ( exp_size > table_width) {
 	    *current_stream << store_remember_font();
-	    *current_stream << "</TD><TD ALIGN=LEFT VALIGN=TOP NOWRAP>";
+	    *current_stream << "</I></TD><TD ALIGN=LEFT VALIGN=TOP NOWRAP><I>";
 	    *current_stream << get_remember_font() << indNewline;
 	}
 	char* p = parameter_list;
@@ -2420,7 +2451,7 @@ void format_constructor( const char* signature, const Text& T) {
         *current_stream << ");";
 	if ( exp_size > table_width) {
 	    *current_stream << store_remember_font();
-	    *current_stream << "</TD></TR></TABLE>" << indNewline;
+	    *current_stream << "</I></TD></TR></TABLE>" << indNewline;
 	}
     } else
         *current_stream << ';';
@@ -2442,18 +2473,21 @@ void format_nested_type( const char* nested_type_name, const Text& T) {
     char* scrambled_type = convert_ascii_to_scrambled_html( nested_type_name);
     two_cols_html_begin( *current_stream);
 
-    // index
-    *index_stream << sort_key_nested_type << '1';
-    filter_for_index_comment( *index_stream, template_class_name);
-    *index_stream << "::";
-    filter_for_index_comment( *index_stream, nested_type_name);
-    *index_stream << "!><UL><LI><A HREF=\""
-		  << current_filename << "#Nested_type_" << nested_type_name
-                  << "\"><I>" << scrambled_template_class_name
-		  << scrambled_type << "</I></A></UL>" << endl;
-    *current_stream << "<A NAME=\"Nested_type_" << nested_type_name 
-		    << "\"></A>" << endl;
-    // end index
+    if ( ! html_no_class_index) {
+	// index
+	*index_stream << sort_key_nested_type << '1';
+	filter_for_index_comment( *index_stream, template_class_name);
+	*index_stream << "::";
+	filter_for_index_comment( *index_stream, nested_type_name);
+	*index_stream << "!><UL><LI><A HREF=\""
+		      << current_filename << "#Nested_type_" 
+                      << nested_type_name
+		      << "\"><I>" << scrambled_template_class_name
+		      << scrambled_type << "</I></A></UL>" << endl;
+	*current_stream << "<A NAME=\"Nested_type_" << nested_type_name 
+			<< "\"></A>" << endl;
+	// end index
+    }
 
     // first, estimate size
     double exp_size =   estimate_html_size( template_class_name)
@@ -2510,7 +2544,7 @@ void format_enum( const char* signature, const Text& T) {
 	filter_for_index_comment( *index_stream, enum_name);
 	*index_stream << "!><UL><LI><I>" << formatted_enum
 		      << "</I></UL>" << endl;
-    } else {
+    } else  if ( ! html_no_class_index) {
 	// index
 	char* scrambled_enum = convert_ascii_to_scrambled_html( enum_name);
 	*index_stream << sort_key_enum << '1';
@@ -2605,7 +2639,7 @@ void format_enum( const char* signature, const Text& T) {
 			       << endl;
 		delete[] tmp_param;
 		*q = c_tmp; // restore initializer
-	    } else {
+            } else  if ( ! html_no_class_index) {
 		// index: print enum tags with their (possible) initializers
 	        char* scrambled_tag = convert_ascii_to_scrambled_html( p);
 		*index_stream << sort_key_enum_tags  << '1' << p 
@@ -2687,7 +2721,7 @@ void format_struct( const char* signature, const Text& T) {
 	filter_for_index_comment( *index_stream, struct_name);
 	*index_stream << "!><UL><LI><I>" << formatted_struct
 		      << "</I></UL>" << endl;
-    } else {
+    } else  if ( ! html_no_class_index) {
 	// index
 	char* scrambled_struct = convert_ascii_to_scrambled_html( struct_name);
 	*index_stream << sort_key_struct << '1';
@@ -2898,9 +2932,10 @@ Buffer* handleCite( const char* cite_keys, const char* option) {
 	    buf->add( ", ");
 	}
     }
-    if ( option) 
-	while ( *option)
-	    buf->add( *option++);
+    if ( option) {
+	buf->add( ", ", 2);
+	buf->add( option);
+    }
     buf->add( ']');
     return buf;
 }
@@ -2961,26 +2996,30 @@ void handleSection(  const Text& T) {
     delete[] section;
 }
 
-void handleLabel( const char* l) {
+void handleLabel( const char* l, size_t len) { // trust only len!
     /* The lexical processing has removed the parantheses around */
     /* \ref{...} macros from TeX, so here is the correct pattern match */
     /* to find them in the pre-HTML text */
-    *anchor_stream << "[\\\\](page)?ref[ \\t]*\"" << l
-		   << "\"    { fputs( \"<A HREF=\\\""
+    char* s = new char[len+1];
+    strncpy( s, l, len);
+    s[len] = '\0';
+    *anchor_stream << "[\\[]ref[:]\"" << s
+		   << "\"[\\]]    { fputs( \"<A HREF=\\\""
 		   << current_filename 
-		   << "#" << l << "\\\">" << reference_icon 
+		   << "#" << s << "\\\">" << reference_icon 
 		   << "</A>\", stdout); }" << endl;    
     // There are two special ref commands defined within the manual
-    *anchor_stream << "[\\\\]Chapter[ \\t]*\"" << l
+    *anchor_stream << "[\\\\]Chapter[ \\t\\n]*\"" << s
 		   << "\"    { fputs( \"Chapter <A HREF=\\\""
 		   << current_filename 
-		   << "#" << l << "\\\">" << reference_icon 
+		   << "#" << s << "\\\">" << reference_icon 
 		   << "</A>\", stdout); }" << endl;    
-    *anchor_stream << "[\\\\]Section[ \\t]*\"" << l
+    *anchor_stream << "[\\\\]Section[ \\t\\n]*\"" << s
 		   << "\"    { fputs( \" Section <A HREF=\\\""
 		   << current_filename 
-		   << "#" << l << "\\\">"  << reference_icon 
+		   << "#" << s << "\\\">"  << reference_icon 
 		   << "</A>\", stdout); }" << endl;    
+    delete[] s;
 }
 
 void handleText( const Text& T, bool check_nlnl) {
@@ -3178,10 +3217,21 @@ void handleClasses( const char* classname, const char* template_cls) {
 					    template_class_name,
 					    formatted_template_class_name);
 
-    if ( ! html_no_class_links)    // Cross links.
-	// Generate a substitution rule for hyperlinking.
-	*current_stream << handleHtmlCrossLink( classname, 
-						template_cls != NULL);
+    if ( ! html_no_class_links) {   // Cross links.
+	// Generate a substitution rule for hyperlinking,
+        // but only if classname is longer than 1 character.
+	int len = 0;
+	const char* s = classname;
+	while ( isspace( *s))
+	    s++;
+	while ( isalnum( *s) || *s == '_') {
+	    s++;
+	    len ++;
+	}
+	if ( len > 1) 
+	    *current_stream << handleHtmlCrossLink( classname, 
+						    template_cls != NULL);
+    }
 }
 
 void handleClass( const char* classname) {
@@ -3247,11 +3297,15 @@ void handleClassTemplateEnd( void) {
 
 void handleHtmlClassFile( const char* filename, const Text& T) {
     char* s = text_block_to_string( T);
-    char* p = convert_ascii_to_html( s);
-    delete[] s;    
-    s = wrap_anchor( filename, p);
+    // char* p = convert_ascii_to_html( s);
+    // delete[] s;    
+    // s = wrap_anchor( filename, p);
+    // delete[] p;
+    // handleClassFile( newstr(filename), s);
+    char *p = wrap_anchor( filename, s);
+    handleClassFile( newstr(filename), p);
     delete[] p;
-    handleClassFile( newstr(filename), s);
+    //
     delete[] s;    
     html_inline_classes = true;
 }
@@ -3602,7 +3656,8 @@ main( int argc, char **argv) {
         close_html( *pre_stream);
 	assert_file_write( *pre_stream, pre_main_filename);
 	delete   pre_stream;
-    }
+    } else
+	cout << endl;
 
     assert_file_write( *index_stream, index_filename);
     delete index_stream;
@@ -3616,7 +3671,6 @@ main( int argc, char **argv) {
     delete anchor_stream;
     delete[] chapter_title;
 
-    cout << endl;
     return 0;
 }
 

@@ -156,11 +156,7 @@ while ($#argv > 0)
 	    echo "error: switch -cgal_dir needs an additional parameter."
             goto usage
 	endif
-	if ( ! -d $1) then 
- 	   echo "error: switch -cgal_dir needs a valid directory as parameter."
-           goto usage
-	endif
-	set cgal_dir = "-cgal_dir $1"
+	set cgal_dir = "-cgal_dir $1/"
 	shift
         continue
     endif

@@ -132,7 +132,7 @@ void handleMainComment( const Text& T);
 
 void handleChapter(  const Text& T);
 void handleSection(  const Text& T);
-void handleLabel(    const char* l);
+void handleLabel(    const char* l, size_t len); // trust only len!
 
 void handleText(       const Text&      T, bool check_nlnl = false);
 void handleBuffer(     const Buffer&    B);

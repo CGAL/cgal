@@ -336,17 +336,29 @@ calblockintro   ([\{][\\](cal))|([\\]mathcal[\{])
 [\\]subsubsection[*]?{w}[\{]  {
 		    return SUBSUBSECTION;
 }
-[\\]label{w}[\{][^\}]+/[\}]  {
-                    yyinput();
-		    char* s = yytext;
-		    while( *s != '{')
-		        ++s;
-		    ++s;
-		    while( *s && *s <= ' ')
-		        ++s;
-	            yylval.string.text = s;
-		    yylval.string.len  = -1;
-		    return LABEL;
+[\\]label{w}[\{][^\}]+[\}]  {
+	            yylval.string.text = yytext + 6;
+	            while ( *yylval.string.text++ != '{')
+                        ;
+	            while ( isspace(*yylval.string.text))
+                        yylval.string.text++;
+		    yylval.string.len  = strlen( yylval.string.text) - 1;
+	            while( isspace( yylval.string.text[ yylval.string.len-1]))
+                        yylval.string.len--;
+                    if ( yylval.string.len > 0)
+		        return LABEL;
+}
+<INITIAL,MMODE,NestingMode>[\\]((page)?)ref{w}[\{][^\}]*[\}]    {
+	            yylval.string.text = yytext + 4;
+	            while ( *yylval.string.text++ != '{')
+                        ;
+	            while ( isspace(*yylval.string.text))
+                        yylval.string.text++;
+		    yylval.string.len  = strlen( yylval.string.text) - 1;
+	            while( isspace( yylval.string.text[ yylval.string.len-1]))
+                        yylval.string.len--;
+                    if ( yylval.string.len > 0)
+		        return REF;
 }
 
 
@@ -664,7 +676,7 @@ calblockintro   ([\{][\\](cal))|([\\]mathcal[\{])
 
  /* Specialized keywords from the manual style */
  /* -------------------------------------------------------------- */
-[\\]cc((Style)|(c))/{noletter}  {
+<INITIAL,MMODE,NestingMode>[\\]cc((Style)|(c))/{noletter}  {
                     /* CCstyle formatting: change to ccStyleMode */
 		    skipspaces();
 		    BEGIN( ccStyleMode);
@@ -897,7 +909,7 @@ calblockintro   ([\{][\\](cal))|([\\]mathcal[\{])
 		    yylval.string.len  = -1;
 		    return STRING;
                  }
-[\\]ccModfiers/{noletter} {
+[\\]ccModifiers/{noletter} {
 		    skipspaces();
 	            yylval.string.text = "<H3>Modifiers</H3>";
 		    yylval.string.len  = -1;
@@ -1270,7 +1282,7 @@ calblockintro   ([\{][\\](cal))|([\\]mathcal[\{])
   /* math symbols */
   /* ------------ */
 
-<MMODE>[\\]((arc)?)|((tan)|(sin)|(cos))/{noletter}  { 
+<MMODE>[\\]((arc)?)((tan)|(sin)|(cos))/{noletter}  { 
 	            yylval.string.text = yytext+1;
 		    yylval.string.len  = yyleng-1;
 	  	    return STRING;
@@ -1325,9 +1337,14 @@ calblockintro   ([\{][\\](cal))|([\\]mathcal[\{])
 		    BEGIN( NestingMode);
 		    return IGNORETWOBLOCKS;
 		}
-[\\]begin[\{]minipage[\}]      |
-[\\]end[\{]minipage[\}]	       {
+[\\]begin[\{]minipage[\}]      {
 		    skipoptionalparam();
+		    yyinput();  /* gobble opening brace */
+		    BEGIN( NestingMode);
+		    return IGNOREBLOCK;		    
+                 }
+[\\]end[\{]minipage[\}]	       {
+		    skipspaces();
 	            yylval.string.text = " ";
 		    yylval.string.len  = 1;
 		    return SPACE;		    
@@ -1479,7 +1496,7 @@ calblockintro   ([\{][\\](cal))|([\\]mathcal[\{])
 
  /* TeX macros                             */
  /* -------------------------------------- */
-<INITIAL,MMODE,NestingMode>[\\]((ref)|(ccTrue)|(ccFalse)|(kill)|(parskip)|(parindent))/{noletter}    {  // copy without warning
+<INITIAL,MMODE,NestingMode>[\\]((ccTrue)|(ccFalse)|(kill)|(parskip)|(parindent))/{noletter}    {  // copy without warning
                     yylval.string.text = yytext;
                     yylval.string.len  = -1;
 		    return STRING;    

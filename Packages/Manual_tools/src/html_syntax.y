@@ -108,6 +108,7 @@ extern bool mbox_within_math;
 %token             BIBITEM
 %token <string>    CITE
 %token <string>    LABEL
+%token <string>    REF
 %token             BEGINCLASS
 %token             ENDCLASS
 %token             BEGINCLASSTEMPLATE
@@ -389,11 +390,17 @@ string_token:     STRING       {
 				  $$->add( $1.text, $1.len);
                                 }
                 | LABEL         {
-                                  handleLabel( $1.text);
+                                  handleLabel( $1.text, $1.len);
                                   $$ = new Buffer;
 				  $$->add( "<A NAME=\"");
 				  $$->add( $1.text, $1.len);
 				  $$->add( "\"></A>");
+                                }
+                | REF           {
+                                  $$ = new Buffer;
+				  $$->add( "[ref:");
+				  $$->add( $1.text, $1.len);
+				  $$->add( "]");
                                 }
                 | HTMLINDEX  '{' nested_token_sequence '}'     {
 		                  char* s = text_block_to_string(* $3);
@@ -1189,6 +1196,19 @@ math_token:
 	    $$->add( "</BOX>", 6);
 	    delete $6;
 	}
+    | CCSTYLE  '{' nested_token_sequence '}'  {
+	  char* s = text_block_to_string( *$3);
+          char* p = convert_ccStyle_to_html(s);
+          $$ = new Buffer;
+	  $$->add( p);
+          $$->prepend( "</MATH>", 7);
+	  $$->add( "<MATH>", 6);
+          current_font = unknown_font;
+	  delete[] p;
+	  delete[] s;
+	  delete $3;
+          set_MMODE = 1;
+        }
 ;
 
 /* End if Grammar */
