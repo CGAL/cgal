@@ -1,0 +1,3 @@
+Algorithms to compute the minimum enclosing rectangle/parallelogram
+(arbitrary orientation) and the minimum enclosing strip of a convex 
+point set.
