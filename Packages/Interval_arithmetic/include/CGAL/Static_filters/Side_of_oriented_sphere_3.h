@@ -108,19 +108,23 @@ public:
     double ptx = px - tx;
     double pty = py - ty;
     double ptz = pz - tz;
-    double pt2 = CGAL_NTS square(ptx) + CGAL_NTS square(pty) + CGAL_NTS square(ptz);
+    double pt2 = CGAL_NTS square(ptx) + CGAL_NTS square(pty)
+	+ CGAL_NTS square(ptz);
     double qtx = qx - tx;
     double qty = qy - ty;
     double qtz = qz - tz;
-    double qt2 = CGAL_NTS square(qtx) + CGAL_NTS square(qty) + CGAL_NTS square(qtz);
+    double qt2 = CGAL_NTS square(qtx) + CGAL_NTS square(qty)
+	+ CGAL_NTS square(qtz);
     double rtx = rx - tx;
     double rty = ry - ty;
     double rtz = rz - tz;
-    double rt2 = CGAL_NTS square(rtx) + CGAL_NTS square(rty) + CGAL_NTS square(rtz);
+    double rt2 = CGAL_NTS square(rtx) + CGAL_NTS square(rty)
+	+ CGAL_NTS square(rtz);
     double stx = sx - tx;
     double sty = sy - ty;
     double stz = sz - tz;
-    double st2 = CGAL_NTS square(stx) + CGAL_NTS square(sty) + CGAL_NTS square(stz);
+    double st2 = CGAL_NTS square(stx) + CGAL_NTS square(sty)
+	+ CGAL_NTS square(stz);
     double det = det4x4_by_formula(ptx,pty,ptz,pt2,
                                    rtx,rty,rtz,rt2,
                                    qtx,qty,qtz,qt2,
