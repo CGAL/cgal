@@ -153,7 +153,7 @@ void delete_drawable(int, int);
   // deletes selected drawables
 void delete_selection();
 
-void delete_group(int);
+  void delete_group(int); //a commenter?????
 
 pthread_t get_window_thread();
 

@@ -47,7 +47,7 @@ convert_type(Point_3<R> p, Viewer_3 &W)
 
 template <class R>
 Drawable_point_3<std::vector<R> >*
-convert_type(std::vector<R> p, Viewer_3 &W)
+convert_type(std::vector<R> &p, Viewer_3 &W)
 {
   Drawable_point_3<std::vector<R> >* dp = new
     Drawable_point_3<std::vector<R> >(p[0],p[1],p[2],W.get_color(),W.get_style(),W.get_size(),W.get_precision());
@@ -58,7 +58,7 @@ convert_type(std::vector<R> p, Viewer_3 &W)
 
 template<class R>
 Drawable_segment_3<Segment_3<R> >*
-convert_type(Segment_3<R> s, Viewer_3 &W)
+convert_type(Segment_3<R> &s, Viewer_3 &W)
 {
    Drawable_segment_3<Segment_3<R> >* sp = new
      Drawable_segment_3<Segment_3<R> >(s,W.get_color(),W.get_style(),W.get_size(),W.get_precision());
@@ -67,7 +67,7 @@ convert_type(Segment_3<R> s, Viewer_3 &W)
 
 template<class R>
 Drawable_triangle_3<Triangle_3<R> >*
-convert_type(Triangle_3<R> s, Viewer_3 &W)
+convert_type(Triangle_3<R> &s, Viewer_3 &W)
 {
    Drawable_triangle_3<Triangle_3<R> >* sp = new
      Drawable_triangle_3<Triangle_3<R> >(s,W.get_color(),W.get_style(),W.get_size(),W.get_precision());
@@ -77,7 +77,7 @@ convert_type(Triangle_3<R> s, Viewer_3 &W)
 
 template<class R>
 Drawable_tetrahedron_3<Tetrahedron_3<R> >*
-convert_type(Tetrahedron_3<R> s, Viewer_3 &W)
+convert_type(Tetrahedron_3<R> &s, Viewer_3 &W)
 {
    Drawable_tetrahedron_3<Tetrahedron_3<R> >* sp = new
      Drawable_tetrahedron_3<Tetrahedron_3<R> >(s,W.get_color(),W.get_style(),W.get_size(),W.get_precision());
@@ -86,7 +86,7 @@ convert_type(Tetrahedron_3<R> s, Viewer_3 &W)
 
 template<class R>
 Drawable_line_3<Line_3<R> >*
-convert_type(Line_3<R> s, Viewer_3 &W)
+convert_type(Line_3<R> &s, Viewer_3 &W)
 {
    Drawable_line_3<Line_3<R> >* sp = new
      Drawable_line_3<Line_3<R> >(s,W.get_color(),W.get_style(),W.get_size(),W.get_precision());
@@ -96,7 +96,7 @@ convert_type(Line_3<R> s, Viewer_3 &W)
 
 template<class R>
 Drawable_ray_3<Ray_3<R> >*
-convert_type(Ray_3<R> s, Viewer_3 &W)
+convert_type(Ray_3<R> &s, Viewer_3 &W)
 {
    Drawable_ray_3<Ray_3<R> >* sp = new
      Drawable_ray_3<Ray_3<R> >(s,W.get_color(),W.get_style(),W.get_size(),W.get_precision());
@@ -106,7 +106,7 @@ convert_type(Ray_3<R> s, Viewer_3 &W)
 
 template<class R>
 Drawable_point_2<Point_2<R> >*
-convert_type(Point_2<R> s, Viewer_3 &W)
+convert_type(Point_2<R> &s, Viewer_3 &W)
 {
    Drawable_point_2<Point_2<R> >* sp = new
      Drawable_point_2<Point_2<R> >(s,W.get_color(),W.get_style(),W.get_size(),W.get_precision());
@@ -115,7 +115,7 @@ convert_type(Point_2<R> s, Viewer_3 &W)
 
 template<class R>
 Drawable_segment_2<Segment_2<R> >*
-convert_type(Segment_2<R> s, Viewer_3 &W)
+convert_type(Segment_2<R> &s, Viewer_3 &W)
 {
    Drawable_segment_2<Segment_2<R> >* sp = new
      Drawable_segment_2<Segment_2<R> >(s,W.get_color(),W.get_style(),W.get_size(),W.get_precision());
@@ -124,7 +124,7 @@ convert_type(Segment_2<R> s, Viewer_3 &W)
 
 template<class R>
 Drawable_line_2<Line_2<R> >*
-convert_type(Line_2<R> s, Viewer_3 &W)
+convert_type(Line_2<R> &s, Viewer_3 &W)
 {
    Drawable_line_2<Line_2<R> >* sp = new
      Drawable_line_2<Line_2<R> >(s,W.get_color(),W.get_style(),W.get_size(),W.get_precision());
@@ -133,7 +133,7 @@ convert_type(Line_2<R> s, Viewer_3 &W)
 
 template<class R>
 Drawable_ray_2<Ray_2<R> >*
-convert_type(Ray_2<R> s, Viewer_3 &W)
+convert_type(Ray_2<R> &s, Viewer_3 &W)
 {
    Drawable_ray_2<Ray_2<R> >* sp = new
      Drawable_ray_2<Ray_2<R> >(s,W.get_color(),W.get_style(),W.get_size(),W.get_precision());
@@ -142,7 +142,7 @@ convert_type(Ray_2<R> s, Viewer_3 &W)
 
 template<class R>
 Drawable_triangle_2<Triangle_2<R> >*
-convert_type(Triangle_2<R> s, Viewer_3 &W)
+convert_type(Triangle_2<R> &s, Viewer_3 &W)
 {
    Drawable_triangle_2<Triangle_2<R> >* sp = new
      Drawable_triangle_2<Triangle_2<R> >(s,W.get_color(),W.get_style(),W.get_size(),W.get_precision());
@@ -151,7 +151,7 @@ convert_type(Triangle_2<R> s, Viewer_3 &W)
 
 template<class R>
 Drawable_circle_2<Circle_2<R> >*
-convert_type(Circle_2<R> s, Viewer_3 &W)
+convert_type(Circle_2<R> &s, Viewer_3 &W)
 {
    Drawable_circle_2<Circle_2<R> >* sp = new
      Drawable_circle_2<Circle_2<R> >(s,W.get_color(),W.get_style(),W.get_size(),W.get_precision());
@@ -192,7 +192,7 @@ return W;
 // Stream for a CGAL object that has a convert_type operation
 template <class object>
 Viewer_3&
-operator<<(Viewer_3& W, object o)
+operator<<(Viewer_3& W, object &o)
 {
 W.add_drawable(convert_type(o,W));
 return W;

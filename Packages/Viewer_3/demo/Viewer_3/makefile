@@ -74,7 +74,7 @@ all: facet demo tetra1 tetra2 tetra3
 
 
 clean:
-	rm -f *.o core *~
+	rm -f *.o core *~ 
 	rm -f ii_files/*
 distclean: clean
 	rm -f demo facet tetra1 tetra2 tetra3 

@@ -75,12 +75,12 @@ int main(int argc, char *argv[])
 
 
   triangle tr(point_t(10,10,-200),point_t(300,10,-200),point_t(200,200,-100));
-  
+
   tetra
     tet(point_t(100,100,-200),point_t(400,100,-300),point_t(400,300,-100),point_t(250,250, 100));
 
 
-  CGAL::Drawable_triangle_3<triangle> dtr(tr,CGAL::GRAY,CGAL::RAW);
+  //  CGAL::Drawable_triangle_3<triangle> dtr(tr,CGAL::GRAY,CGAL::RAW);
  
   CGAL::Drawable_tetrahedron_3<tetra> dtet(tet,CGAL::ORANGE);
 
@@ -97,7 +97,7 @@ int main(int argc, char *argv[])
  CGAL::Drawable_points_set_3<std::list<point_t>::iterator,point_t>
    dlp(first,last,CGAL::RED,CGAL::FILL,5,30);
 
-
+ W << tr ;
  W.add_drawable(&dp1);
  W.add_drawable(&dp2);
  W.add_drawable(&dp3);
@@ -120,7 +120,7 @@ int main(int argc, char *argv[])
  W.add_drawable(&dry2,3);
 
 
- W.add_drawable(&dtr,4);
+ // W.add_drawable(&dtr,4);
  W.add_drawable(&dtet,5);
 
  W.add_drawable(&ds1,6);

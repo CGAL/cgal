@@ -58,6 +58,9 @@ tetra3: tetra3.o
 terrain: terrain.o
 	$(CGAL_CXX) -o $@ $(OFILES) terrain.o -lpthread $(LDFLAGS)
 
+testter: testter.o
+	$(CGAL_CXX) -o $@ $(OFILES) testter.o -lpthread $(LDFLAGS)
+
 all: facet demo tetra1 tetra2 tetra3
 
 #---------------------------------------------------------------------#

@@ -39,10 +39,10 @@ int main(int argc, char *argv[])
 
   W << CGAL::ORANGE ;
   Delaunay_3::Cell_iterator cit;
-  tetra t;
+  tetra* t;
   for (cit = tr.finite_cells_begin(); cit != tr.cells_end(); cit++) {
-    t=tr.tetrahedron(cit->handle());
-    W << t;
+    t = new tetra(tr.tetrahedron(cit->handle()));
+    W << *t;
   }
  W.main_loop();
 
