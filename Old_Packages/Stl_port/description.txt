@@ -1,0 +1,2 @@
+A "hacked" STLport for use with MSVC-6.
+Based on STLport V3.2.1.

@@ -1,0 +1,13 @@
+PURPOSE OF THIS DIRECTORY:
+
+To accomodate naming conversion for SunPro C++ 5.0 compiler (.SUNWCCh)
+
+These wrappers are not put into STLport main include directory because :
+
+1) These files are symbolic links and may clobber principal headers with some systems/archive tools.
+2) These headers are beyond the scope of C++ standard.
+
+If you use this STLport installation only for SUNPro, I would suggest you to link .SUNWCCh and .h files
+in this directory symbolically into the main STLport include directory (..).
+
+-Boris.

@@ -1,0 +1,95 @@
+/*
+ * Copyright (c) 1999 
+ * Boris Fomitchev
+ *
+ * This material is provided "as is", with absolutely no warranty expressed
+ * or implied. Any use is at your own risk.
+ *
+ * Permission to use or copy this software for any purpose is hereby granted 
+ * without fee, provided the above notices are retained on all copies.
+ * Permission to modify the code and to distribute modified code is granted,
+ * provided the above notices are retained, and a notice that the code was
+ * modified is included with the above copyright notice.
+ *
+ */
+
+#ifndef __STLPORT_COMPLEX
+# define __STLPORT_COMPLEX
+
+# ifndef __STL_CONFIG_H
+#  include <stl_config.h>
+# endif
+
+# if defined __STLPORT_NEW_IOSTREAMS && defined (__STL_USE_OWN_NAMESPACE)
+#  include <iosfwd>
+# endif
+
+#  if defined ( __STL_REDEFINE_STD ) && defined (std) 
+#    undef std
+#    define __STL_RESUME_STD_FOR_COMPLEX
+#    define __STLPORT_NATIVE_PASS
+#  endif
+
+# if defined __STLPORT_NEW_IOSTREAMS && defined (__STL_USE_OWN_NAMESPACE)
+namespace std {
+  using stlport::allocator;
+  using stlport::basic_ostringstream;
+  using stlport::basic_istringstream;
+  using stlport::basic_istream;
+  using stlport::basic_iostream;
+  using stlport::basic_ostream;
+  using stlport::basic_ios;
+  using stlport::ios_base;
+  using stlport::ios;
+}
+# endif
+
+# include __STL_NATIVE_HEADER(complex)
+
+# if defined ( __STL_RESUME_STD_FOR_COMPLEX )
+#    undef __STL_RESUME_STD_FOR_COMPLEX
+#    define std __STLPORT_NAMESPACE
+#    undef __STLPORT_NATIVE_PASS
+# endif
+
+
+# if defined (__STL_USE_OWN_NAMESPACE)
+
+__STL_BEGIN_NAMESPACE
+
+using __STL_VENDOR_STD::complex;
+
+// using __STL_VENDOR_STD::operator<<(basic_ostream<char>&, const complex<double>&);
+
+using __STL_VENDOR_STD::real;
+using __STL_VENDOR_STD::imag;
+using __STL_VENDOR_STD::abs;
+using __STL_VENDOR_STD::arg;
+using __STL_VENDOR_STD::norm;
+
+using __STL_VENDOR_STD::conj;
+using __STL_VENDOR_STD::polar;
+
+# ifndef __STL_MSVC
+using __STL_VENDOR_STD::cos;
+using __STL_VENDOR_STD::cosh;
+using __STL_VENDOR_STD::exp;
+using __STL_VENDOR_STD::log;
+using __STL_VENDOR_STD::log10;
+using __STL_VENDOR_STD::pow;
+using __STL_VENDOR_STD::sin;
+using __STL_VENDOR_STD::sinh;
+using __STL_VENDOR_STD::sqrt;
+using __STL_VENDOR_STD::tan;
+using __STL_VENDOR_STD::tanh;
+# endif
+
+__STL_END_NAMESPACE
+
+# endif /* USE_OWN_NAMESPACE */
+
+#endif /* __STLPORT_COMPLEX */
+
+// Local Variables:
+// mode:C++
+// End:

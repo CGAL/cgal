@@ -1,0 +1,8 @@
+
+This directory should be included in search path when compiling
+with Borland C++ 5.0x compiler (maybe later ones, too).
+
+It provides wrappers that force inclusion of STLport files without extensions.
+If you want to preserve old-style HP semantics, include ../old_hp BEFORE this directory
+to include HP-style STL headers (with "using" directives). If namespaces are disabled,
+this one should be enough.

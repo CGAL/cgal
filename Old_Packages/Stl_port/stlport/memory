@@ -1,0 +1,146 @@
+/*
+ * Copyright (c) 1997-1999
+ * Silicon Graphics Computer Systems, Inc.
+ *
+ * Copyright (c) 1999 
+ * Boris Fomitchev
+ *
+ * This material is provided "as is", with absolutely no warranty expressed
+ * or implied. Any use is at your own risk.
+ *
+ * Permission to use or copy this software for any purpose is hereby granted 
+ * without fee, provided the above notices are retained on all copies.
+ * Permission to modify the code and to distribute modified code is granted,
+ * provided the above notices are retained, and a notice that the code was
+ * modified is included with the above copyright notice.
+ *
+ */
+
+#ifndef __SGI_STL_MEMORY
+# define __SGI_STL_MEMORY
+
+# ifndef __SGI_STL_INTERNAL_ALLOC_H
+#  include <stl_alloc.h>
+# endif
+
+# ifndef __SGI_STL_INTERNAL_TEMPBUF_H
+#  include <stl_tempbuf.h>
+# endif
+
+# ifndef __SGI_STL_INTERNAL_RAW_STORAGE_ITER_H
+#  include <stl_raw_storage_iter.h>
+# endif
+
+# if defined (__STL_IMPORT_VENDOR_STD)
+#  if defined ( __STL_REDEFINE_STD ) && defined (std) 
+#    undef std
+#    define __STL_RESUME_STD_FOR_MEMORY
+#    define __STLPORT_NATIVE_PASS
+#  endif
+
+
+#  include __STL_NATIVE_HEADER(memory)
+
+
+# if __MSL__ >= 0x2405	/*  980401 vss  MSL 2.4  Pro 3 Release  */	
+#  include <new_mem.h>
+# endif
+
+# if defined ( __STL_RESUME_STD_FOR_MEMORY )
+#    undef __STL_RESUME_STD_FOR_MEMORY
+#    define std __STLPORT_NAMESPACE
+#    undef __STLPORT_NATIVE_PASS
+# endif
+
+# endif
+
+__STL_BEGIN_NAMESPACE
+
+
+struct __auto_ptr_base {
+  void* _M_p;
+};
+
+template <class _Tp> class auto_ptr_ref {
+public:
+  __auto_ptr_base& _M_r;
+  _Tp* const _M_p;
+  auto_ptr_ref(_Tp* __p, __auto_ptr_base& __r) : _M_r(__r), _M_p(__p) {}
+  _Tp* release() const { _M_r._M_p = 0; return _M_p; }
+};
+
+template<class _Tp> struct auto_ptr : public __auto_ptr_base  {
+
+  typedef _Tp element_type;
+  typedef auto_ptr<_Tp> _Self;
+
+  _Tp* get() const __STL_NOTHROW { return __STATIC_CAST(_Tp*,_M_p); }
+  _Tp* release() __STL_NOTHROW { _Tp* __px = get(); _M_p = 0; return __px; }
+  void reset(_Tp* __px=0) __STL_NOTHROW { if (__px != get()) delete get(), _M_p = __px; }
+  
+  explicit auto_ptr() __STL_NOTHROW { _M_p = 0; }
+
+  explicit auto_ptr(_Tp* __px) __STL_NOTHROW { _M_p = __px; }
+
+  auto_ptr(_Self& __r) __STL_NOTHROW { _M_p = __r.release(); }
+  _Self& operator=(_Self& __r) __STL_NOTHROW {
+    reset(__r.release());
+    return *this;
+  }
+
+#if defined (__STL_MEMBER_TEMPLATES) && defined (__STL_FUNCTION_TMPL_PARTIAL_ORDER)
+  template<class _Tp1> auto_ptr(auto_ptr<_Tp1>& __r) __STL_NOTHROW {
+    _Tp* __px = __r.release();
+    _M_p = __px;
+  }
+  
+  template<class _Tp1> auto_ptr& operator=(auto_ptr<_Tp1>& __r) __STL_NOTHROW {
+    reset(__r.release());
+    return *this;
+  }
+#endif /* __STL_MEMBER_TEMPLATES */
+
+
+  ~auto_ptr() { delete get(); }
+
+  _Tp& operator*() const __STL_NOTHROW { return *get(); }
+
+# if defined (__SGI_STL_NO_ARROW_OPERATOR)
+  // fbp : you would not instantiate auto_ptrs for builtins, would you ?
+#  if !defined (__STL_NO_AUTO_PTR_PROXY_ARROW_OPERATOR)
+  __arrow_op_dispatch<_Tp&, _Tp*> operator->() const __STL_NOTHROW {
+    return __arrow_op_dispatch<_Tp&, _Tp*>(*get());
+  }
+#  endif
+# else
+  _Tp* operator->() const __STL_NOTHROW { return get(); }
+# endif
+
+  auto_ptr(auto_ptr_ref<_Tp> __r) __STL_NOTHROW {
+    _M_p = __r.release();
+  }
+
+  _Self& operator=(auto_ptr_ref<_Tp> __r) __STL_NOTHROW {
+    reset(__r.release());
+    return *this;
+  }
+# if defined(__STL_MEMBER_TEMPLATES) && !defined(__STL_NO_TEMPLATE_CONVERSIONS)
+  template<class _Tp1> operator auto_ptr_ref<_Tp1>() __STL_NOTHROW {
+    return auto_ptr_ref<_Tp1>(get(),*this);
+  }
+  template<class _Tp1> operator auto_ptr<_Tp1>() __STL_NOTHROW {
+    return auto_ptr<_Tp1>(release());
+  }
+# else
+  operator auto_ptr_ref<_Tp>() __STL_NOTHROW
+  	{ return auto_ptr_ref<_Tp>(get(),*this); }
+# endif
+};
+
+__STL_END_NAMESPACE
+
+#endif /* __SGI_STL_MEMORY */
+
+// Local Variables:
+// mode:C++
+// End:
