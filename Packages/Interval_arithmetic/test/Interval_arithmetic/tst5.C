@@ -16,8 +16,8 @@
 #include <CGAL/Quotient.h>
 #include <CGAL/Interval_arithmetic.h>
 
-#include <CGAL/predicates_on_ftC2.h>
-// #include <CGAL/predicates_on_ftC3.h>
+#include <CGAL/predicates/kernel_ftC2.h>
+// #include <CGAL/predicates/kernel_ftC3.h>
 
 #include <CGAL/double.h>
 
