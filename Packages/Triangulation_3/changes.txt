@@ -1,3 +1,8 @@
+Version 1.80 (27 July 01)
+- Susan moved the TDS documentation to its own directory, eliminating one
+  level of subdirectories
+- also made changes necessary for manual split
+
 Version 1.79 (25 July 01)
 - Short names in the examples for VC++.
 
