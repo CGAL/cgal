@@ -17,13 +17,11 @@ General
 TEST SUITE
 
 Doc
-- revoir tous les insert...(...)
 - ameliorer user manual
-- verifier requirements sur la cell_base pour output/input stream 
 - revoir les anciennes corrections de JF Dufourd
 
 Exemples - demo
-- utiliser param template par defaut dans demo
+- rajouter exemples
 - ameliorer demo... (cf geomview...)
 
 TDS
