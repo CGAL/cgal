@@ -25,22 +25,17 @@
 
 #include <CGAL/triple.h>
 #include <utility>
+
 #include <CGAL/triangulation_assertions.h>
-
 #include <CGAL/Triangulation_ds_circulators_3.h>
-
 #include <CGAL/Triangulation_short_names_3.h>
 
 CGAL_BEGIN_NAMESPACE
 
-template < class Vb, class Cb >
-class Triangulation_ds_vertex_3;
-template < class Vb, class Cb >
-class Triangulation_ds_cell_3;
-template < class Vb, class Cb >
-class Triangulation_data_structure_3;
-template <class Tds>
-class Triangulation_ds_cell_circulator_3;
+template < class Vb, class Cb > class Triangulation_ds_vertex_3;
+template < class Vb, class Cb > class Triangulation_ds_cell_3;
+template < class Vb, class Cb > class Triangulation_data_structure_3;
+template <class Tds>            class Triangulation_ds_cell_circulator_3;
 
 template<class Tds>
 class Triangulation_ds_cell_iterator_3
@@ -170,13 +165,12 @@ public:
 private:
   Tds*  _tds;
   Cell* pos;
-
 };
 
 template < class Tds>
 class Triangulation_ds_vertex_iterator_3
 {
-// traverses the list of cells and report for each cell 
+// traverses the list of cells and reports for each cell 
 // the vertices whose cell() is the current cell
 
 public:
@@ -205,7 +199,7 @@ public:
       else { 
 	pos = _tds->list_of_cells()._next_cell; 
 	while ( (pos != _tds->past_end_cell())
-		  && (pos->vertex(index)->cell() != pos) ) {
+             && (pos != pos->vertex(index)->cell()) ) {
 	  increment();
 	}
       }
@@ -228,7 +222,7 @@ public:
     do {
       increment();
     } while ( (pos != _tds->past_end_cell())
-	      && (pos->vertex(index)->cell() != pos) );
+           && (pos != pos->vertex(index)->cell()) );
     return *this;
   }
     
@@ -290,7 +284,7 @@ public:
 private:
   Tds*  _tds;
   Cell* pos; // current "cell". Even if the dimension is <3 when 
-              // there is no true cell yet.
+             // there is no true cell yet.
   int index; // index of the current vertex in the current cell
 
   void 
@@ -304,7 +298,6 @@ private:
     // be careful : index should always be 0 when pos = past_end_cell
     else { index++; }
   }
-
 };
 
 template < class Tds>

@@ -32,40 +32,31 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template < class Vb, class Cb >
-class Triangulation_ds_vertex_3;
+template < class Vb, class Cb > class Triangulation_ds_vertex_3;
 
-template < class Vb, class Cb >
-class Triangulation_data_structure_3;
+template < class Vb, class Cb > class Triangulation_data_structure_3;
 
-template < class Tds>
-class Triangulation_ds_cell_iterator_3;
-template < class Tds>
-class Triangulation_ds_facet_iterator_3;
-template < class Tds>
-class Triangulation_ds_edge_iterator_3;
-template < class Tds>
-class Triangulation_ds_vertex_iterator_3;
+template < class Tds> class Triangulation_ds_cell_iterator_3;
+template < class Tds> class Triangulation_ds_facet_iterator_3;
+template < class Tds> class Triangulation_ds_edge_iterator_3;
+template < class Tds> class Triangulation_ds_vertex_iterator_3;
 
 template < class Vb, class Cb >
 class Triangulation_ds_cell_3
   : public Cb,
     public Triangulation_utils_3
 {
-  friend class Triangulation_data_structure_3<Vb,Cb>;
-
-  friend class Triangulation_ds_cell_iterator_3
-               <Triangulation_data_structure_3<Vb,Cb> >;
-  friend class Triangulation_ds_facet_iterator_3
-               <Triangulation_data_structure_3<Vb,Cb> >;
-  friend class Triangulation_ds_edge_iterator_3
-               <Triangulation_data_structure_3<Vb,Cb> >;
-  friend class Triangulation_ds_vertex_iterator_3
-               <Triangulation_data_structure_3<Vb,Cb> >;
-
 public:
 
   typedef Triangulation_data_structure_3<Vb,Cb> Tds;
+
+  friend class Triangulation_data_structure_3<Vb,Cb>;
+
+  friend class Triangulation_ds_cell_iterator_3<Tds>;
+  friend class Triangulation_ds_facet_iterator_3<Tds>;
+  friend class Triangulation_ds_edge_iterator_3<Tds>;
+  friend class Triangulation_ds_vertex_iterator_3<Tds>;
+
   typedef Triangulation_ds_vertex_3<Vb,Cb> Vertex;
   typedef Triangulation_ds_cell_3<Vb,Cb> Cell;
 
@@ -109,7 +100,7 @@ public:
   {
     set_vertices(v0,v1,v2,v3);
   }
-     
+
   // DESTRUCTOR
 
   ~Triangulation_ds_cell_3()
