@@ -371,7 +371,7 @@ The four classes implementing neighbor searching algorithms are
 \begin{itemize}
 
 \item
-The class \ccc{CGAL::K_neighbor_search<PointTraits, Distance, QueryItem, SpatialTree>} 
+The class \ccc{CGAL::K_neighbor_search<PointTraits, OrthogonalDistance, Splitter, SpatialTree>} 
 implementing the standard search strategy for general distances
 like the Manhattan distance for iso-rectangles.
 Requires no use of extended nodes in the $k$-$d$ tree and supports only $k$
@@ -380,20 +380,20 @@ neighbor searching for queries defined by points or spatial objects.
 
 \item
 The class \ccc{CGAL::Incremental_neighbor_search<PointTraits,
-GeneralDistance, QueryItem, SpatialTree>} implementing the incremental
+GeneralDistance, Splitter, SpatialTree>} implementing the incremental
 search strategy for general distances like the Manhattan distance for
 iso-rectangles.  Requires no use of extended nodes in the $k$-$d$ tree
 and supports incremental neighbor searching and distance browsing for
 queries defined by points or spatial objects.
 
 \item
-The class \ccc{CGAL::Orthogonal_k_neighbor_search<PointTraits, OrthogonalDistance, SpatialTree>} 
+The class \ccc{CGAL::Orthogonal_k_neighbor_search<PointTraits, OrthogonalDistance, Splitter, SpatialTree>} 
 implementing the standard search strategy for orthogonal distances
 like a weighted Minkowski distance. Requires the use of extended nodes in the $k$-$d$ tree and supports 
 only $k$ neighbor searching for point queries.
 
 \item
-The class \ccc{Orthogonal_incremental_neighbor_search<PointTraits, GeneralDistance, QueryItem, SpatialTree>} 
+The class \ccc{Orthogonal_incremental_neighbor_search<PointTraits, GeneralDistance, Splitter, SpatialTree>} 
 implementing the priority search strategy for general distances
 like a weighted Minkowski distance. Requires the use of extended nodes in the $k$-$d$ tree and supports incremental
 neighbor searching and distance browsing for point queries.
