@@ -22,9 +22,9 @@
 #include <CGAL/Sweep_line_2/Sweep_line_2_impl.h>
 #include <CGAL/Sweep_line_2/Sweep_line_event.h>
 #include <CGAL/Sweep_line_2/Sweep_line_subcurve.h>
-#include <CGAL/Sweep_line_2/Sweep_line_points_notification.h>
-#include <CGAL/Sweep_line_2/Sweep_line_subcurves_notification.h>
-#include <CGAL/Sweep_line_2/Sweep_line_do_curves_x_notofication.h>
+#include <CGAL/Sweep_line_2/Sweep_line_points_visitor.h>
+#include <CGAL/Sweep_line_2/Sweep_line_subcurves_visitor.h>
+#include <CGAL/Sweep_line_2/Sweep_line_do_curves_x_visitor.h>
 
 
 
@@ -50,26 +50,26 @@ OutputIterator get_intersection_points(CurveInputIterator curves_begin,
                                        CurveInputIterator curves_end,
                                        OutputIterator points,
                                        bool endpoints = true,
-                                       Traits traits )
+                                       Traits traits  = Traits() )
 {
-  typedef Sweep_line_points_notification<Traits,OutputIterator> Visitor;
-  Visitor notif(points, endpoints);
+  typedef Sweep_line_points_visitor<Traits,OutputIterator> Visitor;
+  Visitor visitor(points, endpoints);
   
   typedef Sweep_line_subcurve<Traits,
-                              Sweep_line_points_notification<Traits,OutputIterator>
+                              Sweep_line_points_visitor<Traits,OutputIterator>
                               >                         Subcurve;
   
   typedef Sweep_line_event<Traits, Subcurve, Visitor>            Event;
   typedef Sweep_line_2_impl< Traits,
                              Event,
                              Subcurve,
-                             Sweep_line_points_notification<Traits,OutputIterator>,
+                             Sweep_line_points_visitor<Traits,OutputIterator>,
                              CGAL_ALLOCATOR(int) > Sweep_line ;
-  Sweep_line sweep_object(&traits, &notif);
+  Sweep_line sweep_object(&traits, &visitor);
   sweep_object.init(curves_begin, curves_end);
   sweep_object.sweep();
 
-  return notif.get_output_iterator();
+  return visitor.get_output_iterator();
 }
 
 
@@ -95,25 +95,25 @@ OutputIterator get_subcurves(CurveInputIterator curves_begin,
                              bool overlapping = false,
                              Traits traits = Traits())
 {
-  typedef Sweep_line_subcurves_notification<Traits, OutputIterator>    Visitor;
-  Visitor notif(subcurves, overlapping);
+  typedef Sweep_line_subcurves_visitor<Traits, OutputIterator>    Visitor;
+  Visitor visitor(subcurves, overlapping);
 
 
   typedef Sweep_line_subcurve<Traits,
-                              Sweep_line_subcurves_notification<Traits,OutputIterator>
+                              Sweep_line_subcurves_visitor<Traits,OutputIterator>
                               >                         Subcurve;
   
   typedef Sweep_line_event<Traits, Subcurve, Visitor>            Event;
   typedef Sweep_line_2_impl< Traits,
                              Event,
                              Subcurve,
-                             Sweep_line_subcurves_notification<Traits,OutputIterator>,
+                             Sweep_line_subcurves_visitor<Traits,OutputIterator>,
                              CGAL_ALLOCATOR(int) > Sweep_line ;
 
-  Sweep_line sweep_object(&traits, &notif);
+  Sweep_line sweep_object(&traits, &visitor);
   sweep_object.init(curves_begin, curves_end);
   sweep_object.sweep();
-  return notif.get_output_iterator();
+  return visitor.get_output_iterator();
 }
 
 
@@ -154,24 +154,24 @@ bool do_curves_intersect(CurveInputIterator curves_begin,
                          CurveInputIterator curves_end,
                          Traits traits = Traits())
 {
-  typedef Sweep_line_do_curves_x_notification<Traits>  Visitor;
-  Visitor notif;
+  typedef Sweep_line_do_curves_x_visitor<Traits>  Visitor;
+  Visitor visitor;
 
   typedef Sweep_line_subcurve<Traits,
-                              Sweep_line_do_curves_x_notification<Traits>
+                              Sweep_line_do_curves_x_visitor<Traits>
                               >                         Subcurve;
   
   typedef Sweep_line_event<Traits, Subcurve, Visitor>            Event;
   typedef Sweep_line_2_impl< Traits,
                              Event,
                              Subcurve,
-                             Sweep_line_do_curves_x_notification<Traits>,
+                             Sweep_line_do_curves_x_visitor<Traits>,
                              CGAL_ALLOCATOR(int) > Sweep_line ;
   
-  Sweep_line sweep_object(&traits, &notif);
+  Sweep_line sweep_object(&traits, &visitor);
   sweep_object.init(curves_begin, curves_end);
   sweep_object.sweep();
-  return notif.found_x();
+  return visitor.found_x();
 }
 
 

@@ -1,5 +1,5 @@
-#ifndef SWEEP_LINE_POINTS_VISITOR_H
-#define SWEEP_LINE_POINTS_VISITOR_H
+#ifndef SWEEP_LINE_POINTS_NOTIFICATION_H
+#define SWEEP_LINE_POINTS_NOTIFICATION_H
 
 #include <CGAL/Sweep_line_2/Sweep_line_event.h>
 #include <CGAL/Sweep_line_2/Sweep_line_subcurve.h>

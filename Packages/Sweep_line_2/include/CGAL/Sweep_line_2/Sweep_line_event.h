@@ -50,7 +50,7 @@ CGAL_BEGIN_NAMESPACE
 
 
 
-template<class SweepLineTraits_2, class CurveWrap, class SweepNotif>
+template<class SweepLineTraits_2, class CurveWrap, class SweepVisitor>
 class Sweep_line_event
 {
 public:
@@ -67,8 +67,8 @@ public:
   typedef typename StatusLine::iterator                     StatusLineIter;
 
 
-  typedef Sweep_line_subcurve<Traits, SweepNotif>                    BaseSubCurve;
-  typedef Sweep_line_event<Traits, BaseSubCurve, SweepNotif>          BaseEvent; 
+  typedef Sweep_line_subcurve<Traits, SweepVisitor>                    BaseSubCurve;
+  typedef Sweep_line_event<Traits, BaseSubCurve, SweepVisitor>          BaseEvent; 
 
   typedef std::pair<bool, SubCurveIter>                     Pair;
 
@@ -418,9 +418,9 @@ public:
 
 
 #ifndef NDEBUG
-template<class SweepLineTraits_2, class CurveWrap, class SweepNotif>
+template<class SweepLineTraits_2, class CurveWrap, class SweepVisitor>
 void 
-Sweep_line_event<SweepLineTraits_2, CurveWrap, SweepNotif>::
+Sweep_line_event<SweepLineTraits_2, CurveWrap, SweepVisitor>::
 Print() 
 {
   std::cout << "\tEvent id: " << id << "\n" ;

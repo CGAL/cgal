@@ -1,5 +1,5 @@
-#ifndef SWEEP_LINE_DO_CURVES_X_VISITOR_H
-#define SWEEP_LINE_DO_CURVES_X_VISITOR_H
+#ifndef SWEEP_LINE_DO_CURVES_X_VISITOR
+#define SWEEP_LINE_DO_CURVES_X_VISITOR
 
 
 #include <CGAL/Sweep_line_2/Sweep_line_event.h>

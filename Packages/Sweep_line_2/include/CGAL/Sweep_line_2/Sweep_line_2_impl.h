@@ -111,7 +111,7 @@ CGAL_BEGIN_NAMESPACE
 template < class SweepLineTraits_2,
            class SweepEvent,
            class CurveWrap,
-           class SweepNotif  ,
+           class SweepVisitor  ,
            typename Allocator = CGAL_ALLOCATOR(int) >
 class Sweep_line_2_impl
 {
@@ -149,7 +149,7 @@ public:
  
 
 
-  Sweep_line_2_impl(SweepNotif* ntf, bool deallocate_event = true) :
+  Sweep_line_2_impl(SweepVisitor* visitor, bool deallocate_event = true) :
       m_traits(new Traits()),
       m_deallocate_event(deallocate_event),
       m_sweep_line_traits(m_traits),
@@ -159,13 +159,13 @@ public:
       m_comp_param(NULL),
       m_xcurves(0),
       m_num_of_subCurves(0),
-      m_notification(ntf)
+      m_visitor(visitor)
   {
-    m_notification->attach(this);
+    m_visitor->attach(this);
   }
 
 
-  Sweep_line_2_impl(Traits *t, SweepNotif* ntf, bool deallocate_event = true) :
+  Sweep_line_2_impl(Traits *t, SweepVisitor* visitor, bool deallocate_event = true) :
       m_traits(t),
       m_deallocate_event(deallocate_event),
       m_sweep_line_traits(m_traits),
@@ -175,9 +175,9 @@ public:
       m_comp_param(NULL),
       m_xcurves(0),
       m_num_of_subCurves(0),
-      m_notification(ntf)
+      m_visitor(visitor)
   {
-    m_notification->attach(this);
+    m_visitor->attach(this);
   }
 
 
@@ -252,7 +252,7 @@ public:
       m_queue->erase(eventIter);
 
       handle_right_curves();
-      m_notification->after_handle_event(m_currentEvent);
+      m_visitor->after_handle_event(m_currentEvent);
 
       deallocate_event(m_currentEvent, m_deallocate_event);
 
@@ -269,7 +269,7 @@ public:
    */
   void handle_left_curves()
   {
-    m_notification->before_handle_event(m_currentEvent);
+    m_visitor->before_handle_event(m_currentEvent);
     EventCurveIter leftCurveIter = m_currentEvent->left_curves_begin();
     const Point_2 &eventPoint = m_currentEvent->get_point();
     
@@ -308,11 +308,11 @@ public:
         {
           X_monotone_curve_2 a,b;
           m_traits->curve_split(cv, a, b, lastPoint);
-          m_notification->add_subcurve(a, leftCurve);
+          m_visitor->add_subcurve(a, leftCurve);
         }
         else 
         {
-          m_notification->add_subcurve(cv,leftCurve);
+          m_visitor->add_subcurve(cv,leftCurve);
         }
         if(leftCurve->get_orig_subcurve1() != NULL)
         {
@@ -342,10 +342,10 @@ public:
         {
           X_monotone_curve_2 a,b;
           m_traits->curve_split(cv, a, b, lastPoint);
-          m_notification->add_subcurve(b, leftCurve);
+          m_visitor->add_subcurve(b, leftCurve);
         } else
         {
-          m_notification->add_subcurve(cv, leftCurve);
+          m_visitor->add_subcurve(cv, leftCurve);
         }
         if(leftCurve->get_orig_subcurve1() != NULL)
         {
@@ -371,18 +371,18 @@ public:
         X_monotone_curve_2 a,b;
         if ( leftCurve->is_source(lastPoint)) {
           m_traits->curve_split(cv, a, b, eventPoint);
-          m_notification->add_subcurve(a, leftCurve);
+          m_visitor->add_subcurve(a, leftCurve);
         } else if ( leftCurve->is_target(lastPoint)) {
           m_traits->curve_split(cv, b, a, eventPoint);
-          m_notification->add_subcurve(a, leftCurve);
+          m_visitor->add_subcurve(a, leftCurve);
         } else {
           const X_monotone_curve_2 &lastCurve = leftCurve->get_last_curve();
           if ( leftCurve->is_source_left_to_target() ) {
             m_traits->curve_split(lastCurve, a, b, eventPoint);
-            m_notification->add_subcurve(a, leftCurve);
+            m_visitor->add_subcurve(a, leftCurve);
           } else {
             m_traits->curve_split(lastCurve, b, a, eventPoint);
-            m_notification->add_subcurve(a, leftCurve);
+            m_visitor->add_subcurve(a, leftCurve);
           }
         }
         leftCurve->set_last_point(eventPoint);
@@ -462,7 +462,7 @@ public:
           sc->set_last_point(m_currentEvent->get_point());
           sc->set_last_curve(b);
         }
-        m_notification->add_subcurve(a, sc);
+        m_visitor->add_subcurve(a, sc);
       }
       else
       {
@@ -496,7 +496,7 @@ public:
             sc->set_last_point(m_currentEvent->get_point());
             sc->set_last_curve(b);
           }
-          m_notification->add_subcurve(a,sc);
+          m_visitor->add_subcurve(a,sc);
         }
       }
     }
@@ -616,7 +616,7 @@ public:
          overlap_sc->set_left_event(event);
          overlap_sc->set_right_event((*q_iter).second);
 
-         m_notification->init_subcurve(overlap_sc);
+         m_visitor->init_subcurve(overlap_sc);
 
 
          //remove curve, *iter from the left curves of end_overlap event
@@ -712,7 +712,7 @@ protected:
   /*! contains all of the new sub-curve creaed by overlap */
   SubCurveList m_overlap_subCurves;
 
-  SweepNotif* m_notification;
+  SweepVisitor* m_visitor;
  
 #ifndef NDEBUG
   int m_eventId;
@@ -746,9 +746,9 @@ protected:
 
 };
 
-template < class SweepLineTraits_2, class SweepEvent, class CurveWrap , class SweepNotif,
+template < class SweepLineTraits_2, class SweepEvent, class CurveWrap , class SweepVisitor,
           typename Allocator >
-Sweep_line_2_impl<SweepLineTraits_2,SweepEvent,CurveWrap,SweepNotif,
+Sweep_line_2_impl<SweepLineTraits_2,SweepEvent,CurveWrap,SweepVisitor,
                   Allocator>::
 ~Sweep_line_2_impl() 
 {
@@ -782,10 +782,10 @@ Sweep_line_2_impl<SweepLineTraits_2,SweepEvent,CurveWrap,SweepNotif,
  *  For each curve create a Subcurve instance.
  */
 template < class SweepLineTraits_2,
-          class SweepEvent, class CurveWrap,class SweepNotif,
+          class SweepEvent, class CurveWrap,class SweepVisitor,
           typename Allocator>
 inline void 
-Sweep_line_2_impl<SweepLineTraits_2,SweepEvent,CurveWrap,SweepNotif,
+Sweep_line_2_impl<SweepLineTraits_2,SweepEvent,CurveWrap,SweepVisitor,
                   Allocator>::
 init_curve(X_monotone_curve_2 &curve,unsigned int j)
 { 
@@ -856,7 +856,7 @@ init_curve(X_monotone_curve_2 &curve,unsigned int j)
 
     (m_subCurves+j)->set_left_event(e);
 
-    m_notification->init_subcurve(m_subCurves+j);
+    m_visitor->init_subcurve(m_subCurves+j);
   
 }
 
@@ -872,10 +872,10 @@ init_curve(X_monotone_curve_2 &curve,unsigned int j)
  * @return an iterator to the position where the curve will be removed from.
  */
 template <class SweepLineTraits_2,
-          class SweepEvent, class CurveWrap, class SweepNotif,
+          class SweepEvent, class CurveWrap, class SweepVisitor,
           typename Allocator>
 inline void
-Sweep_line_2_impl<SweepLineTraits_2,SweepEvent,CurveWrap,SweepNotif,
+Sweep_line_2_impl<SweepLineTraits_2,SweepEvent,CurveWrap,SweepVisitor,
                   Allocator>::
 remove_curve_from_status_line(Subcurve *leftCurve, bool remove_for_good)
                               
@@ -924,10 +924,10 @@ remove_curve_from_status_line(Subcurve *leftCurve, bool remove_for_good)
 
 
 template < class SweepLineTraits_2,
-           class SweepEvent, class CurveWrap,class SweepNotif,
+           class SweepEvent, class CurveWrap,class SweepVisitor,
            typename Allocator >
 inline bool 
-Sweep_line_2_impl<SweepLineTraits_2,SweepEvent,CurveWrap,SweepNotif,
+Sweep_line_2_impl<SweepLineTraits_2,SweepEvent,CurveWrap,SweepVisitor,
                   Allocator>::
 intersect(Subcurve *c1, Subcurve *c2)
 {

@@ -34,7 +34,7 @@ CGAL_BEGIN_NAMESPACE
 
    template< class _SweepLineTraits_2,
              class CurveWrap,
-             class SweepNotif >            class Sweep_line_event;
+             class SweepVisitor >            class Sweep_line_event;
 
 
 /*! @class Sweep_line_subcurve
@@ -62,7 +62,7 @@ CGAL_BEGIN_NAMESPACE
  *
  */
  
-template<class SweepLineTraits_2, class SweepLineNotif>
+template<class SweepLineTraits_2, class SweepLinevisitor>
 class Sweep_line_subcurve
 {
 public:
@@ -72,13 +72,13 @@ public:
 
   typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
 
-  typedef Sweep_line_subcurve<Traits,SweepLineNotif> Self;
+  typedef Sweep_line_subcurve<Traits,SweepLinevisitor> Self;
   typedef Status_line_curve_less_functor<Traits, Self> StatusLineCurveLess;
 
   typedef std::set<Self*, StatusLineCurveLess, CGAL_ALLOCATOR(int)> StatusLine;
   typedef typename StatusLine::iterator StatusLineIter;
 
-  typedef Sweep_line_event<Traits, Self, SweepLineNotif> Event;
+  typedef Sweep_line_event<Traits, Self, SweepLinevisitor> Event;
 
 
 
@@ -381,8 +381,8 @@ private:
 
 };
 
-template<class SweepLineTraits_2,class SweepLineNotif>
-inline Sweep_line_subcurve<SweepLineTraits_2,SweepLineNotif>::
+template<class SweepLineTraits_2,class SweepLinevisitor>
+inline Sweep_line_subcurve<SweepLineTraits_2,SweepLinevisitor>::
 Sweep_line_subcurve( X_monotone_curve_2 &curve) : m_overlap_subcurve(NULL),
                                                   m_orig_subcurve1(NULL)  ,
                                                   m_orig_subcurve2(NULL)
@@ -406,9 +406,9 @@ Sweep_line_subcurve( X_monotone_curve_2 &curve) : m_overlap_subcurve(NULL),
 }
 
 #ifndef NDEBUG
-template<class SweepLineTraits_2,class SweepLineNotif>
+template<class SweepLineTraits_2,class SweepLinevisitor>
 void 
-Sweep_line_subcurve<SweepLineTraits_2, SweepLineNotif>::
+Sweep_line_subcurve<SweepLineTraits_2, SweepLinevisitor>::
 Print() const
 {
   std::cout << "Curve " << this << "  (" << m_curve << ") "
