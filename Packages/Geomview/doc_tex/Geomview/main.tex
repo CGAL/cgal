@@ -22,18 +22,18 @@ in Minneapolis\footnote{\tt http://www.geom.umn.edu/}.
 
 \noindent {\bf Important:} The last line in the startup file \ccc{.geomview}
 must be \ccc{(echo "started")}. The two commands \ccc{rsh} and \ccc{geomview}
-must be in the user's path. Otherwise the program will not be able to execute.
+must be in the user's path, otherwise the program will not be able to execute.
 
 \begin{ccClass}{CGAL_Geomview_stream}
 \ccDefinition
 An object of the class \ccClassName\ is a stream in which geometric
-objects can be insrted and where geometric objects can be extracted
+objects can be inserted and where geometric objects can be extracted
 from. The constructor starts geomview either on the local either on
 a remote machine.
 
 \ccInclude{CGAL/IO/Geomview_stream.h}
 
-\ccSetThreeColumns{CGAL_Oriented_side}{}{\hspace*{10cm}}
+\ccSetThreeColumns{CGAL_Geomview_stream& }{}{\hspace*{10cm}}
 \ccThreeToTwo
 \ccCreation
 \ccCreationVariable{G}
@@ -52,6 +52,9 @@ on the remote machine.}
 
 
 \ccHeading{Output Operators for CGAL Kernel Classes}
+
+\def\ccTagRmEigenClassName{\ccFalse}
+%\def\ccTagOperatorLayout{\ccFalse}
 
 At the moment not all classes of the \cgal\ kernel have output
 operators. 2D objects are embedded in the \ccc{xy}-plane.
@@ -104,7 +107,6 @@ operators. 2D objects are embedded in the \ccc{xy}-plane.
 {Inserts the tetrahedron \ccc{t} into the stream \ccVar.}
 
 
-
 \ccMethod{CGAL_Geomview_stream&
           operator<<(const CGAL_Bbox_2& b);}
 {Inserts the bounding box \ccc{b} into the stream \ccVar.}
@@ -115,6 +117,20 @@ operators. 2D objects are embedded in the \ccc{xy}-plane.
 
 
 \ccHeading{Input Operators for CGAL Kernel Classes}
+
+At the moment input is only provided for points. The user has to select
+a point on the {\it pick plane} with the right mouse button. The pick plane
+can be moved anywhere with the left mouse button, before a point is entered.
+
+\ccFunction{template <class R>
+            CGAL_Geomview_stream&
+            operator>>(CGAL_Geomview_stream& G,
+                       CGAL_Point_3<R>& p);}
+{Extracts the point \ccc{p} from the stream \ccVar. The point is
+ echoed.}
+
+
+\ccHeading{IO Operators for CGAL Basic Library Classes}
 
 At the moment input is only provided for points. The user has to select
 a point on the {\it pickplane} with the right mouse button. The pickplane
@@ -250,6 +266,7 @@ is at the same time the color of vertices.
           get_trace();}
 {Returns \ccc{true} iff tracing is on.}
 
+
 \begin{ccAdvanced}
 
 \ccHeading{Advanced and Developers Features}
@@ -279,10 +296,10 @@ stream is in ascii mode.}
 {Inserts double \ccc{d} into the stream. Puts whitespace around if the
 stream is in ascii mode.}
 
-\ccMethod{bool in_ascii_mode();}
-{Returns \ccc{true} iff \ccVar\ is in ascii mode.}
-
 \ccMethod{bool in_binary_mode();}
+{Returns \ccc{true} iff \ccVar\ is in binary mode.}
+
+\ccMethod{bool in_ascii_mode();}
 {Returns \ccc{true} iff \ccVar\ is in binary mode.}
 
 \ccMethod{void set_binary_mode();}{}
@@ -302,15 +319,13 @@ that can be inserted in the stream.
 \end{ccAdvanced}
 
 %\ccExample
-
-\begin{cprog}
-
-\end{cprog} 
+%\begin{cprog}
+%\end{cprog} 
 
 \ccImplementation
 
 The constructor forks a process and establishes two pipes between the
-processes. The forked process is then overlayed with geomview. The
+processes. The forked process is then overlaid with geomview. The
 file descriptors \ccc{stdin} and \ccc{stdout} of geomview are hooked
 on the two pipes.
 
@@ -322,23 +337,7 @@ sends a description of the event in gcl and the extract operator has
 to parse this expression.
 
 In order to implement further insert and extract operators you should
-take a look at the implementation \cite{GV_Impl} and at the geomview
-manual \cite{GVManual}.
+take a look at the implementation \cite{f-higso-97} and at the geomview
+manual \cite{p-gmgv16-96}.
 \end{ccClass}
-
-\begin{thebibliography}{10}
-
-\bibitem{GVManual}
-Mark Phillips et al.
-\newblock {\em Geomview Manual}.
-\newblock Version 1.6.1 for Unix Workstations.
-\newblock December 10, 1996.
-
-
-\bibitem{GV_Impl}
-Andreas Fabri.
-\newblock {How to Implement Geomview Stream IO Operators.}
-\newblock July 1997. \ccc{http://www.cs.ru.nl/CGAL/}
-
-\end{thebibliography}
 
