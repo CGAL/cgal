@@ -1,3 +1,6 @@
+06 April 2005 Laurent Rineau
+- added sliver exudation: include/CGAL/Mesh_3/Sliver_exuder.h
+  (perhaps should it be only a global function >> TODO)
 03 April 2005 Laurent Rineau
 - New functions using isosurface of Inrimage images
 - Regular triangulation

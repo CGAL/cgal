@@ -377,8 +377,10 @@ int main(int argc, char **argv) {
     }
   if( dump_distribution )
     output_distribution_to_png(T, distribution_size, distribution_type);
-  CGAL::Slivers_exuder<Del> exuder(T);
+  CGAL::Mesh_3::Slivers_exuder<Del> exuder(T);
   exuder.init();
   exuder.pump_vertices();
+  if( dump_distribution )
+    output_distribution_to_png(T, distribution_size, distribution_type);
   std::cerr << " done\n";
 }

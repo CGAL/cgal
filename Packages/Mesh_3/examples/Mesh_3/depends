@@ -11,6 +11,8 @@ essai.o: \
   ../../../Triangulation_3/include/CGAL/Triangulation_ds_cell_base_3.h \
   ../../../Triangulation_3/include/CGAL/Dummy_tds_3.h \
   ../../../Triangulation_3/include/CGAL/Triangulation_ds_vertex_base_3.h \
+  ../../../Triangulation_3/include/CGAL/Triangulation_ds_cell_3.h \
+  ../../../Triangulation_3/include/CGAL/Triangulation_ds_vertex_3.h \
   ../../../Triangulation_3/include/CGAL/Triangulation_ds_iterators_3.h \
   ../../../Triangulation_3/include/CGAL/Triangulation_ds_circulators_3.h \
   ../../../Triangulation_3/include/CGAL/Triangulation_cell_base_3.h \
@@ -83,6 +85,8 @@ implicit_surfaces_mesher_3.o: \
   ../../../Triangulation_2/include/CGAL/Triangulation_utils_2.h \
   ../../../Triangulation_3/include/CGAL/Triangulation_data_structure_3.h \
   ../../../Triangulation_3/include/CGAL/Triangulation_ds_vertex_base_3.h \
+  ../../../Triangulation_3/include/CGAL/Triangulation_ds_cell_3.h \
+  ../../../Triangulation_3/include/CGAL/Triangulation_ds_vertex_3.h \
   ../../../Triangulation_3/include/CGAL/Triangulation_ds_iterators_3.h \
   ../../../Triangulation_3/include/CGAL/Triangulation_ds_circulators_3.h \
   ../../../Triangulation_3/include/CGAL/Triangulation_cell_base_3.h \
@@ -110,7 +114,7 @@ implicit_surfaces_mesher_3.o: \
   ../../include/CGAL/IO/File_medit.h \
   ../../../Chew_4_surfaces/include/CGAL/Chew_4_surfaces/Oracles/Implicit_oracle.h \
   ../../include/CGAL/Mesh_criteria_3.h implicit_function.h parameters.h \
-  ../../include/CGAL/Mesh_3/Slivers_exuder.h
+  ../../include/CGAL/Mesh_3/Slivers_exuder.h \
 
 
 isosurface_mesher.o: \
@@ -127,6 +131,8 @@ isosurface_mesher.o: \
   ../../../Triangulation_2/include/CGAL/Triangulation_utils_2.h \
   ../../../Triangulation_3/include/CGAL/Triangulation_data_structure_3.h \
   ../../../Triangulation_3/include/CGAL/Triangulation_ds_vertex_base_3.h \
+  ../../../Triangulation_3/include/CGAL/Triangulation_ds_cell_3.h \
+  ../../../Triangulation_3/include/CGAL/Triangulation_ds_vertex_3.h \
   ../../../Triangulation_3/include/CGAL/Triangulation_ds_iterators_3.h \
   ../../../Triangulation_3/include/CGAL/Triangulation_ds_circulators_3.h \
   ../../../Triangulation_3/include/CGAL/Triangulation_cell_base_3.h \
