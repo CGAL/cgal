@@ -7,6 +7,7 @@
 //	actual revision
 //---------------------------------------------------------------------
 
+DOCS: Changed to new manual structure.
 DOCS: Changed compose function/class.
 TEST: Fixed warnings with NDEBUG.
 ALL : Fixed leading underscore names.
