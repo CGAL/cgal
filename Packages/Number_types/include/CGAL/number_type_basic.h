@@ -27,8 +27,12 @@
 
 #define CGAL_PI 3.14159265358979323846
 
-// CGAL_NTS is deprecated, and should be replaced by CGAL::
-#define CGAL_NTS CGAL::
+#if defined __GNUG__ && __GNUG__ >=3 && __GNUC_MINOR__ >= 4
+// Attempt at using Koenig lookup for g++ 3.4.
+#  define CGAL_NTS
+#else
+#  define CGAL_NTS CGAL::
+#endif
 // #define CGAL_NTS CGAL::NTS::
 
 #if ((__GNUC__ == 2) && (__GNUC_MINOR__ == 95))

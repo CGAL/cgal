@@ -1,4 +1,8 @@
 20 June 2004 Sylvain Pion
+- Define CGAL_NTS as empty for g++ 3.4 as a temporary attempt.
+  This enables Koenig Lookup, and allows experimenting with it.
+
+20 June 2004 Sylvain Pion
 - Use CGAL_NTS instead of CGAL:: for to_double/to_interval.
 
 31 May 2004 Sylvain Pion
