@@ -1865,8 +1865,11 @@ side_of_tetrahedron(const Point & p,
 
   // now all the oi's are >=0
   // sum gives the number of facets p lies on
-  int sum = ( o0 == ZERO ) + ( o1 == ZERO ) 
-    + ( o2 == ZERO ) + ( o3 == ZERO );
+  int sum = 
+    ( (o0 == ZERO) ? 1 : 0 ) + 
+    ( (o1 == ZERO) ? 1 : 0 ) +
+    ( (o2 == ZERO) ? 1 : 0 ) + 
+    ( (o3 == ZERO) ? 1 : 0 );
 
   switch (sum) {
   case 0:
@@ -2061,8 +2064,10 @@ side_of_triangle(const Point & p,
 
   // now all the oi's are >=0
   // sum gives the number of edges p lies on
-  int sum = ( o0 == ZERO ) + ( o1 == ZERO ) +
-    ( o2 == ZERO );
+  int sum = 
+    ( (o0 == ZERO) ? 1 : 0 ) + 
+    ( (o1 == ZERO) ? 1 : 0 ) +
+    ( (o2 == ZERO) ? 1 : 0 );
 
   switch (sum) {
   case 0:
