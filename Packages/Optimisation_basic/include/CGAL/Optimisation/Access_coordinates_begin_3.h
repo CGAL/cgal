@@ -88,10 +88,10 @@ class Point_3_coordinate_iterator {
 
     value_type  operator [] ( int n) const { return p.homogeneous( i+n); }
 
-    bool   operator <  ( const Self&) const { return ( i <  it.i); }
-    bool   operator >  ( const Self&) const { return ( i >  it.i); }
-    bool   operator <= ( const Self&) const { return ( i <= it.i); }
-    bool   operator >= ( const Self&) const { return ( i >= it.i); }
+    bool   operator <  ( const Self& it) const { return ( i <  it.i); }
+    bool   operator >  ( const Self& it) const { return ( i >  it.i); }
+    bool   operator <= ( const Self& it) const { return ( i <= it.i); }
+    bool   operator >= ( const Self& it) const { return ( i >= it.i); }
 
 private:
     const Point&  p;

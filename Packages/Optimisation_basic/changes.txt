@@ -1,4 +1,5 @@
-Changes done to the `Optimisation_basic' package
+24 June 2004 Sylvain Pion
+- Fixes for g++ 3.4.
 
 03 June 2004 Andreas Fabri
 - inlined function _optimisation_is_valid_fail(..) in order to get rid of src/optimisation_basic.C
