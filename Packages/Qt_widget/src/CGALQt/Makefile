@@ -23,6 +23,8 @@ CGAL_OBJECTS = \
 Qt_widget$(OBJ_EXT) \
 Qt_widget_layer$(OBJ_EXT) \
 Qt_widget_standard_toolbar$(OBJ_EXT) \
+Qt_widget_helpwindow$(OBJ_EXT) \
+Qt_widget_history$(OBJ_EXT)
 
 #---------------------------------------------------------------------#
 #                    target entries
@@ -52,9 +54,20 @@ Qt_widget_layer$(OBJ_EXT): Qt_widget_layer.C \
 	$(CGAL_CXX) $(CXXFLAGS) -c Qt_widget_layer.C
 
 Qt_widget_standard_toolbar$(OBJ_EXT):  Qt_widget_standard_toolbar.C \
-			../../include/CGAL/IO/Qt_widget_standard_toolbar.h
+			../../include/CGAL/IO/Qt_widget_standard_toolbar.h \
+			../../include/CGAL/IO/Qt_widget_history.h
 	$(QT_MOC) ../../include/CGAL/IO/Qt_widget_standard_toolbar.h -o Qt_widget_standard_toolbar.moc
 	$(CGAL_CXX) $(CXXFLAGS) -c Qt_widget_standard_toolbar.C
+
+Qt_widget_history$(OBJ_EXT): Qt_widget_history.C \
+			../../include/CGAL/IO/Qt_widget_history.h
+	$(QT_MOC) ../../include/CGAL/IO/Qt_widget_history.h -o Qt_widget_history.moc
+	$(CGAL_CXX) $(CXXFLAGS) -c Qt_widget_history.C
+
+Qt_widget_helpwindow$(OBJ_EXT): Qt_widget_helpwindow.C \
+			../../include/CGAL/IO/Qt_widget_helpwindow.h
+	$(QT_MOC) ../../include/CGAL/IO/Qt_widget_helpwindow.h -o Qt_widget_helpwindow.moc
+	$(CGAL_CXX) $(CXXFLAGS) -c Qt_widget_helpwindow.C
 
 .C$(OBJ_EXT):
 	$(CGAL_CXX)  $(CXXFLAGS) -c $<

@@ -46,10 +46,6 @@
 #include <qpixmap.h>
 #include <qprinter.h>
 
-
-#ifndef CGAL_QT_WIDGET_HISTORY_H
-  #include <CGAL/IO/Qt_widget_history.h>
-#endif
 namespace CGAL {
 
 class Qt_widget_layer;
@@ -74,23 +70,17 @@ public:
   void set_x_scale(const double xscale){ xscal = xscale; }
   void set_y_scale(const double yscale){ yscal = yscale; }
 
-  void add_to_history(){history.add_to_history(xmin, xmax, ymin,
-                          ymax, xcentre, ycentre, xscal, yscal);}
-  void clear_history(){history.clear(); configure_history_buttons();};
-
   inline void move_center(double distx, double disty) 
   {    
-    xcentre += distx;
-    ycentre += disty;
-    set_ranges_const_center();
-    add_to_history(); //add the current viewport to history
-    configure_history_buttons();
+    xmin += distx;
+    xmax += distx;
+    ymin += disty;
+    ymax += disty;
+    redraw();
+    emit(rangesChanged());
   }
-  inline void set_center(const double x, const double y) 
-  {
-    xcentre = x; ycentre = y;
-    set_ranges_const_center();
-  };
+
+  void set_center(const double x, const double y);
 
   // painting system
   inline QPainter& get_painter() { return (*painter); };
@@ -208,16 +198,28 @@ signals:
   void custom_redraw(); // if user want to draw something after layers
   void new_cgal_object(CGAL::Object);	//this signal is emited every time an
 					//attached tool constructed an object
-//private signals (not documented)
-  void set_back_enabled(bool i);    //used by the standard toolbar
-  void set_forward_enabled(bool i); //used by the standard toolbar
+
+  void rangesChanged(); 
+  // triggered when ranges (xmin, xmax, ymin,...) are changed
 
 public slots:
   void print_to_ps();
   virtual void redraw();
-  bool back();
-  bool forth();
-  
+
+// backward-compatibility with CGAL-2.4, back() and forth() are
+// deprecated, as well as add_to_history() or clear_history().
+signals:
+  void internal_back();
+  void internal_forth();
+  void internal_add_to_history();
+  void internal_clear_history();
+public slots:
+  bool back() { emit(internal_back()); return true; }
+  bool forth() { emit(internal_forth()); return true; }
+public:
+  void add_to_history() { emit(internal_add_to_history()); }
+  void clear_history() { emit(internal_clear_history()); }
+
 protected:
   void paintEvent(QPaintEvent *e);
   void resizeEvent(QResizeEvent *e);
@@ -238,21 +240,12 @@ private:
   // private functions
   // ~~~~~~~~~~~~~~~~~
 
-  void frameChanged(); 
-  // redraw the widget contents, called by QFrame::paintEvent
-
   void resize_pixmap();
   // resize properly the pixmap size, saving then restoring the
   // painter properties
 
   void	  set_scales(); 
   // set xscal and yscal. Update ranges if const_ranges is false.
-
-  void	  set_ranges_const_center();
-  // set ranges without changing the center 
-
-  void configure_history_buttons();
-  //change the enabled state of the history buttons
 
   // color types convertors
   static QColor CGAL2Qt_Color(Color c);
@@ -268,12 +261,7 @@ private:
   // ~~~~~~~~~~~~~~~~~~~~
   bool    set_scales_to_be_done;
   // this flag is set when the widget is not visible and should
-  // postpone the set_scales(), add_to_history() and
-  // configure_history_buttons() calls
-
-  double  xcentre, ycentre; //the center of the axes
-  
-  Qt_widget_history history;//this instance manage the viewports
+  // postpone the set_scales() call.
 
   unsigned int Locked;
   // point style and size
@@ -291,7 +279,6 @@ private:
   double    xmin, xmax, ymin, ymax; // real dimensions
   double    xscal, yscal; // scales int/double
   bool      constranges; // tell if the ranges should be const
-  bool      is_the_first_time;
 
   //for layers
   std::list<Qt_widget_layer*>	qt_layers;
@@ -714,7 +701,7 @@ operator<<(Qt_widget& w, const Triangle_2<R>& t)
   }   
   if(CGAL::assign(vi, obj)){
     QPointArray array(int(vi.size()));
-    std::vector<Point>::const_iterator it = vi.begin();
+    typename std::vector<Point>::const_iterator it = vi.begin();
     int pos = 0;
     while(it != vi.end()){
       array[pos] = QPoint(w.x_pixel(CGAL::to_double((*it).x())), 

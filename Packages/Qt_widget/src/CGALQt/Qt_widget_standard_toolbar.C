@@ -41,6 +41,7 @@
 #include <qstring.h>
 
 #include <CGAL/IO/Qt_widget.h>
+#include <CGAL/IO/Qt_widget_history.h>
 #include <CGAL/IO/Qt_widget_focus.h>
 #include <CGAL/IO/Qt_widget_zoomrect.h>
 #include <CGAL/IO/Qt_widget_handtool.h>
@@ -166,10 +167,6 @@ namespace CGAL {
     button_group->insert(but[0]);
     button_group->setExclusive(true);
   
-    connect(but[1], SIGNAL(clicked()),
-	    this, SLOT(back()));
-    connect(but[2], SIGNAL(clicked()),
-	    this, SLOT(forward()));
     connect(but[5], SIGNAL(stateChanged(int)),
         zoomrectbut, SLOT(stateChanged(int)));
     connect(but[6], SIGNAL(stateChanged(int)),
@@ -178,10 +175,18 @@ namespace CGAL {
         handtoolbut, SLOT(stateChanged(int)));
     connect(but[8], SIGNAL(stateChanged(int)),
         show_coord, SLOT(stateChanged(int)));
-    
-    connect(widget, SIGNAL(set_back_enabled(bool)),
+
+    Qt_widget_history* history = 
+      new Qt_widget_history(widget, "standard history");
+
+    connect(but[1], SIGNAL(clicked()),
+	    history, SLOT(backward()));
+    connect(but[2], SIGNAL(clicked()),
+	    history, SLOT(forward()));
+
+    connect(history, SIGNAL(backwardAvaillable(bool)),
             but[1], SLOT(setEnabled(bool)));
-    connect(widget, SIGNAL(set_forward_enabled(bool)),
+    connect(history, SIGNAL(forwardAvaillable(bool)),
             but[2], SLOT(setEnabled(bool)));
     widget->clear_history();
   };

@@ -38,12 +38,8 @@ Qt_widget::Qt_widget(QWidget *parent, const char *name) :
   xmax = 1;
   ymin = -1;
   ymax = 1;
-  xcentre = xmin + (xmax - xmin)/2;
-  ycentre = ymin + (ymax - ymin)/2;
   constranges=false;
   set_scales();
-  is_the_first_time = true;
-  configure_history_buttons();
 
   // initialize the pixmap and the painter
   painter = new QPainter;
@@ -76,33 +72,45 @@ void Qt_widget::set_scales()
     {
       xscal = yscal = min( width() / (xmax - xmin),
 			   height() / (ymax - ymin) );
-      set_ranges_const_center();
+      double xcenter = xmin + (xmax - xmin) / 2;
+      double ycenter = ymin + (ymax - ymin) / 2;
+
+      if(xscal<1) {
+	xmin = xcenter - (int)(width()/xscal)/2;
+	xmax = xcenter + (int)(width()/xscal)/2;
+	ymin = ycenter - (int)(height()/yscal)/2;
+	ymax = ycenter + (int)(height()/yscal)/2;
+      } else {
+	xmin = xcenter - (width()/xscal)/2;
+	xmax = xcenter + (width()/xscal)/2;
+	ymin = ycenter - (height()/yscal)/2;
+	ymax = ycenter + (height()/yscal)/2;
+      }
     }
   else
     {
       xscal=width()/(xmax-xmin);
       yscal=height()/(ymax-ymin);
     }
-  add_to_history();
-  configure_history_buttons();
 }
 
-void Qt_widget::set_ranges_const_center()
+void Qt_widget::set_center(const double x, const double y)
 {
   if (set_scales_to_be_done) return;
 
   if(xscal<1) {
-    xmin = xcentre - (int)(width()/xscal)/2;
-    xmax = xcentre + (int)(width()/xscal)/2;
-    ymin = ycentre - (int)(height()/yscal)/2;
-    ymax = ycentre + (int)(height()/yscal)/2;
+    xmin = x - (int)(width()/xscal)/2;
+    xmax = x + (int)(width()/xscal)/2;
+    ymin = y - (int)(height()/yscal)/2;
+    ymax = y + (int)(height()/yscal)/2;
   } else {
-    xmin = xcentre - (width()/xscal)/2;
-    xmax = xcentre + (width()/xscal)/2;
-    ymin = ycentre - (height()/yscal)/2;
-    ymax = ycentre + (height()/yscal)/2;
+    xmin = x - (width()/xscal)/2;
+    xmax = x + (width()/xscal)/2;
+    ymin = y - (height()/yscal)/2;
+    ymax = y + (height()/yscal)/2;
   }
   redraw();
+  emit(rangesChanged());
 }
 
 void Qt_widget::resize_pixmap()
@@ -127,10 +135,9 @@ void Qt_widget::resize_pixmap()
   painter->setWorldMatrix(bm);
 }
 
-void Qt_widget::resizeEvent(QResizeEvent *e)
+void Qt_widget::resizeEvent(QResizeEvent*)
 {
   resize_pixmap();
-  clear_history();
   set_scales();
   redraw();
 }
@@ -143,7 +150,7 @@ void Qt_widget::showEvent(QShowEvent* e)
   return QWidget::showEvent(e);
 }
 
-void Qt_widget::paintEvent(QPaintEvent *e)
+void Qt_widget::paintEvent(QPaintEvent*)
 {
   // save paint state
   QFont f=painter->font();
@@ -355,44 +362,23 @@ void Qt_widget::set_window(const double x_min, const double x_max,
   ymin = y_min;
   ymax = y_max;
   constranges = const_ranges;
-  xcentre = xmin + (xmax - xmin)/2;
-  ycentre = ymin + (ymax - ymin)/2;  
   set_scales();
+  redraw();
+  emit(rangesChanged());
 }
 
-
-void Qt_widget::configure_history_buttons()
-{
-  int n = history.get_nr_of_items();
-  if( n < 2){
-    emit(set_forward_enabled(false));
-    emit(set_back_enabled(false));
-  } else {
-    int i = history.get_current_item();
-    if(i<2)
-      emit(set_back_enabled(false));
-    else
-      emit(set_back_enabled(true));
-    if(i == n)
-      emit(set_forward_enabled(false));
-    else
-      emit(set_forward_enabled(true));
-  }
-}
 
 void Qt_widget::zoom(double ratio, double xc, double yc)
 {  
   xscal = xscal*ratio; yscal = yscal*ratio;
-  xcentre = xc;
-  ycentre = yc;
-  set_ranges_const_center();
-  add_to_history(); //add the current viewport to history
-  configure_history_buttons();
+  set_center(xc, yc);
 }
 
 void Qt_widget::zoom(double ratio)
 {
-  zoom(ratio,xcentre,ycentre);
+  zoom(ratio,
+       xmin + (xmax - xmin) / 2 ,
+       xmin + (ymax - ymin) / 2 );
 }
 
 #ifdef CGAL_USE_GMP
@@ -478,38 +464,6 @@ Qt_widget& Qt_widget::operator<<(const PointStyle& ps)
 void Qt_widget::clear() {
   painter->eraseRect(rect());
 }
-  bool Qt_widget::back(){
-    if(history.back()){
-      xmin = history.get_atom()->x1();
-      xmax = history.get_atom()->x2();
-      ymin = history.get_atom()->y1();
-      ymax = history.get_atom()->y2();
-      xcentre = history.get_atom()->xcenter();
-      ycentre = history.get_atom()->ycenter();
-      xscal = history.get_atom()->xscal();
-      yscal = history.get_atom()->yscal();
-      configure_history_buttons();
-      redraw();
-      return true;
-    }
-    return false;
-  }
-  bool Qt_widget::forth(){
-    if(history.forward()) {
-      xmin = history.get_atom()->x1();
-      xmax = history.get_atom()->x2();
-      ymin = history.get_atom()->y1();
-      ymax = history.get_atom()->y2();
-      xcentre = history.get_atom()->xcenter();
-      ycentre = history.get_atom()->ycenter();
-      xscal = history.get_atom()->xscal();
-      yscal = history.get_atom()->yscal();
-      configure_history_buttons();
-      redraw();
-      return true;
-    }
-    return false;
-  }
 
   Qt_widget& operator<<(Qt_widget& w, const Bbox_2& r)
   {
