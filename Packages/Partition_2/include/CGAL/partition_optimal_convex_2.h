@@ -450,10 +450,8 @@ void partition_opt_cvx_preprocessing(Polygon& polygon,
     typedef Vertex_visibility_graph_2<Traits>             Vis_graph;
     typedef typename Traits::Point_2                      Point_2;
     typedef std::pair<Point_2, Point_2>                   Point_pair;
-    typedef typename Traits::Orientation_2                Orientation_2;
 
     Vis_graph graph(polygon.begin(), polygon.end());
-    Orientation_2 orientation = traits.orientation_2_object();
 
     size_type prev_i, i, next_i, next_next_i;
     size_type prev_j, j, next_j;
