@@ -29,15 +29,6 @@ CGAL_BEGIN_NAMESPACE
 template < class K >
 inline
 typename K::Point_2
-operator+(const PointC2<K> &p, const VectorC2<K> &v)
-{
-  //return K().construct_translated_point_2_object()(p, v);
-  return typename K::Point_2(p.x() + v.x(), p.y() + v.y());
-}
-
-template < class K >
-inline
-typename K::Point_2
 operator-(const PointC2<K> &p, const VectorC2<K> &v)
 {
   return typename K::Point_2(p.x() - v.x(), p.y() - v.y());

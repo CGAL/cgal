@@ -1,4 +1,7 @@
- 8 Mar 2003 Andreas Fabri
+10 Mar 2004 Sylvain Pion
+- Move operator+(Point_2, Vector_2) to the new scheme.
+
+8 Mar 2004 Andreas Fabri
 - Added functor and function for constructing orthogonal vector of three points
 
 29 Feb 2004 Sylvain Pion

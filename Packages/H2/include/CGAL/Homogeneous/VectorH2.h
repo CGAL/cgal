@@ -268,16 +268,6 @@ operator-(const Origin&, const PointH2<R>& p)
 template <class R>
 CGAL_KERNEL_INLINE
 typename R::Point_2
-operator+(const PointH2<R>& p, const VectorH2<R>& v)
-{
-  return typename R::Point_2(p.hx()*v.hw() + v.hx()*p.hw(),
-                             p.hy()*v.hw() + v.hy()*p.hw(),
-                             p.hw()*v.hw() );
-}
-
-template <class R>
-CGAL_KERNEL_INLINE
-typename R::Point_2
 operator-(const PointH2<R>& p, const VectorH2<R>& v)
 {
   return typename R::Point_2(p.hx()*v.hw() - v.hx()*p.hw(),

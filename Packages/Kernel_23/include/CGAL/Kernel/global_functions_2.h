@@ -589,6 +589,14 @@ operator*(const Vector_2<K> &v, const Vector_2<K> &w)
   return K().compute_scalar_product_2_object()(v, w);
 }
 
+template < class K >
+inline
+typename K::Point_2
+operator+(const Point_2<K> &p, const Vector_2<K> &v)
+{
+  return K().construct_translated_point_2_object()(p, v);
+}
+
 template <typename K>
 inline
 Orientation
