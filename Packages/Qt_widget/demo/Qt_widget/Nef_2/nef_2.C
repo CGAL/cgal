@@ -32,7 +32,7 @@
 // package       : Qt_widget
 // author(s)     : Radu Ursu
 // release       : CGAL-2.4
-// release_date  : 2002, May 16
+// release_date  : 2002, July 8
 //
 // coordinator   : Laurent Rineau
 //
@@ -181,10 +181,10 @@ public:
     file->insertItem("Load Nef_2", this, SLOT(sl_load_nef()), CTRL+Key_L);
     file->insertItem("Save Nef_2", this, SLOT(sl_save_nef()), CTRL+Key_S);
     file->insertSeparator();
-    file->insertItem("Print", widget, SLOT(sl_print_to_ps()), CTRL+Key_P);
+    file->insertItem("Print", widget, SLOT(print_to_ps()), CTRL+Key_P);
     file->insertSeparator();
-    file->insertItem( "&Close", this, SLOT(sl_close()), CTRL+Key_X );
-    file->insertItem( "&Quit", qApp, SLOT( sl_closeAllWindows() ), CTRL+Key_Q );
+    file->insertItem( "&Close", this, SLOT(close()), CTRL+Key_X );
+    file->insertItem( "&Quit", qApp, SLOT( closeAllWindows() ), CTRL+Key_Q );
 
     // help menu
     QPopupMenu * help = new QPopupMenu( this );

@@ -32,7 +32,7 @@
 // package       : Qt_widget
 // author(s)     : Ursu Radu
 // release       : CGAL-2.4
-// release_date  : 2002, May 16
+// release_date  : 2002, July 8
 //
 // coordinator   : Laurent Rineau
 //
@@ -48,8 +48,6 @@
 
 // icons
 #include <CGAL/IO/pixmaps/mouse_coord.xpm>
-#include <CGAL/IO/pixmaps/optimal_convex.xpm>
-#include <CGAL/IO/pixmaps/ymonotone.xpm>
 
 namespace CGAL {
   Layers_toolbar::Layers_toolbar( Qt_widget *w, QMainWindow *mw,

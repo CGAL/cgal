@@ -32,7 +32,7 @@
 // package       : Qt_widget
 // author(s)     : Radu Ursu
 // release       : CGAL-2.4
-// release_date  : 2002, May 16
+// release_date  : 2002, July 8
 //
 // coordinator   : Laurent Rineau
 //
