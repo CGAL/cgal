@@ -1,5 +1,9 @@
 Changes done for the Interval Arithmetic package.
 
+Version ??? on ???
+- "lines too long" problem fixed.
+- [sent Stefan the necessary updates to other NTs].
+
 Version 2.0 on 17 August 1998.
 - Added CGAL_to_interval_nt() cast functions for Gmpz and
   leda_{real,rational,integer,bigfloat}.
