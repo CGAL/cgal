@@ -41,7 +41,7 @@ index structure of an R-tree. Note, often we simply write R-Tree
 instead of R-Tree and R$^\star$-Tree.
 
 \subsection{What is an R-tree?}
-The R-Tree \cite{gutt-84} is a hierarchical data structure  that
+The R-Tree \cite{g-rtdis-84} is a hierarchical data structure  that
 can be viewed as a multidimensional generalization of a
 B$^+$-Tree \cite{come-79}. 
 It supports exact search, window queries, insertion, and deletion
@@ -89,7 +89,7 @@ leaf capacity \ccc{IO_page_size}.
 %if overflow occurs, the node has to be
 %split. Many merging and splitting strategies  have been
 %proposed. Some important ones are those from
-%Guttman~\cite{gutt-84} and from Beckmann et al.~\cite{Beckmann:1990:RER}.
+%Guttman~\cite{g-rtdis-84} and from Beckmann et al.~\cite{bkss-rtera-90}.
 
 Note that the R-tree is not unique. Its structure depends heavily
 on the order in which the individual bounding boxes were inserted
@@ -111,8 +111,8 @@ distributed into two nodes. Splits are propargated
 up the tree. 
 
 Many {\bf split strategies} have been proposed. Some important ones are those from
-Guttman~\cite{gutt-84} and from Beckmann et
-al.~\cite{Beckmann:1990:RER}.
+Guttman~\cite{g-rtdis-84} and from Beckmann et
+al.~\cite{bkss-rtera-90}.
 The goals of these strategies are to  
  partition the data entries in two
 nodes such that the overlap  of these nodes is minimized, the

@@ -74,9 +74,9 @@ index structure of an R-tree. Note, often we simply write R-Tree
 instead of R-Tree and R$^\star$-Tree.
 
 \subsection{What is an R-tree?}
-The R-Tree \cite{gutt-84} is a hierarchical data structure  that
+The R-Tree \cite{g-rtdis-84} is a hierarchical data structure  that
 can be viewed as a multidimensional generalization of a
-B$^+$-Tree \cite{Come-79}. 
+B$^+$-Tree \cite{c-ubt-79}. 
 It supports exact search, window queries, insertion, and deletion
 of spatial objects in any dimension $d$. Usually, the smallest
 $d$-dimensional aligned rectangle that encloses the spatial object (the {\em orthogonal bounding box}) is
@@ -122,7 +122,7 @@ leaf capacity \ccc{IO_page_size}.
 %if overflow occurs, the node has to be
 %split. Many merging and splitting strategies  have been
 %proposed. Some important ones are those from
-%Guttman~\cite{gutt-84} and from Beckmann et al.~\cite{Beckmann:1990:RER}.
+%Guttman~\cite{g-rtdis-84} and from Beckmann et al.~\cite{bkss-rtera-90}.
 
 Note that the R-tree is not unique. Its structure depends heavily
 on the order in which the individual bounding boxes were inserted
@@ -144,8 +144,8 @@ distributed into two nodes. Splits are propargated
 up the tree. 
 
 Many {\bf split strategies} have been proposed. Some important ones are those from
-Guttman~\cite{gutt-84} and from Beckmann et
-al.~\cite{Beckmann:1990:RER}.
+Guttman~\cite{g-rtdis-84} and from Beckmann et
+al.~\cite{bkss-rtera-90}.
 The goals of these strategies are to  
  partition the data entries in two
 nodes such that the overlap  of these nodes is minimized, the
@@ -299,9 +299,9 @@ implementation of the tree since many diffrent index
 strategies have been proposed for the R-Tree. \cgal\ provides two 
 \ccc{R_tree_index} classes that can be plugged into the tree: The
 \ccc{R_tree_index} class which is the index strategy as
-proposed by Guttman~\cite{gutt-84} and the \ccc{R_star_tree_index}
+proposed by Guttman~\cite{g-rtdis-84} and the \ccc{R_star_tree_index}
 class which is the R$^\star$-Tree index strategy as proposed by  Beckmann
-et al~\cite{Beckmann:1990:RER} (see Section~\ref{preindex}). The
+et al~\cite{bkss-rtera-90} (see Section~\ref{preindex}). The
 requirements for a user defined \ccc{R_tree_index} class are
 given in Section~\ref{indexreq}.
 We here give a
@@ -317,9 +317,9 @@ the new element is to be inserted.
 %strategies have been proposed. We therefore decoupled this
 %strategy from the implementation of the R-Tree. 
 We implemented
-the \ccc{choose-subtree} strategy from Guttman~\cite{gutt-84}
+the \ccc{choose-subtree} strategy from Guttman~\cite{g-rtdis-84}
 and from Beckmann
-et al~\cite{Beckmann:1990:RER} which can be plugged into the
+et al~\cite{bkss-rtera-90} which can be plugged into the
 tree (see Section~\ref{Choosepre}). The requirements for a user
 defined \ccc{choose-subtree} strategy are given in
 Section~\ref{userchoose}.
@@ -334,8 +334,8 @@ Section~\ref{userchoose}.
 The \ccc{split_node} and \ccc{split_leaf} method distributes the
 entries of an overfilled inner node, resp. leaf, into two.
 We implemented some important splitting
-strategies like those from Guttman~\cite{gutt-84} and Beckmann
-et al~\cite{Beckmann:1990:RER} which can be plugged into the
+strategies like those from Guttman~\cite{g-rtdis-84} and Beckmann
+et al~\cite{bkss-rtera-90} which can be plugged into the
 tree (see Section~\ref{Splitpre})
 Note that one can plug in a different split strategy for the
 inner nodes as for the leaf nodes of the tree.
@@ -358,7 +358,7 @@ of the tree as the node is.
 We implemented the
 \ccc{close_reinsert} reinsertion
 strategy of  Beckmann
-et al~\cite{Beckmann:1990:RER} which can be plugged into the
+et al~\cite{bkss-rtera-90} which can be plugged into the
 tree. See Section~\ref{Reinsertpre} for the implementations of
 the reinsertion strategies and  Section~\ref{userreinsert} for the
 requirements a user implemented reinsertion strategy has to fulfill.
@@ -465,8 +465,8 @@ output sensitive query functions (see Section~\ref{r-tree}).
 
 
 %The implementation of the R-Tree follows the design issues of the
-%generalized search tree~\cite{Hellerstein}. That is, the tree is designed
-%to handle  arbitrary geometric objects (called \ccStyle{Data}) in
+%generalized search tree~\cite{cgal:hnp-gstds-95}. That is, the tree is 
+%designed to handle  arbitrary geometric objects (called \ccStyle{Data}) in
 %arbitrary dimension. The traits class for the \ccc{Data} is
 %described in  Section~\ref{data}. The
 %spatial objects are spatially clustered in the tree according to
@@ -841,7 +841,7 @@ Depending on the dimension $k$ the interval length, area, or volume is returned.
   R_tree_key_k b);}
 {\ccc{K} is set to  \ccc{a} $\cap$ \ccc{b}. This method is only
   necessary when the R$^\star$-Tree split strategy of Beckman et
-  al~\cite{Beckmann:1990:RER} is plugged into the tree (see
+  al~\cite{bkss-rtera-90} is plugged into the tree (see
   Section~\ref{Splitpre}).}
 
 \ccMethod{double center\_dist(R_tree_key_k a);}
@@ -849,7 +849,7 @@ Depending on the dimension $k$ the interval length, area, or volume is returned.
   the squared Euclidean distance between their center points. 
 This method is only
   necessary when the R$^\star$-Tree reinsertion strategy of Beckman et
-  al~\cite{Beckmann:1990:RER} is plugged into the tree (see
+  al~\cite{bkss-rtera-90} is plugged into the tree (see
   Section~\ref{Splitpre}).}
 
 
@@ -881,7 +881,7 @@ case that \ccc{split_axis} is greater equal than the dimension of
 the \ccc{Key}, \ccc{false} is returned. Otherwise, true is returned.
 This class is needed  as a template argument for the
 implementation of the split strategies of  Beckmann
-et.al.~\cite{Beckmann:1990:RER} (see Section~\ref{Splitpre}). 
+et.al.~\cite{bkss-rtera-90} (see Section~\ref{Splitpre}). 
 
 
 \begin{ccClassTemplate}{sort_axis_key_k_dim<Container>}
@@ -994,7 +994,7 @@ tree. These methods are highlighted.
 \ccMethod{Key intersection(Key a, Key b);}
 {\ccc{K} is set to  \ccc{a} $\cap$ \ccc{b}. This method is only
   necessary when the R$^\star$-Tree split strategy of Beckman et
-  al~\cite{Beckmann:1990:RER} is plugged into the tree (see
+  al~\cite{bkss-rtera-90} is plugged into the tree (see
   Section~\ref{Splitpre}).}
 
 \ccMethod{double center_dist(Key a, Key b);}{
@@ -1002,7 +1002,7 @@ Computes the center point of \ccc{K} and  \ccc{a} and returns
   the squared Euclidean distance between their center points. 
 This method is only
   necessary when the R$^\star$-Tree reinsertion strategy of Beckman et
-  al~\cite{Beckmann:1990:RER} is plugged into the tree (see
+  al~\cite{bkss-rtera-90} is plugged into the tree (see
   Section~\ref{Splitpre}).}
 
 \ccMethod{void read(char *s, Data a);}
@@ -1033,7 +1033,7 @@ tree. These strategies  define how the data is spatially clustered in
 the tree.
 \subsubsection{Predefined R-Tree Index Class}
 Predefined index class that contains the index strategies of the
-R-Tree of Guttmann~\cite{gutt-84}.
+R-Tree of Guttmann~\cite{g-rtdis-84}.
 \begin{ccClassTemplate}{R_tree_index<R_tree_traits>}
 
 \noindent
@@ -1071,7 +1071,7 @@ R-Tree of Guttmann~\cite{gutt-84}.
 
 \subsubsection{Predefined R$^\star$-Tree Index Class}
 Predefined index class that contains the index strategies of the
-R$^\star$-tree of Beckmann et al~\cite{Beckmann:1990:RER}.
+R$^\star$-tree of Beckmann et al~\cite{bkss-rtera-90}.
 \begin{ccClassTemplate}{R_star_tree_index<R_tree_traits>}
 
 \noindent
@@ -1117,10 +1117,10 @@ into the tree, a node entrie  is determined and returned. This
 node entrie specifies the subtree in which the \ccc{Data}
 element will be inserted.
 \cgal\  provides the \ccc{choose_subtree}
-strategy of Guttman~\cite{gutt-84} and the
+strategy of Guttman~\cite{g-rtdis-84} and the
 \ccc{star_choose_subtree} 
 strategy of Beckmann
-et.al.~\cite{Beckmann:1990:RER}. 
+et.al.~\cite{bkss-rtera-90}. 
 
 \subsubsection{Guttman's Choose Subtree Strategy}
 
@@ -1204,10 +1204,10 @@ returned. Ties are resolved by choosing the element of smallest area.}
 The \ccc{R_tree_index} gets two split classes as template
 arguments. One splits an inner vertex of the tree and
 one a leaf of the tree. \cgal\  provides the quadratic split
-strategy from Guttman~\cite{gutt-84}. 
+strategy from Guttman~\cite{g-rtdis-84}. 
 Furthermore \cgal\  provides an 
 implementation of the split strategy of Beckmann
-et.al.~\cite{Beckmann:1990:RER}. 
+et.al.~\cite{bkss-rtera-90}. 
 
 \subsubsection{Guttman quadratic split}
 
@@ -1395,7 +1395,7 @@ The \ccc{Container} elements in \ccc{[first, last]} are
 \subsubsection{Beckmann R$^\star$-Tree Split Strategy}
 
 Implementation of the R$^\star$-Tree split strategy of Beckmann
-et al~\cite{Beckmann:1990:RER}.
+et al~\cite{bkss-rtera-90}.
 
 \begin{ccClassTemplate}{star_split_leaf<Container,R_tree_traits,Sort_axis>}
 
@@ -1537,7 +1537,7 @@ of the second container will be reinserted into the tree.
 \cgal\  provides the 
 \ccc{reinsertion_leaf} and \ccc{reinsertion_node}  
 strategy of Beckmann
-et.al.~\cite{Beckmann:1990:RER}. 
+et.al.~\cite{bkss-rtera-90}. 
 In case that your tree is not to perform reinsertion, we provide
 two dummy classes \ccc{dummy_reinsertion_leaf} and
 \ccc{dummy_reinsertion_node}
@@ -2000,14 +2000,14 @@ According to
 {A \ccc{Key k}$=$ \ccc{a} $\cap$ \ccc{b} has to be returned.
  This method is only
   necessary when the R$^\star$-Tree split strategy of Beckman et
-  al~\cite{Beckmann:1990:RER} is plugged into the tree.}
+  al~\cite{bkss-rtera-90} is plugged into the tree.}
 
 \ccMethod{double center_dist(Key a, Key b);}
 {The distance between the centers of \ccc{a} and \ccc{b} has to
   be returned.
 This method is only
   necessary when the R$^\star$-Tree reinsertion strategy of Beckman et
-  al~\cite{Beckmann:1990:RER} is plugged into the tree.}
+  al~\cite{bkss-rtera-90} is plugged into the tree.}
 
 \ccMethod{void read(char *s, Data a);}
 {\ccc{a} has to be initialized with \ccc{s}.}
@@ -2023,7 +2023,7 @@ This method is only
 \subsection{Requirements of a User Defined Sort\_axis Class}
 \label{Sortuser}
 The predefined split strategy implementation of
-Beckmann et.al.~\cite{Beckmann:1990:RER} need a 
+Beckmann et.al.~\cite{bkss-rtera-90} need a 
 \ccc{Sort_axis} class template argument (see Section~\ref{Splitpre}). This class has to
 provide  an \ccc{bool operator()(int
   sort_axis, Container *first, Container *last)} which sorts the

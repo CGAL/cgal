@@ -269,7 +269,7 @@ that only the polyhedron can guarantee.
 \subsection{Example with Circulator Writing Object File Format (OFF)}
 
 We create a tetrahedron and write it to \ccc{std::cout} using the
-Object File Format (OFF)~\cite{p-gmgv15-94}.  This example makes use
+Object File Format (OFF)~\cite{cgal:p-gmgv16-96}.  This example makes use
 of \stl\ algorithms (\ccc{std::copy}, \ccc{std::distance}), \stl\
 \ccc{std::ostream_iterator}, and \cgal\ circulators. The polyhedral
 surface provides convenient circulators for the counterclockwise
@@ -338,7 +338,7 @@ equation or any user-added attributes, such as color.
 
 The default file format supported in \cgal\ for output as well as for
 input is the Object File Format, OFF, with file extension {\tt .off},
-which is also understood by GeomView~\cite{p-gmgv15-94}. For OFF
+which is also understood by GeomView~\cite{cgal:p-gmgv16-96}. For OFF
 an ASCII and a binary format exist. The format can be selected with
 the \cgal\ modifiers for streams, \ccc{set_ascii_mode} and
 \ccc{set_binary_mode} respectively. The modifier \ccc{set_pretty_mode}
@@ -363,8 +363,8 @@ is the default format, iostream operators are provided for it.
 
 
 Additional formats supported for writing are OpenInventor ({\tt .iv})
-\cite{w-impoo-94}, VRML 1.0 and 2.0 ({\tt .wrl})
-\cite{bpp-vrml-95,vrmls-96,hw-vrml2h-96}, and Wavefront Advanced
+\cite{cgal:w-impoo-94}, VRML 1.0 and 2.0 ({\tt .wrl})
+\cite{cgal:bpp-vrml-95,cgal:vrmls-96,cgal:hw-vrml2h-96}, and Wavefront Advanced
 Visualizer object format ({\tt .obj}). Another convenient output
 function writes a polyhedral surface to a GeomView process spawned
 from the \cgal\ program.  These output functions are provided as
@@ -575,10 +575,10 @@ This program reads a polyhedral surface from the standard input and
 writes a refined polyhedral surface to the standard output. Input and
 output are in the Object File Format, OFF, with the common file
 extension {\tt .off}, which is also understood by
-GeomView~\cite{p-gmgv15-94}.
+GeomView~\cite{cgal:p-gmgv16-96}.
 
 The refinement is a single step of the $\sqrt{3}$-scheme for creating
-a subdivision surface~\cite{k-s-00}. Each step subdivides a facet
+a subdivision surface~\cite{cgal:k-s-00}. Each step subdivides a facet
 into triangles around a new center vertex, smoothes the position of the
 old vertices, and flips the old edges. The program is organized along
 this outline. In each of these parts, the program efficiently uses the

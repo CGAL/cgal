@@ -84,7 +84,7 @@ its sublayer tree.
 %of the prototype. This prototype is then cloned again and so on.
 The
 design partly follows  the {\em prototype design pattern}
-in~\cite{designpatterns}. In comparison to our first approach
+in~\cite{cgal:ghjv-dpero-95}. In comparison to our first approach
 using templates we want to note the following: In this approach
 the sublayer type is defined in
 use of object oriented programming at run time, while in the
@@ -945,8 +945,7 @@ compiler dependent limit. Even for dimension 2 this
 happened. Therefore we chose another design. Now a tree is created
 with a prototype of the sublayer tree. With this prototype the
 sublayer tree can be cloned. The design pattern
-corresponds to the Prototype design pattern in
-~\cite{ghjv-dpero-95}.%prelim:GHVJ}.
+corresponds to the Prototype design pattern in~\cite{cgal:ghjv-dpero-95}.
 
 In this sense, an instance of a
 three-dimensional range tree (segment tree) would have to be
@@ -965,7 +964,7 @@ Additionally a range tree (segment tree) is build in function
 \ccStyle{make\_tree} using  iterators.
 The iterator concept is realized in the Standard
 Template Library and in many other libraries,
-see~\cite{ms-strg-96}. As long as the GNU, SUN and SGI compiler do not
+see~\cite{cgal:ms-strg-96}. As long as the GNU, SUN and SGI compiler do not
 support template member functions, we only support member
 functions parameterized with iterators working on \ccStyle{STL
   list, STL vector} and \ccStyle{C-arrays}.

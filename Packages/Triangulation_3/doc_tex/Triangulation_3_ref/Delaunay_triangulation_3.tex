@@ -126,7 +126,7 @@ So, the problem reduces to triangulating a polyhedral
 region, while preserving its boundary, or to compute a
 \textit{constrained} triangulation. This is known to be sometimes
 impossible: the Sch\"onhardt polyhedron cannot be triangulated
-\cite{s-cgehd-98}. 
+\cite{cgal:s-cgehd-98}. 
 
 However, when dealing with Delaunay triangulations, the case of such
 polyhedra that cannot be retriangulated cannot happen, so \cgal\
@@ -167,7 +167,7 @@ infinite cell this means that \ccc{p} does not satisfy either of the
 two previous conditions. 
 \ccPrecond{\ccVar.\ccc{dimension()} $=3$.}}
 \ccMethod{Bounded_side
-	  side_of_circle(const Facet & f, const Point & p) const;}
+          side_of_circle(const Facet & f, const Point & p) const;}
 {Returns a value indicating on which side of the circumscribed circle
 of \ccc{f} the point \ccc{p} lies. More precisely, it returns:\\
 - in dimension~3:\\
@@ -190,7 +190,7 @@ by \ccc{f} and not containing any other point of the triangulation,
 \ccc{p} is coplanar with \ccc{f}.}}
 
 \ccMethod{Bounded_side
-	  side_of_circle(Cell_handle c, int i, const Point & p);}
+          side_of_circle(Cell_handle c, int i, const Point & p);}
 {Same as the previous method for facet \ccc{i} of cell \ccc{c}.}
 
 \ccMethod{Vertex_handle nearest_vertex(Point p,
@@ -217,7 +217,7 @@ The set of cells (resp. facets in dimension 2) which are in conflict with
                     class OutputIteratorCells>
   std::pair<OutputIteratorBoundaryFacets, OutputIteratorCells>
   find_conflicts(Point p, Cell_handle c,
-	         OutputIteratorBoundaryFacets bfit,
+                 OutputIteratorBoundaryFacets bfit,
                  OutputIteratorCells cit);}
 {Computes the conflict hole induced by \ccc{p}.  The starting cell
 (resp.  facet) \ccc{c} must be in conflict.  Then this function returns
@@ -241,9 +241,9 @@ with \ccc{p}.}
          OutputIteratorCells,
          OutputIteratorInternalFacets>
   find_conflicts(Point p, Cell_handle c,
-	         OutputIteratorBoundaryFacets bfit,
+                 OutputIteratorBoundaryFacets bfit,
                  OutputIteratorCells cit,
-		 OutputIteratorInternalFacets ifit);}
+                 OutputIteratorInternalFacets ifit);}
 {Same as the other \ccc{find_conflicts()} function, except that it also 
 computes the internal facets, i.e. the facets common to two cells which
 are in conflict with \ccc{p}.
@@ -262,7 +262,7 @@ with \ccc{p}.}
 \ccMethod{template <class OutputIterator>
   OutputIterator
   vertices_in_conflict(Point p, Cell_handle c,
-	         OutputIterator res);}
+                 OutputIterator res);}
 {Similar to \ccc{find_conflicts()}, but reports the vertices which are on the
 boundary of the conflict hole of \ccc{p}, in the output iterator \ccc{res}.
 Returns the resulting output iterator.

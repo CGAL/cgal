@@ -341,7 +341,7 @@ and
 \item
 \ccc{ Halfedge_handle vertical_ray_shoot(const Point_2 & p, 
                                          Locate_type & lt,
-					 bool up_direction )}
+                                         bool up_direction )}
 \end{itemize}
 return the type of the feature that has been located through the
 \ccc{Locate_type} reference parameter.
@@ -585,7 +585,7 @@ types of objects, namely \ccStyle{X_monotone_curve_2} and
 \ccStyle{X_monotone_curve_2}-type curve is \ccStyle{Point_2}. In
 addition, the traits class must provide a set of operations on these
 two types.
-					  
+                                          
 We supply a default traits class for segments, namely
 \ccStyle{Pm_segment_traits_2<Kernel>}, where \ccStyle{Kernel} is a
 kernel representation type, e.g., \ccc{Homogeneous} or
@@ -640,7 +640,7 @@ from the base class \ccc{Pm_point_location_base} which is a
 (\ccc{pure virtual}) base class that defines the interface between the 
 algorithm implemented by the users and the planar map. This follows the 
 known {\it Strategy}
-pattern ~\cite{ghjv-dpero-95}. The indirection overhead due to the virtual
+pattern ~\cite{cgal:ghjv-dpero-95}. The indirection overhead due to the virtual
 functions is negligible since the optimal point location algorithm 
 (e.g., the one implemented in our default strategy) takes $\Theta(\log n)$ time.
 We have derived three concrete classes for point location strategies,

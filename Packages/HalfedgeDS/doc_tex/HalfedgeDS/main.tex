@@ -71,7 +71,7 @@ structure is meant as an implementation layer.  See for example the
 
 The data structure provided here is also known as the
 FE-structure~\cite{w-ebdss-85}, as
-halfedges~\cite{m-ism-88,bfh-mgedm-95} or as the doubly connected edge
+halfedges~\cite{m-ism-88,cgal:bfh-mgedm-95} or as the doubly connected edge
 list (DCEL)~\cite{bkos-cgaa-97}, although the original reference for
 the DCEL~\cite{mp-fitcp-78} describes a different data structure. The
 halfedge data structure can also be seen as one of the variants of the
@@ -182,7 +182,7 @@ a helper class searches in the positive direction along the face for
 the previous halfedge. But if the \ccc{prev()} member function is
 provided, the \ccc{find_prev()} member function simply calls it. This
 distinction is resolved at compile time with a technique called {\em
-compile-time tags}, similar to iterator tags in~\cite{sl-stl-95}.
+compile-time tags}, similar to iterator tags in~\cite{cgal:sl-stl-95}.
 
 The \ccc{Polyhedron_3} as an example for the third layer adds the
 geometric interpretation, provides an easy-to-use interface of
