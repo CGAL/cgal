@@ -7,7 +7,7 @@
 #include <CGAL/Arr_2_default_dcel.h>
 #include <CGAL/Arrangement_2.h>
 
-#include <iostream.h>
+#include <iostream>
 #include <CGAL/Arr_polyline_traits.h>
 #include <CGAL/IO/Arr_iostream.h>
 
