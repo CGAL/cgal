@@ -64,19 +64,19 @@ public:
   }
 
   void write_subcurve (Subcurve_iterator scv){
-    out () << scv->curve() << std::endl;
+    out () << scv->x_curve() << std::endl;
   }
 
   void write_subcurve (Subcurve_const_iterator scv){
-    out () << scv->curve() << std::endl;
+    out () << scv->x_curve() << std::endl;
   }
   
   void write_edge(Edge_iterator edge){
-    out () << edge->curve() << std::endl;
+    out () << edge->x_curve() << std::endl;
   }
   
   void write_edge(Edge_const_iterator edge){
-    out () << edge->curve() << std::endl;
+    out () << edge->x_curve() << std::endl;
   }
 
   //void write_edge_nodes_end() {

@@ -248,7 +248,11 @@ public:
     Arr_overlap_const_circulator<Edge_node,Edge_const_iterator,
                                  Bidirectional_circulator_tag>;
 
-    Subcurve_node() : ftr(0),begin_child(0),past_end_child(0) {}
+    Subcurve_node(int construct_curve=1) : ftr(0),begin_child(0),past_end_child(0) 
+    {
+      if(construct_curve)
+	cv_wrap.x_cv=new X_monotone_curve_2;
+    }
   
     virtual ~Subcurve_node() {}
 
@@ -327,6 +331,7 @@ public:
     Subcurve_node * ftr;
     Subcurve_node * begin_child;
     Subcurve_node * past_end_child;
+
   };
 
 
@@ -378,7 +383,10 @@ public:
   public:
     friend class Arrangement_2<Dcel,Traits,Base_node>; 
 
-    Curve_node() : Subcurve_node(), levels(), edge_level() {}
+    Curve_node() : Subcurve_node(0), levels(), edge_level()
+    {
+      cv_wrap.cv = new Curve_2;
+    }
   
     ~Curve_node() {} //overrides the virtual dtr in Subcurve_node
 
@@ -880,16 +888,16 @@ public:
         Overlap_const_circulator ovlp_circ = eit->halfedge()->overlap_edges();
         
         edge_curve_is_halfedge_curve &= 
-          (traits->curve_equal(eit->curve(), eit->halfedge()->curve()));
+          (traits->curve_equal(eit->x_curve(), eit->halfedge()->curve()));
 
         do {
           Overlap_const_circulator next = ovlp_circ;
           ++next;
           
           circ_curve_is_next_curve &= 
-            traits->curve_equal(ovlp_circ->curve(), next->curve());
+            traits->curve_equal(ovlp_circ->x_curve(), next->x_curve());
           circ_curve_is_halfedge_curve &= 
-            (traits->curve_equal(ovlp_circ->curve(),
+            (traits->curve_equal(ovlp_circ->x_curve(),
                                    eit->halfedge()->curve()));
           
         } while (++ovlp_circ != eit->halfedge()->overlap_edges());
@@ -1074,7 +1082,7 @@ public:
       for (; lit!=x_list.end(); ++lit) {
         Subcurve_node* scn=new Subcurve_node;
         scn->ftr=cn;
-        scn->set_curve(*lit);
+        scn->set_x_monotone_curve(*lit);
       
         cn->levels[0].push_back(*scn);
       }
@@ -1127,78 +1135,63 @@ public:
 
   Curve_iterator insert(const Curve_2 & cv, Change_notification * en = NULL) 
   {
-    CGAL_precondition(!traits->point_equal(traits->curve_source(cv),
-                                             traits->curve_target(cv)) ||
-                      !traits->is_x_monotone(cv));
-  
     //either add Arr to pm as friend class or make public functions
     Curve_node* cn= new Curve_node;
     cn->set_curve(cv);
   
-    if (!traits->is_x_monotone(cv)) {
-      //get an x_monotone sub_curve list and push it in.
-      cn->levels.push_back(In_place_list<Subcurve_node,true>());
+    //get an x_monotone sub_curve list and push it in.
+    cn->levels.push_back(In_place_list<Subcurve_node,true>());
 
-      //cut cv into x_monotone curves and insert them into l
-      std::list<CGAL_TYPENAME_MSVC_NULL Traits::X_curve> x_list;
-      traits->curve_make_x_monotone(cv, std::back_inserter(x_list));
+    //cut cv into x_monotone curves and insert them into l
+    std::list<CGAL_TYPENAME_MSVC_NULL Traits::X_curve> x_list;
+    traits->curve_make_x_monotone(cv, std::back_inserter(x_list));
 
-      typename std::list<CGAL_TYPENAME_MSVC_NULL Traits::X_curve>::iterator 
-        lit=x_list.begin();
-      for (; lit!=x_list.end(); ++lit) {
-        Subcurve_node* scn=new Subcurve_node;
-        scn->ftr=cn;
-        scn->set_curve(*lit);
+    typename std::list<CGAL_TYPENAME_MSVC_NULL Traits::X_curve>::iterator 
+      lit=x_list.begin();
+    for (; lit!=x_list.end(); ++lit) {
+      Subcurve_node* scn=new Subcurve_node;
+      scn->ftr=cn;
+      scn->set_x_monotone_curve(*lit);
       
-        cn->levels[0].push_back(*scn);
-      }
-      cn->begin_child=&(*(cn->levels[0].begin()));
-      cn->past_end_child=&(*(cn->levels[0].end()));
+      cn->levels[0].push_back(*scn);
+    }
+    cn->begin_child=&(*(cn->levels[0].begin()));
+    cn->past_end_child=&(*(cn->levels[0].end()));
 
-      //so far - inserted subcurve level, we insert the edge level only if
-      // we are in update mode.
-      if (do_update) {
-        Vertex_handle curr_v;
-        Halfedge_handle h;
-        bool first_insert(true);
-        Subcurve_iterator scit=cn->levels[0].begin();
-        In_place_list<Subcurve_node,true> edge_list;    
-        for (; scit!=cn->levels[0].end(); ++scit) {
-          Arr_hierarchy_ops aho(this, edge_list, &(*scit), en);
-          if (first_insert) {
-            h = pm.insert(scit->curve(), &aho);
-            first_insert = false;
-          }
-          else {
-            h = pm.insert_from_vertex(scit->curve(), 
-                                      curr_v.current_iterator(), &aho);
-          }
-          curr_v = h->target();       // vertex for next insertion
-          scit->begin_child=&(*(edge_list.begin()));
-          //add edge_list at end of edge_level :
-          cn->edge_level.splice(cn->edge_level.end(),edge_list); 
-        }
+    //so far - inserted subcurve level, we insert the edge level only if
+    // we are in update mode.
+    if (do_update) {
+      Vertex_handle curr_v;
+      Halfedge_handle h;
+      bool first_insert(true);
+      Subcurve_iterator scit=cn->levels[0].begin();
+      In_place_list<Subcurve_node,true> edge_list;    
+      for (; scit!=cn->levels[0].end(); ++scit) {
+	Arr_hierarchy_ops aho(this, edge_list, &(*scit), en);
+	if (first_insert) {
+	  typename Planar_map::Vertex_handle src, tgt;
+	  h = pm.insert_intersecting_xcurve(scit->x_curve(), src, tgt, false, &aho);
+	  first_insert = false;
+	}
+	else {
+	  typename Planar_map::Vertex_handle src(curr_v.current_iterator()), tgt;
+	  h = pm.insert_intersecting_xcurve(scit->x_curve(), src, tgt, true, &aho);
+	}
+	curr_v = h->target();       // vertex for next insertion
+	scit->begin_child=&(*(edge_list.begin()));
+	//add edge_list at end of edge_level :
+	cn->edge_level.splice(cn->edge_level.end(),edge_list); 
+      }
       
-        scit=cn->levels[0].begin();
-        Subcurve_iterator aux=scit; ++aux;
-        for (; aux!=cn->levels[0].end(); ++scit,++aux) { 
-          scit->past_end_child=&(*(aux->begin_child));
-        }
-        //the last past_end_child :
-        scit->past_end_child=&(*(cn->edge_level.end())); 
-
-      } //if (do_update)
-    }
-
-    else { //insert x_curve directly - sub_curve vector is empty
-
-      if (do_update) { //insertion of edge level only if in update mode
-        Arr_hierarchy_ops aho(this, cn->edge_level, cn, en);
-        pm.insert(cv, &aho);
-        cn->past_end_child=&(*(cn->edge_level.end()));
-        cn->begin_child=&(*(cn->edge_level.begin()));
+      scit=cn->levels[0].begin();
+      Subcurve_iterator aux=scit; ++aux;
+      for (; aux!=cn->levels[0].end(); ++scit,++aux) { 
+	scit->past_end_child=&(*(aux->begin_child));
       }
-    }
+      //the last past_end_child :
+      scit->past_end_child=&(*(cn->edge_level.end())); 
+
+    } //if (do_update)
   
     Curve_iterator ci=curve_list.insert(curve_list.end(),*cn);
     if (do_update)
@@ -1247,7 +1240,7 @@ public:
     for (; lit!=c_list.end(); ++lit) {
       Subcurve_node* scn=new Subcurve_node;
       scn->ftr=cn;
-      scn->set_curve(*lit);
+      scn->set_x_monotone_curve(*lit);
       cn->levels[0].push_back(*scn);
     }
     cn->begin_child=&(*(cn->levels[0].begin()));
@@ -1262,7 +1255,7 @@ public:
       for (; scit!=cn->levels[i-1].end(); ++scit) {
         //cut cv into curves and insert them into l
         std::list<Curve_2> c_list;
-        (*(*F_begin))(scit->curve(),c_list);  //split the curve
+        (*(*F_begin))(scit->x_curve(),c_list);  //split the curve
 
         Subcurve_iterator aux=cn->levels[i].end();
         if (!cn->levels[i].empty()) {
@@ -1273,7 +1266,7 @@ public:
         for (; lit!=c_list.end(); ++lit) {
           Subcurve_node* scno=new Subcurve_node;
           scno->ftr=&(*scit); 
-          scno->set_curve(*lit);
+          scno->set_x_monotone_curve(*lit);
           cn->levels[i].push_back(*scno); 
         }
       
@@ -1305,7 +1298,7 @@ public:
       In_place_list<Subcurve_node,true> edge_list;    
       for (; scit!=cn->levels[i-1].end(); ++scit) {
         Arr_hierarchy_ops aho(this, edge_list, &(*scit), en);
-        pm.insert(scit->curve(), &aho);
+        pm.insert(scit->x_curve(), &aho);
 
         scit->begin_child=&(*(edge_list.begin()));
         //add edge_list at end of edge_level :
@@ -1351,12 +1344,12 @@ public:
     if (traits->point_equal(traits->curve_source(c1), 
                               orig_edge->source()->point()))
     {
-      en->set_curve(c2);
-      orig_edge->edge_node()->set_curve(c1);
+      en->set_x_monotone_curve(c2);
+      orig_edge->edge_node()->set_x_monotone_curve(c1);
     }
     else {
-      en->set_curve(c1);
-      orig_edge->edge_node()->set_curve(c2);
+      en->set_x_monotone_curve(c1);
+      orig_edge->edge_node()->set_x_monotone_curve(c2);
     }
 
     //insert en after eit in the edge_node list
@@ -1391,8 +1384,8 @@ public:
         en->begin_child->past_end_child=nen;
         en->begin_child=nen;
 
-        eit->set_curve(orig_edge->curve());
-        nen->set_curve(new_edge->curve());
+        eit->set_x_monotone_curve(orig_edge->curve());
+        nen->set_x_monotone_curve(new_edge->curve());
       
         //insert en before/after eit in the edge_node list
         if (eit->halfedge()== Halfedge_handle(orig_edge->twin())) { 
@@ -1628,7 +1621,7 @@ public:
           Subcurve_iterator scit=last_updated->level_begin(num - 1);
           for (; scit!=last_updated->level_end(num - 1); ++scit) {
             Arr_hierarchy_ops aho(this, edge_list, &(*scit));
-            pm.insert(scit->curve(), &aho);
+            pm.insert(scit->x_curve(), &aho);
             scit->begin_child=&(*(edge_list.begin()));
             //add edge_list at end of edge_level :
             last_updated->edge_level.splice(last_updated->edge_level.end(),
@@ -1646,7 +1639,7 @@ public:
           Arr_hierarchy_ops aho(this, 
                                 last_updated->edge_level, 
                                 &(*last_updated));
-          pm.insert(last_updated->curve(), &aho);
+          pm.insert(last_updated->x_curve(), &aho);
           last_updated->past_end_child=&(*(last_updated->edge_level.end()));
           last_updated->begin_child=&(*(last_updated->edge_level.begin()));
         }
@@ -1708,7 +1701,7 @@ public:
     const typename Traits::X_curve &edge_support_curve(Pm_halfedge_handle edge)
     {
       Halfedge_handle arr_handle = edge;
-      return arr_handle->edge_node()->parent()->curve();
+      return arr_handle->edge_node()->parent()->x_curve();
     }
 
     bool have_support_curve() { return true; }
@@ -1759,13 +1752,13 @@ public:
     // The following condition replaces the original functionality
     // of original_direction, as described in the histroial comment above.
     // The original condition: if (original_direction) 
-    if (traits->compare_xy(traits->curve_source(ftr->curve()), 
-                           traits->curve_target(ftr->curve())) ==
+    if (traits->compare_xy(traits->curve_source(ftr->x_curve()), 
+                           traits->curve_target(ftr->x_curve())) ==
         traits->compare_xy(traits->curve_source(cv), 
                            traits->curve_target(cv)))
-      en->set_curve(cv);
+      en->set_x_monotone_curve(cv);
     else 
-      en->set_curve(traits->curve_opposite(cv));
+      en->set_x_monotone_curve(traits->curve_opposite(cv));
   
     // DEALING WITH OVERLAP:
     // We use the 2 redundant pointers - begin_child and past_end_child
@@ -1805,12 +1798,13 @@ public:
 
     e->set_edge_node(en);
     e->twin()->set_edge_node(en);
-  
+    
     if (traits->point_equal(e->target()->point(),
-                              traits->curve_target(en->curve())))
+                              traits->curve_target(en->x_curve())))
       en->set_halfedge(Halfedge_handle(e));
     else
       en->set_halfedge(Halfedge_handle(e->twin())); 
+
     edge_list.push_back(*en);
   }
 
@@ -1894,7 +1888,7 @@ protected:
     for (; lit!=cv_list.end(); ++lit) {
       Subcurve_node* scn=new Subcurve_node;
       scn->ftr=cn;
-      scn->set_curve(*lit);
+      scn->set_x_monotone_curve(*lit);
       levels[0].push_back(*scn);
     }
     
@@ -1918,7 +1912,7 @@ protected:
         for (; lit!=c_list.end(); ++lit) {
           Subcurve_node* scn=new Subcurve_node;
           scn->ftr=&(*scit); 
-          scn->set_curve(*lit);
+          scn->set_x_monotone_curve(*lit);
           
           levels[i].push_back(*scn); 
         }  

@@ -84,10 +84,10 @@ public:
     skip_comment();
 
     // providing default reading function.
-    Curve curve;
+    X_curve curve;
     in() >> curve;
     
-    scn->set_curve(curve);
+    scn->set_x_monotone_curve(curve);
   }
     
   void scan_Edge_node(Edge_node* en){
@@ -95,10 +95,10 @@ public:
     skip_comment();
 
     // providing default reading function.
-    Curve curve;
+    X_curve curve;
     in() >> curve;
     
-    en->set_curve(curve);
+    en->set_x_monotone_curve(curve);
   }
 
 };

@@ -99,7 +99,7 @@ public:
    * \return true if the given curve is an x-monotone curve. False, otherwise.
    * For segments, this is always true
    */
-  bool is_x_monotone(const Curve_2 &) {return true;}
+//  bool is_x_monotone(const Curve_2 &) {return true;}
   
   /*! curve_make_x_monotone() cuts the given curve into x-monotone subcurves
    * and inserts them to the given output iterator. The order in which they
@@ -198,7 +198,7 @@ public:
 
     // Intersection is a segment
     X_monotone_curve_2 seg;
-    if (assign(seg, res)) {
+    if (assign(seg.seg, res)) {
       // the intersection is a curve:
       Construct_vertex_2 construct_vertex = construct_vertex_2_object();
       const Point_2 & src = construct_vertex(seg.seg, 0);
@@ -262,6 +262,8 @@ public:
                                     const Point_2 & pt,
                                     Point_2 & p1, Point_2 & p2) const
   {
+
+
     Object res = intersect_2_object()(c1.seg, c2.seg);
 
     // Empty object is returned - no intersection.
@@ -278,8 +280,11 @@ public:
     }
 
     // Intersection is a segment
+    bool same_curve=false;
     X_monotone_curve_2 seg;
-    if (assign(seg, res)) {
+    if (assign(seg.seg, res)) {
+      if(same_curve)
+	seg=c1.seg;
       // the intersection is a curve:
       Construct_vertex_2 construct_vertex = construct_vertex_2_object();
       const Point_2 & src = construct_vertex(seg.seg, 0);

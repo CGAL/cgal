@@ -706,6 +706,9 @@ public:
       //std::cout << "iisifi inserted_halfedge " 
       // << inserted_halfedge->source()->point() <<
       //  " ----> " << inserted_halfedge->target()->point() << std::endl;
+
+
+
       if (pmwx_traits->point_equal(inserted_halfedge->source()->point(), 
                                      pmwx_traits->curve_source(cv)))
         remaining_curve_source_vertex = inserted_halfedge->target();
@@ -1162,6 +1165,7 @@ public:
         last_he = insert_intersecting_xcurve(*it, src, tgt, true, en); 
       src = tgt;
     }
+
     target_vertex = tgt;
     return last_he;
   }
@@ -1185,9 +1189,7 @@ public:
   {
     // If curve is x-monotone then its source is different from its target.
     // (which is not true for non x-monotone curves, e.g, triangles.)
-    CGAL_precondition( ! traits->is_x_monotone(c) ||
-                       ! traits->point_equal( traits->curve_source( c),
-                                                traits->curve_target( c)));
+
     Vertex_handle src, tgt;
     return insert_intersecting_curve(c, src, tgt, false, en);
   }
