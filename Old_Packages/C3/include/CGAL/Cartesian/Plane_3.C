@@ -153,6 +153,7 @@ CGAL_KERNEL_INLINE
 bool PlaneC3<R CGAL_CTAG>::
 operator==(const PlaneC3<R CGAL_CTAG> &p) const
 {
+  if (id() == p.id()) return true;
   return has_on_boundary(p.point()) &&
          (orthogonal_direction() == p.orthogonal_direction());
 
@@ -338,9 +339,12 @@ PlaneC3<R CGAL_CTAG>
 PlaneC3<R CGAL_CTAG>::
 transform(const typename PlaneC3<R CGAL_CTAG>::Aff_transformation_3& t) const
 {
-  return PlaneC3<R CGAL_CTAG>( t.transform(point()), (t.is_even())
-           ?   t.transpose().inverse().transform(orthogonal_direction())
-           : - t.transpose().inverse().transform(orthogonal_direction()) );
+  if (t.is_even())
+    return PlaneC3<R CGAL_CTAG>( t.transform(point()),
+               t.transpose().inverse().transform(orthogonal_direction()) );
+  else
+    return PlaneC3<R CGAL_CTAG>( t.transform(point()),
+             - t.transpose().inverse().transform(orthogonal_direction()) );
 }
 
 template < class R >

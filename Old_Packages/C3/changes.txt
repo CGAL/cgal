@@ -1,9 +1,15 @@
-Version 4.0.2 (?? ?? 1999)
+Version 4.0.2 (November 23 1999)
 - Various cleanups [syl & herve].
-- Shorter headers in CVS repository, but complete thanks to scripti
-  for submission
+- Shorter headers in CVS repository, but complete for release
+  thanks to script for submission
 - Added compare_dominance and compare_is_dominated in predicates_on_points
 - Added Iso_cuboid_3
+- Rewrote the body of PlaneC3<R>::transform() for Borland C++
+- Added id()-filters for comparaisons of kernel objects, only when there is
+  substantial computation before first exit point. For instance, when comparing
+  plane, has_on (expensive is called), therefore I compare id()s first;
+  on the other hand, comparing spheres compares center.x() first, which is
+  likely to exit, so comparing id()s not a good investment.
 
 Version 4.0.1 (October 28 1999)
 - Filter related typo in kernel_ftC3.h [Sylvain]

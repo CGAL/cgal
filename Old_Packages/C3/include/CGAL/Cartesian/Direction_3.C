@@ -68,6 +68,7 @@ template < class R >
 bool
 DirectionC3<R CGAL_CTAG>::operator==(const DirectionC3<R CGAL_CTAG> &d) const
 {
+  if (id() == d.id()) return true;
   return equal_directionC3(dx(), dy(), dz(), d.dx(), d.dy(), d.dz());
 }
 

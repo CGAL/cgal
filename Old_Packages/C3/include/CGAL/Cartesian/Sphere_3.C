@@ -125,8 +125,8 @@ CGAL_KERNEL_INLINE
 bool SphereC3<R CGAL_CTAG>::
 operator==(const SphereC3<R CGAL_CTAG> &t) const
 {
-   return (center() == t.center()) &&
-          (squared_radius() == t.squared_radius() &&
+  return (center() == t.center()) &&
+         (squared_radius() == t.squared_radius() &&
           orientation() == t.orientation());
 }
 

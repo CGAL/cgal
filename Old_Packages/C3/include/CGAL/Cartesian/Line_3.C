@@ -100,6 +100,7 @@ inline
 bool
 LineC3<R CGAL_CTAG>::operator==(const LineC3<R CGAL_CTAG> &l) const
 {
+  if (id() == l.id()) return true;
   return has_on(l.point()) && (direction() == l.direction());
 }
 
