@@ -27,8 +27,8 @@ template <class T>
 class New_delete_allocator
 {
  public:
-  typedef size_t      size_type;
-  typedef ptrdiff_t   difference_type;
+  typedef std::size_t      size_type;
+  typedef std::ptrdiff_t   difference_type;
   typedef T           value_type;
   typedef T*          pointer;
   typedef const T*    const_pointer;
