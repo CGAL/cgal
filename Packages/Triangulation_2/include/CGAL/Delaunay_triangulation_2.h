@@ -36,6 +36,8 @@ class Delaunay_triangulation_2 : public Triangulation_2<Gt,Tds>
 public:
   typedef Gt Geom_traits;
   typedef typename Geom_traits::Point Point;
+  typedef typename Geom_traits::Segment Segment;
+  typedef typename Geom_traits::Triangle Triangle;
   typedef typename Geom_traits::Distance Distance;
   typedef typename Geom_traits::Ray Ray;
   typedef typename Geom_traits::Line Line;
