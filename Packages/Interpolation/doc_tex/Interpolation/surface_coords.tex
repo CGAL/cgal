@@ -1,5 +1,4 @@
-\section{Surface natural neighbor coordinates and surface neighbors on
-a point set surface}\label{sec:surface}
+\section{Surface natural neighbor coordinates and surface neighbors}\label{sec:surface}
 
 This section introduces the functions to compute natural neighbor
 coordinates and surface neighbors associated to a set of sample points
@@ -37,10 +36,8 @@ computation of power diagrams via the dual regular triangulation are
 well known and for example provided by \cgal\ in the class
 \ccc{Regular_triangulation_2<Gt, Tds>}.
 
-
+\subsection{Implementation}
 \subsubsection{Voronoi intersection diagrams}
-
-
 
 %We say that $\mathcal{H}$ is in {\em general position} if the
 %intersection of an edge (resp.\ a face) of the power diagram with
@@ -55,7 +52,7 @@ well known and for example provided by \cgal\ in the class
 In \cgal, the regular triangulation dual to the intersection of a $3D$
 Voronoi diagram with a plane $\mathcal{H}$ can be computed by
 instantiating the \ccc{Regular_triangulation_2<Gt, Tds>} class with
-the traits class \ccc{Voronoi_intersection_2_traits_3}. This traits
+the traits class \ccc{Voronoi_intersection_2_traits_3<K>}. This traits
 class contains a point and a vector as class member which define the
 plane $\mathcal{H}$. All predicates and constructions used by the
 triangulation algorithm are replaced by the corresponding operators on
@@ -70,15 +67,40 @@ $p$, $q$, $r$.  This approach allows to avoid the explicite
 constructions of the projected points and the weights which is very
 prone to rounding errors.
 
-\subsection{Natural neighbor coordinates on surfaces}
+\subsubsection{Natural neighbor coordinates on surfaces}
 
 The computation of natural neighbor coordinates on surfaces is based
 upon the computation of regular neighbor coordinates via the function
 \ccc{regular_neighbor_coordinates_2} with respect to the regular
-triangulation dual to the intersection diagram of $\mathcal{T}_x$ and
+triangulation that is dual to the intersection of $\mathcal{T}_x$ and
 the Voronoi diagram of $\mathcal{P}$.
 
+Of course, we might introduce all data points into this regular
+triangulation. However, this is not necessary if we guarantee that all
+surface neighbors of the query point are within the input points. The
+sample points $\mathcal{P}$ can be filtered for example by distance,
+e.g.\ using range search or $k$-nearest neighbor queries, or with the
+help of the $3D$ Delaunay triangulation since the surface neighbors
+are necessarily a subset of the natural neighbors of the query point
+in this triangulation. \cgal\ provides a function that encapsulates
+the filtering based on the $3D$ Delaunay triangulation. For input
+points filtered by distance, functions are provided that indicate
+whether or not points that lie outside the input range (i.e.\ points
+that are further from the query point than the furthest input point)
+can still influence the result.  This allows to iteratively enlarge
+the set of input points until the range is sufficient to certify the
+result.
 
-\subsection{Implementation}
+\subsubsection{Surface neighbors}
+
+The surface neighbors of the query point are its neighbors in the
+regular triangulation that is dual to the intersection of
+$\mathcal{T}_x$ and the Voronoi diagram of $\mathcal{P}$. As for
+surface neighbor coordinates, this regular triangulation is computed
+and the same kind of filtering of the data points as well as the
+certification described above is provided.
+
 
 \subsection{Examples}
+\ccIncludeExampleCode{../../examples/Interpolation/surface_neighbor_coordinates_3.C}
+

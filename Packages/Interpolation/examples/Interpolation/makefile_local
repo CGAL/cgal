@@ -14,6 +14,7 @@ include $(CGAL_MAKEFILE)
 #---------------------------------------------------------------------#
 
 CXXFLAGS = \
+	   -I ../../include \
            $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS) \
            $(DEBUG_OPT)
@@ -39,8 +40,8 @@ all:            \
                 nn_coordinates_2$(EXE_EXT) \
                 rn_coordinates_2$(EXE_EXT) \
                 sibson_interpolation_2$(EXE_EXT) \
-                surface_neighbor_coordinates_3$(EXE_EXT) 
-
+                surface_neighbor_coordinates_3$(EXE_EXT)
+ 
 interpolation_2$(EXE_EXT): interpolation_2$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)interpolation_2 interpolation_2$(OBJ_EXT) $(LDFLAGS)
 
@@ -58,6 +59,7 @@ sibson_interpolation_2$(EXE_EXT): sibson_interpolation_2$(OBJ_EXT)
 
 surface_neighbor_coordinates_3$(EXE_EXT): surface_neighbor_coordinates_3$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)surface_neighbor_coordinates_3 surface_neighbor_coordinates_3$(OBJ_EXT) $(LDFLAGS)
+
 
 clean: \
                    interpolation_2.clean \

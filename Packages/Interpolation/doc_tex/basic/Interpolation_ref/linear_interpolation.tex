@@ -16,7 +16,7 @@
 \ccDefinition
   
 The function \ccRefName\ computes the weighted sum of the function
-values provided via a functor.
+values which must be provided via a functor.
 
 
 \ccInclude{CGAL/interpolation_functions.h}
@@ -29,7 +29,7 @@ values provided via a functor.
   is a pair associating a point to a (non-normalized) barycentric
   coordinate.  \ccc{norm} is the normalization factor. Given a point,
   the functor \ccc{function_values} allows to access a pair of a
-  function value and boolean. The boolean indicates wether the
+  function value and a boolean. The boolean indicates wether the
   function value could be retrieved correctly. This function generates
   the interpolated function value as the weighted sum of the values
   corresponding to each point of the point/coordinate pairs in the
@@ -49,7 +49,7 @@ values provided via a functor.
     \ccc{ForwardIterator::value_type::first_type} and
     \ccc{Functor::result_type} is a pair of the function value type
     and a boolean value. The function value type must provide a
-    multiplication and addition operation with the type
+    multiplication and addition operation with the field number type
     \ccc{ForwardIterator::value_type::second_type}. A model of the
     functor is provided by the struct \ccc{Data_access}. It must be
     instantiated accordingly with an associative container (e.g.\ 
@@ -59,10 +59,10 @@ values provided via a functor.
   
   \ccSeeAlso
   \ccRefIdfierPage{CGAL::Data_access<Map>}\\
-  \ccRefIdfierPage{CGAL::sibson_c1_interpolation} \\
-  \ccRefIdfierPage{CGAL::sibson_gradient_fitting} \\
-  \ccRefIdfierPage{CGAL::farin_c1_interpolation} \\
-  \ccRefIdfierPage{CGAL::quadratic_interpolation} \\
+  %\ccRefIdfierPage{CGAL::sibson_c1_interpolation} \\
+  %\ccRefIdfierPage{CGAL::sibson_gradient_fitting} \\
+  %\ccRefIdfierPage{CGAL::farin_c1_interpolation} \\
+  %\ccRefIdfierPage{CGAL::quadratic_interpolation} \\
   \ccRefIdfierPage{CGAL::natural_neighbor_coordinates_2}\\
   \ccRefIdfierPage{CGAL::regular_neighbor_coordinates_2} \\
   \ccRefIdfierPage{CGAL::surface_neighbor_coordinates_3}\\

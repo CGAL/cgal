@@ -34,10 +34,10 @@ of the triangulation.
   \ccc{Delaunay_triangulation_2<Traits, Tds>}.  The value type of the
   \ccc{OutputIterator} is a pair of \ccc{Dt::Point_2} and the
   coordinate value of type \ccc{Dt::Geom_traits::FT}. The sequence of
-  point-coordinate pairs that is computed by the function is placed
+  point/coordinate pairs that is computed by the function is placed
   starting at \ccc{out}. The function returns a pair with an iterator
   that is placed past-the-end of the resulting sequence of
-  point-coordinate pairs and the normalization factor of the
+  point/coordinate pairs and the normalization factor of the
   coordinates.
   \ccPrecond %
   \ccc{p} lies in the convex hull of the
@@ -88,7 +88,7 @@ of the triangulation.
 \item \ccc{OutputIterator::value_type} is equivalent to
   \ccc{std::pair<Dt::Point_2, Dt::Geom_traits::FT>}, i.e.\ a pair
   asscociating a point and its natural neighbor coordinate.
-\item  \ccc{Traits} is a model of the concept \ccc{DelaunayTriangulationTraits_2} %\ccIndexMainItem[c]{DelaunayTriangulationTraits_2}.
+\item  \ccc{Traits} is a model of the concept \ccc{DelaunayTriangulationTraits_2}. %\ccIndexMainItem[c]{DelaunayTriangulationTraits_2}.
   Only the following members of this traits class are used:
   \begin{itemize}
   \item \ccc{Construct_circumcenter_2}

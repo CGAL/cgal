@@ -140,8 +140,6 @@ sibson_gradient_fitting_rn_2(const Rt& rt,
 			     Functor function_value,
 			     const Traits& traits)
 {
-  
-  
   typedef typename std::back_insert_iterator< std::vector< std::pair<
     typename Traits::Point_d,typename  Traits::FT > > >   CoordInserter;
   

@@ -15,10 +15,11 @@
 
 \ccDefinition
   
-The function \ccRefName\ computes regular neighbor coordinates, also
-called Sibson's coordinates, for $2D$ points provided a two-dimensional
-triangulation and a query point inside the convex hull of the vertices
-of the triangulation.
+The function \ccRefName\ computes natural neighbor coordinates, also
+called Sibson's coordinates, for weighted $2D$ points provided a
+two-dimensional regular triangulation and a (weighted) query point
+inside the convex hull of the vertices of the triangulation. The
+coordinates are also called regular neighbor coordinates.
 
 \ccInclude{CGAL/regular_neighbor_coordinates_2.h}
 
@@ -29,15 +30,15 @@ of the triangulation.
   Traits::Weighted_point& p, OutputIterator out, const Traits& traits,
   typename Rt::Face_handle start = typename Rt::Face_handle(NULL));} {
   computes the regular neighbor coordinates for \ccc{p} with respect
-  to the points in the two-dimensional regular triangulation \ccc{rt}.
-  The template class \ccc{Rt} should be of type
+  to the weighted points in the two-dimensional regular triangulation
+  \ccc{rt}.  The template class \ccc{Rt} should be of type
   \ccc{Regular_triangulation_2<Traits, Tds>}.  The value type of the
   \ccc{OutputIterator} is a pair of \ccc{Rt::Weighted_point} and the
   coordinate value of type \ccc{Rt::Geom_traits::FT}. The sequence of
-  point-coordinate pairs that is computed by the function is placed
+  point/coordinate pairs that is computed by the function is placed
   starting at \ccc{out}. The function returns a pair with an iterator
   that is placed past-the-end of the resulting sequence of
-  point-coordinate pairs and the normalization factor of the
+  point/coordinate pairs and the normalization factor of the
   coordinates.
   \ccPrecond %
   \ccc{p} lies in the convex hull of the
@@ -94,7 +95,7 @@ of the triangulation.
   \ccc{Regular_triangulation_2<Traits, Tds>}.
 \item \ccc{OutputIterator::value_type} is equivalent to
   \ccc{std::pair<Rt::Weighted_point, Rt::Geom_traits::FT>}, i.e.\ a pair
-  asscociating a point and its regular neighbor coordinate.
+  associating a point and its regular neighbor coordinate.
 \item \ccc{Traits} provides the number type \ccc{FT} which is a model
   for \ccc{FieldNumberType} and it must meet the requirements for the
   traits class of the \ccc{polygon_area_2} function. A model of this

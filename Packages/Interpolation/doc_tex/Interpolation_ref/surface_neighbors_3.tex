@@ -15,16 +15,16 @@
 
 \ccDefinition
 
-Given a set of sample points issued from the surface and a query point
+Given a set of sample points issued from a surface and a query point
 \ccc{p}, the function \ccRefName\ computes the neighbors of \ccc{p} on
-a surface within the sample points. If the sampling is sufficiently
-dense, the neighbors meets the properties described in the manual
-pages and in \cite{bf-lcss-02},\cite{prisme-these-flototto}. Notably,
-they are provably close to the point \ccc{p} on the surface.  The
-neighbors are defined to be the neighbors of \ccc{p} in the regular
-triangulation that is dual to the power diagram representing the
-intersection of the Voronoi cell of the query point \ccc{p} with the
-tangent plane to the surface at \ccc{p}.  
+the surface within the sample points. If the sampling is sufficiently
+dense, the neighbors re provably close to the point \ccc{p} on the
+surface (cf.\ the manual pages and
+\cite{bf-lcss-02},\cite{prisme-these-flototto}). They are defined to
+be the neighbors of \ccc{p} in the regular triangulation that is dual
+to the power diagram that is equivalent to the intersection of the
+Voronoi cell of the query point \ccc{p} with the tangent plane to the
+surface at \ccc{p}.
 
 \ccInclude{CGAL/surface_neighbors_3.h}
 
@@ -39,12 +39,12 @@ tangent plane to the surface at \ccc{p}.
   \ccc{p} and the vector \ccc{normal}.  The
   parameter \ccc{K} determines the kernel type. \\
   The surface neighbors of \ccc{p} are computed which are the
-  neighbors of \ccc{p} in the regular triangulation that is dual to the
-  intersection of the $3D$ Voronoi diagram of $\mathcal{P}$ with the
-  tangent plane. The sequence of point that is computed by the
+  neighbors of \ccc{p} in the regular triangulation that is dual to
+  the intersection of the $3D$ Voronoi diagram of $\mathcal{P}$ with
+  the tangent plane. The point sequence that is computed by the
   function is placed starting at \ccc{out}. The function returns an
-  iterator that is placed past-the-end of the resulting sequence of
-  points.}
+  iterator that is placed past-the-end of the resulting point
+  sequence.}
 
 
 \ccFunction{template <class OutputIterator, class InputIterator, class
@@ -52,8 +52,8 @@ tangent plane to the surface at \ccc{p}.
   surface_neighbors_3(InputIterator first, InputIterator beyond,
   const typename ITraits::Point_2& p,OutputIterator out, 
   const ITraits& traits);}{ the same as above only that the traits
-  class must be instantiated by the user. \ccc{ITraits} must be a
-  model of \ccc{VoronoiIntersection2Traits3}.}
+  class must be instantiated by the user. \ccc{ITraits} must be equivalent
+  to \ccc{Voronoi_intersection_2_traits_3<K>}.}
 
 
 The next functions return, in addition, a boolean value that certifies
@@ -89,12 +89,12 @@ been considered.
 
 \ccFunction{template <class OutputIterator, class InputIterator, class
   ITraits> std::pair< OutputIterator, bool >
-  surface_neighbors_certified_3(InputIterator first,
-  InputIterator beyond, const typename ITraits::Point_2& p,
-  OutputIterator out, const ITraits& traits);}{The same as above only
-  that the traits class must be instantiated by the user.
-  \ccc{ITraits} must be a model of \ccc{VoronoiIntersection2Traits3}
-  but without the parameter \ccc{max_distance}.}
+  surface_neighbors_certified_3(InputIterator first, InputIterator
+  beyond, const typename ITraits::Point_2& p, OutputIterator out,
+  const ITraits& traits);}{The same as above only that the traits
+  class must be instantiated by the user.  \ccc{ITraits} must be
+  equivalent to \ccc{Voronoi_intersection_2_traits_3<K>}. There is no
+  parameter \ccc{max_distance}.}
 
 \ccFunction{template <class OutputIterator, class InputIterator, class
   ITraits> std::pair< OutputIterator, bool >
@@ -133,9 +133,9 @@ necessarily neighbors in the Delaunay triangulation of $\mathcal{P}
   const ITraits& traits, typename Dt::Face_handle start = typename
   Dt::Face_handle(NULL));}
 %
-{The same as above only that the geometric traits class must be
-  instantiated by the user with an instance of a model of
-  \ccc{VoronoiIntersection2Traits3}.}
+{The same as above only that the parameter \ccc{traits} instantiates
+  the geometric traits class. Its type \ccc{ITraits} must be
+  equivalent to \ccc{Voronoi_intersection_2_traits_3<K>}.}
 
 
 
@@ -149,8 +149,8 @@ necessarily neighbors in the Delaunay triangulation of $\mathcal{P}
 \end{enumerate}
 
 \ccSeeAlso
-\ccRefIdfierPage{CGAL::Voronoi_intersection_2_traits_3<K>}
-\ccRefIdfierPage{CGAL::surface_neighbor_coordinates_2} 
+\ccRefIdfierPage{CGAL::Voronoi_intersection_2_traits_3<K>}\\
+\ccRefIdfierPage{CGAL::surface_neighbor_coordinates_2} \\
 
 \ccImplementation This function computes the regular triangulation of
 the sample points and the point \ccc{p} using a traits class

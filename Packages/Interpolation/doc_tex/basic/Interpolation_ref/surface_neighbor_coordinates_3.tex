@@ -41,10 +41,10 @@ the sample points onto the tangent plane at \ccc{p}.
   The natural neighbor coordinates for \ccc{p} are computed in the
   power diagram that results from the intersection of the $3D$ Voronoi
   diagram of $\mathcal{P}$ with the tangent plane. The sequence of
-  point-coordinate pairs that is computed by the function is placed
+  point/coordinate pairs that is computed by the function is placed
   starting at \ccc{out}. The function returns a pair with an iterator
   that is placed past-the-end of the resulting sequence of
-  point-coordinate pairs and the normalization factor of the
+  point/coordinate pairs and the normalization factor of the
   coordinates.
   \ccPrecond %
   \ccc{p} lies in the convex hull of the projection of the points
@@ -53,11 +53,11 @@ the sample points onto the tangent plane at \ccc{p}.
 
 \ccFunction{template <class OutputIterator, class InputIterator, class
   ITraits> std::pair< OutputIterator, typename ITraits::FT >
-  surface_neighbor_coordinates_3(InputIterator first, InputIterator beyond,
-  const typename ITraits::Point_2& p,OutputIterator out, 
-  const ITraits& traits);}{ the same as above only that the traits
-  class must be instantiated by the user. \ccc{ITraits} must be a
-  model of \ccc{VoronoiIntersection2Traits3}.}
+  surface_neighbor_coordinates_3(InputIterator first, InputIterator
+  beyond, const typename ITraits::Point_2& p,OutputIterator out, const
+  ITraits& traits);}{ the same as above only that the traits class
+  must be instantiated by the user. \ccc{ITraits} must be equivalent
+  to \ccc{Voronoi_intersection_2_traits_3<K>}.}
 
 
 The next functions return, in addition, a boolean value that certifies
@@ -66,29 +66,29 @@ that lie inside the ball centered on \ccc{p} passing through the
 furthest sample point from \ccc{p} in the range
 $\left[\right.$\ccc{first}, \ccc{beyond}$\left.\right)$. If the sample
 points are collected by a $k$-nearest neighbor or a range search
-query, this permits to verify that a large enough neighborhood has
-been considered. 
+query, this permits to check whether the neighborhood which has been
+considered is large enough.
 
 \ccFunction{template <class OutputIterator, class InputIterator, class
   Kernel> Triple< OutputIterator, typename Kernel::FT, bool >
   surface_neighbor_coordinates_certified_3(InputIterator first,
   InputIterator beyond, const typename Kernel::Point_3& p, const
   typename Kernel::Vector_3& normal, OutputIterator out, const Kernel&
-  K);}{The similar to the first function. The additional third return
+  K);}{Similar to the first function. The additional third return
   value is \ccc{true} if the furthest point in the range
   $\left[\right.$\ccc{first}, \ccc{beyond}$\left.\right)$ is further
   away from \ccc{p} than twice the distance from \ccc{p} to the
   furthest vertex of the intersection of the Voronoi cell of \ccc{p}
-  with the tangent plane defined be \ccc{(p,normal)}. It is
-  \ccc{false} otherwise.}
-\ccFunction{template <class OutputIterator, class InputIterator, class
-  Kernel> Triple< OutputIterator, typename Kernel::FT, bool >
+  with the tangent plane defined by \ccc{(p,normal)}. It is
+  \ccc{false} otherwise.}  \ccFunction{template <class OutputIterator,
+  class InputIterator, class Kernel> Triple< OutputIterator, typename
+  Kernel::FT, bool >
   surface_neighbor_coordinates_certified_3(InputIterator first,
   InputIterator beyond, const typename Kernel::Point_2& p, const
-  typename Kernel::FT& max_distance, OutputIterator out, const
-  Kernel& kernel);} { The same as above except that this function
-  takes the maximal distance from p to the points in the range
-  $\left[\right.$\ccc{first}, \ccc{beyond}$\left.\right)$ as add.
+  typename Kernel::FT& max_distance, OutputIterator out, const Kernel&
+  kernel);} { The same as above except that this function takes the
+  maximal distance from p to the points in the range
+  $\left[\right.$\ccc{first}, \ccc{beyond}$\left.\right)$ as additional
   parameter.}
 
 \ccFunction{template <class OutputIterator, class InputIterator, class
@@ -96,9 +96,9 @@ been considered.
   surface_neighbor_coordinates_certified_3(InputIterator first,
   InputIterator beyond, const typename ITraits::Point_2& p,
   OutputIterator out, const ITraits& traits);}{The same as above only
-  that the traits class must be instantiated by the user.
-  \ccc{ITraits} must be a model of \ccc{VoronoiIntersection2Traits3}
-  but without the parameter \ccc{max_distance}.}
+  that the traits class must be instantiated by the user and without
+  the parameter \ccc{max_distance}.  \ccc{ITraits} must be equivalent
+  to \ccc{Voronoi_intersection_2_traits_3<K>}.}
 
 \ccFunction{template <class OutputIterator, class InputIterator, class
   ITraits> Triple< OutputIterator, typename ITraits::FT, bool >
@@ -123,7 +123,7 @@ necessarily neighbors in the Delaunay triangulation of $\mathcal{P}
   the surface neighbor coordinates with respect to the points that are
   vertices of the Delaunay triangulation \ccc{dt}. The type \ccc{Dt}
   must be equivalent to \ccc{Delaunay_triangulation_3<Gt, Tds>}. The
-  optional parameter \ccc{start} is used for the used as a starting
+  optional parameter \ccc{start} is used as a starting
   place for the search of the conflict zone. It may be the result of
   the call \ccc{dt.locate(p)}. This function instantiates the template
   parameter \ccc{ITraits} to be
@@ -137,9 +137,9 @@ necessarily neighbors in the Delaunay triangulation of $\mathcal{P}
   const ITraits& traits, typename Dt::Face_handle start = typename
   Dt::Face_handle(NULL));}
 %
-{The same as above only that the geometric traits class must be
-  instantiated by the user with an instance of a model of
-  \ccc{VoronoiIntersection2Traits3}.}
+{The same as above only that the parameter \ccc{traits} instantiates
+  the geometric traits class. Its type \ccc{ITraits} must be
+  equivalent to \ccc{Voronoi_intersection_2_traits_3<K>}.}
 
 
 

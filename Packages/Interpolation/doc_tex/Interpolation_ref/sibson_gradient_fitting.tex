@@ -57,23 +57,30 @@ coordinates.
 
 \ccFunction{template < class Dt, class OutputIterator, class Functor,
   class Traits> OutputIterator sibson_gradient_fitting_nn_2(const Dt&
-  dt, OutputIterator out, Functor f, const Traits& traits);} {estimates
-  the function gradients for all data points inside the convex hull
-  using the coordinates computed by the function
-  \ccc{natural_neighbor_coordinates_2}.
+  dt, OutputIterator out, Functor f, const Traits& traits);}
+{estimates the function gradients at all vertices of \ccc{dt} that lie
+  inside the convex hull using the coordinates computed by the
+  function \ccc{natural_neighbor_coordinates_2}.
   \ccc{OutputIterator::value_type} is a pair associating a point to a
-  vector. The sequence of point-gradient pairs computed by this
+  vector. The sequence of point/gradient pairs computed by this
   function is placed starting at \ccc{out}. The function returns an
-  iterator that is placed past-the-end of the resulting sequence.}
-\ccHeading{Requirements}
-\begin{enumerate}
-  \item same as above.
-  \item 
-\end{enumerate}
+  iterator that is placed past-the-end of the resulting sequence. The
+  requirements are the same as above. The template class \ccc{Dt} must
+  be equivalent to \ccc{Delaunay_triangulation_2<Gt, Tds>}.}
 
-\begin{ccAdvanced}
-%  The function 
-\end{ccAdvanced}
+\ccFunction{template < class Rt, class OutputIterator, class Functor,
+  class Traits> OutputIterator sibson_gradient_fitting_rn_2(const Rt&
+  rt, OutputIterator out, Functor f, const Traits& traits);}
+{estimates the function gradients at all vertices of \ccc{rt} that lie
+  inside the convex hull using the coordinates computed by the
+  function \ccc{regular_neighbor_coordinates_2}.
+  \ccc{OutputIterator::value_type} is a pair associating a point to a
+  vector. The sequence of point/gradient pairs computed by this
+  function is placed starting at \ccc{out}. The function returns an
+  iterator that is placed past-the-end of the resulting sequence.The
+  requirements are the same as above. The template class \ccc{Rt} must
+  be equivalent to \ccc{Regular_triangulation_2<Gt, Tds>}.}
+
 
 \ccSeeAlso
 \ccRefIdfierPage{CGAL::linear_interpolation} \\
