@@ -1,22 +1,15 @@
-- rename all types without the _2 at the end to types that have the
-  _2 at the end
 - write a different class for the construction of the Voronoi vertex
-  that does internel filtering
+  that does internal filtering
 - write a different class for the Voronoi vertex for the predicates, that
   also has all the predicates
-- write separate classes/methods for the Voronoi vertex, depending on the
-  Method_tag
-- use the Square_root_* classes to store the representation of the Voronoi
-  vertex; maybe use different representation depending on the method tag
-- collect all basic constructions/predicates (which appear now as static
-  methods) into one or two classes; if two classes are used, then do one with
-  constructions and then derive from that and do the predicates;
-  also this/these classes should provide basic types
-- check using Gmpq that when the ring tag is used that no calls to the
-  sqrt function are permitted
 - try to rewrite the filtered traits so that the non-filtered traits are used to get
   the various types/predicates etc.
 - check the case that s is a segment in the infinite_edge_conflict predicate
 - in the traits class add Object_2 and Assign_2 as in the case of the Apollonius graph
 - remove the constructions from the traits class except the ones for the Voronoi vertex
 - verify that the infinite_edge_predicate is working correctly
+- change the Square_root_2 class so that is does represent the product of the
+  two square roots (drawback: multiplications are now not allowed)
+- check whether it makes sense to use the fact that FG is a perfect square in
+  the computations of the PSS Voronoi vertex
+
