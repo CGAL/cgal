@@ -8,7 +8,7 @@
 //
 // ----------------------------------------------------------------------------
 //
-// file          : include/CGAL/IO/Qt_Scene_Show_Nearest_vertex.h
+// file          : include/CGAL/IO/Qt_view_show_nearest_vertex.h
 // package       : QT_window
 // author(s)     : Radu Ursu
 // release       : 
@@ -18,17 +18,17 @@
 //
 // ============================================================================
 
-#ifndef CGAL_QT_SCENE_NEAREST_VERTEX_H
-#define CGAL_QT_SCENE_NEAREST_VERTEX_H
+#ifndef CGAL_QT_VIEW_NEAREST_VERTEX_H
+#define CGAL_QT_VIEW_NEAREST_VERTEX_H
 
-#include <CGAL/IO/Qt_Scene.h>
+#include <CGAL/IO/Qt_widget_view.h>
 #include <qobject.h>
 
 
 namespace CGAL {
 
 template <class T>
-class Qt_scene_nearest_vertex : public Qt_scene
+class Qt_view_nearest_vertex : public Qt_widget_view
 {
     //Q_OBJECT
 public:
@@ -38,7 +38,7 @@ public:
   typedef typename T::Vertex_handle		Vertex_handle;
   typedef typename T::Geom_traits::FT		FT;
 
-  Qt_scene_nearest_vertex(T &t) : first_time(TRUE), tr(t){};
+  Qt_view_nearest_vertex(T &t) : first_time(TRUE), tr(t){};
 	
   void draw_scene(Qt_widget &widget){first_time = TRUE;};
   void mouseMoveEvent(QMouseEvent *e, Qt_widget &widget)

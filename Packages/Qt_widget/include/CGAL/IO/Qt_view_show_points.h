@@ -8,7 +8,7 @@
 //
 // ----------------------------------------------------------------------------
 //
-// file          : include/CGAL/IO/Qt_Scene_Show_voronoi.h
+// file          : include/CGAL/IO/Qt_Scene_Show_points.h
 // package       : QT_window
 // author(s)     : Radu Ursu
 // release       : 
@@ -18,30 +18,42 @@
 //
 // ============================================================================
 
-#ifndef CGAL_QT_SCENE_SHOW_VORONOI_H
-#define CGAL_QT_SCENE_SHOW_VORONOI_H
+#ifndef CGAL_QT_VIEW_SHOW_POINTS_H
+#define CGAL_QT_VIEW_SHOW_POINTS_H
 
-
+#include <CGAL/IO/Qt_widget_view.h>
 #include <qobject.h>
-#include <CGAL/IO/Qt_Scene.h>
+
 
 namespace CGAL {
 
 template <class T>
-class Qt_scene_show_voronoi : public Qt_scene
-{
+class Qt_view_show_points : public Qt_widget_view {
     //Q_OBJECT
 public:
-	Qt_scene_show_voronoi(T &t1) : tr(t1){};
+  typedef typename T::Point		Point;
+  typedef typename T::Segment		Segment;
+  typedef typename T::Vertex		Vertex;
+  typedef typename T::Vertex_iterator	Vertex_iterator;
 
-	void draw_scene(Qt_widget &widget)
-	{
-		widget << CGAL::RED ;
-		tr.draw_dual(widget);
-	};
-	
+  Qt_view_show_points(T &t) : tr(t){};
+
+  void draw_scene(Qt_widget &widget)
+  {
+    Vertex v;
+    Vertex_iterator it = tr.vertices_begin(), 
+		beyond = tr.vertices_end();
+    widget << CGAL::GREEN << CGAL::PointSize (3) << CGAL::PointStyle (CGAL::DISC);
+    while(it != beyond)
+    {
+      v = *it;
+      widget << v.point();
+      ++it;
+    }
+  };
 private:
-	T	&tr;
+  T	&tr;
+
 };//end class 
 
 } // namespace CGAL

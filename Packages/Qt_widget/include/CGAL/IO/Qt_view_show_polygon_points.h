@@ -18,24 +18,24 @@
 //
 // ============================================================================
 
-#ifndef CGAL_QT_SCENE_SHOW_POLYGON_POINTS_H
-#define CGAL_QT_SCENE_SHOW_POLYGON_POINTS_H
+#ifndef CGAL_QT_VIEW_SHOW_POLYGON_POINTS_H
+#define CGAL_QT_VIEW_SHOW_POLYGON_POINTS_H
 
-#include <CGAL/IO/Qt_Scene.h>
+#include <CGAL/IO/Qt_widget_view.h>
 #include <qobject.h>
 
 
 namespace CGAL {
 
 template <class T>
-class Qt_scene_show_polygon_points : public Qt_scene
+class Qt_view_show_polygon_points : public Qt_widget_view
 {
     //Q_OBJECT
   typedef typename T::Point_2	Point_2;
 public:
   
 
-  Qt_scene_show_polygon_points(T &p) : polygon(p){};
+  Qt_view_show_polygon_points(T &p) : polygon(p){};
   void draw_scene(Qt_widget &widget)
   {
     typename T::const_iterator vert_it;

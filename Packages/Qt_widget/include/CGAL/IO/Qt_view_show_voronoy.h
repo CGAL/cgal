@@ -8,9 +8,9 @@
 //
 // ----------------------------------------------------------------------------
 //
-// file          : include/CGAL/IO/Qt_Scene.C
+// file          : include/CGAL/IO/Qt_view_show_voronoi.h
 // package       : QT_window
-// author(s)     : Laurent Rineau
+// author(s)     : Radu Ursu
 // release       : 
 // release_date  : 
 //
@@ -18,16 +18,32 @@
 //
 // ============================================================================
 
-#ifdef CGAL_USE_QT
+#ifndef CGAL_QT_VIEW_SHOW_VORONOI_H
+#define CGAL_QT_VIEW_SHOW_VORONOI_H
 
-#include <CGAL/IO/Qt_Scene.h>
+
+#include <qobject.h>
+#include <CGAL/IO/Qt_widget_view.h>
 
 namespace CGAL {
 
-Qt_scene::~Qt_scene() { emit(dying(this)); };
+template <class T>
+class Qt_view_show_voronoi : public Qt_widget_view
+{
+    //Q_OBJECT
+public:
+  Qt_view_show_voronoi(T &t1) : tr(t1){};
+
+  void draw_scene(Qt_widget &widget)
+  {
+    widget << CGAL::RED ;
+    tr.draw_dual(widget);
+  };
+	
+private:
+  T	&tr;
+};//end class 
 
 } // namespace CGAL
 
-#include "Qt_Scene.moc"
-
-#endif // CGAL_USE_QT
+#endif // CGAL_QT_WINDOW_GET_SEGMENT_H

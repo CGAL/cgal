@@ -8,7 +8,7 @@
 //
 // ----------------------------------------------------------------------------
 //
-// file          : include/CGAL/IO/Qt_Scene_Show_points.h
+// file          : include/CGAL/IO/Qt_Scene_Show_polygon.h
 // package       : QT_window
 // author(s)     : Radu Ursu
 // release       : 
@@ -18,45 +18,38 @@
 //
 // ============================================================================
 
-#ifndef CGAL_QT_SCENE_SHOW_POINTS_H
-#define CGAL_QT_SCENE_SHOW_POINTS_H
+#ifndef CGAL_QT_VIEW_SHOW_POLYGON_H
+#define CGAL_QT_VIEW_SHOW_POLYGON_H
 
-#include <CGAL/IO/Qt_Scene.h>
+#include <CGAL/IO/Qt_widget_view.h>
 #include <qobject.h>
+
+
 
 
 namespace CGAL {
 
 template <class T>
-class Qt_scene_show_points : public Qt_scene
+class Qt_view_show_polygon : public Qt_widget_view
 {
     //Q_OBJECT
 public:
-  typedef typename T::Point		Point;
-  typedef typename T::Segment		Segment;
-  typedef typename T::Vertex		Vertex;
-  typedef typename T::Vertex_iterator	Vertex_iterator;
-
-  Qt_scene_show_points(T &t) : tr(t){};
-
+  
+  Qt_view_show_polygon(T &p) : polygon(p){};
   void draw_scene(Qt_widget &widget)
   {
-    Vertex v;
-    Vertex_iterator it = tr.vertices_begin(), 
-		beyond = tr.vertices_end();
-    widget << CGAL::GREEN << CGAL::PointSize (3) << CGAL::PointStyle (CGAL::DISC);
-    while(it != beyond)
-    {
-      v = *it;
-      widget << v.point();
-      ++it;
-    }
+    widget << LineWidth(3);
+    widget << CGAL::BLUE; 
+    widget << polygon;
+    widget << LineWidth(1);
+    widget << CGAL::WHITE; 
+    widget << polygon;
   };
+	
 private:
-  T	&tr;
-
+  T &polygon;
 };//end class 
 
 } // namespace CGAL
 
-#endif // CGAL_QT_WINDOW_GET_SEGMENT_H
+#endif // CGAL_QT_SCENE_SHOW_POLYGON_H

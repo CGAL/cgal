@@ -8,7 +8,7 @@
 //
 // ----------------------------------------------------------------------------
 //
-// file          : include/CGAL/IO/Qt_Window_Show_voronoi.h
+// file          : include/CGAL/IO/Qt_view_show_mouse_coordinates.h
 // package       : QT_window
 // author(s)     : Ursu Radu
 // release       : 
@@ -18,10 +18,10 @@
 //
 // ============================================================================
 
-#ifndef CGAL_QT_SCENE_MOUSE_COORDINATES_H
-#define CGAL_QT_SCENE_MOUSE_COORDINATES_H
+#ifndef CGAL_QT_VIEW_MOUSE_COORDINATES_H
+#define CGAL_QT_VIEW_MOUSE_COORDINATES_H
 
-#include <CGAL/IO/Qt_Scene.h>
+#include <CGAL/IO/Qt_widget_view.h>
 #include <qobject.h>
 #include <qmainwindow.h>
 #include <qstatusbar.h>
@@ -29,12 +29,12 @@
 
 namespace CGAL {
 
-class Qt_scene_mouse_coordinates : public Qt_scene
+class Qt_view_mouse_coordinates : public Qt_widget_view
 {
     //Q_OBJECT
 public:
 	
-  Qt_scene_mouse_coordinates(QMainWindow &mw) : qmw(mw){};
+  Qt_view_mouse_coordinates(QMainWindow &mw) : qmw(mw){};
   void draw_scene(Qt_widget &widget){};
   void mouseMoveEvent(QMouseEvent *e, Qt_widget &widget)
   {
