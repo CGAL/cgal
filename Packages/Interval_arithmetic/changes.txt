@@ -1,8 +1,9 @@
 Changes done to the Interval Arithmetic package.
 
-Version 4.48 on ?? June 2000
+Version 4.48 on 15 June 2000
 - Removed obsolete (and buggy) references to
   CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION.
+- Interval_nt<> operations boosted with Protect_FPU_rounding().
 
 Version 4.47 on 13 June 2000
 - Removed useless "template <>" before full specializations of function

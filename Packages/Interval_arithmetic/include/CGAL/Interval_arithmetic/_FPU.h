@@ -223,6 +223,41 @@ FPU_get_and_set_cw (FPU_CW_t cw)
 
 FPU_CW_t FPU_empiric_test(); // Only used for debug.
 
+// A class which constructor sets the FPU mode to +inf, saves a backup of it,
+// and who's destructor resets it back to the saved state.
+// We could had additional checks/assertions/warnings here, I guess.
+
+// The benchmarks show it's faster than the current approach with GCC 2.95.
+// It seems it can schedule better, and eats less stack memory.
+// If test-suite agrees on all platforms, I'll definitely switch to that.
+// Next step: add this in the filtered predicates.  It'll be even more fun with
+// the exceptions :)  And don't forget the test-suite.
+class Protect_FPU_rounding
+{
+	FPU_CW_t backup;
+	// I would like to prevent the following from silently wrongly
+	// compiling:
+	// {
+	//    Protect_FPU_rounding a();  // () compiles but is bogus: WHY ???
+	//    ...
+	// }
+	Protect_FPU_rounding(const Protect_FPU_rounding&)
+	{std::cerr << "XXX" << std::endl;}
+	Protect_FPU_rounding& operator=(const Protect_FPU_rounding&) 
+	{std::cerr << "XXX" << std::endl; return *this;}
+public:
+	Protect_FPU_rounding()
+		: backup( FPU_get_and_set_cw(CGAL_FE_UPWARD) )
+		{ //std::cerr << "ctor" << std::endl;
+	       	}
+
+	~Protect_FPU_rounding()
+	{
+		FPU_set_cw(backup);
+		// std::cerr << "dtor" << std::endl;
+	}
+};
+
 CGAL_END_NAMESPACE
 
 #endif // CGAL_FPU_H

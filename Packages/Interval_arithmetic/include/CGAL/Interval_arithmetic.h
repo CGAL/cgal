@@ -484,55 +484,81 @@ struct Interval_nt : public Interval_nt_advanced
   IA & operator/=(const IA &);
 };
 
+#define CGAL_PROTECT_FPU_OBJECT 1 // temporary.  To test if it works everywhere.
 
 inline
 Interval_nt
 operator+ (const Interval_nt & e, const Interval_nt & d)
 {
+#if CGAL_PROTECT_FPU_OBJECT
+  Protect_FPU_rounding a;
+  return Interval_nt_advanced(e) + Interval_nt_advanced(d);
+#else
   FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_UPWARD);
   Interval_nt tmp ( Interval_nt_advanced(e) + Interval_nt_advanced(d) );
   FPU_set_cw(backup);
   return tmp;
+#endif
 }
 
 inline
 Interval_nt
 operator- (const Interval_nt & e, const Interval_nt & d)
 {
+#if CGAL_PROTECT_FPU_OBJECT
+  Protect_FPU_rounding a;
+  return Interval_nt_advanced(e) - Interval_nt_advanced(d);
+#else
   FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_UPWARD);
   Interval_nt tmp ( Interval_nt_advanced(e) - Interval_nt_advanced(d) );
   FPU_set_cw(backup);
   return tmp;
+#endif
 }
 
 inline
 Interval_nt
 operator* (const Interval_nt & e, const Interval_nt & d)
 {
+#if CGAL_PROTECT_FPU_OBJECT
+  Protect_FPU_rounding a;
+  return Interval_nt_advanced(e) * Interval_nt_advanced(d);
+#else
   FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_UPWARD);
   Interval_nt tmp ( Interval_nt_advanced(e) * Interval_nt_advanced(d) );
   FPU_set_cw(backup);
   return tmp;
+#endif
 }
 
 inline
 Interval_nt
 operator/ (const Interval_nt & e, const Interval_nt & d)
 {
+#if CGAL_PROTECT_FPU_OBJECT
+  Protect_FPU_rounding a;
+  return Interval_nt_advanced(e) / Interval_nt_advanced(d);
+#else
   FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_UPWARD);
   Interval_nt tmp ( Interval_nt_advanced(e) / Interval_nt_advanced(d) );
   FPU_set_cw(backup);
   return tmp;
+#endif
 }
 
 inline
 Interval_nt
 sqrt (const Interval_nt & d)
 {
+#if CGAL_PROTECT_FPU_OBJECT
+  Protect_FPU_rounding a;
+  return sqrt(Interval_nt_advanced(d));
+#else
   FPU_CW_t backup = FPU_get_cw();
   Interval_nt tmp = sqrt( (Interval_nt_advanced) d);
   FPU_set_cw(backup);
   return tmp;
+#endif
 }
 
 namespace NTS {
@@ -541,10 +567,15 @@ inline
 Interval_nt
 square (const Interval_nt & d)
 {
+#if CGAL_PROTECT_FPU_OBJECT
+  Protect_FPU_rounding a;
+  return CGAL_NTS square(Interval_nt_advanced(d));
+#else
   FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_UPWARD);
   Interval_nt tmp = CGAL_NTS square( (Interval_nt_advanced) d);
   FPU_set_cw(backup);
   return tmp;
+#endif
 }
 
 inline

@@ -111,6 +111,8 @@ Concerning the new filters:
 
 Concerning the main code:
 -------------------------
+- GCC 2.96 fails right now (and in a different way with -g and -O2...).......
+  Maybe it's temporary, so let's wait and retry later... [ today's 14 June 00 ]
 - in _FPU.h, some functions are outside namespace CGAL...
 - Check if the symbols beginning with an underscore must be fixed.
 - Use STL's relational operators from <utility>.  Check produced code before
