@@ -1,3 +1,7 @@
+1.10 (1 May 2001)
+    Changed traits requirements for y-monotone partition to incorporate
+    the Compare_x_at_y function now available in the kernel.
+    
 1.9 (22 March 2001)
     Changed basis for std::stack in Vertex_visibility_graph_2 to std::list
     instead of std::deque (the default) since the latter under MSVC++ assumes

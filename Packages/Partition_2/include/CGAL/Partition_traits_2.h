@@ -59,6 +59,7 @@ class Partition_traits_2  : public Partition_traits_2_base<R_>
     // needed by Indirect_edge_compare, used in y_monotone and greene_approx
     typedef typename R::Line_2                          Line_2;
     typedef typename R::Construct_line_2                Construct_line_2;
+    typedef typename R::Compare_x_at_y_2                Compare_x_at_y_2;
 
     // needed by visibility graph and thus by optimal convex
     typedef Ray_2<R_>                                   Ray_2; 
@@ -78,6 +79,10 @@ class Partition_traits_2  : public Partition_traits_2_base<R_>
     Construct_line_2
     construct_line_2_object() const
     {  return Construct_line_2(); }
+
+    Compare_x_at_y_2
+    compare_x_at_y_2_object() const
+    { return Compare_x_at_y_2(); }
 
     Construct_segment_2
     construct_segment_2_object() const

@@ -44,12 +44,14 @@ class Indirect_edge_compare
      typedef typename Traits::Compare_y_2        Compare_y_2;
      typedef typename Traits::Compare_x_2        Compare_x_2;
      typedef typename Traits::Construct_line_2   Construct_line_2;
+     typedef typename Traits::Compare_x_at_y_2   Compare_x_at_y_2;
      typedef typename Traits::Line_2             Line_2;
 
      Indirect_edge_compare() : 
           _compare_y_2(Traits().compare_y_2_object()),
           _compare_x_2(Traits().compare_x_2_object()),
           _construct_line_2(Traits().construct_line_2_object())
+          _compare_x_at_y_2(Traits().compare_x_at_y_2_object())
      { }
      
      // determines if the edge (edge_vtx_1, edge_vtx_1++) has a larger
@@ -74,11 +76,7 @@ class Indirect_edge_compare
         { 
            // construct supporting line for edge
            Line_2  line = _construct_line_2(*edge_vtx_1, *edge_vtx_2);
-           // compute x value at vertex's y value
-     // ??? CHANGE THIS when the function Compare_x_at_y is available
-     //         return _compare_x_at_y(*vertex, line) == SMALLER;
-     // ???
-           return line.x_at_y((*vertex).y()) > (*vertex).x();
+           return _compare_x_at_y(*vertex, line) == SMALLER;
         }
      }               
 
@@ -157,6 +155,7 @@ class Indirect_edge_compare
      Compare_y_2   _compare_y_2;
      Compare_x_2   _compare_x_2;
      Construct_line_2 _construct_line_2;
+     Compare_x_at_y_2 _compare_x_at_y_2;
 };
 
 }
