@@ -42,10 +42,16 @@ on \ccc{h}.}
 \ccc{Line_2 operator()(Point_2 p, Point_2 q)}, which constructs and
 returns the line defined by the points $p$ and $q$.}
 
+\ccNestedType{Is_horizontal_2}{Function object type that provides
+\ccc{bool operator()(Line_2 l)}, which returns \ccc{true} iff the
+line \ccc{l} is horizontal.}
+
 \ccCreation
 \ccCreationVariable{traits}  %% choose variable name
 
-Only a copy constructor is required.
+A copy constructor and default constructor are required.
+
+\ccConstructor{YMonotonePartitionTraits();}{}
 
 \ccConstructor{YMonotonePartitionTraits(const YMonotonePartitionTraits& tr);}{}
 
@@ -60,6 +66,7 @@ object types must exist.
 
 \ccMethod{Compare_x_at_y_2 compare_x_at_y_2_object();}{}
 
+\ccMethod{Is_horizontal_2 is_horizontal_2_object();}{}
 
 \ccHasModels
 
