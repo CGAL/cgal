@@ -351,6 +351,7 @@ public:
     CGAL_Filter_cons(Transform_2, transform_2_object)
     CGAL_Filter_cons(Intersect_2, intersect_2_object)
     CGAL_Filter_cons(Compute_y_at_x_2, compute_y_at_x_2_object)
+    CGAL_Filter_cons(Compute_squared_distance_2, Compute_squared_distance_2_object)
     CGAL_Filter_cons(Compute_squared_length_2, Compute_squared_length_2_object)
 
 
@@ -435,6 +436,7 @@ public:
     CGAL_Filter_cons(Transform_3, transform_3_object)
     CGAL_Filter_cons(Assign_3, assign_3_object)
     CGAL_Filter_cons(Intersect_3, intersect_3_object)
+    CGAL_Filter_cons(Compute_squared_distance_3, compute_squared_distance_3_object)
     CGAL_Filter_cons(Compute_squared_length_3, compute_squared_length_3_object)
 
 
