@@ -1,5 +1,8 @@
 Nef_2 Package: Release changes
 ----------------------------------------------------------------------
+1.45 (10. September 2003) [rursu]
+- Qt_help_window is in the CGAL namespace now.
+
 1.44 (7. September 2003) [rursu]
 - demo use now the new class Qt_help_window instead of HelpWindow
 - demo use the new demo icon demoicon
