@@ -1,25 +1,30 @@
-Based on the \emph{policy-based design} \cite{Alexandrescu:2001:MCD}, 
-we represent a subdivision as a refinement function 
-(\emph{host function}) parameterized with the stencils
-(\emph{policies}). For example, a Catmull-Clark subdivision
-is structured as a primal quadralization function with the 
-Catmull-Clark stencil rules.
+Policy-based design \cite{Alexandrescu:2001:MCD} assemble a 
+class (called \emph{host}) with complex behavior out of many 
+little behaviors (called \emph{policies}). Each policy establishes
+an interface pertaining to a specific behavior.
+Based on this design, we implement a subdivision solution as 
+a \emph{refinement function} parameterized with the 
+\emph{stencils}. The host, i.e.\ the refinement function,
+conducts the \tr\ and maintains the stencils. The policy,
+i.e.\ the stencil, attends the \gm . By mixing and matching
+the host and policy, a combinatory library of the subdivisions
+can be constructed. 
+
+In the following paragraph, we implement the Catmull-Clark 
+subdivision and Doo-Sabin subdivision based on the 
+policy-based design. For the sake of simplicity, all 
+namespaces, template declarations
+and typedefs have be excluded. The sample codes are only
+given for illustration purposes.
+
+A Catmull-Clark subdivision function is structured 
+as a \emph{primal quadralization function} parameterized 
+with the \emph{Catmull-Clark stencil rules}.
 \begin{lstlisting}
 void CatmullClark_subdivision(Polyhedron& p) {
   quadralize_polyhedron<CatmullClark_rule<Polyhedron>>(p);
 }
-\end{lstlisting}
-The \lstinline!quadralize_polyhedron<>()! is the host function
-refining the input mesh and maintaining the stencil 
-correspondence of the PQQ scheme. The \lstinline!CatmullClark_rule!
-is the policy class implementing the Catmull-Clark stencils. 
-Different refinement has a different proper set of policies, 
-i.e.\ the stencils. A PQQ scheme has facet-, edge- and vertex-stencils 
-and a DQQ scheme has only corner-stencils (Figure \ref{fig:RefMap}).
-In the \CC\ format, the policy class (simplified without template 
-parameter) for the Catmull-Clark subdivision 
-is like,
-\begin{lstlisting}
+
 class CatmullClark_rule {
 public:
   void facet_rule(Facet_handle facet, Point& pt);
@@ -27,11 +32,24 @@ public:
   void vertex_rule(Vertex_handle vertex, Point& pt);
 };
 \end{lstlisting}
-The stenciling is a simplified mesh traversal 
-problem inside a policy since only a 1-ring neighborhood 
-need to be visited and collected. To implement a facet stencil of the 
-Catmull-Clark subdivision, we circulate around 
-the facet vertices and apply the stencil.
+The \lstinline!quadralize_polyhedron<>()! is the host function
+refining the input mesh
+and the \lstinline!CatmullClark_rule!
+is the policy class applying the Catmull-Clark stencils. 
+The refinement host calls the policy
+functions while maintaining the correspondence of stencils, 
+i.e.\ the submesh centered as the given facet, edge, or
+vertex handle, and the smoothing point.
+Different refinement scheme may require a 
+different set of stencils. A PQQ scheme needs
+facet-, edge- and vertex-stencils whereas a DQQ scheme 
+only need the corner-stencils (Figure \ref{fig:RefMap}).
+
+\noindent\textbf{Policy}.
+Inside a policy, applying stencil is simplified as 
+the mesh traversal of only a 1-ring neighborhood. 
+Following example shows the policy of facet-stencil 
+in the Catmull-Clark subdivision.
 \begin{lstlisting}
 void facet_rule(Facet_handle facet, Point& pt) {
   Halfedge_around_facet_circulator hcir = facet->facet_begin();
@@ -44,21 +62,22 @@ void facet_rule(Facet_handle facet, Point& pt) {
 }
 \end{lstlisting}
 The \lstinline!Facet_handle facet! points to the 
-stencil and the \lstinline!Point& pt! specifies the
-target vertex. For this specific stencil, we compute the
-centroid with a loop based on a circulator over the halfedges
-surrounding a facet. The CGAL kernel geometry, i.e. Points 
-and Vectors computation, is used. Though for a specialized
-kernel, special computation may be applied in user-defined
-policies.
+center facet of the stencil and the \lstinline!Point& pt! 
+specifies the smoothing vertex. For this specific stencil, 
+we compute the centroid with a loop based on a circulator 
+over the halfedges surrounding a facet. The CGAL kernel 
+geometry, i.e. Points and Vectors computation, is used. 
+Though for a specialized kernel, special computation may be 
+applied in user-defined policies.
  
-Implementing a topology refinement is a rather complex job.  One
-approach is to encode the refinement into a sequence of Euler
-operations. For Catmull-Clark subdivision, the refinement is encoded
+\noindent\textbf{Host: Euler operations}.
+Implementing a topology refinement is a rather complex job. One
+approach is to encode the refinement into \emph{a sequence of Euler
+operations}. For Catmull-Clark subdivision, the refinement is encoded
 as edge-vertex insertions, edge insertion between two neighboring
-edge-vertices, facet-vertex insertion on he inserted edge, and then
-edge insertions between the facet-vertex the edge-vertices. 
-The sequence is demonstrated in Figure \ref{fig:CCRefinement}. 
+edge-vertices, facet-vertex insertion on the inserted edge, and then
+edge insertions between the facet-vertex and the edge-vertices. 
+The Euler sequence is demonstrated in Figure \ref{fig:CCRefinement}. 
 Note that the vertex and edge insertions can be easily 
 implemented based on the Euler operations supported by \cgalpoly.
 \begin{figure}
@@ -66,21 +85,24 @@ implemented based on the Euler operations supported by \cgalpoly.
   \epsfig{file=figs/CCRefinement.eps, width=7cm}
   \caption{A PQQ refinement of a facet is encoded into a sequence of
   vertex insertions and edge insertions. Red indicates the inserted
-  vertices and edges on each step.}
+  vertices and edges in each step.}
   \label{fig:CCRefinement}
 \end{figure}
 
 The stencil correspondence of the refinement is assured
-by the the traversal sequence of the mesh. The host function
-has a two pass algorithm. The first pass generates the
-points by calling the policies. The second pass
+by matching the \emph{traversal sequences} of the mesh. 
+The refinement host has a two pass, hence two traversal, 
+algorithm. The first pass generates the points by 
+calling the policies. The second pass
 refines the mesh with a sequence of the Euler operations.
 The points generated in the first pass are stored in a
 point buffer in the order of the stencil 
 traversal. The sequence of the vertex insertions 
-matches the storage order of the point buffer. It assures 
+is maintained to match the the stencil traversal, i.e.\ 
+the storage order of the point buffer. It assures 
 the stencil correspondence of the refinement.
 
+\noindent\textbf{Host: modifier callback mechanism}.
 Most primal refinement schemes can be translated into a sequence of
 Euler operations. Though dual schemes, e.g.\ Doo-Sabin subdivision,
 have no simple translation of Euler operations. A sequence
