@@ -15,6 +15,18 @@
 #include <CGAL/Pm_segment_exact_traits.h>
 #endif
 
+// Point Location Strategy - STRATEGY
+// ----------------------------------
+// 1 - Default 
+// 2 - Naive
+// 3 - Walk
+// Set a strategy if no one was set already
+#ifndef STRATEGY
+#define STRATEGY 1
+//#define STRATEGY 2
+//#define STRATEGY 3
+#endif
+
 #if STRATEGY == 2
 #include <CGAL/Pm_naive_point_location.h>
 #else
@@ -130,4 +142,4 @@ int main(int argc, char *argv[])
 
   return 0;
 }
-
+ 
