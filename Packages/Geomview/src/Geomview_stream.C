@@ -27,6 +27,7 @@
 
 #include <unistd.h>
 #include <errno.h>
+#include <stdlib.h>
 
 
 CGAL_Geomview_stream::CGAL_Geomview_stream(const CGAL_Bbox_3 &bbox,
