@@ -83,7 +83,8 @@ Triangulation_ds_face_2<Fb>::
 mirror_index(int i) const
 {
   // return the index of opposite vertex in neighbor(i);
-  CGAL_triangulation_precondition (neighbor(i) != NULL &&  dimension() >= 1);
+  CGAL_triangulation_precondition (neighbor(i) != Face_handle() &&
+	                           dimension() >= 1);
   if (dimension() == 1) return 1 - (neighbor(i)->index(vertex(1-i)));
   return ccw( neighbor(i)->index(vertex(ccw(i))));
 }

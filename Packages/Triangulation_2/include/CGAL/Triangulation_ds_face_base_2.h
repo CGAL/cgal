@@ -245,7 +245,7 @@ inline void
 Triangulation_ds_face_base_2<TDS> :: 
 set_vertices()
 {
-  V[0] = V[1] = V[2] = NULL;
+  V[0] = V[1] = V[2] = Vertex_handle();
 }
     
 template <class TDS>      
@@ -263,7 +263,7 @@ inline void
 Triangulation_ds_face_base_2<TDS> :: 
 set_neighbors()
 {
-  N[0] = N[1] = N[2] = NULL;
+  N[0] = N[1] = N[2] = Face_handle();
 }
     
 template <class TDS>      
@@ -311,8 +311,8 @@ inline  int
 Triangulation_ds_face_base_2<TDS> ::
 dimension() const
 {
-  if (V[2] != NULL) {return 2;}
-  else return( V[1] != NULL ? 1 : 0);
+  if (V[2] != Vertex_handle()) {return 2;}
+  else return( V[1] != Vertex_handle() ? 1 : 0);
 }
 
 template < class TDS >

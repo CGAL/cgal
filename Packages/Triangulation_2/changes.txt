@@ -2,6 +2,9 @@ Package triangulation: provides triangulations Delaunay triangulations,
 constrained and regular triangulations with  tests and examples.
 
 
+ver 8.33 (?/1/04)
+- First shot at changing NULL to default constructed handles.
+
 ver 8.32 (9/1/04)
 - fixed operator= of Constrained_triangulation_plus_2
 - added swap in Constriant_hierarchy_2

@@ -40,7 +40,7 @@ public:
   template <typename TDS2>
   struct Rebind_TDS { typedef Triangulation_ds_vertex_base_2<TDS2> Other; };
 
-  Triangulation_ds_vertex_base_2 ()    : _f(NULL)  {}
+  Triangulation_ds_vertex_base_2 ()    : _f()  {}
   Triangulation_ds_vertex_base_2(Face_handle f)    :  _f(f)    {}
 
   Face_handle face() const { return _f;}
@@ -50,7 +50,7 @@ public:
   // the user of derived face base classes 
   // to add their own purpose checking
   bool is_valid(bool /*verbose*/=false, int /*level*/= 0) const
-    {return face() != NULL;}
+    {return face() != Face_handle();}
 
     // For use by the Compact_container.
   void *   for_compact_container() const { return _f.for_compact_container(); }
