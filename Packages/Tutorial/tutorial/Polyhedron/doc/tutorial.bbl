@@ -1,6 +1,11 @@
 \newcommand{\etalchar}[1]{$^{#1}$}
 \begin{thebibliography}{FGK{\etalchar{+}}00}
 
+\bibitem[Ale02]{a-rotm-02}
+Marc Alexa.
+\newblock Refinement operators for triangle meshes.
+\newblock {\em Computer Aided Geometric Design}, 19(3):169--172, 2002.
+
 \bibitem[FGK{\etalchar{+}}00]{fgkss-dccga-00}
 A.~Fabri, G.-J. Giezeman, L.~Kettner, S.~Schirra, and S.~Sch{\"o}nherr.
 \newblock {On the Design of {CGAL}, a Computational Geometry Algorithms

@@ -1,6 +1,9 @@
 tex:
 	latex tutorial
 	latex tutorial
+	bibtex tutorial
+	latex tutorial
+	latex tutorial
 	ls -l *.dvi
 ps:
 	dvips -Ppdf -G0 -t letter -z -o tutorial.ps tutorial.dvi
@@ -13,10 +16,6 @@ all:
 	make tex
 	make ps
 	make pdf
-	make clean
-	\rm *.ps *.tmp
-	clear
-	ls -l
 
 clean:
 	\rm *.aux *.dvi *.log *.out *.blg *.bbl
