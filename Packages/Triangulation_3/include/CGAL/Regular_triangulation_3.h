@@ -53,6 +53,11 @@ public:
   typedef typename Triangulation_3<Gt,Tds>::Facet Facet;
   typedef typename Triangulation_3<Gt,Tds>::Edge Edge;
 
+  typedef typename Triangulation_3<Gt,Tds>::Locate_type Locate_type;
+  typedef typename Triangulation_3<Gt,Tds>::Cell_iterator Cell_iterator;
+  typedef typename Triangulation_3<Gt,Tds>::Facet_iterator Facet_iterator;
+  typedef typename Triangulation_3<Gt,Tds>::Edge_iterator Edge_iterator;
+
   Regular_triangulation_3()
     : Triangulation_3<Gt,Tds>() {}
   

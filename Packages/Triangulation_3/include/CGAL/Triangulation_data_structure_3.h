@@ -605,10 +605,10 @@ std::istream& operator >>
 {
 
   typedef Triangulation_data_structure_3<Vb,Cb> Tds;
-  typedef  Tds::Vertex  Vertex;
-  typedef  Tds::Cell Cell;
-  typedef  Tds::Edge Edge;
-  typedef  Tds::Facet Facet;
+  typedef typename Tds::Vertex  Vertex;
+  typedef typename Tds::Cell Cell;
+  typedef typename Tds::Edge Edge;
+  typedef typename Tds::Facet Facet;
   //  typedef typename Vb::Point Point;
 
   tds.clear();
@@ -656,14 +656,14 @@ std::ostream& operator<<
   // when dimension < 3 : the same with faces of maximal dimension
 {
   typedef Triangulation_data_structure_3<Vb,Cb> Tds;
-  typedef  Tds::Vertex  Vertex;
-  typedef  Tds::Cell Cell;
-  typedef  Tds::Edge Edge;
-  typedef  Tds::Facet Facet;
-  typedef  Tds::Vertex_iterator  Vertex_iterator;
-  typedef  Tds::Cell_iterator  Cell_iterator;
-  typedef  Tds::Edge_iterator  Edge_iterator;
-  typedef  Tds::Facet_iterator  Facet_iterator;
+  typedef typename Tds::Vertex  Vertex;
+  typedef typename Tds::Cell Cell;
+  typedef typename Tds::Edge Edge;
+  typedef typename Tds::Facet Facet;
+  typedef typename Tds::Vertex_iterator  Vertex_iterator;
+  typedef typename Tds::Cell_iterator  Cell_iterator;
+  typedef typename Tds::Edge_iterator  Edge_iterator;
+  typedef typename Tds::Facet_iterator  Facet_iterator;
 
   std::map< void*, int, std::less<void*> > V;
   //  std::map< void*, int, less<void*> > C;
@@ -1177,10 +1177,10 @@ read_cells(std::istream& is,
 	             std::less<int> > &C )
 {
   typedef Triangulation_data_structure_3<Vb,Cb> Tds;
-  typedef  Tds::Vertex  Vertex;
-  typedef  Tds::Cell Cell;
-  typedef  Tds::Edge Edge;
-  typedef  Tds::Facet Facet;
+  typedef typename Tds::Vertex  Vertex;
+  typedef typename Tds::Cell Cell;
+  typedef typename Tds::Edge Edge;
+  typedef typename Tds::Facet Facet;
  
     // creation of the cells and neighbors
   int i;
@@ -1293,14 +1293,14 @@ print_cells(std::ostream& os,
 	    std::map< void*, int, std::less<void*> > &V )
 {
   typedef Triangulation_data_structure_3<Vb,Cb> Tds;
-  typedef  Tds::Vertex  Vertex;
-  typedef  Tds::Cell Cell;
-  typedef  Tds::Edge Edge;
-  typedef  Tds::Facet Facet;
-  typedef  Tds::Vertex_iterator  Vertex_iterator;
-  typedef  Tds::Cell_iterator  Cell_iterator;
-  typedef  Tds::Edge_iterator  Edge_iterator;
-  typedef  Tds::Facet_iterator  Facet_iterator;
+  typedef typename Tds::Vertex  Vertex;
+  typedef typename Tds::Cell Cell;
+  typedef typename Tds::Edge Edge;
+  typedef typename Tds::Facet Facet;
+  typedef typename Tds::Vertex_iterator  Vertex_iterator;
+  typedef typename Tds::Cell_iterator  Cell_iterator;
+  typedef typename Tds::Edge_iterator  Edge_iterator;
+  typedef typename Tds::Facet_iterator  Facet_iterator;
 
   std::map< void*, int, std::less<void*> > C;
 
@@ -2497,7 +2497,7 @@ clear()
 
 
   {// deletion of the vertices
-    std::list<Vertex*>::iterator
+    typename std::list<Vertex*>::iterator
       it=Vertices.begin(),done=Vertices.end();
     while ( it != done ) {
       delete *it;

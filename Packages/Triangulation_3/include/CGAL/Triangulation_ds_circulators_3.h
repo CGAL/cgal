@@ -284,8 +284,7 @@ public:
 				     s >= 0 && s < 4 &&
 				     t >= 0 && t < 4 &&
 				     f >= 0 && f < 4 );
-    CGAL_triangulation_precondition_code
-      ( int i; int j; )
+    int i; int j;
     CGAL_triangulation_precondition
       ( start->has_vertex( c->vertex(s), i ) &&
 	start->has_vertex( c->vertex(t), j ) &&

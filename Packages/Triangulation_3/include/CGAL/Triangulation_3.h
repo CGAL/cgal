@@ -807,12 +807,12 @@ operator>> (std::istream& is, Triangulation_3<GT, Tds> &tr)
 {
   //  return operator>>(is, tr._tds);
   typedef Triangulation_3<GT, Tds> Triangulation;
-  typedef  Triangulation::Vertex_handle  Vertex_handle;
-  typedef  Triangulation::Cell_handle Cell_handle;
-  typedef  Triangulation::Vertex  Vertex;
-  typedef  Triangulation::Cell Cell;
-  typedef  Triangulation::Edge Edge;
-  typedef  Triangulation::Facet Facet;
+  typedef typename Triangulation::Vertex_handle  Vertex_handle;
+  typedef typename Triangulation::Cell_handle Cell_handle;
+  typedef typename Triangulation::Vertex  Vertex;
+  typedef typename Triangulation::Cell Cell;
+  typedef typename Triangulation::Edge Edge;
+  typedef typename Triangulation::Facet Facet;
   typedef typename GT::Point Point;
   typedef typename Tds::Vertex TdsVertex;
   typedef typename Tds::Cell TdsCell;
@@ -865,14 +865,14 @@ operator<< (std::ostream& os, const Triangulation_3<GT, Tds> &tr)
   // when dimension < 3 : the same with faces of maximal dimension
 {
   typedef Triangulation_3<GT, Tds> Triangulation;
-  typedef  Triangulation::Vertex  Vertex;
-  typedef  Triangulation::Cell Cell;
-  typedef  Triangulation::Edge Edge;
-  typedef  Triangulation::Facet Facet;
-  typedef  Triangulation::Vertex_iterator  Vertex_iterator;
-  typedef  Triangulation::Cell_iterator  Cell_iterator;
-  typedef  Triangulation::Edge_iterator  Edge_iterator;
-  typedef  Triangulation::Facet_iterator  Facet_iterator;
+  typedef typename Triangulation::Vertex  Vertex;
+  typedef typename Triangulation::Cell Cell;
+  typedef typename Triangulation::Edge Edge;
+  typedef typename Triangulation::Facet Facet;
+  typedef typename Triangulation::Vertex_iterator  Vertex_iterator;
+  typedef typename Triangulation::Cell_iterator  Cell_iterator;
+  typedef typename Triangulation::Edge_iterator  Edge_iterator;
+  typedef typename Triangulation::Facet_iterator  Facet_iterator;
  
   std::map< void*, int, std::less<void*> > V;
   //  std::map< void*, int, less<void*> > C;
