@@ -4,8 +4,6 @@
 #include <fstream>
 #include <unistd.h> // sleep
 
-#include <CGAL/Gmpz.h>
-
 #include <CGAL/Cartesian.h>
 
 #include <CGAL/Triangulation_euclidean_traits_2.h>
@@ -22,7 +20,7 @@
 #include <CGAL/IO/Triangulation_geomview_ostream_2.h>
 #include <CGAL/IO/Triangulation_geomview_ostream_3.h>
 
-typedef CGAL::Gmpz NT;
+typedef double NT;
 typedef CGAL::Cartesian<NT>  Rep;
 
 typedef CGAL::Triangulation_euclidean_traits_2<Rep> Gt2;
@@ -56,6 +54,7 @@ int main()
   gv.set_line_width(4);
   gv.set_trace(false);
   gv.set_bg_color(CGAL::Color(0, 200, 200));
+  gv.clear();
 
   Delaunay D;
   Delaunay3d D3d;
@@ -77,24 +76,29 @@ int main()
   gv.set_wired(true);
   gv << D;
   sleep(5);
+  gv.clear();
   std::cout << "Drawing 2D Delaunay triangulation in non-wired mode.\n";
   gv.set_wired(false);
   gv << D;
   sleep(5);
+  gv.clear();
 
   std::cout << "Drawing 3D Delaunay triangulation in wired mode.\n";
   gv.set_wired(true);
   gv << D3d;
   sleep(5);
+  gv.clear();
   std::cout << "Drawing 3D Delaunay triangulation in non-wired mode.\n";
   gv.set_wired(false);
   gv << D3d;
   sleep(5);
+  gv.clear();
 
   std::cout << "Drawing Terrain in wired mode.\n";
   gv.set_wired(true);
   gv << T;
   sleep(5);
+  gv.clear();
   std::cout << "Drawing Terrain in non-wired mode.\n";
   gv.set_wired(false);
   gv << T;
