@@ -36,27 +36,58 @@ Chapter~\ref{chapterCirculators}.
 
 \subsection*{Doubly-Connected List Managing Items in Place.}
 
-The class \ccStyle{In_place_list<T,&T::next,&T::prev>} manages a
+The class \ccStyle{In_place_list<T,bool>} manages a
 sequence of items in place in a doubly-connected list. Its goals are
 the flexible handling of memory management and performance
-optimization. The item type is supposed to provide the two necessary
+optimization. The item type has to provide the two necessary
 pointers \ccc{&T::next_link} and \ccc{&T::prev_link}. One possibility
 to obtain these pointers is to inherit them from the base class
 \ccStyle{In_place_list_base<T>}.
 
-The class \ccStyle{In_place_list<T>} is a container and quite similar
+The class \ccStyle{In_place_list<T,bool>} is a container quite similar
 to \stl\ containers, with the advantage that it is able to handle the
 stored elements by reference instead of copying them. It is possible
 to delete an element only knowing its address and no iterator to it.
-This simplifies mutually pointered data structures like a halfedge
-data structure for planar maps or polyhedral surfaces. The usual
-iterators are also available.  Another container with this property of
-working with pointers to objects is the \stl\ vector (at least in the
-current \stl\ implementations).
+This used to simplify mutually pointered data structures like a halfedge
+data structure for planar maps or polyhedral surfaces (the current design
+does not need this anymore). The usual iterators are also available.
 
 \ccRefIdfierPage{CGAL::In_place_list<T,bool>}\\
 \ccRefIdfierPage{CGAL::In_place_list_base<T>}
 
+\subsection*{Compact container.}
+
+The class \ccStyle{Compact_container<T, Allocator>} is an \stl\ like container
+which provides a very compact storage for its elements.  It achieves this goal
+by requiring \ccc{T} to provide access to a pointer in it, which is going to be
+used by \ccStyle{Compact_container<T, Allocator>} for its internal management.
+The traits class \ccStyle{Compact_container_traits<T>} specifies the way to
+access that pointer.  The class \ccStyle{Compact_container_base<T>} can be
+used as a base class to provide the pointer, although in this case you do not
+get the most compact representation.  The values that this pointer can have
+during valid use of the object are valid pointer values to 4 bytes aligned
+objects (i.e., the two least significant bits of the pointer need to be zero
+when the object is constructed). Another interesting property of this
+container is that iterators are not invalidated during \ccc{insert} or
+\ccc{erase} operations.
+
+The main deviation from the \stl\ container concept is that the \ccc{++} and
+\ccc{--} operators of the iterator do not have a constant time complexity in
+all cases.  The actual complexity is related to the maximum size that the
+container has had during its life time compared to its current size, because
+the iterator has to go over the "erased" elements as well, so the bad case is
+when the container used to contain lots of elements, but now has far less.  In
+this case, we suggest to do a copy of the container in order to "defragment"
+the internal representation.
+
+This container has been developed in order to efficiently handle large data
+structures like the triangulation and halfedge data structures.  It can
+probably be useful for other kinds of graphs as well.
+
+\ccRefIdfierPage{CGAL::Compact_container<T, Allocator>}\\
+\ccRefIdfierPage{CGAL::Compact_container_traits<T>}\\
+\ccRefIdfierPage{CGAL::Compact_container_base<T>}
+ 
 \subsection*{Generic Algorithms.}
 
 \ccRefIdfierPage{CGAL::copy_n}\\
@@ -69,7 +100,7 @@ current \stl\ implementations).
 \ccRefIdfierPage{CGAL::Emptyset_iterator}\\
 \ccRefIdfierPage{CGAL::Oneset_iterator<T>}\\
 \ccRefIdfierPage{CGAL::Counting_iterator<Iterator, Value>}\\
-\ccRefIdfierPage{CGAL::N_step_adaptor<I,int N,Ref,Ptr,Val,Dst,Ctg>}\\
+\ccRefIdfierPage{CGAL::N_step_adaptor<I,int N>}\\
 \ccRefIdfierPage{CGAL::Filter_iterator<Iterator, Predicate>}\\
 \ccRefIdfierPage{CGAL::Join_input_iterator_1<Iterator, Creator>}\\
 \ccRefIdfierPage{CGAL::Inverse_index<IC>}\\
