@@ -1,6 +1,6 @@
 #!/bin/bash
 
-labrun -v --log=Rotated_cylinders -n union_of_rotated_cyclineders2 ./union_of_rotated_cyclinders2 off/ngon100.off input/10e0-8.sinus
-labrun -v --log=Rotated_cylinders -n union_of_rotated_cyclineders2 ./union_of_rotated_cyclinders2 off/ngon1000.off input/10e0-8.sinus
-labrun -v --log=Rotated_cylinders -n union_of_rotated_cyclineders2 ./union_of_rotated_cyclinders2 off/ngon2000.off input/10e0-8.sinus
-labrun -v --log=Rotated_cylinders -n union_of_rotated_cyclineders2 ./union_of_rotated_cyclinders2 off/ngon10000.off input/10e0-8.sinus
+labrun -v --log=Rotated_cylinders -n union_of_rotated_cylineders2 ./union_of_rotated_cylinders2 off/ngon100.off input/10e0-8.sinus
+labrun -v --log=Rotated_cylinders -n union_of_rotated_cylineders2 ./union_of_rotated_cylinders2 off/ngon1000.off input/10e0-8.sinus
+labrun -v --log=Rotated_cylinders -n union_of_rotated_cylineders2 ./union_of_rotated_cylinders2 off/ngon2000.off input/10e0-8.sinus
+labrun -v --log=Rotated_cylinders -n union_of_rotated_cylineders2 ./union_of_rotated_cylinders2 off/ngon10000.off input/10e0-8.sinus
