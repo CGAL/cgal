@@ -8,6 +8,7 @@ Rineau: study the effect of QPen::setCapStyle and QPen::setJoinStyle
 ---
 Rineau roadmap 2001/12/17:
  1) merge the branch and the trunc	[done]
+ 1bis) change filenames to follow the CGAL naming convention.
  2) rebuild Qt_scene_widget
  3) polish the interface
  4) work on the doc
