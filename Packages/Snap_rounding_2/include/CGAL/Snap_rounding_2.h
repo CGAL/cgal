@@ -179,16 +179,22 @@ public:
   static inline void set_direction(Direction dir) {seg_dir = dir;}
   static inline bool get_erase_hp() {return(erase_hp);}
 
-  // ctor
+  //! A constructor
   Snap_rounding_2(Segment_const_iterator begin,
                   Segment_const_iterator end,
                   NT inp_pixel_size,bool inp_do_isr = true,
                   int inp_number_of_kd_trees = default_number_of_kd_trees);
-  // ctor
+
+  //! A constructor
   Snap_rounding_2(NT inp_pixel_size,bool inp_do_isr = true,
                   int inp_number_of_kd_trees = default_number_of_kd_trees);
-  // cctor
-  Snap_rounding_2(const Snap_rounding_2 &other);
+
+  //! A copy constructor
+  Snap_rounding_2(const Snap_rounding_2& other);
+
+  //! An operator =
+  Snap_rounding_2& operator =(const Snap_rounding_2& other);
+
 
 #ifdef ISR_DEBUG
   template<class Out>
@@ -253,6 +259,7 @@ private:
                    &inp_hot_pixels_intersected_set,std::list<Point_2>
                    &seg_output,int number_of_intersections,bool first_time);
   void iterate();
+  void copy(const Snap_rounding_2<Rep_>& other);
 };
 
 #if defined(ISR_DEBUG) || defined(TEST)
@@ -275,7 +282,7 @@ Segment_data<Rep_>::Segment_data(NT inp_x1,NT inp_y1,NT inp_x2,NT inp_y2) :
 
 // cctor
 template<class Rep_>
-Segment_data<Rep_>::Segment_data(const Segment_data &other)
+Segment_data<Rep_>::Segment_data(const Segment_data& other)
 {
   x1 = other.x1;
   y1 = other.y1;
@@ -827,10 +834,9 @@ Snap_rounding_2<Rep_>::Snap_rounding_2(Segment_const_iterator
     }
   }
 
-// cctor
 template<class Rep_>
-Snap_rounding_2<Rep_>::Snap_rounding_2(const Snap_rounding_2 &other)
-  {
+void Snap_rounding_2<Rep_>::copy(const Snap_rounding_2<Rep_>& other)
+{
     erase_hp = false;
     wheteher_to_do_isr = other.wheteher_to_do_isr;
     pixel_size = other.pixel_size;
@@ -839,6 +845,24 @@ Snap_rounding_2<Rep_>::Snap_rounding_2(const Snap_rounding_2 &other)
     need_sr = true;
     seg_list = other.seg_list;
     seg_2_list = other.seg_2_list;
+
+}
+
+// cctor
+template<class Rep_>
+Snap_rounding_2<Rep_>::Snap_rounding_2(const Snap_rounding_2<Rep_>& other)
+  {
+    copy(other);
+  }
+
+// operator =
+template<class Rep_>
+Snap_rounding_2<Rep_>&
+Snap_rounding_2<Rep_>::operator =(const Snap_rounding_2<Rep_>& other)
+  {
+    copy(other);
+
+    return(*this);
   }
 
 template<class Rep_>

@@ -138,12 +138,11 @@ int main(int argc,char *argv[])
   std::cout << "\ntesting cctor\n";
   Snap_rounding_2 s4(s3);
   print_out(s3);
-  /*
+
   std::cout << "\ntesting operator=\n";
   Snap_rounding_2 s5(prec,true,4);
-  s5 = s4;
+  s5 = s3;
   print_out(s5);
-  */
 
   // testing changing of pixel size
   std::cout << "\ntesting changing of pixel size\n";

@@ -51,7 +51,7 @@ Polyline number 3:
     (1.5:3.5)
 
 
-cheking clear
+testing clear
 Polyline number 1:
     (0.5:0.5)
     (1.5:3.5)
@@ -98,8 +98,6 @@ Polyline number 2:
 
 Polyline number 3:
     (0.5:7.5)
-    (1.5:4.5)
-    (1.5:3.5)
     (4.5:0.5)
 
 
@@ -114,7 +112,49 @@ Polyline number 2:
 
 Polyline number 3:
     (0.5:7.5)
+    (4.5:0.5)
+
+
+testing cctor
+Polyline number 1:
+    (0.5:0.5)
+    (1.5:3.5)
+
+Polyline number 2:
+    (0.5:4.5)
+    (1.5:4.5)
+
+Polyline number 3:
+    (0.5:7.5)
+    (4.5:0.5)
+
+
+testing operator=
+Polyline number 1:
+    (0.5:0.5)
+    (1.5:3.5)
+
+Polyline number 2:
+    (0.5:4.5)
+    (1.5:4.5)
+
+Polyline number 3:
+    (0.5:7.5)
     (1.5:4.5)
     (1.5:3.5)
     (4.5:0.5)
+
+
+testing changing of pixel size
+Polyline number 1:
+    (0.25:0.75)
+    (1.25:3.75)
+
+Polyline number 2:
+    (0.25:4.75)
+    (1.75:4.25)
+
+Polyline number 3:
+    (0.75:7.75)
+    (4.75:0.75)
 
