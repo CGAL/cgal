@@ -1,0 +1,69 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Arr_subcurve_node.tex (Arrangement)
+% +------------------------------------------------------------------------+
+% | 
+% | Package: arr (Arrangement_2)
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+% +========================================================================+
+%   Arrangement_2::Subcurve_node
+% +========================================================================+
+\begin{ccRefClass}[Arrangement_2<Dcel,Traits,Base_node>::]{Subcurve_node}
+
+\ccDefinition An object $sn$ of the class
+    \ccClassTemplateName\ is a node holding a subcurve in the
+    hierarchy tree of the arrangement.
+
+\ccInheritsFrom
+    \ccc{Base_node}
+
+    The \ccClassTemplateName\ is the base class for the nodes of the tree.
+    Its functions are inherited by the \ccc{Curve_node} and \ccc{Edge_node}
+    classes.
+
+    \ccCreationVariable{sn}
+    
+\ccOperations
+
+    \ccMethod{virtual bool is_edge_node();}{returns false;}
+
+    \ccMethod{Curve_iterator curve_node();}{returns an iterator to the
+       \ccc{Curve_node} that is the root of the hierarchy tree \ccVar{}
+       is in.}
+
+    \ccMethod{Subcurve_iterator parent();}{returns an iterator to the node that
+       is the parent of \ccVar{} in the hierarchy tree.
+       Note that the return value is
+       always a \ccc{Subcurve_iterator} even if the actual type is a
+       \ccc{Curve_node}; in order to get the \ccc{Curve_node} which is the 
+       root of the tree use the member function \ccc{curve_node()}.}
+       %(or cast the \ccc{Subcurve_iterator} to \ccc{Curve_iterator}).}
+    
+  \ccMethod{Subcurve_iterator children_begin();}{returns a begin iterator to the
+     children of \ccVar{} in the hierarchy tree.}
+ 
+  \ccMethod{Subcurve_iterator children_end();}{returns a past-the-end iterator
+     of the children of \ccVar{} in the hierarchy tree.}
+
+  \ccMethod{Edge_iterator edges_begin();}{returns a begin iterator to the
+     edges in the subtree ``hanging'' from \ccVar, i.e., the subtree that
+     \ccVar{} is a root of.
+     \ccPrecond{\ccVar{} has a non-empty edge level.}}
+
+  \ccMethod{Edge_iterator edges_end();}{returns a past-the-end iterator to the
+     edges in the subtree ``hanging'' from \ccVar.
+     \ccPrecond{\ccVar{} has a non-empty edge level.}}
+
+
+\end{ccRefClass}
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+

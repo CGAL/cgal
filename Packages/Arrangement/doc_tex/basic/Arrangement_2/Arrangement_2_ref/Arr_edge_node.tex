@@ -1,0 +1,49 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Arr_edge_node.tex (Arrangement)
+% +------------------------------------------------------------------------+
+% | 
+% | Package: arr (Arrangement_2)
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+% +========================================================================+
+%   Arrangement_2::Edge_node
+% +========================================================================+
+\begin{ccRefClass}[Arrangement_2<Dcel,Traits,Base_node>::]{Edge_node}
+
+\ccDefinition An object $en$ of the class
+    \ccStyle{Edge_node} is a node holding an edge curve in the
+    hierarchy tree.
+
+\ccInheritsFrom
+    \ccc{Subcurve_node}
+
+    \ccCreationVariable{en}
+
+    In addition to the operations of \ccc{Subcurve_node} the following
+    operation is implemented.
+    
+\ccOperations
+    
+    \ccMethod{bool is_edge_node();}{returns true;}
+    
+    \ccMethod{Halfedge_handle halfedge();}{returns the halfedge
+       in the planar map that corresponds to the \ccc{X_curve} in \ccVar.
+       The returned halfedge has the same direction as the $x$-curve $cv$
+       in \ccVar{}
+       (i.e., its source vertex holds the point that is the source of
+       $cv$, and its target vertex holds the point that is $cv$'s target.)}
+
+
+\end{ccRefClass}
+
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+

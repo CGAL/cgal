@@ -1,0 +1,2 @@
+The Arrangement_2 package - arrangements of general curves in the plane.
+
