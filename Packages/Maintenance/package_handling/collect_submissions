@@ -17,6 +17,7 @@ $::MAIL_IN='/users/geert/PUBLIC/CGAL-submit/incoming-mail';
 #$::MAIL_OUT='/users/geert/PUBLIC/CGAL-submit/handled-mail';
 $::MAIL_TMP='/users/geert/PUBLIC/CGAL-submit/temp-mail';
 $::SCRIPT='/projects/CGAL/submissions/autohandle/scripts/collect_submissions';
+my $MAIL_PROG='/local/bin/smtp-relay';
 
 # program locations
 $::FORMAIL='/projects/CGAL/submissions/autohandle/scripts/formail';
@@ -78,7 +79,7 @@ sub initialisation()
 #
 
     if ( system("$::LOCKCMD", "-r", '10', "$::LOCKFILE") != 0) {
-	open NOTICE, "|Mail -s \"collect_submissions notice\" $::invoker";
+	open NOTICE, "|$MAIL_PROG -s \"collect_submissions notice\" $::invoker";
 	print NOTICE <<"TOTHIER";
 The script $::SCRIPT could not proceed because
 it could not acquire the needed lock on file $::LOCKFILE.
@@ -93,7 +94,7 @@ TOTHIER
     my $logline = `tail -1 $::LOGFILE`;
     if ($logline !~ /stopped/) {
 	unlink $::LOCKFILE;
-	open NOTICE, "|Mail -s \"collect_submissions notice\" $::invoker";
+	open NOTICE, "|$MAIL_PROG -s \"collect_submissions notice\" $::invoker";
 	print NOTICE <<"TOTHIER";
 The script $::SCRIPT did not proceed because
 there seems to be another process collecting the mail messages.
@@ -137,7 +138,7 @@ sub main_loop()
 	    --$tries_to_go;
 	    if ($tries_to_go < 0) {
 		open NOTICE,
-		    "|Mail -s \"collect_submissions notice\" $::invoker";
+		    "|$MAIL_PROG -s \"collect_submissions notice\" $::invoker";
 		print NOTICE <<"TOTHIER";
 The script $::SCRIPT could not proceed because
 it could not acquire the needed lock on file $::LOCKFILE.
@@ -149,7 +150,7 @@ TOTHIER
 	    $tries_to_go = $::max_tries_between_warning;
 	    if ( -f $::MAIL_TMP ) {
 		open NOTICE,
-		    "|Mail -s \"collect_submissions notice\" $::invoker";
+		    "|$MAIL_PROG -s \"collect_submissions notice\" $::invoker";
 print NOTICE <<"TOTHIER";
 The script $::SCRIPT has been stopped,
 because the temporary mail box $::MAIL_TMP was not emptied.

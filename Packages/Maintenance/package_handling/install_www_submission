@@ -1,4 +1,4 @@
-#! /net/bin/perl5 -w
+#!/net/bin/perl5 -w
 
 use strict;
 use File::Find;
@@ -7,6 +7,7 @@ use Cwd;
 
 
 my $testing=0;
+my $MAIL_PROG='/local/bin/smtp-relay';
 
 my ($packagedir, $oldpackagedir, $download_dir,
     $maintainer, $console_output, $tempdir, $check_source_file_prog);
@@ -210,7 +211,7 @@ my @source_files_to_check;
 
 sub add_codefiles
 {
-    if ( $_ =~ /(\.(C|h)\s*$)|/ and -f $_) {
+    if ( $_ =~ /\.(C|h)\s*$/ and -f $_) {
 	push @source_files_to_check, $File::Find::name;
     }
 }
@@ -255,9 +256,9 @@ sub check_package($)
     if ( ! -f 'description.txt' ) {
 	log_msg "WARNING: File description.txt is missing!";
     }
-    if ( ! -f 'changes.txt' ) {
-	log_msg "WARNING: File changes.txt is missing!";
-    }
+#    if ( ! -f 'changes.txt' ) {
+#	log_msg "WARNING: File changes.txt is missing!";
+#    }
 
     check_codefiles("$_[0] ($version)");
     if (defined($prev_version)) {
@@ -432,8 +433,9 @@ foreach $submission ( @ARGV) {
 
 close LOGFILE;
 $ARGV[0] =~ s|.*/||;
-system "cat $ACTUAL_LOGFILE | Mail -s \"CGAL submission $ARGV[0]\" $maintainer" if !$testing;
-system "cat $ACTUAL_LOGFILE | Mail -s \"CGAL submission $ARGV[0]\" $sender";
+system "cat $ACTUAL_LOGFILE | $MAIL_PROG -s \"CGAL submission $ARGV[0]\" $maintainer" if !$testing;
+system "cat $ACTUAL_LOGFILE | $MAIL_PROG -s \"CGAL submission $ARGV[0]\" $sender";
+
 
 unlink $ACTUAL_LOGFILE;
 
