@@ -44,8 +44,8 @@ int main()
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Triangulation_hierarchy_3.h>
 
-#include <CGAL/Filtered_exact.h>
 #include <CGAL/MP_Float.h>
+#include <CGAL/Filtered_exact.h>
 
 #include <CGAL/IO/Geomview_stream.h>
 #include <CGAL/IO/Triangulation_geomview_ostream_3.h>

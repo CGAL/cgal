@@ -10,8 +10,8 @@
 #endif
 
 #include <CGAL/Delaunay_triangulation_3.h>
-#include <CGAL/Filtered_exact.h>
 #include <CGAL/MP_Float.h>
+#include <CGAL/Filtered_exact.h>
 
 #include <cassert>
 
