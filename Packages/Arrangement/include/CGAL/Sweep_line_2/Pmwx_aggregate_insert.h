@@ -107,7 +107,6 @@ public:
     m_change_not = change_notification;
     std::vector<X_monotone_curve_2> subcurves;
     init(begin, end, planarMap); 
-    
 
     // initialize the last event in each event 
     for ( EventQueueIter qiter = m_queue->begin();
@@ -150,6 +149,7 @@ protected:
   void sweep(_PM_ &pm, Op tag)
   {
     EventQueueIter eventIter = m_queue->begin();
+    if (eventIter == m_queue->end()) return;
     m_prevPos = *((*eventIter).first);
     Point_2 referencePoint;
 
