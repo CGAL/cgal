@@ -19,7 +19,6 @@
 #define _POLYHEDRON_MEMORY_BUILDER_H_01312002
 
 #include <CGAL/Cartesian.h>
-//#include <CGAL/Polyhedron_default_traits_3.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Polyhedron_incremental_builder_3.h>
 
@@ -33,7 +32,7 @@ template <class _Poly> // P should be a class type of polyhedron
 class Polyhedron_memory_builder : 
   public CGAL::Modifier_base<typename _Poly::HalfedgeDS> {
 protected:
-  typedef _Poly                                        Polyhedron;
+  typedef _Poly                                         Polyhedron;
 
   typedef typename Polyhedron::Traits                  Traits;
   typedef typename Traits::Kernel                      Kernel;
@@ -42,7 +41,7 @@ protected:
   typedef typename Polyhedron::Point_3                 Point;
   typedef typename Kernel::FT                          FT;
 
-  typedef CGAL::Polyhedron_incremental_builder_3<HDS>  PIB;
+  typedef CGAL::Polyhedron_incremental_builder_3<HDS>   PIB;
 
 public:
   ///
