@@ -1,0 +1,21 @@
+General remarks to forward to Bruno Haible:
+-------------------------------------------
+- cl_I should probably have a constructor for doubles (at least when they
+  effectively store an integer value), like GMP'mpz do (?).  The rationals
+  at least should have this exact conversion (they have it, don't they ?).
+- Conversions from CLN types to doubles (cl_double_approx) should have a
+  guarantee on the precision => separate error bound, or interval.
+- Having an interval type would be great...
+- Macro names should be prefixed by CLN_.
+- Use a namespace CLN ?
+- WANT_OBFUSCATING_OPERATORS should be enabled by default, imho, but eh...
+- Problems at beginning of CLN compile time on mips.
+
+TODO:
+----
+- Things that are supported by Gmpz, and should (?) be ported to cl_I:
+  - exact_division  (exquo())
+  - approximate_decimal_length
+  - convert_to<IA>
+- Make benchmarks.
+- Add the converter functions.

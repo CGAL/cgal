@@ -1,0 +1,3 @@
+The CLN CGAL package is a collection of wrappers for all the ordinary number
+types provided by the CLN library (version 1.0) available at
+http://clisp.cons.org/~haible/packages-cln.html.
