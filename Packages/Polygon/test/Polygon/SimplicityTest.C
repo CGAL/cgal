@@ -68,19 +68,20 @@ void TestDegenerateCases()
 int main()
 {
   TestDegenerateCases();
+  
+  bool all_correct = true;
+  all_correct &= TestSimplicity("data/simple1.dat");
+  all_correct &= TestSimplicity("data/simple2.dat");
+  all_correct &= TestSimplicity("data/simple3.dat");
+  all_correct &= TestSimplicity("data/simple4.dat");
+  all_correct &= TestSimplicity("data/simple5.dat");
+  all_correct &= TestSimplicity("data/simple6.dat");
+  all_correct &= TestSimplicity("data/simple7.dat");
+  all_correct &= TestSimplicity("data/simple8.dat");
+  all_correct &= TestSimplicity("data/simple9.dat");
+  all_correct &= TestSimplicity("data/simple10.dat");
+  all_correct &= TestSimplicity("data/simple11.dat");
 
-  TestSimplicity("data/simple1.dat");
-  TestSimplicity("data/simple2.dat");
-  TestSimplicity("data/simple3.dat");
-  TestSimplicity("data/simple4.dat");
-  TestSimplicity("data/simple5.dat");
-  TestSimplicity("data/simple6.dat");
-  TestSimplicity("data/simple7.dat");
-  TestSimplicity("data/simple8.dat");
-  TestSimplicity("data/simple9.dat");
-  TestSimplicity("data/simple10.dat");
-  TestSimplicity("data/simple11.dat");
-
-  return 0;
+  return all_correct ? 0 : 1;
 }
 
