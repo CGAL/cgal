@@ -107,19 +107,21 @@ void bench()
 int test()
 {
   NT px, py, la, lb, lc;
+#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
   Filtered_exact< Quotient<Gmpz>, Quotient<Gmpz> > qq (3,5);
+  cout << (int) compare_y_at_xC2(qq,qq,qq,qq,qq);
 #ifdef CGAL_USE_LEDA
   Filtered_exact< Quotient<int>, leda_rational> ii (3,2);
   Filtered_exact< Quotient<leda_integer>, Quotient<leda_integer> > jj (4,5);
   Interval_nt nt = jj.interval();
   cout << nt << endl;
 #endif // CGAL_USE_LEDA
+#endif // CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
   px=1; py=2; la=3; lb=4; lc=5;
   cout << "Result 1st test: " << (int)compare_y_at_xC2(px, py, la, lb, lc);
   cout << " ( == 1 )\n";
   px=1.1; py=1.7; la=1.3; lb=1.5; lc=-3.98;
   cout << "Result 2nd test: " << (int)compare_y_at_xC2(px, py, la, lb, lc);
   cout << " ( == 0 ) (not sure, it depends of the first approx)\n";
-  cout << (int) compare_y_at_xC2(qq,qq,qq,qq,qq);
   return 0;
 }
