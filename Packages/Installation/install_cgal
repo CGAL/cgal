@@ -718,11 +718,12 @@ set_compiler_flags()
     # set some compiler/os specific variables
 
     # defaults:
-    ADDITIONAL_CXXFLAGS=
-    ADDITIONAL_LDFLAGS=
-    CGAL_LIB_CXXFLAGS=
-    CGAL_LIB_LDFLAGS=
+    ADDITIONAL_CXXFLAGS=""
+    ADDITIONAL_LDFLAGS=""
+    CGAL_LIB_CXXFLAGS=""
+    CGAL_LIB_LDFLAGS=""
     CGAL_LIB_CREATE="ar cr ''"
+    CGAL_OBJ_PREFIX=""
     CGAL_SHARED_LIB_CXXFLAGS="-fpic"
     CGAL_SHARED_LIB_LDFLAGS=
     CGAL_SHARED_LIB_CREATE="false"
@@ -741,11 +742,11 @@ set_compiler_flags()
     LIBPATH_OPT="-L"
     DEBUG_OPT="-g"
     EXE_OPT="-o "
-    EXE_EXT=
+    EXE_EXT=""
     CGAL_LIBNAME="libCGAL.a"
     MATH_LIB="m"
-    SEPARATE_LIBPATH=
-    START_LD_OPTIONS=
+    SEPARATE_LIBPATH=""
+    START_LD_OPTIONS=""
     CGAL_CXX="`compiler_bin`"
     LIB_CREATION_COMMANDS=""
 
@@ -754,25 +755,26 @@ set_compiler_flags()
 	    #### settings Borland C++ compiler 
 	    ADDITIONAL_CXXFLAGS="-P -w-inl"
 	    CGAL_LIB_CXXFLAGS="-P"
-	    CGAL_LIB_CREATE="tlib ''"
-	    WINDOW_DIR=
-	    XLIBS=
+	    CGAL_LIB_CREATE="tlib /C /P512 ''"
+	    CGAL_OBJ_PREFIX="+"
+	    WINDOW_DIR=""
+	    XLIBS=""
 	    WINDOWS_COMPILER="y"
 	    SUFFIX_LIST=".obj .exe"
 	    OBJ_EXT=".obj"
 	    LIB_SFX=".lib"
 	    REMOVE_EXT_LIST=".obj .tds"
-	    LIB_OPT=
+	    LIB_OPT=""
             LEDA_LIB_OPT="lib"
-	    DEBUG_OPT=
+	    DEBUG_OPT=""
 	    EXE_OPT="-e"
 	    EXE_EXT=".exe"
 	    CGAL_LIBNAME="CGAL.lib"
-	    MATH_LIB=
+	    MATH_LIB=""
 	    SEPARATE_LIBPATH="y"
             LIB_CREATION_COMMANDS="tlib @borland_lib_creation"
 	    ;;
-	*VC++*)
+	*CL*|*cl*)
 	    #### settings Microsoft Visual C++ compiler 
 	    WINDOWS_COMPILER="y"
 	    ADDITIONAL_CXXFLAGS="-TP -GR -GX -Zm900 -nologo -DCGAL_LIMITED_ITERATOR_TRAITS_SUPPORT `include_dir_option ${CGAL_DIR}/stlport`"
@@ -1542,7 +1544,7 @@ get_compiler_version()
     case `_real_basename ${1:-${COMPILER}}` in
 	*bcc32*|*BCC32*)
 		_borland_version "$*";;
-	*CL.EXE*|*cl.exe*)
+	*CL*|*cl*)
 		_microsoft_vc_version "$*";;
 	*CC*)
 	    case ${SYST} in
@@ -1565,7 +1567,7 @@ get_compiler_description()
     case ${1:-${COMPILER}} in
 	*bcc32*)
 	    ${_printf} "%s" "Borland";;
-	*CL.EXE*|*cl.exe*)
+	*CL*|*cl*)
 	    ${_printf} "%s" "VC++";;
 	*CC*-32*)
 	    ${_printf} "%s" "MIPSPRO (o32)";;
@@ -2222,6 +2224,12 @@ check_CUSTOM_LDFLAGS()
     return 1
 }
 
+# nothing to check here
+check_LONG_NAME_PROBLEM()
+{
+    return 1
+}
+
 check_NEED_EXTRA_LEDA_IDIR()
 {
     if [ -n "${NEED_EXTRA_LEDA_IDIR}" -a \
@@ -2454,7 +2462,7 @@ _link_run_test()
     # link
     _link=`compiler_bin`
     case ${COMPILER} in
-	*CL.EXE*|*cl.exe*) _link="link";;
+	*CL*|*cl*) _link="link";;
     esac
     ${_printf} "%s\n%s\n" "Linker call:" "--------------" >${TMP_LOGFILE}
     ${_printf} "%s\n\n" "${_link} ${_flags}" >>${TMP_LOGFILE}
@@ -3104,7 +3112,7 @@ _set_support()
 		*) CGAL_SUPPORT_COMPILER='';;
 	    esac
 	    ;;
-	*CYGWIN*CL.EXE*|*CYGWIN*cl.exe*)
+	*VC++*)
 	    case `compiler_version` in
 		12.00.8168*) CGAL_SUPPORT_COMPILER='y';;
 		*) CGAL_SUPPORT_COMPILER='';;
@@ -4252,25 +4260,15 @@ create_include_makefile()
   # 
   # CGAL_LIB_LDFLAGS
   # 
-  ${_printf} "%s\n" \
-    "CGAL_LIB_LDFLAGS = ${CGAL_LIB_LDFLAGS}" \
-    >> ${FILE}
+  ${_printf} "%s\n" "CGAL_LIB_LDFLAGS = ${CGAL_LIB_LDFLAGS}" >> ${FILE}
   ${_printf} "\n" >> ${FILE}
 
   # 
   # CGAL_LIB_CREATE
   # 
   ${_printf} "%s\n\n" "CGAL_LIB_CREATE = ${CGAL_LIB_CREATE}" >> ${FILE}
+  ${_printf} "%s\n" "CGAL_OBJ_PREFIX = ${CGAL_OBJ_PREFIX}" >> ${FILE}
   ${_printf} "%s" "CGAL_LIB_DESTINATION = ${CGAL_LIB_DIR}/\$(CGAL_OS_COMPILER)" >> ${FILE}
-#concat_path "\$(CGAL_LIB_DIR)" "\$(CGAL_OS_COMPILER)" >> ${FILE}
-  ${_printf} "\n\n"  >> ${FILE}
-# This breaks everything
-# ${_printf} "lib_platform_dependent:\n"  >> ${FILE}
-#  if [ -n "$LIB_CREATION_COMMANDS" ]; then
-#    ${_printf} "\t%s\n\n" "$LIB_CREATION_COMMANDS" >> ${FILE}
-#  else
-#    ${_printf} "\t%s%s %s %s\n\n" "${CGAL_LIB_CREATE}" "${CGAL_LIBNAME}" "\$(CGAL_OBJECTS)" "${CGAL_LIB_LDFLAGS}" >> ${FILE}
-#  fi
 
   # 
   # CGAL_SHARED_LIB
