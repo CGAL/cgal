@@ -45,10 +45,6 @@
 
 namespace CGALLA {
 
-#if defined(_MSC_VER) && !defined(__INTEL_COMPILER) && (_MSC_VER < 1310)
-#define CGAL_SIMPLE_INTERFACE
-#endif
-
 template <class NT_, class AL_> class Vector_;
 template <class NT_, class AL_> class Matrix_;
 
