@@ -289,7 +289,7 @@ void force_ieee_double_precision(); // Used by the Fixed_precision_nt.
 // A class whose constructor sets the FPU mode to +inf, saves a backup of it,
 // and whose destructor resets it back to the saved state.
 
-template <bool Protected> class Protect_FPU_rounding;
+template <bool Protected> struct Protect_FPU_rounding;
  
 template <>
 struct Protect_FPU_rounding<true>

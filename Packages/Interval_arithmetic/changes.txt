@@ -1,5 +1,8 @@
 Changes done to the Interval Arithmetic package.
 
+Version 4.103 on 4 July 2001
+- VC++ 7 warning.
+
 Version 4.102 on 26 June 2001
 - Doc update.
 
