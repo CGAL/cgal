@@ -144,6 +144,7 @@ inline int
 Triangulation_ds_face_2<Tds>::
 mirror_index(int i) const
 {
+  // return the index of opposite vertex in neighbor(i);
   CGAL_triangulation_precondition (neighbor(i) != NULL);
   //return neighbor(i)->index(this->handle());
   return ccw( neighbor(i)->index(vertex(ccw(i))));

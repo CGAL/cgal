@@ -43,7 +43,6 @@ class Triangulation_line_face_circulator_2
 	                                    CGAL_CLIB_STD::ptrdiff_t,
                                             CGAL_CLIB_STD::size_t>,
       public Triangulation_cw_ccw_2
-      //public Tds::Face_handle   
 {
 public:
   typedef Triangulation_line_face_circulator_2<Gt,Tds> Line_face_circulator;
@@ -77,11 +76,6 @@ public:
     : pos(), _tr(NULL), s(undefined), i(-1)
     {}
             
-//   Triangulation_line_face_circulator_2(const Line_face_circulator& lfc)
-//     : pos(& (*lfc)), _tr(lfc._tr), s(lfc.s), 
-// 					i(lfc.i),  p(lfc.p), q(lfc.q)
-//     {}
-            
   Triangulation_line_face_circulator_2(Vertex_handle v,
 				       const Triangulation_2<Gt,Tds>* tr,
 				       const Point& dir);
@@ -94,10 +88,6 @@ public:
 				       const Point& qq,
 				       const Face_handle& ff,
 				       const Triangulation_2<Gt,Tds>* t); 
-
-//   Triangulation_line_face_circulator_2&
-//   operator=(const Line_face_circulator& lfc) ;
-  
 
   Line_face_circulator&   operator++() ;
   Line_face_circulator&   operator--() ;
@@ -142,19 +132,6 @@ Triangulation_line_face_circulator_2(const Face_handle& face,
   CGAL_triangulation_precondition(! t->xy_equal(p, q));
 }
 
-// template < class Gt, class Tds >
-// Triangulation_line_face_circulator_2<Gt,Tds>&
-// Triangulation_line_face_circulator_2<Gt,Tds>::
-// operator=(const Line_face_circulator& lfc)
-// {
-//   Face_handle::operator=(lfc);
-//   i = lfc.i;
-//   s = lfc.s;
-//    _tr = lfc._tr;
-//   p = lfc.p;
-//   q = lfc.q;
-//   return *this;
-// }
 
 template < class Gt, class Tds >
 Triangulation_line_face_circulator_2<Gt,Tds>::
@@ -213,7 +190,6 @@ Triangulation_line_face_circulator_2(Vertex_handle v,
     case COLLINEAR:
       ++fc;
       ic = fc->index(_tr->infinite_vertex());
-      //Face_handle::operator=(&(*fc));
       pos = fc;
       s = vertex_vertex;
       i = ic;
@@ -224,13 +200,11 @@ Triangulation_line_face_circulator_2(Vertex_handle v,
     }
   }
   else if (pqr == COLLINEAR) {
-    //Face_handle::operator=(&(*fc));
     pos = fc;
     s = vertex_vertex;
     i = ccw(ic);
    }
   else { // pqr==RIGHTTURN 
-    //Face_handle::operator=(&(*fc));
     pos = fc;
     s = vertex_edge;
     i = ic ;
@@ -337,29 +311,29 @@ Triangulation_line_face_circulator_2(const Point& pp,
   CGAL_triangulation_precondition(_tr->is_infinite(ff) ||
 			      _tr->oriented_side(ff,p) != ON_NEGATIVE_SIDE);
   int j;
-  if(_tr->is_infinite(*this)){
+  if(_tr->is_infinite(pos)){
     *this  = Line_face_circulator(p, q, t);
     return;
   }
 
   // Test whether p lies on a vertex
   for(j = 0; j < 3; j++){
-    if((*this)->vertex(j)->point() == p){
-      *this = Line_face_circulator( (*this)->vertex(j), t, q);
-      if( (!is_empty()) && _tr->is_infinite(*this )) --(*this);
+    if(pos->vertex(j)->point() == p){
+      *this = Line_face_circulator( pos->vertex(j), t, q);
+      if( (!is_empty()) && _tr->is_infinite(pos )) --(*this);
       return;
     }
   }
             
   // Test whether p lies on an edge
   for(j = 0; j < 3; j++) {
-    if(_tr->orientation((*this)->vertex(ccw(j))->point(),
-			(*this)->vertex(cw(j))->point(),
+    if(_tr->orientation(pos->vertex(ccw(j))->point(),
+			pos->vertex(cw(j))->point(),
 			p) == COLLINEAR){
       Orientation pqj =
-	_tr->orientation(p, q, (*this)->vertex(j)->point());
+	_tr->orientation(p, q, pos->vertex(j)->point());
       Orientation pqcwj =
-	_tr->orientation(p, q, (*this)->vertex(cw(j))->point());
+	_tr->orientation(p, q, pos->vertex(cw(j))->point());
       switch(pqcwj) {
       case COLLINEAR :
 	if(pqj == LEFTTURN){
@@ -367,11 +341,10 @@ Triangulation_line_face_circulator_2(const Point& pp,
 	  i = cw(j);
 	  return;
 	} 
-	else if(! _tr->is_infinite((*this)->neighbor(j))){
-	  Face_handle n = (*this)->neighbor(j);
-	  i = cw(n->index(*this));
+	else if(! _tr->is_infinite(pos->neighbor(j))){
+	  Face_handle n = pos->neighbor(j);
+	  i = cw(n->index(pos)); 
 	  pos = n;
-	  //Face_handle::operator=(n);
 	  s = vertex_vertex;
 	  return;
 	} else {
@@ -407,7 +380,7 @@ Triangulation_line_face_circulator_2(const Point& pp,
   Orientation orient[3];
   for(j=0; j<3; j++) {
     orient[j] =
-      _tr->orientation(p,q,(*this)->vertex(j)->point());
+      _tr->orientation(p,q,pos->vertex(j)->point());
   }
   for(j=0; j<3; j++) {
     if(orient[j] == COLLINEAR) {
@@ -437,16 +410,15 @@ increment()
   if(s == vertex_vertex || s == edge_vertex) {
     Orientation o;
     do{
-      Face_handle n = (pos)->neighbor(cw(i));
+      Face_handle n = pos->neighbor(cw(i));
       i = n->index(pos);
-      //Face_handle::operator=(n);
       pos = n;
-      if (n->vertex(i) == _tr->infinite_vertex()){
+      if (pos->vertex(i) == _tr->infinite_vertex()){
 	o = COLLINEAR;
 	i = cw(i);
 	break;
       }
-      o = _tr->orientation(p, q, n->vertex(i)->point());
+      o = _tr->orientation(p, q, pos->vertex(i)->point());
       i = cw(i);
     }while(o == LEFTTURN);
             
@@ -459,13 +431,12 @@ increment()
     }
   } 
   else {
-    Face_handle n = (pos)->neighbor(i);
+    Face_handle n = pos->neighbor(i);
     int ni = n->index(pos);
-    //Face_handle::operator=(n);
     pos = n ;
-    Orientation o = _tr->is_infinite((pos)->vertex(ni)) ?
+    Orientation o = _tr->is_infinite(pos->vertex(ni)) ?
       COLLINEAR :
-      _tr->orientation(p,q,(pos)->vertex(ni)->point());
+      _tr->orientation(p,q,pos->vertex(ni)->point());
             
     switch(o){
     case LEFTTURN:
@@ -495,16 +466,15 @@ decrement()
     }
     Orientation o;
     do{
-      Face_handle n = (pos)->neighbor(ccw(i));
+      Face_handle n = pos->neighbor(ccw(i));
       i = n->index(pos);
-      //Face_handle::operator=(n);
       pos = n;
-      if (n->vertex(i) == _tr->infinite_vertex()){
+      if (pos->vertex(i) == _tr->infinite_vertex()){
 	o = COLLINEAR;
 	i = ccw(i);
 	break;
       }
-      o = _tr->orientation(p, q, n->vertex(i)->point());
+      o = _tr->orientation(p, q, pos->vertex(i)->point());
       i = ccw(i);
     }while(o == LEFTTURN);
             
@@ -517,17 +487,16 @@ decrement()
     if(s == edge_edge){
       i = (_tr->orientation
 	   (p, q,
-	    (pos)->vertex(i)->point()) == 
+	    pos->vertex(i)->point()) == 
 	   LEFTTURN)
 	? cw(i) : ccw(i);
     }
-    Face_handle n = (pos)->neighbor(i);
+    Face_handle n = pos->neighbor(i);
     i = n->index(pos);
-    //Face_handle::operator=(n);
     pos = n;
-    Orientation o = _tr->is_infinite((pos)->vertex(i)) ?
+    Orientation o = _tr->is_infinite(pos->vertex(i)) ?
       COLLINEAR :
-      _tr->orientation(p, q, (pos)->vertex(i)->point());
+      _tr->orientation(p, q, pos->vertex(i)->point());
             
     s = (o == COLLINEAR) ? vertex_edge : edge_edge;
   }
@@ -543,8 +512,8 @@ locate(const Point& t, Locate_type &lt,  int &li)
   case vertex_edge:
     {
       Orientation o =
-	_tr->orientation((pos)->vertex(ccw(i))->point(),
-			 (pos)->vertex(cw(i))->point(),
+	_tr->orientation(pos->vertex(ccw(i))->point(),
+			 pos->vertex(cw(i))->point(),
 			 t);
       if(o == RIGHTTURN)      return false;
       if(o == COLLINEAR){
@@ -558,17 +527,17 @@ locate(const Point& t, Locate_type &lt,  int &li)
     }
   case vertex_vertex:
     {
-      if(_tr->is_infinite((pos)->vertex(i))){
+      if(_tr->is_infinite(pos->vertex(i))){
 	CGAL_triangulation_assertion(
-	       _tr->orientation( (pos)->vertex(cw(i))->point(),
-				 (pos)->vertex(ccw(i))->point(),
+	       _tr->orientation( pos->vertex(cw(i))->point(),
+				 pos->vertex(ccw(i))->point(),
 				 t) != LEFTTURN);
 	lt = Triangulation::OUTSIDE_CONVEX_HULL;
 	li = i;
 	return true;
       }
-      const Point &u = (pos)->vertex(cw(i))->point();
-      const Point &v = (pos)->vertex(i)->point();
+      const Point &u = pos->vertex(cw(i))->point();
+      const Point &v = pos->vertex(i)->point();
       // u == t  was detected earlier
       if(_tr->compare_x(v,t)==EQUAL && 
 	 _tr->compare_y(v,t)==EQUAL){
@@ -585,17 +554,17 @@ locate(const Point& t, Locate_type &lt,  int &li)
     }
   default: // edge_vertex
     {
-      if(_tr->is_infinite((pos)->vertex(i))){
+      if(_tr->is_infinite(pos->vertex(i))){
 	lt = Triangulation::OUTSIDE_CONVEX_HULL;
 	li = i;
 	return true;
       }
-      if(_tr->xy_equal(t,(pos)->vertex(i) ->point()) ){
+      if(_tr->xy_equal(t,pos->vertex(i) ->point()) ){
 	li = i;
 	lt = Triangulation::VERTEX;
 	return true;
       }
-      if(_tr->collinear_between(p, t, (pos)->vertex(i)->point())) {
+      if(_tr->collinear_between(p, t, pos->vertex(i)->point())) {
 	lt = Triangulation::FACE;
 	return true;
       }
@@ -655,8 +624,6 @@ operator==(const Line_face_circulator& lfc) const
 {
   CGAL_triangulation_precondition( *this != CGAL_CIRC_NULL &&
 				   lfc != CGAL_CIRC_NULL);
- //  return ( Face_handle::operator==(lfc) &&  _tr == lfc._tr &&
-//             s== lfc.s && p==lfc.p && q==lfc.q);
   return ( pos == lfc.pos &&  _tr == lfc._tr &&
             s== lfc.s && p==lfc.p && q==lfc.q);
 }

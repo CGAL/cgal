@@ -73,11 +73,11 @@ public:
     : Pointer_(&(*fc))
     {}
 
-  template<class Gt>
-  Triangulation_ds_face_handle_2(
-	      Triangulation_line_face_circulator_2<Gt,Tds> lfc)
-    : Pointer_(lfc->handle())
-    {}
+//   template<class Gt>
+//   Triangulation_ds_face_handle_2(
+// 	      Triangulation_line_face_circulator_2<Gt,Tds> lfc)
+//     : Pointer_(lfc->handle())
+//     {}
 
   Face_handle& operator=(Face* p)
     {
