@@ -9,18 +9,18 @@
 // ----------------------------------------------------------------------------
 //
 // release       :
-// date          :
+// release_date  :
 //
 // file          : include/CGAL/IO/Inventor_ostream.h
-// source        : web/Inventor_ostream.fw
+// source        : $RCSfile$
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Andreas Fabri
 //                 Lutz Kettner <kettner@inf.ethz.ch>
-//                 Herve bronnimann
-//                 <Herve.Bronnimann@sophia.inria.fr>
+//                 Herve Bronnimann <Herve.Bronnimann@sophia.inria.fr>
+//                 Mariette Yvinec <Mariette.Yvinec@sophia.inria.fr>
 //
-// coordinator   : Herve Bronnimann  <Herve.Bronnimann@sophia.inria.fr>
+// coordinator   : Mariette Yvinec <Mariette.Yvinec@sophia.inria.fr>
 //
 // ============================================================================
 
@@ -40,13 +40,15 @@
 // output operators could be shared if they use the following
 // base class, which is common for both output streams.
 
-class CGAL_Inventor_ostream_base {
+CGAL_BEGIN_NAMESPACE
+
+class Inventor_ostream_base {
 private:
     ostream*  m_os;
 public:
-    CGAL_Inventor_ostream_base()           : m_os(0)  {}
-    CGAL_Inventor_ostream_base(ostream& o) : m_os(&o) {}
-    ~CGAL_Inventor_ostream_base()  { close(); }
+    Inventor_ostream_base()           : m_os(0)  {}
+    Inventor_ostream_base(ostream& o) : m_os(&o) {}
+    ~Inventor_ostream_base()  { close(); }
     void open(ostream& o)        { m_os = &o; }
     void close() {
         if ( m_os)
@@ -70,15 +72,15 @@ public:
 };
 
 
-class CGAL_Inventor_ostream : public  CGAL_Inventor_ostream_base
+class Inventor_ostream : public  Inventor_ostream_base
 {
 public:
-    CGAL_Inventor_ostream() {}
-    CGAL_Inventor_ostream(ostream& o) : CGAL_Inventor_ostream_base(o) {
+    Inventor_ostream() {}
+    Inventor_ostream(ostream& o) : Inventor_ostream_base(o) {
         header();
     }
     void open(ostream& o) {
-        CGAL_Inventor_ostream_base::open(o);
+        Inventor_ostream_base::open(o);
         header();
     }
 private:
@@ -88,7 +90,7 @@ private:
     }
 };
 
-
+CGAL_END_NAMESPACE
 #endif // CGAL_IO_INVENTOR_OSTREAM_H
 
 
@@ -96,32 +98,33 @@ private:
 #ifndef CGAL_INVENTOR_TETRAHEDRON_3
 #define CGAL_INVENTOR_TETRAHEDRON_3
 
+CGAL_BEGIN_NAMESPACE
 
 template <class R >
-CGAL_Inventor_ostream&
-operator<<(CGAL_Inventor_ostream& os,
-           const CGAL_Tetrahedron_3<R > &t)
+Inventor_ostream&
+operator<<(Inventor_ostream& os,
+           const Tetrahedron_3<R > &t)
 {
   const char *Indent = "   ";
   os.os() << "\n Separator {";
   os.os() << "\n   Coordinate3 { \n"
           << Indent << "point [\n"
           << Indent << "  "
-          << CGAL_to_double(t[0].x()) << " "
-          << CGAL_to_double(t[0].y()) << " "
-          << CGAL_to_double(t[0].z()) << " ,\n"
+          << CGAL::to_double(t[0].x()) << " "
+          << CGAL::to_double(t[0].y()) << " "
+          << CGAL::to_double(t[0].z()) << " ,\n"
           << Indent << "  "
-          << CGAL_to_double(t[1].x()) << " "
-          << CGAL_to_double(t[1].y()) << " "
-          << CGAL_to_double(t[1].z()) << " ,\n"
+          << CGAL::to_double(t[1].x()) << " "
+          << CGAL::to_double(t[1].y()) << " "
+          << CGAL::to_double(t[1].z()) << " ,\n"
           << Indent << "  "
-          << CGAL_to_double(t[2].x()) << " "
-          << CGAL_to_double(t[2].y()) << " "
-          << CGAL_to_double(t[2].z()) << " ,\n"
+          << CGAL::to_double(t[2].x()) << " "
+          << CGAL::to_double(t[2].y()) << " "
+          << CGAL::to_double(t[2].z()) << " ,\n"
           << Indent << "  "
-          << CGAL_to_double(t[3].x()) << " "
-          << CGAL_to_double(t[3].y()) << " "
-          << CGAL_to_double(t[3].z()) << " ]"
+          << CGAL::to_double(t[3].x()) << " "
+          << CGAL::to_double(t[3].y()) << " "
+          << CGAL::to_double(t[3].z()) << " ]"
           << "\n   } #Coordinate3" ;
   os.os() << "\n   IndexedFaceSet {"
           << Indent << "coordIndex  [ 0,1,2,-1, 1,3,2,-1,\n"
@@ -131,6 +134,10 @@ operator<<(CGAL_Inventor_ostream& os,
   return os;
 }
 
+CGAL_END_NAMESPACE
 
 #endif // CGAL_INVENTOR_TETRAHEDRON_3
 #endif // CGAL_TETRAHEDRON_3_H
+
+
+
