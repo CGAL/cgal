@@ -437,8 +437,8 @@ Curve read_polyline_curve(std::ifstream& file, bool reverse_order)
     
     char s1[STR_LEN], s2[STR_LEN];
 
-    file1.seekg(0, ios::beg);
-    file2.seekg(0, ios::beg);
+    file1.seekg(0, std::ios::beg);
+    file2.seekg(0, std::ios::beg);
     while (!file1.eof() && !file2.eof()){
       file1.getline(s1, STR_LEN);
       file2.getline(s2, STR_LEN);
@@ -446,19 +446,23 @@ Curve read_polyline_curve(std::ifstream& file, bool reverse_order)
       //cout<<s1<<endl;
       //cout<<s2<<endl;
       
-      assert(string(s1) == string(s2));
+      assert(std::string(s1) == std::string(s2));
     }
     
     assert (file1.eof() && file2.eof());
 
-    cout<<"Reading and writing file  - O.K"<<std::endl;
+    std::cout<<"Reading and writing file  - O.K"<<std::endl;
   }
   
-  void read_file_build_arrangement(std::ifstream& input_file, std::ifstream& file, bool reverse_order)
+  void read_file_build_arrangement(std::ifstream& input_file, 
+				   std::ifstream& file, bool reverse_order)
   {
       NT    x,y; 
       Curve curr_curve;
-      std::fstream  arr_file("arr.txt", _IO_OUTPUT + _IO_INPUT + _IO_ATEND);
+      std::fstream  arr_file("arr.txt", 
+			     _IO_OUTPUT + 
+			     _IO_INPUT + 
+			     _IO_ATEND);
       
       arr_file.clear();
       // 1. read polylines and build arrangement
@@ -473,7 +477,7 @@ Curve read_polyline_curve(std::ifstream& file, bool reverse_order)
         CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS
         
         curr_curve = read_segment_curve(file, reverse_order);
-
+ 
         #elif CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_TRAITS || \
         CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_LEDA_TRAITS
         
@@ -513,22 +517,24 @@ Curve read_polyline_curve(std::ifstream& file, bool reverse_order)
       //      std::getline(file, s); // skip
       //      std::getline(file, s, ':'); // skip
       expected_num_vertices = get_next_int(file);
-      cout<<"expected number of  vertices "<<expected_num_vertices<<endl;
+      std::cout<<"expected number of  vertices ";
+      std::cout<<expected_num_vertices<<std::endl;
       
       //      std::getline(file, s); // skip
       //      std::getline(file, s, ':'); // skip
       expected_num_edges = get_next_int(file);
-      cout<<"expected number of edges "<< expected_num_edges<<endl;
+      std::cout<<"expected number of edges "<< expected_num_edges<<std::endl;
       
       //      std::getline(file, s); // skip
       //      std::getline(file, s, ':'); // skip
       expected_num_faces = get_next_int(file);
-      cout<<"expected number of faces "<<expected_num_faces <<endl;
+      std::cout<<"expected number of faces "<<expected_num_faces <<std::endl;
       
       //      std::getline(file, s); // skip
       //      std::getline(file, s, ':'); // skip
       expected_num_overlaps = get_next_int(file);
-      cout<<"expected number of overlaps "<<expected_num_overlaps<<endl;
+      std::cout<<"expected number of overlaps "<<expected_num_overlaps;
+      std::cout<<std::endl;
     }
 
   /****************************
