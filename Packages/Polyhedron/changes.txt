@@ -5,6 +5,7 @@ Polyhedron Package: Release changes:
 
      - Extended Polyhedron_incremental_builder with absolute indexing
        functionality for David Bourguignon.
+     - Fixed bug in empty() member function of Polyhedron_3.
 
 3.24 (21 Mar 2002)
 
