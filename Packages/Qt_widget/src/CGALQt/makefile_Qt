@@ -13,7 +13,7 @@ include $(CGAL_MAKEFILE)
 #                    compiler flags
 #---------------------------------------------------------------------#
 
-CXXFLAGS = $(CGAL_WINLIB_CXXFLAGS) -DCGAL_USE_CGAL_HEADERS -DCGAL_USE_QT -I"../../include"
+CXXFLAGS = -I"../../include" $(CGAL_WINLIB_CXXFLAGS) -DCGAL_USE_CGAL_HEADERS -DCGAL_USE_QT
 
 #---------------------------------------------------------------------#
 # Object files
