@@ -21,7 +21,7 @@ add_cycle( Cycle_circulator c, typename Planar_map::Face_handle outer_cycle, Pla
   curr++;
   CGAL_assertion( curr != prev);
   X_curve first_segment( *prev, *curr);
-  TRACEN("inserting first segment "<<first_segment);
+  CGAL_NEF_TRACEN("inserting first segment "<<first_segment);
   Halfedge_handle first_edge = 
     pm.insert_in_face_interior( first_segment, outer_cycle);
 
@@ -38,15 +38,15 @@ add_cycle( Cycle_circulator c, typename Planar_map::Face_handle outer_cycle, Pla
       if( hav->source()->point() == segment.target())
 	break;
     if( hav != hend) { // segment already inserted
-      TRACEN("segment already inserted (bubble): "<<segment);
+      CGAL_NEF_TRACEN("segment already inserted (bubble): "<<segment);
       edge = hav->twin();
     }
     else if( edge->source()->point() == segment.target()) {
-      TRACEN("segment already inserted (dagger): "<<segment);
+      CGAL_NEF_TRACEN("segment already inserted (dagger): "<<segment);
       edge = edge->twin();
     }
     else {
-      TRACEN("interseting segment "<<segment);
+      CGAL_NEF_TRACEN("interseting segment "<<segment);
       edge = pm.insert_from_vertex( segment, edge);
     }
   }
@@ -60,15 +60,15 @@ add_cycle( Cycle_circulator c, typename Planar_map::Face_handle outer_cycle, Pla
       break;
   Halfedge_handle last_edge;
   if( hav != hend) { // segment already inserted
-    TRACEN("last segment already inserted (bubble): "<<last_segment);
+    CGAL_NEF_TRACEN("last segment already inserted (bubble): "<<last_segment);
     last_edge = hav->twin();
   }
     else if( edge->source()->point() == last_segment.target()) {
-      TRACEN("last segment already inserted (dagger): "<<last_segment);
+      CGAL_NEF_TRACEN("last segment already inserted (dagger): "<<last_segment);
       last_edge = edge->twin();
     }
   else {
-    TRACEN("inserting last segment "<<last_segment);
+    CGAL_NEF_TRACEN("inserting last segment "<<last_segment);
     last_edge = pm.insert_at_vertices( last_segment, edge->target(), first_edge->source());
   }
   
@@ -109,9 +109,9 @@ add_hole( typename SNC_structure::Halffacet_cycle_const_iterator ci,
     cycle.reserve(circulator_distance(sc, send));
     CGAL_For_all( sc, send)
       cycle.push_back(projector(D.point(D.vertex(sc))));
-    TRACEN("number of vertices on cycle: "<<circulator_distance( sc, send));
+    CGAL_NEF_TRACEN("number of vertices on cycle: "<<circulator_distance( sc, send));
 #ifdef _DEBUG
-    //TRACEN("vertices on cycle:");
+    //CGAL_NEF_TRACEN("vertices on cycle:");
     //std::copy( cycle.begin(), cycle.end(), std::ostream_iterator<Point_2>( std::cerr, "\n"));
 #endif
     hole = add_cycle( Circulator(cycle.begin(), cycle.end()), face, pm);
@@ -150,13 +150,13 @@ pm_from_nef3_facet( typename SNC_structure::Halffacet_const_handle f,
   typedef typename Planar_map::Face_handle Face_handle;
 
   Halffacet_cycle_const_iterator hci = f->facet_cycles_begin();
-  TRACEN("adding outer boundary...");
+  CGAL_NEF_TRACEN("adding outer boundary...");
   Face_handle pm_face = add_face<SNC_structure>
     ( hci, pm.unbounded_face(), pm, projector);
   ++hci;
   CGAL_assertion( !pm_face->is_unbounded());
   for( ; hci != f->facet_cycles_end(); ++hci) {
-    TRACEN("adding hole...");
+    CGAL_NEF_TRACEN("adding hole...");
     add_hole<SNC_structure>( hci, pm_face, pm, projector);
   }
   return pm_face;

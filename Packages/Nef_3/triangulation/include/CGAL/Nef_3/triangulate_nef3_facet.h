@@ -43,7 +43,7 @@ class Project_point_3_to_point_2
       p2 = Point_2( p3.hx(), p3.hy(), p3.hw());
     else if( label == NXY) // -XY
       p2 = Point_2( p3.hy(), p3.hx(), p3.hw());
-    TRACEN("projecting "<<p3<<" on "<<p2);
+    CGAL_NEF_TRACEN("projecting "<<p3<<" on "<<p2);
     return p2;
   }
   template <typename Plane_3>
@@ -62,7 +62,7 @@ class Project_point_3_to_point_2
       p3 = Point_3( p2.hx(), p2.hy(), 0, p2.hw());
     else if( label == NXY) // -XY
       p3 = Point_3( p2.hy(), p2.hx(), 0, p2.hw());
-    TRACEN("(inv)projecting "<<p2<<" on "<<plane.projection(p3));
+    CGAL_NEF_TRACEN("(inv)projecting "<<p2<<" on "<<plane.projection(p3));
     return plane.projection(p3);
   }
  private:
@@ -80,7 +80,7 @@ void divide_pm_by_diagonals( Diagonal_iterator begin,
     Vertex_handle v1(i->first.current_circulator()->source());
     Vertex_handle v2(i->second.current_circulator()->source());
     X_curve segment( v1->point(), v2->point());
-    TRACEN( "Diagonal { " << v1->point() << ", " << v2->point() << " }");
+    CGAL_NEF_TRACEN( "Diagonal { " << v1->point() << ", " << v2->point() << " }");
     pm.insert_at_vertices( segment, v1, v2);
   }
 }
@@ -144,8 +144,8 @@ void triangulate_nef3_facet( Halffacet_handle facet,
   Projector projector(label);
   polygon = pm_from_nef3_facet<SNC_structure>( facet, pm, projector);
   
-  TRACEN("triangulating facet on plane "<<fplane);
-  //TRACEN("the facet will be proyected on the plane "<<(axis<0?"-":"")<<(axis==1?"YZ":(axis==2?"XZ":"XY")));
+  CGAL_NEF_TRACEN("triangulating facet on plane "<<fplane);
+  //CGAL_NEF_TRACEN("the facet will be proyected on the plane "<<(axis<0?"-":"")<<(axis==1?"YZ":(axis==2?"XZ":"XY")));
 
 #ifdef _DEBUG_WINDOW
   W.init(-1000,1000,-1000);
@@ -251,7 +251,7 @@ void triangulate_nef3_facet( Halffacet_handle facet,
     Point_3 p3[3];
     for( int i = 0; i < 3; ++i)
       p3[i] = projector(p2[i], fplane);
-    TRACEN(Triangle_3( p3[0], p3[1], p3[2]));
+    CGAL_NEF_TRACEN(Triangle_3( p3[0], p3[1], p3[2]));
     *triangles++ = Triangle_3( p3[0], p3[1], p3[2]);
   }
 

@@ -445,7 +445,7 @@ void  partition_y_monotone_2( InputIterator first, InputIterator beyond,
    Circulator circ(*bi), done(circ);
 #ifdef _DEBUG
    //CGAL_assertion_code(Container cycle(circ));
-   //TRACEN("partition_y_monotone_2(): outer cycle:");
+   //CGAL_NEF_TRACEN("partition_y_monotone_2(): outer cycle:");
    //std::copy( cycle.begin(), cycle.end(), std::ostream_iterator<Point_2>( std::cerr, "\n"));
 #endif
    //CGAL_partition_precondition
@@ -458,7 +458,7 @@ void  partition_y_monotone_2( InputIterator first, InputIterator beyond,
      Circulator circ(*bi), done(circ);
 #ifdef _DEBUG
      //CGAL_assertion_code(Container cycle(circ));
-     //TRACEN("partition_y_monotone_2(): inner cycle:");
+     //CGAL_NEF_TRACEN("partition_y_monotone_2(): inner cycle:");
      //std::copy( cycle.begin(), cycle.end(), std::ostream_iterator<Point_2>( std::cerr, "\n"));
 #endif
      //CGAL_partition_precondition

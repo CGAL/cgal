@@ -125,6 +125,11 @@ class Partition_traits_2  : public Partition_traits_2_base<Kernel_>
     Assign_2
     assign_2_object() const
     {  return Assign_2(); }
+
+    Left_turn_2
+    leftturn_2_object() const 
+    { return Left_turn_2(); }
+
 };
 
 }

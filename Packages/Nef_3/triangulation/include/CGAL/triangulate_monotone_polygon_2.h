@@ -66,9 +66,9 @@ void triangulate_monotone_polygon_2( InputCirculator polygon,
 
   Circulator_vector U; // TODO: especify vector size
   InputCirculator c(polygon), done(c);
-  TRACEN("y-monotone polygon:");
+  CGAL_NEF_TRACEN("y-monotone polygon:");
   CGAL_For_all( c, done) {
-    TRACEN(*c);
+    CGAL_NEF_TRACEN(*c);
     U.push_back(c);
   }
   std::sort( U.begin(), U.end(), Indirect_not_less_yx_2<Traits>(traits));
@@ -111,7 +111,7 @@ void triangulate_monotone_polygon_2( InputCirculator polygon,
 
 	Circulator_iterator uk = S.front();
 	S.pop_front();
-	TRACEN( "Diagonal { " << **uk << ", " << **uj << " } (diff)");
+	CGAL_NEF_TRACEN( "Diagonal { " << **uk << ", " << **uj << " } (diff)");
 #ifdef _DEBUG_WINDOW
 	W << RED << Segment_2( **uk, **uj); 
 	W >> pause;
@@ -148,7 +148,7 @@ void triangulate_monotone_polygon_2( InputCirculator polygon,
       while( !S.empty() && 
 	     is_vertex_visible( *uk, *uj, *ukp, Chain[*uj], traits)) {
 	S.pop_front();
-	TRACEN( "Diagonal { " << **uk << ", " << **uj << " } (same)");
+	CGAL_NEF_TRACEN( "Diagonal { " << **uk << ", " << **uj << " } (same)");
 #ifdef _DEBUG_WINDOW
 	W << RED << Segment_2( **uk, **uj); 
 	W >> pause;
@@ -187,7 +187,7 @@ void triangulate_monotone_polygon_2( InputCirculator polygon,
   while( S.size() > 1) {
     Circulator_iterator uk = S.front();
     S.pop_front();
-    TRACEN( "Diagonal { " << **uk << ", " << **un << " } (final)");
+    CGAL_NEF_TRACEN( "Diagonal { " << **uk << ", " << **un << " } (final)");
 #ifdef _DEBUG_WINDOW
     W << RED << Segment_2( **uk, **un); 
     W >> pause;
