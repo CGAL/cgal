@@ -44,13 +44,14 @@
 #endif
 
 #ifndef CGAL_IO_DRAW_PM_H
-#include  <CGAL/IO/draw_pm.h>
+#include <CGAL/IO/draw_pm.h>
 #endif
 
 CGAL_BEGIN_NAMESPACE
 
 template <class Dcel,class Traits>
-Geomview_stream& operator << (Geomview_stream& os, const Planar_map_2<Dcel,Traits> &pm)
+Geomview_stream& operator<< (Geomview_stream                 & os, 
+                             const Planar_map_2<Dcel,Traits> & pm)
 {
   Pm_drawer< Planar_map_2<Dcel,Traits>, Geomview_stream>  drawer(os);
   
@@ -59,25 +60,6 @@ Geomview_stream& operator << (Geomview_stream& os, const Planar_map_2<Dcel,Trait
   return os;
 }  
 
-
-/*template <class Dcel,class Traits>
-  Window_stream& write(Window_stream& os, Planar_map_2<Dcel,Traits> &m)
-  {
-  //  os << *m.get_bounding_box();
-  Halfedge_iterator it = m.halfedges_begin(), end = m.halfedges_end();
-  const Traits& traits=m.get_traits();
-  while(it != end){
-	write(os,it->curve(),traits);
-        ++it;++it;
-        }
-        return os;
-        } */ 
-
-
 CGAL_END_NAMESPACE
 
 #endif
-
-
-
-
