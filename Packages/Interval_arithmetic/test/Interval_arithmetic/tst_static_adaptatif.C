@@ -6,6 +6,14 @@
 #include <CGAL/basic.h>
 #include <iostream>
 
+#ifndef CGAL_IA_NEW_FILTERS
+int main()
+{
+  std::cout << "NOT TESTED" << std::endl;
+  return 0;
+}
+#else
+
 // Workaround for crappy compilers.
 #ifdef CGAL_CFG_MATCHING_BUG_2
 #define CGAL_IA_CT double
@@ -39,3 +47,4 @@ int main()
   cout << endl;
   return 0;
 }
+#endif

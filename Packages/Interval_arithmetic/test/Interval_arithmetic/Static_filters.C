@@ -34,7 +34,9 @@ int main()
   // KE::Orientation_3 ore;
   // Kf::Orientation_3 orf;
 
+#ifdef CGAL_IA_NEW_FILTERS
   CGAL::Static_Filtered_orientationC3_12::new_bound(1.0);
+#endif
   CGAL::Fixed_precision_nt::init(1.0);
   std::cerr << "*** bound used by Fixed : " << CGAL::Fixed_Or1 << std::endl;
   // This bound is slightly better than epsilon_2.  It's OK, since for the
