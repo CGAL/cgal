@@ -27,7 +27,7 @@
 
 #include <CGAL/IO/Color.h>
 #include <CGAL/LEDA/window.h>
-#include <CGAL/IO/esprit_logo.xpm>
+#include <CGAL/IO/cgal_logo.xpm>
 
 
 CGAL_BEGIN_NAMESPACE

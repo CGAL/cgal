@@ -51,7 +51,7 @@
 # include <LEDA/ps_file.h>
 # undef private
 #endif // LEDA_PS_FILE_H
-#include <CGAL/IO/esprit_logo.xpm>
+#include <CGAL/IO/cgal_logo.xpm>
 
 CGAL_BEGIN_NAMESPACE
 
