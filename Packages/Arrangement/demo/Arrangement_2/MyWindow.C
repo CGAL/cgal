@@ -372,7 +372,7 @@ MyWindow::MyWindow(int w, int h)
 MyWindow::~MyWindow()
 {}
 
-//#include "MyWindow.moc"
+#include "MyWindow.moc"
 
 
 /*! main */
@@ -401,6 +401,7 @@ int main(int, char*)
 
   return 0;
 }
+
 
 
 #endif // CGAL_USE_QT

@@ -540,6 +540,6 @@ QDialog( parent, name, modal, f )
 
 
 
-
+#include "forms.moc"
 
 #endif
