@@ -27,7 +27,7 @@
 // ============================================================================
 
 // set this macro if you have the OpenGL and glut based visualization
-#define CGAL_NEF3_VISUALIZOR
+//#define CGAL_NEF3_VISUALIZOR
 
 #include <CGAL/basic.h>
 #include <CGAL/Gmpz.h>
@@ -38,6 +38,8 @@
 #include <CGAL/Nef_polyhedron_3.h>
 #include <CGAL/Nef_3/SNC_intersection.h>
 #include <CGAL/Timer.h>
+
+#include <fstream>
 
 template<typename Kernel>
 class test {
@@ -124,8 +126,8 @@ private:
       in1 >> s1;
       in2 >> s2;
       if(s1 != s2) {
-	cerr << s1 << std::endl;
-	cerr << s2 << std::endl;
+        std::cerr << s1 << std::endl;
+	std::cerr << s2 << std::endl;
 	return false;
       }
     }
@@ -678,6 +680,6 @@ int main() {
   test_EH.run_test(".EH");
 
   t.stop();
-  cout << "Time " << t.time() << std::endl;
+  std::cout << "Time " << t.time() << std::endl;
 }
 
