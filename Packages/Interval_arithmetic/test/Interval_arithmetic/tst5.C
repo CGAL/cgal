@@ -3,12 +3,14 @@
 // #define CGAL_IA_DEBUG
 
 #include <CGAL/basic.h>
+#include <CGAL/misc.h>
 #include <CGAL/config.h>
 // #include <CGAL/kernel_basic.h>
 // #include <CGAL/number_utils.h>
 #include <CGAL/Timer.h>
 
 #include <CGAL/Interval_arithmetic.h>
+// #include <CGAL/Quotient.h>
 #include <CGAL/leda_real.h>
 
 #include <CGAL/predicates_on_ftC2.h>
@@ -19,7 +21,7 @@
 #include <CGAL/Gmpz.h>
 // #include <CGAL/leda_bigfloat.h>
 // #include <CGAL/leda_rational.h>
-// #include <CGAL/leda_integer.h>
+#include <CGAL/leda_integer.h>
 
 // #define CGAL_IA_NO_WARNINGS
 // #include <CGAL/Interval_arithmetic.h>
@@ -72,7 +74,7 @@ void bench()
   CGAL_Comparison_result result;
   NT px, py, la, lb, lc;
 
-  px=1; py=2; la=3; lb=4; lc=5;
+  px=1; py=2.0/3; la=3.0/5; lb=4.0/7; lc=5.0/6;
   px = py;
   px = NT(py);
   // NT ppx(py);
@@ -87,6 +89,11 @@ void bench()
 int test()
 {
   NT px, py, la, lb, lc;
+  // CGAL_Filtered_exact< CGAL_Quotient<int>, leda_rational> ii (3,2);
+  // CGAL_Quotient<leda_integer> jj (4,5);
+  // CGAL_Interval_nt_advanced pipo;
+  // CGAL_Interval_nt nt = CGAL_convert_to(jj, pipo);
+  // cout << nt << endl;
   px=1; py=2; la=3; lb=4; lc=5;
   cout << "Result 1st test: " << (int)CGAL_compare_y_at_xC2(px, py, la, lb, lc);
   cout << " ( == 1 )\n";
