@@ -27,9 +27,7 @@
 // - CGAL_Interval_nt		("plug-in" version, derived from the other one)
 // The second one is slower.
 
-// TODO:  operators for double * Interval -> Interval,
-//                    Interval * double   -> Interval
-//    maybe a function (double * double)  -> Interval.
+// TODO: maybe a function (double * double)  -> Interval.
 
 #ifndef CGAL_INTERVAL_ARITHMETIC_H
 #define CGAL_INTERVAL_ARITHMETIC_H
@@ -61,7 +59,7 @@ private:
 public:
   friend CGAL_Interval_nt_advanced sqrt(const CGAL_Interval_nt_advanced&);
   friend CGAL_Interval_nt_advanced operator*
-      (const double &, const CGAL_Interval_nt_advanced&);
+      (const double, const CGAL_Interval_nt_advanced&);
   friend double CGAL_to_double(const CGAL_Interval_nt_advanced&);
 
   // The constructors.
@@ -78,18 +76,20 @@ public:
       { CGAL_assertion(i<=s); }
 #endif
 
-  // The copy constructor: useless.
-  // It's supposed to be the default one, but it's faster.
+#if 1
+  // The copy constructors/assignment: useless.
+  // The default ones are ok, but these are faster...
+  CGAL_Interval_nt_advanced(const CGAL_Interval_nt_advanced& d)
+      : inf(d.inf), sup(d.sup) {}
+
   CGAL_Interval_nt_advanced& operator=(const CGAL_Interval_nt_advanced& d)
-  {
-    inf = d.inf;
-    sup = d.sup;
-    return *this;
-  }
+  { inf = d.inf; sup = d.sup; return *this; }
+#endif
 
   // The operators.
   CGAL_Interval_nt_advanced operator+(const CGAL_Interval_nt_advanced& d) const
   { return CGAL_Interval_nt_advanced(-(inf + d.inf), sup + d.sup); }
+  // { return CGAL_Interval_nt_advanced (d) += *this; }
 
   CGAL_Interval_nt_advanced operator-(const CGAL_Interval_nt_advanced& d) const
   { return CGAL_Interval_nt_advanced(-(inf + d.sup), sup + d.inf); }
@@ -107,7 +107,7 @@ public:
   CGAL_Interval_nt_advanced& operator/=(const CGAL_Interval_nt_advanced& d);
 
   // For speed...
-  CGAL_Interval_nt_advanced operator*(const double& d) const;
+  CGAL_Interval_nt_advanced operator*(const double d) const;
 
   bool is_valid() const
   { return CGAL_is_valid(inf) && CGAL_is_valid(sup) && (sup >= -inf); }
@@ -179,14 +179,14 @@ inline CGAL_Interval_nt_advanced CGAL_Interval_nt_advanced::operator*
 }
 
 inline CGAL_Interval_nt_advanced CGAL_Interval_nt_advanced::operator*
-  (const double& d) const
+  (const double d) const
 {
   if (d>=0)	return CGAL_Interval_nt_advanced(-(inf*d), sup*d);
   else		return CGAL_Interval_nt_advanced(-(sup*(-d)), inf*(-d));
 }
 
 inline CGAL_Interval_nt_advanced operator*
-  (const double& d, const CGAL_Interval_nt_advanced &t)
+  (const double d, const CGAL_Interval_nt_advanced &t)
 { return t*d; }
 
 inline CGAL_Interval_nt_advanced CGAL_Interval_nt_advanced::operator/
@@ -372,8 +372,6 @@ inline CGAL_Interval_nt CGAL_Interval_nt::operator/(const CGAL_Interval_nt& d)
   return tmp;
 }
 
-// For the following, use a base common class, and virtual functions ?
-
 inline CGAL_Interval_nt &
   CGAL_Interval_nt::operator+=(const CGAL_Interval_nt& d)
 { return *this = *this + d; }
@@ -397,8 +395,10 @@ inline CGAL_Interval_nt sqrt(const CGAL_Interval_nt& d)
   return tmp;
 }
 
-// This one need a version for ..._advanced ?
+// This one needs a version for ..._advanced ?
 // Is this function only needed by GPC...
+// Or maybe implement them as constructors, that'd be simpler, even if we
+// could not handle user types. (?? define a template constructor...)
 inline CGAL_Interval_nt CGAL_to_interval_nt(const double &d)
 { return (CGAL_Interval_nt) d; }
 
