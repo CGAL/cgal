@@ -5,15 +5,14 @@
 #include <CGAL/Regular_triangulation_euclidean_traits_2.h>
 #include <CGAL/Regular_triangulation_2.h>
 
-using namespace CGAL;
 
-typedef Cartesian<double> Rp;
+typedef CGAL::Cartesian<double> Rp;
 typedef double W;
-typedef Regular_triangulation_euclidean_traits_2<Rp,W>  Gt;
-typedef Triangulation_vertex_base_2<Gt> Vb;
-typedef Regular_triangulation_face_base_2<Gt> Fb;
-typedef Triangulation_default_data_structure_2<Gt,Vb,Fb > Tds;
-typedef Regular_triangulation_2<Gt, Tds> Regular_triangulation;
+typedef CGAL::Regular_triangulation_euclidean_traits_2<Rp,W>  Gt;
+typedef CGAL::Triangulation_vertex_base_2<Gt> Vb;
+typedef CGAL::Regular_triangulation_face_base_2<Gt> Fb;
+typedef CGAL::Triangulation_default_data_structure_2<Gt,Vb,Fb > Tds;
+typedef CGAL::Regular_triangulation_2<Gt, Tds> Regular_triangulation;
 
 int main()
 {
