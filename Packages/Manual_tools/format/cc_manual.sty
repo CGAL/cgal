@@ -745,26 +745,68 @@
 % | \ccChapterAuthor, \ccChapterRelease, \ccChapterSubTitle
 % +--------------------------------------------------------------------------
 
+%\newcommand{\ccChapterAuthor}[1]{%
+%    \mbox{\ifnum\ccTagChapterAuthor=\ccTrue
+%        \noindent\setlength{\unitlength}{1mm}%
+%        \begin{picture}(0,0)% 
+%            \put(0,17){{\em #1}}%
+%        \end{picture}%
+%    \fi}}
+\makeatletter
+\newcommand{\ccChapterSubTitle}[1]{\vskip -9mm\relax
+    \vbox{\noindent\parbox[t]{\textwidth}{{\em #1\\\mbox{}}}}%
+    \vskip 9mm\relax\vskip -\baselineskip\relax\vskip 5pt\relax\@afterheading}
+\makeatother
 \newcommand{\ccChapterAuthor}[1]{%
-    \mbox{\ifnum\ccTagChapterAuthor=\ccTrue
-        \noindent\setlength{\unitlength}{1mm}%
-        \begin{picture}(0,0)% 
-            \put(0,17){{\em #1}}%
-        \end{picture}%
-    \fi}}
+    \ifnum\ccTagChapterAuthor=\ccTrue\ccChapterSubTitle{%
+        \ccChapterAuthorX #1\and\and}\fi}
+% give arg twice and terminate with two \ccEnd
+\def\ccRemoveTrailingSpaces #1#2#3\ccEnd{%
+    \def\xxbody{\ccRemoveTrailingSpaces{#3}#3\ccEnd}%
+    \def\xxparams{#2}\def\xxxparams{\ccEnd}\ifx\xxparams\xxxparams
+      \let\xxnext=\relax
+    \else
+      \let\xxnext=\xxbody
+      \def\xxparams{#1}\def\xxxparams{#2#3}%
+      \ifx\xxparams\xxxparams \else\ \fi #2%
+    \fi
+    \xxnext
+}
+\def\ccChapterAuthorX #1\and#2\and{%
+    \ccRemoveTrailingSpaces{#1}#1\ccEnd\ccEnd
+    \def\xAuthBody{\ccChapterAuthorXX #2\and}%
+    \isEmpty{#2}\ifnum\ccBool=\ccTrue
+        \let\xAuthNext=\relax
+    \else
+        \let\xAuthNext=\xAuthBody
+    \fi
+    \xAuthNext
+}
+\def\ccChapterAuthorXX #1\and#2\and{%
+    \def\xAuthBody{\ccChapterAuthorXXX #2\and}%
+    \isEmpty{#2}\ifnum\ccBool=\ccTrue
+        \ and \ccRemoveTrailingSpaces{#1}#1\ccEnd\ccEnd
+        \let\xAuthNext=\relax
+    \else
+        , \ccRemoveTrailingSpaces{#1}#1\ccEnd\ccEnd
+        \let\xAuthNext=\xAuthBody
+    \fi
+    \xAuthNext
+}
+\def\ccChapterAuthorXXX #1\and#2\and{%
+    \def\xAuthBody{\ccChapterAuthorXXX #2\and}%
+    \isEmpty{#2}\ifnum\ccBool=\ccTrue
+        , and \ccRemoveTrailingSpaces{#1}#1\ccEnd\ccEnd
+        \let\xAuthNext=\relax
+    \else
+        , \ccRemoveTrailingSpaces{#1}#1\ccEnd\ccEnd
+        \let\xAuthNext=\xAuthBody
+    \fi
+    \xAuthNext
+}
+
 \newcommand{\ccChapterRelease}[1]{%
-    \mbox{\ifnum\ccTagChapterRelease=\ccTrue
-        \noindent\setlength{\unitlength}{1mm}%
-        \begin{picture}(0,0)% 
-            \put(0,11){{\em #1}}%
-        \end{picture}%
-    \fi}}
-\newcommand{\ccChapterSubTitle}[1]{%
-    \mbox{\noindent\setlength{\unitlength}{1mm}%
-    \begin{picture}(0,0)% 
-        \put(0,11){{\em #1}}%
-    \end{picture}%
-    }}
+    \ifnum\ccTagChapterRelease=\ccTrue\ccChapterSubTitle{#1}\fi}
 
 \newcommand{\ccSection}[1]{%
                    \section[#1 (\protect\ccPrintSingleTokenSemi
