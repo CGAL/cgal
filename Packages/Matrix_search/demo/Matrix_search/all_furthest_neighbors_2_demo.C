@@ -52,7 +52,7 @@ typedef point                              LEDA_Point;
 typedef point_set< Point_2 >               LEDA_Point_set_Point;
 #include <LEDA/UNDEFINE_NAMES.h>
 void
-wait_for_button_release( CGAL_Window_stream& W)
+wait_for_button_release( leda_window& W)
 {
   // wait until mouse button is released
   double x, y;
@@ -64,8 +64,9 @@ wait_for_button_release( CGAL_Window_stream& W)
 int
 main()
 {
-  CGAL_Window_stream W;
+  leda_window W;
   W.init( -1.25, 1.25, -1.25);
+  W.display();
 
   // get points, last point with middle button:
   cout << "\nCGAL ALL FURTHEST NEIGHBORS DEMO\n"
@@ -100,24 +101,25 @@ main()
   W.set_fg_color( leda_blue);
   ps_item qp;
   // first click, no need to clear old query from screen:
+  int last_button;
   {
     double x, y;
-    W.read_mouse( x, y);
+    last_button = W.read_mouse( x, y);
     qp = query_points.nearest_neighbor( LEDA_Point( x, y));
   }
   for (;;) {
     double x, y;
-    if ( W.last_button_pressed() != MOUSE_BUTTON( 1))
+    if ( last_button != MOUSE_BUTTON( 1))
       break;
-    W << query_points.key( qp);
-    W.draw_circle( query_points.inf( qp).x(),
-                   query_points.inf( qp).y(),
-                   .03);
-    W.read_mouse( x, y);
-    W << query_points.key( qp);
-    W.draw_circle( query_points.inf( qp).x(),
-                   query_points.inf( qp).y(),
-                   .03);
+    W.draw_disc( query_points.key( qp), .02);
+    W.draw_disc( query_points.inf( qp).x(),
+                 query_points.inf( qp).y(),
+                 .03);
+    last_button = W.read_mouse( x, y);
+    W.draw_disc( query_points.key( qp), .02);
+    W.draw_disc( query_points.inf( qp).x(),
+                 query_points.inf( qp).y(),
+                 .03);
     qp = query_points.nearest_neighbor( LEDA_Point( x, y));
   }
   

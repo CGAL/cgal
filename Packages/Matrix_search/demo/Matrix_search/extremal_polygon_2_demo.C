@@ -24,56 +24,21 @@
 // Demo program: Compute extremal polygons of a convex polygon
 // ============================================================================
 
-#ifndef CGAL_PROTECT_STDLIB_H
 #include <stdlib.h>
-#define CGAL_PROTECT_STDLIB_H
-#endif // CGAL_PROTECT_STDLIB_H
-#ifndef CGAL_PROTECT_STDIO_H
 #include <stdio.h>
-#define CGAL_PROTECT_STDIO_H
-#endif // CGAL_PROTECT_STDIO_H
-#ifndef CGAL_BASIC_H
-#include <CGAL/basic.h>
-#endif // CGAL_BASIC_H
-#ifndef CGAL_PROTECT_IOSTREAM_H
-#include <iostream.h>
-#define CGAL_PROTECT_IOSTREAM_H
-#endif // CGAL_PROTECT_IOSTREAM_H
-#ifndef CGAL_CARTESIAN_H
 #include <CGAL/Cartesian.h>
-#endif // CGAL_CARTESIAN_H
-#ifndef CGAL_POINT_2_H
 #include <CGAL/Point_2.h>
-#endif // CGAL_POINT_2_H
-#ifndef CGAL_SEGMENT_2_H
 #include <CGAL/Segment_2.h>
-#endif // CGAL_SEGMENT_2_H
-#ifndef CGAL_SQUARED_DISTANCE_2_H
 #include <CGAL/squared_distance_2.h>
-#endif // CGAL_SQUARED_DISTANCE_2_H
-#ifndef CGAL_CONVEX_HULL_2_H
 #include <CGAL/convex_hull_2.h>
-#endif // CGAL_CONVEX_HULL_2_H
-#ifndef CGAL_CIRCULATOR_H
 #include <CGAL/circulator.h>
-#endif // CGAL_CIRCULATOR_H
-#ifndef CGAL_COPY_N_H
 #include <CGAL/copy_n.h>
-#endif // CGAL_COPY_N_H
-#ifndef CGAL_POINT_GENERATORS_2_H
 #include <CGAL/point_generators_2.h>
-#endif // CGAL_POINT_GENERATORS_2_H
-#ifndef CGAL_RANDOM_CONVEX_SET_2_H
 #include <CGAL/random_convex_set_2.h>
-#endif // CGAL_RANDOM_CONVEX_SET_2_H
-#include "Window_stream.h"
-#ifndef CGAL_PROTECT_LEDA_POINT_SET_H
-#include <LEDA/point_set.h>
-#define CGAL_PROTECT_LEDA_POINT_SET_H
-#endif // CGAL_PROTECT_LEDA_POINT_SET_H
-#ifndef CGAL_EXTREMAL_POLYGON_2_H
 #include <CGAL/extremal_polygon_2.h>
-#endif // CGAL_EXTREMAL_POLYGON_2_H
+#include <CGAL/IO/leda_window.h>
+#include <LEDA/point_set.h>
+#include <iostream.h>
 
 typedef double                                    FT;
 typedef CGAL_Cartesian< FT >                      RepClass;
@@ -113,7 +78,7 @@ static long long int measure;
 #define MEASURE(comm) comm
 #endif
 void
-wait_for_button_release( CGAL_Window_stream& W)
+wait_for_button_release( leda_window& W)
 {
   // wait until mouse button is released
   double x, y;
@@ -125,7 +90,7 @@ wait_for_button_release( CGAL_Window_stream& W)
 int
 main()
 {
-  CGAL_Window_stream W( 650, 650);
+  leda_window W( 650, 650);
   int k( 3);
   W.int_item( "k", k, 2, 12, "#vertices of polygon to inscribe");
   int n( 3);

@@ -27,8 +27,9 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/Iso_rectangle_2.h>
 #include <CGAL/Point_2.h>
-#include <CGAL/IO/Window_stream.h>
+#include <CGAL/IO/leda_window.h>
 #include <CGAL/IO/Ostream_iterator.h>
+#include <CGAL/IO/Istream_iterator.h>
 #include <CGAL/rectangular_p_center_2.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/copy_n.h>
@@ -49,14 +50,14 @@ typedef CGAL_Random_points_in_square_2<
   Point_2,
   CGAL_Creator_uniform_2< FT, Point_2 > >
 Point_generator;
-typedef CGAL_Ostream_iterator< Point_2, CGAL_Window_stream >
+typedef CGAL_Ostream_iterator< Point_2, leda_window >
   Window_stream_iterator_point;
-typedef CGAL_Ostream_iterator< Square_2, CGAL_Window_stream >
+typedef CGAL_Ostream_iterator< Square_2, leda_window >
   Window_stream_iterator_square;
-typedef CGAL_Ostream_iterator< Point_2, ostream >
-  Ostream_iterator_point;
-typedef CGAL_Ostream_iterator< Square_2, ostream >
-  Ostream_iterator_square;
+typedef ostream_iterator< Point_2 >    Ostream_iterator_point;
+typedef ostream_iterator< Square_2 >   Ostream_iterator_square;
+typedef CGAL_Istream_iterator< Point_2, leda_window>
+  Istream_iterator_point;
 
 #include <time.h>
 static time_t Measure;
@@ -96,27 +97,25 @@ main( int argc, char* argv[])
   typedef Build_box< Point_2, FT, Square_2 >  Build_square;
 
   // init CGAL stuff:
-  CGAL_Window_stream W;
+  leda_window W;
+  CGAL_cgalize( W);
   W.init( -1.5, 1.5, -1.5);
+  W.display();
   CGAL_set_pretty_mode( cout);
   CGAL_set_pretty_mode( cerr);
   Window_stream_iterator_point wout_p( W);
   Window_stream_iterator_square wout_s( W);
-  Ostream_iterator_point cout_p( cout);
-  Ostream_iterator_square cout_s( cout);
+  Ostream_iterator_point cout_p( cout, "\n");
+  Ostream_iterator_square cout_s( cout, "\n");
 
   if ( argc < 2 || (number_of_points = atoi(argv[1])) <= 0) {
-    cout << "-- reading input point set\n" <<
-      "-- press middle mouse button for last point" << endl;
+    cout << "-- reading input point set\n"
+         << "-- press middle mouse button for last point"
+         << endl;
     W << CGAL_BLUE;
-    do {
-      Point_2 p;
-      W >> p;
-      // initialise with floats, otherwise
-      // there might be rounding errors
-      p = Point_2( float( p.x()), float( p.y()));
-      input_points.push_back( p);
-    } while ( W.last_button_pressed() != -2);
+    copy( Istream_iterator_point( W),
+          Istream_iterator_point(),
+          back_inserter( input_points));
   }
   else {
     int random_seed( CGAL_random.get_int( 0, (1 << 31)));
@@ -144,14 +143,16 @@ main( int argc, char* argv[])
   copy( input_points.begin(), input_points.end(), wout_p);
 
   FT result;
-  MEASURE(
-    CGAL_rectangular_p_center_2(
-      input_points.begin(),
-      input_points.end(),
-      back_inserter( output_points),
-      result,
-      4);
-    )
+  if ( !input_points.empty()) {
+    MEASURE(
+      CGAL_rectangular_p_center_2(
+        input_points.begin(),
+        input_points.end(),
+        back_inserter( output_points),
+        result,
+        4);
+      )
+  } // if ( !input_points.empty())
 
 #if defined(CGAL_PCENTER_TRACE)
   int number_of_piercing_points( output_points.size());
