@@ -2985,15 +2985,19 @@ end of each file.
     #endif
     #ifndef CGAL_PROTECT_LIST_H
     #  include <list.h>
+    #  define CGAL_PROTECT_LIST_H
     #endif
     #ifndef CGAL_PROTECT_VECTOR_H
-    #include <vector.h>
+    #  include <vector.h>
+    #  define CGAL_PROTECT_VECTOR_H
     #endif
     #ifndef CGAL_PROTECT_ALGO_H
-    #include <algo.h>
+    #  include <algo.h>
+    #  define CGAL_PROTECT_ALGO_H
     #endif
     #ifndef CGAL_PROTECT_IOSTREAM_H
-    #include <iostream.h>
+    #  include <iostream.h>
+    #  define CGAL_PROTECT_IOSTREAM_H
     #endif
 
     @<Min_ellipse_2 interface>

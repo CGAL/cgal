@@ -168,6 +168,7 @@ time.
 @macro <Random constructors> = @begin
     #ifndef CGAL_PROTECT_SYS_TIME_H
     #  include <sys/time.h>
+    #  define CGAL_PROTECT_SYS_TIME_H
     #endif
 
     CGAL_Random::
@@ -212,6 +213,7 @@ The result is converted to a number in the given range.
 @macro <Random operations> = @begin
     #ifndef CGAL_PROTECT_STDLIB_H
     #  include <stdlib.h>
+    #  define CGAL_PROTECT_STDLIB_H
     #endif
 
     inline
