@@ -16,62 +16,55 @@
  
 %\label{I1_S}} 
    
-   A model for the \ccRefName\ concept must provide the
-   following types and operations. It defines the geometric types and
-   primitive operations used in the planar map data structure
-   \ccc{Planar_map_2<Dcel,Traits>}.
-
-%The planar map class is parameterized with the
-%interface class \ccStyle{PlanarMapTraits_2} which defines the abstract interface
-%between planar maps and the primitives they use. 
-%The following
-%requirement catalog lists the primitives, i.e., types, member functions
-%etc., that must be defined for a Traits class that can be used to
-%parameterize planar maps. %Ready-made implementation is available
-%and described in Section~\ref{PM_sec:def:interface}. They can be used as a
-%starting point for customizing own interface classes, for example
-%through derivation and specialization.
+   A model for the \ccRefName\ concept must provide the following types and
+   operations. It defines the geometric types and primitive operations used
+   in the planar map data structure \ccc{Planar_map_2<Dcel,Traits>}.
 
 \ccCreationVariable{pm_traits}
 
 
 \ccDefinition
     A class \ccClassTemplateName\ that satisfies the requirements of an
-    interface class for a planar map class must provide the
-    following types and operations. 
+    interface class for a planar map class must provide the following types
+    and operations. 
 
 \ccTypes
 
     The geometric types defined below must have a default constructor,
     copy constructor, assignment operator and \ccStyle{operator==}.
     
-    \ccNestedType{Point_2}{A type to hold the location of a vertex in the plane.}
-    \ccNestedType{X_curve_2}{A type to hold an $x$-monotone curve in the plane.}
-  
+    \ccNestedType{Point_2}{A type that holds the position of a vertex in
+    the plane.}
+    
+    \ccNestedType{X_curve_2}{A type that holds an $x$-monotone curve in the
+    plane.}
+
+\ccHeading{Categories}
+    
+    \ccNestedType{Has_left_category}{A boolean category that indicates
+     whether the method
+     \ccc{curve_compare_at_x_left()} is required or
+     alternatively the methods
+     \ccc{point_reflect_in_x_and_y()} and
+     \ccc{curve_reflect_in_x_and_y()} are required. It must be either
+     \ccc{Tag_true} or \ccc{Tag_false}.}
+
+\ccHeading{Enumerations}
+
+    \ccEnum{enum Comparison_result {SMALLER, EQUAL, LARGER};}
+    {a constant describing the relative position between objects.}
+    
     \ccEnum{enum Curve_point_status {UNDER_CURVE = -1,
-          CURVE_NOT_IN_RANGE ,
-          ABOVE_CURVE ,
-          ON_CURVE };} {a constant describing the relative position between
-       a curve and a point.}
-
-
-    %\ccNestedType{Curve}{A type to hold a curve in the plane. Not
-    %   necessarily monotone. This type is used by the
-    %   \ccStyle{Arrangement_2} class.}
-    
-%    \ccNestedType{Point_handle}{A handle of a \ccStyle{Point_2}.}
-    
-%    \ccNestedType{X_curve_handle}{A handle of an \ccStyle{X_curve_2}.}
-    
-    %\ccNestedType{Curve_handle}{A handle of \ccStyle{Curve}.}
-
-    %\ccNestedType{FT}{- Field type associated with the geometric data. }
-    
+                                     CURVE_NOT_IN_RANGE ,
+                                     ABOVE_CURVE ,
+                                     ON_CURVE};
+    }
+    {a constant describing the relative position between a curve and a point.}
 
 \ccCreation
     
-%    Only a default constructor is required. Note that further
-%    constructors can be provided.
+% Only a default constructor is required. Note that further constructors
+% can be provided.
 
     \ccConstructor{Traits();}
     {A default constructor.}
@@ -82,44 +75,50 @@
 %predicates
 %----------
     \ccMethod{Comparison_result compare_x(const Point_2& p0,
-       const Point_2& p1);} {compares the \ccStyle{x}-coordinates
-       of $p0$ and $p1$.  Return \ccStyle{LARGER} if $x(p0) >
-       x(p1)$, \ccStyle{SMALLER} if $x(p0) < x(p1)$, or else
-       \ccStyle{EQUAL}.  }
+                                          const Point_2& p1);}
+    {compares the \ccStyle{x}-coordinates of $p0$ and $p1$.  Returns
+    \ccStyle{LARGER} if $x(p0) > x(p1)$; \ccStyle{SMALLER} if $x(p0) < x(p1)$;
+    \ccStyle{EQUAL} otherwise.}
     
-    \ccMethod{Comparison_result compare_y(const Point_2& p0,
-       const Point_2& p1);} {compares the
-       \ccStyle{y}-coordinates of $p0$ and $p1$.}
-
+    \ccMethod{Comparison_result compare_xy(const Point_2& p0,
+                                           const Point_2& p1);}
+    {compares lexigoraphically the two points $p0$ and $p1$ by their
+    \ccStyle{x}-coordinates, then by their \ccStyle{y}-coordinates.
+    Returns \ccStyle{LARGER} if $x(p1) > x(p2)$, or if
+                        $x(p1) = x(p2)$ and $y(p1) > y(p2)$; 
+    \ccStyle{SMALLER} if $x(p1) < x(p2)$, or if $x(p1) = x(p2)$ and
+                      $y(p1) < y(p2)$;
+    \ccStyle{EQUAL} otherwise.}
 
     \ccMethod{bool curve_is_vertical(const X_curve_2& cv);} 
-   {returns \ccStyle{true} if \ccStyle{cv} is a vertical segment.}
+   {returns \ccStyle{true} if \ccStyle{cv} is a vertical segment, and
+    \ccStyle{false} otherwise.}
         
-%redundant - we have curve point status ?
     \ccMethod{bool curve_is_in_x_range( const X_curve_2& cv,
-       const Point_2& pnt );}{returns \ccStyle{true} if \ccStyle{pnt} is
-       in the $x$ range of \ccStyle{cv}.}
+       const Point_2& pnt );}
+    {returns \ccStyle{true} if \ccStyle{pnt} is in the $x$ range of
+    \ccStyle{cv}, and \ccStyle{false} otherwise.}
     
-    \ccMethod{Comparison_result curve_compare_at_x(
-       const X_curve_2& cv1, const X_curve_2& cv2, const Point_2& pnt );}
+    \ccMethod{Comparison_result curve_compare_at_x(const X_curve_2& cv1,
+      const X_curve_2& cv2, const Point_2& pnt );}
     {compares the $y$-coordinate of $cv1$ and $cv2$ at the $x$-coordinate 
-     of $pnt$. Return \ccStyle{EQUAL} if at least one of $cv1$ and $cv2$  
-     is not defined at $pnt$'s $x$-coordinate.}
-   
-  \ccMethod{Comparison_result curve_compare_at_x_left(
-     const X_curve_2& cv1, const X_curve_2& cv2, const Point_2& pnt);}
-  {compares the $y$-coordinate of $cv1$ and $cv2$ immediately to the
-     left of the $x$-coordinate of $pnt$. Return \ccStyle{EQUAL}
-     if at least one of $cv1$ and $cv2$ is not defined to the left of $pnt$'s
-     $x$-coordinate.}
-    
-  \ccMethod{Comparison_result
-     curve_compare_at_x_right(const X_curve_2& cv1, const X_curve_2& cv2,
-     const Point_2& pnt);} {compares the $y$-coordinate of $cv1$ and
-     $cv2$ immediately to the right of the $x$-coordinate of $pnt$.
-     Return \ccStyle{EQUAL} if at least one of $cv1$ and $cv2$ is
-     not defined to the right of $pnt$'s $x$-coordinate.}
+    of $pnt$. Returns \ccStyle{LARGER} if $cv1(x(q)) > cv2(x(q))$;
+    \ccStyle{SMALLER} if $cv1(x(q)) < cv2(x(q))$; \ccStyle{EQUAL} otherwise.
+    \ccPrecond{$cv1$ and $cv2$ are defined at $pnt$'s $x$-coordinate.}}
 
+    \ccMethod{Comparison_result curve_compare_at_x_left(const X_curve_2& cv1,
+      const X_curve_2& cv2, const Point_2& pnt);}
+    {compares the $y$-coordinate of $cv1$ and $cv2$ immediately to the
+     left of the $x$-coordinate of $pnt$. 
+    \ccPrecond{$cv1$ and $cv2$ are defined to the left of $pnt$'s
+     $x$-coordinate.}}
+    
+    \ccMethod{Comparison_result curve_compare_at_x_right(const X_curve_2& cv1,
+      const X_curve_2& cv2, const Point_2& pnt);}
+    {compares the $y$-coordinate of $cv1$ and $cv2$ immediately to the right of
+     the $x$-coordinate of $pnt$.
+    \ccPrecond{$cv1$ and $cv2$ are defined to the left of $pnt$'s
+     $x$-coordinate.}}
     
     \ccMethod{Curve_point_status curve_get_point_status(const X_curve_2& cv,
        const Point_2& pnt);} {returns a constant describing the
@@ -143,7 +142,7 @@
 
        \ccMethod{bool curve_is_same(const X_curve_2 & cv1,
                                     const X_curve_2 & cv2);}
-       {returns \ccc{true} if \ccc{cv1} is the same as \ccc{cv2}.}
+       {returns \ccc{true} if \ccc{cv1} and \ccc{cv2} have the same graph.}
 
        \ccMethod{bool point_is_same(const Point_2 & p1,
                                     const Point_2 & p2);}
