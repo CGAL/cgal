@@ -51,10 +51,13 @@ returns \ccStyle{true}, iff the three points are collinear and
 and \ccStyle{r}.  Note that \ccc{false} should be returned if
 \ccStyle{q==p} or \ccStyle{q==r}.}
 
-\ccCreation
 \ccCreationVariable{traits}  %% choose variable name
+\ccCreation
 
-Only a default constructor and copy constructor are required.
+Only a copy constructor is required.
+
+\ccConstructor{OptimalConvexPartitionTraits_2(OptimalConvexPartitionTraits_2& tr
+)}{}
 
 \ccOperations
 
@@ -69,20 +72,6 @@ must exist:
 \ccMethod{Construct_ray_2 construct_ray_2_object() const;}{}
 \ccMethod{Are_strictly_ordered_along_line_2
     are_strictly_ordered_along_line_2_object() const;}{}
-
-%The following function is required by \ccc{is_convex_2}, which is used
-%to test the convexity postcondition:
-%\ccIndexSubitem[C]{optimal_convex_partition_2}{postconditions}
-%\ccIndexGlobalFunction{is_convex_2}
-%
-%\ccSetThreeColumns{CGAL_Oriented_side}{}{\hspace*{8.5cm}}
-%\ccMemberFunction{
-%    bool lexicographically_yx_smaller(const Point_2& p,
-%                                      const Point_2& q) const;
-%}
-%{
-%Returns \ccc{true} iff $p_y < q_y$ or $p_y = q_y$ and $p_x < q_x$.
-%}
 
 
 \ccHasModels
