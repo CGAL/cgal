@@ -60,7 +60,8 @@ min_ellipse_2$(EXE_EXT): min_ellipse_2$(OBJ_EXT) \
 	 Qt_widget_toolbar$(OBJ_EXT)  Qt_widget_move_list_point$(OBJ_EXT) \
 	$(LDFLAGS)
 
-clean: min_ellipse_2.clean Qt_widget_toolbar.clean
+clean: min_ellipse_2.clean Qt_widget_toolbar.clean \
+	Qt_widget_move_list_point.clean
 
 #---------------------------------------------------------------------#
 #                    suffix rules

@@ -61,7 +61,8 @@ convex_hull_2$(EXE_EXT): convex_hull_2$(OBJ_EXT) \
 	$(LDFLAGS)
 
 clean: convex_hull_2.clean \
-       Qt_widget_toolbar.clean
+       Qt_widget_toolbar.clean \
+       Qt_widget_move_list_point.clean
 
 #---------------------------------------------------------------------#
 #                    suffix rules

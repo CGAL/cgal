@@ -58,8 +58,8 @@ max_k-gon$(EXE_EXT): max_k-gon$(OBJ_EXT) Qt_widget_move_list_point$(OBJ_EXT) \
 	$(LDFLAGS)
 
 clean: max_k-gon.clean \
-       Qt_widget_toolbar.clean
-
+       Qt_widget_toolbar.clean \
+       Qt_widget_move_list_point.clean 
 #---------------------------------------------------------------------#
 #                    suffix rules
 #---------------------------------------------------------------------#
