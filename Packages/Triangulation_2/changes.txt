@@ -1,6 +1,9 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+13 September 2004 Sylvain Pion
+- Regular traits cleanups.
+
 7 September 2004 Menelaos Karavelas
 - re-added commented code in join_vertices that was referring to degree
   2 vertices

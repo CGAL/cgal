@@ -52,7 +52,6 @@ weighted_circumcenter(const Weighted_point< Bare_point,We >& p,
 		      const Weighted_point< Bare_point,We >& r,
 		      Cartesian_tag )
 {
-  
   typename Bare_point::R::RT x,y;
   weighted_circumcenterC2(p.x(),p.y(),p.weight(),
 			  q.x(),q.y(),q.weight(),
@@ -68,7 +67,6 @@ weighted_circumcenter(const Weighted_point< Bare_point,We >& p,
 		      const Weighted_point< Bare_point,We >& r,
 		      Homogeneous_tag )
 {
-  
   typename Bare_point::R::RT x,y,w;
   weighted_circumcenterH2(p.hx(),p.hy(),p.hw(),p.weight(),
 			  q.hx(),q.hy(),q.hw(),q.weight(),
@@ -90,14 +88,19 @@ weighted_circumcenter(const Weighted_point< Bare_point,We >& p,
 }
 
 
-template <class Bare_point, class Weight>
+template < typename K >
 class Construct_weighted_circumcenter_2
 {
 public:
-  typedef CGAL::Weighted_point <Bare_point, Weight>        Weighted_point;
-  Bare_point operator() ( Weighted_point p,
-		     Weighted_point q,
-		     Weighted_point r) 
+  typedef typename K::Weighted_point_2         Weighted_point_2;
+  typedef typename K::Bare_point               Bare_point;
+
+  typedef Arity_tag< 3 >   Arity;
+  typedef Bare_point       result_type;
+
+  Bare_point operator() ( const Weighted_point_2 & p,
+		          const Weighted_point_2 & q,
+		          const Weighted_point_2 & r) const
     {
       CGAL_triangulation_precondition( ! collinear(p, q, r) );
       return CGAL::weighted_circumcenter(p,q,r);
@@ -146,14 +149,18 @@ radical_axis(const Weighted_point< Bare_point,We >& p,
 }
 
 
-template <class Bare_point, class Weight>
+template < typename K >
 class Construct_radical_axis_2
 {
 public:
-  typedef CGAL::Weighted_point <Bare_point, Weight>   Weighted_point;
-  typedef typename Bare_point::R  R;
+  typedef typename K::Weighted_point_2                Weighted_point_2;
+  typedef typename K::Line_2                          Line_2;
 
-  Line_2<R> operator() ( Weighted_point p, Weighted_point q) 
+  typedef Arity_tag< 2 >   Arity;
+  typedef Line_2           result_type;
+
+  Line_2
+  operator() ( const Weighted_point_2 & p, const Weighted_point_2 & q) const
   {
     return CGAL::radical_axis(p,q);
   }
@@ -260,37 +267,45 @@ power_test(const Weighted_point<Bare_point, Weight> &p,
 }
 
 
-template <class Bare_point, class Weight>
+template < typename K >
 class Power_test_2
 {
 public:
-  typedef CGAL::Weighted_point <Bare_point, Weight>        Weighted_point;
-  Oriented_side operator() ( Weighted_point p,
-			     Weighted_point q,
-			     Weighted_point r,
-			     Weighted_point s) 
+  typedef typename K::Weighted_point_2         Weighted_point_2;
+
+  typedef Arity_tag< 4 >   Arity;
+  typedef Oriented_side    result_type;
+
+  Oriented_side operator() ( const Weighted_point_2 & p,
+			     const Weighted_point_2 & q,
+			     const Weighted_point_2 & r,
+			     const Weighted_point_2 & s) const
     {
       //CGAL_triangulation_precondition( ! collinear(p, q, r) );
       return CGAL::power_test(p,q,r,s);
     }
 };
 
-template <class Bare_point, class Weight>
+template < typename K >
 class Power_test_degenerated_2
 {
 public:
-  typedef CGAL::Weighted_point <Bare_point, Weight>        Weighted_point;
-  Oriented_side operator() ( Weighted_point p,
-			     Weighted_point q,
-			     Weighted_point r)
+  typedef typename K::Weighted_point_2         Weighted_point_2;
+
+  typedef Arity_tag< 3 >   Arity;
+  typedef Oriented_side    result_type;
+
+  Oriented_side operator() ( const Weighted_point_2 & p,
+			     const Weighted_point_2 & q,
+			     const Weighted_point_2 & r) const
     {
       //CGAL_triangulation_precondition( collinear(p, q, r) );
       //CGAL_triangulation_precondition( p.point() != q.point() );
       return CGAL::power_test(p,q,r);
     }  
 
-  Oriented_side operator() ( Weighted_point p,
-			     Weighted_point r)
+  Oriented_side operator() ( const Weighted_point_2 & p,
+			     const Weighted_point_2 & r) const
     {
       //CGAL_triangulation_precondition( p.point() == r.point() );
       return CGAL::power_test(p,r);
@@ -316,14 +331,14 @@ public:
   // don't know if this is definitive
   //typedef Weighted_point                        Point_2;
 
-  typedef CGAL::Power_test_2<Bare_point, W>     Power_test_2;
-  typedef CGAL::Power_test_degenerated_2<Bare_point, W>  
-                                                Power_test_degenerated_2;
- //concstruction objects
-  typedef CGAL::Construct_weighted_circumcenter_2<Bare_point, W> 
+  typedef Regular_triangulation_euclidean_traits_2<R, W>   Self;
+
+  typedef CGAL::Power_test_2<Self>              Power_test_2;
+  typedef CGAL::Power_test_degenerated_2<Self>  Power_test_degenerated_2;
+  // construction objects
+  typedef CGAL::Construct_weighted_circumcenter_2<Self> 
                                             Construct_weighted_circumcenter_2;
-  typedef CGAL::Construct_radical_axis_2<Bare_point, W> 
-                                            Construct_radical_axis_2;
+  typedef CGAL::Construct_radical_axis_2<Self>  Construct_radical_axis_2;
   
   Power_test_2 
   power_test_2_object() const
