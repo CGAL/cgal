@@ -1,3 +1,6 @@
+11 Mar 2004 Sylvain Pion
+- Update treat_result_collection to the version I use.
+
 26 Feb 2004 Sylvain Pion
 - Replace treat_result_collection by the version I use.
 - Replace create_testresult_page by the version I use.
