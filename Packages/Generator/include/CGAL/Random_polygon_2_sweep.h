@@ -256,7 +256,7 @@ insertion_event(Tree *tree, Vertex_index prev_vt,
     td_mid.is_in_tree = false;
     td_mid.is_left_to_right = true;
     // insert the highest chain first
-    std::pair<CGAL_TYPENAME_MSVC_NULL Tree::iterator, bool> result;
+    std::pair<typename Tree::iterator, bool> result;
     if (left_turn) {
         result = tree->insert(prev_vt);
 	// assert(result.second)

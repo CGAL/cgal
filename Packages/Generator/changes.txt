@@ -1,5 +1,10 @@
 Generator Package: Release changes:
 ---------------------------------------------------------------------
+
+2.81 (18/01/04)
+- Rename CGAL_TYPENAME_MSVC_NULL to typename.
+
+2.80 (???)
 - added point_generators_d.h header file. This file contains 
   Random_points_in_iso_box_d class.
   Modified the doc too.

@@ -36,11 +36,9 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template < class K1, class K2,
-           class RT_Converter = NT_converter<CGAL_TYPENAME_MSVC_NULL K1::RT,
-	                                     CGAL_TYPENAME_MSVC_NULL K2::RT>,
-           class FT_Converter = NT_converter<CGAL_TYPENAME_MSVC_NULL K1::FT,
-	                                     CGAL_TYPENAME_MSVC_NULL K2::FT> >
+template <class K1, class K2,
+          class RT_Converter = NT_converter<typename K1::RT, typename K2::RT>,
+          class FT_Converter = NT_converter<typename K1::FT, typename K2::FT> >
 class Homogeneous_converter : public Enum_converter
 {
 public:
