@@ -11,7 +11,7 @@
 // release       :
 // release_date  :
 //
-// file          : include/CGAL/IA/_FPU.h
+// file          : include/CGAL/Interval_arithmetic/_FPU.h
 // revision      : 1.7
 // revision_date : 1 July 1998
 // package       : Interval Arithmetic

@@ -31,7 +31,7 @@
 #include <iostream.h>
 #include <CGAL/assertions.h>
 #include <CGAL/double.h>	// For CGAL_is_valid() and CGAL_is_finite().
-#include <CGAL/IA/_FPU.h>	// FPU rounding mode functions.
+#include <CGAL/Interval_arithmetic/_FPU.h>	// FPU rounding mode functions.
 
 
 class CGAL_Interval_nt_advanced
@@ -421,23 +421,23 @@ ostream& operator<<(ostream& os, CGAL_Interval_nt_advanced& d)
 // Finally we source the cast functions from other NTs, when necessary.
 
 #ifdef CGAL_GMPZ_H
-#include <CGAL/IA/IA_Gmpz.h>
+#include <CGAL/Interval_arithmetic/IA_Gmpz.h>
 #endif
 
 #ifdef CGAL_BIGFLOAT_H
-#include <CGAL/IA/IA_leda_bigfloat.h>
+#include <CGAL/Interval_arithmetic/IA_leda_bigfloat.h>
 #endif
 
 #ifdef CGAL_INTEGER_H
-#include <CGAL/IA/IA_leda_integer.h>
+#include <CGAL/Interval_arithmetic/IA_leda_integer.h>
 #endif
 
 #ifdef CGAL_REAL_H
-#include <CGAL/IA/IA_leda_real.h>
+#include <CGAL/Interval_arithmetic/IA_leda_real.h>
 #endif
 
 #ifdef CGAL_RATIONAL_H
-#include <CGAL/IA/IA_leda_rational.h>
+#include <CGAL/Interval_arithmetic/IA_leda_rational.h>
 #endif
 
 #endif /* CGAL_INTERVAL_ARITHMETIC_H */

@@ -11,7 +11,7 @@
 // release       :
 // release_date  :
 //
-// file          : include/CGAL/IA/IA_leda_integer.h
+// file          : include/CGAL/Interval_arithmetic/IA_leda_integer.h
 // revision      : 1.7
 // revision_date : 1 July 1998
 // package       : Interval Arithmetic

@@ -11,7 +11,7 @@
 // release       :
 // release_date  :
 //
-// file          : include/CGAL/IA/IA_Gmpz.h
+// file          : include/CGAL/Interval_arithmetic/IA_Gmpz.h
 // revision      : 1.7
 // revision_date : 1 July 1998
 // package       : Interval Arithmetic
