@@ -1,3 +1,6 @@
+2.26    (26 July 2001)
+- minor formatting changes
+
 2.25    (26 July 2001)
 - made changes necessary for manual split
 
