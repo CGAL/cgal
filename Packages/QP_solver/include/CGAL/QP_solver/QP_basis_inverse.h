@@ -81,7 +81,7 @@ class QPE_basis_inverse {
     QPE_basis_inverse( CGAL::Verbose_ostream&  verbose_ostream);
 
     // set-up
-    void  set( int n, int m, unsigned int  max_basis_size = 0);
+    void  set( int n, int m, int nr_equalities);
     
     // init
     template < class InputIterator >                            // phase I
@@ -226,8 +226,8 @@ class QPE_basis_inverse {
     // private member functions
     // ------------------------
     // set-up
-    void  set( unsigned int  max_basis_size, Tag_false);        // QP case
-    void  set( unsigned int  max_basis_size, Tag_true );        // LP case
+    void  set( Tag_false);        // QP case
+    void  set( Tag_true );        // LP case
 
     // init
     template < class InIt >                                     // QP case
@@ -317,6 +317,12 @@ class QPE_basis_inverse {
 	typename Matrix::iterator  m_it1, m_it2, p_begin, r_begin;
 	typename Row   ::iterator  x_it;
 	unsigned int      row, col;
+
+	// fill missing rows
+	for (row= 0; row< s; ++ row) {
+	    CGAL_qpe_assertion(M[row].size()==0);
+	    M[row].insert(M[row].end(), row+1, et0);
+	}
 
 	// compute new basis inverse [ upper-left part: -(Q^T * 2 D_B * Q) ]
 	// -----------------------------------------------------------------
@@ -464,6 +470,10 @@ class QPE_basis_inverse {
         unsigned int               col, k = l+b;
     
         // store entries in new row
+	if (M[s].size()==0) {
+	   // row has to be filled first
+	   M[s].insert(M[s].end(), s+1, et0);
+	}
         for (   col = 0,   row_it = M[ s].begin(),        x_it = x_l.begin();
                 col < s;
               ++col,     ++row_it,                      ++x_it              ) {
@@ -711,6 +721,10 @@ class QPE_basis_inverse {
 	CGAL_qpe_precondition(rows >= row);
 	if (rows == row) {
             M.push_back(Row(row+1, et0));
+	    // do we have to grow x_x?
+	    CGAL_qpe_precondition(x_x.size() >= row-l);
+	    if (x_x.size() == row-l)
+	       x_x.push_back(et0);
             CGAL_qpe_postcondition(M[row].size()==row+1);
 	    CGAL_qpe_debug {
                 if ( vout.verbose()) {
@@ -999,16 +1013,18 @@ transition( )
 // set-up (QP case)
 template < class ET_, class Is_LP_ >  inline
 void  QPE_basis_inverse<ET_,Is_LP_>::
-set( unsigned int  max_basis_size, Tag_false)
+set( Tag_false)
 {
     M.reserve( l);
-    for ( unsigned int i = 0; i < l; ) M.push_back( Row( ++i, et0));
+    // only allocate empty rows
+    for ( unsigned int i = 0; i < l; ++i )
+       M.push_back(Row(0, et0)); 
 }
     
 // set-up (LP case)
 template < class ET_, class Is_LP_ >  inline
 void  QPE_basis_inverse<ET_,Is_LP_>::
-set( unsigned int, Tag_true)
+set( Tag_true)
 {
     M.reserve( l);
     for ( unsigned int i = 0; i < l; ++i) M.push_back( Row( l, et0));
