@@ -983,7 +983,7 @@ CreateCoreTestDir();
 #Removing Modules directory from Installation package
 #this directory is only used to build the CGAL modules
 chdir "$RELEASEDIR/$VERSION";
-system("rm" "-rf" "Modules");
+system("rm", "-rf", "Modules");
 
 unlock;
 

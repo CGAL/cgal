@@ -1,3 +1,6 @@
+03 June 2004 Radu Ursu
+- fixed sintax error in create_internal_release
+
 02 June 2004 Radu Ursu
 - create_modules script takes modules from the Installation package
 - fixed minor bug when there are directories in the Modules directory, the 
