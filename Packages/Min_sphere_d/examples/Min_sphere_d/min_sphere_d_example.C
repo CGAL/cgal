@@ -1,15 +1,15 @@
 
-#include<CGAL/Cartesian.h>
-#include<iostream>
-#include<cstdlib>
-#include<CGAL/Random.h>
-#include<CGAL/Optimisation_d_traits_d.h>
-#include<CGAL/Min_sphere_d.h>
+#include <CGAL/Cartesian_d.h>
+#include <iostream>
+#include <cstdlib>
+#include <CGAL/Random.h>
+#include <CGAL/Optimisation_d_traits_d.h>
+#include <CGAL/Min_sphere_d.h>
 
-typedef CGAL::Cartesian<double>                R;
-typedef CGAL::Optimisation_d_traits_d<R>       Traits;
+typedef CGAL::Cartesian_d<double>              K;
+typedef CGAL::Optimisation_d_traits_d<K>       Traits;
 typedef CGAL::Min_sphere_d<Traits>             Min_sphere;
-typedef R::Point_d                             Point;
+typedef K::Point_d                             Point;
 
 const int n = 10;                        // number of points
 const int d = 5;                         // dimension of points
