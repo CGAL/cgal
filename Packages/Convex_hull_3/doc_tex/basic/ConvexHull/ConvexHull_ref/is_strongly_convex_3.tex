@@ -5,19 +5,16 @@
 
 \ccDefinition
 
-The function \ccRefName\ implements the tests described in 
-\cite{mnssssu-cgpvg-96} to 
-determine if the vertices of a given polyhedron represents a strongly convex 
-set of points or not.  
-%This test requires $O(???)$ time ??? for a polyhedron
-%with $n$ vertices.
-
+The function \ccRefName\ determines if the vertices of a given polyhedron 
+represents a strongly convex set of points or not.  A set of points is said 
+to be strongly convex if it consists of only extreme points (\textit{i.e.}, 
+vertices of the convex hull).
 
 \ccInclude{CGAL/convexity_check_3.h}
 
 \ccFunction{
-template<class Polyhedron, class Traits>
-bool is_strongly_convex_3(Polyhedron& P, 
+template<class Polyhedron_3, class Traits>
+bool is_strongly_convex_3(Polyhedron_3& P, 
                           const Traits& traits = Default_traits);
 }
 {
@@ -28,18 +25,18 @@ The equations of the facet planes of the polyhedron must have
 already been computed.
 }
 
-The default traits class is the \cgal\ \ccc{Kernel_traits_3} class,
-with the representation determined by \ccc{InputIterator::value_type}.
+The default traits class is the kernel in which the type 
+\ccc{Polyhedron_3::Point} is deinfed.
 
 \ccHeading{Requirements}
 \begin{enumerate}
-   \item \ccc{Polyhedron::Point} should be \ccc{Traits::Point_3}.
+   \item \ccc{Polyhedron_3::Point} is equivalent to \ccc{Traits::Point_3}.
    \item \ccc{Traits} is a model of the concept IsStronlyConvexTraits\_3
          %\ccIndexMainItem[c]{IsStronglyConvexTraits_3}.
-  \item \ccc{Polyhedron} must define the following types:
+  \item \ccc{Polyhedron_3} must define the following types:
         \begin{itemize}
-          \item \ccc{Polyhedron::Facet_iterator}
-          \item \ccc{Polyhedron::Vertex_iterator}
+          \item \ccc{Polyhedron_3::Facet_iterator}
+          \item \ccc{Polyhedron_3::Vertex_iterator}
         \end{itemize}
         and the following member functions:
         \begin{itemize}
@@ -48,9 +45,9 @@ with the representation determined by \ccc{InputIterator::value_type}.
           \item \ccc{vertices_begin()}
           \item \ccc{vertices_end()}
         \end{itemize}
-        The vertex type of \ccc{Polyhedron} must be a model of 
-        \ccc{CGAL::Polyhedron_Vertex};
-        the facet type must be a model of \ccc{CGAL::Polyhedron_Facet}.
+        The vertex type of \ccc{Polyhedron_3} must be 
+        \ccc{CGAL::Polyhedron_3<Traits>::Vertex};
+        the facet type must be \ccc{CGAL::Polyhedron_3<Triats>::Facet}.
 \end{enumerate}
 
 
@@ -61,4 +58,11 @@ with the representation determined by \ccc{InputIterator::value_type}.
 
 \ccIndexSubitemEnd{polyhedron}{strongly convex}
 \ccIndexSubitemEnd{strongly convex}{polyhedron}
+
+\ccImplementation
+
+This function implements the tests described in \cite{mnssssu-cgpvg-96} to 
+determine convexity and requires $O(e + f)$ time for a polyhedron with
+$e$ edges and $f$ faces.
+
 \end{ccRefFunction}

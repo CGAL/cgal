@@ -1,5 +1,5 @@
 % +------------------------------------------------------------------------+
-% | Reference manual page: convex_hull_3_from_d.tex
+% | Reference manual page: convex_hull_incremental_3.tex
 % +------------------------------------------------------------------------+
 % | 09.05.2001   Susan Hert, Stefan Schirra, Michael Seel
 % | Package: Convex_hull_3
@@ -7,24 +7,24 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefFunction}{convex_hull_3_from_d}  
+\begin{ccRefFunction}{convex_hull_incremental_3}  
 \ccIndexMainItemBegin{convex hull, 3D}
-\ccIndexSubitemBegin{convex hull, 3D}{randomized incremental}
+\ccIndexSubitemBegin{convex hull, 3D}{incremental}
 
 \ccDefinition
   
 The function \ccRefName\ computes the convex hull polyhedron from a set
-of given three-dimensional points.  This function uses the $d$-dimensional
-convex hull randomized incremental construction algorithm 
-\cite{cms:fourresults-93}
-with $d$ fixed to 3.  The algorithm requires $O(n^2)$ time.
+of given three-dimensional points.  
 
-\ccInclude{CGAL/convex_hull_3_from_d.h}
+
+\ccInclude{CGAL/convex_hull_incremental_3.h}
 
 \ccFunction{template <class InputIterator, class Polyhedron>
             void
-            convex_hull_3_from_d(InputIterator first, InputIterator beyond, 
-                                 Polyhedron& P, bool test_correctness = false);
+            convex_hull_incremental_3(InputIterator first, 
+                                                 InputIterator beyond, 
+                                                 Polyhedron& P, 
+                                                 bool test_correctness = false);
             }
             {computes the convex hull polyhedron 
             of the points in the range [\ccc{first},\ccc{beyond})
@@ -50,16 +50,27 @@ with $d$ fixed to 3.  The algorithm requires $O(n^2)$ time.
 \ccSeeAlso
 
 \ccRefIdfierPage{CGAL::convex_hull_3} \\
-\ccRefIdfierPage{CGAL::convex_hull_points_2} 
+\ccRefIdfierPage{CGAL::convex_hull_2} 
+
+\ccImplementation
+
+This function uses the $d$-dimensional convex hull incremental construction 
+algorithm \cite{cms:fourresults-93}
+with $d$ fixed to 3.  The algorithm requires $O(n^2)$ time in the
+worst case and $O(n \log n)$ expected time.
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Convex_hull_d<R>}
 
 \ccExample
 
 The following example computes the convex hull of a set of 250 random 
 points chosen uniformly in a sphere of radius 100.
 
-\ccIncludeExampleCode{Convex_hull_3/convex_hull_3_from_d_ex.C}
+\ccIncludeExampleCode{Convex_hull_3/incremental_hull_3_ex.C}
 
-\ccIndexSubitemEnd{convex hull, 3D}{randomized incremental}
+\ccIndexSubitemEnd{convex hull, 3D}{incremental}
 \ccIndexMainItemEnd{convex hull, 3D}
 \end{ccRefFunction}
 

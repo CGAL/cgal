@@ -17,12 +17,13 @@ may also be possible.
 \ccFunction{
 template <class InputIterator, class Polyhedron_3, class Traits>
 void convex_hull_3(InputIterator first, InputIterator last,
-                    Polyhedron_3& polyhedron,
+                    Polyhedron_3& P,
                     const Traits& ch_traits = Default_traits);
 }
 {
 computes the convex hull of the set of points in the range
-[\ccc{first}, \ccc{last}).  The result is stored in \ccc{polyhedron}
+[\ccc{first}, \ccc{last}).  The polyhedron \ccc{P} is cleared, then
+the convex hull is stored in \ccc{P} 
 and the plane equations of each face are computed.
 \ccPrecond: There are at least four points in the range 
 [\ccc{first}, \ccc{last}) not all of which are collinear.
@@ -46,7 +47,9 @@ Both functions require the following:
 \begin{enumerate}
    \item \ccc{InputIterator::value_type} is equivalent to \ccc{Traits::Point_3}.
    \item \ccc{Traits} is a model of the concept ConvexHullTraits\_3
-         \ccIndexMainItem[c]{ConvexHullTraits_3}.
+         \ccIndexMainItem[c]{ConvexHullTraits_3}.  When it is known that
+         the input points are not all coplanar, the types \ccc{Traits_xy}, 
+         \ccc{Traits_yx}, and \ccc{Traits_yz} need not be provided.
          For the purposes of checking the postcondition that the convex hull
          is valid, \ccc{Traits} should also be a model of the concept
          IsStronglyConvexTraits\_3.
@@ -66,13 +69,13 @@ and for the second, it is required that
 
 The default traits class for both versions of \ccc{convex_hull_3} is 
 \ccc{Convex_hull_traits_3<R>},%
-with the representation determined by \ccc{InputIterator::value_type}.
+with the representation \ccc{R} determined by \ccc{InputIterator::value_type}.
 
 \ccSeeAlso
 
-%\ccRefIdfierPage{CGAL::convex_hull_3_from_d} \\
+\ccRefIdfierPage{CGAL::convex_hull_incremental_3} \\
 \ccRefIdfierPage{CGAL::ch_eddy}  \\
-\ccRefIdfierPage{CGAL::convex_hull_points_2} 
+\ccRefIdfierPage{CGAL::convex_hull_2} 
 
 \ccImplementation
 The algorithm implemented by these functions is the quickhull algorithm of 
@@ -86,7 +89,7 @@ hull is a segment or a polyhedron.  Notice that the traits class is not
 necessary in the call to \ccc{convex_hull_3} but is used in the definition
 of \ccc{Polyhedron_3}.
 
-\ccIncludeExampleCode{Convex_hull_3/ch_quickhull_3_ex.C}
+\ccIncludeExampleCode{Convex_hull_3/quickhull_3_ex.C}
 
 \ccIndexSubitemEnd{convex hull, 3D}{quickhull}
 \ccIndexMainItemEnd{quickhull, 3D}
