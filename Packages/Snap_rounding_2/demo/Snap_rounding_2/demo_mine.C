@@ -42,6 +42,7 @@ typedef CGAL::Window_stream                            Window_stream;
 #define MAX_X 50
 #define MAX_Y 50
 #define PRECISION 0.5
+#define DEF_DELTA 1
 
 Number_Type min(const Number_Type &p,const Number_Type &q,Number_Type &r)
 {
@@ -310,7 +311,7 @@ int main(int argc,char *argv[])
     y2 = MAX_Y;
     prec = PRECISION;
     // @@@@ next
-    delta = 2;
+    delta = DEF_DELTA;
   } else {
     // @@@@ next (delta)
     read_data(argc,argv,prec,seg_list,delta);
@@ -470,17 +471,22 @@ int main(int argc,char *argv[])
     } else if(mouse_input == 16) {
       prec = prec * 2;
       s.change_pixel_size(prec);
+      delta = delta * 2;
+      s.change_delta(delta);
       if(prec == 2)
         W.disable_button(16);
       W.enable_button(17);
     } else if(mouse_input == 17) {
       prec = prec / 2;
       s.change_pixel_size(prec);
+      delta = delta / 2;
+      s.change_delta(delta);
       if(prec < 1.0 / 5)
         W.disable_button(17);
       W.enable_button(16);
     } else if(mouse_input == 18) {
       prec = PRECISION;
+      delta = DEF_DELTA;
       s.change_pixel_size(prec);
       W.enable_button(16);
       W.enable_button(17);
