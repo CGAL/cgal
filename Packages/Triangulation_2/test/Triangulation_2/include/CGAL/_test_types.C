@@ -354,7 +354,6 @@ public:
   typedef Triangulation_test_segment   Segment_2;
   typedef Triangulation_test_line      Line_2;
   typedef Triangulation_test_ray       Ray_2;
-  typedef Triangulation_test_direction Direction_2;
   typedef Triangulation_test_triangle  Triangle_2;
 
   typedef Triangulation_test_Compare_x_2    Compare_x_2;

@@ -29,7 +29,6 @@
 #include <CGAL/Segment_2.h>
 #include <CGAL/Triangle_2.h>
 #include <CGAL/Line_2.h>
-#include <CGAL/Direction_2.h>
 #include <CGAL/Ray_2.h>
 
 #include <CGAL/Triangulation_short_names_2.h>
