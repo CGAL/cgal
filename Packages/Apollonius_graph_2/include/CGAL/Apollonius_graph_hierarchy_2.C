@@ -72,7 +72,8 @@ Apollonius_graph_hierarchy_2<Gt,StoreHidden,Agds>::
 copy
 (const Apollonius_graph_hierarchy_2<Gt,StoreHidden,Agds> &agh)
 {
-  std::map< const void*, void*, std::less<const void*> > V;
+  std::map< const Vertex_handle, Vertex_handle,
+    std::less<const Vertex_handle> > V;
   for(int i = 0; i < ag_hierarchy_2__maxlevel; ++i) {
     //      hierarchy[i]->copy_triangulation(*awvd.hierarchy[i]);
     *(hierarchy[i]) = *agh.hierarchy[i];
@@ -82,7 +83,7 @@ copy
   // compute a map at lower level
   for( Finite_vertices_iterator it = hierarchy[0]->finite_vertices_begin(); 
        it != hierarchy[0]->finite_vertices_end(); ++it) {
-    if (it->up()) V[ ((Vertex*)(it->up()))->down() ] = &(*it);
+    if (it->up()) V[ it->up()->down() ] = it;
   }
 
   for(int i = 1; i < ag_hierarchy_2__maxlevel; ++i) {
@@ -91,9 +92,9 @@ copy
       // down pointer goes in original instead in copied triangulation
       it->set_down(V[it->down()]);
       // make reverse link
-      ((Vertex*)(it->down()))->set_up( &(*it) );
+      it->down()->set_up( it );
       // make map for next level
-      if (it->up()) V[ ((Vertex*)(it->up()))->down() ] = &(*it);
+      if (it->up()) V[ it->up()->down() ] = it;
     }
   }
 }
@@ -145,8 +146,7 @@ is_valid(bool verbose, int level) const
   for(int i = 1; i < ag_hierarchy_2__maxlevel; ++i) {
     for( Finite_vertices_iterator it = hierarchy[i]->finite_vertices_begin(); 
 	 it != hierarchy[i]->finite_vertices_end(); ++it) {
-      result = result && 
-	( ((Vertex*)((Vertex*)it->down())->up()) ==  &(*it) );
+      result = result && ( it->down()->up() ==  it );
     }
   }
   return result;
@@ -188,8 +188,8 @@ insert(const Weighted_point_2 &p)
     int level = 1;
     while (level <= vertex_level ){
       vertex = hierarchy[level]->insert(p, vnear[level]);
-      vertex->set_down((void *) &*previous); // link with level above
-      previous->set_up((void *) &*vertex);
+      vertex->set_down(previous); // link with level above
+      previous->set_up(vertex);
       previous = vertex;
       level++;
     }
@@ -254,8 +254,8 @@ insert(const Weighted_point_2 &p)
     int level = 1;
     while (level <= vertex_level ){
       vertex = hierarchy[level]->insert(p, vnear[level]);
-      vertex->set_down((void *) &*previous); // link with level above
-      previous->set_up((void *) &*vertex);
+      vertex->set_down(previous); // link with level above
+      previous->set_up(vertex);
       previous = vertex;
       level++;
     }
@@ -286,18 +286,18 @@ insert(const Weighted_point_2 &p)
     } else {
       typename Apollonius_graph_base::Vertex_map::iterator it;
       for (it = v_hidden.begin(); it != v_hidden.end(); it++) {
-	Vertex_handle vh = (*it).first;
-	Vertex* v = static_cast<Vertex*>( &(*vh) );
-	void * u = v->up();
+	Vertex_handle v = (*it).first;
+	//	Vertex* v = static_cast<Vertex*>( &(*vh) );
+	Vertex_handle u = v->up();
 	if ( u != NULL ) {
-	  v = (Vertex*)u;
+	  v = u;
 	  u = v->up();
 	  int l = 1;
 	  while ( true ) {
 	    hierarchy[l++]->remove(v);
-	    if (!u) break; 
+	    if (u == NULL) break; 
 	    if(l >= ag_hierarchy_2__maxlevel) { break; }
-	    v = (Vertex*)u;
+	    v = u;
 	    u = v->up();
 	  }
 	}
@@ -323,8 +323,8 @@ insert(const Weighted_point_2 &p)
   int level = 1;
   while (level <= vertex_level ){
     vertex = hierarchy[level]->insert(p, vnear[level]);
-    vertex->set_down((void *) &*previous); // link with level above
-    previous->set_up((void *) &*vertex);
+    vertex->set_down(previous); // link with level above
+    previous->set_up(vertex);
     previous = vertex;
     level++;
   }
@@ -350,13 +350,13 @@ remove(Vertex_handle v)
   v->clear_hidden_weighted_point_container();
 
   // do the actual removal
-  void * u = v->up();
+  Vertex_handle u = v->up();
   int l = 0;
   while ( true ) {
     hierarchy[l++]->remove(v);
-    if (!u) break; 
+    if (u == NULL) break; 
     if(l >= ag_hierarchy_2__maxlevel) break;
-    v = (Vertex*)u;
+    v = u;
     u = v->up();
   }
 
@@ -418,7 +418,7 @@ nearest_neighbor(const Point_2& p,
 
     CGAL_assertion( !hierarchy[level]->is_infinite(vnear[level]) );
     // go at the same vertex on level below
-    nearest = (Vertex*)( nearest->down() );
+    nearest =  nearest->down();
     --level;
   }
   vnear[0] =

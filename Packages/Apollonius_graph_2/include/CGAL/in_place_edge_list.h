@@ -64,25 +64,21 @@ public:
 
   inline Edge next(const Edge& e) const {
     CGAL_triangulation_precondition( is_in_list(e) );
-    std::pair<void*, int> _next = e.first->next(e.second);
-    Face* fptr = static_cast<Face*>(_next.first);
-    return Edge(Face_handle(fptr), _next.second);
+    return e.first->next(e.second);
   }
 
   inline Edge previous(const Edge& e) const {
     CGAL_triangulation_precondition( is_in_list(e) );
-    std::pair<void*, int> _prev = e.first->previous(e.second);
-    Face* fptr = static_cast<Face*>(_prev.first);
-    return Edge(Face_handle(fptr), _prev.second);
+    return e.first->previous(e.second);
   }
 
   inline void set_next(const Edge& e, const Edge& next) {
-    std::pair<void*,int> _next(&(*next.first), next.second);
+    Edge _next(next.first, next.second);
     e.first->set_next(e.second, _next);
   }
 
   inline void set_previous(const Edge& e, const Edge& prev) {
-    std::pair<void*,int> _prev(&(*prev.first), prev.second);
+    Edge _prev(prev.first, prev.second);
     e.first->set_previous(e.second, _prev);
   }
 

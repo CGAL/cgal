@@ -32,20 +32,17 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template <class Vb, class Fb>
+template <class Vb = Triangulation_ds_vertex_base_2<>,
+	  class Fb = Triangulation_ds_face_base_2<> >
 class Apollonius_graph_data_structure_2
   : public Triangulation_data_structure_2<Vb, Fb>
 {
-  //private:
 public:
-  typedef Triangulation_data_structure_2<Vb, Fb>       Tds_base;
-  typedef typename Tds_base::Face                      Face;
-  typedef typename Tds_base::Vertex                    Vertex;
-
-public:
-  typedef typename Tds_base::Face_handle               Face_handle;
-  typedef typename Tds_base::Vertex_handle             Vertex_handle;
   typedef Apollonius_graph_data_structure_2<Vb, Fb>    Tds;
+  typedef Triangulation_data_structure_2<Vb, Fb>       Tds_base;
+
+  typedef typename Vb::template Rebind_TDS<Tds>::Other  Vertex_base;
+  typedef typename Fb::template Rebind_TDS<Tds>::Other  Face_base;
 
 
 public:
@@ -104,9 +101,12 @@ public:
   }
 #endif
   
-  Vertex_handle
-  insert_degree_2(Face_handle f, int i)
+  typename Tds::Vertex_handle
+  insert_degree_2(typename Tds::Face_handle f, int i)
   {
+    typedef typename Tds::Vertex_handle Vertex_handle;
+    typedef typename Tds::Face_handle   Face_handle;
+
     Face_handle g = f->neighbor(i);
     int j = f->mirror_index(i);
 
@@ -185,8 +185,11 @@ public:
 #endif
 
   void
-  remove_degree_2(Vertex_handle v)
+  remove_degree_2(typename Tds::Vertex_handle v)
   {
+    typedef typename Tds::Vertex_handle Vertex_handle;
+    typedef typename Tds::Face_handle   Face_handle;
+
     CGAL_precondition( v->degree() == 2 );
 
     Face_handle f1 = v->face();
@@ -220,7 +223,7 @@ public:
     delete_vertex(v);
   }
 
-
+#if 0
   inline
   Vertex*
   join_vertices(Face* f, int i, Vertex* v)
@@ -383,6 +386,7 @@ public:
   {
     return join_vertices(f, i, f->vertex( ccw(i) ));
   }
+#endif
 };
 
 

@@ -34,19 +34,34 @@
 CGAL_BEGIN_NAMESPACE
 
 
-template <class Gt, bool StoreHidden = true>
+template <class Gt,
+	  bool StoreHidden = true,
+	  class Vb = Triangulation_ds_vertex_base_2<> >
 class Apollonius_graph_vertex_base_2
-  : private Triangulation_vertex_base_2<Gt>
+  : private Triangulation_vertex_base_2<Gt,Vb>
 {
+private:
+  typedef typename Vb::Triangulation_data_structure   AGDS;
 public:
   // TYPES
   //------
-  typedef Gt                               Geom_traits;
-  typedef typename Gt::Weighted_point_2    Weighted_point_2;
+  typedef Gt                             Geom_traits;
+  typedef typename Gt::Weighted_point_2  Weighted_point_2;
+  typedef AGDS	                         Apollonius_graph_data_structure;
+  typedef typename AGDS::Face_handle     Face_handle;
+  typedef typename AGDS::Vertex_handle   Vertex_handle;
+
+  template < typename AGDS2 >
+  struct Rebind_TDS {
+    typedef typename Vb::template Rebind_TDS<AGDS2>::Other      Vb2;
+    typedef Apollonius_graph_vertex_base_2<Gt,StoreHidden,Vb2>  Other;
+  };
+
+
 private:
   // local types
-  typedef std::list<Weighted_point_2>      Container;
-  typedef Triangulation_vertex_base_2<Gt>  Vbase;
+  typedef std::list<Weighted_point_2>         Container;
+  typedef Triangulation_vertex_base_2<Gt,Vb>  Vbase;
 public:
   // TYPES (continued)
   //------------------
@@ -71,7 +86,7 @@ public:
   //---------------
   inline Weighted_point_2 point() const { return Vbase::point(); }
 
-  inline void* face() const { return Vbase::face(); }
+  inline Face_handle face() const { return Vbase::face(); }
 
   inline unsigned int number_of_hidden_weighted_points() const {
     return weighted_point_list.size();
@@ -94,7 +109,7 @@ public:
     Vbase::set_point(p);
   }
 
-  inline void set_face(void* f) { Vbase::set_face(f); }
+  inline void set_face(Face_handle f) { Vbase::set_face(f); }
 
   inline
   void add_hidden_weighted_point(const Weighted_point_2& p)

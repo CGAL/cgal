@@ -27,24 +27,33 @@
 #ifndef CGAL_APOLLONIUS_GRAPH_FACE_BASE_2_H
 #define CGAL_APOLLONIUS_GRAPH_FACE_BASE_2_H
 
-#include <CGAL/Triangulation_face_base_2.h>
+#include <CGAL/Triangulation_ds_face_base_2.h>
 #include <CGAL/triangulation_assertions.h>
+#include <CGAL/Dummy_tds_2.h>
 
 CGAL_BEGIN_NAMESPACE
 
 
-template <class Gt>
+template <class AGDS = void >
 class Apollonius_graph_face_base_2
-  :  public Triangulation_face_base_2<Gt>
+  :  public Triangulation_ds_face_base_2<AGDS>
 {
 protected:
   // local types
-  typedef Triangulation_face_base_2<Gt>     Fbase;
+  typedef Triangulation_ds_face_base_2<AGDS>     Fbase;
 
 public:
   // TYPES
   //------
-  typedef Apollonius_graph_face_base_2<Gt>  Face_base;
+  typedef AGDS                          Apollonius_graph_data_structure;
+  typedef typename AGDS::Vertex_handle  Vertex_handle;
+  typedef typename AGDS::Face_handle    Face_handle;
+  typedef typename AGDS::Edge           Edge;
+
+  // Borland requires this.
+  template <typename AGDS2>
+  struct Rebind_TDS { typedef Apollonius_graph_face_base_2<AGDS2> Other; }; 
+
 
 public:
   // CREATION
@@ -52,12 +61,18 @@ public:
   Apollonius_graph_face_base_2() : Fbase()
   { init(); }
 
-  Apollonius_graph_face_base_2(void* v0, void* v1, void* v2)
+  Apollonius_graph_face_base_2(Vertex_handle v0,
+			       Vertex_handle v1,
+			       Vertex_handle v2)
     : Fbase(v0,v1,v2)
   { init(); }
 
-  Apollonius_graph_face_base_2(void* v0, void* v1, void* v2,
-			       void* n0, void* n1, void* n2)
+  Apollonius_graph_face_base_2(Vertex_handle v0,
+			       Vertex_handle v1,
+			       Vertex_handle v2,
+			       Face_handle n0,
+			       Face_handle n1,
+			       Face_handle n2)
     : Fbase(v0,v1,v2,n0,n1,n2)
   { init(); }
 
@@ -71,7 +86,7 @@ public:
 	    prev_face_in_list[i] != NULL);
   }
 
-  inline void set_next(int i, const std::pair<void*,int>& next)
+  inline void set_next(int i, const Edge& next)
   {
     CGAL_triangulation_precondition( i >= 0 && i <= 2 );
     CGAL_triangulation_precondition( next.first == NULL ||
@@ -81,7 +96,7 @@ public:
     next_indx_in_list[i] = next.second;
   }
 
-  inline void set_previous(int i, const std::pair<void*,int>& prev)
+  inline void set_previous(int i, const Edge&  prev)
   {
     CGAL_triangulation_precondition( i >= 0 && i <= 2 );
     CGAL_triangulation_precondition( prev.first == NULL ||
@@ -91,38 +106,51 @@ public:
     prev_indx_in_list[i] = prev.second;
   }
 
-  inline std::pair<void*, int> next(int i) const
+  inline Edge next(int i) const
   {
     CGAL_triangulation_precondition( i >= 0 && i <= 2 );
-    return std::pair<void*, int>(next_face_in_list[i],
-				 next_indx_in_list[i]);
+    return Edge(next_face_in_list[i], next_indx_in_list[i]);
   }
 
-  inline std::pair<void*, int> previous(int i) const
+  inline Edge previous(int i) const
   {
     CGAL_triangulation_precondition( i >= 0 && i <= 2 );
-    return std::pair<void*, int>(prev_face_in_list[i],
-				 prev_indx_in_list[i]);
+    return Edge(prev_face_in_list[i], prev_indx_in_list[i]);
   }
 
 
 protected:
   // class variables
-  void* next_face_in_list[3];
-  int   next_indx_in_list[3];
-  void* prev_face_in_list[3];
-  int   prev_indx_in_list[3];
+  Face_handle next_face_in_list[3];
+  int         next_indx_in_list[3];
+  Face_handle prev_face_in_list[3];
+  int         prev_indx_in_list[3];
 
 protected:
   // initialization of in-place list pointers
   inline void init() {
     for (int i = 0; i < 3; i++) {
-      next_face_in_list[i] = NULL;
-      prev_face_in_list[i] = NULL;
+      next_face_in_list[i] = Face_handle(NULL);
+      prev_face_in_list[i] = Face_handle(NULL);
     }
   }
 
 };
+
+
+
+// Specialisation for void.
+template <>
+class Apollonius_graph_face_base_2<void>
+{
+public:
+  typedef Dummy_tds_2 Apollonius_graph_data_structure;
+  template <typename AGDS2>
+  struct Rebind_TDS { typedef Apollonius_graph_face_base_2<AGDS2> Other; };
+};
+
+
+
 
 CGAL_END_NAMESPACE 
 

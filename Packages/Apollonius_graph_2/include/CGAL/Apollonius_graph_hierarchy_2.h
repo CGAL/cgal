@@ -51,7 +51,7 @@ template < class Gt, bool StoreHidden = true,
   class Agds = Apollonius_graph_data_structure_2<
     Triangulation_hierarchy_vertex_base_2<
        Apollonius_graph_vertex_base_2<Gt,StoreHidden> >,
-    Apollonius_graph_face_base_2<Gt> > >
+    Apollonius_graph_face_base_2<> > >
 class Apollonius_graph_hierarchy_2
   : public Apollonius_graph_2< Gt, StoreHidden, Agds >
 {

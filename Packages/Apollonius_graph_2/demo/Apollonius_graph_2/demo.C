@@ -149,7 +149,7 @@ private slots:
 #else
 	if ( &(*v) != NULL ) {
 	  ag.remove(v);
-	  ag.is_valid(false,1);
+	  assert( ag.is_valid(false,1) );
 	  //	  std::cout << "--------" << std::endl;
 	}
 #endif
@@ -166,7 +166,7 @@ private slots:
       Weighted_point_2 wp(p, Weight(0));
       ag.insert(wp);
     }
-    ag.is_valid(false, 1);
+    assert( ag.is_valid(false, 1) );
     //    std::cout << "--------" << std::endl;
     //      *widget << CGAL::RED << c;
     widget->redraw();
@@ -225,7 +225,7 @@ private slots:
       }
       //      std::cout << "\r" << counter 
       //		<< " sites haved been inserted... Done!" << std::endl;
-      ag.is_valid(false, 1);
+      assert( ag.is_valid(false, 1) );
       widget->redraw();
 #else
       for (int i = 0; i < n - 1; i++) {
