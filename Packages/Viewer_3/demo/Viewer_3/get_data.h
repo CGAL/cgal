@@ -3,6 +3,7 @@
 #include <CGAL/Triangulation_3.h>
 #include <CGAL/Triangulation_geom_traits_3.h>
 #include <CGAL/Delaunay_triangulation_3.h>
+#include <CGAL/Viewer_stream.h>
 #include <CGAL/facet_object.h>
 
 typedef CGAL::Cartesian<double> rep_t;

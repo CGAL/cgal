@@ -1,6 +1,5 @@
 
 #include "get_data.h"
-#include <CGAL/Viewer_stream.h>
 
 typedef CGAL::Point_3<rep_t> point_t;
 typedef CGAL::Tetrahedron_3<rep_t> tetra;
@@ -37,4 +36,6 @@ int main(int argc, char *argv[])
   W.display();
   pthread_join(W.get_window_thread(), NULL);
   //  W.main_loop();
+  std::cerr << "done." << std::endl;
+  return 0;
 }
