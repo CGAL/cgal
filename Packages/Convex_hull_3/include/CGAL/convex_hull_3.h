@@ -199,7 +199,7 @@ farthest_outside_point(Facet_handle f_handle, std::list<Point>& outside_set,
 
    typename Traits::Plane_3 plane;
    get_plane(plane, f_handle);
-   CGAL_assertion(!outside_set.empty());
+   CGAL_ch_assertion(!outside_set.empty());
    typename Traits::Less_signed_distance_to_plane_3 less_dist_to_plane =
             traits.less_signed_distance_to_plane_3_object();
    Outside_set_iterator farthest_it =
@@ -324,7 +324,7 @@ ch_quickhull_3_scan(
      cout << "farthest point is in red" << endl;
      char ch;
      cin >> ch;
-     assert (P.is_valid(true));
+     CGAL_ch_assertion(P.is_valid(true));
      window.clear();
 #endif
 
@@ -354,27 +354,27 @@ ch_quickhull_3_scan(
           hole_halfedge != P.halfedges_end() && !(*hole_halfedge).is_border();
           hole_halfedge++) 
      {}
-     CGAL_assertion(hole_halfedge->is_border());
-     CGAL_assertion(hole_halfedge->next()->is_border());
+     CGAL_ch_assertion(hole_halfedge->is_border());
+     CGAL_ch_assertion(hole_halfedge->next()->is_border());
      // add a new facet and vertex to the surface.  This is the first
      // new facet to be added.
      new_pt_halfedge = P.add_vertex_and_facet_to_border(hole_halfedge, 
                                                       (*hole_halfedge).next());
      // associate the farthest point with the new vertex. 
      (*(*new_pt_halfedge).vertex()).point() = farthest_pt;
-     CGAL_assertion( !new_pt_halfedge->is_border() );
-     CGAL_assertion( new_pt_halfedge->opposite()->is_border() );
+     CGAL_ch_assertion( !new_pt_halfedge->is_border() );
+     CGAL_ch_assertion( new_pt_halfedge->opposite()->is_border() );
 
      std::list<Facet_handle>  new_facets;
      new_facets.push_back(new_pt_halfedge->facet());
      Halfedge_handle start_hole_halfedge = new_pt_halfedge->opposite()->prev();
-     CGAL_assertion( start_hole_halfedge->is_border() );
-     CGAL_assertion( start_hole_halfedge->vertex()->point() == farthest_pt );
+     CGAL_ch_assertion( start_hole_halfedge->is_border() );
+     CGAL_ch_assertion( start_hole_halfedge->vertex()->point() == farthest_pt);
 
      // need to move to second next halfedge to get to a point where a 
      // triangular facet can be created
      Halfedge_handle curr_halfedge = start_hole_halfedge->next()->next();
-     CGAL_assertion( curr_halfedge->is_border() );
+     CGAL_ch_assertion( curr_halfedge->is_border() );
 
      Halfedge_handle new_halfedge;
 
@@ -384,15 +384,15 @@ ch_quickhull_3_scan(
      {
         new_halfedge = 
                P.add_facet_to_border(start_hole_halfedge, curr_halfedge);
-        CGAL_assertion( !new_halfedge->is_border() );
-        CGAL_assertion( new_halfedge->opposite()->is_border() );
+        CGAL_ch_assertion( !new_halfedge->is_border() );
+        CGAL_ch_assertion( new_halfedge->opposite()->is_border() );
         new_facets.push_back(new_halfedge->facet());
 
         // once the new facet is added curr->next() will be the next halfedge
         // on this facet (i.e., not a border halfedge), so the next border
         // halfedge will be the one after the opposite of the new halfedge
         curr_halfedge = new_halfedge->opposite()->next();
-        CGAL_assertion( curr_halfedge->is_border() );
+        CGAL_ch_assertion( curr_halfedge->is_border() );
      }
      // fill in the last triangular hole with a facet
      new_halfedge = P.fill_hole(curr_halfedge);
@@ -403,7 +403,7 @@ ch_quickhull_3_scan(
      cout << "after filling hole" << endl;
      char c;
      cin >> c;
-     assert (P.is_valid(true));
+     CGAL_ch_assertion(P.is_valid(true));
 #endif
 
      // now partition the set of outside set points among the new facets.
