@@ -344,7 +344,7 @@ template < class R >
 std::istream &
 operator>>(std::istream& is, Iso_cuboidC3<R CGAL_CTAG>& r)
 {
-  Iso_cuboidC3<R CGAL_CTAG>::Point_3 p, q;
+  typename Iso_cuboidC3<R CGAL_CTAG>::Point_3 p, q;
   is >> p >> q;
   if (is)
       r = Iso_cuboidC3<R CGAL_CTAG>(p, q);
