@@ -32,7 +32,7 @@ template <class _Poly> // P should be a class type of polyhedron
 class Polyhedron_memory_builder : 
   public CGAL::Modifier_base<typename _Poly::HalfedgeDS> {
 protected:
-  typedef _Poly                                         Polyhedron;
+  typedef _Poly                                        Polyhedron;
 
   typedef typename Polyhedron::Traits                  Traits;
   typedef typename Traits::Kernel                      Kernel;
@@ -41,7 +41,7 @@ protected:
   typedef typename Polyhedron::Point_3                 Point;
   typedef typename Kernel::FT                          FT;
 
-  typedef CGAL::Polyhedron_incremental_builder_3<HDS>   PIB;
+  typedef CGAL::Polyhedron_incremental_builder_3<HDS>  PIB;
 
 public:
   ///
