@@ -1,3 +1,8 @@
+version 1.15 [af]
+- removed some coordiante accesses
+- removed new/delete pairs for local variables
+- removed large comments
+
 version 1.13 [af]
 - changed option for diff in cgal_test, so that it ignores whitespace
 
