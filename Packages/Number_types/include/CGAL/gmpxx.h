@@ -58,11 +58,11 @@ struct Number_type_traits<mpf_class> {
 template <>
 struct Rational_traits<mpq_class> {
   typedef mpz_class RT;
- RT numerator   (const mpq_class & r) const { return r.num_ref(); }
- RT denominator (const mpq_class & r) const { return r.den_ref(); }
+  RT numerator   (const mpq_class & r) const { return r.get_num(); }
+  RT denominator (const mpq_class & r) const { return r.get_den(); }
 
- mpq_class make_rational(const RT & n, const RT & d) const
- { return mpq_class(n, d); } 
+  mpq_class make_rational(const RT & n, const RT & d) const
+  { return mpq_class(n, d); } 
 };
 
 inline

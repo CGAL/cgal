@@ -1,3 +1,6 @@
+4.67      (5 October 02)
+- Rational_traits<mpq_class> didn't compile...
+
 4.66      (5 September 02)
 - forgot this entry for 4.65
 - added a construction of an arbitrary size integer from a double
