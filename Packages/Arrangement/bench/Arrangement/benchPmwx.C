@@ -7,28 +7,22 @@
 // Kernel:
 #if defined(USE_LEDA_KERNEL)
 #include <CEP/Leda_rat_kernel/leda_rat_kernel_traits.h>
-#else
-#if defined(USE_MY_KERNEL)
+#elif defined(USE_MY_KERNEL)
 #include <CGAL/Pm_segment_traits_leda_kernel_2.h>
 #else
 #include <CGAL/Cartesian.h>
-#endif
 #endif
 
 // Traits:
 #if defined(USE_CONIC_TRAITS)
 #include <CGAL/Arr_conic_traits_2.h>
 #include <CGAL/IO/Conic_arc_2_Window_stream.h>
-#else
-#if defined(USE_LEDA_SEGMENT_TRAITS)
+#elif defined(USE_LEDA_SEGMENT_TRAITS)
 #include <CGAL/Arr_leda_segment_traits_2.h>
-#else
-#if defined(USE_CACHED_TRAITS)
+#elif defined(USE_CACHED_TRAITS)
 #include <CGAL/Arr_segment_cached_traits_2.h>
 #else
 #include <CGAL/Arr_segment_traits_2.h>
-#endif
-#endif
 #endif
 
 #include <CGAL/Pm_default_dcel.h>
@@ -62,19 +56,13 @@
 #if defined(USE_LEDA_KERNEL)
 typedef CGAL::leda_rat_kernel_traits                    Kernel;
 #define KERNEL_TYPE "Leda"
-#else
-
-#if defined(USE_MY_KERNEL)
+#elif defined(USE_MY_KERNEL)
 typedef CGAL::Pm_segment_traits_leda_kernel_2           Kernel;
 #define KERNEL_TYPE "Partial Leda"
 #else
-
 typedef CGAL::Cartesian<WNT>                            Kernel;
 #define KERNEL_TYPE "Cartesian"
-
 #endif
-#endif
-
 
 #if defined(USE_CONIC_TRAITS)
 typedef CGAL::Arr_conic_traits_2<Kernel>                Traits;
@@ -83,26 +71,17 @@ typedef CGAL::Arr_conic_traits_2<Kernel>                Traits;
 #else
 #define TRAITS_TYPE "Conics"
 #endif
-#else
-
-#if defined(USE_LEDA_SEGMENT_TRAITS)
+#elif defined(USE_LEDA_SEGMENT_TRAITS)
 typedef CGAL::Arr_leda_segment_traits_2<Kernel>         Traits;
 #define TRAITS_TYPE "Leda Segments"
-#else
-
-#if defined(USE_CACHED_TRAITS)
+#elif defined(USE_CACHED_TRAITS)
 typedef CGAL::Arr_segment_cached_traits_2<Kernel>       Traits;
 #define TRAITS_TYPE "Cached Segments"
-#else
-#if defined(USE_CACHED_TRAITS)
+#elif defined(USE_CACHED_TRAITS)
 typedef CGAL::Arr_segment_cached_traits_2<Kernel>       Traits;
-
 #else
 typedef CGAL::Arr_segment_traits_2<Kernel>              Traits;
 #define TRAITS_TYPE "Segments"
-
-#endif
-#endif
 #endif
 
 typedef CGAL::Pm_default_dcel<Traits>                   Dcel;
@@ -120,37 +99,50 @@ typedef CGAL::Bench_parse_args::TypeId                  TypeId;
 typedef CGAL::Bench_parse_args::StrategyId              StrategyId;
 typedef CGAL::Bench_parse_args::FormatId                FormatId;
 
-#if defined(USE_CACHED_TRAITS)
-inline CGAL::Window_stream & operator<<(CGAL::Window_stream & os,
-                                        const Curve & curve)
-{
-  os << static_cast<Kernel::Segment_2>(curve);
-  return os;
-}
-#endif
-
 #if defined(USE_LEDA_KERNEL) || defined(USE_MY_KERNEL)
 inline CGAL::Window_stream & operator<<(CGAL::Window_stream & os,
                                         const Point & p)
 { return os << leda_point(p.xcoordD(), p.ycoordD()); } 
 
+#if defined(USE_CACHED_TRAITS)
+inline CGAL::Window_stream & operator<<(CGAL::Window_stream & os,
+                                        const Curve & curve)
+{
+  Kernel::Segment_2 seg = static_cast<Kernel::Segment_2>(curve);
+  os <<  leda_segment(seg.xcoord1D(), seg.ycoord1D(),
+                      seg.xcoord2D(), seg.ycoord2D());
+  return os;
+}
+#else
 inline CGAL::Window_stream & operator<<(CGAL::Window_stream & os,
                                         const Kernel::Segment_2 & seg)
 {
   return os << leda_segment(seg.xcoord1D(), seg.ycoord1D(),
                             seg.xcoord2D(), seg.ycoord2D());
-
+  return os;
 }
+#endif
+
 inline CGAL::Window_stream & operator<<(CGAL::Window_stream & os, Pmwx & pm)
 {
   Pmwx::Edge_iterator ei;
   for (ei = pm.edges_begin(); ei != pm.edges_end(); ++ei)
-      os << (*ei).curve();
+    os << (*ei).curve();
   Pmwx::Vertex_iterator vi;
   for (vi = pm.vertices_begin(); vi != pm.vertices_end(); ++vi)
-      os << (*vi).point();
+    os << (*vi).point();
   return os;
 }
+#else
+
+#if defined(USE_CACHED_TRAITS)
+inline CGAL::Window_stream & operator<<(CGAL::Window_stream & os,
+                                        const Curve & curve)
+{
+  os << static_cast<Kernel::Segment_2>(curve);  
+  return os;
+}
+#endif
 #endif
 
 /*
