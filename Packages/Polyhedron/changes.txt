@@ -1,6 +1,9 @@
 Polyhedron Package: Release changes:
 ---------------------------------------------------------------------
 
+3.20 (31 Jul 2001)
+     - Susan moved Polyhedron_ref directory up one level
+
 3.19 (27 Jul 2001)
      - Susan made changes necessary to do the manual split and minor 
        formatting changes 
