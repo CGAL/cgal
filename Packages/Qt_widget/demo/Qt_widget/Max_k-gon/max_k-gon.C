@@ -50,6 +50,7 @@ int main(int, char*)
 
 
 #include <CGAL/IO/Qt_widget.h>
+#include <CGAL/IO/Qt_widget_Polygon_2.h>
 #include "Qt_widget_toolbar.h"
 #include <CGAL/IO/Qt_widget_standard_toolbar.h>
 #include <CGAL/IO/Qt_widget_layer.h>
@@ -67,14 +68,15 @@ int main(int, char*)
 #include <qfiledialog.h>
 #include <qtimer.h>
 
-typedef double Coord_type;
+typedef double                      Coord_type;
 typedef CGAL::Cartesian<Coord_type> Rep;
 
 typedef CGAL::Polygon_traits_2<Rep> Traits;
-typedef Traits::Point_2		    Point;
-typedef Traits::Segment_2	    Segment;
-typedef std::vector<Point>	    Container;
-typedef CGAL::Polygon_2<Traits,Container> Polygonvec;
+typedef Traits::Point_2             Point;
+typedef Traits::Segment_2           Segment;
+typedef std::vector<Point>          Container;
+typedef CGAL::Polygon_2<Traits,Container>
+                                    Polygonvec;
 
 const QString my_title_string("Maximum Inscribed K-gon Demo with"
 			      " CGAL Qt_widget");
