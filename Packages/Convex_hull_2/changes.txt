@@ -1,3 +1,6 @@
+3.25    (3 Oct 2001)
+- put back ch_postcondition_code macro around the save_first assignment
+
 3.24    (21 Sep 2001)
 - changed ch__e_point to ch_e_point (typo)
 
