@@ -1,0 +1,20 @@
+\begin{ccRefClass}{Kernel_traits<T>}
+\ccTexHtml{\ccSetThreeColumns{Point_2< Homogeneous<RT> > }{}{\hspace*{8.5cm}}}{}
+
+\ccDefinition
+
+This class provides access to the traits class in which \ccc{T} belongs.
+This allows to specify a return type of a global function only knowing that
+the arguments are of the form \ccc{Kernel::Point_2}.
+
+% \ccInclude{CGAL/Kernel_traits.h}
+
+\ccTypes
+
+\ccTypedef {typedef T::R Kernel;}
+{ When \ccc{T} is a type such as \ccc{R::Point_2} of a kernel traits \ccc{R},
+the \ccc{Kernel} typedef is equal to \ccc{R}. }
+
+\ccTexHtml{\KernelRefLayout}{}
+\end{ccRefClass}
+

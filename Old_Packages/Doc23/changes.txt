@@ -1,3 +1,8 @@
+2.31    (12 July 2001)
+- Kernel_traits<>
+- Kernel::FT, Kernel::RT
+- Cartesian_converter<>, Homogeneous_converter<>.
+
 2.30    (12 July 2001)
 - Documented which functors are model for AdaptableFunctor.
 

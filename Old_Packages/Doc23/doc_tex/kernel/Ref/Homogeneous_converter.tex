@@ -1,0 +1,51 @@
+\begin{ccRefClass}{Homogeneous_converter<K1, K2,
+                             RT_Converter = NT_converter<K1::RT, K2::RT>,
+                             FT_Converter = NT_converter<K1::FT, K2::FT> >}
+%\ccTexHtml{\ccSetThreeColumns{Point_2< us<RT> > }{}{\hspace*{8.5cm}}}{}
+
+\KernelRefLayout\gdef\ccTagOperatorLayout{\ccFalse}
+
+\ccDefinition
+
+\ccClassTemplateName converts objects from the kernel traits \ccc{K1} to
+the kernel traits \ccc{K2}.  Those traits must be of the form
+\ccc{Homogeneous<RT1>} and \ccc{Homogeneous<RT2>} (or the equivalent with
+\ccc{Simple_homogeneous}).  It then provides the following operators to
+convert objects from \ccc{K1} to \ccc{K2}.
+
+\ccInclude{CGAL/Homogeneous_converter.h}
+
+\ccTypes
+
+The third template parameter \ccc{RT_Converter} is a function object that must
+satisfy:
+
+\ccMemberFunction{K2::RT operator()(const K1::RT &n);}
+{ converts \ccc{n} to an \ccc{K2::RT} which has the same value.}
+
+The default value of this parameter uses the conversion operator from
+\ccc{K1::RT} to \ccc{K2::RT}.
+
+Similarly for the fourth template parameter which must satisfy:
+
+\ccMemberFunction{K2::FT operator()(const K1::FT &n);}
+{ converts \ccc{n} to an \ccc{K2::FT} which has the same value.}
+
+\ccCreation
+\ccCreationVariable{conv}
+
+\ccConstructor{Homogeneous_converter<>();}{Default constructor.}
+
+\ccOperations
+
+\ccMemberFunction{K2::Point_2 operator()(const K1::Point_2&p);}
+{ returns a \ccc{K2::Point_2} which coordinates are those of \ccc{p},
+converted by \ccc{RT_Converter}.}
+
+Similar operators are defined for the other kernel traits types \ccc{Point_3},
+\ccc{Vector_2}...
+
+
+%\ccTexHtml{\KernelRefLayout}{}
+\end{ccRefClass}
+
