@@ -11,11 +11,14 @@
 // release       : $$
 // release_date  : $$
 //
-// file          : include/CGAL/Planar_map_2/Pm_segment_slim_traits.h
+// file          : include/CGAL/Planar_map_2/Pm_segment_utilities.h
 // package       : Planar_map (5.80)
-// maintainer    : Efi Fogel <efif@post.tau.ac.il>
-// author(s)     : Efi Fogel <efif@post.tau.ac.il>
-//                 Shai Hirsch <shaihi@post.tau.ac.il>
+// maintainer    : Efi Fogel         <efif@post.tau.ac.il>
+// source        : 
+// revision      : 
+// revision_date : 
+// author(s)     : Shai Hirsch       <shaihi@post.tau.ac.il>
+//                 Efi Fogel         <efif@post.tau.ac.il>
 //
 // coordinator   : Tel-Aviv University (Dan Halperin halperin<@math.tau.ac.il>)
 //

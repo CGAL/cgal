@@ -1,3 +1,34 @@
+// ======================================================================
+//
+// Copyright (c) 1997 The CGAL Consortium
+//
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
+//
+// ----------------------------------------------------------------------
+//
+// release       : $$
+// release_date  : $$
+//
+// file          : include/CGAL/Pm_segment_traits_2.h
+// package       : Planar_map (5.87)
+// maintainer    : Eyal Flato        <flato@math.tau.ac.il>
+// source        : 
+// revision      : 
+// revision_date : 
+// author(s)     : Iddo Hanniel      <hanniel@math.tau.ac.il>
+//                 Eyal Flato        <flato@post.tau.ac.il>
+//                 Oren Nechushtan   <theoren@math.tau.ac.il>
+//                 Eti Ezra          <estere@post.tau.ac.il>
+//                 Shai Hirsch       <shaihi@post.tau.ac.il>
+//                 Eugene Lipovetsky <eug@post.tau.ac.il>
+//                 Efi Fogel         <efif@post.tau.ac.il>
+//
+// coordinator   : Tel-Aviv University (Dan Halperin <halperin@math.tau.ac.il>)
+//
+// Chapter       : 
+// ======================================================================
 #ifndef CGAL_PM_SEGMENT_TRAITS_2_H
 #define CGAL_PM_SEGMENT_TRAITS_2_H
 
