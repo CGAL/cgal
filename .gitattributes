@@ -1423,6 +1423,8 @@ Packages/Qt_widget/demo/Qt_widget/basic/tutorial5/demo.dsp -text
 Packages/Qt_widget/demo/Qt_widget/basic/tutorial6/demo.dsp -text
 Packages/Qt_widget/demo/Qt_widget/basic/tutorial7/demo.dsp -text
 Packages/Qt_widget/demo/Qt_widget/basic/tutorial8/demo.dsp -text
+Packages/Qt_widget/doc_tex/Qt_widget/standard_toolbar.eps -text
+Packages/Qt_widget/doc_tex/support/Qt_widget/standard_toolbar.eps -text
 Packages/Qt_widget/include/CGAL/IO/pixmaps/arrow.xpm -text
 Packages/Qt_widget/include/CGAL/IO/pixmaps/greene_approx.xpm -text
 Packages/Qt_widget/include/CGAL/IO/pixmaps/hand.xpm -text
