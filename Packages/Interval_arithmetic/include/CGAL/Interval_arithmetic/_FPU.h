@@ -59,7 +59,10 @@
 // *** Error code 1 (bu21)
 
 #if ( defined(__GNUC__) && \
-    ( defined(__i386) || defined(__sparc) || defined(__alpha) ) )
+    ( defined(__i386) || \
+      defined(__mips) || \
+      defined(__sparc) || \
+      defined(__alpha) ) )
 #define CGAL_IA_USE_ASSEMBLY
 #endif
 
