@@ -206,19 +206,13 @@ template <class SNCstructure>
 Bounding_box_3<typename SNCstructure::Kernel::FT>
 Objects_bbox<SNCstructure>::operator()
   ( const Object_list& O) const {
-  CGAL_assertion( O.size() > 0);
-  Vertex_handle v;
-  typename Object_list::const_iterator o = O.begin();
-  while( !assign( v, *o)) {
-    o++;
-    CGAL_assertion( o != O.end());
-  }
-  Bounding_box_3 b((*this)(v));
-  o++;
-  while( o != O.end()) {
+  CGAL_assertion( O.size() >= 0);
+  Bounding_box_3 b(0,0,0,0,0,0);
+  typename Object_list::const_iterator o;
+  for( o = O.begin(); o != O.end(); ++o) {
+    Vertex_handle v;
     if( assign( v, *o))
       b = b + (*this)(v);
-    o++;
   }
   return b;
 }

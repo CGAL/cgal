@@ -464,7 +464,7 @@ private:
 template <typename Depth>
 Node* build_kdtree( const Object_list& O, Depth depth, Node* parent=0, int non_efective_splits=0) {
   CGAL_precondition( depth >= 0);
-  CGAL_precondition( O.size() > 0);
+//  CGAL_precondition( O.size() > 0);
   TRACEN( "build_kdtree: "<<O.size()<<" objects, "<<"depth "<<depth);
   TRACEN( "build_kdtree: "<<dump_object_list(O));
   if( !can_set_be_divided( O, depth)) {

@@ -230,7 +230,7 @@ During the construction of a Kd-tree, the space is consecutively divided into tw
 template <typename Depth>
 Node* build_kdtree( const Object_list& O, Depth depth, Node* parent=0, int non_efective_splits=0) {
   CGAL_precondition( depth >= 0);
-  CGAL_precondition( O.size() > 0);
+//  CGAL_precondition( O.size() > 0);
   TRACEN( "build_kdtree: "<<O.size()<<" objects, "<<"depth "<<depth);
   TRACEN( "build_kdtree: "<<dump_object_list(O));
   if( !can_set_be_divided( O, depth)) {
@@ -992,19 +992,13 @@ template <class SNCstructure>
 Bounding_box_3<typename SNCstructure::Kernel::FT>
 Objects_bbox<SNCstructure>::operator()
   ( const Object_list& O) const {
-  CGAL_assertion( O.size() > 0);
-  Vertex_handle v;
-  typename Object_list::const_iterator o = O.begin();
-  while( !assign( v, *o)) {
-    o++;
-    CGAL_assertion( o != O.end());
-  }
-  Bounding_box_3 b((*this)(v));
-  o++;
-  while( o != O.end()) {
+  CGAL_assertion( O.size() >= 0);
+  Bounding_box_3 b(0,0,0,0,0,0);
+  typename Object_list::const_iterator o;
+  for( o = O.begin(); o != O.end(); ++o) {
+    Vertex_handle v;
     if( assign( v, *o))
       b = b + (*this)(v);
-    o++;
   }
   return b;
 }
