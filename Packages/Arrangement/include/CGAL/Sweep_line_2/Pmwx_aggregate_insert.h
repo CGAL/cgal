@@ -13,11 +13,11 @@
 //
 // file          : include/CGAL/Sweep_line_2/Pmwx_aggregate_insert.h
 // package       : Arrangement (2.07)
-// maintainer    : Eyal Flato <flato@math.tau.ac.il>
+// maintainer    : Tali Zvi <talizvi@post.tau.ac.il>
 // source        : 
 // revision      : 
 // revision_date : 
-// author(s)     : Eti Ezra <estere@post.tau.ac.il>
+// author(s)     : Tali Zvi <talizvi@post.tau.ac.il>
 //
 //
 // coordinator   : Tel-Aviv University (Dan Halperin <halperin@math.tau.ac.il>)
@@ -33,7 +33,6 @@
 #include <CGAL/Sweep_line_2/Pmwx_sweep_line_curve.h>
 #include <list>
 
-// #define FLIP_CURVE 1
 
 CGAL_BEGIN_NAMESPACE
 
@@ -182,9 +181,9 @@ protected:
       )
 
       if ( m_traits->compare_x(eventIter->first, m_sweepLinePos) != EQUAL) {
-	SL_DEBUG(std::cout << "====================== clearing miniq " 
-		 << eventIter->first  << " "
-		 << m_prevPos << "\n";)
+	SL_DEBUG(std::cout << "clearing miniq " 
+		           << eventIter->first  << " "
+		           << m_prevPos << "\n";)
 	m_miniq.clear();
       }
       m_miniq.push_back(m_currentEvent);
@@ -469,7 +468,8 @@ protected:
 	       m_traits->point_in_x_range((*slIter)->getCurve(), 
 					     vcurve->getBottomEnd()) &&
 	       m_traits->curve_compare_y_at_x(vcurve->getBottomEnd(),
-                                              (*slIter)->getCurve()) == SMALLER)
+                                              (*slIter)->getCurve()) == 
+	       SMALLER)
 	{
 	  SL_DEBUG(std::cout<<"checking \n";)
 	  SL_DEBUG((*slIter)->Print();) 
@@ -628,7 +628,8 @@ protected:
   {
     m_tmpOut.clear();
     SL_DEBUG(std::cout << "IntersectCurveGroup (with out)\n";)
-    SL_DEBUG(std::cout << "Intersecting with " << mylist.size() << " curves\n";)
+    SL_DEBUG(std::cout << "Intersecting with " << mylist.size() 
+                       << " curves\n";)
     SubCurveListIter i = mylist.begin();
     while ( i != mylist.end())
     {
@@ -918,7 +919,8 @@ void HandleRightCurves(PM &pm, SweepLinePlanarmap &tag)
    *  @param hhandle a prev halfedge handle (may be NULL)
    *  @param pm a reference to the planar map
    */
-  Halfedge_handle insertToPm(const X_monotone_curve_2 &cv, SubCurve *leftCurve,
+  Halfedge_handle insertToPm(const X_monotone_curve_2 &cv, 
+			     SubCurve *leftCurve,
 			     Halfedge_handle hhandle, PM &pm)
   {
 
@@ -957,12 +959,14 @@ void HandleRightCurves(PM &pm, SweepLinePlanarmap &tag)
 	SL_DEBUG(std::cout << "  from vertex (1)";
 		 std::cout << hhandle->source()->point() << " " 
 		 << hhandle->target()->point() << "\n";)
-        res = pm.non_intersecting_insert_from_vertex(cv, hhandle, m_change_not);
+        res = pm.non_intersecting_insert_from_vertex(cv, hhandle, 
+						     m_change_not);
 	res = res->twin();
       } else { 
 	// if this is the first left curve being inserted
 	SL_DEBUG(std::cout << "  in face interior\n";)
-	res = pm.insert_in_face_interior(cv, pm.unbounded_face(), m_change_not);
+	res = pm.insert_in_face_interior(cv, pm.unbounded_face(), 
+					 m_change_not);
 	if ( !leftCurve->isSourceLeftToTarget() ){
 	  res = res->twin();
 	}
@@ -985,17 +989,9 @@ void HandleRightCurves(PM &pm, SweepLinePlanarmap &tag)
 		           << prev->target()->point();
 		 std::cout << hhandle->source()->point() << " " 
                            << hhandle->target()->point() << "\n";)
-//#ifndef FLIP_CURVE
+
 	  res = pm.non_intersecting_insert_at_vertices(cv, prev, hhandle, 
 	  				     m_change_not);
-//#else
-//	X_curve_2 flipped = m_traits->curve_flip(cv);
-//	res = pm.non_intersecting_insert_at_vertices(flipped, 
-//						     hhandle,
-//						     prev,
-//						     m_change_not);
-//	res = res->twin();
-//#endif
       } else {
 	// if this is the first left curve being inserted
 	SL_DEBUG(std::cout << "  from vertex (2)";
@@ -1124,4 +1120,4 @@ insertToPmV(const X_monotone_curve_2 &cv, SubCurve *origCurve,
 
 CGAL_END_NAMESPACE
 
-#endif
+#endif // CGAL_PMWX_AGGREGATE_INSERT_H
