@@ -1,8 +1,54 @@
-#ifndef CGAL_CARTESIAN_SCALING_REP_3_H
+// ==========================================================================
+//
+// Copyright (c) 1998 The CGAL Consortium
+//
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
+//
+// --------------------------------------------------------------------------
+//
+// release       :
+// release_date  :
+//
+// file          : include/CGAL/Cartesian/Scaling_rep_3.h
+// source        : include/CGAL/Cartesian/Scaling_rep_3.h
+// revision      : $Revision$
+// revision_date : $Date$
+// author(s)     : Herve.Bronnimann@sophia.inria.fr
+//
+// coordinator   : INRIA Sophia-Antipolis (Herve.Bronnimann@sophia.inria.fr)
+//
+// ==========================================================================
+
+#ifndef CGAL_CARTESIAN_REDEFINE_NAMES_3_H
+#define CGAL_CTAG
+#endif
+
+#ifdef _MSC_VER
+#define typename
+#endif
+
+#include <CGAL/Cartesian/distance_computations_3.C>
+
+#ifndef CGAL_CARTESIAN_SEGMENT_3_C
+#define CGAL_CARTESIAN_SEGMENT_3_C
+
+CGAL_BEGIN_NAMESPACE
+
+template < class R >
+inline
+_Twotuple< typename SegmentC3<R CGAL_CTAG>::Point_3 > *
+SegmentC3<R CGAL_CTAG>::ptr() const
+{
+  return (_Twotuple< Point_3 >*)PTR;
+}
+
+t#ifndef CGAL_CARTESIAN_SCALING_REP_3_H
 #define CGAL_CARTESIAN_SCALING_REP_3_H
 
 #ifndef CGAL_CARTESIAN_REDEFINE_NAMES_3_H
-#include <CGAL/Cartesian/redefine_names_3.h>
+#include <CGAL/Cartesian/redefine_names_3.C>
 #endif
 
 CGAL_BEGIN_NAMESPACE

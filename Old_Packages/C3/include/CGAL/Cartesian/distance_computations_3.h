@@ -8,12 +8,11 @@
 //
 // --------------------------------------------------------------------------
 //
-
 // release       :
 // release_date  :
 //
-// file          : include/CGAL/Cartesian/basic_constructions_3.h
-// source        : include/CGAL/Cartesian/basic_constructions_3.h
+// file          : include/CGAL/Cartesian/distance_computations_3.h
+// source        : include/CGAL/Cartesian/distance_computations_3.h
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Herve.Bronnimann@sophia.inria.fr

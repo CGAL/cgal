@@ -1,5 +1,32 @@
+// ==========================================================================
+//
+// Copyright (c) 1998 The CGAL Consortium
+//
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
+//
+// --------------------------------------------------------------------------
+//
+// release       :
+// release_date  :
+//
+// file          : include/CGAL/Cartesian/Aff_transformation_rep_3.h
+// source        : include/CGAL/Cartesian/Aff_transformation_rep_3.h
+// revision      : $Revision$
+// revision_date : $Date$
+// author(s)     : Herve.Bronnimann@sophia.inria.fr
+//
+// coordinator   : INRIA Sophia-Antipolis (Herve.Bronnimann@sophia.inria.fr)
+//
+// ==========================================================================
+
 #ifndef CGAL_CARTESIAN_REDEFINE_NAMES_3_H
 #define CGAL_CTAG
+#endif
+
+#ifdef _MSC_VER
+#define typename
 #endif
 
 #ifndef CGAL_CARTESIAN_AFF_TRANSFORMATION_REP_3_C
@@ -55,5 +82,8 @@ Aff_transformation_repC3<R>::transpose() const
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_CARTESIAN_AFF_TRANSFORMATION_REP_3_H
+#ifdef _MSC_VER
+#undef typename
+#endif
 
+#endif // CGAL_CARTESIAN_AFF_TRANSFORMATION_REP_3_H
