@@ -396,7 +396,6 @@ this tutorials.
 
 The following is a typical template of how to create a window using
 \ccStyle{Qt} and \ccStyle{Qt\_widget.}
-
 \begin{ccExampleCode}
 #include <CGAL/IO/Qt_widget.h>
 #include <qapplication.h>
@@ -413,28 +412,35 @@ int main( int argc, char **argv )
     return app.exec();
 }
 \end{ccExampleCode}
-
-You'll allways need to include the header:\\
-\#include $< qapplication.h >$
+You'll allways need to include the header:
+\begin{ccExampleCode}
+#include <qapplication.h>
+\end{ccExampleCode}
 
 The entry point for a typical Qt application is the function main. In
-this function you should define an application object of Qt:\\
+this function you should define an application object of Qt:
+\begin{ccExampleCode}
 QApplication app( argc, argv );
-
-You will run the Qt application with the line:\\
+\end{ccExampleCode}
+You will run the Qt application with the line:
+\begin{ccExampleCode}
 return app.exec();
-
+\end{ccExampleCode}
 To use \ccStyle{Qt\_widget} you need an instance and tell the
-application to use that instance:\\
-CGAL::Qt\_widget *W = new CGAL::Qt\_widget();\\
-app.setMainWidget( W );
-
-To resize and set the scales of the window you'll use:\\
-W$->$resize(600, 600);\\
-W$->$set\_window(0, 600, 0, 600);
-
-At the end you need to show the window when the initialization have been done:\\
-W$->$show();
+application to use that instance:
+\begin{ccExampleCode}
+CGAL::Qt_widget *W = new CGAL::Qt_widget();
+app.setMainWidget(W);
+\end{ccExampleCode}
+To resize and set the scales of the window you'll use:
+\begin{ccExampleCode}
+W->resize(600, 600);
+W->set_window(0, 600, 0, 600);
+\end{ccExampleCode}
+At the end you need to show the window when the initialization have been done:
+\begin{ccExampleCode}
+W->show();
+\end{ccExampleCode}
 
 All the drawing code should be put betwen \ccStyle{Qt\_Widget}'s lock() and
 unlock() functions. See the manual reference pages of
@@ -467,13 +473,14 @@ In this sense, we create a new class My\_Window as a child for
 \ccStyle{Qt\_widget}. The resize function has been moved into the
 constructor of My\_Window.
 
-We define a triangulation as a global variable:\\
-typedef CGAL::Cartesian$<$double$>$		 Rep;\\
-typedef CGAL::Point\_2$<$Rep$>$		    	 Point;\\
-typedef CGAL::Delaunay\_triangulation\_2$<$Rep$>$ Delaunay;
+We define a triangulation as a global variable:
+\begin{ccExampleCode}
+typedef CGAL::Cartesian<double>             Rep;
+typedef CGAL::Point_2<Rep>                  Point;
+typedef CGAL::Delaunay_triangulation_2<Rep> Delaunay;
 
 Delaunay dt;
-
+\end{ccExampleCode}
 The private member redraw() is used to output the triangulation on the screen. 
 \begin{ccExampleCode}
 private:
@@ -483,9 +490,10 @@ private:
     *this << dt;
   }
 \end{ccExampleCode}
-There is another line in the redraw():\\
-Qt\_widget::redraw();
-
+There is another line in the redraw():
+\begin{ccExampleCode}
+Qt_widget::redraw();
+\end{ccExampleCode}
 This line is meant to call the redraw() from the \ccStyle{Qt\_widget}
 base class, used to draw the attached layers as you'll see later. This function
 also clears the screen. If you remove this line it's necessary to add
@@ -508,8 +516,10 @@ redraw(). You can comment redraw() to see what happens: You'll see
 the results only when you'll resize the window.
 
 Of course if you want to trigger the mouse press event in the base
-class you have to put this in the code of the function:\\
-Qt\_widget::mousePressEvent(e);
+class you have to put this in the code of the function:
+\begin{ccExampleCode}
+Qt_widget::mousePressEvent(e);
+\end{ccExampleCode}
 
 \subsection*{Tutorial 3}
 
@@ -533,8 +543,10 @@ draw() function for every attached and active layer. A layer is active
 in the moment of attaching by default.
 
 In the code of the constructor of My\_Window the layer is attached to
-the widget:\\
-attach(\&v);\\
+the widget:
+\begin{ccExampleCode}
+attach(&v);
+\end{ccExampleCode}
 Because the layer is attached, the triangulation will appear on the
 screen every time you call redraw(), as the widget redraws all the
 layers. This means that in this tutorial every time you press the mouse
@@ -565,19 +577,26 @@ int main( int argc, char **argv )
     return app.exec();
 }
 \end{ccExampleCode}
-This time you see that W is no longer an instance of \ccStyle{Qt\_widget} but is
-an instance of \ccStyle{QMainWindow}. \ccStyle{QMainWindow} is also a widget but provides
-functionalities like you can use a toolbar, a status bar ... in other
+This time you see that W is no longer an instance of
+\ccStyle{Qt\_widget} but is an instance of
+\ccStyle{QMainWindow}. \ccStyle{QMainWindow} is also a widget but
+provides functionalities like you can use a toolbar, a status bar ... in other
 words you can create a complex MDI application. To use an instance of
-\ccStyle{Qt\_widget} you have to say in the constructor:\\
-setCentralWidget(widget);\\
+\ccStyle{Qt\_widget} you have to say in the constructor:
+\begin{ccExampleCode}
+setCentralWidget(widget);
+\end{ccExampleCode}
 where widget is an instance of \ccStyle{Qt\_widget}. As you see it is
 also declared in My\_Window.
 
-There is one more thing, at the constructor you see:\\
-widget = new My\_Widget(this);\\
-Also the constructor of My\_Widget is adapted:\\
-My\_Widget(QMainWindow* c) : CGAL::Qt\_widget(c) {};\\
+There is one more thing, at the constructor you see:
+\begin{ccExampleCode}
+widget = new My_Widget(this);
+\end{ccExampleCode}
+Also the constructor of My\_Widget is adapted:
+\begin{ccExampleCode}
+My_Widget(QMainWindow* c) : CGAL::Qt_widget(c) {};
+\end{ccExampleCode}
 This lines tells the application that My\_Window is a parent for
 My\_Widget. Try to comment this lines to see what happens. Two
 windows will appear, one for My\_Window and one for My\_Widget.
@@ -600,12 +619,15 @@ The class My\_Widget is like in the previous example an intance of
 \ccStyle{Qt\_widget}, that you need in the class My\_Window.
 
 The only difference between this example and the previous one is the
-use of standard toolbar. It is declared as private in My\_Window class:\\
-CGAL::Standard\_toolbar *stoolbar;\\
-To use it, in the constructor of My\_Window, it is added:\\
-stoolbar = new CGAL::Standard\_toolbar(widget, this);\\
-this$->$addToolBar(stoolbar$->toolbar()$, Top, FALSE);
-
+use of standard toolbar. It is declared as private in My\_Window class:
+\begin{ccExampleCode}
+CGAL::Standard_toolbar *stoolbar;
+\end{ccExampleCode}
+To use it, in the constructor of My\_Window, it is added:
+\begin{ccExampleCode}
+stoolbar = new CGAL::Standard_toolbar(widget, this);
+this->addToolBar(stoolbar->toolbar(), Top, FALSE);
+\end{ccExampleCode}
 In this tutorial you can play a little bit with the standard toolbar
 but you will see probably something that is not quite pleasant. If you
 select the hand, and try to use it, you'll see that when you click to
@@ -641,10 +663,14 @@ private:
 This class has a member function mousePressEvent(QMouseEvent *e) that
 is called by \ccStyle{Qt\_widget} if the tool is attached.
 
-In My\_Window class an instance of My\_Tool is created :\\
-My\_Tool	t;\\
-In the constructor of My\_Window we attach the tool:\\
-widget$->$attach(t);
+In My\_Window class an instance of My\_Tool is created:
+\begin{ccExampleCode}
+My_Tool	t;
+\end{ccExampleCode}
+In the constructor of My\_Window we attach the tool:
+\begin{ccExampleCode}
+widget->attach(t);
+\end{ccExampleCode}
 
 To receive the object that the tool creates, in the constructor of My\_Window, 
 we connect:
@@ -695,20 +721,20 @@ world. This means that the mouse coordinates are transformed using the
 current scales to the real world coordinates.
 
 The generic tools are documented in the manual. They are templetized
-by a kernel of CGAL. In this tutorial the generic tool \ccStyle{CGAL::Qt\_widget\_get\_point} it is
-templetized by Cartesian<double>.
+by a kernel of CGAL. In this tutorial the generic tool
+\ccStyle{CGAL::Qt\_widget\_get\_point} it is templetized by Cartesian<double>.
 
 First comes the include statement:
 \begin{ccExampleCode}
-	#include <CGAL/IO/Qt_widget_get_point.h>
+#include <CGAL/IO/Qt_widget_get_point.h>
 \end{ccExampleCode}
-In the class My_Window, it is declared as a private member:
+In the class My\_Window, it is declared as a private member:
 \begin{ccExampleCode}
-	CGAL::Qt_widget_get_point<Rep> get_point;
+CGAL::Qt_widget_get_point<Rep> get_point;
 \end{ccExampleCode}
 In the constructor of My\_Window also we attached this generic tool:
 \begin{ccExampleCode}
-	    widget->attach(get_point);
+widget->attach(get_point);
 \end{ccExampleCode}
 
 The connect is still there in the constructor, the good news is that
