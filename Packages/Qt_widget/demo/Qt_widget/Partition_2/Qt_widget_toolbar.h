@@ -24,7 +24,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
-#include <CGAL/MP_float.h>
+#include <CGAL/MP_Float.h>
 #include <CGAL/Partition_traits_2.h>
 #include <list>
 
