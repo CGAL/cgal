@@ -1,5 +1,8 @@
 Changes done to the `Optimisation_basic' package
 
+Version 3.7.1 on 13-Sep-2000
+- `Construct_point_2' and `Construct_point_3' ported to M$-VC++.
+
 Version 3.7 on 12-Sep-2000
 - `Construct_point_2' and `Construct_point_3' added.
 - moved documentation to `Optimisation_doc'.
