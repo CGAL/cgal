@@ -804,31 +804,31 @@ private:
   void unary_operations(char* suffix) {
     
     if(suffix[1] == 'E') {
-      Nef_polyhedron T("data/topologyE.nef3");
+      Nef_polyhedron T = load_nef3("topology.nef3.EH");
       Nef_polyhedron N = T;
       N = N.boundary();
       CGAL_assertion(N.is_valid(0,0));
-      CGAL_assertion(does_nef3_equals_file(N,"boundary.nef3",suffix));
+      CGAL_assertion(does_nef3_equals_file(N,"boundary.nef3.EH"));
     
       N = T;
       N = N.interior();
       CGAL_assertion(N.is_valid(0,0));
-      CGAL_assertion(does_nef3_equals_file(N,"interior.nef3",suffix));
+      CGAL_assertion(does_nef3_equals_file(N,"interior.nef3.EH"));
       
       N = T;
       N = N.closure();
       CGAL_assertion(N.is_valid(0,0));
-      CGAL_assertion(does_nef3_equals_file(N,"closure.nef3",suffix));
+      CGAL_assertion(does_nef3_equals_file(N,"closure.nef3.EH"));
       
       N = T;
       N = N.regularization();
       CGAL_assertion(N.is_valid(0,0));
-      CGAL_assertion(does_nef3_equals_file(N,"regularization.nef3",suffix));
+      CGAL_assertion(does_nef3_equals_file(N,"regularization.nef3.EH"));
       
       N = T; 
       N = N.complement();
       CGAL_assertion(N.is_valid(0,0));
-      CGAL_assertion(does_nef3_equals_file(N,"complement.nef3",suffix));
+      CGAL_assertion(does_nef3_equals_file(N,"complement.nef3.EH"));
     }
   }
     
@@ -909,8 +909,8 @@ public:
     //        simplification_SNC(suffix);
     //        simplification_SM(suffix);
     //	      synthesis(suffix);
-    //        unary_operations(suffix);
-            mark_evaluation(suffix);
+            unary_operations(suffix);
+    //        mark_evaluation(suffix);
   }
 
 };

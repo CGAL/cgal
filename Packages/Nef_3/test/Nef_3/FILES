@@ -1,4 +1,7 @@
-complete.nef3.SH 	
+boundary.nef3.EH
+complement.nef3.EH
+complete.nef3.SH
+closure.nef3.EH	
 cube.nef3.SH
 cube+p3-4-5-0.nef3.EH
 cube+p3-4-5-31.nef3.EH 
@@ -21,6 +24,7 @@ cube+p0-0-1-10.nef3.EH
 cube_create_from_halfspaces.nef3.SH
 donotsimplify.nef3.SH
 donotsimplifyRef.nef3.SH
+interior.nef3.EH
 mark_eval.nef3.SH
 mark_eval2.nef3.SH
 meNNdiff.nef3.SH
@@ -42,6 +46,7 @@ mePPsymdiff.nef3.SH
 nestedFCafterSimpl.nef3.SH
 nestedFCafterSimplRef.nef3.SH
 openSquare.nef3.SH
+regularization.nef3.EH
 simplifySface.nef3.SH
 simplifySfaceRef.nef3.SH
 single_vertex.nef3.SH
