@@ -1,3 +1,7 @@
+17 May 2004 Menelaos Karavelas
+- replaced Point by Point_2 in the demo in order to resolve clash with
+  the Mac version of Qt
+
 04 May 2004 Andreas Fabri
 - Removed ~Point_container() as it does nothing and leads to error messages for SunProCC
 

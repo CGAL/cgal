@@ -40,7 +40,7 @@ class Tools_toolbar : public QToolBar
 {
   Q_OBJECT
 public:
-  Tools_toolbar(CGAL::Qt_widget *w, QMainWindow *mw, std::vector<Point> *l1);
+  Tools_toolbar(CGAL::Qt_widget *w, QMainWindow *mw, std::vector<Point_2> *l1);
   ~Tools_toolbar(){};
 private:
   QToolButton     *but[10];

@@ -34,7 +34,7 @@
 #include <qiconset.h>
 
 Tools_toolbar::Tools_toolbar(CGAL::Qt_widget *w, 
-			     QMainWindow *mw, std::vector<Point> *l1) :
+			     QMainWindow *mw, std::vector<Point_2> *l1) :
   QToolBar(mw, "NT")
   {
     w->attach(&edit_layer);

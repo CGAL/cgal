@@ -51,7 +51,7 @@ int main(int, char*){
 
 //global flags and variables
 int current_state;
-std::vector<Point>                        vector_of_points;
+std::vector<Point_2>                      vector_of_points;
 
 const QString my_title_string("Spatial Searching Demo with"
 			      " CGAL Qt_widget");
@@ -69,7 +69,7 @@ public:
     widget->lock();
     *widget << CGAL::PointSize(3);
     *widget << CGAL::GREEN;
-    std::vector<Point>::iterator itp = vector_of_points.begin();
+    std::vector<Point_2>::iterator itp = vector_of_points.begin();
     while(itp!=vector_of_points.end())
     {
       *widget << (*itp++);
@@ -164,7 +164,7 @@ public slots:
 private slots:
   void get_new_object(CGAL::Object obj)
   {
-    Point p;
+    Point_2 p;
     Iso_rectangle_2 ir;
     Circle_2 c;
     if(CGAL::assign(p,obj)) {
@@ -176,7 +176,7 @@ private slots:
       Fuzzy_box exact_range(ir.min(), ir.max());
       Traits tr;
       typedef CGAL::Kd_tree<Traits> Tree;
-      std::list<Point> l, res;
+      std::list<Point_2> l, res;
       CGAL::copy_n(vector_of_points.begin(), vector_of_points.size(),
                   std::back_inserter(l));
       Tree d(l.begin(), l.end(), tr);
@@ -185,7 +185,7 @@ private slots:
       widget->lock();
       *widget << CGAL::RED;
       *widget << ir;
-      std::list<Point>::const_iterator it = res.begin();
+      std::list<Point_2>::const_iterator it = res.begin();
       while(it!=res.end()){
         *widget << (*it);
         it++;
@@ -197,7 +197,7 @@ private slots:
       Fuzzy_circle exact_range(c.center(), sqrt(c.squared_radius()));
       Traits tr;
       typedef CGAL::Kd_tree<Traits> Tree;
-      std::list<Point> l, res;
+      std::list<Point_2> l, res;
       CGAL::copy_n(vector_of_points.begin(), vector_of_points.size(),
                   std::back_inserter(l));
       Tree d(l.begin(), l.end(), tr);
@@ -206,7 +206,7 @@ private slots:
       widget->lock();
       *widget << CGAL::RED;
       *widget << c;
-      std::list<Point>::const_iterator it = res.begin();
+      std::list<Point_2>::const_iterator it = res.begin();
       while(it!=res.end()){
         *widget << (*it);
         it++;
@@ -261,7 +261,7 @@ private slots:
 		// set the Visible Area to the Interval
 
     // send resizeEvent only on show.
-    CGAL::Random_points_in_disc_2<Point> g(1);
+    CGAL::Random_points_in_disc_2<Point_2> g(1);
     for(int count=0; count<200; count++) {
       vector_of_points.push_back(*g++);
     }
@@ -271,15 +271,15 @@ private slots:
   void n_search(){
     Traits tr;
     typedef CGAL::Kd_tree<Traits> Tree;
-    std::list<Point> l;
+    std::list<Point_2> l;
     CGAL::copy_n(vector_of_points.begin(), vector_of_points.size(),
 		std::back_inserter(l));
     //    Tree d(vector_of_points.begin(), vector_of_points.end(), tr);
     Tree d(l.begin(), l.end(), tr);
 
     const int query_point_number=30;
-    CGAL::Random_points_in_square_2<Point,Creator> h( 1.0);
-    std::vector<Point> query_points;
+    CGAL::Random_points_in_square_2<Point_2,Creator> h( 1.0);
+    std::vector<Point_2> query_points;
     CGAL::copy_n( h, query_point_number, std::back_inserter(query_points));
     Distance tr_dist;
     std::vector<Neighbour_search::Point_with_distance>
@@ -320,8 +320,10 @@ main(int argc, char **argv)
   app.setMainWidget(&widget);
   widget.setCaption(my_title_string);
   widget.setMouseTracking(TRUE);
+#if !defined (__POWERPC__)
   QPixmap cgal_icon = QPixmap((const char**)demoicon_xpm);
   widget.setIcon(cgal_icon);
+#endif
   widget.show();
   current_state = -1;
   return app.exec();
