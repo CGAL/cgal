@@ -287,14 +287,17 @@ public:
 
 				// Get circulator over face's vertices
 				Vertex_around_face_circulator  face_vertices_begin (Face_handle face) {
+					assert(is_valid(face));
 					return face->facet_begin();
 				}
 				Vertex_around_face_const_circulator  face_vertices_begin (Face_const_handle face) const {
+					assert(is_valid(face));
 					return face->facet_begin();
 				}
 
 				// Count the number of vertices of a face
 				int  count_face_vertices (Face_const_handle face) const {
+					assert(is_valid(face));
 					int index = 0;
 					Vertex_around_face_const_circulator cir_begin = face_vertices_begin(face), 
 														cir_end   = cir_begin;
@@ -310,45 +313,55 @@ public:
 
 				// Get the 3D position of a vertex (stored in Polyhedron vertex)
 				Point_3  get_vertex_position (Vertex_const_handle adaptor_vertex) const {
+					assert(is_valid(adaptor_vertex));
 					return adaptor_vertex->vertex()->point();	
 				}
 
 				// Get/set the 2D position (u/v pair) of a vertex (stored in halfedge)
 				Point_2  get_vertex_uv (Vertex_const_handle adaptor_vertex) const {
+					assert(is_valid(adaptor_vertex));
 					return Point_2(adaptor_vertex->u(), adaptor_vertex->v());		
 				}
 				void  set_vertex_uv (Vertex_handle adaptor_vertex, const Point_2& uv) {
+					assert(is_valid(adaptor_vertex));
 					adaptor_vertex->u(uv.x());
 					adaptor_vertex->v(uv.y());
 				}
 
 				// Get/set "is parameterized" field of vertex (stored in halfedge)
 				void  set_vertex_parameterized (Vertex_handle adaptor_vertex, bool parameterized) {
+					assert(is_valid(adaptor_vertex));
 					adaptor_vertex->is_parameterized(parameterized);
 				}
 				bool  is_vertex_parameterized (Vertex_const_handle adaptor_vertex) const {
+					assert(is_valid(adaptor_vertex));
 					return adaptor_vertex->is_parameterized();
 				}
 
 				// Get/set vertex index (stored in halfedge)
 				void  set_vertex_index (Vertex_handle adaptor_vertex, int new_index) {
+					assert(is_valid(adaptor_vertex));
 					adaptor_vertex->index(new_index);
 				}
 				int  get_vertex_index (Vertex_const_handle adaptor_vertex) const {
+					assert(is_valid(adaptor_vertex));
 					return adaptor_vertex->index();		
 				}
 
 				// Return true if a vertex belongs to the mesh's boundary
 				bool  is_vertex_on_border (Vertex_const_handle adaptor_vertex) const {
+					assert(is_valid(adaptor_vertex));
 					return adaptor_vertex->opposite()->is_border();		// @@@ SEAM
 				}
 
 				// Get circulator over the vertices incident to 'adaptor_vertex'
 				// @@@ INONDATION
 				Vertex_around_vertex_circulator  vertices_around_vertex_begin (Vertex_handle adaptor_vertex) {
+					assert(is_valid(adaptor_vertex));
 					return adaptor_vertex->vertex_begin();
 				}
 				Vertex_around_vertex_const_circulator  vertices_around_vertex_begin (Vertex_const_handle adaptor_vertex) const {
+					assert(is_valid(adaptor_vertex));
 					return adaptor_vertex->vertex_begin();
 				}
 
@@ -401,6 +414,7 @@ private:
 				// Extract mesh UNIQUE boundary
 				static std::list<Halfedge_handle> extract_unique_boundary(Polyhedron_ex* mesh)
 				{
+					assert(mesh != NULL);
 					std::list<Halfedge_handle> boundary;	// returned list
 					mesh->free_skeleton();
 					Mesh_feature_extractor feature_extractor(mesh);
@@ -473,6 +487,16 @@ private:
 				inline static Vertex_handle get_adaptor_vertex(Halfedge_handle halfedge) {
 					Vertex_const_handle adaptor_vertex = get_adaptor_vertex( (Halfedge_const_handle)halfedge );
 					return (Vertex*) (&*adaptor_vertex);
+				}
+
+				// Check if variables are valid (for debug purpose)
+				inline bool is_valid (Face_const_handle face) const {
+					return (face != NULL);	
+				}
+				inline bool is_valid (Vertex_const_handle adaptor_vertex) const {
+					if (adaptor_vertex == NULL)
+						return false;
+					return (get_adaptor_vertex(adaptor_vertex) == adaptor_vertex);	
 				}
 
 // Fields
