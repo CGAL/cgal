@@ -137,7 +137,7 @@ public:
     Line_2 l(p1, p2);
     //    Point base = p.is_point() ? p.point() : q.point();
     Line_2 lperp = l.perpendicular( v );
-    return Ray(v, lperp.direction());
+    return Ray_2(v, lperp.direction());
   }
 };
 
