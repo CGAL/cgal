@@ -1,55 +1,24 @@
+// Copyright (c) 1997  ETH Zurich (Switzerland).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $Source$
+// $Revision$ $Date$
+// $Name$
+//
+// Author(s)     : Gabriele Neyer
+
 #ifndef __TREE_TRAITS__
 #define __TREE_TRAITS__
-// ============================================================================
-//
-// Copyright (c) 1997 The CGAL Consortium
-//
-// This software and related documentation is part of the
-// Computational Geometry Algorithms Library (CGAL).
-//
-// Every use of CGAL requires a license. Licenses come in three kinds:
-//
-// - For academic research and teaching purposes, permission to use and
-//   copy the software and its documentation is hereby granted free of  
-//   charge, provided that
-//   (1) it is not a component of a commercial product, and
-//   (2) this notice appears in all copies of the software and
-//       related documentation.
-// - Development licenses grant access to the source code of the library 
-//   to develop programs. These programs may be sold to other parties as 
-//   executable code. To obtain a development license, please contact
-//   the CGAL Consortium (at cgal@cs.uu.nl).
-// - Commercialization licenses grant access to the source code and the
-//   right to sell development licenses. To obtain a commercialization 
-//   license, please contact the CGAL Consortium (at cgal@cs.uu.nl).
-//
-// This software and documentation is provided "as-is" and without
-// warranty of any kind. In no event shall the CGAL Consortium be
-// liable for any damage of any kind.
-//
-// The CGAL Consortium consists of Utrecht University (The Netherlands),
-// ETH Zurich (Switzerland), Free University of Berlin (Germany),
-// INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
-// (Germany) Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
-// and Tel-Aviv University (Israel).
-//
-// ----------------------------------------------------------------------
-//
-// release       : CGAL-1.2
-// release_date  : 1999, January 18
-//
-// file          : src/test/RangeSegmentTrees/include/Tree_Traits.h
-// source        : src/test/RangeSegmentTrees/include/Tree_Traits.h
-// revision      : $Revision$
-// revision_date : $Date$
-// author(s)     : Gabriele Neyer
-//
-// coordinator   : Peter Widmayer, ETH Zurich
-//
-//
-// email         : cgal@cs.uu.nl
-//
-// ======================================================================
 
 #include <functional>
 #include <utility>

@@ -1,3 +1,6 @@
+27 May 2004 Radu Ursu
+- updated headers in examples/RangeSegmentTrees/include
+
 26 March 2004 Radu Ursu
 -made doc work with the current implementation of the Manual tools
 
