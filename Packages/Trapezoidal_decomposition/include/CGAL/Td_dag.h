@@ -64,6 +64,13 @@ public:
   typedef Td_dag_base<T> Td_dag_handle;
   typedef Td_dag<T> Self;
   typedef std::list<pointer> list_pointer;
+
+#ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
+public:
+  using Td_dag_handle::PTR;
+  using Td_dag_handle::operator!;
+#endif
+
 protected:	
   class node : public Rep
   {

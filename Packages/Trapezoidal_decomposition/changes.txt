@@ -1,3 +1,6 @@
+24 September 2004 Andreas Fabri
+- changes for g++-3.4.0
+
 7 May 2004 Sylvain Pion
 - Fix "friend bug" for PGCC and ICC.
 

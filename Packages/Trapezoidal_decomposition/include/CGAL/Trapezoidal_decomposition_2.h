@@ -150,6 +150,11 @@ public:
   
   class In_face_iterator : public Base_trapezoid_iterator
   {
+
+#ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
+    using Base_trapezoid_iterator::curr;
+#endif
+
   protected:
     const X_curve& sep;
   public:
@@ -297,10 +302,19 @@ public:
    */
   class Around_point_circulator : public Base_trapezoid_circulator
   {
+
+#ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
+    using Base_trapezoid_circulator::curr;
+#endif
+
   protected:
     const Point& fixed;
   public:
     
+#ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
+    using Base_trapezoid_circulator::operator!;
+#endif
+
     Around_point_circulator(const_Traits_ptr traits_, const Point & fixedp,
                             pointer currt) :
       Base_trapezoid_iterator(traits_,currt),fixed(fixedp) {};
