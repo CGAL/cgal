@@ -1,54 +1,27 @@
-// ======================================================================
+// ============================================================================
 //
-// Copyright (c) 1999 The GALIA Consortium
+// Copyright (c) 1998 The CGAL Consortium
 //
-// This software and related documentation is part of the
-// Computational Geometry Algorithms Library (CGAL).
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
 //
-// Every use of CGAL requires a license. Licenses come in three kinds:
+// ----------------------------------------------------------------------------
 //
-// - For academic research and teaching purposes, permission to use and
-//   copy the software and its documentation is hereby granted free of  
-//   charge, provided that
-//   (1) it is not a component of a commercial product, and
-//   (2) this notice appears in all copies of the software and
-//       related documentation.
-// - Development licenses grant access to the source code of the library 
-//   to develop programs. These programs may be sold to other parties as 
-//   executable code. To obtain a development license, please contact
-//   the GALIA Consortium (at cgal@cs.uu.nl).
-// - Commercialization licenses grant access to the source code and the
-//   right to sell development licenses. To obtain a commercialization 
-//   license, please contact the GALIA Consortium (at cgal@cs.uu.nl).
-//
-// This software and documentation is provided "as-is" and without
-// warranty of any kind. In no event shall the CGAL Consortium be
-// liable for any damage of any kind.
-//
-// The GALIA Consortium consists of Utrecht University (The Netherlands),
-// ETH Zurich (Switzerland), Free University of Berlin (Germany),
-// INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
-// (Germany), Max-Planck-Institute Saarbrucken (Germany),
-// and Tel-Aviv University (Israel).
-//
-// ----------------------------------------------------------------------
-//
+
 // release       :
 // release_date  :
 //
 // file          : include/CGAL/Arithmetic_filter/predicates_on_ftC2.h
-// package       : Interval_arithmetic
 // source        : include/CGAL/predicates_on_ftC2.h
 // revision      : $Revision$
 // revision_date :
 // author(s)     : Sylvain.Pion@sophia.inria.fr
-//                 Sylvain Pion
+//                 Sylvain Pion     (Sylvain.Pion@sophia.inria.fr)
 //
-// coordinator   : INRIA Sophia-Antipolis
+// coordinator   : INRIA Sophia-Antipolis (Herve.Bronnimann@sophia.inria.fr)
 //
-// email         : cgal@cs.uu.nl
-//
-// ======================================================================
+// ============================================================================
 
 
 #ifndef CGAL_ARITHMETIC_FILTER_PREDICATES_ON_FTC2_H
@@ -123,15 +96,15 @@ compare_xC2(
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l1a, 
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l1b, 
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l1c,
-                 
+            
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l2a, 
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l2b, 
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l2c,
-                 
+            
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &h1a, 
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &h1b, 
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &h1c,
-                 
+            
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &h2a, 
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &h2b, 
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &h2c)
@@ -795,14 +768,13 @@ template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
 // inline
 Comparison_result
-cmp_signed_dist_to_lineC2(
+cmp_signed_dist_to_directionC2(
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &la, 
-    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &lb, 
-    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &lc,
-                          
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &lb,
+                               
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &px, 
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &py,
-                          
+                               
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qx, 
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qy)
 {
@@ -810,10 +782,9 @@ cmp_signed_dist_to_lineC2(
   CGAL::FPU_set_cw(CGAL::FPU_cw_up);
   try
   {
-    Comparison_result result = cmp_signed_dist_to_lineC2(
+    Comparison_result result = cmp_signed_dist_to_directionC2(
 		la.interval(),
 		lb.interval(),
-		lc.interval(),
 		px.interval(),
 		py.interval(),
 		qx.interval(),
@@ -824,10 +795,9 @@ cmp_signed_dist_to_lineC2(
   catch (CGAL::Interval_nt_advanced::unsafe_comparison)
   {
     CGAL::FPU_set_cw(backup);
-    return cmp_signed_dist_to_lineC2(
+    return cmp_signed_dist_to_directionC2(
 		la.exact(),
 		lb.exact(),
-		lc.exact(),
 		px.exact(),
 		py.exact(),
 		qx.exact(),
@@ -840,14 +810,13 @@ template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
 // inline
 bool
-has_larger_signed_dist_to_lineC2(
+has_larger_signed_dist_to_directionC2(
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &la, 
-    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &lb, 
-    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &lc,
-                                 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &lb,
+                                      
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &px, 
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &py,
-                                 
+                                      
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qx, 
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qy)
 {
@@ -855,10 +824,9 @@ has_larger_signed_dist_to_lineC2(
   CGAL::FPU_set_cw(CGAL::FPU_cw_up);
   try
   {
-    bool result = has_larger_signed_dist_to_lineC2(
+    bool result = has_larger_signed_dist_to_directionC2(
 		la.interval(),
 		lb.interval(),
-		lc.interval(),
 		px.interval(),
 		py.interval(),
 		qx.interval(),
@@ -869,10 +837,9 @@ has_larger_signed_dist_to_lineC2(
   catch (CGAL::Interval_nt_advanced::unsafe_comparison)
   {
     CGAL::FPU_set_cw(backup);
-    return has_larger_signed_dist_to_lineC2(
+    return has_larger_signed_dist_to_directionC2(
 		la.exact(),
 		lb.exact(),
-		lc.exact(),
 		px.exact(),
 		py.exact(),
 		qx.exact(),
@@ -885,14 +852,13 @@ template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
 // inline
 bool
-has_smaller_signed_dist_to_lineC2(
+has_smaller_signed_dist_to_directionC2(
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &la, 
-    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &lb, 
-    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &lc,
-                                  
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &lb,
+                                       
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &px, 
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &py,
-                                  
+                                       
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qx, 
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qy)
 {
@@ -900,10 +866,9 @@ has_smaller_signed_dist_to_lineC2(
   CGAL::FPU_set_cw(CGAL::FPU_cw_up);
   try
   {
-    bool result = has_smaller_signed_dist_to_lineC2(
+    bool result = has_smaller_signed_dist_to_directionC2(
 		la.interval(),
 		lb.interval(),
-		lc.interval(),
 		px.interval(),
 		py.interval(),
 		qx.interval(),
@@ -914,10 +879,9 @@ has_smaller_signed_dist_to_lineC2(
   catch (CGAL::Interval_nt_advanced::unsafe_comparison)
   {
     CGAL::FPU_set_cw(backup);
-    return has_smaller_signed_dist_to_lineC2(
+    return has_smaller_signed_dist_to_directionC2(
 		la.exact(),
 		lb.exact(),
-		lc.exact(),
 		px.exact(),
 		py.exact(),
 		qx.exact(),
