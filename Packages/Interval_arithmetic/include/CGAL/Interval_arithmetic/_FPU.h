@@ -270,4 +270,41 @@ static inline void CGAL_FPU_set_rounding_to_minus_infinity (void)
 #endif
 }
 
+// Rouding mode empiric testing.
+
+enum CGAL_FPU_rounding_mode
+{
+    CGAL_FPU_MINUS_INFINITY,
+    CGAL_FPU_ZERO,
+    CGAL_FPU_NEAREST,
+    CGAL_FPU_PLUS_INFINITY
+};
+
+
+// The result of 1+epsilon, 1-epsilon, -1+epsilon is enough
+// to detect exactly the rounding mode.
+// (epsilon = MIN_DOUBLE, ulp = 2^-52 or 2^-53).
+// ----------------------------------------------------
+// rounding mode:	 +inf	 -inf	 0	 nearest
+// ----------------------------------------------------
+//  1+epsilon		 1+ulp	 1	 1	 1
+//  1-epsilon		 1	 1-ulp	 1-ulp	 1
+// -1+epsilon		-1+ulp	-1	-1+ulp	-1
+// ----------------------------------------------------
+
+static inline CGAL_FPU_rounding_mode CGAL_FPU_get_rounding_mode ()
+{
+    const double m = 5e-324; // CGAL_Interval_nt_advanced::min_double;
+    // If not marked "volatile", the result is false when optimizing
+    // because the constants are pre-computed at compile time !!!
+    volatile double x, y, z, xe, ye, ze;
+    x =  1.0; xe = x + m;
+    y =  1.0; ye = y - m;
+    z = -1.0; ze = z + m;
+    if ((x == xe) && (y == ye) && (z == ze)) return CGAL_FPU_NEAREST;
+    if (y == ye) return CGAL_FPU_PLUS_INFINITY;
+    if (z == ze) return CGAL_FPU_MINUS_INFINITY;
+    return CGAL_FPU_ZERO;
+}
+
 #endif // CGAL_FPU_H
