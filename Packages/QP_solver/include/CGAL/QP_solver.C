@@ -1454,7 +1454,6 @@ check_basis_inverse( Tag_false)
     CGAL_qpe_debug {
 	vout4 << std::endl;
     }
-
     // left part of M_B
     std::fill_n( tmp_l.begin(), rows, et0);
     for ( col = 0; col < rows; ++col) {
@@ -1467,13 +1466,18 @@ check_basis_inverse( Tag_false)
 		      art_A[ *i_it - qp_n].first != (int)row ? et0 :// artific.
 		      ( art_A[ *i_it - qp_n].second ? -et1 : et1));
 	}
-	
-	if ( art_s_i >= 0) {              // special artificial variable basic?
-	    int  k = qp_n+slack_A.size()+art_s_i;
-	    if ( in_B[ k] >= 0) {
-		tmp_x[ in_B[ k]] = art_s[ row];
-	    }
-	}
+//	if ( art_s_i > 0) {              // special artificial variable?
+//	    if (in_B.size()==art_s_i+1) {
+//	   	// the special artificial variable has never been
+//		// removed from the basis, consider it
+//		tmp_x[ in_B[ art_s_i]] = art_s[ row];
+//	    } else {
+//	    	CGAL_qpe_assertion (in_B.size()==art_s_i);
+//	    }
+//	}
+        // the above code might get useful later, for now we just
+	// assume that no articial variable is basic anymore (note
+	// that this code is only executed in phase II)
 	
 	inv_M_B.multiply( tmp_l.begin(), tmp_x.begin(),
 			  q_lambda.begin(), q_x_O.begin());
@@ -1872,7 +1876,7 @@ is_solution_feasible_aux()
 
 template < class Rep_ >
 bool QPE_solver<Rep_>::
-is_solution_optimal()
+is_solution_optimal(Tag_false)		//QP case
 {
     Index_iterator i_it, M_i_it, N_i_it;
     Value_iterator v_it;
@@ -1981,6 +1985,110 @@ is_solution_optimal()
 
 template < class Rep_ >
 bool QPE_solver<Rep_>::
+is_solution_optimal(Tag_true)		//LP case
+{
+    Index_iterator i_it, M_i_it, N_i_it;
+    Value_iterator v_it;
+    Indices        M, N;
+    bool           active_constr;
+    
+    CGAL_expensive_precondition(is_solution_feasible());
+    
+    // solution vector of original problem
+    Values x_prime(qp_n, et0);
+    v_it = x_B_O.begin();
+    for (i_it = B_O.begin(); i_it != B_O.end(); ++i_it, ++v_it) {
+        x_prime[(*i_it)] = (*v_it);
+    }
+    
+    
+    // Note: lambda[i] <= 0 for qp_r[i] == "GREATER_EQUAL"
+    Values lambda_prime(qp_m, et0);
+    v_it = lambda.begin();
+    for (i_it = C.begin(); i_it != C.end(); ++i_it, ++v_it) {
+        lambda_prime[(*i_it)] = (*v_it);
+    } 
+    
+    //debug
+    CGAL_qpe_debug {
+        for (int col = 0; col < qp_m; ++col) {
+	    vout4 << "lambda'[" << col << "]= " << lambda_prime[col] 
+	        << std::endl;
+	}        
+    }
+    
+    // tau^T = c^T + lambda'^T * A 
+    for (int i = 0; i < qp_m; ++i) {
+        M.push_back(i);
+    }
+    for (int i = 0; i < qp_n; ++i) {
+        N.push_back(i);
+    }
+    Values tau(qp_n, et0);
+    for (unsigned int col = 0; col < tau.size(); ++col) {
+	A_by_index_accessor a_accessor(qp_A[col]);
+        tau[col] += ET(qp_c[col]) * d;
+	for (M_i_it = M.begin(); M_i_it != M.end(); ++M_i_it) {
+		tau[col] += lambda_prime[*M_i_it]
+		    * (*A_by_index_iterator( M_i_it, a_accessor));
+	}
+	CGAL_qpe_debug {
+	    vout4 << "tau[" << col << "]= " << tau[col] << std::endl;
+	}
+    }
+
+    // check tau >= 0, tau^T * x' == 0
+    for (int col = 0; col < qp_n; ++col) {
+        if (tau[col] >= et0) {
+	    if (tau[col] * x_prime[col] != et0) {
+	        return false;
+	    }
+	} else {
+	    return false;
+	}
+    }
+    
+    // check lambda'[i] >= 0 for i in LE =={j|qp_r[j]==LESS_EQUAL},
+    // check lambda'[i] <= 0 for i in GE =={j|qp_r[j]==GREATER_EQUAL}
+    // check lambda'[i] * (Ax-b) == 0 for i in (LE union GE)
+    Values lhs_col(qp_m, et0);
+    v_it = x_B_O.begin();
+    for (i_it = B_O.begin(); i_it != B_O.end(); ++i_it, ++v_it) {
+        A_by_index_accessor a_accessor(qp_A[*i_it]);
+	for (M_i_it = M.begin(); M_i_it != M.end(); ++M_i_it) {
+	    lhs_col[*M_i_it] += (*v_it) 
+	         * (*A_by_index_iterator( M_i_it, a_accessor));
+	}
+    }
+    for (int row = 0; row < qp_m; ++row) {
+        if (qp_r[row] != Rep::EQUAL) {
+	    active_constr = (lhs_col[row] == (ET(qp_b[row]) * d)) ?
+	        true : false;
+	    if (qp_r[row] == Rep::LESS_EQUAL) {
+	        if (lambda_prime[row] < et0) {
+		    return false;
+		}
+		if ((lambda_prime[row] > et0) && !active_constr) {
+		    return false;
+		}
+	    } else {
+	        if (lambda_prime[row] > et0) {
+		    return false;
+		}
+		if ((lambda_prime[row] < et0) && !active_constr) {
+		    return false;
+		}
+	    }
+	    
+	}
+    }
+    return true;
+        
+}
+
+
+template < class Rep_ >
+bool QPE_solver<Rep_>::
 is_solution_optimal_aux()
 {
     Index_iterator i_it, M_i_it;
@@ -1988,7 +2096,12 @@ is_solution_optimal_aux()
     C_auxiliary_iterator c_it;
     Indices        M;
     unsigned int            k;
+    // if there ever was a special artifial variable, it has to be
+    // considered for this optimality test, even if it has already
+    // left the basis
     int no_of_wo_vars = this->number_of_working_variables();
+    if (art_s_i == -2) ++no_of_wo_vars;
+    
     
     CGAL_expensive_precondition(is_solution_feasible_aux());
 
@@ -2078,7 +2191,7 @@ is_solution_optimal_aux()
 
 template < class Rep_ >
 bool QPE_solver<Rep_>::
-is_solution_unbounded()
+is_solution_unbounded(Tag_false)		//QP case
 {
 
     Index_iterator i_it, M_i_it;
@@ -2176,13 +2289,89 @@ is_solution_unbounded()
 
 template < class Rep_ >
 bool QPE_solver<Rep_>::
+is_solution_unbounded(Tag_true)		//LP case
+{
+
+    Index_iterator i_it, M_i_it;
+    Value_iterator v_it;
+    Indices        M;
+    bool           unbounded, basic_vars_nonpos;
+    int sl_ind;
+    
+    CGAL_expensive_precondition(is_solution_feasible());
+    
+    //check nonpositivity of q
+    Values q(qp_n, et0);
+    basic_vars_nonpos = true;
+    v_it = q_x_O.begin();
+    for (i_it = B_O.begin(); i_it != B_O.end(); ++v_it, ++i_it) {
+        basic_vars_nonpos = basic_vars_nonpos && ((*v_it) <= et0);
+	q[*i_it] = *v_it;
+    }
+    v_it = q_x_S.begin();
+    for (i_it = B_S.begin(); i_it != B_S.end(); ++v_it, ++i_it) {
+        basic_vars_nonpos = basic_vars_nonpos && ((*v_it) <= et0);
+    }
+
+    //check A|A_S_BxB_S*q=0
+    Values lhs_col(qp_m, et0);
+    //initialize M
+    for (int i = 0; i < qp_m; ++i) {
+        M.push_back(i);
+    }
+    v_it = q_x_O.begin();
+    for (i_it = B_O.begin(); i_it != B_O.end(); ++i_it, ++v_it) {
+        A_by_index_accessor  a_accessor( qp_A[*i_it]);
+	for (M_i_it = M.begin(); M_i_it != M.end(); ++M_i_it) {
+	    lhs_col[*M_i_it] += (*v_it)
+	        * (*A_by_index_iterator( M_i_it, a_accessor));
+	}
+    }
+    v_it = q_x_S.begin();
+    for (i_it = B_S.begin(); i_it != B_S.end(); ++i_it, ++v_it) {
+        sl_ind = *i_it - qp_n;
+	if (slack_A[sl_ind].second) {
+	    lhs_col[slack_A[sl_ind].first] -= *v_it;
+	} else {
+	    lhs_col[slack_A[sl_ind].first] += *v_it;
+	}
+    }    
+    if (j < qp_n) {  // entering variable original
+        A_by_index_accessor  a_accessor( qp_A[j]);
+        for (M_i_it = M.begin(); M_i_it != M.end(); ++M_i_it) {
+	    lhs_col[*M_i_it] -= d
+	        * (*A_by_index_iterator( M_i_it, a_accessor));
+        }
+    } else { // entering variable slack
+        sl_ind = j - qp_n;
+	lhs_col[slack_A[sl_ind].first] -= d;
+    }  
+    unbounded = basic_vars_nonpos;    
+    for (int row = 0; row < qp_m; ++row) {
+        unbounded = unbounded && (lhs_col[row] == et0); 
+    }
+        
+    //check c*q > 0
+    ET sum = et0;
+    v_it = q_x_O.begin();
+    for (i_it = B_O.begin(); i_it != B_O.end(); ++i_it, ++v_it) {
+        sum += (*v_it) * qp_c[*i_it];
+    }
+    if (j < qp_n) sum -= qp_c[j] * d;
+    unbounded = unbounded && (sum > et0);
+    return unbounded;
+}
+
+
+template < class Rep_ >
+bool QPE_solver<Rep_>::
 is_solution_valid()
 {
     bool f, o, u, aux_positive;
     switch(this->m_status) {
     case UPDATE: 	return false;
     case OPTIMAL:  	f = this->is_solution_feasible();
-     			o = this->is_solution_optimal();
+     			o = this->is_solution_optimal(Is_linear());
 			CGAL_qpe_debug {
     			    vout << "feasible: " << f << std::endl;
 			    vout << "optimal: " << o << std::endl;
@@ -2199,7 +2388,7 @@ is_solution_valid()
 			}
     			return (f && o && aux_positive);
     case UNBOUNDED:	f = this->is_solution_feasible();
-    			u = this->is_solution_unbounded();
+    			u = this->is_solution_unbounded(Is_linear());
 			CGAL_qpe_debug {
 			    vout << "feasible: " << f << std::endl;
 			    vout << "unbounded: " << u << std::endl;
