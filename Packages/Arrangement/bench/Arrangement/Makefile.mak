@@ -21,7 +21,19 @@ TARGET0 = benchPmwxMyKernel$(EXEFILESUFFIX)
 LCPPDEFS+= -DUSE_MY_KERNEL
 LOBJDIR :=$(LOBJDIR)_my_kernel
 else
+ifeq ($(USE_LAZY_RAT), 1)
+TARGET0 = benchPmwxLazyRat$(EXEFILESUFFIX)
+LCPPDEFS+= -DUSE_LAZY_RAT
+LOBJDIR :=$(LOBJDIR)_lazy_rat
+else
+ifeq ($(USE_LAZY_QUOTIENT), 1)
+TARGET0 = benchPmwxLazyQuotient$(EXEFILESUFFIX)
+LCPPDEFS+= -DUSE_LAZY_QUOTIENT
+LOBJDIR :=$(LOBJDIR)_lazy_quotient
+else
 TARGET0 = benchPmwx$(EXEFILESUFFIX)
+endif
+endif
 endif
 endif
 endif
