@@ -1,3 +1,7 @@
+Version 3.2.2 (September 2 1999)
+- fixed include files that still included <CGAL/...C2.h>
+  [worked with symlinks, but not in releases newer than 2.1-I-13]
+
 Version 3.0 (August 26 1999)
 ****EXTENSIVE CHANGES -- enough to warrant a new 3.0 release*****
 - new <CGAL/Cartesian/...> subdirectory

@@ -1,3 +1,10 @@
+Version 3.2.2 (September 2 1999)
+- fixed include files that still included <CGAL/...C2.h>
+  [worked with symlinks, but not in releases newer than 2.1-I-13]
+
+Version 3.2.1 (Sept 1 1999)
+- Release again for I-15 made in Dagstuhl
+
 Version 3.2 (Sept 1 1999)
 - Includes new predicates and construction files in C2 and C3
 

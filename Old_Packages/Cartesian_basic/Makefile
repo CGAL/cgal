@@ -38,6 +38,7 @@ Submit: Package
 	echo "submission::" >> $(TMP_file)
 	echo "http://www-sop.inria.fr/prisme/CGAL/DR:/Members" >> $(TMP_file)
 	echo "/$(Package)/$(Package).tar.gz" >> $(TMP_file)
+	mutt -s autohandle cgal-submit@cs.uu.nl < $(TMP_file)
 	rm -f $(TMP_file)
 
 clean:
