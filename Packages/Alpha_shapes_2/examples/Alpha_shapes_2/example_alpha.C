@@ -74,7 +74,7 @@ typedef Alpha_shape_2::Alpha_iterator Alpha_iterator;
 //---------------------------------------------------------------------
 
 std::vector<Gt::Segment>
-Construst_Alpha_shape(const std::list<Point> &V_p,
+Construct_Alpha_shape(const std::list<Point> &V_p,
 		      const Coord_type &Alpha,
 		      bool mode)
   // Generate Alpha Shape
@@ -131,7 +131,7 @@ int main(int argc,  char* argv[])
   std::list<Point> L;
   file_input(L);
   std::vector<Gt::Segment> V =
-    Construst_Alpha_shape(L,10000.0,Alpha_shape_2::GENERAL);
+    Construct_Alpha_shape(L,10000.0,Alpha_shape_2::GENERAL);
   std::cout << "Alpha Shape computed" << std::endl;
   return 0;
 }

@@ -46,9 +46,9 @@ R_FT_return(R)
   squared_radius_smallest_circumcircle(const Point_2<R> &p,
 				       const Point_2<R> &q) 
 {
-  
+  typedef typename R::FT Return_type;
   Vector_2<R> v(p - q);
-  return (R_FT_return(R)((v*v)/4));
+  return (Return_type ((v*v)/4));
 }
 
 template <class R >
