@@ -1,8 +1,11 @@
 Changes done to the `Min_circle_2' package
 
+Version 3.2.10 on 07-Oct-1999
+- inequality operator added to '...adapterH2__Circle'.
+
 Version 3.2.9 on 07-Oct-1999
 - removed 'CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC(...)' for kernel types.
-- inequality operator added to '..adapter..__Circle..'.
+- inequality operator added to '...adapterC2__Circle'.
 
 Version 3.2.8 on 01-Oct-1999
 - inequality operator added to 'MyPoint[CH]2'.
