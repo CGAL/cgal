@@ -51,8 +51,8 @@ public:
   typedef typename Triangulation_3<Gt,Tds>::Cell Cell;
   typedef typename Triangulation_3<Gt,Tds>::Vertex Vertex;
   typedef typename Triangulation_3<Gt,Tds>::Edge Edge;
-  typedef typename Vertex::Vertex_handle Vertex_handle;
-  typedef typename Cell::Cell_handle Cell_handle;
+  typedef typename Triangulation_3<Gt,Tds>::Vertex_handle Vertex_handle;
+  typedef typename Triangulation_3<Gt,Tds>::Cell_handle Cell_handle;
   typedef Triangulation_3<Gt,Tds> Triangulation;
 
   typedef Triangulation_cell_circulator_3<Gt,Tds> Cell_circulator;
@@ -170,8 +170,8 @@ public:
   typedef typename Triangulation_3<Gt,Tds>::Vertex Vertex;
   typedef typename Triangulation_3<Gt,Tds>::Edge Edge;
   typedef typename Triangulation_3<Gt,Tds>::Facet Facet;
-  typedef typename Vertex::Vertex_handle Vertex_handle;
-  typedef typename Cell::Cell_handle Cell_handle;
+  typedef typename Triangulation_3<Gt,Tds>::Vertex_handle Vertex_handle;
+  typedef typename Triangulation_3<Gt,Tds>::Cell_handle Cell_handle;
   typedef Triangulation_3<Gt,Tds> Triangulation;
 
   typedef Triangulation_facet_circulator_3<Gt,Tds> Facet_circulator;
