@@ -3,15 +3,13 @@
 #include <CGAL/Point_set_2.h>
 
 typedef CGAL::Cartesian<double>     K;
-typedef CGAL::Triangulation_vertex_base_2<K> Vb;
-typedef CGAL::Triangulation_face_base_2<K>   Fb;
-typedef CGAL::Triangulation_default_data_structure_2<K,Vb,Fb> Tds;
-typedef CGAL::Point_set_2<K,Tds>::Vertex_handle  Vertex_handle;
+
+typedef CGAL::Point_set_2<K>::Vertex_handle  Vertex_handle;
 typedef CGAL::Point_2<K>                         Point;
 
 int main()
 {
-  CGAL::Point_set_2<K,Tds> PSet;
+  CGAL::Point_set_2<K> PSet;
   std::list<Point> Lr;
   
   Point p1(12,14);
