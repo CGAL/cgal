@@ -80,12 +80,25 @@ Edges of the planar map:
 
 The \ccc{Planar_map_with_intersections_2<Planar_map_2<Dcel, Traits> >} class 
 is parameterized with the \ccc{Planar_map_2} class it inherits from, which 
-includes the \ccc{Dcel} object represents the underlying topological data structure and maintains a {\em doubly-connected edge list}. 
+is parameterized with the \ccc{Dcel} and the \ccc{Traits} objects. The
+\ccc{Dcel} is a data structure that maintains a
+{\em doubly-connected edge list} and represents the underlying topology.
 The geometric functionality is provided by the \ccc{Traits} class, and is
 tailored to handle a specific family of curves. It encapsulates the
 number type used and the coordinate representation. This package
 contains traits classes that handle various types of curves (e.g.,
 segments, polylines, conics, etc.).
+
+Similar to some constructors of the \ccc{Planar_map_2}, 
+(see Chapter~\ref{I1_ChapterPlanarMap}), some of the constructors of the
+\ccc{Planar_map_with_intersections_2} class allow you to choose between
+various point-location strategies. While the default point-location
+strategy of the \ccc{Planar_map_2} class is the {\it trapezoid-ric} strategy,
+which is based on a trapezoidal decomposition of the map, and requires
+constructing and maintening auxliary data structures, the default strategy
+of the \ccc{Planar_map_with_intersections_2} class is the
+{\it walk-along-a-line\/} strategy, as the overhead of the former
+tends to be very large when no restrictions are applied on the input curves.
 
 \subsection{Operations}
 The set of operations that can be applied to a planar map with intersection 
