@@ -1,6 +1,6 @@
 // ==========================================================================
 //
-// Copyright (c) 1998 The CGAL Consortium
+// Copyright (c) 1998, 1999 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -15,7 +15,7 @@
 // source        : include/CGAL/Cartesian/Vector_3.h
 // revision      : $Revision$
 // revision_date : $Date$
-// author        : Andreas.Fabri@sophia.inria.fr
+// author        : Andreas Fabri
 //
 // coordinator   : INRIA Sophia-Antipolis (Herve.Bronnimann@sophia.inria.fr)
 //
