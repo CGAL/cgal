@@ -22,8 +22,6 @@
 #ifndef CGAL_HOMOGENEOUS_REP_H
 #define CGAL_HOMOGENEOUS_REP_H
 
-#define CGAL_REP_CLASS_DEFINED
-
 #include <CGAL/Handle_for.h>
 #include <CGAL/Handle.h>
 #include <CGAL/Twotuple.h>

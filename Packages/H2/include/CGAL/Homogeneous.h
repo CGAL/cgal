@@ -25,6 +25,8 @@
 #ifndef CGAL_HOMOGENEOUS_H
 #define CGAL_HOMOGENEOUS_H
 
+#define CGAL_REP_CLASS_DEFINED
+
 #include <CGAL/basic.h>
 #include <CGAL/Quotient.h>
 #include <CGAL/user_classes.h>

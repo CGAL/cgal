@@ -1,3 +1,6 @@
+2.29   (18 June 2001)
+- Move definition of CGAL_REP_CLASS_DEFINED.
+
 2.28   (7 June 2001)
 - refixed compare_x_at_y()
 - Move homogeneous-only files from Kernel_basic to H2.
