@@ -12,10 +12,12 @@
 // release_date  : $CGAL_Date: 2000/07/11 $
 // 
 // file          : include/CGAL/Planar_map_2/Handle_for_with_access.h
+// package       : Planar_map
 // maintainer    : Oren Nechushtan <theoren@math.tau.ac.il>
 // revision      : 1.0
 // revision_date : 27 Jun 2000 
 // author(s)     : Oren Nechushtan
+// coordinator   : Tel-Aviv University (Dan Halperin <halperin@math.tau.ac.il>)
 //
 //
 // ======================================================================
