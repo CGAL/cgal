@@ -5,6 +5,9 @@
   et virer les appels a handle() dans la test-suite pour verifier si ca
   marche.  Pour les iterators, il faudra surement deriver simplement de
   celui du DS_container.
+- Finir de decider pour find_conflicts, si on veut les facettes du bord du
+  trou vues de l'interieur ou de l'exterieur.  Implanter ca avant la release !
+  (et prevenir David/Raphaelle, les deux seuls users pour le moment).
 - bien tester le output_stream de T_3 et le copy_tds (ordre de creation des
   sommets). 
 - Verifier qu'il n'y a pas d'autres operations du meme style a modifier. 
@@ -22,7 +25,7 @@ General
   remarche ?
 - Can we have : typedef Vertex * Vertex_handle; ?
   Problem is const-correctness (see HDS and its Vertex_const_handle...).
-- Deriver Triangulation de TDS ?
+- Virer les fonctions marquees "obsoletes" apres la release.
 
 TEST SUITE
 - faire tourner GCOV sur la test-suite, et rajouter ce qu'il faut pour
@@ -39,6 +42,7 @@ Exemples - demo
 
 TDS
 - virer le truc infame dans DS_Container (le magic machin).
+- reflechir a un support de facettes explicites (cf papier de Giesen)
 - comprendre bug dans ancienne version de is_edge de tds, dim 2 
 	(pb edge_iterator...? etonnant)
 
@@ -71,9 +75,17 @@ Delaunay
 - natural neighbors de Raphaelle a integrer
 
 Regular :
+- la cell_base speciale qui stocke une liste de points caches ou pas (et un
+  tag qui dit si oui ou non elle stocke les points caches ou pas), et un
+  iterator pour y acceder.
+- remove devrait etre pareil que pour delaunay (a part les points caches a
+  re-inserer apres coup).
 - faire marcher la hierarchie avec.  Le probleme est qu'on delete des
   vertex, et donc la hierarchie est perdue avec ses pointeurs up/down qui
   pointent dans l'espace, du coup...
-  La solution que je vois est de commencer l'implantation des sommets caches
-  par une liste (in place) de vertex dans chaque cellule, qui sera
-  necessaire pour le remove de toute facon.
+  La solution qu'on a discute est :
+  - la hierarchy devrait avoir tous les etages superieurs simplement Delaunay,
+    et pas autre chose.
+  - le insert() (ou find_conflict) de Regular devrait fournir un iterator sur
+    les Vertex_handle correspondant aux points qui seront caches, et en
+    fonction de ca, une hierarchy speciale Regular fera ce qu'il faut.
