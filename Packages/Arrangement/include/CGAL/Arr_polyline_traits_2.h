@@ -55,12 +55,12 @@ public:
   class My_polyline_2 : 
     protected ::std::vector<typename Segment_traits_::Curve_2>
   {
+  protected:
+
     typedef Segment_traits_                           Segment_traits_2;
     typedef typename Segment_traits_2::Point_2        Point_2;
     typedef typename Segment_traits_2::Curve_2        Segment_2;
     typedef ::std::vector<Segment_2>                  Base;
-
-  protected:
 
     /*!
      * Default constructor.
@@ -1032,12 +1032,14 @@ template <class Segment_traits_>
 class Polyline_2 :
     public Arr_polyline_traits_2<Segment_traits_>::My_polyline_2
 {
+private:
   typedef typename Arr_polyline_traits_2<Segment_traits_>::My_polyline_2
                                                   Base;
+
+public:
+
   typedef typename Base::Segment_2                Segment_2;
   typedef typename Base::Point_2                  Point_2;
-
-  public:
 
   /*!
    * Default constructor.
