@@ -6,23 +6,31 @@ use Cwd;
 # install_submission <sender> <url1> <url2> ...
 
 
-$::TESTING=0;
+my $testing=0;
+
+my ($packagedir, $oldpackagedir, $download_dir,
+    $maintainer, $console_output, $tempdir);
+my $WGET;
 
 
 umask 002;
 
-if ($::TESTING) {
-$::packagedir='/users/geert/tmp/inst_www/packages';
-$::oldpackagedir='/users/geert/tmp/inst_www/old_packages';
-$::download_dir='/users/geert/tmp/inst_www/download';
-$::maintainer='geert@cs.uu.nl';
-$::CONSOLE_OUTPUT=1;
-} else {
-$::packagedir='/users/www/CGAL/Members/Develop/updates/packages';
-$::oldpackagedir='/users/www/CGAL/Members/Develop/updates/old_packages';
-$::download_dir='/projects/CGAL/submissions/download';
-$::maintainer='geert@cs.uu.nl';
-$::CONSOLE_OUTPUT=0;
+sub init_variables()
+{
+    if ($testing) {
+	$packagedir='/users/geert/tmp/inst_www/packages';
+	$oldpackagedir='/users/geert/tmp/inst_www/old_packages';
+	$download_dir='/users/geert/tmp/inst_www/download';
+	$maintainer='geert@cs.uu.nl';
+	$console_output=1;
+    } else {
+	$packagedir='/users/www/CGAL/Members/Develop/updates/packages';
+	$oldpackagedir='/users/www/CGAL/Members/Develop/updates/old_packages';
+	$download_dir='/projects/CGAL/submissions/download';
+	$maintainer='geert@cs.uu.nl';
+	$console_output=0;
+    }
+    $WGET="/users/wieger/local/bin/wget -Y off -nd -P $download_dir";
 }
 
 $ENV{PATH}=
@@ -30,45 +38,36 @@ $ENV{PATH}=
 
 
 
-# logfile
-$::ACTUAL_LOGFILE="/tmp/install_www_submission.log.$$";
+my $ACTUAL_LOGFILE="/tmp/install_www_submission.log.$$";
 
-# ----------------------------------------------------
-# program for getting files via http/ftp
-# GNU wget (see http://sunsite.auc.dk/ftp/pub/infosystems/wget/)
-
-$::WGET="/users/wieger/local/bin/wget -Y off -nd -P $::download_dir";
+my $check_source_file_prog=
+	'/projects/CGAL/submissions/autohandle/scripts/check_headers';
 
 
-
-# ----------------------------------------------------
-# You probably don't need to change anything beyond
-# ----------------------------------------------------
-#
 # write to logfile
 #
 
 sub log_header($)
 {
-    if ( $::CONSOLE_OUTPUT ) {
-        print "$_[0] ...\n";
+    if ( $console_output ) {
+        print "$_[0]\n";
     }
     print LOGFILE "-------------------------------------------------------\n";
-    print LOGFILE "  $_[0] ...\n";
+    print LOGFILE "  $_[0]\n";
     printf LOGFILE "-------------------------------------------------------\n";
 }
 
 sub log_msg($)
 {
-    if ( $::CONSOLE_OUTPUT ) {
-        print  "$_[0] ...\n";
+    if ( $console_output ) {
+        print  "$_[0]\n";
     }
-    printf LOGFILE "  $_[0] ...\n";
+    printf LOGFILE "  $_[0]\n";
 }
 
 sub log_done()
 {
-    if ( $::CONSOLE_OUTPUT ) {
+    if ( $console_output ) {
         print  " done\n-------------------------------------------------------\n"
     }
     print LOGFILE "-------------------------------------------------------\n";
@@ -105,7 +104,7 @@ sub make_package_name($)
 sub belongs_to_release($)
 # parameter 1 is the name of the package
 {
-    open PACKAGES_TO_INCLUDE, "$::packagedir/include_in_release" or die;
+    open PACKAGES_TO_INCLUDE, "$packagedir/include_in_release" or die;
     while (<PACKAGES_TO_INCLUDE>) {
 	chomp;
 	if (/^\s*$_[0]\s*$/) {
@@ -119,15 +118,15 @@ sub belongs_to_release($)
 
 sub create_package_dir()
 {
-    $::tempdir="$::packagedir/TMP$$";
-    mkdir($::tempdir, 0775) ;
+    $tempdir="$packagedir/TMP$$";
+    mkdir($tempdir, 0775) ;
 }
 
 sub unpack_package($)
 {
     my ($full_file_name);
     $full_file_name = shift;
-    chdir $::tempdir;
+    chdir $tempdir;
     if ( $full_file_name =~ /\.tar\s*$/) {
 	system 'tar', 'xf', "$full_file_name";
     } elsif ($full_file_name =~ /\.zip\s*$/) {
@@ -180,7 +179,7 @@ sub check_version($)
 	return 0;
     }
     ($old_version_string, $old_date) =
-	get_version("$::packagedir/$package_name/version");
+	get_version("$packagedir/$package_name/version");
     if (!defined($old_version_string)) {
 	log_msg "No previous version";
 	return 1;
@@ -208,6 +207,40 @@ sub check_version($)
     return 0;
 }
 
+my @source_files_to_check;
+
+sub add_codefiles
+{
+    if ( $_ =~ /(\.(C|h)\s*$)|/ and -f $_) {
+	push @source_files_to_check, $File::Find::name;
+    }
+}
+
+sub check_codefiles()
+{
+    @source_files_to_check = ();
+    if (-d 'include') {
+	find(\&add_codefiles, "include");
+    }
+    if (-d 'src') {
+	find(\&add_codefiles, "src");
+    }
+    if (-d 'config') {
+	find(\&add_codefiles, "config");
+    }
+    my $source_file;
+    foreach $source_file (@source_files_to_check) {
+	system("$check_source_file_prog -v V $source_file >tmpmsg.$$");
+	open CHECK_MSGS, "<tmpmsg.$$";
+	while (<CHECK_MSGS>) {
+	    chomp;
+	    log_msg($_);
+	}
+	close CHECK_MSGS;
+	unlink "tmpmsg.$$";
+    }
+}
+
 sub check_package($)
 {
     if ( ! -f 'version' ) {
@@ -226,7 +259,7 @@ sub check_package($)
 	log_msg "WARNING: File changes.txt is missing!";
     }
 
-  # checks for correct headers, etc.
+    check_codefiles();
     return 1;
 }
 
@@ -264,23 +297,23 @@ sub move_packagedir($)
 {
     my $package_name = shift;
   # first remove the earlier version (if it exists)
-    if ( -d "$::oldpackagedir/$package_name" ) {
-#    log_msg "removing directory $::oldpackagedir/$package_name"
-	system('rm', '-rf', "$::oldpackagedir/$package_name");
+    if ( -d "$oldpackagedir/$package_name" ) {
+#    log_msg "removing directory $oldpackagedir/$package_name"
+	system('rm', '-rf', "$oldpackagedir/$package_name");
     }
 
   # move existing version to old packages
-  if ( -d "$::packagedir/$package_name" ) {
-#    log_msg "moving directory $::packagedir/$package_name to $::oldpackagedir/$package_name"
-	rename("$::packagedir/$package_name",
-	    "$::oldpackagedir/$package_name") or die;
+  if ( -d "$packagedir/$package_name" ) {
+#    log_msg "moving directory $packagedir/$package_name to $oldpackagedir/$package_name"
+	rename("$packagedir/$package_name",
+	    "$oldpackagedir/$package_name") or die;
     }
 
-#  log_msg "moving directory $::tempdir to $::packagedir/$package_name"
-    rename($::tempdir, "$::packagedir/$package_name") or die;
+#  log_msg "moving directory $tempdir to $packagedir/$package_name"
+    rename($tempdir, "$packagedir/$package_name") or die;
 
-    system 'chgrp', '-R', 'cgal', "$::packagedir/$package_name";
-    system 'chmod', '-R', 'ug+w', "$::packagedir/$package_name" ;
+    system 'chgrp', '-R', 'cgal', "$packagedir/$package_name";
+    system 'chmod', '-R', 'ug+w', "$packagedir/$package_name" ;
 }
 
 sub install_submission($$)
@@ -288,9 +321,9 @@ sub install_submission($$)
     my ($file_name, $file_pathname, $package_name);
     $file_name = shift;
     $package_name = shift;
-    $file_pathname = "$::download_dir/$file_name";
+    $file_pathname = "$download_dir/$file_name";
 
-    chdir($::tempdir);
+    chdir($tempdir);
     if (! unpack_package( $file_pathname) ) {
 	log_msg("Failed to unpack $file_pathname");
 	return 0;
@@ -328,13 +361,13 @@ sub do_submission($)
 	log_msg "Send a separate mail to cgal_submit if you want that";
     }
     $url_with_password =~ s|http://|http://member1:cg4any1@|;
-    unlink glob("$::download_dir/*") if (! $::TESTING);
+    unlink glob("$download_dir/*") if (! $testing);
     log_header "downloading $url";
     my $logfileno = fileno(LOGFILE);
     die "Log file not open" if ! defined($logfileno);
-    system("$::WGET $url_with_password >>$logfileno 2>&$logfileno");
-#    system("$::WGET $url_with_password >> $::ACTUAL_LOGFILE 2>&1") if (! $::TESTING);
-    if ( ! -f "$::download_dir/$file_name" ) {
+    system("$WGET $url_with_password >>$logfileno 2>&$logfileno");
+#    system("$WGET $url_with_password >> $ACTUAL_LOGFILE 2>&1") if (! $testing);
+    if ( ! -f "$download_dir/$file_name" ) {
 	log_msg "ERROR: download failed!";
 	return 0;
     } 
@@ -355,39 +388,49 @@ sub do_submission($)
 #
 #-----------------------------------
 
-$SIG{INT}='IGNORE';
-$SIG{QUIT} = 'IGNORE';
-$SIG{TERM} = 'IGNORE';
-
-unlink $::ACTUAL_LOGFILE;
-system("echo >$::ACTUAL_LOGFILE");
-open LOGFILE, ">$::ACTUAL_LOGFILE";
-
 if ($#ARGV < 1) {
     print_usage;
     exit 1;
 }
 
-$::SENDER=shift;
-$::starting_directory = cwd();
-foreach $::submission ( @ARGV) {
+my $submission;
+my $sender=shift;
+my $starting_directory = cwd();
+
+if ($starting_directory =~ m'CGAL/Geert/maintenance') {
+    $testing=1;
+}
+
+init_variables();
+
+
+$SIG{INT}='IGNORE';
+$SIG{QUIT} = 'IGNORE';
+$SIG{TERM} = 'IGNORE';
+
+unlink $ACTUAL_LOGFILE;
+system("echo >$ACTUAL_LOGFILE");
+open LOGFILE, ">$ACTUAL_LOGFILE";
+
+
+foreach $submission ( @ARGV) {
     if (!create_package_dir) {
 	log_msg "Failed to create temporary directory";
 	exit 1;
     }
-    do_submission($::submission);
-    chdir($::starting_directory);
-    if (-d "$::tempdir") {
-	system('rm', '-rf', "$::tempdir");
+    do_submission($submission);
+    chdir($starting_directory);
+    if (-d "$tempdir") {
+	system('rm', '-rf', "$tempdir");
     }
 }
 
 close LOGFILE;
 $ARGV[0] =~ s|.*/||;
-system "cat $::ACTUAL_LOGFILE | Mail -s \"CGAL submission $ARGV[0]\" $::maintainer" if !$::TESTING;
-system "cat $::ACTUAL_LOGFILE | Mail -s \"CGAL submission $ARGV[0]\" $::SENDER";
+system "cat $ACTUAL_LOGFILE | Mail -s \"CGAL submission $ARGV[0]\" $maintainer" if !$testing;
+system "cat $ACTUAL_LOGFILE | Mail -s \"CGAL submission $ARGV[0]\" $sender";
 
-unlink $::ACTUAL_LOGFILE;
+unlink $ACTUAL_LOGFILE;
 
 exit 0;
 
