@@ -899,6 +899,7 @@ Packages/Generator/doc_tex/support/Generator/generators_prog1_small.gif -text sv
 Packages/Generator/doc_tex/support/Generator/generators_prog2.gif -text svneol=unset#unset
 Packages/Generator/doc_tex/support/Generator/generators_prog2.ps -text
 Packages/Generator/doc_tex/support/Generator/generators_prog2_small.gif -text svneol=unset#unset
+Packages/Generator/examples/Generator/rcs_example.C svneol=native#unset
 Packages/HalfedgeDS/doc_tex/HalfedgeDS/fig/halfedge.ips -text
 Packages/HalfedgeDS/doc_tex/HalfedgeDS/fig/hds_design.ips -text
 Packages/HalfedgeDS/doc_tex/HalfedgeDS/fig/loop.ips -text
