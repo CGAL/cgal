@@ -509,7 +509,7 @@ int main(int argc,  char* argv[])
 			  Pfin.button("Cancel",1);
 			  if (Pfin.open(W) == 1)
 			    break;
-			  strcpy(opt.finname, finname);
+			  CGAL_CLIB_STD::strcpy(opt.finname, finname);
 			  std::cout << opt.finname << std::endl;
 	
 			  clear_all(A, V, W);
@@ -522,7 +522,7 @@ int main(int argc,  char* argv[])
 			  W.init(xmin, xmax, ymin);
 			  W << VERTEX_COLOR; 
 			  {
-			    std::vector<Point>::const_iterator it;
+			    std::vector<Point>::iterator it;
 			    for (it = V.begin(); it != V.end(); ++it)
 			      W << *it;
 			  }
@@ -573,7 +573,7 @@ int main(int argc,  char* argv[])
 	    if (Pout.open(W) == 0)
 	      { 
 		opt.file_output = true;
-		strcpy(opt.foutname, foutname);
+		CGAL_CLIB_STD::strcpy(opt.foutname, foutname);
 		file_output(V, opt);
 	      }
 	    break;

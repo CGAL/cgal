@@ -215,8 +215,6 @@ public:
   // `alpha' that is initialized with the points in the range
   // from first to last
 
-#ifndef CGAL_CFG_NO_MEMBER_TEMPLATES
-
   template <class InputIterator>
   Alpha_shape_2( InputIterator first,  
 		 InputIterator last,  
@@ -238,59 +236,6 @@ public:
 	  initialize_alpha_spectrum();
 	}
     }
-
-#else //CGAL_CFG_NO_MEMBER_TEMPLATES 
-#if defined(LIST) || defined(__SGI_STL_LIST)
-Alpha_shape_2(typename std::list<Point>::const_iterator first,
-	      typename std::list<Point>::const_iterator last,
-	      const Coord_type& alpha = 0,
-	      Mode m = GENERAL)
-  : _alpha(alpha), _mode(m), INFINITY(-1), UNDEFINED(-2) 
-{
-  if (Dt::insert(first, last) >= 4)
-    {
-      // Compute the associated _interval_face_map
-      initialize_interval_face_map();
-
-      // Compute the associated _interval_edge_map
-      initialize_interval_edge_map();
-   
-      // Compute the associated _interval_vertex_map
-      initialize_interval_vertex_map();
-
-      // merge the two maps
-      initialize_alpha_spectrum();
-    }
-}
-
-#endif //LIST
-
-#if defined(VECTOR) || defined(__SGI_STL_VECTOR)
-Alpha_shape_2(typename std::vector<Point>::const_iterator first,
-	      typename std::vector<Point>::const_iterator last,
-	      const Coord_type& alpha = 0,
-	      Mode m = GENERAL)
-  : _alpha(alpha), _mode(m), INFINITY(-1), UNDEFINED(-2) 
-{
-  if (Dt::insert(first, last) >= 4)
-    {
-      // Compute the associated _interval_face_map
-      initialize_interval_face_map();
-
-      // Compute the associated _interval_edge_map
-      initialize_interval_edge_map();
-   
-      // Compute the associated _interval_vertex_map
-      initialize_interval_vertex_map();
-
-      // merge the two maps
-      initialize_alpha_spectrum();
-    }
-}
-#endif // VECTOR
-
-#endif // CGAL_CFG_NO_MEMBER_TEMPLATES
-
  
 public:
 
@@ -310,7 +255,9 @@ Window_stream& op_window(Window_stream& W) const;
  
 //----------------------- OPERATIONS ---------------------------------
 
-#ifndef CGAL_CFG_NO_MEMBER_TEMPLATES
+// Introduces an alpha-shape `A' for a positive alpha-value
+// `alpha' that is initialized with the points in the range
+// from first to last
 
 template < class InputIterator >  
 int make_alpha_shape(InputIterator first,  
@@ -340,80 +287,6 @@ int make_alpha_shape(InputIterator first,
     }
   return n;
 }
-
-// Introduces an alpha-shape `A' for a positive alpha-value
-// `alpha' that is initialized with the points in the range
-// from first to last
-
-#else //CGAL_CFG_NO_MEMBER_TEMPLATES
-
-//-----------------------------------------------------------------------
-
-#if defined(LIST) || defined(__SGI_STL_LIST)
-
-int make_alpha_shape(typename std::list<Point>::const_iterator first,
-		     typename std::list<Point>::const_iterator last) 
-{
-
-  clear();
-
-  int n = Dt::insert(first, last);
-    
-#ifdef DEBUG
-  std::cout << "Triangulation computed" << std::endl;
-#endif
- if (n >= 4)
-   { 
-     // Compute the associated _interval_face_map
-     initialize_interval_face_map();
- 
-     // Compute the associated _interval_edge_map
-     initialize_interval_edge_map();
-
-     // Compute the associated _interval_vertex_map
-     initialize_interval_vertex_map();
-  
-     // merge the two maps
-     initialize_alpha_spectrum();
-   }
-  return n;
-}
-#endif //LIST
-
-//-----------------------------------------------------------------------
-
-#if defined(VECTOR) || defined(__SGI_STL_VECTOR)
-
-int  make_alpha_shape(typename std::vector<Point>::const_iterator first,
-		      typename std::vector<Point>::const_iterator last) 
-{
-    
-  clear();
-  int n = Dt::insert(first, last);
-  
-#ifdef DEBUG
-  std::cout << "Triangulation computed" << std::endl;
-#endif
-  if (n >= 4)
-    {
-      // Compute the associated _interval_face_map
-      initialize_interval_face_map();
-
-      // Compute the associated _interval_edge_map
-      initialize_interval_edge_map();
- 
-      // Compute the associated _interval_vertex_map
-      initialize_interval_vertex_map();
-
-      // merge the two maps 
-      initialize_alpha_spectrum(); 
-    }
-  return n;
-}
-#endif // VECTOR
-
-#endif // CGAL_CFG_NO_MEMBER_TEMPLATES
-
 
 private :
 

@@ -126,8 +126,6 @@ public:
   // `alpha' that is initialized with the points in the range
   // from first to last
 
-#ifndef CGAL_CFG_NO_MEMBER_TEMPLATES
-
   template <class InputIterator>
   Weighted_alpha_shape_2( InputIterator first,  
 			  InputIterator last,  
@@ -136,493 +134,130 @@ public:
     : Alpha_shape_2<Rt>(first, last, alpha, m) 
     {}
 
-#else //CGAL_CFG_NO_MEMBER_TEMPLATES
-#if defined(LIST) || defined(__SGI_STL_LIST)
-
-  Weighted_alpha_shape_2(typename std::list<Point>::const_iterator first,
-			 typename std::list<Point>::const_iterator last,
-			 const Coord_type& alpha = 0,
-			 Mode m = GENERAL) 
-    : Alpha_shape_2<Rt>(first, last, alpha, m) 
-    {}
-
-#endif //LIST
-
-#if defined(VECTOR) || defined(__SGI_STL_VECTOR)
-
-  Weighted_alpha_shape_2(typename std::vector<Point>::const_iterator first,
-			 typename std::vector<Point>::const_iterator last,
-			 const Coord_type& alpha = 0,
-			 Mode m = GENERAL) 
-    : Alpha_shape_2<Rt>(first, last, alpha, m) 
-    {}
-
-#endif // VECTOR
-
-#endif //CGAL_CFG_NO_MEMBER_TEMPLATES 
-
-
   //---------------heuristic initialization of weights----------------
 
-#ifndef CGAL_CFG_NO_MEMBER_TEMPLATES
-
   template <class Iterator>
   void
-  initialize_weights_to_the_nearest_voronoi_vertex
-  (Iterator  first, Iterator  last, const Coord_type &k);
-
-  //---------------------------------------------------------------------
-
-  template <class Iterator>
-  void
-  initialize_weights_to_the_nearest_voronoi_edge
-  (Iterator  first, Iterator  last, const Coord_type &k);
-
-  //---------------------------------------------------------------------
-
-  template <class Iterator>
-  void
-  initialize_weights_to_the_nearest_vertex
-  (Iterator  first, Iterator  last, const Coord_type &k);
-
-  
-#else //CGAL_CFG_NO_MEMBER_TEMPLATES
-#if defined(LIST) || defined(__SGI_STL_LIST)
-
-  void
-  initialize_weights_to_the_nearest_voronoi_vertex
-  (typename std::list<Point>::iterator  first,
-   typename std::list<Point>::iterator  last, const Coord_type &k);
-
-  //---------------------------------------------------------------------
-
-  void
-  initialize_weights_to_the_nearest_voronoi_edge
-  (typename std::list<Point>::iterator  first,
-   typename std::list<Point>::iterator  last, const Coord_type &k);
-
-
-  //---------------------------------------------------------------------
-
-  void
-  initialize_weights_to_the_nearest_vertex
-  (typename std::list<Point>::iterator  first,
-   typename std::list<Point>::iterator  last, const Coord_type &k);
-  
-
-#endif //LIST
-
-#if defined(VECTOR) || defined(__SGI_STL_VECTOR)
-
-  void
-  initialize_weights_to_the_nearest_voronoi_vertex
-  (typename std::vector<Point>::iterator  first,
-   typename std::vector<Point>::iterator  last, const Coord_type &k);
-
-  //---------------------------------------------------------------------
-  
-  void
-  initialize_weights_to_the_nearest_voronoi_edge
-  (typename std::vector<Point>::iterator  first,
-   typename std::vector<Point>::iterator  last, const Coord_type &k);
-
-  //---------------------------------------------------------------------
-
-  void
-  initialize_weights_to_the_nearest_vertex
-  (typename std::vector<Point>::iterator  first,
-   typename std::vector<Point>::iterator  last, const Coord_type &k);
-  
-  //---------------------------------------------------------------------
-   
-
-#endif // VECTOR
-#endif // CGAL_CFG_NO_MEMBER_TEMPLATES
-};
-
-//---------------------- MEMBER FUNCTIONS -----------------------------
-
-#ifndef CGAL_CFG_NO_MEMBER_TEMPLATES
-
-template <class Rt> template <class Iterator>
-void
-Weighted_alpha_shape_2<Rt>::initialize_weights_to_the_nearest_voronoi_vertex
-(Iterator  first, Iterator  last, const Coord_type &k)
-{ 
-  Delaunay_triangulation_2<Gt, Tds> D;
-  Iterator point_it;
-  
-  D.insert(first, last);
-
-  for( point_it = first; 
-       point_it != last; 
-       ++point_it)    
+  initialize_weights_to_the_nearest_voronoi_vertex(Iterator first,
+						   Iterator last, 
+						   const Coord_type &k)
     { 
-      Face_circulator face_circ=D.incident_faces(D.nearest_vertex(*point_it)),
-	done = face_circ;
-      double d=DBL_MAX;
-      if (!face_circ.is_empty())	
-	{
-	  do	    
-	    {
-	      Face_handle f = face_circ;
-	      if (!D.is_infinite(f))		
-		{
-		  Point p = D.dual(f);
-		  double dd = squared_distance(p, *point_it);
-		  d = std::min(dd, d);
-		}
-	    }
-	  while(++face_circ != done);
-	}
-      (*point_it) = Point((*point_it).point(), k*k*d);
-    }
-}
-
-
-//---------------------------------------------------------------------
-
-template <class Rt> template <class Iterator>
-void
-Weighted_alpha_shape_2<Rt>::initialize_weights_to_the_nearest_voronoi_edge
-(Iterator  first, Iterator  last, const Coord_type &k)
-{ 
-  typedef  Delaunay_triangulation_2<Gt, Tds> Dt_int;
-  Dt_int D;	
-  Iterator point_it;
+      Delaunay_triangulation_2<Gt, Tds> D;
+      Iterator point_it;
   
-  D.insert(first, last);
+      D.insert(first, last);
 
-  for( point_it = first; 
-       point_it != last; 
-       ++point_it)    
-    { 
-      typename Dt_int::Face_circulator face_circ=
-	D.incident_faces(D.nearest_vertex(*point_it)),
-	done = face_circ;
-
-      double d = DBL_MAX;
-      double dd = DBL_MAX;
-
-      if (!face_circ.is_empty())	
-	{
-	  do	    
+      for( point_it = first; 
+	   point_it != last; 
+	   ++point_it)    
+	{ 
+	  Face_circulator face_circ=D.incident_faces(D.nearest_vertex(*point_it)),
+	    done = face_circ;
+	  double d=DBL_MAX;
+	  if (!face_circ.is_empty())	
 	    {
-	      typename Dt_int::Face_handle f = face_circ;
-	      if (!D.is_infinite(f))		
+	      do	    
 		{
-		  for ( int i=0; i!=3; ++i)		    
+		  Face_handle f = face_circ;
+		  if (!D.is_infinite(f))		
 		    {
-		      typename Dt_int::Edge e(f,i);
-		      
-		      if ((!D.is_infinite(e.first))&&
-			  (!D.is_infinite(e.first->neighbor(e.second))))
-			{
-			  typename Gt::Segment seg(D.dual(e.first),
-						   D.dual(e.first
-							  ->neighbor(e.second)));
-			  dd = squared_distance(seg, *point_it);
-			}
+		      Point p = D.dual(f);
+		      double dd = squared_distance(p, *point_it);
 		      d = std::min(dd, d);
 		    }
 		}
+	      while(++face_circ != done);
 	    }
-	  while(++face_circ != done);
+	  (*point_it) = Point((*point_it).point(), k*k*d);
 	}
-      if (d != DBL_MAX)	
-	(*point_it) = Point((*point_it).point(), k*k*d); 
-      else	
-	(*point_it) = Point((*point_it).point(), Coord_type(0));
     }
-}
 
+  //---------------------------------------------------------------------
 
-//---------------------------------------------------------------------
+  template <class Iterator>
+  void
+  initialize_weights_to_the_nearest_voronoi_edge(Iterator first, 
+						 Iterator last,
+						 const Coord_type &k)
+    { 
+      typedef  Delaunay_triangulation_2<Gt, Tds> Dt_int;
+      Dt_int D;	
+      Iterator point_it;
+  
+      D.insert(first, last);
 
-template <class Rt> template <class Iterator>
-void
-Weighted_alpha_shape_2<Rt>::initialize_weights_to_the_nearest_vertex
-(Iterator  first, Iterator  last, const Coord_type &k)
-{ 
-  Delaunay_triangulation_2<Gt, Tds> D;
-  Iterator point_it;
+      for( point_it = first; 
+	   point_it != last; 
+	   ++point_it)    
+	{ 
+	  typename Dt_int::Face_circulator face_circ=
+	    D.incident_faces(D.nearest_vertex(*point_it)),
+	    done = face_circ;
+
+	  double d = DBL_MAX;
+	  double dd = DBL_MAX;
+
+	  if (!face_circ.is_empty())	
+	    {
+	      do	    
+		{
+		  typename Dt_int::Face_handle f = face_circ;
+		  if (!D.is_infinite(f))		
+		    {
+		      for ( int i=0; i!=3; ++i)		    
+			{
+			  typename Dt_int::Edge e(f,i);
+		      
+			  if ((!D.is_infinite(e.first))&&
+			      (!D.is_infinite(e.first->neighbor(e.second))))
+			    {
+			      typename Gt::Segment seg(D.dual(e.first),
+						       D.dual(e.first
+							      ->neighbor(e.second)));
+			      dd = squared_distance(seg, *point_it);
+			    }
+			  d = std::min(dd, d);
+			}
+		    }
+		}
+	      while(++face_circ != done);
+	    }
+	  if (d != DBL_MAX)	
+	    (*point_it) = Point((*point_it).point(), k*k*d); 
+	  else	
+	    (*point_it) = Point((*point_it).point(), Coord_type(0));
+	}
+    }
+
+  //---------------------------------------------------------------------
+
+  template <class Iterator>
+  void
+  initialize_weights_to_the_nearest_vertex(Iterator first,
+					   Iterator last, 
+					   const Coord_type &k)
+    { 
+      Delaunay_triangulation_2<Gt, Tds> D;
+      Iterator point_it;
     
-  D.insert(first, last);
+      D.insert(first, last);
 
-  for( point_it = first; 
-       point_it != last; 
-       ++point_it) 
-    { 
+      for( point_it = first; 
+	   point_it != last; 
+	   ++point_it) 
+	{ 
 
-      D.remove(D.nearest_vertex(*point_it));
+	  D.remove(D.nearest_vertex(*point_it));
       
-      Point neighbor = D.nearest_vertex(*point_it)->point();
+	  Point neighbor = D.nearest_vertex(*point_it)->point();
 
-      (*point_it) = Point((*point_it).point(),k*k* 
-			  squared_distance(neighbor, *point_it));
+	  (*point_it) = Point((*point_it).point(),k*k* 
+			      squared_distance(neighbor, *point_it));
 			
-      D.insert(*point_it);
-    }
-}
- 
-#else // CGAL_CFG_NO_MEMBER_TEMPLATES
-
-//-------------------------------------------------------------------
-
-#if defined(VECTOR) || defined(__SGI_STL_VECTOR)
-
-template<class Rt> 
-void
-Weighted_alpha_shape_2<Rt>::initialize_weights_to_the_nearest_voronoi_vertex
-(typename std::vector<Point>::iterator  first,
- typename std::vector<Point>::iterator  last, const Coord_type &k)
-{ 
-  Delaunay_triangulation_2<Gt, Tds> D;
-  typename std::vector<Point>::iterator point_it;
-  
-  D.insert(first, last);
-
-  for( point_it = first; 
-       point_it != last; 
-       ++point_it)    
-    { 
-      Face_circulator face_circ=D.incident_faces(D.nearest_vertex(*point_it)),
-	done = face_circ;
-      double d=DBL_MAX;
-      if (!face_circ.is_empty())	
-	{
-	  do	    
-	    {
-	      Face_handle f = face_circ;
-	      if (!D.is_infinite(f))		
-		{
-		  Point p = D.dual(f);
-		  double dd = squared_distance(p, *point_it);
-		  d = std::min(dd, d);
-		}
-	    }
-	  while(++face_circ != done);
+	  D.insert(*point_it);
 	}
-      (*point_it) = Point((*point_it).point(), k*k*d);
     }
-}
-
-//-----------------------------------------------------------------------
-  
-template<class Rt>
-void
-Weighted_alpha_shape_2<Rt>::initialize_weights_to_the_nearest_voronoi_edge
-(typename std::vector<Point>::iterator  first,
- typename std::vector<Point>::iterator  last, const Coord_type &k)
-{ 
-  typedef  Delaunay_triangulation_2<Gt, Tds> Dt_int;
-  Dt_int D;	
-  typename std::vector<Point>::iterator point_it;
-  
-  D.insert(first, last);
-
-  for( point_it = first; 
-       point_it != last; 
-       ++point_it)    
-    { 
-      typename Dt_int::Face_circulator face_circ=
-	D.incident_faces(D.nearest_vertex(*point_it)),
-	done = face_circ;
-
-      double d = DBL_MAX;
-      double dd = DBL_MAX;
-
-      if (!face_circ.is_empty())	
-	{
-	  do	    
-	    {
-	      typename Dt_int::Face_handle f = face_circ;
-	      if (!D.is_infinite(f))		
-		{
-		  for ( int i=0; i!=3; ++i)		    
-		    {
-		      typename Dt_int::Edge e(f,i);
-		      
-		      if ((!D.is_infinite(e.first))&&
-			  (!D.is_infinite(e.first->neighbor(e.second))))
-			{
-			  typename Gt::Segment seg(D.dual(e.first),
-						   D.dual(e.first
-							  ->neighbor(e.second)));
-			  dd = squared_distance(seg, *point_it);
-			}
-		      d = std::min(dd, d);
-		    }
-		}
-	    }
-	  while(++face_circ != done);
-	}
-      if (d != DBL_MAX)	
-	(*point_it) = Point((*point_it).point(), k*k*d); 
-      else	
-	(*point_it) = Point((*point_it).point(), Coord_type(0));
-    }
-}
-
-//-----------------------------------------------------------------------
-
-template<class Rt>
-void
-Weighted_alpha_shape_2<Rt>::initialize_weights_to_the_nearest_vertex
-(typename std::vector<Point>::iterator  first,
- typename std::vector<Point>::iterator  last, const Coord_type &k) 
-{ 
-  Delaunay_triangulation_2<Gt, Tds> D;
-  typename std::vector<Point>::iterator point_it;
-  
-  D.insert(first, last);
-
-  for( point_it = first; 
-       point_it != last; 
-       ++point_it) 
-    { 
-
-      D.remove(D.nearest_vertex(*point_it));
-      
-      Point neighbor = D.nearest_vertex(*point_it)->point();
-
-      (*point_it) = Point((*point_it).point(),k*k* 
-			  squared_distance(neighbor, *point_it));
-      D.insert(*point_it);
-    }
-}
-
-#endif //VECTOR
-
-//-----------------------------------------------------------------------
-
-#if defined(LIST) || defined(__SGI_STL_LIST)
-
-template<class Rt> 
-void
-Weighted_alpha_shape_2<Rt>::initialize_weights_to_the_nearest_voronoi_vertex
-(typename std::list<Point>::iterator  first,
- typename std::list<Point>::iterator  last, const Coord_type &k)
-{ 
-  Delaunay_triangulation_2<Gt, Tds> D;
-  typename std::list<Point>::iterator point_it;
-  
-  D.insert(first, last);
-
-  for( point_it = first; 
-       point_it != last; 
-       ++point_it)    
-    { 
-      Face_circulator face_circ=D.incident_faces(D.nearest_vertex(*point_it)),
-	done = face_circ;
-      double d=DBL_MAX;
-      if (!face_circ.is_empty())	
-	{
-	  do	    
-	    {
-	      Face_handle f = face_circ;
-	      if (!D.is_infinite(f))		
-		{
-		  Point p = D.dual(f);
-		  double dd = squared_distance(p, *point_it);
-		  d = std::min(dd, d);
-		}
-	    }
-	  while(++face_circ != done);
-	}
-      (*point_it) = Point((*point_it).point(), k*k*d);
-    }
-}
-
-//-----------------------------------------------------------------------
-  
-template<class Rt>
-void
-Weighted_alpha_shape_2<Rt>::initialize_weights_to_the_nearest_voronoi_edge
-(typename std::list<Point>::iterator  first,
- typename std::list<Point>::iterator  last, const Coord_type &k)
-{ 
-  typedef  Delaunay_triangulation_2<Gt, Tds> Dt_int;
-  Dt_int D;	
-  typename std::list<Point>::iterator point_it;
-  
-  D.insert(first, last);
-
-  for( point_it = first; 
-       point_it != last; 
-       ++point_it)    
-    { 
-      typename Dt_int::Face_circulator face_circ=
-	D.incident_faces(D.nearest_vertex(*point_it)),
-	done = face_circ;
-
-      double d = DBL_MAX;
-      double dd = DBL_MAX;
-
-      if (!face_circ.is_empty())	
-	{
-	  do	    
-	    {
-	      typename Dt_int::Face_handle f = face_circ;
-	      if (!D.is_infinite(f))		
-		{
-		  for ( int i=0; i!=3; ++i)		    
-		    {
-		      typename Dt_int::Edge e(f,i);
-		      
-		      if ((!D.is_infinite(e.first))&&
-			  (!D.is_infinite(e.first->neighbor(e.second))))
-			{
-			  typename Gt::Segment seg(D.dual(e.first),
-						   D.dual(e.first
-							  ->neighbor(e.second)));
-			  dd = squared_distance(seg, *point_it);
-			}
-		      d = std::min(dd, d);
-		    }
-		}
-	    }
-	  while(++face_circ != done);
-	}
-      if (d != DBL_MAX)	
-	(*point_it) = Point((*point_it).point(), k*k*d); 
-      else	
-	(*point_it) = Point((*point_it).point(), Coord_type(0));
-    }
-}
-
-//-----------------------------------------------------------------------
-
-template<class Rt>
-void
-Weighted_alpha_shape_2<Rt>::initialize_weights_to_the_nearest_vertex
-(typename std::list<Point>::iterator  first,
- typename std::list<Point>::iterator  last, const Coord_type &k) 
-{ 
-  Delaunay_triangulation_2<Gt, Tds> D;
-  typename std::list<Point>::iterator point_it;
-  
-  D.insert(first, last);
-
-  for( point_it = first; 
-       point_it != last; 
-       ++point_it) 
-    { 
-
-      D.remove(D.nearest_vertex(*point_it));
-      
-      Point neighbor = D.nearest_vertex(*point_it)->point();
-
-      (*point_it) = Point((*point_it).point(),k*k* 
-			  squared_distance(neighbor, *point_it));
-      D.insert(*point_it);
-    }
-}
-
-//-------------------------------------------------------------------
-
-#endif // LIST
-#endif // CGAL_CFG_NO_MEMBER_TEMPLATES
+};
 
 //-------------------------------------------------------------------
 CGAL_END_NAMESPACE
