@@ -3,6 +3,7 @@
 - removed opposite_site method (unused) from the site classes
 - made changes in ref manual according to Sylvain's 1st review
 - fixed reference in user manual + other minor changes
+- added all text except examples in the user manual
 
 5 August 2004:  Menelaos Karavelas
 - added initial revision for the user manual

@@ -1555,6 +1555,10 @@ Packages/Segment_Voronoi_diagram_2/demo/Segment_Voronoi_diagram_2/filenew.xpm -t
 Packages/Segment_Voronoi_diagram_2/demo/Segment_Voronoi_diagram_2/fileopen.xpm -text
 Packages/Segment_Voronoi_diagram_2/demo/Segment_Voronoi_diagram_2/fileprint.xpm -text
 Packages/Segment_Voronoi_diagram_2/demo/Segment_Voronoi_diagram_2/filesave.xpm -text
+Packages/Segment_Voronoi_diagram_2/doc_tex/Segment_Voronoi_diagram_2/svd-rep.eps -text
+Packages/Segment_Voronoi_diagram_2/doc_tex/Segment_Voronoi_diagram_2/svd-rep.fig -text
+Packages/Segment_Voronoi_diagram_2/doc_tex/Segment_Voronoi_diagram_2/svd-rep.gif -text svneol=unset#unset
+Packages/Segment_Voronoi_diagram_2/doc_tex/Segment_Voronoi_diagram_2/svd-rep.pdf -text svneol=unset#unset
 Packages/Segment_Voronoi_diagram_2/doc_tex/Segment_Voronoi_diagram_2/svd-strongly-bw.eps -text
 Packages/Segment_Voronoi_diagram_2/doc_tex/Segment_Voronoi_diagram_2/svd-strongly-bw.gif -text svneol=unset#unset
 Packages/Segment_Voronoi_diagram_2/doc_tex/Segment_Voronoi_diagram_2/svd-strongly-bw.pdf -text svneol=unset#unset

@@ -198,331 +198,403 @@ exceptions to this rule are as follows:
 \section{Software Design}
 \label{sec:segvor2-design}
 
-\section{The Geometric Traits}
-\label{sec:segvor2-traits}
-
-\section{The segment Voronoi diagram hierarchy}
-\label{sec:segvor2-hierarchy}
-
-\hide{
-
-\section{Software Design}
-\label{sec:segvor2-design}
-
-The 2D Apollonius graph class
-\ccc{Apollonius_graph_2<ApolloniusGraphTraits_2,ApolloniusGraphDataStructure_2>}
+The 2D segment Voronoi diagram class
+\ccc{Segment_Voronoi_diagram_2<SegmentVoronoiDiagramTraits_2,SegmentVoronoiDiagramDataStructure_2>}
 follows the design of the triangulation package of \cgal. It is
 parametrized by two arguments:
 \begin{itemize}
 \item the {\bf geometric traits} class. It provides the basic
   geometric objects involved in the algorithm, such as sites, points
   etc. It also provides the geometric predicates for the computation
-  of the Apollonius graph, as well as some basic constructions that
-  can be used, for example, to visualize the Apollonius graph or the
-  Apollonius diagram. The geometric traits for the Apollonius graph
-  will be discussed in more detail in the next section.
-\item the {\bf Apollonius graph data structure}. This is essentially
-  the same as the triangulation data structure (discussed in Chapter
-  \ref{Chapter_2D_Triangulation_Data_Structure}), augmented with some
-  additional operations that are specific to Apollonius graphs. The
-  corresponding concept is that of
-  \ccc{ApolloniusGraphDataStructure_2}, which in fact is a refinement
-  of the \ccc{TriangulationDataStructure_2} concept. The class
-  \ccc{Apollonius_graph_data_structure_2<Vb,Fb>} is a model of
-  the concept \ccc{ApolloniusGraphDataStructure_2}. A default value
+  of the segment Voronoi diagram, as well as some basic constructions
+  that can be used, for example, to visualize the diagram.
+  The geometric traits for the segment Voronoi diagram will be
+  discussed in more detail in the next section.
+\item the {\bf segment Voronoi diagram data structure}. This is
+  essentially the same as the Apollonius graph data structure (discussed
+  in Chapter \ref{sec:apollonius2-design}), augmented with some
+  additional operations that are specific to segment Voronoi
+  diagrams. The corresponding concept is that of
+  \ccc{SegmentVoronoiDiagramDataStructure_2}, which in fact is a refinement
+  of the \ccc{ApolloniusGraphDataStructure_2} concept. The class
+  \ccc{Segment_Voronoi_diagram_data_structure_2<Vb,Fb>} is a model of
+  the concept \ccc{SegmentVoronoiDiagramDataStructure_2}. A default value
   for the corresponding template parameter is provided, so the user
   does not need to specify it.
 \end{itemize}
 
-\paragraph{Storing hidden sites.}
-As we have already mentioned a circle is hidden if it is contained
-inside some visible circle. This creates a parent-child relationship
-between visible and hidden circles: the parent of a hidden circle is the
-visible circle that contains it. If more than one visible circles
-contain a hidden circle then the hidden circle can be assigned to any of
-the visible circles arbitrarily.
 
-To store hidden circles we assign to every visible circle a list. This
-list comprises the hidden circles that are contained in the
-visible circle. The user can access the hidden circles associated with
-a visible circle through an iterator called
-\ccc{Hidden_sites_iterator}. This iterator is defined in the
-\ccc{ApolloniusGraphVertexBase_2} concept and is implemented by its
-model, the \ccc{Apollonius_graph_vertex_base_2<Gt,StoreHidden>}
-class. It is also possible to iterate through the entire set of hidden
-sites using an homonymous iterator defined by the
-\ccc{Apollonius_graph_2<Gt,Agds>} class. 
+\paragraph{Intersecting sites and their representation.}
+As we have mentioned above, the segment Voronoi diagram package of
+\cgal\ is designed to support the computation of the segment Voronoi
+diagram even when the input segment sites are intersecting. This
+choice poses certain issues for the design of the software
+package. The major concern is the representation of the subsegments
+that appear in the arrangement of the these sites, because the sites
+in the arrangement are the ones over which the diagram is actually
+defined. A direct consequence of the choice of representation is the
+algebraic degree of the predicates involved in the computation of the
+segment Voronoi diagram, as well as the storage requirements for the
+subsegments and points on intersection in the arrangement.
 
-Since storing hidden sites may not be of interest in some cases (e.g.,
-for example this is the case if we only perform insertions in the
-Apollonius graph), the user has the possibility of controllong this
-behavior. More precisely, the class
-\ccc{Apollonius_graph_vertex_base_2<Gt,StoreHidden>} has two template
-parameters, the second of which is a boolean value. This value is by
-default \ccc{true} and it indicates that hidden sites should be
-stored. The user can indicate that hidden sites may be discarded
-by setting this value to \ccc{false}.
+The case of weakly intersecting sites does not require any special
+treatment. We can simply represent points by their coordinates and
+segments by their endpoints.
+In the case of strongly intersecting sites,
+the obvious choice to use the afore-mentioned representation
+%represent points by their coordinates and segments by their endpoints 
+has severe disadvantages. Consider two
+strongly intersecting segments $t_i$ and $t_j$, whose endpoints have
+homogeneous coordinates of size $b$. Their intersection point will
+have homogeneous coordinates of bit size $6b+O(1)$. This effect can be
+cascaded, which implies that after inserting $k$ (input) segments we
+can arrive at having points of intersection whose bit sizes are
+exponential with respect to $k$, i.e., their homogeneous coordinates
+will have bit size $\Omega(2^kb)$. Not only the points of
+intersection, but also the adjacent subsegments will be represented by
+quantities of arbitrarily high bit size, and as a result we would not
+be able to give a bound on the bit sizes of the coordinates of the
+points of intersection. As a result, we would not be able to give
+a bound on the memory needed to store these coordinates. An equally
+important consequence is that we would also not be able to give a
+bound on the algebraic degree of the algebraic expressions involved in
+the evaluation of the predicates.
+
+Such a behavior is obviously undesirable. For robustness, efficiency,
+and scalability purposes, it is critical that the bit size of the
+algebraic expressions in the predicates does not depend on the input
+size. For this reason, as well as for others to be discussed below,
+we decided to represent sites in a implicit manner, which somehow
+encodes the history of their construction. In particular, we exploit
+the fact that points of intersection always lie on two input segments,
+and that segments that are not part of the input are always supported
+by input segments.
+
+For example, let us consider the configuration in
+Fig. \ref{fig:segvor2-siterep}. We assume that the segments
+$t_i=p_iq_i$, $i=1,2,3$, are inserted in that order. Upon the
+insertion of $t_2$, our algorithm will split the segment $t_1$ into
+the subsegments
+$p_1s_1$ and $s_1q_1$, then add $s_1$, and finally insert the
+subsegments $p_2s_1$ and $s_1q_2$. How do we represent the five new
+sites? $s_1$ will be represented by its two defining segments $t_1$
+and $t_2$. The segment $p_1s_1$ will be represented by two segments, a
+point, and a boolean. The first segment is $t_1$, which is always the
+segment with the same support as the newly created segment. The second
+segment is $t_2$ and the point is $p_1$. The boolean indicates whether
+the first endpoint of $p_1s_1$ is an input point; in this case the
+boolean is equal to \ccc{true}. The segment $s_1q_1$ will also be
+represented by two segments, a point, and a boolean, namely, $t_1$
+(the supporting segment of $s_1q_1$), $t_2$ and \ccc{false} (it is the
+second endpoint of $s_1q_1$ that is an input point). Subsegments
+$p_2s_2$ and $s_2q_2$ are represented analogously.
+Consider now what happens when we insert $t_3$. The point 
+$s_2$ will again be represented by two segments, but not $s_1q_1$ and
+$t_3$. In fact, it will be represented by $t_1$ (the supporting
+segment of $s_1q_1$) and $t_3$. $s_2q_1$ will be represented
+by two segments, a point, and a boolean ($t_1$, $t_3$ and
+\ccc{false}), and similarly for $p_3s_2$ and $s_2q_3$. On the other
+hand, both endpoints of $s_1s_2$ are non-input points. In such a
+case we represent the segment by three input segments.
+More precisely, $s_1s_2$ is represented by the segments $t_1$ (the
+supporting segment of $s_1q_1$), $t_2$ (it defines $s_1$ along with
+$t_1$) and $t_3$ (it defines $s_2$ along with $t_1$).
+
+\begin{figure}[!t]
+  \begin{ccTexOnly}
+    \begin{center}
+      \includegraphics[width=0.3\textwidth]%
+      {Segment_Voronoi_diagram_2/svd-rep}
+    \end{center}
+  \end{ccTexOnly}
+  \begin{ccHtmlOnly}
+    <center>
+    <img border=1 src="./svd-rep.gif" align=center
+    alt="Site representation" title="Site representation">
+    </center>
+  \end{ccHtmlOnly}
+  \begin{ccHtmlOnly}
+    <font size=-1>
+  \end{ccHtmlOnly}
+  \begin{center}
+    \caption{Site representation. The point $s_1$ is represented by the
+      four points $p_1$, $q_1$, $p_2$ and $q_2$. The segment $p_1s_1$ is
+      represented by the points $p_1$, $q_1$, $p_2$, $q_2$ and a boolean
+      which is set to \emph{true} to indicate that the first endpoint in
+      not a point of intersection. The segment $s_1s_2$ is represented by
+      the six points: $p_1$, $q_1$, $p_2$, $q_2$, $p_3$ and $q_3$. The
+      remaining (non-input) points and segments in the figure are
+      represented similarly.}\label{fig:segvor2-siterep}
+  \end{center}
+  \begin{ccHtmlOnly}
+    </font>
+  \end{ccHtmlOnly}
+\end{figure}
+
+The five different presentations, two for points (coordinates; two
+input segments) and three for segments (two input points; two input
+segments, an input point and a boolean; three input segments),
+form a closed set of representations and thus represent
+any point of intersection or subsegment regardless of the number of
+input segments. Moreover, every point (input or intersection) has
+homogeneous coordinates of bit size at most $3b+O(1)$.
+The supporting lines of the segments (they are needed in some of
+the predicates) have coefficients which are always of bit size
+$2b+O(1)$. As a result, the bit size of the expressions involved in
+our predicates will always be $O(b)$, independently of the
+size of the input.
+
+The \ccc{SegmentVoronoiDiagramSite_2} concept encapsulates the ideas
+presented below. A site is represented in this concept by up to four
+points and a boolean, or up to six points, depending on its type. The
+class \ccc{Segment_Voronoi_diagram_site_2<K>} implements this
+concept.
+
+%% Notice, however a drawback in our approach: we only need up
+%% to two points to represent a site, when the input data set consists of
+%% only weakly intersecting sites. In other words, we penalize the
+%% representation of sites with an overhead of up to four points, which
+%% dramatically increases the storage requirements of our
+%% implementation. For this reason we have a model for the
+%% \ccc{SegmentVoronoiDiagramSite_2} concept that implements the concept
+%% in a custom way, when we only have weakly intersecting sites. The
+%% corresponding class is called
+%% \ccc{Segment_Voronoi_diagram_simple_site_2<K>} and it only stores 2
+%% points, in contrast to the 6 points stored by the
+%% \ccc{Segment_Voronoi_diagram_2<K>} class.
+
+Even this representation, however, has some degree of redundancy. The
+endpoint of a segment appears in both the representation of the (open)
+segment site as well as the representation of the point site
+itself. The situation becomes even worse in the presence of strongly
+intersecting sites: a 
+point may appear in the representation of multiple subsegments and/or
+points of intersection. To avoid this redundancy, input points are
+stored in a container, and the various types of sites (input points
+and segments, points of intersection, subsegments with one or two
+points of intersection as endpoints) only store handles to the points
+in the container. This is achieved by the
+\ccc{Segment_Voronoi_diagram_storage_site_2<Gt>} class which is a
+model of the corresponding concept:
+\ccc{SegmentVoronoiDiagramStorageSite_2}. This concept enforces a site
+to be represented by up to 6 handles (which are very lightweight
+objects) instead of 6 points, which are, compared to handles of
+course, very heavy objects.
+
+\paragraph{Optimizing memory allocation.}
+There applications where we know beforehand that the input consists of
+only weakly intersecting sites. In these cases the site representation
+described in the previous section poses a significant overhead in the
+memory requirements of our implementation: instead of representing
+sites with up to two points (or ultimately with to two handles), we
+require sites to store six points (respectively, six handles). To
+avoid this overhead we have introduced two series of traits classes:
+\begin{itemize}
+\item One that supports the full-fledged sites, and is suitable when
+  the input consists of strongly intersecting sites. This series
+  consists of the 
+  \ccc{Segment_Voronoi_diagram_traits_2<K,MTag>} and
+  \ccc{Segment_Voronoi_diagram_filtered_traits_2<CK,CM,EK,EM,FK,FM>} 
+  classes.
+\item One that is customized for input that contain only weakly
+  intersecting sites. This series consists of the
+  \ccc{Segment_Voronoi_diagram_traits_without_intersections_2<K,MTag>} and
+  \ccc{Segment_Voronoi_diagram_filtered_traits_without_intersections_2<CK,CM,EK,EM,FK,FM>}
+  classes.
+\end{itemize}
+The advantages of having different traits classes are as follows:
+\begin{itemize}
+\item When the user chooses to use one of the traits classes in the
+  second series we only store two points per site. This implies a
+  reduction my a factor of three in the memory allocated per site with
+  respect to the first series of traits classes.
+\item In the case of the first series of traits classes, we can better
+  exploit the knowledge that have strongly intersecting sites, in
+  order to further apply geometric filters (see below) during the
+  evaluation of the predicates.
+\end{itemize}
 
 
 \section{The Geometric Traits}
 \label{sec:apollonius2-traits}
 
-The predicates required for the computation of the Apollonius graph
-are rather complicated. It is not the purpose of this document to
-discuss them in detail. The interested reader may refer to the papers
-by Karavelas and Emiris for the details
-\cite{cgal:ke-ppawv-02,ke-rctac-03}. However, we would like to give a brief
-overview of what they 
-compute. There are several predicates needed by this algorithm. We
-will discuss the most important/complicated ones. It turns out that
-it is much easier to describe them in terms of the Apollonius diagram,
-rather than the Apollonius graph. Whenever it is applicable we will also
-describe their meaning in terms of the Apollonius graph.
+The predicates required for the computation of the segment Voronoi
+diagram are rather complicated. It is not the purpose of this document to
+discuss them in detail. The interested reader may refer to Burnikel's
+thesis \cite{b-ecvdl-96}, where it is shown that in the case of weakly
+intersecting sites represented in homogeneous coordinates of bit size
+$b$, the maximum bit size of the algebraic expressions involved in the
+predicates is $40b+O(1)$. Given our site representation given above we
+can guarantee that even in the case of strongly intersecting sites,
+the algebraic degree of the predicates remains $O(b)$, independently
+of the size of the input. What we want to focus in the remainder of
+this section are the different kinds of filtering techniques that we
+have employed in our implementation.
 
+\paragraph{Geometric filtering.}
+Our representation of sites is coupled very naturally, with what we
+call {\em geometric filtering}. The technique
+amounts to performing simple geometric tests exploiting the
+representation of our data, as well as the geometric structure
+inherent in our problem, in order to evaluate predicates in seemingly
+degenerate configurations. Geometric filtering can be seen as a
+preprocessing step before performing arithmetic filtering.
+Roughly speaking, by arithmetic filtering we mean that we first try to
+evaluate the predicates using a fixed-precision floating-point number
+type (such as {\tt double}), and at the same time keep error bounds on
+the numerical errors of the computations we perform. If the numerical
+errors are too big and do not permit us to evaluate the predicate, we
+switch to an exact number type, and repeat the evaluation of the
+predicate. Geometric filtering can help by eliminating situations in
+which the arithmetic filter will fail, thus decreasing the number
+of times we need to evaluate a predicate using exact arithmetic.
 
-The first two geometric predicates are called
-\ccc{Is_hidden_2} and \ccc{Oriented_side_of_bisector_2}. The first one
-involves two circles, say $P_1$ and $P_2$. It determines if $P_1$ is
-hidden with respect to $P_2$; more precisely it checks whether the
-circle $P_1$ is contained in the closure of the disk defined by the
-circle $P_2$. As its name indicates, it determines if a circle is
-hidden or not. The second predicate involves two circles $P_1$ and
-$P_2$ and a point $q$. It answers the question whether $q$ is closer
-to $P_1$ or $P_2$. Its name stems from the fact that answering the
-afore-mentioned question is equivalent to determining the oriented
-side of the bisector of $P_1$ and $P_2$ that contains the query point
-$q$. This predicate is used by the algorithm for closest neighbor
-queries for points.
+To illustrate the application and effectiveness of this approach,
+let us consider a very simple example usage.
+Suppose we want to determine if two non-input points are
+identical (we assume here that the input sites are represented by
+{\tt double}s). In order to do that we need to compute their
+coordinates and compare them. If the two points are identical, the
+answer to our question using {\tt double} arithmetic may be 
+wrong (due to numerical errors), in which case we will have to reside
+to the more expensive exact computation. Instead, before testing the
+coordinates for equality, we can use the representation of the points
+to potentially answer the question. More specifically, and this is the
+geometric filtering part of the computation, we can first
+test if the defining segments of the two points are the same. If they
+are not, then we proceed to comparing their coordinates as
+usual. Testing the defining segments for equality does not involve any
+arithmetic operations on the input, but rather only comparisons on
+{\tt double}s. By performing this very simple test we avoid a
+numerically difficult computation, which could be performed
+thousands of times during the computation of a Voronoi diagram.
 
-
-The next geometric predicate is called \ccc{Vertex_conflict_2} and it
-involves four circles $P_1$, $P_2$, $P_3$, and $P_4$ (see
-Fig. \ref{figag2vc}). The first three (red circles in
-Fig. \ref{figag2vc}) define a tritangent circle (yellow
-circle in Fig. \ref{figag2vc}). What we want to determine is
-the sign of the distance of the green circle from the yellow
-circle. The distance between two circles $K_1=(c_1,r_1)$ and
-$K_2=(c_2, r_2)$ is defined as the distance of their centers minus
-their radii:
-\[   \delta(K_1, K_2) = \|c_1-c_2\|-r_1-r_2. \]
-This predicate determines if a vertex in the Apollonius diagram
-(the center of the yellow circle) is destroyed when a new circle is
-inserted in the diagram (the green circle). In the Apollonius graph
-it tells us if a triangular face of the diagram is to be destroyed or
-not.
-
-\begin{figure}[!htb]\label{figag2vc}
-\begin{ccTexOnly}
-\begin{center}
-\includegraphics[width=0.4\textwidth]%
-{Apollonius_graph_2/apollonius-vertex_conflict-false_bw.eps}
-\hfil
-\includegraphics[width=0.4\textwidth]%
-{Apollonius_graph_2/apollonius-vertex_conflict-true_bw.eps} 
-\end{center}
-\end{ccTexOnly}
-\begin{ccHtmlOnly}
-  <center>
-  <img border=1 src="./apollonius-vertex_conflict-false.gif" align=center
-  alt="The Vertex_conflict_2 predicate returns NEGATIVE"
-  title="The Vertex_conflict_2 predicate returns NEGATIVE">
-  <!-- -->
-  <img border=1 src="./apollonius-vertex_conflict-true.gif" align=center
-  alt="The Vertex_conflict_2 predicate returns POSITIVE"
-  title="The Vertex_conflict_2 predicate returns POSITIVE">
-  </center>
-\end{ccHtmlOnly}
-\begin{ccHtmlOnly}
-<font size=-1>
-\end{ccHtmlOnly}
-\caption{
-    The \protect\ccc{Vertex_conflict_2} predicate. The left-most, bottom-most
-    and top-most circles define the tritangent circle in the middle.
-    We want to determine the sign of the distance of the left-most
-    circle from the one in the middle. The almost horizontal curve is
-    the bisector of the top-most and bottom-most circles. Left: the
-    predicate returns \protect\ccc{CGAL::NEGATIVE}. Right: the predicate
-    returns \protect\ccc{CGAL::POSITIVE}.}
-\begin{ccHtmlOnly}
-</font>
-\end{ccHtmlOnly}
-\end{figure}
-
-What we essentially want to compute when we construct incrementally a
-Voronoi diagram, is whether the object to be inserted destroys an edge
-of the Voronoi diagram or not. In the case of points this is really
-easy and it amounts to the well known {\em incircle} test. 
-% add a pointer to the kernel for the incircle test
-In the case
-of circles the situation is more complicated. We can have six possible
-outcomes as to what portion of an edge of the Apollonius diagram the
-new circle destroys (see Fig. \ref{fig-ag2edgeconflict}). The first
-two can be answered directly by the \ccc{Vertex_conflict_2} predicate
-evaluated for the two endpoints of the Apollonius diagram edge. This
-is due to the fact that the value of the \ccc{Vertex_conflict_2}
-predicate is different for the two endpoints. If the two values are
-the same then we need an additional test which determines if the interior
-of the Apollonius diagram edge is destroyed by the new circle. This is
-what the \ccc{Finite_edge_interior_conflict_2} and
-\ccc{Infinite_edge_interior_conflict_2} predicates do. In essense, it
-is the same predicate (same idea) applied to two different types of
-edges in the Apollonius diagram: a finite or an infinite edge. An edge
-is infinite if its dual edge in the Apollonius graph connects the
-site at infinity with the vertex corresponding to a (finite) circle; 
-otherwise it is a finite edge.
-
-\begin{figure}[!t]
-\begin{ccTexOnly}
-\begin{center}
-\includegraphics[width=0.35\textwidth]%
-{Apollonius_graph_2/apollonius-left_vertex_bw.eps}
-\hfil
-\includegraphics[width=0.35\textwidth]%
-{Apollonius_graph_2/apollonius-right_vertex_bw.eps}\\
-\includegraphics[width=0.35\textwidth]%
-{Apollonius_graph_2/apollonius-no_conflict_bw.eps}
-\hfil
-\includegraphics[width=0.35\textwidth]%
-{Apollonius_graph_2/apollonius-entire_edge_bw.eps}\\
-\includegraphics[width=0.35\textwidth]%
-{Apollonius_graph_2/apollonius-interior_bw.eps}
-\hfil
-\includegraphics[width=0.35\textwidth]%
-{Apollonius_graph_2/apollonius-both_vertices_bw.eps}\\
-\end{center}
-\end{ccTexOnly}
-\begin{ccHtmlOnly}
-  <center>
-  <img border=1 src="./apollonius-left_vertex.gif" align=center
-  alt="In conflict with a neighborhood of the left-most vertex of the
-  Apollonius edge"
-  title="In conflict with a neighborhood of the left-most vertex of the Apollonius edge">
-  <!-- -->
-  <img border=1 src="./apollonius-right_vertex.gif" align=center
-  alt="In conflict with a neighborhoof of the right-most vertex of the
-  Apollonius edge"
-  title="In conflict with a neighborhoof of the right-most vertex of the Apollonius edge">
-  <br><br>
-  <!-- -->
-  <img border=1 src="./apollonius-no_conflict.gif" align=center
-  alt="No conflict" title="No conflict">
-  <!-- -->
-  <img border=1 src="./apollonius-entire_edge.gif" align=center
-  alt="In conflict with the entire Apollonius edge"
-  title="In conflict with the entire Apollonius edge">
-  <br><br>
-  <!-- -->
-  <img border=1 src="./apollonius-interior.gif" align=center
-  alt="In conflict with a portion of the interior of the Apollonius
-  edge"
-  title="In conflict with a portion of the interior of the Apollonius edge">
-  <!-- -->
-  <img border=1 src="./apollonius-both_vertices.gif" align=center
-  alt="In conflict with (disjoint) neighborhoods of the vertices of
-  the Apollonius edge"
-  title="In conflict with (disjoint) neighborhoods of the vertices of the Apollonius edge">
-</center>
-\end{ccHtmlOnly}
-\begin{ccHtmlOnly}
-<font size=-1>
-\end{ccHtmlOnly}
-\caption{The 6 possible outcomes of the
-  \protect\ccc{Finite_edge_interior_conflict_2} predicate.
-%  The
-%  (unshaded) black circles define two tritangent gray circles, whose
-%  centers are the endpoints of the edge in the Apollonius diagram.
-%  The gray curve is the bisecting curve of the top-most and
-%  bottom-most (unshaded) black circles, and it is also the supporting 
-%  curve of the edge of the Apollonius diagram. The shaded black circle
-%  is the circle to be inserted. 
-  Top left: only a neighborhood around
-  the left-most endpoint of the edge will be destroyed. Top right:
-  only a neighborhood around the right-most endpoint of the edge will
-  be destroyed. Middle left: no portion of the edge is destroyed.
-  Middle right: the entire edge will be destroyed. Bottom left: a
-  neighborhood in the interior of the edge
-  will be destroyed; the regions near the endpoints remain
-  unaffected. Bottom right: The neighborhood around the two endpoints
-  will be destroyed, but an interval in the interior of the edge will
-  remain in the new diagram.}\label{fig-ag2edgeconflict}
-\begin{ccHtmlOnly}
-</font>
-\end{ccHtmlOnly}
-\end{figure}
-
-The last predicate that we want to discuss is called
-\ccc{Is_degenerate_edge_2}. It tells us whether an edge in the
-Apollonius diagram is degenerate, that is if its two endpoints
-coincide. In the Apollonius graph such an edge corresponds to one of
-the additional edges that we use to triangulate the non-triangular
-faces.
-
-The afore mentioned predicates are part of the
-\ccc{ApolloniusGraphTraits_2} concept of \cgal. \cgal{} also provides
-a model for this concept, the
-\ccc{Apollonius_graph_traits_2<K,Method_tag>} class. The first
-template parameter of this class must be a model of the \ccc{Kernel}
-concept. The second template parameter is a tag that indicates what
-operations are allowed in the computations that take place within the
-traits class.
-The two possible values of the \ccc{Method_tag} parameter are
-\ccc{CGAL::Ring_tag} and \ccc{CGAL::Sqrt_field_tag}. When
-\ccc{CGAL::Ring_tag} is used, only ring operations are used during the
-evaluation of the predicates, whereas if \ccc{CGAL::Sqrt_field_tag} is
-chosen, all four field operations, as well as square roots, are used
-during the predicate evaluation.
-
-The \ccc{Apollonius_graph_traits_2<K,Method_tag>} class provides exact
-predicates if the number type in the kernel \ccc{K} is an exact number
-type. This is to be associated with the type of operations allowed for
-the predicate evaluation. For example \ccc{CGAL::MP_Float} as number
-type, with \ccc{CGAL::Ring_tag} as tag will give exact predicates,
-whereas \ccc{CGAL::MP_Float} with \ccc{CGAL::Sqrt_field_tag} will give
-inexact predicates.
-
-Since using an exact number type may be too slow, the
-\ccc{Apollonius_graph_traits_2<K,Method_tag>} class is designed to
-support the dynamic filtering of \cgal{} through the
-\ccc{CGAL::Filtered_exact<CT,ET>} mechanism. In particular if \ccc{CT}
-is an inexact number type that supports the operations denoted by the
-tag \ccc{Method_tag} and \ccc{ET} is an exact number type for these
-operations, then kernel with number type
-\ccc{CGAL::Filtered_exact<CT,ET>} will yield exact predicates for the
-Apollonius graph traits. To give a concrete example,
-\ccc{CGAL::Filtered_exact<double,CGAL::MP_Float>} with 
-\ccc{CGAL::Ring_tag} will produce exact predicates.
-
-Another possibility for fast and exact predicate evalutation is to use
-the
-\ccc{Apollonius_graph_filtered_traits_2<CK,CM,EK,EM,FK,FM>}
-class. This class is the analog of a filtered kernel. It takes a
-constructions kernel \ccc{CK}, a filtering kernel \ccc{FK} and an
-exact kernel \ccc{EK}, as well as the corresponding tags
-(\ccc{CM}, \ccc{FM} and \ccc{EM}, respectively).
-It evaluates the predicates by first using the filtering kernel, and
-if this fails the evaluation is performed using the exact kernel. The
-constructions are done using the kernel \ccc{CK}, which means that
-they are not necessarily exact. All template parameters except
-\ccc{CK} have default values, which are explained in the reference
-manual.
+Geometric filtering has been implemented in all our models of the
+\ccc{SegmentVoronoiDiagramTraits_2} concept. These models are the
+classes:
+\ccc{Segment_Voronoi_diagram_traits_2<K,MTag>},
+\ccc{Segment_Voronoi_diagram_traits_without_intersections_2<K,MTag>},
+\ccc{Segment_Voronoi_diagram_filtered_traits_2<CK,CM,EK,EM,FK,FM>} and
+\ccc{Segment_Voronoi_diagram_filtered_traits_without_intersections_2<CK,CM,EK,EM,FK,FM>}.
 
 
 
-\section{The Apollonius graph hierarchy}
-\label{sec:apollonius2-hierarchy}
+\paragraph{Arithmetic filtering.}
+As mentioned above, performing computations with exact arithmetic
+can be very costly. For this reason we have devoted considerable
+effort in implementing different kinds of arithmetic filtering
+mechanisms. Presently, there two ways of performing arithmetic
+filtering for the predicates involved in the computation of
+segment Voronoi diagrams:
+\begin{enumerate}
+\item The user can define his/her kernel using as number type, a
+  number type of the form \ccc{CGAL::Filtered_exact<CT,ET>}. Then this
+  kernel can be entered as the first template parameter in the
+  \ccc{Segment_Voronoi_diagram_2<K,MTag>} or
+  \ccc{Segment_Voronoi_diagram_with_intersections_2<K,MTag>} class.
+\item The user can define up to three different kernels \ccc{CK},
+  \ccc{FK} and \ccc{EK} (some default values are provided). The first
+  kernel \ccc{CK} will be used only for constructions. The second
+  kernel \ccc{FK} is the filtering kernel: the traits class will
+  attempt to compute the predicates using this kernel. If the
+  filtering kernel fails to successfully compute a predicate, the
+  exact kernel \ccc{EK} will be used. These three kernels are then
+  used in the 
+  \ccc{Segment_Voronoi_diagram_filtered_traits_2<CK,CM,EK,EM,FK,FM>} and
+  \ccc{Segment_Voronoi_diagram_filtered_traits_without_intersections_2<CK,CM,EK,EM,FK,FM>}
+  classes, which have been implemented using the
+  \ccc{Filtered_predicate<EP,FP>} mechanism.
+\end{enumerate}
+Our experience so far has shown that for all reasonable and valid
+values of the template parameters, the second method for arithmetic
+filtering is more efficient among the two.
 
-The \ccc{Apollonius_graph_hierarchy_2<ApolloniusGraphTraits_2,ApolloniusGraphDataStructure_2>} class is nothing but the equivalent of the \ccc{Triangulation_hierarchy_2}
-class, applied to the Apollonius graph. It consists of a series of
-Apollonius graphs constructed in a manner analogous to the Delaunay
-hierarchy by Devillers \cite{cgal:d-dh-02}. The class
-\ccc{Apollonius_graph_hierarchy_2<ApolloniusGraphTraits_2,ApolloniusGraphDataStructure_2>}
+Let's consider once more the classes
+\ccc{Segment_Voronoi_diagram_2<K,MTag>} and 
+\ccc{Segment_Voronoi_diagram_with_intersections_2<K,MTag>}.
+The template parameter \ccc{MTag} provides another degree of freedom
+to the user, who can indicate the type of arithmetic operations to
+be used in the evaluation of the predicates. More specifically, in
+both classes, \ccc{MTag} can be \ccc{CGAL::Sqrt_field_tag}, in
+which case the predicates will be evaluated using all four basic
+arithmetic operations plus square roots; this requires of course
+that the number type used in the kernel \ccc{K} supports these
+operations exactly. The second choices is \ccc{CGAL::Field_tag} for
+the \ccc{Segment_Voronoi_diagram_2<K,MTag>}, and \ccc{CGAL::Ring_tag}
+for the \ccc{Segment_Voronoi_diagram_with_intersections_2<K,MTag>}
+class. In the first case we indicate that we want the predicates to be
+computed using only the four basic arithmetic operations, whereas in
+the second case we evaluate the predicates using only ring operations.
+Again, for the predicates to be evaluated correctly, the number type
+used in the kernel \ccc{K} must support the corresponding operations
+exactly.
+
+The semantics for the template parameters \ccc{CM}, \ccc{FM} and
+\ccc{EM} in the
+\ccc{Segment_Voronoi_diagram_filtered_traits_2<CK,CM,EK,EM,FK,FM>} and 
+\ccc{Segment_Voronoi_diagram_filtered_traits_without_intersections_2<CK,CM,EK,EM,FK,FM>}
+classes are analogous. With each of these template parameters we can
+control the type of arithmetic operations that are going to be used in
+calculations involving each of the corresponding kernels \ccc{CK},
+\ccc{FK} and \ccc{EK}. When the
+\ccc{Segment_Voronoi_diagram_filtered_traits_2<CK,CM,EK,EM,FK,FM>} is
+used the possible values for \ccc{CM}, \ccc{FM} and \ccc{EM} are
+\ccc{CGAL::Sqrt_field_tag} and \ccc{CGAL::Field_tag}, whereas if the 
+\ccc{Segment_Voronoi_diagram_filtered_traits_without_intersections_2<CK,CM,EK,EM,FK,FM>}
+class is used, the possible values are \ccc{CGAL::Sqrt_field_tag} and
+\ccc{CGAL::Ring_tag}. The semantics are the same as in the case of the 
+\ccc{Segment_Voronoi_diagram_2<K,MTag>} and 
+\ccc{Segment_Voronoi_diagram_with_intersections_2<K,MTag>} classes.
+
+
+
+
+
+
+\section{The segment Voronoi diagram hierarchy}
+\label{sec:segvor2-hierarchy}
+
+
+The
+\ccc{Segment_Voronoi_diagram_hierarchy_2<SegmentVoronoiDiagramTraits_2,SSTag,SegmentVoronoiDiagramDataStructure_2>}
+class is the analogue of the
+\ccc{Triangulation_hierarchy_2} or the \ccc{Apollonius_graph_hierarchy_2}
+class, applied to the segment Voronoi diagram. It consists of a series of
+segment Voronoi diagrams constructed in a manner analogous to the
+Delaunay hierarchy by Devillers \cite{cgal:d-dh-02}. Unlike the
+triangulation hierarchy or the Apollonius graph hierarchy, the
+situation here is more complicated because of two factors: firstly,
+segments are treated as three objects instead of one (the two
+endpoints and the interior of the segments), and secondly, the
+presence of strongly intersecting sites complicates significantly the
+way the hierarchy is constructed. The interested reader may refer to
+the paper by Karavelas \cite{k-reisv-04} for the details of the
+construction of the hierarchy.
+Another alternative is to have a hybrid hierarchy that consists of the
+segment Voronoi diagram at the bottom-most level and point Voronoi
+diagrams at all other levels. This choice seems to work very well in
+practice , primarily because it avoids the overhead of maintaining a
+Voronoi diagram for segments at the upper levels of the
+hierarchy. However, it seems much less likely to be possible to give
+any theoretical guarantees for its performance, in contrast to the
+hierarchy with segment Voronoi diagrams at all levels
+(cf. \cite{k-reisv-04}). The user can choose between the two types of
+hierarchies by means of the template parameter \ccc{SSTag}. If
+\ccc{SSTag} is set to \ccc{false} (which is also the default value),
+the upper levels of the hierarchy consist of point Voronoi
+diagrams. If \ccc{SSTag} is set to \ccc{true}, we have segment Voronoi
+diagrams at all levels of the hierarchy.
+
+The class \ccc{Segment_Voronoi_diagram_hierarchy_2<SegmentVoronoiDiagramTraits_2,SSTag,SegmentVoronoiDiagramDataStructure_2>}
 has exactly the same interface and functionality as the
-\ccc{Apollonius_graph_2<ApolloniusGraphTraits_2,ApolloniusGraphDataStructure_2>}
-class. Using the Apollonius graph hierarchy involves an additional
-cost in space and time for maintaining the hierarchy. Our experiments
-have shown that it usually pays off to use the hierarchy for inputs
-consisting of more than 1,000 circles. This threshold holds for both
-the construction of the Apollonius diagram itself, as well as for
-nearest neighbor queries.
+\ccc{Segment_Voronoi_diagram_2<SegmentVoronoiDiagramTraits_2,SegmentVoronoiDiagramDataStructure_2>}
+class. Using the segment Voronoi diagram hierarchy involves an
+additional cost in space and time for maintaining the hierarchy. Our
+experiments have shown that it usually pays off to use the hierarchy
+for inputs consisting of more than 1,000 sites. 
 
-}
+%This threshold holds
+%for both the construction of the  diagram itself, as well as for
+%nearest neighbor queries.
+
+%EOF
