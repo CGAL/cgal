@@ -43,6 +43,14 @@ int nesting;
 /* Avoid substitutions while within an HTML Anchor. */
 %x ANCHORMODE
 
+letter          [a-zA-Z]
+noletter        [^a-zA-Z]
+digit           [0-9]
+CCletter        [a-zA-Z_]
+word            {letter}+
+CCidfier        ({CCletter}({CCletter}|{digit})*)
+ws              [ \t\n\r]*
+
 %%
 
 <PARAMMODE>"&gt;"      {
