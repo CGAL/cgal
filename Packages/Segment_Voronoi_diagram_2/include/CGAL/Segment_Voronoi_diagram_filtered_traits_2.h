@@ -22,6 +22,7 @@
 #ifndef CGAL_SEGMENT_VORONOI_DIAGRAM_FILTERED_TRAITS_2_H
 #define CGAL_SEGMENT_VORONOI_DIAGRAM_FILTERED_TRAITS_2_H
 
+#include <CGAL/Segment_Voronoi_diagram_short_names_2.h>
 
 #include <CGAL/Segment_Voronoi_diagram_traits_2.h>
 
@@ -186,14 +187,8 @@ public:
 			C2E, C2F, E2C, F2C>
   Construct_svd_vertex_2;
 
-  //  typedef typename CK_traits::Construct_svd_vertex_2
-  //  Construct_svd_vertex_2;
-
-#if 0
-  typedef typename CK_traits::Construct_svd_circle_2
-  Construct_svd_circle_2;
-#endif
-
+  //  typedef typename CK_traits::Construct_svd_circle_2
+  //  Construct_svd_circle_2;
 
 private:
   // PREDICATES FOR THE TWO KERNELS
@@ -330,12 +325,12 @@ public:
     return Construct_svd_vertex_2();
   }
 
-#if 0
+  /*
   Construct_svd_circle_2
   construct_svd_circle_2_object() const {
     return Construct_svd_circle_2();
   }
-#endif
+  */
 
   // PREDICATES
   //-----------

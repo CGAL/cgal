@@ -53,10 +53,8 @@ public:
   typedef typename K::Site_2                Site_2;
   typedef CGAL::Svd_voronoi_vertex_2<K,M>   Voronoi_vertex_2;
   typedef typename K::Point_2               Point_2;
-
   typedef Point_2                           result_type;
-
-  struct Arity {};
+  typedef Arity_tag<3>                      Arity;
 
 public:
   Point_2 operator()(const Site_2& s1, const Site_2& s2,
@@ -80,7 +78,10 @@ public:
   typedef typename Gt::Site_2                 Site_2;
   typedef Svd_voronoi_vertex_2<Gt,M>          Voronoi_vertex_2;
   typedef typename Gt::Circle_2               Circle_2;
+  typedef Circle_2                            result_type;
+  typedef Arity_tag<3>                        Arity;
 
+public:
   Circle_2 operator() (const Site_2& s1, const Site_2& s2,
 		       const Site_2& s3) const
   {
@@ -103,7 +104,10 @@ public:
   typedef typename Gt::Site_2        Site_2;
   typedef typename Gt::Point_2       Point_2;
   typedef typename Gt::Line_2        Line_2;
+  typedef Line_2                     result_type;
+  typedef Arity_tag<2>               Arity;
 
+public:
   Line_2 operator()(const Site_2& p, const Site_2& q) const
   {
     CGAL_assertion( !(p.is_segment() && q.is_segment()) );
@@ -130,7 +134,7 @@ public:
 //                 Segment Voronoi diagram bisector ray
 //-----------------------------------------------------------------------
 
-template<class Gt, class M >
+template<class Gt, class M>
 class Construct_svd_bisector_ray_2
 {
 public:
@@ -139,8 +143,9 @@ public:
   typedef typename Gt::Line_2                   Line_2;
   typedef typename Gt::Ray_2                    Ray_2;
   typedef typename Gt::Construct_svd_vertex_2   Construct_svd_vertex_2;
-
   typedef typename Gt::Are_same_points_2        Are_same_points_2;
+  typedef Ray_2                                 result_type;
+  typedef Arity_tag<3>                          Arity;
 
   Ray_2 operator()(const Site_2& p, const Site_2& q,
 		   const Site_2& r) const
@@ -165,7 +170,6 @@ public:
       p2 = are_same_points(q, p.source_site()) ? p.target() : p.source();
     }
     Line_2 l(p1, p2);
-    //    Point base = p.is_point() ? p.point() : q.point();
     Line_2 lperp = l.perpendicular( v );
     return Ray_2(v, lperp.direction());
   }
@@ -191,14 +195,18 @@ public:
   typedef typename Gt::Construct_svd_vertex_2  Construct_svd_vertex_2;
   typedef typename Gt::Are_same_points_2       Are_same_points_2;
 
-  Object operator()(const Site_2& p, const Site_2& q,
-		    const Site_2& r, const Site_2& s) const
+  typedef CGAL::Object                         Object_2;
+  typedef Object_2                             result_type;
+  typedef Arity_tag<4>                         Arity;
+
+  result_type operator()(const Site_2& p, const Site_2& q,
+			 const Site_2& r, const Site_2& s) const
   {
     Construct_svd_vertex_2 circumcenter;
     Point_2 vpqr = circumcenter(p, q, r);
     Point_2 vqps = circumcenter(q, p, s);
 
-    Are_same_points_2 are_same_points;
+    Are_same_points_2 same_points;
 
     if ( (p.is_point() && q.is_point()) ||
 	 (p.is_segment() && q.is_segment()) ) {
@@ -207,8 +215,8 @@ public:
     }
     if ( p.is_point() ) {
       // check is p is an endpoint of q
-      if (  are_same_points( p, q.source_site() ) ||
-	    are_same_points( p, q.target_site() )  ) {
+      if (  same_points( p, q.source_site() ) ||
+	    same_points( p, q.target_site() )  ) {
 	Segment_2 vorseg(vpqr, vqps);
 	return CGAL::make_object(vorseg);
       }
@@ -217,8 +225,8 @@ public:
       return CGAL::make_object(vorseg);
     }
     // check is q is an endpoint of p
-    if ( are_same_points(q, p.source_site()) ||
-	 are_same_points(q, p.target_site()) ) {
+    if ( same_points(q, p.source_site()) ||
+	 same_points(q, p.target_site()) ) {
       Segment_2 vorseg(vpqr, vqps);
       return CGAL::make_object(vorseg);
     }

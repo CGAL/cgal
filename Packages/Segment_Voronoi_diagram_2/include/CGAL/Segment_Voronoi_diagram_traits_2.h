@@ -22,6 +22,7 @@
 #ifndef CGAL_SEGMENT_VORONOI_DIAGRAM_TRAITS_2_H
 #define CGAL_SEGMENT_VORONOI_DIAGRAM_TRAITS_2_H
 
+#include <CGAL/Segment_Voronoi_diagram_short_names_2.h>
 
 #ifndef CGAL_REP_CLASS_DEFINED
 #error  no representation class defined
@@ -42,12 +43,6 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template<class T>
-void debug_info(char msg[], const T& t)
-{
-  std::cout << msg << " \t\t\t" << t << std::endl;
-}
-
 //***********************************************************************
 //***********************************************************************
 //                              PREDICATES
@@ -67,10 +62,10 @@ public:
 
   typedef Comparison_result          result_type;
 
-  struct Arity {};
+  typedef Arity_tag<2>               Arity;
 
 private:
-  typedef typename K::Compare_x_2  compare_x_2;
+  typedef typename K::Compare_x_2    compare_x_2;
 
 public:
 
@@ -91,10 +86,8 @@ class Svd_compare_y_2
 public:
   typedef typename K::Site_2         Site_2;
   typedef typename K::Point_2        Point_2;
-
   typedef Comparison_result          result_type;
-
-  struct Arity {};
+  typedef Arity_tag<2>               Arity;
 
 private:
   typedef typename K::Compare_y_2  compare_y_2;
@@ -118,10 +111,8 @@ class Svd_orientation_2
 public:
   typedef typename K::Site_2         Site_2;
   typedef typename K::Point_2        Point_2;
-
   typedef Orientation                result_type;
-
-  struct Arity {};
+  typedef Arity_tag<3>               Arity;
 
 private:
   typedef typename K::Orientation_2  orientation_2;
@@ -145,22 +136,16 @@ template< class K >
 class Are_same_points_2
 {
 public:
-  typedef typename K::Site_2         Site_2;
-  typedef typename K::Point_2        Point_2;
-
-  //  typedef typename K::Compare_x_2  compare_x_2;
-  //  typedef typename K::Compare_y_2  compare_y_2;
-
-  typedef bool                     result_type;
-
-  struct Arity {};
+  typedef typename K::Site_2        Site_2;
+  typedef typename K::Point_2       Point_2;
+  typedef bool                      result_type;
+  typedef Arity_tag<2>              Arity;
 
 public:
 
-  bool operator()(const Site_2& p, const Site_2& q) const
+  result_type operator()(const Site_2& p, const Site_2& q) const
   {
     CGAL_precondition( p.is_point() && q.is_point() );
-    //    debug_info("are_same_points_2::", p);
     return svd_are_same_points_C2<K>(p, q);
   }
 };
@@ -175,13 +160,11 @@ class Are_parallel_2
 {
 public:
   typedef typename K::Site_2       Site_2;
-
   typedef bool                     result_type;
-
-  struct Arity {};
+  typedef Arity_tag<2>             Arity;
 
 public:
-  bool operator()(const Site_2& p, const Site_2& q) const
+  result_type operator()(const Site_2& p, const Site_2& q) const
   {
     return svd_are_parallel_C2(p, q);
   }
@@ -199,27 +182,12 @@ class Svd_oriented_side_of_bisector_2
 public:
   typedef typename K::Site_2     Site_2;
   typedef Oriented_side          result_type;
-
-  //  typedef typename K::Point_2    Point_2;
-  //  typedef typename K::Segment_2  Segment_2;
-  //  typedef typename K::Rep_tag    Rep_tag;
-
-  struct Arity {};
+  typedef Arity_tag<3>           Arity;
 
 public:
-  Oriented_side
-  operator()(const Site_2& t1, const Site_2& t2,
-	     const Site_2& q) const
+  result_type operator()(const Site_2& t1, const Site_2& t2,
+			 const Site_2& q) const
   {
-#if 0
-    std::cout << "//////////////////////////////" << std::endl;
-    std::cout << "inside Svd_oriented_side_of_bisector_2"
-	      << " operator()" << std::endl;
-    std::cout << "t1: " << t1 << std::endl;
-    std::cout << "t2: " << t2 << std::endl;
-    std::cout << "q: " << q << std::endl;
-#endif
-    //    debug_info("oriented_side_of_bisector_2::", q);
     return svd_oriented_side_of_bisector_ftC2<K,Method_tag>
       (t1, t2, q, Method_tag());
   }
@@ -241,18 +209,16 @@ public:
   struct Arity {};
 
 public:
-  Sign operator()(const Site_2& p, const Site_2& q,
-		  const Site_2& t) const
+  result_type operator()(const Site_2& p, const Site_2& q,
+			 const Site_2& t) const
   {
-    //    debug_info("vertex_conflict_2 (3)::", p);
     return
       svd_vertex_conflict_ftC2<K,Method_tag>(q, p, t, Method_tag());
   }
 
-  Sign operator()(const Site_2& p, const Site_2& q,
-		  const Site_2& r, const Site_2& t) const
+  result_type operator()(const Site_2& p, const Site_2& q,
+			 const Site_2& r, const Site_2& t) const
   {
-    //    debug_info("vertex_conflict_2 (4)::", p);
     return
       svd_vertex_conflict_ftC2<K,Method_tag>(p, q, r, t, Method_tag());
   }
@@ -272,30 +238,28 @@ public:
   struct Arity {};
 
 public:
-  bool operator()(const Site_2& p, const Site_2& q,
-		  const Site_2& t, Sign sgn) const
+  result_type operator()(const Site_2& p, const Site_2& q,
+			 const Site_2& t, Sign sgn) const
   {
-    //    debug_info("finite_edge_interior_2 (3)::", p);
     return
       svd_finite_edge_conflict_ftC2<K,Method_tag>(p, q, t,
 						  sgn, Method_tag());
   }
 
 
-  bool operator()(const Site_2& p, const Site_2& q,
-		  const Site_2& r, const Site_2& t, Sign sgn) const
+  result_type
+  operator()(const Site_2& p, const Site_2& q,
+	     const Site_2& r, const Site_2& t, Sign sgn) const
   {
-    //    debug_info("finite_edge_interior_2 (4)::", p);
     return
       svd_finite_edge_conflict_ftC2<K,Method_tag>(p, q, r, t,
 						  sgn, Method_tag());
   }
 
-  bool operator()(const Site_2& p, const Site_2& q,
-		  const Site_2& r, const Site_2& s,
-		  const Site_2& t, Sign sgn) const
+  result_type operator()(const Site_2& p, const Site_2& q,
+			 const Site_2& r, const Site_2& s,
+			 const Site_2& t, Sign sgn) const
   {
-    //    debug_info("finite_edge_interior_2 (5)::", p);
     return
       svd_finite_edge_conflict_ftC2<K,Method_tag>(p, q, r, s, t,
 						  sgn, Method_tag());
@@ -315,14 +279,13 @@ class Svd_infinite_edge_interior_conflict_2
 public:
   typedef typename K::Site_2  Site_2;
   typedef bool                result_type;
-
-  struct Arity {};
+  typedef Arity_tag<5>        Arity;
 
 public:
-  bool operator()(const Site_2& q, const Site_2& r, const Site_2& s,
-		  const Site_2& t, Sign sgn) const
+  result_type
+  operator()(const Site_2& q, const Site_2& r, const Site_2& s,
+	     const Site_2& t, Sign sgn) const
   {
-    //    debug_info("infinite_edge_interior_2 (4)::", q);
     return
       svd_infinite_edge_conflict_ftC2<K,Method_tag>(q, r, s, t,
 						    sgn, Method_tag());
@@ -340,12 +303,11 @@ class Svd_is_degenerate_edge_2
 public:
   typedef typename K::Site_2  Site_2;
   typedef bool                result_type;
-
-  struct Arity {};
+  typedef Arity_tag<4>        Arity;
 
 public:
-  bool operator()(const Site_2& p, const Site_2& q, const Site_2& r,
-		  const Site_2& s) const
+  result_type operator()(const Site_2& p, const Site_2& q,
+			 const Site_2& r, const Site_2& s) const
   {
     return
       svd_is_degenerate_edge_ftC2<K,Method_tag>(p, q, r, s, Method_tag());
@@ -362,12 +324,10 @@ class Svd_do_intersect_2
 public:
   typedef typename K::Site_2     Site_2;
   typedef std::pair<int,int>     result_type;
-
-  struct Arity {};
+  typedef Arity_tag<2>           Arity;
 
 public:
-  result_type
-  operator()(const Site_2& p, const Site_2& q) const
+  result_type operator()(const Site_2& p, const Site_2& q) const
   {
     return
       svd_do_intersect_C2<K,Method_tag>(p, q, Method_tag());
@@ -385,8 +345,7 @@ class Svd_oriented_side_2
 public:
   typedef typename K::Site_2     Site_2;
   typedef Oriented_side          result_type;
-
-  struct Arity {};
+  typedef Arity_tag<5>           Arity;
 
 public:
   result_type
@@ -449,10 +408,7 @@ public:
   //--------------
   // vertex and Voronoi circle
   typedef CGAL::Construct_svd_vertex_2<K,MTag>  Construct_svd_vertex_2;
-
-#if 0
-  typedef CGAL::Construct_svd_circle_2<K,MTag>  Construct_svd_circle_2;
-#endif
+  //  typedef CGAL::Construct_svd_circle_2<K,MTag>  Construct_svd_circle_2;
 
   // PREDICATES
   //-----------
@@ -497,12 +453,12 @@ public:
     return Construct_svd_vertex_2();
   }
 
-#if 0
+  /*
   Construct_svd_circle_2
   construct_svd_circle_2_object() const {
     return Construct_svd_circle_2();
   }
-#endif
+  */
 
   // PREDICATES
   //-----------

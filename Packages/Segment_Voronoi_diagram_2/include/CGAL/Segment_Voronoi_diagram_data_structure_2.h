@@ -27,6 +27,7 @@
 #include <CGAL/utility.h>
 #include <CGAL/Apollonius_graph_data_structure_2.h>
 
+#include <CGAL/Segment_Voronoi_diagram_short_names_2.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -152,10 +153,10 @@ public:
 
     // 4. update the vertex for the faces f2 through g1 in
     //    counterclockwise order
-    typename std::list<Face_handle>::iterator lit = lst.begin();
+    typename std::list<Face_handle>::iterator fit = lst.begin();
     typename std::list<int>::iterator         iit = idx.begin();
-    for (; lit != lst.end(); ++lit, ++iit) {
-      (*lit)->set_vertex(*iit, v2);
+    for (; fit != lst.end(); ++fit, ++iit) {
+      (*fit)->set_vertex(*iit, v2);
     }
 
     lst.clear();

@@ -25,6 +25,7 @@
 #include <iostream>
 #include <CGAL/assertions.h>
 
+#include <CGAL/Segment_Voronoi_diagram_short_names_2.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -61,29 +62,6 @@ public:
     initialize_site(hp1, hp2);
   }
 
-  // the compiler complains that it cannot find this constructor;
-  // solution: make the insert_intersecting_segment a template
-  // method...
-  template<class A1, class A2, class A3, class A4>
-  Segment_Voronoi_diagram_simple_storage_site_2(const A1&, const A2&,
-						const A3&, const A4&) {
-    CGAL_assertion( false );
-  }
-
-  template<class A1, class A2, class A3, class A4, class A5>
-  Segment_Voronoi_diagram_simple_storage_site_2(const A1&, const A2&,
-						const A3&, const A4&,
-						const A5&) {
-    CGAL_assertion( false );
-  }
-
-  template<class A1, class A2, class A3, class A4, class A5, class A6>
-  Segment_Voronoi_diagram_simple_storage_site_2(const A1&, const A2&,
-						const A3&, const A4&,
-						const A5&, const A6&) {
-    CGAL_assertion( false );
-  }
-
 public:
   // PREDICATES
   //-----------
@@ -98,23 +76,6 @@ public:
   const Handle& point_handle(unsigned int i) const {
     CGAL_precondition( i < 6 );
     return h_[i];
-  }
-
-  Self supporting_segment_site() const {
-    CGAL_precondition( is_segment() );
-    return Self(h_[0], h_[1]);
-  }
-
-  Self supporting_segment_site(unsigned int i) const {
-    CGAL_precondition( false );
-    CGAL_precondition( is_point() && i < 2 );
-    return Self(h_[0], h_[0]);
-  }
-
-  Self crossing_segment_handle(unsigned int i) const {
-    CGAL_precondition( false );
-    CGAL_precondition( is_segment() && i < 2 );
-    return Self(h_[0], h_[1]);
   }
 
   Site_2 site() const {
@@ -134,26 +95,6 @@ public:
 
   void set_segment(const Handle& hp1, const Handle& hp2) {
     initialize_site(hp1, hp2);
-  }
-
-  // the compiler complains that it cannot find this constructor;
-  // solution: make the insert_intersecting_segment a template
-  // method...
-  template<class A1, class A2, class A3, class A4>
-  void set_point(const A1&, const A2&, const A3&, const A4&) {
-    CGAL_assertion(false);
-  }
-
-  template<class A1, class A2, class A3, class A4, class A5>
-  void set_segment(const A1&, const A2&, const A3&, const A4&,
-		   const A5&) {
-    CGAL_assertion(false);
-  }
-
-  template<class A1, class A2, class A3, class A4, class A5, class A6>
-  void set_segment(const A1&, const A2&, const A3&, const A4&,
-		   const A5&, const A6&) {
-    CGAL_assertion(false);
   }
 
 protected:

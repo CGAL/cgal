@@ -23,6 +23,7 @@
 #ifndef CGAL_SEGMENT_VORONOI_DIAGRAM_VERTEX_BASE_2_H
 #define CGAL_SEGMENT_VORONOI_DIAGRAM_VERTEX_BASE_2_H
 
+#include <CGAL/Segment_Voronoi_diagram_short_names_2.h>
 
 #include <CGAL/Triangulation_ds_vertex_base_2.h>
 #include <CGAL/Segment_Voronoi_diagram_storage_site_2.h>
@@ -132,9 +133,6 @@ private:
   Storage_site_2 ss_;
   //  std::list<Vb>  adjseg_list; // list of adjacent segments; this is
   // important when I want to do deletions
-  //  bool _is_point; // false if it is a segment; true otherwise
-  // to be used for intersecting segments:
-  //  bool is_simple;
 };
 
 

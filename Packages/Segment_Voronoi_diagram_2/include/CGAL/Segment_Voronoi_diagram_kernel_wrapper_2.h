@@ -22,6 +22,7 @@
 #ifndef CGAL_SEGMENT_VORONOI_DIAGRAM_KERNEL_WRAPPER_2_H
 #define CGAL_SEGMENT_VORONOI_DIAGRAM_KERNEL_WRAPPER_2_H
 
+#include <CGAL/Segment_Voronoi_diagram_short_names_2.h>
 
 #include <CGAL/Segment_Voronoi_diagram_site_2.h>
 #include <CGAL/Segment_Voronoi_diagram_simple_site_2.h>
@@ -75,13 +76,9 @@ public:
 
 
 template<class K1, class K2, class Converter>
-class Svd_cartesian_converter
-  : public Converter
+class Svd_cartesian_converter : public Converter
 {
 private:
-  //  typedef Segment_Voronoi_diagram_kernel_wrapper_2<K1> K1W;
-  //  typedef Segment_Voronoi_diagram_kernel_wrapper_2<K2> K2W;
-
   typedef typename K2::Site_2     K2_Site_2;
   typedef typename K2::Point_2    K2_Point_2;
 
@@ -89,7 +86,8 @@ private:
 
 public:
 #if 0
-  // MK: maybe at some day I will also add the intersections tag in
+  // MK::ERROR:
+  // maybe at some day I will also add the intersections tag in
   // this class too; this way I will be able to avoid calling, inside
   // operator() for sites, constructors that have no meaning for
   // simple sites. The more general problem though happens in the

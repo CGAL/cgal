@@ -26,6 +26,8 @@
 #include <map>
 #include <algorithm>
 
+#include <CGAL/Segment_Voronoi_diagram_short_names_2.h>
+
 #include <CGAL/Triangulation_2.h>
 #include <CGAL/Segment_Voronoi_diagram_site_2.h>
 #include <CGAL/Segment_Voronoi_diagram_data_structure_2.h>
@@ -84,13 +86,10 @@ namespace CGALi {
 } // namespace CGALi
 
 
-
-
 template<class Gt, class STag, class PC, class DS, class LTag >
 class Segment_Voronoi_diagram_hierarchy_2;
 
-	 //	   typename PC = Point_container<typename Gt::Point_2>,
-  //	   typename PC = Point_container<typename Gt::Point_2>,
+
 
 template<class Gt,
 	 class PC = std::list<typename Gt::Point_2>,
@@ -105,10 +104,6 @@ class Segment_Voronoi_diagram_2
 {
   friend class Segment_Voronoi_diagram_hierarchy_2<Gt,Tag_true,PC,DS,LTag>;
   friend class Segment_Voronoi_diagram_hierarchy_2<Gt,Tag_false,PC,DS,LTag>;
-
-private:
-  static const char point_descriptor;
-  static const char segment_descriptor;
 
 private:
   // types and access methods needed for visualization
@@ -207,16 +202,6 @@ protected:
   // the in place edge list
   typedef typename
   CGALi::SVD_which_list<Edge,Use_in_place_edge_list_tag>::List  List;
-
-  typedef enum { NO_CONFLICT = -1, INTERIOR, LEFT_VERTEX,
-		 RIGHT_VERTEX, BOTH_VERTICES, ENTIRE_EDGE }
-  Conflict_type;
-
-  static Conflict_type opposite(const Conflict_type& ct) {
-    if ( ct == RIGHT_VERTEX ) { return LEFT_VERTEX; }
-    if ( ct == LEFT_VERTEX ) { return RIGHT_VERTEX; }
-    return ct;
-  }
 
 public:
   // CREATION
@@ -459,33 +444,6 @@ public:
   }
 #endif
 
-public:
-  // REMOVAL
-  //--------
-
-  // returns the number of sites removed
-  // possible answers:
-  // 0 : no site was removed; this can only happen if we ask to
-  //     remove a point that is the endpoint of a segment
-  // 1 : a single site was removed; this can happen if
-  //     (1) we ask to remove a point which is not the endpoint of
-  //         a segment
-  //     (2) we ask to remove an open segment, i.e., we keep its
-  //         endpoints
-  //     (3) we ask to remove a closed segment, but its two
-  //         endpoints are also endpoints of other segments and
-  //         thus cannot be removed
-  // 2 : two sites were removed; this can happen if we ask to
-  //     remove a closed segment, but only one of its endpoints is
-  //     removed; the other is also the endpoint of another
-  //     segment
-  // 2 : three sites where removed; this can happen when we ask to
-  //     remove a closed segment; in this case the two endpoints
-  //     are not endpoints of other segment, and thus they are
-  //     removed as well
-  unsigned int remove(Vertex_handle v,
-		      bool remove_endpoints = true);
-
 
 public:
   // NEAREST NEIGHBOR LOCATION
@@ -587,21 +545,6 @@ public:
     }
     return str;
   }
-
-protected:
-#if 0
-  template < class Stream >
-  Stream& draw_Voronoi_circles(Stream& str) const
-  {
-    Finite_faces_iterator fit = finite_faces_begin();
-    for (; fit != finite_faces_end(); ++fit) {
-      typename Gt::Circle_2 c = circumcircle(Face_handle(fit));
-      str << c;
-      str << c.center();
-    }
-    return str;
-  }
-#endif
 
 public:
   // VALIDITY CHECK
@@ -731,11 +674,6 @@ protected:
 			      const Vertex_handle& v,
 			      Sign sgn) const;
 
-  Conflict_type
-  finite_edge_conflict_type_degenerated(const Site_2& t1,
-					const Site_2& t2,
-					const Site_2& t) const;
-
   bool edge_interior(const Face_handle& f, int i,
 		     const Site_2& t, Sign sgn) const;
 
@@ -751,40 +689,6 @@ protected:
 		     const Vertex_handle& v4,
 		     const Vertex_handle& v,
 		     Sign sgn) const;
-
-#if 0
-  bool is_degenerate_edge(const Site_2& t1,
-			  const Site_2& t2,
-			  const Site_2& t3,
-			  const Site_2& t4) const {
-    return geom_traits().is_degenerate_edge_2_object()
-      (t1, t2, t3, t4);
-  }
-
-  bool is_degenerate_edge(const Vertex_handle& v1,
-			  const Vertex_handle& v2,
-			  const Vertex_handle& v3,
-			  const Vertex_handle& v4) const {
-    CGAL_precondition( !is_infinite(v1) && !is_infinite(v2) &&
-		       !is_infinite(v3) && !is_infinite(v4) );
-
-    return is_degenerate_edge(v1->site(), v2->site(),
-			      v3->site(), v4->site());
-  }
-
-  bool is_degenerate_edge(const Face_handle& f, int i) const {
-    Vertex_handle v1 = f->vertex( ccw(i) );
-    Vertex_handle v2 = f->vertex(  cw(i) );
-    Vertex_handle v3 = f->vertex(     i  );
-    Vertex_handle v4 = f->mirror_vertex(i);
-
-    return is_degenerate_edge(v1, v2, v3, v4);
-  }
-
-  bool is_degenerate_edge(const Edge& e) const {
-    return is_degenerate_edge(e.first, e.second);
-  }
-#endif
 
   bool do_intersect(const Site_2& t, Vertex_handle v) const;
   bool do_intersect(const Site_2& p, const Site_2& q) const
@@ -839,14 +743,6 @@ public:
 		       const Site_2& t1, 
 		       const Site_2& t2) const;
 
-#if 0
-  typename Gt::Circle_2 circumcircle(const Face_handle& f) const;
-  typename Gt::Circle_2 circumcircle(const Site_2& t0, const Site_2& t1, 
-				     const Site_2& t2) const;
-
-  typename Gt::Line_2 circumcircle(const Point_2& p0, const Point_2& p1) const;
-#endif
-
 protected:
   // wrappers for combinatorial operations on the data structure
 
@@ -871,10 +767,6 @@ protected:
   Vertex_handle insert_degree_2(Edge e, const Storage_site_2& ss);
 
   void          remove_degree_2(Vertex_handle v);
-#if 0
-  void          remove_degree_3(Vertex_handle v);
-  void          remove_degree_3(Vertex_handle v, Face* f);
-#endif
 
   // this was defined because the hierarchy needs it
   Vertex_handle create_vertex(const Storage_site_2& ss) {
@@ -974,31 +866,6 @@ protected:
   void retriangulate_conflict_region(Vertex_handle v, List& l,
 				     Face_map& fm);
 
-protected:
-  // methods for removal
-#if 0
-  std::pair<Vertex_handle,Vertex_handle >
-  endpoint_vertices(Vertex_handle v) const;
-
-  bool is_endpoint_of_segment(Vertex_handle v) const;
-
-  void  remove_first(Vertex_handle v);
-  void  remove_second(Vertex_handle v);
-  unsigned int remove_third(Vertex_handle v, bool remove_endpoints);
-  unsigned int remove_degree_2(Vertex_handle v,
-			       bool remove_endpoints);
-  unsigned int remove_degree_3(Vertex_handle v,
-			       bool remove_endpoints);
-  unsigned int remove_degree_d(Vertex_handle v,
-			       bool remove_endpoints);
-
-  void  minimize_degree(Vertex_handle v);
-
-  void find_conflict_region_remove(const Vertex_handle& v,
-				   const Vertex_handle& vnearest,
-				   List& l, Face_map& fm,
-				   std::vector<Vh_triple*>* fe);
-#endif
 protected:
   // methods for I/O
 

@@ -25,6 +25,8 @@
 #include <iostream>
 #include <CGAL/assertions.h>
 
+#include <CGAL/Segment_Voronoi_diagram_short_names_2.h>
+
 CGAL_BEGIN_NAMESPACE
 
   /** A Site is either a point or a segment or a point defined as the
@@ -80,22 +82,6 @@ public:
 				 const Point_2& q1, const Point_2& q2,
 				 bool is_first_exact) {
     initialize_site(p1, p2, q1, q2, is_first_exact);
-  }
-
-  Segment_Voronoi_diagram_site_2(const Object &o) {
-    Point_2 p;
-    if ( assign(p, o) ) {
-      initialize_site(p);
-      return;
-    }
-
-    Segment_2 s;
-    if ( assign(s, o) ) {
-      initialize_site(s.source(), s.target());
-      return;
-    }
-
-    type_ = 0;
   }
 
   bool is_defined() const { return type_; }
@@ -203,26 +189,21 @@ public:
     CGAL_precondition( is_segment() );
     if ( is_exact() ) {
       return Self(p_[1], p_[0]);
-      //      return segment().opposite() );
     }
-
-    //    Segment_2 supp = supporting_segment().opposite();
 
     CGAL_assertion( !is_exact(0) || !is_exact(1) );
 
     if ( is_exact(0) && !is_exact(1) ) {
-      //      return Self(supp, crossing_segment(1), false);
       return Self(p_[1], p_[0], p_[4], p_[5], false);
     } else if ( !is_exact(0) && is_exact(1) ) {
-      //      return Self(supp, crossing_segment(0), true);
       return Self(p_[1], p_[0], p_[2], p_[3], true);
     } else {
-      //      return Self(supp, crossing_segment(1), crossing_segment(0));
       return Self(p_[1], p_[0], p_[4], p_[5], p_[2], p_[3]);
     }
   }
 
 #if 1
+  // MK::ERROR: at some point I want to remove these
   Segment_2 supporting_segment() const {
     CGAL_precondition( is_segment() );
     return Segment_2(p_[0], p_[1]);

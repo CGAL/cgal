@@ -21,6 +21,7 @@
 #ifndef CGAL_SEGMENT_VORONOI_DIAGRAM_HIERARCHY_VERTEX_BASE_2_H
 #define CGAL_SEGMENT_VORONOI_DIAGRAM_HIERARCHY_VERTEX_BASE_2_H
 
+#include <CGAL/Segment_Voronoi_diagram_short_names_2.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -58,7 +59,7 @@ public:  // for use in hierarchy only
   Vertex_handle up()   { return up_; }
   Vertex_handle down() { return down_; }
   void set_up(Vertex_handle u)   { up_ = u; }
-  void set_down(Vertex_handle d) { if (this) down_ = d; }
+  void set_down(Vertex_handle d) { down_ = d; }
 
 private:
   Vertex_handle up_;    // same vertex one level above

@@ -22,11 +22,11 @@
 #ifndef CGAL_SEGMENT_VORONOI_DIAGRAM_HIERARCHY_2_H
 #define CGAL_SEGMENT_VORONOI_DIAGRAM_HIERARCHY_2_H
 
-#include <CGAL/Random.h>
 #include <map>
-// the following include should be removed
-#include <CGAL/Triangulation_hierarchy_2.h>
 
+#include <CGAL/Segment_Voronoi_diagram_short_names_2.h>
+
+#include <CGAL/Random.h>
 #include <CGAL/Segment_Voronoi_diagram_2.h>
 #include <CGAL/Segment_Voronoi_diagram_data_structure_2.h>
 #include <CGAL/Segment_Voronoi_diagram_vertex_base_2.h>
@@ -119,7 +119,7 @@ public:
 
   ~Segment_Voronoi_diagram_hierarchy_2();
 
-  //Helping
+  // Helping
   void copy_triangulation
   (const Segment_Voronoi_diagram_hierarchy_2 &svd);
 
@@ -196,15 +196,12 @@ public:
   }
 
   Vertex_handle  insert(const Site_2& t) {
+    CGAL_precondition( t.is_exact() );
     if ( t.is_segment() ) {
-      // MK::ERROR: the following does not work if the point is not
-      //            exact...
+      Insert_segments_in_hierarchy_tag stag;
       return insert_segment_with_tag(t.source(), t.target(),
-				     UNDEFINED_LEVEL,
-				     Insert_segments_in_hierarchy_tag());
+				     UNDEFINED_LEVEL, stag);
     } else if ( t.is_point() ) {
-      // MK::ERROR: the following does not work if the point is not
-      //            exact...
       return insert_point(t.point(), UNDEFINED_LEVEL);
     } else {
       CGAL_precondition ( t.is_defined() );
@@ -217,11 +214,11 @@ private:
   Vertex_handle insert_point(const Point_2& p, int level);
   void          insert_point(const Point_2& p, int level,
 			     Vertex_handle* vertices);
-
-  // no implemented yet
+#if 0
+  // not implemented yet
   void          insert_point(const Site_2& p, int level,
 			     Vertex_handle* vertices);
-
+#endif
 
   Vertex_handle insert_segment_with_tag(const Point_2& p0,
 					const Point_2& p1,
@@ -271,12 +268,6 @@ private:
 				       int level,
 				       Tag_true itag, Tag_true stag);
 
-
-#if 0
-public:
-  // removal
-  void remove(Vertex_handle  v, bool remove_endpoints = true);
-#endif
 
 public:
   // nearest neighbor
@@ -349,10 +340,10 @@ copy_triangulation
   std::map< Vertex_handle, Vertex_handle > V;
   {
     for(int i = 0; i < svd_hierarchy_2__maxlevel; ++i) {
-      //      hierarchy[i]->copy_triangulation(*svd.hierarchy[i]);
       *(hierarchy[i]) = *svd.hierarchy[i];
     }
   }
+
   //up and down have been copied in straightforward way
   // compute a map at lower level
   {
@@ -496,10 +487,7 @@ insert_segment_with_tag(const Point_2& p0, const Point_2& p1,
   if ( hierarchy[0]->number_of_vertices() == 2 ) {
     vertex = hierarchy[0]->insert_third(vertices0[0], vertices1[0]);
   } else {
-    vertex =
-      insert_segment_interior(t, ss, vertices0[0], level, stag);
-      //    vertex = hierarchy[0]->insert_segment_interior(t, ss,
-      //					   vertices0[0], false);
+    vertex = insert_segment_interior(t, ss, vertices0[0], level, stag);
   }
 
   return vertex;
@@ -518,12 +506,6 @@ insert_segment_with_tag(const Point_2& p0, const Point_2& p1,
   if ( level == UNDEFINED_LEVEL ) {
     level = random_level();
   }
-
-#if 1
-  std::cout << "insert segment with segments' tag true:" << std::endl;
-  std::cout << "s: " << p0 << " " << p1 << std::endl;
-  std::cout << "level: " << level << std::endl;
-#endif
 
   Site_2 t(p0, p1);
 
@@ -571,34 +553,6 @@ insert_segment_with_tag(const Point_2& p0, const Point_2& p1,
   }
 
   return vertex;
-#if 0
-  // this can happen only if I ask not to support intersections...
-  if ( vertex == Vertex_handle() ) {
-    return vertex;
-  }
-
-  // insert at other levels
-  Vertex_handle previous = vertex;
-  Vertex_handle first = vertex;
-      
-  int k = 1;
-  while (k <= level ){
-    if ( hierarchy[k]->number_of_vertices() == 2 ) {
-      vertex = hierarchy[k]->insert_third(vertices0[k], vertices1[k]);
-    } else {
-      vertex = hierarchy[k]->insert_segment_interior(t, ss,
-						     vertices0[k], false);
-    }
-
-    CGAL_assertion( vertex != Vertex_handle() );
-
-    vertex->set_down(previous); // link with level above
-    previous->set_up(vertex);
-    previous = vertex;
-    k++;
-  }
-  return first;
-#endif
 }
 
 //========================================================================
@@ -635,7 +589,6 @@ insert_segment_interior(const Site_2& t, const Storage_site_2& ss,
     if ( do_intersect(t, vv) ) {
       if ( t.is_segment() ) {
 	Intersections_tag itag;
-	std::cout << "intersecting segment found" << std::endl;
 	return insert_intersecting_segment_with_tag(ss, t, vv, level,
 						    itag, stag);
       }
@@ -716,8 +669,6 @@ insert_segment_interior(const Site_2& t, const Storage_site_2& ss,
 			   v1 != Vertex_handle() );
 	vertex = hierarchy[k]->insert_third(v0, v1);
       } else {
-	std::cout << "lalala..................................."
-		  << std::endl;
 	vertex = hierarchy[k]->insert_third(vertices0[k],
 					    vertices1[k]);
       }
@@ -906,8 +857,6 @@ insert_intersecting_segment_with_tag(const Storage_site_2& ss,
     return v;
   }
 
-  //  Storage_site_2 ssx(ss.supporting_segment_handle(),
-  //		     v->storage_site().supporting_segment_handle());
   Storage_site_2 ssitev = v->storage_site();
   Storage_site_2 ssx( ss.point_handle(0), ss.point_handle(1),
 		      ssitev.point_handle(0), ssitev.point_handle(1) );
@@ -960,17 +909,12 @@ insert_intersecting_segment_with_tag(const Storage_site_2& ss,
   if ( sitev.is_exact(0) ) {
     sv1.set_segment(sitev.point(0), sitev.point(1),
 		    t.point(0), t.point(1), true);
-    //    ssv1.set_segment(ssitev.supporting_segment_handle(),
-    //		     ss.supporting_segment_handle(), true);
     ssv1.set_segment(ssitev.point_handle(0), ssitev.point_handle(1),
 		     ss.point_handle(0), ss.point_handle(1), true);
   } else {
     sv1.set_segment(sitev.point(0), sitev.point(1),
 		    sitev.point(2), sitev.point(3),
 		    t.point(0), t.point(1));
-    //    ssv1.set_segment(ssitev.supporting_segment_handle(),
-    //		     ssitev.crossing_segment_handle(0),
-    //		     ss.supporting_segment_handle());
     ssv1.set_segment(ssitev.point_handle(0), ssitev.point_handle(1),
 		     ssitev.point_handle(2), ssitev.point_handle(3),
 		     ss.point_handle(0), ss.point_handle(1));
@@ -983,17 +927,12 @@ insert_intersecting_segment_with_tag(const Storage_site_2& ss,
   if ( sitev.is_exact(1) ) {
     sv2.set_segment(sitev.point(0), sitev.point(1),
 		    t.point(0), t.point(1), false);
-    //    ssv2.set_segment(ssitev.supporting_segment_handle(),
-    //		     ss.supporting_segment_handle(), false);
     ssv2.set_segment(ssitev.point_handle(0), ssitev.point_handle(1),
 		     ss.point_handle(0), ss.point_handle(1), false);
   } else {
     sv2.set_segment(sitev.point(0), sitev.point(1),
 		    t.point(0), t.point(1),
 		    sitev.point(4), sitev.point(5));
-    //    ssv2.set_segment(ssitev.supporting_segment_handle(),
-    //		     ss.supporting_segment_handle(),
-    //		     ssitev.crossing_segment_handle(1));
     ssv2.set_segment(ssitev.point_handle(0), ssitev.point_handle(1),
 		     ss.point_handle(0), ss.point_handle(1),
 		     ssitev.point_handle(4), ssitev.point_handle(5));
@@ -1056,17 +995,12 @@ insert_intersecting_segment_with_tag(const Storage_site_2& ss,
   if ( t.is_exact(0) ) {
     s3.set_segment(t.point(0), t.point(1),
 		   sitev.point(0), sitev.point(1), true);
-    //    ss3.set_segment(ss.supporting_segment_handle(),
-    //		    ssitev.supporting_segment_handle(), true);
     ss3.set_segment(ss.point_handle(0), ss.point_handle(1),
 		    ssitev.point_handle(0), ssitev.point_handle(1), true);
   } else {
     s3.set_segment(t.point(0), t.point(1),
 		   t.point(2), t.point(3),
 		   sitev.point(0), sitev.point(1));
-    //    ss3.set_segment(ss.supporting_segment_handle(),
-    //		    ss.crossing_segment_handle(0),
-    //		    ssitev.supporting_segment_handle());
     ss3.set_segment(ss.point_handle(0), ss.point_handle(1),
 		    ss.point_handle(2), ss.point_handle(3),
 		    ssitev.point_handle(0), ssitev.point_handle(1));
@@ -1075,17 +1009,12 @@ insert_intersecting_segment_with_tag(const Storage_site_2& ss,
   if ( t.is_exact(1) ) {
     s4.set_segment(t.point(0), t.point(1),
 		   sitev.point(0), sitev.point(1), false);
-    //    ss4.set_segment(ss.supporting_segment_handle(),
-    //		    ssitev.supporting_segment_handle(), false);
     ss4.set_segment(ss.point_handle(0), ss.point_handle(1),
 		    ssitev.point_handle(0), ssitev.point_handle(1), false);
   } else {
     s4.set_segment(t.point(0), t.point(1),
 		   sitev.point(0), sitev.point(1),
 		   t.point(4), t.point(5));
-    //    ss4.set_segment(ss.supporting_segment_handle(),
-    //		    ssitev.supporting_segment_handle(),
-    //		    ss.crossing_segment_handle(1));
     ss4.set_segment(ss.point_handle(0), ss.point_handle(1),
 		    ssitev.point_handle(0), ssitev.point_handle(1),
 		    ss.point_handle(4), ss.point_handle(5));
@@ -1105,9 +1034,6 @@ insert_intersecting_segment_with_tag(const Storage_site_2& ss,
 				     int level,
 				     Tag_true itag, Tag_true stag)
 {
-  std::cout << "inside: insert_intersecting_segment_with_tag"
-	    << std::endl;
-
   CGAL_precondition( t.is_segment() && v->is_segment() );
 
   // MK::ERROR: I have to remove this; too expensive...
@@ -1119,8 +1045,6 @@ insert_intersecting_segment_with_tag(const Storage_site_2& ss,
     return v;
   }
 
-  std::cout << "check -100" << std::endl;
-
   Storage_site_2 ssitev = v->storage_site();
   Storage_site_2 ssx( ss.point_handle(0), ss.point_handle(1),
 		      ssitev.point_handle(0), ssitev.point_handle(1) );
@@ -1129,47 +1053,33 @@ insert_intersecting_segment_with_tag(const Storage_site_2& ss,
   Site_2 sx(t.point(0), t.point(1), sitev.point(0), sitev.point(1));
   Site_2 sitev_supp(sitev.point(0), sitev.point(1));
 
-  std::cout << "check -99" << std::endl;
-
   Storage_site_2 ssv1;
   Site_2 sv1;
   if ( sitev.is_exact(0) ) {
     sv1.set_segment(sitev.point(0), sitev.point(1),
 		    t.point(0), t.point(1), true);
-    //    ssv1.set_segment(ssitev.supporting_segment_handle(),
-    //		     ss.supporting_segment_handle(), true);
     ssv1.set_segment(ssitev.point_handle(0), ssitev.point_handle(1),
 		     ss.point_handle(0), ss.point_handle(1), true);
   } else {
     sv1.set_segment(sitev.point(0), sitev.point(1),
 		    sitev.point(2), sitev.point(3),
 		    t.point(0), t.point(1));
-    //    ssv1.set_segment(ssitev.supporting_segment_handle(),
-    //		     ssitev.crossing_segment_handle(0),
-    //		     ss.supporting_segment_handle());
     ssv1.set_segment(ssitev.point_handle(0), ssitev.point_handle(1),
 		     ssitev.point_handle(2), ssitev.point_handle(3),
 		     ss.point_handle(0), ss.point_handle(1));
   }
-
-  std::cout << "check -98" << std::endl;
 
   Storage_site_2 ssv2;
   Site_2 sv2;
   if ( sitev.is_exact(1) ) {
     sv2.set_segment(sitev.point(0), sitev.point(1),
 		    t.point(0), t.point(1), false);
-    //    ssv2.set_segment(ssitev.supporting_segment_handle(),
-    //		     ss.supporting_segment_handle(), false);
     ssv2.set_segment(ssitev.point_handle(0), ssitev.point_handle(1),
 		     ss.point_handle(0), ss.point_handle(1), false);
   } else {
     sv2.set_segment(sitev.point(0), sitev.point(1),
 		    t.point(0), t.point(1),
 		    sitev.point(4), sitev.point(5));
-    //    ssv2.set_segment(ssitev.supporting_segment_handle(),
-    //		     ss.supporting_segment_handle(),
-    //		     ssitev.crossing_segment_handle(1));
     ssv2.set_segment(ssitev.point_handle(0), ssitev.point_handle(1),
 		     ss.point_handle(0), ss.point_handle(1),
 		     ssitev.point_handle(4), ssitev.point_handle(5));
@@ -1177,25 +1087,13 @@ insert_intersecting_segment_with_tag(const Storage_site_2& ss,
 
   Vertex_handle vertices[svd_hierarchy_2__maxlevel];
 
-  std::cout << "check -97" << std::endl;
-
-
   int v_level = find_level(v);
-
-  std::cout << "check -96" << std::endl;
-
-  std::cout << "v: " << v->site() << std::endl;
-  std::cout << "v level: " << v_level << std::endl;
-  std::cout << "level: " << level << std::endl;
 
   Vertex_handle vertex = v;
   Vertex_handle v1_old, v2_old, vsx_old;
 
   int m = 0;
   while ( m <= v_level ) {
-    std::cout << "m = " << m << std::endl;
-    std::cout << "is_valid? " << is_valid(false, 1) << std::endl;
-
     // MK::ERROR: I have to remove this; too expensive...
     CGAL_precondition( do_intersect(t, vertex->site()) );
 
@@ -1232,42 +1130,10 @@ insert_intersecting_segment_with_tag(const Storage_site_2& ss,
       ++fc1, ++fc2;
     } while ( fc_start != fc1 ); 
     
-#if 1
-    if ( f1 == f2 ) {
-      std::cout << "f1 == f2" << std::endl;
-      std::cout << "m = " << m << std::endl;
-      std::cout << "# vertices: " << hierarchy[m]->number_of_vertices()
-		<< std::endl;
-    }
-#endif
     CGAL_assertion( f1 != f2 );
     CGAL_assertion( !is_infinite(f1) && !is_infinite(f2) );
 
-    //******************************************************************
-    //******************************************************************
-    //******************************************************************
-    //******************************************************************
-    //******************************************************************
-    //******************************************************************
-    //******************************************************************
-    // MAJOR BUG: THE HIERARCHY IS NOT UPDATED PROPERLY...
-    //******************************************************************
-    //******************************************************************
-    //******************************************************************
-    //******************************************************************
-    //******************************************************************
-    //******************************************************************
-    //******************************************************************
-
     Vertex_handle vertex_up = vertex->up();
-
-#if 1
-    if ( vertex_up != Vertex_handle() ) {
-      std::cout << "v up: " << vertex_up->site() << std::endl;
-    } else {
-      std::cout << "v up: " << "NULL" << std::endl;
-    }
-#endif
 
     Quadruple<Vertex_handle, Vertex_handle, Face_handle, Face_handle>
       qq = hierarchy[m]->_tds.split_vertex(vertex, f1, f2);
@@ -1301,87 +1167,6 @@ insert_intersecting_segment_with_tag(const Storage_site_2& ss,
       vsx->set_down(vsx_old);
     }
 
-#if 1
-    if ( m > 0 ) {
-      std::cout << "..........." << std::endl;
-      std::cout << "m = " << m << std::endl;
-      std::cout << "v1 old: " << v1_old->site() << std::endl;
-      std::cout << "v2 old: " << v2_old->site() << std::endl;
-      std::cout << "v1    : " << v1->site() << std::endl;
-      std::cout << "v2    : " << v2->site() << std::endl;
-      std::cout << "v1    : " << v1->site() << std::endl;
-      std::cout << "vsx    : " << vsx->site() << std::endl;
-      std::cout << "vsx old: " << vsx_old->site() << std::endl;
-      if ( v1_old->up() != Vertex_handle() ) {
-	std::cout << "v1 old up: " << v1_old->up()->site() << std::endl;
-      } else {
-	std::cout << "v1 old up: " << "NULL" << std::endl;
-      }
-      if ( v1_old->down() != Vertex_handle() ) {
-	std::cout << "v1 old down: " << v1_old->down()->site() << std::endl;
-      } else {
-	std::cout << "v1 old down: " << "NULL" << std::endl;
-      }
-
-      if ( v2_old->up() != Vertex_handle() ) {
-	std::cout << "v2 old up: " << v2_old->up()->site() << std::endl;
-      } else {
-	std::cout << "v2 old up: " << "NULL" << std::endl;
-      }
-      if ( v2_old->down() != Vertex_handle() ) {
-	std::cout << "v2 old down: " << v2_old->down()->site() << std::endl;
-      } else {
-	std::cout << "v2 old down: " << "NULL" << std::endl;
-      }
-
-      if ( v1->up() != Vertex_handle() ) {
-	std::cout << "v1 up: " << v1->up()->site() << std::endl;
-      } else {
-	std::cout << "v1 up: " << "NULL" << std::endl;
-      }
-      if ( v1->down() != Vertex_handle() ) {
-	std::cout << "v1 down: " << v1->down()->site() << std::endl;
-      } else {
-	std::cout << "v1 down: " << "NULL" << std::endl;
-      }
-
-      if ( v2->up() != Vertex_handle() ) {
-	std::cout << "v2 up: " << v2->up()->site() << std::endl;
-      } else {
-	std::cout << "v2 up: " << "NULL" << std::endl;
-      }
-      if ( v2->down() != Vertex_handle() ) {
-	std::cout << "v2 down: " << v2->down()->site() << std::endl;
-      } else {
-	std::cout << "v2 down: " << "NULL" << std::endl;
-      }
-
-      if ( vsx_old->up() != Vertex_handle() ) {
-	std::cout << "vsx old up: " << vsx_old->up()->site() << std::endl;
-      } else {
-	std::cout << "vsx old up: " << "NULL" << std::endl;
-      }
-      if ( vsx_old->down() != Vertex_handle() ) {
-	std::cout << "vsx old down: " << vsx_old->down()->site() << std::endl;
-      } else {
-	std::cout << "vsx old down: " << "NULL" << std::endl;
-      }
-
-      if ( vsx->up() != Vertex_handle() ) {
-	std::cout << "vsx up: " << vsx->up()->site() << std::endl;
-      } else {
-	std::cout << "vsx up: " << "NULL" << std::endl;
-      }
-      if ( vsx->down() != Vertex_handle() ) {
-	std::cout << "vsx down: " << vsx->down()->site() << std::endl;
-      } else {
-	std::cout << "vsx down: " << "NULL" << std::endl;
-      }
-      
-      std::cout << "^^^^^^^^^^^" << std::endl;
-    }
-#endif
-
     v1_old = v1;
     v2_old = v2;
     vsx_old = vsx;
@@ -1391,9 +1176,6 @@ insert_intersecting_segment_with_tag(const Storage_site_2& ss,
     vertex = vertex_up;
     m++;
   }
-
-  std::cout << "check 1" << std::endl;
-  std::cout << "is_valid? " << is_valid(false, 1) << std::endl;
 
   //  insert_point(sx, level, vertices);
 
@@ -1432,9 +1214,6 @@ insert_intersecting_segment_with_tag(const Storage_site_2& ss,
 	//	CGAL_assertion( false );
 	vertex = hierarchy[k]->insert_third(sx, ssx);
       } else {
-	std::cout << "k = " << k << std::endl;
-	std::cout << "is_valid? " << is_valid(false, 1) << std::endl;
-
 	vertex = hierarchy[k]->insert_point(ssx, sx, vnear[k]);
       }
 
@@ -1449,25 +1228,17 @@ insert_intersecting_segment_with_tag(const Storage_site_2& ss,
     }
   }
 
-  std::cout << "check 2" << std::endl;
-  std::cout << "is_valid? " << is_valid(false, 1) << std::endl;
-
   Storage_site_2 ss3, ss4;
   Site_2 s3, s4;
   if ( t.is_exact(0) ) {
     s3.set_segment(t.point(0), t.point(1),
 		   sitev.point(0), sitev.point(1), true);
-    //    ss3.set_segment(ss.supporting_segment_handle(),
-    //		    ssitev.supporting_segment_handle(), true);
     ss3.set_segment(ss.point_handle(0), ss.point_handle(1),
 		    ssitev.point_handle(0), ssitev.point_handle(1), true);
   } else {
     s3.set_segment(t.point(0), t.point(1),
 		   t.point(2), t.point(3),
 		   sitev.point(0), sitev.point(1));
-    //    ss3.set_segment(ss.supporting_segment_handle(),
-    //		    ss.crossing_segment_handle(0),
-    //		    ssitev.supporting_segment_handle());
     ss3.set_segment(ss.point_handle(0), ss.point_handle(1),
 		    ss.point_handle(2), ss.point_handle(3),
 		    ssitev.point_handle(0), ssitev.point_handle(1));
@@ -1476,31 +1247,17 @@ insert_intersecting_segment_with_tag(const Storage_site_2& ss,
   if ( t.is_exact(1) ) {
     s4.set_segment(t.point(0), t.point(1),
 		   sitev.point(0), sitev.point(1), false);
-    //    ss4.set_segment(ss.supporting_segment_handle(),
-    //		    ssitev.supporting_segment_handle(), false);
     ss4.set_segment(ss.point_handle(0), ss.point_handle(1),
 		    ssitev.point_handle(0), ssitev.point_handle(1), false);
   } else {
     s4.set_segment(t.point(0), t.point(1),
 		   sitev.point(0), sitev.point(1),
 		   t.point(4), t.point(5));
-    //    ss4.set_segment(ss.supporting_segment_handle(),
-    //		    ssitev.supporting_segment_handle(),
-    //		    ss.crossing_segment_handle(1));
     ss4.set_segment(ss.point_handle(0), ss.point_handle(1),
 		    ssitev.point_handle(0), ssitev.point_handle(1),
 		    ss.point_handle(4), ss.point_handle(5));
   }
 
-  //*****************************************************************
-  //*****************************************************************
-  //*****************************************************************
-  //*****************************************************************
-  //*****************************************************************
-  //*****************************************************************
-  //*****************************************************************
-  //*****************************************************************
-  //*****************************************************************
   insert_segment_interior(s3, ss3, vertices, NULL, level, stag);
   insert_segment_interior(s4, ss4, vertices, vertices, level, stag);
   return vertices[0];
@@ -1508,24 +1265,6 @@ insert_intersecting_segment_with_tag(const Storage_site_2& ss,
 
 
 //===========================================================================
-
-#if 0
-template<class Gt, class STag, class PC, class DS, class LTag>
-void
-Segment_Voronoi_diagram_hierarchy_2<Gt,STag,PC,DS,LTag>::
-remove(Vertex_handle v, bool remove_endpoints)
-{
-  void* u = v->up();
-  int l = 0;
-  while ( true ) {
-    hierarchy[l++]->remove(v, remove_endpoints);
-    if ( !u )  { break; }
-    if( l > svd_hierarchy_2__maxlevel )   { break; }
-    v = u;
-    u = v->up();
-  }
-}
-#endif
 
 template<class Gt, class STag, class PC, class DS, class LTag>
 typename
@@ -1601,9 +1340,6 @@ find_level(Vertex_handle v) const
     vertex = vertex->up();
     level++;
   }
-
-  std::cout << "v: " << v->site() << std::endl;
-  std::cout << "---> level: " << level << std::endl;
 
   return level;
 }

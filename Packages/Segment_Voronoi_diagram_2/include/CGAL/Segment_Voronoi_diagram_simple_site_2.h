@@ -25,6 +25,8 @@
 #include <iostream>
 #include <CGAL/assertions.h>
 
+#include <CGAL/Segment_Voronoi_diagram_short_names_2.h>
+
 CGAL_BEGIN_NAMESPACE
 
   /** A Site is either a point or a segment or a point defined as the
@@ -59,9 +61,12 @@ public:
     initialize_site(p1, p2);
   }
 
+#if 1
+  // MK::ERROR:
   // the compiler complains that it cannot find this constructor;
-  // solution: make the insert_intersecting_segment a template
-  // method...
+  // solution: make the kernel converter use the intersections tag
+  // in order to provide converters that do not need these
+  // constructors
   template<class A1, class A2, class A3, class A4>
   Segment_Voronoi_diagram_simple_site_2(const A1&, const A2&,
 					const A3&, const A4&) {
@@ -84,22 +89,7 @@ public:
     //    THIS_CONSTRUCTOR_SHOULD_HAVE_NEVER_BEEN_CALLED;
     CGAL_assertion( false );
   }
-
-  Segment_Voronoi_diagram_simple_site_2(const Object &o) {
-    Point_2 p;
-    if ( assign(p, o) ) {
-      initialize_site(p);
-      return;
-    }
-
-    Segment_2 s;
-    if ( assign(s, o) ) {
-      initialize_site(s.source(), s.target());
-      return;
-    }
-
-    type_ = 0;
-  }
+#endif
 
   bool is_defined() const { return type_; }
   bool is_point() const { return type_ == 1; }
@@ -165,6 +155,8 @@ public:
     return *this;
   }
 
+#if 1
+  // MK::ERROR: at some point I need to remove these
   Segment_2 supporting_segment() const {
     CGAL_precondition( is_segment() );
     return segment();
@@ -181,6 +173,7 @@ public:
     CGAL_precondition( is_segment() && i < 2 );
     return Segment_2(p_[0], p_[1]);
   }
+#endif
 
   void set_point(const Point_2& p) {
     initialize_site(p);
@@ -189,10 +182,11 @@ public:
   void set_segment(const Point_2& p1, const Point_2& p2) {
     initialize_site(p1, p2);
   }
-
+#if 1
+  // MK::ERROR:
   // the compiler complains that it cannot find this constructor;
-  // solution: make the insert_intersecting_segment a template
-  // method...
+  // solution: make the functions in predicates_ftC2 use the
+  // intersections tag so that no calls to these methods are needed
   template<class A1, class A2, class A3, class A4>
   void set_point(const A1&, const A2&, const A3&, const A4&)
   {
@@ -212,7 +206,7 @@ public:
   {
     CGAL_assertion(false);
   }
-
+#endif
 
 protected:
   void initialize_site(const Point_2& p)

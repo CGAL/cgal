@@ -25,6 +25,7 @@
 #include <iostream>
 #include <CGAL/assertions.h>
 
+#include <CGAL/Segment_Voronoi_diagram_short_names_2.h>
 
 CGAL_BEGIN_NAMESPACE
 
