@@ -228,9 +228,9 @@ void compute_plane_equation(Facet_handle f)
    typedef typename Facet::Plane_3                   Plane_3;
 
    Halfedge_handle h = (*f).halfedge();
-   (*f).plane() = Plane(h->opposite()->vertex()->point(),
-                        h->vertex()->point(),
-                        h->next()->vertex()->point());
+   (*f).plane() = Plane_3(h->opposite()->vertex()->point(),
+                          h->vertex()->point(),
+                          h->next()->vertex()->point());
 }
 
 template <class Facet_handle, class Traits>
