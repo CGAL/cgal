@@ -22,8 +22,22 @@ int main() {
   assert(q4.denominator() == Gmpz(2));
   Gmpq q5(q4);
 
-  Gmpq q6((signed long)1, 2);
-  Gmpq q7((unsigned long)1, 2);
+  Gmpq qi1(0,1); // int int
+  Gmpq qi2(3, -3);
+  assert(qi2.numerator() == Gmpz(-1)); // because Gmpq is canonicalized
+  Gmpq qi3(-3, 3);
+  assert(qi2 == qi3);
+
+  Gmpq q6((signed long)1, (unsigned long)2);
+  Gmpq q7((unsigned long)1, (unsigned long)2);
+
+  Gmpq qs("-100/-111", 2);
+  assert(qs.numerator() == Gmpz(4));
+  assert(qs.denominator() == Gmpz(7));
+
+  Gmpq qs2("100/1");
+  assert(qs2.numerator() == Gmpz(100));
+  assert(qs2.denominator() == Gmpz(1));
   return 0;
 }
 #else 
