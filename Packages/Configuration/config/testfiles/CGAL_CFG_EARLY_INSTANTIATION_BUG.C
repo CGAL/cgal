@@ -11,7 +11,7 @@
 // release       : 
 // release_date  : 
 //
-// file          : config/testfiles/CGAL_CFG_EARLY_INSTANCIATION_BUG.C
+// file          : config/testfiles/CGAL_CFG_EARLY_INSTANTIATION_BUG.C
 // package       : Configuration (1.28)
 // source        :
 // revision      : 1.11
@@ -22,7 +22,7 @@
 //
 // ======================================================================
 
-// CGAL_CFG_EARLY_INSTANCIATION_BUG.C
+// CGAL_CFG_EARLY_INSTANTIATION_BUG.C
 // ---------------------------------------------------------------------
 // A short test program to evaluate a C++ compiler / STL implementation
 // whether it supports the new standard headers (i.e. without the .h suffix)
@@ -30,7 +30,7 @@
 // The following documentation will be pasted in the generated configfile.
 // ---------------------------------------------------------------------
 
-//| The flag CGAL_CFG_EARLY_INSTANCIATION_BUG is set, if a compiler does not 
+//| The flag CGAL_CFG_EARLY_INSTANTIATION_BUG is set, if a compiler does not 
 //| not how to compile the following code. See the solution bellow.
 //| Created to workaround a cl1300 bug
 
