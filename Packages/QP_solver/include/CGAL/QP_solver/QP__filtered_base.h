@@ -37,7 +37,7 @@ CGAL_BEGIN_NAMESPACE
 // use CGAL function?
 struct To_Double {
     template < class NT >
-    double  operator ( ) ( const NT& x) { return CGAL::to_double( x); }
+    double  operator ( ) ( const NT& x) { return CGAL_NTS to_double( x); }
 };
 
 // ==================
@@ -122,6 +122,7 @@ class QPE__filtered_base : virtual public QPE_pricing_strategy<Rep_> {
                                         Basic_constraint_index_iterator;
 
     typedef  std::vector<NT>            Values_NT;
+    typedef  typename Values_NT::const_iterator  Values_NT_iterator;
 
     // data members
     ET2NT                    et2nt_obj; // conversion from ET to NT
@@ -213,13 +214,14 @@ mu_j_NT( int j) const
 {
     return this->solver().mu_j( j, lambda_NT.begin(), x_B_O_NT.begin(), d_NT);
 }
-
+/*
 template < class Rep_, class NT_, class ET2NT_ >  inline        // LP case
 void  QPE__filtered_base<Rep_,NT_,ET2NT_>::
 update_maxima( Tag_true)
 {
     // nop
 }
+*/
 
 // transition
 template < class Rep_, class NT_, class ET2NT_ >  inline        // QP case
