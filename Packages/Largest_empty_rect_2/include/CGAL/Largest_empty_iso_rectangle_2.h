@@ -82,9 +82,62 @@ public:
     typedef typename kd_tree::Box Kd_box;
 #endif
 
+  class Less_yx
+  {
+  private:
+    class Less_xy_internal_point;
+    class Less_yx_internal_point;
+
+    Traits _gt;
+
+    const Traits & traits() const {return _gt;};
+
+    Less_yx(){}
+
+  public:
+    Less_yx(const Traits& t)
+      : _gt(t)
+    {}
+
+    bool operator()(const Point_data *a, const Point_data *b) const
+    {
+      Comparison_result c = traits().compare_y_2_object()
+             (b->p.y_part, a->p.y_part);
+      if(c == LARGER) {
+        return true;
+      } else if (c == EQUAL) {
+        return traits().less_x_2_object()(a->p.x_part, b->p.x_part); 
+      } 
+      return false;
+    }
+  };
+
+  class Less_xy
+  {
+  private:
+    Traits _gt;
+
+    const Traits & traits() const {return _gt;};
+
+  public:
+    Less_xy(const Traits& t)
+      : _gt(t)
+    {}
+
+    bool operator()(const Point_data *a, const Point_data *b) const
+    {
+      Comparison_result c = traits().compare_x_2_object()
+             (b->p.x_part, a->p.x_part);
+      if(c == LARGER) {
+        return true;
+      } else if (c == EQUAL) {
+        return traits().less_y_2_object()(a->p.y_part, b->p.y_part); 
+      } 
+      return false;
+    }
+  };
+
   class Point_data;
-  class Less_yx;
-  class Less_xy;
 
   template < class Node>
   struct Proj_point {
@@ -289,61 +342,6 @@ public:
       delete left_tent;
     }
   }; 
-
-  class Less_yx
-  {
-  private:
-    class Less_xy_internal_point;
-    class Less_yx_internal_point;
-
-    Traits _gt;
-
-    const Traits & traits() const {return _gt;};
-
-    Less_yx(){}
-
-  public:
-    Less_yx(const Traits& t)
-      : _gt(t)
-    {}
-
-    bool operator()(const Point_data *a, const Point_data *b) const
-    {
-      Comparison_result c = traits().compare_y_2_object()
-             (b->p.y_part, a->p.y_part);
-      if(c == LARGER) {
-        return true;
-      } else if (c == EQUAL) {
-        return traits().less_x_2_object()(a->p.x_part, b->p.x_part); 
-      } 
-      return false;
-    }
-  };
-
-  class Less_xy
-  {
-  private:
-    Traits _gt;
-
-    const Traits & traits() const {return _gt;};
-
-  public:
-    Less_xy(const Traits& t)
-      : _gt(t)
-    {}
-
-    bool operator()(const Point_data *a, const Point_data *b) const
-    {
-      Comparison_result c = traits().compare_x_2_object()
-             (b->p.x_part, a->p.x_part);
-      if(c == LARGER) {
-        return true;
-      } else if (c == EQUAL) {
-        return traits().less_y_2_object()(a->p.y_part, b->p.y_part); 
-      } 
-      return false;
-    }
-  };
 
 private:
 
