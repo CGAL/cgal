@@ -1,14 +1,12 @@
 #include "short_names.h"
 
-#include <fstream>
 #include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Arr_2_bases.h>
 #include <CGAL/Arr_2_default_dcel.h>
-
-#ifndef CGAL_ARR_IOSTREAM_H
 #include <CGAL/IO/Arr_iostream.h>
-#endif
+
+#include <fstream>
 
 /*#ifndef CGAL_IO_ARR_WINDOW_STREAM_H
   #include <CGAL/IO/Arr_Window_stream.h>
@@ -192,17 +190,17 @@ public:
    ****************************/
 private:
   
-  int                      num_polylines;
+  int num_polylines;
 
-  Point_list               all_points_list;
-  Point_list               test_point_list;
+  Point_list m_all_points_list;
+  Point_list m_test_point_list;
   std::list<Arr_2::Locate_type> exp_type_list;
   
-  unsigned                 expected_num_vertices,
-                           expected_num_edges,
-                           expected_num_faces,
-                           expected_num_overlaps,
-                           actual_num_overlaps;
+  unsigned expected_num_vertices,
+    expected_num_edges,
+    expected_num_faces,
+    expected_num_overlaps,
+    actual_num_overlaps;
  
   // count overlap references in arrangement,
   // that is every reference from a halfedge of an overlapped edge
@@ -402,8 +400,8 @@ private:
     x = get_next_num(file); y = get_next_num(file);
     Point p2(x,y);
     
-    all_points_list.push_back(p1);
-    all_points_list.push_back(p2);
+    m_all_points_list.push_back(p1);
+    m_all_points_list.push_back(p2);
     
     if (reverse_order)
       segment = Curve(p1,p2);
@@ -498,7 +496,7 @@ private:
 	x = get_next_num(file); y = get_next_num(file);
 	std::cout << x << "," << y << std::endl;
 	Point s(x,y);
-	test_point_list.push_back(s);
+	m_test_point_list.push_back(s);
 	
 	exp_type = get_next_int(file);
 	exp_type_list.push_back( (Arr_2::Locate_type) exp_type);
@@ -554,7 +552,7 @@ public:
       CGAL_assertion(arr.is_valid());
             
       // Check that vertices read are indeed in the arrangement
-      check_that_vertices_are_in_arrangement(all_points_list);
+      check_that_vertices_are_in_arrangement(m_all_points_list);
 
       // count overlaps
       actual_num_overlaps = count_overlaps(); 
@@ -563,7 +561,7 @@ public:
       
       CGAL_assertion (arr.number_of_vertices()  == expected_num_vertices);
       // verify that test points are as located in the arrangemet as expected
-      points_in_expected_place(test_point_list, exp_type_list);
+      points_in_expected_place(m_test_point_list, exp_type_list);
       CGAL_assertion (arr.number_of_halfedges() == expected_num_edges * 2);
       CGAL_assertion (arr.number_of_faces()     == expected_num_faces);
       CGAL_assertion (actual_num_overlaps       == expected_num_overlaps);
