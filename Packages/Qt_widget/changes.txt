@@ -1,8 +1,9 @@
-1.0.7 (5 June 2001)
+1.0.7 (6 June 2001)
 =====
 We now provide contrained.moc
 redraw signal is know resized.
 Several code cleaning.
+New version of demo makefiles that works with Qt enable install_cgal
 
 1.0.6 (22 May 2001)
 =====
