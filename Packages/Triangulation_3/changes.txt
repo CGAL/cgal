@@ -1,4 +1,4 @@
-Version 1.101 (?? January 02)
+Version 1.101 (14 January 02)
 - Documentation updates.
 - remove_from_simplex() renamed to remove_from_maximal_dimension_simplex().
 - star_hole() renamed to insert_in_hole().
