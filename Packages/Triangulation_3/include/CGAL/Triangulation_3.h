@@ -1045,6 +1045,27 @@ public:
 	// if p is collinear, location :
 	Cell_handle c = start;
 	CGAL_Comparison_result o, o0, o1;
+	int xyz;
+	p0 = start->vertex(0)->point();
+	p1 = start->vertex(1)->point();
+	CGAL_triangulation_assertion
+	  ( ( geom_traits().compare_x(p0,p1) != CGAL_ZERO ) ||
+	    ( geom_traits().compare_y(p0,p1) != CGAL_ZERO ) ||
+	    ( geom_traits().compare_z(p0,p1) != CGAL_ZERO ) );
+	o = geom_traits().compare_x(p0,p1);
+	if ( o == CGAL_EQUAL ) {
+	  o = geom_traits().compare_y(p0,p1);
+	  if ( o == CGAL_EQUAL ) {
+	    o = geom_traits().compare_z(p0,p1);
+	    xyz = 3;
+	  }
+	  else {
+	    xyz = 2;
+	  }
+	}
+	else {
+	  xyz  = 1;
+	}
 	//	bool notfound = true;
 	while (1) {
 	  
@@ -1058,22 +1079,45 @@ public:
 	  // we test on which direction to continue the traversal
 	  p0 = c->vertex(0)->point();
 	  p1 = c->vertex(1)->point();
-	  o = geom_traits().compare_x(p0,p1);
-	  if ( o == CGAL_EQUAL ) {
-	    o = geom_traits().compare_y(p0,p1);
-	    if ( o == CGAL_EQUAL ) {
+	  switch ( xyz ) {
+	  case 1:
+	    {
+	      o = geom_traits().compare_x(p0,p1);
+	      o0 = geom_traits().compare_x(p0,p);
+	      o1 = geom_traits().compare_x(p,p1);
+	      break;
+	    }
+	  case 2:
+	    {
+	      o = geom_traits().compare_y(p0,p1);
+	      o0 = geom_traits().compare_y(p0,p);
+	      o1 = geom_traits().compare_y(p,p1);
+	      break;
+	    }
+	  default: // case 3
+	    {
+	      o = geom_traits().compare_z(p0,p1);
 	      o0 = geom_traits().compare_z(p0,p);
 	      o1 = geom_traits().compare_z(p,p1);
 	    }
-	    else {
-	      o0 = geom_traits().compare_y(p0,p);
-	      o1 = geom_traits().compare_y(p,p1);
-	    }
 	  }
-	  else {
-	    o0 = geom_traits().compare_x(p0,p);
-	    o1 = geom_traits().compare_x(p,p1);
-	  }
+// 	  o = geom_traits().compare_x(p0,p1);
+// 	  if ( o == CGAL_EQUAL ) {
+// 	    o = geom_traits().compare_y(p0,p1);
+// 	    if ( o == CGAL_EQUAL ) {
+// 	      o = geom_traits().compare_z(p0,p1);
+// 	      o0 = geom_traits().compare_z(p0,p);
+// 	      o1 = geom_traits().compare_z(p,p1);
+// 	    }
+// 	    else {
+// 	      o0 = geom_traits().compare_y(p0,p);
+// 	      o1 = geom_traits().compare_y(p,p1);
+// 	    }
+// 	  }
+// 	  else {
+// 	    o0 = geom_traits().compare_x(p0,p);
+// 	    o1 = geom_traits().compare_x(p,p1);
+// 	  }
 	  
 	  if ( o0 == o1 ) {
 	    lt = EDGE;
