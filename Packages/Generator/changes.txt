@@ -1,5 +1,8 @@
 Generator Package: Release changes:
 ---------------------------------------------------------------------
+2.47 (02 Jan 2002)
+   - changed from use of (nonstandard) M_PI to CGAL_PI
+
 2.46 (10 Dec 2001)
    - fixed random_points_in_sphere_3 generator
 
