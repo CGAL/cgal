@@ -41,13 +41,35 @@ template <class K1, class K2,
           class FT_Converter = NT_converter<typename K1::FT, typename K2::FT> >
 class Homogeneous_converter : public Enum_converter
 {
+private:
+    typedef Enum_converter   Base;
+
 public:
     typedef K1            Source_kernel;
     typedef K2            Target_kernel;
     typedef RT_Converter  Ring_number_type_converter;
     typedef FT_Converter  Field_number_type_converter;
 
-    using Enum_converter::operator();
+#ifdef CGAL_CFG_USING_BASE_MEMBER_BUG
+    bool operator()(bool b) const { return Base::operator()(b); }
+    Sign operator()(Sign s) const { return Base::operator()(s); }
+
+    Oriented_side operator()(Oriented_side os) const {
+      return Base::operator()(os);
+    }
+
+    Bounded_side operator()(Bounded_side bs) const {
+      return Base::operator()(bs);
+    }
+
+    Comparison_result operator()(Comparison_result cr) const {
+      return Base::operator()(cr);
+    }
+
+    Angle operator()(Angle a) const { return Base::operator()(a); }
+#else
+    using Base::operator();
+#endif
 
     typename K2::Point_2
     operator()(const typename K1::Point_2 &a) const

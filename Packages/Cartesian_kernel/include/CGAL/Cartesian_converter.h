@@ -51,16 +51,35 @@ template < class K1, class K2,
            class Converter = typename CGALi::Default_converter<K1, K2>::Type >
 class Cartesian_converter : public Enum_converter
 {
+private:
+    typedef Enum_converter   Base;
+
 public:
     typedef K1         Source_kernel;
     typedef K2         Target_kernel;
     typedef Converter  Number_type_converter;
 
-#if defined(__GNUC__) && (__GNUC__ < 3)
-#elif defined(__sun) && defined(__SUNPRO_CC)
+#ifdef CGAL_CFG_USING_BASE_MEMBER_BUG
+    bool operator()(bool b) const { return Base::operator()(b); }
+    Sign operator()(Sign s) const { return Base::operator()(s); }
+
+    Oriented_side operator()(Oriented_side os) const {
+      return Base::operator()(os);
+    }
+
+    Bounded_side operator()(Bounded_side bs) const {
+      return Base::operator()(bs);
+    }
+
+    Comparison_result operator()(Comparison_result cr) const {
+      return Base::operator()(cr);
+    }
+
+    Angle operator()(Angle a) const { return Base::operator()(a); }
 #else
-    using Enum_converter::operator();
+    using Base::operator();
 #endif
+
     Cartesian_converter()
 	: c(), k() {}
 
