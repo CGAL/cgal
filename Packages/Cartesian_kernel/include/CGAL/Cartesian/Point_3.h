@@ -25,7 +25,6 @@
 #include <CGAL/Threetuple.h>
 #include <CGAL/Origin.h>
 #include <CGAL/Bbox_3.h>
-#include <CGAL/Threetuple.h>
 #include <CGAL/Kernel/Cartesian_coordinate_iterator_3.h>
 
 CGAL_BEGIN_NAMESPACE
