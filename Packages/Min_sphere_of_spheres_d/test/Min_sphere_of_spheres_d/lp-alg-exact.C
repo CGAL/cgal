@@ -12,6 +12,7 @@
 
 #include <iostream>
 #include <vector>
+#include <ctime>
 
 #include "Rational.h"
 

@@ -15,6 +15,7 @@
 #include <CGAL/Min_sphere_of_spheres_d.h>
 
 #include <iostream>
+#include <vector>
 #include <ctime>
 
 #include "Rational.h"
