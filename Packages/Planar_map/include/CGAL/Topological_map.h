@@ -109,22 +109,22 @@ public:
   Face,
   Difference, iterator_category>       Face_const_iterator;
 
-  typedef I_HalfedgeDS_facet_circ<
+  typedef _HalfedgeDS_facet_circ<
   Halfedge,
   Halfedge_iterator,
   Forward_circulator_tag>            Ccb_halfedge_circulator;
 
-  typedef I_HalfedgeDS_vertex_circ<
+  typedef _HalfedgeDS_vertex_circ<
   Halfedge,
   Halfedge_iterator,
   Forward_circulator_tag>            Halfedge_around_vertex_circulator;
 
-  typedef I_HalfedgeDS_facet_const_circ<
+  typedef _HalfedgeDS_facet_const_circ<
   Halfedge,
   Halfedge_const_iterator,
   Forward_circulator_tag>       Ccb_halfedge_const_circulator;
   
-  typedef I_HalfedgeDS_vertex_const_circ<
+  typedef _HalfedgeDS_vertex_const_circ<
   Halfedge,
   Halfedge_const_iterator,
   Forward_circulator_tag>      Halfedge_around_vertex_const_circulator;
