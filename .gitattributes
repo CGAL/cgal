@@ -1315,6 +1315,8 @@ Packages/Mesh_2/demo/Mesh_2/seeds.xpm -text
 Packages/Mesh_2/doc_tex/Mesh_2_ref/part_of_a_cluster.eps -text
 Packages/Mesh_2/doc_tex/Mesh_2_ref/part_of_a_cluster.gif -text svneol=unset#unset
 Packages/Mesh_3/examples/Mesh_3/cube-1-1-1.off -text
+Packages/Mesh_3/examples/Mesh_3/double-cube-7-8.off -text
+Packages/Mesh_3/examples/Mesh_3/modified-double-cube-7-8.off -text
 Packages/Min_circle_2/demo/Min_circle_2/min_circle_2.vcproj -text
 Packages/Min_ellipse_2/demo/Min_ellipse_2/min_ellipse_2.vcproj -text
 Packages/Min_quadrilateral_2/demo/Min_quadrilateral_2/min_quadrilateral_2.vcproj -text
