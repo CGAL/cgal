@@ -43,16 +43,16 @@ int main()
   Point_2 a11(11, 7), a12(6, 9);
 
   // Create the curves:
-  cv[0] = X_curve_2(a1, a3);
-  cv[1] = X_curve_2(a1, a4);
-  cv[2] = X_curve_2(a2, a3);
-  cv[3] = X_curve_2(a2, a6);
-  cv[4] = X_curve_2(a3, a6);
-  cv[5] = X_curve_2(a3, a4);
-  cv[6] = X_curve_2(a4, a5);
-  cv[7] = X_curve_2(a4, a7);
-  cv[8] = X_curve_2(a5, a7);
-  cv[9] = X_curve_2(a6, a8);
+  cv[0]  = X_curve_2(a1, a3);
+  cv[1]  = X_curve_2(a1, a4);
+  cv[2]  = X_curve_2(a2, a3);
+  cv[3]  = X_curve_2(a2, a6);
+  cv[4]  = X_curve_2(a3, a6);
+  cv[5]  = X_curve_2(a3, a4);
+  cv[6]  = X_curve_2(a4, a5);
+  cv[7]  = X_curve_2(a4, a7);
+  cv[8]  = X_curve_2(a5, a7);
+  cv[9]  = X_curve_2(a6, a8);
   cv[10] = X_curve_2(a6, a9);
   cv[11] = X_curve_2(a7, a10);
   cv[12] = X_curve_2(a7, a11);
@@ -69,7 +69,7 @@ int main()
 
   // Insert the curves into the Planar_map:
   std::cout << "Inserting the curves to the map ... ";
-  pm.insert(&cv[0], &cv[5]);
+  pm.insert(&cv[0], &cv[18]);
   std::cout << ((pm.is_valid()) ? "map valid!" : "map invalid!") << std::endl
             << std::endl;
   
