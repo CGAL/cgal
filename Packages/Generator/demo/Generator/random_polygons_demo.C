@@ -50,7 +50,7 @@ const double RADIUS = 0.9 * WINDOW_SIZE/2.0;
 Transformation_2 translate(CGAL::TRANSLATION, 
                            Vector_2(WINDOW_SIZE/2.0, WINDOW_SIZE/2.0));
 
-typedef CGAL::Creator_uniform_2<int, Point_2>             Creator;
+typedef CGAL::Creator_uniform_2<double, Point_2>             Creator;
 typedef CGAL::Random_points_in_square_2<Point_2, Creator> Point_generator;
 
 CGAL::Window_stream W(WINDOW_SIZE, WINDOW_SIZE, "Random polygons");
