@@ -800,7 +800,7 @@ run_latex() {
     if [ ${MakePDF} -eq 0 ] ; then 
         cleanup_latex $1
     else
-        rm -f $1.aux
+        rm -f $1.aux $1.toc $1.bmt $1.mtc*
     fi
     return $RetCode
 }
