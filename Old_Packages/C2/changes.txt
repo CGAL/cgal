@@ -1,3 +1,7 @@
+Version 3.9 (6 Juin 2000)
+fixed a bug in bisector_of_pointsC2 in the file
+include/CGAL/constructions/kernel_ftC2.h
+
 Version 3.8 (2 Mai 2000)
 - make the following classes derive from Handle_for instead of Handle
 CircleC2

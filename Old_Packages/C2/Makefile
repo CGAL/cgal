@@ -15,9 +15,9 @@ package: clean $(Package).tar.gz
 	@echo "----------------------------------"
 	@echo "---- changes.txt              ----"
 	@echo "---- make test                ----"
-	@echo "---- make VERSION=3.1 version ----"
+	@echo "---- make VERSION=3.9 version ----"
 	@echo "---- make commit               ----"
-	@echo "---- make VERSION=3.1 rtag    ----"
+	@echo "---- make VERSION=3.9  rtag    ----"
 	@echo "---- make submit              ----"
 	@echo "----------------------------------"
 
@@ -25,7 +25,7 @@ symlinks:
 	cd include/CGAL/Cartesian ; sh ./create_symlinks_2
 
 test:
-	cd test/Kernel; ./cgal_test
+	cd ../Kernel_test/test/KernelCartesian; ./cgal_test
 
 version:
 	echo "$(VERSION) (" `date +"%e %b %Y"` ")" > version
