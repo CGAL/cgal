@@ -170,7 +170,12 @@ public:
 
   // assign function for non-connectivity data
   virtual void assign(const Pm_face_base &f)
-  {
+  { 
+    // The reason we do not assign anything here is because
+    // we can't copy pointers of a face from another Pm_dcel.
+    // The assign function of Pm_dcel does all the necessary updates.
+
+    (void) f; // We avoid the `unused parameter' warning.
   }
   
 
