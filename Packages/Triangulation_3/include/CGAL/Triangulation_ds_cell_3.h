@@ -36,12 +36,14 @@ class CGAL_Triangulation_ds_vertex;
 template < class Vb, class Cb >
 class CGAL_Triangulation_data_structure;
 
-template < class Tds>
-class CGAL_Triangulation_ds_iterator_base;
+//template < class Tds>
+//class CGAL_Triangulation_ds_iterator_base;
 template < class Tds>
 class CGAL_Triangulation_ds_cell_iterator;
 template < class Tds>
 class CGAL_Triangulation_ds_facet_iterator;
+template < class Tds>
+class CGAL_Triangulation_ds_edge_iterator;
 template < class Tds>
 class CGAL_Triangulation_ds_vertex_iterator;
 
@@ -51,11 +53,13 @@ class CGAL_Triangulation_ds_cell
 {
   friend class CGAL_Triangulation_data_structure<Vb,Cb>;
 
-  friend class CGAL_Triangulation_ds_iterator_base
-  <CGAL_Triangulation_data_structure<Vb,Cb> >;
+  //  friend class CGAL_Triangulation_ds_iterator_base
+  //  <CGAL_Triangulation_data_structure<Vb,Cb> >;
   friend class CGAL_Triangulation_ds_cell_iterator
   <CGAL_Triangulation_data_structure<Vb,Cb> >;
   friend class CGAL_Triangulation_ds_facet_iterator
+  <CGAL_Triangulation_data_structure<Vb,Cb> >;
+  friend class CGAL_Triangulation_ds_edge_iterator
   <CGAL_Triangulation_data_structure<Vb,Cb> >;
   friend class CGAL_Triangulation_ds_vertex_iterator
   <CGAL_Triangulation_data_structure<Vb,Cb> >;
@@ -479,16 +483,31 @@ private:
 
   // only for dimension 2
 
-  inline int ccw(int i) const
-  {
-    return (i+1) % 3;
-  }
+//   inline int ccw(int i) const
+//   {
+//     return (i+1) % 3;
+//   }
     
-  inline int cw(int i) const
-  {
-    return (i+2) % 3;
-  }
+//   inline int cw(int i) const
+//   {
+//     return (i+2) % 3;
+//   }
  
+  inline unsigned int ccw(const unsigned int i) const
+  {
+    CGAL_precondition( i== 0 || i == 1 || i==2 );
+    static const unsigned int tab_ccw[] = {1,2,0};
+    return tab_ccw[i];
+  }
+
+  inline unsigned int cw(const unsigned int i) const
+  {
+    CGAL_precondition( i== 0 || i == 1 || i==2 );
+    static const unsigned int tab_cw[] = {2,0,1};
+    return tab_cw[i];
+  }
+
+
   void error_orient( Cell * n, int i) const
   {
     cerr << this->vertex(0)->point() << ", "
