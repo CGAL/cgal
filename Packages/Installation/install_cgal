@@ -770,8 +770,9 @@ set_compiler_flags()
 	    ;;
 	*CL.EXE*|*cl.exe*)
 	    #### settings Microsoft Visual C++ compiler 
-	    ADDITIONAL_CXXFLAGS="-TP -GR -GX"
-	    CGAL_LIB_CXXFLAGS="-TP"
+	    ADDITIONAL_CXXFLAGS="-TP -GR -GX -nologo"
+	    ADDITIONAL_LDFLAGS="-nologo"
+#	    CGAL_LIB_CXXFLAGS="-TP"
 	    CGAL_LIB_CREATE="LIB /OUT:"
 	    CGAL_SHARED_LIB_CXXFLAGS=
 	    CGAL_SHARED_LIB_CREATE=
@@ -781,7 +782,7 @@ set_compiler_flags()
 	    OBJ_EXT=".obj"
 	    LIB_SFX=".lib"
 	    REMOVE_EXT_LIST=".obj"
-	    LIB_OPT=
+	    LIB_OPT="-DEFAULTLIB:"
             LEDA_LIB_OPT="lib"
 	    LIBPATH_OPT="-LIBPATH:"
 	    DEBUG_OPT="-Z7"
@@ -1230,7 +1231,16 @@ _where_is()
     if [ -z "`value_of \"${1}\"`" ]; then
 	${_printf} "%s" "WHERE_IS_YOUR_${1}"
     else
-	value_of "${1}"
+	filename_for_compiler "`value_of \"${1}\"`"
+    fi
+}
+
+posix_path()
+{
+    if [ -z "${WINDOWS_COMPILER}" ]; then
+	${_printf} "%s" "$*"
+    else
+	${_printf} "%s" "`${_cygpath} -u $*`"
     fi
 }
 
@@ -1239,16 +1249,34 @@ filename_for_compiler()
     if [ -z "${WINDOWS_COMPILER}" ]; then
 	${_printf} "%s" "$1"
     else
-	${_printf} "%s" "`cygpath -w $1`"
+	${_printf} "%s" "`${_cygpath} -w $1`"
     fi
 }
 
 include_dir_option()
 {
     if [ -z "${WINDOWS_COMPILER}" ]; then
-	${_printf} "%s" "'-I$1'"
+	${_printf} "'-I%s' " "$1"
     else
-	${_printf} "'-I%s'" `cygpath -w $1`
+	${_printf} "'-I%s' " "`${_cygpath} -w $1`"
+    fi
+}
+
+libpath_option()
+{
+    if [ -z "${WINDOWS_COMPILER}" ]; then
+	${_printf} "'${LIBPATH_OPT}%s' " "$*"
+    else
+	${_printf} "'${LIBPATH_OPT}%s' " "`${_cygpath} -w $*`"
+    fi
+}
+
+lib_option()
+{
+    if [ -z "${WINDOWS_COMPILER}" ]; then
+	${_printf} "'${LIB_OPT}%s${LIB_SFX}' " "$*"
+    else
+	${_printf} "'${LIB_OPT}%s${LIB_SFX}' " "`${_cygpath} -w $*`"
     fi
 }
 
@@ -1257,7 +1285,7 @@ object_file_name()
     if [ -z "${WINDOWS_COMPILER}" ]; then
 	${_printf} "%s" "$1${OBJ_EXT}"
     else
-	${_printf} "%s" "'`cygpath -w $1`${OBJ_EXT}'"
+	${_printf} "%s" "'`${_cygpath} -w $1`${OBJ_EXT}'"
     fi
 }
 
@@ -1266,7 +1294,7 @@ to_object_file_option()
     if [ -z "${WINDOWS_COMPILER}" ]; then
 	${_printf} "%s" "-o $1.o"
     else
-	${_printf} "%s" "'-o`cygpath -w $1`'"
+	${_printf} "%s" "'-o`${_cygpath} -w $1`'"
     fi
 }
 
@@ -1275,7 +1303,7 @@ output_file_option()
     if [ -z "${WINDOWS_COMPILER}" ]; then
 	${_printf} "%s" "${EXE_OPT}$1"
     else
-	${_printf} "%s" "'${EXE_OPT}`cygpath -w $1`'"
+	${_printf} "%s" "'${EXE_OPT}`${_cygpath} -w $1`'"
     fi
 }
 
@@ -1300,15 +1328,14 @@ concat_path()
 
 cgal_cxxflags()
 {
-    tmp_path_name=`_where_is 'CGAL_INCL_DIR'`
-    tmp_cxx_flags="${ADDITIONAL_CXXFLAGS} `include_dir_option ${tmp_path_name}`"
-    ${_printf} "%s" `include_dir_option ${tmp_path_name}`
+    ${_printf} "%s" "${ADDITIONAL_CXXFLAGS} "
+    include_dir_option "`_where_is 'CGAL_INCL_DIR'`"
 }
 
 cgal_ldflags()
 {
-    ${_printf} "%s" "${LIBPATH_OPT}`_where_is 'CGAL_LIB_DIR'`/`full_ostype` "
-    ${_printf} "%s" "`rpath_directive 'CGAL_LIB_DIR'`"
+    libpath_option "`_where_is 'CGAL_LIB_DIR'`/`full_ostype`"
+    rpath_directive 'CGAL_LIB_DIR'
     if [ -n "${RUNTIME_LINKER_FLAG}" ]; then
 	${_printf} "%s" "/`full_ostype` "
     fi
@@ -1321,7 +1348,7 @@ cgal_ldflags()
 math_ldflags()
 {
     if [ -n "${MATH_LIB}" ] ; then
-        ${_printf} "%s" "${LIB_OPT}${MATH_LIB}${LIB_SFX} "
+        lib_option "${MATH_LIB}"
     fi
 }
 
@@ -1357,10 +1384,10 @@ gmp_ldflags()
     if [ -n "${GMP_SUPPORT}" ]; then
 	if [ "${GMP_INSTALLATION}" != 'c' -a \
              "${GMP_INSTALLATION}" != 's' ]; then
-	    ${_printf} "%s" "${LIBPATH_OPT}`_where_is 'GMP_LIB_DIR'` "
+	    libpath_option "`_where_is 'GMP_LIB_DIR'`"
 	    ${_printf} "%s" "`rpath_directive 'GMP_LIB_DIR'` "
 	fi
-	${_printf} "%s" "${LIB_OPT}gmp${LIB_SFX} "
+	lib_option "gmp"
     fi
 }
 
@@ -1390,8 +1417,7 @@ cln_cxxflags()
     if [ -n "${CLN_SUPPORT}" -a \
 	"${CLN_INSTALLATION}" != 'c' -a \
 	"${CLN_INSTALLATION}" != 's' ]; then
-	tmp_dir_name=`_where_is 'CLN_INCL_DIR'`
-	${_printf} "%s" "`include_dir_option ${tmp_dir_name}` "
+	include_dir_option "`_where_is 'CLN_INCL_DIR'`"
     fi
 }
 
@@ -1400,10 +1426,10 @@ cln_ldflags()
     if [ -n "${CLN_SUPPORT}" ]; then
 	if [ "${CLN_INSTALLATION}" != 'c' -a \
              "${CLN_INSTALLATION}" != 's' ]; then
-	    ${_printf} "%s" "${LIBPATH_OPT}`_where_is 'CLN_LIB_DIR'` "
+	    libpath_option "`_where_is 'CLN_LIB_DIR'`"
 	    ${_printf} "%s" "`rpath_directive 'CLN_LIB_DIR'` "
 	fi
-	${_printf} "%s" "${LIB_OPT}cln{LIB_SFX} "
+	lib_option "cln"
     fi
 }
 
@@ -1441,12 +1467,13 @@ leda_ldflags()
 {
     if [ -n "${LEDA_SUPPORT}" ]; then
 	if [ -n "${NEED_EXTRA_LEDA_LDIR}" ]; then
-	    pathname1=`_where_is 'LEDA_LIB_DIR'`
-	    pathname2=`filename_for_compiler ${pathname1}`
-	    ${_printf} "%s" "${START_LD_OPTIONS}'${LIBPATH_OPT}${pathname2}' "
+	    ${_printf} "%s" "${START_LD_OPTIONS}"
+	    libpath_option "`_where_is 'LEDA_LIB_DIR'`"
 	    ${_printf} "%s" "`rpath_directive 'LEDA_LIB_DIR'` "
 	fi
-	${_printf} "%s" "${LEDA_LIB_OPT}P${LIB_SFX} ${LEDA_LIB_OPT}G${LIB_SFX} ${LEDA_LIB_OPT}L${LIB_SFX} "
+	lib_option "P"
+	lib_option "G"
+	lib_option "L"
     fi
 }
 
@@ -1475,7 +1502,7 @@ compiler_flags()
 # print ldflags for current setting
 linker_flags()
 {
-    ${_printf} "%s" "${CUSTOM_LDFLAGS} `cgal_ldflags`${LIB_OPT}CGAL{LIB_SFX} `leda_ldflags``gmp_ldflags``cln_ldflags``math_ldflags`"
+    ${_printf} "%s" "${CUSTOM_LDFLAGS} `cgal_ldflags` `lib_option CGAL``leda_ldflags``gmp_ldflags``cln_ldflags``math_ldflags`"
 }
 
 # print ldflags for current setting (do not link with cgal lib,
@@ -1654,6 +1681,9 @@ _add_flags()
 search_for_compilers()
 {
     guess_os log_print
+    case ${SYST} in
+	*CYGWIN*) _check_for_sysutil cygpath y;;
+    esac
     _COMPILER_NUMBER=1
 
     # first check, which config files exist
@@ -2399,11 +2429,15 @@ _link_run_test()
     _flags="`output_file_option ${TMP_CXX_FILE}` `object_file_name ${TMP_CXX_FILE}` ${_flags}"
 
     # link
+    _link=`compiler_bin`
+    case ${COMPILER} in
+	*CL.EXE*|*cl.exe*) _link="link";;
+    esac
     ${_printf} "%s\n%s\n" "Linker call:" "--------------" >${TMP_LOGFILE}
-    ${_printf} "%s\n\n" "`compiler_bin` ${_flags}" >>${TMP_LOGFILE}
+    ${_printf} "%s\n\n" "${_link} ${_flags}" >>${TMP_LOGFILE}
     ${_printf} "%s\n" "Got the following error messages:" >>${TMP_LOGFILE}
     ${_printf} "%s\n" "---------------------------------" >>${TMP_LOGFILE}
-    eval "`compiler_bin` ${_flags} >>${TMP_LOGFILE} 2>&1"
+    eval "${_link} ${_flags} >>${TMP_LOGFILE} 2>&1"
     i=$?
     j=1
     if [ $i = 0 ]; then 
@@ -2505,7 +2539,7 @@ test_for_leda_lib_in_sys_lib()
     }" > ${TMP_CXX_FILE}.C
     if _compile_test "LEDA syslibs" "${CUSTOM_CXXFLAGS} " "$1"; then
 	if _link_run_test "LEDA syslibs" \
-	    "${CUSTOM_LDFLAGS} ${LIB_OPT}P${LIB_SFX} ${LIB_OPT}G${LIB_SFX} ${LIB_OPT}L${LIB_SFX} `math_ldflags`" "$1"; then
+	    "${CUSTOM_LDFLAGS} `lib_option P``lib_option G``lib_option L``math_ldflags`" "$1"; then
 	    NEED_EXTRA_LEDA_LDIR=''
 	    return 0
 	fi
@@ -3132,6 +3166,8 @@ change_value()
 change_dir()
 {
     change_value $1
+    _tmp="`value_of $1`"
+    eval "$1=\"`posix_path ${_tmp}`\""
     if [ "${_oldvalue}" = "`value_of $1`" ]; then
 	return 1
     else
@@ -3981,8 +4017,8 @@ write_linker_flags()
     LIB_PATH="${LIBPATH_OPT}\$(CGAL_LIB_DIR)/\$(CGAL_OS_COMPILER)"
     RUNTIME_LIB_PATH="\$(CGAL_LIB_DIR)/\$(CGAL_OS_COMPILER)"
   fi
-  LIBS="${LIB_OPT}CGAL${LIB_SFX}"
-  WLIBS="${LIB_OPT}CGAL${LIB_SFX}"
+  LIBS="`lib_option CGAL`"
+  WLIBS="`lib_option CGAL`"
   if [ -n "${LEDA_SUPPORT}" ] ; then
     if [ -n "${NEED_EXTRA_LEDA_LDIR}" ]; then
 	if [ -n "${WINDOWS_COMPILER}" ]; then
@@ -3992,7 +4028,7 @@ write_linker_flags()
 	fi
 	RUNTIME_LIB_PATH="${RUNTIME_LIB_PATH}:\$(LEDA_LIB_DIR)"
     fi
-    LIBS="${LIBS} ${LEDA_LIB_OPT}P${LIB_SFX} ${LEDA_LIB_OPT}G${LIB_SFX} ${LEDA_LIB_OPT}L${LIB_SFX}"
+    LIBS="${LIBS} `lib_option P``lib_option G``lib_option L`"
     WLIBS="${WLIBS} -lW -lP -lG -lL -lX11"
   fi
   if [ -n "${GMP_SUPPORT}" ]; then
@@ -4006,8 +4042,8 @@ write_linker_flags()
 	fi
 	RUNTIME_LIB_PATH="${RUNTIME_LIB_PATH}:\$(GMP_LIB_DIR)"
     fi
-    LIBS="${LIBS} ${LIB_OPT}gmp${LIB_SFX}"
-    WLIBS="${WLIBS} ${LIB_OPT}gmp${LIB_SFX}"
+    LIBS="${LIBS} `lib_option gmp`"
+    WLIBS="${WLIBS} `lib_option gmp`"
   fi
   if [ -n "${CLN_SUPPORT}" ]; then
     if [ "${CLN_INSTALLATION}" = 'x' -o \
@@ -4016,8 +4052,8 @@ write_linker_flags()
 	LIB_PATH="${LIB_PATH} ${LIBPATH_OPT}\$(CLN_LIB_DIR)"
 	RUNTIME_LIB_PATH="${RUNTIME_LIB_PATH}:\$(CLN_LIB_DIR)"
     fi
-    LIBS="${LIBS} ${LIB_OPT}cln${LIB_SFX}"
-    WLIBS="${WLIBS} ${LIB_OPT}cln${LIB_SFX}"
+    LIBS="${LIBS} `lib_option cln`"
+    WLIBS="${WLIBS} `lib_option cln`"
   fi
   LIBS="${LIBS} `math_ldflags`"
   WLIBS="${WLIBS} `math_ldflags`"
@@ -4222,7 +4258,7 @@ create_include_makefile()
       makefile_print_line "${RUNTIME_LINKER_FLAG}\$(LEDA_LIB_DIR)" \
 	>> ${FILE}
     fi
-    ${_printf} "\t%s\n" "${LIB_OPT}L${LIB_SFX} ${CGAL_SHARED_LIB_LDFLAGS}" >> ${FILE}
+    ${_printf} "\t%s\n" "`lib_option L`${CGAL_SHARED_LIB_LDFLAGS}" >> ${FILE}
   else
     ${_printf} "%s\n" \
 	"CGAL_SHARED_LIB_LDFLAGS = ${CGAL_SHARED_LIB_LDFLAGS}" >> ${FILE}
