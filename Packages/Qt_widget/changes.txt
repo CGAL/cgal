@@ -1,3 +1,9 @@
+1.2.30
+--------
+Qt_widget_get_polygon and Qt_widget_get_simple_polygon were upgraded.
+Qt_widget_history removed warnings.
+Qt_widget_layer --- wheelEvent -- repaired changed parameter.
+
 1.2.28
 ------
 Put some remark in the doc about Qpl license.
