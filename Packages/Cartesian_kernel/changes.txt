@@ -1,3 +1,6 @@
+Version 102.12 (1 January 2004)
+- Speed up PointC[23].cartesian().
+
 Version 102.11 (17 December 2003)
 - Added Compute_area_3, and a version of Compute_squared_area_3 taking 3
   points.

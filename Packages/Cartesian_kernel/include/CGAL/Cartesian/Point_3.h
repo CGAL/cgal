@@ -142,11 +142,7 @@ const typename PointC3<R>::FT &
 PointC3<R>::cartesian(int i) const
 {
   CGAL_kernel_precondition( (i>=0) && (i<=2) );
-  // return (i==0) ? x() :
-//          (i==1) ? y() : z();
-  if (i==0) return x();
-  if (i==1) return y();
-  return z();
+  return *(&(this->Ptr()->e0)+i);
 }
 
 template < class R >
