@@ -1667,7 +1667,7 @@ template < class GT, class Tds >
 Triangulation_3<GT,Tds>::Cell_handle
 Triangulation_3<GT,Tds>::
 locate(const Point & p,
-       Cell_handle start,
+       const Cell_handle start,
        Locate_type & lt,
        int & li,
        int & lj) const
@@ -1684,11 +1684,6 @@ locate(const Point & p,
   // separating p from the rest of the triangulation
   // lt = OUTSIDE_AFFINE_HULL if p is not coplanar with the triangulation
 {
-  //  static Random rand( (long) 0 );
-  static int rand = 0;
-  const int rand_a = 421;
-  const int rand_b = 2073;
-  const int rand_c = 32749;
   int i, inf;
   switch (dimension()) {
   case 3:
@@ -1698,7 +1693,7 @@ locate(const Point & p,
 // 	  && ( ! start->has_vertex(infinite) ) );
 //       Cell_handle c = start;
       CGAL_triangulation_precondition( (&(*start) != NULL) );
-      Cell_handle c;
+      Cell_handle c, previous = NULL;
       int ind_inf;
       if ( start->has_vertex(infinite,ind_inf) ) 
 	c = start->neighbor(ind_inf);
@@ -1706,74 +1701,77 @@ locate(const Point & p,
 	c = start;
  
       Orientation o[4];
-      while (1) {
-	  
+
+      // We implement the remembering visibility/stochastic walk.
+
+      // Main locate loop
+      while(1) {
 	if ( c->has_vertex(infinite,li) ) {
 	  // c must contain p in its interior
 	  lt = OUTSIDE_CONVEX_HULL;
 	  return c;
 	}
-	   
-	// else c is finite
-	// we test its facets in a random order until we find a
-	// neighbor to go further
-	//	i = rand.get_int(0,4);
-	rand = ( rand_a * rand + rand_b ) % rand_c;
-	i = rand &3;
-	Point p0 = c->vertex( i )->point();
-	Point p1 = c->vertex( (i+1)&3 )->point();
-	Point p2 = c->vertex( (i+2)&3 )->point();
-	Point p3 = c->vertex( (i+3)&3 )->point();
-	if ( (i&1) == 0 ) {
-	  o[0] = geom_traits().orientation( p, p1, p2, p3 );
-	  if ( o[0] == NEGATIVE ) {
-	    c = c->neighbor(i);
+
+	i = rand_4(); // For the (remembering) stochastic walk
+	// i = 0; // For the (remembering) visibility walk. Ok for Delaunay only
+
+        Orientation test_or = (i&1)==0 ? NEGATIVE : POSITIVE;
+	const Point & p0 = c->vertex( i )->point();
+	const Point & p1 = c->vertex( (i+1)&3 )->point();
+	const Point & p2 = c->vertex( (i+2)&3 )->point();
+	const Point & p3 = c->vertex( (i+3)&3 )->point();
+
+	// Note : among the four Points, 3 are common with the previous cell...
+	// Something can probably be done to take advantage of this, like
+	// storing the four in an array and changing only one ?
+
+	// We could make a loop of these 4 blocks, for clarity, but not speed.
+	Cell_handle next = c->neighbor(i);
+	if (previous != next) {
+	  o[0] = geom_traits().orientation(p, p1, p2, p3);
+	  if ( o[0] == test_or) {
+	    previous = c;
+	    c = next;
 	    continue;
 	  }
-	  // (i+1)%2 == 1
-	  o[1] = geom_traits().orientation( p2, p, p3, p0 );
-	  if ( o[1] == NEGATIVE ) {
-	    c = c->neighbor((i+1)&3);
+	} else
+	    o[0] = (Orientation) - test_or;
+
+	next = c->neighbor((i+1)&3);
+	if (previous != next) {
+	  o[1] = geom_traits().orientation(p0, p, p2, p3);
+	  if ( o[1] == test_or) {
+	    previous = c;
+	    c = next;
 	    continue;
 	  }
-	  // (i+2)%2 == 0
-	  o[2] = geom_traits().orientation( p, p3, p0, p1 );
-	  if ( o[2] == NEGATIVE ) {
-	    c = c->neighbor((i+2)&3);
+	} else
+	    o[1] = (Orientation) - test_or;
+
+	next = c->neighbor((i+2)&3);
+	if (previous != next) {
+	  o[2] = geom_traits().orientation(p0, p1, p, p3);
+	  if ( o[2] == test_or) {
+	    previous = c;
+	    c = next;
 	    continue;
 	  }
-	  // (i+3)%2 == 1
-	  o[3] = geom_traits().orientation( p0, p, p1, p2 );
-	  if ( o[3] == NEGATIVE ) {
-	    c = c->neighbor((i+3)&3);
+	} else
+	    o[2] = (Orientation) - test_or;
+
+	next = c->neighbor((i+3)&3);
+	if (previous != next) {
+	  o[3] = geom_traits().orientation(p0, p1, p2, p);
+	  if ( o[3] == test_or) {
+	    // previous = c; // not necessary because it's the last one.
+	    c = next;
 	    continue;
 	  }
-	}
-	else {// (i%2) == 1
-	  o[0] = geom_traits().orientation( p1, p, p2, p3 );
-	  if ( o[0] == NEGATIVE ) {
-	    c = c->neighbor(i);
-	    continue;
-	  }
-	  // (i+1)%2 == 0
-	  o[1] = geom_traits().orientation( p, p2, p3, p0 );
-	  if ( o[1] == NEGATIVE ) {
-	    c = c->neighbor((i+1)&3);
-	    continue;
-	  }
-	  // (i+2)%2 == 1
-	  o[2] = geom_traits().orientation( p3, p, p0, p1 );
-	  if ( o[2] == NEGATIVE ) {
-	    c = c->neighbor((i+2)&3);
-	    continue;
-	  }
-	  // (i+3)%2 == 0
-	  o[3] = geom_traits().orientation( p, p0, p1, p2 );
-	  if ( o[3] == NEGATIVE ) {
-	    c = c->neighbor((i+3)&3);
-	    continue;
-	  }
-	}
+	} else
+	    o[3] = (Orientation) - test_or;
+
+	break;
+      }
 	  
 	// now p is in c or on its boundary
 	int sum = ( o[0] == COPLANAR )
@@ -1821,9 +1819,6 @@ locate(const Point & p,
 	  }
 	}
 	return c;
-      }
-
-
     }
   case 2:
     {
@@ -1867,12 +1862,10 @@ locate(const Point & p,
 	// else c is finite
 	// we test its edges in a random order until we find a
 	// neighbor to go further
-	//	i = rand.get_int(0,3);
-	rand = ( rand_a * rand + rand_b ) % rand_c;
-	i = rand %3;
-	Point p0 = c->vertex( i )->point();
-	Point p1 = c->vertex( ccw(i) )->point();
-	Point p2 = c->vertex( cw(i) )->point();
+	i = rand_3();
+	const Point & p0 = c->vertex( i )->point();
+	const Point & p1 = c->vertex( ccw(i) )->point();
+	const Point & p2 = c->vertex( cw(i) )->point();
 	o[0] = geom_traits().orientation_in_plane(p0,p1,p2,p);
 	if ( o[0] == NEGATIVE ) {
 	  c = c->neighbor( cw(i) );
@@ -1920,8 +1913,6 @@ locate(const Point & p,
 	}
 	return c;
       }
-
-
     }
   case 1:
     {
@@ -2067,9 +2058,6 @@ locate(const Point & p,
       // 	  }
       // 	  lj = 1-li;
       // 	} // else vertex, li is already the right index
-	
-
-
     }
   case 0:
     {
@@ -2901,8 +2889,7 @@ insert(const Point & p, Cell_handle start)
 {
   Locate_type lt;
   int li, lj;
-  Cell_handle c;
-  c = locate( p, start, lt, li, lj);
+  Cell_handle c = locate( p, start, lt, li, lj);
   switch (lt) {
   case VERTEX:
     return c->vertex(li);
