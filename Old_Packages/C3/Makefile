@@ -33,7 +33,6 @@ version:
 	cvs update
 
 commit:
-	vim changes.txt
 	cvs commit
 
 rtag:

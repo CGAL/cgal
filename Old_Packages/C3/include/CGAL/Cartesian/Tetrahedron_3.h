@@ -16,7 +16,7 @@ class TetrahedronC3
 // This is a partial specialization
 <R_,Cartesian_tag>
 #endif
-  : public Handle
+  : public Handle_for< Fourtuple< typename R_::Point_3 > >
 {
 public:
   typedef R_                               R;
@@ -42,14 +42,11 @@ public:
                 const Point_3 &s);
   ~TetrahedronC3();
 
-  Self &operator=(const Self &t);
-
   Point_3    vertex(int i) const;
   Point_3    operator[](int i) const;
 
   bool       operator==(const Self &t) const;
   bool       operator!=(const Self &t) const;
-  long       id() const;
 
   Bbox_3     bbox() const;
 
@@ -67,8 +64,6 @@ public:
 
   bool       is_degenerate() const;
 
-private:
-  _Fourtuple< Point_3 >*   ptr() const;
 };
 
 CGAL_END_NAMESPACE

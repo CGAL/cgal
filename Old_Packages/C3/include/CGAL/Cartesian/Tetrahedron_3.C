@@ -20,23 +20,16 @@
 CGAL_BEGIN_NAMESPACE
 
 template < class R >
-_Fourtuple< typename TetrahedronC3<R CGAL_CTAG>::Point_3 >*  
-TetrahedronC3<R CGAL_CTAG>::ptr() const
-{
-  return (_Fourtuple< Point_3 >*)PTR;
-}
-
-template < class R >
 TetrahedronC3<R CGAL_CTAG>::
 TetrahedronC3()
 {
-  PTR = new _Fourtuple< Point_3 >;
+  new ( static_cast< void*>(ptr)) Fourtuple< Point_3 >;
 }
 
 template < class R >
 TetrahedronC3<R CGAL_CTAG>::
 TetrahedronC3(const TetrahedronC3<R CGAL_CTAG> &t)
-  : Handle(t)
+  : Handle_for<Fourtuple< typename R::Point_3> >(t)
 {}
 
 template < class R >
@@ -46,7 +39,7 @@ TetrahedronC3(const typename TetrahedronC3<R CGAL_CTAG>::Point_3 &p,
               const typename TetrahedronC3<R CGAL_CTAG>::Point_3 &r,
               const typename TetrahedronC3<R CGAL_CTAG>::Point_3 &s)
 {
-  PTR = new _Fourtuple< Point_3 >(p, q, r, s);
+  new ( static_cast< void*>(ptr)) Fourtuple< Point_3 >(p, q, r, s);
 }
 
 template < class R >
@@ -54,14 +47,6 @@ inline
 TetrahedronC3<R CGAL_CTAG>::~TetrahedronC3()
 {}
 
-template < class R >
-TetrahedronC3<R CGAL_CTAG> &
-TetrahedronC3<R CGAL_CTAG>::
-operator=(const TetrahedronC3<R CGAL_CTAG> &t)
-{
-  Handle::operator=(t);
-  return *this;
-}
 
 template < class Point_3 >
 struct Less_xyzC3 {
@@ -77,7 +62,7 @@ bool
 TetrahedronC3<R CGAL_CTAG>::
 operator==(const TetrahedronC3<R CGAL_CTAG> &t) const
 {
-  if ( id() == t.id() ) return true;
+  if ( ptr == t.ptr ) return true;
   if ( orientation() != t.orientation() ) return false;
 
   std::vector< Point_3 > V1;
@@ -106,13 +91,6 @@ operator!=(const TetrahedronC3<R CGAL_CTAG> &t) const
 }
 
 template < class R >
-inline
-long TetrahedronC3<R CGAL_CTAG>::id() const
-{
-  return (long) PTR;
-}
-
-template < class R >
 typename TetrahedronC3<R CGAL_CTAG>::Point_3
 TetrahedronC3<R CGAL_CTAG>::
 vertex(int i) const
@@ -121,10 +99,10 @@ vertex(int i) const
   else if (i>3) i=i%4;
   switch (i)
     {
-    case 0: return ptr()->e0;
-    case 1: return ptr()->e1;
-    case 2: return ptr()->e2;
-    default: return ptr()->e3;
+    case 0: return ptr->e0;
+    case 1: return ptr->e1;
+    case 2: return ptr->e2;
+    default: return ptr->e3;
     }
 }
 
