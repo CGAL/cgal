@@ -1,3 +1,0 @@
-#!/bin/sh
-
-zip -r Distance_3.zip version description.txt include test
