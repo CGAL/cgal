@@ -1375,7 +1375,7 @@ hide_remove_degree_3(Face_handle fh, Vertex_handle vh)
 
 // create a vertex and hide it
 template < class Gt, class Tds >
-Regular_triangulation_2<Gt,Tds>::Vertex_handle
+typename Regular_triangulation_2<Gt,Tds>::Vertex_handle
 Regular_triangulation_2<Gt,Tds>::
 hide_new_vertex(Face_handle f, const Weighted_point& p)
 {

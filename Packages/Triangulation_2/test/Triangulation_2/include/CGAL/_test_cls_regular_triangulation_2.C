@@ -537,6 +537,12 @@ _test_cls_reg_triangulation_2( const Triangulation & )
   loc = TT.locate(Bare_point(0,0));
   fc = TT.line_walk(Bare_point(0,0),Bare_point(1,1));
   fc2 = TT.line_walk(Bare_point(0,0),Bare_point(1,1),loc);
+  if (fc != fc2) 
+    {
+      TT.show_face(loc);
+      TT.show_face(fc);
+      TT.show_face(fc2);
+    }
   assert(fc==fc2);
   n=0;
   do {fc2++ ; n = n+1;} while (fc2 != fc);
