@@ -7,20 +7,20 @@
 #include <CGAL/Planar_map_2.h>
 #include <CGAL/IO/Straight_2_stream.h>
 
-using namespace CGAL;
+typedef double                              	   Number_type;
+typedef CGAL::Cartesian<Number_type>               Coord_t;
+typedef CGAL::Pm_straight_exact_traits<Coord_t>    Pmtraits;
+typedef Pmtraits::Point                            Point;
+typedef Pmtraits::X_curve                          Curve;
+typedef Pmtraits::X_bounded_curve                  Segment;
+typedef CGAL::Pm_default_dcel<Pmtraits>            Pmdcel;
+typedef CGAL::Planar_map_2<Pmdcel,Pmtraits>        Planar_map;
 
-typedef double                              	   number_type;
-typedef Cartesian<number_type>                     coord_t;
-typedef Pm_straight_exact_traits<coord_t>          pmtraits;
-typedef pmtraits::Point                            Point;
-typedef pmtraits::X_curve                          Curve;
-typedef pmtraits::X_bounded_curve                  Segment;
-typedef Pm_default_dcel<pmtraits>                  pmdcel;
 
 int main() 
 {
   // creating an instance of Planar_map_2<pmdcel,pmtraits>
-  Planar_map_2<pmdcel,pmtraits> pm;
+  Planar_map pm;
 
   Curve cv[5];
   int i;
@@ -58,8 +58,8 @@ int main()
   
   // vertical ray shooting upward from p
   Point p(95, 30);
-  Planar_map_2<pmdcel,pmtraits>::Halfedge_handle e;  
-  Planar_map_2<pmdcel,pmtraits>::Locate_type lt;
+  Planar_map::Halfedge_handle e;  
+  Planar_map::Locate_type lt;
 
   std::cout << std::endl << "upward vertical ray shooting from " << p;
   std::cout << std::endl; 

@@ -22,30 +22,40 @@
 //uncomment if you have LEDA installed.
 //#include <CGAL/IO/Pm_Postscript_file_stream.h>
 
+using std::cout;
+using std::cin;
+using std::endl;
+using CGAL::write_pm;
+
 //typedef leda_rational                    NT;
 typedef CGAL::Quotient<int>                NT;
 typedef CGAL::Cartesian<NT>                R;
 typedef CGAL::Pm_segment_exact_traits<R>   Traits;
 typedef CGAL::Pm_default_dcel<Traits>      Dcel;
 typedef CGAL::Planar_map_2<Dcel,Traits>    PM;
+typedef CGAL::Pm_file_writer<PM>           Pm_writer;
 
 int main()
 { 
   PM pm;
 
-  std::cout<<"Demonstrating a trivial use of IO functions"<<std::endl;
-  std::cin >> pm;
-  std::cout << pm;
-    
-  std::cout<<"Presenting the use of verbose format"<<std::endl;
-  CGAL::Pm_file_writer<PM>  verbose_writer(std::cout, pm, true);
-  write_pm(pm, verbose_writer, std::cout);
+  cout << "* * * Demonstrating a trivial use of IO functions" << endl << endl;
+  cin  >> pm;
+  cout << pm;
   
-  std::cout<<"Demonstrating the use of the writer class interface."<<std::endl;
-  std::cout<<"Printing all halfedges in non verbose format"<<std::endl;
-  CGAL::Pm_file_writer<PM>  writer(std::cout, pm);
+  cout << endl;
+  cout << "* * * Presenting the use of verbose format" << endl;
+  cout << endl;
+  Pm_writer verbose_writer(cout, pm, true);
+  write_pm(pm, verbose_writer, cout);
+  
+  cout << endl;
+  cout << "* * * Demonstrating the use of the writer class interface." << endl;
+  cout << "* * * Printing all halfedges in non verbose format" << endl << endl;
+  Pm_writer writer(cout, pm);
   writer.write_halfedges(pm.halfedges_begin(), pm.halfedges_end());
-  std::cout<<"Printing all halfedges in a verbose format"<<std::endl;
+  cout << endl;
+  cout << "* * * Printing all halfedges in a verbose format" << endl << endl;
   verbose_writer.write_halfedges(pm.halfedges_begin(), pm.halfedges_end());
    
   //uncomment if you have LEDA installed. 

@@ -5,28 +5,32 @@
 #include <CGAL/Pm_default_dcel.h>
 #include <CGAL/Planar_map_2.h>
 
-//for operator<<
-#include <CGAL/IO/Planar_map_iostream.h>
+#include <CGAL/IO/Pm_file_writer.h>
+#include <CGAL/IO/write_pm.h>
 
-using namespace CGAL;
+using CGAL::write_pm;
 
-typedef Homogeneous<long>                  coord_t;
-typedef Pm_segment_exact_traits<coord_t>   Pmtraits;
+typedef CGAL::Homogeneous<long>                Coord_t;
+typedef CGAL::Pm_segment_exact_traits<Coord_t> Pmtraits;
 
-typedef Pmtraits::Point                    Point;
-typedef Pmtraits::X_curve                  Curve;
+typedef Pmtraits::Point                        Point;
+typedef Pmtraits::X_curve                      Curve;
 
-typedef Pm_default_dcel<Pmtraits>          Pmdcel;
+typedef CGAL::Pm_default_dcel<Pmtraits>        Pmdcel;
+typedef CGAL::Planar_map_2<Pmdcel,Pmtraits>    Planar_map;
+
+typedef CGAL::Pm_file_writer<Planar_map>       Pm_writer;
 
 int main()
 {
-  // creating an instance of Planar_map_2<Pmdcel,Pmtraits>
-  Planar_map_2<Pmdcel,Pmtraits> pm;
+  // creating an instance of Planar_map
+  Planar_map pm;
+  Pm_writer verbose_writer(std::cout, pm, true);
 
   Curve cv[5];
   int i;
 
-  set_ascii_mode(std::cout);
+  CGAL::set_ascii_mode(std::cout);
 
   Point a1(100, 0), a2(20, 50), a3(180, 50), a4(100, 100);
 
@@ -37,7 +41,7 @@ int main()
   cv[3] = Curve(a2, a4);
   cv[4] = Curve(a3, a4);
   
-  Planar_map_2<Pmdcel,Pmtraits>::Halfedge_handle e[5];  
+  Planar_map::Halfedge_handle e[5];  
   // insert the five curves to the map and return e[i]
   for (i = 0; i < 5; i++)
   {
@@ -48,9 +52,11 @@ int main()
     std::cout << "valid" << std::endl  ;
   }
   
-   //map before splitting the edge and adding curve
-  std::cout << "Map before:" << std::endl;
-  std::cout << pm << std::endl;
+  //map before splitting the edge and adding curve
+  std::cout << "* * * Map before:" << std::endl << std::endl;
+  //std::cout << pm << std::endl;
+  write_pm(pm, verbose_writer, std::cout);
+
   
 
   //splitting e[2] of the map at the middle and inserting an edge between the 
@@ -59,12 +65,12 @@ int main()
   Curve c1(a2,p);
   Curve c2(p,a3);
 
-  Planar_map_2<Pmdcel,Pmtraits>::Halfedge_handle se = pm.split_edge(e[2],c1,c2); 
+  Planar_map::Halfedge_handle se = pm.split_edge(e[2],c1,c2); 
 
   pm.insert_at_vertices( Curve(p,a1), se->target(),e[0]->source() );
 
-  std::cout << "Map after:" << std::endl;
-  std::cout << pm;
+  std::cout << std::endl << "* * * Map after:" << std::endl << std::endl;
+  write_pm(pm, verbose_writer, std::cout);
 
   return 0;  
 }

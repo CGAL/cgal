@@ -12,15 +12,15 @@
 #include <CGAL/IO/Pm_iostream.h>
 #include <CGAL/IO/write_pm.h>
 #include <iostream>
-#include<string>
+#include <string>
 
-CGAL_BEGIN_NAMESPACE
+using CGAL::write_pm;
 
 template <class Pt>
-class Pm_my_vertex : public Pm_vertex_base<Pt>
+class Pm_my_vertex : public CGAL::Pm_vertex_base<Pt>
 {
 public:
-  Pm_my_vertex() : Pm_vertex_base<Pt>(){}
+  Pm_my_vertex() : CGAL::Pm_vertex_base<Pt>(){}
 
   void  set_color(const std::string& c) { color = c;}
   
@@ -33,9 +33,9 @@ private:
 // building new dcel with my vertex base.
 template <class Traits>
 class Pm_my_dcel : 
-  public Pm_dcel<Pm_my_vertex<typename Traits::Point>,
-                 Pm_halfedge_base<typename Traits::X_curve>, 
-                 Pm_face_base> 
+  public CGAL::Pm_dcel<Pm_my_vertex<typename Traits::Point>,
+                       CGAL::Pm_halfedge_base<typename Traits::X_curve>, 
+                       CGAL::Pm_face_base> 
 {
 public:  // Creation
   Pm_my_dcel() {}
@@ -43,7 +43,7 @@ public:  // Creation
 
 // extend the drawer to print the color as well. 
 template <class PM>
-class Pm_my_file_writer:  public Pm_file_writer<PM> {
+class Pm_my_file_writer:  public CGAL::Pm_file_writer<PM> {
 public:
   
   typedef typename PM::Vertex_handle             Vertex_handle;
@@ -51,8 +51,8 @@ public:
   typedef typename PM::Vertex_iterator           Vertex_iterator;
   typedef typename PM::Vertex_const_iterator     Vertex_const_iterator;
 
-  Pm_my_file_writer(std::ostream& o, const PM& pm, bool verbose = false) : 
-    Pm_file_writer<PM>(o, pm, verbose) {}
+  Pm_my_file_writer(ostream& o, const PM& pm, bool verbose = false) : 
+    CGAL::Pm_file_writer<PM>(o, pm, verbose) {}
   
   void write_vertex(Vertex_handle v) {
     out() << v->point() <<"  ";
@@ -81,17 +81,14 @@ public:
   }
 };
 
-CGAL_END_NAMESPACE
-
 typedef CGAL::Quotient<int>                NT;
 typedef CGAL::Cartesian<NT>                R;
 typedef CGAL::Pm_segment_exact_traits<R>   Traits;
 
-typedef CGAL::Pm_my_dcel<Traits>           Dcel;
+typedef Pm_my_dcel<Traits>                 Dcel;
 typedef CGAL::Planar_map_2<Dcel,Traits>    PM;
 
 typedef PM::Vertex_iterator                Vertex_iterator;
-//typedef PM::Vertex_const_iterator          Vertex_const_iterator;
 
 int main(int argc, char* argv[])
 {
@@ -105,7 +102,7 @@ int main(int argc, char* argv[])
     v_iter->set_color("BLUE");
 
  //printing pm to output stream with the user attributes.
-  CGAL::Pm_my_file_writer<PM>  writer(std::cout, pm); 
+  Pm_my_file_writer<PM>  writer(std::cout, pm); 
   write_pm(pm, writer, std::cout);
 
   return 0;

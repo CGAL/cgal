@@ -5,7 +5,7 @@
 #define CGAL_NO_PM_DEFAULT_POINT_LOCATION
 #define NAIVE_POINT_LOCATION
 #define CARTESIAN	//  Cartesian or Homogeneous
-#define ROBUSTNESS
+//#define ROBUSTNESS
 
 #if defined(CGAL_USE_LEDA) && defined(ROBUSTNESS)
 #include <CGAL/leda_rational.h>
@@ -23,36 +23,38 @@
 #include <CGAL/Planar_map_2.h>
 
 #include <CGAL/IO/Straight_2_stream.h>
-#include <CGAL/IO/Planar_map_iostream.h>
+#include <CGAL/IO/Pm_file_writer.h>
+#include <CGAL/IO/write_pm.h>
 
 #ifdef NAIVE_POINT_LOCATION
 #include <CGAL/Pm_naive_point_location.h>
 #endif
 
-using namespace CGAL;
+using CGAL::write_pm;
 
 #if defined(CGAL_USE_LEDA) && defined(ROBUSTNESS)
 #ifdef CARTESIAN
-typedef Cartesian<leda_rational>	Coord_t;
+typedef CGAL::Cartesian<leda_rational>	  Coord_t;
 #else
-typedef Homogeneous<leda_rational>	Coord_t;
+typedef CGAL::Homogeneous<leda_rational>  Coord_t;
 #endif
 #else //defined(CGAL_USE_LEDA) && defined(ROBUSTNESS)
 #ifdef CARTESIAN
-typedef Cartesian<double>		Coord_t;
+typedef CGAL::Cartesian<double>		Coord_t;
 #else
-typedef Homogeneous<double>		Coord_t;
+typedef CGAL::Homogeneous<double>      	Coord_t;
 #endif
 #endif
 
-typedef Pm_straight_exact_traits<Coord_t>	Traits;
+typedef CGAL::Pm_straight_exact_traits<Coord_t>	Traits;
 typedef Traits::Bounding_box			Bounding_box;
 typedef Traits::Point				Point;
 typedef Traits::X_curve				X_curve;
 typedef Traits::X_bounded_curve			Segment;
-typedef Pm_default_dcel<Traits>			Dcel;
-typedef Planar_map_2<Dcel,Traits>		PM;
+typedef CGAL::Pm_default_dcel<Traits>		Dcel;
+typedef CGAL::Planar_map_2<Dcel,Traits>		PM;
 typedef PM::Halfedge_handle			Halfedge_handle;
+typedef CGAL::Pm_file_writer<PM>                Pm_writer;
 
 int main()
 {
@@ -62,16 +64,17 @@ int main()
 
   // creating an instance of Planar_map_Bbox_2<Dcel,Traits>
 #ifndef NAIVE_POINT_LOCATION   
-  PM pm(traits);
+  PM pm(traits, NULL, NULL); // setting NULL for defaults
 #else	
-  Pm_naive_point_location< PM > naive_pl;
+  CGAL::Pm_naive_point_location< PM > naive_pl;
   PM pm(traits, &naive_pl, NULL);
 #endif
+  Pm_writer verbose_writer(std::cout, pm, true);
   
   X_curve cv[6];
   int i;
   
-  set_ascii_mode(std::cout);
+  CGAL::set_ascii_mode(std::cout);
   Point a1(1, 1), a2(1, 0), a3(0, 0), a4(0, 1), a5(1,4,2) ;
   
   /*
@@ -134,9 +137,9 @@ int main()
     std::cout << "map valid!" << std::endl;
   else
     std::cout << "map invalid!" << std::endl;
-  std::cout << std::endl << "Printing map: " << std::endl;
+  std::cout << std::endl << "* * * Printing map: " << std::endl << std::endl;
   
-  std::cout << pm ;
-  
+  write_pm(pm, verbose_writer, std::cout);
+
   return 0;  
 }

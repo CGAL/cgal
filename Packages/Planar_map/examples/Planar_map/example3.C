@@ -5,59 +5,57 @@
 #include <CGAL/Pm_default_dcel.h>
 #include <CGAL/Planar_map_2.h>
 
-using namespace CGAL;
+typedef CGAL::Cartesian<double>                   Coord_t;
+typedef CGAL::Pm_segment_epsilon_traits<Coord_t>  Pmtraits;
+//typedef CGAL::Pm_segment_epsilon_traits<Coord_t,1,4>  Pmtraits;
+typedef Pmtraits::Point                           Point;
+typedef Pmtraits::X_curve                         Curve;
+typedef CGAL::Pm_default_dcel<Pmtraits>           Pmdcel;
 
-typedef Cartesian<double>                         coord_t;
-typedef Pm_segment_epsilon_traits<coord_t>        pmtraits;
-//typedef Pm_segment_epsilon_traits<coord_t,1,4>  pmtraits;
-typedef pmtraits::Point                           point;
-typedef pmtraits::X_curve                         curve;
-typedef Pm_default_dcel<pmtraits>                 pmdcel;
-
-typedef Planar_map_2<pmdcel,pmtraits>             planar_map;
-typedef planar_map::Halfedge_handle	          Halfedge_handle;
-typedef planar_map::Halfedge_const_handle	  Halfedge_const_handle;
-typedef planar_map::Locate_type                   Locate_type;
-typedef planar_map::Ccb_halfedge_circulator       Ccb_halfedge_circulator;
-typedef planar_map::Ccb_halfedge_const_circulator Ccb_halfedge_const_circulator;
+typedef CGAL::Planar_map_2<Pmdcel,Pmtraits>       Planar_map;
+typedef Planar_map::Halfedge_handle	          Halfedge_handle;
+typedef Planar_map::Halfedge_const_handle	  Halfedge_const_handle;
+typedef Planar_map::Locate_type                   Locate_type;
+typedef Planar_map::Ccb_halfedge_circulator       Ccb_halfedge_circulator;
+typedef Planar_map::Ccb_halfedge_const_circulator Ccb_halfedge_const_circulator;
 
 // use only for this program
-void draw_point_locate(const point &, const planar_map&);
+void draw_point_locate(const Point &, const Planar_map&);
 // end part of use only for this program
 
 int main()
 {
-  // creating an instance of Planar_map_2<pmdcel,pmtraits>
-  planar_map pm;
+  // creating an instance of Planar_map
+  Planar_map pm;
 
-  curve cv[18];
+  Curve cv[18];
   int i;
 
-  set_ascii_mode(std::cout);
+  CGAL::set_ascii_mode(std::cout);
 
-  point a1(6, 1), a2(1, 3), a3(4, 3), a4(8, 3), a5(11,3) ;
-  point a6(3, 5), a7(9, 5), a8(1, 7), a9(4, 7), a10(8,7) ;
-  point a11(11, 7), a12(6, 9);
+  Point a1(6, 1), a2(1, 3), a3(4, 3), a4(8, 3), a5(11,3) ;
+  Point a6(3, 5), a7(9, 5), a8(1, 7), a9(4, 7), a10(8,7) ;
+  Point a11(11, 7), a12(6, 9);
 
 	// those curves are about to enter to pm
-  cv[0] = curve(a1, a3);
-  cv[1] = curve(a1, a4);
-  cv[2] = curve(a2, a3);
-  cv[3] = curve(a2, a6);
-  cv[4] = curve(a3, a6);
-  cv[5] = curve(a3, a4);
-  cv[6] = curve(a4, a5);
-  cv[7] = curve(a4, a7);
-  cv[8] = curve(a5, a7);
-  cv[9] = curve(a6, a8);
-  cv[10] = curve(a6, a9);
-  cv[11] = curve(a7, a10);
-  cv[12] = curve(a7, a11);
-  cv[13] = curve(a8, a9);
-  cv[14] = curve(a9, a10);
-  cv[15] = curve(a9, a12);
-  cv[16] = curve(a10, a11);
-  cv[17] = curve(a10, a12);
+  cv[0] = Curve(a1, a3);
+  cv[1] = Curve(a1, a4);
+  cv[2] = Curve(a2, a3);
+  cv[3] = Curve(a2, a6);
+  cv[4] = Curve(a3, a6);
+  cv[5] = Curve(a3, a4);
+  cv[6] = Curve(a4, a5);
+  cv[7] = Curve(a4, a7);
+  cv[8] = Curve(a5, a7);
+  cv[9] = Curve(a6, a8);
+  cv[10] = Curve(a6, a9);
+  cv[11] = Curve(a7, a10);
+  cv[12] = Curve(a7, a11);
+  cv[13] = Curve(a8, a9);
+  cv[14] = Curve(a9, a10);
+  cv[15] = Curve(a9, a12);
+  cv[16] = Curve(a10, a11);
+  cv[17] = Curve(a10, a12);
    
   std::cout << "the curves of the map :" << std::endl; 
   for (i = 0; i < 18; i++)
@@ -103,9 +101,9 @@ int main()
   std::cout << "           a1             1" << std::endl;
 
   // try to find some point locations
-  draw_point_locate( point(6,1) , pm );
-  draw_point_locate( point(2,3) , pm );
-  draw_point_locate( point(6,8) , pm );
+  draw_point_locate( Point(6,1) , pm );
+  draw_point_locate( Point(2,3) , pm );
+  draw_point_locate( Point(6,8) , pm );
   std::cout << std::endl ;
 
   std::cout << "Enter x coordinate for point location:" << std::endl;
@@ -115,7 +113,7 @@ int main()
   double y;
   std::cin >> y;
         
-  draw_point_locate( point(x,y) ,pm );
+  draw_point_locate( Point(x,y) ,pm );
 
   //        std::cout << std::endl << pm;
 
@@ -123,34 +121,34 @@ int main()
 
 }
 
-void draw_point_locate(const point & p, const planar_map & pm){
+void draw_point_locate(const Point & p, const Planar_map & pm){
   Locate_type lt;	
   Halfedge_const_handle edge  = pm.locate( p,  lt);
   Ccb_halfedge_const_circulator curr,first;
   std::cout << "The location of point " << p << " is of type " ;
   switch ( lt ) {
-  case Planar_map_2<pmdcel,pmtraits>::VERTEX	:	
+  case Planar_map::VERTEX	:	
     std::cout << "VERTEX" << std::endl;
     std::cout << "The vertex is : (" << edge->target()->point() << ")" 
 	      << std::endl;
     break;
-  case Planar_map_2<pmdcel,pmtraits>::UNBOUNDED_VERTEX	:	
+  case Planar_map::UNBOUNDED_VERTEX	:	
     std::cout << "UNBOUNDED_VERTEX" << std::endl;
     std::cout << "The vertex is : (" << edge->target()->point() << ")" 
 	      << std::endl;
-    break;	case Planar_map_2<pmdcel,pmtraits>::EDGE	:
+    break;	case Planar_map::EDGE	:
       std::cout << "EDGE" << std::endl;
     std::cout << "The edge is : {(" << edge->source()->point() ;
     std::cout<< ")->(" << edge->target()->point() << ")}" 
 	     << std::endl;
     break;
-  case Planar_map_2<pmdcel,pmtraits>::UNBOUNDED_EDGE	:
+  case Planar_map::UNBOUNDED_EDGE	:
     std::cout << "UNBOUNDED_EDGE" << std::endl;
     std::cout << "The edge is : {(" << edge->source()->point() ;
     std::cout<< ")->(" << edge->target()->point() << ")}" 
 	     << std::endl;
     break;
-  case Planar_map_2<pmdcel,pmtraits>::FACE	:
+  case Planar_map::FACE	:
     first = Ccb_halfedge_const_circulator(edge);
     curr=first;
     std::cout << "FACE" << std::endl;
@@ -162,7 +160,7 @@ void draw_point_locate(const point & p, const planar_map & pm){
     }while (curr!=first) ;
     std::cout << "(" << curr->target()->point() << ")]" << std::endl;
     break;
-  case Planar_map_2<pmdcel,pmtraits>::UNBOUNDED_FACE	:
+  case Planar_map::UNBOUNDED_FACE	:
     std::cout << "UNBOUNDED_FACE" << std::endl;
     break;
   }
