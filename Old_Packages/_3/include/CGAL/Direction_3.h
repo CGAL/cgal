@@ -25,6 +25,9 @@
 #define CGAL_DIRECTION_3_H
 
 #include <CGAL/Vector_3.h>
+#include <CGAL/Line_3.h>
+#include <CGAL/Ray_3.h>
+#include <CGAL/Segment_3.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -37,6 +40,9 @@ public:
   typedef typename R::FT                    FT;
   typedef typename R::Direction_3_base  RDirection_3;
   typedef typename R::Vector_3_base  RVector_3;
+  typedef typename R::Line_3_base           RLine_3;
+  typedef typename R::Ray_3_base            RRay_3;
+  typedef typename R::Segment_3_base        RSegment_3;
 
   Direction_3()
   {}
@@ -51,6 +57,18 @@ public:
 
   Direction_3(const RVector_3&  v)
     : RDirection_3(v)
+  {}
+
+  Direction_3(const RLine_3& l)
+    : RDirection_3(l)
+  {}
+
+  Direction_3(const RRay_3& r)
+    : RDirection_3(r)
+  {}
+
+  Direction_3(const RSegment_3& s)
+    : RDirection_3(s)
   {}
 
   Direction_3(const RT& hx, const RT& hy, const RT& hz)
