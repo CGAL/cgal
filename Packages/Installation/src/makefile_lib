@@ -9,7 +9,7 @@
 #---------------------------------------------------------------------#
 # Choose the right include file from the <cgalroot>/make directory.
 
-CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE
+CGAL_MAKEFILE = /home/hoffmann/tmp/CGAL/CGAL-2.0-I-15/make/makefile_mips_IRIX64-6.5_CC-n32-7.2.1.3m_LEDA
 include $(CGAL_MAKEFILE)
 
 #---------------------------------------------------------------------#
@@ -51,10 +51,13 @@ optimisation_basic.o
 #                    target entries
 #---------------------------------------------------------------------#
 
-lib: $(CGAL_OBJECTS)
+lib: $(CGAL_OBJECTS) $(CGAL_EXTRA_OBJECTS)
 	$(CGAL_LIB_CREATE) $(CGAL_LIB) $(CGAL_EXTRA_OBJECTS) $(CGAL_OBJECTS) $(CGAL_LIB_LDFLAGS)
 	mv $(CGAL_LIB) $(CGAL_LIB_DIR)/$(CGAL_OS_COMPILER)
-	rm $(CGAL_OBJECTS)
+	rm $(CGAL_OBJECTS) $(CGAL_EXTRA_OBJECTS)
+
+workaround_4_irix.o:
+	$(CGAL_CC) $(CXXFLAGS) -c Interval_arithmetic/workaround_4_irix.s
 
 #---------------------------------------------------------------------#
 #                    suffix rules
@@ -62,4 +65,6 @@ lib: $(CGAL_OBJECTS)
 
 .C.o:
 	$(CGAL_CXX)  $(CXXFLAGS)  -c $<
+
+
 
