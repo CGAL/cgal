@@ -37,32 +37,28 @@
 #include <qstatusbar.h>
 #include <qbuttongroup.h>
 
-namespace CGAL {
-
 class Layers_toolbar : public QObject
 {
   Q_OBJECT
 public:
-  Layers_toolbar(Qt_widget *w, QMainWindow *mw, 
+  Layers_toolbar(CGAL::Qt_widget *w, QMainWindow *mw, 
                  Delaunay *t, Alpha_shape *a, QImage *i);
 
   QToolBar*	toolbar(){return maintoolbar;};
 
 private:
-  QToolBar      *maintoolbar;	
-  QToolButton   *but[10];
-  QButtonGroup  *button_group;
-  Qt_widget     *widget;
-  QMainWindow   *window;  	
-  int           nr_of_buttons;
+  QToolBar        *maintoolbar;	
+  QToolButton     *but[10];
+  QButtonGroup    *button_group;
+  CGAL::Qt_widget *widget;
+  QMainWindow     *window;  	
+  int             nr_of_buttons;
 	
-  CGAL::Qt_layer_show_triangulation < Delaunay >  *showT;
-  CGAL::Qt_layer_show_voronoi < Delaunay >        *showV;
-  CGAL::Qt_layer_show_points < Delaunay >         *showP;
-  CGAL::Qt_layer_show_alpha_shape                 *showA;
-  CGAL::Qt_layer_show_image                       *showI;
+  Qt_layer_show_triangulation < Delaunay >  *showT;
+  Qt_layer_show_voronoi < Delaunay >        *showV;
+  Qt_layer_show_points < Delaunay >         *showP;
+  Qt_layer_show_alpha_shape                 *showA;
+  Qt_layer_show_image                       *showI;
 };//end class
-
-};//end namespace
 
 #endif

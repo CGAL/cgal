@@ -31,18 +31,17 @@
 
 #include <CGAL/squared_distance_2.h> 
 
-namespace CGAL {
-  class Qt_widget_movepoint_helper : public Qt_widget_layer
-  {
-	Q_OBJECT
-  public:
-    virtual void delete_pointi(){};
-    virtual void move_pointi(){};
+class Qt_widget_movepoint_helper : public CGAL::Qt_widget_layer
+{
+Q_OBJECT
+public:
+  virtual void delete_pointi(){};
+  virtual void move_pointi(){};
 
-  public slots:
-    void delete_point();
-    void move_point();
-    void stateChanged(int);
+public slots:
+  void delete_point();
+  void move_point();
+  void stateChanged(int);
 };
 
 
@@ -89,16 +88,16 @@ private:
         "Generate some points first or add it with the \
          input tool before using this tool!");
       else{
-	FT x, y;
+        FT x, y;
         widget->x_real(e->x(), x);
-	widget->y_real(e->y(), y);
+        widget->y_real(e->y(), y);
         Point p(x, y);
         Point closest_p;  
-	//this point is the closest one to the mouse coordinates
+        //this point is the closest one to the mouse coordinates
         FT min_dist;
         typename std::list<Point>::const_iterator it = l_of_p->begin();
         min_dist = squared_distance(p, (*it));
-	closest_p = (*it);
+        closest_p = (*it);
         while(it!=l_of_p->end())
         {
   	      if (min_dist > squared_distance(p, (*it)))
@@ -171,7 +170,5 @@ private:
     on_first = TRUE;
   };
 };
-
-} // namespace CGAL
 
 #endif // CGAL_QT_WIDGET_MOVE_LIST_POINT_H

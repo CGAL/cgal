@@ -26,12 +26,8 @@
 #include <qobject.h>
 
 
-
-
-namespace CGAL {
-
 template <class T>
-class Qt_layer_show_polygon : public Qt_widget_layer
+class Qt_layer_show_polygon : public CGAL::Qt_widget_layer
 {
 public:
   
@@ -49,7 +45,5 @@ public:
 private:
   T &polygon;
 };//end class 
-
-} // namespace CGAL
 
 #endif // CGAL_QT_LAYER_SHOW_POLYGON_H

@@ -39,13 +39,11 @@ typedef double Coord_type;
 typedef CGAL::Cartesian<Coord_type>  Rp;
 typedef Rp::Point_2   Point;
 
-namespace CGAL {
-
 class Layers_toolbar : public QObject
 {
 	Q_OBJECT
 public:
-  Layers_toolbar(Qt_widget *w, QMainWindow *mw, std::list<Point> *l_of_p);
+  Layers_toolbar(CGAL::Qt_widget *w, QMainWindow *mw, std::list<Point> *l_of_p);
   ~Layers_toolbar()
   {
     delete showP;
@@ -56,19 +54,17 @@ public:
   QToolBar*	toolbar(){return maintoolbar;};
   
 private:
-  QToolBar		*maintoolbar;
-  QToolButton		*but[10];
-  Qt_widget		*widget;
-  QMainWindow		*window;
-  QButtonGroup		*button_group;
-  int			nr_of_buttons;
+  QToolBar        *maintoolbar;
+  QToolButton     *but[10];
+  CGAL::Qt_widget *widget;
+  QMainWindow     *window;
+  QButtonGroup    *button_group;
+  int             nr_of_buttons;
 	
-  Qt_layer_show_points<Rp>	    *showP;
+  Qt_layer_show_points<Rp>          *showP;
   Qt_layer_show_parallelogram<Rp>   *showPL;
-  Qt_layer_show_strip<Rp>	    *showLS;
-  Qt_layer_show_rectangle<Rp>	    *showR;
+  Qt_layer_show_strip<Rp>           *showLS;
+  Qt_layer_show_rectangle<Rp>       *showR;
 };//end class
-
-};//end namespace
 
 #endif

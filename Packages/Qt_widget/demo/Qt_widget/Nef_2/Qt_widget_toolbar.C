@@ -54,8 +54,7 @@
 
 #include <qiconset.h>
 
-namespace CGAL {
-  Tools_toolbar::Tools_toolbar(Qt_widget *w, 
+Tools_toolbar::Tools_toolbar(CGAL::Qt_widget *w, 
 			  QMainWindow *mw)
   {
     w->attach(&input_point); 
@@ -115,8 +114,6 @@ namespace CGAL {
   connect(but[3], SIGNAL(stateChanged(int)),
         &input_polygon, SLOT(stateChanged(int)));
 };
-        
-}//end namespace CGAL
 
 #include "Qt_widget_toolbar.moc"
 

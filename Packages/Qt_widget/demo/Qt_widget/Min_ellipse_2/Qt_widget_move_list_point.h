@@ -31,18 +31,18 @@
 
 #include <CGAL/squared_distance_2.h> 
 
-namespace CGAL {
-  class Qt_widget_movepoint_helper : public Qt_widget_layer
-  {
-	Q_OBJECT
-  public:
-    virtual void delete_pointi(){};
-    virtual void move_pointi(){};
 
-  public slots:
-    void delete_point();
-    void move_point();
-    void stateChanged(int);
+class Qt_widget_movepoint_helper : public CGAL::Qt_widget_layer
+{
+Q_OBJECT
+public:
+  virtual void delete_pointi(){};
+  virtual void move_pointi(){};
+
+public slots:
+  void delete_point();
+  void move_point();
+  void stateChanged(int);
 };
 
 
@@ -168,7 +168,5 @@ private:
     on_first = TRUE;
   };
 };
-
-} // namespace CGAL
 
 #endif // CGAL_QT_WIDGET_MOVE_LIST_POINT_H

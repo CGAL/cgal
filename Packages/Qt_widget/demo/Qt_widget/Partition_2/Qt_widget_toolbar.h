@@ -58,14 +58,11 @@
 #include <qtoolbar.h>
 #include <qbuttongroup.h>
 
-
-namespace CGAL {
-
 class Tools_toolbar : public QObject
 {
   Q_OBJECT
 public:
-  Tools_toolbar(Qt_widget *w, QMainWindow *mw);
+  Tools_toolbar(CGAL::Qt_widget *w, QMainWindow *mw);
 
   QToolBar*	toolbar(){return maintoolbar;}
 
@@ -77,13 +74,11 @@ private slots:
 private:
   QToolBar				*maintoolbar;
   QToolButton		  *but[10];
-  Qt_widget				*widget;
+  CGAL::Qt_widget *widget;
   QButtonGroup    *button_group;
   int					    nr_of_buttons;
 	
   CGAL::Qt_widget_get_simple_polygon<Cgal_Polygon> getsimplebut;
 };//end class
-
-};//end namespace
 
 #endif

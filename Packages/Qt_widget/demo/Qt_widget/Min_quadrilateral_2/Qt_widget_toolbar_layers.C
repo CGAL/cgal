@@ -54,8 +54,8 @@ static char * lines_small_xpm[] = {
 "    ........    "};
 
 
-namespace CGAL {
-  Layers_toolbar::Layers_toolbar(Qt_widget *w, QMainWindow *mw, std::list<Point>	*l_of_p) : 
+
+Layers_toolbar::Layers_toolbar(CGAL::Qt_widget *w, QMainWindow *mw, std::list<Point>	*l_of_p) : 
     widget(w), window(mw), nr_of_buttons(0)
   {
       
@@ -116,8 +116,6 @@ namespace CGAL {
       widget, SLOT(redraw()));
     
   }//end constructor
-
-}//end namespace
 
 #include "Qt_widget_toolbar_layers.moc"
 

@@ -24,16 +24,12 @@
 #include <CGAL/IO/Qt_widget_layer.h>
 #include <qobject.h>
 
-
-namespace CGAL {
-
 template <class T>
-class Qt_layer_show_polygon_points : public Qt_widget_layer
+class Qt_layer_show_polygon_points : public CGAL::Qt_widget_layer
 {
   typedef typename T::Point_2	Point_2;
 public:
   
-
   Qt_layer_show_polygon_points(T &p) : polygon(p){};
   void draw()
   {
@@ -53,7 +49,5 @@ public:
 private:
   T &polygon;
 };//end class 
-
-} // namespace CGAL
 
 #endif // CGAL_QT_LAYER_SHOW_POLYGON_POINTS_H

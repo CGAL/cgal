@@ -140,7 +140,7 @@ public:
     help->insertItem("About &Qt", this, SLOT(aboutQt()) );
 
     //the new tools toolbar
-    newtoolbar = new CGAL::Tools_toolbar(widget, this, &list_of_points);	
+    newtoolbar = new Tools_toolbar(widget, this, &list_of_points);	
     //the standard toolbar
     stoolbar = new CGAL::Qt_widget_standard_toolbar (widget, this);
     this->addToolBar(stoolbar->toolbar(), Top, FALSE);
@@ -233,9 +233,9 @@ private slots:
 
 private:
   CGAL::Qt_widget           *widget;
-  CGAL::Tools_toolbar       *newtoolbar;
   CGAL::Qt_widget_standard_toolbar
                             *stoolbar;
+  Tools_toolbar             *newtoolbar;
   int                       old_state;
   Qt_layer_show_ch          testlayer;
 };

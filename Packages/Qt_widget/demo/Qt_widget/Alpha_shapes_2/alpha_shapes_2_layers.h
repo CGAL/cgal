@@ -3,10 +3,8 @@
 #include <CGAL/IO/Qt_widget_Alpha_shape_2.h>
 #include <qimage.h>
 
-namespace CGAL {
-
 template <class T>
-class Qt_layer_show_points : public Qt_widget_layer {
+class Qt_layer_show_points : public CGAL::Qt_widget_layer {
 public:
   typedef typename T::Point           Point;
   typedef typename T::Segment         Segment;
@@ -32,7 +30,7 @@ private:
 };//end class 
 
 template <class T>
-class Qt_layer_show_triangulation : public Qt_widget_layer
+class Qt_layer_show_triangulation : public CGAL::Qt_widget_layer
 {
 public:
 	
@@ -51,7 +49,7 @@ private:
 };//end class 
 
 template <class T>
-class Qt_layer_show_voronoi : public Qt_widget_layer
+class Qt_layer_show_voronoi : public CGAL::Qt_widget_layer
 {
 public:
   Qt_layer_show_voronoi(T &t1) : tr(t1){};
@@ -90,6 +88,3 @@ public:
   }
   QImage *image;
 };
-
-
-} //namespace CGAL

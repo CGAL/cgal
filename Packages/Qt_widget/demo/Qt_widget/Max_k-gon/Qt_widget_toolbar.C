@@ -29,8 +29,7 @@
 #include <CGAL/IO/pixmaps/arrow.xpm>
 
 
-namespace CGAL {
-  Tools_toolbar::Tools_toolbar(Qt_widget *w, 
+Tools_toolbar::Tools_toolbar(CGAL::Qt_widget *w, 
 			  QMainWindow *mw, std::list<Point> *l1)
   {
     w->attach(&move_deletebut);
@@ -81,8 +80,6 @@ namespace CGAL {
   connect(but[2], SIGNAL(stateChanged(int)),
         &move_deletebut, SLOT(stateChanged(int)));
 };
-        
-}//end namespace CGAL
 
 #include "Qt_widget_toolbar.moc"
 

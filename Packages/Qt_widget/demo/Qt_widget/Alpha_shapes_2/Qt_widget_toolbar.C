@@ -30,8 +30,7 @@
 
 #include <qiconset.h>
 
-namespace CGAL {
-  Tools_toolbar::Tools_toolbar(Qt_widget *w, QMainWindow *mw, 
+Tools_toolbar::Tools_toolbar(CGAL::Qt_widget *w, QMainWindow *mw, 
                                Delaunay *t, Alpha_shape *a)
   {
     //when it is created, the toolbar has 0 buttons
@@ -87,9 +86,6 @@ namespace CGAL {
   connect(but[2], SIGNAL(stateChanged(int)),
         &movepointbut, SLOT(stateChanged(int)));
 };
-  
-
-}//end namespace
 
 #include "Qt_widget_toolbar.moc"
 

@@ -102,9 +102,9 @@ public:
 
     //the new tools toolbar
     //setUsesBigPixmaps(TRUE);
-    newtoolbar = new CGAL::Tools_toolbar(widget, this, &list_of_points);	
+    newtoolbar = new Tools_toolbar(widget, this, &list_of_points);	
     //the layers toolbar
-    vtoolbar = new CGAL::Layers_toolbar(widget, this, &list_of_points);
+    vtoolbar = new Layers_toolbar(widget, this, &list_of_points);
     //the standard toolbar
     stoolbar = new CGAL::Qt_widget_standard_toolbar (widget, this);
     this->addToolBar(stoolbar->toolbar(), Top, FALSE);
@@ -196,11 +196,12 @@ private slots:
 	
 
 private:
-  CGAL::Qt_widget       *widget;		
-  CGAL::Tools_toolbar   *newtoolbar;
-  CGAL::Qt_widget_standard_toolbar  *stoolbar;
-  CGAL::Layers_toolbar	  *vtoolbar;
-  int			  old_state;  	
+  CGAL::Qt_widget       *widget;
+  CGAL::Qt_widget_standard_toolbar
+                        *stoolbar;
+  Tools_toolbar         *newtoolbar;
+  Layers_toolbar        *vtoolbar;
+  int                   old_state;
 };
 
 #include "min_quadrilateral_2.moc"

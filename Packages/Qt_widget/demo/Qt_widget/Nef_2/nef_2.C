@@ -208,7 +208,7 @@ public:
     //the standard toolbar
     stoolbar = new CGAL::Qt_widget_standard_toolbar (widget, this);
     //the new tools toolbar
-    newtoolbar = new CGAL::Tools_toolbar(widget, this);	
+    newtoolbar = new Tools_toolbar(widget, this);	
     //the layers toolbar
     //ltoolbar = new CGAL::Layers_toolbar(widget, this, 
     //                                    &Nef_visible,
@@ -666,7 +666,7 @@ private:
   void  something_changed(){current_state++;};
 
   CGAL::Qt_widget             *widget;		
-  CGAL::Tools_toolbar         *newtoolbar;
+  Tools_toolbar         *newtoolbar;
   //CGAL::Layers_toolbar        *ltoolbar;
   CGAL::Qt_widget_standard_toolbar
                               *stoolbar;
@@ -676,8 +676,8 @@ private:
                               //used to give names to polyhedrons
   Nef_2_list_box              *list1, *list2;
   std::list<Nef_description>  nef_2_list;
-  CGAL::Qt_layer_nef_red<Nef_polyhedron>  *nef_layer1;
-  CGAL::Qt_layer_nef_gray<Nef_polyhedron> *nef_layer2;
+  Qt_layer_nef_red<Nef_polyhedron>  *nef_layer1;
+  Qt_layer_nef_gray<Nef_polyhedron> *nef_layer2;
 };
 
 #include "nef_2.moc"

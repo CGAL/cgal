@@ -62,7 +62,7 @@ private:
 	
   CGAL::Qt_widget_get_line<Rep>       linebut;
   CGAL::Qt_widget_get_point<Rep>      pointbut;
-  CGAL::Qt_widget_movepoint<Delaunay> movepointbut;
+  Qt_widget_movepoint<Delaunay>       movepointbut;
 };//end class
 
 

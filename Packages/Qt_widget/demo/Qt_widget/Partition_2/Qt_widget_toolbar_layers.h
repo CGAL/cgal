@@ -55,8 +55,6 @@
 #include <qbuttongroup.h>
 
 
-namespace CGAL {
-
 template <class T> class Qt_layer_show_polygon;
 template <class T> class Qt_layer_show_greene_approx;
 template <class T> class Qt_layer_show_ymonotone;
@@ -67,26 +65,24 @@ class Layers_toolbar : public QObject
 {
   Q_OBJECT
 public:
-  Layers_toolbar(Qt_widget *w, QMainWindow *mw, Cgal_Polygon *p);
+  Layers_toolbar(CGAL::Qt_widget *w, QMainWindow *mw, Cgal_Polygon *p);
   ~Layers_toolbar();
   QToolBar* toolbar(){return maintoolbar;};
 
 private:
-  QToolBar      *maintoolbar;
-  QToolButton	*but[10];
-  Qt_widget     *widget;
-  QMainWindow	*window;
-  QButtonGroup	*button_group;
-  int		nr_of_buttons;
+  QToolBar            *maintoolbar;
+  QToolButton         *but[10];
+  CGAL::Qt_widget     *widget;
+  QMainWindow         *window;
+  QButtonGroup        *button_group;
+  int                 nr_of_buttons;
 
-  CGAL::Qt_layer_show_polygon <Cgal_Polygon>		*showP;
-  CGAL::Qt_layer_show_greene_approx <Cgal_Polygon >	*showGA;
-  CGAL::Qt_layer_show_ymonotone <Cgal_Polygon>          *showYM;
-  CGAL::Qt_layer_show_optimal_convex <Cgal_Polygon>	*showOC;
-  CGAL::Qt_layer_show_polygon_points <Cgal_Polygon>	*showPP;
+  Qt_layer_show_polygon <Cgal_Polygon>        *showP;
+  Qt_layer_show_greene_approx <Cgal_Polygon > *showGA;
+  Qt_layer_show_ymonotone <Cgal_Polygon>      *showYM;
+  Qt_layer_show_optimal_convex <Cgal_Polygon> *showOC;
+  Qt_layer_show_polygon_points <Cgal_Polygon> *showPP;
 
 };//end class
-
-};//end namespace
 
 #endif

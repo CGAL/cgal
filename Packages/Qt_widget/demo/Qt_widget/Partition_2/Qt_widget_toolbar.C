@@ -53,9 +53,8 @@
 
 #include <qiconset.h>
 
-namespace CGAL {
-  Tools_toolbar::Tools_toolbar(Qt_widget *w, QMainWindow *mw)
-  {
+Tools_toolbar::Tools_toolbar(CGAL::Qt_widget *w, QMainWindow *mw)
+{
     //when it is created, the toolbar has 0 buttons
     nr_of_buttons = 0;
     //set the widget
@@ -97,10 +96,6 @@ namespace CGAL {
         &getsimplebut, SLOT(stateChanged(int)));
   nr_of_buttons = 2;
   };
-
-	
-
-}//end namespace
 
 #include "Qt_widget_toolbar.moc"
 

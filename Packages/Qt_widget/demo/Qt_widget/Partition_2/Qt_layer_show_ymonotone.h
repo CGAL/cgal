@@ -27,10 +27,8 @@
 #include <CGAL/partition_2.h>
 
 
-namespace CGAL {
-
 template <class T>
-class Qt_layer_show_ymonotone : public Qt_widget_layer
+class Qt_layer_show_ymonotone : public CGAL::Qt_widget_layer
 {
 public:
   typedef typename T::FT	      FT;
@@ -60,7 +58,5 @@ private:
   T		&polygon;
   std::list<T>	ymonotone;
 };//end class 
-
-} // namespace CGAL
 
 #endif // CGAL_QT_LAYER_SHOW_YMONOTONE_H

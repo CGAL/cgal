@@ -27,16 +27,13 @@
 #include <CGAL/partition_2.h>
 
 
-namespace CGAL {
-
 template <class T>
-class Qt_layer_show_greene_approx : public Qt_widget_layer
+class Qt_layer_show_greene_approx : public CGAL::Qt_widget_layer
 {
 public:
-  typedef typename T::FT	      FT;
-  typedef CGAL::Cartesian<FT>	      K;
+  typedef typename T::FT              FT;
+  typedef CGAL::Cartesian<FT>         K;
   typedef CGAL::Partition_traits_2<K> Traits;
-
 
   Qt_layer_show_greene_approx(T &p) : polygon(p)
   {};
@@ -67,7 +64,5 @@ private:
   T		&polygon;
   std::list<T>	greene_approx_polys;
 };//end class 
-
-} // namespace CGAL
 
 #endif // CGAL_QT_WIDGET_GET_SEGMENT_H

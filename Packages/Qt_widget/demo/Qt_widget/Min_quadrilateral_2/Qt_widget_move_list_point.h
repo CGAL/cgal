@@ -31,18 +31,18 @@
 
 #include <CGAL/squared_distance_2.h> 
 
-namespace CGAL {
-  class Qt_widget_movepoint_helper : public Qt_widget_layer
-  {
-	Q_OBJECT
-  public:
-    virtual void delete_pointi(){};
-    virtual void move_pointi(){};
 
-  public slots:
-    void delete_point();
-    void move_point();
-    void stateChanged(int);
+class Qt_widget_movepoint_helper : public CGAL::Qt_widget_layer
+{
+Q_OBJECT
+public:
+  virtual void delete_pointi(){};
+  virtual void move_pointi(){};
+
+public slots:
+  void delete_point();
+  void move_point();
+  void stateChanged(int);
 };
 
 
@@ -51,16 +51,16 @@ template <class R>
 class Qt_widget_move_list_point : public Qt_widget_movepoint_helper
 {
 public:
-  typedef typename R::Point_2	Point;
-  typedef typename R::FT        FT;
-  bool					        on_first,   //if the user choosed something from the popup
-					            wasrepainted;//true when the widget was repainted
-  Point					        old_point,  //the last point stored in the list
-					            current_v;  //the current point
-  QPopupMenu				    *popup1;
-  QCursor				        cursor;
-  std::list<Point>*			    l_of_p;
-  bool                          first_time;
+  typedef typename R::Point_2  Point;
+  typedef typename R::FT       FT;
+  bool                         on_first,   //if the user choosed something from the popup
+                               wasrepainted;//true when the widget was repainted
+  Point                        old_point,  //the last point stored in the list
+                               current_v;  //the current point
+  QPopupMenu                   *popup1;
+  QCursor                      cursor;
+  std::list<Point>*            l_of_p;
+  bool                         first_time;
 
   //constructor
   Qt_widget_move_list_point(const QCursor c=QCursor(Qt::crossCursor)) :
@@ -171,7 +171,5 @@ private:
     on_first = TRUE;
   };
 };
-
-} // namespace CGAL
 
 #endif // CGAL_QT_WIDGET_MOVE_LIST_POINT_H

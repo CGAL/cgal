@@ -174,9 +174,9 @@ public:
   help->insertItem("About &Qt", this, SLOT(aboutQt()) );
 
   //the new input layers toolbar
-  newtoolbar = new CGAL::Tools_toolbar(widget, this, &tr1, &A);	
+  newtoolbar = new Tools_toolbar(widget, this, &tr1, &A);	
   //the new drawing layers toolbar
-  vtoolbar = new CGAL::Layers_toolbar(widget, this, &tr1, &A, &image);
+  vtoolbar = new Layers_toolbar(widget, this, &tr1, &A, &image);
   //the standard toolbar
   stoolbar = new CGAL::Qt_widget_standard_toolbar (widget, this);
   this->addToolBar(stoolbar->toolbar(), Top, FALSE);
@@ -451,10 +451,10 @@ private slots:
 
 private:
   CGAL::Qt_widget         *widget;		
-  CGAL::Tools_toolbar     *newtoolbar;
-  CGAL::Layers_toolbar    *vtoolbar;
   CGAL::Qt_widget_standard_toolbar
                           *stoolbar;
+  Tools_toolbar           *newtoolbar;
+  Layers_toolbar          *vtoolbar;
   int                     old_state;
   QSlider                 *slider;
   QLabel                  *label;

@@ -47,8 +47,7 @@
 #include "Qt_widget_toolbar_layers.h"
 
 
-namespace CGAL {
-  Layers_toolbar::Layers_toolbar( Qt_widget *w, QMainWindow *mw,
+Layers_toolbar::Layers_toolbar( CGAL::Qt_widget *w, QMainWindow *mw,
                                   Nef_polyhedron *n1, Nef_polyhedron *n2) : 
     widget(w), window(mw), nr_of_buttons(0)
   {
@@ -64,42 +63,7 @@ namespace CGAL {
     
     maintoolbar = new QToolBar("tools", mw, QMainWindow::Top, TRUE, "Tools");
 
-    //but[0] = new QToolButton(maintoolbar, "mouse_coord");
-    //but[0]->setPixmap(QPixmap( (const char**)mouse_coord_xpm ));
-    //but[0]->setTextLabel("Show Mouse Coordinates");
-    /*
-    but[1] = new QToolButton(maintoolbar, "first_nef_2");
-    but[1]->setPixmap(QPixmap( (const char**)optimal_convex_xpm ));
-    but[1]->setTextLabel("Show the first nef polyhedron");
-    but[2] = new QToolButton(maintoolbar, "second_nef_2");
-    but[2]->setPixmap(QPixmap( (const char**)ymonotone_xpm ));
-    but[2]->setTextLabel("Show the second nef polyhedron");
-    */
-    /*
-    nr_of_buttons = 1;
-    button_group = new QButtonGroup(0, "nonexclusive");	
-    for(int i =0; i<nr_of_buttons; i++)
-    {
-	    but[i]->setToggleButton(TRUE);
-	    but[i]->toggle();
-	    button_group->insert(but[i]);
-    }
-    */
-    //connect(but[0], SIGNAL(stateChanged(int)), 
-    //  showMC, SLOT(stateChanged(int)));
-    /*
-    connect(but[1], SIGNAL(stateChanged(int)), 
-      showNG, SLOT(stateChanged(int)));
-    connect(but[2], SIGNAL(stateChanged(int)), 
-      showNR, SLOT(stateChanged(int)));
-    */
-    /*
-    connect(button_group, SIGNAL(clicked(int)),
-      widget, SLOT(redraw()));
-    */
   }//end constructor
-
-}//end namespace
 
 #include "Qt_widget_toolbar_layers.moc"
 

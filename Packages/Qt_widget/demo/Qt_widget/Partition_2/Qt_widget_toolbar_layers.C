@@ -61,8 +61,8 @@
 
 #include <qiconset.h>
 
-namespace CGAL {
-  Layers_toolbar::Layers_toolbar(Qt_widget *w, QMainWindow *mw, Cgal_Polygon *p) : 
+
+Layers_toolbar::Layers_toolbar(CGAL::Qt_widget *w, QMainWindow *mw, Cgal_Polygon *p) : 
      nr_of_buttons(0)
   {
     showP = new Qt_layer_show_polygon<Cgal_Polygon>(*p);
@@ -148,8 +148,6 @@ namespace CGAL {
     delete showPP;
     delete button_group;
   };
-
-}//end namespace
 
 #include "Qt_widget_toolbar_layers.moc"
 

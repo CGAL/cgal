@@ -54,12 +54,11 @@
 #include <qstatusbar.h>
 #include <qbuttongroup.h>
 
-namespace CGAL {
 class Layers_toolbar : public QObject
 {
 	Q_OBJECT
 public:
-  Layers_toolbar( Qt_widget *w, 
+  Layers_toolbar( CGAL::Qt_widget *w, 
                   QMainWindow *mw,
                   Nef_polyhedron *n1, 
                   Nef_polyhedron *n2);
@@ -71,17 +70,16 @@ public:
   QToolBar*	toolbar(){return maintoolbar;};
   
 private:
-  QToolBar      *maintoolbar;
-  QToolButton   *but[10];
-  Qt_widget     *widget;
-  QMainWindow   *window;
-  QButtonGroup  *button_group;
-  int           nr_of_buttons;
+  QToolBar        *maintoolbar;
+  QToolButton     *but[10];
+  CGAL::Qt_widget *widget;
+  QMainWindow     *window;
+  QButtonGroup    *button_group;
+  int             nr_of_buttons;
 	
-  CGAL::Qt_layer_nef_red<Nef_polyhedron>  *showNR;
-  CGAL::Qt_layer_nef_gray<Nef_polyhedron> *showNG;
+  Qt_layer_nef_red<Nef_polyhedron>  *showNR;
+  Qt_layer_nef_gray<Nef_polyhedron> *showNG;
 };//end class
 
-};//end namespace
 
 #endif

@@ -40,13 +40,11 @@
 typedef CGAL::Cartesian<double>	  Rp;
 typedef Rp::Point_2		  Point;
 
-namespace CGAL {
-
 class Tools_toolbar : public QObject
 {
 	Q_OBJECT
 public:
-  Tools_toolbar(Qt_widget *w, QMainWindow *mw, std::list<Point> *l1);
+  Tools_toolbar(CGAL::Qt_widget *w, QMainWindow *mw, std::list<Point> *l1);
   ~Tools_toolbar(){};
   QToolBar*	toolbar(){return maintoolbar;}
 
@@ -54,18 +52,14 @@ signals:
   void new_object(CGAL::Object);
 
 private:
-  QToolBar      *maintoolbar;
-  QToolButton		*but[10];
-  QButtonGroup  *button_group;
-  Qt_widget     *widget;
-  
-  int           nr_of_buttons;
+  QToolBar        *maintoolbar;
+  QToolButton     *but[10];
+  QButtonGroup    *button_group;
+  CGAL::Qt_widget *widget;
+  int             nr_of_buttons;
 
-
-  CGAL::Qt_widget_get_point<Rp>	      pointbut;
-  CGAL::Qt_widget_move_list_point<Rp> move_deletebut;
+  CGAL::Qt_widget_get_point<Rp>  pointbut;
+  Qt_widget_move_list_point<Rp>  move_deletebut;
 };//end class
-
-};//end namespace
 
 #endif

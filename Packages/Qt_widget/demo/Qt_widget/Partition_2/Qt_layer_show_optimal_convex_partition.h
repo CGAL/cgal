@@ -26,17 +26,13 @@
 #include <CGAL/Partition_traits_2.h>
 #include <CGAL/partition_2.h>
 
-
-namespace CGAL {
-
 template <class T>
-class Qt_layer_show_optimal_convex : public Qt_widget_layer
+class Qt_layer_show_optimal_convex : public CGAL::Qt_widget_layer
 {
 public:
-  typedef typename T::FT	      FT;
-  typedef CGAL::Cartesian<FT>	      K;
+  typedef typename T::FT              FT;
+  typedef CGAL::Cartesian<FT>         K;
   typedef CGAL::Partition_traits_2<K> Traits;
-
 
   Qt_layer_show_optimal_convex(T &p) : polygon(p)
   {};
@@ -62,7 +58,5 @@ private:
   T		&polygon;
   std::list<T>	optimal_convex;
 };//end class 
-
-} // namespace CGAL
 
 #endif // CGAL_QT_LAYER_SHOW_OPTIMAL_CONVEX_H

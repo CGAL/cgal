@@ -1,8 +1,6 @@
 #include <CGAL/IO/Qt_widget_layer.h>
 #include <CGAL/IO/Qt_widget_Nef_2.h>
 
-namespace CGAL{
-
 template <class Nef_polyhedron>
 class Qt_layer_nef_red : public CGAL::Qt_widget_layer
 {
@@ -33,5 +31,3 @@ public:
 private:
   Nef_polyhedron &Nef;
 };//end class 
-
-}//end namespace

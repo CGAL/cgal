@@ -31,18 +31,17 @@
 
 #include <CGAL/squared_distance_2.h> 
 
-namespace CGAL {
-  class Qt_widget_movepoint_helper : public Qt_widget_layer
-  {
-	Q_OBJECT
-  public:
-    virtual void delete_pointi(){};
-    virtual void move_pointi(){};
+class Qt_widget_movepoint_helper : public CGAL::Qt_widget_layer
+{
+Q_OBJECT
+public:
+  virtual void delete_pointi(){};
+  virtual void move_pointi(){};
 
-  public slots:
-    void delete_point();
-    void move_point();
-    void stateChanged(int);
+public slots:
+  void delete_point();
+  void move_point();
+  void stateChanged(int);
 };
 
 
@@ -51,15 +50,15 @@ template <class R>
 class Qt_widget_move_list_point : public Qt_widget_movepoint_helper
 {
 public:
-  typedef typename R::Point_2	Point;
+  typedef typename R::Point_2	  Point;
   typedef typename R::FT        FT;
-  bool				on_first,   //if the user choosed something from the popup
-				wasrepainted;//true when the widget was repainted
-  Point				old_point,  //the last point stored in the list
-				current_v;  //the current point
-  QPopupMenu			*popup1;
-  QCursor			cursor;
-  std::list<Point>*		l_of_p;
+  bool                          on_first,   //if the user choosed something from the popup
+                                wasrepainted;//true when the widget was repainted
+  Point                         old_point,  //the last point stored in the list
+                                current_v;  //the current point
+  QPopupMenu                    *popup1;
+  QCursor                       cursor;
+  std::list<Point>*             l_of_p;
   bool                          first_time;
 
   //constructor
@@ -89,24 +88,24 @@ private:
         "Generate some points first or add it with the \
          input tool before using this tool!");
       else{
-	FT x, y;
+        FT x, y;
         widget->x_real(e->x(), x);
-	widget->y_real(e->y(), y);
+        widget->y_real(e->y(), y);
         Point p(x, y);
         Point closest_p;  
-	//this point is the closest one to the mouse coordinates
+        //this point is the closest one to the mouse coordinates
         FT min_dist;
         typename std::list<Point>::const_iterator it = l_of_p->begin();
         min_dist = squared_distance(p, (*it));
-	closest_p = (*it);
+        closest_p = (*it);
         while(it!=l_of_p->end())
         {
-  	  if (min_dist > squared_distance(p, (*it))){
-	    min_dist = squared_distance(p, (*it));
-	    closest_p = (*it);
-	  }
-	  it++;
-	}
+          if (min_dist > squared_distance(p, (*it))){
+          min_dist = squared_distance(p, (*it));
+          closest_p = (*it);
+          }
+          it++;
+        }
         RasterOp old = widget->rasterOp();	//save the initial raster mode
         widget->setRasterOp(XorROP);
         widget->lock();
@@ -169,7 +168,5 @@ private:
     on_first = TRUE;
   };
 };
-
-} // namespace CGAL
 
 #endif // CGAL_QT_WIDGET_MOVE_LIST_POINT_H
