@@ -19,7 +19,7 @@
 
 // Including headers for testing
 #if TESTR == 1
-#include <CGAL/Simple_Cartesian.h>
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/Filtered_kernel.h>
 #endif
 #if TESTR == 3 || TESTR == 5 || TESTR == 7 
