@@ -40,6 +40,7 @@
 #include<CGAL/partition_is_valid_2.h>
 #include<CGAL/Partition_traits_2.h>
 #include<CGAL/is_y_monotone_2.h>
+#include<CGAL/is_degenerate_polygon_2.h>
 
 // These things should be constant: 
 //   front is where you add things to a chain 
@@ -191,8 +192,12 @@ void visible(Polygon& polygon,
              erase_vertices(bottom_chain.back(), bottom_chain.front(), polygon,
                             update_required);
           }
-          *result = new_polygon; 
-          result++;
+          if (!is_degenerate_polygon_2(new_polygon.vertices_begin(),
+                                       new_polygon.vertices_end()))
+          {
+             *result = new_polygon; 
+             result++;
+          }
           bottom_chain.push_back(stack.back());
           if (stack.back() == stack.front())   // form new stack with previous
           {                                    // point and old stack top 
@@ -369,8 +374,12 @@ void change_top_chain(Polygon& polygon,
                            update_required);
             top_chain.push_front(stack.front());
          }
-         *result = new_polygon; 
-         result++;
+         if (!is_degenerate_polygon_2(new_polygon.vertices_begin(),
+                                      new_polygon.vertices_end()))
+         {
+            *result = new_polygon; 
+            result++;
+         }
          if (stack.front() == stack.back())          // the "stack empty" case
          {
             done = true;
@@ -485,8 +494,12 @@ void change_bottom_chain(Polygon& polygon,
             erase_vertices(bottom_chain.back(), new_point_ref, polygon,
                            update_required);
          }
-         *result = new_polygon;  
-         result++;
+         if (!is_degenerate_polygon_2(new_polygon.vertices_begin(),
+                                      new_polygon.vertices_end()))
+         {
+            *result = new_polygon;  
+            result++;
+         }
          bottom_chain.initialize(stack.back());
          if (stack.back() == stack.front())   // form new stack with new point
          {                                // and old stack top (still on stack)
@@ -584,14 +597,22 @@ void make_polygons_from_stack(Polygon& polygon,
                         update_required);
          bottom_chain.push_back(stack.back());
        }
-       *result = new_polygon; 
-       result++;
+       if (!is_degenerate_polygon_2(new_polygon.vertices_begin(),
+                                    new_polygon.vertices_end()))
+       {
+          *result = new_polygon; 
+          result++;
+       }
        stack.pop_back();  
    }
    // add remaining points from the top chain if there is more than one
    std::copy(polygon.begin(), polygon.end(), std::back_inserter(new_polygon));
-   *result = new_polygon;
-   result++;
+   if (!is_degenerate_polygon_2(new_polygon.vertices_begin(),
+                                new_polygon.vertices_end()))
+   {
+      *result = new_polygon;
+      result++;
+   }
 }
 
 template<class BidirectionalCirculator, class Traits>
