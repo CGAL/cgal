@@ -8,7 +8,7 @@
 #include <iostream>
 
 // The number types.
-#include <CGAL/Arithmetic_filter.h>
+// #include <CGAL/Arithmetic_filter.h>
 #include <CGAL/double.h>
 #include <CGAL/leda_real.h>
 #include <CGAL/Static_adaptatif_filter.h>
