@@ -12,6 +12,8 @@
 // release_date  :
 // 
 // file          : include/CGAL/Arithmetic_filter/dispatch.h
+// revision      : $Revision$
+// revision_date : $Date$
 // package       : Interval_arithmetic
 // author(s)     : Sylvain Pion <Sylvain.Pion@sophia.inria.fr>
 //
