@@ -25,7 +25,7 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 
-#include <CGAL/IO/Qt_Widget.h>
+#include <CGAL/IO/Qt_widget.h>
 
 
 #include <CGAL/IO/Qt_view_show_triangulation.h>
