@@ -95,6 +95,10 @@ SOURCE=..\..\..\src\CGALQt\Qt_widget.C
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\..\src\CGALQt\Qt_widget_layer.C
+# End Source File
+# Begin Source File
+
 SOURCE=.\Qt_widget_move_point.C
 # End Source File
 # Begin Source File
@@ -112,10 +116,6 @@ SOURCE=.\Qt_widget_toolbar.C
 # Begin Source File
 
 SOURCE=.\Qt_widget_toolbar_layers.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\src\CGALQt\Qt_widget_layer.C
 # End Source File
 # Begin Source File
 
@@ -138,6 +138,25 @@ InputPath=..\..\..\include\CGAL\IO\Qt_widget.h
 
 "../../../src/CGALQt/Qt_widget.moc" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
 	$(QTDIR)\bin\moc.exe -o "../../../src/CGALQt/Qt_widget.moc" "../../../Include/CGAL/IO/Qt_widget.h"
+
+# End Custom Build
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\include\CGAL\IO\Qt_widget_layer.h
+
+!IF  "$(CFG)" == "demo - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "demo - Win32 Debug"
+
+# Begin Custom Build
+InputPath=..\..\..\include\CGAL\IO\Qt_widget_layer.h
+
+"../../../src/CGALQt/Qt_widget_layer.moc" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	$(QTDIR)\bin\moc.exe -o "../../../src/CGALQt/Qt_widget_layer.moc" "../../../Include/CGAL/IO/Qt_widget_layer.h"
 
 # End Custom Build
 
@@ -241,17 +260,17 @@ InputPath=.\Qt_widget_toolbar_layers.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\include\CGAL\IO\Qt_widget_layer.h
+SOURCE=.\triangulation_2.h
 
 !IF  "$(CFG)" == "demo - Win32 Release"
 
 !ELSEIF  "$(CFG)" == "demo - Win32 Debug"
 
 # Begin Custom Build
-InputPath=..\..\..\include\CGAL\IO\Qt_widget_layer.h
+InputPath=.\triangulation_2.h
 
-"../../../src/CGALQt/Qt_widget_layer.moc" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	$(QTDIR)\bin\moc.exe -o "../../../src/CGALQt/Qt_widget_layer.moc" "../../../Include/CGAL/IO/Qt_widget_layer.h"
+"triangulation_2.moc" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	$(QTDIR)/bin/moc.exe -o triangulation_2.moc triangulation_2.h
 
 # End Custom Build
 
