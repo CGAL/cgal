@@ -1,3 +1,4 @@
+Put Qt_window.h in include/CGAL/IO
 ---
 Perhaps, my setBackgroundColor should use a const QColor& instead of a 
 single QColor as argument.
