@@ -719,9 +719,8 @@ public:
 	    // that there is exactly ONE point. Assinging this
 	    // point to p1.
             
-             // Bug: What happens if the curves are vertical. The vertical ray
+            // Bug: What happens if the curves are vertical. The vertical ray
             // shoot will return a segment instead of point.
-            
             Point_2 ap1( pt.x(), i_seg.source().y() );
             Point_2 ap2( pt.x(), i_seg.target().y() );
             Segment_2<R> vertical_pt_x_base( ap1, ap2 );
@@ -734,8 +733,8 @@ public:
             if ( assign( tmp_p1, i_obj ))
               p1=tmp_p1;
             else if ( assign(i_vertical, i_obj))
-              p1=i_vertical.source();  // the intersection vertical segment starts at pt.
-            
+              // the intersection vertical segment starts at pt.
+              p1=i_vertical.source();  
           }         
 	  found = true;
 	}
