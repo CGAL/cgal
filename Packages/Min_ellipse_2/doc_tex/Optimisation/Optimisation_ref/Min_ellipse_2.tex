@@ -23,8 +23,8 @@ euclidean space $\E_2$. For a point set $P$ we denote by $me(P)$ the
 smallest ellipse that contains all points of $P$. Note that $me(P)$ can be
 degenerate, i.e.\ $me(P)=\mbox{\ccTexHtml{$\;\emptyset$}{&Oslash;}}$ if
 $P=\mbox{\ccTexHtml{$\;\emptyset$}{&Oslash;}}$, $me(P)=\{p\}$ if $P=\{p\}$,
-and $me(P) = \{ (1-\lambda)p + \lambda q \mid 0 \leq \lambda \leq 1 \}$ if
-$P=\{p,q\}$.
+and $me(P) = \{ \mbox{\ccTexHtml{$(1-\lambda)p + \lambda q \mid
+0 \leq \lambda \leq 1$}{(1-l)p + l q | 0 <= l <= 1}} \}$ if $P=\{p,q\}$.
 
 An inclusion-minimal subset $S$ of $P$ with $me(S)=me(P)$ is called a
 \emph{support set}, the points in $S$ are the \emph{support points}.
@@ -99,9 +99,9 @@ useful for reconstructing $me(P)$ from a given support set $S$ of $P$.
                                    CGAL_Random&   random    = CGAL_random,
                                    Traits const&  traits    = Traits()   );}{
         creates
-\SaveSpaceByHand{}{a}
+\SaveSpaceByHand\ccTexHtml{}{a}
                   variable \ccVar\ of type \ccClassTemplateName%
-\SaveSpaceByHand{$\!$}{}.
+\SaveSpaceByHand\ccTexHtml{$\!$}{}.
         It is initialized to $mc(P)$ with $P$ being the set of points
         in the range [\ccc{first},\ccc{last}). If \ccc{randomize} is
         \ccc{true}, a random permutation of $P$ is computed in
@@ -147,9 +147,9 @@ the \stl\ input stream iterator \ccc{istream_iterator<Point>}.
 
 \ccConstructor{ CGAL_Min_ellipse_2( Traits const& traits = Traits());}{
         creates
-\SaveSpaceByHand{}{a}
+\SaveSpaceByHand\ccTexHtml{}{a}
                   variable \ccVar\ of type \ccClassTemplateName%
-\SaveSpaceByHand{$\!$}{}.
+\SaveSpaceByHand\ccTexHtml{$\!$}{}.
         It is initialized to
         $me(\mbox{\ccTexHtml{$\emptyset$}{&Oslash;}})$, the empty set.
         \ccPostcond \ccVar\ccc{.is_empty()} = \ccc{true}.}
@@ -157,11 +157,9 @@ the \stl\ input stream iterator \ccc{istream_iterator<Point>}.
 \ccConstructor{ CGAL_Min_ellipse_2( Point  const&  p,
                                     Traits const&  traits = Traits());}{
         creates
-\SaveSpaceByHand{}{a}
+\SaveSpaceByHand\ccTexHtml{}{a}
                   variable \ccVar\ of type \ccClassTemplateName%
-\SaveSpaceByHand{$\!$}{}.
-\SaveSpaceByHand{a}
-                  variable \ccVar\ of type \ccClassTemplateName.
+\SaveSpaceByHand\ccTexHtml{$\!$}{}.
         It is initialized to $me(\{p\})$, the set $\{p\}$.
         \ccPostcond \ccVar\ccc{.is_degenerate()} = \ccc{true}.}
 
@@ -169,9 +167,9 @@ the \stl\ input stream iterator \ccc{istream_iterator<Point>}.
                                     Point  const&  q,
                                     Traits const&  traits = Traits());}{
         creates
-\SaveSpaceByHand{}{a}
+\SaveSpaceByHand\ccTexHtml{}{a}
                   variable \ccVar\ of type \ccClassTemplateName%
-\SaveSpaceByHand{$\!$}{}.
+\SaveSpaceByHand\ccTexHtml{$\!$}{}.
         It is initialized to $me(\{p,q\})$, the set
         $\{ (1-\lambda)p + \lambda q \mid 0 \leq \lambda \leq 1 \}$.
         \ccPostcond \ccVar\ccc{.is_degenerate()} = \ccc{true}.}
@@ -181,9 +179,9 @@ the \stl\ input stream iterator \ccc{istream_iterator<Point>}.
                                     Point  const&  p3,
                                     Traits const&  traits = Traits());}{
         creates
-\SaveSpaceByHand{}{a}
+\SaveSpaceByHand\ccTexHtml{}{a}
                   variable \ccVar\ of type \ccClassTemplateName%
-\SaveSpaceByHand{$\!$}{}.
+\SaveSpaceByHand\ccTexHtml{$\!$}{}.
         It is initialized to $me(\{p1,p2,p3\})$.}
 
 \ccConstructor{ CGAL_Min_ellipse_2( Point  const&  p1,
@@ -192,9 +190,9 @@ the \stl\ input stream iterator \ccc{istream_iterator<Point>}.
                                     Point  const&  p4,
                                     Traits const&  traits = Traits());}{
         creates
-\SaveSpaceByHand{}{a}
+\SaveSpaceByHand\ccTexHtml{}{a}
                   variable \ccVar\ of type \ccClassTemplateName%
-\SaveSpaceByHand{$\!$}{}.
+\SaveSpaceByHand\ccTexHtml{$\!$}{}.
         It is initialized to $me(\{p1,p2,p3,p4\})$.}
 
 \ccConstructor{ CGAL_Min_ellipse_2( Point  const&  p1,
@@ -204,9 +202,9 @@ the \stl\ input stream iterator \ccc{istream_iterator<Point>}.
                                     Point  const&  p5,
                                     Traits const&  traits = Traits());}{
         creates
-\SaveSpaceByHand{}{a}
+\SaveSpaceByHand\ccTexHtml{}{a}
                   variable \ccVar\ of type \ccClassTemplateName%
-\SaveSpaceByHand{$\!$}{}.
+\SaveSpaceByHand\ccTexHtml{$\!$}{}.
         It is initialized to $me(\{p1,p2,p3,p4,p5\})$.}
 
 \ccUnchecked
@@ -252,10 +250,10 @@ the \stl\ input stream iterator \ccc{istream_iterator<Point>}.
 
 \ccMemberFunction{ Point const& support_point( int i) const;}{
         returns the \ccc{i}-th support point of \ccVar%
-\SaveSpaceByHand{$\!$}{}.
+\SaveSpaceByHand\ccTexHtml{$\!$}{}.
                                                         Between two
         modifying operations (see
-\SaveSpaceByHand{$\!$}{}
+\SaveSpaceByHand\ccTexHtml{$\!$}{}
                                   below) any call to
         \ccVar\ccc{.support_point(i)} with the same \ccc{i} returns
         the same point.
@@ -273,9 +271,9 @@ bounded side, i.e.\ its unbounded side equals the whole plane $\E_2$.
 \ccMemberFunction{ CGAL_Bounded_side
                    bounded_side( Point const& p) const;}{
         returns \ccc{CGAL_ON_BOUNDED_SIDE},%
-\SaveSpaceByHand{}{ }%
+\SaveSpaceByHand\ccTexHtml{}{ }%
                                             \ccc{CGAL_ON_BOUNDARY}%
-\SaveSpaceByHand{$\!$}{},
+\SaveSpaceByHand\ccTexHtml{$\!$}{},
                                                                     or
         \ccc{CGAL_ON_UNBOUNDED_SIDE} iff \ccc{p} lies properly inside,
         on the boundary, or properly outside of \ccVar, resp.}
@@ -410,7 +408,7 @@ correct.
         \ccc{Point} and \ccc{Ellipse}.}
 
 % -----------------------------------------------------------------------------
-\ccSeeAlso
+\ccHeading{See Also}
 
 \ccc{CGAL_Min_circle_2}
   (Section~\ref{sec:min_circle_2_spec}), 

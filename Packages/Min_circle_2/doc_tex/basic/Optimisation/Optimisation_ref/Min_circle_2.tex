@@ -98,7 +98,7 @@ reconstructing $mc(P)$ from a given support set $S$ of $P$.
                                    CGAL_Random&   random    = CGAL_random,
                                    Traits const&  traits    = Traits()   );}{
         creates a variable \ccVar\ of type \ccClassTemplateName%
-\SaveSpaceByHand{$\!$}{}.
+\SaveSpaceByHand\ccTexHtml{$\!$}{}.
         It is initialized to $mc(P)$ with $P$ being the set of points
         in the range [\ccc{first},\ccc{last}). If \ccc{randomize} is
         \ccc{true}, a random permutation of $P$ is computed in
@@ -144,7 +144,7 @@ the \stl\ input stream iterator \ccc{istream_iterator<Point>}.
 
 \ccConstructor{ CGAL_Min_circle_2( Traits const&  traits = Traits());}{
         creates a variable \ccVar\ of type \ccClassTemplateName%
-\SaveSpaceByHand{$\!$}{}.
+\SaveSpaceByHand\ccTexHtml{$\!$}{}.
         It is initialized to
         $mc(\mbox{\ccTexHtml{$\emptyset$}{&Oslash;}})$, the empty set.
         \ccPostcond  \ccVar\ccc{.is_empty()} = \ccc{true}.}
@@ -152,7 +152,7 @@ the \stl\ input stream iterator \ccc{istream_iterator<Point>}.
 \ccConstructor{ CGAL_Min_circle_2( Point  const&  p,
                                    Traits const&  traits = Traits());}{
         creates a variable \ccVar\ of type \ccClassTemplateName%
-\SaveSpaceByHand{$\!$}{}.
+\SaveSpaceByHand\ccTexHtml{$\!$}{}.
         It is initialized to $mc(\{p\})$, the set $\{p\}$.
         \ccPostcond  \ccVar\ccc{.is_degenerate()} = \ccc{true}.}
 
@@ -160,7 +160,7 @@ the \stl\ input stream iterator \ccc{istream_iterator<Point>}.
                                    Point  const&  p2,
                                    Traits const&  traits = Traits());}{
         creates a variable \ccVar\ of type \ccClassTemplateName%
-\SaveSpaceByHand{$\!$}{}.
+\SaveSpaceByHand\ccTexHtml{$\!$}{}.
         It is initialized to $mc(\{p1,p2\})$, the circle with diameter
         equal to the segment connecting $p1$ and $p2$.}
 
@@ -169,7 +169,7 @@ the \stl\ input stream iterator \ccc{istream_iterator<Point>}.
                                    Point  const&  p3,
                                    Traits const&  traits = Traits());}{
         creates a variable \ccVar\ of type \ccClassTemplateName%
-\SaveSpaceByHand{$\!$}{}.
+\SaveSpaceByHand\ccTexHtml{$\!$}{}.
         It is initialized to $mc(\{p1,p2,p3\})$.}
 
 \ccUnchecked
@@ -233,9 +233,9 @@ bounded side, i.e.\ its unbounded side equals the whole plane $\E_2$.
 \ccMemberFunction{ CGAL_Bounded_side
                    bounded_side( Point const& p) const;}{
         returns \ccc{CGAL_ON_BOUNDED_SIDE},%
-\SaveSpaceByHand{}{ }%
+\SaveSpaceByHand\ccTexHtml{}{ }%
                                             \ccc{CGAL_ON_BOUNDARY}%
-\SaveSpaceByHand{$\!$}{},
+\SaveSpaceByHand\ccTexHtml{$\!$}{},
                                                                     or
         \ccc{CGAL_ON_UNBOUNDED_SIDE} iff \ccc{p} lies properly inside,
         on the boundary, or properly outside of \ccVar, resp.}
@@ -366,7 +366,7 @@ correct.
         \ccc{Point} and \ccc{Circle}.}
 
 % -----------------------------------------------------------------------------
-\ccSeeAlso
+\ccHeading{See Also}
 
 \ccc{CGAL_Min_ellipse_2}
   (Section~\ref{sec:min_ellipse_2_spec}), 

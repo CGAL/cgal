@@ -9,18 +9,16 @@
 % $Date$
 % =============================================================================
 
-\newcommand{\ccSeeAlso}{\ccHeading{See Also}}
-
-\newcommand{\ccSetThreeColumnsByHand}{\ccSetThreeColumns}
+\newcommand{\ccSetThreeColumnsByHand}{\ccTexHtml{\ccSetThreeColumns}{}}
 \newcommand{\linebreakByHand}{\ccTexHtml{\\}{}}
-\newcommand{\SaveSpaceByHand}[2]{\ccTexHtml{#1}{#2}}
+\newcommand{\SaveSpaceByHand}{}  %%%% [2]{\ccTexHtml{#1}{#2}}
 
 \chapter{Optimisation} \label{Optimisation}
 \RCSdefDate{\OptRCSDate}{$Date$}
 
-\ccChapterRelease{Release: 1.2 \quad \OptRCSDate}
+\ccChapterRelease{Release: 1.2 \ccTexHtml{\quad}{ , } \OptRCSDate}
 
-\ccChapterAuthor{Bernd Gärtner} \par
+\ccChapterAuthor{Bernd Gärtner}\ccTexHtml{\par}{<br>}
 \ccChapterAuthor{Sven Schönherr}
 
 \ccTexHtml{\thispagestyle{empty}}{}

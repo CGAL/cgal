@@ -133,8 +133,9 @@ of \ccc{CGAL_Min_circle_2} is used.
 \ccMemberFunction{ void  set( Point const& p,
                               Point const& q);}{
         sets \ccVar\ to the circle with diameter
-        $\overline{\mbox{\ccc{p}\ccc{q}}}$. The algorithm
-        guarantees that \ccc{set} is never called with two equal points.}
+        \ccTexHtml{$\overline{\mbox{\ccc{p}\ccc{q}}}$}{<i>pq</i>}.
+        The algorithm guarantees that \ccc{set} is never called
+        with two equal points.}
 
 \ccMemberFunction{ void  set( Point const& p,
                               Point const& q,
@@ -155,9 +156,9 @@ predicate of \ccc{CGAL_Min_circle_2} is used.
 \ccMemberFunction{ CGAL_Bounded_side
                    bounded_side( Point const& p) const;}{
         returns \ccc{CGAL_ON_BOUNDED_SIDE},%
-\SaveSpaceByHand{}{ }%
+\SaveSpaceByHand\ccTexHtml{}{ }%
                                             \ccc{CGAL_ON_BOUNDARY}%
-\SaveSpaceByHand{$\!$}{},
+\SaveSpaceByHand\ccTexHtml{$\!$}{},
                                                                     or
         \ccc{CGAL_ON_UNBOUNDED_SIDE} iff \ccc{p} lies properly inside,
         on the boundary, or properly outside of \ccVar, resp.}
@@ -198,9 +199,11 @@ The following operations are only needed, if the member function
 The following I/O operators are only needed, if the corresponding I/O
 operators of \ccc{CGAL_Min_circle_2} are used.
 
+\ccHtmlNoIndex
 \ccFunction{ ostream& operator << ( ostream& os, Circle const& circle);}{
         writes \ccVar\ to output stream \ccc{os}.}
 
+\ccHtmlNoIndex
 \ccFunction{ istream& operator >> ( istream& is, Circle &circle);}{
         reads \ccVar\ from input stream \ccc{is}.}
 

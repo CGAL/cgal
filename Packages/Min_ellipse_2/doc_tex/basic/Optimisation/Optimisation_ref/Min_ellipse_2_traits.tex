@@ -112,8 +112,9 @@ whole plane $\E_2$.
 \ccMemberFunction{ void  set( Point const& p,
                               Point const& q);}{
         sets \ccVar\ to the ellipse containing exactly the segment
-        $\overline{\mbox{\ccc{p}\ccc{q}}}$. The algorithm
-        guarantees that \ccc{set} is never called with two equal points.}
+        \ccTexHtml{$\overline{\mbox{\ccc{p}\ccc{q}}}$}{<i>pq</i>}.
+        The algorithm guarantees that \ccc{set} is never called
+        with two equal points.}
 
 \ccMemberFunction{ void  set( Point const& p,
                               Point const& q,
@@ -151,9 +152,9 @@ predicate of \ccc{CGAL_Min_ellipse_2} is used.
 \ccMemberFunction{ CGAL_Bounded_side
                    bounded_side( Point const& p) const;}{
         returns \ccc{CGAL_ON_BOUNDED_SIDE},%
-\SaveSpaceByHand{}{ }%
+\SaveSpaceByHand\ccTexHtml{}{ }%
                                             \ccc{CGAL_ON_BOUNDARY}%
-\SaveSpaceByHand{$\!$}{},
+\SaveSpaceByHand\ccTexHtml{$\!$}{},
                                                                     or
         \ccc{CGAL_ON_UNBOUNDED_SIDE} iff \ccc{p} lies properly inside,
         on the boundary, or properly outside of \ccVar, resp.}
@@ -179,9 +180,11 @@ predicate of \ccc{CGAL_Min_ellipse_2} is used.
 The following I/O operators are only needed, if the corresponding I/O
 operators of \ccc{CGAL_Min_ellipse_2} are used.
 
+\ccHtmlNoIndex
 \ccFunction{ ostream& operator << ( ostream& os, Ellipse const& ellipse);}{
         writes \ccVar\ to output stream \ccc{os}.}
 
+\ccHtmlNoIndex
 \ccFunction{ istream& operator >> ( istream& is, Ellipse &ellipse);}{
         reads \ccVar\ from input stream \ccc{is}.}
 
