@@ -1,4 +1,3 @@
-- write all geometric types with _2 at the end: e.g. Site -> Site_2
 - replace segment arguments in constructors of sites with points
 - in the doc change the name of the template parameter for the
   point container from SC to PC.
