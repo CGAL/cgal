@@ -96,12 +96,12 @@ private:
         //this point is the closest one to the mouse coordinates
         FT min_dist;
         typename std::list<Point>::const_iterator it = l_of_p->begin();
-        min_dist = squared_distance(p, (*it));
+        min_dist = CGAL::squared_distance(p, (*it));
         closest_p = (*it);
         while(it!=l_of_p->end())
         {
-          if (min_dist > squared_distance(p, (*it))){
-          min_dist = squared_distance(p, (*it));
+          if (min_dist > CGAL::squared_distance(p, (*it))){
+          min_dist = CGAL::squared_distance(p, (*it));
           closest_p = (*it);
           }
           it++;
