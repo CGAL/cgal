@@ -13,7 +13,9 @@ include $(CGAL_MAKEFILE)
 #                    compiler flags
 #---------------------------------------------------------------------#
 
-CXXFLAGS = -I../../include \
+CXXFLAGS = \
+           $(TESTSUITE_CXXFLAGS) \
+           $(EXTRA_FLAGS) \
            $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS) \
            $(DEBUG_OPT)
@@ -23,9 +25,11 @@ CXXFLAGS = -I../../include \
 #---------------------------------------------------------------------#
 
 LIBPATH = \
+          $(TESTSUITE_LIBPATH) \
           $(CGAL_LIBPATH)
 
 LDFLAGS = \
+          $(TESTSUITE_LDFLAGS) \
           $(LONG_NAME_PROBLEM_LDFLAGS) \
           $(CGAL_LDFLAGS)
 
@@ -35,19 +39,16 @@ LDFLAGS = \
 
 all:            \
                 test_Compact_container$(EXE_EXT) \
-                test_composition$(EXE_EXT) \
                 test_Concatenate_iterator$(EXE_EXT) \
                 test_In_place_list$(EXE_EXT) \
                 test_Nested_iterator$(EXE_EXT) \
+                test_composition$(EXE_EXT) \
                 test_new_binders1$(EXE_EXT) \
                 test_stl_extension$(EXE_EXT) \
                 test_vector$(EXE_EXT) 
 
 test_Compact_container$(EXE_EXT): test_Compact_container$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_Compact_container test_Compact_container$(OBJ_EXT) $(LDFLAGS)
-
-test_composition$(EXE_EXT): test_composition$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_composition test_composition$(OBJ_EXT) $(LDFLAGS)
 
 test_Concatenate_iterator$(EXE_EXT): test_Concatenate_iterator$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_Concatenate_iterator test_Concatenate_iterator$(OBJ_EXT) $(LDFLAGS)
@@ -57,6 +58,9 @@ test_In_place_list$(EXE_EXT): test_In_place_list$(OBJ_EXT)
 
 test_Nested_iterator$(EXE_EXT): test_Nested_iterator$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_Nested_iterator test_Nested_iterator$(OBJ_EXT) $(LDFLAGS)
+
+test_composition$(EXE_EXT): test_composition$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_composition test_composition$(OBJ_EXT) $(LDFLAGS)
 
 test_new_binders1$(EXE_EXT): test_new_binders1$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_new_binders1 test_new_binders1$(OBJ_EXT) $(LDFLAGS)
@@ -69,10 +73,10 @@ test_vector$(EXE_EXT): test_vector$(OBJ_EXT)
 
 clean: \
                    test_Compact_container.clean \
-                   test_composition.clean \
                    test_Concatenate_iterator.clean \
                    test_In_place_list.clean \
                    test_Nested_iterator.clean \
+                   test_composition.clean \
                    test_new_binders1.clean \
                    test_stl_extension.clean \
                    test_vector.clean 
