@@ -15,7 +15,6 @@ OBJ_EXT = .wrong_cgal_makefile
 
 CXXFLAGS = \
 	$(EXTRA_FLAGS) \
-	-I./include \
 	$(CGAL_CXXFLAGS) \
 	$(LONG_NAME_PROBLEM_CXXFLAGS) \
 	$(DEBUG_OPT)
