@@ -84,8 +84,8 @@ PropertiesForm::PropertiesForm(  QTabWidget * bar, QWidget* parent ,
   textLabel7 = new QLabel( "Remove Curve Mode", this );
   arrLayout7->addWidget( textLabel7 );
   box7 = new QComboBox( FALSE, this );
-  box7->insertItem( "Remove All Original Curve" );
-  box7->insertItem( "Remove Current Xcurve" );
+  box7->insertItem( "Remove entire original curve" );
+  box7->insertItem( "Remove Edge" );
   arrLayout7->addWidget( box7 );
   optionsFormLayout->addLayout( arrLayout7 );
   if (!w_demo_p->remove_org_curve)

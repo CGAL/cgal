@@ -87,18 +87,21 @@ template <class Info>
 class Face_with_info : public CGAL::Pm_face_base {
   Info data;
   bool _visited;
+  int _index;
   /*! array of info's for overlay issues */
   std::vector<Info> overlay_info;
 public:
 
 	typedef typename std::vector<Info>::iterator OverlayInfoIterator;  // iterator for overlay_info vector
 
-  Face_with_info() : CGAL::Pm_face_base(), data(),_visited(false) , overlay_info(20) {}
+  Face_with_info() : CGAL::Pm_face_base(), data(),_visited(false) , _index(0) , overlay_info(20) {}
 
   Info info() { return data; }
   void set_info(Info i) { data = i; }
   bool visited() { return _visited; }
   void set_visited(bool b) { _visited = b; }
+  int index() { return _index; }
+  void set_index(int index) { _index = index; }
   Info get_overlay_info(int index) { return overlay_info[index]; }
   void set_overlay_info(int index, Info info) { overlay_info[index] = info; }
   void assign_overlay_info(std::vector<Info> info){ overlay_info = info; }
@@ -142,7 +145,7 @@ typedef CGAL::Arr_curve_data_traits_2<Base_seg_traits,
 typedef Seg_traits::Curve_2                                Pm_seg_2; 
 typedef Seg_traits::X_monotone_curve_2                     Pm_xseg_2;
 typedef Seg_traits::Point_2                                Pm_seg_point_2;
-typedef Dcel<Seg_traits , QColor>                  Seg_dcel;
+typedef Dcel<Seg_traits , QColor>                          Seg_dcel;
 typedef CGAL::Planar_map_2<Seg_dcel, Seg_traits>           Seg_pm;
 typedef CGAL::Planar_map_with_intersections_2<Seg_pm>      Seg_arr;
 typedef Seg_arr::Halfedge                                  Seg_halfedge;
@@ -192,7 +195,7 @@ typedef CGAL::Arr_curve_data_traits_2<Base_pol_traits,
 typedef Pol_traits::Curve_2                                Pm_pol_2;
 typedef Pol_traits::X_monotone_curve_2                     Pm_xpol_2;
 typedef Pol_traits::Point_2                                Pm_pol_point_2;
-typedef Dcel<Pol_traits,QColor>                  Pol_dcel;
+typedef Dcel<Pol_traits,QColor>                            Pol_dcel;
 typedef CGAL::Planar_map_2<Pol_dcel, Pol_traits>           Pol_pm;
 typedef CGAL::Planar_map_with_intersections_2<Pol_pm>      Pol_arr;
 typedef Pol_arr::Locate_type                               Pol_locate_type;
@@ -246,7 +249,7 @@ typedef CGAL::Arr_curve_data_traits_2<Base_conic_traits,
 typedef Conic_traits::Curve_2                            Pm_conic_2;
 typedef Conic_traits::X_monotone_curve_2                 Pm_xconic_2;
 typedef Conic_traits::Point_2                            Pm_conic_point_2;
-typedef Dcel<Conic_traits,QColor>              Conic_dcel;
+typedef Dcel<Conic_traits,QColor>                        Conic_dcel;
 typedef CGAL::Planar_map_2<Conic_dcel, Conic_traits>     Conic_pm;
 typedef CGAL::Planar_map_with_intersections_2<Conic_pm>  Conic_arr;
 typedef Conic_arr::Locate_type                           Conic_locate_type;

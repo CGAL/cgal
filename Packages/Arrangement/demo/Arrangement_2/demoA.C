@@ -197,11 +197,11 @@ MyWindow::MyWindow(int w, int h)
   file->insertItem("&Open Polyline File...", this, SLOT(fileOpenPolyline()));
   file->insertItem("&Open Conic File...", this, SLOT(fileOpenConic()));
   file->insertItem("&Open Segment Pm File...", this, SLOT(fileOpenSegmentPm()));
-  file->insertItem("&Open Polyline Pm File...", this, SLOT(fileOpenPolylinePm()));
+  //file->insertItem("&Open Polyline Pm File...", this, SLOT(fileOpenPolylinePm()));
   //file->insertItem("&Open Conic Pm File", this, SLOT(fileOpenConicPm()));
   file->insertItem("&Save...", this, SLOT(fileSave()));
   file->insertItem("&Save As...", this, SLOT(fileSaveAs()));
-  file->insertItem("&Save to ps...", this, SLOT(fileSave_ps()));
+  //file->insertItem("&Save to ps...", this, SLOT(fileSave_ps()));
   file->insertSeparator();
   file->insertItem("&Print...", this , SLOT(print()));
   file->insertSeparator();
@@ -239,12 +239,16 @@ MyWindow::MyWindow(int w, int h)
   setGridSnapMode->addTo(snap_mode);
   menuBar()->insertSeparator();
   
+  // traits menu
+  QPopupMenu * traits = new QPopupMenu( this );
+  menuBar()->insertItem( "&Traits Type", traits );
+  setSegmentTraits->addTo(traits); 
+  setPolylineTraits->addTo(traits); 
+  setConicTraits->addTo(traits); 
+
   // options menu
   QPopupMenu * options = new QPopupMenu( this );
   menuBar()->insertItem( "&Options", options );
-  setSegmentTraits->addTo(options); 
-  setPolylineTraits->addTo(options); 
-  setConicTraits->addTo(options); 
   options->insertSeparator();
   options->insertItem("Overlay...", this, SLOT(overlay_pm()));
   options->insertSeparator();

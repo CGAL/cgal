@@ -100,7 +100,7 @@ void MyWindow::properties()
     else
       colors_flag = false;
 	QString remove_mode = optionsForm->box7->currentText();
-	if (strcmp(remove_mode,"Remove All Original Curve") == 0)
+	if (strcmp(remove_mode,"Remove entire original curve") == 0)
       w_demo_p->remove_org_curve = true;
     else
       w_demo_p->remove_org_curve = false;
@@ -340,7 +340,7 @@ void MyWindow::fileOpenPm()
      break;
     }
    case POLYLINE_TRAITS: // dosen't work !!
-    {
+    {// because the operator >> in Arr_polyline_traits doesn't work...
       Qt_widget_demo_tab<Polyline_tab_traits> *w_demo_p =
        static_cast<Qt_widget_demo_tab<Polyline_tab_traits> *> 
        (myBar->currentPage());
@@ -416,8 +416,8 @@ void MyWindow::load( const QString& filename , bool clear_flag )
       cd.m_type = Curve_conic_data::LEAF;
       cd.m_index = w_demo_p->index;
       cd.m_ptr.m_curve = cv;
-      
-      w_demo_p->m_curves_arr.insert(Pm_conic_2( *cv , cd));
+      Conic_notification conic_notif;
+      w_demo_p->m_curves_arr.insert(Pm_conic_2( *cv , cd) , & conic_notif);
       
       CGAL::Bbox_2 curve_bbox = cv->bbox();
       if (i == 0)
@@ -476,8 +476,9 @@ void MyWindow::load( const QString& filename , bool clear_flag )
       //w_demo_p->m_curves_arr.insert(Pm_pol_2( *base_polyline , cd));
     }
     Pol_notification pol_notif;
-	 w_demo_p->m_curves_arr.insert(pol_list.begin(),pol_list.end(), &pol_notif);
-
+    std::cout << "insert polylines fron file\n";
+	  w_demo_p->m_curves_arr.insert(pol_list.begin(),pol_list.end(), &pol_notif);
+    std::cout << "finish insert polylines fron file\n";
     if( w_demo_p->m_curves_arr.number_of_vertices() == 0 )
       w_demo_p->empty = true;
     else 
