@@ -43,18 +43,21 @@ namespace CGALi {
 
   struct Unsafe_comparison {};    // Exception class.
 
+  const double Huge_val = HUGE_VAL; // Workaround for G++ 2.95 on Linux.
 }
 
 template <bool Protected = true>
-struct Interval_nt
+class Interval_nt
 {
+  typedef Interval_nt<Protected>     IA;
+  typedef std::pair<double, double>  Pair;
+public:
   typedef Tag_false   Has_gcd;
   typedef Tag_true    Has_division;
   typedef Tag_true    Has_sqrt;
 
   typedef CGALi::Unsafe_comparison unsafe_comparison;
 
-  typedef Interval_nt<Protected> IA;
   static unsigned number_of_failures;	// Number of filter failures.
 
   Interval_nt() {}
@@ -77,7 +80,7 @@ struct Interval_nt
   Interval_nt(const Interval_nt & i)
 	  : inf_sup(i.pair()) {}
 
-   Interval_nt(const std::pair<double,double> & p)
+   Interval_nt(const Pair & p)
 	  : inf_sup(p) {}
 
   // The advantage of non-member operators is that (double * IA) just works...
@@ -187,19 +190,20 @@ struct Interval_nt
     return inf_sup;
   }
 
-  // "inf_" stores the lower bound, "sup_" the upper.
-  std::pair<double,double> inf_sup;
-
-  static Interval_nt<Protected> smallest()
+  static IA largest()
   {
-    return Interval_nt<Protected>(-CGAL_IA_MIN_DOUBLE,
-				  CGAL_IA_MIN_DOUBLE);
+    // G++ 2.95 on Linux has problems with HUGE_VAL in template context.
+    // (it's a macro defined by "__extension__ ..." and it gets lost.
+    return IA(-CGALi::Huge_val, CGALi::Huge_val);
+  } 
+
+  static IA smallest()
+  {
+    return IA(-CGAL_IA_MIN_DOUBLE, CGAL_IA_MIN_DOUBLE);
   }
 
-  static Interval_nt<Protected> largest()
-  {
-    return Interval_nt<Protected>(-HUGE_VAL, HUGE_VAL);
-  } 
+private:
+  Pair inf_sup;
 };
 
 template <bool Protected>

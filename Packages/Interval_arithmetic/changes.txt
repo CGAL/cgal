@@ -1,3 +1,6 @@
+Version 4.167 on 22 May 2003
+- Workaround a g++ 2.95 + Linux bug.
+
 Version 4.166 on 13 May 2003 [af]
 - Removed a forgotten #include <CGAL/Interval_base.h>
 
