@@ -79,23 +79,6 @@ SegmentC2<R CGAL_CTAG>::operator!=(const SegmentC2<R CGAL_CTAG> &s) const
   return !(*this == s);
 }
 
-
-template < class R >
-inline
-typename SegmentC2<R CGAL_CTAG>::Point_2
-SegmentC2<R CGAL_CTAG>::start() const
-{
-  return ptr->e0;
-}
-
-template < class R >
-inline
-typename SegmentC2<R CGAL_CTAG>::Point_2
-SegmentC2<R CGAL_CTAG>::end() const
-{
-  return ptr->e1;
-}
-
 template < class R >
 inline
 typename SegmentC2<R CGAL_CTAG>::Point_2
@@ -110,6 +93,22 @@ typename SegmentC2<R CGAL_CTAG>::Point_2
 SegmentC2<R CGAL_CTAG>::target() const
 {
   return ptr->e1;
+}
+
+template < class R >
+inline
+typename SegmentC2<R CGAL_CTAG>::Point_2
+SegmentC2<R CGAL_CTAG>::start() const
+{
+  return source();
+}
+
+template < class R >
+inline
+typename SegmentC2<R CGAL_CTAG>::Point_2
+SegmentC2<R CGAL_CTAG>::end() const
+{
+  return target();
 }
 
 template < class R >

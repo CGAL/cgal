@@ -35,7 +35,6 @@
 
 CGAL_BEGIN_NAMESPACE
 
-
 template < class R >
 CGAL_KERNEL_INLINE
 void
@@ -114,8 +113,6 @@ inline
 LineC2<R CGAL_CTAG>::~LineC2()
 {}
 
-
-
 template < class R >
 CGAL_KERNEL_MEDIUM_INLINE
 bool LineC2<R CGAL_CTAG>::operator==(const LineC2<R CGAL_CTAG> &l) const
@@ -162,8 +159,8 @@ CGAL_KERNEL_INLINE
 typename LineC2<R CGAL_CTAG>::FT
 LineC2<R CGAL_CTAG>::x_at_y(const typename LineC2<R CGAL_CTAG>::FT &y) const
 {
-  CGAL_kernel_precondition_msg( (a() != FT(0)),
-  "Line::x_at_y(LineC2<R CGAL_CTAG>::FT y) is undefined for horizontal line" );
+  CGAL_kernel_precondition_msg( a() != FT(0),
+  "Line::x_at_y(FT y) is undefined for horizontal line");
   return line_x_at_y(*this,y);
 }
 
@@ -172,8 +169,8 @@ CGAL_KERNEL_INLINE
 typename LineC2<R CGAL_CTAG>::FT
 LineC2<R CGAL_CTAG>::y_at_x(const typename LineC2<R CGAL_CTAG>::FT &x) const
 {
-  CGAL_kernel_precondition_msg( (b() != FT(0)),
-  "Line::x_at_y(LineC2<R CGAL_CTAG>::FT y) is undefined for vertical line");
+  CGAL_kernel_precondition_msg( b() != FT(0),
+  "Line::y_at_x(FT x) is undefined for vertical line");
   return line_y_at_x(*this,x);
 }
 
@@ -273,7 +270,7 @@ inline
 bool
 LineC2<R CGAL_CTAG>::is_horizontal() const
 {
-  return a() == LineC2<R CGAL_CTAG>::FT(0) ;
+  return a() == LineC2<R CGAL_CTAG>::FT(0);
 }
 
 template < class R >
@@ -281,7 +278,7 @@ inline
 bool
 LineC2<R CGAL_CTAG>::is_vertical() const
 {
-  return b() == FT(0) ;
+  return b() == FT(0);
 }
 
 template < class R >
@@ -289,7 +286,7 @@ inline
 bool
 LineC2<R CGAL_CTAG>::is_degenerate() const
 {
-  return (a() == FT(0)) && (b() == FT(0)) ;
+  return a() == FT(0) && b() == FT(0);
 }
 
 template < class R >

@@ -32,7 +32,6 @@
 
 CGAL_BEGIN_NAMESPACE
 
-
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 DirectionC2<R CGAL_CTAG>::DirectionC2()
@@ -68,7 +67,6 @@ inline
 DirectionC2<R CGAL_CTAG>::~DirectionC2()
 {}
 
-
 template < class R >
 inline
 bool
@@ -86,8 +84,6 @@ DirectionC2<R CGAL_CTAG>::operator!=(const DirectionC2<R CGAL_CTAG> &d) const
   return !( *this == d );
 }
 
-
-
 template < class R >
 CGAL_KERNEL_MEDIUM_INLINE
 bool
@@ -101,7 +97,7 @@ CGAL_KERNEL_INLINE
 bool
 DirectionC2<R CGAL_CTAG>::operator>(const DirectionC2<R CGAL_CTAG> &d) const
 {
-  return d < *this ;
+  return d < *this;
 }
 
 template < class R >
@@ -132,12 +128,10 @@ counterclockwise_in_between(const DirectionC2<R CGAL_CTAG> &d1,
 // Note that true is returned if \ccc{d1} == \ccc{d2}, unless
 //  also \ccVar\ == \ccc{d1}.
 {
-  if ( d1 < *this)  {
+  if ( d1 < *this)
     return ( *this < d2 )||( d2 <= d1 );
-  }
-  else    {
+  else
     return ( *this < d2 )&&( d2 <= d1 );
-  }
 }
 
 template < class R >

@@ -118,7 +118,7 @@ inline
 typename PointC2<R CGAL_CTAG>::FT
 PointC2<R CGAL_CTAG>::y() const
 {
-  return  ptr->e1 ;
+  return ptr->e1;
 }
 
 template < class R >
@@ -151,7 +151,7 @@ inline
 typename PointC2<R CGAL_CTAG>::FT
 PointC2<R CGAL_CTAG>::hx() const
 {
-  return ptr->e0;
+  return x();
 }
 
 template < class R >
@@ -159,7 +159,7 @@ inline
 typename PointC2<R CGAL_CTAG>::FT
 PointC2<R CGAL_CTAG>::hy() const
 {
-  return ptr->e1;
+  return y();
 }
 
 template < class R >

@@ -173,7 +173,7 @@ inline
 typename VectorC2<R CGAL_CTAG>::FT
 VectorC2<R CGAL_CTAG>::hx() const
 {
-  return ptr->e0;
+  return x();
 }
 
 template < class R >
@@ -181,7 +181,7 @@ inline
 typename VectorC2<R CGAL_CTAG>::FT
 VectorC2<R CGAL_CTAG>::hy()  const
 {
-  return ptr->e1;
+  return y();
 }
 
 template < class R >

@@ -95,7 +95,7 @@ TriangleC2<R CGAL_CTAG>::vertex(int i) const
   else if (i<0) i = (i%3) + 3;
   return (i==0) ? ptr->e0 :
          (i==1) ? ptr->e1 :
-                  ptr->e2 ;
+                  ptr->e2;
 }
 
 template < class R >

@@ -1,3 +1,7 @@
+Version 4.2 (?? ???? 2000)
+- Fixed an assertion message. [syl]
+- Minor cleanups. [syl]
+
 Version 4.1 (29 June 2000)
 - Header fixes [syl].  Got rid of Herve's check_header script.
 - Fixed a few buggy protect macro names [syl].
