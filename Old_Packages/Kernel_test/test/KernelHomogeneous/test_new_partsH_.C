@@ -23,16 +23,16 @@
 
 #include <CGAL/basic.h>
 #include <cassert>
-#include <CGAL/Precise_numbers.h>
+#include "../Kernel/include/CGAL/Precise_numbers.h"
 #include <CGAL/Homogeneous.h>
-#include <CGAL/_test_fct_points_implicit_sphere.h>
-#include <CGAL/_test_orientation_and_bounded_side.h>
-#include <CGAL/_test_fct_constructions_2.h>
-#include <CGAL/_test_fct_constructions_3.h>
-#include <CGAL/_test_fct_point_3.C>
-#include <CGAL/_test_fct_coplanar_3.h>
-#include <CGAL/_test_cls_iso_cuboid_3.C>
-#include <CGAL/_test_angle.h>
+#include "../Kernel/include/CGAL/_test_fct_points_implicit_sphere.h"
+#include "../Kernel/include/CGAL/_test_orientation_and_bounded_side.h"
+#include "../Kernel/include/CGAL/_test_fct_constructions_2.h"
+#include "../Kernel/include/CGAL/_test_fct_constructions_3.h"
+#include "../Kernel/include/CGAL/_test_fct_point_3.C"
+#include "../Kernel/include/CGAL/_test_fct_coplanar_3.h"
+#include "../Kernel/include/CGAL/_test_cls_iso_cuboid_3.C"
+#include "../Kernel/include/CGAL/_test_angle.h"
 
 int
 main()

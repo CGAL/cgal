@@ -23,8 +23,8 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Homogeneous.h>
-#include <CGAL/Precise_numbers.h>
-#include <CGAL/_test_new_2.h>
+#include "../Kernel/include/CGAL/Precise_numbers.h"
+#include "../Kernel/include/CGAL/_test_new_2.h"
 
 typedef CGAL::Homogeneous<Precise_integer> Kernel;
 

@@ -24,6 +24,7 @@
 #ifndef CGAL__TEST_CLS_POINT_D_H
 #define CGAL__TEST_CLS_POINT_D_H
 
+#include <strstream> // Non standard.
 
 template <class R>
 bool
@@ -53,7 +54,7 @@ _test_cls_point_d( const R& )
 
   // I/O
 
-  const int size = 100;                 // suffices to store a point
+  const int size = 1024;                 // suffices to store a point
   char buffer[size];
   std::ostrstream ost (buffer, size);
   CGAL::set_ascii_mode (ost);

@@ -35,7 +35,7 @@ _test_fct_constructions_2(const R&);
 
 
 #ifdef CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
-#include <CGAL/_test_fct_constructions_2.C>
+#include "_test_fct_constructions_2.C"
 #endif // CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
 
 #endif // CGAL__TEST_FCT_CONSTRUCTIONS_2_H

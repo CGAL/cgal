@@ -23,9 +23,8 @@
 
 #ifndef CGAL__TEST_CLS_RAY_2_C
 #define CGAL__TEST_CLS_RAY_2_C
-#ifndef CGAL__TEST_CLS_RAY_2_H
-#include <CGAL/_test_cls_ray_2.h>
-#endif // CGAL__TEST_CLS_RAY_2_H
+
+#include "_test_cls_ray_2.h"
 
 template <class R>
 bool

@@ -23,9 +23,8 @@
 
 #ifndef CGAL__TEST_CLS_DIRECTION_3_C
 #define CGAL__TEST_CLS_DIRECTION_3_C
-#ifndef CGAL__TEST_CLS_DIRECTION_3_H
-#include <CGAL/_test_cls_direction_3.h>
-#endif // CGAL__TEST_CLS_DIRECTION_3_H
+
+#include "_test_cls_direction_3.h"
 
 template <class R>
 bool

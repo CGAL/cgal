@@ -23,10 +23,10 @@
 
 #include <CGAL/basic.h>
 #include <cassert>
-#include <CGAL/Precise_numbers.h>
+#include "../Kernel/include/CGAL/Precise_numbers.h"
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Quotient.h>
-#include <CGAL/_test_mf_plane_3_to_2d.C>
+#include "../Kernel/include/CGAL/_test_mf_plane_3_to_2d.C"
 
 int
 main()

@@ -1,3 +1,17 @@
+3.35   (27 September 2001)
+- remove the need to have "-I../Kernel/include" in the submitted makefiles,
+  by hard coding it in the #includes<> inside the test files.  This way it
+  makes it clear in the test files which headers come from CGAL, and which
+  come from the test-suite.
+- a by product of this is that we can use the default makefiles, and so I
+  added "makefile" to dont_submit.
+- I added "-I../../H2/include" and similar in the makefiles, so that we can
+  work more easily with our working copies (didn't you find it painful to
+  have to tweak the makefiles for each submission ?).
+- Fixes a buffer overflow which made SunPro 5.3 fail at run time.
+
+====================== CGAL 2.3 =============================
+
 3.34   (25 July 2001)
 - fixed use of constructive predicate and deprecated cmp_ and _dist_ functions
 - fixed LEDA kernel test by adding predicates with new names

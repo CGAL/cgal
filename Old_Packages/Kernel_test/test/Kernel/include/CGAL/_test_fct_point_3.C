@@ -24,7 +24,7 @@
 #ifndef CGAL__TEST_FCT_POINT_3_C
 #define CGAL__TEST_FCT_POINT_3_C
 
-#include <CGAL/_test_fct_point_3.h>
+#include "_test_fct_point_3.h"
 
 template <class R>
 bool

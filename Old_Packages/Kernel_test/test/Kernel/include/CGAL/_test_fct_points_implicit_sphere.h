@@ -36,7 +36,7 @@ template <class R> bool _test_fct_points_implicit_sphere(const R&);
 
 
 #ifdef CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
-#include <CGAL/_test_fct_points_implicit_sphere.C>
+#include "_test_fct_points_implicit_sphere.C"
 #endif // CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
 
 #endif // CGAL__TEST_FCT_POINTS_IMPLICIT_SPHERE_H

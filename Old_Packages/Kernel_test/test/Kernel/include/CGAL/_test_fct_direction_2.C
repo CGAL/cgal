@@ -23,9 +23,8 @@
 
 #ifndef CGAL__TEST_FCT_DIRECTION_2_C
 #define CGAL__TEST_FCT_DIRECTION_2_C
-#ifndef CGAL__TEST_FCT_DIRECTION_2_H
-#include <CGAL/_test_fct_direction_2.h>
-#endif // CGAL__TEST_FCT_DIRECTION_2_H
+
+#include "_test_fct_direction_2.h"
 
 bool
 ccw(int i, int j, int k)

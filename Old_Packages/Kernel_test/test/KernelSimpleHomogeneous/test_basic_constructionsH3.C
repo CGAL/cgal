@@ -23,7 +23,7 @@
 
 #include <CGAL/basic.h>
 #include <cassert>
-#include <CGAL/Precise_numbers.h>
+#include "../Kernel/include/CGAL/Precise_numbers.h"
 #include <CGAL/Simple_homogeneous.h>
 #include <CGAL/Point_3.h>
 #include <CGAL/Line_3.h>

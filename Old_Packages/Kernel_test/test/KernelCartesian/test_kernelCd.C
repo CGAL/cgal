@@ -22,11 +22,10 @@
  
 
 #include <iostream>
-#include <strstream>
 #include <cassert>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Point_d.h>
-#include <CGAL/_test_cls_point_d.h>
+#include "../Kernel/include/CGAL/_test_cls_point_d.h"
 
 typedef CGAL::Cartesian<double>   RC;
 

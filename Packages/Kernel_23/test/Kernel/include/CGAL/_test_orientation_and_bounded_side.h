@@ -35,7 +35,7 @@ _test_orientation_and_bounded_side(const R&);
 
 
 #ifdef CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
-#include <CGAL/_test_orientation_and_bounded_side.C>
+#include "_test_orientation_and_bounded_side.C"
 #endif // CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
 
 #endif // CGAL__TEST_ORIENTATION_AND_BOUNDED_SIDE_H

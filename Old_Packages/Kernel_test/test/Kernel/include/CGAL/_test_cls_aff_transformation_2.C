@@ -23,7 +23,8 @@
 
 #ifndef CGAL__TEST_CLS_AFF_TRANSFORMATION_2_C
 #define CGAL__TEST_CLS_AFF_TRANSFORMATION_2_C
-#include <CGAL/_test_cls_aff_transformation_2.h>
+
+#include "_test_cls_aff_transformation_2.h"
 
 template <class R>
 bool

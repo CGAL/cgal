@@ -24,7 +24,7 @@
 #ifndef CGAL__TEST_CLS_ISO_RECTANGLE_2_C
 #define CGAL__TEST_CLS_ISO_RECTANGLE_2_C
 
-#include <CGAL/_test_cls_iso_rectangle_2.h>
+#include "_test_cls_iso_rectangle_2.h"
 
 
 template <class R>

@@ -24,12 +24,12 @@
 
 #include <CGAL/basic.h>
 #include <cassert>
-#include <CGAL/Precise_numbers.h>
+#include "../Kernel/include/CGAL/Precise_numbers.h"
 #include <CGAL/Cartesian.h>
 #include <CGAL/Quotient.h>
 #include <CGAL/Point_2.h>
 #include <CGAL/Line_2.h>
-#include <CGAL/_test_fctobj_point_line_2.C>
+#include "../Kernel/include/CGAL/_test_fctobj_point_line_2.C"
 
 int
 main()

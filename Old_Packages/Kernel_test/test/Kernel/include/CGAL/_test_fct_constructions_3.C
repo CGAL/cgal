@@ -25,7 +25,7 @@
 #ifndef CGAL__TEST_FCT_CONSTRUCTIONS_3_C
 #define CGAL__TEST_FCT_CONSTRUCTIONS_3_C
 
-#include <CGAL/_test_fct_constructions_3.h>
+#include "_test_fct_constructions_3.h"
 
 template <class R>
 bool

@@ -22,7 +22,7 @@
 #ifndef CGAL__TEST_FCT_POINT_2_C
 #define CGAL__TEST_FCT_POINT_2_C
 
-#include <CGAL/_test_fct_point_2.h>
+#include "_test_fct_point_2.h"
 
 template <class R>
 bool

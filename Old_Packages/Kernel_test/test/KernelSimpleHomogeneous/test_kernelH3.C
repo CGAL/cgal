@@ -23,9 +23,9 @@
 
 #include <CGAL/basic.h>
 #include <cassert>
-#include <CGAL/Precise_numbers.h>
+#include "../Kernel/include/CGAL/Precise_numbers.h"
 #include <CGAL/Simple_homogeneous.h>
-#include <CGAL/_test_3.C>
+#include "../Kernel/include/CGAL/_test_3.C"
 
 int
 main()

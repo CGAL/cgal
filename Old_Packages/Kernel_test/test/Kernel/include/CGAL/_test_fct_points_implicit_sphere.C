@@ -23,7 +23,7 @@
 #ifndef CGAL__TEST_FCT_POINTS_IMPLICIT_SPHERE_C
 #define CGAL__TEST_FCT_POINTS_IMPLICIT_SPHERE_C
 
-#include <CGAL/_test_fct_points_implicit_sphere.h>
+#include "_test_fct_points_implicit_sphere.h"
 
 template <class R>
 bool

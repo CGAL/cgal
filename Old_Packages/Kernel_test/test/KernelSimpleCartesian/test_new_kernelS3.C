@@ -23,8 +23,8 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Precise_numbers.h>
-#include <CGAL/_test_new_3.h>
+#include "../Kernel/include/CGAL/Precise_numbers.h"
+#include "../Kernel/include/CGAL/_test_new_3.h"
 
 typedef CGAL::Simple_cartesian<Precise_rational>  Kernel;
 

@@ -23,9 +23,8 @@
 
 #ifndef CGAL__TEST_FURTHER_FCT_POINT_2_LINE_2_C
 #define CGAL__TEST_FURTHER_FCT_POINT_2_LINE_2_C
-#ifndef CGAL__TEST_FURTHER_FCT_POINT_LINE_2_H
-#include <CGAL/_test_further_fct_point_line_2.h>
-#endif // CGAL__TEST_FURTHER_FCT_POINT_LINE_2_H
+
+#include "_test_further_fct_point_line_2.h"
 
 template <class R>
 bool

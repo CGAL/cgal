@@ -31,7 +31,7 @@
 template <class R> bool _test_fct_coplanar_3(const R&);
 
 #ifdef CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
-#include <CGAL/_test_fct_coplanar_3.C>
+#include "_test_fct_coplanar_3.C"
 #endif // CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
 
 #endif // CGAL__TEST_FCT_COPLANAR_3_H
