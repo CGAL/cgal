@@ -1,3 +1,6 @@
+1.24 (11 February 2003)
+- Add squared_radius(p, q).
+
 1.23 (29 January 2003)
 - Added #include<cstddef> otherwise SGI CC doesn't know ptrdiff_t
 
