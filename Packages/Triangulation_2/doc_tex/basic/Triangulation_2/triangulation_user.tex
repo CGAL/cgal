@@ -23,10 +23,10 @@ of \cgal.
 Section~\ref{Section_2D_Triangulations_Definitions} recalls the
 main definitions about triangulations.
 Sections~\ref{Section_2D_Triangulations_Representation} discusses
-the way two-dimensional triangulations are represented in \cgal\
-and Section~\ref{Section_2D_Triangulations_Software_Design} presents
+the way two-dimensional triangulations are represented in \cgal\.
+Section~\ref{Section_2D_Triangulations_Software_Design} presents
 and the overall software
-design of the 2D triangulation package. 
+design of the 2D triangulations package. 
 The next sections present the different two dimensional triangulations classes
 available in  \cgal\ : 
 basic triangulations (section~\ref{Section_2D_Triangulations_Basic}),
@@ -42,10 +42,10 @@ Section~\ref{Section_2D_Triangulations_Constrained_Plus}
 describes a class which implements a constrained or
 constrained Delaunay triangulation together with
 a hierarchiacal data structure on the constraints.
-At last, Section~\ref{Section_2D_Triangulations_Hierarchy}
-described a hierarchical data structure for
-fast point location queries and
-Section~\ref{Section_2D_Triangulations_Flexibility} 
+Section~\ref{Section_2D_Triangulations_Hierarchy}
+describes a hierarchical data structure for
+fast point location queries.
+At last, Section~\ref{Section_2D_Triangulations_Flexibility} 
 explain how to benefit  from the flexibility 
 of  \cgal\ triangulations using customized classes for faces
 and vertices.
@@ -55,7 +55,7 @@ and vertices.
 
 A two dimensional triangulation can be simply described as a set $T$
 of triangular facets such that~:\\
-- two facets are either disjoint or share a lower dimensional
+- two facets either are  disjoint or share a lower dimensional
 face (edge or vertex).\\
 - the set of facets in  $T$ is connected for the adjacency relation. \\
 - the domain $U_T$ of the triangulation which is the union
@@ -63,29 +63,30 @@ of facets in $T$ has no singularity.
 
 
 More precisely, a triangulation can be described 
-as a simplicial complex, according to the following definitions.
+as a simplicial complex.
+Let us first record a few definitions.
 
 A simplicial complex is a set $T$  of simplices such that~\\
 - any face of a simplex in $T$ is a simplex in $T$ \\
-- two simplices in $T$ are either disjoints or  share
-  a subface.
+- two simplices in $T$  either are disjoint or  share
+  a common subface.
 
 The dimension $d$ of a  simplicial complex is the 
-maximal dimension of all its simplices. \\
+maximal dimension of its simplices. \\
 A simplicial complex $T$ is pure if any simplex of $T$
 is included in a simplex of $T$ with maximal dimension. \\
 Two simplexes in $T$ with maximal dimension $d$ are said to be
-adjacent if they share a $(d-1)$ dimensinal subface.
+adjacent if they share a $(d-1)$ dimensional subface.
 A simplicial complex is connected if the adjacency relation
 defines a connected graph 
 over  the set of simplices of $T$ with maximal dimension. \\
-The union of all simplices in $T$ is called the domain of $T$.
+The union $U_T$ of all simplices in $T$ is called the domain of $T$.
 A point $p$ in the domain of $T$ is said to singular 
 if its surrounding in $U_T$
 is neither a topological ball nor a topological disc.
 
 Then, a two dimensional triangulation can be described as a 
-simplicial complex with dimension 2 that is pure,
+two dimensional simplicial complex  that is pure,
 connected and without singularity.
 
 Each facet of a triangulation can be given an orientation
@@ -96,9 +97,29 @@ opposite orientations on their common incident edge.
 A triangulation is said to be orientable if 
 the orientation of each facet can be chosen in such a way
 that all pairs of incident facets have consistent orientations. 
-The two-dimensional triangulations represented in \cgal\
-are orientable triangulations
-embedded in a plane or in a higher dimensional space.
+
+The data stucture underlying \cgal\ triangulations
+allows to represent the combinatorics of 
+any  orientable two dimensional  triangulations
+without boundaries. However, taking care
+of the geometric embedding, 
+the two dimensional triangulations of \cgal\ are  mainly
+designed to represent planar triangulations.
+The plane of the tiangulation may be embedded in a higher
+dimensional space.
+
+The  triangulation \cgal\ are complete
+meaning that their domain always covers the
+convex hull of  their vertices.
+Because any planar  two dimensional triangulation
+can be completed, this is not a real restriction.
+For instance, a triangulation of a  polygonal region can be
+constructed as a subset  of a constrained triangulation 
+where the edges bounding the region have been input as 
+constrained edges (see
+Section~\ref{Section_2D_Triangulations_Constrained},
+\ref{Section_2D_Triangulations_Constrained_Delaunay} and 
+\ref{Section_2D_Triangulations_Constrained_Plus}.)
 
 Strictly speaking, the term {\em face} should be used
 to design  a face of any dimension,
@@ -111,71 +132,63 @@ of a two dimensional triangulation.
 \section{Representation}
 \label{Section_2D_Triangulations_Representation}
 
-{\bf The set of represented faces}
-The  triangulations of \cgal\
-are such that their domain always covers the convex hull
-of their vertices \footnote{Triangulations covering a given 
-bounded part of the plane can nevertheless be represented
-through constrained od Delaunay constrained triangulations.
-See sections~\ref{Section_2D_Triangulations_Constrained},
-\ref{Section_2D_Triangulations_Constrained_Delaunay} and
-~\ref{Section_2D_Triangulations_Constrained_Plus}.}
-Therefore a triangulation  can be viewed as a planar partition of the plane
+\subsubsection{The set of represented faces}
+
+A triangulation  of \cgal\ can be viewed as a planar partition 
 whose bounded faces are triangular and cover
 the convex hull of the set ${  A}$ of vertices. 
 The single unbounded face of this partition
 is the complementary of the convex hull of ${  A}$. 
 In many applications, such as Kirkpatrick's hierarchy
 or incremental Delaunay construction, it is convenient to
-deal with only triangular faces. Therefore, we add to the
-triangulation
+deal with only triangular faces. Therefore, 
 a fictitious vertex, called the \ccc{infinite vertex}
-and we make each  convex hull edge incident 
-to an \ccc{infinite} 
-face having as third vertex  the \ccc{infinite vertex}.
- In that way, each edge is incident to exactly two faces
-and special cases at the
-boundary of the convex hull are simpler to deal with.
+is added to the triangulation and  the triangulation
+includes additionnal \ccc{infinite edges} and \ccc{infinite faces}.
+Each infinite edge
+is incident to the infinite vertex and a vertex of the convex hull.
+Each infinite face is incident to the infinite vertex
+and to a convex hull edge. 
+ In that way, each edge of the triangulation
+is incident to exactly two faces
+and the set of faces (of a triangulation is topologically
+equivalent to a two-dimensional sphere.
+This is also true
+in special cases of triangulations with lower dimensions
+arising either in degenerate cases or when the triangulations
+as less than three vertices.
+With the infinite vertex and edges, a one dimensional 
+is a one ring of edges and vertices
+topologically equivalent to a $1$-sphere
+and a zero dimensional triangulation whose domain is reduced to a
+single point is formed with two vertices that is
+topologically equivalent to a $0$-sphere
 
-In the following, we called {\it infinite}  the infinite vertex
-and any face or edge 
-incident  to the infinite vertex. Any face or edge non incident
-to the infinite vertex as well as any vertex different from
-the infinite vertex  is said to be {\it finite}.
-Although it is convenient to draw a triangulation as in
-figure~\ref{I1_Fig_infinite_vertex}, note that
+Note that
 the \ccc{infinite vertex} has no significant
 coordinates and that no geometric predicate can be applied on it
 or on an infinite face.
 
 \begin{figure}
 \begin{ccTexOnly}
-\begin{center} \IpeScale{100} \Ipe{infinite_vertex.ipe} \end{center}
+\begin{center}
+\includegraphics{infinite.eps} 
+\end{center}
 \end{ccTexOnly}
 \caption{The infinite vertex.
 \label{I1_Fig_infinite_vertex}}
 \begin{ccHtmlOnly}
 <CENTER>
-<img border=0 src=infinite_vertex.gif align=center alt="Vertices at
+<img border=0 src=infinite.gif align=center alt="Vertices at
 infinity">
 </CENTER>
 \end{ccHtmlOnly}
 \end{figure}
 
-Thus the set of represented faces is topologically
-equivalent to a two-dimensional sphere. This is extended
-in special cases of triangulations with lower dimensions
-arising either in degenerate cases or when the triangulations
-as less than three vertices.
-With the infinite\_vertex, the set of faces representing 
-a triangulation of dimension 1 is
-topologically equivalent to a $1$-sphere i.e. to a circle.
-A triangulation of dimension 0 is reduced to a single point.
-It is represented  as a $0$-sphere, i.e. with two vertices
-corresponding to the single point and the infinite vertex.
 
 
-{\bf A representation based on faces and vertices}
+
+\subsubsection{ A representation based on faces and vertices}
 Because a triangulation is merely a set of
 triangular faces with constant-size complexity,
 triangulations are not implemented
