@@ -85,9 +85,9 @@ public:
     }
 
   Orientation orientation(const Point & p,
-			       const Point & q,
-			       const Point & r,
-			       const Point & s) const
+			  const Point & q,
+			  const Point & r,
+			  const Point & s) const
   {
     return CGAL::orientation(p, q, r, s);
   }
