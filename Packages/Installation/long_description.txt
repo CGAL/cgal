@@ -4,6 +4,18 @@
 
 
 //---------------------------------------------------------------------
+//	revision 1.82
+//---------------------------------------------------------------------
+
+GLOB: Changed real_which to work with spaces in directory names.
+GLOB: Added gmp installation in CGAL tree for cygwin.
+GLOB: Removed -DCGAL_LIMITED_ITERATOR_TRAITS_SUPPORT for MSVC.
+DOCS: Updated.
+DOCS: Major additions about MS-stuff by Dima.
+DOCS: Reorganized section order moving some stuff into the appendix.
+DOCS: A number of minor changes/additions.
+
+//---------------------------------------------------------------------
 //	revision 1.81
 //---------------------------------------------------------------------
 

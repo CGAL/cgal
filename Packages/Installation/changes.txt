@@ -7,6 +7,9 @@
 //	actual revision
 //---------------------------------------------------------------------
 
+GLOB: Changed real_which to work with spaces in directory names.
+GLOB: Added gmp installation in CGAL tree for cygwin.
+GLOB: Removed -DCGAL_LIMITED_ITERATOR_TRAITS_SUPPORT for MSVC.
 GLOB: Introduced CGAL_WINDOW_LD_LIBPATH in analogy to CGAL_LD_LIBPATH.
 ALL : Updated ps-docs.
 GLOB: Remove ii_files in .C.clean target for mips-CC.
@@ -71,9 +74,13 @@ ALL : updated CGAL-version to 2.1.
 GLOB: removed CGAL_directories (contained only two variables).
 GLOB: no support for gcc prior to 2.8 anymore.
 GLOB: fixed little problem with install-script name - now $CGAL_INSTALL_CGAL.
+DOCS: Updated.
 DOCS: Some additions/corrections due to Dima.
 DOCS: Added description of CLN support.
 DOCS: Some minor corrections.
+DOCS: Major additions about MS-stuff by Dima.
+DOCS: Reorganized section order moving some stuff into the appendix.
+DOCS: A number of minor changes/additions.
 DOCS: Updated LEDA version number.
 DOCS: Added docs for cygwin installation.
 DOCS: Added Dima to the list of authors.
