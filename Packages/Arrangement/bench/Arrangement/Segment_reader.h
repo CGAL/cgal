@@ -9,6 +9,7 @@
 #include <list>
 
 #include "numberType.h"
+#include "Input_traits.h"
 
 template <class Traits>
 class Segment_reader
@@ -34,33 +35,27 @@ public:
     
     int i;
     for (i = 0; i < count; i++) {
-      NT x0, y0, x1, y1;
+      WNT x0, y0, x1, y1;
       if (format == CGAL::Bench_parse_args::FORMAT_RAT) {
-        inp >> x0 >> y0 >> x1 >> y1;
+        Input_traits<WNT>::Input_rat_type ix0, iy0, ix1, iy1;
+        inp >> ix0 >> iy0 >> ix1 >> iy1;
+        x0 = ix0; y0 = iy0; x1 = ix1; y1 = iy1;
       } else if (format == CGAL::Bench_parse_args::FORMAT_INT) {
-        int ix0, iy0, ix1, iy1;
+        Input_traits<WNT>::Input_int_type ix0, iy0, ix1, iy1;
         inp >> ix0 >> iy0 >> ix1 >> iy1;
-        x0 = ix0; y0 = iy0; x1 = ix1; y1 = iy1;
+        x0 = (WNT) ix0; y0 = (WNT) iy0; x1 = (WNT) ix1; y1 = (WNT) iy1;
       } else if (format == CGAL::Bench_parse_args::FORMAT_FLT) {
-        float ix0, iy0, ix1, iy1;
+        Input_traits<WNT>::Input_float_type ix0, iy0, ix1, iy1;
         inp >> ix0 >> iy0 >> ix1 >> iy1;
-        x0 = ix0; y0 = iy0; x1 = ix1; y1 = iy1;
+        x0 = (WNT) ix0; y0 = (WNT) iy0; x1 = (WNT) ix1; y1 = (WNT) iy1;
       } else {
         std::cerr << "Illegal format!" << std::endl;
         return -1;
       }
-
-#if NT == LAZY_LEDA_RAT_NT || NT == LAZY_QUOTIENT_MP_FLOAT_NT
-      WNT lazy_exact_x0(x0);
-      WNT lazy_exact_x1(x1);
-      WNT lazy_exact_y0(y0);
-      WNT lazy_exact_y1(y1);
-      Point_2 p1(lazy_exact_x0, lazy_exact_y0);
-      Point_2 p2(lazy_exact_x1, lazy_exact_y1);
-#else
+      
       Point_2 p1(x0, y0);
       Point_2 p2(x1, y1);
-#endif
+
       // if (p1 == p2) continue;
       Curve_2 curve(p1, p2);
       ++curves_out = curve;
