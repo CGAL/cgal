@@ -32,8 +32,7 @@ CGAL_BEGIN_NAMESPACE
 // LEDA integer's internal representation, which is not possible without
 // modifying LEDA.
 
-template <>
-struct converter
+struct converter<Interval_nt_advanced,leda_integer>
 {
     static inline Interval_nt_advanced do_it (const leda_integer & z)
     {
@@ -43,7 +42,7 @@ struct converter
     FPU_set_rounding_to_nearest();
     double approx = to_double(z);
     FPU_set_rounding_to_infinity();
-    Interval_nt_advanced result = approx + Interval_nt_advanced::smallest;
+    Interval_nt_advanced result = approx + CGAL_IA_SMALLEST;
 #ifdef CGAL_IA_DEBUG
     FPU_set_rounding_to_nearest();
     CGAL_assertion(     leda_integer(result.lower_bound()) <= z &&

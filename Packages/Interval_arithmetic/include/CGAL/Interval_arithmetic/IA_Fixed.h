@@ -28,8 +28,7 @@ CGAL_BEGIN_NAMESPACE
 
 // The Fixed is in fact a float => trivial conversion.
 
-template <>
-struct converter
+struct converter<Interval_nt_advanced,Fixed_precision_nt>
 {
     static inline Interval_nt_advanced do_it (const Fixed_precision_nt & z)
     { return to_double(z); }

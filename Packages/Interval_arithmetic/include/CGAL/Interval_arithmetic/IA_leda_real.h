@@ -26,8 +26,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template <>
-struct converter
+struct converter<Interval_nt_advanced,leda_real>
 {
     static inline Interval_nt_advanced do_it (const leda_real & z)
     {

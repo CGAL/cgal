@@ -32,8 +32,7 @@ CGAL_BEGIN_NAMESPACE
 // It should be much faster to have a low level function especially designed
 // for that using rounding to infinity.
 
-template <>
-struct converter
+struct converter<Interval_nt_advanced,Gmpz>
 {
     static inline Interval_nt_advanced do_it (const Gmpz & z)
     {
@@ -43,7 +42,7 @@ struct converter
 	FPU_set_rounding_to_nearest();
 	double approx = to_double(z);
 	FPU_set_rounding_to_infinity();
-	Interval_nt_advanced result = approx + Interval_nt_advanced::smallest;
+	Interval_nt_advanced result = approx + CGAL_IA_SMALLEST;
 #ifdef CGAL_IA_DEBUG
 	FPU_set_rounding_to_nearest();
 	CGAL_assertion(	Gmpz(result.lower_bound()) <= z &&

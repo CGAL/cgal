@@ -30,8 +30,7 @@ CGAL_BEGIN_NAMESPACE
 // approximation, which is guaranted 1 bit error max(?), and return an
 // interval around this value (+/- ulp).
 
-template <>
-struct converter
+struct converter<Interval_nt_advanced,leda_bigfloat>
 {
     static inline Interval_nt_advanced do_it(const leda_bigfloat & z)
     {
@@ -41,7 +40,7 @@ struct converter
 	FPU_set_rounding_to_nearest();
 	double approx = to_double(z);
 	FPU_set_rounding_to_infinity();
-	Interval_nt_advanced result = approx + Interval_nt_advanced::smallest;
+	Interval_nt_advanced result = approx + CGAL_IA_SMALLEST;
 #ifdef CGAL_IA_DEBUG
 	FPU_set_rounding_to_nearest();
 	CGAL_assertion( leda_bigfloat(result.lower_bound()) <= z &&

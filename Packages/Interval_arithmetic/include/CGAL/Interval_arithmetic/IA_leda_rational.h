@@ -30,8 +30,7 @@ CGAL_BEGIN_NAMESPACE
 // conversion.  Since LEDA types (except real) don't give information on the
 // precision of to_double(), we can't do much...
 
-template <>
-struct converter
+struct converter<Interval_nt_advanced,leda_rational>
 {
     static inline Interval_nt_advanced do_it (const leda_rational & z)
     {
@@ -42,10 +41,10 @@ struct converter
     double approx = to_double(z);
     FPU_set_rounding_to_infinity();
 
-    Interval_nt_advanced result = approx + Interval_nt_advanced::smallest;
+    Interval_nt_advanced result = approx + CGAL_IA_SMALLEST;
     // We play it safe:
-    result += Interval_nt_advanced::smallest;
-    result += Interval_nt_advanced::smallest;
+    result += CGAL_IA_SMALLEST;
+    result += CGAL_IA_SMALLEST;
 #ifdef CGAL_IA_DEBUG
     FPU_set_rounding_to_nearest();
     CGAL_assertion( leda_rational(result.lower_bound()) <= z &&
