@@ -1,0 +1,32 @@
+#!/bin/sh
+#
+# Usage: driver [d1 d2 ...]
+#
+
+# if there was no argument given to the script, default to creating
+# the manual for all subdirectories listed in the file "docdirs"
+# otherwise use only those subdirectories given as arguments
+if [ $# -ne 0 ] ; then
+   DIRS="$*"
+elif [ -f docdirs ] ; then
+   DIRS=`cat docdirs`
+else
+   DIRS=""
+fi
+
+for DIR in $DIRS ; do
+  echo "***********"
+  echo "Starting with directory $DIR..."
+  echo
+  cd $DIR
+  echo "Now in directory $DIR..."
+  echo "  ... creating $DIR's HTML"
+  echo 
+  to_html 
+  echo 
+  echo "... leaving directory $DIR"
+  cd ..
+  echo
+  echo "DONE with directory $DIR"
+  echo "****************"
+done

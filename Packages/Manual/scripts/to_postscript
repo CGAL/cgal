@@ -1,0 +1,46 @@
+#!/bin/sh
+
+if [ $# -ne 0 ]; then
+    DOCDIRS="$*"
+elif [ -f wrapper.dvi ]; then
+    DOCDIRS="."
+elif [ -f docdirs ] ; then
+    DOCDIRS=`cat docdirs`
+else
+    DOCDIRS=""
+fi
+
+# add the directories (and their subdirectories) to the TEXINPUT variable
+# so dvips knows where to get the pictures
+for DIR in ${DOCDIRS}; do
+      cd $DIR
+      echo "to_postscript: Now in directory $DIR..."
+      if [ -f docdirs ]; then
+         DOC_SUBDIRS=`cat docdirs`
+         for SUBDIR in $DOC_SUBDIRS; do
+            TEXINPUTS=$TEXINPUTS:$SUBDIR
+         done
+      fi
+      export TEXINPUTS
+
+      CURR_DIR=`pwd`
+      if [ -f wrapper.dvi ]; then
+         case $CURR_DIR in 
+           *installation)  dvips -o installation.ps wrapper;; 
+           *general)       dvips -o general_intro.ps wrapper;; 
+           *kernel)        dvips -o kernel.ps wrapper;; 
+           *kernel_d)      dvips -o kernel_d.ps wrapper;; 
+           *basic)         dvips -o basic_lib.ps wrapper;; 
+           *support)       dvips -o support_lib.ps wrapper;;
+           *use_of_stl)    dvips -o use_of_stl.ps wrapper;;
+           *)               
+              echo "UNKNOWN manual part $CURR_DIR; creating ref-manual.ps"; 
+              dvips -o ref-manual.ps wrapper; 
+              gzip ref-manual.ps ;;
+         esac
+      else
+         echo "ERROR: no wrapper.dvi file in directory $DIR"
+      fi
+      echo "to_postscript: ... leaving directory $DIR"
+      cd ..
+done

@@ -841,6 +841,14 @@ Packages/Kernel_23/doc_tex/kernel/compare_x_at_y.fig -text
 Packages/Kernel_23/doc_tex/kernel/compare_x_at_y.gif -text svneol=unset#unset
 Packages/Kernel_23/doc_tex/kernel/transvecthree.gif -text svneol=unset#unset
 Packages/Kernel_23/doc_tex/kernel/transvectwo.gif -text svneol=unset#unset
+Packages/Manual/doc_tex_skel/Fig/a-full.ipe -text
+Packages/Manual/doc_tex_skel/Fig/a-simp.ipe -text
+Packages/Manual/doc_tex_skel/Fig/c-full.ipe -text
+Packages/Manual/doc_tex_skel/Fig/c-simp.ipe -text
+Packages/Manual/doc_tex_skel/Fig/g-full.ipe -text
+Packages/Manual/doc_tex_skel/Fig/g-simp.ipe -text
+Packages/Manual/doc_tex_skel/Fig/l-full.ipe -text
+Packages/Manual/doc_tex_skel/Fig/l-simp.ipe -text
 Packages/Manual_tools/doc/horizontal_struct.ips -text
 Packages/Manual_tools/doc/tools_overview.ips -text
 Packages/Manual_tools/doc/vertical_struct.ips -text

@@ -1,0 +1,48 @@
+#!/bin/sh
+
+#   Purpose: for directories that have subdirectories (names of which are
+#            provided in the file <subdir>/'docdirs') creates a new AllMains.tex
+#            file and in each subdirectory named in 'docdirs' adds a link
+#            to ./html_wrapper.
+#
+#   Usage:   clean_start [d1 d2 ...]
+
+
+
+# clean the listed directories, or, if this directory contains wrapper.tex file,
+# clean this directory, or if no wrapper.tex but a docdirs, clean the 
+# directories listed in docdirs.  Otherwise, clean nothing.
+if [ $# -ne 0 ]; then
+   DOCDIRS="$*"
+elif [ -f wrapper.tex ]; then
+   DOCDIRS="."
+elif [ -f docdirs ]; then
+   DOCDIRS=`cat docdirs`
+else
+   DOCDIRS=""
+fi
+
+
+for DIR in $DOCDIRS; do
+   if [ -f $DIR/docdirs ]; then
+   
+     DOC_SUBDIRS=`cat $DIR/docdirs`
+     
+     rm -f $DIR/AllMains.tex
+     touch $DIR/AllMains.tex
+     for SUBDIR in ${DOC_SUBDIRS}; do 
+        if [ $SUBDIR != "Title" -a $SUBDIR != "Preface" \
+            -a $SUBDIR != "Bibliography" ]; then
+          echo "\cgalColumnLayout" >> $DIR/AllMains.tex
+          echo "\include{$SUBDIR/main}" >> $DIR/AllMains.tex
+        fi
+     done
+
+     for SUBDIR in $DOC_SUBDIRS ; do
+       rm -f $DIR/$SUBDIR/html_wrapper
+       ln -s $DIR/html_wrapper $DIR/$SUBDIR/html_wrapper
+     done
+   fi
+done
+
+

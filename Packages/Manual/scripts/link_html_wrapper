@@ -1,0 +1,33 @@
+#!/bin/sh
+
+if [ $# -ne 0 ]; then
+   DOCDIRS="$*"
+elif [ -f wrapper.tex ]; then
+   DOCDIRS="."
+elif [ -f docdirs ]; then
+   DOCDIRS=`cat docdirs`
+else
+   DOCDIRS=""
+fi
+
+
+for DIR in $DOCDIRS; do
+   if [ -f $DIR/docdirs ]; then
+   
+     DOC_SUBDIRS=`cat $DIR/docdirs`
+     
+     CURR_DIR=`pwd`
+     for SUBDIR in $DOC_SUBDIRS ; do
+       rm -f $DIR/$SUBDIR/html_wrapper
+       if [ $DIR = "basic" ]; then
+          rm -f $DIR/${SIBDIR}_ref/html_wrapper
+       fi
+       ln -s $CURR_DIR/html_wrapper $DIR/$SUBDIR/html_wrapper
+       if [ $DIR = "basic" -a $SUBDIR != "Title" -a $SUBDIR != "Preface" ]; then
+          ln -s $CURR_DIR/html_wrapper $DIR/${SUBDIR}_ref/html_wrapper
+       fi
+     done
+   fi
+done
+
+

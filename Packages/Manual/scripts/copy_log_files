@@ -1,0 +1,52 @@
+#!/bin/sh
+#  Purpose: to copy the log files created from the test_html and test_tex
+#           scripts to the location of the manual test web pages
+#
+#  Usage: copy_log_files <destination>
+#
+
+
+if [ $# -ne 1 ] ; then
+   echo "Usage: $0 <destination>"
+   exit 1
+else
+   DESTINATION="$1"
+fi
+
+
+if [ -f docdirs ] ; then
+   DIRS=`cat docdirs`
+else 
+   echo "No docdirs file.  Nothing is copied."
+   exit 1
+fi
+
+if [ ! -d $DESTINATION ]; then
+   mkdir $DESTINATION
+fi
+
+for DIR in $DIRS ; do
+  echo "copying from $DIR..."
+  if [ ! -d $DESTINATION/$DIR ] ; then
+     mkdir "$DESTINATION/$DIR"
+  fi
+  cp $DIR/wrapper.log $DESTINATION/$DIR/.
+  cp $DIR/wrapper.blg $DESTINATION/$DIR/.
+  cp $DIR/wrapper.ilg $DESTINATION/$DIR/.
+  if [ ! -d $DIR/html ]; then
+    mkdir $DIR/html
+  fi
+  cp $DIR/html/to_html.log $DESTINATION/$DIR/.
+  if [ -f $DIR/docdirs ]; then
+     SUBDIRS=`cat $DIR/docdirs`
+     for SUBDIR in $SUBDIRS; do
+        if [ ! -d $DESTINATION/$DIR/$SUBDIR ]; then
+           mkdir $DESTINATION/$DIR/$SUBDIR
+        fi
+        cp $DIR/$SUBDIR/main.log $DESTINATION/$DIR/$SUBDIR/.
+        cp $DIR/$SUBDIR/main.ilg $DESTINATION/$DIR/$SUBDIR/.
+        cp $DIR/html_test/$SUBDIR/to_html.log $DESTINATION/$DIR/$SUBDIR/.
+     done
+  fi
+  
+done

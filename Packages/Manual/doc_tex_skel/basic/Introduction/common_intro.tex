@@ -1,0 +1,17 @@
+\cgal, the {\em Computational Geometry Algorithms Library}, is written in 
+\CC\ and consists of three major parts.
+The first part is the kernel, which consists of constant-size non-modifiable 
+geometric primitive objects and operations on these objects. 
+The objects are represented both as stand-alone classes that are
+parameterized by a representation class, which specifies
+the underlying number types used for calculations and as members of the
+kernel classes, which allows for more flexibility and adaptability of the 
+kernel.
+The second part is a collection of basic geometric data structures and
+algorithms, which are parameterized by traits classes that define the 
+interface between the data structure or algorithm and the primitives they use.
+In many cases, the kernel classes provided in \cgal\ can be used as traits
+classes for these data structures and algorithms.
+The third part of the library consists of non-geometric support facilities, 
+such as circulators, random sources, I/O support for debugging and for 
+interfacing \cgal\ to various visualization tools.  
