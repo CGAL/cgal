@@ -617,6 +617,31 @@ _install_version_number()
     ${_printf} "%s\n" "${CGAL_INSTALL_VERSION}" | ${_awk} '{print $2}'
 }
 
+# on some systems, like FreeBSD, printf handles options, that's why
+# the first options should be --
+#
+# printf to use on some systems
+printf_dash_dash()
+{
+    ${_printf_bin} -- "$@"
+}
+
+# check if printf handles options
+# $1 indicates verbosity
+_check_printf()
+{
+    if [ x`${_printf} "-I%s" CGAL 2>/dev/null` != "x-ICGAL" ]; then
+	_printf_bin=${_printf}
+	_printf=printf_dash_dash
+	if [ x`${_printf} "-I%s" CGAL 2>/dev/null` != "x-ICGAL" ]; then
+	    exit_on_error "Cannot find a working printf."
+	fi
+	if [ -n "$1" ]; then
+	    log_print "REMARK: printf handles options: printf='printf --'"
+	fi
+    fi
+}
+
 # check, if all needed utility programs are available
 # (they should be on a unix system, but ...)
 check_for_utils()
@@ -626,6 +651,9 @@ check_for_utils()
     _check_for_sysutil dirname y
     _check_for_sysutil uname y
     _check_for_sysutil printf y
+
+    _check_printf $INSTALL_VERBOSE
+
     _check_for_sysutil cat y
     _check_for_sysutil cp y
     _check_for_sysutil mv y
@@ -985,9 +1013,9 @@ print_undef()
 quote()
 {
     if [ -z "${CYGWIN_COMPILER}" ]; then
-	printf "%s\n" "${*}"
+	${_printf} "%s\n" "${*}"
     else
-	printf "%s\n" "\"${*}\""
+	${_printf} "%s\n" "\"${*}\""
     fi
 }
 
@@ -1108,6 +1136,7 @@ EOF3
 create_standard_header_replacements()
 {
     ${_printf} "%s\n" "${_LEFTSPACE}Checking for standard header files"
+    
 #
 # Decide if a .h suffix is needed for header files.
 #
@@ -2258,7 +2287,7 @@ print_as_shell_comment()
 # print $2 times string $1 ($1 must not contain '@'!)
 string_n_print()
 {
-    _tmp=`eval "printf \"\`${_printf} \"$1@$2\" | ${_awk} 'BEGIN {FS=\"@\"} 
+    _tmp=`eval "${_printf} \"\`${_printf} \"$1@$2\" | ${_awk} 'BEGIN {FS=\"@\"} 
 	{ for ( i=0; i<$2; ++i) printf $1}'\`\""`
    write_buffer "${_tmp}"
 }
@@ -6311,7 +6340,6 @@ set_variable_from_command_line()
 	exit_on_error "Argument \"${1}\" expected"
     fi
 }
-
 
 _WHAT_TO_DO=''
 _CONFLICT=''

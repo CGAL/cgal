@@ -7,6 +7,7 @@
 //	actual revision
 //---------------------------------------------------------------------
 
+GLOB: patched to support the FreeBSD printf
 GLOB: VC7 is supported, VC6 is not anymore.
 GLOB: Fix typo.
 GLOB: Move GMP link options at the end.
