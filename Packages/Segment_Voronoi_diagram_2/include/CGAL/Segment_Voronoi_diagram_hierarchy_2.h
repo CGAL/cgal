@@ -31,7 +31,7 @@
 #include <CGAL/Segment_Voronoi_diagram_data_structure_2.h>
 #include <CGAL/Segment_Voronoi_diagram_vertex_base_2.h>
 #include <CGAL/Segment_Voronoi_diagram_hierarchy_vertex_base_2.h>
-#include <CGAL/Segment_Voronoi_diagram_face_base_2.h>
+#include <CGAL/Triangulation_face_base_2.h>
 
 
 CGAL_BEGIN_NAMESPACE
@@ -54,7 +54,7 @@ template < class Gt,
               Segment_Voronoi_diagram_hierarchy_vertex_base_2<
                  Segment_Voronoi_diagram_vertex_base_2<Gt,PC,
 			     typename Gt::Intersections_tag> >,
-              Segment_Voronoi_diagram_face_base_2<Gt> >,
+              Triangulation_face_base_2<Gt> >,
 	   class LTag = Tag_false>
 class Segment_Voronoi_diagram_hierarchy_2
   : public Segment_Voronoi_diagram_2<Gt,PC,DS,LTag>

@@ -27,11 +27,9 @@
 #include <algorithm>
 
 #include <CGAL/Triangulation_2.h>
-// the following include should be removed
-#include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/Segment_Voronoi_diagram_site_2.h>
 #include <CGAL/Segment_Voronoi_diagram_data_structure_2.h>
-#include <CGAL/Segment_Voronoi_diagram_face_base_2.h>
+#include <CGAL/Triangulation_face_base_2.h>
 #include <CGAL/Segment_Voronoi_diagram_vertex_base_2.h>
 
 #include <CGAL/Segment_Voronoi_diagram_constructions_C2.h>
@@ -99,7 +97,7 @@ template<class Gt,
 	 class DS = Segment_Voronoi_diagram_data_structure_2 < 
                 Segment_Voronoi_diagram_vertex_base_2<Gt,PC,
 			    typename Gt::Intersections_tag>,
-                Segment_Voronoi_diagram_face_base_2<Gt> >,
+                Triangulation_face_base_2<Gt> >,
 	 class LTag = Tag_false >
 class Segment_Voronoi_diagram_2
   : private Triangulation_2<

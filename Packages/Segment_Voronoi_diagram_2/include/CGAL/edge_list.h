@@ -64,7 +64,7 @@ namespace CGALi {
   public:
     // remove the following method and make SENTINEL_EDGE a static const
     // member of the class.
-    static Edge sentinel_edge() {
+    static const Edge& sentinel_edge() {
       static Edge SENTINEL_EDGE = Edge(Face_handle(), sentinel_index());
       return SENTINEL_EDGE;
     }
