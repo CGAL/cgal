@@ -15,7 +15,8 @@
 // revision      : $Revision$
 // author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //
-// coordinator   : INRIA Sophia Antipolis (Mariette Yvinec)
+// coordinator   : INRIA Sophia Antipolis 
+//                 (Mariette Yvinec <Mariette.Yvinec@sophia.inria.fr>)
 //
 // ============================================================================
 //
@@ -28,7 +29,6 @@
 #ifndef CGAL_TRIANGULATION_DS_CELL_3_H
 #define CGAL_TRIANGULATION_DS_CELL_3_H
 
-#include <CGAL/Triangulation_short_names_3.h>
 #include <CGAL/Triangulation_utils_3.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -39,8 +39,6 @@ class Triangulation_ds_vertex_3;
 template < class Vb, class Cb >
 class Triangulation_data_structure_3;
 
-//template < class Tds>
-//class Triangulation_ds_iterator_base_3;
 template < class Tds>
 class Triangulation_ds_cell_iterator_3;
 template < class Tds>

@@ -16,7 +16,8 @@
 //
 // author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //
-// coordinator   : INRIA Sophia Antipolis (Mariette Yvinec)
+// coordinator   : INRIA Sophia Antipolis 
+//                 (Mariette Yvinec <Mariette.Yvinec@sophia.inria.fr>)
 //
 // ============================================================================
 
@@ -28,8 +29,7 @@
 #include <iostream>
 #include <list>
 #include <map> 
-//#include <algo>
-//#include <pair.h>
+
 #include <utility>
 
 #include <CGAL/Triangulation_utils_3.h>
@@ -42,7 +42,6 @@
 #include <CGAL/predicates_on_points_3.h>
 
 #include <CGAL/triangulation_assertions.h>
-#include <CGAL/Triangulation_short_names_3.h>
 
 #include <CGAL/Triangulation_data_structure_3.h>
 
@@ -83,8 +82,6 @@ class Triangulation_3
 {
   friend std::istream& operator>> CGAL_NULL_TMPL_ARGS
   (std::istream& is, Triangulation_3<GT,Tds> &tr);
-//   friend std::ostream& operator<< CGAL_NULL_TMPL_ARGS
-//   (std::ostream& os, const Triangulation_3<GT,Tds> &tr);
 
   friend class Triangulation_cell_3<GT,Tds>;
   friend class Triangulation_vertex_3<GT,Tds>;
@@ -98,7 +95,6 @@ class Triangulation_3
   friend Triangulation_cell_circulator_3<GT,Tds>;
 
 public:
-  //  typedef Triangulation_3<GT,Tds> Triangulation;
 
   typedef typename GT::Point Point;
   typedef typename GT::Segment Segment;
@@ -140,8 +136,8 @@ private:
     {
       infinite = (Vertex*) _tds.insert_outside_affine_hull(Vertex(Point(500,500,500)));
       // forces the compiler to instanciate debug :
-      debug( infinite ); 
-      debug( Cell_handle() );
+      handle2pointer( infinite ); 
+      handle2pointer( Cell_handle() );
     }
   
   // debug
@@ -235,7 +231,7 @@ public:
   const Tds & tds() const 
     { return _tds;}
   
-  inline
+  //  inline
   int dimension() const 
     { return _tds.dimension();}
 

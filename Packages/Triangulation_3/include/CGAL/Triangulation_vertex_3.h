@@ -15,7 +15,8 @@
 // revision      : $Revision$
 // author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //
-// coordinator   : INRIA Sophia Antipolis (Mariette Yvinec)
+// coordinator   : INRIA Sophia Antipolis 
+//                 (Mariette Yvinec <Mariette.Yvinec@sophia.inria.fr>)
 //
 // ============================================================================
 
@@ -23,7 +24,6 @@
 #define CGAL_TRIANGULATION_VERTEX_3_H
 
 #include <CGAL/Pointer.h>
-#include <CGAL/Triangulation_short_names_3.h>
 #include <CGAL/Triangulation_data_structure_3.h>
 #include <CGAL/Triangulation_circulators_3.h>
 

@@ -15,7 +15,8 @@
 // revision      : $Revision$
 // author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //
-// coordinator   : INRIA Sophia Antipolis (Mariette Yvinec)
+// coordinator   : INRIA Sophia Antipolis 
+//                 (Mariette Yvinec <Mariette.Yvinec@sophia.inria.fr>)
 //
 // ============================================================================
 
@@ -87,7 +88,7 @@ public:
 
 template <class Gt, class Tds>
 Triangulation_vertex_3<Gt,Tds> * 
-debug(const Triangulation_vertex_handle_3<Gt,Tds> v)
+handle2pointer(const Triangulation_vertex_handle_3<Gt,Tds> v)
 {
   return v.ptr();
 }
@@ -140,7 +141,7 @@ public:
 
 template <class Gt, class Tds>
 Triangulation_cell_3<Gt,Tds> * 
-debug(const Triangulation_cell_handle_3<Gt,Tds> c)
+handle2pointer(const Triangulation_cell_handle_3<Gt,Tds> c)
 {
   return c.ptr();
 }
