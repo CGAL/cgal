@@ -1,12 +1,13 @@
 /****************************************************************************
 ** CGAL::Qt_widget_tool meta object code from reading C++ file 'Qt_Window_tool.h'
 **
-** Created: Mon Jun 25 17:31:03 2001
+** Created: Mon Jul 2 17:30:54 2001
 **      by: The Qt MOC ($Id$)
 **
 ** WARNING! All changes made in this file will be lost!
 *****************************************************************************/
 
+#define Q_MOC_Qt_widget_tool
 #if !defined(Q_MOC_OUTPUT_REVISION)
 #define Q_MOC_OUTPUT_REVISION 9
 #elif Q_MOC_OUTPUT_REVISION != 9
@@ -17,6 +18,11 @@
 #include <qmetaobject.h>
 #include <qapplication.h>
 
+#if defined(Q_SPARCWORKS_FUNCP_BUG)
+#define Q_AMPERSAND
+#else
+#define Q_AMPERSAND &
+#endif
 
 
 const char *CGAL::Qt_widget_tool::className() const
@@ -57,13 +63,11 @@ QMetaObject* CGAL::Qt_widget_tool::staticMetaObject()
 #ifndef QT_NO_PROPERTIES
 #endif // QT_NO_PROPERTIES
     QMetaData::Access *slot_tbl_access = 0;
-    typedef void (CGAL::Qt_widget_tool::*m2_t0)(CGAL::Object);
-    typedef void (QObject::*om2_t0)(CGAL::Object);
-    m2_t0 v2_0 = &CGAL::Qt_widget_tool::new_object;
-    om2_t0 ov2_0 = (om2_t0)v2_0;
+    typedef void(CGAL::Qt_widget_tool::*m2_t0)(CGAL::Object);
+    m2_t0 v2_0 = Q_AMPERSAND CGAL::Qt_widget_tool::new_object;
     QMetaData *signal_tbl = QMetaObject::new_metadata(1);
     signal_tbl[0].name = "new_object(CGAL::Object)";
-    signal_tbl[0].ptr = (QMember)ov2_0;
+    signal_tbl[0].ptr = (QMember)v2_0;
     metaObj = QMetaObject::new_metaobject(
 	"CGAL::Qt_widget_tool", "QObject",
 	0, 0,
@@ -102,11 +106,19 @@ void CGAL::Qt_widget_tool::new_object( CGAL::Object t0 )
 	object->setSender( this );
 	switch ( c->numArgs() ) {
 	    case 0:
+#ifdef Q_FP_CCAST_BROKEN
+		r0 = reinterpret_cast<RT0>(*(c->member()));
+#else
 		r0 = (RT0)*(c->member());
+#endif
 		(object->*r0)();
 		break;
 	    case 1:
+#ifdef Q_FP_CCAST_BROKEN
+		r1 = reinterpret_cast<RT1>(*(c->member()));
+#else
 		r1 = (RT1)*(c->member());
+#endif
 		(object->*r1)(t0);
 		break;
 	}

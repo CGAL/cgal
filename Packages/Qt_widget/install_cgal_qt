@@ -5,36 +5,36 @@
 # $Id$
 # ---------------------------------------------------------------------
 # 
-# Copyright (c) 1998-2000 The CGAL Consortium
+# Copyright (c) 1997-2001 The CGAL Consortium
 #
-# This software and related documentation is part of the Computational
+# This software and related documentation are part of the Computational
 # Geometry Algorithms Library (CGAL).
-#
-# This software and documentation is provided "as-is" and without warranty
+# This software and documentation are provided "as-is" and without warranty
 # of any kind. In no event shall the CGAL Consortium be liable for any
-# damage of any kind. 
+# damage of any kind.
 #
-# Every use of CGAL requires a license. 
+# Every use of CGAL requires a license.
 #
 # Academic research and teaching license
 # - For academic research and teaching purposes, permission to use and copy
 #   the software and its documentation is hereby granted free of charge,
 #   provided that it is not a component of a commercial product, and this
-#   notice appears in all copies of the software and related documentation. 
+#   notice appears in all copies of the software and related documentation.
 #
 # Commercial licenses
-# - A commercial license is available through Algorithmic Solutions, who 
-#   also  markets LEDA (http://www.algorithmic-solutions.de). 
 # - Commercial users may apply for an evaluation license by writing to
-#   Algorithmic Solutions (contact@algorithmic-solutions.com). 
-#
+#   (Andreas.Fabri@geometryfactory.com).
+# - A commercial license is available through Algorithmic Solutions, who also
+#   markets LEDA (http://www.algorithmic-solutions.com).
+# 
 # The CGAL Consortium consists of Utrecht University (The Netherlands),
-# ETH Zurich (Switzerland), Free University of Berlin (Germany),
+# ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
 # INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
-# (Germany) Max-Planck-Institute Saarbrucken (Germany), RISC Linz (Austria),
+# (Germany), Max-Planck-Institute Saarbrucken (Germany), RISC Linz (Austria),
 # and Tel-Aviv University (Israel).
 #
 # ---------------------------------------------------------------------
+
 
 # ---------------------------------------------------------------------
 # some important global variables
@@ -115,7 +115,7 @@ CGAL_CONFIG_PREFIX='CGAL_CFG_'
 
 # ---------------------------------------------
 # set to empty string, if you want to disable testsuite 
-INTERNAL_RELEASE='y'
+INTERNAL_RELEASE=''
 
 # ---------------------------------------------
 # set to non-empty string, if MIPSPRO 64 compiler
@@ -786,6 +786,8 @@ set_compiler_flags()
     CGAL_SHARED_LIB_CXXFLAGS="-fpic"
     CGAL_SHARED_LIB_LDFLAGS=
     CGAL_SHARED_LIB_CREATE="false"
+    CGAL_WINLIB_CXXFLAGS=""
+    WINDOW_INCLUDE=""
     WINDOW_DIR="/usr/lib/X11"
     XLIBS="-lX11"
     RUNTIME_LINKER_FLAG=''
@@ -804,6 +806,8 @@ set_compiler_flags()
     SAVE_THE_BLANK=""
     EXE_EXT=""
     CGAL_LIBNAME="libCGAL.a"
+    CGAL_WIN_LIBNAME="libCGALWin.a"
+    CGAL_WIN_EXTRA_DIR=x11
     GMP_LIBNAME="libgmp.a"
     MATH_LIB="m"
     SEPARATE_LIBPATH=""
@@ -831,6 +835,8 @@ set_compiler_flags()
 	    EXE_OPT="-e"
 	    EXE_EXT=".exe"
 	    CGAL_LIBNAME="CGAL.lib"
+	    CGAL_WIN_LIBNAME="CGALWin.lib"
+	    CGAL_WIN_EXTRA_DIR=mswin
 	    GMP_LIBNAME="gmp.lib"
 	    MATH_LIB=""
 	    SEPARATE_LIBPATH="y"
@@ -858,6 +864,8 @@ set_compiler_flags()
 	    EXE_OPT="-Fp"
 	    EXE_EXT=".exe"
 	    CGAL_LIBNAME="CGAL.lib"
+	    CGAL_WIN_LIBNAME="CGALWin.lib"
+	    CGAL_WIN_EXTRA_DIR=mswin
 	    GMP_LIBNAME="gmp.lib"
 	    MATH_LIB=
 	    START_LD_OPT="-link "
@@ -874,6 +882,7 @@ set_compiler_flags()
 	    #### settings for sgi mipspro compiler V7.3 on irix6
 	    ADDITIONAL_CXXFLAGS="-LANG:std"
 	    ADDITIONAL_LDFLAGS="-LANG:std"
+	    CGAL_LIB_CREATE="\$(CGAL_CXX) -ar -o''"
 	    CGAL_SHARED_LIB_CXXFLAGS=
 	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -shared"
 	    RUNTIME_LINKER_FLAG="-rpath "
@@ -881,6 +890,7 @@ set_compiler_flags()
 	    ;;
 	*IRIX*6.*CC*)
 	    #### settings for sgi mipspro compiler on irix6
+	    CGAL_LIB_CREATE="\$(CGAL_CXX) -ar -o''"
 	    CGAL_SHARED_LIB_CXXFLAGS=
 	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -shared"
 	    RUNTIME_LINKER_FLAG="-rpath "
@@ -901,6 +911,7 @@ set_compiler_flags()
             CGAL_LIB_CREATE="\$(CGAL_CXX) -o ''"
             CGAL_SHARED_LIB_CXXFLAGS="-Kpic"
             CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -G"
+	    WINDOW_INCLUDE="/usr/openwin/include"
             WINDOW_DIR="/usr/openwin/lib"
             RUNTIME_LINKER_FLAG="-R "
             PRINT_STACKTRACE_PROGRAM="dbx"
@@ -912,6 +923,7 @@ set_compiler_flags()
 	    CGAL_LIB_CREATE="\$(CGAL_CXX) -xar -o ''"
 	    CGAL_SHARED_LIB_CXXFLAGS="-pic"
 	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -G"
+	    WINDOW_INCLUDE="/usr/openwin/include"
 	    WINDOW_DIR="/usr/openwin/lib"
 	    RUNTIME_LINKER_FLAG="-R "
 	    PRINT_STACKTRACE_PROGRAM="dbx"
@@ -921,6 +933,8 @@ set_compiler_flags()
 	    ADDITIONAL_CXXFLAGS="-Wall"
 	    LONG_NAME_PROBLEM_LDFLAGS="-z nodefs -s"
 	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -G"
+	    CGAL_WINLIB_CXXFLAGS="-fpermissive"
+	    WINDOW_INCLUDE="/usr/openwin/include"
 	    WINDOW_DIR="/usr/openwin/lib"
 	    RUNTIME_LINKER_FLAG="-R "
 	    PRINT_STACKTRACE_PROGRAM="gdb"
@@ -3419,8 +3433,8 @@ print_os_setting()
 {
     ${1} "OS:\t\t${SYST}" 
     ${1} "COMPILER:\t`extended_compiler_description`" 
-#    _set_tmp_to_not_or_not "${LEDA_SUPPORT}"
-#    ${1} "LEDA:\t\t${_tmp}supported" 
+    _set_tmp_to_not_or_not "${LEDA_SUPPORT}"
+    ${1} "LEDA:\t\t${_tmp}supported" 
     _set_tmp_to_not_or_not "${GMP_SUPPORT}"
     ${1} "GMP:\t\t${_tmp}supported" 
     _set_tmp_to_not_or_not "${CLN_SUPPORT}"
@@ -3719,6 +3733,14 @@ store_compiler_settings()
     _store_install_config_variable LEDA_INCL_DIR >>${_file}
     _store_install_config_variable NEED_EXTRA_LEDA_LDIR >>${_file}
     _store_install_config_variable LEDA_LIB_DIR >>${_file}
+    _store_install_config_variable GMP_SUPPORT >>${_file}
+    _store_install_config_variable GMP_INSTALLATION >>${_file}
+    _store_install_config_variable GMP_INCL_DIR >>${_file}
+    _store_install_config_variable GMP_LIB_DIR >>${_file}
+    _store_install_config_variable CLN_SUPPORT >>${_file}
+    _store_install_config_variable CLN_INSTALLATION >>${_file}
+    _store_install_config_variable CLN_INCL_DIR >>${_file}
+    _store_install_config_variable CLN_LIB_DIR >>${_file}
     _store_install_config_variable QT_SUPPORT >>${_file}
     _store_install_config_variable QT_ADVANCED_MODE >>${_file}
     _store_install_config_variable NEED_EXTRA_QTDIR >>${_file}
@@ -3729,14 +3751,6 @@ store_compiler_settings()
     _store_install_config_variable QT_LIB_DIR >>${_file}
     _store_install_config_variable NEED_EXTRA_QTMOC >>${_file}
     _store_install_config_variable QT_MOC >>${_file}
-    _store_install_config_variable GMP_SUPPORT >>${_file}
-    _store_install_config_variable GMP_INSTALLATION >>${_file}
-    _store_install_config_variable GMP_INCL_DIR >>${_file}
-    _store_install_config_variable GMP_LIB_DIR >>${_file}
-    _store_install_config_variable CLN_SUPPORT >>${_file}
-    _store_install_config_variable CLN_INSTALLATION >>${_file}
-    _store_install_config_variable CLN_INCL_DIR >>${_file}
-    _store_install_config_variable CLN_LIB_DIR >>${_file}
     _store_install_config_variable CUSTOM_CXXFLAGS  >>${_file}
     _store_install_config_variable CUSTOM_LDFLAGS >>${_file}
     _store_install_config_variable LONG_NAME_PROBLEM >>${_file}
@@ -3763,6 +3777,16 @@ test_setup()
 
     # COMPILER
     if [ -z "${CONFIG_TEST_PASSED}" ]; then
+	print_filled_line
+	print_line "The following lines show results of configuration tests."
+	print_line \
+	  "Some of the tests might fail, since many compilers are"
+	print_line "still not completely ANSI/ISO compliant."
+	print_line "Since we worked around the arising problems," 
+	print_center_line "${_bold_on}*** CGAL will work fine ***${_bold_off}"
+	print_line "regardless of the outcome of these tests."
+	print_filled_line
+	flush_buffer
 	test_compiler_specifica "${INSTALL_VERBOSE}"
     fi
 
@@ -3900,8 +3924,8 @@ _set_support()
 	    ;;
 	*GNU*)
 	    case `compiler_version` in
-		2.9*) CGAL_SUPPORT_COMPILER='y';;
-		egcs-2*) CGAL_SUPPORT_COMPILER='y';;
+		3.0*) CGAL_SUPPORT_COMPILER='y';;
+		2.95*) CGAL_SUPPORT_COMPILER='y';;
 		*) CGAL_SUPPORT_COMPILER='';;
 	    esac
 	    ;;
@@ -3943,8 +3967,8 @@ menu_header()
     print_line     "OS:                  ${SYST}"
     print_line \
 	"Compiler:            `extended_compiler_description`"
-#    _set_tmp_to_not_or_not "${LEDA_SUPPORT}"
-#    print_line     "LEDA:                ${_tmp}supported." 
+    _set_tmp_to_not_or_not "${LEDA_SUPPORT}"
+    print_line     "LEDA:                ${_tmp}supported." 
     _set_tmp_to_not_or_not "${GMP_SUPPORT}"
     print_line     "GMP:                 ${_tmp}supported." 
     _set_tmp_to_not_or_not "${CLN_SUPPORT}"
@@ -5036,6 +5060,20 @@ write_compiler_flags()
   else
     ${_printf} "\t%s\n\n" "'-I\$(CGAL_INCL_DIR)'" >> ${FILE}
   fi
+
+  #
+  # CGAL_WINLIB_CXXFLAGS
+  #
+  ${_printf} "%s\\\\\n" \
+    "CGAL_WINLIB_CXXFLAGS = " >> ${FILE}
+  if [ -n "${WINDOW_INCLUDE}" ]; then
+    ${_printf} "\t%s\n\n" \
+      "\$(CGAL_LIB_CXXFLAGS) ${CGAL_WINLIB_CXXFLAGS} -I${WINDOW_INCLUDE}" \
+      >> ${FILE}
+  else
+    ${_printf} "\t%s\n\n" \
+      "\$(CGAL_LIB_CXXFLAGS) ${CGAL_WINLIB_CXXFLAGS}" >> ${FILE}
+  fi
 }
 
 # write linker flags for a CGAL include makefile
@@ -5152,6 +5190,9 @@ write_linker_flags()
     LIBS="${LIBS} `leda_lib_option P``leda_lib_option G``leda_lib_option L`"
     GEOWLIBS="${WLIBS} `leda_lib_option GeoW``leda_lib_option D3``leda_lib_option W``leda_lib_option P``leda_lib_option G``leda_lib_option L` ${XLIBS}"
     WLIBS="${WLIBS} `leda_lib_option W``leda_lib_option P``leda_lib_option G``leda_lib_option L` ${XLIBS}"
+  else
+    # no LEDA --> use libCGALWin
+    WLIBS="${WLIBS} `lib_option CGALWin` ${XLIBS}"
   fi
   if [ -n "${GMP_SUPPORT}" ]; then
     if [ "${GMP_INSTALLATION}" = 'x' -o \
@@ -5239,38 +5280,36 @@ write_linker_flags()
   #
   # CGAL_WINDOW_LIBPATH
   #
-  if [ -n "${LEDA_SUPPORT}" ]; then
-    if [ -n "${WINDOW_DIR}" ]; then 
-	LIB_PATH="${LIB_PATH} ${LIBPATH_OPT}${WINDOW_DIR}"
-	RUNTIME_LIB_PATH="${RUNTIME_LIB_PATH}:${WINDOW_DIR}"
-    fi
-    if [ -n "${SEPARATE_LIBPATH}" ]; then
-	${_printf}  "CGAL_WINDOW_LD_LIBPATH =\n\n" >> ${FILE}
-	${_printf}  "CGAL_WINDOW_LIBPATH =" >> ${FILE}
-    else
-	${_printf}  "CGAL_WINDOW_LIBPATH =\n\n" >> ${FILE}
-	${_printf}  "CGAL_WINDOW_LD_LIBPATH =" >> ${FILE}
-    fi
-    makefile_print_continuationline "${CUSTOM_LIBPATH}" >> ${FILE}
-    makefile_print_continuationline "${LIB_PATH}" >> ${FILE}
-    if [ -n "${RUNTIME_LINKER_FLAG}" ]; then
-      makefile_print_continuationline "${RUNTIME_LINKER_FLAG}${RUNTIME_LIB_PATH}" \
-	>> ${FILE}
-    fi
-    ${_printf} "\n\n"  >> ${FILE}
+  if [ -n "${WINDOW_DIR}" ]; then 
+    LIB_PATH="${LIB_PATH} ${LIBPATH_OPT}${WINDOW_DIR}"
+    RUNTIME_LIB_PATH="${RUNTIME_LIB_PATH}:${WINDOW_DIR}"
   fi
+  if [ -n "${SEPARATE_LIBPATH}" ]; then
+    ${_printf}  "CGAL_WINDOW_LD_LIBPATH =\n\n" >> ${FILE}
+    ${_printf}  "CGAL_WINDOW_LIBPATH =" >> ${FILE}
+  else
+    ${_printf}  "CGAL_WINDOW_LIBPATH =\n\n" >> ${FILE}
+    ${_printf}  "CGAL_WINDOW_LD_LIBPATH =" >> ${FILE}
+  fi
+  makefile_print_continuationline "${CUSTOM_LIBPATH}" >> ${FILE}
+  makefile_print_continuationline "${LIB_PATH}" >> ${FILE}
+  if [ -n "${RUNTIME_LINKER_FLAG}" ]; then
+    makefile_print_continuationline "${RUNTIME_LINKER_FLAG}${RUNTIME_LIB_PATH}" \
+  	>> ${FILE}
+  fi
+  ${_printf} "\n\n"  >> ${FILE}
 
   #
   # CGAL_WINDOW_LDFLAGS
   #
   ${_printf} "%s\\\\\n" "CGAL_WINDOW_LDFLAGS = " >> ${FILE}
-  if [ -n "${LEDA_SUPPORT}" ]; then
-    makefile_print_line "${START_LD_OPT}\$(CGAL_WINDOW_LD_LIBPATH) ${ADDITIONAL_LDFLAGS}" >> ${FILE}
-    makefile_print_line "\$(CUSTOM_LDFLAGS)" >> ${FILE}
-    ${_printf} "\t%s\n\n" "${WLIBS}" >> ${FILE}
-  else
-    ${_printf} "\t%s\n\n" "\$(CGAL_LDFLAGS)" >> ${FILE}
-  fi
+  #if [ -n "${LEDA_SUPPORT}" ]; then
+  makefile_print_line "${START_LD_OPT}\$(CGAL_WINDOW_LD_LIBPATH) ${ADDITIONAL_LDFLAGS}" >> ${FILE}
+  makefile_print_line "\$(CUSTOM_LDFLAGS)" >> ${FILE}
+  ${_printf} "\t%s\n\n" "${WLIBS}" >> ${FILE}
+  #else
+  #  ${_printf} "\t%s\n\n" "\$(CGAL_LDFLAGS)" >> ${FILE}
+  #fi
 
   #
   # CGAL_GEOWIN_LDFLAGS
@@ -5404,15 +5443,17 @@ create_include_makefile()
   esac
 
   # 
-  # CGAL_LIB
+  # CGAL_(WIN)LIB
   # 
   ${_printf} "%s\n" "CGAL_LIB = ${CGAL_LIBNAME}" >> ${FILE}
+  ${_printf} "%s\n" "CGAL_WIN_LIB = ${CGAL_WIN_LIBNAME}" >> ${FILE}
+  ${_printf} "%s\n" "CGAL_WIN_EXTRA_DIR = ${CGAL_WIN_EXTRA_DIR}" >> ${FILE}
 
   # 
   # CGAL_LIB_CXXFLAGS
   # 
   ${_printf} "%s\\\\\n" "CGAL_LIB_CXXFLAGS = " >> ${FILE}
-  makefile_print_line "${CGAL_LIB_CXXFLAGS}" >> ${FILE}
+  makefile_print_line "${CGAL_LIB_CXXFLAGS} -O" >> ${FILE}
   ${_printf} "\t%s\n" "\$(CGAL_CXXFLAGS)" >> ${FILE}
 
   # 
@@ -5436,7 +5477,7 @@ create_include_makefile()
   # CGAL_SHARED_LIB_CXXFLAGS
   # 
   ${_printf} "%s\\\\\n" "CGAL_SHARED_LIB_CXXFLAGS = " >> ${FILE}
-  makefile_print_line "${CGAL_SHARED_LIB_CXXFLAGS}" >> ${FILE}
+  makefile_print_line "${CGAL_SHARED_LIB_CXXFLAGS} -O" >> ${FILE}
   ${_printf} "\t%s\n" "\$(CGAL_CXXFLAGS)" >> ${FILE}
 
   # 
@@ -5507,6 +5548,10 @@ prepare_lib_makefiles()
 	replace_line ${FILE} CGAL_MAKEFILE \
 	    "CGAL_MAKEFILE = ${CGAL_MAKEFILE}"
     done
+    if [ -d ${CGAL_SRC_DIR}/CGALWin ]; then
+	replace_line ${CGAL_SRC_DIR}/CGALWin/makefile_Win \
+	    CGAL_MAKEFILE "CGAL_MAKEFILE = ${CGAL_MAKEFILE}"
+    fi
 }
 
 # log via $1
@@ -5541,7 +5586,7 @@ generatemakefiles()
 
 }
 
-# compile $1 (= lib or sharedlib)
+# compile $1 (= lib, sharedlib, or Win)
 # return 0, iff success
 _do_compile()
 {
@@ -5626,6 +5671,10 @@ build_cgal()
 		fi
 		;;
 	esac
+	if [ -z "${LEDA_SUPPORT}" -a -d ${CGAL_SRC_DIR}/CGALWin ]; then
+	    cd ${CGAL_SRC_DIR}/CGALWin
+	    _do_compile Win
+	fi
     fi
     write_buffer "\n"
     print_filled_line
@@ -5991,11 +6040,12 @@ finish_interactive()
 	print_filled_line
 	print_center_line "${CGAL_INSTALL_CGAL} completed."
     fi
-    print_center_line \
-	"If something went wrong, (or maybe also, if not:)"
-    print_center_line \
-	"have a look at `${_basename} ${INSTALL_LOGFILE}`." 
+    print_center_line "If something went wrong, (or maybe also, if not:)"
+    print_center_line "have a look at `${_basename} ${INSTALL_LOGFILE}`." 
     print_filled_line
+    write_buffer "\nCGAL_LIB_DIR is\n${CGAL_LIB_DIR}/`full_ostype`\n"
+    write_buffer "\nRemember to set the CGAL_MAKEFILE environment "
+    write_buffer "variable, e.g. to\n${CGAL_MAKEFILE}\n\n"
     flush_buffer
 }
 
@@ -6092,6 +6142,11 @@ while [ ${#} -gt 0 ]; do
 	    fi
 	    CLN_INSTALLATION='e'
 	    ;;
+	-qt*|-QT*|--qt*|--QT*)
+	    _ANY_OPT='y'
+	    QT_SUPPORT='_QT'
+	    write_buffer "${_LEFTSPACE}Enable Qt support.\n"
+	    ;;
 	--qt_incl_dir*|--QT_INCL_DIR*|-qt_incl_dir*|-QT_INCL_DIR*)
 	    _ANY_OPT='y'
 	    if set_variable_from_command_line 'QT_INCL_DIR' "$1" "$2"; then
@@ -6146,11 +6201,6 @@ while [ ${#} -gt 0 ]; do
 	    _ANY_OPT='y'
 	    CLN_SUPPORT='_CLN'
 	    write_buffer "${_LEFTSPACE}Enable CLN support.\n"
-	    ;;
-	-qt*|-QT*|--qt*|--QT*)
-	    _ANY_OPT='y'
-	    QT_SUPPORT='_QT'
-	    write_buffer "${_LEFTSPACE}Enable Qt support.\n"
 	    ;;
 	-os*|-OS*)
 	    if [ -n "${_WHAT_TO_DO}" ]; then
@@ -6215,7 +6265,7 @@ if [ -n "${QT_SUPPORT}" -a -z "${QT_ADVANCED_MODE}" -a -z "${QT_DIR}" ]; then
 	QT_DIR=${QTDIR}
 	write_buffer "remark: QT_DIR has been set to \$QTDIR (${QTDIR})"
     else
-	write_buffer "WARNING: --QT_DIR not set unless Qt support enable.\n"
+	write_buffer "WARNING: --QT_DIR not set whereas Qt support enable.\n"
     fi
 fi
 
