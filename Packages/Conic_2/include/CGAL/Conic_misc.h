@@ -94,8 +94,8 @@ int solve_cubic (NT c3, NT c2, NT c1, NT c0,
             return 1;
         }
         // two real roots
-        r1 = (-c1 + CGAL::sqrt(D))/(2.0*c2);
-        r2 = (-c1 - CGAL::sqrt(D))/(2.0*c2);
+        r1 = (-c1 + CGAL_NTS sqrt(D))/(2.0*c2);
+        r2 = (-c1 - CGAL_NTS sqrt(D))/(2.0*c2);
         return 2;
     }
 
@@ -120,8 +120,8 @@ int solve_cubic (NT c3, NT c2, NT c1, NT c0,
     NT D  = a*a*a/27.0 + b*b/4.0;
     if (D >= 0.0) {
         // real case
-        /***** NT u = cbrt(-b/2.0 + CGAL::sqrt(D)), *****/
-        NT u = exp(log(-b/2.0 + CGAL::sqrt(D))),
+        /***** NT u = cbrt(-b/2.0 + CGAL_NTS sqrt(D)), *****/
+        NT u = exp(log(-b/2.0 + CGAL_NTS sqrt(D))),
                alpha = 1.0 - a/(3.0*u*u);
         if (D == 0) {
             // two distinct real roots
@@ -134,7 +134,7 @@ int solve_cubic (NT c3, NT c2, NT c1, NT c0,
         return 1;
     }
     // complex case
-    NT r_prime   = CGAL::sqrt(-a/3),
+    NT r_prime   = CGAL_NTS sqrt(-a/3),
        phi_prime = acos (-b/(2.0*r_prime*r_prime*r_prime))/3.0,
        u_R       = r_prime * cos (phi_prime),
        u_I       = r_prime * sin (phi_prime);

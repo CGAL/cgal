@@ -1,4 +1,7 @@
 20 June 2004 Sylvain Pion
+- Use CGAL_NTS instead of CGAL:: for sqrt().
+
+20 June 2004 Sylvain Pion
 - Add #include <cmath> and qualify sqrt() with std:: when using doubles.
 
 18 February 2004 Radu Ursu
