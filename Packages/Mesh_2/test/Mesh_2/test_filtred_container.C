@@ -1,5 +1,5 @@
 #include <CGAL/basic.h>
-#include <CGAL/Filtred_container.h>
+#include <CGAL/Filtered_container.h>
 #include <CGAL/Random.h>
 
 #include <list>
@@ -13,7 +13,7 @@ public:
     }
 };
 
-typedef CGAL::Filtred_container<std::list<int>, Is_odd> List;
+typedef CGAL::Filtered_container<std::list<int>, Is_odd> List;
 
 int main(int, char**)
 {

@@ -1,3 +1,7 @@
+version 0.9.3 (2003/05/10)
+--------------------------
+o split of the code into Mesh_2 and Conform_2
+
 version 0.9.2 (2003/03/12)
 --------------------------
 o added a bench sub-directory

@@ -4,13 +4,13 @@
 CGAL_BEGIN_NAMESPACE
 
 template <class Cont, class Pred>
-class Filtred_container
+class Filtered_container
 {
   Cont cont;
   Pred test;
 public:
-  Filtred_container(Pred p=Pred()) : cont(), test(p) {};
-  Filtred_container(Cont& c, Pred p=Pred()) : cont(c), test(p) {};
+  Filtered_container(Pred p=Pred()) : cont(), test(p) {};
+  Filtered_container(Cont& c, Pred p=Pred()) : cont(c), test(p) {};
 
   typedef typename Cont::reference reference;
   typedef typename Cont::iterator iterator;

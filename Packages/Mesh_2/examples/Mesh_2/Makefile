@@ -34,20 +34,30 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:            \
+                conform$(EXE_EXT) \
                 mesh$(EXE_EXT) 
+
+conform$(OBJ_EXT): ../../include/CGAL/Conform_2.h \
+                ../../include/CGAL/Mesh_default_traits_2.h \
+		../../include/CGAL/Double_map.h \
+		../../include/CGAL/Filter_circulator.h \
+		../../include/CGAL/Filtered_container.h
+
+conform$(EXE_EXT): conform$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)conform conform$(OBJ_EXT) $(LDFLAGS)
 
 mesh$(OBJ_EXT): ../../include/CGAL/Mesh_2.h \
                 ../../include/CGAL/Mesh_face_base_2.h \
                 ../../include/CGAL/Mesh_default_traits_2.h \
 		../../include/CGAL/Double_map.h \
-		../../include/CGAL/Filtred_circulator.h \
-		../../include/CGAL/Filtred_container.h \
+		../../include/CGAL/Filter_circulator.h \
+		../../include/CGAL/Filtered_container.h \
 
 mesh$(EXE_EXT): mesh$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)mesh mesh$(OBJ_EXT) $(LDFLAGS)
 
 clean: \
-                   mesh.clean 
+                   mesh.clean conform.clean
 
 #---------------------------------------------------------------------#
 #                    suffix rules
@@ -56,3 +66,5 @@ clean: \
 .C$(OBJ_EXT):
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
 
+%.h.gch: %.h
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
