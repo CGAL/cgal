@@ -4,6 +4,14 @@
 
 
 //---------------------------------------------------------------------
+//	revision 1.46
+//---------------------------------------------------------------------
+
+DOCS: added section "Compiler Optimisations"
+DOCS: added long-name-problem remarks to Troubleshooting
+DOCS: moved leda-stl-conflict subsection to Troubleshooting
+
+//---------------------------------------------------------------------
 //	revision 1.45
 //---------------------------------------------------------------------
 
