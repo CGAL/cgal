@@ -119,4 +119,9 @@ using std::min;
 using std::max;
 #endif
 
+// Is Geomview usable ?
+#if !defined(__BORLANDC__) && !defined(_MSC_VER)
+#  define CGAL_USE_GEOMVIEW
+#endif
+
 #endif // CGAL_CONFIG_H
