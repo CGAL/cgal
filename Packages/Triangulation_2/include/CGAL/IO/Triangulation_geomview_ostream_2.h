@@ -47,16 +47,16 @@ show_triangulation_edges(Geomview_stream &gv, const Triangulation_2<GT,TDS> &T)
        << T.number_of_vertices() + T.number_of_faces()-1 << "\n";
 
     // Finite vertices coordinates.
-    std::map<Triangulation_2<GT, TDS>::Vertex_handle, int> V;
+    std::map<typename Triangulation_2<GT, TDS>::Vertex_handle, int> V;
     int inum = 0;
-    for( Triangulation_2<GT, TDS>::Vertex_iterator
+    for( typename Triangulation_2<GT, TDS>::Vertex_iterator
 	  vit = T.vertices_begin(); vit != T.vertices_end(); ++vit) {
         V[vit] = inum++;
         gv << vit->point() << "\n";
     }
   
     // Finite edges indices.
-    for( Triangulation_2<GT, TDS>::Edge_iterator
+    for( typename Triangulation_2<GT, TDS>::Edge_iterator
 	  eit = T.edges_begin(); eit != T.edges_end(); ++eit) {
         gv << 2
            << V[(*eit).first->vertex(T.ccw((*eit).second))]
@@ -77,16 +77,16 @@ show_triangulation_faces(Geomview_stream &gv, const Triangulation_2<GT,TDS> &T)
        << T.number_of_vertices() << T.number_of_faces() << 0;
 
     // Finite vertices coordinates.
-    std::map<Triangulation_2<GT, TDS>::Vertex_handle, int> V;
+    std::map<typename Triangulation_2<GT, TDS>::Vertex_handle, int> V;
     int inum = 0;
-    for( Triangulation_2<GT, TDS>::Vertex_iterator
+    for( typename Triangulation_2<GT, TDS>::Vertex_iterator
 	  vit = T.vertices_begin(); vit != T.vertices_end(); ++vit) {
         V[vit] = inum++;
         gv << vit->point();
     }
   
     // Finite faces indices.
-    for( Triangulation_2<GT, TDS>::Face_iterator
+    for( typename Triangulation_2<GT, TDS>::Face_iterator
 	  fit = T.faces_begin(); fit != T.faces_end(); ++fit) {
         gv << 3;
         for (int i=0; i<3; i++)
