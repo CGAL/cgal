@@ -5,8 +5,8 @@ Installing the manual package
 In order to be able to use the scripts in the scripts/ directory to
 create a manual, you need to do the following:
 
-(1)  install the manual conversion tools (available as package Tools or
-     from http://www.cgal.org/Members/Tools)
+(1)  install the manual conversion tools (available as package Manual_tools 
+     on the CVS server or from http://www.cgal.org/Members/Manual_tools)
 
 (2)  most of the scripts are shell scripts, which assume sh to be located in
      /bin/sh.  If this is not the case(!), edit the scripts to indicate the 
