@@ -1,3 +1,7 @@
+13 September 2004 Sylvain Pion
+- Regular traits : make functor classes parameterized by K (meant to be the
+  regular traits, or the kernel when WPs will be there).
+
 7 September 2004 Sylvain Pion
 - Regular_triangulation_3 now fetches "Weighted_point_3" instead of
   "Weighted_point" from the traits (which still exports both for backward

@@ -38,59 +38,60 @@ CGAL_BEGIN_NAMESPACE
 // return the sign of the determinant of the lifted points
 // associated with p,q,r,s,t  [P,Q,R,S,T]
 // where the P colum is [ p, p^2-wp,1]
-template <class Point, class Weight>
+template < typename K >
 class Power_test_3
 {
 public:
-  typedef CGAL::Weighted_point <Point, Weight>        Weighted_point;
+  typedef typename K::Weighted_point_3                  Weighted_point_3;
 
   typedef Arity_tag< 5 >   Arity;
   typedef Oriented_side    result_type;
 
-  Oriented_side operator() ( const Weighted_point & p,
-			     const Weighted_point & q,
-			     const Weighted_point & r,
-			     const Weighted_point & s,
-			     const Weighted_point & t) const
+  Oriented_side operator() ( const Weighted_point_3 & p,
+			     const Weighted_point_3 & q,
+			     const Weighted_point_3 & r,
+			     const Weighted_point_3 & s,
+			     const Weighted_point_3 & t) const
     {
       return power_test(p,q,r,s,t);
     }
 
-  Oriented_side operator() ( const Weighted_point & p,
-			     const Weighted_point & q,
-			     const Weighted_point & r,
-			     const Weighted_point & s) const
+  Oriented_side operator() ( const Weighted_point_3 & p,
+			     const Weighted_point_3 & q,
+			     const Weighted_point_3 & r,
+			     const Weighted_point_3 & s) const
     {
       return power_test(p,q,r,s);
     }
 
-  Oriented_side operator() ( const Weighted_point & p,
-			     const Weighted_point & q,
-			     const Weighted_point & r) const
+  Oriented_side operator() ( const Weighted_point_3 & p,
+			     const Weighted_point_3 & q,
+			     const Weighted_point_3 & r) const
     {
       return power_test(p,q,r);
     }
 
-  Oriented_side operator() ( const Weighted_point & p,
-			     const Weighted_point & q) const
+  Oriented_side operator() ( const Weighted_point_3 & p,
+			     const Weighted_point_3 & q) const
     {
       return power_test(p,q);
     }
 };
 
 
-template <class Point, class Weight>
+template < typename K >
 class Compare_power_distance_3
 {
 public:
-  typedef CGAL::Weighted_point <Point, Weight>        Weighted_point;
+  typedef typename K::Weighted_point_3                  Weighted_point_3;
+  typedef typename K::Bare_point                        Point_3;
 
   typedef Arity_tag< 3 >     Arity;
   typedef Comparison_result  result_type;
 
-  Comparison_result operator() ( const Point & p,
-				 const Weighted_point & q,
-				 const Weighted_point & r) const
+  Comparison_result operator() ( const Point_3 & p,
+				 const Weighted_point_3 & q,
+				 const Weighted_point_3 & r) const
     {
       return compare_power_distance_3(p,q,r);
     }
@@ -99,38 +100,34 @@ public:
 
 // operator ()
 // return the sign of the power test of  last weighted point
-// with respect to the smallest sphere orthogonal to
-// the others
-template< class K, class Weight = typename K::RT >
+// with respect to the smallest sphere orthogonal to the others
+template< typename K >
 class In_smallest_orthogonal_sphere_3
 {
 public:
-  typedef typename K::Point_3                        Bare_point;
-  typedef CGAL::Weighted_point<Bare_point, Weight>   Weighted_point;
-  typedef typename K::Orientation_3                  Orientation_3;
+  typedef typename K::Weighted_point_3               Weighted_point_3;
 
   typedef Arity_tag< 5 >   Arity;
   typedef Sign             result_type;
 
-  Sign operator() ( const Weighted_point & p,
-		    const Weighted_point & q,
-		    const Weighted_point & r,
-		    const Weighted_point & s,
-		    const Weighted_point & t) const
+  Sign operator() ( const Weighted_point_3 & p,
+		    const Weighted_point_3 & q,
+		    const Weighted_point_3 & r,
+		    const Weighted_point_3 & s,
+		    const Weighted_point_3 & t) const
   {
     K traits;
-    typename K::Orientation_3  orientation =
-      traits.orientation_3_object();
+    typename K::Orientation_3  orientation = traits.orientation_3_object();
     Orientation o = orientation(p,q,r,s);
     Oriented_side os = power_test(p,q,r,s,t);
     CGAL_triangulation_assertion( o != COPLANAR); 
     return Sign( (-1) * o * os);
   }
   
-  Sign operator() ( const Weighted_point & p,
-		    const Weighted_point & q,
-		    const Weighted_point & r,
-		    const Weighted_point & s) const
+  Sign operator() ( const Weighted_point_3 & p,
+		    const Weighted_point_3 & q,
+		    const Weighted_point_3 & r,
+		    const Weighted_point_3 & s) const
   {
     return in_smallest_orthogonal_sphereC3(
                               p.x(), p.y(), p.z(), p.weight(),
@@ -139,9 +136,9 @@ public:
 			      s.x(), s.y(), s.z(), s.weight());
   }
 
-  Sign operator() ( const Weighted_point & p,
-		    const Weighted_point & q,
-		    const Weighted_point & r) const
+  Sign operator() ( const Weighted_point_3 & p,
+		    const Weighted_point_3 & q,
+		    const Weighted_point_3 & r) const
   {
     return in_smallest_orthogonal_sphereC3(
                               p.x(), p.y(), p.z(), p.weight(),
@@ -150,37 +147,36 @@ public:
   }
 };
 
-template< class K, class Weight = typename K::RT >
+template < typename K >
 class Side_of_bounded_orthogonal_sphere_3
 {
 public :
-  typedef typename K::Point_3                        Bare_point;
-  typedef CGAL::Weighted_point<Bare_point, Weight>   Weighted_point;
-  typedef CGAL::In_smallest_orthogonal_sphere_3<K,Weight> In_sphere;
+  typedef typename K::Weighted_point_3                 Weighted_point_3;
+  typedef typename K::In_smallest_orthogonal_sphere_3  In_sphere;
 
   typedef Arity_tag< 5 >   Arity;
   typedef Bounded_side     result_type;
 
-  Bounded_side operator() ( const Weighted_point & p,
-			    const Weighted_point & q,
-			    const Weighted_point & r,
-			    const Weighted_point & s,
-			    const Weighted_point & t) const
+  Bounded_side operator() ( const Weighted_point_3 & p,
+			    const Weighted_point_3 & q,
+			    const Weighted_point_3 & r,
+			    const Weighted_point_3 & s,
+			    const Weighted_point_3 & t) const
   {
     return Bounded_side( (-1) * In_sphere()(p,q,r,s,t));
   }
   
-  Bounded_side operator() ( const Weighted_point & p,
-			    const Weighted_point & q,
-			    const Weighted_point & r,
-			    const Weighted_point & s) const
+  Bounded_side operator() ( const Weighted_point_3 & p,
+			    const Weighted_point_3 & q,
+			    const Weighted_point_3 & r,
+			    const Weighted_point_3 & s) const
   {
     return Bounded_side ( (-1) * In_sphere()(p,q,r,s) );
   }
 
-  Bounded_side operator() ( const Weighted_point & p,
-			    const Weighted_point & q,
-			    const Weighted_point & r) const
+  Bounded_side operator() ( const Weighted_point_3 & p,
+			    const Weighted_point_3 & q,
+			    const Weighted_point_3 & r) const
   {
     return Bounded_side ( (-1) * In_sphere()(p,q,r) );
   }
@@ -190,20 +186,19 @@ public :
 // operator() returns true if the affine hull of the dual
 // to the given weighted points 
 // intersect  the simplex formed by the bare points 
-template< class K, class Weight = typename K::RT >
+template < typename K >
 class Does_simplex_intersect_dual_support_3
 {
 public:
-  typedef typename K::Point_3                        Bare_point;
-  typedef CGAL::Weighted_point<Bare_point, Weight>   Weighted_point;
+  typedef typename K::Weighted_point_3               Weighted_point_3;
 
   typedef Arity_tag< 4 >   Arity;
   typedef Bounded_side     result_type;
 
-  Bounded_side operator()(const Weighted_point & p,
-		          const Weighted_point & q,
-		          const Weighted_point & r,
-		          const Weighted_point & s) const
+  Bounded_side operator()(const Weighted_point_3 & p,
+		          const Weighted_point_3 & q,
+		          const Weighted_point_3 & r,
+		          const Weighted_point_3 & s) const
   {
     return does_simplex_intersect_dual_supportC3(
                                         p.x(), p.y(), p.z(), p.weight(),
@@ -212,9 +207,9 @@ public:
 					s.x(), s.y(), s.z(), s.weight());
   }
 
-  Bounded_side operator()(const Weighted_point & p,
-		          const Weighted_point & q,
-		          const Weighted_point & r) const
+  Bounded_side operator()(const Weighted_point_3 & p,
+		          const Weighted_point_3 & q,
+		          const Weighted_point_3 & r) const
   {
     return does_simplex_intersect_dual_supportC3(
                                         p.x(), p.y(), p.z(), p.weight(),
@@ -222,8 +217,8 @@ public:
 					r.x(), r.y(), r.z(), r.weight()); 
   }
 
-  Bounded_side operator()(const Weighted_point & p,
-		          const Weighted_point & q) const
+  Bounded_side operator()(const Weighted_point_3 & p,
+		          const Weighted_point_3 & q) const
   {
     return does_simplex_intersect_dual_supportC3(
                                         p.x(), p.y(), p.z(), p.weight(),
@@ -231,21 +226,21 @@ public:
   }
 };
 
-template< class K, class Weight = typename K::RT >
+template < typename K >
 class Construct_weighted_circumcenter_3
 {
 public:
-  typedef typename K::Point_3                        Bare_point;
-  typedef CGAL::Weighted_point<Bare_point, Weight>   Weighted_point;
+  typedef typename K::Weighted_point_3               Weighted_point_3;
+  typedef typename K::Bare_point                     Bare_point;
   typedef typename K::FT                             FT;
 
   typedef Arity_tag< 4 >   Arity;
   typedef Bare_point       result_type;
 
-  Bare_point operator() ( const Weighted_point & p,
-			  const Weighted_point & q,
-			  const Weighted_point & r,
-			  const Weighted_point & s) const
+  Bare_point operator() ( const Weighted_point_3 & p,
+			  const Weighted_point_3 & q,
+			  const Weighted_point_3 & r,
+			  const Weighted_point_3 & s) const
     {
       FT x, y, z;
       weighted_circumcenterC3(p.x(), p.y(), p.z(), p.weight(),
@@ -256,9 +251,9 @@ public:
       return Bare_point(x,y,z);
     }
 
-  Bare_point operator() ( const Weighted_point & p,
-			  const Weighted_point & q,
-			  const Weighted_point & r) const
+  Bare_point operator() ( const Weighted_point_3 & p,
+			  const Weighted_point_3 & q,
+			  const Weighted_point_3 & r) const
     {
       FT x, y, z;
       weighted_circumcenterC3(p.x(), p.y(), p.z(), p.weight(),
@@ -268,8 +263,8 @@ public:
       return Bare_point(x,y,z);
     }
 
-  Bare_point operator() ( const Weighted_point & p,
-			  const Weighted_point & q) const
+  Bare_point operator() ( const Weighted_point_3 & p,
+			  const Weighted_point_3 & q) const
     {
       FT x, y, z;
       weighted_circumcenterC3(p.x(), p.y(), p.z(), p.weight(),
@@ -280,19 +275,18 @@ public:
 };
 
 
-template< class K, class Weight = typename K::RT >
+template < typename K >
 class Compute_power_product_3
 {
 public:
-  typedef typename K::Point_3                        Bare_point;
-  typedef CGAL::Weighted_point<Bare_point, Weight>   Weighted_point;
-  typedef typename K::FT  FT;
+  typedef typename K::Weighted_point_3               Weighted_point_3;
+  typedef typename K::FT                             FT;
 
   typedef Arity_tag< 2 >   Arity;
   typedef FT               result_type;
 
-  FT operator() (const Weighted_point & p,
-		 const Weighted_point & q) const
+  FT operator() (const Weighted_point_3 & p,
+		 const Weighted_point_3 & q) const
   {
     return power_productC3(p.x(), p.y(), p.z(), p.weight(),
 			   q.x(), q.y(), q.z(), q.weight());
@@ -300,33 +294,31 @@ public:
 };
 
 
-template< class K, class Weight = typename K::RT >
+template < typename K >
 class Compute_squared_radius_smallest_orthogonal_sphere_3
 {
 public:
-  typedef typename K::Point_3                        Bare_point;
-  typedef CGAL::Weighted_point<Bare_point, Weight>   Weighted_point;
-  typedef typename K::FT FT;
+  typedef typename K::Weighted_point_3               Weighted_point_3;
+  typedef typename K::FT                             FT;
 
   typedef Arity_tag< 4 >   Arity;
   typedef FT               result_type;
 
-  FT operator() ( const Weighted_point & p,
-		  const Weighted_point & q,
-		  const Weighted_point & r,
-		  const Weighted_point & s) const
+  FT operator() ( const Weighted_point_3 & p,
+		  const Weighted_point_3 & q,
+		  const Weighted_point_3 & r,
+		  const Weighted_point_3 & s) const
     {
         return squared_radius_orthogonal_sphereC3(
                               p.x(), p.y(), p.z(), p.weight(),
 			      q.x(), q.y(), q.z(), q.weight(),
 			      r.x(), r.y(), r.z(), r.weight(),
 			      s.x(), s.y(), s.z(), s.weight());
-
     }
 
-  FT operator() ( const Weighted_point & p,
-		  const Weighted_point & q,
-		  const Weighted_point & r) const
+  FT operator() ( const Weighted_point_3 & p,
+		  const Weighted_point_3 & q,
+		  const Weighted_point_3 & r) const
     {
       return squared_radius_smallest_orthogonal_sphereC3(
                               p.x(), p.y(), p.z(), p.weight(),
@@ -334,8 +326,8 @@ public:
 			      r.x(), r.y(), r.z(), r.weight());
     }
 
-  FT operator() (const Weighted_point & p,
-		 const Weighted_point & q) const
+  FT operator() (const Weighted_point_3 & p,
+		 const Weighted_point_3 & q) const
   {
     return squared_radius_smallest_orthogonal_sphereC3(
 			   p.x(), p.y(), p.z(), p.weight(),
@@ -350,72 +342,63 @@ class Regular_triangulation_euclidean_traits_3
   : public K
 {
 public:
-  typedef typename K::FT                                      FT;
+  typedef typename K::FT                             FT;
   typedef typename K::Point_3                        Bare_point;
   typedef CGAL::Weighted_point<Bare_point, Weight>   Weighted_point;
   typedef Weighted_point                             Weighted_point_3;
   typedef Weighted_point                             Point_3;
+  //typedef typename K::Point_3                        Point_3;
+
+  typedef Regular_triangulation_euclidean_traits_3<K, Weight> Self;
 
   // The next typedef is there for backward compatibility
   // Some users take their point type from the traits class.
   // Before this type was Point
   typedef Point_3 Point;
 
-  typedef CGAL::Power_test_3<Bare_point, Weight> Power_test_3;
-  typedef CGAL::Compare_power_distance_3<Bare_point, Weight>  
-                                         Compare_power_distance_3;
-  typedef CGAL::In_smallest_orthogonal_sphere_3<K, Weight>
+  typedef CGAL::Power_test_3<Self>                 Power_test_3;
+  typedef CGAL::Compare_power_distance_3<Self>     Compare_power_distance_3;
+  typedef CGAL::In_smallest_orthogonal_sphere_3<Self>
                                 In_smallest_orthogonal_sphere_3;
-  typedef CGAL::Side_of_bounded_orthogonal_sphere_3<K, Weight>
+  typedef CGAL::Side_of_bounded_orthogonal_sphere_3<Self>
                                 Side_of_bounded_orthogonal_sphere_3;
-  typedef CGAL::Does_simplex_intersect_dual_support_3<K, Weight>
+  typedef CGAL::Does_simplex_intersect_dual_support_3<Self>
                                 Does_simplex_intersect_dual_support_3; 
-  typedef CGAL::Construct_weighted_circumcenter_3<K,Weight>
+  typedef CGAL::Construct_weighted_circumcenter_3<Self>
                                  Construct_weighted_circumcenter_3;
-  typedef 
-  CGAL::Compute_squared_radius_smallest_orthogonal_sphere_3<K,
-    Weight>
-             Compute_squared_radius_smallest_orthogonal_sphere_3;
-   typedef  CGAL::Compute_power_product_3<K,Weight>
-                                Compute_power_product_3; 
+  typedef CGAL::Compute_squared_radius_smallest_orthogonal_sphere_3<Self>
+                Compute_squared_radius_smallest_orthogonal_sphere_3;
+  typedef CGAL::Compute_power_product_3<Self>    Compute_power_product_3; 
   
-  Power_test_3   power_test_3_object() const {
-    return Power_test_3();}
+  Power_test_3   power_test_3_object() const
+  { return Power_test_3(); }
 
-  Compare_power_distance_3 compare_power_distance_3_object() const {
-    return Compare_power_distance_3();}
+  Compare_power_distance_3 compare_power_distance_3_object() const
+  { return Compare_power_distance_3(); }
 
   In_smallest_orthogonal_sphere_3 
-  in_smallest_orthogonal_sphere_3_object() const {
-    return In_smallest_orthogonal_sphere_3();
-  }
+  in_smallest_orthogonal_sphere_3_object() const
+  { return In_smallest_orthogonal_sphere_3(); }
 
   Side_of_bounded_orthogonal_sphere_3
-  side_of_bounded_orthogonal_sphere_3_object() const {
-    return Side_of_bounded_orthogonal_sphere_3();
-  }
+  side_of_bounded_orthogonal_sphere_3_object() const
+  { return Side_of_bounded_orthogonal_sphere_3(); }
 
   Does_simplex_intersect_dual_support_3 
-  does_simplex_intersect_dual_support_3_object() const {
-    return Does_simplex_intersect_dual_support_3();
-  }
+  does_simplex_intersect_dual_support_3_object() const
+  { return Does_simplex_intersect_dual_support_3(); }
 
   Construct_weighted_circumcenter_3 
-  construct_weighted_circumcenter_3_object() const {
-    return Construct_weighted_circumcenter_3();
-  }
+  construct_weighted_circumcenter_3_object() const
+  { return Construct_weighted_circumcenter_3(); }
 
   Compute_power_product_3
-  compute_power_product_3_object() const {
-    return Compute_power_product_3();
-  }
+  compute_power_product_3_object() const
+  { return Compute_power_product_3(); }
 
   Compute_squared_radius_smallest_orthogonal_sphere_3
-  compute_squared_radius_smallest_orthogonal_sphere_3_object() const  {
-    return Compute_squared_radius_smallest_orthogonal_sphere_3();
-  }
-
-
+  compute_squared_radius_smallest_orthogonal_sphere_3_object() const
+  { return Compute_squared_radius_smallest_orthogonal_sphere_3(); }
 };
 
 
@@ -430,7 +413,7 @@ power_test(const Weighted_point<pt, Weight> &p,
            const Weighted_point<pt, Weight> &t,
 	   Cartesian_tag)
 {
-  typedef typename pt::R::FT FT;
+    typedef typename pt::R::FT FT;
     return power_testC3(p.x(), p.y(), p.z(), FT(p.weight()),
                         q.x(), q.y(), q.z(), FT(q.weight()),
                         r.x(), r.y(), r.z(), FT(r.weight()),
@@ -447,9 +430,9 @@ power_test(const Weighted_point<pt, Weight> &p,
            const Weighted_point<pt, Weight> &t,
 	   Cartesian_tag)
 {
-  typedef typename pt::R::FT FT;
+    typedef typename pt::R::FT FT;
     return power_testC3(p.x(), p.y(), p.z(), FT(p.weight()),
-                         q.x(), q.y(), q.z(), FT(q.weight()),
+                        q.x(), q.y(), q.z(), FT(q.weight()),
                         r.x(), r.y(), r.z(), FT(r.weight()),
                         t.x(), t.y(), t.z(), FT(t.weight()));
 }
@@ -462,7 +445,7 @@ power_test(const Weighted_point<pt, Weight> &p,
            const Weighted_point<pt, Weight> &t,
 	   Cartesian_tag)
 {
-  typedef typename pt::R::FT FT;
+    typedef typename pt::R::FT FT;
     return power_testC3(p.x(), p.y(), p.z(), FT(p.weight()),
                         q.x(), q.y(), q.z(), FT(q.weight()),
                         t.x(), t.y(), t.z(), FT(t.weight()));
@@ -489,7 +472,7 @@ compare_power_distance_3 (const pt &p,
 			  const Weighted_point<pt, Weight> &r,
 			  Cartesian_tag)
 {
-  typedef typename pt::R::FT FT;
+   typedef typename pt::R::FT FT;
    return compare_power_distanceC3(p.x(), p.y(), p.z(),
 				   q.x(), q.y(), q.z(), FT(q.weight()),
 				   r.x(), r.y(), r.z(), FT(r.weight()));
@@ -508,7 +491,7 @@ power_test(const Weighted_point<pt, Weight> &p,
            const Weighted_point<pt, Weight> &t,
 	   Homogeneous_tag)
 {
-  typedef typename pt::R::RT RT;
+    typedef typename pt::R::RT RT;
     return power_testH3(p.hx(), p.hy(), p.hz(), p.hw(), RT(p.weight()),
                         q.hx(), q.hy(), q.hz(), q.hw(), RT(q.weight()),
                         r.hx(), r.hy(), r.hz(), r.hw(), RT(r.weight()),
@@ -571,8 +554,8 @@ compare_power_distance_3 (const Point &p,
 {
   typedef typename Point::R::FT FT;
   return compare_power_distanceC3(p.x(), p.y(), p.z(), FT(p.weight()),
-				    q.x(), q.y(), q.z(), FT(q.weight()),
-				    t.x(), t.y(), t.z(), FT(t.weight()));
+				  q.x(), q.y(), q.z(), FT(q.weight()),
+				  t.x(), t.y(), t.z(), FT(t.weight()));
 }     
 
 // Kludges for M$.
@@ -587,7 +570,7 @@ power_test(const Weighted_point<pt,Weight> &p,
 	   const Weighted_point<pt,Weight> &t)
 {
   typedef typename pt::R::Rep_tag Tag;
-  return( power_test(p,q,r,s,t, Tag()) );
+  return power_test(p,q,r,s,t, Tag());
 }
 
 template < class pt, class Weight >
@@ -599,7 +582,7 @@ power_test(const Weighted_point<pt,Weight> &p,
 	   const Weighted_point<pt,Weight> &t)
 {
   typedef typename pt::R::Rep_tag Tag;
-  return( power_test(p,q,r,t, Tag()) );
+  return power_test(p,q,r,t, Tag());
 }
 
 template < class pt, class Weight >
@@ -610,7 +593,7 @@ power_test(const Weighted_point<pt,Weight> &p,
 	   const Weighted_point<pt,Weight> &t)
 {
   typedef typename pt::R::Rep_tag Tag;
-  return( power_test(p,q,t, Tag()) );
+  return power_test(p,q,t, Tag());
 }
 
 template < class pt, class Weight >
@@ -620,7 +603,7 @@ power_test(const Weighted_point<pt,Weight> &p,
 	   const Weighted_point<pt,Weight> &q)
 {
   typedef typename pt::R::Rep_tag Tag;
-  return( power_test(p,q, Tag()) );
+  return power_test(p,q, Tag());
 }
 
 template < class Point, class Weight >
@@ -631,7 +614,7 @@ compare_power_distance_3 (const Point &p,
 			  const Weighted_point<Point, Weight> &r)
 {
   typedef typename Point::R::Rep_tag Tag;
-  return( compare_power_distance_3(p,q,r, Tag()) );
+  return compare_power_distance_3(p,q,r, Tag());
 }
 
 CGAL_END_NAMESPACE
