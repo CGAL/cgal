@@ -43,11 +43,11 @@ public:
   typedef Circle_2                  Circle;
 
   Circ_Curve(const NT& x, const NT& y, const NT& r2) : 
-    c(Point_2(x,y),r2), s(x-CGAL::sqrt(r2),y),t(x-CGAL::sqrt(r2),y)
+    c(Point_2(x,y),r2), s(x-CGAL::sqrt(r2),y), t(x-CGAL::sqrt(r2),y)
   {}
   Circ_Curve(const NT& x, const NT& y, const NT& r2, 
 	     const Point_2& src , const Point_2& trgt) :
-    c(Point_2(x,y),r2), s(src),t(trgt)
+    c(Point_2(x,y),r2), s(src), t(trgt)
   {
     CGAL_precondition(c.has_on_boundary(src));
     CGAL_precondition(c.has_on_boundary(trgt));
@@ -552,7 +552,10 @@ public:
       //if we get a curve that is not a closed circle - for completeness
       // bug fix, Shai, 12 Feb. 2001
       // curves that are split to 3 x-monotone sub curves were not handled
-      const Point_2 &center(cv.circle().center());
+
+      // MSVC doesn't like the copy constructor:
+      // const Point_2 &center(cv.circle().center());
+      const Point_2 & center = cv.circle().center();
       Point_2  mid1, mid2;
       NT     sq_radius(cv.c.squared_radius());
       Curve_2  work_cv;
@@ -569,8 +572,11 @@ public:
       }
 
       CGAL_assertion(work_cv.circle().orientation() == COUNTERCLOCKWISE);
-      const Point_2 &src(work_cv.source()),
-	&trg(work_cv.target());
+
+      // MSVC doesn't like the copy constructor:
+      // const Point_2 &src(work_cv.source()), &trg(work_cv.target());
+      const Point_2 & src = work_cv.source();
+      const Point_2 & trg = work_cv.target();
 
       // now we work on a CCW circular curve which is, by precondition
       // NOT x-monotone. 
