@@ -9,6 +9,7 @@ CHANGES
 
 Ver 1.4 (to appear)
 - Added include <stdlib.h> for prototypes: exit(), ...
+- Removed warning in Geomview_stream.C (unused variable length in CGAL_nth)
 
 Ver 1.3 (29 Sept 1998)
 - Removed variables CGAL_RSH and CGAL_GEOMVIEW. Use default values instead.
