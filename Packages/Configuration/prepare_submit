@@ -10,3 +10,5 @@ then
     cp $f $copy
 fi
 done
+cd test/Configuration
+cvs commit -m ""
