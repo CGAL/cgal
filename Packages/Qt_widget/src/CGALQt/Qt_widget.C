@@ -44,13 +44,16 @@ Qt_widget::Qt_widget(QWidget *parent, const char *name) :
   set_scales();
 
   // initialize the pixmap and the painter
-  pixmap.resize(size());
-  paint.begin(&pixmap);
+  painter = new QPainter;
+  printer = new QPrinter;
+  pixmap = new QPixmap;
+  pixmap->resize(size());
+  painter->begin(pixmap);
 
   // set properties
-  paint.setRasterOp(CopyROP);
+  painter->setRasterOp(CopyROP);
   setBackgroundColor(Qt::white);
-  paint.setPen(QPen(Qt::black,2));
+  painter->setPen(QPen(Qt::black,2));
 
   clear();
 }
@@ -84,25 +87,23 @@ void Qt_widget::set_scale_center(double xc, double yc)
 
 void Qt_widget::resizeEvent(QResizeEvent *e)
 {
+  
   // save paint state
-  QFont f=paint.font();
-  QBrush b=paint.brush();
-  QPen p=paint.pen();
-  QColor bc=paint.backgroundColor();
+  QFont f=painter->font();
+  QBrush b=painter->brush();
+  QPen p=painter->pen();
+  QColor bc=painter->backgroundColor();
 
-  paint.end();  // end painting on pixmap
-
-  pixmap.resize(size());
-  paint.begin(&pixmap); // begin again painting on pixmap
+  painter->end();  // end painting on pixmap
+  pixmap->resize(size());
+  painter->begin(pixmap); // begin again painting on pixmap
 
   // restore paint state
-  paint.setFont(f);
-  paint.setBrush(b);
-  paint.setPen(p);
-  paint.setBackgroundColor(bc);
+  painter->setFont(f);
+  painter->setBrush(b);
+  painter->setPen(p);
+  painter->setBackgroundColor(bc);
 
-  clear();
-  
   if (constranges)
     set_scales();
   else
@@ -114,22 +115,22 @@ void Qt_widget::resizeEvent(QResizeEvent *e)
 void Qt_widget::paintEvent(QPaintEvent *e)
 {
   // save paint state
-  QFont f=paint.font();
-  QBrush b=paint.brush();
-  QPen p=paint.pen();
-  QColor bc=paint.backgroundColor();
+  QFont f=painter->font();
+  QBrush b=painter->brush();
+  QPen p=painter->pen();
+  QColor bc=painter->backgroundColor();
 
 
-  paint.end();  // end painting on pixmap
-  bitBlt(this, 0, 0, &pixmap); // copy pixmap to the Qt_widget
-  paint.begin(&pixmap); // begin again painting on pixmap
+  painter->end();  // end painting on pixmap
+  bitBlt(this, 0, 0, pixmap); // copy pixmap to the Qt_widget
+  painter->begin(pixmap); // begin again painting on pixmap
 
 
   // restore paint state
-  paint.setFont(f);
-  paint.setBrush(b);
-  paint.setPen(p);
-  paint.setBackgroundColor(bc);
+  painter->setFont(f);
+  painter->setBrush(b);
+  painter->setPen(p);
+  painter->setBackgroundColor(bc);
 }
 
 void Qt_widget::mousePressEvent(QMouseEvent *e)
@@ -376,7 +377,7 @@ Qt_widget& Qt_widget::operator<<(const PointStyle& ps)
 }
 	
 void Qt_widget::clear() {
-  painter().eraseRect(rect());
+  painter->eraseRect(rect());
 }
 
   Qt_widget& operator<<(Qt_widget& w, const Bbox_2& r)
@@ -387,7 +388,7 @@ void Qt_widget::clear() {
       xmax = w.x_pixel(r.xmax()),
       ymax = w.y_pixel(r.ymax());
 
-    w.painter().drawWinFocusRect(xmin, ymin, xmax-xmin, ymax-ymin);
+    w.get_painter().drawWinFocusRect(xmin, ymin, xmax-xmin, ymax-ymin);
     w.do_paint();
     return w;
   }
@@ -413,6 +414,22 @@ void Qt_widget::clear() {
     return false;
   }
 
+  void Qt_widget::print_to_ps(){
+    if(printer->setup(this)){
+      QPainter *ptemp = new QPainter();
+      ptemp = painter;
+      QPainter *painter_for_printer = new QPainter(printer);
+      painter = painter_for_printer;
+      lock();
+        std::list<Qt_widget_layer*>::iterator it;
+		    for(it = qt_layers.begin(); it!= qt_layers.end(); it++)
+		      if((*it)->is_active())
+			      (*it)->draw();
+      unlock();
+      delete painter;
+      painter = ptemp;
+    }
+  }
 
   void Qt_widget::redraw()
   {

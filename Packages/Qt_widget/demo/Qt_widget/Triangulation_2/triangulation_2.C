@@ -55,7 +55,6 @@ int main(int, char*)
 #include <qapplication.h>
 #include <qmainwindow.h>
 #include <qstatusbar.h>
-#include <qfiledialog.h>
 #include <qmessagebox.h>
 #include <qpopupmenu.h>
 #include <qmenubar.h>
@@ -116,6 +115,8 @@ public:
 		      SLOT(load_triangulation()), CTRL+Key_L);
     file->insertItem("&Save Triangulation", this,
 		      SLOT(save_triangulation()), CTRL+Key_T);
+    file->insertSeparator();
+    file->insertItem("Print", widget, SLOT(print_to_ps()));
     file->insertSeparator();
     file->insertItem( "&Close", this, SLOT(close()), CTRL+Key_X );
     file->insertItem( "&Quit", qApp,

@@ -83,6 +83,8 @@ public:
     file->insertItem("&Load Polygon", this, SLOT(load_polygon()), CTRL+Key_L);
     file->insertItem("&Save Polygon", this, SLOT(save_polygon()), CTRL+Key_S);
     file->insertSeparator();
+    file->insertItem("Print", widget, SLOT(print_to_ps()), CTRL+Key_P);
+    file->insertSeparator();
     file->insertItem( "&Close", this, SLOT(close()), CTRL+Key_X );
     file->insertItem( "&Quit", qApp, SLOT( closeAllWindows() ), CTRL+Key_Q );
 

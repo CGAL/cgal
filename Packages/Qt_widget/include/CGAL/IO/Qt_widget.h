@@ -26,6 +26,7 @@
 #include <qcolor.h>
 #include <qpixmap.h>
 #include <qmessagebox.h>
+#include <qprinter.h>
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/IO/Color.h>
@@ -69,8 +70,8 @@ public:
   };
 
   // painting system
-  inline QPainter& painter() { return paint; };
-  inline QPixmap& get_pixmap() { return pixmap; };
+  inline QPainter& get_painter() { return (*painter); };
+  inline QPixmap& get_pixmap() { return (*pixmap); };
   void lock() { ++Locked; };
   void unlock() { if (Locked>0) --Locked; do_paint(); };
   void do_paint() { if (Locked==0) repaint( FALSE ); };
@@ -101,8 +102,8 @@ public:
   PointStyle pointStyle() const;
   void setPointStyle(PointStyle s);
   // rasterOp
-  RasterOp rasterOp() {return paint.rasterOp();}
-  void setRasterOp(RasterOp r) {paint.setRasterOp(r);}
+  RasterOp rasterOp() {return painter->rasterOp();}
+  void setRasterOp(RasterOp r) {painter->setRasterOp(r);}
 
   // CGAL version of setFooColor
   // used by the manipulators system
@@ -161,7 +162,8 @@ signals:
   void custom_redraw(); // if user want to draw something after layers
   void new_cgal_object(CGAL::Object);	//this signal is emited every time an
 					//attached tool constructed an object
-
+public slots:
+  void print_to_ps();
 protected:
   void paintEvent(QPaintEvent *e);
   void resizeEvent(QResizeEvent *e);
@@ -191,8 +193,9 @@ private:
   uint	      _pointSize;
   PointStyle  _pointStyle;
 
-  QPixmap     pixmap; // the pixmap on which paints the painter
-  QPainter    paint; // the painter
+  QPixmap     *pixmap;	// the pixmap on which paints the painter
+  QPainter    *painter;	// the painter
+  QPrinter    *printer;	// the printer
   QBrush      savedBrush; // saved brush, to be able to restore it on
   // setFilled(true)
 
@@ -280,75 +283,75 @@ Color Qt_widget::Qt2CGAL_color(QColor c)
 inline
 QColor Qt_widget::color() const
 {
-  return paint.pen().color();
+  return painter->pen().color();
 };
 
 
 inline
 void Qt_widget::setColor(QColor c)
 {
-  QPen p=painter().pen();
+  QPen p=get_painter().pen();
   p.setColor(c);
-  painter().setPen(p);
+  get_painter().setPen(p);
 }
 
 inline
 QColor Qt_widget::backgroundColor() const
 {
-  return paint.backgroundColor();
+  return painter->backgroundColor();
 }
 
 inline
 void Qt_widget::setBackgroundColor(QColor c)
 {
   QWidget::setBackgroundColor(c);
-  painter().setBackgroundColor(c);
+  get_painter().setBackgroundColor(c);
   clear();
 }
 
 inline
 QColor Qt_widget::fillColor() const
 {
-  return paint.brush().color();
+  return painter->brush().color();
 }
 
 inline
 void Qt_widget::setFillColor(QColor c)
 {
   setFilled(true);
-  painter().setBrush(c);
+  get_painter().setBrush(c);
 }
 
 inline
 bool Qt_widget::isFilled() const
 {
-  return( paint.brush().style()==Qt::NoBrush );
+  return( painter->brush().style()==Qt::NoBrush );
 }
 
 inline
 void Qt_widget::setFilled(bool f)
 {
   if (f)
-    paint.setBrush(savedBrush);
+    painter->setBrush(savedBrush);
   else
     {
-      savedBrush=paint.brush();
-      paint.setBrush(QBrush());
+      savedBrush=painter->brush();
+      painter->setBrush(QBrush());
     };
 }
 
 inline
 uint Qt_widget::lineWidth() const
 {
-  return( paint.pen().width());
+  return( painter->pen().width());
 }
 
 inline
 void Qt_widget::setLineWidth(unsigned int i)
 {
-  QPen p=painter().pen();
+  QPen p=get_painter().pen();
   p.setWidth(i);
-  painter().setPen(p);
+  get_painter().setPen(p);
 }
 
 inline
@@ -391,51 +394,51 @@ Qt_widget& operator<<(Qt_widget& w, const Point_2<R>& p)
   {
     case PIXEL:
     {
-			w.painter().drawPoint(x,y);
+			w.get_painter().drawPoint(x,y);
 			break;
     }
     case CROSS:
     {
-			w.painter().drawLine(x-size/2, y-size/2, x+size/2, y+size/2);
-			w.painter().drawLine(x-size/2, y+size/2, x+size/2, y-size/2);
+			w.get_painter().drawLine(x-size/2, y-size/2, x+size/2, y+size/2);
+			w.get_painter().drawLine(x-size/2, y+size/2, x+size/2, y-size/2);
 			break;
     }
     case PLUS:
     {
-			w.painter().drawLine(x, y-size/2, x, y+size/2);
-			w.painter().drawLine(x-size/2, y, x+size/2, y);
+			w.get_painter().drawLine(x, y-size/2, x, y+size/2);
+			w.get_painter().drawLine(x-size/2, y, x+size/2, y);
 			break;
     }
     case CIRCLE:
     {
-			QBrush old_brush=w.painter().brush();
-			w.painter().setBrush(QBrush());
-			w.painter().drawEllipse(x-size/2, y-size/2, size, size);
-			w.painter().setBrush(old_brush);
+			QBrush old_brush=w.get_painter().brush();
+			w.get_painter().setBrush(QBrush());
+			w.get_painter().drawEllipse(x-size/2, y-size/2, size, size);
+			w.get_painter().setBrush(old_brush);
 			break;
     }
     case DISC:
     {
-			QBrush old_brush=w.painter().brush();
-			w.painter().setBrush(w.painter().pen().color());
-			w.painter().drawEllipse(x-size/2, y-size/2, size, size);
-			w.painter().setBrush(old_brush);
+			QBrush old_brush=w.get_painter().brush();
+			w.get_painter().setBrush(w.get_painter().pen().color());
+			w.get_painter().drawEllipse(x-size/2, y-size/2, size, size);
+			w.get_painter().setBrush(old_brush);
 			break;
     }
     case RECT:
     {
-			QBrush old_brush=w.painter().brush();
-			w.painter().setBrush(QBrush());
-			w.painter().drawRect(x-size/2, y-size/2, size, size);
-			w.painter().setBrush(old_brush);
+			QBrush old_brush=w.get_painter().brush();
+			w.get_painter().setBrush(QBrush());
+			w.get_painter().drawRect(x-size/2, y-size/2, size, size);
+			w.get_painter().setBrush(old_brush);
 			break;
     }
     case BOX:
     {
-			QBrush old_brush=w.painter().brush();
-			w.painter().setBrush(w.painter().pen().color());
-			w.painter().drawRect(x-size/2, y-size/2, size, size);
-			w.painter().setBrush(old_brush);
+			QBrush old_brush=w.get_painter().brush();
+			w.get_painter().setBrush(w.get_painter().pen().color());
+			w.get_painter().drawRect(x-size/2, y-size/2, size, size);
+			w.get_painter().setBrush(old_brush);
 			break;
     }
   };
@@ -452,7 +455,7 @@ Qt_widget& operator<<(Qt_widget& w, const Segment_2<R>& s)
     y1=w.y_pixel(to_double(s.source().y())),
     x2=w.x_pixel(to_double(s.target().x())),
     y2=w.y_pixel(to_double(s.target().y()));
-  w.painter().drawLine(x1,y1,x2,y2);
+  w.get_painter().drawLine(x1,y1,x2,y2);
   w.do_paint();
   return w;
 }
@@ -497,7 +500,7 @@ Qt_widget& operator<<(Qt_widget& w, const Line_2<R>& l)
       x2=p1d.x()+(y2-p1d.y())*dx/dy;
     }
 
-  w.painter().drawLine(w.x_pixel(x1),w.y_pixel(y1),
+  w.get_painter().drawLine(w.x_pixel(x1),w.y_pixel(y1),
 		       w.x_pixel(x2),w.y_pixel(y2));
   return w;
 }
@@ -544,7 +547,7 @@ Qt_widget& operator<<(Qt_widget& w, const Ray_2<R>& r)
 	y = w.y_min();
       x=p1d.x()+(y-p1d.y())*dx/dy;
     }
-  w.painter().drawLine(w.x_pixel(p1d.x()),w.y_pixel(p1d.y()),
+  w.get_painter().drawLine(w.x_pixel(p1d.x()),w.y_pixel(p1d.y()),
 		       w.x_pixel(x),w.y_pixel(y));
   return w;
 
@@ -567,7 +570,7 @@ operator<<(Qt_widget& w, const Triangle_2<R>& t)
   QPointArray array;
 
   array.setPoints(3,ax,ay,bx,by,cx,cy);
-  w.painter().drawPolygon(array);
+  w.get_painter().drawPolygon(array);
   w.do_paint();
   return w;
 }
@@ -583,7 +586,7 @@ Qt_widget& operator<<(Qt_widget& w, const Circle_2<R>& c)
     rx=w.x_pixel_dist((std::sqrt(to_double(c.squared_radius())))),
     ry=w.y_pixel_dist((std::sqrt(to_double(c.squared_radius()))));
 
-  w.painter().drawEllipse(cx-rx,cy-ry,2*rx,2*ry);
+  w.get_painter().drawEllipse(cx-rx,cy-ry,2*rx,2*ry);
   w.do_paint();
   return w;
 }
@@ -599,7 +602,7 @@ operator<<(Qt_widget& w, const Iso_rectangle_2<R>& r)
     ymin = w.y_pixel(to_double(r.min().y())),
     xmax = w.x_pixel(to_double(r.max().x())),
     ymax = w.y_pixel(to_double(r.max().y()));
-  w.painter().drawRect(xmin,ymin,xmax-xmin,ymax-ymin);
+  w.get_painter().drawRect(xmin,ymin,xmax-xmin,ymax-ymin);
   w.do_paint();
   return w;
 }
@@ -625,7 +628,7 @@ Qt_widget& operator<<(Qt_widget& w, const Polygon_2<Tr,Co>& pol)
       array.setPoint(n++,w.x_pixel(to_double(i->x())),
 		     w.y_pixel(to_double(i->y())));
     }
-  w.painter().drawPolygon(array);
+  w.get_painter().drawPolygon(array);
   w.do_paint();
   return w;
 }

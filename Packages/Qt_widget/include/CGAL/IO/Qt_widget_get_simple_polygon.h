@@ -47,7 +47,7 @@ public:
       ECI  it;
       widget->lock();
 	RasterOp old_rasterop=widget->rasterOp();
-	widget->painter().setRasterOp(XorROP);
+	widget->get_painter().setRasterOp(XorROP);
 	*widget << CGAL::GREEN;
 	for(it = poly.edges_begin(); it != --poly.edges_end(); it++)
 	  *widget << *it;
@@ -79,7 +79,7 @@ public:
 	  //show the last rubber as edge of the polygon
 	  widget->lock();
 	    RasterOp old_rasterop=widget->rasterOp();
-	    widget->painter().setRasterOp(XorROP);
+	    widget->get_painter().setRasterOp(XorROP);
 	    *widget << CGAL::WHITE;
 	    *widget << Segment_2(rubber, last_of_poly);
 	    *widget << CGAL::GREEN;
@@ -117,7 +117,7 @@ public:
 	  if(poly.size() > 1){
 	    widget->lock();
 	      RasterOp old_rasterop=widget->rasterOp();
-	      widget->painter().setRasterOp(XorROP);
+	      widget->get_painter().setRasterOp(XorROP);
 	      *widget << CGAL::GREEN;
 	      *widget << Segment_2(*(----poly.vertices_end()), last_of_poly);
 	      *widget << CGAL::WHITE;
@@ -143,7 +143,7 @@ public:
       rubber = Point_2(x, y);
       widget->lock();
 	RasterOp old_rasterop=widget->rasterOp();
-	widget->painter().setRasterOp(XorROP);
+	widget->get_painter().setRasterOp(XorROP);
 	*widget << CGAL::WHITE;      	
 	if(!first_time)
 	  *widget << Segment_2(rubber_old, last_of_poly);
@@ -177,7 +177,7 @@ public:
     {
       widget->lock();
 	RasterOp old_rasterop=widget->rasterOp();
-	widget->painter().setRasterOp(XorROP);
+	widget->get_painter().setRasterOp(XorROP);
 	*widget << CGAL::WHITE;
 	*widget << Segment_2(rubber_old, last_of_poly);
 	widget->setRasterOp(old_rasterop);
