@@ -1,3 +1,7 @@
+2.33   (?? June 2001)
+- Rename compare_angles_with_x_axis to compare_angle_with_x_axis to match
+  Cartesian.
+
 2.32   (20 June 2001)
 - fixed bug in centroid
 - change #include order.

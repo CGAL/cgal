@@ -609,25 +609,25 @@ template <class R >
 inline
 bool
 DirectionH2<R>::operator< (const DirectionH2<R>& d) const
-{ return (compare_angles_with_x_axis(*this,d) == SMALLER); }
+{ return (compare_angle_with_x_axis(*this,d) == SMALLER); }
 
 template <class R >
 inline
 bool
 DirectionH2<R>::operator> (const DirectionH2<R>& d) const
-{ return (compare_angles_with_x_axis(*this,d) == LARGER); }
+{ return (compare_angle_with_x_axis(*this,d) == LARGER); }
 
 template <class R >
 inline
 bool
 DirectionH2<R>::operator>= (const DirectionH2<R>& d) const
-{ return !(compare_angles_with_x_axis(*this,d) == SMALLER); }
+{ return !(compare_angle_with_x_axis(*this,d) == SMALLER); }
 
 template <class R >
 inline
 bool
 DirectionH2<R>::operator<= (const DirectionH2<R>& d) const
-{ return !(compare_angles_with_x_axis(*this,d) == LARGER); }
+{ return !(compare_angle_with_x_axis(*this,d) == LARGER); }
 
 template <class R >
 CGAL_KERNEL_INLINE

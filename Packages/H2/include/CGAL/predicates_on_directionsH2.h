@@ -33,8 +33,8 @@ CGAL_BEGIN_NAMESPACE
 template < class R >
 CGAL_KERNEL_LARGE_INLINE
 Comparison_result
-compare_angles_with_x_axis(const DirectionH2<R>& d1,
-                           const DirectionH2<R>& d2)
+compare_angle_with_x_axis(const DirectionH2<R>& d1,
+                          const DirectionH2<R>& d2)
 {
   typedef typename R::RT  RT;
   CGAL_kernel_precondition(
