@@ -1,0 +1,66 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: SHalfloop.tex
+% +------------------------------------------------------------------------+
+% | 14.05.2004   Peter Hachenberger
+% | Package: Nef_3
+% | 
+\RCSdef{\RCSSHalfloopRev}{$Revision$}
+\RCSdefDate{\RCSSHalfloopDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}[Nef_polyhedron_3<Traits>::]{SHalfloop}
+
+\ccDefinition
+
+\ccInclude{CGAL/Nef_polyhedron_3.h}
+
+\ccTypes
+\ccThree{Halfedge_const_handle}{h.halfedge() const;;}{}
+\ccThreeToTwo
+
+\ccNestedType{Mark}{type of mark.}
+
+\ccNestedType{Sphere_circle}{sphere circle type stored in SHalfloop.}
+
+\ccNestedType{Halffacet_const_handle}{const handle to Halffacet.}
+\ccGlue
+\ccNestedType{SHalfloop_const_handle}{const handle to SHalfloop.}
+\ccGlue
+\ccNestedType{SFace_const_handle}{const handle to SFace.}
+
+\ccCreation
+\ccCreationVariable{se}
+
+\ccConstructor{SHalfloop();}{default constructor.}
+
+\ccOperations
+
+\ccMethod{const Mark& mark() const;}{the mark of \ccVar\ .}
+
+\ccMethod{const Sphere_circle& circle() const;}{the sphere circle of \ccVar\ .}
+
+\ccMethod{SHalfloop_const_handle twin() const;}{the twin of \ccVar\ .}
+
+\ccMethod{Halffacet_const_handle incident_facet() const;}{the incident facet of \ccVar\ .}
+
+\ccMethod{SFace_const_handle incident_sface() const;}{the incident sface of \ccVar\ .}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Nef_polyhedron_3<Traits>::Halffacet}\\
+\ccRefIdfierPage{CGAL::Nef_polyhedron_3<Traits>::SFace}
+
+\ccTagDefaults
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+

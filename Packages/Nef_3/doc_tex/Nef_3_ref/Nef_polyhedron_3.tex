@@ -25,9 +25,6 @@ operations, i.e. \ccc{intersection}, \ccc{union}, \ccc{difference},
 \ccc{complement}, and under the topological operations \ccc{boundary},
 \ccc{closure}, and \ccc{interior}.
 
-Nef_S2
-Extended_kernel
-
 \ccInclude{CGAL/Nef_polyhedron_3.h}
 
 \ccParameters
@@ -50,7 +47,7 @@ By default, the class \ccc{CGAL::SNC_items} is preseleted.
 
 \ccTypes
 
-\ccTwo{Nef_polyhedron_3<Traits>::SHalfedge_around_svertex_const_circulator}{}
+\ccTwo{Nef_polyhedron_3<Traits>::SHalfedge_const_iterator;}{}
 
 \ccNestedType{Traits}{traits class selected for \ccc{Nef_polyhedronTraits_3}.}
 \ccGlue
@@ -92,6 +89,8 @@ By default, the class \ccc{CGAL::SNC_items} is preseleted.
 \ccGlue
 \ccNestedType{SFace_const_iterator}{non-mutable iterator over all sfaces.}
 
+\ccTwo{Nef_polyhedron_3<Traits>::Object_handle;;;}{}
+
 \ccNestedType{SHalfedge_around_svertex_const_circulator}{non-mutable circulator of shalfedges around a svertex (cw).}
 \ccGlue
 \ccNestedType{SHalfedge_around_sface_const_circulator}{non-mutable circulator of shalfedges around a sface (ccw).}
@@ -108,7 +107,7 @@ By default, the class \ccc{CGAL::SNC_items} is preseleted.
   The kind of object \ccc{(vertex, halfedge, halffacet, volume, 
     svertex, shalfedge, shalfloop, sface)} can 
   be determined and the object can be assigned to a corresponding
-  handle by one of the following functions:\\
+  constant handle by one of the following functions:\\
   \ccc{bool assign(Vertex_const_handle& h, Object_handle)}\\
   \ccc{bool assign(Halfedge_const_handle& h, Object_handle)}\\
   \ccc{bool assign(Halffacet_const_handle& h, Object_handle)}\\
@@ -119,6 +118,8 @@ By default, the class \ccc{CGAL::SNC_items} is preseleted.
   \ccc{bool assign(SFace_const_handle& h, Object_handle)}\\
   where each function returns \ccc{true} iff the assignment to
   \ccc{h} could be accomplished. }
+
+\ccTwo{Nef_polyhedron_3<Traits>::SHalfedge_const_iterator}{}
 
 \ccNestedType{Point_3}{location of vertices.}
 \ccGlue
@@ -150,31 +151,33 @@ By default, the class \ccc{CGAL::SNC_items} is preseleted.
   set if \ccc{plane == EMPTY}
   and to the whole space if \ccc{space == COMPLETE}.}
 
-\ccConstrcutor{Nef_polyhedron_3(const Plane_3& p, 
+\ccConstructor{Nef_polyhedron_3(const Plane_3& p, 
                                 Boundary b = INCLUDED);}{
   creates a Nef polyhedron containing the halfspace left of
   \ccc{p} including \ccc{p} if \ccc{b==INCLUDED}, excluding \ccc{p}
   if \ccc{b==EXCLUDED}.}
 
-\ccConstrcutor{Nef_polyhedron_3(Polyhedron& P);}{
+\ccConstructor{Nef_polyhedron_3(Polyhedron& P);}{
   creates a Nef polyhedron, which represents the same point set as 
   the polyhedral surface \ccc{P} does.}
 
-\ccConstrcutor{Nef_polyhedron_3(const char* filename);}{
-  loads a Nef polyhedron from the \ccc}filename}.}
+%\ccConstructor{Nef_polyhedron_3(const char* filename);}{
+%  loads a Nef polyhedron from \ccc{filename}.}
 
 
 \ccOperations
+
+\ccThree{bool}{N.operator==();}{}
 
 \ccMethod{bool is_empty() const;}{returns true, if \ccVar\ is the 
                                   empty point set.}
 \ccGlue
 \ccMethod{bool is_space() const;}{returns true, if \ccVar\ is the 
                                   complete 3D space.}
-\ccGlue
-\ccMethod{bool is_simple() const;}{return true, if \ccVar\ is a 2-manifold.}
 
-\ccMethod{bool is_valid() const;}{checks the integrity of \ccVar\.}
+\ccMethod{bool is_simple() const;}{returns true, if \ccVar\ is a 2-manifold.}
+\ccGlue
+\ccMethod{bool is_valid() const;}{checks the integrity of \ccVar\ .}
 
 \ccMethod{bool operator==(const Nef_polyhedron_3<Traits>& N1) const;}
 {returns true, if \ccVar\ and N1 comprise the same point sets.}
@@ -203,18 +206,18 @@ By default, the class \ccc{CGAL::SNC_items} is preseleted.
 {returns the number of volumes.}   
 
 \ccMethod{Nef_polyhedron_3<Traits> complement() const;}
-{returns the complement of \ccVar\.}
+{returns the complement of \ccVar\ .}
 \ccMethod{Nef_polyhedron_3<Traits> interior() const;}
-{returns the interior of \ccVar\.}
+{returns the interior of \ccVar\ .}
 \ccMethod{Nef_polyhedron_3<Traits> boundary() const;}
-{returns the boundary of \ccVar\.}
+{returns the boundary of \ccVar\ .}
 \ccMethod{Nef_polyhedron_3<Traits> closure() const;}
-{returns the closure of \ccVar\.}
+{returns the closure of \ccVar\ .}
 \ccMethod{Nef_polyhedron_3<Traits> regularization() const;}
-{returns the regularization, i.e. the closure of the interior, of \ccVar\.}
+{returns the regularization, i.e. the closure of the interior, of \ccVar\ .}
 
 \ccMethod{void operator!();}
-{returns the complement of \ccVar\.}
+{returns the complement of \ccVar\ .}
 
 \ccMethod{Nef_polyhedron_3<Traits> intersection(const Nef_polyhedron_3<Traits>& N1) const;}
 {return the intersection of \ccVar\ and N1.}
@@ -236,7 +239,7 @@ By default, the class \ccc{CGAL::SNC_items} is preseleted.
 
 \ccMethod{void operator*=(const Nef_polyhedron_3<Traits>& N1);}{intersects \ccVar\ and N1.}
 \ccMethod{void operator+=(const Nef_polyhedron_3<Traits>& N1);}{unites \ccVar\ with N1.}
-\ccMethod{void operator-=(const Nef_polyhedron_3<Traits>& N1);}{subtracts N1 from \ccVar\.}
+\ccMethod{void operator-=(const Nef_polyhedron_3<Traits>& N1);}{subtracts N1 from \ccVar\ .}
 \ccMethod{void operator^=(const Nef_polyhedron_3<Traits>& N1);}{performs a symmetric intersection of \ccVar\ and N1.}
 
 \ccMethod{Object_handle locate(const Point_3& p) const;}
@@ -248,11 +251,11 @@ By default, the class \ccc{CGAL::SNC_items} is preseleted.
 {make \ccVar\ the empty set if \ccc{space == EMPTY} and
  the complete 3D space if \ccc{space == COMPLETE}.}
 
-\ccMethod{void transform(const Aff_transformation_3& aff);}{applies an affine transformation to \ccVar\.}
+\ccMethod{void transform(const Aff_transformation_3& aff);}{applies an affine transformation to \ccVar\ .}
 
 %\ccMethod{void dump() const;}{}
-\ccMethod{void convert_to_Polyhedron(Polyhedron& P) const;}{converts \ccVar\ into a Polyhedron. \emph{Precondition: \ccVar\.is_simple()}.}
-\ccMethod{Nef_polyhedron_S2 get_sphere_map(Vertex_const_iterator v) const;}{returns the neighborhood of a Vertex modeled by a Nef_polyhedron_S2.}
+\ccMethod{void convert_to_Polyhedron(Polyhedron& P) const;}{converts \ccVar\ into a Polyhedron. \ccc{Precondition: \ccVar\ .is_simple()}.}
+\ccMethod{Nef_polyhedron_S2 get_sphere_map(Vertex_const_iterator v) const;}{returns the neighborhood of a vertex modeled by a \ccc{Nef_polyhedron_S2}.}
 
 \ccMethod{Mark mark(Vertex_const_handle v) const;}{returns the mark of v.}
 \ccMethod{Mark mark(Halfedge_const_handle e) const;}{returns the mark of e.}
@@ -303,7 +306,7 @@ By default, the class \ccc{CGAL::SNC_items} is preseleted.
 {calls the visit function of V for every item which belongs to the same shell as sf.}
 
 \ccMethod{const Point_3& point(Vertex_const_handle v) const;}{returns the location of v.}
-\ccMethod{Segment_3 segment(Halfedge_const_handle e) const;}{returns Segment_3(point(source(e)),point(target(e))).}
+\ccMethod{Segment_3 segment(Halfedge_const_handle e) const;}{returns \ccc{Segment_3(point(source(e)),point(target(e)))}.}
 \ccMethod{Vector_3 vector(Halfedge_const_handle e) const;}{returns the direction of e.}
 \ccMethod{const Plane_3& plane(Halffacet_const_handle f) const;}{returns the supporting plane of f.}
 

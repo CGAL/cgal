@@ -20,8 +20,9 @@ This operator reads a Nef polyhedron, which is given in the proprietary file
 format written by the input operator \emph{in} and assigns it to \emph{N}. It includes the 
 complete incidence structure, the geometric data, and the marks of each item.
 
-It is recommended to use the \cgal kernels Homogeneous, Simple_homogeneous, 
-or Extended_homogeneous parametrized with any exact number type that models 
+It is recommended to use the \cgal kernels \ccc{Homogeneous}, 
+\ccc{Simple_homogeneous}, 
+or \ccc{Extended_homogeneous} parametrized with any exact number type that models 
 mathbb{Z}. The input and output iterators of Nef polyhedra parametrized with
 either of these kernels are compatible as long as the Nef polyhedron is bounded.
 An unbounded Nef polyhedron can only be read by a Nef polyhedron parametrized with
@@ -40,7 +41,7 @@ The input operator and output operators of N
 
 \ccRefIdfierPage{CGAL::Nef_polyhedron_3<Traits>}\\ 
 \lcTex{\ccc{operator<<} \dotfill\ 
-    page~\pageref{refNef_polyhedron_operator_leftshift}}%
+    page~\pageref{refNef_polyhedron_operator_leftshift_3}}%
 \lcRawHtml{
     <I><A HREF="Function_operator.html">operator&lt;&lt;</A></I>.
 }

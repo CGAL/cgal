@@ -1,0 +1,78 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Halfedge.tex
+% +------------------------------------------------------------------------+
+% | 14.05.2004   Peter Hachenberger
+% | Package: Nef_3
+% | 
+\RCSdef{\RCSHalfedgeRev}{$Revision$}
+\RCSdefDate{\RCSHalfedgeDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}[Nef_polyhedron_3<Traits>::]{Halfedge}
+
+\ccDefinition
+ 
+
+\ccInclude{CGAL/Nef_polyhedron_3.h}
+
+\ccTypes
+\ccThree{Halfedge_const_handle}{h.halfedge() const;;}{}
+\ccThreeToTwo
+
+\ccNestedType{Mark}{type of mark.}
+
+\ccNestedType{Sphere_point}{sphere point type stored in Halfedge.}
+
+\ccNestedType{Vertex_const_handle}{const handle to vertex.}
+\ccGlue
+\ccNestedType{Halfedge_const_handle}{const handle to halfedge.}
+\ccGlue
+\ccNestedType{SHalfedge_const_handle}{const handle to SHalfedge.}
+\ccGlue
+\ccNestedType{SFace_const_handle}{const handle to SFace.}
+
+\ccCreation
+\ccCreationVariable{e}
+
+\ccConstructor{Halfedge();}{default constructor.}
+
+\ccConstructor{Halfedge(Mark m);}
+{creates Halfedge with an initial value for its mark.}
+
+\ccOperations
+
+\ccMethod{const Mark& mark() const;}{the mark of \ccVar\ .}
+
+\ccMethod{const Sphere_point& point() const;}{the sphere point of \ccVar\ .}
+
+\ccMethod{Vertex_const_handle center_vertex() const;}
+{the center vertex of the sphere map \ccVar\ belongs to.}
+
+\ccMethod{Halfedge_const_handle twin() const;}{the twin of \ccVar\ .}
+
+\ccMethod{SHalfedge_const_handle out_sedge() const;}
+{the first out sedege of \ccVar\ .}
+
+\ccMethod{SFace_const_handle incident_sface() const;}
+{the incident sface of \ccVar\ .}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Nef_polyhedron_3<Traits>::Vertex}\\
+\ccRefIdfierPage{CGAL::Nef_polyhedron_3<Traits>::SHalfedge}\\
+\ccRefIdfierPage{CGAL::Nef_polyhedron_3<Traits>::SFace}
+
+\ccTagDefaults
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+

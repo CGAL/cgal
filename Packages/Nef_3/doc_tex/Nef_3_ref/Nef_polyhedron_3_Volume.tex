@@ -1,0 +1,66 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Volume.tex
+% +------------------------------------------------------------------------+
+% | 14.05.2004   Peter Hachenberger
+% | Package: Nef_3
+% | 
+\RCSdef{\RCSVolumeRev}{$Revision$}
+\RCSdefDate{\RCSVolumeDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}[Nef_polyhedron_3<Traits>::]{Volume}
+
+\ccDefinition
+
+
+\ccInclude{CGAL/Nef_polyhedron_3.h}
+
+\ccTypes
+\ccThree{Halfedge_const_handle}{h.halfedge() const;;}{}
+\ccThreeToTwo
+
+\ccNestedType{Mark}{type of mark.}
+
+\ccNestedType{Object_list}{list of Object handles.}
+
+\ccNestedType{Volume_const_handle}{const handle to Volume.}
+\ccGlue
+\ccNestedType{Shell_entry_const_iterator}
+{const iterator over the entries to all shells adjacent to \ccVar\ .}
+
+\ccCreation
+\ccCreationVariable{c}
+
+\ccConstructor{Volume();}{default constructor.}
+
+\ccOperations
+
+\ccMethod{const Mark& mark() const;}{the mark of \ccVar\ .}
+
+\ccMethod{Shell_entry_const_iterator  facet_cycle_begin() const;}
+{const iterator over the entries to all shells adjacent to \ccVar\ .}
+
+\ccMethod{Shell_entry_const_iterator  facet_cycle_end() const;}
+{past-the-end iterator.}
+
+\ccMethod{const Object_list&  boundary_entry_objects() const;}
+{list of entries to all shells adjacent to \ccVar\ .}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Nef_polyhedron_3<Traits>::SFace}
+
+\ccTagDefaults
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
