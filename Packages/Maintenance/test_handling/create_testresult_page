@@ -17,8 +17,6 @@ use strict;
 
 my ($PLATFORMS_BESIDE_RESULTS, $PLATFORMS_REF_BETWEEN_RESULTS)=(1,1);
 
-my $SCRIPTDIR = './';
-
 my $TEMPPAGE="tmp$$.html";
 my $TEMPPAGE2="tmp2$$.html";
 my $release_name;
@@ -28,11 +26,7 @@ my %platform_short_names;
 my @available_platforms;
 my @test_directories;
 my @testresults;
-my $currentdir;
-my $testresult_dir;
-
-$currentdir=cwd();
-$testresult_dir="$currentdir/TESTRESULTS";
+my $testresult_dir=cwd()."/TESTRESULTS";
 
 
 sub write_select()
