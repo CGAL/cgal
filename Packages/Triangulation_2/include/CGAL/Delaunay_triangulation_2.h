@@ -50,31 +50,32 @@
 
 #include <CGAL/Triangulation_2.h>
 
-template < class Tds>
-class CGAL_Delaunay_triangulation_2 : public CGAL_Triangulation_2<Tds>
+template < class Gt, class Tds>
+class CGAL_Delaunay_triangulation_2 : public CGAL_Triangulation_2<Gt,Tds>
 {
 friend istream& operator>> CGAL_NULL_TMPL_ARGS
-                (istream& is, CGAL_Delaunay_triangulation_2<Tds> &T);
+                (istream& is, CGAL_Delaunay_triangulation_2<Gt,Tds> &T);
 public:
-  typedef typename Tds::Geom_traits Geom_traits;
+  typedef Gt Geom_traits;
   typedef typename Geom_traits::Distance Distance;
 
   CGAL_Delaunay_triangulation_2()
-  : CGAL_Triangulation_2<Tds>() {}
+    : CGAL_Triangulation_2<Gt,Tds>() {}
   
-  CGAL_Delaunay_triangulation_2(Tds& tds)
-  : CGAL_Triangulation_2<Tds>(tds) {}
+  CGAL_Delaunay_triangulation_2(const Gt& gt)
+  : CGAL_Triangulation_2<Gt,Tds>(gt) {}
   
   
-  CGAL_Delaunay_triangulation_2(const Vertex_handle& v)
-    : CGAL_Triangulation_2<Tds>(v)
+  CGAL_Delaunay_triangulation_2(const Vertex_handle& v, const Gt& gt=Gt())
+    : CGAL_Triangulation_2<Gt,Tds>(v,gt)
   {   CGAL_triangulation_postcondition( is_valid() );  }
   
   
-  
-  CGAL_Delaunay_triangulation_2(const Vertex_handle& v,
-                                 Tds& tds)
-      : CGAL_Triangulation_2<Tds>(v, tds)
+  // copy constructor duplicates vertices and faces
+  // no copy constructed needed :
+  // the default will invoke the copy constructor of CGAL_Triangulation_2 ?
+  CGAL_Delaunay_triangulation_2(const CGAL_Delaunay_triangulation_2<Gt,Tds> &tr)
+      : CGAL_Triangulation_2<Gt,Tds>(tr)
   {   CGAL_triangulation_postcondition( is_valid() );  }
   
   #ifndef CGAL_CFG_NO_MEMBER_TEMPLATES
@@ -228,7 +229,7 @@ public:
   
   Vertex_handle
   insert(const Point  &p,
-         CGAL_Triangulation_2<Tds>::Locate_type& lt,
+         CGAL_Triangulation_2<Gt,Tds>::Locate_type& lt,
          Face_handle f = Face_handle() )
   {
 //       Vertex_handle v;
@@ -295,7 +296,7 @@ public:
 //       }
 //   
     
-      Vertex_handle v = CGAL_Triangulation_2<Tds>::insert(p,lt,f);
+      Vertex_handle v = CGAL_Triangulation_2<Gt,Tds>::insert(p,lt,f);
 
       if(dimension() <= 1) return v;
 
@@ -319,7 +320,7 @@ public:
      CGAL_triangulation_precondition( !is_infinite(v));
   
        if  (number_of_vertices() == 1) {
-        CGAL_Triangulation_2<Tds>::remove(v);
+        CGAL_Triangulation_2<Gt,Tds>::remove(v);
         return;
       }
        
@@ -446,7 +447,7 @@ public:
 //       result = result && ( face_count == 2* (vertex_count -1) );
 //       CGAL_triangulation_assertion( result );
 
-    bool result = CGAL_Triangulation_2<Tds>::is_valid();
+    bool result = CGAL_Triangulation_2<Gt,Tds>::is_valid();
 
     Face_iterator it = faces_begin(),
                         done = faces_end();
@@ -696,19 +697,19 @@ private:
 };
 
 
-template < class Tds >
+template < class Gt, class Tds >
 ostream&
-operator<<(ostream& os, const CGAL_Delaunay_triangulation_2<Tds> &DT)
+operator<<(ostream& os, const CGAL_Delaunay_triangulation_2<Gt,Tds> &DT)
 {
-  return os << (const CGAL_Triangulation_2<Tds>&)DT;
+  return os << (const CGAL_Triangulation_2<Gt,Tds>&)DT;
 }
 
 
-template < class Tds >
+template < class Gt, class Tds >
 istream&
-operator>>(istream& is, CGAL_Delaunay_triangulation_2<Tds> &dt)
+operator>>(istream& is, CGAL_Delaunay_triangulation_2<Gt,Tds> &dt)
 {
-  is >> (CGAL_Triangulation_2<Tds>&)dt;
+  is >> (CGAL_Triangulation_2<Gt,Tds>&)dt;
   dt.is_valid();
   return is;
 }
