@@ -36,9 +36,6 @@ CGAL_BEGIN_NAMESPACE
 template < class Gt, class Tds >
 class Triangulation_3;
 
-template < class Gt, class Tds >
-class Triangulation_cell_3;
-
 template < class Gt, class Tds>
 class Triangulation_cell_circulator_3
   : public Bidirectional_circulator_base<Triangulation_cell_3<Gt,Tds>, 
@@ -48,12 +45,13 @@ public:
   typedef typename Tds::Cell Ctds;
   typedef typename Tds::Cell_circulator Circulator_base;
 
-  typedef typename Triangulation_3<Gt,Tds>::Cell Cell;
-  typedef typename Triangulation_3<Gt,Tds>::Vertex Vertex;
-  typedef typename Triangulation_3<Gt,Tds>::Edge Edge;
-  typedef typename Triangulation_3<Gt,Tds>::Vertex_handle Vertex_handle;
-  typedef typename Triangulation_3<Gt,Tds>::Cell_handle Cell_handle;
   typedef Triangulation_3<Gt,Tds> Triangulation;
+
+  typedef typename Triangulation::Cell Cell;
+  typedef typename Triangulation::Vertex Vertex;
+  typedef typename Triangulation::Edge Edge;
+  typedef typename Triangulation::Vertex_handle Vertex_handle;
+  typedef typename Triangulation::Cell_handle Cell_handle;
 
   typedef Triangulation_cell_circulator_3<Gt,Tds> Cell_circulator;
 
@@ -166,13 +164,14 @@ public:
   typedef typename Tds::Cell Ctds;
   typedef typename Tds::Facet_circulator Circulator_base;
 
-  typedef typename Triangulation_3<Gt,Tds>::Cell Cell;
-  typedef typename Triangulation_3<Gt,Tds>::Vertex Vertex;
-  typedef typename Triangulation_3<Gt,Tds>::Edge Edge;
-  typedef typename Triangulation_3<Gt,Tds>::Facet Facet;
-  typedef typename Triangulation_3<Gt,Tds>::Vertex_handle Vertex_handle;
-  typedef typename Triangulation_3<Gt,Tds>::Cell_handle Cell_handle;
   typedef Triangulation_3<Gt,Tds> Triangulation;
+
+  typedef typename Triangulation::Cell Cell;
+  typedef typename Triangulation::Vertex Vertex;
+  typedef typename Triangulation::Edge Edge;
+  typedef typename Triangulation::Facet Facet;
+  typedef typename Triangulation::Vertex_handle Vertex_handle;
+  typedef typename Triangulation::Cell_handle Cell_handle;
 
   typedef Triangulation_facet_circulator_3<Gt,Tds> Facet_circulator;
 
@@ -279,7 +278,8 @@ public:
 
   inline Facet operator*() const
   {
-    return std::make_pair( (Cell*) (*_cb).first, (*_cb).second  ) ;
+    return std::make_pair( Cell_handle( (Cell *) ((*_cb).first) ),
+			   (*_cb).second  ) ;
   }
 
 private: 
