@@ -72,7 +72,6 @@ private:
   void			    addToolButton(QToolButton *b);
   int			      nr_of_buttons;
 	
-  Delaunay			    *dt;
   CGAL::Qt_widget_get_line<Rp>	    linebut;
   CGAL::Qt_widget_get_point<Rp>	    pointbut;
   CGAL::Qt_widget_movepoint<Delaunay> movepointbut;

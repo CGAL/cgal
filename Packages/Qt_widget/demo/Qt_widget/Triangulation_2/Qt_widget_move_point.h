@@ -40,6 +40,7 @@ namespace CGAL {
 	virtual void move_pointi(){};
 
   public slots:
+    void stateChanged(int i);
     void delete_point();
     void move_point();
   };
@@ -66,9 +67,7 @@ namespace CGAL {
     QPopupMenu				*popup1;
   public:
     Qt_widget_movepoint() : wasrepainted(true), on_first(FALSE)
-    {
-      
-    };
+    {};
     void set_Delaunay (T *t) {dt = t;}
   private:
     QCursor oldcursor;
@@ -85,9 +84,8 @@ namespace CGAL {
       if(e->button() == Qt::RightButton)
       {
 	      if (dt->dimension()<2) return;
-	        FT
-	          x=static_cast<FT>(widget->x_real(e->x())),
-	          y=static_cast<FT>(widget->y_real(e->y()));
+          FT x=static_cast<FT>(widget->x_real(e->x()));
+          FT y=static_cast<FT>(widget->y_real(e->y()));
 
 	      Point p(x, y);
 	      Vertex_handle v = dt->nearest_vertex(p);

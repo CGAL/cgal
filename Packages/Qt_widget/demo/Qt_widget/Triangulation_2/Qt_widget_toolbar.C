@@ -31,7 +31,7 @@
 
 
 namespace CGAL {
-  Tools_toolbar::Tools_toolbar(Qt_widget *w, QMainWindow *mw, Delaunay *t) : dt(t)
+  Tools_toolbar::Tools_toolbar(Qt_widget *w, QMainWindow *mw, Delaunay *t)
   {
     //when it is created, the toolbar has 0 buttons
     nr_of_buttons = 0;
@@ -40,6 +40,7 @@ namespace CGAL {
     widget->attach(&linebut);
     widget->attach(&pointbut);
     widget->attach(&movepointbut);
+    movepointbut.set_Delaunay(t);
     pointbut.deactivate();
     linebut.deactivate();
     movepointbut.deactivate();
