@@ -1,3 +1,6 @@
+Version 2.15 (11 April 2002)
+- doc fixes
+
 Version 2.14 (10 April 2002)
 - fixed main.tex in doc of  iostream packages
 
