@@ -197,16 +197,29 @@ enum {
 
 // User interface:
 
-inline FPU_CW_t FPU_get_cw (void)
+inline
+FPU_CW_t
+FPU_get_cw (void)
 {
     FPU_CW_t cw;
     CGAL_IA_GETFPCW(cw);
     return cw;
 }
 
-inline void FPU_set_cw (FPU_CW_t cw)
+inline
+void
+FPU_set_cw (FPU_CW_t cw)
 {
     CGAL_IA_SETFPCW(cw);
+}
+
+inline
+FPU_CW_t
+FPU_get_and_set_cw (FPU_CW_t cw)
+{
+    FPU_CW_t old = FPU_get_cw();
+    FPU_set_cw(cw);
+    return old;
 }
 
 CGAL_END_NAMESPACE
