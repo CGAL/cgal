@@ -4,17 +4,22 @@
 # - package
 # - doc
 # - clean
-# - test ?
+# - test
 # - all = test/package ?
 
 .PHONY: doc package
 
 package: doc clean Interval_arithmetic.tar.gz
 	@echo "-----------------------------------------------------"
-	@echo "------- Penser à updater le fichier version    ------"
-	@echo "------- Penser à faire un commit/status/rtag   ------"
-	@echo "------- Penser à mettre à jour le fichier html ------"
+	@echo "------- Penser à: -----------------------------------"
+	@echo " *** updater les fichiers version  et changes.txt ---"
+	@echo " *** faire un make test -----------------------------"
+	@echo " *** faire un commit/status/rtag   ------------------"
+	@echo " *** mettre à jour le fichier html ------------------"
 	@echo "-----------------------------------------------------"
+
+test:
+	$(MAKE) -C test/Interval_arithmetic all
 
 clean:
 	$(MAKE) -C doc_tex/support/Interval_arithmetic clean
