@@ -34,6 +34,7 @@ class SegmentC2
 CGAL_VC7_BUG_PROTECTED
   typedef typename R_::FT                   FT;
   typedef typename R_::Point_2              Point_2;
+  typedef typename R_::Vector_2             Vector_2;
   typedef typename R_::Direction_2          Direction_2;
   typedef typename R_::Line_2               Line_2;
   typedef typename R_::Segment_2            Segment_2;
@@ -80,6 +81,7 @@ public:
   FT          squared_length() const;
 
   Direction_2 direction() const;
+  Vector_2    to_vector() const;
   Line_2      supporting_line() const;
   Segment_2        opposite() const;
   Segment_2        transform(const Aff_transformation_2 &t) const
@@ -179,6 +181,14 @@ typename SegmentC2<R>::Direction_2
 SegmentC2<R>::direction() const
 {
   return Direction_2( target() - source() );
+}
+
+template < class R >
+CGAL_KERNEL_INLINE
+typename SegmentC2<R>::Vector_2
+SegmentC2<R>::to_vector() const
+{
+  return target() - source();
 }
 
 template < class R >

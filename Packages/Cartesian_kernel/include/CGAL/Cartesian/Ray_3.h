@@ -34,6 +34,7 @@ CGAL_VC7_BUG_PROTECTED
   typedef typename R_::FT                   FT;
   typedef typename R_::Point_3              Point_3;
   typedef typename R_::Direction_3          Direction_3;
+  typedef typename R_::Vector_3             Vector_3;
   typedef typename R_::Line_3               Line_3;
   typedef typename R_::Ray_3                Ray_3;
   typedef typename R_::Aff_transformation_3 Aff_transformation_3;
@@ -50,8 +51,14 @@ public:
   RayC3(const Point_3 &sp, const Point_3 &secondp)
     : base(rep(sp, secondp)) {}
 
+  RayC3(const Point_3 &sp, const Vector_3 &v)
+    : base(rep(sp, sp + v)) {}
+
   RayC3(const Point_3 &sp, const Direction_3 &d)
     : base(rep(sp, sp + d.to_vector())) {}
+
+  RayC3(const Point_3 &sp, const Line_3 &l)
+    : base(rep(sp, sp + l.to_vector())) {}
 
   bool        operator==(const RayC3 &r) const;
   bool        operator!=(const RayC3 &r) const;
@@ -68,6 +75,7 @@ public:
   Point_3     point(int i) const;
 
   Direction_3 direction() const;
+  Vector_3    to_vector() const;
   Line_3      supporting_line() const;
   Ray_3       opposite() const;
 
@@ -116,6 +124,14 @@ RayC3<R>::point(int i) const
   if (i == 0) return source();
   if (i == 1) return second_point();
   return source() + FT(i) * (second_point() - source());
+}
+
+template < class R >
+inline
+typename RayC3<R>::Vector_3
+RayC3<R>::to_vector() const
+{
+  return second_point() - source();
 }
 
 template < class R >

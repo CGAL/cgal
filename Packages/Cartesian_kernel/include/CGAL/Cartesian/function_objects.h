@@ -889,6 +889,7 @@ namespace CartesianKernelFunctors {
     typedef typename K::FT                        FT;
     typedef typename K::Point_2                   Point_2;
     typedef typename K::Direction_2               Direction_2;
+    typedef typename K::Vector_2                  Vector_2;
     typedef typename K::Segment_2                 Segment_2;
     typedef typename K::Ray_2                     Ray_2;
     typedef typename K::Line_2                    Line_2;
@@ -924,6 +925,14 @@ namespace CartesianKernelFunctors {
     { 
       FT a, b, cc;
       line_from_point_directionC2(p.x(), p.y(), d.dx(), d.dy(), a, b, cc);
+      return Line_2(a, b, cc);
+    }
+
+    Line_2
+    operator()(const Point_2& p, const Vector_2& v) const
+    { 
+      FT a, b, cc;
+      line_from_point_directionC2(p.x(), p.y(), v.x(), v.y(), a, b, cc);
       return Line_2(a, b, cc);
     }
 
@@ -1113,6 +1122,9 @@ namespace CartesianKernelFunctors {
   {
     typedef typename K::RT           RT;
     typedef typename K::FT           FT;
+    typedef typename K::Segment_2    Segment_2;
+    typedef typename K::Ray_2        Ray_2;
+    typedef typename K::Line_2       Line_2;
     typedef typename K::Vector_2     Vector_2;
     typedef typename K::Point_2      Point_2;
   public:
@@ -1126,6 +1138,18 @@ namespace CartesianKernelFunctors {
     Vector_2
     operator()( const Point_2& p, const Point_2& q) const
     { return Vector_2(q.x() - p.x(), q.y() - p.y()); }
+
+    Vector_2
+    operator()( const Segment_2& s) const
+    { return s.to_vector(); }
+
+    Vector_2
+    operator()( const Ray_2& r) const
+    { return r.to_vector(); }
+
+    Vector_2
+    operator()( const Line_2& l) const
+    { return l.to_vector(); }
 
     Vector_2
     operator()( Null_vector) const
@@ -1147,6 +1171,9 @@ namespace CartesianKernelFunctors {
   {
     typedef typename K::RT           RT;
     typedef typename K::FT           FT;
+    typedef typename K::Segment_3    Segment_3;
+    typedef typename K::Ray_3        Ray_3;
+    typedef typename K::Line_3       Line_3;
     typedef typename K::Vector_3     Vector_3;
     typedef typename K::Point_3      Point_3;
   public:
@@ -1162,6 +1189,18 @@ namespace CartesianKernelFunctors {
     { 
       return Vector_3(q.x() - p.x(), q.y() - p.y(), q.z() - p.z());
     }
+
+    Vector_3
+    operator()( const Segment_3& s) const
+    { return s.to_vector(); }
+
+    Vector_3
+    operator()( const Ray_3& r) const
+    { return r.to_vector(); }
+
+    Vector_3
+    operator()( const Line_3& l) const
+    { return l.to_vector(); }
 
     Vector_3
     operator()( const Null_vector&) const

@@ -34,6 +34,7 @@ CGAL_VC7_BUG_PROTECTED
   typedef typename R_::FT                   FT;
   typedef typename R_::Point_2              Point_2;
   typedef typename R_::Direction_2          Direction_2;
+  typedef typename R_::Vector_2             Vector_2;
   typedef typename R_::Ray_2                Ray_2;
   typedef typename R_::Segment_2            Segment_2;
   typedef typename R_::Line_2               Line_2;
@@ -63,6 +64,9 @@ public:
   LineC2(const Point_2 &p, const Direction_2 &d)
     : base(R().construct_line_2_object()(p, d)) {}
 
+  LineC2(const Point_2 &p, const Vector_2 &v)
+    : base(R().construct_line_2_object()(p, v)) {}
+
   bool            operator==(const LineC2 &l) const;
   bool            operator!=(const LineC2 &l) const;
 
@@ -90,6 +94,7 @@ public:
   Point_2         projection(const Point_2 &p) const;
 
   Direction_2     direction() const;
+  Vector_2        to_vector() const;
 
   Oriented_side   oriented_side(const Point_2 &p) const;
   bool            has_on_boundary(const Point_2 &p) const;
@@ -210,6 +215,14 @@ typename LineC2<R>::Direction_2
 LineC2<R>::direction() const
 {
   return Direction_2( b(), -a() );
+}
+
+template < class R >
+inline
+typename LineC2<R>::Vector_2
+LineC2<R>::to_vector() const
+{
+  return Vector_2( b(), -a() );
 }
 
 template < class R >

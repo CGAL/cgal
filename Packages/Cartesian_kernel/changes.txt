@@ -1,3 +1,25 @@
+Version 6.86 (11 May 2003)
+- Add missing functor for Plane_3(Point_3, Vector_3).
+- In order to get rid of Direction_[23] at some point, I have added :
+    - Line_2(Point_2, Vector_2)        ConstructLine_2
+    - Line_3(Point_3, Vector_3)        ConstructLine_3
+    - Ray_2(Point_2, Vector_2)         ConstructRay_2
+    - Ray_3(Point_3, Vector_3)         ConstructRay_3
+    - Ray_2(Point_2, Line_2)           ConstructRay_2
+    - Ray_3(Point_3, Line_3)           ConstructRay_3
+    - Vector_2(Line_2)                 ConstructVector_2
+    - Vector_3(Line_3)                 ConstructVector_3
+    - Vector_2(Ray_2)                  ConstructVector_2
+    - Vector_3(Ray_3)                  ConstructVector_3
+    - Vector_2(Segment_2)              ConstructVector_2
+    - Vector_3(Segment_3)              ConstructVector_3
+    - Vector_2 Line_2.to_vector()
+    - Vector_3 Line_3.to_vector()
+    - Vector_2 Ray_2.to_vector()
+    - Vector_3 Ray_3.to_vector()
+    - Vector_2 Segment_2.to_vector()
+    - Vector_3 Segment_3.to_vector()
+
 Version 6.85 (11 May 2003) [mh]
 - Rename variable to avoid SunPro warning.
 

@@ -34,6 +34,7 @@ CGAL_VC7_BUG_PROTECTED
   typedef typename R_::FT                   FT;
   typedef typename R_::Point_3              Point_3;
   typedef typename R_::Direction_3          Direction_3;
+  typedef typename R_::Vector_3             Vector_3;
   typedef typename R_::Line_3               Line_3;
   typedef typename R_::Segment_3            Segment_3;
   typedef typename R_::Aff_transformation_3 Aff_transformation_3;
@@ -77,6 +78,7 @@ public:
   FT          squared_length() const;
 
   Direction_3 direction() const;
+  Vector_3    to_vector() const;
   Line_3      supporting_line() const;
   Segment_3   opposite() const;
   Segment_3   transform(const Aff_transformation_3 &t) const
@@ -168,6 +170,14 @@ typename SegmentC3<R>::FT
 SegmentC3<R>::squared_length() const
 {
   return squared_distance(target(), source());
+}
+
+template < class R >
+inline
+typename SegmentC3<R>::Vector_3
+SegmentC3<R>::to_vector() const
+{
+  return target() - source();
 }
 
 template < class R >

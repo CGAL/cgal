@@ -34,6 +34,7 @@ CGAL_VC7_BUG_PROTECTED
   typedef typename R_::FT                   FT;
   typedef typename R_::Point_2              Point_2;
   typedef typename R_::Direction_2          Direction_2;
+  typedef typename R_::Vector_2             Vector_2;
   typedef typename R_::Line_2               Line_2;
   typedef typename R_::Ray_2                Ray_2;
   typedef typename R_::Aff_transformation_2 Aff_transformation_2;
@@ -53,6 +54,12 @@ public:
   RayC2(const Point_2 &sp, const Direction_2 &d)
     : base(rep(sp, sp + d.to_vector())){}
 
+  RayC2(const Point_2 &sp, const Vector_2 &v)
+    : base(rep(sp, sp + v)){}
+
+  RayC2(const Point_2 &sp, const Line_2 &l)
+    : base(rep(sp, sp + l.to_vector())){}
+
   bool        operator==(const RayC2 &r) const;
   bool        operator!=(const RayC2 &r) const;
 
@@ -68,10 +75,11 @@ public:
   }
 
   Direction_2 direction() const;
+  Vector_2    to_vector() const;
   Line_2      supporting_line() const;
-  Ray_2        opposite() const;
+  Ray_2       opposite() const;
 
-  Ray_2        transform(const Aff_transformation_2 &t) const
+  Ray_2       transform(const Aff_transformation_2 &t) const
   {
     return RayC2<R>(t.transform(source()), t.transform(second_point()));
   }
@@ -118,6 +126,14 @@ RayC2<R>::point(int i) const
   if (i == 0) return source();
   if (i == 1) return second_point();
   return source() + (second_point() - source()) * FT(i);
+}
+
+template < class R >
+inline
+typename RayC2<R>::Vector_2
+RayC2<R>::to_vector() const
+{
+  return second_point() - source();
 }
 
 template < class R >

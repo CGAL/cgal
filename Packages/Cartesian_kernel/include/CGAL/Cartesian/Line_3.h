@@ -29,7 +29,7 @@ CGAL_BEGIN_NAMESPACE
 template < class R_ >
 class LineC3
   : public R_::template Handle<std::pair<typename R_::Point_3,
-                                         typename R_::Direction_3> >::type
+                                         typename R_::Vector_3> >::type
 {
 CGAL_VC7_BUG_PROTECTED
   typedef typename R_::FT                   FT;
@@ -42,7 +42,7 @@ CGAL_VC7_BUG_PROTECTED
   typedef typename R_::Segment_3            Segment_3;
   typedef typename R_::Aff_transformation_3 Aff_transformation_3;
 
-  typedef std::pair<Point_3, Direction_3>          rep;
+  typedef std::pair<Point_3, Vector_3>             rep;
   typedef typename R_::template Handle<rep>::type  base;
 
 public:
@@ -52,7 +52,7 @@ public:
     : base(rep()) {}
 
   LineC3(const Point_3 &p, const Point_3 &q)
-    : base(rep(p, (q-p).direction())) {}
+    : base(rep(p, q-p)) {}
 
   LineC3(const Segment_3 &s)
     : base(R().construct_line_3_object()(s)) {}
@@ -60,8 +60,11 @@ public:
   LineC3(const Ray_3 &r)
     : base(R().construct_line_3_object()(r)) {}
 
+  LineC3(const Point_3 &p, const Vector_3 &v)
+    : base(rep(p, v)) {}
+
   LineC3(const Point_3 &p, const Direction_3 &d)
-    : base(rep(p, d)) {}
+    : base(rep(p, Vector_3(d.dx(), d.dy(), d.dz()))) {}
 
   bool        operator==(const LineC3 &l) const;
   bool        operator!=(const LineC3 &l) const;
@@ -73,9 +76,15 @@ public:
   {
       return Ptr()->first;
   }
-  const Direction_3 & direction() const
+
+  const Vector_3 & to_vector() const
   {
       return Ptr()->second;
+  }
+
+  Direction_3 direction() const
+  {
+      return Direction_3(Ptr()->second);
   }
 
   Point_3     point(int i) const;
@@ -123,7 +132,7 @@ typename LineC3<R>::Plane_3
 LineC3<R>::
 perpendicular_plane(const typename LineC3<R>::Point_3 &p) const
 {
-  return Plane_3(p, direction().to_vector());
+  return Plane_3(p, to_vector());
 }
 
 template < class R >
@@ -131,7 +140,7 @@ inline
 typename LineC3<R>::Line_3
 LineC3<R>::opposite() const
 {
-  return LineC3<R>(point(), -direction());
+  return LineC3<R>(point(), -to_vector());
 }
 
 template < class R >
@@ -149,7 +158,7 @@ bool
 LineC3<R>::
 has_on(const typename LineC3<R>::Point_3 &p) const
 {
-  return collinear(point(), point()+direction().to_vector(), p);
+  return collinear(point(), point()+to_vector(), p);
 }
 
 template < class R >
@@ -157,7 +166,7 @@ inline
 bool
 LineC3<R>::is_degenerate() const
 { // FIXME : predicate
-  return direction() == Direction_3(0,0,0);
+  return to_vector() == NULL_VECTOR;
 }
 
 #ifndef CGAL_CARTESIAN_NO_OSTREAM_INSERT_LINEC3
