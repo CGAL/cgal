@@ -4,6 +4,15 @@
 
 
 //---------------------------------------------------------------------
+//	revision 1.109
+//---------------------------------------------------------------------
+
+ALL : Changed CGAL version to 2.3.
+DOCS: Some minor corrections by Susan and Dima.
+DOCS: Replaced path by nonlinkedpath.
+DOCS: moved here from former package Installation_doc.
+
+//---------------------------------------------------------------------
 //	revision 1.108
 //---------------------------------------------------------------------
 

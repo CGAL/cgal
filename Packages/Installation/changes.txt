@@ -7,6 +7,12 @@
 //	actual revision
 //---------------------------------------------------------------------
 
+ALL : Changed CGAL version to 2.3.
+
+//---------------------------------------------------------------------
+//	 CGAL-2.2
+//---------------------------------------------------------------------
+
 GLOB: Show KCC support (fixed).
 GLOB: Show KCC and Borland 5.5 as supported.
 GLOB: Search for kcc automatically.
@@ -23,6 +29,7 @@ GLOB: Added flags for Solaris / KCC.
 GLOB: Fixed problem in _real_options.
 ALL : Updated CGAL_VERSION to 2.2.
 DOCS: updated.
+DOCS: Some minor corrections by Susan and Dima.
 DOCS: Fixed footnotes for HTML acc. to Susan's remarks.
 DOCS: Updated list of supported compilers: add borland and kcc.
 DOCS: Added http references to compiler vendors.
@@ -32,6 +39,8 @@ DOCS: Changed LEDA version to 4.1.
 DOCS: Removed description of the replace_header script.
 DOCS: Added remark, that CLN R1.0.3+ is required.
 DOCS: Changed CGAL_NO_LEDA_HANDLE passus.
+DOCS: Replaced path by nonlinkedpath.
+DOCS: moved here from former package Installation_doc.
 
 //---------------------------------------------------------------------
 //	 CGAL-2.1
