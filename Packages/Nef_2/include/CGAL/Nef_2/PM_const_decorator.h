@@ -29,73 +29,17 @@
 #define CGAL_PM_CONST_DECORATOR_H
 
 #include <CGAL/basic.h>
-#include <CGAL/circulator.h>
 #include <CGAL/Unique_hash_map.h>
 #include <string>
 #include <list>
 #include <strstream>
 #include <CGAL/Nef_2/Object_index.h>
+#include <CGAL/Nef_2/iterator_tools.h>
 #undef _DEBUG
 #define _DEBUG 7
 #include <CGAL/Nef_2/debug.h>
 
 CGAL_BEGIN_NAMESPACE
-
-template <typename Iter, typename Move> 
-class CircFromIt : public Iter {
-    // Ptr  node;    // The internal node ptr inherited from It.
-    typedef CircFromIt<Iter,Move> ThisClass;
-public:
-    typedef typename Iter::iterator_category Icategory;
-    typedef I_Circulator_from_iterator_traits<Icategory> CTraits;
-    typedef typename CTraits::iterator_category iterator_category;
-
-    CircFromIt() : Iter(0) {}
-    CircFromIt(Iter i) : Iter(i) {}
-
-// OPERATIONS Forward Category
-// ---------------------------
-
-    bool operator==( CGAL_NULL_TYPE p ) const {
-      CGAL_assertion( p == NULL );
-      return Iter::operator==( Iter(NULL) );
-    }
-    bool operator!=( CGAL_NULL_TYPE p ) const {
-      return !(*this == p);
-    }
-    bool operator==( const ThisClass& i ) const {
-      return Iter::operator==(i);
-    }
-    bool operator!=( const ThisClass& i) const {
-        return !(*this == i);
-    }
-
-    ThisClass& operator++() {
-      Move move;
-      move.forward(*this);
-      return *this;
-    }
-    ThisClass  operator++(int) {
-      CircFromIt tmp = *this;
-      ++*this;
-      return tmp;
-    }
-
-// OPERATIONS Bidirectional Category
-// ---------------------------------
-
-    ThisClass& operator--() {
-      Move move;
-      move.backward(*this);
-      return *this;
-    }
-    ThisClass  operator--(int) {
-      CircFromIt tmp = *this;
-      --*this;
-      return tmp;
-    }
-
-};
 
 #ifndef _MSC_VER
 
@@ -117,28 +61,6 @@ template <typename HE>
 struct move_halfedge_around_face {
   void forward(HE& e)  const { e = (e->next()); }
   void backward(HE& e) const { e = (e->prev()); }
-};
-
-template <typename Iter, typename Pnt> 
-class PntItFromVertIt : public Iter {
-public:
-  typedef PntItFromVertIt<Iter,Pnt> Self;
-  typedef Iter Base;
-  typedef Pnt  value_type;
-  typedef const Pnt* pointer;
-  typedef const Pnt& reference;
-
-  PntItFromVertIt() : Base() {}
-  PntItFromVertIt(Iter it) : Base(it) {}
-  PntItFromVertIt(const Self& it) : Base(it) {}
-
-  reference operator*() const 
-  { return Base::operator*().point(); }
-  pointer operator->() const 
-  { return &(operator*()); }
-  Self& operator++() { return (Self&)Base::operator++(); }
-  Self operator++(int) { Self tmp=*this; ++*this; return tmp; }
-
 };
 
 

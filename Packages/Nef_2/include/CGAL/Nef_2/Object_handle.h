@@ -29,6 +29,7 @@
 #define CGAL_OBJECT_HANDLE_H
 
 #include <CGAL/Handle_for_virtual.h>
+#include <CGAL/circulator.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -98,6 +99,9 @@ class Object_handle
 
     bool operator==(CGAL_NULL_TYPE n) const
     { assert(n == 0); return is_empty(); }
+
+    bool operator!=(CGAL_NULL_TYPE n) const
+    { assert(n == 0); return !is_empty(); }
 
 };
 
