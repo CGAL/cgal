@@ -7,6 +7,7 @@
 //	actual revision
 //---------------------------------------------------------------------
 
+GLOB: fixed EXE_OPT setting.
 GLOB: Added GMP support for MSVC.
 GLOB: Fixed "nospace" bug in LIB_CREATE commands introduced by VC support.
 GLOB: Fixed LIBPATHs for VC (GJ).
