@@ -1,4 +1,4 @@
-#!/net/bin/perl5 -w
+#!/net/bin/perl5
 
 use strict;
 use Cwd;
@@ -12,7 +12,6 @@ use File::Find;
 #                     initialization                             #
 #----------------------------------------------------------------#
 
-$::CURRENT_DIR=cwd();
 $::TEMPFILE="TEMPFILE.$$";
 @::package_versions = ();
 
@@ -65,37 +64,30 @@ sub unzip_files($@)
     system('unzip', '-qq', $package, @to_unzip);
 }
 
+
 #----------------------------------------------------------------#
-#                     get_file_type                              #
+#                     check_and_update_file                      #
 #----------------------------------------------------------------#
 
-sub get_file_type($)
+sub check_and_update_file($$)
 {
-    open SOURCE_FILE, $_[0] or return 0;
-    while ( <SOURCE_FILE> ) {
-	if ( /^Copyright \(c\) 1997|8 The CGAL Consortium/ ) {
-	    return 1;
-	}
-	if ( /^\/\/ Copyright \(c\) 1997|8 The CGAL Consortium/ ) {
-	    return 2;
-	}
-    }
-    return 0;
-}
-
-#----------------------------------------------------------------#
-#                     set_filename                               #
-#----------------------------------------------------------------#
-
-sub set_filename($$)
-{
-    my $filename = shift;
-    my $filename_with_dir = shift;
+    my ($filename, $filename_with_dir) = @_;
+    my $header_type = 0;
+    my $lines_exceeding_length = 0;
+    my $has_line_directives = 0;
     unlink $::TEMPFILE;
     open SOURCE_FILE, "<$filename" || die "Error opening $filename_with_dir: $!\n";
     open TEMPFILE, ">$::TEMPFILE" || die;
     while ( <SOURCE_FILE> ) {
-	s|^\s*//\s*file\s*:.*|// file          : $filename_with_dir|;
+	$header_type = 1
+	    if m|^Copyright \(c\) \d{4](,\s?\d{4})* The CGAL Consortium|;
+	$header_type = 2
+	    if m|^// Copyright \(c\) \d{4}(,\s?\d{4})* The CGAL Consortium|;
+	$lines_exceeding_length +=1 if length $_ > 80;
+	$has_line_directives = 1 if m|^\s*#\s*line\s|;
+	s<^\s*//\s*file\s*:.*$><// file          : $filename_with_dir>;
+	s<^\s*// release\b.*$><// release       : \$CGAL_Revision: $::VERSION \$>;
+	s<^\s*// release_date.*$><$::release_date>;
 	print TEMPFILE $_;
     }
     close SOURCE_FILE || die "Error closing $filename_with_dir: $!";
@@ -103,28 +95,35 @@ sub set_filename($$)
     rename($::TEMPFILE, $filename )
     || system('mv', "$::TEMPFILE", "$filename")
     || warn "Could not update file $filename_with_dir\n";
+    if ($header_type == 0) {
+	print FILE_CHECKS "$filename_with_dir has unrecognised header.\n";
+    } elsif ($header_type == 1) {
+	print FILE_CHECKS "$filename_with_dir has old style header.\n";
+    }
+    if ($lines_exceeding_length) {
+	print FILE_CHECKS "$filename_with_dir has $lines_exceeding_length",
+	    " lines over 80 characters.\n";
+    }
+    if ($has_line_directives) {
+	print FILE_CHECKS "$filename_with_dir has line directives.\n";
+    }
 }
 
 #----------------------------------------------------------------#
 #                     set_file_headers                           #
 #----------------------------------------------------------------#
-#
-# replace the old style headers with new ones
-#
-
-#sub set_header($)
-#{
-#    my $filename = shift;
-#    unlink $::TEMPFILE
-#    awk -f ../$DIRNAME/set_header.awk $FILE > $TEMPFILE
-#    rename $::TEMPFILE, $FILE
-#}
 
 sub set_file_headers()
 {
-    chdir $::CURRENT_DIR;
-    find(\&file_header_setting, 'include', 'src',
-        glob("config/testfiles/CGAL_CFG*"));
+    print "Setting file headers...\n";
+    chdir $::MAIN_DIR;
+    $::release_date =
+	`date '+// release_date  : \$CGAL_Date: %Y/%m/%d \$'`;
+    chomp($::release_date);
+    open(FILE_CHECKS,">$::PARENT_DIR/code_check_$::VERSION");
+    find(\&file_header_setting, 'include', 'src', 'config/testfiles');
+    close FILE_CHECKS;
+    chdir $::MAIN_DIR;
 }
 
 sub file_header_setting
@@ -136,31 +135,9 @@ sub file_header_setting
 	! -f _ ) {
 	return;
     }
-    $filetype = get_file_type($filename);
-    if ($filetype == 0)
-	{warn "$filename has unrecognized header.\n"; }
-    elsif ($filetype == 0)
-	{ warn "$filename has old style header.\n"; }
-    else {
-	set_filename($filename, $File::Find::name);
-	system("$::SCRIPTDIR/create_internal_release_file2 $filename $::VERSION");
-    }
+    check_and_update_file($filename, $File::Find::name);
 }
 
-#---------------------------------------------------------------#
-# set the headers
-#---------------------------------------------------------------#
-
-sub SetFileHeaders()
-{
-    print "Setting file headers...\n";
-    chdir $::CURRENT_DIR;
-    set_file_headers;
-    unlink(glob("include/CGAL/*.bak"));
-    unlink (glob("include/CGAL/*/*.bak"));
-    unlink (glob("src/*.bak"));
-    unlink (glob("config/testfiles/*.bak"));
-}
 
 #---------------------------------------------------------------#
 # set the version information in the config.h include file.
@@ -169,7 +146,7 @@ sub SetFileHeaders()
 sub set_version_in_config()
 {
     my $V = substr($::VERSION,5);
-    chdir "$::CURRENT_DIR/include/CGAL" or die;
+    chdir "$::MAIN_DIR/include/CGAL" or die;
     open(SOURCE_FILE, '<config.h') or die "Error opening config.h: $!";
     open(TEMPFILE, ">$::TEMPFILE") or die;
     while ( <SOURCE_FILE> ) {
@@ -198,10 +175,6 @@ sub CreateExampleTestDirs()
 	print "$DIR\n";
 	if ( -d $DIR ) {
 	    system('cp', '-r', "$DIR", "../test/Examples$DIR");
-#	    mkdir("$::THIS_RELEASE_RESULTS/Examples$DIR", 0775);
-#	    if ( -f 'version' ) {
-#		copy('version', $::THIS_RELEASE_RESULTS/Examples$DIR);
-#	    }
 	}
     }
     chdir '..';
@@ -304,7 +277,6 @@ sub make_testscripts()
 {
     my ($DIR, $BASEDIR);
     $BASEDIR = cwd();
-print "In make_testscripts\n";
     chdir 'test';
     foreach $DIR (glob("*")) {
 	if ( -d $DIR ) {
@@ -338,7 +310,7 @@ sub make_results_page()
     $::THIS_RELEASE_RESULTS = "$::ALL_RESULTS_DIR/$::VERSION";
     mkdir "$::THIS_RELEASE_RESULTS", 0775
     || die "Cannot create test results directory";
-    chdir ("$::CURRENT_DIR/test") or return;
+    chdir ("$::MAIN_DIR/test") or return;
     foreach $direc (glob("*")) {
 	if ( -d "$direc" &&  -f "$direc/version" ) {
 	    mkdir("$::THIS_RELEASE_RESULTS/$direc", 0775);
@@ -424,26 +396,27 @@ sub unlock()
 }
 
 
+$::PARENT_DIR=cwd();
 
 umask(002);
-if ($::CURRENT_DIR ne '/private/CGAL') {
+if ($::PARENT_DIR ne '/private/CGAL') {
     die "$0 should only be called from directory /private/CGAL on goya.\n";
 }
 check_call;
 mkdir "$::VERSION",0775 or die;
+open VERSIONS, ">versions_$::VERSION";
 chdir $::VERSION or die;
-$::CURRENT_DIR=cwd();
+$::MAIN_DIR=cwd();
 lock;
 
 install_packages();
 install_misc;
 unlock;
-open VERSIONS, ">versions_$::VERSION";
 print VERSIONS sort @::package_versions;
 close VERSIONS;
 CreateExampleTestDirs;
 make_testscripts;
-SetFileHeaders if !$::TESTING;
+set_file_headers if !$::TESTING;
 set_version_in_config;
 make_results_page;
 
