@@ -1,3 +1,7 @@
+4.5.2 (5 December 2001)
++ Removed some non essential tests from PolygonTest.C. Those tests tested
+  standard iterator functionality more than specific polygon functionality.
+
 4.5 (30 October 2001)
 + Susan made a base class for Vertex_data so it can be shared with the
   Vertex_data used in generating random polygons (Generator package)
