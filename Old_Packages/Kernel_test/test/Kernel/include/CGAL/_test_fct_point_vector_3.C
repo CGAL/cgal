@@ -23,9 +23,8 @@
 
 #ifndef CGAL__TEST_FCT_POINT_VECTOR_3_C
 #define CGAL__TEST_FCT_POINT_VECTOR_3_C
-#ifndef CGAL__TEST_FCT_POINT_VECTOR_3_H
+
 #include <CGAL/_test_fct_point_vector_3.h>
-#endif // CGAL__TEST_FCT_POINT_VECTOR_3_H
 
 template <class R>
 bool
@@ -60,6 +59,8 @@ _test_fct_point_vector_3(const R& )
  CGAL::Point_3<R> p2 = CGAL::ORIGIN + v2;
  CGAL::Point_3<R> p3 = CGAL::ORIGIN + v3;
 
+ CGAL::Vector_3<R>  v5(p1, p2);
+
  assert( CGAL::ORIGIN + v2 == CGAL::Point_3<R>( n5, n6, n7, n8) );
  assert( CGAL::ORIGIN - v2 == CGAL::Point_3<R>( -n5, -n6, -n7, n8) );
  assert( p1 - p1 == v0 );
@@ -68,6 +69,7 @@ _test_fct_point_vector_3(const R& )
  assert( p2 + v4 == p1 );
  assert( p3 - v1 == p2 );
  assert( p3 - p1 == v2 );
+ assert( p2 - p1 == v5 );
 
  std::cout << "..";
  std::cout << "done" << std::endl;

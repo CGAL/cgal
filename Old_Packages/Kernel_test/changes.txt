@@ -1,3 +1,6 @@
+3.14   (? Mar 2001)
+- Added constructor Vector(Point, Point).
+
 3.13   (6 Mar 2001)
 - Added Compute_squared_distance_2 and 3.
 

@@ -84,6 +84,7 @@ test_new_2(const R& rep)
   Vector_2 v2 = construct_vector(NULL_VECTOR);
   Vector_2 v3 = construct_vector(1,3);
   Vector_2 v4 = construct_vector(1,2,3);
+  Vector_2 v5 = construct_vector(p5, p6);
 
   typename R::Construct_direction_2 construct_direction
         = rep.construct_direction_2_object();
