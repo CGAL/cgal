@@ -25,6 +25,7 @@
 #define CGAL_ARR_LEDA_SEGMENT_EXACT_TRAITS
 
 #include <CGAL/LEDA_basic.h>
+#include <CGAL/leda_integer.h>
 #include <CGAL/Pm_segment_traits_2.h>
 #include <CGAL/tags.h>
 
