@@ -238,7 +238,7 @@ Add vertices on the cutter.
             last->next = newrec;
             newrec->side = ON_ORIENTED_BOUNDARY;
             Line_2_Line_2_pair<R> linepair(&cutter,  &l);
-            Line_2_Line_2_pair<R>::Intersection_results isr;
+            typename Line_2_Line_2_pair<R>::Intersection_results isr;
             isr = linepair.intersection_type();
             CGAL_kernel_assertion(isr == Line_2_Line_2_pair<R>::POINT);
             linepair.intersection(newrec->point);
@@ -302,7 +302,7 @@ Triangle_2_Triangle_2_pair(Triangle_2<R> const *trian1,
 
 #ifndef CGAL_CFG_RETURN_TYPE_BUG_2
 template <class R>
-Triangle_2_Triangle_2_pair<R>::Intersection_results
+typename Triangle_2_Triangle_2_pair<R>::Intersection_results
 Triangle_2_Triangle_2_pair<R>::intersection_type() const
 @<Triangle_2_Triangle_2_pair intersection_type body@>
 #endif
@@ -590,7 +590,7 @@ Line_2_Triangle_2_pair(Line_2<R> const *line,
 
 #ifndef CGAL_CFG_RETURN_TYPE_BUG_2
 template <class R>
-Line_2_Triangle_2_pair<R>::Intersection_results
+typename Line_2_Triangle_2_pair<R>::Intersection_results
 Line_2_Triangle_2_pair<R>::intersection_type() const
 @<Line_2_Triangle_2_pair intersection_type body@>
 #endif // CGAL_CFG_RETURN_TYPE_BUG_2
@@ -812,7 +812,7 @@ Ray_2_Triangle_2_pair(Ray_2<R> const *ray,
 
 #ifndef CGAL_CFG_RETURN_TYPE_BUG_2
 template <class R>
-Ray_2_Triangle_2_pair<R>::Intersection_results
+typename Ray_2_Triangle_2_pair<R>::Intersection_results
 Ray_2_Triangle_2_pair<R>::intersection_type() const
 @<Ray_2_Triangle_2_pair intersection_type body@>
 #endif // CGAL_CFG_RETURN_TYPE_BUG_2
@@ -1034,7 +1034,7 @@ Segment_2_Triangle_2_pair(Segment_2<R> const *seg,
 
 #ifndef CGAL_CFG_RETURN_TYPE_BUG_2
 template <class R>
-Segment_2_Triangle_2_pair<R>::Intersection_results
+typename Segment_2_Triangle_2_pair<R>::Intersection_results
 Segment_2_Triangle_2_pair<R>::intersection_type() const
 @<Segment_2_Triangle_2_pair intersection_type body@>
 #endif // CGAL_CFG_RETURN_TYPE_BUG_2
@@ -1247,7 +1247,7 @@ Point_2_Triangle_2_pair(Point_2<R> const *pt,
 
 #ifndef CGAL_CFG_RETURN_TYPE_BUG_2
 template <class R>
-Point_2_Triangle_2_pair<R>::Intersection_results
+typename Point_2_Triangle_2_pair<R>::Intersection_results
 Point_2_Triangle_2_pair<R>::intersection_type() const
 @<Point_2_Triangle_2_pair intersection_type body@>
 #endif // CGAL_CFG_RETURN_TYPE_BUG_2
@@ -1444,7 +1444,7 @@ Line_2_Iso_rectangle_2_pair(Line_2<R> const *line,
 
 #ifndef CGAL_CFG_RETURN_TYPE_BUG_2
 template <class R>
-Line_2_Iso_rectangle_2_pair<R>::Intersection_results
+typename Line_2_Iso_rectangle_2_pair<R>::Intersection_results
 Line_2_Iso_rectangle_2_pair<R>::intersection_type() const
 @<Iso_rectangle_2_Line_2_pair intersection_type body@>
 #endif
@@ -1697,7 +1697,7 @@ Ray_2_Iso_rectangle_2_pair(
 
 #ifndef CGAL_CFG_RETURN_TYPE_BUG_2
 template <class R>
-Ray_2_Iso_rectangle_2_pair<R>::Intersection_results
+typename Ray_2_Iso_rectangle_2_pair<R>::Intersection_results
 Ray_2_Iso_rectangle_2_pair<R>::intersection_type() const
 @<Ray_2_Iso_rectangle_2_pair intersection_type body@>
 #endif // CGAL_CFG_RETURN_TYPE_BUG_2
@@ -1946,7 +1946,7 @@ Segment_2_Iso_rectangle_2_pair(
 
 #ifndef CGAL_CFG_RETURN_TYPE_BUG_2
 template <class R>
-Segment_2_Iso_rectangle_2_pair<R>::Intersection_results
+typename Segment_2_Iso_rectangle_2_pair<R>::Intersection_results
 Segment_2_Iso_rectangle_2_pair<R>::intersection_type() const
 @<Segment_2_Iso_rectangle_2_pair intersection_type body@>
 #endif // CGAL_CFG_RETURN_TYPE_BUG_2

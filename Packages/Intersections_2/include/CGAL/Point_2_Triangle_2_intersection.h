@@ -128,7 +128,7 @@ Point_2_Triangle_2_pair(Point_2<R> const *pt,
 
 #ifndef CGAL_CFG_RETURN_TYPE_BUG_2
 template <class R>
-Point_2_Triangle_2_pair<R>::Intersection_results
+typename Point_2_Triangle_2_pair<R>::Intersection_results
 Point_2_Triangle_2_pair<R>::intersection_type() const
 {
     typedef Line_2<R> line_t;

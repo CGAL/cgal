@@ -433,11 +433,11 @@ CGAL_END_NAMESPACE
     } else {
         double newmin, newmax;
         if (pimpl->_dir.x() > 0.0) {
-            newmin = (pimpl->_box.xmin()-pimpl->_ref_point.x())/pimpl->_dir.x();
-            newmax = (pimpl->_box.xmax()-pimpl->_ref_point.x())/pimpl->_dir.x();
+            newmin =(pimpl->_box.xmin()-pimpl->_ref_point.x())/pimpl->_dir.x();
+            newmax =(pimpl->_box.xmax()-pimpl->_ref_point.x())/pimpl->_dir.x();
         } else {
-            newmin = (pimpl->_box.xmax()-pimpl->_ref_point.x())/pimpl->_dir.x();
-            newmax = (pimpl->_box.xmin()-pimpl->_ref_point.x())/pimpl->_dir.x();
+            newmin =(pimpl->_box.xmax()-pimpl->_ref_point.x())/pimpl->_dir.x();
+            newmax =(pimpl->_box.xmin()-pimpl->_ref_point.x())/pimpl->_dir.x();
         }
         if (newmin > pimpl->_min)
             pimpl->_min = newmin;
@@ -466,11 +466,11 @@ CGAL_END_NAMESPACE
     } else {
         double newmin, newmax;
         if (pimpl->_dir.y() > 0.0) {
-            newmin = (pimpl->_box.ymin()-pimpl->_ref_point.y())/pimpl->_dir.y();
-            newmax = (pimpl->_box.ymax()-pimpl->_ref_point.y())/pimpl->_dir.y();
+            newmin =(pimpl->_box.ymin()-pimpl->_ref_point.y())/pimpl->_dir.y();
+            newmax =(pimpl->_box.ymax()-pimpl->_ref_point.y())/pimpl->_dir.y();
         } else {
-            newmin = (pimpl->_box.ymax()-pimpl->_ref_point.y())/pimpl->_dir.y();
-            newmax = (pimpl->_box.ymin()-pimpl->_ref_point.y())/pimpl->_dir.y();
+            newmin =(pimpl->_box.ymax()-pimpl->_ref_point.y())/pimpl->_dir.y();
+            newmax =(pimpl->_box.ymin()-pimpl->_ref_point.y())/pimpl->_dir.y();
         }
         if (newmin > pimpl->_min)
             pimpl->_min = newmin;

@@ -142,7 +142,7 @@ Segment_2_Triangle_2_pair(Segment_2<R> const *seg,
 
 #ifndef CGAL_CFG_RETURN_TYPE_BUG_2
 template <class R>
-Segment_2_Triangle_2_pair<R>::Intersection_results
+typename Segment_2_Triangle_2_pair<R>::Intersection_results
 Segment_2_Triangle_2_pair<R>::intersection_type() const
 {
     if (_known)

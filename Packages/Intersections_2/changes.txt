@@ -1,3 +1,6 @@
+2.10.2 (8 October 2001)
+Added some more 'typename' keywords to shut up warnings.
+
 2.10.1 (3 October 2001)
 Small fixes
 

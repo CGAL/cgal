@@ -187,7 +187,7 @@ Ray_2_Iso_rectangle_2_pair(
 
 #ifndef CGAL_CFG_RETURN_TYPE_BUG_2
 template <class R>
-Ray_2_Iso_rectangle_2_pair<R>::Intersection_results
+typename Ray_2_Iso_rectangle_2_pair<R>::Intersection_results
 Ray_2_Iso_rectangle_2_pair<R>::intersection_type() const
 {
     typedef typename R::RT RT;

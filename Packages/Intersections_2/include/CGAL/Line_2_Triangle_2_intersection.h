@@ -142,7 +142,7 @@ Line_2_Triangle_2_pair(Line_2<R> const *line,
 
 #ifndef CGAL_CFG_RETURN_TYPE_BUG_2
 template <class R>
-Line_2_Triangle_2_pair<R>::Intersection_results
+typename Line_2_Triangle_2_pair<R>::Intersection_results
 Line_2_Triangle_2_pair<R>::intersection_type() const
 {
     if (_known)

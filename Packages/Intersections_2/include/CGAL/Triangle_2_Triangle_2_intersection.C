@@ -213,7 +213,7 @@ void _cut_off(Pointlist_2_<R> &list,
             last->next = newrec;
             newrec->side = ON_ORIENTED_BOUNDARY;
             Line_2_Line_2_pair<R> linepair(&cutter,  &l);
-            Line_2_Line_2_pair<R>::Intersection_results isr;
+            typename Line_2_Line_2_pair<R>::Intersection_results isr;
             isr = linepair.intersection_type();
             CGAL_kernel_assertion(isr == Line_2_Line_2_pair<R>::POINT);
             linepair.intersection(newrec->point);
@@ -270,7 +270,7 @@ Triangle_2_Triangle_2_pair(Triangle_2<R> const *trian1,
 
 #ifndef CGAL_CFG_RETURN_TYPE_BUG_2
 template <class R>
-Triangle_2_Triangle_2_pair<R>::Intersection_results
+typename Triangle_2_Triangle_2_pair<R>::Intersection_results
 Triangle_2_Triangle_2_pair<R>::intersection_type() const
 {
     if (_known)
