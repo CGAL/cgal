@@ -409,7 +409,8 @@ remove_constraint(T va, T vb){
   for(H_vertex_it it = hvl->begin(), succ = it; 
       ++succ != hvl->end(); 
       ++it){
-    typename H_sc_to_c_map::iterator scit = sc_to_c_map.find(make_edge(*it,*succ));
+    typename H_sc_to_c_map::iterator scit = 
+                                   sc_to_c_map.find(make_edge(*it,*succ));
     CGAL_triangulation_assertion(scit != sc_to_c_map.end());
     H_context_list* hcl = scit->second;
 
