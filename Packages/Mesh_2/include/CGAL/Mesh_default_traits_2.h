@@ -63,13 +63,13 @@ public:
 	  k.compute_squared_distance_2_object();
 
 	Triangle_2 t = k.construct_triangle_2_object()(pa,pb,pc);
-	double area = 2*to_double(area_2(t));
+	double area = 2*CGAL::to_double(area_2(t));
 	area=area*area;
 
 	double
-	  a = squared_distance(pb, pc),
-	  b = squared_distance(pc, pa),
-	  c = squared_distance(pa, pb);
+	  a = CGAL::to_double(squared_distance(pb, pc)),
+	  b = CGAL::to_double(squared_distance(pc, pa)),
+	  c = CGAL::to_double(squared_distance(pa, pb));
 
 	if(a<b)
 	  if(a<c)

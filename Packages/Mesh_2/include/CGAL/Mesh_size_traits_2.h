@@ -47,9 +47,9 @@ public:
 	  typename Traits::Compute_squared_distance_2 distance = 
 	    Traits().compute_squared_distance_2_object();
 	  const double 
-	    dab = to_double(distance(a,b)), 
-	    dbc = to_double(distance(b,c)),
-	    dca = to_double(distance(c,a));
+	    dab = CGAL::to_double(distance(a,b)), 
+	    dbc = CGAL::to_double(distance(b,c)),
+	    dca = CGAL::to_double(distance(c,a));
 
 	  return ((dab > SB*SB) || (dbc > SB*SB) || (dca > SB*SB));
 	}
