@@ -1,3 +1,7 @@
+
+version 11.20 (22/08/02) MY
+- fixed a bug in function classify(Point p, ..) of Alpha_shapes_2.h
+
 version 11.19 [sp]
 - replace exit(0) by break, to avoid KCC warning "statement unreachable".
 
