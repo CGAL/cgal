@@ -1,6 +1,10 @@
 Union_find Package: Release changes
 ----------------------------------------------------------------------
 
+1.2 (04 Apr 2002)
+
+    - Renamed member variable 'first' to 'm_first' to avoid warning.
+
 1.1 (19 Mar 2002)
 
     - Removed Partition.h and Partition.tex. Its use in Nef_2 and

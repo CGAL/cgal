@@ -121,7 +121,7 @@ public:
 #endif
 
 private:
-    pointer      first;
+    pointer      m_first;
     std::size_t  sets;
     std::size_t  values;
     allocator    alloc;
@@ -149,7 +149,7 @@ private:
     bool is_valid(const_handle v) const { return v != const_handle(0); }
 
 public:
-    Union_find() : first(0), sets(0), values(0) {}
+    Union_find() : m_first(0), sets(0), values(0) {}
     ~Union_find() { clear(); }
 
     allocator   get_allocator() const { return alloc; }
@@ -201,30 +201,30 @@ public:
         return find(p) == find(q); 
     }
 
-    iterator begin() { return iterator(first); }
+    iterator begin() { return iterator(m_first); }
     iterator end()   { return iterator(0); }
 
-    const_iterator begin() const { return const_iterator(first); }
+    const_iterator begin() const { return const_iterator(m_first); }
     const_iterator end()   const { return const_iterator(0); }
 };
 
 template <typename T, typename A>
 typename Union_find<T,A>::handle Union_find<T,A>::make_set(const T& x) {
-    pointer tmp = first;
-    first = alloc.allocate(1);
-    alloc.construct( first, Union_find_struct(tmp,x));
+    pointer tmp = m_first;
+    m_first = alloc.allocate(1);
+    alloc.construct( m_first, Union_find_struct(tmp,x));
     ++sets;
     ++values;
-    return handle( first);
+    return handle( m_first);
 }
 
 template <typename T, typename A>
 void Union_find<T,A>::clear() {
-    while (first) { 
-        pointer tmp = first->next;
-        alloc.destroy(first);
-        alloc.deallocate(first,1);
-        first = tmp;
+    while (m_first) { 
+        pointer tmp = m_first->next;
+        alloc.destroy(m_first);
+        alloc.deallocate(m_first,1);
+        m_first = tmp;
     }
     sets   = 0;
     values = 0;
