@@ -1,5 +1,7 @@
 Nef_2 Package: Release changes
 ----------------------------------------------------------------------
+10 February 2004 Radu Ursu
+- Updated headers in examples
 
 1.55 (18 Jan 2004)
 - Rename USING in CGAL_USING.
