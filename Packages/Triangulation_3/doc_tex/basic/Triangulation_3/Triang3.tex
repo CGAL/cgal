@@ -362,12 +362,15 @@ Chapter~\ref{chapter-TDS3}).  A model of this triangulation data structure is
 \ccc{Triangulation_data_structure_3}\lcTex{
 (\ccRefPage{CGAL::Triangulation_data_structure_3<TriangulationDSVertexBase_3,TriangulationDSCellBase_3>})},
 and it is described by the \ccc{TriangulationDataStructure_3} concept
-\lcTex{(\ccRefPage{TriangulationDataStructure_3})}.
+\lcTex{(\ccRefPage{TriangulationDataStructure_3})}.  This model is itself
+parameterized by a vertex base and a cell base classes, which gives the
+possibility to customize the vertices and cells used by the triangulation data
+structure, and hence by the geometric triangulation using it.
 
-A default value for this template parameter is provided in all the
-triangulation classes, so it need not be specified by the user unless he wants
-to use a different triangulation data structure or a different vertex or cell
-base class.
+A default value for the triangulation data structure parameter is provided in
+all the triangulation classes, so it need not be specified by the user unless
+he wants to use a different triangulation data structure or a different vertex
+or cell base class.
 
 \subsection{Flexibility of the Design}
 
