@@ -3075,7 +3075,7 @@ postcondition:
 		bool needs_update()
 		{
 			//to avoid g++ warning
-			signed long sz=number_of_curves();
+			unsigned long sz = number_of_curves();
 			if (rand()>RAND_MAX/(sz+1)) return false;
 			/*			 INTERNAL COMPILER ERROR overide
 			#ifndef __GNUC__
