@@ -45,7 +45,7 @@ void
 any_button(CGAL::Window_stream &W)
 {
     double x, y;
-    cerr << "Press any button to continue" << endl;
+    std::cerr << "Press any button to continue" << std::endl;
     W.read_mouse(x,y);
 }
 
@@ -64,9 +64,9 @@ window_input(std::list<Segment> & list_contraintes,
 	     CDTplus & t,
 	     Window_stream &W)
 {
-  cerr << "Enter segments  with the left button" << endl;
-  cerr << "double clic for a single point " << endl;
-  cerr << "Right button terminates input" << endl;
+  std::cerr << "Enter segments  with the left button" << std::endl;
+  std::cerr << "double clic for a single point " << std::endl;
+  std::cerr << "Right button terminates input" << std::endl;
   
 
   Point p,q;
