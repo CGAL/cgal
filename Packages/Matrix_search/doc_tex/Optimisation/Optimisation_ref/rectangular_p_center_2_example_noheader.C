@@ -1,5 +1,3 @@
-#line 690 "pcenter.aw"
-#line 307 "pc_testprog.awi"
 #include <CGAL/Cartesian.h>
 #include <CGAL/Point_2.h>
 #include <CGAL/point_generators_2.h>
@@ -50,4 +48,3 @@ int main() {
   cout << "\n\n" << p << "-radius = " << p_radius << endl;
 
 } 
-#line 691 "pcenter.aw"

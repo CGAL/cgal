@@ -1,5 +1,3 @@
-#line 351 "fj_testprog.awi"
-#line 290 "fj_testprog.awi"
 #include <CGAL/Random.h>
 #include <CGAL/function_objects.h>
 #include <CGAL/Cartesian_matrix.h>
@@ -49,4 +47,3 @@ int main() {
        << upper_bound << endl;
 
 } 
-#line 352 "fj_testprog.awi"
