@@ -19,7 +19,7 @@ int main(int, char*)
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Filtered_kernel.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
-#include <CGAL/Triangulation_euclidean_traits_2.h>
+//#include <CGAL/Triangulation_euclidean_traits_2.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Mesh_2.h>
 #include <CGAL/Mesh_default_traits_2.h>
@@ -30,8 +30,8 @@ int main(int, char*)
 #include <CGAL/IO/Qt_widget.h>
 #include <CGAL/IO/Qt_widget_standard_toolbar.h>
 #include <CGAL/IO/Qt_widget_get_point.h>
-//#include <CGAL/IO/Qt_widget_get_polygon.h>
-#include "Qt_widget_get_polygon.h"
+#include <CGAL/IO/Qt_widget_get_polygon.h>
+//#include "Qt_widget_get_polygon.h"
 
 #include "icons.h"
 
@@ -44,8 +44,11 @@ int main(int, char*)
 
 #include <qapplication.h>
 #include <qmainwindow.h>
+#include <qhbox.h>
+#include <qvbox.h>
 #include <qstatusbar.h>
 #include <qfiledialog.h>
+#include <qinputdialog.h>
 #include <qstring.h>
 //#include <qmessagebox.h>
 #include <qpopupmenu.h>
@@ -66,8 +69,6 @@ typedef K::FT                           FT;
 typedef CGAL::Triangulation_vertex_base_2<K> Vb;
 typedef CGAL::Mesh_face_base_2<K> Fb;
 typedef CGAL::Triangulation_data_structure_2<Vb, Fb> Tds;
-//typedef CGAL::Triangulation_euclidean_traits_2<K> Geomtraits;
-typedef K Geomtraits;
 typedef CGAL::Mesh_default_traits_2<K> Meshtraits;
 typedef CGAL::Constrained_Delaunay_triangulation_2<Meshtraits, Tds,
   CGAL::Exact_predicates_tag> Tr;
@@ -76,16 +77,15 @@ typedef K::Point_2 Point;
 typedef K::Circle_2 Circle;
 typedef CGAL::Polygon_2<K> Polygon;
 
-typedef CGAL::Mesh_2<Tr> Mesh1;
-struct Mesh: public Mesh1 {};
+typedef CGAL::Mesh_2<Tr> Mesh;
 
-CGAL::Qt_widget& operator<< (CGAL::Qt_widget& w, const Mesh& mesh)
-{
-  w.lock();
-  mesh.draw_triangulation(w);
-  w.unlock();
-  return w;
-}
+// CGAL::Qt_widget& operator<< (CGAL::Qt_widget& w, const Mesh& mesh)
+// {
+//   w.lock();
+//   mesh.draw_triangulation(w);
+//   w.unlock();
+//   return w;
+// }
 
 template <class M>
 class Show_marked_faces : public CGAL::Qt_widget_layer
@@ -137,10 +137,11 @@ class MyWindow : public QMainWindow
 {
   Q_OBJECT
 public:
-  MyWindow() : is_mesh_initialized(false)
+  MyWindow() : is_mesh_initialized(false), traits(), mesh(traits)
     {
-      widget = new CGAL::Qt_widget(this,"Main widget");
-      setCentralWidget(widget);
+      QHBox *hbox = new QHBox(this);
+      widget = new CGAL::Qt_widget(hbox,"Main widget");
+      setCentralWidget(hbox);
       resize(700,500);
 
       // we use layers instead of custom_redraw()
@@ -378,6 +379,11 @@ public:
       pmMesh->insertItem("&Quit", qApp, SLOT(closeAllWindows()),
 			 CTRL+Key_Q );
 
+      QPopupMenu *pmCriteria = new QPopupMenu(this);
+      menuBar()->insertItem("&Criteria", pmCriteria);
+      pmCriteria->insertItem("Set &bound", this, SLOT(setBound()),
+			     CTRL+Key_B );
+
       widget->set_window(-500.,500.,-500.,500.);
       widget->setMouseTracking(TRUE);
     };
@@ -562,6 +568,15 @@ public slots:
   inline
   void fake_slot()
     {
+    }
+
+  void setBound() 
+    {
+      double bound = QInputDialog::getDouble( "Set bound",
+					      "Please enter a new bound",
+					      mesh.geom_traits().bound());
+      traits.set_bound(bound);
+      mesh.set_geom_traits(traits);
     }
 
 private:

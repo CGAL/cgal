@@ -226,6 +226,8 @@ public:
   void init();
   void mark_convex_hull();
 
+private: void propagate_marks(Face_handle, bool);
+public:
   // It is an iterator of points
   template <class It> void init(It begin, It end);
   template <class It> void mark_facets(It begin, It end);
@@ -233,6 +235,8 @@ public:
   void process_one_edge();
   void process_one_face();
   bool refine_step();
+
+  void set_geom_traits(const Geom_traits& gt);
   //CHECK
   bool is_encroached(const Vertex_handle va, 
 		     const Vertex_handle vb,
@@ -246,7 +250,10 @@ public:
   inline
   double aspect_ratio(const Face_handle f) const;
 
-  Mesh_2() : Tr(), test_is_bad(*this), Bad_faces(test_is_bad),
+
+  // constructors
+  Mesh_2(const Geom_traits& gt = Geom_traits()) : Tr(gt),
+    test_is_bad(*this), Bad_faces(test_is_bad),
     test_is_encroached(*this), c_edge_queue(test_is_encroached) {};
 
   Mesh_2(List_constraints& lc, const Geom_traits& gt = Geom_traits())
@@ -912,8 +919,6 @@ is_encroached(const Vertex_handle va, const Vertex_handle vb,
   return angle(va->point(), p, vb->point())==OBTUSE;
 }
 
-// TODO: si les graines sont utilisées, il faut tester uniquement avec 
-// les vertex dans les faces marquées.
 template <class Tr>
 bool Mesh_2<Tr>::
 is_encroached(const Vertex_handle va, const Vertex_handle vb) const
@@ -925,8 +930,11 @@ is_encroached(const Vertex_handle va, const Vertex_handle vb) const
   Point candidat_1 = fh->vertex(i)->point();
   Point candidat_2 = fh->mirror_vertex(i)->point();
 
-  return ( is_encroached(va, vb, candidat_1) ||
-	   is_encroached(va, vb, candidat_2) );
+  return ( ( fh->is_marked() && 
+	    is_encroached(va, vb, candidat_1) ) ||
+	   ( fh->neighbor(i)->is_marked() && 
+	     is_encroached(va, vb, candidat_2) )
+	   );
 }
 
 // ?????????????
@@ -1046,14 +1054,8 @@ inline
 void Mesh_2<Tr>::
 init()
 {
-  cluster_map.clear();
-  c_edge_queue.clear();
-  Bad_faces.clear();
-  
-  create_clusters();
-  fill_edge_queue();
-  fill_facette_map();
-  mark_convex_hull();
+  std::list<Point> l;
+  init(l.end(), l.end());
 }
 
 template <class Tr>
@@ -1062,8 +1064,15 @@ inline
 void Mesh_2<Tr>::
 init(It begin, It end)
 {
-  init();
+  cluster_map.clear();
+  c_edge_queue.clear();
+  Bad_faces.clear();
+  
   mark_facets(begin, end);
+
+  create_clusters();
+  fill_edge_queue();
+  fill_facette_map();
 }
 
 template <class Tr>
@@ -1113,48 +1122,68 @@ template <class Tr>
 void Mesh_2<Tr>::
 mark_convex_hull()
 {
-  for(Finite_faces_iterator fit=finite_faces_begin();
-      fit!=finite_faces_end();
+  for(All_faces_iterator fit=all_faces_begin();
+      fit!=all_faces_end();
       ++fit)
     fit->set_marked(true);
-  infinite_face()->set_marked(false);
+  propagate_marks(infinite_face(), false);
 }
+
+template <class Tr>
+void Mesh_2<Tr>::
+propagate_marks(const Face_handle fh, bool mark)
+{
+  std::queue<Face_handle> face_queue;
+  fh->set_marked(mark);
+  face_queue.push(fh);
+  while( !face_queue.empty() )
+    {
+      Face_handle fh = face_queue.front();
+      face_queue.pop();
+      for(int i=0;i<3;i++)
+	{
+	  const Face_handle& nb = fh->neighbor(i);
+	  if( !fh->is_constrained(i) && (mark != nb->is_marked()) )
+	    {
+	      nb->set_marked(mark);
+	      face_queue.push(nb);
+	    }
+	}
+    }
+};
 
 template <class Tr>
 template <class It>
 void Mesh_2<Tr>::
 mark_facets(It begin, It end)
 {
-  for(All_faces_iterator it=all_faces_begin();
-      it!=all_faces_end();
-      ++it)
-    it->set_marked(false);
-  
-  for(It it=begin; it!=end; ++it)
+  if(begin!=end)
     {
-      std::queue<Face_handle> face_queue;
-      Face_handle fh=locate(*it);
-      if(fh!=NULL)
-      {
-	face_queue.push(fh);
-	fh->set_marked(true);
-      }
-      while( !face_queue.empty() )
+      for(All_faces_iterator it=all_faces_begin();
+	  it!=all_faces_end();
+	  ++it)
+	it->set_marked(false);
+      
+      for(It it=begin; it!=end; ++it)
 	{
-	  Face_handle fh = face_queue.front();
-	  face_queue.pop();
-	  for(int i=0;i<3;i++)
-	    {
-	      const Face_handle& nb = fh->neighbor(i);
-	      if( !fh->is_constrained(i) && !nb->is_marked() )
-		{
-		  nb->set_marked(true);
-		  face_queue.push(nb);
-		}
-	    }
+	  std::queue<Face_handle> face_queue;
+	  Face_handle fh=locate(*it);
+	  if(fh!=NULL)
+	    propagate_marks(fh, true);
 	}
     }
-  infinite_face()->set_marked(false);
+  else
+    mark_convex_hull();
+  propagate_marks(infinite_face(), false);
+}
+
+template <class Tr>
+void Mesh_2<Tr>::
+set_geom_traits(const Geom_traits& gt)
+{
+  _gt = gt;
+  Bad_faces.clear();
+  fill_facette_map();
 }
 
 CGAL_END_NAMESPACE
