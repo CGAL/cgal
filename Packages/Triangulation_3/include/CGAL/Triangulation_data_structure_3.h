@@ -1283,7 +1283,7 @@ public:
 
       Vertex_iterator it=tds.vertices_begin();
       while (it != tds.vertices_end()) {
-	V[&(*it)] = new Vertex( it->point() );
+	V[&(*it)] = new Vertex( *it );
 	++it;
       }
     }
@@ -1291,11 +1291,18 @@ public:
     { // create the cells
       Cell* it = tds._list_of_cells._next_cell;
       while ( it != tds.past_end_cell() ){
+// 	F[&(*it)]=  new Cell( *this,
+// 			      (Vertex*) V[it->vertex(0)],
+// 			      (Vertex*) V[it->vertex(1)],
+// 			      (Vertex*) V[it->vertex(2)],
+// 			      (Vertex*) V[it->vertex(3)]);
+	// modified to keep the possible additional non combinatorial information
 	F[&(*it)]=  new Cell( *this,
 			      (Vertex*) V[it->vertex(0)],
 			      (Vertex*) V[it->vertex(1)],
 			      (Vertex*) V[it->vertex(2)],
-			      (Vertex*) V[it->vertex(3)]);
+			      (Vertex*) V[it->vertex(3)],
+			      *it);
 	it = it->_next_cell;
       }
     }

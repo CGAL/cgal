@@ -103,7 +103,7 @@ public:
 			     Vertex* v2, Vertex* v3)
     :  Cb(v0,v1,v2,v3)
   { add_list(tds); }
-    
+
   CGAL_Triangulation_ds_cell_3(Tds & tds,
 			     Vertex* v0, Vertex* v1, 
 			     Vertex* v2, Vertex* v3,
@@ -111,7 +111,18 @@ public:
     :  Cb(v0,v1,v2,v3,n0,n1,n2,n3)
   { add_list(tds); }
 
-
+  // not documented
+  // only used by copy_tds in the TDS class
+  CGAL_Triangulation_ds_cell_3(Tds & tds,
+			       Vertex* v0, Vertex* v1, 
+			       Vertex* v2, Vertex* v3,
+			       const Cell& old_cell)
+    :  Cb(old_cell)
+  {
+    set_vertices(v0,v1,v2,v3);
+    add_list(tds);
+  }
+     
   // DESTRUCTOR
 
   ~CGAL_Triangulation_ds_cell_3()
