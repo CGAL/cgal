@@ -1,3 +1,6 @@
+20 September 2004 Andreas Fabri
+- Made derivation in Regular_triangulation_euclidean_traits_3 public
+
 15 September 2004 Sylvain Pion
 - Remove unused code to please g++ 2.95.
 
