@@ -5,6 +5,7 @@
 #ifndef CGAL_CARTESIAN_DIRECTION_D_C
 #define CGAL_CARTESIAN_DIRECTION_D_C
 
+#include <CGAL/Cartesian/redefine_names_d.h>
 #include <CGAL/Cartesian/Direction_d.h>
 #include <CGAL/Cartesian/predicates_on_directions_d.h>
 #include <CGAL/Cartesian/d_utils.h>
@@ -56,6 +57,7 @@ bool
 DirectionCd<R CGAL_CTAG>::operator==(const DirectionCd<R CGAL_CTAG> &d) const
 {
   if (dimension() != d.dimension()) return false;
+  if (ptr() == d.ptr()) return true; // identical
   return equal_direction(*this,d);
 }
 

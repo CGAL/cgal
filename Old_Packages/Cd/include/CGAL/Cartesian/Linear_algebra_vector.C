@@ -46,6 +46,7 @@ bool
 LA_vectorCd<R CGAL_CTAG>::operator==(const LA_vectorCd<R CGAL_CTAG> &v) const
 {
   if (dimension() != v.dimension()) return false;
+  if (ptr() == v.ptr()) return true; // identical
   return std::equal(begin(),end(),v.begin());
 }
 

@@ -83,6 +83,7 @@ bool
 LA_matrixCd<LA>::operator==(const LA_matrixCd<LA> &M) const
 {
   if (dimension() != M.dimension()) return false;
+  if (ptr() == M.ptr()) return true; // identical
   return std::equal(begin(),end(),M.begin());
 }
 

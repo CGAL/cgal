@@ -106,6 +106,16 @@ template < class R > class Aff_transformationC3;
 template < class R > class PointCd;
 template < class R > class VectorCd;
 template < class R > class DirectionCd;
+template < class R > class PlaneCd;
+template < class R > class LineCd;
+template < class R > class RayCd;
+template < class R > class SegmentCd;
+template < class R > class TriangleCd;
+template < class R > class TetrahedronCd;
+template < class R > class SphereCd;
+template < class R > class SimplexCd;
+template < class R > class Iso_rectangleCd;
+template < class R > class Aff_transformationCd;
 
 CGAL_END_NAMESPACE
 

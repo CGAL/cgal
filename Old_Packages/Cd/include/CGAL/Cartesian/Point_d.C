@@ -69,6 +69,7 @@ bool
 PointCd<R CGAL_CTAG>::operator==(const PointCd<R CGAL_CTAG>& p) const
 {
   if (dimension() != p.dimension()) return false;
+  if (ptr() == p.ptr()) return true; // identical
   return std::equal(begin(),end(),p.begin());
 }
 

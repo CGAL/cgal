@@ -11,7 +11,8 @@ bool
 equal_direction(const DirectionCd<R CGAL_CTAG>& d1,
                 const DirectionCd<R CGAL_CTAG>& d2)
 {
-  return equal_directionCd(d1.begin(),d1.end(),d2.begin(),d2.end());
+  if (d1.dimension() != d2.dimension()) return false;
+  return equal_directionCd(d1.begin(),d1.end(),d2.begin());
 }
 
 CGAL_END_NAMESPACE

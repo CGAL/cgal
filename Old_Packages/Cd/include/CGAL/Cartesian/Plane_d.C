@@ -13,20 +13,13 @@
 #define typename
 #endif
 
+#include <CGAL/Cartesian/Plane_d.h>
 #include <CGAL/predicates/kernel_ftCd.h>
 #include <CGAL/Cartesian/constructions_on_planes_d.h>
 // #include <CGAL/Cartesian/distance_computations_d.h>
 #include <CGAL/Cartesian/predicates_on_planes_d.h>
 
 CGAL_BEGIN_NAMESPACE
-
-template < class R >
-inline
-_d_tuple<typename R::FT>*
-PlaneCd<R CGAL_CTAG>::ptr() const
-{
-  return (_d_tuple<FT>*)PTR;
-}
 
 template < class R >
 inline
@@ -41,23 +34,23 @@ template < class R >
 inline
 void
 PlaneCd<R CGAL_CTAG>::
-new_rep(int dim,
-        typename PlaneCd<R CGAL_CTAG>::const_iterator hb,
+new_rep(typename PlaneCd<R CGAL_CTAG>::const_iterator hb,
         typename PlaneCd<R CGAL_CTAG>::const_iterator he)
 {
+  int dim = he-hb-1;
   new_rep(dim);
-  std::copy_n(hb,dim+1,ptr->e());
+  std::copy_n(hb,dim+1,begin());
 }
 
 template < class R >
 inline
 void
 PlaneCd<R CGAL_CTAG>::
-new_rep(int dim,
-        typename PlaneCd<R CGAL_CTAG>::const_iterator hb,
+new_rep(typename PlaneCd<R CGAL_CTAG>::const_iterator hb,
         typename PlaneCd<R CGAL_CTAG>::const_iterator he,
         const typename PlaneCd<R CGAL_CTAG>::RT &w)
 {
+  int dim = he-hb-1;
   new_rep(dim);
   std::copy_n(hb,dim,begin());
   *(begin()+dim+1) = w;
@@ -85,7 +78,7 @@ PlaneCd(const typename PlaneCd<R CGAL_CTAG>::Point_d &p,
         const typename PlaneCd<R CGAL_CTAG>::Direction_d &d)
 {
   PlaneCd<R CGAL_CTAG> h = plane_from_point_direction(p,d);
-  new_rep(h.dimension(),h.begin(),h.end());
+  new_rep(h.begin(),h.end());
 }
 
 template < class R >
@@ -95,7 +88,7 @@ PlaneCd(const typename PlaneCd<R CGAL_CTAG>::Point_d &p,
         const typename PlaneCd<R CGAL_CTAG>::Vector_d &v)
 {
   PlaneCd<R CGAL_CTAG> h = plane_from_point_direction(p,v.direction());
-  new_rep(h.dimension(),h.begin(),h.end());
+  new_rep(h.begin(),h.end());
 }
 
 template < class R >
@@ -118,7 +111,8 @@ bool PlaneCd<R CGAL_CTAG>::
 operator==(const PlaneCd<R CGAL_CTAG> &h) const
 {
   if (dimension() != h.dimension()) return false;
-  return is_positively_proportional(begin(),end(),h.begin());
+  if (ptr() == h.ptr()) return true; // identical
+  return is_positively_proportionalCd(begin(),end(),h.begin());
 }
 
 template < class R >
@@ -138,10 +132,18 @@ long PlaneCd<R CGAL_CTAG>::id() const
 
 template < class R >
 inline
-typename PlaneCd<R CGAL_CTAG>::Point_d
-PlaneCd<R CGAL_CTAG>::point(int i) const
+typename PlaneCd<R CGAL_CTAG>::RT
+PlaneCd<R CGAL_CTAG>::operator[](int i) const
 {
-  return point_on_plane(*this,i);
+  return *(begin()+i);
+}
+
+template < class R >
+inline
+typename PlaneCd<R CGAL_CTAG>::Point_d
+PlaneCd<R CGAL_CTAG>::point() const
+{
+  return point_on_plane(*this);
 }
 
 template < class R >
@@ -173,8 +175,10 @@ template < class R >
 typename PlaneCd<R CGAL_CTAG>::Vector_d
 PlaneCd<R CGAL_CTAG>::base(int i) const
 {
+  return Vector_d(); // TODO
 }
 
+/*
 template < class R >
 inline
 typename PlaneCd<R CGAL_CTAG>::Line_d
@@ -183,6 +187,7 @@ perpendicular_line(const typename PlaneCd<R CGAL_CTAG>::Point_d &p) const
 {
   return Line_d(p, orthogonal_direction());
 }
+*/
 
 template < class R >
 inline

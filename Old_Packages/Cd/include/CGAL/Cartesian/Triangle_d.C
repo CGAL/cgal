@@ -60,10 +60,10 @@ bool
 TriangleC3<R CGAL_CTAG>::operator==(const TriangleC3<R CGAL_CTAG> &t) const
 {
   int i;
+  if (ptr() == t.ptr()) return true; // identical
   for(i=0; i<3; i++)
     if ( vertex(0) == t.vertex(i) )
        break;
-
   return (i<3) && vertex(1) == t.vertex(i+1) && vertex(2) == t.vertex(i+2);
 }
 

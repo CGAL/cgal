@@ -6,7 +6,11 @@
 #define CGAL_CARTESIAN_PLANE_D_H
 
 #include <CGAL/Cartesian/redefine_names_d.h>
+#include <CGAL/Cartesian/d_utils.h>
 #include <CGAL/d_tuple.h>
+#include <algorithm>
+#include <functional>
+
 
 CGAL_BEGIN_NAMESPACE
 
@@ -29,48 +33,51 @@ public:
   typedef typename R::Point_d                   Point_d;
   typedef typename R::Vector_d                  Vector_d;
   typedef typename R::Direction_d               Direction_d;
-  typedef typename R::Line_d                    Line_d;
-  typedef typename R::Ray_d                     Ray_d;
-  typedef typename R::Segment_d                 Segment_d;
-  typedef typename R::Aff_transformation_d      Aff_transformation_d;
+  // typedef typename R::Line_d                    Line_d;
+  // typedef typename R::Ray_d                     Ray_d;
+  // typedef typename R::Segment_d                 Segment_d;
+  // typedef typename R::Aff_transformation_d      Aff_transformation_d;
 #else
   typedef PlaneCd<R>                            Self;
   typedef typename R::Point_d_base              Point_d;
   typedef typename R::Vector_d_base             Vector_d;
   typedef typename R::Direction_d_base          Direction_d;
-  typedef typename R::Line_d_base               Line_d;
-  typedef typename R::Ray_d_base                Ray_d;
-  typedef typename R::Segment_d_base            Segment_d;
-  typedef typename R::Aff_transformation_d_base Aff_transformation_d;
+  // typedef typename R::Line_d_base               Line_d;
+  // typedef typename R::Ray_d_base                Ray_d;
+  // typedef typename R::Segment_d_base            Segment_d;
+  // typedef typename R::Aff_transformation_d_base Aff_transformation_d;
 #endif
 
   PlaneCd(int d = 0);
   PlaneCd(const Self &p);
   PlaneCd(const Point_d &p, const Direction_d &d);
+  PlaneCd(const Point_d &p, const Vector_d &d);
   template < class InputIterator >
   PlaneCd(const int d,
           const InputIterator &first, const InputIterator &last)
     {
-      new_rep(d,first,last);
+      CGAL_kernel_assertion( last-first == d+1);
+      new_rep(first,last);
     }
   template < class InputIterator >
   PlaneCd(const int d,
           const InputIterator &first, const InputIterator &last, const RT &w)
     {
-      new_rep(d,first,last,w);
+      CGAL_kernel_assertion( last-first == d);
+      new_rep(first,last,w);
     }
   template < class InputIterator >
   PlaneCd(const InputIterator &first, const InputIterator &last)
     { 
-      Self h = plane_from_points(first->dimension(),first,last);
-      new_rep(h.dimension(),h.begin(),h.end());
+      Self h = plane_from_points(first->dimension(),first,last,R());
+      new_rep(h.begin(),h.end());
     }
   template < class InputIterator >
   PlaneCd(const InputIterator &begin, const InputIterator &end,
           const Self &o, Oriented_side side = POSITIVE)
     {
       Self h = plane_from_points(first->dimension(),first,last,o,side);
-      new_rep(h.dimension(),h.begin(),h.end());
+      new_rep(h.begin(),h.end());
     }
   ~PlaneCd();
 
@@ -86,7 +93,7 @@ public:
   Vector_d       orthogonal_vector() const;
   Direction_d    orthogonal_direction() const;
   Vector_d       base(const int i) const;
-  Line_d         perpendicular_line(const Point_d &p) const;
+  // Line_d         perpendicular_line(const Point_d &p) const;
   Self           opposite() const;
 
   Point_d        to_plane_basis(const Point_d &p) const;
@@ -101,7 +108,7 @@ public:
 
   bool           is_degenerate() const;
 
-  int            dimension() const { return ptr->d; }
+  int            dimension() const { return ptr()->d; }
   const_iterator begin()     const { return ptr()->e; }
   const_iterator end()       const { return ptr()->e+dimension(); }
 
@@ -111,10 +118,10 @@ protected:
 
 private:
   const _d_tuple<RT>* ptr()  const { return (const _d_tuple<RT>*)PTR; }
-  _d_tuple<RT>*  ptr()             { return (_d_tuple<RT>*)PTR; }
+  _d_tuple<RT>*       ptr()        { return (_d_tuple<RT>*)PTR; }
   void new_rep(int d);
-  void new_rep(int d, const_iterator hb, const_iterator he);
-  void new_rep(int d, const_iterator hb, const_iterator he, const RT &w);
+  void new_rep(const_iterator hb, const_iterator he);
+  void new_rep(const_iterator hb, const_iterator he, const RT &w);
 };
 
 CGAL_END_NAMESPACE

@@ -21,10 +21,9 @@ CGAL_KERNEL_LARGE_INLINE
 bool
 is_positively_proportionalCd(
   const InputIterator &db1, const InputIterator &de1,
-  const InputIterator &db2, const InputIterator &de2)
+  const InputIterator &db2)
 {
   typedef typename iterator_traits<InputIterator>::value_type FT;
-  CGAL_kernel_assertion( de1-db1 == de2-db2 );
   InputIterator nz1; // first non-zero position in [db1,de1)
   nz1 = std::find_if(db1,de1,bind1st(not_equal_to<FT>(),FT(0)));
   CGAL_kernel_assertion( nz1 != de1 );
@@ -37,16 +36,25 @@ is_positively_proportionalCd(
       return false;
   // check that all subsequent positions are proportional
   return std::mismatch(nz1+1,de1+0,nz2+1,is_proportional<FT>(*nz1,*nz2))
-	  .first == de1;
+	   .first == de1;
 }
 
 template < class InputIterator >
 inline
 bool
 equal_directionCd(const InputIterator &db1, const InputIterator &de1,
-                  const InputIterator &db2, const InputIterator &de2)
+                  const InputIterator &db2)
 {
-  return is_positively_proportionalCd(db1,de1,db2,de2);
+  return is_positively_proportionalCd(db1,de1,db2);
+}
+
+template < class InputIterator >
+inline
+bool
+side_of_oriented_planeCd(const InputIterator &db1, const InputIterator &de1,
+                         const InputIterator &db2)
+{
+  return false; // TODO
 }
 
 CGAL_END_NAMESPACE

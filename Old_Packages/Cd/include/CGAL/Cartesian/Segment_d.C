@@ -63,6 +63,7 @@ inline
 bool
 SegmentC3<R CGAL_CTAG>::operator==(const SegmentC3<R CGAL_CTAG> &s) const
 {
+  if (ptr() == s.ptr()) return true; // identical
   return (source() == s.source())  && (target() == s.target());
 }
 
