@@ -37,18 +37,17 @@ class Qt_widget_get_line : public Qt_widget_layer
 {
 public:
   typedef typename R::Point_2  Point;
-  typedef typename R::Line_2	  Line;
-  typedef typename	R::FT FT;
+  typedef typename R::Line_2   Line;
+  typedef typename R::FT       FT;
 
-  Qt_widget_get_line(QObject* parent = 0, const char* name = 0)
-    : Qt_widget_layer(parent, name), firstpoint(false),
+  Qt_widget_get_line(const QCursor c = QCursor(Qt::crossCursor),
+		     QObject* parent = 0, const char* name = 0)
+    : Qt_widget_layer(parent, name), cursor(c), firstpoint(false),
       firsttime(true){};
   void draw(){
     firsttime = true;
   }
 private:
-  QCursor oldcursor;
-
   bool is_pure(Qt::ButtonState s){
     if((s & Qt::ControlButton) ||
        (s & Qt::ShiftButton) ||
@@ -152,7 +151,7 @@ private:
     oldpolicy = widget->focusPolicy();
     widget->setFocusPolicy(QWidget::StrongFocus);
     oldcursor = widget->cursor();
-    widget->setCursor(crossCursor);
+    widget->setCursor(cursor);
   };
 
   void deactivating()
@@ -161,6 +160,9 @@ private:
     widget->setCursor(oldcursor);
     firstpoint = false;
   };
+
+  QCursor oldcursor;
+  QCursor cursor;
 
   FT	x1, //the X of the first point
 	y1; //the Y of the first point

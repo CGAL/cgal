@@ -46,7 +46,11 @@ not, the parameter T has to provide this types:
 \ccCreationVariable{getline}
 \ccSetTwoColumns{Qt_widget_get_line}{}
 
-\ccConstructor{Qt_widget_get_line();}{The default constructor.}
+\ccConstructor{Qt_widget_get_line(const QCursor
+c=QCursor(Qt::crossCursor), QObject* parent = 0, const char* name =
+0);}{\ccc{c} is the cursor that this layer will use when is
+active. \ccc{parent} is the parent widget and \ccc{name} is the name you 
+give to this layer.}
 
 \end{ccRefClass}
 

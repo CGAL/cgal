@@ -29,7 +29,13 @@ The full template declaration of \ccc{Qt_widget_get_simple_polygon} states one p
 	\ccc{class Qt_widget_get_simple_polygon;}
 \end{tabbing}
 
-Polygon should be a \cgal\ Polygon.
+Polygon should be a \cgal\ Polygon, or it should provide the following 
+types:.
+
+\ccTypes
+\ccTypedef{typedef Polygon::Point_2 Point_2;}{}
+\ccTypedef{typedef Polygon::Segment_2 Segment2;}{}
+\ccTypedef{typedef Polygon::Edge_const_iterator ECI;}{}
 
 \ccInheritsFrom
 \ccc{Qt_widget_layer}
@@ -39,7 +45,11 @@ Polygon should be a \cgal\ Polygon.
 \ccCreationVariable{getspoly}
 \ccSetTwoColumns{Qt_widget_get_simple_polygon}{}
 
-\ccConstructor{Qt_widget_get_simple_polygon();}{The default constructor.}
+\ccConstructor{Qt_widget_get_simple_polygon<T>(const QCursor
+c=QCursor(Qt::crossCursor), QObject* parent = 0, const char* name =
+0);}{\ccc{c} is the cursor that this layer will use when is
+active. \ccc{parent} is the parent widget and \ccc{name} is the name you 
+give to this layer.}
 
 \end{ccRefClass}
 % +-----------------------------------------------------+

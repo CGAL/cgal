@@ -39,8 +39,10 @@ public:
                                         VI;
   typedef typename Polygon::FT          FT;
   
-  Qt_widget_get_polygon(QObject* parent = 0, const char* name = 0)
-    : Qt_widget_layer(parent, name), active(false), first_time(true) {}
+  Qt_widget_get_polygon(const QCursor c=QCursor(Qt::crossCursor),
+			QObject* parent = 0, const char* name = 0)
+    : Qt_widget_layer(parent, name), active(false),
+      first_time(true), cursor(c) {}
 
   void draw()
   {
@@ -170,9 +172,9 @@ protected:
     }
   };
   void activating()
-  {	
+  {
     oldcursor = widget->cursor();
-    widget->setCursor(crossCursor);
+    widget->setCursor(cursor);
     oldpolicy = widget->focusPolicy();
     widget->setFocusPolicy(QWidget::StrongFocus);
   };
@@ -208,14 +210,16 @@ private:
   
 protected:
   bool	active,     //true if the first point was inserted
-		first_time; //true if it is the first time when 
-		      //draw the rubber band
-  Point_2 rubber,     //the new point of the rubber band
-		  last_of_poly,	//the last point of the polygon
-		  rubber_old; //the old point of the rubber band
-  Polygon poly;	      //the polygon
-  QWidget::FocusPolicy	oldpolicy;
+        first_time; //true if it is the first time when 
+                    //draw the rubber band
+  Point_2 rubber,   //the new point of the rubber band
+          last_of_poly, //the last point of the polygon
+          rubber_old; //the old point of the rubber band
+  Polygon poly;       //the polygon
+  QWidget::FocusPolicy  oldpolicy;
   QCursor oldcursor;
+  QCursor cursor;
+
 };
 
 } // namespace CGAL

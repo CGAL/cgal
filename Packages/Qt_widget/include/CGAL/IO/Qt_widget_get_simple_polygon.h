@@ -32,14 +32,16 @@ template <class Polygon>
 class Qt_widget_get_simple_polygon : public Qt_widget_get_polygon<Polygon>
 {
 public:
-  typedef Qt_widget_get_polygon<Polygon> Get_polygon;
-
-  typedef typename Polygon::Point_2   Point_2;
-  typedef typename Polygon::Segment_2 Segment_2;
+  typedef Qt_widget_get_polygon<Polygon>  Get_polygon;
+  typedef typename Polygon::Point_2       Point_2;
+  typedef typename Polygon::Segment_2     Segment_2;
   typedef typename Polygon::Edge_const_iterator  ECI;
-  
-  Qt_widget_get_simple_polygon() {}
 
+  Qt_widget_get_simple_polygon(const QCursor
+                               c=QCursor(Qt::crossCursor),QObject*
+                               parent = 0, const char* name = 0)
+    : Qt_widget_get_polygon<Polygon>(c, parent, name){}
+  
 protected:
 
   void mousePressEvent(QMouseEvent *e)

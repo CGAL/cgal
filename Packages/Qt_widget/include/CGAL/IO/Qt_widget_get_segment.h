@@ -39,12 +39,12 @@ public:
   typedef typename R::Segment_2		Segment;
   typedef typename R::FT	FT;
 
-  Qt_widget_get_segment(QObject* parent = 0, const char* name = 0)
-    : Qt_widget_layer(parent, name), firstpoint(false), firsttime(true){};
+  Qt_widget_get_segment(const QCursor c=QCursor(Qt::crossCursor),
+			QObject* parent = 0, const char* name = 0)
+    : Qt_widget_layer(parent, name), cursor(c), firstpoint(false),
+      firsttime(true){};
 
 private:
-  QCursor oldcursor;
-
   bool is_pure(Qt::ButtonState s){
     if((s & Qt::ControlButton) ||
        (s & Qt::ShiftButton) ||
@@ -149,7 +149,7 @@ private:
     oldpolicy = widget->focusPolicy();
     widget->setFocusPolicy(QWidget::StrongFocus);
     oldcursor = widget->cursor();
-    widget->setCursor(crossCursor);
+    widget->setCursor(cursor);
   };
 
   void deactivating()
@@ -158,6 +158,9 @@ private:
     widget->setCursor(oldcursor);
     firstpoint = false;
   };
+
+  QCursor oldcursor;
+  QCursor cursor;
 
   FT  x1, //the X of the first point
       y1; //the Y of the first point
