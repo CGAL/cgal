@@ -5,9 +5,9 @@
 #                    include platform specific settings
 #---------------------------------------------------------------------#
 # Choose the right include file from the <cgalroot>/make directory.
+
+# CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE
 include $(CGAL_MAKEFILE)
-#include /KM/projects/CGAL/Work_in_Progress/CGAL-2.1-I-32/make/makefile_sparc_SunOS-5.6_g++-2.95.2_LEDA++
-#include /KM/projects/CGAL/Work_in_Progress/CGAL-2.1-I-39/make/makefile_sparc_SunOS-5.6_g++-2.95.2_LEDA++
 
 #---------------------------------------------------------------------#
 #                    compiler flags
@@ -18,9 +18,8 @@ CXXFLAGS = \
            $(EXTRA_FLAGS) \
            -Iinclude \
            $(CGAL_CXXFLAGS) \
+           $(LONG_NAME_PROBLEM_CXXFLAGS) \
            $(DEBUG_OPT)
-
-#           -DCGAL_NO_LEDA_HANDLE \
 
 #---------------------------------------------------------------------#
 #                    linker flags
@@ -32,6 +31,7 @@ LIBPATH = \
 
 LDFLAGS = \
           $(TESTSUITE_LDFLAGS) \
+          $(LONG_NAME_PROBLEM_LDFLAGS) \
           $(CGAL_LDFLAGS)
 
 #---------------------------------------------------------------------#
@@ -39,13 +39,13 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:            \
-                test_kernel__
+                test_kernel__$(EXE_EXT) 
 
 test_kernel__$(EXE_EXT): test_kernel__$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_kernel__ test_kernel__$(OBJ_EXT) $(LDFLAGS)
 
 clean: \
-                   test_kernel__.clean
+                   test_kernel__.clean 
 
 #---------------------------------------------------------------------#
 #                    suffix rules

@@ -5,6 +5,8 @@
 #                    include platform specific settings
 #---------------------------------------------------------------------#
 # Choose the right include file from the <cgalroot>/make directory.
+
+# CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE
 include $(CGAL_MAKEFILE)
 
 #---------------------------------------------------------------------#
@@ -16,6 +18,7 @@ CXXFLAGS = \
            $(EXTRA_FLAGS) \
            -I../Kernel/include \
            $(CGAL_CXXFLAGS) \
+           $(LONG_NAME_PROBLEM_CXXFLAGS) \
            $(DEBUG_OPT)
 
 #---------------------------------------------------------------------#
@@ -28,6 +31,7 @@ LIBPATH = \
 
 LDFLAGS = \
           $(TESTSUITE_LDFLAGS) \
+          $(LONG_NAME_PROBLEM_LDFLAGS) \
           $(CGAL_LDFLAGS)
 
 #---------------------------------------------------------------------#
@@ -35,15 +39,14 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:            \
-                test_kernelC2 \
-                test_kernelC3 \
-                test_kernelCd \
-                test_planeC3_to_2d \
-                test_new_partsC_ \
-                test_predicate_classes_2C \
-                test_new_kernelC2 \
-                test_new_kernelC3
-
+                test_kernelC2$(EXE_EXT) \
+                test_kernelC3$(EXE_EXT) \
+                test_kernelCd$(EXE_EXT) \
+                test_new_kernelC2$(EXE_EXT) \
+                test_new_kernelC3$(EXE_EXT) \
+                test_new_partsC_$(EXE_EXT) \
+                test_planeC3_to_2d$(EXE_EXT) \
+                test_predicate_classes_2C$(EXE_EXT) 
 
 test_kernelC2$(EXE_EXT): test_kernelC2$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_kernelC2 test_kernelC2$(OBJ_EXT) $(LDFLAGS)
@@ -54,31 +57,30 @@ test_kernelC3$(EXE_EXT): test_kernelC3$(OBJ_EXT)
 test_kernelCd$(EXE_EXT): test_kernelCd$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_kernelCd test_kernelCd$(OBJ_EXT) $(LDFLAGS)
 
-test_planeC3_to_2d$(EXE_EXT): test_planeC3_to_2d$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_planeC3_to_2d test_planeC3_to_2d$(OBJ_EXT) $(LDFLAGS)
-
-test_new_partsC_$(EXE_EXT): test_new_partsC_$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_new_partsC_ test_new_partsC_$(OBJ_EXT) $(LDFLAGS)
-
-test_predicate_classes_2C$(EXE_EXT): test_predicate_classes_2C$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_predicate_classes_2C test_predicate_classes_2C$(OBJ_EXT) $(LDFLAGS)
-
 test_new_kernelC2$(EXE_EXT): test_new_kernelC2$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_new_kernelC2 test_new_kernelC2$(OBJ_EXT) $(LDFLAGS)
 
 test_new_kernelC3$(EXE_EXT): test_new_kernelC3$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_new_kernelC3 test_new_kernelC3$(OBJ_EXT) $(LDFLAGS)
 
+test_new_partsC_$(EXE_EXT): test_new_partsC_$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_new_partsC_ test_new_partsC_$(OBJ_EXT) $(LDFLAGS)
+
+test_planeC3_to_2d$(EXE_EXT): test_planeC3_to_2d$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_planeC3_to_2d test_planeC3_to_2d$(OBJ_EXT) $(LDFLAGS)
+
+test_predicate_classes_2C$(EXE_EXT): test_predicate_classes_2C$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_predicate_classes_2C test_predicate_classes_2C$(OBJ_EXT) $(LDFLAGS)
 
 clean: \
                    test_kernelC2.clean \
                    test_kernelC3.clean \
                    test_kernelCd.clean \
-                   test_planeC3_to_2d.clean \
-                   test_new_partsC_.clean \
-                   test_predicate_classes_2C.clean \
                    test_new_kernelC2.clean \
-                   test_new_kernelC3.clean
+                   test_new_kernelC3.clean \
+                   test_new_partsC_.clean \
+                   test_planeC3_to_2d.clean \
+                   test_predicate_classes_2C.clean 
 
 #---------------------------------------------------------------------#
 #                    suffix rules
