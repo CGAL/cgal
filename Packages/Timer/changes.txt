@@ -1,5 +1,18 @@
 Timer Package: Release changes:
 ---------------------------------------------------------------------
+
+2.2 (18 Mar 2002)
+
+    - Improved Timer based on getrusage() on POSIX systems (does
+      not wrap around after 30 minutes).
+    - Error behaviour of both timer classes changed to warning
+      and proper error return values.
+    - Rewritten test program (more modular, since both timers are so similar.
+    - Cleanup at some places, all based on one system depending function
+      returning a time in seconds in one double.
+    - Changed the precision function to compute the precision dynamically
+      at runtime at its first invocation.
+
 2.1.1 (10 Dec 2001)
     Real_timer changes from Andreas Fabri for MWCC included
 

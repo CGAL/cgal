@@ -12,7 +12,7 @@
 The class \ccRefName\ is a timer class for measuring user process time.
 A timer \ccVar\ of type \ccRefName\ is an object with a state. It is
 either {\em running\/} or it is {\em stopped}. The state is controlled
-with \ccStyle{t.start()} and \ccStyle{t.stop()} . The timer counts the
+with \ccStyle{t.start()} and \ccStyle{t.stop()}. The timer counts the
 time elapsed since its creation or last reset. It counts only the time
 where it is in the running state. The time information is given in seconds.
 The timer counts also the number of intervals it was running, i.e. it 
@@ -39,24 +39,29 @@ first interval.
 \ccGlue
 \ccMethod{bool     is_running();}{\ccc{true} if the current state is running.}
 
-\ccMethod{double   time();}{user process time in seconds.}
+\ccMethod{double   time();}{user process time in seconds, or 0 if the 
+                            underlying system call failed.}
 \ccGlue
 \ccMethod{int      intervals();}{number of start/stop-intervals since
                                  the last reset.} 
 \ccGlue
-\ccMethod{double   precision();}{smallest possible time step in seconds.}
+\ccMethod{double   precision();}{smallest possible time step in seconds,
+                                 or -1 if the system call failed.}
 \ccGlue
 \ccMethod{double   max();}{maximal representable time in seconds.}
 
 
 \ccImplementation
 
-The timer class is based in the C function \ccStyle{std::clock(\ldots)}
-which measures the user and system times of the current process and
-its subprocesses.  The time granularity is reasonable fine with
-currently 10 ms on IRIX and Solaris. However the counter wraps around
-after only about 36 minutes. On Solaris machines the man page states
-that the timer could fail. In that case an error message is printed
-and the program aborted.
+The timer class is based in the C function \ccc{std::clock()} on
+PC systems and the C function \ccc{getrusage()} on standard
+POSIX systems. The counter for the \ccc{std::clock()} based
+solution might wrap around (overflow) after only about 36
+minutes. This won't happen on POSIX systems. The system calls to these
+timers might fail, in which case a warning message will be issued
+through the \cgal\ error handler and the functions return with the
+error codes indicated above. The \ccc{precision} method computes the
+precision dynamically at runtime at its first invocation.
+
 
 \end{ccRefClass}

@@ -1,11 +1,10 @@
-
-
 #include <CGAL/basic.h>
 #include <CGAL/Timer.h>
 #include <CGAL/Real_timer.h>
 
-void test_timer() {
-    CGAL::Timer t;
+template <class T>
+double test_timer() {
+    T t;
     CGAL_assertion( ! t.is_running());
     t.start();
     CGAL_assertion( t.is_running());
@@ -14,51 +13,34 @@ void test_timer() {
     t.stop();
     CGAL_assertion( ! t.is_running());
     CGAL_assertion( t.time() >= 0.0);
-    std::cout << t.time() << "\n";
+    std::cout << "time()                 : " << t.time() << "\n";
     CGAL_assertion( t.intervals() == 1);
     CGAL_assertion( t.precision() >= 0.0);
-    std::cout << t.precision() << "\n"; 
+    std::cout << "precision()            : " << t.precision() << "\n"; 
     CGAL_assertion( t.max() > 0.0);
-}
 
-void test_real_timer() {
-    CGAL::Real_timer t;
-    CGAL_assertion( ! t.is_running());
-    t.start();
-    CGAL_assertion( t.is_running());
-    t.reset();
-    CGAL_assertion( t.is_running());
-    t.stop();
-    CGAL_assertion( ! t.is_running());
-    CGAL_assertion( t.time() >= 0.0);
-    std::cout << t.time() << "\n";
-    CGAL_assertion( t.intervals() == 1);
-    CGAL_assertion( t.max() > 0.0);
+    T s;
+    s.start();
+    double p = 0.0;     
+    for ( int i = 0; i < 5; i++) {
+        for ( int j = 0; j < 1000000; j++)
+            p = p + 1.0;
+        std::cout << "time() in " << (i+1) << ". iteration : " << s.time()
+                  << "\n";
+    }
+    // make use of the computed result to stop optimizers from removing
+    // the complete loop.
+    return p;
 }
 
 int main(){
-    test_timer();
-    test_real_timer();
-    CGAL::Real_timer Tm;
-    CGAL::Timer Tm2;
-    Tm.start();
-    Tm2.start();
-    int i1,i2;
-    double p = 0;
-     
-    std::cout << "\n";
-    for (i1=0;i1<5;i1++) {
-    for (i2=0;i2<800000;i2++) p=p+1.0 ;
-     std::cout << Tm.time() << "\n";
-    }
-    std::cout << "\n";
-
-    for (i1=0;i1<5;i1++) {
-    for (i2=0;i2<800000;i2++) p=p+1.0 ;
-     std::cout << Tm2.time() << "\n";
-    }
-    std::cout << "\n";
-  
-    return 0;
+    double p = 0.0;
+    std::cout << "CGAL::Timer:\n";
+    p += test_timer<CGAL::Timer>();
+    std::cout << std::endl;
+    std::cout << "CGAL::Real_timer:\n";
+    p += test_timer<CGAL::Real_timer>();
+    std::cout << std::endl;
+    return (p > 0) ? 0 : 1;
 }
 // EOF //

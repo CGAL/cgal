@@ -26,23 +26,7 @@
 #ifndef CGAL_TIMER_H
 #define CGAL_TIMER_H 1
 
-#ifndef CGAL_BASIC_H
 #include <CGAL/basic.h>
-#endif
-#ifndef CGAL_PROTECT_CSTDLIB
-#include <cstdlib>
-#define CGAL_PROTECT_CSTDLIB
-#endif
-#ifndef CGAL_PROTECT_CLIMITS
-#include <climits>
-#define CGAL_PROTECT_CLIMITS
-#endif
-
-// used for clock()
-#ifndef CGAL_PROTECT_CTIME
-#include <ctime>
-#define CGAL_PROTECT_CTIME
-#endif
 
 CGAL_BEGIN_NAMESPACE
 
@@ -59,13 +43,17 @@ CGAL_BEGIN_NAMESPACE
 
 class Timer {
 private:
-    CGAL_CLIB_STD::clock_t  elapsed;
-    CGAL_CLIB_STD::clock_t  started;
-    int           interv;
-    bool          running;
+    double      elapsed;
+    double      started;
+    int         interv;
+    bool        running;
 
+    static bool m_failed;
+
+    double   user_process_time() const; // in seconds
+    double   compute_precision() const; // in seconds
 public:
-    Timer() : elapsed(0), started(0), interv(0), running(false) {}
+    Timer() : elapsed(0.0), started(0.0), interv(0), running(false) {}
 
     void     start();
     void     stop ();
@@ -74,52 +62,49 @@ public:
 
     double   time()       const;
     int      intervals()  const { return interv; }
-    double   precision()  const { return 0.01; }
-    double   max() const        { return 2146.0;}
+    double   precision()  const;
+    // Returns timer precison. Computes it dynamically at first call.
+    // Returns -1.0 if timer system call fails, which, for a proper coded
+    // test towards precision leads to an immediate stop of an otherwise 
+    // infinite loop (fixed tolerance * total time >= precision).
+    double   max()        const;
 };
 
 
-/*****************************************************************************/
+// -----------------------------------------------------------------------
 
-// Member functions Timer
+// Member functions for Timer
 // ===========================
 
 inline void Timer::start() {
-    CGAL_assertion( ! running);
-    started = CGAL_CLIB_STD::clock();
-    if (started == (CGAL_CLIB_STD::clock_t)-1) {
-        // possible on Solaris according to man-page
-#if defined (_MSC_VER)
-	std::cout << "Timer error: CGAL_CLIB_STD::clock() returned -1.\n";
-#else
-	std::cerr << "Timer error: CGAL_CLIB_STD::clock() returned -1.\n";
-#endif
-	CGAL_CLIB_STD::abort();
-    }
+    CGAL_precondition( ! running);
+    started = user_process_time();
     running = true;
     ++ interv;
 }
 
 inline void Timer::stop() {
-    CGAL_assertion( running);
-    elapsed += CGAL_CLIB_STD::clock() - started;
-    running  = false;
+    CGAL_precondition( running);
+    elapsed += user_process_time() - started;
+    started = 0.0;
+    running = false;
 }
 
 inline void Timer::reset() {
-    interv = 0;
-    elapsed = 0;
+    interv  = 0;
+    elapsed = 0.0;
     if (running) {
-	started = CGAL_CLIB_STD::clock();
+	started = user_process_time();
 	++ interv;
+    } else {
+        started = 0.0;
     }
 }
 
 inline double Timer::time() const {
-    if (running) {
-	return double( elapsed  + CGAL_CLIB_STD::clock() - started) / CLOCKS_PER_SEC;
-    }
-    return double(elapsed) / CLOCKS_PER_SEC;
+    if (running)
+	return elapsed + (user_process_time() - started);
+    return elapsed;
 }
 
 CGAL_END_NAMESPACE
