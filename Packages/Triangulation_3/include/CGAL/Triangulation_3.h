@@ -575,6 +575,8 @@ protected:
     CGAL_triangulation_precondition( c != NULL );
     CGAL_triangulation_precondition( tester(c) );
 
+    set_number_of_vertices(number_of_vertices()+1);
+
     if ( w == NULL )  // Let _tds.star_hole_[23]() do that ?
       w = (Vertex *) _tds.create_vertex();
 
@@ -596,16 +598,13 @@ protected:
         fit != facets.end(); ++fit)
         fit->first->neighbor(fit->second)->set_in_conflict_flag(0);
 
-    // Create the new cells.
+    // Create the new cells and delete the old.
     if (dimension() == 3)
-	_tds.star_hole_3(&*w, facets.begin(), facets.end());
+	_tds.star_hole_3(&*w, facets.begin(), facets.end(),
+		         cells.begin(), cells.end());
     else
-	_tds.star_hole_2(&*w, facets.begin(), facets.end());
-
-    // Delete the old cells.
-    for(typename std::vector<Cell_handle>::iterator cit=cells.begin();
-        cit != cells.end(); ++cit)
-        _tds.delete_cell(&*(*cit));
+	_tds.star_hole_2(&*w, facets.begin(), facets.end(),
+		         cells.begin(), cells.end());
 
     return w;
   }
@@ -2354,19 +2353,13 @@ insert_outside_convex_hull(const Point & p, Cell_handle c, Vertex_handle v)
     }
   case 2:
     {
-      set_number_of_vertices(number_of_vertices()+1);
-
       Conflict_tester_outside_convex_hull_2 tester(p, this);
       Vertex_handle v = insert_conflict(NULL, c, tester);
       v->set_point(p);
-      
       return v;
     }
-  case 3:
-  default:
+  default: // case 3:
     {
-      set_number_of_vertices(number_of_vertices()+1);
-
       Conflict_tester_outside_convex_hull_3 tester(p, this);
       Vertex_handle v = insert_conflict(NULL, c, tester);
       v->set_point(p);

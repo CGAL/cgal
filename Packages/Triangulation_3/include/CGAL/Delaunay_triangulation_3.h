@@ -311,7 +311,6 @@ insert(const Point & p, Cell_handle start, Vertex_handle v)
       if ( lt == VERTEX )
 	  return c->vertex(li);
 
-      set_number_of_vertices(number_of_vertices()+1);
       Conflict_tester_3 tester(p, this);
       v = insert_conflict(&(*v), &(*c), tester); 
       v->set_point(p);
@@ -328,7 +327,6 @@ insert(const Point & p, Cell_handle start, Vertex_handle v)
       case FACET:
       case EDGE:
 	{
-	  set_number_of_vertices(number_of_vertices()+1);
           Conflict_tester_2 tester(p, this);
 	  v = insert_conflict(&(*v), &(*c), tester); 
 	  v->set_point(p);

@@ -379,7 +379,6 @@ insert(const Weighted_point & p, Cell_handle start, Vertex_handle v)
           _tds.delete_vertex( &(*(*it)));
 	}
       }
-      set_number_of_vertices(number_of_vertices()+1);
       // a voir : comment compter les sommets redondants ? (***)
       // else : traiter le cas des points redondants a stocker dans
       // la face associee pour le cas d'une future suppression
@@ -412,7 +411,6 @@ insert(const Weighted_point & p, Cell_handle start, Vertex_handle v)
               _tds.delete_vertex( &(*(*it)));
 	    }
 	  }
-	  set_number_of_vertices(number_of_vertices()+1);
 	  return v;
 	}
       case VERTEX:
