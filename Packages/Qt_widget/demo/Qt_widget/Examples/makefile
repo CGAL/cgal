@@ -37,7 +37,7 @@ LDFLAGS = \
 all:            \
                 hellosegment$(EXE_EXT) \
                 standard_toolbar$(EXE_EXT) \
-                tool$(EXE_EXT) 
+                layer$(EXE_EXT) 
 
 hellosegment$(EXE_EXT): hellosegment$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)hellosegment hellosegment$(OBJ_EXT) $(LDFLAGS)
@@ -50,18 +50,18 @@ standard_toolbar$(OBJ_EXT): standard_toolbar.moc
 standard_toolbar$(EXE_EXT): standard_toolbar$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)standard_toolbar standard_toolbar$(OBJ_EXT) $(LDFLAGS)
 
-tool.moc:  tool.C
-	$(QT_MOC) -o tool.moc $<
+layer.moc:  layer.C
+	$(QT_MOC) -o layer.moc $<
 
-tool$(OBJ_EXT): tool.moc
+layer$(OBJ_EXT): layer.moc
 
-tool$(EXE_EXT): tool$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)tool tool$(OBJ_EXT) $(LDFLAGS)
+layer$(EXE_EXT): layer$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)layer layer$(OBJ_EXT) $(LDFLAGS)
 
 clean: \
                    hellosegment.clean \
                    standard_toolbar.clean \
-                   tool.clean 
+                   layer.clean 
 
 #---------------------------------------------------------------------#
 #                    suffix rules
