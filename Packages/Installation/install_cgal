@@ -845,6 +845,7 @@ set_compiler_flags()
             WINDOW_DIR="/usr/openwin/lib"
             RUNTIME_LINKER_FLAG="-R "
             PRINT_STACKTRACE_PROGRAM="dbx"
+	    EXE_OPT="-o \$(SAVESTHEBLANK)"
             ;;
 	*SunOS*5.*CC*)
 	    #### settings for sunpro compiler on solaris
