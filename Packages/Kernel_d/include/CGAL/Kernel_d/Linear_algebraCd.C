@@ -205,8 +205,8 @@ inverse(const Matrix &M, FT &D)
 {
   CGAL_kernel_precondition(M.row_dimension()==M.column_dimension());
   Matrix I; Vector c;
-  bool result = inverse(M,I,D,c);
-  CGAL_kernel_precondition( result );
+  CGAL_kernel_assertion_code( bool result = ) inverse(M,I,D,c);
+  CGAL_kernel_assertion( result );
   return I;
 }
 

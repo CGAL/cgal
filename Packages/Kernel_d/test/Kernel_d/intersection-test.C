@@ -12,19 +12,26 @@
 #include <CGAL/test_macros.h>
 
 #ifdef CGAL_USE_LEDA
+
 #include <CGAL/leda_integer.h>
 #include <CGAL/leda_real.h>
 typedef leda_integer RT;
-typedef leda_real FT;
-#else
-#ifdef CGAL_USE_GMP
+typedef leda_real    FT;
+
+#elif defined CGAL_USE_GMP
+
 #include <CGAL/Gmpz.h>
+#include <CGAL/Gmpq.h>
 typedef CGAL::Gmpz RT;
-typedef double FT;
+typedef CGAL::Gmpq FT;
+
 #else
-typedef double RT;
-typedef double FT;
-#endif
+
+#include <CGAL/MP_Float.h>
+#include <CGAL/Quotient.h>
+typedef CGAL::MP_Float     RT;
+typedef CGAL::Quotient<RT> FT;
+
 #endif
 
 int main()
