@@ -204,7 +204,7 @@ public:
       
       //for (Holes_iterator holes_it = face->holes_begin(); 
       //     holes_it != face->holes_end(); ++holes_it) {
-      for (std::vector<Ccb_halfedge_circulator>::iterator holes_it = holes.begin(); 
+      for (typename std::vector<Ccb_halfedge_circulator>::iterator holes_it = holes.begin(); 
            holes_it != holes.end(); ++holes_it) 
         {
           Ccb_halfedge_circulator face_cc(*holes_it);
