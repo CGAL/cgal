@@ -61,7 +61,6 @@ protected:
 	Qt_widget	*widget;//the pointer to the widget
   virtual void activating(){};
   virtual void deactivating(){};
-  QCursor   oldcursor;
 };
 
 } // namespace CGAL end
