@@ -11,7 +11,7 @@ typedef Kernel::Point_d Point_d;
 typedef Kernel::Iso_box_d Iso_box;
 typedef CGAL::Random_points_in_iso_box_d<Point_d>       Random_points_iterator;
 typedef CGAL::Counting_iterator<Random_points_iterator> N_Random_points_iterator;
-typedef CGAL::Manhattan_distance_iso_box_point<Kernel,Iso_box> L1_distance;
+typedef CGAL::Manhattan_distance_iso_box_point<Kernel> L1_distance;
 typedef CGAL::K_neighbor_search<Kernel, L1_distance> K_neighbor_search;
 typedef K_neighbor_search::Tree Tree;
 
