@@ -41,7 +41,8 @@ int main()
 #include <CGAL/Cartesian.h>
 #elif CGAL_PM_TEST_TRAITS==CGAL_SEGMENT_LEDA_TRAITS
 #include <CGAL/leda_rational.h>
-#include <CEP/Leda_rat_kernel/leda_rat_kernel_traits.h>
+//#include <CEP/Leda_rat_kernel/leda_rat_kernel_traits.h>
+#include <CGAL/Pm_segment_traits_leda_kernel_2.h>
 #else
   #error No traits defined for test
 #endif
@@ -78,7 +79,8 @@ typedef CGAL::Quotient<int>                             NT;
 typedef CGAL::Cartesian<NT>                             Kernel;
 #elif CGAL_PM_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS
 typedef leda_rational                                   NT;
-typedef CGAL::leda_rat_kernel_traits                    Kernel;
+//typedef CGAL::leda_rat_kernel_traits                    Kernel;
+typedef CGAL::Pm_segment_traits_leda_kernel_2           Kernel;
 #endif
 
 typedef CGAL::Pm_segment_traits_2<Kernel>               Traits;
@@ -152,12 +154,12 @@ private:
         return counted_overlaps;
       }*/
  
-  void print_vertices(Planar_map &pm)
+  void print_vertices(Planar_map &myPm)
   {
     Planar_map::Vertex_const_iterator vit;
 
     std::cout << "Vertices in Planar_map:" << std::endl;
-    for(vit = pm.vertices_begin(); vit != pm.vertices_end(); vit++)
+    for(vit = myPm.vertices_begin(); vit != myPm.vertices_end(); vit++)
     {
       std::cout << (*vit).point() << " , ";
     }
@@ -189,17 +191,17 @@ private:
     std::cout << std::endl;
   }
   
-  bool point_is_in_expected_place(Planar_map & pm, Point_2 & pnt, 
+  bool point_is_in_expected_place(Planar_map & myPm, Point_2 & pnt, 
 				  Planar_map::Locate_type exp_lt)
   {
     Planar_map::Locate_type location_of_vertex;
       
-    pm.locate(pnt ,location_of_vertex);
+    myPm.locate(pnt ,location_of_vertex);
     print_kind_of_location(location_of_vertex);
     return (location_of_vertex == exp_lt);
   }
   
-  void check_that_vertices_are_in_arrangement(Planar_map & pm, 
+  void check_that_vertices_are_in_arrangement(Planar_map & myPm, 
 					      Point_list & all_points_list)
   {
     Point_list::iterator pit;
@@ -214,14 +216,14 @@ private:
       std::cout << (*pit).x() << " " << (*pit).y();
 #endif
       std::cout << std::endl;
-      CGAL_assertion(point_is_in_expected_place(pm, * pit, 
+      CGAL_assertion(point_is_in_expected_place(myPm, * pit, 
                                                 Planar_map::VERTEX) ||
-                     point_is_in_expected_place(pm, * pit, 
+                     point_is_in_expected_place(myPm, * pit, 
                                                 Planar_map::EDGE));
     }
   }
   
-  void points_in_expected_place(Planar_map & pm,
+  void points_in_expected_place(Planar_map & myPm,
                                 Point_list & point_list,
                                 std::list<Planar_map::Locate_type> & lt_list)
   {
@@ -237,7 +239,7 @@ private:
 #else
       std::cout << (*pit).x() << " " << (*pit).y() << "*** ";
 #endif
-      CGAL_assertion(point_is_in_expected_place(pm, *pit, *lt_it));
+      CGAL_assertion(point_is_in_expected_place(myPm, *pit, *lt_it));
     }
   }
 
