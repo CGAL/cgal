@@ -2,6 +2,9 @@
 //	Revision History for package Installation
 //=====================================================================
 
+10 Apr 2004: Sylvain Pion
+- Added PGCC support.
+
 18 Mar 2004: Michael Hoffmann
 - Added RANLIB variable (set to "cat >/dev/null" for non-Darwin)
 
