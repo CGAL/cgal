@@ -71,6 +71,8 @@ typedef typename Refs_::Sphere_circle    Sphere_circle;
 typedef typename Refs_::Sphere_direction Sphere_direction;
 /*{\Mtypemember embedding directions.}*/
 
+typedef typename Refs_::Aff_transformation_3 Aff_transformation_3;
+
 typedef typename Refs_::Mark   Mark;
 /*{\Mtypemember attributes of objects (vertices, edges, faces).}*/
 
@@ -910,6 +912,24 @@ The iterator range access operations are of the following kind:\\
 The macros are then |CGAL_nef3_forall_svertices_of(v,V)|,
 |CGAL_nef3_forall_shalfedges_of(e,V)|, |CGAL_nef3_forall_sedges_of(e,V)|, 
 |CGAL_nef3_forall_sfaces_of(f,V)|, |CGAL_nef3_forall_sface_cycles_of(fc,F)|.}*/
+
+void transform( const Aff_transformation_3& linear) {
+    typedef typename Aff_transformation_3::RT RT;
+    // The affine transformation is linear, i.e., no translation part.
+    CGAL_precondition( linear.hm(0,3) == RT(0) && 
+                       linear.hm(1,3) == RT(0) && 
+                       linear.hm(2,3) == RT(0));
+    for (SVertex_iterator i = svertices_begin(); i != svertices_end(); ++i)
+        point(i) = Sphere_point( point(i).transform( linear));
+    for (SHalfedge_iterator i = shalfedges_begin(); i !=shalfedges_end(); ++i)
+        circle(i) = Sphere_circle( circle(i).transform( linear));
+    if ( has_loop()) {
+        circle(shalfloop()) = Sphere_circle(circle(shalfloop())
+                                            .transform( linear));
+        circle(twin(shalfloop()))
+            = Sphere_circle(circle(twin(shalfloop())).transform( linear));
+    }
+}
 
 }; // SNC_SM_decorator
 
