@@ -28,17 +28,6 @@
 #define CGAL_VERSION 1.1-I-01
 #define CGAL_VERSION_NR 1001100001
 
-//----------------------------------------------------------------------//
-//             no namespaces for MIPS 7.2.1
-//----------------------------------------------------------------------//
-
-#if defined(__sgi) && !defined(__GNUC__) && defined(_COMPILER_VERSION)
-#if (_COMPILER_VERSION >= 721) && defined(_NAMESPACES)
-#define __STL_NO_NAMESPACES
-#include <stl_config.h>
-#undef __STL_USE_NAMESPACES
-#endif
-#endif
 
 //----------------------------------------------------------------------//
 //             include platform specific workaround flags (CGAL_CFG_...)
