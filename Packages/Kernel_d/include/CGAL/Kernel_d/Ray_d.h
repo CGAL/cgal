@@ -69,11 +69,9 @@ Ray_d(const Base& b) : Base(b) {}
 public: 
 /*{\Mcreation 3}*/
 
-Ray_d(int d = 0)  
+Ray_d() : Base( Pair() ) {}
 /*{\Mcreate introduces some ray in $d$-dimensional space }*/
- : Base( Pair(Point_d<R>(d), Point_d<R>(d)+
-         Vector_d<R>(d,Base_vector(),0)) ) {}
-
+ 
 Ray_d(const Point_d<R>& p, const Point_d<R>& q)
 /*{\Mcreate introduces a ray through |p| and |q| and starting at |p|.
 \precond $p$ and $q$ are distinct and have the same dimension. }*/

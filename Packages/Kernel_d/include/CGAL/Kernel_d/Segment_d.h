@@ -68,9 +68,8 @@ Segment_d(const Base& b) : Base(b) {}
 public: 
 /*{\Mcreation 3}*/
 
-Segment_d(int d = 0) : Base( Pair(d) ) {}
-/*{\Mcreate introduces a variable |\Mvar| of type |\Mname| and
-initializes it to some segment in $d$ - dimensional space.}*/
+Segment_d() : Base( Pair() ) {}
+/*{\Mcreate introduces a variable |\Mvar| of type |\Mname|.}*/
 
 Segment_d(const Point_d<R>& p, const Point_d<R>& q) 
 /*{\Mcreate introduces a variable |\Mvar| of type |\Mname| which

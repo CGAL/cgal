@@ -67,11 +67,9 @@ Line_d(const Base& b) : Base(b) {}
 public: 
 /*{\Mcreation 3}*/
 
-Line_d(int d = 0) 
+Line_d() : Base( Pair() ) {}
 /*{\Mcreate introduces a variable |\Mvar| of type |\Mname| and 
 initializes it to some line in $d$ - dimensional space }*/
- : Base( Pair(Point_d<R>(d), Point_d<R>(d)+
-         Vector_d<R>(d,Base_vector(),0)) ) {}
 
 Line_d(const Point_d<R>& p, const Point_d<R>& q)
 /*{\Mcreate introduces a line through |p| and |q| and oriented

@@ -475,7 +475,7 @@ int main()
   {
     Point p1(-5,1), p2(5,1); 
     Vector v(0,5);
-    Segment s0(2), s1(p1,p2), s2(p1,v),
+    Segment s0, s1(p1,p2), s2(p1,v),
               s3(Point(-1,-1),Point(5,5)),
               s4(Point(1,1,2),Point(5,5,3)),
               s5(Point(0,0,1),Point(4,4,1)),
@@ -509,13 +509,13 @@ int main()
     Point p1(2), p2(5,0);
     Segment s(Point(1,-1),Point(1,5));
     Direction dir(1,0); 
-    Ray r1(p1,p2), r2(p1,dir), r3(s), r4(2), r5(r1); 
+    Ray r0, r1(p1,p2), r2(p1,dir), r3(s), r4(r1); 
     Point p3(3), p4(1,1,1,1);
     Ray r6(p3,p4);
 
-    CGAL_TEST(r1==r5&&r1==r2);
+    CGAL_TEST(r1==r4&&r1==r2);
     CGAL_TEST(r1!=r3);
-    CGAL_TEST(r1.dimension()==2&&r6.dimension()==3);
+    CGAL_TEST(r0.dimension()==0&&r1.dimension()==2&&r6.dimension()==3);
     CGAL_TEST(r1.source()==p1);
     CGAL_TEST(r1.point(0)==p1&&r1.point(1)==p2);
     CGAL_TEST(r1.opposite()==Ray(p1,-dir));
@@ -525,7 +525,7 @@ int main()
     CGAL_TEST(r1+Vector(1,-1) == r7);
     CGAL_TEST(r1.has_on(Point(10,0))&&!r1.has_on(Point(-10,0)));
     CGAL_TEST(CGAL::parallel(r1,(r2+Vector(0,1)).opposite()));
-    if (DOIO) CGAL_IO_TEST(r1,r5); r5 = r1;
+    if (DOIO) CGAL_IO_TEST(r1,r4); r4 = r1;
   }
 
   {
@@ -534,11 +534,10 @@ int main()
     Vector v(0,2);
     Segment s(Point(1,-2),Point(1,2));
     Ray r(origin, p3);
-    Line l0(2), l1(origin,p1), l2(origin,dir), l3(s), l4(r), l5(l1);
-    Line l6(3);
-    CGAL_TEST(l1==l5&&l1==2);
+    Line l1(origin,p1), l2(origin,dir), l3(s), l4(r), l5(l1), l6;
+    CGAL_TEST(l1==l5&&l1==l2);
     CGAL_TEST(l1!=l3&&l1!=l6);
-    CGAL_TEST(l0.dimension()==2&&l6.dimension()==3);
+    CGAL_TEST(l1.dimension()==2&&l6.dimension()==0);
     CGAL_TEST(l1.point(0)==origin&&l1.point(1)==p1);
     CGAL_TEST(l1.opposite()==Line(p1,-dir));
     CGAL_TEST(l2.direction()==dir);
@@ -981,7 +980,7 @@ int main()
   {
     Point p1(-5,1), p2(5,1); 
     Vector v(0,5);
-    Segment s0(2), s1(p1,p2), s2(p1,v),
+    Segment s0, s1(p1,p2), s2(p1,v),
               s3(Point(-1,-1),Point(5,5)),
               s4(Point(1,1,2),Point(5,5,3)),
               s5(Point(0,0,1),Point(4,4,1)),
@@ -1015,13 +1014,13 @@ int main()
     Point p1(2), p2(5,0);
     Segment s(Point(1,-1),Point(1,5));
     Direction dir(1,0); 
-    Ray r1(p1,p2), r2(p1,dir), r3(s), r4(2), r5(r1); 
+    Ray r0, r1(p1,p2), r2(p1,dir), r3(s), r4(r1); 
     Point p3(3), p4(1,1,1,1);
     Ray r6(p3,p4);
 
-    CGAL_TEST(r1==r5&&r1==r2);
+    CGAL_TEST(r1==r4&&r1==r2);
     CGAL_TEST(r1!=r3);
-    CGAL_TEST(r1.dimension()==2&&r6.dimension()==3);
+    CGAL_TEST(r0.dimension()==0&&r1.dimension()==2&&r6.dimension()==3);
     CGAL_TEST(r1.source()==p1);
     CGAL_TEST(r1.point(0)==p1&&r1.point(1)==p2);
     CGAL_TEST(r1.opposite()==Ray(p1,-dir));
@@ -1031,7 +1030,7 @@ int main()
     CGAL_TEST(r1+Vector(1,-1) == r7);
     CGAL_TEST(r1.has_on(Point(10,0))&&!r1.has_on(Point(-10,0)));
     CGAL_TEST(CGAL::parallel(r1,(r2+Vector(0,1)).opposite()));
-    if (DOIO) CGAL_IO_TEST(r1,r5); r5 = r1;
+    if (DOIO) CGAL_IO_TEST(r1,r4); r4 = r1;
   }
 
   {
@@ -1040,11 +1039,10 @@ int main()
     Vector v(0,2);
     Segment s(Point(1,-2),Point(1,2));
     Ray r(origin, p3);
-    Line l0(2), l1(origin,p1), l2(origin,dir), l3(s), l4(r), l5(l1);
-    Line l6(3);
-    CGAL_TEST(l1==l5&&l1==2);
+    Line l1(origin,p1), l2(origin,dir), l3(s), l4(r), l5(l1), l6;
+    CGAL_TEST(l1==l5&&l1==l2);
     CGAL_TEST(l1!=l3&&l1!=l6);
-    CGAL_TEST(l0.dimension()==2&&l6.dimension()==3);
+    CGAL_TEST(l1.dimension()==2&&l6.dimension()==0);
     CGAL_TEST(l1.point(0)==origin&&l1.point(1)==p1);
     CGAL_TEST(l1.opposite()==Line(p1,-dir));
     CGAL_TEST(l2.direction()==dir);

@@ -60,10 +60,6 @@ Pair_d(const Point_d& p, const Point_d& q)
   _p[0]=p; _p[1]=q;
 }
 
-//Pair_d(const Self& p) { _p[0]=p._p[0]; _p[1]=p._p[1]; }
-//Self& operator=(const Self& p) 
-//{ _p[0]=p._p[0]; _p[1]=p._p[1]; return *this; }
-
 bool is_degenerate() const
 { return (_p[0] == _p[1]); }
 
