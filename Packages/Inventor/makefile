@@ -16,12 +16,12 @@ package:
 	@echo "---- cvs update; cvs commit ------"
 	@echo "---- more version ----------------"
 	@echo "---- VERSION=   ; export VERSION -"
-	@echo "---- make version ----------------"
+	@echo "---- make Version ----------------"
 	@echo "---- make rtag --------------------"
 	@echo "---- make submit -----------------"
 	@echo "----------------------------------"
 
-version:
+Version:
 	echo "$(VERSION) (`date '+%e %b %Y'`)" > version
 
 commit: changes.txt
