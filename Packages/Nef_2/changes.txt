@@ -1,6 +1,13 @@
 Nef_2 Package: Release changes
 ----------------------------------------------------------------------
 
+1.18 (28 June 2002)
+    
+     - Initialize boolean mark variable in constructors since default 
+       value on MSVC is not always 'false'.
+
+---------------------------- Release 2.4 -------------------------------
+
 1.18 (13 May 2002)
 
      - Removed LEDA_MEMORY from Vertex, Halfedge, and Face. It won't 

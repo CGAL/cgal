@@ -71,7 +71,7 @@ class Vertex_  { public:
       GenPtr          _i;
     public:
 
-Vertex_() : _h(),_f(),_ivit(nil_),_m(),_i((GenPtr)0xABCD) {}
+Vertex_() : _h(),_f(),_ivit(nil_),_m(0),_i((GenPtr)0xABCD) {}
 Vertex_(const Point& p) : 
   _h(),_f(),_p(p),_ivit(nil_),_m(),_i((GenPtr)0xABCD) {}
      
@@ -136,7 +136,7 @@ class Halfedge_ { public:
     public:
        
 Halfedge_() : 
-  opp(),prv(),nxt(),_v(),_f(),_fcit(nil_),_m(),_i((GenPtr)0xABCD) {}
+  opp(),prv(),nxt(),_v(),_f(),_fcit(nil_),_m(0),_i((GenPtr)0xABCD) {}
 
 Halfedge_handle       opposite()                        { return opp; }
 Halfedge_const_handle opposite() const                  { return opp; }
@@ -257,7 +257,7 @@ class Face_ { public:
       GenPtr                     _i;
     public:
 
-      Face_() : _e(),_m(),_i((GenPtr)0xABCD) {}
+      Face_() : _e(),_m(0),_i((GenPtr)0xABCD) {}
       ~Face_() { FC.clear(); IV.clear(); }
 
       void store_fc(Halfedge_handle h) 

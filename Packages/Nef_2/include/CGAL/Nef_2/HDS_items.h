@@ -80,12 +80,12 @@ private:
     GenPtr          _i;
 public:
 
-    Nef_vertex_2() : _h(),_f(),_ivit(nil_),_m(),_i((GenPtr)0xABCD) {}
+    Nef_vertex_2() : _h(),_f(),_ivit(nil_),_m(0),_i((GenPtr)0xABCD) {}
     // constructs an uninitialized vertex concerning embedding 
     // and mark. All links are initialized by their default value.
 
     Nef_vertex_2( const Point& p) : 
-        _h(),_f(),_p(p),_ivit(nil_),_m(),_i((GenPtr)0xABCD) {}
+        _h(),_f(),_p(p),_ivit(nil_),_m(0),_i((GenPtr)0xABCD) {}
     // constructs a vertex with embedding |p| and mark |m|.
     //  All links are initialized by their default value.
 
@@ -160,7 +160,7 @@ protected:
 public:
        
     Nef_halfedge_2() : 
-        opp(),prv(),nxt(),_v(),_f(),_fcit(nil_),_m(),_i((GenPtr)0xABCD) {}
+        opp(),prv(),nxt(),_v(),_f(),_fcit(nil_),_m(0),_i((GenPtr)0xABCD) {}
     /*{\Mcreate constructs an uninitialized halfedge concerning embedding 
       and mark. All links are initialized by their default value.}*/   
 
@@ -309,7 +309,7 @@ private:
     GenPtr                     _i;
 public:
 
-    Nef_face_2() : _e(),_m(),_i((GenPtr)0xABCD) {}
+    Nef_face_2() : _e(),_m(0),_i((GenPtr)0xABCD) {}
     /*{\Mcreate constructs an uninitialized face with undefined mark,
       empty face cycle list, and empty isolated vertices list.}*/   
 
