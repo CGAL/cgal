@@ -45,19 +45,19 @@ public:
 		 : BBox_handle_2(BBox_ref_2(x_min, y_min,
                                             x_max, y_max)) {}
 
-  bool       operator==(const Bbox_2 &b) const;
-  bool       operator!=(const Bbox_2 &b) const;
+  inline bool       operator==(const Bbox_2 &b) const;
+  inline bool       operator!=(const Bbox_2 &b) const;
 
-  int        dimension() const;
-  double     xmin() const;
-  double     ymin() const;
-  double     xmax() const;
-  double     ymax() const;
+  inline int        dimension() const;
+  inline double     xmin() const;
+  inline double     ymin() const;
+  inline double     xmax() const;
+  inline double     ymax() const;
 
-  double     max(int i) const;
-  double     min(int i) const;
+  inline double     max(int i) const;
+  inline double     min(int i) const;
 
-  Bbox_2     operator+(const Bbox_2 &b) const;
+  inline Bbox_2     operator+(const Bbox_2 &b) const;
 
 };
 
