@@ -7,6 +7,7 @@
 typedef CGAL::Cartesian_d<double> Kernel;
 typedef Kernel::Point_d           Point;
 typedef Kernel::Iso_box_d         Box;
+typedef Kernel::Construct_iso_box_d Construct_iso_box_d;
 
 int main() {
 
@@ -65,6 +66,9 @@ int main() {
   Point qq5(dim+1,q5,q5+dim+1);
   Box b5(pp5,qq5);
 
+  Construct_iso_box_d construct_iso_box_d = Kernel().construct_iso_box_d_object();
+  Box b6 = construct_iso_box_d(pp5, qq5);
+  assert(b5 == b6);
   assert(b1==b3);
   assert(b1!=b4);
   assert(b3!=b4);

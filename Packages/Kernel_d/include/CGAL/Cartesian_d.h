@@ -139,6 +139,10 @@ public:
   Construct_line_d construct_line_d_object() const
   { return Construct_line_d(); }
 
+  typedef CGALi::Construct<Iso_box_d> Construct_iso_box_d;
+  Construct_iso_box_d construct_iso_box_d_object() const
+  { return Construct_iso_box_d(); }
+
   typedef CGALi::Construct<Hyperplane_d> Construct_hyperplane_d;
   Construct_hyperplane_d construct_hyperplane_d_object() const
   { return Construct_hyperplane_d(); }
