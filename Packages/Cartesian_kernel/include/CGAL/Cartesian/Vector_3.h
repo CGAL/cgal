@@ -23,7 +23,6 @@
 #define CGAL_CARTESIAN_VECTOR_3_H
 
 #include <CGAL/Cartesian/redefine_names_3.h>
-#include <CGAL/Cartesian/Direction_3.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -51,12 +50,28 @@ public:
   typedef typename R::Aff_transformation_3_base Aff_transformation_3;
 #endif
 
-  VectorC3();
-  VectorC3(const Null_vector &);
-  VectorC3(const Point_3 &p);
-  VectorC3(const Direction_3 &p);
-  VectorC3(const FT &x, const FT &y, const FT &z);
-  VectorC3(const FT &x, const FT &y, const FT &z, const FT &w);
+  VectorC3()
+    : Vector_handle_3(Vector_ref_3()) {}
+
+  VectorC3(const Null_vector &)
+    : Vector_handle_3(Vector_ref_3(FT(0), FT(0), FT(0))) {}
+
+  VectorC3(const Point_3 &p)
+    : Vector_handle_3(p) {}
+
+  VectorC3(const Direction_3 &d)
+    : Vector_handle_3(d) {}
+
+  VectorC3(const FT &x, const FT &y, const FT &z)
+    : Vector_handle_3(Vector_ref_3(x, y, z)) {}
+
+  VectorC3(const FT &x, const FT &y, const FT &z, const FT &w)
+  {
+    if (w != FT(1))
+      initialize_with(Vector_ref_3(x/w, y/w, z/w));
+    else
+      initialize_with(Vector_ref_3(x, y, z));
+  }
 
   bool operator==(const Self &p) const;
   bool operator!=(const Self &p) const;
@@ -103,6 +118,7 @@ public:
       return 3;
   }
 
+  // FIXME: why not like the other operators in global_operators_[23].h ?
   Self operator+(const Self &w) const;
   Self operator-(const Self &w) const;
   Self operator-() const;
@@ -110,59 +126,19 @@ public:
   FT operator*(const Self &w) const;
   FT squared_length() const;
   Direction_3 direction() const;
-  Self transform(const Aff_transformation_3 &) const;
+  Self transform(const Aff_transformation_3 &t) const
+  {
+    return t.transform(*this);
+  }
 };
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-VectorC3<R CGAL_CTAG>::VectorC3()
-  : Vector_handle_3(Vector_ref_3()) {}
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-VectorC3<R CGAL_CTAG>::VectorC3(const Null_vector &)
-  : Vector_handle_3(Vector_ref_3(FT(0), FT(0), FT(0))) {}
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-VectorC3<R CGAL_CTAG>::
-VectorC3(const typename VectorC3<R CGAL_CTAG>::FT &x,
-         const typename VectorC3<R CGAL_CTAG>::FT &y,
-         const typename VectorC3<R CGAL_CTAG>::FT &z)
-  : Vector_handle_3(Vector_ref_3(x, y, z)) {}
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-VectorC3<R CGAL_CTAG>::
-VectorC3(const typename VectorC3<R CGAL_CTAG>::FT &x,
-         const typename VectorC3<R CGAL_CTAG>::FT &y,
-         const typename VectorC3<R CGAL_CTAG>::FT &z,
-         const typename VectorC3<R CGAL_CTAG>::FT &w)
-{
-  if (w != FT(1))
-    initialize_with(Vector_ref_3(x/w, y/w, z/w) );
-  else
-    initialize_with(Vector_ref_3(x, y, z) );
-}
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-VectorC3<R CGAL_CTAG>::
-VectorC3(const typename VectorC3<R CGAL_CTAG>::Point_3 &p)
-  : Vector_handle_3(p) {}
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-VectorC3<R CGAL_CTAG>::
-VectorC3(const typename VectorC3<R CGAL_CTAG>::Direction_3 &d)
-  : Vector_handle_3(d) {}
 
 template < class R >
 inline
 bool
 VectorC3<R CGAL_CTAG>::operator==(const VectorC3<R CGAL_CTAG> &v) const
 {
-  if ( identical(v) ) return true;
+  if (identical(v))
+      return true;
   return x() == v.x() && y() == v.y() && z() == v.z();
 }
 
@@ -265,7 +241,7 @@ VectorC3<R CGAL_CTAG>
 VectorC3<R CGAL_CTAG>::
 operator/(const typename VectorC3<R CGAL_CTAG>::FT &c) const
 {
-  return VectorC3<R CGAL_CTAG>( x()/c, y()/c, z()/c);
+  return VectorC3<R CGAL_CTAG>(x()/c, y()/c, z()/c);
 }
 
 template < class R >
@@ -274,14 +250,6 @@ typename VectorC3<R CGAL_CTAG>::Direction_3
 VectorC3<R CGAL_CTAG>::direction() const
 {
   return Direction_3(*this);
-}
-
-template < class R >
-VectorC3<R CGAL_CTAG>
-VectorC3<R CGAL_CTAG>::
-transform(const typename VectorC3<R CGAL_CTAG>::Aff_transformation_3 &t) const
-{
-  return t.transform(*this);
 }
 
 #ifndef CGAL_CARTESIAN_NO_OSTREAM_INSERT_VECTORC3

@@ -23,7 +23,6 @@
 #define CGAL_CARTESIAN_VECTOR_2_H
 
 #include <CGAL/Cartesian/redefine_names_2.h>
-#include <CGAL/Cartesian/Direction_2.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -63,12 +62,28 @@ public:
   typedef typename R::Circle_2_base             Circle_2;
 #endif
 
-  VectorC2();
-  VectorC2(const Null_vector &);
-  VectorC2(const Point_2 &p);
-  VectorC2(const Direction_2 &d);
-  VectorC2(const FT &hx, const FT &hy, const FT &hw);
-  VectorC2(const FT &x, const FT &y);
+  VectorC2()
+    : Vector_handle_2(Vector_ref_2()) {}
+
+  VectorC2(const Null_vector &)
+    : Vector_handle_2(Vector_ref_2(FT(0), FT(0))) {}
+
+  VectorC2(const Point_2 &p)
+    : Vector_handle_2(p) {}
+
+  VectorC2(const Direction_2 &d)
+    : Vector_handle_2(d) {}
+
+  VectorC2(const FT &x, const FT &y)
+    : Vector_handle_2(Vector_ref_2(x, y)) {}
+
+  VectorC2(const FT &hx, const FT &hy, const FT &hw)
+  {
+    if (hw != FT(1))
+      initialize_with(Vector_ref_2(hx/hw, hy/hw));
+    else
+      initialize_with(Vector_ref_2(hx, hy));
+  }
 
   bool operator==(const Self &v) const;
   bool operator!=(const Self &v) const;
@@ -115,55 +130,19 @@ public:
   Direction_2 direction() const;
 
   Self perpendicular(const Orientation &o) const;
-  Self transform(const Aff_transformation_2 &) const;
+  Self transform(const Aff_transformation_2 &t) const
+  {
+    return t.transform(*this);
+  }
 };
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-VectorC2<R CGAL_CTAG>::VectorC2()
-  : Vector_handle_2(Vector_ref_2()) {}
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-VectorC2<R CGAL_CTAG>::VectorC2(const Null_vector &)
-  : Vector_handle_2(Vector_ref_2(FT(0), FT(0)) ) {}
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-VectorC2<R CGAL_CTAG>::VectorC2(const typename VectorC2<R CGAL_CTAG>::FT &x,
-                                const typename VectorC2<R CGAL_CTAG>::FT &y)
-  : Vector_handle_2(Vector_ref_2(x, y) ) {}
-
-template < class R >
-CGAL_KERNEL_CTOR_MEDIUM_INLINE
-VectorC2<R CGAL_CTAG>::VectorC2(const typename VectorC2<R CGAL_CTAG>::FT &hx,
-                                const typename VectorC2<R CGAL_CTAG>::FT &hy,
-				const typename VectorC2<R CGAL_CTAG>::FT &hw)
-{
-  if( hw != FT(1))
-    initialize_with( Vector_ref_2(hx/hw, hy/hw) );
-  else
-    initialize_with( Vector_ref_2(hx, hy) );
-}
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-VectorC2<R CGAL_CTAG>::
-VectorC2(const typename VectorC2<R CGAL_CTAG>::Point_2 &p)
-  : Vector_handle_2(p) {}
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-VectorC2<R CGAL_CTAG>::
-VectorC2(const typename VectorC2<R CGAL_CTAG>::Direction_2 &d)
-  : Vector_handle_2(d) {}
 
 template < class R >
 CGAL_KERNEL_INLINE
 bool
 VectorC2<R CGAL_CTAG>::operator==(const VectorC2<R CGAL_CTAG> &v) const
 {
-  if ( identical(v) ) return true;
+  if (identical(v))
+      return true;
   return x() == v.x() && y() == v.y();
 }
 
@@ -283,15 +262,6 @@ VectorC2<R CGAL_CTAG>::perpendicular(const Orientation &o) const
     return VectorC2<R CGAL_CTAG>(-y(), x());
   else
     return VectorC2<R CGAL_CTAG>(y(), -x());
-}
-
-template < class R >
-inline
-VectorC2<R CGAL_CTAG>
-VectorC2<R CGAL_CTAG>::
-transform(const typename VectorC2<R CGAL_CTAG>::Aff_transformation_2 &t) const
-{
-  return t.transform(*this);
 }
 
 #ifndef CGAL_NO_OSTREAM_INSERT_VECTORC2
