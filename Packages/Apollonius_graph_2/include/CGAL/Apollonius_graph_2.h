@@ -547,7 +547,7 @@ protected:
   // returns:
   //   ON_POSITIVE_SIDE if q is closer to p1
   //   ON_NEGATIVE_SIDE if q is closer to p2
-  //   ON_ORIENTED_BOUNDARY if 1 is on the bisector of p1 and p2
+  //   ON_ORIENTED_BOUNDARY if q is on the bisector of p1 and p2
   Oriented_side side_of_bisector(const Weighted_point &p1,
 				 const Weighted_point &p2,
 				 const Point &q) const;
