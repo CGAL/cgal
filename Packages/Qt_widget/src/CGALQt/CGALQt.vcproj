@@ -18,13 +18,14 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalOptions="/GR /Zm900 /GX -nologo"
+				AdditionalOptions="/Zm900 /GX -nologo"
 				Optimization="0"
 				AdditionalIncludeDirectories="&quot;$(CGALROOT)\include\CGAL\config\msvc7&quot;;&quot;$(CGALROOT)\include&quot;;&quot;$(QTDIR)/include&quot;"
 				PreprocessorDefinitions="WIN32;_LIB;CGAL_USE_GMP;CGAL_USE_QT"
 				MinimalRebuild="FALSE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="5"
+				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
 				WarningLevel="2"
 				Detect64BitPortabilityProblems="FALSE"
@@ -56,7 +57,7 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalOptions="/GR /Zm900 /GX -nologo "
+				AdditionalOptions="/Zm900 /GX"
 				Optimization="2"
 				InlineFunctionExpansion="1"
 				OmitFramePointers="TRUE"
@@ -65,6 +66,7 @@
 				StringPooling="TRUE"
 				RuntimeLibrary="4"
 				EnableFunctionLevelLinking="TRUE"
+				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
 				WarningLevel="2"
 				Detect64BitPortabilityProblems="FALSE"
@@ -174,14 +176,16 @@
 					Name="Debug|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o Qt_widget_history.moc $(CGALROOT)/include/CGAL/IO/Qt_widget_history.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o Qt_widget_history.moc $(CGALROOT)/include/CGAL/IO/Qt_widget_history.h
+"
 						Outputs="Qt_widget_history.moc"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o Qt_widget_history.moc $(CGALROOT)/include/CGAL/IO/Qt_widget_history.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o Qt_widget_history.moc $(CGALROOT)/include/CGAL/IO/Qt_widget_history.h
+"
 						Outputs="Qt_widget_history.moc"/>
 				</FileConfiguration>
 			</File>
