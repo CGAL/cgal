@@ -1013,7 +1013,8 @@ rectangular_3_center_2_type2(
     binder1st< greater_equal< FT > >
       le_delta_m(bind1st(greater_equal< FT >(), op.delta()(*m)));
     RandomAccessIterator b1 =
-      partition(m + 1, e, compose1_1(le_delta_m, bind1st(op.distance(), q_t)));
+      partition(m + 1, e,
+                compose1_1(le_delta_m, bind1st(op.distance(), q_t)));
     RandomAccessIterator b2 =
       partition(b1, e, compose1_1(le_delta_m, bind1st(op.distance(), q_r)));
 
@@ -1202,7 +1203,8 @@ rectangular_3_center_2_type2(
                                           bind1st(op.distance(), q_t)));
     b1 = partition(s_b + 1, b2, compose1_1(le_delta_sb,
                                            bind1st(op.distance(), q_r)));
-    b3 = partition(b2, e, compose1_1(le_delta_sb, bind1st(op.distance(), q_r)));
+    b3 = partition(b2, e,
+                   compose1_1(le_delta_sb, bind1st(op.distance(), q_r)));
 
     if (b3 != e ||
         !Q_t_empty && op.compute_x_distance(q_t, Q_t) > op.delta()(*s_b) ||
@@ -1229,14 +1231,17 @@ rectangular_3_center_2_type2(
 
     if (s_b == s) {
       CGAL_optimisation_expensive_assertion_code(
+        std::vector< Point > tmppts(f, l);
         RandomAccessIterator ii =
-        partition(f, l, compose1_1(le_delta_sb, op.delta()));
-        pos = min_max_element(ii, l, op.compare_x(), op.compare_y());
+          partition(tmppts.begin(), tmppts.end(),
+                    compose1_1(le_delta_sb, op.delta()));
+        IP tmppos = min_max_element(ii, tmppts.end(),
+                                    op.compare_x(), op.compare_y());
         )
       CGAL_optimisation_expensive_assertion(
-        !op.compare_x()(*pos.first, q_t));
+        !op.compare_x()(*tmppos.first, q_t));
       CGAL_optimisation_expensive_assertion(
-        !op.compare_y()(q_r, *pos.second));
+        !op.compare_y()(q_r, *tmppos.second));
 
       // we are done
       rho_max = op.delta()(*s);
