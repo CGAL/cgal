@@ -1,4 +1,4 @@
-// Copyright (c) 2001  Utrecht University (The Netherlands),
+// Copyright (c) 2001-2004  Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
 // INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
 // (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
@@ -33,6 +33,8 @@
 #include <CGAL/basic.h>
 #include <CGAL/NT_converter.h>
 #include <CGAL/Enum_converter.h>
+#include <CGAL/Bbox_2.h>
+#include <CGAL/Bbox_3.h>
 
 CGAL_BEGIN_NAMESPACE
 
