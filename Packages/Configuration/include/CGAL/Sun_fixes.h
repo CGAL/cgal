@@ -27,12 +27,26 @@
 #define CGAL_SUN_FIXES_H 1
 
 //----------------------------------------------------------------------//
-//             enable member templates for stdlib                       //
+//             if member templates for stdlib are not enabled           //
 //----------------------------------------------------------------------//
 
+/*
+
+For reasons of binary backward compatibility, Sun CC does not enable 
+member templates of the STL classes.
+
+An #undef creates runtime errors for some packages, so it is not a 
+viable solution. Instead, we have to offer workarounds in CGAL
+code, whereever we use this feature.
+*/
+ 
 #include <stdcomp.h>
-#undef RWSTD_NO_MEMBER_TEMPLATES
-#undef _RWSTD_NO_MEMBER_TEMPLATES
+
+#if defined( RWSTD_NO_MEMBER_TEMPLATES ) || defined( _RWSTD_NO_MEMBER_TEMPLATES )
+
+#define CGAL_CFG_RWSTD_NO_MEMBER_TEMPLATES
+
+#endif
 
 //----------------------------------------------------------------------//
 //             fake iterator_traits                                     //
