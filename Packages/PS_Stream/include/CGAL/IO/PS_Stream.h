@@ -44,9 +44,6 @@
 
 CGAL_BEGIN_NAMESPACE
 
-#ifndef PS_MANIP_H_
-#define PS_MANIP_H_
-
 class PS_Stream;
 
 template <class T>
@@ -81,7 +78,6 @@ protected:
   PS_Stream& (PS_Stream::*_PS_func)(T);
 };
 
-#endif //PS_MANIP_H_
 
 typedef const char *DashStyle;
       
@@ -575,7 +571,7 @@ PS_Stream & operator <<(PS_Stream& ps, const Ray_2<R>& r)
 }
 
 #endif // CGAL_RAY_2_H
-#ifdef PARABOLA_2_H
+#ifdef CGAL_PARABOLA_2_H
 
 template < class R >
 PS_Stream & operator <<(PS_Stream& ps,const Parabola<R>& p)
@@ -591,7 +587,7 @@ PS_Stream & operator <<(PS_Stream& ps,const Parabola<R>& p)
   return ps;
 }
 
-#endif // PARABOLA_2_H
+#endif // CGAL_PARABOLA_2_H
 #ifdef CGAL_TRIANGLE_2_H
 
 template < class R >
