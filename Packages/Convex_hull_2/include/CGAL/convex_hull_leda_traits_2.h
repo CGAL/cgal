@@ -35,9 +35,9 @@ CGAL_BEGIN_NAMESPACE
 
 class LEDA_kernel_2
 {
-   tyepdef leda_point     Point_2;
-   tyepdef leda_segment   Segment_2;
-}
+   typedef leda_point     Point_2;
+   typedef leda_segment   Segment_2;
+};
 
 class Convex_hull_leda_traits_2
 {
@@ -47,8 +47,8 @@ public:
   typedef   CGALi::Less_yx_2<LEDA_kernel_2>                 Less_yx_2;
   typedef   CGALi::Less_signed_distance_to_line_2<LEDA_kernel_2>           
                                                Less_signed_distance_to_line_2;
-  typedef   CGALi::Less_rotate_ccw<LEDA_kernel_2>           Less_rotate_ccw_2;
-  typedef   CGALi::Left_turn<LEDA_kernel_2>                 Left_turn_2;
+  typedef   CGALi::Less_rotate_ccw_2<LEDA_kernel_2>         Less_rotate_ccw_2;
+  typedef   CGALi::Left_turn_2<LEDA_kernel_2>               Left_turn_2;
   typedef   leda_segment                                    Segment_2; 
   
   Less_xy_2
