@@ -22,8 +22,6 @@ typedef Polygon::Segment_2         Segment_2;
 
 typedef CGAL::Polygons_bops_traits_2<K>   Bops_traits;
 
-//typedef CGAL::Arr_segment_exact_traits<K>  Traits;
-
 using std::cin; 
 using std::cout; 
 using std::endl;
@@ -52,8 +50,6 @@ int  main()
   cout<<poly1<<endl;
   cout<<poly2<<endl;
   
-  //Bops_traits traits;
-  //BopsTraits bops_traits;
   std::list<Polygon>      polygons;
   std::list<Segment_2>    curves;
   std::list<Point_2>      points;
@@ -64,11 +60,6 @@ int  main()
              std::back_inserter(polygons),
              std::back_inserter(curves),
              std::back_inserter(points));
-  
-  //CGAL::Union(poly1,poly2,traits,bops_traits,
-  //            std::back_inserter(polygons),
-  //            std::back_inserter(curves),
-  //            std::back_inserter(points));
  
   cout<<"The number of resulting polygons: "<<
     polygons.size()<<endl;
@@ -81,3 +72,9 @@ int  main()
   
  return 0;
 }
+
+
+
+
+
+
