@@ -89,14 +89,14 @@ struct Lazy_exact_rep : public Rep
   Interval_base in; // could be const, except for rafinement ? or mutable ?
   ET *et; // mutable as well ?
 
-  Lazy_exact_rep (const Interval_base i)
+  Lazy_exact_rep (const Interval_base & i)
       : in(i), et(NULL) {}
 
 private:
   Lazy_exact_rep (const Lazy_exact_rep&) { abort(); } // cannot be copied.
 public:
 
-  Interval_nt<true> approx() const  // Better return a const ref instead ?
+  Interval_nt<true> approx() const  // TODO : return a const ref instead !
   {
       return in;
   }
@@ -135,6 +135,34 @@ struct Lazy_exact_Cst : public Lazy_exact_rep<ET>
   void update_exact()  { et = new ET(in.inf()); }
 };
 
+// Exact constant
+template <typename ET>
+struct Lazy_exact_Ex_Cst : public Lazy_exact_rep<ET>
+{
+  Lazy_exact_Ex_Cst (const ET & e)
+      : Lazy_exact_rep<ET>(to_interval(e))
+  {
+    et = new ET(e);
+  }
+
+  void update_approx() { CGAL_assertion(false); }
+  void update_exact()  { CGAL_assertion(false); }
+};
+
+// Construction from a Lazy_exact_nt<ET1> (which keeps the lazyness).
+template <typename ET, typename ET1>
+struct Lazy_lazy_exact_Cst : public Lazy_exact_rep<ET>
+{
+  Lazy_lazy_exact_Cst (const Lazy_exact_nt<ET1> &x)
+      : Lazy_exact_rep<ET>(x.approx()), l(x) {}
+
+  void update_approx() { CGAL_assertion(false); }
+  void update_exact()  { et = new ET(l.exact()); }
+
+  Lazy_exact_nt<ET1> l;
+};
+
+
 // Unary  operations: abs, sqrt, square.
 // Binary operations: +, -, *, /, min, max.
 
@@ -157,20 +185,6 @@ struct Lazy_exact_binary : public Lazy_exact_unary<ET>
   Lazy_exact_binary (const Interval_base &i,
 		     const Lazy_exact_nt<ET> &a, const Lazy_exact_nt<ET> &b)
       : Lazy_exact_unary<ET>(i, a), op2(b) {}
-};
-
-// Exact constant
-template <typename ET>
-struct Lazy_exact_Ex_Cst : public Lazy_exact_rep<ET>
-{
-  Lazy_exact_Ex_Cst (const ET & e)
-      : Lazy_exact_rep<ET>(to_interval(e))
-  {
-    et = new ET(e);
-  }
-
-  void update_approx() { CGAL_assertion(false); }
-  void update_exact()  { CGAL_assertion(false); }
 };
 
 // Here we could use a template class for all operations (STL provides
@@ -261,6 +275,10 @@ public :
   Lazy_exact_nt (const ET & e)
   { PTR = new Lazy_exact_Ex_Cst<ET>(e); }
 
+  template <class ET1>
+  Lazy_exact_nt (const Lazy_exact_nt<ET1> &x)
+  { PTR = new Lazy_lazy_exact_Cst<ET, ET1>(x); }
+
   Self operator- () const
   { return new Lazy_exact_Opp<ET>(*this); }
 
@@ -282,7 +300,7 @@ public :
   Interval_nt_advanced approx_adv() const
   { return ptr()->approx(); }
 
-  ET exact() const
+  const ET & exact() const
   { return ptr()->exact(); }
 
   bool operator< (const Self & a) const

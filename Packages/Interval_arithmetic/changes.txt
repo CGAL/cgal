@@ -1,3 +1,6 @@
+Version 4.149 on 8 November 2002
+- Add a template constructor from a Lazy_exact_nt<ET1> to Lazy_exact_nt<ET>.
+
 Version 4.148 on 6 November 2002
 - filtered_predicate_generator.pl : ${CGAL} qualify Dynamic and Static.
 

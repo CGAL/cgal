@@ -119,6 +119,15 @@ int main ()
             << std::endl;
   predicates();
   delaunay();
+
+  // Try conversions from Lazy_exact_nt<XXX> of different XXXs.
+  CGAL::Lazy_exact_nt<CGAL::MP_Float> one(1), two;
+  two = one + one;
+  CGAL::Lazy_exact_nt<CGAL::Quotient<CGAL::MP_Float> > eins(1), zwei;
+  zwei = eins + eins;
+  CGAL::Lazy_exact_nt<CGAL::Quotient<CGAL::MP_Float> > deux(two);
+  assert(zwei == deux);
+
   return 0;
 }
 
