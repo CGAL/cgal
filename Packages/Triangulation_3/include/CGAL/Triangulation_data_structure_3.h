@@ -202,8 +202,6 @@ public:
 
   void delete_cell( Cell* c )
     {
-      // The preconditions use the iterators, so we must cleanup.
-      c->set_in_conflict_flag(0);
       CGAL_triangulation_expensive_precondition( dimension() != 3 ||
                                                  is_cell(c) );
       CGAL_triangulation_expensive_precondition( dimension() != 2 ||
