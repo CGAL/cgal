@@ -37,6 +37,7 @@ public:
   typedef typename R::FT                        FT;
   typedef typename R::RT                        RT;
 
+  // Guess why we have the trailing underscore ?  Yes, that's it : VC++ !
   typedef typename R::Point_handle_2		Point_handle_2_;
   typedef typename Point_handle_2_::element_type	Point_ref_2;
 
