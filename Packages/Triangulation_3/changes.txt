@@ -1,3 +1,6 @@
+Version 1.48 (? Apr 01)
+- for() scope VC++ bug workaround.
+
 Version 1.47 (9 Apr 01)
 - member template definition in class body for VC++.
 
