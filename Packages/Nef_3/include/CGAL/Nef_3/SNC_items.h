@@ -35,7 +35,7 @@
 #include <CGAL/In_place_list.h>
 #include <CGAL/Nef_2/Object_handle.h>
 #include <string>
-#include <strstream>
+#include <sstream>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -360,9 +360,11 @@ public:
 
   public:
     std::string debug() const
-    { std::ostrstream os; set_pretty_mode(os);
+    { std::stringstream os; 
+      set_pretty_mode(os);
       os<<"v"<<tmp_point()<<info_<<'\0';
-      std::string res(os.str()); os.freeze(0); return res;
+      std::string res(os.str());
+      return res;
     }
 
     bool is_twin() const { return (&*twin_ < this); }
@@ -598,10 +600,12 @@ public:
 
   public:
     std::string debug() const
-    { std::ostrstream os; set_pretty_mode(os); 
+    { std::stringstream os; 
+      set_pretty_mode(os); 
       os <<"e["<<source_->debug()<<","
          <<twin_->source_->debug()<<" "<<info_<<"]"<<'\0';
-      std::string res(os.str()); os.freeze(0); return res;
+      std::string res(os.str());
+      return res;
     }
 
   }; // SHalfedge
@@ -672,9 +676,11 @@ public:
 
   public:
     std::string debug() const
-    { std::ostrstream os; set_pretty_mode(os); 
+    { std::stringstream os; 
+      set_pretty_mode(os); 
       os<<"l"<<tmp_circle()<<'\0';
-      std::string res(os.str()); os.freeze(0); return res;
+      std::string res(os.str());
+      return res;
     }
 
   }; // SHalfloop

@@ -92,12 +92,12 @@ class Nef_polyhedron_3_rep : public Rep
   typedef CGAL::SNC_SM_visualizor<SNC_structure>       SM_visualizor;
 #endif // SM_VISUALIZOR
 
-  SNC_structure ews_;
+  SNC_structure snc_;
   // SNC_point_locator* pl_;
   
  public:
-  Nef_polyhedron_3_rep() : ews_() {}
-  ~Nef_polyhedron_3_rep() { ews_.clear(); }
+  Nef_polyhedron_3_rep() : snc_() {}
+  ~Nef_polyhedron_3_rep() { snc_.clear(); }
 };
 
 /*{\Manpage {Nef_polyhedron_3} {T} {Nef Polyhedra in Space}{N}}*/
@@ -154,11 +154,11 @@ protected:
   typedef typename Nef_rep::SM_point_locator    SM_point_locator;
   typedef typename Nef_rep::SM_io_parser        SM_io_parser;
 #ifdef SM_VISUALIZOR
-  //typedef typename Nef_rep::SM_visualizor       SM_visualizor;
+  typedef typename Nef_rep::SM_visualizor       SM_visualizor;
 #endif // SM_VISUALIZOR
 
-  SNC_structure& ews() { return ptr()->ews_; } 
-  const SNC_structure& ews() const { return ptr()->ews_; } 
+  SNC_structure& snc() { return ptr()->snc_; } 
+  const SNC_structure& snc() const { return ptr()->snc_; } 
 
   friend std::ostream& operator<< <>
       (std::ostream& os, const Nef_polyhedron_3<T>& NP);
@@ -224,16 +224,18 @@ protected:
     CGAL_assertion(CGAL_NTS abs(x) == 
 		   CGAL_NTS abs(y) == 
 		   CGAL_NTS abs(z) == 1);
-    Vertex_handle v = ews().new_vertex();
-    ews().point(v) = Point_3(x*IMMN, y*IMMN, z*IMMN); 
-    // TODO: to replace the IMMN constant by a real infimaximal number
+    Vertex_handle v = snc().new_vertex();
+    snc().point(v) = Point_3(x*IMMN, y*IMMN, z*IMMN); 
+    /* TODO: to replace the IMMN constant by a real infimaximal number */
     SM_decorator D(v);
     Sphere_point sp[] = { Sphere_point(-x, 0, 0), 
 			  Sphere_point(0, -y, 0), 
 			  Sphere_point(0, 0, -z) };
+    /* create box vertices */
     SVertex_handle sv[3];
     for(int vi=0; vi<3; ++vi)
       sv[vi] = D.new_vertex(sp[vi]);
+    /* create facet's edge uses */
     Sphere_segment ss[3];
     SHalfedge_handle she[3];
     for(int si=0; si<3; ++si) {
@@ -242,11 +244,12 @@ protected:
       D.circle(she[si]) = ss[si].sphere_circle();
       D.circle(D.twin(she[si])) = ss[si].opposite().sphere_circle();
     }
+    /* create facets */
     SFace_handle fi = D.new_face();
     SFace_handle fe = D.new_face();
     D.link_as_face_cycle(she[0], fi);
     D.link_as_face_cycle(D.twin(she[0]), fe);
-    // set boundary marks
+    /* set boundary marks */
     SHalfedge_iterator e = D.shalfedges_begin();
     SFace_handle f;
     Sphere_point p1 = D.point(D.source(e));
@@ -259,8 +262,8 @@ protected:
     D.mark(f) = space;
     CGAL_nef3_forall_sedges_of(e, v)
       D.mark(e) = D.mark(D.source(e)) = true;
-    // D.mark_of_halfsphere(-1) = (x<0 && y>0 && z>0);
-    // D.mark_of_halfsphere(+1) = (x>0 && y>0 && z<0);
+    D.mark_of_halfsphere(-1) = (x<0 && y>0 && z>0);
+    D.mark_of_halfsphere(+1) = (x>0 && y>0 && z<0);
     return v;
   }
 
@@ -282,7 +285,7 @@ protected:
   void add_h_to_local_view_of_v();
   
   void build_external_structure() {
-    SNC_constructor C(ews());
+    SNC_constructor C(snc());
     C.pair_up_halfedges();
     C.link_shalfedges_to_facet_cycles();
     C.categorize_facet_cycles_and_create_facets();
@@ -291,7 +294,7 @@ protected:
 
   void clear_box_marks() 
   { // unset all frame marks
-    SNC_decorator D(ews());
+    SNC_decorator D(snc());
     Volume_iterator c = D.volumes_begin(); 
     D.mark(c) = false;
     Shell_entry_iterator s = D.shells_begin(c);
@@ -321,16 +324,16 @@ public:
   Nef_polyhedron_3( Polyhedron& P) {
     initialize_simple_cube_vertices(EMPTY);
     polyhedron_3_to_nef_3< Polyhedron, SNC_structure, SNC_constructor>
-      ( P, ews() );
+      ( P, snc() );
     build_external_structure();
     simplify();
   }
   
-  void dump() { SNC_io_parser::dump( ews()); }
+  void dump() { SNC_io_parser::dump( snc()); }
 
   void visualize() { 
 #ifdef SNC_VISUALIZOR
-    SNC_visualizor sncv( ews());
+    SNC_visualizor sncv( snc());
     sncv.draw();
     OGL::polyhedra_.back().debug();
     OGL::start_viewer();
@@ -338,9 +341,7 @@ public:
   }
 
  protected:
-  void clone_rep() { *this = Nef_polyhedron_3<T>(ews()); }
-
-  void construct_from_polyhedron_3(const Polyhedron& P);
+  void clone_rep() { *this = Nef_polyhedron_3<T>(snc()); }
 
   Nef_polyhedron_3(const SNC_structure& H, bool cloneit=true);
   /*{\Xcreate makes |\Mvar| a new object.  If |cloneit==true| then the
@@ -355,41 +356,38 @@ public:
 
   bool is_empty() //const
   /*{\Mop returns true if |\Mvar| is empty, false otherwise.}*/
-  { //SNC_structure ews_non_const = ews(); // const_decorator not implemented
-    SNC_decorator D(ews());
+  { //SNC_structure snc_non_const = snc(); // const_decorator not implemented
+    SNC_decorator D(snc());
     Volume_iterator v = D.volumes_begin(); // it should be const_iterator
-      return (D.number_of_vertices()==8 &&
-            D.number_of_edges()==12 &&
-	      D.number_of_facets()==6);
-	    // create_volumes() is not finished
-	    // &&
-	    //D.number_of_volumes()==2 &&
-	    //D.mark(++v) == false);
+    return (D.number_of_vertices()==8 &&
+	    D.number_of_edges()==12 &&
+	    D.number_of_facets()==6 &&
+	    D.number_of_volumes()==2 &&
+	    D.mark(++v) == false);
   }
 
   bool is_space() //const
   /*{\Mop returns true if |\Mvar| is the whole space, false otherwise.}*/
   //{ SM_const_decorator D(pm());
   //  typename PM_const_decorator::Volume_const_iterator v = D.volumes_begin();
-  { //SNC_structure ews_non_const = ews(); // const_decorator not implemented
-    SNC_decorator D(ews());
+  { //SNC_structure snc_non_const = snc(); // const_decorator not implemented
+    SNC_decorator D(snc());
     Volume_iterator v = D.volumes_begin(); // it should be const_iterator
     return (D.number_of_vertices()==8 &&
             D.number_of_edges()==12 &&
-            D.number_of_facets()==6); 
-            // create_volumes() is not finished
-            //&& 
-            //D.number_of_volumes()==2 && 
-            //D.mark(++v) == true);
+            D.number_of_facets()==6 && 
+	    D.number_of_volumes()==2 && 
+            D.mark(++v) == true);
   }
 
   /*{\Xtext \headerline{Destructive Operations}}*/
 
-  // WARNING: this method must be private
+ private:
   void simplify() {
-    ews().simplify();
+    snc().simplify();
   }
-
+  
+ public:
   void extract_complement();
   /*{\Xop converts |\Mvar| to its complement. }*/
   void extract_interior();
@@ -400,7 +398,7 @@ public:
   void extract_closure()
   /*{\Xop converts |\Mvar| to its closure. }*/
   { TRACEN("extract closure");
-  //if (refs()>1) *this = Nef_polyhedron_3<T>(ews()); // clone
+    if (refs()>1) *this = Nef_polyhedron_3<T>(snc()); // clone
     extract_complement();
     extract_interior();
     extract_complement();
@@ -409,7 +407,7 @@ public:
   void extract_regularization()
   /*{\Xop converts |\Mvar| to its regularization. }*/
   { TRACEN("extract regularization");
-  //if (refs()>1) *this = Nef_polyhedron_3<T>(ews()); // clone
+    if (refs()>1) *this = Nef_polyhedron_3<T>(snc()); // clone
     extract_interior();
     extract_closure();
   }
@@ -456,9 +454,9 @@ public:
 
   Nef_polyhedron_3<T> intersection(const Nef_polyhedron_3<T>& N1) const
   /*{\Mop returns |\Mvar| $\cap$ |N1|. }*/
-  { Nef_polyhedron_3<T> res(ews(),false); // empty, no frame
-  //EW_overlayer EWO(res.ews());
-  //EWO.subdivide(ews(),N1.ews());
+  { Nef_polyhedron_3<T> res(snc(),false); // empty, no frame
+  //EW_overlayer EWO(res.snc());
+  //EWO.subdivide(snc(),N1.snc());
   //AND _and; EWO.select(_and);
   //EWO.simplify();
   //EWO.build_external_structure();
@@ -468,9 +466,9 @@ public:
 
   Nef_polyhedron_3<T> join(const Nef_polyhedron_3<T>& N1) const
   /*{\Mop returns |\Mvar| $\cup$ |N1|. }*/
-  { Nef_polyhedron_3<T> res(ews(),false); // empty, no frame
-  //EW_overlayer EWO(res.ews());
-  //EWO.subdivide(ews(),N1.ews());
+  { Nef_polyhedron_3<T> res(snc(),false); // empty, no frame
+  //EW_overlayer EWO(res.snc());
+  //EWO.subdivide(snc(),N1.snc());
   //OR _or; EWO.select(_or);
   //EWO.simplify();
   //EWO.build_external_structure();
@@ -481,9 +479,9 @@ public:
   Nef_polyhedron_3<T> difference(
     const Nef_polyhedron_3<T>& N1) const
   /*{\Mop returns |\Mvar| $-$ |N1|. }*/
-  { Nef_polyhedron_3<T> res(ews(),false); // empty, no frame
-  //EW_overlayer EWO(res.ews());
-  //EWO.subdivide(ews(),N1.ews());
+  { Nef_polyhedron_3<T> res(snc(),false); // empty, no frame
+  //EW_overlayer EWO(res.snc());
+  //EWO.subdivide(snc(),N1.snc());
   //DIFF _diff; EWO.select(_diff);
   //EWO.simplify();
   //EWO.build_external_structure();
@@ -495,9 +493,9 @@ public:
     const Nef_polyhedron_3<T>& N1) const
   /*{\Mop returns the symmectric difference |\Mvar - T| $\cup$ 
           |T - \Mvar|. }*/
-  { Nef_polyhedron_3<T> res(ews(),false); // empty, no frame
-  //EW_overlayer EWO(res.ews());
-  //EWO.subdivide(ews(),N1.ews());
+  { Nef_polyhedron_3<T> res(snc(),false); // empty, no frame
+  //EW_overlayer EWO(res.snc());
+  //EWO.subdivide(snc(),N1.snc());
   //XOR _xor; EWO.select(_xor);
   //EWO.simplify();
   //EWO.build_external_structure();
@@ -592,7 +590,7 @@ public:
   bool contains(Object_handle h) const
   /*{\Mop  returns true iff the object |h| is contained in the set
   represented by |\Mvar|.}*/
-  { SNC_point_locator PL(ews()); return PL.mark(h); }
+  { SNC_point_locator PL(snc()); return PL.mark(h); }
 
   bool contained_in_boundary(Object_handle h) const
   /*{\Mop  returns true iff the object |h| is contained in the $2$-skeleton
@@ -605,7 +603,7 @@ public:
 
   Object_handle locate(const Point_3& p) const;
   /*{\Mop  returns a generic handle |h| to an object (vertex, edge, facet,
-  volume) of the underlying EWS which contains the point |p| in its relative 
+  volume) of the underlying SNC which contains the point |p| in its relative 
   interior. The point |p| is contained in the set represented by |\Mvar| if 
   |\Mvar.contains(h)| is true.}*/
 
@@ -613,7 +611,7 @@ public:
   /*{\Mop returns a decorator object which allows read-only access of
   the underlying three-dimensional subdivision structure. 
   See the manual page |EW_explorer| for its usage.}*/
-  //{ return EW_explorer(ews,EK); }
+  //{ return EW_explorer(snc,EK); }
 
   /*{\Mimplementation Nef polyhedra are implemented on top of an
   extended Wuerzburg structure data structure (EWS) and use linear
@@ -681,10 +679,10 @@ Nef_polyhedron_3(const Plane_3& h, Boundary b) : Base(Nef_rep()) {
 
 template <typename T>
 Nef_polyhedron_3<T>::
-Nef_polyhedron_3(const SNC_structure& W, bool clone=true) : Base(Nef_rep()) {
+Nef_polyhedron_3(const SNC_structure& W, bool clone) : Base(Nef_rep()) {
   TRACEN("construction from an existing nefp3");
   if (clone) { 
-    ews() = W;
+    snc() = W;
   } else {
     bool __CGAL_Nef_polyhedron_3__copy_operation_not_supported_yet__;
   }
@@ -693,8 +691,8 @@ Nef_polyhedron_3(const SNC_structure& W, bool clone=true) : Base(Nef_rep()) {
 template <typename T>
 void Nef_polyhedron_3<T>::extract_complement() {
   TRACEN("extract complement");
-  //if (refs()>1) *this = Nef_polyhedron_3<T>(ews()); // clone
-  //EW_overlayer D(ews());
+  //if (refs()>1) *this = Nef_polyhedron_3<T>(snc()); // clone
+  //EW_overlayer D(snc());
   Vertex_iterator v;
   //forall_vertices(v,D) D.mark(v) = !D.mark(v);
   Halfedge_iterator e;
@@ -710,8 +708,8 @@ void Nef_polyhedron_3<T>::extract_complement() {
 template <typename T>
 void Nef_polyhedron_3<T>::extract_interior() {
   TRACEN("extract interior");
-  //if (refs()>1) *this = Nef_polyhedron_3<T>(ews()); // clone
-  //EW_overlayer D(ews());
+  //if (refs()>1) *this = Nef_polyhedron_3<T>(snc()); // clone
+  //EW_overlayer D(snc());
   Vertex_iterator v;
   //forall_vertices(v,D) D.mark(v) = false;
   Halfedge_iterator e;
@@ -726,8 +724,8 @@ void Nef_polyhedron_3<T>::extract_interior() {
 template <typename T>
 void Nef_polyhedron_3<T>::extract_boundary() {
   TRACEN("extract boundary");
-  //if (refs()>1) *this = Nef_polyhedron_3<T>(ews()); // clone
-  //EW_overlayer D(ews());
+  //if (refs()>1) *this = Nef_polyhedron_3<T>(snc()); // clone
+  //EW_overlayer D(snc());
   Vertex_iterator v;
   //forall_vertices(v,D) D.mark(v) = true;
   Halfedge_iterator e;
@@ -745,7 +743,7 @@ std::ostream& operator<<
  (std::ostream& os, const Nef_polyhedron_3<T>& NP)
 {
   typedef typename Nef_polyhedron_3<T>::SNC_decorator SNC_decorator;
-  CGAL::SNC_io_parser<SNC_decorator> O(os, NP.ews());
+  CGAL::SNC_io_parser<SNC_decorator> O(os, NP.snc());
   O.print();
   return os;
 }
@@ -755,7 +753,7 @@ std::istream& operator>>
   (std::istream& is, Nef_polyhedron_3<T>& NP)
 {
   typedef typename Nef_polyhedron_3<T>::SNC_decorator SNC_decorator;
-  CGAL::SNC_io_parser<SNC_decorator> I(is, NP.ews());
+  CGAL::SNC_io_parser<SNC_decorator> I(is, NP.snc());
   I.read();
   I.check_integrity();
   return is;

@@ -250,6 +250,12 @@ public:
   }
 
   template <typename H>
+  void store_as_first_boundary_object(H h, Halffacet_handle f) const
+  { f->boundary_entry_objects_.push_front(Object_handle(h));
+    sncp()->store_boundary_item(h, --(f->facet_cycles_end()));
+  }
+
+  template <typename H>
   void undo_boundary_object(H h, Halffacet_handle f) const
   { CGAL_assertion(sncp()->is_boundary_object(h));
     Halffacet_cycle_iterator it = sncp()->boundary_item(h);
@@ -317,10 +323,12 @@ public:
     store_boundary_object( f, c );
   }
 
+  template <class H> void set_facet(H h, Halffacet_handle f) const 
+    { h->incident_facet_ = f; }
   void set_volume(Halffacet_handle h, Volume_handle c) const
-  { h->volume_ = c; CGAL_assertion(h->volume_ == c); }
+    { h->volume_ = c; }
   void set_volume(SFace_handle h, Volume_handle c) const 
-  { h->incident_volume_ = c; CGAL_assertion(h->incident_volume_ == c); }
+    { h->incident_volume_ = c; }
 
   void add_sloop_to_facet(SHalfloop_handle l, Halffacet_handle f) const {
     SM_decorator SD(vertex(l));
@@ -417,7 +425,7 @@ template <typename Visitor>
 void SNC_decorator<EW>::
 visit_shell_objects(SFace_handle f, Visitor& V) const
 { 
-  typedef SM_decorator::SHalfedge_around_sface_circulator 
+  typedef typename SM_decorator::SHalfedge_around_sface_circulator 
     SHalfedge_around_sface_circulator;
   std::list<SFace_handle> SFaceCandidates;
   std::list<Halffacet_handle> FacetCandidates;

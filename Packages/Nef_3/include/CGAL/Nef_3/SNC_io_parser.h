@@ -46,6 +46,18 @@ class SNC_io_parser : public SNC_decorator<SNC_structure_>
   typedef CGAL::SNC_io_parser<SNC_structure_> Self;
   typedef CGAL::SNC_decorator<SNC_structure_> Base;
   typedef CGAL::SNC_SM_decorator<SNC_structure_> SM_decorator;
+
+  #define USING(t) typedef typename SNC_structure::t t
+  USING(Vertex_iterator);
+  USING(Halfedge_iterator);
+  USING(Halffacet_iterator);
+  USING(Volume_iterator);
+  USING(SVertex_iterator);
+  USING(SHalfedge_iterator);
+  USING(SHalfloop_iterator);
+  USING(SFace_iterator);
+  #undef USING
+
   std::istream& in; std::ostream& out;
   bool verbose;
   CGAL::Object_index<Vertex_iterator>   VI;
@@ -53,7 +65,7 @@ class SNC_io_parser : public SNC_decorator<SNC_structure_>
   CGAL::Object_index<Halffacet_iterator>    FI;
   CGAL::Object_index<Volume_iterator>   CI;
   CGAL::Object_index<SHalfedge_iterator> SEI;
-  CGAL::Object_index<SHalfloop_handle>   SLI;
+  CGAL::Object_index<SHalfloop_iterator>   SLI;
   CGAL::Object_index<SFace_iterator>     SFI;
   std::vector<Vertex_iterator>   Vertex_of;
   std::vector<Halfedge_iterator> Edge_of;

@@ -188,6 +188,9 @@ public:
   USING(SHalfedge_iterator); USING(SHalfedge_handle);
   USING(SHalfloop_iterator); USING(SHalfloop_handle);
   USING(SFace_iterator); USING(SFace_handle);
+  USING(SFace_cycle_iterator);
+  USING(Halffacet_cycle_iterator);
+  USING(Shell_entry_iterator);
   USING(SObject_handle);
   USING(Point_3);
   USING(Plane_3);
@@ -201,13 +204,13 @@ public:
     SHalfedge_around_facet_const_circulator;
 #endif
 
-  typedef std::list<SObject_handle>::iterator 
+  typedef typename std::list<SObject_handle>::iterator 
     SObject_list_iterator;
 
   typedef Vertex_point<Point_3,Vertex_handle>  Vertex_point;
   typedef std::pair<Vertex_point,Vertex_point> Vertex_segment;
   typedef std::list<Vertex_segment>            Segment_list;
-  typedef Segment_list::iterator               Segment_iterator;
+  typedef typename Segment_list::iterator      Segment_iterator;
 
 protected:
   Halffacet_handle f_;
@@ -315,8 +318,8 @@ create_facet_objects(const Plane_3& plane_supporting_facet,
   std::list<SHalfloop_handle> SHalfloops; 
   Segment_list Segments;
   SHalfedge_handle e; SHalfloop_handle l;
-  std::list<SHalfedge_handle>::iterator eit;
-  std::list<SHalfloop_handle>::iterator lit;
+  typename std::list<SHalfedge_handle>::iterator eit;
+  typename std::list<SHalfloop_handle>::iterator lit;
 
   // the output decorator for the facet plane sweep
   typedef CGAL::Halffacet_output<Vertex_point, Vertex_handle, 

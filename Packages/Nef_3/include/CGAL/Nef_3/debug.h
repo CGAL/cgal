@@ -46,28 +46,31 @@ static int debugthread=3141592;
 #endif
 
 #if _DEBUG>0
-#define TRACE(t)   if((debugthread%_DEBUG)==0)\
- std::cerr<<" "<<t;std::cerr.flush()
+#define TRACE(t) if((debugthread%_DEBUG)==0) \
+ std::cerr<<" "<<t; \
+ std::cerr.flush()
 #else
 #define TRACE(t) 
 #endif
 
 #if _DEBUG>0
-#define TRACEV(t)  if((debugthread%_DEBUG)==0)\
- std::cerr<<" "<<#t<<" = "<<(t)<<std::endl;std::cerr.flush()
+#define TRACEV(t) if((debugthread%_DEBUG)==0) \
+ std::cerr<<" "<<#t<<" = "<<(t)<<std::endl; \
+ std::cerr.flush()
 #else
 #define TRACEV(t) 
 #endif
 
 #if _DEBUG>0
-#define TRACEN(t)  if((debugthread%_DEBUG)==0)\
- std::cerr<<" "<<t<<std::endl;std::cerr.flush()
+#define TRACEN(t) if((debugthread%_DEBUG)==0) \
+ std::cerr<<" "<<t<<std::endl; \
+ std::cerr.flush()
 #else
 #define TRACEN(t) 
 #endif
 
 #if _DEBUG>0
-#define CTRACE(b,t)  if(b) std::cerr<<" "<<t; else std::cerr<<" 0"
+#define CTRACE(b,t) if(b) std::cerr<<" "<<t; else std::cerr<<" 0"
 #else
 #define CTRACE(b,t) 
 #endif

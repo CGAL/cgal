@@ -113,7 +113,7 @@ namespace OGL {
       return *this; }
     operator double_ptr() const 
     { return const_cast<Double_triple&>(*this).coords_; }
-    double operator[](unsigned i) const 
+    double operator[](unsigned i) 
     { CGAL_assertion(i<3); return coords_[i]; }
   }; // Double_triple
 
@@ -129,14 +129,15 @@ namespace OGL {
   class DFacet {
     typedef std::vector<Double_triple>   Coord_vector;
     typedef std::vector<unsigned>        Cycle_vector;
-    typedef Coord_vector::iterator Coord_iterator;
-    typedef Coord_vector::const_iterator Coord_const_iterator;
     Coord_vector    coords_;  // stores all vertex coordinates
     Cycle_vector    fc_ends_; // stores entry points of facet cycles
     Double_triple   normal_; // stores normal and mark of facet
     bool            mark_;
 
   public:
+    typedef Coord_vector::iterator Coord_iterator;
+    typedef Coord_vector::const_iterator Coord_const_iterator;
+
     DFacet() {}
 
     void push_back_vertex(double x, double y, double z)
@@ -311,13 +312,13 @@ namespace OGL {
     { TRACEN("drawing facet "<<(f->debug(),""));
       GLUtesselator* tess_ = gluNewTess();
       gluTessCallback(tess_, GLenum(GLU_TESS_VERTEX_DATA),
-		      (GLvoid (*) ()) &vertexCallback);
+		      (GLvoid (*)(...)) &vertexCallback);
       gluTessCallback(tess_, GLenum(GLU_TESS_BEGIN),
-		      (GLvoid (*) ()) &beginCallback);
+		      (GLvoid (*)(...)) &beginCallback);
       gluTessCallback(tess_, GLenum(GLU_TESS_END),
-		      (GLvoid (*) ()) &endCallback);
+		      (GLvoid (*)(...)) &endCallback);
       gluTessCallback(tess_, GLenum(GLU_TESS_ERROR),
-		      (GLvoid (*) ()) &errorCallback);
+		      (GLvoid (*)(...)) &errorCallback);
       gluTessProperty(tess_, GLenum(GLU_TESS_WINDING_RULE),
 		      GLU_TESS_WINDING_POSITIVE);
 
@@ -701,11 +702,17 @@ public:
   USING(Vertex_iterator); 
   USING(Halfedge_iterator); 
   USING(Halffacet_iterator); 
-  USING(Object_handle);
   USING(Halffacet_cycle_iterator);
+
+  USING(Object_handle);
   USING(SObject_handle); 
   USING(SHalfedge_handle); 
   USING(SHalfloop_handle); 
+
+  USING(Vertex_handle); 
+  USING(Halfedge_handle); 
+  USING(Halffacet_handle);
+
   USING(Point_3);
   USING(Vector_3);
   USING(Segment_3);

@@ -204,6 +204,8 @@ public:
   USING(Object_handle);
   USING(SObject_handle);
 
+  USING(SHalfedge_around_facet_const_circulator);
+  USING(SHalfedge_around_facet_circulator);
   USING(SFace_cycle_iterator);
   USING(SFace_cycle_const_iterator);
   USING(Halffacet_cycle_iterator);
@@ -682,9 +684,7 @@ public:
 template <typename SNC_>
 typename SNC_::Vertex_handle 
 SNC_constructor<SNC_>::
-create_box_corner(int x, int y, int z,
-                  bool boundary=true) const
-{ 
+create_box_corner(int x, int y, int z, bool boundary) const { 
   CGAL_nef3_assertion(x*y*z != 0);
   CGAL_nef3_assertion(x==y==z==1);
   Vertex_handle v = sncp()->new_vertex();
@@ -834,12 +834,12 @@ pair_up_halfedges() const
     M[l].push_back(Halfedge_key(p,inverted,e,D));
   }
 
-  Pluecker_line_map::iterator it;
+  typename Pluecker_line_map::iterator it;
   CGAL_nef3_forall_iterators(it,M) {
     it->second.sort(Halfedge_key_lt());
     TRACEN("  "<<it->first<<"\n   "
 	   <<(debug_container(it->second),""));
-    Halfedge_list::iterator itl;
+    typename Halfedge_list::iterator itl;
     CGAL_nef3_forall_iterators(itl,it->second) {
       Halfedge_handle e1 = itl->e;
       ++itl; CGAL_nef3_assertion(itl != it->second.end());
@@ -941,7 +941,7 @@ categorize_facet_cycles_and_create_facets() const
     if ( sign_of(h)<0 ) continue;
     M[normalized(h)].push_back(SObject_handle(twin(l)));
   }
-  Map_planes::iterator it;
+  typename Map_planes::iterator it;
   CGAL_nef3_forall_iterators(it,M) { TRACEN("  plane "<<it->first);
     FM_decorator D(*sncp());
     D.create_facet_objects(it->first,it->second.begin(),it->second.end());
@@ -981,7 +981,7 @@ create_volumes() const
      shotting in the direction (-1,0,0) over the Sphere_map of the minimal 
      vertex.  The Shell corresponds to a Volume if the object hit belongs 
      to another Shell. */
-  sncp()->new_volume(); // Outer volume, aka. nirvana
+  sncp()->new_volume(); // outermost volume (nirvana)
   for( unsigned int i = 0; i < MinimalVertex.size(); ++i) {
     Vertex_handle v = MinimalVertex[i];
     TRACEN( "Shell #" << i << " minimal vertex: " << point(v));
