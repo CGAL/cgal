@@ -7,7 +7,7 @@
 # Sylvain Pion, 1998-1999.
 
 # Tell where the script is.
-SCRIPT = ../../../examples/Interval_arithmetic/filtered_predicate_converter
+SCRIPT = ../../../scripts/filtered_predicates_generator.pl
 BASE = $(CGAL)/include/CGAL
 
 # Tell which files must be treated.
