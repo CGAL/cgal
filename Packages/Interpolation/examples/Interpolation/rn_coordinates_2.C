@@ -28,7 +28,8 @@ int main()
   
   std::vector< std::pair< K::Point_2, K::FT  > > coords;
   K::FT  norm = 
-    CGAL::regular_neighbor_coordinates_2(rt, wp,std::back_inserter(coords)).second;
+    CGAL::regular_neighbor_coordinates_2(rt, wp,
+					 std::back_inserter(coords)).second;
   
-  return 1; 
+  return 0; 
 }

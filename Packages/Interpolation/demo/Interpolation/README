@@ -25,6 +25,12 @@ This demo program computes the interpolation of a quadratic function
 known on a small set of random sample points. The gradients of the function are given.
 
 - verifies the barycentric property
-- computes the maximum and mean error of the different interpolation function 
-  compared to the exact function value.
+- computes the maximum and mean error of the different interpolation 
+  function compared to the exact function value.
+--------------------------------------------------------------
+
+------- demo_surface_voronoi -----------------------------------------------
+This demo program displays the intersection between the three dimensional 
+Voronoi diagram of a point cloud issued from a surface (sphere,cylinder 
+or cube) and the tangent plane of another surface point. 
 --------------------------------------------------------------

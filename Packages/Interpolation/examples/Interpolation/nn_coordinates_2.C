@@ -23,7 +23,8 @@ int main()
   K::Point_2 p(1.2, 0.7);
   std::vector< std::pair< K::Point_2, K::FT  > > coords;
   K::FT  norm = 
-    CGAL::natural_neighbor_coordinates_2(T, p,std::back_inserter(coords)).second;
+    CGAL::natural_neighbor_coordinates_2(T, p,
+					 std::back_inserter(coords)).second;
   
-  return 1; 
+  return 0; 
 }

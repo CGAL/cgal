@@ -27,30 +27,40 @@ LIBPATH = \
 
 LDFLAGS = \
           $(LONG_NAME_PROBLEM_LDFLAGS) \
-          $(CGAL_GEOWIN_LDFLAGS)
+          $(CGAL_LDFLAGS)
 
 #---------------------------------------------------------------------#
 #                    target entries
 #---------------------------------------------------------------------#
 
 all:            \
-                demo_surface_voronoi$(EXE_EXT) \
-                demo_interpolation_2$(EXE_EXT) \
-                demo_numerical_2$(EXE_EXT) 
+                interpolation_2$(EXE_EXT) \
+                sibson_interpolation_2$(EXE_EXT) \
+                nn_coordinates_2$(EXE_EXT) \
+                rn_coordinates_2$(EXE_EXT) \
+                linear_interpolation_2$(EXE_EXT) 
 
-demo_surface_voronoi$(EXE_EXT): demo_surface_voronoi$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)demo_surface_voronoi demo_surface_voronoi$(OBJ_EXT) $(LDFLAGS)
+interpolation_2$(EXE_EXT): interpolation_2$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)interpolation_2 interpolation_2$(OBJ_EXT) $(LDFLAGS)
 
-demo_interpolation_2$(EXE_EXT): demo_interpolation_2$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)demo_interpolation_2 demo_interpolation_2$(OBJ_EXT) $(LDFLAGS)
+sibson_interpolation_2$(EXE_EXT): sibson_interpolation_2$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)sibson_interpolation_2 sibson_interpolation_2$(OBJ_EXT) $(LDFLAGS)
 
-demo_numerical_2$(EXE_EXT): demo_numerical_2$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)demo_numerical_2 demo_numerical_2$(OBJ_EXT) $(LDFLAGS)
+nn_coordinates_2$(EXE_EXT): nn_coordinates_2$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)nn_coordinates_2 nn_coordinates_2$(OBJ_EXT) $(LDFLAGS)
+
+rn_coordinates_2$(EXE_EXT): rn_coordinates_2$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)rn_coordinates_2 rn_coordinates_2$(OBJ_EXT) $(LDFLAGS)
+
+linear_interpolation_2$(EXE_EXT): linear_interpolation_2$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)linear_interpolation_2 linear_interpolation_2$(OBJ_EXT) $(LDFLAGS)
 
 clean: \
-                   demo_surface_voronoi.clean \
-                   demo_interpolation_2.clean \
-                   demo_numerical_2.clean 
+                   interpolation_2.clean \
+                   sibson_interpolation_2.clean \
+                   nn_coordinates_2.clean \
+                   rn_coordinates_2.clean \
+                   linear_interpolation_2.clean 
 
 #---------------------------------------------------------------------#
 #                    suffix rules

@@ -25,7 +25,7 @@
 //-------------------------------------------------------------------
 CGAL_BEGIN_NAMESPACE
 //-------------------------------------------------------------------
-
+//init traits:
 template <class Rt, class OutputIterator>
 std::pair< OutputIterator, typename Rt::Geom_traits::FT > 
 regular_neighbor_coordinates_2(const Rt& rt, 
@@ -33,10 +33,11 @@ regular_neighbor_coordinates_2(const Rt& rt,
 			       Weighted_point& p, 
 			       OutputIterator out){
   
-  return regular_neighbor_coordinates_2(rt, p, out, rt.geom_traits(),
+  return regular_neighbor_coordinates_2(rt, p, out, 
+					rt.geom_traits(),
 					typename Rt::Face_handle(NULL));
 };
-  
+//init start:
 template <class Rt, class OutputIterator, class Traits>
 std::pair< OutputIterator, typename Traits::FT > 
 regular_neighbor_coordinates_2(const Rt& rt, 
@@ -50,6 +51,18 @@ regular_neighbor_coordinates_2(const Rt& rt,
 					typename Rt::Face_handle(NULL));
 };
 
+template <class Rt, class OutputIterator, class Traits, 
+  class OutputIteratorVorVertices>
+std::pair< OutputIterator, typename Traits::FT > 
+regular_neighbor_coordinates_2(const Rt& rt,
+			       const typename Traits::Weighted_point& p, 
+			       OutputIterator out, OutputIteratorVorVertices
+			       vor_vertices, 
+			       const Traits& traits){
+  return regular_neighbor_coordinates_2(rt, p, out, vor_vertices, traits, 
+					typename Rt::Face_handle(NULL));
+}
+//init vor_vertices to Emptyset_iterator:
 template <class Rt, class OutputIterator, class Traits>
 std::pair< OutputIterator, typename Traits::FT > 
 regular_neighbor_coordinates_2(const Rt& rt,
@@ -57,6 +70,22 @@ regular_neighbor_coordinates_2(const Rt& rt,
 			     OutputIterator out, const Traits& traits, 
 		 	     typename Rt::Face_handle start){
   
+  return regular_neighbor_coordinates_2(rt, p, out, 
+					Emptyset_iterator(),
+					traits, start);
+}
+
+template <class Rt, class OutputIterator, class Traits, 
+  class OutputIteratorVorVertices>
+std::pair< OutputIterator, typename Traits::FT > 
+regular_neighbor_coordinates_2(const Rt& rt,
+			       const typename Traits::Weighted_point& p, 
+			       OutputIterator out, 
+			       OutputIteratorVorVertices vor_vertices, 
+			       const Traits& traits, 
+			       typename Rt::Face_handle start){
+  //out: the result of the coordinate computation 
+  //vor_vertices: the vertices of the power cell (to avoid recomputation)
   typedef typename Traits::FT            Coord_type;
   typedef typename Traits::Weighted_point  Weighted_point;
   
@@ -96,14 +125,13 @@ regular_neighbor_coordinates_2(const Rt& rt,
 						  fh); 
   return 
     regular_neighbor_coordinates_2
-    (rt, p, out, hole.begin(),hole.end(),hidden_vertices.begin(), 
-     hidden_vertices.end(), traits);
+    (rt, p, out, vor_vertices, hole.begin(),hole.end(),
+     hidden_vertices.begin(), hidden_vertices.end(), traits);
 };
 
 
-
 template <class Rt, class OutputIterator, class Traits, class
-EdgeIterator, class VertexIterator  >
+EdgeIterator, class VertexIterator >
 std::pair< OutputIterator, typename Traits::FT > 
 regular_neighbor_coordinates_2(const Rt& rt, 
 			       const typename Traits::Weighted_point& p, 
@@ -112,11 +140,33 @@ regular_neighbor_coordinates_2(const Rt& rt,
 			       VertexIterator hidden_vertices_begin, 
 			       VertexIterator hidden_vertices_end, 
 			       const Traits& traits){
-  
+  return regular_neighbor_coordinates_2(rt, p,
+					out,Emptyset_iterator(), 
+					hole_begin, hole_end, 
+					hidden_vertices_begin,
+					hidden_vertices_end, 
+					traits);
+}
+
+
+template <class Rt, class OutputIterator, class Traits, class
+EdgeIterator, class VertexIterator , class OutputIteratorVorVertices >
+std::pair< OutputIterator, typename Traits::FT > 
+regular_neighbor_coordinates_2(const Rt& rt, 
+			       const typename Traits::Weighted_point& p, 
+			       OutputIterator out,  
+			       OutputIteratorVorVertices vor_vertices, 
+			       EdgeIterator
+			       hole_begin, EdgeIterator hole_end, 
+			       VertexIterator hidden_vertices_begin, 
+			       VertexIterator hidden_vertices_end, 
+			       const Traits& traits){
   //precondition: p must lie inside the non-empty hole 
   //               (=^ inside convex hull of neighbors)
+  //out: the result of the coordinate computation 
+  //vor_vertices: the vertices of the power cell of p (to avoid recomputation)
   CGAL_precondition(rt.dimension()==2);
-
+  
   typedef typename Traits::FT         Coord_type;
   typedef typename Traits::Bare_point      Bare_point;
   typedef typename Traits::Weighted_point  Weighted_point;
@@ -151,7 +201,8 @@ regular_neighbor_coordinates_2(const Rt& rt,
       vor[0] = traits.construct_weighted_circumcenter_2_object()
  	(current->point(),
 	 hit->first->vertex(rt.ccw(hit->second))->point(), p);
-      
+      *vor_vertices++= vor[0];
+
       Face_circulator fc = rt.incident_faces(current, hit->first);
       ++fc;
       vor[1] = rt.dual(fc);
@@ -168,7 +219,8 @@ regular_neighbor_coordinates_2(const Rt& rt,
       vor[2] = 
 	traits.construct_weighted_circumcenter_2_object()
 	(prev->point(),current->point(),p);
-     
+      *vor_vertices++= vor[2];
+      
       area += polygon_area_2(vor.begin(), vor.end(), Traits());
       *out++= std::make_pair(current->point(),area);
       

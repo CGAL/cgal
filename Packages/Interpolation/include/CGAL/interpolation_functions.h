@@ -66,7 +66,8 @@ linear_interpolation(ForwardIterator first, ForwardIterator beyond,
 };
 
 
-template < class ForwardIterator, class Functor, class GradFunctor,class Traits>
+template < class ForwardIterator, class Functor, class GradFunctor,
+  class Traits>
 std::pair< typename Functor::result_type::first_type, bool> 
 quadratic_interpolation(ForwardIterator first, ForwardIterator beyond,  
 			const typename
@@ -97,7 +98,8 @@ quadratic_interpolation(ForwardIterator first, ForwardIterator beyond,
 };
 
 
-template < class ForwardIterator, class Functor, class GradFunctor, class Traits>
+template < class ForwardIterator, class Functor, class GradFunctor, 
+  class Traits>
 std::pair< typename Functor::result_type::first_type, bool> 
 sibson_c1_interpolation(ForwardIterator first, ForwardIterator beyond,
 			const typename

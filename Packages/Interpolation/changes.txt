@@ -1,5 +1,7 @@
 Package Interpolation: provides interpolation functions and functions for computing natural neighbor coordinates
 
+Ver 1.1 (28/11/03)  includes first version of surface neighbor coordinates
+
 Ver 1.0 (20/11/03)  first version of two dimensional natural- and regular-
 		    neighbor coordinate computation + interpolation functions
 

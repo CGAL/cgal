@@ -34,7 +34,6 @@
 #if defined CGAL_HOMOGENEOUS_H || defined CGAL_SIMPLE_HOMOGENEOUS_H
 #include <CGAL/predicates/predicates_for_voronoi_intersection_cartesian_2_3.h>
 #include <CGAL/constructions/constructions_for_voronoi_intersection_cartesian_2_3.h>
-
 #endif
 
 CGAL_BEGIN_NAMESPACE 
@@ -245,49 +244,34 @@ public:
   typedef typename  R::Triangle_3             Triangle;
   typedef typename  R::Point_3                Point;
   typedef typename  R::Compute_squared_area_3 Compute_squared_area_3;
-
- //operators:
+  
+  //operators:
+  //la version avec triangle becomes obsolete from Release 3.0-I-11:
   FT operator() (const Triangle &t){
+    FT squared_area= Compute_squared_area_3()(t);
     return 
-      cast_sqrt_to_double(t,
-			  Number_type_traits<FT>::Has_sqrt);
+      cast_sqrt_to_double(squared_area, 
+			  typename Number_type_traits<FT>::Has_sqrt());
   }
   FT operator() 
     (const Point& p,const Point& q,const Point& r){
+    FT squared_area= Compute_squared_area_3()(p,q,r);
     return 
-      cast_sqrt_to_double(p,q,r,
-			  Number_type_traits<FT>::Has_sqrt);
+      cast_sqrt_to_double(squared_area,typename 
+			  Number_type_traits<FT>::Has_sqrt());
   }
-
 private:
-  //sqrt is supported by FT:
   inline FT 
-  cast_sqrt_to_double(const Triangle &t,Tag_true)
+  cast_sqrt_to_double(const FT& squared_area, Tag_true)
     {
-      return CGAL_NTS sqrt(Compute_squared_area_3()(t));
+      return CGAL_NTS sqrt(squared_area);
     }
-  inline FT cast_sqrt_to_double
-  (const Point& p,const Point& q,const Point& r, Tag_true)
-    {
-      return CGAL_NTS sqrt(Compute_squared_area_3()
-			   (Triangle(p,q,r)));
-    }
-  //no sqrt supported:
   inline FT 
-  cast_sqrt_to_double(const Triangle &t,Tag_false)
+  cast_sqrt_to_double(const FT& squared_area, Tag_false)
     {
-      double approx = 
-	to_double(Compute_squared_area_3()(t));
+      double approx = to_double(squared_area);
       return CGAL_NTS sqrt(approx);
     }
-  inline FT cast_sqrt_to_double
-  (const Point& p,const Point& q,const Point& r, Tag_false)
-    {
-      double approx = 
-	to_double(Compute_squared_area_3()(Triangle(p,q,r)));
-      return CGAL_NTS sqrt(approx);
-    }
-
 };
 
 template < class _R>
@@ -308,9 +292,9 @@ public:
   typedef typename Rep::Direction_3                 Direction_2;
   typedef typename Rep::Vector_3                    Vector_2;
   typedef typename Rep::Construct_ray_3             Construct_ray_2;
-  typedef typename Rep::Construct_direction_3
-  Construct_direction_2;
-  typedef typename Rep::Construct_triangle_3      Construct_triangle_2;
+  typedef typename Rep::Construct_direction_3       Construct_direction_2;
+  typedef typename Rep::Construct_segment_3         Construct_segment_2;
+  typedef typename Rep::Construct_triangle_3        Construct_triangle_2;
 
   typedef typename Rep::Compare_distance_3          Compare_distance_2;
   //if no sqrt is supported, it casts to double:
@@ -322,6 +306,12 @@ public:
   typedef  Point_2                        Bare_point;
   
   
+  // for compatibility with previous versions
+  typedef Point_2      Point;
+  typedef Segment_2    Segment;
+  typedef Triangle_2   Triangle;
+  
+
   //specific tests:
   typedef Orientation_with_normal_plane_2_3<Rep>          Orientation_2;
   typedef Side_of_plane_centered_sphere_2_3<Point_2>       Power_test_2;
@@ -338,8 +328,13 @@ public:
   typedef Compare_second_projection_3<Point_2>             Compare_y_2;
   
   
-  
-  
+  //for certificated coordinate/neighbor computation:
+  typedef typename Rep::Less_distance_to_point_3
+                                                  Less_distance_to_point_2;
+  typedef typename Rep::Compute_squared_distance_3
+  Compute_squared_distance_2;
+
+
   //instantiations and creation of functors:
   //for the triangulation:
   Orientation_2 
@@ -381,17 +376,28 @@ public:
   
   Construct_ray_2  construct_ray_2_object() const
     {return Construct_ray_2();}
-  
-  Construct_direction_2  construct_direction_2_object() const
-    {return Construct_direction_2();}
+
+Construct_direction_2  construct_direction_2_object() const
+{return Construct_direction_2();}
+
+Construct_segment_2  construct_segment_2_object() const
+{return Construct_segment_2();}
 
   Construct_triangle_2  construct_triangle_2_object() const
     {return Construct_triangle_2();}
 
   
+  //for certification of coordinate/neighbor computation:
+  Less_distance_to_point_2 less_distance_to_point_2_object() const
+     { return Less_distance_to_point_2();}
+
+Compute_squared_distance_2 compute_squared_distance_2_object() const
+    { return Compute_squared_distance_2();}
+
 public:  
     Voronoi_intersection_2_traits_3<_R>(const Point_2& _p = Point_2(), 
-					const Vector_2& _normal = NULL_VECTOR) 
+					const Vector_2& _normal 
+					= NULL_VECTOR) 
       : a(_p), normal(_normal){};
   
   Vector_2 get_normal() const {return normal;}

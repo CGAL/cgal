@@ -17,5 +17,5 @@ sibson_interpolation_2: interpolates a spherical function using the
 	2D natural neighbor coordinates.
 
 interpolation_2: this example allows to numerically compare the error 
-	commited by the different interpolation function when interpolating 
+	committed by the different interpolation function when interpolating 
 	a predefined function on random points.
