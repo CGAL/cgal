@@ -11,9 +11,8 @@
 // release       : 
 // release_date  : 
 //
-// file          : include/CGAL/IO/io.h
+// file          : include/CGAL/IO/Color.h
 // package       : iostream
-// source        : $RCSfile$
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Andreas Fabri
@@ -22,9 +21,8 @@
 //
 // ============================================================================
 
-
-
 #include <CGAL/config.h>
+
 #ifndef CGAL_COLOR_H
 #define CGAL_COLOR_H
 
