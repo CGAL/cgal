@@ -631,7 +631,7 @@ public:
     O1.print();
 #endif // CGAL_NEF3_DUMP_SNC_OPERATORS
 
-    //    SETDTHREAD(131*19*43);
+    // SETDTHREAD(131*19*43);
 
     TRACEN("=> for all v0 in snc0, qualify v0 with respect snc1");
 

@@ -386,11 +386,12 @@ int eval( int argc, char* argv[]) {
                 error = 2;
                 continue;
             }
+	    cerr << "inters" << std::endl;
             Nef_polyhedron nf1 = nef.back();
             nef.pop_back();
             Nef_polyhedron nf2 = nef.back();
             nef.pop_back();
-            Nef_polyhedron nf = nf1.intersection( nf2);
+	    Nef_polyhedron nf = nf1.intersection( nf2);
             nef.push_back( nf);
         } else if ( strcmp( argv[i], "union") == 0) {
             if ( nef.size() < 2) {

@@ -252,7 +252,6 @@ protected:
   
   void build_external_structure() {
     SNC_constructor C(snc());
-    // SETDTHREAD(43);
     C.pair_up_halfedges();
     C.link_shalfedges_to_facet_cycles();
     C.categorize_facet_cycles_and_create_facets();
@@ -288,11 +287,12 @@ public:
   
   typedef Polyhedron_3< Kernel> Polyhedron;
   Nef_polyhedron_3( Polyhedron& P) {
+    SETDTHREAD(11*131*19*43);
     initialize_simple_cube_vertices(EMPTY);
     polyhedron_3_to_nef_3< Polyhedron, SNC_structure, SNC_constructor>
       ( P, snc() );
-    build_external_structure();
-    simplify();
+    //   build_external_structure();
+    //   simplify();
   }
   
   template <class HDS>
@@ -566,6 +566,7 @@ public:
 
   Nef_polyhedron_3<T> intersection(Nef_polyhedron_3<T>& N1)
     /*{\Mop returns |\Mvar| $\cap$ |N1|. }*/ {
+    SETDTHREAD(11*131*19*43);
     TRACEN(" intersection between nef3 "<<&*this<<" and "<<&N1);
     AND _and;
     SNC_structure rsnc;
