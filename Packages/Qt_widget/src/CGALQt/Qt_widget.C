@@ -469,6 +469,7 @@ void Qt_widget::clear() {
 		    for(it = qt_layers.begin(); it!= qt_layers.end(); it++)
 		      if((*it)->is_active())
 			      (*it)->draw();
+        emit(custom_redraw());
       unlock();
       delete painter;
       painter = ptemp;
