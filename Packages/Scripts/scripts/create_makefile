@@ -40,11 +40,11 @@ create_makefile_entry()
       echo
     fi
   fi
-  if grep 'main *(' $CFILE  > /dev/null; then
+#  if grep 'main *(' $CFILE  > /dev/null; then
     echo "$1\$(EXE_EXT): $1\$(OBJ_EXT)"
     echo "	\$(CGAL_CXX) \$(LIBPATH) \$(EXE_OPT)$1 $1\$(OBJ_EXT) \$(LDFLAGS)"
     echo
-  fi;
+#  fi;
 }
 
 
