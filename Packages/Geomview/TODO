@@ -1,4 +1,12 @@
-- Document raw_flag.  Maybe it could apply to Color as well ?
+- Add flags to the stream that say :
+  - draw vertices or not
+  - draw edges or not
+  - draw surfaces or not (fill or wired).
+  Note that Geomview already has the possibility to do these things from the
+  menus, so...
+- See how we can mix the Color output with the raw mode.
+  Currently it's not clear to me.
+- Use raw mode for triangulations
 - Finish get rid of non standard compliant (and gcc 2.97 friendly) strstream.
   http://www.cmla.ens-cachan.fr/Utilisateurs/dosreis/C++/FAQ/
   It's harder than I thought, since g++ 2.95 doesn't have <sstream>.
@@ -12,16 +20,6 @@
 - Why not use the OOGL library coming with Geomview to parse stuff ?
 - The remote geomview (with rsh) facility probably doesn't work.
   But is it useful ?
-- Write operator<<(Triangulation), 2D and 3D.  Partly done.
-- Add a note in the doc when triangulation outputs are ready.
-- Add flags to the stream that say :
-  - draw vertices or not
-  - draw edges or not
-  - draw surfaces or not (fill or wired).
-  Note that Geomview already has the possibility to do these things from the
-  menus, so...
-- le gv << Triangulation_2 utilise gv << Point_[23] et z=0 le cas echeant.
-  Maybe by putting the stream is a state "raw".
 - What to do for Circle_2 ?  Maybe there's some code somewhere, or ask the
   geomview list.  Or do the discretisation ourselves, maybe it's the kernel's
   job ?  Discretisation for Sphere and Circle should be configurable for the
@@ -36,3 +34,4 @@
 Demo :
 ------
 - Add demo files for polyhedrons, t2D, t3d.
+- Add a note in the doc when triangulation outputs are ready.
