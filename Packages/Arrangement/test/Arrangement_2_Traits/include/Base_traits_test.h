@@ -18,9 +18,9 @@ public:
   typedef typename Traits_class::Has_left_category      Has_left_category;
     
   typedef Number_type  NT;
-  typedef typename Traits_class::Point     Point;
-  typedef typename Traits_class::X_curve   X_curve;
-  typedef typename Traits_class::Curve     Curve;
+  typedef typename Traits_class::Point_2                Point;
+  typedef typename Traits_class::X_monotone_curve_2     X_curve;
+  typedef typename Traits_class::Curve_2                Curve;
 
 public:
   Base_traits_test( int argc, char** argv );
@@ -581,7 +581,7 @@ nearest_intersection_to_right_wrapper( std::istringstream& strLine )
 {
   int index1, index2, index3;
   NT x1, y1, x2, y2;
-  bool exp_answer, real_answer;
+  bool exp_answer;
   Point p1, p2;
 
   strLine >> index1 >> index2 >> index3 >> x1 >> y1 >> x2 >> y2;
@@ -596,38 +596,64 @@ nearest_intersection_to_right_wrapper( std::istringstream& strLine )
     std::cout << "The input curve must be X-monotone" << std::endl;
     return false;    
   }
-  real_answer = tr.nearest_intersection_to_right( all_curves_vec[index1],
-                                                  all_curves_vec[index2],
-                                                  all_points_vec[index3],
-                                                  p1, p2 );
-  if( exp_answer == real_answer && p1 == exp_p1 && p2 == exp_p2 ) {
-    std::cout << "Was successful" << std::endl;
-    return true;
-  }
-  else if( exp_answer == real_answer && exp_answer == false ) {
-    // We were expecting to get FALSE.
-    // So it does not matter what are the points.
-    std::cout << "Was successful" << std::endl;
-    return true;
-  }
-  else{
-    std::cout << "Was NOT successful" << std::endl;
-    if( exp_answer != real_answer ) {
-      std::cout << "The returned answer is different from the expected one"
-                << std::endl;
+
+  CGAL::Object res = tr.nearest_intersection_to_right( all_curves_vec[index1],
+                                                       all_curves_vec[index2],
+                                                       all_points_vec[index3]);
+   
+  if (!exp_answer) {
+    // No intersection is expected:
+    if (res.is_empty()) {
+      std::cout << "Was successful" << std::endl;
+      return true;
     }
-    if( p1 != exp_p1 ) {
-      std::cout << "Source point of the intersection is not the expected one"
-                << std::endl;
-      std::cout << "Expected: " << exp_p1 << " Actual: " << p1 << std::endl;
-    }
-    if( p2 != exp_p2 ) {
-      std::cout << "Target point of the intersection is not the expected one"
-                << std::endl;
-      std::cout << "Expected: " << exp_p2 << " Actual: " << p2 << std::endl;
-    }
+    std::cout << "Was NOT successful" << std::endl
+              << "no intersection is expected!" << std::endl;
     return false;
   }
+  
+  if (CGAL::assign(p1, res)) {
+    // Intersection is a point:
+    if (!tr.point_equal(p1, exp_p1)) {
+      std::cout << "Was NOT successful" << std::endl
+                << "intersection source point " << p1
+                << " is not the expected one " << exp_p1
+                << std::endl;
+      return false;
+    }
+    if (!tr.point_equal(p1, exp_p2)) {
+      std::cout << "Was NOT successful" << std::endl
+                << "intersection target point " << p1
+                << " is not the expected one " << exp_p2
+                << std::endl;
+      return false;
+    }
+    std::cout << "Was successful" << std::endl;
+    return true;
+  }
+
+  X_curve cv;
+  if (CGAL::assign(cv, res)) {
+    // Intersection is an x-monotone curve:
+    p1 = tr.curve_source(cv);
+    p2 = tr.curve_target(cv);
+    if ((tr.point_equal(p1, exp_p1) && (tr.point_equal(p2, exp_p2))) ||
+        (tr.point_equal(p1, exp_p2) && (tr.point_equal(p2, exp_p1))))
+    {
+      std::cout << "Was successful" << std::endl;
+      return true;
+    }
+    std::cout << "Failed: intersection source and target points "
+              << p1 << "," << p2
+              << " are different than the expected ones "
+              << exp_p1 << "," << exp_p2
+              << std::endl;
+    
+    return false;
+  }
+
+  std::cout << "Failed: unexpected results!" << std::endl;
+  return false;
 } 
 
 /*!
