@@ -1,3 +1,8 @@
+27 August 2004 Menelaos Karavelas
+- install_cgal : removed creation of shared libraries for GMP; the
+  installation was failing if both GMP and GMPXX where supported and
+  the CGAL version of GMP was chosen
+
 26 August 2004 Sylvain Pion
 - install_cgal : update supported compiler list recognition.
 - install_cgal : remove obsolete workaround for g++ 2.8 concerning leda.

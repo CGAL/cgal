@@ -5185,6 +5185,9 @@ install_gmp_sub()
     _opts="${_opts} --libdir=\"${CGAL_LIB_DIR}/`full_ostype`\""
     _opts="${_opts} --includedir=\"${CGAL_INCL_CONF_DIR}/${CGAL_OS_COMPILER}\""
     case ${SYST} in 
+	*Darwin*)
+	    _opts="${_opts} --disable-shared"
+        ;;
         *SunOS*)
 	    if [ "`uname -r`" != "5.6" ]; then
 	        _opts="${_opts} ABI=32"
