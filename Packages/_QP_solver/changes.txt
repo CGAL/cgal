@@ -1,5 +1,8 @@
 Changes done to the `_QP_solver' package
 
+Version 0.9.13 on 11-Aug-2003 [af]
+- Removed To_double from Pricing_strategy.h, as this functor is now part of the kernel
+
 Version 0.9.12 on 29-Jul-2003 [af]
 Added comparison operator with int in gmp_double.h
 
