@@ -87,7 +87,7 @@ public:
   }
   
   bool operator==(const Point_plus_handle &p_plus) const
-  { return Ptr()->p_ == p_plus.point(); }
+  { return ptr()->p_ == p_plus.point(); }
   
   bool operator!=(const Point_plus_handle &p_plus) const
   { return !(operator==(p_plus)); }
@@ -96,12 +96,11 @@ public:
   
   void set_vertex (Vertex_handle v) { ptr()->v_ = v; }
   
-  const Point& point() const { return Ptr()->p_; }
+  const Point& point() const { return ptr()->p_; }
   
-  Vertex_handle vertex() const { return Ptr()->v_; } 
+  Vertex_handle vertex() const { return ptr()->v_; } 
   
 private:
-  //Point_plus_rep_pm*  Ptr() { return ptr(); }
   //Point_plus_rep_pm* ptr() const { return (Point_plus_rep_pm*) PTR; }
 };
 

@@ -186,15 +186,15 @@ public:
   }
   
   bool operator==(const Point_handle &p) const
-  { return Ptr()->p_ == p.point(); }
+  { return ptr()->p_ == p.point(); }
   
   bool operator!=(const Point_handle &p) const
-  { return  !(operator==(p));  //Ptr()->p_ != p.point(); 
+  { return  !(operator==(p));  //ptr()->p_ != p.point(); 
   }
   
   void set_point(const Point& p) { ptr()->p_ = p; }
   
-  const Point& point() const { return Ptr()->p_; }
+  const Point& point() const { return ptr()->p_; }
     
 private:
 };

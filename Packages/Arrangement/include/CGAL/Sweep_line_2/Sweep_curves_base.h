@@ -215,7 +215,7 @@ protected:
 
     bool operator==(const Curve_node& cv_node) const 
     {
-      return *Ptr() == *(cv_node.Ptr());
+      return *ptr() == *(cv_node.ptr());
     }
 
     bool operator!=(const Curve_node& cv_node) const 
@@ -234,7 +234,7 @@ protected:
     } 
 
     const X_curve_plus& get_curve() const { 
-      return  Ptr()->cv_; 
+      return  ptr()->cv_; 
     }
     
     Point_plus& get_rightmost_point() { 
@@ -243,8 +243,8 @@ protected:
     }
     
     const Point_plus& get_rightmost_point() const { 
-      CGAL_assertion ( Ptr()->points.size() > 0);
-      return *(Ptr()->points.rbegin());
+      CGAL_assertion ( ptr()->points.size() > 0);
+      return *(ptr()->points.rbegin());
     }
 
     Points_iterator  points_begin() { 
@@ -256,11 +256,11 @@ protected:
     }
     
     Points_const_iterator  points_begin() const { 
-      return  Ptr()->points.begin(); 
+      return  ptr()->points.begin(); 
     }
     
     Points_const_iterator  points_end() const { 
-      return  Ptr()->points.end(); 
+      return  ptr()->points.end(); 
     }
 
    
