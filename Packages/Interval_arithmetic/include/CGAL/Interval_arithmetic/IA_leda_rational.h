@@ -39,10 +39,10 @@ convert_from_to (const Interval_nt_advanced&, const leda_rational & z)
     double approx = CGAL::to_double(z);
     FPU_set_cw(FPU_cw_up);
 
-    Interval_nt_advanced result = approx + CGAL_IA_SMALLEST;
+    Interval_nt_advanced result = approx + Interval_nt_advanced::Smallest;
     // We play it safe:
-    result += CGAL_IA_SMALLEST;
-    result += CGAL_IA_SMALLEST;
+    result += Interval_nt_advanced::Smallest;
+    result += Interval_nt_advanced::Smallest;
     CGAL_expensive_assertion_code(FPU_set_cw(FPU_cw_near);)
     CGAL_expensive_assertion( leda_rational(result.inf()) <= z &&
 		              leda_rational(result.sup()) >= z );
