@@ -97,38 +97,18 @@ compilers/operating systems:
   \renewcommand{\arraystretch}{1.3}
   \gdef\lcTabularBorder{2}
   \begin{tabular}{|l|l|} \hline
-    \textbf{compiler}     & \textbf{operating system}\\\hline\hline
-    \mipsprocc\ 7.2 (n32) & IRIX 6.5\\\hline
-    \Gcc{2.8.1}           & IRIX 6.5 / Solaris 2.6 / Linux 2.0\\\hline
-    \egcs{1.0/1.1}        & IRIX 5.3 / IRIX 6.5 / Solaris 2.6 / Linux 2.0\\\hline
+    \textbf{compiler}       & \textbf{operating system}\\\hline\hline
+    \mipsprocc\ 7.2.1 (n32) & IRIX 6.5\\\hline
+    \Gcc{2.8.1}             & IRIX 6.5 / Solaris 2.6 / Linux 2.0\\\hline
+    \egcs{1.1}              & IRIX 5.3 / IRIX 6.5 / Solaris 2.6 / Linux 2.0\\\hline
   \end{tabular}
 \end{center}
 
-There are plans to support PC compilers (\msvc{6}) in the future, but
-there is no such support at the moment.
-
-%%If your compiler/operating system is not on this list, this not
-%%necessarily implies that \cgal\ does not work on your
-%%system\footnote{e.g. we would expect \egcs{1.0.*} to work on IRIX 6.4
-%%  as well}, it just means we did not test it so far. For some
-%%compilers we did the tests, but not all parts of \cgal\ work with
-%%them. This includes \mipsprocc\ 4.0, \sunprocc{4.1} and \Gcc{2.7.2}.
-%%An overview of known problems is given at the following URL:
-%%\begin{quote}
-%%      \compilerpage
-%%\end{quote}
-
-%%N.B. It is highly recommended to read this information, since some of
-%%these older compilers may cause a lot of problems! Especially the
-%%support for templates is sometimes very poor. 
-
-%%At the same location you can find some hints about \cgal\ support for
-%%PC compilers (\bcc{5.02}\ and \msvc{5.0}), but this in a very
-%%premature state at the moment.
-
-%%In case you want to use \leda\ together with \cgal\ (needed e.g. for
-%%the graphical demo programs), you should have a look at section
-%%\ref{sec:leda} now.
+There will be support for PC compilers (\msvc{6}) in the future, but
+there is no such support at the moment. The \sunprocc{4.2} compiler is
+not supported anymore, please stay with \cgal-1.2 if you have to use
+it. Support for \sunprocc{5} will be reconsidered as soon as an
+acceptable degree of standard-conformance is reached.
 
 \section{Getting \cgal}
 
@@ -191,7 +171,7 @@ contains the following subdirectories:
     \textbf{directory} & \textbf{contents}\\\hline\hline
     \texttt{auxiliary} & packages that can optionally be used with \cgal\\\hline
     \texttt{config}    & configuration files for install script\\\hline
-    \texttt{demo}      & demo programs (some of them  need \leda)\\\hline
+    \texttt{demo}      & demo programs (some of them need \leda)\\\hline
     \texttt{doc\_html} & documentation (HTML)\\\hline
     \texttt{doc\_pdf}  & documentation (PDF)\\\hline
     \texttt{doc\_ps}   & documentation (Postscript)\\\hline
@@ -199,6 +179,7 @@ contains the following subdirectories:
     \texttt{include}   & header files\\\hline
     \texttt{lib}       & (shared) object libraries\\\hline
     \texttt{make}      & files with platform dependent makefile settings\\\hline
+    \texttt{scripts}   & some useful scripts (e.g. for creating makefiles)\\\hline
     \texttt{src}       & source files\\\hline
   \end{tabular}
 \end{center}
@@ -219,10 +200,8 @@ about specific menus and their options, take a look at section
 \ref{sec:interactive-mode}. Finally, for the non-interactive mode
 refer to section \ref{sec:non-interactive}.
 
-If you want to use \leda\ in combination with \cgal, there might be
-some compatibility issues that need to be addressed first. See
-section~\ref{sec:leda} and \compilerpage\ for more information about
-this.
+If you want to use \leda\ together with \cgal, have a look at
+section~\ref{sec:leda}.
 
 \section{A Sample Installation}\label{sec:sample-inst}
 
@@ -693,9 +672,9 @@ scheme.
 
 The suffix \texttt{\_}LEDA is appended to indicate \leda\ support. 
 
-We call the resulting string \cgal-OS description. Examples are
+We call the resulting string \cgal-OS description.\\ Examples are
 \texttt{mips\_IRIX-6.2\_CC-7.2} or {\tt
-  sparc\_SunOS-5.5\_g++-2.8.1\_LEDA}. You can use the install script
+  sparc\_SunOS-5.5\_g++-2.8.1\_LEDA}.\\ You can use the install script
 to get your \cgal-OS description, see section \ref{sec:other-options}.
 
 \section{The \cgal\ makefile structure}\label{sec:makefiles}
@@ -758,7 +737,11 @@ in bourne shell resp.
 \begin{alltt}
 setenv CGAL_MAKEFILE `\yourcgaldir/install_cgal -os g++`
 \end{alltt}
-in csh derivatives.
+in csh derivatives. 
+
+\textit{Tip:} Include the setting of \texttt{CGAL\_MAKEFILE} into your
+shell startup script (e.g. \texttt{.}(\texttt{t})\texttt{cshrc} for
+(\texttt{t})\texttt{csh} or \texttt{.bashrc} for \texttt{bash}).
 
 All makefiles contain sections with compiler and linker flags.  You
 can add your own flags here. For example, you might want to add the
@@ -783,8 +766,9 @@ The directory \texttt{CGAL-2.0/examples} contains a small program
 include makefile in the \texttt{\cgaldir/make} directory. After the
 installation of \cgal\ this sample makefile is ready for use. Just
 type '\texttt{make example}' to compile the program
-\texttt{example.C}.  You may use this makefile as a blueprint for your
-own makefiles.
+\texttt{example.C}. There is a script for conveniently creating
+makefiles for \cgal\ applications, see
+section~\ref{sec:create_cgal_makefile}.
 
 Furthermore the directories \texttt{\cgaldir/examples} and
 \texttt{\cgaldir/demo} contain many subdirectories with non-graphical
@@ -821,7 +805,7 @@ corresponding to \leda\ can be recognized by the suffix
 If you are using an old version of \leda, the combination of \leda\ 
 and \stl\ may give some problems. In order to avoid them, it is highly
 recommended to use the latest \leda\ release\footnote{At the moment
-  this is \leda\ 3.7.}, since this is what we test \cgal\ with.
+  this is \leda\ 3.8.}, since this is what we test \cgal\ with.
 
 \section{Upgrading a \cgal\ 1.* installation}
 In case you have \cgal\ 1.0/1.1/1.2 installed on your system, you
@@ -868,4 +852,76 @@ already take care of including \texttt{<CGAL/config.h>}. Nevertheless
 it would be a good idea to always start your \cgal\ programs with
 including \texttt{<CGAL/config.h>} (or \texttt{<CGAL/basic.h>}, which
 contains some more basic \cgal\ definitions).
+
+\section{Scripts}
+
+\subsection{\texttt{create\_cgal\_makefile}}\label{sec:create_cgal_makefile}
+
+The bourne-shell script \texttt{create\_cgal\_makefile} is contained
+in the \cgaldir\texttt{/scripts} directory. It can be used to create
+makefiles for compiling \cgal\ applications. Executing
+\texttt{create\_cgal\_makefile} in an application directory creates a
+\texttt{makefile} containing rules for every \texttt{*.C} file there.
+
+In order to use this makefile, you have to specify the \cgal\ include
+makefile (see section~\ref{sec:makefiles}) to be used. This can be
+done be either setting the environment variable
+\texttt{CGAL\_MAKEFILE} or by editing the line
+\begin{alltt}
+  # CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE
+\end{alltt}
+of the created makefile. First remove the ``\texttt{\#}'' at the
+beginning of the line and then replace the text after ``\texttt{=}''
+by the location of the include makefile. 
+
+Finally type \texttt{make} to compile the application programs.
+
+\subsection{\texttt{use\_cgal\_namespace}}\label{sec:use_cgal_namespace}
+
+The perl script \texttt{use\_cgal\_namespace} is contained in the
+\cgaldir\texttt{/scripts} directory. It can be used to convert
+\cgal\texttt{-1.*} application sourcecode to the \cgal\texttt{-2.*}
+format.  Basically, it replaces \texttt{CGAL\_} prefixes by
+\texttt{CGAL::} namespace qualifiers. You have to give the files to
+convert as arguments, e.g.
+\begin{alltt}
+  use_cgal_namespace my_great_file1.C *.h
+\end{alltt}
+The original files are kept with the suffix \texttt{.bck}.
+
+In order to use it, you first have to set the perl path in the first
+line correctly, i.e. replace \texttt{/net/bin/perl5} by the path to
+perl on your system (try \texttt{which perl}(5), if you do not know).
+Alternatively, you can type
+\begin{alltt}
+  perl -wi.bck -- use_cgal_namespace <FILES>
+\end{alltt}
+
+\subsection{\texttt{replace\_headers}}\label{sec:replace_headers}
+
+The perl script \texttt{redirect\_headers} is contained in the
+\cgaldir\texttt{/scripts} directory. It can be used to replace
+oldstyle include directives for standard headers by their standard ISO
+counterparts, e.g.
+\begin{alltt}
+  #include <algo.h>
+\end{alltt}
+is replaced by
+\begin{alltt}
+  #include <algorithm>
+\end{alltt}
+You have to give the files to
+convert as arguments, e.g.
+\begin{alltt}
+  use_cgal_namespace my_great_file1.C *.h
+\end{alltt}
+The original files are kept with the suffix \texttt{.hrbck}.
+
+In order to use it, you first have to set the perl path in the first
+line correctly, i.e. replace \texttt{/net/bin/perl5} by the path to
+perl on your system (try \texttt{which perl}(5), if you do not know).
+Alternatively, you can type
+\begin{alltt}
+  perl -wi.hrbck -- replace_headers <FILES>
+\end{alltt}
 
