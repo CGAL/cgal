@@ -76,9 +76,10 @@ are decribed in concept \ccc{TriangulationDataStructure_2::Vertex}
 are decribed in concept \ccc{TriangulationDataStructure_2::Face}
 \lcTex{\ccRefPage{TriangulationDataStructure_2::Face}}.}
 
-Vertices and cells are acessed  via \ccc{handles}.
-\ccc{handles} are trivial pointers supporting
-the two dereference operators \ccc{operator*} and \ccc{operator->}.
+Vertices and facess are accessed  via \ccc{Vertex_handle} and
+\ccc{Face_handle}. These types 
+are trivial pointers supporting
+the two dereference operators \ccc{*} and \ccc{->}.
 
 \ccNestedType{Vertex_handle}{Handle to a vertex}
 \ccGlue

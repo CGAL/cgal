@@ -212,13 +212,18 @@ The three vertices of a face are indexed with 0, 1 and 2
 in counterclockwise order. The neighbor of a face are also 
 indexed with 0,1,2 in such a way that the neighbor indexed by \ccc{i}
 is opposite to the vertex with the same index.
+See Figure~\ref{2D_Triangulation_Fig_neighbors1}, 
+ the functions \ccc{ccw(i)}
+and \ccc{cw(i)} shown  on this figure
+compute respectively $i+1$ and $i-1$ modulo 3.
 
 The edges are not explicitly represented, they are only implicitely
 represented through the adjacency relations of two faces.
 Each edge has two implicit representations : the edge
 of a face \ccc{f}  which is opposed to the vertex indexed \ccc{i},
 can be represented as well as an edge of the \ccc{neighbor(i)} of 
-\ccc{f}. See Figure~\ref{2D_Triangulation_Fig_neighbors1}.
+\ccc{f}. 
+
 
  \begin{figure}
 \begin{ccTexOnly}
@@ -226,8 +231,7 @@ can be represented as well as an edge of the \ccc{neighbor(i)} of
      \includegraphics[width=6cm]{rep_bis.eps} 
     \end{center}
 \end{ccTexOnly} 
-    \caption{Vertices and neighbors. The function \ccc{ccw(i)}
-and \ccc{cw(i)} compute respectively $i+1$ and $i-1$ modulo 3.
+    \caption{Vertices and neighbors. 
     \label{2D_Triangulation_Fig_neighbors1} }
   \begin{ccHtmlOnly}
 <CENTER>
@@ -372,21 +376,21 @@ interface to a triangulation.
 The vertices and faces of the triangulations are accessed through 
 \ccc{handles}
 \footnote{A handle is a type which supports the two
-dereference operators \ccc{operator*} and \ccc{operator->}.},
+dereference operators \ccc{*} and \ccc{->}.},
 \ccc{iterators} and \ccc{circulators}
 \footnote{A circulator is a type devoted to visit circular sequences.}.
 \end{ccTexOnly}
  \begin{ccHtmlOnly}
 The vertices and faces of the triangulations are accessed through
-\ccc{handles},
-\ccc{iterators} and \ccc{circulators}. 
+handles,
+iterators, and circulators. 
 (A handle is a type which supports the two
-dereference operators \ccc{operator*} and \ccc{operator->},
+dereference operators  *  and -> ,
 a circulator is a type devoted to visit circular sequences.)
  \end{ccHtmlOnly}
 Handles are used whenever the accessed element 
 is not part of a sequence.
-iterators  and circulators are used
+Iterators  and circulators are used
 to visit  all or parts of the triangulation.
 
 The iterators and circulators

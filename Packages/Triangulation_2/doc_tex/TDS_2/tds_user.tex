@@ -40,11 +40,15 @@ The three vertices of a face are indexed with 0, 1 and 2.
 The neighbor of a face are also 
 indexed with 0,1,2 in such a way that the neighbor indexed by \ccc{i}
 is opposite to the vertex with the same index.
+See Figure~\ref{2D_TDS_Fig_neighbors1}, 
+ the functions \ccc{ccw(i)}
+and \ccc{cw(i)} shown  on this figure
+compute respectively $i+1$ and $i-1$ modulo 3
 
 Each edge has two implicit representations : the edge
 of a face \ccc{f}  which is opposed to the vertex indexed \ccc{i},
 can be represented as well as an edge of the \ccc{neighbor(i)} of 
-\ccc{f}. See Figure~\ref{2D_Triangulation_Fig_neighbors1}.
+\ccc{f}. 
 
  \begin{figure}
 \begin{ccTexOnly}
@@ -52,8 +56,7 @@ can be represented as well as an edge of the \ccc{neighbor(i)} of
      \includegraphics[width=6cm]{rep_bis.eps} 
     \end{center}
 \end{ccTexOnly} 
-    \caption{Vertices and neighbors. The function \ccc{ccw(i)}
-and \ccc{cw(i)} compute respectively $i+1$ and $i-1$ modulo 3.
+    \caption{Vertices and neighbors. 
     \label{2D_TDS_Fig_neighbors1}}
   \begin{ccHtmlOnly}
 <CENTER>
@@ -262,7 +265,7 @@ class Triangulation_data_structure
 {
   typedef Triangulation_data_structure<Vb,Fb>    Self;
 
-  // Rebind the vertex and cell base to the actual TDS (Self).
+  // Rebind the vertex and face base to the actual TDS (Self).
   typedef typename Vb::template Rebind_TDS<Self>::Other  VertexBase;
   typedef typename Fb::template Rebind_TDS<Self>::Other  FaceBase;
 
@@ -318,7 +321,7 @@ store a data member of this type and gives acces to it.
 his own base classes from the default base
 classes :
 \ccc{Triangulation_ds_vertex_base_2}, and
-\ccc{Triangulation_ds_cell_base_2}
+\ccc{Triangulation_ds_face_base_2}
 are the default base classes to be plugged in a triangulation 
 data structure used alone.
 Triangulation classes requires a data strucure in which
