@@ -117,6 +117,7 @@ template < class R >
 CGAL_KERNEL_MEDIUM_INLINE
 bool LineC2<R CGAL_CTAG>::operator==(const LineC2<R CGAL_CTAG> &l) const
 {
+  if ( id() == l.id() ) return true;
   return equal_line(*this,l);
 }
 

@@ -184,8 +184,8 @@ bool
 RayC2<R CGAL_CTAG>::has_on(const typename RayC2<R CGAL_CTAG>::Point_2 &p) const
 {
   return p == source()
-         || ( collinear(source(), p, second_point())
-            && ( typename R::Direction_2(p - source()) == direction() ));
+      || collinear(source(), p, second_point())
+      && Direction_2(p - source()) == direction();
 }
 
 template < class R >

@@ -72,6 +72,7 @@ inline
 bool
 DirectionC2<R CGAL_CTAG>::operator==(const DirectionC2<R CGAL_CTAG> &d) const
 {
+  if ( id() == d.id() ) return true;
   return equal_direction(*this, d);
 }
 

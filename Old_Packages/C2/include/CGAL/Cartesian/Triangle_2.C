@@ -67,6 +67,7 @@ CGAL_KERNEL_MEDIUM_INLINE
 bool
 TriangleC2<R CGAL_CTAG>::operator==(const TriangleC2<R CGAL_CTAG> &t) const
 {
+  if ( id() == t.id() ) return true;
   int i;
   for(i=0; i<3; i++)
     if ( vertex(0) == t.vertex(i) )
