@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefConcept}{Tds_3}
+\begin{ccRefConcept}{TriangulationDataStructure_3}
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[concept]{} %% add further index entries
@@ -52,16 +52,16 @@ topological sphere $S^d$ of $\R^{d+1}$, for any $d \in \{-1,0,1,2,3\}$.
 
 The second template parameter of the basic triangulation class 
 (see Chapter~\ref{chapter-Triangulation3})
-\ccc{Triangulation_3<Triangulation_traits_3,Tds_3>} is a triangulation 
+\ccc{Triangulation_3<TriangulationTraits_3,TriangulationDataStructure_3>} is a triangulation 
 data structure class. (See Chapter~\ref{chapter-TDS3}.)  
 
 To ensure all the \textbf{flexibility} of class \ccc{Triangulation_3}
 described in 
-\lcTex{ \ccRefPage{CGAL::Triangulation_3<Triangulation_traits_3,Tds_3>}
+\lcTex{ \ccRefPage{CGAL::Triangulation_3<TriangulationTraits_3,TriangulationDataStructure_3>}
 and in } Chapter~\ref{chapter-Triangulation3}, a model of a
 triangulation data structure must be templated by the base vertex and
 the base cell classes (see~\ref{TDS3-sec-intro}):
-\ccc{Tds_3<Triangulation_vb_3,Triangulation_cb_3>}.
+\ccc{TriangulationDataStructure_3<Triangulation_vb_3,Triangulation_cb_3>}.
 The optional functionalities related to geometry are compulsory for
 this use as a template parameter of \ccc{Triangulation_3}.
 
@@ -80,7 +80,7 @@ operations.
 \ccNestedType{Cell}{Cell type}
 \lcTex{
 Requirements for \ccc{Vertex} and \ccc{Cell} are described in
-\ccRefPage{Tds_3::Vertex} and \ccRefPage{Tds_3::Cell}.
+\ccRefPage{TriangulationDataStructure_3::Vertex} and \ccRefPage{TriangulationDataStructure_3::Cell}.
 }
 
 \ccTypedef{typedef triple<Cell*, int, int> Edge;}{\ccc{(c,i,j)} is the
@@ -113,28 +113,28 @@ incident to a given edge. They are bidirectional and non-mutable.
 
 \ccCreation
 \ccCreationVariable{tds}  %% choose variable name
-\ccThree{Tds_3<Tvb,Tcb>();}{tds.set_number_of_vertices()}{}
+\ccThree{TriangulationDataStructure_3<Tvb,Tcb>();}{tds.set_number_of_vertices()}{}
 
-\ccConstructor{Tds_3();}
+\ccConstructor{TriangulationDataStructure_3();}
 {A default constructor.}
 
-\ccConstructor{Tds_3(const Tds_3 & tds1);}
+\ccConstructor{TriangulationDataStructure_3(const TriangulationDataStructure_3 & tds1);}
 {Copy constructor. All the vertices and cells are duplicated.}
 
-\ccMethod{Tds_3 operator = (const Tds_3 & tds1);}
+\ccMethod{TriangulationDataStructure_3 operator = (const TriangulationDataStructure_3 & tds1);}
 {Assignment. All the vertices and cells are duplicated.}
 
 The previous two methods are equivalent.
 
-\ccThree{Tds_3<Tvb,Tcb>}{tds.set_number_of_vertices()}{}
+\ccThree{TriangulationDataStructure_3<Tvb,Tcb>}{tds.set_number_of_vertices()}{}
 
-\ccMethod{void swap(Tds_3 & tds1);} 
+\ccMethod{void swap(TriangulationDataStructure_3 & tds1);} 
 {Swaps \ccVar\ and \ccc{tds1}. There is no copy of cells and vertices,
 thus this method runs in constant time. This method should be preferred to
 \ccVar=\ccc{tds1} or \ccVar(\ccc{tds1}) when \ccc{tds1} is deleted after
 that.}
 
-\ccMethod{Vertex* copy_tds(const Tds_3 & tds1, Vertex* v = NULL);}
+\ccMethod{Vertex* copy_tds(const TriangulationDataStructure_3 & tds1, Vertex* v = NULL);}
 {\ccc{tds1} is copied into \ccVar. If $v\, !\!= NULL$, the vertex of \ccVar\ 
 corresponding to \ccc{v} is returned, otherwise \ccc{NULL} is returned.
 \ccPrecond{The optional argument \ccc{v} is a vertex of \ccc{tds1}.}}
@@ -394,7 +394,7 @@ data structure constructed by the default constructor.}
 
 In addition to these requirements, in order to be used as a triangulation 
 data structure by the class
-\ccc{Delaunay_triangulation_3<Triangulation_traits_3,Tds_3>}, the triangulation
+\ccc{Delaunay_triangulation_3<DelaunayTriangulationTraits_3,TriangulationDataStructure_3>}, the triangulation
 must offer the following method:
 
 \ccMethod{void star_region( set<void*> & region, Vertex* v, Cell* c, int li );}
@@ -537,11 +537,11 @@ a precise indication on the kind of invalidity encountered.}
 \ccHeading{I/O}
 
 \ccFunction{istream& operator>>
-	(istream& is, Tds_3 & t);}
+	(istream& is, TriangulationDataStructure_3 & t);}
 {Reads a combinatorial triangulation from \ccc{is} and assigns it to \ccc{t}}
 
 \ccFunction{ostream& operator<<
-	(ostream& os, const Tds_3 & t);}
+	(ostream& os, const TriangulationDataStructure_3 & t);}
 {Writes \ccc{t} into the stream \ccc{os}}
 
 The information stored in the \ccc{iostream} is: 
@@ -557,8 +557,8 @@ for faces of maximal dimension instead of cells.
 
 \ccSeeAlso
 
-\ccc{Tds_3::Vertex},\\
-\ccc{Tds_3::Cell}.
+\ccc{TriangulationDataStructure_3::Vertex},\\
+\ccc{TriangulationDataStructure_3::Cell}.
 
 \end{ccRefConcept}
 
