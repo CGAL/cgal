@@ -4,16 +4,12 @@
 
 #include "include/Segment_traits_test.h"
 
-typedef CGAL::Quotient<int>                            NT;
-typedef CGAL::Cartesian<NT>                            R;
-typedef CGAL::Arr_segment_traits_2<R>                  Traits;
+typedef CGAL::Quotient<int>                     NT;
+typedef CGAL::Cartesian<NT>                     Kernel;
+typedef CGAL::Arr_segment_traits_2<Kernel>      Traits;
 
 int main(int argc, char * argv[])
 {
   Segment_traits_test< Traits, NT >  test_obj( argc, argv );
-
-  if (test_obj.start())
-    return (0); // SUCCESS    
-  else 
-    return (1); // FAILURE  
+  return (test_obj.start()) ? 0 /* SUCCESS */ : 1; /* FAILURE */
 }
