@@ -18,9 +18,10 @@ typedef TESTED_TYPE IA;
 
 void bench()
 {
-  const int loops=10000000;
+  const int loops = 10000000;
   CGAL_Timer t;
   double dt;
+  const double dd = 1.0;
   const IA a(0.12);
   // const IA b(2.1);
   const IA b(IA(21)/10);
@@ -61,6 +62,16 @@ void bench()
   for (int i=0; i<loops; i++) { c = sqrt(b); }
   t.stop();
   cout << c << "\tsqrt\t" << t.time()-dt << endl;
+
+  dt = t.time(); t.start();
+  for (int i=0; i<loops; i++) { c = c * dd; }
+  t.stop();
+  cout << c << "\tia*dbl\t" << t.time()-dt << endl;
+
+  dt = t.time(); t.start();
+  for (int i=0; i<loops; i++) { c = dd * c; }
+  t.stop();
+  cout << c << "\tdbl*ia\t" << t.time()-dt << endl;
 }
 
 
