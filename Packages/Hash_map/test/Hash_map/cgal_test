@@ -68,7 +68,6 @@ if [ $# -ne 0 ] ; then
     compile_and_run $file
   done
 else
-  compile_and_run Hash_map-test
   compile_and_run Unique_hash_map_test
 fi
 

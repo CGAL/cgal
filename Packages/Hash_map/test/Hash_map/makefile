@@ -37,17 +37,12 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:            \
-                Hash_map-test \
                 Unique_hash_map_test 
-
-Hash_map-test$(EXE_EXT): Hash_map-test$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Hash_map-test Hash_map-test$(OBJ_EXT) $(LDFLAGS)
 
 Unique_hash_map_test$(EXE_EXT): Unique_hash_map_test$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Unique_hash_map_test Unique_hash_map_test$(OBJ_EXT) $(LDFLAGS)
 
 clean: \
-                   Hash_map-test.clean \
                    Unique_hash_map_test.clean 
 
 #---------------------------------------------------------------------#

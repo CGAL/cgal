@@ -1,5 +1,10 @@
 Hash_map Package: Release changes
 ----------------------------------------------------------------------
+
+1.1 (12 Apr 2002)
+
+     - Removed Hash_map.h and test file. Replaced by Unique_hash_map.
+
 0.9.5 (16 Jul 2001)
 
      - Fixed variable names in for loop of tests to please MSVC.
