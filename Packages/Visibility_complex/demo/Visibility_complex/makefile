@@ -43,7 +43,6 @@ Qt_widget_styled_layer.moc:  Qt_widget_styled_layer.h
 Qt_widget_styled_layer$(OBJ_EXT): Qt_widget_styled_layer.moc \
 		Qt_widget_styled_layer.C
 
-<<<<<<< makefile
 Qt_widget_style_editor.moc:  Qt_widget_style_editor.h
 	$(QT_MOC) -o Qt_widget_style_editor.moc Qt_widget_style_editor.h
 
@@ -54,14 +53,12 @@ Qt_widget_style_editor$(OBJ_EXT): Qt_widget_style_editor.moc \
 		Qt_widget_style_editor.C.moc \
 		Qt_widget_style_editor.C
 
-=======
 Qt_widget_style_editor.moc:  Qt_widget_style_editor.h
 	$(QT_MOC) -o Qt_widget_style_editor.moc Qt_widget_style_editor.h
 
 Qt_widget_style_editor$(OBJ_EXT): Qt_widget_style_editor.moc \
 		Qt_widget_style_editor.C
 
->>>>>>> 1.4
 Show_points.moc:  Show_points.h
 	$(QT_MOC) -o Show_points.moc Show_points.h
 
