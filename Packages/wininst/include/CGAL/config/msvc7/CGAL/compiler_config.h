@@ -4,7 +4,7 @@
 // Computational Geometry Algorithms Library (CGAL).
 //
 // release       : CGAL-2.5-I-3
-// file          : include/CGAL/config/i686_CYGWINNT-5.0-1.3.2_CL.EXE-1300/CGAL/compiler_config.h
+// file          : include/CGAL/config/msvc7/CGAL/compiler_config.h
 // package       : Installation (1.149)
 //
 // Compiler specific configuration file for CGAL 2.5-I-3
@@ -48,10 +48,12 @@
 #define CGAL_CFG_MATCHING_BUG_3 1
 
 //+--------------------------------------------------------------------------
-//| This is a test-case for a bug in VC++ 7.0 that redefines min(a, b) and max(a, b)
+//| This is a test-case for a bug in VC++ 7.0 that 
+//| redefines min(a, b) and max(a, b)
 //| Files concerned: windows.h, windef.h
 //| When the bug is present, CGAL_CFG_NOMINMAX_BUG is set
-//| The file basic.h should check if this bug is present and if so, define NOMINMAX flag
+//| The file basic.h should check if this bug is present and if so, 
+//| define NOMINMAX flag
 //+--------------------------------------------------------------------------
 #define CGAL_CFG_NOMINMAX_BUG 1
 
