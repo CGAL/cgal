@@ -1,5 +1,6 @@
 \label{sec:remeshing}
 
+
 % few words on remeshing (why it became a key ingredient of mesh
 % processing).
 
@@ -93,16 +94,16 @@ orthogonal sets of streamlines in a conformal parameter space to align
 mesh edges along principal curvature lines and therefore respect the
 local symmetries. A careful control of the density of streamlines
 allows us to improve the mesh efficiency so as to match the optimality
-conditions for the $\Ltwo$ metric in the limit. On spherical areas the
-algorithm simply switches to isotropic point sampling strategy. This
-remeshing technique produces quad-dominant meshes as illustrated by
-Fig.\ref{fig:anisotropic}.
+conditions for the $\L^2$ metric in the limit. On spherical areas the
+algorithm simply switches to isotropic point sampling strategy (see
+Fig.\ref{fig:anisotropic}). This remeshing technique produces
+quad-dominant meshes as illustrated by Fig.\ref{fig:trimming}.
 
 % figure anisotropic remeshing
 \begin{figure}
   \centering
   \epsfig{file=figs/anisotropic.eps, width=\linewidth}
-  \caption{Anisotropic remeshing.}
+  \caption{Lines of curvatures and umbilics.}
   \label{fig:anisotropic}
 \end{figure}
 
@@ -141,11 +142,9 @@ Fig.\ref{fig:trimming}).
   \caption{Remeshing phase: a dome-like shape is sampled with lines of
   curvatures. All the curvature line segments (red/blue) and the
   feature edges (green) are added as constraints in a CDT in parameter
-  space. The CDT creates a dense triangulation; a rapid vertex
+  space. The CDT creates a dense triangulation; a vertex
   decimation (A,B) then suppresses most small edges, and leaves only
-  few vertices, defining a coarse polygonal mesh. Adding constraint
-  edges to the umbilic (center) point takes care of the near-spherical
-  cap.}
+  few vertices, defining a quad-dominant polygonal mesh.}
   \label{fig:trimming}
 \end{figure}
 
