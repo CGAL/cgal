@@ -79,6 +79,7 @@ int main()
   TestSimplicity("data/simple8.dat");
   TestSimplicity("data/simple9.dat");
   TestSimplicity("data/simple10.dat");
+  TestSimplicity("data/simple11.dat");
 
   return 0;
 }
