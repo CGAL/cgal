@@ -1,3 +1,6 @@
+1.63 (16 January 2004) [mk]
+- updated the doc for the changes in the previous submission
+
 1.62 (6 January 2004) [mk]
 - moved Qt_widget related I/O to a separate file
 
