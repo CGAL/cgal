@@ -47,20 +47,20 @@ Qt_widget_toolbar$(OBJ_EXT): Qt_widget_toolbar.C Qt_widget_toolbar.moc
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) Qt_widget_toolbar.C
 
 Qt_widget_toolbar.moc: Qt_widget_toolbar.h
-	$(QT_MOC) -o Qt_widget_toolbar.moc $<
+	$(QT_MOC) -o Qt_widget_toolbar.moc Qt_widget_toolbar.h
 
 Qt_widget_toolbar_views$(OBJ_EXT): Qt_widget_toolbar_views.C \
 		Qt_widget_toolbar_views.moc
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) Qt_widget_toolbar_views.C
 
 Qt_widget_toolbar_views.moc: Qt_widget_toolbar_views.h
-	$(QT_MOC) -o Qt_widget_toolbar_views.moc $<
+	$(QT_MOC) -o Qt_widget_toolbar_views.moc Qt_widget_toolbar_views.h
 
 Qt_widget_move_point$(OBJ_EXT): Qt_widget_move_point.C Qt_widget_move_point.moc
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) Qt_widget_move_point.C
 
 Qt_widget_move_point.moc: Qt_widget_move_point.h
-	$(QT_MOC) -o Qt_widget_move_point.moc $<
+	$(QT_MOC) -o Qt_widget_move_point.moc Qt_widget_move_point.h
 
 
 triangulationdemo.moc: triangulationdemo.C Qt_widget_move_point$(OBJ_EXT) \
