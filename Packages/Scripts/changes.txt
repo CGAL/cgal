@@ -1,3 +1,6 @@
+1.39 (06 Ian 2004) [rursu]
+- modified create_internal_release script to substract "CGAL-" from the CGAL_VERSION
+
 1.38 (19 Dec 2003) [rursu]
 - fixed makefile_Core -> becomes makefile in test directory
 
