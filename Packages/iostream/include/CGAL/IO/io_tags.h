@@ -9,11 +9,11 @@
 // ----------------------------------------------------------------------------
 //
 
-// release       : $CGAL_Revision: CGAL-0.9-I-04 $
-// release_date  : $CGAL_Date: 1997/12/15 $
+// release       : 
+// release_date  : 
 //
 // file          : include/CGAL/IO/io_tags.h
-// source        : web/io.fw
+// source        : $RCSfile$
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Andreas Fabri
@@ -26,9 +26,12 @@
 #ifndef CGAL_IO_TAGS_H
 #define CGAL_IO_TAGS_H
 
-struct CGAL_io_Read_write{};
-struct CGAL_io_Extract_insert{};
-struct CGAL_io_Operator{};
+CGAL_BEGIN_NAMESPACE
 
+struct io_Read_write{};
+struct io_Extract_insert{};
+struct io_Operator{};
+
+CGAL_END_NAMESPACE
 
 #endif // CGAL_IO_TAGS_H

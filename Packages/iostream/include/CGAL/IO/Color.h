@@ -8,11 +8,11 @@
 //
 // ----------------------------------------------------------------------------
 //
-// release       : $CGAL_Revision: CGAL-0.9-I-04 $
-// release_date  : $CGAL_Date: 1997/12/15 $
+// release       : 
+// release_date  : 
 //
 // file          : include/CGAL/IO/Color.h
-// source        :
+// source        : $RCSfile$
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Andreas Fabri, Hervé Brönnimann
@@ -25,10 +25,12 @@
 #ifndef CGAL_COLOR_H
 #define CGAL_COLOR_H
 
-class CGAL_Color {
+CGAL_BEGIN_NAMESPACE
+
+class Color {
 public:
-  CGAL_Color() {}
-  CGAL_Color(int red, int green, int blue)
+  Color() {}
+  Color(int red, int green, int blue)
     : _red(red), _green(green), _blue(blue)
   {}
 
@@ -40,19 +42,19 @@ public:
   int green() const {return _green;}
   int blue() const {return _blue;}
 
-  bool operator==(const CGAL_Color &c) const
+  bool operator==(const Color &c) const
   {
     return ( (red() == c.red()) &&
              (green() == c.green()) &&
              (blue() == c.blue()) );
   }
 
-  bool operator!=(CGAL_Color &c) const
+  bool operator!=(Color &c) const
   {
     return !( (*this) == c);
   }
 
-  CGAL_Color& operator=(const CGAL_Color &c)
+  Color& operator=(const Color &c)
   {
     _red = c.red();
     _green = c.green();
@@ -67,13 +69,14 @@ private:
 };
 
 
-extern const CGAL_Color CGAL_BLACK;
-extern const CGAL_Color CGAL_WHITE;
-extern const CGAL_Color CGAL_RED;
-extern const CGAL_Color CGAL_GREEN;
-extern const CGAL_Color CGAL_BLUE;
-extern const CGAL_Color CGAL_VIOLET;
-extern const CGAL_Color CGAL_ORANGE;
+extern const Color BLACK;
+extern const Color WHITE;
+extern const Color RED;
+extern const Color GREEN;
+extern const Color BLUE;
+extern const Color VIOLET;
+extern const Color ORANGE;
 
+CGAL_END_NAMESPACE
 
 #endif  // CGAL_COLOR_H
