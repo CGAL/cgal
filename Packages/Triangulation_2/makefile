@@ -42,6 +42,7 @@ Test:
 	cd test/Triangulation; make realclean
 	cd test/Triangulation2_Delaunay; make clean
 	cd test/Triangulation2_constrained; make clean
+	cd test/Triangulation2_newd; make -f Makefile realclean;
 	cd test/Triangulation2_Delaunay; mv makefile.submitted makefile
 	cd test/Triangulation2_constrained; mv makefile.submitted makefile
 
@@ -51,6 +52,7 @@ clean:
 	cd test/Triangulation ; make -f Makefile realclean;
 	cd test/Triangulation2_Delaunay; make -f Makefile realclean
 	cd test/Triangulation2_constrained; make -f Makefile realclean
+	cd test/Triangulation2_newd; make -f Makefile realclean;
 	cd examples/Triangulation ; make realclean
 	cd demo/Triangulation ; make realclean
 
