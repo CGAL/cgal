@@ -1,5 +1,8 @@
 Stream_support Package: Release changes:
 ---------------------------------------------------------------------
+2.10 (18 Jan 01)
+- Fix long long support "bug" caught by VC++ 7.
+
 2.9 (30 May 00)
 added to Istream_iterator
 operator!=( const Self& i)
