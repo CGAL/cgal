@@ -142,10 +142,8 @@ Anyway, \cgal\ proposes a method that removes a vertex if it is
 possible. If it is not possible, the current implementation tries to
 remove the vertex, and returns \ccc{false} as soon as it finds a facet
 that cannot form a tetrahedron inside the hole with any other vertex
-of the hole. The drawback is that the triangulation is then completely
-invalidated and cannot be restored in its previous state. The user
-dealing with very degenerate input data might want to copy his
-triangulation before trying to remove a vertex.
+of the hole. The triangulation remains valid. ({\bf Remark:} In a previous 
+release the triangulation was then completely invalidated.) 
 
 In practical cases, the probability that such a problem arises is
 of course very low.
