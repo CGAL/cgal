@@ -121,19 +121,17 @@ struct Lazy_exact_rep : public Ref_counted
   // - Invalid interval [1;0].  Drawback is it's slower to test, and conflicts
   //   with assertions in the generic IA code.
   // - A enum value ?  waste of space...
-  // - A particular value (1) for et.
+  // - A particular value for et:
   //   et==NULL => interval, and a fortiori exact, are not computed
   //   et==1    => exact is not computed, but interval is
   Lazy_exact_rep ()
       : in(), et(NULL) {}
-      // : in(1,0), et(NULL) {}
   Lazy_exact_rep (const double d)
       : in(d), et((ET*)1) {}
 
   bool valid_approx() const
   {
     return et!=NULL;
-    // return et!=(ET *)1;
     // return is_valid(in);
   }
 
@@ -244,9 +242,8 @@ CGAL_LAZY_UNARY_OP(CGAL_NTS square, Lazy_exact_Square)
 CGAL_LAZY_UNARY_OP(sqrt, Lazy_exact_Sqrt)
 
 #if 0
-// Template binary operator (might be merged with the above ?)
+// Template binary operator (might be merged with the base ?)
 // Note : G++ 2.95 produces an ICE on this  :(  Will try again later...
-// Second solution is a macro.
 template <typename ET, template <typename T> class Op>
 struct Lazy_exact_binary_op : public Lazy_exact_binary<ET>
 {
@@ -338,7 +335,7 @@ struct Lazy_exact_nt : public Handle_for<Lazy_exact_rep<ET> >
   typedef Lazy_exact_nt<ET> Self;
   typedef Lazy_exact_rep<ET> Self_rep;
 
-  Lazy_exact_nt () {}  // Note : this allocates 1 element...
+  Lazy_exact_nt () {}  // Note : this allocates 1 element
 
   Lazy_exact_nt (Self_rep *r)
     : PTR(r) {}
@@ -346,19 +343,10 @@ struct Lazy_exact_nt : public Handle_for<Lazy_exact_rep<ET> >
   Lazy_exact_nt (const Self & s)
     : PTR(s) {}
 
-#if 0 // provided by Handle_for, normaly...
-  Self & operator= (const Self & s)
-  {
-      Self_rep::inc_count(s.ptr);
-      Self_rep::dec_count(ptr);
-      ptr = s.ptr;
-      return *this;
-  }
-#endif
-
   // Operations
   Lazy_exact_nt (const double d)
     : PTR (new Lazy_exact_Cst<ET>(d)) {}
+
   Lazy_exact_nt (const int i)
     : PTR (new Lazy_exact_Cst<ET>(double(i))) {}
 
@@ -503,38 +491,22 @@ Number_tag
 number_type_tag (const Lazy_exact_nt<ET>&)
 { return Number_tag(); }
 
-// Temporary hack
-inline
-int
-convert_from_to (const int&, const Lazy_exact_nt<int> &)
-{
-    return int();
-}
-
 #if !defined(CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION) \
  && !defined(CGAL_CFG_NO_PARTIAL_CLASS_TEMPLATE_SPECIALISATION)
-struct converter<int, Lazy_exact_nt<int> >
+template <typename ET>
+struct converter<ET, Lazy_exact_nt<ET> >
 {
-    static inline int do_it (const Lazy_exact_nt<int> & z)
-    {
-        return convert_from_to(int(), z);
-    }
-};
-
-struct converter<leda_real, Lazy_exact_nt<leda_real> >
-{
-    static inline leda_real do_it (const Lazy_exact_nt<leda_real> & z)
+    static inline ET do_it (const Lazy_exact_nt<ET> & z)
     {
         return z.exact();
     }
 };
-#endif // CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
-
+#endif
 
 CGAL_END_NAMESPACE
 
 #ifdef CGAL_INTERVAL_ARITHMETIC_H
 #include <CGAL/Interval_arithmetic/IA_Lazy_exact_nt.h>
-#endif // CGAL_INTERVAL_ARITHMETIC_H
+#endif
 
 #endif // CGAL_LAZY_EXACT_NT_H

@@ -1,7 +1,5 @@
 // Test program for Lazy_exact_nt<>.
 
-// #define CGAL_NO_ASSERTIONS
-
 #include <CGAL/basic.h>
 #include <iostream>
 #include <CGAL/Cartesian.h>
