@@ -31,8 +31,8 @@ CGAL_BEGIN_NAMESPACE
 template <typename K>
 inline
 typename K::Plane_3
-bisector(const typename K::Point_3 &p,
-         const typename K::Point_3 &q, const K &k)
+bisector(const typename CGAL_WRAP(K)::Point_3 &p,
+         const typename CGAL_WRAP(K)::Point_3 &q, const K &k)
 {
   return k.construct_bisector_3_object()(p, q);
 }
@@ -40,8 +40,8 @@ bisector(const typename K::Point_3 &p,
 template <typename K>
 inline
 typename K::Plane_3
-bisector(const typename K::Plane_3 &h1,
-         const typename K::Plane_3 &h2, const K &k)
+bisector(const typename CGAL_WRAP(K)::Plane_3 &h1,
+         const typename CGAL_WRAP(K)::Plane_3 &h2, const K &k)
 {
   return k.construct_bisector_3_object()(h1, h2);
 }
@@ -65,8 +65,8 @@ bisector(const Plane_3<K> &h1, const Plane_3<K> &h2)
 template <typename K>
 inline
 bool
-parallel(const typename K::Line_3 &l1,
-         const typename K::Line_3 &l2, const K &k)
+parallel(const typename CGAL_WRAP(K)::Line_3 &l1,
+         const typename CGAL_WRAP(K)::Line_3 &l2, const K &k)
 {
   return k.are_parallel_3_object()(l1, l2);
 }
@@ -74,8 +74,8 @@ parallel(const typename K::Line_3 &l1,
 template <typename K>
 inline
 bool
-parallel(const typename K::Plane_3 &h1,
-         const typename K::Plane_3 &h2, const K &k)
+parallel(const typename CGAL_WRAP(K)::Plane_3 &h1,
+         const typename CGAL_WRAP(K)::Plane_3 &h2, const K &k)
 {
   return k.are_parallel_3_object()(h1, h2);
 }
@@ -83,8 +83,8 @@ parallel(const typename K::Plane_3 &h1,
 template <typename K>
 inline
 bool
-parallel(const typename K::Ray_3 &r1,
-         const typename K::Ray_3 &r2, const K &k)
+parallel(const typename CGAL_WRAP(K)::Ray_3 &r1,
+         const typename CGAL_WRAP(K)::Ray_3 &r2, const K &k)
 {
   return k.are_parallel_3_object()(r1, r2);
 }
@@ -92,8 +92,8 @@ parallel(const typename K::Ray_3 &r1,
 template <typename K>
 inline
 bool
-parallel(const typename K::Segment_3 &s1,
-         const typename K::Segment_3 &s2, const K &k)
+parallel(const typename CGAL_WRAP(K)::Segment_3 &s1,
+         const typename CGAL_WRAP(K)::Segment_3 &s2, const K &k)
 {
   return k.are_parallel_3_object()(s1, s2);
 }

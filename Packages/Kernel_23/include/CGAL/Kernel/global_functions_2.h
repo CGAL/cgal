@@ -67,8 +67,8 @@ bisector(const Line_2<K> &l1, const Line_2<K> &l2)
 template <typename K>
 inline
 bool
-parallel(const typename K::Line_2 &l1,
-         const typename K::Line_2 &l2, const K &k)
+parallel(const typename CGAL_WRAP(K)::Line_2 &l1,
+         const typename CGAL_WRAP(K)::Line_2 &l2, const K &k)
 {
   return k.are_parallel_2_object()(l1, l2);
 }
@@ -76,8 +76,8 @@ parallel(const typename K::Line_2 &l1,
 template <typename K>
 inline
 bool
-parallel(const typename K::Ray_2 &r1,
-         const typename K::Ray_2 &r2, const K &k)
+parallel(const typename CGAL_WRAP(K)::Ray_2 &r1,
+         const typename CGAL_WRAP(K)::Ray_2 &r2, const K &k)
 {
   return k.are_parallel_2_object()(r1, r2);
 }
@@ -85,8 +85,8 @@ parallel(const typename K::Ray_2 &r1,
 template <typename K>
 inline
 bool
-parallel(const typename K::Segment_2 &s1,
-         const typename K::Segment_2 &s2, const K &k)
+parallel(const typename CGAL_WRAP(K)::Segment_2 &s1,
+         const typename CGAL_WRAP(K)::Segment_2 &s2, const K &k)
 {
   return k.are_parallel_2_object()(s1, s2);
 }
