@@ -242,8 +242,47 @@ insert_point(const Storage_site_2& ss, const Site_2& t,
   CGAL_precondition( t.is_point() );
   CGAL_assertion( number_of_vertices() > 2 );
 
+  //*********************************************************************
+  //*********************************************************************
+  //*********************************************************************
+  //*********************************************************************
+  //*********************************************************************
+  //*********************************************************************
+  //*********************************************************************
+  //*********************************************************************
+  //*********************************************************************
+  //*********************************************************************
+  //*********************************************************************
+  // MK::ERROR: I need to write a insert_point_no_search method that
+  // does not search for the nearest neighbor; this should be used by
+  // insert_point. Below the first version of the code is correct. The
+  // second is what the insert_point method should do before calling
+  // insert_point_no_search.
+
   // first find the nearest neighbor
+#if 1
   Vertex_handle  vnearest = nearest_neighbor( t, vnear );
+#else
+  Vertex_handle vnearest;
+  if ( vnear == Vertex_handle() ) {
+    vnearest = nearest_neighbor( t, vnear );
+  } else {
+    vnearest = vnear;
+  }
+#endif
+
+  //*********************************************************************
+  //*********************************************************************
+  //*********************************************************************
+  //*********************************************************************
+  //*********************************************************************
+  //*********************************************************************
+  //*********************************************************************
+  //*********************************************************************
+  //*********************************************************************
+  //*********************************************************************
+  //*********************************************************************
+
 
   CGAL_assertion( vnearest != Vertex_handle() );
 
@@ -859,7 +898,7 @@ add_bogus_vertices(List& l)
 {
   Vertex_list vertex_list;
 
-  static std::set<Edge> edge_list;
+  std::set<Edge> edge_list;
 
   edge_list.clear();
 
@@ -1588,15 +1627,7 @@ arrangement_type(const Site_2& t, Vertex_handle v) const
   if ( !t.is_segment() || !v->is_segment() ) { return false; }
 
 #if 0
-#if 1
-  if ( same_segments(t, v->site()) ) {
-    return true;
-  }
-#else
-  if ( !intersection_flag ) {
-    return same_segments(t, v->site());
-  }
-#endif
+  return same_segments(t, v->site());
 #endif
 
   if ( arrangement_type(t, v->site()) ) {

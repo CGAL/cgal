@@ -472,7 +472,7 @@ protected:
   // container: useful for the hierarchy
   Vertex_handle  insert_no_register(const Point_2& p,
 				    Vertex_handle vnear) {
-    return insert_point(p, Vertex_handle());
+    return insert_point(p, vnear);
   }
 
 public:

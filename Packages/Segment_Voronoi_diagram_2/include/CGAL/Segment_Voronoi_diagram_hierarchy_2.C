@@ -258,7 +258,16 @@ insert_segment(const Point_2& p0, const Point_2& p1,
   Vertex_handle vertices1[svd_hierarchy_2__maxlevel];
 
   insert_point(p0, level, vertices0);
+
+#if 0
   insert_point(p1, level, vertices1);
+#else // this way may be faster...
+  vertices1[0] = hierarchy[0]->insert_no_register(p1, vertices0[0]);
+  if ( level >= 1 ) {
+    Storage_site_2 ss1 = vertices1[0]->storage_site();
+    insert_point(ss1.site(), ss1, 1, level, vertices1[0], vertices1);
+  }
+#endif
 
   CGAL_assertion( vertices0[0] != Vertex_handle() );
   CGAL_assertion( vertices1[0] != Vertex_handle() );
@@ -372,6 +381,7 @@ insert_segment_interior(const Site_2& t, const Storage_site_2& ss,
   hierarchy[0]->retriangulate_conflict_region(v, l, fm);
 
   insert_segment_in_upper_levels(t, ss, v, vertices, level, stag);
+
   return v;
 }
 
