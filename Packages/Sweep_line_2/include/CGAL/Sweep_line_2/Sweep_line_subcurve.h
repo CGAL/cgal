@@ -95,7 +95,7 @@ public:
     m_lastCurve = curve;
   }
 
-  virtual ~Sweep_line_subcurve() {}
+  ~Sweep_line_subcurve() {}
 
   /*!
     @return a reference to the curve 
@@ -163,15 +163,7 @@ public:
     return is_target(p) || is_source(p);
   }
 
-  /*! returns true if the last point is an end point and the specified
-      point is an end point. Otherwise returns false;
-  */
-  bool is_unsplit_curve(const Point_2 &p) {
-    if ( is_end_point(p) && is_end_point(m_lastPoint) )
-      return true;
-    return false;
-  }
-
+  
   const Point_2 &get_source() const {
     return m_source;
   }
@@ -209,19 +201,7 @@ public:
   }
 
  
-  // returns true if the point is in the range of the curve and is not
-  // one of its ends
-  bool is_point_in_range(const Point_2 &p)
-  {
-    if (! m_traits->point_in_x_range(m_curve, p) ||
-        m_traits->curve_compare_y_at_x(p, m_curve) != EQUAL)
-      return false;
-    if ( is_end_point(p) )
-      return false;
-    return true;
-  }
-
-
+  
   template <class StatusLineIter>
   void set_hint(StatusLineIter hint) 
   {

@@ -24,7 +24,7 @@
 #include <CGAL/Sweep_line_2/Sweep_line_functors.h>
 #include <list>
 #include <set>
-#include<functional>
+#include <functional>
 
 
 
@@ -98,7 +98,7 @@ public:
   /*! Destructor. Deletes the lists of curves, without deleting the 
       curves themselves. 
   */
-  virtual ~Sweep_line_event() 
+  ~Sweep_line_event() 
   {}
 
 
@@ -156,8 +156,9 @@ public:
       {
         if ( (*iter) ==  curve)
         {
-                m_leftCurves.erase(iter);
-                break;
+               /* m_leftCurves.erase(iter);
+                break;*/
+          return;
         }
         ++iter;
       }
@@ -245,6 +246,14 @@ public:
 
 
     SubCurveIter iter = m_rightCurves.begin();
+    while ( iter != m_rightCurves.end() ) 
+    {
+      if ( (*iter) ==  curve)
+         return false;
+      ++iter;
+    }
+
+    iter = m_rightCurves.begin();
     Comparison_result res;
     while ((res = m_traits->curves_compare_y_at_x_right(curve->get_curve(),
                                                       (*iter)->get_curve(), 
@@ -267,20 +276,12 @@ public:
               m_rightCurves.insert(iter, curve);
               return true;
       }
-
-     
       res = m_traits->curves_compare_y_at_x_right(curve->get_curve(),
                                                   (*iter)->get_curve(), 
                                                    m_point);
-    }
-    
-    // insert the curve only if it is not already in...
-    if ( (*iter) !=  curve)
-    {
-      m_rightCurves.insert(iter, curve);
-      return true;
-    }
-    return false;
+    } 
+     m_rightCurves.insert(iter, curve);
+     return true;
   }
   
 

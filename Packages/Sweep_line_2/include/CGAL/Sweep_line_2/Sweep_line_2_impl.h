@@ -147,7 +147,7 @@ public:
                          m_includeEndPoints(true),
                          m_found_intersection(false),
                          is_first_point(true),
-                          m_num_of_subCurves(0)
+                         m_num_of_subCurves(0)
   {
   }
 
@@ -322,7 +322,6 @@ protected:
     EventCurveIter leftCurveIter = m_currentEvent->left_curves_begin();
     const Point_2 &eventPoint = m_currentEvent->get_point();
 
-    m_use_hint_for_erase = false;
     while ( leftCurveIter != m_currentEvent->left_curves_end() )  
     {
       Subcurve *leftCurve = *leftCurveIter; 
@@ -376,7 +375,6 @@ protected:
       // remove curve from the status line (also checks intersection 
       // between the neighbouring curves)
       remove_curve_from_status_line(leftCurve);
-      m_use_hint_for_erase = true;
 
       ++leftCurveIter;
     }
@@ -961,25 +959,8 @@ protected:
   }
 
 
-  /*! 
-   * Returns true if the point is in the interior of the curve.
-   * Returns false if the point is outside the range of the curve or
-   * if the point is either the source or the target of the curve.
-   * @return true if the point is int he interior of the curve.
-   */
-  bool is_point_in_curve_interior(const X_monotone_curve_2 &c, 
-                                  const Point_2 &p)
-  {
-    if (! m_traits->point_in_x_range(c,p) || 
-        m_traits->curve_compare_y_at_x(p, c) != EQUAL)
-      return false;
-    if ( is_end_point(p) )
-      return false;
-    return true;
-  }
-
-
  
+
   /*! For each left-curve, if it is the "last" subcurve, i.e., the 
    * event point is the right-edge of the original curve, the 
    * last sub curve is created and added to the result. Otherwise
@@ -1006,12 +987,11 @@ protected:
 
     // delete the curve from the status line
     EventCurveIter leftCurveIter = m_currentEvent->left_curves_begin();
-    m_use_hint_for_erase = false;
+
     while ( leftCurveIter != m_currentEvent->left_curves_end() )
     {
       // before deleting check new neighbors that will become after deletion
       remove_curve_from_status_line(*leftCurveIter);
-      m_use_hint_for_erase = true;
       PRINT_ERASE((*leftCurveIter));
       Subcurve *leftCurve = *leftCurveIter; 
       leftCurve->set_last_point(eventPoint);
@@ -1081,9 +1061,7 @@ protected:
   /*! An iterator of the  status line that is used as a hint for inserts. */
   StatusLineIter m_status_line_insert_hint;
 
-  /*! A an indication wether the hint can be used to erase from the status
-    line */
-  bool m_use_hint_for_erase;
+
   SubCurveList m_tmpOut;
   Point_2 m_lastReportedPoint;
   bool is_first_point;
@@ -1094,12 +1072,17 @@ protected:
   /*! An allocator for the SubCurve objects */
   SubCurveAlloc m_subCurveAlloc;
 
+  /*! a master Event (created by default c'tor)to be used by allocator */
+  Event m_masterEvent;
+
+  /*! a master Subcurve (created by default c'tor) to be used by allocator */
+  Subcurve m_masterSubcurve;
+
+
   /*! The num of subcurves  */
   unsigned int m_num_of_subCurves;
 
-  /*! a counter that assigns unique ids to the curves. */
-  //int m_curveId;
-
+  
 #ifndef NDEBUG
   int m_eventId;
 #endif
@@ -1181,7 +1164,7 @@ init(CurveInputIterator begin, CurveInputIterator end)
              << xcurves.size() << " curves." << std::endl;
              )
   }
-  m_num_of_subCurves += m_xcurves.size();
+  m_num_of_subCurves = m_xcurves.size();
 
     
 
@@ -1211,7 +1194,7 @@ init_curve(X_monotone_curve_2 &curve,unsigned int j)
 { 
   Event *e ;
  
-  m_subCurveAlloc.construct(m_subCurves+j,Subcurve());
+  m_subCurveAlloc.construct(m_subCurves+j,m_masterSubcurve);
   (m_subCurves+j)->init(curve, m_traits);
 
   const Point_2 &left_end = (m_subCurves+j)->get_left_end();
@@ -1225,7 +1208,7 @@ init_curve(X_monotone_curve_2 &curve,unsigned int j)
     if(insertion_res.second == true)  // its a new event
     {
       e =  m_eventAlloc.allocate(1); 
-      m_eventAlloc.construct(e,Event());
+      m_eventAlloc.construct(e, m_masterEvent);
       e->init(right_end , m_traits);
      
 
@@ -1252,7 +1235,7 @@ init_curve(X_monotone_curve_2 &curve,unsigned int j)
     if(insertion_res2.second == true)
     {
       e =  m_eventAlloc.allocate(1); // allocation of space for one dlink 
-      m_eventAlloc.construct(e,Event());
+      m_eventAlloc.construct(e, m_masterEvent);
       e -> init(left_end , m_traits );
     #ifndef NDEBUG
       e->id = m_eventId++;
@@ -1456,7 +1439,7 @@ intersect(Subcurve *c1, Subcurve *c2)
                                        // that the intersection point cannot be one 
                                        //of the end-points of two curves
       e =  m_eventAlloc.allocate(1);
-      m_eventAlloc.construct(e,Event());
+      m_eventAlloc.construct(e, m_masterEvent);
       e -> init(xp , m_traits );
       
 #ifndef NDEBUG
