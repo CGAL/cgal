@@ -184,7 +184,7 @@ protected:
 
   //to debug
 public:
-  void print_hierarchy() { return hierarchy.print();}
+  void print_hierarchy() { hierarchy.print(); }
 
   //template member functions
 public:
