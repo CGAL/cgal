@@ -428,10 +428,6 @@ data structure constructed by the default constructor.}
 The following modifiers can affect the validity of the triangulation
 data structure.
 
-\ccMethod{void add_cell( Cell* c );}
-{Adds an already constructed cell to the triangulation data structure.
-\ccPrecond{\ccc{c != NULL}.}}
-
 \ccMethod{Cell * create_cell();}
 {Creates a cell and adds it to the triangulation data structure. Its 
 vertices and neighbors are initialized to \ccc{NULL}.
@@ -448,7 +444,7 @@ being initialized with \ccc{NULL}.}
 into the triangulation data structure.}
 
 \ccMethod{void delete_cell( Cell* c );}
-{Removes the cell from the triangulation data structure and deletes it.
+{Removes the cell from the triangulation data structure.
 \ccPrecond{The cell is a cell of \ccVar.}}
 
 \end{ccAdvanced}

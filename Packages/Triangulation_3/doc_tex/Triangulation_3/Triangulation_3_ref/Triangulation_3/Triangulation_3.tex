@@ -196,19 +196,6 @@ an edge (resp. facet) \ccc{infinite} if it is incident to the infinite vertex.
 \ccHeading{Setting}
 \ccMethod{void set_number_of_vertices(int n);}
 {Sets the number of vertices to \ccc{n}.}
-
-\ccModifiers
-The geometric triangulation is not supposed to perform any operations
-on its underlying triangulation data structure. We nevertheless
-provide the following function to add a cell created by a constructor
-of the cell class of a triangulation
-\ccc{Triangulation_cell_3<TriangulationTraits_3,TriangulationDataStructure_3>}. 
-Users programming their own
-triangulation algorithms might use it.
-
-\ccMethod{void add_cell( Cell_handle c );}
-{Adds \ccc{c} to the triangulation.
-\ccPrecond{\ccc{c} is not \ccc{NULL}.}}
 \end{ccAdvanced}
 
 \ccHeading{Geometric access functions}

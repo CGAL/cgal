@@ -42,27 +42,21 @@ The class \ccClassName\ defines the following types.
 \ccCreationVariable{c}  %% choose variable name
 \ccThree{TriangulationDataStructure::Vertex}{v(const Point & p, Cell* c);}{}
 
-The constructors of a cell do not insert it into any triangulation
-data structure. To add a cell into a given triangulation
-data structure, the \ccc{add_cell()} method of the triangulation
-data structure must be used. Note that a given cell can only be
-inserted into \textit{one} triangulation data structure.
+In order to obtain new cells or destruct unused cells, the user must call the
+\ccc{create_cell()} and \ccc{delete_cell()} methods of the triangulation data
+structure.
 
-\ccConstructor{Cell();}
-{Introduces a cell \ccVar\ and initializes all vertices and neighbors 
- with \ccc{NULL}.}
+%\ccConstructor{Cell();}
+%{Introduces a cell \ccVar\ and initializes all vertices and neighbors 
+% with \ccc{NULL}.}
 
-%\ccConstructor{\ccClassName(Tds & tds);}
-%{Introduces a cell \ccVar\ and inserts it in the triangulation 
-%data structure \ccc{tds}.}
+%\ccConstructor{Cell(Vertex* v0, Vertex* v1, Vertex* v2, Vertex* v3);}
+%{Introduces a cell \ccVar, and initializes its vertices. The neighbors
+%are initialized with \ccc{NULL}.} 
 
-\ccConstructor{Cell(Vertex* v0, Vertex* v1, Vertex* v2, Vertex* v3);}
-{Introduces a cell \ccVar, and initializes its vertices. The neighbors
-are initialized with \ccc{NULL}.} 
-
-\ccConstructor{Cell(Vertex* v0, Vertex* v1, Vertex* v2, Vertex* v3,
-                Cell* n0, Cell* n1, Cell* n2, Cell* n3);}
-{Introduces a cell \ccVar, and initializes its vertices and neighbors.}
+%\ccConstructor{Cell(Vertex* v0, Vertex* v1, Vertex* v2, Vertex* v3,
+%                Cell* n0, Cell* n1, Cell* n2, Cell* n3);}
+%{Introduces a cell \ccVar, and initializes its vertices and neighbors.}
 
 \ccOperations
 
