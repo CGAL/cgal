@@ -166,13 +166,13 @@
 }
 \newcommand{\ccIndexMainItem@om}{%
    \lciIf{\ccIndex}{% 
-     \gdef\lciWhichItem{MainItem} 
+     \gdef\lciWhichItem{MainItem}%
      \lciOpenFileforIndex%
      \ccFonts{#1}{#C2}%
      \lciCloseFileforIndex
      \lciIndex 
-     \gdef\lciWhichItem{}
-   }{}
+     \gdef\lciWhichItem{}%
+   }{}%
 }
 
 
@@ -202,7 +202,7 @@
 % Usage:  \ccIndexMainItemDef[category]{item}
 %
 \newcommand{\ccIndexMainItemDef}[1]{%
-   \ccIndexMainItem{#1}
+   \ccIndexMainItem{#1}%
 }
 \newcommand{\ccIndexMainItemDef@om}{%
    \ccIndexMainItem[#1]{#2}%
