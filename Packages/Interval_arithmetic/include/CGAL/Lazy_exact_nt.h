@@ -417,7 +417,7 @@ max(const Lazy_exact_nt<ET> & a, const Lazy_exact_nt<ET> & b)
 template <typename ET>
 std::ostream &
 operator<< (std::ostream & os, const Lazy_exact_nt<ET> & a)
-{ return os << a.approx(); }
+{ return os << CGAL::to_double(a); }
 
 template <typename ET>
 std::istream &
