@@ -245,12 +245,17 @@ public:
     HDS( const Self& hds)
 #endif // CGAL_CFG_NO_TMPL_IN_TMPL_PARAM //
     :  vertices( hds.vertices),
-       halfedges( hds.halfedges),
+       //halfedges( hds.halfedges),
        faces( hds.faces),
        nb_border_halfedges( hds.nb_border_halfedges),
        nb_border_edges( hds.nb_border_edges),
        border_halfedges( hds.border_halfedges)
     {
+	// goal is halfedges = hds.halfedges, but we have pairs here
+	Halfedge_const_iterator i = hds.halfedges_begin();
+	for ( ; i != hds.halfedges_end(); ++ ++ i) {
+	    edges_push_back(i);
+	}
         pointer_update( hds);
     }
 
@@ -258,7 +263,11 @@ public:
         if ( this != &hds) {
             erase_all();
             vertices            = hds.vertices;
-            halfedges           = hds.halfedges;
+	    // goal is halfedges = hds.halfedges, but we have pairs here
+	    Halfedge_const_iterator i = hds.halfedges_begin();
+	    for ( ; i != hds.halfedges_end(); ++ ++ i) {
+		edges_push_back(i);
+	    }
             faces               = hds.faces;
             nb_border_halfedges = hds.nb_border_halfedges;
             nb_border_edges     = hds.nb_border_edges;
