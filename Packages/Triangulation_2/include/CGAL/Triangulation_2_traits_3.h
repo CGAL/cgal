@@ -43,8 +43,8 @@ public:
 
   Comparison_result operator() (Point p, Point q){
     Comparison_result r;
-    r = CGAL::compare_y<R>(p,q);
-    if (r == EQUAL) r = CGAL::compare_z<R>(p,q);
+    r = CGAL::compare_y(p,q);
+    if (r == EQUAL) r = CGAL::compare_z(p,q);
     return r;
    }
 };
