@@ -1,4 +1,4 @@
-// ============================================================================
+// ======================================================================
 //
 // Copyright (c) 1997-2001 The CGAL Consortium
 //
@@ -6,13 +6,14 @@
 // of the Computational Geometry Algorithms Library (CGAL). It is not
 // intended for general use.
 //
-// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------
 //
-// release       : $CGAL_Revision: CGAL-I $
-// release_date  : $CGAL_Date$
+// release       : $CGAL_Revision: CGAL-2.4-I-67 $
+// release_date  : $CGAL_Date: 2002/03/22 $
 //
 // file          : include/CGAL/Optimisation_d_traits_3.h
-// package       : $CGAL_Package: Optimisation_basic $
+// package       : Optimisation_basic (3.8.13)
+// maintainer    : Sven Schönherr <sven@inf.ethz.ch>
 // chapter       : Geometric Optimisation
 //
 // source        : web/Optimisation_d_traits.aw
@@ -23,7 +24,7 @@
 // coordinator   : ETH Zürich (Bernd Gärtner <gaertner@inf.ethz.ch>)
 //
 // implementation: Traits class (3D) for dD optimisation algorithms
-// ============================================================================
+// ======================================================================
 
 #ifndef CGAL_OPTIMISATION_D_TRAITS_3_H
 #define CGAL_OPTIMISATION_D_TRAITS_3_H
@@ -71,7 +72,9 @@ class Optimisation_d_traits_3 {
     typedef  CGAL::Access_coordinates_begin_3<K>
                                         Access_coordinates_begin_d;
 
-    typedef  typename K::Construct_point_3    Construct_point_d;
+    typedef  Construct_point_3<K>       Construct_point_d;
+    // this does not (yet) work:
+    // typedef  typename K::Construct_point_3    Construct_point_d;
 
     // creation
     Optimisation_d_traits_3( ) { }
