@@ -407,7 +407,7 @@ find_faces_to_split(const Vertex_handle& v, const Site_2& t) const
   Face_circulator fc_start = fc1;
   Face_handle f1, f2;
   bool found_f1 = false, found_f2 = false;
-  Site_2 sitev_supp = v->storage_site().supporting_segment_site().site();
+  Site_2 sitev_supp = v->site().supporting_site();
   do {
     Face_handle ff1(fc1), ff2(fc2);
 
