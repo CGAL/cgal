@@ -20,7 +20,6 @@
 #ifndef CGAL_IO_PM_FILE_WRITER_H
 #define CGAL_IO_PM_FILE_WRITER_H
 
-#include <CGAL/IO/binary_file_io.h>
 #include <CGAL/Inverse_index.h>
 #include <CGAL/IO/File_header.h>
 #include <iostream>
