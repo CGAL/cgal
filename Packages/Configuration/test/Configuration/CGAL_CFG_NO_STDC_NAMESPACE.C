@@ -129,7 +129,7 @@ using std::towupper;
 using std::wctrans;
 using std::wctype;
 
-#include <cstring>
+include <cstring>
 using std::size_t;
 using std::memchr;
 using std::memcmp;
@@ -153,7 +153,7 @@ using std::strspn;
 using std::strstr;
 using std::strtok;
 using std::strxfrm;
-
+#if 0
 #include <cwchar>
 using std::wint_t;
 using std::size_t;
@@ -212,6 +212,7 @@ using std::wcstok;
 using std::wcstol;
 using std::wcstoul;
 using std::wcsxfrm;
+#endif
 
 #include <cstdio>
 using std::FILE;
