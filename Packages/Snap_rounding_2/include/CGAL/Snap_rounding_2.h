@@ -159,8 +159,8 @@ public:
   typedef typename Segments_container::const_iterator Segment_const_iterator;
   typedef typename Segments_container::iterator Segment_iterator;
 
-  static bool erase_hp;
-  static inline bool get_erase_hp() {return(erase_hp);}
+  //  static bool erase_hp;
+  //  static inline bool get_erase_hp() {return(erase_hp);}
 
   //! A constructor
   Snap_rounding_2(Segment_const_iterator begin,
@@ -316,12 +316,12 @@ Hot_Pixel<Rep_>::Hot_Pixel(const Point_2& inp_point,NT inp_pixel_size) :
 template<class Rep_>
 Hot_Pixel<Rep_>::~Hot_Pixel()
   {
-    if(Snap_rounding_2<Rep_>::get_erase_hp()) {
+    //    if(Snap_rounding_2<Rep_>::get_erase_hp()) {
       delete(right_seg);
       delete(left_seg);
       delete(top_seg);
       delete(bot_seg);
-    }
+      //    }
   }
 
 template<class Rep_>
@@ -715,9 +715,9 @@ void Snap_rounding_2<Rep_>::iterate(
         // segment entirely inside a pixel
         hp = new Hot_Pixel<Rep_>(iter->source(),pixel_size);
         seg_output.push_back(hp->get_center(int_output));
-        erase_hp = true;
+        //erase_hp = true;
         delete(hp);
-        erase_hp = false;
+	//        erase_hp = false;
       } else {
         seg_output.push_back((*hot_pixel_iter)->get_center(int_output));
         if(number_of_intersections > 1) {
@@ -746,7 +746,7 @@ Snap_rounding_2<Rep_>::Snap_rounding_2(
   unsigned int number_of_kd_trees)
   {
     // initialize approximation angles map    
-    erase_hp = false;
+    //erase_hp = false;
     number_of_segments = 0;
     // copy segments list
     while(begin != end) {
@@ -764,8 +764,8 @@ Snap_rounding_2<Rep_>::Snap_rounding_2(
 template<class Rep>
 typename Snap_rounding_2<Rep>::Direction Snap_rounding_2<Rep>::seg_dir;
 
-template<class Rep>
-bool Snap_rounding_2<Rep>::erase_hp = false;
+//template<class Rep>
+//bool Snap_rounding_2<Rep>::erase_hp = false;
 
 CGAL_END_NAMESPACE
 
