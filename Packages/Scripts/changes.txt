@@ -1,4 +1,9 @@
 //--------------------------------
+// 1.10
++Added script cgal_conditional_include_remove which undoes the effects of
+ cgal_conditional_inlude.
+
+//--------------------------------
 // 1.9
 +Adapted run_testsuite. It now checks if cgal_test returns succesfully.
 
