@@ -17,7 +17,7 @@
 %% \ccHtmlIndexC[class]{} %% add further index entries
 
 \ccDefinition  
-The class \ccRefName\ defines a $k$-$d$ tree.
+The class \ccRefName\ defines a $k$-$d$ tree. 
 
 \ccInclude{CGAL/Kd_tree.h}
 
@@ -27,7 +27,7 @@ Expects for the first template argument a model of the concept
 \ccc{SearchTraits}, for example \ccc{CGAL::Search_traits_2<CGAL::Cartesian<double> >}.
 
 Excepts for the second template argument a model for the concept \ccc{Splitter}.
-It defaults  to \ccc{Sliding_midpoint<Traits>}
+It defaults  to \ccc{Sliding_midpoint<Traits>}.
 
 Expects for the third template argument \ccc{CGAL::Tag_true}, if the 
 tree shall be built with extended nodes, and \ccc{CGAL::Tag_false} otherwise.
@@ -50,6 +50,8 @@ with value type \ccc{Point_d*}.}
 \ccCreation
 \ccCreationVariable{tree}
 
+\ccConstructor{Kd_tree(Splitter s=Splitter());}{Constructs an empty $k$-$d$ tree.}
+
 \ccConstructor
 {template <class InputIterator> Kd_tree(InputIterator first, InputIterator beyond, Splitter s=Splitter());}
 {
@@ -61,6 +63,13 @@ The value type of the \ccc{InputIterator} must be \ccc{Point_d}.
 % -----------------------------------
 \ccOperations
 
+\ccMethod{void insert(Point_d p);}
+{Inserts the point \ccc{p} in the $k$-$d$ tree.}
+
+\ccMethod{template <class InputIterator> void insert(InputIterator first, InputIterator beyond);}
+{Inserts the elements from the sequence \ccc{[first, beyond)} in the $k$-$d$ tree.
+The value type of the \ccc{InputIterator} must be \ccc{Point_d}.}
+
 \ccMethod{
 template <class OutputIterator, class FuzzyQueryItem>
 OutputIterator search(OutputIterator it, FuzzyQueryItem q);}
@@ -70,8 +79,7 @@ The types \ccc{FuzzyQueryItem::Point_d} and \ccc{Point_d} must be equivalent.}
 \ccMethod{iterator begin();}{Returns an iterator to the first point in the tree.}
 \ccMethod{iterator end();}{Returns the corresponding past-the-end iterator.}
 
-
-
+\ccMethod{void clear() const;}{Removes all points from the $k$-$d$ tree.}
 
 
 \ccMethod{unsigned int size();}

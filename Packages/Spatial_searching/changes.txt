@@ -1,3 +1,6 @@
+07 September Andreas Fabri
+- Made the Kd_tree lazy which allows to insert points after its construction
+
 12 July 2004 Andreas Fabri
 - Point_container now stores an iterator range instead of a real point list
 
