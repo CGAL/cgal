@@ -5675,7 +5675,7 @@ write_linker_flags()
     # QLIBS = LIBS + special qt libs
     if [ -n "${WINDOWS_COMPILER}" ]; then
 	SECOND_LIB=`lib_option "${QT_SECOND_LIB}"`
-	QLIBS="${LIBS} `lib_option CGALQt` `lib_option qtmain` `lib_option imm32` `lib_option wsock32` `lib_option gdi32` `lib_option user32` `lib_option ole_32` `lib_option winspool` `lib_option commdlg32` ${SECOND_LIB}"
+	QLIBS="${LIBS} `lib_option CGALQt` `lib_option qtmain` `lib_option imm32` `lib_option wsock32` `lib_option gdi32` `lib_option user32` `lib_option ole32` `lib_option winspool` `lib_option commdlg32` ${SECOND_LIB}"
     else
 	QLIBS="${LIBS} `lib_option qt` `lib_option CGALQt`"
     fi
