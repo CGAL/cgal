@@ -71,7 +71,7 @@ template <typename T>
 std::istream& operator>>(std::istream&, Nef_polyhedron_3<T>&); 
 
 template <typename T>
-class Nef_polyhedron_3_rep : public Ref_counted
+class Nef_polyhedron_3_rep
 { 
   typedef Nef_polyhedron_3_rep<T>                     Self;
   friend class Nef_polyhedron_3<T>;
@@ -299,10 +299,11 @@ protected:
   Nef_polyhedron_3( Polyhedron& P, 
 		    SNC_point_locator* _pl = new SNC_point_locator_default) {
     TRACEN("construction from Polyhedron_3");
+    SNC_structure rsnc;
+    *this = Nef_polyhedron_3(rsnc, _pl, false);
     initialize_infibox_vertices(EMPTY);
     polyhedron_3_to_nef_3
       < Polyhedron, SNC_structure, SM_point_locator>( P, snc());
-    pl() = _pl;
     build_external_structure();
     simplify();
   }
@@ -312,7 +313,9 @@ protected:
     bool OK = true;
     std::ifstream in(filename);
     OK = OK && in;
-    
+
+    empty_rep();   
+
     size_t s(strlen(filename));
     if(filename[s-7] == 'n' &&
        filename[s-6] == 'e' &&
@@ -328,6 +331,7 @@ protected:
       OK = OK && snc().load(in);
     if(!OK) 
       std::cerr << "Failure while loading data" << std::endl;
+
     pl() = _pl;
     pl()->initialize(&snc());
   }
@@ -550,6 +554,10 @@ protected:
 
  protected:
   void clone_rep() { *this = Nef_polyhedron_3<T>(snc(), pl()); }
+  void empty_rep() { 
+    SNC_structure rsnc;
+    *this = Nef_polyhedron_3<T>(rsnc, new SNC_point_locator_default);
+  }
 
   Nef_polyhedron_3( const SNC_structure& W, 
 		    SNC_point_locator* _pl = new SNC_point_locator_default,
@@ -996,6 +1004,8 @@ template <typename T>
 Nef_polyhedron_3<T>::
 Nef_polyhedron_3( Content space, SNC_point_locator* _pl) {
   TRACEN("construction from empty or space.");
+  SNC_structure rsnc;
+  empty_rep();
   pl() = _pl;
   if(Infi_box::extended_Kernel()) {
     initialize_infibox_vertices(space);
@@ -1011,6 +1021,7 @@ template <typename T>
 Nef_polyhedron_3<T>::
 Nef_polyhedron_3(const Plane_3& h, Boundary b, SNC_point_locator* _pl) {
   TRACEN("construction from plane "<<h);
+  empty_rep();
   SNC_constructor C(snc(), pl());
   Infi_box::create_vertices_of_box_with_plane(C,h,(b==INCLUDED));
   pl() = _pl;
@@ -1025,6 +1036,7 @@ Nef_polyhedron_3( const SNC_structure& W, SNC_point_locator* _pl,
   CGAL_nef3_assertion( clone_snc == true || clone_pl == false);
   // TODO: granados: define behavior when clone=false
   //  TRACEN("construction from an existing SNC structure (clone="<<clone<<")"); 
+  copy_on_write();
   if(clone_snc)
     snc() = W;
   if(clone_pl) {
