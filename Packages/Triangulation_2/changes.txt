@@ -1,6 +1,9 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+Ver 6.04 (28/1/02)
+- fixed include in constructions_on_weighted_points_cartesian_2.h
+
 Ver 6.03 (24/1/02)
 - removed references to type RT in Weighted_point.h
   replaced in Regular_triangulation_euclidean_traits_2.h
