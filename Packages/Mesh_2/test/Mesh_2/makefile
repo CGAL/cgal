@@ -46,6 +46,9 @@ test_filtred_container$(EXE_EXT): test_filtred_container$(OBJ_EXT)
 clean: \
                    test_filtred_container.clean 
 
+run: all
+	./test_filtred_container
+
 #---------------------------------------------------------------------#
 #                    suffix rules
 #---------------------------------------------------------------------#

@@ -3,12 +3,12 @@
 #include <CGAL/basic.h>
 #include <list>
 #include <map>
-#include <cmath>
 #include <iostream>
 #include <fstream>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Threetuple.h>
 #include <CGAL/Filtred_container.h>
+#include <CGAL/Filtred_circulator.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -31,7 +31,7 @@ public:
       while(!(*this==_end) & !test(*this))
 	this->In::operator++();
     };
-  
+
   Self& operator++() {
     do {
       this->In::operator++();
@@ -46,75 +46,6 @@ public:
   }
 };
 
-template <class Circ, class Pred>
-class Filtred_circulator : public Circ
-{
-  bool is_null;
-  Pred test;
-
-public:
-  typedef Filtred_circulator<Circ,Pred> Self;
-
-
-  Filtred_circulator(const Pred p=Pred()): is_null(true), test(p) {};
-
-  Filtred_circulator(const Self& c): Circ(c), is_null(c.is_null),
-    test(c.test) {};
-
-  Self& operator=(const Self& c)
-    {
-      this->Circ::operator=(c);
-      is_null=c.is_null;
-      test=c.test;
-      return *this;
-    }
-
-  Filtred_circulator(const Circ& c, const Pred p=Pred())
-    : Circ(c), is_null(false), test(p)
-    {
-      if(test(**this))
-	is_null=false;
-      else
-	{
-	  Self end(*this);
-	  do { 
-	    this->Circ::operator++();
-	  } while( !test(**this) && (*this)!=end );
-	  if((*this)==end)
-	    is_null=true;
-	}
-    };
-
-  bool operator==( CGAL_NULL_TYPE p) const {
-    return is_null;
-  }
-
-  bool operator!=( CGAL_NULL_TYPE p) const {
-    return !is_null;
-  }
-
-  bool operator==(const Self& c) const 
-    {
-      std::cerr << "FC::operator==" << std::endl;
-      return is_null==c.is_null && this->Circ::operator==(c);
-    }
-
-  bool operator!=( const Self& c) const { return !(*this == c); }
-
-  Self& operator++() {
-    CGAL_assertion(!is_null);
-    do {
-      this->Circ::operator++();
-    } while( !test(**this) );
-    return *this;
-  }
-
-  Self  operator++(int) {
-    Self tmp= *this;
-    ++*this;
-    return tmp;
-  }
-};
 
 // Tr is a Delaunay constrained triangulation (with intersections or not)
 template <class Tr>
@@ -154,6 +85,7 @@ public:
 //   typedef typename Tr::Constraint             Constraint;
   typedef typename Tr::List_constraints       List_constraints;
 
+public:
   void write(ostream &f);
   void read(istream &f);
   void reset() {
@@ -220,8 +152,8 @@ private:
     Is_this_edge_constrained& 
     operator=(const Is_this_edge_constrained& other)
       {
-	_m=other._m;
-	_v=other._v;
+	_m = other._m;
+	_v = other._v;
 	return *this;
       }
 
@@ -250,13 +182,13 @@ private:
     inline
     bool operator()(const std::pair<FT, Threevertices>& p) const
       {
-	const Threevertices& t=p.second;
+	const Threevertices& t = p.second;
 	const Vertex_handle&
 	  va = t.e0,
 	  vb = t.e1,
 	  vc = t.e2;
 	Face_handle f;
-	return( _m.is_face(va,vb,vc,f) && _m.is_bad(f));
+	return( _m.is_face(va,vb,vc,f) and _m.is_bad(f));
       }
   };
 
@@ -268,24 +200,24 @@ private:
 
   // c_edge_queue: list of encroached constrained edges
   //  warning: some edges could be destroyed, use the same wrapper
-  class Is_really_an_encroached_edge {
+  class Is_really_a_contrained_edge {
     const Self& _m;
   public:
-    explicit Is_really_an_encroached_edge(const Self& m) : _m(m) {};
+    explicit Is_really_a_contrained_edge(const Self& m) : _m(m) {};
     inline
     bool operator()(const Constrained_edge& ce) const
       {
 	Face_handle fh;
 	int i;
-	return _m.is_edge( ce.first, ce.second, fh,i) &&
-	  fh->is_constrained(i) && _m.is_encroached(ce.first, ce.second);
+	return _m.is_edge(ce.first, ce.second, fh,i) and
+	  fh->is_constrained(i);
       }
   };
 
-  const Is_really_an_encroached_edge test_is_encroached;
+  const Is_really_a_contrained_edge test_is_encroached;
   typedef std::list<Constrained_edge> List_of_constraints;
   CGAL::Filtred_container<List_of_constraints,
-    Is_really_an_encroached_edge>       c_edge_queue;
+    Is_really_a_contrained_edge>       c_edge_queue;
 
   typedef std::multimap<Vertex_handle, Cluster> Cluster_map_type;
   Cluster_map_type cluster_map;
@@ -315,11 +247,11 @@ public:
   Mesh_2() : Tr(), test_is_bad(*this), Bad_faces(test_is_bad),
     test_is_encroached(*this), c_edge_queue(test_is_encroached) {};
 
-  Mesh_2(List_constraints& lc, const Geom_traits& gt=Geom_traits())
+  Mesh_2(List_constraints& lc, const Geom_traits& gt = Geom_traits())
     : Tr(gt), test_is_bad(*this), Bad_faces(test_is_bad),
     test_is_encroached(*this), c_edge_queue(test_is_encroached)
     {
-      typename List_constraints::iterator lcit=lc.begin();
+      typename List_constraints::iterator lcit = lc.begin();
       for( ; lcit != lc.end(); ++lcit)
 	{
 	  insert( (*lcit).first, (*lcit).second);
@@ -329,7 +261,7 @@ public:
   
   template <class InputIterator>
   Mesh_2(InputIterator first, InputIterator last, const Geom_traits&
-       gt=Geom_traits()) : Tr(gt), test_is_bad(*this),
+       gt = Geom_traits()) : Tr(gt), test_is_bad(*this),
 	 Bad_faces(test_is_bad), test_is_encroached(*this), 
 	 c_edge_queue(test_is_encroached)
     {
@@ -349,11 +281,10 @@ private:
   void construct_cluster(Vertex_handle v,
 			 Constrained_vertex_circulator begin,
 			 const Constrained_vertex_circulator& end,
-			 Cluster c=Cluster());
+			 Cluster c = Cluster());
   Vertex_handle insert_middle(Face_handle f, int i);
   void cut_cluster_edge(Vertex_handle va, Vertex_handle vb, Cluster&
 			c);
-  // TODO: rewrite cut_cluster_edge
   Vertex_handle insert_in_c_edge(Vertex_handle va, Vertex_handle vb, Point p);
   void fill_edge_queue();
   void fill_facette_map();
@@ -365,7 +296,7 @@ private:
   // update_cluster update the cluster of [va,vb], putting vm instead
   // of vb. If reduction=false, the edge [va,vm] is not set reduced.
   void update_cluster(Cluster& c, Vertex_handle va, Vertex_handle vb,
-		      Vertex_handle vm, bool reduction=true);
+		      Vertex_handle vm, bool reduction = true);
 
 
   inline Edge edge_between(Vertex_handle va, Vertex_handle vb);
@@ -384,14 +315,14 @@ private:
   // if it is in a cluster. If erase=true, the cluster is remove from
   // the cluster map.
   bool get_cluster(Vertex_handle va, Vertex_handle vb, Cluster &c,
-		   bool erase=false);
+		   bool erase = false);
 
 }; // end of Mesh_2
 
 // # used by refine_face and cut_cluster_edge
 template <class Tr>
 bool Mesh_2<Tr>::
-get_cluster(Vertex_handle va, Vertex_handle vb, Cluster &c, bool erase=false)
+get_cluster(Vertex_handle va, Vertex_handle vb, Cluster &c, bool erase)
 {
   std::cerr << "----->get_cluster(...) {count=" << cluster_map.size()
 	    << "} = ";
@@ -426,7 +357,7 @@ write(ostream &f)
     eit++;
   }
   f<<nedges<<endl;
-  eit=finite_edges_begin();
+  eit = finite_edges_begin();
   while(eit!=finite_edges_end()) {
     if((*eit).first->is_constrained((*eit).second)) {
       f<<(*eit).first->vertex(cw((*eit).second))->point().x()<<" ";
@@ -446,7 +377,7 @@ read(istream &f)
   int nedges = 0;
   clear();
   f>>nedges;
-  for(int n=0; n<nedges; n++) {
+  for(int n = 0; n<nedges; n++) {
     FT x1, y1, x2, y2;
     f>>x1>>y1>>x2>>y2;
     insert(Point(x1, y1), Point(x2, y2));
@@ -463,7 +394,7 @@ fill_edge_queue()
     {
       Vertex_handle va = (*ei).first->vertex(cw((*ei).second));
       Vertex_handle vb = (*ei).first->vertex(ccw((*ei).second));
-      if((*ei).first->is_constrained((*ei).second) && 
+      if((*ei).first->is_constrained((*ei).second) and 
 	 is_encroached(va, vb))
 	{
 	  c_edge_queue.push_back(make_pair(va, vb));
@@ -479,9 +410,9 @@ aspect_ratio(const Face_handle fh) const
   Compute_squared_minimum_sine_2 squared_sine = 
     geom_traits().compute_squared_minimum_sine_2_object();
   const Vertex_handle&
-    va=fh->vertex(0),
-    vb=fh->vertex(1),
-    vc=fh->vertex(2);
+    va = fh->vertex(0),
+    vb = fh->vertex(1),
+    vc = fh->vertex(2);
   return squared_sine(va->point(), vb->point(), vc->point());
 }
   
@@ -497,9 +428,9 @@ fill_facette_map()
       if( is_bad(fit))
 	{
 	  const Vertex_handle&
-	    va=fit->vertex(0),
-	    vb=fit->vertex(1),
-	    vc=fit->vertex(2);
+	    va = fit->vertex(0),
+	    vb = fit->vertex(1),
+	    vc = fit->vertex(2);
 	  Bad_faces.insert(make_pair(aspect_ratio(fit),
 				     Threevertices(va,vb,vc)));
 	}
@@ -563,37 +494,41 @@ refine_face(Face_handle f)
   // For the moment, we don't use the zone_of_pc.
   // It will be used when we will destroyed old bad faces in Bad_faces
 
-  bool split_the_face=true;
+  bool split_the_face = true;
+  bool keep_the_face_bad = false;
 
-  for(List_of_edges::iterator it=zone_of_pc_boundary.begin();
-      it!=zone_of_pc_boundary.end();
+  for(List_of_edges::iterator it = zone_of_pc_boundary.begin();
+      it!= zone_of_pc_boundary.end();
       it++)
     {
-      const Face_handle& fh=it->first;
-      const int& i=it->second;
+      const Face_handle& fh = it->first;
+      const int& i = it->second;
       const Vertex_handle&
-	va=fh->vertex(cw(i)),
-	vb=fh->vertex(ccw(i));
-      if(fh->is_constrained(i) && is_encroached(va,vb,pc))
+	va = fh->vertex(cw(i)),
+	vb = fh->vertex(ccw(i));
+      if(fh->is_constrained(i) and is_encroached(va,vb,pc))
 	{
 	  std::cerr << "The circumcenter encroaches [ ("
 		    << va->point() << "), (" << vb->point() 
 		    << ") ]" << std::endl;
 
-	  split_the_face=false;
+	  split_the_face = false;
 	  Cluster c,c2;
 	  bool 
-	    is_cluster_at_va=get_cluster(va,vb,c),
-	    is_cluster_at_vb=get_cluster(vb,va,c2);
-	  if( ( is_cluster_at_va &&  is_cluster_at_vb) || 
-	      (!is_cluster_at_va && !is_cluster_at_vb) )
+	    is_cluster_at_va = get_cluster(va,vb,c),
+	    is_cluster_at_vb = get_cluster(vb,va,c2);
+	  if( ( is_cluster_at_va and  is_cluster_at_vb) or 
+	      (!is_cluster_at_va and !is_cluster_at_vb) )
+	    {
 	      // two clusters or no cluster
 	      c_edge_queue.push_back(Constrained_edge(va,vb));
+	      keep_the_face_bad = true;
+	    }
 	  else
 	    {
 	      // only one cluster: c or c2
 	      if(is_cluster_at_vb)
-		c=c2;
+		c = c2;
 // What Shewchuck says:
 // - If the cluster is not reduced (all segments don't have the same
 // length as [va,vb]), then split the edge
@@ -607,12 +542,21 @@ refine_face(Face_handle f)
 			<< shortest_edge_squared_length(f) 
 			<< ")" << std::endl;
 
-	      if( !c.reduced() || 
+	      if( !c.reduced() or 
 		  c.rmin >= shortest_edge_squared_length(f) )
-		c_edge_queue.push_back(Constrained_edge(va,vb));
+		{
+		  std::cerr << " => cut!" << std::endl;
+		  c_edge_queue.push_back(Constrained_edge(va,vb));
+		  keep_the_face_bad = true;
+		}
 	    }
 	}
     }; // after here c_edge_queue contains edges encroached by pc
+
+  const Vertex_handle&
+    va = f->vertex(0),
+    vb = f->vertex(1),
+    vc = f->vertex(2);
 
   if(split_the_face)
     {
@@ -622,6 +566,12 @@ refine_face(Face_handle f)
       if(lt!=OUTSIDE_CONVEX_HULL)
 	split_face(f, pc);
     }
+  else
+    if(keep_the_face_bad)
+      {
+	Bad_faces.insert(make_pair(aspect_ratio(f),
+				   Threevertices(va,vb,vc)));
+      }
 }
 
 // # used by refine_face
@@ -666,7 +616,7 @@ create_clusters_of_vertex(Vertex_handle v)
   ++next; // next is always just after current.
   if(current == next) return;
 
-  bool in_a_cluster=false;
+  bool in_a_cluster = false;
   do
     {
       std::cerr << "Angle: [ (" <<
@@ -681,8 +631,8 @@ create_clusters_of_vertex(Vertex_handle v)
 	  if(!in_a_cluster)
 	    {
 	      // at this point, current is the beginning of a cluster
-	      in_a_cluster=true;
-	      cluster_begin=current;
+	      in_a_cluster = true;
+	      cluster_begin = current;
 	    }
 	}
       else
@@ -691,7 +641,7 @@ create_clusters_of_vertex(Vertex_handle v)
 	    // at this point, current is the end of a cluster and
 	    // cluster_begin is its beginning
  	    construct_cluster(v, cluster_begin, current);
-	    in_a_cluster=false;
+	    in_a_cluster = false;
 	  }
       ++next;
       ++current;
@@ -716,58 +666,68 @@ construct_cluster(Vertex_handle v,
 {
   if(c.vertices.empty())
     {
-      c.is_reduced=false;
+      c.is_reduced = false;
       // c.rmin is not initialized because
       // is_reduced=false!
       c.minimum_squared_length = 
 	squared_distance(v->point(), begin->point());
       Constrained_vertex_circulator second(begin);
       ++second;
-      c.smallest_angle.first=begin;
-      c.smallest_angle.second=second;
+      c.smallest_angle.first = begin;
+      c.smallest_angle.second = second;
       std::cerr << "New cluster!" << std::endl;
     }
   else
     std::cerr << "Clusters merge!" << std::endl;
 
+  bool all_edges_in_cluster=false;
+  if(begin==end)
+    all_edges_in_cluster=true;
+
   Point& vp = v->point();
   
   Compute_squared_distance_2 squared_distance = 
     geom_traits().compute_squared_distance_2_object();
-  
+
   FT greatest_cosine = 
     squared_cosine_of_angle_times_4(c.smallest_angle.first->point(),
 				    v->point(),
 				    c.smallest_angle.second->point());
+
   Constrained_vertex_circulator next(begin);
   ++next;
   do
     {
-      c.vertices[begin]=false;
+      c.vertices[begin] = false;
       std::cerr << "Cluster edge: [ (" << v->point() << "), ("
 		<< begin->point() << ") ]" <<
 	std::endl;
-      Squared_length l=squared_distance(vp,
+      Squared_length l = squared_distance(vp,
 					begin->point());
-      c.minimum_squared_length=
+      c.minimum_squared_length = 
 	std::min(l,c.minimum_squared_length);
       
-      if(begin!=end)
+      if(all_edges_in_cluster or begin!=end)
 	{
 	  FT cosine = 
 	    squared_cosine_of_angle_times_4(begin->point(),
 					    v->point(),
 					    next->point());
-	  if(l>greatest_cosine)
+	  std::cerr << "cosine=" << cosine << std::endl;
+	  if(cosine>greatest_cosine)
 	    {
-	      greatest_cosine=cosine;
-	      c.smallest_angle.first=begin;
-	      c.smallest_angle.second=next;
+	      greatest_cosine = cosine;
+	      c.smallest_angle.first = begin;
+	      c.smallest_angle.second = next;
 	    }
 	}
     }
-  while(++next,begin++!=end);
+  while(next++,begin++!=end);
   cluster_map.insert(make_pair(v,c));
+
+  std::cerr << "smallest angle: [ (" << c.smallest_angle.first->point()
+	    << "), (" << c.smallest_angle.second->point() << ") ]" 
+	    << std::endl;
 
   std::cerr << "Number of edges in this cluster: " <<
     c.vertices.size() << std::endl;
@@ -811,20 +771,20 @@ cut_cluster_edge(Vertex_handle va, Vertex_handle vb, Cluster& c)
 	b = vb->point(),
 	m = midpoint(a, b);
 
-      Vector_2 v=vector(a,m);
-      v=scaled_vector(v,CGAL_NTS sqrt(c.minimum_squared_length /
+      Vector_2 v = vector(a,m);
+      v = scaled_vector(v,CGAL_NTS sqrt(c.minimum_squared_length /
 				      squared_distance(a,b)));
       Point 
 	i = translate(a,v),
 	i2(i);
 	
       do {
-	i=translate(a,v);
-	v=scaled_vector(v,FT(2));
-	i2=translate(a,v);
+	i = translate(a,v);
+	v = scaled_vector(v,FT(2));
+	i2 = translate(a,v);
       }	while(squared_distance(a,i2) <= squared_distance(a,m));
       if( squared_distance(i,m) > squared_distance(m,i2) )
-	i=i2;
+	i = i2;
       //here i is the best point for splitting
       Face_handle fh;
       int index;
@@ -849,8 +809,8 @@ insert_middle(Face_handle f, int i)
     midpoint = geom_traits().construct_midpoint_2_object();
 
   Vertex_handle
-    va=f->vertex(cw(i)),
-    vb=f->vertex(ccw(i));
+    va = f->vertex(cw(i)),
+    vb = f->vertex(ccw(i));
 
   Point mp = midpoint(va->point(), vb->point());
 
@@ -865,7 +825,6 @@ insert_middle(Face_handle f, int i)
 }
 
 //update the encroached segments list
-// # TODO: rewrite this!!
 template <class Tr>
 void Mesh_2<Tr>::
 update_c_edge_queue(Vertex_handle va, Vertex_handle vb, Vertex_handle vm)
@@ -873,11 +832,11 @@ update_c_edge_queue(Vertex_handle va, Vertex_handle vb, Vertex_handle vm)
   Face_circulator fc = incident_faces(vm), fcbegin(fc);
 
   do {
-    for(int i=0; i<3; i++) {
-      Vertex_handle v1=fc->vertex(cw(i));
-      Vertex_handle v2=fc->vertex(ccw(i));
-      if( fc->is_constrained(i) && !is_infinite(v1) &&
-	  !is_infinite(v2) && is_encroached(v1, v2) )
+    for(int i = 0; i<3; i++) {
+      Vertex_handle v1 = fc->vertex(cw(i));
+      Vertex_handle v2 = fc->vertex(ccw(i));
+      if( fc->is_constrained(i) and !is_infinite(v1) and
+	  !is_infinite(v2) and is_encroached(v1, v2) )
 	c_edge_queue.push_back(Constrained_edge(v1, v2));
     }
     ++fc;
@@ -890,8 +849,6 @@ update_c_edge_queue(Vertex_handle va, Vertex_handle vb, Vertex_handle vm)
   if(is_encroached(vb, vm)) {
     c_edge_queue.push_back(Constrained_edge(vb, vm));
   }
- 
-
 }
 
 template <class Tr>
@@ -903,9 +860,9 @@ update_facette_map(Vertex_handle v)
     if(!is_infinite(fc)) {
       if(is_bad(fc)) {
 	const Vertex_handle&
-	  va=fc->vertex(0),
-	  vb=fc->vertex(1),
-	  vc=fc->vertex(2);
+	  va = fc->vertex(0),
+	  vb = fc->vertex(1),
+	  vc = fc->vertex(2);
 	
 	Bad_faces.insert(make_pair(aspect_ratio(fc),
 				   Threevertices(va,vb,vc)));
@@ -923,29 +880,35 @@ update_cluster(Cluster& c, Vertex_handle va,Vertex_handle vb,
   Compute_squared_distance_2 squared_distance = 
     geom_traits().compute_squared_distance_2_object();
   c.vertices.erase(vb);
-  c.vertices[vm]=reduction;
+  c.vertices[vm] = reduction;
   
   if(vb==c.smallest_angle.first)
-    c.smallest_angle.first=vm;
+    c.smallest_angle.first = vm;
   if(vb==c.smallest_angle.second)
-    c.smallest_angle.second=vm;
+    c.smallest_angle.second = vm;
 
-  FT l=squared_distance(va->point(),vm->point());
+  FT l = squared_distance(va->point(),vm->point());
   if(l<c.minimum_squared_length)
-    c.minimum_squared_length=l;
+    c.minimum_squared_length = l;
 
   if(!c.reduced())
     {
-      typename Cluster::Vertices_map::iterator it=c.vertices.begin();
-      while(it!=c.vertices.end() && c.reduced(it->first))
+      typename Cluster::Vertices_map::iterator it = c.vertices.begin();
+      while(it!=c.vertices.end() and c.reduced(it->first))
 	++it; // TODO: use std::find and an object class
       if(it==c.vertices.end())
-	c.is_reduced=true;
+	c.is_reduced = true;
     }
 
   if(c.reduced())
-    c.rmin=squared_distance(c.smallest_angle.first->point(),
-			c.smallest_angle.second->point())/FT(2);
+    {
+      c.rmin = squared_distance(c.smallest_angle.first->point(),
+				c.smallest_angle.second->point())/FT(4);
+      std::cerr << "rmin=" << c.rmin << std::endl;
+      std::cerr << "smallest angle: [ (" << c.smallest_angle.first->point()
+		<< "), (" << c.smallest_angle.second->point() << ") ]" 
+		<< std::endl;
+    }
   cluster_map.insert(make_pair(va,c));
 }
 
@@ -954,21 +917,21 @@ bool Mesh_2<Tr>::
 is_encroached(const Vertex_handle va, const Vertex_handle vb,
 	      const Point p) const
 {
-  Angle_2 angle=geom_traits().angle_2_object();
+  Angle_2 angle = geom_traits().angle_2_object();
 
   return angle(va->point(), p, vb->point())==OBTUSE;
 }
 
-// NOT ALL VERTICES, ONLY THE TWO NEIGHBORS
+// WARNING, TODO: NOT ALL VERTICES, ONLY THE TWO NEIGHBORS
 template <class Tr>
 bool Mesh_2<Tr>::
 is_encroached(const Vertex_handle va, const Vertex_handle vb) const
 {
-  Finite_vertices_iterator vi=finite_vertices_begin();
+  Finite_vertices_iterator vi = finite_vertices_begin();
   while(vi!=finite_vertices_end())
     {
-      if(is_encroached(va, vb, vi->point())&&
-	 va!=Vertex_handle(vi)&&
+      if(is_encroached(va, vb, vi->point()) and
+	 va!=Vertex_handle(vi) and
 	 vb!=Vertex_handle(vi))
 	{
 	  return true;
@@ -989,9 +952,9 @@ bool Mesh_2<Tr>::
 is_bad(const Face_handle f) const
 {
   const Point&
-    a=f->vertex(0)->point(),
-    b=f->vertex(1)->point(),
-    c=f->vertex(2)->point();
+    a = f->vertex(0)->point(),
+    b = f->vertex(1)->point(),
+    c = f->vertex(2)->point();
 
   return geom_traits().is_bad_object()(a,b,c);
 }
@@ -1004,8 +967,8 @@ is_small_angle(const Point& pleft,
 	       const Point& pmiddle,
 	       const Point& pright) const
 {
-  Angle_2 angle=geom_traits().angle_2_object();
-  Orientation_2 orient=geom_traits().orientation_2_object();
+  Angle_2 angle = geom_traits().angle_2_object();
+  Orientation_2 orient = geom_traits().orientation_2_object();
   
   if( angle(pleft, pmiddle, pright)==OBTUSE )
     return false;
@@ -1026,7 +989,8 @@ is_small_angle(const Point& pleft,
 }
 
 // # used by: is_small_angle, create_clusters_of_vertex
-// compute 4 times the square of the cosine of the angle (ab,ac)
+// # compute 4 times the square of the cosine of the angle (ab,ac)
+// # WARNING, TODO: this is not exact with doubles and can lead to crashes!!
 template <class Tr>
 typename Mesh_2<Tr>::FT Mesh_2<Tr>::
 squared_cosine_of_angle_times_4(const Point& pb, const Point& pa,
@@ -1040,7 +1004,7 @@ squared_cosine_of_angle_times_4(const Point& pb, const Point& pa,
     b = squared_distance(pa, pb),
     c = squared_distance(pa, pc);
 
-  const FT num=a-(b+c);
+  const FT num = a-(b+c);
 
   return (num*num)/(b*c);
 }
@@ -1059,9 +1023,9 @@ shortest_edge_squared_length(Face_handle f)
     pb = (f->vertex(1))->point(),
     pc = (f->vertex(2))->point();
   FT a, b, c;
-  a =squared_distance(pb, pc);
-  b =squared_distance(pc, pa);
-  c =squared_distance(pa, pb);
+  a = squared_distance(pb, pc);
+  b = squared_distance(pc, pa);
+  c = squared_distance(pa, pb);
   return (min(a, min(b, c)));
 }
 
@@ -1071,10 +1035,11 @@ void Mesh_2<Tr>::
 refine()
 {
   init();
-  while(! (c_edge_queue.empty() && Bad_faces.empty()) )
+  while(! (c_edge_queue.empty() and Bad_faces.empty()) )
     {
       conform();
-      process_one_face();
+      if ( !Bad_faces.empty() )
+	process_one_face();
     }
 }
 
@@ -1108,7 +1073,7 @@ inline
 void Mesh_2<Tr>::
 process_one_edge()
 {
-  Constrained_edge ce=c_edge_queue.front();
+  Constrained_edge ce = c_edge_queue.front();
   c_edge_queue.pop_front();
 
   refine_edge(ce.first, ce.second);
@@ -1124,7 +1089,7 @@ process_one_face()
     va = t.e0,
     vb = t.e1,
     vc = t.e2;
-  
+
   std::cerr << "->refine_face( [ "
 	    << va->point() << "], ["
 	    << vb->point() << "], ["
@@ -1151,4 +1116,3 @@ CGAL_END_NAMESPACE
 
 
 #endif
-

@@ -1,8 +1,14 @@
+.PHONY: all run test clean update
+
+
 all:
 	${MAKE} -C demo/Mesh_2 mesh_demo
 
 run: all
 	demo/Mesh_2/mesh_demo
+
+test:
+	${MAKE} -C test/Mesh_2 run
 
 # clean all object files
 clean: 

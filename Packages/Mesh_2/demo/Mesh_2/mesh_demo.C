@@ -123,6 +123,8 @@ public:
       widget->attach(show_points);
       widget->attach(show_mouse);
 
+      show_circles->deactivate();
+
       get_point = new CGAL::Qt_widget_get_point<K>();
       widget->attach(get_point);
       get_point->deactivate();
@@ -390,7 +392,7 @@ public slots:
   void openTriangulation()
     {    
       QString s( QFileDialog::getOpenFileName( QString::null,
-        "Constrained edges (*.edg)", this ) );
+        "Constrained edges (*.edg);;All files (*)", this ) );
       if ( s.isEmpty() )
         return;
       ifstream f(s);
