@@ -1,3 +1,7 @@
+4 August 2004 Sylvain Pion
+- Filtered_kernel.tex : re-enable some of my documentation shamefully
+  commented out by Andreas, and add a note on CGAL_NO_STATIC_FILTERS.
+
 20 July 2004 Sylvain Pion
 - Deprecate Construct_supporting_line_[23] (redundant with Construct_line_[23]).
 

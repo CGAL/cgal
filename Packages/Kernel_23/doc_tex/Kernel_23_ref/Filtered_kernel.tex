@@ -53,8 +53,10 @@ typedef CGAL::Filtered_kernel<CK> K;
 
 \end{verbatim}
 
-%\ccImplementation
-%The implementation uses \ccc{CGAL::Filtered_predicate<EP, FP, C2E, C2F>} over
-%each predicate of the kernel traits interface.
+\ccImplementation
+The implementation uses \ccc{CGAL::Filtered_predicate<EP, FP, C2E, C2F>} over
+each predicate of the kernel traits interface.  Additionally, faster static
+filters are used for a few selected critical predicates.  The static filters
+can be disabled by compiling with \ccc{-DCGAL_NO_STATIC_FILTERS}.
 
 \end{ccRefClass}
