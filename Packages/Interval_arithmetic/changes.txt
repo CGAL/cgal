@@ -1,7 +1,7 @@
 Changes done to the Interval Arithmetic package.
 
 Version 4.115 on ?? August 2001
-- New class Profile_counter.
+- New class Profile_counter.  Use it in the filtered predicates.
 
 ========================== CGAL 2.3 =======================
 
