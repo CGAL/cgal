@@ -27,7 +27,7 @@ which must be a model of \ccc{ApolloniusGraphDataStructure_2}.
 The second template argument defaults to
 \ccc{CGAL::Apollonius_graph_data_structure_2< 
 CGAL::Apollonius_graph_vertex_base_2<Gt,true>,
-CGAL::Apollonius_graph_face_base_2<Gt> >}.
+CGAL::Triangulation_face_base_2<Gt> >}.
 
 \ccInclude{CGAL/Apollonius_graph_2.h}
 
@@ -70,52 +70,59 @@ Some iterators (the \ccc{All} iterators ) allow to visit finite or
 infinite features while the others (the \ccc{Finite} iterators) visit only
 finite features. Circulators visit both infinite and finite features.
 
-\ccThree{typedef std::pair<Face_handle, int>}{}{the apollonius graph,
-the apollonius graph, the graph}
-%\ccThreeToTwo
+\ccThree{typedef Data_structure::Vertex_circulator}
+{Vertex_circulator+}{}
 %
 % MK:: change the edge definition as follows?
-\ccTypedef{typedef std::pair<Face_handle, int> Edge;} {the edge type.
+\ccTypedef{typedef Data_structure::Edge Edge;} {the edge type.
 The \ccc{Edge(f,i)} is the edge common to faces \ccc{f} and 
 \ccc{f.neighbor(i)}. It is also the edge joining the vertices
 \ccc{vertex(cw(i))} and \ccc{vertex(ccw(i))} of \ccc{f}.
-\ccPrecond{\ccc{i} must be \ccc{0}, \ccc{1} or \ccc{2}.}
-}
-%
-\ccTwo{Apollonius_graph_2<Gt,Agds>::Finite_vertices_iterator+}
-{}
-%
+\ccPrecond{\ccc{i} must be \ccc{0}, \ccc{1} or \ccc{2}.}}
 \ccGlue
-\ccNestedType{Vertex_handle}{A type for a handle to a vertex.}
+\ccTypedef{typedef Data_structure::Vertex_handle Vertex_handle;}
+{A type for a handle to a vertex.}
 \ccGlue
-\ccNestedType{Face_handle}{A type for a handle to a face.}
+\ccTypedef{typedef Data_structure::Face_handle Face_handle;}
+{A type for a handle to a face.}
 \ccGlue
-\ccNestedType{Vertex_circulator}
+\ccTypedef{typedef Data_structure::Vertex_circulator Vertex_circulator;}
 {A type for a circulator over vertices incident to a given vertex.}
 \ccGlue
-\ccNestedType{Face_circulator}
+\ccTypedef{typedef Data_structure::Face_circulator Face_circulator;}
 {A type for a circulator over faces incident to a given vertex.}
 \ccGlue
-\ccNestedType{Edge_circulator}
+\ccTypedef{typedef Data_structure::Edge_circulator Edge_circulator;}
 {A type for a circulator over edges incident to a given vertex.}
+\ccThree{typedef Data_structure::Finite_vertices_iterator}
+{Finite_vertices_iterator+}{}
 \ccGlue
-\ccNestedType{All_vertices_iterator}
+\ccTypedef{typedef Data_structure::All_vertices_iterator
+  All_vertices_iterator;}
 {A type for an iterator over all vertices.}
 \ccGlue
-\ccNestedType{Finite_vertices_iterator}
+\ccTypedef{typedef Data_structure::Finite_vertices_iterator
+  Finite_vertices_iterator;}
 {A type for an iterator over finite vertices.}
 \ccGlue
-\ccNestedType{All_faces_iterator}
+\ccTypedef{typedef Data_structure::All_faces_iterator
+  All_faces_iterator;}
 {A type for an iterator over all faces.}
 \ccGlue
-\ccNestedType{Finite_faces_iterator}
+\ccTypedef{typedef Data_structure::Finite_faces_iterator
+  Finite_faces_iterator;}
 {A type for an iterator over finite faces.}
 \ccGlue
-\ccNestedType{All_edges_iterator}
+\ccTypedef{typedef Data_structure::All_edges_iterator
+  All_edges_iterator;}
 {A type for an iterator over all edges.}
 \ccGlue
-\ccNestedType{Finite_edges_iterator}
+\ccTypedef{typedef Data_structure::Finite_edges_iterator
+  Finite_edges_iterator;}
 {A type for an iterator over finite edges.}
+\ccGlue
+\ccTypedef{typedef Data_structure::size_type size_type;}
+{An unsigned integral type.}
 
 
 In addition to iterators and circulators for vertices and faces,
@@ -123,6 +130,8 @@ iterators for sites are provided. In particular there are iterators
 for the entire set of sites, the hidden sites and the visible sites of
 the Apollonius graph.
 
+\ccTwo{Apollonius_graph_2<Gt,Agds>::Visible_sites_iterator+}
+{}
 
 \ccGlue
 \ccNestedType{Sites_iterator}
@@ -171,7 +180,7 @@ operator=(const Apollonius_graph_2<Gt,Agds>& other);}
 
 \ccAccessFunctions
 % MK:: in the following copy text from TDS
-\ccThree{Vertex_handle}{ag.number_of_vertices()+}{}
+\ccThree{Vertex_handle}{ag.number_of_hidden_vertices()+}{}
 %
 \ccMethod{Geom_traits geom_traits();}
 {Returns a reference to the Apollonius graph traits object.}
@@ -179,10 +188,16 @@ operator=(const Apollonius_graph_2<Gt,Agds>& other);}
 \ccMethod{int dimension();}
 {Returns the dimension of the Apollonius graph.}
 \ccGlue
-\ccMethod{int number_of_vertices();}
+\ccMethod{size_type number_of_vertices();}
 {Returns the number of finite vertices.}
 \ccGlue
-\ccMethod{int number_of_faces();}
+\ccMethod{size_type number_of_visible_sites();}
+{Returns the number of visible sites.}
+\ccGlue
+\ccMethod{size_type number_of_hidden_sites();}
+{Returns the number of hidden sites.}
+\ccGlue
+\ccMethod{size_type number_of_faces();}
 	 {Returns the number of faces (both finite and infinite) of the
 	   Apollonius graph.}
 \ccGlue
@@ -557,12 +572,12 @@ be preferred to \ccVar\ccc{ = other} or to \ccVar\ccc{(other)} if
 \ccc{ApolloniusGraphTraits_2}\\
 \ccc{ApolloniusGraphDataStructure_2}\\
 \ccc{ApolloniusGraphVertexBase_2}\\
-\ccc{ApolloniusGraphFaceBase_2}\\
+\ccc{TriangulationFaceBase_2}\\
 \ccc{CGAL::Apollonius_graph_traits_2<K,Method_tag>}\\
 \ccc{CGAL::Apollonius_graph_filtered_traits_2<CK,CM,EK,EM,FK,FM>}\\
 \ccc{CGAL::Apollonius_graph_data_structure_2<Vb,Fb>}\\
 \ccc{CGAL::Apollonius_graph_vertex_base_2<Gt,StoreHidden>}\\
-\ccc{CGAL::Apollonius_graph_face_base_2<Gt>}
+\ccc{CGAL::Triangulation_face_base_2<Gt>}
 
 \end{ccRefClass}
 
