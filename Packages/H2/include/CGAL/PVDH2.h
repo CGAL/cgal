@@ -146,6 +146,9 @@ public:
             DirectionH2(const DirectionH2<R>& d );
             DirectionH2(const PointH2<R> & p );
             DirectionH2(const VectorH2<R> & v );
+            DirectionH2(const LineH2<R> & l );
+            DirectionH2(const RayH2<R> & r );
+            DirectionH2(const SegmentH2<R> & s );
             DirectionH2(const RT& x, const RT& y);
             DirectionH2(const RT& x, const RT& y, const RT& w );
 
@@ -417,6 +420,21 @@ template <class R >
 CGAL_KERNEL_CTOR_INLINE
 DirectionH2<R>::DirectionH2(const VectorH2<R> & v )
   : Direction_handle_2_ ( v) {}
+
+template <class R >
+CGAL_KERNEL_CTOR_INLINE
+DirectionH2<R>::DirectionH2(const LineH2<R> & l )
+  : Direction_handle_2_ ( l.direction()) {}
+
+template <class R >
+CGAL_KERNEL_CTOR_INLINE
+DirectionH2<R>::DirectionH2(const RayH2<R> & r )
+  : Direction_handle_2_ ( r.direction()) {}
+
+template <class R >
+CGAL_KERNEL_CTOR_INLINE
+DirectionH2<R>::DirectionH2(const SegmentH2<R> & s )
+  : Direction_handle_2_ ( s.direction()) {}
 
 template <class R >
 CGAL_KERNEL_CTOR_INLINE

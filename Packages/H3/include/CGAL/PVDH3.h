@@ -172,6 +172,15 @@ class DirectionH3
   DirectionH3(const VectorH3<R> & v )
     : Direction_handle_3_(v) {}
 
+  DirectionH3(const LineH3<R> & l )
+    : Direction_handle_3_(l.direction()) {}
+
+  DirectionH3(const RayH3<R> & r )
+    : Direction_handle_3_(r.direction()) {}
+
+  DirectionH3(const SegmentH3<R> & s )
+    : Direction_handle_3_(s.direction()) {}
+
   DirectionH3(const RT& x, const RT& y,
               const RT& z, const RT& w = RT(1) );
 
