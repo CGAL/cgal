@@ -781,8 +781,13 @@ SNC_io_parser<EW>::SNC_io_parser(std::ostream& os, SNC_structure& W,
   Vertex_iterator vi; 
   CGAL_forall_vertices(vi, *this->sncp()) {
     VL.push_back(vi);
-    if(sorted)
+    if(sorted) {
       point(vi) = normalized(point(vi));
+      if(vi->has_shalfloop() && 
+	 sort_sloops<SNC_structure>(*this->sncp())(vi->shalfloop()->twin(),
+						   vi->shalfloop()))
+	vi->shalfloop() = vi->shalfloop()->twin();
+    }
   }
   if(sorted) {
     VL.sort(sort_vertices<SNC_structure>(*this->sncp()));
