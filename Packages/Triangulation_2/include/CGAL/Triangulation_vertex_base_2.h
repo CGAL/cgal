@@ -45,7 +45,11 @@ public:
         return _f;
     }
     
-
+  //the following trivial is_valid to allow
+  // the user of derived face base classes 
+  // to add their own purpose checking
+  bool is_valid() const
+  {return true;}
 
 private:
         Point _p;

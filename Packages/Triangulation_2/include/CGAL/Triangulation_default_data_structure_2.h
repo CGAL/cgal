@@ -442,6 +442,8 @@ public:
             Vertex_iterator it = vertices_begin();
     
             while(it != vertices_end()){
+	        result = result && it->is_valid(verbose,level);
+		CGAL_triangulation_assertion( it->is_valid(verbose, level) );
                 ++vertex_count;
                 ++it;
             }

@@ -126,7 +126,12 @@ public:
     return Edge_circulator(this, f);
   }
     
-
+   bool is_valid(bool verbose = false, int level = 0) const
+  {
+    bool result = Vb::is_valid();
+    result = result && face()->has_vertex(this);
+    return result;
+  }
 };
 
 #endif CGAL_TRIANGULATION_DS_VERTEX_2_H
