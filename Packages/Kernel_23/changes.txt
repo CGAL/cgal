@@ -1,3 +1,7 @@
+20 September 2004 Sylvain Pion
+- Exact_predicates_exact_constructions_kernel : use Filtered_kernel on top.
+- test/Filtered_cartesian : test Exact_predicates_exact_constructions_kernel.
+
 17 September 2004 Sylvain Pion
 - #include <CGAL/Origin.h> instead of declaring types.
 

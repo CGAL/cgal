@@ -25,6 +25,7 @@
 #define CGAL_EXACT_PREDICATES_EXACT_CONSTRUCTIONS_KERNEL_H
 
 #include <CGAL/Simple_cartesian.h>
+#include <CGAL/Filtered_kernel.h>
 #include <CGAL/Lazy_exact_nt.h>
 
 #ifdef CGAL_USE_GMP
@@ -37,10 +38,10 @@
 CGAL_BEGIN_NAMESPACE
 
 #ifdef CGAL_USE_GMP
-typedef Simple_cartesian< Lazy_exact_nt< Gmpq > >              
+typedef Filtered_kernel<Simple_cartesian<Lazy_exact_nt<Gmpq > > >
         Exact_predicates_exact_constructions_kernel;
 #else
-typedef Simple_cartesian< Lazy_exact_nt< Quotient<MP_Float> > >
+typedef Filtered_kernel<Simple_cartesian<Lazy_exact_nt<Quotient<MP_Float> > > >
         Exact_predicates_exact_constructions_kernel;
 #endif
 

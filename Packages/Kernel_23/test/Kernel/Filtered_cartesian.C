@@ -24,6 +24,8 @@
 #include <CGAL/Quotient.h>
 #include <CGAL/MP_Float.h>
 
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+
 #include <cassert>
 
 #include "CGAL/Precise_numbers.h"
@@ -50,15 +52,18 @@
 int
 main()
 {
-  typedef   CGAL::Cartesian<double>                               Clsdb;
-  // typedef   CGAL::Cartesian<CGAL::Quotient<Precise_integer> >     Clsb;
-  typedef   CGAL::Cartesian<CGAL::Quotient<CGAL::MP_Float> >      Clsb;
-  typedef   CGAL::Filtered_kernel<Clsdb>                          Clsd;
-  typedef   CGAL::Filtered_kernel<Clsb>                           Cls;
+  typedef CGAL::Cartesian<double>                               Clsdb;
+  typedef CGAL::Filtered_kernel<Clsdb>                          Clsd;
+
+  // typedef CGAL::Cartesian<CGAL::Quotient<Precise_integer> >     Clsb;
+  // typedef CGAL::Cartesian<CGAL::Quotient<CGAL::MP_Float> >      Clsb;
+  // typedef CGAL::Filtered_kernel<Clsb>                           Cls;
+  typedef CGAL::Exact_predicates_exact_constructions_kernel       Cls;
 
   std::cout <<
    // "Testing with Filtered_kernel<Cartesian<Quotient<Precise_integer>>>:"
-   "Testing with Filtered_kernel<Cartesian<Quotient<MP_Float>>>:"
+   // "Testing with Filtered_kernel<Cartesian<Quotient<MP_Float>>>:"
+   "Testing with Exact_predicates_exact_constructions_kernel:"
             << std::endl;
   std::cout << "Testing IO with F_k<Cartesian<double>>:" << std::endl;
   _test_io( Clsd() );
