@@ -12,6 +12,7 @@
 
 #ifdef CGAL_USE_GMP
 #include <CGAL/Gmpz.h>
+#include <CGAL/Gmpq.h>
 #endif // CGAL_USE_GMP
 
 #ifdef CGAL_USE_GMPXX
@@ -87,6 +88,7 @@ int main()
   // GMP based NTs
 #ifdef CGAL_USE_GMP
   TESTIT(CGAL::Gmpz, "Gmpz")
+  TESTIT(CGAL::Gmpq, "Gmpq")
 #endif // CGAL_USE_GMP
 #ifdef CGAL_USE_GMPXX
   TESTIT(mpz_class, "mpz_class")

@@ -34,6 +34,7 @@
 
 #ifdef CGAL_USE_GMP
 #include <CGAL/Gmpz.h>
+#include <CGAL/Gmpq.h>
 #endif
 
 #ifdef CGAL_USE_CLN
@@ -66,6 +67,7 @@ main()
 
 #ifdef CGAL_USE_GMP
   && test_to_interval( CGAL::Gmpz() )
+  && test_to_interval( CGAL::Gmpq() )
   && test_to_interval( CGAL::Quotient< CGAL::Gmpz>() )
 #endif // CGAL_USE_GMP
 
