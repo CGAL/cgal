@@ -1,11 +1,6 @@
 #include <CGAL/basic.h>
-#include <assert.h>
-#include <stdio.h>
-#include <string.h>
-#include <iostream.h>
-#include <fstream.h>
-#include <strstream.h>
-#include <iterator.h>
+#include <iostream>
+
 
 // Define shorter names to please linker (g++/egcs)
 #define Cartesian Cart

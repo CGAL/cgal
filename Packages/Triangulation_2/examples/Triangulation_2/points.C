@@ -1,9 +1,6 @@
 
-#include <assert.h>
-#include <iostream.h>
-#include <fstream.h>
 #include <CGAL/basic.h>
-
+#include <iostream>
 #include "points.h"
 
 #include <CGAL/Triangulation_2.h>

@@ -1,12 +1,7 @@
 
 #include <CGAL/basic.h>
-#include <assert>
-#include <stdio>
-#include <string>
 #include <iostream>
-#include <fstream>
-#include <strstream>
-#include <iterator>
+
 
 // Define shorter names to please linker (g++/egcs)
 #define Cartesian C
