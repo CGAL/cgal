@@ -16,7 +16,8 @@ An object of type \ccRefName\ creates a \cgal\ polygon. A new
 vertex is inserted every time the left mouse button is pressed.
 The polygon is returned on a right click. You can use the \ccc{Escape}
 key if you want to remove your last entered point in the polygon.
-
+The use of \ccRefName\ requires that the mouse tracking is
+enabled for widgets attaching it.
 
 \ccInclude{CGAL/IO/Qt_widget_get_polygon.h}
 
@@ -26,7 +27,7 @@ The full template declaration of \ccc{Qt_widget_get_polygon} states one paramete
 
 \begin{tabbing}
 \ccc{template <} \=\ccc{class Polygon >}\\
-	\ccc{class Qt_widget_get_polygon;}
+        \ccc{class Qt_widget_get_polygon;}
 \end{tabbing}
 
 Polygon should be a \cgal\ Polygon, or should provide the following
