@@ -1,3 +1,6 @@
+2.117 (18 January 2004)
+- Remove CGAL_CFG_USING_NAMESPACE_BUG workaround.
+
 2.116 (18 January 2004)
 - Rename CGAL_TYPENAME_MSVC_NULL to typename.
 
