@@ -27,9 +27,9 @@
 #define CGAL_CONSTRAINT_HIERARCHY_2_H
 
 #include <CGAL/basic.h>
-#include <pair.h>
-#include <map.h> 
-#include <list.h> 
+#include <pair>
+#include <map> 
+#include <list> 
 #include <CGAL/Iterator_project.h>
 #include <CGAL/triangulation_assertions.h>
 
@@ -37,7 +37,6 @@ CGAL_BEGIN_NAMESPACE
 
 // T               is expected to be Vertex_handle
 // Data            is intended to store info on a Vertex
-
 template <class T, class Data>
 class Constraint_hierarchy_2
 {
@@ -52,7 +51,7 @@ public:
   typedef typename std::list<H_constraint>::iterator    H_constraint_it;
 
   class H_context {
-    friend class Hierarchy;
+    friend class Constraint_hierarchy_2<T,Data>;
   private:
     H_vertex_list*    enclosing;
     H_vertex_it       pos;
@@ -233,7 +232,7 @@ enclosing_constraints(T vaa, T vbb , H_constraint_list& hcl) const
 }
 
 template <class T, class Data>
-Constraint_hierarchy_2<T,Data>::H_context
+typename Constraint_hierarchy_2<T,Data>::H_context
 Constraint_hierarchy_2<T,Data>::
 context(T va, T vb)
 {
@@ -253,7 +252,7 @@ number_of_enclosing_constraints(T va, T vb)
 }
 
 template <class T, class Data>
-Constraint_hierarchy_2<T,Data>::H_context_iterator
+typename Constraint_hierarchy_2<T,Data>::H_context_iterator
 Constraint_hierarchy_2<T,Data>::
 contexts_begin(T va, T vb)
 {
@@ -263,7 +262,7 @@ contexts_begin(T va, T vb)
 }
 
 template <class T, class Data>
-Constraint_hierarchy_2<T,Data>::H_context_iterator
+typename Constraint_hierarchy_2<T,Data>::H_context_iterator
 Constraint_hierarchy_2<T,Data>::
 contexts_end(T va, T vb)
 {   
@@ -283,7 +282,7 @@ vertices_in_constraint_begin(T va, T vb)
 }
   
 template <class T, class Data>
-Constraint_hierarchy_2<T,Data>::H_vertex_it
+typename Constraint_hierarchy_2<T,Data>::H_vertex_it
 Constraint_hierarchy_2<T,Data>::
 vertices_in_constraint_end(T va, T vb)
 {
@@ -493,7 +492,7 @@ add_Steiner(T va, T vb, T vc){
 
 template <class T, class Data>
 inline
-Constraint_hierarchy_2<T,Data>::H_edge
+typename Constraint_hierarchy_2<T,Data>::H_edge
 Constraint_hierarchy_2<T,Data>::
 make_edge(T va, T vb) const
 {
@@ -536,7 +535,7 @@ get_contexts(T va, T vb,
 
 template <class T, class Data>
 inline
-Constraint_hierarchy_2<T,Data>::H_vertex_it
+typename Constraint_hierarchy_2<T,Data>::H_vertex_it
 Constraint_hierarchy_2<T,Data>::
 get_pos(T va, T vb) const
   //return pos in the first context
