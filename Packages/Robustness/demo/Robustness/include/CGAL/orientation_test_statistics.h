@@ -77,7 +77,7 @@ orientation_statistics_IA( ForwardIterator first, ForwardIterator last,
                     (void) orientation(*i, *j, *k);
                     ++success;
                   }
-                  catch ( CGAL::Interval_base::unsafe_comparison )
+                  catch ( CGAL::Interval_nt<false>::unsafe_comparison )
                   {}
                   ++c;
                 }
