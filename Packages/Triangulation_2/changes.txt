@@ -1,10 +1,15 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
-Ver 4.80 ()
+Ver 4.81 ()
+- added missing function void insert(Vertex_handle va, Vertex_handle vb)
+  in Constrained_Delaunay_triangulation_2.h
+- regenerate triangulation_assertions.h to avoid old style casts.
+- fixed warning in operator ==(CGAL_NULL_TYPE) of Triangulation_ds_circulator_2
+
+Ver 4.80 (9/01/01)
 - added missing std:: in  test for new design
 - added a default for TDS of Triangulation_2
-- regenerate triangulation_assertions.h to avoid old style casts.
 
 Ver 4.79 (28/12/00)
 - fixed a typename in Regular_triangulation
