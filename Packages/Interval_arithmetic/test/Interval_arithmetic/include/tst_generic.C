@@ -290,16 +290,12 @@ cout << is_finite(d.upper_bound()) << is_valid(d.upper_bound())<<endl;
   cout << "Do overflow_test()      \t";
   tmpflag = overflow_test();
   cout << (int) tmpflag << endl;
-#ifndef __i386
   flag = tmpflag && flag;
-#endif
 
   cout << "Do underflow_test()     \t";
   tmpflag = underflow_test();
   cout << (int) tmpflag << endl;
-#ifndef __i386
   flag = tmpflag && flag;
-#endif
 
   cout << "Do division_test()      \t";
   tmpflag = division_test();
