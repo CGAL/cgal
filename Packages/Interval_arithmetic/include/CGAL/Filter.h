@@ -31,7 +31,7 @@
 #include <CGAL/IO/io_tags.h>            // For CGAL_io_Operator().
 #include <CGAL/number_type_tags.h>      // For CGAL_number_type_tag()
 #include <CGAL/enum.h>  // Because we overload CGAL_{sign,compare,abs,min,max}
-#include <CGAL/number_utils.h>  // For CGAL_max(double, double).
+// #include <CGAL/number_utils.h>
 
 
 // CT = construction type (filtered)
@@ -46,18 +46,17 @@
 //     which converts _exactly_ the CT value to ET.
 
 template <class CT, class ET>
-class CGAL_Filtering
+struct CGAL_Filtering
 {
-public:
   CT value;
 
   CGAL_Filtering () {}
-  CGAL_Filtering (int i) : value(i)  {}
-  CGAL_Filtering (CT ct) : value(ct) {}
+  CGAL_Filtering (const int i) : value(i)  {}
+  CGAL_Filtering (const CT ct) : value(ct) {}
 
   typedef CGAL_Filtering<CT,ET> Fil;
 
-  Fil operator-()               const { return Fil(-value); }
+  Fil  operator-()                const { return Fil(-value); }
   bool operator< (const Fil& fil) const { return value <  fil.value; }
   bool operator> (const Fil& fil) const { return value >  fil.value; }
   bool operator<=(const Fil& fil) const { return value <= fil.value; }
@@ -66,9 +65,14 @@ public:
   bool operator!=(const Fil& fil) const { return value != fil.value; }
 };
 
+
 template <class CT, class ET>
-class CGAL_Filtering_allow_inexact : public CGAL_Filtering<CT,ET>
+struct CGAL_Filtering_allow_inexact : public CGAL_Filtering <CT,ET>
 {
+  CGAL_Filtering_allow_inexact () {}
+  CGAL_Filtering_allow_inexact (const int i) : CGAL_Filtering(i)  {}
+  CGAL_Filtering_allow_inexact (const CT ct) : CGAL_Filtering(ct) {}
+
   typedef CGAL_Filtering_allow_inexact<CT,ET> Fil;
   Fil operator+(const Fil& fil) const { return Fil(value + fil.value); }
   Fil operator-(const Fil& fil) const { return Fil(value - fil.value); }
@@ -81,7 +85,8 @@ class CGAL_Filtering_allow_inexact : public CGAL_Filtering<CT,ET>
   Fil& operator/=(const Fil& fil) { value /= fil.value; return *this; }
 };
 
-// We forward all the following functions to the CT value:
+
+// We forward the following functions to the CT value:
 // CGAL_is_valid, CGAL_is_finite, CGAL_to_double, CGAL_sign, CGAL_compare,
 // CGAL_abs, CGAL_min, CGAL_max, sqrt, CGAL_io_tag, CGAL_number_type_tag,
 // operator>>, operator<<.
