@@ -103,8 +103,7 @@ the user can pass them directly as arguments to the functions.
 finite vertices of the triangulation.}
 
 \ccTypedef{typedef TriangulationDataStructure_3::Cell_circulator Cell_circulator;}
-{circulator over all cells incident to a
-given edge} 
+{circulator over all cells incident to a given edge} 
 \ccGlue
 \ccTypedef{typedef TriangulationDataStructure_3::Facet_circulator Facet_circulator;}
 {circulator over all facets incident to a given edge}
@@ -823,6 +822,7 @@ Cell_handle start) const;}
 The following circulators on facets are defined only in dimension~3,
 though facets are defined also in dimension~2: there are only two
 facets sharing an edge in dimension~2. 
+
 \ccMethod{Facet_circulator incident_facets(Edge e) const;}
 {Starts at an arbitrary facet incident to \ccc{e}.
 \ccPrecond{\ccVar.\ccc{dimension()}~$=3$}}
@@ -848,19 +848,23 @@ Cell_handle start, int f) const;}
 
 \ccHeading{Traversal of the incident cells and the adjacent vertices
 of a given vertex} 
-\ccThree{bool}{t.inciden__cells()}{}
+\ccThree{OutputIterator}{t.inciden__cells()}{}
 
 \ccMethod{template <class OutputIterator>
-          void incident_cells (Vertex_handle v, OutputIterator cells) const;}
+          OutputIterator
+          incident_cells(Vertex_handle v, OutputIterator cells) const;}
 {Copies the \ccc{Cell_handle}s of all cells incident to \ccc{v} to the output
 iterator \ccc{cells}.  If \ccVar.\ccc{dimension()} $<3$, then do nothing.
+Returns the resulting output iterator.
 \ccPrecond{\ccc{v} $\neq$ \ccc{NULL}, \ccVar.\ccc{is_vertex(v)}.}}
 
 \ccMethod{template <class OutputIterator>
-          void incident_vertices (Vertex_handle v, OutputIterator vertices) const;}
+          OutputIterator
+          incident_vertices(Vertex_handle v, OutputIterator vertices) const;}
 {Copies the \ccc{Vertex_handle}s of all vertices incident to \ccc{v} to the
 output iterator \ccc{vertices}.  If \ccVar.\ccc{dimension()} $<2$, then do
-nothing.  \ccPrecond{\ccc{v} $\neq$ \ccc{NULL}, \ccVar.\ccc{is_vertex(v)}.}}
+nothing.  Returns the resulting output iterator.
+\ccPrecond{\ccc{v} $\neq$ \ccc{NULL}, \ccVar.\ccc{is_vertex(v)}.}}
 
 \ccMethod{int degree(Vertex_handle v) const;}
 {Returns the degree of a vertex, that is, the number of incident vertices.

@@ -78,7 +78,7 @@ In the degenerate case when there are cospherical points, the Delaunay
 triangulation is known not to be uniquely defined. In this case, CGAL
 chooses a particular Delaunay triangulation using a symbolic perturbation
 scheme.
-% TODO : rajouter un ref au papier des que c'est pret.
+% TODO FIXME XXX : rajouter un ref au papier !
 
 \ccThree{Vertex_handle}{dt.remove()}{}
 
@@ -176,12 +176,16 @@ A point \ccc{p} is said to be in conflict with a cell \ccc{c} in dimension 3
 (resp. a facet \ccc{f} in dimension 2) iff \ccVar.\ccc{side_of_sphere(c, p)}
 (resp. \ccVar.\ccc{side_of_circle(f, p)}) returns \ccc{ON_BOUNDED_SIDE}.
 
-\ccMethod{template <class Out_it_boundary_facets,
-            class Out_it_cells, class Out_it_internal_facets>
-  void
+\ccMethod{template <class OutputIteratorBoundaryFacets,
+                    class OutputIteratorCells,
+                    class OutputIteratorInternalFacets>
+  Triple<OutputIteratorBoundaryFacets,
+         OutputIteratorCells,
+         OutputIteratorInternalFacets>
   find_conflicts(Point p, Cell_handle c,
-	         Out_it_boundary_facets bfit, Out_it_cells cit,
-		 Out_it_internal_facets ifit);}
+	         OutputIteratorBoundaryFacets bfit,
+                 OutputIteratorCells cit,
+		 OutputIteratorInternalFacets ifit);}
 {A point \ccc{p} defines a set of connected cells (resp. facets in dimension
 2) which are in conflict with it, which forms a hole.  The starting cell
 (resp.  facet) \ccc{c} must be in conflict.  Then this function returns
@@ -195,6 +199,7 @@ two cells (resp facets) in conflict.\\
 This function can be used in conjunction with \ccc{insert_in_hole()} in order
 to decide the insertion of a point after seeing which elements of the
 triangulation are affected.
+Returns the \ccc{Triple} composed of the resulting output iterators.
 \ccPrecond{\ccVar.\ccc{dimension()} $\geq 2$, and \ccc{c} is in conflict
 with \ccc{p}.}
 }
