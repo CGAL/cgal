@@ -225,25 +225,32 @@ an interior cell of the $\alpha$-shape.}
            classify(const Point& p, 
 	const FT& alpha = get_alpha()) const;}
 {Locates a point  \ccc{p} in the underlying triangulation and Classifies the 
-associated k-face with respect to \ccVar.}
+associated k-face with respect to \ccc{alpha}.}
 
 \ccMethod{Classification_type
            classify(Cell_handle f, const FT& alpha = get_alpha()) const;}
-{Classifies the cell \ccc{f} of the underlying triangulation with respect to \ccVar.}
+{Classifies the cell \ccc{f} of the underlying triangulation with
+respect 
+to \ccc{alpha}.}
 
 \ccMethod{Classification_type
            classify(Facet f, const FT& alpha = get_alpha()) const;}
-{Classifies the facet \ccc{e} of the underlying triangulation with respect to \ccVar.}
+{Classifies the facet \ccc{e} of the underlying triangulation with
+respect to \ccc{alpha}.}
 
 \ccMethod{Classification_type
            classify(Cell_handle f, int i, const FT& alpha = get_alpha()) const;}
 {Classifies the facet of the cell \ccc{f} opposite to the vertex with index
 \ccc{i} 
-of the underlying triangulation with respect to \ccVar.}	
+of the underlying triangulation with respect to \ccc{alpha}.}
+
+\ccMethod{Classification_type
+           classify(const Edge& e, const FT& alpha = get_alpha()) const;}
+{Classifies the edge \ccc{e} with respect to \ccc{alpha} . }
 
 \ccMethod{Classification_type
            classify(Vertex_handle v, const FT& alpha = get_alpha()) const;}
-{Classifies the vertex \ccc{v} of the underlying triangulation with respect to \ccVar.}
+{Classifies the vertex \ccc{v} of the underlying triangulation with respect to \ccc{alpha}.}
 
 
 \ccHeading{Traversal of the $\alpha$-Values}
