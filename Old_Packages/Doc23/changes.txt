@@ -1,3 +1,8 @@
+
+2.54    (1 Aug 2002)
+- removed inclusion of ComputeYatX reference page since it is not (currently) 
+  part of the kernel concept.
+
 2.53    (16 Jul 2002)
 - added CGAL:: to intersection example
 
