@@ -1449,6 +1449,11 @@ Packages/Qt_widget/demo/Qt_widget/Nef_2/nef_2.vcproj -text
 Packages/Qt_widget/demo/Qt_widget/Partition_2/demo.dsp -text
 Packages/Qt_widget/demo/Qt_widget/Partition_2/partition_2.vcproj -text
 Packages/Qt_widget/demo/Qt_widget/Triangulation_2/demo.dsp -text
+Packages/Qt_widget/demo/Qt_widget/Triangulation_2/help/conflict_zone.gif svneol=native#unset
+Packages/Qt_widget/demo/Qt_widget/Triangulation_2/help/conflict_zone_after.gif svneol=native#unset
+Packages/Qt_widget/demo/Qt_widget/Triangulation_2/help/input_line_layer.gif svneol=native#unset
+Packages/Qt_widget/demo/Qt_widget/Triangulation_2/help/input_point_layer.gif svneol=native#unset
+Packages/Qt_widget/demo/Qt_widget/Triangulation_2/help/movedelete_point_layer.gif svneol=native#unset
 Packages/Qt_widget/demo/Qt_widget/Triangulation_2/triangulation_2.vcproj -text
 Packages/Qt_widget/demo/Qt_widget/Triangulation_2_constrained/demo.dsp -text
 Packages/Qt_widget/demo/Qt_widget/Triangulation_2_constrained/triangulation_2_constrained.vcproj -text

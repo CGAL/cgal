@@ -64,24 +64,7 @@ int main(int, char*)
 #include <qfiledialog.h>
 #include <qtimer.h>
 
-typedef double Coord_type;
-typedef CGAL::Cartesian<Coord_type>	    Rep;
 
-typedef CGAL::Point_2<Rep>		    Point;
-typedef CGAL::Segment_2<Rep>		    Segment;
-typedef CGAL::Line_2<Rep>		    Line;
-typedef CGAL::Triangle_2<Rep>		    Triangle;
-typedef CGAL::Circle_2<Rep>		    Circle;
-
-typedef CGAL::Triangulation_2<Rep>	    Triangulation;
-typedef CGAL::Delaunay_triangulation_2<Rep> Delaunay;
-
-
-typedef Triangulation::Vertex_iterator      Vertex_iterator;
-typedef Delaunay::Face_handle               Face_handle;
-typedef Delaunay::Vertex_handle             Vertex_handle;
-typedef Delaunay::Edge                      Edge;
-typedef Triangulation::Line_face_circulator Line_face_circulator;
 
 const QString my_title_string("Triangulation Demo with"
 			      " CGAL Qt_widget");
@@ -116,24 +99,26 @@ public:
     file->insertItem("&Load Triangulation", this, 
 		      SLOT(load_triangulation()), CTRL+Key_L);
     file->insertItem("&Save Triangulation", this,
-		      SLOT(save_triangulation()), CTRL+Key_T);
+		      SLOT(save_triangulation()), CTRL+Key_S);
     file->insertSeparator();
-    file->insertItem("Print", widget, SLOT(print_to_ps()));
+    file->insertItem("Print", widget, SLOT(print_to_ps()), CTRL+Key_P);
     file->insertSeparator();
     file->insertItem( "&Close", this, SLOT(close()), CTRL+Key_X );
     file->insertItem( "&Quit", qApp,
 		      SLOT( closeAllWindows() ), CTRL+Key_Q );
 
 
-    // drawidgetg menu
-    QPopupMenu * draw = new QPopupMenu( this );
-    menuBar()->insertItem( "&Draw", draw );
-    draw->insertItem("&Generate_triangulation", this,
+    // edit menu
+    QPopupMenu * edit = new QPopupMenu( this );
+    menuBar()->insertItem( "&Edit", edit );
+    edit->insertItem("&Generate_triangulation", this,
 		      SLOT(generate_triangulation()), CTRL+Key_G );
 
     // help menu
     QPopupMenu * help = new QPopupMenu( this );
     menuBar()->insertItem( "&Help", help );
+    help->insertItem("How To", this, SLOT(howto()), Key_F1);
+    help->insertSeparator();
     help->insertItem("&About", this, SLOT(about()), CTRL+Key_A );
     help->insertItem("About &Qt", this, SLOT(aboutQt()) );
 
@@ -169,15 +154,13 @@ public:
   }
 
   void set_window(double xmin, double xmax,
-			  double ymin, double ymax)
-  {
+			  double ymin, double ymax){
     widget->set_window(xmin, xmax, ymin, ymax);
   }
 
 
 private slots:
-  void new_instance()
-  {
+  void new_instance(){
     widget->lock();
     widget->clear();
     widget->clear_history();
@@ -187,8 +170,7 @@ private slots:
     something_changed();
   }
 	
-  void get_new_object(CGAL::Object obj)
-  {
+  void get_new_object(CGAL::Object obj){
     Point p;
     Segment s;
     Line l;
@@ -218,8 +200,7 @@ private slots:
     } 
   }
 
-  void insert_after_show_conflicts(QMouseEvent*)
-  {
+  void insert_after_show_conflicts(QMouseEvent*){
     if(got_point)
     {
       got_point = FALSE;
@@ -227,15 +208,22 @@ private slots:
     }
   }
 
-  void about()
-  {
+  void howto(){
+    QString home;
+    home = "help/index.html";
+    HelpWindow *help = new HelpWindow(home, ".", 0, "help viewer");
+    help->resize(400, 400);
+    help->setCaption("Demo HowTo");
+    help->show();
+  }
+
+  void about(){
     QMessageBox::about( this, my_title_string,
 		"This is a demo for Triangulation,\n"
   		"Copyright CGAL @2001");
   }
 
-  void aboutQt()
-  {
+  void aboutQt(){
     QMessageBox::aboutQt( this, my_title_string );
   }
 
@@ -247,22 +235,21 @@ private slots:
     something_changed();
   }
 
-  void timerDone()
-  {
+  void timerDone(){
     if(old_state!=current_state){
       widget->redraw();
       old_state = current_state;
     }
   }	
 
-  void generate_triangulation()
-  {
+  void generate_triangulation(){
     tr1.clear();
     CGAL::Random_points_in_disc_2<Point> g(0.5);
     for(int count=0; count<200; count++)
       tr1.insert(*g++);
-    xmin = ymin = xmax = ymax = 0;
     Vertex_iterator it = tr1.vertices_begin();
+    xmin = xmax = (*it).point().x();
+    ymin = ymax = (*it).point().y();
     while(it != tr1.vertices_end()) {
       if(xmin > (*it).point().x())
 	xmin = (*it).point().x();
@@ -292,8 +279,6 @@ private slots:
     }
   }
 
-	
-
   void load_triangulation()
   {
     QString s( QFileDialog::getOpenFileName( QString::null,
@@ -304,7 +289,10 @@ private slots:
     std::ifstream in(s);
     CGAL::set_ascii_mode(in);
     in >> tr1;
+
     Vertex_iterator it = tr1.vertices_begin();
+    xmin = xmax = (*it).point().x();
+    ymin = ymax = (*it).point().y();
     while(it != tr1.vertices_end()) {
       if(xmin > (*it).point().x())
 	xmin = (*it).point().x();
@@ -349,8 +337,8 @@ private:
   CGAL::Qt_widget                   *widget;		
   CGAL::Qt_widget_standard_toolbar  *stoolbar;
   Tools_toolbar                     *newtoolbar;
-  Layers_toolbar                    *vtoolbar;
-  bool                              got_point;
+  Layers_toolbar	            *vtoolbar;
+  bool                              got_point;	
 	  //if a CGAL::Point is received should be true
   int                               old_state;
 };//endclass

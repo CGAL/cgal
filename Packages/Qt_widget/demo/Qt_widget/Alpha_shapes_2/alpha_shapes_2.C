@@ -358,8 +358,9 @@ private slots:
       L.push_back(*g++);
       LW.push_back(pw);
     }
-    xmin = ymin = xmax = ymax = 0;
     Vertex_iterator it = tr1.vertices_begin();
+    xmin = xmax = (*it).point().x();
+    ymin = ymax = (*it).point().y();
     while(it != tr1.vertices_end()) {
       L.push_back((*it).point());
       if(xmin > (*it).point().x())
@@ -403,8 +404,9 @@ private slots:
     std::ifstream in(s);
     CGAL::set_ascii_mode(in);
     in >> tr1;
-    xmin = ymin = xmax = ymax = 0;
     Vertex_iterator it = tr1.vertices_begin();
+    xmin = xmax = (*it).point().x();
+    ymin = ymax = (*it).point().y();
     while(it != tr1.vertices_end()) {
       L.push_back((*it).point());
       if(xmin > (*it).point().x())
