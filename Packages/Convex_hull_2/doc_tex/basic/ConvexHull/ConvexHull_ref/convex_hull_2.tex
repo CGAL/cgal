@@ -1,5 +1,5 @@
 % +------------------------------------------------------------------------+
-% | Reference manual page: convex_hull_points_2.tex
+% | Reference manual page: convex_hull_2.tex
 % +------------------------------------------------------------------------+
 % | 09.05.2001   Susan Hert and Stefan Schirra
 % | Package: Convex_hull_2
@@ -7,7 +7,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefFunction}{convex_hull_points_2}  %% add template arg's if necessary
+\begin{ccRefFunction}{convex_hull_2}  %% add template arg's if necessary
 \ccIndexMainItemBegin{convex hull, 2D}
 
 \ccDefinition
@@ -25,21 +25,21 @@ iterators, the $O(n \log n)$ algorithm of of Akl and Toussaint
 
 \ccFunction{template <class InputIterator, class OutputIterator>
             OutputIterator
-            convex_hull_points_2(InputIterator first, InputIterator beyond,
-                                 OutputIterator  result,
-                                 const Traits & ch_traits = Default_traits );}
+            convex_hull_2(InputIterator first, InputIterator beyond,
+                          OutputIterator  result,
+                          const Traits & ch_traits = Default_traits );}
             {generates the counterclockwise sequence of extreme points
             of the points in the range [\ccc{first},\ccc{beyond}).
             The resulting sequence is placed starting at position
             \ccc{result}, and the past-the-end iterator for the resulting
             sequence is returned. It is not specified at which point the
             cyclic sequence of extreme points is cut into a linear sequence.
-            \ccPrecond %\ccIndexSubitem[C]{convex_hull_points_2}{preconditions}
+            \ccPrecond %\ccIndexSubitem[C]{convex_hull_2}{preconditions}
             The source range [\ccc{first},\ccc{beyond}) does not contain
             \ccc{result}.}
 
 The default traits class \ccc{Default_traits} is the \cgal\ 
-\ccc{Kernel_traits_2} class,%\ccIndexTraitsClassDefault{convex_hull_points_2}
+\ccc{Kernel_traits_2} class,%\ccIndexTraitsClassDefault{convex_hull_2}
 with the representation type determined by \ccc{InputIterator::value_type}.
 
 \ccHeading{Requirements}
@@ -75,10 +75,10 @@ In the following example we use the \stl-compliant interface of
 sequence of extreme points. Point data are read from standard input, the
 convex hull polygon is shown in a \cgal\ window.
 Remember, that when no traits class is specified for the function
-\ccc{convex_hull_points_2}, the representation class \ccc{R} is used 
+\ccc{convex_hull_2}, the representation class \ccc{R} is used 
 with the two-dimensional \cgal\ kernel to create the default traits class.
 
-\ccIncludeExampleCode{Convex_hull_2/convex_hull_points_2_demo.C}
+\ccIncludeExampleCode{Convex_hull_2/convex_hull_2_demo.C}
 
 \ccIndexMainItemEnd{convex hull, 2D}
 \end{ccRefFunction}

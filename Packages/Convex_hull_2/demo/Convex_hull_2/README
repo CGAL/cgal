@@ -18,6 +18,6 @@ ch_of_polyline
     NO_DISPLAY, the output is written to a PostScript file instead of a 
     window.
    
-convex_hull_points_2_demo
+convex_hull_2_demo
     Computes the convex hull of a set of points whose vertices are read
     from standard input and displays the result in a window.

@@ -1,4 +1,3 @@
-# Created by the script create_makefile
 # This is the makefile for compiling a CGAL application.
 
 #---------------------------------------------------------------------#
@@ -15,14 +14,11 @@ include $(CGAL_MAKEFILE)
 
 CXXFLAGS = \
            $(CGAL_CXXFLAGS) \
-           $(DEBUG_OPT)
+           -g
 
 #---------------------------------------------------------------------#
 #                    linker flags
 #---------------------------------------------------------------------#
-
-LIBPATH = \
-          $(CGAL_WINDOW_LIBPATH)
 
 LDFLAGS = \
           $(CGAL_WINDOW_LDFLAGS)
@@ -33,27 +29,29 @@ LDFLAGS = \
 
 all:            \
                 ch_demo \
-                convex_hull_points_2_demo  \
-                ch_of_polyline  
+                ch_of_polyline \
+                convex_hull_2_demo 
 
-ch_demo$(EXE_EXT): ch_demo$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)ch_demo ch_demo$(OBJ_EXT) $(LDFLAGS)
+ch_demo: ch_demo.o
+	$(CGAL_CXX) -o ch_demo ch_demo.o $(LDFLAGS)
 
-convex_hull_points_2_demo$(EXE_EXT): convex_hull_points_2_demo$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)convex_hull_points_2_demo convex_hull_points_2_demo$(OBJ_EXT) $(LDFLAGS)
+ch_of_polyline: ch_of_polyline.o
+	$(CGAL_CXX) -o ch_of_polyline ch_of_polyline.o $(LDFLAGS)
 
-ch_of_polyline$(EXE_EXT): ch_of_polyline$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)ch_of_polyline ch_of_polyline$(OBJ_EXT) $(LDFLAGS)
+convex_hull_2_demo: convex_hull_2_demo.o
+	$(CGAL_CXX) -o convex_hull_2_demo convex_hull_2_demo.o $(LDFLAGS)
 
-clean: \
-                   ch_demo.clean \
-                   convex_hull_points_2_demo.clean  \
-                   ch_of_polyline.clean 
+clean:
+	/bin/rm -f *.o \
+                   ch_demo \
+                   ch_of_polyline \
+                   convex_hull_2_demo \
+                   core
 
 #---------------------------------------------------------------------#
 #                    suffix rules
 #---------------------------------------------------------------------#
 
-.C$(OBJ_EXT):
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
+.C.o:
+	$(CGAL_CXX) $(CXXFLAGS) -c $<
 
