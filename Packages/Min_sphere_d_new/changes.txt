@@ -1,5 +1,8 @@
 Changes done to the `Min_sphere_d_new' package
 
+Version 0.12.5 on 2-Sep-2003 [mh]
+- Fix CGAL_NTS.
+
 Version 0.12.4 on 26-Mar-2002
 - Fixed test program to use Kernel_d.
 
