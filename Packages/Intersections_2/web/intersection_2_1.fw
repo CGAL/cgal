@@ -680,11 +680,11 @@ template <class R, class POINT, class RT>
 bool construct_if_finite(POINT &pt, RT x, RT y, RT w, R &)
 {
     typedef typename R::FT FT;
-    CGAL_kernel_precondition(is_finite(x)
-                             && is_finite(y)
+    CGAL_kernel_precondition(::CGAL::is_finite(x)
+                             && ::CGAL::is_finite(y)
                              && w != RT(0));
 
-    if (!is_finite(FT(x)/FT(w)) || !is_finite(FT(y)/FT(w)))
+    if (!::CGAL::is_finite(FT(x)/FT(w)) || !::CGAL::is_finite(FT(y)/FT(w)))
         return false;
     pt = POINT(x, y, w);
     return true;
@@ -708,9 +708,9 @@ bool construct_if_finite(Point_2<R> &pt,
 {
     typedef  typename R::FT FT;
     typedef typename R::RT RT;
-    CGAL_kernel_precondition(is_finite(x)
-            && is_finite(y) && w != (RT) 0);
-    if (!is_finite(FT(x)/FT(w)) || !is_finite(FT(y)/FT(w)))
+    CGAL_kernel_precondition(::CGAL::is_finite(x)
+            && ::CGAL::is_finite(y) && w != (RT) 0);
+    if (!::CGAL::is_finite(FT(x)/FT(w)) || !::CGAL::is_finite(FT(y)/FT(w)))
         return false;
     pt = Point_2<R>(x, y, w);
     return true;
@@ -795,12 +795,12 @@ CGAL_END_NAMESPACE
         return _result;
     }
     nom1 = (_line1->b()*_line2->c() - _line2->b()*_line1->c());
-    if (!is_finite(nom1)) {
+    if (!::CGAL::is_finite(nom1)) {
         ncthis->_result = NO;
         return _result;
     }
     nom2 = (_line2->a()*_line1->c() - _line1->a()*_line2->c());
-    if (!is_finite(nom2)) {
+    if (!::CGAL::is_finite(nom2)) {
         ncthis->_result = NO;
         return _result;
     }
