@@ -127,12 +127,9 @@ MakeIndex="makeindex -q"
 DvipsA4="dvips -q -D 600 -t a4 -P pdf"
 Gzip="gzip"
 LatexToHtml="latex_to_html"
+Sendmail=mail
 
 ResourceFile="$HOME/.cgalmanualrc"
-
-# =====================================================================
-# ... End of Configuration Section.
-# =====================================================================
 
 #---------------------------------------------------------------------#
 # Global variables, default initialization
@@ -147,7 +144,7 @@ MakeHTML=1
 MakeWrapperOnly=0
 
 # Selects if the results are collected and formatted for the test-suite
-# result pagees on the web and copies them there
+# result pages on the web and copies them there
 MakeTestSuiteResult=0
 
 # The corresponding address in the file space for copying the 
@@ -155,7 +152,7 @@ MakeTestSuiteResult=0
 # not only are pages copied, but the script manages also a clever 
 # history of up to $TestSuiteHistory many test-suite results and
 # deletes older ones.
-TestSuiteResultPath=/www/pub/www.cgal.org/Members/Manual_test
+TestSuiteResultPath="/www/pub/www.cgal.org/Members/Manual_test"
 
 # Number of older test-suite results kept. Test-suite results beyond this 
 # number are deleted.
@@ -164,6 +161,17 @@ TestSuiteHistory=8
 # Number of older test-suites for which the full results will be kept. Older
 # test suites will have their manuals removed to save space.
 TestSuiteFullHistory=3
+
+# Email address to send the end-of-testsuite announcement to. If this 
+# variable is empty, no email will be send.
+TestSuiteResultEmail="cgal-develop-l@postino.mpi-sb.mpg.de"
+
+# The url prefix of the result web page
+TestSuiteResultUrl="http://www.cgal.org/Members/Manual_test"
+
+# =====================================================================
+# ... End of Configuration Section.
+# =====================================================================
 
 # Determines if we currently make a Module or Package manual.
 # Only one is set to 1.
@@ -279,7 +287,8 @@ ${BoldColor}Options:${ResetColor}
     ${BoldColor}-pdf${ResetColor}                PDF manuals only (not yet supported).
     ${BoldColor}-html${ResetColor}               HTML manuals only (incl. a LaTeX run).
     ${BoldColor}-wrapper${ResetColor}            creates the LaTeX wrapper files only.
-    ${BoldColor}-testsuite${ResetColor}          runs the testsuite and installes the results.
+    ${BoldColor}-testsuite${ResetColor}          runs testsuite, installs results and sends email. Use
+                        only after reading the config section of this script.
     ${BoldColor}-h${ResetColor}                  help (this text).
     ${BoldColor}-V${ResetColor}                  version.
     ${BoldColor}-v${ResetColor}                  verbose: repeats logfiles on stserr.
@@ -1210,6 +1219,10 @@ EOF
         popd  > /dev/null
         cp -r testsuite/* ${TestSuiteResultPath}/${Target}
         rm -r testsuite
+        # send email notification
+        if [ "${TestSuiteResultEmail}" != "" ]; then
+            printf "Subject: New manual test results ${Target}\n\n\n${TestSuiteResultUrl}/${Target}\n" | ${Sendmail} ${TestSuiteResultEmail}            
+        fi
     fi
 }
 
