@@ -434,6 +434,7 @@ class Optimisation_ellipse_2 {
        default:
 	 CGAL_optimisation_assertion( ( n_boundary_points >= 0) &&
                                       ( n_boundary_points <= 5) ); 
+	 return false;
        }
     }
 };
