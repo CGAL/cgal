@@ -1,3 +1,7 @@
+Version 1.63 (20 June 01)
+- doc for hierarchy fixed
+- cleanup in examples, demo
+
 Version 1.62 (19 June 01)
 - Nothing changed.  Package renamed to Triangulation_3.
 
