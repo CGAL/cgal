@@ -36,8 +36,6 @@
     <benchPmwxAggInsert file="eurcut.dat"></benchPmwxAggInsert>
     <benchPmwxAggInsert_fast file="eurcut.dat"></benchPmwxAggInsert_fast>
   </bench>
-
-<!--
   <bench samples="1" enable="true">
     <benchPmwxAggInsert file="random_segments_100.dat"></benchPmwxAggInsert>
     <benchPmwxAggInsert_fast file="random_segments_100.dat"></benchPmwxAggInsert_fast>
@@ -58,5 +56,5 @@
     <benchPmwxAggInsert file="world.seg.cut.rand.dat"></benchPmwxAggInsert>
     <benchPmwxAggInsert_fast file="world.seg.cut.rand.dat"></benchPmwxAggInsert_fast>
   </bench>
--->
+
 </bench>

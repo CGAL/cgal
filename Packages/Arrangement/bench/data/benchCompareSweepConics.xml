@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<bench name_length="64" header="false" type_mask="0x3" strategy_mask="0x6">
+<bench name_length="64" header="false" type_mask="0x18" strategy_mask="0x6">
   <clo name="format" string="-If="/> 
   <clo name="samples" string="-s"/> 
   <clo name="header" string="-bh="/> 
@@ -7,44 +7,91 @@
   <clo name="type_mask" string="-btm="/> 
   <clo name="strategy_mask" string="-bsm="/> 
 
-  <file name="box_25_16_org_big.txt" format="rat" curves="1"
-    vertices="1" halfedges="1" faces="1"></file>
-  <file name="cgal_logo_460.txt" format="rat" curves="1"
-    vertices="1" halfedges="1" faces="1"></file>
-  <file name="circles_21.txt" format="rat" curves="1"
-    vertices="1" halfedges="1" faces="1"></file>
-  <file name="ellipses_20.txt" format="rat" curves="1"
-    vertices="1" halfedges="1" faces="1"></file>
-  <file name="ellipses_30.txt" format="rat" curves="1"
-    vertices="1" halfedges="1" faces="1"></file>
-  <file name="hyper_ellip_18.txt" format="rat" curves="1"
-    vertices="1" halfedges="1" faces="1"></file>
-  <file name="mix_20.txt" format="rat" curves="1"
-    vertices="1" halfedges="1" faces="1"></file>
-  <file name="mix_50.txt" format="rat" curves="1"
-    vertices="1" halfedges="1" faces="1"></file>
-  <file name="rose_with_holes_14.txt" format="rat" curves="1"
-    vertices="1" halfedges="1" faces="1"></file>
-  <file name="tng_circs_8.txt" format="rat" curves="1"
-    vertices="1" halfedges="1" faces="1"></file>
-  <file name="tng_ellipses_9.txt" format="rat" curves="1"
+  <file name="big_clover2.txt" format="int" curves="1"
     vertices="1" halfedges="1" faces="1"></file>
 
+  <file name="big_clover.txt" format="int" curves="1"
+    vertices="1" halfedges="1" faces="1"></file>
+
+  <file name="box_25_16_org_big.txt" format="int" curves="1"
+    vertices="1" halfedges="1" faces="1"></file>
+
+  <!-- not working -->
+  <file name="box_25_16_per_sml.txt" format="int" curves="1"
+    vertices="1" halfedges="1" faces="1"></file>
+
+  <!-- not working -->
+  <file name="cgal_logo_460.txt" format="int" curves="1"
+    vertices="1" halfedges="1" faces="1"></file>
+
+  <!-- not working -->
+  <file name="cgal_logo_segs.txt" format="int" curves="1"
+    vertices="1" halfedges="1" faces="1"></file>
+
+  <file name="circles_21.txt" format="int" curves="1"
+    vertices="1" halfedges="1" faces="1"></file>
+
+  <file name="ellipses_20.txt" format="int" curves="1"
+    vertices="1" halfedges="1" faces="1"></file>
+
+  <file name="ellipses_2.txt" format="int" curves="1"
+    vertices="1" halfedges="1" faces="1"></file>
+
+  <file name="ellipses_2_int.txt" format="int" curves="1"
+    vertices="1" halfedges="1" faces="1"></file>
+
+  <!-- not working -->
+  <file name="ellipses_30.txt" format="int" curves="1"
+    vertices="1" halfedges="1" faces="1"></file>
+
+  <!-- not working -->
+  <file name="hyper_ellip_18.txt" format="int" curves="1"
+    vertices="1" halfedges="1" faces="1"></file>
+
+  <file name="mix_20.txt" format="int" curves="1"
+    vertices="1" halfedges="1" faces="1"></file>
+
+  <file name="mix_50.txt" format="int" curves="1"
+    vertices="1" halfedges="1" faces="1"></file>
+
+  <file name="rose_with_holes_14.txt" format="int" curves="1"
+    vertices="1" halfedges="1" faces="1"></file>
+
+  <file name="seg_ellipse_4.txt" format="int" curves="1"
+    vertices="1" halfedges="1" faces="1"></file>
+
+  <file name="tng_circs_8.txt" format="int" curves="1"
+    vertices="1" halfedges="1" faces="1"></file>
+
+  <file name="tng_ellipses_9.txt" format="int" curves="1"
+    vertices="1" halfedges="1" faces="1"></file>
+
+  <bench samples="10" enable="true">
+    <benchPmwxAggInsertConics file="big_clover2.txt" header="true"></benchPmwxAggInsertConics>
+    <benchPmwxAggInsertConics_fast file="big_clover2.txt"></benchPmwxAggInsertConics_fast>
+  </bench>
+  <bench samples="10" enable="true">
+    <benchPmwxAggInsertConics file="big_clover.txt"></benchPmwxAggInsertConics>
+    <benchPmwxAggInsertConics_fast file="big_clover.txt"></benchPmwxAggInsertConics_fast>
+  </bench>
   <bench samples="1" enable="true">
-    <benchPmwxAggInsertConics file="box_25_16_org_big.txt" header="true"></benchPmwxAggInsertConics>
+    <benchPmwxAggInsertConics file="box_25_16_org_big.txt"></benchPmwxAggInsertConics>
     <benchPmwxAggInsertConics_fast file="box_25_16_org_big.txt"></benchPmwxAggInsertConics_fast>
   </bench>
+  <!--
   <bench samples="1" enable="true">
-    <benchPmwxAggInsertConics file="circles_21.txt" ></benchPmwxAggInsertConics>
-    <benchPmwxAggInsertConics_fast file="circles_21.txt" ></benchPmwxAggInsertConics_fast>
+    <benchPmwxAggInsertConics file="box_25_16_per_sml.txt" ></benchPmwxAggInsertConics>
+    <benchPmwxAggInsertConics_fast file="box_25_16_per_sml.txt"></benchPmwxAggInsertConics_fast>
   </bench>
-
-<!--
   <bench samples="1" enable="true">
     <benchPmwxAggInsertConics file="cgal_logo_460.txt" ></benchPmwxAggInsertConics>
     <benchPmwxAggInsertConics_fast file="cgal_logo_460.txt" ></benchPmwxAggInsertConics_fast>
   </bench>
-
+  <bench samples="1" enable="true">
+    <benchPmwxAggInsertConics file="cgal_logo_segs.txt" ></benchPmwxAggInsertConics>
+    <benchPmwxAggInsertConics_fast file="cgal_logo_segs.txt" ></benchPmwxAggInsertConics_fast>
+  </bench>
+  -->
   <bench samples="1" enable="true">
     <benchPmwxAggInsertConics file="circles_21.txt" ></benchPmwxAggInsertConics>
     <benchPmwxAggInsertConics_fast file="circles_21.txt" ></benchPmwxAggInsertConics_fast>
@@ -54,6 +101,11 @@
     <benchPmwxAggInsertConics_fast file="ellipses_20.txt" ></benchPmwxAggInsertConics_fast>
   </bench>
   <bench samples="1" enable="true">
+    <benchPmwxAggInsertConics file="ellipses_2_int.txt" ></benchPmwxAggInsertConics>
+    <benchPmwxAggInsertConics_fast file="ellipses_2_int.txt" ></benchPmwxAggInsertConics_fast>
+  </bench>
+  <!--
+  <bench samples="1" enable="true">
     <benchPmwxAggInsertConics file="ellipses_30.txt" ></benchPmwxAggInsertConics>
     <benchPmwxAggInsertConics_fast file="ellipses_30.txt" ></benchPmwxAggInsertConics_fast>
   </bench>
@@ -61,7 +113,8 @@
     <benchPmwxAggInsertConics file="hyper_ellip_18.txt" ></benchPmwxAggInsertConics>
     <benchPmwxAggInsertConics_fast file="hyper_ellip_18.txt" ></benchPmwxAggInsertConics_fast>
   </bench>
-  <bench samples="1" enable="true">
+  -->
+  <bench samples="3" enable="true">
     <benchPmwxAggInsertConics file="mix_20.txt" ></benchPmwxAggInsertConics>
     <benchPmwxAggInsertConics_fast file="mix_20.txt" ></benchPmwxAggInsertConics_fast>
   </bench>
@@ -69,17 +122,22 @@
     <benchPmwxAggInsertConics file="mix_50.txt" ></benchPmwxAggInsertConics>
     <benchPmwxAggInsertConics_fast file="mix_50.txt" ></benchPmwxAggInsertConics_fast>
   </bench>
-  <bench samples="1" enable="true">
+  <bench samples="2" enable="true">
     <benchPmwxAggInsertConics file="rose_with_holes_14.txt" ></benchPmwxAggInsertConics>
     <benchPmwxAggInsertConics_fast file="rose_with_holes_14.txt" ></benchPmwxAggInsertConics_fast>
   </bench>
-  <bench samples="1" enable="true">
+  <!--
+  <bench samples="10" enable="true">
+    <benchPmwxAggInsertConics file="seg_ellipse_4.txt" ></benchPmwxAggInsertConics>
+    <benchPmwxAggInsertConics_fast file="seg_ellipse_4.txt" ></benchPmwxAggInsertConics_fast>
+  </bench>
+  -->
+  <bench samples="5" enable="true">
     <benchPmwxAggInsertConics file="tng_circs_8.txt" ></benchPmwxAggInsertConics>
     <benchPmwxAggInsertConics_fast file="tng_circs_8.txt" ></benchPmwxAggInsertConics_fast>
   </bench>
-  <bench samples="1" enable="true">
+  <bench samples="5" enable="true">
     <benchPmwxAggInsertConics file="tng_ellipses_9.txt" ></benchPmwxAggInsertConics>
     <benchPmwxAggInsertConics_fast file="tng_ellipses_9.txt" ></benchPmwxAggInsertConics_fast>
   </bench>
--->
 </bench>
