@@ -24,8 +24,6 @@
 #ifndef CGAL_TRIANGULATION_SHORT_NAMES_3_H
 #define CGAL_TRIANGULATION_SHORT_NAMES_3_H
 
-// needed for MSVC
-
 // ======
 #define Triangulation_vertex_base_3                 T_vb
 #define Triangulation_cell_base_3                   T_cb
@@ -65,9 +63,10 @@
 
 // ======
 #define Delaunay_triangulation_3                    DT
+#define Delaunay_remove_tds_face_3_2                Df
+#define Delaunay_remove_tds_vertex_3_2              Dv
 
 #define Regular_triangulation_euclidean_traits_3    R_gt
 #define Regular_triangulation_3                     RT
 
-
-#endif //CGAL_TRIANGULATION_SHORT_NAMES_3_H
+#endif // CGAL_TRIANGULATION_SHORT_NAMES_3_H
