@@ -18,7 +18,6 @@
 // Authors       : Hans Tangelder (<hanst@cs.uu.nl>)
 
 
-
 #ifndef CGAL_FUZZY_SPHERE_D_H
 #define CGAL_FUZZY_SPHERE_D_H
 #include <CGAL/Kd_tree_rectangle.h>
