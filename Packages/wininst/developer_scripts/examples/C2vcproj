@@ -1,0 +1,26 @@
+#!/bin/sh
+
+for h in $@ ; do
+if [ -d $h ]; then
+  cd $h;
+  echo "In " $h;
+  if [ -e text ]; then
+    rm -r text;
+  fi
+  mkdir text; 
+  if [ -e VC7 ]; then
+    rm -r VC7;
+  fi
+  mkdir VC7;
+
+  for i in *.C ; do
+    jp=`echo $i|sed -e "s/\.C/\.vcproj/"`;
+    k=`echo $i|sed -e "s/\.C//"`; 
+    sed -e"s/master/$k/g" ../master.vcproj > ./text/$jp; 
+    mv ./text/$jp VC7/; 
+  done
+
+  rm -r text
+  cd ..;
+fi
+done
