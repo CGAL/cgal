@@ -119,7 +119,7 @@ public:
     }
   }
 
-  // idem for 4, 5, 6... arguments.  Do it as needed.
+  // idem for 4, 5, 6... arguments.  Do it on demand.
 };
 
 CGAL_END_NAMESPACE
