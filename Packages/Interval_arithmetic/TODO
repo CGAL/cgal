@@ -1,9 +1,6 @@
 [See also the file TODO_static_filters]
 
-For CGAL-2.3-I-* :
-------------------
-- mv CGAL/Interval_arithmetic/_FPU.h CGAL/FPU.h.
-- Implement and document enough for the new to_interval() requirement.
+- Implement and DOCUMENT enough for the new to_interval() requirement.
 - Dispatch all CGAL/Interval_arithmetic/*.h into the respective packages.
 - mv test/include/*.C *.def ; Or use template functions ?
 - Use Self instead of IA as the internal typedef ?
@@ -12,29 +9,7 @@ Concerning the main code:
 -------------------------
 - Remove the "return false" after overlap_action(), if possible, and see
   produced code.  Or re-arrange the code in order to remove it ?
-- Implement to_interval() for CLN types (long [long|double] are done).
-  What will be the interface exactly ?
-  - return type is Interval_base, in Interval_base.h, which has a ctor with 1
-    and 2 doubles.
-  - with what rounding mode requirement can/will it be called:
-    - will CGAL call to_interval() with any rounding mode, in which case
-      the function to_interval() must protect itself.
-    - we will fix a default calling rounding mode from within CGAL, which will
-      be the default rounding mode (NB: it's the contrary as the current
-      convert_to() functions in the IA package...).
-    - To sum up:
-      - double (and other builtins <= double) and Fixed_precision_nt don't care
-        about the current rounding mode, so it will be a pain if we enforced
-	a specific mode before entering to_interval().
-      - Lazy_exact_nt<> doesn't care (currently, since it already has the
-        interval precomputed).
-      - Quotient<RT> forwards the requirements to those of RT, but with a
-        division.
-      - Gmpz, LEDA NTs a priori prefer the default rounding mode, but they
-        have to make 2 changes anyway, so a third is not that a big deal...
-    - My gust feeling would be to require from the NT that to_interval(NT) can
-      be called from within CGAL with whatever rounding mode.  So it has to
-      protect itself if it needs to.
+- Implement to_interval() for CLN types, and Lazy_exact_nt<>.
 - Specializations for is_zero() and co, and make use of them in the kernel.
   [Filtered_exact<> doesn't define them either, it's a bug...]
 - Have a non-ref counted (and non dynamic allocated) version of
@@ -52,18 +27,23 @@ Concerning the main code:
 - Implement CGAL_ms_sqrt() with asms so that no special install procedure is
   needed ?  Should not be too hard, and should be faster (no function call).
   If M$ has a flag like __OPTIMIZE__, then we can use in the non-optimize case,
-  something like (NON TESTED !!!) :
-  inline double my_sqrt(double d)
+  something like (test again) :
+   
+  inline double my_sqrt (double d)
   {
-    double r;
     _asm
     {
-      fld d;
-      fsqrt;
-      fst r;
+      fld d
+      fsqrt
+      fstp d
     }
-    return r;
+    return d;
   }
+  
+Sous optimal, mais si on peut lui dire de l'utiliser quand il n'optimise pas
+(genre #ifndef __OPTIMIZE__), ca peut faire l'affaire.
+De toute facon, c'est le fsqrt qui prend un max de temps, donc l'enrobage...
+
 - GCC 2.96 seems really bad at optimizing copy ctor of intervals (august'00).
 - Does KCC 4.0 still fails when optimizing ?  Ask Stefan.
 - Try to see if KCC can use the GCC asm() on x86 ?
@@ -87,6 +67,7 @@ Concerning the main code:
     void convert_from_to(Target &, const Source &) ?
   Suggest that to Stefan for misc.h ?
 - Handle in_smallest_orthogonalcircle_ftC2.h correctly (needs an include)
+  Note : this is already in the kernel, this file should disappear !
 - Bench -fbranch-probabilities ?  Use __builtin_expect() for GCC 3 ?
 - Mark the cache as "mutable" (see Stroustrup, page 232) ?
 - Filter_Cache: Faire des benchs, et une test-suite qui soit raisonnable.
