@@ -1,3 +1,11 @@
+2.16    (?? June 2001)
+- fixed degenerate quickhull test so it generates precise numbers instead
+  of doubles
+- added some missing typenames
+- modified quickhull to get rid of use of normalize_border (faster and less
+  obscure set of requirements for the polyhedron) 
+- fixed demo makefile for Windoze
+
 2.15    (27 June 2001)
 - removed use of hash_map and replaced with CGAL::Hash_map in quickhull
 - updated some typenames that were changed in Polyhedron
