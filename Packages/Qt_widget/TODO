@@ -17,6 +17,7 @@ Rineau roadmap 2001/12/17:
 
 Allow to choose mouse buttons for tools.
 Rineau: Put Oldcursor of tools in a subclass.
+Rineau: put Qt_widget_focus, Qt_widget_zoom_rect in a C file
 
 RADU URSU
 --------------
