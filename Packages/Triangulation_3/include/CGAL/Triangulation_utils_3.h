@@ -53,6 +53,29 @@ struct Triangulation_utils_3
 		                     ( i != j ) );
     return tab_next_around_edge[i][j];
   }
+
+  unsigned int rand_4() const
+  {
+      static unsigned int random_value = 0;
+      static unsigned int count = 0;
+      static unsigned int val;
+      if (count==0)
+      {
+          count = 16;
+          random_value = (421 * random_value + 2073) % 32749;
+          val = random_value;
+      }
+      count--;
+      unsigned int ret = val & 3;
+      val = val >> 1;
+      return ret;
+  }
+
+  unsigned int rand_3() const
+  {
+      unsigned int i = rand_4();
+      return i==3 ? 0 : i;
+  }
 };
 
 CGAL_END_NAMESPACE
