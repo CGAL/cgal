@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (c) 1997-2003 The CGAL Consortium
+// Copyright (c) 1997-2004 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -11,12 +11,12 @@
 // release       : $CGAL_Revision: CGAL-I $
 // release_date  : $CGAL_Date$
 //
-// file          : include/CGAL/QP_engine/QPE_full_exact_pricing.h
+// file          : include/CGAL/QPE_full_exact_pricing.h
 // package       : $CGAL_Package: QP_engine $
 // chapter       : Quadratic Programming Engine
 //
 // revision      : 3.0alpha
-// revision_date : 2003/08
+// revision_date : 2004/06
 //
 // author(s)     : Sven Schönherr <sven@inf.fu-berlin.de>
 // coordinator   : ETH Zürich (Bernd Gärtner <gaertner@inf.ethz.ch>)
@@ -28,7 +28,7 @@
 #define CGAL_QPE_FULL_EXACT_PRICING_H
 
 // includes
-#include <CGAL/QP_engine/QPE_pricing_strategy.h>
+#include <CGAL/QPE_pricing_strategy.h>
 
 CGAL_BEGIN_NAMESPACE
 

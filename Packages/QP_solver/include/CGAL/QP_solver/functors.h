@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (c) 1997-2002 The CGAL Consortium
+// Copyright (c) 1997-2004 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -16,7 +16,7 @@
 // chapter       : Quadratic Programming Engine
 //
 // revision      : 3.0alpha
-// revision_date : 2002/01/27
+// revision_date : 2004/06
 //
 // author(s)     : Sven Schönherr <sven@inf.ethz.ch>
 // coordinator   : ETH Zürich (Bernd Gärtner <gaertner@inf.ethz.ch>)
@@ -35,6 +35,10 @@
 #  include <CGAL/function_objects.h>
 #endif
 
+#ifndef CGAL_PROTECT_FUNCTIONAL
+#  define CGAL_PROTECT_FUNCTIONAL
+#  include <functional>
+#endif
 #ifndef CGAL_PROTECT_ITERATOR
 #  define CGAL_PROTECT_ITERATOR
 #  include <iterator>
@@ -57,6 +61,10 @@ class QPE_matrix_accessor;
 template < class MatrixIt, class IsSymmetric,
            bool check_lower = false, bool check_upper = false >
 class QPE_matrix_pairwise_accessor;
+
+
+template < class RndAccIt >
+class Value_by_basic_index;
 
 
 // =====================
@@ -196,6 +204,43 @@ class QPE_matrix_pairwise_accessor : public std::unary_function<
     int                r;
     int                l;
     int                u;
+};
+
+
+// ----------------------------------------------------------------------------
+
+// --------------------
+// Value_by_basic_index
+// --------------------
+template < class RndAccIt >
+class Value_by_basic_index : public std::unary_function<
+    int, typename std::iterator_traits<RndAccIt>::value_type > {
+
+  public:
+    typedef typename
+    std::unary_function<
+      int, typename std::iterator_traits
+         <RndAccIt>::value_type >::result_type
+    result_type;
+
+    Value_by_basic_index( RndAccIt x_B_O_it,            int n_original,
+			  RndAccIt x_B_S_it = x_B_O_it, int n_slack = 0)
+	: o( x_B_O_it), s( x_B_S_it),
+	  l( n_original), u( n_original+n_slack),
+	  z( 0)
+	{ }
+
+    result_type  operator () ( int i) const
+        {
+	    if ( i < 0) return z;
+	    if ( i >= l && i < u) return s[ i];
+	    return o[ i];
+	}
+
+  private:
+    RndAccIt     o, s;
+    int          l, u;
+    result_type  z;
 };
 
 

@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (c) 1997-2002 The CGAL Consortium
+// Copyright (c) 1997-2004 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -16,7 +16,7 @@
 // chapter       : Quadratic Programming Engine
 //
 // revision      : 3.0alpha
-// revision_date : 2002/01/27
+// revision_date : 2004/06
 //
 // author(s)     : Sven Schönherr <sven@inf.ethz.ch>
 // coordinator   : ETH Zürich (Bernd Gärtner <gaertner@inf.ethz.ch>)

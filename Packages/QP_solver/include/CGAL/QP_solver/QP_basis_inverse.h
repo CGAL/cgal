@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (c) 1997-2002 The CGAL Consortium
+// Copyright (c) 1997-2004 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -13,10 +13,10 @@
 //
 // file          : include/CGAL/QP_engine/QPE_basis_inverse.h
 // package       : $CGAL_Package: QP_engine $
-// chapter       : Generalized Linear Programming
+// chapter       : Quadratic Programming Engine
 //
 // revision      : 3.0alpha
-// revision_date : 2003/08
+// revision_date : 2004/06
 //
 // author(s)     : Sven Schönherr <sven@inf.ethz.ch>
 // coordinator   : ETH Zürich (Bernd Gärtner <gaertner@inf.ethz.ch>)
@@ -63,17 +63,17 @@ class QPE_basis_inverse {
   private:
     
     // private types
-    typedef std::vector<ET>            Row;
-    typedef std::vector<Row>           Matrix;
+    typedef std::vector<ET>             Row;
+    typedef std::vector<Row>            Matrix;
 
   public:
 
     /*
-     * Note: Some member functions below are suffixed with '_'. They
-     * are member templates and their declaration is "hidden", because
-     * they are also implemented in the class interface. This is a
-     * workaround for M$-VC++, which otherwise fails to instantiate
-     * them correctly.
+     * Note: Some member functions below are suffixed with '_'.
+     * They are member templates and their declaration is "hidden",
+     * because they are also implemented in the class interface.
+     * This is a workaround for M$-VC++, which otherwise fails to
+     * instantiate them correctly.
      */
 
     // creation and initialization
@@ -87,8 +87,10 @@ class QPE_basis_inverse {
     template < class InputIterator >                            // phase I
     void  init_( unsigned int art_size, InputIterator art_first);
 
+    /*
     template < class InputIterator >                            // phase II
     void  init_( ...);
+    */
 
     // transition to phase II
     template < class InputIterator >                            // QP case
@@ -353,13 +355,9 @@ class QPE_basis_inverse {
 	    // compute '(Q^T * 2 D_B)_i * Q'
 	    multiply__l( x_l.begin(), x_x.begin());
 
-	    // store result in 'P'
-	    if ( b % 2 == 0) {                                  // negate
-		std::transform( x_x.begin(), x_x.begin()+row+1,
-				m_it1->begin(), std::negate<ET>());
-	    } else {                                            // signs cancel
-		std::copy( x_x.begin(), x_x.begin()+row+1, m_it1->begin());
-	    }
+	    // negate and store result in 'P'
+	    std::transform( x_x.begin(), x_x.begin()+row+1,
+			    m_it1->begin(), std::negate<ET>());
 
 	    // clean up in 'R'
 	    std::fill_n( m_it2->begin()+l, b-row+1, et0);
@@ -372,7 +370,7 @@ class QPE_basis_inverse {
 			    std::bind2nd( std::multiplies<ET>(), d));
 	}
 
-	// new denominator: det(A_B)^2
+	// new denominator: |det(A_B)|^2
 	d *= d;
 
 	// update status
@@ -515,21 +513,20 @@ class QPE_basis_inverse {
 
         // rows: 0..s-1 without k
         unsigned int  row, col;
-	ET            y;
+	ET            minus_y;
         for (   row = 0;
                 row < s;
               ++row,     ++matrix_it, ++y_x_it) {
 	    if ( row != k) {
 
 		// columns: 0..b-1
-		y = *y_x_it;
+		minus_y = -( *y_x_it);
 		for (   col = 0, row_it = matrix_it->begin(), row_k_it = row_k;
 			col < b;
 		      ++col,   ++row_it,                    ++row_k_it       ){
         
-		    *row_it *= z;
-		    *row_it -= y * *row_k_it;
-		    *row_it /= d;                       // without remainder!
+		    // update in place
+		    update_entry( *row_it, z, minus_y * *row_k_it, d);
 		}
 	    }
         }
@@ -582,14 +579,14 @@ class QPE_basis_inverse {
 	if ( is_QP) matrix_it += l;
 
         // rows: 0..s-1
-        unsigned int    row, col;
-	ET            m_row;
+        unsigned int          row, col;
+	ET            minus_m_row;
         for (   row = 0;
                 row < s;
               ++row,     ++matrix_it) {
 
 	    // columns: 0..b-1
-	    m_row = ( *matrix_it)[ k];
+	    minus_m_row = -( *matrix_it)[ k];
 	    for (   col = 0,   row_it = matrix_it->begin(), x_it = x_x.begin();
 		    col < b;
 		  ++col,     ++row_it,                    ++x_it             ){
@@ -597,9 +594,7 @@ class QPE_basis_inverse {
 		if ( col != k) {                // all columns but k
 
 		    // update in place
-		    *row_it *= z;
-		    *row_it -= m_row * *x_it;
-		    *row_it /= d;                       // without remainder!
+		    update_entry( *row_it, z, minus_m_row * *x_it, d);
 
 		} else {                        // column k
 

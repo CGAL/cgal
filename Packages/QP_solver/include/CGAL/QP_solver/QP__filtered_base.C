@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (c) 1997-2003 The CGAL Consortium
+// Copyright (c) 1997-2004 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -11,12 +11,12 @@
 // release       : $CGAL_Revision: CGAL-I $
 // release_date  : $CGAL_Date$
 //
-// file          : include/CGAL/QP_engine/QPE__filtered_base.h
+// file          : include/CGAL/QP_engine/QPE__filtered_base.C
 // package       : $CGAL_Package: QP_engine $
 // chapter       : Quadratic Programming Engine
 //
 // revision      : 3.0alpha
-// revision_date : 2003/08
+// revision_date : 2004/06
 //
 // author(s)     : Sven Schönherr <sven@inf.ethz.ch>
 // coordinator   : ETH Zürich (Bernd Gärtner <gaertner@inf.ethz.ch>)
@@ -74,6 +74,8 @@ template < class Rep_, class NT_, class ET2NT_ >
 void  QPE__filtered_base<Rep_,NT_,ET2NT_>::
 init_NT( )
 {
+    // ToDo: scale 'x_B_O', 'lambda', and 'd' if necessary
+
     // get inexact version of 'lambda'
     std::transform( solver().lambda_numerator_begin(),
 		    solver().lambda_numerator_end(),
@@ -139,7 +141,6 @@ update_maxima( )
 
     // finalize error bounds
     // ToDo: use std::numeric_limits for 'machine epsilon'
-    // ToDo: scale 'x_B_O', 'lambda', and 'd' if necessary
     NT  q = std::ldexp( 1.015625 * ( c+b+1) * ( c+b+2), -53);
     bound1    *= q;
     bound2_wq *= q;

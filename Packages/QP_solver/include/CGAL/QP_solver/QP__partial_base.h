@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (c) 1997-2003 The CGAL Consortium
+// Copyright (c) 1997-2004 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -16,7 +16,7 @@
 // chapter       : Quadratic Programming Engine
 //
 // revision      : 3.0alpha
-// revision_date : 2003/07
+// revision_date : 2004/06
 //
 // author(s)     : Sven Schönherr <sven@inf.ethz.ch>
 // coordinator   : ETH Zürich (Bernd Gärtner <gaertner@inf.ethz.ch>)
@@ -28,7 +28,7 @@
 #define CGAL_QPE__PARTIAL_BASE_H
 
 // includes
-#include <CGAL/QP_engine/QPE_pricing_strategy.h>
+#include <CGAL/QPE_pricing_strategy.h>
 #include <CGAL/Random.h>
 #include <algorithm>
 #include <vector>
@@ -53,12 +53,13 @@ class QPE__partial_base : virtual public QPE_pricing_strategy<Rep_> {
     typedef  QPE__partial_base<Rep>     Self;
     typedef  QPE_pricing_strategy<Rep>  Base;
 
+    typedef  typename Base::QP_solver   QP_solver;
   protected:
 
     // types
-    typedef  typename Base::QP_solver::Indices         Indices;
-    typedef  typename Base::QP_solver::Index_iterator  Index_iterator;
-    typedef  typename Base::QP_solver::Index_const_iterator  Index_const_iterator;
+    typedef  typename QP_solver::Indices               Indices;
+    typedef  typename QP_solver::Index_iterator        Index_iterator;
+    typedef  typename QP_solver::Index_const_iterator  Index_const_iterator;
 
     // construction
     QPE__partial_base( bool  randomize, Random&  random);
@@ -124,7 +125,7 @@ init( )
     int  n = solver().number_of_variables();
     int  m = solver().number_of_constraints();
 
-    s = static_cast< int>( m*std::sqrt( n/2.0));
+    s = std::min( static_cast< unsigned int>( m*std::sqrt( n/2.0)), N.size());
 }
 
 // operations

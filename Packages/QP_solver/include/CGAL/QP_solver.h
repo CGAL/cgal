@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (c) 1997-2003 The CGAL Consortium
+// Copyright (c) 1997-2004 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -16,7 +16,7 @@
 // chapter       : Quadratic Programming Engine
 //
 // revision      : 3.0alpha
-// revision_date : 2003/07
+// revision_date : 2004/06
 //
 // author(s)     : Sven Schönherr <sven@inf.ethz.ch>
 // coordinator   : ETH Zürich (Bernd Gärtner <gaertner@inf.ethz.ch>)
@@ -40,11 +40,10 @@
 #ifndef CGAL_QP_ENGINE_QPE_BASIS_INVERSE_H
 #include <CGAL/QP_engine/QPE_basis_inverse.h>
 #endif
-#ifndef CGAL_QP_ENGINE_QPE_PRICING_STRATEGY_H
-#include <CGAL/QP_engine/QPE_pricing_strategy.h>
+#ifndef CGAL_QPE_PRICING_STRATEGY_H
+#include <CGAL/QPE_pricing_strategy.h>
 #endif
 
-#include <CGAL/Function_objects/Value_by_basic_index.h>
 #include <CGAL/functional.h>
 
 #ifndef CGAL_IO_VERBOSE_OSTREAM_H
@@ -333,11 +332,11 @@ private:
   public:
 
     /*
-     * Note: Some member functions below are suffixed with '_'. They
-     * are member templates and their declaration is "hidden", because
-     * they are also implemented in the class interface. This is a
-     * workaround for M$-VC++, which otherwise fails to instantiate
-     * them correctly.
+     * Note: Some member functions below are suffixed with '_'.
+     * They are member templates and their declaration is "hidden",
+     * because they are also implemented in the class interface.
+     * This is a workaround for M$-VC++, which otherwise fails to
+     * instantiate them correctly.
      */
 
     // creation & initialization
@@ -421,7 +420,7 @@ private:
     
     Variable_numerator_iterator
     variables_numerator_end  ( ) const
-        { return Variable_numerator_iterator( in_B.end  (),
+        { return Variable_numerator_iterator( in_B.end(),
                    Value_by_basic_index( x_B_O.begin(), qp_n, x_B_S.begin()));}
     
     Variable_value_iterator
@@ -433,7 +432,7 @@ private:
     Variable_value_iterator
     variables_value_end  ( ) const
         { return Variable_value_iterator(
-                     variables_numerator_end  (),
+                     variables_numerator_end(),
                      Quotient_maker( Quotient_creator(), d)); }
     
     // access to slack variables
@@ -465,7 +464,7 @@ private:
     Basic_variable_value_iterator
     basic_original_variables_value_end  ( ) const
         { return Basic_variable_value_iterator(
-                     basic_original_variables_numerator_end  (),
+                     basic_original_variables_numerator_end(),
                      Quotient_maker( Quotient_creator(), d)); }
 
     Basic_variable_index_iterator
@@ -486,7 +485,7 @@ private:
     Basic_variable_value_iterator
     basic_slack_variables_value_end  ( ) const
         { return Basic_variable_value_iterator(
-                     basic_slack_variables_numerator_end  (),
+                     basic_slack_variables_numerator_end(),
                      Quotient_maker( Quotient_creator(), d)); }
 
     // access to working variables
@@ -513,7 +512,7 @@ private:
     Lambda_value_iterator
     lambda_value_end  ( ) const
         { return Lambda_value_iterator(
-                     lambda_numerator_end  (),
+                     lambda_numerator_end(),
                      Quotient_maker( Quotient_creator(), d)); }
 
     // miscellaneous
@@ -560,7 +559,7 @@ private:
     void  init_solution__b_C( Tag_true  has_no_inequalities);
     void  init_solution__b_C( Tag_false has_no_inequalities);
 
-    void  init_additional_variables( );// rename: data_members
+    void  init_additional_data_members( );
 
     // transition (to phase II)
     void  transition( );
@@ -635,6 +634,8 @@ private:
 
     void  ratio_test_2( Tag_true  is_linear);
     void  ratio_test_2( Tag_false is_linear);
+    void  ratio_test_2__p( Tag_true  has_no_inequalities);
+    void  ratio_test_2__p( Tag_false has_no_inequalities);                    
 
     // update
     void  update_1( );
@@ -828,7 +829,6 @@ void  QPE_solver<Rep_>::
 init_basis__constraints( int, Tag_true)
 {
     // create 'm' dummy entries in 'C'
-    if ( ! C.empty()) C.clear();         // --> move to 'init_basis()'?
     C.reserve( qp_m);
     for ( i = 0; i < qp_m; ++i) C.push_back( i);
 }
@@ -961,7 +961,7 @@ ratio_test_1__q_x_S( Tag_false)
     // A_S_BxB_O * q_x_O
     multiply__A_S_BxB_O( q_x_O.begin(), q_x_S.begin());
 
-    // ( A_S_BxB_O * x_B_O) - A_S_Bxj
+    // ( A_S_BxB_O * q_x_O) - A_S_Bxj
     if ( j < qp_n) {
 	std::transform( q_x_S.begin(),
 			q_x_S.begin()+S_B.size(),
@@ -973,7 +973,7 @@ ratio_test_1__q_x_S( Tag_false)
 				    std::bind1st( std::multiplies<ET>(), d)));
     }
 
-    // q_x_S = -+ ( A_S_BxB_O * x_B_O - A_S_Bxj)
+    // q_x_S = -+ ( A_S_BxB_O * q_x_O - A_S_Bxj)
     Value_iterator  q_it = q_x_S.begin();
     Index_iterator  i_it;
     for ( i_it = B_S.begin(); i_it != B_S.end(); ++i_it, ++q_it) {
@@ -1039,6 +1039,82 @@ ratio_test_2( Tag_true)
     // nop
 }
 
+template < class Rep_ >  inline                                 // no ineq.
+void  QPE_solver<Rep_>::
+ratio_test_2__p( Tag_true)
+{
+    // get column index of entering variable in basis
+    int  col = in_B[ j];
+    CGAL_qpe_assertion( col >= 0);
+    col += l;
+
+    // get (last) column of `M_B^{-1}' (Note: `p_...' is stored in `q_...')
+    Value_iterator  it;
+    int             row;
+    unsigned int    k;
+    for (   k = 0,            row = 0,   it = q_lambda.begin();
+	    k < C.size();
+	  ++k,              ++row,     ++it                   ) {
+	*it = inv_M_B.entry( row, col);
+    }
+    for (   k = 0,            row = l,   it = q_x_O.begin();
+	    k < B_O.size();
+	  ++k,              ++row,     ++it                   ) {
+	*it = inv_M_B.entry( row, col);
+    }
+}
+
+template < class Rep_ >  inline                                 // has ineq.
+void  QPE_solver<Rep_>::
+ratio_test_2__p( Tag_false)
+{
+    Value_iterator  v_it;
+    Index_iterator  i_it;
+
+    // compute 'p_lambda' and 'p_x_O' (Note: `p_...' is stored in `q_...')
+    // -------------------------------------------------------------------
+
+    // type of entering variable
+    if ( j < qp_n) {                                        // original
+
+	// use 'no_ineq' variant
+	ratio_test_2__p( Tag_true());
+
+    } else {                                                // slack
+
+	j -= qp_n;
+
+	// get column A_{S_j,B_O}^T (i.e. row of A_{S_B,B_O})
+	int             row  = slack_A[ j].first;
+	bool            sign = slack_A[ j].second;
+
+	for (   i_it =  B_O.begin(),   v_it = tmp_x.begin();
+	        i_it != B_O.end();
+	      ++i_it,                ++v_it                ) {
+	    *v_it = ( sign ? qp_A[ *i_it][ row] : -qp_A[ *i_it][ row]);
+	}
+
+	// compute  ( p_l | p_x_O )^T = M_B^{-1} * ( 0 | A_{S_j,B_O} )^T
+	std::fill_n( tmp_l.begin(), C.size(), et0);
+	inv_M_B.multiply( tmp_l     .begin(), tmp_x  .begin(),
+			  q_lambda.begin(),   q_x_O.begin());
+
+	j += qp_n;
+    }
+
+    // compute 'p_x_S'
+    // ---------------
+    // A_S_BxB_O * p_x_O
+    multiply__A_S_BxB_O( q_x_O.begin(), q_x_S.begin());
+
+    // p_x_S = +- ( A_S_BxB_O * p_x_O)
+    for (   i_it =  B_S.begin(),   v_it = q_x_S.begin();
+	    i_it != B_S.end();
+	  ++i_it,                ++v_it                ) {
+	if ( ! slack_A[ *i_it - qp_n].second) *v_it = -(*v_it);
+    }
+}
+
 // update
 // ------
 template < class Rep_ >  inline                                 // LP case
@@ -1060,17 +1136,20 @@ update_1( Tag_false)
 
     } else {                                            // phase II
 
-	// enter variable into basis, if
-	// - no leaving variable was found  or
-	// - basis matrix would become singular when variable i leaves
-	bool  stays_regular = basis_matrix_stays_regular();
-	if ( ( i < 0) || ( ! stays_regular)) enter_variable();
+	if ( ( i >= 0) && basis_matrix_stays_regular()) {
 
-	// leave variable from basis, if
-	// - some leaving variable was found  and
-	// - basis matrix stays regular
-	if ( ( i >= 0) && stays_regular) leave_variable();
+	    // leave variable from basis, if
+	    // - some leaving variable was found  and
+	    // - basis matrix stays regular
+	    leave_variable();
 
+	} else {
+
+	    // enter variable into basis, if
+	    // - no leaving variable was found  or
+	    // - basis matrix would become singular when variable i leaves
+	    enter_variable();
+	}
     }
 }
 
@@ -1134,6 +1213,11 @@ basis_matrix_stays_regular()
     // check original variable
     int k = l+in_B[ i];
     return ( inv_M_B.entry( k, k) != et0);
+
+/* ToDo: check, if really not needed in 'update_1':
+  - basis has already minimal size  or
+  || ( B_O.size()==C.size()) 
+*/
 }
 
 // current solution

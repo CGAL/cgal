@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (c) 1997-2002 The CGAL Consortium
+// Copyright (c) 1997-2004 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -13,10 +13,10 @@
 //
 // file          : include/CGAL/QP_engine/QPE_basis_inverse.C
 // package       : $CGAL_Package: QP_engine $
-// chapter       : Generalized Linear Programming
+// chapter       : Quadratic Programming Engine
 //
 // revision      : 3.0alpha
-// revision_date : 2002/04/20
+// revision_date : 2004/06
 //
 // author(s)     : Sven Schönherr <sven@inf.ethz.ch>
 // coordinator   : ETH Zürich (Bernd Gärtner <gaertner@inf.ethz.ch>)
@@ -326,26 +326,3 @@ print( )
 CGAL_END_NAMESPACE
 
 // ===== EOF ==================================================================
-
-/*
-// ========
-// Functors
-// ========
-template < class ET >
-class QPE_update_adding {
-    ET  zz, dd;
-  public:
-    QPE_update_adding( const ET& z, const ET& d) : zz( z), dd( d) { }
-    void  operator () ( ET& entry, const ET& y) const
-        { entry *= zz; entry += y; entry /= dd; }
-};
-
-template < class ET >
-class QPE_update_removing {
-    ET  zz, dd;
-  public:
-    QPE_update_removing( const ET& z, const ET& d) : zz( z), dd( d) { }
-    void  operator () ( ET& entry, const ET& y) const
-        { entry *= zz; entry -= y; entry /= dd; }
-};
-*/

@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (c) 1997-2002 The CGAL Consortium
+// Copyright (c) 1997-2004 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -16,7 +16,7 @@
 // chapter       : Quadratic Programming Engine
 //
 // revision      : 3.0alpha
-// revision_date : 2003/07
+// revision_date : 2004/06
 //
 // author(s)     : Sven Schönherr <sven@inf.ethz.ch>
 // coordinator   : ETH Zürich (Bernd Gärtner <gaertner@inf.ethz.ch>)
@@ -188,10 +188,11 @@ init( )
     }
 
     // set status
-    m_phase   = 1;
-    m_status  = UPDATE;
-    m_pivots  = 0;
-    is_phaseI = true;
+    m_phase    = 1;
+    m_status   = UPDATE;
+    m_pivots   = 0;
+    is_phaseI  = true;
+    is_phaseII = false;
 
     // initial basis and basis inverse
     init_basis();
@@ -199,12 +200,27 @@ init( )
     // initial solution
     init_solution();
 
-    // initialize additional variables
-    init_additional_variables();
+    // initialize additional data members
+    init_additional_data_members();
 
     // initialize pricing strategy
     CGAL_qpe_precondition( strategyP != static_cast< Pricing_strategy*>( 0));
     strategyP->init( 0);
+
+    // basic feasible solution already available?
+    if ( art_basic == 0) {
+
+	// transition to phase II
+	CGAL_qpe_debug {
+	    if ( vout2.verbose()) {
+		vout2.out() << std::endl
+			    << "no artificial variables at all "
+			    << "--> skip phase I"
+			    << std::endl;
+	    }
+	}
+	transition();
+    }
 }
 
 // initial basis and basis inverse
@@ -219,13 +235,13 @@ init_basis( )
     // has special artificial column?
     if ( ! art_s.empty()) {
 	    s_i = -art_s_i;
-	art_s_i = qp_n+slack_A.size()+art_A.size();
+	art_s_i = qp_n+s+art_A.size();
 	art_A.push_back( std::make_pair( s_i, slack_A[ s_i].first));
     }
 
     // initialize indices of basic variables
     if ( ! in_B.empty()) in_B.clear();
-    in_B.reserve( qp_n+slack_A.size()+art_A.size());
+    in_B.reserve( qp_n+s+art_A.size());
     in_B.insert( in_B.end(), qp_n, -1);        // no original variable is basic
 
     init_basis__slack_variables( s_i, Has_no_inequalities());
@@ -239,6 +255,7 @@ init_basis( )
     art_basic = art_A.size();
 
     // initialize indices of 'basic' and 'nonbasic' constraints
+    if ( ! C.empty()) C.clear();
     init_basis__constraints( s_i, Has_no_inequalities());
 
     // diagnostic output
@@ -246,7 +263,7 @@ init_basis( )
         if ( vout.verbose()) print_basis();
     }
 
-    // initialize basis inverse
+    // initialize basis inverse (explain: 'art_s' not needed here)
     inv_M_B.init( art_A.size(), art_A.begin());
 }
 
@@ -261,6 +278,7 @@ init_basis__slack_variables( int s_i, Tag_false)
     B_S.reserve( s);
 
     // (almost) all slack variables are basic
+    // Note: slack var. corresponding to special artificial var. is nonbasic
     for ( i = 0, j = qp_n; i < s; ++i, ++j) {
 	if ( i != s_i) {
 	    in_B  .push_back( B_S.size());
@@ -276,7 +294,6 @@ void  QPE_solver<Rep_>::
 init_basis__constraints( int s_i, Tag_false)
 {
     // reserve memory
-    if ( !    C  .empty())    C  .clear();
     if ( ! in_C  .empty()) in_C  .clear();
     if ( !    S_B.empty())    S_B.clear();
       C.reserve( l);
@@ -333,11 +350,11 @@ init_solution( )
     }
 }
 
-// initialize additional variables
+// initialize additional data members
 template < class Rep_ >
 void
 QPE_solver<Rep_>::
-init_additional_variables( )
+init_additional_data_members( )
 {
     if ( ! A_Cj.empty()) A_Cj.clear();
     A_Cj.insert( A_Cj.end(), l, et0);
@@ -828,27 +845,22 @@ ratio_test_2( Tag_false)
 	}
     }
 
-    // get `q_x'
-
-    /*
-    if ( is_QP && is_phaseII) {                         // QP && phase II
-	inv_M_B.multiply  (     A_Cj.begin(), two_D_Bj.begin(),
-			    q_lambda.begin(),    q_x_O.begin());
-    } else {                                            // LP || phase I
-	inv_M_B.multiply_x(     A_Cj.begin(),    q_x_O.begin());
-    }
-    multiply__A_S_BxB_O( q_x_O.begin(), q_x_S.begin());
-    */
+    // compute `p_lambda' and `p_x' (Note: `p_...' is stored in `q_...')
+    ratio_test_2__p( Has_no_inequalities());
  
     // diagnostic output
     CGAL_qpe_debug {
 	if ( vout3.verbose()) {
-	    vout3.out() << "   q_x_O: ";
+	    vout3.out() << "p_lambda: ";
+	    std::copy( q_lambda.begin(), q_lambda.begin()+C.size(),
+		       std::ostream_iterator<ET>( vout3.out()," "));
+	    vout3.out() << std::endl;
+	    vout3.out() << "   p_x_O: ";
 	    std::copy( q_x_O.begin(), q_x_O.begin()+B_O.size(),
 		       std::ostream_iterator<ET>( vout3.out()," "));
 	    vout3.out() << std::endl;
 	    if ( has_ineq) {
-		vout3.out() << "   q_x_S: ";
+		vout3.out() << "   p_x_S: ";
 		std::copy( q_x_S.begin(), q_x_S.begin()+B_S.size(),
 			   std::ostream_iterator<ET>( vout3.out()," "));
 		vout3.out() << std::endl;
@@ -857,24 +869,22 @@ ratio_test_2( Tag_false)
 	}
     }
 
-    /*
-
-    // check `t_i's
-    x_i = et1;                                          // trick: initialize
-    q_i = et0;                                          // minimum with +oo
+    // check `mu_j_i's
+    x_i = et0;                                          // initialize
+    q_i = et1;                                          // minimum with 0
 
     Value_iterator  x_it = x_B_O.begin();
     Value_iterator  q_it = q_x_O.begin();
     Index_iterator  i_it;
     for ( i_it = B_O.begin(); i_it != B_O.end(); ++i_it, ++x_it, ++q_it) {
-	if ( ( *q_it > et0) && ( ( *x_it * q_i) < ( x_i * *q_it))) {
+	if ( ( *q_it > et0) && ( ( *x_it * q_i) > ( x_i * *q_it))) {
 	    i = *i_it; x_i = *x_it; q_i = *q_it;
 	}
     }
     x_it = x_B_S.begin();
     q_it = q_x_S.begin();
     for ( i_it = B_S.begin(); i_it != B_S.end(); ++i_it, ++x_it, ++q_it) {
-	if ( ( *q_it > et0) && ( ( *x_it * q_i) < ( x_i * *q_it))) {
+	if ( ( *q_it > et0) && ( ( *x_it * q_i) > ( x_i * *q_it))) {
 	    i = *i_it; x_i = *x_it; q_i = *q_it;
 	}
     }
@@ -882,39 +892,36 @@ ratio_test_2( Tag_false)
     CGAL_qpe_debug {
 	if ( vout2.verbose()) {
 	    for ( unsigned int k = 0; k < B_O.size(); ++k) {
-		vout2.out() << "t_O_" << k << ": "
+		vout2.out() << "mu_j_O_" << k << ": - "
 			    << x_B_O[ k] << '/' << q_x_O[ k]
-			    << ( ( q_i > et0) && ( i == B_O[ k]) ? " *" : "")
+			    << ( ( q_i < et0) && ( i == B_O[ k]) ? " *" : "")
 			    << std::endl;
 	    }
 	    for ( unsigned int k = 0; k < B_S.size(); ++k) {
-		vout2.out() << "t_S_" << k << ": "
+		vout2.out() << "mu_j_S_" << k << ": - "
 			    << x_B_S[ k] << '/' << q_x_S[ k]
-			    << ( ( q_i > et0) && ( i == B_S[ k]) ? " *" : "")
+			    << ( ( q_i < et0) && ( i == B_S[ k]) ? " *" : "")
 			    << std::endl;
 	    }
 	    vout2.out() << std::endl;
 	}
-	if ( q_i > et0) {
-	    if ( i < 0) {
-		vout2 << "leaving variable: none" << std::endl;
-	    } else {
-		vout1 << ", ";
-		vout  << "leaving"; vout2 << " variable"; vout << ": ";
-		vout  << i;
-		if ( vout2.verbose()) {
-		    if ( ( i < qp_n) || ( i >= (int)( qp_n+slack_A.size()))) {
-			vout2.out() << " (= B_O[ " << in_B[ i] << "]: "
-				    << variable_type( i) << ')' << std::endl;
-		    } else {
-			vout2.out() << " (= B_S[ " << in_B[ i] << "]: slack)"
-				    << std::endl;
-		    }
+	if ( i < 0) {
+	    vout2 << "leaving variable: none" << std::endl;
+	} else {
+	    vout1 << ", ";
+	    vout  << "leaving"; vout2 << " variable"; vout << ": ";
+	    vout  << i;
+	    if ( vout2.verbose()) {
+		if ( i < qp_n) {
+		    vout2.out() << " (= B_O[ " << in_B[ i] << "]: original)"
+				<< std::endl;
+		} else {
+		    vout2.out() << " (= B_S[ " << in_B[ i] << "]: slack)"
+				<< std::endl;
 		}
 	    }
 	}
     }
-    */
 }
 
 // update (step 1)
@@ -1151,16 +1158,15 @@ enter_variable( )
     if ( no_ineq || ( j < qp_n)) {                      // original variable
 
 	// enter original variable [ in: j ]
+	if ( minus_c_B.size() == B_O.size()) {
+	    minus_c_B.push_back( et0);
+	        q_x_O.push_back( et0);
+	      tmp_x  .push_back( et0);
+	}
+	minus_c_B[ B_O.size()] = -ET( qp_c[ j]);
+
 	in_B  [ j] = B_O.size();
 	   B_O.push_back( j);
-
-	if ( minus_c_B.size() < B_O.size()) {
-	    minus_c_B.push_back( -ET( qp_c[ j]));
-	    q_x_O.push_back( et0);
-	    tmp_x.push_back( et0);
-	} else {
-	    minus_c_B[ B_O.size()-1] = -ET( qp_c[ j]);
-	}
 
 	// diagnostic output
 	CGAL_qpe_debug {
@@ -1218,7 +1224,8 @@ leave_variable( )
 	in_B  [ B_O.back()] = k;
 	   B_O[ k] = B_O.back(); B_O.pop_back();
 
-	minus_c_B[ k] = minus_c_B[ B_O.size()];
+	minus_c_B [ k] = minus_c_B [ B_O.size()];
+	  two_D_Bj[ k] =   two_D_Bj[ B_O.size()];
 
 	// diagnostic output
 	CGAL_qpe_debug {
@@ -1239,6 +1246,9 @@ leave_variable( )
 
 	// enter inequality constraint [ in: i ]
 	int new_row = slack_A[ i-qp_n].first;
+
+	A_Cj[ C.size()] = ( j < qp_n ? ET( qp_A[ j][ new_row]) : et0);
+
 	 b_C[ C.size()] = ET( qp_b[ new_row]);
 	in_C[ new_row ] = C.size();
 	   C.push_back( new_row);
@@ -1284,10 +1294,10 @@ multiply__A_S_BxB_O( Value_iterator in, Value_iterator out) const
     std::fill_n( out, B_S.size(), et0);
 
     // foreach original column of A in B_O (artificial columns are zero in S_B
-    A_column        a_col;                                   // except special)
+    A_column              a_col;                             // except special)
     Index_const_iterator  row_it, col_it;
-    Value_iterator  out_it;
-    ET              in_value;
+    Value_iterator        out_it;
+    ET                    in_value;
     for ( col_it = B_O.begin(); col_it != B_O.end(); ++col_it, ++in) {
 	in_value = *in;
 	out_it   = out;
@@ -1392,14 +1402,23 @@ check_basis_inverse( Tag_false)
     // left part of M_B
     std::fill_n( tmp_l.begin(), rows, et0);
     for ( col = 0; col < rows; ++col) {
+
+	// get column of A_B^T (i.e. row of A_B)
 	row = ( has_ineq ? C[ col] : col);
 	v_it = tmp_x.begin();
 	for ( i_it = B_O.begin(); i_it != B_O.end(); ++i_it, ++v_it) {
-	    *v_it = ( *i_it < qp_n ? qp_A[ *i_it][ row] :
-		      art_A[ *i_it - qp_n].first != (int)row ? et0 :
+	    *v_it = ( *i_it < qp_n ? qp_A[ *i_it][ row] :           // original
+		      art_A[ *i_it - qp_n].first != (int)row ? et0 :// artific.
 		      ( art_A[ *i_it - qp_n].second ? -et1 : et1));
 	}
-	// ToDo: handling of special artificial [art_s_i]
+
+	if ( art_s_i >= 0) {              // special artificial variable basic?
+	    int  k = qp_n+slack_A.size()+art_s_i;
+	    if ( in_B[ k] >= 0) {
+		tmp_x[ in_B[ k]] = art_s[ row];
+	    }
+	}
+
 	inv_M_B.multiply( tmp_l.begin(), tmp_x.begin(),
 			  q_lambda.begin(), q_x_O.begin());
 
@@ -1439,9 +1458,10 @@ check_basis_inverse( Tag_false)
 	    }
 	    std::cerr << "failed ( row=" << rows+(v_it-q_x_O.begin())
 		      << " | col=" << col << " )" << std::endl;
-	    //	    return false;
+	    // ToDo: return false;
 	}
     }
+    vout4 << "= = = = = = = = = =" << std::endl;
 
     // right part of M_B
     if ( is_phaseI) std::fill_n( tmp_x.begin(), B_O.size(), et0);
@@ -1469,7 +1489,7 @@ check_basis_inverse( Tag_false)
 	    }
 	}
 
-	v_it = std::find_if( q_lambda.begin(), q_lambda.begin()+cols,
+	v_it = std::find_if( q_lambda.begin(), q_lambda.begin()+rows,
 			     std::bind2nd( std::not_equal_to<ET>(), et0));
 	if ( v_it != q_lambda.begin()+rows) {
 	    if ( ! vout4.verbose()) {
@@ -1587,11 +1607,6 @@ print_basis( )
 	if ( is_phaseI) {
 	    vout2.out() << " (artificial: " << art_basic << ')';
 	}
-	if ( vout3.verbose()) {
-	    vout3.out() << "\nin_B: ";
-	    std::copy( in_B.begin(), in_B.end  (),
-		       std::ostream_iterator<int>( vout3.out(), " "));
-	}
 	if ( has_ineq) {
 	    vout2.out() << std::endl
 			<< "basic constraints:  ";
@@ -1602,8 +1617,16 @@ print_basis( )
 		std::copy( C.begin()+qp_m-slack_A.size(), C.end(),
 			   std::ostream_iterator<int>( vout2.out(), " "));
 	    }
-	    if ( vout3.verbose()) {
-		vout3.out() << "\nin_C: ";
+	}
+	if ( vout3.verbose()) {
+	    vout3.out() << std::endl
+			<< std::endl
+			<< "    in_B: ";
+	    std::copy( in_B.begin(), in_B.end  (),
+		       std::ostream_iterator<int>( vout3.out(), " "));
+	    if ( has_ineq) {
+		vout3.out() << std::endl
+			    << "    in_C: ";
 		std::copy( in_C.begin(), in_C.end  (),
 			   std::ostream_iterator<int>( vout3.out(), " "));
 	    }
@@ -1665,9 +1688,3 @@ variable_type( int k) const
 CGAL_END_NAMESPACE
 
 // ===== EOF ==================================================================
-
-/*
-  really not needed in 'update_1'?
-  - basis has already minimal size  or
-  || ( B_O.size()==C.size()) 
-*/

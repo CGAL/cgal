@@ -1,12 +1,25 @@
-// ======================================================================
+// ============================================================================
 //
-// Copyright (c) 1997-2000 The CGAL Consortium
+// Copyright (c) 1997-2004 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
 // intended for general use.
 //
-// ----------------------------------------------------------------------
+// ----------------------------------------------------------------------------
+//
+// release       : $CGAL_Revision: CGAL-I $
+// release_date  : $CGAL_Date$
+//
+// file          : include/CGAL/QP_engine/assertions.h
+// package       : $CGAL_Package: QP_engine $
+// chapter       : Quadratic Programming Engine
+//
+// revision      : 3.0alpha
+// revision_date : 2004/06
+//
+// author(s)     : Sven Schönherr <sven@inf.fu-berlin.de>
+// coordinator   : ETH Zürich (Bernd Gärtner <gaertner@inf.ethz.ch>)
 //
 // implementation: assertion macros for the QP engine
 // ======================================================================
@@ -14,9 +27,11 @@
 #ifndef CGAL_QPE_ASSERTIONS_H
 #define CGAL_QPE_ASSERTIONS_H
 
+// =================
 // macro definitions
 // =================
 
+// ----------
 // assertions
 // ----------
 #if (    defined( CGAL_QPE_NO_ASSERTIONS) \
@@ -82,7 +97,7 @@
 #endif // qpe expensive exactness assertions
 
 
-
+// -------------
 // preconditions
 // -------------
 #if (    defined( CGAL_QPE_NO_PRECONDITIONS) \
@@ -148,7 +163,7 @@
 #endif // qpe expensive exactness preconditions
 
 
-
+// --------------
 // postconditions
 // --------------
 #if (    defined( CGAL_QPE_NO_POSTCONDITIONS) \
@@ -214,7 +229,7 @@
 #endif // qpe expensive exactness postconditions
 
 
-
+// --------
 // warnings
 // --------
 #if (    defined( CGAL_QPE_NO_WARNINGS) \
@@ -278,7 +293,6 @@
      ((EX)?((void)0): ::CGAL::warning_fail( # EX ,__FILE__,__LINE__,MSG))
 #  define  CGAL_qpe_expensive_exactness_warning_code(CODE) CODE
 #endif // qpe expensive exactness warnings
-
 
 
 #endif // CGAL_QPE_ASSERTIONS_H

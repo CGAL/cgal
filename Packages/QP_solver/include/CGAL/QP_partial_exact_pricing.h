@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (c) 1997-2003 The CGAL Consortium
+// Copyright (c) 1997-2004 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -16,7 +16,7 @@
 // chapter       : Quadratic Programming Engine
 //
 // revision      : 3.0alpha
-// revision_date : 2003/08
+// revision_date : 2004/06
 //
 // author(s)     : Sven Schönherr <sven@inf.fu-berlin.de>
 // coordinator   : ETH Zürich (Bernd Gärtner <gaertner@inf.ethz.ch>)
@@ -51,10 +51,9 @@ class QPE_partial_exact_pricing : public QPE__partial_base<Rep_> {
     typedef  QPE_partial_exact_pricing<Rep>  Self;
 
     // types from the pricing base class
-    typedef  typename Base::ET          ET;
-    typedef  typename Partial_base::Index_iterator Index_iterator;
-    typedef  typename Partial_base::Index_const_iterator Index_const_iterator;
-
+    typedef  typename Base::ET                            ET;
+    typedef  typename Partial_base::Index_iterator        Index_iterator;
+    typedef  typename Partial_base::Index_const_iterator  Index_const_iterator;
 
   public:
 
