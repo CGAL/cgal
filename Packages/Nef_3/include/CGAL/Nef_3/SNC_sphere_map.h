@@ -228,7 +228,7 @@ class SNC_sphere_map : public Items_::Vertex<SNC_structure<Kernel_, Items_, Mark
     operator Object_handle() const { return Ibase::operator*(); }
     Object_handle& operator*() const { return Ibase::operator*(); }
     Object_handle  operator->() const 
-    { CGAL_nef_assertion_msg(0,"not impl."); }
+    { CGAL_nef_assertion_msg(0,"not impl."); return Object_handle(); }
   };
 
   class SFace_cycle_const_iterator : public Object_const_iterator 
@@ -259,7 +259,7 @@ class SNC_sphere_map : public Items_::Vertex<SNC_structure<Kernel_, Items_, Mark
     operator Object_handle() const { return Ibase::operator*(); }
     const Object_handle& operator*() const { return Ibase::operator*(); }
     Object_handle  operator->() const 
-    { CGAL_nef_assertion_msg(0,"not impl."); }
+    { CGAL_nef_assertion_msg(0,"not impl."); return Object_handle(); }
   };
 
   SFace_cycle_const_iterator sface_cycles_begin(SFace_const_handle f) const
@@ -326,7 +326,7 @@ class SNC_sphere_map : public Items_::Vertex<SNC_structure<Kernel_, Items_, Mark
       sv =  sncp()->new_halfedge_only(svn);
       svertices_last() = sv;
     }
-    sv->vector() = p; 
+    sv->point() = p; 
     sv->mark() = m;
     sv->center_vertex() = Vertex_handle((SNC_in_place_list_sm<Self>*) this);
     TRACEN("new_svertex "<<&*sv);

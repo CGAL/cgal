@@ -546,7 +546,7 @@ class Infimaximal_box<Tag_true, Kernel> {
     Point_3 p  = e->center_vertex()->point();
     if(Kernel::is_standard(p)) return false;
 
-    Vector_3 v(e->vector()-CGAL::ORIGIN);
+    Vector_3 v(e->vector());
     CGAL_assertion(p.hw().degree() == 0);
     RT Outer(0,CGAL_NTS abs(p.hw()[0]));
 
@@ -613,7 +613,7 @@ class Infimaximal_box<Tag_true, Kernel> {
   static bool is_type4(Halfedge_handle e) {
 
     Point_3 p(e->center_vertex()->point());
-    Direction_3 d(e->vector()-CGAL::ORIGIN);
+    Direction_3 d(e->vector());
 
     if((CGAL_NTS abs(p.hx()) == CGAL_NTS abs(p.hw()) || 
 	d == Direction_3(1,0,0) ||
@@ -632,7 +632,7 @@ class Infimaximal_box<Tag_true, Kernel> {
   static bool is_type3(Halfedge_handle e) {
 
     Point_3 p(e->center_vertex()->point());
-    Direction_3 d(e->vector()-CGAL::ORIGIN);
+    Direction_3 d(e->vector());
     
     if(d == Direction_3(1,0,0) || d == Direction_3(-1,0,0)) {
       if(CGAL_NTS abs(p.hy()) == CGAL_NTS abs(p.hw()))

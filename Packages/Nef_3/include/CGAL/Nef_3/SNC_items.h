@@ -330,6 +330,7 @@ class SNC_items {
       if(sfaces_begin_ == sncp()->sfaces_end())
         CGAL_assertion(sfaces_end() == sncp()->sfaces_end());
       */
+      return true;
     }
 
     bool is_valid( bool verb = false, int level = 0) const {
@@ -377,6 +378,7 @@ class SNC_items {
   { // == Halfedge
     typedef void* GenPtr;
     typedef typename Refs::Mark  Mark;
+    typedef typename Refs::Vector_3  Vector_3;
     typedef typename Refs::Sphere_point  Sphere_point;
     typedef typename Refs::Vertex_handle    Vertex_handle;
     typedef typename Refs::Halfedge_handle  Halfedge_handle;
@@ -444,8 +446,7 @@ class SNC_items {
     Mark& mark() { return mark_; }
     const Mark& mark() const { return mark_; }
 
-    Sphere_point& vector(){ return point_; }
-    const Sphere_point& vector() const { return point_; }
+    Vector_3 vector() const { return (point_ - CGAL::ORIGIN); }
     Sphere_point& point(){ return point_; }
     const Sphere_point& point() const { return point_; }
 

@@ -1160,7 +1160,7 @@ protected:
   /*{\Mop  returns true iff the object |h| is contained in the set
   represented by |\Mvar|.}*/
     // { SNC_point_locator PL(snc()); return PL.mark(h);} 
-    { CGAL_assertion_msg( 0, "not implemented."); }
+    { CGAL_assertion_msg( 0, "not implemented."); return false;}
 
   bool contained_in_boundary(Object_handle h) const
   /*{\Mop  returns true iff the object |h| is contained in the $2$-skeleton

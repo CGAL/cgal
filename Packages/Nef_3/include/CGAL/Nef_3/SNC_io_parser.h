@@ -1288,11 +1288,11 @@ void SNC_io_parser<EW>::print_edge(Halfedge_handle e) const
   else out << "0 " << index(D.first_out_edge(e));
   out << " | ";
   if(reduce) {
-    Standard_vector p(Infi_box::standard_vector(vector(e)));
+    Standard_vector p(Infi_box::standard_vector(e->vector()));
     out << p.hx() << " " << p.hy() << " " << p.hz() << " " << p.hw();
   }
   else {
-    Vector_3 p(vector(e));
+    Vector_3 p(e->vector());
     out << p.hx() << " " << p.hy() << " " << p.hz() << " " << p.hw();
   }
   out << " } "<< mark(e) << std::endl;
@@ -1354,7 +1354,7 @@ read_edge(Halfedge_handle eh) {
   }
   OK = OK && test_string("|");
   in >> hx >> hy >> hz >> hw;
-  eh->vector() = Sphere_point(hx,hy,hz);
+  eh->point() = Sphere_point(hx,hy,hz);
   OK = OK && test_string("}");
   in >> eh->mark();
 
@@ -1861,7 +1861,7 @@ void SNC_io_parser<EW>::add_infi_box() {
       hx = hy = 0;
       break;
     }
-    eh->vector() = Sphere_point(hx,hy,hz);
+    eh->point() = Sphere_point(hx,hy,hz);
     eh->mark() = 1;
   }
   

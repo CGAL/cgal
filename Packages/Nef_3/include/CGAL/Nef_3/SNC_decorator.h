@@ -324,7 +324,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
   static Point_3& point(Vertex_handle v)
   { return v->point(); }
 
-  static Vector_3 vector(Halfedge_handle e) {  // rename to to_vector
+  static Vector_3 to_vector(Halfedge_handle e) {  // rename to to_vector
     return Vector_3(e->vector()-CGAL::ORIGIN);
   }
 

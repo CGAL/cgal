@@ -138,7 +138,7 @@ struct Halfedge_key_lt {
       return (k1.i < k2.i);
     /* previous code: 
        else return CGAL::lexicographically_xyz_smaller(k1.p,k2.p); */
-    Direction l(k1.D.vector(k1.e));
+    Direction l(k1.e->vector());
     if( k1.i < 0) l = -l;
     return (Direction( k2.p - k1.p) == l); 
   }
@@ -594,7 +594,7 @@ erase_redundant_vertices() {
     Halfedge_iterator e;
     CGAL_forall_halfedges(e,*sncp()) {
       Point_3 p = point(vertex(e));
-      Point_3 q = p + vector(e);
+      Point_3 q = p + e->vector();
       Standard_point_3 sp = Infi_box::standard_point(p,eval);
       Standard_point_3 sq = Infi_box::standard_point(q,eval);
       Pluecker_line_3 l( sp, sq);
@@ -603,7 +603,7 @@ erase_redundant_vertices() {
       l = categorize( l, inverted);
       
       TRACEN(" segment("<<p<<", "<<q<<")"<<
-	" direction("<<vector(e)<<")"<<
+	" direction("<<e->vector()<<")"<<
 	" line("<<l<<")"<<" inverted="<<inverted);
 
       if(Infi_box::is_edge_on_infibox(e))
@@ -632,7 +632,7 @@ erase_redundant_vertices() {
 	}
 	Halfedge_handle e2 = itl->e;
 	TRACE(point(vertex(e2)));
-	if(normalized(vector(e1))!=normalized(-vector(e2))) {
+	if(normalized(e1->vector())!=normalized(-e2->vector())) {
 	  erase_vertex[e1->source()] = true;
 	  --itl;
 	  TRACE("   failed ");
@@ -657,7 +657,7 @@ erase_redundant_vertices() {
 	}
 	Halfedge_handle e2 = itl->e;
 	TRACE(point(vertex(e2)));
-	if(normalized(vector(e1))!=normalized(-vector(e2))) {
+	if(normalized(e1->vector())!=normalized(-e2->vector())) {
 	  erase_vertex[e1->source()] = true;
 	  --itl;
 	  TRACE("   failed ");
@@ -682,7 +682,7 @@ erase_redundant_vertices() {
 	}
 	Halfedge_handle e2 = itl->e;
 	TRACE(point(vertex(e2)));
-	if(normalized(vector(e1))!=normalized(-vector(e2))) {
+	if(normalized(e1->vector())!=normalized(-e2->vector())) {
 	  erase_vertex[e1->source()] = true;
 	  --itl;
 	  TRACE("   failed ");
@@ -1761,8 +1761,8 @@ create_edge_facet_overlay( typename SNC_::Halfedge_const_handle e,
       SHalfedge_around_svertex_circulator en(ec2);
       ++en;
       se1 = D.new_shalfedge_pair(twin(ec2), twin(en), -1, 1);
-      TRACEN("new edge pair " << vector(ssource(twin(ec2))) << 
-	     " -> " << vector(ssource(twin(en))));
+      TRACEN("new edge pair " << ssource(twin(ec2))->vector() << 
+	     " -> " << ssource(twin(en))->vector());
       D.circle(se1) = Sphere_circle(plane(faces_p));
       D.circle(D.twin(se1)) = D.circle(se1).opposite();
       D.mark(se1) = D.mark(D.twin(se1)) = BOP(mark_of_right_sface[ec2], mark(faces_p), inv);
@@ -1832,7 +1832,7 @@ SNC_constructor<SNC_>::add_interim_points(SHalfedge_handle sh) {
 
   \\ berechne Start-Punkt + Start Vektor
     Point_3 ps(point(source(sh)));
-  Vector_3 vec(vector(sh->target()));
+  Vector_3 vec(sh->target()->vector());
 
   \\berechne Ziel-Punkt
     Point_3 pt(point(sh->target()->twin()));
@@ -1970,7 +1970,7 @@ pair_up_halfedges() const
   CGAL_forall_halfedges(e,*sncp()) {
     //    progress++;
     Point_3 p = point(vertex(e));
-    Point_3 q = p + vector(e);
+    Point_3 q = p + e->vector();
     Standard_point_3 sp = Infi_box::standard_point(p,eval);
     Standard_point_3 sq = Infi_box::standard_point(q,eval);
     Pluecker_line_3 l( sp, sq);
@@ -1994,7 +1994,7 @@ pair_up_halfedges() const
     //   Vector_3(point(e))); 
 
     TRACEN(" segment("<<p<<", "<<q<<")"<<
-	   " direction("<<vector(e)<<")"<<
+	   " direction("<<e->vector()<<")"<<
 	   " line("<<l<<")"<<" inverted="<<inverted);
   }
 
@@ -2011,8 +2011,8 @@ pair_up_halfedges() const
       CGAL_assertion(itl != it->second.end());
       Halfedge_handle e2 = itl->e;
       TRACEN("    " << point(vertex(e1)) << " -> " << point(vertex(e2)));
-      TRACEN(vector(e1)<<" -> "<<-vector(e2));
-      CGAL_assertion(normalized(vector(e1))==normalized(-vector(e2)));
+      TRACEN(e1->vector()<<" -> "<<-e2->vector());
+      CGAL_assertion(normalized(e1->vector())==normalized(-e2->vector()));
       make_twins(e1,e2);
       CGAL_assertion(mark(e1)==mark(e2));
 
@@ -2031,8 +2031,8 @@ pair_up_halfedges() const
       CGAL_assertion(itl != it->second.end());
       Halfedge_handle e2 = itl->e;
       TRACEN("    " << point(vertex(e1)) << " -> " << point(vertex(e2)));
-      TRACEN(vector(e1)<<" -> "<<-vector(e2));
-      CGAL_assertion(normalized(vector(e1))==normalized(-vector(e2)));
+      TRACEN(e1->vector()<<" -> "<<-e2->vector());
+      CGAL_assertion(normalized(e1->vector())==normalized(-e2->vector()));
       make_twins(e1,e2);
       CGAL_assertion(mark(e1)==mark(e2));
 
@@ -2051,8 +2051,8 @@ pair_up_halfedges() const
       CGAL_assertion(itl != it->second.end());
       Halfedge_handle e2 = itl->e;
       TRACEN("    " << point(vertex(e1)) << " -> " << point(vertex(e2)));
-      TRACEN(vector(e1)<<" -> "<<-vector(e2));
-      CGAL_assertion(normalized(vector(e1))==normalized(-vector(e2)));
+      TRACEN(e1->vector()<<" -> "<<-e2->vector());
+      CGAL_assertion(normalized(e1->vector())==normalized(-e2->vector()));
       make_twins(e1,e2);
       CGAL_assertion(mark(e1)==mark(e2));
 
@@ -2071,8 +2071,8 @@ pair_up_halfedges() const
       CGAL_assertion(itl != it->second.end());
       Halfedge_handle e2 = itl->e;
       TRACEN("    " << point(vertex(e1)) << " -> " << point(vertex(e2)));
-      TRACEN(vector(e1)<<" -> "<< -vector(e2));
-      CGAL_assertion(normalized(vector(e1))==normalized(-vector(e2)));
+      TRACEN(e1->vector()<<" -> "<< -e2->vector());
+      CGAL_assertion(normalized(e1->vector())==normalized(-e2->vector()));
       CGAL_assertion(point(vertex(e1)) != point(vertex(e2)));
       CGAL_assertion(mark(e1)==mark(e2));
       make_twins(e1,e2);
