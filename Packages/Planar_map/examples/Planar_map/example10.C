@@ -88,7 +88,7 @@ typedef CGAL::Planar_map_2<Dcel,Traits>    PM;
 
 typedef PM::Vertex_iterator                Vertex_iterator;
 
-int main(int argc, char* argv[])
+int main()
 {
   PM pm;
   std::cin >> pm;
