@@ -1,6 +1,9 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+ver 8.26 
+- fixed typo in the doc
+
 ver 8.25 (25/11/03)
 -  fixed #include/CGAL/Triangulation_short_names_3.h in
    Triangulation_hierarchy_vertex_base_2.h 
