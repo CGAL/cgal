@@ -43,7 +43,7 @@ public:  // Creation
 
 // extend the drawer to print the color as well. 
 template <class PM>
-class Pm_my_file_writer:  public CGAL::Pm_file_writer<PM> {
+class Pm_my_file_writer :  public CGAL::Pm_file_writer<PM> {
 public:
   
   typedef typename PM::Vertex_handle             Vertex_handle;
@@ -51,7 +51,7 @@ public:
   typedef typename PM::Vertex_iterator           Vertex_iterator;
   typedef typename PM::Vertex_const_iterator     Vertex_const_iterator;
 
-  Pm_my_file_writer(ostream& o, const PM& pm, bool verbose = false) : 
+  Pm_my_file_writer(std::ostream& o, const PM& pm, bool verbose = false) : 
     CGAL::Pm_file_writer<PM>(o, pm, verbose) {}
   
   void write_vertex(Vertex_handle v) {
