@@ -67,7 +67,7 @@ typedef CGAL::Segment_2< RepClass >               Segment;
 typedef vector< Point >                           PointCont;
 typedef PointCont::iterator                       PointIter;
 typedef vector< PointIter >                       PointIterCont;
-typedef vector< PointIter >::iterator             PointIterIter;
+typedef PointIterCont::iterator                   PointIterIter;
 typedef RepClass::FT                              FT;
 typedef PointCont                                 Polygon;
 typedef PointCont::iterator                       Vertex_iterator;
@@ -150,10 +150,15 @@ main()
       for (;;) {
         W << RED << *i;
         W.set_fg_color( leda_blue);
-        if ( (i+1) == p.end()) {
-          W << Segment( *i, *(p.begin()));
-          break;
-        }
+    #ifndef _MSC_VER
+        if ( (i+1) == p.end())
+    #else
+        if ( (i+1) == Vertex_const_iterator(p.end()))
+    #endif // _MSC_VER
+          {
+            W << Segment( *i, *(p.begin()));
+            break;
+          }
         else {
           W << Segment( *i, *(i+1));
           ++i;

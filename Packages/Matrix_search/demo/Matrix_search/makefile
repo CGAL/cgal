@@ -34,9 +34,9 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:            \
-                all_furthest_neighbors_2_demo \
-                extremal_polygon_2_demo \
-                rectangular_p_center_2_demo 
+                all_furthest_neighbors_2_demo$(EXE_EXT) \
+                extremal_polygon_2_demo$(EXE_EXT) \
+                rectangular_p_center_2_demo$(EXE_EXT) 
 
 all_furthest_neighbors_2_demo$(EXE_EXT): all_furthest_neighbors_2_demo$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)all_furthest_neighbors_2_demo all_furthest_neighbors_2_demo$(OBJ_EXT) $(LDFLAGS)
