@@ -1,4 +1,4 @@
-version 11.1:
+version 11.6:
 - test/example programs use MP_Float instead of double when nor LEDA nor GMP
   are there.
 - french comments translated in example programs.
