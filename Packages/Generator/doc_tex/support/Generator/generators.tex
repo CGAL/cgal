@@ -1,0 +1,389 @@
+% +------------------------------------------------------------------------+
+% | CEBaP Reference Manual:  generators.tex
+% +------------------------------------------------------------------------+
+% | Random sources and geometric object generators.
+% |
+% | 09.06.1997   Lutz Kettner
+% | 
+\RCSdef{\generatorsRev}{$Revision$}
+\RCSdefDate{\generatorsDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+\beforecprogskip\medskipamount
+\aftercprogskip\medskipamount
+\ccParDims
+
+\chapter{Random Sources and Geometric Object Generators}
+\label{chapterGenerators}
+\ccChapterSubTitle{\generatorsRev. \ \generatorsDate}\\
+\ccChapterAuthor{Lutz Kettner}\\
+\ccChapterAuthor{Sven Sch\"onherr}
+
+
+A variety of geomeric object generators are provided in \cgal. They
+are useful as synthetic test data sets, e.g.~for testing algorithms on
+degenerate object sets and for performance analysis.
+
+The first section describes the random number source used for random
+generators. The second section documents generators for point sets,
+the third section for segments. Note that the \stl\ algorithm
+\ccc{random_shuffle} is useful in this context to achieve random
+permutations (e.g.~for points on a grid).
+
+
+% +------------------------------------------------------------------------+
+\input{Random}
+
+% +------------------------------------------------------------------------+
+\newpage
+\section{2D Point Generators}
+
+\ccDefinition
+
+Point generators are provided for random points equally distributed
+over a two-dimensional domain (square or disc) or a one-dimensional
+domain (boundary of a square, circle, or segment). Other point
+generators create two-dimensional grids or equally spaced points on a
+segment. A perturbation function adds random noise to a given set of
+points. Several functions add degeneracies: the duplication of randomly
+chosen points and the construction of a collinear point between two randomly
+chosen points from a set of points.
+
+
+\ccInclude{CGAL/point_generators_2.h}
+
+\ccCreation
+
+The random point generators build two-dimensional points from a pair
+of \ccc{double}'s. Depending on the point representation and
+arithmetic, a different building process is necessary. It is
+encapsulated in the global function \ccc{CGAL_build_point()}.
+Implementations exist for \ccc{CGAL_Cartesian<double>} and
+\ccc{CGAL_Cartesian<float>}. They are automatically included if the
+representation type \ccc{CGAL_Cartesian} has been included before. For
+other representations and arithmetic types the function can be
+overloaded.
+
+\ccThree{void}{random}{}
+\ccFunction{void CGAL_build_point( double x, double y, Point&
+  p);}{builds a point $(x,y)$ in $p$. \ccc{Point} is the point type in
+  question.}
+
+\ccHeading{Random Points}
+
+The random point generators are implemented as classes that satisfies
+the requirements for input iterators. They represent the possibly
+infinite sequence of randomly generated points. Each call to the
+\ccc{operator*} returns a new point. To create a finite sequence in a
+container, the function \ccc{CGAL_ncopy()} could be used.
+
+\ccHtmlNoClassFile
+\begin{ccClassTemplate}{CGAL_Random_points_in_disc_2<P>}
+\ccCreationVariable{g}
+\ccConstructor{CGAL_Random_points_in_disc_2( double r, CGAL_Random& rnd =
+  CGAL_random);}{%
+  $g$ is an input iterator creating points of type \ccc{P} uniformly
+  distributed in the open disc with radius $r$,
+  i.e.~$|\ccc{*g}| < r$~. Two random numbers are needed from
+  \ccc{rnd} for each point.
+  \ccPrecond a function \ccc{CGAL_build_point()} for the point type \ccc{P}.} 
+\end{ccClassTemplate}
+
+\ccHtmlNoClassFile
+\begin{ccClassTemplate}{CGAL_Random_points_on_circle_2<P>}
+\ccCreationVariable{g}
+\ccConstructor{CGAL_Random_points_on_circle_2( double r, CGAL_Random& rnd =
+  CGAL_random);}{%
+  $g$ is an input iterator creating points of type \ccc{P} uniformly
+  distributed on the circle with radius $r$,
+  i.e.~$|\ccc{*g}| == r$~. A single random number is needed from
+  \ccc{rnd} for each point.
+  \ccPrecond a function \ccc{CGAL_build_point()} for the point type \ccc{P}.} 
+\end{ccClassTemplate}
+
+\ccHtmlNoClassFile
+\begin{ccClassTemplate}{CGAL_Random_points_in_square_2<P>}
+\ccCreationVariable{g}
+\ccConstructor{CGAL_Random_points_in_square_2( double a, CGAL_Random& rnd =
+  CGAL_random);}{%
+  $g$ is an input iterator creating points of type \ccc{P} uniformly
+  distributed in the half-open square with side length $a$, centered
+  around the origin, i.e.~$\forall p = \ccc{*g}:  -\frac{a}{2} \le
+  p.x() < \frac{a}{2}$ and $-\frac{a}{2} \le p.y() < \frac{a}{2}$~. 
+  Two random numbers are needed from \ccc{rnd} for each point.
+  \ccPrecond a function \ccc{CGAL_build_point()} for the point type \ccc{P}.} 
+\end{ccClassTemplate}
+
+\ccHtmlNoClassFile
+\begin{ccClassTemplate}{CGAL_Random_points_on_square_2<P>}
+\ccCreationVariable{g}
+\ccConstructor{CGAL_Random_points_on_square_2( double a, CGAL_Random& rnd =
+  CGAL_random);}{%
+  $g$ is an input iterator creating points of type \ccc{P} uniformly
+  distributed on the boundary of the square with side length $a$,
+  centered around the origin, i.e.~$\forall p = \ccc{*g}:$ one
+  coordinate is either $\frac{a}{2}$ or $-\frac{a}{2}$ and for the 
+  other coordinate $c$ holds $-\frac{a}{2} \le c < \frac{a}{2}$~.
+  A single random number is needed from \ccc{rnd} for each point.
+  \ccPrecond a function \ccc{CGAL_build_point()} for the point type \ccc{P}.} 
+\end{ccClassTemplate}
+
+\ccHtmlNoClassFile
+\begin{ccClassTemplate}{CGAL_Random_points_on_segment_2<P>}
+\ccCreationVariable{g}
+\ccConstructor{CGAL_Random_points_on_segment_2( const P& p, const P& q,
+  CGAL_Random& rnd = CGAL_random);}{%
+  $g$ is an input iterator creating points of type \ccc{P} uniformly
+  distributed on the segment from $p$ to $q$ except $q$,
+  i.e.~$\ccc{*g} == \lambda p + (1-\lambda)\, q$ where $0 \le \lambda < 1$~.
+  A single random number is needed from \ccc{rnd} for each point.
+  \ccPrecond a function \ccc{CGAL_build_point()} for the point type \ccc{P}.
+    The expressions \ccc{CGAL_to_double(p.x())} and
+  \ccc{CGAL_to_double(p.y())} must be legal and similar for $q$.}
+\end{ccClassTemplate}
+
+\ccFunction{template <class InputIterator, class OutputIterator>
+  OutputIterator CGAL_ncopy( InputIterator first, size_t n, 
+  OutputIterator first2);}
+{copies the first $n$ elements from \ccc{first} to \ccc{first2}.}
+
+\ccHeading{Grid Points}
+
+Grid points are produced by generating functions writing to an output
+iterator.
+
+\ccFunction{template <class OutputIterator>
+    OutputIterator
+    CGAL_points_on_square_grid_2( double a, size_t n, OutputIterator o,
+                                  const P*);}
+{ creates the $n$ first points on the regular $\lceil\sqrt{n}\,\rceil
+    \times \lceil  \sqrt{n}\,\rceil$ grid within the square
+  $[-\frac{a}{2},\frac{a}{2}]\times [-\frac{a}{2},\frac{a}{2}]$.
+  Returns the value of $o$ after inserting the $n$ points.
+  \ccPrecond a function \ccc{CGAL_build_point()} for the point type
+  $P$ and $P$ must be assignable to the value type of 
+  \ccc{OutputIterator}.} 
+
+\ccFunction{template <class P, class OutputIterator>
+    OutputIterator CGAL_points_on_segment_2( const P& p, const P& q, size_t n,
+    OutputIterator o);}
+{ creates $n$ points regular spaced on the segment from $p$ to $q$,
+    i.e.~$\forall i: 0 \le i < n: o[i] := \frac{n-i-1}{n-1}\, p +
+    \frac{i}{n-1}\, q$. Returns the value of $o$ after inserting
+    the $n$ points.}
+
+\ccHeading{Random Perturbations}
+
+Degenerate input sets like grid points can be randomly perturbed by a
+small amount to produce {\em quasi}-degenerate test sets. This
+challenges either numerical stability of algorithms using inexact
+arithmetic or exact predicates to compute the sign of expressions
+slightly off from zero. 
+
+\ccFunction{template <class ForwardIterator>
+    void CGAL_perturbe_points_2( ForwardIterator first, ForwardIterator last, 
+        double xeps, double yeps = xeps, CGAL_Random& rnd = CGAL_random);}
+{ perturbes the points in the range $[\ccc{first},\ccc{last})$ by
+  replacing each point with a random point from the rectangle
+  \ccc{xeps} $\times$ \ccc{yeps} centered around the original point.
+  Two random numbers are needed from \ccc{rnd} for each point.
+  \ccPrecond a function \ccc{CGAL_build_point()} for the value type of
+    the \ccc{ForwardIterator}. 
+    The expression \ccc{CGAL_to_double((*first).x())} and
+    \ccc{CGAL_to_double((*begin).y())} must be legal. 
+}
+
+\ccHeading{Adding Degeneracies}
+
+For a given point set certain kinds of degeneracies can be produced
+adding new points.
+
+\ccFunction{template <class RandomAccessIterator, class OutputIterator>
+    OutputIterator CGAL_random_selection( RandomAccessIterator first,
+        RandomAccessIterator last, 
+        size_t n, OutputIterator first2, CGAL_Random& rnd = CGAL_random);}
+{ choose a random point from the range $[\ccc{first},\ccc{last})$ and
+    write it to \ccc{first2}, each point from the range with equal
+    probability. Repeat this $n$ times, thus writing $n$ points to
+    \ccc{first2}.
+    A single random number is needed from \ccc{rnd} for each point.
+    Returns the value of \ccc{first2} after inserting the $n$ points.
+}
+
+\ccFunction{template <class RandomAccessIterator, class OutputIterator>
+    OutputIterator CGAL_random_collinear_points_2( RandomAccessIterator first,
+        RandomAccessIterator last, 
+        size_t n, OutputIterator first2, CGAL_Random& rnd = CGAL_random);}
+{ choose two random points from the range $[\ccc{first},\ccc{last})$,
+    create a random third point on the segment connecting this two
+    points, and write it to \ccc{first2}. Repeat this $n$ times, thus
+    writing $n$ points to \ccc{first2} that are collinear with points
+    in the range $[\ccc{first},\ccc{last})$.
+    Three random numbers are needed from \ccc{rnd} for each point.
+    Returns the value of \ccc{first2} after inserting the $n$ points.
+  \ccPrecond a function \ccc{CGAL_build_point()} for the value type of
+    the \ccc{ForwardIterator}. 
+    The expression \ccc{CGAL_to_double((*first).x())} and
+    \ccc{CGAL_to_double((*first).y())} must be legal. 
+}
+
+\ccExample
+
+We want to generate a test set of 1000 points, where 60\% are chosen
+randomly in a small disc, 20\% are from a larger grid, 10\% duplicates
+are added, and 10\% collinearities added. A random shuffle removes the
+construction order from the test set. See \ccTexHtml{
+Figure~\ref{figurePointGenerator}}{Figure <A HREF="#PointGenerators">
+  <IMG SRC="cc_ref_up_arrow.gif" ALT="reference arrow" WIDTH="10"
+  HEIGHT="10"></A>} for the example output.
+
+\cprogfile{generators_prog1.C}
+
+\begin{ccTexOnly}
+  \begin{figure}
+    \noindent
+    \hspace*{0.025\textwidth}%
+    \begin{minipage}{0.45\textwidth}%
+      \epsfig{figure=generators_prog1.ps,width=\textwidth}
+      \caption{Output of example program for point generators.}
+      \label{figurePointGenerator}
+    \end{minipage}%
+    \hspace*{0.05\textwidth}%
+    \begin{minipage}{0.45\textwidth}%
+      \epsfig{figure=generators_prog2.ps,width=\textwidth}%      
+      \caption{Output of example program for point generators working
+        on integer points.}
+      \label{figureIntegerPointGenerator}
+    \end{minipage}%
+  \end{figure}
+\end{ccTexOnly}
+
+\begin{ccHtmlOnly}
+  <A NAME="PointGenerators">
+  <TABLE><TR><TD ALIGN=LEFT VALIGN=TOP WIDTH=60%>
+    <A HREF="./generators_prog1.gif">Figure:</A>
+    Output of example program for point generators.
+  </TD><TD ALIGN=LEFT VALIGN=TOP WIDTH=5% NOWRAP>
+  </TD><TD ALIGN=LEFT VALIGN=TOP WIDTH=35% NOWRAP>
+    <A HREF="./generators_prog1.gif">
+        <img src="./generators_prog1_small.gif" 
+             alt="Point Generator Example Output"></A>
+  </TD></TR></TABLE>
+\end{ccHtmlOnly}
+
+
+The second example demostrates the point generators with integer
+points. Arithmetic with \ccc{double}'s is sufficient to produce
+regular integer grids. See \ccTexHtml{
+Figure~\ref{figureIntegerPointGenerator}}{Figure 
+  <A HREF="#IntegerPointGenerators">
+  <IMG SRC="cc_ref_up_arrow.gif" ALT="reference arrow" WIDTH="10"
+  HEIGHT="10"></A>}
+for the example output.
+
+\cprogfile{generators_prog2.C}
+
+\begin{ccHtmlOnly}
+  <A NAME="IntegerPointGenerators">
+  <TABLE><TR><TD ALIGN=LEFT VALIGN=TOP WIDTH=60%>
+    <A HREF="./generators_prog2.gif">Figure:</A>
+        Output of example program for point generators working
+        on integer points.
+  </TD><TD ALIGN=LEFT VALIGN=TOP WIDTH=5% NOWRAP>
+  </TD><TD ALIGN=LEFT VALIGN=TOP WIDTH=35% NOWRAP>
+    <A HREF="./generators_prog2.gif">
+        <img src="./generators_prog2_small.gif" 
+             alt="Integer Point Generator Example Output"></A>
+  </TD></TR></TABLE>
+\end{ccHtmlOnly}
+
+
+% +------------------------------------------------------------------------+
+\newpage
+\section{2D Segment Generators}
+
+The following generic segment generator uses two point generators to
+create a segment from two endpoints. This is a design example how
+further generators could look like -- for segments and for other
+higher level objects.
+
+
+% +------------------------------------------------------------------------+
+\begin{ccClassTemplate}{CGAL_Segment_generator<S,P1,P2>}
+\ccCreationVariable{g}
+\subsection{A Generic Segment Generator from Two Points}
+
+\ccDefinition
+
+The generic segment generator \ccClassTemplateName\ uses two point
+generators \ccc{P1} and \ccc{P2} to create a segment of type $S$ from
+two endpoints. This is a design example how further generators could
+look like -- for segments and for other higher level objects.
+
+The generic segment generator \ccClassTemplateName\  satisfies
+the requirements for an input iterator. It represents the possibly
+infinite sequence of generated segments. Each call to the
+\ccc{operator*} returns a new segment. To create a finite sequence in
+a container, the function \ccc{CGAL_ncopy()} could be used.
+
+\ccInclude{CGAL/Segment_generator_2.h}
+
+\ccCreation
+
+\ccConstructor{CGAL_Segment_generator( P1& p1, P2& p2);}{%
+  $g$ is an input iterator creating segments of type \ccc{S} from two 
+  input points, one chosen from \ccc{p1}, the other chosen from
+  \ccc{p2}. \ccc{p1} and \ccc{p2} are allowed be be same point
+  generator.\ccPrecond $S$ must provide a constructor with two
+  arguments, such that the value type of \ccc{P1} and the
+  value type of \ccc{P2} can be used to construct a segment.}
+
+\ccOperations
+
+$g$ satisfies the requirements of an input iterator. Each call to the
+\ccc{operator*} returns a new segment. 
+
+\ccExample
+
+We want to generate a test set of 200 segments, where one endpoint is
+chosen with regular spacing from a horizontal segment of length 200,
+and the other endpoint is chosen ramdomly from a circle of radius
+250. See \ccTexHtml{
+Figure~\ref{figureSegmentGenerator}}{Figure <A HREF="#SegmentGenerator">
+  <IMG SRC="cc_ref_up_arrow.gif" ALT="reference arrow" WIDTH="10"
+  HEIGHT="10"></A>} for the example output.
+
+\begin{ccTexOnly}
+  \begin{figure}
+    \noindent
+    \hspace*{0.025\textwidth}%
+    \begin{minipage}{0.45\textwidth}%
+      \epsfig{figure=Segment_generator_prog1.ps,width=\textwidth}
+      \caption{Output of example program for the generic segment generator.}
+      \label{figureSegmentGenerator}
+    \end{minipage}%
+  \end{figure}
+\end{ccTexOnly}
+
+\cprogfile{Segment_generator_prog1.C}
+
+\begin{ccHtmlOnly}
+  <A NAME="SegmentGenerator">
+  <TABLE><TR><TD ALIGN=LEFT VALIGN=TOP WIDTH=60%>
+    <A HREF="./Segment_generator_prog1.gif">Figure:</A>
+    Output of example program for the generic segment generator.
+  </TD><TD ALIGN=LEFT VALIGN=TOP WIDTH=5% NOWRAP>
+  </TD><TD ALIGN=LEFT VALIGN=TOP WIDTH=35% NOWRAP>
+    <A HREF="./Segment_generator_prog1.gif">
+        <img src="./Segment_generator_prog1_small.gif" 
+             alt="Segment Generator Example Output"></A>
+  </TD></TR></TABLE>
+\end{ccHtmlOnly}
+
+\end{ccClassTemplate}
+
+% +--------------------------------------------------------+
+\beforecprogskip\parskip
+\aftercprogskip0pt
+
+% EOF
