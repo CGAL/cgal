@@ -1,9 +1,9 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
-ver 8.07
-- updated and changed the examples
-- changed the doc
+ver 8.07 (12/08/03)
+- updated examples
+- updated user manuel
 
 ver 8.06 (05/08/03)
 - fixed Triangulation:: to Ctr:: in Constraint_delaunay_triangulation_2.h
