@@ -49,73 +49,23 @@
 
 \ccDefinition
 
-\ccc{Df} has to be choosed as the face base for the underlying triangulation. 
+The class \ccRefName\ is the default  model for the concept
+\ccc{AlphaShapeFaceBase_2}.
+
+\ccc{Df} has to be chosen as the face base for the underlying triangulation. 
 
 In addition to the functionalities required by an underlying triangulation face \ccc{Df}.
 They are listed below as such.
+
+
+\ccInclude{Alpha_shape_face_base_2.h}
+
+\ccIsModel
+\ccc{AlphaShapeFaceBase_2}
 
 \ccInheritsFrom
 
 \ccc{Df}
 
-\ccCreationVariable{f}
-\ccTypes
-
-\ccNestedType{Interval_3}{A container type to get (and put) the three special values 
-($\alpha_1, \alpha_2, \alpha_3$) associated with an alpha shape edge.}
-
-\ccNestedType{Coord_type}{A type to hold a coordinate type class. 
-The type must provide a copy constructor, assignment, comparison
-operators, negation, multiplication, division and allow the
-declaration and initialization with a small integer constant
-(cf. requirements for number types). An obvious choice would be
-coordinate type of the point class.
-\ccPrecond Let's us precise that \ccc{Coord_type} has to be the same as the one used by
-\ccc{Gt}, already used by the underlying triangulation \ccc{Dt}, and by
-her face base \ccc{Df}.} 
-
-\ccCreation
-
-\begin{ccAdvanced}
-
-\ccConstructor{Alpha_shape_face_base_2();}{default constructor.}
-\ccGlue
-\ccConstructor{Alpha_shape_face_base_2(void* v0, void* v1, void* v2);}{constructor setting the incident vertices.}
-\ccGlue
-\ccConstructor{Alpha_shape_face_base_2(void* v0, void* v1, void*  v2, void* n0, void* n1, void* n2);} 
-{constructor setting the incident vertices and the neighboring faces.}
-
-\end{ccAdvanced}
-
-\ccHeading{Access Functions}
-\ccMethod{Interval_3[3] get_ranges();}
-{returns a vector \ccc{V}, in which, for each edge $i$, \ccc{V[i]} contains
-three alpha values
- $\alpha_1 \leq \alpha_2 \leq \alpha_3$, such as for
-$\alpha$  between $\alpha_1$ and $\alpha_2$, the edge indexed with $i$ is
-attached but singular, 
-for $\alpha$ between $\alpha_2$ and $\alpha_3$, the edge is regular, and for $\alpha$
-upper $\alpha_3$, the edge is interior.}
-\ccMethod{Coord_type get_alpha();}
-{return the alpha value, under which the alpha shape contains the
-face.}
-
-\ccModifiers
-
-\begin{ccAdvanced}
-
-\ccMethod{void set_ranges(Interval_3[3] V);}
-{sets the vector \ccc{V}, in which, for each edge $i$, \ccc{V[i]} contains three
-alpha values
- $\alpha_1 \leq \alpha_2 \leq \alpha_3$, such as for
-$\alpha$  between $\alpha_1$ and $\alpha_2$, the edge indexed with $i$ is
-attached but singular, 
-for $\alpha$ between $\alpha_2$ and $\alpha_3$, the edge is regular, and for $\alpha$
-upper $\alpha_3$, the edge is interior.}
-\ccMethod{void set_alpha(Coord_type A);}
-{sets the alpha value, under which the alpha shape contains the
-face.}
-
-\end{ccAdvanced}
 
 \end{ccRefClass}
