@@ -12,14 +12,8 @@ namespace CGAL {
 
 class Qt_widget_style : public QObject {
   Q_OBJECT
-<<<<<<< Qt_widget_styled_layer.h
 
   typedef QMap<QString,QVariant> Map;
-  typedef Map::iterator iterator;
-=======
-
-  typedef QMap<QString,QVariant> Map;
->>>>>>> 1.2
 public:
 
   typedef Map::const_iterator const_iterator;

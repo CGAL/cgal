@@ -53,12 +53,6 @@ Qt_widget_style_editor$(OBJ_EXT): Qt_widget_style_editor.moc \
 		Qt_widget_style_editor.C.moc \
 		Qt_widget_style_editor.C
 
-Qt_widget_style_editor.moc:  Qt_widget_style_editor.h
-	$(QT_MOC) -o Qt_widget_style_editor.moc Qt_widget_style_editor.h
-
-Qt_widget_style_editor$(OBJ_EXT): Qt_widget_style_editor.moc \
-		Qt_widget_style_editor.C
-
 Show_points.moc:  Show_points.h
 	$(QT_MOC) -o Show_points.moc Show_points.h
 

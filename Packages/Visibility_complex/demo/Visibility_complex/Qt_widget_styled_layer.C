@@ -48,6 +48,7 @@ namespace CGAL {
   void Qt_widget_style::setPointStyle(QString name, PointStyle s)
   {
     map[name] = static_cast<uint>(s);
+    map[name].cast(QVariant::UInt);
   }
 
   bool Qt_widget_style::getBool(QString name)

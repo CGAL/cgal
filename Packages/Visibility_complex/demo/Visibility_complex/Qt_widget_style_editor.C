@@ -31,6 +31,12 @@ public:
 
   virtual ~Color_selector() {};
 
+  QColor value() const
+  {
+    return color;
+  }
+
+public slots:
   void setColor(QColor c)
   {
     color = c;
@@ -38,12 +44,12 @@ public:
     QPixmap pix(24,20);
     pix.fill(c);
     setPixmap(pix);
+
+    emit newColor(c);
   }
 
-  QColor value() const
-  {
-    return color;
-  }
+signals:
+  void newColor(QColor);
 
 private slots:
   void color_dialog()
@@ -52,6 +58,7 @@ private slots:
     if( c.isValid() )
       setColor(c);
   }
+
 private:
   QColor color;
 };
@@ -126,7 +133,7 @@ namespace CGAL {
 Qt_widget_style_editor::Qt_widget_style_editor(Style* style,
 					       QWidget *parent,
 					       const char *name)
-  : QFrame(parent, name)
+  : QFrame(parent, name), style(style)
 {
   typedef Style::const_iterator iterator;
 
@@ -148,18 +155,63 @@ Qt_widget_style_editor::Qt_widget_style_editor(Style* style,
       switch( it.data().type() ) {
       case QVariant::Color:
 	selector = new Color_selector(it.data().toColor(), this);
+	connect(selector, SIGNAL(newColor(QColor)),
+		this, SLOT(map(QColor)));
 	break;
       case QVariant::Int:
 	selector = new Int_selector(it.data().toInt(), this);
+	connect(selector, SIGNAL(valueChanged(int)),
+		this, SLOT(map(int)));
+	break;
+      case QVariant::Bool:
+	selector = new Bool_selector(it.data().toBool(),
+				     this);
+	connect(selector, SIGNAL(toggled(bool)),
+		this, SLOT(map(bool)));
+	break;
+      case QVariant::UInt:
+	selector = 
+	  new Point_style_selector(PointStyle(it.data().toUInt()),
+				   this);
+	connect(selector, SIGNAL(activated(int)),
+		this, SLOT(pointstyle(int)));
 	break;
       default:
+	CGAL_assertion(false);
 	break;
       }
       
+      mapper[selector]=it.key();
+
       layout->addWidget(selector, row, selectors_col);
+
       ++row;
     }
-}	
+}
+
+void Qt_widget_style_editor::map(QColor c)
+{
+  const QObject* s = sender();
+  if( mapper.contains(s) )
+    style->setColor(mapper[s], c);
+  emit styleChanged();
+}
+  
+void Qt_widget_style_editor::map(int i)
+{
+  const QObject* s = sender();
+  if( mapper.contains(s) )
+    style->setInt(mapper[s], i);
+  emit styleChanged();
+}
+  
+void Qt_widget_style_editor::map(bool b)
+{
+  const QObject* s = sender();
+  if( mapper.contains(s) )
+    style->setBool(mapper[s], b);
+  emit styleChanged();
+}
 
 } // end namespace CGAL
 

@@ -45,20 +45,13 @@
 #include <qpushbutton.h>
 #include <qframe.h>
 #include <qhbox.h>
-<<<<<<< arrangements.C
 #include <qvbox.h>
 #include <qdialog.h>
 #include <qcheckbox.h>
 #include <qlayout.h>
+#include <qsizepolicy.h>
 #include <qtabwidget.h>
 #include <qgroupbox.h>
-=======
-#include <qvbox.h>
-#include <qdialog.h>
-#include <qcheckbox.h>
-#include <qtabwidget.h>
-#include <qgroupbox.h>
->>>>>>> 1.3
 #include <qtimer.h>
 #include <qtooltip.h>
 #include <qpixmap.h>
@@ -128,9 +121,9 @@ void display_zone(CGAL::Qt_widget* widget, Vertex_handle top)
   *widget << poly;
 }
 
-<<<<<<< arrangements.C
 class Preferences : public QDialog
 {
+  Q_OBJECT
 private:
   QGridLayout* layout;
   QTabWidget* tab;
@@ -156,58 +149,47 @@ public:
 
     for(LayersIterator it = begin; it!=end; ++it)
       {
-	QVBox* box = new QVBox(tab);
-	//	QCheckBox* check = new QCheckBox("&Enable", box);
+	QFrame* box = new QFrame(this);
+	QHBoxLayout* hor = new QHBoxLayout(box, 5, 0);
+	QVBoxLayout* layout = new QVBoxLayout(hor, 5);
+
+	QCheckBox* check = new QCheckBox("&Activated", box);
+	layout->addWidget(check);
+
+	check->setChecked((*it)->is_active());
+
+	connect(check, SIGNAL(stateChanged(int)),
+		*it, SLOT(stateChanged(int)));
+	connect(check, SIGNAL(stateChanged(int)),
+		this, SLOT(is_changed()));
+
 	//	QGroupBox* group = new QGroupBox("&Properties", box);
 	CGAL::Qt_widget_style_editor* editor =
 	  new CGAL::Qt_widget_style_editor((*it)->style(), box);
-	editor->setFrameShape(QFrame::Panel);
-	editor->setLineWidth(5);
 	editor->show();
+
+	layout->addWidget(editor);
+	layout->addItem(new QSpacerItem(0, 0,
+					QSizePolicy::Minimum,
+					QSizePolicy::Expanding));
+	hor->addItem(new QSpacerItem(0, 0,
+				     QSizePolicy::Expanding,
+				     QSizePolicy::Minimum));
+
+	connect(editor, SIGNAL(styleChanged()),
+		this, SLOT(is_changed()));
+
 	tab->addTab(box, (*it)->name());
       }
   }
-};
 
-=======
-class Preferences : public QDialog
-{
-private:
-  QGridLayout* layout;
-  QTabWidget* tab;
+private slots:
+  void is_changed() { emit changed(); }  
 
-public:
-  Preferences(QWidget* parent = 0, const char* name = 0, bool modal = false)
-    : QDialog(parent, name, modal)
-  {
-    layout = new QGridLayout(this, 1,1, 11, 6, "pref_layout");
-    tab = new QTabWidget(this);
-    layout->addWidget(tab, 0, 0);
-  }
+signals:
+  void changed();
+}; // end of class Preferences
 
-  template <typename LayersIterator>
-  void setLayers(LayersIterator begin, LayersIterator end)
-  {
-    QWidget* w;
-    while( (w = tab->currentPage()) != 0)
-      {
-	tab->removePage(w);
-	delete w;
-      }
-
-    for(LayersIterator it = begin; it!=end; ++it)
-      {
-	QVBox* box = new QVBox(tab);
-	//	QCheckBox* check = new QCheckBox("&Enable", box);
-	//	QGroupBox* group = new QGroupBox("&Properties", box);
-	CGAL::Qt_widget_style_editor* editor =
-	  new CGAL::Qt_widget_style_editor((*it)->style(), box);
-	tab->addTab(box, (*it)->name());
-      }
-  }
-};
-
->>>>>>> 1.3
 // ********* MAIN WINDOW CLASS  ********** //
 class MyWindow : public QMainWindow
 {
@@ -445,6 +427,12 @@ public:
       Preferences* prefs = new Preferences(0, "Preferences", false);
       prefs->setLayers(styled_layers.begin(), styled_layers.end());
       prefs->show();
+
+      connect(prefs, SIGNAL(changed()),
+	      points_widget, SLOT(redraw()));
+
+      connect(prefs, SIGNAL(changed()),
+	      lines_widget, SLOT(redraw()));
 
       points_widget->set_window(-1., 1., -1., 1.);
       lines_widget->set_window(-1., 1., -1., 1.);
