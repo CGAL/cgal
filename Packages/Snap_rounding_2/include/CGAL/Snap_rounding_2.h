@@ -287,8 +287,8 @@ private:
   void find_hot_pixels_and_create_kd_trees();
 
   //@@@@ next function
-  //  void produce_extra_hot_pixels(std::list<std::pair<Point_2,Hot_Pixel<Rep_> *> >&
-  //                 hot_pixels_list,std::list<Segment_2> segment_list);
+  void produce_extra_hot_pixels(std::list<std::pair<Point_2,Hot_Pixel<Rep_> *> >&
+                   hot_pixels_list,std::list<Segment_2> segment_list);
 
   void find_intersected_hot_pixels(Segment_data<Rep> &seg,
                          std::set<Hot_Pixel<Rep> *,
@@ -630,8 +630,45 @@ bool hot_pixel_dir_cmp<Rep_>::operator ()(const Hot_Pixel<Rep_> *h1,
 }
 
 // @@@@ a function for ISRS
-/* template<class Rep_>
-void Snap_rounding_2<Rep_>::produce_extra_hot_pixels(std::list<std::pair<Point_2,Hot_Pixel<Rep_> *> >& hot_pixels_list,std::list<Segment_2> segment_list,NT delta)
+template<class Rep_>
+Segment_2 Snap_rounding_2<Rep_>::find_segment_to_right(Point_2 query_point,std::list<Segment_2>& segment_list,NT& dis,bool& found);
+{
+  std::list<Segment_2>::const_iterator iter;
+  NT curr_dis;
+  bool first_time = true;
+  Segment_2 result_segment;
+
+  for(iter = segment_list.begin();iter != segment_list.end();++iter) {
+    Segment_2 s = *iter;
+    if(to_the_right(query_point,s)) { // both to the right and a x-ray shooting intersects it
+      curr_dis = squared_distance_2(query_point,s);
+      if(first_time || curr_dis < dis) {
+        first_time = false;
+        result_segment = s;
+        dis = curr_dis;
+        found = true;
+      }
+    }
+  }
+}
+
+// @@@@ a function for ISRS
+template<class Rep_>
+bool Snap_rounding_2<Rep_>::inside_bounding_box(Point_2 query_point,Segment_2 s)
+{
+  NT x = query_point.x(),
+     y = query_point.y(),
+    s1x = s.source().x(),
+    s1y = s.source().y(),
+    s2x = s.target().x(),
+    s2y = s.target().y();
+
+  return(!(x < s1x && x < s2x || x > s1x && x > s2x || y < s1y && y < s2y || y > s1y && y > s2y));
+}
+
+// @@@@ a function for ISRS
+template<class Rep_>
+void Snap_rounding_2<Rep_>::produce_extra_hot_pixels(std::list<std::pair<Point_2,Hot_Pixel<Rep_> *> >& hot_pixels_list,std::list<Segment_2>& segment_list,NT delta)
 {
   typename std::list<std::pair<Point_2,Hot_Pixel<Rep_> *> >::const_iterator iter;
 
@@ -640,9 +677,10 @@ void Snap_rounding_2<Rep_>::produce_extra_hot_pixels(std::list<std::pair<Point_2
     bool done = false;
     while(!done) {
       bool found;
-      Segment_2 first_s = find_segment_to_up_right(p_center,segment_list,found);
-      if(found && negative_slope(first_s) && inside_bounding_box(p_center,first_s)) {
-        NT sq_dis = squared_distance_2(p_center,first_s);
+      NT sq_dis;
+      Point_2 query_point = Point_2(p_center.x(),p_center.y() + pixel_size;
+      Segment_2 first_s = find_segment_to_right(query_point,segment_list,sq_dis,found);
+      if(found && inside_bounding_box(query_point,first_s)) {
         if(sq_dis < delta * delta) // !!! add triangle is empty
           p_center = YYY;
         else if(sq_dis < delta * delta + R * R + 2 * delta * R) { // !!!! and the triangle is empty
