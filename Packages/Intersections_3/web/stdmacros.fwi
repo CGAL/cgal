@@ -1,0 +1,8 @@
+@p typesetter = tex
+@p no_doc_header
+@p #line_offset = 0
+@p #line_depth = 1
+@$@<line@>==@{#line @<#line@> "@<#file@>"@}
+
+@p automatic_line_directive_macro = "line"
+
