@@ -35,6 +35,25 @@ inline bool diff_was_exact(double a, double b, double ab)
     return ab+b == a && a-ab == b;
 }
 
+// Auxiliary function to check if static filters can be applied, that is,
+// if to_double() does not add roundoff errors.
+// TODO :
+// - generalize it to other number types.
+// - should it be merged in one function with to_double() ?
+//   always ?  only when true ?  what if one of the values is false ?...
+// - promote it as a number type requirement ?
+// - naming : is_representable_in_double() ?
+//            is_representable<T>() for representable in T ?
+
+template < typename T >
+inline bool fit_in_double(const T&) { return false; }
+
+inline bool fit_in_double(const double&) { return true; }
+
+inline bool fit_in_double(const float&) { return true; }
+
+inline bool fit_in_double(const int&) { return true; }
+
 CGAL_END_NAMESPACE
 
 #endif // CGAL_STATIC_FILTERS_TOOLS_H
