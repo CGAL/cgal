@@ -45,23 +45,25 @@
 
 %----------------------------------------------------------------------
 
-\begin{ccRefClass}{Alpha_shape_face_base_2<AlphaShapeEuclideanTraits_2, 
-	                                   TriangulationFaceBase_2>}
+\begin{ccRefClass} {Alpha_shape_euclidean_traits_2<K>}
+
+\ccCreationVariable{t}
 
 \ccDefinition
 
 The class \ccRefName\ is the default  model for the concept
-\ccc{AlphaShapeFace_2}.
+\ccc{AlphaShapeEuclideanTraits_2}. \ccc{K} must be a
+kernel.
 
+\ccInclude{Alpha_shape_euclidean_traits_2.h}
 
-\ccInclude{Alpha_shape_face_base_2.h}
+\ccRefines
+\ccc{Triangulation_euclidean_traits_2<K, typename K::FT> }
+
 
 \ccIsModel
-\ccc{AlphaShapeFace_2}
-
-\ccInheritsFrom
-
-\ccc{TriangulationFaceBase_2}
+\ccc{AlphaShapeEuclideanTraits_2}
 
 
 \end{ccRefClass}
+

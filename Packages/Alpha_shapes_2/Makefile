@@ -37,5 +37,5 @@ clean:
 
 doc: doc_tex/basic/$(Package)/$(Package).ps
 
-doc_tex/basic/$(Package)/$(Package).ps: doc_tex/basic/$(Package)/alpha.tex
+doc_tex/basic/$(Package)/$(Package).ps: doc_tex/basic/$(Package)/alpha2.tex
 	$(MAKE) -C doc_tex/basic/$(Package) all

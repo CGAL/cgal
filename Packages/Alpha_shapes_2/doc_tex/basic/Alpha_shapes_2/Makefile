@@ -7,7 +7,7 @@ alpha.ps: dvi
 
 dvi: wrapper.dvi
 
-wrapper.dvi: alpha.tex
+wrapper.dvi: alpha2.tex
 	latex wrapper.tex
 	bibtex wrapper
 	latex wrapper.tex

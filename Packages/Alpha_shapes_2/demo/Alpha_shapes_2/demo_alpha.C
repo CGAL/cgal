@@ -62,6 +62,7 @@
 
 #define CGAL_ALPHA_WINDOW_STREAM
 
+#include <CGAL/Cartesian.h>
 #ifndef CGAL_MYTRAITS
 #include <CGAL/Alpha_shape_euclidean_traits_2.h>
 #else

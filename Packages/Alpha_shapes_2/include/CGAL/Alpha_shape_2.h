@@ -1783,9 +1783,6 @@ template < class Dt >
 std::list<CGAL_TYPENAME_MSVC_NULL Alpha_shape_2<Dt>::Point> 
 Alpha_shape_2<Dt>::Output () 
 {
-
-  typename Interval_vertex_map::const_iterator vertex_alpha_it;
-
   typename Interval_edge_map::const_iterator edge_alpha_it;
 
   const Interval3* pInterval;
