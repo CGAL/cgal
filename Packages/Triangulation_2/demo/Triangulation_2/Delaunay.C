@@ -13,9 +13,11 @@ int main(int argc, char* argv[])
 #else
 #if defined(CGAL_USE_CGAL_WINDOW)
 #define leda_drawing_mode CGAL::drawing_mode
-#define leda_xor_mode CGAL::xor_mode
-#define leda_src_mode CGAL::src_mode
-#define leda_red      CGAL::red
+#define leda_xor_mode     CGAL::xor_mode
+#define leda_src_mode     CGAL::src_mode
+#define leda_red          CGAL::red
+#define leda_yellow       CGAL::yellow
+#define leda_invisible    CGAL::invisible
 #endif
 
 
