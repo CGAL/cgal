@@ -252,7 +252,7 @@ regular_neighbor_coordinates_2(const Rt& rt,
 
 //class providing a function object:
 template <class Rt, class OutputIterator>
-class natural_neighbor_coordinates_2_object 
+class regular_neighbor_coordinates_2_object 
 {
 public:
   std::pair< OutputIterator, typename Rt::Geom_traits::FT > 
