@@ -1,3 +1,5 @@
+2.1.25(19/03/03)  split the compiler_config.h in cl_1300.h and cl_1310.h
+
 2.1.24(10/03/03)  removed warnings from build using VC7 project
 
 2.1.23(18/02/03)  removed Triangulation_3.C from the CGAL project in src.
