@@ -1,6 +1,9 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+Ver 7.99
+- rursu: corrected the word used in demo "constraineds" -> "constraints"
+
 Ver 7.98
 - replaced the demo projects with the binary version on the CVS (-kb)
 - removed spaces in the demo makefile between $(EXE_OPT) and the target
