@@ -1,3 +1,8 @@
+1.2.39
+----------
+	The VC7 vcproj files were added in binary mode for all the demos in Qt_widget. This projects are configured for RELEASE/DEBUG mode with Qt3.0
+	Also couple demos have a cgal_types.h file that contain all the CGAL types definitions.
+
 1.2.38
 ----------
 	The alpha shapes demo was modified.
