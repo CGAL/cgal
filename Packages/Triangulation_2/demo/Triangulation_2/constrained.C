@@ -57,7 +57,7 @@ draw_constraints(Window_stream &win, std::list<Constraint> & lc)
 } 
 
 void
-input_constraints_from_file(std::list<Constraint> & list_contraintes,
+input_constraints_from_file(std::list<Constraint> & constraints,
 			    std::ifstream& is)
 {
   int n;
@@ -67,7 +67,7 @@ input_constraints_from_file(std::list<Constraint> & list_contraintes,
   Point p,q;
   for(; n > 0; n--) {
     is >> p >> q;
-    std::list_contraintes.push_back(std::make_pair(p,q));
+    constraints.push_back(std::make_pair(p,q));
   }
 }
 
