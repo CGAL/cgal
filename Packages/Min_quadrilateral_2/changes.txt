@@ -7,5 +7,6 @@
 //	actual revision
 //---------------------------------------------------------------------
 
+ALL : Fixed file headers.
 ALL : minimum_enclosing_* -> min_*
 DOCS: Changed to new manual style.
