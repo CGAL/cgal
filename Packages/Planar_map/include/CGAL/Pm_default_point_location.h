@@ -60,7 +60,12 @@ public:
   ~PL_X_curve_plus(){}
   PL_X_curve_plus& operator=(const PL_X_curve_plus &cv)
   {
+    // Workaround a bug in the Irix compiler
+#if ((SGI == _sgi) && (_COMPILER_VERSION <= 730))
+    static_cast<curve&>(*this) = cv;
+#else
     curve::operator=(cv);
+#endif
     parent=cv.get_parent();
     return *this;
   }
