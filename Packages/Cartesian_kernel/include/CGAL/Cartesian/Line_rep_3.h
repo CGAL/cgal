@@ -25,25 +25,7 @@
 CGAL_BEGIN_NAMESPACE
 
 template < class R >
-class Simple_Line_repC3
-{
-public:
-  typedef typename R::FT                        FT;
-  typedef typename R::Kernel_base::Point_3                   Point_3;
-  typedef typename R::Kernel_base::Direction_3               Direction_3;
-
-  Simple_Line_repC3() {}
-
-  Simple_Line_repC3(const Point_3 &p, const Direction_3 &d)
-    : basepoint(p), direction(d) {}
-
-// private:
-  Point_3       basepoint;
-  Direction_3   direction;
-};
-
-template < class R >
-class Line_repC3 : public Ref_counted
+class Line_repC3
 {
 public:
   typedef typename R::FT                        FT;

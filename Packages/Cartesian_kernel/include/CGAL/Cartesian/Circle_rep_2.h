@@ -25,24 +25,7 @@
 CGAL_BEGIN_NAMESPACE
 
 template < class R >
-class Simple_Circle_repC2
-{
-public:
-  typedef typename R::FT                        FT;
-  typedef typename R::Kernel_base::Point_2                   Point_2;
-
-  Simple_Circle_repC2() {}
-
-  Simple_Circle_repC2(const Point_2 & c, const FT & r, const Orientation &o)
-    : center(c), squared_radius(r), orient(o) {}
-
-  Point_2      center;
-  FT           squared_radius;
-  Orientation  orient;
-};
-
-template < class R >
-class Circle_repC2 : public Ref_counted
+class Circle_repC2
 {
 public:
   typedef typename R::FT                        FT;

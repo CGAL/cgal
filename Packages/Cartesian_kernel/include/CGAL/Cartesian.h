@@ -29,6 +29,7 @@
 #include <CGAL/Cartesian/redefine_names_2.h>
 #include <CGAL/Cartesian/redefine_names_3.h>
 
+#include <CGAL/Handle_for_virtual.h>
 #include <CGAL/basic_classes.h>
 #include <CGAL/user_classes.h>
 #include <CGAL/Cartesian_dynamic_d.h>
@@ -80,7 +81,6 @@ template < class PT, class DA > class ConicCPA2;
 #include <CGAL/Cartesian/distance_predicates_3.h>
 
 #include <CGAL/Cartesian/basic_constructions_3.h>
-#include <CGAL/New_delete_allocator.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -238,8 +238,7 @@ struct Cartesian
 	                     Kernel_base::Point_2> >    Triangle_handle_2;
     typedef CGAL::Handle_for<CGAL::Twotuple<CGAL_TYPENAME_MSVC_NULL
 	                     Kernel_base::Point_2> >    Iso_rectangle_handle_2;
-    typedef CGAL::Handle_for< Aff_transformation_rep_baseC2<Self>,
-		New_delete_allocator< Aff_transformation_rep_baseC2<Self> > >
+    typedef CGAL::Handle_for_virtual< Aff_transformation_rep_baseC2<Self> >
 			                           Aff_transformation_handle_2;
 
     typedef CGAL::Handle_for<CGAL::Threetuple<FT> >	Point_handle_3;
@@ -258,8 +257,7 @@ struct Cartesian
 	                     Kernel_base::Point_3> >    Tetrahedron_handle_3;
     typedef CGAL::Handle_for<CGAL::Twotuple<CGAL_TYPENAME_MSVC_NULL
 	                     Kernel_base::Point_3> >    Iso_cuboid_handle_3;
-    typedef CGAL::Handle_for< Aff_transformation_rep_baseC3<Self>,
-		New_delete_allocator< Aff_transformation_rep_baseC3<Self> > >
+    typedef CGAL::Handle_for_virtual< Aff_transformation_rep_baseC3<Self> >
 			                           Aff_transformation_handle_3;
 
     // TODO: cleanup
