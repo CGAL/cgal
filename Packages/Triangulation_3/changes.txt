@@ -1,3 +1,6 @@
+25 Auguts 2004 Monique Teillaud
+- new pdf figures, fixing the bounding boxes
+
 19 August 2004 Monique Teillaud
 - fixes in the bibliography
 - pdf conversion of figures added
