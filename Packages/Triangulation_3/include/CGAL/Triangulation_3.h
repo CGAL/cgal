@@ -26,6 +26,7 @@
 
 #include <iostream.h>
 #include <CGAL/Triangulation_utils_3.h>
+#include <CGAL/Random.h>
 #include <list.h>
 #include <map.h> 
 //#include <algo.h>
@@ -900,7 +901,16 @@ public:
   {
     Locate_type lt;
     int li, lj;
-    Cell_handle c = locate( p, lt, li, lj);
+    Cell_handle c;
+    if ( dimension() > 2 ) {//TBD dim 2 !!!
+      // there is at least one finite "cell" (or facet)
+      Cell_handle start = infinite_cell()
+	->neighbor( infinite_cell()->index( infinite_vertex()) );
+      c = locate_quick( p, start, lt, li, lj);
+    }
+    else {
+      c = locate( p, lt, li, lj);
+    }
     switch (lt) {
     case VERTEX:
       return c->vertex(li);
@@ -1227,12 +1237,175 @@ public:
     return NULL;
   }
 
+  Cell_handle
+  locate_quick(const Point & p,
+	       Cell_handle start,
+	       Locate_type & lt,
+	       int & li,
+	       int & lj) const
+    // returns a cell p lies in if there is one
+    // starts at cell "start"
+    // start must be non NULL and finite
+    // if lt == OUTSIDE_CONVEX_HULL, returns a finite cell, and li is the
+    // index of a facet separating p from the rest of the triangulation
+    // in dimension 2 :
+    // returns a facet (Cell_handle,li) if lt == FACET
+    // returns an edge (Cell_handle,li,lj) if lt == EDGE
+    // returns a vertex (Cell_handle,li) if lt == VERTEX
+    // if lt == OUTSIDE_CONVEX_HULL, li, lj give the edge of c
+    // separating p from the rest of the triangulation
+  {
+    CGAL_triangulation_precondition( (start != NULL) 
+				     && ( ! is_infinite(start) ) );
+    static CGAL_Random rand( (long) 0 );
+    int i, inf;
+    Point p0,p1,p2,p3;
+    switch (dimension()) {
+    case 3:
+      {
+	Cell_handle c = start;
+	CGAL_Orientation o[4];
+	while (1) {
+	  
+	  if ( c->has_vertex(infinite,inf) ) {
+	    // c must contain p in its interior
+	    // returns the finite cell sharing the finite facet of c
+	    Cell_handle n = c->neighbor(inf);
+	    lt = OUTSIDE_CONVEX_HULL;
+	    li = n->index(c);
+	    return n;
+	  }
+	   
+	  // else c is finite
+	  // we test its facets in a random order until we find a
+	  // neighbor to go further
+	  i = rand.get_int(0,4);
+	  p0 = c->vertex( i )->point();
+	  p1 = c->vertex( (i+1)&3 )->point();
+	  p2 = c->vertex( (i+2)&3 )->point();
+	  p3 = c->vertex( (i+3)&3 )->point();
+	  if ( (i&1) == 0 ) {
+	    o[0] = geom_traits().orientation( p, p1, p2, p3 );
+	    if ( o[0] == CGAL_NEGATIVE ) {
+	      c = c->neighbor(i);
+	      continue;
+	    }
+	    // (i+1)%2 == 1
+	    o[1] = geom_traits().orientation( p2, p, p3, p0 );
+	    if ( o[1] == CGAL_NEGATIVE ) {
+	      c = c->neighbor((i+1)&3);
+	      continue;
+	    }
+	    // (i+2)%2 == 0
+	    o[2] = geom_traits().orientation( p, p3, p0, p1 );
+	    if ( o[2] == CGAL_NEGATIVE ) {
+	      c = c->neighbor((i+2)&3);
+	      continue;
+	    }
+	    // (i+3)%2 == 1
+	    o[3] = geom_traits().orientation( p0, p, p1, p2 );
+	    if ( o[3] == CGAL_NEGATIVE ) {
+	      c = c->neighbor((i+3)&3);
+	      continue;
+	    }
+	  }
+	  else {// (i%2) == 1
+	    o[0] = geom_traits().orientation( p1, p, p2, p3 );
+	    if ( o[0] == CGAL_NEGATIVE ) {
+	      c = c->neighbor(i);
+	      continue;
+	    }
+	    // (i+1)%2 == 0
+	    o[1] = geom_traits().orientation( p, p2, p3, p0 );
+	    if ( o[1] == CGAL_NEGATIVE ) {
+	      c = c->neighbor((i+1)&3);
+	      continue;
+	    }
+	    // (i+2)%2 == 1
+	    o[2] = geom_traits().orientation( p3, p, p0, p1 );
+	    if ( o[2] == CGAL_NEGATIVE ) {
+	      c = c->neighbor((i+2)&3);
+	      continue;
+	    }
+	    // (i+3)%2 == 0
+	    o[3] = geom_traits().orientation( p, p0, p1, p2 );
+	    if ( o[3] == CGAL_NEGATIVE ) {
+	      c = c->neighbor((i+3)&3);
+	      continue;
+	    }
+	  }
+	  
+	  // now p is in c or on its boundary
+	  int sum = ( o[0] == CGAL_COPLANAR )
+	    + ( o[1] == CGAL_COPLANAR )
+	    + ( o[2] == CGAL_COPLANAR )
+	    + ( o[3] == CGAL_COPLANAR );
+	  switch (sum) {
+	  case 0:
+	    {
+	      lt = CELL;
+	      break;
+	    }
+	  case 1:
+	    { 
+	      lt = FACET;
+	      li = ( o[0] == CGAL_COPLANAR ) ? i :
+		( o[1] == CGAL_COPLANAR ) ? (i+1)&3 :
+		( o[2] == CGAL_COPLANAR ) ? (i+2)&3 :
+		(i+3)&3;
+	      break;
+	    }
+	  case 2:
+	    { 
+	      lt = EDGE;
+	      li = ( o[0] != CGAL_COPLANAR ) ? i :
+		( o[1] != CGAL_COPLANAR ) ? (i+1)&3 :
+		(i+2)&3;
+	      lj = ( o[ (li+1)&3 ] != CGAL_COPLANAR ) ? (li+1)&3 :
+		( o[ (li+2)&3 ] != CGAL_COPLANAR ) ? (li+2)&3 :
+		(li+3)&3;
+	      break;
+	    }
+	  case 3:
+	    {
+	      lt = VERTEX;
+	      li = ( o[0] != CGAL_COPLANAR ) ? i :
+		( o[1] != CGAL_COPLANAR ) ? (i+1)&3 :
+		( o[2] != CGAL_COPLANAR ) ? (i+2)&3 :
+		(i+3)&3;
+	      break;
+	    }
+	  }
+	  return c;
+	}
+	// to avoid warning
+	return start;
+      }
+    default:
+      {
+	//	TBD
+	return start;
+      }
+    }
+    // to avoid warning
+    return start;
+  }
+	  
   inline Cell_handle
   locate(const Point & p) const
     {
       Locate_type lt;
       int li, lj;
       return locate(p, lt, li, lj);
+    }
+
+inline Cell_handle
+locate_quick(const Point & p) const
+{
+      Locate_type lt;
+      int li, lj;
+      Cell_handle start = *finite_cells_begin();
+      return locate_quick(p, start, lt, li, lj);
     }
 
   //TRAVERSING : ITERATORS AND CIRCULATORS
@@ -1819,7 +1992,7 @@ public:
 	  v1=c->vertex((inf+1)&3), 
 	  v2=c->vertex((inf+2)&3), 
 	  v3=c->vertex((inf+3)&3);
-	if ( inf%2 == 0 ) {
+	if ( (inf&1) == 0 ) {
 	  o = geom_traits().orientation(p,
 					v1->point(),
 					v2->point(),
