@@ -27,8 +27,6 @@
 // - CGAL_Interval_nt		("plug-in" version, derived from the other one)
 // The second one is slower.
 
-// TODO: maybe a function (double * double)  -> Interval.
-
 #ifndef CGAL_INTERVAL_ARITHMETIC_H
 #define CGAL_INTERVAL_ARITHMETIC_H
 
@@ -37,22 +35,22 @@
 #include <CGAL/double.h>	// For CGAL_is_valid() and CGAL_is_finite().
 #include <CGAL/Interval_arithmetic/_FPU.h>	// FPU rounding mode functions.
 
-
 struct CGAL_Interval_nt_advanced
 {
 protected:
         // "inf" stores the OPPOSITE of the lower bound.
         // "sup" stores the upper bound of the interval.
   double inf, sup;
+  struct unsafe_comparison{};  // Exception class.
 
 private:
-  bool overlap(const CGAL_Interval_nt_advanced& d) const
-  { return (sup >= -d.inf) && (d.sup >= -inf); }
-
-  void verify_overlap(const CGAL_Interval_nt_advanced& d) const
+  void overlap_action() const throw (unsafe_comparison)
   {
 #if !defined(CGAL_IA_NO_WARNINGS) && !defined(CGAL_NO_WARNINGS)
-    CGAL_warning_msg(!overlap(d), " Comparison between overlapping intervals");
+    CGAL_warning_msg(false, " Comparison between overlapping intervals");
+#endif
+#ifndef CGAL_IA_DONT_THROW_EXCEPTION
+    throw unsafe_comparison();
 #endif
   }
 
@@ -115,23 +113,38 @@ public:
   bool is_finite() const
   { return CGAL_is_finite(inf) && CGAL_is_finite(sup); }
 
-  bool operator==(const CGAL_Interval_nt_advanced& d) const
-  { verify_overlap(d); return overlap(d); }
-
-  bool operator!=(const CGAL_Interval_nt_advanced& d) const
-  { verify_overlap(d); return !overlap(d); }
-
   bool operator<(const CGAL_Interval_nt_advanced& d) const
-  { verify_overlap(d); return (sup < -d.inf); }
+  {
+    if (sup  < -d.inf) return true;
+    if (-inf >= d.sup) return false;
+    overlap_action();
+    return false;  // Hum...
+  }
 
   bool operator>(const CGAL_Interval_nt_advanced& d) const
-  { verify_overlap(d); return (d.sup < -inf); }
+  { return (d < *this); }
 
   bool operator<=(const CGAL_Interval_nt_advanced& d) const
-  { verify_overlap(d); return !(*this > d); }
+  {
+    if (sup <= -d.inf) return true;
+    if (-inf >  d.sup) return false;
+    overlap_action();
+    return false;  // Hum...
+  }
 
   bool operator>=(const CGAL_Interval_nt_advanced& d) const
-  { verify_overlap(d); return !(*this < d); }
+  { return (d <= *this); }
+
+  bool operator==(const CGAL_Interval_nt_advanced& d) const
+  {
+    if ((d > *this) || (d < *this)) return false;
+    if ((-d.inf == d.sup) && (-inf == sup) && (sup == d.sup)) return true;
+    overlap_action();
+    return false;  // Hum...
+  }
+
+  bool operator!=(const CGAL_Interval_nt_advanced& d) const
+  { return !(d == *this); }
 
   double lower_bound() const { return -inf; }
   double upper_bound() const { return sup; }
