@@ -119,7 +119,7 @@ public:
 	//create a timer for checking if somthing changed
   QTimer *timer = new QTimer( this );
   connect( timer, SIGNAL(timeout()),
-           this, SLOT(timerDone()) );
+           this, SLOT(timer_done()) );
   timer->start( 200, FALSE );
 
 
@@ -229,7 +229,7 @@ private slots:
     something_changed();
   }
 
-  void timerDone()
+  void timer_done()
   {
     if(old_state!=current_state){
       win.redraw();
