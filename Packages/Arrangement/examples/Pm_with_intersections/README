@@ -10,3 +10,7 @@ example1 : Demonstrates the simplest use of the package, insertion of
            intersecting curves.
 
 example2 : Deomnstrates a user defined notifier.
+
+example3 : Demonstraits insertion of non intersecting curves. The insertion
+           is carried out through the Planar_map_2 corresponding
+	   insert functions. 
