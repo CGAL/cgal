@@ -631,62 +631,35 @@ sub email_address_in_html_format($)
 	    $qualification = " ($2)";
 	}
 	if ($responsible eq 'baesken') {
-	    return 
-		'<A HREF="mailto:baesken@infsn2.informatik.uni-halle.de">'.
-		"Matthias Baesken</A>$qualification";
+	    return '<A HREF="mailto:baesken@infsn2.informatik.uni-halle.de">'.
+		   "Matthias Baesken</A>$qualification";
 	} elsif ($responsible eq 'spion') {
 	    return '<A HREF="mailto:Sylvain.Pion@sophia.inria.fr">'.
-		"Sylvain Pion</A>$qualification";
-	} elsif ($responsible eq 'andreas') {
-	    return '<A HREF="mailto:Andreas.Fabri@sophia.inria.fr">'.
-		"Andreas Fabri</A>$qualification";
+		   "Sylvain Pion</A>$qualification";
 	} elsif ($responsible eq 'rursu') {
-	    return '<A HREF="mailto:Radu.Ursu@sophia.inria.fr">'.
-		"Radu Ursu</A>$qualification";
-	} elsif ($responsible eq 'frebufat') {
-	    return 
-		'<A HREF="mailto:Francois.Rebufat@sophia.inria.fr">'.
-		"Fran&ccedil;ois Rebufat</A>$qualification";
+	    return '<A HREF="mailto:rursu@geometryfactory.com">'.
+		   "Radu Ursu</A>$qualification";
 	} elsif ($responsible eq 'yvinec') {
-	    return 
-		'<A HREF="mailto:Mariette.Yvinec@sophia.inria.fr">'.
-		"Mariette Yvinec</A>$qualification";
+	    return '<A HREF="mailto:Mariette.Yvinec@sophia.inria.fr">'.
+		   "Mariette Yvinec</A>$qualification";
 	} elsif ($responsible eq 'geert') {
-	    return 
-		'<A HREF="mailto:geert@cs.uu.nl">'.
-		"Geert-Jan Giezeman</A>$qualification";
+	    return '<A HREF="mailto:geert@cs.uu.nl">'.
+		   "Geert-Jan Giezeman</A>$qualification";
 	} elsif ($responsible eq 'rineau') {
-	    return 
-		'<a href="mailto:rineau@clipper.ens.fr">'.
-		"Laurent Rineau</A>$qualification";
-	} elsif ($responsible eq 'dima') {
-	    return 
-		'<A HREF="mailto:dima@cs.uu.nl">'.
-		"Dima Pasechnik</A>$qualification";
+	    return '<a href="mailto:rineau@clipper.ens.fr">'.
+		   "Laurent Rineau</A>$qualification";
 	} elsif ($responsible eq 'hoffmann') {
-	    return 
-		'<A HREF="mailto:hoffmann@inf.ethz.ch">'.
-		"Michael Hoffmann</A>$qualification";
-	} elsif ($responsible eq 'stschirr') {
-	    return 
-		'<A HREF="mailto:stschirr@mpi-sb.mpg.de">'.
-		"Stefan Schirra</A>$qualification";
-	} elsif ($responsible eq 'hert') {
-	    return 
-		'<A HREF="mailto:hert@mpi-sb.mpg.de">'.
-		"Susan Hert</A>$qualification";
+	    return '<A HREF="mailto:hoffmann@inf.ethz.ch">'.
+		   "Michael Hoffmann</A>$qualification";
 	} elsif ($responsible eq 'hachenb') {
-	    return 
-		'<A HREF="mailto:hachenb@mpi-sb.mpg.de">'.
-		"Peter Hachenberger</A>$qualification";
+	    return '<A HREF="mailto:hachenb@mpi-sb.mpg.de">'.
+		   "Peter Hachenberger</A>$qualification";
 	} elsif ($responsible eq 'mkaravel') {
-	    return 
-		'<A HREF="mailto:mkaravel@cse.nd.edu">'.
-		"Menelaos Karavelas</A>$qualification";
+	    return '<A HREF="mailto:mkaravel@cse.nd.edu">'.
+		   "Menelaos Karavelas</A>$qualification";
 	} elsif ($responsible eq 'afabri') {
-	    return 
-		'<A HREF="mailto:Andreas.Fabri@geometryfactory.com">'.
-		"Andreas Fabri</A>$qualification";
+	    return '<A HREF="mailto:Andreas.Fabri@geometryfactory.com">'.
+		   "Andreas Fabri</A>$qualification";
 	} else {
 	    print STDERR "Unknown responsible person $responsible.\n";
 	    return "?";
