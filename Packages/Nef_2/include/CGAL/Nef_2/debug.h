@@ -35,7 +35,9 @@
 #undef TRACEV
 #undef CTRACE
 #undef CTRACEN
+/*
 #undef ASSERT
+*/
 
 static int debugthread=3141592;
 
@@ -79,9 +81,9 @@ static int debugthread=3141592;
 #endif
 
 #ifndef _ASSERT
-#define  ASSERT(cond,fstr) 
+#define  CGAL_NEF_ASSERT(cond,fstr) 
 #else
-#define ASSERT(cond,fstr)   \
+#define CGAL_NEF_ASSERT(cond,fstr)   \
   if (!(cond)) {       \
     std::cerr<<"   ASSERT:   "<< #fstr << std::endl; \
     std::cerr<<"   COND:     "<< #cond << std::endl; \

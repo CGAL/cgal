@@ -1,6 +1,10 @@
 Nef_2 Package: Release changes
 ----------------------------------------------------------------------
 
+1.19 (8 July 2002)
+     - rename ASSERT macro to CGAL_NEF_ASSERT to avoid conflict with 
+       other libraries' macros.
+
 1.18 (28 June 2002)
     
      - Initialize boolean mark variable in constructors since default 
