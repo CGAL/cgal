@@ -133,6 +133,17 @@ public:
 	left_node->transform(t);
  	right_node->transform(t);
   	splitting_plane = splitting_plane.transform(t);
+#ifdef CGAL_NEF3_TRIANGULATE_FACETS 
+    } else {
+      std::cerr << "transform node " << std::endl;
+      Halffacet_triangle_handle tri;
+      typename Object_list::iterator o;
+      for(o = object_list.begin(); o != object_list.end(); ++o)
+        if(assign(tri,*o)) {
+          tri.transform(t);
+	  *o = Object_handle(tri);
+        }
+#endif // CGAL_NEF3_TRIANGULATE_FACETS 
     }
   }
   void add_facet(Halffacet_handle f) {
@@ -178,7 +189,7 @@ public:
   }
 
   
-#line 928 "k3_tree.nw"
+#line 939 "k3_tree.nw"
 friend std::ostream& operator<<
   (std::ostream& os, const Node* node) {
   CGAL_assertion( node != 0);
@@ -196,9 +207,9 @@ friend std::ostream& operator<<
   return os;
 }
 
-#line 628 "k3_tree.nw"
+#line 639 "k3_tree.nw"
   
-#line 703 "k3_tree.nw"
+#line 714 "k3_tree.nw"
 ~Node() {
   CGAL_NEF_TRACEN("~Node: deleting node...");
   if( !is_leaf()) {
@@ -207,7 +218,7 @@ friend std::ostream& operator<<
   }
 }
 
-#line 629 "k3_tree.nw"
+#line 640 "k3_tree.nw"
 private:
   Node* parent_node;
   Node* left_node;
@@ -274,7 +285,7 @@ public:
       }
       Self& operator++() {
         
-#line 998 "k3_tree.nw"
+#line 1009 "k3_tree.nw"
 if( S.empty())
   node = 0; // end of the iterator
 else {
@@ -338,7 +349,7 @@ else {
         return node;
       }
       
-#line 859 "k3_tree.nw"
+#line 870 "k3_tree.nw"
 inline 
 const Node* get_child_by_side( const Node* node, Oriented_side side) {
   CGAL_assertion( node != NULL);
@@ -428,7 +439,7 @@ bounding_box = objects_bbox(objects);
   Object_list objects_around_segment( const Segment_3& s) const {
     Object_list O;
     
-#line 952 "k3_tree.nw"
+#line 963 "k3_tree.nw"
 Objects_around_segment objects( *this, s);
 Unique_hash_map< Vertex_handle, bool> v_mark(false);
 Unique_hash_map< Halfedge_handle, bool> e_mark(false);
@@ -541,7 +552,7 @@ for( typename Objects_around_segment::Iterator oar = objects.begin();
   }
 
   
-#line 885 "k3_tree.nw"
+#line 896 "k3_tree.nw"
 #ifdef CODE_DOES_NOT_WORK_WITH_BOTH_KERNELS_AT_THE_SAME_TIME
 template <typename T>
 friend std::ostream& operator<<
@@ -586,7 +597,7 @@ std::string dump_object_list( const Object_list& O, int level = 0) {
 
 #line 282 "k3_tree.nw"
   
-#line 641 "k3_tree.nw"
+#line 652 "k3_tree.nw"
 bool update( Unique_hash_map<Vertex_handle, bool>& V, 
              Unique_hash_map<Halfedge_handle, bool>& E, 
              Unique_hash_map<Halffacet_handle, bool>& F) {
@@ -641,7 +652,7 @@ bool update( Node* node,
 
 #line 283 "k3_tree.nw"
   
-#line 697 "k3_tree.nw"
+#line 708 "k3_tree.nw"
 ~K3_tree() {
   CGAL_NEF_TRACEN("~K3_tree: deleting root...");
   delete root;
@@ -848,7 +859,7 @@ Plane_3 construct_splitting_plane(Object_iterator start, Object_iterator end,
 
 #line 286 "k3_tree.nw"
   
-#line 717 "k3_tree.nw"
+#line 728 "k3_tree.nw"
 const Node *locate_cell_containing( const Point_3& p, const Node* node) const {
   CGAL_precondition( node != 0);
   if( node->is_leaf())

@@ -221,7 +221,8 @@ public:
       typedef typename Triangles::const_iterator Triangles_iterator;
       typedef Polygon_triangulation_traits_2<Kernel> Triangulation_traits;
       Triangles triangles;
-      triangulate_nef3_facet<SNC_structure>( f, std::back_inserter(triangles), Triangulation_traits());
+      triangulate_nef3_facet<SNC_structure>
+	( f, std::back_inserter(triangles), Triangulation_traits());
       for( Triangles_iterator ti = triangles.begin(); 
            ti != triangles.end(); ++ti) {
         Halffacet_triangle_handle th( f, *ti);
@@ -489,7 +490,7 @@ public:
 	  result = Object_handle(f);
         }
       } else if( CGAL::assign(t, *o)) {
-        CGAL_NEF_TRACEN("test triangle ");
+        CGAL_NEF_TRACEN("test triangle of facet " << t->plane());
         Triangle_3 tr = t.get_triangle();
         CGAL_NEF_TRACEN("trying triangle "<<tr);	
 	if(tr.has_on(p)) {
