@@ -271,8 +271,20 @@ public:
   const Data_structure&   ds() const { return this->_tds; }
   const Point_container&  point_container() const { return pc_; }
 
+  size_type number_of_input_sites() const {
+    return isc_.size();
+  }
+
+  size_type number_of_output_sites() const {
+    return number_of_vertices();
+  }
+
   size_type number_of_vertices() const {
     return DG::number_of_vertices();
+  }
+
+  size_type number_of_faces() const {
+    return DG::number_of_faces();
   }
 
   Vertex_handle infinite_vertex() const {
