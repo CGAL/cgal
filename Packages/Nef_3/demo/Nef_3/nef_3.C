@@ -360,7 +360,7 @@ int eval( int argc, char* argv[]) {
 	      new Qt_widget_Nef_3<Nef_polyhedron>(nef.back());
 	    a.setMainWidget(w);
 	    w->show();
-	    return a.exec();
+	    a.exec();
 #else
 	    std::cout << "Sorry, this demo needs QT..." << std::endl;
 #endif
