@@ -40,7 +40,7 @@ bool is_vertex_visible( PointIterator uk, PointIterator uj, PointIterator ukp,
   // check if the vertex uk is visible from uj, in a ccw oriented polygon.
   // ukp is the adjacent vertex to uk, nearest to uj on the same chain
   CGAL_assertion( chain == LEFTCHAIN || chain == RIGHTCHAIN);
-  Orientation proper = (chain == LEFTCHAIN ? RIGHTTURN: LEFTTURN);
+  Orientation proper = (chain == LEFTCHAIN ? RIGHT_TURN: LEFT_TURN);
   return( traits.orientation_2_object()( *uk, *uj, *ukp) == proper);
 }
 

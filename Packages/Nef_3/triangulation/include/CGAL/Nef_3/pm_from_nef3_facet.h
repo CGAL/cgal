@@ -108,7 +108,7 @@ add_hole( typename SNC_structure::Halffacet_cycle_const_iterator ci,
     Point_2_vector cycle;
     cycle.reserve(circulator_distance(sc, send));
     CGAL_For_all( sc, send)
-      cycle.push_back(projector(D.point(D.vertex(sc))));
+      cycle.push_back(projector(sc->source()->source()->point()));
     CGAL_NEF_TRACEN("number of vertices on cycle: "<<circulator_distance( sc, send));
 #ifdef _DEBUG
     //CGAL_NEF_TRACEN("vertices on cycle:");
