@@ -373,9 +373,14 @@ public:
     int min_y = static_cast<int> (y_min());
     int max_y = static_cast<int> (y_max());
     
-    // calculate cube size (minimum of 1)
+	// calculate cube size (minimum of 1)
     //int cube_size_x = std::max(1, abs(max_x - min_x)/20);
     //int cube_size_y = std::max(1, abs(max_y - min_y)/20);
+	if (cube_size < abs(max_x - min_x)/40 ||
+		cube_size < abs(max_y - min_y)/40)
+		cube_size = std::max(std::max(1, abs(max_x - min_x)/20),
+							 std::max(1, abs(max_y - min_y)/20));
+	
     int cube_size_x = cube_size;
     int cube_size_y = cube_size;
     // draw the grid lines
