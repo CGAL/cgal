@@ -80,7 +80,6 @@ template <class Container>
 void read_polylines(Container& curves)
 {
   int      num_polylines = 0;
-  NT       x,y; 
 
   std::cin >> num_polylines;
   std::cout << "number of polylines is : " << num_polylines << std::endl;
@@ -117,6 +116,8 @@ int main()
   //W.display();
   //W << pm;
 }
+
+
 
 
 
