@@ -59,10 +59,10 @@ data structure.}
 \ccTypedef{typedef typename DS::size_type size_type;}
 {Size type (an unsigned integral type)}
 \ccGlue
-\ccTypedef{typedef Gt::Point_2 Point_2;}{A type for the
+\ccTypedef{typedef typename Gt::Point_2 Point_2;}{A type for the
 point defined in the geometric traits.}
 \ccGlue
-\ccTypedef{typedef Gt::Site_2  Site_2;}
+\ccTypedef{typedef typename Gt::Site_2  Site_2;}
 {A type for the segment Voronoi diagram site, defined in the geometric
   traits.}
 \ccGlue
@@ -94,45 +94,46 @@ Some iterators (the \ccc{All} iterators ) allow to visit finite or
 infinite features while the others (the \ccc{Finite} iterators) visit only
 finite features. Circulators visit both infinite and finite features.
 
-\ccThree{typedef typename}{DS::Finite_vertices_iterator;}{}
+\ccThree{typedef typename DS::Vertex_circulator}{All_vertices_iterator;}{}
 %
-\ccTypedef{typedef typename DS::Edge;}{The edge type.
+\ccTypedef{typedef typename DS::Edge Edge;}{The edge type.
 The \ccc{Edge(f,i)} is the edge common to faces \ccc{f} and 
 \ccc{f.neighbor(i)}. It is also the edge joining the vertices
 \ccc{vertex(cw(i))} and \ccc{vertex(ccw(i))} of \ccc{f}.
 \ccPrecond{\ccc{i} must be \ccc{0}, \ccc{1} or \ccc{2}.}}
 %
 \ccGlue
-\ccTypedef{typedef typename DS::Vertex_handle;}
+\ccTypedef{typedef typename DS::Vertex_handle Vertex_handle;}
 {A type for a handle to a vertex.}
 \ccGlue
-\ccTypedef{typedef typename DS::Face_handle;}{A type for a handle to a face.}
+\ccTypedef{typedef typename DS::Face_handle Face_handle;}{A type for a handle to a face.}
 \ccGlue
-\ccTypedef{typedef typename DS::Vertex_circulator;}
+\ccTypedef{typedef typename DS::Vertex_circulator Vertex_circulator;}
 {A type for a circulator over vertices incident to a given vertex.}
 \ccGlue
-\ccTypedef{typedef typename DS::Face_circulator;}
+\ccTypedef{typedef typename DS::Face_circulator Face_circulator;}
 {A type for a circulator over faces incident to a given vertex.}
 \ccGlue
-\ccTypedef{typedef typename DS::Edge_circulator;}
+\ccTypedef{typedef typename DS::Edge_circulator Edge_circulator;}
 {A type for a circulator over edges incident to a given vertex.}
 \ccGlue
-\ccTypedef{typedef typename DS::All_vertices_iterator;}
+\ccTypedef{typedef typename DS::Vertex_iterator All_vertices_iterator;}
 {A type for an iterator over all vertices.}
 \ccGlue
-\ccTypedef{typedef typename DS::Finite_vertices_iterator;}
-{A type for an iterator over finite vertices.}
-\ccGlue
-\ccTypedef{typedef typename DS::All_faces_iterator;}
+\ccTypedef{typedef typename DS::Face_iterator All_faces_iterator;}
 {A type for an iterator over all faces.}
 \ccGlue
-\ccTypedef{typedef typename DS::Finite_faces_iterator;}
+\ccTypedef{typedef typename DS::Edge_iterator All_edges_iterator;}
+{A type for an iterator over all edges.}
+\ccTwo{Segment_Voronoi_diagram_2<Gt,DS>::Finite_vertices_iterator+}{}
+\ccGlue
+\ccNestedType{Finite_vertices_iterator;}
+{A type for an iterator over finite vertices.}
+\ccGlue
+\ccNestedType{Finite_faces_iterator;}
 {A type for an iterator over finite faces.}
 \ccGlue
-\ccTypedef{typedef typename DS::All_edges_iterator;}
-{A type for an iterator over all edges.}
-\ccGlue
-\ccTypedef{typedef typename DS::Finite_edges_iterator;}
+\ccNestedType{Finite_edges_iterator;}
 {A type for an iterator over finite edges.}
 
 
