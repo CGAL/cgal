@@ -54,8 +54,6 @@ public:
   typedef typename Base::Point_2    Point_2;
   typedef typename Base::Segment_2  Segment_2;
 
-  typedef Oriented_side          result_type;
-
 private:
   bool is_endpoint(const Site_2& p, const Site_2& s) const
   {
@@ -296,6 +294,11 @@ private:
   }
 
 public:
+  typedef Oriented_side          result_type;
+  typedef Site_2                 argument_type;
+  typedef Arity_tag<3>           Arity;
+
+
   Oriented_side
   operator()(const Site_2& t1, const Site_2& t2,
 	     const Site_2& q) const

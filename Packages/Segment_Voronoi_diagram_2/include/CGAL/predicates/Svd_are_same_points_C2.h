@@ -36,6 +36,8 @@ private:
   typedef typename K::Compare_x_2 Compare_x_2;
   typedef typename K::Compare_y_2 Compare_y_2;
 
+  typedef typename K::Intersections_tag  ITag;
+
   Compare_x_2 compare_x_2;
   Compare_y_2 compare_y_2;
 
@@ -54,22 +56,38 @@ private:
 	are_same(s.target(), t.source()) );
   }
 
-public:
-  bool operator()(const Site_2& p, const Site_2& q) const
+  bool predicate(const Site_2& p, const Site_2& q, const Tag_false&) const
   {
-    CGAL_precondition( p.is_point() && q.is_point() );
+    return are_same(p.point(), q.point()); 
+  }
 
+  bool predicate(const Site_2& p, const Site_2& q, const Tag_true&) const
+  {
     if ( !p.is_exact() && !q.is_exact() ) {
       Segment_2 s[2] = { p.supporting_segment(0),
 			 p.supporting_segment(1) };
       Segment_2 t[2] = { q.supporting_segment(0),
 			 q.supporting_segment(1) };
 
-      return ( are_same(s[0], t[0]) && are_same(s[1], t[1]) ) ||
-	( are_same(s[0], t[1]) && are_same(s[1], t[0]) );
+      if (  ( are_same(s[0], t[0]) && are_same(s[1], t[1]) ) ||
+	    ( are_same(s[0], t[1]) && are_same(s[1], t[0]) )  ) {
+	return true;
+      }
     }
 
-    return are_same(p.point(), q.point());
+    return predicate(p, q, Tag_false());
+  }
+
+public:
+  typedef bool           result_type;
+  typedef Site_2         argument_type;
+  typedef Arity_tag<2>   Arity;
+
+  bool operator()(const Site_2& p, const Site_2& q) const
+  {
+    CGAL_precondition( p.is_point() && q.is_point() );
+
+    return predicate(p, q, ITag());
   }
 };
 

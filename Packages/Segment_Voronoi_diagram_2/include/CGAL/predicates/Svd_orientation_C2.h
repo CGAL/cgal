@@ -50,6 +50,9 @@ private:
   typedef CGAL::Svd_are_same_points_C2<K>     Are_same_points_2;
   typedef CGAL::Svd_are_same_segments_C2<K>   Are_same_segments_2;
 
+
+  typedef typename K::Intersections_tag       ITag;
+
   Are_same_points_2    same_points;
   Are_same_segments_2  same_segments;
 
@@ -85,61 +88,24 @@ private:
     return false;
   }
 
-#if 0 // not used
-  bool have_common_support(const Site_2& p, const Site_2& q,
-			   const Site_2& r) const
-  {
-    CGAL_precondition( !p.is_exact() && !q.is_exact() && !r.is_exact() );
-
-    if ( same_segments(p.supporting_site(0),
-		       q.supporting_site(0)) ||
-	 same_segments(p.supporting_site(0),
-		       q.supporting_site(1)) ) {
-      return
-	same_segments(p.supporting_site(0),r.supporting_site(0)) ||
-	same_segments(p.supporting_site(0),r.supporting_site(1));
-	
-    } else if ( same_segments(p.supporting_site(1),
-			      q.supporting_site(0)) ||
-		same_segments(p.supporting_site(1),
-			      q.supporting_site(1)) ) {
-      return
-	same_segments(p.supporting_site(1),r.supporting_site(0)) ||
-	same_segments(p.supporting_site(1),r.supporting_site(1));
-    }
-  }
-#endif
-
   bool is_endpoint(const Site_2& p, const Site_2& s) const
   {
     return same_points(s.source_site(), p) ||
       same_points(s.target_site(), p);
   }
 
-#if 0
-  void check(const Gmpq&) const {
-    std::cout << "Gmpq used..." << std::endl;
+  //-------------------------------------------------------------
+
+  Orientation predicate(const Site_2& p, const Site_2& q,
+			const Site_2& r, const Tag_false&) const
+  {
+    return Orientation_2()(p.point(), q.point(), r.point());
   }
 
-  template<class NT>
-  void check(const NT&) const {}
-#endif
-
-public:
-  Orientation operator()(const Site_2& p, const Site_2& q,
-			 const Site_2& r) const
+  Orientation predicate(const Site_2& p, const Site_2& q,
+			const Site_2& r, const Tag_true&) const
   {
-    CGAL_precondition( p.is_point() && q.is_point() && r.is_point() );
-
-#if 0
-    {
-      typedef typename K::FT FT;
-      {
-	check(p.point().x());
-      }
-    }
-#endif
-#if 0
+#if 1
     // do geometric filtering
     bool pe = p.is_exact();
     bool qe = q.is_exact();
@@ -188,7 +154,21 @@ public:
       }
     }
 #endif
-    return Orientation_2()(p.point(), q.point(), r.point());
+
+    return predicate(p, q, r, Tag_false());
+  }
+
+public:
+  typedef Orientation             result_type;
+  typedef Site_2                  argument_type;
+  typedef Arity_tag<3>            Arity;
+
+  Orientation operator()(const Site_2& p, const Site_2& q,
+			 const Site_2& r) const
+  {
+    CGAL_precondition( p.is_point() && q.is_point() && r.is_point() );
+
+    return predicate(p, q, r, ITag());
   }
 };
 

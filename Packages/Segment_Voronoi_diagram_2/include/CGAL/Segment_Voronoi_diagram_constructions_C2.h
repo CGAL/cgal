@@ -43,6 +43,51 @@ CGAL_BEGIN_NAMESPACE
 
 
 //-----------------------------------------------------------------------
+//                  Segment Voronoi diagram site
+//-----------------------------------------------------------------------
+template<class K>
+class Construct_svd_site_2
+{
+public:
+  typedef typename K::Site_2               Site_2;
+  typedef typename K::Point_2              Point_2;
+  typedef Site_2                           result_type;
+  struct Arity_tag {};
+
+public:
+  result_type operator()(const Point_2& p) const {
+    return Site_2(p);
+  }
+
+  result_type operator()(const Point_2& p0, const Point_2& p1) const {
+    return Site_2(p0, p1);
+  }
+
+  result_type operator()(const Point_2& p0, const Point_2& p1,
+			 const Point_2& q0, const Point_2& q1) const {
+    return Site_2(p0, p1, q0, q1);
+  }
+
+  result_type operator()(const Point_2& p0, const Point_2& p1,
+			 const Point_2& q0, const Point_2& q1) const {
+    return Site_2(p0, p1, q0, q1);
+  }
+
+  result_type operator()(const Point_2& p0, const Point_2& p1,
+			 const Point_2& q0, const Point_2& q1,
+			 bool b) const {
+    return Site_2(p0, p1, q0, q1, b);
+  }
+
+  result_type operator()(const Point_2& p0, const Point_2& p1,
+			 const Point_2& q0, const Point_2& q1,
+			 const Point_2& r0, const Point_2& r1) const {
+    return Site_2(p0, p1, q0, q1, r0, r1);
+  }
+};
+
+
+//-----------------------------------------------------------------------
 //                  Segment Voronoi diagram vertex
 //-----------------------------------------------------------------------
 

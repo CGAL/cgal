@@ -58,8 +58,11 @@ public:
 
   typedef typename Base::Homogeneous_point_2 Homogeneous_point_2;
 
+private:
   typedef Svd_are_same_points_C2<K>    Are_same_points_C2;
   typedef Svd_are_same_segments_C2<K>  Are_same_segments_C2;
+
+  typedef typename K::Intersections_tag ITag;
 
   Are_same_points_C2     same_points;
   Are_same_segments_C2   same_segments;
@@ -314,6 +317,17 @@ private:
 
 
   //--------------------------------------------------------------------------
+  bool check_if_exact(const Site_2& s, unsigned int i,
+		      const Tag_false&) const
+  {
+    return true;
+  } 
+
+  bool check_if_exact(const Site_2& s, unsigned int i,
+		      const Tag_true&) const
+  {
+    return s.is_exact(i);
+  }
 
   // determines of the segment s is on the positive halfspace as
   // defined by the supporting line of the segment supp; the line l
@@ -340,13 +354,15 @@ private:
       return oriented_side_of_line(l, s.source()) == ON_POSITIVE_SIDE;
     }
 
-    if ( !s.is_exact(0) &&
+    ITag itag;
+
+    if ( !check_if_exact(s, 0, itag) &&
 	 same_segments(supp.supporting_site(),
 		       s.crossing_site(0)) ) {
       return oriented_side_of_line(l, s.target()) == ON_POSITIVE_SIDE;
     }
 
-    if ( !s.is_exact(1) &&
+    if ( !check_if_exact(s, 1, itag) &&
 	 same_segments(supp.supporting_site(),
 		       s.crossing_site(1)) ) {
       return oriented_side_of_line(l, s.source()) == ON_POSITIVE_SIDE;

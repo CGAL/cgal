@@ -55,6 +55,8 @@ private:
   typedef Svd_are_same_points_C2<K>           Are_same_points_2;
   typedef Svd_are_same_segments_C2<K>         Are_same_segments_2;
 
+  typedef typename K::Intersections_tag       ITag;
+
 private:
   Are_same_points_2    same_points;
   Are_same_segments_2  same_segments;
@@ -214,6 +216,16 @@ private:
 
   //--------------------------------------------------------------------
 
+  bool check_if_exact(const Site_2& t1, const Tag_false&) const
+  {
+    return true;
+  }
+
+  bool check_if_exact(const Site_2& t1, const Tag_true&) const
+  {
+    return t1.is_exact();
+  }
+
   bool
   is_interior_in_conflict_both_ps_s(const Site_2& sp, const Site_2& sq,
 				    const Site_2& r, const Site_2& s,
@@ -258,7 +270,7 @@ private:
       if ( same_points(t1, sq.source_site()) ||
 	   same_points(t1, sq.target_site()) ) {
 	o_t1 = ON_ORIENTED_BOUNDARY;
-      } else if (  !t1.is_exact() &&
+      } else if (  !check_if_exact(t1, ITag()) &&
 		   ( same_segments(t1.supporting_site(0),
 				   sq.supporting_site()) ||
 		     same_segments(t1.supporting_site(1),

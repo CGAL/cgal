@@ -157,6 +157,7 @@ public:
     }
   }
 
+#ifdef USE_SET_METHODS
 public:
   // SET METHODS
   //------------
@@ -184,6 +185,7 @@ public:
 		   bool is_first_exact) {
     initialize_site(hp1, hp2, hq1, hq2, is_first_exact);
   }
+#endif
 
 protected:
   // INITIALIZATION

@@ -175,6 +175,7 @@ public:
   }
 #endif
 
+#ifdef USE_SET_METHODS
   void set_point(const Point_2& p) {
     initialize_site(p);
   }
@@ -206,6 +207,7 @@ public:
   {
     CGAL_assertion(false);
   }
+#endif
 #endif
 
 protected:
@@ -254,11 +256,19 @@ operator>>(std::istream &is,
     if (type == 'p') {
       Point_2 p;
       is >> p;
+#ifdef USE_SET_METHODS
       t.set_point(p);
+#else
+      t = Site_2(p);
+#endif
     } else if (type == 's') {
       Point_2 p1, p2;
       is >> p1 >> p2;
+#ifdef USE_SET_METHODS
       t.set_segment(p1, p2);
+#else
+      t = Site_2(p1, p2);
+#endif
     }
   }
   return is;

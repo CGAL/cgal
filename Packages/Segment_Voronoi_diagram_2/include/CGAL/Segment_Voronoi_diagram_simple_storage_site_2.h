@@ -86,6 +86,7 @@ public:
     }
   }
 
+#ifdef USE_SET_METHODS
 public:
   // SET METHODS
   //------------
@@ -96,6 +97,7 @@ public:
   void set_segment(const Handle& hp1, const Handle& hp2) {
     initialize_site(hp1, hp2);
   }
+#endif
 
 protected:
   // INITIALIZATION

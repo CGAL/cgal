@@ -48,22 +48,6 @@ CGAL_BEGIN_NAMESPACE
 template<class CK_t, class CK_MTag, class EK_t, class EK_MTag,
 	 class FK_t, class FK_MTag, class C2E_t, class C2F_t,
 	 class ITag>
-#if 0
-	 class CK_MTag = Sqrt_field_tag,
-#ifdef CGAL_USE_GMP
-	 class EK_t    = Simple_cartesian< Gmpq >,
-#else
-	 class EK_t    = Simple_cartesian< Quotient<MP_Float> >,
-#endif
-	 class EK_MTag = Ring_tag,
-	 class ITag    = Tag_true,
-	 class FK_t    = Simple_cartesian< Interval_nt<false> >,
-	 class FK_MTag = Sqrt_field_tag,
-	 class C2E_t   = Cartesian_converter<CK_t, EK_t>,
-	 class C2F_t   =
-	 Cartesian_converter<CK_t, FK_t, To_interval<typename CK_t::RT> >
->
-#endif
 class Segment_Voronoi_diagram_filtered_traits_base_2
 {
 private:
@@ -243,6 +227,7 @@ private:
 public:
   // PREDICATES
   //-----------
+#if 0
   typedef
   Filtered_predicate<EK_Compare_x_2, FK_Compare_x_2, C2E, C2F>
   Compare_x_2;
@@ -296,6 +281,73 @@ public:
   typedef
   Filtered_predicate<EK_Oriented_side_2, FK_Oriented_side_2, C2E, C2F>
   Oriented_side_2;
+
+#else
+
+  typedef
+  Filtered_predicate<Svd_compare_x_2<EK>,
+		     Svd_compare_x_2<FK>, C2E, C2F>
+  Compare_x_2;
+
+  typedef
+  Filtered_predicate<Svd_compare_y_2<EK>,
+		     Svd_compare_y_2<FK>, C2E, C2F>
+  Compare_y_2;
+
+  typedef
+  Filtered_predicate<Svd_orientation_C2<EK>,
+		     Svd_orientation_C2<FK>, C2E, C2F>
+  Orientation_2;
+
+  typedef
+  Filtered_predicate<Svd_are_same_points_C2<EK>,
+		     Svd_are_same_points_C2<FK>, C2E, C2F>
+  Are_same_points_2;
+
+  typedef
+  Filtered_predicate<Are_parallel_2<EK>,
+		     Are_parallel_2<FK>, C2E, C2F>
+  Are_parallel_2;
+
+  typedef
+  Filtered_predicate<Svd_oriented_side_of_bisector_C2<EK,EK_MTag>,
+		     Svd_oriented_side_of_bisector_C2<FK,FK_MTag>,
+		     C2E, C2F>
+  Oriented_side_of_bisector_2;
+
+  typedef
+  Filtered_predicate<Svd_incircle_2<EK,EK_MTag>,
+		     Svd_incircle_2<FK,FK_MTag>, C2E, C2F>
+  Vertex_conflict_2;
+
+  typedef
+  Filtered_predicate<Svd_finite_edge_interior_conflict_2<EK,EK_MTag>,
+		     Svd_finite_edge_interior_conflict_2<FK,FK_MTag>,
+		     C2E, C2F>
+  Finite_edge_interior_conflict_2;
+
+  typedef
+  Filtered_predicate<Svd_infinite_edge_interior_conflict_2<EK,EK_MTag>,
+		     Svd_infinite_edge_interior_conflict_2<FK,FK_MTag>,
+		     C2E, C2F>
+  Infinite_edge_interior_conflict_2;
+
+  typedef
+  Filtered_predicate<Svd_is_degenerate_edge_C2<EK,EK_MTag>,
+		     Svd_is_degenerate_edge_C2<FK,FK_MTag>, C2E, C2F>
+  Is_degenerate_edge_2;
+
+  typedef
+  Filtered_predicate<Svd_arrangement_type_C2<EK>,
+		     Svd_arrangement_type_C2<FK>, C2E, C2F>
+  Arrangement_type_2;
+
+  typedef
+  Filtered_predicate<Svd_oriented_side_C2<EK,EK_MTag>,
+		     Svd_oriented_side_C2<FK,FK_MTag>, C2E, C2F>
+  Oriented_side_2;
+#endif
+
 
 public:
   //-----------------------------------------------------------------------

@@ -45,6 +45,8 @@ private:
   typedef Svd_are_same_points_C2<K>     Are_same_points_C2;
   typedef Svd_are_same_segments_C2<K>   Are_same_segments_C2;
 
+  typedef typename K::Intersections_tag             ITag;
+
 private:
   Are_same_points_C2    same_points;
   Are_same_segments_C2  same_segments;
@@ -94,6 +96,119 @@ private:
   }
 
 private:
+  Sign incircle_ppp(const Site_2& p, const Site_2& q,
+		    const Site_2& t, const Tag_false&) const
+  {
+    Point_2 pp = p.point(), qp = q.point(), tp = t.point();
+
+    // MK::ERROR: here I should call a kernel object, not a
+    // function...; actually here (and everywhere in this class)
+    // use the orientation predicate for sites; it does some
+    // geometric filtering...
+    Orientation o = orientation(pp, qp, tp);
+
+    if ( o != COLLINEAR ) {
+      return (o == LEFT_TURN) ? POSITIVE : NEGATIVE;
+    }
+
+    // MK::ERROR: change the following code to use the compare_x_2
+    // and compare_y_2 stuff...
+    RT dtpx = pp.x() - tp.x();
+    RT dtpy = pp.y() - tp.y();
+    RT dtqx = qp.x() - tp.x();
+    RT minus_dtqy = -qp.y() + tp.y();
+    
+    Sign s = sign_of_determinant2x2(dtpx, dtpy, minus_dtqy, dtqx);
+
+    CGAL_assertion( s != ZERO );
+
+    return s;
+  }
+
+  Sign incircle_ppp(const Site_2& p, const Site_2& q,
+		    const Site_2& t, const Tag_true&) const
+  {
+    Orientation o = COLLINEAR; // the initialization was done in
+                               // order a compiler warning
+
+    // do some geometric filtering...
+    bool p_exact = p.is_exact();
+    bool q_exact = q.is_exact();
+    bool t_exact = t.is_exact();
+    bool filtered = false;
+    // the following if-statement does the gometric filtering...
+    // maybe it is not so important since this will only be
+    // activated if a lot of intersection points appear on the
+    // convex hull
+    if ( !p_exact || !q_exact || !t_exact ) {
+      if ( !p_exact && !q_exact && !t_exact ) {
+	if ( have_common_support(p, q) &&
+	     have_common_support(q, t) ) {
+	  o = COLLINEAR;
+	  filtered = true;
+	}
+      } else if ( !p_exact && !q_exact && t_exact ) {
+	if ( is_on_common_support(p, q, t.point()) ) {
+	  o = COLLINEAR;
+	  filtered = true;
+	}
+      } else if ( !p_exact && q_exact && !t_exact ) {
+	if ( is_on_common_support(p, t, q.point()) ) {
+	  o = COLLINEAR;
+	  filtered = true;
+	}
+      } else if ( p_exact && !q_exact && !t_exact ) {
+	if ( is_on_common_support(t, q, p.point()) ) {
+	  o = COLLINEAR;
+	  filtered = true;
+	}
+      } else if ( !p_exact && q_exact && t_exact ) {
+	if ( have_common_support(p, q.point(), t.point()) ) {
+	  o = COLLINEAR;
+	  filtered = true;
+	}
+      } else if ( p_exact && !q_exact && t_exact ) {
+	if ( have_common_support(q, p.point(), t.point()) ) {
+	  o = COLLINEAR;
+	  filtered = true;
+	}
+      } else if ( p_exact && q_exact && !t_exact ) {
+	if ( have_common_support(t, p.point(), q.point()) ) {
+	  o = COLLINEAR;
+	  filtered = true;
+	}
+      }
+    }
+
+    Point_2 pp = p.point(), qp = q.point(), tp = t.point();
+
+    if ( !filtered ) {
+      // MK::ERROR: here I should call a kernel object, not a
+      // function...; actually here (and everywhere in this class)
+      // use the orientation predicate for sites; it does some
+      // geometric filtering...
+      o = orientation(pp, qp, tp);
+    }
+
+    if ( o != COLLINEAR ) {
+      return (o == LEFT_TURN) ? POSITIVE : NEGATIVE;
+    }
+
+    // MK::ERROR: change the following code to use the compare_x_2
+    // and compare_y_2 stuff...
+    RT dtpx = pp.x() - tp.x();
+    RT dtpy = pp.y() - tp.y();
+    RT dtqx = qp.x() - tp.x();
+    RT minus_dtqy = -qp.y() + tp.y();
+    
+    Sign s = sign_of_determinant2x2(dtpx, dtpy, minus_dtqy, dtqx);
+    
+    CGAL_assertion( s != ZERO );
+
+    return s;
+  }
+
+
   Sign incircle_p(const Site_2& p, const Site_2& q,
 		  const Site_2& t) const
   {
@@ -101,6 +216,10 @@ private:
 
     if ( p.is_point() && q.is_point() ) {
 
+#if 1
+      return incircle_ppp(p, q, t, ITag());
+
+#else
       Orientation o = COLLINEAR; // the initialization was done in
                                  // order a compiler warning
 
@@ -179,6 +298,7 @@ private:
       CGAL_assertion( s != ZERO );
 
       return s;
+#endif
     }
 
     CGAL_assertion( p.is_point() || q.is_point() );
@@ -310,6 +430,10 @@ private:
 
 
 public:
+  typedef Site_2                 argument_type;
+  typedef Sign                   result_type;
+  struct Arity {};
+
 
   Sign operator()(const Site_2& p, const Site_2& q,
 		  const Site_2& r, const Site_2& t) const
@@ -338,11 +462,13 @@ public:
     }
 
     if ( t.is_point() ) {
-      return incircle_p(p, q, t);
+      //      return incircle_p(p, q, t);
+      return incircle_p(q, p, t);
     }
 
     // MK::ERROR: do geometric filtering when orientation is called.
-    return incircle_s(p, q, t);
+    //    return incircle_s(p, q, t);
+    return incircle_s(q, p, t);
   }
 
 

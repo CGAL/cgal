@@ -229,6 +229,7 @@ public:
   }
 #endif
 
+#ifdef USE_SET_METHODS
   void set_point(const Point_2& p) {
     initialize_site(p);
   }
@@ -253,6 +254,7 @@ public:
 		   bool is_first_exact) {
     initialize_site(p1, p2, q1, q2, is_first_exact);
   }
+#endif
 
 protected:
   void initialize_site(const Point_2& p)
@@ -378,11 +380,19 @@ operator>>(std::istream &is,
     if (type == 'p') {
       Point_2 p;
       is >> p;
+#ifdef USE_SET_METHODS
       t.set_point(p);
+#else
+      t = Site_2(p);
+#endif
     } else if (type == 's') {
       Point_2 p1, p2;
       is >> p1 >> p2;
+#ifdef USE_SET_METHODS
       t.set_segment(p1, p2);
+#else
+      t = Site_2(p1, p2);
+#endif
     }
   }
   return is;

@@ -132,30 +132,50 @@ get_site(const typename K::FT v[], unsigned int& k,
   if ( site_types[j] == 'p' ) {
     if ( site_types[j+1] == 'e' ) {
       Point_2 p(v[k], v[k+1]);
+#ifdef USE_SET_METHODS
       t.set_point(p);
+#else
+      t = Site_2(p);
+#endif
       step = 2;
     } else {
       Point_2 p1(v[k], v[k+1]), p2(v[k+2], v[k+3]);
       Point_2 p3(v[k+4], v[k+5]), p4(v[k+6], v[k+7]);
+#ifdef USE_SET_METHODS
       t.set_point(p1, p2, p3, p4);
+#else
+      t = Site_2(p1, p2, p3, p4);
+#endif
       step = 8;
     }
   } else {
     if ( site_types[j+1] == 'e' ) {
       Point_2 p1(v[k], v[k+1]), p2(v[k+2], v[k+3]);
+#ifdef USE_SET_METHODS
       t.set_segment(p1, p2);
+#else
+      t = Site_2(p1, p2);
+#endif
       step = 4;
     } else {
       if ( site_types[j+1] != 'i' ) {
 	Point_2 p1(v[k], v[k+1]), p2(v[k+2], v[k+3]);
 	Point_2 p3(v[k+4], v[k+5]), p4(v[k+6], v[k+7]);
+#ifdef USE_SET_METHODS
 	t.set_segment(p1, p2, p3, p4, (site_types[j+1] == '0'));
+#else
+	t = Site_2(p1, p2, p3, p4, (site_types[j+1] == '0'));
+#endif
 	step = 8;
       } else {
 	Point_2 p1(v[k], v[k+1]), p2(v[k+2], v[k+3]);
 	Point_2 p3(v[k+4], v[k+5]), p4(v[k+6], v[k+7]);
 	Point_2 p5(v[k+8], v[k+9]), p6(v[k+10], v[k+11]);
+#ifdef USE_SET_METHODS
 	t.set_segment(p1, p2, p3, p4, p5, p6);
+#else
+	t = Site_2(p1, p2, p3, p4, p5, p6);
+#endif
 	step = 12;
       }
     }

@@ -213,7 +213,7 @@ public:
 			 const Site_2& t) const
   {
     return
-      svd_vertex_conflict_ftC2<K,Method_tag>(q, p, t, Method_tag());
+      svd_vertex_conflict_ftC2<K,Method_tag>(p, q, t, Method_tag());
   }
 
   result_type operator()(const Site_2& p, const Site_2& q,
