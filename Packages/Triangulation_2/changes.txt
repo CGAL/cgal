@@ -1,6 +1,9 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+Ver 7.20
+- add special_insert_in_edge() for Delaunay_constrained_triangulations
+
 Ver 7.19 (08/04/02)
 - fixed copy constructor oc Constraint_hierarchy
 

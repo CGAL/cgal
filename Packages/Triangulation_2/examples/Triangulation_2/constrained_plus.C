@@ -8,7 +8,8 @@
 #include <CGAL/Constrained_triangulation_plus_2.h>
 
 typedef CGAL::Simple_cartesian<double>  K1;
-typedef CGAL::Filtered_kernel<K1>       K;
+typedef CGAL::Filtered_kernel<K1>       K2;
+struct K : public K2 {};
 
 typedef CGAL::Triangulation_vertex_base_2<K>              Vb;
 typedef CGAL::Constrained_triangulation_face_base_2<K>    Fb;

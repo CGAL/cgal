@@ -33,7 +33,12 @@ CGAL_BEGIN_NAMESPACE
 template <class T>
 struct Pointer
 {
-  typedef T value_type;
+  typedef void     iterator_category;
+  typedef T        value_type;
+  typedef void     difference_type;
+  typedef T*       pointer;
+  typedef T&       reference;
+  
 
   //Pointer(const T* p = NULL) : _pointer((T*)p) {}
   //Pointer( T* p = NULL) : _pointer((T*)p) {}
