@@ -14,6 +14,7 @@ public:
 
   typedef typename Cont::reference reference;
   typedef typename Cont::iterator iterator;
+  typedef typename Cont::const_iterator const_iterator;
   typedef typename Cont::value_type value_type;
 
   inline
@@ -58,6 +59,7 @@ public:
 
   inline
   void clear() { cont.clear(); }
+
 };
 
 CGAL_END_NAMESPACE
