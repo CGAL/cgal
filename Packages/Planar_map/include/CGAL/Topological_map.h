@@ -617,7 +617,7 @@ public:
 #if _MSC_VER>=1100 // VC template bug
 	  ,Vertex* dummy=NULL
 #endif
-	  ) const
+                ) const
   {
     bool valid = true;
     
@@ -640,7 +640,7 @@ public:
 #if _MSC_VER>=1100 // VC template bug
 	  ,Halfedge* dummy=NULL
 #endif
-	  ) const
+                ) const
   {
     //check relations with next
     if (e->target() != e->next_halfedge()->source())
@@ -693,38 +693,38 @@ public:
     
     return valid;
   }
-  
-bool is_valid() const
+
+  /*! Chcecks whether the planar map is valid. In particular is_valid()
+   * checks the validity of each vertex, halfedge, and face
+   */
+  bool is_valid() const
   {
-    bool valid = true;
-    
     Vertex_const_iterator vi;
-    for (vi = vertices_begin(); vi != vertices_end(); ++vi)
-      {
-        if (!is_valid(vi)) 
-          {//an iterator is used for a handle
-            valid = false;
-          }
+    for (vi = vertices_begin(); vi != vertices_end(); ++vi) {
+      if (!is_valid(vi)) {
+        CGAL_warning("Invalid vertex!");
+        return false;
       }
+    }
     
     Halfedge_const_iterator ei;
-    for (ei = halfedges_begin(); ei != halfedges_end(); ++ei)
-      {
-        if (!is_valid(ei))
-          valid = false;
-      }	
+    for (ei = halfedges_begin(); ei != halfedges_end(); ++ei) {
+      if (!is_valid(ei)) {
+        CGAL_warning("Invalid halfedge!");
+        return false;
+      }
+    }
     
     Face_const_iterator fi;
-    for (fi = faces_begin(); fi != faces_end(); ++fi)
-      {
-        if (!is_valid(fi))
-          valid = false;
+    for (fi = faces_begin(); fi != faces_end(); ++fi) {
+      if (!is_valid(fi)) {
+        CGAL_warning("Invalid face!");
+        return false;
       }
+    }
     
-    return valid;
+    return true;
   }
-
-
 
   /******************************************************************/
   /*********************   counting functions ***********************/
