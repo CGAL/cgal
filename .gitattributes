@@ -763,6 +763,7 @@ Packages/Auxiliary/auxiliary/gmp-4.1.2.tar.gz -text svneol=unset#unset
 Packages/Auxiliary/auxiliary/wingmp/gmp-4.1.2/gcc/libgmp.a -text svneol=unset#unset
 Packages/Auxiliary/auxiliary/wingmp/gmp-4.1.2/gmp.dll -text svneol=unset#unset
 Packages/Auxiliary/auxiliary/wingmp/gmp-4.1.2/msvc/gmp.lib -text svneol=unset#unset
+Packages/Box_intersection_d/doc_tex/Box_intersection_d/fig/benchmark.eps -text
 Packages/Coin/demo/Coin/Polyhedron_3/data/venus.off -text
 Packages/Coin/demo/Coin/Polyhedron_3/polyhedron_3.sln -text
 Packages/Coin/demo/Coin/Polyhedron_3/polyhedron_3.vcproj -text

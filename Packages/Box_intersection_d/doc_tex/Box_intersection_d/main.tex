@@ -9,7 +9,7 @@
 \RCSdefDate{\BoxIntersectionDate}{$Date$}
 % +------------------------------------------------------------------------+
 
-\newcommand{\LK}[1]{\textbf{L.K.:#1???}
+\newcommand{\LK}[1]{\textbf{L.K.:#1???}}
 
 \ccParDims
 
@@ -24,7 +24,7 @@
 % +------------------------------------------------------------------------+
 \section{Introduction}
 
-We provide an efficient algorithm~\cite{ze-fsbi-02} for finding all
+We provide an efficient algorithm~\cite{cgal:ze-fsbi-02} for finding all
 intersecting pairs for large numbers of iso-oriented boxes, i.e.,
 typically these will be bounding boxes of more complicated geometries
 
@@ -55,7 +55,8 @@ The iso-oriented box, or bounding box, can have arbitrary dimension.
 An interval specifies the size of the box in each dimension. The
 number type used to represent the interval boundaries is a template
 parameter of the box. Useful instantiations are with the builtin
-\texttt{double} or \texttt{float} type.
+\texttt{int}, \texttt{unsigned int}, \texttt{double} or \texttt{float}
+types.
 
 We offer two topological interpretations of the box; it can be a
 half-open set or a closed set. The box is half open if its intervals
@@ -176,7 +177,7 @@ When no box adaptor is given, it is assumed that the default box
 adaptor can be used to access the supplied boxes. A minimal example
 using just the defaults demonstrates the invocation:
 
-\ccIncludeExampleCode{../../../examples/Box_intersection_d/minimal.cc}
+\ccIncludeExampleCode{Box_intersection_d/minimal.C}
 
 Here, the box type is exactly the default box using three dimensions
 and \texttt{double} as the underlying number type. A number of boxes
@@ -261,7 +262,7 @@ inside the box container, the pointer specialization of the box traits
 template is used automatically, with the custom box as the template
 parameter.
 
-\ccIncludeExampleCode{../../../examples/Box_intersection_d/custombox.cc}
+\ccIncludeExampleCode{Box_intersection_d/custombox.C}
 
 \subsection{Custom Box Traits }
 
@@ -271,7 +272,7 @@ point plus a size for all three dimensions. The primitive class is the
 same as in the custom box example above. Invocation differs only where
 the box traits must be supplied as an argument.
 
-\ccIncludeExampleCode{../../../examples/Box_intersection_d/customadaptor.cc}
+\ccIncludeExampleCode{Box_intersection_d/customadaptor.C}
 
 % +------------------------------------------------------------------------+
 \section{Implementation}
@@ -304,7 +305,7 @@ there are more and more boxes, the overhead becomes less important.
 \begin{ccTexOnly}
  \begin{figure}
   \begin{center}
-  \includegraphics[width=0.5\textwidth]{../../../test/Box_intersection_d/benchmark.eps}
+  \includegraphics[width=0.5\textwidth]{Box_intersection_d/fig/benchmark}
   \caption{Runtime comparison scanning vs. streaming.}
   \label{fig_benchmark}
   \end{center}
