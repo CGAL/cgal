@@ -1,3 +1,6 @@
+4.122 (28 October 2003)
+- Protect to_double(Quotient<MP_Float>) against overflows like Quotient<Gmpz>.
+
 4.121 (27 October 2003)
 - Fix Gmpq's operator>> in case of end of stream.
 

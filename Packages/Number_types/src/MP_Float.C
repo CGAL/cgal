@@ -276,18 +276,19 @@ sqrt(const MP_Float &d)
   return MP_Float(CGAL_NTS sqrt(CGAL::to_double(d)));
 }
 
-// to_double() returns, not the closest double, but a one bit error is allowed.
-// We guarantee : to_double(MPI(double d)) == d.
-double
-to_double(const MP_Float &b)
+namespace CGALi {
+// Returns (first * 2^second), an approximation of b.
+inline
+std::pair<double, int>
+to_double_exp(const MP_Float &b)
 {
   if (b.is_zero())
-    return 0;
+    return std::make_pair(0.0, 0);
 
   int exp = b.max_exp();
   int steps = std::min(limbs_per_double, b.v.size());
   double d_exp_1 = CGAL_CLIB_STD::ldexp(1.0, - (int) log_limb);
-  double d_exp   = CGAL_CLIB_STD::ldexp(1.0, exp * log_limb);
+  double d_exp   = 1.0;
   double d = 0;
 
   for (int i = exp - 1; i > exp - 1 - steps; i--) {
@@ -295,7 +296,25 @@ to_double(const MP_Float &b)
     d += d_exp * b.of_exp(i);
   }
 
-  return d;
+  return std::make_pair(d, exp * log_limb);
+}
+}
+
+// to_double() returns, not the closest double, but a one bit error is allowed.
+// We guarantee : to_double(MP_Float(double d)) == d.
+double
+to_double(const MP_Float &b)
+{
+  std::pair<double, int> ap = CGALi::to_double_exp(b);
+  return ap.first * CGAL_CLIB_STD::ldexp(1.0, ap.second);
+}
+
+double
+to_double(const Quotient<MP_Float> &q)
+{
+    std::pair<double, int> n = CGALi::to_double_exp(q.numerator());
+    std::pair<double, int> d = CGALi::to_double_exp(q.denominator());
+    return n.first / d.first * CGAL_CLIB_STD::ldexp(1.0, n.second - d.second);
 }
 
 // FIXME : This function deserves proper testing...

@@ -26,6 +26,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Interval_arithmetic.h>
+#include <CGAL/Quotient.h>
 #include <iostream>
 #include <vector>
 
@@ -228,6 +229,10 @@ sqrt(const MP_Float &d);
 // We guarantee : to_double(MP_Float(double d)) == d.
 double
 to_double(const MP_Float &b);
+
+// Overloaded in order to protect against overflow.
+double
+to_double(const Quotient<MP_Float> &b);
 
 std::pair<double,double>
 to_interval(const MP_Float &b);
