@@ -2,6 +2,9 @@
 //	Revision History for package Installation
 //=====================================================================
 
+20 May 2004 Sylvain Pion
+- Add --disable-shared.
+
 13 May 2004 Radu Ursu
 - install_cgal configures gmp with mpfr support. 
 

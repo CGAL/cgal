@@ -33,7 +33,7 @@
 
 %% macro for SGI CC
 \newcommand{\mipsprocc}{\textsc{SGI}~Mips(Pro)~\texttt{CC}}
-\newcommand{\mipsprourl}{\path'http://www.sgi.com/developers/devtools/languages/mipspro.html'}
+\newcommand{\mipsprourl}{\path'http://www.sgi.com/software/irix/tools/c++.html'}
 
 %% macro for Borland C++
 \newcommand{\bcc}[1]{\textsc{Borland}~\texttt{C++}~{\rm #1}}
@@ -64,7 +64,7 @@
 
 %% macros for WWW pages
 \newcommand{\cgalhomepage}{\path'http://www.cgal.org'}
-\newcommand{\gmppage}{\path'http://www.gnu.org/software/gmp'}
+\newcommand{\gmppage}{\path'http://www.swox.com/gmp/'}
 \newcommand{\corepage}{\path'http://www.cs.nyu.edu/exact/core/'}
 \newcommand{\ledapage}{\path'http://www.mpi-sb.mpg.de/LEDA'}
 \newcommand{\trolltechpage}{\path'http://www.trolltech.com'}
@@ -516,8 +516,9 @@ follows.
 \index{compiler menu}\index{menus!compiler}
 
 Here is the place to set the compiler specific options, such as the
-compiler to use (if more than one has been detected) and custom
-compiler or linker flags.\bigskip
+compiler to use (if more than one has been detected), custom
+compiler or linker flags, or deciding whether to build shared libraries
+or not.\bigskip
 
 \fbox{
 \begin{minipage}{.95\linewidth}
@@ -535,6 +536,9 @@ compiler or linker flags.\bigskip
 \item[$<$L$>$] Set custom linker flags. These are the first flags
   given to the linker in every call. Under normal circumstances
   there should be no need to set any such flag.
+\item[$<$S$>$] Toggle shared libraries building.
+  By default, shared libraries are built (e.g. \texttt{libCGAL.so}),
+  but it is possible to only build static libraries using this option.
 \end{description}
 \vspace{2pt}
 \end{minipage}
@@ -965,6 +969,20 @@ contain spaces. Example:
   ./install_cgal -ni g++ --CUSTOM_CXXFLAGS "-I/my/include -O2"
 \end{verbatim}
 
+
+\subsection{Disabling shared libraries building}\label{sec:disable-shared-setup}
+\index{compilers!disabling shared libraries building}
+
+You can disable the building of shared libraries (e.g. \texttt{libCGAL.so})
+using the option \mbox{(``\texttt{--disable-shared}'')\TTindex{disable-shared}}.
+This way, only static libraries (object file archives) are built.
+
+Example:
+\begin{verbatim}
+  ./install_cgal --disable-shared -ni g++
+\end{verbatim}
+
+
 \subsection{Other Options}\label{sec:other-options}
 
 There are some less important features of the install script we will
@@ -1087,9 +1105,7 @@ The \cgal\ distribution contains the following makefiles:
   object library \texttt{libCGAL.a},
   
 \item \texttt{\cgaldir/src/makefile\_sharedlib} for compiling the
-  \cgal\ shared object library \texttt{libCGAL.so},
-  
-\item \texttt{\cgaldir/examples/makefile} as sample makefile
+  \cgal\ shared object library \texttt{libCGAL.so}
   \textit{and}
   
 \item \texttt{\cgaldir/examples/*/makefile} for compiling the \cgal\ 

@@ -70,6 +70,10 @@ UPGRADE_FROM=''
 BUILD_ONE_CONFIG=''
 
 # ---------------------------------------------
+# set to empty to disable building of shared libraries.
+ENABLE_SHARED='y'
+
+# ---------------------------------------------
 # LEDA specific:
 
 # suffix for include makefile:
@@ -288,7 +292,7 @@ print_usage_information()
 "usage: ${CGAL_INSTALL_CGAL}
       [--help | --version | -i | --interactive | -u <dir> | 
        --upgrade <dir> | --build-all | --rebuild-all |
-       --build <config> | --rebuild <config> |
+       --build <config> | --rebuild <config> | --disable-shared |
        -ni <comp> | --non-interactive <comp> | -os <comp>]
       [-leda] [-core] [-gmp] [-gmpxx] [-qt] [-qt_mt] [--verbose]
       [--CGAL_DIR <dir>] [--leda-sys-incl] [--leda-sys-lib]
@@ -316,8 +320,8 @@ print_usage_information()
                (other options - except for --CGAL_DIR - are ignored)
   --upgrade <dir> or -u <dir>
                runs the script in upgrade mode
-	       Use this option, if you upgrade from CGAL-1.*/2.*
-	       and supply the directory where CGAL is installed
+	       Use this option, if you upgrade from a previously installed
+	       CGAL and supply the directory where it is installed
 	       on your system.
 	       The config/install files and GMP installations will 
 	       be copied from there.
@@ -335,6 +339,8 @@ print_usage_information()
 	       (Re)build the compiler configuration file and libraries
 	       for the compiler specified by its configuration file
                config/install/<config>.
+  --disable-shared
+               Do not build shared libraries, only the static archives.
   --non-interactive <comp> or -ni <comp>
                runs the script in non-interactive mode
                i.e. makefiles are generated for C++ compiler
@@ -3004,6 +3010,12 @@ check_LONG_NAME_PROBLEM()
     return 1
 }
 
+# nothing to check here
+check_ENABLE_SHARED()
+{
+    return 1
+}
+
 check_NEED_EXTRA_LEDA_IDIR()
 {
     if [ -n "${NEED_EXTRA_LEDA_IDIR}" -a \
@@ -4188,6 +4200,11 @@ retrieve_compiler_settings()
 	SETUP_COMPLETE=''
     fi
 
+    if try_to_get_var_from_file ENABLE_SHARED "${_file}"; then
+	ENABLE_SHARED='y'
+	SETUP_COMPLETE=''
+    fi
+
     set_lib_compiled_flag
     reassemble_compiler
 }
@@ -4263,6 +4280,7 @@ store_compiler_settings()
     _store_install_config_variable CUSTOM_CXXFLAGS  >>${_file}
     _store_install_config_variable CUSTOM_LDFLAGS >>${_file}
     _store_install_config_variable LONG_NAME_PROBLEM >>${_file}
+    _store_install_config_variable ENABLE_SHARED >>${_file}
     ${_printf} "\n%s\n" \
 	"/* EOF */" \
 	>>${_file}
@@ -4638,7 +4656,7 @@ _set_tmp_to_not_or_not()
 }
 
 # ---------------------------------------------------------------------
-# compiler_menu to setup compiler and STL options
+# compiler_choose_menu to choose which compiler to use
 #
 
 compiler_choose_menu()
@@ -4703,6 +4721,10 @@ compiler_choose_menu()
     done
 }
 
+# ---------------------------------------------------------------------
+# compiler_menu : setup compiler options.
+#
+
 compiler_menu()
 {
     while [ 0 ]; do
@@ -4712,6 +4734,12 @@ compiler_menu()
 	print_multi_line "${CUSTOM_CXXFLAGS:-<none>}"
 	print_line "${_bold_on}<L>${_bold_off}  Set custom linker flags"
 	print_multi_line "${CUSTOM_LDFLAGS:-<none>}"
+	print_line "${_bold_on}<S>${_bold_off}  Toggle shared libraries building" 
+        if [ -n "${ENABLE_SHARED}" ]; then
+	    print_multi_line "<enabled>"
+        else
+	    print_multi_line "<disabled>"
+        fi
 	print_line "${_bold_on}<T>${_bold_off}  Test (and save) setup"
 	menu_tailer 'Main Menu'
  
@@ -4726,6 +4754,15 @@ compiler_menu()
 		;;
 	    l|L)
 		change_value CUSTOM_LDFLAGS
+		reset_all_test_variables
+		SETUP_COMPLETE=''
+		;;
+            s|S)
+		if [ -n "${ENABLE_SHARED}" ]; then
+                    ENABLE_SHARED=''
+                else
+                    ENABLE_SHARED='y'
+                fi
 		reset_all_test_variables
 		SETUP_COMPLETE=''
 		;;
@@ -6476,16 +6513,18 @@ build_cgal()
 	${_printf} "\n${_LEFTSPACE}%s\n" \
 	"----------------------------------------------------------" \
 	    >> ${INSTALL_RIS_LOGFILE}
-	case ${CGAL_OS_COMPILER} in
-	    *CYGWIN*)
-		${_printf} "%s\n" \
-		"${_LEFTSPACE}No shared libraries on this platform!"
-		;;
-	    *)  if _do_compile sharedlib; then
-		    ${_rm} -f ${CGAL_DIR}/.upgrade-tag
-		fi
-		;;
-	esac
+        if [ -n "${ENABLE_SHARED}" ]; then
+            case ${CGAL_OS_COMPILER} in
+                *CYGWIN*)
+                    ${_printf} "%s\n" \
+                    "${_LEFTSPACE}No shared libraries on this platform!"
+                    ;;
+                *)  if _do_compile sharedlib; then
+                        ${_rm} -f ${CGAL_DIR}/.upgrade-tag
+                    fi
+                    ;;
+            esac
+        fi
 	if [ -n "${QT_SUPPORT}" -a -d ${CGAL_SRC_DIR}/CGALQt ]; then
 	    cd ${CGAL_SRC_DIR}/CGALQt
 	    _do_compile Qt
@@ -7174,6 +7213,9 @@ while [ ${#} -gt 0 ]; do
 	    _WHAT_TO_DO='build'
             BUILD_ONE_CONFIG=$2
             shift
+	    ;;
+	--disable-shared*)
+	    ENABLE_SHARED=''
 	    ;;
 	*) 
 	    _WHAT_TO_DO='help'
