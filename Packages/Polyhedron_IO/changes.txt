@@ -1,6 +1,11 @@
 Polyhedron_IO Package: Release changes:
 ---------------------------------------------------------------------
 
+3.14 (07 May 2003)
+
+     - In examples/Polyhedron_IO/terr_triang.C switched to default
+       arguments of the triangulation.
+
 3.13 (05 May 2003)
 
      - Changed <strstream> to <sstream>.
