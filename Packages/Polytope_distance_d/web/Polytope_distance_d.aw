@@ -1577,7 +1577,6 @@ e.g.~with $2$, $3$, or $d$.
 
 @macro <Poly_dist_d test: includes and typedefs>(1) many += @begin
     #include <CGAL/Cartesian.h>
-    #include <CGAL/Point_@1.h>
     #include <CGAL/Polytope_distance_d.h>
     #include <CGAL/Optimisation_d_traits_@1.h>
 @end
@@ -1590,8 +1589,8 @@ variant.
     // test variant 1 (needs LEDA)
     #ifdef CGAL_USE_LEDA
     # include <CGAL/leda_integer.h>
-      typedef  CGAL::Cartesian<leda_integer>       R_1;
-      typedef  CGAL::Optimisation_d_traits_@1<R_1>  Traits_1;
+      typedef  CGAL::Cartesian<leda_integer>       K_1;
+      typedef  CGAL::Optimisation_d_traits_@1<K_1>  Traits_1;
     # define TEST_VARIANT_1 \
         "Optimisation_d_traits_@1< Cartesian<leda_integer> >"
       CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC( leda_integer)
@@ -1609,8 +1608,8 @@ arithmetic.
     // test variant 2 (needs GMP)
     #ifdef CGAL_USE_GMP
     # include <CGAL/_QP_solver/Double.h>
-      typedef  CGAL::Cartesian< int >                                 R_2;
-      typedef  CGAL::Optimisation_d_traits_@1<R_2,GMP::Double,double>  Traits_2;
+      typedef  CGAL::Cartesian< int >                                 K_2;
+      typedef  CGAL::Optimisation_d_traits_@1<K_2,GMP::Double,double>  Traits_2;
     # define TEST_VARIANT_2 \
         "Optimisation_d_traits_@1< Cartesian<int>, GMP::Double, double >"
     #endif
@@ -1626,18 +1625,18 @@ coordinates uniformly distributed in a $d$-cube.
 @end
 
 @macro <Poly_dist_d test: generate point set (2D)>(1) = @begin
-    std::vector<R_@1::Point_2>  p_points_@1, q_points_@1;
+    std::vector<K_@1::Point_2>  p_points_@1, q_points_@1;
     p_points_@1.reserve( 50);
     q_points_@1.reserve( 50);
     {
         int  i;
         for ( i = 0; i < 50; ++i) {
-            p_points_@1.push_back( R_@1::Point_2(
+            p_points_@1.push_back( K_@1::Point_2(
                 CGAL::default_random( 0x100000),
                 CGAL::default_random( 0x100000)));
         }
         for ( i = 0; i < 50; ++i) {
-            q_points_@1.push_back( R_@1::Point_2(
+            q_points_@1.push_back( K_@1::Point_2(
                 -CGAL::default_random( 0x100000),
                 -CGAL::default_random( 0x100000)));
         }
@@ -1645,19 +1644,19 @@ coordinates uniformly distributed in a $d$-cube.
 @end
 
 @macro <Poly_dist_d test: generate point set (3D)>(1) = @begin
-    std::vector<R_@1::Point_3>  p_points_@1, q_points_@1;
+    std::vector<K_@1::Point_3>  p_points_@1, q_points_@1;
     p_points_@1.reserve( 50);
     q_points_@1.reserve( 50);
     {
         int  i;
         for ( i = 0; i < 50; ++i) {
-            p_points_@1.push_back( R_@1::Point_3(
+            p_points_@1.push_back( K_@1::Point_3(
                 CGAL::default_random( 0x100000),
                 CGAL::default_random( 0x100000),
                 CGAL::default_random( 0x100000)));
         }
         for ( i = 0; i < 50; ++i) {
-            q_points_@1.push_back( R_@1::Point_3(
+            q_points_@1.push_back( K_@1::Point_3(
                 -CGAL::default_random( 0x100000),
                 -CGAL::default_random( 0x100000),
                 -CGAL::default_random( 0x100000)));
@@ -1669,7 +1668,7 @@ The traits class model with $d$-dimensional points is tested with $d = 5$
 (variant 1) and $d = 10$ (variant 2).
 
 @macro <Poly_dist_d test: generate point set (dD)>(1) = @begin
-    std::vector<R_@1::Point_d>  p_points_@1, q_points_@1;
+    std::vector<K_@1::Point_d>  p_points_@1, q_points_@1;
     p_points_@1.reserve( 50);
     q_points_@1.reserve( 50);
     {
@@ -1679,13 +1678,13 @@ The traits class model with $d$-dimensional points is tested with $d = 5$
         for ( i = 0; i < 50; ++i) {
             for ( j = 0; j < d; ++j)
                 coords[ j] = CGAL::default_random( 0x100000);
-            p_points_@1.push_back( R_@1::Point_d( d, coords.begin(),
+            p_points_@1.push_back( K_@1::Point_d( d, coords.begin(),
                                                      coords.end()));
         }
         for ( i = 0; i < 50; ++i) {
             for ( j = 0; j < d; ++j)
                 coords[ j] = -CGAL::default_random( 0x100000);
-            q_points_@1.push_back( R_@1::Point_d( d, coords.begin(),
+            q_points_@1.push_back( K_@1::Point_d( d, coords.begin(),
                                                      coords.end()));
         }
     }
@@ -1699,7 +1698,6 @@ Finally we call the test function (described in the last section).
 @end
 
 @macro <Poly_dist_d test: call test function>(1) many = @begin
-    // call test function
     CGAL::test_Polytope_distance_d( p_points_@1.begin(), p_points_@1.end(),
                                     q_points_@1.begin(), q_points_@1.end(),
                                     Traits_@1(), verbose);
@@ -1710,7 +1708,9 @@ respective number type is available.
 
 @macro <Poly_dist_d test: test variant output>(1) many = @begin
     verr << endl
-         << "Testing `Polytope_distance_d' with traits class model" << endl
+         << "==================================="
+         << "===================================" << endl
+         << "Testing `Polytope_distance_d' with traits class model" <<endl
          << "==> " << TEST_VARIANT_@1 << endl
          << "==================================="
          << "===================================" << endl
@@ -1771,7 +1771,7 @@ can be enabled by giving a number between 0 and 3 at the command line.
 @macro <Poly_dist_d test: command line argument> many = @begin
     int verbose = -1;
     if ( argc > 1) verbose = atoi( argv[ 1]);
-    CGAL::Verbose_ostream  verr( verbose >= 0);
+    CGAL::Verbose_ostream  verr ( verbose >= 0); verr  << "";
 @end
 
 @macro <Poly_dist_d test: main (2D)> = @begin
