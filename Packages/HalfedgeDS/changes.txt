@@ -1,5 +1,9 @@
 HalfedgeDS Package: Release changes:
 ---------------------------------------------------------------------
+3.6 (17 Jun 2001)
+
+     - changed erase_all() to clear() for HalfedgeDS concept.
+
 3.5 (15 Jun 2001)
 
      - hanged filename to avoid upper/lower-case conflict of 

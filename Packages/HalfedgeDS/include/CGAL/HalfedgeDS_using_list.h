@@ -200,7 +200,7 @@ public:
 
     Self& operator=( const Self& hds)  {
         if ( this != &hds) {
-            erase_all();
+            clear();
             vertices            = hds.vertices;
             halfedges           = hds.halfedges;
             faces               = hds.faces;
@@ -329,7 +329,7 @@ public:
         faces.erase( first.iterator(), last.iterator());
     }
 
-    void erase_all() {
+    void clear() {
         vertices.erase( vertices.begin(), vertices.end());
         halfedges.erase( halfedges.begin(), halfedges.end());
         faces.erase( faces.begin(), faces.end());

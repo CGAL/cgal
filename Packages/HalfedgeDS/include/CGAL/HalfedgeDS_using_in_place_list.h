@@ -234,14 +234,14 @@ public:
         // halfedges, and f faces. The reservation sizes are a hint for
         // optimizing storage allocation. They are not used here.
 
-    ~HalfedgeDS_using_in_place_list() { erase_all(); }
+    ~HalfedgeDS_using_in_place_list() { clear(); }
 
     HalfedgeDS_using_in_place_list( const Self& hds)
 #else
     HDS() : nb_border_halfedges(0), nb_border_edges(0) {}
     HDS( size_type, size_type, size_type)
           : nb_border_halfedges(0), nb_border_edges(0) {}
-    ~HDS() { erase_all(); }
+    ~HDS() { clear(); }
     HDS( const Self& hds)
 #endif // CGAL_CFG_NO_TMPL_IN_TMPL_PARAM //
     :  vertices( hds.vertices),
@@ -261,7 +261,7 @@ public:
 
     Self& operator=( const Self& hds)  {
         if ( this != &hds) {
-            erase_all();
+            clear();
             vertices            = hds.vertices;
 	    // goal is halfedges = hds.halfedges, but we have pairs here
 	    halfedges = Halfedge_list();
@@ -432,7 +432,7 @@ public:
             faces_erase(first++);
     }
 
-    void erase_all() {
+    void clear() {
         vertices.destroy();
         edges_erase( halfedges.begin(), halfedges.end());
         faces.destroy();

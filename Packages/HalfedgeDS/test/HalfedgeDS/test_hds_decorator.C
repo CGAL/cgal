@@ -57,7 +57,7 @@ void test_HalfedgeDS_decorator() {
     CGAL_assertion( decorator.is_valid( false, 4));
 
     // Restart with open segment.
-    hds.erase_all();
+    hds.clear();
     hds.normalize_border();
     CGAL_assertion( decorator.is_valid( false, 4));
     h = decorator.create_segment();
@@ -133,7 +133,7 @@ void test_HalfedgeDS_decorator() {
     CGAL_assertion( decorator.is_valid( false, 4));
 
     // Check add_face_to_border.
-    hds.erase_all();
+    hds.clear();
     h = decorator.create_loop();
     decorator.make_hole( h->opposite());
     hds.normalize_border();
@@ -169,7 +169,7 @@ void test_HalfedgeDS_decorator2() {
     CGAL_assertion( decorator.is_valid( false, 4));
 
     // Restart with open segment.
-    hds.erase_all();
+    hds.clear();
     hds.normalize_border();
     CGAL_assertion( decorator.is_valid( false, 4));
     h = decorator.create_segment();
@@ -245,7 +245,7 @@ void test_HalfedgeDS_decorator2() {
     CGAL_assertion( decorator.is_valid( false, 4));
 
     // Check add_face_to_border.
-    hds.erase_all();
+    hds.clear();
     h = decorator.create_loop();
     decorator.make_hole( h->opposite());
     hds.normalize_border();
@@ -289,7 +289,7 @@ void test_HalfedgeDS_decorator3() {
     CGAL_assertion( decorator.is_valid( false, 4));
 
     // Restart with open segment.
-    hds.erase_all();
+    hds.clear();
     hds.normalize_border();
     CGAL_assertion( decorator.is_valid( false, 4));
     h = decorator.create_segment();
