@@ -14,7 +14,9 @@ public:
 public:
   typedef FT_                                   RT;
   typedef FT_                                   FT;
+
   Direction_2(const leda_rat_point & p) : leda_rat_point(p) {}
+  Direction_2(const FT x, const FT y) : leda_rat_point(x,y) {}
 
   /*!
    */
@@ -291,8 +293,8 @@ public:
    */
   class Construct_opposite_direction_2 {
   public:
-    Direction_2 operator()(const Segment_2 & cv) const
-    { return Direction_2(cv.source() - cv.target()); }
+    Direction_2 operator()(const Direction_2 & d) const
+    { return Direction_2(-d.xcoord(), -d.ycoord()); }
   };
 
   // creators:
