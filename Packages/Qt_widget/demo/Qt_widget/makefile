@@ -39,6 +39,7 @@ DEMO_SUBDIRS= \
 ./Min_ellipse_2 \
 ./Min_quadrilateral_2 \
 ./Partition_2 \
+./Alpha_shapes_2 \
 ./Triangulation_2 \
 ./Constrained_triangulation_2 \
 ./basic/tutorial1 \

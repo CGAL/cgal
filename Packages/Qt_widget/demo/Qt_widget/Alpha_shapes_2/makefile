@@ -57,7 +57,7 @@ alpha_shapes_2$(OBJ_EXT): alpha_shapes_2.C alpha_shapes_2.moc
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) alpha_shapes_2.C
 
 alpha_shapes_2$(EXE_EXT): alpha_shapes_2$(OBJ_EXT)
-	$(CGAL_CXX) $(EXE_OPT)alpha_shapes_2 alpha_shapes_2$(OBJ_EXT)  Qt_widget_move_point$(OBJ_EXT) Qt_widget_toolbar$(OBJ_EXT) Qt_widget_toolbar_layers$(OBJ_EXT) $(LDFLAGS)
+	$(CGAL_CXX) $(EXE_OPT)alpha_shapes_2 alpha_shapes_2$(OBJ_EXT) Qt_widget_toolbar$(OBJ_EXT) Qt_widget_toolbar_layers$(OBJ_EXT) $(LDFLAGS)
 
 clean: alpha_shapes_2.clean \
        Qt_widget_toolbar_layers.clean \
