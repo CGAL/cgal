@@ -38,7 +38,7 @@ using std::cin;
 using std::endl;
 using std::vector;
 
-int main(/*int argc, char* argv[]*/)
+int main()
 {
   PM                 pm;
   int                num_segments;
