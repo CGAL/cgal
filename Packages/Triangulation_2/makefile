@@ -21,7 +21,7 @@ package:
 	@echo "---- editer changes.txt       ----"
 	@echo "---- make VERSION=4.65 Version ---"
 	@echo "---- cvs commit ------------------"
-	@echo "---- make VERSION=4.64 Tag -------"
+	@echo "---- make VERSION=4.65 Tag -------"
 	@echo "---- make Submit -----------------"
 	@echo "----------------------------------"
 
