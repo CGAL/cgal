@@ -1,29 +1,25 @@
-//-----------------------------------------------------------------------//
-// This is the polygon example from the reference manual.
-//-----------------------------------------------------------------------//
-
 #include <CGAL/Cartesian.h>
 #include <CGAL/Polygon_2.h>
-#include <list>
+#include <iostream>
 
 typedef CGAL::Cartesian<double> K;
 typedef K::Point_2 Point;
-typedef std::list<Point> Container;
-typedef CGAL::Polygon_2<K,Container> Polygon;
+typedef CGAL::Polygon_2<K> Polygon;
+using std::cout; using std::endl;
 
-#include <iostream>
 
 int main()
 {
-  Polygon p;
+  Point points[] = { Point(0,0), Point(5.1,0), Point(1,1), Point(0.5,6)};
+  Polygon pgn(points, points+4);
 
-  p.push_back(Point(0,0));
-  p.push_back(Point(1,0));
-  p.push_back(Point(1,1));
-  p.push_back(Point(0,1));
+  // check if the polygon is simple.
+  cout << "The polygon is " << 
+    (pgn.is_simple() ? "" : "not ") << "simple." << endl;
 
-  std::cout << "The polygon is " << 
-    (p.is_convex() ? "" : "not ") << "convex." << std::endl;
+  // check if the polygon is convex
+  cout << "The polygon is " << 
+    (pgn.is_convex() ? "" : "not ") << "convex." << endl;
 
   return 0;
 }
