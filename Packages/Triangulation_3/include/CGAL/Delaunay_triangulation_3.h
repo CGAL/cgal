@@ -28,12 +28,19 @@
 #include <CGAL/basic.h>
 
 #include <set>
+#include <list>
+#include <algorithm>
 #include <CGAL/Triangulation_utils_3.h>
 #include <CGAL/Triangulation_3.h>
 
 #include <CGAL/Triangulation_short_names_3.h>
-
+#include <CGAL/Delaunay_remove_tds_3.h>
+#include <CGAL/Triangulation_face_base_2.h>
 CGAL_BEGIN_NAMESPACE
+
+
+
+
 
 template < class Gt, class Tds>
 class Delaunay_triangulation_3 : public Triangulation_3<Gt,Tds>
@@ -146,8 +153,19 @@ public:
   void delete_cells(std::list<Facet> & cells);
 
   bool fill_hole_3D(std::set<Facet> & boundhole,
-		    std::set<Vertex_handle> & boundvert);	
+	      std::set<Vertex_handle> & boundvert);
+
+
+  bool remove_3D_ear(Vertex_handle v );
+  bool fill_hole_3D_ear(std::list<Facet> & boundhole);
+  void make_hole_3D_ear( Vertex_handle v, 
+	                 std::list<Facet> & boundhole,
+			 //	                 std::set<Vertex_handle> & boundvert,
+	                 std::list<Cell_handle> & hole);
+  void undo_make_hole_3D_ear(std::list<Facet> & boundhole,
+		             std::list<Cell_handle> & hole);
   void print(Vertex_handle v) const;
+  void print(Cell_handle c) const;
 
 private:
 #ifdef SYL
@@ -195,6 +213,11 @@ private:
 		  Vertex_handle v3, 
 		  const Point & p) const;
 
+  Bounded_side
+  side_of_sphere_inf(const Point & p0, 
+		     const Point & p1, 
+		     const Point & p2, 
+		     const Point & p) const;
 
 public:
 
@@ -349,7 +372,7 @@ remove(Vertex_handle v)
     return true;
   }
 
-  return remove_3D(v);
+  return remove_3D_ear(v);
 }// remove(v)
 
 template < class Gt, class Tds >
@@ -359,7 +382,7 @@ remove_3D(Vertex_handle v)
 {
   CGAL_triangulation_precondition( dimension() == 3 );
 
-  std::set<Facet> boundary; // facets on the boundary of the hole
+  std::list<Facet> boundary; // facets on the boundary of the hole
   std::set<Vertex_handle> bdvert; // vertices on the boundary of the hole
 
   if ( test_dim_down(v) ) {
@@ -389,7 +412,7 @@ remove_3D(Vertex_handle v)
   std::list<Facet> outside, inside;
   make_hole_3D(v, boundary, bdvert, outside, inside);
   bool filled = fill_hole_3D(boundary, bdvert);
-if(filled){
+  if(filled){
     delete( &(*v) );
     delete_cells(inside);
     set_number_of_vertices(number_of_vertices()-1);
@@ -422,6 +445,7 @@ make_hole_3D( Vertex_handle v,
   Cell_handle opp_cit;
   Vertex_handle vi;
   do {
+
     indv = (*cit)->index(&(*v));
     opp_cit = (*cit)->neighbor( indv );
     
@@ -444,6 +468,7 @@ make_hole_3D( Vertex_handle v,
 
   return;
 }// make_hole_3D
+
 
 
 
@@ -491,6 +516,7 @@ delete_cells(std::list<Facet> & hole) {
 
 
 
+
 //debug
 template < class Gt, class Tds >
 void 
@@ -501,7 +527,21 @@ print( Vertex_handle v ) const
     std::cout << "inf" << "; ";
   else 
     std::cout << v->point() << "; ";
-};
+}
+
+
+template < class Gt, class Tds >
+void 
+Delaunay_triangulation_3<Gt,Tds>::
+print( Cell_handle c ) const
+{
+  for(int i = 0; i < 4; i++) {
+    print(c->vertex(i));
+  }
+  std::cout << std::endl;
+}
+
+
 
 template < class Gt, class Tds >
 bool
@@ -1111,6 +1151,7 @@ find_conflicts_2(Conflict_set & conflicts, const Point & p,
   // gives a cell ac having a facet on the boundary of conflicts
   // and the index i of its facet on the boundary
 {
+
 #ifdef SYL
   conflicts.push_back( (Conflict_set::value_type) &(*c) );
   c->set_flags(1);
@@ -1235,11 +1276,10 @@ side_of_sphere(Vertex_handle v0,
 	i1 = (i+1)&3;
 	i2 = (i+3)&3;
       }
-      Orientation
-	o = orientation(v[i0]->point(),
-				      v[i1]->point(),
-				      v[i2]->point(),
-				      p);
+      Orientation o = orientation(v[i0]->point(),
+				  v[i1]->point(),
+				  v[i2]->point(),
+				  p);
       if (o != ZERO)
 	return Bounded_side(o);
 
@@ -1252,12 +1292,33 @@ side_of_sphere(Vertex_handle v0,
   }
   
   // all vertices are finite
+
   return Bounded_side( side_of_oriented_sphere
-		       ( v[0]->point(),
-			 v[1]->point(),
-			 v[2]->point(),
-			 v[3]->point(), p) );
+		       ( v0->point(),   // remove the indirection through the array
+			 v1->point(),
+			 v2->point(),
+			 v3->point(), p) );
 }// end side of sphere
+
+
+
+template < class Gt, class Tds >
+Bounded_side
+Delaunay_triangulation_3<Gt,Tds>::
+side_of_sphere_inf(const Point & p0, 
+		   const Point & p1, 
+		   const Point & p2, 
+		   const Point & p) const
+{
+  CGAL_triangulation_precondition( dimension() == 3 );
+
+  Orientation o = orientation(p0, p1, p2, p);
+  if (o != ZERO)
+    return Bounded_side(o);
+
+  return Bounded_side( side_of_oriented_circle (p0, p1, p2, p ) );
+}// end side of sphere
+
 
 template < class Gt, class Tds >
 Bounded_side
@@ -1565,6 +1626,414 @@ is_valid(Cell_handle c, bool verbose, int level) const
   if (verbose) { std::cerr << "Delaunay valid cell" << std::endl;}
   return true;
 }
+
+
+
+template < class Gt, class Tds >
+bool
+Delaunay_triangulation_3<Gt,Tds>::
+remove_3D_ear(Vertex_handle v)
+{
+  CGAL_triangulation_precondition( dimension() == 3 );
+
+  std::list<Facet> boundary; // facets on the boundary of the hole
+  //  std::set<Vertex_handle> bdvert; // vertices on the boundary of the hole
+
+  if ( test_dim_down(v) ) {
+
+    // _tds.remove_dim_down(&(*v)); return; 
+    // !!!!!!!!!!!! TO BE DONE !!!!!!!!!!!!!
+    // the triangulation is rebuilt...
+
+    Vertex_iterator vit;
+    Vertex_iterator vdone = vertices_end();
+    std::list<Point> points;
+    for ( vit = finite_vertices_begin(); vit != vdone ; ++vit) {
+	if ( v != (*vit).handle() ) { points.push_front( vit->point() ); }
+    }
+    typename std::list<Point>::iterator pit;
+    typename std::list<Point>::iterator pdone = points.end();
+    
+    clear();
+    for ( pit = points.begin(); pit != pdone; ++pit) {
+      insert( *pit );
+    }
+    return true;
+  }
+
+  std::list<Cell_handle> hole;
+  make_hole_3D_ear(v, boundary,
+		   //bdvert, 
+		   hole);
+
+
+  bool filled = fill_hole_3D_ear(boundary);
+  if(filled){
+    delete( &(*v) );
+    delete_cells(hole);
+    set_number_of_vertices(number_of_vertices()-1);
+  } else {
+    undo_make_hole_3D_ear(boundary, hole);
+  }
+
+  return filled;
+
+}// remove_3D_ear(v)
+
+
+
+template < class Gt, class Tds >
+void
+Delaunay_triangulation_3<Gt,Tds>::
+make_hole_3D_ear( Vertex_handle v, 
+	      std::list<Facet> & boundhole,
+		  //std::set<Vertex_handle> & boundvert,
+	      std::list<Cell_handle> & hole)
+{
+  CGAL_triangulation_precondition( ! test_dim_down(v) );
+
+  typedef std::set<Cell_handle> Hole_cells;
+  Hole_cells cells;
+  incident_cells( v, cells );
+  int i, indv;
+
+  typename Hole_cells::iterator cit = cells.begin();
+  typename Hole_cells::iterator cdone = cells.end();
+
+  Cell_handle opp_cit;
+  Vertex_handle vi;
+  do {
+
+    indv = (*cit)->index(&(*v));
+    opp_cit = (*cit)->neighbor( indv );
+    hole.push_back(*cit);    
+    boundhole.push_back( std::make_pair( opp_cit, opp_cit->index(*cit)) );
+
+    for ( i=0; i<4; i++) {
+      if ( i != indv ) {
+	vi = (*cit)->vertex(i);
+	//if ( boundvert.find( vi ) == boundvert.end() )
+	//  {
+	//    boundvert.insert( vi );
+	    vi->set_cell( opp_cit );
+	    //  }
+      }
+    }
+
+    ++cit;
+  } while ( cit != cdone );
+
+  return;
+}// make_hole_3D_ear
+
+
+template < class Gt, class Tds >
+void
+Delaunay_triangulation_3<Gt,Tds>::
+undo_make_hole_3D_ear(std::list<Facet> & boundhole,
+		  std::list<Cell_handle> & hole){
+  std::list<Cell_handle>::iterator cit = hole.begin();
+  for(std::list<Facet>::iterator fit = boundhole.begin();	
+      fit != boundhole.end();
+      fit++) {
+    Cell_handle ch = (*fit).first;
+    ch->set_neighbor((*fit).second, *cit);
+    for(int i = 0; i < 4; i++) {
+      ch->vertex(i)->set_cell(ch);
+    }
+    cit++;
+  }
+}// undo_make_hole_3D_ear
+
+
+
+
+
+template < class Gt, class Tds >
+bool
+Delaunay_triangulation_3<Gt,Tds>::
+fill_hole_3D_ear( std::list<Facet> & boundhole)
+{
+  typedef Delaunay_remove_tds_3_2<Delaunay_triangulation_3> Surface;
+  typedef Surface::Face_3_2 Face_3_2;
+  typedef Surface::Vertex_3_2 Vertex_3_2;
+  typedef Surface::Vertex_circulator Vertex_circulator_3_2;
+
+  std::list<Cell_handle> cells;
+
+  Surface surface(boundhole);
+
+  int size = 5* boundhole.size();
+  int opcount = 0;
+
+  Face_3_2 *f = &(* surface.faces_begin());
+  Face_3_2 *last_op;
+  int k = -1;
+
+  // This is a loop over the halfedges of the surface of the hole
+  // we have a current face f, and look at its incident edges (k = 0,1,2)
+  for(;;){
+    k++;
+    if(k == 3) {
+      f = (Face_3_2*)f->n();
+      if(f == last_op) {
+	std::cerr << "\nUnable to find an ear\n" <<  surface << std::endl;
+	delete_cells(cells);
+	return false;
+      }
+      k = 0;
+    }
+    if(f->edge(k)) {
+      bool violation = false;
+      Vertex_3_2 *w0, *w1, *w2, *w3;
+      Vertex *v0, *v1, *v2, *v3;
+      int i = ccw(k);
+      int j = cw(k);
+      Face_3_2 *n = f->neighbor(k);
+      int fi = n->index(f);
+
+      w0 = f->vertex(k);
+      w1 = f->vertex(i);
+      w2 = f->vertex(j);
+      w3 = n->vertex(fi);
+
+      v0 = w0->info();
+      v1 = w1->info();
+      v2 = w2->info();
+      v3 = w3->info();
+
+      const Point & p0 = v0->point();
+      const Point & p1 = v1->point();
+      const Point & p2 = v2->point();
+      const Point & p3 = v3->point();
+
+
+      bool inf_0 = is_infinite(Vertex_handle(v0));
+      bool inf_1 = is_infinite(Vertex_handle(v1));
+      bool inf_2 = is_infinite(Vertex_handle(v2));
+      bool inf_3 = is_infinite(Vertex_handle(v3));
+
+      if( inf_1 || inf_2 ){
+	// there will be another ear, so let's ignore this one,
+	// because it is complicated to treat
+      } else if( inf_0 || inf_3 ||
+		 (orientation(p0, p1, p2, p3) == POSITIVE) ) {
+	// the two faces form a concavity, in which we might plug a tetrahedron
+
+	int cospheric = 0;
+	std::set<Vertex_3_2*> cospheric_vertices;
+	bool on_unbounded_side = false;
+	// we now look at all vertices that are on the boundary of the hole
+	for(Surface::Vertex_iterator vit = surface.vertices_begin();
+	    (! violation ) && (vit != surface.vertices_end());
+	    vit++) {
+	  Vertex *v = (*vit).info();
+	  if( (! is_infinite(Vertex_handle(v)))
+	      && (v != v0) && (v != v1) && (v != v2) && (v != v3)) {
+	    const Point & p = v->point();
+
+	    Bounded_side bs; // = side_of_sphere(v0, v1, v2, v3, p);
+
+	    if(inf_0) {
+	      bs = side_of_sphere_inf(p2, p1, p3, p);
+	    } else if(inf_3) {
+	      bs = side_of_sphere_inf(p0, p1, p2, p);
+	    } else {
+	      bs = Bounded_side( side_of_oriented_sphere(p0, p1, p2, p3, p) );
+	    }
+	    //CGAL_triangulation_assertion(bs == side_of_sphere(v0, v1, v2, v3, p));
+
+	    if((bs == ON_BOUNDARY)) {
+	      cospheric++;
+	      cospheric_vertices.insert(&(*vit));
+	    }
+	    violation = (bs == ON_BOUNDED_SIDE);
+	    on_unbounded_side |= (bs == on_unbounded_side);
+	  }
+	}
+
+	// if there are cospheric points we have to test a little bit more
+	if( (! violation) && (cospheric > 0) ) {
+	  if(inf_0 || inf_3) {
+	    // the cospheric points are on the boundary of the convex hull we don't care
+	    if(! on_unbounded_side) {
+	      //std::cout << "all points are coplanar" << std::endl;
+	    }
+	  }  else  {
+	    // for all edges that are incident to w2, check if the other vertex is cospheric
+	    // and if the edge  is coplanar to plane(v0, v2, v3) 
+	    Vertex_circulator_3_2 vc = w2->incident_vertices();
+	    Vertex_circulator_3_2 done = vc;
+	    std::set<Vertex_3_2*>::iterator co_it, not_found = cospheric_vertices.end();
+	    do {
+	      if( ! ((co_it = cospheric_vertices.find(&(*vc))) == not_found) ) {
+		const Point & pc = (*co_it)->info()->point();
+		violation = orientation(p0,p2,p3,pc) == COPLANAR;
+	      }
+	    } while( (! violation) && (++vc != done));
+
+	    if( ! violation ) {
+	      // for all edges that are incident to w1, check if the other vertex is cospheric
+	      // and if the edge  is coplanar to plane(v0, v1, v3) 
+	      Vertex_circulator_3_2 vc = w1->incident_vertices();
+	      Vertex_circulator_3_2 done = vc;
+	      std::set<Vertex_3_2*>::iterator co_it, not_found = cospheric_vertices.end();
+	      do {
+		if( ! ((co_it = cospheric_vertices.find(&(*vc))) == not_found) ) {
+		  const Point & pc = (*co_it)->info()->point();
+		  violation = (orientation(p0,p1,p3,pc) == COPLANAR);
+		}
+	      } while( (! violation) && (++vc != done));
+	    }
+	  }
+	  if( (! violation) && (! inf_0) && (! inf_1) && (! inf_2) && (! inf_3) ) {
+	    for(std::set<Vertex_3_2*>::iterator it = cospheric_vertices.begin();
+		it != cospheric_vertices.end();
+		it++) {
+	      const Point & pit = (*it)->info()->point();
+	      Vertex_circulator_3_2 vc = (*it)->incident_vertices();
+	      Vertex_circulator_3_2 done = vc;
+	      std::set<Vertex_3_2*>::iterator co_it, not_found = cospheric_vertices.end();
+	      do {
+		if( ! ((co_it = cospheric_vertices.find(&(*vc))) == not_found) ) {
+		  const Point & pc = (*co_it)->info()->point();
+		  violation = (orientation(p0,p3,pc, pit) == COPLANAR) 
+		    && (coplanar_orientation(p0,p3,pc, pit) == NEGATIVE);
+		}
+	      } while( (! violation) && (++vc != done));
+	    }
+	  }
+	} // test a little bit more
+
+	Face_3_2 *m_i = f->neighbor(i);
+	Face_3_2 *m_j = f->neighbor(j); 
+	bool neighbor_i = m_i == n->neighbor(cw(fi));
+	bool neighbor_j = m_j == n->neighbor(ccw(fi));
+
+	if((! violation) && (! (((! neighbor_i) && (! neighbor_j)) 
+				&& surface.is_edge(f->vertex(k), n->vertex(fi))))) {
+	  // none of the vertices violates the Delaunay property
+	  // and if we are in the flip case, the edge that would get introduced is not on the surface
+	  // We are ready to plug the tetrahedron
+	  // It may touch 2 triangles, 
+
+	  Cell_handle ch = create_cell(Vertex_handle(v0), Vertex_handle(v1), Vertex_handle(v2), Vertex_handle(v3),
+				       NULL, NULL, NULL, NULL);
+	  cells.push_back(ch);
+	  Cell* c = handle2pointer(ch);
+	  v0->set_cell(c);
+	  v1->set_cell(c);
+	  v2->set_cell(c);
+	  v3->set_cell(c);
+	 
+	  //print(ch);
+	  /*
+Removal of point 265 : -7 -18 -15
+
+-9 -18 -14; -7 -21 -10; -8 -22 -16; -3 -21 -11;
+flip
+-1 -20 -15; -8 -22 -16; -3 -21 -11; -9 -18 -14;
+flip
+-9 -18 -14; -1 -20 -15; -8 -22 -16; -7 -19 -24;
+remove
+-3 -11 -20; -7 -19 -24; -1 -20 -15; -9 -18 -14;
+flip
+-9 -18 -14; -3 -11 -20; -7 -19 -24; -11 -14 -13;
+remove
+-9 -18 -14; -3 -11 -20; -11 -14 -13; -7 -9 -11;
+flip
+-11 -14 -13; -7 -9 -11; -5 -12 -9; -3 -11 -20;
+flip
+-5 -12 -9; -9 -18 -14; -11 -14 -13; -7 -9 -11;
+flip
+-5 -12 -9; -7 -21 -10; -9 -18 -14; -3 -21 -11;
+remove
+-5 -12 -9; -3 -21 -11; -9 -18 -14; -1 -20 -15;
+remove
+-3 -11 -20; -1 -20 -15; -5 -12 -9; -9 -18 -14;
+remove
+-3 -11 -20; -9 -18 -14; -5 -12 -9; -7 -9 -11;
+remove
+
+Unable to find an ear
+4 4 2
+-3 -11 -20; -5 -12 -9; -11 -14 -13; -7 -9 -11
+	   */
+
+	  Facet fac = n->info();
+	  c->set_neighbor(0, fac.first);
+	  fac.first->set_neighbor(fac.second, c);
+	  fac = f->info();
+	  c->set_neighbor(3, fac.first);
+	  fac.first->set_neighbor(fac.second, c);
+	  CGAL_triangulation_assertion(c->neighbor(0) != c->neighbor(3));
+	  // 3, or even 4 if it is the last tetrahedron
+
+	  if(neighbor_i) {
+	    fac = m_i->info();
+	    c->set_neighbor(1, fac.first);
+	    CGAL_triangulation_assertion(c->neighbor(1) != c->neighbor(3));
+	    CGAL_triangulation_assertion(c->neighbor(1) != c->neighbor(0));
+	    fac.first->set_neighbor(fac.second, c);
+	  }
+	  if(neighbor_j) {
+	    fac = m_j->info();
+	    c->set_neighbor(2, fac.first);
+	    CGAL_triangulation_assertion(c->neighbor(2) != c->neighbor(3));
+	    CGAL_triangulation_assertion(c->neighbor(2) != c->neighbor(0));
+	    if(neighbor_i) {
+	    CGAL_triangulation_assertion(c->neighbor(2) != c->neighbor(1));
+	    }
+	    fac.first->set_neighbor(fac.second, c);
+	  }
+
+	  if((! neighbor_i) && (! neighbor_j)) {
+	    surface.flip(f,k);
+	    //std::cout << "flip" << std::endl;
+	    int ni = f->index(n);
+	    f->set_edge(ni, false);
+	    f->set_edge(cw(ni));
+	    f->set_edge(ccw(ni));
+	    last_op = f; k = -1;
+
+	    int fi = n->index(f);
+	    n->set_edge(fi, false);
+	    n->set_edge(cw(fi), f);
+	    n->set_edge(ccw(fi), f);
+
+	    f->set_info(std::make_pair(Cell_handle(c),2));
+	    n->set_info(std::make_pair(Cell_handle(c),1));
+	  } else if (neighbor_i && (! neighbor_j)) {
+	    f->unlink(j);
+	    surface.remove_degree_3(f->vertex(j), f);
+	    //std::cout << "remove" << std::endl;
+	    f->set_edge();
+	    last_op = f; k = -1;
+	    f->set_info(std::make_pair(Cell_handle(c),2));
+	  } else if ((! neighbor_i) && neighbor_j)  {
+	    f->unlink(i);
+	    surface.remove_degree_3(f->vertex(i), f);
+	    //std::cout << "remove" << std::endl;
+	    f->set_edge();
+	    last_op = f; k = -1;
+	    f->set_info(std::make_pair(Cell_handle(c),1));
+	  } else {
+	    if(surface.number_of_vertices() != 4) {
+	      delete_cells(cells);
+	      return false;
+	    } else {
+	      // when we leave the function the vertices and faces of the surface
+	      // are deleted by the destructor
+	      return true;
+	    }
+	  }
+	}// if(! violation)
+      }// if(geom_traits()..
+    }// if(f->edge(k))
+  } // for(;;)
+}
+
+
 
 CGAL_END_NAMESPACE
 
