@@ -266,6 +266,7 @@ sub CreateExampleTestDirs()
 	    system('cp', '-r', "$DIR", "../test/${DIR}_Examples");
 	}
     }
+    system("$SCRIPTDIR/C2dsp");
     chdir '..';
 }
 
@@ -347,7 +348,8 @@ sub install_packages()
 	print "$filenaam\n";
 	unzip_files("$filenaam", "include", "test", "examples", "demo", "src",
 		"version","doc_tex","stlport","winutils","auxiliary",
-		"developer_scripts","scripts","cgal_config.bat","install.txt");
+		"developer_scripts","scripts","cgal_config.bat",
+		"install.txt","INSTALL.win32");
 	if (-f 'version') {
 	    open CUR_VERSION, 'version';
 	    while (<CUR_VERSION>) {
