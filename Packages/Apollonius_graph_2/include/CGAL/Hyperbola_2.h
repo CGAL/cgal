@@ -222,10 +222,10 @@ public:
 
 
 #if defined CGAL_USE_QT
-  void draw_qt(Qt_widget& W) const
+ void generate_points_qt(std::vector<Point_2>& pleft,
+			 std::vector<Point_2>& pright) const
     {
       std::vector< Point_2 > p;
-      std::vector< Point_2 > pleft, pright;
 
       pleft.push_back(o);
       pright.push_back(o);
@@ -253,6 +253,12 @@ public:
 	  }
 	}
       }
+    }
+
+  void draw_qt(Qt_widget& W) const
+    {
+      std::vector< Point_2 > pleft, pright;
+      generate_points_qt(pleft, pright);
 
       for (unsigned int i = 0; i < pleft.size() - 1; i++) {
 	W << Segment_2(pleft[i], pleft[i+1]);
@@ -264,11 +270,10 @@ public:
     }
 #endif
 
-  template< class Stream >
-  void draw(Stream &W) const
+  void generate_points(std::vector<Point_2>& pleft,
+		       std::vector<Point_2>& pright) const
   {
     std::vector< Point_2 > p;
-    std::vector< Point_2 > pleft, pright;
 
     pleft.push_back(o);
     pright.push_back(o);
@@ -287,11 +292,18 @@ public:
 	}
       }
     }
+  }
+
+  template< class Stream >
+  void draw(Stream &W) const
+  {
+    std::vector< Point_2 > pleft, pright;
+    generate_points(pleft,pright);
 
     for (unsigned int i = 0; i < pleft.size() - 1; i++) {
       W << Segment_2(pleft[i], pleft[i+1]);
     }
-
+      
     for (unsigned int i = 0; i < pright.size() - 1; i++) {
       W << Segment_2(pright[i], pright[i+1]);
     }

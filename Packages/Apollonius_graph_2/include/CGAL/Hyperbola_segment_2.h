@@ -93,15 +93,14 @@ public:
     this->p2 = p2;
   }
 
-  template< class Stream >
-  void draw(Stream &W) const
+  void generate_points(std::vector<Point_2>& p) const
   {
     if ( CGAL_NTS is_zero(this->r) ) {
-      draw_line(W);
+      p.push_back(p1);
+      p.push_back(p2);
       return;
     }
 
-    std::vector< Point_2 > p;
 
     //    FT STEP = W.width() / 100.0;
 
@@ -178,11 +177,20 @@ public:
       }
       p.push_back( f(s[0]) );
     }
+  }
+
+  template< class Stream >
+  void draw(Stream &W) const
+  {
+    std::vector<Point_2> p;
+    generate_points(p);
 
     for (unsigned int i = 0; i < p.size() - 1; i++) {
       W << Segment_2(p[i], p[i+1]);
     }
   }
+
+
 };
 
 

@@ -86,7 +86,6 @@ public:
 
 
 #if defined CGAL_QT_WIDGET_H
-  inline
   void draw_qt(Qt_widget& s)
   {
     if ( CGAL_NTS is_zero(r) ) {
@@ -130,7 +129,7 @@ public:
 
 template < class Gt >
 const typename Hyperbola_ray_2<Gt>::FT
-Hyperbola_ray_2<Gt>::OFFSET = 1000;
+Hyperbola_ray_2<Gt>::OFFSET = 10000;
 
 
 

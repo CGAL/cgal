@@ -59,11 +59,8 @@ public:
     this->p2 = p2;
   }
 
-  template< class Stream >
-  void draw(Stream &W) const
+  void generate_points(std::vector<Point_2>& p) const
   {
-    std::vector< Point_2 > p;
-
     FT s[2];
 
     s[0] = t(p1);
@@ -137,12 +134,22 @@ public:
       }
       p.push_back( f(s[0]) );
     }
+  }
+
+
+  template< class Stream >
+  void draw(Stream& W) const
+  {
+    std::vector< Point_2 > p;
+    generate_points(p);
 
     for (unsigned int i = 0; i < p.size() - 1; i++) {
       W << Segment_2(p[i], p[i+1]);
     }
   }
 };
+
+
 
 template< class Stream, class Gt >
 inline
