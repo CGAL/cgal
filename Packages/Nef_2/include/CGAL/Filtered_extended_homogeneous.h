@@ -1,4 +1,3 @@
-#line 1646 "Filtered_extended_kernel.lw"
 // ============================================================================
 //
 // Copyright (c) 1997-2000 The CGAL Consortium
@@ -26,7 +25,6 @@
 //
 // implementation: Filtered extended homogeneous kernel
 // ============================================================================
-#line 1546 "Filtered_extended_kernel.lw"
 #ifndef CGAL_FILTERED_EXTENDED_HOMOGENEOUS_H
 #define CGAL_FILTERED_EXTENDED_HOMOGENEOUS_H
 
@@ -66,7 +64,6 @@ std::cout << #c##" " << c##_exception << "/" << c##_total << std::endl
 #endif
 
 CGAL_BEGIN_NAMESPACE
-#line 121 "Filtered_extended_kernel.lw"
 template <typename RT>
 class SPolynomial {
   RT _m,_n;
@@ -163,7 +160,6 @@ CGAL::io_Operator io_tag(const SPolynomial<RT>&)
 { return CGAL::io_Operator(); }
 
 
-#line 221 "Filtered_extended_kernel.lw"
 template <typename RT>
 class SQuotient {
   SPolynomial<RT> _p;
@@ -184,7 +180,6 @@ inline double to_double(const SQuotient<RT>& q)
           CGAL::to_double(q.denominator())); }
 
 
-#line 249 "Filtered_extended_kernel.lw"
 template <typename RT> class Extended_point;
 template <typename RT> class Extended_point_rep;
 
@@ -195,39 +190,34 @@ class Extended_point_rep : public Ref_counted {
   typedef Interval_nt_advanced DT;
   DT mxd,myd,nxd,nyd,wd;
 public:
-  
-#line 310 "Filtered_extended_kernel.lw"
-Extended_point_rep(const RT& x, const RT& y, const RT& w) :
-  Ref_counted(), x_(x),y_(y),w_(w)
-{ CGAL_assertion_msg(w!=0,"denominator is zero.");
-  nxd=CGAL::to_interval(x);
-  nyd=CGAL::to_interval(y);
-  wd=CGAL::to_interval(w);
-  mxd=myd=0;
-}
+  Extended_point_rep(const RT& x, const RT& y, const RT& w) :
+    Ref_counted(), x_(x),y_(y),w_(w)
+  { CGAL_assertion_msg(w!=0,"denominator is zero.");
+    nxd=CGAL::to_interval(x);
+    nyd=CGAL::to_interval(y);
+    wd=CGAL::to_interval(w);
+    mxd=myd=0;
+  }
 
-Extended_point_rep(const SPolynomial<RT>& x, 
-                   const SPolynomial<RT>& y, 
-                   const RT& w) : Ref_counted(), x_(x),y_(y),w_(w)
-{ CGAL_assertion_msg(w!=0,"denominator is zero.");
-  mxd=CGAL::to_interval(x.m());
-  myd=CGAL::to_interval(y.m());
-  nxd=CGAL::to_interval(x.n());
-  nyd=CGAL::to_interval(y.n());
-  wd=CGAL::to_interval(w);
-}
+  Extended_point_rep(const SPolynomial<RT>& x, 
+                     const SPolynomial<RT>& y, 
+                     const RT& w) : Ref_counted(), x_(x),y_(y),w_(w)
+  { CGAL_assertion_msg(w!=0,"denominator is zero.");
+    mxd=CGAL::to_interval(x.m());
+    myd=CGAL::to_interval(y.m());
+    nxd=CGAL::to_interval(x.n());
+    nyd=CGAL::to_interval(y.n());
+    wd=CGAL::to_interval(w);
+  }
 
-#line 336 "Filtered_extended_kernel.lw"
-Extended_point_rep() : Ref_counted(), x_(),y_(),w_() {}
-~Extended_point_rep() {}
-void negate() 
-{ x_ = -x_; y_ = -y_; w_ = -w_; 
-  mxd = -mxd; myd = -myd; nxd = -nxd; nyd = -nyd; wd = -wd; }
+  Extended_point_rep() : Ref_counted(), x_(),y_(),w_() {}
+  ~Extended_point_rep() {}
+  void negate() 
+  { x_ = -x_; y_ = -y_; w_ = -w_; 
+    mxd = -mxd; myd = -myd; nxd = -nxd; nyd = -nyd; wd = -wd; }
 
-#line 260 "Filtered_extended_kernel.lw"
 };
 
-#line 343 "Filtered_extended_kernel.lw"
 template <typename RT_>
 class Extended_point : public Handle_for< Extended_point_rep<RT_> > {
   typedef Extended_point_rep<RT_> Rep;
@@ -281,7 +271,6 @@ public:
   Extended_point<RT> opposite() const 
   { return Extended_point<RT>(-mx(),nx(),-my(),ny(),w()); }
 
-#line 1612 "Filtered_extended_kernel.lw"
 #ifdef KERNEL_CHECK
 typedef CGAL::Extended_homogeneous<RT_> CheckKernel;
 typedef typename CheckKernel::Point_2   CheckPoint;
@@ -297,7 +286,6 @@ CheckPoint checkrep() const
 #endif // KERNEL_CHECK
 
 
-#line 398 "Filtered_extended_kernel.lw"
 };
 
 template <class RT> 
@@ -310,8 +298,10 @@ std::ostream& operator<<(std::ostream& os, const Extended_point<RT>& p)
       CGAL::write(os,p.hw()); break;
     default:
       os << "(" << p.hx() << "," << p.hy() << "," << p.hw() << ")"; 
-      os << "((" << p.nx().to_double()/p.hw().to_double() << "," 
-         << p.ny().to_double()/p.hw().to_double() << "))"; 
+#if 0
+      os << "((" << CGAL::to_double(p.nx())/CGAL::to_double(p.hw()) << "," 
+         << CGAL::to_double(p.ny())/CGAL::to_double(p.hw()) << "))"; 
+#endif
   } 
   return os; 
 }
@@ -332,7 +322,6 @@ std::istream& operator>>(std::istream& is, Extended_point<RT>& p)
 }
 
 
-#line 458 "Filtered_extended_kernel.lw"
 template <typename NT> inline
 int orientation_coeff2(const NT& mx1, const NT& /*nx1*/, 
                        const NT& my1, const NT& /*ny1*/, const NT& w1,
@@ -373,11 +362,9 @@ int orientation_coeff0(const NT& /*mx1*/, const NT& nx1,
   return CGAL_NTS sign(coeff0);
 }
 
-#line 500 "Filtered_extended_kernel.lw"
 DEFCOUNTER(or0)
 DEFCOUNTER(or1)
 DEFCOUNTER(or2)
-#line 514 "Filtered_extended_kernel.lw"
 template <typename RT>
 int orientation(const Extended_point<RT>& p1, 
                 const Extended_point<RT>& p2, 
@@ -421,7 +408,6 @@ int orientation(const Extended_point<RT>& p1,
   return res;
 }
 
-#line 565 "Filtered_extended_kernel.lw"
 template <typename NT> 
 inline
 int compare_expr(const NT& n1, const NT& d1, 
@@ -647,7 +633,6 @@ int compare_pair_dist(
 }
 
 
-#line 800 "Filtered_extended_kernel.lw"
 template <typename RT>
 class Extended_segment {
   Extended_point<RT> _p1,_p2;
@@ -667,7 +652,6 @@ public:
   void line_equation(RT& a, RT& b, SPolynomial<RT>& c) const;
 };
 
-#line 821 "Filtered_extended_kernel.lw"
 template <class RT> 
 std::ostream& operator<<(std::ostream& os, const Extended_segment<RT>& s)
 { os << s.source() << s.target(); return os; }
@@ -676,7 +660,6 @@ std::istream& operator>>(std::istream& is, Extended_segment<RT>& s)
 { Extended_point<RT> p1,p2;
   is >> p1 >> p2; s=Extended_segment<RT>(p1,p2); return is; }
 
-#line 837 "Filtered_extended_kernel.lw"
 template <typename RT>
 void Extended_segment<RT>::
 line_equation(RT& a, RT& b, SPolynomial<RT>& c) const
@@ -684,59 +667,49 @@ line_equation(RT& a, RT& b, SPolynomial<RT>& c) const
   bool sstandard = _p1.is_standard();
   bool tstandard = _p2.is_standard();
   if (sstandard && tstandard) {
-    
-#line 871 "Filtered_extended_kernel.lw"
-a = _p1.ny()*_p2.hw() - _p2.ny()*_p1.hw();
-b = _p1.hw()*_p2.nx() - _p2.hw()*_p1.nx();
-c = SPolynomial<RT>(_p1.nx()*_p2.ny() - _p2.nx()*_p1.ny());
-return;
+    a = _p1.ny()*_p2.hw() - _p2.ny()*_p1.hw();
+    b = _p1.hw()*_p2.nx() - _p2.hw()*_p1.nx();
+    c = SPolynomial<RT>(_p1.nx()*_p2.ny() - _p2.nx()*_p1.ny());
+    return;
 
-#line 845 "Filtered_extended_kernel.lw"
   }
   Extended_point<RT> p;
   bool correct_orientation=true;
   if (!sstandard && !tstandard) {
-    
-#line 890 "Filtered_extended_kernel.lw"
-bool x_equal = (_p1.hx()*_p2.hw() - _p2.hx()*_p1.hw()).is_zero();
-bool y_equal = (_p1.hy()*_p2.hw() - _p2.hy()*_p1.hw()).is_zero();
-if (x_equal && CGAL_NTS abs(_p1.mx())==_p1.hw() && _p1.nx()==0 ) 
-{ int dy = (_p2.hy()-_p1.hy()).sign(); 
-  a=-dy; b=0; c = SPolynomial<RT>(dy*_p1.hx().sign(),0); return; }
-if (y_equal && CGAL_NTS abs(_p1.my())==_p1.hw() && _p1.ny()==0 ) 
-{ int dx = (_p2.hx()-_p1.hx()).sign(); 
-  a=0; b=dx; c = SPolynomial<RT>(-dx*_p1.hy().sign(),0); return; }
-p = _p2; // evaluation according to mixed case
+    bool x_equal = (_p1.hx()*_p2.hw() - _p2.hx()*_p1.hw()).is_zero();
+    bool y_equal = (_p1.hy()*_p2.hw() - _p2.hy()*_p1.hw()).is_zero();
+    if (x_equal && CGAL_NTS abs(_p1.mx())==_p1.hw() && _p1.nx()==0 ) 
+    { int dy = (_p2.hy()-_p1.hy()).sign(); 
+      a=-dy; b=0; c = SPolynomial<RT>(dy*_p1.hx().sign(),0); return; }
+    if (y_equal && CGAL_NTS abs(_p1.my())==_p1.hw() && _p1.ny()==0 ) 
+    { int dx = (_p2.hx()-_p1.hx()).sign(); 
+      a=0; b=dx; c = SPolynomial<RT>(-dx*_p1.hy().sign(),0); return; }
+    p = _p2; // evaluation according to mixed case
 
-#line 850 "Filtered_extended_kernel.lw"
   } 
   else if (sstandard && !tstandard) 
   { p = _p2; }
   else if (!sstandard && tstandard) 
   { p = _p1; correct_orientation=false; }
-  
-#line 920 "Filtered_extended_kernel.lw"
-RT x1 = p.nx(), y1 = p.ny();               // R==0
-RT x2 = p.mx()+p.nx(), y2 = p.my()+p.ny(); // R==1
-RT w = p.hw();
-RT ci;
-if ( correct_orientation ) {
-  a = -p.my(); // (y1*w-w*y2)/w
-  b =  p.mx(); // (x2*w-w*x1)/w
-  ci = (p.nx()*p.my()-p.ny()*p.mx())/w; // (x1*y2-x2*y1)/w;
-} else {
-  a =  p.my(); // (y2*w-w*y1)
-  b = -p.mx(); // (x1*w-w*x2)
-  ci = (p.ny()*p.mx()-p.nx()*p.my())/w; // (x2*y1-x1*y2)/w;
-}
-c = SPolynomial<RT>(ci);
+  RT x1 = p.nx(), y1 = p.ny();               // R==0
+  RT x2 = p.mx()+p.nx(), y2 = p.my()+p.ny(); // R==1
+  RT w = p.hw();
+  RT ci;
+  if ( correct_orientation ) {
+    a = -p.my(); // (y1*w-w*y2)/w
+    b =  p.mx(); // (x2*w-w*x1)/w
+    ci = (p.nx()*p.my()-p.ny()*p.mx())/w; // (x1*y2-x2*y1)/w;
+  } else {
+    a =  p.my(); // (y2*w-w*y1)
+    b = -p.mx(); // (x1*w-w*x2)
+    ci = (p.ny()*p.mx()-p.nx()*p.my())/w; // (x2*y1-x1*y2)/w;
+  }
+  c = SPolynomial<RT>(ci);
 
 
 
-#line 857 "Filtered_extended_kernel.lw"
 }
 
-#line 953 "Filtered_extended_kernel.lw"
 template <typename RT>
 Extended_point<RT> intersection(
   const Extended_segment<RT>& s1, const Extended_segment<RT>& s2)
@@ -748,24 +721,20 @@ Extended_point<RT> intersection(
   SPolynomial<RT> x = c2*b1 - c1*b2;
   SPolynomial<RT> y = c1*a2 - c2*a1;
   RT w = a1*b2 - a2*b1; CGAL_assertion(w!=0);
-  
-#line 978 "Filtered_extended_kernel.lw"
-#ifdef REDUCE_INTERSECTION_POINTS
-RT xgcd,ygcd;
-if ( x.m() == RT(0) )  xgcd = ( x.n() == 0 ? RT(1) : x.n() ); 
-else /* != 0 */    xgcd = ( x.n() == 0 ? x.m() : gcd(x.m(),x.n()) ); 
-if ( y.m() == RT(0) )  ygcd = ( y.n() == 0 ? RT(1) : y.n() ); 
-else /* != 0 */    ygcd = ( y.n() == 0 ? y.m() : gcd(y.m(),y.n()) ); 
-RT d = gcd(w,gcd(xgcd,ygcd));
-x /= d;
-y /= d;
-w /= d;
-#endif // REDUCE_INTERSECTION_POINTS
-#line 965 "Filtered_extended_kernel.lw"
+  #ifdef REDUCE_INTERSECTION_POINTS
+  RT xgcd,ygcd;
+  if ( x.m() == RT(0) )  xgcd = ( x.n() == 0 ? RT(1) : x.n() ); 
+  else /* != 0 */    xgcd = ( x.n() == 0 ? x.m() : gcd(x.m(),x.n()) ); 
+  if ( y.m() == RT(0) )  ygcd = ( y.n() == 0 ? RT(1) : y.n() ); 
+  else /* != 0 */    ygcd = ( y.n() == 0 ? y.m() : gcd(y.m(),y.n()) ); 
+  RT d = gcd(w,gcd(xgcd,ygcd));
+  x /= d;
+  y /= d;
+  w /= d;
+  #endif // REDUCE_INTERSECTION_POINTS
   return Extended_point<RT>(x,y,w);
 }
 
-#line 994 "Filtered_extended_kernel.lw"
 template <typename RT>
 inline
 int orientation(const Extended_segment<RT>& s, const Extended_point<RT>& p) 
@@ -788,7 +757,6 @@ bool contains(const Extended_segment<RT>& s,
 }
 
 
-#line 1019 "Filtered_extended_kernel.lw"
 template <typename RT>
 class Extended_direction {
   Extended_point<RT> _p1,_p2;
@@ -825,7 +793,6 @@ std::istream& operator>>(std::istream& is, Extended_direction<RT>& d)
   return is; }
 
 
-#line 1056 "Filtered_extended_kernel.lw"
 template <typename NT>
 inline
 int coeff2_dor(const NT& mx1, const NT& /*nx1*/, 
@@ -928,7 +895,6 @@ int orientation(const Extended_direction<RT>& d1,
   return res;
 }
 
-#line 1167 "Filtered_extended_kernel.lw"
 template <typename RT>
 inline
 bool operator==(const Extended_direction<RT>& d1,
@@ -973,7 +939,6 @@ bool operator<(const Extended_direction<RT>& d1,
 }
 
 
-#line 1256 "Filtered_extended_kernel.lw"
 template <typename RT_>
 class Filtered_extended_homogeneous {
 typedef Filtered_extended_homogeneous<RT_> Self;
@@ -995,7 +960,6 @@ typedef SQuotient<RT_>          FT;
 typedef Extended_point<RT_>     Point_2;
 typedef Extended_segment<RT_>   Segment_2;
 typedef Extended_direction<RT_> Direction_2;
-#line 1627 "Filtered_extended_kernel.lw"
 #ifdef KERNEL_CHECK
 typedef Extended_homogeneous<RT_>         CheckKernel;
 typedef typename CheckKernel::Point_2     CheckPoint;
@@ -1014,12 +978,10 @@ CheckDirection convert(const Direction_2& d) const
 
 
 
-#line 1279 "Filtered_extended_kernel.lw"
 enum Point_type { SWCORNER=1, LEFTFRAME, NWCORNER, 
                   BOTTOMFRAME, STANDARD, TOPFRAME,
                   SECORNER, RIGHTFRAME, NECORNER };
 
-#line 1289 "Filtered_extended_kernel.lw"
 Standard_RT dx(const Standard_line_2& l) const { return l.b(); }
 Standard_RT dy(const Standard_line_2& l) const { return -l.a(); }
 Standard_FT abscissa_distance(const Standard_line_2& l) const 
@@ -1276,12 +1238,10 @@ const char* output_identifier() const
 
 
 
-#line 1285 "Filtered_extended_kernel.lw"
 };
 
 
 
-#line 1595 "Filtered_extended_kernel.lw"
 CGAL_END_NAMESPACE
 
 #undef CHECK
