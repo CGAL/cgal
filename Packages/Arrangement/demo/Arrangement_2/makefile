@@ -15,10 +15,6 @@ include $(CGAL_MAKEFILE)
 
 CXXFLAGS = \
 	   -Iinclude \
-           -I../../include \
-           -I../../../Trapezoidal_decomposition/include \
-           -I../../../Planar_map/include \
-           -I../../../Sweep_line_2/include \
            $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS) \
            $(DEBUG_OPT)

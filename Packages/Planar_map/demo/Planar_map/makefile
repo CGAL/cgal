@@ -14,9 +14,6 @@ include $(CGAL_MAKEFILE)
 #---------------------------------------------------------------------#
 
 CXXFLAGS = \
-        -I../../include \
-        -I../../../Trapezoidal_decomposition/include \
-        -I../../../Sweep_line_2/include \
         $(EXTRA_FLAGS) \
 	$(CGAL_CXXFLAGS) \
         $(LONG_NAME_PROBLEM_CXXFLAGS) \
