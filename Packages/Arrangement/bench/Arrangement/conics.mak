@@ -51,7 +51,7 @@ cartesian_core_conic_inst:
 simple_cartesian_core_conic_inst:
 	$(MAKEF) "BENCH_PM=$(PLANAR_MAP_WITH_INTERSECTIONS)" "BENCH_NT=$(CORE_EXPR_NT)" "BENCH_TRAITS=$(CORE_CONIC_TRAITS)" "BENCH_KERNEL=$(SIMPLE_CARTESIAN_KERNEL)" install
 
-cgal_conics_int: cartesian_leda_conic_inst \
+cgal_conics_inst: cartesian_leda_conic_inst \
         simple_cartesian_leda_conic_inst \
 	cartesian_core_conic_inst \
 	simple_cartesian_core_conic_inst \
