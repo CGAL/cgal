@@ -1,5 +1,8 @@
 Circulator Package: Release changes:
 ---------------------------------------------------------------------
+3.7 (07 october 99)
+    fixed a bug in Circulator_stl.tex
+
 3.6 (24 septembre 99)
     add the doc file Circulator_stl.tex in submission
 
