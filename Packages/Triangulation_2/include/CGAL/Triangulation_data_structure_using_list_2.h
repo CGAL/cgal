@@ -328,8 +328,8 @@ is_edge(const Vertex* va, const Vertex* vb, Face* &fr,  int & i) const
 // if true is returned (fr,i) is the edge ab
 // with face fr on the right of a->b
 {
-  Face* fc=va->face(); 
-  Face* start(fc);
+  Face* fc = va->face(); 
+  Face* start = fc;
   if (fc == 0) return false;
   int inda, indb;
   do {

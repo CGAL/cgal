@@ -322,7 +322,7 @@ is_edge(const Vertex* va, const Vertex* vb, Face* &fr,  int & i) const
   // with face fr on the right of a->b
 {
   Face* fc=va->face();
-  Face* start(fc);
+  Face* start = fc;
   if (fc == NULL) return false;
   int inda, indb;
   do {
