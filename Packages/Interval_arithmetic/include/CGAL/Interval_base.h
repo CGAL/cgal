@@ -28,6 +28,7 @@
 
 #include <CGAL/basic.h>
 #include <utility>				// Relational operators.
+#include <CGAL/double.h>                        // is_finite(double)
 
 CGAL_BEGIN_NAMESPACE
 
@@ -125,12 +126,17 @@ to_double (const Interval_base & d)
   // But if you are _that_ unlucky, you are probably already dead :)
 }
 
+// I need to declare them here since double.h is included after, and otherwise
+// is_finite(Interval_base) calls itself recursively...
+inline bool is_finite(double);
+inline bool is_valid(double);
+
 inline
 bool
 is_valid (const Interval_base & d)
 {
 #if defined _MSC_VER || defined __sgi || defined __BORLANDC__
-  return is_valid(d.inf_) && is_valid(d.sup_) && d.inf_ <= d.sup_;
+  return CGAL::is_valid(d.inf_) && CGAL::is_valid(d.sup_) && d.inf_ <= d.sup_;
 #else
   // The 2 first is_valid() are implicitely done by the 3rd test ;-)
   return d.inf_ <= d.sup_;
@@ -141,7 +147,7 @@ inline
 bool
 is_finite (const Interval_base & d)
 {
-  return is_finite(d.inf_) && is_finite(d.sup_);
+  return CGAL::is_finite(d.inf_) && CGAL::is_finite(d.sup_);
 }
 
 inline
