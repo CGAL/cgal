@@ -23,8 +23,8 @@ Meeting the first requirement, the interface needed is straightforward.  However
 #include <sstream>
 #include <string>
 
-#undef _DEBUG
-#define _DEBUG 503
+#undef CGAL_NEF_DEBUG
+#define CGAL_NEF_DEBUG 503
 #include <CGAL/Nef_2/debug.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -1290,8 +1290,8 @@ CGAL_END_NAMESPACE
 #include <fstream>
 #include <string.h>
 
-#undef _DEBUG
-#define _DEBUG 157
+#undef CGAL_NEF_DEBUG
+#define CGAL_NEF_DEBUG 157
 #include <CGAL/Nef_2/debug.h>
 
 typedef CGAL::Gmpz                          NT;
