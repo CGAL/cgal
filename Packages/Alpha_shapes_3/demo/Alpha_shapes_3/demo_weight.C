@@ -47,11 +47,11 @@ typedef double coord_type;
 
 typedef CGAL::Cartesian<coord_type>  K;
 
-typedef K::Point_3<K>  Point;
-typedef K::Segment_3<K>  Segment;
-typedef K::Ray_3<K>  Ray;
-typedef K::Line_3<K>  Line;
-typedef K::Triangle_3<K>  Triangle;
+typedef K::Point_3    Point;
+typedef K::Segment_3  Segment;
+typedef K::Ray_3      Ray;
+typedef K::Line_3     Line;
+typedef K::Triangle_3 Triangle;
 
 typedef CGAL::Weighted_alpha_shape_euclidean_traits_3<K> Gt;
 typedef Gt::Point Wpoint;
