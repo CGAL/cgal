@@ -179,7 +179,8 @@ const double CGAL_Interval_nt_advanced::max_double =1.7976931348623157081e+308;
 
 // Smallest interval strictly around zero.
 const CGAL_Interval_nt_advanced CGAL_Interval_nt_advanced::smallest
-(-CGAL_Interval_nt_advanced::min_double, CGAL_Interval_nt_advanced::min_double);
+(-CGAL_Interval_nt_advanced::min_double,
+  CGAL_Interval_nt_advanced::min_double);
 
 // [-inf;+inf]
 const CGAL_Interval_nt_advanced CGAL_Interval_nt_advanced::largest
