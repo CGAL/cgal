@@ -1436,14 +1436,50 @@ Packages/Qt_widget/demo/Qt_widget/basic/tutorial5/demo.dsp -text
 Packages/Qt_widget/demo/Qt_widget/basic/tutorial6/demo.dsp -text
 Packages/Qt_widget/demo/Qt_widget/basic/tutorial7/demo.dsp -text
 Packages/Qt_widget/demo/Qt_widget/basic/tutorial8/demo.dsp -text
+Packages/Qt_widget/doc_tex/Qt_widget/arrow_but.gif -text svneol=unset#unset
+Packages/Qt_widget/doc_tex/Qt_widget/circle_but.gif -text svneol=unset#unset
+Packages/Qt_widget/doc_tex/Qt_widget/greene_aprox_but.gif -text svneol=unset#unset
+Packages/Qt_widget/doc_tex/Qt_widget/hand_but.gif -text svneol=unset#unset
+Packages/Qt_widget/doc_tex/Qt_widget/holddown_but.gif -text svneol=unset#unset
+Packages/Qt_widget/doc_tex/Qt_widget/line_but.gif -text svneol=unset#unset
+Packages/Qt_widget/doc_tex/Qt_widget/mouse_coord_but.gif -text svneol=unset#unset
+Packages/Qt_widget/doc_tex/Qt_widget/movepoint_but.gif -text svneol=unset#unset
+Packages/Qt_widget/doc_tex/Qt_widget/notool_but.gif -text svneol=unset#unset
+Packages/Qt_widget/doc_tex/Qt_widget/optimal_convex_but.gif -text svneol=unset#unset
+Packages/Qt_widget/doc_tex/Qt_widget/point_but.gif -text svneol=unset#unset
+Packages/Qt_widget/doc_tex/Qt_widget/points_but.gif -text svneol=unset#unset
+Packages/Qt_widget/doc_tex/Qt_widget/polygon_but.gif -text svneol=unset#unset
 Packages/Qt_widget/doc_tex/Qt_widget/standard_toolbar.eps -text
 Packages/Qt_widget/doc_tex/Qt_widget/standard_toolbar.gif -text svneol=unset#unset
 Packages/Qt_widget/doc_tex/Qt_widget/triangulation.eps -text
 Packages/Qt_widget/doc_tex/Qt_widget/triangulation.gif -text svneol=unset#unset
+Packages/Qt_widget/doc_tex/Qt_widget/triangulation_but.gif -text svneol=unset#unset
+Packages/Qt_widget/doc_tex/Qt_widget/voronoi_but.gif -text svneol=unset#unset
+Packages/Qt_widget/doc_tex/Qt_widget/ymonotone_but.gif -text svneol=unset#unset
+Packages/Qt_widget/doc_tex/Qt_widget/zoom_in_but.gif -text svneol=unset#unset
+Packages/Qt_widget/doc_tex/Qt_widget/zoom_out_but.gif -text svneol=unset#unset
+Packages/Qt_widget/doc_tex/support/Qt_widget/arrow_but.gif -text svneol=unset#unset
+Packages/Qt_widget/doc_tex/support/Qt_widget/circle_but.gif -text svneol=unset#unset
+Packages/Qt_widget/doc_tex/support/Qt_widget/greene_aprox_but.gif -text svneol=unset#unset
+Packages/Qt_widget/doc_tex/support/Qt_widget/hand_but.gif -text svneol=unset#unset
+Packages/Qt_widget/doc_tex/support/Qt_widget/holddown_but.gif -text svneol=unset#unset
+Packages/Qt_widget/doc_tex/support/Qt_widget/line_but.gif -text svneol=unset#unset
+Packages/Qt_widget/doc_tex/support/Qt_widget/mouse_coord_but.gif -text svneol=unset#unset
+Packages/Qt_widget/doc_tex/support/Qt_widget/movepoint_but.gif -text svneol=unset#unset
+Packages/Qt_widget/doc_tex/support/Qt_widget/notool_but.gif -text svneol=unset#unset
+Packages/Qt_widget/doc_tex/support/Qt_widget/optimal_convex_but.gif -text svneol=unset#unset
+Packages/Qt_widget/doc_tex/support/Qt_widget/point_but.gif -text svneol=unset#unset
+Packages/Qt_widget/doc_tex/support/Qt_widget/points_but.gif -text svneol=unset#unset
+Packages/Qt_widget/doc_tex/support/Qt_widget/polygon_but.gif -text svneol=unset#unset
 Packages/Qt_widget/doc_tex/support/Qt_widget/standard_toolbar.eps -text
 Packages/Qt_widget/doc_tex/support/Qt_widget/standard_toolbar.gif -text svneol=unset#unset
 Packages/Qt_widget/doc_tex/support/Qt_widget/triangulation.eps -text
 Packages/Qt_widget/doc_tex/support/Qt_widget/triangulation.gif -text svneol=unset#unset
+Packages/Qt_widget/doc_tex/support/Qt_widget/triangulation_but.gif -text svneol=unset#unset
+Packages/Qt_widget/doc_tex/support/Qt_widget/voronoi_but.gif -text svneol=unset#unset
+Packages/Qt_widget/doc_tex/support/Qt_widget/ymonotone_but.gif -text svneol=unset#unset
+Packages/Qt_widget/doc_tex/support/Qt_widget/zoom_in_but.gif -text svneol=unset#unset
+Packages/Qt_widget/doc_tex/support/Qt_widget/zoom_out_but.gif -text svneol=unset#unset
 Packages/Qt_widget/include/CGAL/IO/pixmaps/arrow.xpm -text
 Packages/Qt_widget/include/CGAL/IO/pixmaps/back.xpm -text
 Packages/Qt_widget/include/CGAL/IO/pixmaps/circle.xpm -text
