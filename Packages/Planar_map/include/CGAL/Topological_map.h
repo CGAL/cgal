@@ -1307,8 +1307,12 @@ Topological_map<Dcel>::remove_edge(Halfedge_handle e)
 
     else { //antenna is a hole - split it into two holes
       is_halfedge_on_inner_ccb<Dcel>(prev1,df1,ccb1);
-      find_and_erase_hole(ccb1,df1); 
-      CGAL_assertion(hole_found) ;//ccb1 must be a hole in df1
+	  #if defined(CGAL_NO_ASSERTIONS)
+      find_and_erase_hole(ccb1,df1);
+      #else
+      bool hole_found = find_and_erase_hole(ccb1,df1);
+      CGAL_assertion(hole_found);       //ccb1 must be a hole in df1
+      #endif
       df1->add_hole(prev1);
       df1->add_hole(prev2);
     }
