@@ -36,7 +36,9 @@ struct Pointer
   typedef T value_type;
 
   //Pointer(const T* p = NULL) : _pointer((T*)p) {}
-  Pointer( T* p = NULL) : _pointer((T*)p) {}
+  //Pointer( T* p = NULL) : _pointer((T*)p) {}
+  Pointer() : _pointer(NULL) {}
+  Pointer( const T* p) : _pointer(const_cast<T*>(p)) {}
 
   //Pointer& operator=(const T* p)
   Pointer& operator=( T* p)
