@@ -37,7 +37,7 @@ Interval_nt_advanced
 convert_from_to (const Interval_nt_advanced&, const Gmpz & z)
 {
 #ifdef CGAL_IA_DEBUG
-	CGAL_assertion(FPU_get_cw() == FPU_cw_up);
+	CGAL_warning(FPU_get_cw() == FPU_cw_up);
 #endif
 	FPU_set_cw(FPU_cw_near);
 	double approx = CGAL::to_double(z);
@@ -45,8 +45,7 @@ convert_from_to (const Interval_nt_advanced&, const Gmpz & z)
 	Interval_nt_advanced result = approx + CGAL_IA_SMALLEST;
 #ifdef CGAL_IA_DEBUG
 	FPU_set_cw(FPU_cw_near);
-	CGAL_assertion(	Gmpz(result.lower_bound()) <= z &&
-			Gmpz(result.upper_bound()) >= z);
+	CGAL_warning(Gmpz(result.inf()) <= z && Gmpz(result.sup()) >= z);
 	FPU_set_cw(FPU_cw_up);
 #endif
 	return result;

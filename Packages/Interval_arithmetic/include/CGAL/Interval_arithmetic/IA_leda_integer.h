@@ -45,8 +45,8 @@ convert_from_to (const Interval_nt_advanced&, const leda_integer & z)
     Interval_nt_advanced result = approx + CGAL_IA_SMALLEST;
 #ifdef CGAL_IA_DEBUG
     FPU_set_cw(FPU_cw_near);
-    CGAL_warning(       leda_integer(result.lower_bound()) <= z &&
-			leda_integer(result.upper_bound()) >= z);
+    CGAL_warning(leda_integer(result.inf()) <= z &&
+		 leda_integer(result.sup()) >= z);
     FPU_set_cw(FPU_cw_up);
 #endif
     return result;

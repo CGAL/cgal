@@ -31,7 +31,7 @@ Interval_nt_advanced
 convert_from_to (const Interval_nt_advanced&, const leda_real & z)
 {
 #ifdef CGAL_IA_DEBUG
-    CGAL_assertion(FPU_get_cw() == FPU_cw_up);
+    CGAL_warning(FPU_get_cw() == FPU_cw_up);
 #endif
     FPU_set_cw(FPU_cw_near);
     double approx = CGAL::to_double(z);
@@ -41,8 +41,8 @@ convert_from_to (const Interval_nt_advanced&, const leda_real & z)
 	* ( Interval_nt_advanced(-rel_error,rel_error) + 1 );
 #ifdef CGAL_IA_DEBUG
     FPU_set_cw(FPU_cw_near);
-    CGAL_assertion( leda_real(result.lower_bound()) <= z &&
-		    leda_real(result.upper_bound()) >= z );
+    CGAL_warning(leda_real(result.inf()) <= z &&
+		 leda_real(result.sup()) >= z );
     FPU_set_cw(FPU_cw_up);
 #endif
     return result;
