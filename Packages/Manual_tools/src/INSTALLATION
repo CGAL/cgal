@@ -17,6 +17,14 @@ Installation of the Supporting Tools:
      *  perl 5
      *  Unix environment with tools like grep, sed, ...
 
+     NOTE: If you use the tools on something large, such as a whole
+     CGAL Manual, you might run into limitations of the flex parser
+     tables. If so, apply the patch 
+
+         patch_for_flex_2.5.4_to_increase_NFA_states_limit
+
+     and recompile your flex parser from sources.
+
 
 (2)  The scripts cc_patch_anchor_filter, cc_patch_anchor_pages, 
      cc_remove_unwanted_links, and cc_patch_anchor_toc_index are Perl 

@@ -1,0 +1,30 @@
+--- flexdef.h.orig	2003-06-03 15:00:38.526899000 +0200
++++ flexdef.h	2003-06-03 15:03:15.803634000 +0200
+@@ -210,10 +210,10 @@
+ #define INITIAL_MAX_DFAS 1000	/* default maximum number of dfa states */
+ #define MAX_DFAS_INCREMENT 1000
+ 
+-#define JAMSTATE -32766	/* marks a reference to the state that always jams */
++#define JAMSTATE -327660   /* marks a reference to the state that always jams */
+ 
+ /* Maximum number of NFA states. */
+-#define MAXIMUM_MNS 31999
++#define MAXIMUM_MNS 319990
+ 
+ /* Enough so that if it's subtracted from an NFA state number, the result
+  * is guaranteed to be negative.
+@@ -304,12 +304,12 @@
+ /* Number that, if used to subscript an array, has a good chance of producing
+  * an error; should be small enough to fit into a short.
+  */
+-#define BAD_SUBSCRIPT -32767
++#define BAD_SUBSCRIPT -327670
+ 
+ /* Absolute value of largest number that can be stored in a short, with a
+  * bit of slop thrown in for general paranoia.
+  */
+-#define MAX_SHORT 32700
++#define MAX_SHORT 327000
+ 
+ 
+ /* Declarations for global variables. */
