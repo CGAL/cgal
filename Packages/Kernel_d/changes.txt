@@ -1,6 +1,9 @@
 Kernel_d Package: Release changes
 ----------------------------------------------------------------------
 
+0.9.59 (26 March 2002)
+   added missing include
+
 0.9.58 (24 March 2002)
    really moved for loop variable out of loop header
 

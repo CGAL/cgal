@@ -27,6 +27,7 @@
 #include <strstream>
 #include <CGAL/basic.h>
 #include <CGAL/Handle_for.h>
+#include <CGAL/Quotient.h>
 #endif
 
 CGAL_BEGIN_NAMESPACE
