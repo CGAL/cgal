@@ -12,9 +12,10 @@
 #include <fcntl.h>
 #include <fstream>
 #include <strstream>
+#include <iterator>
 #include <list>
-#include <CGAL/config.h>
 
+#include <CGAL/config.h>
 #include <LEDA/basic.h>
 #include <CGAL/IO/Color.h>
 #include <CGAL/Point_2.h>
@@ -35,7 +36,7 @@ class PS_Manipulator {
 public:
   PS_Manipulator(PS_Stream& (PS_Stream::*f)(T),T v):
     _PS_func(f), param(v) {}
-private:
+protected:
   PS_Stream& (PS_Stream::*_PS_func)(T);
   T param;
 };
@@ -56,7 +57,7 @@ public:
   {
     return PS_Manipulator<T>(_PS_func,param);
   }
-private:
+protected:
   PS_Stream& (PS_Stream::*_PS_func)(T);
 };
 
@@ -101,7 +102,7 @@ public:
   double stepx()     const { return _stepx;}
   double stepy()     const { return _stepy;}
   unsigned int thickness() const { return _thick;}
-private:
+protected:
   double _stepx;
   double _stepy;
   unsigned int _thick;
@@ -123,7 +124,7 @@ public:
   double    stepy() const { return _stepy;}
   DashStyle style() const { return _style;}
 
-private:
+protected:
   double _stepx;
   double _stepy;
   DashStyle _style;
@@ -139,7 +140,7 @@ public:
   Label() { _text="";}
   const char* text() const { return _text;}
 
-private:
+protected:
   const char* _text;
  
 };
@@ -157,7 +158,7 @@ public:
   float ypos() const {return posy;}
   const char* text() const { return _text;}
 
-private:
+protected:
   // These functions are private because the position of the string must never appears to the user
   // Only stream modifiers will access these data
   void setposition(float x, float y) { posx=x;posy=y;}
@@ -181,7 +182,7 @@ public:
   Border(int s=0) { _size=s;}
  int size() const { return _size;}
 
-private:
+protected:
  
   int _size;
 };
@@ -230,7 +231,7 @@ void set_current_pos(const Point_2<Cartesian <double> >& p) {_anchor_point=p;}
 void set_line_style(DashStyle style) {_line_style=strdup(style);}
 void set_font(const char *font) {_font=strdup(font);}
 
-private:
+protected:
 
 // Store the current border color
  Color _border_color;
@@ -256,8 +257,15 @@ unsigned int _font_size;
 Point_2<Cartesian <double> > _anchor_point;
 
 };
-// Conctructors
-    PS_Stream(const PS_BBox& bb, ostream& os,
+
+//Constructors used for PS_Stream 3D
+   PS_Stream(ostream& os,OutputMode = QUIET);
+   PS_Stream(const char* fname, OutputMode = QUIET);
+   PS_Stream(float H,ostream& os,OutputMode = QUIET);
+   PS_Stream(float H, const char* fname, OutputMode = QUIET);
+
+//Constructors
+   PS_Stream(const PS_BBox& bb, ostream& os,
    OutputMode = QUIET);
    PS_Stream(const PS_BBox& bb, const char* fname,
    OutputMode = QUIET);
@@ -301,6 +309,12 @@ Point_2<Cartesian <double> > _anchor_point;
   int          width()         const {return _width;}
   int          height()        const {return _height;}
   OutputMode   mode()          const {return _mode;}
+
+  void set_scale(const PS_BBox& bb){_xratio=_width/(bb.xmax()-bb.xmin());
+                                    _yratio=_height/(bb.ymax()-bb.ymin());
+                                   }
+  void set_window(PS_BBox bb,int H)
+            {_width=(int)((bb.xmax()-bb.xmin())*H/(bb.ymax()-bb.ymin()));}
       
   // Utils
   double xratio() { return _xratio;}
@@ -310,14 +324,13 @@ Point_2<Cartesian <double> > _anchor_point;
    bool is_eps();
    bool is_readable();
 
-  private:
+  protected:
   //   PS_Stream(const PS_BBox& bb);
 
   // PS_Stream(const PS_BBox& bb,float H);
 
   // PS_Stream(const PS_BBox& bb,float L, float H);
 
-  // PS_Stream();
 
 // Manipulation du contexte.
   void setdefault();
@@ -413,9 +426,11 @@ PS_Stream & operator <<(PS_Stream& ps, const Point_2<R>& p)
       ps.os() << "%CGAL% "<<p.x()<<" "<<p.y()<<endl;
     }
   if (ps.context().get_dot_style()!=PS_Stream::NONE)
-    ps.os() << ps.x2ps(p.x()) << " "
+    {
+  ps.os() << ps.x2ps(p.x()) << " "
             << ps.y2ps(p.y()) << " "
             << ps.context().get_dot_size() << " ";
+  
   switch (ps.context().get_dot_style())
     {
     case PS_Stream::EBOX:
@@ -433,11 +448,16 @@ PS_Stream & operator <<(PS_Stream& ps, const Point_2<R>& p)
     case PS_Stream::ICROSS:
       ps.os() << "ic" << endl;
       break;
-    case PS_Stream::XCROSS:
+    default :
       ps.os() << "xc" << endl;
       break;
-    default : break;  
     }
+    }  
+
+else {
+     ps.os() << ps.x2ps(p.x()) << " " 
+	     << ps.y2ps(p.y())<< " " ;
+     }
   return ps;
 }
 
@@ -624,9 +644,10 @@ PS_Stream & operator <<(PS_Stream& ps, const Circle_2<R>& c)
         ps.os() << "%CGAL " << c.squared_radius() << endl;
       }
     double ratio=ps.yratio()/ps.xratio();
+    double radius=sqrt(to_double(c.squared_radius()));
     ps.os()<< "gsave 1 " << ratio << " scale" << endl;
     ps.os()<< ps.x2ps(c.center().x()) << " " << ps.y2ps(c.center().y())/ratio
-           << " " << c.squared_radius()*ps.xratio()  << " 0 360 arc " << endl;
+           << " " << radius*ps.xratio()  << " 0 360 arc " << endl;
     if (ps.context().get_fill())
       {
         ps.os() << "gsave " << endl;
@@ -641,6 +662,9 @@ PS_Stream & operator <<(PS_Stream& ps, const Circle_2<R>& c)
 
 #endif // CGAL_CIRCLE_2_H
 
+
+
 CGAL_END_NAMESPACE
+
 
 #endif  // Postscript_STREAM
