@@ -1,5 +1,6 @@
 06 January 2005 Sylvain Pion
 - Add Map_overlay_2 back in the internal releases.
+- Add Persistent_homology_d back in the internal releases.
 
 ------------------------- CGAL 3.1 -----------------------------
 
