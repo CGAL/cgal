@@ -561,7 +561,7 @@ initial_check()
 
 # fetch CGAL version id from ${CGAL_INCL_DIR}/CGAL/config.h
 # and compiler-testsuite version id 
-# from ${CGAL_TEST_CONF_DIR}/CGAL_CFG_NO_ITERATOR_TRAITS.C
+# from ${CGAL_TEST_CONF_DIR}/CGAL_CFG_NO_TMPL_IN_TMPL_PARAM.C
 get_cgal_version()
 {
     # this file is assumed to contain one line matching "CGAL_VERSION "
@@ -573,7 +573,7 @@ get_cgal_version()
     
     # this file is assumed to contain one line matching "revision "
     # where the fourth field describes the compiler-testsuite version
-    FILE="${CGAL_TEST_CONF_DIR}/CGAL_CFG_NO_ITERATOR_TRAITS.C"
+    FILE="${CGAL_TEST_CONF_DIR}/CGAL_CFG_NO_TMPL_IN_TMPL_PARAM.C"
     _check_read ${FILE}
     CGAL_INSTALL_CONF_VERSION=`${_fgrep} 'revision ' ${FILE} | \
 	${_awk} '{printf "%s",$4}'`
@@ -759,9 +759,9 @@ set_compiler_flags()
     OBJ_OPT="-c"
     LIB_SUFFIX=""
     REMOVE_EXT_LIST=".o"
-    LIB_OPT="-l"
-    LEDA_LIB_OPT='-l'
-    LIBPATH_OPT="-L"
+    LIB_OPT=" -l"
+    LEDA_LIB_OPT=' -l'
+    LIBPATH_OPT=" -L"
     DEBUG_OPT="-g"
     EXE_OPT="-o "
     SAVE_THE_BLANK="\$(SAVESTHEBLANK)"
