@@ -76,72 +76,77 @@ class MyWindow : public QMainWindow
 {
   Q_OBJECT
 public:
-  MyWindow(int w, int h): win(this) {
-  setCentralWidget(&win);
+  MyWindow(int w, int h){
+
+    widget = new CGAL::Qt_widget(this);
+    setCentralWidget(widget);
     
-  connect(&win, SIGNAL(mouseReleased(QMouseEvent*)), this,
+    connect(widget, SIGNAL(mouseReleased(QMouseEvent*)), this,
           SLOT(insert_after_show_conflicts(QMouseEvent*)));
 	
-  //create a timer for checking if somthing changed
-  QTimer *timer = new QTimer( this );
-  connect( timer, SIGNAL(timeout()),
+    //create a timer for checking if somthing changed
+    QTimer *timer = new QTimer( this );
+    connect( timer, SIGNAL(timeout()),
            this, SLOT(timerDone()) );
-  timer->start( 200, FALSE );
+    timer->start( 200, FALSE );
 
 
-  // file menu
-  QPopupMenu * file = new QPopupMenu( this );
-  menuBar()->insertItem( "&File", file );
-  file->insertItem("&New", this, SLOT(new_instance()), CTRL+Key_N);
-  file->insertItem("New &Window", this, SLOT(new_window()), CTRL+Key_W);
-  file->insertSeparator();
-  file->insertItem("&Load Triangulation", this, SLOT(load_triangulation()), CTRL+Key_L);
-  file->insertItem("&Save Triangulation", this, SLOT(save_triangulation()), CTRL+Key_T);
-  file->insertSeparator();
-  file->insertItem( "&Close", this, SLOT(close()), CTRL+Key_X );
-  file->insertItem( "&Quit", qApp, SLOT( closeAllWindows() ), CTRL+Key_Q );
+    // file menu
+    QPopupMenu * file = new QPopupMenu( this );
+    menuBar()->insertItem( "&File", file );
+    file->insertItem("&New", this, SLOT(new_instance()), CTRL+Key_N);
+    file->insertItem("New &Window", this, SLOT(new_window()), CTRL+Key_W);
+    file->insertSeparator();
+    file->insertItem("&Load Triangulation", this, SLOT(load_triangulation()), CTRL+Key_L);
+    file->insertItem("&Save Triangulation", this, SLOT(save_triangulation()), CTRL+Key_T);
+    file->insertSeparator();
+    file->insertItem( "&Close", this, SLOT(close()), CTRL+Key_X );
+    file->insertItem( "&Quit", qApp, SLOT( closeAllWindows() ), CTRL+Key_Q );
 
 
-  // drawing menu
-  QPopupMenu * draw = new QPopupMenu( this );
-  menuBar()->insertItem( "&Draw", draw );
-  draw->insertItem("&Generate_triangulation", this, SLOT(gen_tr()), CTRL+Key_G );
+    // drawidgetg menu
+    QPopupMenu * draw = new QPopupMenu( this );
+    menuBar()->insertItem( "&Draw", draw );
+    draw->insertItem("&Generate_triangulation", this, SLOT(gen_tr()), CTRL+Key_G );
 
-  // help menu
-  QPopupMenu * help = new QPopupMenu( this );
-  menuBar()->insertItem( "&Help", help );
-  help->insertItem("&About", this, SLOT(about()), CTRL+Key_A );
-  help->insertItem("About &Qt", this, SLOT(aboutQt()) );
+    // help menu
+    QPopupMenu * help = new QPopupMenu( this );
+    menuBar()->insertItem( "&Help", help );
+    help->insertItem("&About", this, SLOT(about()), CTRL+Key_A );
+    help->insertItem("About &Qt", this, SLOT(aboutQt()) );
 
-  //the new tools toolbar
-  setUsesBigPixmaps(TRUE);
-  newtoolbar = new CGAL::Tools_toolbar(&win, this, &tr1);	
-  //the new scenes toolbar
-  vtoolbar = new CGAL::Layers_toolbar(&win, this, &tr1);
-  //the standard toolbar
-  stoolbar = new CGAL::Standard_toolbar (&win, this);
-  this->addToolBar(stoolbar->toolbar(), Top, FALSE);
-  this->addToolBar(newtoolbar->toolbar(), Top, FALSE);
-  this->addToolBar(vtoolbar->toolbar(), Top, FALSE);
+    //the new tools toolbar
+    setUsesBigPixmaps(TRUE);
+    newtoolbar = new CGAL::Tools_toolbar(widget, this, &tr1);	
+    //the new scenes toolbar
+    vtoolbar = new CGAL::Layers_toolbar(widget, this, &tr1);
+    //the standard toolbar
+    stoolbar = new CGAL::Standard_toolbar (widget, this);
+    this->addToolBar(stoolbar->toolbar(), Top, FALSE);
+    this->addToolBar(newtoolbar->toolbar(), Top, FALSE);
+    this->addToolBar(vtoolbar->toolbar(), Top, FALSE);
   
-  win << CGAL::LineWidth(2) << CGAL::BackgroundColor (CGAL::BLACK);
+    *widget << CGAL::LineWidth(2) << CGAL::BackgroundColor (CGAL::BLACK);
 
-  resize(w,h);
-  win.show();
+    resize(w,h);
+    widget->show();
 
-  win.setMouseTracking(TRUE);
+    widget->setMouseTracking(TRUE);
 	
-  //connect the widget to the main function that receives the objects
-  connect(&win, SIGNAL(new_cgal_object(CGAL::Object)), 
-    this, SLOT(get_new_object(CGAL::Object)));
+    //connect the widget to the main function that receives the objects
+    connect(widget, SIGNAL(new_cgal_object(CGAL::Object)), 
+      this, SLOT(get_new_object(CGAL::Object)));
 
-  //application flag stuff
-  got_point = FALSE;
-  old_state = 0;
+    //application flag stuff
+    got_point = FALSE;
+    old_state = 0;
   };
 
   ~MyWindow()
   {
+    delete newtoolbar;
+    delete vtoolbar;
+    delete stoolbar;
   };
 
   void show_conflicts(Point p)
@@ -154,15 +159,15 @@ public:
     std::back_inserter(hole_bd));
     std::list<Face_handle>::iterator fit = conflict_faces.begin();
     std::list<Edge>::iterator eit = hole_bd.begin();
-    win << CGAL::WHITE ;
+    *widget << CGAL::WHITE ;
     for( ; fit != conflict_faces.end(); fit++)  {
       if(! tr1.is_infinite( *fit))
-	win << tr1.triangle( *fit );
+	*widget << tr1.triangle( *fit );
     }
-    win << CGAL::YELLOW;
+    *widget << CGAL::YELLOW;
     for( ; eit != hole_bd.end(); eit++)  {
       if(! tr1.is_infinite( *eit ))
-	win << tr1.segment( *eit );
+	*widget << tr1.segment( *eit );
     }
 		
   }
@@ -174,16 +179,16 @@ signals:
 public slots:
   void set_window(double xmin, double xmax, double ymin, double ymax)
   {
-    win.set_window(xmin, xmax, ymin, ymax);
+    widget->set_window(xmin, xmax, ymin, ymax);
   }
   void new_instance()
   {
-    win.detach_current_tool();
-    win.lock();
-    win.clear();
+    widget->detach_current_tool();
+    widget->lock();
+    widget->clear();
     tr1.clear();
-    win.set_window(-1.1, 1.1, -1.1, 1.1); // set the Visible Area to the Interval
-    win.unlock();
+    widget->set_window(-1.1, 1.1, -1.1, 1.1); // set the Visible Area to the Interval
+    widget->unlock();
     something_changed();
   }
 	
@@ -197,23 +202,23 @@ private slots:
     if (CGAL::assign(l,obj))
     {
       if (tr1.dimension()<1) return;
-      win.redraw();
-      win.lock();
+      widget->redraw();
+      widget->lock();
       Line_face_circulator lfc = 
 	tr1.line_walk(l.point(1), l.point(2)), done(lfc);
       if(lfc == (CGAL_NULL_TYPE) NULL){
       } else {
-	win << CGAL::BLUE;
-	win << CGAL::FillColor(CGAL::WHITE);
+	*widget << CGAL::BLUE;
+	*widget << CGAL::FillColor(CGAL::WHITE);
 	do{
 	  if(! tr1.is_infinite( lfc  )){
-	    win << tr1.triangle( lfc );
+	    *widget << tr1.triangle( lfc );
 	  }
 	}while(++lfc != done);
       }
-      win << CGAL::GREEN << l ;
-      win << CGAL::noFill;
-      win.unlock();
+      *widget << CGAL::GREEN << l ;
+      *widget << CGAL::noFill;
+      widget->unlock();
     } else if(CGAL::assign(p,obj)) {
       got_point = TRUE;
       show_conflicts(p);
@@ -226,7 +231,7 @@ private slots:
     if(got_point)
     {
       got_point = FALSE;
-      win.redraw();
+      widget->redraw();
       something_changed();
     }
   }
@@ -254,7 +259,7 @@ private slots:
   void timerDone()
   {
     if(old_state!=current_state){
-      win.redraw();
+      widget->redraw();
       old_state = current_state;
     }
   }	
@@ -262,16 +267,16 @@ private slots:
   void gen_tr()
   {
     tr1.clear();
-    win.lock();
-    win.set_window(-1.1, 1.1, -1.1, 1.1); // set the Visible Area to the Interval
+    widget->lock();
+    widget->set_window(-1.1, 1.1, -1.1, 1.1); // set the Visible Area to the Interval
 
     // send resizeEvent only on show.
-    win.unlock();
+    widget->unlock();
     CGAL::Random_points_in_disc_2<Point> g(0.5);
     for(int count=0; count<200; count++) {
       tr1.insert(*g++);
     }
-    win.redraw();
+    widget->redraw();
     something_changed();
   }
 	
@@ -306,7 +311,7 @@ private slots:
 
 private:
   
-  CGAL::Qt_widget	  win;		
+  CGAL::Qt_widget	  *widget;		
   CGAL::Tools_toolbar	  *newtoolbar;
   CGAL::Layers_toolbar	  *vtoolbar;
   CGAL::Standard_toolbar  *stoolbar;
@@ -327,13 +332,13 @@ main(int argc, char **argv)
     app.setStyle( new QPlatinumStyle );
     QPalette p( QColor( 250, 215, 100 ) );
     app.setPalette( p, TRUE );
-  MyWindow win(800,800); // physical window size
-  app.setMainWidget(&win);
-  win.setCaption(my_title_string);
-  win.setMouseTracking(TRUE);
-  win.show();
+  MyWindow widget(800,800); // physical widgetdow size
+  app.setMainWidget(&widget);
+  widget.setCaption(my_title_string);
+  widget.setMouseTracking(TRUE);
+  widget.show();
   // because Qt send resizeEvent only on show.
-  win.set_window(-1, 1, -1, 1);
+  widget.set_window(-1, 1, -1, 1);
   current_state = -1;
   return app.exec();
 }
