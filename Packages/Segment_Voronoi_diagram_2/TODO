@@ -1,28 +1,11 @@
-- The type Segment_2 should not be required in the segment Voronoi
-  diagram and hierarchy classes
 - in the doc change the name of the template parameter for the
   point container from SC to PC.
-- in the hierarchy use the Intersections_tag tag to decide whether or
-  not to add segments in the upper levels; this should be changed and
-  controlled by a separate tag; however, the intersection_flag flag
-  must be removed.
-- add boolean in the hierarchy class that indicates whether to insert segments
+- add tag in the hierarchy class that indicates whether to insert segments
   in the upper levels of the hierarchy or not
 - change the doc so that the requirement for the face base is the
   Triangulation_face_base_2 class
-- replace the vertex base class of both the Apollonius_graph_2 and
-  the Segment_Voronoi_diagram_2 packages by a common base class and
-  derive from that; the base class should accomodate different sites, other
-  than points, and also have the capability of having a different type
-  for storage and the actual site. Then derive from that.
 - add the methods insert_polyline and insert_polygon that do some
   optimized insertion for polylines and polygons; add these in both
   the one-level and hierarchy classes
 - add the check for a segment intersecting an existing point and
   a point intersecting an existing segment.
-
-**************** OLD COMMENTS (with self-answers) ************************
-- in the traits class add Object_2 and Assign_2 as in the case of the
-  Apollonius graph
-- check whether it makes sense to use the fact that FG is a perfect square in
-  the computations of the PSS Voronoi vertex
