@@ -37,7 +37,7 @@ Fig.~\ref{fig:isotropic}).
   \centering
   \epsfig{file=figs/isotropic.eps, width=\linewidth}
   \caption{Isotropic remeshing.}
-  \label{fig:isotropic}
+  \label{fig:isotropic}\vspace{-3mm}
 \end{figure}
 
 
@@ -79,8 +79,8 @@ transparent manner for the programmer.
 
 % anisotropic remeshing, what for ?
 
-Beside quality of the mesh elements, remeshing techniques are also
-concerned by approximation efficiency. When accurate representation is
+Beside quality of the mesh elements, remeshing is also
+concerned about approximation efficiency. When accurate representation is
 needed, a strategic sizing, alignment and aspect ratio of the mesh
 elements is crucial. This is a consequence of the natural anisotropic
 nature of generic surfaces.
@@ -103,12 +103,12 @@ quad-dominant meshes as illustrated by Fig.\ref{fig:trimming}.
   \centering
   \epsfig{file=figs/anisotropic.eps, width=\linewidth}
   \caption{Lines of curvatures and umbilics.}
-  \label{fig:anisotropic}
+  \label{fig:anisotropic}\vspace{-3mm}
 \end{figure}
 
 % CGAL components
 
-As for the isotropic remeshing technique described above, the
+As for the isotropic remeshing described above, the
 \cgalpoly\ has been used to represent the input mesh. Its primitives
 have been enriched so as to store two $u,v$ parameter coordinates per
 halfedge, and both 3D and 2D curvature tensors per vertex, or per
@@ -135,18 +135,4 @@ insertion. The edge-straightening stage is applied by repeatedly
 eliminating vertices from the triangulation while adding new
 constrained edges until only intersection and isotropic vertices
 remain (see Fig~.\ref{fig:trimming}).
-
-% figure trimming
-\begin{figure}
-  \centering
-  \epsfig{file=figs/trimming.eps, width=\linewidth}
-  \caption{Remeshing phase: a dome-like shape is sampled with lines of
-  curvatures. All the curvature line segments (red/blue) and the
-  feature edges (green) are added as constraints in a CDT in parameter
-  space. The CDT creates a dense triangulation; a vertex
-  decimation (A,B) then suppresses most small edges, and leaves only
-  few vertices, defining a quad-dominant polygonal mesh.}
-  \label{fig:trimming}
-\end{figure}
-
 

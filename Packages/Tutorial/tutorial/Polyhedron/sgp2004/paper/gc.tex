@@ -5,25 +5,11 @@ processing a mesh, but that can be helpful in the mesh processing
 context, for example, a fast self intersection test, the smallest
 enclosing sphere, or the minimum width of a point set. We use a few
 large meshes (see Fig.~\ref{fig:models}) to evaluate performance on a
-laptop with an Intel Pentium4 Mobile CPU running at 1.80GHz with 512KB
+laptop with an Intel Mobile Pentium4 running at 1.80GHz with 512KB
 cache and 254MB main memory under Linux. For our largest mesh, the
 Raptor, the algorithms started swapping. Nevertheless, the runtimes
 are acceptable. For the final paper, we can in addition run the
 experiments on a larger machine.
-
-% models used for benchmarking
-\begin{figure}
-  \centering
-  \epsfig{file=figs/models.eps, width=\linewidth}
-  \caption{Models used for benchmarking. 
-           Complexity (in triangles):
-           Bunny: 69,451,
-           Lion vase: 400k,
-           David (simplified version): 700k,
-           Raptor: 2M.}
-  \label{fig:models}
-\end{figure}
-
 
 The self intersection test is based on the general algorithm for fast
 box intersections~\cite{cgal:ze-fsbi-02}, applied to the bounding
@@ -42,8 +28,10 @@ before they, for example, go into production.
 \noindent\hspace*{-3mm}%
 {\small
 \begin{tabular}{l|ccccc}
+  \multicolumn{1}{l}{{\footnotesize time in}}
   & \multicolumn{2}{c}{\textbf{min. sphere}}
   & \textbf{convex} & \textbf{min.} & \textbf{self inter-}\\
+  \multicolumn{1}{l}{{\footnotesize seconds}}
   & \CodeFmt{double} & \CodeFmt{gmpq}
   & \textbf{hull} & \textbf{width}  & \textbf{section}\\\hline
   Bunny     &  0.02 & \hspace*{1ex}14 & 
@@ -53,6 +41,20 @@ before they, for example, go into production.
   Raptor    & 0.35 & 589 & 45.5 & 123 & 92.3
 \end{tabular}
 }
+
+% figure trimming
+\begin{figure}
+  \centering
+  \epsfig{file=figs/trimming.eps, width=\linewidth}
+  \caption{Remeshing phase: a dome-like shape is sampled with lines of
+  curvatures. All the curvature line segments (red/blue) and the
+  feature edges (green) are added as constraints in a CDT in parameter
+  space. The CDT creates a dense triangulation; a vertex
+  decimation (A,B) then suppresses most small edges, and leaves only
+  few vertices, defining a quad-dominant polygonal mesh.}
+  \label{fig:trimming}\vspace{-3mm}
+\end{figure}
+
 
 Smallest enclosing spheres, min.~sphere for short, are commonly used
 as bounding volumes in bounding volume hierarchies, for example, to
@@ -73,6 +75,20 @@ the running time anomaly in above table---the smaller lion vase needs
 longer than the larger David sculpture---which is o.k. for this data
 sensitive algorithm. It is worst-case linear time, but depends on a
 heuristic to be really fast.
+
+
+% models used for benchmarking
+\begin{figure}
+  \centering
+  \epsfig{file=figs/models.eps, width=\linewidth}
+  \caption{Models used for benchmarking. 
+           Complexity (in triangles):
+           Bunny: 69,451,
+           Lion vase: 400k,
+           David (simplified version): 700k,
+           Raptor: 2M.}
+  \label{fig:models}\vspace{-3mm}
+\end{figure}
 
 
 % \begin{tabular}{l|ll}

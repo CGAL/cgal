@@ -56,7 +56,7 @@ to~\cite{k-ugpdd-99}.
     primal triangle quadrisection (PTQ),
     dual quadrilateral quadrisection (DQQ) and
     $\sqrt{3}$ triangulation.}
-  \label{fig:RefSchemes}
+  \label{fig:RefSchemes}\vspace*{-4mm}
 \end{figure}
 
 
@@ -93,7 +93,7 @@ void render( const Polyhedron& P) {
   }
 }
 \end{lstlisting}%
-\vspace*{-4mm}
+\vspace*{-3.5mm}
 
 \noindent
 The sequential access is conventional, but the connectivity
@@ -102,9 +102,9 @@ combinatorial integrity of the underlying halfedge data structure.
 Instead of updating individual handles in the items, it offers an
 interface with Euler operations, so called because they preserve the
 Euler-Poincar\'e invariance of a mesh. Examples of Euler operations
-are the well-known edge collapse, split facet, join facets, etc.
-In~\cite{Maentylae88} it was shown that a proper set of Euler
-operators does not restrict the class of meshes one can create.
+are the well-known edge collapse, split facet, and more.
+\cite{Maentylae88} shows that all meshes can be created from a
+suitable set of Euler operations.
 
 Nevertheless, Euler operations can be cumbersome for certain tasks,
 especially if a mesh operation needs to work with intermediate invalid

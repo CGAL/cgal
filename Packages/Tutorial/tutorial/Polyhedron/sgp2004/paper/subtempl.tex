@@ -9,13 +9,11 @@ generic subdivision solution as a \emph{refinement function\/}
 parameterized with the \emph{stencils}. The host, i.e., the refinement
 function, conducts the \tr\ and applies the stencils provided by the
 policies for the \gm s. We provide different hosts and different
-policies that can be combined to form subdivision schemes.
-
-We demonstrate the principle with the Catmull-Clark 
-subdivision and the Doo-Sabin subdivision. 
-A Catmull-Clark subdivision function is structured 
-as a primal quadralization function parameterized 
-with the policies of the Catmull-Clark stencils.
+policies that can be combined to form subdivision schemes.  We
+demonstrate the principle with the Catmull-Clark and the Doo-Sabin
+subdivision. A Catmull-Clark subdivision is structured as a
+primal quadralization function parameterized with a corresponding
+stencil policy.
 \begin{lstlisting}
 void CatmullClark_subdivision(Polyhedron& p) {
   quadralize_polyhedron<CatmullClark_rule<Polyhedron>>(p);
@@ -26,7 +24,9 @@ public:
   void edge_rule(Halfedge_handle   edge, Point& pt);
   void vertex_rule(Vertex_handle vertex, Point& pt);
 };
-\end{lstlisting}
+\end{lstlisting}\vspace*{-3mm}
+
+\noindent
 The \CodeFmt{quadralize\_polyhedron<>()} is the host function
 refining the input mesh
 and the \CodeFmt{CatmullClark\_rule} is the policy class applying the
@@ -49,23 +49,27 @@ the mesh traversal of a 1-ring neighborhood. We can use circulators
 again, as in the following example for the policy of the facet-stencil 
 in the Catmull-Clark subdivision.
 \begin{lstlisting}
-void CatmullClark_rule::facet_rule(Facet_handle facet, Point& pt) {
+void facet_rule(Facet_handle facet, Point& point) {
   Halfedge_around_facet_circulator hcir = facet->facet_begin();
   Vector vec = hcir->vertex()->point() - ORIGIN;
   ++hcir;
   do {
     vec = vec + hcir->vertex()->point();
   } while (++hcir != facet->facet_begin());
-  pt = ORIGIN + vec/circulator_size(hcir);
+  point = ORIGIN + vec/circulator_size(hcir);
 }
-\end{lstlisting}
-The \CodeFmt{Facet\_handle facet} points to the 
-center facet of the stencil and the \CodeFmt{Point\& pt} 
-specifies the smoothing point. We compute the centroid with a
-circulator loop over the halfedges surrounding a facet. The \cgal\
-geometric kernel is used with point and vector arithmetic.
-However, for a specialized kernel, special computations may be 
+\end{lstlisting}\vspace*{-3mm}
+
+\noindent
+The \CodeFmt{facet} points to the center facet of the stencil and the
+\CodeFmt{point} specifies the smoothing point. We compute the centroid
+with a circulator loop over the halfedges surrounding a facet. The
+\cgal\ geometric kernel is used here, but special computations may be
 done in user-defined policies.
+
+%with point and vector arithmetic.
+%However, for a specialized kernel, special computations may be 
+%done in user-defined policies.
  
 \noindent\textbf{The refinement host based on Euler operations}.
 Implementing the topology refinement is a complex task. One
@@ -82,7 +86,7 @@ by \cgalpoly.
   \caption{A PQQ refinement of a facet is encoded into a sequence of
   vertex insertions and edge insertions. Red indicates the inserted
   vertices and edges in each step.}
-  \label{fig:CCRefinement}
+  \label{fig:CCRefinement}\vspace*{-2mm}
 \end{figure}
 
 The correspondence between stencil and control mesh is assured in the
@@ -96,26 +100,25 @@ insertions is consistent to match the stencil traversal, i.e.\ the
 storage order of the point buffer.
 % It assures the stencil correspondence of the refinement.
 
-\noindent\textbf{The refinement host based on the modifier callback mechanism}.
-Most primal refinement schemes can be translated into a sequence of
-Euler operations. Though dual schemes, e.g.\ Doo-Sabin subdivision,
-have no simple translation of Euler operations. A sequence of Euler
-operations for a DQQ scheme consist of two times of the midedge
-refinement \cite{Peters:1997:SSS} and result an inefficient
-implementation. This multipass refinement scheme, called subdivision
-operator factorization, is introduced in \cite{Peter:2003:CPDSS}.  To
-support such schemes efficiently, we use the modifier callback
-mechanism and the incremental builder of \cgalpoly\ to rebuild the
-mesh connectivity. In addition to the point buffer, we also create a
-facet list based on the source mesh. Note that in a DQQ scheme, every
-new facet corresponds to a vertex, edge or facet. The combination of
-the points buffer and facet list represent a facet-vertex index list
-which indexes the vertices and enumerates each facet as an index
-sequence. A modifier creating a polyhedron from a facet-vertex index
-list is then a simple task, here the sketch using the incremental
-builder \CodeFmt{pb}.
+\noindent\textbf{Refinement host based on the modifier callback mechanism}.
+Most primal refinement schemes are easy to express in Euler
+operations. But dual schemes, e.g.\ Doo-Sabin subdivision, are
+different. A sequence of Euler operations for a DQQ scheme consists of
+twice the midedge refinement \cite{Peters:1997:SSS} and results
+an inefficient implementation. This multipass refinement scheme,
+called subdivision operator factorization, is introduced in
+\cite{Peter:2003:CPDSS}.  To support such schemes efficiently, we use
+the modifier callback mechanism and the incremental builder of
+\cgalpoly\ to rebuild the mesh connectivity. In addition to the point
+buffer, we also create a facet list based on the source mesh. Note
+that in a DQQ scheme, every new facet corresponds to a vertex, edge or
+facet. The combination of the points buffer and facet list represent a
+facet-vertex index list which indexes the vertices and enumerates each
+facet as an index sequence. A modifier creating a polyhedron from such
+a representation is straigthforward, here a sketch using the
+incremental builder \CodeFmt{pb}.
 \begin{lstlisting}
-pb.begin_surface(num_point, num_facet); {
+  pb.begin_surface(num_point, num_facet);
   for (int i = 0; i < num_point; ++i) 
     pb.add_vertex(Point(point_buffer[i*3+0], 
                         point_buffer[i*3+1], 
@@ -126,9 +129,8 @@ pb.begin_surface(num_point, num_facet); {
       pb.add_vertex_to_facet(facet_buffer[i][n+1]);
     pb.end_facet();
   }
-}
-pb.end_surface();
-\end{lstlisting}
+  pb.end_surface();
+\end{lstlisting}\vspace*{-3mm}
 
 \begin{figure}
   \centering
@@ -143,7 +145,7 @@ pb.end_surface();
   Doo-Sabin subdivision surfaces ({\itshape third row}) 
   of an aircraft polyhedron ({\itshape first row}).
   }
-  \label{fig:SubExample}
+  \label{fig:SubExample}\vspace*{-2mm}
 \end{figure}
 
 \noindent\textbf{The subdivision library.}
