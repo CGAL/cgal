@@ -80,17 +80,6 @@ public:
 					i(lfc.i),  p(lfc.p), q(lfc.q)
     {}
             
-  Triangulation_line_face_circulator_2(const Face_handle& face,
-				       int index,
-				       State state,
-				       const Triangulation_2<Gt,Tds> * t,
-				       const Point& pp,
-				       const Point& qq)
-    : Face_handle(face), _tr(t), s(state), i(index),  
-      p(pp), q(qq)            {
-    CGAL_triangulation_precondition(! t->xy_equal(p, q));
-  }
-   
   Triangulation_line_face_circulator_2(Vertex_handle v,
 				       const Triangulation_2<Gt,Tds>* tr,
 				       const Point& dir);
@@ -121,10 +110,30 @@ public:
   bool locate(const Point& t, Locate_type &lt,  int &li);
 
 private:
+  Triangulation_line_face_circulator_2(const Face_handle& face,
+				       int index,
+				       State state,
+				       const Triangulation_2<Gt,Tds> * t,
+				       const Point& pp,
+				       const Point& qq);
   void increment();
   void decrement();
 };
 
+
+template < class Gt, class Tds >
+Triangulation_line_face_circulator_2<Gt,Tds>::
+Triangulation_line_face_circulator_2(const Face_handle& face,
+				     int index,
+				     State state,
+				     const Triangulation_2<Gt,Tds> * t,
+				     const Point& pp,
+				     const Point& qq)
+    : Face_handle(face), _tr(t), s(state), i(index),  
+      p(pp), q(qq)            
+{
+  CGAL_triangulation_precondition(! t->xy_equal(p, q));
+}
 
 template < class Gt, class Tds >
 Triangulation_line_face_circulator_2<Gt,Tds>&
@@ -152,87 +161,72 @@ Triangulation_line_face_circulator_2(Vertex_handle v,
 				  (! _tr->is_infinite(v)) &&
 				  (_tr->dimension() == 2) &&
 				  (! _tr->xy_equal(v->point(),dir)));
-
   p=v->point();
   q=dir;
+
+  // find a finite vertex to the left of pq
+  // if there is no, the line_face_circulator is null
   Face_circulator fc = v->incident_faces();
-  Face_circulator done = fc;
+  Face_circulator done(fc);
   int ic = fc->index(v);
-  Vertex_handle  vt= fc->vertex(ccw(ic));
-  Orientation ptq = RIGHTTURN; 
-  //this	initialisation means nothing;
-  // just there to avoid a warning
-  if (! _tr->is_infinite(vt)) 
-    ptq = _tr->orientation(p, vt->point(), q);
-
-		
-  while( _tr->is_infinite(vt) || ptq == RIGHTTURN) {
-    ++fc;
-    if (fc == done) {
-      // no edge on the left of pq , pq is a supporting line
-      // set Face_handle to the right infinite face
-      while ( ! _tr->is_infinite(fc)) 
-	{  ++fc;}
-      ic = fc->index(_tr->infinite_vertex());
-      if( _tr->orientation(fc->vertex( cw(ic))->point(),
-			   fc->vertex( ccw(ic))->point(),
-			   q) != RIGHTTURN) {  ++fc;}
-      Face_handle::operator=(&(*fc));
-      i = fc->index(_tr->infinite_vertex());
-      s = vertex_vertex;
-      return;
-    }
-
-    ic = fc->index(v);
-    vt= fc->vertex(ccw(ic));
-    if (! _tr->is_infinite(vt)) 
-      ptq = _tr->orientation(p,  vt->point(), q);
-  }
-		
-	
-  // now vt is a finite vertex and ptq is COLLINEAR or LEFTTURN
-  Vertex_handle vr = fc-> vertex(cw(ic));
-  Orientation prq= RIGHTTURN; 
-  //this	initialisation means nothing;
-  // just there to avoid a warning
-  if (! _tr->is_infinite(vr))
-    prq = _tr->orientation(p, vr->point(), q);
-
-  while ( (!_tr->is_infinite(vr)) && (!(prq == RIGHTTURN ))){
+  Vertex_handle  vt= fc->vertex(cw(ic));
+   while( _tr->is_infinite(vt) || 
+	  _tr->orientation(p, q, vt->point()) != LEFTTURN) {
     ++fc;
     ic = fc->index(v);
-    vr = fc-> vertex(cw(ic));
-    if (! _tr->is_infinite(vr))
-      prq = _tr->orientation(p, vr->point(), q);
+    vt= fc->vertex(cw(ic));
+    if (fc == done) { *this = Line_face_circulator(); return;}
   }
-	
-  Face_handle::operator=(&(*fc));
-  // reset vt, vt is finite and ptq is still COLLINEAR or LEFTTURN
+  
+  // now vt is finite and to the left of pq
+  Vertex_handle vr = fc-> vertex(ccw(ic));
+  Orientation pqr;
+  while ( (!_tr->is_infinite(vr)) &&
+	  (pqr = _tr->orientation(p, q, vr->point()))== LEFTTURN ) {
+    --fc;
+    ic = fc->index(v);
+    vr = fc-> vertex(ccw(ic));
+  }
+
+  // vr can be infinite or finite. If finite [pqr] is COLLINEAR or RIGHTTURN
+  //reset vt and conclude.  vt is still finite and [pqt] still LEFTTURN
   ic = fc->index(v);
-  vt= fc->vertex(ccw(ic));
-  ptq = _tr->orientation(p,  vt->point(), q);
-
-  if (_tr->is_infinite(vr)) {		  
-    s = vertex_vertex;
-    if (ptq == LEFTTURN) {
-      i = fc->index(vr); 
-    }
-    else {// ptq == COLLINEAR
-      i= fc->index(vt);
-    }
-  }
-  else{ // vr is a finite vertex}
-    if (ptq == LEFTTURN) {
-      s = vertex_edge;
-      i = ic;
-    }
-    else { // ptq == COLLINEAR
+  vt= fc->vertex(cw(ic));
+  CGAL_triangulation_assertion (_tr->orientation(p,q, vt->point())==
+				LEFTTURN );
+  if (_tr->is_infinite(vr)) {
+    --fc;
+    ic = fc->index(v);
+    vr = fc->vertex(ccw(ic));
+    pqr = _tr->orientation(p, q, vr->point());
+    switch(pqr){
+    case RIGHTTURN:
+    case COLLINEAR:
+      ++fc;
+      ic = fc->index(_tr->infinite_vertex());
+      Face_handle::operator=(&(*fc));
       s = vertex_vertex;
-      i = fc->index(vt);
-    }
+      i = ic;
+      break;
+    case LEFTTURN:
+     *this = Line_face_circulator(); 
+     break;
   }
-	
+  }
+  else if (pqr == COLLINEAR) {
+    Face_handle::operator=(&(*fc));
+    s = vertex_vertex;
+    i = ccw(ic);
+   }
+  else { // pqr==RIGHTTURN 
+    Face_handle::operator=(&(*fc));
+    s = vertex_edge;
+    i = ic ;
+  }
+  return;
 }
+  
+
 
 
 template < class Gt, class Tds >
@@ -249,7 +243,7 @@ Triangulation_line_face_circulator_2(const Point& pp,
   i = fc->index(inf);
             
   Point l = fc->vertex(cw(i))->point(),
-    r = fc->vertex(ccw(i))->point();
+        r = fc->vertex(ccw(i))->point();
             
   Orientation pql = _tr->orientation(p, q, l),
     pqr = _tr->orientation(p, q, r);
@@ -263,48 +257,42 @@ Triangulation_line_face_circulator_2(const Point& pp,
       *this = ++Line_face_circulator( fc, ccw(i), vertex_vertex, t, p, q);
       return;
     } 
-    else if( (pql == COLLINEAR) && (pqr == COLLINEAR) ){
-      Face_handle n = fc->neighbor(i);
-      int ni  = n->index( fc->handle() );
-      Vertex_handle vn = n->vertex(ni);
-      if(_tr->orientation(p, q, vn->point()) == LEFTTURN){
-	// the entire triangulation is to the left of line (p,q).
-	// There might be further collinear edges, so we might have
-	// to walk back on the hull.
-	while(1){
-	  ++fc;
-	  i = fc->index(inf);
-	  l = fc->vertex(cw(i))->point();
-	  if(_tr->orientation(p, q, l) == COLLINEAR) continue;
-	  else {
-	    // we went one step to far back
-	    --fc;
-	    i = fc->index(inf);
-	    Face_handle::operator=(&(*fc->neighbor(i)));
-	    i = cw((*this)->index(fc));
-	    s = vertex_vertex;
-	    return;
-	  }
-	}
+    else if( (pql == COLLINEAR) && (pqr == COLLINEAR) ) {
+      // walkback on the convexhull to find the first edge 
+      // non collinear with pq
+      // decide if circulator is null or not and return
+      while ( pql == COLLINEAR) {
+	++fc;
+	i = fc->index(inf);
+	l = fc->vertex(cw(i))->point();	
+	pql = t->orientation(p, q, l);
       }
-      else {
-	// the entire triangulation is to the right of line (p,q).
-	// here are no faces to traverse, so we give the circulator
-	// a singular value
+      if (pql == RIGHTTURN) {
+	*this=Line_face_circulator(); 
 	return;
       }
-    } 
-    else {
+      //one step too far
       --fc;
-      l = r;
-      pql = pqr;
       i = fc->index(inf);
-      r = fc->vertex(ccw(i))->point();
-      pqr = _tr->orientation(p, q, r);
+      Face_handle fn = fc->neighbor(i);
+      int in = fn->index(fc);
+      *this = Line_face_circulator(fc, cw(in), vertex_vertex, t, p, q);
+      return;
     }
+
+    // going CCW around convex hull is CW around infinite vertex
+    --fc; 
+    l = r;
+    pql = pqr;
+    i = fc->index(inf);
+    r = fc->vertex(ccw(i))->point();
+    pqr = _tr->orientation(p, q, r);
   }while(fc != done);
-  // if line (p,q) does not intersect the convex hull in an edge
-  // the circulator has a singular value
+
+   // if line (p,q) does not intersect the convex hull in an edge
+   // the circulator has a singular value
+   *this=Line_face_circulator();
+   return;
 }
 
 
@@ -334,19 +322,15 @@ Triangulation_line_face_circulator_2(const Point& pp,
   }
             
   // Test whether p lies on an edge
-  for(j = 0; j < 3; j++){
+  for(j = 0; j < 3; j++) {
     if(_tr->orientation((*this)->vertex(j)->point(),
-				      (*this)->vertex(ccw(j))->point(),
-				      p) == COLLINEAR){
+			(*this)->vertex(ccw(j))->point(),
+			p) == COLLINEAR){
       Orientation jpq =
-	_tr->orientation((*this)->vertex(j)->point(),
-				       p,
-				       q);
+	_tr->orientation((*this)->vertex(j)->point(), p, q);
       Orientation p_cwj_q =
-	_tr->orientation(p,
-				       (*this)->vertex(cw(j))->point(),
-				       q);
-      switch(jpq){
+	_tr->orientation(p, (*this)->vertex(cw(j))->point(), q);
+      switch(jpq) {
       case COLLINEAR:
 	if(p_cwj_q == RIGHTTURN){
 	  s = vertex_vertex;
@@ -361,6 +345,7 @@ Triangulation_line_face_circulator_2(const Point& pp,
 	  return;
 	} else {
            // singular value
+	  *this = Line_face_circulator();
 	  return;
 	}
       case RIGHTTURN:
@@ -394,7 +379,7 @@ Triangulation_line_face_circulator_2(const Point& pp,
       _tr->orientation(p,q,(*this)->vertex(j)->point());
   }
   for(j=0; j<3; j++) {
-    if(orient[j] == COLLINEAR){
+    if(orient[j] == COLLINEAR) {
       i = j;
       s = (orient[ccw(j)] == LEFTTURN) ? edge_vertex : 
 	vertex_edge;
@@ -679,9 +664,16 @@ inline bool
 Triangulation_line_face_circulator_2<Gt,Tds>:: 
 collinear_outside() const
 {
-  return (_tr->is_infinite(*this))
-    && (s == vertex_vertex)
-    && (! _tr->is_infinite((*this)->vertex(i)));
+//   return (_tr->is_infinite(*this))
+//     && (s == vertex_vertex)
+//     && (! _tr->is_infinite((*this)->vertex(i)));
+  // return true if  the circulator is non null
+  // the line is collinear with a convex hull edge
+  // and the convex hull is on the left of the line
+  Face_handle fh = *this;
+  return ( s == vertex_vertex  &&
+	  (! _tr->is_infinite(fh)) &&
+           _tr->is_infinite(fh->neighbor(ccw(i))));
 }
 
 CGAL_END_NAMESPACE

@@ -33,6 +33,7 @@
 #include <CGAL/_test_fct_is_infinite.C>
 #include <CGAL/_test_triangulation_iterators.C>
 #include <CGAL/_test_triangulation_circulators.C>
+#include <CGAL/_test_line_face_circulator.C>
 
 
 
@@ -547,6 +548,7 @@ _test_cls_triangulation_2( const Triangulation & )
   
   // Line_face_circulator
   std::cout << "    line face circulator  " << std::endl;
+  _test_line_face_circulator(Cls());
   typedef typename Cls::Line_face_circulator LFC;
   // here == operator needed for Point!
   // testing with the grid triangulation
@@ -615,10 +617,6 @@ _test_cls_triangulation_2( const Triangulation & )
   s = T2_1.segment(T2_1.finite_edges_begin()); assert( &s == &s );
 
   // finite/infinite vertex
-  // T2_1.set_finite_vertex(v2_1_1);
-  // assert( T2_1.is_valid() );
-  // T2_1.set_finite_vertex(v2_1_6);
-  // assert( T2_1.is_valid() );
   // T2_1.set_infinite_vertex(T2_1.infinite_vertex());
   // assert( T2_1.is_valid() );
 

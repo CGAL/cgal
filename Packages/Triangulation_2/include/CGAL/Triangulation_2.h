@@ -1511,9 +1511,6 @@ march_locate_2D(const Face_handle& start,
 		int& li) const
 {
   //    CGAL_triangulation_precondition( ! is_infinite(start) );
-  //Triangulation_2 *ncthis = (Triangulation_2 *) this;
-  //Triangulation_2 *ncthis = const_cast<Triangulation_2 *>(this);
-      
   Point p(start->vertex(0)->point());
   if(xy_equal(t,p)) {
     lt = VERTEX;
@@ -1521,55 +1518,156 @@ march_locate_2D(const Face_handle& start,
     return start;
   }
 
-  Line_face_circulator lfc(start->vertex(0),
-			   //ncthis,
-			   this,
-			   t);
-	
-  if(lfc.collinear_outside()) {
-    // point t lies outside or on the convex hull
-    // we walk clockwise on the hull to decide
-    int i = lfc->index(infinite_vertex());
-    p = lfc->vertex(ccw(i))->point();
-    if(xy_equal(t,p)){
-      lt = VERTEX;
-      li = ccw(i);
-      return lfc;
-    }
-    Point q(lfc->vertex(cw(i))->point());
-    Orientation pqt;
-    Face_handle f(lfc);
-    while(1) {
-      if(xy_equal(t,q)){
-	lt = VERTEX;
-	li = cw(i);
-	return f;
-      }
-      pqt = orientation(p,q,t);
-      if (pqt == COLLINEAR && collinear_between(p, t, q)){
-	lt = EDGE;
-	li = i;
-	return f;
-      }
-      if (pqt == LEFTTURN){
-	lt = OUTSIDE_CONVEX_HULL;
-	li = i;
-	return f ;
-      }
-	   	       
-      // go to the next face
-      f = f->neighbor(ccw(i));
-      i = f->index(infinite_vertex());
-      p = q;
-      q = f->vertex(cw(i))->point();
-    }
-  }
+  Line_face_circulator lfc(start->vertex(0), this, t);
 
-  while(! lfc.locate(t, lt, li) ){
+  if(lfc==0 || lfc.collinear_outside()){
+    // point t lies outside or on the convex hull
+    // we walk on the convex hull to find it out
+    Face_circulator fc = infinite_vertex()->incident_faces();
+    Face_circulator done(fc);
+    int ic = fc->index(infinite_vertex());
+    if (xy_equal(t,fc->vertex(cw(ic))->point())){
+      lt = VERTEX;
+      li = cw(ic);
+      return fc;
+     }
+    Orientation ori;
+    do{ // walking ccw around convex hull
+      ic = fc->index(infinite_vertex());
+      if (xy_equal(t,fc->vertex(ccw(ic))->point())){
+	lt = VERTEX;
+	li = ccw(ic);
+	return fc;
+      }
+      ori = orientation( fc->vertex(cw(ic))->point(),
+			 fc->vertex(ccw(ic))->point(), t);
+      if (ori == RIGHTTURN) {
+	lt = OUTSIDE_CONVEX_HULL;
+	li = ic;
+	return fc;
+      }
+      if (ori == COLLINEAR &&
+	  collinear_between(fc->vertex(cw(ic))->point(),
+			    t, 
+			    fc->vertex(ccw(ic))->point()) ) {
+	lt = EDGE;
+	li = ic;
+	return fc;
+      }
+    } while (--fc != done);
+    //should not arrive there;
+    CGAL_triangulation_assertion(fc != done);
+  }
+	  
+    while(! lfc.locate(t, lt, li) ){
     ++lfc;
   }
   return lfc;
-}
+}    
+      
+//   bool collinear_convex_hull_edge= false;
+//   Face_handle collinear_fh;
+//   int collinear_ih;
+//   Line_face_circulator lfc(start->vertex(0), this, t);
+//   if (lfc == 0) {
+//     // point t lies outside or on the convex hull
+//     Face_circulator fc = start->vertex(0).begin();
+//     while(!is_infinite(fc)) fc++;
+//     int i = fc->index(infinite_vertex());
+//     Orientation ori = orientation(t,
+// 				  fc->vertex(ccw(i))->point(),
+// 				  fc->vertex(ccw(i))->point());
+//     if (ori= RIGHTTURN) {
+//       fc++;
+//       i = fc->index(infinite_vertex());
+//       ori = orientation(t,
+// 			fc->vertex(ccw(i))->point(),
+// 			fc->vertex(ccw(i))->point());
+//     }
+//     //ori is now LEFTTURN or COLLINEAR
+//     CGAL_Triangulation_assertion( ori == LEFTTURN || ori == COLLINEAR );
+//     if (ori == LEFTTURN) {
+//       lt = OUTSIDE_CONVEX_HULL;
+//       li = i;
+//       return fc;
+//     }
+//     else { 
+//       // segment [start->vertex(0)t] is collinear to a convex hull
+//       //edge
+//       collinear_convex_hull_edge = true;
+//       collinear_fh = fc;
+//       collinear_ih = i;
+//     }
+//   }
+
+//   if (lfc.collinear_outside() {
+//     collinear_convex_hull_edge = true;
+//     collinear_fh = lfc->neighbor(ccw(i));
+//     collinear_ih = collinear_fh->index(infinite_vertex());
+//   }
+	
+//   if(collinear_convex_hull_edge) {
+//     // point t lies outside or on the convex hull
+//     // we walk on the hull to decide
+//     Face_circulator fc =
+//       incident_vertex()->incident_faces(collinear_fh);
+//     Point p,q;
+//     int ic;
+//     do {
+//       ic = fc->index(infinite_vertex());
+//       r = fc->vertex(ccw(ic))->point();
+//       q = fc->vertex(cw(ic))->point();
+//       fc = fc++;
+//       ic = fc->index(infinite_vertex());
+//       p = fc->vertex(cw(ic))->point();
+//     } while(orientation(p, q, r) == COLLINEAR);
+//     if (orientation(p, q, t) == LEFTTURN){
+//       	lt = OUTSIDE_CONVEX_HULL;
+// 	li = ic;
+// 	return fc ;
+//     }
+    
+//     fc--;
+//     ic = fc->index(infinite_vertex());
+//     p = fc->vertex(cw(ic))->point();
+//     q = fc->vertex(ccw(ic))->point();
+//     if(xy_equal(t,p)){
+//       lt = VERTEX;
+//       li = cw(ic);
+//       return lfc;
+//     }
+//     Orientation pqt;
+//     while(1) {
+//       if(xy_equal(t,q)){
+// 	lt = VERTEX;
+// 	li = ccw(i);
+// 	return f;
+//       }
+//       pqt = orientation(p,q,t);
+//       if (pqt == COLLINEAR && collinear_between(p, t, q)){
+// 	lt = EDGE;
+// 	li = ic;
+// 	return fc;
+//       }
+//       if (pqt == RIGHTTURN){
+// 	lt = OUTSIDE_CONVEX_HULL;
+// 	li = ic;
+// 	return fc ;
+//       }
+	   	       
+//       // go to the next face
+//       fc--;
+//       ic = fc->index(infinite_vertex());
+//       p = q;
+//       q = fc->vertex(ccw(i))->point();
+//     }
+//   }
+
+//   while(! lfc.locate(t, lt, li) ){
+//     ++lfc;
+//   }
+//   return lfc;
+//}
 
     
 template <class Gt, class Tds >
