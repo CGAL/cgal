@@ -76,7 +76,6 @@ public:
 
   typedef typename Gt::Ray Ray;
   typedef typename Gt::Line Line;
-  typedef typename Gt::Direction Direction;
 
 
   typedef typename Alpha_shape_2<Rt>::Face_handle Face_handle;
