@@ -405,7 +405,7 @@ _test_cls_triangulation_short_2( const Triangul &)
   // here == operator needed for Point!
   // testing with the grid triangulation
   LFC fc= T2_3.line_walk(p1,p10);
-  assert(fc.ptr()!=NULL);
+  assert(fc != NULL);
   assert(!fc.is_empty());
   LFC fc2=fc;
   assert(fc==fc2);
