@@ -1,3 +1,6 @@
+1 December 2004 Sylvain Pion
+- doc [ref] : add separator for Links to the Reference Sections.
+
 16 November 2004 Sylvain Pion
 - Comment out Regular::remove() documentation, as it's not ready.
 - Comment out Christophe's acknowledgement, for the same reason.
