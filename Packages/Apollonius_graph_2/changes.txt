@@ -1,3 +1,7 @@
+6 September 2004:  Menelaos Karavelas
+- moved {insert,remove}_degree_2 from Agds_2 to Tds_2; kept Agds_2
+  for backward compatibility
+
 3 September 2004:  Menelaos Karavelas
 - added chapter author
 - added 2004 as a copyright year in files that were modified in 2004
