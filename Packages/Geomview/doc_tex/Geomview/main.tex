@@ -154,17 +154,24 @@ can be moved anywhere with the left mouse button, before a point is entered.
 
 \ccHeading{Output Operators for CGAL Basic Library Classes}
 
+\ccInclude{CGAL/IO/Polyhedron_geomview_ostream.h}
+
 \ccFunction{template <class Traits, class HDS>
 Geomview_stream&
 operator<<(Geomview_stream &G, const Polyhedron_3<Traits,HDS> &P);}
 {Inserts the polyhedron \ccc{P} into the stream \ccVar.}
+
+\ccInclude{CGAL/IO/Triangulation_geomview_ostream_2.h}
 
 \ccFunction{template <class GT, class TDS>
 Geomview_stream&
 operator<<(Geomview_stream &G, const Triangulation_2<GT,TDS> &T);}
 {Inserts the 2D triangulation \ccc{T} into the stream \ccVar.
  The actual output depends on whether the stream is in wired mode or not.
- Also note that terrains are supported directly.}
+ Also note that in the case of terrains (when GT::Point_2 is
+ Point_3<R>), then the 3D terrain is displayed.}
+
+\ccInclude{CGAL/IO/Triangulation_geomview_ostream_3.h}
 
 \ccFunction{template <class GT, class TDS>
 Geomview_stream&
