@@ -51,11 +51,11 @@ protected:
   {
     if(e->button() == Qt::RightButton && is_pure(e->state()))
     {
-      if (active) {
-        if(!poly.is_simple()) return;
-        if(poly.is_clockwise_oriented())
-          poly.reverse_orientation ();
-        assert( ! poly.is_clockwise_oriented());
+      if (this->active) {
+        if(!this->poly.is_simple()) return;
+        if(this->poly.is_clockwise_oriented())
+          this->poly.reverse_orientation ();
+        assert( ! this->poly.is_clockwise_oriented());
       }
     }
     Get_polygon::mousePressEvent(e);
@@ -64,14 +64,14 @@ protected:
 private:
   bool is_simple()
   {
-    Segment_2 rubber_segment(rubber, last_of_poly);
-    if(poly.size() > 1)
+    Segment_2 rubber_segment(this->rubber, this->last_of_poly);
+    if(this->poly.size() > 1)
     {
-      ECI before_last_it = poly.edges_end();
+      ECI before_last_it = this->poly.edges_end();
       --before_last_it;
       --before_last_it;
       ECI it;
-      for(it = poly.edges_begin(); it != before_last_it; it++)
+      for(it = this->poly.edges_begin(); it != before_last_it; it++)
       {
         if(do_intersect(*it, rubber_segment))
         return false;
