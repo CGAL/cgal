@@ -577,7 +577,7 @@ sets is empty, it is \emph{zero} if the polytopes intersect, and it is
         { return ( number_of_points_p() > 0) && ( number_of_points_q() > 0); }
     
     bool  is_zero( ) const
-        { return CGAL_NTS is_zero( squared_distance_numerator() == et_0); }
+        { return CGAL_NTS is_zero( squared_distance_numerator()); }
     
     bool  is_degenerate( ) const { return ( ! is_finite()); }
 @end
