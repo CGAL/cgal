@@ -26,12 +26,7 @@
 #define CGAL_ALPHA_SHAPE_EUCLIDEAN_TRAITS_3_H 
 
 //#include <CGAL/basic.h>
-//#include <CGAL/Cartesian.h>
-//#include <CGAL/Homogeneous.h>
-//#include <CGAL/Integer.h>
-//#include <CGAL/Rational.h>
-//#include <CGAL/Fixed.h>
-//#include <CGAL/Real.h>
+
 
 #include <CGAL/squared_distance_3.h>   // to avoid a g++ problem
 #include <CGAL/Point_3.h>
