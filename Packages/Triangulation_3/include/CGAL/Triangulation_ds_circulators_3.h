@@ -31,7 +31,8 @@ CGAL_BEGIN_NAMESPACE
 
 template < class Tds_ >
 class Triangulation_ds_cell_circulator_3
- : public Bidirectional_circulator_base<typename Tds_::Cell, ptrdiff_t, size_t>
+ : public Bidirectional_circulator_base<typename Tds_::Cell,
+                                        std::ptrdiff_t, std::size_t>
 {
   // circulates on cells around a given edge
 
@@ -151,7 +152,7 @@ private:
 template < class Tds_ >
 class Triangulation_ds_facet_circulator_3
   : public Bidirectional_circulator_base<typename Tds_::Facet,
-                                         ptrdiff_t, size_t>
+                                         std::ptrdiff_t, std::size_t>
 {
   // circulates on facets around a given edge
 
@@ -330,7 +331,8 @@ private:
 
 template < class Tds_ >
 class Triangulation_ds_face_circulator_3
- : public Bidirectional_circulator_base<typename Tds_::Cell, ptrdiff_t, size_t>
+ : public Bidirectional_circulator_base<typename Tds_::Cell,
+                                        std::ptrdiff_t, std::size_t>
 {
   // circulates on faces (Cell) around a given vertex,
   // valid in dimension 2 only.
