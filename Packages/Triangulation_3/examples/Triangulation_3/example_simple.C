@@ -1,3 +1,4 @@
+// Triangulation_3/example_simple.C
 #include <CGAL/Cartesian.h>
 
 #include <CGAL/Triangulation_3.h>
@@ -16,7 +17,7 @@
 // for more complicated examples with degenerate configurations,
 // using Filtered_exact number type is advised :
 // 
-// #include <CGAL/Arithmetic_filter.h>
+// #include <CGAL/Filtered_exact.h>
 // #include <CGAL/MP_Float.h>
 // 
 // typedef CGAL::Filtered_exact<double, CGAL::MP_Float> NT;

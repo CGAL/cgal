@@ -42,15 +42,17 @@ int main()
 #include <unistd.h>
 #include <list>
 
-typedef CGAL::Cartesian<double> Gt;
+typedef double NT;
 // for this simple example, using doubles is ok
 // for more complicated examples with degenerate configurations,
 // using Filtered_exact number type is advised :
 // 
-// #include <CGAL/Arithmetic_filter.h>
+// #include <CGAL/Filtered_Exact.h>
 // #include <CGAL/MP_Float.h>
 // 
 // typedef CGAL::Filtered_exact<double, CGAL::MP_Float> NT;
+
+typedef CGAL::Cartesian<NT> Gt;
 
 typedef CGAL::Triangulation_3<Gt> Triangulation;
 typedef CGAL::Delaunay_triangulation_3<Gt> Delaunay;

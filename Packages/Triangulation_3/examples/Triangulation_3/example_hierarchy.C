@@ -1,3 +1,4 @@
+// Triangulation_3/example_hierarchy.C
 #include <CGAL/Cartesian.h>
 
 #include <CGAL/Triangulation_data_structure_3.h>
@@ -17,7 +18,7 @@
 // for examples with data stored on a large number of bits,
 // using Filtered_exact number type is advised :
 // 
-// #include <CGAL/Arithmetic_filter.h>
+// #include <CGAL/Filtered_exact.h>
 // #include <CGAL/MP_Float.h>
 // 
 // typedef CGAL::Filtered_exact<double, CGAL::MP_Float> NT;

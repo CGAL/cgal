@@ -1,9 +1,6 @@
 FINIR CORRECTIONS SUR output_stream de T_3 (ordre)
 pour tester, example/Triangulation_3/example_hierarchy
 
-- penser a enlever -I../../include\ dans demo/Triangulation_3/makefile
-- changer le nom du fichier include pour Filtered_exact dans exemples et demos
-                   --> CGAL/Filtered_Exact.h
 - Voir mail Laurent Rineau pour read_cells
 
 a negocier 
@@ -41,6 +38,7 @@ TDS
 - set_number_of_vertices(number_of_vertices()+1);  devrait etre dans la TDS ?
 
 T3
+- constructeur pour avoir Triangulation T(points.begin(), points.end()); 
 - nettoyer flips/is_flippable (code duplique)
 - incident_facets, incident_cells (vieille demande de Frank a
   rediscuter) 
