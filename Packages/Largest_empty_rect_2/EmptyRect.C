@@ -2,7 +2,7 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/Segment_2.h>
 #include <CGAL/Iso_rectangle_2.h>
-#include "EmptyRect.h"
+#include <CGAL/Largest_empty_iso_rectangle_2.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/IO/leda_window.h>
 #include <CGAL/leda_real.h>
@@ -24,8 +24,12 @@ Polygon P;
 void display_points(Largest_empty_rect &empty_rectangle,CGAL::Window_stream &W)
 {
   W << CGAL::BLACK;
-  for(Largest_empty_rect::const_iterator it = empty_rectangle.begin();it != empty_rectangle.end();++it)
+  for(Largest_empty_rect::const_iterator it = empty_rectangle.begin();
+      it != empty_rectangle.end();
+      ++it){
+    const Point& p = *it;
     W << *it;
+  }
 }
 
 void display_bounding_box(Largest_empty_rect &empty_rectangle,CGAL::Window_stream &W)
@@ -53,12 +57,11 @@ void redraw(Largest_empty_rect &empty_rectangle,CGAL::Window_stream &W)
   display_bounding_box(empty_rectangle,W);
 
   // display points
-  list<pair<Number_Type,Number_Type> > points_list;
 
-  empty_rectangle.get_list_of_points(points_list);
-
-  for(list<pair<Number_Type,Number_Type> >::iterator iter = points_list.begin();iter != points_list.end();++iter)
-    W << Point(iter->first,iter->second);
+  for(Largest_empty_rect::const_iterator iter = empty_rectangle.begin();
+      iter != empty_rectangle.end();
+      ++iter)
+    W << *iter;
 }
 
 
