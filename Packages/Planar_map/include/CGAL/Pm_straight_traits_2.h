@@ -659,8 +659,9 @@ public:
           {
             X_bounded_curve seg;
             cv.current(seg);
-            //return seg.opposite();
-            return typename R::Construct_opposite_segment_2()(seg);
+            // return seg.opposite();
+            return
+              CGAL_TYPENAME_MSVC_NULL R::Construct_opposite_segment_2()(seg);
           }
           // same curve with opposite orientation.
         case X_curve::MIN_UNBOUNDED:
@@ -680,8 +681,9 @@ public:
           {
             X_unbounded_curve line;
             cv.current(line);
-            //return line.opposite();
-            return typename R::Construct_opposite_line_2()(line);
+            // return line.opposite();
+            return
+              CGAL_TYPENAME_MSVC_NULL R::Construct_opposite_line_2()(line);
           }                  
         default:
           CGAL_assertion(cv.bound_state()==X_curve::NO_UNBOUNDED||
