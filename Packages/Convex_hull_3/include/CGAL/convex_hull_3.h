@@ -36,7 +36,7 @@
 #include <utility>
 #include <list>
 #include <vector>
-#include <hash_map>
+#include <CGAL/Hash_map.h>
 #include <CGAL/algorithm.h> 
 #include <CGAL/convex_hull_2.h>
 #include <CGAL/Polyhedron_incremental_builder_3.h>
@@ -48,19 +48,6 @@
 
 
 namespace CGAL {
-
-template<class Handle>
-struct Handle_hash
-{
-  size_t operator()(Handle h) const
-  {
-    return (int)(*((int*)(&h)));
-  }
-};
-
-template<class Handle, class Data_type>
-class Handle_map : public hash_map< Handle, Data_type, Handle_hash<Handle> > 
-{};
 
 
 template<class HDS, class ForwardIterator>
@@ -122,43 +109,6 @@ template <class InputIterator, class Plane_3, class Polyhedron_3, class Traits>
 void coplanar_3_hull(InputIterator first, InputIterator beyond,
                      Plane_3 plane, Polyhedron_3& P, const Traits& traits)
 {
-/*
-  typedef typename Traits::Vector_3              Vector_3;
-  typedef typename Traits::Point_3               Point_3;
-  typedef typename Traits::Point_2               Point_2;
-  typedef typename Traits::Construct_vector_3    Construct_vector_3;
-  typedef std::pair<Point_3, Point_2>            Point_3_2_pair;
-
-
-  Construct_vector_3 construct_vector = traits.construct_vector_3_object();
-    
-  std::list<Point_3_2_pair> point_pair_list;
-  
-  InputIterator iter = first;
-  
-  // ??? 
-  // This is not right with respect to Kernel traits.  
-  // need to use something like Construct_projected_point and something else
-  // for the basis vectors
-  // ???
-  Point_3 pt = *first;
-  Vector_3 v1 = plane.base1();
-  Vector_3 v2 = plane.base2();
-  while (iter != beyond)
-  {
-      Vector_3 v3 = construct_vector(pt, *iter); 
-      Point_2 proj_point(v1 * v3, v2 * v3);
-      point_pair_list.push_back(Point_3_2_pair(*iter, proj_point));
-      iter++;
-  }
-
-  std::list<Point_3_2_pair> CH_2;
-  typedef typename std::list<Point_3_2_pair>::iterator  CH_2_iterator;
-  convex_hull_points_2(point_pair_list.begin(),point_pair_list.end(),
-                       std::back_inserter(CH_2),
-                       Convex_hull_projective_traits_2<Point_3_2_pair>());
-*/
-
   typedef typename Traits::R                     R;
   typedef typename Traits::Point_3               Point_3;
   typedef typename Traits::Vector_3              Vector_3;
@@ -220,7 +170,7 @@ find_visible_set(const typename Traits::Point_3& point,
 
    visible.clear();
    std::list<Facet_handle>::iterator  vis_it;
-   Handle_map<Facet_handle, bool> visited;
+   CGAL::Hash_map<Facet_handle, bool> visited(false);
    visible.push_back(start_facet);
    visited[start_facet] = true;
    Facet_handle current;
@@ -237,7 +187,7 @@ find_visible_set(const typename Traits::Point_3& point,
           // the facet on the other side of the current halfedge
           Facet_handle f = (*(*hdl_curr).opposite()).facet();
           // if haven't already seen this facet
-          if ( visited.find(f) == visited.end() ) 
+          if ( !visited[f] )
           {
              visited[f] = true;
              if ( has_on_positive_side((*f).plane(), point) )  // is visible
@@ -260,6 +210,7 @@ farthest_outside_point(Facet_handle f_handle,
    typedef typename Traits::Point_3               Point_3;
    typedef typename std::list<Point_3>::iterator     Outside_set_iterator;
 
+   assert (!outside_set.empty());
    typename Traits::Less_signed_distance_to_plane_3 less_dist_to_plane =
             traits.less_signed_distance_to_plane_3_object((*f_handle).plane());
    Outside_set_iterator farthest_it =
@@ -286,8 +237,8 @@ template <class Facet_handle, class Traits>
 void     
 partition_outside_sets(const std::list<Facet_handle>& new_facets,
         std::list<typename Traits::Point_3>& vis_outside_set, 
-        Handle_map<Facet_handle, 
-                   std::list<typename Traits::Point_3> >& outside_sets,
+        CGAL::Hash_map<Facet_handle, 
+                       std::list<typename Traits::Point_3> >& outside_sets,
         std::list<Facet_handle>& pending_facets, 
         const Traits& traits, const typename Traits::Point_3& farthest_pt)
 {
@@ -320,7 +271,7 @@ partition_outside_sets(const std::list<Facet_handle>& new_facets,
    for (f_list_it = new_facets.begin(); f_list_it != new_facets.end(); 
         f_list_it++)
    {
-      if (outside_sets.find(*f_list_it) != outside_sets.end())
+      if (!outside_sets[*f_list_it].empty())
          pending_facets.push_back(*f_list_it);
    }
 }
@@ -330,7 +281,7 @@ void
 ch_quickhull_3_scan( 
         Polyhedron_3& P,
         std::list<typename Polyhedron_3::Facet_handle>& pending_facets,
-        Handle_map<typename Polyhedron_3::Facet_handle, 
+        CGAL::Hash_map<typename Polyhedron_3::Facet_handle, 
                    std::list<typename Traits::Point_3> >& outside_sets,
         const Traits& traits)
 {
@@ -367,11 +318,16 @@ ch_quickhull_3_scan(
         std::copy(outside_sets[*vis_set_it].begin(),
                   outside_sets[*vis_set_it].end(),
                   std::back_inserter(vis_outside_set));
+/*
+        // keep hold of a halfedge for a facet neighboring the hole
+        if (!(*(*vis_set_it)).halfedge()->is_border())
+          hole_halfedge = (*(*vis_set_it)).halfedge()->opposite();
+*/
         //   delete this visible facet
         P.erase_facet((*(*vis_set_it)).halfedge());
-        outside_sets.erase(*vis_set_it);
+//        hole_halfedge = P.make_hole((*(*vis_set_it)).halfedge());
+        outside_sets[*vis_set_it].clear();
      }
-
      // at this point there should be one hole in the surface 
      P.normalize_border();
      assert ( P.size_of_border_halfedges() != 0 );
@@ -380,7 +336,10 @@ ch_quickhull_3_scan(
      // to get a border halfedge, but you do.
      // ??? 
      hole_halfedge = P.border_halfedges_begin()->opposite();
+
+//     hole_halfedge = hole_halfedge->opposite();
      assert (hole_halfedge->is_border());
+     assert (hole_halfedge->next()->is_border());
      // add a new facet and vertex to the surface.  This is the first
      // new facet to be added.
      new_pt_halfedge = P.add_vertex_and_facet_to_border(hole_halfedge, 
@@ -422,10 +381,11 @@ ch_quickhull_3_scan(
      // fill in the last triangular hole with a facet
      new_halfedge = P.fill_hole(curr_halfedge);
      new_facets.push_back(new_halfedge->facet());
-
+/*
      P.normalize_border();
      // the hole should have been completely filled by now
      assert ( P.size_of_border_halfedges() == 0 );
+*/
 
      // now partition the set of outside set points among the new facets.
      partition_outside_sets(new_facets, vis_outside_set, outside_sets,
@@ -440,7 +400,7 @@ void non_coplanar_quickhull_3(std::list<typename Traits::Point_3>& points,
   typedef typename Polyhedron_3::Facet_handle             Facet_handle;
   typedef typename Polyhedron_3::Facet_iterator           Facet_iterator;
   typedef typename Traits::Point_3                        Point_3;
-  typedef Handle_map<Facet_handle, std::list<Point_3> >   Outside_set_map;
+  typedef CGAL::Hash_map<Facet_handle, std::list<Point_3> >   Outside_set_map;
   typedef typename std::list<Point_3>::iterator           P3_iterator;
 
   std::list<Facet_iterator> pending_facets;
@@ -471,7 +431,7 @@ void non_coplanar_quickhull_3(std::list<typename Traits::Point_3>& points,
   // add all the facets with non-empty outside sets to the set of facets for
   // further consideration
   for (f_it = P.facets_begin(); f_it != P.facets_end(); f_it++)
-     if (outside_sets.find(f_it) != outside_sets.end())
+     if (!outside_sets[f_it].empty())
        pending_facets.push_back(f_it);
 
   ch_quickhull_3_scan(P, pending_facets, outside_sets, traits);
@@ -655,6 +615,7 @@ void convex_hull_3(InputIterator first, InputIterator beyond,
   CGAL_ch_precondition_msg(point2_it != points.end(), 
         "All points are collinear; cannot construct polyhedron.");
   
+  polyhedron.clear();
   // result will be a polyhedron
   ch_quickhull_polyhedron_3(points, point1_it, point2_it, point3_it,
                             polyhedron, traits);
