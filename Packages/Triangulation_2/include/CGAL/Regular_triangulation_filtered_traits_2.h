@@ -41,29 +41,6 @@ struct Weighted_converter_2
   typedef typename Regular_triangulation_euclidean_traits_base_2<Target_kernel>
                    ::Weighted_point_2  Target_wp;
 
-  using Converter::operator();
-
-// I keep the following commented for now, since I expect some broken compilers
-// will need something like that... :(
-
-//  typedef typename Source_kernel::FT   Source_FT;
-//  typedef typename Target_kernel::FT   Target_FT;
-
-//  typedef typename Source_kernel::Point_2   Source_Point_2;
-//  typedef typename Target_kernel::Point_2   Target_Point_2;
-
-//  Target_FT
-//  operator()(const Source_FT &ft) const
-//  {
-//    return Converter::operator()(ft);
-//  }
-
-//  Target_Point_2
-//  operator()(const Source_Point_2 &pt) const
-//  {
-//    return Converter::operator()(pt);
-//  }
-
   Target_wp
   operator()(const Source_wp &wp) const
   {

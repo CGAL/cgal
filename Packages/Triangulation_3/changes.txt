@@ -1,3 +1,6 @@
+15 September 2004 Sylvain Pion
+- Remove unused code to please g++ 2.95.
+
 14 September 2004 Sylvain Pion
 - Specialize Regular_traits_3<> for Exact_pred_inexact_const_kernel, so that
   it becomes automatically the filtered traits (and thus gets better backward

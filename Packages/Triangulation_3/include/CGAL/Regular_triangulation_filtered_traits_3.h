@@ -30,7 +30,7 @@ CGAL_BEGIN_NAMESPACE
 // and adds the conversions for the Weighted_point.
 template < typename Converter >
 struct Weighted_converter_3
-  : Converter
+  : public Converter
 {
   typedef typename Converter::Source_kernel Source_kernel;
   typedef typename Converter::Target_kernel Target_kernel;
@@ -40,29 +40,6 @@ struct Weighted_converter_3
 
   typedef typename Regular_triangulation_euclidean_traits_base_3<Target_kernel>
                    ::Weighted_point_3  Target_wp;
-
-  using Converter::operator();
-
-// I keep the following commented for now, since I expect some broken compilers
-// will need something like that... :(
-
-//  typedef typename Source_kernel::FT   Source_FT;
-//  typedef typename Target_kernel::FT   Target_FT;
-
-//  typedef typename Source_kernel::Point_3   Source_Point_3;
-//  typedef typename Target_kernel::Point_3   Target_Point_3;
-
-//  Target_FT
-//  operator()(const Source_FT &ft) const
-//  {
-//    return Converter::operator()(ft);
-//  }
-
-//  Target_Point_3
-//  operator()(const Source_Point_3 &pt) const
-//  {
-//    return Converter::operator()(pt);
-//  }
 
   Target_wp
   operator()(const Source_wp &wp) const

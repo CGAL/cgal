@@ -1,6 +1,9 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+15 September 2004 Sylvain Pion
+- Remove unused code to please g++ 2.95.
+
 14 September 2004 Sylvain Pion
 - Specialize Regular_traits_2<> for Exact_pred_inexact_const_kernel, so that
   it becomes automatically the filtered traits (and thus gets better backward
@@ -26,7 +29,7 @@ constrained and regular triangulations with  tests and examples.
 4 September 2004 Menelaos Karavelas
 - re-wrote author names in copyright notices using 7-bit characters
 
-1 september 2004 Mariette
+1 September 2004 Mariette Yvinec
 - fixed typo in doc : ref page of Triangulation_2
 
 28 August 2004 Menelaos Karavelas
