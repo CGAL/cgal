@@ -337,7 +337,8 @@ re_adjust:
       goto re_adjust;
     }
     // This scheme definitely fails => exact computation (filtered_exact<> ?).
-    return power_testC3(px.exact(),
+    return power_testC3(
+		px.exact(),
 		py.exact(),
 		pz.exact(),
 		pwt.exact(),
@@ -690,7 +691,8 @@ re_adjust:
       goto re_adjust;
     }
     // This scheme definitely fails => exact computation (filtered_exact<> ?).
-    return power_testC3(px.exact(),
+    return power_testC3(
+		px.exact(),
 		py.exact(),
 		pz.exact(),
 		pwt.exact(),
@@ -977,7 +979,8 @@ re_adjust:
       goto re_adjust;
     }
     // This scheme definitely fails => exact computation (filtered_exact<> ?).
-    return power_testC3(px.exact(),
+    return power_testC3(
+		px.exact(),
 		py.exact(),
 		pz.exact(),
 		pwt.exact(),

@@ -222,7 +222,8 @@ re_adjust:
       goto re_adjust;
     }
     // This scheme definitely fails => exact computation (filtered_exact<> ?).
-    return collinearC3(px.exact(),
+    return collinearC3(
+		px.exact(),
 		py.exact(),
 		pz.exact(),
 		qx.exact(),
@@ -435,7 +436,8 @@ re_adjust:
       goto re_adjust;
     }
     // This scheme definitely fails => exact computation (filtered_exact<> ?).
-    return orientationC3(px.exact(),
+    return orientationC3(
+		px.exact(),
 		py.exact(),
 		pz.exact(),
 		qx.exact(),
@@ -712,7 +714,8 @@ re_adjust:
       goto re_adjust;
     }
     // This scheme definitely fails => exact computation (filtered_exact<> ?).
-    return side_of_oriented_sphereC3(px.exact(),
+    return side_of_oriented_sphereC3(
+		px.exact(),
 		py.exact(),
 		pz.exact(),
 		qx.exact(),
@@ -977,7 +980,8 @@ re_adjust:
       goto re_adjust;
     }
     // This scheme definitely fails => exact computation (filtered_exact<> ?).
-    return side_of_bounded_sphereC3(px.exact(),
+    return side_of_bounded_sphereC3(
+		px.exact(),
 		py.exact(),
 		pz.exact(),
 		qx.exact(),
@@ -1167,7 +1171,8 @@ re_adjust:
       goto re_adjust;
     }
     // This scheme definitely fails => exact computation (filtered_exact<> ?).
-    return cmp_dist_to_pointC3(px.exact(),
+    return cmp_dist_to_pointC3(
+		px.exact(),
 		py.exact(),
 		pz.exact(),
 		qx.exact(),
@@ -1360,7 +1365,8 @@ re_adjust:
       goto re_adjust;
     }
     // This scheme definitely fails => exact computation (filtered_exact<> ?).
-    return cmp_signed_dist_to_planeC3(pa.exact(),
+    return cmp_signed_dist_to_planeC3(
+		pa.exact(),
 		pb.exact(),
 		pc.exact(),
 		pd.exact(),
@@ -1609,7 +1615,8 @@ re_adjust:
       goto re_adjust;
     }
     // This scheme definitely fails => exact computation (filtered_exact<> ?).
-    return cmp_signed_dist_to_planeC3(ppx.exact(),
+    return cmp_signed_dist_to_planeC3(
+		ppx.exact(),
 		ppy.exact(),
 		ppz.exact(),
 		pqx.exact(),

@@ -193,7 +193,8 @@ re_adjust:
       goto re_adjust;
     }
     // This scheme definitely fails => exact computation (filtered_exact<> ?).
-    return compare_xC2(px.exact(),
+    return compare_xC2(
+		px.exact(),
 		l1a.exact(),
 		l1b.exact(),
 		l1c.exact(),
@@ -430,7 +431,8 @@ re_adjust:
       goto re_adjust;
     }
     // This scheme definitely fails => exact computation (filtered_exact<> ?).
-    return compare_xC2(l1a.exact(),
+    return compare_xC2(
+		l1a.exact(),
 		l1b.exact(),
 		l1c.exact(),
 		l2a.exact(),
@@ -590,7 +592,8 @@ re_adjust:
       goto re_adjust;
     }
     // This scheme definitely fails => exact computation (filtered_exact<> ?).
-    return compare_y_at_xC2(px.exact(),
+    return compare_y_at_xC2(
+		px.exact(),
 		py.exact(),
 		la.exact(),
 		lb.exact(),
@@ -768,7 +771,8 @@ re_adjust:
       goto re_adjust;
     }
     // This scheme definitely fails => exact computation (filtered_exact<> ?).
-    return compare_y_at_xC2(px.exact(),
+    return compare_y_at_xC2(
+		px.exact(),
 		l1a.exact(),
 		l1b.exact(),
 		l1c.exact(),
@@ -969,7 +973,8 @@ re_adjust:
       goto re_adjust;
     }
     // This scheme definitely fails => exact computation (filtered_exact<> ?).
-    return compare_y_at_xC2(l1a.exact(),
+    return compare_y_at_xC2(
+		l1a.exact(),
 		l1b.exact(),
 		l1c.exact(),
 		l2a.exact(),
@@ -1209,7 +1214,8 @@ re_adjust:
       goto re_adjust;
     }
     // This scheme definitely fails => exact computation (filtered_exact<> ?).
-    return compare_y_at_xC2(l1a.exact(),
+    return compare_y_at_xC2(
+		l1a.exact(),
 		l1b.exact(),
 		l1c.exact(),
 		l2a.exact(),
@@ -1349,7 +1355,8 @@ re_adjust:
       goto re_adjust;
     }
     // This scheme definitely fails => exact computation (filtered_exact<> ?).
-    return compare_deltax_deltayC2(px.exact(),
+    return compare_deltax_deltayC2(
+		px.exact(),
 		qx.exact(),
 		ry.exact(),
 		sy.exact());
@@ -1499,7 +1506,8 @@ re_adjust:
       goto re_adjust;
     }
     // This scheme definitely fails => exact computation (filtered_exact<> ?).
-    return orientationC2(px.exact(),
+    return orientationC2(
+		px.exact(),
 		py.exact(),
 		qx.exact(),
 		qy.exact(),
@@ -1699,7 +1707,8 @@ re_adjust:
       goto re_adjust;
     }
     // This scheme definitely fails => exact computation (filtered_exact<> ?).
-    return side_of_oriented_circleC2(px.exact(),
+    return side_of_oriented_circleC2(
+		px.exact(),
 		py.exact(),
 		qx.exact(),
 		qy.exact(),
@@ -1882,7 +1891,8 @@ re_adjust:
       goto re_adjust;
     }
     // This scheme definitely fails => exact computation (filtered_exact<> ?).
-    return side_of_bounded_circleC2(px.exact(),
+    return side_of_bounded_circleC2(
+		px.exact(),
 		py.exact(),
 		qx.exact(),
 		qy.exact(),
@@ -2038,7 +2048,8 @@ re_adjust:
       goto re_adjust;
     }
     // This scheme definitely fails => exact computation (filtered_exact<> ?).
-    return cmp_dist_to_pointC2(px.exact(),
+    return cmp_dist_to_pointC2(
+		px.exact(),
 		py.exact(),
 		qx.exact(),
 		qy.exact(),
@@ -2201,7 +2212,8 @@ re_adjust:
       goto re_adjust;
     }
     // This scheme definitely fails => exact computation (filtered_exact<> ?).
-    return cmp_signed_dist_to_lineC2(la.exact(),
+    return cmp_signed_dist_to_lineC2(
+		la.exact(),
 		lb.exact(),
 		lc.exact(),
 		px.exact(),
@@ -2374,7 +2386,8 @@ re_adjust:
       goto re_adjust;
     }
     // This scheme definitely fails => exact computation (filtered_exact<> ?).
-    return cmp_signed_dist_to_lineC2(px.exact(),
+    return cmp_signed_dist_to_lineC2(
+		px.exact(),
 		py.exact(),
 		qx.exact(),
 		qy.exact(),

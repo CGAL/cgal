@@ -305,7 +305,8 @@ re_adjust:
       goto re_adjust;
     }
     // This scheme definitely fails => exact computation (filtered_exact<> ?).
-    return power_testH2(phx.exact(),
+    return power_testH2(
+		phx.exact(),
 		phy.exact(),
 		phw.exact(),
 		pwt.exact(),
@@ -584,7 +585,8 @@ re_adjust:
       goto re_adjust;
     }
     // This scheme definitely fails => exact computation (filtered_exact<> ?).
-    return power_testH2(phx.exact(),
+    return power_testH2(
+		phx.exact(),
 		phy.exact(),
 		phw.exact(),
 		pwt.exact(),

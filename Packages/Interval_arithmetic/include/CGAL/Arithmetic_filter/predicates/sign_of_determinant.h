@@ -147,7 +147,8 @@ re_adjust:
       goto re_adjust;
     }
     // This scheme definitely fails => exact computation (filtered_exact<> ?).
-    return sign_of_determinant2x2(a00.exact(),
+    return sign_of_determinant2x2(
+		a00.exact(),
 		a01.exact(),
 		a10.exact(),
 		a11.exact());
@@ -328,7 +329,8 @@ re_adjust:
       goto re_adjust;
     }
     // This scheme definitely fails => exact computation (filtered_exact<> ?).
-    return sign_of_determinant3x3(a00.exact(),
+    return sign_of_determinant3x3(
+		a00.exact(),
 		a01.exact(),
 		a02.exact(),
 		a10.exact(),
@@ -579,7 +581,8 @@ re_adjust:
       goto re_adjust;
     }
     // This scheme definitely fails => exact computation (filtered_exact<> ?).
-    return sign_of_determinant4x4(a00.exact(),
+    return sign_of_determinant4x4(
+		a00.exact(),
 		a01.exact(),
 		a02.exact(),
 		a03.exact(),
@@ -920,7 +923,8 @@ re_adjust:
       goto re_adjust;
     }
     // This scheme definitely fails => exact computation (filtered_exact<> ?).
-    return sign_of_determinant5x5(a00.exact(),
+    return sign_of_determinant5x5(
+		a00.exact(),
 		a01.exact(),
 		a02.exact(),
 		a03.exact(),
@@ -1371,7 +1375,8 @@ re_adjust:
       goto re_adjust;
     }
     // This scheme definitely fails => exact computation (filtered_exact<> ?).
-    return sign_of_determinant6x6(a00.exact(),
+    return sign_of_determinant6x6(
+		a00.exact(),
 		a01.exact(),
 		a02.exact(),
 		a03.exact(),

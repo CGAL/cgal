@@ -210,7 +210,8 @@ re_adjust:
       goto re_adjust;
     }
     // This scheme definitely fails => exact computation (filtered_exact<> ?).
-    return in_smallest_orthogonalcircleC2(px.exact(),
+    return in_smallest_orthogonalcircleC2(
+		px.exact(),
 		py.exact(),
 		pw.exact(),
 		qx.exact(),
