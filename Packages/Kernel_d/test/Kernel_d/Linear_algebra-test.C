@@ -23,7 +23,13 @@ typedef double RT;
 #include <CGAL/leda_real.h>
 typedef leda_real FT;
 #else
+#ifdef CGAL_USE_GMP
+#include <CGAL/Gmpz.h>
+#include <CGAL/Quotient.h>
+typedef CGAL::Quotient<CGAL::Gmpz> FT;
+#else
 typedef double FT;
+#endif
 #endif
 
 int main(int argc, char* argv[])
