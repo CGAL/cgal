@@ -60,7 +60,7 @@ make_and_execute()
     else
 	echo "ERROR: compilation of ${file}  with TESTR=$1 failed" >> $OUTPUTFILE
     fi
-    rm -f ${base} ${base}.o
+    make ${base}.clean
 }
 
 echo ${CGAL_LIB_DIR}
