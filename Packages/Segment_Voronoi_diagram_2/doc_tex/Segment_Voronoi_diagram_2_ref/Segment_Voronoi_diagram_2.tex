@@ -579,13 +579,24 @@ The following operators must be defined:\\
 %
 \ccGlue
 \ccMethod{template< class Stream >
-Stream& draw_dual_edge(Edge e, Stream& str);}{Draws an edge of the
-  segment Voronoi diagram to the stream \ccc{str}.
-\ccPrecond{The following operators must be defined:\\
+Stream& draw_dual_edge(Edge e, Stream& str);}{Draws the edge \ccc{e} of
+  the segment Voronoi diagram to the stream \ccc{str}.
+The following operators must be defined:\\
 \ccc{Stream& operator<<(Stream&, Gt::Segment_2)}\\
 \ccc{Stream& operator<<(Stream&, Gt::Ray_2)}\\
-\ccc{Stream& operator<<(Stream&, Gt::Line_2)}}
-}
+\ccc{Stream& operator<<(Stream&, Gt::Line_2)}
+\ccPrecond{\ccc{e} must be a finite edge.}}
+%
+\ccGlue
+\ccMethod{template< class Stream >
+Stream& draw_dual_edge(Edge_circulator ec, Stream& str);}
+{Draws the edge \ccc{*ec} of
+  the segment Voronoi diagram to the stream \ccc{str}.
+The following operators must be defined:\\
+\ccc{Stream& operator<<(Stream&, Gt::Segment_2)}\\
+\ccc{Stream& operator<<(Stream&, Gt::Ray_2)}\\
+\ccc{Stream& operator<<(Stream&, Gt::Line_2)}
+\ccPrecond{\ccc{*ec} must be a finite edge.}}
 
 
 
