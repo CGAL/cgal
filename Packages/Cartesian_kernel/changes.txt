@@ -1,3 +1,6 @@
+Version 6.42 (19 December 2001)
+- Fix PlaneC3.base2().
+
 Version 6.41 (13 December 2001)
 - Fix DirectionC3's operator>>.
 

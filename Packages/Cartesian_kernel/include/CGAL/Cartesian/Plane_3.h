@@ -200,7 +200,7 @@ PlaneC3<R CGAL_CTAG>::orthogonal_direction() const
 template < class R >
 typename PlaneC3<R CGAL_CTAG>::Vector_3
 PlaneC3<R CGAL_CTAG>::base1() const
-{
+{ // FIXME : construction
   if ( CGAL_NTS is_zero(a()) )  // parallel to x-axis
       return Vector_3(FT(1), FT(0), FT(0));
 
@@ -210,30 +210,14 @@ PlaneC3<R CGAL_CTAG>::base1() const
   if ( CGAL_NTS is_zero(c()) )  // parallel to z-axis
       return Vector_3(FT(0), FT(0), FT(1));
 
-  return Vector_3(-b(), a(), FT(0)); // FIXME : construction
+  return Vector_3(-b(), a(), FT(0));
 }
 
 template < class R >
 typename PlaneC3<R CGAL_CTAG>::Vector_3
 PlaneC3<R CGAL_CTAG>::base2() const
 { // FIXME : construction
-  if ( CGAL_NTS is_zero(a()) ) // parallel to x-axis already returned in base1
-    {
-      if ( CGAL_NTS is_zero(b()) )  // parallel to y-axis
-          return Vector_3(FT(0), FT(1), FT(0));
-
-      if ( CGAL_NTS is_zero(c()) ) // parallel to z-axis
-          return Vector_3(FT(0), FT(0), FT(1));
-
-      return Vector_3(FT(0), -b(), c());
-    }
-  if ( CGAL_NTS is_zero(b()) )
-      return Vector_3(c(), FT(0), -a());
-
-  if ( CGAL_NTS is_zero(c()) )
-      return Vector_3(-b(), a(), FT(0));
-
-  return Vector_3(FT(0), -c(), b());
+  return cross_product(orthogonal_vector(), base1());
 }
 
 template < class R >
