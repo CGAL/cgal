@@ -28,24 +28,22 @@
 #include <CGAL/IO/Ostream_iterator.h>
 #include <CGAL/IO/Istream_iterator.h>
 
-using namespace CGAL;
-
 typedef CGAL::Cartesian<double>                  Rep;
 typedef Rep::Point_2                             Point;
 
 int main()
 {
-    typedef Ostream_iterator<Point,std::ostrstream>  IteratorO;
-    typedef Istream_iterator<Point,std::istrstream>  IteratorI;
+    typedef CGAL::Ostream_iterator<Point,std::ostrstream>  IteratorO;
+    typedef CGAL::Istream_iterator<Point,std::istrstream>  IteratorI;
     {
         char buffer[1000];
         std::ostrstream  out( buffer, 1000);
-        set_ascii_mode( out);
-        CGAL_assertion( is_ascii( out));
+        CGAL::set_ascii_mode( out);
+        CGAL_assertion( CGAL::is_ascii( out));
         out << Point( 1, 2) << '\0';
         std::istrstream in( buffer, 1000);
-        set_ascii_mode(in);
-        CGAL_assertion( is_ascii(in));
+        CGAL::set_ascii_mode(in);
+        CGAL_assertion( CGAL::is_ascii(in));
         Point p;
         in >> p;
         CGAL_assertion( p == Point( 1, 2));
@@ -53,12 +51,12 @@ int main()
     {
         char buffer[1000];
         std::ostrstream  out( buffer, 1000);
-        set_ascii_mode( out);
+        CGAL::set_ascii_mode( out);
         IteratorO   o(out);
         *o = Point( 1, 2);
         out << '\0';
         std::istrstream  in( buffer, 1000);
-        set_ascii_mode( in);
+        CGAL::set_ascii_mode( in);
         IteratorI   i(in);
         Point p = *i;
         CGAL_assertion( p == Point( 1, 2));
