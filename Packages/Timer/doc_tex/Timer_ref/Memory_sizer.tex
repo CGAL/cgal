@@ -39,8 +39,8 @@ The memory sizes are given in bytes.
 \ccImplementation
 
 Accessing this information requires the use of non-portable code.
-Currently, there is support for Linux platforms through the \ccc{/proc}
-interface, and support for the Microsoft and Intel compiler on Windows.  
-Other platforms might work as well.
+Currently, there is support for Linux platforms and the Microsoft and Intel
+compiler on Windows.  If a platform is not supported, then the macro
+\ccc{CGAL_DONT_HAVE_MEMORY_SIZER} is defined by this file.
 
 \end{ccRefClass}

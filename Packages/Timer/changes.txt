@@ -1,7 +1,9 @@
-Timer Package: Release changes:
----------------------------------------------------------------------
+11 September 2004 Sylvain Pion
+- Add CGAL_DONT_HAVE_MEMORY_SIZER to detect on which platforms it works,
+  and make the test-suite emit a warning instead of an error in this case.
+
 26 March 2004 Radu Ursu
--made doc work with the current implementation of the Manual tools
+- made doc work with the current implementation of the Manual tools
 
 2.12 (12 Jan 2004)
 - Add Memory_sizer
