@@ -468,8 +468,8 @@ locate_in_all(const Point& p,
       nearest = position->vertex(0);
     else
       nearest = position->vertex(1);
-    // compare to vertex 2
-    if ( !  hierarchy[level]->is_infinite(position->vertex(2)))
+    // compare to vertex 2, but only if the triangulation is 2D, because otherwise vertex(2) is  NULL
+    if ( (hierarchy[level]->dimension()==2) && (!  hierarchy[level]->is_infinite(position->vertex(2))))
       if ( closer( p, 
 		   position->vertex(2)->point(),
 		   nearest->point()) == SMALLER )
