@@ -8,12 +8,12 @@
 //
 // ----------------------------------------------------------------------
 //
-// release       : $CGAL_Revision: CGAL-2.3-I-73 $
-// release_date  : $CGAL_Date: 2001/06/19 $
+// release       : $CGAL_Revision: CGAL-2.4-I-40 $
+// release_date  : $CGAL_Date: 2001/12/28 $
 //
 // file          : include/CGAL/Trapezoidal_decomposition_2.h
-// package       : Trapezoidal_decomposition (1.16)
-// maintainer    : Shai Hirsch <shaihi@post.tau.ac.il>
+// package       : Trapezoidal_decomposition (1.17)
+// maintainer    : Eugene Lipovetsky <eug@post.tau.ac.il>
 // source		 : 
 // revision 	 : 
 // revision_date : 
@@ -1303,7 +1303,7 @@ output: trapezoid iterator
     const X_curve* pc;
     
 #ifdef CGAL_TD_DEBUG
-    pointer old;
+    pointer old=NULL;
 #endif
 		
     while(true)
@@ -2657,12 +2657,28 @@ public:
 		CGAL_assertion(traits);
 		CGAL_precondition(traits->curve_merge_condition(cv,cv1,cv2));
 		
-#endif
-		
-		Point p=traits->point_is_same(traits->curve_target(cv1),traits->curve_source(cv2)) ? traits->curve_target(cv1) : traits->curve_target(cv2);
-		
+#endif		
+		Point p=
+		  // Calculate the common point of cv1 and cv2. 
+		  // There should be one!
+		  traits->point_is_same(traits->curve_target(cv1),
+					traits->curve_source(cv2)) ? 
+		  traits->curve_target(cv1) : 
+		  // [-- cv1 -->] p [-- cv2 -->] or [<-- cv2 --] p [<-- cv1 --]
+		  traits->point_is_same(traits->curve_source(cv1),
+					traits->curve_target(cv2)) ? 
+		  // [<-- cv1 --] p [<-- cv2 --] or [-- cv2 -->] p [-- cv1 -->]
+		  traits->curve_source(cv1) : //
+		  traits->point_is_same(traits->curve_source(cv1),
+					traits->curve_source(cv2)) ? 
+		  // [<-- cv1 --] p [-- cv2 -->]
+		  traits->curve_source(cv1) : 
+		  // [-- cv1 -->] p [<-- cv2 --]
+		  traits->curve_target(cv1);
+
+							      
 #ifdef CGAL_TD_DEBUG
-		
+		// p is interior to the union curve
 		CGAL_precondition(
 			traits->point_is_left_low(
 			traits->curve_leftlow_most(cv),p
@@ -2671,7 +2687,6 @@ public:
 			traits->point_is_right_top(
 			traits->curve_righttop_most(cv),p
 			));
-		
 #endif
 		
 		Point
