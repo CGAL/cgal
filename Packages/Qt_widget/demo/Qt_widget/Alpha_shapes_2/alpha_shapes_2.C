@@ -17,14 +17,15 @@ int main(int, char*)
 
 
 #include "cgal_types.h"
+#include "helpwindow.h"
+#include "Qt_widget_toolbar.h"
+#include "Qt_widget_toolbar_layers.h"
 
 //Qt_widget
-#include "Qt_widget_toolbar_layers.h"
 #include <CGAL/IO/Qt_widget.h>
 #include <CGAL/IO/Qt_widget_layer.h>
 #include <CGAL/IO/Qt_widget_standard_toolbar.h>
-#include <CGAL/IO/Qt_widget_Alpha_shape_2.h>
-#include "Qt_widget_toolbar.h"
+
 
 //STL 
 #include <fstream>
@@ -94,6 +95,8 @@ private:
   QSlider         *slider;
   QLabel          *label;
 };
+
+
 class MyWindow : public QMainWindow
 {
   Q_OBJECT
@@ -143,6 +146,8 @@ public:
   // help menu
   QPopupMenu * help = new QPopupMenu( this );
   menuBar()->insertItem( "&Help", help );
+  help->insertItem("How To", this, SLOT(howto()), Key_F1);
+  help->insertSeparator();
   help->insertItem("&About", this, SLOT(about()), CTRL+Key_A );
   help->insertItem("About &Qt", this, SLOT(aboutQt()) );
 
@@ -205,6 +210,16 @@ public slots:
     // set the Visible Area to the Interval
     widget->unlock();
     something_changed();
+  }
+
+  void howto(){
+    QString home;
+    home = "help/index.html";
+    HelpWindow *help = new HelpWindow(home, ".", 0, "help
+        viewer");
+    help->resize(400, 400);
+    help->setCaption("Demo HowTo");
+    help->show();
   }
 
   void load_image(){

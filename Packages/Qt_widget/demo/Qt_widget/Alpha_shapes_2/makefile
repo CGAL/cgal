@@ -54,22 +54,29 @@ Qt_widget_toolbar_layers$(OBJ_EXT): Qt_widget_toolbar_layers.C \
 Qt_widget_toolbar_layers.moc: Qt_widget_toolbar_layers.h
 	$(QT_MOC) -o Qt_widget_toolbar_layers.moc Qt_widget_toolbar_layers.h
 
+helpwindow$(OBJ_EXT): helpwindow.C helpwindow.moc
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) helpwindow.C
+helpwindow.moc: helpwindow.h
+	$(QT_MOC) -o helpwindow.moc helpwindow.h
+
 alpha_shapes_2.moc: alpha_shapes_2.C \
 			Qt_widget_toolbar$(OBJ_EXT) \
 			Qt_widget_toolbar_layers$(OBJ_EXT) \
-			Qt_widget_move_point$(OBJ_EXT)
+			Qt_widget_move_point$(OBJ_EXT) \
+			helpwindow$(OBJ_EXT)
 	${QT_MOC} -o alpha_shapes_2.moc alpha_shapes_2.C
 
 alpha_shapes_2$(OBJ_EXT): alpha_shapes_2.C alpha_shapes_2.moc
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) alpha_shapes_2.C
 
 alpha_shapes_2$(EXE_EXT): alpha_shapes_2$(OBJ_EXT)
-	$(CGAL_CXX) $(EXE_OPT)alpha_shapes_2 alpha_shapes_2$(OBJ_EXT) Qt_widget_toolbar$(OBJ_EXT) Qt_widget_toolbar_layers$(OBJ_EXT) Qt_widget_move_point$(OBJ_EXT) $(LDFLAGS)
+	$(CGAL_CXX) $(EXE_OPT)alpha_shapes_2 alpha_shapes_2$(OBJ_EXT) Qt_widget_toolbar$(OBJ_EXT) Qt_widget_toolbar_layers$(OBJ_EXT) Qt_widget_move_point$(OBJ_EXT) helpwindow$(OBJ_EXT) $(LDFLAGS)
 
 clean: alpha_shapes_2.clean \
        Qt_widget_toolbar_layers.clean \
        Qt_widget_toolbar.clean \
-	Qt_widget_move_point.clean
+       Qt_widget_move_point.clean \
+       helpwindow.clean
 
 #---------------------------------------------------------------------#
 #                    suffix rules

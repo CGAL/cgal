@@ -1,0 +1,27 @@
+/* XPM */
+/* Drawn  by Mark Donohoe for the K Desktop Environment */
+/* See http://www.kde.org */
+static char*home[]={
+"16 16 4 1",
+"# c #000000",
+"a c #ffffff",
+"b c #c0c0c0",
+". c None",
+"........... ....",
+"   ....##.......",
+"..#...####......",
+"..#..#aabb#.....",
+"..#.#aaaabb#....",
+"..##aaaaaabb#...",
+"..#aaaaaaaabb#..",
+".#aaaaaaaaabbb#.",
+"###aaaaaaaabb###",
+"..#aaaaaaaabb#..",
+"..#aaa###aabb#..",
+"..#aaa#.#aabb#..",
+"..#aaa#.#aabb#..",
+"..#aaa#.#aabb#..",
+"..#aaa#.#aabb#..",
+"..#####.######..",
+"................"};
+
