@@ -66,12 +66,16 @@ public:
           if (maxy < fabs(pry)) maxy = fabs(pry);
           double eps = 8.8872057372592758e-16 * maxx * maxy;
 
+          // Sort them
+          if (maxx > maxy)  std::swap(maxx, maxy);
+
           // Protect against underflow in the computation of eps.
-          if (maxx < 1e-146 || maxy < 1e-146) {
-            if (maxx == 0 || maxy == 0)
+          if (maxx < 1e-146) /* sqrt(min_double/eps) */ {
+            if (maxx == 0)
               return ZERO;
           }
-          else {
+          // Protect against overflow in the computation of det.
+          else if (maxy < 1e153) /* sqrt(max_double [hadamard]/2) */ {
             if (det > eps)  return POSITIVE;
             if (det < -eps) return NEGATIVE;
           }

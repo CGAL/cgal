@@ -94,12 +94,16 @@ public:
           if (maxz < fabs(rtz)) maxz = fabs(rtz);
           if (maxz < fabs(stz)) maxz = fabs(stz);
 
-	  double maxt = maxx;
-          if (maxt < maxy) maxt = maxy;
-          if (maxt < maxz) maxt = maxz;
+          // Sort maxx < maxy < maxz.
+          if (maxx > maxz)
+              std::swap(maxx, maxz);
+          if (maxy > maxz)
+              std::swap(maxy, maxz);
+          else if (maxy < maxx)
+              std::swap(maxx, maxy);
 
           double eps = 1.246613653102729e-13 * maxx * maxy * maxz
-                     * (maxt * maxt);
+                     * (maxz * maxz);
 
           double det = det4x4_by_formula(ptx,pty,ptz,pt2,
                                          rtx,rty,rtz,rt2,
@@ -107,11 +111,12 @@ public:
                                          stx,sty,stz,st2);
 
           // Protect against underflow in the computation of eps.
-          if (maxx < 1e-59 || maxy < 1e-59 || maxz < 1e-59) {
-            if (maxx == 0 || maxy == 0 || maxz == 0)
+          if (maxx < 1e-58) /* sqrt^5(min_double/eps) */ {
+            if (maxx == 0)
               return ON_ORIENTED_BOUNDARY;
           }
-          else {
+          // Protect against overflow in the computation of det.
+          else if (maxz < 1e61) /* sqrt^5(max_double/4 [hadamard]) */ {
             if (det > eps)  return ON_POSITIVE_SIDE;
             if (det < -eps) return ON_NEGATIVE_SIDE;
           }

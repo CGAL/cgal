@@ -82,12 +82,21 @@ public:
                                          prx, pry, prz,
                                          psx, psy, psz);
 
+          // Sort maxx < maxy < maxz.
+          if (maxx > maxz)
+              std::swap(maxx, maxz);
+          if (maxy > maxz)
+              std::swap(maxy, maxz);
+          else if (maxy < maxx)
+              std::swap(maxx, maxy);
+
           // Protect against underflow in the computation of eps.
-          if (maxx < 1e-97 || maxy < 1e-97 || maxz < 1e-97) {
-            if (maxx == 0 || maxy == 0 || maxz == 0)
+          if (maxx < 1e-97) /* cbrt(min_double/eps) */ {
+            if (maxx == 0)
               return ZERO;
           }
-          else {
+          // Protect against overflow in the computation of det.
+          else if (maxz < 1e102) /* cbrt(max_double [hadamard]/4) */ {
             if (det > eps)  return POSITIVE;
             if (det < -eps) return NEGATIVE;
           }

@@ -1,3 +1,6 @@
+11 January 2005 Sylvain Pion
+- Improve static filters : protect against overflow.
+
 06 January 2005 Sylvain Pion
 - Fix warning with VC++.
 

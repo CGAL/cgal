@@ -78,17 +78,17 @@ public:
           if (maxy < fabs(tpy)) maxy = fabs(tpy);
           if (maxy < fabs(tqy)) maxy = fabs(tqy);
           if (maxy < fabs(rqy)) maxy = fabs(rqy);
-          double maxt = maxx;
-          if (maxt < maxy) maxt = maxy;
 
-          double eps = 8.887856576200131e-15 * maxx * maxy * (maxt*maxt);
+          if (maxx > maxy)  std::swap(maxx, maxy);
+
+          double eps = 8.887856576200131e-15 * maxx * maxy * (maxy*maxy);
 
           // Protect against underflow in the computation of eps.
-          if (maxx < 1e-73 || maxy < 1e-73) {
-            if (maxx == 0 || maxy == 0)
+          if (maxx < 1e-73) {
+            if (maxx == 0)
               return ON_ORIENTED_BOUNDARY;
           }
-          else {
+          else if (maxy < 1e76) /* sqrt(sqrt(max_double/16 [hadamard])) */ {
             if (det > eps)  return ON_POSITIVE_SIDE;
             if (det < -eps) return ON_NEGATIVE_SIDE;
           }
