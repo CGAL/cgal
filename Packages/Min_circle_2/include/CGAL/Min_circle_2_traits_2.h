@@ -48,6 +48,7 @@ class Min_circle_2_traits_2 {
     typedef  K_                              K;
     typedef  typename K::Point_2             Point;
     typedef  CGAL::Optimisation_circle_2<K>  Circle;
+    typedef  typename K::Orientation_2       Orientation_2;
 
 private:
     // data members
@@ -66,7 +67,8 @@ private:
     CGAL::Orientation
     orientation( const Point& p, const Point& q, const Point& r) const
     {
-        return( CGAL::orientation( p, q, r));
+      Orientation_2 orienntation;
+        return(orientation( p, q, r));
     }
 };
 
