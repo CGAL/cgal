@@ -47,7 +47,7 @@ do_platform()
   RESULT_FILE=$CURRENT_DIR/results_${TESTER}_${PLATFORM}.txt
   rm -f $RESULT_FILE
   touch $RESULT_FILE
-  sed -n '/CGAL_VERSION/s/#define //p' <../include/CGAL/config.h >> $RESULT_FILE
+  sed -n '/CGAL_VERSION/s/#define //p' <../include/CGAL/version.h >> $RESULT_FILE
   echo "TESTER ${TESTER}" >> $RESULT_FILE
   echo "PLATFORM ${PLATFORM}" >> $RESULT_FILE
 

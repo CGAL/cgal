@@ -1,3 +1,6 @@
+29 February 2004 Sylvain Pion
+- test/collect_cgal_testresults : change config.h to version.h.
+
 27 February 2004 Sylvain Pion
 - create_makefile : Add -I../../include to CXXFLAGS by default,
   and remove DEBUG_OPTS.
