@@ -1,3 +1,6 @@
+Version 11.50 (09 February 2004) [rursu]
+- Updated headers for examples
+
 Version 11.49 (25 January 2004) [af]
 - Removed Alpha_shape_euclidean_traits_2 from doc, examples, demo and testsuite
 
