@@ -7,6 +7,7 @@
 //	actual revision
 //---------------------------------------------------------------------
 
+GLOB: Introduced CGAL_WINDOW_LD_LIBPATH in analogy to CGAL_LD_LIBPATH.
 ALL : Updated ps-docs.
 GLOB: Remove ii_files in .C.clean target for mips-CC.
 GLOB: No gmp installation on cygwin.
@@ -70,6 +71,7 @@ ALL : updated CGAL-version to 2.1.
 GLOB: removed CGAL_directories (contained only two variables).
 GLOB: no support for gcc prior to 2.8 anymore.
 GLOB: fixed little problem with install-script name - now $CGAL_INSTALL_CGAL.
+DOCS: Some additions/corrections due to Dima.
 DOCS: Added description of CLN support.
 DOCS: Some minor corrections.
 DOCS: Updated LEDA version number.
