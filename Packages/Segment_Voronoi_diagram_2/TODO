@@ -1,8 +1,3 @@
-- remove the macro USE_SC (meaning USE SITE CONSTRUCTOR).
-- gcc 2.95.3 has a problem with templte template parameters; as a result
-  the code for the non-filtered traits does not compile; workaround has
-  be written for the filtered traits but the problem with it is that some
-  types are not defined (e.g., Exact_traits, etc.)
 - add a method insert_point_no_search in the segment Voronoi diagram class
   that inserts a point without searching for the nearest neighbor;
   the assumption here is that the nearest neighbor given is already known
