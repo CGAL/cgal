@@ -1,5 +1,7 @@
 // example using nearest_neighbour_iterator for weighted Minkowski Distance
+
 #include <CGAL/compiler_config.h>
+
 
 #include <vector>
 #include <numeric>
@@ -12,7 +14,8 @@
 #include <CGAL/Binary_search_tree.h>
 #include <CGAL/Weighted_Minkowski_distance.h>
 #include <CGAL/Kd_tree_traits_point.h>
-#include <CGAL/Nearest_neighbour_PQ.h>
+#include <CGAL/Nearest_neighbour_general_distance.h>
+#include <CGAL/Search_nearest_neighbour.h>
 #include <CGAL/Random.h>
 
 #pragma hdrstop
@@ -23,16 +26,16 @@
 //example illustrating next nearest neigbbour searching
 //using std::copy and illustrating distance browsing
 
-void example2_using_nearest_neighbour_PQ() {
+void example2_using_nearest_neighbour_general_distance() {
 
 typedef CGAL::Cartesian<double> R;
 typedef CGAL::Point_d<R> Point;
 typedef Point::FT NT;
 typedef CGAL::Plane_separator<NT> Separator;
 typedef CGAL::Kd_tree_traits_point<Separator,Point> Tree_traits;
-typedef CGAL::Weighted_Minkowski_distance<Tree_traits> Search_traits;
-typedef CGAL::Nearest_neighbour_PQ<Tree_traits, Search_traits>::iterator
-        NNN_Iterator;
+typedef CGAL::Weighted_Minkowski_distance<Tree_traits> Distance;
+typedef CGAL::Nearest_neighbour_general_distance<Tree_traits,
+CGAL::Search_nearest_neighbour, Distance>::iterator NNN_Iterator;
 
 int dim=12;
 int point_number=5;
@@ -68,15 +71,19 @@ v[0]=2.0;
 Point q(dim,v.begin(),v.end());
 std::cout << "query point is " << q << std::endl;
 
-Search_traits tr(the_power,dim,my_weights);
+Distance tr(the_power,dim,my_weights);
+
 
 // illustrate use of container with copy
+
 // did not work for Visual C++
+
 
 std::cout << "started test std::copy" << std::endl;
 
 std::vector<Tree_traits::Item_with_distance> result1(point_number);
-CGAL::Nearest_neighbour_PQ<Tree_traits,Search_traits> NNN1(d,q,tr,eps);
+CGAL::Nearest_neighbour_general_distance<Tree_traits,
+CGAL::Search_nearest_neighbour, Distance> NNN1(d,q,tr,eps);
 std::copy(NNN1.begin(),NNN1.end(),result1.begin());
 
 for (int i3=0; i3 < nearest_neighbour_number; i3++) {
@@ -90,14 +97,20 @@ for (int i3=0; i3 < nearest_neighbour_number; i3++) {
 // example of browsing
 
 
-CGAL::Nearest_neighbour_PQ<Tree_traits,Search_traits> NNN2(d,q,tr,eps);
+CGAL::Nearest_neighbour_general_distance<Tree_traits,
+CGAL::Search_nearest_neighbour, Distance> NNN2(d,q,tr,eps);
 
 // define predicate class
 class GreaterThan0 {
+
         public:
+
                 bool operator() (NNN_Iterator::value_type const result) const {
+
                 return ( (*(result.first))[0] > 0.0);
+
         }
+
 };
 
 GreaterThan0 pred;
@@ -120,7 +133,7 @@ else  {
 }
 
 int main() {
-  example2_using_nearest_neighbour_PQ();
+  example2_using_nearest_neighbour_general_distance();
   return 0;
 }
 
