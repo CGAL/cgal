@@ -28,7 +28,7 @@ Sphere_segment_rep(const Point& p1, const Point& p2,
     c_ = Sphere_circle<R_>(Plane_3(Point_3(0,0,0),h.base1()));
   }
   if (!shorter_arc) c_ = c_.opposite(); 
-  CGAL_assertion(c_.has_on(p1) && c_.has_on(p2));
+  CGAL_exactness_assertion(c_.has_on(p1) && c_.has_on(p2));
 }
 
 Sphere_segment_rep(const Point& p1, const Point& p2, const Circle& c) :
