@@ -98,6 +98,36 @@ definition {\em Orientation\_3}:
 Now other kernel functionality is removed from the interface of
 \ccc{CGAL::Kernel_archetype}, so access to these other kernel types will result
 in a compile-time error.
+Another option is to use an own archetype class that encapsulates only the 
+needed type definitions and the corresponding member functions. 
+See the following code snippet for a simple example.
+
+\ccHtmlLinksOff
+
+\begin{ccExampleCode}
+#include <CGAL/Kernel_archetype.h>
+
+// build an own archetype class ...
+
+// get needed types from the kernel archetype ...
+typedef CGAL::Kernel_archetype           KA;
+typedef KA::Point_3                      KA_Point_3;
+typedef KA::Plane_3                      KA_Plane_3;
+typedef KA::Construct_opposite_plane_3   KA_Construct_opposite_plane_3;
+
+// reuse the types from the kernel archetype in the own archetype class
+struct My_archetype {
+  typedef KA_Point_3                    Point_3;
+  typedef KA_Plane_3                    Plane_3;
+  typedef KA_Construct_opposite_plane_3 Construct_opposite_plane_3;
+  
+  Construct_opposite_plane_3
+  construct_opposite_plane_3_object()
+  { return Construct_opposite_plane_3(); }
+};
+\end{ccExampleCode}
+
+\ccHtmlLinksOn
 
 \subsection{Example program}
 

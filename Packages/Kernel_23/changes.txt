@@ -1,3 +1,7 @@
+1.27 (18 February 2003)
+- documentation and example program for Kernel_archetype
+  changed
+
 1.26 (17 February 2003)
 - Improve Type_equality_wrapper to support Filtered_kernel.
 
