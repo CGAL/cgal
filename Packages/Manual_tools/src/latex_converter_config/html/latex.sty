@@ -1008,9 +1008,9 @@
         {\def\lciPartNum{0}}{\def\lciPartNum{-1}}%
     \lciIfLessExpanded{\lciCountersecnumdepth}{\lciPartNum}{%
       \lciHtmlPartHeader{\value{part}}{#2}%
-      \lciHtmlPartToc{\value{part}}{#1}}%
+      \lciHtmlPartToc{\thepart}{#1}}%
     {\lciHtmlPartHeader{\value{part}}{\thepart~~~#2}%
-      \lciHtmlPartToc{\value{part}}{\thepart~~~#1}}}
+      \lciHtmlPartToc{\thepart}{\thepart~~~#1}}}
 \newcommand{\part*}[1]{%
     \gdef{\lciIfHtmlLinks}{\lcTrue}%
     \gdef{\lciIfHtmlIndex}{\lcTrue}%
@@ -1054,10 +1054,10 @@
     \lciHtmlFileHeader{#2}%
     \lciHtmlNavigationTop
     \lciIfLessExpanded{\lciCountersecnumdepth}{0}{%
-      \lciHtmlChapterToc{\value{chapter}}{#1}%
+      \lciHtmlChapterToc{\thechapter}{#1}%
       \lciHtmlChapterHeader{#2}%
     }{%
-      \lciHtmlChapterToc{\value{chapter}}{\thechapter~~~#1}%
+      \lciHtmlChapterToc{\thechapter}{\thechapter~~~#1}%
       \lciHtmlChapterHeader{Chapter \thechapter\\#2}%
     }}
 \newcommand{\chapter*}[1]{%
@@ -1084,9 +1084,9 @@
     \lciEndSection
     \refstepcounter{section}%
     \lciIfLessExpanded{\lciCountersecnumdepth}{1}{%
-      \lciHtmlSectionToc{\value{section}}{#1}%
+      \lciHtmlSectionToc{\thesection}{#1}%
       \lciHtmlSectionHeader{#2}}%
-    {\lciHtmlSectionToc{\value{section}}{\thesection~~~#1}%
+    {\lciHtmlSectionToc{\thesection}{\thesection~~~#1}%
       \lciHtmlSectionHeader{\thesection~~~#2}}}
 \newcommand{\section*}[1]{%
     \lciHtmlSectionHeader{#1}}
@@ -1102,10 +1102,10 @@
     \lciEndSubsection
     \refstepcounter{subsection}%
     \lciIfLessExpanded{\lciCountersecnumdepth}{2}{%
-      \lciHtmlSubsectionHeader{\value{subsection}}{#2}%
-      \lciHtmlSubsectionToc{\value{subsection}}{#1}}%
-    {\lciHtmlSubsectionHeader{\value{subsection}}{\thesubsection~~~#2}%
-      \lciHtmlSubsectionToc{\value{subsection}}{\thesubsection~~~#1}}}
+      \lciHtmlSubsectionHeader{\thesubsection}{#2}%
+      \lciHtmlSubsectionToc{\thesubsection}{#1}}%
+    {\lciHtmlSubsectionHeader{\thesubsection}{\thesubsection~~~#2}%
+      \lciHtmlSubsectionToc{\thesubsection}{\thesubsection~~~#1}}}
 \newcommand{\subsection*}[1]{%
     \lciHtmlSubsectionHeader{}{#1}}
 
@@ -1120,10 +1120,10 @@
     \lciEndSubsubsection
     \refstepcounter{subsubsection}%
     \lciIfLessExpanded{\lciCountersecnumdepth}{3}{%
-      \lciHtmlSubsubsectionHeader{\value{subsubsection}}{#2}%
-      \lciHtmlSubsubsectionToc{\value{subsubsection}}{#1}}%
-   {\lciHtmlSubsubsectionHeader{\value{subsubsection}}{\thesubsubsection~~~#2}%
-     \lciHtmlSubsubsectionToc{\value{subsubsection}}{\thesubsubsection~~~#1}}}
+      \lciHtmlSubsubsectionHeader{\thesubsubsection}{#2}%
+      \lciHtmlSubsubsectionToc{\thesubsubsection}{#1}}%
+   {\lciHtmlSubsubsectionHeader{\thesubsubsection}{\thesubsubsection~~~#2}%
+     \lciHtmlSubsubsectionToc{\thesubsubsection}{\thesubsubsection~~~#1}}}
 \newcommand{\subsubsection*}[1]{%
     \lciHtmlSubsubsectionHeader{}{#1}}
 
@@ -1139,10 +1139,10 @@
     \lciEndParagraph
     \refstepcounter{paragraph}%
     \lciIfLessExpanded{\lciCountersecnumdepth}{4}{%
-      \lciHtmlParagraphHeader{\value{paragraph}}{#2}%
-      \lciHtmlParagraphToc{\value{paragraph}}{#1}}%
-    {\lciHtmlParagraphHeader{\value{paragraph}}{\theparagraph~~~#2}%
-      \lciHtmlParagraphToc{\value{paragraph}}{\theparagraph~~~#1}}}
+      \lciHtmlParagraphHeader{\theparagraph}{#2}%
+      \lciHtmlParagraphToc{\theparagraph}{#1}}%
+    {\lciHtmlParagraphHeader{\theparagraph}{\theparagraph~~~#2}%
+      \lciHtmlParagraphToc{\theparagraph}{\theparagraph~~~#1}}}
 \newcommand{\paragraph*}[1]{%
     \lciHtmlParagraphHeader{}{#1}}
 
@@ -1157,10 +1157,10 @@
     \lciEndSubparagraph
     \refstepcounter{subparagraph}%
     \lciIfLessExpanded{\lciCountersecnumdepth}{5}{%
-      \lciHtmlSubparagraphHeader{\value{subparagraph}}{#2}%
-      \lciHtmlSubparagraphToc{\value{subparagraph}}{#1}}%
-    {\lciHtmlSubparagraphHeader{\value{subparagraph}}{\thesubparagraph~~~#2}%
-      \lciHtmlSubparagraphToc{\value{subparagraph}}{\thesubparagraph~~~#1}}}
+      \lciHtmlSubparagraphHeader{\thesubparagraph}{#2}%
+      \lciHtmlSubparagraphToc{\thesubparagraph}{#1}}%
+    {\lciHtmlSubparagraphHeader{\thesubparagraph}{\thesubparagraph~~~#2}%
+      \lciHtmlSubparagraphToc{\thesubparagraph}{\thesubparagraph~~~#1}}}
 \newcommand{\subparagraph*}[1]{%
     \lciHtmlSubparagraphHeader{}{#1}}
 
@@ -1171,7 +1171,9 @@
 
 % appendix changes numbering of chapters
 \newcommand{\appendix}{%
-    \gdef{\thechapter}{\Alph{chapter}}}
+  \lciIfEqualExpanded{\lciDocumentClass}{article}{%
+    \gdef{\thesection}{\Alph{section}}\setcounter{section}{0}}{%
+    \gdef{\thechapter}{\Alph{chapter}}\setcounter{chapter}{0}}}
 
 \newcommand{\minitoc}{}
 \newcommand{\tableofcontents}{}
