@@ -150,7 +150,7 @@ public:
 	    Cell_handle aconflict;
 	    int ineighbor;
 	    find_conflicts_3(conflicts,p,c,aconflict,ineighbor);
-	    tds().star_region(conflicts,&(*v),&(*aconflict),ineighbor);
+	    _tds.star_region(conflicts,&(*v),&(*aconflict),ineighbor);
 	    return v;
 	  }
 	case VERTEX:
@@ -177,7 +177,7 @@ public:
 	    Cell_handle aconflict;
 	    int ineighbor;
 	    find_conflicts_2(conflicts,p,c,aconflict,ineighbor);
-	    tds().star_region(conflicts,&(*v),&(*aconflict),ineighbor);
+	    _tds.star_region(conflicts,&(*v),&(*aconflict),ineighbor);
 	    return v;
 	  }
 	case VERTEX:
@@ -251,6 +251,7 @@ private:
       }
     }
   }// find_conflicts_2
+public:
 
   CGAL_Bounded_side
   side_of_sphere( Cell_handle c, const Point & p) const
@@ -503,6 +504,75 @@ private:
     }// infinite facet
     return CGAL_ON_BOUNDARY; // to avoid warning with egcs
   }// side_of_circle
+
+  
+  bool is_valid(bool verbose = false, int level = 0) const
+    {
+      if ( ! tds().is_valid(verbose,level) ) {
+	if (verbose) { cerr << "invalid data structure" << endl; }
+	CGAL_triangulation_assertion(false); return false;
+      }
+    
+      if ( &(*infinite_vertex()) == NULL ) {
+	if (verbose) { cerr << "no infinite vertex" << endl; }
+	CGAL_triangulation_assertion(false); return false;
+      }
+
+      int i;
+
+      switch ( dimension() ) {
+      case 3:
+	{
+	  Cell_iterator it;
+	  for ( it = finite_cells_begin(); it != cells_end(); ++it ) {
+	    is_valid_finite((*it).handle());
+	    for ( i=0; i<4; i++ ) {
+	      if ( side_of_sphere
+		   ( (*it).handle(), 
+		     it->vertex( (it->neighbor(i))->index((*it).handle() ) )
+		     ->point() )
+		   == CGAL_ON_BOUNDED_SIDE ) {
+		if (verbose) { 
+		  cerr << "non-empty sphere " << endl;
+		}
+		CGAL_triangulation_assertion(false); return false;
+	      }
+	    }
+	  }
+	  break;
+	}
+      case 2:
+	{
+	  Facet_iterator it;
+	  for ( it = finite_facets_begin(); it != facets_end(); ++it ) {
+	    is_valid_finite((*it).first);
+	    for ( i=0; i<2; i++ ) {
+	      if ( side_of_circle
+		   ( (*it).first, 3,
+		     (*it).first
+		     ->vertex( (((*it).first)->neighbor(i))->index((*it).first) )->point() )
+		   == CGAL_ON_BOUNDED_SIDE ) {
+		if (verbose) { 
+		  cerr << "non-empty circle " << endl;
+		}
+		CGAL_triangulation_assertion(false); return false;
+	      }
+	    }
+	  }
+	  break;
+	}
+      case 1:
+	{
+	  Edge_iterator it;
+	  for ( it = finite_edges_begin(); it != edges_end(); ++it ) {
+	    is_valid_finite((*it).first);
+	  }
+	  break;
+	}
+      }
+      if (verbose) { cerr << "Delaunay valid triangulation" << endl;}
+      return true;
+    }
 
 };
 #endif CGAL_DELAUNAY_TRIANGULATION_3_H
