@@ -13,15 +13,9 @@ include $(CGAL_MAKEFILE)
 #                    compiler flags
 #---------------------------------------------------------------------#
 
-OPTIM_OPT = 
-
-OTHER_CXXFLAGS?= 
-
 CXXFLAGS = -I../../include \
            $(CGAL_CXXFLAGS) \
-           $(LONG_NAME_PROBLEM_CXXFLAGS) \
-           $(OPTIM_OPT) \
-           $(OTHER_CXXFLAGS)
+           $(LONG_NAME_PROBLEM_CXXFLAGS)
 
 #---------------------------------------------------------------------#
 #                    linker flags
@@ -77,16 +71,7 @@ Show_clusters.moc: Show_clusters.h
 
 mesh_demo$(OBJ_EXT): mesh_demo.moc Show_clusters.moc \
 	Show_points.h \
-	Qt_widget_style_editor.h \
-	../../include/CGAL/Double_map.h \
-	../../include/CGAL/Filter_circulator.h \
-	../../include/CGAL/Conforming_Delaunay_triangulation_maker_2.h \
-	../../include/CGAL/Delaunay_mesher_2.h \
-	../../include/CGAL/Delaunay_mesh_criteria_2.h \
-	../../include/CGAL/Delaunay_mesh_face_base_2.h \
-	../../include/CGAL/Delaunay_mesh_local_size_criteria_2.h \
-	../../include/CGAL/Delaunay_mesh_size_criteria_2.h
-
+	Qt_widget_style_editor.h 
 
 mesh_demo$(EXE_EXT): mesh_demo$(OBJ_EXT) icons$(OBJ_EXT) \
 		Show_points$(OBJ_EXT) \
@@ -103,23 +88,8 @@ mesh_demo$(EXE_EXT): mesh_demo$(OBJ_EXT) icons$(OBJ_EXT) \
 run_mesh_demo: mesh_demo$(EXE_EXT)
 	./mesh_demo$(EXE_EXT)
 
-conform$(OBJ_EXT): \
-	../../include/CGAL/Conforming_Delaunay_triangulation_maker_2.h \
-	../../include/CGAL/Mesh_2/Clusters.h \
-	../../include/CGAL/Mesh_2/Refine_edges.h \
-	../../include/CGAL/Mesh_2/Refine_edges_with_clusters.h \
-	../../include/CGAL/Delaunay_mesh_criteria_2.h \
-	../../include/CGAL/Double_map.h \
-	../../include/CGAL/Filter_circulator.h
-
 conform$(EXE_EXT): conform$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)conform conform$(OBJ_EXT) $(LDFLAGS)
-
-mesh$(OBJ_EXT): ../../include/CGAL/Delaunay_mesh_2.h \
-                ../../include/CGAL/Delaunay_mesh_face_base_2.h \
-                ../../include/CGAL/Delaunay_mesh_criteria_2.h \
-		../../include/CGAL/Double_map.h \
-		../../include/CGAL/Filter_circulator.h
 
 mesh$(EXE_EXT): mesh$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)mesh mesh$(OBJ_EXT) $(LDFLAGS)
