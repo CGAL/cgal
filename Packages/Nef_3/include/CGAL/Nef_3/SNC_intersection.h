@@ -303,7 +303,7 @@ class SNC_intersection : public SNC_const_decorator<SNC_structure_> {
     CGAL_assertion(h.has_on(p));
     Halffacet_cycle_const_iterator fc = f->facet_cycles_begin();
     SHalfedge_handle se;
-    Bounded_side outer_bound_pos;
+    Bounded_side outer_bound_pos(CGAL::ON_BOUNDED_SIDE);
     if ( assign(se,fc) ) {
       SHalfedge_around_facet_circulator hfc(se);
       Circulator c(hfc);
@@ -322,7 +322,7 @@ class SNC_intersection : public SNC_const_decorator<SNC_structure_> {
     ++fc;
     if( fc == fe )
       return outer_bound_pos;
-    Bounded_side inner_bound_pos;
+    Bounded_side inner_bound_pos(CGAL::ON_BOUNDED_SIDE);
     CGAL_For_all(fc, fe) {
       SHalfloop_handle l;
       if ( assign(l,fc) ) { 
