@@ -12,117 +12,324 @@
 // release_date  : $CGAL_Date: 2003/05/23 $
 //
 // file          : include/CGAL/Iso_box_d.h
-// package       : ASPAS (3.12)
-// maintainer    : Hans Tangelder <hanst@cs.uu.nl>
+// package       : Kernel_d
+// maintainer    : Michael Hoffmann <hoffmann@inf.ethz.ch>
 // revision      : 2.4 
 // revision_date : 2003/02/01 
-// authors       : Hans Tangelder (<hanst@cs.uu.nl>)
-// coordinator   : Utrecht University
+// authors       : Hans Tangelder <hanst@cs.uu.nl>, Michael Hoffmann
+// coordinator   : ETH Zurich
 //
 // ======================================================================
 
 #ifndef CGAL_ISO_BOX_D_H
 #define CGAL_ISO_BOX_D_H
-#include <CGAL/enum.h>
-#include <CGAL/representation_tags.h>
+
+#include <CGAL/Kernel_d/Pair_d.h> 
 #include <functional>
 #include <algorithm>
-#include <new>
-#include <cassert>
+#include <numeric>
 
 namespace CGAL {
   
-  template <class Kernel> class Iso_box_d {
+  namespace Kernel_d {
+    struct Begin {};
+    struct End {};
+    struct Cartesian_end {};
+  } // namespace Kernel_d
+  
+  template < typename Point_, typename Functor_ >
+  struct Cartesian_iterator {
+    typedef Point_                                    Point;
+    typedef Functor_                                  Functor;
+    typedef typename Point::Cartesian_const_iterator  Iterator;
+    typedef Cartesian_iterator<Point,Functor>         Self;
+
+    typedef typename Functor::result_type  value_type;
+    typedef value_type&                    reference;
+    typedef value_type*                    pointer;
+    typedef std::ptrdiff_t                 difference_type;
+    typedef std::input_iterator_tag        iterator_category;
+      
+  protected:
+      
+    Iterator pb, qb;
+    Functor f;
+      
   public:
-    typedef typename Kernel::FT FT;
-    typedef typename Kernel::Point_d Point_d;
-    typedef typename Kernel::Rep_tag Rep_tag;
-   
-  private:
-
-    int dim;
-    Point_d* lower;
-    Point_d* upper;
-
+      
+    Cartesian_iterator(const Point& p, const Point& q, Kernel_d::Begin)
+      : pb(p.cartesian_begin()), qb(q.cartesian_begin())
+    {}
+    
+    Cartesian_iterator(const Point& p, const Point& q, Kernel_d::End)
+      : pb(p.cartesian_end()), qb(q.cartesian_end())
+    {}
+    
+    Cartesian_iterator(const Point& p, const Point& q, Kernel_d::Cartesian_end)
+      : pb(p.cartesian_end()), qb(q.cartesian_end())
+    {}
+    
+    Cartesian_iterator(const Point& p, const Point& q, const Functor& f_,
+		       Kernel_d::Begin) 
+      : pb(p.cartesian_begin()), qb(q.cartesian_begin()), f(f_) 
+    {}
+      
+    Cartesian_iterator(const Point& p, const Point& q, const Functor& f_,
+		       Kernel_d::End) 
+      : pb(p.cartesian_end()), qb(q.cartesian_end()), f(f_) 
+    {}
+      
+    Cartesian_iterator(const Point& p, const Point& q, const Functor& f_,
+		       Kernel_d::Cartesian_end) 
+      : pb(p.cartesian_end()), qb(q.cartesian_end()), f(f_) 
+    {}
+      
+    Self& operator++() { ++pb; ++qb; return *this; }
+      
+    Self operator++(int) {
+      Self tmp(*this);
+      ++(*this);
+      return tmp;
+    }
+    
+    value_type operator*()  const { return f(*pb, *qb); }
+    pointer    operator->() const { return &(**this); }
+      
+    const Functor& functor() const { return f; }
+    Iterator base_p() const { return pb; }
+    Iterator base_q() const { return qb; }
+  };
   
-  void construct_box(const Point_d& p, const Point_d& q, Cartesian_tag tag) {
-     const int dimension=dim;
-     FT low[dimension];
-     FT upp[dimension];
-     for (int i = 0; i < dimension; ++i) {
-	  if (p[i] <= q[i]) {
-		low[i]=p[i]; 
-                upp[i]=q[i];
-	  }
-	  else {
-		low[i]=q[i]; 
-                upp[i]=p[i];
-	  }
-     }	  
-     lower = new Point_d(dimension,low,low+dimension);
-     upper = new Point_d(dimension,upp,upp+dimension);
-}  
-  
-void construct_box(const Point_d& p, const Point_d& q, Homogeneous_tag tag) {
- {
-     typedef typename Kernel::RT RT;
-     const int dimension=dim;
-     RT low[dimension];
-     RT upp[dimension];
-     for (int i = 0; i < dimension; ++i) {
-	  if (p[i] <= q[i]) {
-		low[i]=p.homogeneous(i); 
-                upp[i]=q.homogeneous(i);
-	  }
-	  else {
-		low[i]=q.homogeneous(i); 
-                upp[i]=p.homogeneous(i);
-	  }
-     }	  
-     lower = new Point_d(dimension,low,low+dimension,RT(1));
-     upper = new Point_d(dimension,upp,upp+dimension,RT(1));
+  template < typename Iterator, typename Functor > inline
+  bool operator==(const Cartesian_iterator<Iterator,Functor>& x, 
+		  const Cartesian_iterator<Iterator,Functor>& y)
+  {
+    return x.base_p() == y.base_p() && x.base_q() == y.base_q(); 
   }
-}
-
-  public:
-
-    Iso_box_d(const Point_d& p, const Point_d& q)
-    { CGAL_precondition(p.dimension() == q.dimension());
-      dim = p.dimension();
-      typename Kernel::Rep_tag tag;
-#if defined(__sun) && defined(__SUNPRO_CC)
-     // to avoid a warning "tag has not yet been assigned a value"
-     // typedef typename Kernel::Rep_tag Rep_tag;
-     tag = Rep_tag();
-#endif // SUNPRO
-     construct_box(p,q,tag);  
-    }
   
-    // copy constructor
-    Iso_box_d(const Iso_box_d& b) : dim(b.dim) {
-      lower = new Point_d(*(b.lower));
-      upper = new Point_d(*(b.upper));
+  template < typename Iterator, typename Functor > inline
+  bool operator!=(const Cartesian_iterator<Iterator,Functor>& x, 
+		  const Cartesian_iterator<Iterator,Functor>& y)
+  {
+    return ! (x == y);
+  }
+  
+  template < typename Point_, typename Functor_ >
+  struct Homogeneous_iterator {
+    typedef Point_                                      Point;
+    typedef Functor_                                    Functor;
+    typedef typename Point::Homogeneous_const_iterator  Iterator;
+    typedef Homogeneous_iterator<Point,Functor>         Self;
+
+    typedef typename Functor::result_type  value_type;
+    typedef value_type&                    reference;
+    typedef value_type*                    pointer;
+    typedef std::ptrdiff_t                 difference_type;
+    typedef std::input_iterator_tag        iterator_category;
+      
+  protected:
+      
+    Iterator pb, qb;
+    Functor f;
+    typedef typename Kernel_traits<Point>::Kernel::RT RT;
+    RT hp, hq; // homogenizing coordinates
+    
+  public:
+      
+    Homogeneous_iterator(const Point& p, const Point& q, Kernel_d::Begin)
+      : pb(p.homogeneous_begin()), qb(q.homogeneous_begin()),
+	hp(p.homogeneous(p.dimension())), hq(q.homogeneous(q.dimension()))
+    {}
+    
+    Homogeneous_iterator(const Point& p, const Point& q, Kernel_d::End)
+      : pb(p.homogeneous_end()), qb(q.homogeneous_end()),
+	hp(p.homogeneous(p.dimension())), hq(q.homogeneous(q.dimension()))
+    {}
+    
+    Homogeneous_iterator(const Point& p, const Point& q, 
+			 Kernel_d::Cartesian_end)
+      : pb(p.homogeneous_end()), qb(q.homogeneous_end()),
+	hp(p.homogeneous(p.dimension())), hq(q.homogeneous(q.dimension()))
+    {
+      --pb; --qb;
     }
-
-
-    // destructor
-    ~Iso_box_d() {
-	delete lower;
-	delete upper;
+    
+    Homogeneous_iterator(const Point& p, const Point& q, const Functor& f_,
+			 Kernel_d::Begin) 
+      : pb(p.homogeneous_begin()), qb(q.homogeneous_begin()), f(f_),
+	hp(p.homogeneous(p.dimension())), hq(q.homogeneous(q.dimension()))
+    {}
+    
+    Homogeneous_iterator(const Point& p, const Point& q, const Functor& f_,
+			 Kernel_d::End) 
+      : pb(p.homogeneous_end()), qb(q.homogeneous_end()), f(f_),
+	hp(p.homogeneous(p.dimension())), hq(q.homogeneous(q.dimension()))
+    {}
+      
+    Homogeneous_iterator(const Point& p, const Point& q, const Functor& f_,
+			 Kernel_d::Cartesian_end) 
+      : pb(p.homogeneous_end()), qb(q.homogeneous_end()), f(f_),
+	hp(p.homogeneous(p.dimension())), hq(q.homogeneous(q.dimension()))
+    {
+      --pb; --qb;
     }
+      
+    Self& operator++() { ++pb; ++qb; return *this; }
+      
+    Self operator++(int) {
+      Self tmp(*this);
+      ++(*this);
+      return tmp;
+    }
+    
+    value_type operator*()  const { return f(*pb * hq, *qb * hp); }
+    pointer    operator->() const { return &(**this); }
+      
+    const Functor& functor() const { return f; }
+    Iterator base_p() const { return pb; }
+    Iterator base_q() const { return qb; }
+  };
+  
+  template < typename Iterator, typename Functor > inline
+  bool operator==(const Homogeneous_iterator<Iterator,Functor>& x, 
+		  const Homogeneous_iterator<Iterator,Functor>& y)
+  {
+    return x.base_p() == y.base_p() && x.base_q() == y.base_q(); 
+  }
+  
+  template < typename Iterator, typename Functor > inline
+  bool operator!=(const Homogeneous_iterator<Iterator,Functor>& x, 
+		  const Homogeneous_iterator<Iterator,Functor>& y)
+  {
+    return ! (x == y);
+  }
+  
+  template < typename Kernel_ > struct Iso_box_d;
+  
+  namespace Kernel_d {
 
+    template < typename RepTag > struct Coordinate_iterator;
+    
+    template <> struct Coordinate_iterator<Cartesian_tag> {
+      template < typename Point, typename Functor > 
+      struct Iterator {
+	typedef Cartesian_iterator<Point,Functor>  type;
+      };
+    };
+    
+    template <> struct Coordinate_iterator<Homogeneous_tag> {
+      template < typename Point, typename Functor > 
+      struct Iterator {
+	typedef Homogeneous_iterator<Point,Functor>  type;
+      };
+    };
 
+    template < typename Kernel_ > 
+    struct Iso_box_d_rep {
+      typedef Kernel_                   Kernel;
+      friend class Iso_box_d<Kernel>;
+      
+    protected:
+
+      typedef typename Kernel::Point_d  Point_d;
+      Point_d lower, upper;
+
+    public:
+
+      Iso_box_d_rep() {}
+      
+      template < typename InputIteratorI, typename InputIteratorII >
+      Iso_box_d_rep(int dim,
+		    InputIteratorI b1, InputIteratorI e1,
+		    InputIteratorII b2, InputIteratorII e2)
+	: lower(dim, b1, e1), upper(dim, b2, e2)
+      {}
+      
+    };
+    
+  } // namespace Kernel_d
+
+  template < typename Kernel_ > 
+  struct Iso_box_d : public Handle_for< Kernel_d::Iso_box_d_rep<Kernel_> > 
+  { 
+    typedef Kernel_                   Kernel;
+    
+  protected:
+
+    typedef Kernel_d::Iso_box_d_rep<Kernel>  Rep;
+    typedef Handle_for<Rep>                  Base;
+    typedef Iso_box_d<Kernel>                Self;
+
+    typedef typename Kernel::RT       RT;
+    typedef typename Kernel::FT       FT;
+    typedef typename Kernel::Point_d  Point_d;
+    typedef typename Kernel::Rep_tag  Rep_tag;
+   
+    typedef typename Kernel_d::Coordinate_iterator<Rep_tag>           CIRT;
+    typedef typename CIRT::template Iterator<Point_d,Min<RT> >::type  MinIter;
+    typedef typename CIRT::template Iterator<Point_d,Max<RT> >::type  MaxIter;
+    typedef Kernel_d::Begin            Begin; 
+    typedef Kernel_d::End              End; 
+    typedef Kernel_d::Cartesian_end    Cartesian_end; 
+
+    RT volume_nominator() const
+    {
+      typedef typename CIRT::Iterator<Point_d,std::minus<RT> >::type Iter;
+      Iter b(ptr()->upper, ptr()->lower, Begin());
+      Iter e(ptr()->upper, ptr()->lower, Cartesian_end());
+      return std::accumulate(b, e, RT(1), std::multiplies<RT>());
+    }
+    
+    RT volume_denominator() const
+    {
+      RT den = 
+	ptr()->lower.homogeneous(dimension()) * 
+	ptr()->upper.homogeneous(dimension());
+      RT prod = den;
+      for (int i = 1; i < dimension(); ++i)
+	prod *= den;
+      return prod;
+    }
+    
+    FT volume(Homogeneous_tag) const
+    { 
+      return FT(volume_nominator(), volume_denominator());
+    }
+    
+    FT volume(Cartesian_tag) const
+    { 
+      return volume_nominator();
+    }
+    
+public:
+
+    Iso_box_d() {}
+    
+    Iso_box_d(const Point_d& p, const Point_d& q)
+      : Base(Rep(p.dimension(), 
+		 MinIter(p, q, Begin()), MinIter(p, q, End()),
+		 MaxIter(p, q, Begin()), MaxIter(p, q, End())))
+    { 
+      CGAL_precondition(p.dimension() == q.dimension());
+    }
+    
     Bounded_side bounded_side(const Point_d& p) const
     { 
-      CGAL_precondition(p.dimension() == dim);
-      FT h;
-      for (int i = 0; i < dim; ++i) {
-        h=p[i];
-        if ( (h < (*lower)[i]) || (h > (*upper)[i]) ) return ON_UNBOUNDED_SIDE;
-      }
-      for (int i = 0; i < dim; ++i) {
-        h=p[i];
-        if ( (h == (*lower)[i]) || (h == (*upper)[i]) ) return ON_BOUNDARY;
+      CGAL_precondition(p.dimension() == dimension());
+      typedef typename CIRT::Iterator<Point_d,Compare<RT> >::type Iter;
+      
+      Iter il(p, ptr()->lower, Begin());
+      Iter ilend(p, ptr()->lower, Cartesian_end());
+      Iter iu(p, ptr()->upper, Begin());
+      CGAL_assertion_code(Iter iuend(p, ptr()->upper, Cartesian_end()));
+      
+      for (; il != ilend; ++il, ++iu) {
+	CGAL_assertion(iu != iuend);
+	Comparison_result low = *il;
+	Comparison_result upp = *iu;
+	if (low == LARGER && upp == SMALLER) continue;
+	if (low == SMALLER || upp == LARGER) return ON_UNBOUNDED_SIDE;
+	return ON_BOUNDARY;
       }
       return ON_BOUNDED_SIDE;
     }
@@ -142,73 +349,46 @@ void construct_box(const Point_d& p, const Point_d& q, Homogeneous_tag tag) {
       return (bounded_side(p)==ON_BOUNDARY); 
     } 
 
-      
-    int dimension() const { return dim;}
+    int dimension() const { return ptr()->lower.dimension();}
     
-    FT min_coord(int i) const {
-      return (*lower)[i];
+    // FIXME!
+    FT min_coord(int i) const { return ptr()->lower[i]; }
+
+    FT max_coord(int i) const { return ptr()->upper[i]; }
+
+    const Point_d& min() const { return ptr()->lower; }
+
+    const Point_d& max() const { return ptr()->upper; }
+
+    FT volume() const { return volume(Rep_tag()); }
+    
+    bool is_degenerate() const
+    {
+      typedef typename CIRT::Iterator<Point_d,std::equal_to<RT> >::type Iter;
+      // omit homogenizing coordinates
+      Iter e(ptr()->lower, ptr()->upper, Cartesian_end());
+      return 
+	e != std::find(Iter(ptr()->lower, ptr()->upper, Begin()), e, true);
     }
-
-    FT max_coord(int i) const {
-      return (*upper)[i];
-    }
-
-   Point_d min() const
-   {
-     return Point_d(*lower);
-   }
-
-   Point_d max() const
-   {
-     return Point_d(*upper);
-   }
- 
-   
-  FT volume() const
-  {
-     FT  vol = (*upper)[0]-(*lower)[0];
-     for (int i = 1; i < dim; ++i) {
-        vol=vol*((*upper)[i]-(*lower)[i]);
-     }
-     return vol;
-  }
-
-bool is_degenerate() const
-  {
-     for (int i = 0; i < dim; ++i) {
-        if ((*lower)[i]==(*upper)[i]) return true;
-     }
-     return false;
-  }
 
 }; // end of class
 
-template <class Kernel>
-inline bool
-operator!=(const Iso_box_d<Kernel>& b1, Iso_box_d<Kernel>& b2)
-{
-  CGAL_precondition(b1.dimension() == b2.dimension());
-  unsigned int dim = b1.dimension();
-  for (unsigned int i = 0; i < dim; ++i) {
-			if ( (b1.min_coord(i) != b2.min_coord(i)) || (b1.max_coord(i) != b2.max_coord(i)) ) return true;
-		}
-  return false; 
-}
-
-template <class Kernel>
+template < typename Kernel >
 inline bool
 operator==(const Iso_box_d<Kernel>& b1, Iso_box_d<Kernel>& b2)
 {
   CGAL_precondition(b1.dimension() == b2.dimension());
-  unsigned int dim = b1.dimension();
-  for (unsigned int i = 0; i < dim; ++i) {
-			if ( (b1.min_coord(i) != b2.min_coord(i)) || (b1.max_coord(i) != b2.max_coord(i)) ) return false;
-		}
-  return true; 
+  return b1.min() == b2.min() && b1.max() == b2.max();
 }
-  
 
+template < typename Kernel >
+inline bool
+operator!=(const Iso_box_d<Kernel>& b1, Iso_box_d<Kernel>& b2)
+{
+  return ! (b1 == b2); 
+}
 
 } // namespace CGAL
+
 #endif // CGAL_ISO_BOX_D_H
 
