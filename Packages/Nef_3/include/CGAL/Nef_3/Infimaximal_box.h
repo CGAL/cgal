@@ -188,9 +188,9 @@ class Infimaximal_box<Tag_true, Kernel> {
     return p[i];
   }
 
-  template <typename SNC_decorator_>
-  static Point_3 target_for_ray_shot(SNC_decorator_& deco, Point_3 p) {
-    return Kernel::epoint(0, p.hx()[0], 0, p.hy()[0], p.hw()[0], 0, p.hw()[0]);
+  static Point_3 target_for_ray_shoot_on_minus_x_direction(Point_3 p) {
+    CGAL_warning( Kernel::is_standard(p));
+    return Kernel::epoint( -1, 0, 0, p.hy()[0], 0, p.hz()[0], p.hw()[0]);
   }
 
   static Standard_point standard_point(Point_3 p, NT d=1) {
