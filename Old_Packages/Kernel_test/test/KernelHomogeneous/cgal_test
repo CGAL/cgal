@@ -70,13 +70,6 @@ if [ $# -ne 0 ] ; then
     compile_and_run $file
   done
 else
-  compile_and_run test_basic_constructionsH3
-  compile_and_run test_io
-  compile_and_run test_kernelH2
-  compile_and_run test_kernelH3
-  compile_and_run test_new_kernelH2
-  compile_and_run test_new_kernelH3
-  compile_and_run test_new_partsH_
-  compile_and_run test_planeH3_to_2d
+  compile_and_run test_all
 fi
 
