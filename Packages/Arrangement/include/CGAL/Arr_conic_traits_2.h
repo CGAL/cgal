@@ -752,21 +752,22 @@ public:
   }
 
   /*!
-   * Find the nearest intersection point (or points) of two given curves to
-   * the right lexicographically of a given point not including the point
-   * itself:
-   *  - If the intersection of the two curves is a point to the right of the 
-   *    given point, it is returned through both point references p1 and p2.
-   *  - If the intersection of the two curves is an X_monotone_curve_2, 
-   *    that is, they overlap at infinitely many points, then the endpoints
-   *    of the overlapping sub-arc are returned.
+   * Find the nearest intersection of the two given curves to the right of 
+   * a given reference point.
+   * Nearest is defined as the lexicographically nearest point, not including 
+   * the point reference point itself.
+   * If the intersection of the two curves is an X_monotone_curve_2, that is,
+   * there is an overlapping subcurve, that contains the reference point in
+   * its x-range, the function should return an X_monotone_curve_2 whose 
+   * interior is strictly to the right of the reference point (that is, whose
+   * left endpoint is the projection of the reference point onto the 
+   * overlapping subcurve).
    * \param curve1 The first curve.
    * \param curve2 The second curve.
    * \param p The refernece point.
-   * \param p1 The first output point.
-   * \param p2 The second output point.
-   * \return (true) if curve1 and curve2 do intersect to the right of p, 
-   *         or (false) if no such intersection exists.
+   * \return An empty object if there is no intersection to the right of p.
+   *         An object wrapping a Point_2 in case of a simple intersection.
+   *         An object wrapping an X_monotone_curve_2 in case of an overlap.
    */
   Object nearest_intersection_to_right (const X_monotone_curve_2& curve1,
 					const X_monotone_curve_2& curve2,
@@ -904,21 +905,22 @@ public:
   }
 
   /*!
-   * Find the nearest intersection point (or points) of two given curves to
-   * the left lexicographically of a given point not including the point
-   * itself:
-   *  - If the intersection of the two curves is a point to the left of the 
-   *    given point, it is returned through both point references p1 and p2.
-   *  - If the intersection of the two curves is an X_monotone_curve_2, 
-   *    that is, they overlap at infinitely many points, then the endpoints
-   *    of the overlapping sub-arc are returned.
+   * Find the nearest intersection of the two given curves to the left of 
+   * a given reference point.
+   * Nearest is defined as the lexicographically nearest point, not including 
+   * the point reference point itself.
+   * If the intersection of the two curves is an X_monotone_curve_2, that is,
+   * there is an overlapping subcurve, that contains the reference point in
+   * its x-range, the function should return an X_monotone_curve_2 whose 
+   * interior is strictly to the left of the reference point (that is, whose
+   * right endpoint is the projection of the reference point onto the 
+   * overlapping subcurve).
    * \param curve1 The first curve.
    * \param curve2 The second curve.
    * \param p The refernece point.
-   * \param p1 The first output point.
-   * \param p2 The second output point.
-   * \return (true) if curve1 and curve2 do intersect to the left of p, 
-   *         or (false) if no such intersection exists.
+   * \return An empty object if there is no intersection to the left of p.
+   *         An object wrapping a Point_2 in case of a simple intersection.
+   *         An object wrapping an X_monotone_curve_2 in case of an overlap.
    */
   Object nearest_intersection_to_left (const X_monotone_curve_2& curve1,
 				       const X_monotone_curve_2& curve2,

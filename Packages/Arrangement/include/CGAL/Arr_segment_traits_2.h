@@ -17,6 +17,7 @@
 //
 // Author(s)     : Iddo Hanniel <hanniel@math.tau.ac.il>
 //                 Efi Fogel    <efif@post.tau.ac.il>
+//                 Ron Wein     <wein@post.tau.ac.il>
 
 #ifndef CGAL_ARR_SEGMENT_EXACT_TRAITS_H
 #define CGAL_ARR_SEGMENT_EXACT_TRAITS_H
@@ -65,18 +66,29 @@ protected:
   typedef typename Kernel::Construct_object_2   Construct_object_2;
 
 public:
-  Arr_segment_traits_2() : Base() { }
 
-  /*! is_x_monotone()
-   * \return true if the given curve is an x-monotone curve. False, otherwise.
+  /*!
+   * Default constructor.
+   */
+  Arr_segment_traits_2() : 
+    Base()
+  {}
+
+  /*!
+   * Check whether the curve is x-monotone.
+   * \return (true) if the given curve is an x-monotone curve; 
+   *         (false) otherwise.
    * For segments, this is always true
    */
-  bool is_x_monotone(const Curve_2 &) {return true;}
+  bool is_x_monotone(const Curve_2 &) const
+  {
+    return (true);
+  }
   
-  /*! curve_make_x_monotone() cuts the given curve into x-monotone subcurves
-   * and inserts them to the given output iterator. The order in which they
-   * are inserted defines their order in the hierarchy tree.
-   * While segments are x_monotone, still need to pass them out.
+  /*!
+   * Split the given curve into x-monotone subcurves and insert them to 
+   * the given output iterator. Since segments are x-monotone, the output
+   * iterator will eventually contain a single curve.
    * \param cv the input curve
    * \param o the output iterator
    * \return the past-the-end iterator
@@ -89,28 +101,29 @@ public:
     return o;
   } 
 
-  /*! curve_opposite() flips a given curve
-   * \param cv the curve
-   * \return a segment with source and target point interchanged
+  /*!
+   * Flip a given curve.
+   * \param cv The curve
+   * \return A segment with source and target point interchanged.
    */
   X_monotone_curve_2 curve_opposite(const X_monotone_curve_2 & cv) const
   {
     return construct_opposite_segment_2_object()(cv);
   }
  
-  /*! curve_split() splits a given curve at a given split point into two
-   * sub-curves.
-   * \param cv the curve to split
-   * \param c1 the output first part of the split curve.Its source is the
-   * source of the original curve.
-   * \param c2 the output second part of the split curve. Its target is the
-   * target of the original curve
-   * \param split_pt
+  /*!
+   * Split a given curve at a given split point into two sub-curves.
+   * \param cv The curve to split
+   * \param c1 The output first part of the split curve.
+   *           Its source is the source of the original curve.
+   * \param c2 The output second part of the split curve.
+   *           Its target is the target of the original curve.
+   * \param split_pt A point on cv.
    * \pre split_pt is on cv but is not an endpoint.
    */
-  void curve_split(const X_monotone_curve_2 & cv,
-                   X_monotone_curve_2 & c1, X_monotone_curve_2 & c2, 
-                   const Point_2 & split_pt) const
+  void curve_split (const X_monotone_curve_2 & cv,
+                    X_monotone_curve_2 & c1, X_monotone_curve_2 & c2, 
+		    const Point_2 & split_pt) const
   {
     //split curve at split point (x coordinate) into c1 and c2
     CGAL_precondition(curve_compare_y_at_x(split_pt, cv) == EQUAL);
@@ -126,26 +139,23 @@ public:
     c2 = construct_segment(split_pt, target);
   }
 
-  /*! nearest_intersection_to_right() finds the nearest intersection point of
-   * two given curves to the right of a given point. Nearest is defined as the
-   * lexicographically nearest not including the point itself with one
-   * exception explained bellow..
+  /*!
+   * Find the nearest intersection of the two given curves to the right of 
+   * a given reference point.
+   * Nearest is defined as the lexicographically nearest point, not including 
+   * the point reference point itself.
    * If the intersection of the two curves is an X_monotone_curve_2, that is,
-   * there is an overlapping subcurve, then if the the source and target of the
-   * subcurve are strickly to the right, they are returned through two
-   * other point references p1 and p2. If pt is between the source and target
-   * of the overlapping subcurve, or pt is its left endpoint, pt and the target
-   * of the right endpoint of the subcurve are returned through p1 and p2 
-   * respectively.
-   * If the intersection of the two curves is a point to the right of pt, pt
-   * is returned through the p1 and p2.
-   * \param c1 the first curve
-   * \param c2 the second curve
-   * \param pt the point to compare against
-   * \param p1 the first point reference
-   * \param p2 the second point reference
-   * \return true if c1 and c2 do intersect to the right of pt. Otherwise,
-   * false
+   * there is an overlapping subcurve, that contains the reference point in
+   * its x-range, the function should return an X_monotone_curve_2 whose 
+   * interior is strictly to the right of the reference point (that is, whose
+   * left endpoint is the projection of the reference point onto the 
+   * overlapping subcurve).
+   * \param c1 The first curve.
+   * \param c2 The second curve.
+   * \param pt The refernece point.
+   * \return An empty object if there is no intersection to the right of p.
+   *         An object wrapping a Point_2 in case of a simple intersection.
+   *         An object wrapping an X_monotone_curve_2 in case of an overlap.
    */
   Object nearest_intersection_to_right(const X_monotone_curve_2 & c1,
                                        const X_monotone_curve_2 & c2,
@@ -186,20 +196,30 @@ public:
       if (src_pt != SMALLER && trg_pt != SMALLER)
         return (res);
 
-      // The target is to the left and the source is to the right. Trim the trg:
+      // The target is to the left and the source is to the right. 
+      // Trim the trg:
       if (trg_pt == SMALLER && src_pt != SMALLER)
       {
 	Point_2  p1 = _vertical_ray_shoot (pt, c1);
         Construct_object_2 construct_object_f = construct_object_2_object();
-        return (construct_object_f(X_monotone_curve_2(p1, src)));
+
+	if (equal_2_object() (p1, src))
+	  return (construct_object_f(src));
+	else
+	  return (construct_object_f(X_monotone_curve_2(p1, src)));
       }
 
-      // The source is to the left and the target is to the right. Trim the src:
+      // The source is to the left and the target is to the right.
+      // Trim the src:
       if (src_pt == SMALLER && trg_pt != SMALLER)
       {
  	Point_2  p1 = _vertical_ray_shoot (pt, c1);
         Construct_object_2 construct_object_f = construct_object_2_object();
-        return (construct_object_f(X_monotone_curve_2(p1, trg)));
+        
+	if (equal_2_object() (p1, trg))
+	  return (construct_object_f(trg));
+	else
+	  return (construct_object_f(X_monotone_curve_2(p1, trg)));
       }
 
       // The subcurve is completely to the left:
@@ -210,26 +230,23 @@ public:
     return Object();
   }
 
-  /*! nearest_intersection_to_left() finds the nearest intersection point of
-   * two given curves to the left of a given point. Nearest is defined as the
-   * lexicographically nearest not including the point itself with one
-   * exception explained bellow..
+  /*!
+   * Find the nearest intersection of the two given curves to the left of 
+   * a given reference point.
+   * Nearest is defined as the lexicographically nearest point, not including 
+   * the point reference point itself.
    * If the intersection of the two curves is an X_monotone_curve_2, that is,
-   * there is an overlapping subcurve, then if the the source and target of the
-   * subcurve are strickly to the left, they are returned through two
-   * other point references p1 and p2. If pt is between the source and target
-   * of the overlapping subcurve, or pt is its left endpoint, pt and the target
-   * of the left endpoint of the subcurve are returned through p1 and p2 
-   * respectively.
-   * If the intersection of the two curves is a point to the left of pt, pt
-   * is returned through the p1 and p2.
-   * \param c1 the first curve
-   * \param c2 the second curve
-   * \param pt the point to compare against
-   * \param p1 the first point reference
-   * \param p2 the second point reference
-   * \return true if c1 and c2 do intersect to the left of pt. Otherwise,
-   * false
+   * there is an overlapping subcurve, that contains the reference point in
+   * its x-range, the function should return an X_monotone_curve_2 whose 
+   * interior is strictly to the left of the reference point (that is, whose
+   * right endpoint is the projection of the reference point onto the 
+   * overlapping subcurve).
+   * \param c1 The first curve.
+   * \param c2 The second curve.
+   * \param pt The refernece point.
+   * \return An empty object if there is no intersection to the left of p.
+   *         An object wrapping a Point_2 in case of a simple intersection.
+   *         An object wrapping an X_monotone_curve_2 in case of an overlap.
    */
   Object nearest_intersection_to_left(const X_monotone_curve_2 & c1,
                                       const X_monotone_curve_2 & c2,
@@ -272,20 +289,30 @@ public:
       if (src_pt != LARGER && trg_pt != LARGER)
         return (res);
       
-      // The target is to the right and the source is to the left, trim the trg:
+      // The target is to the right and the source is to the left.
+      // Trim the trg:
       if (trg_pt == LARGER && src_pt != LARGER)
       {
         Point_2 p1 = _vertical_ray_shoot (pt, c1);
         Construct_object_2 construct_object_f = construct_object_2_object();
-        return (construct_object_f(X_monotone_curve_2(src, p1)));
+        
+	if (equal_2_object() (p1, src))
+	  return (construct_object_f(src));
+	else
+	  return (construct_object_f(X_monotone_curve_2(src, p1)));
       }
 
-      // The source is to the right and the target is to the left, trim the src:
+      // The source is to the right and the target is to the left. 
+      // Trim the src:
       if (src_pt == LARGER && trg_pt != LARGER)
       {
         Point_2 p1 = _vertical_ray_shoot (pt, c1);
         Construct_object_2 construct_object_f = construct_object_2_object();
-        return (construct_object_f(X_monotone_curve_2(trg, p1)));
+        
+	if (equal_2_object() (p1, trg))
+	  return (construct_object_f(trg));
+	else
+	  return (construct_object_f(X_monotone_curve_2(trg, p1)));
       }
 
       // The subcurve is completely to the right:

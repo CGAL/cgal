@@ -490,24 +490,25 @@ public:
   }
 
   /*!
-   * Find the nearest intersection point (or points) of two given curves to
-   * the right lexicographically of a given point not including the point
-   * itself:
-   *  - If the intersection of the two curves is a point to the right of the 
-   *    given point, it is returned through both point references p1 and p2.
-   *  - If the intersection of the two curves is an X_monotone_curve_2, 
-   *    that is, they overlap at infinitely many points, then the rightmost
-   *    segment of the intersection is returned.
+   * Find the nearest intersection of the two given curves to the right of 
+   * a given reference point.
+   * Nearest is defined as the lexicographically nearest point, not including 
+   * the point reference point itself.
+   * If the intersection of the two curves is an X_monotone_curve_2, that is,
+   * there is an overlapping subcurve, that contains the reference point in
+   * its x-range, the function should return an X_monotone_curve_2 whose 
+   * interior is strictly to the right of the reference point (that is, whose
+   * left endpoint is the projection of the reference point onto the 
+   * overlapping subcurve).
    * NOTE: When there is an overlap we will always return a SEGMENT (i.e.,
-   *       p1 and p2 will be on a segment) even if the overlap is a polyline,
-   *       but this is still sufficient for the arrangement.
+   *       a polyline with 2 points) even if the overlap is actually a longer
+   *       polyline, as this is still sufficient for the arrangement.
    * \param cv1 The first curve.
    * \param cv2 The second curve.
    * \param p The refernece point.
-   * \param p1 The first output point.
-   * \param p2 The second output point.
-   * \return (true) if c1 and c2 do intersect to the right of p, or (false)
-   * if no such intersection exists.
+   * \return An empty object if there is no intersection to the right of p.
+   *         An object wrapping a Point_2 in case of a simple intersection.
+   *         An object wrapping an X_monotone_curve_2 in case of an overlap.
    */
   Object nearest_intersection_to_right (const X_monotone_curve_2& cv1,
 					const X_monotone_curve_2& cv2,
@@ -534,24 +535,25 @@ public:
   }
 
   /*!
-   * Find the nearest intersection point (or points) of two given curves to
-   * the left lexicographically of a given point not including the point
-   * itself:
-   *  - If the intersection of the two curves is a point to the left of the 
-   *    given point, it is returned through both point references p1 and p2.
-   *  - If the intersection of the two curves is an X_monotone_curve_2, 
-   *    that is, they overlap at infinitely many points, then the leftmost
-   *    segment of the intersection is returned.
+   * Find the nearest intersection of the two given curves to the left of 
+   * a given reference point.
+   * Nearest is defined as the lexicographically nearest point, not including 
+   * the point reference point itself.
+   * If the intersection of the two curves is an X_monotone_curve_2, that is,
+   * there is an overlapping subcurve, that contains the reference point in
+   * its x-range, the function should return an X_monotone_curve_2 whose 
+   * interior is strictly to the left of the reference point (that is, whose
+   * right endpoint is the projection of the reference point onto the 
+   * overlapping subcurve).
    * NOTE: When there is an overlap we will always return a SEGMENT (i.e.,
-   *       p1 and p2 will be on a segment) even if the overlap is a polyline,
-   *       but this is still sufficient for the arrangement.
+   *       a polyline with 2 points) even if the overlap is actually a longer
+   *       polyline, as this is still sufficient for the arrangement.
    * \param cv1 The first curve.
    * \param cv2 The second curve.
    * \param p The refernece point.
-   * \param p1 The first output point.
-   * \param p2 The second output point.
-   * \return (true) if c1 and c2 do intersect to the right of p, or (false)
-   * if no such intersection exists.
+   * \return An empty object if there is no intersection to the left of p.
+   *         An object wrapping a Point_2 in case of a simple intersection.
+   *         An object wrapping an X_monotone_curve_2 in case of an overlap.
    */
   Object nearest_intersection_to_left (const X_monotone_curve_2& cv1,
 				       const X_monotone_curve_2& cv2,
@@ -895,7 +897,7 @@ private:
     Object             obj;
     Segment_2          seg;
     Comparison_result  res;
-    
+     
     while (i1 >= 0 && i1 < n1 && i2 >= 0 && i2 < n2)
     {      
       // Check if the two current segment intersect to the right (left) of p.
@@ -933,7 +935,7 @@ private:
 				      (inc2 == 1) ? 
 				      seg_traits.curve_target(cv2[i2]) :
 				      seg_traits.curve_source(cv2[i2]));
-        
+ 	       
 	if (!eq1 && !eq2)
 	{
 	  return (1);
@@ -976,7 +978,6 @@ private:
 	{	
 	  Point_2  q1 = seg_traits.curve_source (seg);
 	  Point_2  q2 = seg_traits.curve_target (seg);
-
 
 	  if (seg_traits.point_equal (p1, q1))
 	  {

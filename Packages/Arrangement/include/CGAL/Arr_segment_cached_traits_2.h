@@ -524,14 +524,6 @@ public:
                    const Point_2 & p) const
   {
     // Check preconditions.
-	Equal_2 my_is_equal = equal_2_object();
-
-	if (my_is_equal (cv.ps, p))
-	{
-		std::cout << "Inserting the segment: " << cv << std::endl << "p = " << p << std::endl;
-		std::cout << std::flush;
-	}
-
     CGAL_precondition(curve_compare_y_at_x(p, cv) == EQUAL);
     CGAL_precondition_code(Equal_2 is_equal = equal_2_object());
     CGAL_precondition(!is_equal(cv.ps, p));
@@ -552,26 +544,22 @@ public:
   }
 
   /*!
-   * Find the nearest intersection point (or points) of two given curves to
-   * the right lexicographically of a given point not includin the point
-   * itself, (with one exception explained below).
+   * Find the nearest intersection of the two given curves to the right of 
+   * a given reference point.
+   * Nearest is defined as the lexicographically nearest point, not including 
+   * the point reference point itself.
    * If the intersection of the two curves is an X_monotone_curve_2, that is,
-   * they overlap at infinitely many points, then if the right endpoint and the
-   * left endpoint of the overlapping subcurve are strickly to the right of
-   * the given point, they are returned through the two other point
-   * references respectively. If the given point is between the
-   * overlapping-subcurve endpoints, or the point is its left endpoint,
-   * the point and the right endpoint of the subcurve are returned through
-   * the point references respectively. If the intersection of the two curves
-   * is a point to the right of the given point, it is returned through the
-   * point references.
+   * there is an overlapping subcurve, that contains the reference point in
+   * its x-range, the function should return an X_monotone_curve_2 whose 
+   * interior is strictly to the right of the reference point (that is, whose
+   * left endpoint is the projection of the reference point onto the 
+   * overlapping subcurve).
    * \param cv1 The first curve.
    * \param cv2 The second curve.
    * \param p The refernece point.
-   * \param p1 The first output point.
-   * \param p2 The second output point.
-   * \return (true) if c1 and c2 do intersect to the right of p, or (false)
-   * if no such intersection exists.
+   * \return An empty object if there is no intersection to the right of p.
+   *         An object wrapping a Point_2 in case of a simple intersection.
+   *         An object wrapping an X_monotone_curve_2 in case of an overlap.
    */
   Object nearest_intersection_to_right (const X_monotone_curve_2 & cv1,
 				        const X_monotone_curve_2 & cv2,
@@ -616,6 +604,11 @@ public:
 			     p1);
       }
 
+      // If after the trimming we have p1 == p2, return just a single point.
+      if (equal_2_object() (p1, p2))
+	return (CGAL::make_object (p1));
+
+      // Return the segment p1 -> p2.
       return (CGAL::make_object (X_monotone_curve_2 (p1, p2)));
     }
 
@@ -624,25 +617,22 @@ public:
   }
 
   /*!
-   * Find the nearest intersection point of two given curves to the left of 
-   * a given point. Nearest is defined as the lexicographically nearest not 
-   * including the point itself (with one exception explained below).
+   * Find the nearest intersection of the two given curves to the left of 
+   * a given reference point.
+   * Nearest is defined as the lexicographically nearest point, not including 
+   * the point reference point itself.
    * If the intersection of the two curves is an X_monotone_curve_2, that is,
-   * there is an overlapping subcurve, then if the the source and target of the
-   * subcurve are strickly to the left, they are returned through two
-   * other point references p1 and p2. If p is between the source and target
-   * of the overlapping subcurve, or p is its right endpoint, p and the source
-   * of the left endpoint of the subcurve are returned through p1 and p2 
-   * respectively.
-   * If the intersection of the two curves is a point to the left of p, it is
-   * returned through the p1 and p2.
+   * there is an overlapping subcurve, that contains the reference point in
+   * its x-range, the function should return an X_monotone_curve_2 whose 
+   * interior is strictly to the left of the reference point (that is, whose
+   * right endpoint is the projection of the reference point onto the 
+   * overlapping subcurve).
    * \param cv1 The first curve.
    * \param cv2 The second curve.
    * \param p The refernece point.
-   * \param p1 The first output point.
-   * \param p2 The second output point.
-   * \return (true) if c1 and c2 do intersect to the left of p, or (false)
-   * if no such intersection exists.
+   * \return An empty object if there is no intersection to the left of p.
+   *         An object wrapping a Point_2 in case of a simple intersection.
+   *         An object wrapping an X_monotone_curve_2 in case of an overlap.
    */
   Object nearest_intersection_to_left (const X_monotone_curve_2 & cv1,
 				       const X_monotone_curve_2 & cv2,
@@ -687,10 +677,15 @@ public:
 			     p2);
       }
 
-    // The overlap is entirely to the right of p:
+      // If after the trimming we have p1 == p2, return just a single point.
+      if (equal_2_object() (p1, p2))
+	return (CGAL::make_object (p1));
+
+      // Return the segment p1 -> p2.
       return (CGAL::make_object (X_monotone_curve_2 (p1, p2)));
     }
      
+    // The overlap is entirely to the right of p:
     return Object();
   }
 
