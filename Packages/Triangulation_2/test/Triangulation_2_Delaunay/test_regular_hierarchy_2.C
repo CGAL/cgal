@@ -22,8 +22,6 @@
 // coordinator   : INRIA Sophia-Antipolis
 // ============================================================================
 
-
-
 #include <CGAL/_test_types.h>
 #include <CGAL/Weighted_point.h>
 
@@ -34,12 +32,10 @@
 #include <CGAL/_test_cls_regular_triangulation_2.C>
 #include <CGAL/_test_cls_regular_hierarchy_2.C>
 
-#include <CGAL/Filtered_kernel.h>
-#include <CGAL/Regular_triangulation_filtered_traits_2.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
-//typedef CGAL::Regular_triangulation_euclidean_traits_2<TestK> RGt;
-typedef CGAL::Filtered_kernel<CGAL::Simple_cartesian<double> >  FK;
-typedef CGAL::Regular_triangulation_filtered_traits_2<FK>       RGt;
+typedef CGAL::Regular_triangulation_euclidean_traits_2
+               <CGAL::Exact_predicates_inexact_constructions_kernel>  RGt;
 
 typedef CGAL::Regular_triangulation_vertex_base_2<RGt> Vbb;
 typedef CGAL::Triangulation_hierarchy_vertex_base_2<Vbb> Vb;
@@ -63,4 +59,3 @@ int main()
   _test_cls_regular_hierarchy_2( Regular_hierarchy_cartesian());
   return 0;
 }
-

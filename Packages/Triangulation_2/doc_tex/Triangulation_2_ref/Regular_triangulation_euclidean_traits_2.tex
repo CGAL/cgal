@@ -26,6 +26,11 @@ This class inherits from \ccc{K}
 and uses a \ccc{Weighted_point} type
 derived from the type \ccc{K::Point_2}.
 
+Note that this template class is specialized for
+\ccc{CGAL::Exact_predicates_inexact_constructions_kernel}, so that it is as if
+\ccc{Regular_triangulation_filtered_traits_2} was used, i.e. you get
+filtered predicates automatically.
+
 \ccInclude{CGAL/Regular_triangulation_euclidean_traits_2.h}
 
 \ccIsModel

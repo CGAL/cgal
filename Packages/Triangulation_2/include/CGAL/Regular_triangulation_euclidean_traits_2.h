@@ -313,7 +313,7 @@ public:
 };
 
 template < class R, class W = typename R::RT>
-class Regular_triangulation_euclidean_traits_2
+class Regular_triangulation_euclidean_traits_base_2
   : public R
 {
 public:
@@ -331,7 +331,7 @@ public:
   // don't know if this is definitive
   //typedef Weighted_point                        Point_2;
 
-  typedef Regular_triangulation_euclidean_traits_2<R, W>   Self;
+  typedef Regular_triangulation_euclidean_traits_base_2<R, W>   Self;
 
   typedef CGAL::Power_test_2<Self>              Power_test_2;
   typedef CGAL::Power_test_degenerated_2<Self>  Power_test_degenerated_2;
@@ -359,6 +359,29 @@ public:
 
 };
  
+// We use a base class here to have the specialization below to work.
+// Otherwise there is a cycle in the derivation.
+template < class R, class W = typename R::RT>
+class Regular_triangulation_euclidean_traits_2
+  : public Regular_triangulation_euclidean_traits_base_2<R, W>
+{};
+
+CGAL_END_NAMESPACE
+
+// Now specialize for Exact_predicates_ienxact_constructions_kernel, to get
+// the filtered traits automatically.
+#include <CGAL/Regular_triangulation_filtered_traits_2.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
+CGAL_BEGIN_NAMESPACE
+
+template <>
+class Regular_triangulation_euclidean_traits_2
+         <Exact_predicates_inexact_constructions_kernel>
+  : public Regular_triangulation_filtered_traits_2
+         <Exact_predicates_inexact_constructions_kernel>
+{};
+
 CGAL_END_NAMESPACE
 
 #endif // CGAL_REGULAR_TRIANGULATION_EUCLIDEAN_TRAITS_2_H
