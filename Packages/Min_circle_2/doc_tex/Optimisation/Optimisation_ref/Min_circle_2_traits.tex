@@ -53,7 +53,7 @@ Only default and copy constructor are required.
 The following predicate is only needed, if the member function
 \ccc{is_valid} of \ccc{Min_circle_2} is used.
 
-\ccMemberFunction{ \ccPureGlobalScope Orientation
+\ccMemberFunction{ CGAL::Orientation
                    orientation( const Point& p,
                                 const Point& q,
                                 const Point& r) const;}{
@@ -66,12 +66,12 @@ The following predicate is only needed, if the member function
 % -----------------------------------------------------------------------------
 \ccHasModels
 
-\ccRefIdfierPage{\ccPureGlobalScope Min_circle_2_traits_2<R>}
+\ccRefIdfierPage{CGAL::Min_circle_2_traits_2<R>}
 
 % -----------------------------------------------------------------------------
 \ccSeeAlso
 
-\ccRefIdfierPage{\ccPureGlobalScope Min_circle_2<Traits>}
+\ccRefIdfierPage{CGAL::Min_circle_2<Traits>}
 
 % -----------------------------------------------------------------------------
 
@@ -145,7 +145,7 @@ of \ccc{Min_circle_2} is used.
 Each of the following predicates is only needed, if the corresponding
 predicate of \ccc{Min_circle_2} is used.
 
-\ccMemberFunction{ \ccPureGlobalScope Bounded_side
+\ccMemberFunction{ CGAL::Bounded_side
                    bounded_side( const Point& p) const;}{
         returns \ccGlobalScope\ccc{ON_BOUNDED_SIDE},
         \ccGlobalScope\ccc{ON_BOUNDARY}, or
@@ -195,7 +195,7 @@ operators of \ccc{Min_circle_2} are used.
 
 \ccHtmlNoIndex
 \ccFunction{ CGAL::Window_stream&
-             operator << ( \ccPureGlobalScope Window_stream& ws,
+             operator << ( CGAL::Window_stream& ws,
                            const Circle& circle);}{
         writes \ccVar\ to window stream \ccc{ws}.}
 
