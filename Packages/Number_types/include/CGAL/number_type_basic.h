@@ -27,8 +27,8 @@
 
 #define CGAL_PI 3.14159265358979323846
 
-#if defined __GNUG__ && __GNUG__ >=3 && __GNUC_MINOR__ >= 4
-// Attempt at using Koenig lookup for g++ 3.4.
+#ifdef CGAL_USE_ADL_FOR_NT
+// Attempt at using Koenig lookup for the NT interface.
 #  define CGAL_NTS
 #else
 #  define CGAL_NTS CGAL::

@@ -1,4 +1,8 @@
 20 June 2004 Sylvain Pion
+- Use CGAL_USE_ADL_FOR_NT instead of hardcoding a test for g++ 3.4
+  in previous change.
+
+20 June 2004 Sylvain Pion
 - Define CGAL_NTS as empty for g++ 3.4 as a temporary attempt.
   This enables Koenig Lookup, and allows experimenting with it.
 
