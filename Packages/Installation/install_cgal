@@ -3568,9 +3568,14 @@ create_include_makefile()
   # CGAL_EXTRA_OBJECTS
   # 
   case ${SYST} in
-    *IRIX*) 
+    *IRIX*-5) 
 	${_printf} "%s\n" \
 	"CGAL_EXTRA_OBJECTS = workaround_4_irix.o" \
+	>> ${FILE}
+	;;
+    *) 
+	${_printf} "%s\n" \
+	"CGAL_EXTRA_OBJECTS = workaround_4_irix6.o" \
 	>> ${FILE}
 	;;
   esac
