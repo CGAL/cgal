@@ -71,9 +71,9 @@ private:
   {
     v_type = PPP;
 
-    RT np = CGAL_NTS square(p.x()) + CGAL_NTS square(p.y());
-    RT nq = CGAL_NTS square(q.x()) + CGAL_NTS square(q.y());
-    RT nr = CGAL_NTS square(r.x()) + CGAL_NTS square(r.y());
+    RT np = CGAL::square(p.x()) + CGAL::square(p.y());
+    RT nq = CGAL::square(q.x()) + CGAL::square(q.y());
+    RT nr = CGAL::square(r.x()) + CGAL::square(r.y());
 
     ux_ppp = 
       np * (q.y() - r.y()) + nq * (r.y() - p.y()) + nr * (p.y() - q.y());
@@ -119,8 +119,8 @@ private:
       c2_ = RT(0);
     }
 
-    Sign sgn_c1_ = CGAL_NTS sign(c1_);
-    Sign sgn_c2_ = CGAL_NTS sign(c2_);
+    Sign sgn_c1_ = CGAL::sign(c1_);
+    Sign sgn_c2_ = CGAL::sign(c2_);
 
     if ( sgn_c1_ == NEGATIVE ) {
       a1 = -a1;  b1 = -b1;  c1_ = -c1_;
@@ -144,8 +144,8 @@ private:
       RT J = a1 * c2_;
       RT I = b1 * c2_;
 
-      RT n1 = CGAL_NTS square(a1) + CGAL_NTS square(b1);
-      RT n2 = CGAL_NTS square(a2) + CGAL_NTS square(b2);
+      RT n1 = CGAL::square(a1) + CGAL::square(b1);
+      RT n2 = CGAL::square(a2) + CGAL::square(b2);
 
       RT D1D2 = n1 * n2;
 
@@ -162,8 +162,8 @@ private:
       RT J = a2 * c1_;
       RT I = b2 * c1_;
 
-      RT n1 = CGAL_NTS square(a1) + CGAL_NTS square(b1);
-      RT n2 = CGAL_NTS square(a2) + CGAL_NTS square(b2);
+      RT n1 = CGAL::square(a1) + CGAL::square(b1);
+      RT n2 = CGAL::square(a2) + CGAL::square(b2);
 
       RT D1D2 = n1 * n2;
 
@@ -193,8 +193,8 @@ private:
     CGAL_precondition( c1_ >= RT(0) );
     CGAL_precondition( c2_ >= RT(0) );
 
-    RT n1 = CGAL_NTS square(a1) + CGAL_NTS square(b1);
-    RT n2 = CGAL_NTS square(a2) + CGAL_NTS square(b2);
+    RT n1 = CGAL::square(a1) + CGAL::square(b1);
+    RT n2 = CGAL::square(a2) + CGAL::square(b2);
 
     RT I = b1 * c2_ + b2 * c1_;
     RT J = a1 * c2_ + a2 * c1_;
@@ -213,8 +213,8 @@ private:
 
     // compute sigma
     Sign s_sigma(ZERO);
-    s1 = CGAL_NTS sign(b1);
-    s2 = CGAL_NTS sign(-b2);
+    s1 = CGAL::sign(b1);
+    s2 = CGAL::sign(-b2);
     if ( s1 == ZERO ) {
       s_sigma = s2;
     } else if ( s2 == ZERO ) {
@@ -222,8 +222,8 @@ private:
     } else if ( s1 == s2 ) {
       s_sigma = s1;
     } else {
-      RT e = CGAL_NTS square(b1) * n2 - CGAL_NTS square(b2) * n1;
-      s_sigma = Sign(s1 * CGAL_NTS sign(e));
+      RT e = CGAL::square(b1) * n2 - CGAL::square(b2) * n1;
+      s_sigma = Sign(s1 * CGAL::sign(e));
     }
 
     Sqrt_1 sigma = Zero;
@@ -235,8 +235,8 @@ private:
 
     // compute rho
     Sign s_rho(ZERO);
-    s1 = CGAL_NTS sign(a1);
-    s2 = CGAL_NTS sign(-a2);
+    s1 = CGAL::sign(a1);
+    s2 = CGAL::sign(-a2);
     if ( s1 == ZERO ) {
       s_rho = s2;
     } else if ( s2 == ZERO ) {
@@ -244,8 +244,8 @@ private:
     } else if ( s1 == s2 ) {
       s_rho = s1;
     } else {
-      RT e = CGAL_NTS square(a1) * n2 - CGAL_NTS square(a2) * n1;
-      s_rho = Sign(s1 * CGAL_NTS sign(e));
+      RT e = CGAL::square(a1) * n2 - CGAL::square(a2) * n1;
+      s_rho = Sign(s1 * CGAL::sign(e));
     }
 
     
@@ -292,12 +292,12 @@ private:
       cq_ = RT(0);
     }
 
-    Sign s = CGAL_NTS sign(c_);
+    Sign s = CGAL::sign(c_);
 
     if ( s == NEGATIVE ) {
       a = -a;  b = -b;  c = -c;  c_ = -c_;  cq_ = -cq_;
     } else if ( s == ZERO ) {
-      Sign s1 = CGAL_NTS sign(cq_);
+      Sign s1 = CGAL::sign(cq_);
 
       CGAL_assertion( s1 != ZERO );
       if ( s1 == NEGATIVE ) {
@@ -305,17 +305,17 @@ private:
       }
     }
 
-    RT nl = CGAL_NTS square(a) + CGAL_NTS square(b);
+    RT nl = CGAL::square(a) + CGAL::square(b);
 
     RT x_ = q.x() - p.x();
     RT y_ = q.y() - p.y();
-    RT n_ = CGAL_NTS square(x_) + CGAL_NTS square(y_);
+    RT n_ = CGAL::square(x_) + CGAL::square(y_);
 
 
-    Comparison_result res = CGAL_NTS compare( c_, cq_ );
+    Comparison_result res = CGAL::compare( c_, cq_ );
 
     if ( res == EQUAL ) {
-      RT e1 = CGAL_NTS square(c_);
+      RT e1 = CGAL::square(c_);
       RT J = nl * (a * n_ + RT(4) * c_ * x_) - RT(4) * a * e1;
       RT I = nl * (b * n_ + RT(4) * c_ * y_) - RT(4) * b * e1;
       RT X = RT(8) * nl * c_;
@@ -332,7 +332,7 @@ private:
     RT e3 = n_ * e1;
     RT e4 = RT(2) * c_ * e2;
 
-    RT X = RT(2) * CGAL_NTS square(e1);
+    RT X = RT(2) * CGAL::square(e1);
     RT I = b * e3 + x_ * e4;
     RT J = a * e3 - y_ * e4;
     RT S = n_ * nl * c_ * cq_;
@@ -444,7 +444,7 @@ private:
 
     RT d[3];
     for (int i = 0; i < 3; i++) {
-      d[i] = CGAL_NTS square(l[i].a()) + CGAL_NTS square(l[i].b());
+      d[i] = CGAL::square(l[i].a()) + CGAL::square(l[i].b());
     }
 
     RT z[3];
@@ -462,7 +462,7 @@ private:
 
     Sqrt_3 vz(z[0] * sqrt_D0, z[1] + Zero, z[2] + Zero, Zero, D1, D2);
 
-    Sign s_minus_vz = CGAL_NTS sign(vz);
+    Sign s_minus_vz = CGAL::sign(vz);
 
 
     CGAL_assertion( s_minus_vz != ZERO );
@@ -485,7 +485,7 @@ private:
 
     vz = Sqrt_3(z[0] * sqrt_D0, z[1] + Zero, z[2] + Zero, Zero, D1, D2);
 
-    Sign s_minus_vz_2 = CGAL_NTS sign(vz);
+    Sign s_minus_vz_2 = CGAL::sign(vz);
 
     CGAL_assertion( s_minus_vz_2 != ZERO );
 
@@ -525,9 +525,9 @@ private:
 
     Sqrt_3 dist = a1 * vx + b1 * vy + c1 * vw;
 
-    Sign s_vw = CGAL_NTS sign(vw);
+    Sign s_vw = CGAL::sign(vw);
 
-    Sign sgn_dist = Sign(s_vw * CGAL_NTS sign(dist));
+    Sign sgn_dist = Sign(s_vw * CGAL::sign(dist));
 
     CGAL_assertion( sgn_dist != ZERO );
 
@@ -553,7 +553,7 @@ private:
       cx[i] = c[(i+1)%3] * b[(i+2)%3] - c[(i+2)%3] * b[(i+1)%3];
       cy[i] = -(c[(i+1)%3] * a[(i+2)%3] - c[(i+2)%3] * a[(i+1)%3]);
       cz[i] = -(a[(i+1)%3] * b[(i+2)%3] - a[(i+2)%3] * b[(i+1)%3]);
-      D[i] = CGAL_NTS square(a[i]) + CGAL_NTS square(b[i]);
+      D[i] = CGAL::square(a[i]) + CGAL::square(b[i]);
 
       Sqrt_1 Zero(RT(0), RT(0), D[0]);
       Sqrt_1 sqrt_D0(RT(0), RT(1), D[0]);
@@ -627,9 +627,9 @@ private:
   Orientation
   orientation(const Line_2& l, PPP_Type) const
   {
-    Sign s_uz = CGAL_NTS sign(uz_ppp);
+    Sign s_uz = CGAL::sign(uz_ppp);
     Sign s_l =
-      CGAL_NTS sign(l.a() * ux_ppp + l.b() * uy_ppp + l.c() * uz_ppp);
+      CGAL::sign(l.a() * ux_ppp + l.b() * uy_ppp + l.c() * uz_ppp);
 
     Sign s = Sign(s_uz * s_l);
 
@@ -643,9 +643,9 @@ private:
   Orientation
   orientation(const Line_2& l, PPS_Type) const
   {
-    Sign s_uz = CGAL_NTS sign(uz_pps);
+    Sign s_uz = CGAL::sign(uz_pps);
     Sign s_l =
-      CGAL_NTS sign(l.a() * ux_pps + l.b() * uy_pps + l.c() * uz_pps);
+      CGAL::sign(l.a() * ux_pps + l.b() * uy_pps + l.c() * uz_pps);
 
     Sign s = Sign(s_uz * s_l);
 
@@ -667,8 +667,8 @@ private:
     Sqrt_1 b = l.b() + Zero;
     Sqrt_1 c = l.c() + Zero;
 
-    Sign s_uz = CGAL_NTS sign(uz);
-    Sign s_l = CGAL_NTS sign(a * ux + b * uy + c * uz);
+    Sign s_uz = CGAL::sign(uz);
+    Sign s_l = CGAL::sign(a * ux + b * uy + c * uz);
 
     Sign s = Sign(s_uz * s_l);
 
@@ -751,12 +751,12 @@ private:
     Sqrt_1 vx = ux_pps - p_ref().x() * uz_pps;
     Sqrt_1 vy = uy_pps - p_ref().y() * uz_pps;
 
-    Sqrt_1 Rs = CGAL_NTS square(vx) + CGAL_NTS square(vy);
+    Sqrt_1 Rs = CGAL::square(vx) + CGAL::square(vy);
 
-    Sqrt_1 Rs1 = CGAL_NTS square(ux_pps - t.x() * uz_pps)
-      + CGAL_NTS square(uy_pps - t.y() * uz_pps);
+    Sqrt_1 Rs1 = CGAL::square(ux_pps - t.x() * uz_pps)
+      + CGAL::square(uy_pps - t.y() * uz_pps);
 
-    return CGAL_NTS sign(Rs1 - Rs);
+    return CGAL::sign(Rs1 - Rs);
   }
 
   //--------------------------------------------------------------------------
@@ -775,16 +775,16 @@ private:
     Sqrt_3 vx = ux - xref * uz;
     Sqrt_3 vy = uy - yref * uz;
 
-    Sqrt_3 Rs = CGAL_NTS square(vx) + CGAL_NTS square(vy);
+    Sqrt_3 Rs = CGAL::square(vx) + CGAL::square(vy);
 
     Sqrt_1 tx = t.x() + Zero;
     Sqrt_1 ty = t.y() + Zero;
 
     Sqrt_3 Rs1 =
-      CGAL_NTS square(ux - tx * uz) + CGAL_NTS square(uy - ty * uz);
+      CGAL::square(ux - tx * uz) + CGAL::square(uy - ty * uz);
 
-    //    Sign s_vz = CGAL_NTS sign(vz);
-    Sign s_Q = CGAL_NTS sign(Rs1 - Rs);
+    //    Sign s_vz = CGAL::sign(vz);
+    Sign s_Q = CGAL::sign(Rs1 - Rs);
 
     //    return Sign(s_vz * s_Q);
     return s_Q;
@@ -804,22 +804,22 @@ private:
     RT a1, b1, c1;
     compute_supporting_line(p_.segment(), a1, b1, c1);
 
-    RT ns = CGAL_NTS square(a1) + CGAL_NTS square(b1);
+    RT ns = CGAL::square(a1) + CGAL::square(b1);
 
     Sqrt_1 a = a1 + Zero;
     Sqrt_1 b = b1 + Zero;
     Sqrt_1 c = c1 + Zero;
 
     Sqrt_1 Ns = ns + Zero;
-    Sqrt_3 Ls = CGAL_NTS square(a * ux + b * uy + c * uz);
+    Sqrt_3 Ls = CGAL::square(a * ux + b * uy + c * uz);
 
     Sqrt_1 tx = t.x() + Zero;
     Sqrt_1 ty = t.y() + Zero;
 
-    Sqrt_3 R1s = CGAL_NTS square(ux - tx * uz)
-      + CGAL_NTS square(uy - ty * uz);
+    Sqrt_3 R1s = CGAL::square(ux - tx * uz)
+      + CGAL::square(uy - ty * uz);
 
-    return CGAL_NTS sign(R1s * Ns - Ls);
+    return CGAL::sign(R1s * Ns - Ls);
   }
 
 
@@ -863,12 +863,12 @@ private:
   Oriented_side
   oriented_side(const Line_2& l, const Point_2& p, PPP_Type) const
   {
-    Sign s_uz = CGAL_NTS sign(uz_ppp);
+    Sign s_uz = CGAL::sign(uz_ppp);
 
     RT px = uz_ppp * p.x() - ux_ppp;
     RT py = uz_ppp * p.y() - uy_ppp;
 
-    Sign s1 = CGAL_NTS sign(l.b() * px - l.a() * py);
+    Sign s1 = CGAL::sign(l.b() * px - l.a() * py);
 
     Sign s = Sign(s_uz * s1);
 
@@ -883,8 +883,8 @@ private:
     Sqrt_1 dx = ux_pps - uz_pps * p.x();
     Sqrt_1 dy = uy_pps - uz_pps * p.y();
 
-    Sign s = Sign(CGAL_NTS sign(uz_pps) *
-		  CGAL_NTS sign(dy * l.a() - dx * l.b())
+    Sign s = Sign(CGAL::sign(uz_pps) *
+		  CGAL::sign(dy * l.a() - dx * l.b())
 		  );
 
     if ( s == POSITIVE ) { return ON_POSITIVE_SIDE; }
@@ -907,8 +907,8 @@ private:
     Sqrt_1 a = l.a() + Zero;
     Sqrt_1 b = l.b() + Zero;
 
-    Sign s = Sign(CGAL_NTS sign(uz) *
-		  CGAL_NTS sign(a * dy - b * dx)
+    Sign s = Sign(CGAL::sign(uz) *
+		  CGAL::sign(a * dy - b * dx)
 		  );
 
 
@@ -922,14 +922,14 @@ private:
   
   Sign incircle(const Line_2& l, PPP_Type) const
   {
-    RT a1 = CGAL_NTS square(l.a()) + CGAL_NTS square(l.b());
-    RT a2 = CGAL_NTS square(ux_ppp - p_ref().x() * uz_ppp) +
-      CGAL_NTS square(uy_ppp - p_ref().y() * uz_ppp);
+    RT a1 = CGAL::square(l.a()) + CGAL::square(l.b());
+    RT a2 = CGAL::square(ux_ppp - p_ref().x() * uz_ppp) +
+      CGAL::square(uy_ppp - p_ref().y() * uz_ppp);
 
     RT a3 =
-      CGAL_NTS square(l.a() * ux_ppp + l.b() * uy_ppp + l.c() * uz_ppp);
+      CGAL::square(l.a() * ux_ppp + l.b() * uy_ppp + l.c() * uz_ppp);
 
-    Comparison_result cr = CGAL_NTS compare(a3, a1 * a2);
+    Comparison_result cr = CGAL::compare(a3, a1 * a2);
 
     if ( cr == LARGER ) { return POSITIVE; }
     if ( cr == SMALLER ) { return NEGATIVE; }
@@ -943,14 +943,14 @@ private:
     Sqrt_1 vx = ux_pps - p_ref().x() * uz_pps;
     Sqrt_1 vy = uy_pps - p_ref().y() * uz_pps;
 
-    Sqrt_1 Rs = CGAL_NTS square(vx) + CGAL_NTS square(vy);
+    Sqrt_1 Rs = CGAL::square(vx) + CGAL::square(vy);
     
-    RT Ns = CGAL_NTS square(l.a()) + CGAL_NTS square(l.b());
+    RT Ns = CGAL::square(l.a()) + CGAL::square(l.b());
 
     Sqrt_1 Ls =
-      CGAL_NTS square(l.a() * ux_pps + l.b() * uy_pps + l.c() * uz_pps);
+      CGAL::square(l.a() * ux_pps + l.b() * uy_pps + l.c() * uz_pps);
 
-    return CGAL_NTS sign(Ls - Rs * Ns);
+    return CGAL::sign(Ls - Rs * Ns);
   }
 
 
@@ -963,18 +963,18 @@ private:
     Sqrt_3 vx = ux - (p_ref().x() + Zero) * uz;
     Sqrt_3 vy = uy - (p_ref().y() + Zero) * uz;
 
-    Sqrt_3 Rs = CGAL_NTS square(vx) + CGAL_NTS square(vy);
+    Sqrt_3 Rs = CGAL::square(vx) + CGAL::square(vy);
 
 
     Sqrt_1 a = l.a() + Zero;
     Sqrt_1 b = l.b() + Zero;
     Sqrt_1 c = l.c() + Zero;
 
-    Sqrt_1 Ns = CGAL_NTS square(a) + CGAL_NTS square(b);
+    Sqrt_1 Ns = CGAL::square(a) + CGAL::square(b);
 
-    Sqrt_3 Ls = CGAL_NTS square(a * ux + b * uy + c * uz);
+    Sqrt_3 Ls = CGAL::square(a * ux + b * uy + c * uz);
 
-    return CGAL_NTS sign(Ls - Rs * Ns);
+    return CGAL::sign(Ls - Rs * Ns);
   }
 
 
@@ -991,20 +991,20 @@ private:
     Sqrt_1 b = b1 + Zero;
     Sqrt_1 c = c1 + Zero;
 
-    Sqrt_1 Ns = CGAL_NTS square(a) + CGAL_NTS square(b);
+    Sqrt_1 Ns = CGAL::square(a) + CGAL::square(b);
 
     Sqrt_1 la = l.a() + Zero;
     Sqrt_1 lb = l.b() + Zero;
     Sqrt_1 lc = l.c() + Zero;
 
-    Sqrt_1 Ns1 = CGAL_NTS square(la) + CGAL_NTS square(lb);
+    Sqrt_1 Ns1 = CGAL::square(la) + CGAL::square(lb);
 
-    Sqrt_3 Ls = CGAL_NTS square(a * ux + b * uy + c * uz);
+    Sqrt_3 Ls = CGAL::square(a * ux + b * uy + c * uz);
 
     Sqrt_3 Ls1 =
-      CGAL_NTS square(la * ux + lb * uy + lc * uz);
+      CGAL::square(la * ux + lb * uy + lc * uz);
 
-    return CGAL_NTS sign(Ls1 * Ns - Ls * Ns1);
+    return CGAL::sign(Ls1 * Ns - Ls * Ns1);
   }
 
   //--------------------------------------------------------------------------
@@ -1177,10 +1177,10 @@ public:
 #if 0
   bool is_same_point(const Point_2& p, Method_tag) const
   {
-    Comparison_result res = CGAL_NTS compare(x(), p.x());
+    Comparison_result res = CGAL::compare(x(), p.x());
     if ( res != EQUAL ) { return false; }
 
-    return (CGAL_NTS compare(y(), p.y()) == EQUAL);
+    return (CGAL::compare(y(), p.y()) == EQUAL);
   }
 #endif
 
@@ -1254,8 +1254,8 @@ public:
 	  p_ref = r_.point();
 	}
 
-	FT dx2 = CGAL_NTS square(x() - p_ref.x());
-	FT dy2 = CGAL_NTS square(y() - p_ref.y());
+	FT dx2 = CGAL::square(x() - p_ref.x());
+	FT dy2 = CGAL::square(y() - p_ref.y());
 	return dx2 + dy2;
       }
       break;
@@ -1264,8 +1264,8 @@ public:
 	Line_2 l = compute_supporting_line(p_.segment());
 	Homogeneous_point_2 q = compute_projection(l, point());
 
-	FT dx2 = CGAL_NTS square(x() - q.x());
-	FT dy2 = CGAL_NTS square(y() - q.y());
+	FT dx2 = CGAL::square(x() - q.x());
+	FT dy2 = CGAL::square(y() - q.y());
 	return dx2 + dy2;
       }
       break;

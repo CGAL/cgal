@@ -491,11 +491,11 @@ private:
 
 
     Comparison_result res =
-      CGAL_NTS compare(lt.a() * lq.b(), lt.b() * lq.a());
+      CGAL::compare(lt.a() * lq.b(), lt.b() * lq.a());
     bool are_parallel = (res == EQUAL);
       
     if ( are_parallel ) {
-      Sign sgn = CGAL_NTS sign(lt.a() * lq.a() + lt.b() * lq.b());
+      Sign sgn = CGAL::sign(lt.a() * lq.a() + lt.b() * lq.b());
       bool have_opposite_directions = (sgn == NEGATIVE);
       if ( have_opposite_directions ) { lq = opposite_line(lq); }
 

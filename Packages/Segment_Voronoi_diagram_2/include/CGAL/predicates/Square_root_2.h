@@ -60,8 +60,8 @@ public:
 		const NT& a3, const NT& A, const NT& B)
     : a0_(a0), a1_(a1), a2_(a2), a3_(a3), A_(A), B_(B)
   {
-    //    CGAL_assertion( !(CGAL_NTS is_negative(A_)) );
-    //    CGAL_assertion( !(CGAL_NTS is_negative(B_)) );
+    //    CGAL_assertion( !(CGAL::is_negative(A_)) );
+    //    CGAL_assertion( !(CGAL::is_negative(B_)) );
   }
 
   Square_root_2(const Square_root_2<NT>& other)
@@ -80,8 +80,8 @@ public:
   Self operator*(const Self& b) const
   {
 #if CHECK_CGAL_PRECONDITIONS
-    CGAL_precondition( CGAL_NTS compare(A_, b.A_) == EQUAL );
-    CGAL_precondition( CGAL_NTS compare(B_, b.B_) == EQUAL );
+    CGAL_precondition( CGAL::compare(A_, b.A_) == EQUAL );
+    CGAL_precondition( CGAL::compare(B_, b.B_) == EQUAL );
 #endif
 
     NT a0 = a0_ * b.a0_ + a1_ * b.a1_ * A_ + a2_ * b.a2_ * B_
@@ -105,8 +105,8 @@ public:
 
   Self square() const
   {
-    NT a0 = CGAL_NTS square(a0_) + CGAL_NTS square(a1_) * A_
-      + CGAL_NTS square(a2_) * B_ + CGAL_NTS square(a3_) * A_ * B_;
+    NT a0 = CGAL::square(a0_) + CGAL::square(a1_) * A_
+      + CGAL::square(a2_) * B_ + CGAL::square(a3_) * A_ * B_;
     NT a1_half = a0_ * a1_ + a2_ * a3_ * B_;
     NT a2_half = a0_ * a2_ + a1_ * a3_ * A_;
     NT a3_half = a0_ * a3_ + a1_ * a2_;
@@ -123,9 +123,9 @@ public:
     Sqrt_1 x(a0_, a1_, A_);
     Sqrt_1 y(a2_, a3_, A_);
 
-    Sign s_x = CGAL_NTS sign(x);
-    Sign s_y = CGAL_NTS sign(y);
-    Sign s_B = CGAL_NTS sign(B_);
+    Sign s_x = CGAL::sign(x);
+    Sign s_y = CGAL::sign(y);
+    Sign s_B = CGAL::sign(B_);
 
     if ( s_B == ZERO ) {
       return s_x;
@@ -136,23 +136,23 @@ public:
     } else if ( s_y == ZERO ) {
       return s_x;
     } else {
-      Sqrt_1 Q = CGAL_NTS square(x) - CGAL_NTS square(y) * B_;
-      return Sign(s_x * CGAL_NTS sign(Q));
+      Sqrt_1 Q = CGAL::square(x) - CGAL::square(y) * B_;
+      return Sign(s_x * CGAL::sign(Q));
     }
   }
 
   double to_double() const
   {
     // THIS MUST BE CHECK WITH SYLVAIN FOR CORRECTNESS
-    double a0d = CGAL_NTS to_double(a0_);
-    double a1d = CGAL_NTS to_double(a1_);
-    double a2d = CGAL_NTS to_double(a2_);
-    double a3d = CGAL_NTS to_double(a3_);
-    double Ad = CGAL_NTS to_double(A_);
-    double Bd = CGAL_NTS to_double(B_);
+    double a0d = CGAL::to_double(a0_);
+    double a1d = CGAL::to_double(a1_);
+    double a2d = CGAL::to_double(a2_);
+    double a3d = CGAL::to_double(a3_);
+    double Ad = CGAL::to_double(A_);
+    double Bd = CGAL::to_double(B_);
 
-    return (a0d + a1d * CGAL_NTS sqrt(Ad) + a2d * CGAL_NTS sqrt(Bd)
-	    + a3d * CGAL_NTS sqrt(Ad * Bd));
+    return (a0d + a1d * CGAL::sqrt(Ad) + a2d * CGAL::sqrt(Bd)
+	    + a3d * CGAL::sqrt(Ad * Bd));
   }
 
 };
@@ -207,8 +207,8 @@ Square_root_2<NT>
 operator+(const Square_root_2<NT>& x, const Square_root_2<NT>& y)
 {
 #if CHECK_CGAL_PRECONDITIONS
-  CGAL_precondition( CGAL_NTS compare(x.e(), y.e()) == EQUAL );
-  CGAL_precondition( CGAL_NTS compare(x.f(), y.f()) == EQUAL );
+  CGAL_precondition( CGAL::compare(x.e(), y.e()) == EQUAL );
+  CGAL_precondition( CGAL::compare(x.f(), y.f()) == EQUAL );
 #endif
 
   return Square_root_2<NT>(x.a() + y.a(), x.b() + y.b(),
@@ -247,69 +247,63 @@ operator-(const Square_root_2<NT>& x, const Square_root_2<NT>& y)
 
 
 
+template<class NT>
+inline
+bool
+is_positive(const Square_root_2<NT>& x)
+{
+  return sign(x) == POSITIVE;
+}
 
-namespace NTS {
+template<class NT>
+inline
+bool
+is_negative(const Square_root_2<NT>& x)
+{
+  return sign(x) == NEGATIVE;
+}
 
-
-  template<class NT>
-  inline
-  bool
-  is_positive(const Square_root_2<NT>& x)
-  {
-    return sign(x) == POSITIVE;
-  }
-
-  template<class NT>
-  inline
-  bool
-  is_negative(const Square_root_2<NT>& x)
-  {
-    return sign(x) == NEGATIVE;
-  }
-
-  template<class NT>
-  inline
-  bool
-  is_zero(const Square_root_2<NT>& x)
-  {
-    return sign(x) == ZERO;
-  }
+template<class NT>
+inline
+bool
+is_zero(const Square_root_2<NT>& x)
+{
+  return sign(x) == ZERO;
+}
 
 
-  template<class NT>
-  inline
-  Sign
-  sign(const Square_root_2<NT>& x)
-  {
-    return x.sign();
-  }
+template<class NT>
+inline
+Sign
+sign(const Square_root_2<NT>& x)
+{
+  return x.sign();
+}
 
-  template<class NT>
-  inline
-  Square_root_2<NT>
-  square(const Square_root_2<NT>& x)
-  {
-    return x.square();
-  }
+template<class NT>
+inline
+Square_root_2<NT>
+square(const Square_root_2<NT>& x)
+{
+  return x.square();
+}
 
-  template<class NT>
-  inline
-  Comparison_result
-  compare(const Square_root_2<NT>& x,
-	  const Square_root_2<NT>& y)
-  {
+template<class NT>
+inline
+Comparison_result
+compare(const Square_root_2<NT>& x,
+	const Square_root_2<NT>& y)
+{
 #if CHECK_CGAL_PRECONDITIONS
-    CGAL_precondition( CGAL_NTS compare(x.e(), y.e()) == EQUAL );
-    CGAL_precondition( CGAL_NTS compare(x.f(), y.f()) == EQUAL );
+  CGAL_precondition( CGAL::compare(x.e(), y.e()) == EQUAL );
+  CGAL_precondition( CGAL::compare(x.f(), y.f()) == EQUAL );
 #endif
 
-    Sign s = CGAL_NTS sign(x - y);
+  Sign s = CGAL::sign(x - y);
 
-    if ( s == ZERO ) { return EQUAL; }
-    return (s == POSITIVE) ? LARGER : SMALLER;
-  }
-
-} // namespace NTS
+  if ( s == ZERO ) { return EQUAL; }
+  return (s == POSITIVE) ? LARGER : SMALLER;
+}
 
 
 
@@ -326,46 +320,46 @@ operator<<(Stream& os, const Square_root_2<NT>& x)
   return os;
 
 #if 0
-  if ( CGAL_NTS is_zero(x) ) {
+  if ( CGAL::is_zero(x) ) {
     os << "0";
     return os;
   }
 
   Square_root_2<NT> One(NT(1), NT(0), NT(0), NT(0), x.e(), x.f());
 
-  if ( CGAL_NTS sign(x.a()) != ZERO ) {
+  if ( CGAL::sign(x.a()) != ZERO ) {
     os << x.a();
-    if ( CGAL_NTS is_positive(x.b()) ) {
+    if ( CGAL::is_positive(x.b()) ) {
       os << "+";
     }
   }
 
-  if ( CGAL_NTS sign(x.b()) != ZERO &&
-       CGAL_NTS sign(x.e()) != ZERO ) {
-    if ( CGAL_NTS sign(x.b() - One) != ZERO ) {
+  if ( CGAL::sign(x.b()) != ZERO &&
+       CGAL::sign(x.e()) != ZERO ) {
+    if ( CGAL::sign(x.b() - One) != ZERO ) {
       os << x.b() << " ";
     }
     os << "sqrt{" << x.e() << "}";
-    if ( CGAL_NTS is_positive(x.c()) ) {
+    if ( CGAL::is_positive(x.c()) ) {
       os << "+";
     }
   }
 
-  if ( CGAL_NTS sign(x.c()) != ZERO &&
-       CGAL_NTS sign(x.f()) != ZERO ) {
-    if ( CGAL_NTS sign(x.c() - One) != ZERO ) {
+  if ( CGAL::sign(x.c()) != ZERO &&
+       CGAL::sign(x.f()) != ZERO ) {
+    if ( CGAL::sign(x.c() - One) != ZERO ) {
       os << x.c() << " ";
     }
     os << "sqrt{" << x.f() << "}";
-    if ( CGAL_NTS is_positive(x.d()) ) {
+    if ( CGAL::is_positive(x.d()) ) {
       os << "+";
     }
   }
 
-  if ( CGAL_NTS sign(x.d()) != ZERO &&
-       CGAL_NTS sign(x.e()) != ZERO &&
-       CGAL_NTS sign(x.f()) != ZERO ) {
-    if ( CGAL_NTS sign(x.d() - One) != ZERO ) {
+  if ( CGAL::sign(x.d()) != ZERO &&
+       CGAL::sign(x.e()) != ZERO &&
+       CGAL::sign(x.f()) != ZERO ) {
+    if ( CGAL::sign(x.d() - One) != ZERO ) {
       os << x.d() << " ";
     }
     os << "sqrt{" << x.e() << " " << x.f() << "}";

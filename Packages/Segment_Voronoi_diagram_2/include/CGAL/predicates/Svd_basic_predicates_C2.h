@@ -82,7 +82,7 @@ public:
     Homogeneous_point_2(const RT& hx, const RT& hy, const RT& hw)
       :  hx_(hx), hy_(hy), hw_(hw)
     {
-      CGAL_precondition( !(CGAL_NTS is_zero(hw_)) );
+      CGAL_precondition( !(CGAL::is_zero(hw_)) );
     }
 
     Homogeneous_point_2(const Point_2& p)
@@ -107,15 +107,15 @@ public:
   static
   FT to_ft(const Sqrt_1& x)
   {
-    FT sqrt_c = CGAL_NTS sqrt(x.c());
+    FT sqrt_c = CGAL::sqrt(x.c());
     return x.a() + x.b() * sqrt_c;
   }
 
   static
   FT to_ft(const Sqrt_3& x)
   {
-    FT sqrt_e = CGAL_NTS sqrt(x.e());
-    FT sqrt_f = CGAL_NTS sqrt(x.f());
+    FT sqrt_e = CGAL::sqrt(x.e());
+    FT sqrt_f = CGAL::sqrt(x.f());
     FT sqrt_ef = sqrt_e * sqrt_f;
     return x.a() + x.b() * sqrt_e +  x.c() * sqrt_f + x.d() * sqrt_ef;
   }
@@ -152,11 +152,11 @@ public:
 
     RT ab = l.a() * l.b();
 
-    RT hx = CGAL_NTS square(l.b()) * p.x()
+    RT hx = CGAL::square(l.b()) * p.x()
       - ab * p.y() - l.a() * l.c();
-    RT hy = CGAL_NTS square(l.a()) * p.y()
+    RT hy = CGAL::square(l.a()) * p.y()
       - ab * p.x() - l.b() * l.c();
-    RT hw = CGAL_NTS square(l.a()) + CGAL_NTS square(l.b());
+    RT hw = CGAL::square(l.a()) + CGAL::square(l.b());
 
     return Homogeneous_point_2(hx, hy, hw);
   }
@@ -168,11 +168,11 @@ public:
   {
     RT ab = l.a() * l.b();
 
-    RT hx = CGAL_NTS square(l.b()) * p.x()
+    RT hx = CGAL::square(l.b()) * p.x()
       - ab * p.y() - l.a() * l.c();
-    RT hy = CGAL_NTS square(l.a()) * p.y()
+    RT hy = CGAL::square(l.a()) * p.y()
       - ab * p.x() - l.b() * l.c();
-    RT hw = CGAL_NTS square(l.a()) + CGAL_NTS square(l.b());
+    RT hw = CGAL::square(l.a()) + CGAL::square(l.b());
 
     return Homogeneous_point_2(hx, hy, hw);
   }
@@ -226,10 +226,10 @@ public:
   compare_squared_distances_to_line(const Line_2& l, const Point_2& p,
                                     const Point_2& q)
   {
-    RT d2_lp = CGAL_NTS square(l.a() * p.x() + l.b() * p.y() + l.c());
-    RT d2_lq = CGAL_NTS square(l.a() * q.x() + l.b() * q.y() + l.c());
+    RT d2_lp = CGAL::square(l.a() * p.x() + l.b() * p.y() + l.c());
+    RT d2_lq = CGAL::square(l.a() * q.x() + l.b() * q.y() + l.c());
 
-    return CGAL_NTS compare(d2_lp, d2_lq);
+    return CGAL::compare(d2_lp, d2_lq);
   }
 
   static
@@ -238,23 +238,21 @@ public:
 				     const Line_2& l1,
                                      const Line_2& l2)
   {
-    RT d2_l1 =
-      CGAL_NTS square(l1.a() * p.x() + l1.b() * p.y() + l1.c());
+    RT d2_l1 = CGAL::square(l1.a() * p.x() + l1.b() * p.y() + l1.c());
 
-    RT d2_l2 =
-      CGAL_NTS square(l2.a() * p.x() + l2.b() * p.y() + l2.c());
+    RT d2_l2 = CGAL::square(l2.a() * p.x() + l2.b() * p.y() + l2.c());
 
-    RT n1 = CGAL_NTS square(l1.a()) + CGAL_NTS square(l1.b());
-    RT n2 = CGAL_NTS square(l2.a()) + CGAL_NTS square(l2.b());
+    RT n1 = CGAL::square(l1.a()) + CGAL::square(l1.b());
+    RT n2 = CGAL::square(l2.a()) + CGAL::square(l2.b());
 
-    return CGAL_NTS compare(d2_l1 * n2, d2_l2 * n1);
+    return CGAL::compare(d2_l1 * n2, d2_l2 * n1);
   }
 
   static
   Oriented_side
   oriented_side_of_line(const Line_2& l, const Point_2& p)
   {
-    Sign s = CGAL_NTS sign(l.a() * p.x() + l.b() * p.y() + l.c());
+    Sign s = CGAL::sign(l.a() * p.x() + l.b() * p.y() + l.c());
     if ( s == ZERO ) { return ON_ORIENTED_BOUNDARY; }
     return ( s == POSITIVE ) ? ON_POSITIVE_SIDE : ON_NEGATIVE_SIDE;
   }
@@ -264,8 +262,8 @@ public:
   oriented_side_of_line(const Line_2& l, const Homogeneous_point_2& p)
   {
     Sign s1 =
-      CGAL_NTS sign(l.a() * p.hx() + l.b() * p.hy() + l.c() * p.hw());
-    Sign s_hw = CGAL_NTS sign(p.hw());
+      CGAL::sign(l.a() * p.hx() + l.b() * p.hy() + l.c() * p.hw());
+    Sign s_hw = CGAL::sign(p.hw());
 
     Sign s = Sign(s1 * s_hw);
 

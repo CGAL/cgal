@@ -69,9 +69,9 @@ private:
   {
     v_type = PPP;
 
-    FT np = CGAL_NTS square(p.x()) + CGAL_NTS square(p.y());
-    FT nq = CGAL_NTS square(q.x()) + CGAL_NTS square(q.y());
-    FT nr = CGAL_NTS square(r.x()) + CGAL_NTS square(r.y());
+    FT np = CGAL::square(p.x()) + CGAL::square(p.y());
+    FT nq = CGAL::square(q.x()) + CGAL::square(q.y());
+    FT nr = CGAL::square(r.x()) + CGAL::square(r.y());
 
     ux = np * (q.y() - r.y()) + nq * (r.y() - p.y()) + nr * (p.y() - q.y());
     uy = -(np * (q.x() - r.x()) + nq * (r.x() - p.x()) + nr * (p.x() - q.x()));
@@ -113,8 +113,8 @@ private:
       c2_ = FT(0);
     }
 
-    Sign sgn_c1_ = CGAL_NTS sign(c1_);
-    Sign sgn_c2_ = CGAL_NTS sign(c2_);
+    Sign sgn_c1_ = CGAL::sign(c1_);
+    Sign sgn_c2_ = CGAL::sign(c2_);
 
     if ( sgn_c1_ == NEGATIVE ) {
       a1 = -a1;  b1 = -b1;  c1_ = -c1_;
@@ -140,12 +140,12 @@ private:
       FT J = a1 * c2_;
       FT I = b1 * c2_;
 
-      FT n1 = CGAL_NTS square(a1) + CGAL_NTS square(b1);
-      FT n2 = CGAL_NTS square(a2) + CGAL_NTS square(b2);
+      FT n1 = CGAL::square(a1) + CGAL::square(b1);
+      FT n2 = CGAL::square(a2) + CGAL::square(b2);
 
       FT D1D2 = n1 * n2;
 
-      uz = -a1 * a2 - b1 * b2 + CGAL_NTS sqrt(D1D2);
+      uz = -a1 * a2 - b1 * b2 + CGAL::sqrt(D1D2);
 
       ux = J + p.x() * uz;
       uy = I + p.y() * uz;
@@ -154,12 +154,12 @@ private:
       FT J = a2 * c1_;
       FT I = b2 * c1_;
 
-      FT n1 = CGAL_NTS square(a1) + CGAL_NTS square(b1);
-      FT n2 = CGAL_NTS square(a2) + CGAL_NTS square(b2);
+      FT n1 = CGAL::square(a1) + CGAL::square(b1);
+      FT n2 = CGAL::square(a2) + CGAL::square(b2);
 
       FT D1D2 = n1 * n2;
 
-      uz = -a1 * a2 - b1 * b2 + CGAL_NTS sqrt(D1D2);
+      uz = -a1 * a2 - b1 * b2 + CGAL::sqrt(D1D2);
 
       ux = J + p.x() * uz;
       uy = I + p.y() * uz;
@@ -181,8 +181,8 @@ private:
     CGAL_precondition( c1_ >= FT(0) );
     CGAL_precondition( c2_ >= FT(0) );
 
-    FT n1 = CGAL_NTS square(a1) + CGAL_NTS square(b1);
-    FT n2 = CGAL_NTS square(a2) + CGAL_NTS square(b2);
+    FT n1 = CGAL::square(a1) + CGAL::square(b1);
+    FT n2 = CGAL::square(a2) + CGAL::square(b2);
 
     FT I = b1 * c2_ + b2 * c1_;
     FT J = a1 * c2_ + a2 * c1_;
@@ -194,29 +194,29 @@ private:
     FT D1D2 = n1 * n2;
 
     // compute sigma
-    FT sigma_expr = b1 * CGAL_NTS sqrt(n2) - b2 * CGAL_NTS sqrt(n1);
-    Sign s_sigma = CGAL_NTS sign(sigma_expr);
+    FT sigma_expr = b1 * CGAL::sqrt(n2) - b2 * CGAL::sqrt(n1);
+    Sign s_sigma = CGAL::sign(sigma_expr);
 
     int i_sigma(s_sigma);
     FT sigma(i_sigma);
 
     // compute rho
-    FT rho_expr = a1 * CGAL_NTS sqrt(n2) - a2 * CGAL_NTS sqrt(n1);
-    Sign s_rho = CGAL_NTS sign(rho_expr);
+    FT rho_expr = a1 * CGAL::sqrt(n2) - a2 * CGAL::sqrt(n1);
+    Sign s_rho = CGAL::sign(rho_expr);
 
     int i_rho(s_rho);
     FT rho(i_rho);
 
-    FT sqrt_D1D2 = CGAL_NTS sqrt(D1D2);
+    FT sqrt_D1D2 = CGAL::sqrt(D1D2);
 
     FT A = a1a2 - b1b2;
     FT u1 = c1c2 * (sqrt_D1D2 + A);
     FT u2 = c1c2 * (sqrt_D1D2 - A);
 
-    uz = -a1a2 - b1b2 + CGAL_NTS sqrt(D1D2);
+    uz = -a1a2 - b1b2 + CGAL::sqrt(D1D2);
 
-    ux = J + p.x() * uz + sigma * CGAL_NTS sqrt(u1);
-    uy = I + p.y() * uz - rho * CGAL_NTS sqrt(u2);
+    ux = J + p.x() * uz + sigma * CGAL::sqrt(u1);
+    uy = I + p.y() * uz - rho * CGAL::sqrt(u2);
   }
 
 
@@ -242,12 +242,12 @@ private:
       cq_ = FT(0);
     }
 
-    Sign s = CGAL_NTS sign(c_);
+    Sign s = CGAL::sign(c_);
 
     if ( s == NEGATIVE ) {
       a = -a;  b = -b;  c = -c;  c_ = -c_;  cq_ = -cq_;
     } else if ( s == ZERO ) {
-      Sign s1 = CGAL_NTS sign(cq_);
+      Sign s1 = CGAL::sign(cq_);
 
       CGAL_assertion( s1 != ZERO );
       if ( s1 == NEGATIVE ) {
@@ -255,17 +255,17 @@ private:
       }
     }
 
-    FT nl = CGAL_NTS square(a) + CGAL_NTS square(b);
+    FT nl = CGAL::square(a) + CGAL::square(b);
 
     FT x_ = q.x() - p.x();
     FT y_ = q.y() - p.y();
-    FT n_ = CGAL_NTS square(x_) + CGAL_NTS square(y_);
+    FT n_ = CGAL::square(x_) + CGAL::square(y_);
 
 
-    Comparison_result res = CGAL_NTS compare( c_, cq_ );
+    Comparison_result res = CGAL::compare( c_, cq_ );
 
     if ( res == EQUAL ) {
-      FT e1 = CGAL_NTS square(c_);
+      FT e1 = CGAL::square(c_);
       FT J = nl * (a * n_ + FT(4) * c_ * x_) - FT(4) * a * e1;
       FT I = nl * (b * n_ + FT(4) * c_ * y_) - FT(4) * b * e1;
       FT X = FT(8) * nl * c_;
@@ -282,10 +282,10 @@ private:
     FT e3 = n_ * e1;
     FT e4 = FT(2) * c_ * e2;
 
-    FT X = FT(2) * CGAL_NTS square(e1);
+    FT X = FT(2) * CGAL::square(e1);
     FT I = b * e3 + x_ * e4;
     FT J = a * e3 - y_ * e4;
-    FT sqrt_S = CGAL_NTS sqrt(n_ * nl * c_ * cq_);
+    FT sqrt_S = CGAL::sqrt(n_ * nl * c_ * cq_);
 
     ux = J + p.x() * X - FT(2) * y_ * sqrt_S;
     uy = I + p.y() * X + FT(2) * x_ * sqrt_S;
@@ -394,8 +394,8 @@ private:
 
     FT sqrt_d[3];
     for (int i = 0; i < 3; i++) {
-      FT d1 = CGAL_NTS square(l[i].a()) + CGAL_NTS square(l[i].b());
-      sqrt_d[i] = CGAL_NTS sqrt(d1);
+      FT d1 = CGAL::square(l[i].a()) + CGAL::square(l[i].b());
+      sqrt_d[i] = CGAL::sqrt(d1);
     }
 
     FT z[3];
@@ -407,7 +407,7 @@ private:
 
     FT vz = z[0] * sqrt_d[0] + z[1] * sqrt_d[1] + z[2] * sqrt_d[2];
 
-    Sign s_minus_vz = CGAL_NTS sign(vz);
+    Sign s_minus_vz = CGAL::sign(vz);
 
     CGAL_assertion( s_minus_vz != ZERO );
 
@@ -429,7 +429,7 @@ private:
 
     vz = z[0] * sqrt_d[0] + z[1] * sqrt_d[1] + z[2] * sqrt_d[2];
 
-    Sign s_minus_vz_2 = CGAL_NTS sign(vz);
+    Sign s_minus_vz_2 = CGAL::sign(vz);
 
     CGAL_assertion( s_minus_vz_2 != ZERO );
 
@@ -465,13 +465,13 @@ private:
       vw += w[i] * sqrt_d[i];
     }
 
-    Sign s_vw = CGAL_NTS sign(vw);
+    Sign s_vw = CGAL::sign(vw);
 
     FT dist =
       a[(i_no+1)%3] * vx + b[(i_no+1)%3] * vy + c[(i_no+1)%3] * vw;
     
 
-    Sign sgn_dist = Sign(s_vw * CGAL_NTS sign(dist));
+    Sign sgn_dist = Sign(s_vw * CGAL::sign(dist));
 
     CGAL_assertion( sgn_dist != ZERO );
 
@@ -499,8 +499,8 @@ private:
       cy[i] = -(c[(i+1)%3] * a[(i+2)%3] - c[(i+2)%3] * a[(i+1)%3]);
       cz[i] = -(a[(i+1)%3] * b[(i+2)%3] - a[(i+2)%3] * b[(i+1)%3]);
 
-      FT d = CGAL_NTS square(a[i]) + CGAL_NTS square(b[i]);
-      sqrt_D[i] = CGAL_NTS sqrt(d);
+      FT d = CGAL::square(a[i]) + CGAL::square(b[i]);
+      sqrt_D[i] = CGAL::sqrt(d);
     }
 
     ux = cx[0] * sqrt_D[0] + cx[1] * sqrt_D[1] + cx[2] * sqrt_D[2];
@@ -630,10 +630,10 @@ private:
 
     FT r2 = squared_radius();
 
-    FT d2 = CGAL_NTS square(x() - t.x()) +
-      CGAL_NTS square(y() - t.y());
+    FT d2 = CGAL::square(x() - t.x()) +
+      CGAL::square(y() - t.y());
 
-    return Sign( CGAL_NTS compare(d2, r2) );
+    return Sign( CGAL::compare(d2, r2) );
   }
 
 
@@ -686,11 +686,11 @@ private:
   {
     FT r2 = squared_radius();
 
-    FT n2 = CGAL_NTS square(l.a()) + CGAL_NTS square(l.b());
+    FT n2 = CGAL::square(l.a()) + CGAL::square(l.b());
 
-    FT d2 = CGAL_NTS square(l.a() * x() + l.b() * y() + l.c());
+    FT d2 = CGAL::square(l.a() * x() + l.b() * y() + l.c());
 
-    return Sign( CGAL_NTS compare(d2, r2 * n2) );
+    return Sign( CGAL::compare(d2, r2 * n2) );
   }
 
 
@@ -849,10 +849,10 @@ public:
 #if 0
   bool is_same_point(const Point_2& p) const
   {
-    Comparison_result res = CGAL_NTS compare(x(), p.x());
+    Comparison_result res = CGAL::compare(x(), p.x());
     if ( res != EQUAL ) { return false; }
 
-    return (CGAL_NTS compare(y(), p.y()) == EQUAL);
+    return (CGAL::compare(y(), p.y()) == EQUAL);
   }
 #endif
 
@@ -910,8 +910,8 @@ public:
     switch (v_type) {
     case PPP:    case PPS:    case PSS:
       {
-	FT dx2 = CGAL_NTS square(x() - p_ref().x());
-	FT dy2 = CGAL_NTS square(y() - p_ref().y());
+	FT dx2 = CGAL::square(x() - p_ref().x());
+	FT dy2 = CGAL::square(y() - p_ref().y());
 	return dx2 + dy2;
       }
       break;
@@ -920,8 +920,8 @@ public:
 	Line_2 l = compute_supporting_line(p_.segment());
 	Homogeneous_point_2 q = compute_projection(l, point());
 
-	FT dx2 = CGAL_NTS square(x() - q.x());
-	FT dy2 = CGAL_NTS square(y() - q.y());
+	FT dx2 = CGAL::square(x() - q.x());
+	FT dy2 = CGAL::square(y() - q.y());
 	return dx2 + dy2;
       }
       break;
@@ -979,7 +979,7 @@ public:
 
   Orientation orientation(const Line_2& l) const 
   {
-    Sign s = CGAL_NTS sign(l.a() * x() + l.b() * y() + l.c());
+    Sign s = CGAL::sign(l.a() * x() + l.b() * y() + l.c());
 
     if ( s == ZERO ) { return COLLINEAR; }
     return ( s == POSITIVE ) ? LEFT_TURN : RIGHT_TURN;

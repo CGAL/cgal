@@ -72,28 +72,28 @@ svd_compare_distanceC2(const FT& qx, const FT& qy,
   }
 
 
-  FT d2_from_p = CGAL_NTS square (qx-px) + CGAL_NTS square(qy-py);
+  FT d2_from_p = CGAL::square (qx-px) + CGAL::square(qy-py);
 
   FT dot1 = dx * d1x + dy * d1y;
   if ( dot1 >= FT(0) ) {
     // q is outside (or the boundary of) the band on the side of s.
-    FT d2_from_s = CGAL_NTS square(d1x) + CGAL_NTS square(d1y);
-    return CGAL_NTS compare(d2_from_s, d2_from_p);
+    FT d2_from_s = CGAL::square(d1x) + CGAL::square(d1y);
+    return CGAL::compare(d2_from_s, d2_from_p);
   }
 
   FT dot2 = dx * d2x + dy * d2y;
   if ( dot2 <= FT(0) ) {
     // q is outside (or the boundary of) the band on the side of t.
-    FT d2_from_t = CGAL_NTS square(d2x) + CGAL_NTS square(d2y);
-    return CGAL_NTS compare(d2_from_t, d2_from_p);
+    FT d2_from_t = CGAL::square(d2x) + CGAL::square(d2y);
+    return CGAL::compare(d2_from_t, d2_from_p);
   }
 
   // q is strictly in the interior of the band, so I have to compare
   // its distance from the supporting line.
   FT c = sx * ty - sy * tx;
-  FT n = CGAL_NTS square(dx) + CGAL_NTS square(dy);
-  FT d2_from_l = CGAL_NTS square(qx * dy - qy * dx + c);
-  return CGAL_NTS compare(d2_from_l, d2_from_p * n);
+  FT n = CGAL::square(dx) + CGAL::square(dy);
+  FT d2_from_l = CGAL::square(qx * dy - qy * dx + c);
+  return CGAL::compare(d2_from_l, d2_from_p * n);
 }
 
 template<class FT, class Method_tag>
@@ -166,75 +166,75 @@ svd_compare_distanceC2(const FT& qx, const FT& qy,
   }
 
   if ( idx1 == 0 ) {
-    FT d2_from_s1 = CGAL_NTS square(dqs1x) + CGAL_NTS square(dqs1y);
+    FT d2_from_s1 = CGAL::square(dqs1x) + CGAL::square(dqs1y);
     //    if ( qx == s1x && qy == s1y ) { d2_from_s1 = FT(0); }
     if ( idx2 == 0 ) {
-      FT d2_from_s2 = CGAL_NTS square(dqs2x) + CGAL_NTS square(dqs2y);
+      FT d2_from_s2 = CGAL::square(dqs2x) + CGAL::square(dqs2y);
       //      if ( qx == s2x && qy == s2y ) { d2_from_s2 = FT(0); }
 
       if ( s1x == s2x && s1y == s2y ) { return EQUAL; }
 
-      return CGAL_NTS compare(d2_from_s1, d2_from_s2);
+      return CGAL::compare(d2_from_s1, d2_from_s2);
     } else if ( idx2 == 2 ) {
 
-      FT d2_from_t2 = CGAL_NTS square(dqt2x) + CGAL_NTS square(dqt2y);
+      FT d2_from_t2 = CGAL::square(dqt2x) + CGAL::square(dqt2y);
       //      if ( qx == t2x && qy == t2y ) { d2_from_t2 = FT(0); }
 
       if ( s1x == t2x && s1y == t2y ) { return EQUAL; }
 
-      return CGAL_NTS compare(d2_from_s1, d2_from_t2);
+      return CGAL::compare(d2_from_s1, d2_from_t2);
     } else { // idx2 == 1
       FT c2 = s2x * t2y - s2y * t2x;
-      FT n2 = CGAL_NTS square(d2x) + CGAL_NTS square(d2y);
-      FT d2_from_l2 = CGAL_NTS square(qx * d2y - qy * d2x + c2);
+      FT n2 = CGAL::square(d2x) + CGAL::square(d2y);
+      FT d2_from_l2 = CGAL::square(qx * d2y - qy * d2x + c2);
 
-      return CGAL_NTS compare(d2_from_s1 * n2, d2_from_l2);
+      return CGAL::compare(d2_from_s1 * n2, d2_from_l2);
     }
   } else if ( idx1 == 2 ) {
-     FT d2_from_t1 = CGAL_NTS square(dqt1x) + CGAL_NTS square(dqt1y);
+     FT d2_from_t1 = CGAL::square(dqt1x) + CGAL::square(dqt1y);
      //     if ( qx == t1x && qy == t1y ) { d2_from_t1 = FT(0); }
 
      if ( idx2 == 0 ) {
-       FT d2_from_s2 = CGAL_NTS square(dqs2x) + CGAL_NTS square(dqs2y);
+       FT d2_from_s2 = CGAL::square(dqs2x) + CGAL::square(dqs2y);
        //       if ( qx == s2x && qy == s2y ) { d2_from_s2 = FT(0); }
 
        if ( t1x == s2x && t1y == s2y ) { return EQUAL; }
 
-       return CGAL_NTS compare(d2_from_t1, d2_from_s2);
+       return CGAL::compare(d2_from_t1, d2_from_s2);
      } else if ( idx2 == 2 ) {
-       FT d2_from_t2 = CGAL_NTS square(dqt2x) + CGAL_NTS square(dqt2y);
+       FT d2_from_t2 = CGAL::square(dqt2x) + CGAL::square(dqt2y);
        //       if ( qx == t2x && qy == t2y ) { d2_from_t2 = FT(0); }
 
        if ( t1x == t2x && t1y == t2y ) { return EQUAL; }
 
-       return CGAL_NTS compare(d2_from_t1, d2_from_t2);
+       return CGAL::compare(d2_from_t1, d2_from_t2);
     } else { // idx2 == 1
       FT c2 = s2x * t2y - s2y * t2x;
-      FT n2 = CGAL_NTS square(d2x) + CGAL_NTS square(d2y);
-      FT d2_from_l2 = CGAL_NTS square(qx * d2y - qy * d2x + c2);
+      FT n2 = CGAL::square(d2x) + CGAL::square(d2y);
+      FT d2_from_l2 = CGAL::square(qx * d2y - qy * d2x + c2);
 
-      return CGAL_NTS compare(d2_from_t1 * n2, d2_from_l2);
+      return CGAL::compare(d2_from_t1 * n2, d2_from_l2);
     }
   } else { // idx1 == 1
     FT c1 = s1x * t1y - s1y * t1x;
-    FT n1 = CGAL_NTS square(d1x) + CGAL_NTS square(d1y);
-    FT d2_from_l1 = CGAL_NTS square(qx * d1y - qy * d1x + c1);
+    FT n1 = CGAL::square(d1x) + CGAL::square(d1y);
+    FT d2_from_l1 = CGAL::square(qx * d1y - qy * d1x + c1);
     if ( idx2 == 0 ) {
-      FT d2_from_s2 = CGAL_NTS square(dqs2x) + CGAL_NTS square(dqs2y);
+      FT d2_from_s2 = CGAL::square(dqs2x) + CGAL::square(dqs2y);
       //      if ( qx == s2x && qy == s2y ) { d2_from_s2 = FT(0); }
 
-      return CGAL_NTS compare(d2_from_l1, d2_from_s2 * n1);
+      return CGAL::compare(d2_from_l1, d2_from_s2 * n1);
     } else if ( idx2 == 2 ) {
-      FT d2_from_t2 = CGAL_NTS square(dqt2x) + CGAL_NTS square(dqt2y);
+      FT d2_from_t2 = CGAL::square(dqt2x) + CGAL::square(dqt2y);
       //      if ( qx == t2x && qy == t2y ) { d2_from_t2 = FT(0); }
 
-      return CGAL_NTS compare(d2_from_l1, d2_from_t2 * n1);
+      return CGAL::compare(d2_from_l1, d2_from_t2 * n1);
     } else { // idx2 == 1
       FT c2 = s2x * t2y - s2y * t2x;
-      FT n2 = CGAL_NTS square(d2x) + CGAL_NTS square(d2y);
-      FT d2_from_l2 = CGAL_NTS square(qx * d2y - qy * d2x + c2);
+      FT n2 = CGAL::square(d2x) + CGAL::square(d2y);
+      FT d2_from_l2 = CGAL::square(qx * d2y - qy * d2x + c2);
 
-      return CGAL_NTS compare(d2_from_l1 * n2, d2_from_l2 * n1);
+      return CGAL::compare(d2_from_l1 * n2, d2_from_l2 * n1);
     }
   }
 }
