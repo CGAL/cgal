@@ -33,35 +33,12 @@
 
 namespace CGAL_MINIBALL_NAMESPACE {
 
+  // We provide several algorithms to solve the Miniball problem.
+  // The following types are used by the client to select the
+  // algorithm he or she wants to run.
   struct LP_algorithm {};
   struct Farthest_first_heuristic {};
   typedef Farthest_first_heuristic Default_algorithm;
-
-  template<typename FT>
-  inline bool compare(const FT& a,const FT& b,
-                      const FT& ap,const FT& bp) {
-    const FT u = a-ap, uu = u*u;
-    if (u >= FT(0)) {
-      if (bp <= uu)
-        return false;
-  
-      // here (1) holds
-      const FT v = uu-b+bp;
-      if (v <= 0)
-        return false;
-  
-      // here (2) holds
-      return 4 * uu * bp < sqr(v);
-    } else {
-      // here (1) holds
-      const FT v = uu-b+bp;
-      if (v >= FT(0))
-        return true;
-  
-      // here (3) holds
-      return 4 * uu *bp > sqr(v);
-    }
-  }
 
   template<class Traits>
   class Min_sphere_of_spheres_d {
@@ -160,6 +137,8 @@ namespace CGAL_MINIBALL_NAMESPACE {
   
   public: // validity check:
     bool is_valid();
+
+  private:
     bool is_valid(const Tag_true is_exact);
     bool is_valid(const Tag_false is_exact);
   

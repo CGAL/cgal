@@ -39,6 +39,32 @@ namespace CGAL_MINIBALL_NAMESPACE {
     return std::rand() % k; // todo.  This is not good...
   }
 
+  template<typename FT>
+  inline bool compare(const FT& a,const FT& b,
+                      const FT& ap,const FT& bp) {
+    const FT u = a-ap, uu = u*u;
+    if (u >= FT(0)) {
+      if (bp <= uu)
+        return false;
+  
+      // here (1) holds
+      const FT v = uu-b+bp;
+      if (v <= 0)
+        return false;
+  
+      // here (2) holds
+      return 4 * uu * bp < sqr(v);
+    } else {
+      // here (1) holds
+      const FT v = uu-b+bp;
+      if (v >= FT(0))
+        return true;
+  
+      // here (3) holds
+      return 4 * uu *bp > sqr(v);
+    }
+  }
+
   template<class Traits>
   void Min_sphere_of_spheres_d<Traits>::update(LP_algorithm) {
     using namespace Min_sphere_of_spheres_d_impl;
