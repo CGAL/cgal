@@ -13,24 +13,27 @@ include $(CGAL_MAKEFILE)
               # -L$(GMP_LIB_DIR) -lgmp -lm \
 
 CXXFLAGS = \
-	-I../../include \
+	-I$(CGAL)/include_advanced -I../../include \
 	$(TESTSUITE_CXXFLAGS) \
 	$(CGAL_CXXFLAGS) \
-	-g -W -Wall
-	# -O2 -fomit-frame-pointer -mcpu=pentiumpro -march=pentiumpro -W -Wall -DLOOPS=10000000
+	-DCGAL_NO_ASSERTIONS -DCGAL_NO_PRECONDITIONS -DCGAL_NO_POSTCONDITIONS\
+	-DCGAL_NO_WARNINGS \
+	-O2 -fomit-frame-pointer -mcpu=pentiumpro -march=pentiumpro -W -Wall -DLOOPS=10000000
 	# -g -W -Wall -Winline
 	# -O2 -mcpu=pentiumpro -march=pentiumpro -W -Wall -DLOOPS=10000000
 	# -O2 -W -Winline -Wunused -malign-double
+	# -I$(CGAL)/include_advanced    # Advanced kernel, cf config.h aussi.
 	# -mcpu=pentiumpro -march=pentiumpro -mieee-fp
 	# -mcpu=ultrasparc -mtune=ultrasparc
 	# -fomit-frame-pointer
-	# -fprofile-arcs -ftest-coverage
+	# -fprofile-arcs -ftest-coverage # for GCOV
 	# -fpermissive
-	# -B$(UTIL)/Binutils/$(UNAME)/bin/ \
-	# -Wa,-xarch=v8plus   # g++ sans -m*=ultra*
+	# -fno-enforce-eh-specs # for GCC 3
 	# -fhonor-std
 	# -frepo
 	# -pedantic
+	# -B$(UTIL)/Binutils/$(UNAME)/bin/ \
+	# -Wa,-xarch=v8plus   # g++ sans -m*=ultra*
 	# /Fatst1.s
 	# /Op /Oi /Od /Za /O2 /Ox
 	# -DCGAL_IA_NEW_FILTERS \
