@@ -277,7 +277,7 @@ class Partition_vertex_map : public std::map<typename Traits::Point_2,
 {
 public:
 
-   typedef typename std::map<typename Traits::Point_2,
+   typedef std::map<typename Traits::Point_2,
                              Edge_list<Traits>,
                              typename Traits::Less_xy_2>::iterator
                                                    Self_iterator;
@@ -304,19 +304,19 @@ public:
       Location_pair begin_v_loc_pair;
       Location_pair prev_v_loc_pair;
    
-      Poly_vtx_iterator begin;
-      Poly_vtx_iterator end;
+      Poly_vtx_iterator vtx_begin;
+      Poly_vtx_iterator vtx_end;
       Poly_vtx_iterator v_it;
    
       int poly_num = 0;
       for (; poly_first != poly_last; poly_first++, poly_num++)
       {
-        begin = (*poly_first).vertices_begin();
-        end = (*poly_first).vertices_end();
-        begin_v_loc_pair= insert(P_Vertex(*begin, Edge_list()));
+        vtx_begin = (*poly_first).vertices_begin();
+        vtx_end = (*poly_first).vertices_end();
+        begin_v_loc_pair = insert(P_Vertex(*vtx_begin, Edge_list()));
         prev_v_loc_pair = begin_v_loc_pair;
-        v_it = begin;
-        for (v_it++; v_it != end; v_it++)
+        v_it = vtx_begin;
+        for (v_it++; v_it != vtx_end; v_it++)
         {
            v_loc_pair = insert(P_Vertex(*v_it, Edge_list()));
            insert_next_edge(prev_v_loc_pair.first, v_loc_pair.first, poly_num);
@@ -444,10 +444,5 @@ public:
 
 }
 
-/*
-#ifdef CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
-#include <CGAL/Partition_vertex_map.C>
-#endif // CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
-*/
 
 #endif // CGAL_PARTITION_VERTEX_MAP_H
