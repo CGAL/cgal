@@ -1600,26 +1600,8 @@ This compiler version is no longer supported starting with \cgal\ 3.0.
 
 \subsubsection{\msvc{7.0} (\textsc{.NET})}
 
-\paragraph{\texttt{std::iterator\_traits}} is only partially
-supported, due to absence of partial specialization support in \msvc.
-This means that \texttt{std::iterator\_traits<T>} must be explicitly
-instantiated when \texttt{T} is a C pointer. 
+This compiler version is no longer supported starting with \cgal\ 3.1.
 
-\cgal\ provides
-these instantiations for most commonly used primitive data types and
-\cgal\ kernel types\footnote{\cgal\ \texttt{Point, Segment}, etc.}.
-For other types the user must do this himself.  
-This can be done by using the macro
-\nonlinkedpath'CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC(T)'.
-Note that the parameter of this macro cannot contain symbols $<$ and
-$>$. Thus the macro cannot be used with types that contain $<$ and $>$
-directly. However, one can be done by first define a new type using 
-\texttt{typedef} and then applying the macro to this new type.
-See e.g. \nonlinkedpath'examples/Getting_started/advanced_hull.C'
-for an example of using this macro.
-
-Note that this macro does not have any effect when other than
-\msvc{7.0} compiler is used, so it can be safely left in the source code. 
 \medskip
 
 \textbf{Other problems.}
