@@ -723,7 +723,7 @@ $
     int sign(const FT& x) const;
 }
 {
-\begin{ccTexOnly}
+\ccTexHtml{
 Returns
 $
   \left\{
@@ -734,11 +734,10 @@ $
   \end{array}
   \right.
 $
-\end{ccTexOnly}
-}
-\begin{ccHtmlOnly}
+}{
 Returns -1 if x < 0, 0 if x = 0 and 1 if x > 0
-\end{ccHtmlOnly}
+}
+}
 
 \ccMemberFunction{
     bool is_negative(const FT& x) const;
@@ -775,7 +774,7 @@ on $l$.
     Comparison_result compare_x(const Point_2 &p, const Point_2 &q) const;
 }
 {
-\begin{ccTexOnly}
+\ccTexHtml{
 Returns
 $
   \left\{
@@ -786,17 +785,16 @@ $
   \end{array}
   \right.
 $
-\end{ccTexOnly}
-}
-\begin{ccHtmlOnly}
+}{
 Returns SMALLER if p_x < q_x, EQUAL if p_x = q_x and LARGER if p_x > q_x
-\end{ccHtmlOnly}
+}
+}
 
 \ccMemberFunction{ 
     Comparison_result compare_y(const Point_2 &p, const Point_2 &q) const;
 }
 {
-\begin{ccTexOnly}
+\ccTexHtml{
 Returns
 $
   \left\{
@@ -807,11 +805,10 @@ $
   \end{array}
   \right.
 $
-\end{ccTexOnly}
-}
-\begin{ccHtmlOnly}
+}{
 Returns SMALLER if p_y < q_y, EQUAL if p_y = q_y and LARGER if p_y > q_y
-\end{ccHtmlOnly}
+}
+}
 
 \ccMemberFunction{
     bool have_equal_direction(const Vector_2& v1,
