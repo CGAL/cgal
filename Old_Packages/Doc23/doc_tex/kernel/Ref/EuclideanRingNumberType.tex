@@ -1,33 +1,43 @@
 \begin{ccRefConcept}{EuclideanRingNumberType}
 
-%The concept \ccRefName\ defines the requirements of a number type to be
-%used ???.  
-The number type supports the operations $+$, $-$ and $*$ as well as
-$/$ when the remainder of the division is zero, and the computation of
-the greatest common divisor of two numbers.
+The number type supports the operations $+$, $-$ and $*$ as well as a function
+$div$, which performs an integer division, the modulus operator $\%$,
+that returns the remainder of integer division and the function $gcd$.
 
 \ccRefines
 RingNumberType
 
 \ccHasModels
-\CC\ built-in number types \\
-\ccc{CGAL::Filtered_exact<EuclideanRingNumberType, ET>} \\
-\ccc{CGAL::Fixed_precision_nt} \\
-\ccc{CGAL::Interval_nt} \\
-\ccc{CGAL::Interval_nt_advanced} \\
-\ccc{CGAL::Lazy_exact_nt<EuclideanRingNumberType>} \\
-\ccc{CGAL::Quotient<RingNumberType>} \\
+\ccc{int} \\
+\ccc{long} \\
+\ccc{long long} \\
+\ccc{Gmpz} \\
+\ccc{leda\_integer} \\
+//\ccc{CGAL::Filtered_exact<EuclideanRingNumberType, ET>} \\
+//\ccc{CGAL::Lazy_exact_nt<EuclideanRingNumberType>} \\
 
 \ccCreationVariable{ntvar}
 
 \ccOperations
 \ccGlue
-\ccMethod{EuclideanRingNumberType operator/(const EuclideanRingNumberType &n) const;}
-       {\ccPrecond \ccc{n} properly divides \ccVar.}
+\ccFunction{EuclideanRingNumberType div(
+                    const EuclideanRingNumberType& n1,
+                    const EuclideanRingNumberType &n2) const;}
+{returns the result of the integer division \ccc{n1}/\ccc{n2}.}
+       
 
 \ccGlue
-\ccMethod{EuclideanRingNumberType gcd(const EuclideanRingNumberType &n) const;}
-       {Computes the greatest common divisor between \ccVar\ and \ccc{n}.}
+\ccMethod{EuclideanRingNumberType operator%(const EuclideanRingNumberType &n) const;}
+       {returns the remainder achieved when dividing \ccVar\ by \ccc{n}.}
+
+\ccGlue
+\ccMethod{EuclideanRingNumberType operator%=(const EuclideanRingNumberType &n) const;}
+       {computes the remainder achieved when dividing \ccVar\ by \ccc{n} and
+        assigns it to \ccVar.}
+
+\ccGlue
+\ccFunction{EuclideanRingNumberType gcd(const EuclideanRingNumberType n1, const EuclideanRingNumberType &n2) const;}
+       {Computes the greatest common divisor between \ccc{n1} and \ccc{n2}.}
 
 
 \ccSeeAlso

@@ -202,24 +202,24 @@ the \ccHtmlNoLinksFrom{intersection} point of two lines, computation of
 \ccHtmlNoLinksFrom{Cartesian} coordinates usually involves divisions, so
 you need to use a field type with \ccHtmlNoLinksFrom{Cartesian} representation
 or have to switch to homogeneous representation. 
-\ccc{double} is a possible, but imprecise field type.
+The type \ccc{double} is a possible, but imprecise, field type.
 You can also put any ring type into \ccc{Quotient} to get a
 field type and put it into \ccc{Cartesian}, but you better put
 the ring type into \ccc{Homogeneous}.
-\ccc{leda_rational} and \ccc{leda_real} are valid field types, too.
+Other valid field types are \ccc{leda_rational} and \ccc{leda_real}.
 
 If it is crucial for you that the computation is reliable, 
 the right choice are probably number types that guarantee
-exact computation. The number type \ccc{leda_real} guarantees
-that all decisions and hence all branchings in a computation
-are correct. They also allow you to compute approximations to whatever
-precision you need. Furthermore computation with 
-\ccc{leda_real} is faster than computation with arbitrary precision
-arithmetic. So if you would like to avoid surprises caused by imprecise
-computation, this is a good choice. In fact, it is a good choice with
-both representations, since divisions slow down the computation of
-the reals and hence it might pay-off to avoid them.
-
+exact computation. 
+%The number type \ccc{leda_real} guarantees
+%that all decisions and hence all branchings in a computation
+%are correct. They also allow you to compute approximations to whatever
+%precision you need. Furthermore computation with 
+%\ccc{leda_real} is faster than computation with arbitrary precision
+%arithmetic. So if you would like to avoid surprises caused by imprecise
+%computation, this is a good choice. In fact, it is a good choice with
+%both representations, since divisions slow down the computation of
+%the reals and hence it might pay-off to avoid them.
 Still other people will prefer the built-in
 type {\tt double}, because they need speed and can live with
 approximate results, or even algorithms that, from time to time,
