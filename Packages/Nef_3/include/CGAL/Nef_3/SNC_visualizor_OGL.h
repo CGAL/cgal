@@ -313,13 +313,13 @@ namespace OGL {
     { TRACEN("drawing facet "<<(f->debug(),""));
       GLUtesselator* tess_ = gluNewTess();
       gluTessCallback(tess_, GLenum(GLU_TESS_VERTEX_DATA),
-		      (GLvoid (*)(...)) &vertexCallback);
+		      (GLvoid (*)()) &vertexCallback);
       gluTessCallback(tess_, GLenum(GLU_TESS_BEGIN),
-		      (GLvoid (*)(...)) &beginCallback);
+		      (GLvoid (*)()) &beginCallback);
       gluTessCallback(tess_, GLenum(GLU_TESS_END),
-		      (GLvoid (*)(...)) &endCallback);
+		      (GLvoid (*)()) &endCallback);
       gluTessCallback(tess_, GLenum(GLU_TESS_ERROR),
-		      (GLvoid (*)(...)) &errorCallback);
+		      (GLvoid (*)()) &errorCallback);
       gluTessProperty(tess_, GLenum(GLU_TESS_WINDING_RULE),
 		      GLU_TESS_WINDING_POSITIVE);
 
