@@ -1,5 +1,8 @@
 Changes done to the `Min_annulus_d' package
 
+Version 0.7.1 on 13-Sep-2000
+- replaced '\ccPureGlobalScope' by 'CGAL::' in C++ arguments of '\cc...' macros
+
 Version 0.7 on 12-Sep-2000
 - documentation split up into user and reference manual parts.
 
