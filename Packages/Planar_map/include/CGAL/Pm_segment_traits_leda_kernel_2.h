@@ -30,6 +30,14 @@
 #include <CGAL/rat_leda_in_CGAL_2.h>
 #include <CGAL/Planar_map_2/Pm_segment_utilities_2.h>
 
+// if we use a LEDA version without namespaces
+// we have to define a few macros
+#if !defined(LEDA_NAMESPACE)
+#define LEDA_BEGIN_NAMESPACE
+#define LEDA_END_NAMESPACE
+#define LEDA_NAMESPACE_NAME
+#endif
+
 CGAL_BEGIN_NAMESPACE
 
 /*!
@@ -260,7 +268,7 @@ public:
       }
                     
       // Non of the curves are vertical:
-      int res = cmp_segments_at_xcoord(cv1_, cv2_, q);
+      int res = LEDA_NAMESPACE_NAME::::cmp_segments_at_xcoord(cv1_, cv2_, q);
       return ((res < 0) ? SMALLER : ((res > 0) ? LARGER : EQUAL));
     }
 
@@ -291,7 +299,7 @@ public:
     Comparison_result operator()(const Segment_2 & cv1, const Segment_2 & cv2)
       const
     {
-      int res = cmp_slopes(cv1, cv2);
+      int res = LEDA_NAMESPACE_NAME::::cmp_slopes(cv1, cv2);
       return ((res < 0) ? SMALLER : ((res > 0) ? LARGER : EQUAL));
     }
   };
