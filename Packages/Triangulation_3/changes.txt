@@ -1,3 +1,7 @@
+20 June 2004 Sylvain Pion
+- Regular traits : unqualify some calls to e.g. power_test() to please
+  g++ 3.4.
+
 3 June 2004 Sylvain Pion
 - Test-suite fixes for Darwin, which does not work fine on files open
   both read and write at the same time through 2 streams.

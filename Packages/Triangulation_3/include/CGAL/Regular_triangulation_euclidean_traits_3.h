@@ -51,27 +51,27 @@ public:
 			     const Weighted_point & s,
 			     const Weighted_point & t) const
     {
-      return CGAL::power_test(p,q,r,s,t);
+      return power_test(p,q,r,s,t);
     }
   Oriented_side operator() ( const Weighted_point & p,
 			     const Weighted_point & q,
 			     const Weighted_point & r,
 			     const Weighted_point & s) const
     {
-      return CGAL::power_test(p,q,r,s);
+      return power_test(p,q,r,s);
     }
 
   Oriented_side operator() ( const Weighted_point & p,
 			     const Weighted_point & q,
 			     const Weighted_point & r) const
     {
-      return CGAL::power_test(p,q,r);
+      return power_test(p,q,r);
     }
 
   Oriented_side operator() ( const Weighted_point & p,
 			     const Weighted_point & q) const
     {
-      return CGAL::power_test(p,q);
+      return power_test(p,q);
     }
 };
 
@@ -87,7 +87,7 @@ public:
 				 const Weighted_point & q,
 				 const Weighted_point & r)
     {
-      return CGAL::compare_power_distance_3(p,q,r);
+      return compare_power_distance_3(p,q,r);
     }
 };
 
