@@ -1,3 +1,6 @@
+//
+// file: demo/Partition_2/partition_2_demo.C
+//
 #include <CGAL/basic.h>
 #ifndef CGAL_USE_LEDA
 int main() { 
@@ -185,13 +188,11 @@ int main( )
    file_name_panel =
        controls.text_item(file_label.insert(file_label.length(), 
                           current_file_name));
-   W.set_node_width(1);
 
    W.display();
    controls.display();
    int button_num;
 
-   W.set_node_width(1);
    if (read_poly_from_file(polygon, current_file_name))
       compute_partitions(polygon);
 

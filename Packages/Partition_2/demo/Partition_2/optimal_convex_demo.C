@@ -1,10 +1,6 @@
-#include <CGAL/basic.h>
-#ifndef CGAL_USE_LEDA
-int main() { 
-  std::cout << "\nSorry, this demo needs LEDA for visualization.\n"; 
-  return 0; 
-}
-#else
+// 
+// file: demo/Partition_2/optimal_convex_demo.C
+//
 #include <CGAL/Cartesian.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/partition_2.h>
@@ -13,8 +9,8 @@ int main() {
 #include <string>
 #include <fstream>
 
-typedef CGAL::Cartesian<double>                           R;
-typedef CGAL::Partition_traits_2<R>                       Traits;
+typedef CGAL::Cartesian<double>                           K;
+typedef CGAL::Partition_traits_2<K>                       Traits;
 typedef Traits::Polygon_2                                 Polygon_2;
 typedef Traits::Point_2                                   Point_2;
 typedef Polygon_2::Vertex_const_iterator                  Vertex_iterator;
@@ -46,7 +42,6 @@ void draw_polygons(const Polygon_2& polygon,
                    CGAL::Window_stream& W)
 {
    W.clear();
-   W.set_node_width(2);
    W.set_line_width(3);
    W << CGAL::BLACK;
    W << polygon; 
@@ -84,4 +79,3 @@ int main( )
    return 0;
 }
 
-#endif // CGAL_USE_LEDA
