@@ -139,8 +139,7 @@ Add_Sub(const MP_Float &a, const MP_Float &b, const BinOp &op)
   {
     MP_Float::limb2 tmp = r.v[i] + op(a.of_exp(i+min_exp),
                                       b.of_exp(i+min_exp));
-    r.v[i] = tmp;
-    r.v[i+1] = MP_Float::higher_limb(tmp);
+    MP_Float::split(tmp, r.v[i+1], r.v[i]);
   }
   r.canonicalize();
   return r;
@@ -181,13 +180,12 @@ operator*(const MP_Float &a, const MP_Float &b)
   for(unsigned i = 0; i < a.v.size(); ++i)
   {
     unsigned j;
-    MP_Float::limb2 carry = 0;
+    MP_Float::limb carry = 0;
     for(j = 0; j < b.v.size(); ++j)
     {
       MP_Float::limb2 tmp = carry + (MP_Float::limb2) r.v[i+j]
                         + std::multiplies<MP_Float::limb2>()(a.v[i], b.v[j]);
-      r.v[i+j] = tmp;
-      carry = MP_Float::higher_limb(tmp);
+      MP_Float::split(tmp, carry, r.v[i+j]);
     }
     r.v[i+j] = carry;
   }
@@ -199,6 +197,7 @@ operator*(const MP_Float &a, const MP_Float &b)
 MP_Float
 square(const MP_Float &a)
 {
+  typedef MP_Float::limb limb;
   typedef MP_Float::limb2 limb2;
 
   if (a.is_zero())
@@ -210,7 +209,8 @@ square(const MP_Float &a)
   for(unsigned i=0; i<a.v.size(); i++)
   {
     unsigned j;
-    limb2 carry = 0, carry2 = 0;
+    limb2 carry = 0;
+    limb carry2 = 0;
     for(j=0; j<i; j++)
     {
       // There is a risk of overflow here :(
@@ -219,8 +219,9 @@ square(const MP_Float &a)
       limb2 tmp1 = carry + (limb2) r.v[i+j] + tmp0;
       limb2 tmp = tmp0 + tmp1;
 
-      r.v[i+j] = tmp;
-      carry = MP_Float::higher_limb(tmp) + carry2;
+      limb tmpcarry;
+      MP_Float::split(tmp, tmpcarry, r.v[i+j]);
+      carry = tmpcarry + (limb2) carry2;
 
       // Is there a more efficient way to handle this carry ?
       if (tmp > 0 && tmp0 < 0 && tmp1 < 0)
@@ -236,8 +237,8 @@ square(const MP_Float &a)
     // last round for j=i :
     limb2 tmp0 = carry + (limb2) r.v[i+i]
                        + std::multiplies<limb2>()(a.v[i], a.v[i]);
-    r.v[i+i] = tmp0;
-    r.v[i+i+1] = MP_Float::higher_limb(tmp0) + carry2;
+    MP_Float::split(tmp0, r.v[i+i+1], r.v[i+i]);
+    r.v[i+i+1] += carry2;
   }
   r.canonicalize();
   return r;

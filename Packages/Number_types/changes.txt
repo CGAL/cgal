@@ -1,3 +1,8 @@
+17 Apr 2004 Sylvain Pion
+- MP_Float : Do not use an implementation-defined behavior (conversion to
+             signed integral type), which was making PGCC unhappy.
+- MP_Float : add a split() function to convert a limb2 in 2 limbs.
+
 12 Apr 2004 Sylvain Pion
 - Added preconditions (denominator != 0) in operator/ of Gmpz and Gmpq.
 

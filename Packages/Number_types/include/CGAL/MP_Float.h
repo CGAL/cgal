@@ -100,20 +100,39 @@ private:
     v.erase(v.begin(), i);
   }
 
+  // This union is used to convert an unsigned short to a short with
+  // the same binary representation, without invoking implementation-defined
+  // behavior (standard 4.7.3).
+  // It is needed by PGCC, which behaves differently from the others.
+  union to_signed {
+      unsigned short us;
+      short s;
+  };
+
 public:
+
+  // Splits a limb2 into 2 limbs (high and low).
+  static
+  void split(limb2 l, limb & high, limb & low)
+  {
+    to_signed l2 = {l};
+    low = l2.s;
+    high = (l - low) >> (8*sizeof(limb));
+  }
+
+  // Given a limb2, returns the higher limb.
+  static
+  limb higher_limb(limb2 l)
+  {
+      limb high, low;
+      split(l, high, low);
+      return high;
+  }
 
   void canonicalize()
   {
     remove_leading_zeros();
     remove_trailing_zeros();
-  }
-
-  // Accessory function : Given a limb2, this returns the higher limb.
-  // The lower limb is simply obtained by casting to a limb.
-  static
-  limb higher_limb(limb2 l)
-  {
-    return (l - (limb) l) >> (8*sizeof(limb));
   }
 
   MP_Float()
@@ -136,8 +155,7 @@ public:
   MP_Float(limb2 i)
   : v(2), exp(0)
   {
-    v[0] = i;
-    v[1] = higher_limb(i);
+    split(i, v[1], v[0]);
     canonicalize();
   }
 
