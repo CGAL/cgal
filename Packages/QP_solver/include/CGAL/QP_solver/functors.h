@@ -223,8 +223,14 @@ class Value_by_basic_index : public std::unary_function<
          <RndAccIt>::value_type >::result_type
     result_type;
 
-    Value_by_basic_index( RndAccIt x_B_O_it,            int n_original,
-			  RndAccIt x_B_S_it = x_B_O_it, int n_slack = 0)
+    Value_by_basic_index( RndAccIt x_B_O_it, int n_original)
+	: o( x_B_O_it), s( x_B_O_it),
+	  l( n_original), u( n_original+0),
+	  z( 0)
+	{ }
+
+    Value_by_basic_index( RndAccIt x_B_O_it, int n_original,
+			  RndAccIt x_B_S_it, int n_slack = 0)
 	: o( x_B_O_it), s( x_B_S_it),
 	  l( n_original), u( n_original+n_slack),
 	  z( 0)
