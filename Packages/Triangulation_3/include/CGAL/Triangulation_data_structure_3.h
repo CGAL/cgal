@@ -1697,7 +1697,7 @@ std::istream& operator>>
 //   }
  
   read_cells(is, tds, n, V, m, C);
-  CGAL_triangulation_assertion( tds.is_valid(true) );
+  CGAL_triangulation_assertion( tds.is_valid(false) );
   return is;
 }
 
