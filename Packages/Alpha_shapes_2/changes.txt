@@ -1,3 +1,7 @@
+version 11.16: [af]
+- Changed a private member to mutable as it is used for caching for iterators.
+- Declared at the same time some begin()/end() functions const, as they are.
+
 version 11.15: [af]
 - Added some missing std:: before endl
 
