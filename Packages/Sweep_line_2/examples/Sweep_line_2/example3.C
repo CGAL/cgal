@@ -1,35 +1,40 @@
 // examples/Sweep_line/example3.C
 // ------------------------------
-#include <CGAL/Quotient.h>
 #include <CGAL/Cartesian.h>
+#include <CGAL/MP_Float.h>
+#include <CGAL/Quotient.h>
 #include <CGAL/Arr_segment_exact_traits.h>
 #include <CGAL/sweep_to_produce_subcurves_2.h>
 #include <iostream>
 #include <vector>
 
-typedef CGAL::Quotient<int>                 NT;
-typedef CGAL::Cartesian<NT>                 R;
-typedef CGAL::Arr_segment_exact_traits<R>   Traits;
-typedef Traits::Point                       Point;
-typedef Traits::X_curve                     X_curve;
-typedef Traits::Curve                       Curve;
+typedef CGAL::Quotient<CGAL::MP_Float>         NT;
+typedef CGAL::Cartesian<NT>                    Kernel;
+typedef CGAL::Arr_segment_exact_traits<Kernel> Traits;
+
+typedef Traits::Point                          Point;
+typedef Traits::Curve                          Curve;
 
 
 int main()
 {
-  int                num_segments;
-  std::list<Curve>        segments;
+  // Read input
+
+  int               num_segments;
+  std::list<Curve>  segments;
   
   std::cin >> num_segments;
   
-  NT        x1, y1, x2, y2;
+  NT  x1, y1, x2, y2;
   
-  while (num_segments--) {
+  while (num_segments--) 
+  {
     std::cin >> x1 >> y1 >> x2 >> y2;
     
     segments.push_back(Curve(Point(x1,y1), Point(x2,y2)));
   }    
-  
+
+  // Use a sweep to create the sub curves  
   Traits traits;
   std::list<Curve>  subcurves;
   CGAL::sweep_to_produce_subcurves_2(segments.begin(), 
@@ -37,6 +42,8 @@ int main()
                                      traits, 
                                      std::back_inserter(subcurves));
   
+  // Write output
+
   std::cout<<"The number of disjoint interior sub segments is "<< subcurves.size();
   std::cout<< std::endl;
   
