@@ -1,0 +1,582 @@
+%% =============================================================================
+%% The CGAL Developers' Manual
+%% Chapter: Portability Issues
+%% -----------------------------------------------------------------------------
+%% file   : portability.tex
+%% authors: Michael Hoffmann <hoffmann@inf.ethz.ch> &
+%%          Stefan Schirra <stschirr@mpi-sb.mpg.de>
+%% -----------------------------------------------------------------------------
+%% $Revision$
+%% $Date$
+%% =============================================================================
+
+\chapter{Portability Issues}
+\label{chap:portability}
+\ccChapterRelease{Chapter Version: 1.0} \\
+\ccChapterAuthor{Michael Hoffmann ({\tt hoffmann@inf.ethz.ch}) \&
+                 Stefan Schirra ({\tt stschirr@mpi-sb.mpg.de}) \&
+                 Sylvain Pion ({\tt Sylvain.Pion@sophia.inria.fr})}
+\ccIndexMainItemBegin{portability}
+
+This chapter gives an overview of issues related to the
+configuration of \cgal\ that allow you to answer such questions as:
+\begin{itemize}
+\item Is \leda/\textsc{Gmp} there? (Section~\ref{sec:leda_gmp_support})
+\item What version of \cgal\ am I running? (Section~\ref{sec:which_versions})
+\item Which compiler is this? (Section~\ref{sec:which_compiler})
+\item Does the compiler support Koenig lookup? (Section~\ref{sec:workaround_flags})
+\end{itemize}
+
+Also addressed here are issues related to writing code for 
+non-standard-compliant compilers.  Compilers have made a lot of progress toward 
+the \CC-standard recently.  But still they do not fully implement it. There 
+are a few features you may assume; others you may not
+assume. Especially you may assume that the compiler
+\begin{itemize}
+\item supports namespaces
+\item supports member templates
+\item support for \texttt{std::iterator\_traits}.
+\end{itemize}
+Still, there are many bugs (sometimes known as ``features'') left in the 
+compilers.  Have a look at the list of (non-obsolete) workarounds in 
+Section~\ref{sec:workaround_flags} to get an idea of which ``features'' are
+still present.  
+
+\ccIndexMainItemBegin{configuration}
+\section{Checking for \leda\ or GMP support}
+\label{sec:leda_gmp_support}
+\ccIndexSubsubitem{\leda}{support}{checking for}
+%\index{leda support@\leda\ support!checking for}
+\index{gmp support@GMP support!checking for}
+
+In the makefiles included for the compilation of every \cgal\ program
+(\ie, those to which the environment variable {\tt CGAL\_MAKEFILE} refers),
+\ccIndexSubitem{\tt makefile}{\cgal}
+\index{CGAL_MAKEFILE variable@{\tt CGAL\_MAKEFILE} variable}
+we define command line switches that set the flags 
+\begin{verbatim}
+CGAL_USE_LEDA, CGAL_USE_GMP
+\end{verbatim}
+\index{CGAL_USE_LEDA flag@{\tt CGAL\_USE\_LEDA} flag}
+\index{flag!for \leda}
+\index{CGAL_USE_GMP flag@{\tt CGAL\_USE\_GMP} flag}
+\index{flag!for GMP}
+iff \cgal\ is configured with \leda\ or GMP support, respectively.
+
+\section{Using Boost}
+\label{sec:boost_support}
+\cgal\ code can rely on Boost libraries to some extent.
+
+Boost is always installed with \cgal, and is updated to the latest
+version of Boost available.  Note that users may supply a version
+of Boost of their own, which implies that some care must be taken
+about which version of Boost is used, which may imply using some
+configuration programs or testing explicitly the Boost version in
+use.
+
+Currently, only the header files of Boost are installed, but not the
+compiled libraries.  This represents the majority of Boost libraries
+however.  If the need arise in the future, we may think about extending
+the installation process to handle the libraries with compiled parts
+as well.
+
+Since portability and backward compatibility are a concern in \cgal,
+we have decided that the list of Boost libraries usable in \cgal\ will be
+decided by the \cgal\ editorial board.  The requirements are higher
+when it appears in the user visible interface than when Boost code
+is used only internally.  Requirements are even lower for code that
+is not released such as the test-suite.  Boost libraries already accepted
+in the C++ Standard Library Technical Report will be the first easy
+candidates (these are marked \texttt{[TR1]} in the list below).
+
+Finally, the policy is that if a better alternative exists in Boost and is
+allowed, then \cgal\ code must use it instead of a \cgal\ version (which
+probably must be deprecated and phased out), trying not to break backward
+compatibility too much.
+
+Here follows a list of Boost libraries allowed for use in \cgal\ (those
+with question marks are not decided yet) :
+\begin{itemize}
+\item ? Any --- Safe, generic container for single values of different value
+      types (what's the relation with \texttt{variant})
+\item ? Concept check --- Tools for generic programming
+\item ? Bind \texttt{[TR1]} and  mem\_fn --- Generalized binders for
+      function/object/pointers and member functions (overlaps with STL
+      Extensions)
+\item ? Graph --- Generic graph components and algorithms
+\item ? Interval --- Extends the usual arithmetic functions to mathematical intervals (overlaps with CGAL::Interval\_nt)
+\item ? Iterators --- Iterator construction framework, adaptors, concepts, and more
+\item ? MPL --- Template metaprogramming framework of compile-time algorithms, sequences and metafunction classes
+\item ? Operators --- Templates ease arithmetic classes and iterators
+\item ? Optional --- Discriminated-union wrapper for optional values
+\item ? Property map --- Concepts defining interfaces which map key objects to value objects
+\item ? Random \texttt{[TR1]} --- A complete system for random number generation
+      (overlaps with support library)
+\item ? Rational --- A rational number class (overlaps with CGAL::Quotient)
+\item ? Ref \texttt{[TR1]} --- A utility library for passing references to generic functions
+%\item ? Result\_of \texttt{[TR1]}
+\item ? Smart Pointers \texttt{[TR1]} --- Five smart pointer class templates
+\item ? Static assertions --- Static assertions (compile time assertions)
+\item ? Tuple \texttt{[TR1]} --- Ease definition of functions returning multiple values, and more
+\item ? Type traits \texttt{[TR1]} --- Templates for fundamental properties of types
+\item ? Variant --- Safe, generic, stack-based discriminated union container
+      (how does it relate to \texttt{any} ?)
+\end{itemize}
+
+
+\section{Identifying \cgal\ and \leda\ versions}
+\label{sec:which_versions}
+\ccIndexSubitem{version number}{of \cgal}
+\ccIndexSubitem{version number}{of \leda}
+\ccIndexSubitem{macros}{for version numbers}
+
+Every release of \cgal\ defines (in \texttt{<CGAL/config.h>}) two
+macros:
+\begin{description}
+\item[\texttt{CGAL\_VERSION}]
+     \index{CGAL_VERSION macro@{\tt CGAL\_VERSION} macro}
+     -- a textual description of the
+     current release (\eg, or 1.2 or 2.2-I-1), and 
+\item[\texttt{CGAL\_VERSION\_NR}], 
+     \index{CGAL_VERSION_NR macro@{\tt CGAL\_VERSION\_NR} macro}
+     --  a numerical description of
+     the current release such that more recent releases have higher
+     number.
+
+     More precisely, it is defined as \texttt{1vvvmmmiii},
+     where \texttt{vvv} is the major release number (currently 002),
+     \texttt{mmm} is the minor release number (currently 004), and
+     \texttt{iii} is the internal release number (currently 001). For
+     public releases, the latter is defined as 100, at least as long as we
+     manage to get out something with less than 100 internal releases.
+     \texttt{:-)} Examples: for the public release 2.0 this number is 
+     1002000100; for internal release 2.2-I-1, it is 1002002001.
+\end{description}
+ 
+\noindent \leda\ defines a macro \texttt{\_\_LEDA\_\_}
+\index{LEDA macro@{\tt \_\_LEDA\_\_} macro}
+in
+\texttt{<LEDA/basic.h>} that provides a numerical description of the
+current \leda\ version. Examples: for \leda-3.8, it is 380, for
+\leda-4.1 it is 410.
+
+\section{Using the version-number and configuration macros and flags}
+\label{sec:using_version_macros}
+\index{LEDA macro@{\tt \_\_LEDA\_\_} macro!using}
+\index{CGAL_USE_LEDA flag@{\tt CGAL\_USE\_LEDA} flag!using}
+\index{CGAL_USE_GMP flag@{\tt CGAL\_USE\_GMP} flag!using}
+
+Here is a short example on how these macros can be used. Assume you have some
+piece of code that depends on whether you have \leda-4.0 or later.
+\begin{verbatim}
+#ifdef CGAL_USE_LEDA
+#include <LEDA/basic.h>
+#endif
+
+#if defined(CGAL_USE_LEDA) && __LEDA__ >= 400
+... put your code for LEDA 4.0 or later ...
+#else
+... put your code for the other case ...
+#endif 
+\end{verbatim}
+
+\section{Identifying compilers and architectures}
+\label{sec:which_compiler}
+\ccIndexSubitem{compilers}{identifying}
+\ccIndexSubitem{macros}{for compiler identification}
+\ccIndexSubitem{flag}{for copmiler}
+
+Every compiler defines some macros that allow you to identify it; see 
+the following table.
+
+\vspace{5mm}\fbox{\begin{tabular}{lll}
+Borland 5.4     & \texttt{\_\_BORLANDC\_\_}         & 0x540\\
+Borland 5.5     & \texttt{\_\_BORLANDC\_\_}         & 0x550\\
+Borland 5.5.1   & \texttt{\_\_BORLANDC\_\_}         & 0x551\\
+GNU 2.95        & \texttt{\_\_GNUC\_\_}             & 2\\
+GNU 2.95        & \texttt{\_\_GNUC\_MINOR\_\_}      & 95\\
+GNU 3.2.1       & \texttt{\_\_GNUC\_\_}             & 3\\
+GNU 3.2.1       & \texttt{\_\_GNUC\_MINOR\_\_}      & 2\\
+GNU 3.2.1       & \texttt{\_\_GNUC\_PATCHLEVEL\_\_} & 1\\
+Microsoft VC6.0 & \texttt{\_MSC\_VER}               & 1200\\
+Microsoft VC7.0 & \texttt{\_MSC\_VER}               & 1300\\
+Intel 7.0       & \texttt{\_\_INTEL\_COMPILER}      & ???\\
+SGI 7.3         & \texttt{\_COMPILER\_VERSION}      & 730\\
+SUN 5.0         & \texttt{\_\_SUNPRO\_CC}           & 0x500\\
+SUN 5.3         & \texttt{\_\_SUNPRO\_CC}           & 0x530\\
+\end{tabular}}\vspace{5mm}
+
+\noindent There are also flags to identify the architecture.
+\ccIndexSubitem{architecture}{identifying}
+\ccIndexSubitem{macros}{for architecture identification}
+\ccIndexSubitem{flag}{for architecture}
+
+\vspace{5mm}\fbox{\begin{tabular}{lll}
+    SGI   & \texttt{\_\_sgi}\\
+    SUN   & \texttt{\_\_sun}\\
+    Linux & \texttt{\_\_linux}\\
+\end{tabular}}\vspace{5mm}
+
+\section{Known problems and workarounds}
+\label{sec:problems_and_workarounds}
+
+For (good) reasons that will not be discussed here, it was decided to
+use \CC\ for the development of \cgal. An international standard for
+\CC\ has been sanctioned in 1998 \cite{cgal:ansi-is14882-98} and the
+level of compliance varies widely between different
+compilers\index{C++ standard@\CC\ standard}, let alone bugs.
+
+\subsection{Workaround flags}
+\label{sec:workaround_flags}
+\ccIndexMainItemBegin{workaround flags}
+
+In order to provide a uniform development environment for \cgal\ that
+looks more standard compliant than what the compilers provide, a number
+of workaround flags and macros have been created.  Some of the
+workaround macros are set in \ccAnchor{http://www.cgal.org/Manual/include/CGAL/config.h}{\texttt{<CGAL/config.h>}}
+\ccIndexMainItem{\tt config.h}
+using the macros 
+listed in Section~\ref{sec:which_compiler} to identify the compiler. 
+But most of them are set in the platform-specific configuration files
+\ccIndexSubitem{configuration}{file}
+\begin{center}
+\texttt{<CGAL/config/}{\em os-compiler}\texttt{/CGAL/compiler\_config.h>}
+\end{center}
+where \textit{os-compiler} refers to a string describing your
+operating system and compiler that is defined as follows.
+\ccIndexSubitemBegin{flag}{for OS \& compiler}
+
+\begin{center}
+  \textit{$<$arch$>$\texttt{\_}$<$os$>$\texttt{-}$<$os-version$>$\texttt{\_}$<$comp$>${\tt
+      -}$<$comp-version$>$}
+\end{center}
+
+\begin{description}
+\item[$<$arch$>$] is the system architecture as defined by ``{\tt
+    uname -p}'' or ``\texttt{uname -m}'',
+\item[$<$os$>$] is the operating system as defined by ``\texttt{uname
+    -s}'',
+\item[$<$os-version$>$] is the operating system version as defined by
+  ``\texttt{uname -r}'',
+\item[$<$comp$>$] is the basename of the compiler executable (if it
+  contains spaces, these are replaced by "-"), and
+\item[$<$comp-version$>$] is the compiler's version number (which
+  unfortunately can not be derived in a uniform manner, since it is
+  quite compiler specific).
+\end{description}
+
+\noindent Examples are \texttt{mips\_IRIX64-6.5\_CC-n32-7.30} or {\tt
+  sparc\_SunOS-5.6\_g++-2.95}. For more information, see the \cgal\ 
+\ccAnchor{http://www.cgal.org/Manual/doc_html/installation/contents.html}{installation guide}.
+\ccIndexSubitemEnd{flag}{for OS \& compiler}
+
+This platform-specific configuration file is created during
+\ccIndexSubsubitem{configuration}{file}{creation}
+\ccIndexMainItem{installation}
+installation by the script \texttt{install\_cgal}. The flags listed below
+are set according to the results of test programs that are compiled and run.
+These test programs reside in the directory
+\begin{center}
+\verb|$(CGAL_ROOT)/config/testfiles|
+\end{center}
+where \verb|$(CGAL_ROOT)| represents the installation directory for the library.
+The names of all testfiles, which correspond to the names of the flags, 
+\ccIndexSubitem{workaround flags}{names}
+start with ``\texttt{CGAL\_CFG\_}'' followed by
+\begin{itemize}
+\item \textit{either} a description of a bug ending with
+  ``\texttt{\_BUG}''
+\item \textit{or} a description of a feature starting with
+  ``\texttt{NO\_}''.
+\end{itemize}
+For any of these files a corresponding flag is set in the 
+platform-specific configuration file, iff either compilation or execution
+fails. The reasoning behind this sort of negative scheme is that on
+standard-compliant platforms there should be no flags at all.
+
+\InternalOnly{
+Which compilers passed which tests can be determined by looking at the 
+\ccAnchor{http://www-sop.inria.fr/geometrica/CGAL/Members/testsuite/}%
+{test suite results page}\lcTex{ ( 
+\nonlinkedpath|http://www-sop.inria.fr/geometrica/CGAL/Members/testsuite/|)}
+for the package \texttt{Configuration}.
+}
+
+\noindent Currently (CGAL-3.1-I-33), we have the following configuration
+test files (and flags). The short descriptions that are given in the files are 
+included here. In some cases, it is probably necessary to have a look at the
+actual files to understand what the flag is for. This list is just to
+give an overview.  See the section on
+\ccAnchor{http://www.cgal.org/Manual/doc_html/installation/Chapter_installation.html#Section_17}{troubleshooting} in the installation guide
+for more explanation of some of these problems and known workarounds. 
+Be sure to have a look at \texttt{Configuration/config/testfiles/} to have an
+uptodate version of this list.
+
+\begin{description}
+\item[{\tt CGAL\_CFG\_CCTYPE\_MACRO\_BUG}]~\\
+ \index{cctype functions@{\tt cctype} functions!as macros} %
+ \ccIndexSubitem{compiler bugs}{macros} %
+ This flag is set if a compiler defines the standard C library
+ functions in {\tt cctype} ({\tt isdigit} etc.) as macros.  According
+ to the standard they have to be functions.
+ 
+\item[{\tt CGAL\_CFG\_LONGNAME\_BUG}]~\\
+ \ccIndexMainItem{long-name problem} %
+ \ccIndexSubitem{compiler bugs}{long symbol names} %
+ This flag is set if a compiler (or assembler or linker) has problems 
+ with long symbol names. 
+
+\item[{\tt CGAL\_CFG\_MATCHING\_BUG\_3}]~\\
+ \ccIndexSubitem{matching}{pointer type arguments} %
+ \ccIndexSubitem{compiler bugs}{function template overloading} %
+ This flag is set, if the compiler does not match function arguments
+ of pointer type correctly, when the return type depends on the
+ parameter's type (\eg, sun C++ 5.3).
+
+\item[{\tt CGAL\_CFG\_MATCHING\_BUG\_4}]~\\
+ \ccIndexSubitem{matching}{function template arguments} %
+ \ccIndexSubitem{compiler bugs}{function template overloading} %
+ This flag is set, if a compiler cannot distinguish the signature of
+ overloaded function templates, which have arguments whose type
+ depends on the template parameter.  This bug appears for example on
+ Sunpro~5.3 and 5.4.
+
+\item[{\tt CGAL\_CFG\_NET2003\_MATCHING\_BUG}]~\\
+ \ccIndexSubitem{matching}{member functions} %
+ \ccIndexSubitem{compiler bugs}{member functions} %
+ This flag is set, if the compiler does not match a member definition
+ to an existing declaration. This bug shows up on VC~7.1~Beta
+ (\ccc{cl1310}).
+
+\item[{\tt CGAL\_CFG\_NO\_AUTOMATIC\_TEMPLATE\_INCLUSION}]~\\
+ \ccIndexSubitem{source files}{template implementation files}
+ When template implementation files are not included in the source files,
+ a compiler may attempt to find the unincluded template bodies
+ automatically. For example, suppose that the following conditions are
+ all true:
+ \begin{itemize}
+ \item template entity {\tt ABC::f} is declared in file {\tt xyz.h}
+ \item an instantiation of {\tt ABC::f} is required in a compilation
+ \item no definition of {\tt ABC::f} appears in the source code processed by
+       the compilation
+ \end{itemize}
+ In this case, the compiler may look to see if the source file {\tt xyz.n}
+ exists, where {\tt n} is {\tt .c}, {\tt .C}, {\tt .cpp}, {\tt .CPP}, 
+ {\tt .cxx}, {\tt .CXX}, or {\tt .cc}. The flag
+ is set if this feature is missing.
+ 
+\item[{\tt CGAL\_CFG\_NO\_BIG\_ENDIAN}]~\\
+  \ccIndexMainItem{big-endian}
+  \ccIndexMainItem{little-endian}
+  The byte order of a machine architecture distinguishes into
+  big-endian and little-endian machines.  This flag is
+  set if it is a little-endian machine.
+ 
+\item[{\tt CGAL\_CFG\_NO\_KOENIG\_LOOKUP}]~\\
+  \ccIndexMainItem{Koenig lookup} %
+  \ccIndexSubitem{compiler bugs}{name lookup} %
+  This flag is set if the compiler does not support the operator
+  Koenig lookup. That is, it does not search in the namespace of the
+  arguments for the function.
+ 
+\item[{\tt CGAL\_CFG\_NO\_LIMITS}]~\\
+  \ccIndexMainItem{limits} %
+  This flag is set if a compiler does not know the limits.
+
+\item[{\tt CGAL\_CFG\_NO\_LOCALE}]~\\
+  \ccIndexMainItem{locale} %
+  This flag is set if a compiler does not know the locale classic. 
+
+\item[{\tt CGAL\_CFG\_NO\_LONG\_LONG}]~\\
+  \index{long long@{\tt long long}} %
+  The \ccc{long long} built-in integral type is not part of the
+  \textsc{Iso} C++ standard, but many compilers support it
+  nevertheless, since it is part of the \textsc{Iso} C standard. This
+  flag is set if it is supported.
+  
+\item[{\tt CGAL\_CFG\_NO\_SFINAE}]~\\ 
+  \ccIndexSubitem{compiler bugs}{template instantiation} %
+  \ccIndexMainItem{sfinae} %
+  \ccIndexMainItem{substitution failure is not an error} %
+  This flag is set if the compiler doesn't support the SFINAE
+  principle (Substitution Failure Is Not An Error), which we
+  eventually plan to use for the next version of the kernel design.
+ 
+\item[{\tt CGAL\_CFG\_NO\_STDC\_NAMESPACE}]~\\ 
+  \index{C standard library!and namespace std@and namespace \ccStyle{std}} %
+  \ccIndexSubitem{namespace}{\ccFont std} %
+  This flag is set if a compiler does not put the parts of the
+  standard library inherited from the standard C library in namespace
+  {\ccFont std} (only tests for the symbols used in \cgal).
+ 
+\item[{\tt CGAL\_CFG\_NO\_TMPL\_IN\_TMPL\_DEPENDING\_FUNCTION\_PARAM}]~\\
+  \ccIndexSubitem{compiler bugs}{template parameters} %
+  \ccIndexSubitem{template}{template parameter} %
+  This flag is set of a compiler does not support member functions
+  that have parameter types that are dependent on the template
+  parameter list of the class and are implemented outside of the class
+  body (\eg, g++ 2.95.2).
+  
+\item[{\tt CGAL\_CFG\_NO\_TMPL\_IN\_TMPL\_PARAM}]~\\
+  \ccIndexSubitem{compiler bugs}{template parameters} %
+  \ccIndexSubitem{template}{template parameter} %
+  Nested templates in template parameter, such as ``\texttt{template <
+    template <class T> class A>}'' are not supported by any compiler.
+  This flag is set if they are not supported.
+
+\item[{\tt CGAL\_CFG\_OUTOFLINE\_TEMPLATE\_MEMBER\_DEFINITION\_BUG}]~\\
+  \ccIndexSubitem{compiler bugs}{member definitions} %
+  This flag is set, if a compiler does not support the definition of
+  member templates out of line, \ie, outside class scope. The solution
+  is to put the definition inside the class. This is a feature of
+  SunPRO 5.5.
+
+\end{description}
+\ccIndexMainItemEnd{workaround flags}
+
+\subsection{Macros connected to workarounds/compilers}
+\label{sec:workaround_macros}
+\ccIndexSubitemBegin{macros}{for workarounds}
+
+Some macros are defined according to certain workaround flags. This is
+done to avoid some \texttt{\#ifdef}s in our actual code.
+
+\begin{description}
+\item[\texttt{CGAL\_CLIB\_STD}] 
+ \index{cgal_clib_std macro@{\tt CGAL\_CLIB\_STD} macro}
+  \index{C standard library!and namespace std@and namespace \ccStyle{std}} 
+  \ccIndexSubitem{namespace}{\ccFont std}
+  set to \texttt{std}, if
+  {\texttt{CGAL\_CFG\_NO\_STDC\_NAMESPACE}} is not set and
+  empty, otherwise.
+\item[\texttt{CGAL\_LITTLE\_ENDIAN}] set, iff
+ \index{cgal_little_endian macro@\texttt{CGAL\_LITTLE\_ENDIAN} macro}
+  \ccIndexMainItem{little-endian}
+  {\texttt{CGAL\_CFG\_NO\_BIG\_ENDIAN}} is set.
+\item[\texttt{CGAL\_BIG\_ENDIAN}] set, iff
+ \index{cgal_big_endian macro@\texttt{CGAL\_BIG\_ENDIAN} macro}
+  \ccIndexMainItem{big-endian}
+  {\texttt{CGAL\_CFG\_NO\_BIG\_ENDIAN}} is not set.
+\end{description}
+\ccIndexSubitemEnd{macros}{for workarounds}
+
+
+\subsection{Various other problems and solutions}
+\label{sec:various_problems}
+
+%\subsection{The Long-name Problem}
+%\label{sec:long_name_problem}
+%
+%Because of the decisions to avoid using abbreviations in identifiers
+%and to write generic code using template parameters, the names of things
+%in \cgal\ can become a little long.  No, make that very long.
+%While one can argue that 
+%the genericty and readability of the code are good reasons to have such
+%long names, some assemblers and compilers are not so easily convinced; 
+%they have problems 
+%with names that are beyond a certain length. In particular, the Solaris 
+%assembler limit names to about ??? and VC++ truncates names used in
+%debugging to about 250 bytes and, in general, to about 2000 bytes.  
+%For Solaris, the solution is to install the GNU assemblers ({\tt gas}).
+%However, since this is not always possible (and is not a solution for
+%VC++), one should also define a file of abbreviations for those classes
+%where the problems appear.  See the file 
+%\ccAnchor{http://www.cgal.org/Manual/include/CGAL/Triangulation_short_names_2.h}{\texttt{<CGAL/Triangulation\_short\_names\_2.h>}}
+%for an example of such a file.
+%
+
+\begin{description}
+\item[\textbf{Templated member functions}]
+
+For SunPRO \CC\, member function templates with dependent return type
+must be defined in the body of the class. 
+
+\item[\textbf{Function parameter matching}]
+
+The function parameter matching capacities of Visual \CC are rather limited. 
+Failures occur when your function \ccc{bar} is like
+\begin{verbatim}
+  bar(std::some_iterator<std::some_container<T>>....) ...
+  ...
+  bar(std::some_iterator<std::some_other_container<T>>....) ...
+\end{verbatim}
+VC++ fails to distinguish that these parameters have different types.
+A workaround is to add some dummy parameters that are defaulted to
+certain values, and this affects only the places where the functions
+are defined, not the places where they are called.
+This may not be true anymore for recent VC++ versions.
+
+\item[\textbf{typedefs of derived classes}]
+Microsoft VC++ does not like the following sorts of typedefs that are 
+standard
+\begin{verbatim}
+class A : public B::C {
+        typedef B::C C;
+};
+\end{verbatim}
+It says that the typedef is "redefinition".  So such typedefs should be 
+enclosed by
+\begin{verbatim}
+#ifndef _MSC_VER
+
+#endif
+\end{verbatim}
+This may not be true anymore for recent VC++ versions.
+
+\item[\textbf{parse error in constructions}]
+\ccIndexSubitem{parse error}{construction}
+The following program will produce a parse error with g++ 3.1.
+
+\begin{verbatim}
+#include <CGAL/Segment_circle_2.h> 
+
+typedef CGAL::Segment_circle_2<double> Curve; 
+typedef Curve::Segment                 Segment; 
+typedef Curve::Point                   Point; 
+
+int main()
+{
+  Segment s1(Point(0,0), Point(1,1));
+  Curve curve(Segment(Point(0,0), Point(1,1))); // parse error
+  
+  // ...
+  return 0;
+}
+\end{verbatim}
+
+This is a well-known bug in the Gnu compiler 
+(see \path|http://gcc.gnu.org/bugs.html#parsing|).
+The workaround is to split :
+
+\verb|   Curve curve(Segment(Point(0,0), Point(1,1)));| 
+
+into, {\textit e.g.,} :
+\begin{verbatim}
+   Segment s (Point(0,0), Point(1,1));
+   Curve rude_curve(s);
+\end{verbatim}
+
+\end{description}
+\ccIndexMainItemEnd{configuration}
+
+
+\InternalOnly{
+\section{Requirements and recommendations}
+\label{sec:portability_req_and_rec}
+}
+\InternalOnly{
+\noindent
+Recommendations:
+\begin{itemize}
+\item Workarounds for a compiler bug or a missing feature should not
+      be treated on a per-compiler basis. When you detect a deficiency,
+      you should rather write a short test program that triggers the setting
+      of a flag for this deficiency during configuration.
+\item Avoid classes having friend functions and member functions with
+      the same name. \texttt{g++ 2.95.*} does not like that. This holds also for
+      operators, especially \ccc{operator-()}.
+\end{itemize}
+}
+
+\ccIndexMainItemEnd{portability}
+

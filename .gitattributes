@@ -843,6 +843,32 @@ Packages/Convex_hull_2/demo/Convex_hull_2/convex_hull_2.vcproj -text
 Packages/Convex_hull_2/doc_tex/Convex_hull_2/saarhull.eps -text
 Packages/Convex_hull_2/doc_tex/Convex_hull_2/saarhull.gif -text svneol=unset#unset
 Packages/Convex_hull_2/doc_tex/Convex_hull_2/saarhull.pdf -text svneol=unset#unset
+Packages/Developers_manual/doc_tex/Developers_manual/fig/Cartesian_ipoint.gif -text svneol=unset#unset
+Packages/Developers_manual/doc_tex/Developers_manual/fig/Cartesian_orientation.gif -text svneol=unset#unset
+Packages/Developers_manual/doc_tex/Developers_manual/fig/Object.eps -text
+Packages/Developers_manual/doc_tex/Developers_manual/fig/Object.gif -text svneol=unset#unset
+Packages/Developers_manual/doc_tex/Developers_manual/fig/Object.pdf -text svneol=unset#unset
+Packages/Developers_manual/doc_tex/Developers_manual/fig/cgal.eps -text
+Packages/Developers_manual/doc_tex/Developers_manual/fig/cgal.pdf -text svneol=unset#unset
+Packages/Developers_manual/doc_tex/Developers_manual/fig/cgal_small.gif -text svneol=unset#unset
+Packages/Developers_manual/doc_tex/Developers_manual/fig/generic_cgal.eps -text
+Packages/Developers_manual/doc_tex/Developers_manual/fig/generic_cgal.gif -text svneol=unset#unset
+Packages/Developers_manual/doc_tex/Developers_manual/fig/generic_cgal.pdf -text svneol=unset#unset
+Packages/Developers_manual/doc_tex/Developers_manual/fig/handle_allocate.eps -text
+Packages/Developers_manual/doc_tex/Developers_manual/fig/handle_allocate.gif -text svneol=unset#unset
+Packages/Developers_manual/doc_tex/Developers_manual/fig/handle_allocate.pdf -text svneol=unset#unset
+Packages/Developers_manual/doc_tex/Developers_manual/fig/handle_rep.eps -text
+Packages/Developers_manual/doc_tex/Developers_manual/fig/handle_rep.gif -text svneol=unset#unset
+Packages/Developers_manual/doc_tex/Developers_manual/fig/handle_rep.pdf -text svneol=unset#unset
+Packages/Developers_manual/doc_tex/Developers_manual/fig/homogeneous_ipoint.gif -text svneol=unset#unset
+Packages/Developers_manual/doc_tex/Developers_manual/fig/homogeneous_orientation.gif -text svneol=unset#unset
+Packages/Developers_manual/doc_tex/Developers_manual/fig/reference_counting.eps -text
+Packages/Developers_manual/doc_tex/Developers_manual/fig/reference_counting.fig -text
+Packages/Developers_manual/doc_tex/Developers_manual/fig/reference_counting.gif -text svneol=unset#unset
+Packages/Developers_manual/doc_tex/Developers_manual/fig/reference_counting.pdf -text svneol=unset#unset
+Packages/Developers_manual/doc_tex/Developers_manual/fig/use_real.eps -text
+Packages/Developers_manual/doc_tex/Developers_manual/fig/use_real.gif -text svneol=unset#unset
+Packages/Developers_manual/doc_tex/Developers_manual/fig/use_real.pdf -text svneol=unset#unset
 Packages/Developers_manual/html/images/Cartesian_ipoint.gif -text svneol=unset#unset
 Packages/Developers_manual/html/images/Cartesian_orientation.gif -text svneol=unset#unset
 Packages/Developers_manual/html/images/Object.gif -text svneol=unset#unset
