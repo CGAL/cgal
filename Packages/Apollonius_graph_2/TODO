@@ -11,7 +11,8 @@
 - update doc for vertex base and face base when the new design arrives
 - remove from the code the type for Site (in the traits class and the
   main class if it is there)
-- change the draw_* methods to write_* in Apollonius_graph_2.{h,C}
+- change the draw_* methods to write_* in Apollonius_graph_2.{h,C};
+  also in the doc
 - check the typedefs.h file in the demo directory to make sure that
   definitions make sense
 - add two methods in Apollonius_graph_2: dimension() and number_of_faces();
