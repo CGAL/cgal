@@ -13,6 +13,11 @@ typedef leda_rational NT;
 typedef CGAL::Gmpz NT;
 #endif
 
+#ifdef CGAL_NEF3_USE_MPZ_CLASS
+#include <CGAL/gmpxx.h>
+typedef CGAL::mpz_class NT;
+#endif
+
 #ifdef CGAL_NEF3_USE_GMPQ
 #include <CGAL/Gmpq.h>
 typedef CGAL::Gmpq NT;
