@@ -16,7 +16,6 @@ int main()
 
 #include <CGAL/Delaunay_triangulation_3.h>
 
-#include <CGAL/IO/Geomview_stream.h>
 #include <CGAL/IO/Triangulation_geomview_ostream_3.h>
 
 #include <iostream>

@@ -17,7 +17,6 @@ int main()
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Triangulation_vertex_base_with_info_3.h>
 
-#include <CGAL/IO/Geomview_stream.h>
 #include <CGAL/IO/Triangulation_geomview_ostream_3.h>
 
 struct K : CGAL::Exact_predicates_inexact_constructions_kernel {};
