@@ -18,6 +18,10 @@
 #include <CGAL/gmpxx.h>
 #endif
 
+#ifdef CGAL_USE_CORE
+#include <CGAL/CORE_Expr.h>
+#endif
+
 #ifdef CGAL_USE_LEDA
 #include <CGAL/leda_integer.h>
 #include <CGAL/leda_rational.h>
@@ -88,6 +92,11 @@ int main()
   TESTIT(mpz_class, "mpz_class")
   TESTIT(mpq_class, "mpq_class")
   TESTIT(mpf_class, "mpf_class")
+#endif
+
+  // CORE
+#ifdef CGAL_USE_CORE
+  TESTIT(CORE::Expr, "CORE::Expr")
 #endif
 
   // LEDA based NTs

@@ -122,13 +122,44 @@ help in doing filtering of predicates.
 \section{Number Types Provided by {\sc Cln}}
 \label{CLN}
 
-% \ccChapterAuthor{Sylvain Pion}
-
 \cgal\ defines the functions needed to use the number types \ccc{cl_integer}
 and \ccc{cl_rational} provided by {\sc Cln}, the Class Library for
 Numbers~\cite{cln}.  To use {\sc Cln} with \cgal, just install \cgal\ with
 {\sc Cln} support, and include the corresponding {\sc Cln} file but with the
 prefix \ccc{CGAL/CLN/}.  These wrappers work for versions 1.0.x of \ccc{CLN}.
+
+
+\section{Number Type Provided by {\sc Core}}
+\label{CORE}
+
+\cgal\ defines the functions needed to use the number type \ccc{CORE::Expr}
+provided by {\sc Core}~\cite{klpy-clp-99}.  To use {\sc Core} with \cgal, just
+install \cgal\ with {\sc Core} support, and include the file
+\ccc{CGAL/CORE_Expr.h}.  {\sc Core} version 1.5 or later is required.
+
+\ccc{CORE::Expr}s are a subset of real algebraic numbers.  Any integer is a
+\ccc{CORE::Expr} and \ccc{CORE::Expr}s are closed under the operations
+$+,-,\times,/$ and $\sqrt{}$.  \ccc{CORE::Expr}s guarantee that all
+comparisons between expressions involving \ccc{CORE::Expr}s produce the exact
+result.
+
+This number type provides an equivalent functionality to \ccc{leda_real}.
+
+
+\section{Number Types Provided by {\sc Gmp}}
+
+\cgal\ provides wrapper classes for number types defined in the
+{\sc Gnu} Multiple Precision arithmetic library~\cite{g-ggmpa-}.
+The file {\tt  CGAL/Gmpz.h} provides the class \ccStyle{Gmpz},
+a wrapper class for the integer type \ccc{mpz_t}, that is compliant to the
+\cgal\ number type requirements.
+
+In addition, it is possible to directly use the C++ number types provided with
+recent versions of {\sc Gmp}~: \ccc{mpz_class}, \ccc{mpq_class},
+\ccc{mpf_class}.  The file {\tt CGAL/gmpxx.h} provides the necessary functions
+to make these classes compliant to the \cgal\ number type requirements.
+
+To use this, {\sc Gmp} must be installed.
 
 
 \section{Number Types Provided by \leda}
@@ -155,23 +186,13 @@ The most sophisticated number type in \leda\ is the number type called
 \ccc{leda_real}. Like in Pascal, where the name \ccc{real} is used for
 floating-point numbers, the name \ccc{leda_real} does not describe the
 number type precisely, but intentionally.  
-\ccc{leda_reals} are a subset of real algebraic
+\ccc{leda_real}s are a subset of real algebraic
 numbers.  Any integer is \ccc{leda_real} and \ccc{leda_real}s are closed under
 the operations $+,-,*,/$ and $k$-th root computation. 
 %\ccTexHtml{$\sqrt[k]{\ }$}{k-th root computation}. 
 \ccc{leda_real}s guarantee that
 all comparisons between expressions involving \ccc{leda_real}s produce the
 exact result.
-
-\section{Number Types Provided by GNU}
-
-\cgal\ provides wrapper classes for number types defined in the
-{\sc Gnu} Multiple Precision Arithmetic Library~\cite{g-gmpal-96}.
-The file {\tt  CGAL/Gmpz.h} provides the class \ccStyle{Gmpz},
-a wrapper class for the integer type \ccc{mpz_t}, that is compliant to the
-CGAL number type requirements.
-To use this, the {\sc Gnu} Multiple Precision Arithmetic Library must be
-installed.
 
 
 \section{User-supplied Number Types}

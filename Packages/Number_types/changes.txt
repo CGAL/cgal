@@ -1,7 +1,7 @@
-4.59     (?? July 02)
+4.59     (23 July 02)
+- Add mpz_class, mpq_class, mpf_class, CORE::Expr.
 - Merged _test_sign.h and utilities.C in utilities.h.
 - Removed _test_sign.C.
-- Add tests for mpz_class, mpq_class, mpf_class.
 
 4.58     (2 July 02)
 - New square(MP_Float) specialization.
