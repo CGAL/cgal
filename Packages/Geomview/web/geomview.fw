@@ -242,7 +242,7 @@ operator<<(CGAL_Geomview_stream &gv,
        << 3 << 1 << 3;
 
     for(int i=0; i<3; i++){
-        gv << CCAL_to_double(t[i].x())
+        gv << CGAL_to_double(t[i].x())
            << CGAL_to_double(t[i].y())
            << 0.0;
     }
