@@ -222,7 +222,7 @@ public:
   {
     CGAL_PM_START_OP(1)
      
-      typename Planar_map::Halfedge_around_vertex_circulator next, prev, start;
+      typename Planar_map::Halfedge_around_vertex_circulator next, prev, start, last_next_checked;
     X_curve_2 xcv;
     Point_2 xp1, xp2;
     Point_2 start_point;
@@ -231,13 +231,14 @@ public:
     bool b;
 		
     start_point = pmwx_traits->curve_source(cv);
-		
+	
+	last_next_checked = halfedges_end();	
     start = vh->incident_halfedges();
     prev = start;
     next = prev;
     ++next;
     do {
-      if (traits->curves_overlap( cv, prev->curve())) {
+      if ((last_next_checked != prev) && (traits->curves_overlap( cv, prev->curve()))) {
 	// cv overlapps prev->curve()
 	b = directed_nearest_intersection_with_halfedge
 	  (cv, orig_cv, prev, start_point, direction_right, xp1, xp2, en);
@@ -268,14 +269,58 @@ public:
 	  return;
 	}
       }
-      if (!traits->curves_overlap( cv, next->curve())) {
-		    // in case of overlap, will find it in the next step.
-		    // this condition is redundant if curve_is_between_cw does
-		    // not return true when overlap occurs, but it is needed
-		    // since it is not a defined behaviour (in specs).
+
+	  // Same check as above is done now to next->curve() to prevent
+	  // unexpected behavior of is_between_cw when one of the curves
+	  // overlaps at vh.
+	  // last_next_checked is set to next so if the test fails
+	  // (namely, there is no overlap at vh) then it will not 
+	  // be executed again at the next loop when prev will be this 
+	  // next. this is for efficiency only.
+      if (traits->curves_overlap( cv, next->curve())) {
+    last_next_checked = next;
+	// cv overlapps next->curve()
+	b = directed_nearest_intersection_with_halfedge
+	  (cv, orig_cv, next, start_point, direction_right, xp1, xp2, en);
+	// Verify that there is indeed an intersection
+	CGAL_assertion( b );
+	// Verify that there is indeed an overlap
+	CGAL_assertion( !pmwx_traits->point_is_same(xp1, xp2));
+
+	// the overlapping part might not start from the source 
+	// vertex (in polyline for example), so if this is the case, 
+	// we ignore the overlap. 
+	if ( (pmwx_traits->point_is_same(xp1, 
+					 pmwx_traits->curve_source(cv))) ||
+	     (pmwx_traits->point_is_same(xp2, 
+					 pmwx_traits->curve_source(cv))) )
+	{
+	  if ( traits->point_is_same( vh->point(), xp1)) {
+	    overlap_end_pt = xp2;
+	  }
+	  else {
+	    CGAL_assertion(  traits->point_is_same( vh->point(), xp2));
+	    overlap_end_pt = xp1;
+	  }
+	  
+	  prev_halfedge = next;
+	  is_overlap = true;
+	  CGAL_PM_END_OP(1);
+	  return;
+	}
+      }
+  
+	  /////////***** Eyal end
+      // The following remarked test is not fully correct
+	  // since there can be an overlap that does not start at vh
+	  // but elsewhere on cv (e.g., polylines).
+	  // this condition is redundant if curve_is_between_cw does
+	  // not return true when overlap occurs, but it is needed
+	  // since it is not a defined behaviour (in specs).
+      //// if (!traits->curves_overlap( cv, next->curve())) ----
       
-        if (next != prev) 
-				{
+      if (next != prev) 
+	  {
           if (( pmwx_traits->curve_is_between_cw
 	                (cv, prev->curve(), next->curve(), vh->point()) ))
 					{
@@ -284,8 +329,7 @@ public:
 	          CGAL_PM_END_OP(1);
 	          return;
 					}
-				}
-			}
+	  }
       ++next;
       ++prev;
     } while (prev != start);
@@ -1148,4 +1192,5 @@ Planar_map_with_intersections_2<Pm>::~Planar_map_with_intersections_2()
 CGAL_END_NAMESPACE
 
 #endif
+
 
