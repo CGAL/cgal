@@ -50,12 +50,12 @@ printf "Setting RELEASE_NUMBER=${RELEASE_NUMBER} ...\n"
 
 if [ ! -r ${CVSDIR} ]; then
   printf "Directory ${CVSDIR} does not exist ... EXITING\n"
-  return
+  exit
 fi
 
 if [ ! -r create_internal_module ]; then
   printf "create_internal_module file could not be found ... EXITING\n"
-  return
+  exit
 fi
 
 
