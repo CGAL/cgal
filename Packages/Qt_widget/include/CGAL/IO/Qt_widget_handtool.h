@@ -51,7 +51,11 @@ private:
 
   void timerEvent( QTimerEvent *e )
   {
-    widget->setCursor(QCursor( 
+    if(on_first)
+      widget->setCursor(QCursor( 
+              QPixmap( (const char**)holddown_xpm)));
+    else
+      widget->setCursor(QCursor( 
               QPixmap( (const char**)hand_xpm)));
   }
 
