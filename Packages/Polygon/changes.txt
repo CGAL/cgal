@@ -1,4 +1,7 @@
 //-----------------------------------------------------------------------//
+// 2.5
++Added constructor that takes a circulator as parameter
+//-----------------------------------------------------------------------//
 // 2.4.8
 +Added CGAL qualification to Less_xy_2
 +Added std qualification to endl
