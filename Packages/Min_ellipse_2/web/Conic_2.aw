@@ -308,6 +308,9 @@ more specialized and needed only by the class template
     template < class _R >
     class CGAL_Optimisation_ellipse_2;
 
+    template < class _R >
+    CGAL_Window_stream&
+    operator << ( CGAL_Window_stream&, const CGAL_Optimisation_ellipse_2<_R>&);
 @end
  
 As a general rule, a method only qualifies for the public domain if 
@@ -3216,10 +3219,12 @@ included before that.
 #  include <CGAL/Point_2.h>
 #endif
 
-@<CGAL_Optimisation_ellipse_2 declaration>
 #ifndef CGAL_IO_FORWARD_DECL_WINDOW_STREAM_H
 #include <CGAL/IO/forward_decl_window_stream.h>
 #endif
+
+@<CGAL_Optimisation_ellipse_2 declaration>
+
 @<CGAL_Conic_2 interface and implementation>
 
 #ifndef CGAL_NO_OSTREAM_INSERT_CONIC_2

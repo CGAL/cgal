@@ -1235,7 +1235,7 @@ The class interface looks as follows.
     class CGAL_Optimisation_ellipse_2 {
         friend  ostream&  operator << CGAL_NULL_TMPL_ARGS (
             ostream&, const CGAL_Optimisation_ellipse_2<_R>&);
-        friend  istream&  operator << CGAL_NULL_TMPL_ARGS (
+        friend  istream&  operator >> CGAL_NULL_TMPL_ARGS (
             istream&, CGAL_Optimisation_ellipse_2<_R> &);
         friend  CGAL_Window_stream& operator << CGAL_NULL_TMPL_ARGS (
             CGAL_Window_stream&, const CGAL_Optimisation_ellipse_2<_R>&);
@@ -1592,11 +1592,15 @@ one.
 @macro <Optimisation_ellipse_2 I/O operators declaration> = @begin
     template < class _R >
     ostream&
-    operator << ( ostream& os, const CGAL_Optimisation_ellipse_2<_R>& e);
+    operator << ( ostream&, const CGAL_Optimisation_ellipse_2<_R>&);
 
     template < class _R >
     istream&
-    operator >> ( istream& is, CGAL_Optimisation_ellipse_2<_R>      & e);
+    operator >> ( istream&, CGAL_Optimisation_ellipse_2<_R>&);
+
+    template < class _R >
+    CGAL_Window_stream&
+    operator << ( CGAL_Window_stream&, const CGAL_Optimisation_ellipse_2<_R>&);
 @end
 
 @macro <Optimisation_ellipse_2 I/O operators> = @begin
@@ -1883,6 +1887,14 @@ it is declared \ccc{friend}.
 
 @macro <Min_ellipse_2_adapterC2 nested type `Ellipse'> = @begin
     template < class _PT, class _DA >
+    ostream&  operator << ( ostream& os,
+	const CGAL__Min_ellipse_2_adapterC2__Ellipse<_PT,_DA>& c);
+
+    template < class _PT, class _DA >
+    istream&  operator >> ( istream& is,
+	CGAL__Min_ellipse_2_adapterC2__Ellipse<_PT,_DA>& c);
+
+    template < class _PT, class _DA >
     class CGAL__Min_ellipse_2_adapterC2__Ellipse {
       public:
         // typedefs
@@ -1898,6 +1910,12 @@ it is declared \ccc{friend}.
         PT   boundary_point1, boundary_point2;  // two boundary points
         CT   conic1, conic2;                    // two conics
         FT   dr, ds, dt, du, dv, dw;            // the gradient vector
+
+        friend  ostream&  operator << CGAL_NULL_TMPL_ARGS ( ostream& os,
+	    const CGAL__Min_ellipse_2_adapterC2__Ellipse<_PT,_DA>& c);
+
+        friend  istream&  operator >> CGAL_NULL_TMPL_ARGS ( istream& is,
+	    CGAL__Min_ellipse_2_adapterC2__Ellipse<_PT,_DA>& c);
 
       public:
         // types
@@ -2060,106 +2078,107 @@ it is declared \ccc{friend}.
             return( false);
         }
 
-        // I/O
-        friend
-        ostream&
-        operator << ( ostream& os,
-                      const CGAL__Min_ellipse_2_adapterC2__Ellipse<_PT,_DA>& e)
-        {
-            const char* const  empty       = "";
-            const char* const  pretty_head =
-                                     "CGAL_Min_ellipse_2_adapterC2::Ellipse( ";
-            const char* const  pretty_sep  = ", ";
-            const char* const  pretty_tail = ")";
-            const char* const  ascii_sep   = " ";
-
-            const char*  head = empty;
-            const char*  sep  = empty;
-            const char*  tail = empty;
-
-            switch ( CGAL_get_mode( os)) {
-              case CGAL_IO::PRETTY:
-                head = pretty_head;
-                sep  = pretty_sep;
-                tail = pretty_tail;
-                break;
-              case CGAL_IO::ASCII:
-                sep  = ascii_sep;
-                break;
-              case CGAL_IO::BINARY:
-                break;
-              default:
-                CGAL_optimisation_assertion_msg( false,
-                                                "CGAL_get_mode( os) invalid!");
-                break; }
-
-            os << head << e.n_boundary_points;
-            switch ( e.n_boundary_points) {
-              case 0:
-                break;
-              case 1:
-                os << sep << e.boundary_point1;
-                break;
-              case 2:
-                os << sep << e.boundary_point1
-                   << sep << e.boundary_point2;
-                break;
-              case 3:
-              case 5:
-                os << sep << e.conic1;
-                break;
-              case 4:
-                os << sep << e.conic1
-                   << sep << e.conic2;
-                break; }
-            os << tail;
-
-            return( os);
-        }
-
-        friend
-        istream&
-        operator >> ( istream& is,
-                      CGAL__Min_ellipse_2_adapterC2__Ellipse<_PT,_DA>& e)
-        {
-            switch ( CGAL_get_mode( is)) {
-
-              case CGAL_IO::PRETTY:
-                cerr << endl;
-                cerr << "Stream must be in ascii or binary mode" << endl;
-                break;
-
-              case CGAL_IO::ASCII:
-              case CGAL_IO::BINARY:
-                CGAL_read( is, e.n_boundary_points);
-                switch ( e.n_boundary_points) {
-                  case 0:
-                    break;
-                  case 1:
-                    is >> e.boundary_point1;
-                    break;
-                  case 2:
-                    is >> e.boundary_point1
-                       >> e.boundary_point2;
-                    break;
-                  case 3:
-                  case 5:
-                    is >> e.conic1;
-                    break;
-                  case 4:
-                    is >> e.conic1
-                       >> e.conic2;
-                    break; }
-                break;
-
-              default:
-                CGAL_optimisation_assertion_msg( false,
-                                                 "CGAL_IO::mode invalid!");
-                break; }
-
-            return( is);
-        }
     };
+
+    // I/O
+    template < class _PT, class _DA >
+    ostream&
+    operator << ( ostream& os,
+		  const CGAL__Min_ellipse_2_adapterC2__Ellipse<_PT,_DA>& e)
+    {
+	const char* const  empty       = "";
+	const char* const  pretty_head =
+				 "CGAL_Min_ellipse_2_adapterC2::Ellipse( ";
+	const char* const  pretty_sep  = ", ";
+	const char* const  pretty_tail = ")";
+	const char* const  ascii_sep   = " ";
+
+	const char*  head = empty;
+	const char*  sep  = empty;
+	const char*  tail = empty;
+
+	switch ( CGAL_get_mode( os)) {
+	  case CGAL_IO::PRETTY:
+	    head = pretty_head;
+	    sep  = pretty_sep;
+	    tail = pretty_tail;
+	    break;
+	  case CGAL_IO::ASCII:
+	    sep  = ascii_sep;
+	    break;
+	  case CGAL_IO::BINARY:
+	    break;
+	  default:
+	    CGAL_optimisation_assertion_msg( false,
+					    "CGAL_get_mode( os) invalid!");
+	    break; }
+
+	os << head << e.n_boundary_points;
+	switch ( e.n_boundary_points) {
+	  case 0:
+	    break;
+	  case 1:
+	    os << sep << e.boundary_point1;
+	    break;
+	  case 2:
+	    os << sep << e.boundary_point1
+	       << sep << e.boundary_point2;
+	    break;
+	  case 3:
+	  case 5:
+	    os << sep << e.conic1;
+	    break;
+	  case 4:
+	    os << sep << e.conic1
+	       << sep << e.conic2;
+	    break; }
+	os << tail;
+
+	return( os);
+    }
+
+    template < class _PT, class _DA >
+    istream&
+    operator >> ( istream& is,
+		  CGAL__Min_ellipse_2_adapterC2__Ellipse<_PT,_DA>& e)
+    {
+	switch ( CGAL_get_mode( is)) {
+
+	  case CGAL_IO::PRETTY:
+	    cerr << endl;
+	    cerr << "Stream must be in ascii or binary mode" << endl;
+	    break;
+
+	  case CGAL_IO::ASCII:
+	  case CGAL_IO::BINARY:
+	    CGAL_read( is, e.n_boundary_points);
+	    switch ( e.n_boundary_points) {
+	      case 0:
+		break;
+	      case 1:
+		is >> e.boundary_point1;
+		break;
+	      case 2:
+		is >> e.boundary_point1
+		   >> e.boundary_point2;
+		break;
+	      case 3:
+	      case 5:
+		is >> e.conic1;
+		break;
+	      case 4:
+		is >> e.conic1
+		   >> e.conic2;
+		break; }
+	    break;
+
+	  default:
+	    CGAL_optimisation_assertion_msg( false,
+					     "CGAL_IO::mode invalid!");
+	    break; }
+
+	return( is);
+    }
 @end
 
 @! ----------------------------------------------------------------------------
@@ -2261,6 +2280,15 @@ it is declared \ccc{friend}.
 
 @macro <Min_ellipse_2_adapterH2 nested type `Ellipse'> = @begin
     template < class _PT, class _DA >
+    ostream&
+    operator << ( ostream&,
+                  const CGAL__Min_ellipse_2_adapterH2__Ellipse<_PT,_DA>&);
+
+    template < class _PT, class _DA >
+    istream&
+    operator >> ( istream&, CGAL__Min_ellipse_2_adapterH2__Ellipse<_PT,_DA>&);
+
+    template < class _PT, class _DA >
     class CGAL__Min_ellipse_2_adapterH2__Ellipse {
       public:
         // typedefs
@@ -2276,6 +2304,12 @@ it is declared \ccc{friend}.
         PT   boundary_point1, boundary_point2;  // two boundary points
         CT   conic1, conic2;                    // two conics
         RT   dr, ds, dt, du, dv, dw;            // the gradient vector
+
+	friend  ostream&  operator << CGAL_NULL_TMPL_ARGS ( ostream&,
+	    const CGAL__Min_ellipse_2_adapterH2__Ellipse<_PT,_DA>&);
+
+        friend  istream&  operator >> CGAL_NULL_TMPL_ARGS ( istream&,
+	    CGAL__Min_ellipse_2_adapterH2__Ellipse<_PT,_DA>&);
 
       public:
         // types
@@ -2437,107 +2471,107 @@ it is declared \ccc{friend}.
             // keeps g++ happy
             return( false);
         }
-
-        // I/O
-        friend
-        ostream&
-        operator << ( ostream& os,
-                      const CGAL__Min_ellipse_2_adapterH2__Ellipse<_PT,_DA>& e)
-        {
-            const char* const  empty       = "";
-            const char* const  pretty_head =
-                                     "CGAL_Min_ellipse_2_adapterH2::Ellipse( ";
-            const char* const  pretty_sep  = ", ";
-            const char* const  pretty_tail = ")";
-            const char* const  ascii_sep   = " ";
-
-            const char*  head = empty;
-            const char*  sep  = empty;
-            const char*  tail = empty;
-
-            switch ( CGAL_get_mode( os)) {
-              case CGAL_IO::PRETTY:
-                head = pretty_head;
-                sep  = pretty_sep;
-                tail = pretty_tail;
-                break;
-              case CGAL_IO::ASCII:
-                sep  = ascii_sep;
-                break;
-              case CGAL_IO::BINARY:
-                break;
-              default:
-                CGAL_optimisation_assertion_msg( false,
-                                                "CGAL_get_mode( os) invalid!");
-                break; }
-
-            os << head << e.n_boundary_points;
-            switch ( e.n_boundary_points) {
-              case 0:
-                break;
-              case 1:
-                os << sep << e.boundary_point1;
-                break;
-              case 2:
-                os << sep << e.boundary_point1
-                   << sep << e.boundary_point2;
-                break;
-              case 3:
-              case 5:
-                os << sep << e.conic1;
-                break;
-              case 4:
-                os << sep << e.conic1
-                   << sep << e.conic2;
-                break; }
-            os << tail;
-
-            return( os);
-        }
-
-        friend
-        istream&
-        operator >> ( istream& is,
-                      CGAL__Min_ellipse_2_adapterH2__Ellipse<_PT,_DA>& e)
-        {
-            switch ( CGAL_get_mode( is)) {
-
-              case CGAL_IO::PRETTY:
-                cerr << endl;
-                cerr << "Stream must be in ascii or binary mode" << endl;
-                break;
-
-              case CGAL_IO::ASCII:
-              case CGAL_IO::BINARY:
-                CGAL_read( is, e.n_boundary_points);
-                switch ( e.n_boundary_points) {
-                  case 0:
-                    break;
-                  case 1:
-                    is >> e.boundary_point1;
-                    break;
-                  case 2:
-                    is >> e.boundary_point1
-                       >> e.boundary_point2;
-                    break;
-                  case 3:
-                  case 5:
-                    is >> e.conic1;
-                    break;
-                  case 4:
-                    is >> e.conic1
-                       >> e.conic2;
-                    break; }
-                break;
-
-              default:
-                CGAL_optimisation_assertion_msg( false,
-                                                 "CGAL_IO::mode invalid!");
-                break; }
-
-            return( is);
-        }
     };
+
+    // I/O
+    template < class _PT, class _DA >
+    ostream&
+    operator << ( ostream& os,
+		  const CGAL__Min_ellipse_2_adapterH2__Ellipse<_PT,_DA>& e)
+    {
+	const char* const  empty       = "";
+	const char* const  pretty_head =
+				 "CGAL_Min_ellipse_2_adapterH2::Ellipse( ";
+	const char* const  pretty_sep  = ", ";
+	const char* const  pretty_tail = ")";
+	const char* const  ascii_sep   = " ";
+
+	const char*  head = empty;
+	const char*  sep  = empty;
+	const char*  tail = empty;
+
+	switch ( CGAL_get_mode( os)) {
+	  case CGAL_IO::PRETTY:
+	    head = pretty_head;
+	    sep  = pretty_sep;
+	    tail = pretty_tail;
+	    break;
+	  case CGAL_IO::ASCII:
+	    sep  = ascii_sep;
+	    break;
+	  case CGAL_IO::BINARY:
+	    break;
+	  default:
+	    CGAL_optimisation_assertion_msg( false,
+					    "CGAL_get_mode( os) invalid!");
+	    break; }
+
+	os << head << e.n_boundary_points;
+	switch ( e.n_boundary_points) {
+	  case 0:
+	    break;
+	  case 1:
+	    os << sep << e.boundary_point1;
+	    break;
+	  case 2:
+	    os << sep << e.boundary_point1
+	       << sep << e.boundary_point2;
+	    break;
+	  case 3:
+	  case 5:
+	    os << sep << e.conic1;
+	    break;
+	  case 4:
+	    os << sep << e.conic1
+	       << sep << e.conic2;
+	    break; }
+	os << tail;
+
+	return( os);
+    }
+
+    template < class _PT, class _DA >
+    istream&
+    operator >> ( istream& is,
+		  CGAL__Min_ellipse_2_adapterH2__Ellipse<_PT,_DA>& e)
+    {
+	switch ( CGAL_get_mode( is)) {
+
+	  case CGAL_IO::PRETTY:
+	    cerr << endl;
+	    cerr << "Stream must be in ascii or binary mode" << endl;
+	    break;
+
+	  case CGAL_IO::ASCII:
+	  case CGAL_IO::BINARY:
+	    CGAL_read( is, e.n_boundary_points);
+	    switch ( e.n_boundary_points) {
+	      case 0:
+		break;
+	      case 1:
+		is >> e.boundary_point1;
+		break;
+	      case 2:
+		is >> e.boundary_point1
+		   >> e.boundary_point2;
+		break;
+	      case 3:
+	      case 5:
+		is >> e.conic1;
+		break;
+	      case 4:
+		is >> e.conic1
+		   >> e.conic2;
+		break; }
+	    break;
+
+	  default:
+	    CGAL_optimisation_assertion_msg( false,
+					     "CGAL_IO::mode invalid!");
+	    break; }
+
+	return( is);
+    }
 @end
 
 @! ============================================================================
@@ -3148,13 +3182,13 @@ end of each file.
     #include <CGAL/IO/forward_decl_window_stream.h>
     #endif
 
-    @<Optimisation_ellipse_2 interface>
-
     // Function declarations
     // =====================
     // I/O
     // ---
     @<Optimisation_ellipse_2 I/O operators declaration>
+
+    @<Optimisation_ellipse_2 interface>
 
     #ifdef CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
     #  include <CGAL/Optimisation_ellipse_2.C>

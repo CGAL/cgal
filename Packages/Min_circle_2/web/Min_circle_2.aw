@@ -1524,11 +1524,11 @@ emptiness and degeneracy, resp.
 @macro <Optimisation_circle_2 I/O operators declaration> = @begin
     template < class _R >
     ostream&
-    operator << ( ostream& os, const CGAL_Optimisation_circle_2<_R>& c);
+    operator << ( ostream&, const CGAL_Optimisation_circle_2<_R>&);
 
     template < class _R >
     istream&
-    operator >> ( istream& is, CGAL_Optimisation_circle_2<_R>      & c);
+    operator >> ( istream&, CGAL_Optimisation_circle_2<_R>&);
 @end
 
 @macro <Optimisation_circle_2 I/O operators> = @begin
@@ -1777,6 +1777,15 @@ it is declared \ccc{friend}.
 
 @macro <Min_circle_2_adapterC2 nested type `Circle'> = @begin
     template < class _PT, class _DA >
+    ostream&
+    operator << ( ostream&,
+	          const CGAL__Min_circle_2_adapterC2__Circle<_PT,_DA>&);
+
+    template < class _PT, class _DA >
+    istream&
+    operator >> ( istream&, CGAL__Min_circle_2_adapterC2__Circle<_PT,_DA>&);
+
+    template < class _PT, class _DA >
     class CGAL__Min_circle_2_adapterC2__Circle {
       public:
         // typedefs
@@ -1801,6 +1810,12 @@ it is declared \ccc{friend}.
             FT  dy( py - qy);
             return( dx*dx + dy*dy);
         }
+
+        friend  ostream&  operator << CGAL_NULL_TMPL_ARGS ( ostream&,
+	    const CGAL__Min_circle_2_adapterC2__Circle<_PT,_DA>&);
+
+        friend  istream&  operator >> CGAL_NULL_TMPL_ARGS ( istream&,
+	    CGAL__Min_circle_2_adapterC2__Circle<_PT,_DA>&);
 
       public:
         // types
@@ -1939,70 +1954,70 @@ it is declared \ccc{friend}.
         {
             return( sqr_rad);
         }
-
-        // I/O
-        friend
-        ostream&
-        operator << ( ostream& os,
-                      const CGAL__Min_circle_2_adapterC2__Circle<_PT,_DA>& c)
-        {
-            switch ( CGAL_get_mode( os)) {
-
-              case CGAL_IO::PRETTY:
-                os << "CGAL_Min_circle_2_adapterC2::Circle( "
-                   << c.center_x << ", "
-                   << c.center_y << ", "
-                   << c.sqr_rad  << ')';
-                break;
-
-              case CGAL_IO::ASCII:
-                os << c.center_x << ' ' << c.center_y << ' ' << c.sqr_rad;
-                break;
-
-              case CGAL_IO::BINARY:
-                CGAL_write( os, c.center_x);
-                CGAL_write( os, c.center_y);
-                CGAL_write( os, c.sqr_rad);
-                break;
-
-              default:
-                CGAL_optimisation_assertion_msg( false,
-                                                "CGAL_get_mode( os) invalid!");
-                break; }
-
-            return( os);
-        }
-
-        friend
-        istream&
-        operator >> ( istream& is,
-                      CGAL__Min_circle_2_adapterC2__Circle<_PT,_DA>& c)
-        {
-            switch ( CGAL_get_mode( is)) {
-
-              case CGAL_IO::PRETTY:
-                cerr << endl;
-                cerr << "Stream must be in ascii or binary mode" << endl;
-                break;
-
-              case CGAL_IO::ASCII:
-                is >> c.center_x >> c.center_y >> c.sqr_rad;
-                break;
-
-              case CGAL_IO::BINARY:
-                CGAL_read( is, c.center_x);
-                CGAL_read( is, c.center_y);
-                CGAL_read( is, c.sqr_rad);
-                break;
-
-              default:
-                CGAL_optimisation_assertion_msg( false,
-                                                 "CGAL_IO::mode invalid!");
-                break; }
-
-            return( is);
-        }
     };
+
+    // I/O
+    template < class _PT, class _DA >
+    ostream&
+    operator << ( ostream& os,
+	const CGAL__Min_circle_2_adapterC2__Circle<_PT,_DA>& c)
+    {
+	switch ( CGAL_get_mode( os)) {
+
+	  case CGAL_IO::PRETTY:
+	    os << "CGAL_Min_circle_2_adapterC2::Circle( "
+	       << c.center_x << ", "
+	       << c.center_y << ", "
+	       << c.sqr_rad  << ')';
+	    break;
+
+	  case CGAL_IO::ASCII:
+	    os << c.center_x << ' ' << c.center_y << ' ' << c.sqr_rad;
+	    break;
+
+	  case CGAL_IO::BINARY:
+	    CGAL_write( os, c.center_x);
+	    CGAL_write( os, c.center_y);
+	    CGAL_write( os, c.sqr_rad);
+	    break;
+
+	  default:
+	    CGAL_optimisation_assertion_msg( false,
+					    "CGAL_get_mode( os) invalid!");
+	    break; }
+
+	return( os);
+    }
+
+    template < class _PT, class _DA >
+    istream&
+    operator >> ( istream& is,
+		  CGAL__Min_circle_2_adapterC2__Circle<_PT,_DA>& c)
+    {
+	switch ( CGAL_get_mode( is)) {
+
+	  case CGAL_IO::PRETTY:
+	    cerr << endl;
+	    cerr << "Stream must be in ascii or binary mode" << endl;
+	    break;
+
+	  case CGAL_IO::ASCII:
+	    is >> c.center_x >> c.center_y >> c.sqr_rad;
+	    break;
+
+	  case CGAL_IO::BINARY:
+	    CGAL_read( is, c.center_x);
+	    CGAL_read( is, c.center_y);
+	    CGAL_read( is, c.sqr_rad);
+	    break;
+
+	  default:
+	    CGAL_optimisation_assertion_msg( false,
+					     "CGAL_IO::mode invalid!");
+	    break; }
+
+	return( is);
+    }
 @end
 
 @! ----------------------------------------------------------------------------
@@ -2104,6 +2119,15 @@ it is declared \ccc{friend}.
 
 @macro <Min_circle_2_adapterH2 nested type `Circle'> = @begin
     template < class _PT, class _DA >
+    ostream&
+    operator << ( ostream&,
+		  const CGAL__Min_circle_2_adapterH2__Circle<_PT,_DA>&);
+
+    template < class _PT, class _DA >
+    istream&
+    operator >> ( istream&, CGAL__Min_circle_2_adapterH2__Circle<_PT,_DA>&);
+
+    template < class _PT, class _DA >
     class CGAL__Min_circle_2_adapterH2__Circle {
       public:
         // typedefs
@@ -2132,6 +2156,12 @@ it is declared \ccc{friend}.
             RT  dhw( phw*qhw);
             return( FT( dhx*dhx + dhy*dhy, dhw*dhw));
         }
+
+	friend  ostream&  operator << CGAL_NULL_TMPL_ARGS ( ostream&,
+	    const CGAL__Min_circle_2_adapterH2__Circle<_PT,_DA>&);
+
+        friend  istream&  operator >> CGAL_NULL_TMPL_ARGS ( istream&,
+	    CGAL__Min_circle_2_adapterH2__Circle<_PT,_DA>&);
 
       public:
         // types
@@ -2297,76 +2327,76 @@ it is declared \ccc{friend}.
         {
             return( sqr_rad);
         }
-
-        // I/O
-        friend
-        ostream&
-        operator << ( ostream& os,
-                      const CGAL__Min_circle_2_adapterH2__Circle<_PT,_DA>& c)
-        {
-            switch ( CGAL_get_mode( os)) {
-
-              case CGAL_IO::PRETTY:
-                os << "CGAL_Min_circle_2_adapterH2::Circle( "
-                   << c.center_hx << ", "
-                   << c.center_hy << ", "
-                   << c.center_hw << ", "
-                   << c.sqr_rad   << ')';
-                break;
-
-              case CGAL_IO::ASCII:
-                os << c.center_hx << ' '
-                   << c.center_hy << ' '
-                   << c.center_hw << ' '
-                   << c.sqr_rad;
-                break;
-
-              case CGAL_IO::BINARY:
-                CGAL_write( os, c.center_hx);
-                CGAL_write( os, c.center_hy);
-                CGAL_write( os, c.center_hw);
-                CGAL_write( os, c.sqr_rad);
-                break;
-
-              default:
-                CGAL_optimisation_assertion_msg( false,
-                                                "CGAL_get_mode( os) invalid!");
-                break; }
-
-            return( os);
-        }
-
-        friend
-        istream&
-        operator >> ( istream& is,
-                      CGAL__Min_circle_2_adapterH2__Circle<_PT,_DA>& c)
-        {
-            switch ( CGAL_get_mode( is)) {
-
-              case CGAL_IO::PRETTY:
-                cerr << endl;
-                cerr << "Stream must be in ascii or binary mode" << endl;
-                break;
-
-              case CGAL_IO::ASCII:
-                is >> c.center_hx >> c.center_hy >> c.center_hw >> c.sqr_rad;
-                break;
-
-              case CGAL_IO::BINARY:
-                CGAL_read( is, c.center_hx);
-                CGAL_read( is, c.center_hy);
-                CGAL_read( is, c.center_hw);
-                CGAL_read( is, c.sqr_rad);
-                break;
-
-              default:
-                CGAL_optimisation_assertion_msg( false,
-                                                 "CGAL_IO::mode invalid!");
-                break; }
-
-            return( is);
-        }
     };
+
+    // I/O
+    template < class _PT, class _DA >
+    ostream&
+    operator << ( ostream& os,
+		  const CGAL__Min_circle_2_adapterH2__Circle<_PT,_DA>& c)
+    {
+	switch ( CGAL_get_mode( os)) {
+
+	  case CGAL_IO::PRETTY:
+	    os << "CGAL_Min_circle_2_adapterH2::Circle( "
+	       << c.center_hx << ", "
+	       << c.center_hy << ", "
+	       << c.center_hw << ", "
+	       << c.sqr_rad   << ')';
+	    break;
+
+	  case CGAL_IO::ASCII:
+	    os << c.center_hx << ' '
+	       << c.center_hy << ' '
+	       << c.center_hw << ' '
+	       << c.sqr_rad;
+	    break;
+
+	  case CGAL_IO::BINARY:
+	    CGAL_write( os, c.center_hx);
+	    CGAL_write( os, c.center_hy);
+	    CGAL_write( os, c.center_hw);
+	    CGAL_write( os, c.sqr_rad);
+	    break;
+
+	  default:
+	    CGAL_optimisation_assertion_msg( false,
+					    "CGAL_get_mode( os) invalid!");
+	    break; }
+
+	return( os);
+    }
+
+    template < class _PT, class _DA >
+    istream&
+    operator >> ( istream& is,
+		  CGAL__Min_circle_2_adapterH2__Circle<_PT,_DA>& c)
+    {
+	switch ( CGAL_get_mode( is)) {
+
+	  case CGAL_IO::PRETTY:
+	    cerr << endl;
+	    cerr << "Stream must be in ascii or binary mode" << endl;
+	    break;
+
+	  case CGAL_IO::ASCII:
+	    is >> c.center_hx >> c.center_hy >> c.center_hw >> c.sqr_rad;
+	    break;
+
+	  case CGAL_IO::BINARY:
+	    CGAL_read( is, c.center_hx);
+	    CGAL_read( is, c.center_hy);
+	    CGAL_read( is, c.center_hw);
+	    CGAL_read( is, c.sqr_rad);
+	    break;
+
+	  default:
+	    CGAL_optimisation_assertion_msg( false,
+					     "CGAL_IO::mode invalid!");
+	    break; }
+
+	return( is);
+    }
 @end
 
 @! ============================================================================
