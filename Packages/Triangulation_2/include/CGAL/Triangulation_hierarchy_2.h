@@ -67,12 +67,12 @@ const int   Triangulation_hierarchy_2__minsize  = 20;
 const int   Triangulation_hierarchy_2__maxlevel = 5;
 // maximal number of points is 30^5 = 24 millions !
 
-template < class Triangulation>
+template < class Tr>
 class Triangulation_hierarchy_2
-: public Triangulation
+: public Tr
 {
  public:
-  typedef Triangulation                        Tr_Base;
+  typedef Tr                        Tr_Base;
   typedef typename Tr_Base::Geom_traits        Geom_traits;
   typedef typename Geom_traits::Point_2        Point;
   typedef typename Tr_Base::Vertex_handle     Vertex_handle;
@@ -157,8 +157,8 @@ public:
 
 
 
-template <class Triangulation >
-Triangulation_hierarchy_2<Triangulation>::
+template <class Tr >
+Triangulation_hierarchy_2<Tr>::
 Triangulation_hierarchy_2(const Geom_traits& traits)
   : Tr_Base(traits), random((long)0)
 { 
@@ -169,9 +169,9 @@ Triangulation_hierarchy_2(const Geom_traits& traits)
 
 
 // copy constructor duplicates vertices and faces
-template <class Triangulation>
-Triangulation_hierarchy_2<Triangulation>::
-Triangulation_hierarchy_2(const Triangulation_hierarchy_2<Triangulation> &tr)
+template <class Tr>
+Triangulation_hierarchy_2<Tr>::
+Triangulation_hierarchy_2(const Triangulation_hierarchy_2<Tr> &tr)
     : Tr_Base(), random((long)0)
 { 
   // create an empty triangulation to be able to delete it !
@@ -183,20 +183,20 @@ Triangulation_hierarchy_2(const Triangulation_hierarchy_2<Triangulation> &tr)
  
 
 //Assignement
-template <class Triangulation>
-Triangulation_hierarchy_2<Triangulation> &
-Triangulation_hierarchy_2<Triangulation>::
-operator=(const Triangulation_hierarchy_2<Triangulation> &tr)
+template <class Tr>
+Triangulation_hierarchy_2<Tr> &
+Triangulation_hierarchy_2<Tr>::
+operator=(const Triangulation_hierarchy_2<Tr> &tr)
 {
   copy_triangulation(tr);
   return *this;
 }
 
 
-template <class Triangulation>
+template <class Tr>
 void
-Triangulation_hierarchy_2<Triangulation>::   
-copy_triangulation(const Triangulation_hierarchy_2<Triangulation> &tr)
+Triangulation_hierarchy_2<Tr>::   
+copy_triangulation(const Triangulation_hierarchy_2<Tr> &tr)
 {
   std::map< const void*, void*, std::less<const void*> > V;
 
@@ -221,10 +221,10 @@ copy_triangulation(const Triangulation_hierarchy_2<Triangulation> &tr)
   }
 }
 
-template <class Triangulation>
+template <class Tr>
 void
-Triangulation_hierarchy_2<Triangulation>:: 
-swap(Triangulation_hierarchy_2<Triangulation> &tr)
+Triangulation_hierarchy_2<Tr>:: 
+swap(Triangulation_hierarchy_2<Tr> &tr)
 {
 //   Tr_Base** h= hierarchy;
 //   hierarchy = tr.hierarchy;
@@ -238,8 +238,8 @@ swap(Triangulation_hierarchy_2<Triangulation> &tr)
   }
 }
 
-template <class Triangulation>
-Triangulation_hierarchy_2<Triangulation>:: 
+template <class Tr>
+Triangulation_hierarchy_2<Tr>:: 
 ~Triangulation_hierarchy_2()
 {
   clear();
@@ -248,9 +248,9 @@ Triangulation_hierarchy_2<Triangulation>::
   }
 }
 
-template <class Triangulation>
+template <class Tr>
 void
-Triangulation_hierarchy_2<Triangulation>:: 
+Triangulation_hierarchy_2<Tr>:: 
 clear()
 {
         for(int i=0;i<Triangulation_hierarchy_2__maxlevel;++i)
@@ -258,9 +258,9 @@ clear()
 }
 
 
-template <class Triangulation>
+template <class Tr>
 bool
-Triangulation_hierarchy_2<Triangulation>:: 
+Triangulation_hierarchy_2<Tr>:: 
 is_valid() const
 {
   bool result = true;
@@ -283,9 +283,9 @@ is_valid() const
 }
 
   
-template <class Triangulation >
-Triangulation_hierarchy_2<Triangulation>::Vertex_handle
-Triangulation_hierarchy_2<Triangulation>::
+template <class Tr>
+Triangulation_hierarchy_2<Tr>::Vertex_handle
+Triangulation_hierarchy_2<Tr>::
 insert(const Point &p)
 {
   int vertex_level = random_level();
@@ -310,18 +310,18 @@ insert(const Point &p)
   return first;
 }
 
-template <class Triangulation >
+template <class Tr>
 inline
-Triangulation_hierarchy_2<Triangulation>::Vertex_handle
-Triangulation_hierarchy_2<Triangulation>::
+Triangulation_hierarchy_2<Tr>::Vertex_handle
+Triangulation_hierarchy_2<Tr>::
 push_back(const Point &p)
 {
   return insert(p);
 }
 
-template <class Triangulation >
+template <class Tr>
 void 
-Triangulation_hierarchy_2<Triangulation>::
+Triangulation_hierarchy_2<Tr>::
 remove(Vertex_handle v )
 {
   void * u=v->up();
@@ -334,33 +334,33 @@ remove(Vertex_handle v )
   }
 }
 
-template <class Triangulation >
+template <class Tr>
 inline void 
-Triangulation_hierarchy_2<Triangulation>::
+Triangulation_hierarchy_2<Tr>::
 remove_degree_3(Vertex_handle v )
 {
   remove(v);
 }
 
-template <class Triangulation >
+template <class Tr>
 inline void 
-Triangulation_hierarchy_2<Triangulation>::
+Triangulation_hierarchy_2<Tr>::
 remove_first(Vertex_handle v )
 {
   remove(v);
 }
 
-template <class Triangulation >
+template <class Tr>
 inline void 
-Triangulation_hierarchy_2<Triangulation>::
+Triangulation_hierarchy_2<Tr>::
 remove_second(Vertex_handle v )
 {
   remove(v);
 }
 
-template <class Triangulation >
-Triangulation_hierarchy_2<Triangulation>::Face_handle 
-Triangulation_hierarchy_2<Triangulation>::
+template <class Tr>
+Triangulation_hierarchy_2<Tr>::Face_handle 
+Triangulation_hierarchy_2<Tr>::
 locate(const Point& p, Locate_type& lt, int& li) const
 {
   Face_handle positions[Triangulation_hierarchy_2__maxlevel];
@@ -368,9 +368,9 @@ locate(const Point& p, Locate_type& lt, int& li) const
   return positions[0];
 }
 
-template <class Triangulation >
-Triangulation_hierarchy_2<Triangulation>::Face_handle 
-Triangulation_hierarchy_2<Triangulation>::
+template <class Tr>
+Triangulation_hierarchy_2<Tr>::Face_handle 
+Triangulation_hierarchy_2<Tr>::
 locate(const Point& p) const
 {
   Locate_type lt;
@@ -378,9 +378,9 @@ locate(const Point& p) const
   return locate(p, lt, li);
 }
 
-template <class Triangulation >
+template <class Tr>
 void
-Triangulation_hierarchy_2<Triangulation>::
+Triangulation_hierarchy_2<Tr>::
 locate(const Point& p,
        Locate_type& lt,
        int& li,
@@ -426,9 +426,9 @@ locate(const Point& p,
 }
 
 
-template <class Triangulation >
+template <class Tr>
 int
-Triangulation_hierarchy_2<Triangulation>::
+Triangulation_hierarchy_2<Tr>::
 random_level()
 {
   int l = 0;
