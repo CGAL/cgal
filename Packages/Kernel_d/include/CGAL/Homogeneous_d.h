@@ -97,6 +97,7 @@ public:
     }
   };
 
+  // TODO: Make it work for the other values
  template <typename K>
   class Construct_vertex
   {    
