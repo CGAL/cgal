@@ -1,3 +1,6 @@
+29 March 2004 Radu Ursu
+- removed obsolete doc_tex directory
+
 09 Mar 2004 Andreas Fabri
 Replaced operator*(Vector,Vector), and operator*(Vector,NT) with functors
 
