@@ -1,4 +1,4 @@
-Version 1.119 (?? Sep 02)
+Version 1.119 (9 Oct 02)
 - Valgrind noticed that copy_tds() touched pointers of index > dimension().
 - undocument set_number_of_vertices(), and deprecate it.
 - Remove _number_of_vertices, since DS_Container now counts.
