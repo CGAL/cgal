@@ -321,8 +321,11 @@ bool is_valid_test()
   CGAL::Failure_function prev    = CGAL::set_error_handler(empty_handler);
 
   bool tmpflag, flag = true;
-  const double inf = 1.0/zero;
-  const double nan = 0.0 * inf;
+  // Why the zero() ??
+  // If we do not do this, the Intel 7 compiler optimizes
+  // and the nan is at a sudden 0
+  const double inf = 1.0/CGAL::CGALi::zero();
+  const double nan = CGAL::CGALi::zero() * inf;
   const IA_nt a(nan, nan), b(0,nan), c(nan, 0), d(1,0);
   const IA_nt e(0,1), f(0,0);
 

@@ -479,6 +479,16 @@ to_interval (const long & l)
     return Interval_base(double(l));
 }
 
+
+// needed for making the testsuite pass for Intel7
+
+namespace CGALi {
+
+  extern double zero();
+}
+
+
+
 CGAL_END_NAMESPACE
 
 #endif // CGAL_INTERVAL_ARITHMETIC_H
