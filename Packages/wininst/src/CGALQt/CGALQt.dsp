@@ -8,12 +8,12 @@ CFG=cgallib2 - Win32 Debug
 !MESSAGE This is not a valid makefile. To build this project using NMAKE,
 !MESSAGE use the Export Makefile command and run
 !MESSAGE 
-!MESSAGE NMAKE /f "CGALQtlib.mak".
+!MESSAGE NMAKE /f "CGALQt.mak".
 !MESSAGE 
 !MESSAGE You can specify a configuration when running NMAKE
 !MESSAGE by defining the macro CFG on the command line. For example:
 !MESSAGE 
-!MESSAGE NMAKE /f "CGALQtlib.mak" CFG="cgallib2 - Win32 Debug"
+!MESSAGE NMAKE /f "CGALQt.mak" CFG="cgallib2 - Win32 Debug"
 !MESSAGE 
 !MESSAGE Possible choices for configuration are:
 !MESSAGE 
@@ -64,7 +64,7 @@ LIB32=link.exe -lib
 # PROP Intermediate_Dir "Debug"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /YX /FD /GZ /c
-# ADD CPP /nologo /W3 /Gm /GR /GX /ZI /Od /I "$(QTDIR)/include" /I "$(CGALROOT)\stlport" /I "$(CGALROOT)\auxilary\wingmp\gmp-4.0.1" /I "$(CGALROOT)\include\cgal\config\msvc6" /I "$(CGALROOT)\include" /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /D "CGAL_USE_GMP" /D "CGAL_USE_QT" /YX /FD /I /GZ /TP /Zm900 /c
+# ADD CPP /nologo /W3 /GR /GX /I "$(QTDIR)/include" /I "$(CGALROOT)\stlport" /I "$(CGALROOT)\auxilary\wingmp\gmp-4.0.1" /I "$(CGALROOT)\include\cgal\config\msvc6" /I "$(CGALROOT)\include" /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /D "CGAL_USE_GMP" /D "CGAL_USE_QT" /D "QT_DLL" /D "QT_THREAD_SUPPORT" /YX /FD /O /I /GZ /TP /Zm900 /c
 # ADD BASE RSC /l 0x40c /d "_DEBUG"
 # ADD RSC /l 0x40c /d "_DEBUG"
 BSC32=bscmake.exe
