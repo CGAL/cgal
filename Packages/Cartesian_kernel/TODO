@@ -12,6 +12,9 @@ Stuff to look at, as time permits:
     constructions/predicates on top of that.
 
 - Handles :
+  - http://www.uni-giessen.de/faq/archiv/c++-faq.part1-9/msg00005.html
+    [16.22] How do I provide reference counting with copy-on-write
+            semantics for a hierarchy of classes?
   - Having a proper Handle_for_virtual<> is becoming important...
     - It must have the same interface than Handle_for<> [due, it can't !]
     - Must use the allocator, see Stefan's mail. [due, impossible !]
