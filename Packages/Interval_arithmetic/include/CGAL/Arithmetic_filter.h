@@ -50,7 +50,7 @@ CGAL_BEGIN_NAMESPACE
 // (Interval_nt_advanced) = used for filtering.
 //
 // 2 conversion functions must be provided:
-// - convert_to <Interval_nt_advanced> (CT)
+// - to_interval(CT)
 //     which gives an interval SURELY containing the CT value.
 // - convert_to <ET> (CT)
 //     which converts EXACTLY the CT value to ET.
@@ -76,14 +76,12 @@ class Filtered_exact
   // Cache managing functions.
 
   IA give_interval (const IA &inter) const
-  { return inter; }
+  {
+      return inter;
+  }
   IA give_interval (const No_Filter_Cache &) const
   {
-#ifndef CGAL_CFG_NO_PARTIAL_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
-    return convert_to<Interval_nt_advanced>(_value);
-#else
-    return convert_from_to(Interval_nt_advanced(), _value);
-#endif // CGAL_CFG_NO_PARTIAL_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+      return Interval_nt_advanced(CGAL::to_interval(_value));
   }
 
   void compute_cache (const No_Filter_Cache &) const
