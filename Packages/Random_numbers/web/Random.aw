@@ -9,9 +9,6 @@
 @! $Date$
 @! ============================================================================
 
-@p maximum_input_line_length = 120
-@p maximum_output_line_length = 120
-
 @documentclass[twoside]{article}
 @usepackage[latin1]{inputenc}
 @usepackage{a4wide2}
@@ -465,11 +462,11 @@ numbers.
     @<copyright notice>
     @<file name>(@1)
     @<file description>(
-        "Random Sources and Geometric Object Generators",
+        "Random Sources and Geometric Object Genera.",
         "Random","Random/Random",
         "$Revision$","$Date$",
         "Sven Schönherr <sven@@inf.fu-berlin.de>","N.N.",
-        "MPI Saarbrücken (Stefan Schirra <stschirr@@mpi-sb.mpg.de>)",
+        "INRIA Sophia-Antipolis (<Herve.Bronnimann@@sophia.inria.fr>)",
         "@2")
 @end    
 
