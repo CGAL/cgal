@@ -26,7 +26,7 @@ int main()
 
   // Generate an iterated snap-rounding representation, where the centers of
   // the hot pixels bear their original coordinates, using 5 kd trees:
-  CGAL::snap_rounding_2<Traits, Segment_list_2::const_iterator, Polyline_list_2>
+  CGAL::snap_rounding_2<Traits,Segment_list_2::const_iterator,Polyline_list_2>
     (seg_list.begin(), seg_list.end(), output_list, 1.0, true, false, 5);
 
   int counter = 0;
