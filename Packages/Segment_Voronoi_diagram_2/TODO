@@ -1,3 +1,7 @@
+- add a boolean template parameter in the Segment_Voronoi_diagram_2
+  that indicates if we want to optimize for space or time; in the case of space
+  use the Edge_list class and a set in add_bogus_vertices; in the case of time
+  use the In_place_edge_list_class and a vector in add_bogus_vertices
 - remove the macros USE_VECTOR, USE_SET from the add_bogus_vertices
   method of the Segment_Voronoi_diagram_2 class; use a set (which should
   static)
