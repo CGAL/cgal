@@ -1,6 +1,10 @@
+4.124 (28 Nov 2003)
+- SunPro 5.3 workaround.
 
 4.123 (25 Nov 2003) [af]
 - Added #include of gmpxx.h
+
+====================================== CGAL 3.0 =============================
 
 4.122 (28 October 2003)
 - Protect to_double(Quotient<MP_Float>) against overflows like Quotient<Gmpz>.
