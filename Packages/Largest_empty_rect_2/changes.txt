@@ -1,3 +1,7 @@
+version 1.6 [af]
+- added typename
+-moved body of get_left_bottom_right_top() in the class for VC++6
+
 version 1.5 [af]
 - moved reference pages to doc_tex/basic/Optimization_ref/
 

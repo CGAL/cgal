@@ -1,17 +1,9 @@
-- Remove the polygon stuff  - done(Eli)
-- add default constructor + init method, copy constructor, assignment - done(Eli)
-- Remove these 0.000001 constants - done(Eli)
+- Make get_left_bottom_right_top() const
+  which means making some variables mutable so that update() becomes "const"
 - Check if the lengthy name problem is still an issue
-- Why does the Delete function object not compile???
 - Do we also want to offer functions left(), right(), top(), bottom() ???
-- The four auxiliary points behave strange: 
-  * They are enumerated with begin(), end()
-  * They can delimit a rectangle
-  although they are not known to  the user.
-  Can we identify the additional points via their Point_data pointer?? - done(Eli)
-- Shouldn't we check wether inserted points are inside the initial bounding box? - done(Eli)
 - Find a better name for method get_bounding_box.
-- Shall we sto tre the iso-rectangle passed in the constructor
+- Shall we store the iso-rectangle passed in the constructor
   in order to return the one that was passed to the constructor
   instead of a new one
-- Add ++ andd -- operators - done
+
