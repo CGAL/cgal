@@ -15,6 +15,7 @@
 // #include <CGAL/CLN/cl_integer.h>
 // typedef cl_I my_NT;
 // #else
+
 #ifdef CGAL_USE_LEDA
 #include <CGAL/leda_integer.h>
 typedef leda_integer my_NT;
@@ -27,6 +28,7 @@ typedef CGAL::Gmpz my_NT;
 typedef double my_NT;
 #endif
 #endif
+
 // #endif
 
 #ifndef CGAL_CARTESIAN_H

@@ -6,8 +6,8 @@
 
 # pour purify, virer LEDA
 
-CGAL_MAKEFILE = /0/prisme_util/CGAL/CGAL-2.1-I-30/make/makefile_sparc_SunOS-5.6_g++-2.95.1_LEDA
-#CGAL_MAKEFILE = /0/prisme_util/CGAL/CGAL-2.1-I-24/make/makefile_i686_Linux-2.2.7_g++-2.95.1_LEDA
+CGAL_MAKEFILE = /0/prisme_util/CGAL/CGAL-2.1-I-31/make/makefile_sparc_SunOS-5.6_g++-2.95.1
+#CGAL_MAKEFILE = /0/prisme_util/CGAL/CGAL-I/make/makefile_i686_Linux-2.2.7_g++-2.95.1_LEDA
 include $(CGAL_MAKEFILE)
 
 #---------------------------------------------------------------------#
@@ -15,7 +15,7 @@ include $(CGAL_MAKEFILE)
 #---------------------------------------------------------------------#
 
 # pour purify :
-#CGAL_CXX=purify /usr/local/egcs/bin/g++
+CGAL_CXX=purify /usr/local/egcs/bin/g++
 
 CXXFLAGS = \
 	-I../../include \
@@ -37,12 +37,12 @@ CXXFLAGS = \
 #---------------------------------------------------------------------#
 
 # pour purify :
-#CGAL_LDFLAGS= $(CGAL_LIB_DIR)/$(CGAL_OS_COMPILER)/libCGAL.a \
-#              -L$(GMP_LIB_DIR) -lgmp -lm 
+CGAL_LDFLAGS= $(CGAL_LIB_DIR)/$(CGAL_OS_COMPILER)/libCGAL.a \
+              -L$(GMP_LIB_DIR) -lgmp -lm 
 
 LDFLAGS = $(TESTSUITE_LDFLAGS) \
-          -B$(UTIL)/Binutils/$(UNAME)/bin/ \
           $(CGAL_LDFLAGS)
+#          -B$(UTIL)/Binutils/$(UNAME)/bin/ \
 
 #---------------------------------------------------------------------#
 #                    target entries
@@ -57,6 +57,7 @@ all: test_triangulation_geom_traits test_triangulation_tds \
 	./test_delaunay_3
 	./test_triangulation_regular_traits
 	./test_regular_3 
+#        -B$(UTIL)/Binutils/$(UNAME)/bin/ \
 
 test_triangulation_geom_traits : test_triangulation_geom_traits.o
 	$(CGAL_CXX)  -o test_triangulation_geom_traits test_triangulation_geom_traits.o $(LDFLAGS)
