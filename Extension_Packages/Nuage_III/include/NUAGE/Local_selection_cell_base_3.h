@@ -18,8 +18,19 @@
 template < class CellBase >
 class Local_selection_cell_base_3 : public CellBase
 {
+
+public:
+  template < typename TDS2 >
+  struct Rebind_TDS {
+    typedef typename CellBase::template Rebind_TDS<TDS2>::Other  Cb2;
+    typedef Local_selection_cell_base_3<Cb2>                    Other;
+  };
+
 private:
-               
+     
+#ifdef FACET_NUMBER
+  int _facet_number[4];
+#endif
   typedef double coord_type;        
   typedef typename CGAL::Simple_cartesian<coord_type>::Point_3 D_Point;
 
@@ -42,25 +53,43 @@ public:
 #ifndef NOLAZY
       , _circumcenter(NULL), _squared_radius(NULL)
 #endif //NOLAZY
-    {}
+    {
+#ifdef FACET_NUMBER
+      for(int i = 0; i < 4; i++){
+	_facet_number[i] = -1;
+      }
+#endif
+    }
   
-  Local_selection_cell_base_3(void* v0, void* v1, void* v2, void* v3)
+  Local_selection_cell_base_3(Vertex_handle v0, Vertex_handle v1, Vertex_handle v2, Vertex_handle v3)
     : CellBase( v0, v1, v2, v3),
       _smallest_radius_facet_tab(NULL), selected_facet(0)
 #ifndef NOLAZY
       , _circumcenter(NULL), _squared_radius(NULL)
 #endif //NOLAZY
-    {}
+    {
+#ifdef FACET_NUMBER
+      for(int i = 0; i < 4; i++){
+	_facet_number[i] = -1;
+      }
+#endif
+    }
   
-  Local_selection_cell_base_3(void* v0, void* v1, void* v2, void* v3,
-			      void* n0, void* n1, void* n2, void* n3)
+  Local_selection_cell_base_3(Vertex_handle v0, Vertex_handle v1, Vertex_handle v2, Vertex_handle v3,
+			      Cell_handle n0, Cell_handle n1, Cell_handle n2, Cell_handle n3)
     : CellBase(v0,  v1,  v2, v3,
-					  n0,  n1,  n2, n3),
+	       n0,  n1,  n2, n3),
       _smallest_radius_facet_tab(NULL), selected_facet(0)
 #ifndef NOLAZY
       , _circumcenter(NULL), _squared_radius(NULL)
 #endif //NOLAZY
-    {}
+    {
+#ifdef FACET_NUMBER
+      for(int i = 0; i < 4; i++){
+	_facet_number[i] = -1;
+      }
+#endif
+    }
 
   //-------------------- DESTRUCTOR -----------------------------------
 
@@ -127,6 +156,22 @@ public:
       return false;
     }
 
+  
+  //-------------------------------------------------------------------
+void
+set_facet_number(int i, int n)
+{
+#ifdef FACET_NUMBER
+  _facet_number[i] = n;
+#endif
+}
+int
+facet_number(int i)
+{
+#ifdef FACET_NUMBER
+  return _facet_number[i];
+#endif
+}
   //-------------------------------------------------------------------
   
   inline void select_facet(const int& i)

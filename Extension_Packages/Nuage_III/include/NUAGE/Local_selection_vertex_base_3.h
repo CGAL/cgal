@@ -27,12 +27,21 @@ class Local_selection_vertex_base_3 : public VertexBase
 {
 public:
 
+  template < typename TDS2 >
+  struct Rebind_TDS {
+    typedef typename VertexBase::template Rebind_TDS<TDS2>::Other  Vb2;
+    typedef Local_selection_vertex_base_3<Vb2>                    Other;
+  };
+
+
   typedef VertexBase Base;
+  typedef typename Base::Vertex_handle Vertex_handle;
+  typedef typename Base::Cell_handle Cell_handle;
   typedef typename VertexBase::Point Point;
   typedef double coord_type;
   
-  typedef CGAL::Triple< void*, int, int > void_Edge;
-  typedef std::pair< void_Edge, int > Edge_IFacet;
+  typedef CGAL::Triple< Cell_handle, int, int > Edge;
+  typedef std::pair< Edge, int > Edge_IFacet;
   typedef std::pair< Edge_IFacet, Edge_IFacet > IO_edge_type;
 
   //  typedef std::pair< coord_type, coord_type > criteria;
@@ -40,7 +49,7 @@ public:
 
   typedef std::pair< criteria, IO_edge_type > Radius_edge_type;
   typedef std::pair< Radius_edge_type, int > Border_elt;
-  typedef std::pair< void*, Border_elt > Next_border_elt;
+  typedef std::pair< Vertex_handle, Border_elt > Next_border_elt;
 
 private:
 
@@ -50,12 +59,12 @@ private:
 public:
 
   typedef std::pair< criteria, IO_edge_type* > Radius_ptr_type;
-  typedef std::pair< void*, void* > void_Edge_like;
-  typedef std::pair< criteria,  void_Edge_like > Incidence_request_elt;
+  typedef std::pair< Vertex_handle, Vertex_handle > Edge_like;
+  typedef std::pair< criteria,  Edge_like > Incidence_request_elt;
   typedef std::list< Incidence_request_elt > Incidence_request_type;
   typedef typename Incidence_request_type::iterator Incidence_request_iterator;
   
-  typedef std::set< void* > Interior_edge_set_type;
+  //  typedef std::set< void* > Interior_edge_set_type;
   
   //-------------------- DATA MEMBERS ---------------------------------
 
@@ -66,11 +75,11 @@ private:
   Intern_successors_type* _incident_border;
 
   // Instead of having a set per vertex, there is a global list.
-  static std::list<void*> interior_edges;
+  static std::list<Vertex_handle> interior_edges;
   // and two iterators per vertex in this list
   // Note that ie_last is not past the end
   // ie_first == ie_last == interior_edge.end()  iff  the set is empty
-  std::list<void*>::iterator ie_first, ie_last;
+  std::list<Vertex_handle>::iterator ie_first, ie_last;
 
 
   // We do the same for the incidence requests
@@ -88,7 +97,7 @@ public:
     {
       _incident_border = new Intern_successors_type(new Next_border_elt(),
 						    new Next_border_elt());
-      _incident_border->first->first = NULL;
+      _incident_border->first->first = NULL; 
       _incident_border->second->first = NULL;
     }
   
@@ -104,7 +113,7 @@ public:
       _incident_border->second->first = NULL;
     }
   
-  Local_selection_vertex_base_3(const Point & p, void* f)
+  Local_selection_vertex_base_3(const Point & p, Cell_handle f)
     : VertexBase(p, f), _mark(-1), 
     _post_mark(-1), 
     ie_first(interior_edges.end()), ie_last(interior_edges.end()),
@@ -116,7 +125,7 @@ public:
       _incident_border->second->first = NULL;
     }
 
-  Local_selection_vertex_base_3(void* f)
+  Local_selection_vertex_base_3(Cell_handle f)
     : VertexBase(f), _mark(-1), 
     _post_mark(-1), 
     ie_first(interior_edges.end()), ie_last(interior_edges.end()),
@@ -128,6 +137,17 @@ public:
       _incident_border->second->first = NULL;
     }
 
+	Local_selection_vertex_base_3(const Local_selection_vertex_base_3& other)
+    : VertexBase(), _mark(-1), 
+    _post_mark(-1), 
+    ie_first(interior_edges.end()), ie_last(interior_edges.end()),
+    ir_first(incidence_requests.end()), ir_last(incidence_requests.end())
+	{
+      _incident_border = new Intern_successors_type(new Next_border_elt(),
+						    new Next_border_elt());
+      _incident_border->first->first = NULL;
+      _incident_border->second->first = NULL;
+	}
   //-------------------- DESTRUCTOR -----------------------------------
 
   ~Local_selection_vertex_base_3()
@@ -147,7 +167,7 @@ public:
 
       if(ie_first != interior_edges.end()){
 	assert(ie_last != interior_edges.end());
-	std::list< void* >::iterator b(ie_first), e(ie_last);
+	std::list<Vertex_handle>::iterator b(ie_first), e(ie_last);
 	e++;
 	interior_edges.erase(b, e);
       }
@@ -209,7 +229,7 @@ public:
     }
 
 
-  inline void remove_border_edge(void* v)
+  inline void remove_border_edge(Vertex_handle v)
     {
       if (_incident_border != NULL)
 	{
@@ -240,14 +260,14 @@ public:
 	}
     }
 
-  inline bool is_border_edge(void* v) const
+  inline bool is_border_edge(Vertex_handle v) const
     { 
       if (_incident_border == NULL) return false;
       return ((_incident_border->first->first == v)||
 	      (_incident_border->second->first == v));
     }
 
-  inline Next_border_elt* get_border_elt(void* v) const
+  inline Next_border_elt* get_border_elt(Vertex_handle v) const
     {
       if (_incident_border == NULL) return NULL;
       if (_incident_border->first->first == v) return _incident_border->first;
@@ -285,40 +305,40 @@ public:
   // bord (en fait seule, les aretes interieures reliant 2 bords nous
   // interressent...)
 
-  inline bool is_interior_edge(void* v) const
+  inline bool is_interior_edge(Vertex_handle v) const
     {
 
       bool r1;
       if(ie_first == interior_edges.end()){
 	r1 = false;
       }else {
-	std::list<void*>::iterator b(ie_first), e(ie_last);
+	std::list<Vertex_handle>::iterator b(ie_first), e(ie_last);
 	e++;
-	std::list<void*>::iterator r = std::find(b, e, v);
+	std::list<Vertex_handle>::iterator r = std::find(b, e, v);
 	r1 = ( r != e);
       }
 
       return r1;
     }
 
-  inline void set_interior_edge(void* v)
+  inline void set_interior_edge(Vertex_handle v)
     {
       if(ie_last == interior_edges.end()){ // empty set
 	assert(ie_first == ie_last);
 	ie_last = interior_edges.insert(ie_last, v);
 	ie_first = ie_last;
       } else {
-	std::list<void*>::iterator e(ie_last);
+	std::list<Vertex_handle>::iterator e(ie_last);
 	e++;
 #ifdef DEBUG
-	std::list<void*>::iterator r = std::find(ie_first, e, v);
+	std::list<Vertex_handle>::iterator r = std::find(ie_first, e, v);
 #endif
 	assert(r == e);
 	ie_last = interior_edges.insert(e, v);
       }
     }
 
-  inline void remove_interior_edge(void* v)
+  inline void remove_interior_edge(Vertex_handle v)
     {
       if(ie_first == interior_edges.end()){
 	assert(ie_last == ie_first);
@@ -329,9 +349,9 @@ public:
 	  ie_first = ie_last;
 	}
       } else {
-	std::list<void*>::iterator b(ie_first), e(ie_last);
+	std::list<Vertex_handle>::iterator b(ie_first), e(ie_last);
 	e++;
-	std::list<void*>::iterator r = std::find(b, e, v);
+	std::list<Vertex_handle>::iterator r = std::find(b, e, v);
 	if(r != e){
 	  if(r == ie_first){
 	    ie_first++;
@@ -454,7 +474,7 @@ public:
 };
 
 template <class Gt>
-std::list<void*> Local_selection_vertex_base_3<Gt>::interior_edges;
+std::list<Local_selection_vertex_base_3<Gt>::Vertex_handle> Local_selection_vertex_base_3<Gt>::interior_edges;
 
 template <class Gt>
 std::list<Local_selection_vertex_base_3<Gt>::Incidence_request_elt> Local_selection_vertex_base_3<Gt>::incidence_requests;

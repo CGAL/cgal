@@ -100,7 +100,7 @@ public:
     if(pos == NULL) {
       return;
     }
-    pos = static_cast<Vertex*>(pos->first_incident()->first);
+    pos = pos->first_incident()->first;
     pos->set_post_mark(mark);
   }
 
@@ -112,7 +112,7 @@ public:
     do {
       first_vertex++;
     } while((first_vertex != S.triangulation().finite_vertices_end()) && 
-	    (! ((first_vertex->number_of_incident_border() > 0) 
+	    (! ((first_vertex->is_on_border()) 
 		&& ! first_vertex->is_post_marked(mark))));
     if(first_vertex != S.triangulation().finite_vertices_end()) {
       pos = first_vertex;
@@ -130,7 +130,6 @@ class Extract_surface {
 public:
   typedef Triangulation Triangulation_3;
   typedef Extract_surface<Triangulation_3,Kernel> Extract;
-  typedef Extract_surface_boundary_iterator<Extract> Boundary_iterator; 
   typedef typename Triangulation_3::Geom_traits Geom_traits;
   typedef typename Geom_traits::Point_3 P;
   //typedef CGAL::Kernel_traits<P> Kernel;
@@ -165,7 +164,6 @@ public:
   typedef typename Triangulation_3::All_vertices_iterator  All_vertices_iterator;
   typedef typename Triangulation_3::All_edges_iterator  All_edges_iterator;
   
-  typedef typename Triangulation_3::Vertex::void_Edge void_Edge;
   typedef typename Triangulation_3::Vertex::Edge_IFacet Edge_IFacet;
   typedef typename Triangulation_3::Vertex::IO_edge_type IO_edge_type;
   typedef typename Triangulation_3::Vertex::criteria criteria;
@@ -175,7 +173,6 @@ public:
   typedef typename Triangulation_3::Vertex::Radius_ptr_type Radius_ptr_type;
 
   typedef typename Triangulation_3::Vertex::Incidence_request_iterator Incidence_request_iterator;
-  typedef typename Triangulation_3::Vertex::void_Edge_like void_Edge_like;
   typedef typename Triangulation_3::Vertex::Incidence_request_elt Incidence_request_elt;
   
   typedef std::pair< Vertex_handle, Vertex_handle > Edge_like;
@@ -234,7 +231,7 @@ public:
     : T(T_), _number_of_border(1), SLIVER_ANGULUS(.86), DELTA(delta), min_K(HUGE_VAL), 
     eps(1e-7), inv_eps_2(coord_type(1)/(eps*eps)), eps_3(eps*eps*eps),
     STANDBY_CANDIDATE(3), STANDBY_CANDIDATE_BIS(STANDBY_CANDIDATE+1), 
-    NOT_VALID_CANDIDATE(STANDBY_CANDIDATE+2), _vh_number(0), _facet_number(0),
+    NOT_VALID_CANDIDATE(STANDBY_CANDIDATE+2), _vh_number(T.number_of_vertices()), _facet_number(0),
     _postprocessing_counter(0), _size_before_postprocessing(0)
   {}
 
@@ -263,13 +260,7 @@ public:
     return outliers.size();
   }
 
-  int get_next_mark() const
-  {
-    _postprocessing_counter++;
-    return _postprocessing_counter;
-  }
-
-  typedef std::list<Point>::const_iterator Outlier_iterator;
+  typedef typename std::list<Point>::const_iterator Outlier_iterator;
 
   Outlier_iterator outliers_begin() const
   {
@@ -281,6 +272,7 @@ public:
     return outliers.end();
   }
 
+  typedef Extract_surface_boundary_iterator<Extract> Boundary_iterator; 
 
   Boundary_iterator boundaries_begin() const
   {
@@ -289,7 +281,14 @@ public:
 
   Boundary_iterator boundaries_end() const
   {
-     return Contour_iterator(*this);
+     return Boundary_iterator(*this);
+  }
+
+
+  int get_next_mark() const
+  {
+    _postprocessing_counter++;
+    return _postprocessing_counter;
   }
 
   //=====================================================================
@@ -297,27 +296,27 @@ public:
   //=====================================================================
 
 
-  inline Next_border_elt* get_border_elt(const Vertex_handle& v1, const Vertex_handle& v2)
+   Next_border_elt* get_border_elt(const Vertex_handle& v1, const Vertex_handle& v2)
   {
-    return v1->get_border_elt((void*) &(*v2));
+    return v1->get_border_elt(v2);
   }
 
   //public
 
-  inline IO_edge_type* get_border_IO_elt(const Vertex_handle& v1, const Vertex_handle& v2)
+   IO_edge_type* get_border_IO_elt(const Vertex_handle& v1, const Vertex_handle& v2)
   {
     return &get_border_elt(v1,v2)->second.first.second;
   }
 
-  inline IO_edge_type* set_border_elt(const Vertex_handle& v1, const Vertex_handle& v2,
+   IO_edge_type* set_border_elt(const Vertex_handle& v1, const Vertex_handle& v2,
 				      const Border_elt& e)
   {
-    v1->set_next_border_elt(Next_border_elt ((void*) &(*v2), e));
+    v1->set_next_border_elt(Next_border_elt (v2, e));
     return get_border_IO_elt(v1, v2);
   }
 
 
-  inline IO_edge_type* set_again_border_elt(const Vertex_handle& v1, const Vertex_handle& v2,
+   IO_edge_type* set_again_border_elt(const Vertex_handle& v1, const Vertex_handle& v2,
 					    const Border_elt& e)
   {
     get_border_elt(v1,v2)->second = e;
@@ -328,9 +327,9 @@ public:
 
   //af: Why does key get changed??
 
-  inline bool is_border_elt(Edge_like& key, Border_elt& result) const
+   bool is_border_elt(Edge_like& key, Border_elt& result) const
   {
-    Next_border_elt* it12 =  key.first->get_border_elt((void*) &(*key.second));
+    Next_border_elt* it12 =  key.first->get_border_elt(key.second);
     if (it12 != NULL)
       {    
 	result = it12->second;
@@ -339,7 +338,7 @@ public:
 	return true;
       }
 
-    Next_border_elt* it21 =  key.second->get_border_elt((void*) &(*key.first));
+    Next_border_elt* it21 =  key.second->get_border_elt(key.first);
     if (it21 != NULL)
       {    
 	result = it21->second;
@@ -350,15 +349,15 @@ public:
   }
 
   //---------------------------------------------------------------------
-  inline bool is_border_elt(Edge_like& key) const {
-    Next_border_elt* it12 =  key.first->get_border_elt((void*) &(*key.second));
+   bool is_border_elt(Edge_like& key) const {
+    Next_border_elt* it12 =  key.first->get_border_elt(key.second);
     if (it12 != NULL)
       {    
 	key = Edge_like(key.first, key.second);
 	return true;
       }
 
-    Next_border_elt* it21 =  key.second->get_border_elt((void*) &(*key.first));
+    Next_border_elt* it21 =  key.second->get_border_elt(key.first);
     if (it21 != NULL)
       {    
 	std::swap(key.first, key.second);
@@ -368,9 +367,9 @@ public:
   }
   //---------------------------------------------------------------------
 
-  inline bool is_ordered_border_elt(const Edge_like& key, Border_elt& result) const
+   bool is_ordered_border_elt(const Edge_like& key, Border_elt& result) const
   {
-    Next_border_elt* it12 =  key.first->get_border_elt((void*) &(*key.second));
+    Next_border_elt* it12 =  key.first->get_border_elt(key.second);
     if (it12 != NULL)
       {    
 	result = it12->second;
@@ -381,18 +380,18 @@ public:
 
   //---------------------------------------------------------------------
 
-  inline void
+   void
   remove_border_elt(const Edge_like& ordered_key)
   {
-    ordered_key.first->remove_border_edge((void*) &(*ordered_key.second));
+    ordered_key.first->remove_border_edge(ordered_key.second);
   }
 
   //---------------------------------------------------------------------
 
-  inline bool is_ordered_border_elt(const void_Edge_like& e, 
+   bool is_ordered_border_elt(const Edge_like& e, 
 				    IO_edge_type* &ptr) const
   {
-    Vertex_handle v1 = (Vertex*) e.first;
+    Vertex_handle v1 = e.first;
 
     Next_border_elt* it12 =  v1->get_border_elt(e.second);
     if (it12 != NULL)
@@ -403,31 +402,30 @@ public:
     return false;
   }
 
-  inline void set_incidence_request(const Vertex_handle& v,
+   void set_incidence_request(const Vertex_handle& v,
 				    const criteria& value,
 				    const Edge_like& e)
   {
-    void_Edge_like ve((void*) &*e.first, (void*) &*e.second);
-    Incidence_request_elt incident_elt(value, ve);
+    Incidence_request_elt incident_elt(value, e);
     v->set_incidence_request(incident_elt);
   }
 
   //---------------------------------------------------------------------
 
-  inline bool is_interior_edge(const Edge_like& key) const
+   bool is_interior_edge(const Edge_like& key) const
     // pour gerer certaines aretes interieures: a savoir celle encore connectee au 
     // bord (en fait seule, les aretes interieures reliant 2 bords nous
     // interressent...)
   {
-    return (key.first->is_interior_edge((void*) &(*key.second))||
-	    key.second->is_interior_edge((void*) &(*key.first)));
+    return (key.first->is_interior_edge(key.second)||
+	    key.second->is_interior_edge(key.first));
   }
 
   //---------------------------------------------------------------------
 
 #ifndef NOLAZY
 
-  inline coord_type get_lazy_squared_radius(const Cell_handle& c)
+   coord_type get_lazy_squared_radius(const Cell_handle& c)
   {
     if (c->get_lazy_squared_radius() != NULL)
       return *(c->get_lazy_squared_radius());
@@ -440,7 +438,7 @@ public:
     return *(c->get_lazy_squared_radius());
   }
 
-  inline Point get_lazy_circumcenter(const Cell_handle& c)
+   Point get_lazy_circumcenter(const Cell_handle& c)
   {
     if (c->get_lazy_circumcenter() != NULL)
       return *(c->get_lazy_circumcenter());
@@ -457,9 +455,9 @@ public:
 
   //---------------------------------------------------------------------
 
-  inline Edge_IFacet inc_facet_circ(const Edge_IFacet& e) const
+   Edge_IFacet inc_facet_circ(const Edge_IFacet& e) const
   {
-    Cell_handle c = (Cell*) e.first.first;
+    Cell_handle c = e.first.first;
     int i = e.second;
     int i1 = e.first.second, i2 = e.first.third;
     int i3 = (6 - e.second - i1 - i2);
@@ -467,14 +465,14 @@ public:
     Cell_handle n = c->neighbor(i);
     int j1 = n->index(c->vertex(i1)), j2 = n->index(c->vertex(i2));
     int j =  n->index(c->vertex(i3));
-    return Edge_IFacet(void_Edge((void*) &*n, j1, j2), j);  
+    return Edge_IFacet(Edge(n, j1, j2), j);  
   }
 
   //---------------------------------------------------------------------
 
-  inline Edge_IFacet dec_facet_circ(const Edge_IFacet& e) const
+   Edge_IFacet dec_facet_circ(const Edge_IFacet& e) const
   {
-    Cell_handle c = (Cell*) e.first.first;
+    Cell_handle c = e.first.first;
     int i = e.second;
     int i1 = e.first.second, i2 = e.first.third;
     int i3 = (6 - e.second - i1 - i2);
@@ -482,12 +480,12 @@ public:
     Cell_handle n = c->neighbor(i3);
     int j1 = n->index(c->vertex(i1)), j2 = n->index(c->vertex(i2));
     int j =  n->index(c->vertex(i));
-    return Edge_IFacet(void_Edge((void*) &*n, j1, j2), j);  
+    return Edge_IFacet(Edge(n, j1, j2), j);  
   }
 
   //---------------------------------------------------------------------
 
-  inline bool
+   bool
   my_coplanar(const Point& p, const Point& q, 
 	      const Point& r, const Point& s) const
   {
@@ -510,7 +508,7 @@ public:
   //---------------------------------------------------------------------
 
 
-  inline bool
+   bool
   my_collinear(const Point& p, const Point& q, const Point& s) const
   {
     coord_type psx = p.x()-s.x();
@@ -532,11 +530,12 @@ public:
 
   //---------------------------------------------------------------------
 
-  inline void
+   void
   visu_facet(const Cell_handle& c, const int& i)
   {
     c->select_facet(i);
     _facet_number++;
+    c->set_facet_number(i, _facet_number);
   }
 
 
@@ -564,7 +563,7 @@ public:
 
   //=====================================================================
   //=====================================================================
-  inline
+  
   coord_type get_smallest_radius_delaunay_sphere(const Cell_handle& c,
 						 const int& index) const
   {
@@ -673,20 +672,19 @@ public:
 
   Radius_edge_type compute_value(const Edge_IFacet& e)
   {
-    Cell_handle c = (Cell*) e.first.first;
+    Cell_handle c = e.first.first;
     int i = e.second;
     int i1 = e.first.second, i2 = e.first.third;
     int i3 = 6 - e.second - i1 - i2;
 
     Edge_IFacet e_it = e, predone = dec_facet_circ(e);
-    Cell_handle c_predone = (Cell*) predone.first.first;
+    Cell_handle c_predone = predone.first.first;
 
     coord_type min_valueP = NOT_VALID_CANDIDATE, min_valueA = HUGE_VAL;
     Facet min_facet, min_facetA;
     bool border_facet(false);
 
     coord_type pscal;//, prec_pliure = e.third;
-
     const Point& p1 = c->vertex(i1)->point();
     const Point& p2 = c->vertex(i2)->point();
     const Point& pc = c->vertex(i3)->point();
@@ -704,7 +702,7 @@ public:
   
     do
       {
-	Cell_handle neigh = (Cell*) e_it.first.first;
+	Cell_handle neigh = e_it.first.first;
 	Facet facet_it(neigh, e_it.second);
 
 	if (!T.is_infinite(facet_it))
@@ -769,7 +767,7 @@ public:
 	//count++;
 	e_it = inc_facet_circ(e_it);
       }
-    while(Cell_handle((Cell*) e_it.first.first) != c);
+    while(e_it.first.first != c);
 
     criteria value;
 
@@ -816,7 +814,7 @@ public:
 
     return 
       Radius_edge_type(value, IO_edge_type(e, Edge_IFacet
-					   (void_Edge((void*) &(*n), ni1, ni2),
+					   (Edge(n, ni1, ni2),
 					    min_facet.second)));
   }
 
@@ -867,6 +865,7 @@ public:
     if (min_value != HUGE_VAL)
       {
 	Cell_handle c_min = min_facet.first;
+	
 	int ind = min_facet.second;
 	i1 = (ind+1) & 3;
 	i2 = (ind+2) & 3;
@@ -874,9 +873,9 @@ public:
 
 	Radius_edge_type e12, e23, e31;
 
-	e12 = compute_value(Edge_IFacet(void_Edge((void*) &(*c_min), i1, i2), ind));
-	e23 = compute_value(Edge_IFacet(void_Edge((void*) &(*c_min), i2, i3), ind));
-	e31 = compute_value(Edge_IFacet(void_Edge((void*) &(*c_min), i3, i1), ind));
+	e12 = compute_value(Edge_IFacet(Edge(c_min, i1, i2), ind));
+	e23 = compute_value(Edge_IFacet(Edge(c_min, i2, i3), ind));
+	e31 = compute_value(Edge_IFacet(Edge(c_min, i3, i1), ind));
 
 	IO_edge_type* p12 = set_border_elt(c_min->vertex(i1), c_min->vertex(i2),
 					   Border_elt(e12, _number_of_border));
@@ -904,7 +903,7 @@ public:
 
   //---------------------------------------------------------------------
   // test de reciprocite avant de recoller une oreille anti-singularite
-  inline int
+   int
   test_merge(const Edge_like& ordered_key, const Border_elt& result, 
 	     const Vertex_handle& v, const coord_type& ear_alpha)
   {
@@ -914,7 +913,7 @@ public:
     const Point& p2 = (ordered_key.second)->point();
     const Point& pc = v->point();
 
-    Cell_handle neigh = (Cell*) Ifacet.first.first;
+    Cell_handle neigh = Ifacet.first.first;
     int n_ind = Ifacet.second;
     int n_i1 = Ifacet.first.second;
     int n_i2 = Ifacet.first.third;
@@ -1021,7 +1020,7 @@ public:
 
 
     //   Edge_IFacet e_Ifacet = p->first;
-    //   Cell_handle c = (Cell*) e_Ifacet.first.first;
+    //   Cell_handle c = e_Ifacet.first.first;
     //   Vertex_handle 
     //     v1 = c->vertex(e_Ifacet.first.second),
     //     v2 = c->vertex(e_Ifacet.first.third);
@@ -1107,7 +1106,7 @@ public:
     remove_border_elt(ordered_key);
 
     //depiler v3 avant de le mettre a jour... pour reperer s'il est sur un bord
-    if (v3->number_of_incident_border() > 0)
+    if (v3->is_on_border())
       dequeue_incidence_request(v3);
 
     if (ordered_key.first == v1)
@@ -1139,7 +1138,7 @@ public:
     int i = (6 - edge_Efacet.second 
 	     - edge_Efacet.first.second
 	     - edge_Efacet.first.third);
-    Cell_handle c = (Cell*) edge_Efacet.first.first;
+    Cell_handle c =  edge_Efacet.first.first;
 
     //   coord_type candidate_alpha =  c->get_smallest_radius(edge_Efacet.second);
     //  coord_type pre_pliure = edge_Efacet.third;
@@ -1199,7 +1198,7 @@ public:
 		// 	      if (test_merge_ear(ordered_el1, result1, v2, candidate_alpha)&&
 		// 		  (result12.second==result1.second))// force a merger
 		// 		{
-		Edge_IFacet edge_Ifacet_2(void_Edge((void*) &(*c), i, edge_Efacet.first.third), 
+		Edge_IFacet edge_Ifacet_2(Edge(c, i, edge_Efacet.first.third), 
 					  edge_Efacet.second);
 		merge_ear(ordered_el1, result1, 
 			  ordered_key, v1, v2, edge_Ifacet_2);
@@ -1219,7 +1218,7 @@ public:
 		// 	      if (test_merge_ear(ordered_el2, result2, v1, candidate_alpha)&&
 		// 		  (result12.second==result2.second))// force a merger
 		// 		{
-		Edge_IFacet edge_Ifacet_1(void_Edge((void*) &(*c), i, edge_Efacet.first.second), 
+		Edge_IFacet edge_Ifacet_1(Edge(c, i, edge_Efacet.first.second), 
 					  edge_Efacet.second);
 		merge_ear(ordered_el2, result2, 
 			  ordered_key, v2, v1, edge_Ifacet_1);
@@ -1247,10 +1246,10 @@ public:
 	      
 		if(c->vertex(i)->is_exterior())
 		  {		  
-		    Edge_IFacet edge_Ifacet_1(void_Edge((void*) &(*c), i, edge_Efacet.first.second), 
+		    Edge_IFacet edge_Ifacet_1(Edge(c, i, edge_Efacet.first.second), 
 					      edge_Efacet.second);
 		  
-		    Edge_IFacet edge_Ifacet_2(void_Edge((void*) &(*c), i, edge_Efacet.first.third), 
+		    Edge_IFacet edge_Ifacet_2(Edge(c, i, edge_Efacet.first.third), 
 					      edge_Efacet.second);
 		    e1 = compute_value(edge_Ifacet_1);
 		    e2 = compute_value(edge_Ifacet_2);
@@ -1288,9 +1287,9 @@ public:
 		    // a ce niveau on peut tester si le recollement se fait en
 		    // maintenant la compatibilite d'orientation des bords (pour
 		    // surface orientable...) ou si elle est brisee...
-		    Edge_IFacet edge_Ifacet_1(void_Edge((void*) &(*c), i, edge_Efacet.first.second), 
+		    Edge_IFacet edge_Ifacet_1(Edge(c, i, edge_Efacet.first.second), 
 					      edge_Efacet.second);
-		    Edge_IFacet edge_Ifacet_2(void_Edge((void*) &(*c), i, edge_Efacet.first.third), 
+		    Edge_IFacet edge_Ifacet_2(Edge(c, i, edge_Efacet.first.third), 
 					      edge_Efacet.second);
 
 		    e1 = compute_value(edge_Ifacet_1);
@@ -1307,13 +1306,13 @@ public:
 		    int ear1_i = (6 - ear1.second 
 				  - ear1.first.second
 				  - ear1.first.third);
-		    Cell_handle ear1_c = (Cell*) ear1.first.first;
+		    Cell_handle ear1_c =  ear1.first.first;
 		    Border_elt result_ear1;
 
 		    int ear2_i = (6 - ear2.second 
 				  - ear2.first.second
 				  - ear2.first.third);
-		    Cell_handle ear2_c = (Cell*) ear2.first.first;
+		    Cell_handle ear2_c =  ear2.first.first;
 		    Border_elt result_ear2;
 
 		    Edge_like ear1_e, ear2_e;
@@ -1523,7 +1522,7 @@ public:
 	  {
 	    Ordered_border_iterator e_it = _ordered_border.begin();
 	    Edge_IFacet mem_Ifacet =  e_it->second->first;
-	    Cell_handle c_tmp = (Cell*) mem_Ifacet.first.first;
+	    Cell_handle c_tmp = mem_Ifacet.first.first;
 	    _ordered_border.erase(e_it);
 	    Vertex_handle v1 = c_tmp->vertex(mem_Ifacet.first.second);
 	    Vertex_handle v2 = c_tmp->vertex(mem_Ifacet.first.third);
@@ -1582,14 +1581,14 @@ public:
 	    else
 	      {
 		Edge_IFacet candidate = e_it->second->second;
-		Cell_handle c_ext = (Cell*) candidate.first.first;
+		Cell_handle c_ext =  candidate.first.first;
 		int i1, i2 , i3;
 		i1 = candidate.first.second;
 		i2 = candidate.first.third;
 		i3 = (6 - i1- i2 - candidate.second);
 
 		Edge_IFacet mem_Ifacet =  e_it->second->first;
-		Cell_handle c_tmp = (Cell*) mem_Ifacet.first.first;
+		Cell_handle c_tmp =  mem_Ifacet.first.first;
 
 		v1 = c_tmp->vertex(mem_Ifacet.first.second);
 		v2 = c_tmp->vertex(mem_Ifacet.first.third);
@@ -1607,7 +1606,7 @@ public:
 		//{
 		// fin de la modif...   
 		Validation_case validate_result = validate(candidate, value);
-		//      Cell_handle ccc = (Cell*) candidate.first.first;
+		//      Cell_handle ccc =  candidate.first.first;
 		if ((validate_result == not_valid)||
 		    (validate_result == not_valid_connecting_case))
 		  { 
@@ -1711,8 +1710,10 @@ public:
 	// compute_value... donc a swapper aussi
 	if (c->is_selected_facet(index))
 	  {
+	    int fn = c->facet_number(index);
 	    c->unselect_facet(index);
 	    neigh->select_facet(n_ind);
+	    neigh->set_facet_number(n_ind, fn);
 	    int i1 = (n_ind+1) & 3;
 	    int i2 = (n_ind+2) & 3;
 	    int i3 = (n_ind+3) & 3;
@@ -1720,7 +1721,7 @@ public:
 
 	    if (is_border_elt(key))
 	      {
-		Edge_IFacet ei_facet(void_Edge((void*) &*neigh, i1, i2), 
+		Edge_IFacet ei_facet(Edge(neigh, i1, i2), 
 				     n_ind);
 		*get_border_IO_elt(key.first, key.second) =
 		  IO_edge_type(ei_facet, ei_facet);
@@ -1728,7 +1729,7 @@ public:
 	    key = Edge_like(neigh->vertex(i1), neigh->vertex(i3));
 	    if (is_border_elt(key))
 	      {
-		Edge_IFacet ei_facet(void_Edge((void*) &*neigh, i1, i3), 
+		Edge_IFacet ei_facet(Edge(neigh, i1, i3), 
 				     n_ind);
 		*get_border_IO_elt(key.first, key.second) =
 		  IO_edge_type(ei_facet, ei_facet);
@@ -1736,7 +1737,7 @@ public:
 	    key = Edge_like(neigh->vertex(i3), neigh->vertex(i2));
 	    if (is_border_elt(key))
 	      {
-		Edge_IFacet ei_facet(void_Edge((void*) &*neigh, i3, i2), 
+		Edge_IFacet ei_facet(Edge(neigh, i3, i2), 
 				     n_ind);
 		*get_border_IO_elt(key.first, key.second) =
 		  IO_edge_type(ei_facet, ei_facet);
@@ -1750,10 +1751,10 @@ public:
   Facet get_next_selected_facet_around_edge(const Edge_IFacet& start)
   {
     Edge_IFacet circ = inc_facet_circ(start);
-    Cell_handle c = (Cell*) start.first.first;
+    Cell_handle c =  start.first.first;
     do
       {
-	Cell_handle ch = (Cell*) circ.first.first;
+	Cell_handle ch =  circ.first.first;
 	int ind = circ.second;
 	Cell_handle neigh = ch->neighbor(ind);
 	int n_ind = neigh->index(ch);
@@ -1763,7 +1764,7 @@ public:
 	  return Facet(neigh, n_ind);
 	circ = inc_facet_circ(circ);
       }
-    while(Cell_handle ((Cell*) circ.first.first) != c);
+    while(circ.first.first != c);
     // si on passe par la, alors y a eu un probleme....
     std::cerr << "+++probleme dans la MAJ avant remove..." << std::endl;
   
@@ -1776,10 +1777,10 @@ public:
   {
     Next_border_elt border_elt =  *(vh->first_incident());
     int border_index = border_elt.second.second;
-    Vertex_handle vh_succ = (Vertex*) border_elt.first;
+    Vertex_handle vh_succ = border_elt.first;
     IO_edge_type io_edge = border_elt.second.first.second;
     Edge_IFacet i_facet = io_edge.first;
-    Cell_handle c = (Cell*) i_facet.first.first;
+    Cell_handle c = i_facet.first.first;
     int i1 = c->index(vh);
     int i2 = c->index(vh_succ);
     int index = i_facet.second;
@@ -1787,9 +1788,9 @@ public:
     Vertex_handle vh_int = c->vertex(i3);
     _ordered_map_erase(border_elt.second.first.first, 
 		       get_border_IO_elt(vh, vh_succ));
-    vh->remove_border_edge((void*) &*vh_succ);
+    vh->remove_border_edge(vh_succ);
     // 1- a virer au cas ou car vh va etre detruit
-    vh_succ->remove_interior_edge((void*) &*vh);
+    vh_succ->remove_interior_edge(vh);
     bool while_cond(true);
     do
       {
@@ -1803,7 +1804,7 @@ public:
 	// 	  vh_succ->re_init();
 	// 	}
 	Facet f32 = 
-	  get_next_selected_facet_around_edge(Edge_IFacet(void_Edge((void*) &*c, i3, i2), 
+	  get_next_selected_facet_around_edge(Edge_IFacet(Edge(c, i3, i2), 
 							  index));
 
 	if (!vh_int->is_on_border())
@@ -1822,25 +1823,25 @@ public:
 	    // 	      }
 	  }
 
-	Edge_IFacet e32(void_Edge((void*) &*f32.first, 
-				  f32.first->index(vh_int),
-				  f32.first->index(vh_succ)), f32.second);
+	Edge_IFacet e32(Edge(f32.first, 
+			     f32.first->index(vh_int),
+			     f32.first->index(vh_succ)), f32.second);
 	Radius_edge_type rad_elt_32(STANDBY_CANDIDATE, IO_edge_type(e32, e32)); 
 	Border_elt result;
 	if (is_ordered_border_elt(Edge_like(vh_int, vh), result))
 	  {
 	    _ordered_map_erase(result.first.first, get_border_IO_elt(vh_int, vh));
-	    vh_int->remove_border_edge((void*) &*vh);
+	    vh_int->remove_border_edge(vh);
 	    // 1- a virer au cas ou car vh va etre detruit
-	    vh_int->remove_interior_edge((void*) &*vh);
+	    vh_int->remove_interior_edge(vh);
 	    while_cond = false;
 	  }
 	// a titre  preventif... on essaye de s'assurer de marquer les aretes
 	// interieures au sens large...
 
 	// 2- a virer a tout pris pour que maintenir le sens de interior edge
-	vh_int->remove_interior_edge((void*) &*vh_succ);
-	vh_succ->remove_interior_edge((void*) &*vh_int);
+	vh_int->remove_interior_edge(vh_succ);
+	vh_succ->remove_interior_edge(vh_int);
       
 	IO_edge_type* p32 = set_border_elt(vh_int, vh_succ, 
 					   Border_elt(rad_elt_32, border_index));
@@ -1850,7 +1851,7 @@ public:
 	if (while_cond)
 	  {
 	    Facet f31 = 
-	      get_next_selected_facet_around_edge(Edge_IFacet(void_Edge((void*) &*c, i3, i1), 
+	      get_next_selected_facet_around_edge(Edge_IFacet(Edge(c, i3, i1), 
 							      index));
 
 	    c = f31.first;
@@ -1867,18 +1868,18 @@ public:
 
   //---------------------------------------------------------------------
 
-  inline bool create_singularity(const Vertex_handle& vh)
+   bool create_singularity(const Vertex_handle& vh)
   {
     // Pour reperer le cas de triangle isole 
     if (vh->is_on_border())
       {
 	// vh sommet 0
 	Next_border_elt border_elt =  *(vh->first_incident());
-	Vertex_handle vh_1 = (Vertex*) border_elt.first;// sommet 1
+	Vertex_handle vh_1 = border_elt.first;// sommet 1
 	border_elt =  *(vh_1->first_incident());
-	Vertex_handle vh_2 = (Vertex*) border_elt.first;// sommet 2
+	Vertex_handle vh_2 = border_elt.first;// sommet 2
 	border_elt =  *(vh_2->first_incident());
-	Vertex_handle vh_3 = (Vertex*) border_elt.first;// sommet 0 ???
+	Vertex_handle vh_3 = border_elt.first;// sommet 0 ???
 	Cell_handle c;
 	int i, j, k;
 	if ((vh_3 == vh)&&(T.is_facet(vh, vh_1, vh_2, c, i ,j ,k)))
@@ -1990,17 +1991,17 @@ public:
 	v_it++)
       {
 	v_it->erase_incidence_request();
-	if ((v_it->number_of_incident_border() > 0)&&
+	if ((v_it->is_on_border())&&
 	    (!v_it->is_post_marked(_postprocessing_counter)))
 	  {
 	    std::list<Vertex_handle> L_v_tmp;
-	    Vertex_handle vprev_it(v_it->handle()), done(vprev_it), vh_it;
+	    Vertex_handle vprev_it(v_it), done(vprev_it), vh_it;
 	    // 	  Vertex_handle vsucc_it;
 	    int v_count(0);
 	    // collect all vertices on the border
 	    do
 	      {		      
-		vh_it = (Vertex*) vprev_it->first_incident()->first;
+		vh_it =  vprev_it->first_incident()->first;
 		// 	      vsucc_it = (Vertex*) vh_it->first_incident()->first;
 		// 	      D_Point p1 = convert()(vprev_it->point());
 		// 	      D_Point p = convert()(vh_it->point());
@@ -2023,8 +2024,8 @@ public:
 	      }
 
 	  } 
-	if (v_it->number_of_incident_border() < 0)
-	  L_v.push_back(v_it->handle());
+	if (v_it->is_exterior())
+	  L_v.push_back(v_it);
       }
 
     unsigned int itmp, L_v_size_mem;
@@ -2065,44 +2066,6 @@ public:
     //   if (_postprocessing_counter < 5)
     //     return true;
     return true;
-  }
-
-
-
-  void
-  fill_holes()
-  {  
-
-    for(Finite_vertices_iterator v_it = T.finite_vertices_begin();
-	v_it != T.finite_vertices_end(); 
-	v_it++) {
-      if (v_it->number_of_incident_border() > 0) {
-	std::list<Vertex_handle> L_v_tmp;
-	Vertex_handle vprev_it(v_it->handle()), done(vprev_it), vh_it;
-	// 	  Vertex_handle vsucc_it;
-	int v_count(0);
-	// collect all vertices on the border
-	do {		      
-	  vh_it = (Vertex*) vprev_it->first_incident()->first;
-	  L_v_tmp.push_back(vh_it);
-	  vprev_it = vh_it;
-	  v_count++;
-	} while((vprev_it != done)&&(v_count < 20));
-	// we stopped either because we did a complete tour, or because
-	// the border was so long that we consider it as too big to close
-	// e.g., if it is a terrain with only one real border at the exterior
-	if (v_count < 20){
-	  std::cout << "Border begin" << std::endl;
-	  for(std::list<Vertex_handle>::iterator it = L_v_tmp.begin();
-	      it != L_v_tmp.end();
-	      it++){
-	    std::cout << (*it)->point() << std::endl;
-	  }
-	  std::cout << "Border end" << std::endl;
-	}
-      }
-    }
-
   }
 
 
