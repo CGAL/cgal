@@ -1,4 +1,9 @@
 //-----------------------------------------------------------------------//
+// Changes in 1.33
+Updated include/CGAL/MSVC_standard_header_fixes.h
+(Added header and added abort, clock and clock_t to namespace std)
+
+//-----------------------------------------------------------------------//
 // Changes in 1.32
 
 Removed configuration files/flags, as decided in ETHZ-99 meeting
