@@ -46,11 +46,11 @@ RSH="rsh"
 if [ -f $HOME/.autocgalrc ]; then
   . $HOME/.autocgalrc
 else
-  if [ -f .autocgalrc ]; then
-    . .autocgalrc
-  else
+#  if [ -f .autocgalrc ]; then
+#    . .autocgalrc
+#  else
     echo "CONFIGURATION FILE .autocgalrc NOT FOUND";
-  fi
+#  fi
 fi
 
 
@@ -410,18 +410,20 @@ run_test()
 
 USE_TARGZ="n"
 USE_TARBZ="n"
+# logfile
+ACTUAL_LOGFILE="${CGAL_ROOT}/`basename ${0}`.log"
+
+cd $CGAL_ROOT
 
 CRITICAL="n"
 if [ "${MYSHELL}" = "must_be_set_in_.autocgalrc" ]; then
-  echo "MYSHELL must be set in .autocgalrc"
+  log ${ACTUAL_LOGFILE} "MYSHELL must be set in .autocgalrc"
   CRITICAL="y"
 fi
 if [ "${CRITICAL}" = "y" ]; then
   exit 1;
 fi
 
-# logfile
-ACTUAL_LOGFILE="${CGAL_ROOT}/`basename ${0}`.log"
 
 if [ -r "LATEST" ]; then
   rm -rf LATEST
@@ -429,12 +431,12 @@ fi
   log ${ACTUAL_LOGFILE} "getting LATEST"
   ${WGET} ${LATEST_LOCATION} >> ${ACTUAL_LOGFILE} 2>&1
 if [ ! -f "LATEST" ]; then
-  echo "COULD NOT DOWNLOAD LATEST!"
+  log ${ACTUAL_LOGFILE} "COULD NOT DOWNLOAD LATEST!"
 fi
 if [ ! -r "RELEASE_NR" ]; then
   touch "RELEASE_NR"
 fi
-  diff LATEST RELEASE_NR > diff.txt
+  cmp LATEST RELEASE_NR > ${ACTUAL_LOGFILE}
   if [ ${?} != 0 ]; then
 #   echo "The diff is different!!"
     for i in `cat LATEST`
@@ -529,7 +531,7 @@ build_cgal
 run_test
 
 # restore settings:
-cd ${ACTUAL_DIR}
+cd ${CGAL_ROOT}
 cp LATEST RELEASE_NR
 
   fi

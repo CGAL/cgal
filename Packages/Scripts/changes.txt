@@ -1,7 +1,11 @@
-11 Mars 2004 Radu Ursu
+12 March 2004 Radu Ursu
+- fixed bug in autotest_cgal ... it changes dir to CGAL_ROOT first.
+- .autocgalrc is not searched in the current_dir at all
+
+11 March 2004 Radu Ursu
 - using explicit binary with FTP 
 
-10 Mars 2004 Radu Ursu
+10 March 2004 Radu Ursu
 - fixed bug in autotest_cgal concerning the location of .autocgalrc 
 
 06 Mars 2004 Radu Ursu
