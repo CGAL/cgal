@@ -1,5 +1,9 @@
 Changes done to the `Min_ellipse_2' package.
 
+Version 3.11 on 17-Jul-2001
+- replaced template parameter 'R' by 'K'
+- renamed concept names
+
 Version 3.10.6 on 04-Apr-2001
 - no changes (renamed 'examples/Min_ellipse' to 'examples/Min_ellipse_2')
 
