@@ -37,6 +37,7 @@ int main(int, char*)
 #include <CGAL/point_generators_2.h>
 
 #include <fstream>
+#include <iomanip>
 
 typedef CGAL::MP_Float				    NT;
 typedef CGAL::Cartesian<NT>                         K;
