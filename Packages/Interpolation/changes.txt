@@ -1,3 +1,6 @@
+8 April 2004 Andreas Fabri
+- changed variable name to get rid of a warning
+
 25 March 2004 Radu Ursu
 - made doc work with the new implementation of the Manual tools
 

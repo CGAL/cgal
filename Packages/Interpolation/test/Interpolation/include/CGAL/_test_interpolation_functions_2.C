@@ -373,12 +373,12 @@ _test_interpolation_functions_2_delaunay( const Triangul &, const
   assert(ci->second == Coord_type(1));
   ci++;
   assert(ci==coords.end());
-  for(int i=0; i<3; i++) {
+  for(int j=0; j<3; j++) {
     assert(test_interpolation(coords.begin(), coords.end(),norm,points[n/2], 
-			      CGAL::Data_access< Point_value_map >(values[i]),
+			      CGAL::Data_access< Point_value_map >(values[j]),
 			      CGAL::Data_access< Point_vector_map >
-			      (gradients[i]), 
-			      Traits(),i, tolerance));
+			      (gradients[j]), 
+			      Traits(),j, tolerance));
   }
   coords.clear();
   
