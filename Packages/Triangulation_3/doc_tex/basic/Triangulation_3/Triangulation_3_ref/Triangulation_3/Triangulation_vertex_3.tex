@@ -47,6 +47,7 @@ The user needs to construct vertices explicitly only when implementing his
 own triangulation algorithms. If he uses the standard ways proposed by 
 \cgal\ to construct a triangulation, he does not need the following
 constructors. 
+\ccThree{Vertex_handle}{v(Point & p, Cell_handle c)()}{}
 
 \ccConstructor{{Triangulation_vertex_3<TriangulationTraits_3,TriangulationDataStructure_3>}();}
 {Introduces a new vertex. The geometric information is initialized by
@@ -62,8 +63,7 @@ to the incident cell of \ccVar\ for equality with \ccc{NULL} will
 answer \ccc{true}.}
 
 \ccConstructor{{Triangulation_vertex_3<TriangulationTraits_3,TriangulationDataStructure_3>}
-(const Point & p,
-                      		Cell_handle c);}
+(const Point & p, Cell_handle c);}
 {Introduces vertex \ccVar, and initializes the geometric information and 
 the handle to the incident cell.}
 

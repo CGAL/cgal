@@ -30,7 +30,7 @@ dimension~1, each cell represents one edge $(0,1)$. (See also
 Section~\ref{TDS3-sec-intro}.) 
 
 \ccTypes
-\ccThree{typedef triple <Cell*, int, int>}{Facet }{}
+\ccThree{typedef TriangulationDataStructure_3::Vertex}{Facet }{}
 \ccThreeToTwo
 The class \ccClassName\ defines the following types.
 
@@ -40,7 +40,7 @@ The class \ccClassName\ defines the following types.
 
 \ccCreation
 \ccCreationVariable{c}  %% choose variable name
-\ccThree{TriangulationDataStructure::Vertex}{v(const Point & p, Cell* c);}{}
+\ccThree{Vertex*}{c.set_vertices());}{}
 
 In order to obtain new cells or destruct unused cells, the user must call the
 \ccc{create_cell()} and \ccc{delete_cell()} methods of the triangulation data

@@ -113,7 +113,8 @@ incident to a given edge. They are bidirectional and non-mutable.
 
 \ccCreation
 \ccCreationVariable{tds}  %% choose variable name
-\ccThree{TriangulationDataStructure_3<Tvb,Tcb>();}{tds.set_number_of_vertices()}{}
+\ccThree{TriangulationDataStructure_3<Tvb,Tcb>();}{tds.set_number}{}
+\ccThreeToTwo
 
 \ccConstructor{TriangulationDataStructure_3();}
 {A default constructor.}
@@ -126,7 +127,7 @@ incident to a given edge. They are bidirectional and non-mutable.
 
 The previous two methods are equivalent.
 
-\ccThree{TriangulationDataStructure_3<Tvb,Tcb>}{tds.set_number_of_vertices()}{}
+\ccThree{Vertex*xx}{tds.insert_in_facet()}{}
 
 \ccMethod{void swap(TriangulationDataStructure_3 & tds1);} 
 {Swaps \ccVar\ and \ccc{tds1}. There is no copy of cells and vertices,
@@ -450,7 +451,7 @@ into the triangulation data structure.}
 \end{ccAdvanced}
 
 \ccHeading{Traversing the triangulation}
-\ccThree{Facet_circulator}{tds.facets_begin()toto}{}
+\ccThree{Facet_circulator}{tds.vertices_begin()()}{}
 
 \ccMethod{Cell_iterator cells_begin() const;}
 {Returns \ccc{cells_end()} when \ccVar.\ccc{dimension()}~$<3$.}
@@ -471,6 +472,8 @@ into the triangulation data structure.}
 {Returns \ccc{vertices_end()} when \ccVar.\ccc{number_of_vertices()}~$<$~1.}
 \ccGlue
 \ccMethod{Vertex_iterator vertices_end() const;}{}
+
+\ccThree{Facet_circulator}{tds.incident_cells}{}
 
 \ccMethod{Cell_circulator incident_cells(const Edge & e) const;}
 {Starts at an arbitrary cell incident to \ccc{e}.

@@ -26,7 +26,7 @@ compulsory when the triangulation data structure is used as a layer
 for the geometric triangulation class. (See Section~\ref{TDS3-sec-design}.)
 
 \ccTypes
-\ccThree{typedef triple <Cell*, int, int>}{Facet }{}
+\ccThree{typedef TriangulationDataStructure_3::Vertex}{Facet }{}
 \ccThreeToTwo
 \ccNestedType{Point}{\textit{Optional for the triangulation data
 structure alone.}} 
@@ -40,7 +40,7 @@ types defined by the triangulation data structure class \ccc{TriangulationDataSt
 
 \ccCreation
 \ccCreationVariable{v}  %% choose variable name
-\ccThree{TriangulationDataStructure::Vertex}{v(const Point & p, Cell* c);}{}
+\ccThree{Vertex*}{v(Point p, Cell* c);}{}
 
 \ccConstructor{Vertex();}
 {Introduces a vertex \ccVar. 
@@ -63,6 +63,7 @@ to \ccc{c}.}
 \ccConstructor{Vertex();}{default constructor.}
 
 \ccOperations
+\ccThree{Vertex*}{v.set_point()}{}
 
 \ccAccessFunctions
 

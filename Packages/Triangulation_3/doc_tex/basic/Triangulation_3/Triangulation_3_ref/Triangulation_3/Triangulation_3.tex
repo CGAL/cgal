@@ -108,7 +108,7 @@ OUTSIDE_AFFINE_HULL};}
 \ccCreation
 \ccCreationVariable{t}  %% choose variable name
 
-\ccThree{Triangulation_3<Traits_3,DataStructure_3>}{Facet }{}
+\ccThree{Triangulation_3<>}{Facet }{}
 
 \ccConstructor{Triangulation_3<TriangulationTraits_3,TriangulationDataStructure_3>
 (const TriangulationTraits_3 & traits );}
@@ -198,6 +198,7 @@ an edge (resp. facet) \ccc{infinite} if it is incident to the infinite vertex.
 \end{ccAdvanced}
 
 \ccHeading{Geometric access functions}
+\ccThree{Tetrahedron}{t.tetrahedron()}{}
 
 \ccMethod{Tetrahedron tetrahedron(const Cell_handle c) const;}
 {Returns the tetrahedron formed by the four vertices of \ccc{c}.
@@ -795,6 +796,7 @@ Cell_handle start, int f) const;}
 
 \ccHeading{Traversal of the incident cells and the adjacent vertices
 of a given vertex} 
+\ccThree{bool}{t.incident_cells()}{}
 
 \ccMethod{void incident_cells(Vertex_handle v, 
 		set<Cell_handle> & cells, Cell_handle c = NULL ) const;}
