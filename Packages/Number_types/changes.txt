@@ -1,3 +1,7 @@
+30 September 2004 Sylvain Pion
+- MP_Float : fix bug in constructor from double.
+- MP_Float : add convertion function to rational types (e.g. Gmpq).
+
 22 September 2004 Sylvain Pion
 - Define CGAL::min/max() for Quotient, since LEDA defines template min/max
   functions that clash with std::min/max through ADL.

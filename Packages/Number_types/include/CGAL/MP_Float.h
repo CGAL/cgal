@@ -214,6 +214,29 @@ public:
     std::swap(exp, m.exp);
   }
 
+  // Converts to a rational type (e.g. Gmpq).
+  template < typename T >
+  T to_rational() const
+  {
+    const unsigned log_limb = 8 * sizeof(MP_Float::limb);
+
+    if (is_zero())
+      return 0;
+
+    MP_Float::const_iterator i;
+    exponent_type exp = min_exp() * log_limb;
+    T res = 0;
+
+    for (i = v.begin(); i != v.end(); i++)
+    {
+      res += CGAL_CLIB_STD::ldexp(static_cast<double>(*i),
+                                  static_cast<int>(exp));
+      exp += log_limb;
+    }
+
+    return res;
+  }
+
   V v;
   exponent_type exp;
 };

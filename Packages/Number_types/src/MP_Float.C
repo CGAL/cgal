@@ -55,7 +55,8 @@ my_rint(double d)
 MP_Float::MP_Float(double d)
   : exp(0)    // (to shut up valgrind)
 {
-    // FIXME : Protection against rounding mode != nearest ?
+    // Protection against rounding mode != nearest, and extended precision.
+    Protect_FPU_rounding<> P(CGAL_FE_TONEAREST);
     if (d == 0)
       return;
 
@@ -78,11 +79,18 @@ MP_Float::MP_Float(double d)
 
     // Then, compute the limbs.
     v.resize(limbs_per_double);
+    double orig = d, sum = 0;
     for (int i = limbs_per_double - 1; i > 0; i--) {
       v[i] = my_rint(d);
       if (d-v[i] >= double(base/2-1)/(base-1))
         v[i]++;
-      d -= v[i];
+      // We used to do simply "d -= v[i];", but when the most significant limb
+      // is 1 and the second is -32768, then it can happen that |d-v[i]|>|d|,
+      // hence a bit of precision can be lost.  Hence the need for sum/orig.
+      sum += v[i];
+      d = orig-sum;
+      sum *= base;
+      orig *= base;
       d *= base;
     }
 
@@ -321,7 +329,7 @@ to_interval_exp(const MP_Float &b)
   double d_exp_1 = CGAL_CLIB_STD::ldexp(1.0, - (int) log_limb);
   double d_exp   = 1.0;
 
-  Protect_FPU_rounding<true> P;
+  Protect_FPU_rounding<> P;
   Interval_nt_advanced d = 0;
 
   exponent_type i;

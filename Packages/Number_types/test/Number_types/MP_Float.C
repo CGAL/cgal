@@ -7,6 +7,9 @@
 #include <CGAL/MP_Float.h>
 #include <CGAL/Random.h>
 #include <CGAL/Quotient.h>
+#ifdef CGAL_USE_GMP
+#  include <CGAL/Gmpq.h>
+#endif
 
 typedef CGAL::MP_Float       MPF;
 typedef CGAL::Quotient<MPF>  QMPF;
@@ -133,15 +136,29 @@ int main(int argc, char **argv)
     double d = CGAL::default_random.get_double();
     int exp = int((CGAL::default_random.get_double()-.5)*1024);
     d = CGAL_CLIB_STD::ldexp(d, exp);
-    // d = 7.34766e-140; // Crash encore sur PC...
-    // d = 1.9696110926449043849e+124;
-    // d = 7.3074228557478900057e+47;
     // std::cout << d << std::endl;
     // std::cout << MPF(d) << std::endl;
     // std::cout << CGAL::to_double(MPF(d)) << std::endl;
     if (CGAL::to_double(MPF(d)) != d)
       std::cerr << "CONVERSION ERROR with double : " << d << std::endl;
-    // MPF z(d);
+  }
+
+  // Test-cases for specific bugs found :
+  {
+    double d = 0.4999974472643795;
+    assert ( d == CGAL_NTS to_double(MPF(d)) );
+  }
+  {
+    double d = 7.3074228557478900057e+47;
+    assert ( d == CGAL_NTS to_double(MPF(d)) );
+  }
+  {
+    double d = 1.9696110926449043849e+124;
+    assert ( d == CGAL_NTS to_double(MPF(d)) );
+  }
+  {
+    double d = 7.34766e-140; // Crashed on PC...
+    assert ( d == CGAL_NTS to_double(MPF(d)) );
   }
 
   MPF a(0);
@@ -214,6 +231,13 @@ int main(int argc, char **argv)
   test_overflow_to_interval();
 
   test_overflow_exponent();
+
+#ifdef CGAL_USE_GMP
+  double dt = -135.9682;
+  MPF mdt = dt;
+  CGAL::Gmpq q = mdt.to_rational<CGAL::Gmpq>();
+  assert(q == CGAL::Gmpq(dt));
+#endif // CGAL_USE_GMP
 
   return 0;
 }
