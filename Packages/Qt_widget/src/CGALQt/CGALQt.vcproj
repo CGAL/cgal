@@ -106,6 +106,9 @@
 				RelativePath="Qt_widget_helpwindow.C">
 			</File>
 			<File
+				RelativePath="Qt_widget_history.C">
+			</File>
+			<File
 				RelativePath="Qt_widget_layer.C">
 				<FileConfiguration
 					Name="Debug|Win32">
@@ -152,15 +155,34 @@
 					Name="Debug|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o Qt_widget_helpwindow.moc $(CGALROOT)/include/CGAL/IO/Qt_widget_helpwindow.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o Qt_widget_helpwindow.moc $(CGALROOT)/include/CGAL/IO/Qt_widget_helpwindow.h
+"
 						Outputs="Qt_widget_helpwindow.moc"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o Qt_widget_helpwindow.moc $(CGALROOT)/include/CGAL/IO/Qt_widget_helpwindow.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o Qt_widget_helpwindow.moc $(CGALROOT)/include/CGAL/IO/Qt_widget_helpwindow.h
+"
 						Outputs="Qt_widget_helpwindow.moc"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\include\CGAL\IO\Qt_widget_history.h">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="$(QTDIR)/bin/moc.exe -o Qt_widget_history.moc $(CGALROOT)/include/CGAL/IO/Qt_widget_history.h"
+						Outputs="Qt_widget_history.moc"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="$(QTDIR)/bin/moc.exe -o Qt_widget_history.moc $(CGALROOT)/include/CGAL/IO/Qt_widget_history.h"
+						Outputs="Qt_widget_history.moc"/>
 				</FileConfiguration>
 			</File>
 			<File
@@ -206,9 +228,6 @@
 			Name="Resource Files"
 			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe">
 		</Filter>
-		<File
-			RelativePath="ReadMe.txt">
-		</File>
 	</Files>
 	<Globals>
 	</Globals>
