@@ -58,10 +58,8 @@ namespace CGAL {
 
       // constructor
       Cell (Node_box* Nb, Node_handle N)
-      {
-	the_box = Nb;
-	the_node = N;
-      }
+      :the_box(Nb), the_node(N)
+      {}
 
       Node_box* 
       box() 
@@ -299,10 +297,12 @@ namespace CGAL {
 	// constructor
 	Iterator_implementation(const Tree& tree, const Query_item& q,const Distance& tr,
 				FT Eps, bool search_nearest)
-	  : reference_count(1), distance(tr), search_nearest_neighbour(search_nearest), query_point(q),
-	    number_of_leaf_nodes_visited(0), number_of_internal_nodes_visited(0), number_of_items_visited(0),
-	    number_of_neighbours_computed(0), PriorityQueue(Priority_higher(search_nearest)),
-	    Item_PriorityQueue(Distance_smaller(search_nearest))
+	  : query_point(q), search_nearest_neighbour(search_nearest), 
+	  PriorityQueue(Priority_higher(search_nearest)),
+	  Item_PriorityQueue(Distance_smaller(search_nearest)),
+	  distance(tr), reference_count(1), number_of_internal_nodes_visited(0), 
+	  number_of_leaf_nodes_visited(0), number_of_items_visited(0),
+	  number_of_neighbours_computed(0)
 	{	  
 	  multiplication_factor= distance.transformed_distance(FT(1)+Eps);
 
@@ -364,14 +364,14 @@ namespace CGAL {
 	//destructor
 	~Iterator_implementation() 
 	{
-	  while (PriorityQueue.size()>0) {
+	  while (! PriorityQueue.empty()) {
 	    Cell_with_distance* The_top=PriorityQueue.top();
 	    PriorityQueue.pop();
 	    delete The_top->first->box();
 	    delete The_top->first;
 	    delete The_top;
 	  }
-	  while (Item_PriorityQueue.size()>0) {
+	  while (! Item_PriorityQueue.empty()) {
 	    Point_with_transformed_distance* The_top=Item_PriorityQueue.top();
 	    Item_PriorityQueue.pop();
 	    delete The_top;
