@@ -86,7 +86,7 @@ typedef CGAL::Triangulation_default_data_structure_2<Gt,Vb,Fb> Tds;
 typedef CGAL::Triangulation_2<Gt,Tds>  Triangulation;
 //typedef CGAL::Delaunay_triangulation_2<Gt,Tds>  Delaunay_triangulation_2;
 
-typedef Gt::Point_2              Point;
+typedef Gt::Point_2          Point;
 typedef Triangulation::Face  Face;
 typedef Triangulation::Vertex Vertex;
 typedef Triangulation::Face_handle  Face_handle;
