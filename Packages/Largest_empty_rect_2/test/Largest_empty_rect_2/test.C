@@ -168,12 +168,12 @@ int main(int argc,char *argv[])
             << "," << bb.max().y() << ")\n";
 
   // test quadruple
-  /* quadruple<Largest_empty_iso_rectangle_2<T>::Point,
-          Largest_empty_iso_rectangle_2<T>::Point,
-          Largest_empty_iso_rectangle_2<T>::Point,
-          Largest_empty_iso_rectangle_2<T>::Point> > q = 
-    empty_rectangle1.get_left_bottom_right_top();
-  cerr << q.first() ...*/
+ CGAL::Quadruple<Largest_empty_rect::Point,
+                 Largest_empty_rect::Point,
+                 Largest_empty_rect::Point,
+                 Largest_empty_rect::Point>  q = 
+   empty_rectangle1.get_left_bottom_right_top();
+ std::cerr << q.first << q.second << q.third << q.fourth << std::endl;
   // complete
 
   return(0);
