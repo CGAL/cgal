@@ -1,3 +1,6 @@
+4.125 (1 Dec 2003)
+- Quotient<NT> now supports sqrt() iff NT supports it.
+
 4.124 (28 Nov 2003)
 - SunPro 5.3 workaround.
 

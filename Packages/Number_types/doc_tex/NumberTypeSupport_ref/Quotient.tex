@@ -82,8 +82,9 @@ on number types.
 \ccGlue
 \ccFunction{bool  is_finite(const Quotient<NT>& q);}
        {returns true, if numerator and denominator are finite.}
-
-%\ccFunction{io_Operator  io_tag(const Gmpz& g);}
-%       {}
+\ccGlue
+\ccFunction{Quotient<NT>  sqrt(const Quotient<NT>& q);}
+       {returns the square root of \ccc{q}.  This is supported if and only if
+        \ccc{NT} supports the square root as well.}
 
 \end{ccRefClass} 

@@ -20,6 +20,7 @@
 // $Name$
 //
 // Author(s)     : Stefan Schirra, Sylvain Pion
+
 // The template class Quotient<NT> is based on the LEDA class
 // leda_rational written by Stefan Naeher and Christian Uhrig.
 // It is basically a templated version with restricted functionality
@@ -63,7 +64,7 @@ class Quotient
   typedef NT_        NT;
   typedef Tag_false  Has_gcd;
   typedef Tag_true   Has_division;
-  typedef Tag_false  Has_sqrt;
+  typedef typename Number_type_traits<NT_>::Has_sqrt  Has_sqrt;
 
   Quotient() : num(0), den(1) {}
 
@@ -97,6 +98,15 @@ class Quotient
   NT   den;
 };
 
+
+template <class NT>
+Quotient<NT>
+sqrt(const Quotient<NT> &q)
+{
+    CGAL_precondition(q > 0);
+    return Quotient<NT>(CGAL_NTS sqrt(q.numerator()*q.denominator()),
+	                q.denominator());
+}
 
 template <class NT>
 CGAL_KERNEL_MEDIUM_INLINE
