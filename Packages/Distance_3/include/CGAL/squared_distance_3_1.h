@@ -330,22 +330,22 @@ squared_distance_parallel(
 {
 
   typedef typename K::Vector_3 Vector_3;
-    bool same_direction;
-    const Vector_3 &dir1 = seg.direction().vector();
-    const Vector_3 &dir2 = ray.direction().vector();
-    if (CGAL_NTS abs(dir1.hx()) > CGAL_NTS abs(dir1.hy())) {
-        same_direction = (CGAL_NTS sign(dir1.hx()) == CGAL_NTS sign(dir2.hx()));
-    } else {
-        same_direction = (CGAL_NTS sign(dir1.hy()) == CGAL_NTS sign(dir2.hy()));
-    }
-    if (same_direction) {
-        if (!is_acute_angle(seg.start(), seg.end(), ray.start(), k))
-            return squared_distance(seg.end(), ray.start(), k);
-    } else {
-        if (!is_acute_angle(seg.end(), seg.start(), ray.start(), k))
-            return squared_distance(seg.start(), ray.start(), k);
-    }
-    return squared_distance(ray.start(), seg.supporting_line(), k);
+  bool same_direction;
+  const Vector_3 &dir1 = seg.direction().vector();
+  const Vector_3 &dir2 = ray.direction().vector();
+  if (CGAL_NTS abs(dir1.hx()) > CGAL_NTS abs(dir1.hy())) {
+    same_direction = (CGAL_NTS sign(dir1.hx()) == CGAL_NTS sign(dir2.hx()));
+  } else {
+    same_direction = (CGAL_NTS sign(dir1.hy()) == CGAL_NTS sign(dir2.hy()));
+  }
+  if (same_direction) {
+    if (!is_acute_angle(seg.start(), seg.end(), ray.start(), k))
+      return squared_distance(seg.end(), ray.start(), k);
+  } else {
+    if (!is_acute_angle(seg.end(), seg.start(), ray.start(), k))
+      return squared_distance(seg.start(), ray.start(), k);
+  }
+  return squared_distance(ray.start(), seg.supporting_line(), k);
 }
 
 
@@ -531,27 +531,27 @@ ray_ray_squared_distance_parallel(
     const typename CGAL_WRAP(K)::Vector_3 &s1_min_s2,
     const K& k)
 {
-    if (!is_acute_angle(ray2dir, s1_min_s2, k)) {
-        bool same_direction;
-        if (CGAL_NTS abs(ray1dir.hx()) > CGAL_NTS abs(ray1dir.hy())) {
-            if (CGAL_NTS abs(ray1dir.hx()) > CGAL_NTS abs(ray1dir.hz()))
-                same_direction =
-                   (CGAL_NTS sign(ray1dir.hx()) == CGAL_NTS sign(ray2dir.hx()));
-            else
-                same_direction =
-                   (CGAL_NTS sign(ray1dir.hz()) == CGAL_NTS sign(ray2dir.hz()));
-        } else {
-            if (CGAL_NTS abs(ray1dir.hy()) > CGAL_NTS abs(ray1dir.hz()))
-                same_direction =
-                   (CGAL_NTS sign(ray1dir.hy()) == CGAL_NTS sign(ray2dir.hy()));
-            else
-                same_direction =
-                   (CGAL_NTS sign(ray1dir.hz()) == CGAL_NTS sign(ray2dir.hz()));
-        }
-        if (!same_direction)
-            return (typename K::FT)(s1_min_s2*s1_min_s2);
+  if (!is_acute_angle(ray2dir, s1_min_s2, k)) {
+    bool same_direction;
+    if (CGAL_NTS abs(ray1dir.hx()) > CGAL_NTS abs(ray1dir.hy())) {
+      if (CGAL_NTS abs(ray1dir.hx()) > CGAL_NTS abs(ray1dir.hz()))
+	same_direction =
+	  (CGAL_NTS sign(ray1dir.hx()) == CGAL_NTS sign(ray2dir.hx()));
+      else
+	same_direction =
+	  (CGAL_NTS sign(ray1dir.hz()) == CGAL_NTS sign(ray2dir.hz()));
+    } else {
+      if (CGAL_NTS abs(ray1dir.hy()) > CGAL_NTS abs(ray1dir.hz()))
+	same_direction =
+	  (CGAL_NTS sign(ray1dir.hy()) == CGAL_NTS sign(ray2dir.hy()));
+      else
+	same_direction =
+	  (CGAL_NTS sign(ray1dir.hz()) == CGAL_NTS sign(ray2dir.hz()));
     }
-    return squared_distance_to_line(ray1dir, s1_min_s2, k);
+    if (!same_direction)
+      return (typename K::FT)(s1_min_s2*s1_min_s2);
+  }
+  return squared_distance_to_line(ray1dir, s1_min_s2, k);
 }
 
 
@@ -862,8 +862,8 @@ ray_ray_squared_distance_parallel(
     const Vector_3<K> &ray2dir,
     const Vector_3<K> &s1_min_s2)
 {
- 
-  return CGALi::ray_ray_squared_distance_parallel(ray1dir, ray2dir, s1_min_s2, K());
+  return CGALi::ray_ray_squared_distance_parallel(ray1dir, ray2dir, 
+						  s1_min_s2, K());
 }
 
 template <class K>
