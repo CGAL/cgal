@@ -78,6 +78,7 @@ class Nef_polyhedron_3_rep : public Ref_counted
   typedef CGAL::SNC_constructor<SNC_structure>         SNC_constructor;
   typedef CGAL::SNC_ray_shoter<SNC_structure>          SNC_ray_shoter;
   typedef CGAL::SNC_io_parser<SNC_structure>           SNC_io_parser;
+
 #ifdef CGAL_NEF3_VISUALIZOR
   typedef CGAL::SNC_visualizor_OGL<SNC_structure>      SNC_visualizor;
 #endif // CGAL_NEF3_VISUALIZOR
@@ -86,6 +87,7 @@ class Nef_polyhedron_3_rep : public Ref_counted
   typedef CGAL::SNC_SM_overlayer<SNC_structure>        SM_overlayer;
   typedef CGAL::SNC_SM_point_locator<SNC_structure>    SM_point_locator;
   typedef CGAL::SNC_SM_io_parser<SNC_structure>        SM_io_parser;
+
 #ifdef CGAL_NEF3_SM_VISUALIZOR
   typedef CGAL::SNC_SM_visualizor<SNC_structure>       SM_visualizor;
 #endif // CGAL_NEF3_SM_VISUALIZOR
@@ -143,6 +145,7 @@ protected:
   typedef typename Nef_rep::SNC_constructor     SNC_constructor;
   typedef typename Nef_rep::SNC_ray_shoter      SNC_ray_shoter;
   typedef typename Nef_rep::SNC_io_parser       SNC_io_parser;
+
 #ifdef CGAL_NEF3_VISUALIZOR
   typedef typename Nef_rep::SNC_visualizor      SNC_visualizor;
 #endif // CGAL_NEF3_VISUALIZOR
@@ -214,6 +217,11 @@ protected:
   typedef typename SM_decorator::SFace_const_iterator     
                                                    SFace_const_iterator;
 
+  typedef typename SNC_structure::SHalfedge_around_svertex_circulator
+    SHalfedge_around_svertex_circulator;
+  typedef typename SNC_structure::Halffacet_cycle_iterator
+    Halffacet_cycle_iterator;
+
   typedef typename SNC_structure::Sphere_point     Sphere_point;
   typedef typename SNC_structure::Sphere_segment   Sphere_segment;
   typedef typename SNC_structure::Sphere_circle    Sphere_circle;
@@ -281,6 +289,60 @@ public:
   }
   
   void dump() { SNC_io_parser::dump( snc()); }
+
+
+  bool is_convertable_to_Polyhedron() {
+
+    Halfedge_iterator e;
+    CGAL_nef3_forall_edges(e,snc())
+      if(!is_edge_2manifold(e))
+	return false;
+
+    Vertex_iterator v;
+    CGAL_nef3_forall_vertices(v,snc())
+      if(!is_vertex_2manifold(v))
+	return false;
+
+    Halffacet_iterator f;
+    CGAL_nef3_forall_halffacets(f,snc())
+      if(is_hole_in_facet(f))
+	return false;
+
+    return true;
+  }
+  
+  bool is_edge_2manifold(const Halfedge_handle& e) {
+ 
+    SM_decorator SD;
+    SHalfedge_around_svertex_circulator c(SD.first_out_edge(e));
+    
+    if(circulator_size(c) != 2)
+      return false;
+
+    return true;
+  }
+ 
+  bool is_vertex_2manifold(const Vertex_handle& v) {
+      
+    if (++(v->sfaces_begin()) != v->sfaces_last())
+      return false;
+
+    return true;
+  }
+
+  bool is_hole_in_facet(const Halffacet_handle& f) {
+    
+    bool found_first = false;
+    Halffacet_cycle_iterator it; 
+    CGAL_nef3_forall_facet_cycles_of(it,f)
+      if ( it.is_shalfedge() ) 
+	if (found_first)
+	  return true;
+	else
+	  found_first = true;
+   
+    return false;
+  }
 
   void visualize() { 
 #ifdef CGAL_NEF3_VISUALIZOR
