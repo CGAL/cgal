@@ -45,7 +45,7 @@ different set of stencils. A PQQ scheme needs
 facet-, edge- and vertex-stencils whereas a DQQ scheme 
 only need the corner-stencils (Figure \ref{fig:RefMap}).
 
-\noindent\textbf{Policy}.
+\noindent\textbf{Geometry Policies}.
 Inside a policy, applying stencil is simplified as 
 the mesh traversal of only a 1-ring neighborhood. 
 Following example shows the policy of facet-stencil 
@@ -70,7 +70,7 @@ geometry, i.e. Points and Vectors computation, is used.
 Though for a specialized kernel, special computation may be 
 applied in user-defined policies.
  
-\noindent\textbf{Host: Euler operations}.
+\noindent\textbf{The refinement host: Euler operations}.
 Implementing a topology refinement is a rather complex job. One
 approach is to encode the refinement into \emph{a sequence of Euler
 operations}. For Catmull-Clark subdivision, the refinement is encoded
@@ -102,13 +102,15 @@ is maintained to match the the stencil traversal, i.e.\
 the storage order of the point buffer. It assures 
 the stencil correspondence of the refinement.
 
-\noindent\textbf{Host: modifier callback mechanism}.
+\noindent\textbf{The refinement host: modifier callback mechanism}.
 Most primal refinement schemes can be translated into a sequence of
 Euler operations. Though dual schemes, e.g.\ Doo-Sabin subdivision,
 have no simple translation of Euler operations. A sequence
 of Euler operations for a DQQ scheme consists of two times 
 of the midedge refinement \cite{Peters:1997:SSS} and 
-result an inefficient implementation.
+result an inefficient implementation. This multipass 
+refinement scheme, called subdivision operator factorization, 
+is proposed in \cite{Peter:2003:CPDSS}.
 To support such schemes efficiently, we use the modifier 
 callback mechanism of \cgalpoly\ to rebuild the mesh
 connectivity. In addition to the points buffer, we
@@ -135,10 +137,31 @@ pb.begin_surface(num_point, num_facet); {
 pb.end_surface();
 \end{lstlisting}
 
+
+\begin{figure}
+  \centering
+  \epsfig{file=figs/plane0.eps, width=3.5cm}\\
+  \epsfig{file=figs/planeCC1.eps, width=3.5cm}
+  \vspace{0.3cm}
+  \epsfig{file=figs/planeDS1.eps, width=3.5cm}\\
+  \epsfig{file=figs/planeCC2.eps, width=3.5cm}
+  \vspace{0.3cm}
+  \epsfig{file=figs/planeDS2.eps, width=3.5cm}\\
+  \epsfig{file=figs/planeCC.eps, width=3.5cm}
+  \vspace{0.3cm}
+  \epsfig{file=figs/planeDS.eps, width=3.5cm}
+  \caption{ With the input plohedron (first raw), 
+  the subdivision sequence of the 
+  the Catmull-Clark subdivision (\IL) and
+  the Doo-Sabin subdiviison (\IR).}
+  \label{fig:SubExample}
+\end{figure}
+
 Our subdivision solution, decoupling the geometry rules from the
-refinement, grants users the flexible control of the stencil.
-Variants of the subdivisions can be devised by simply replacing
-the policies. As the solution is not restricted by the 
+refinement, grants users flexible control of the stencils.
+Variants of the subdivisions can be devised by simply mixing
+and matching the refinement host and geometry policies. As 
+our solution is not restricted by the 
 mesh configurations (in contrast to the quad-tree or patch-based 
 implementation), subdivision pipeline is easily supported
 as a composite function like
@@ -151,8 +174,11 @@ void MySubdivision(Polyhedron& p) {
 
 More importantly, our solution accepts a user-specialized 
 polyhedron. No special flag or attribute is required 
-to assist the \tr . This generality make our solution naturally fit 
-in a modeling pipeline or a multipass modeling environment. 
+to assist the \tr . This generality make our solution 
+naturally fit in a modeling pipeline or a multipass modeling 
+environment. Though in some application, efficiency is more
+important than flexibility, a tight-coupled implementation
+of $\sqrt{3}$ is introduced in next section.
 
 %TODO: since the writing memory is not overlapped, multi-threaded
 %supporting is easily done.
