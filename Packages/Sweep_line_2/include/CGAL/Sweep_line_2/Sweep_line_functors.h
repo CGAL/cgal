@@ -21,6 +21,7 @@
 #define CGAL_SWEEP_LINE_FUNCTORS_H
 
 #include <CGAL/assertions.h>
+#include <CGAL/Sweep_line_2/Sweep_line_traits.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -37,7 +38,7 @@ public:
     return (m_traits->compare_xy(*p1,*p2) == SMALLER);
   }
 
-         bool operator()(const Point& p1,const Point& p2)const  
+  bool operator()(const Point& p1,const Point& p2) const  
   { 
     return (m_traits->compare_xy(p1,p2) == SMALLER);
   }

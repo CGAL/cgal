@@ -19,12 +19,164 @@
 #ifndef CGAL_SWEEP_2_H
 #define CGAL_SWEEP_2_H
 
-#include <string>
 #include <CGAL/Sweep_line_2/Sweep_line_2_impl.h>
 #include <CGAL/Sweep_line_2/Sweep_line_event.h>
 #include <CGAL/Sweep_line_2/Sweep_line_subcurve.h>
+#include <CGAL/Sweep_line_2/Sweep_line_points_notification.h>
+#include <CGAL/Sweep_line_2/Sweep_line_subcurves_notification.h>
+#include <CGAL/Sweep_line_2/Sweep_line_do_curves_x_notofication.h>
+
+
+
+
 
 CGAL_BEGIN_NAMESPACE
+
+
+ /*!
+  *  Given a range of curves, this function returns a list of points 
+  *  that are the intersection points of the curves.
+  *  The intersections are calculated using the sweep algorithm.
+  *  \param begin the input iterator that points to the first curve 
+  *                   in the range.
+  *  \param end the input past-the-end iterator of the range.
+  *  \param points an iterator to the first point in the range
+  *                   of points created by intersecting the input curves.
+  *  \param includeEndPoints if true, the end points of the curves are 
+  *                   reported as intersection points. Defaults to true.
+  */
+template <class Traits, class CurveInputIterator, class OutputIterator>
+OutputIterator get_intersection_points(CurveInputIterator curves_begin,
+                                       CurveInputIterator curves_end,
+                                       OutputIterator points,
+                                       bool endpoints = true,
+                                       Traits traits )
+{
+  typedef Sweep_line_points_notification<Traits,OutputIterator> Visitor;
+  Visitor notif(points, endpoints);
+  
+  typedef Sweep_line_subcurve<Traits,
+                              Sweep_line_points_notification<Traits,OutputIterator>
+                              >                         Subcurve;
+  
+  typedef Sweep_line_event<Traits, Subcurve, Visitor>            Event;
+  typedef Sweep_line_2_impl< Traits,
+                             Event,
+                             Subcurve,
+                             Sweep_line_points_notification<Traits,OutputIterator>,
+                             CGAL_ALLOCATOR(int) > Sweep_line ;
+  Sweep_line sweep_object(&traits, &notif);
+  sweep_object.init(curves_begin, curves_end);
+  sweep_object.sweep();
+
+  return notif.get_output_iterator();
+}
+
+
+
+
+
+ /*!
+  *  Given a container of curves, this function returns a list of curves
+  *  that are created by intersecting the input curves.
+  *  \param begin the input iterator that points to the first curve 
+  *                      in the range.
+  *  \param end the input past-the-end iterator of the range.
+  *  \param subcurves an iterator to the first curve in the range
+  *                   of curves created by intersecting the input curves.
+  *  \param overlapping indicates whether overlapping curves should be 
+  *                   reported once or multiple times. If false, the 
+  *                   overlapping curves are reported once only.
+  */
+template <class Traits, class CurveInputIterator, class OutputIterator>
+OutputIterator get_subcurves(CurveInputIterator curves_begin,
+                             CurveInputIterator curves_end,
+                             OutputIterator subcurves,
+                             bool overlapping = false,
+                             Traits traits = Traits())
+{
+  typedef Sweep_line_subcurves_notification<Traits, OutputIterator>    Visitor;
+  Visitor notif(subcurves, overlapping);
+
+
+  typedef Sweep_line_subcurve<Traits,
+                              Sweep_line_subcurves_notification<Traits,OutputIterator>
+                              >                         Subcurve;
+  
+  typedef Sweep_line_event<Traits, Subcurve, Visitor>            Event;
+  typedef Sweep_line_2_impl< Traits,
+                             Event,
+                             Subcurve,
+                             Sweep_line_subcurves_notification<Traits,OutputIterator>,
+                             CGAL_ALLOCATOR(int) > Sweep_line ;
+
+  Sweep_line sweep_object(&traits, &notif);
+  sweep_object.init(curves_begin, curves_end);
+  sweep_object.sweep();
+  return notif.get_output_iterator();
+}
+
+
+
+
+                                                                  
+
+
+
+/*!
+  *  Given a range of curves, this function returns an iterator 
+  *  to the beginning of a range that contains the list of curves 
+  *  for each intersection point between any two curves in the 
+  *  specified range.
+  *  The intersections are calculated using the sweep algorithm.
+  *  \param begin the input iterator that points to the first curve 
+  *                      in the range.
+  *  \param end the input past-the-end iterator of the range.
+  *  \param intersecting_curves an iterator to the output
+  *  \param endpoints if true, the end points of the curves are reported
+  *                   as intersection points. Defaults to true.
+  */
+template <class Traits, class CurveInputIterator, class OutputIterator>
+OutputIterator get_intersection_curves(CurveInputIterator curves_begin,
+                                       CurveInputIterator curves_end,
+                                       OutputIterator intersecting_curves,
+                                       bool endpoints = true,
+                                       Traits traits = Traits())
+{
+
+  //TODO: implement !!!
+  return intersecting_curves;
+}
+
+
+template <class Traits, class CurveInputIterator>
+bool do_curves_intersect(CurveInputIterator curves_begin,
+                         CurveInputIterator curves_end,
+                         Traits traits = Traits())
+{
+  typedef Sweep_line_do_curves_x_notification<Traits>  Visitor;
+  Visitor notif;
+
+  typedef Sweep_line_subcurve<Traits,
+                              Sweep_line_do_curves_x_notification<Traits>
+                              >                         Subcurve;
+  
+  typedef Sweep_line_event<Traits, Subcurve, Visitor>            Event;
+  typedef Sweep_line_2_impl< Traits,
+                             Event,
+                             Subcurve,
+                             Sweep_line_do_curves_x_notification<Traits>,
+                             CGAL_ALLOCATOR(int) > Sweep_line ;
+  
+  Sweep_line sweep_object(&traits, &notif);
+  sweep_object.init(curves_begin, curves_end);
+  sweep_object.sweep();
+  return notif.found_x();
+}
+
+
+
+
 
 /*!
   @class  Sweep_line_2
@@ -50,25 +202,21 @@ CGAL_BEGIN_NAMESPACE
 
 */
 
+
 template <class CurveInputIterator,  class SweepLineTraits_2>
-class Sweep_line_2 : public Sweep_line_2_impl<
-  CurveInputIterator, 
-  SweepLineTraits_2, 
-  Sweep_line_event<SweepLineTraits_2, Sweep_line_subcurve<SweepLineTraits_2> >,
-  Sweep_line_subcurve<SweepLineTraits_2> >
+class Sweep_line_2 
 {
 
 public:
-  typedef SweepLineTraits_2 Traits;
-  typedef Sweep_line_2_impl<
-    CurveInputIterator, 
-    SweepLineTraits_2, 
-    Sweep_line_event<Traits, Sweep_line_subcurve<Traits> >,
-    Sweep_line_subcurve<Traits> > Base;
 
-  Sweep_line_2() : Base() {}
-  Sweep_line_2(Traits *t) : Base(t) {}
+  typedef SweepLineTraits_2 Traits;
+ 
+  Sweep_line_2() {}
+
+  Sweep_line_2(Traits *t) {}
+
   virtual ~Sweep_line_2() {}
+ 
 
   /*!
    *  Given a container of curves, this function returns a list of curves
@@ -82,11 +230,11 @@ public:
    *                   reported once or multiple times. If false, the 
    *                   overlapping curves are reported once only.
    */
-  template <class OutpoutIterator>
+  template <class OutputIterator>
   void  get_subcurves(CurveInputIterator begin, CurveInputIterator end, 
-		      OutpoutIterator subcurves, bool overlapping = false)
+		      OutputIterator subcurves, bool overlapping = false)
   { 
-    Base::get_subcurves(begin, end, subcurves, overlapping);
+    CGAL::get_subcurves(begin, end, subcurves, overlapping, Traits());
   }
 
   /*!
@@ -101,13 +249,13 @@ public:
    *  \param includeEndPoints if true, the end points of the curves are 
    *                   reported as intersection points. Defaults to true.
    */
-  template <class OutpoutIterator>
+  template <class OutputIterator>
   void  get_intersection_points(CurveInputIterator begin, 
                                 CurveInputIterator end, 
-                                OutpoutIterator points,
+                                OutputIterator points,
                                 bool includeEndPoints = true)
   { 
-    Base::get_intersection_points(begin, end, points, includeEndPoints);
+    CGAL::get_intersection_points(begin,end,points,includeEndPoints, Traits());
   }
 
  /*!
@@ -129,7 +277,12 @@ public:
 				OutputIterator intersecting_curves,
 				bool endpoints = true)
   { 
-    Base::get_intersecting_curves(begin, end, intersecting_curves, endpoints);
+    CGAL::get_intersecting_curves(begin, end, intersecting_curves, endpoints,Traits());
+  }
+
+  bool do_curves_intersect(CurveInputIterator begin, CurveInputIterator end)
+  {
+    return CGAL::do_curves_intersect(begin, end, Traits());
   }
 
 };

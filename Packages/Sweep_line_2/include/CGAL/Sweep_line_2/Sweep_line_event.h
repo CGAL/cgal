@@ -23,6 +23,7 @@
 
 #include <CGAL/Sweep_line_2/Sweep_line_functors.h>
 #include <CGAL/Sweep_line_2/Sweep_line_traits.h>
+#include <CGAL/Sweep_line_2/Sweep_line_subcurve.h>
 #include <list>
 #include <set>
 
@@ -45,26 +46,31 @@ CGAL_BEGIN_NAMESPACE
  * The class mostly exists to store information and does not have any 
  * significant functionality otherwise.
  * 
- * TODO - implement this class with a set to hold the left and right curves
  */
 
 
 
-template<class SweepLineTraits_2, class CurveWrap>
+template<class SweepLineTraits_2, class CurveWrap, class SweepNotif>
 class Sweep_line_event
 {
 public:
-  typedef SweepLineTraits_2 Traits;
-  typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
-  typedef typename Traits::Point_2 Point_2;
+  typedef SweepLineTraits_2                                 Traits;
+  typedef typename Traits::X_monotone_curve_2               X_monotone_curve_2;
+  typedef typename Traits::Point_2                          Point_2;
 
-  typedef CurveWrap SubCurve;
-  typedef std::list<SubCurve *> SubcurveContainer; //TODO - change it to SET (faster?)
-  typedef typename SubcurveContainer::iterator SubCurveIter;
+  typedef CurveWrap                                         SubCurve;
+  typedef std::list<SubCurve *> SubcurveContainer; 
+  typedef typename SubcurveContainer::iterator              SubCurveIter;
 
-  typedef Status_line_curve_less_functor<Traits, SubCurve> StatusLineCurveLess;
-  typedef std::set<SubCurve*, StatusLineCurveLess> StatusLine;
-  typedef typename StatusLine::iterator StatusLineIter;
+  typedef Status_line_curve_less_functor<Traits, SubCurve>  StatusLineCurveLess;
+  typedef std::set<SubCurve*, StatusLineCurveLess>          StatusLine;
+  typedef typename StatusLine::iterator                     StatusLineIter;
+
+
+  typedef Sweep_line_subcurve<Traits, SweepNotif>                    BaseSubCurve;
+  typedef Sweep_line_event<Traits, BaseSubCurve, SweepNotif>          BaseEvent; 
+
+  typedef std::pair<bool, SubCurveIter>                     Pair;
 
 
 
@@ -74,8 +80,7 @@ public:
   Sweep_line_event(const Point_2 &point) :
     m_point(point),
     m_isInitialized(false),
-    m_isInternalIntersectionPoint(false),
-    m_containsOverlap(false)
+    m_isInternalIntersectionPoint(false)
   {}
 
 
@@ -84,36 +89,18 @@ public:
     m_point = point;
     m_isInitialized = false;
     m_isInternalIntersectionPoint = false;
-    m_containsOverlap = false;
   }
 
 
-  /*! Destructor. Deletes the lists of curves, without deleting the 
-      curves themselves. 
-  */
+  /*! Destructor */
   ~Sweep_line_event() 
   {}
 
 
   
-  /*! Adds a new curve that is defined to the left of the event point.
-   *  The insertion is performed so that the curves remain sorted by their
-   *  Y values to the left of the event.                             <br>
-   *  If the curve is already in the list of curves, it is removed and 
-   *  re-inserted. This way the curves remain sorted.
-   *
-   *  @param curve  a pointer to the curve.
-   *  @pram ref a reference point to perform the compare by
-   *  @param isInitStage true when thie method is called at the 
-   *  initialization stage (in which case some extra tests are performed).
-   *
-   * TODO - check to see in which cases the curve is re-inserted with 
-   *        a different ordering. Probably in case of conics.
-   */
-  void add_curve_to_left(SubCurve *curve)
-  {
-   
 
+  SubCurveIter add_curve_to_left(SubCurve *curve)
+  {
     //insert the curve at the right place...
     if (m_leftCurves.empty())
     {
@@ -123,7 +110,7 @@ public:
         m_isInitialized = true;
         m_rightmostPointToLeft = curve->get_left_end();
       }
-      return;
+      return m_leftCurves.end();
     }
 
     //update_rightmost_point(ref) if curve is not vertical
@@ -148,9 +135,7 @@ public:
       {
         if ( (*iter) ==  curve)
         {
-               /* m_leftCurves.erase(iter);
-                break;*/
-          return;
+          return ++iter;
         }
         ++iter;
       }
@@ -171,20 +156,22 @@ public:
                                              (*iter)->get_curve(),
                                               m_rightmostPointToLeft);
         if (res == EQUAL)
+        {
           res = traits()->curves_compare_y_at_x_right(cv, 
                                                       (*iter)->get_curve(),
                                                       m_rightmostPointToLeft);
+        }
         if ( res != LARGER )
           break;
         ++iter;
       }
     
       while ( iter != m_leftCurves.end() &&
-              res == EQUAL &&
-              curve > (*iter) )
+              res == EQUAL )
     
       {
-        m_containsOverlap = true;
+        if((*iter)->is_parent(curve))
+          return ++iter; 
         ++iter;
         if ( iter == m_leftCurves.end())
           break;
@@ -194,8 +181,9 @@ public:
                                               m_rightmostPointToLeft);
       }
     
-    // insert the curve. If the curve is already in the list, it is not added
+      // insert the curve. If the curve is already in the list, it is not added
       m_leftCurves.insert(iter, curve);
+      return iter;
       }
       else // the curve is vertical  
       {
@@ -213,30 +201,36 @@ public:
         }
         iter = m_leftCurves.begin();
         while ( iter != m_leftCurves.end() &&
-                traits()->curve_is_vertical((*iter)->get_curve()) &&
-                curve > (*iter))
+                traits()->curve_is_vertical((*iter)->get_curve()))
         {
-          m_containsOverlap = true;
+          if((*iter)->is_parent(curve))
+            return ++iter;
           ++iter;
           if ( iter == m_leftCurves.end())
             break;
         }
-         m_leftCurves.insert(iter, curve);
+        m_leftCurves.insert(iter, curve);
+        return iter;
       }
     }
 
+    void add_curve_to_left(SubCurveIter pos, SubCurve *curve)
+    {
+      m_leftCurves.insert(pos, curve);
+    }
 
-  /*! Adds a new curve that is defined to the right of the event point.
-   *  The insertion is performed so that the curves remain sorted by their Y 
-   *  values to the right of the event.
-   *  @param curve  a pointer to the curve.
-   */
-  bool add_curve_to_right(SubCurve *curve) 
+    void push_back_curve_to_left(SubCurve *curve)
+    {
+      m_leftCurves.push_back(curve);
+    }
+
+
+
+  std::pair<bool, SubCurveIter>  add_curve_to_right(SubCurve *curve) 
   {
-    
     if (m_rightCurves.empty()) {
       m_rightCurves.push_back(curve);
-      return true;
+      return Pair(false, m_rightCurves.begin());
     }
 
 
@@ -244,7 +238,7 @@ public:
     while ( iter != m_rightCurves.end() ) 
     {
       if ( (*iter) ==  curve)
-         return false;
+        return Pair(false, m_rightCurves.end());
       ++iter;
     }
 
@@ -258,27 +252,50 @@ public:
       if ( iter == m_rightCurves.end())
       {
               m_rightCurves.insert(iter, curve);
-              return true;
+              return Pair(false, --iter);
       }
     }
     
-    while ( res == EQUAL && curve > (*iter) )
+    if ( res == EQUAL ) //overlap !!
     {
-      m_containsOverlap = true;
-      ++iter;
-      if ( iter == m_rightCurves.end() ) 
-      {
-              m_rightCurves.insert(iter, curve);
-              return true;
-      }
-      res = traits()->curves_compare_y_at_x_right(curve->get_curve(),
-                                                  (*iter)->get_curve(), 
-                                                   m_point);
-    } 
+      if((*iter)->is_parent(curve))
+        return Pair(false,m_rightCurves.end());
+      return Pair(true, iter);
+     }
      m_rightCurves.insert(iter, curve);
-     return true;
+     return Pair(false,--iter);
   }
   
+
+  void remove_curve_from_left(SubCurve* curve)
+  {
+    for(SubCurveIter iter = m_leftCurves.begin();
+        iter!= m_leftCurves.end();
+        ++iter)
+    {
+      if((*iter)== curve)
+      {
+        m_leftCurves.erase(iter);
+        return;
+      }
+    }
+  }
+
+
+  void replace_right_curve(SubCurve* sc1, SubCurve* sc2)
+  {
+    for(SubCurveIter iter = m_rightCurves.begin();
+        iter!= m_rightCurves.end();
+        ++iter)
+    {
+      if(*iter == sc1)
+      {
+        *iter = sc2;
+        return;
+      }
+    }
+  }
+
 
   /*! Returns an iterator to the first curve to the left of the event */
   SubCurveIter left_curves_begin() {
@@ -321,7 +338,7 @@ public:
   }
 
   /*! Returns the actual point of the event */
-  const Point_2 &get_point() {
+  const Point_2 &get_point() const {
     return m_point;
   }
 
@@ -341,12 +358,7 @@ public:
     return m_isInternalIntersectionPoint;
   }
 
-  /*! 
-    @return true if the any two curves in the event overlap, false otherwise.
-  */
-  bool does_contain_overlap() const {
-    return m_containsOverlap;
-  }
+ 
 
 #ifndef NDEBUG
   void Print();
@@ -382,15 +394,13 @@ public:
   */
   bool m_isInternalIntersectionPoint;
 
-  /*! true if any two curves passing through the event overlap. */
-  bool m_containsOverlap;
+ 
 
-  
 
   protected:
 
 
-  Traits* traits()
+  Traits* traits() const
   {
     return Sweep_line_traits<Traits>::get_traits();
   }
@@ -400,8 +410,6 @@ public:
 public:
   int id;
 #endif
-
-
   
 };
 
@@ -410,9 +418,9 @@ public:
 
 
 #ifndef NDEBUG
-template<class SweepLineTraits_2, class CurveWrap>
+template<class SweepLineTraits_2, class CurveWrap, class SweepNotif>
 void 
-Sweep_line_event<SweepLineTraits_2, CurveWrap>::
+Sweep_line_event<SweepLineTraits_2, CurveWrap, SweepNotif>::
 Print() 
 {
   std::cout << "\tEvent id: " << id << "\n" ;
