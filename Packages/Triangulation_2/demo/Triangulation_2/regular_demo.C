@@ -1,7 +1,7 @@
 #include <CGAL/basic.h>
 
 #if !defined(CGAL_USE_LEDA) || !defined(CGAL_USE_CGAL_WINDOW )
-int main(int argc, char* argv[])
+int main()
 {
 
   std::cout << "Sorry, this demo needs LEDA for visualisation.";
