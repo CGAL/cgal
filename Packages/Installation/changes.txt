@@ -7,11 +7,11 @@
 //	actual revision
 //---------------------------------------------------------------------
 
+GLOB: added licensing information about Qt widget stuff
+GLOB: updated for release 2.4
 GLOB: Fix last change.
 GLOB: Remove LEDA link options for libCGAL.
 GLOB: -O replaced by -O2 for the Intel compiler.
-GLOB: added licensing information about Qt widget stuff
-GLOB: updated for release 2.4
 ALL : Remove traces of KCC/EGCS and CGAL_CC.
 GLOB: CGAL_EXTRA_OBJECTS is not needed anymore.
 ALL : - New options --build <config> and --rebuild <config>.
@@ -37,6 +37,7 @@ GLOB: - Document --build-all
 GLOB: Fixes for QT.
 GLOB: src/Interval_arithmetic/workaround_4_ms.obj is no longer necessary.
 GLOB: Add -D_RWSTD__ALLOCATOR for SunPro.
+ALL : Removed all MLd options (=debug) for vc/ilc.
 GLOB: Incorporate Intel support (<- Andreas).
 GLOB: Set CGAL_VERSION to 3.0.
 GLOB: Removed visual support for CLN (menu etc.).
