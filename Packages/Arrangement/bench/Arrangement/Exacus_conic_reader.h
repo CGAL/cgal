@@ -10,8 +10,11 @@
 
 #include "numberType.h"
 
+#include <LiS/file_io.h>
+
+
 template <class Traits>
-class Exacus_conix_reader {
+class Exacus_conic_reader {
     
 public:
     typedef typename Traits::Point_2               Point_2;
@@ -24,38 +27,30 @@ public:
                   CGAL::Bbox_2 & bbox) {
         
         Curve_2 cv;
+
+        std::list< Curve_2 > curves;
+        bool success = LiS::read_file(filename, curves);
+        if (!success) {
+            return 0;
+        }
+        std::copy(curves.begin(), curves.end(), curves_out);
         
-        std::ifstream inp(filename);
-        if (!inp.is_open()) {
-            std::cerr << "Cannot open file " << filename << "!" << std::endl;
-            return -1;
-        }
-        int count;
-        inp >> count;
-        for (int i = 0; i < count; i++) {
-            inp >> cv;
-            ++curves_out = cv;
-            // TODO bounding box
 #if 0
+        // TODO set these boxes
+        for (typename std::list< Curve_2 >::iterator it = curves.begin();
+             it != curves.end();
+             it++) {
             CGAL::Bbox_2 curve_bbox = cv.bounding_box();
-            if (i == 0) bbox = curve_bbox;
-            else bbox = bbox + curve_bbox;      
-#else
-            // TODO set these boxes
-            bbox = CGAL::Bbox_2(-10, -10, 10, 10);
-#endif
-        }
-        inp.close();
-        return 0;
-    }
-    
-    void skip_comments(std::ifstream& is, char* one_line) {
-        while( !is.eof() ){
-            is.getline( one_line, 128 );
-            if( one_line[0] != '#' ){
-                break;
+            if (i == 0) {
+                bbox = curve_bbox;
+            } else {
+                bbox = bbox + curve_bbox;
             }
-        }  
+        }
+#else
+        bbox = CGAL::Bbox_2(-1000, -1000, 1000, 1000);
+#endif
+        return static_cast< int >(curves.size());
     }
 };
 
