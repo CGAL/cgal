@@ -96,6 +96,8 @@ public:
   FT           xmax() const;
   FT           ymax() const;
   FT           zmax() const;
+
+  FT           volume() const;
 };
 
 #ifdef CGAL_CFG_TYPENAME_BUG
@@ -193,6 +195,14 @@ Iso_cuboidC3<R CGAL_CTAG>::Point_3
 Iso_cuboidC3<R CGAL_CTAG>::operator[](int i) const
 {
   return vertex(i);
+}
+
+template < class R >
+inline
+Iso_cuboidC3<R CGAL_CTAG>::FT
+Iso_cuboidC3<R CGAL_CTAG>::volume() const
+{
+  return (xmax()-xmin()) * (ymax()-ymin()) * (zmax()-zmin());
 }
 
 template < class R >

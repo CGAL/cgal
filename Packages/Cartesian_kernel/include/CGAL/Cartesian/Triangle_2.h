@@ -98,6 +98,8 @@ public:
   bool           is_degenerate() const;
 
   Bbox_2         bbox() const;
+
+  FT             area() const;
 };
 
 #ifdef CGAL_CFG_TYPENAME_BUG
@@ -146,6 +148,16 @@ typename TriangleC2<R CGAL_CTAG>::Point_2
 TriangleC2<R CGAL_CTAG>::operator[](int i) const
 {
   return vertex(i);
+}
+
+template < class R >
+CGAL_KERNEL_MEDIUM_INLINE
+typename TriangleC2<R CGAL_CTAG>::FT
+TriangleC2<R CGAL_CTAG>::area() const
+{
+  typename R::Vector_2 v1 = vertex(1)-vertex(0);
+  typename R::Vector_2 v2 = vertex(2)-vertex(0);
+  return CGAL_NTS abs(det2x2_by_formula(v1.x(), v1.y(), v2.x(), v2.y())/FT(2));
 }
 
 template < class R >

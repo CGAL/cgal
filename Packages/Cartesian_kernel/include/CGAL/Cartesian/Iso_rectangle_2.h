@@ -110,6 +110,8 @@ public:
   FT              ymin() const;
   FT              xmax() const;
   FT              ymax() const;
+
+  FT              area() const;
 };
 
 #ifdef CGAL_CFG_TYPENAME_BUG
@@ -186,6 +188,14 @@ typename Iso_rectangleC2<R CGAL_CTAG>::Point_2
 Iso_rectangleC2<R CGAL_CTAG>::operator[](int i) const
 {
   return vertex(i);
+}
+
+template < class R >
+inline
+typename Iso_rectangleC2<R CGAL_CTAG>::FT
+Iso_rectangleC2<R CGAL_CTAG>::area() const
+{
+  return (xmax()-xmin()) * (ymax()-ymin());
 }
 
 template < class R >
