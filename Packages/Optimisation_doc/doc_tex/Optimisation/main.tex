@@ -16,9 +16,10 @@
 \chapter{Optimisation} \label{Optimisation}
 \RCSdefDate{\OptRCSDate}{$Date$}
 
-\ccChapterRelease{Release: 1.4 \ccTexHtml{\quad}{ , } \OptRCSDate}
+\ccChapterRelease{Release: 2.0 \ccTexHtml{\quad}{ , } \OptRCSDate}
 
 \ccChapterAuthor{Bernd G{\"a}rtner}\ccTexHtml{\\}{<br>}
+\ccChapterAuthor{Michael Hoffmann}\ccTexHtml{\\}{<br>}
 \ccChapterAuthor{Sven Sch{\"o}nherr}
 
 \ccTexHtml{\thispagestyle{empty}}{}
@@ -56,6 +57,19 @@ e.g.\ defining the compiler flag
 \ccc{CGAL_OPTIMISATION_NO_PRECONDITIONS} switches precondition
 checking off, cf.~Section~\ref{assertions}.
 
+\newcommand{\cgalSetOptTraitsAdaptLayout}{\ccTexHtml{%
+    \ccSetThreeColumns{CGAL_Oriented_side}{}{returns constants
+      \ccc{CGAL_LEFTTURN}, \ccc{CGAL_COLLINEAR}}
+    \ccPropagateThreeToTwoColumns}{}}
+\newcommand{\cgalSetOptTraitsAdaptReqLayout}{\ccTexHtml{%
+    \ccSetThreeColumns{CGAL_Oriented_side}{da.get_hw( Point p).}{}
+    \ccPropagateThreeToTwoColumns}{}}
+
+\newcommand{\cgalSetOptTraitsReqLayout}{\ccTexHtml{%
+    \ccSetThreeColumns{CGAL_Oriented_side}{}{returns
+      \ccc{CGAL_ON_BOUNDED_SIDE}, \ccc{CGAL_ON_BOUNDARY}}
+    \ccPropagateThreeToTwoColumns}{}}
+
 \newcommand{\cgalSetMinCircleLayout}{\ccTexHtml{%
     \ccSetThreeColumns{Support_point_iterator}{}{creates a variable
       \ccc{min_circle} of type \ccc{CGAL_Min_circle_2<Traits>}.}
@@ -69,9 +83,5 @@ checking off, cf.~Section~\ref{assertions}.
     \ccPropagateThreeToTwoColumns}{}}
 \clearpage
 \input{Min_ellipse_2}
-
-\input{traits_implementations}
-\input{traits_adapters}
-\input{traits_requirements}
 
 % ===== EOF ===================================================================
