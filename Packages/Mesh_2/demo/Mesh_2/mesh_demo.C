@@ -43,7 +43,7 @@ int main(int, char*)
 #include "Qt_layer_show_triangulation_constraints.h"
 #include "Qt_layer_show_circles.h"
 #ifdef CGAL_USE_BOOST
-#include "Show_clusters.h"
+#  include "Show_clusters.h"
 #endif
 #include <CGAL/IO/Qt_layer_show_mouse_coordinates.h>
 
@@ -181,6 +181,7 @@ public:
       nb_of_points = new QLabel("0", infoframe);
       vbox->addWidget(nb_of_points, 0, 1, AlignLeft | AlignTop );
 
+#ifdef CGAL_USE_BOOST
       QLabel *nb_of_clusters_label = new QLabel(infoframe);
       nb_of_clusters_label->setText("Number of clusters: ");
       vbox->addWidget(nb_of_clusters_label, 1, 0,
@@ -188,6 +189,7 @@ public:
 
       nb_of_clusters = new QLabel("0", infoframe);
       vbox->addWidget(nb_of_clusters, 1, 1, AlignLeft | AlignTop );
+#endif
       
       setCentralWidget(mainframe);
       resize(700,500);
@@ -444,6 +446,7 @@ public:
       connect(sbTimerInterval, SIGNAL(valueChanged(int)),
 	      this, SLOT(updateTimerInterval(int)));
 
+#ifdef CGAL_USE_BOOST
       QPushButton* pbShowCluster = 
 	new QPushButton("Show clusters", toolBarAdvanced);
       pbShowCluster->setToggleButton(true);
@@ -451,6 +454,7 @@ public:
 	      show_clusters, SLOT(stateChanged(int)));
       connect(pbShowCluster, SIGNAL(stateChanged(int)),
 	      widget, SLOT(redraw()));
+#endif
 
       setUsesBigPixmaps(true);
 
@@ -486,8 +490,10 @@ public:
 
       connect(this, SIGNAL(insertedInput()),
 	      this, SLOT(after_inserted_input()));
+#ifdef CGAL_USE_BOOST
       connect(this, SIGNAL(insertedInput()),
 	      show_clusters, SLOT(reinitClusters()));
+#endif
       connect(this, SIGNAL(initializedMesh()),
 	      this, SLOT(set_initialized()));
 
@@ -527,7 +533,9 @@ public slots:
   void after_inserted_input()
   {
     is_mesh_initialized = false;
+#ifdef CGAL_USE_BOOST
     nb_of_clusters_has_to_be_updated = true;
+#endif
     mesh->mark_facets();
   }
 
@@ -618,11 +626,13 @@ public slots:
   void updatePointCounter()
     {
       nb_of_points->setNum(mesh->number_of_vertices());
+#ifdef CGAL_USE_BOOST
       if(nb_of_clusters_has_to_be_updated)
 	{
 	  nb_of_clusters_has_to_be_updated = false;
 	  nb_of_clusters->setNum(mesh->number_of_clusters_vertices());
 	}
+#endif
     }
 
   void refineMesh()
@@ -903,7 +913,6 @@ public slots:
 private:
   static const QString my_filters;
   bool is_mesh_initialized;
-  bool nb_of_clusters_has_to_be_updated;
   Meshtraits traits;
   Mesh* mesh;
 
@@ -932,12 +941,13 @@ private:
   Show_marked_faces<Mesh>* show_marked;
 
 #ifdef CGAL_USE_BOOST
+  bool nb_of_clusters_has_to_be_updated;
+  QLabel *nb_of_clusters;
   Show_clusters<Mesh>* show_clusters;
 #endif
 
   //  QLabel* aspect_ratio_label;
   QLabel *nb_of_points;
-  QLabel *nb_of_clusters;
   QTimer* timer;
   QPushButton *pbMeshTimer;
   QPushButton *pbMeshStep;
