@@ -271,7 +271,7 @@ public:
   typedef typename Decorator::Hole_iterator Hole_iterator;
   typedef typename Decorator::Isolated_vertex_iterator Isolated_vertex_iterator;
 
-#ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
+#ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_3
   using Base::clear;
   using Base::vertices_begin;
   using Base::vertices_end;

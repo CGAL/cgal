@@ -62,7 +62,7 @@ typedef typename Base::Halfedge_around_vertex_const_circulator Halfedge_around_v
 typedef typename Base::Halfedge_around_face_const_circulator Halfedge_around_face_const_circulator;
 
 
-#ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
+#ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_3
   using Base::clear;
   using Base::vertices_begin;
   using Base::vertices_end;

@@ -111,7 +111,7 @@ enum { BEFORE = -1, AFTER = 1 };
 
 
 
-#ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
+#ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_3
   using Base::phds;
 #endif
 

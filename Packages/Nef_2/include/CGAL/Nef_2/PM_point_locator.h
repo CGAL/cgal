@@ -112,7 +112,7 @@ public:
    typedef typename PM_decorator_::Halfedge_around_face_circulator Halfedge_around_face_circulator;
    typedef typename PM_decorator_::Halfedge_around_face_const_circulator Halfedge_around_face_const_circulator;
 
-#ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
+#ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_3
   using Base::clear;
   using Base::vertices_begin;
   using Base::vertices_end;
@@ -414,7 +414,7 @@ public:
   typedef typename Base::Halfedge_around_face_circulator Halfedge_around_face_circulator;
   typedef typename Base::Halfedge_around_face_const_circulator Halfedge_around_face_const_circulator;
 
-#ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
+#ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_3
   using Base::K;
   using Base::number_of_vertices;
 #endif

@@ -51,7 +51,7 @@ class PM_io_parser : public PMDEC
   typedef typename PMDEC::Halfedge_handle   Halfedge_handle;
   typedef typename PMDEC::Face_handle       Face_handle;
 
-#ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
+#ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_3
   using Base::clear;
   using Base::vertices_begin;
   using Base::vertices_end;
