@@ -533,7 +533,7 @@ report_latex() {
     echo "For the full logfile see $1.log"
     if [ $MakePackage -eq 1 ]; then
         echo "Since this is a CGAL Package manual, one can probably ignore "
-        echo "warnings about undefined references."
+        echo "warnings about undefined references or missing header files."
     fi
     egrep -i '((error)|(^[!]))' $1.log | grep -v "operatorerror"
     grep -i warn $1.log 
@@ -571,7 +571,7 @@ report_latex() {
 #---------------------------------------------------------------------#
 
 cleanup_latex() {
-    rm -f $1.toc $1.mtc* $1.idx $1.ind $1.dvi
+    rm -f $1.toc $1.mtc* $1.idx $1.ind $1.dvi $1.inc $1.out $1.ref
     if [ $MakeHTML -eq 0 ] ; then 
         rm -f $1.aux $1.bbl
     fi
@@ -734,6 +734,15 @@ run_latex() {
                 mv $1.ps.gz ../doc_ps
             fi
         fi
+    fi
+    # check for include files that don't exist
+    if [ -r $1.inc ]; then 
+        for f in `cat $1.inc | sort | uniq` ; do
+          if [ ! -r ../include/$f ]; then
+            echo "WARNING: Include file '$f' does not exist!" >> $1.log
+            if [ ! $LatexExit  -eq 1 ]; then LatexExit=2; fi
+          fi
+        done
     fi
     if [ $LatexExit  -eq 0 ]; then
         if check_latex_warn  $1 ; then LatexExit=2;  fi
