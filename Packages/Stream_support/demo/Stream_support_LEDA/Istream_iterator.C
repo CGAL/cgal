@@ -1,3 +1,8 @@
+#ifndef CGAL_USE_LEDA
+#include <iostream>
+int main(){ std::cout << "This demo needs LEDA" << std::endl; return 0;}
+#else
+
 #include <CGAL/Cartesian.h>
 #include <CGAL/IO/Istream_iterator.h>
 #include <CGAL/IO/Window_stream.h>
@@ -26,3 +31,5 @@ int main () {
                std::ostream_iterator<Point>(std::cout,"\n"));
     return 0;
 }
+
+#endif

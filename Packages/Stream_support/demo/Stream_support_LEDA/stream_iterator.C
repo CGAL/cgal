@@ -1,3 +1,9 @@
+#ifndef CGAL_USE_LEDA
+#include <iostream>
+int main(){ std::cout << "This demo needs LEDA" << std::endl; return 0;}
+#else
+
+
 // stream_iterator.C
 // ----------------------------------------------------------
 // CGAL example program for the CGAL stream iterator adaptor.
@@ -49,3 +55,5 @@ int main() {
 
     return 0;
 }
+
+#endif
