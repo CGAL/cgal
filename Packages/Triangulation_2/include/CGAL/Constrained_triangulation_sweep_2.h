@@ -70,8 +70,8 @@ public:
   //typedef std::map<Constraint, Chain *, Status_comp> Sweep_status;
   typedef std::pair<Face_handle, int> Neighbor;
   // added to please MIPS Pro
-  typedef Event_queue::iterator  Event_queue_iterator;
-  typedef Sweep_status::iterator Sweep_status_iterator;
+  typedef typename Event_queue::iterator  Event_queue_iterator;
+  typedef typename Sweep_status::iterator Sweep_status_iterator;
     
   class Event_less : public CGAL_STD::binary_function<Point, Point, bool>
   {
