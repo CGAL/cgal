@@ -70,7 +70,7 @@ class Delaunay_remove_tds_face_3_2
 {
 public:
 
-  typedef typename Fb::Triangulation_data_structure::Face_handle Face_handle;
+  typedef typename Fb::Face_handle    Face_handle;
 
   template < typename TDS2 >
   struct Rebind_TDS {
@@ -104,6 +104,7 @@ private:
     return n->neighbor(i);
   }
 
+protected:
   // Remove this face from the list
   void remove_from_list() {
     // Q: Can't we be sure that there is always a predecessor
@@ -169,7 +170,7 @@ public:
     _edge[i] = b;
   }
 
-private:
+protected:
   // Move face f after this.
   void move_after_this(Face_handle f) {
     if (_n == f)
