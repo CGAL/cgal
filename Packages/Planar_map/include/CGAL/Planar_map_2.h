@@ -1216,7 +1216,7 @@ insert(const typename Planar_map_2< Dcel, Traits >::X_curve & cv,
     bb->split_boundary_edge(h, h1, h2, tgt);
     // make sure the intersection point is in the map, 
     // i.e. split the halfedge that contains its.
-    lt1 = VERTEX;
+    lt2 = VERTEX;
   }
   if (lt1 == VERTEX && lt2 == VERTEX) 
     return insert_at_vertices(cv, h1->target(),h2->target(), en); 
