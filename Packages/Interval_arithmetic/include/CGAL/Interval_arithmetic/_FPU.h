@@ -125,20 +125,6 @@ enum {
 #endif
 #endif // __sparc__
 
-#ifdef __sgi
-// It seems MipsPro needs that too, and it doesn't understand the GNU
-// extension ({ ... }).  It would be nice to have informations
-// on that processor though...
-
-inline double ia_force_to_double(double a)
-{
-    volatile double b = a;
-    return b;
-}
-#undef CGAL_IA_FORCE_TO_DOUBLE
-#define CGAL_IA_FORCE_TO_DOUBLE(x) ia_force_to_double(x)
-#endif // __sgi
-
 #if defined(__mips__) || defined(__sgi)
 #ifdef CGAL_IA_USE_ASSEMBLY
 #define CGAL_IA_SETFPCW(CW) asm volatile ("ctc1 %0,$31" : :"r" (CW))
