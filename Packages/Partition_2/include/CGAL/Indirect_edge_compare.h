@@ -108,10 +108,10 @@ class Indirect_edge_compare
         {
           // construct supporting line
           Line_2  l_p = _construct_line_2(*p, *after_p);
-          if (is_horizontal(l_p)) 
+          if (_is_horizontal_2(l_p)) 
           {
               Line_2  l_q = _construct_line_2(*q, *after_q);
-              if (is_horizontal(l_q))  // shouldn't ever happen, since these
+              if (_is_horizontal_2(l_q))  // shouldn't ever happen, since these
               {                         // can't both be in sweep structure at
                                         // the same time
                  return std::max((*p).x(), (*after_p).x()) > 
@@ -132,7 +132,7 @@ class Indirect_edge_compare
              {
                 // construct the other line
                 Line_2 l_q = _construct_line_2(*q, *after_q); 
-                if (is_horizontal(l_q))     // p is not horizontal
+                if (_is_horizontal_2(l_q))     // p is not horizontal
                 {
                    return (*q).x() > l_p.x_at_y((*q).y());
                 }
