@@ -1,3 +1,6 @@
+// 1.13 (17 Apr 2000)
++ Added a time limit for cgal_test in run_testsuite
+
 //--------------------------------
 // 1.12
 + Added support for geowin in create_makefile script.

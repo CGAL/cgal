@@ -1,1 +1,1 @@
-Some useful scripts for developers.
+Some useful scripts for developers and users.
