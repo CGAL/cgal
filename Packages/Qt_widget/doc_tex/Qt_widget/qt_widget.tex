@@ -588,6 +588,34 @@ previous tutorials: insert a new point in a Delaunay triangulation and
 draw the triangulation every time you click on the window.
 
 \subsection*{Tutorial 5}
+
+The fifth tutorial includes the standard toolbar in the
+application. The application has the same functionality but as you
+see you can now zoom in, zoom out and translate, using the tools from
+the standard toolbar.
+
+The layer is still there, doing nothing but drawing the triangulation.
+
+The class My\_Widget is like in the previous example an intance of
+\ccStyle{Qt\_widget}, that you need in the class My\_Window.
+
+The only difference between this example and the previous one is the
+use of standard toolbar. It is declared as private in My\_Window class:\\
+CGAL::Standard\_toolbar *stoolbar;\\
+To use it, in the constructor of My\_Window, it is added:
+stoolbar = new CGAL::Standard\_toolbar(widget, this);\\
+this$->$addToolBar(stoolbar->toolbar(), Top, FALSE);
+
+In this tutorial you can play a little bit with the standard toolbar
+but you will see probably something that is not quite pleasant. If you
+select the hand, and try to use it, you'll see that when you click to
+select the first point, also a new CGAL::Point\_2 is inserted in the
+triangulation. This is due to the fact that the mousePressEvent
+implemented in My\_Window it is called every time you click on the
+widget, even if a tool from the standard toolbar is active.
+
+You will see in the next tutorial a solution to this problem.
+
 \subsection*{Tutorial 6}
 \subsection*{Tutorial 7}
 \subsection*{Tutorial 8}
