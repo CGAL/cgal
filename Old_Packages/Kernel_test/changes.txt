@@ -1,3 +1,7 @@
+ 3.11   (19 Feb 2001)
+
+- resubmit with test/KernelSimpleHomogeneous.
+
  3.10   (14 Feb 2001)
 
 - added test for new function in Iso_* classes
