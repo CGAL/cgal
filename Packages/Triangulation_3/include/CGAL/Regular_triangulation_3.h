@@ -39,12 +39,12 @@ public:
   typedef typename Gt::Bare_point Bare_point;
   typedef typename Gt::Weighted_point Weighted_point;
 
-  typedef Triangulation_3<Gt,Tds>::Vertex_handle Vertex_handle;
-  typedef Triangulation_3<Gt,Tds>::Cell_handle Cell_handle;
-  typedef Triangulation_3<Gt,Tds>::Vertex Vertex;
-  typedef Triangulation_3<Gt,Tds>::Cell Cell;
-  typedef Triangulation_3<Gt,Tds>::Facet Facet;
-  typedef Triangulation_3<Gt,Tds>::Edge Edge;
+  typedef typename Triangulation_3<Gt,Tds>::Vertex_handle Vertex_handle;
+  typedef typename Triangulation_3<Gt,Tds>::Cell_handle Cell_handle;
+  typedef typename Triangulation_3<Gt,Tds>::Vertex Vertex;
+  typedef typename Triangulation_3<Gt,Tds>::Cell Cell;
+  typedef typename Triangulation_3<Gt,Tds>::Facet Facet;
+  typedef typename Triangulation_3<Gt,Tds>::Edge Edge;
 
   Regular_triangulation_3()
     : Triangulation_3<Gt,Tds>() {}

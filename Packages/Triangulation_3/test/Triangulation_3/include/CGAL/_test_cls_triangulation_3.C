@@ -138,8 +138,8 @@ _test_cls_triangulation_3(const Triangulation &)
     {
       Cls Tfromfile;
       std::cout << "    I/O" << std::endl;
-      std::ofstream oFileT1("Test1_triangulation_IO_3",ios::out);
-      std::ifstream iFileT1("Test1_triangulation_IO_3",ios::in);
+      std::ofstream oFileT1("Test1_triangulation_IO_3",std::ios::out);
+      std::ifstream iFileT1("Test1_triangulation_IO_3",std::ios::in);
       oFileT1 << T0;
       iFileT1 >> Tfromfile;
       assert(Tfromfile.is_valid());
@@ -158,8 +158,8 @@ _test_cls_triangulation_3(const Triangulation &)
     {
       Cls Tfromfile;
       std::cout << "    I/O" << std::endl;
-      std::ofstream oFileT2("Test2_triangulation_IO_3",ios::out);
-      std::ifstream iFileT2("Test2_triangulation_IO_3",ios::in);
+      std::ofstream oFileT2("Test2_triangulation_IO_3",std::ios::out);
+      std::ifstream iFileT2("Test2_triangulation_IO_3",std::ios::in);
       oFileT2 << T0;
       iFileT2 >> Tfromfile;
       assert(Tfromfile.is_valid());
@@ -179,8 +179,8 @@ _test_cls_triangulation_3(const Triangulation &)
     {
       Cls Tfromfile;
       std::cout << "    I/O" << std::endl;
-      std::ofstream oFileT3("Test3_triangulation_IO_3",ios::out);
-      std::ifstream iFileT3("Test3_triangulation_IO_3",ios::in);
+      std::ofstream oFileT3("Test3_triangulation_IO_3",std::ios::out);
+      std::ifstream iFileT3("Test3_triangulation_IO_3",std::ios::in);
       oFileT3 << T0;
       iFileT3 >> Tfromfile;
       assert(Tfromfile.is_valid());
@@ -199,8 +199,8 @@ _test_cls_triangulation_3(const Triangulation &)
     {
       Cls Tfromfile;
       std::cout << "    I/O" << std::endl;
-      std::ofstream oFileT4("Test4_triangulation_IO_3",ios::out);
-      std::ifstream iFileT4("Test4_triangulation_IO_3",ios::in);
+      std::ofstream oFileT4("Test4_triangulation_IO_3",std::ios::out);
+      std::ifstream iFileT4("Test4_triangulation_IO_3",std::ios::in);
       oFileT4 << T0;
       iFileT4 >> Tfromfile;
       assert(Tfromfile.is_valid());
@@ -220,8 +220,8 @@ _test_cls_triangulation_3(const Triangulation &)
     {
       Cls Tfromfile;
       std::cout << "    I/O" << std::endl;
-      std::ofstream oFileT5("Test5_triangulation_IO_3",ios::out);
-      std::ifstream iFileT5("Test5_triangulation_IO_3",ios::in);
+      std::ofstream oFileT5("Test5_triangulation_IO_3",std::ios::out);
+      std::ifstream iFileT5("Test5_triangulation_IO_3",std::ios::in);
       oFileT5 << T0;
       iFileT5 >> Tfromfile;
       assert(Tfromfile.is_valid());
@@ -313,8 +313,8 @@ _test_cls_triangulation_3(const Triangulation &)
     {
       Cls Tfromfile;
       std::cout << "    I/O" << std::endl;
-      std::ofstream oFileT6("Test6_triangulation_IO_3",ios::out);
-      std::ifstream iFileT6("Test6_triangulation_IO_3",ios::in);
+      std::ofstream oFileT6("Test6_triangulation_IO_3",std::ios::out);
+      std::ifstream iFileT6("Test6_triangulation_IO_3",std::ios::in);
       oFileT6 << T1_2;
       iFileT6 >> Tfromfile;
       assert(Tfromfile.is_valid());
@@ -362,8 +362,8 @@ _test_cls_triangulation_3(const Triangulation &)
     {
       Cls Tfromfile;
       std::cout << "    I/O" << std::endl;
-      std::ofstream oFileT7("Test7_triangulation_IO_3",ios::out);
-      std::ifstream iFileT7("Test7_triangulation_IO_3",ios::in);
+      std::ofstream oFileT7("Test7_triangulation_IO_3",std::ios::out);
+      std::ifstream iFileT7("Test7_triangulation_IO_3",std::ios::in);
       oFileT7 << T2_0;
       iFileT7 >> Tfromfile;
       assert(Tfromfile.is_valid());
@@ -409,8 +409,8 @@ _test_cls_triangulation_3(const Triangulation &)
     {
       Cls Tfromfile;
       std::cout << "    I/O" << std::endl;
-      std::ofstream oFileT8("Test8_triangulation_IO_3",ios::out);
-      std::ifstream iFileT8("Test8_triangulation_IO_3",ios::in);
+      std::ofstream oFileT8("Test8_triangulation_IO_3",std::ios::out);
+      std::ifstream iFileT8("Test8_triangulation_IO_3",std::ios::in);
       oFileT8 << T3_1;
       iFileT8 >> Tfromfile;
       assert(Tfromfile.is_valid());

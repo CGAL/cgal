@@ -20,10 +20,8 @@
 // ============================================================================
 #include <CGAL/basic.h>
 
-// #include <cstring>
 #include <iostream>
 #include <fstream>
-// #include <strstream.h>
 
 #include <assert.h>
 
