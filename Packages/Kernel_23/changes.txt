@@ -1,3 +1,6 @@
+1.51 (29 July 2003)
+- Fix another typo in Exact_predicates_exact_constructions_kernel.h.
+
 1.50 (29 July 2003)
 - Fix typo in Exact_predicates_exact_constructions_kernel.h.
 
