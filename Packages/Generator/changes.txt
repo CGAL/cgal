@@ -1,5 +1,11 @@
 Generator Package: Release changes:
 ---------------------------------------------------------------------
+2.62 (2 May 2002)
+   - removed reference to deleted section
+
+2.61 (30 Apr 2002)
+   - did manual split
+
 2.60 (25 Apr 2002)
    - removed obsolete configuration macro
    - added more casting for creators in point_generators_2
