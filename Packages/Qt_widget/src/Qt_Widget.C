@@ -308,17 +308,19 @@ int Qt_widget::y_pixel_dist(double d) const
   else
     return( static_cast<int>(d*yscal-0.5) );
 }
-
+/*
 Qt_widget& Qt_widget::operator<<(Qt_widget_tool* tool)
 {
-  if (has_tool())
+  if (has_tool()) {
     current_tool->detach();
+    emit(detached_tool());
+  }
   current_tool=tool;
   _has_tool=true;
   tool->attach(this);
   return *this;
 }
-
+*/
 Qt_widget& Qt_widget::operator<<(const Color& c)
 {
   setColor(CGAL2Qt_Color(c));
@@ -354,8 +356,10 @@ Qt_widget& operator<<(Qt_widget& w, const Bbox_2& r)
 *********************************************/
 Qt_widget& Qt_widget::operator>>(Qt_widget_tool &tool)
 {
-  if (has_tool())
+  if (has_tool()) {
     current_tool->detach();
+    emit(detached_tool());
+  }
   current_tool=&tool;
   _has_tool=true;
   current_tool->attach(this);
@@ -363,8 +367,10 @@ Qt_widget& Qt_widget::operator>>(Qt_widget_tool &tool)
 }
 void Qt_widget::detach_current_tool()
 {
-  if (has_tool()) 
+  if (has_tool()) {
     current_tool->detach();
+    emit(detached_tool());
+  }
   _has_tool = FALSE;
 };
 

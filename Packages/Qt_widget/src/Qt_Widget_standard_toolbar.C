@@ -42,12 +42,12 @@ namespace CGAL {
     is_active = FALSE;
 
 #if QT_VERSION < 300
-		// for Qt 2.3 and before
-    maintoolbar = new QToolBar("tools", mw, QMainWindow::Top, TRUE, "Tools");
+  // for Qt 2.3 and before
+  maintoolbar = new QToolBar("tools", mw, QMainWindow::Top, TRUE, "Tools");
 #else
-		// from Qt 3.0
-		maintoolbar = new QToolBar(mw, "Tools");
-		mw->addDockWindow (maintoolbar, "tools", DockTop, TRUE );
+  // from Qt 3.0
+  maintoolbar = new QToolBar(mw, "Tools");
+  mw->addDockWindow (maintoolbar, "tools", DockTop, TRUE );
 #endif
 		
 
@@ -103,25 +103,30 @@ namespace CGAL {
     but[4]->setToggleButton(TRUE);
     but[5]->setToggleButton(TRUE);
 
+    connect(w, SIGNAL(detached_tool()), this, SLOT(toggle_button()));
     nr_of_buttons = 6;
   };
 
-      
+  void Standard_toolbar::toggle_button ()
+  {
+    if(is_active) {
+      but[activebutton]->toggle();
+      is_active = false;
+    }
+  }
 	
   void Standard_toolbar::toolregion()
   {
     if (but[3]->isOn())
     {
-	if(is_active)
-	  but[activebutton]->toggle();
 	*widget >> zoombut;
 	activebutton = 3;
-	is_active = TRUE;
+	is_active = true;
     }
     else
     {
-	widget->detach_current_tool();
-	is_active = FALSE;
+      is_active = false;
+      widget->detach_current_tool();
     }
   }
 
@@ -129,16 +134,14 @@ namespace CGAL {
   {
     if (but[4]->isOn())
     {	
-      if(is_active)
-	but[activebutton]->toggle();
       *widget >> zoomrectbut;
       activebutton = 4;
-      is_active = TRUE;
+      is_active = true;
     }
     else
     {
+      is_active = false;
       widget->detach_current_tool();
-      is_active = FALSE;
     }
   }
 
@@ -155,10 +158,9 @@ namespace CGAL {
   void Standard_toolbar::notool()
   {
     if(is_active) {
-      but[activebutton]->toggle();
       widget->detach_current_tool();
+      is_active = false;
     }
-    is_active = FALSE;
   }
 
 
@@ -167,14 +169,12 @@ namespace CGAL {
     if (but[5]->isOn())
     {
       widget->detach_current_tool();
-      if(is_active)
-	but[activebutton]->toggle();
       *widget >> handtoolbut;
       activebutton = 5;
-      is_active = TRUE;
+      is_active = true;
     } else {
+      is_active = false;
       widget->detach_current_tool();
-      is_active = FALSE;
     }
   }
 

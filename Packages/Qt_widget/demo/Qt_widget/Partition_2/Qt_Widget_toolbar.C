@@ -64,20 +64,25 @@ namespace CGAL {
 						"Get Simple Polygon");
 
     but[1]->setToggleButton(TRUE);
-    
+    connect(w, SIGNAL(detached_tool()), this, SLOT(toggle_button()));
     nr_of_buttons = 2;
   };
 
 	
   //the definition of the slots
-	
-
-  void Tools_toolbar::notool()
+  void Tools_toolbar::toggle_button ()
   {
     if(is_active) {
       but[activebutton]->toggle();
+      is_active = false;
+    }
+  }
+	
+  void Tools_toolbar::notool()
+  {
+    if(is_active) {
       widget->detach_current_tool();
-      is_active = FALSE;
+      is_active = false;
     }
   }
   
@@ -90,10 +95,11 @@ namespace CGAL {
 	but[activebutton]->toggle();
       *widget >> getsimplebut;
       activebutton = 1;
-      is_active = TRUE;
+      is_active = true;
     } else {
+      is_active = false;
       widget->detach_current_tool();
-      is_active = FALSE;
+      
     }
   }
 

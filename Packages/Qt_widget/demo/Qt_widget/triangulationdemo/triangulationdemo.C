@@ -321,9 +321,9 @@ private:
   CGAL::Tools_toolbar	  *newtoolbar;
   CGAL::Views_toolbar	  *vtoolbar;
   CGAL::Standard_toolbar  *stoolbar;
-  bool		    got_point;	
+  bool			  got_point;	
 	  //if a CGAL::Point is received should be true
-  int		    old_state;
+  int			  old_state;
 	
 	
 };

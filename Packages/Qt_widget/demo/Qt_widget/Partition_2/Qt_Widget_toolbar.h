@@ -63,6 +63,7 @@ signals:
 
 private slots:
   void notool();
+  void toggle_button();
   void get_s_polygon();
 	
 	

@@ -88,51 +88,53 @@ namespace CGAL {
   but[3]->setToggleButton(TRUE);
   
   nr_of_buttons = 4;
+
+  connect(w, SIGNAL(detached_tool()), this, SLOT(toggle_button()));
 };
 
       
 	
   //the definition of the slots
-	
+  void Tools_toolbar::toggle_button ()
+  {
+    if(is_active) {
+      but[activebutton]->toggle();
+      is_active = false;
+    }
+  }	
   void Tools_toolbar::linetool()
   {
     if (but[2]->isOn())
     {
-	
-	if(is_active)
-	  but[activebutton]->toggle();
 	*widget >> linebut;
 	activebutton = 2;
-	is_active = TRUE;
+	is_active = true;
     }
     else
     {
-	widget->detach_current_tool();
-	is_active = FALSE;
+      is_active = false;
+      widget->detach_current_tool();	
     }
   }
   void Tools_toolbar::pointtool()
   {
     if (but[1]->isOn())
     {
-      if(is_active)
-	  but[activebutton]->toggle();
       *widget >> pointbut;
       activebutton = 1;
-      is_active = TRUE;
+      is_active = true;
     }
     else
     {
+      is_active = false;
       widget->detach_current_tool();
-      is_active = FALSE;
     }
   }
   void Tools_toolbar::notool()
   {
     if(is_active) {
-      but[activebutton]->toggle();
       widget->detach_current_tool();
-      is_active = FALSE;
+      is_active = false;
     }
   }
   void Tools_toolbar::movepoint()
@@ -140,17 +142,15 @@ namespace CGAL {
     if (but[3]->isOn())
     {
       widget->detach_current_tool();
-      if(is_active)
-	but[activebutton]->toggle();
       movepointbut.set_Delaunay(dt);
       *widget >> movepointbut;
       activebutton = 3;
-      is_active = TRUE;
+      is_active = true;
     }
     else
     {
+      is_active = false;
       widget->detach_current_tool();
-      is_active = FALSE;
     }
   }
 

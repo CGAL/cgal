@@ -67,7 +67,9 @@ private slots:
   void linetool();
   void notool();
   void movepoint();
-	
+
+  void toggle_button();
+
 private:
   QToolBar		*maintoolbar;
   QToolButton		*but[10];

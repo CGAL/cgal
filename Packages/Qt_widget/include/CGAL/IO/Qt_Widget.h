@@ -170,6 +170,7 @@ signals:
   void new_cgal_object(CGAL::Object);	//this signal is emited every time an
 					//attached tool constructed an object
   void redrawed();
+  void detached_tool();
 
 protected:
   void paintEvent(QPaintEvent *e);
