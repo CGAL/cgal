@@ -68,6 +68,9 @@ public:
   typedef typename Gt::Tetrahedron_3               Tetrahedron;
   typedef typename Gt::Object_3                    Object;
 
+  //Tag to distinguish Delaunay from Regular triangulations
+  typedef Tag_true   Weighted_tag; 
+
   using Tr_Base::cw;
   using Tr_Base::ccw;
 #ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2

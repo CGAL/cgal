@@ -1,4 +1,10 @@
-5 July 2004 Mariette
+9 August 2004 Mariette
+- added Weighted_tag in   in  Delaunay_triangulation_3 
+  and Regular_triangulation_3
+- remove trivial function is_Gabriel(Vertex_handle v) from
+   Delaunay_triangulation_3
+
+5 August 2004 Mariette
 - added member function : bool is_Gabriel(Vertex_handle v)
  in  Delaunay_triangulation_3 and Regular_triangulation_3
 

@@ -90,6 +90,10 @@ public:
 
   typedef Triple<Vertex_handle,Vertex_handle,Vertex_handle> Vertex_triple;
 
+  //Tag to distinguish Delaunay from Regular triangulations
+  typedef Tag_false  Weighted_tag;
+
+
 #ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
   using Tr_Base::cw;
   using Tr_Base::ccw;
@@ -374,7 +378,6 @@ public:
   bool is_Gabriel(Cell_handle c, int i, int j) const;
   bool is_Gabriel(const Facet& f)const ;
   bool is_Gabriel(const Edge& e) const;
-  bool is_Gabriel(Vertex_handle v) const {return true;}
 
 // Dual functions
   Point dual(Cell_handle c) const;
