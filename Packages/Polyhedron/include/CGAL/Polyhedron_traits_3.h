@@ -24,9 +24,6 @@
 //
 // Default Traits for Polyhedral Surfaces in CGAL.
 // ============================================================================
-// $Source$
-// $Revision$   $Date$
-// $Name$
 
 #ifndef CGAL_POLYHEDRON_TRAITS_3_H
 #define CGAL_POLYHEDRON_TRAITS_3_H 1
