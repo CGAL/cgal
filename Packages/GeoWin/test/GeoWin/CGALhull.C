@@ -16,6 +16,9 @@ int main(int argc, char *argv[])
 #include <CGAL/Polygon_2_algorithms.h>
 #include <CGAL/geowin_support.h>
 
+#if defined(LEDA_NAMESPACE)
+using namespace leda;
+#endif
 
 class geo_hull : public geowin_update<std::list<CGALPoint>, std::list<CGALSegment> >
 {

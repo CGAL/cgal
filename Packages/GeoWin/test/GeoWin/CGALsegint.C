@@ -15,6 +15,10 @@ int main(int argc, char *argv[])
 #include <CGAL/Segment_2_Segment_2_intersection.h>
 #include <CGAL/geowin_support.h>
 
+#if defined(LEDA_NAMESPACE)
+using namespace leda;
+#endif
+
 class geo_segint : public geowin_update<std::list<CGALSegment>,std::list<CGALPoint> >
 {
 public:
