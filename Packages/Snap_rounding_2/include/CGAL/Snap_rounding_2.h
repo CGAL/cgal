@@ -15,7 +15,8 @@
 // package       : arr (1.73)
 // maintainer    : Eli Packer <elip@post.tau.ac.il>
 // author(s)     : Eli Packer
-// coordinator   : Dan Halperin Tel-Aviv University (Dan Halperin <danha@post.tau.ac.il>)
+// coordinator   : Dan Halperin Tel-Aviv University
+//                 (Dan Halperin <danha@post.tau.ac.il>)
 //
 // ======================================================================
 #ifndef CGAL_SR_2_H
@@ -300,7 +301,8 @@ Segment_data<Rep_>::Segment_data(const Segment_data& other)
 }
 
 template<class Rep_>
-inline void Segment_data<Rep_>::set_data(const Point_2& inp_p,const Point_2& inp_q)
+inline void Segment_data<Rep_>::set_data(const Point_2& inp_p,
+                                         const Point_2& inp_q)
 {
   p = inp_p;
   q = inp_q;
