@@ -741,6 +741,8 @@ set_compiler_flags()
     CGAL_SHARED_LIB_CXXFLAGS="-fpic"
     CGAL_SHARED_LIB_LDFLAGS=
     CGAL_SHARED_LIB_CREATE="false"
+    CGAL_WINLIB_CXXFLAGS=""
+    WINDOW_INCLUDE=""
     WINDOW_DIR="/usr/lib/X11"
     XLIBS="-lX11"
     RUNTIME_LINKER_FLAG=''
@@ -835,6 +837,7 @@ set_compiler_flags()
 	    #### settings for sgi mipspro compiler V7.3 on irix6
 	    ADDITIONAL_CXXFLAGS="-LANG:std"
 	    ADDITIONAL_LDFLAGS="-LANG:std"
+	    CGAL_LIB_CREATE="\$(CGAL_CXX) -ar -o''"
 	    CGAL_SHARED_LIB_CXXFLAGS=
 	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -shared"
 	    RUNTIME_LINKER_FLAG="-rpath "
@@ -842,6 +845,7 @@ set_compiler_flags()
 	    ;;
 	*IRIX*6.*CC*)
 	    #### settings for sgi mipspro compiler on irix6
+	    CGAL_LIB_CREATE="\$(CGAL_CXX) -ar -o''"
 	    CGAL_SHARED_LIB_CXXFLAGS=
 	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -shared"
 	    RUNTIME_LINKER_FLAG="-rpath "
@@ -862,6 +866,7 @@ set_compiler_flags()
             CGAL_LIB_CREATE="\$(CGAL_CXX) -o ''"
             CGAL_SHARED_LIB_CXXFLAGS="-Kpic"
             CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -G"
+	    WINDOW_INCLUDE="/usr/openwin/include"
             WINDOW_DIR="/usr/openwin/lib"
             RUNTIME_LINKER_FLAG="-R "
             PRINT_STACKTRACE_PROGRAM="dbx"
@@ -873,6 +878,7 @@ set_compiler_flags()
 	    CGAL_LIB_CREATE="\$(CGAL_CXX) -xar -o ''"
 	    CGAL_SHARED_LIB_CXXFLAGS="-pic"
 	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -G"
+	    WINDOW_INCLUDE="/usr/openwin/include"
 	    WINDOW_DIR="/usr/openwin/lib"
 	    RUNTIME_LINKER_FLAG="-R "
 	    PRINT_STACKTRACE_PROGRAM="dbx"
@@ -882,6 +888,8 @@ set_compiler_flags()
 	    ADDITIONAL_CXXFLAGS="-Wall"
 	    LONG_NAME_PROBLEM_LDFLAGS="-z nodefs -s"
 	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -G"
+	    CGAL_WINLIB_CXXFLAGS="-fpermissive"
+	    WINDOW_INCLUDE="/usr/openwin/include"
 	    WINDOW_DIR="/usr/openwin/lib"
 	    RUNTIME_LINKER_FLAG="-R "
 	    PRINT_STACKTRACE_PROGRAM="gdb"
@@ -3311,8 +3319,8 @@ _set_support()
 	    ;;
 	*GNU*)
 	    case `compiler_version` in
-		2.9*) CGAL_SUPPORT_COMPILER='y';;
-		egcs-2*) CGAL_SUPPORT_COMPILER='y';;
+		3.0*) CGAL_SUPPORT_COMPILER='y';;
+		2.95*) CGAL_SUPPORT_COMPILER='y';;
 		*) CGAL_SUPPORT_COMPILER='';;
 	    esac
 	    ;;
@@ -4191,6 +4199,20 @@ write_compiler_flags()
   else
     ${_printf} "\t%s\n\n" "'-I\$(CGAL_INCL_DIR)'" >> ${FILE}
   fi
+
+  #
+  # CGAL_WINLIB_CXXFLAGS
+  #
+  ${_printf} "%s\\\\\n" \
+    "CGAL_WINLIB_CXXFLAGS = " >> ${FILE}
+  if [ -n "${WINDOW_INCLUDE}" ]; then
+    ${_printf} "\t%s\n\n" \
+      "\$(CGAL_LIB_CXXFLAGS) ${CGAL_WINLIB_CXXFLAGS} -I${WINDOW_INCLUDE}" \
+      >> ${FILE}
+  else
+    ${_printf} "\t%s\n\n" \
+      "\$(CGAL_LIB_CXXFLAGS) ${CGAL_WINLIB_CXXFLAGS}" >> ${FILE}
+  fi
 }
 
 # write linker flags for a CGAL include makefile
@@ -4540,7 +4562,7 @@ create_include_makefile()
   # CGAL_LIB_CXXFLAGS
   # 
   ${_printf} "%s\\\\\n" "CGAL_LIB_CXXFLAGS = " >> ${FILE}
-  makefile_print_line "${CGAL_LIB_CXXFLAGS}" >> ${FILE}
+  makefile_print_line "${CGAL_LIB_CXXFLAGS} -O" >> ${FILE}
   ${_printf} "\t%s\n" "\$(CGAL_CXXFLAGS)" >> ${FILE}
 
   # 
@@ -4564,7 +4586,7 @@ create_include_makefile()
   # CGAL_SHARED_LIB_CXXFLAGS
   # 
   ${_printf} "%s\\\\\n" "CGAL_SHARED_LIB_CXXFLAGS = " >> ${FILE}
-  makefile_print_line "${CGAL_SHARED_LIB_CXXFLAGS}" >> ${FILE}
+  makefile_print_line "${CGAL_SHARED_LIB_CXXFLAGS} -O" >> ${FILE}
   ${_printf} "\t%s\n" "\$(CGAL_CXXFLAGS)" >> ${FILE}
 
   # 
