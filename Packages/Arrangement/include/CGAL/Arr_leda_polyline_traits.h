@@ -39,14 +39,14 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template <class FT_, class Container = std::vector<leda_rat_point > >
-class Arr_leda_polyline_traits : public leda_rat_kernel_traits
+template <class Kernel_, class Container = std::vector<leda_rat_point > >
+class Arr_leda_polyline_traits : public Kernel_
 {
 public:
   typedef Tag_false                                     Has_left_category;
 
-  typedef FT_                                           FT;
-  typedef Arr_leda_polyline_traits<FT,Container>        Self;
+  typedef Kernel_                                       Kernel;
+  typedef Arr_leda_polyline_traits<Kernel,Container>    Self;
 
   typedef leda_rat_point                                Point_2;
   typedef leda_rat_vector                               Vector_2;
