@@ -23,7 +23,6 @@
 #define CGAL_HOMOGENEOUS_REP_H
 
 #include <CGAL/Handle_for.h>
-#include <CGAL/Handle.h>
 #include <CGAL/Twotuple.h>
 #include <CGAL/Threetuple.h>
 #include <CGAL/Fourtuple.h>
@@ -98,7 +97,9 @@ class Homogeneous_base
     typedef CGAL::Handle_for< Segment_repH3<R_> >  Segment_handle_3;
     typedef CGAL::Handle_for< Threetuple< PointH3<R_> > >  Triangle_handle_3;
     typedef CGAL::Handle_for< Twotuple<PointH3<R_> > > Iso_cuboid_handle_3;
-    typedef CGAL::Handle                          Aff_transformation_handle_3;
+    typedef CGAL::Handle_for< Aff_transformation_rep_baseH3<R_>,
+                    New_delete_allocator< Aff_transformation_rep_baseH3<R_> > >
+			                           Aff_transformation_handle_3;
 
 };
 

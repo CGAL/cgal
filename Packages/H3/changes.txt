@@ -1,3 +1,6 @@
+2.37   (? October 2001)
+- Replace Handle/Rep by Handle_for/Ref_counted.
+
 2.36   (2 October 2001)
 - Access functions of objects (like .x() ) now return const references.
 

@@ -42,7 +42,7 @@ _general_transformation_composition (
                            Aff_transformation_repH3<R> r);
 
 template <class R_ >
-class Aff_transformation_rep_baseH3 : public Rep
+class Aff_transformation_rep_baseH3 : public Ref_counted
 // abstract base class of aff transformation representations
 {
 public:
@@ -91,7 +91,8 @@ public:
   typedef typename R::FT           FT;
   typedef typename R::RT           RT;
 
-  Aff_transformation_repH3();
+  Aff_transformation_repH3() {}
+
   Aff_transformation_repH3(
                  const RT& m00, const RT& m01, const RT& m02, const RT& m03,
                  const RT& m10, const RT& m11, const RT& m12, const RT& m13,
@@ -211,8 +212,6 @@ public:
   typedef typename R::FT       FT;
   typedef typename R::RT       RT;
 
-           Translation_repH3();
-
            Translation_repH3( const VectorH3<R>& v);
 
   virtual  ~Translation_repH3() {}
@@ -255,7 +254,7 @@ private:
 };
 
 template < class R_ >
-class Aff_transformationH3 : public Handle
+class Aff_transformationH3 : public R_::Aff_transformation_handle_3
 {
 public:
   typedef R_                R;
@@ -263,8 +262,6 @@ public:
   typedef typename R::FT    FT;
 
   Aff_transformationH3();
-
-  Aff_transformationH3(const Aff_transformationH3<R>& tbc);
 
   // Identity
   Aff_transformationH3(const Identity_transformation&);
@@ -286,8 +283,6 @@ public:
                   const RT& m10, const RT& m11, const RT& m12,
                   const RT& m20, const RT& m21, const RT& m22,
                                                                const RT& m33);
-
-  ~Aff_transformationH3();
 
   PointH3<R>
   transform(const PointH3<R>& p) const;
@@ -315,38 +310,24 @@ public:
 
   FT
   cartesian(int i, int j) const
-  { return ptr()->cartesian(i,j); }
+  { return Ptr()->cartesian(i,j); }
 
   RT
   homogeneous(int i, int j) const
-  { return ptr()->homogeneous(i,j); }
+  { return Ptr()->homogeneous(i,j); }
 
   FT
   m(int i, int j) const
-  { return ptr()->cartesian(i,j); }
+  { return Ptr()->cartesian(i,j); }
 
   RT
   hm(int i, int j) const
-  { return ptr()->homogeneous(i,j); }
-
-// protected:
-  Aff_transformation_rep_baseH3<R>*   ptr() const;
+  { return Ptr()->homogeneous(i,j); }
 };
 
 #ifdef CGAL_CFG_TYPENAME_BUG
 #define typename
 #endif
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-Aff_transformation_repH3<R>::Aff_transformation_repH3()
-#ifdef INITIALIZE_AFF_TRANSFORMATIONS
-  :  t00(RT(1)), t01(RT(0)), t02(RT(0)), t03(RT(0)),
-     t10(RT(0)), t11(RT(1)), t12(RT(0)), t13(RT(0)),
-     t20(RT(0)), t21(RT(0)), t22(RT(1)), t23(RT(0)),
-                                         t33(RT(1))
-#endif // INITIALIZE_AFF_TRANSFORMATIONS
-{}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
@@ -584,16 +565,6 @@ Identity_repH3<R>::general_form() const
                                                         RT1 );
 }
 
-// not used (default ctor in Aff_transformationH3
-// calls default ctor of Aff_transformation_repH3 )
-template < class R >
-inline
-Translation_repH3<R>::Translation_repH3()
-#ifdef INITIALIZE_AFF_TRANSFORMATIONS
-  : tv( VectorH3<R>( RT(0), RT(0) ))
-#endif // INITIALIZE_AFF_TRANSFORMATIONS
-{}
-
 template < class R >
 inline
 Translation_repH3<R>::Translation_repH3( const VectorH3<R>& v)
@@ -749,26 +720,19 @@ _general_transformation_composition(
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 Aff_transformationH3<R>::Aff_transformationH3()
-{ PTR = new Aff_transformation_repH3<R>(); }
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-Aff_transformationH3<R>::
-Aff_transformationH3( const Aff_transformationH3<R>& tbc)
- : Handle(tbc)
-{}
+{ initialize_with(Aff_transformation_repH3<R>()); }
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 Aff_transformationH3<R>::
 Aff_transformationH3(const Identity_transformation&)
-{ PTR = new Identity_repH3<R>(); }
+{ initialize_with(Identity_repH3<R>()); }
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 Aff_transformationH3<R>::
 Aff_transformationH3(const Translation&, const VectorH3<R>& v)
-{ PTR = new Translation_repH3<R>( v ); }
+{ initialize_with(Translation_repH3<R>( v )); }
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
@@ -776,10 +740,10 @@ Aff_transformationH3<R>::
 Aff_transformationH3(const Scaling&, const RT& num, const RT& den)
 {
   const RT RT0(0);
-  PTR = new Aff_transformation_repH3<R>(num, RT0, RT0, RT0,
+  initialize_with(Aff_transformation_repH3<R>(num, RT0, RT0, RT0,
                                             RT0, num, RT0, RT0,
                                             RT0, RT0, num, RT0,
-                                                           den );
+                                                           den ));
 }
 
 template < class R >
@@ -791,10 +755,10 @@ Aff_transformationH3(
                   const RT& m20, const RT& m21, const RT& m22, const RT& m23,
                                                                const RT& m33)
 {
-  PTR = new Aff_transformation_repH3<R>(m00, m01, m02, m03,
+  initialize_with(Aff_transformation_repH3<R>(m00, m01, m02, m03,
                                             m10, m11, m12, m13,
                                             m20, m21, m22, m23,
-                                                           m33 );
+                                                           m33 ));
 }
 
 template < class R >
@@ -807,72 +771,61 @@ Aff_transformationH3(
                                                                const RT& m33)
 {
   const RT RT0 = RT(0);
-  PTR = new Aff_transformation_repH3<R>(m00, m01, m02, RT0,
+  initialize_with(Aff_transformation_repH3<R>(m00, m01, m02, RT0,
                                             m10, m11, m12, RT0,
                                             m20, m21, m22, RT0,
-                                                           m33 );
+                                                           m33 ));
 }
-
-template < class R >
-inline
-Aff_transformation_rep_baseH3<R>*
-Aff_transformationH3<R>::ptr() const
-{ return static_cast<Aff_transformation_rep_baseH3<R>*>(PTR); }
-
-template < class R >
-inline
-Aff_transformationH3<R>::~Aff_transformationH3()
-{}
 
 template < class R >
 inline
 PointH3<R>
 Aff_transformationH3<R>::transform(const PointH3<R>& p) const
-{ return ptr()->transform(p); }
+{ return Ptr()->transform(p); }
 
 template < class R >
 inline
 VectorH3<R>
 Aff_transformationH3<R>::transform(const VectorH3<R>& v) const
-{ return ptr()->transform(v); }
+{ return Ptr()->transform(v); }
 
 template < class R >
 inline
 DirectionH3<R>
 Aff_transformationH3<R>::
 transform(const DirectionH3<R>& d) const
-{ return ptr()->transform(d); }
+{ return Ptr()->transform(d); }
 
 template < class R >
 inline
 PlaneH3<R>
 Aff_transformationH3<R>::
 transform(const PlaneH3<R>& pl) const
-{ return ptr()->transform(pl); }
+{ return Ptr()->transform(pl); }
 
 template < class R >
 inline
 Aff_transformationH3<R>
 Aff_transformationH3<R>::inverse() const
-{ return ptr()->inverse(); }
+{ return Ptr()->inverse(); }
 
 template < class R >
 inline
 Aff_transformationH3<R>
 Aff_transformationH3<R>::transpose() const
-{ return ptr()->transpose(); }
+{ return Ptr()->transpose(); }
 
 template < class R >
 inline
 bool
 Aff_transformationH3<R>::is_even() const
-{ return ptr()->is_even(); }
+{ return Ptr()->is_even(); }
 
 template < class R >
 inline
 bool
 Aff_transformationH3<R>::is_odd() const
-{ return ( ! (ptr()->is_even() )); }
+{ return ( ! (Ptr()->is_even() )); }
 
 template < class R >
 CGAL_KERNEL_INLINE
@@ -881,8 +834,8 @@ operator*(const Aff_transformationH3<R>& left_argument,
           const Aff_transformationH3<R>& right_argument )
 {
  return _general_transformation_composition(
-              left_argument.ptr() ->general_form(),
-              right_argument.ptr()->general_form() );
+              left_argument.Ptr() ->general_form(),
+              right_argument.Ptr()->general_form() );
 }
 
 template < class R >
@@ -891,7 +844,7 @@ operator<< ( std::ostream & out,
              const Aff_transformationH3<R>& t)
 {
  typename R::RT RT0(0);
- Aff_transformation_repH3<R> r = t.ptr()->general_form();
+ Aff_transformation_repH3<R> r = t.Ptr()->general_form();
  return  out
  << "| "<< r.t00 <<' '<< r.t01 <<' '<< r.t02 <<' '<< r.t03 << " |\n"
  << "| "<< r.t10 <<' '<< r.t11 <<' '<< r.t12 <<' '<< r.t13 << " |\n"
