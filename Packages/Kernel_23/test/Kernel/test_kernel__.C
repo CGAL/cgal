@@ -23,9 +23,6 @@
 
 #include <CGAL/basic.h>
 #include <cassert>
-#ifdef CGAL_USE_GMP
-#include <CGAL/Gmpz.h>
-#endif // CGAL_USE_GMP
 #include <CGAL/Homogeneous.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Simple_cartesian.h>
@@ -33,21 +30,19 @@
 #include <CGAL/_test_cls_quotient.C>
 #include <CGAL/_test_fct_point_conversion.C>
 #include <CGAL/_test_fct_determinant.C>
+#include <CGAL/MP_Float.h>
+#include <CGAL/Precise_numbers.h>
+#ifdef CGAL_USE_GMP
+#include <CGAL/Gmpz.h>
+#endif
 #ifdef CGAL_USE_LEDA
 #include <CGAL/leda_integer.h>
-#endif // CGAL_USE_LEDA
+#endif
 
 int
 main()
 {
   std::cout << "Testing miscellanous" << std::endl;
-#ifdef CGAL_USE_GMP
-  typedef   CGAL::Gmpz     Precise_integer;
-#else
-# ifdef CGAL_USE_LEDA
-  typedef   leda_integer   Precise_integer;
-# endif // CGAL_USE_LEDA
-#endif // CGAL_USE_GMP
   typedef   CGAL::Homogeneous<Precise_integer>                 H_Cls;
   typedef   CGAL::Cartesian<CGAL::Quotient<Precise_integer> >  C_Cls;
   typedef   CGAL::Simple_cartesian<CGAL::Quotient<Precise_integer> >  S_Cls;
@@ -64,10 +59,12 @@ main()
 #ifdef CGAL_USE_GMP
   _test_cls_quotient( CGAL::Gmpz(1) );
   _test_fct_point_conversion( CGAL::Gmpz(1) );
-#endif // CGAL_USE_GMP
+#endif
 #ifdef CGAL_USE_LEDA
   _test_cls_quotient( leda_integer(1) );
   _test_fct_point_conversion( leda_integer(1) );
-#endif // CGAL_USE_LEDA
+#endif
+  _test_cls_quotient( CGAL::MP_Float(1) );
+  _test_fct_point_conversion( CGAL::MP_Float(1) );
   return 0;
 }

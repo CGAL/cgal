@@ -24,16 +24,7 @@
 #include <CGAL/basic.h>
 #include <cassert>
 
-#ifdef CGAL_USE_GMP
-# include <CGAL/Gmpz.h>
-typedef CGAL::Gmpz    Precise_integer;
-#else
-# ifdef CGAL_USE_LEDA
-#  include <CGAL/leda_integer.h>
-typedef leda_integer  Precise_integer;
-# endif // CGAL_USE_LEDA
-#endif // CGAL_USE_GMP
-
+#include <CGAL/Precise_numbers.h>
 #include <CGAL/Homogeneous.h>
 #include <CGAL/Point_3.h>
 #include <CGAL/Line_3.h>

@@ -1,3 +1,7 @@
+3.21   (16 May 2001)
+- Commonize the definition of Precise_[integer|rational].
+- Use MP_Float when neither LEDA or GMP are supported.
+
 3.20   (1 May 2001)
 - angle.
 - Removed obsolete uses of CGAL_STRICT21 and CGAL_STRICT_09.

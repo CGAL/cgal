@@ -23,17 +23,7 @@
 
 #include <CGAL/basic.h>
 #include <cassert>
-#ifdef CGAL_USE_GMP
-# include <CGAL/Gmpz.h>
-typedef CGAL::Gmpz    Precise_integer;
-#else
-# ifdef CGAL_USE_LEDA
-#  include <CGAL/leda_integer.h>
-typedef leda_integer  Precise_integer;
-# endif // CGAL_USE_LEDA
-#endif // CGAL_USE_GMP
-
-
+#include <CGAL/Precise_numbers.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Quotient.h>
 #include <CGAL/_test_fct_points_implicit_sphere.h>
@@ -44,7 +34,6 @@ typedef leda_integer  Precise_integer;
 #include <CGAL/_test_fct_coplanar_3.h>
 #include <CGAL/_test_cls_iso_cuboid_3.C>
 #include <CGAL/_test_angle.h>
-
 
 int
 main()

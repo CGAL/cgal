@@ -23,24 +23,8 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Simple_cartesian.h>
-#ifdef CGAL_USE_LEDA
-#include <CGAL/leda_integer.h>
-#include <CGAL/leda_rational.h>
-typedef leda_integer                  Precise_integer;
-typedef leda_rational                 Precise_rational;
-#else
-#  ifdef CGAL_USE_GMP
-#include <CGAL/Gmpz.h>
-#include <CGAL/Quotient.h>
-typedef CGAL::Gmpz                    Precise_integer;
-typedef CGAL::Quotient<CGAL::Gmpz>    Precise_rational;
-#  endif // CGAL_USE_GMP
-#endif // CGAL_USE_LEDA
-
-
-
+#include <CGAL/Precise_numbers.h>
 #include <CGAL/_test_new_3.h>
-
 
 typedef CGAL::Simple_cartesian<Precise_rational>  Kernel;
 
@@ -49,4 +33,3 @@ int main()
   test_new_3( Kernel() );
   return 0;
 }
-
