@@ -25,12 +25,13 @@
 \ccSubsection{Fixed precision numbers}
 \label{I1_Chapter_Fixed_precision_nt}
 
-The class \ccStyle{Fixed_precision_nt} provides 24 bits number in 
+The class \ccStyle{Fixed_precision_nt} provides 24 bits numbers in 
 fixed point representation.
 Basically these numbers are integers in the range
 $[-2^{24},2^{24}]$ with a multiplying factor $2^b$.
 The multiplying factor $2^b$ has to be initialized by the user
-before the construction of the first \ccStyle{Fixed_precision_nt}.
+before the construction of the first \ccStyle{Fixed_precision_nt}
+and is common to all variables.
 
 The interest of such a number type is that geometric predicates
 can be overloaded to get exact and very efficient predicates.
@@ -47,27 +48,25 @@ but only the specialized predicates.
 
 \ccInclude{CGAL/Fixed_precision_nt.h}
 
-\ccConstructor{Fixed_precision_nt(double);}
+\ccConstructor{Fixed_precision_nt();}
+            {Declaration.}
+
+\ccConstructor{Fixed_precision_nt(double d);}
             {Initialization of a variable. The variable is rounded to the
                 nearest legal fixed number (i.e. a multiple of $2^b=$
                 \ccStyle{Fixed_precision_nt::unit_value()}}
 
 
-\ccConstructor{Fixed_precision_nt();}
-            {Declaration.}
-
 \ccConstructor{Fixed_precision_nt(const Fixed_precision_nt &fval);}
             {Declaration and initialization.}
 
 
-\ccConstructor{Fixed_precision_nt(i)}
+\ccConstructor{Fixed_precision_nt(int i)}
             {Declaration and initialization with an integer.}
 
 \ccSetThreeColumns{Fixed_precision_nt &}{}{\hspace*{6.5cm}}
 \ccOperations
 
-The comparison operations $==$, $!=$, $<$, $>$, $<=$, and $>=$ are all
-available.
 
 \ccMethod{Fixed_precision_nt & operator=(const Fixed_precision_nt &fval);}
         {Assignment. 
@@ -76,61 +75,23 @@ available.
 \ccFunction{bool is_valid(const Fixed_precision_nt &fval);}
 {In case of overflow or division by 0, numbers becomes invalid.
 If the precision is changed by usage of 
-\ccStyle{Fixed_precision_nt::init()}, already existing numbers may became invalid
-if they are non longer multiple of $2^b$.}
+\ccStyle{Fixed_precision_nt::init()}, already existing numbers may become invalid
+if they are no longer multiple of $2^b$.}
 
 \ccFunction{bool is_finite(const Fixed_precision_nt &fval);}
-{ \ccClassName do not implement infinite numbers. 
+{ \ccClassName\ do not implement infinite numbers. 
   \ccStyle{is_finite} is identical to \ccStyle{is_valid}.}
 
-%\ccMethod{bool operator==(const Fixed_precision_nt &f) const;}
-%       {}
+The comparison operations $==$, $!=$, $<$, $>$, $<=$, and $>=$ are all
+available.
 
-%\ccMethod{bool operator!=(const Fixed_precision_nt &f) const;}
-%       {}
-
-%\ccMethod{bool operator<(const Fixed_precision_nt &f) const;}
-%       {}
-
-
-%\ccMethod{bool operator>(const Fixed_precision_nt &f) const;}
-%       {}
+The arithmetic operators $+$, $-$, $*$, $/$, $+=$, $-=$, $*=$ and $/=$
+are all available. The result of the computation is rounded to the
+nearest legal \ccClassName. Overflow is possible, and even probable in case
+of multiplication or division. \ccClassName\ are designed to use
+specialized predicates, not to use arithmetic.
 
 
-%\ccMethod{bool operator<=(const Fixed_precision_nt &f) const;}
-%       {}
-
-
-%\ccMethod{bool operator>=(const Fixed_precision_nt &f) const;}
-%       {}
-
-\ccFunction{Fixed_precision_nt operator+(const Fixed_precision_nt &fval1, const Fixed_precision_nt &fval2);}
-       {rounds the result to nearest legal \ccStyle{ Fixed}.}
-\ccGlue
-\ccFunction{Fixed_precision_nt operator-(const Fixed_precision_nt &fval1, const Fixed_precision_nt &fval2);}
-       {rounds the result to nearest legal \ccStyle{ Fixed}.}
-\ccGlue
-\ccFunction{Fixed_precision_nt operator*(const Fixed_precision_nt &fval1, const Fixed_precision_nt &fval2);}
-       {rounds the result to nearest legal \ccStyle{ Fixed}. Overflow is possible.}
-\ccGlue
-\ccFunction{Fixed_precision_nt operator-(const Fixed_precision_nt &fval);}
-       {rounds the result to nearest legal \ccStyle{ Fixed}.}
-\ccGlue
-\ccMethod{Fixed_precision_nt operator+=(const Fixed_precision_nt &f) const;}
-       {rounds the result to nearest legal \ccStyle{ Fixed}.}
-\ccGlue
-\ccMethod{Fixed_precision_nt operator-=(const Fixed_precision_nt &f) const;}
-       {rounds the result to nearest legal \ccStyle{ Fixed}.}
-\ccGlue
-\ccMethod{Fixed_precision_nt operator*=(const Fixed_precision_nt &f) const;}
-       {rounds the result to nearest legal \ccStyle{ Fixed}. Overflow is possible.}
-\ccGlue
-\ccMethod{Fixed_precision_nt operator/=(const Fixed_precision_nt &f) const;}
-       {rounds the result to nearest legal \ccStyle{ Fixed}. Overflow is possible.}
-\ccGlue
-\ccFunction{Fixed_precision_nt operator/(const Fixed_precision_nt &fval1, const Fixed_precision_nt &fval2);}
-       {rounds the result to nearest legal \ccStyle{ Fixed}. Overflow is possible.}
-\ccGlue
 \ccFunction{double to_double(const Fixed_precision_nt &fval);}
          {casts to \ccStyle{double}.}
 
@@ -138,16 +99,17 @@ if they are non longer multiple of $2^b$.}
 %\section{Parametrization routines}
 
 \ccHeading{Precision initialization}
-As mentioned before, the \ccStyle{Fixed_precision_nt} numbers works in an
+As mentioned before, the \ccClassName\ numbers takes their values in an
 interval $[-2^{24+b},2^{24+b}]$ of multiples of $2^b$,
-this number $b$ as to be defined before all use of \ccStyle{Fixed_precision_nt}.
+this number $b$ as to be defined before any
+ use of \ccStyle{Fixed_precision_nt}.
 
 \ccSetThreeColumns{Oriented_side}{}{\hspace*{7.5cm}}
 
 \ccFunction{static bool Fixed_precision_nt::init(float B);}
 {$B$ is an upper bound on the data, $b$ is the smallest integer such that 
 $|B|\leq 2^b$. The result of the function is false if initialization was
-already done, in that case already existing \ccClassName\ may became invalid.}
+already done, in that case already existing \ccClassName\ may become invalid.}
 
 \ccFunction{static float Fixed_precision_nt::unit_value();}
 {returns $2^b$.}
@@ -157,13 +119,14 @@ already done, in that case already existing \ccClassName\ may became invalid.}
 
 \ccHeading{Perturbation scheme}
 
-\ccClassName\ implements perturbation scheme as described by
+\ccClassName\ implements the perturbation scheme as described by
 Alliez, Devillers and Snoeyink \cite{ads-rdppw-97}.
-The perturbation mode can be activate or deactivate for different kinds
+The perturbation mode can be activated or deactivated for different kinds
 of perturbations. The default mode is no perturbation.
 
 \ccFunction{static void Fixed_precision_nt::perturb_incircle();}
-{Activate. Incircle test of 4 cocircular points answers degenerate only if
+{Activate. \ccstyle{side_of_oriented_circle} predicate
+ of 4 cocircular points answers degenerate only if
 the 4 points are colinear.}
 
 \ccFunction{static void Fixed_precision_nt::unperturb_incircle();}
@@ -173,7 +136,8 @@ the 4 points are colinear.}
 {returns current mode}
 
 \ccFunction{static void Fixed_precision_nt::perturb_insphere();}
-{Activate. Insphere test of 5 cospherical points answers degenerate only if
+{Activate. \ccstyle{side_of_oriented_sphere} predicate
+ of 5 cospherical points answers degenerate only if
 the 5 points are coplanar.}
 
 \ccFunction{static void Fixed_precision_nt::unperturb_insphere();}

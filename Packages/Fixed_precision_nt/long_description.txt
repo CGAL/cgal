@@ -49,6 +49,10 @@ Versions
 2.3 (10 May 1999)
   small bug in test suite
 
+2.4 (17 May 1999)
+  doc
+
+
 CONTENTS:
 
 description.txt
