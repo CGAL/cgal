@@ -15,7 +15,7 @@
 \ccChapterAuthor{Sylvain Pion ({\tt Sylvain.Pion@sophia.inria.fr})}
 \index{CVS server|(}
 
-CVS (Concurrent Versions System) is a very efficient version control
+CVS (Concurrent Versions System) is a popular version control
 system that keeps track of the complete history of changes for a set of
 source files.  CVS is of great help when several people work on the
 same project.
@@ -25,7 +25,7 @@ Lots of documentation, including tutorials, can easily be found on the net.
 
 The machine \texttt{cgal.inria.fr} hosts a CVS server for \cgal.
 There is read-only access via the web at
-\path|http://cgal.inria.fr/cgi-bin/cvsweb.cgi/|.
+\path|http://cgal.inria.fr/cgi-bin/viewcvs.cgi/|.
 
 \section{Structure of the repository}
 \label{sec:cvs_structure}
@@ -65,8 +65,6 @@ $CVSROOT/CGAL
            |         |     |
            |         |     |-- maintainer 
            |         |     |
-           |         |     |-- version
-           |         |     |
            |         |     |-- changes.txt 
            |         |     |
            |         |     |-- TODO 
@@ -104,13 +102,13 @@ Here are the access rules:
 \item Everybody who has the login and password for \cgal\ members 
       has read access to the \cgal\ repository and there is also
       read-only access for members via the web at 
-      \path|http://cgal.inria.fr/cgi-bin/cvsweb.cgi/|.
+      \path|http://cgal.inria.fr/cgi-bin/viewcvs.cgi/|.
 \item Each package has a set (which can be only one person) of people having
       write access to the corresponding module.  It's up to the maintainer of
       the package to decide who is given write access, and how you should
       coordinate (we may decide something else for the freeze periods).
       The file
-      \path|http://cgal.inria.fr/cgi-bin/cvsweb.cgi/Admin/write_access_rights|
+      \path|http://cgal.inria.fr/cgi-bin/viewcvs.cgi/Admin/write_access_rights|
       contains the write access lists.
 \item Currently, there is no SSH access method, only the less secure pserver
       is working.
@@ -163,11 +161,10 @@ print "${crypttext}\n";
     and indicate for which packages you need write permission.
 \end{itemize}
 
-There are possibilities to run a script after each \texttt{cvs
-commit} command, for example to send mail to the maintainers of
-a package so they all can keep track of what is going on.
-
-To submit a package from the CVS server, use the script
-\ccAnchor{http://cgal.inria.fr/cgi-bin/cvsweb.cgi/CGAL/Packages/Scripts/developer_scripts/cgal_submit}{\texttt{cgal\_submit}} (Section~\ref{sec:cgal_submit}).
+After each commit, an automatic mail is sent to the
+\texttt{cgal-cvs-l@postino.mpi-sb.mpg.de} mailing-list which records
+the log message as well as URL to the corresponding diffs within
+the ViewCVS interface.  Maintainers and developpers can subscribe
+to it in order to check what gets commited to their packages.
 
 \index{CVS server|)}

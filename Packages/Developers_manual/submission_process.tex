@@ -89,7 +89,7 @@ Andreas Fabri          & Bernd G\"artner  \\
 Efi Fogel              & Michael Hoffmann \\
 Lutz Kettner           & Monique Teillaud  \\
 Remco Veltkamp         & Mariette Yvinec  \\
-Sylvain Pion &
+Sylvain Pion           & Menelaos Karavelas
 \end{tabular}
 \end{center}
 \ccIndexMainItemEnd{editorial committee}
@@ -99,12 +99,15 @@ Sylvain Pion &
 \label{sec:electronic_submission}
 \ccIndexMainItemBegin{submitting}
 
-
 Whether you produce library code, demos, documentation or something else,
 if you want it to become part of \cgal, you'll have to submit it in the form
-of a package.  The directory structure required for a package is described in
+of a package which has to be a module under CVS.
+The directory structure required for a package is described in
 Chapter~\ref{chap:directory_structure}.
+
 Here we focus on how to submit a package.
+This section is mostly obsolete since we have gotten rid of the mail-based
+system for package submission in 2004.
 
 \ccIndexSubitem{naming scheme}{package}
 A package has a name, which identifies it.  This name should obey the same
@@ -119,48 +122,10 @@ in the plane and \texttt{Min\_ellipse\_2}, which contains an algorithm that
 finds the minimal enclosing ellipse of a set of points in the plane. The 
 package names \texttt{pm} and \texttt{arr} are a bit too terse.
 \texttt{Planar\_map} and \texttt{Arrangement} (or
-\texttt{Arrangement\_2}) would have been better.
+\texttt{Arrangement\_2}) are better.
 
 \ccIndexSubitem{submitting}{file for}
-A submission consists of a single compressed file.  The name of this file
-must be the name of the package followed by \texttt{.tar.gz} or \texttt{.tgz} 
-if the file is made with \texttt{tar} and \texttt{gzip} or followed by 
-\texttt{.zip} if the file is made with \texttt{zip}.   
 
-With the advent of the CVS server, the submission of packages has become
-quite simple.  One need only 
-\begin{itemize}
-   \item[(a)] put your package on the CVS server (Chapter~\ref{chap:cvs})
-   \item[(b)] go to the working directory of the package and run the script 
-              \texttt{cgal\_submit} (Section~\ref{sec:cgal_submit}).
-\end{itemize}
-If all goes well, the package is installed and the 
-\ccAnchor{http://www.cs.uu.nl/CGAL/Members/Develop/updates/packages.html}{packages page}
-\begin{ccTexOnly} 
-(\path|http://www.cs.uu.nl/CGAL/Members/Develop/updates/packages.html|) 
-\end{ccTexOnly}
-is updated. 
-
-Within 15 minutes the maintainers of the package (those listed in the file
-\texttt{maintainer}) will receive a confirmation of the
-submission.\footnote{The confirmation goes also to the person responsible
-for the submission procedure.}  If this is not the case, send a mail to
-\texttt{cgal-submit@cs.uu.nl} (with a subject other than \texttt{autohandle}) 
-and ask what went
-wrong.  The first time you submit a package, the confirmation message will
-tell you that the package will not go into internal releases. Usually, you
-request \texttt{cgal-submit@cs.uu.nl} to add the package to the internal 
-releases. In a perfectly bureaucratic world, the editorial committee would be 
-asked if it is OK to add the package. In practice, that is not done.
-
-The submission process checks your package for several things.  It checks
-if your source files contain a valid header (Section~\ref{sec:file_header})
-and if the lines are not longer than 80 characters. It checks if any files
-in the package have the same case-insensitive name as a file in some other
-package.  Moreover, it is picky about the files
-\ccAnchor{example/version}{\texttt{version}} and \ccAnchor{example/maintainer}{\texttt{maintainer}},
-which must be part of your package. See Chapter~\ref{chap:directory_structure}
-for a precise description of the required format for this file.
 \ccIndexMainItemEnd{submitting}
 
 
