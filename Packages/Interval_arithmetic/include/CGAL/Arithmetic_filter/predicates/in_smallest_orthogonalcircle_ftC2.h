@@ -81,16 +81,6 @@ struct Static_Filtered_in_smallest_orthogonalcircleC2_9
   static double _epsilon_0;
   // static unsigned number_of_failures; // ?
 
-  // Call this function from the outside to update the context.
-  static void new_bound (const double b) // , const double error = 0)
-  {
-    _bound = b;
-    // recompute the epsilons: "just" call it over Static_filter_error.
-    // That's the tricky part that might not work for everything.
-    (void) update_epsilons(b,b,b,b,b,b,_epsilon_0);
-    // TODO: We should verify that all epsilons have really been updated.
-  }
-
   static Oriented_side update_epsilon(
 	const Static_filter_error &px,
 	const Static_filter_error &py,
@@ -114,6 +104,16 @@ struct Static_Filtered_in_smallest_orthogonalcircleC2_9
     return Oriented_side (Static_Filtered_sign_1::update_epsilon((square(dtx)+square(dty)-tw+qw)*dpz
   			     -(dpz-pw+qw)*(dpx*dtx+dpy*dty),
   		epsilon_0));
+  }
+
+  // Call this function from the outside to update the context.
+  static void new_bound (const double b) // , const double error = 0)
+  {
+    _bound = b;
+    // recompute the epsilons: "just" call it over Static_filter_error.
+    // That's the tricky part that might not work for everything.
+    (void) update_epsilon(b,b,b,b,b,b,b,b,b,_epsilon_0);
+    // TODO: We should verify that all epsilons have really been updated.
   }
 
   static Oriented_side epsilon_variant(
@@ -201,7 +201,7 @@ re_adjust:
 		tx.dbl(),
 		ty.dbl(),
 		tw.dbl(),
-		SAF_epsilon_0);
+		Static_Filtered_in_smallest_orthogonalcircleC2_9::_epsilon_0);
   }
   catch (Restricted_double::unsafe_comparison)
   {

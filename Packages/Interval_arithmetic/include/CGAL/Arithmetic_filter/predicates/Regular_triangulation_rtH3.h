@@ -129,16 +129,6 @@ struct Static_Filtered_power_testH3_25
   static double _epsilon_0;
   // static unsigned number_of_failures; // ?
 
-  // Call this function from the outside to update the context.
-  static void new_bound (const double b) // , const double error = 0)
-  {
-    _bound = b;
-    // recompute the epsilons: "just" call it over Static_filter_error.
-    // That's the tricky part that might not work for everything.
-    (void) update_epsilons(b,b,b,b,b,b,_epsilon_0);
-    // TODO: We should verify that all epsilons have really been updated.
-  }
-
   static Oriented_side update_epsilon(
 	const Static_filter_error &phx,
 	const Static_filter_error &phy,
@@ -205,6 +195,16 @@ struct Static_Filtered_power_testH3_25
   	                                        dshx, dshy, dshz, dsz, dshw,
   	                                        dthx, dthy, dthz, dtz, dthw,
   		epsilon_0));
+  }
+
+  // Call this function from the outside to update the context.
+  static void new_bound (const double b) // , const double error = 0)
+  {
+    _bound = b;
+    // recompute the epsilons: "just" call it over Static_filter_error.
+    // That's the tricky part that might not work for everything.
+    (void) update_epsilon(b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,_epsilon_0);
+    // TODO: We should verify that all epsilons have really been updated.
   }
 
   static Oriented_side epsilon_variant(
@@ -399,7 +399,7 @@ re_adjust:
 		thz.dbl(),
 		thw.dbl(),
 		twt.dbl(),
-		SAF_epsilon_0);
+		Static_Filtered_power_testH3_25::_epsilon_0);
   }
   catch (Restricted_double::unsafe_comparison)
   {

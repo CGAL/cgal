@@ -75,16 +75,6 @@ struct Static_Filtered_compare_xC2_7
   static double _epsilon_0,_epsilon_1;
   // static unsigned number_of_failures; // ?
 
-  // Call this function from the outside to update the context.
-  static void new_bound (const double b) // , const double error = 0)
-  {
-    _bound = b;
-    // recompute the epsilons: "just" call it over Static_filter_error.
-    // That's the tricky part that might not work for everything.
-    (void) update_epsilons(b,b,b,b,b,b,_epsilon_0,_epsilon_1);
-    // TODO: We should verify that all epsilons have really been updated.
-  }
-
   static Comparison_result update_epsilon(
 	const Static_filter_error &px,
 	const Static_filter_error &l1a,
@@ -106,6 +96,16 @@ struct Static_Filtered_compare_xC2_7
   		epsilon_1);
     CGAL_kernel_assertion( sign1 != 0 );
     return Comparison_result (sign1 * sign2);
+  }
+
+  // Call this function from the outside to update the context.
+  static void new_bound (const double b) // , const double error = 0)
+  {
+    _bound = b;
+    // recompute the epsilons: "just" call it over Static_filter_error.
+    // That's the tricky part that might not work for everything.
+    (void) update_epsilon(b,b,b,b,b,b,b,_epsilon_0,_epsilon_1);
+    // TODO: We should verify that all epsilons have really been updated.
   }
 
   static Comparison_result epsilon_variant(
@@ -183,8 +183,8 @@ re_adjust:
 		l2a.dbl(),
 		l2b.dbl(),
 		l2c.dbl(),
-		SAF_epsilon_0,
-		SAF_epsilon_1);
+		Static_Filtered_compare_xC2_7::_epsilon_0,
+		Static_Filtered_compare_xC2_7::_epsilon_1);
   }
   catch (Restricted_double::unsafe_comparison)
   {
@@ -269,16 +269,6 @@ struct Static_Filtered_compare_xC2_12
   static double _epsilon_0,_epsilon_1,_epsilon_2;
   // static unsigned number_of_failures; // ?
 
-  // Call this function from the outside to update the context.
-  static void new_bound (const double b) // , const double error = 0)
-  {
-    _bound = b;
-    // recompute the epsilons: "just" call it over Static_filter_error.
-    // That's the tricky part that might not work for everything.
-    (void) update_epsilons(b,b,b,b,b,b,_epsilon_0,_epsilon_1,_epsilon_2);
-    // TODO: We should verify that all epsilons have really been updated.
-  }
-
   static Comparison_result update_epsilon(
 	const Static_filter_error &l1a,
 	const Static_filter_error &l1b,
@@ -312,6 +302,16 @@ struct Static_Filtered_compare_xC2_12
   		epsilon_2);
     CGAL_kernel_assertion( (sign1 != 0) && (sign2 != 0) );
     return Comparison_result (- sign1 * sign2 * sign3);
+  }
+
+  // Call this function from the outside to update the context.
+  static void new_bound (const double b) // , const double error = 0)
+  {
+    _bound = b;
+    // recompute the epsilons: "just" call it over Static_filter_error.
+    // That's the tricky part that might not work for everything.
+    (void) update_epsilon(b,b,b,b,b,b,b,b,b,b,b,b,_epsilon_0,_epsilon_1,_epsilon_2);
+    // TODO: We should verify that all epsilons have really been updated.
   }
 
   static Comparison_result epsilon_variant(
@@ -421,9 +421,9 @@ re_adjust:
 		h2a.dbl(),
 		h2b.dbl(),
 		h2c.dbl(),
-		SAF_epsilon_0,
-		SAF_epsilon_1,
-		SAF_epsilon_2);
+		Static_Filtered_compare_xC2_12::_epsilon_0,
+		Static_Filtered_compare_xC2_12::_epsilon_1,
+		Static_Filtered_compare_xC2_12::_epsilon_2);
   }
   catch (Restricted_double::unsafe_comparison)
   {
@@ -492,16 +492,6 @@ struct Static_Filtered_compare_y_at_xC2_5
   static double _epsilon_0,_epsilon_1;
   // static unsigned number_of_failures; // ?
 
-  // Call this function from the outside to update the context.
-  static void new_bound (const double b) // , const double error = 0)
-  {
-    _bound = b;
-    // recompute the epsilons: "just" call it over Static_filter_error.
-    // That's the tricky part that might not work for everything.
-    (void) update_epsilons(b,b,b,b,b,b,_epsilon_0,_epsilon_1);
-    // TODO: We should verify that all epsilons have really been updated.
-  }
-
   static Comparison_result update_epsilon(
 	const Static_filter_error &px,
 	const Static_filter_error &py,
@@ -519,6 +509,16 @@ struct Static_Filtered_compare_y_at_xC2_5
   		epsilon_1);
     CGAL_kernel_assertion( sign1 != 0 );
     return Comparison_result (sign1 * sign2);
+  }
+
+  // Call this function from the outside to update the context.
+  static void new_bound (const double b) // , const double error = 0)
+  {
+    _bound = b;
+    // recompute the epsilons: "just" call it over Static_filter_error.
+    // That's the tricky part that might not work for everything.
+    (void) update_epsilon(b,b,b,b,b,_epsilon_0,_epsilon_1);
+    // TODO: We should verify that all epsilons have really been updated.
   }
 
   static Comparison_result epsilon_variant(
@@ -584,8 +584,8 @@ re_adjust:
 		la.dbl(),
 		lb.dbl(),
 		lc.dbl(),
-		SAF_epsilon_0,
-		SAF_epsilon_1);
+		Static_Filtered_compare_y_at_xC2_5::_epsilon_0,
+		Static_Filtered_compare_y_at_xC2_5::_epsilon_1);
   }
   catch (Restricted_double::unsafe_comparison)
   {
@@ -653,16 +653,6 @@ struct Static_Filtered_compare_y_at_xC2_7
   static double _epsilon_0,_epsilon_1,_epsilon_2;
   // static unsigned number_of_failures; // ?
 
-  // Call this function from the outside to update the context.
-  static void new_bound (const double b) // , const double error = 0)
-  {
-    _bound = b;
-    // recompute the epsilons: "just" call it over Static_filter_error.
-    // That's the tricky part that might not work for everything.
-    (void) update_epsilons(b,b,b,b,b,b,_epsilon_0,_epsilon_1,_epsilon_2);
-    // TODO: We should verify that all epsilons have really been updated.
-  }
-
   static Comparison_result update_epsilon(
 	const Static_filter_error &px,
 	const Static_filter_error &l1a,
@@ -685,6 +675,16 @@ struct Static_Filtered_compare_y_at_xC2_7
   		epsilon_2);
     CGAL_kernel_assertion( (sign1 != 0) && (sign2 != 0) );
     return Comparison_result (- sign1 * sign2 * sign3);
+  }
+
+  // Call this function from the outside to update the context.
+  static void new_bound (const double b) // , const double error = 0)
+  {
+    _bound = b;
+    // recompute the epsilons: "just" call it over Static_filter_error.
+    // That's the tricky part that might not work for everything.
+    (void) update_epsilon(b,b,b,b,b,b,b,_epsilon_0,_epsilon_1,_epsilon_2);
+    // TODO: We should verify that all epsilons have really been updated.
   }
 
   static Comparison_result epsilon_variant(
@@ -763,9 +763,9 @@ re_adjust:
 		l2a.dbl(),
 		l2b.dbl(),
 		l2c.dbl(),
-		SAF_epsilon_0,
-		SAF_epsilon_1,
-		SAF_epsilon_2);
+		Static_Filtered_compare_y_at_xC2_7::_epsilon_0,
+		Static_Filtered_compare_y_at_xC2_7::_epsilon_1,
+		Static_Filtered_compare_y_at_xC2_7::_epsilon_2);
   }
   catch (Restricted_double::unsafe_comparison)
   {
@@ -841,16 +841,6 @@ struct Static_Filtered_compare_y_at_xC2_9
   static double _epsilon_0,_epsilon_1,_epsilon_2,_epsilon_3;
   // static unsigned number_of_failures; // ?
 
-  // Call this function from the outside to update the context.
-  static void new_bound (const double b) // , const double error = 0)
-  {
-    _bound = b;
-    // recompute the epsilons: "just" call it over Static_filter_error.
-    // That's the tricky part that might not work for everything.
-    (void) update_epsilons(b,b,b,b,b,b,_epsilon_0,_epsilon_1,_epsilon_2,_epsilon_3);
-    // TODO: We should verify that all epsilons have really been updated.
-  }
-
   static Comparison_result update_epsilon(
 	const Static_filter_error &l1a,
 	const Static_filter_error &l1b,
@@ -876,6 +866,16 @@ struct Static_Filtered_compare_y_at_xC2_9
   		epsilon_2) != ZERO) );
     return Comparison_result (sign0 * CGAL::Static_Filtered_sign_1::update_epsilon(hb,
   		epsilon_3) * sign1);
+  }
+
+  // Call this function from the outside to update the context.
+  static void new_bound (const double b) // , const double error = 0)
+  {
+    _bound = b;
+    // recompute the epsilons: "just" call it over Static_filter_error.
+    // That's the tricky part that might not work for everything.
+    (void) update_epsilon(b,b,b,b,b,b,b,b,b,_epsilon_0,_epsilon_1,_epsilon_2,_epsilon_3);
+    // TODO: We should verify that all epsilons have really been updated.
   }
 
   static Comparison_result epsilon_variant(
@@ -965,10 +965,10 @@ re_adjust:
 		ha.dbl(),
 		hb.dbl(),
 		hc.dbl(),
-		SAF_epsilon_0,
-		SAF_epsilon_1,
-		SAF_epsilon_2,
-		SAF_epsilon_3);
+		Static_Filtered_compare_y_at_xC2_9::_epsilon_0,
+		Static_Filtered_compare_y_at_xC2_9::_epsilon_1,
+		Static_Filtered_compare_y_at_xC2_9::_epsilon_2,
+		Static_Filtered_compare_y_at_xC2_9::_epsilon_3);
   }
   catch (Restricted_double::unsafe_comparison)
   {
@@ -1055,16 +1055,6 @@ struct Static_Filtered_compare_y_at_xC2_12
   static double _epsilon_0,_epsilon_1,_epsilon_2,_epsilon_3;
   // static unsigned number_of_failures; // ?
 
-  // Call this function from the outside to update the context.
-  static void new_bound (const double b) // , const double error = 0)
-  {
-    _bound = b;
-    // recompute the epsilons: "just" call it over Static_filter_error.
-    // That's the tricky part that might not work for everything.
-    (void) update_epsilons(b,b,b,b,b,b,_epsilon_0,_epsilon_1,_epsilon_2,_epsilon_3);
-    // TODO: We should verify that all epsilons have really been updated.
-  }
-
   static Comparison_result update_epsilon(
 	const Static_filter_error &l1a,
 	const Static_filter_error &l1b,
@@ -1098,6 +1088,16 @@ struct Static_Filtered_compare_y_at_xC2_12
                                      h1a, h1b, FT0, h1c,
   		epsilon_3);
     return Comparison_result (s1 * s2 * s3 * s4);
+  }
+
+  // Call this function from the outside to update the context.
+  static void new_bound (const double b) // , const double error = 0)
+  {
+    _bound = b;
+    // recompute the epsilons: "just" call it over Static_filter_error.
+    // That's the tricky part that might not work for everything.
+    (void) update_epsilon(b,b,b,b,b,b,b,b,b,b,b,b,_epsilon_0,_epsilon_1,_epsilon_2,_epsilon_3);
+    // TODO: We should verify that all epsilons have really been updated.
   }
 
   static Comparison_result epsilon_variant(
@@ -1207,10 +1207,10 @@ re_adjust:
 		h2a.dbl(),
 		h2b.dbl(),
 		h2c.dbl(),
-		SAF_epsilon_0,
-		SAF_epsilon_1,
-		SAF_epsilon_2,
-		SAF_epsilon_3);
+		Static_Filtered_compare_y_at_xC2_12::_epsilon_0,
+		Static_Filtered_compare_y_at_xC2_12::_epsilon_1,
+		Static_Filtered_compare_y_at_xC2_12::_epsilon_2,
+		Static_Filtered_compare_y_at_xC2_12::_epsilon_3);
   }
   catch (Restricted_double::unsafe_comparison)
   {
@@ -1276,16 +1276,6 @@ struct Static_Filtered_compare_deltax_deltayC2_4
   static double _epsilon_0;
   // static unsigned number_of_failures; // ?
 
-  // Call this function from the outside to update the context.
-  static void new_bound (const double b) // , const double error = 0)
-  {
-    _bound = b;
-    // recompute the epsilons: "just" call it over Static_filter_error.
-    // That's the tricky part that might not work for everything.
-    (void) update_epsilons(b,b,b,b,b,b,_epsilon_0);
-    // TODO: We should verify that all epsilons have really been updated.
-  }
-
   static Comparison_result update_epsilon(
 	const Static_filter_error &px,
 	const Static_filter_error &qx,
@@ -1297,6 +1287,16 @@ struct Static_Filtered_compare_deltax_deltayC2_4
   
       return CGAL::Static_Filtered_compare_2::update_epsilon(abs(px-qx), abs(ry-sy),
   		epsilon_0);
+  }
+
+  // Call this function from the outside to update the context.
+  static void new_bound (const double b) // , const double error = 0)
+  {
+    _bound = b;
+    // recompute the epsilons: "just" call it over Static_filter_error.
+    // That's the tricky part that might not work for everything.
+    (void) update_epsilon(b,b,b,b,_epsilon_0);
+    // TODO: We should verify that all epsilons have really been updated.
   }
 
   static Comparison_result epsilon_variant(
@@ -1352,7 +1352,7 @@ re_adjust:
 		qx.dbl(),
 		ry.dbl(),
 		sy.dbl(),
-		SAF_epsilon_0);
+		Static_Filtered_compare_deltax_deltayC2_4::_epsilon_0);
   }
   catch (Restricted_double::unsafe_comparison)
   {
@@ -1416,16 +1416,6 @@ struct Static_Filtered_orientationC2_6
   static double _epsilon_0;
   // static unsigned number_of_failures; // ?
 
-  // Call this function from the outside to update the context.
-  static void new_bound (const double b) // , const double error = 0)
-  {
-    _bound = b;
-    // recompute the epsilons: "just" call it over Static_filter_error.
-    // That's the tricky part that might not work for everything.
-    (void) update_epsilons(b,b,b,b,b,b,_epsilon_0);
-    // TODO: We should verify that all epsilons have really been updated.
-  }
-
   static Orientation update_epsilon(
 	const Static_filter_error &px,
 	const Static_filter_error &py,
@@ -1439,6 +1429,16 @@ struct Static_Filtered_orientationC2_6
   
     return Static_Filtered_sign_of_determinant2x2_4::update_epsilon(px-rx,py-ry,qx-rx,qy-ry,
   		epsilon_0);
+  }
+
+  // Call this function from the outside to update the context.
+  static void new_bound (const double b) // , const double error = 0)
+  {
+    _bound = b;
+    // recompute the epsilons: "just" call it over Static_filter_error.
+    // That's the tricky part that might not work for everything.
+    (void) update_epsilon(b,b,b,b,b,b,_epsilon_0);
+    // TODO: We should verify that all epsilons have really been updated.
   }
 
   static Orientation epsilon_variant(
@@ -1504,7 +1504,7 @@ re_adjust:
 		qy.dbl(),
 		rx.dbl(),
 		ry.dbl(),
-		SAF_epsilon_0);
+		Static_Filtered_orientationC2_6::_epsilon_0);
   }
   catch (Restricted_double::unsafe_comparison)
   {
@@ -1576,16 +1576,6 @@ struct Static_Filtered_side_of_oriented_circleC2_8
   static double _epsilon_0;
   // static unsigned number_of_failures; // ?
 
-  // Call this function from the outside to update the context.
-  static void new_bound (const double b) // , const double error = 0)
-  {
-    _bound = b;
-    // recompute the epsilons: "just" call it over Static_filter_error.
-    // That's the tricky part that might not work for everything.
-    (void) update_epsilons(b,b,b,b,b,b,_epsilon_0);
-    // TODO: We should verify that all epsilons have really been updated.
-  }
-
   static Oriented_side update_epsilon(
 	const Static_filter_error &px,
 	const Static_filter_error &py,
@@ -1616,6 +1606,16 @@ struct Static_Filtered_side_of_oriented_circleC2_8
                                     qtx, qty, square(qtx) + square(qty),
                                     rtx, rty, square(rtx) + square(rty),
   		epsilon_0));
+  }
+
+  // Call this function from the outside to update the context.
+  static void new_bound (const double b) // , const double error = 0)
+  {
+    _bound = b;
+    // recompute the epsilons: "just" call it over Static_filter_error.
+    // That's the tricky part that might not work for everything.
+    (void) update_epsilon(b,b,b,b,b,b,b,b,_epsilon_0);
+    // TODO: We should verify that all epsilons have really been updated.
   }
 
   static Oriented_side epsilon_variant(
@@ -1706,7 +1706,7 @@ re_adjust:
 		ry.dbl(),
 		tx.dbl(),
 		ty.dbl(),
-		SAF_epsilon_0);
+		Static_Filtered_side_of_oriented_circleC2_8::_epsilon_0);
   }
   catch (Restricted_double::unsafe_comparison)
   {
@@ -1780,16 +1780,6 @@ struct Static_Filtered_side_of_bounded_circleC2_8
   static double _epsilon_0,_epsilon_1;
   // static unsigned number_of_failures; // ?
 
-  // Call this function from the outside to update the context.
-  static void new_bound (const double b) // , const double error = 0)
-  {
-    _bound = b;
-    // recompute the epsilons: "just" call it over Static_filter_error.
-    // That's the tricky part that might not work for everything.
-    (void) update_epsilons(b,b,b,b,b,b,_epsilon_0,_epsilon_1);
-    // TODO: We should verify that all epsilons have really been updated.
-  }
-
   static Bounded_side update_epsilon(
 	const Static_filter_error &px,
 	const Static_filter_error &py,
@@ -1810,6 +1800,16 @@ struct Static_Filtered_side_of_bounded_circleC2_8
   		epsilon_1);
   
     return Bounded_side (s * o);
+  }
+
+  // Call this function from the outside to update the context.
+  static void new_bound (const double b) // , const double error = 0)
+  {
+    _bound = b;
+    // recompute the epsilons: "just" call it over Static_filter_error.
+    // That's the tricky part that might not work for everything.
+    (void) update_epsilon(b,b,b,b,b,b,b,b,_epsilon_0,_epsilon_1);
+    // TODO: We should verify that all epsilons have really been updated.
   }
 
   static Bounded_side epsilon_variant(
@@ -1890,8 +1890,8 @@ re_adjust:
 		ry.dbl(),
 		tx.dbl(),
 		ty.dbl(),
-		SAF_epsilon_0,
-		SAF_epsilon_1);
+		Static_Filtered_side_of_bounded_circleC2_8::_epsilon_0,
+		Static_Filtered_side_of_bounded_circleC2_8::_epsilon_1);
   }
   catch (Restricted_double::unsafe_comparison)
   {
@@ -1959,16 +1959,6 @@ struct Static_Filtered_cmp_dist_to_pointC2_6
   static double _epsilon_0;
   // static unsigned number_of_failures; // ?
 
-  // Call this function from the outside to update the context.
-  static void new_bound (const double b) // , const double error = 0)
-  {
-    _bound = b;
-    // recompute the epsilons: "just" call it over Static_filter_error.
-    // That's the tricky part that might not work for everything.
-    (void) update_epsilons(b,b,b,b,b,b,_epsilon_0);
-    // TODO: We should verify that all epsilons have really been updated.
-  }
-
   static Comparison_result update_epsilon(
 	const Static_filter_error &px,
 	const Static_filter_error &py,
@@ -1983,6 +1973,16 @@ struct Static_Filtered_cmp_dist_to_pointC2_6
     return CGAL::Static_Filtered_compare_2::update_epsilon(squared_distanceC2(px,py,qx,qy),
                          squared_distanceC2(px,py,rx,ry),
   		epsilon_0);
+  }
+
+  // Call this function from the outside to update the context.
+  static void new_bound (const double b) // , const double error = 0)
+  {
+    _bound = b;
+    // recompute the epsilons: "just" call it over Static_filter_error.
+    // That's the tricky part that might not work for everything.
+    (void) update_epsilon(b,b,b,b,b,b,_epsilon_0);
+    // TODO: We should verify that all epsilons have really been updated.
   }
 
   static Comparison_result epsilon_variant(
@@ -2049,7 +2049,7 @@ re_adjust:
 		qy.dbl(),
 		rx.dbl(),
 		ry.dbl(),
-		SAF_epsilon_0);
+		Static_Filtered_cmp_dist_to_pointC2_6::_epsilon_0);
   }
   catch (Restricted_double::unsafe_comparison)
   {
@@ -2118,16 +2118,6 @@ struct Static_Filtered_cmp_signed_dist_to_lineC2_7
   static double _epsilon_0;
   // static unsigned number_of_failures; // ?
 
-  // Call this function from the outside to update the context.
-  static void new_bound (const double b) // , const double error = 0)
-  {
-    _bound = b;
-    // recompute the epsilons: "just" call it over Static_filter_error.
-    // That's the tricky part that might not work for everything.
-    (void) update_epsilons(b,b,b,b,b,b,_epsilon_0);
-    // TODO: We should verify that all epsilons have really been updated.
-  }
-
   static Comparison_result update_epsilon(
 	const Static_filter_error &la,
 	const Static_filter_error &lb,
@@ -2143,6 +2133,16 @@ struct Static_Filtered_cmp_signed_dist_to_lineC2_7
     return CGAL::Static_Filtered_compare_2::update_epsilon(scaled_distance_to_directionC2(la,lb,px,py),
                          scaled_distance_to_directionC2(la,lb,qx,qy),
   		epsilon_0);
+  }
+
+  // Call this function from the outside to update the context.
+  static void new_bound (const double b) // , const double error = 0)
+  {
+    _bound = b;
+    // recompute the epsilons: "just" call it over Static_filter_error.
+    // That's the tricky part that might not work for everything.
+    (void) update_epsilon(b,b,b,b,b,b,b,_epsilon_0);
+    // TODO: We should verify that all epsilons have really been updated.
   }
 
   static Comparison_result epsilon_variant(
@@ -2214,7 +2214,7 @@ re_adjust:
 		py.dbl(),
 		qx.dbl(),
 		qy.dbl(),
-		SAF_epsilon_0);
+		Static_Filtered_cmp_signed_dist_to_lineC2_7::_epsilon_0);
   }
   catch (Restricted_double::unsafe_comparison)
   {
@@ -2287,16 +2287,6 @@ struct Static_Filtered_cmp_signed_dist_to_lineC2_8
   static double _epsilon_0;
   // static unsigned number_of_failures; // ?
 
-  // Call this function from the outside to update the context.
-  static void new_bound (const double b) // , const double error = 0)
-  {
-    _bound = b;
-    // recompute the epsilons: "just" call it over Static_filter_error.
-    // That's the tricky part that might not work for everything.
-    (void) update_epsilons(b,b,b,b,b,b,_epsilon_0);
-    // TODO: We should verify that all epsilons have really been updated.
-  }
-
   static Comparison_result update_epsilon(
 	const Static_filter_error &px,
 	const Static_filter_error &py,
@@ -2313,6 +2303,16 @@ struct Static_Filtered_cmp_signed_dist_to_lineC2_8
     return CGAL::Static_Filtered_compare_2::update_epsilon(scaled_distance_to_lineC2(px,py,qx,qy,rx,ry),
                          scaled_distance_to_lineC2(px,py,qx,qy,sx,sy),
   		epsilon_0);
+  }
+
+  // Call this function from the outside to update the context.
+  static void new_bound (const double b) // , const double error = 0)
+  {
+    _bound = b;
+    // recompute the epsilons: "just" call it over Static_filter_error.
+    // That's the tricky part that might not work for everything.
+    (void) update_epsilon(b,b,b,b,b,b,b,b,_epsilon_0);
+    // TODO: We should verify that all epsilons have really been updated.
   }
 
   static Comparison_result epsilon_variant(
@@ -2389,7 +2389,7 @@ re_adjust:
 		ry.dbl(),
 		sx.dbl(),
 		sy.dbl(),
-		SAF_epsilon_0);
+		Static_Filtered_cmp_signed_dist_to_lineC2_8::_epsilon_0);
   }
   catch (Restricted_double::unsafe_comparison)
   {

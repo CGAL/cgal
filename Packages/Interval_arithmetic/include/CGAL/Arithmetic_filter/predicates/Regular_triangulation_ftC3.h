@@ -114,16 +114,6 @@ struct Static_Filtered_power_testC3_20
   static double _epsilon_0;
   // static unsigned number_of_failures; // ?
 
-  // Call this function from the outside to update the context.
-  static void new_bound (const double b) // , const double error = 0)
-  {
-    _bound = b;
-    // recompute the epsilons: "just" call it over Static_filter_error.
-    // That's the tricky part that might not work for everything.
-    (void) update_epsilons(b,b,b,b,b,b,_epsilon_0);
-    // TODO: We should verify that all epsilons have really been updated.
-  }
-
   static Oriented_side update_epsilon(
 	const Static_filter_error &px,
 	const Static_filter_error &py,
@@ -172,6 +162,16 @@ struct Static_Filtered_power_testC3_20
   						   drx, dry, drz, drt,
   						   dsx, dsy, dsz, dst,
   		epsilon_0));
+  }
+
+  // Call this function from the outside to update the context.
+  static void new_bound (const double b) // , const double error = 0)
+  {
+    _bound = b;
+    // recompute the epsilons: "just" call it over Static_filter_error.
+    // That's the tricky part that might not work for everything.
+    (void) update_epsilon(b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,_epsilon_0);
+    // TODO: We should verify that all epsilons have really been updated.
   }
 
   static Oriented_side epsilon_variant(
@@ -328,7 +328,7 @@ re_adjust:
 		ty.dbl(),
 		tz.dbl(),
 		twt.dbl(),
-		SAF_epsilon_0);
+		Static_Filtered_power_testC3_20::_epsilon_0);
   }
   catch (Restricted_double::unsafe_comparison)
   {
@@ -438,16 +438,6 @@ struct Static_Filtered_power_testC3_16
   static double _epsilon_0,_epsilon_1,_epsilon_2,_epsilon_3,_epsilon_4,_epsilon_5;
   // static unsigned number_of_failures; // ?
 
-  // Call this function from the outside to update the context.
-  static void new_bound (const double b) // , const double error = 0)
-  {
-    _bound = b;
-    // recompute the epsilons: "just" call it over Static_filter_error.
-    // That's the tricky part that might not work for everything.
-    (void) update_epsilons(b,b,b,b,b,b,_epsilon_0,_epsilon_1,_epsilon_2,_epsilon_3,_epsilon_4,_epsilon_5);
-    // TODO: We should verify that all epsilons have really been updated.
-  }
-
   static Oriented_side update_epsilon(
 	const Static_filter_error &px,
 	const Static_filter_error &py,
@@ -517,6 +507,16 @@ struct Static_Filtered_power_testC3_16
       return Oriented_side(cmp * Static_Filtered_sign_of_determinant2x2_4::update_epsilon(py-ry, pz-rz,
   		                                      qy-ry, qz-rz,
   		epsilon_5));
+  }
+
+  // Call this function from the outside to update the context.
+  static void new_bound (const double b) // , const double error = 0)
+  {
+    _bound = b;
+    // recompute the epsilons: "just" call it over Static_filter_error.
+    // That's the tricky part that might not work for everything.
+    (void) update_epsilon(b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,_epsilon_0,_epsilon_1,_epsilon_2,_epsilon_3,_epsilon_4,_epsilon_5);
+    // TODO: We should verify that all epsilons have really been updated.
   }
 
   static Oriented_side epsilon_variant(
@@ -678,12 +678,12 @@ re_adjust:
 		ty.dbl(),
 		tz.dbl(),
 		twt.dbl(),
-		SAF_epsilon_0,
-		SAF_epsilon_1,
-		SAF_epsilon_2,
-		SAF_epsilon_3,
-		SAF_epsilon_4,
-		SAF_epsilon_5);
+		Static_Filtered_power_testC3_16::_epsilon_0,
+		Static_Filtered_power_testC3_16::_epsilon_1,
+		Static_Filtered_power_testC3_16::_epsilon_2,
+		Static_Filtered_power_testC3_16::_epsilon_3,
+		Static_Filtered_power_testC3_16::_epsilon_4,
+		Static_Filtered_power_testC3_16::_epsilon_5);
   }
   catch (Restricted_double::unsafe_comparison)
   {
@@ -777,16 +777,6 @@ struct Static_Filtered_power_testC3_12
   static double _epsilon_0,_epsilon_1,_epsilon_2,_epsilon_3,_epsilon_4,_epsilon_5;
   // static unsigned number_of_failures; // ?
 
-  // Call this function from the outside to update the context.
-  static void new_bound (const double b) // , const double error = 0)
-  {
-    _bound = b;
-    // recompute the epsilons: "just" call it over Static_filter_error.
-    // That's the tricky part that might not work for everything.
-    (void) update_epsilons(b,b,b,b,b,b,_epsilon_0,_epsilon_1,_epsilon_2,_epsilon_3,_epsilon_4,_epsilon_5);
-    // TODO: We should verify that all epsilons have really been updated.
-  }
-
   static Oriented_side update_epsilon(
 	const Static_filter_error &px,
 	const Static_filter_error &py,
@@ -839,6 +829,16 @@ struct Static_Filtered_power_testC3_12
   		epsilon_4);
       return Oriented_side(cmp * Static_Filtered_sign_of_determinant2x2_4::update_epsilon(dpz, dpt, dqz, dqt,
   		epsilon_5));
+  }
+
+  // Call this function from the outside to update the context.
+  static void new_bound (const double b) // , const double error = 0)
+  {
+    _bound = b;
+    // recompute the epsilons: "just" call it over Static_filter_error.
+    // That's the tricky part that might not work for everything.
+    (void) update_epsilon(b,b,b,b,b,b,b,b,b,b,b,b,_epsilon_0,_epsilon_1,_epsilon_2,_epsilon_3,_epsilon_4,_epsilon_5);
+    // TODO: We should verify that all epsilons have really been updated.
   }
 
   static Oriented_side epsilon_variant(
@@ -967,12 +967,12 @@ re_adjust:
 		ty.dbl(),
 		tz.dbl(),
 		twt.dbl(),
-		SAF_epsilon_0,
-		SAF_epsilon_1,
-		SAF_epsilon_2,
-		SAF_epsilon_3,
-		SAF_epsilon_4,
-		SAF_epsilon_5);
+		Static_Filtered_power_testC3_12::_epsilon_0,
+		Static_Filtered_power_testC3_12::_epsilon_1,
+		Static_Filtered_power_testC3_12::_epsilon_2,
+		Static_Filtered_power_testC3_12::_epsilon_3,
+		Static_Filtered_power_testC3_12::_epsilon_4,
+		Static_Filtered_power_testC3_12::_epsilon_5);
   }
   catch (Restricted_double::unsafe_comparison)
   {

@@ -66,16 +66,6 @@ struct Static_Filtered_sign_of_determinant2x2_4
   static double _epsilon_0;
   // static unsigned number_of_failures; // ?
 
-  // Call this function from the outside to update the context.
-  static void new_bound (const double b) // , const double error = 0)
-  {
-    _bound = b;
-    // recompute the epsilons: "just" call it over Static_filter_error.
-    // That's the tricky part that might not work for everything.
-    (void) update_epsilons(b,b,b,b,b,b,_epsilon_0);
-    // TODO: We should verify that all epsilons have really been updated.
-  }
-
   static Sign update_epsilon(
 	const Static_filter_error &a00,
 	const Static_filter_error &a01,
@@ -86,6 +76,16 @@ struct Static_Filtered_sign_of_determinant2x2_4
     typedef Static_filter_error FT;
    return static_cast<Sign>(static_cast<int>(CGAL::Static_Filtered_compare_2::update_epsilon( a00*a11, a10*a01,
   		epsilon_0))); }
+
+  // Call this function from the outside to update the context.
+  static void new_bound (const double b) // , const double error = 0)
+  {
+    _bound = b;
+    // recompute the epsilons: "just" call it over Static_filter_error.
+    // That's the tricky part that might not work for everything.
+    (void) update_epsilon(b,b,b,b,_epsilon_0);
+    // TODO: We should verify that all epsilons have really been updated.
+  }
 
   static Sign epsilon_variant(
 	const Restricted_double &a00,
@@ -138,7 +138,7 @@ re_adjust:
 		a01.dbl(),
 		a10.dbl(),
 		a11.dbl(),
-		SAF_epsilon_0);
+		Static_Filtered_sign_of_determinant2x2_4::_epsilon_0);
   }
   catch (Restricted_double::unsafe_comparison)
   {
@@ -211,16 +211,6 @@ struct Static_Filtered_sign_of_determinant3x3_9
   static double _epsilon_0;
   // static unsigned number_of_failures; // ?
 
-  // Call this function from the outside to update the context.
-  static void new_bound (const double b) // , const double error = 0)
-  {
-    _bound = b;
-    // recompute the epsilons: "just" call it over Static_filter_error.
-    // That's the tricky part that might not work for everything.
-    (void) update_epsilons(b,b,b,b,b,b,_epsilon_0);
-    // TODO: We should verify that all epsilons have really been updated.
-  }
-
   static Sign update_epsilon(
 	const Static_filter_error &a00,
 	const Static_filter_error &a01,
@@ -239,6 +229,16 @@ struct Static_Filtered_sign_of_determinant3x3_9
                                         a10, a11, a12,
                                         a20, a21, a22),
   		epsilon_0);
+  }
+
+  // Call this function from the outside to update the context.
+  static void new_bound (const double b) // , const double error = 0)
+  {
+    _bound = b;
+    // recompute the epsilons: "just" call it over Static_filter_error.
+    // That's the tricky part that might not work for everything.
+    (void) update_epsilon(b,b,b,b,b,b,b,b,b,_epsilon_0);
+    // TODO: We should verify that all epsilons have really been updated.
   }
 
   static Sign epsilon_variant(
@@ -321,7 +321,7 @@ re_adjust:
 		a20.dbl(),
 		a21.dbl(),
 		a22.dbl(),
-		SAF_epsilon_0);
+		Static_Filtered_sign_of_determinant3x3_9::_epsilon_0);
   }
   catch (Restricted_double::unsafe_comparison)
   {
@@ -420,16 +420,6 @@ struct Static_Filtered_sign_of_determinant4x4_16
   static double _epsilon_0;
   // static unsigned number_of_failures; // ?
 
-  // Call this function from the outside to update the context.
-  static void new_bound (const double b) // , const double error = 0)
-  {
-    _bound = b;
-    // recompute the epsilons: "just" call it over Static_filter_error.
-    // That's the tricky part that might not work for everything.
-    (void) update_epsilons(b,b,b,b,b,b,_epsilon_0);
-    // TODO: We should verify that all epsilons have really been updated.
-  }
-
   static Sign update_epsilon(
 	const Static_filter_error &a00,
 	const Static_filter_error &a01,
@@ -456,6 +446,16 @@ struct Static_Filtered_sign_of_determinant4x4_16
                                         a20, a21, a22, a23,
                                         a30, a31, a32, a33),
   		epsilon_0);
+  }
+
+  // Call this function from the outside to update the context.
+  static void new_bound (const double b) // , const double error = 0)
+  {
+    _bound = b;
+    // recompute the epsilons: "just" call it over Static_filter_error.
+    // That's the tricky part that might not work for everything.
+    (void) update_epsilon(b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,_epsilon_0);
+    // TODO: We should verify that all epsilons have really been updated.
   }
 
   static Sign epsilon_variant(
@@ -574,7 +574,7 @@ re_adjust:
 		a31.dbl(),
 		a32.dbl(),
 		a33.dbl(),
-		SAF_epsilon_0);
+		Static_Filtered_sign_of_determinant4x4_16::_epsilon_0);
   }
   catch (Restricted_double::unsafe_comparison)
   {
@@ -707,16 +707,6 @@ struct Static_Filtered_sign_of_determinant5x5_25
   static double _epsilon_0;
   // static unsigned number_of_failures; // ?
 
-  // Call this function from the outside to update the context.
-  static void new_bound (const double b) // , const double error = 0)
-  {
-    _bound = b;
-    // recompute the epsilons: "just" call it over Static_filter_error.
-    // That's the tricky part that might not work for everything.
-    (void) update_epsilons(b,b,b,b,b,b,_epsilon_0);
-    // TODO: We should verify that all epsilons have really been updated.
-  }
-
   static Sign update_epsilon(
 	const Static_filter_error &a00,
 	const Static_filter_error &a01,
@@ -753,6 +743,16 @@ struct Static_Filtered_sign_of_determinant5x5_25
                                         a30, a31, a32, a33, a34,
                                         a40, a41, a42, a43, a44),
   		epsilon_0);
+  }
+
+  // Call this function from the outside to update the context.
+  static void new_bound (const double b) // , const double error = 0)
+  {
+    _bound = b;
+    // recompute the epsilons: "just" call it over Static_filter_error.
+    // That's the tricky part that might not work for everything.
+    (void) update_epsilon(b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,_epsilon_0);
+    // TODO: We should verify that all epsilons have really been updated.
   }
 
   static Sign epsilon_variant(
@@ -917,7 +917,7 @@ re_adjust:
 		a42.dbl(),
 		a43.dbl(),
 		a44.dbl(),
-		SAF_epsilon_0);
+		Static_Filtered_sign_of_determinant5x5_25::_epsilon_0);
   }
   catch (Restricted_double::unsafe_comparison)
   {
@@ -1092,16 +1092,6 @@ struct Static_Filtered_sign_of_determinant6x6_36
   static double _epsilon_0;
   // static unsigned number_of_failures; // ?
 
-  // Call this function from the outside to update the context.
-  static void new_bound (const double b) // , const double error = 0)
-  {
-    _bound = b;
-    // recompute the epsilons: "just" call it over Static_filter_error.
-    // That's the tricky part that might not work for everything.
-    (void) update_epsilons(b,b,b,b,b,b,_epsilon_0);
-    // TODO: We should verify that all epsilons have really been updated.
-  }
-
   static Sign update_epsilon(
 	const Static_filter_error &a00,
 	const Static_filter_error &a01,
@@ -1150,6 +1140,16 @@ struct Static_Filtered_sign_of_determinant6x6_36
                                         a40, a41, a42, a43, a44, a45,
                                         a50, a51, a52, a53, a54, a55),
   		epsilon_0);
+  }
+
+  // Call this function from the outside to update the context.
+  static void new_bound (const double b) // , const double error = 0)
+  {
+    _bound = b;
+    // recompute the epsilons: "just" call it over Static_filter_error.
+    // That's the tricky part that might not work for everything.
+    (void) update_epsilon(b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,_epsilon_0);
+    // TODO: We should verify that all epsilons have really been updated.
   }
 
   static Sign epsilon_variant(
@@ -1370,7 +1370,7 @@ re_adjust:
 		a53.dbl(),
 		a54.dbl(),
 		a55.dbl(),
-		SAF_epsilon_0);
+		Static_Filtered_sign_of_determinant6x6_36::_epsilon_0);
   }
   catch (Restricted_double::unsafe_comparison)
   {
