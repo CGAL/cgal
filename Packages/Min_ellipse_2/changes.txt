@@ -1,5 +1,8 @@
 Changes done to the `Min_ellipse_2' package.
 
+Version 3.8.2 on 07-Aug-2000
+- field 'maintainer' added to file header (where missing).
+
 Version 3.8.1 on 27-Jul-2000
 - demo program compiles if LEDA is not available (and does nothing)
 
