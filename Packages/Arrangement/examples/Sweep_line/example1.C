@@ -2,7 +2,6 @@
 
 #include <CGAL/basic.h> //CGAL definitions that need to be before anything else
 #include <iostream.h>
-//#include <fstream.h>
 #include <vector>
 
 
@@ -45,7 +44,7 @@ int main(int argc, char* argv[])
   
   cin >> num_segments;
   
-  double        x1, y1, x2, y2;
+  NT        x1, y1, x2, y2;
   
   while (num_segments--) {
     cin >> x1 >> y1 >> x2 >> y2;

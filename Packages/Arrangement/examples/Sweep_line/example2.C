@@ -2,7 +2,6 @@
 
 #include <CGAL/basic.h> //CGAL definitions that need to be before anything else
 #include <iostream.h>
-//#include <fstream.h>
 #include <vector>
 
 #include <CGAL/Cartesian.h>
@@ -48,7 +47,7 @@ template <class Container>
 void read_polylines(Container& curves)
 {
   int      num_polylines = 0;
-  double   x,y; 
+  NT       x,y; 
 
   cin >> num_polylines;
   std::cout<<"number of polylines is : " << num_polylines<<std::endl;
