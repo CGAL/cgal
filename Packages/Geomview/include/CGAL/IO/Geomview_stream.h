@@ -87,12 +87,12 @@ public:
     void trace(double d) const;
     void trace(int i) const;
 
-    void set_binary_mode();
-    void set_ascii_mode();
-    bool in_binary_mode() const;
-    bool in_ascii_mode() const;
+    void set_binary_mode()         { bflag = true; }
+    void set_ascii_mode()          { bflag = false; }
+    bool in_binary_mode() const    { return bflag; }
+    bool in_ascii_mode() const     { return ! bflag; }
 
-    Geomview_stream &operator<< ( Geomview_stream& (*fct)(Geomview_stream&));
+    Geomview_stream &operator<<( Geomview_stream& (*fct)(Geomview_stream&));
 
     Geomview_stream &operator>>(char *expr);
 
@@ -108,12 +108,11 @@ private:
     void frame(const Bbox_3 &bbox);
     void pickplane(const Bbox_3 &bbox);
 
-    Color col, vertex_color, edge_color, face_color;
+    Color vertex_color, edge_color, face_color;
     bool trace_;
-    int in;       // file descriptor for input pipe
-    int out;      // file descriptor for output pipe
+    int in, out;  // file descriptors for input and output pipes
     int pid;      // the geomview process identification
-    int bflag ;   // bool that makes operator<< write binary format
+    bool bflag;    // bool that makes operator<< write binary format
     double radius_;
     int line_width_;
 };

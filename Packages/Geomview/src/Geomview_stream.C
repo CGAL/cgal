@@ -51,12 +51,8 @@ Geomview_stream::~Geomview_stream()
 
 void Geomview_stream::setup_geomview(const char *machine, const char *login)
 {
-    bflag = 0;
-    trace_ = false;
-    col = BLACK;
-    vertex_color = BLACK;
-    edge_color = BLACK;
-    face_color = BLACK;
+    bflag = trace_ = false;
+    vertex_color = edge_color = face_color = BLACK;
     int pipe_out[2], pipe_in[2];
 
     // Communication between CGAL and geomview should be possible
@@ -155,30 +151,6 @@ Geomview_stream::pickplane(const Bbox_3 &bbox)
     // close the text bracket
             << "}) (pickable pickplane no)"
             << ascii;
-}
-
-void
-Geomview_stream::set_binary_mode()
-{
-    bflag = 1;
-}
-
-void
-Geomview_stream::set_ascii_mode()
-{
-    bflag = 0;
-}
-
-bool
-Geomview_stream::in_binary_mode() const
-{
-    return bflag;
-}
-
-bool
-Geomview_stream::in_ascii_mode() const
-{
-    return ! bflag;
 }
 
 Geomview_stream&
@@ -373,7 +345,7 @@ Geomview_stream::set_bg_color(const Color &c)
 Geomview_stream&
 Geomview_stream::operator<<(const Color &c)
 {
-    col = vertex_color = edge_color = face_color = c;
+    vertex_color = edge_color = face_color = c;
     return (*this);
 }
 
