@@ -3,13 +3,13 @@
 // try a general example (not in CGAL), first
 #include <list>
 
-struct Bidon {
+struct TDS_Bidon {
  typedef int  Vertex_handle;
 };
 
 
 //template <class TDS = void> 
-template <class TDS = Bidon>
+template <class TDS = TDS_Bidon>
 class  Vertex_base 
 {
 public:

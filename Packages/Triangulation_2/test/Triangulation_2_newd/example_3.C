@@ -18,7 +18,14 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template <class Gt, class TDS = void> 
+struct TDS_Bidon {
+  typedef int  Vertex_handle;
+  typedef int  Face_handle;
+};
+
+
+
+template <class Gt, class TDS = TDS_Bidon> 
 class  Vertex_base : public Triangulation_vertex_base_2<Gt> 
 {
 public:
@@ -46,7 +53,7 @@ private:
 };
 
 
-template <class Gt, class TDS = void> 
+template <class Gt, class TDS = TDS_Bidon> 
 class  Face_base : public Triangulation_face_base_2<Gt> 
 {
 public:
@@ -82,7 +89,7 @@ CGAL_END_NAMESPACE
 
 //
 // A user defined Vertex 
-template <class Gt, class TDS = void> 
+template <class Gt, class TDS = CGAL::TDS_Bidon> 
 class  My_vertex : public CGAL::Vertex_base<Gt, TDS>
 {
 public:
@@ -108,17 +115,17 @@ typedef CGAL::Cartesian<double>                         K;
 typedef My_vertex<K>                                    MyVb;
 typedef CGAL::Vertex_base<K>                            Vb;
 typedef CGAL::Face_base<K>                              Fb;
-typedef CGAL::Triangulation_data_structure_2<Vb,Fb>     Tds;
-// typedef CGAL::Triangulation_data_structure_2<MyVb,Fb>     Tds;
+//typedef CGAL::Triangulation_data_structure_2<Vb,Fb>     Tds;
+typedef CGAL::Triangulation_data_structure_2<MyVb,Fb>     Tds;
 typedef CGAL::Triangulation_2<K,Tds>                    Triangulation;
 
-typedef Gt::Point_2                              Point;
+typedef K::Point_2                               Point;
 typedef Triangulation::Face_handle               Face_handle;
 typedef Triangulation::Vertex_handle             Vertex_handle;
 
 typedef Triangulation::Finite_faces_iterator     Face_iterator;
-typedef Triangulation::Finite_Vertices_iterator  Vertex_iterator;
-typedef Triangulation::Finite_edges _iterator    Edge_iterator;
+typedef Triangulation::Finite_vertices_iterator  Vertex_iterator;
+typedef Triangulation::Finite_edges_iterator     Edge_iterator;
 
 
 int  main()
@@ -143,6 +150,9 @@ int  main()
        v_iter++){
     v_iter->set_vh(vertex);
     v_iter->set_fh(face);
+    vertex = v_iter;
+    face  = v_iter->face();
+    v_iter->set_wahou(v_iter);
   }
 
   for (Face_iterator f_iter = T.faces_begin(); 
@@ -153,9 +163,11 @@ int  main()
   }
   
 
-  Vertex_iterator v_it = T.finite_vertices_begin();
-  std::cerr << v_it->get_vh()->point()<<"\n";
-
+  for (Vertex_iterator v_it = T.finite_vertices_begin(); 
+       v_it != T.finite_vertices_end(); 
+       v_it++){
+    std::cerr << v_it->point() << " " << v_it->get_wahou()->point()<<"\n";
+  }
   return 0;
 }
 
