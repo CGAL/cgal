@@ -1,30 +1,24 @@
-#include <CGAL/config.h>
+#include <CGAL/basic.h>
 #include <list>
 #include <CGAL/Cartesian.h>
 //#include <CGAL/Simple_cartesian.h>
-
-#include <CGAL/Triangulation_short_names_2.h>
-#include <CGAL/Triangulation_euclidean_traits_2.h>
-
 #include <CGAL/Point_set_2.h>
 #include <CGAL/IO/Window_stream.h>
 
-typedef CGAL::Cartesian<double>    REP;
-//typedef CGAL::Simple_cartesian<double>    REP;
+typedef CGAL::Cartesian<double>    K;
+//typedef CGAL::Simple_cartesian<double>    K;
 
-typedef CGAL::Triangulation_euclidean_traits_2<REP> Gt;
-typedef CGAL::Triangulation_vertex_base_2<Gt> Vb;
-typedef CGAL::Triangulation_face_base_2<Gt>  Fb;
-typedef CGAL::Triangulation_default_data_structure_2<Gt,Vb,Fb> Tds;
+typedef CGAL::Triangulation_vertex_base_2<K> Vb;
+typedef CGAL::Triangulation_face_base_2<K>  Fb;
+typedef CGAL::Triangulation_default_data_structure_2<K,Vb,Fb> Tds;
 
-typedef CGAL::Point_set_2<Gt,Tds>::Edge    Edge;
-typedef CGAL::Point_set_2<Gt,Tds>::Edge_iterator  Edge_iterator;
-typedef CGAL::Point_set_2<Gt,Tds>::Vertex_handle  Vertex_handle;
-typedef CGAL::Point_set_2<Gt,Tds>::Vertex  Vertex;
-
+typedef CGAL::Point_set_2<K,Tds>::Edge           Edge;
+typedef CGAL::Point_set_2<K,Tds>::Edge_iterator  Edge_iterator;
+typedef CGAL::Point_set_2<K,Tds>::Vertex_handle  Vertex_handle;
+typedef CGAL::Point_set_2<K,Tds>::Vertex         Vertex;
 
 
-void output(CGAL::Window_stream& W, const CGAL::Point_set_2<Gt,Tds>& PSet)
+void output(CGAL::Window_stream& W, const CGAL::Point_set_2<K,Tds>& PSet)
 {
   W.clear();
   Edge e;
@@ -32,14 +26,14 @@ void output(CGAL::Window_stream& W, const CGAL::Point_set_2<Gt,Tds>& PSet)
   
   for(;eit != PSet.finite_edges_end(); eit++) {
     e = *eit;
-    CGAL::Segment_2<REP> s= PSet.seg(e);
+    CGAL::Segment_2<K> s= PSet.seg(e);
     W << s;
   }
 }
 
 int main()
 {
-  CGAL::Point_set_2<Gt,Tds> PSet;
+  CGAL::Point_set_2<K,Tds> PSet;
 
   CGAL::Window_stream W(600,500, "Finding nearest neighbor / k nearest neighbors");  
   //CGAL::cgalize(W);
@@ -47,9 +41,15 @@ int main()
   W.init(-500,500,-400);
   W.display(100,100);
   
+#if defined(CGAL_USE_CGAL_WINDOW)
+  W.set_point_style(CGAL::disc_point);
+#else
+  W.set_point_style(leda_disc_point);
+#endif  
+  
   W.draw_text(-260,20, "Input some points; quit input with the right mouse button");
   
-  CGAL::Point_2<REP> actual;
+  CGAL::Point_2<K> actual;
   int i=0;
   
   while (W >> actual){
@@ -69,7 +69,7 @@ int main()
     
     if (v != NULL) {
     
-     CGAL::Segment_2<REP> my_seg(actual,PSet.pos(v));
+     CGAL::Segment_2<K> my_seg(actual,PSet.pos(v));
     
      W << CGAL::RED << PSet.pos(v) << CGAL::BLACK;
      W << CGAL::BLUE << my_seg << CGAL::BLACK;

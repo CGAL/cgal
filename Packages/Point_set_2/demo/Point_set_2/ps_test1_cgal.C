@@ -1,36 +1,29 @@
-#include <CGAL/config.h>
+#include <CGAL/basic.h>
 #include <list>
-
 //#include <CGAL/Cartesian.h>
 #include <CGAL/Simple_cartesian.h>
-
 #include <CGAL/Triangle_2.h>
 #include <CGAL/Iso_rectangle_2.h>
-
-#include <CGAL/Triangulation_short_names_2.h>
-#include <CGAL/Triangulation_euclidean_traits_2.h>
 #include <CGAL/Point_set_2.h>
 #include <CGAL/IO/Window_stream.h>
 
+//typedef CGAL::Cartesian<double>          K;
+typedef CGAL::Simple_cartesian<double>    K;
 
-//typedef CGAL::Cartesian<double>          REP;
-typedef CGAL::Simple_cartesian<double>    REP;
+typedef CGAL::Triangulation_vertex_base_2<K> Vb;
+typedef CGAL::Triangulation_face_base_2<K>   Fb;
+typedef CGAL::Triangulation_default_data_structure_2<K,Vb,Fb> Tds;
 
-typedef CGAL::Triangulation_euclidean_traits_2<REP> Gt;
-typedef CGAL::Triangulation_vertex_base_2<Gt> Vb;
-typedef CGAL::Triangulation_face_base_2<Gt>  Fb;
-typedef CGAL::Triangulation_default_data_structure_2<Gt,Vb,Fb> Tds;
+typedef CGAL::Point_set_2<K,Tds>::Edge           Edge;
+typedef CGAL::Point_set_2<K,Tds>::Edge_iterator  Edge_iterator;
+typedef CGAL::Point_set_2<K,Tds>::Vertex_handle  Vertex_handle;
+typedef CGAL::Point_set_2<K,Tds>::Vertex         Vertex;
 
-typedef CGAL::Point_set_2<Gt,Tds>::Edge    Edge;
-typedef CGAL::Point_set_2<Gt,Tds>::Edge_iterator  Edge_iterator;
-typedef CGAL::Point_set_2<Gt,Tds>::Vertex_handle  Vertex_handle;
-typedef CGAL::Point_set_2<Gt,Tds>::Vertex  Vertex;
-
-typedef CGAL::Iso_rectangle_2<REP>     Rectangle;
-typedef CGAL::Triangle_2<REP>          Triangle;
+typedef CGAL::Iso_rectangle_2<K>     Rectangle;
+typedef CGAL::Triangle_2<K>          Triangle;
 
 
-void output(CGAL::Window_stream& W, const CGAL::Point_set_2<Gt,Tds>& PSet)
+void output(CGAL::Window_stream& W, const CGAL::Point_set_2<K,Tds>& PSet)
 {
   W.clear();
   Edge e;
@@ -38,7 +31,7 @@ void output(CGAL::Window_stream& W, const CGAL::Point_set_2<Gt,Tds>& PSet)
   
   for(;eit != PSet.finite_edges_end(); eit++) {
     e = *eit;
-    CGAL::Segment_2<REP> s= PSet.seg(e);
+    CGAL::Segment_2<K> s= PSet.seg(e);
     W << s;
   }
 }
@@ -46,7 +39,7 @@ void output(CGAL::Window_stream& W, const CGAL::Point_set_2<Gt,Tds>& PSet)
 
 int main()
 {
-  CGAL::Point_set_2<Gt,Tds> PS;
+  CGAL::Point_set_2<K,Tds> PS;
 
   CGAL::Window_stream W(600,500,"Range search operations on a point set");  
   //CGAL::cgalize( W);
@@ -54,9 +47,15 @@ int main()
   W.init(-500,500,-400);
   W.display(100,100);
   
+#if defined(CGAL_USE_CGAL_WINDOW)
+  W.set_point_style(CGAL::disc_point);
+#else
+  W.set_point_style(leda_disc_point);
+#endif   
+  
   W.draw_text(-260,20, "Input some points; quit input with the right mouse button");
 
-  CGAL::Point_2<REP> pnew;
+  CGAL::Point_2<K> pnew;
 
   while (W >> pnew) {
     PS.insert(pnew);
@@ -65,7 +64,7 @@ int main()
   
 /*  
   for (i=0; i<2; i++) {
-    CGAL::Point_2<REP> pnew;
+    CGAL::Point_2<K> pnew;
     W >> pnew;
     Vertex_handle v = PS.nearest_neighbor(pnew);
     PS.del(v);
@@ -80,7 +79,7 @@ int main()
   output(W,PS);
   W.draw_text(-450,-350, "Input a circle; we perform a range search (quit: right mouse button) ... ");
   
-  CGAL::Circle_2<REP> rc;
+  CGAL::Circle_2<K> rc;
    
   while (W >> rc) {
    W << CGAL::BLACK;
@@ -102,7 +101,7 @@ int main()
   output(W,PS);  
   W.draw_text(-450,-350, "Input a triangle; we perform a range search (quit: right mouse button) ... ");
     
-  CGAL::Point_2<REP> pt1,pt2,pt3,pt4;
+  CGAL::Point_2<K> pt1,pt2,pt3,pt4;
   Triangle Tr;
   
   while (W >> Tr){

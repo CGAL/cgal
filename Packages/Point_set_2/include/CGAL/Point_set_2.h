@@ -8,14 +8,14 @@
 //
 // ----------------------------------------------------------------------
 //
-// release       : 
-// release_date  : 
+// release       : $CGAL_Revision: CGAL-2.3-I-74 $
+// release_date  : $CGAL_Date: 2001/06/20 $
 //
 // file          : include/CGAL/Point_set_2.h
-// package       : Point_set_2 (2.0.2)
+// package       : Point_set_2 (2.1)
 // maintainer    : Matthias Baesken <baesken@informatik.uni-trier.de>
-// revision      : 2.0.2
-// revision_date : 19 June 2001 
+// revision      : 2.1
+// revision_date : 21 June 2001 
 // author(s)     : Matthias Baesken
 //
 // coordinator   : Matthias Baesken, Trier  (<baesken@informatik.uni-trier.de>)
@@ -62,17 +62,16 @@ class  Point_set_2 : public  Delaunay_triangulation_2<Gt,Tds>
 public:  
   typedef Gt Geom_traits;
   
-  typedef typename Geom_traits::Rep                         Rep;
   typedef typename Geom_traits::Point_2                     Point;
   typedef typename Geom_traits::Segment_2                   Segment;
   
-  typedef typename Rep::Circle_2                            Circle;
+  typedef typename Geom_traits::Circle_2                    Circle;
   
   typedef typename Geom_traits::Orientation_2               Orientation_2;
   typedef typename Geom_traits::Side_of_oriented_circle_2   Side_of_oriented_circle_2;
-  typedef typename Rep::Construct_circle_2                  Construct_circle_2; 
-  typedef typename Rep::Compute_squared_distance_2          Compute_squared_distance_2;
-  typedef typename Rep::FT                                  Numb_type;  // field number type ...
+  typedef typename Geom_traits::Construct_circle_2          Construct_circle_2; 
+  typedef typename Geom_traits::Compute_squared_distance_2  Compute_squared_distance_2;
+  typedef typename Geom_traits::FT                          Numb_type;  // field number type ...
                         
   
   typedef Triangulation_2<Gt,Tds>                           Triangulation;
@@ -88,10 +87,9 @@ public:
   typedef typename Triangulation::Vertex_circulator         Vertex_circulator;  
   typedef typename Triangulation::Edge_iterator             Edge_iterator;
 
-  // function object classes from the removed second geometry traits ...
-  typedef typename Rep::Bounded_side_2                      Circleptori; 
-  typedef typename Rep::Compare_distance_2                  Comparedist;         
-  typedef typename Rep::Construct_center_2                  Circlecenter;     
+  typedef typename Geom_traits::Bounded_side_2              Circleptori; 
+  typedef typename Geom_traits::Compare_distance_2          Comparedist;         
+  typedef typename Geom_traits::Construct_center_2          Circlecenter;     
   
    Comparedist                   tr_comparedist;
    Orientation_2                 tr_orientation;  
