@@ -1431,6 +1431,9 @@ Packages/Qt_widget/doc_tex/support/Qt_widget/standard_toolbar.eps -text
 Packages/Qt_widget/doc_tex/support/Qt_widget/standard_toolbar.gif -text svneol=unset#unset
 Packages/Qt_widget/include/CGAL/IO/pixmaps/arrow.xpm -text
 Packages/Qt_widget/include/CGAL/IO/pixmaps/circle.xpm -text
+Packages/Qt_widget/include/CGAL/IO/pixmaps/focus1.xpm -text
+Packages/Qt_widget/include/CGAL/IO/pixmaps/focus2.xpm -text
+Packages/Qt_widget/include/CGAL/IO/pixmaps/focus3.xpm -text
 Packages/Qt_widget/include/CGAL/IO/pixmaps/greene_approx.xpm -text
 Packages/Qt_widget/include/CGAL/IO/pixmaps/hand.xpm -text
 Packages/Qt_widget/include/CGAL/IO/pixmaps/handtool.xpm -text
