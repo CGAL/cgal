@@ -1,3 +1,11 @@
+1.3.33 - 06/06/2003 (rursu)
+---------------------------
+	- added Qt_widget_get_iso_rectangle layer
+	- written DOC for this layer
+	- made layers constructors more uniform and documented
+	- changed names of triangulation_2 and triangulation_2_constrained
+	- written DOC for 
+
 1.3.32 - 04/06/2003 (rursu)
 ---------------------------
 	- written DOC for HelpWindow class
