@@ -1,3 +1,8 @@
+28 August 2004:  Menelaos Karavelas
+- Parabola_2.h: added hack in order to avoid nasty warning about
+  static variables that appears on Darwin with G++ 3.4
+- moved join_vertices (which was unused) from AGDS2 to TDS2
+
 4 August 2004:  Menelaos Karavelas
 - added image files in the PNG format for the PDF version of the manual
 - fixed problem with hardcoded .eps extension in the manual files
