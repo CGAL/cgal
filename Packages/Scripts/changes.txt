@@ -1,3 +1,7 @@
+27 February 2004 Sylvain Pion
+- create_makefile : Add -I../../include to CXXFLAGS by default,
+  and remove DEBUG_OPTS.
+
 26 February 2004 Radu Ursu
 - replaced set_version_in_config with create_version_file 
    in create_internal_release script.

@@ -89,6 +89,7 @@ create_makefile()
   header "compiler flags"
   echo
   echo    "CXXFLAGS = \\"
+  echo    "           -I../../include \\"
   if [ ! -z "$TESTSUITE" ] ; then
     echo    "           \$(TESTSUITE_CXXFLAGS) \\"
     echo    "           \$(EXTRA_FLAGS) \\"
@@ -97,8 +98,7 @@ create_makefile()
   if [ -d include ] ; then
     echo  "           -Iinclude \\"
   fi
-  echo    "           \$(LONG_NAME_PROBLEM_CXXFLAGS) \\"
-  echo    "           \$(DEBUG_OPT)"
+  echo    "           \$(LONG_NAME_PROBLEM_CXXFLAGS)"
   echo
   header "linker flags"
   echo
