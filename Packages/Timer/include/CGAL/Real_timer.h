@@ -9,13 +9,13 @@
 // ----------------------------------------------------------------------
 //
 // release       : 
-// release_date  : 2000, August 11
+// release_date  : 
 //
 // file          : include/CGAL/Real_timer.h
-// package       : Timer (1.8)
+// package       : Timer (1.9)
 // maintainer    : Matthias Baesken <baesken@informatik.uni-trier.de>
-// revision      : 1.8
-// revision_date : 11 August 2000 
+// revision      : 1.9
+// revision_date : 4 April 2001 
 // author(s)     : Lutz Kettner  <kettner@inf.ethz.ch>
 //                 Matthias Baesken <baesken@informatik.uni-halle.de>
 // coordinator   : INRIA, Sophia Antipolis
@@ -74,9 +74,9 @@ private:
 #endif 
 #endif
 
-    const inline int get_time(Timetype* t) const;
-    const inline void report_err() const;
-    const inline double recalc_time(const Timetype& t) const;
+    inline const int get_time(Timetype* t) const;
+    inline const void report_err() const;
+    inline const double recalc_time(const Timetype& t) const;
     double          elapsed;
     Timetype        started;
     int             interv;
@@ -107,7 +107,7 @@ public:
 // private member functions.
 // all the platform-specific functions are encapsulated here.
 
-const inline int Real_timer::get_time(Timetype* t) const {
+inline const int Real_timer::get_time(Timetype* t) const {
 #if !defined(_MSC_VER) && !defined(__BORLANDC__)
   return gettimeofday( t, NULL);
 #else
@@ -120,7 +120,7 @@ const inline int Real_timer::get_time(Timetype* t) const {
 #endif 
 }
 
-const inline void Real_timer::report_err() const {
+inline const void Real_timer::report_err() const {
  #if !defined (_MSC_VER) && !defined(__BORLANDC__)
   std::cerr << "Real_timer error: gettimeofday() returned -1.\n"
 	    << std::endl;
@@ -130,7 +130,7 @@ const inline void Real_timer::report_err() const {
 #endif
 }
 
-const inline double Real_timer::recalc_time(const Timetype& t) const {
+inline const double Real_timer::recalc_time(const Timetype& t) const {
 #if !defined(_MSC_VER) && !defined(__BORLANDC__)
   return double(t.tv_sec  - started.tv_sec) 
     + double(t.tv_usec - started.tv_usec) / 1000000;
