@@ -57,7 +57,7 @@ int main( )
 
    CGAL::random_polygon_2(point_set.size(), std::back_inserter(polygon), 
                           point_set.begin());
-   std::cout << "The following simple polygon was made: " << endl;
+   std::cout << "The following simple polygon was made: " << std::endl;
    std::cout << polygon << std::endl;
    return 0;
 }
