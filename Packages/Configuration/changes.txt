@@ -1,3 +1,6 @@
+2.86 9/12/2003
+- Simpler implementation of CGAL_WRAP().
+
 2.85 4/12/2003
 - CGAL_CFG_NO_TEMPLATE_FRIEND_DISTINCTION is now gone.
 

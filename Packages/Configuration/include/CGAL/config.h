@@ -107,8 +107,11 @@
 // that do not appear when using the wrapper...
 #if defined(CGAL_CFG_MATCHING_BUG_4) || \
   (defined(__sun) && defined(__SUNPRO_CC))
-#  define CGAL_WRAP(K) Matching_bug_wrapper<K>
-#  include <CGAL/Matching_bug_wrapper.h>
+namespace CGAL {
+    template < typename T >
+    struct Self { typedef T Type; };
+}
+#  define CGAL_WRAP(K) CGAL::Self<K>::Type
 #else
 #  define CGAL_WRAP(K) K
 #endif
