@@ -158,7 +158,7 @@ inline
 Interval_nt_advanced
 operator+ (const Interval_nt_advanced & e, const Interval_nt_advanced & d)
 {
-    CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
+    CGAL_expensive_assertion(FPU_empiric_test() == CGAL_FE_UPWARD);
     return Interval_nt_advanced (-CGAL_IA_FORCE_TO_DOUBLE((-e._inf) - d._inf),
 	                          CGAL_IA_FORCE_TO_DOUBLE( e._sup + d._sup));
 }
@@ -167,7 +167,7 @@ inline
 Interval_nt_advanced
 operator- (const Interval_nt_advanced & e, const Interval_nt_advanced & d)
 {
-    CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
+    CGAL_expensive_assertion(FPU_empiric_test() == CGAL_FE_UPWARD);
     return Interval_nt_advanced (-CGAL_IA_FORCE_TO_DOUBLE(d._sup - e._inf),
 	                          CGAL_IA_FORCE_TO_DOUBLE(e._sup - d._inf));
 }
@@ -180,7 +180,7 @@ inline
 Interval_nt_advanced
 operator* (const Interval_nt_advanced & e, const Interval_nt_advanced & d)
 {
-  CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
+  CGAL_expensive_assertion(FPU_empiric_test() == CGAL_FE_UPWARD);
   if (e._inf>=0.0)					// e>=0
   {
     // d>=0     [_inf*d._inf; _sup*d._sup]
@@ -236,7 +236,7 @@ inline
 Interval_nt_advanced
 operator/ (const Interval_nt_advanced & e, const Interval_nt_advanced & d)
 {
-  CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
+  CGAL_expensive_assertion(FPU_empiric_test() == CGAL_FE_UPWARD);
   if (d._inf>0.0)				// d>0
   {
     // e>=0	[_inf/d._sup; _sup/d._inf]
@@ -280,15 +280,15 @@ sqrt (const Interval_nt_advanced & d)
   // sqrt([+a,+b]) => [sqrt(+a);sqrt(+b)]
   // sqrt([-a,+b]) => [0;sqrt(+b)] => assumes roundoff error.
   // sqrt([-a,-b]) => [0;sqrt(-b)] => assumes user bug (unspecified result).
-  FPU_set_cw(FPU_cw_down);
+  FPU_set_cw(CGAL_FE_DOWNWARD);
 #if defined _MSC_VER || defined __CYGWIN__
   // sqrt(double) on M$ is buggy.
   double i = (d._inf>0.0) ? CGAL_IA_FORCE_TO_DOUBLE(CGAL_ms_sqrt(d._inf)) : 0.0;
-  FPU_set_cw(FPU_cw_up);
+  FPU_set_cw(CGAL_FE_UPWARD);
   return Interval_nt_advanced(i, CGAL_IA_FORCE_TO_DOUBLE(CGAL_ms_sqrt(d._sup)));
 #else
   double i = (d._inf>0.0) ? CGAL_IA_FORCE_TO_DOUBLE(std::sqrt(d._inf)) : 0.0;
-  FPU_set_cw(FPU_cw_up);
+  FPU_set_cw(CGAL_FE_UPWARD);
   return Interval_nt_advanced(i, CGAL_IA_FORCE_TO_DOUBLE(std::sqrt(d._sup)));
 #endif
 }
@@ -297,7 +297,7 @@ inline
 Interval_nt_advanced
 square (const Interval_nt_advanced & d)
 {
-  CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
+  CGAL_expensive_assertion(FPU_empiric_test() == CGAL_FE_UPWARD);
   if (d._inf>=0.0)
       return Interval_nt_advanced(-CGAL_IA_FORCE_TO_DOUBLE(d._inf*(-d._inf)),
 	     			   CGAL_IA_FORCE_TO_DOUBLE(d._sup*d._sup));
@@ -493,7 +493,7 @@ inline
 Interval_nt
 operator+ (const Interval_nt & e, const Interval_nt & d)
 {
-  FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
+  FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_UPWARD);
   Interval_nt tmp ( Interval_nt_advanced(e) + Interval_nt_advanced(d) );
   FPU_set_cw(backup);
   return tmp;
@@ -503,7 +503,7 @@ inline
 Interval_nt
 operator- (const Interval_nt & e, const Interval_nt & d)
 {
-  FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
+  FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_UPWARD);
   Interval_nt tmp ( Interval_nt_advanced(e) - Interval_nt_advanced(d) );
   FPU_set_cw(backup);
   return tmp;
@@ -513,7 +513,7 @@ inline
 Interval_nt
 operator* (const Interval_nt & e, const Interval_nt & d)
 {
-  FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
+  FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_UPWARD);
   Interval_nt tmp ( Interval_nt_advanced(e) * Interval_nt_advanced(d) );
   FPU_set_cw(backup);
   return tmp;
@@ -523,7 +523,7 @@ inline
 Interval_nt
 operator/ (const Interval_nt & e, const Interval_nt & d)
 {
-  FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
+  FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_UPWARD);
   Interval_nt tmp ( Interval_nt_advanced(e) / Interval_nt_advanced(d) );
   FPU_set_cw(backup);
   return tmp;
@@ -543,7 +543,7 @@ inline
 Interval_nt
 square (const Interval_nt & d)
 {
-  FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
+  FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_UPWARD);
   Interval_nt tmp = square( (Interval_nt_advanced) d);
   FPU_set_cw(backup);
   return tmp;

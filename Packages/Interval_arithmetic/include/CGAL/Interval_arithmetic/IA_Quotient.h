@@ -34,7 +34,7 @@ inline
 Interval_nt_advanced
 convert_from_to (const Interval_nt_advanced&, const Quotient<RT> & z)
 {
-	CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
+	CGAL_expensive_assertion(FPU_empiric_test() == CGAL_FE_UPWARD);
 	return  convert_from_to(Interval_nt_advanced(), z.numerator()) /
 		convert_from_to(Interval_nt_advanced(), z.denominator());
 }

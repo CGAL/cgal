@@ -39,7 +39,7 @@ sign_of_determinant2x2(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &a10,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &a11)
 {
-  FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
+  FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_UPWARD);
   try
   {
     Sign result = sign_of_determinant2x2(
@@ -74,7 +74,7 @@ sign_of_determinant2x2(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a10,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a11)
 {
-  CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
+  CGAL_expensive_assertion(FPU_empiric_test() == CGAL_FE_UPWARD);
   try
   {
     return sign_of_determinant2x2(
@@ -85,7 +85,7 @@ sign_of_determinant2x2(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-    FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_near);
+    FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_TONEAREST);
     Sign result = sign_of_determinant2x2(
 		a00.exact(),
 		a01.exact(),
@@ -258,7 +258,7 @@ sign_of_determinant3x3(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &a21,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &a22)
 {
-  FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
+  FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_UPWARD);
   try
   {
     Sign result = sign_of_determinant3x3(
@@ -308,7 +308,7 @@ sign_of_determinant3x3(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a21,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a22)
 {
-  CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
+  CGAL_expensive_assertion(FPU_empiric_test() == CGAL_FE_UPWARD);
   try
   {
     return sign_of_determinant3x3(
@@ -324,7 +324,7 @@ sign_of_determinant3x3(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-    FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_near);
+    FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_TONEAREST);
     Sign result = sign_of_determinant3x3(
 		a00.exact(),
 		a01.exact(),
@@ -572,7 +572,7 @@ sign_of_determinant4x4(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &a32,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &a33)
 {
-  FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
+  FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_UPWARD);
   try
   {
     Sign result = sign_of_determinant4x4(
@@ -643,7 +643,7 @@ sign_of_determinant4x4(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a32,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a33)
 {
-  CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
+  CGAL_expensive_assertion(FPU_empiric_test() == CGAL_FE_UPWARD);
   try
   {
     return sign_of_determinant4x4(
@@ -666,7 +666,7 @@ sign_of_determinant4x4(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-    FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_near);
+    FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_TONEAREST);
     Sign result = sign_of_determinant4x4(
 		a00.exact(),
 		a01.exact(),
@@ -1009,7 +1009,7 @@ sign_of_determinant5x5(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &a43,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &a44)
 {
-  FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
+  FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_UPWARD);
   try
   {
     Sign result = sign_of_determinant5x5(
@@ -1107,7 +1107,7 @@ sign_of_determinant5x5(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a43,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a44)
 {
-  CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
+  CGAL_expensive_assertion(FPU_empiric_test() == CGAL_FE_UPWARD);
   try
   {
     return sign_of_determinant5x5(
@@ -1139,7 +1139,7 @@ sign_of_determinant5x5(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-    FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_near);
+    FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_TONEAREST);
     Sign result = sign_of_determinant5x5(
 		a00.exact(),
 		a01.exact(),
@@ -1603,7 +1603,7 @@ sign_of_determinant6x6(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &a54,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &a55)
 {
-  FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
+  FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_UPWARD);
   try
   {
     Sign result = sign_of_determinant6x6(
@@ -1734,7 +1734,7 @@ sign_of_determinant6x6(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a54,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a55)
 {
-  CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
+  CGAL_expensive_assertion(FPU_empiric_test() == CGAL_FE_UPWARD);
   try
   {
     return sign_of_determinant6x6(
@@ -1777,7 +1777,7 @@ sign_of_determinant6x6(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-    FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_near);
+    FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_TONEAREST);
     Sign result = sign_of_determinant6x6(
 		a00.exact(),
 		a01.exact(),

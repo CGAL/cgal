@@ -38,19 +38,19 @@ CGAL::FPU_CW_t FPU_empiric_test_mul ()
     std::cout << "m = " << m << "\n m*m = " << a << "\n (-m)*m = " << b;
     std::cout << std::endl;
 // Note: it's not supposed to work here like that.
-    if ((a == 0.0) && (b == 0.0)) return CGAL::FPU_cw_near;
-    if (a > 0.0) return CGAL::FPU_cw_up;
-    if (b < 0.0) return CGAL::FPU_cw_down;
-    return CGAL::FPU_cw_zero;
+    if ((a == 0.0) && (b == 0.0)) return CGAL_FE_TONEAREST;
+    if (a > 0.0) return CGAL_FE_UPWARD;
+    if (b < 0.0) return CGAL_FE_DOWNWARD;
+    return CGAL_FE_TOWARDZERO;
 }
 
 void print_rounding_name (CGAL::FPU_CW_t r)
 {
   switch (r) {
-  case CGAL::FPU_cw_near: std::cout << "FPU_cw_near\n"; break;
-  case CGAL::FPU_cw_down: std::cout << "FPU_cw_down\n"; break;
-  case CGAL::FPU_cw_up:   std::cout << "FPU_cw_up\n"; break;
-  case CGAL::FPU_cw_zero: std::cout << "FPU_cw_zero\n"; break;
+  case CGAL_FE_TONEAREST:  std::cout << "NEAR\n"; break;
+  case CGAL_FE_DOWNWARD:   std::cout << "DOWN\n"; break;
+  case CGAL_FE_UPWARD:     std::cout << "UP\n"; break;
+  case CGAL_FE_TOWARDZERO: std::cout << "ZERO\n"; break;
   default:          std::cout << "unknown !\n";
   }
 }
@@ -59,41 +59,41 @@ int main()
 {
    bool flag = true;
 
-   flag = flag && (CGAL::FPU_empiric_test() == CGAL::FPU_cw_near);
+   flag = flag && (CGAL::FPU_empiric_test() == CGAL_FE_TONEAREST);
    std::cout << "default: ";
    print_res(flag);
 
    // Should be a no-op.
    CGAL::FPU_set_cw(CGAL::FPU_get_cw());
-   flag = flag && (CGAL::FPU_empiric_test() == CGAL::FPU_cw_near);
+   flag = flag && (CGAL::FPU_empiric_test() == CGAL_FE_TONEAREST);
    std::cout << "get/set: ";
    print_res(flag);
    if (!flag) print_rounding_name(CGAL::FPU_empiric_test());
 
    // Rounding to zero.
-   CGAL::FPU_set_cw(CGAL::FPU_cw_zero);
-   flag = flag && (CGAL::FPU_empiric_test() == CGAL::FPU_cw_zero);
+   CGAL::FPU_set_cw(CGAL_FE_TOWARDZERO);
+   flag = flag && (CGAL::FPU_empiric_test() == CGAL_FE_TOWARDZERO);
    std::cout << "zero   : ";
    print_res(flag);
    if (!flag) print_rounding_name(CGAL::FPU_empiric_test());
 
    // Rounding to infinity.
-   CGAL::FPU_set_cw(CGAL::FPU_cw_up);
-   flag = flag && (CGAL::FPU_empiric_test() == CGAL::FPU_cw_up);
+   CGAL::FPU_set_cw(CGAL_FE_UPWARD);
+   flag = flag && (CGAL::FPU_empiric_test() == CGAL_FE_UPWARD);
    std::cout << "+inf   : ";
    print_res(flag);
    if (!flag) print_rounding_name(CGAL::FPU_empiric_test());
 
    // Rounding to minus infinity.
-   CGAL::FPU_set_cw(CGAL::FPU_cw_down);
-   flag = flag && (CGAL::FPU_empiric_test() == CGAL::FPU_cw_down);
+   CGAL::FPU_set_cw(CGAL_FE_DOWNWARD);
+   flag = flag && (CGAL::FPU_empiric_test() == CGAL_FE_DOWNWARD);
    std::cout << "-inf   : ";
    print_res(flag);
    if (!flag) print_rounding_name(CGAL::FPU_empiric_test());
 
    // Rounding to nearest.
-   CGAL::FPU_set_cw(CGAL::FPU_cw_near);
-   flag = flag && (CGAL::FPU_empiric_test() == CGAL::FPU_cw_near);
+   CGAL::FPU_set_cw(CGAL_FE_TONEAREST);
+   flag = flag && (CGAL::FPU_empiric_test() == CGAL_FE_TONEAREST);
    std::cout << "near   : ";
    print_res(flag);
    if (!flag) print_rounding_name(CGAL::FPU_empiric_test());

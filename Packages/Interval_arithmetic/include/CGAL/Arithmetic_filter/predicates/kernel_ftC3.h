@@ -44,7 +44,7 @@ collinearC3(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &ry,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &rz)
 {
-  FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
+  FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_UPWARD);
   try
   {
     bool result = collinearC3(
@@ -94,7 +94,7 @@ collinearC3(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &ry,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &rz)
 {
-  CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
+  CGAL_expensive_assertion(FPU_empiric_test() == CGAL_FE_UPWARD);
   try
   {
     return collinearC3(
@@ -110,7 +110,7 @@ collinearC3(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-    FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_near);
+    FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_TONEAREST);
     bool result = collinearC3(
 		px.exact(),
 		py.exact(),
@@ -380,7 +380,7 @@ orientationC3(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &sy,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &sz)
 {
-  FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
+  FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_UPWARD);
   try
   {
     Orientation result = orientationC3(
@@ -439,7 +439,7 @@ orientationC3(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &sy,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &sz)
 {
-  CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
+  CGAL_expensive_assertion(FPU_empiric_test() == CGAL_FE_UPWARD);
   try
   {
     return orientationC3(
@@ -458,7 +458,7 @@ orientationC3(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-    FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_near);
+    FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_TONEAREST);
     Orientation result = orientationC3(
 		px.exact(),
 		py.exact(),
@@ -732,7 +732,7 @@ equal_directionC3(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &dy2,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &dz2)
 {
-  FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
+  FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_UPWARD);
   try
   {
     bool result = equal_directionC3(
@@ -773,7 +773,7 @@ equal_directionC3(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &dy2,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &dz2)
 {
-  CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
+  CGAL_expensive_assertion(FPU_empiric_test() == CGAL_FE_UPWARD);
   try
   {
     return equal_directionC3(
@@ -786,7 +786,7 @@ equal_directionC3(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-    FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_near);
+    FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_TONEAREST);
     bool result = equal_directionC3(
 		dx1.exact(),
 		dy1.exact(),
@@ -1043,7 +1043,7 @@ side_of_oriented_planeC3(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &py,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &pz)
 {
-  FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
+  FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_UPWARD);
   try
   {
     Oriented_side result = side_of_oriented_planeC3(
@@ -1087,7 +1087,7 @@ side_of_oriented_planeC3(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &py,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &pz)
 {
-  CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
+  CGAL_expensive_assertion(FPU_empiric_test() == CGAL_FE_UPWARD);
   try
   {
     return side_of_oriented_planeC3(
@@ -1101,7 +1101,7 @@ side_of_oriented_planeC3(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-    FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_near);
+    FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_TONEAREST);
     Oriented_side result = side_of_oriented_planeC3(
 		a.exact(),
 		b.exact(),
@@ -1320,7 +1320,7 @@ side_of_oriented_sphereC3(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &ty,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &tz)
 {
-  FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
+  FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_UPWARD);
   try
   {
     Oriented_side result = side_of_oriented_sphereC3(
@@ -1388,7 +1388,7 @@ side_of_oriented_sphereC3(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &ty,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &tz)
 {
-  CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
+  CGAL_expensive_assertion(FPU_empiric_test() == CGAL_FE_UPWARD);
   try
   {
     return side_of_oriented_sphereC3(
@@ -1410,7 +1410,7 @@ side_of_oriented_sphereC3(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-    FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_near);
+    FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_TONEAREST);
     Oriented_side result = side_of_oriented_sphereC3(
 		px.exact(),
 		py.exact(),
@@ -1763,7 +1763,7 @@ side_of_bounded_sphereC3(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &ty,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &tz)
 {
-  FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
+  FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_UPWARD);
   try
   {
     Bounded_side result = side_of_bounded_sphereC3(
@@ -1831,7 +1831,7 @@ side_of_bounded_sphereC3(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &ty,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &tz)
 {
-  CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
+  CGAL_expensive_assertion(FPU_empiric_test() == CGAL_FE_UPWARD);
   try
   {
     return side_of_bounded_sphereC3(
@@ -1853,7 +1853,7 @@ side_of_bounded_sphereC3(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-    FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_near);
+    FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_TONEAREST);
     Bounded_side result = side_of_bounded_sphereC3(
 		px.exact(),
 		py.exact(),
@@ -2186,7 +2186,7 @@ cmp_dist_to_pointC3(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &ry,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &rz)
 {
-  FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
+  FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_UPWARD);
   try
   {
     Comparison_result result = cmp_dist_to_pointC3(
@@ -2236,7 +2236,7 @@ cmp_dist_to_pointC3(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &ry,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &rz)
 {
-  CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
+  CGAL_expensive_assertion(FPU_empiric_test() == CGAL_FE_UPWARD);
   try
   {
     return cmp_dist_to_pointC3(
@@ -2252,7 +2252,7 @@ cmp_dist_to_pointC3(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-    FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_near);
+    FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_TONEAREST);
     Comparison_result result = cmp_dist_to_pointC3(
 		px.exact(),
 		py.exact(),
@@ -2491,7 +2491,7 @@ cmp_signed_dist_to_directionC3(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &qy,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &qz)
 {
-  FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
+  FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_UPWARD);
   try
   {
     Comparison_result result = cmp_signed_dist_to_directionC3(
@@ -2541,7 +2541,7 @@ cmp_signed_dist_to_directionC3(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &qy,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &qz)
 {
-  CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
+  CGAL_expensive_assertion(FPU_empiric_test() == CGAL_FE_UPWARD);
   try
   {
     return cmp_signed_dist_to_directionC3(
@@ -2557,7 +2557,7 @@ cmp_signed_dist_to_directionC3(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-    FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_near);
+    FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_TONEAREST);
     Comparison_result result = cmp_signed_dist_to_directionC3(
 		pa.exact(),
 		pb.exact(),
@@ -2802,7 +2802,7 @@ cmp_signed_dist_to_planeC3(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &qy,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &qz)
 {
-  FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
+  FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_UPWARD);
   try
   {
     Comparison_result result = cmp_signed_dist_to_planeC3(
@@ -2870,7 +2870,7 @@ cmp_signed_dist_to_planeC3(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &qy,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &qz)
 {
-  CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
+  CGAL_expensive_assertion(FPU_empiric_test() == CGAL_FE_UPWARD);
   try
   {
     return cmp_signed_dist_to_planeC3(
@@ -2892,7 +2892,7 @@ cmp_signed_dist_to_planeC3(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-    FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_near);
+    FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_TONEAREST);
     Comparison_result result = cmp_signed_dist_to_planeC3(
 		ppx.exact(),
 		ppy.exact(),

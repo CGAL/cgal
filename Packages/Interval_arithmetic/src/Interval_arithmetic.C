@@ -66,7 +66,7 @@ operator>> (std::istream & is, Interval_nt_advanced & I)
 void force_ieee_double_precision()
 {
 #if defined __i386__ || defined _MSC_VER || defined __BORLANDC__
-    FPU_set_cw(FPU_cw_near);
+    FPU_set_cw(CGAL_FE_TONEAREST);
 #endif
 }
 
@@ -75,7 +75,7 @@ void force_ieee_double_precision()
 // => FP exceptions.
 struct Borland_workaround
 {
-    Borland_workaround() { FPU_set_cw(FPU_cw_near); }
+    Borland_workaround() { FPU_set_cw(CGAL_FE_TONEAREST); }
 };
 
 static Borland_workaround Borland_workaround_object;
@@ -102,10 +102,10 @@ FPU_empiric_test()
     double ye, ze;
     ye = y - m;
     ze = z + m;
-    if (y == ye && z == ze) return FPU_cw_near;
-    if (y == ye) return FPU_cw_up;
-    if (z == ze) return FPU_cw_down;
-    return FPU_cw_zero;
+    if (y == ye && z == ze) return CGAL_FE_TONEAREST;
+    if (y == ye) return CGAL_FE_UPWARD;
+    if (z == ze) return CGAL_FE_DOWNWARD;
+    return CGAL_FE_TOWARDZERO;
 }
 
 CGAL_END_NAMESPACE

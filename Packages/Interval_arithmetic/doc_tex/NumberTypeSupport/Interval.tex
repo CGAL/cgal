@@ -160,11 +160,11 @@ The user can add such functions for his own number types, see the files
 
 % FPU rounding modes~:
 
-We provide the following functions to change the rounding mode:
+We provide the following interface to change the rounding mode:
 
-\ccEnum{enum FPU_CW_t {FPU_cw_near, FPU_cw_zero, FPU_cw_up, FPU_cw_down};}
-       {The different selectors for the rounding mode (respectively to the
-       nearest, to zero, to plus infinity, and to minus infinity).}
+\ccTypedef{typedef int FPU_CW_t;}
+       {The type used by the following functions to deal with rounding modes.
+       This is usually an \ccc{int}.}
 \ccFunction{void FPU_set_cw (FPU_CW_t R);}
        {sets the rounding mode to \ccc{R}.}
 \ccFunction{FPU_CW_t FPU_get_cw (void);}
@@ -172,13 +172,17 @@ We provide the following functions to change the rounding mode:
 \ccFunction{FPU_CW_t FPU_get_and_set_cw (FPU_CW_t R);}
        {sets the rounding mode to \ccc{R} and returns the old one. }
 
+The macros \ccc{CGAL_FE_TONEAREST}, \ccc{CGAL_FE_TOWARDZERO},
+\ccc{CGAL_FE_UPWARD} and \ccc{CGAL_FE_DOWNWARD} are the values corresponding
+to the rounding modes.
+
 \ccExample
 
 The correct way to protect an area of code that uses operations on the class
 \ccc{Interval_nt_advanced} is the following:
 
 \begin{verbatim}
-  FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
+  FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_UPWARD);
   ... // The code to be protected.
   FPU_set_cw(backup);
 \end{verbatim}

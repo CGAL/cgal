@@ -113,7 +113,7 @@ int main()
 {
 #ifdef ADVANCED
   CGAL::FPU_CW_t backup = CGAL::FPU_get_cw();
-  CGAL::FPU_set_cw(CGAL::FPU_cw_up);
+  CGAL::FPU_set_cw(CGAL_FE_UPWARD);
   std::cout << "Benching the class Interval_nt_advanced.\n";
 #else
   std::cout << "Benching the class Interval_nt.\n";

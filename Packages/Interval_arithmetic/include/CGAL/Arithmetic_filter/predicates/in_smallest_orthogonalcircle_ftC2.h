@@ -44,7 +44,7 @@ in_smallest_orthogonalcircleC2(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &ty,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &tw)
 {
-  FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
+  FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_UPWARD);
   try
   {
     Oriented_side result = in_smallest_orthogonalcircleC2(
@@ -94,7 +94,7 @@ in_smallest_orthogonalcircleC2(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &ty,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &tw)
 {
-  CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
+  CGAL_expensive_assertion(FPU_empiric_test() == CGAL_FE_UPWARD);
   try
   {
     return in_smallest_orthogonalcircleC2(
@@ -110,7 +110,7 @@ in_smallest_orthogonalcircleC2(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-    FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_near);
+    FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_TONEAREST);
     Oriented_side result = in_smallest_orthogonalcircleC2(
 		px.exact(),
 		py.exact(),

@@ -36,15 +36,15 @@ inline
 Interval_nt_advanced
 convert_from_to (const Interval_nt_advanced&, const leda_integer & z)
 {
-    CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
-    FPU_set_cw(FPU_cw_near);
+    CGAL_expensive_assertion(FPU_empiric_test() == CGAL_FE_UPWARD);
+    FPU_set_cw(CGAL_FE_TONEAREST);
     double approx = CGAL::to_double(z);
-    FPU_set_cw(FPU_cw_up);
+    FPU_set_cw(CGAL_FE_UPWARD);
     Interval_nt_advanced result = approx + Interval_nt_advanced::Smallest;
-    CGAL_expensive_assertion_code(FPU_set_cw(FPU_cw_near);)
+    CGAL_expensive_assertion_code(FPU_set_cw(CGAL_FE_TONEAREST);)
     CGAL_expensive_assertion( leda_integer(result.inf()) <= z &&
 		              leda_integer(result.sup()) >= z);
-    CGAL_expensive_assertion_code(FPU_set_cw(FPU_cw_up);)
+    CGAL_expensive_assertion_code(FPU_set_cw(CGAL_FE_UPWARD);)
     return result;
 }
 

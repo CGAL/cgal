@@ -164,7 +164,7 @@ public:
   {
       if (!is_valid(in))
       {
-	  FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
+	  FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_UPWARD);
 	  update_interval_advanced();
 	  FPU_set_cw(backup);
       }

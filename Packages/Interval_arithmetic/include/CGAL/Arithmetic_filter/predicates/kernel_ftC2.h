@@ -41,7 +41,7 @@ equal_lineC2(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &l2b,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &l2c)
 {
-  FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
+  FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_UPWARD);
   try
   {
     bool result = equal_lineC2(
@@ -82,7 +82,7 @@ equal_lineC2(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &l2b,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &l2c)
 {
-  CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
+  CGAL_expensive_assertion(FPU_empiric_test() == CGAL_FE_UPWARD);
   try
   {
     return equal_lineC2(
@@ -95,7 +95,7 @@ equal_lineC2(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-    FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_near);
+    FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_TONEAREST);
     bool result = equal_lineC2(
 		l1a.exact(),
 		l1b.exact(),
@@ -344,7 +344,7 @@ compare_xC2(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &l2b,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &l2c)
 {
-  FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
+  FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_UPWARD);
   try
   {
     Comparison_result result = compare_xC2(
@@ -388,7 +388,7 @@ compare_xC2(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &l2b,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &l2c)
 {
-  CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
+  CGAL_expensive_assertion(FPU_empiric_test() == CGAL_FE_UPWARD);
   try
   {
     return compare_xC2(
@@ -402,7 +402,7 @@ compare_xC2(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-    FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_near);
+    FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_TONEAREST);
     Comparison_result result = compare_xC2(
 		px.exact(),
 		l1a.exact(),
@@ -634,7 +634,7 @@ compare_xC2(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &h2b,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &h2c)
 {
-  FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
+  FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_UPWARD);
   try
   {
     Comparison_result result = compare_xC2(
@@ -693,7 +693,7 @@ compare_xC2(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &h2b,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &h2c)
 {
-  CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
+  CGAL_expensive_assertion(FPU_empiric_test() == CGAL_FE_UPWARD);
   try
   {
     return compare_xC2(
@@ -712,7 +712,7 @@ compare_xC2(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-    FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_near);
+    FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_TONEAREST);
     Comparison_result result = compare_xC2(
 		l1a.exact(),
 		l1b.exact(),
@@ -1005,7 +1005,7 @@ compare_y_at_xC2(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &lb,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &lc)
 {
-  FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
+  FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_UPWARD);
   try
   {
     Comparison_result result = compare_y_at_xC2(
@@ -1043,7 +1043,7 @@ compare_y_at_xC2(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &lb,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &lc)
 {
-  CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
+  CGAL_expensive_assertion(FPU_empiric_test() == CGAL_FE_UPWARD);
   try
   {
     return compare_y_at_xC2(
@@ -1055,7 +1055,7 @@ compare_y_at_xC2(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-    FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_near);
+    FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_TONEAREST);
     Comparison_result result = compare_y_at_xC2(
 		px.exact(),
 		py.exact(),
@@ -1252,7 +1252,7 @@ compare_y_at_xC2(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &l2b,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &l2c)
 {
-  FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
+  FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_UPWARD);
   try
   {
     Comparison_result result = compare_y_at_xC2(
@@ -1296,7 +1296,7 @@ compare_y_at_xC2(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &l2b,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &l2c)
 {
-  CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
+  CGAL_expensive_assertion(FPU_empiric_test() == CGAL_FE_UPWARD);
   try
   {
     return compare_y_at_xC2(
@@ -1310,7 +1310,7 @@ compare_y_at_xC2(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-    FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_near);
+    FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_TONEAREST);
     Comparison_result result = compare_y_at_xC2(
 		px.exact(),
 		l1a.exact(),
@@ -1541,7 +1541,7 @@ compare_y_at_xC2(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &hb,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &hc)
 {
-  FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
+  FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_UPWARD);
   try
   {
     Comparison_result result = compare_y_at_xC2(
@@ -1591,7 +1591,7 @@ compare_y_at_xC2(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &hb,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &hc)
 {
-  CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
+  CGAL_expensive_assertion(FPU_empiric_test() == CGAL_FE_UPWARD);
   try
   {
     return compare_y_at_xC2(
@@ -1607,7 +1607,7 @@ compare_y_at_xC2(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-    FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_near);
+    FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_TONEAREST);
     Comparison_result result = compare_y_at_xC2(
 		l1a.exact(),
 		l1b.exact(),
@@ -1867,7 +1867,7 @@ compare_y_at_xC2(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &h2b,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &h2c)
 {
-  FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
+  FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_UPWARD);
   try
   {
     Comparison_result result = compare_y_at_xC2(
@@ -1926,7 +1926,7 @@ compare_y_at_xC2(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &h2b,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &h2c)
 {
-  CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
+  CGAL_expensive_assertion(FPU_empiric_test() == CGAL_FE_UPWARD);
   try
   {
     return compare_y_at_xC2(
@@ -1945,7 +1945,7 @@ compare_y_at_xC2(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-    FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_near);
+    FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_TONEAREST);
     Comparison_result result = compare_y_at_xC2(
 		l1a.exact(),
 		l1b.exact(),
@@ -2243,7 +2243,7 @@ equal_directionC2(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &dx2,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &dy2)
 {
-  FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
+  FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_UPWARD);
   try
   {
     bool result = equal_directionC2(
@@ -2278,7 +2278,7 @@ equal_directionC2(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &dx2,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &dy2)
 {
-  CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
+  CGAL_expensive_assertion(FPU_empiric_test() == CGAL_FE_UPWARD);
   try
   {
     return equal_directionC2(
@@ -2289,7 +2289,7 @@ equal_directionC2(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-    FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_near);
+    FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_TONEAREST);
     bool result = equal_directionC2(
 		dx1.exact(),
 		dy1.exact(),
@@ -2489,7 +2489,7 @@ compare_deltax_deltayC2(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &ry,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &sy)
 {
-  FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
+  FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_UPWARD);
   try
   {
     Comparison_result result = compare_deltax_deltayC2(
@@ -2524,7 +2524,7 @@ compare_deltax_deltayC2(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &ry,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &sy)
 {
-  CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
+  CGAL_expensive_assertion(FPU_empiric_test() == CGAL_FE_UPWARD);
   try
   {
     return compare_deltax_deltayC2(
@@ -2535,7 +2535,7 @@ compare_deltax_deltayC2(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-    FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_near);
+    FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_TONEAREST);
     Comparison_result result = compare_deltax_deltayC2(
 		px.exact(),
 		qx.exact(),
@@ -2709,7 +2709,7 @@ orientationC2(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &rx,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &ry)
 {
-  FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
+  FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_UPWARD);
   try
   {
     Orientation result = orientationC2(
@@ -2750,7 +2750,7 @@ orientationC2(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &rx,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &ry)
 {
-  CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
+  CGAL_expensive_assertion(FPU_empiric_test() == CGAL_FE_UPWARD);
   try
   {
     return orientationC2(
@@ -2763,7 +2763,7 @@ orientationC2(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-    FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_near);
+    FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_TONEAREST);
     Orientation result = orientationC2(
 		px.exact(),
 		py.exact(),
@@ -2965,7 +2965,7 @@ side_of_oriented_circleC2(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &tx,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &ty)
 {
-  FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
+  FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_UPWARD);
   try
   {
     Oriented_side result = side_of_oriented_circleC2(
@@ -3012,7 +3012,7 @@ side_of_oriented_circleC2(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &tx,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &ty)
 {
-  CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
+  CGAL_expensive_assertion(FPU_empiric_test() == CGAL_FE_UPWARD);
   try
   {
     return side_of_oriented_circleC2(
@@ -3027,7 +3027,7 @@ side_of_oriented_circleC2(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-    FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_near);
+    FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_TONEAREST);
     Oriented_side result = side_of_oriented_circleC2(
 		px.exact(),
 		py.exact(),
@@ -3287,7 +3287,7 @@ side_of_bounded_circleC2(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &tx,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &ty)
 {
-  FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
+  FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_UPWARD);
   try
   {
     Bounded_side result = side_of_bounded_circleC2(
@@ -3334,7 +3334,7 @@ side_of_bounded_circleC2(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &tx,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &ty)
 {
-  CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
+  CGAL_expensive_assertion(FPU_empiric_test() == CGAL_FE_UPWARD);
   try
   {
     return side_of_bounded_circleC2(
@@ -3349,7 +3349,7 @@ side_of_bounded_circleC2(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-    FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_near);
+    FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_TONEAREST);
     Bounded_side result = side_of_bounded_circleC2(
 		px.exact(),
 		py.exact(),
@@ -3583,7 +3583,7 @@ cmp_dist_to_pointC2(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &rx,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &ry)
 {
-  FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
+  FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_UPWARD);
   try
   {
     Comparison_result result = cmp_dist_to_pointC2(
@@ -3624,7 +3624,7 @@ cmp_dist_to_pointC2(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &rx,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &ry)
 {
-  CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
+  CGAL_expensive_assertion(FPU_empiric_test() == CGAL_FE_UPWARD);
   try
   {
     return cmp_dist_to_pointC2(
@@ -3637,7 +3637,7 @@ cmp_dist_to_pointC2(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-    FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_near);
+    FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_TONEAREST);
     Comparison_result result = cmp_dist_to_pointC2(
 		px.exact(),
 		py.exact(),
@@ -3837,7 +3837,7 @@ cmp_signed_dist_to_directionC2(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &qx,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &qy)
 {
-  FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
+  FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_UPWARD);
   try
   {
     Comparison_result result = cmp_signed_dist_to_directionC2(
@@ -3878,7 +3878,7 @@ cmp_signed_dist_to_directionC2(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &qx,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &qy)
 {
-  CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
+  CGAL_expensive_assertion(FPU_empiric_test() == CGAL_FE_UPWARD);
   try
   {
     return cmp_signed_dist_to_directionC2(
@@ -3891,7 +3891,7 @@ cmp_signed_dist_to_directionC2(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-    FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_near);
+    FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_TONEAREST);
     Comparison_result result = cmp_signed_dist_to_directionC2(
 		la.exact(),
 		lb.exact(),
@@ -4093,7 +4093,7 @@ cmp_signed_dist_to_lineC2(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &sx,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &sy)
 {
-  FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
+  FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_UPWARD);
   try
   {
     Comparison_result result = cmp_signed_dist_to_lineC2(
@@ -4140,7 +4140,7 @@ cmp_signed_dist_to_lineC2(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &sx,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &sy)
 {
-  CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
+  CGAL_expensive_assertion(FPU_empiric_test() == CGAL_FE_UPWARD);
   try
   {
     return cmp_signed_dist_to_lineC2(
@@ -4155,7 +4155,7 @@ cmp_signed_dist_to_lineC2(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-    FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_near);
+    FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_TONEAREST);
     Comparison_result result = cmp_signed_dist_to_lineC2(
 		px.exact(),
 		py.exact(),

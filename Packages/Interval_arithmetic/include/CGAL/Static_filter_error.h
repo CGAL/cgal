@@ -69,7 +69,7 @@ struct Static_filter_error
       CGAL_warning_msg(_d == f._d,
 	      "you are adding variables of different homogeneous degree");
       double b = _b + f._b;
-      FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
+      FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_UPWARD);
       double e = (ulp(b)/2 + _e) + f._e;
       FPU_set_cw(backup);
       return Sfe(b, e, _d);
@@ -78,7 +78,7 @@ struct Static_filter_error
   Sfe operator* (const Sfe &f) const
   {
       double b = _b * f._b;
-      FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
+      FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_UPWARD);
       double e = (ulp(b)/2 + _e * f._e) +  _e * f._b + _b * f._e;
       FPU_set_cw(backup);
       return Sfe(b, e, _d+f._d);
@@ -127,7 +127,7 @@ sqrt(const Static_filter_error &f)
   CGAL_warning_msg(f.degree() & 1 == 0,
 	  "you really want a non integer degree ???");
   double b = std::sqrt(f.bound());
-  FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
+  FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_UPWARD);
   double e = std::sqrt(f.error()) + Static_filter_error::ulp(b)/2;
   FPU_set_cw(backup);
   return Static_filter_error(b, e, f.degree()/2);

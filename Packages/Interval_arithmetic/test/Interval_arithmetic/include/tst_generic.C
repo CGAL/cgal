@@ -403,7 +403,7 @@ void print_res (bool res)
 int main()
 {
 #ifdef ADVANCED
-  CGAL::FPU_CW_t backup = CGAL::FPU_get_and_set_cw(CGAL::FPU_cw_up);
+  CGAL::FPU_CW_t backup = CGAL::FPU_get_and_set_cw(CGAL_FE_UPWARD);
   std::cout << "Stress-testing the class Interval_nt_advanced.\n";
 #else
   std::cout << "Stress-testing the class Interval_nt.\n";

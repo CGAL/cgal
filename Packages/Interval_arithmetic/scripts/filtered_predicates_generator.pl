@@ -133,21 +133,21 @@ $fct_name($args_call)
 
   if ($adv eq "Advanced") {
     print FO "
-  CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
+  CGAL_expensive_assertion(FPU_empiric_test() == CGAL_FE_UPWARD);
   try
   {
     return $fct_name($args_inter);
   } 
   catch (${CGAL}Interval_nt_advanced::unsafe_comparison)
   {
-    ${CGAL}FPU_CW_t backup = ${CGAL}FPU_get_and_set_cw(${CGAL}FPU_cw_near);
+    ${CGAL}FPU_CW_t backup = ${CGAL}FPU_get_and_set_cw(CGAL_FE_TONEAREST);
     $ret_type result = $fct_name($args_exact);
     ${CGAL}FPU_set_cw(backup);
     return result;
   }";
   } else {
     print FO "
-  ${CGAL}FPU_CW_t backup = ${CGAL}FPU_get_and_set_cw(${CGAL}FPU_cw_up);
+  ${CGAL}FPU_CW_t backup = ${CGAL}FPU_get_and_set_cw(CGAL_FE_UPWARD);
   try
   {
     $ret_type result = $fct_name($args_inter);

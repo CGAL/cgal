@@ -93,12 +93,10 @@ CGAL_BEGIN_NAMESPACE
 #define CGAL_IA_SETFPCW(CW) fesetround(CW)
 #define CGAL_IA_GETFPCW(CW) CW = fegetround()
 typedef int FPU_CW_t;
-enum {
-    FPU_cw_near = FE_TONEAREST,
-    FPU_cw_zero = FE_TOWARDZERO,
-    FPU_cw_up   = FE_UPWARD,
-    FPU_cw_down = FE_DOWNWARD
-};
+#define CGAL_FE_TONEAREST    FE_TONEAREST
+#define CGAL_FE_TOWARDZERO   FE_TOWARDZERO
+#define CGAL_FE_UPWARD       FE_UPWARD
+#define CGAL_FE_DOWNWARD     FE_DOWNWARD
 
 #elif defined __i386__
 // The GNU libc version (cf powerpc) is nicer, but doesn't work on libc 5 :(
@@ -106,112 +104,92 @@ enum {
 #define CGAL_IA_SETFPCW(CW) asm volatile ("fldcw %0" : :"m" (CW))
 #define CGAL_IA_GETFPCW(CW) asm volatile ("fnstcw %0" : "=m" (CW))
 typedef unsigned short FPU_CW_t;
-enum {
-    FPU_cw_near = 0x000 | 0x127f,
-    FPU_cw_zero = 0xc00 | 0x127f,
-    FPU_cw_up   = 0x800 | 0x127f,
-    FPU_cw_down = 0x400 | 0x127f
-};
+#define CGAL_FE_TONEAREST    (0x000 | 0x127f)
+#define CGAL_FE_TOWARDZERO   (0xc00 | 0x127f)
+#define CGAL_FE_UPWARD       (0x800 | 0x127f)
+#define CGAL_FE_DOWNWARD     (0x400 | 0x127f)
 
 #elif defined __powerpc__
 #define CGAL_IA_SETFPCW(CW) _FPU_SETCW(CW)
 #define CGAL_IA_GETFPCW(CW) _FPU_GETCW(CW)
 typedef fpu_control_t FPU_CW_t;
-enum {
-    FPU_cw_near = _FPU_RC_NEAREST | _FPU_DEFAULT,
-    FPU_cw_zero = _FPU_RC_ZERO    | _FPU_DEFAULT,
-    FPU_cw_up   = _FPU_RC_UP      | _FPU_DEFAULT,
-    FPU_cw_down = _FPU_RC_DOWN    | _FPU_DEFAULT
-};
+#define CGAL_FE_TONEAREST    (_FPU_RC_NEAREST | _FPU_DEFAULT)
+#define CGAL_FE_TOWARDZERO   (_FPU_RC_ZERO    | _FPU_DEFAULT)
+#define CGAL_FE_UPWARD       (_FPU_RC_UP      | _FPU_DEFAULT)
+#define CGAL_FE_DOWNWARD     (_FPU_RC_DOWN    | _FPU_DEFAULT)
 
 #elif defined __SUNPRO_CC
 #define CGAL_IA_SETFPCW(CW) fpsetround(fp_rnd(CW))
 #define CGAL_IA_GETFPCW(CW) CW = fpgetround()
 typedef unsigned int FPU_CW_t;
-enum {
-    FPU_cw_near = FP_RN,
-    FPU_cw_zero = FP_RZ,
-    FPU_cw_up   = FP_RP,
-    FPU_cw_down = FP_RM
-};
+#define CGAL_FE_TONEAREST    FP_RN
+#define CGAL_FE_TOWARDZERO   FP_RZ
+#define CGAL_FE_UPWARD       FP_RP
+#define CGAL_FE_DOWNWARD     FP_RM
 
 #elif defined __sparc__
 #define CGAL_IA_SETFPCW(CW) asm volatile ("ld %0,%%fsr" : :"m" (CW))
 #define CGAL_IA_GETFPCW(CW) asm volatile ("st %%fsr,%0" : "=m" (CW))
 typedef unsigned int FPU_CW_t;
-enum {  //        rounding   | precision  | def.mask
-    FPU_cw_near = 0x0        | 0x20000000 | 0x1f,
-    FPU_cw_zero = 0x40000000 | 0x20000000 | 0x1f,
-    FPU_cw_up   = 0x80000000 | 0x20000000 | 0x1f,
-    FPU_cw_down = 0xc0000000 | 0x20000000 | 0x1f
-};
+#define CGAL_FE_TONEAREST    (0x0        | 0x20000000 | 0x1f)
+#define CGAL_FE_TOWARDZERO   (0x40000000 | 0x20000000 | 0x1f)
+#define CGAL_FE_UPWARD       (0x80000000 | 0x20000000 | 0x1f)
+#define CGAL_FE_DOWNWARD     (0xc0000000 | 0x20000000 | 0x1f)
 
 #elif defined __sgi
 #define CGAL_IA_SETFPCW(CW) CGAL_workaround_IRIX_set_FPU_cw(CW)
 #define CGAL_IA_GETFPCW(CW) CW = CGAL_workaround_IRIX_get_FPU_cw()
 typedef unsigned int FPU_CW_t;
-enum {
-    FPU_cw_near = 0x0,
-    FPU_cw_zero = 0x1,
-    FPU_cw_up   = 0x2,
-    FPU_cw_down = 0x3
-};
+#define CGAL_FE_TONEAREST    (0x0)
+#define CGAL_FE_TOWARDZERO   (0x1)
+#define CGAL_FE_UPWARD       (0x2)
+#define CGAL_FE_DOWNWARD     (0x3)
 
 #elif defined __mips__ // && !defined __sgi
 #define CGAL_IA_SETFPCW(CW) asm volatile ("ctc1 %0,$31" : :"r" (CW))
 #define CGAL_IA_GETFPCW(CW) asm volatile ("cfc1 %0,$31" : "=r" (CW))
 typedef unsigned int FPU_CW_t;
-enum {
-    FPU_cw_near = 0x0,
-    FPU_cw_zero = 0x1,
-    FPU_cw_up   = 0x2,
-    FPU_cw_down = 0x3
-};
+#define CGAL_FE_TONEAREST    (0x0)
+#define CGAL_FE_TOWARDZERO   (0x1)
+#define CGAL_FE_UPWARD       (0x2)
+#define CGAL_FE_DOWNWARD     (0x3)
 
 #elif defined __osf || defined __osf__  // Not yet supported.
 #define CGAL_IA_SETFPCW(CW) write_rnd(CW)
 #define CGAL_IA_GETFPCW(CW) CW = read_rnd()
 typedef unsigned int FPU_CW_t;
-enum {
-    FPU_cw_near = FP_RND_RN,
-    FPU_cw_zero = FP_RND_RZ,
-    FPU_cw_up   = FP_RND_RP,
-    FPU_cw_down = FP_RND_RM
-};
+#define CGAL_FE_TONEAREST    FP_RND_RN
+#define CGAL_FE_TOWARDZERO   FP_RND_RZ
+#define CGAL_FE_UPWARD       FP_RND_RP
+#define CGAL_FE_DOWNWARD     FP_RND_RM
 
 #elif defined __alpha__  // This one is not really supported [yet].
 #define CGAL_IA_SETFPCW(CW) asm volatile ("mt_fpcr %0; excb" : :"f" (CW))
 #define CGAL_IA_GETFPCW(CW) asm volatile ("excb; mf_fpcr %0" : "=f" (CW))
 typedef unsigned long FPU_CW_t;
-enum { // I fear it won't work because enum == int.
-    FPU_cw_near = 0x0800000000000000UL,
-    FPU_cw_zero = 0x0000000000000000UL,
-    FPU_cw_up   = 0x0c00000000000000UL,
-    FPU_cw_down = 0x0400000000000000UL
-};
+#define CGAL_FE_TONEAREST    (0x0800000000000000UL)
+#define CGAL_FE_TOWARDZERO   (0x0000000000000000UL)
+#define CGAL_FE_UPWARD       (0x0c00000000000000UL)
+#define CGAL_FE_DOWNWARD     (0x0400000000000000UL)
 
 #elif defined _MSC_VER
 // Found in http://msdn.microsoft.com/library/sdkdoc/directx/imover_7410.htm :
 #define CGAL_IA_SETFPCW(CW) __asm fldcw CW
 #define CGAL_IA_GETFPCW(CW) __asm fstcw CW
 typedef unsigned short FPU_CW_t;
-enum {
-    FPU_cw_near = 0x0   | 0x127f,
-    FPU_cw_zero = 0xC00 | 0x127f,
-    FPU_cw_up   = 0x800 | 0x127f,
-    FPU_cw_down = 0x400 | 0x127f
-};
+#define CGAL_FE_TONEAREST    (0x0   | 0x127f)
+#define CGAL_FE_TOWARDZERO   (0xC00 | 0x127f)
+#define CGAL_FE_UPWARD       (0x800 | 0x127f)
+#define CGAL_FE_DOWNWARD     (0x400 | 0x127f)
 
 #elif defined __BORLANDC__
 #define CGAL_IA_SETFPCW(CW) _control87(CW,~0)
 #define CGAL_IA_GETFPCW(CW) CW = _control87(0,0)
 typedef unsigned short FPU_CW_t;
-enum {
-    FPU_cw_near = 0x0   | 0x127f,
-    FPU_cw_zero = 0xC00 | 0x127f,
-    FPU_cw_up   = 0x800 | 0x127f,
-    FPU_cw_down = 0x400 | 0x127f
-};
+#define CGAL_FE_TONEAREST    (0x0   | 0x127f)
+#define CGAL_FE_TOWARDZERO   (0xC00 | 0x127f)
+#define CGAL_FE_UPWARD       (0x800 | 0x127f)
+#define CGAL_FE_DOWNWARD     (0x400 | 0x127f)
 
 #else
 #error Architecture not supported
