@@ -1,4 +1,4 @@
-#!/sw/bin/perl5 -w
+#!/sw/bin/perl -w
 
 use strict;
 my (
@@ -91,11 +91,11 @@ if (system('create_release',"${Version_A}-${Version_B}-${New_C}")==0) {
        "versions_CGAL-${Version_A}.${Version_B}-I-${Version_C}",
        "versions_${Version}");
 
-    start_local_testsuite("leros");
+    start_local_testsuite("denebola");
     start_local_testsuite("liguria");
 
     remove_old_releases(@versions);
-    remove_old_testresults(splice(@versions, 5*3));
+    remove_old_testresults(splice(@versions, 4*3));
 } else {
 #   rollback_release(${Version_A},${Version_B},${New_C});
 }

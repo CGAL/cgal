@@ -523,7 +523,8 @@ sub do_submission($)
 #
 #-----------------------------------
 
-if ($#ARGV < 1) {
+if ($#ARGV < 0) {
+    print "Too few arguments:",$#ARGV,"\n";
     print_usage;
     exit 1;
 }

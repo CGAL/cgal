@@ -20,6 +20,7 @@ my $maintainer= 'geert@cs.uu.nl';
 my $no_of_succesful_submissions = 0;
 
 my @trusted_hosts = (
+	'cgal.org',
 	'cs.uu.nl',
 	'inria.fr',
 	'informatik.uni-halle.de',

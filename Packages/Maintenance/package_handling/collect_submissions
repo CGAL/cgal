@@ -1,4 +1,4 @@
-#! /sw/bin/perl5 -T
+#! /sw/bin/perl -T
 
 use strict;
 

@@ -1,4 +1,4 @@
-#!/sw/bin/perl5
+#!/sw/bin/perl
 
 use strict;
 use Cwd;
@@ -266,7 +266,7 @@ sub CreateExampleTestDirs()
 	    system('cp', '-r', "$DIR", "../test/${DIR}_Examples");
 	}
     }
-    system("$SCRIPTDIR/C2dsp");
+    system("$SCRIPTDIR/C2dsp *");
     chdir '..';
 }
 
@@ -380,6 +380,7 @@ sub install_packages()
 
 #---------------------------------------------------------------#
 # install_misc
+# install all components of this package, without filtering.
 #---------------------------------------------------------------#
 
 sub install_misc()

@@ -1,4 +1,4 @@
-#!/sw/bin/perl5 -w
+#!/sw/bin/perl -w
 
 #use strict
 
@@ -19,13 +19,16 @@ if ($#ARGV != 1) {
 
 my @testers = (
   'geert',
-  'd.pasechnik@twi.tudelft.nl',
+#  'd.pasechnik@twi.tudelft.nl',
   'hert@mpi-sb.mpg.de',
 #  'stschirr@mpi-sb.mpg.de',
   'hoffmann@inf.ethz.ch',
+  'rineau@clipper.ens.fr',
 #  'Francois.Rebufat@sophia.inria.fr',
-#  'Mariette.Yvinec@sophia.inria.fr',
+  'Mariette.Yvinec@sophia.inria.fr',
   'Sylvain.Pion@sophia.inria.fr',
+  'Andreas.Fabri@sophia.inria.fr',
+  'Radu.Ursu@sophia.inria.fr',
 );
 my $scripts_dir= "/projects/CGAL/admin_scripts/";
 my $data_dir= "${scripts_dir}DATA/";

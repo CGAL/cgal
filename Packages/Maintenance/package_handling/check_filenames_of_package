@@ -1,4 +1,4 @@
-#!/sw/bin/perl5 -w
+#!/sw/bin/perl -w
 
 use strict;
 use File::Find;
