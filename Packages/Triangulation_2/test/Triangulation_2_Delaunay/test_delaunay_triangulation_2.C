@@ -84,9 +84,9 @@ int main()
   typedef CGAL::Triangulation_vertex_base_2<Gt4>                    Vb4;
   typedef CGAL::Triangulation_face_base_2<Gt4>                      Fb4;
   typedef CGAL::Triangulation_default_data_structure_2<Gt4,Vb4,Fb4> Tds4;
-  typedef CGAL::Delaunay_triangulation_2<Gt,Tds3>                   Cls4;
+  typedef CGAL::Delaunay_triangulation_2<Gt4,Tds4>                   Cls4;
 
-  _test_cls_delaunay_triangulation_2( Cls3() );
+  _test_cls_delaunay_triangulation_2( Cls4() );
 
   return 0;
 }
