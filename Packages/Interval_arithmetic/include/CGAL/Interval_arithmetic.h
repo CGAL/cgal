@@ -38,14 +38,6 @@
 #include <CGAL/Interval_arithmetic/_FPU.h>
 #include <CGAL/Interval_base.h>
 
-// sqrt(double) on M$ is buggy.
-#if defined _MSC_VER || defined __CYGWIN__
-extern "C" { double CGAL_ms_sqrt(double); }
-#define CGAL_IA_SQRT(d) CGAL_ms_sqrt(d)
-#else
-#define CGAL_IA_SQRT(d) CGAL_CLIB_STD::sqrt(d)
-#endif
-
 CGAL_BEGIN_NAMESPACE
 
 // bool or Tag_true/false, I don't know yet.
@@ -67,30 +59,18 @@ struct Interval_nt : public Interval_base
   Interval_nt(const Interval_base & d)
 	  : Interval_base(d) {}
 
-#if 1
-  // The copy constructors/assignment: useless.
-  // The default ones are ok, but these appear to be faster with GCC 2.95.
-  Interval_nt(const IA & d)
-      : Interval_base(d._inf, d._sup) {}
-
-  IA & operator=(const IA & d)
-  { _inf = d._inf; _sup = d._sup; return *this; }
-#endif
-
   // The advantage of non-member operators is that (double * IA) just works...
   // But is it really useful and wishable in CGAL ?
   IA operator+ (const IA &d) const
   {
     Protect_FPU_rounding<Protected> P;
-    return IA(-CGAL_IA_FORCE_TO_DOUBLE((-_inf) - d._inf),
-	       CGAL_IA_FORCE_TO_DOUBLE( _sup + d._sup));
+    return IA(-CGAL_IA_SUB(-_inf, d._inf), CGAL_IA_ADD(_sup, d._sup));
   }
 
   IA operator- (const IA &d) const
   {
     Protect_FPU_rounding<Protected> P;
-    return IA(-CGAL_IA_FORCE_TO_DOUBLE(d._sup - _inf),
-	       CGAL_IA_FORCE_TO_DOUBLE(_sup - d._inf));
+    return IA(-CGAL_IA_SUB(d._sup, _inf), CGAL_IA_SUB(_sup, d._inf));
   }
 
   IA operator* (const IA &) const;
@@ -136,8 +116,7 @@ Interval_nt<Protected>::operator* (const Interval_nt<Protected> & d) const
 	if (d._sup < 0.0)
 	    b=_inf;
     }
-    return Interval_nt<Protected>(-CGAL_IA_FORCE_TO_DOUBLE(a*(-d._inf)),
-	                           CGAL_IA_FORCE_TO_DOUBLE(b*d._sup));
+    return IA(-CGAL_IA_MUL(a, -d._inf), CGAL_IA_MUL(b, d._sup));
   }
   else if (_sup<=0.0)				// e<=0
   {
@@ -151,23 +130,20 @@ Interval_nt<Protected>::operator* (const Interval_nt<Protected> & d) const
 	if (d._sup < 0.0)
 	    b=_sup;
     }
-    return Interval_nt<Protected>(-CGAL_IA_FORCE_TO_DOUBLE(b*(-d._sup)),
-	                           CGAL_IA_FORCE_TO_DOUBLE(a*d._inf));
+    return IA(-CGAL_IA_MUL(b, -d._sup), CGAL_IA_MUL(a, d._inf));
   }
   else						// 0 \in [_inf;_sup]
   {
     if (d._inf>=0.0)				// d>=0
-      return Interval_nt<Protected>(-CGAL_IA_FORCE_TO_DOUBLE((-_inf)*d._sup),
-	                             CGAL_IA_FORCE_TO_DOUBLE(_sup*d._sup));
+      return IA(-CGAL_IA_MUL(-_inf, d._sup), CGAL_IA_MUL(_sup, d._sup));
     if (d._sup<=0.0)				// d<=0
-      return Interval_nt<Protected>(-CGAL_IA_FORCE_TO_DOUBLE(_sup*(-d._inf)),
-	                             CGAL_IA_FORCE_TO_DOUBLE(_inf*d._inf));
+      return IA(-CGAL_IA_MUL(_sup, -d._inf), CGAL_IA_MUL(_inf, d._inf));
         					// 0 \in d
-    double tmp1 = CGAL_IA_FORCE_TO_DOUBLE((-_inf)*d._sup);
-    double tmp2 = CGAL_IA_FORCE_TO_DOUBLE(_sup*(-d._inf));
-    double tmp3 = CGAL_IA_FORCE_TO_DOUBLE(_inf*d._inf);
-    double tmp4 = CGAL_IA_FORCE_TO_DOUBLE(_sup*d._sup);
-    return Interval_nt<Protected>(-std::max(tmp1,tmp2), std::max(tmp3,tmp4));
+    double tmp1 = CGAL_IA_MUL(-_inf, d._sup);
+    double tmp2 = CGAL_IA_MUL(_sup, -d._inf);
+    double tmp3 = CGAL_IA_MUL(_inf, d._inf);
+    double tmp4 = CGAL_IA_MUL(_sup, d._sup);
+    return IA(-std::max(tmp1,tmp2), std::max(tmp3,tmp4));
   };
 }
 
@@ -191,8 +167,7 @@ Interval_nt<Protected>::operator/ (const Interval_nt<Protected> & d) const
 	if (_sup<0.0)
 	    b=d._sup;
     };
-    return Interval_nt<Protected>(-CGAL_IA_FORCE_TO_DOUBLE((-_inf)/a),
-	                           CGAL_IA_FORCE_TO_DOUBLE(_sup/b));
+    return IA(-CGAL_IA_DIV(-_inf, a), CGAL_IA_DIV(_sup, b));
   }
   else if (d._sup<0.0)			// d<0
   {
@@ -206,11 +181,10 @@ Interval_nt<Protected>::operator/ (const Interval_nt<Protected> & d) const
 	if (_sup<0.0)
 	    a=d._inf;
     };
-    return Interval_nt<Protected>(-CGAL_IA_FORCE_TO_DOUBLE((-_sup)/a),
-	                           CGAL_IA_FORCE_TO_DOUBLE(_inf/b));
+    return IA(-CGAL_IA_DIV(-_sup, a), CGAL_IA_DIV(_inf, b));
   }
   else					// d~0
-    return Interval_nt<Protected>::Largest;
+    return IA::Largest;
 	   // We could do slightly better -> [0;HUGE_VAL] when d._sup==0,
 	   // but is this worth ?
 }
@@ -225,11 +199,9 @@ sqrt (const Interval_nt<Protected> & d)
   // sqrt([-a,+b]) => [0;sqrt(+b)] => assumes roundoff error.
   // sqrt([-a,-b]) => [0;sqrt(-b)] => assumes user bug (unspecified result).
   FPU_set_cw(CGAL_FE_DOWNWARD);
-  double i = (d._inf > 0.0) ? CGAL_IA_FORCE_TO_DOUBLE(CGAL_IA_SQRT(d._inf))
-	                    : 0.0;
+  double i = (d._inf > 0.0) ? CGAL_IA_SQRT(d._inf) : 0.0;
   FPU_set_cw(CGAL_FE_UPWARD);
-  return Interval_nt<Protected>
-	  (i, CGAL_IA_FORCE_TO_DOUBLE(CGAL_IA_SQRT(d._sup)));
+  return Interval_nt<Protected>(i, CGAL_IA_SQRT(d._sup));
 }
 
 template <bool Protected>
@@ -260,13 +232,12 @@ square (const Interval_nt<Protected> & d)
 {
   Protect_FPU_rounding<Protected> P;
   if (d._inf>=0.0)
-      return Interval_nt<Protected>(-CGAL_IA_FORCE_TO_DOUBLE(d._inf*(-d._inf)),
-	     			     CGAL_IA_FORCE_TO_DOUBLE(d._sup*d._sup));
+      return Interval_nt<Protected>(-CGAL_IA_MUL(d._inf, -d._inf),
+	                             CGAL_IA_MUL(d._sup, d._sup));
   if (d._sup<=0.0)
-      return Interval_nt<Protected>(-CGAL_IA_FORCE_TO_DOUBLE(d._sup*(-d._sup)),
-	     			     CGAL_IA_FORCE_TO_DOUBLE(d._inf*d._inf));
-  return Interval_nt<Protected>(0.0,
-	  CGAL_IA_FORCE_TO_DOUBLE(CGAL_NTS square(std::max(-d._inf, d._sup))));
+      return Interval_nt<Protected>(-CGAL_IA_MUL(d._sup, -d._sup),
+	     	                     CGAL_IA_MUL(d._inf, d._inf));
+  return Interval_nt<Protected>(0.0, CGAL_IA_SQUARE(std::max(-d._inf, d._sup)));
 }
 
 template <bool Protected>
@@ -311,13 +282,12 @@ square (const Interval_nt<true> & d)
 {
   Protect_FPU_rounding<true> P;
   if (d._inf>=0.0)
-      return Interval_nt<true>(-CGAL_IA_FORCE_TO_DOUBLE(d._inf*(-d._inf)),
-	     			     CGAL_IA_FORCE_TO_DOUBLE(d._sup*d._sup));
+      return Interval_nt<true>(-CGAL_IA_MUL(d._inf, -d._inf),
+	                        CGAL_IA_MUL(d._sup, d._sup));
   if (d._sup<=0.0)
-      return Interval_nt<true>(-CGAL_IA_FORCE_TO_DOUBLE(d._sup*(-d._sup)),
-	     			     CGAL_IA_FORCE_TO_DOUBLE(d._inf*d._inf));
-  return Interval_nt<true>(0.0,
-	  CGAL_IA_FORCE_TO_DOUBLE(CGAL_NTS square(std::max(-d._inf, d._sup))));
+      return Interval_nt<true>(-CGAL_IA_MUL(d._sup, -d._sup),
+	                        CGAL_IA_MUL(d._inf, d._inf));
+  return Interval_nt<true>(0.0, CGAL_IA_SQUARE(std::max(-d._inf, d._sup)));
 }
 
 inline
@@ -358,13 +328,12 @@ square (const Interval_nt<false> & d)
 {
   Protect_FPU_rounding<false> P;
   if (d._inf>=0.0)
-      return Interval_nt<false>(-CGAL_IA_FORCE_TO_DOUBLE(d._inf*(-d._inf)),
-	     			     CGAL_IA_FORCE_TO_DOUBLE(d._sup*d._sup));
+      return Interval_nt<false>(-CGAL_IA_MUL(d._inf, -d._inf),
+	                         CGAL_IA_MUL(d._sup, d._sup));
   if (d._sup<=0.0)
-      return Interval_nt<false>(-CGAL_IA_FORCE_TO_DOUBLE(d._sup*(-d._sup)),
-	     			     CGAL_IA_FORCE_TO_DOUBLE(d._inf*d._inf));
-  return Interval_nt<false>(0.0,
-	  CGAL_IA_FORCE_TO_DOUBLE(CGAL_NTS square(std::max(-d._inf, d._sup))));
+      return Interval_nt<false>(-CGAL_IA_MUL(d._sup, -d._sup),
+	                         CGAL_IA_MUL(d._inf, d._inf));
+  return Interval_nt<false>(0.0, CGAL_IA_SQUARE(std::max(-d._inf, d._sup)));
 }
 
 inline
@@ -406,9 +375,29 @@ typedef Interval_nt<false> Interval_nt_advanced;  // for back-compatibility
 CGAL_END_NAMESPACE
 
 // Finally we deal with the convert_to<Interval_nt_advanced>(NT).
+// This is going to be obsoleted by the new NT requirement : to_interval().
 //
 // For the builtin types (well, all those that can be casted to double
 // exactly), the template in misc.h is enough.
+
+#if 0
+inline
+Interval_base
+to_interval(const long long z)
+{
+  double dz = (double) z;
+  if (z == (long long) dz)
+    return dz;
+  return Interval_nt<>(dz) + Interval_base::Smallest;
+}
+
+inline
+Interval_base
+to_interval(const long double z)
+{
+  return Interval_nt<>((double) z) + Interval_base::Smallest;
+}
+#endif
 
 #ifdef CGAL_GMPZ_H
 #include <CGAL/Interval_arithmetic/IA_Gmpz.h>
