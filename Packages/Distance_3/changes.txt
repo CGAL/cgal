@@ -1,3 +1,8 @@
+1 Feb 2004 Sylvain Pion
+- Remove "extern".
+
+========================= CGAL 3.0 ========================
+
 2.15
 - fix headers
 

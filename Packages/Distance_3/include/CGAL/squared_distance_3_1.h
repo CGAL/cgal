@@ -1,4 +1,4 @@
-// Copyright (c) 1998  Utrecht University (The Netherlands),
+// Copyright (c) 1998-2004  Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
 // INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
 // (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
@@ -64,7 +64,6 @@ squared_distance(
 
 
 template <class K>
-extern
 typename K::FT
 squared_distance(
     const typename CGAL_WRAP(K)::Point_3 &pt,
@@ -627,7 +626,7 @@ squared_distance(
 
 
 template <class K>
-extern typename K::FT
+typename K::FT
 squared_distance(
     const typename CGAL_WRAP(K)::Line_3 &line,
     const typename CGAL_WRAP(K)::Ray_3 &ray,
