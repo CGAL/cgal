@@ -319,7 +319,7 @@ typename Apollonius_graph_2<Gt,Agds,LTag>::Edge
 Apollonius_graph_2<Gt,Agds,LTag>::
 flip(Face_handle& f, int i)
 {
-  CGAL_triangulation_precondition ( f != NULL );
+  CGAL_triangulation_precondition ( f != Face_handle() );
   CGAL_triangulation_precondition (i == 0 || i == 1 || i == 2);
   CGAL_triangulation_precondition( dimension()==2 ); 
 
@@ -396,7 +396,11 @@ void
 Apollonius_graph_2<Gt,Agds,LTag>::
 remove_degree_3(Vertex_handle v)
 {
+#ifdef CGAL_T2_USE_ITERATOR_AS_HANDLE
+  remove_degree_3(v, Face_handle());
+#else
   remove_degree_3(v, NULL);
+#endif
 }
 
 
@@ -439,7 +443,7 @@ insert_second(const Site_2& p)
   Vertex_handle v(finite_vertices_begin());
   if ( is_hidden(v->site(), p) ) {
     v->add_hidden_site(p);
-    vnew = Vertex_handle(NULL);  
+    vnew = Vertex_handle();  
   } else if ( is_hidden(p, v->site()) ) {
     v->add_hidden_site(v->site());
     v->set_site(p);
@@ -466,11 +470,11 @@ insert_third(const Site_2& p)
 
   if ( is_hidden(v1->site(), p) ) {
     v1->add_hidden_site(p);
-    return Vertex_handle(NULL);
+    return Vertex_handle();
   }
   if ( is_hidden(v2->site(), p) ) {
     v2->add_hidden_site(p);
-    return Vertex_handle(NULL);
+    return Vertex_handle();
   }
 
   bool t1 = is_hidden(p, v1->site());
@@ -597,14 +601,14 @@ insert(const Site_2& p, Vertex_handle vnear)
   // first find the nearest neighbor
   Vertex_handle vnearest = nearest_neighbor(p.point(), vnear);
 
-  CGAL_assertion( vnearest != NULL );
+  CGAL_assertion( vnearest != Vertex_handle() );
 
 
   // check if it is hidden
   Site_2 wp_nearest = vnearest->site();
   if ( is_hidden(wp_nearest, p) ) {
     vnearest->add_hidden_site(p);
-    return Vertex_handle(NULL);
+    return Vertex_handle();
   }
 
   // find the first conflict
@@ -691,7 +695,7 @@ find_conflict_region_remove(const Vertex_handle& v,
     return;
   }
 
-  CGAL_precondition( vnearest != NULL );
+  CGAL_precondition( vnearest != Vertex_handle() );
 
 
   // find the first conflict
@@ -840,7 +844,7 @@ expand_conflict_region(const Face_handle& f, const Site_2& p,
     if ( fe != NULL ) {
       Vh_triple* vhq = new Vh_triple[1];
 
-      (*vhq)[0] = NULL;
+      (*vhq)[0] = Vertex_handle();
       (*vhq)[1] = n->vertex(     j  );
       (*vhq)[2] = n->vertex( ccw(j) );
 
@@ -1167,7 +1171,7 @@ typename Apollonius_graph_2<Gt,Agds,LTag>::Vertex_handle
 Apollonius_graph_2<Gt,Agds,LTag>::
 nearest_neighbor(const Point_2& p) const
 {
-  return nearest_neighbor(p, NULL);
+  return nearest_neighbor(p, Vertex_handle());
 }
 
 
@@ -1178,14 +1182,14 @@ nearest_neighbor(const Point_2& p,
 		 Vertex_handle start_vertex) const
 {
   if ( number_of_vertices() == 0 ) {
-    return Vertex_handle(NULL);
+    return Vertex_handle();
   }
 
-  if ( start_vertex == NULL ) {
+  if ( start_vertex == Vertex_handle() ) {
     start_vertex = finite_vertex();
   }
 
-  //  if ( start_vertex == NULL ) { return start_vertex; }
+  //  if ( start_vertex == Vertex_handle() ) { return start_vertex; }
 
   Vertex_handle vclosest;
   Vertex_handle v = start_vertex;
@@ -1682,12 +1686,12 @@ void
 Apollonius_graph_2<Gt,Agds,LTag>::
 remove(Vertex_handle v)
 {
-  CGAL_triangulation_precondition( v != Vertex_handle(NULL) );
+  CGAL_triangulation_precondition( v != Vertex_handle() );
   CGAL_triangulation_precondition( !is_infinite(v) );
 
   // find a neighbor of v to use for point location of hidden sites to
   // be re-inserted
-  Vertex_handle vnear(NULL);
+  Vertex_handle vnear;
   if ( /*StoreHidden*/ true ) {
     if ( number_of_vertices() > 10 ) {
       Vertex_circulator vc_start = v->incident_vertices();
@@ -1765,7 +1769,7 @@ remove_degree_d_vertex(Vertex_handle v)
       vmap[vh_small] = vh_large;
     } else { 
       vh_small = ag_small.insert(vc->site());
-      if ( vh_small != NULL ) {
+      if ( vh_small != Vertex_handle() ) {
 	vmap[vh_small] = vh_large;
       }
     }
@@ -1791,7 +1795,7 @@ remove_degree_d_vertex(Vertex_handle v)
 
   Vertex_handle vn = ag_small.nearest_neighbor(v->site().point());
 
-  assert( vn != NULL );
+  assert( vn != Vertex_handle() );
 
   List l;
   Face_map fm;
@@ -1831,7 +1835,11 @@ remove_degree_d_vertex(Vertex_handle v)
   }
   CGAL_triangulation_precondition( v->degree() == 3 );
 
-  this->_tds.remove_degree_3( v, NULL);
+#ifdef CGAL_T2_USE_ITERATOR_AS_HANDLE
+  this->_tds.remove_degree_3( v, Face_handle() );
+#else
+  this->_tds.remove_degree_3( v, NULL );
+#endif
 
   for (unsigned int i = 0; i < num_fe; i++) {
     delete flipped_edges[i];

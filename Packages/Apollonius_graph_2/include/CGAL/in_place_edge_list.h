@@ -89,7 +89,7 @@ public:
   }
 
 public:
-  In_place_edge_list(const Edge& e = Edge(Face_handle(NULL),-1) )
+  In_place_edge_list(const Edge& e = Edge(Face_handle(),-1) )
     : _size(0) {
     _front = e;
   }
@@ -105,7 +105,7 @@ public:
   }
 
   inline bool is_empty() const {
-    return ( _front.first == NULL );
+    return ( _front.first == Face_handle() );
   }
 
   inline void pop() {
@@ -163,7 +163,7 @@ public:
 
   void remove(const Edge& e) {
     CGAL_precondition( is_in_list(e) );
-    static Edge SENTINEL_QUEUE_EDGE = Edge(Face_handle(NULL), -1);
+    static Edge SENTINEL_QUEUE_EDGE = Edge(Face_handle(), -1);
 
     if ( is_singleton() ) {
       _front = SENTINEL_QUEUE_EDGE;

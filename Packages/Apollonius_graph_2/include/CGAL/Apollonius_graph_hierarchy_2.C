@@ -84,7 +84,7 @@ copy
   // compute a map at lower level
   for( Finite_vertices_iterator it = hierarchy[0]->finite_vertices_begin(); 
        it != hierarchy[0]->finite_vertices_end(); ++it) {
-    if ( it->up() != NULL ) V[ it->up()->down() ] = it;
+    if ( it->up() != Vertex_handle() ) V[ it->up()->down() ] = it;
   }
 
   for(unsigned int i = 1; i < ag_hierarchy_2__maxlevel; ++i) {
@@ -95,7 +95,7 @@ copy
       // make reverse link
       it->down()->set_up( it );
       // make map for next level
-      if ( it->up() != NULL ) V[ it->up()->down() ] = it;
+      if ( it->up() != Vertex_handle() ) V[ it->up()->down() ] = it;
     }
   }
 }
@@ -183,7 +183,7 @@ insert(const Site_2 &p)
     }
 
     // if it hidden just return it right away
-    if ( vertex == NULL ) {
+    if ( vertex == Vertex_handle() ) {
       return vertex;
     }
 
@@ -206,13 +206,13 @@ insert(const Site_2 &p)
   // locate the nearest neighbor using hierarchy
   nearest_neighbor(p.point(), vnear);
 
-  CGAL_assertion( vnear[0] != NULL );
+  CGAL_assertion( vnear[0] != Vertex_handle() );
 
   // check if it is hidden
   Site_2 wp_nearest = vnear[0]->site();
   if ( is_hidden(wp_nearest, p) ) {
     vnear[0]->add_hidden_site(p);
-    return Vertex_handle(NULL);
+    return Vertex_handle();
   }
 
   // find the first conflict
@@ -286,20 +286,20 @@ insert(const Site_2 &p)
 	  ++vit;
 	} while ( v_hidden.find(non_hidden) != v_hidden.end() );
 
-	non_hidden->set_up(NULL);
+	non_hidden->set_up( Vertex_handle() );
       }
     } else {
       typename Apollonius_graph_base::Vertex_map::iterator it;
       for (it = v_hidden.begin(); it != v_hidden.end(); it++) {
 	Vertex_handle v = (*it).first;
 	Vertex_handle u = v->up();
-	if ( u != NULL ) {
+	if ( u != Vertex_handle() ) {
 	  v = u;
 	  u = v->up();
 	  unsigned int l = 1;
 	  while ( true ) {
 	    hierarchy[l++]->remove(v);
-	    if (u == NULL) break; 
+	    if ( u == Vertex_handle() ) break; 
 	    if(l >= ag_hierarchy_2__maxlevel) { break; }
 	    v = u;
 	    u = v->up();
@@ -358,7 +358,7 @@ remove(Vertex_handle v)
   unsigned int l = 0;
   while ( true ) {
     hierarchy[l++]->remove(v);
-    if (u == NULL) break; 
+    if ( u == Vertex_handle() ) break; 
     if(l >= ag_hierarchy_2__maxlevel) break;
     v = u;
     u = v->up();

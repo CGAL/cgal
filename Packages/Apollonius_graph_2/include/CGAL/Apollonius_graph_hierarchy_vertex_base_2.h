@@ -47,14 +47,14 @@ public:
   };
 
   Apollonius_graph_hierarchy_vertex_base_2()
-    : Base(), _up(NULL), _down(NULL)
+    : Base(), _up(), _down()
     {}
   Apollonius_graph_hierarchy_vertex_base_2(const Site_2& p,
 					   Face_handle f)
-    : Base(p,f), _up(NULL), _down(NULL)
+    : Base(p,f), _up(), _down()
     {}
   Apollonius_graph_hierarchy_vertex_base_2(const Site_2& p)
-    : Base(p), _up(NULL), _down(NULL)
+    : Base(p), _up(), _down()
     {}
 
   Vertex_handle up() {return _up;}

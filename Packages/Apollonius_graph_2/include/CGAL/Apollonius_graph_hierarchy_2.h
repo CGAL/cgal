@@ -158,7 +158,7 @@ public:
 		       Vertex_handle vnear) {
     // the following statement has been added in order to avoid
     // a g++3.2.1_FreeBSD-RELEASE warning
-    vnear = Vertex_handle(NULL);
+    vnear = Vertex_handle();
     return insert(p);
   }
 
