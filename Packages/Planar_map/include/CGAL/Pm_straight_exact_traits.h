@@ -344,7 +344,7 @@ public:
         CGAL_assertion(bound_state_invariant(cv));
 #endif
       }
-    return Origin();
+    return R().construct_point_2_object()(CGAL::ORIGIN);
   }
   
   inline Point curve_target(const X_curve & cv,const Bounding_box& bbox) const 
@@ -384,7 +384,7 @@ public:
         CGAL_assertion(bound_state_invariant(cv));
 #endif
       }
-    return Origin();
+    return R().construct_point_2_object()(CGAL::ORIGIN);
   }
   
   inline bool curve_is_vertical(const X_curve & cv) const 
