@@ -9,6 +9,16 @@
 # CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE
 include $(CGAL_MAKEFILE)
 
+CGAL_CXXFLAGS = \
+	'-I../../include/' \
+	$(CUSTOM_CXXFLAGS) -Wall \
+	'-I$(CGAL_INCL_CONF_DIR)' \
+	-DCGAL_USE_LEDA -DLEDA_PREFIX \
+	'-I$(CGAL_INCL_DIR)' \
+	'-I$(LEDA_INCL_DIR)'
+
+
+
 #---------------------------------------------------------------------#
 #                    compiler flags
 #---------------------------------------------------------------------#

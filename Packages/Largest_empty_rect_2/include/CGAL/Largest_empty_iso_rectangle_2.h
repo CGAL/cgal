@@ -22,6 +22,7 @@
 #ifndef CGAL_LARGEST_EMPTY_ISO_RECTANGLE_2_H
 #define CGAL_LARGEST_EMPTY_ISO_RECTANGLE_2_H
 
+#include <iostream>
 #include <set>
 #include <list>
 
@@ -31,18 +32,64 @@
 
 CGAL_BEGIN_NAMESPACE
 
-
 template<class T>
 class Largest_empty_iso_rectangle_2 {
-public: 
+public:
+
+  struct Internal_point;
+
   enum Point_type{REG, BOT_RIGHT, BOT_LEFT, TOP_LEFT, TOP_RIGHT};
 
   typedef typename T::FT                NT;
-  typedef typename T::Point_2           Point;
+  typedef typename T::Point_2           Point_2;
+  typedef Internal_point                Point;
   typedef typename T::Iso_rectangle_2   Iso_rectangle_2;
   typedef T                             Traits;
 
+  /* std::ostream & operator<<(CGAL::Window_stream &W, const Internal_point &p)
+{
+  
+
+
+  typedef Curve_2::const_iterator Points_iterator;
+  
+  os << cv.size() << std::endl;
+  for (Points_iterator points_iter = cv.begin(); 
+       points_iter != cv.end(); points_iter++)
+    os << " " << *points_iter;
+
+  return W;
+  }*/
+
 private:
+  struct Internal_point {
+     Point_2 x_part;
+     Point_2 y_part;
+
+
+    /*     Internal_point &
+     operator=(const Internal_point &other)
+    {
+      x_part = other.x_part;
+      y_part = other.y_part;
+
+      return(this);
+      }*/
+
+    Internal_point() // no real value - just to allow construction of LER
+      : x_part(Point_2(0,0)), y_part(Point_2(0,0)) {}
+
+     Internal_point(const Point_2 &p) // "original" point
+       : x_part(p), y_part(p) {}
+
+     Internal_point(const Point_2 &p, const Point_2 &q) // "pseudo constructed" point
+       : x_part(p), y_part(q) {}
+
+     // ... and similar constructors if you need them, e.g. :
+
+     Internal_point(const Internal_point &p, const Internal_point &q)
+       : x_part(p.x_part), y_part(q.y_part) {}
+  };
 
   bool cache_valid;
   Traits _gt;
@@ -100,29 +147,38 @@ private:
   // was x_smaller
   bool less_xy(const Point_data *a, const Point_data *b) const
   {
-    return traits().less_xy_2_object()(a->p, b->p);
+    //return traits().less_xy_2_object()(a->p, b->p);
+    return(!larger_xy(a,b));
   }
 
   // was y_smaller
   bool less_yx(const Point_data *a, const Point_data *b) const
   {
-    return traits().less_yx_2_object()(a->p, b->p);
+    //return traits().less_yx_2_object()(a->p, b->p);
+    return(!larger_yx(a,b));
   }
 
   // was x_larger
   bool larger_xy(const Point_data *a, const Point_data *b) const
   {
-    return traits().compare_xy_2_object()(a->p, b->p) == LARGER;
+    //return traits().compare_xy_2_object()(a->p, b->p) == LARGER;
+    Comparison_result c = traits().compare_x_2_object()(a->p.x_part, b->p.x_part);
+    if(c == LARGER) {
+      return true;
+    } else if (c == EQUAL) {
+      return traits().less_y_2_object()(b->p.y_part, a->p.y_part); 
+    } 
+    return false;
   }
 
   // was y_larger
   bool larger_yx(const Point_data *a, const Point_data *b) const
   {
-    Comparison_result c = traits().compare_y_2_object()(a->p, b->p);
+    Comparison_result c = traits().compare_y_2_object()(a->p.y_part, b->p.y_part);
     if(c == LARGER) {
       return true;
     } else if (c == EQUAL) {
-      return traits().less_x_2_object()(b->p, a->p); 
+      return traits().less_x_2_object()(b->p.x_part, a->p.x_part); 
     } 
     return false;
   }
@@ -130,18 +186,27 @@ private:
   class Less_yx
   {
   private:
-    Traits gt;
+    Traits _gt;
+
+    const Traits & traits() const {return _gt;};
 
     Less_yx(){}
 
   public:
     Less_yx(const Traits& t)
-      : gt(t)
+      : _gt(t)
     {}
 
     bool operator()(const Point_data *a, const Point_data *b) const
     {
-      return gt.less_yx_2_object()(a->p, b->p);
+      //  return gt.less_yx_2_object()(a->p, b->p);
+      Comparison_result c = traits().compare_y_2_object()(b->p.y_part, a->p.y_part);
+      if(c == LARGER) {
+        return true;
+      } else if (c == EQUAL) {
+        return traits().less_x_2_object()(a->p.x_part, b->p.x_part); 
+      } 
+      return false;
     }
   };
 
@@ -149,16 +214,25 @@ private:
   class Less_xy
   {
   private:
-    Traits gt;
+    Traits _gt;
+
+    const Traits & traits() const {return _gt;};
 
   public:
     Less_xy(const Traits& t)
-      : gt(t)
+      : _gt(t)
     {}
 
     bool operator()(const Point_data *a, const Point_data *b) const
     {
-      return gt.less_xy_2_object()(a->p, b->p);
+      // return gt.less_xy_2_object()(a->p, b->p);
+      Comparison_result c = traits().compare_x_2_object()(b->p.x_part, a->p.x_part);
+      if(c == LARGER) {
+        return true;
+      } else if (c == EQUAL) {
+        return traits().less_y_2_object()(a->p.y_part, b->p.y_part); 
+      } 
+      return false;
     }
   };
 
@@ -178,6 +252,7 @@ private:
 
 
   bool insert(const Point& _p,Point_type i_type);
+  bool insert(const Point_2& _p,Point_type i_type);
   void phase_1();
   void phase_1_on_x();
   void phase_1_on_y();
@@ -395,7 +470,7 @@ private:
 
   void empty_tents();
   void update();
-  void init(const Point& bl, const Point& tr);
+  void init(const Point_2& bl, const Point_2& tr);
   void copy_memory(const Largest_empty_iso_rectangle_2<T>& ler);
   void free_memory();
 
@@ -422,7 +497,7 @@ public:
   const Traits & traits() const {return _gt;};
 
   // ctor
-  Largest_empty_iso_rectangle_2(const Point& bl, const Point& tr);
+  Largest_empty_iso_rectangle_2(const Point_2& bl, const Point_2& tr);
 
   // ctor
   Largest_empty_iso_rectangle_2(const Iso_rectangle_2 &b);
@@ -430,6 +505,10 @@ public:
   // ctor
   Largest_empty_iso_rectangle_2();
 
+
+  // add a point to data
+  bool
+  insert(const Point_2& p);
 
   // add a point to data
   bool
@@ -573,18 +652,26 @@ Largest_empty_iso_rectangle_2(
   copy_memory(ler);
 }
 
-
-
-
-
 template<class T>
 bool
-Largest_empty_iso_rectangle_2<T>::insert(const Point& _p)
+Largest_empty_iso_rectangle_2<T>::insert(const Point_2& _p)
 {
   // check that the point is inside the bounding box 
   if(bbox_p.has_on_unbounded_side(_p)) {
     return(false);
   }
+
+  return(insert(Point(_p)));
+}
+
+template<class T>
+bool
+Largest_empty_iso_rectangle_2<T>::insert(const Point& _p)
+{
+  /* // check that the point is inside the bounding box 
+  if(bbox_p.has_on_unbounded_side(_p)) {
+    return(false);
+    }*/
   // check that the point is not already inserted
   Point_data po(_p);
   typename Point_data_set_of_x::iterator iter = x_sorted.find(&po);
@@ -640,7 +727,7 @@ Largest_empty_iso_rectangle_2<T>::check_for_larger(const Point& px0,
   // check if the rectangle represented by the parameters is larger 
   //than the current one
   NT rect_size =
-    CGAL_NTS abs(px1.x() - px0.x()) * CGAL_NTS abs(py1.y() - py0.y());
+    CGAL_NTS abs(px1.x_part.x() - px0.x_part.x()) * CGAL_NTS abs(py1.y_part.y() - py0.y_part.y());
   if(do_check && rect_size > largest_rect_size) {
     largest_rect_size = rect_size;
     left_p = px0;
@@ -706,13 +793,27 @@ Largest_empty_iso_rectangle_2<T>::phase_1_on_y()
 
 template<class T>
 bool
-Largest_empty_iso_rectangle_2<T>::insert(const Point& _p,
+Largest_empty_iso_rectangle_2<T>::insert(const Point_2& _p,
 					 Point_type i_type)
 {
   // check that the point is inside the bounding box 
   if((i_type == REG) && bbox_p.has_on_unbounded_side(_p)) {
     return false;
   }
+
+  return(insert(Point(_p),i_type));
+}
+
+
+template<class T>
+bool
+Largest_empty_iso_rectangle_2<T>::insert(const Point& _p,
+					 Point_type i_type)
+{
+  /* // check that the point is inside the bounding box 
+  if((i_type == REG) && bbox_p.has_on_unbounded_side(_p)) {
+    return false;
+    }*/
   // check that the point is not already inserted
   Point_data po(_p);
   typename Point_data_set_of_x::iterator iter = x_sorted.find(&po);
@@ -1081,8 +1182,9 @@ Largest_empty_iso_rectangle_2<T>::get_largest_empty_iso_rectangle()
     return(get_bounding_box());
   }
   update();
-  return(Iso_rectangle_2(Point(left_p.x(), bottom_p.y()),
-			 Point(right_p.x(),top_p.y())));
+
+  return(Iso_rectangle_2(Point_2(left_p.x_part.x(), bottom_p.y_part.y()),
+			 Point_2(right_p.x_part.x(),top_p.y_part.y())));
 }
 
 /* Some applications might be more interested in the four points
@@ -1106,11 +1208,9 @@ Largest_empty_iso_rectangle_2<T>::get_left_bottom_right_top()
 
 template<class T>
 void
-Largest_empty_iso_rectangle_2<T>::init(const Point& bl, const Point& tr)
+Largest_empty_iso_rectangle_2<T>::init(const Point_2& bl, const Point_2& tr)
 {
   // determine extreme values of bounding box
-  bl_p = bl;
-  tr_p = tr;
   bbox_p = Iso_rectangle_2(bl,tr);
   // add extreme points
   
@@ -1123,11 +1223,13 @@ Largest_empty_iso_rectangle_2<T>::init(const Point& bl, const Point& tr)
 // ctor
 template<class T>
 Largest_empty_iso_rectangle_2<T>::Largest_empty_iso_rectangle_2(
-  const Point& bl,
-  const Point& tr)
+  const Point_2& bl,
+  const Point_2& tr)
   : cache_valid(false), _gt(),
-    x_sorted(Less_xy(traits())),
-    y_sorted(Less_yx(traits()))
+     x_sorted(Less_xy(traits())),
+     y_sorted(Less_yx(traits())),
+     bl_p(bl),
+     tr_p(tr)
 {
   // precondition: bl and tr
   init(bl, tr);
@@ -1139,7 +1241,9 @@ Largest_empty_iso_rectangle_2<T>::Largest_empty_iso_rectangle_2(
   const Iso_rectangle_2 &b)
   : cache_valid(false), _gt(),
     x_sorted(Less_xy(traits())),
-    y_sorted(Less_yx(traits()))
+     y_sorted(Less_yx(traits())),
+     bl_p(b.min()),
+     tr_p(b.max())
 {
   init(b.min(), b.max());
 }
