@@ -133,7 +133,7 @@ namespace CGAL {
   };
   void Qt_widget_standard_toolbar::zoomin()
   {
-    widget->zoom(2);
+    widget->zoom(2); //
   }
   void Qt_widget_standard_toolbar::zoomout()
   {
