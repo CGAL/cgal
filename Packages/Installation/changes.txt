@@ -1,3 +1,6 @@
+26 November 2004 Sylvain Pion
+- Similar fix for "x86_64".
+
 20 November 2004 Sylvain Pion
 - On Fedora Core 3, "uname -r" returns "2.6.9-1.678_FC3", and the underscore
   confuses a few things.  Fixed by converting "_"s to "-"s.
