@@ -1,8 +1,9 @@
 CHANGES to the Geomview package.
 
-Ver 3.4 (?? ???????? 2000)
+Ver 3.4 (29 November 2000)
 - Removed the cruft about "ascii" and "binary" function pointers (beurk !).
 - Added a raw mode, and use it internally : get_raw() and set_raw().
+- More cleanup.
 
 Ver 3.3 (29 November 2000)
 - to_double -> CGAL::to_double.
