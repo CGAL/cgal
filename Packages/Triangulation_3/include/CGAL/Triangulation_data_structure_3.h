@@ -179,11 +179,6 @@ public:
     copy_tds(tds);
   }
 
-  ~Triangulation_data_structure_3()
-  {
-    clear();
-  }
-
   Tds & operator= (const Tds & tds)
   {
     if (&tds != this) {
