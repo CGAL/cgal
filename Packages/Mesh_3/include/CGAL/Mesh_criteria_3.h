@@ -37,7 +37,31 @@ public:
   {
   };
 
-  typedef double Quality;
+  struct Quality : public std::pair<double, double>
+  {
+    typedef std::pair<double, double> Base;
+
+    Quality() : Base() {};
+    Quality(double _aspect, double _sq_size) : Base(_aspect, _sq_size) {};
+
+    const double& sq_size() const { return second; }
+    const double& aspect() const { return first; }
+
+    // q1<q2 means q1 is prioritised over q2
+    // ( q1 == *this, q2 == q )
+    bool operator<(const Quality& q) const
+    {
+      if( sq_size() > 1 )
+	if( q.sq_size() > 1 )
+	  return ( sq_size() > q.sq_size() );
+	else
+	  return true; // *this is big but not q
+      else
+	if( q.sq_size() >  1 )
+	  return false; // q is big but not *this
+      return( aspect() > q.aspect() );
+    }
+  };
 
   inline
   double squared_radius_bound() const 
@@ -79,31 +103,58 @@ public:
     bool operator()(const Cell_handle& c,
                     Quality& qual) const
     {
-      typedef typename Tr::Geom_traits Geom_traits;
-      typedef typename Geom_traits::Compute_squared_radius_3 Radius;
-
-      if( size_bound==0 )
-        {
-          qual = 1;
-          return false;
-        }
-
       const Point_3& p = c->vertex(0)->point();
       const Point_3& q = c->vertex(1)->point();
       const Point_3& r = c->vertex(2)->point();
       const Point_3& s = c->vertex(3)->point();
 
+      typedef typename Tr::Geom_traits Geom_traits;
+      typedef typename Geom_traits::Compute_squared_radius_3 Radius;
+      typedef typename Geom_traits::Compute_squared_distance_3 Distance;
+      typedef typename Geom_traits::FT FT;
+
       Radius radius = Geom_traits().compute_squared_radius_3_object();
-      qual = size_bound / to_double(radius(p, q, r, s));
-      return qual < 1.;
-    };
-  };
+      Distance distance = Geom_traits().compute_squared_distance_3_object();
+
+      double size = to_double(radius(p, q, r, s));
+
+      if( size_bound != 0 )
+        {
+          qual.second = size / size_bound;
+            // normalized by size bound to deal
+            // with size field
+          if( qual.sq_size() > 1 )
+            {
+              qual.first = 1; // (do not compute aspect)
+              return true;
+            }
+        }
+      if( shape_bound == 0 )
+	{
+	  qual = Quality(0,1);
+	  return false;
+	}
+
+      double min_sq_length = CGAL::to_double(distance(p, q));
+      min_sq_length = CGAL::min(min_sq_length, to_double(distance(p, r)));
+      min_sq_length = CGAL::min(min_sq_length, to_double(distance(p, s)));
+      min_sq_length = CGAL::min(min_sq_length, to_double(distance(q, r)));
+      min_sq_length = CGAL::min(min_sq_length, to_double(distance(q, s)));
+      min_sq_length = CGAL::min(min_sq_length, to_double(distance(r, s)));
+
+      qual.first = size / min_sq_length;
+
+      return (qual.first > shape_bound);
+    }
+    
+  }; // end Is_bad
+    
 
   Is_bad is_bad_object() const
-    { return Is_bad(shape_bound, size_bound); }
+  { return Is_bad(shape_bound, size_bound); }
 
 }; // end Mesh_criteria_3
-  
+
 
 } // end namespace CGAL
 

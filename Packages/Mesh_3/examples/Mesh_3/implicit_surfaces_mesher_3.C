@@ -73,7 +73,7 @@ int main(int argc, char **argv) {
 //   crit_vect.push_back(&a_r_crit);
   Criteria C (crit_vect);
 
-  Tets_criteria tets_criteria(0, tets_size_bound);
+  Tets_criteria tets_criteria(tets_aspect_ratio_bound, tets_size_bound);
 
   std::cout << "Initial number of points: " << T.number_of_vertices() 
             << std::endl;

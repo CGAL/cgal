@@ -12,6 +12,8 @@ const double tets_size_bound = 0.05;
 
 const double aspect_ratio_bound = 30.; // in degrees
 
+const double tets_aspect_ratio_bound = 10.; // in degrees
+
 const double enclosing_sphere_radius = 6.;
 
 const double precision = 1e-6;

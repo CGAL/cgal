@@ -3,6 +3,7 @@ extern const double curvature_bound;
 extern const double size_bound;
 extern const double aspect_ratio_bound;
 extern const double tets_size_bound;
+extern const double tets_aspect_ratio_bound;
 extern const double precision;
 extern const double enclosing_sphere_radius;
 extern const double precision;
