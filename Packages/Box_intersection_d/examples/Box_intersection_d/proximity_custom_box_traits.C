@@ -1,5 +1,4 @@
 // file: examples/Box_intersection_d/proximity_custom_box_traits.C
-
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/box_intersection_d.h>
 #include <CGAL/point_generators_3.h>

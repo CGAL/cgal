@@ -1,5 +1,4 @@
 // file: examples/Box_intersection_d/triangle_self_intersect_pointers.C
-
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/intersections.h>
 #include <CGAL/point_generators_3.h>

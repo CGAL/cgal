@@ -1,5 +1,4 @@
 // file: examples/Box_intersection_d/box_grid.C
-
 #include <CGAL/box_intersection_d.h>
 #include <vector>
 #include <algorithm>
@@ -34,12 +33,12 @@ int main() {
     // run the intersection algorithm and store results in a vector
     std::vector<std::size_t> result;
     CGAL::box_intersection_d( boxes, boxes+9, query, query+2, 
-                              report( std::back_inserter( result)), 0);
+                              report( std::back_inserter( result)));
     // sort, check, and show result
     std::sort( result.begin(), result.end());
-    std::size_t checker1[13] = {0,1,2,3,4,4,5,5,6,7,7,8,8};
+    std::size_t check1[13] = {0,1,2,3,4,4,5,5,6,7,7,8,8};
     CGAL_assertion( result.size() == 13 && 
-                    std::equal( checker1, checker1+13, result.begin()));
+                    std::equal( check1, check1+13, result.begin()));
     std::copy( result.begin(), result.end(), 
                std::ostream_iterator<std::size_t>( std::cout, " "));
     std::cout << std::endl;
@@ -51,9 +50,9 @@ int main() {
                               1, CGAL::Box_intersection_d::HALF_OPEN);
     // sort, check, and show result
     std::sort( result.begin(), result.end());
-    std::size_t checker2[2]  = {4,8};
+    std::size_t check2[2]  = {4,8};
     CGAL_assertion( result.size() == 2 && 
-                    std::equal( checker2, checker2+2, result.begin()));
+                    std::equal( check2, check2+2, result.begin()));
     std::copy( result.begin(), result.end(), 
                std::ostream_iterator<std::size_t>( std::cout, " "));
     std::cout << std::endl;
