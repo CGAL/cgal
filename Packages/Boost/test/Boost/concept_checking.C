@@ -22,10 +22,15 @@ struct PipoConcept
      function_requires< ConvertibleConcept< Flute, int > >();
      // The second is that it has a const member function pipo()
      // returning something convertible to int.
-     i = flute.pipo();
+     const_constraints(flute);
   }
 
-  const Flute flute;
+  void const_constraints(const Flute &f)
+  {
+     i = f.pipo();
+  }
+
+  Flute flute;
   int i;
 };
 
@@ -67,7 +72,7 @@ my_function(const T & t)
 {
   function_requires< PipoConcept<T> >();
 
-  using namespace Internal;
+  Internal::
   function_with_long_name_that_I_don_t_want_to_see_in_the_ERROR_message(t);
 }
 
@@ -93,8 +98,8 @@ int main()
 
   // Now try the archetype (without execution).
   if (false) {
-    pipo_archetype *pa;
-    my_function(*pa);
+    const pipo_archetype & pa = static_object<pipo_archetype>::get();
+    my_function(pa);
   }
 
   return 0;

@@ -1,3 +1,6 @@
+23 June 2004 Sylvain Pion
+- Fix some issues with last change with g++ 2.95 and Intel.
+
 21 June 2004 Sylvain Pion
 - Add a test program for the concept checking library.
 
