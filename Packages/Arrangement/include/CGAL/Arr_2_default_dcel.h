@@ -39,9 +39,8 @@ template <class Traits>
 class Arr_2_default_dcel
   : public Pm_dcel<
 Arr_2_vertex_base<typename Traits::Point>,
-Arr_2_halfedge_base<Arr_base_node<typename Traits::Curve, typename Traits::X_curve> >,
-Arr_2_face_base
-> 
+  Arr_2_halfedge_base<Arr_base_node<typename Traits::Curve, 
+    typename Traits::X_curve> >, Arr_2_face_base > 
 {
 public:  // CREATION
   

@@ -248,7 +248,8 @@ public:
     Arr_overlap_const_circulator<Edge_node,Edge_const_iterator,
                                  Bidirectional_circulator_tag>;
 
-    Subcurve_node(int construct_curve=1) : ftr(0),begin_child(0),past_end_child(0) 
+    Subcurve_node(int construct_curve=1) : ftr(0),begin_child(0),
+					   past_end_child(0)
     {
       if(construct_curve)
 	cv_wrap.x_cv=new X_monotone_curve_2;
