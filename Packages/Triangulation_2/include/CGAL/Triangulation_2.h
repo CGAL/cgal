@@ -195,9 +195,12 @@ public:
 
 
   //ACCESS FUNCTIONs
+  const Geom_traits& geom_traits() const { return _gt;}
+  const Tds & tds() const  { return _tds;}
+  Tds & tds()   { return _tds;}
   int dimension() const { return _tds.dimension();}
   int number_of_vertices() const {return _tds.number_of_vertices() - 1;}
-  const Geom_traits& geom_traits() const { return _gt;}
+  
   int number_of_faces() const;
   Vertex_handle infinite_vertex() const;
   Vertex_handle finite_vertex() const;

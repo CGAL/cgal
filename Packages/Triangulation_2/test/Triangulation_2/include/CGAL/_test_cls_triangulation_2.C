@@ -763,6 +763,10 @@ _test_cls_triangulation_2( const Triangul & )
     T2_7.remove(T2_7.finite_vertex());
   assert( T2_7.number_of_vertices() == 0 );
 
+  //test access to tds
+  assert (T2_1.tds().is_valid());
+  assert (T1_5.tds().is_valid());
+
   // test destructors and return
   std::cout << "    test destructors and return" << std::endl;
 }

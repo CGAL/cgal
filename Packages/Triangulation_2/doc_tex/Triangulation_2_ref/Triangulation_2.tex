@@ -264,6 +264,24 @@ empty triangulation.}
 \ccMethod{const Geom_traits& geom_traits() const;}
 {Returns a const reference to the triangulation traits object.}
 \ccGlue
+\ccMethod{const TriangulationDataStructure_2 & tds() const;}
+{Returns a const reference to the triangulation data structure.}
+
+\begin{ccAdvanced}
+\ccHeading{Non const access}
+The responsibility of keeping a valid triangulation belongs to the user
+when using advanced operations allowing a direct manipulation of the \ccc{tds}.
+
+\ccMethod{TriangulationDataStructure_2 & tds();}
+{Returns a reference to the triangulation data structure.}
+
+This method is mainly a help for users implementing their own triangulation
+algorithms.
+ 
+\end{ccAdvanced}
+
+
+\ccGlue
 \ccMethod{int dimension() const;}
 {Returns the dimension of the convex hull.}
 \ccGlue
