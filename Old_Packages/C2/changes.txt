@@ -1,3 +1,6 @@
+Version 3.3.13
+- fixed the code of counterclockwise_in_between in Direction_2.C
+  upon request of Stafan Schirra [my]
 - fixed lines over 80 characters. Some remain in Cartesian/Line_2.C
 
 Version 3.3.12 (8 february 2000)
