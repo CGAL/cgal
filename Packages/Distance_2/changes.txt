@@ -1,4 +1,9 @@
 -----
+* 2.3.4 *
++ fix to cgal_test
++ removed include file guards
+
+-----
 * 2.3.3 *
 + Small fix to cgal_test
 
