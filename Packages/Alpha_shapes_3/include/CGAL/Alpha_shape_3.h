@@ -1069,7 +1069,7 @@ public:
 	   && as->alpha_mid() == alpha  
 	   && facet_set.find(f) == facet_set.end() 
 	   && facet_set.find(std::make_pair(c->neighbor(i), 
-					    c->mirror_index(i)))
+					    this->mirror_index(c, i)))
 	      == facet_set.end()) { 
         filtration_output( alpha, f, it, edge_set, vertex_set); 
         facet_set.insert(f); 

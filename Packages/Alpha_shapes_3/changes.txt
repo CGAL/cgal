@@ -1,3 +1,6 @@
+1 April 2005 Sylvain Pion
+- update obsolete mirror_index() call.
+
 15 January 2005 Sylvain Pion
 - Missing this-> for g++ 4.0
 
