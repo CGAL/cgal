@@ -40,7 +40,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template <class PM_>
+template <class traits, class vertexHandle>
 class Point_plus_handle;
 
 // Point_plus_rep:
@@ -50,13 +50,12 @@ class Point_plus_handle;
 // subdivision by the time the sweep line progresses without makeing any 
 // point location query. This class holds the representation, and the next 
 // will hold the Handle to Point_plus.
-template <class PM_>
+template <class traits, class vertexHandle>
 class Point_plus_rep /*: public Ref_counted*/ {
 public:
-  typedef PM_                          PM;
-  typedef typename PM::Traits          Traits;
-  typedef typename Traits::Point       Point;
-  typedef typename PM::Vertex_handle   Vertex_handle;
+  typedef traits                   Traits;
+  typedef typename Traits::Point   Point;
+  typedef vertexHandle             Vertex_handle;
   
   Point_plus_rep() {}
   
@@ -67,7 +66,7 @@ public:
   ~Point_plus_rep() {}
   
 protected:
-  friend class Point_plus_handle<PM_>;    
+  friend class Point_plus_handle<Traits, Vertex_handle>;    
   
   Point p_;
   Vertex_handle v_;
@@ -75,16 +74,17 @@ protected:
 
 // Point_plus:
 // The handle to Point_plus.
-template <class PM_>
-class Point_plus_handle : public  Handle_for<Point_plus_rep<PM_> > 
+template <class traits, class vertexHandle>
+class Point_plus_handle : public  Handle_for<
+                                 Point_plus_rep<traits, vertexHandle> > 
 {
-  typedef Handle_for<Point_plus_rep<PM_> > Handle_for_Point_plus_rep;
+  typedef Handle_for<Point_plus_rep<traits, vertexHandle> > 
+                                      Handle_for_Point_plus_rep;
 public:
-  typedef PM_                         PM;
-  typedef typename PM::Traits         Traits;
-  typedef typename Traits::Point      Point;
-  typedef typename PM::Vertex_handle  Vertex_handle;
-  typedef Point_plus_rep<PM>          Point_plus_rep_pm;
+  typedef  traits                               Traits;
+  typedef typename Traits::Point                Point;
+  typedef vertexHandle                          Vertex_handle;
+  typedef Point_plus_rep<Traits, Vertex_handle> Point_plus_rep_pm;
   
   Point_plus_handle() : Handle_for_Point_plus_rep() {}
   
