@@ -150,12 +150,18 @@ power_testC3( const FT &px, const FT &py, const FT &pz, const FT &pwt,
     return Oriented_side(cmp * sign_of_determinant2x2(dpz, dpt, dqz, dqt));
 }
 
+template <class FT>
+Oriented_side
+power_testC3(const FT &pwt, const FT &qwt)
+{
+    return Oriented_side(CGAL_NTS compare(qwt, pwt));
+}
+
+
 CGAL_END_NAMESPACE
 
 #ifdef CGAL_ARITHMETIC_FILTER_H
-#ifndef CGAL_ARITHMETIC_FILTER_REGULAR_TRIANGULATION_FTC3_H
 #include <CGAL/Arithmetic_filter/predicates/Regular_triangulation_ftC3.h>
-#endif // CGAL_ARITHMETIC_FILTER_REGULAR_TRIANGULATION_FTC3_H
 #endif
 
 #endif // CGAL_REGULAR_TRIANGULATION_FTC3_H

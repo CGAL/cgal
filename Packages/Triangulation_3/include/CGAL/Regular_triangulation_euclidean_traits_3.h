@@ -63,6 +63,12 @@ public:
     {
       return CGAL::power_test(p,q,r);
     }
+
+  Oriented_side operator() ( const Weighted_point & p,
+			     const Weighted_point & q) const
+    {
+      return CGAL::power_test(p,q);
+    }
 };
 
 
@@ -139,6 +145,18 @@ power_test(const Weighted_point<pt, Weight> &p,
                         t.x(), t.y(), t.z(), FT(t.weight()));
 }
 
+template < class pt, class Weight >
+inline
+Oriented_side
+power_test(const Weighted_point<pt, Weight> &p,
+           const Weighted_point<pt, Weight> &q,
+	   Cartesian_tag)
+{
+    typedef typename pt::R::FT FT;
+    return power_testC3(FT(p.weight()),
+                        FT(q.weight()));
+}
+
 
 // Homogeneous versions.
 template < class pt, class Weight >
@@ -192,6 +210,18 @@ power_test(const Weighted_point<pt, Weight> &p,
                         t.x(), t.y(), t.z(), FT(t.weight()));
 }
 
+template < class pt, class Weight >
+inline
+Oriented_side
+power_test(const Weighted_point<pt, Weight> &p,
+           const Weighted_point<pt, Weight> &q,
+	   Homogeneous_tag)
+{
+    typedef typename pt::R::FT FT;
+    return power_testC3(FT(p.weight()),
+                        FT(q.weight()));
+}
+
 
 // Kludges for M$.
 
@@ -229,6 +259,16 @@ power_test(const Weighted_point<pt,Weight> &p,
 {
   typedef typename pt::R::Rep_tag Tag;
   return( power_test(p,q,t, Tag()) );
+}
+
+template < class pt, class Weight >
+inline
+Oriented_side
+power_test(const Weighted_point<pt,Weight> &p,
+	   const Weighted_point<pt,Weight> &q)
+{
+  typedef typename pt::R::Rep_tag Tag;
+  return( power_test(p,q, Tag()) );
 }
 
 CGAL_END_NAMESPACE

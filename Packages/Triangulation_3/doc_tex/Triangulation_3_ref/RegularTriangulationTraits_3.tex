@@ -86,6 +86,14 @@ If all the points have a weight equal to 0, then
 \ccc{s(p,q).has_on(t)} would give, where  \ccc{s(p,q)} denotes the
 segment with endpoints \ccc{p} and \ccc{q}.
 }
+\\
+\\
+\ccc{Oriented_side operator()( Weighted_point p, Weighted_point q)}
+which is the same for equal points, that is when \ccc{p} and \ccc{q}
+have equal coordinates, then it returns the comparison of the weights
+(\ccc{ON_POSITIVE_SIDE} when \ccc{q} is heavier than \ccc{p}).
+\ccPrecond{\ccc{p} and \ccc{q} have equal Bare\_points.}
+}
 
 \ccOperations
 
@@ -101,9 +109,3 @@ The following function gives access to the predicate object:
 \ccc{CGAL::Regular_triangulation_euclidean_traits_3<R,Weight>}.
 
 \end{ccRefConcept}
-
-% +------------------------------------------------------------------------+
-%%RefPage: end of main body, begin of footer
-% EOF
-% +------------------------------------------------------------------------+
-
