@@ -9,6 +9,7 @@
 
 ALL : New functor adaptors (bind/compose).
 ALL : Removed Compose for Projection objects.
+ALL : Rejoined Inverse_index fix by Dima.
 ALL : Fixed sunpro 5.3 problems.
 ALL : Fixed dumb compiler macro.
 ALL : Fixed stlport stuff for msvc.
