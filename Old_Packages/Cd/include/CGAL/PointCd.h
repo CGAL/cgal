@@ -85,8 +85,9 @@ template < class FT >
 CGAL_KERNEL_INLINE
 const _d_tuple<FT>* PointCd<FT>::ptr() const
 {
-  return (_d_tuple<FT>*)PTR;
+  return static_cast<_d_tuple<FT>*>(PTR);
 }
+
 CGAL_END_NAMESPACE
 
 #include <CGAL/Origin.h>
@@ -114,7 +115,7 @@ PointCd<FT>::PointCd(int dim, const Origin &)
 template < class FT >
 CGAL_KERNEL_CTOR_INLINE
 PointCd<FT>::PointCd(const PointCd<FT> &p)
-  : Handle((Handle&)p)
+  : Handle(static_cast<const Handle&>(p))
 {}
 
 
@@ -152,8 +153,9 @@ PointCd<FT>::operator!=(const PointCd<FT>& p) const
 
 template < class FT >
 inline
-int PointCd<FT>::id() const
-{ return (int)PTR; }
+unsigned long
+PointCd<FT>::id() const
+{ return reinterpret_cast<unsigned long>(PTR); }
 
 template < class FT >
 inline
