@@ -127,6 +127,7 @@ The class interface looks as follows.
 @macro <Min_ellipse_2 interface> = @begin
     template < class R >
     class CGAL_Min_ellipse_2 {
+
       public:
 	@<public interface>
 
@@ -321,7 +322,7 @@ tests `$p\in \me(\emptyset,B)$'. To perform these tests, each class has a
 
 	    // default constructor
 	    // -------------------
-	    Ellipse_3 () {};
+	    Ellipse_3 () {}
 
 	    // set method
 	    // ----------
@@ -347,21 +348,21 @@ tests `$p\in \me(\emptyset,B)$'. To perform these tests, each class has a
 
 	    // default constructor
 	    // -------------------
-	    Ellipse_4 () {};
+	    Ellipse_4 () {}
 
 	    // set method
 	    // ----------
 	    void set (const CGAL_Point_2<R>& p1, const CGAL_Point_2<R>& p2,
-	              const CGAL_Point_2<R>& p3, const CGAL_Point_2<R>& p4) 
+	              const CGAL_Point_2<R>& p3, const CGAL_Point_2<R>& p4)
 	    {
-	    	@<Ellipse_4::set body>	
+	    	@<Ellipse_4::set body>
 	    }
 
 	    // bounded_side method, non-const
 	    // ------------------------------
 	    CGAL_Bounded_side bounded_side (const CGAL_Point_2<R>& p)
 	    {
-	    	@<Ellipse_4::bounded_side body>	
+	    	@<Ellipse_4::bounded_side body>
 	    }
     };
 @end 
@@ -458,11 +459,8 @@ method $\me$ to compute $\me(P)=\me(P,\emptyset)$.
 	    copy( first, last, back_inserter( points));
 
 	    // shuffle points at random
-	    if ( randomize) {
-	        long  seed;
-		time( &seed);
-		srand( seed);
-		random_shuffle( points.begin(), points.end()); }
+	    if ( randomize)
+		random_shuffle( points.begin(), points.end());
 
 	    // link points
 	    for ( int i = 0; i < number_of_points(); ++i) {
@@ -766,7 +764,7 @@ subsection \ref{ellipse_rep}.
 	    break;
 	  case 4:
 	    // cast away ellipse_4's constness 
-	    return const_cast( Ellipse_4&, ellipse_4).bounded_side (p);
+	    return ( const_cast( Ellipse_4&, ellipse_4)).bounded_side (p);
 	    break;
 	  case 3:
 	    return ellipse_3.bounded_side (p);
@@ -956,7 +954,12 @@ for doing in-ellipse tests, see subsequent subsections).
     template <class R>
     class Conic {
 	public:
-	    R::FT r, s, t, u, v, w;
+	    R::FT  r;
+	    R::FT  s;
+	    R::FT  t;
+	    R::FT  u;
+	    R::FT  v;
+	    R::FT  w;
 
 	    // default constructor
 	    // -------------------
@@ -1051,8 +1054,13 @@ This enables the subsequent
 just evaluating the sign of (\ref{ellipse_3_test}).
 
 @macro <Ellipse_3 data members> = @begin
-    R::FT cx, cy, z, m11, m12, m22;
-@end 
+    R::FT  cx;
+    R::FT  cy;
+    R::FT  z;
+    R::FT  m11;
+    R::FT  m12;
+    R::FT  m22;
+@end
   
 @! ----------------------------------------------------------------------------
 @subsubsection{ The \texttt{set} method}
@@ -1062,19 +1070,23 @@ Using the formulas above, the private data members are
 straightforward to set.
 
 @macro <Ellipse_3::set body> = @begin
-    R::FT x1 = p1.x(), 
-	  y1 = p1.y(),
-	  x2 = p2.x(), 
-	  y2 = p2.y(),
- 	  x3 = p3.x(), 
-	  y3 = p3.y();
+    R::FT  x1 = p1.x();
+    R::FT  y1 = p1.y();
+    R::FT  x2 = p2.x(); 
+    R::FT  y2 = p2.y();
+    R::FT  x3 = p3.x(); 
+    R::FT  y3 = p3.y();
 
     // center c
     cx = (x1+x2+x3)/R::FT(3);
     cy = (y1+y2+y3)/R::FT(3);
- 
-    R::FT x1_cx = x1-cx, x2_cx = x2-cx, x3_cx = x3-cx,
-	  y1_cy = y1-cy, y2_cy = y2-cy, y3_cy = y3-cy;
+
+    R::FT  x1_cx = x1-cx;
+    R::FT  x2_cx = x2-cx;
+    R::FT  x3_cx = x3-cx;
+    R::FT  y1_cy = y1-cy;
+    R::FT  y2_cy = y2-cy;
+    R::FT  y3_cy = y3-cy;
 
     // matrix M
     m11 = (x1_cx)*(x1_cx) + (x2_cx)*(x2_cx) + (x3_cx)*(x3_cx);
@@ -1082,10 +1094,10 @@ straightforward to set.
     m22 = (y1_cy)*(y1_cy) + (y2_cy)*(y2_cy) + (y3_cy)*(y3_cy);
 
     // z'
-    z = R::FT(2)*(m11*m22-m12*m12)/R::FT(3); // z'
+    z = R::FT(2)*(m11*m22-m12*m12)/R::FT(3);
 
     // assert positive definiteness
-    CGAL_Min_ellipse_2_assertion ( (z > R::FT(0)) && (m11 > R::FT(0)) );
+    CGAL_Min_ellipse_2_assertion( (z > R::FT(0)) && (m11 > R::FT(0)) );
 @end
 
 @! ----------------------------------------------------------------------------
@@ -1100,13 +1112,13 @@ $$(x-c_x,y-c_y)^T \left(\begin{array}{cc} m_{22} & -m_{12} \\ -m_{12} & m_{11}
 \end{array}\right. 0.$$
 
 @macro <Ellipse_3::bounded_side body> = @begin
-    R::FT x = p.x(), 
-	  y = p.y(),
-	  x_cx = x-cx, 
-	  y_cy = y-cy,
-	  discr = m22*(x_cx)*(x_cx) + m11*(y_cy)*(y_cy)
-		 -R::FT(2)*m12*(x_cx)*(y_cy) - z;	    
-    return static_cast (CGAL_Bounded_side, CGAL_sign (discr));
+    R::FT  x = p.x();
+    R::FT  y = p.y();
+    R::FT  x_cx = x-cx;
+    R::FT  y_cy = y-cy;
+    R::FT  discr = m22*(x_cx)*(x_cx) + m11*(y_cy)*(y_cy)
+		   - R::FT(2)*m12*(x_cx)*(y_cy) - z;	    
+    return static_cast( CGAL_Bounded_side, CGAL_sign( discr));
 @end
 
 @! ----------------------------------------------------------------------------
@@ -1143,7 +1155,10 @@ the correct order, we swap $p_2$ and $p_3$.
 
 @macro <Ellipse_4::set body> = @begin
     // copy p_i's to allow swapping
-    CGAL_Point_2<R> q1 = p1, q2 = p2, q3 = p3, q4 = p4;
+    CGAL_Point_2<R>  q1 = p1;
+    CGAL_Point_2<R>  q2 = p2;
+    CGAL_Point_2<R>  q3 = p3;
+    CGAL_Point_2<R>  q4 = p4;
 
     // preprocessing: bring q_i's into (counter)clockwise order
     CGAL_Orientation side1_24 = CGAL_orientation (q2, q4, q1),
@@ -1155,13 +1170,13 @@ the correct order, we swap $p_2$ and $p_3$.
 	else 
 	    swap (q2, q3);
     }
-	
+
     // assert correct ordering
-    CGAL_Min_ellipse_2_assertion
-	 ( (CGAL_orientation (q1, q2, q3) == CGAL_orientation (q2, q3, q4)) &&
-	   (CGAL_orientation (q2, q3, q4) == CGAL_orientation (q3, q4, q1)) &&
-	   (CGAL_orientation (q3, q4, q1) == CGAL_orientation (q4, q1, q2)) &&
- 	   (CGAL_orientation (q1, q2, q3) != CGAL_COLLINEAR) );
+    CGAL_Min_ellipse_2_assertion(
+        ( CGAL_orientation( q1, q2, q3) == CGAL_orientation( q2, q3, q4)) &&
+	( CGAL_orientation( q2, q3, q4) == CGAL_orientation( q3, q4, q1)) &&
+	( CGAL_orientation( q3, q4, q1) == CGAL_orientation( q4, q1, q2)) &&
+ 	( CGAL_orientation( q1, q2, q3) != CGAL_COLLINEAR               ) );
 
     // do the actual computations
     @<Ellipse_4 setup>
@@ -1195,28 +1210,35 @@ ${\cal C}_1$ and ${\cal C}_2$ are stored as data members in an
 @prg{Ellipse_4} object.
 
 @macro <Ellipse_4 data members> += @begin
-    Conic<R> conic1, conic2;
+    Conic<R>  conic1;
+    Conic<R>  conic2;
 @end
 
 @macro <Ellipse_4 setup> += @begin
     // point coordinates
-    R::FT x1 = q1.x(), y1 = q1.y(),
-	  x2 = q2.x(), y2 = q2.y(),
-	  x3 = q3.x(), y3 = q3.y(),
-	  x4 = q4.x(), y4 = q4.y();
+    R::FT  x1 = q1.x();
+    R::FT  y1 = q1.y();
+    R::FT  x2 = q2.x();
+    R::FT  y2 = q2.y();
+    R::FT  x3 = q3.x();
+    R::FT  y3 = q3.y();
+    R::FT  x4 = q4.x();
+    R::FT  y4 = q4.y();
+
     // auxiliary values
-    R::FT y1_y2 = y1-y2,
-	  y3_y4 = y3-y4,
-	  x1_x2 = x1-x2,
-          x3_x4 = x3-x4,
- 	  y2_y3 = y2-y3,
- 	  y4_y1 = y4-y1,
-	  x2_x3 = x2-x3,
-	  x4_x1 = x4-x1,
-	  x1y2_x2y1 = x1*y2 - x2*y1,
-	  x3y4_x4y3 = x3*y4 - x4*y3,
-	  x2y3_x3y2 = x2*y3 - x3*y2,
-	  x4y1_x1y4 = x4*y1 - x1*y4;
+    R::FT  y1_y2 = y1-y2;
+    R::FT  y3_y4 = y3-y4;
+    R::FT  x1_x2 = x1-x2;
+    R::FT  x3_x4 = x3-x4;
+    R::FT  y2_y3 = y2-y3;
+    R::FT  y4_y1 = y4-y1;
+    R::FT  x2_x3 = x2-x3;
+    R::FT  x4_x1 = x4-x1;
+    R::FT  x1y2_x2y1 = x1*y2 - x2*y1;
+    R::FT  x3y4_x4y3 = x3*y4 - x4*y3;
+    R::FT  x2y3_x3y2 = x2*y3 - x3*y2;
+    R::FT  x4y1_x1y4 = x4*y1 - x1*y4;
+
     // define conics
     conic1.set (  y1_y2 * y3_y4, 
 		  x1_x2 * x3_x4, 
@@ -1271,14 +1293,18 @@ w'(0) &=& r_1 w_2 - r_2 w_1.
 \end{eqnarray*}
 
 @macro <Ellipse_4 data members> += @begin
-    R::FT ds, dt, du, dv, dw;
+    R::FT  ds;	  
+    R::FT  dt;
+    R::FT  du;
+    R::FT  dv;	
+    R::FT  dw;
 @end
 
 @macro <Ellipse_4 setup> += @begin
-    ds = conic1.r*conic2.s - conic2.r*conic1.s,
-    dt = conic1.r*conic2.t - conic2.r*conic1.t,
-    du = conic1.r*conic2.u - conic2.r*conic1.u,
-    dv = conic1.r*conic2.v - conic2.r*conic1.v,
+    ds = conic1.r*conic2.s - conic2.r*conic1.s;
+    dt = conic1.r*conic2.t - conic2.r*conic1.t;
+    du = conic1.r*conic2.u - conic2.r*conic1.u;
+    dv = conic1.r*conic2.v - conic2.r*conic1.v;
     dw = conic1.r*conic2.w - conic2.r*conic1.w;
 @end
 
@@ -1297,13 +1323,13 @@ This ellipse is stored as another conic in @prg{Ellipse_4}.
 @end
 
 @macro <Ellipse_4 setup> += @begin
-    R::FT beta = conic1.r*conic2.s + conic2.r*conic1.s 
-		-R::FT(2)*conic1.t*conic2.t,
-	  lambda = R::FT(2)*conic2.det()-beta,
-	  mu = R::FT(2)*conic1.det()-beta;
+    R::FT  beta   = conic1.r*conic2.s + conic2.r*conic1.s 
+		    - R::FT(2)*conic1.t*conic2.t;
+    R::FT  lambda = R::FT(2)*conic2.det()-beta;
+    R::FT  mu     = R::FT(2)*conic1.det()-beta;
     ellipse.set (lambda, conic1, mu, conic2);
     ellipse.normalize();
-    CGAL_Min_ellipse_2_assertion (ellipse.det() > R::FT(0));
+    CGAL_Min_ellipse_2_assertion( ellipse.det() > R::FT(0));
 @end
 
 @! ----------------------------------------------------------------------------
@@ -1329,8 +1355,8 @@ Depending on the type of ${\cal C}_0$ (given by its determinant),
 different actions are taken.
 
 @macro <Ellipse_4::bounded_side body> = @begin
-    R::FT lambda_0 =  conic2.eval(p),
-	  mu_0     = -conic1.eval(p);
+    R::FT  lambda_0 =  conic2.eval(p);
+    R::FT  mu_0     = -conic1.eval(p);
     conic0.set (lambda_0, conic1, mu_0, conic2);
     R::FT d = conic0.det();
     if (d > R::FT(0)) {
@@ -1429,14 +1455,14 @@ ${\cal C}_0$ is assumed to be normalized.
 
 @macro <handle ellipse case> += @begin
     conic0.normalize();
-    R::FT dd = conic0.r*ds - R::FT(2)*conic0.t*dt,
-	  Z1 = conic0.u*conic0.s - conic0.v*conic0.t,
-	  Z2 = conic0.v*conic0.r - conic0.u*conic0.t,
-	  dZ1 = du*conic0.s + conic0.u*ds - dv*conic0.t - conic0.v*dt,
-	  dZ2 = dv*conic0.r - du*conic0.t - conic0.u*dt,
-	  Z = conic0.u*Z1 + conic0.v*Z2,
-    	  dZ = du*Z1 + conic0.u*dZ1 +dv*Z2 + conic0.v*dZ2,
-	  f = R::FT(3)*dd*Z + d*(R::FT(2)*d*dw-dd*conic0.w-R::FT(2)*dZ);
+    R::FT  dd  = conic0.r*ds - R::FT(2)*conic0.t*dt;
+    R::FT  Z1  = conic0.u*conic0.s - conic0.v*conic0.t;
+    R::FT  Z2  = conic0.v*conic0.r - conic0.u*conic0.t;
+    R::FT  dZ1 = du*conic0.s + conic0.u*ds - dv*conic0.t - conic0.v*dt;
+    R::FT  dZ2 = dv*conic0.r - du*conic0.t - conic0.u*dt;
+    R::FT  Z   = conic0.u*Z1 + conic0.v*Z2;
+    R::FT  dZ  = du*Z1 + conic0.u*dZ1 +dv*Z2 + conic0.v*dZ2;
+    R::FT  f   = R::FT(3)*dd*Z + d*(R::FT(2)*d*dw-dd*conic0.w-R::FT(2)*dZ);
 @end
 
 The sign of $f(0)$ is the one we are interested in. We deduce 
@@ -1564,15 +1590,16 @@ ellipse has already been normalized by @prg{ellipse_4}.
     // ================
     // includes
     // --------
+    #ifndef CGAL_PREDICATES_ON_POINTS_2_H
+    #include <CGAL/predicates_on_points_2.h>
+    #endif
     #ifndef CGAL_UTILS_H
     #include <CGAL/utils.h>
     #endif
     #include <algo.h>
     #include <algobase.h>
-    #include <sys/types.h>
-    #include <time.h>
 
-        @<Min_ellipse_2 implementation>
+    @<Min_ellipse_2 implementation>
 
     // specialization does not exist yet
     // ---------------------------------
