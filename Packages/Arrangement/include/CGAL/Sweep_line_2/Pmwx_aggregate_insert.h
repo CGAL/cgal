@@ -72,6 +72,24 @@ public:
   typedef typename Base::SweepLinePlanarmap SweepLinePlanarmap;
   typedef typename Base::EventQueueValueType EventQueueValueType;
 
+#ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_3
+  using Base::m_queue;
+  using Base::m_prevPos;
+  using Base::m_traits;
+  using Base::m_sweepLinePos;
+  using Base::m_verticals;
+  using Base::m_verticalSubCurves;
+  using Base::m_currentPos;
+  using Base::m_currentEvent;
+  using Base::m_miniq;
+  using Base::m_prevPos;
+  using Base::m_use_hint_for_erase;
+  using Base::m_statusLine;
+  using Base::m_tmpOut;
+  using Base::m_status_line_insert_hint;
+  using Base::m_events;
+#endif
+
   Pmwx_aggregate_insert() : 
     Base(), m_change_not(NULL) {}
   

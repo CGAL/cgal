@@ -69,6 +69,13 @@ public:
 
   typedef typename PmwxInsertInfo::Halfedge_handle Halfedge_handle;
 
+#ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_3
+  using Base::m_traits;
+  using Base::m_rightCurves;
+  using Base::get_num_left_curves;
+  using Base::get_num_right_curves;
+#endif
+
   /*! Constructor */
   Pmwx_sweep_line_event(const Point_2 &point, Traits *traits) :
     Base(point, traits)

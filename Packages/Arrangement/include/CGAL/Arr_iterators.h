@@ -52,6 +52,9 @@ public:
   typedef  value_type*              pointer;
   typedef  const value_type*        const_pointer;
 
+#ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_3
+  using Base::nt;
+#endif
 
 // CREATION
 // --------
@@ -125,6 +128,10 @@ public:
   typedef  value_type*                  pointer;
   typedef  const value_type*            const_pointer;
 
+#ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_3
+  using Base::nt;
+#endif
+
   // CREATION
   // --------
 
@@ -192,6 +199,10 @@ public:
   typedef  const value_type&        const_reference;
   typedef  value_type*              pointer;
   typedef  const value_type*        const_pointer;
+
+#ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_3
+  using Base::nt;
+#endif
 
   // CREATION
   // --------
@@ -264,6 +275,11 @@ public:
   typedef  const value_type&        const_reference;
   typedef  value_type*              pointer;
   typedef  const value_type*        const_pointer;
+
+
+#ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_3
+  using Base::nt;
+#endif
 
   // CREATION
   // --------
@@ -340,6 +356,11 @@ public:
   typedef  value_type*              pointer;
   typedef  const value_type*        const_pointer;
 
+
+#ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_3
+  using Base::nt;
+#endif
+
 // CREATION
 // --------
 
@@ -411,6 +432,11 @@ public:
   typedef  const value_type&        const_reference;
   typedef  value_type*              pointer;
   typedef  const value_type*        const_pointer;
+
+
+#ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_3
+  using Base::nt;
+#endif
 
   // CREATION
   // --------
@@ -500,6 +526,7 @@ public:
   typedef           Fct                    reference; 
   //typedef           Ptr                    pointer;
   typedef           C                    pointer;  //just for this special case
+
 
   // CREATION
   // --------

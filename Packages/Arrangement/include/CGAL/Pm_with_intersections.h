@@ -66,6 +66,14 @@ public:
   typedef Curve_2                               Curve;
   typedef Change_notification                   Pmwx_change_notification;
 
+#ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_3
+  using Planar_map::traits;
+  using Planar_map::halfedges_end;
+  using Planar_map::halfedges_begin;
+  using Planar_map::unbounded_face;
+  using Planar_map::pl;
+#endif
+
   CGAL_DEFINE_COUNT_OP_TIMES_OBJECT
 
   // Constructors

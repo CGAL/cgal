@@ -236,6 +236,12 @@ public:
   class Subcurve_node : public Base_node,
                         public In_place_list_base<Subcurve_node> 
   {
+
+#ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_3
+  protected:
+  using Base_node::cv_wrap;
+#endif
+
   public: 
     friend class Arrangement_2<Dcel,Traits,Base_node>;
 
@@ -358,8 +364,8 @@ public:
       //push_in_edge_list below). if we want to implement a linear list
       //it needs to be removed (begin_child and past_end_child should then be
       //NULL)
-      begin_child = this;
-      past_end_child = this;
+      this->begin_child = this;
+      this->past_end_child = this;
     }
 
     ~Edge_node() {} //overrides the virtual dtr in Subcurve node
@@ -389,7 +395,7 @@ public:
 
     Curve_node() : Subcurve_node(0), levels(), edge_level()
     {
-      cv_wrap.cv = new Curve_2;
+      this->cv_wrap.cv = new Curve_2;
     }
   
     ~Curve_node() {} //overrides the virtual dtr in Subcurve_node

@@ -127,6 +127,11 @@ public:
   typedef typename Status_line::iterator            Status_line_iterator; 
   typedef typename std::list<Curve_node>::iterator  list_Curve_node_iterator;
 
+#ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_3
+  using Base::traits;
+  using Base::is_right;
+#endif
+
   Pmwx_aggregate_insert_old() : 
     Base() {}
   

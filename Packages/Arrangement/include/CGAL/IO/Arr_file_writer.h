@@ -31,14 +31,18 @@ template <class Arrangement>
 class Arr_file_writer : public  Pm_file_writer<Arrangement> {
 
 public:
+  typedef Pm_file_writer<Arrangement>                   Base;
   typedef typename Arrangement::Curve_iterator          Curve_iterator;
   typedef typename Arrangement::Subcurve_iterator       Subcurve_iterator;
   typedef typename Arrangement::Edge_iterator           Edge_iterator;
   typedef typename Arrangement::Curve_const_iterator    Curve_const_iterator;
   typedef typename Arrangement::Subcurve_const_iterator   
-                                                    Subcurve_const_iterator;
+                                                        Subcurve_const_iterator;
   typedef typename Arrangement::Edge_const_iterator     Edge_const_iterator;
 
+#ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_3
+  using Base::out;
+#endif
   Arr_file_writer(std::ostream & o,
                   const Arrangement & arr,
                   bool verbose = false) : 

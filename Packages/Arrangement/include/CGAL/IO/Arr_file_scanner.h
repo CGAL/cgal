@@ -52,6 +52,7 @@ CGAL_BEGIN_NAMESPACE
 template <class Arrangement>
 class Arr_file_scanner : public  Pm_file_scanner<Arrangement> {
 public:
+  typedef Pm_file_scanner<Arrangement> Base;
   typedef typename Arrangement::Curve_node                Curve_node;
   typedef typename Arrangement::Subcurve_node             Subcurve_node;
   typedef typename Arrangement::Edge_node                 Edge_node;
@@ -60,6 +61,12 @@ public:
   typedef typename Traits::Point                         Point;
   typedef typename Traits::X_curve                       X_curve;
   typedef typename Traits::Curve                         Curve;
+
+#ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_3
+  using Base::skip_comment;
+  using Base::in;
+#endif
+
 
   Arr_file_scanner(std::istream& in) : Pm_file_scanner<Arrangement>(in) {}
 
