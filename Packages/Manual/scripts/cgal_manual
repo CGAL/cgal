@@ -129,7 +129,7 @@ Latex="latex"
 # idea, not finished: if $Latex --help | grep file-line-error-style
 Bibtex="bibtex -terse"
 MakeIndex="makeindex -q"
-DvipsA4="dvips -q -D 600 -t a4 -P pdf"
+DvipsA4="dvips -q -D 600 -t a4 -P pdf -G0"
 Gzip="gzip"
 LatexToHtml="latex_to_html"
 Sendmail=mail
