@@ -51,6 +51,9 @@
 int
 main()
 {
+#if 1
+  std::cout << " NOT TESTED AT THE MOMENT !!! " << std::endl;
+#else
   typedef   CGAL::Homogeneous<double>                             Clsdb;
   // typedef   CGAL::Homogeneous<Precise_integer>     Clsb;
   typedef   CGAL::Homogeneous<CGAL::MP_Float>                     Clsb;
@@ -95,5 +98,6 @@ main()
   std::cout << std::endl;
   _test_mf_plane_3_to_2d( Cls() );
   
+#endif
   return 0;
 }

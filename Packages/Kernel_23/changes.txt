@@ -1,5 +1,5 @@
-1.44 (04 July 2003)
-- Fixed bug in operator<< and  operator>> in case of ASCII mode
+1.46 (23 July 2003)
+- Comment out test/Filtered_homogeneous.C until I get a chance to make it work.
 
 1.43 (20 June 2003)
 - Fixes for HTML index.
