@@ -147,20 +147,6 @@ int main(int argc,  char* argv[])
   Point_value_map values;
   Point_vector_map gradients;
 
-  sample.push_back( Point_2(2*h,2*h));
-  sample.push_back( Point_2( -2*h,2*h));
-  sample.push_back( Point_2( 2*h,-2*h ));
-  sample.push_back( Point_2( -2*h,-2*h)); 
-  sample.push_back( Point_2(0,2*h));
-  sample.push_back( Point_2( 0,2*h));
-  sample.push_back( Point_2(0,-2*h ));
-  sample.push_back( Point_2(0,-2*h)); 
-  sample.push_back( Point_2(2*h,0));
-  sample.push_back( Point_2( -2*h,0));
-  sample.push_back( Point_2( 2*h,0 ));
-  sample.push_back( Point_2( -2*h,0)); 
-
-
   sample.push_back( Point_2(h,h));
   sample.push_back( Point_2( -h,h));
   sample.push_back( Point_2( h,-h ));
@@ -170,6 +156,7 @@ int main(int argc,  char* argv[])
   sample.push_back( Point_2( h/2, 0.0 ));
   sample.push_back( Point_2( -h/2, 0.0));
   sample.push_back( Point_2(0.0,0.0));
+
   int s = sample.size();
   for(int j=0; j<s ; j++){
     T.insert(sample[j]);
