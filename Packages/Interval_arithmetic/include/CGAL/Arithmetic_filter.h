@@ -39,9 +39,9 @@
 //
 // 2 functions must be provided for the whole thing to work for a particular
 // instantiation:
-// - CGAL_to_interval_nt_advanced CGAL_to_interval_nt(const CT &);
+// - CGAL_convert_to<CGAL_Interval_nt_advanced> (CT)
 //     which gives an interval surely containing the CT value.
-// - ET CGAL_convert_to<ET>(const CT &)
+// - CGAL_convert_to<ET> (CT)
 //     which converts _exactly_ the CT value to ET.
 
 template <class CT, class ET>
@@ -161,18 +161,18 @@ inline istream &operator>>(istream &is, const CGAL_Filtered_exact<CT,ET>& d)
 // It's bad to provide such a default, because it can be an inexact cast:
 // ex: CGAL_Gmpz accepts it, but it's false !!!
 
-template <class ET, class CT>
-inline ET CGAL_convert_to (const CT & ct)
-{ return ET(ct); }
+// template <class ET, class CT>
+// inline ET CGAL_convert_to (const CT & ct)
+// { return ET(ct); }
 
 // template <class ET>
 // inline ET CGAL_convert_to (const double & d)
 // { return ET(d); }
 
 // When CT == ET.
-template <class ET>
-inline ET CGAL_convert_to (const ET & e)
-{ return e; }
+// template <class ET>
+// inline ET CGAL_convert_to (const ET & e)
+// { return e; }
 
 
 #ifdef CGAL_PREDICATES_ON_FTC2_H
