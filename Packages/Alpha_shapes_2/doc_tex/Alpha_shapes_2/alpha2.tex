@@ -192,19 +192,27 @@ type. It must be a \ccc{CGAL::Delaunay_triangulation_2} or a
 \ccc{CGAL::Triangulation_hierarchy_2} templatized with a Delaunay
 triangulation.
 
-The same holds for the vertex and face type, where we only provide the
-models \ccc{Alpha_shape_vertex_base_2<Gt, Tv},
-\ccc{Alpha_shape_face_base_2<Tf>}, and \ccc{Regular_triangulation_face_base_2<Gt>}. 
-They have functions that allow to get and set alpha values. 
 
-Finally there is the alpha shape traits class. Again we do not
-define the concept but only refer to the models \ccc{CGAL::Alpha_shape_euclidean_traits_2}
+The triangulation takes a geometric traits class as argument,
+the alpha shape traits class. The class
+\ccc{CGAL::Alpha_shape_euclidean_traits_2} is model of the
+concept \ccc{CGAL::AlphaShapeEuclideanTraits_2}.
+
 and \ccc{CGAL::Weighted_alpha_shape_euclidean_traits_2}.
 
 The class \ccc{Dt} must be parameterized with a special alpha shape
 traits class and a simple triangulation data structure, with no more requirements as
-for a simple triangulation class, but parameterized with the above 
-mentioned vertex and face class.
+for a simple triangulation class, but parameterized with special
+vertex and face classes.  The class \ccc{Alpha_shape_vertex_base_2<Gt, Tv} is a model for
+the concept \ccc{AlphaShapeVertexBase_2}.
+
+The class \ccc{Alpha_shape_face_base_2<Tf>} is a model for the concept
+\ccc{AlphaShapeFaceBase_2}.
+
+\ccc{Regular_triangulation_face_base_2<Gt>}
+
+They have functions that allow to get and set alpha values. 
+
 
 
 %----------------------------------------------------------------------
