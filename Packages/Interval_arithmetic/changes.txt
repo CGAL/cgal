@@ -1,5 +1,8 @@
 Changes done to the Interval Arithmetic package.
 
+Version 4.40 on 17 February 2000
+- Added KCC/Sun support (by Stefan).
+
 Version 4.39 on 22 November 1999
 - Fix test-suite bug detected by CHECK_EXACTNESS (global intervals initilized
   with incorrect rounding mode).
