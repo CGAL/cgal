@@ -13,6 +13,7 @@ DOCS: Added Filter_iterator suggested by Sylvain.
 ALL : Added Emptyset_iterator and Oneset_iterator.
 SRC : Combined iterators and iterator adaptors into iterator.h.
 SRC : Fixed a few more sunpro problems.
+SRC : Moved to Kernel_basic.
 TEST: Fixed double -> int conversion warning.
 
 //---------------------------------------------------------------------

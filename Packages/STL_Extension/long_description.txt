@@ -4,6 +4,29 @@
 
 
 //---------------------------------------------------------------------
+//	revision 243
+//---------------------------------------------------------------------
+
+
+//---------------------------------------------------------------------
+//	revision 242
+//---------------------------------------------------------------------
+
+SRC : Moved to Kernel_basic.
+SRC : Rejoined Inverse_index fix by Dima.
+SRC : Fixed sunpro 5.3 problems.
+SRC : Fixed dumb compiler macro.
+SRC : Fixed stlport stuff for msvc.
+SRC : Added functional_base to stlport.
+SRC : Made In_place_list::allocator non-static for MSVC.
+SRC : Added swap adaptor for functors.
+SRC : Added Allocators to In_place_list acc. to Lutz.
+SRC : Added compose_shared.
+SRC : Fixed Arity_traits problem.
+SRC : New functor adaptors (bind/compose).
+SRC : Removed Compose for Projection objects.
+
+//---------------------------------------------------------------------
 //	revision 240
 //---------------------------------------------------------------------
 
