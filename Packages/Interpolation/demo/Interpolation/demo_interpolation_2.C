@@ -68,46 +68,45 @@ typedef K::Vector_2                         Vector_2;
 typedef K::Point_3                          Point_3;
 typedef K::Vector_3                         Vector_3;
 typedef K::Segment_3                        Segment_3;
+typedef K::Triangle_3                       Triangle_3;
 
 typedef std::map<Point_2, Coord_type, K::Less_xy_2>     Point_value_map ;
 typedef std::map<Point_2, Vector_2, K::Less_xy_2 >      Point_vector_map;
 
-typedef std::vector<Point_3>                   Point_vector_3;
-typedef std::vector<Point_2>                     Point_vector_2;
+typedef std::vector<Point_3>                            Point_vector_3;
+typedef std::vector<Point_2>                            Point_vector_2;
 
 ////////////////////// 
 // VISU GEOMVIEW
 ////////////////////// 
 
 template<class Point_vector>
-void visu_points(CGAL::Geomview_stream & os, const Point_vector & points)
+void visu_points(CGAL::Geomview_stream & gv, const Point_vector & points)
 {
   int n = points.size();
   for(int i=0; i<n ; i++)
-    os << points[i];
+    gv << points[i];
 }
+template < class Point_vector>
+void
+visu_graph(CGAL::Geomview_stream & gv, const Point_vector& points, int m) 
+{
 
-//////////////////////////////// 
-template< class Map >  
-struct DataAccess : public std::unary_function< typename Map::key_type,
-		    typename Map::mapped_type> {
-  typedef typename Map::mapped_type Data_type;
-  typedef typename Map::key_type  Point;
+  //generate list of triangles:
+  std::vector< Triangle_3 > tr;
+  tr.reserve(2*(m-1)*(m-1));
   
-  //CONSTRUCTOR:
-  DataAccess< Map >(const Map& m): map(m){};
-  
-  //Functor
-  Data_type operator()(const Point& p) { 
-    
-    typename Map::const_iterator mit = map.find(p);
-    if(mit!= map.end())
-      return mit->second;
-    return Data_type();
-  };
-  
-  const Map& map;
-};
+  //indices
+  for(int i=0; i< m-1;i++)
+    for(int j=0; j< m-1; j++){
+      tr.push_back(Triangle_3(points[i*m + j],
+			      points[j+1 + i*m],
+			      points[(j+1) + (i+1)*m]));
+      tr.push_back(Triangle_3(points[i*m + j],points[(j+1) + (i+1)*m],
+			      points[j + (i+1)*m]));
+    } 
+  gv.draw_triangles(tr.begin(), tr.end());  
+}
 
 //////////////////////////////////////////////////////////////////////////
 ////POINT GENERATION:
@@ -121,8 +120,6 @@ void generate_grid_points(Point_vector_2& points, int m, float h)
 
   std::cout <<" generate " <<n   << " grid points in square of height " 
 	    << h <<std::endl;
- 
-   
   // Create n points from a 16 x 16 grid. Note that the double
   // arithmetic _is_ sufficient to produce exact integer grid points.
   // The distance between neighbors is 34 pixel = 510 / 15.
@@ -131,46 +128,6 @@ void generate_grid_points(Point_vector_2& points, int m, float h)
 				CGAL::Creator_uniform_2<double,Point_2>());
   
 }
-template < class Point_vector>
-bool
-dump_off_file_quadrilateral(const Point_vector& points, int m) 
-{
-  //open file stream 
-  char fname[11];
-  CGAL_CLIB_STD::strcpy(fname, "result.off");
-
-  //dump reconstruction file:
-  std::ofstream os(fname,std::ios::out);
-  if (! os) {
-    std::cout <<"cannot open output file: result.off. "<< std::endl;
-    return false;
-  }
-
-
-
-  int n= points.size();
-  std::cout << n << " points " << (m-1)*(m-1) <<std::endl;
-  
-  //first line: OFF
-  // 2. line : number of vertices and quad_indices:
-  os << "OFF" << std::endl;
-  os << n << " " <<(m-1)*(m-1) << " 0" <<
-    std::endl;
-  os << std::endl;
-  
-  for(int i=0; i<n ; i++)
-    os << points[i]<< std::endl;
-  
-  //indices
-  for(int i=0; i< m-1;i++)
-    for(int j=0; j< m-1; j++)
-      os << "4  " << i*m + j  << "  "
-	 <<  j+1 + i*m 
-	 << "  " <<(j+1) + (i+1)*m << "  " <<j + (i+1)*m 
-	 << std::endl;
-  return true;  
-}
-
 
 ////////////////////// 
 
@@ -189,7 +146,21 @@ int main(int argc,  char* argv[])
   Dt T;
   Point_value_map values;
   Point_vector_map gradients;
-  
+
+  sample.push_back( Point_2(2*h,2*h));
+  sample.push_back( Point_2( -2*h,2*h));
+  sample.push_back( Point_2( 2*h,-2*h ));
+  sample.push_back( Point_2( -2*h,-2*h)); 
+  sample.push_back( Point_2(0,2*h));
+  sample.push_back( Point_2( 0,2*h));
+  sample.push_back( Point_2(0,-2*h ));
+  sample.push_back( Point_2(0,-2*h)); 
+  sample.push_back( Point_2(2*h,0));
+  sample.push_back( Point_2( -2*h,0));
+  sample.push_back( Point_2( 2*h,0 ));
+  sample.push_back( Point_2( -2*h,0)); 
+
+
   sample.push_back( Point_2(h,h));
   sample.push_back( Point_2( -h,h));
   sample.push_back( Point_2( h,-h ));
@@ -249,61 +220,65 @@ int main(int argc,  char* argv[])
   
 
   //INTERPOLATION:
-  Coord_type exact_value, res, norm;
+  Coord_type value;
+  std::pair<Coord_type, bool> res;
   std::vector< std::pair< Point_2, Coord_type > > coords;
   int n = points.size();
   ITraits traits;
   
   std::cout << "Interpolation at  "<<n  <<" grid points " << std::endl;
   for(int i=0;i<n;i++){
-    norm = 
+    Coord_type norm = 
       CGAL::natural_neighbor_coordinates_2(T, points[i],
 					   std::back_inserter(coords)).second;
     assert(norm>0);  
     
     switch(method){
     case 0: 
-      res = CGAL::linear_interpolation(coords.begin(),coords.end(),norm,
-				       DataAccess<Point_value_map>(values)); 
+      value = CGAL::linear_interpolation(coords.begin(),coords.end(),norm,
+				       CGAL::DataAccess<Point_value_map>(values)); 
       break;
     case 1: 
       res = CGAL::quadratic_interpolation(coords.begin(),coords.end(),
 					  norm, points[i], 
-					  DataAccess< Point_value_map>
+					  CGAL::DataAccess< Point_value_map>
 					  (values),
-					  DataAccess< Point_vector_map>
+					  CGAL::DataAccess< Point_vector_map>
 					  (gradients),traits); break;
     case 2:  
       res = CGAL::sibson_c1_interpolation(coords.begin(),coords.end(),
-					  norm, points[i], 
-					  DataAccess<Point_value_map>
-					  (values),
-					  DataAccess<Point_vector_map>
-					  (gradients), traits); break;
+       					  norm, points[i], 
+       					  CGAL::DataAccess<Point_value_map>
+       					  (values),
+       					  CGAL::DataAccess<Point_vector_map>
+       					  (gradients), traits); break;
     case 3:  
       res = CGAL::sibson_c1_interpolation_square(coords.begin(),coords.end(),
 						 norm, points[i], 
-						 DataAccess<Point_value_map>
+						 CGAL::DataAccess<Point_value_map>
 						 (values),
-						 DataAccess<Point_vector_map>
+						 CGAL::DataAccess<Point_vector_map>
 						 (gradients), traits); break;
     case 4:  
       res = CGAL::farin_c1_interpolation(coords.begin(),coords.end(),
 					 norm, points[i], 
-					 DataAccess<Point_value_map>
+					 CGAL::DataAccess<Point_value_map>
 					 (values),
-					 DataAccess<Point_vector_map>
+					 CGAL::DataAccess<Point_vector_map>
 					 (gradients), traits); break;
       
     default: std::cout <<"No valid choice of interpolant." <<
 		  std::endl; break;
     }
-    points_3.push_back(Point_3(points[i].x(), points[i].y(),res));
+    if(method==0)
+      points_3.push_back(Point_3(points[i].x(), points[i].y(),value));
+    else if(res.second)
+      points_3.push_back(Point_3(points[i].x(), points[i].y(),res.first));
+    else std::cout <<"Interpolation failed"<<std::endl;
     coords.clear();
   }
   /************** end of Coordinate computation **************/
-  dump_off_file_quadrilateral(points_3, m);
-
+  //dump_off_file_quadrilateral(points_3, m);
   char ch;
   
   //viewer
@@ -312,6 +287,8 @@ int main(int argc,  char* argv[])
   gv.clear();
   gv.set_line_width(2);
   
+  visu_graph(gv, points_3,m);
+
   std::cout << "The data points are displayed in blue in the geomview"
 	    << " application." << std::endl;
   gv << CGAL::BLUE;
@@ -342,7 +319,7 @@ int main(int argc,  char* argv[])
   std::cout << "Enter any character to quit." << std::endl;
   std::cin >> ch;
   
-  return 1; 
+  return 0; 
 }
 #endif // if defined(__BORLANDC__) || defined(_MSC_VER)
  
