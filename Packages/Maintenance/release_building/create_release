@@ -263,7 +263,7 @@ sub CreateExampleTestDirs()
     foreach $DIR (glob("*")) {
 	print "$DIR\n";
 	if ( -d $DIR ) {
-	    system('cp', '-r', "$DIR", "../test/Examples$DIR");
+	    system('cp', '-r', "$DIR", "../test/${DIR}_Examples");
 	}
     }
     chdir '..';
