@@ -21,9 +21,9 @@ one_run()
         cp ${OUTPUTFILE} aresult
 	if [ -r ${goodresult} ]
 	then
-	    if ${CMP} aresult ${goodresult} ||
-               grep -c "LEDA installation missing." aresult > /dev/null ||
-               grep -c "GMPZ installation missing." aresult > /dev/null
+	    if grep -c "LEDA installation missing." aresult > /dev/null ||
+               grep -c "GMPZ installation missing." aresult > /dev/null ||
+               ${CMP} aresult ${goodresult}
 	    then
 			succes=oui
 	    else
