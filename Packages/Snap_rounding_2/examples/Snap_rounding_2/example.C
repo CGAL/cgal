@@ -3,8 +3,6 @@
 #include "../../include/CGAL/Snap_rounding_2_traits.h"
 #include "../../include/CGAL/Snap_rounding_2.h"
 
-#include <CGAL/leda_real.h>
-
 typedef leda_rational                    Number_type;
 typedef CGAL::Cartesian<Number_type>     Rep;
 typedef CGAL::Snap_rounding_traits<Rep>  Sr_traits;

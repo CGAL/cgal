@@ -216,7 +216,7 @@ public:
       --right_iter;
     }
 
-    Iso_rectangle_2 rec = _gt.box_of_minkowski_sum_2_object()(s,unit_squere,
+    Iso_rectangle_2 rec = _gt.bounding_box_of_minkowski_sum_2_object()(s,unit_squere,
 			  right_iter->second);
 
     Point_2 p1 = rec.vertex(0);

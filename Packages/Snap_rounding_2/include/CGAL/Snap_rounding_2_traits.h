@@ -66,8 +66,8 @@ class Integer_grid_point_2 {
  public:
   Point_2 operator()(Point_2 p,NT pixel_size)
   {
-    NT x = p.x() - pixel_size / 2.0 / pixel_size;
-    NT y = p.y() - pixel_size / 2.0 / pixel_size;
+    NT x = (p.x() - pixel_size / 2.0) / pixel_size;
+    NT y = (p.y() - pixel_size / 2.0) / pixel_size;
     Point_2 out_p(x,y);
 
     return(out_p);
@@ -121,10 +121,10 @@ Rotate_point_2 rotate_point_2_object() const {return Rotate_point_2(); }
 /*! Functor
  */
 
-class Box_of_minkowski_sum_2 {
+class Bounding_box_of_minkowski_sum_2 {
  private:
   const Snap_rounding_traits<base_rep>* _gt;
-  Box_of_minkowski_sum_2(const Snap_rounding_traits<base_rep>* gt) : _gt(gt) {}
+  Bounding_box_of_minkowski_sum_2(const Snap_rounding_traits<base_rep>* gt) : _gt(gt) {}
 
   Point_2 small_x_point(Point_2 p1,Point_2 p2)
   {
@@ -235,7 +235,8 @@ class Box_of_minkowski_sum_2 {
   friend class Snap_rounding_traits<base_rep>;
 };
 
-Box_of_minkowski_sum_2 box_of_minkowski_sum_2_object() const {return Box_of_minkowski_sum_2(this); }
+Bounding_box_of_minkowski_sum_2 bounding_box_of_minkowski_sum_2_object() const
+    {return Bounding_box_of_minkowski_sum_2(this); }
 
  private:
   static const double rad_to_deg = 57.297;
