@@ -26,7 +26,7 @@ void modified_two_way_scan( RandomAccessIter p_begin, RandomAccessIter p_end,
                  p != p_end && Traits::is_lo_less_hi( *p, *i_begin, 0 );
                  ++p )
             {
-                if( Traits::get_num( *p ) == Traits::get_num( *i_begin ) )
+                if( Traits::get_id( *p ) == Traits::get_id( *i_begin ) )
                     continue;
 
                 for( unsigned int dim = 1; dim <= last_dim; ++dim )
@@ -47,7 +47,7 @@ void modified_two_way_scan( RandomAccessIter p_begin, RandomAccessIter p_end,
                  i != i_end && Traits::is_lo_less_hi( *i, *p_begin, 0 );
                  ++i )
             {
-                if( Traits::get_num( *p_begin ) == Traits::get_num( *i ) )
+                if( Traits::get_id( *p_begin ) == Traits::get_id( *i ) )
                     continue;
                 for( unsigned int dim = 1; dim <= last_dim; ++dim )
                     if( !Traits::does_intersect( *p_begin, *i, dim ) )

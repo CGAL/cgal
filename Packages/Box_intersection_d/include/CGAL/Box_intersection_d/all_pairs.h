@@ -13,7 +13,7 @@ void all_pairs( RandomAccessIter p_begin, RandomAccessIter p_end,
 {
     for( RandomAccessIter p = p_begin; p != p_end; ++p ) {
         for( RandomAccessIter i = i_begin; i != i_end; ++i ) {
-            if (Traits::get_num(*p) >= Traits::get_num(*i) )
+            if (Traits::get_id(*p) >= Traits::get_id(*i) )
                 continue;
             for( unsigned int dim = 0; dim <= last_dim; ++dim )
                 if( !Traits::does_intersect( *p, *i, dim ) )

@@ -61,15 +61,16 @@ iterative_radon( RandomAccessIter begin, RandomAccessIter end,
 // than mi. so, elements from [mid,end) are equal or higher than mi.
 template< class RandomAccessIter, class Predicate_traits, class T >
 RandomAccessIter
-split_points( RandomAccessIter begin, RandomAccessIter end, Predicate_traits traits,
-              int dim, T& mi )
+split_points( RandomAccessIter begin, RandomAccessIter end,
+              Predicate_traits traits, int dim, T& mi )
 {
     // magic formula
     int levels = (int)(.91*log(((double)std::distance(begin,end))/137.0)+1);
     levels = (levels <= 0) ? 1 : levels;
     RandomAccessIter it = iterative_radon( begin, end, traits, dim, levels );
     mi = Predicate_traits::get_lo( *it, dim );
-    return std::partition( begin, end, typename Predicate_traits::Lo_Less( mi, dim ) );
+    return std::partition( begin, end,
+                           typename Predicate_traits::Lo_less( mi, dim ) );
 }
 
 
@@ -109,7 +110,7 @@ void dump_intervals( ForwardIter begin, ForwardIter end, Traits traits,
 template< class ForwardIter, class  Traits >
 void dump_box_numbers( ForwardIter begin, ForwardIter end, Traits traits ) {
     while( begin != end ) {
-        std::cout << Traits::get_num( *begin ) << " ";
+        std::cout << Traits::get_id( *begin ) << " ";
         ++begin;
     }
     std::cout << std::endl;
@@ -122,17 +123,16 @@ struct Counter {
    ~Counter() { --value; }
 };
 
-template< class RandomAccessIter, class Callback, class T, class Predicate_traits >
+template<class RandomAccessIter,class Callback,class T,class Predicate_traits>
 void segment_tree( RandomAccessIter p_begin, RandomAccessIter p_end,
                    RandomAccessIter i_begin, RandomAccessIter i_end,
                    T lo, T hi,
-                   Callback& callback, Predicate_traits traits, unsigned int cutoff,
-                   unsigned int dim, bool in_order )
+                   Callback& callback, Predicate_traits traits,
+                   unsigned int cutoff, unsigned int dim, bool in_order )
 {
-    typedef typename Predicate_traits::Box Box;
-    typedef typename Predicate_traits::Interval_Spanning_Predicate Spanning;
-    typedef typename Predicate_traits::Lo_Less Lo_Less;
-    typedef typename Predicate_traits::Hi_Greater Hi_Greater;
+    typedef typename Predicate_traits::Spanning   Spanning;
+    typedef typename Predicate_traits::Lo_less    Lo_less;
+    typedef typename Predicate_traits::Hi_greater Hi_greater;
 
     const T inf = workaround::numeric_limits< T >::inf();
     const T sup = workaround::numeric_limits< T >::sup();
@@ -153,12 +153,12 @@ void segment_tree( RandomAccessIter p_begin, RandomAccessIter p_end,
     {
         // first: each point is inside segment [lo,hi)
         for( RandomAccessIter it = p_begin; it != p_end; ++it ) {
-            assert( Lo_Less( hi, dim )(*it) );
-            assert( Lo_Less( lo, dim )(*it) == false );
+            assert( Lo_less( hi, dim )(*it) );
+            assert( Lo_less( lo, dim )(*it) == false );
         }
         // second: each interval intersects segment [lo,hi)
         for( RandomAccessIter it = i_begin; it != i_end; ++it )
-            assert( Hi_Greater( lo, dim )(*it) && Lo_Less( hi, dim )(*it) );
+            assert( Hi_greater( lo, dim )(*it) && Lo_less( hi, dim )(*it) );
     }
 #endif
 
@@ -208,13 +208,13 @@ void segment_tree( RandomAccessIter p_begin, RandomAccessIter p_end,
     RandomAccessIter i_mid;
     // separate left intervals.
     // left intervals have a low point strictly less than mi
-    i_mid = std::partition( i_span_end, i_end, Lo_Less( mi, dim ) );
+    i_mid = std::partition( i_span_end, i_end, Lo_less( mi, dim ) );
     DUMP("->left" << std::endl )
     segment_tree( p_begin, p_mid, i_span_end, i_mid, lo, mi,
                   callback, traits, cutoff, dim, in_order );
     // separate right intervals.
     // right intervals have a high point strictly higher than mi
-    i_mid = std::partition( i_span_end, i_end, Hi_Greater( mi, dim ) );
+    i_mid = std::partition( i_span_end, i_end, Hi_greater( mi, dim ) );
     DUMP("->right"<< std::endl )
     segment_tree( p_mid, p_end, i_span_end, i_mid, mi, hi,
                   callback, traits, cutoff, dim, in_order );
