@@ -7,12 +7,13 @@
 
 #if defined(USE_LEDA_KERNEL)
 #include <CEP/Leda_rat_kernel/leda_rat_kernel_traits.h>
+#include <CGAL/Arr_segment_traits_2.h>
 #else
 #if defined(USE_MY_KERNEL)
 #include <CGAL/Arr_leda_segment_exact_traits.h>
 #else
 #include <CGAL/Cartesian.h>
-#include <CGAL/Arr_segment_exact_traits.h>
+#include <CGAL/Arr_segment_traits_2.h>
 #endif
 #endif
 
@@ -40,7 +41,8 @@
 typedef leda_rational                                   NT;
 
 #if defined(USE_LEDA_KERNEL)
-typedef CGAL::leda_rat_kernel_traits                    Traits;
+typedef CGAL::leda_rat_kernel_traits                    Kernel;
+typedef CGAL::Arr_segment_exact_traits<Kernel>          Traits;
 #define PM_TYPE "Leda Kernel"
 #else
 #if defined(USE_MY_KERNEL)
@@ -180,11 +182,12 @@ public:
     CurveList::const_iterator i;
     for (i = m_curveList.begin(); i != m_curveList.end(); i++)
         pm.insert(*i);
-    // pm.insert(m_curveList.begin(), m_curveList.end());
-    // if (!pm.is_valid()) std::cerr << "map invalid!" << std::endl;
-    //std::cout << "# of vertices: " << pm.number_of_vertices() << std::endl;
-    //std::cout << "# of halfedges: " << pm.number_of_halfedges() << std::endl;
-    //std::cout << "# of faces: " << pm.number_of_faces() << std::endl;
+    if (m_verbose) {
+      if (!pm.is_valid()) std::cerr << "map invalid!" << std::endl;
+      std::cout << "# of vertices: " << pm.number_of_vertices() << std::endl;
+      std::cout << "# of halfedges: " << pm.number_of_halfedges() << std::endl;
+      std::cout << "# of faces: " << pm.number_of_faces() << std::endl;
+    }
   }
 };
 
@@ -207,7 +210,12 @@ public:
     Strategy strategy;
     Pmwx pm(&strategy);
     pm.insert(m_curveList.begin(), m_curveList.end());
-    // if (!pm.is_valid()) std::cerr << "map invalid!" << std::endl;
+    if (m_verbose) {
+      if (!pm.is_valid()) std::cerr << "map invalid!" << std::endl;
+      std::cout << "# of vertices: " << pm.number_of_vertices() << std::endl;
+      std::cout << "# of halfedges: " << pm.number_of_halfedges() << std::endl;
+      std::cout << "# of faces: " << pm.number_of_faces() << std::endl;
+    }
   }
 };
 
@@ -242,6 +250,12 @@ public:
     Strategy strategy;
     Pmwx pm(&strategy);
     pm.insert(m_curveList.begin(), m_curveList.end());
+    if (m_verbose) {
+      if (!pm.is_valid()) std::cerr << "map invalid!" << std::endl;
+      std::cout << "# of vertices: " << pm.number_of_vertices() << std::endl;
+      std::cout << "# of halfedges: " << pm.number_of_halfedges() << std::endl;
+      std::cout << "# of faces: " << pm.number_of_faces() << std::endl;
+    }
 
     m_window->set_flush(0);
     (*m_window) << pm;
