@@ -1,3 +1,6 @@
+28 April 2004  Menelaos Karavelas <mkaravel@cse.nd.edu>
+- fixed bugs in test suite and examples, created by the changes of April 25th
+
 26 April 2004  Menelaos Karavelas <mkaravel@cse.nd.edu>
 - CC-5.30_SunOS-5.8 was complaining about the static constants of the
   Parabola_2 and Hyperbola_ray_2 classes; these constants are now given
