@@ -4,6 +4,9 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+Ver 7.39 (08/07/02)
+- andreas fixes : Point -> const Point&
+
 Ver 7.38 (08/07/02)
 - remove the virtual character of insert in Constrained_triangulation
   Constrained_Delaunay_triangulation_2 and Constrained_triangulation_plus_2.
