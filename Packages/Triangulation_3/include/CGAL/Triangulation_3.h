@@ -585,6 +585,18 @@ public:
 	  ( ( i == 0 || i == 1 || i == 2 || i == 3 ) &&
 	    ( j == 0 || j == 1 || j == 2 || j == 3 ) );
 	CGAL_triangulation_precondition( ! is_infinite(c,i,j) );
+	Locate_type lt;
+	int li;
+	CGAL_triangulation_precondition
+	  ( geom_traits().collinear( c->vertex(i)->point(),
+				     p,
+				     c->vertex(j)->point() )
+	    &&
+	    ( side_of_segment( p,
+			       c->vertex(i)->point(),
+			       c->vertex(j)->point(),
+			       lt,li ) == CGAL_ON_BOUNDED_SIDE )
+	    );
    	break;
       }
     case 2:
@@ -593,6 +605,18 @@ public:
 	  ( ( i == 0 || i == 1 || i == 2 ) &&
 	    ( j == 0 || j == 1 || j == 2 ) );
 	CGAL_triangulation_precondition( ! is_infinite(c,i,j) );
+	Locate_type lt;
+	int li;
+	CGAL_triangulation_precondition
+	  ( geom_traits().collinear( c->vertex(i)->point(),
+				     p,
+				     c->vertex(j)->point() )
+	    &&
+	    ( side_of_segment( p,
+			       c->vertex(i)->point(),
+			       c->vertex(j)->point(),
+			       lt,li ) == CGAL_ON_BOUNDED_SIDE )
+	    );
    	break;
       }
     case 1:
@@ -605,18 +629,6 @@ public:
       CGAL_triangulation_assertion( false );
       // return 
     }
-    Locate_type lt;
-    int li;
-    CGAL_triangulation_precondition
-      ( geom_traits().collinear( c->vertex(i)->point(),
-			p,
-			c->vertex(j)->point() )
-	&&
-	( side_of_segment( p,
-			c->vertex(i)->point(),
-			c->vertex(j)->point(),
-			lt,li ) == CGAL_ON_BOUNDED_SIDE )
-      );
     Vertex_handle v = new Vertex(p);
     _tds.insert_in_edge(&(*v), &(*c), i, j);
     return v;
@@ -781,7 +793,7 @@ hat(Vertex_handle v, Cell_handle c)
 } // hat
 void
 link(Vertex_handle v, Cell_handle c)
-  // c belongs to the hat of v anad has a fecet on its boundary
+  // c belongs to the hat of v and has a facet on its boundary
   // traverses the boundary of the hat and finds adjacencies
   // traversal is done counterclockwise as seen from v
 {
@@ -789,13 +801,8 @@ link(Vertex_handle v, Cell_handle c)
   int iv = c->index(v);
   int ib;
   for ( ib=0; ib<4; ib++ ) {
-    if ( ib != iv ) {
-      if ( c->neighbor(ib)->has_vertex(infinite) ) {
-	break;
-      }
-    }
-    else {
-      ++ib;
+    if ( ( ib != iv ) && c->neighbor(ib)->has_vertex(infinite) ) {
+      break;
     }
   }
   
