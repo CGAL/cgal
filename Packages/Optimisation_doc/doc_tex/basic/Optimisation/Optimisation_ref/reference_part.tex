@@ -19,6 +19,11 @@
 \newcommand{\linebreakByHand}{\ccTexHtml{\linebreak[4]}{}}
 \newcommand{  \newlineByHand}{\ccTexHtml{\\}{}}
 
+% cross references
+\index{minimum enclosing|see{{smallest enclosing}}}
+\index{minimum spanning|see{{smallest enclosing}}}
+\index{concentric spheres|see{{annulus}}}
+
 % -----------------------------------------------------------------------------
 \section*{Introduction}
 
@@ -35,7 +40,7 @@ Maximum area and perimeter inscribed $k$-gon (2D), extremal inscribed
 $k$-gon (2D).
 
 \paragraph{Optimal Distances.}
-All furthest neigbors (2D), polytope distance (dD).
+All furthest neigbors (2D), width of point set (3D), polytope distance (dD).
 
 \paragraph{Advanced Techniques.}
 Monotone and sorted matrix search.
@@ -69,19 +74,12 @@ Monotone and sorted matrix search.
 
 \bigskip
 
-\ccRefIdfierPage{CGAL::Min_sphere_d<Traits>}\\[1ex]
-\ccRefIdfierPage{CGAL::Min_sphere_d_traits_2<R>}\\
-\ccRefIdfierPage{CGAL::Min_sphere_d_traits_3<R>}\\
-\ccRefIdfierPage{CGAL::Min_sphere_d_traits_d<R>}\\[1ex]
-\ccRefConceptPage{Min_sphere_d_traits}
-
-\smallskip
-
+\ccRefIdfierPage{CGAL::Min_sphere_d<Traits>}\\
 \ccRefIdfierPage{CGAL::Min_annulus_d<Traits>}\\[1ex]
-\ccRefIdfierPage{CGAL::Min_annulus_d_traits_2<R,ET,NT>}\\
-\ccRefIdfierPage{CGAL::Min_annulus_d_traits_3<R,ET,NT>}\\
-\ccRefIdfierPage{CGAL::Min_annulus_d_traits_d<R,ET,NT>}\\[1ex]
-\ccRefConceptPage{Min_annulus_d_traits}
+\ccRefIdfierPage{CGAL::Optimisation_d_traits_2<R,ET,NT>}\\
+\ccRefIdfierPage{CGAL::Optimisation_d_traits_3<R,ET,NT>}\\
+\ccRefIdfierPage{CGAL::Optimisation_d_traits_d<R,ET,NT>}\\[1ex]
+\ccRefConceptPage{Optimisation_d_traits}
 
 % -----------------------------------------------------------------------------
 \subsection*{Inscribed Areas}
@@ -108,11 +106,17 @@ Monotone and sorted matrix search.
 
 \smallskip
 
+\ccRefIdfierPage{CGAL::Width_3<Traits>}\\[1ex]
+\ccRefIdfierPage{CGAL::Width_default_traits_3<R>}\\[1ex]
+\ccRefConceptPage{Width_traits_3}
+
+\smallskip
+
 \ccRefIdfierPage{CGAL::Polytope_distance_d<Traits>}\\[1ex]
-\ccRefIdfierPage{CGAL::Polytope_distance_d_traits_2<R,ET,NT>}\\
-\ccRefIdfierPage{CGAL::Polytope_distance_d_traits_3<R,ET,NT>}\\
-\ccRefIdfierPage{CGAL::Polytope_distance_d_traits_d<R,ET,NT>}\\[1ex]
-\ccRefConceptPage{Polytope_distance_d_traits}
+\ccRefIdfierPage{CGAL::Optimisation_d_traits_2<R,ET,NT>}\\
+\ccRefIdfierPage{CGAL::Optimisation_d_traits_3<R,ET,NT>}\\
+\ccRefIdfierPage{CGAL::Optimisation_d_traits_d<R,ET,NT>}\\[1ex]
+\ccRefConceptPage{Optimisation_d_traits}
 
 % -----------------------------------------------------------------------------
 \subsection*{Advanced Techniques}
@@ -141,7 +145,7 @@ Monotone and sorted matrix search.
 
 \inputOpt{main_Min_sphere_d}
 \inputOpt{main_Min_annulus_d}
-
+\inputOpt{main_Optimisation_d_traits}
 
 % Inscribed Areas
 
@@ -150,6 +154,8 @@ Monotone and sorted matrix search.
 % Optimal Distances
 
 \inputOpt{main_All_furthest_neighbors}
+
+\inputOpt{main_Width_3}
 
 \inputOpt{main_Polytope_distance_d}
 
