@@ -24,12 +24,13 @@
 #ifndef CGAL_INTERVAL_SKIP_LIST_H
 #define CGAL_INTERVAL_SKIP_LIST_H
 
+#include <CGAL/basic.h>
 #include <list>
 #include <cassert>
 #include <iostream>
 #include <CGAL/Random.h>
 //#define CCC
-#define ISL_LIST
+//#define ISL_LIST
 
 #include <CGAL/Compact_container.h>
 
@@ -130,15 +131,16 @@ class Interval_for_container : public Interval_
 
 #ifdef ISL_LIST
     std::list<Interval> container;
+
     typedef typename std::list<Interval>::iterator Interval_handle;
 #else
     Compact_container<Interval_for_container<Interval> > container;
-    typedef Compact_container<Interval_for_container<Interval> >::iterator 
+    typedef typename Compact_container<Interval_for_container<Interval> >::iterator 
       Interval_handle;
 #endif
 
 #ifdef CCC
-    typedef Compact_container<IntervalListElt<Interval> >::iterator ILE_handle;
+    typedef typename Compact_container<IntervalListElt<Interval> >::iterator ILE_handle;
 #else
     typedef IntervalListElt<Interval>* ILE_handle;
 #endif
@@ -299,6 +301,7 @@ class Interval_for_container : public Interval_
     void printOrdered(std::ostream& os) const;
 
 #ifdef ISL_LIST
+
     typedef typename std::list<Interval>::const_iterator const_iterator;
 #else
     typedef typename 
@@ -325,6 +328,7 @@ class Interval_for_container : public Interval_
     typedef typename Interval::Value Value;
     //typedef Interval* Interval_handle;
 #ifdef ISL_LIST
+
     typedef typename std::list<Interval>::iterator Interval_handle;
 #else
     typedef typename Compact_container<Interval_for_container<Interval> >::iterator 
@@ -332,7 +336,7 @@ class Interval_for_container : public Interval_
 #endif
 
 #ifdef CCC
-    typedef typenme Compact_container<IntervalListElt<Interval> >::iterator ILE_handle;
+    typedef typename Compact_container<IntervalListElt<Interval> >::iterator ILE_handle;
 #else
     typedef IntervalListElt<Interval>* ILE_handle;
 #endif
@@ -428,6 +432,7 @@ class Interval_for_container : public Interval_
   {
     typedef Interval_ Interval;
 #ifdef ISL_LIST
+
     typedef typename std::list<Interval>::iterator Interval_handle;
 #else
     typedef typename Compact_container<Interval_for_container<Interval> >::iterator 
@@ -1102,8 +1107,8 @@ template <class Interval>
     // Remove markers for interval I, which has left as it's left
     // endpoint,  following a staircase pattern.
 
-    Interval_handle res=0, tmp=0;
-
+    //    Interval_handle res=0, tmp=0; // af: assignment not possible with std::list
+    Interval_handle res, tmp;
     // remove marks from ascending path
     IntervalSLnode<Interval>* x = left;
     if (I.contains(x->key)) {
@@ -1349,11 +1354,13 @@ template <class Interval>
   template <class Interval>
   void IntervalListElt<Interval>::print(std::ostream& os) const
   {
+    /*
     if(I == 0) {
       os << "NULL";
     } else {
       os << *I;
     }
+    */
   }
 
   template <class Interval>
