@@ -328,6 +328,8 @@ private:
 
     Values                   tmp_l;     // temporary vector of size l
     Values                   tmp_x;     // temporary vector of s. >= B_O.size()
+    Values                   tmp_l_2;   // temporary vector of size l
+    Values                   tmp_x_2;   // temporary vector of s. >= B_O.size()
 
   public:
 
@@ -1205,14 +1207,27 @@ template < class Rep_ >  inline
 bool  QPE_solver<Rep_>::
 basis_matrix_stays_regular()
 {
-    /* ToDo: handling of slack variable
-    // slack variable?
-    if ( has_ineq && ( i >= qp_n)) return true;
-    */
+    CGAL_qpe_precondition( is_phaseII);
+    int new_row, k;
+    
+    if ( has_ineq && (i >= qp_n)) {	// slack variable
+	new_row = slack_A[ i-qp_n].first;
+	A_row_by_index_accessor  a_accessor( A_accessor( qp_A, 0, qp_n), new_row);
+	std::copy( A_row_by_index_iterator( B_O.begin(), a_accessor),
+		   A_row_by_index_iterator( B_O.end  (), a_accessor),
+		   tmp_x.begin());
+		   
+	inv_M_B.multiply( tmp_x.begin(),                        // dummy (not used)
+		  tmp_x.begin(), tmp_l_2.begin(), tmp_x_2.begin(),
+		  Tag_false(),                                 // QP
+		  Tag_false());                             // ignore 1st argument
+        return ( -inv_M_B.inner_product_x( tmp_x_2.begin(), tmp_x.begin()) != et0);
 
-    // check original variable
-    int k = l+in_B[ i];
-    return ( inv_M_B.entry( k, k) != et0);
+	
+    } else {						// check original variable
+    	k = l+in_B[ i];
+    	return ( inv_M_B.entry( k, k) != et0);
+    }
 
 /* ToDo: check, if really not needed in 'update_1':
   - basis has already minimal size  or
@@ -1252,6 +1267,7 @@ compute__x_B_S( Tag_false)
     for ( i_it = B_S.begin(); i_it != B_S.end(); ++i_it, ++x_it) {
 	if ( slack_A[ *i_it - qp_n].second) *x_it = -(*x_it);
     }
+       
 }
 
 CGAL_END_NAMESPACE
