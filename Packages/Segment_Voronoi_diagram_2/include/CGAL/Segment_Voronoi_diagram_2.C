@@ -32,7 +32,7 @@ CGAL_BEGIN_NAMESPACE
 //====================================================================
 
 //--------------------------------------------------------------------
-// insertion of site
+// insertion of first three sites
 //--------------------------------------------------------------------
 
 template<class Gt, class PC, class DS, class LTag>
@@ -187,7 +187,6 @@ insert_third(const Site_2& t, const Storage_site_2& ss)
 template<class Gt, class PC, class DS, class LTag>
 typename Segment_Voronoi_diagram_2<Gt,PC,DS,LTag>::Vertex_handle
 Segment_Voronoi_diagram_2<Gt,PC,DS,LTag>::
-//insert_third(const Point_2& p0, const Point_2 & p1)
 insert_third(Vertex_handle v0, Vertex_handle v1)
 {
   CGAL_precondition( number_of_vertices() == 2 );
@@ -212,44 +211,14 @@ insert_third(Vertex_handle v0, Vertex_handle v1)
   return v;
 }
 
-
-template<class Gt, class PC, class DS, class LTag>
-inline
-bool
-Segment_Voronoi_diagram_2<Gt,PC,DS,LTag>::
-do_intersect(const Site_2& t, Vertex_handle v) const
-{
-  if ( is_infinite(v) ) { return false; }
-  // add here the cases where t is a segment and intersects a point
-  // and t is a point and lies in a segment
-
-  if ( !t.is_segment() || !v->is_segment() ) { return false; }
-
-#if 0
-#if 1
-  if ( same_segments(t, v->site()) ) {
-    return true;
-  }
-#else
-  if ( !intersection_flag ) {
-    return same_segments(t, v->site());
-  }
-#endif
-#endif
-
-  if ( do_intersect(t, v->site()) ) {
-    //	print_error_message();
-    return true;
-  }
-  return false;
-}
-
+//--------------------------------------------------------------------
+// insertion of a point
+//--------------------------------------------------------------------
 template<class Gt, class PC, class DS, class LTag>
 typename Segment_Voronoi_diagram_2<Gt,PC,DS,LTag>::Vertex_handle
 Segment_Voronoi_diagram_2<Gt,PC,DS,LTag>::
 insert_point(const Point_2& p, Vertex_handle vnear)
 {
-#if 1
   if ( number_of_vertices() == 0 ) {
     return insert_first(p);
   } else if ( number_of_vertices() == 1 ) {
@@ -261,123 +230,6 @@ insert_point(const Point_2& p, Vertex_handle vnear)
   Site_2 t(p);
   Storage_site_2 ss = create_storage_site(p);
   return insert_point(ss, t, vnear);
-#else
-  if ( number_of_vertices() == 0 ) {
-    return insert_first(p);
-  } else if ( number_of_vertices() == 1 ) {
-    return insert_second(p);
-  } else if ( number_of_vertices() == 2 ) {
-    return insert_third(p);
-  }
-
-  // first find the nearest neighbor
-  Site_2 t(p);
-
-  Vertex_handle  vnearest = nearest_neighbor( p, vnear );
-
-  CGAL_assertion( vnearest != Vertex_handle() );
-
-  // find the first conflict
-  // check if it is already inserted
-  if ( vnearest->is_point() && same_points(t, vnearest->site()) ) {
-    return vnearest;
-  }
-
-  // MK: add here code that checks if the inserted segment has already
-  // been inserted
-
-  // find the first conflict
-
-  // first look if there are intersections...
-  Vertex_circulator vc = vnearest->incident_vertices();
-  Vertex_circulator vc_start = vc;
-  do {
-    Vertex_handle vv(vc);
-    if ( do_intersect(t, vv) ) {
-      // ADD HERE CODE THAT DOES THE APPROPRIATE INSERTION
-      return Vertex_handle();
-    }
-    ++vc;
-  } while ( vc != vc_start );
-
-  // first look for conflict with vertex
-  Face_circulator fc_start = vnearest->incident_faces();
-  Face_circulator fc = fc_start;
-  Face_handle start_f;
-  Sign s;
-
-  std::map<Face_handle,Sign> sign_map;
-
-  do {
-    Face_handle f(fc);
-
-    s = incircle(f, t);
-
-    sign_map[f] = s;
-
-    if ( s == NEGATIVE ) {
-      start_f = f;
-      break;
-    }
-    ++fc;
-  } while ( fc != fc_start );
-
-  // we are not in conflict with a Voronoi vertex, so we have to
-  // be in conflict with the interior of a Voronoi edge
-  if ( s != NEGATIVE ) {
-    Edge_circulator ec_start = vnearest->incident_edges();
-    Edge_circulator ec = ec_start;
-
-    bool interior_in_conflict(false);
-    Edge e;
-    do {
-      e = *ec;
-
-      Sign s1 = sign_map[e.first];
-      Sign s2 = sign_map[e.first->neighbor(e.second)];
-
-      if ( s1 == s2 ) {
-	interior_in_conflict = edge_interior(e, t, s1);
-      }
-
-      if ( interior_in_conflict ) { break; }
-      ++ec;
-    } while ( ec != ec_start );
-
-    sign_map.clear();
-
-    CGAL_assertion( interior_in_conflict );
-
-    Storage_site_2 ss = create_storage_site(p);
-    return insert_degree_2(e, ss);
-  }
-
-
-  // we are in conflict with a Voronoi vertex; start from that and 
-  // find the entire conflict region and then repair the diagram
-  List l;
-  Face_map fm;
-
-  std::pair<bool, Vertex_handle> vcross(false, Vertex_handle());
-
-  // MK:: NEED TO WRITE A FUNCTION CALLED find_conflict_region WHICH
-  // IS GIVEN A STARTING FACE, A LIST, A FACE MAP, A VERTEX MAP AND A
-  // LIST OF FLIPPED EDGES AND WHAT IS DOES IS INITIALIZE THE CONFLICT 
-  // REGION AND EXPANDS THE CONFLICT REGION.
-
-  Storage_site_2 ss = create_storage_site(p);
-
-  initialize_conflict_region(start_f, l);
-  expand_conflict_region(start_f, t, ss, l, fm, sign_map, vcross);
-
-  CGAL_assertion( !vcross.first );
-
-  Vertex_handle v = create_vertex(ss);
-
-  retriangulate_conflict_region(v, l, fm);
-
-  return v;
-#endif
 }
 
 
@@ -496,6 +348,9 @@ insert_point(const Storage_site_2& ss, const Site_2& t,
   return v;
 }
 
+//--------------------------------------------------------------------
+// insertion of a on a segment point
+//--------------------------------------------------------------------
 template<class Gt, class PC, class DS, class LTag>
 typename Segment_Voronoi_diagram_2<Gt,PC,DS,LTag>::Vertex_triple
 Segment_Voronoi_diagram_2<Gt,PC,DS,LTag>::
@@ -590,6 +445,9 @@ insert_point_on_segment(const Storage_site_2& ss, const Site_2& t,
   return Vertex_triple(vsx, v1, v2);
 }
 
+//--------------------------------------------------------------------
+// insertion of a segment
+//--------------------------------------------------------------------
 template<class Gt, class PC, class DS, class LTag>
 typename Segment_Voronoi_diagram_2<Gt,PC,DS,LTag>::Vertex_handle
 Segment_Voronoi_diagram_2<Gt,PC,DS,LTag>::
@@ -723,7 +581,7 @@ insert_segment_interior(const Site_2& t, const Storage_site_2& ss,
 
 
 //--------------------------------------------------------------------
-// insertion of intersecting site
+// insertion of an intersecting segment
 //--------------------------------------------------------------------
 template<class Gt, class PC, class DS, class LTag>
 typename Segment_Voronoi_diagram_2<Gt,PC,DS,LTag>::Vertex_handle
@@ -1670,6 +1528,37 @@ do_intersect(const Site_2& p, const Site_2& q) const
   return (res.first != 3);
 }
 
+
+template<class Gt, class PC, class DS, class LTag>
+inline
+bool
+Segment_Voronoi_diagram_2<Gt,PC,DS,LTag>::
+do_intersect(const Site_2& t, Vertex_handle v) const
+{
+  if ( is_infinite(v) ) { return false; }
+  // add here the cases where t is a segment and intersects a point
+  // and t is a point and lies in a segment
+
+  if ( !t.is_segment() || !v->is_segment() ) { return false; }
+
+#if 0
+#if 1
+  if ( same_segments(t, v->site()) ) {
+    return true;
+  }
+#else
+  if ( !intersection_flag ) {
+    return same_segments(t, v->site());
+  }
+#endif
+#endif
+
+  if ( do_intersect(t, v->site()) ) {
+    //	print_error_message();
+    return true;
+  }
+  return false;
+}
 
 //--------------------------------------------------------------------
 //--------------------------------------------------------------------

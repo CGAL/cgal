@@ -28,7 +28,11 @@ CGAL_BEGIN_NAMESPACE
 
 //===========================================================================
 
-
+//---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+//  constructors
+//---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
 template<class Gt, class STag, class PC, class DS, class LTag>
 Segment_Voronoi_diagram_hierarchy_2<Gt,STag,PC,DS,LTag>::
 Segment_Voronoi_diagram_hierarchy_2(const Geom_traits& traits)
@@ -53,61 +57,12 @@ Segment_Voronoi_diagram_hierarchy_2
     hierarchy[i] = new Base(svd.geom_traits());
   copy_triangulation(svd);
 } 
- 
 
-//Assignement
-template<class Gt, class STag, class PC, class DS, class LTag>
-Segment_Voronoi_diagram_hierarchy_2<Gt,STag,PC,DS,LTag> &
-Segment_Voronoi_diagram_hierarchy_2<Gt,STag,PC,DS,LTag>::
-operator=(const Segment_Voronoi_diagram_hierarchy_2<Gt,STag,PC,DS,LTag> &svd)
-{
-  copy_triangulation(svd);
-  return *this;
-}
-
-template<class Gt, class STag, class PC, class DS, class LTag>
-void
-Segment_Voronoi_diagram_hierarchy_2<Gt,STag,PC,DS,LTag>::   
-copy_triangulation
-(const Segment_Voronoi_diagram_hierarchy_2<Gt,STag,PC,DS,LTag> &svd)
-{
-  std::map< Vertex_handle, Vertex_handle > V;
-  {
-    for(int i = 0; i < svd_hierarchy_2__maxlevel; ++i) {
-      *(hierarchy[i]) = *svd.hierarchy[i];
-    }
-  }
-
-  //up and down have been copied in straightforward way
-  // compute a map at lower level
-  {
-    for(All_vertices_iterator it = hierarchy[0]->all_vertices_begin(); 
-	it != hierarchy[0]->all_vertices_end(); ++it) {
-      if ( it->up() != Vertex_handle() ) {
-	V[ it->up()->down() ] = it;
-      }
-    }
-  }
-  {
-    for(int i = 1; i < svd_hierarchy_2__maxlevel; ++i) {
-      for(All_vertices_iterator it = hierarchy[i]->all_vertices_begin(); 
-	  it != hierarchy[i]->all_vertices_end(); ++it) {
-	// down pointer goes in original instead in copied triangulation
-	it->set_down(V[it->down()]);
-	// make reverse link
-	it->down()->set_up( it );
-	// make map for next level
-	if ( it->up() != Vertex_handle() ) {
-	  V[ it->up()->down() ] = it;
-	}
-      }
-    }
-  }
-
-  // copy the point container
-  hierarchy[0]->pc_ = svd.hierarchy[0]->pc_;
-}
-
+//---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+//  destructor
+//---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
 template<class Gt, class STag, class PC, class DS, class LTag>
 Segment_Voronoi_diagram_hierarchy_2<Gt,STag,PC,DS,LTag>:: 
 ~Segment_Voronoi_diagram_hierarchy_2()
@@ -118,20 +73,29 @@ Segment_Voronoi_diagram_hierarchy_2<Gt,STag,PC,DS,LTag>::
   }
 }
 
+//---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+// assignment operator
+//---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
 template<class Gt, class STag, class PC, class DS, class LTag>
-void
-Segment_Voronoi_diagram_hierarchy_2<Gt,STag,PC,DS,LTag>:: 
-clear()
+Segment_Voronoi_diagram_hierarchy_2<Gt,STag,PC,DS,LTag> &
+Segment_Voronoi_diagram_hierarchy_2<Gt,STag,PC,DS,LTag>::
+operator=(const Segment_Voronoi_diagram_hierarchy_2<Gt,STag,PC,DS,LTag> &svd)
 {
-  for(unsigned int i = 0; i < svd_hierarchy_2__maxlevel; ++i) {
-    hierarchy[i]->clear();
-  }
+  copy_triangulation(svd);
+  return *this;
 }
 
-//------------------
-// INSERTION METHODS
-//------------------
+//====================================================================
+//====================================================================
+//                   METHODS FOR INSERTION
+//====================================================================
+//====================================================================
 
+//--------------------------------------------------------------------
+// insertion of a point
+//--------------------------------------------------------------------
 template<class Gt, class STag, class PC, class DS, class LTag>
 inline typename 
 Segment_Voronoi_diagram_hierarchy_2<Gt,STag,PC,DS,LTag>::Vertex_handle
@@ -186,7 +150,9 @@ insert_point(const Point_2& p, int level, Vertex_handle* vertices)
   }
 }
 
-
+//--------------------------------------------------------------------
+// insertion of a segment
+//--------------------------------------------------------------------
 template<class Gt, class STag, class PC, class DS, class LTag>
 typename
 Segment_Voronoi_diagram_hierarchy_2<Gt,STag,PC,DS,LTag>::Vertex_handle
@@ -288,8 +254,6 @@ insert_segment_with_tag(const Point_2& p0, const Point_2& p1,
 
   return vertex;
 }
-
-//========================================================================
 
 template<class Gt, class STag, class PC, class DS, class LTag>
 typename
@@ -519,62 +483,9 @@ insert_segment_interior(const Site_2& t, const Storage_site_2& ss,
   return v;
 }
 
-//========================================================================
-
 //--------------------------------------------------------------------
-// insertion of intersecting site
+// insertion of an intersecting segment
 //--------------------------------------------------------------------
-
-template<class Gt, class STag, class PC, class DS, class LTag>
-typename
-Segment_Voronoi_diagram_hierarchy_2<Gt,STag,PC,DS,LTag>::Vertex_handle
-Segment_Voronoi_diagram_hierarchy_2<Gt,STag,PC,DS,LTag>::
-insert_intersecting_segment_with_tag(const Storage_site_2& ss,
-				     const Site_2& t, Vertex_handle v,
-				     int, Tag_false itag, Tag_false stag)
-{
-  static int i = 0;
-  if ( i == 0 ) {
-    i = 1;
-    std::cerr << std::endl;
-    std::cerr << "WARNING:" << std::endl;
-    std::cerr << "A segment-segment intersection was found."
-	      << std::endl;
-    std::cerr << "The segment Voronoi diagram class is not configured"
-	      << " to handle this situation." << std::endl;
-    std::cerr << "Please look at the documentation on how to handle"
-	      << " this behavior." << std::endl;
-    std::cerr << std::endl;
-  }
-  return Vertex_handle();
-}
-
-
-template<class Gt, class STag, class PC, class DS, class LTag>
-typename
-Segment_Voronoi_diagram_hierarchy_2<Gt,STag,PC,DS,LTag>::Vertex_handle
-Segment_Voronoi_diagram_hierarchy_2<Gt,STag,PC,DS,LTag>::
-insert_intersecting_segment_with_tag(const Storage_site_2& ss,
-				     const Site_2& t, Vertex_handle v,
-				     int, Tag_false itag, Tag_true stag)
-{
-  static int i = 0;
-  if ( i == 0 ) {
-    i = 1;
-    std::cerr << std::endl;
-    std::cerr << "WARNING:" << std::endl;
-    std::cerr << "A segment-segment intersection was found."
-	      << std::endl;
-    std::cerr << "The segment Voronoi diagram class is not configured"
-	      << " to handle this situation." << std::endl;
-    std::cerr << "Please look at the documentation on how to handle"
-	      << " this behavior." << std::endl;
-    std::cerr << std::endl;
-  }
-  return Vertex_handle();
-}
-
-
 template<class Gt, class STag, class PC, class DS, class LTag>
 typename
 Segment_Voronoi_diagram_hierarchy_2<Gt,STag,PC,DS,LTag>::Vertex_handle
@@ -998,7 +909,13 @@ insert_intersecting_segment_with_tag(const Storage_site_2& ss,
 
 
 //===========================================================================
+//===========================================================================
 
+//---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+//  nearest neighbor location
+//---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
 template<class Gt, class STag, class PC, class DS, class LTag>
 typename
 Segment_Voronoi_diagram_hierarchy_2<Gt,STag,PC,DS,LTag>::Vertex_handle 
@@ -1045,38 +962,72 @@ nearest_neighbor(const Site_2& p,
   // at level 0
 }
 
+
+
+//---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+//  miscellaneous methods
+//---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
 template<class Gt, class STag, class PC, class DS, class LTag>
-int
-Segment_Voronoi_diagram_hierarchy_2<Gt,STag,PC,DS,LTag>::
-random_level()
+void
+Segment_Voronoi_diagram_hierarchy_2<Gt,STag,PC,DS,LTag>::   
+copy_triangulation
+(const Segment_Voronoi_diagram_hierarchy_2<Gt,STag,PC,DS,LTag> &svd)
 {
-  unsigned int l = 0;
-  while ( true ) {
-    if ( random(svd_hierarchy_2__ratio) ) break;
-    ++l;
+  std::map< Vertex_handle, Vertex_handle > V;
+  {
+    for(int i = 0; i < svd_hierarchy_2__maxlevel; ++i) {
+      *(hierarchy[i]) = *svd.hierarchy[i];
+    }
   }
-  if (l >= svd_hierarchy_2__maxlevel)
-    l = svd_hierarchy_2__maxlevel -1;
-  return l;
+
+  //up and down have been copied in straightforward way
+  // compute a map at lower level
+  {
+    for(All_vertices_iterator it = hierarchy[0]->all_vertices_begin(); 
+	it != hierarchy[0]->all_vertices_end(); ++it) {
+      if ( it->up() != Vertex_handle() ) {
+	V[ it->up()->down() ] = it;
+      }
+    }
+  }
+  {
+    for(int i = 1; i < svd_hierarchy_2__maxlevel; ++i) {
+      for(All_vertices_iterator it = hierarchy[i]->all_vertices_begin(); 
+	  it != hierarchy[i]->all_vertices_end(); ++it) {
+	// down pointer goes in original instead in copied triangulation
+	it->set_down(V[it->down()]);
+	// make reverse link
+	it->down()->set_up( it );
+	// make map for next level
+	if ( it->up() != Vertex_handle() ) {
+	  V[ it->up()->down() ] = it;
+	}
+      }
+    }
+  }
+
+  // copy the point container
+  hierarchy[0]->pc_ = svd.hierarchy[0]->pc_;
 }
 
 template<class Gt, class STag, class PC, class DS, class LTag>
-inline typename
-Segment_Voronoi_diagram_hierarchy_2<Gt,STag,PC,DS,LTag>::size_type
-Segment_Voronoi_diagram_hierarchy_2<Gt,STag,PC,DS,LTag>::
-find_level(Vertex_handle v) const
+void
+Segment_Voronoi_diagram_hierarchy_2<Gt,STag,PC,DS,LTag>:: 
+clear()
 {
-  CGAL_precondition( v != Vertex_handle() );
-  size_type level = 0;
-  Vertex_handle vertex = v;
-  while ( vertex->up() != Vertex_handle() ) {
-    vertex = vertex->up();
-    level++;
+  for(unsigned int i = 0; i < svd_hierarchy_2__maxlevel; ++i) {
+    hierarchy[i]->clear();
   }
-
-  return level;
 }
 
+
+//---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+//  validity check
+//---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
 template<class Gt, class STag, class PC, class DS, class LTag>
 bool
 Segment_Voronoi_diagram_hierarchy_2<Gt,STag,PC,DS,LTag>:: 
@@ -1111,6 +1062,60 @@ is_valid(bool verbose, int level) const
   return result;
 }
 
+
+//---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+//  local helper methods
+//---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+template<class Gt, class STag, class PC, class DS, class LTag>
+int
+Segment_Voronoi_diagram_hierarchy_2<Gt,STag,PC,DS,LTag>::
+random_level()
+{
+  unsigned int l = 0;
+  while ( true ) {
+    if ( random(svd_hierarchy_2__ratio) ) break;
+    ++l;
+  }
+  if (l >= svd_hierarchy_2__maxlevel)
+    l = svd_hierarchy_2__maxlevel -1;
+  return l;
+}
+
+template<class Gt, class STag, class PC, class DS, class LTag>
+inline typename
+Segment_Voronoi_diagram_hierarchy_2<Gt,STag,PC,DS,LTag>::size_type
+Segment_Voronoi_diagram_hierarchy_2<Gt,STag,PC,DS,LTag>::
+find_level(Vertex_handle v) const
+{
+  CGAL_precondition( v != Vertex_handle() );
+  size_type level = 0;
+  Vertex_handle vertex = v;
+  while ( vertex->up() != Vertex_handle() ) {
+    vertex = vertex->up();
+    level++;
+  }
+
+  return level;
+}
+
+template<class Gt, class STag, class PC, class DS, class LTag>
+inline
+void
+Segment_Voronoi_diagram_hierarchy_2<Gt,STag,PC,DS,LTag>::
+print_error_message() const
+{
+  std::cerr << std::endl;
+  std::cerr << "WARNING:" << std::endl;
+  std::cerr << "A segment-segment intersection was found."
+	    << std::endl;
+  std::cerr << "The segment Voronoi diagram class is not configured"
+	    << " to handle this situation." << std::endl;
+  std::cerr << "Please look at the documentation on how to handle"
+	    << " this behavior." << std::endl;
+  std::cerr << std::endl;
+}
 
 //--------------------------------------------------------------------
 

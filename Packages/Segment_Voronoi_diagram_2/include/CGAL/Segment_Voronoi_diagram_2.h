@@ -333,13 +333,12 @@ public:
   template<class Input_iterator>
   size_type insert(Input_iterator first, Input_iterator beyond, Tag_true)
   {
-    std::random_shuffle(first, beyond);
     std::vector<Site_2> site_vec;
     for (Input_iterator it = first; it != beyond; ++it) {
       site_vec.push_back(Site_2(*it));
     }
-    //    return insert_with_tag(first, beyond, Tag_false());
-    return insert_with_tag(site_vec.begin(), site_vec.end(), Tag_false());
+    std::random_shuffle(site_vec.begin(), site_vec.end());
+    return insert(site_vec.begin(), site_vec.end(), Tag_false());
   }
 
   template<class Input_iterator>

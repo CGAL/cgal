@@ -65,6 +65,8 @@ class Segment_Voronoi_diagram_hierarchy_2
   : public Segment_Voronoi_diagram_2<Gt,PC,DS,LTag>
 {
 public:
+  // PUBLIC TYPES
+  //-------------
   typedef Segment_Voronoi_diagram_2<Gt,PC,DS,LTag>  Base;
 
   typedef typename Base::Geom_traits        Geom_traits;
@@ -94,21 +96,25 @@ public:
 
   typedef STag                            Insert_segments_in_hierarchy_tag;
 
-private:
-  struct Vertex_iterator {};
-
-  static const int UNDEFINED_LEVEL;
-
+protected:
+  // LOCAL TYPES
+  //------------
   typedef typename Base::Storage_site_2            Storage_site_2;
   typedef typename Base::List                      List;
   typedef typename Base::Face_map                  Face_map;
 
-private:
+protected:
+  // LOCAL VARIABLES
+  //----------------
+  static const int UNDEFINED_LEVEL;
+
   // here is the stack of triangulations which form the hierarchy
   Base*   hierarchy[svd_hierarchy_2__maxlevel];
-  Random random; // random generator
+  Random random; // random number generator
 
 public:
+  // CONSTRUCTORS
+  //-------------
   Segment_Voronoi_diagram_hierarchy_2
   (const Geom_traits& traits = Geom_traits());
   Segment_Voronoi_diagram_hierarchy_2
@@ -117,64 +123,49 @@ public:
   Segment_Voronoi_diagram_hierarchy_2 &operator=
   (const  Segment_Voronoi_diagram_hierarchy_2& svd);
 
+  // DESTRUCTOR
+  //-----------
   ~Segment_Voronoi_diagram_hierarchy_2();
 
-  // Helping
-  void copy_triangulation
-  (const Segment_Voronoi_diagram_hierarchy_2 &svd);
-
-  void clear();
-
-  // CHECKING
-  bool is_valid(bool verbose = true, int level = 1) const;
-
+public:
+  // ACCESS METHODS
+  //---------------
   const Base& diagram(unsigned int i) const  {
     CGAL_precondition( i < svd_hierarchy_2__maxlevel );
     return *hierarchy[i];
   }
 
 public:
-   // insertion of a point/segment
+  // INSERTION METHODS
+  //------------------
   template<class Input_iterator>
   size_type insert(Input_iterator first, Input_iterator beyond) {
     return insert_with_tag(first, beyond, Tag_false());
   }
 
-protected:
   template<class Input_iterator>
-  size_type insert_with_tag(Input_iterator first,
-			    Input_iterator beyond,
-			    Tag_true)
+  size_type insert(Input_iterator first, Input_iterator beyond,	Tag_true)
   {
-    // MK::ERROR: this changes the data I would have to copy them to
-    //            a vector first and then do the suffling thing...
-    std::random_shuffle(first, beyond);
-    return insert_with_tag(first, beyond, Tag_false());
+    std::vector<Site_2> site_vec;
+    for (Input_iterator it = first; it != beyond; ++it) {
+      site_vec.push_back(Site_2(*it));
+    }
+    std::random_shuffle(site_vec.begin(), site_vec.end());
+    return insert(site_vec.begin(), site_vec.end(), Tag_false());
   }
 
   template<class Input_iterator>
-  size_type insert_with_tag(Input_iterator first,
-			    Input_iterator beyond,
-			    Tag_false)
+  size_type insert(Input_iterator first, Input_iterator beyond,	Tag_false)
   {
     // do it the obvious way: insert them as they come;
     // one might think though that it might be better to first insert
     // all end points and then all segments, or a variation of that.
-
     size_type n_before = number_of_vertices();
     for (Input_iterator it = first; it != beyond; ++it) {
       insert(*it);
     }
     size_type n_after = number_of_vertices();
     return n_after - n_before;
-  }
-
-public:
-  template<class Input_iterator, class True_false_tag>
-  size_type insert(Input_iterator first, Input_iterator beyond,
-		   True_false_tag tag)
-  {
-    return insert_with_tag(first, beyond, tag);
   }
 
   Vertex_handle  insert(const Point_2& p) {
@@ -196,6 +187,8 @@ public:
   }
 
   Vertex_handle  insert(const Site_2& t) {
+    // the intended use is to unify the calls to insert(...);
+    // thus the site must be an exact one; 
     CGAL_precondition( t.is_exact() );
     if ( t.is_segment() ) {
       Insert_segments_in_hierarchy_tag stag;
@@ -210,7 +203,7 @@ public:
   }
 
 
-private:
+protected:
   Vertex_handle insert_point(const Point_2& p, int level);
   void          insert_point(const Point_2& p, int level,
 			     Vertex_handle* vertices);
@@ -240,19 +233,19 @@ private:
 					Vertex_handle vnear,
 					int level, Tag_false stag);
 
+  template<class Tag>
   Vertex_handle
   insert_intersecting_segment_with_tag(const Storage_site_2& ss,
 				       const Site_2& t,
 				       Vertex_handle v,
-				       int level,
-				       Tag_false itag, Tag_false stag);
-
-  Vertex_handle
-  insert_intersecting_segment_with_tag(const Storage_site_2& ss,
-				       const Site_2& t,
-				       Vertex_handle v,
-				       int level,
-				       Tag_false itag, Tag_true stag);
+				       int level, Tag_false itag, Tag) {
+    static int i = 0;
+    if ( i == 0 ) {
+      i = 1;
+      print_error_message();
+    }
+    return Vertex_handle();
+  }
 
   Vertex_handle
   insert_intersecting_segment_with_tag(const Storage_site_2& ss,
@@ -268,9 +261,9 @@ private:
 				       int level,
 				       Tag_true itag, Tag_true stag);
 
-
 public:
-  // nearest neighbor
+  // NEAREST NEIGHBOR LOCATION
+  //--------------------------
   Vertex_handle  nearest_neighbor(const Point_2& p,
 				  bool force_point = false) const;
 
@@ -279,14 +272,34 @@ public:
     return nearest_neighbor(p);
   }
 
-private:
+protected:
   void nearest_neighbor(const Site_2& p,
 			Vertex_handle vnear[svd_hierarchy_2__maxlevel],
 			bool force_point) const; 
+
+public:
+  // MISCELLANEOUS
+  //--------------
+  void copy_triangulation
+  (const Segment_Voronoi_diagram_hierarchy_2 &svd);
+
+  void clear();
+
+public:
+  // VALIDITY CHECK
+  //---------------
+  bool is_valid(bool verbose = true, int level = 1) const;
+
+protected:
+  // LOCAL HELPER METHODS
+  //---------------------
   int random_level();
 
   size_type find_level(Vertex_handle v) const;
+
+  void print_error_message() const;
 };
+
 
 template<class Gt, class STag, class PC, class DS, class LTag>
 const int
