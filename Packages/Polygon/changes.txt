@@ -1,4 +1,9 @@
 4.2.2 (27 July 2001)
++ Susan made minor formatting changes, fixed some undefined references, and
+  commented out some headings for empty sections.  Added TOC for reference
+  pages in intro.tex
+
+4.2.2 (27 July 2001)
 + Susan made changes necessary in doc to do the manual split
 
 4.2.1 (16 July 2001)

@@ -115,7 +115,7 @@ Their value type is \ccStyle{Segment_2}.
   \ccMethod{ Vertex_iterator insert(Vertex_iterator i, const Point_2& q);}
     { Inserts the vertex \ccStyle{q} before \ccStyle{i}.
       The return value points to the inserted vertex. }
-
+  \clearpage
   \ccMethod{template <class InputIterator>
       void insert(Vertex_iterator i, InputIterator first, InputIterator last);}
     { Inserts the vertices in the range \ccStyle{[first, last)} before
@@ -301,7 +301,7 @@ These methods are only available for random access containers.
 
 
 
-\ccSeeAlso
+%\ccSeeAlso
 
 \ccImplementation
 
@@ -317,9 +317,12 @@ The methods
 \ccStyle{right_vertex},
 \ccStyle{top_vertex} and
 \ccStyle{bottom_vertex}
-are all implemented using the algorithms on sequences of 2D points described
-in section \ref{sec:poly_algo}. There you can find information about which
-algorithms were used and what complexity they have.
+are all implemented using the algorithms on sequences of 2D points.
+See the corresponding global functions for information about which algorithms
+were used and what complexity they have.
+% described
+%in section \ref{sec:poly_algo}. There you can find information about which
+%algorithms were used and what complexity they have.
 
 If caching is turned on, all functions are cached except those that compute on
 which side of the polygon a point is situated.
