@@ -1,6 +1,10 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+Ver 6.12 (25/02/02)
+- in Triangulation_data_structure_2.h chane the variible "emit" to "emapit"
+  to fix a clash with Qt
+
 Ver 6.11 (19/02/02)
 - added missing file in the doc
 

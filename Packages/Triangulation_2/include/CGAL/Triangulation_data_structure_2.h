@@ -1720,14 +1720,14 @@ set_adjacency(Face_handle fh,
   Vh_pair  vhp =  vhcw < vhccw ?  
                   std::make_pair(vhcw, vhccw) 
                 : std::make_pair(vhccw, vhcw) ;
-  typename std::map<Vh_pair, Edge>::iterator emit = edge_map.find(vhp);
-  if (emit == edge_map.end()) {// not found, insert edge
+  typename std::map<Vh_pair, Edge>::iterator emapit = edge_map.find(vhp);
+  if (emapit == edge_map.end()) {// not found, insert edge
     edge_map.insert(std::make_pair(vhp, Edge(fh,ih)));
   }
   else { //found set adjacency and erase
-    Edge e = emit->second;
+    Edge e = emapit->second;
     set_adjacency( fh,ih, e.first, e.second);
-    edge_map.erase(emit);
+    edge_map.erase(emapit);
   } 
 }
 
