@@ -72,17 +72,17 @@ private:
 #endif // CGAL_IA_NO_EXCEPTION
 
 public:
-  friend IA	sqrt     (const IA &);
+  friend IA	sqrt	(const IA &);
   friend IA	square	(const IA &);
-  friend IA	abs (const IA &);
-  friend IA	min (const IA &, const IA &);
-  friend IA	max (const IA &, const IA &);
+  friend IA	abs	(const IA &);
+  friend IA	min	(const IA &, const IA &);
+  friend IA	max	(const IA &, const IA &);
   friend IA	operator- (const double, const IA &);
   friend IA	operator/ (const double, const IA &);
   friend double to_double (const IA &);
   friend bool   is_valid  (const IA &);
   friend bool   is_finite (const IA &);
-  friend Sign sign   (const IA &);
+  friend Sign	sign	(const IA &);
   friend Comparison_result compare (const IA &, const IA &);
 
   // The constructors.
@@ -128,55 +128,62 @@ public:
   }
 
   // Those 2 ones could be made not inlined.
-  IA  operator*(const IA & d) const;
-  IA  operator/(const IA & d) const;
+  IA  operator*	(const IA & d) const;
+  IA  operator/	(const IA & d) const;
 
   IA  operator-() const { return IA (-(sup), inf); }
 
-  IA & operator+=(const IA & d);
-  IA & operator-=(const IA & d);
-  IA & operator*=(const IA & d);
-  IA & operator/=(const IA & d);
+  IA & operator+= (const IA & d);
+  IA & operator-= (const IA & d);
+  IA & operator*= (const IA & d);
+  IA & operator/= (const IA & d);
 
   // For speed...
-  IA  operator+(const double d) const {  return IA(-(inf-d), sup+d); };
-  IA  operator-(const double d) const {  return IA(-(inf+d), sup-d); };
-  IA  operator*(const double d) const;
-  IA  operator/(const double d) const;
+  IA  operator+ (const double d) const { return IA(-(inf-d), sup+d); };
+  IA  operator- (const double d) const { return IA(-(inf+d), sup-d); };
+  IA  operator* (const double d) const;
+  IA  operator/ (const double d) const;
 
-  bool operator<(const IA & d) const
+  bool operator< (const IA & d) const
   {
     if (sup  < -d.inf) return true;
     if (-inf >= d.sup) return false;
     return overlap_action();
   }
 
-  bool operator<=(const IA & d) const
+  bool operator<= (const IA & d) const
   {
     if (sup <= -d.inf) return true;
     if (-inf >  d.sup) return false;
     return overlap_action();
   }
   
-  bool operator==(const IA & d) const
+  bool operator== (const IA & d) const
   {
     if ((-d.inf >  sup) || (d.sup  < -inf)) return false;
     if ((-d.inf == sup) && (d.sup == -inf)) return true;
     return overlap_action();
   }
 
-  bool operator> (const IA & d) const { return  (d <  *this); }
-  bool operator>=(const IA & d) const { return  (d <= *this); }
-  bool operator!=(const IA & d) const { return !(d == *this); }
+  bool operator>  (const IA & d) const { return  (d <  *this); }
+  bool operator>= (const IA & d) const { return  (d <= *this); }
+  bool operator!= (const IA & d) const { return !(d == *this); }
 
-  bool is_same(const IA & d) const
+  bool is_same (const IA & d) const
   { return (inf == d.inf) && (sup == d.sup); }
 
-  bool overlap(const IA & d) const
+  bool overlap (const IA & d) const
   { return !((-d.inf > sup) || (d.sup < -inf)); }
 
   double lower_bound() const { return -inf; }
   double upper_bound() const { return sup; }
+
+  // The (join, union, ||) operator.
+  IA operator|| (const IA & d) const
+  { return IA(min(-inf,-d.inf), max(sup,d.sup)); }
+  // The (meet, intersection, &&) operator.  Valid if intervals overlap.
+  IA operator&& (const IA & d) const
+  { return IA(max(-inf,-d.inf), min(sup,d.sup)); }
 };
 
 // Usefull constants.
