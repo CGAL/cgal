@@ -1,8 +1,8 @@
 # ------------------------------------- Printing Arrangement
 # --------------------------------------------------------
-# ------------------------------------- Printing Planar map
+# ------------------------------------- Begin Planar Map
 # --------------------------------------------------------
-# Printing number of vertices halfedges and faces in Planar map
+# Number of vertices halfedges and faces in Planar map
 5 10 2
 # 5 vertices
 # ------------------------------------------
@@ -58,7 +58,7 @@
 0
 # finish writing face
 # ------------------------------------------
-# ------------------------------------- End of Planar map
+# ------------------------------------- End Planar Map
 # --------------------------------------------------------
 # Printing curve hierachy
 # number of curves
