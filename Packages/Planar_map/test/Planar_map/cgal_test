@@ -13,7 +13,9 @@ ABSTRACT_TEST=false
 one_run()
 {
     goodresult=RESULT/`basename ${datafile}.$1.$2`
-    OUTPUTFILE=ProgramOutput.${base}.${PLATFORM}.`basename ${datafile}`.$1.$2.$3
+    # This following filename is in the format ProgramOutput.*.${PLATFORM}
+    # so it should get collected as part of the test results.
+    OUTPUTFILE=ProgramOutput.${base}.`basename ${datafile}`.$1.$2.$3.${PLATFORM}
     echo "Executing ${base} `basename ${datafile}` ..."
     rm -f aresult
     if ./${base} < ${datafile} > ${OUTPUTFILE} 2>&1
