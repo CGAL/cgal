@@ -96,9 +96,14 @@ void show_output(Snap_rounding_2 &s,
   }
 }
 
-void display_bounding_box(Snap_rounding_2 &s,CGAL::Window_stream &W)
+void display_bounding_box(CGAL::Window_stream &W,
+                          Number_Type x1,
+                          Number_Type y1,
+                          Number_Type x2,
+                          Number_Type y2)
 {
-  return;// !!!!! check
+  W << CGAL::BLACK << 
+    Iso_rectangle_2(Point_2(x1,y1),Point_2(x2,y2));
 }
 
 void window_output(Snap_rounding_2 &s,Window_stream &w,
@@ -186,20 +191,30 @@ void read_data(int argc,
   }
 }
 
-void clear(Snap_rounding_2 &s,CGAL::Window_stream &W)
+void clear(Snap_rounding_2 &s,
+           CGAL::Window_stream &W,
+           Number_Type x1,
+           Number_Type y1,
+           Number_Type x2,
+           Number_Type y2)
 {
   s.clear();
 
   W.clear();
 
-  display_bounding_box(s,W);
+  display_bounding_box(W,x1,y1,x2,y2);
 }
 
-void redraw(Snap_rounding_2 &s,CGAL::Window_stream &W)
+void redraw(Snap_rounding_2 &s,
+            CGAL::Window_stream &W,
+            Number_Type x1,
+            Number_Type y1,
+            Number_Type x2,
+            Number_Type y2)
 {
   W.clear();
 
-  display_bounding_box(s,W);
+  display_bounding_box(W,x1,y1,x2,y2 );
 
   W << CGAL::BLACK;
   for(Segment_iterator i1 = s.segments_begin();
@@ -271,7 +286,7 @@ int main(int argc,char *argv[])
 
   Iso_rectangle_2 b(Point_2(x1, y1), Point_2(x2, y2));// !!!! need to be displayed
 
-  display_bounding_box(s,W);
+  display_bounding_box(W,x1,y1,x2,y2);
   
   double x3,y3,x4,y4;
   //Number_Type x_type,y_type;
@@ -310,7 +325,7 @@ int main(int argc,char *argv[])
         if(closest_iter != s.segments_end())
           s.remove(*closest_iter);
 
-	redraw(s,W);
+	redraw(s,W,x1,y1,x2,y2);
       } else {
         //x_type = x;
         //y_type = y;
@@ -320,7 +335,7 @@ int main(int argc,char *argv[])
            y4 >= y1 && y4 <= y2) {
           if(sr_shown) {
             sr_shown = false;
-            redraw(s,W);
+            redraw(s,W,x1,y1,x2,y2);
           }
         }
         W << CGAL::BLACK;
@@ -340,7 +355,7 @@ int main(int argc,char *argv[])
       show_output(s,prec,W);
       sr_shown = true;
     } else if(mouse_input == 2) {
-      clear(s,W);
+      clear(s,W,x1,y1,x2,y2);
       sr_shown = false;
     } else if(mouse_input == 3) {
       // change to automatic mode
@@ -350,7 +365,7 @@ int main(int argc,char *argv[])
       W.disable_button(3);
       W.disable_button(1);
       sr_shown = true;
-      redraw(s,W);
+      redraw(s,W,x1,y1,x2,y2);
       show_output(s,prec,W);
       sr_shown = true;
     } else if(mouse_input == 4) {
@@ -360,19 +375,19 @@ int main(int argc,char *argv[])
       W.enable_button(3);
       W.disable_button(4);
       sr_shown = false;
-      redraw(s,W);
+      redraw(s,W,x1,y1,x2,y2);
     } else if(mouse_input == 5) {
       W.enable_button(6);
       W.disable_button(5);
       remove_segments = false;
-      redraw(s,W);
+      redraw(s,W,x1,y1,x2,y2);
       if(automatic_show)
         show_output(s,prec,W);
     } else if(mouse_input == 6) {
       W.enable_button(5);
       W.disable_button(6);
       remove_segments = true;
-      redraw(s,W);
+      redraw(s,W,x1,y1,x2,y2);
       if(automatic_show)
         show_output(s,prec,W);
     } else if(mouse_input == 7) {
@@ -386,9 +401,9 @@ int main(int argc,char *argv[])
       W.text_box(-1.5,-1,10,"manual");
 
     if(remove_segments)
-      W.text_box(-1.5,-1,9.5,"remove points");
+      W.text_box(-1.5,-1,9.5,"remove segments");
     else
-      W.text_box(-1.5,-1,9.5,"add points");
+      W.text_box(-1.5,-1,9.5,"add segments");
   }
 
   if(argc == 2)
