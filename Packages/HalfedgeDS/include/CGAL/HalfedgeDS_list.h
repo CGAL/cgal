@@ -148,37 +148,38 @@ public:
     typedef std::bidirectional_iterator_tag            iterator_category;
     static inline Vertex_handle vertex_handle( Vertex_base* v) {
         Vertex* vv = 0;
-        vv = (Vertex*)((char*) v - (ptrdiff_t)((Vertex_base*)vv));
+        vv = (Vertex*)((char*) v - (std::ptrdiff_t)((Vertex_base*)vv));
         return vv;
     }
     static inline Vertex_const_handle vertex_handle( const Vertex_base* v) {
         const Vertex* vv = 0;
         vv = (const Vertex*)((const char*) v -
-                 (ptrdiff_t)((const Vertex_base*)vv));
+                 (std::ptrdiff_t)((const Vertex_base*)vv));
         return vv;
     }
 
     static inline Halfedge_handle halfedge_handle( Halfedge_base* h) {
         Halfedge* hh = 0;
-        hh = (Halfedge*)((char*) h - (ptrdiff_t)((Halfedge_base*)hh));
+        hh = (Halfedge*)((char*) h - (std::ptrdiff_t)((Halfedge_base*)hh));
         return hh;
     }
     static inline
     Halfedge_const_handle halfedge_handle( const Halfedge_base* h) {
         const Halfedge* hh = 0;
         hh = (const Halfedge*)((const char*) h -
-                 (ptrdiff_t)((const Halfedge_base*)hh));
+                 (std::ptrdiff_t)((const Halfedge_base*)hh));
         return hh;
     }
 
     static inline Face_handle face_handle( Face_base* f) {
         Face* ff = 0;
-        ff = (Face*)((char*) f - (ptrdiff_t)((Face_base*)ff));
+        ff = (Face*)((char*) f - (std::ptrdiff_t)((Face_base*)ff));
         return ff;
     }
     static inline Face_const_handle face_handle( const Face_base* h) {
         const Face* ff = 0;
-        ff = (const Face*)((const char*)f - (ptrdiff_t)((const Face_base*)ff));
+        ff = (const Face*)((const char*)f -
+                 (std::ptrdiff_t)((const Face_base*)ff));
         return ff;
     }
 };

@@ -1,6 +1,10 @@
 HalfedgeDS Package: Release changes:
 ---------------------------------------------------------------------
 
+3.31 (19 Apr 2002)
+
+     - Added missing std:: before ptrdiff_t in HalfedgeDS_list.h.
+
 3.30 (15 Apr 2002)
 
      - Changed get_iter functions to get_[vhf]_iter functions in 
