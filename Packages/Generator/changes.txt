@@ -1,5 +1,10 @@
 Generator Package: Release changes:
 ---------------------------------------------------------------------
+2.41 (29 Aug 2001)
+   - changed ccSection commands to section commands since pdf converter that
+     creates bookmarks can't handle the former
+
+%%%%%%%%%%%%%%%%%%% Release 2.3 %%%%%%%%%%%%%%%%%%%%%%%%
 2.40 (25 July 2001)
    - fixed section reference in doc.
 
