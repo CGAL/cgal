@@ -249,6 +249,9 @@ test_new_2(const R& rep)
         = rep.construct_opposite_circle_2_object();
   Circle_2 tmp19 = construct_opposite_circle(c2);
 
+  typename R::Construct_opposite_vector_2 construct_opposite_vector
+        = rep.construct_opposite_vector_2_object();
+  Vector_2 tmp19a = construct_opposite_vector(v2);
 
   typename R::Transform_2 transform
         = rep.transform_2_object();

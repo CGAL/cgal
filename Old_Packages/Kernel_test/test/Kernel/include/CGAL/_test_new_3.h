@@ -220,7 +220,7 @@ test_new_3(const R& rep)
 
   typename R::Construct_orthogonal_vector_3 construct_orthogonal_vector
         = rep.construct_orthogonal_vector_3_object();
-  Vector_3 tmp3b = construct_orthogonal_vector(p5);
+  Vector_3 tmp3b = construct_orthogonal_vector(h7);
 
   typename R::Construct_midpoint_3 construct_midpoint
         = rep.construct_midpoint_3_object();
@@ -260,6 +260,10 @@ test_new_3(const R& rep)
   typename R::Construct_opposite_plane_3 construct_opposite_plane
         = rep.construct_opposite_plane_3_object();
   Plane_3 tmp71 = construct_opposite_plane(h2);
+
+  typename R::Construct_opposite_vector_3 construct_opposite_vector
+        = rep.construct_opposite_vector_3_object();
+  Vector_3 tmp72 = construct_opposite_vector(v2);
 
   typename R::Construct_supporting_plane_3 construct_supporting_plane
         = rep.construct_supporting_plane_3_object();
@@ -527,7 +531,7 @@ test_new_3(const R& rep)
   use(tmp15); use(tmp14); use(tmp13); use(tmp12b); use(tmp12a);
   use(tmp16); use(tmp17); use(tmp18); use(tmp19); use(tmp20); use(tmp21);
   use(tmp26); use(tmp28); use(tmp30a); use(tmp30b); use(tmp34ab); 
-  use(tmp39a); use(tmp3a); use(tmp3b);
+  use(tmp39a);
 
   return true;
 }
