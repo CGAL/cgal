@@ -1,3 +1,10 @@
+24 June 2004:  Menelaos Karavelas
+- fixed bug in copy method of segment Voronoi diagram; added some debugging
+  code with CGAL_NO_ASSERTIONS block
+- fixed bug for the SGI compiler: it does not really like "using Base::member"
+- replaced occurences of NDEBUG by CGAL_NO_ASSERTIONS
+- added copy constructors and assignment operators to the storage sites
+
 22 June 2004:  Menelaos Karavelas
 - fixed errors of g++ 3.4.0 related to the traits' template parameter
   checking
