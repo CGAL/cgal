@@ -1,4 +1,9 @@
-This is a demo for the interface of CGAL with the Geomview Viewer.
+This directory contains demo programs for the interface of CGAL with the
+Geomview 3D viewer.
 
-Note : please pay attention to the "(echo "started")" thing in the
+- kernel is a program that shows the output of kernel objects.
+- input is a program demonstrating how you can enter a point in Geomview and
+  pass it to the CGAL program.
+
+Note : please pay attention to the '(echo "started")' thing in the
 documentation.
