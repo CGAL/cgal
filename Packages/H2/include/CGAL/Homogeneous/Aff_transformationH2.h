@@ -154,10 +154,9 @@ class Aff_transformation_repH2 : public Aff_transformation_rep_baseH2<R>
     RT    g;
 
   friend Aff_transformationH2<R>
-         _general_transformation_composition CGAL_NULL_TMPL_ARGS (
+         _general_transformation_composition <> (
                                    Aff_transformation_repH2<R> l,
-                                   Aff_transformation_repH2<R> r
-                                                                 );
+                                   Aff_transformation_repH2<R> r);
 };
 
 template < class R >
@@ -594,7 +593,7 @@ public:
                             general_form() const;
 
 //  friend   Aff_transformationH2<R>
-//    operator* CGAL_NULL_TMPL_ARGS
+//    operator* <>
 //              (const Aff_transformationH2<R>& left_argument,
 //               const Aff_transformationH2<R>& right_argument );
 

@@ -147,18 +147,17 @@ public:
   virtual  FT
            cartesian(int i, int j) const ;
 
-friend class Aff_transformationH3<R>;
+  friend class Aff_transformationH3<R>;
 
-friend
-Aff_transformationH3<R>
-_general_transformation_composition CGAL_NULL_TMPL_ARGS (
+  friend
+  Aff_transformationH3<R>
+  _general_transformation_composition <> (
                            Aff_transformation_repH3<R> l,
                            Aff_transformation_repH3<R> r);
 
-friend
-std::ostream &
-operator<< CGAL_NULL_TMPL_ARGS (std::ostream & out,
-                                const Aff_transformationH3<R>& t);
+  friend
+  std::ostream &
+  operator<< <> (std::ostream & out, const Aff_transformationH3<R>& t);
 
 private:
     RT   t00, t01, t02, t03;
