@@ -290,7 +290,7 @@ Line_2 construct_line(const Standard_line_2& l)  const
 Line_2 construct_line(const Point_2& p1, const Point_2& p2) const
 /*{\Xop returns a line through the two extended points |p1| and |p2|.}*/
 { Line_2 l(p1,p2);
-    TRACEN("eline("<<p1<<p2<<")="<<l);
+    CGAL_NEF_TRACEN("eline("<<p1<<p2<<")="<<l);
   RT a=l.a(), b=l.b(), c=l.c();
   l =  Line_2(a,b,c);
   return l; 

@@ -99,7 +99,7 @@ struct PM_persistent_PL_traits
     PredLessThanX() : pK(0) {}
     PredLessThanX(const Geometry* pKi) : pK(pKi) {}
     PredLessThanX(const PredLessThanX& P) : pK(P.pK) 
-    { TRACEN("copy PredLessThanX"); }
+    { CGAL_NEF_TRACEN("copy PredLessThanX"); }
     int operator() (const XCoord& x1, const XCoord& x2) const
     { return pK->compare_x(x1,x2) < 0; }
   };

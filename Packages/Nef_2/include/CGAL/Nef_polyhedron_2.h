@@ -272,7 +272,7 @@ public:
   /*{\Mcreate creates a Nef polyhedron |\Mvar| containing the half-plane
   left of |l| including |l| if |line==INCLUDED|, excluding |l| if 
   |line==EXCLUDED|.}*/  
-  {   TRACEN("Nconstruction from line "<<l);
+  {   CGAL_NEF_TRACEN("Nconstruction from line "<<l);
     ES_list L;
     fill_with_frame_segs(L);
     Extended_point ep1 = EK.construct_opposite_point(l);
@@ -424,7 +424,7 @@ public:
   }
 
   void extract_complement()
-  { TRACEN("extract complement");
+  { CGAL_NEF_TRACEN("extract complement");
   if ( this->is_shared() ) {
 	  clone_rep();
   }
@@ -439,7 +439,7 @@ public:
   }
 
   void extract_interior()
-  { TRACEN("extract interior");
+  { CGAL_NEF_TRACEN("extract interior");
     if ( this->is_shared() ) clone_rep();
     Overlayer D(pm());
     Vertex_iterator v, vend = D.vertices_end();
@@ -451,7 +451,7 @@ public:
 
 
   void extract_boundary()
-  { TRACEN("extract boundary");
+  { CGAL_NEF_TRACEN("extract boundary");
     if ( this->is_shared() ) clone_rep();
     Overlayer D(pm());
     Vertex_iterator v, vend = D.vertices_end();
@@ -466,7 +466,7 @@ public:
 
   void extract_closure()
   /*{\Xop converts |\Mvar| to its closure. }*/
-  { TRACEN("extract closure");
+  { CGAL_NEF_TRACEN("extract closure");
     extract_complement();
     extract_interior();
     extract_complement();
@@ -474,7 +474,7 @@ public:
 
   void extract_regularization()
   /*{\Xop converts |\Mvar| to its regularization. }*/
-  { TRACEN("extract regularization");
+  { CGAL_NEF_TRACEN("extract regularization");
     extract_interior();
     extract_closure();
   }

@@ -486,7 +486,7 @@ void merge_halfedge_pairs_at_target(Halfedge_handle e) const
   in the merger. \precond |v| has outdegree two. The adjacency at |source(e)|
   and |target(next(e))| is kept consistent.}*/
 {
-  TRACEN("merge_halfedge_pairs_at_target "<<PE(e));
+  CGAL_NEF_TRACEN("merge_halfedge_pairs_at_target "<<PE(e));
   Halfedge_handle eo = e->opposite(), 
                   en = e->next(), eno = en->opposite(),
                   enn = en->next(), enno = eno->prev();

@@ -63,8 +63,12 @@ class Nef_polynomial : public Polynomial<NT> {
   Nef_polynomial(const Base& p) : Base(p) {}
   Nef_polynomial(const Nef_polynomial<NT>& p) : Base(p) {}
 
-  static NT R_; // for visualization only
-  static void set_R(const NT& R) { R_ = R; }
+    //  static NT R_; // for visualization only
+    //  static void set_R(const NT& R) { R_ = R; }
+    static NT& infi_maximal_value() {
+      static NT R_ = 1;
+      return R_;
+    }
 };
 
 template <> 
@@ -91,8 +95,12 @@ class Nef_polynomial<int> : public Polynomial<int> {
   Nef_polynomial(const Base& p) : Base(p) {}
   Nef_polynomial(const Nef_polynomial<int>& p) : Base(p) {}
 
-  static int R_; // for visualization only
-  static void set_R(const int& R) { R_ = R; }
+    //  static int R_; // for visualization only
+    //  static void set_R(const int& R) { R_ = R; }
+  static int& infi_maximal_value() {
+    static int R_ = 1;
+    return R_;
+  }
 };
 
 template <> 
@@ -120,26 +128,30 @@ class Nef_polynomial<double> : public Polynomial<double> {
   Nef_polynomial(const Base& p) : Base(p) {}
   Nef_polynomial(const Nef_polynomial<double>& p) : Base(p) {}
 
-  static double R_; // for visualization only
-  static void set_R(const double& R) { R_ = R; }
+    //  static double R_; // for visualization only
+    //  static void set_R(const double& R) { R_ = R; }
+    static double& infi_maximal_value() {
+      static double R_ = 1.0;
+      return R_;
+    }
 };
 
-template <class NT> NT Nef_polynomial<NT>::R_ = 1;
-int                    Nef_polynomial<int>::R_ = 1;
-double                 Nef_polynomial<double>::R_ = 1.0;
+// template <class NT> NT Nef_polynomial<NT>::R_ = 1;
+// int                    Nef_polynomial<int>::R_ = 1;
+// double                 Nef_polynomial<double>::R_ = 1.0;
 
 template <class NT> double to_double(const ::CGAL::Nef_polynomial<NT>& p) { 
-  return (CGAL::to_double(p.eval_at(CGAL::Nef_polynomial<NT>::R_))); 
+  return (CGAL::to_double(p.eval_at(CGAL::Nef_polynomial<NT>::infi_maximal_value()))); 
 }
 
 inline
 double to_double(const Nef_polynomial<int>& p) { 
-  return (CGAL::to_double(p.eval_at(Nef_polynomial<int>::R_))); 
+  return (CGAL::to_double(p.eval_at(Nef_polynomial<int>::infi_maximal_value()))); 
 }
 
 inline
 double to_double(const Nef_polynomial<double>& p) { 
-  return (CGAL::to_double(p.eval_at(Nef_polynomial<double>::R_))); 
+  return (CGAL::to_double(p.eval_at(Nef_polynomial<double>::infi_maximal_value()))); 
 }
 
 template <class NT> 
