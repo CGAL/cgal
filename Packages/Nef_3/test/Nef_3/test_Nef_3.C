@@ -295,7 +295,7 @@ private:
       N.transform(rotx20.inverse());
       N.transform(Aff_transformation_3( CGAL::TRANSLATION, Vector_3(-2,0,0,1)));
       CGAL_assertion(N.is_valid(0,0));
-      //      CGAL_assertion(N == N1);
+      CGAL_assertion(N == N1);
     }
   }
 
@@ -1184,13 +1184,13 @@ private:
     CGAL_assertion(N1.is_valid(0,0));
     N = N.symmetric_difference(N1);
     CGAL_assertion(N.is_valid(0,0));
-    // CGAL_assertion(does_nef3_equals_file(N, "octa_ref.nef3.SH"));
+    CGAL_assertion(does_nef3_equals_file(N, "octa_ref.nef3.SH"));
 
     N = load_off("data/2_cycles_on_halfsphere.off");
     N1 = load_off("data/2_cycles_on_halfsphere2.off");
     N = N1.difference(N);
     CGAL_assertion(N.is_valid(0,0));
-    CGAL_assertion(does_nef3_equals_file(N, "2_cycles_on_halfsphere_ref.nef3.SH"));    
+    CGAL_assertion(does_nef3_equals_file(N, "2_cycles_on_halfsphere_ref.nef3.SH"));
   }
     
 public:
