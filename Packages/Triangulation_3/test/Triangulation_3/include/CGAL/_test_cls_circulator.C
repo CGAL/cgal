@@ -36,6 +36,7 @@ _test_circulator( const Triangulation &T )
   typedef typename Triangulation::Vertex           Vertex;
   typedef typename Triangulation::Vertex_handle    Vertex_handle;
   typedef typename Triangulation::Cell_handle      Cell_handle;
+  typedef typename Triangulation::Facet            Facet;
 
   int n = 0;
   Cell_circulator cc, cc0;
@@ -106,11 +107,26 @@ _test_circulator( const Triangulation &T )
 
   std::vector<Cell_handle> cells;
   std::vector<Vertex_handle > vertices;
+  std::vector<Facet > facets;
 
   Vertex_handle vh = T.vertices_begin();
 
   T.incident_cells(vh,std::back_inserter(cells));
   T.incident_vertices(vh, std::back_inserter(vertices));
+  T.incident_facets(vh, std::back_inserter(facets));
+
+  for(typename std::vector<Cell_handle>::const_iterator cit = cells.begin(),
+                                                        end = cells.end();
+                                                        cit != end; ++cit)
+    assert((*cit)->has_vertex(vh));
+
+  for(typename std::vector<Facet>::const_iterator fit = facets.begin(),
+                                                  end = facets.end();
+                                                  fit != end; ++fit)
+  {
+    assert( (fit->first)->has_vertex(vh) );
+    assert( fit->second != (fit->first)->index(vh) );
+  }
 
    Facet_circulator fc, fc0;
    int i,j;

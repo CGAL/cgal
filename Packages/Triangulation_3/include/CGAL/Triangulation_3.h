@@ -976,6 +976,13 @@ public:
 
   template <class OutputIterator>
   OutputIterator
+  incident_facets(Vertex_handle v, OutputIterator facets) const
+  {
+      return _tds.incident_facets(v, facets);
+  }
+
+  template <class OutputIterator>
+  OutputIterator
   incident_vertices(Vertex_handle v, OutputIterator vertices) const
   {
       return _tds.incident_vertices(v, vertices);

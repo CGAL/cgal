@@ -639,10 +639,11 @@ public:
 
   // around a vertex
 private:
-  template <class OutputIterator>
-  void
+  template <class IncidentCellIterator, class IncidentFacetIterator>
+  std::pair<IncidentCellIterator, IncidentFacetIterator>
   incident_cells_3(const Vertex_handle& v, const Cell_handle& c,
-	           OutputIterator cells) const
+	           std::pair<IncidentCellIterator,
+                             IncidentFacetIterator> it) const
   {
       CGAL_triangulation_precondition(dimension() == 3);
 
@@ -650,16 +651,19 @@ private:
       // 1 : incident cell already visited
       // 0 : unknown
       c->set_in_conflict_flag(1);
-      *cells++ = c;
+      *it.first++ = c;
 
       for (int i=0; i<4; ++i) {
 	  if (c->vertex(i) == v)
 	      continue;
 	  Cell_handle next = c->neighbor(i);
+          if (c < next)
+              *it.second++ = Facet(c, i); // Incident facet.
 	  if (next->get_in_conflict_flag() != 0)
 	      continue;
-	  incident_cells_3(v, next, cells);
+	  it = incident_cells_3(v, next, it);
       }
+      return it;
   }
 
   template <class OutputIterator>
@@ -704,7 +708,9 @@ public:
       std::vector<Cell_handle> tmp_cells;
       tmp_cells.reserve(64);
       if ( dimension() == 3 )
-          incident_cells_3(v, v->cell(), std::back_inserter(tmp_cells));
+          incident_cells_3(v, v->cell(),
+                           std::make_pair(std::back_inserter(tmp_cells),
+                                          Emptyset_iterator()));
       else
           incident_cells_2(v, v->cell(), std::back_inserter(tmp_cells));
 
@@ -714,6 +720,27 @@ public:
 	  *cells++ = *cit;
       }
       return cells;
+  }
+
+  template <class OutputIterator>
+  OutputIterator
+  incident_facets(const Vertex_handle& v, OutputIterator facets) const
+  {
+      CGAL_triangulation_precondition( dimension() == 3 );
+      CGAL_triangulation_precondition( v != Vertex_handle() );
+      CGAL_triangulation_expensive_precondition( is_vertex(v) );
+
+      std::vector<Cell_handle> tmp_cells;
+      tmp_cells.reserve(64);
+      std::pair<std::back_insert_iterator<std::vector<Cell_handle> >,
+                OutputIterator> it (std::back_inserter(tmp_cells), facets);
+      it = incident_cells_3(v, v->cell(), it);
+
+      for(typename std::vector<Cell_handle>::iterator cit = tmp_cells.begin();
+	      cit != tmp_cells.end(); ++cit) {
+	  (*cit)->set_in_conflict_flag(0);
+      }
+      return it.second;
   }
 
   template <class OutputIterator>
