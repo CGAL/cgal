@@ -1,4 +1,7 @@
 30/01/2004 Sylvain Pion
+- Use CGAL_USE_GEOMVIEW in the demos.
+
+30/01/2004 Sylvain Pion
 - Remove obsolete _MSC_VER workaround.
 
 Version 1.190 (?? January 04)
