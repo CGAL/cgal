@@ -21,19 +21,19 @@
 #ifndef CGAL_PM_WITH_INTERSECTIONS_MISC_H
 #define CGAL_PM_WITH_INTERSECTIONS_MISC_H
 
-#include <CGAL/Planar_map_2/Planar_map_misc.h>
+#include <CGAL/Planar_map_2/Pm_traits_wrap_2.h>
 #include <CGAL/tags.h>
 
 CGAL_BEGIN_NAMESPACE
 
 template <class I>
 class Planar_map_with_intersections_traits_wrap : 
-  public Planar_map_traits_wrap<I>
+  public Pm_traits_wrap_2<I>
 {
 public:
-  typedef  Planar_map_traits_wrap<I>    Base;
-  typedef  typename Base::X_curve_2     X_curve_2;
-  typedef  typename Base::Point_2       Point_2;
+  typedef Pm_traits_wrap_2<I>           Base;
+  typedef typename Base::X_curve_2      X_curve_2;
+  typedef typename Base::Point_2        Point_2;
 
   typedef typename I::Has_left_category Has_left_category;
   
