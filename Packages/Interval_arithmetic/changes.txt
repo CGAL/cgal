@@ -1,5 +1,9 @@
 Changes done to the Interval Arithmetic package.
 
+Version 4.95 on 5 June 2001
+- Add a workaround on OSF/Alpha for GCC's too agressive fixincludes in FPU.h.
+- Fix MP_Float::operator-() which died in an endless loop...
+
 Version 4.94 on 30 May 2001
 - Remove Compare_distance_to_point_[23].
 

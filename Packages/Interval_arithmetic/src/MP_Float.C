@@ -112,10 +112,15 @@ inline
 void
 Add_Sub(MP_Float &r, const MP_Float &a, const MP_Float &b)
 {
-  CGAL_assertion(!a.is_zero() && !b.is_zero());
+  CGAL_assertion(!b.is_zero());
 
   int min_exp = std::min(a.min_exp(), b.min_exp());
   int max_exp = std::max(a.max_exp(), b.max_exp());
+  if (a.is_zero()) {
+    min_exp = b.min_exp();
+    max_exp = b.max_exp();
+  }
+    
   r.exp = min_exp;
   r.v.resize(max_exp - min_exp + 1); // One more for the carry.
   r.v[0] = 0;
@@ -145,8 +150,6 @@ MP_Float::operator+(const MP_Float &b) const
 MP_Float
 MP_Float::operator-(const MP_Float &b) const
 {
-  if (is_zero())
-    return -b;
   if (b.is_zero())
     return *this;
 
