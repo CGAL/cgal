@@ -174,7 +174,10 @@
     
 \ccOperations
 
-    \ccMethod{Curve_iterator insert(const Curve& cv);}{inserts the curve
+    \ccMethod{void clear();}
+     {clears the arrangement.}
+
+     \ccMethod{Curve_iterator insert(const Curve& cv);}{inserts the curve
        \ccStyle{cv} into the arrangement. It uses the
        \ccc{Traits::make_x_monotone}
        function to cut the curve into $x$-monotone curves and inserts
@@ -234,7 +237,18 @@
         \ccc{(*(*F_begin))(const Curve& c, list<Curve>& l);}
 
 \end{ccAdvanced}
-    
+
+\begin{ccAdvanced}
+\ccHeading{Reading Arrangement}
+
+\ccMethod{bool read (istream &in);}
+{reading \ccRefName\ from a given input stream.} 
+
+\ccStyle{template <class Scanner>}
+\ccMethod{bool read (istream &in, Scanner& scanner);}
+{reading \ccRefName\ from a given input stream when taking the scanner class as a parameter.}
+
+\end{ccAdvanced}    
 
     %\ccMethod{void insert( list<Traits::X_curve> &l );} {insert the
     %   curves of \ccStyle{l} into the arrangement \comment{iddo: use plane sweep?}}
