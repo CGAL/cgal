@@ -28,10 +28,9 @@
 #include <CGAL/basic.h>
 
 #include <set>
-#include <CGAL/Triangulation_utils_3.h>
-#include <CGAL/Triangulation_3.h>
 
 #include <CGAL/Triangulation_short_names_3.h>
+#include <CGAL/Triangulation_3.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -123,7 +122,6 @@ private:
       power_test = geom_traits().power_test_3_object();
     }
 
-
   bool in_conflict_3(const Weighted_point & p, const Cell_handle & c)
     {
       return side_of_power_sphere(c, p) == ON_BOUNDED_SIDE;
@@ -147,7 +145,6 @@ private:
   void find_conflicts_2(Conflict_set & conflicts, const Weighted_point & p,
 			Cell_handle c, Cell_handle & ac, int & i);
 
-  //  Conflict_set
   void
   star_region_delete_points( Conflict_set & region, 
 			     Vertex* v, 
@@ -232,11 +229,10 @@ side_of_power_sphere( Cell_handle c, const Weighted_point &p) const
   }
 
   // general case
-  Orientation
-    o = orientation(c->vertex(i0)->point(),
-		    c->vertex(i1)->point(),
-		    c->vertex(i2)->point(),
-		    p);
+  Orientation o = orientation(c->vertex(i0)->point(),
+		              c->vertex(i1)->point(),
+		              c->vertex(i2)->point(),
+		              p);
   if (o != ZERO)
     return Bounded_side(o);
 
@@ -244,7 +240,7 @@ side_of_power_sphere( Cell_handle c, const Weighted_point &p) const
   return Bounded_side( power_test( c->vertex(i0)->point(),
 				   c->vertex(i1)->point(),
 				   c->vertex(i2)->point(), p ) );
-}// end side of power sphere
+}
 
 template < class Gt, class Tds >
 Bounded_side
@@ -265,19 +261,18 @@ side_of_power_circle( Cell_handle c, int i, const Weighted_point &p) const
     // else infinite facet
     // v1, v2 finite vertices of the facet such that v1,v2,infinite
     // is positively oriented
-    Vertex_handle 
-      v1 = c->vertex( ccw(i3) ),
-      v2 = c->vertex( cw(i3) );
+    Vertex_handle v1 = c->vertex( ccw(i3) ),
+                  v2 = c->vertex( cw(i3) );
     // does not work in dimension 3 :
     // we need a fourth point to look at orientation with respect
     // to v1v2
     Cell_handle n = c->neighbor(i3);
-    Orientation o =
-      coplanar_orientation( v1->point(), 
-			    v2->point(), 
-			    n->vertex(n->index(c))->point(),
-			    p );
-    if ( o != ZERO ) return Bounded_side( -o );
+    Orientation o = coplanar_orientation( v1->point(), 
+			                  v2->point(), 
+			                  n->vertex(n->index(c))->point(),
+			                  p );
+    if ( o != ZERO )
+	return Bounded_side( -o );
     // case when p collinear with v1v2
     return Bounded_side( power_test( v1->point(), v2->point(), p ) );
   }// dim 2
@@ -303,20 +298,19 @@ side_of_power_circle( Cell_handle c, int i, const Weighted_point &p) const
   //else infinite facet
   // v1, v2 finite vertices of the facet such that v1,v2,infinite
   // is positively oriented
-  Vertex_handle 
-    v1 = c->vertex( next_around_edge(i3,i) ),
-    v2 = c->vertex( next_around_edge(i,i3) );
+  Vertex_handle v1 = c->vertex( next_around_edge(i3,i) ),
+                v2 = c->vertex( next_around_edge(i,i3) );
   Orientation o = coplanar_orientation( v1->point(),
 					v2->point(),
 					c->vertex(i)->point(),
 					p );
   // then the code is duplicated from 2d case
-  if ( o != ZERO ) return Bounded_side( -o );
+  if ( o != ZERO )
+      return Bounded_side( -o );
   // because p is in f iff 
   // it is not on the same side of v1v2 as c->vertex(i)
   // case when p collinear with v1v2 :
-  return Bounded_side( power_test
-		       ( v1->point(), v2->point(), p ) );
+  return Bounded_side( power_test( v1->point(), v2->point(), p ) );
 }
 
 template < class Gt, class Tds >
@@ -375,8 +369,7 @@ insert(const Weighted_point & p, Cell_handle start )
 	v = new Vertex(p);
 	find_conflicts_3(conflicts, p, c, aconflict, ineighbor);
 	//	deleted_points = 
-	star_region_delete_points(conflicts,&(*v),&(*aconflict),
-				  ineighbor);
+	star_region_delete_points(conflicts,&(*v),&(*aconflict), ineighbor);
 	// a voir : comment compter les sommets redondants ? (***)
 	set_number_of_vertices(number_of_vertices()+1);
       }
@@ -420,8 +413,7 @@ insert(const Weighted_point & p, Cell_handle start )
 	{
 	  // if the 2d triangulation is Delaunay, the 3d
 	  // triangulation will be Delaunay
-	  return
-	    Triangulation_3<Gt,Tds>::insert_outside_affine_hull(p); 
+	  return Triangulation_3<Gt,Tds>::insert_outside_affine_hull(p); 
 	}
       }
     }//dim 2
@@ -619,10 +611,10 @@ is_valid(bool verbose, int level) const
 		 (*it).first->vertex( (((*it).first)->neighbor(i))
 				      ->index((*it).first) )->point() )
 	       == ON_BOUNDED_SIDE ) {
-	    if (verbose) { 
-	      std::cerr << "non-empty circle " << std::endl;
-	    }
-	    CGAL_triangulation_assertion(false); return false;
+	    if (verbose)
+		std::cerr << "non-empty circle " << std::endl;
+	    CGAL_triangulation_assertion(false);
+	    return false;
 	  }
 	}
       }
@@ -639,17 +631,18 @@ is_valid(bool verbose, int level) const
 		 (*it).first->vertex( (((*it).first)->neighbor(i))
 				      ->index((*it).first) )->point() )
 	       == ON_BOUNDED_SIDE ) {
-	    if (verbose) { 
-	      std::cerr << "non-empty edge " << std::endl;
-	    }
-	    CGAL_triangulation_assertion(false); return false;
+	    if (verbose)
+		std::cerr << "non-empty edge " << std::endl;
+	    CGAL_triangulation_assertion(false);
+	    return false;
 	  }
 	}
       }
       break;
     }
   }
-  if (verbose) { std::cerr << "Regular valid triangulation" << std::endl;}
+  if (verbose)
+      std::cerr << "Regular valid triangulation" << std::endl;
   return true;
 }
 
