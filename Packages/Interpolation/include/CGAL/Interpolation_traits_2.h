@@ -33,26 +33,26 @@ class Interpolation_traits_2
 {
 public:
   typedef typename R::FT                     FT;
-  typedef typename R::Point_2                Point;
-  typedef typename R::Vector_2               Vector;
+  typedef typename R::Point_2                Point_d;
+  typedef typename R::Vector_2               Vector_d;
 
-  typedef typename R::Construct_vector_2     Construct_vector;
+  typedef typename R::Construct_vector_2     Construct_vector_d;
   typedef typename R::Construct_scaled_vector_2
-                                             Construct_scaled_vector;
+                                             Construct_scaled_vector_d;
   typedef typename R::Compute_squared_distance_2 
-                                             Compute_squared_distance;
+                                             Compute_squared_distance_d;
   
-  Construct_scaled_vector
-  construct_scaled_vector_object()const
-    {return Construct_scaled_vector();}
+  Construct_scaled_vector_d
+  construct_scaled_vector_d_object()const
+    {return Construct_scaled_vector_d();}
   
-  Construct_vector
-  construct_vector_object()const
-    {return Construct_vector();}
+  Construct_vector_d
+  construct_vector_d_object()const
+    {return Construct_vector_d();}
   
-  Compute_squared_distance
-  compute_squared_distance_object()const
-    {return Compute_squared_distance();}
+  Compute_squared_distance_d
+  compute_squared_distance_d_object()const
+    {return Compute_squared_distance_d();}
 
 };
 
