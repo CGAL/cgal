@@ -1,6 +1,9 @@
-Version 3.3.7 (?? ?? 1999)
+Version 3.3.7 (November 22 1999)
 - Added missing headers [syl].
 - Remove protect macros [syl].
+- Cleaned up some useless include <Kernel/...> [Hervé]
+- Shorter headers in CVS repository, but complete for release
+  thanks to script for submission
 
 Version 3.3.6 (October 7 1999)
 - Removed  CVS conflict in Cartesian (was submitted in 3.3.5)

@@ -1,24 +1,6 @@
-// ============================================================================
-//
-// Copyright (c) 1999 The CGAL Consortium
-//
-// This software and related documentation is part of an INTERNAL release
-// of the Computational Geometry Algorithms Library (CGAL). It is not
-// intended for general use.
-//
-// ----------------------------------------------------------------------------
-//
-// release       :
-// release_date  :
-//
-// file          : include/CGAL/Cartesian_2.h
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Herve Bronnimann
-//
-// coordinator   : INRIA Sophia-Antipolis
-//
-// ============================================================================
 
 #ifndef CGAL_CARTESIAN_2_H
 #define CGAL_CARTESIAN_2_H
@@ -29,12 +11,7 @@
 #ifdef CGAL_CFG_NO_ADVANCED_KERNEL
   // Because we cannot use Michael's scheme, we need the wrapper classes
   // We include them (they are common to Cartesian and Homogeneous)
-  #ifndef CGAL_USER_CLASSES_H
   #include <CGAL/user_classes.h>
-  #endif // CGAL_USER_CLASSES_H
-  // Forgotten in user_classes, for CGAL-2.0!!!
-  // #warning "Forgotten classes in <CGAL/user_class.h> "
-  // template <class R > class Circle_2;
 #endif // CGAL_CFG_NO_ADVANCED_KERNEL
 
 #define CGAL_REP_CLASS_DEFINED

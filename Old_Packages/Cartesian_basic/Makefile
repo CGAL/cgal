@@ -45,8 +45,12 @@ clean:
 	rm -f $(Package).tar.gz
 
 $(Package).tar.gz:
+	./check_headers.pl -u include/CGAL/*.[Ch]
+	./check_headers.pl -u include/CGAL/*/*.[Ch]
 	tar -zcvf $(Package).tar.gz \
 	--exclude=CVS --exclude=wrapper.tex --exclude=Makefile \
 	--exclude=TODO \
 	version long_description.txt description.txt changes.txt \
 	include
+	./check_headers.pl -u include/CGAL/*.[Ch]
+	./check_headers.pl -u include/CGAL/*/*.[Ch]

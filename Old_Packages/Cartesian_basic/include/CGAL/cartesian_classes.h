@@ -1,24 +1,6 @@
-// ============================================================================
-//
-// Copyright (c) 1998, 1999 The CGAL Consortium
-//
-// This software and related documentation is part of an INTERNAL release
-// of the Computational Geometry Algorithms Library (CGAL). It is not
-// intended for general use.
-//
-// ----------------------------------------------------------------------------
-//
-// release       :
-// release_date  :
-//
-// file          : include/CGAL/cartesian_classes.h
 // revision      : $Revision$
 // revision_date : $Date$
 // authors       : Herve Bronnimann
-//
-// coordinator   : INRIA Sophia-Antipolis
-//
-// ============================================================================
 
 #ifndef CGAL_CARTESIAN_CLASSES_H
 #define CGAL_CARTESIAN_CLASSES_H
