@@ -27,73 +27,73 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template < class FT, class RT >
+template < class R >
 class PointH2;
 
-template < class FT, class RT >
+template < class R >
 class VectorH2;
 
-template < class FT, class RT >
+template < class R >
 class DirectionH2;
 
-template < class FT, class RT >
+template < class R >
 class LineH2;
 
-template < class FT, class RT >
+template < class R >
 class RayH2;
 
-template < class FT, class RT >
+template < class R >
 class SegmentH2;
 
-template < class FT, class RT >
+template < class R >
 class TriangleH2;
 
-template < class FT, class RT >
+template < class R >
 class CircleH2;
 
-template < class FT, class RT >
+template < class R >
 class Iso_rectangleH2;
 
-template < class FT, class RT >
+template < class R >
 class Aff_transformationH2;
 
-template < class FT, class RT >
+template < class R >
 class PointH3;
 
-template < class FT, class RT >
+template < class R >
 class VectorH3;
 
-template < class FT, class RT >
+template < class R >
 class DirectionH3;
 
-template < class FT, class RT >
+template < class R >
 class PlaneH3;
 
-template < class FT, class RT >
+template < class R >
 class LineH3;
 
-template < class FT, class RT >
+template < class R >
 class RayH3;
 
-template < class FT, class RT >
+template < class R >
 class SegmentH3;
 
-template < class FT, class RT >
+template < class R >
 class TriangleH3;
 
-template < class FT, class RT >
+template < class R >
 class Iso_rectangleH3;
 
-template < class FT, class RT >
+template < class R >
 class TetrahedronH3;
 
-template < class FT, class RT >
+template < class R >
 class Iso_cuboidH3;
 
-template < class FT, class RT >
+template < class R >
 class SphereH3;
 
-template < class FT, class RT >
+template < class R >
 class Aff_transformationH3;
 
 template < class PT, class DA >

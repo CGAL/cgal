@@ -20,13 +20,9 @@
 // coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
 // ======================================================================
  
-
-#ifndef CGAL_AFF_TRANSFORMATION_TAGS_H
 #include <CGAL/aff_transformation_tags.h>
-#endif // CGAL_AFF_TRANSFORMATION_TAGS_H
 
 CGAL_BEGIN_NAMESPACE
-
 
 Translation             TRANSLATION;
 Rotation                ROTATION;
