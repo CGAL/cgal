@@ -1,6 +1,9 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+Ver 7.25 (17/04/02)
+- fixes in doc
+
 Ver 7.24 (15/04/02)
 - fix in the doc
 
