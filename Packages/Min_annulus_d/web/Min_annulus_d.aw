@@ -293,11 +293,11 @@ in the \cgal\ Reference Manual.
 \input{../doc_tex/basic/Optimisation/Optimisation_ref/Min_annulus_d.tex}
 
 @! ----------------------------------------------------------------------------
-@! Concept: Optimisation_d_traits
+@! Concept: OptimisationDTraits
 @! ----------------------------------------------------------------------------
 
 \subsectionRef{Concept}{Optimisation\_d\_traits}
-\input{../../Optimisation_basic/doc_tex/basic/Optimisation/Optimisation_ref/Optimisation_d_traits.tex}
+\input{../../Optimisation_basic/doc_tex/basic/Optimisation/Optimisation_ref/OptimisationDTraits.tex}
 
 @p maximum_input_line_length = 80
 
@@ -317,8 +317,8 @@ in the \cgal\ Reference Manual.
   CGAL::Min\_annulus\_d\texttt{<}Traits\texttt{>}}
 
 The class template \ccc{Min_annulus_d} expects a model of the concept
-\ccc{Optimisation_d_traits} (see
-Section~\ref{ccRef_Optimisation_d_traits}.2) as its template argument.
+\ccc{OptimisationDTraits} (see
+Section~\ref{ccRef_OptimisationDTraits}.2) as its template argument.
 
 @macro <Min_annulus_d declarations> += @begin
     template < class Traits_ >
