@@ -1,3 +1,6 @@
+Version 1.102 (?? January 02)
+- Doc : update Tds_3 => TriangulationDataStructure_3.
+
 Version 1.101 (14 January 02)
 - Documentation updates.
 - remove_from_simplex() renamed to remove_from_maximal_dimension_simplex().
