@@ -1,6 +1,7 @@
 
 #include <CGAL/basic.h>
 #include <iostream>
+#include <fstream>
 
 
 // Define shorter names to please linker (g++/egcs)

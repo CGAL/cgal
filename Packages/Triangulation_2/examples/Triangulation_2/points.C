@@ -1,6 +1,7 @@
 
 #include <CGAL/basic.h>
 #include <iostream>
+#include <fstream>
 #include "points.h"
 
 #include <CGAL/Triangulation_2.h>
