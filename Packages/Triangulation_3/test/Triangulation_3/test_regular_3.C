@@ -28,13 +28,9 @@
 #include <CGAL/_test_types.h>
 #include <CGAL/_test_cls_regular_3.C>
 
-#include <CGAL/Regular_triangulation_filtered_traits_3.h>
-#include <CGAL/Filtered_kernel.h>
-
 bool del=true;
 
-// typedef CGAL::Regular_triangulation_euclidean_traits_3<K> traits;
-typedef CGAL::Filtered_kernel<CGAL::Simple_cartesian<double> > FK;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel FK;
 typedef CGAL::Regular_triangulation_filtered_traits_3<FK> traits;
 
 // Explicit instantiation of the whole class :
@@ -42,7 +38,8 @@ template class CGAL::Regular_triangulation_3<traits>;
 
 int main()
 {
-  std::cout << " with CGAL::Regular_triangulation_euclidean_traits_3: " << std::endl;
+  std::cout << " with CGAL::Regular_triangulation_euclidean_traits_3: "
+            << std::endl;
 
   typedef CGAL::Regular_triangulation_3<traits>                 Cls;
 

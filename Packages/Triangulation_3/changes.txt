@@ -1,3 +1,8 @@
+14 September 2004 Sylvain Pion
+- Specialize Regular_traits_3<> for Exact_pred_inexact_const_kernel, so that
+  it becomes automatically the filtered traits (and thus gets better backward
+  compat).
+
 13 September 2004 Sylvain Pion
 - Regular traits : make functor classes parameterized by K (meant to be the
   regular traits, or the kernel when WPs will be there).

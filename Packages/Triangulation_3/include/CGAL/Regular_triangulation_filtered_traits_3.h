@@ -35,10 +35,10 @@ struct Weighted_converter_3
   typedef typename Converter::Source_kernel Source_kernel;
   typedef typename Converter::Target_kernel Target_kernel;
 
-  typedef typename Regular_triangulation_euclidean_traits_3<Source_kernel>
+  typedef typename Regular_triangulation_euclidean_traits_base_3<Source_kernel>
                    ::Weighted_point_3  Source_wp;
 
-  typedef typename Regular_triangulation_euclidean_traits_3<Target_kernel>
+  typedef typename Regular_triangulation_euclidean_traits_base_3<Target_kernel>
                    ::Weighted_point_3  Target_wp;
 
   using Converter::operator();
@@ -75,7 +75,7 @@ struct Weighted_converter_3
 // The argument is supposed to be a Filtered_kernel like kernel.
 template < typename K >
 class Regular_triangulation_filtered_traits_3
-  : public Regular_triangulation_euclidean_traits_3<K>
+  : public Regular_triangulation_euclidean_traits_base_3<K>
 {
   // Exact traits is based on the exact kernel.
   typedef Regular_triangulation_euclidean_traits_3<typename K::EK>

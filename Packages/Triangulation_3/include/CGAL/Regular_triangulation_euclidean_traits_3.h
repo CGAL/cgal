@@ -338,7 +338,7 @@ public:
 
 
 template < class K, class Weight = typename K::RT >
-class Regular_triangulation_euclidean_traits_3
+class Regular_triangulation_euclidean_traits_base_3
   : public K
 {
 public:
@@ -349,7 +349,7 @@ public:
   typedef Weighted_point                             Point_3;
   //typedef typename K::Point_3                        Point_3;
 
-  typedef Regular_triangulation_euclidean_traits_3<K, Weight> Self;
+  typedef Regular_triangulation_euclidean_traits_base_3<K, Weight> Self;
 
   // The next typedef is there for backward compatibility
   // Some users take their point type from the traits class.
@@ -401,6 +401,13 @@ public:
   { return Compute_squared_radius_smallest_orthogonal_sphere_3(); }
 };
 
+// We need to introduce a "traits_base_3" class in order to get the
+// specialization for Exact_predicates_inexact_constructions_kernel to work,
+// otherwise there is a cycle in the derivation.
+template < class K, class Weight = typename K::RT >
+class Regular_triangulation_euclidean_traits_3
+  : public Regular_triangulation_euclidean_traits_base_3<K, Weight>
+{};
 
 // Cartesian versions.
 template < class pt, class Weight >
@@ -616,6 +623,22 @@ compare_power_distance_3 (const Point &p,
   typedef typename Point::R::Rep_tag Tag;
   return compare_power_distance_3(p,q,r, Tag());
 }
+
+CGAL_END_NAMESPACE
+
+// Partial specialization for Exact_predicates_inexact_constructions_kernel.
+
+#include <CGAL/Regular_triangulation_filtered_traits_3.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
+CGAL_BEGIN_NAMESPACE
+
+template < typename T >
+class Regular_triangulation_euclidean_traits_3
+          <Exact_predicates_inexact_constructions_kernel, T>
+  : Regular_triangulation_filtered_traits_3
+          <Exact_predicates_inexact_constructions_kernel>
+{};
 
 CGAL_END_NAMESPACE
 

@@ -1,4 +1,4 @@
-// Copyright (c) 1998  INRIA Sophia-Antipolis (France).
+// Copyright (c) 1998, 2004  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -15,24 +15,18 @@
 // $Revision$ $Date$
 // $Name$
 //
-// Author(s)     : Francois Rebufat
+// Author(s)     : Francois Rebufat, Sylvain Pion
 
 #ifndef CGAL_TEST_TYPES_H
 #define CGAL_TEST_TYPES_H
 
-#define Simple_cartesian Sc
-
-#include <CGAL/Simple_cartesian.h>
-#include <CGAL/MP_Float.h>
-#include <CGAL/Filtered_exact.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <iostream>
 #include <cassert>
 
-// Filtered_kernel fails with Regular until weighted points are in the kernel.
-typedef CGAL::Filtered_exact<double, CGAL::MP_Float> NT;
-
 // Try to shorten symbol names (for VC++)
-struct K : public CGAL::Simple_cartesian<NT> {};
+struct K : CGAL::Exact_predicates_inexact_constructions_kernel {};
+typedef K::RT   NT;
 
 #endif

@@ -29,6 +29,11 @@ The second argument \ccc{Weight} of the class
 \ccc{Regular_triangulation_euclidean_traits_3<R,Weight>} is in fact
 optional: if is it not provided, \ccc{R::RT} will be used.
 
+Note that this template class is specialized for
+\ccc{CGAL::Exact_predicates_inexact_constructions_kernel}, so that it is as if
+\ccc{Regular_triangulation_filtered_traits_3} was used, i.e. you get
+filtered predicates automatically.
+
 \ccInclude{CGAL/Regular_triangulation_euclidean_traits_3.h}
 
 \ccIsModel
