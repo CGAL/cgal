@@ -13,14 +13,14 @@ typedef Sr::Segments_container           Segments;
 
 int main()
 {
-  Segments seg_list;
+  Segments segments_container;
 
-  seg_list.push_back(Segment_2(Point_2(0,0),Point_2(10,10)));
-  seg_list.push_back(Segment_2(Point_2(0,10),Point_2(10,0)));
-  seg_list.push_back(Segment_2(Point_2(3,0),Point_2(3,10)));
-  seg_list.push_back(Segment_2(Point_2(7,0),Point_2(7,10)));
+  segments_container.push_back(Segment_2(Point_2(0,0),Point_2(10,10)));
+  segments_container.push_back(Segment_2(Point_2(0,10),Point_2(10,0)));
+  segments_container.push_back(Segment_2(Point_2(3,0),Point_2(3,10)));
+  segments_container.push_back(Segment_2(Point_2(7,0),Point_2(7,10)));
 
-  Sr snap(seg_list.begin(),seg_list.end(),1.0);
+  Sr snap(segments_container.begin(),segments_container.end(),1.0,1,5);
 
   int counter = 0;
   for(Sr::Polyline_const_iterator iter1 = snap.polylines_begin();
