@@ -79,6 +79,11 @@ template< class _FT >
 struct Cartesian_dynamic_d
   : public Cartesian_base_dynamic_d< Cartesian_dynamic_d<_FT>, _FT >
 {
+    // Number types and representation tag
+    typedef _FT                                 RT;
+    typedef _FT                                 FT;
+    typedef Cartesian_tag                       Rep_tag;
+
     typedef Cartesian_dynamic_d<_FT>            Self;
     typedef Cartesian_base_dynamic_d<Self,_FT>  Kernel_base;
 
@@ -87,7 +92,7 @@ struct Cartesian_dynamic_d
     // Cartesian_d<FT>::Point_d is exactly CGAL::Point_d< Cartesian_d<FT> >
     // We still need to inherit explicitly, see Cartesian.h for explanation
 
-    typedef Kernel_base::Point_d                Point_d;
+    typedef typename Kernel_base::Point_d       Point_d;
 
 #else
     // Now CGAL::Point_d<R> is only a wrapper around CGAL::PointCd<R>
@@ -97,7 +102,7 @@ struct Cartesian_dynamic_d
     // Cartesian_d<FT>::Base is needed so that CGAL::Point_d< Cartesian_d<FT> >
     // can inherit from Cartesian_d<FT>::Kernel_base::Point_d
 
-    typedef Kernel_base::Point_d                Point_d_base;
+    typedef typename Kernel_base::Point_d       Point_d_base;
 
     // Note: necessary to qualify Point_d by ::CGAL:: to disambiguate between
     // Point_d in the current namespace (nested within CGAL) and
