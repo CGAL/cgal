@@ -37,7 +37,13 @@
 // member function calls to its template argument. It uses 
 // iterator traits to derive correct types and iterator category.
 
+#ifdef  _MSC_VER
+using namespace std; // MSC hates "using std::{blah};"....
+#define typename     // preventing MSVC 6.0 "error C2899:
+                     // typename cannot be used outside a template
+#else
 using std::iterator_traits;
+#endif // _MSC_VER
 
 template < class I, class category = typename iterator_traits<I>::iterator_category >
 class Adaptor {
@@ -86,4 +92,3 @@ int main() {
     return 0;
 }
 
-// EOF //

@@ -34,16 +34,14 @@
 //             STLport fix for MSVC
 //----------------------------------------------------------------------//
 
-#define CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC(a)
 
 #ifdef _MSC_VER
-
-#define CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT 1
-#define __STL_DEBUG 1
-
-#include <stl_config.h>
-#include <stl_iterator_base.h>
-
+#   define CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT 1
+#   define __STL_DEBUG 1
+#   include <stl_config.h>
+#   include <stl_iterator_base.h>
+#else  // not _MSC_VER
+#   define CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC(a)
 #endif // _MSC_VER
 
 //----------------------------------------------------------------------//
