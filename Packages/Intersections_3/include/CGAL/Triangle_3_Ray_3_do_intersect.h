@@ -51,8 +51,6 @@ bool do_intersect(const Triangle_3<K> &t,
   const Point_3 & a = vertex_on(t,0);
   const Point_3 & b = vertex_on(t,1);
   const Point_3 & c = vertex_on(t,2);
-  const Point_3 & p = point_on(r,0);
-  const Point_3 & q = point_on(r,1);
   
   typename K::Construct_vector_3  construct_vector =
     k.construct_vector_3_object();
@@ -62,7 +60,10 @@ bool do_intersect(const Triangle_3<K> &t,
 
   typename K::Construct_point_on_3 point_on = 
     k.construct_point_on_3_object();
- 
+
+  const Point_3 & p = point_on(r,0);
+  const Point_3 & q = point_on(r,1);
+
 
   const Orientation ray_direction =
     orientation(a,b,c,point_on(construct_ray(a, construct_vector(r)),1));

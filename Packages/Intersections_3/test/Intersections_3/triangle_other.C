@@ -334,7 +334,11 @@ main()
       }
     }
   }
-
+  
+  // parallel case
+  Ray r(Point(-1,0,1),Point(4,0,1));
+  assert(CGAL::do_intersect(r,tris[0]) ==  false);
+  
 
   /////////////////////////////////////////////////////////////////////
   //

@@ -1,3 +1,9 @@
+
+
+
+2.8 (24 July 03) my
+- fixed Triangle_3_Ray_3 intersections in parallell cases
+
 2.7 (27 May 03) my
 - fixed cgal_test so that it compiles and run triangle_other
 
