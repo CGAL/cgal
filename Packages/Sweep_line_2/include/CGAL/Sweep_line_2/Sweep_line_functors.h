@@ -134,7 +134,7 @@ public:
   }
 
   void setReference(Point_2 point) {
-    m_point = point;
+    // m_point = point; //   af: I've put it in a comment as it is not declared
   }
 
   Compare_param *m_compare_param;
