@@ -59,6 +59,7 @@ int main(int, char*)
 #include "icons.h"
 
 #include "Show_points.h"
+#include "Show_segments.h"
 #include "Qt_layer_show_triangulation.h"
 #include "Qt_layer_show_triangulation_constraints.h"
 #include "Qt_layer_show_circles.h"
@@ -111,11 +112,14 @@ typedef CGAL::Constrained_Delaunay_triangulation_2<K, Tds,
 typedef CGAL::Delaunay_mesh_local_size_criteria_2<Tr> Criteria;
 
 typedef K::Point_2 Point_2;
+typedef K::Segment_2 Segment_2;
+typedef K::Triangle_2 Triangle_2;
 typedef K::Circle_2 Circle;
 typedef CGAL::Polygon_2<K> CGALPolygon;
 
 typedef CGAL::Delaunay_mesher_2<Tr, Criteria> Mesher;
 typedef Tr::Vertex Vertex;
+typedef Tr::Edge Edge;
 
 template <class CDT>
 void
@@ -165,8 +169,13 @@ class Show_marked_faces : public CGAL::Qt_widget_layer
   Tr *cdt;
   CGAL::Color color;
 public:
-  Show_marked_faces(Tr *t, CGAL::Color c=CGAL::GREEN) : cdt(t),
-    color(c) {};
+  Show_marked_faces(Tr *t, CGAL::Color c=CGAL::GREEN,
+                    QObject* parent = 0, const char* name = 0)
+    : Qt_widget_layer(parent, name),
+      cdt(t),
+      color(c) 
+  {
+  }
 
   typedef typename Tr::Finite_faces_iterator Face_iterator;
 
@@ -185,10 +194,91 @@ public:
   }
 };
 
+template <class Mesher>
+class Show_bad_faces : public CGAL::Qt_widget_layer
+{
+  Mesher *m;
+  CGAL::Color color;
+public:
+  Show_bad_faces(Mesher *mesher,
+                 CGAL::Color c=CGAL::Color(127,0,0),
+                 QObject* parent = 0, const char* name = 0)
+    : Qt_widget_layer(parent, name),
+      m(mesher),
+      color(c) 
+  {}
+
+  void set_container(Mesher* mesher)
+  {
+    m = mesher;
+  }
+
+  typedef typename Mesher::Bad_faces_const_iterator Bad_faces_iterator;
+
+  void draw()
+  {
+    if( m != 0 )
+      {
+        widget->lock();
+        {          
+          QColor old_fill_color = widget->fillColor();
+          int old_line_width = widget->lineWidth();
+
+          *widget << CGAL::FillColor(color) 
+                  << CGAL::LineWidth(0);
+
+          for(Bad_faces_iterator fit=m->bad_faces_begin();
+                fit!=m->bad_faces_end();
+              ++fit)
+            *widget << Triangle_2((*fit)->vertex(0)->point(),
+                                  (*fit)->vertex(1)->point(),
+                                  (*fit)->vertex(2)->point());
+          widget->setFillColor(old_fill_color);
+          widget->setLineWidth(old_line_width);
+        }
+        widget->unlock();
+      }
+  }
+};
+
+template <class Mesher>
+class Meshing_debugging_layer : public CGAL::Qt_widget_layer
+{
+  Mesher* m;
+public:
+  Meshing_debugging_layer(QObject* parent = 0, const char* name = 0)
+    : Qt_widget_layer(parent, name), m(0)
+  {
+  }
+  
+  void set_container(Mesher* mesher)
+  {
+    m = mesher;
+  }
+
+  void draw()
+  {
+    if( m != 0 )
+      {
+        widget->lock();
+        {
+          
+        }
+        widget->unlock();
+      }
+  }
+};
+
+ 
 class Follow_mouse : public CGAL::Qt_widget_layer
 {
   QCursor oldcursor;
 public:
+  Follow_mouse(QObject* parent = 0, const char* name = 0)
+    : Qt_widget_layer(parent, name)
+  {
+  }
+
   void mouseMoveEvent(QMouseEvent *e)
   {
     FT x=static_cast<FT>(widget->x_real(e->x()));
@@ -211,7 +301,17 @@ public:
 
 struct Vertex_to_point {
   const Point_2& operator()(const Vertex& v) const
-    {  return v.point(); }
+  {
+    return v.point();
+  }
+};
+
+struct Edge_to_segment {
+  const Segment_2 operator()(const Edge& e) const
+  {
+    return Segment_2(e.first->vertex(Tr::cw (e.second))->point(),
+                     e.first->vertex(Tr::ccw(e.second))->point());
+  }
 };
 
 class MyWindow : public QMainWindow
@@ -337,41 +437,73 @@ public:
         new Show_points_from_triangulation(&cdt,
                                            &Tr::finite_vertices_begin,
                                            &Tr::finite_vertices_end,
-                                           CGAL::BLACK, 2);
+                                           CGAL::BLACK, 2,
+                                           CGAL::DISC,
+                                           this, "Show points");
 
       show_seeds = new Show_seeds(&seeds,
                                   &Seeds::begin,
                                   &Seeds::end,
                                   CGAL::BLUE,
                                   5,
-                                  CGAL::CROSS);
+                                  CGAL::CROSS,
+                                  this, "Show seeds");
       show_triangulation =
         new CGAL::Qt_layer_show_triangulation<Tr>(&cdt,
-                                                  CGAL::BLUE,1);
+                                                  CGAL::BLUE,1,
+                                                  this,
+                                                  "Show triangulation edges");
       show_marked =
-        new Show_marked_faces<Tr>(&cdt, CGAL::GREEN);
+        new Show_marked_faces<Tr>(&cdt, CGAL::GREEN,
+                                  this, "Show marked faces");
+
       show_constraints =
         new CGAL::Qt_layer_show_triangulation_constraints<Tr>
-        (&cdt, CGAL::RED, 1);
+        (&cdt, CGAL::RED, 1,
+         this, "Show constrained edges");
+
+      show_encroached_edges = 
+        new Show_encroached_edges(0,
+                                  &Mesher::encroached_edges_begin,
+                                  &Mesher::encroached_edges_end,
+                                  CGAL::RED, 2,
+                                  this, "Encroached edges layer");
+
+      show_bad_faces = 
+        new Show_bad_faces<Mesher>(0, CGAL::Color(0,160,0),
+                                   this, "Show bad faces");
+
       show_circles =
-        new CGAL::Qt_layer_show_circles<Tr>(&cdt, CGAL::GRAY, 1);
-      show_mouse = new CGAL::Qt_widget_show_mouse_coordinates(*this);
+        new CGAL::Qt_layer_show_circles<Tr>(&cdt, CGAL::GRAY, 1,
+                                            CGAL::WHITE, false,
+                                            this, "Show circles");
+
+      show_coordinates = 
+        new CGAL::Qt_widget_show_mouse_coordinates(*this,
+                                                   this,
+                                                   "Follow mouse coordinates");
 
       show_clusters = new Show_clusters<Mesher>(mesher,
                                                 CGAL::BLACK,3,CGAL::RECT,
-                                                CGAL::BLACK,2);
+                                                CGAL::BLACK,2,
+                                                this,
+                                                "Show clusters");
 
       // layers order, first attached are "under" last attached
       widget->attach(show_marked);
+      widget->attach(show_bad_faces);
       widget->attach(show_triangulation);
       widget->attach(show_constraints);
       widget->attach(show_circles);
-      widget->attach(show_points);
+      widget->attach(show_encroached_edges);
       widget->attach(show_clusters);
+      widget->attach(show_points);
       widget->attach(show_seeds);
-      widget->attach(show_mouse);
+      widget->attach(show_coordinates);
 
       show_circles->deactivate();
+      show_encroached_edges->deactivate();
+      show_bad_faces->deactivate();
       show_clusters->deactivate();
 
       get_point = new CGAL::Qt_widget_get_point<K>();
@@ -585,6 +717,24 @@ public:
       connect(pbShowCluster, SIGNAL(stateChanged(int)),
               widget, SLOT(redraw()));
 
+      pbShowEncroachedEdges = new QPushButton("Show encroached edges",
+                                              toolBarAdvanced);
+      pbShowEncroachedEdges->setToggleButton(true);
+      pbShowEncroachedEdges->setEnabled(false);
+      connect(pbShowEncroachedEdges, SIGNAL(stateChanged(int)),
+              show_encroached_edges, SLOT(stateChanged(int)));
+      connect(pbShowEncroachedEdges, SIGNAL(stateChanged(int)),
+              widget, SLOT(redraw()));
+
+      pbShowBadFaces = new QPushButton("Show bad faces",
+                                       toolBarAdvanced);
+      pbShowBadFaces->setToggleButton(true);
+      pbShowBadFaces->setEnabled(false);
+      connect(pbShowBadFaces, SIGNAL(stateChanged(int)),
+              show_bad_faces, SLOT(stateChanged(int)));
+      connect(pbShowBadFaces, SIGNAL(stateChanged(int)),
+              widget, SLOT(redraw()));
+
       setUsesBigPixmaps(true);
 
       // --- MENUS ---
@@ -643,14 +793,22 @@ private slots:
       {
         init_status->setText("yes");
         pbShowCluster->setEnabled(true);
+        pbShowEncroachedEdges->setEnabled(true);
+        pbShowBadFaces->setEnabled(true);
       }
     else
       {
         init_status->setText("no");
         pbShowCluster->setOn(false);
         pbShowCluster->setEnabled(false);
+        pbShowEncroachedEdges->setOn(false);
+        pbShowEncroachedEdges->setEnabled(false);
+        pbShowBadFaces->setOn(false);
+        pbShowBadFaces->setEnabled(false);
       }
     show_clusters->change_mesher(mesher);
+    show_encroached_edges->set_container(mesher);
+    show_bad_faces->set_container(mesher);
   }
 
   void after_inserted_input()
@@ -1070,12 +1228,19 @@ private:
   typedef CGAL::Show_points<Seeds, Seeds::const_iterator>
     Show_seeds;
 
+  typedef CGAL::Show_segments<Mesher,
+                              Mesher::Encroached_edges_const_iterator,
+                              Edge_to_segment>
+    Show_encroached_edges;
+
   Show_points_from_triangulation* show_points;
   Show_seeds* show_seeds;
+  Show_encroached_edges* show_encroached_edges;
+  Show_bad_faces<Mesher>* show_bad_faces;
   CGAL::Qt_layer_show_triangulation<Tr>* show_triangulation;
   CGAL::Qt_layer_show_triangulation_constraints<Tr>* show_constraints;
   CGAL::Qt_layer_show_circles<Tr>* show_circles;
-  CGAL::Qt_widget_show_mouse_coordinates* show_mouse;
+  CGAL::Qt_widget_show_mouse_coordinates* show_coordinates;
   Show_marked_faces<Tr>* show_marked;
 
   bool nb_of_clusters_has_to_be_updated;
@@ -1091,6 +1256,8 @@ private:
   QPushButton *pbMeshTimer;
   QPushButton *pbMeshStep;
   QPushButton* pbShowCluster;
+  QPushButton* pbShowEncroachedEdges;
+  QPushButton* pbShowBadFaces;
   QToolBar *toolBarAdvanced;
   int timer_interval;
   int step_lenght;

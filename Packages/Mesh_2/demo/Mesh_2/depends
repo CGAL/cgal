@@ -1,0 +1,66 @@
+
+
+Qt_widget_style_editor.o: \
+
+
+Qt_widget_styled_layer.o: \
+
+
+Show_points.o: \
+
+
+Show_segments_base.o: \
+
+
+conform.o: \
+  ../../include/CGAL/Conforming_Delaunay_triangulation_maker_2.h \
+  ../../include/CGAL/Mesh_2/Refine_edges_with_clusters.h \
+  ../../include/CGAL/Mesh_2/Refine_edges.h \
+  ../../include/CGAL/Mesher_level.h \
+  ../../include/CGAL/Mesh_2/Triangulation_mesher_level_traits_2.h \
+  ../../include/CGAL/Mesh_2/Filtered_queue_container.h \
+  ../../include/CGAL/Mesh_2/Clusters.h \
+  ../../include/CGAL/Filter_circulator.h \
+  ../../include/CGAL/IO/File_poly.h
+
+
+icons.o: \
+
+
+mesh.o: \
+  ../../include/CGAL/Delaunay_mesher_2.h \
+  ../../include/CGAL/Mesh_2/Refine_edges_with_clusters.h \
+  ../../include/CGAL/Mesh_2/Refine_edges.h \
+  ../../include/CGAL/Mesher_level.h \
+  ../../include/CGAL/Mesh_2/Triangulation_mesher_level_traits_2.h \
+  ../../include/CGAL/Mesh_2/Filtered_queue_container.h \
+  ../../include/CGAL/Mesh_2/Clusters.h \
+  ../../include/CGAL/Filter_circulator.h \
+  ../../include/CGAL/Mesh_2/Refine_edges_visitor.h \
+  ../../include/CGAL/Mesh_2/Refine_faces.h \
+  ../../include/CGAL/Double_map.h \
+  ../../include/CGAL/Delaunay_mesh_face_base_2.h \
+  ../../include/CGAL/Delaunay_mesh_area_criteria_2.h \
+  ../../include/CGAL/Delaunay_mesh_size_criteria_2.h \
+  ../../include/CGAL/Delaunay_mesh_criteria_2.h \
+  ../../include/CGAL/IO/File_poly.h
+
+
+mesh_demo.o: \
+  ../../include/CGAL/Conforming_Delaunay_triangulation_maker_2.h \
+  ../../include/CGAL/Mesh_2/Refine_edges_with_clusters.h \
+  ../../include/CGAL/Mesh_2/Refine_edges.h \
+  ../../include/CGAL/Mesher_level.h \
+  ../../include/CGAL/Mesh_2/Triangulation_mesher_level_traits_2.h \
+  ../../include/CGAL/Mesh_2/Filtered_queue_container.h \
+  ../../include/CGAL/Mesh_2/Clusters.h \
+  ../../include/CGAL/Filter_circulator.h \
+  ../../include/CGAL/Delaunay_mesher_2.h \
+  ../../include/CGAL/Mesh_2/Refine_edges_visitor.h \
+  ../../include/CGAL/Mesh_2/Refine_faces.h \
+  ../../include/CGAL/Double_map.h \
+  ../../include/CGAL/Delaunay_mesh_local_size_criteria_2.h \
+  ../../include/CGAL/Delaunay_mesh_size_criteria_2.h \
+  ../../include/CGAL/Delaunay_mesh_criteria_2.h \
+  ../../include/CGAL/Delaunay_mesh_face_base_2.h \
+  ../../include/CGAL/IO/File_poly.h \

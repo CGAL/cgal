@@ -1,3 +1,12 @@
+12 October 2004 Laurent Rineau
+- Added parents and names to every layers, so that Qt releases the memory.
+- Added debugging functions in Delaunay_mesher_2, and new debugging 
+  layers and buttons tools into demo/Mesh_2/mesh_demo. These functions are 
+  not documented.
+- CGAL::Mesh_2::Refine_edges now has Tr::Edge has Element type. It 
+  decreases number of calls to Tr::is_edge().
+- There is still a bug.
+
 6 October 2004 Laurent Rineau
 - Patch for gcc-3.4
 

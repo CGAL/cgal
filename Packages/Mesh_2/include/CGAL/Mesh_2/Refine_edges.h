@@ -25,6 +25,7 @@
 #include <CGAL/Mesh_2/Filtered_queue_container.h>
 
 #include <utility>
+#include <boost/iterator/transform_iterator.hpp>
 
 namespace CGAL {
 
@@ -128,7 +129,7 @@ namespace Mesh_2 {
       int i;
       CGAL_assertion_code( bool should_be_true = )
       ct.is_edge(va, vb, fh, i);
-      CGAL_assertion( should_be_true );
+      CGAL_assertion( should_be_true == true );
       
       return this->operator()(ct, fh, i);
     }
@@ -304,7 +305,7 @@ public:
   Refine_edges_base(Tr& tr_) :
     tr(tr_), is_really_a_constrained_edge(tr_),
     edges_to_be_conformed(is_really_a_constrained_edge),
-    is_locally_conform()
+    is_locally_conform(), converter(tr_)
   {
   }
 
@@ -344,12 +345,12 @@ public:
   for(typename Tr::Subconstraint_iterator it = tr.subconstraints_begin();
       it != tr.subconstraints_end(); ++it) 
     {
-      const Vertex_handle& va = it->first.first;
-      const Vertex_handle& vb = it->first.second;
+      const Vertex_handle& v1 = it->first.first;
+      const Vertex_handle& v2 = it->first.second;
       
       if(fh->is_constrained(i) &&
-         !is_locally_conform(tr, va, vb) )
-        add_constrained_edge_to_be_conformed(va, vb);
+         !is_locally_conform(tr, v1, v2) )
+        add_constrained_edge_to_be_conformed(v1, v2);
     }
 #endif
   } // end do_scan_triangulation()
@@ -361,9 +362,18 @@ public:
   }
 
   /** Get the next edge to conform. */
-  Constrained_edge do_get_next_element()
+  Edge do_get_next_element()
   {
-    return edges_to_be_conformed.get_next_element();
+    Constrained_edge edge = edges_to_be_conformed.get_next_element();
+
+    Face_handle fh;
+    int index;
+
+    CGAL_assertion_code( bool should_be_true =)
+    tr.is_edge(edge.first, edge.second, fh, index);
+    CGAL_assertion( should_be_true == true );
+
+    return Edge(fh, index);
   }
 
   /** Pop the first edge of the queue. */
@@ -374,40 +384,29 @@ public:
 
   /** This version computes the refinement point without handling
       clusters. The refinement point of an edge is just the middle point of
-      the segment. */
-  Point get_refinement_point(const Constrained_edge& edge) const
+      the segment.
+      Saves the handles of the edge that will be splitted. */
+  Point get_refinement_point(const Edge& edge) const
   {
     typename Geom_traits::Construct_midpoint_2
       midpoint = tr.geom_traits().construct_midpoint_2_object();
 
-    const Vertex_handle& va = edge.first;
-    const Vertex_handle& vb = edge.second;
+    va = edge.first->vertex(tr.cw (edge.second));
+    vb = edge.first->vertex(tr.ccw(edge.second));
 
     return midpoint(va->point(), vb->point());
   }
 
   /** Unmark as constrained. */
-  void do_before_conflicts(const Constrained_edge& e, const Point&)
+  void do_before_conflicts(const Edge& e, const Point&)
   {
-    /*const Vertex_handle& */va = e.first;
-    /*const Vertex_handle& */vb = e.second;
-    
-    Face_handle fh;
-    int i;
-    CGAL_assertion_code( bool should_be_true= )
-    tr.is_edge(va, vb, fh, i);
-    CGAL_assertion( should_be_true );
-    
-    tr.remove_constrained_edge(fh, i);
-    tr.is_edge(va, vb);
+    tr.remove_constrained_edge(e.first, e.second);
   }
 
-  void do_after_no_insertion(const Constrained_edge& e, const Point&,
+  /** Re-mark as constrained. */
+  void do_after_no_insertion(const Edge&, const Point&,
                              const Zone& )
   {
-    const Vertex_handle& va = e.first;
-    const Vertex_handle& vb = e.second;
-    
     tr.insert_constraint(va, vb);
   }
 
@@ -451,12 +450,10 @@ public:
     return std::make_pair(true, true);
   }
 
-  /** Saves the handles of the edge that will be splitted. */
-  void do_before_insertion(const Constrained_edge& e, const Point&,
+  /** Do nothing. */
+  void do_before_insertion(const Edge&, const Point&,
                            const Zone&)
   {
-    va = e.first;
-    vb = e.second;
   }
 
   /**
@@ -509,6 +506,44 @@ protected:
     edges_to_be_conformed.add_element(std::make_pair(va, vb));
   }
 
+private: /** \name DEBUGGING TYPES AND DATAS */
+  class From_pair_of_vertex_to_edge 
+    : public std::unary_function<Constrained_edge, Edge>
+  {
+    Tr& tr;
+  public:
+    From_pair_of_vertex_to_edge(Tr& t) : tr(t) {};
+
+    const Edge operator()(const Constrained_edge edge) const
+    {
+      Face_handle fh;
+      int index;
+      tr.is_edge(edge.first, edge.second, fh, index);
+      return Edge(fh, index);
+    }
+  }; // end From_pair_of_vertex_to_edge
+
+  // -- private data member --
+  From_pair_of_vertex_to_edge converter;
+
+public:  /** \name DEBUGGING FUNCTIONS */
+
+  typedef typename boost::transform_iterator<
+    From_pair_of_vertex_to_edge,
+    typename Container::const_iterator>
+  Edges_const_iterator;
+
+  Edges_const_iterator begin() const
+  {
+    return Edges_const_iterator(this->edges_to_be_conformed.begin(),
+                                converter);
+  }
+
+  Edges_const_iterator end() const
+  {
+    return Edges_const_iterator(this->edges_to_be_conformed.end(),
+                                converter);
+  }
 }; // end class Refine_edges_base
 
   namespace details {
@@ -518,8 +553,7 @@ protected:
       typedef Mesher_level <
         Triangulation_mesher_level_traits_2<Tr>,
         Self,
-        typename ::CGAL::Mesh_2::details::Refine_edges_base_types<Tr>
-        ::Constrained_edge,
+        typename Tr::Edge,
         Null_mesher_level > Edges_mesher_level;
     }; // end Refine_edges_types
   } // end namespace details

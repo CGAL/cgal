@@ -39,6 +39,11 @@ public slots:
   {
     reinit_clusters();
   }
+public:
+  Show_clusters_aux(QObject* parent, const char* name)
+    : Qt_widget_layer(parent, name)
+  {
+  }
 };
 
 template <class Mesher>
@@ -66,8 +71,10 @@ public:
 		int pointsize = 3,
 		CGAL::PointStyle pointstyle = CGAL::DISC,
 		CGAL::Color lc = CGAL::RED,
-		int linewidth = 2)
-    : mesher(m), dt(), _color(color),
+		int linewidth = 2,
+                QObject* parent = 0, const char* name = 0)
+    : Show_clusters_aux(parent, name),
+      mesher(m), dt(), _color(color),
       size(pointsize), style(pointstyle), _line_color(lc),
       width(linewidth) 
     {

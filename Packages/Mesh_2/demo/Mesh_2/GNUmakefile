@@ -43,6 +43,8 @@ all:            \
 		mesh$(EXE_EXT) \
 		conform$(EXE_EXT)
 
+include depends
+
 Qt_widget_styled_layer.moc:  Qt_widget_styled_layer.h
 	$(QT_MOC) -o Qt_widget_styled_layer.moc Qt_widget_styled_layer.h
 
@@ -59,15 +61,17 @@ Qt_widget_style_editor$(OBJ_EXT): Qt_widget_style_editor.moc \
 		Qt_widget_style_editor.C.moc \
 		Qt_widget_style_editor.C
 
-Show_points.moc:  Show_points.h
+Show_points.moc: Show_points.h
 	$(QT_MOC) -o Show_points.moc Show_points.h
 
 Show_points$(OBJ_EXT): Show_points.moc Show_points.C
 
-icons$(OBJ_EXT): seeds.xpm marked.xpm contraints.xpm
+Show_segments_base.moc:  Show_segments_base.h
+	$(QT_MOC) -o Show_segments_base.moc Show_segments_base.h
 
-icons$(EXE_EXT): icons$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)icons icons$(OBJ_EXT) $(LDFLAGS)
+Show_segments_base$(OBJ_EXT): Show_segments_base.moc Show_segments_base.C
+
+icons$(OBJ_EXT): seeds.xpm marked.xpm contraints.xpm
 
 mesh_demo.moc:  mesh_demo.C
 	$(QT_MOC) -o mesh_demo.moc $<
@@ -75,18 +79,20 @@ mesh_demo.moc:  mesh_demo.C
 Show_clusters.moc: Show_clusters.h
 	$(QT_MOC) -o Show_clusters.moc $<
 
-mesh_demo$(OBJ_EXT): mesh_demo.moc Show_clusters.moc \
+mesh_demo$(OBJ_EXT): mesh_demo.moc Show_clusters.moc Show_segments_base.moc\
 	Show_points.h \
 	Qt_widget_style_editor.h 
 
 mesh_demo$(EXE_EXT): mesh_demo$(OBJ_EXT) icons$(OBJ_EXT) \
 		Show_points$(OBJ_EXT) \
+		Show_segments_base$(OBJ_EXT) \
 		Qt_widget_styled_layer$(OBJ_EXT) \
 		Qt_widget_style_editor$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)mesh_demo \
 	mesh_demo$(OBJ_EXT) \
 	icons$(OBJ_EXT) \
 	Show_points$(OBJ_EXT) \
+	Show_segments_base$(OBJ_EXT) \
 	Qt_widget_styled_layer$(OBJ_EXT) \
 	Qt_widget_style_editor$(OBJ_EXT) \
 	$(LDFLAGS)
@@ -100,18 +106,27 @@ conform$(EXE_EXT): conform$(OBJ_EXT)
 mesh$(EXE_EXT): mesh$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)mesh mesh$(OBJ_EXT) $(LDFLAGS)
 
-polygon2poly$(EXE_EXT): polygon2poly$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)polygon2poly polygon2poly$(OBJ_EXT) $(LDFLAGS)
-
 clean: \
 		icons.clean \
 		mesh_demo.clean \
 		mesh.clean \
 		conform.clean \
 		Show_points.clean \
+		Show_segments_base.clean \
 		Qt_widget_styled_layer.clean \
 		Qt_widget_style_editor.clean
 	rm -f Show_clusters.moc
+
+depends: *.C
+	cat /dev/null > depends
+	for f in *.C; do \
+	  echo >> depends; \
+	  echo >> depends; \
+	  echo "$${f%.C}$(OBJ_EXT): \\" >> depends; \
+	  $(CGAL_CXX) $(CXXFLAGS) -M $$f \
+	     | grep '\.\./\.\..*/include/CGAL' >> depends; \
+	done
+
 
 #---------------------------------------------------------------------#
 #                    suffix rules

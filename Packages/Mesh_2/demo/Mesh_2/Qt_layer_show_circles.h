@@ -48,7 +48,9 @@ public:
 			CGAL::Color c = CGAL::GRAY,
 			int linewidth = 1,
 			CGAL::Color fill_color = CGAL::WHITE,
-			bool filled = false) :
+			bool filled = false,
+                        QObject* parent = 0, const char* name = 0) :
+    Qt_widget_layer(parent, name),
     tr(t), do_erase(false), color(c), width(linewidth),
     fillcolor(fill_color), fill(filled) {};
 

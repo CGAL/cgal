@@ -61,8 +61,6 @@ class Refine_edges_base_with_clusters :
   
   typedef typename Triangulation_mesher_level_traits_2<Tr>::Zone Zone;
 
-  typedef typename Super::Constrained_edge Constrained_edge;
-
   typedef typename Clusters<Tr>::Cluster Cluster;
 
 
@@ -83,10 +81,13 @@ public:
 
   /*\name FUNCTIONS NEEDED BY \c Mesher_level OVERIDDEN BY THIS CLASS. */
 
-  Point get_refinement_point(const Constrained_edge& edge)
+  Point get_refinement_point(const Edge& edge)
   {
-    this->va = edge.first;
-    this->vb = edge.second;
+    typename Geom_traits::Construct_midpoint_2
+      midpoint = tr.geom_traits().construct_midpoint_2_object();
+
+    this->va = edge.first->vertex(tr.cw (edge.second));
+    this->vb = edge.first->vertex(tr.ccw(edge.second));
     va_has_a_cluster = false;
     vb_has_a_cluster = false;
     
@@ -97,7 +98,7 @@ public:
         { // both ends are clusters
           va_has_a_cluster = true;
           vb_has_a_cluster = true;
-          return Super::get_refinement_point(edge);
+          return midpoint(va->point(), vb->point());
         }
       else {
         // va only is a cluster
@@ -111,7 +112,7 @@ public:
       return split_cluster_point(this->vb,this->va,cb);
     }else{
       // no cluster
-      return Super::get_refinement_point(edge);
+      return midpoint(va->point(), vb->point());
     }
   };
 

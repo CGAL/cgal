@@ -20,12 +20,12 @@
 #ifndef CGAL_DOUBLE_MAP_H
 #define CGAL_DOUBLE_MAP_H
 
-namespace CGAL {
-
 #include <map>
 #include <utility>
 #include <algorithm>
 #include <CGAL/assertions.h>
+
+namespace CGAL {
 
 template <class _Key, class _Data, class _Direct_order = std::less<_Key>, 
 	  class _Reverse_order = std::less<_Data> >
@@ -48,6 +48,9 @@ public:
   typedef typename Reverse_func::iterator reverse_iterator;
   typedef typename Direct_func::iterator direct_iterator;
   typedef reverse_iterator iterator;
+  typedef typename Direct_func::const_iterator direct_const_iterator;
+
+  typedef direct_const_iterator const_iterator;
 
 private:
   // Private members
@@ -85,11 +88,11 @@ public :
   // Assignation
   bool insert(const Key& k, const Data& d)
     {
-      std::cerr << "Double_map::insert(" 
-                << k->vertex(0)->point() << ", "
-                << k->vertex(1)->point() << ", "
-	        << k->vertex(2)->point()
-                << ", " << d << ")\n";
+//       std::cerr << "Double_map::insert(" 
+//                 << k->vertex(0)->point() << ", "
+//                 << k->vertex(1)->point() << ", "
+// 	        << k->vertex(2)->point()
+//                 << ", " << d << ")\n";
 
       std::pair<direct_iterator, bool> 
 	direct_result = direct_func.insert(Direct_entry(k, d));
@@ -119,13 +122,13 @@ public :
       direct_iterator pos = direct_func.find(rit->second);
       assert(pos != direct_func.end());
       
-      std::cerr << "Before Double_map::pop_front()\n";
-      std::cerr << pos->second << " " 
-	    << "("
-	    << pos->first->vertex(0)->point() << ", "
-	    << pos->first->vertex(1)->point() << ", "
-	    << pos->first->vertex(2)->point()
-	    << ")" << std::endl;
+//       std::cerr << "Before Double_map::pop_front()\n";
+//       std::cerr << pos->second << " " 
+// 	    << "("
+// 	    << pos->first->vertex(0)->point() << ", "
+// 	    << pos->first->vertex(1)->point() << ", "
+// 	    << pos->first->vertex(2)->point()
+// 	    << ")" << std::endl;
 
       direct_func.erase(pos);
       reverse_func.erase(rit);
@@ -134,6 +137,16 @@ public :
       //      std::cerr << "After Double_map::pop_front()\n";
       //      dump_direct_func(std::cerr);      
     }
+
+  const_iterator begin() const
+  {
+    return direct_func.begin();
+  }
+    
+  const_iterator end() const
+  {
+    return direct_func.end();
+  }
 
   class Second_is {
     Key k;
@@ -194,6 +207,6 @@ erase(Key& k)
   CGAL_assertion(is_valid());
 }
 
-}
+} // end namespace CGAL
 
-#endif
+#endif // CGAL_DOUBLE_MAP_H

@@ -21,6 +21,7 @@
 #define CGAL_MESH_2_REFINE_FACES_H
 
 #include <CGAL/Double_map.h>
+#include <boost/iterator/transform_iterator.hpp>
 
 namespace CGAL {
 
@@ -45,7 +46,7 @@ class Refine_faces_base
 
   typedef typename Triangulation_mesher_level_traits_2<Tr>::Zone Zone;
 
-private: // --- PRIVATE TYPES ---
+protected: // --- PROTECTED TYPES ---
   /** Meshing criteria. */
   typedef typename Criteria::Is_bad Is_bad;
   typedef typename Criteria::Quality Quality;
@@ -54,8 +55,8 @@ private: // --- PRIVATE TYPES ---
 
   typedef CGAL::Double_map<Face_handle, Quality> Bad_faces;
 
-private:
-  // --- PRIVATE MEMBER DATAS ---
+protected:
+  // --- PROTECTED MEMBER DATAS ---
 
   Tr& tr; /**< The triangulation itself. */
   Criteria& criteria; /**<The meshing criteria */
@@ -206,6 +207,7 @@ public:
     for(Fh_it pfit=begin; pfit!=end; ++pfit)
       push_in_bad_faces(*pfit, Quality());
   }
+
 }; // end class Refine_faces_base
   
 // --- PRIVATE MEMBER FUNCTIONS ---
@@ -266,19 +268,51 @@ template <typename Tr,
           typename Criteria,
           typename Previous,
           typename Base = Refine_faces_base<Tr, Criteria> >
-struct Refine_faces : 
+class Refine_faces : 
   public Base, 
   public details::Refine_faces_types<Tr, 
     Refine_faces<Tr, Criteria, Previous, Base>,
     Previous>::Faces_mesher_level
 {
+  template <class Pair>
+  struct Pair_get_first: public std::unary_function<Pair,
+                                                    typename Pair::first_type>
+  {
+    typedef typename Pair::first_type result;
+    const result& operator()(const Pair& p) const
+    {
+      return p.first;
+    }
+  };
+
+public:
   typedef Refine_faces<Tr, Criteria, Previous, Base> Self;
   typedef typename details::Refine_faces_types<Tr, Self, Previous>
     ::Faces_mesher_level Mesher;
+
+  typedef typename Base::Bad_faces Bad_faces;
+
+  typedef typename boost::transform_iterator<
+    Pair_get_first<typename Bad_faces::Direct_entry>,
+    typename Bad_faces::const_iterator>
+   Bad_faces_const_iterator;
+
 public:
   Refine_faces(Tr& t, Criteria& criteria, Previous& previous)
     : Base(t, criteria), Mesher(previous)
   {
+  }
+
+  /** \name DEBUGGING FUNCTIONS */
+
+  Bad_faces_const_iterator begin() const
+  {
+    return Bad_faces_const_iterator(this->bad_faces.begin());
+  }
+
+  Bad_faces_const_iterator end() const
+  {
+    return Bad_faces_const_iterator(this->bad_faces.end());
   }
 }; // end Refine_faces
 

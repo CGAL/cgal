@@ -36,14 +36,14 @@ namespace CGAL {
       typedef Elt Element;
       typedef Pred Predicate;
 
+      typedef typename std::deque<Element>::const_iterator const_iterator;
     private:
       // --- private datas ---
       std::deque<Element> d;
-      std::queue<Element> q;
       Predicate test;
 
     public:
-      Filtered_queue_container(Predicate p) : d(), q(d), test(p) {}
+      Filtered_queue_container(Predicate p) : d(), test(p) {}
       Filtered_queue_container() : test() {}
 
       void clear()
@@ -53,13 +53,13 @@ namespace CGAL {
 
       bool empty()
       {
-        if(q.empty())
+        if(d.empty())
           return true;
 
-        while( !test(q.front()) )
+        while( !test(d.front()) )
           {
-            q.pop();
-            if( q.empty() )
+            d.pop_front();
+            if( d.empty() )
               return true;
           }
 
@@ -68,19 +68,31 @@ namespace CGAL {
 
       Element& get_next_element()
       {
-        while( !test(q.front()) )
-          q.pop();
-        return q.front();
+        while( !test(d.front()) )
+          d.pop_front();
+        return d.front();
       }
 
       void add_element(const Element& e)
       {
-        q.push(e);
+        d.push_back(e);
       }
 
       void remove_next_element()
       {
-        q.pop();
+        d.pop_front();
+      }
+
+      const_iterator begin() const
+      {
+        std::cerr << "edges_to_be_conformed.size()= "
+                  << d.size() << std::endl;
+        return d.begin();
+      }
+      
+      const_iterator end() const
+      {
+        return d.end();
       }
     }; // end Simple_queue_container
 

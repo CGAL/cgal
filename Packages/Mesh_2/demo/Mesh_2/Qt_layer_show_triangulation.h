@@ -33,8 +33,9 @@ public:
 	
   Qt_layer_show_triangulation(T *t,
 			      CGAL::Color lc = CGAL::BLUE,
-			      int linewidth = 1) 
-    : tr(t), color(lc), width(linewidth) {};
+			      int linewidth = 1,
+                              QObject* parent = 0, const char* name = 0)
+    : Qt_widget_layer(parent, name), tr(t), color(lc), width(linewidth) {};
 
 
   void draw()

@@ -61,18 +61,13 @@ public:
   /** 
    * Store vertex handles and markers at left and right of the edge \c e.
    */
-  void before_conflicts(const Constrained_edge& e, const Point&)
+  void before_conflicts(const Edge& e, const Point&)
   {
-    Tr& tr = mesher_base.get_triangulation_ref();
+    const Face_handle& fh = e.first;
+    const int edge_index = e.second;
 
-    va = e.first;
-    vb = e.second;
-
-    Face_handle fh;
-    int edge_index;
-    CGAL_assertion_code( bool should_be_true = )
-    tr.is_edge(va, vb, fh, edge_index);
-    CGAL_assertion( should_be_true );
+    va = fh->vertex(Tr::cw (edge_index));
+    vb = fh->vertex(Tr::ccw(edge_index));
     
     mark_at_right = fh->is_marked();
     mark_at_left = fh->neighbor(edge_index)->is_marked();

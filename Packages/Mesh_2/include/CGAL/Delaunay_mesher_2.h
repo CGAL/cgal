@@ -33,6 +33,7 @@ class Delaunay_mesher_2
   /** \name \c Tr types */
   typedef typename Tr::Vertex_handle Vertex_handle;
   typedef typename Tr::Face_handle Face_handle;
+  typedef typename Tr::Edge Edge;
 
   typedef typename Tr::Point Point;
 
@@ -277,6 +278,63 @@ public:
   const Triangulation& triangulation() const
   {
     return tr;
+  }
+
+  /** \name DEBUGGING FUNCTIONS */
+
+  typedef typename Edges_level::Constrained_edge Constrained_edge;
+
+  Edge next_encroached_edge() const
+  {
+    Constrained_edge e = edges_level.get_next_element();
+
+    Face_handle fh;
+    int index;
+
+    CGAL_assertion_code(bool should_be_true= )
+    tr.is_edge(e.first, e.second, fh, index);
+    CGAL_assertion(should_be_true == true);
+
+    return Edge(fh, i);
+  }
+
+  const Face_handle next_bad_face() const
+  {
+    return faces_level.get_next_element();
+  }
+
+  const Point next_refinement_point() const
+  {
+    if( !edges_level.is_algorithm_done() )
+      return edges_level.get_refinement_point(next_encroached_edge());
+    else
+      return faces_level.get_refinement_point(next_bad_face());
+  }
+
+  typedef typename Edges_level::Edges_const_iterator
+    Encroached_edges_const_iterator;
+
+  typedef typename Faces_level::Bad_faces_const_iterator
+    Bad_faces_const_iterator;
+  
+  Encroached_edges_const_iterator encroached_edges_begin() const
+  {
+    return edges_level.begin();
+  }
+
+  Encroached_edges_const_iterator encroached_edges_end() const
+  {
+    return edges_level.end();
+  }
+
+  Bad_faces_const_iterator bad_faces_begin() const
+  {
+    return faces_level.begin();
+  }
+  
+  Bad_faces_const_iterator bad_faces_end() const
+  {
+    return faces_level.end();
   }
 }; // end class Delaunay_mesher_2
 

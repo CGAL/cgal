@@ -92,6 +92,9 @@ public:
   /** Type of the conflict zone for a point that can be inserted. */
   typedef typename Triangulation_traits::Zone Zone;
 
+  typedef Element Element_type;
+  typedef Previous Previous_level;
+
 private:
   /** \name Private member functions */
   
@@ -113,8 +116,6 @@ private:
   Previous& previous_level; /**< The previous level of the refinement
                                     process. */
 public:
-  typedef Previous Previous_level;
-
   typedef Mesher_level<Triangulation_traits,
                        Derived,
                        Element,
