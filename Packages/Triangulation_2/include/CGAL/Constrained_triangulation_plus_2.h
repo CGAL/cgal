@@ -129,14 +129,12 @@ public:
   void insert(Point a, Point b) { insert_constraint(a, b);}
   void insert(Vertex_handle va, Vertex_handle  vb) {insert_constraint(va,vb);}
 
-  Vertex_handle intersect(Face_handle f, int i, 
-			  Vertex_handle vaa,
-			  Vertex_handle vbb);
-  Vertex_handle intersect(Face_handle f, int i, 
+
+  virtual Vertex_handle intersect(Face_handle f, int i, 
 			  Vertex_handle vaa,
 			  Vertex_handle vbb,
 			  Exact_intersections_tag);
-  Vertex_handle intersect(Face_handle f, int i, 
+  virtual Vertex_handle intersect(Face_handle f, int i, 
 			  Vertex_handle vaa,
 			  Vertex_handle vbb,
 			  Exact_predicates_tag);
@@ -195,8 +193,6 @@ push_back(const Point &p)
 {
   return insert(p);
 }
-
-
 
 template <class Tr>
 inline
@@ -303,6 +299,7 @@ insert_subconstraint(Vertex_handle vaa,
     return;
   }
 
+  //no intersection
   triangulate_hole(intersected_faces,
 		   conflict_boundary_ab,
 		   conflict_boundary_ba);
@@ -312,16 +309,6 @@ insert_subconstraint(Vertex_handle vaa,
     insert_subconstraint(vi,vbb); 
   }
   return;
-}
-
-template <class Tr>
-typename Constrained_triangulation_plus_2<Tr>:: Vertex_handle 
-Constrained_triangulation_plus_2<Tr>::
-intersect(Face_handle f, int i, 
-	  Vertex_handle vaa,
-	  Vertex_handle vbb) 
-{
-  return intersect(f, i, vaa, vbb, Intersection_tag());
 }
 
 template <class Tr>
@@ -353,6 +340,7 @@ intersect(Face_handle f, int i,
   CGAL_triangulation_assertion(assign(pi, result));
 
   Vertex_handle vi = insert(pi, EDGE, f, i);
+  hierarchy.split_constraint(vcc,vdd,vi);
   return vi; 
 }
 

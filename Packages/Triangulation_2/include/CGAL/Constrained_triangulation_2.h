@@ -173,15 +173,15 @@ protected:
   Vertex_handle intersect(Face_handle f, int i, 
 			  Vertex_handle vaa,
 			  Vertex_handle vbb);
-  Vertex_handle intersect(Face_handle f, int i, 
+  virtual Vertex_handle intersect(Face_handle f, int i, 
 			  Vertex_handle vaa,
 			  Vertex_handle vbb,
 			  No_intersection_tag);
-  Vertex_handle intersect(Face_handle f, int i, 
+  virtual Vertex_handle intersect(Face_handle f, int i, 
 			  Vertex_handle vaa,
 			  Vertex_handle vbb,
 			   Exact_intersections_tag);
-  Vertex_handle intersect(Face_handle f, int i, 
+  virtual Vertex_handle intersect(Face_handle f, int i, 
 			  Vertex_handle vaa,
 			  Vertex_handle vbb,
 			  Exact_predicates_tag);

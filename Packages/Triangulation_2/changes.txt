@@ -1,6 +1,10 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+Ver 7.12 (22/03/02)
+- fixed a bug in Constrained_triangulation_plus by making
+  the intersect members virtual
+
 Ver 7.11 (21/03/02)
 - move the intersection_tag parameter from Constrained triangulation plus
  to Constrained and Delaunay constrained triangulation
