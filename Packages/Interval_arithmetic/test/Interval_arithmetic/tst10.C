@@ -63,14 +63,16 @@ midpoint2(const Point2 &p, const Point2 &q)
   return Point2((p.x() + q.x())/FT(2), (p.y() + q.y())/FT(2));
 }
 
+#if 0
 inline
 Point2
 midpoint3(const Point2 &p, const Point2 &q)
 {
   Point2 M;
-  // midpointC2(p.x(),p.y(),q.x(),q.y(),M.x_ref_non_const(),M.y_ref_non_const());
+  midpointC2(p.x(),p.y(),q.x(),q.y(),M.x_ref_non_const(),M.y_ref_non_const());
   return M;
 }
+#endif // 0
 #endif
 
 } // namespace CGAL
@@ -119,7 +121,7 @@ int main()
 #endif
 
   t.stop();
-  std::cout << "temps = " << t.time()-dt << std::endl;
+  std::cout << "time = " << t.time()-dt << std::endl;
 
   return 0;
 }
