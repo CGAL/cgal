@@ -343,7 +343,7 @@ EOF
 	    chomp;
 	    my $tester_address = $_;
 	    print OUTPUT "<TD NOWRAP><A HREF=\"mailto:$tester_address\">$tester_name</A>\n";
-	    my $index = 4;
+	    my $index = 5;
 	    while ($index) {
 	        $index--;
 		$_ = <PLATFORM_INFO>;
