@@ -160,11 +160,6 @@ CGAL_Kernel_obj(Compare_y_at_x_2, compare_y_at_x_2_object)
 CGAL_Kernel_obj(Compare_x_at_y_2, compare_x_at_y_2_object)
 CGAL_Kernel_obj(Compare_distance_2, compare_distance_2_object)
 
-typedef CGALi::Compare_distance_to_point<Point_2>  Compare_distance_to_point_2;
-Compare_distance_to_point_2
-compare_distance_to_point_2_object(const Point_2& p) const
-{ return Compare_distance_to_point_2(p); }
-
 typedef CGAL ::p_Less_dist_to_point<Point_2>       Less_distance_to_point_2;
 Less_distance_to_point_2
 less_distance_to_point_2_object(const Point_2& p) const  // XXX
@@ -391,12 +386,6 @@ typedef CGALi::Less_signed_distance_to_plane<Plane_3, Point_3>
 Less_signed_distance_to_plane_3
 less_signed_distance_to_plane_3_object() const
 { return Less_signed_distance_to_plane_3(); }
-
-typedef CGALi::Compare_distance_to_point<Point_3> Compare_distance_to_point_3;
-Compare_distance_to_point_3
-compare_distance_to_point_3_object(const Point_3& p) const
-{ return Compare_distance_to_point_3(p); }
-
 
 typedef CGALi::p_Angle                                 Angle_3;
 typedef CGALi::Collinear                               Collinear_3;

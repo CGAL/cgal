@@ -365,13 +365,9 @@ test_new_2(const R& rep)
         = rep.less_distance_to_point_2_object(p2);
   bool tmp35 = less_distance_to_point(p3,p4);
 
-  typename R::Compare_distance_to_point_2 compare_dist_to_point
-        = rep.compare_distance_to_point_2_object(p2);
-  Comparison_result tmp34ab = compare_dist_to_point(p2,p3);
-
   typename R::Compare_distance_2 compare_dist
         = rep.compare_distance_2_object();
-  Comparison_result tmp34abc = compare_dist(p1,p2,p3);
+  Comparison_result tmp34ab = compare_dist(p1,p2,p3);
 
   typename R::Less_signed_distance_to_line_2 less_signed_distance_to_line
         = rep.less_signed_distance_to_line_2_object(p4,p5);
@@ -511,7 +507,7 @@ test_new_2(const R& rep)
   use(tmp34c); use(tmp34b); use(tmp34a); use(tmp32d); use(tmp32c); use(tmp32b);
   use(tmp32a); use(tmp31d); use(tmp31c); use(tmp31b); use(tmp31a); use(tmp30);
   use(tmp26); use(tmp25); use(tmp24);
-  use(tmp29); use(tmp28); use(tmp27); use(tmp33a); use(tmp34ab); use(tmp34abc);
+  use(tmp29); use(tmp28); use(tmp27); use(tmp33a); use(tmp34ab);
   use(tmp34dd); use(tmp34cc); use(tmp34bb); use(tmp34aa); 
   use(tmp39a); use(tmp36a);
   use(tmp_bool);

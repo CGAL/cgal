@@ -174,23 +174,6 @@ _test_fctobj_point_line_2(const Point&, const Line& )
  
   std::cout << '.';
  
-  CGAL::Compare_distance_to_point_2< Point>  cmp_dist_to_point_p3(p3);
-  assert( cmp_dist_to_point_p3(p2,p1) == CGAL::LARGER );
- 
-  CGAL::Compare_distance_to_point_2< Point>  cmp_dist_to_point_p1(p1);
-  assert( cmp_dist_to_point_p1(p5,p1) == CGAL::LARGER );
- 
-  CGAL::Compare_distance_to_point_2< Point>  cmp_dist_to_point_p4(p4);
-  assert( cmp_dist_to_point_p4(p6,p5) == CGAL::SMALLER );
-  assert( cmp_dist_to_point_p4(p9,p1) == CGAL::SMALLER );
- 
-  CGAL::Compare_distance_to_point_2< Point>  cmp_dist_to_point_p8(p8);
-  assert( cmp_dist_to_point_p8(p3,p3) == CGAL::EQUAL );
- 
-  CGAL::Compare_distance_to_point_2< Point>  cmp_dist_to_point_p2(p2);
-  assert( cmp_dist_to_point_p2(p3,p3) == CGAL::EQUAL );
-  assert( cmp_dist_to_point_p2(p4,p9) == CGAL::LARGER );
- 
   CGAL::Less_distance_to_point_2< Point>     has_smaller_dist_to_point_p4(p4);
   assert( has_smaller_dist_to_point_p4(p9,p1) );
   assert( has_smaller_dist_to_point_p4(p6,p5) );

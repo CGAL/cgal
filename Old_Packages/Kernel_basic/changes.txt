@@ -1,3 +1,6 @@
+3.39   (30 May 2001)
+- Remove Compare_distance_to_point_[23].
+
 3.38   (29 May 2001)
 - Add Compare_distance_[23].
 

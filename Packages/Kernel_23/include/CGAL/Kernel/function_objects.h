@@ -857,21 +857,6 @@ class Compare_x_at_y
 };
 
 template <class T>
-class Compare_distance_to_point
-{
-  public:
-    typedef Comparison_result           result_type;
-
-    Compare_distance_to_point(const T& cp) : p(cp) {}
-
-    Comparison_result
-    operator()(const T& q, const T& r) const
-    { return cmp_dist_to_point(p,q,r); }
-
-    T  p;
-};
-
-template <class T>
 class Compare_distance
 {
   public:
