@@ -130,7 +130,7 @@ struct Static_Filtered_power_testH3_25
   // static unsigned number_of_failures; // ?
 
   // Call this function from the outside to update the context.
-  static void new_bound (double b, error = 0)
+  static void new_bound (const double b) // , const double error = 0)
   {
     _bound = b;
     // recompute the epsilons: "just" call it over Static_filter_error.

@@ -67,7 +67,7 @@ struct Static_Filtered_sign_of_determinant2x2_4
   // static unsigned number_of_failures; // ?
 
   // Call this function from the outside to update the context.
-  static void new_bound (double b, error = 0)
+  static void new_bound (const double b) // , const double error = 0)
   {
     _bound = b;
     // recompute the epsilons: "just" call it over Static_filter_error.
@@ -212,7 +212,7 @@ struct Static_Filtered_sign_of_determinant3x3_9
   // static unsigned number_of_failures; // ?
 
   // Call this function from the outside to update the context.
-  static void new_bound (double b, error = 0)
+  static void new_bound (const double b) // , const double error = 0)
   {
     _bound = b;
     // recompute the epsilons: "just" call it over Static_filter_error.
@@ -421,7 +421,7 @@ struct Static_Filtered_sign_of_determinant4x4_16
   // static unsigned number_of_failures; // ?
 
   // Call this function from the outside to update the context.
-  static void new_bound (double b, error = 0)
+  static void new_bound (const double b) // , const double error = 0)
   {
     _bound = b;
     // recompute the epsilons: "just" call it over Static_filter_error.
@@ -708,7 +708,7 @@ struct Static_Filtered_sign_of_determinant5x5_25
   // static unsigned number_of_failures; // ?
 
   // Call this function from the outside to update the context.
-  static void new_bound (double b, error = 0)
+  static void new_bound (const double b) // , const double error = 0)
   {
     _bound = b;
     // recompute the epsilons: "just" call it over Static_filter_error.
@@ -1093,7 +1093,7 @@ struct Static_Filtered_sign_of_determinant6x6_36
   // static unsigned number_of_failures; // ?
 
   // Call this function from the outside to update the context.
-  static void new_bound (double b, error = 0)
+  static void new_bound (const double b) // , const double error = 0)
   {
     _bound = b;
     // recompute the epsilons: "just" call it over Static_filter_error.

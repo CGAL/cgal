@@ -115,7 +115,7 @@ struct Static_Filtered_power_testC3_20
   // static unsigned number_of_failures; // ?
 
   // Call this function from the outside to update the context.
-  static void new_bound (double b, error = 0)
+  static void new_bound (const double b) // , const double error = 0)
   {
     _bound = b;
     // recompute the epsilons: "just" call it over Static_filter_error.
@@ -439,7 +439,7 @@ struct Static_Filtered_power_testC3_16
   // static unsigned number_of_failures; // ?
 
   // Call this function from the outside to update the context.
-  static void new_bound (double b, error = 0)
+  static void new_bound (const double b) // , const double error = 0)
   {
     _bound = b;
     // recompute the epsilons: "just" call it over Static_filter_error.
@@ -778,7 +778,7 @@ struct Static_Filtered_power_testC3_12
   // static unsigned number_of_failures; // ?
 
   // Call this function from the outside to update the context.
-  static void new_bound (double b, error = 0)
+  static void new_bound (const double b) // , const double error = 0)
   {
     _bound = b;
     // recompute the epsilons: "just" call it over Static_filter_error.

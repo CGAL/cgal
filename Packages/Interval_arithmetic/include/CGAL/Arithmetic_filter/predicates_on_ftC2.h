@@ -76,7 +76,7 @@ struct Static_Filtered_compare_xC2_7
   // static unsigned number_of_failures; // ?
 
   // Call this function from the outside to update the context.
-  static void new_bound (double b, error = 0)
+  static void new_bound (const double b) // , const double error = 0)
   {
     _bound = b;
     // recompute the epsilons: "just" call it over Static_filter_error.
@@ -270,7 +270,7 @@ struct Static_Filtered_compare_xC2_12
   // static unsigned number_of_failures; // ?
 
   // Call this function from the outside to update the context.
-  static void new_bound (double b, error = 0)
+  static void new_bound (const double b) // , const double error = 0)
   {
     _bound = b;
     // recompute the epsilons: "just" call it over Static_filter_error.
@@ -493,7 +493,7 @@ struct Static_Filtered_compare_y_at_xC2_5
   // static unsigned number_of_failures; // ?
 
   // Call this function from the outside to update the context.
-  static void new_bound (double b, error = 0)
+  static void new_bound (const double b) // , const double error = 0)
   {
     _bound = b;
     // recompute the epsilons: "just" call it over Static_filter_error.
@@ -654,7 +654,7 @@ struct Static_Filtered_compare_y_at_xC2_7
   // static unsigned number_of_failures; // ?
 
   // Call this function from the outside to update the context.
-  static void new_bound (double b, error = 0)
+  static void new_bound (const double b) // , const double error = 0)
   {
     _bound = b;
     // recompute the epsilons: "just" call it over Static_filter_error.
@@ -842,7 +842,7 @@ struct Static_Filtered_compare_y_at_xC2_9
   // static unsigned number_of_failures; // ?
 
   // Call this function from the outside to update the context.
-  static void new_bound (double b, error = 0)
+  static void new_bound (const double b) // , const double error = 0)
   {
     _bound = b;
     // recompute the epsilons: "just" call it over Static_filter_error.
@@ -1056,7 +1056,7 @@ struct Static_Filtered_compare_y_at_xC2_12
   // static unsigned number_of_failures; // ?
 
   // Call this function from the outside to update the context.
-  static void new_bound (double b, error = 0)
+  static void new_bound (const double b) // , const double error = 0)
   {
     _bound = b;
     // recompute the epsilons: "just" call it over Static_filter_error.
@@ -1277,7 +1277,7 @@ struct Static_Filtered_compare_deltax_deltayC2_4
   // static unsigned number_of_failures; // ?
 
   // Call this function from the outside to update the context.
-  static void new_bound (double b, error = 0)
+  static void new_bound (const double b) // , const double error = 0)
   {
     _bound = b;
     // recompute the epsilons: "just" call it over Static_filter_error.
@@ -1417,7 +1417,7 @@ struct Static_Filtered_orientationC2_6
   // static unsigned number_of_failures; // ?
 
   // Call this function from the outside to update the context.
-  static void new_bound (double b, error = 0)
+  static void new_bound (const double b) // , const double error = 0)
   {
     _bound = b;
     // recompute the epsilons: "just" call it over Static_filter_error.
@@ -1577,7 +1577,7 @@ struct Static_Filtered_side_of_oriented_circleC2_8
   // static unsigned number_of_failures; // ?
 
   // Call this function from the outside to update the context.
-  static void new_bound (double b, error = 0)
+  static void new_bound (const double b) // , const double error = 0)
   {
     _bound = b;
     // recompute the epsilons: "just" call it over Static_filter_error.
@@ -1781,7 +1781,7 @@ struct Static_Filtered_side_of_bounded_circleC2_8
   // static unsigned number_of_failures; // ?
 
   // Call this function from the outside to update the context.
-  static void new_bound (double b, error = 0)
+  static void new_bound (const double b) // , const double error = 0)
   {
     _bound = b;
     // recompute the epsilons: "just" call it over Static_filter_error.
@@ -1960,7 +1960,7 @@ struct Static_Filtered_cmp_dist_to_pointC2_6
   // static unsigned number_of_failures; // ?
 
   // Call this function from the outside to update the context.
-  static void new_bound (double b, error = 0)
+  static void new_bound (const double b) // , const double error = 0)
   {
     _bound = b;
     // recompute the epsilons: "just" call it over Static_filter_error.
@@ -2119,7 +2119,7 @@ struct Static_Filtered_cmp_signed_dist_to_lineC2_7
   // static unsigned number_of_failures; // ?
 
   // Call this function from the outside to update the context.
-  static void new_bound (double b, error = 0)
+  static void new_bound (const double b) // , const double error = 0)
   {
     _bound = b;
     // recompute the epsilons: "just" call it over Static_filter_error.
@@ -2288,7 +2288,7 @@ struct Static_Filtered_cmp_signed_dist_to_lineC2_8
   // static unsigned number_of_failures; // ?
 
   // Call this function from the outside to update the context.
-  static void new_bound (double b, error = 0)
+  static void new_bound (const double b) // , const double error = 0)
   {
     _bound = b;
     // recompute the epsilons: "just" call it over Static_filter_error.
