@@ -420,9 +420,10 @@ Look at the output to be sure!</B>
 <OL>
 <LI><A HREF="#platforms">Platform Description</A> </LI>
 <LI><A HREF="#testresults">Test Results</A> </LI>
-<LI><A HREF="http://www.mpi-sb.mpg.de/GALIA/Members/Manual_test/${release_name}.manual_test.html">
+<LI><A HREF="http://www.cgal.org/Members/Manual_test/${release_name}.manual_test.html">
 The documentation of this release</A></LI>
 EOF
+#<LI><A HREF="http://www.mpi-sb.mpg.de/~hert/CGAL/${release_name}.manual_test.html">
     if (defined($opt_p)) {
 	my $prev_page = result_filename($opt_p);
 	print OUTPUT<<"EOF";
@@ -520,6 +521,10 @@ sub email_address_in_html_format($)
 	    return 
 		'<A HREF="mailto:Francois.Rebufat@sophia.inria.fr">'.
 		"Fran&ccedil;ois Rebufat</A>$qualification";
+	} elsif ($responsible eq 'yvinec') {
+	    return 
+		'<A HREF="mailto:Mariette.Yvinec@sophia.inria.fr">'.
+		"Mariette Yvinec</A>$qualification";
 	} elsif ($responsible eq 'geert') {
 	    return 
 		'<A HREF="mailto:geert@cs.uu.nl">'.
@@ -536,6 +541,10 @@ sub email_address_in_html_format($)
 	    return 
 		'<A HREF="mailto:stschirr@mpi-sb.mpg.de">'.
 		"Stefan Schirra</A>$qualification";
+	} elsif ($responsible eq 'hert') {
+	    return 
+		'<A HREF="mailto:hert@mpi-sb.mpg.de">'.
+		"Susan Hert</A>$qualification";
 	} else {
 	    print STDERR "Unknown responsible person $responsible.\n";
 	    return "?";
@@ -556,9 +565,12 @@ sub email_address_in_html_format($)
     'mips_IRIX-6.5_g++-2.95.1',
     'i686_Linux-2.2.7_g++-2.95.2',
     'i686_Linux-2.2.13_g++-2.95.2',
+    'i686_Linux-2.2.14_g++-2.95.2',
     'sparc_SunOS-5.6_g++-2.95.2',
     'sparc_SunOS-5.7_g++-2.95.2',
+    'sparc_SunOS-5.8_g++-2.95.2',
     'mips_IRIX-6.5_g++-2.95.2',
+    'mips_IRIX-6.5_g++-fsquangle-2.95.2',
     'i686_Linux-2.0.36_g++-2.8.1',
     'sparc_SunOS-5.6_g++-2.8.1',
     'mips_IRIX64-6.5_CC-n32-7.30',
@@ -566,8 +578,16 @@ sub email_address_in_html_format($)
     'i586_CYGWIN95-4.0-21.0_CL.EXE-12.00.8168',
     'i686_CYGWINNT-4.0-20.1_CL.EXE-12.00.8168',
     'i686_CYGWINNT-4.0-21.0_CL.EXE-12.00.8168',
+    'i686_CYGWINNT-5.0-1.1.0-0.17-3-2_CL.EXE-12.00.8804',
+    'i686_CYGWINNT-5.0-1.1.4-0.26-3-2_CL.EXE-12.00.8804',
     'i686_CYGWINNT-4.0-20.1_bcc32.exe-5.4',
     'i686_CYGWINNT-4.0-21.0_bcc32.exe-5.4',
+    'i686_CYGWINNT-4.0-20.1_bcc32.exe-5.5',
+    'i686_CYGWINNT-4.0-21.0_bcc32.exe-5.5',
+    'i686_CYGWINNT-5.0-1.1.4-0.26-3-2_bcc32.exe-5.5.1',
+    'sparc_SunOS-5.7_KCC',
+    'sparc_SunOS-5.7_KCC-4.0a',
+    'sparc_SunOS-5.8_KCC-4.0a',
 );
 
 main();
