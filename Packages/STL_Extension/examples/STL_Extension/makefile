@@ -1,3 +1,4 @@
+# Created by the script create_makefile
 # This is the makefile for compiling a CGAL application.
 
 #---------------------------------------------------------------------#
@@ -14,17 +15,22 @@ include $(CGAL_MAKEFILE)
 
 CXXFLAGS = \
            $(TESTSUITE_CXXFLAGS) \
+           $(EXTRA_FLAGS) \
            $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS) \
-           -g
+           $(DEBUG_OPT)
 
 #---------------------------------------------------------------------#
 #                    linker flags
 #---------------------------------------------------------------------#
 
+LIBPATH = \
+          $(TESTSUITE_LIBPATH) \
+          $(CGAL_LIBPATH)
+
 LDFLAGS = \
           $(TESTSUITE_LDFLAGS) \
-           $(LONG_NAME_PROBLEM_LDFLAGS) \
+          $(LONG_NAME_PROBLEM_LDFLAGS) \
           $(CGAL_LDFLAGS)
 
 #---------------------------------------------------------------------#
@@ -32,20 +38,28 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:            \
-                in_place_list_prog 
+                in_place_list_prog \
+                min_element_if_example_noheader \
+                min_max_element_example_noheader 
 
-in_place_list_prog: in_place_list_prog.o
-	$(CGAL_CXX) -o in_place_list_prog in_place_list_prog.o $(LDFLAGS)
+in_place_list_prog$(EXE_EXT): in_place_list_prog$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)in_place_list_prog in_place_list_prog$(OBJ_EXT) $(LDFLAGS)
 
-clean:
-	rm -f *.o \
-                   in_place_list_prog \
-                   core
+min_element_if_example_noheader$(EXE_EXT): min_element_if_example_noheader$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)min_element_if_example_noheader min_element_if_example_noheader$(OBJ_EXT) $(LDFLAGS)
+
+min_max_element_example_noheader$(EXE_EXT): min_max_element_example_noheader$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)min_max_element_example_noheader min_max_element_example_noheader$(OBJ_EXT) $(LDFLAGS)
+
+clean: \
+                   in_place_list_prog.clean \
+                   min_element_if_example_noheader.clean \
+                   min_max_element_example_noheader.clean 
 
 #---------------------------------------------------------------------#
 #                    suffix rules
 #---------------------------------------------------------------------#
 
-.C.o:
-	$(CGAL_CXX) $(CXXFLAGS) -c $<
+.C$(OBJ_EXT):
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
 
