@@ -32,7 +32,7 @@
 
 inline CGAL_Interval_nt CGAL_to_interval_nt(const leda_integer &z)
 {
-    const double two_52 = 1.0/(1024.0*1024.0*1024.0*1024.0*1024.0*4.0); // 2^-52
+    const double two_52 = 1.0/(1024.0*1024.0*1024.0*1024.0*1024.0*4.0); //2^-52
     const double approx = CGAL_to_double(z);
     CGAL_FPU_set_rounding_to_infinity();
     CGAL_Interval_nt_advanced res_ia =
