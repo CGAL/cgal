@@ -1,3 +1,6 @@
+Version 4.185 on 20 November 2003
+- VC++ fix.
+
 Version 4.184 on 17 November 2003
 - FPU.h : by default, use the ISO C99 version (which should make Darwin work).
 
