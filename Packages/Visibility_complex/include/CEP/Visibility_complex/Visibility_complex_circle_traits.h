@@ -16,7 +16,7 @@
 #include <CEP/Visibility_complex/Circle_2_Circle_2_intersection.h>
 #include <CEP/Visibility_complex/Circle_2_Bitangent_2_intersection.h>
 #include <CEP/Visibility_complex/predicates/Visibility_complex_ftC2.h>
-#include <CEP/Visibility_complex/predicates/kernel_ftC2.h>
+#include <CGAL/predicates/kernel_ftC2.h>
 
 CGAL_BEGIN_NAMESPACE
 

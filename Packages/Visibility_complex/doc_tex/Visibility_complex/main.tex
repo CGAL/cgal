@@ -437,6 +437,49 @@ closure of the $2n$ total orders defined on $B_o, B'_o$ for each $o \in S_H$.
 The right part of the figure above shows an example where $a \prec b$.
 
 % +============================================================================+
+\section{Shortest paths}
+% +============================================================================+
+The main goal of this package is to provide an implementation of the visibility
+complex structure. Since this is one of the main applications of visibility
+graphs, we provide a function to compute the shortest path between two points in
+a scene.  Bear in mind that this is \emph{not} a package centered on shortest
+paths and therefore the interface is far from perfect. 
+
+The function responsible for shortest paths computations is the following seven
+argument function:
+
+\begin{verbatim}
+template < class DiskIterator , class ConstraintIterator ,
+           class OutputIterator , class Traits >
+shortest_path_2(InputIterator first       , InputIterator last ,
+		ConstraintIterator firstc , ConstraintIterator lastc ,
+		Traits::Point_2 p , Traits::Point_2 q ,
+		Traits g);
+\end{verbatim}
+The first two pairs of iterators provide the input scene. The function returns
+an iterator on the bitangents of the shortest path between the points $p$ and
+$q$.  The function's last argument is the geometric traits class providing the
+basic geometric types and primitives for the algorithm. We provide three
+geometric traits classes for points, segments and polygons. Currently there is
+no geometric traits class for circles.
+
+The shortest path is computed as follows:
+\begin{enumerate}
+    \item Add the points $p$ and $q$ to the scene.
+    \item Compute the visibility complex of the corresponding scene.
+    \item Perform a Dijsktra algorithm to find the shortest path between $p$ and
+    $q$.
+\end{enumerate}
+The value type of the output iterator is the vertex type of the the visibility
+complex computed in the second step above. In other words we only give access to
+the bitangent segments of the shortest path (recall that the vertices of the
+visibility complex correspond to free bitangents). 
+
+Since we compute the visibility complex of a scene containing the two points $p$
+and $q$, we must recompute the visibility complex from scratch if the two input
+points are changed.
+
+% +============================================================================+
 \section{Software Design}
 % +============================================================================+
 \begin{ccTexOnly}

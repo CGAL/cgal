@@ -1,11 +1,14 @@
-#include <CGAL/Cartesian.h>
-#include <CGAL/Visibility_complex_2.h>
-#include <CGAL/Visibility_complex_circle_traits.h>
+#include <fstream>
+#include <list>
+#include <CGAL/basic.h>
+#include <CGAL/Simple_cartesian.h>
+#include <CEP/Visibility_complex/Visibility_complex_2.h>
+#include <CEP/Visibility_complex/Visibility_complex_circle_traits.h>
 
-typedef CGAL::Cartesian<double>                     Rep;
+typedef CGAL::Simple_cartesian<double>              Rep;
 typedef CGAL::Visibility_complex_circle_traits<Rep> Traits;
 typedef Traits::Disk                                Circle;
-typedef CGAL::Visibility_complex<Traits>            VComplex;
+typedef CGAL::Visibility_complex_2<Traits>          VComplex;
 
 int main()
 {
@@ -21,7 +24,7 @@ int main()
 
     // Sice of V
     int size = 0;
-    distance(V.vertices_begin(),V.vertices_end(),size);
+    std::distance(V.vertices_begin(),V.vertices_end(),size);
     std::cout << size << std::endl;
 
     return 0;

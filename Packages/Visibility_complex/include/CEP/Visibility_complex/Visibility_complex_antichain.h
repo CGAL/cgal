@@ -33,6 +33,10 @@
 #include <CEP/Visibility_complex/Visibility_complex_function_objects.h>
 #endif
 
+#ifndef VISIBILITY_COMPLEX_SWEEP_ITERATOR_H
+#include <CEP/Visibility_complex/Visibility_complex_sweep_iterator.h>
+#endif
+
 #include <queue>
 #include <list>
 #include <set>
@@ -190,6 +194,22 @@ public:
                                          typename Cw_traits::Sup> 
 						       Vertex_cw_const_iterator;
     // -------------------------------------------------------------------------
+    typedef Visibility_complex_linear_sweep_iterator<Antichain,Vertex,
+						     Vertex&,Vertex_handle,
+						typename Gt::Is_upward_directed>
+							 Linear_sweep_iterator;
+    typedef Visibility_complex_linear_sweep_iterator<Antichain,Vertex,
+					      const Vertex&,const Vertex_handle,
+						typename Gt::Is_upward_directed>
+						    Linear_sweep_const_iterator;
+    // -------------------------------------------------------------------------
+    typedef Visibility_complex_sweep_iterator<Antichain,Vertex,
+					      Vertex&,Vertex_handle>
+							 Sweep_iterator;
+    typedef Visibility_complex_sweep_iterator<Antichain,Vertex,
+					      const Vertex&,const Vertex_handle>
+							 Sweep_const_iterator;
+    // -------------------------------------------------------------------------
     typedef typename BT::Type_util               Type_util;
     // -------------------------------------------------------------------------
 private:
@@ -210,7 +230,7 @@ public :
     Visibility_complex_antichain() 
 	: _valid(false) , _straight_sweep(false) , _linear_space(true)
     { }
-    template <class InputIterator ,class ConstraintIt>
+    template < class InputIterator ,class ConstraintIt >
     Visibility_complex_antichain(InputIterator first, InputIterator last,
 				 ConstraintIt  firstc,ConstraintIt lastc); 
     ~Visibility_complex_antichain() { destroy(); }
@@ -269,6 +289,16 @@ public :
     Minimals_iterator minimals_end  (Ccw_traits) { return minimals_end();      }
     Minimals_iterator minimals_begin(Cw_traits)  { return cw_minimals_begin(); }
     Minimals_iterator minimals_end  (Cw_traits)  { return cw_minimals_end();   }
+    // -------------------------------------------------------------------------
+    // Iterator pair for linear sweep
+    Linear_sweep_iterator       sweep_begin() 
+	{ return Linear_sweep_iterator(this); }
+    Linear_sweep_const_iterator sweep_begin() const 
+	{ return Linear_sweep_const_iterator(this); }
+    Linear_sweep_iterator       sweep_end()
+	{ return Linear_sweep_iterator(this,0); }
+    Linear_sweep_const_iterator sweep_end() const 
+	{ return Linear_sweep_const_iterator(this,0); }
     // -------------------------------------------------------------------------
     // Testing minimality
     template < class _Tr > 

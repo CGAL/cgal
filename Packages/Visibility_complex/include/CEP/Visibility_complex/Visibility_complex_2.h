@@ -3,7 +3,6 @@
 
 #include <CEP/Visibility_complex/Visibility_complex_antichain.h>
 #include <CEP/Visibility_complex/Visibility_complex_iterators.h>
-#include <CEP/Visibility_complex/Visibility_complex_sweep_iterator.h>
 
 #include <algorithm>
 #include <functional>
@@ -56,23 +55,12 @@ public:
 					     const Face&,const Face_handle>
 							 Face_const_iterator;
     // -------------------------------------------------------------------------
-    typedef Visibility_complex_linear_sweep_iterator<Antichain,Vertex,
-						     Vertex&,Vertex_handle,
-						typename Gt::Is_upward_directed>
-							 Linear_sweep_iterator;
-    typedef Visibility_complex_linear_sweep_iterator<Antichain,Vertex,
-					      const Vertex&,const Vertex_handle,
-						typename Gt::Is_upward_directed>
+    typedef typename Antichain::Linear_sweep_iterator Linear_sweep_iterator;
+    typedef typename Antichain::Linear_sweep_const_iterator 
 						    Linear_sweep_const_iterator;
+    typedef typename Antichain::Sweep_iterator        Sweep_iterator;
+    typedef typename Antichain::Sweep_const_iterator  Sweep_const_iterator;
     // -------------------------------------------------------------------------
-    typedef Visibility_complex_sweep_iterator<Antichain,Vertex,
-					      Vertex&,Vertex_handle>
-							 Sweep_iterator;
-    typedef Visibility_complex_sweep_iterator<Antichain,Vertex,
-					      const Vertex&,const Vertex_handle>
-							 Sweep_const_iterator;
-    // -------------------------------------------------------------------------
-
 private:
     Antichain* _antichain;
     std::list<Vertex_handle> vertices;

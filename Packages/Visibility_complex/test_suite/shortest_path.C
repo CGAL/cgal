@@ -7,7 +7,7 @@
 #include <CGAL/Simple_cartesian.h>
 
 #include <CEP/Visibility_complex/Shortest_path_segment_traits.h>
-#include <CEP/Visibility_complex/Shortest_path_2.h>
+#include <CEP/Visibility_complex/shortest_path_2.h>
 //
 // Number type used for input
 typedef int                                         NT;  

@@ -58,8 +58,10 @@ swept.
 \ccCreationVariable{a}
 
 \ccConstructor{VisibilityComplex_Antichain();}{default constructor.}
-\ccConstructor{VisibilityComplex_Antichain(InputIterator first, InputIterator last,
-					   ConstraintIt firstc, ConstraintIt lastc);}
+\ccConstructor{
+template < class InputIterator , class ConstraintIt >
+VisibilityComplex_Antichain(InputIterator first, InputIterator last,
+			    ConstraintIt firstc, ConstraintIt lastc);}
 {creates the antichain of the disks in the range $[$\ccc{first,last}$)$ and
 constraints in the range $[$\ccc{firstc,lastc}$)$ corresponding to the filter
 $I(0)$ of bitangents with positive slope. The value type of \ccc{InputIterator}
@@ -92,6 +94,15 @@ must be \ccc{Disk} and the value type of \ccc{ConstraintIt} must be
 					antichain.}
 \ccGlue
 \ccMethod{Face_iterator faces_end();}{}
+
+
+\ccMethod{Linear_sweep_iterator sweep_begin();}{}
+\ccGlue
+\ccMethod{Linear_sweep_iterator sweep_end();}
+{iterator pair which can be used to sweep the visibility complex using the
+antichain \ccVar\ while keeping the storage linear (i.e. proportional to the
+size of the input).}
+
 
 \ccThree{bool }{v.is_right_minimal( Vertex_handle v);}{}
 \ccMethod{void set_linear_space(bool b);} {If \ccc{b} is true then the antichain

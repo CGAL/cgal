@@ -61,11 +61,14 @@ of the visibilty complex.
 \ccCreationVariable{v}
 
 \ccConstructor{VisibilityComplex();}{default constructor.}
-\ccConstructor{VisibilityComplex(InputIterator first, InputIterator last,
-				 ConstraintIt  firstc,ConstraintIt lastc);}
+\ccConstructor{
+template < class InputIterator , class ConstraintIt >
+VisibilityComplex(InputIterator first, InputIterator last,
+		  ConstraintIt  firstc,ConstraintIt lastc);}
 {creates the visibility complex of the disks in the range 
  $[$\ccc{first,last}$)$ and constraints in the range $[$\ccc{firstc,lastc}$)$.
- The value type of \ccc{ConstraintIt} is \ccc{Vertex}. }
+The value type of \ccc{InputIterator} is \ccc{Disk}.
+The value type of \ccc{ConstraintIt} is \ccc{Vertex}. }
 % +----------------------------------------------------------------------------+
 
 % +----------------------------------------------------------------------------+
