@@ -103,7 +103,7 @@ class Infimaximal_box {
   }
 
   static Point_3 create_extended_point(NT x, NT y, NT z) {
-    cerr << "function should not be called" << std::endl;
+    std::cerr << "function should not be called" << std::endl;
     while(1);
     return Point_3(0,0,0);
   }
@@ -116,7 +116,7 @@ class Infimaximal_box {
 
   template <typename SNC_constructor_>
   static void create_vertices_of_box_with_plane(SNC_constructor_& C, const Plane_3& h, bool b) {
-    cerr << "Constructor not available for this Kernel" << std::endl;
+    std::cerr << "Constructor not available for this Kernel" << std::endl;
   }
 
   template <typename SNC_constructor>
