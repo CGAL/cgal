@@ -100,7 +100,7 @@ retriangulated.
 So, the problem reduces to triangulating a polyhedral
 region, while preserving its boundary, or to compute a
 \textit{constrained} triangulation. This is known to be sometimes
-impossible: the Sch\"onhardt polyhedra cannot be triangulated
+impossible: the Sch\"onhardt polyhedron cannot be triangulated
 \cite{s-cgehd-98}. 
 
 However, when dealing with Delaunay triangulations, the case of such
@@ -112,9 +112,9 @@ appear, whereas \cgal\ explicitly treats all degenerate cases.
 Suppose for instance that the hole created consists of cospherical
 points, some of them being coplanar.
 Figure~\ref{Triangulation3-fig-remimpos} shows the simplest
-realization of this case. Then it is impossible to triangulate the
-interior of the polyhedron without creating edges that intersect
-already existing edges.
+realization of this case. Then it is \textit{impossible} to
+triangulate the interior of the polyhedron without creating edges that
+intersect already existing edges.
 
 \begin{figure}[htbp]
 \begin{ccTexOnly}
@@ -140,15 +140,15 @@ algorithm that modifies the minimum number of cells is an open problem.
 
 Anyway, \cgal\ proposes a method that removes a vertex if it is
 possible. If it is not possible, the current implementation tries to
-remove the vertex, and returns \ccc{false} as soon as it finds facets
-that cannot form a tetrahedron inside the hole. The drawback is that
-the triangulation is then completely invalidated and cannot be
-restored in its previous state. The user dealing with very degenerate
-input data might want to copy his triangulation before trying to
-remove a vertex.
+remove the vertex, and returns \ccc{false} as soon as it finds a facet
+that cannot form a tetrahedron inside the hole with any other vertex
+of the hole. The drawback is that the triangulation is then completely
+invalidated and cannot be restored in its previous state. The user
+dealing with very degenerate input data might want to copy his
+triangulation before trying to remove a vertex.
 
 In practical cases, the probability that such a problem arises is
-of course quite low.
+of course very low.
 
 \ccMethod{bool remove(Vertex_handle v);}
 {Removes the vertex \ccc{v} from the triangulation and returns
