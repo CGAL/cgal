@@ -2535,7 +2535,7 @@ The command line option \ccc{-verbose} enables verbose output.
 
 @macro <Min_ellipse_2 test (verbose option)> = @begin
     bool  verbose = false;
-    if ( ( argc > 1) && ( strcmp( argv[ 1], "-verbose") == 0)) {
+    if ( ( argc > 1) && ( CGAL_CLIB_STD::strcmp( argv[ 1], "-verbose") == 0)) {
         verbose = true;
         --argc;
         ++argv; }
