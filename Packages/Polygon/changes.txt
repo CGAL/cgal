@@ -1,3 +1,9 @@
+4.0.1 (3 July 2001)
++ Made the caching design safer.
+  Caching should be enabled explicitly by setting CGAL_POLYGON_2_CACHED.
+  Some compilers will fail to compile with this flag. An extra flag,
+  CGAL_POLYGON_2_MOD_ITER will allow to compile at the expense of safety
+
 4.0 (2 July 2001)
 + Made Polygon_2 cache several operations.
 + Made iterators of Polygon_2 const. -not backwards compatible change
