@@ -690,6 +690,11 @@ private:
       }
   };
 
+  // They access "Self", so need to be friend.
+  friend class Conflict_tester_outside_convex_hull_3;
+  friend class Conflict_tester_outside_convex_hull_2;
+  friend class Infinite_tester;
+
 public:
 
   //TRAVERSING : ITERATORS AND CIRCULATORS
