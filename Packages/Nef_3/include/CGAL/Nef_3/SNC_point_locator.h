@@ -80,6 +80,9 @@ public:
                                       const Intersection_call_back& call_back)
     const = 0;
 
+  virtual void intersect_with_edges_and_facets( Halfedge_const_handle edge,
+	const Intersection_call_back& call_back) const = 0;
+
   class Intersection_call_back 
   {
   public:
@@ -391,6 +394,71 @@ public:
     }
     TIMER(pl_t.stop());
     return result;
+  }
+
+  virtual void intersect_with_edges_and_facets( Halfedge_const_handle e0,
+	const typename SNC_point_locator::Intersection_call_back& call_back) const {
+
+    TIMER(it_t.start());
+    CGAL_assertion( initialized);
+    _TRACEN( "intersecting edge: "<<&*e0<<' '<<Segment_3(e0->source()->point(),
+                                                         e0->twin()->source()->point()));
+
+#ifdef CGAL_NEF3_TRIANGULATE_FACETS
+    Unique_hash_map< Halffacet_triangle_handle, bool> f_mark(false);
+#endif // CGAL_NEF3_TRIANGULATE_FACETS
+
+    Segment_3 s(Segment_3(e0->source()->point(),e0->twin()->source()->point()));
+    Vertex_handle v;
+    Halfedge_handle e;
+    Halffacet_handle f;
+    Halffacet_triangle_handle t;
+    Object_list_iterator o;
+    Object_list objects = candidate_provider->objects_around_segment(s);
+    CGAL_for_each( o, objects) {
+      if( CGAL::assign( v, *o)) {
+        /* do nothing */
+      }
+      else if( CGAL::assign( e, *o)) {
+        Point_3 q;
+        if( is.does_intersect_internally( s, Segment_3(e->source()->point(),
+	                                               e->twin()->source()->point()), q)) {
+          q = normalized(q);
+          call_back( e0, Object_handle(Halfedge_const_handle(e)), q);
+          _TRACEN("edge intersects edge "<<' '<<&*e<< Segment_3(e->source()->point(),
+                                                                e->twin()->source()->point())<<" on "<<q);
+        }
+      }
+      else if( CGAL::assign( f, *o)) {
+        Point_3 q;
+        if( is.does_intersect_internally( s, f, q) ) {
+          q = normalized(q);
+          call_back( e0, Object_handle(Halffacet_const_handle(f)), q);
+          _TRACEN("edge intersects facet on plane "<<plane(f)<<" on "<<q);
+        }
+      }
+      else if( CGAL::assign( t, *o)) {
+        Point_3 q;
+        Triangle_3 tr = t.get_triangle();
+#ifdef CGAL_NEF3_TRIANGULATE_FACETS
+	if( f_mark[t])
+	  continue;
+#endif // CGAL_NEF3_TRIANGULATE_FACETS
+	_TRACEN("trying with triangle "<<tr);
+        if( is.does_intersect( s, tr, q) &&
+            !is.does_contain_on_boundary( t, q)) {
+          q = normalized(q);
+          call_back( e0, Object_handle(Halffacet_handle(t)), q);
+          _TRACEN("edge intersects facet triangle on plane "<<plane(t)<<" on "<<q);
+#ifdef CGAL_NEF3_TRIANGULATE_FACETS
+	  f_mark[t] = true;
+#endif // CGAL_NEF3_TRIANGULATE_FACETS
+        }
+      }
+      else
+        CGAL_assertion_msg( 0, "wrong handle");
+    }
+    TIMER(it_t.stop());
   }
 
   virtual void intersect_with_edges( Halfedge_const_handle e0,
