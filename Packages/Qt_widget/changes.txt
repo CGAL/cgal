@@ -1,3 +1,8 @@
+1.2.0
+=====
+Version submitted to the editoral board
+Almost everything has been rewritted since version 1.1.1
+
 1.1.1
 =====
 Add of Qt_Windon_Get_point.h (input of points)
