@@ -313,8 +313,6 @@ public:
   {
     while(! is_algorithm_done() )
     {
-      std::cerr << "fini=" << no_longer_element_to_refine() << std::endl
-    << std::endl;
       previous_level.refine(visitor.previous_level());
       if(! no_longer_element_to_refine() )
         process_one_element(visitor);
@@ -331,9 +329,6 @@ public:
     Element e = get_next_element();
 
     const std::pair<bool, bool> result = try_to_refine_element(e, visitor);
-
-    std::cerr << "process_one_element::result.second=" 
-              << result.second << "\n";
 
     if(result.second)
       pop_next_element();

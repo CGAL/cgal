@@ -88,12 +88,6 @@ public :
   // Assignation
   bool insert(const Key& k, const Data& d)
     {
-//       std::cerr << "Double_map::insert(" 
-//                 << k->vertex(0)->point() << ", "
-//                 << k->vertex(1)->point() << ", "
-// 	        << k->vertex(2)->point()
-//                 << ", " << d << ")\n";
-
       std::pair<direct_iterator, bool> 
 	direct_result = direct_func.insert(Direct_entry(k, d));
 
@@ -122,20 +116,9 @@ public :
       direct_iterator pos = direct_func.find(rit->second);
       assert(pos != direct_func.end());
       
-//       std::cerr << "Before Double_map::pop_front()\n";
-//       std::cerr << pos->second << " " 
-// 	    << "("
-// 	    << pos->first->vertex(0)->point() << ", "
-// 	    << pos->first->vertex(1)->point() << ", "
-// 	    << pos->first->vertex(2)->point()
-// 	    << ")" << std::endl;
-
       direct_func.erase(pos);
       reverse_func.erase(rit);
       CGAL_assertion(is_valid());
-
-      //      std::cerr << "After Double_map::pop_front()\n";
-      //      dump_direct_func(std::cerr);      
     }
 
   const_iterator begin() const

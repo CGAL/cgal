@@ -85,8 +85,6 @@ namespace CGAL {
 
       const_iterator begin() const
       {
-        std::cerr << "edges_to_be_conformed.size()= "
-                  << d.size() << std::endl;
         return d.begin();
       }
       

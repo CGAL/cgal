@@ -139,30 +139,17 @@ public:
     bool split_the_face = true;
     bool remove_the_bad_face = true;
 
-    std::cerr << "with_clusters::do_test_point_conflict_from_superior(" << p 
-              << ", ...)\n";
-    std::cerr << "test de " << z.boundary_edges.size() 
-              << " aretes" << std::endl;
-    
    for(typename Zone::Edges_iterator eit = z.boundary_edges.begin();
         eit != z.boundary_edges.end(); ++eit)
       {
         const Face_handle& fh = eit->first;
         const int& i = eit->second;
 
-	std::cerr << (int)&*eit << std::endl;
-	
         if(fh->is_constrained(i) && !is_locally_conform(this->tr, fh, i, p))
           {
 	    const Vertex_handle& v1 = fh->vertex( this->tr.cw (i));
 	    const Vertex_handle& v2 = fh->vertex( this->tr.ccw(i));
 
-	    std::cerr << fh->is_constrained(i) << !is_locally_conform(this->tr, fh, i, p) << std::endl;
-	    
-	    std::cerr << fh->vertex(this->tr.cw (i))->point() << "|"
-		      << fh->vertex(this->tr.ccw(i))->point() << "|"
-		      << p << std::endl;
-	    
             split_the_face = false;
 
             bool v1_has_a_cluster = clusters.get_cluster(v1,v2,ca);
@@ -199,9 +186,6 @@ public:
       }; // after here edges encroached by p are in the list of edges to
          // be conformed.
 
-    std::cerr << "split_the_face=" << split_the_face << std::endl
-    << "remove_the_bad_face=" << remove_the_bad_face << std::endl;
-    
     return std::make_pair(split_the_face, remove_the_bad_face);
   }
 
