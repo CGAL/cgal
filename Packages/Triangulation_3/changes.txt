@@ -1,3 +1,6 @@
+Version 1.151 (6 June 03)
+- Doc : regenerate the world-famous pictures.
+
 Version 1.150 (6 June 03)
 - Small doc improvements.
 
