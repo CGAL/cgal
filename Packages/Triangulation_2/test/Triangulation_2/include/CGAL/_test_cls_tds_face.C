@@ -32,112 +32,121 @@ _test_cls_tds_face( const Face &, const Gt & )
   std::cout << "    face" << std::endl;
 
   typedef typename Face::Vertex               Vertex;
-  // typedef typename Face::Edge                 Edge;
+  typedef typename Face::Face_handle          Face_handle;
+  typedef typename Face::Vertex_handle        Vertex_handle;
 
   // Build a few objects
   int i;
   Vertex v1, v2, v3, v4;
-  
+  Vertex_handle vh1 = v1.handle();
+  Vertex_handle vh2 = v2.handle();
+  Vertex_handle vh3 = v3.handle();
+  Vertex_handle vh4 = v4.handle();
+
   // Test constructors
   Face f1,f2,f3;
-  Face f4(&v1,&v2,&v3);
-  Face f5(&v1,&v2,&v3,&f1,&f2,&f3);
+  Face_handle fh1 = f1.handle();
+  Face_handle fh2 = f2.handle();
+  Face_handle fh3 = f3.handle();
+  Face f4(vh1,vh2,vh3);
+  Face f5(vh1,vh2,vh3,fh1,fh2,fh3);
+  Face_handle fh4 = f4.handle();
   
   // Test vertex()
-  assert( f4.vertex(0) == &v1 );
-  assert( f4.vertex(1) == &v2 );
-  assert( f4.vertex(2) == &v3 );
-  assert( f5.vertex(0) == &v1 );
-  assert( f5.vertex(1) == &v2 );
-  assert( f5.vertex(2) == &v3 );
+  assert( f4.vertex(0) == vh1 );
+  assert( f4.vertex(1) == vh2 );
+  assert( f4.vertex(2) == vh3 );
+  assert( f5.vertex(0) == vh1 );
+  assert( f5.vertex(1) == vh2 );
+  assert( f5.vertex(2) == vh3 );
   
   // Test index(Vertex *)
-  assert( f4.index(&v1) == 0 );
-  assert( f4.index(&v2) == 1 );
-  assert( f4.index(&v3) == 2 );
-  assert( f5.index(&v1) == 0 );
-  assert( f5.index(&v2) == 1 );
-  assert( f5.index(&v3) == 2 );
+  assert( f4.index(vh1) == 0 );
+  assert( f4.index(vh2) == 1 );
+  assert( f4.index(vh3) == 2 );
+  assert( f5.index(vh1) == 0 );
+  assert( f5.index(vh2) == 1 );
+  assert( f5.index(vh3) == 2 );
       
   // Test has_vertex()
-  assert( f4.has_vertex(&v1) );
-  assert( ! f4.has_vertex(&v4) );
-  assert( f4.has_vertex(&v2,i) && (i==1) );
-  assert( f5.has_vertex(&v3,i) && (i==2) );
+  assert( f4.has_vertex(vh1) );
+  assert( ! f4.has_vertex(vh4) );
+  assert( f4.has_vertex(vh2,i) && (i==1) );
+  assert( f5.has_vertex(vh3,i) && (i==2) );
 
   // Test set_vertex()
-  f1.set_vertex(0,&v4);
-  f1.set_vertex(1,&v3);
-  f1.set_vertex(2,&v2);
-  f2.set_vertex(0,&v3);
-  f2.set_vertex(1,&v4);
-  f2.set_vertex(2,&v1);
-  f3.set_vertex(0,&v2);
-  f3.set_vertex(1,&v1);
-  f3.set_vertex(2,&v4);
-  assert( f1.vertex(0) == &v4 );
-  assert( f1.vertex(1) == &v3 );
-  assert( f1.vertex(2) == &v2 );
-  assert( f2.vertex(0) == &v3 );
-  assert( f2.vertex(1) == &v4 );
-  assert( f2.vertex(2) == &v1 );
-  assert( f3.vertex(0) == &v2 );
-  assert( f3.vertex(1) == &v1 );
-  assert( f3.vertex(2) == &v4 );
+  f1.set_vertex(0,vh4);
+  f1.set_vertex(1,vh3);
+  f1.set_vertex(2,vh2);
+  f2.set_vertex(0,vh3);
+  f2.set_vertex(1,vh4);
+  f2.set_vertex(2,vh1);
+  f3.set_vertex(0,vh2);
+  f3.set_vertex(1,vh1);
+  f3.set_vertex(2,vh4);
+  assert( f1.vertex(0) == vh4 );
+  assert( f1.vertex(1) == vh3 );
+  assert( f1.vertex(2) == vh2 );
+  assert( f2.vertex(0) == vh3 );
+  assert( f2.vertex(1) == vh4 );
+  assert( f2.vertex(2) == vh1 );
+  assert( f3.vertex(0) == vh2 );
+  assert( f3.vertex(1) == vh1 );
+  assert( f3.vertex(2) == vh4 );
   
   // Test set_vertices()
   f5.set_vertices();
   assert( f5.vertex(0) == NULL );
   assert( f5.vertex(1) == NULL );
   assert( f5.vertex(2) == NULL);
-  f5.set_vertices( &v1, &v2, &v3 );
-  assert( f5.vertex(0) == &v1 );
-  assert( f5.vertex(1) == &v2 );
-  assert( f5.vertex(2) == &v3 );
+  f5.set_vertices( vh1, vh2, vh3 );
+  assert( f5.vertex(0) == vh1 );
+  assert( f5.vertex(1) == vh2 );
+  assert( f5.vertex(2) == vh3 );
 
   // Test neighbor()
-  assert( f5.neighbor(0) == &f1 );
-  assert( f5.neighbor(1) == &f2 );
-  assert( f5.neighbor(2) == &f3 );
+  assert( f5.neighbor(0) == fh1 );
+  assert( f5.neighbor(1) == fh2 );
+  assert( f5.neighbor(2) == fh3 );
   
   // Test index(Face *)
-  assert( f5.index(&f1) == 0 );
-  assert( f5.index(&f2) == 1 );
-  assert( f5.index(&f3) == 2 );
+  assert( f5.index(fh1) == 0 );
+  assert( f5.index(fh2) == 1 );
+  assert( f5.index(fh3) == 2 );
    
   // Test has_neighbor()
-  assert( f5.has_neighbor(&f1) );
-  assert( ! f5.has_neighbor(&f4) );
-  assert( f5.has_neighbor(&f2,i) && (i==1) );
-  assert( f5.has_neighbor(&f3,i) && (i==2) );
+  assert( f5.has_neighbor(fh1) );
+  assert( ! f5.has_neighbor(fh4) );
+  assert( f5.has_neighbor(fh2,i) && (i==1) );
+  assert( f5.has_neighbor(fh3,i) && (i==2) );
 
   // Test set_neighbor()
-  f1.set_neighbor(0,&f4);
-  f2.set_neighbor(1,&f4);
-  f3.set_neighbor(2,&f4);
-  assert( f1.neighbor(0) == &f4 );
-  assert( f2.neighbor(1) == &f4 );
-  assert( f3.neighbor(2) == &f4 );
+  f1.set_neighbor(0,fh4);
+  f2.set_neighbor(1,fh4);
+  f3.set_neighbor(2,fh4);
+  assert( f1.neighbor(0) == fh4 );
+  assert( f2.neighbor(1) == fh4 );
+  assert( f3.neighbor(2) == fh4 );
   
   // Test set_neighbors()
   f5.set_neighbors();
   assert( f5.neighbor(0) == NULL );
   assert( f5.neighbor(1) == NULL );
   assert( f5.neighbor(2) == NULL );
-  f5.set_neighbors( &f1, &f2, &f3 );
-  assert( f5.neighbor(0) == &f1 );
-  assert( f5.neighbor(1) == &f2 );
-  assert( f5.neighbor(2) == &f3 );
-  f4.set_neighbors( &f1, &f2, &f3 );
-  assert( f4.neighbor(0) == &f1 );
-  assert( f4.neighbor(1) == &f2 );
-  assert( f4.neighbor(2) == &f3 );
+  f5.set_neighbors( fh1, fh2, fh3 );
+  assert( f5.neighbor(0) == fh1 );
+  assert( f5.neighbor(1) == fh2 );
+  assert( f5.neighbor(2) == fh3 );
+  f4.set_neighbors( fh1, fh2, fh3 );
+  assert( f4.neighbor(0) == fh1 );
+  assert( f4.neighbor(1) == fh2 );
+  assert( f4.neighbor(2) == fh3 );
 
   //Test mirror_vertex() mirror_index()
-  assert( f4.mirror_vertex(0) == &v4);
-  assert( f1.mirror_vertex(0) == &v1);
-  assert( f2.mirror_vertex(1) == &v2);
-  assert( f3.mirror_vertex(2) == &v3);
+  assert( f4.mirror_vertex(0) == vh4);
+  assert( f1.mirror_vertex(0) == vh1);
+  assert( f2.mirror_vertex(1) == vh2);
+  assert( f3.mirror_vertex(2) == vh3);
   assert( f4.mirror_index(0) == 0);
   assert( f1.mirror_index(0) == 0);
   assert( f2.mirror_index(1) == 1);
@@ -158,23 +167,29 @@ _test_cls_tds_face( const Face &, const Gt & )
   assert(f4.dimension() == 2);
 
   //Test low dimensional faces
-  Face g1(&v2,&v3,NULL);
-  Face g2(&v3,&v1, NULL);
-  Face g3(&v1,&v2, NULL);
-  g1.set_neighbors( &g2, &g3, NULL);
-  g2.set_neighbors( &g3, &g1, NULL);
-  g3.set_neighbors( &g1, &g2, NULL);
+  Face g1(vh2,vh3,NULL);
+  Face g2(vh3,vh1, NULL);
+  Face g3(vh1,vh2, NULL); 
+  Face_handle gh1 = g1.handle();
+  Face_handle gh2 = g2.handle();
+  Face_handle gh3 = g3.handle();
+  g1.set_neighbors( gh2, gh3, NULL);
+  g2.set_neighbors( gh3, gh1, NULL);
+  g3.set_neighbors( gh1, gh2, NULL);
+
   assert(g1.dimension() == 1);
   assert (g1.is_valid());
 
-  Face h1(&v1, NULL, NULL);
-  Face h2(&v2, NULL, NULL, &h1, NULL, NULL);
-  h1.set_neighbor(0, &h2);
+  Face h1(vh1, NULL, NULL);
+  Face_handle hh1=h1.handle();
+  Face h2(vh2, NULL, NULL, hh1, NULL, NULL);
+  Face_handle hh2=h2.handle();
+  h1.set_neighbor(0, hh2);
   assert (h1.dimension() == 0);
   assert (h1.is_valid()); 
 
-  assert(g1.mirror_vertex(0) == &v1);
-  assert(g1.mirror_vertex(1) == &v1);
+  assert(g1.mirror_vertex(0) == vh1);
+  assert(g1.mirror_vertex(1) == vh1);
   assert(g1.mirror_index(0) == 1);
   assert(g1.mirror_index(1) == 0);
 

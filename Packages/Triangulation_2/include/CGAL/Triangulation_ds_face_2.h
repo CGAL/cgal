@@ -8,8 +8,8 @@
 //
 // ----------------------------------------------------------------------
 //
-// release       : $CGAL_Revision: CGAL-2.0-I-12 $
-// release_date  : $CGAL_Date: 1999/04/28 $
+// release       : 
+// release_date  : 
 //
 // file          : Triangulation/include/CGAL/Triangulation_ds_face_2.h
 // source        : $RCSfile$
@@ -24,184 +24,198 @@
 #ifndef CGAL_TRIANGULATION_DS_FACE_2_H
 #define CGAL_TRIANGULATION_DS_FACE_2_H
 
+#include <CGAL/basic.h>
 #include <CGAL/Triangulation_short_names_2.h>
+#include <CGAL/Triangulation_utils_2.h>
 
 CGAL_BEGIN_NAMESPACE 
 
-template <class Vb, class Fb>
-class  Triangulation_ds_vertex_2 ;
-
-
-template < class Vb, class Fb>
+template < class Tds >
 class  Triangulation_ds_face_2
-  : public Fb
+  : public Tds::Face_base,    
+    public Triangulation_cw_ccw_2
 {
 public:
-  typedef Vb Vertex_base;
-  typedef Fb Face_base;
-  typedef Triangulation_ds_vertex_2<Vertex_base,Face_base> Vertex;
-  typedef Triangulation_ds_face_2<Vertex_base,Face_base> Face;
+  typedef typename Tds::Vertex_base        Vb;
+  typedef typename Tds::Face_base          Fb;
+  typedef typename Tds::Vertex             Vertex;
+  typedef typename Tds::Face               Face;
+  typedef typename Tds::Vertex_handle      Vertex_handle;
+  typedef typename Tds::Face_handle        Face_handle;
 
+private:
+  Face_handle _previous;
+  Face_handle _next;
+
+public :
   // creators
   Triangulation_ds_face_2()
-    : Face_base()
+    : Fb(), _previous(this), _next(this)
   {}
     
-  Triangulation_ds_face_2(Vertex* v0, Vertex* v1, Vertex* v2)
-    :  Face_base(v0,v1,v2)
+  Triangulation_ds_face_2(Vertex_handle v0, Vertex_handle v1, Vertex_handle v2)
+    :  Fb(&*v0,&*v1,&*v2)
   {}
     
-  Triangulation_ds_face_2(Vertex* v0, Vertex* v1, Vertex* v2,
-			  Face* n0, Face* n1, Face* n2)
-    :  Face_base(v0,v1,v2,n0,n1,n2)
+  Triangulation_ds_face_2(Vertex_handle v0, Vertex_handle v1, Vertex_handle v2,
+			  Face_handle n0, Face_handle n1, Face_handle n2)
+    :  Fb(&*v0,&*v1,&*v2,&*n0,&*n1,&*n2)
   {}
 
-  Triangulation_ds_face_2( const Face & f)
-    : Face_base(f)
+  Triangulation_ds_face_2( const Face& f)
+    : Fb(f)
     {}
 
   //setting
-  void set_vertex(int i, Vertex* v) { Face_base::set_vertex(i,v);}
-  void set_neighbor(int i, Face* n) { Face_base::set_neighbor(i,n);}
-  void set_vertices() { Face_base::set_vertices();}
-  void set_neighbors() { Face_base::set_neighbors();}
-  void set_vertices(Vertex* v0, Vertex* v1, Vertex* v2);
-  void set_neighbors(Face* n0, Face* n1, Face* n2);
-  //void reorient();  inherited from Face_base
+  void set_vertex(int i, Vertex_handle v) { Fb::set_vertex(i, &*v);}
+  void set_neighbor(int i, Face_handle n) { Fb::set_neighbor(i, &*n);}
+  void set_vertices() { Fb::set_vertices();}
+  void set_neighbors() { Fb::set_neighbors();}
+  void set_vertices(Vertex_handle v0, Vertex_handle v1, Vertex_handle v2);
+  void set_neighbors(Face_handle n0, Face_handle n1, Face_handle n2);
+  //void reorient();  inherited from Fb
  
   //Vertex Access Member Functions
-  Vertex* vertex(int i) const;
-  Vertex* mirror_vertex(int i) const;
-  bool has_vertex(const Vertex* v) const;
-  bool has_vertex(const Vertex* v, int& i) const;
-  int index(const Vertex* v) const;
+  Vertex_handle vertex(int i) const;
+  Vertex_handle mirror_vertex(int i) const;
+  bool has_vertex(Vertex_handle v) const;
+  bool has_vertex(Vertex_handle v, int& i) const;
+  int index(Vertex_handle v) const;
 
   // Neighbors Access Functions
-  Face* neighbor(int i) const;
-  bool has_neighbor(const Face* n) const;
-  bool has_neighbor(const Face* n, int& i) const;
-  int index(const Face* n) const;
+  Face_handle neighbor(int i) const;
+  bool has_neighbor(Face_handle n) const;
+  bool has_neighbor(Face_handle n, int& i) const;
+  int index(Face_handle n) const;
   int mirror_index(int i) const;
 
   //Miscelleanous
+  Face_handle handle() const {return const_cast<Face*>(this);}
+  Face_handle handle() {return const_cast<Face*>(this);}
   bool is_valid(bool verbose = false, int level = 0) const;
+
+  //Handling the list of faces
+  Face_handle previous() const {return _previous;}
+  Face_handle next() const {return _next;}
+  void  set_previous(Face_handle f) {_previous = f;};
+  void  set_next(Face_handle f) {_next = f;};
 };
 
 
 
-template < class Vb, class Fb >
+template < class Tds >
 inline void 
-Triangulation_ds_face_2<Vb,Fb>::
-set_vertices(Vertex* v0, Vertex* v1, Vertex* v2)
+Triangulation_ds_face_2<Tds>::
+set_vertices(Vertex_handle v0, Vertex_handle v1, Vertex_handle v2)
 {
-  Face_base::set_vertices(v0,v1,v2);
+  Fb::set_vertices(&*v0,&*v1,&*v2);
 }
 
-template < class Vb, class Fb >
+template < class Tds >
 inline void 
-Triangulation_ds_face_2<Vb,Fb>::
-set_neighbors(Face* n0, Face* n1, Face* n2)
+Triangulation_ds_face_2<Tds>::
+set_neighbors(Face_handle n0, Face_handle n1, Face_handle n2)
 {
-  Face_base::set_neighbors(n0,n1,n2);
+  Fb::set_neighbors(&*n0,&*n1,&*n2);
 }
 
-template < class Vb, class Fb >
+template < class Tds >
 inline
-Triangulation_ds_vertex_2<Vb,Fb> *
-Triangulation_ds_face_2<Vb,Fb>::
+typename Triangulation_ds_face_2<Tds>::Vertex_handle
+Triangulation_ds_face_2<Tds>::
 vertex(int i) const
 {
-  return( static_cast<Vertex*>(Face_base::vertex(i)) );
+  return(Vertex_handle(static_cast<Vertex*>(Fb::vertex(i))));
 } 
 
-template < class Vb, class Fb >
+template < class Tds >
 inline
-Triangulation_ds_vertex_2<Vb,Fb> *
-Triangulation_ds_face_2<Vb,Fb>::
+typename Triangulation_ds_face_2<Tds>::Vertex_handle
+Triangulation_ds_face_2<Tds>::
 mirror_vertex(int i) const
 {
-  CGAL_triangulation_precondition ( neighbor(i) != NULL);
-  return neighbor(i)->vertex(neighbor(i)->index(this));
+  CGAL_triangulation_precondition ( &*neighbor(i) != NULL);
+  return neighbor(i)->vertex(neighbor(i)->index(this->handle()));
 }
 
-template < class Vb, class Fb >
+template < class Tds >
 inline int
-Triangulation_ds_face_2<Vb,Fb>::
+Triangulation_ds_face_2<Tds>::
 mirror_index(int i) const
 {
   CGAL_triangulation_precondition (neighbor(i) != NULL);
-  return neighbor(i)->index(this);
+  return neighbor(i)->index(this->handle());
 }
 
-template < class Vb, class Fb >
+template < class Tds >
 inline  bool 
-Triangulation_ds_face_2<Vb,Fb>::
-has_vertex(const Vertex* v) const
+Triangulation_ds_face_2<Tds>::
+has_vertex(Vertex_handle v) const
 {
-  return (Face_base::has_vertex(v));
+  return (Fb::has_vertex(&*v));
 }
     
-template < class Vb, class Fb >
+template < class Tds >
 inline  bool 
-Triangulation_ds_face_2<Vb,Fb>::    
-has_vertex(const Vertex* v, int& i) const
+Triangulation_ds_face_2<Tds>::    
+has_vertex(Vertex_handle v, int& i) const
 {
-  return (Face_base::has_vertex(v,i));
+  return (Fb::has_vertex(&*v,i));
 }
     
-template < class Vb, class Fb >
+template < class Tds >
 inline  int 
-Triangulation_ds_face_2<Vb,Fb>::  
-index(const Vertex* v) const
+Triangulation_ds_face_2<Tds>::  
+index(Vertex_handle v) const
 {
-  return(Face_base::vertex_index(v));
+  return(Fb::vertex_index(&*v));
 }
 
 // Neighbors Access Functions
-template < class Vb, class Fb >
+template < class Tds >
 inline   
-Triangulation_ds_face_2<Vb,Fb>* 
-Triangulation_ds_face_2<Vb,Fb>::  
+typename Triangulation_ds_face_2<Tds>::Face_handle
+Triangulation_ds_face_2<Tds>::  
 neighbor(int i) const
 {
-  return (static_cast<Face*>(Face_base::neighbor(i)) );
+  return (static_cast<Face*>(Fb::neighbor(i)));
 }
     
-template < class Vb, class Fb >
+template < class Tds >
 inline  bool 
-Triangulation_ds_face_2<Vb,Fb>::  
-has_neighbor(const Face* n) const
+Triangulation_ds_face_2<Tds>::  
+has_neighbor(Face_handle n) const
 {
-  return (Face_base::has_neighbor(n));
+  return (Fb::has_neighbor(&*n));
 }
     
-template < class Vb, class Fb >
+template < class Tds >
 inline  bool 
-Triangulation_ds_face_2<Vb,Fb>::      
-has_neighbor(const Face* n, int& i) const
+Triangulation_ds_face_2<Tds>::      
+has_neighbor(Face_handle n, int& i) const
 {
-  return (Face_base::has_neighbor(n,i));
+  return (Fb::has_neighbor(&*n,i));
 }
     
-template < class Vb, class Fb >
+template < class Tds >
 inline  int 
-Triangulation_ds_face_2<Vb,Fb>::    
-index(const Face* n) const
+Triangulation_ds_face_2<Tds>::    
+index(Face_handle n) const
 {
-  return(Face_base::face_index(n));
+  return(Fb::face_index(&*n));
 }
     
 //Miscelleanous
-template < class Vb, class Fb >
+template < class Tds >
 bool
-Triangulation_ds_face_2<Vb,Fb>::  
+Triangulation_ds_face_2<Tds>::  
 is_valid(bool verbose, int level) const
 {
-  bool result = Face_base::is_valid(verbose, level);
+  bool result = Fb::is_valid(verbose, level);
   for(int i = 0; i <= dimension(); i++) {
-    Face* n = neighbor(i);
-    int in = n->index(this);
-    result = result && ( this == n->neighbor(in) );
+    Face_handle n = neighbor(i);
+    int in = n->index(this->handle());
+    result = result && ( this->handle() == n->neighbor(in) );
     switch(dimension()) {
     case 0 : 
       break;

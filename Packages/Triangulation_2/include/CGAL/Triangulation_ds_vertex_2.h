@@ -24,76 +24,76 @@
 #ifndef CGAL_TRIANGULATION_DS_VERTEX_2_H
 #define CGAL_TRIANGULATION_DS_VERTEX_2_H
 
-#include <utility>
 #include <CGAL/Triangulation_short_names_2.h>
-#include <CGAL/Triangulation_utils_2.h>
-#include <CGAL/Triangulation_ds_circulators_2.h>
 
 CGAL_BEGIN_NAMESPACE
 
-template <class Vb, class Fb >
-class  Triangulation_ds_face_2 ;
-
-template <class Vb, class Fb >
+template <class Tds>
 class  Triangulation_ds_vertex_2 
-  : public Vb,
+  : public Tds::Vertex_base,    
     public Triangulation_cw_ccw_2
 {
 public:
-  typedef Vb Vertex_base;
-  typedef Fb Face_base;
-  typedef typename Vertex_base::Point Point;
-  typedef Triangulation_ds_vertex_2<Vertex_base,Fb> Vertex;
-  typedef Triangulation_ds_face_2<Vertex_base,Fb> Face;
-  typedef std::pair< Face*,int> Edge;
-  typedef Triangulation_ds_face_circulator_2<Vertex,Face> Face_circulator;
-  typedef Triangulation_ds_vertex_circulator_2<Vertex,Face> 
-                                                           Vertex_circulator;
-  typedef Triangulation_ds_edge_circulator_2<Vertex,Face> Edge_circulator;
-
+  typedef typename Tds::Vertex_base        Vb;
+  typedef typename Tds::Vertex             Vertex;
+  typedef typename Tds::Face               Face;
+  typedef typename Tds::Edge               Edge;
+  typedef typename Tds::Vertex_handle      Vertex_handle;
+  typedef typename Tds::Face_handle        Face_handle;
+  typedef typename Tds::Vertex_circulator  Vertex_circulator;
+  typedef typename Tds::Face_circulator    Face_circulator;
+  typedef typename Tds::Edge_circulator    Edge_circulator;
+  typedef typename Vb::Point               Point;
+ 
   //CREATORS
-  Triangulation_ds_vertex_2() : Vertex_base() {}
-  Triangulation_ds_vertex_2(const Point & p) :  Vertex_base(p)  {}
-  Triangulation_ds_vertex_2(const Point & p, Face * f) : Vertex_base(p, f )  {}
+  Triangulation_ds_vertex_2() : Vb() {}
+  Triangulation_ds_vertex_2(const Point& p) :  Vb(p)  {}
+  Triangulation_ds_vertex_2(const Point& p, Face_handle f) 
+    : Vb(p, &*f )  {}
 
   //SETTING
-  void set_face(Face* f)  { Vertex_base::set_face(f);  }
+  void set_face(Face_handle f)  { Vb::set_face(&*f);}
 
   //ACCESS
-  Face* face() const {return ( static_cast<Face *>(Vertex_base::face()) );}
-  int degree() const ;
+  //Vertex_handle handle() const {return &*this;}
+  Vertex_handle handle() {return const_cast<Vertex*>(this); }
+  Face_handle face() const {return static_cast<Face*>(Vb::face()) ;}
+  int degree(); //should be const
 
-  inline Vertex_circulator incident_vertices() const    {
-    return Vertex_circulator(this);
-  }
-  inline Vertex_circulator incident_vertices(const Face* f) const  {
-    return Vertex_circulator(this,f);
-  }
-  inline Face_circulator incident_faces() const  {
-    return Face_circulator(this);
-  }
-  inline Face_circulator incident_faces(const Face* f) const   {
-    return Face_circulator(this, f);
-  }
-  inline Edge_circulator incident_edges() const  {
-    return Edge_circulator(this);
-  }
-  inline Edge_circulator incident_edges(const Face* f) const {
-    return Edge_circulator(this, f);
-  }
-
-  bool is_valid(bool verbose = false, int level = 0) const;
+  // the following should be const
+  // when Face_circulator, Vertex_circulator and Edge_circulator
+  // are created from 
+  // Face_const_handle and Face_const_vertex
+  Vertex_circulator incident_vertices()     
+    {return Vertex_circulator(this);}
+ 
+  Vertex_circulator incident_vertices( Face_handle f)  
+    {return Vertex_circulator(this,f);}
+  
+  Face_circulator incident_faces()  
+    { return Face_circulator(this) ;}
+  
+  Face_circulator incident_faces( Face_handle f)    
+    { return Face_circulator(this, f);}
+  
+  Edge_circulator incident_edges()   
+    { return Edge_circulator(this);}
+  
+  Edge_circulator incident_edges( Face_handle f)  
+    { return Edge_circulator(this, f);}
+  
+  bool is_valid(bool verbose = false, int level = 0);
 
 };
 
-template <class Vb, class Fb >
+template <class Tds>
 int
-Triangulation_ds_vertex_2 <Vb,Fb> ::
-degree() const
+Triangulation_ds_vertex_2 <Tds> ::
+degree() //const
 {
   int count = 0;
   Vertex_circulator vc = incident_vertices(), done(vc);
-  if ( ! vc. is_empty()) {
+  if ( ! vc.is_empty()) {
     do { 
       count += 1;
     } while (++vc != done);
@@ -101,75 +101,17 @@ degree() const
   return count;
 }
 
-// template <class Vb, class Fb >
-// inline
-// Triangulation_ds_vertex_circulator_2<Triangulation_ds_vertex_2<Vb,Fb>,
-//                                      Triangulation_ds_face_2<Vb,Fb> >
-// Triangulation_ds_vertex_2<Vb,Fb> ::
-// incident_vertices() const
-// {
-//   return Vertex_circulator(this);
-// }
-    
-// template <class Vb, class Fb >
-// inline
-// Triangulation_ds_vertex_circulator_2<Triangulation_ds_vertex_2<Vb,Fb>,
-//                                      Triangulation_ds_face_2<Vb,Fb> >
-// Triangulation_ds_vertex_2<Vb,Fb> ::
-// incident_vertices(const Face* f) const
-// {
-//   return Vertex_circulator(this,f);
-// }
 
-// template <class Vb, class Fb >
-// inline
-// Triangulation_ds_face_circulator_2<Triangulation_ds_vertex_2<Vb,Fb>,
-//                                    Triangulation_ds_face_2<Vb,Fb> >
-// Triangulation_ds_vertex_2<Vb,Fb> ::
-// incident_faces() const
-// {
-//   return Face_circulator(this);
-// }
     
-// template <class Vb, class Fb >
-// inline
-// Triangulation_ds_face_circulator_2<Triangulation_ds_vertex_2<Vb,Fb>,
-//                                    Triangulation_ds_face_2<Vb,Fb> >
-// Triangulation_ds_vertex_2<Vb,Fb> ::
-// incident_faces(const Face* f) const
-// {
-//   return Face_circulator(this, f);
-// }
-    
-// template <class Vb, class Fb >
-// inline
-// Triangulation_ds_edge_circulator_2<Triangulation_ds_vertex_2<Vb,Fb>,
-//                                    Triangulation_ds_face_2<Vb,Fb> >
-// Triangulation_ds_vertex_2<Vb,Fb> ::  
-// incident_edges() const
-// {
-//   return Edge_circulator(this);
-// }
-       
-// template <class Vb, class Fb >
-// inline
-// Triangulation_ds_edge_circulator_2<Triangulation_ds_vertex_2<Vb,Fb>,
-//                                    Triangulation_ds_face_2<Vb,Fb> >
-// Triangulation_ds_vertex_2<Vb,Fb> ::  
-// incident_edges(const Face* f) const
-// {
-//   return Edge_circulator(this, f);
-// }
-    
-template <class Vb, class Fb >
+template <class Tds>
 bool 
-Triangulation_ds_vertex_2<Vb,Fb> ::  
-is_valid(bool verbose, int level) const
+Triangulation_ds_vertex_2<Tds> ::  
+is_valid(bool verbose, int level) 
 {
-  bool result = Vertex_base::is_valid(verbose, level);
+  bool result = Vb::is_valid(verbose, level);
   CGAL_triangulation_assertion(result);
   if (face() != NULL) { // face==NULL if dim <0
-    result = result && face()->has_vertex(this);
+    result = result && face()->has_vertex(handle());
   }
   return result;
 }

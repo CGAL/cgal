@@ -33,7 +33,6 @@ CGAL_BEGIN_NAMESPACE
 
 template < class Gt >
 class Triangulation_face_base_2 
-  : public Triangulation_cw_ccw_2
 {
 public:
   typedef Triangulation_face_base_2  Face_base;

@@ -28,23 +28,14 @@ void
 _test_cls_triangulation_face( const Face & )
 {
   std::cout << "    face" << std::endl;
-  typedef typename Face::Geom_traits          Gt;
-
-  typedef typename Face::Point                Point;
-  typedef typename Face::Segment              Segment;
-  typedef typename Face::Triangle             Triangle;
-
+ 
   typedef typename Face::Vertex               Vertex;
-  // typedef typename Face::Edge                 Edge;
-
   typedef typename Face::Vertex_handle        Vertex_handle;
   typedef typename Face::Face_handle          Face_handle;
 
   // Build a few objects
   int i;
-  Point p1(5,6,1);
-  Point p2(6,14,1);
-  Vertex v1, v2, v3(p1), v4(p2);
+  Vertex v1, v2, v3, v4 ;
   
   // Test constructors
   Face f1,f2,f3;

@@ -23,9 +23,7 @@
 
 #include <CGAL/_test_types.h>
 #include <CGAL/Triangulation_euclidean_traits_2.h>
-#include <CGAL/Triangulation_data_structure_using_list_2.h>
 #include <CGAL/Constrained_triangulation_2.h>
-
 #include <CGAL/_test_cls_constrained_triangulation_2.C>
 
 int main()
@@ -37,10 +35,6 @@ int main()
   typedef double coord_type;
   typedef CGAL::Cartesian<coord_type>  Rep;
   typedef CGAL::Triangulation_euclidean_traits_2<Rep>            Gt;
-//   typedef CGAL::Triangulation_vertex_base_2<Gt>                  Vb;
-//   typedef CGAL::Constrained_triangulation_face_base_2<Gt>        Fb;
-//   typedef CGAL::Triangulation_default_data_structure_2<Gt,Vb,Fb> Tds;
-//   typedef CGAL::Constrained_triangulation_2<Gt,Tds>              CCls;
   typedef CGAL::Constrained_triangulation_2<Gt>              CCls;
   _test_cls_constrained_triangulation(CCls());
 

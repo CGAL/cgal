@@ -39,23 +39,23 @@ class Triangulation_2;
 
 template < class Gt, class Tds >
 class Triangulation_line_face_circulator_2
-  :   public Bidirectional_circulator_base<Triangulation_face_2<Gt,Tds>,
-	                                      CGAL_CLIB_STD::ptrdiff_t,
-                                              CGAL_CLIB_STD::size_t>,
+  :   public Bidirectional_circulator_base< typename Tds::Face,
+	                                    CGAL_CLIB_STD::ptrdiff_t,
+                                            CGAL_CLIB_STD::size_t>,
       public Triangulation_cw_ccw_2,
-      public  Triangulation_face_handle_2<Gt,Tds>
+      public  Triangulation_ds_face_handle_2<Tds>
 {
 public:
   typedef Triangulation_line_face_circulator_2<Gt,Tds> Line_face_circulator;
-  typedef Triangulation_2<Gt,Tds> Triangulation;
-  typedef Triangulation_face_2<Gt,Tds> Face;
-  typedef Triangulation_vertex_2<Gt,Tds> Vertex;
-  typedef Triangulation_face_circulator_2<Gt,Tds>      Face_circulator;
-  
-  typedef Triangulation_face_handle_2<Gt,Tds> Face_handle;
-  typedef Triangulation_vertex_handle_2<Gt,Tds> Vertex_handle;
-  typedef std::pair<Face_handle, int>                Edge;
+  typedef Triangulation_2<Gt,Tds>                      Triangulation;
  
+  typedef typename Tds::Vertex                 Vertex;
+  typedef typename Tds::Face                   Face;
+  typedef typename Tds::Edge                   Edge;
+  typedef typename Tds::Vertex_handle          Vertex_handle;
+  typedef typename Tds::Face_handle            Face_handle;
+  typedef typename Tds::Face_circulator        Face_circulator;
+  
   typedef typename Gt::Point_2 Point;
   typedef typename Triangulation::Locate_type Locate_type;
 

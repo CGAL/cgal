@@ -37,6 +37,8 @@ _test_cls_tds_2( const Tds &, const Gt &)
   typedef typename Tds::Vertex            Vertex;
   typedef typename Tds::Face              Face;
   typedef typename Tds::Edge              Edge;
+  typedef typename Tds::Vertex_handle     Vertex_handle;
+  typedef typename Tds::Face_handle       Face_handle;
 
   typedef typename Tds::Vertex_iterator   Vertex_iterator;
   typedef typename Tds::Face_iterator     Face_iterator;
@@ -82,21 +84,21 @@ _test_cls_tds_2( const Tds &, const Gt &)
   // tds4 2dim
 
   std::cout << "    insert and flip" << std::endl;
-  Vertex* w1 = tds1.insert_first();
+  Vertex_handle w1 = tds1.insert_first();
   assert(tds1.dimension()== -1); 
   assert(tds1.number_of_vertices() == 1);
   assert(tds1.is_valid() );
 
-  Vertex* w2 = tds2.insert_first();
-  Vertex* v2 = tds2.insert_second();
+  Vertex_handle w2 = tds2.insert_first();
+  Vertex_handle v2 = tds2.insert_second();
   assert(tds2.dimension()== 0); 
   assert(tds2.number_of_vertices() == 2);
   assert(tds2.is_valid() );
 
-  Vertex* w3 = tds3.insert_first();
+  Vertex_handle w3 = tds3.insert_first();
   tds3.insert_second();
   // test insert_dim_up, remove _dim_down  from dimsension 0 to 1
-  Vertex * v3 = tds3.insert_dim_up(w3,false);
+  Vertex_handle v3 = tds3.insert_dim_up(w3,false);
   assert(tds3.is_valid());
   assert(tds3.number_of_vertices() == 3);
   assert(tds3.dimension() == 1);
@@ -111,9 +113,9 @@ _test_cls_tds_2( const Tds &, const Gt &)
   assert(tds3.is_valid() );
 
  
-  Vertex* w4 = tds4.insert_first();
-  Vertex* v4_1 = tds4.insert_second();
-  Vertex* v4_2 = tds4.insert_dim_up(w4,true);
+  Vertex_handle w4 = tds4.insert_first();
+  Vertex_handle v4_1 = tds4.insert_second();
+  Vertex_handle v4_2 = tds4.insert_dim_up(w4,true);
    // from now on, coordinates have to be introduced for
   // the ierators in is_valid() to work
   Point p1(0,0);
@@ -125,7 +127,7 @@ _test_cls_tds_2( const Tds &, const Gt &)
   v4_1->set_point(p1);
   v4_2->set_point(p2);
   //test insert_dim_up, remove _dim_down  from dimsension 1 to 2
-  Vertex* v4_3 = tds4.insert_dim_up(w4,false);
+  Vertex_handle v4_3 = tds4.insert_dim_up(w4,false);
   v4_3->set_point(p3bis);
   assert(tds4.dimension()== 2);
   assert(tds4.number_of_vertices() == 4);
@@ -139,15 +141,15 @@ _test_cls_tds_2( const Tds &, const Gt &)
   // Find the face  v4_1 v4_2 v4_3 for insertion
   Face_circulator fc= v4_1->incident_faces();
   while( ! (fc->has_vertex(v4_2) && fc->has_vertex(v4_3)) ) fc++;
-  Vertex* v4_4 = tds4.insert_in_face(&( *fc));
+  Vertex_handle v4_4 = tds4.insert_in_face(&( *fc));
   v4_4->set_point(p4);
   assert(tds4.is_valid() );
   // Find the edge v4_1v4_2 for insertion
-  fc= v4_1->incident_faces();
+  fc = v4_1->incident_faces();
   int ic;
   while(! (fc->has_vertex(v4_2, ic ) && ic == fc->ccw(fc->index(v4_1)))) 
     fc++;
-  Vertex* v4_5 = tds4.insert_in_edge(&(*fc), ic);
+  Vertex_handle v4_5 = tds4.insert_in_edge(&(*fc), ic);
   v4_5->set_point(p5);
   assert(tds4.is_valid() );
   assert(tds4.dimension()== 2);
@@ -158,11 +160,11 @@ _test_cls_tds_2( const Tds &, const Gt &)
   assert(tds4.is_valid() );
 
   //remove_degree_3 remove_1D
-  Vertex* u4 = tds4.insert_in_face(v4_1->face());
+  Vertex_handle u4 = tds4.insert_in_face(v4_1->face());
   tds4.remove_degree_3(u4);
   assert(tds4.is_valid() );
   
-  Vertex* u3 = tds3.insert_in_edge(v3->face(),2);
+  Vertex_handle u3 = tds3.insert_in_edge(v3->face(),2);
   tds3.remove_1D(u3);
   assert(tds3.is_valid() );
   
@@ -211,7 +213,7 @@ _test_cls_tds_2( const Tds &, const Gt &)
   assert(tds1d.is_valid() & tds1d.number_of_vertices()==1);
   tds1d.clear();
   Tds tds1e;
-  Vertex *w1e= tds1e.copy_tds(tds1,w1);
+  Vertex_handle w1e= tds1e.copy_tds(tds1,w1);
   assert(tds1e.is_valid() && tds1e.is_vertex(w1e));
 
   Tds tds2b(tds2);
@@ -223,7 +225,7 @@ _test_cls_tds_2( const Tds &, const Gt &)
   assert(tds2d.is_valid() & tds2d.number_of_vertices()==2);
   tds2d.clear();
   Tds tds2e;
-  Vertex *w2e= tds2e.copy_tds(tds2,w2);
+  Vertex_handle w2e= tds2e.copy_tds(tds2,w2);
   assert(tds2e.is_valid() && tds2e.is_vertex(w2e));
 
   Tds tds3b(tds3);
@@ -235,7 +237,7 @@ _test_cls_tds_2( const Tds &, const Gt &)
   assert(tds3d.is_valid() & tds3d.number_of_vertices()==4);
   tds3d.clear();
   Tds tds3e;
-  Vertex *w3e= tds3e.copy_tds(tds3,w3);
+  Vertex_handle w3e= tds3e.copy_tds(tds3,w3);
   assert(tds3e.is_valid()&& tds3e.is_vertex(w3e));
 
 
@@ -248,7 +250,7 @@ _test_cls_tds_2( const Tds &, const Gt &)
   assert(tds4d.is_valid() && tds4d.number_of_vertices()==6);
   tds4d.clear();
   Tds tds4e;
-  Vertex *w4e= tds4e.copy_tds(tds4,w4);
+  Vertex_handle w4e= tds4e.copy_tds(tds4,w4);
   assert(tds4e.is_valid() && tds4e.is_vertex(w4e));
 
   //test circulators and v->degree()

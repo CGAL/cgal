@@ -27,8 +27,7 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/Triangulation_short_names_2.h>
 #include <CGAL/Triangulation_euclidean_traits_2.h>
-#include <CGAL/Triangulation_default_data_structure_2.h>
-#include <CGAL/Triangulation_data_structure_using_list_2.h>
+#include <CGAL/Triangulation_data_structure_2.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 
 #include <CGAL/_test_types.C>
@@ -41,7 +40,7 @@ int main()
   typedef CGAL::Triangulation_euclidean_traits_2<Test_rep_cartesian> Gt1;
   typedef CGAL::Triangulation_vertex_base_2<Gt1>                  Vb1;
   typedef CGAL::Triangulation_face_base_2<Gt1>                    Fb1;
-  typedef CGAL::Triangulation_default_data_structure_2<Gt1,Vb1,Fb1> Tds1;
+  typedef CGAL::Triangulation_data_structure_2<Vb1,Fb1> Tds1;
   typedef CGAL::Delaunay_triangulation_2<Gt1,Tds1>                 Cls1;
 
   _test_cls_delaunay_triangulation_2( Cls1() );
@@ -52,13 +51,13 @@ int main()
   typedef CGAL::_Triangulation_test_traits                       Gt;
   typedef CGAL::Triangulation_vertex_base_2<Gt>                  Vb;
   typedef CGAL::Triangulation_face_base_2<Gt>                    Fb;
-  typedef CGAL::Triangulation_default_data_structure_2<Gt,Vb,Fb> Tds;
+  typedef CGAL::Triangulation_data_structure_2<Vb,Fb> Tds;
   typedef CGAL::Delaunay_triangulation_2<Gt,Tds>                 Cls;
 
   _test_cls_delaunay_triangulation_2( Cls() ); 
 
   std::cout << "Testing Delaunay Triangulation_2 " <<  std::endl;
-  std::cout << " with Triangulation_data_structure_using_list_2 : " 
+  std::cout << " with Triangulation_data_structure_2 : " 
 	    <<  std::endl << " and Cartesian<double>"
     	    << std::endl;
   std::cout << "this tests defaults setting" << std::endl;
@@ -73,7 +72,7 @@ int main()
   typedef CGAL::Homogeneous<double>                                 Gt4;
   typedef CGAL::Triangulation_vertex_base_2<Gt4>                    Vb4;
   typedef CGAL::Triangulation_face_base_2<Gt4>                      Fb4;
-  typedef CGAL::Triangulation_default_data_structure_2<Gt4,Vb4,Fb4> Tds4;
+  typedef CGAL::Triangulation_data_structure_2<Vb4,Fb4> Tds4;
   typedef CGAL::Delaunay_triangulation_2<Gt4,Tds4>                   Cls4;
 
   _test_cls_delaunay_triangulation_2( Cls4() );

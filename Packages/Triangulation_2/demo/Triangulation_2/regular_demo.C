@@ -22,7 +22,7 @@ typedef double W;
 typedef CGAL::Regular_triangulation_euclidean_traits_2<Rp,W>  Gt;
 typedef CGAL::Triangulation_vertex_base_2<Gt> Vb;
 typedef CGAL::Regular_triangulation_face_base_2<Gt> Fb;
-typedef CGAL::Triangulation_default_data_structure_2<Gt,Vb,Fb > Tds;
+typedef CGAL::Triangulation_data_structure_2<Vb,Fb > Tds;
 typedef CGAL::Regular_triangulation_2<Gt, Tds> Regular_triangulation;
 typedef CGAL::Window_stream  Window_stream;
 

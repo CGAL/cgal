@@ -28,8 +28,7 @@
 
 #include <CGAL/Triangulation_vertex_base_2.h>
 #include <CGAL/Triangulation_face_base_2.h>
-#include <CGAL/Triangulation_default_data_structure_2.h>
-#include <CGAL/Triangulation_data_structure_using_list_2.h>
+#include <CGAL/Triangulation_data_structure_2.h>
 #include <CGAL/Triangulation_euclidean_traits_2.h>
 #include <CGAL/Triangulation_2.h>
 
@@ -45,7 +44,7 @@ int main()
   typedef CGAL::Triangulation_euclidean_traits_2<Test_rep_cartesian> Gt1;
   typedef CGAL::Triangulation_vertex_base_2<Gt1>                     Vb1;
   typedef CGAL::Triangulation_face_base_2<Gt1>                       Fb1;
-  typedef CGAL::Triangulation_default_data_structure_2<Gt1,Vb1,Fb1> Tds1;
+  typedef CGAL::Triangulation_data_structure_2<Vb1,Fb1> Tds1;
   typedef CGAL::Triangulation_2<Gt1,Tds1>                            Cls1;
    _test_cls_triangulation_2( Cls1() );
 

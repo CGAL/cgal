@@ -20,7 +20,7 @@ public:
 typedef CGAL::Cartesian<double> Gt;
 typedef CGAL::Triangulation_vertex_base_2<Gt> Vb;
 typedef My_face_base<Gt> Fb;
-typedef CGAL::Triangulation_data_structure_using_list_2<Vb,Fb > Tds;
+typedef CGAL::Triangulation_data_structure_2<Vb,Fb > Tds;
 typedef CGAL::Triangulation_2<Gt,Tds> Triangulation;
 
 typedef Triangulation::Face_handle Face_handle;

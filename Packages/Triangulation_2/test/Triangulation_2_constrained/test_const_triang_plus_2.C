@@ -23,7 +23,6 @@
 #include <CGAL/_test_types.h>
 
 #include <CGAL/intersections.h>
-#include <CGAL/Triangulation_data_structure_using_list_2.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Constrained_triangulation_plus_2.h>
 

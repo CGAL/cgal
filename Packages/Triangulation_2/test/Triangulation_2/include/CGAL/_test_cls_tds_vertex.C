@@ -33,6 +33,8 @@ _test_cls_tds_vertex( const Vertex &, const Gt & )
   typedef typename Vertex::Point                Point;
   typedef typename Vertex::Face                 Face;
   typedef typename Vertex::Edge                 Edge;
+  typedef typename Vertex::Face_handle          Face_handle;
+  typedef typename Vertex::Vertex_handle        Vertex_handle;
 
   typedef typename Vertex::Vertex_circulator    Vertex_circulator;
   typedef typename Vertex::Face_circulator      Face_circulator;
@@ -44,11 +46,12 @@ _test_cls_tds_vertex( const Vertex &, const Gt & )
   Point p2(1,2);
   Point p3(2,3);
   Face f3;
+  Face_handle fh3 = f3.handle();
   
   // Test constructors
   Vertex v1;
   Vertex v2(p2);
-  Vertex v3(p3,&f3);
+  Vertex v3(p3,fh3);
   
   // Test point()
   assert( Gt().compare_x_2_object()(v2.point(),p2) == CGAL::EQUAL &&
@@ -57,13 +60,13 @@ _test_cls_tds_vertex( const Vertex &, const Gt & )
 	  Gt().compare_y_2_object()(v3.point(),p3) == CGAL::EQUAL) ;
   
   // Test face()
-  assert( v3.face() == &f3 );
+  assert( v3.face() == fh3 );
   // to avoid "unused variable warning
-  v3.set_face(&f3);
+  v3.set_face(fh3);
       
   // Test set_face()
-  v2.set_face(&f3);
-  assert( v2.face() == &f3 );
+  v2.set_face(fh3);
+  assert( v2.face() == fh3 );
   
   // Test set_point()
   v1.set_point(p3);

@@ -179,12 +179,12 @@ _test_cls_constrained_triangulation(const Triangulation &)
   Cls T2_2_copy; if2_2 >> T2_2_copy;
 
   // test copy of constrained Triangulation
-   Cls T2_2_bis(T2_2);
-  std::ofstream of2_2_bis("T22_bis.triangulation");
+   Cls T2_4(T2_2);
+  std::ofstream of2_2_bis("T22.triangulation");
   CGAL::set_ascii_mode(of2_2_bis);
-  of2_2_bis << T2_2_bis; of2_2_bis.close();
+  of2_2_bis << T2_4; of2_2_bis.close();
   All_faces_iterator fit2 = T2_2.all_faces_begin();
-  All_faces_iterator fit2_bis = T2_2_bis.all_faces_begin();
+  All_faces_iterator fit2_bis = T2_4.all_faces_begin();
   for( ; fit2 != T2_2.faces_end(); ++fit2, ++fit2_bis) {
     for(int i=0; i<3 ; i++)  
     assert( fit2->is_constrained(i) ==  fit2_bis->is_constrained(i) );
