@@ -1,3 +1,7 @@
+2.2.11 (04/10/03) [rursu] modified C2vcproj script to make the project name
+		  and the output file name the same as the .C file name
+		  added the script that was used to generate CGAL3.0Setup.exe
+
 2.2.1 (23/10/03)  resubmission
 
 2.1.39(22/10/03)  resubmission
