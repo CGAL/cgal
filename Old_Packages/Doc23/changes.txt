@@ -1,3 +1,6 @@
+2.20    (?? May 2001)
+- fixed typo in compare_x_at_y()
+
 2.19    (1 May 2001)
 - Fix return type of Kernel::Orientation_?.
 - angle()
