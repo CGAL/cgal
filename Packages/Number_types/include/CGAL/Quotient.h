@@ -51,16 +51,16 @@ CGAL_BEGIN_NAMESPACE
 
 namespace CGALi {
 
-  // Mini helper to prevent clashes when NT == int.
-  template < typename T >
-  struct Int_if_not_int { typedef int type; };
+  // Mini helper to prevent clashes when T == T2.
+  template < typename T, typename T2 >
+  struct Int_if_not { typedef T2 type; };
 
-  template <>
-  struct Int_if_not_int<int> { struct type{}; };
+  template < typename T >
+  struct Int_if_not<T, T> { struct type{}; };
 
 } // namespace CGALi
 
-#define CGAL_int(T) typename CGALi::Int_if_not_int<T>::type
+#define CGAL_int(T) typename CGALi::Int_if_not<T, int>::type
 
 // Simplify the quotient numerator/denominator.
 // Currently the default template doesn't do anything.
@@ -87,10 +87,20 @@ class Quotient
   typedef typename Number_type_traits<NT_>::Has_exact_ring_operations
   Has_exact_ring_operations;
 
-  Quotient() : num(0), den(1) {}
+  Quotient()
+    : num(0), den(1) {}
+
+  Quotient(const NT& n)
+    : num(n), den(1) {}
+
+  Quotient(const typename CGALi::Int_if_not<NT, double>::type & n)
+    : num(n), den(1) {}
+
+  Quotient(const CGAL_int(NT) & n)
+    : num(n), den(1) {}
 
   template <class T>
-  Quotient(const T& n) : num(n), den(1) {}
+  explicit Quotient(const T& n) : num(n), den(1) {}
 
   template <class T1, class T2>
   Quotient(const T1& n, const T2& d) : num(n), den(d)

@@ -1,3 +1,7 @@
+6 March 2005 Sylvain Pion
+- Mark template ctor of Quotient<NT> explicit, as it is too greedy,
+  complement it by constructors from NT, int and double.
+
 5 March 2005 Sylvain Pion
 - Use <boost/operators.hpp> to simplify <CGAL/Quotient.h>.
 - Add test program for the mixed operators of Quotient.
