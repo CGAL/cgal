@@ -150,7 +150,7 @@ does_affine_dual_intersectC3(
 			      qs,rs,spw);
   CGAL_kernel_assertion( ! CGAL_NTS is_zero(den) );
 
- CGAL::Sign  sign = sign(FT(2)*den - detq -detr -dets)
+ CGAL::Sign  sign = sign(FT(2)*den - detq -detr -dets);
   return  
    (CGAL_NTS sign(detq) == CGAL_NTS sign(den) || CGAL_NTS sign(detq)== ZERO) &&
    (CGAL_NTS sign(detr) == CGAL_NTS sign(den) || CGAL_NTS sign(detr)== ZERO) &&
@@ -182,7 +182,7 @@ does_affine_dual_intersectC3(
   FT qpw = qq - qw + pw ;
   FT rpw = rr - rw + pw ;
   
-  FT den = det2,2_by_formula(qq,qr,
+  FT den = det2x2_by_formula(qq,qr,
 			     qr,rr);
   FT detq = det3x3_by_formula(qpw,qr,
 			      rpw,rr);
@@ -191,7 +191,7 @@ does_affine_dual_intersectC3(
 
   CGAL_kernel_assertion( ! CGAL_NTS is_zero(den) );
 
- CGAL::Sign  sign = CGAL_NTS sign(FT(2)*den - detq - detr)
+ CGAL::Sign  sign = CGAL_NTS sign(FT(2)*den - detq - detr);
   return  
    (CGAL_NTS sign(detq) == CGAL_NTS sign(den) || CGAL_NTS sign(detq)== ZERO) &&
    (CGAL_NTS sign(detr) == CGAL_NTS sign(den) || CGAL_NTS sign(detr)== ZERO) &&
