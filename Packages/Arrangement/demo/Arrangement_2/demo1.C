@@ -645,8 +645,13 @@ void MyWindow::updateSnapMode( bool on )
   if (on)
   {
     setGridSnapMode->setEnabled( TRUE );
-    setGridSnapMode->setOn( FALSE );
-    w_demo_p->snap_mode = POINT;
+	if (w_demo_p->snap_mode == GRID)
+	  setGridSnapMode->setOn( TRUE );
+	else
+	{
+      setGridSnapMode->setOn( FALSE );
+      w_demo_p->snap_mode = POINT;
+	}
     w_demo_p->snap = true;
   }
   else
@@ -774,9 +779,25 @@ void MyWindow::update()
   Qt_widget_base_tab    *w_demo_p = 
     static_cast<Qt_widget_base_tab *> (myBar->currentPage());
   setMode( w_demo_p->mode );
-  updateSnapMode( false );
+  //updateSnapMode( w_demo_p->snap );
   setTraits( w_demo_p->traits_type );
   setConicType( w_demo_p->conic_type ); 
+
+  if ( w_demo_p->snap )
+  {
+	setGridSnapMode->setEnabled( TRUE );
+	setSnapMode->setOn( TRUE );
+	if ( w_demo_p->snap_mode == GRID)
+	  setGridSnapMode->setOn( TRUE );
+	else
+	  setGridSnapMode->setOn( FALSE );
+  }
+  else
+  {
+	setSnapMode->setOn( FALSE );
+	setGridSnapMode->setOn( FALSE );
+    setGridSnapMode->setEnabled( FALSE );
+  }
 }
 
 /*! zoom in - enlarge the picture */
