@@ -1,4 +1,4 @@
-// ============================================================================
+// ======================================================================
 //
 // Copyright (c) 1997 The CGAL Consortium
 //
@@ -6,21 +6,21 @@
 // of the Computational Geometry Algorithms Library (CGAL). It is not
 // intended for general use.
 //
-// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------
 //
-// release       :
-// release_date  :
+// release       : $CGAL_Revision: CGAL-2.0-I-12 $
+// release_date  : $CGAL_Date: 1999/04/28 $
 //
-// file          : Triangulation/include/CGAL/Triangulation_ds_iterators_2.h
+// file          : include/CGAL/Triangulation_ds_iterators_2.h
+// package       : Triangulation (3.7)
 // source        : $RCSfile$
 // revision      : $Revision$
 // revision_date : $Date$
-//
 // author(s)     : Mariette Yvinec
 //
 // coordinator   : Mariette Yvinec  <Mariette Yvinec@sophia.inria.fr>
 //
-// ============================================================================
+// ======================================================================
 
 #ifndef CGAL_TRIANGULATION_DS_ITERATORS_2_H
 #define CGAL_TRIANGULATION_DS_ITERATORS_2_H
@@ -28,6 +28,7 @@
 
 
 #include <utility>
+#include <iterator>
 
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Triangulation_short_names_2.h>
@@ -59,7 +60,7 @@ public:
     pos = _tds->infinite_vertex()->face();
   }
 
- Triangulation_ds_iterator_base_2(Tds* tds, int i)
+ Triangulation_ds_iterator_base_2(Tds* tds, int)
      :  _tds(tds), pos(NULL)
  {}
 
@@ -196,8 +197,10 @@ protected:
 
 };
 
+
 // the following iterator visit all the Tds faces
 // whatever may be the dimensionality of those faces
+
 template<class Tds>
 class Triangulation_ds_face_iterator_2
   : public Triangulation_ds_iterator_base_2<Tds>,
@@ -313,7 +316,6 @@ public:
 
 
 };
-
 
 
 template < class Tds>
@@ -517,6 +519,7 @@ public:
   typedef std::size_t     size_type;
   typedef std::ptrdiff_t  difference_type;
   typedef std::bidirectional_iterator_tag   iterator_category;  
+
 
   typedef typename Tds::Geom_traits Geom_traits;
   typedef typename Tds::Vertex Vertex;

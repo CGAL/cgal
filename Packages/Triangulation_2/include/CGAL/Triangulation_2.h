@@ -1,4 +1,4 @@
-// ============================================================================
+// ======================================================================
 //
 // Copyright (c) 1997 The CGAL Consortium
 //
@@ -6,12 +6,13 @@
 // of the Computational Geometry Algorithms Library (CGAL). It is not
 // intended for general use.
 //
-// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------
 //
-// release       :
-// release_date  :
+// release       : $CGAL_Revision: CGAL-2.0-I-12 $
+// release_date  : $CGAL_Date: 1999/04/28 $
 //
 // file          : include/CGAL/Triangulation_2.h
+// package       : Triangulation (3.7)
 // source        : $RCSfile$
 // revision      : $Revision$
 // revision_date : $Date$
@@ -19,7 +20,7 @@
 //
 // coordinator   : Mariette Yvinec  <Mariette Yvinec@sophia.inria.fr>
 //
-// ============================================================================
+// ======================================================================
 
 
 
@@ -97,9 +98,10 @@ public:
   typedef Triangulation_vertex_iterator_2<Gt,Tds> Vertex_iterator;
 
   typedef Triangulation_line_face_circulator_2<Gt,Tds>  Line_face_circulator;
-  
-  //typedef Line_Face_circulator::Locate_type Locate_type;
-   enum Locate_type {VERTEX=0, EDGE, FACE, OUTSIDE, COLLINEAR_OUTSIDE};
+
+  typedef Point value_type; // to have a back_inserter
+
+  enum Locate_type {VERTEX=0, EDGE, FACE, OUTSIDE, COLLINEAR_OUTSIDE};
 
 
 protected:
@@ -166,7 +168,6 @@ public:
   }
 
 
-  
   //ACCESS FUNCTIONs
   int  dimension() const { return _tds.dimension();}
   int number_of_vertices() const {return _tds.number_of_vertices() - 1;}
@@ -199,7 +200,6 @@ public:
    
   Face_handle infinite_face() const
   {
-    //CGAL_triangulation_precondition( ! infinite_vertex()->face().is_null());
     return infinite_vertex()->face();
   }
 
@@ -283,7 +283,6 @@ public:
   //INSERTION - DELETION - Flip
 public:
   void   flip(Face_handle& f, int i);
-
   
   void 
   insert_first(const Vertex_handle& v)
@@ -327,7 +326,7 @@ public:
     return;
   }
 
-  
+
   void 
   insert_outside_convex_hull(Vertex_handle v, Face_handle f)
   {
@@ -468,8 +467,7 @@ public:
 
   Face_handle
     march_locate_1D(const Point& t, Locate_type& lt, int& li) const ;
-    
-    
+     
   Face_handle
     march_locate_2D(const Face_handle& start,
                     const Point& t,
@@ -481,7 +479,7 @@ public:
            int& li,
            Face_handle start = Face_handle()) const;
 
-inline Face_handle
+Face_handle
 locate(const Point &p,
        Face_handle start = Face_handle()) const
 {
@@ -529,39 +527,39 @@ locate(const Point &p,
 		ncthis = (Triangulation_2<Gt, Tds>*)this;
         return Edge_iterator(ncthis,1);
     }
-inline
+
   Face_circulator incident_faces( const Vertex_handle& v) const
   {
     return v->incident_faces();
   }
 
-  inline
+  
    Face_circulator incident_faces( 
 	const Vertex_handle& v, const Face_handle& f) const
   {
     return v->incident_faces(f);
   }
 
-   inline 
+   
   Vertex_circulator incident_vertices(const Vertex_handle& v) const
   {
     return v->incident_vertices();
   }
 
-  inline 
+  
   Vertex_circulator incident_vertices(const Vertex_handle& v,
 				      const Face_handle& f) const
   {
     return v->incident_vertices(f);
   }
 
- inline 
-  Edge_circulator incident_edgees(const Vertex_handle& v) const
+ 
+  Edge_circulator incident_edges(const Vertex_handle& v) const
   {
     return v->incident_edges();
   }
 
-  inline 
+  
   Edge_circulator incident_edges(const Vertex_handle& v,
 				 const Face_handle& f) const
   {
@@ -572,20 +570,8 @@ inline
    Line_face_circulator
     line_walk(const Point& p,
               const Point& q,
-              Face_handle f = Face_handle())
-    {
-        CGAL_triangulation_precondition( (dimension() == 2) && 
-					 (! geom_traits().compare(p,q)) );
-    
-        Line_face_circulator lfc = (f.is_null())
-                                   ? Line_face_circulator(p, q, this)
-                                   : Line_face_circulator(p, q, f, this);
-    
-        if( (!lfc.is_empty()) && is_infinite( lfc )){
-            return Line_face_circulator();
-         }
-        return lfc;
-    }
+              Face_handle f = Face_handle());
+  
     
 // not documented
 public:
@@ -599,7 +585,7 @@ bounded_side(const Point &p0, const Point &p1,
     
 Oriented_side
 oriented_side(const Face_handle& f, const Point &p) const;
-    
+
 bool 
 collinear_between(const Point& p, const Point& q, const Point& r) const;
        
@@ -737,6 +723,7 @@ flip(Face_handle& f, int i)
 
 
 template <class Gt, class Tds >
+
 Triangulation_2<Gt,Tds>::Vertex_handle
 Triangulation_2<Gt,Tds>::
 insert(const Point& p, Locate_type& lt, Face_handle f)
@@ -1330,9 +1317,10 @@ march_locate_2D(const Face_handle& start,
         }
         return lfc;
     }
+
     
 template <class Gt, class Tds >
-Face_handle
+Triangulation_2<Gt, Tds>::Face_handle
 Triangulation_2<Gt,Tds>::
 locate(const Point& p,
            Locate_type& lt,
@@ -1361,11 +1349,31 @@ locate(const Point& p,
     
         return march_locate_2D(start, p, lt, li);
 }
+
     
-    
-  
+
 template <class Gt, class Tds >
- Oriented_side
+Triangulation_2<Gt, Tds>:: Line_face_circulator  
+Triangulation_2<Gt, Tds>::    
+line_walk(const Point& p,
+              const Point& q,
+              Face_handle f) 
+{
+        CGAL_triangulation_precondition( (dimension() == 2) && 
+					 (! geom_traits().compare(p,q)) );
+    
+        Line_face_circulator lfc = (f.is_null())
+                                   ? Line_face_circulator(p, q, this)
+                                   : Line_face_circulator(p, q, f, this);
+    
+        if( (!lfc.is_empty()) && is_infinite( lfc )){
+            return Line_face_circulator();
+        }
+        return lfc;
+}
+   
+template <class Gt, class Tds >
+Oriented_side
 Triangulation_2<Gt, Tds>::
 oriented_side(const Point &p0, const Point &p1,
                   const Point &p2, const Point &p) const
@@ -1411,6 +1419,27 @@ oriented_side(const Point &p0, const Point &p1,
             }
         return ON_NEGATIVE_SIDE;
     }
+
+template <class Gt, class Tds >
+bool
+Triangulation_2<Gt, Tds>::
+collinear_between(const Point& p, const Point& q, const Point& r) const
+{
+        Comparison_result c_pr = geom_traits().compare_x(p, r);
+        Comparison_result c_pq;
+        Comparison_result c_qr;
+        if(c_pr == EQUAL) {
+            c_pr = geom_traits().compare_y(p, r);
+            c_pq = geom_traits().compare_y(p, q);
+            c_qr = geom_traits().compare_y(q, r);
+        } else {
+            c_pq = geom_traits().compare_x(p, q);
+            c_qr = geom_traits().compare_x(q, r);
+        }
+        return ( (c_pq == SMALLER) && (c_qr == SMALLER) ) ||
+            ( (c_qr == LARGER) && (c_pq == LARGER) );
+    
+}
 
 template <class Gt, class Tds >
 Bounded_side
@@ -1501,8 +1530,8 @@ operator<<(std::ostream& os, const Triangulation_2<Gt, Tds> &tr)
   //operator<<(os, tr._tds);
   //os << tr._tds;
 
-  std::map< void*, int, less<void*> > V;
-  std::map< void*, int, less<void*> > F;
+  std::map< void*, int, std::less<void*> > V;
+  std::map< void*, int, std::less<void*> > F;
   typename Triangulation_2<Gt, Tds>::Vertex_handle  v;
 
     int n = tr.number_of_vertices() + 1;

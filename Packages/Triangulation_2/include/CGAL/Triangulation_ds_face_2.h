@@ -1,4 +1,4 @@
-// ============================================================================
+// ======================================================================
 //
 // Copyright (c) 1997 The CGAL Consortium
 //
@@ -6,21 +6,20 @@
 // of the Computational Geometry Algorithms Library (CGAL). It is not
 // intended for general use.
 //
-// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------
 //
-// release       :
-// release_date  :
+// release       : $CGAL_Revision: CGAL-2.0-I-12 $
+// release_date  : $CGAL_Date: 1999/04/28 $
 //
 // file          : Triangulation/include/CGAL/Triangulation_ds_face_2.h
 // source        : $RCSfile$
 // revision      : $Revision$
 // revision_date : $Date$
-//
 // author(s)     : Mariette Yvinec
 //
 // coordinator   : Mariette Yvinec  <Mariette Yvinec@sophia.inria.fr>
 //
-// ============================================================================
+// ======================================================================
 
 #ifndef CGAL_TRIANGULATION_DS_FACE_2_H
 #define CGAL_TRIANGULATION_DS_FACE_2_H
@@ -111,9 +110,10 @@ public:
     return( (Vertex*) (Fb::vertex(i)));
   } 
 
- inline 
- bool has_vertex(const Vertex* v) const
+ inline
+   bool has_vertex(const Vertex* v) const
   {
+    //Triangulation_ds_vertex_2<Vb,Fb>* w=v;
     return (Fb::has_vertex(v));
   }
     

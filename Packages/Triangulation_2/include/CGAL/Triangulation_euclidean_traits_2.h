@@ -15,7 +15,6 @@
 // source        : $RCSfile$
 // revision      : $Revision$
 // revision_date : $Date$
-//
 // author(s)     : Mariette Yvinec
 //
 // coordinator   : Mariette Yvinec  <Mariette.Yvinec@sophia.inria.fr>
@@ -76,30 +75,23 @@ public:
 	    compare_y(p, q)== EQUAL);
   }
 
-    Orientation orientation(const Point &p,
-                                 const Point &q,
-                                 const Point &r) const
+  Orientation orientation(const Point &p,
+			  const Point &q,
+			  const Point &r) const
     {
         return CGAL::orientation(p, q, r);
     }
 
 
-   Orientation extremal(const Point &p,
-                        const Point &q,
-                        const Point &r) const
-      {
-        return orientation(p, q, r);
-      }
-    
-    Oriented_side side_of_oriented_circle(const Point &p,
-                                               const Point &q,
-                                               const Point &r,
-                                               const Point &s) const
-      {
-        return CGAL::side_of_oriented_circle(p, q, r, s);
-      }
+  Oriented_side side_of_oriented_circle(const Point &p,
+					const Point &q,
+					const Point &r,
+					const Point &s) const
+    {
+      return CGAL::side_of_oriented_circle(p, q, r, s);
+    }
 
-     Point circumcenter(const Point &p, const Point &q, const Point &r) const
+  Point circumcenter(const Point &p, const Point &q, const Point &r) const
     {
         return CGAL::circumcenter(p, q, r);
     }

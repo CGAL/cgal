@@ -1,4 +1,4 @@
-// ============================================================================
+// ======================================================================
 //
 // Copyright (c) 1997 The CGAL Consortium
 //
@@ -6,10 +6,10 @@
 // of the Computational Geometry Algorithms Library (CGAL). It is not
 // intended for general use.
 //
-// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------
 //
-// release       :
-// release_date  :
+// release       : $CGAL_Revision: CGAL-2.0-I-12 $
+// release_date  : $CGAL_Date: 1999/04/28 $
 //
 // file          : include/CGAL/Constrained_triangulation_sweep_2.h
 // source        : $RCSfile : Constrained_triangulation_sweep_2.h,v $
@@ -19,7 +19,7 @@
 //
 // coordinator   : Mariette Yvinec  <Mariette Yvinec@sophia.inria.fr>
 //
-// ============================================================================
+// ======================================================================
 
 #ifndef CGAL_CONSTRAINED_TRIANGULATION_SWEEP_2_H
 #define CGAL_CONSTRAINED_TRIANGULATION_SWEEP_2_H
@@ -65,7 +65,7 @@ public:
   //typedef std::map<Constraint, Chain *, Status_comp> Sweep_status;
   typedef std::pair<Face_handle, int> Neighbor;
     
-    class Event_less : public binary_function<Point, Point, bool>
+    class Event_less : public CGAL_STD::binary_function<Point, Point, bool>
     {
     private:
       Geom_traits t;
@@ -80,7 +80,8 @@ public:
       }
     };
     
-    class Status_comp : public binary_function<Constraint, Constraint, bool>
+    class Status_comp : 
+      public CGAL_STD::binary_function<Constraint, Constraint, bool>
     {
     private:
       Geom_traits t;
@@ -150,7 +151,7 @@ public:
       
     };
     
-    class Neighbor_list : public std::list<Neighbor>
+    class Neighbor_list : public CGAL_STD::list<Neighbor>
     {
     public:
       bool is_removable(Face_handle fh)

@@ -15,7 +15,6 @@
 // source        : $RCSfile$
 // revision      : $Revision$
 // revision_date : $Date$
-//
 // author(s)     : Mariette Yvinec
 //
 // coordinator   : Mariette Yvinec  <Mariette Yvinec@sophia.inria.fr>
@@ -99,17 +98,10 @@ public:
   inline 
   int vertex_index(const void* v) const
   {
-    if (v == V[0]) {
-      return 0;
-    }
-    if (v == V[1]) {
-      return 1;
-    }
-    if (v == V[2]) {
-      return 2;
-    }
-    CGAL_triangulation_assertion(false); // we should not get here
-    return -1;
+    if (v == V[0]) return 0;
+    if (v == V[1]) return 1;
+    CGAL_triangulation_assertion( v == V[2] );
+    return 2;
   }
 
   inline 
@@ -149,17 +141,10 @@ public:
   inline 
   int face_index(const void* n) const
   {
-    if (n == N[0]) {
-      return 0;
-    }
-    if (n == N[1]) {
-      return 1;
-    }
-    if (n == N[2]) {
-      return 2;
-    }
-    CGAL_triangulation_precondition(false); // we should not get here
-    return -1;
+    if (n == N[0]) return 0;
+    if (n == N[1]) return 1;
+    CGAL_triangulation_assertion( n == N[2] );
+    return 2;
   }
     
  
@@ -182,9 +167,7 @@ public:
   inline 
   void set_vertices()
   {
-    V[0] = NULL;
-    V[1] = NULL;
-    V[2] = NULL;
+    V[0] = V[1] = V[2] = NULL;
   }
     
     
@@ -201,9 +184,7 @@ public:
   inline 
   void set_neighbors()
   {
-    N[0] = NULL;
-    N[1] = NULL;
-    N[2] = NULL;
+    N[0] = N[1] = N[2] = NULL;
   }
     
   inline
@@ -215,8 +196,6 @@ public:
     N[1] = n1;
     N[2] = n2;
   }
- 
- 
  
    
  
@@ -235,4 +214,3 @@ private:
 CGAL_END_NAMESPACE 
 
 #endif //CGAL_TRIANGULATION_FACE_BASE_2_H
-

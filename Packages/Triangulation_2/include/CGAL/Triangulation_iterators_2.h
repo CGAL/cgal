@@ -15,7 +15,6 @@
 // source        : $RCSfile$
 // revision      : $Revision$
 // revision_date : $Date$
-//
 // author(s)     : Mariette Yvinec
 //
 // coordinator   : Mariette Yvinec  <Mariette Yvinec@sophia.inria.fr>
@@ -54,11 +53,18 @@ class Triangulation_edge_iterator_2;
 
 template < class Gt, class Tds>
 class Triangulation_face_iterator_2
- : public
-bidirectional_iterator<Triangulation_face_2<Gt,Tds>,ptrdiff_t>,
+ : 
+  //public bidirectional_iterator<Triangulation_face_2<Gt,Tds>,ptrdiff_t>,
   public Triangulation_cw_ccw_2
 {
 public:
+  typedef Triangulation_face_2<Gt,Tds>       value_type;
+  typedef Triangulation_face_2<Gt,Tds> *     pointer;
+  typedef Triangulation_face_2<Gt,Tds> &     reference;
+  typedef std::size_t     size_type;
+  typedef std::ptrdiff_t  difference_type;
+  typedef std::bidirectional_iterator_tag   iterator_category;
+
   typedef typename Tds::Vertex Ve;
   typedef typename Tds::Face Fa;
   typedef typename Tds::Face_iterator  Iterator_base;
@@ -180,11 +186,18 @@ public:
 
 template < class Gt, class Tds>
 class Triangulation_vertex_iterator_2
- : public bidirectional_iterator<Triangulation_vertex_2<Gt,
-   Tds>,ptrdiff_t>,
+ : 
+  //public bidirectional_iterator<Triangulation_vertex_2<Gt,Tds>,ptrdiff_t>,
    public Triangulation_cw_ccw_2
 {
 public:
+  typedef Triangulation_vertex_2<Gt,Tds>       value_type;
+  typedef Triangulation_vertex_2<Gt,Tds> *     pointer;
+  typedef Triangulation_vertex_2<Gt,Tds> &     reference;
+  typedef std::size_t     size_type;
+  typedef std::ptrdiff_t  difference_type;
+  typedef std::bidirectional_iterator_tag   iterator_category;
+
   typedef typename Tds::Vertex Ve;
   typedef typename Tds::Face Fa;
   typedef typename Tds::Vertex_iterator  Iterator_base;
@@ -302,8 +315,9 @@ public:
 
 template < class Gt, class Tds>
 class Triangulation_edge_iterator_2
- : public bidirectional_iterator<typename
-Triangulation_2<Gt,Tds>::Edge ,ptrdiff_t>,
+ : 
+  //  public bidirectional_iterator<typename
+  //  Triangulation_2<Gt,Tds>::Edge ,ptrdiff_t>,
   public Triangulation_cw_ccw_2
 {
 public:
@@ -321,6 +335,13 @@ public:
   typedef Triangulation_face_iterator_2<Gt,Tds>      Face_iterator;
   typedef Triangulation_edge_iterator_2<Gt,Tds>      Edge_iterator;
   typedef Triangulation_vertex_iterator_2<Gt,Tds>    Vertex_iterator;
+
+  typedef Edge       value_type;
+  typedef Edge *     pointer;
+  typedef Edge &     reference;
+  typedef std::size_t     size_type;
+  typedef std::ptrdiff_t  difference_type;
+  typedef std::bidirectional_iterator_tag   iterator_category;
 
 
 private:

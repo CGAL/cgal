@@ -15,7 +15,6 @@
 // source        : $RCSfile$
 // revision      : $Revision$
 // revision_date : $Date$
-//
 // author(s)     : Mariette Yvinec
 //
 // coordinator   : Mariette Yvinec  <Mariette Yvinec@sophia.inria.fr>
@@ -39,6 +38,8 @@
    #define Constrained_triangulation_face_base_2  Ctrfb
    #define Regular_triangulation_euclidean_traits_2 Rtet2
 
+   #define Triangulation_ds_vertex_2 Tdsv
+   #define Triangulation_ds_face_2  Tdsf
    #define Triangulation_vertex_2 Trv
    #define Triangulation_face_2 Trf
    #define Triangulation_vertex_handle_2 Trvh

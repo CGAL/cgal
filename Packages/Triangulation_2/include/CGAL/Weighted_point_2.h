@@ -15,7 +15,6 @@
 // source        : $RCSfile$
 // revision      : $Revision$
 // revision_date : $Date$
-//
 // author(s)     : Mariette Yvinec
 //
 // coordinator   : Mariette Yvinec  <Mariette Yvinec@sophia.inria.fr>
@@ -93,14 +92,12 @@ public:
 
 	Weight power(const Point &p)
 	{	
-	  return ((p.x()-x())*(p.x()-x())+(p.y()-y())*(p.y()-y())-weight());
+	  return square(p.x()-x()) + square(p.y()-y()) - weight();
 	}
 
         Weight power(const Weighted_point_2 &p)
 	{	
-	  return  ( (p.x()-x())*(p.x()-x())
-		   +(p.y()-y())*(p.y()-y())
-		   -weight() -p.weight());
+	  return square(p.x()-x()) + square(p.y()-y()) - weight() - p.weight();
 	}
 
 

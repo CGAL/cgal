@@ -1,4 +1,4 @@
-// ============================================================================
+// ======================================================================
 //
 // Copyright (c) 1997 The CGAL Consortium
 //
@@ -6,21 +6,20 @@
 // of the Computational Geometry Algorithms Library (CGAL). It is not
 // intended for general use.
 //
-// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------
 //
-// release       :
-// release_date  :
+// release       : $CGAL_Revision: CGAL-2.0-I-12 $
+// release_date  : $CGAL_Date: 1999/04/28 $
 //
 // file          : Triangulation/include/CGAL/Triangulation_euclidean_traits_yz_3
-// source        : RCSfile$
+// source        : $RCSfile$
 // revision      : $Revision$
 // revision_date : $Date$
-//
 // author(s)     : Mariette Yvinec
 //
 // coordinator   : Mariette Yvinec  < Mariette Yvinec@sophia.inria.fr>
 //
-// ============================================================================
+// ======================================================================
 
 #ifndef CGAL_TRIANGULATION_EUCLIDEAN_TRAITS_YZ_3_H
 #define CGAL_TRIANGULATION_EUCLIDEAN_TRAITS_YZ_3_H
@@ -48,10 +47,14 @@ public:
     typedef Ray_3<R>    Ray;
     typedef Direction_3<R> Direction;
     
-   
+  Triangulation_euclidean_traits_yz_3(){}
+  Triangulation_euclidean_traits_yz_3(
+				const Triangulation_euclidean_traits_yz_3& et){}
+  Triangulation_euclidean_traits_yz_3 &operator=(
+		       const Triangulation_euclidean_traits_yz_3&  et){return *this;}
     
-      typename Rep::FT x(const Point &p) const { return p.y(); }
-      typename Rep::FT y(const Point &p) const { return p.z(); }
+  typename Rep::FT x(const Point &p) const { return p.y(); }
+  typename Rep::FT y(const Point &p) const { return p.z(); }
     
     Comparison_result compare_x(const Point &p, const Point &q) const
       {
@@ -63,7 +66,8 @@ public:
       }
     bool compare(const Point &p, const Point &q) const
       {
-        return (x(p)==x(q)) &&  (y(p)==y(q));
+        return (compare_x(p, q)== EQUAL &&  
+		compare_y(p, q)== EQUAL);
       }
     
     Orientation orientation(const Point &p,
@@ -73,30 +77,18 @@ public:
         return orientationC2(x(p), y(p), x(q), y(q), x(r), y(r));
       }
     
-    Orientation extremal(const Point &p,
-                              const Point &q,
-                              const Point &r) const
-      {
-        if (compare(p,q)) return COLLINEAR;
-        if (compare(p,r)) return COLLINEAR;
-        if (compare(r,q)) return COLLINEAR;
-    
-        return orientationC2(x(p), y(p), x(q), y(q), x(r), y(r));
-      }
-    
+
+
     Oriented_side side_of_oriented_circle(const Point &p,
-                                               const Point &q,
-                                               const Point &r,
-                                               const Point &s) const
+					  const Point &q,
+					  const Point &r,
+					  const Point &s) const
       {
-        if (compare(p,s)) return ON_ORIENTED_BOUNDARY;
-        if (compare(q,s)) return ON_ORIENTED_BOUNDARY;
-        if (compare(r,s)) return ON_ORIENTED_BOUNDARY;
-    
+            
         return side_of_oriented_circleC2(x(p), y(p),
-                                              x(q), y(q),
-                                              x(r), y(r),
-                                              x(s), y(s));
+					 x(q), y(q),
+					 x(r), y(r),
+					 x(s), y(s));
       }
     
 

@@ -15,7 +15,6 @@
 // source        : $RCSfile$
 // revision      : $Revision$
 // revision_date : $Date$
-//
 // author(s)     : Mariette Yvinec
 //
 // coordinator   : Mariette Yvinec  <Mariette Yvinec@sophia.inria.fr>
@@ -38,7 +37,7 @@ CGAL_BEGIN_NAMESPACE
 
 template < class Vertex, class Face >
 class Triangulation_ds_face_circulator_2
-  : public CGAL::Bidirectional_circulator_base<Face,
+  : public Bidirectional_circulator_base<Face,
                                  CGAL_STD::ptrdiff_t,
 				 CGAL_STD::size_t>,
     public Triangulation_cw_ccw_2
@@ -165,7 +164,7 @@ public:
 
 template < class Vertex, class Face >
 class Triangulation_ds_vertex_circulator_2 :
-  public CGAL::Bidirectional_circulator_base<Vertex, 
+  public Bidirectional_circulator_base<Vertex, 
                        CGAL_STD::ptrdiff_t,CGAL_STD::size_t>,
   public  Triangulation_cw_ccw_2
 {
@@ -323,7 +322,7 @@ public:
 
 template < class Vertex, class Face >
 class Triangulation_ds_edge_circulator_2 :
-  public CGAL::Bidirectional_circulator_base
+  public Bidirectional_circulator_base
              <CGAL_STD::pair<Face*,int>, CGAL_STD::ptrdiff_t,std::size_t>,
   public Triangulation_cw_ccw_2
 {

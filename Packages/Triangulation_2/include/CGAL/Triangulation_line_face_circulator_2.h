@@ -36,7 +36,7 @@ CGAL_BEGIN_NAMESPACE
 
 
 template < class Gt, class Tds >
-class Triangulation_2<Gt,Tds>;
+class Triangulation_2;
 
 template < class Gt, class Tds >
 class Triangulation_line_face_circulator_2
@@ -94,11 +94,11 @@ public:
             
             
   Triangulation_line_face_circulator_2(const Face_handle& face,
-                                 int index,
-                                 State state,
-                                 Triangulation_2<Gt,Tds> * t,
-                                 const Point& pp,
-                                 const Point& qq)
+				       int index,
+				       State state,
+				       Triangulation_2<Gt,Tds> * t,
+				       const Point& pp,
+				       const Point& qq)
     : Face_handle(face), _tr(t), s(state), i(index),  
       p(pp), q(qq)            {
     CGAL_triangulation_precondition(! t->geom_traits().compare(p, q));
@@ -349,8 +349,8 @@ Triangulation_line_face_circulator_2(Vertex_handle v,
 template < class Gt, class Tds >
 Triangulation_line_face_circulator_2<Gt,Tds>::
 Triangulation_line_face_circulator_2(const Point& pp,
-				      const Point& qq,
-				      Triangulation_2<Gt,Tds> * t)
+				     const Point& qq,
+				     Triangulation_2<Gt,Tds> * t)
      : _tr(t), s(undefined), p(pp), q(qq)
             {
                 Vertex_handle inf = _tr->infinite_vertex();

@@ -172,38 +172,13 @@ public:
 protected:
   bool is_degree(Vertex_handle v, int i) const
   {
-    Face_circulator fic = v->incident_faces(), done(fic);
-    fic++;
-    int count=1;
-    while ( fic != done && count <= i) {
-      fic ++; count++;
-    }
-    return (count==i ? true :false );
+     return (v->degree() == i);
   }
 
 bool degree_equal_3(Vertex_handle v) const
 {
-  Face_handle f = v->face();
-    if (f == NULL) 
-      {	return false;
-      }
-    int i = f->index(v);
-    Face_handle ptr1 = f->neighbor(ccw(i));
-    Face_handle ptr2 = f;
-    f = f->neighbor(cw(i));
-    
-    int count = 2;
-    
-    while(ptr1 != f)
-      {	count++;
-      i = ptr1->index(ptr2);
-      ptr2 = ptr1;
-      ptr1 = ptr1->neighbor(cw(i));
-      if (count>3)
-	break;
-      }
-    return (count==3 ? true :false );
-  }
+    return(v->degree() == 3);
+}
   
   bool degree_equal_4(Vertex_handle v) const
   {
@@ -225,7 +200,7 @@ regularize(Vertex_handle v);
  
    
 private :
-void 	stack_flip(Vertex_handle v, Faces_around_stack &faces_around);
+void stack_flip(Vertex_handle v, Faces_around_stack &faces_around);
       
       
 void stack_flip_4_2(Face_handle f, int i, int j, 
