@@ -2514,22 +2514,21 @@ number type \ccc{Gmpz} or \ccc{integer}.
     #include <fstream>
 
     using namespace std;
-    using namespace CGAL;
 
     #ifdef CGAL_USE_LEDA_FOR_OPTIMISATION_TEST
     #  include <CGAL/leda_integer.h>
-       typedef  leda_integer                 Rt;
-       typedef  Quotient< leda_integer >     Ft;
+       typedef  leda_integer                       Rt;
+       typedef  CGAL::Quotient< leda_integer >     Ft;
     #else
     #  include <CGAL/Gmpz.h>
-       typedef  Gmpz                         Rt;
-       typedef  Quotient< Gmpz >             Ft;
+       typedef  CGAL::Gmpz                         Rt;
+       typedef  CGAL::Quotient< CGAL::Gmpz >       Ft;
     #endif
 
-    typedef  Cartesian< Ft >                 RepC;
-    typedef  Homogeneous< Rt >               RepH;
-    typedef  Min_ellipse_2_traits_2< RepC >  TraitsC;
-    typedef  Min_ellipse_2_traits_2< RepH >  TraitsH;
+    typedef  CGAL::Cartesian< Ft >                 RepC;
+    typedef  CGAL::Homogeneous< Rt >               RepH;
+    typedef  CGAL::Min_ellipse_2_traits_2< RepC >  TraitsC;
+    typedef  CGAL::Min_ellipse_2_traits_2< RepH >  TraitsH;
 @end
 
 The command line option \ccc{-verbose} enables verbose output.
@@ -2561,17 +2560,17 @@ once to ensure code coverage.
     void
     cover_Min_ellipse_2( bool verbose, const Traits&, const RT&)
     {
-        typedef  Min_ellipse_2< Traits >  Min_ellipse;
-        typedef  Min_ellipse::Point       Point;
-        typedef  Min_ellipse::Ellipse     Ellipse;
+        typedef  CGAL::Min_ellipse_2< Traits >  Min_ellipse;
+        typedef  typename Min_ellipse::Point    Point;
+        typedef  typename Min_ellipse::Ellipse  Ellipse;
 
-        Verbose_ostream verr( verbose);
+        CGAL::Verbose_ostream verr( verbose);
 
         // generate `n' points at random
-        const int  n = 20;
-        Random     random_x, random_y;
-        Point      random_points[ n];
-        int        i;
+        const int     n = 20;
+        CGAL::Random  random_x, random_y;
+        Point         random_points[ n];
+        int           i;
         verr << n << " random points from [0,128)^2:" << endl;
         for ( i = 0; i < n; ++i) {
             random_points[ i] = Point( RT( random_x( 128)),
@@ -2692,18 +2691,18 @@ once to ensure code coverage.
 
         verr << endl << "in-ellipse predicates...";
         {
-            Point              p;
-            Bounded_side  bounded_side;
-            bool               has_on_bounded_side;
-            bool               has_on_boundary;
-            bool               has_on_unbounded_side;
+            Point               p;
+            CGAL::Bounded_side  bounded_side;
+            bool                has_on_bounded_side;
+            bool                has_on_boundary;
+            bool                has_on_unbounded_side;
             for ( i = 0; i < 9; ++i) {
                 p = random_points[ i];
                 bounded_side          = me.bounded_side( p);
                 has_on_bounded_side   = me.has_on_bounded_side( p);
                 has_on_boundary       = me.has_on_boundary( p);
                 has_on_unbounded_side = me.has_on_unbounded_side( p);
-            assert( bounded_side != ON_UNBOUNDED_SIDE);
+            assert( bounded_side != CGAL::ON_UNBOUNDED_SIDE);
             assert( has_on_bounded_side || has_on_boundary);
             assert( ! has_on_unbounded_side); }
         }
@@ -2753,26 +2752,26 @@ once to ensure code coverage.
         {
             verr << endl << "  writing `test_Min_ellipse_2.ascii'...";
             ofstream os( "test_Min_ellipse_2.ascii");
-            set_ascii_mode( os);
+            CGAL::set_ascii_mode( os);
             os << me;
         }
         {
             verr << endl << "  writing `test_Min_ellipse_2.pretty'...";
             ofstream os( "test_Min_ellipse_2.pretty");
-            set_pretty_mode( os);
+            CGAL::set_pretty_mode( os);
             os << me;
         }
         {
             verr << endl << "  writing `test_Min_ellipse_2.binary'...";
             ofstream os( "test_Min_ellipse_2.binary");
-            set_binary_mode( os);
+            CGAL::set_binary_mode( os);
             os << me;
         }
         {
             verr << endl << "  reading `test_Min_ellipse_2.ascii'...";
             Min_ellipse me_in;
             ifstream is( "test_Min_ellipse_2.ascii");
-            set_ascii_mode( is);
+            CGAL::set_ascii_mode( is);
             is >> me_in;
             bool    is_valid = me_in.is_valid( verbose);
             assert( is_valid);
@@ -2942,8 +2941,8 @@ representation) and corresponding data accessors.
 To test the traits class adapters we use the code coverage test function.
 
 @macro <Min_ellipse_2 test (adapters test)> = @begin
-    typedef  Min_ellipse_2_adapterC2< MyPointC2, MyPointC2DA >  AdapterC2;
-    typedef  Min_ellipse_2_adapterH2< MyPointH2, MyPointH2DA >  AdapterH2;
+    typedef CGAL::Min_ellipse_2_adapterC2< MyPointC2, MyPointC2DA >  AdapterC2;
+    typedef CGAL::Min_ellipse_2_adapterH2< MyPointH2, MyPointH2DA >  AdapterH2;
     cover_Min_ellipse_2( verbose, AdapterC2(), Rt());
     cover_Min_ellipse_2( verbose, AdapterH2(), Rt());
 @end
@@ -2963,11 +2962,11 @@ end of each file.
 @macro <Min_ellipse_2 test (external test sets)> = @begin
     while ( argc > 1) {
 
-        typedef  Min_ellipse_2< TraitsH >  Min_ellipse;
-        typedef  Min_ellipse::Point             Point;
-        typedef  Min_ellipse::Ellipse           Ellipse;
+        typedef  CGAL::Min_ellipse_2< TraitsH >  Min_ellipse;
+        typedef  typename Min_ellipse::Point     Point;
+        typedef  typename Min_ellipse::Ellipse   Ellipse;
 
-        Verbose_ostream verr( verbose);
+        CGAL::Verbose_ostream verr( verbose);
 
         // read points from file
         verr << endl << "input file: `" << argv[ 1] << "'" << flush;
