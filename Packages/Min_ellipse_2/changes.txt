@@ -1,5 +1,8 @@
 Changes done to the `Min_ellipse_2' package.
 
+Version 3.4.1 on 09-Nov-1999
+- bug with `typename' removed (introduced in version 3.4).
+
 Version 3.4 on 05-Nov-1999
 - 'using namespace CGAL;' removed from test program.
 
