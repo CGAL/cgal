@@ -85,36 +85,6 @@ struct Static_Filtered_compare_2
   }
 };
 
-struct Static_Filtered_lexicographical_sign_2
-{
-  static double _bound;
-  static double _epsilon_0;
-  static Sign update_epsilon(
-          const Static_filter_error &,
-          const Static_filter_error &,
-          double &)
-  {
-      // Not finished.
-      return ZERO;
-  }
-
-  static void new_bound (const double b) // , const double error = 0)
-  {
-    _bound = b;
-    (void) update_epsilon(b,b,_epsilon_0);
-  }
-
-  static Sign epsilon_variant(
-          const Restricted_double &,
-          const Restricted_double &,
-          const double &)
-  {
-    // Not finished.
-    Interval_nt_advanced::number_of_failures++;
-    throw Interval_nt_advanced::unsafe_comparison();
-  }
-};
-
 } // namespace NTS
 
 CGAL_END_NAMESPACE

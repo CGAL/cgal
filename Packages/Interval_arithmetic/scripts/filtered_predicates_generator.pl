@@ -23,13 +23,11 @@ require 'getopt.pl';
 %known_ret_types=("bool", 1);	# Known allowed return types (see main())
 @predicates=(			# list of predicates, with the built-ins.
 # CGAL::, template_type, inline, ret_type, fct_name, #eps, body, new_body, args
-    [ "", "NT", "CGAL_KERNEL_INLINE", "Sign", "lexicographical_sign", 1, "",
-      "", "x", "y" ],
     [ "", "NT", "inline", "Comparison_result", "compare", 1, "", "", "a", "b"],
     [ "", "NT", "inline", "Sign", "sign", 1, "", "", "x"] );
 # Note: we don't actually care about a few fields ($body...) for these.
 $num_built_in_predicates=$#predicates+1;     # Number of built-in predicates.
-$pred_list_re="sign|compare|lexicographical_sign";
+$pred_list_re="sign|compare";
 
 # We _must_ manipulate the fields of @predicate using these constants:
 # (aren't there structs in Perl ?  Are packs the way to go ? )
