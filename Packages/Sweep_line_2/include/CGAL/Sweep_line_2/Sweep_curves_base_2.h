@@ -964,10 +964,10 @@ public:
   typedef typename std::list<Curve_node>::iterator  list_Curve_node_iterator;
   
   Sweep_curves_base_2() : 
-    traits(new Traits), use_delete_traits(true) {}
+    traits(new Traits), use_delete_traits(true), intersection_exist_(false) {}
   
   Sweep_curves_base_2(Traits *traits_) : 
-    traits(traits_), use_delete_traits(false) {}
+    traits(traits_), use_delete_traits(false), intersection_exist_(false) {}
   
   ~Sweep_curves_base_2()
   {
@@ -1180,8 +1180,9 @@ protected:
         if (check_status_neighbors_intersections(event_queue, 
                                                  status, 
                                                  --hint, 
-                                                 event_point))
+                                                 event_point)) 
           event_terminated = false;
+        
       
       return event_terminated;
     }
@@ -1243,6 +1244,7 @@ protected:
         // if it is this event will be taked cared again.
         event_terminated = false;
       
+      
       //check_status_neighbors1_t = clock() - check_status_neighbors1_t;
       //check_status_neighbors_t += check_status_neighbors1_t;
       
@@ -1261,6 +1263,7 @@ protected:
             // Edge case of tangency in the event point, if it is - 
             // this event will be taked cared again.
             event_terminated = false;
+          
           
           //check_status_neighbors2_t = clock() - check_status_neighbors2_t;
           //check_status_neighbors_t += check_status_neighbors2_t;
@@ -1789,6 +1792,9 @@ protected:
 #ifdef CGAL_MAKE_PROFILING
       cout<<"Finish check_status_neighbors_intersections" <<endl;
 #endif
+    
+      if (curves_intersect || curves_tangent)
+        intersection_exist_ = true;
       
       if (curves_intersect && !curves_tangent)
         return ((!xp2_cv1_in_queue || !xp2_cv2_in_queue) && xp2==event_point);
@@ -1999,6 +2005,7 @@ protected:
 
   Traits   *traits;
   bool      use_delete_traits;
+  bool      intersection_exist_;
 };
 
 CGAL_END_NAMESPACE
