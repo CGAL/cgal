@@ -41,13 +41,13 @@ class Arr_conic_traitrr_s_2
 
   // The difference between Curve and X_curve is semantical only,
   // NOT syntactical.
-  typedef Conic_arc_2<NT>        Curve;
-  typedef Curve                  X_curve;
+  typedef Conic_arc_2<NT>        Curve_2;
+  typedef Curve_2                X_curve_2;
  
   // Using typename to please compiler (e.g., CC with IRIX64 on mips)
   typedef typename Curve::R      R;
-  typedef typename Curve::Point  Point;
-  typedef typename Curve::Conic  Conic;
+  typedef typename Curve::Point  Point_2;
+  typedef typename Curve::Conic  Conic_2;
 
   enum Curve_point_status
   {
@@ -57,10 +57,16 @@ class Arr_conic_traitrr_s_2
     CURVE_NOT_IN_RANGE = 0,
   };
 
+  // Obsolete, for backward compatibility
+  typedef Point_2                      Point;
+  typedef X_curve_2                    X_curve;
+  typedef Curve_2                      Curve;
+  typedef Conic_2                      Conic;
+
 #ifdef CGAL_CONIC_ARC_USE_CACHING
  private:
 
-  typedef typename Curve::Intersections Intersections;
+  typedef typename Curve_2::Intersections Intersections;
   mutable std::list<Intersections> inter_list; // For caching intersections.
 #endif
 
@@ -73,25 +79,25 @@ class Arr_conic_traitrr_s_2
   ////////// Planar Map methods: //////////
 
   // Compare the co-ordinates of two given points.
-  Comparison_result compare_x(const Point& p0, const Point& p1) const
+  Comparison_result compare_x(const Point_2& p0, const Point_2& p1) const
   {
     return (p0.compare_x(p1));
   }
 
-  Comparison_result compare_y(const Point& p0, const Point& p1) const
+  Comparison_result compare_y(const Point_2& p0, const Point_2& p1) const
   {
     return (p0.compare_y(p1));
   }
 
   // Check whether the given curve is a vertical segment.
-  bool curve_is_vertical(const X_curve& curve) const
+  bool curve_is_vertical(const X_curve_2& curve) const
   {
     return (curve.is_vertical_segment());
   }
 
   // Check whether the x co-ordinate of the given point is contained in the
   // x-range of the given x-monotone curve.
-  bool curve_is_in_x_range (const X_curve& curve, const Point& p) const
+  bool curve_is_in_x_range (const X_curve_2& curve, const Point_2& p) const
   {
     CGAL_precondition(is_x_monotone(curve));
 
@@ -111,16 +117,16 @@ class Arr_conic_traitrr_s_2
 
   // Decide wether curve1 is above, below or equal to curve2 at the
   // x co-ordinate of the given point.
-  Comparison_result curve_compare_at_x (const X_curve& curve1, 
-				        const X_curve& curve2, 
-				        const Point& p) const
+  Comparison_result curve_compare_at_x (const X_curve_2& curve1, 
+				        const X_curve_2& curve2, 
+				        const Point_2& p) const
   {
     CGAL_precondition(is_x_monotone(curve1));
     CGAL_precondition(is_x_monotone(curve2));
 
     // Get the points on curve1 with the same x co-ordinate as p.
     int    n1;
-    Point  ps1[2];
+    Point_2  ps1[2];
 
     if (curve1.is_vertical_segment())
     {
@@ -160,7 +166,7 @@ class Arr_conic_traitrr_s_2
 
     // Get the points on curve2 with the same x co-ordinate as p.
     int    n2;
-    Point  ps2[2];
+    Point_2  ps2[2];
 
     if (curve2.is_vertical_segment())
     {
@@ -235,9 +241,9 @@ class Arr_conic_traitrr_s_2
 
   // Decide wether curve1 is above, below or equal to curve2 immediately to
   // the left of the x co-ordinate of the given point.
-  Comparison_result curve_compare_at_x_left (const X_curve& curve1, 
-					     const X_curve& curve2,
-					     const Point& p) const
+  Comparison_result curve_compare_at_x_left (const X_curve_2& curve1, 
+					     const X_curve_2& curve2,
+					     const Point_2& p) const
   {
     CGAL_precondition(is_x_monotone(curve1));
     CGAL_precondition(is_x_monotone(curve2));
@@ -253,7 +259,7 @@ class Arr_conic_traitrr_s_2
 
     // Get the points on curve1 with the same x co-ordinate as p.
     int    n1;
-    Point  ps1[2];
+    Point_2  ps1[2];
 
     if (curve1.contains_point(p))
     {
@@ -270,7 +276,7 @@ class Arr_conic_traitrr_s_2
     
     // Get the points on curve2 with the same x co-ordinate as p.
     int    n2;
-    Point  ps2[2];
+    Point_2  ps2[2];
 
     if (curve2.contains_point(p))
     {
@@ -322,7 +328,7 @@ class Arr_conic_traitrr_s_2
 
     // Otherwise, the two curves do intersect at p_int = ps1[0] = ps2[0]:
     // make a decision based on their partial derivatives.
-    const Point& p_int = ps1[0];
+    const Point_2& p_int = ps1[0];
     const NT     _zero = 0;
 
     NT    slope1_numer, slope1_denom;
@@ -417,9 +423,9 @@ class Arr_conic_traitrr_s_2
 
   // Decide wether curve1 is above, below or equal to curve2 immediately to
   // the right of the x co-ordinate of the given point.
-  Comparison_result curve_compare_at_x_right (const X_curve& curve1, 
-					      const X_curve& curve2,
-					      const Point& p) const
+  Comparison_result curve_compare_at_x_right (const X_curve_2& curve1, 
+					      const X_curve_2& curve2,
+					      const Point_2& p) const
   {
     CGAL_precondition(is_x_monotone(curve1));
     CGAL_precondition(is_x_monotone(curve2));
@@ -435,7 +441,7 @@ class Arr_conic_traitrr_s_2
 
     // Get the points on curve1 with the same x co-ordinate as p.
     int    n1;
-    Point  ps1[2];
+    Point_2  ps1[2];
 
     if (curve1.contains_point(p))
     {
@@ -452,7 +458,7 @@ class Arr_conic_traitrr_s_2
     
     // Get the points on curve2 with the same x co-ordinate as p.
     int    n2;
-    Point  ps2[2];
+    Point_2  ps2[2];
 
     if (curve2.contains_point(p))
     {
@@ -504,7 +510,7 @@ class Arr_conic_traitrr_s_2
 
     // Otherwise, the two curves do intersect at p_int = ps1[0] = ps2[0]:
     // make a decision based on their partial derivatives.
-    const Point& p_int = ps1[0];
+    const Point_2& p_int = ps1[0];
     const NT     _zero = 0;
 
     NT    slope1_numer, slope1_denom;
@@ -598,8 +604,8 @@ class Arr_conic_traitrr_s_2
   }
 
   // Check whether the given point is above, under or on the given curve.
-  Curve_point_status curve_get_point_status (const X_curve& curve,
-					     const Point& p) const
+  Curve_2_point_status curve_get_point_status (const X_curve_2& curve,
+					     const Point_2& p) const
   {
     CGAL_precondition(is_x_monotone(curve));
 
@@ -641,7 +647,7 @@ class Arr_conic_traitrr_s_2
 
     // Get the points on the arc with the same x co-ordinate as p.
     int    n;
-    Point  ps[2];
+    Point_2  ps[2];
 
     n = curve.get_points_at_x (p, ps);
 
@@ -664,9 +670,9 @@ class Arr_conic_traitrr_s_2
   // Check whether the given curve in between c1 and c2, when going in the
   // clockwise direction from p from c1 to c2.
   // Notice that all three curves share the same end-point p.
-  bool curve_is_between_cw (const X_curve& curve,
-			    const X_curve& c1, const X_curve& c2,
-			    const Point& p) const
+  bool curve_is_between_cw (const X_curve_2& curve,
+			    const X_curve_2& c1, const X_curve_2& c2,
+			    const Point_2& p) const
   {
     CGAL_precondition(is_x_monotone(curve));
     CGAL_precondition(is_x_monotone(c1));
@@ -678,9 +684,9 @@ class Arr_conic_traitrr_s_2
 
     // Make sure each one of the curves has p as one of its end-points.
     // Let p1_P, p2_P and pv_P point to the other end-points of c1, c2 and cv.
-    const Point* p1_P = NULL;
-    const Point* p2_P = NULL;
-    const Point* pv_P = NULL;
+    const Point_2* p1_P = NULL;
+    const Point_2* p2_P = NULL;
+    const Point_2* pv_P = NULL;
     int          p1_flip = 1, p2_flip = 1, pv_flip = 1;
 
     if (curve.source().equals(p))
@@ -913,7 +919,7 @@ class Arr_conic_traitrr_s_2
   }
 
   // Check whether the two curves are identical.
-  bool curve_is_same (const X_curve& curve1, const X_curve& curve2) const
+  bool curve_is_same (const X_curve_2& curve1, const X_curve_2& curve2) const
   {
     CGAL_precondition(is_x_monotone(curve1));
     CGAL_precondition(is_x_monotone(curve2));
@@ -936,51 +942,51 @@ class Arr_conic_traitrr_s_2
   }
 
   // Get the source and target vertex of the curve.
-  Point curve_source(const X_curve& curve) const
+  Point_2 curve_source(const X_curve_2& curve) const
   {
     return (curve.source());
   }
 
-  Point curve_target(const X_curve& curve) const
+  Point_2 curve_target(const X_curve_2& curve) const
   {
     return (curve.target());
   }
 
   // Return a point to the left or to the right of p.
-  Point point_to_left (const Point& p) const
+  Point_2 point_to_left (const Point_2& p) const
   {
     NT   x = CGAL::to_double(p.x()) - 1;
-    return (Point(x , p.y(),
-		  Point::User_defined));
+    return (Point_2(x , p.y(),
+		  Point_2::User_defined));
   }
 
-  Point point_to_right (const Point& p) const
+  Point_2 point_to_right (const Point_2& p) const
   {
     NT   x = CGAL::to_double(p.x()) + 1;
-    return (Point(x , p.y(),
-		  Point::User_defined));
+    return (Point_2(x , p.y(),
+		  Point_2::User_defined));
   }
 
   // Reflect a point in y.
-  Point point_reflect_in_y (const Point& p) const
+  Point_2 point_reflect_in_y (const Point_2& p) const
   {
     return (p.reflect_in_y());
   }
       
   // Reflect a curve in y.
-  X_curve curve_reflect_in_y (const X_curve& curve) const
+  X_curve_2 curve_reflect_in_y (const X_curve_2& curve) const
   {
     return (curve.reflect_in_y());
   }
 
   // Reflect a point in x and y.
-  Point point_reflect_in_x_and_y (const Point& p) const
+  Point_2 point_reflect_in_x_and_y (const Point_2& p) const
   {
     return (p.reflect_in_x_and_y());
   }
       
   // Reflect a curve in x and y.
-  X_curve curve_reflect_in_x_and_y (const X_curve& curve) const
+  X_curve_2 curve_reflect_in_x_and_y (const X_curve_2& curve) const
   {
     return (curve.reflect_in_x_and_y());
   }
@@ -988,14 +994,14 @@ class Arr_conic_traitrr_s_2
   ////////// Arrangement methods: //////////
 
   // Check whether the curve is x-monotone.
-  bool is_x_monotone (const Curve& curve) const
+  bool is_x_monotone (const Curve_2& curve) const
   {
     return (curve.is_x_monotone());
   }
 
   // Cut the curve to several x-monotone sub-curves.
-  void make_x_monotone (const Curve& curve, 
-			std::list<X_curve>& x_curves) const
+  void make_x_monotone (const Curve_2& curve, 
+			std::list<X_curve_2>& x_curves) const
   {
     CGAL_precondition(!is_x_monotone(curve));
 
@@ -1004,7 +1010,7 @@ class Arr_conic_traitrr_s_2
 
     // Find the points of vertical tangency and act accordingly.
     int    n;
-    Point  ps[2];
+    Point_2  ps[2];
 
     n = curve.vertical_tangency_points (ps);
 
@@ -1018,14 +1024,14 @@ class Arr_conic_traitrr_s_2
 
       // In case the curve is a full conic, split it to two x-monotone curves,
       // one going from ps[0] to ps[1], and the other from ps[1] to ps[0].
-      x_curves.push_back (X_curve (curve, ps[0], ps[1], false));
-      x_curves.push_back (X_curve (curve, ps[1], ps[0], false));
+      x_curves.push_back (X_curve_2 (curve, ps[0], ps[1], false));
+      x_curves.push_back (X_curve_2 (curve, ps[1], ps[0], false));
     }
     else
     {
-      X_curve    sub_curve1;
-      X_curve    sub_curve2;
-      X_curve    sub_curve3;
+      X_curve_2    sub_curve1;
+      X_curve_2    sub_curve2;
+      X_curve_2    sub_curve3;
 
       if (n == 1)
       {
@@ -1044,7 +1050,7 @@ class Arr_conic_traitrr_s_2
 	// arc source to ps[0], one from ps[0] to ps[1], and the last one
 	// from ps[1] to the target.
 	// Notice that ps[0] and ps[1] might switch places.
-	X_curve    temp;
+	X_curve_2    temp;
 
 	_curve_split (curve, 
 	              sub_curve1, sub_curve2, 
@@ -1087,9 +1093,9 @@ class Arr_conic_traitrr_s_2
   }
 
   // Split the given curve into two sub-curves at the given point.
-  void curve_split (const X_curve& curve, 
-		    X_curve& sub_curve1, X_curve& sub_curve2, 
-                    const Point& p) const 
+  void curve_split (const X_curve_2& curve, 
+		    X_curve_2& sub_curve1, X_curve_2& sub_curve2, 
+                    const Point_2& p) const 
   {
     CGAL_precondition(is_x_monotone(curve));
 
@@ -1107,15 +1113,15 @@ class Arr_conic_traitrr_s_2
 
   // Check whether the intersection point between the two given curves is
   // lexicographically strictly to right of the given point.
-  bool do_intersect_to_right(const X_curve& curve1, const X_curve& curve2,
-                             const Point& p) const 
+  bool do_intersect_to_right(const X_curve_2& curve1, const X_curve_2& curve2,
+                             const Point_2& p) const 
   {
     CGAL_precondition(is_x_monotone(curve1));
     CGAL_precondition(is_x_monotone(curve2));
 
     // Deal with overlapping curves:
     int     n_ovlps;
-    X_curve ovlp_arcs[2];
+    X_curve_2 ovlp_arcs[2];
 
     n_ovlps = curve1.overlaps (curve2, ovlp_arcs);
     CGAL_assertion (n_ovlps < 2);
@@ -1153,7 +1159,7 @@ class Arr_conic_traitrr_s_2
 
     // Find the intersection points and decide accordingly.
     int   n;
-    Point ps[4];
+    Point_2 ps[4];
   
 #ifdef CGAL_CONIC_ARC_USE_CACHING
     n = curve1.intersections_with (curve2, ps, &inter_list);
@@ -1174,15 +1180,15 @@ class Arr_conic_traitrr_s_2
   // THE NEXT FUNCTION IS NOT REALLY USED AND WILL BE OVERRIDEN BY THE WRAPPER.
   // Check whether the intersection point between the two given curves is
   // lexicographically strictly to left of the given point.
-  bool do_intersect_to_left (const X_curve& curve1, const X_curve& curve2,
-                             const Point& p) const 
+  bool do_intersect_to_left (const X_curve_2& curve1, const X_curve_2& curve2,
+                             const Point_2& p) const 
   {
     CGAL_precondition(is_x_monotone(curve1));
     CGAL_precondition(is_x_monotone(curve2));
 
     // Deal with overlapping curves:
     int     n_ovlps;
-    X_curve ovlp_arcs[2];
+    X_curve_2 ovlp_arcs[2];
 
     n_ovlps = curve1.overlaps (curve2, ovlp_arcs);
     CGAL_assertion (n_ovlps < 2);
@@ -1220,7 +1226,7 @@ class Arr_conic_traitrr_s_2
 
     // Find the intersection points and decide accordingly.
     int   n;
-    Point ps[4];
+    Point_2 ps[4];
   
 #ifdef CGAL_CONIC_ARC_USE_CACHING
     n = curve1.intersections_with (curve2, ps, &inter_list);
@@ -1242,26 +1248,26 @@ class Arr_conic_traitrr_s_2
   // right of the given point.
   // In case of an overlap, p1 and p2 are the source and destination of the
   // overlapping curve. Otherwise p1=p2 is the calculated intersection point.
-  bool nearest_intersection_to_right (const X_curve& curve1,
-				      const X_curve& curve2,
-				      const Point& p,
-                                      Point& p1,
-                                      Point& p2) const
+  bool nearest_intersection_to_right (const X_curve_2& curve1,
+				      const X_curve_2& curve2,
+				      const Point_2& p,
+                                      Point_2& p1,
+                                      Point_2& p2) const
   {
     CGAL_precondition(is_x_monotone(curve1));
     CGAL_precondition(is_x_monotone(curve2));
 
     // Deal with overlapping curves:
     int     n_ovlps;
-    X_curve ovlp_arcs[2];
+    X_curve_2 ovlp_arcs[2];
 
     n_ovlps = curve1.overlaps (curve2, ovlp_arcs);
     CGAL_assertion (n_ovlps < 2);
 
     if (n_ovlps == 1)
     {
-      Point  ovlp_source = ovlp_arcs[0].source();
-      Point  ovlp_target = ovlp_arcs[0].target();
+      Point_2  ovlp_source = ovlp_arcs[0].source();
+      Point_2  ovlp_target = ovlp_arcs[0].target();
 
       if (ovlp_source.compare_lex_xy(p) == LARGER &&
 	  ovlp_target.compare_lex_xy(p) == LARGER)
@@ -1299,7 +1305,7 @@ class Arr_conic_traitrr_s_2
     // curves share an end point.
     if (curve1.has_same_base_conic(curve2))
     {
-      const Point    *nearest_end_P = NULL;
+      const Point_2    *nearest_end_P = NULL;
 
       if ((curve1.source().equals(curve2.source()) ||
 	   curve1.source().equals(curve2.target())) &&
@@ -1334,8 +1340,8 @@ class Arr_conic_traitrr_s_2
 
     // Find the intersection points and choose the one nearest to p.
     int          n;
-    Point        ps[4];
-    const Point *nearest_inter_P = NULL;
+    Point_2        ps[4];
+    const Point_2 *nearest_inter_P = NULL;
   
 #ifdef CGAL_CONIC_ARC_USE_CACHING
     n = curve1.intersections_with (curve2, ps, &inter_list);
@@ -1374,26 +1380,26 @@ class Arr_conic_traitrr_s_2
   // left of the given point.
   // In case of an overlap, p1 and p2 are the source and destination of the
   // overlapping curve. Otherwise p1=p2 is the calculated intersection point.
-  bool nearest_intersection_to_left (const X_curve& curve1,
-				     const X_curve& curve2,
-				     const Point& p,
-				     Point& p1,
-				     Point& p2) const
+  bool nearest_intersection_to_left (const X_curve_2& curve1,
+				     const X_curve_2& curve2,
+				     const Point_2& p,
+				     Point_2& p1,
+				     Point_2& p2) const
   {
     CGAL_precondition(is_x_monotone(curve1));
     CGAL_precondition(is_x_monotone(curve2));
 
     // Deal with overlapping curves:
     int     n_ovlps;
-    X_curve ovlp_arcs[2];
+    X_curve_2 ovlp_arcs[2];
 
     n_ovlps = curve1.overlaps (curve2, ovlp_arcs);
     CGAL_assertion (n_ovlps < 2);
 
     if (n_ovlps == 1)
     {
-      Point  ovlp_source = ovlp_arcs[0].source();
-      Point  ovlp_target = ovlp_arcs[0].target();
+      Point_2  ovlp_source = ovlp_arcs[0].source();
+      Point_2  ovlp_target = ovlp_arcs[0].target();
 
       if (ovlp_source.compare_lex_xy(p) == SMALLER &&
 	  ovlp_target.compare_lex_xy(p) == SMALLER)
@@ -1431,7 +1437,7 @@ class Arr_conic_traitrr_s_2
     // curves share an end point.
     if (curve1.has_same_base_conic(curve2))
     {
-      const Point    *nearest_end_P = NULL;
+      const Point_2    *nearest_end_P = NULL;
 
       if ((curve1.source().equals(curve2.source()) ||
 	   curve1.source().equals(curve2.target())) &&
@@ -1466,8 +1472,8 @@ class Arr_conic_traitrr_s_2
 
     // Find the intersection points and choose the one nearest to p.
     int          n;
-    Point        ps[4];
-    const Point *nearest_inter_P = NULL;
+    Point_2        ps[4];
+    const Point_2 *nearest_inter_P = NULL;
   
 #ifdef CGAL_CONIC_ARC_USE_CACHING
     n = curve1.intersections_with (curve2, ps, &inter_list);
@@ -1502,12 +1508,12 @@ class Arr_conic_traitrr_s_2
   // RWRW: }
 
   // Check whether two curves overlap.
-  bool curves_overlap (const X_curve& curve1, const X_curve& curve2) const
+  bool curves_overlap (const X_curve_2& curve1, const X_curve_2& curve2) const
   {
     CGAL_precondition(is_x_monotone(curve1));
     CGAL_precondition(is_x_monotone(curve2));
 
-    X_curve ovlp_arcs[2];
+    X_curve_2 ovlp_arcs[2];
 
     return (curve1.overlaps (curve2, ovlp_arcs) > 0);
   }
@@ -1518,13 +1524,13 @@ class Arr_conic_traitrr_s_2
 
   // Split the given curve into two sub-curves at the given point.
   // Since this is a private function, there are no preconditions.
-  void _curve_split (const X_curve& curve, 
-		     X_curve& sub_curve1, X_curve& sub_curve2, 
-		     const Point& p) const
+  void _curve_split (const X_curve_2& curve, 
+		     X_curve_2& sub_curve1, X_curve_2& sub_curve2, 
+		     const Point_2& p) const
   {
     // Split the curve to source->p and p->target.
-    sub_curve1 = X_curve (curve, curve.source(), p, false);
-    sub_curve2 = X_curve (curve, p, curve.target(), false);
+    sub_curve1 = X_curve_2(curve, curve.source(), p, false);
+    sub_curve2 = X_curve_2(curve, p, curve.target(), false);
 
     return;
   }
