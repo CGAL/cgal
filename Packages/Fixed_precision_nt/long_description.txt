@@ -10,6 +10,9 @@ predicates.
 
 Versions
 
+2.16 (1 Aug 2000)
+  qualifying with CGAL_NTS
+
 2.15 (23 Jun 2000)
   adding operators <= > >= for Micro$oft and kcc 
 

@@ -243,11 +243,11 @@ cmp_dist_to_pointC2(
   const Fixed_precision_nt& x1, const Fixed_precision_nt& y1,
   const Fixed_precision_nt& x2, const Fixed_precision_nt& y2)
 {
-  return CGAL::compare(
-	square(x0.to_double()-x1.to_double()) 
-                + square(y0.to_double()-y1.to_double()),
-        square(x0.to_double()-x2.to_double()) 
-                + square(y0.to_double()-y2.to_double()));
+  return CGAL_NTS compare(
+	CGAL_NTS square(x0.to_double()-x1.to_double()) 
+                + CGAL_NTS square(y0.to_double()-y1.to_double()),
+        CGAL_NTS square(x0.to_double()-x2.to_double()) 
+                + CGAL_NTS square(y0.to_double()-y2.to_double()));
 }
 
 
@@ -296,7 +296,7 @@ inline Oriented_side side_of_oriented_circleC2 (
   // static filter failed, error is small
   {
     double error= 
-      abs(R1*M1) + abs(R2*M2) + abs(R3*M3) ;
+      CGAL_NTS abs(R1*M1) + CGAL_NTS abs(R2*M2) + CGAL_NTS abs(R3*M3) ;
     error *= Fixed_Ic2 ;
     if ( error < Fixed_Bx4 ) error = 0.0;
     if (det >   error) return ON_NEGATIVE_SIDE;
@@ -333,7 +333,7 @@ inline Oriented_side side_of_oriented_circleC2 (
     if (det <= -Fixed_Ic1) return ON_POSITIVE_SIDE;
     // static filter failed, error is small
     error= 
-      (abs(R1*M1)+abs(R2*M2)+abs(R3*M3))
+      (CGAL_NTS abs(R1*M1)+CGAL_NTS abs(R2*M2)+CGAL_NTS abs(R3*M3))
       * Fixed_Ic2 ;
     if ( error < Fixed_Bx4 ) error = 0.0;
     if (det >   error) return ON_NEGATIVE_SIDE;
@@ -360,7 +360,7 @@ inline Oriented_side side_of_oriented_circleC2 (
     if (det <= -Fixed_Ic1) return ON_POSITIVE_SIDE;
     // static filter failed, error is small
     error= 
-      (abs(R1*M1)+abs(R2*M2)+abs(R3*M3))
+      (CGAL_NTS abs(R1*M1)+CGAL_NTS abs(R2*M2)+CGAL_NTS abs(R3*M3))
       * Fixed_Ic2 ;
     if ( error < Fixed_Bx4 ) error = 0.0;
     if (det >   error) return ON_NEGATIVE_SIDE;
@@ -390,13 +390,13 @@ cmp_dist_to_pointC3(
   const Fixed_precision_nt& x2, const Fixed_precision_nt& y2,
         const Fixed_precision_nt& z2)
 {
-  return CGAL::compare(
-	square(x0.to_double()-x1.to_double()) 
-                + square(y0.to_double()-y1.to_double())
-                + square(z0.to_double()-z1.to_double()),
-        square(x0.to_double()-x2.to_double()) 
-                + square(y0.to_double()-y2.to_double())
-                + square(z0.to_double()-z2.to_double()));
+  return CGAL_NTS compare(
+	CGAL_NTS square(x0.to_double()-x1.to_double()) 
+                + CGAL_NTS square(y0.to_double()-y1.to_double())
+                + CGAL_NTS square(z0.to_double()-z1.to_double()),
+        CGAL_NTS square(x0.to_double()-x2.to_double()) 
+                + CGAL_NTS square(y0.to_double()-y2.to_double())
+                + CGAL_NTS square(z0.to_double()-z2.to_double()));
 }
 
 
@@ -427,7 +427,7 @@ Orientation orientationC3
   if (det <  -Fixed_Or1 ) return NEGATIVE;
   /* det is small */
   double error= 
-    abs(X1*M1) + abs(X2*M2) + abs(X3*M3);
+    CGAL_NTS abs(X1*M1) + CGAL_NTS abs(X2*M2) + CGAL_NTS abs(X3*M3);
   error *= Fixed_Or2;
   if ( error < Fixed_Bx3) error = 0.0;
   if (det >   error) return POSITIVE;
@@ -498,16 +498,16 @@ Oriented_side side_of_oriented_sphereC3
   if (det <= -Fixed_Is1 ) return ON_POSITIVE_SIDE;
   // static filter failed, error is small
   {
-    double mm1 =abs(Z2*M34) + abs(Z3*M24) 
-      + abs(Z4*M23) ;
-    double mm2 =abs(Z1*M34) + abs(Z3*M14) 
-      + abs(Z4*M13) ;
-    double mm3 =abs(Z1*M24) + abs(Z2*M14) 
-      + abs(Z4*M12) ;
-    double mm4 =abs(Z1*M23) + abs(Z2*M13) 
-      + abs(Z3*M12) ;
-    error= abs(R1)*mm1 + abs(R2)*mm2 
-           + abs(R3)*mm3 + abs(R4)*mm4;
+    double mm1 =CGAL_NTS abs(Z2*M34) + CGAL_NTS abs(Z3*M24)
+      + CGAL_NTS abs(Z4*M23) ;
+    double mm2 =CGAL_NTS abs(Z1*M34) + CGAL_NTS abs(Z3*M14) 
+      + CGAL_NTS abs(Z4*M13) ;
+    double mm3 =CGAL_NTS abs(Z1*M24) + CGAL_NTS abs(Z2*M14) 
+      + CGAL_NTS abs(Z4*M12) ;
+    double mm4 =CGAL_NTS abs(Z1*M23) + CGAL_NTS abs(Z2*M13) 
+      + CGAL_NTS abs(Z3*M12) ;
+    error= CGAL_NTS abs(R1)*mm1 + CGAL_NTS abs(R2)*mm2 
+           + CGAL_NTS abs(R3)*mm3 + CGAL_NTS abs(R4)*mm4;
     error *= Fixed_Is2;
     if ( error < Fixed_Bx5 ) error = 0.0;
     if (det >   error) return ON_NEGATIVE_SIDE;
@@ -580,8 +580,8 @@ Oriented_side side_of_oriented_sphereC3
       if (det >=  Fixed_Is1 ) return ON_NEGATIVE_SIDE;
       if (det <= -Fixed_Is1 ) return ON_POSITIVE_SIDE;
       // static filter failed, error is small
-      error= abs(R1)*mm1 + abs(R2)*mm2 
-	     + abs(R3)*mm3 + abs(R4)*mm4;
+      error= CGAL_NTS abs(R1)*mm1 + CGAL_NTS abs(R2)*mm2 
+	     + CGAL_NTS abs(R3)*mm3 + CGAL_NTS abs(R4)*mm4;
       error *= Fixed_Is2;
       if ( error < Fixed_Bx5 ) error = 0.0;
       if (det >   error) return ON_NEGATIVE_SIDE;
@@ -616,8 +616,8 @@ Oriented_side side_of_oriented_sphereC3
       if (det >=  Fixed_Is1 ) return ON_NEGATIVE_SIDE;
       if (det <= -Fixed_Is1 ) return ON_POSITIVE_SIDE;
       // static filter failed, error is small
-      error= abs(R1)*mm1 + abs(R2)*mm2
-	     + abs(R3)*mm3 + abs(R4)*mm4;
+      error= CGAL_NTS abs(R1)*mm1 + CGAL_NTS abs(R2)*mm2
+	     + CGAL_NTS abs(R3)*mm3 + CGAL_NTS abs(R4)*mm4;
       error *= Fixed_Is2;
       if ( error < Fixed_Bx5 ) error = 0.0;
       if (det >   error) return ON_NEGATIVE_SIDE;
@@ -652,8 +652,8 @@ Oriented_side side_of_oriented_sphereC3
       if (det >=  Fixed_Is1 ) return ON_NEGATIVE_SIDE;
       if (det <= -Fixed_Is1 ) return ON_POSITIVE_SIDE;
       // static filter failed, error is small
-      error= abs(R1)*mm1 + abs(R2)*mm2
-	     + abs(R3)*mm3 + abs(R4)*mm4;
+      error= CGAL_NTS abs(R1)*mm1 + CGAL_NTS abs(R2)*mm2
+	     + CGAL_NTS abs(R3)*mm3 + CGAL_NTS abs(R4)*mm4;
       error *= Fixed_Is2;
       if ( error < Fixed_Bx5 ) error = 0.0;
       if (det >   error) return ON_NEGATIVE_SIDE;
@@ -688,8 +688,8 @@ Oriented_side side_of_oriented_sphereC3
       if (det >=  Fixed_Is1 ) return ON_NEGATIVE_SIDE;
       if (det <= -Fixed_Is1 ) return ON_POSITIVE_SIDE;
       // static filter failed, error is small
-      error= abs(R1)*mm1 + abs(R2)*mm2
-	     + abs(R3)*mm3 + abs(R4)*mm4;
+      error= CGAL_NTS abs(R1)*mm1 + CGAL_NTS abs(R2)*mm2
+	     + CGAL_NTS abs(R3)*mm3 + CGAL_NTS abs(R4)*mm4;
       error *= Fixed_Is2;
       if ( error < Fixed_Bx5 ) error = 0.0;
       if (det >   error) return ON_NEGATIVE_SIDE;
@@ -724,8 +724,8 @@ Oriented_side side_of_oriented_sphereC3
       if (det >=  Fixed_Is1 ) return ON_NEGATIVE_SIDE;
       if (det <= -Fixed_Is1 ) return ON_POSITIVE_SIDE;
       // static filter failed, error is small
-      error= abs(R1)*mm1 + abs(R2)*mm2
-	     + abs(R3)*mm3 + abs(R4)*mm4;
+      error= CGAL_NTS abs(R1)*mm1 + CGAL_NTS abs(R2)*mm2
+	     + CGAL_NTS abs(R3)*mm3 + CGAL_NTS abs(R4)*mm4;
       error *= Fixed_Is2;
       if ( error < Fixed_Bx5 ) error = 0.0;
       if (det >   error) return ON_NEGATIVE_SIDE;
@@ -760,8 +760,8 @@ Oriented_side side_of_oriented_sphereC3
       if (det >=  Fixed_Is1 ) return ON_NEGATIVE_SIDE;
       if (det <= -Fixed_Is1 ) return ON_POSITIVE_SIDE;
       // static filter failed, error is small
-      error= abs(R1)*mm1 + abs(R2)*mm2 
-	     + abs(R3)*mm3 + abs(R4)*mm4;
+      error= CGAL_NTS abs(R1)*mm1 + CGAL_NTS abs(R2)*mm2 
+	     + CGAL_NTS abs(R3)*mm3 + CGAL_NTS abs(R4)*mm4;
       error *= Fixed_Is2;
       if ( error < Fixed_Bx5 ) error = 0.0;
       if (det >   error) return ON_NEGATIVE_SIDE;
