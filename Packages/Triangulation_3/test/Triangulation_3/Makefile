@@ -26,10 +26,10 @@ CXXFLAGS = \
         -B$(UTIL)/Binutils/$(UNAME)/bin/ \
 	 $(CGAL_CXXFLAGS)\
 	 $(TESTSUITE_CXXFLAGS) \
-	-O2 -fno-default-inline \
-	-DCGAL_NO_PRECONDITIONS -DCGAL_NO_POSTCONDITIONS -DCGAL_NO_ASSERTIONS
+         -gdwarf-2
+#	-O2 -fno-default-inline \
+#	-DCGAL_NO_PRECONDITIONS -DCGAL_NO_POSTCONDITIONS -DCGAL_NO_ASSERTIONS
 #         -g
-#         -gdwarf-2
 
 
 #---------------------------------------------------------------------#
@@ -49,11 +49,12 @@ LDFLAGS = $(TESTSUITE_LDFLAGS) \
 #---------------------------------------------------------------------#
 
 all: test_triangulation_geom_traits test_triangulation_tds \
-     test_triangulation_3 test_delaunay_3
+     test_triangulation_3 test_delaunay_3 test_regular_3 
 	./test_triangulation_geom_traits
 	./test_triangulation_tds
 	./test_triangulation_3
 	./test_delaunay_3
+	./test_regular_3 
 
 test_triangulation_geom_traits : test_triangulation_geom_traits.o
 	$(CGAL_CXX)  -o test_triangulation_geom_traits test_triangulation_geom_traits.o $(LDFLAGS)
@@ -67,9 +68,12 @@ test_triangulation_3: test_triangulation_3.o
 test_delaunay_3: test_delaunay_3.o 
 	$(CGAL_CXX) -o test_delaunay_3 test_delaunay_3.o $(LDFLAGS)
 
+test_regular_3: test_regular_3.o 
+	$(CGAL_CXX) -o test_regular_3 test_regular_3.o $(LDFLAGS)
 clean:
 	- rm -f *.o test_triangulation_3 test_triangulation_geom_traits \
 	            test_triangulation_tds test_delaunay_3 \
+		    test_regular_3 \
 	            Program* Error* Compiler* error* Test*_triangulation_IO_3 \
 	            Test_tds_IO_3 core
 

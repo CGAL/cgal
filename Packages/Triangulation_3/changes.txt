@@ -1,3 +1,19 @@
+Version 1.4 (27 july 99)
+regular triangulations added
++ cleaning
+
+Version 1.3 (13 July 99)
+include files :
+	Some cleaning +
+	The constructors of the cells do not insert the cell in the
+	triangulation any more. Instead the triangulation has functions
+	to add cells. (for data structure and geometric triangulation as well)
+doc :
+	Several small corrections + updates due to the changes in include files.	
+test-suite :
+	updates due to the changes in include files +
+	does not always call gmp
+
 Version 1.2 (30 June 99)
 small bug fixes in the test-suite after results of 2.1-I-1
 methods defined outside classes to compile with -O2
