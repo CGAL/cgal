@@ -1,8 +1,15 @@
-26 April 2004  Menelaos Karavelas <mkaravel@cse.nd.edu>
+2 May 2004:  Menelaos Karavelas <mkaravel@cse.nd.edu>
+- forgot to submit correct version of
+  predicates/Segment_Voronoi_diagram_predicates_ftC2.h in which
+  the construct_site_2 static method is used for constructing
+  sites instead of a constructor
+
+26 April 2004:  Menelaos Karavelas <mkaravel@cse.nd.edu>
 - removed duplicate definition of one of the operator()'s in
   the Construct_svd_site_2 functor.
 
-22 April 2004  Menelaos Karavelas <mkaravel@cse.nd.edu>
+
+22 April 2004:  Menelaos Karavelas <mkaravel@cse.nd.edu>
 - replaced the site constructors by static methods that create
   the sites
 - added functors for some predicates that did not have
@@ -12,18 +19,18 @@
 - fixed filtered traits to work with gcc 2.95.3
 
 
-20 April 2004  Menelaos Karavelas <mkaravel@cse.nd.edu>
+20 April 2004:  Menelaos Karavelas <mkaravel@cse.nd.edu>
 - rewrote code for filtered traits to improve efficiency;
   the traits functor do not go through the number type level now
 - removed dependencies on the set_* methods of the site classes;
   this should make the site classes interface much simpler
 
 
-18 April 2004  Menelaos Karavelas <mkaravel@cse.nd.edu>
+18 April 2004:  Menelaos Karavelas <mkaravel@cse.nd.edu>
 - added code for input and output sites iterator
 
 
-15 April 2004  Menelaos Karavelas <mkaravel@cse.nd.edu>
+15 April 2004:  Menelaos Karavelas <mkaravel@cse.nd.edu>
 - the point container is not hardcoded
 - the traits classes is now split in two different classes; there is
   no intersection tag as a template parameter

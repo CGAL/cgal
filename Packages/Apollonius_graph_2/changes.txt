@@ -1,12 +1,16 @@
-28 April 2004  Menelaos Karavelas <mkaravel@cse.nd.edu>
+2 May 2004:  Menelaos Karavelas <mkaravel@cse.nd.edu>
+- bug fix for VC 7.1 in test suite
+- bug fix for sun compiler in Apollonius_graph_2.h
+
+28 April 2004:  Menelaos Karavelas <mkaravel@cse.nd.edu>
 - fixed bugs in test suite and examples, created by the changes of April 25th
 
-26 April 2004  Menelaos Karavelas <mkaravel@cse.nd.edu>
+26 April 2004:  Menelaos Karavelas <mkaravel@cse.nd.edu>
 - CC-5.30_SunOS-5.8 was complaining about the static constants of the
   Parabola_2 and Hyperbola_ray_2 classes; these constants are now given
   my static methods
 
-25 April 2004  Menelaos Karavelas <mkaravel@cse.nd.edu>
+25 April 2004:  Menelaos Karavelas <mkaravel@cse.nd.edu>
 - changes in the traits: moved the various functors from
   predicates/Apollonius_graph_predicates_C2.h to separate files named
   predicates/Ag2_*.h; the two traits classes have been appropriately modified
