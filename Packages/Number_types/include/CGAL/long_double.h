@@ -62,8 +62,8 @@ to_interval(const long double & d)
   Protect_FPU_rounding<true> P(CGAL_FE_UPWARD);
   volatile long double md = -d; // needed otherwise the conversion can get
                                 // factorized between d and -d...
-  return std::make_pair(- CGAL_IA_FORCE_TO_DOUBLE(md),
-                        CGAL_IA_FORCE_TO_DOUBLE(d));
+  return std::make_pair(- (double) CGAL_IA_FORCE_TO_DOUBLE(md),
+                        (double) CGAL_IA_FORCE_TO_DOUBLE(d));
 }
 
 inline

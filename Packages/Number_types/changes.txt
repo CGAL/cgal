@@ -1,3 +1,6 @@
+3 March 2005 Sylvain Pion
+- long_double.h : SunPRO workaround.
+
 8 February 2005 Sylvain Pion
 - doc fix for Rational_traits<>.
 
