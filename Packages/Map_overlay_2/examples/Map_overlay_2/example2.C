@@ -15,6 +15,7 @@
 #include <list>
 #include <string>
 
+// uncomment if LEDA is installed.
 //#include <CGAL/IO/cgal_window.h>  //used for visualization -
 //#include <CGAL/IO/Pm_Window_stream.h>
 
@@ -48,14 +49,16 @@ int  main()
   while (num_curves1--) {
     std::cin >> x1 >> y1 >> x2 >> y2;
 
-    pmwx1.insert(Curve(Point(x1,y1), Point(x2,y2)));
+    Point p1(x1,y1), p2(x2,y2);
+    pmwx1.insert(Curve(p1, p2));
   } 
   
   std::cin >> num_curves2;
   while (num_curves2--) {
     std::cin >> x1 >> y1 >> x2 >> y2;
 
-    pmwx2.insert(Curve(Point(x1,y1), Point(x2,y2))); 
+    Point p1(x1,y1), p2(x2,y2);
+    pmwx2.insert(Curve(p1, p2)); 
   }
   
   MapOverlay_incremental                 ovl_incremental;
@@ -64,7 +67,8 @@ int  main()
   MapOverlay map_overlay(map1, map2, &ovl_incremental);
 
   cout << map_overlay.subdivision();
-  
+
+  // uncomment if LEDA is installed.
   //CGAL::Window_stream W(700, 700);
   //W.init(-10, 10, -10);
   //W.set_node_width(3);

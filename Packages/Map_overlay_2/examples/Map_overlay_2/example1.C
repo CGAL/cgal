@@ -48,7 +48,9 @@ int  main()
   
   while (num_curves1--) {
     std::cin >> x1 >> y1 >> x2 >> y2;
-    segments.push_back(Curve(Point(x1,y1), Point(x2,y2)));
+
+    Point p1(x1,y1), p2(x2,y2);
+    segments.push_back(Curve(p1, p2));
   } 
   
   Traits traits;
@@ -61,8 +63,9 @@ int  main()
   
   while (num_curves2--) {
     std::cin >> x1 >> y1 >> x2 >> y2;
-
-    segments.push_back(Curve(Point(x1,y1), Point(x2,y2))); 
+    
+    Point p1(x1,y1), p2(x2,y2);
+    segments.push_back(Curve(p1, p2)); 
   }
   
   CGAL::sweep_to_construct_planar_map_2(segments.begin(),segments.end(), 
