@@ -21,7 +21,7 @@
 #ifndef CGAL_SR_2_H
 #define CGAL_SR_2_H
 
-//efine DEBUG
+//#define DEBUG
 
 #include <CGAL/leda_rational.h> 
 
@@ -705,7 +705,7 @@ bool Snap_rounding_2<Rep_>::to_the_right(const Point_2& query_point,const Segmen
     ta = tmp;
   }
 
-  #ifdef DEBUG
+  #ifdef ISR_DEBUG
     std::cout << "so = " << so << std::endl;
     std::cout << "query_point = " << query_point << std::endl;
     std::cout << "ta = " << ta << std::endl;
@@ -745,7 +745,7 @@ bool Snap_rounding_2<Rep_>::to_the_left(const Point_2& query_point,const Segment
     ta = tmp;
   }
 
-  #ifdef DEBUG
+  #ifdef ISR_DEBUG
     std::cout << "so = " << so << std::endl;
     std::cout << "query_point = " << query_point << std::endl;
     std::cout << "ta = " << ta << std::endl;
@@ -766,13 +766,13 @@ typename Snap_rounding_2<Rep_>::Segment_2 Snap_rounding_2<Rep_>::find_segment_to
   bool first_time = true;
   Segment_2 result_segment;
 
-  #ifdef DEBUG
+  #ifdef ISR_DEBUG
     std::cout << "query_point = " << query_point << std::endl;
   #endif
   found = false;
   for(iter = segment_list.begin();iter != segment_list.end();++iter) {
     Segment_2 s = *iter;
-    #ifdef DEBUG
+    #ifdef ISR_DEBUG
       std::cout << "s = " << s << std::endl;
     #endif
     if(to_the_right(query_point,s)) { // both to the right and a x-ray shooting intersects it
@@ -800,13 +800,13 @@ typename Snap_rounding_2<Rep_>::Segment_2 Snap_rounding_2<Rep_>::find_segment_to
   bool first_time = true;
   Segment_2 result_segment;
 
-  #ifdef DEBUG
+  #ifdef ISR_DEBUG
     std::cout << "query_point = " << query_point << std::endl;
   #endif
   found = false;
   for(iter = segment_list.begin();iter != segment_list.end();++iter) {
     Segment_2 s = *iter;
-    #ifdef DEBUG
+    #ifdef ISR_DEBUG
       std::cout << "s = " << s << std::endl;
     #endif
     if(to_the_left(query_point,s)) { // both to the LEFT and a x-ray shooting intersects it
@@ -848,7 +848,7 @@ typename Snap_rounding_2<Rep_>::Point_2 Snap_rounding_2<Rep_>::find_point_on_seg
 
   Segment_2 crossing_s(p,Point_2(s.max().x(),p.y()));
 
-  #ifdef DEBUG
+  #ifdef ISR_DEBUG
     std::cout << "crossing_s = " << crossing_s << std::endl;
     std::cout << "s = " << s << std::endl;
   #endif
@@ -947,7 +947,7 @@ bool Snap_rounding_2<Rep_>::triangle_empty_up_right(const Segment_2& s,const Poi
     return(true);
   Point_2 h1,h2,h3,h4;
 
-  #ifdef DEBUG
+  #ifdef ISR_DEBUG
     std::cout << "s2 = " << s << std::endl;
     std::cout << "p = " << p << std::endl;
     std::cout << "s1 = " << s1 << std::endl;
@@ -959,7 +959,7 @@ bool Snap_rounding_2<Rep_>::triangle_empty_up_right(const Segment_2& s,const Poi
     h2 = i->second->get_lr();
     h3 = i->second->get_ul();
     h4 = i->second->get_ur();
-    #ifdef DEBUG
+    #ifdef ISR_DEBUG
       std::cout << "h1 = " << h1 << std::endl;
       std::cout << "h2 = " << h2 << std::endl;
       std::cout << "h3 = " << h3 << std::endl;
@@ -969,7 +969,7 @@ bool Snap_rounding_2<Rep_>::triangle_empty_up_right(const Segment_2& s,const Poi
        left_turn(s1,h2,p) && left_turn(s2,h2,s1) && left_turn(p,h2,s2) ||
        left_turn(s1,h3,p) && left_turn(s2,h3,s1) && left_turn(p,h3,s2) ||
        left_turn(s1,h4,p) && left_turn(s2,h4,s1) && left_turn(p,h4,s2)) {
-      #ifdef DEBUG
+      #ifdef ISR_DEBUG
         std::cout << "inside TRIANGLE" << std::endl;
       #endif
       return(false);
@@ -994,7 +994,7 @@ bool Snap_rounding_2<Rep_>::triangle_empty_down_right(const Segment_2& s,const P
     return(true);
   Point_2 h1,h2,h3,h4;
 
-  #ifdef DEBUG
+  #ifdef ISR_DEBUG
     std::cout << "s2 = " << s << std::endl;
     std::cout << "p = " << p << std::endl;
     std::cout << "s1 = " << s1 << std::endl;
@@ -1006,7 +1006,7 @@ bool Snap_rounding_2<Rep_>::triangle_empty_down_right(const Segment_2& s,const P
     h2 = i->second->get_lr();
     h3 = i->second->get_ul();
     h4 = i->second->get_ur();
-    #ifdef DEBUG
+    #ifdef ISR_DEBUG
       std::cout << "h1 = " << h1 << std::endl;
       std::cout << "h2 = " << h2 << std::endl;
       std::cout << "h3 = " << h3 << std::endl;
@@ -1016,7 +1016,7 @@ bool Snap_rounding_2<Rep_>::triangle_empty_down_right(const Segment_2& s,const P
        right_turn(s1,h2,p) && right_turn(s2,h2,s1) && right_turn(p,h2,s2) ||
        right_turn(s1,h3,p) && right_turn(s2,h3,s1) && right_turn(p,h3,s2) ||
        right_turn(s1,h4,p) && right_turn(s2,h4,s1) && right_turn(p,h4,s2)) {
-      #ifdef DEBUG
+      #ifdef ISR_DEBUG
         std::cout << "inside TRIANGLE" << std::endl;
       #endif
       return(false);
@@ -1041,7 +1041,7 @@ bool Snap_rounding_2<Rep_>::triangle_empty_up_left(const Segment_2& s,const Poin
     return(false);
   Point_2 h1,h2,h3,h4;
 
-  #ifdef DEBUG
+  #ifdef ISR_DEBUG
     std::cout << "s2 = " << s << std::endl;
     std::cout << "p = " << p << std::endl;
     std::cout << "s1 = " << s1 << std::endl;
@@ -1053,7 +1053,7 @@ bool Snap_rounding_2<Rep_>::triangle_empty_up_left(const Segment_2& s,const Poin
     h2 = i->second->get_lr();
     h3 = i->second->get_ul();
     h4 = i->second->get_ur();
-    #ifdef DEBUG
+    #ifdef ISR_DEBUG
       std::cout << "h1 = " << h1 << std::endl;
       std::cout << "h2 = " << h2 << std::endl;
       std::cout << "h3 = " << h3 << std::endl;
@@ -1063,7 +1063,7 @@ bool Snap_rounding_2<Rep_>::triangle_empty_up_left(const Segment_2& s,const Poin
        right_turn(s1,h2,p) && right_turn(s2,h2,s1) && right_turn(p,h2,s2) ||
        right_turn(s1,h3,p) && right_turn(s2,h3,s1) && right_turn(p,h3,s2) ||
        right_turn(s1,h4,p) && right_turn(s2,h4,s1) && right_turn(p,h4,s2)) {
-      #ifdef DEBUG
+      #ifdef ISR_DEBUG
         std::cout << "inside TRIANGLE" << std::endl;
       #endif
       return(false);
@@ -1088,7 +1088,7 @@ bool Snap_rounding_2<Rep_>::triangle_empty_down_left(const Segment_2& s,const Po
     return(false);
   Point_2 h1,h2,h3,h4;
 
-  #ifdef DEBUG
+  #ifdef ISR_DEBUG
     std::cout << "s2 = " << s << std::endl;
     std::cout << "p = " << p << std::endl;
     std::cout << "s1 = " << s1 << std::endl;
@@ -1100,7 +1100,7 @@ bool Snap_rounding_2<Rep_>::triangle_empty_down_left(const Segment_2& s,const Po
     h2 = i->second->get_lr();
     h3 = i->second->get_ul();
     h4 = i->second->get_ur();
-    #ifdef DEBUG
+    #ifdef ISR_DEBUG
       std::cout << "h1 = " << h1 << std::endl;
       std::cout << "h2 = " << h2 << std::endl;
       std::cout << "h3 = " << h3 << std::endl;
@@ -1110,7 +1110,7 @@ bool Snap_rounding_2<Rep_>::triangle_empty_down_left(const Segment_2& s,const Po
        left_turn(s1,h2,p) && left_turn(s2,h2,s1) && left_turn(p,h2,s2) ||
        left_turn(s1,h3,p) && left_turn(s2,h3,s1) && left_turn(p,h3,s2) ||
        left_turn(s1,h4,p) && left_turn(s2,h4,s1) && left_turn(p,h4,s2)) {
-      #ifdef DEBUG
+      #ifdef ISR_DEBUG
         std::cout << "inside TRIANGLE" << std::endl;
       #endif
       return(false);
@@ -1140,7 +1140,7 @@ void Snap_rounding_2<Rep_>::heat_pixel_up_right(const Point_2& p,const Segment_2
   Object result;
   Point_2 inter_p;  
 
-  #ifdef DEBUG
+  #ifdef ISR_DEBUG
     std::cout << "** p = " << p << std::endl;
     std::cout << "** s = " << s << std::endl;
   #endif
@@ -1149,7 +1149,7 @@ void Snap_rounding_2<Rep_>::heat_pixel_up_right(const Point_2& p,const Segment_2
   Segment_2 t(p,Point_2(s.max().x(),p.y()));
   result = intersection(t,s);
   if(assign(inter_p,result)) {
-    #ifdef DEBUG
+    #ifdef ISR_DEBUG
       std::cout << "1) inter_p = " << inter_p << std::endl;
     #endif
     // reach a point which is in the left pixel columns to the intersection
@@ -1157,13 +1157,13 @@ void Snap_rounding_2<Rep_>::heat_pixel_up_right(const Point_2& p,const Segment_2
                 Point_2(inter_p.x() - pixel_size,s.target().y() > s.source().y() ?
                                                  s.target().y() : s.source().y()));
     result = intersection(r,s);
-    #ifdef DEBUG
+    #ifdef ISR_DEBUG
       std::cout << "r = " << r << std::endl;
       std::cout << "s = " << s << std::endl;
     #endif
 
     if(assign(inter_p,result)) {
-      #ifdef DEBUG
+      #ifdef ISR_DEBUG
         std::cout << "2) inter_p = " << inter_p << std::endl;
       #endif
       // heat the resective pixel and insert it to hot_pixels_list
@@ -1191,7 +1191,7 @@ void Snap_rounding_2<Rep_>::heat_pixel_up_right(const Point_2& p,const Segment_2
   Object result;
   Point_2 inter_p;  
 
-  #ifdef DEBUG
+  #ifdef ISR_DEBUG
     std::cout << "** p = " << p << std::endl;
     std::cout << "** s = " << s << std::endl;
   #endif
@@ -1200,7 +1200,7 @@ void Snap_rounding_2<Rep_>::heat_pixel_up_right(const Point_2& p,const Segment_2
   Segment_2 t(p,Point_2(s.max().x(),p.y()));
   result = intersection(t,s);
   if(assign(inter_p,result)) {
-    #ifdef DEBUG
+    #ifdef ISR_DEBUG
       std::cout << "1) inter_p = " << inter_p << std::endl;
     #endif
 
@@ -1229,7 +1229,7 @@ void Snap_rounding_2<Rep_>::heat_pixel_down_right(const Point_2& p,const Segment
   Segment_2 t(p,Point_2(s.max().x(),p.y()));
   result = intersection(t,s);
   if(assign(inter_p,result)) {
-    #ifdef DEBUG
+    #ifdef ISR_DEBUG
       std::cout << "1) inter_p = " << inter_p << std::endl;
     #endif
     // reach a point which is in the left pixel columns to the intersection
@@ -1237,13 +1237,13 @@ void Snap_rounding_2<Rep_>::heat_pixel_down_right(const Point_2& p,const Segment
                 Point_2(inter_p.x() - pixel_size,s.target().y() < s.source().y() ?
                                                  s.target().y() : s.source().y()));
     result = intersection(r,s);
-    #ifdef DEBUG
+    #ifdef ISR_DEBUG
       std::cout << "r = " << r << std::endl;
       std::cout << "s = " << s << std::endl;
     #endif
 
     if(assign(inter_p,result)) {
-      #ifdef DEBUG
+      #ifdef ISR_DEBUG
         std::cout << "2) inter_p = " << inter_p << std::endl;
       #endif
       // heat the resective pixel and insert it to hot_pixels_list
@@ -1275,7 +1275,7 @@ void Snap_rounding_2<Rep_>::heat_pixel_down_right(const Point_2& p,const Segment
   Segment_2 t(p,Point_2(s.max().x(),p.y()));
   result = intersection(t,s);
   if(assign(inter_p,result)) {
-    #ifdef DEBUG
+    #ifdef ISR_DEBUG
       std::cout << "1) inter_p = " << inter_p << std::endl;
     #endif
 
@@ -1304,7 +1304,7 @@ void Snap_rounding_2<Rep_>::heat_pixel_up_left(const Point_2& p,const Segment_2&
   Segment_2 t(p,Point_2(s.min().x(),p.y()));
   result = intersection(t,s);
   if(assign(inter_p,result)) {
-    #ifdef DEBUG
+    #ifdef ISR_DEBUG
       std::cout << "1) inter_p = " << inter_p << std::endl;
       std::cout << "t = " << t << std::endl;
     #endif
@@ -1313,12 +1313,12 @@ void Snap_rounding_2<Rep_>::heat_pixel_up_left(const Point_2& p,const Segment_2&
                 Point_2(inter_p.x() + pixel_size,s.target().y() > s.source().y() ?
                                                  s.target().y() : s.source().y()));
     result = intersection(r,s);
-    #ifdef DEBUG
+    #ifdef ISR_DEBUG
       std::cout << "r = " << r << std::endl;
       std::cout << "s = " << s << std::endl;
     #endif
     if(assign(inter_p,result)) {
-      #ifdef DEBUG
+      #ifdef ISR_DEBUG
         std::cout << "2) inter_p = " << inter_p << std::endl;
       #endif
       // heat the resective pixel and insert it to hot_pixels_list
@@ -1351,7 +1351,7 @@ void Snap_rounding_2<Rep_>::heat_pixel_up_left(const Point_2& p,const Segment_2&
   Segment_2 t(p,Point_2(s.min().x(),p.y()));
   result = intersection(t,s);
   if(assign(inter_p,result)) {
-    #ifdef DEBUG
+    #ifdef ISR_DEBUG
       std::cout << "1) inter_p = " << inter_p << std::endl;
       std::cout << "t = " << t << std::endl;
     #endif
@@ -1381,7 +1381,7 @@ void Snap_rounding_2<Rep_>::heat_pixel_down_left(const Point_2& p,const Segment_
   Segment_2 t(p,Point_2(s.min().x(),p.y()));
   result = intersection(t,s);
   if(assign(inter_p,result)) {
-    #ifdef DEBUG
+    #ifdef ISR_DEBUG
       std::cout << "1) inter_p = " << inter_p << std::endl;
       std::cout << "t = " << t << std::endl;
     #endif
@@ -1390,12 +1390,12 @@ void Snap_rounding_2<Rep_>::heat_pixel_down_left(const Point_2& p,const Segment_
                 Point_2(inter_p.x() + pixel_size,s.target().y() < s.source().y() ?
                                                  s.target().y() : s.source().y()));
     result = intersection(r,s);
-    #ifdef DEBUG
+    #ifdef ISR_DEBUG
       std::cout << "r = " << r << std::endl;
       std::cout << "s = " << s << std::endl;
     #endif
     if(assign(inter_p,result)) {
-      #ifdef DEBUG
+      #ifdef ISR_DEBUG
         std::cout << "2) inter_p = " << inter_p << std::endl;
       #endif
       // heat the resective pixel and insert it to hot_pixels_list
@@ -1428,7 +1428,7 @@ void Snap_rounding_2<Rep_>::heat_pixel_down_left(const Point_2& p,const Segment_
   Segment_2 t(p,Point_2(s.min().x(),p.y()));
   result = intersection(t,s);
   if(assign(inter_p,result)) {
-    #ifdef DEBUG
+    #ifdef ISR_DEBUG
       std::cout << "1) inter_p = " << inter_p << std::endl;
       std::cout << "t = " << t << std::endl;
     #endif
@@ -1454,7 +1454,7 @@ typename Snap_rounding_2<Rep_>::Point_2 Snap_rounding_2<Rep_>::next_center_to_ri
   Point_2 ass_p;
   Object result;
   Segment_2 inter_s(p,Point_2(s.max().x(),p.y()));
-  #ifdef DEBUG
+  #ifdef ISR_DEBUG
     std::cout << "s = " << s << std::endl;
     std::cout << "inter_s = " << inter_s << std::endl;
   #endif
@@ -1474,7 +1474,7 @@ typename Snap_rounding_2<Rep_>::Point_2 Snap_rounding_2<Rep_>::next_center_to_le
   Point_2 ass_p;
   Object result;
   Segment_2 inter_s(p,Point_2(s.min().x(),p.y()));
-  #ifdef DEBUG
+  #ifdef ISR_DEBUG
     std::cout << "s = " << s << std::endl;
     std::cout << "inter_s = " << inter_s << std::endl;
   #endif
@@ -1496,7 +1496,7 @@ void Snap_rounding_2<Rep_>::produce_extra_hot_pixels(std::list<std::pair<Point_2
   NT dis1 = delta * delta;
   NT dis2 = delta * delta + R * R + 2 * delta * R;
 
-  #ifdef DEBUG
+  #ifdef ISR_DEBUG
     std::cout << "delta = " << delta << std::endl;
   #endif
 
@@ -1549,13 +1549,13 @@ void Snap_rounding_2<Rep_>::produce_extra_hot_pixels(std::list<std::pair<Point_2
 
     // DOWN RIGHT
     p_center = iter->first;
-    #ifdef DEBUG
+    #ifdef ISR_DEBUG
       std::cout << "p_center = " << p_center << std::endl;
     #endif
     query_point = Point_2(p_center.x(),p_center.y() - pixel_size);
     done = false;
     while(!done) {
-      #ifdef DEBUG
+      #ifdef ISR_DEBUG
         std::cout << "query_point = " << query_point << std::endl;
       #endif
       bool found;
@@ -1563,7 +1563,7 @@ void Snap_rounding_2<Rep_>::produce_extra_hot_pixels(std::list<std::pair<Point_2
       Segment_2 first_s = find_segment_to_right(p_center,query_point,segment_list,sq_dis,found);
       if(found && //negative_slope(first_s) &&
          inside_bounding_box(query_point,first_s)) {
-        #ifdef DEBUG
+        #ifdef ISR_DEBUG
           std::cout << "first_s = " << first_s << std::endl;
 	  std::cout << "sq_dis = " << sq_dis << std::endl;
         #endif
@@ -1587,7 +1587,7 @@ void Snap_rounding_2<Rep_>::produce_extra_hot_pixels(std::list<std::pair<Point_2
       bool found;
       NT sq_dis;
       Segment_2 first_s = find_segment_to_left(p_center,query_point,segment_list,sq_dis,found);
-      #ifdef DEBUG
+      #ifdef ISR_DEBUG
           std::cout << "query_point = " << query_point << std::endl;
           std::cout << "first_s = " << first_s << std::endl;
 	  std::cout << "sq_dis = " << sq_dis << std::endl;
@@ -1674,7 +1674,7 @@ void Snap_rounding_2<Rep_>::find_hot_pixels_and_create_kd_trees()
 				hp->get_center(),hp));
     }
 
-    std::cout << "number of vertices: " << hot_pixels_list.size() << std::endl;
+    std::cout << "number of hot pixels : " << hot_pixels_list.size() << std::endl;
 
     // create kd multiple tree
     // create simple_list from seg_list

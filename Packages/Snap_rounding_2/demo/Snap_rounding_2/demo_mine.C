@@ -27,7 +27,7 @@ typedef leda_rational                                  Number_Type;
 typedef CGAL::Cartesian<Number_Type>                   Rep;
 typedef Rep::Point_2                                   Local_point_2;
 typedef Rep::Segment_2                                 Local_segment_2;
-typedef CGAL::Snap_rounding_traits<Rep>                Sr_traits;
+typedef CGAL::Snap_rounding_traits_2<Rep>              Sr_traits;
 typedef CGAL::Snap_rounding_2<Sr_traits>               Snap_rounding_2;
 typedef Snap_rounding_2::Segment_2                     Segment_2;
 typedef Snap_rounding_2::Point_2                       Point_2;
