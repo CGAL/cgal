@@ -172,7 +172,7 @@ template <class CT, class ET>
 inline
 Sign
 sign (const Filtered_exact<CT,ET>& fil)
-{ return sign(fil.value); }
+{ return CGAL::sign(fil.value); }
 
 template <class CT, class ET>
 inline
