@@ -83,10 +83,12 @@ public:
 
  friend CGAL_FRIEND_INLINE
         PointH2<R>
-        CGAL_SCOPE origin_plus_vector CGAL_NULL_TMPL_ARGS ( const VectorH2<R> & v);
+        CGAL_SCOPE origin_plus_vector CGAL_NULL_TMPL_ARGS ( 
+                                                      const VectorH2<R> & v);
  friend CGAL_FRIEND_INLINE
         PointH2<R>
-        CGAL_SCOPE origin_minus_vector CGAL_NULL_TMPL_ARGS (const VectorH2<R> & v);
+        CGAL_SCOPE origin_minus_vector CGAL_NULL_TMPL_ARGS (
+                                                      const VectorH2<R> & v);
 };
 
 template < class R_ >
@@ -139,10 +141,10 @@ protected:
 
 friend CGAL_FRIEND_INLINE
        VectorH2<R>
-       CGAL_SCOPE point_minus_origin CGAL_NULL_TMPL_ARGS ( const PointH2<R>& p);
+       CGAL_SCOPE point_minus_origin CGAL_NULL_TMPL_ARGS (const PointH2<R>& p);
 friend CGAL_FRIEND_INLINE
        VectorH2<R>
-       CGAL_SCOPE origin_minus_point CGAL_NULL_TMPL_ARGS ( const PointH2<R>& p);
+       CGAL_SCOPE origin_minus_point CGAL_NULL_TMPL_ARGS (const PointH2<R>& p);
 /*
 friend CGAL_FRIEND_INLINE
        PointH2<R>

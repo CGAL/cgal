@@ -79,12 +79,12 @@ class Aff_transformation_repH2 : public Aff_transformation_rep_baseH2<R>
     typedef typename R::RT RT;
     typedef typename R::FT FT;
 
-             Aff_transformation_repH2()
-             {}
+    Aff_transformation_repH2()
+    {}
 
-             Aff_transformation_repH2(const RT& m00, const RT& m01, const RT& m02,
-                                      const RT& m10, const RT& m11, const RT& m12,
-                                                                    const RT& m22)
+    Aff_transformation_repH2(const RT& m00, const RT& m01, const RT& m02,
+                             const RT& m10, const RT& m11, const RT& m12,
+                             const RT& m22)
               : a(m00), b(m01), c(m02), d(m10), e(m11), f(m12), g(m22)
              {}
 
@@ -261,9 +261,9 @@ class Translation_repH2 : public Aff_transformation_rep_baseH2<R>
              general_form() const
              {
                return
-               Aff_transformation_repH2<R>( _tv.hw(),  RT(0)  ,  _tv.hx(),
-                                               RT(0)  ,   _tv.hw(),  _tv.hy(),
-                                                                     _tv.hw() );
+               Aff_transformation_repH2<R>( _tv.hw(), RT(0) ,  _tv.hx(),
+                                               RT(0), _tv.hw(),  _tv.hy(),
+                                                                 _tv.hw() );
              }
 
     virtual  RT   homogeneous(int i, int j) const;
@@ -506,7 +506,8 @@ class Aff_transformationH2
 
           // Scaling:
 
-          Aff_transformationH2(const Scaling, const RT& a,  const RT& b = RT(1)  );
+          Aff_transformationH2(const Scaling, const RT& a,  
+                               const RT& b = RT(1));
 
           Aff_transformationH2(const Scaling, const RT& xa, const RT& xb,
                                               const RT& ya, const RT& yb);
@@ -524,7 +525,7 @@ class Aff_transformationH2
           Aff_transformationH2(const Rotation,
                                const DirectionH2<R>& dir,
                                const RT& n,
-                               const RT& d = RT(1)   );
+                               const RT& d = RT(1));
 
           // Orthogonal Transformation:
 
@@ -532,8 +533,8 @@ class Aff_transformationH2
                                const RT& sine,
                                const RT& cosine,
                                const RT& denominator,
-                               const RT& scaling_numerator = RT(1)  ,
-                               const RT& scaling_denominator = RT(1)   );
+                               const RT& scaling_numerator = RT(1),
+                               const RT& scaling_denominator = RT(1));
 
           // General affine transformation
           //    | a b c |   |x|
@@ -542,11 +543,11 @@ class Aff_transformationH2
 
           Aff_transformationH2(const RT& a, const RT& b, const RT& c,
                                const RT& d, const RT& e, const RT& f,
-                                                         const RT& g = RT(1)  );
+                                                         const RT& g = RT(1));
 
           Aff_transformationH2(const RT& a, const RT& b,
                                const RT& d, const RT& e,
-                                                         const RT& g = RT(1)  );
+                                                         const RT& g = RT(1));
 
           Aff_transformationH2( Aff_transformation_rep_baseH2<R>* _ptr);
 

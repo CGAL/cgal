@@ -265,8 +265,7 @@ TriangleH2<R>::has_on_bounded_side(const PointH2<R>& p) const
 template <class R>
 CGAL_KERNEL_MEDIUM_INLINE
 bool
-TriangleH2<R>::has_on_unbounded_side(const PointH2<R>& p)
-                                                                          const
+TriangleH2<R>::has_on_unbounded_side(const PointH2<R>& p) const
 {
   CGAL_kernel_precondition( ! is_degenerate() );
 
@@ -342,7 +341,7 @@ operator<<(std::ostream &os, const TriangleH2<R> &t)
     case IO::BINARY :
         return os << t[0] << t[1]  << t[2];
     default:
-        return os<< "TriangleH2(" << t[0] << ", " << t[1] << ", " << t[2] <<")";
+       return os<< "TriangleH2(" << t[0] << ", " << t[1] << ", " << t[2] <<")";
   }
 }
 #endif // CGAL_NO_OSTREAM_INSERT_TRIANGLEH2

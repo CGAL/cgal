@@ -168,7 +168,7 @@ operator<<(std::ostream &os, const RayH2<R> &r)
     case IO::BINARY :
         return os << r.source() << r.second_point();
     default:
-        return os << "RayC2(" << r.source() <<  ", " << r.second_point() << ")";
+       return os << "RayC2(" << r.source() <<  ", " << r.second_point() << ")";
   }
 }
 #endif // CGAL_NO_OSTREAM_INSERT_RAYH2
@@ -189,13 +189,17 @@ template < class R >
 CGAL_KERNEL_INLINE
 bool
 RayH2<R>::is_horizontal() const
-{ return start().hy()*second_point().hw() == second_point().hy()*start().hw(); }
+{
+  return start().hy()*second_point().hw() == second_point().hy()*start().hw();
+}
 
 template < class R >
 CGAL_KERNEL_INLINE
 bool
 RayH2<R>::is_vertical() const
-{ return start().hx()*second_point().hw() == second_point().hx()*start().hw(); }
+{
+  return start().hx()*second_point().hw() == second_point().hx()*start().hw();
+}
 
 template < class R >
 CGAL_KERNEL_INLINE

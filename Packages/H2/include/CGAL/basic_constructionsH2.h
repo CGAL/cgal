@@ -132,16 +132,16 @@ circumcenter( const PointH2<R>& p,
 
 #ifdef EXPANDED_CIRCUMCENTER_COMPUTATION   /* strange flag -- XXX */
   RT vvx =
-      ( qhy*qhw*phw*phw - phy*phw*qhw*qhw )
-     *( phx*phx*rhw*rhw + phy*phy*rhw*rhw - rhx*rhx*phw*phw - rhy*rhy*phw*phw )
-   -  ( rhy*rhw*phw*phw - phy*phw*rhw*rhw )
-     *( phx*phx*qhw*qhw + phy*phy*qhw*qhw - qhx*qhx*phw*phw - qhy*qhy*phw*phw );
+     ( qhy*qhw*phw*phw - phy*phw*qhw*qhw )
+    *( phx*phx*rhw*rhw + phy*phy*rhw*rhw - rhx*rhx*phw*phw - rhy*rhy*phw*phw )
+  -  ( rhy*rhw*phw*phw - phy*phw*rhw*rhw )
+    *( phx*phx*qhw*qhw + phy*phy*qhw*qhw - qhx*qhx*phw*phw - qhy*qhy*phw*phw );
 
   RT vvy =
-   -  ( qhx*qhw*phw*phw - phx*phw*qhw*qhw )
-     *( phx*phx*rhw*rhw + phy*phy*rhw*rhw - rhx*rhx*phw*phw - rhy*rhy*phw*phw )
-   +  ( rhx*rhw*phw*phw - phx*phw*rhw*rhw )
-     *( phx*phx*qhw*qhw + phy*phy*qhw*qhw - qhx*qhx*phw*phw - qhy*qhy*phw*phw );
+  -  ( qhx*qhw*phw*phw - phx*phw*qhw*qhw )
+    *( phx*phx*rhw*rhw + phy*phy*rhw*rhw - rhx*rhx*phw*phw - rhy*rhy*phw*phw )
+  +  ( rhx*rhw*phw*phw - phx*phw*rhw*rhw )
+    *( phx*phx*qhw*qhw + phy*phy*qhw*qhw - qhx*qhx*phw*phw - qhy*qhy*phw*phw );
 
   RT vvw = RT(2) *
    (  ( qhx*qhw*phw*phw - phx*phw*qhw*qhw )

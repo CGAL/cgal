@@ -733,11 +733,11 @@ bool
 DirectionH3<R>::operator==( const DirectionH3<R>& d) const
 {
   return ( ( Ptr()->hx()*d.Ptr()->hy() == Ptr()->hy()*d.Ptr()->hx() )
-         &&( Ptr()->hx()*d.Ptr()->hz() == Ptr()->hz()*d.Ptr()->hx() )
-         &&( Ptr()->hy()*d.Ptr()->hz() == Ptr()->hz()*d.Ptr()->hy() )
-         &&( CGAL_NTS sign( Ptr()->hx() ) == CGAL_NTS sign( d.Ptr()->hx() ) )
-         &&( CGAL_NTS sign( Ptr()->hy() ) == CGAL_NTS sign( d.Ptr()->hy() ) )
-         &&( CGAL_NTS sign( Ptr()->hz() ) == CGAL_NTS sign( d.Ptr()->hz() ) ) );
+        &&( Ptr()->hx()*d.Ptr()->hz() == Ptr()->hz()*d.Ptr()->hx() )
+        &&( Ptr()->hy()*d.Ptr()->hz() == Ptr()->hz()*d.Ptr()->hy() )
+        &&( CGAL_NTS sign( Ptr()->hx() ) == CGAL_NTS sign( d.Ptr()->hx() ) )
+        &&( CGAL_NTS sign( Ptr()->hy() ) == CGAL_NTS sign( d.Ptr()->hy() ) )
+        &&( CGAL_NTS sign( Ptr()->hz() ) == CGAL_NTS sign( d.Ptr()->hz() ) ) );
 }
 
 template <class R >

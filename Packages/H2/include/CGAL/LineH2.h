@@ -264,7 +264,7 @@ operator<<(std::ostream &os, const LineH2<R> &l)
         write(os, l.c());
         return os;
     default:
-        return os << "LineH2(" << l.a() << ", " << l.b() << ", " << l.c() <<')';
+       return os << "LineH2(" << l.a() << ", " << l.b() << ", " << l.c() <<')';
   }
 }
 #endif // CGAL_NO_OSTREAM_INSERT_LINEH2

@@ -152,7 +152,8 @@ template < class R >
 CGAL_KERNEL_CTOR_LARGE_INLINE
 Iso_cuboidH3<R>::
 Iso_cuboidH3(const RT& min_hx, const RT& min_hy, const RT& min_hz,
-             const RT& max_hx, const RT& max_hy, const RT& max_hz, const RT& hw)
+             const RT& max_hx, const RT& max_hy, const RT& max_hz, 
+             const RT& hw)
 {
   initialize_with( Iso_cuboid_ref_3( PointH3<R>(min_hx, min_hy, min_hz, hw),
                                      PointH3<R>(max_hx, max_hy, max_hz, hw) ));

@@ -396,9 +396,9 @@ orientation( const PointH2<R>& p,
   RT  det =  A*D - B*C;
 
 /*
-  RT det_old =    p.hx_ref() * (q.hy_ref()*r.hw_ref() - q.hw_ref()*r.hy_ref() )
-                + p.hy_ref() * (q.hw_ref()*r.hx_ref() - q.hx_ref()*r.hw_ref() )
-                + p.hw_ref() * (q.hx_ref()*r.hy_ref() - q.hy_ref()*r.hx_ref() );
+  RT det_old =   p.hx_ref() * (q.hy_ref()*r.hw_ref() - q.hw_ref()*r.hy_ref() )
+               + p.hy_ref() * (q.hw_ref()*r.hx_ref() - q.hx_ref()*r.hw_ref() )
+               + p.hw_ref() * (q.hx_ref()*r.hy_ref() - q.hy_ref()*r.hx_ref() );
 
   if ( !(CGAL_NTS sign(det) == CGAL_NTS sign(det_old)) )
   {
@@ -449,9 +449,9 @@ leftturn( const PointH2<R>& p,
   RT  det =  A*D - B*C;
 
 /*
-  RT det_old =    p.hx_ref() * (q.hy_ref()*r.hw_ref() - q.hw_ref()*r.hy_ref() )
-                + p.hy_ref() * (q.hw_ref()*r.hx_ref() - q.hx_ref()*r.hw_ref() )
-                + p.hw_ref() * (q.hx_ref()*r.hy_ref() - q.hy_ref()*r.hx_ref() );
+  RT det_old =   p.hx_ref() * (q.hy_ref()*r.hw_ref() - q.hw_ref()*r.hy_ref() )
+               + p.hy_ref() * (q.hw_ref()*r.hx_ref() - q.hx_ref()*r.hw_ref() )
+               + p.hw_ref() * (q.hx_ref()*r.hy_ref() - q.hy_ref()*r.hx_ref() );
 
   if ( !(CGAL_NTS sign(det) == CGAL_NTS sign(det_old)) )
   {
@@ -494,9 +494,9 @@ rightturn( const PointH2<R>& p,
   RT  det =  A*D - B*C;
 
 /*
-  RT det_old =    p.hx_ref() * (q.hy_ref()*r.hw_ref() - q.hw_ref()*r.hy_ref() )
-                + p.hy_ref() * (q.hw_ref()*r.hx_ref() - q.hx_ref()*r.hw_ref() )
-                + p.hw_ref() * (q.hx_ref()*r.hy_ref() - q.hy_ref()*r.hx_ref() );
+  RT det_old =   p.hx_ref() * (q.hy_ref()*r.hw_ref() - q.hw_ref()*r.hy_ref() )
+               + p.hy_ref() * (q.hw_ref()*r.hx_ref() - q.hx_ref()*r.hw_ref() )
+               + p.hw_ref() * (q.hx_ref()*r.hy_ref() - q.hy_ref()*r.hx_ref() );
 
   if ( !(CGAL_NTS sign(det) == CGAL_NTS sign(det_old)) )
   {
@@ -539,9 +539,9 @@ collinear( const PointH2<R>& p,
   RT  det =  A*D - B*C;
 
 /*
-  RT det_old =    p.hx_ref() * (q.hy_ref()*r.hw_ref() - q.hw_ref()*r.hy_ref() )
-                + p.hy_ref() * (q.hw_ref()*r.hx_ref() - q.hx_ref()*r.hw_ref() )
-                + p.hw_ref() * (q.hx_ref()*r.hy_ref() - q.hy_ref()*r.hx_ref() );
+  RT det_old =   p.hx_ref() * (q.hy_ref()*r.hw_ref() - q.hw_ref()*r.hy_ref() )
+               + p.hy_ref() * (q.hw_ref()*r.hx_ref() - q.hx_ref()*r.hw_ref() )
+               + p.hw_ref() * (q.hx_ref()*r.hy_ref() - q.hy_ref()*r.hx_ref() );
 
   if ( !(CGAL_NTS sign(det) == CGAL_NTS sign(det_old)) )
   {
