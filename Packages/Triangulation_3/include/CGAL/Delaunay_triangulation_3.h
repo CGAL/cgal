@@ -328,8 +328,6 @@ private:
 				Vertex_handle v3, 
 				Vertex_handle v) const;
 
-  int maxless(int i0, int i1, int i2, int i3, int i4, int m) const;
-
   void make_hole_3D_ear( Vertex_handle v, 
 	                 std::vector<Facet> & boundhole,
 	                 std::vector<Cell_handle> & hole);
@@ -726,27 +724,6 @@ side_of_sphere_inf_perturb(Vertex_handle v0,
 }
 
 template < class Gt, class Tds >
-int
-Delaunay_triangulation_3<Gt,Tds>::
-maxless(int i0, int i1, int i2, int i3, int i4, int m) const
-  // returns the largest i which is less than m
-{
-  int mtmp=-1;
-  if (i0 < m) // we know that i0 > -1
-    mtmp = i0;
-  if ( (i1 < m) && (i1 > mtmp) )
-    mtmp = i1;
-  if ( (i2 < m) && (i2 > mtmp) )
-    mtmp = i2;
-  if ( (i3 < m) && (i3 > mtmp) )
-    mtmp = i3;
-  if ( (i4 < m) && (i4 > mtmp) )
-    mtmp = i4;
-
-  return mtmp;
-}
-
-template < class Gt, class Tds >
 Bounded_side
 Delaunay_triangulation_3<Gt,Tds>::
 side_of_sphere_finite_perturb(Vertex_handle v0, 
@@ -781,73 +758,71 @@ side_of_sphere_finite_perturb(Vertex_handle v0,
   if ( bs != ON_BOUNDARY )
       return bs;
 
-  int i0 = v0->get_order_of_creation();
-  int i1 = v1->get_order_of_creation();
-  int i2 = v2->get_order_of_creation();
-  int i3 = v3->get_order_of_creation();
-  int i = v->get_order_of_creation();
+  // Array of the 5 vertices.
+  Vertex_handle vertices[5] = {v0, v1, v2, v3, v};
+
+  // We sort them by order_of_creation order (later it will be lexicographic).
+  std::sort(vertices, vertices+5,
+	    Vertex_tds_compare_order_of_creation<Vertex_handle>() );
+
   Orientation o;
 
-  int m = std::max(i0,std::max(i1,std::max(i2,std::max(i3,i))));
   // we look whether the leading monomial of the determinant has non null 
   // coefficient 
-  if (m == i) 
+  if (vertices[4] == v) 
     return ON_UNBOUNDED_SIDE;
   // since p0 p1 p2 p3 are supposed to be non coplanar and positively oriented
-  if (m == i3 && (o = orientation(p0,p1,p2,p)) != ZERO )
+  if (vertices[4] == v3 && (o = orientation(p0,p1,p2,p)) != ZERO )
     return Bounded_side(o);
-  if (m == i2 && (o = orientation(p0,p1,p3,p)) != ZERO )
+  if (vertices[4] == v2 && (o = orientation(p0,p1,p3,p)) != ZERO )
     return Bounded_side(-o);
-  if (m == i1 && (o = orientation(p0,p2,p3,p)) != ZERO )
+  if (vertices[4] == v1 && (o = orientation(p0,p2,p3,p)) != ZERO )
     return Bounded_side(o);
-  if (m == i0 && (o = orientation(p1,p2,p3,p)) != ZERO )
+  if (vertices[4] == v0 && (o = orientation(p1,p2,p3,p)) != ZERO )
     return Bounded_side(-o);
 
   // if not yet returned, then the leading monomial of the determinant
   // has null coefficient 
   // we look whether the 2nd monomial has non null coefficient 
-  m = maxless(i0,i1,i2,i3,i,m);
-  if (m == i) 
+  if (vertices[3] == v) 
     return ON_UNBOUNDED_SIDE;
-  if (m == i3 && (o = orientation(p0,p1,p2,p)) != ZERO )
+  if (vertices[3] == v3 && (o = orientation(p0,p1,p2,p)) != ZERO )
     return Bounded_side(o);
-  if (m == i2 && (o = orientation(p0,p1,p3,p)) != ZERO )
+  if (vertices[3] == v2 && (o = orientation(p0,p1,p3,p)) != ZERO )
     return Bounded_side(-o);
-  if (m == i1 && (o = orientation(p0,p2,p3,p)) != ZERO )
+  if (vertices[3] == v1 && (o = orientation(p0,p2,p3,p)) != ZERO )
     return Bounded_side(o);
-  if (m == i0 && (o = orientation(p1,p2,p3,p)) != ZERO )
+  if (vertices[3] == v0 && (o = orientation(p1,p2,p3,p)) != ZERO )
     return Bounded_side(-o);
 
   // we look whether the 3rd monomial also has non null coefficient 
-  m = maxless(i0,i1,i2,i3,i,m);
-  if (m == i) 
+  if (vertices[2] == v) 
     return ON_UNBOUNDED_SIDE;
-  if (m == i3 && (o = orientation(p0,p1,p2,p)) != ZERO )
+  if (vertices[2] == v3 && (o = orientation(p0,p1,p2,p)) != ZERO )
     return Bounded_side(o);
-  if (m == i2 && (o = orientation(p0,p1,p3,p)) != ZERO )
+  if (vertices[2] == v2 && (o = orientation(p0,p1,p3,p)) != ZERO )
     return Bounded_side(-o);
-  if (m == i1 && (o = orientation(p0,p2,p3,p)) != ZERO )
+  if (vertices[2] == v1 && (o = orientation(p0,p2,p3,p)) != ZERO )
     return Bounded_side(o);
-  if (m == i0 && (o = orientation(p1,p2,p3,p)) != ZERO )
+  if (vertices[2] == v0 && (o = orientation(p1,p2,p3,p)) != ZERO )
     return Bounded_side(-o);
 
   // we look whether the 4th monomial also has non null coefficient 
-  m = maxless(i0,i1,i2,i3,i,m);
-  if (m == i) 
+  if (vertices[1] == v) 
     return ON_UNBOUNDED_SIDE;
-  if (m == i3 && (o = orientation(p0,p1,p2,p)) != ZERO )
+  if (vertices[1] == v3 && (o = orientation(p0,p1,p2,p)) != ZERO )
     return Bounded_side(o);
-  if (m == i2 && (o = orientation(p0,p1,p3,p)) != ZERO )
+  if (vertices[1] == v2 && (o = orientation(p0,p1,p3,p)) != ZERO )
     return Bounded_side(-o);
-  if (m == i1 && (o = orientation(p0,p2,p3,p)) != ZERO )
+  if (vertices[1] == v1 && (o = orientation(p0,p2,p3,p)) != ZERO )
     return Bounded_side(o);
-  if (m == i0 && (o = orientation(p1,p2,p3,p)) != ZERO )
+  if (vertices[1] == v0 && (o = orientation(p1,p2,p3,p)) != ZERO )
     return Bounded_side(-o);
 
   // case when the first non null coefficient is the coefficient of 
   // the 5th monomial
-  // moreover, the tests (m == i) were false up to here, so the
-  // monomial corresponding to i is the only monomial with non-zero
+  // moreover, the tests (vertices[] == v) were false up to here, so the
+  // monomial corresponding to v is the only monomial with non-zero
   // coefficient, it is equal to orient(p0,p1,p2,p3) == positive 
   // so, no further test is required
   return ON_UNBOUNDED_SIDE; 
