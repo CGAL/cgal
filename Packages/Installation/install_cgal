@@ -42,7 +42,7 @@
 # CGAL specific:
 
 # ---------------------------------------------
-CGAL_VERSION='2.5'
+CGAL_VERSION='3.0'
 # ---------------------------------------------
 CGAL_INSTALL_CGAL="`basename ${0}`"
 # ---------------------------------------------
@@ -835,6 +835,39 @@ set_compiler_flags()
 	    MATH_LIB=
 	    START_LD_OPT="-link "
 	    ;;
+	*ICL.*|*icl.*)
+	    #### settings Intel C++ compiler 
+	    WINDOWS_COMPILER="y"
+	    CYGWIN_COMPILER="y"
+	    ADDITIONAL_CXXFLAGS="-TP -GR -GX -Zm900 -MLd -nologo"
+	    ADDITIONAL_LDFLAGS="-nologo"
+#	    CGAL_LIB_CXXFLAGS="-TP"
+	    CGAL_QT_CXXFLAGS="-DQT_DLL -DQT_THREAD_SUPPORT"
+	    CGAL_LIB_CREATE="LIB /OUT:"
+	    CGAL_SHARED_LIB_CXXFLAGS=
+	    CGAL_SHARED_LIB_CREATE=
+	    WINDOW_DIR=
+	    XLIBS="ws2_32.lib user32.lib gdi32.lib comdlg32.lib shell32.lib advapi32.lib"
+	    SUFFIX_LIST=".obj .exe"
+	    OBJ_EXT=".obj"
+	    LIB_SUFFIX=".lib"
+	    REMOVE_EXT_LIST=".obj"
+	    LIB_OPT=""
+            LEDA_LIB_OPT="lib"
+	    LIBPATH_OPT="-LIBPATH:"
+	    DEBUG_OPT="-Z7"
+	    EXE_OPT="-Fp"
+	    SAVE_THE_BLANK=""
+	    EXE_EXT=".exe"
+	    CGAL_LIBNAME="CGAL.lib"
+	    CGAL_WIN_LIBNAME="CGALWin.lib"
+	    CGAL_QT_LIBNAME="CGALQt.lib"
+	    CGAL_WIN_EXTRA_DIR=mswin
+	    GMP_LIBNAME="gmp.lib"
+	    GMPXX_LIBNAME="gmpxx.lib"
+	    MATH_LIB=
+	    START_LD_OPT="-link "
+	    ;;
 	*IRIX*5.*CC*)
 	    #### settings for sgi mipspro compiler on irix5
 	    CGAL_SHARED_LIB_CXXFLAGS=
@@ -957,6 +990,7 @@ set_compiler_flags()
     # version specific adjustments for msvc
     case ${CGAL_OS_COMPILER} in
 	*CL.*-1300*) ADDITIONAL_CXXFLAGS="${ADDITIONAL_CXXFLAGS}";;
+	*ICL.*|*icl.*) ADDITIONAL_CXXFLAGS="${ADDITIONAL_CXXFLAGS} `include_dir_option D:/vc7/include`";;
 	*CL.*|*cl.*) ADDITIONAL_CXXFLAGS="${ADDITIONAL_CXXFLAGS} `include_dir_option ${CGAL_DIR}/stlport`";;
     esac
 }
@@ -1808,6 +1842,17 @@ int main()
     output_first_ciff_separate(__MWERKS__, 16);
     CGAL_STDCOUT << CGAL_STDENDL;
 # endif // (__MWERKS__ == 1)
+#elif defined(__INTEL_COMPILER)
+  // Intel Compiler
+  CGAL_STDCOUT << "Intel@" <<     __INTEL_COMPILER / 100;
+    CGAL_STDCOUT << CGAL_STDENDL;
+#elif defined(__KCC)
+  // KAI CC
+  CGAL_STDCOUT << "KAI CC@";
+  output_first_ciff_separate(__KCC_VERSION / 100, 10);
+  if (__KCC_VERSION % 100 != 0) 
+    CGAL_STDCOUT << char(__KCC_VERSION % 100 + int('a') - 1);
+  CGAL_STDCOUT << CGAL_STDENDL;
 #elif defined(_MSC_VER)
   // Microsoft Visual C++
   CGAL_STDCOUT << "VC++@" << _MSC_VER << CGAL_STDENDL;
@@ -1824,6 +1869,7 @@ EOF4
     case $1 in
   	*bcc32.exe*|*BCC32*)      EXE_OPT="-P -e";;
 	*CL.*-1300*|*cl.*-1300*)  EXE_OPT="-EHsc -TP -GR -GX -MLd -nologo -Fp";;
+	*ICL.*|*icl.*)              EXE_OPT="-TP -GR -GX -MLd -nologo -Fp";;
 	*CL.*|*cl.*)              EXE_OPT="-TP -GR -GX -MLd -nologo -Fp";;
         *mwcc.exe*|*MWCC*) EXE_OPT="-gccincludes -lang c++ -msgstyle gcc -o ";
     esac
@@ -2081,6 +2127,7 @@ search_for_compilers()
 	    ;;
 	*CYGWIN*)
 	    _search_compiler CL.EXE CL.EXE ''
+	    _search_compiler ICL.EXE ICL.EXE ''
 	    _search_compiler bcc32.exe bcc32.exe ''
 	    _search_compiler mwcc.exe mwcc.exe ''
 	    ;;
@@ -4943,6 +4990,9 @@ install_gmp()
 	    gmpdir="${CGAL_AUX_DIR}/wingmp/gmp-4.0.1"
 	    case `compiler_description` in
 		*VC++*)    _tmp_name=msvc
+			   _tmp_lib=gmp.lib
+			   ;;
+		*Intel*)    _tmp_name=msvc
 			   _tmp_lib=gmp.lib
 			   ;;
 		*Borland*) _tmp_name=bcc
