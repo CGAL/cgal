@@ -32,7 +32,7 @@ template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 template <>
 #endif
 /* CGAL_MEDIUM_INLINE */
-Oriented_side
+Bounded_side
 in_smallest_orthogonalcircleC2(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &px,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &py,
@@ -47,7 +47,7 @@ in_smallest_orthogonalcircleC2(
   FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_UPWARD);
   try
   {
-    Oriented_side result = in_smallest_orthogonalcircleC2(
+    Bounded_side result = in_smallest_orthogonalcircleC2(
 		px.interval(),
 		py.interval(),
 		pw.interval(),
@@ -82,7 +82,7 @@ template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 template <>
 #endif
 /* CGAL_MEDIUM_INLINE */
-Oriented_side
+Bounded_side
 in_smallest_orthogonalcircleC2(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &px,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &py,
@@ -111,7 +111,7 @@ in_smallest_orthogonalcircleC2(
   catch (Interval_nt_advanced::unsafe_comparison)
   {
     FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_TONEAREST);
-    Oriented_side result = in_smallest_orthogonalcircleC2(
+    Bounded_side result = in_smallest_orthogonalcircleC2(
 		px.exact(),
 		py.exact(),
 		pw.exact(),
@@ -135,7 +135,7 @@ struct Static_Filtered_in_smallest_orthogonalcircleC2_9
   static unsigned number_of_failures; // ?
   static unsigned number_of_updates;
 
-  static Oriented_side update_epsilon(
+  static Bounded_side update_epsilon(
 	const Static_filter_error &px,
 	const Static_filter_error &py,
 	const Static_filter_error &pw,
@@ -155,8 +155,8 @@ struct Static_Filtered_in_smallest_orthogonalcircleC2_9
     FT dty = ty-qy;
     FT dpz = square(dpx)+square(dpy);
    
-    return Oriented_side (Static_Filtered_sign_1::update_epsilon((square(dtx)+square(dty)-tw+qw)*dpz
-  			     -(dpz-pw+qw)*(dpx*dtx+dpy*dty),
+    return Bounded_side (CGAL::Static_Filtered_sign_1::update_epsilon(-(square(dtx)+square(dty)-tw+qw)*dpz
+  				  +(dpz-pw+qw)*(dpx*dtx+dpy*dty),
   		epsilon_0));
   }
 
@@ -171,7 +171,7 @@ struct Static_Filtered_in_smallest_orthogonalcircleC2_9
     // TODO: We should verify that all epsilons have really been updated.
   }
 
-  static Oriented_side epsilon_variant(
+  static Bounded_side epsilon_variant(
 	const Restricted_double &px,
 	const Restricted_double &py,
 	const Restricted_double &pw,
@@ -191,8 +191,8 @@ struct Static_Filtered_in_smallest_orthogonalcircleC2_9
     FT dty = ty-qy;
     FT dpz = square(dpx)+square(dpy);
    
-    return Oriented_side (Static_Filtered_sign_1::epsilon_variant((square(dtx)+square(dty)-tw+qw)*dpz
-  			     -(dpz-pw+qw)*(dpx*dtx+dpy*dty),
+    return Bounded_side (CGAL::Static_Filtered_sign_1::epsilon_variant(-(square(dtx)+square(dty)-tw+qw)*dpz
+  				  +(dpz-pw+qw)*(dpx*dtx+dpy*dty),
   		epsilon_0));
   }
 };
@@ -203,7 +203,7 @@ template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 template <>
 #endif
 /* CGAL_MEDIUM_INLINE */
-Oriented_side
+Bounded_side
 in_smallest_orthogonalcircleC2(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &px,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &py,
@@ -286,7 +286,7 @@ template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 template <>
 #endif
 /* CGAL_MEDIUM_INLINE */
-Oriented_side
+Bounded_side
 in_smallest_orthogonalcircleC2(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &px,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &py,
