@@ -7,6 +7,7 @@
 //	actual revision
 //---------------------------------------------------------------------
 
+ALL : Fixed _Random_generator stuff (now without leading underscore).
 DEMO: Added check for CGAL_USE_LEDA.
 DOCS: Added distance_object() to afn-spec.
 SRC : Fixed more ledaing underscores.
