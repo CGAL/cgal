@@ -69,20 +69,20 @@ void handleComment( const Text& T) {
 }
 
 void handleClass( const char* classname) {
-    cout << newline;
-    cout << "class " << classname << " {" << newline;
-    cout << "public:" << newline;
+    cout << indNewline;
+    cout << "class " << classname << " {" << indNewline;
+    cout << "public:" << indNewline;
     cout << indent;
 }
 
 void handleClassEnd( void) {
     cout << outdent;
-    cout << newline;
-    cout << "}" << newline;
+    cout << indNewline;
+    cout << "}" << indNewline;
 }
 
 void handleClassTemplate( const char* classname) {
-    cout << newline;
+    cout << indNewline;
     cout << "template < class ";
     const char* s = classname;
     while ( *s != 0 && *s != '<') s++;
@@ -117,37 +117,37 @@ void handleClassTemplate( const char* classname) {
 	if ( nesting >= 0)
 	    printErrorMessage( MalformedTemplateParamError);
     }
-    cout << " >" << newline;
+    cout << " >" << indNewline;
     cout << "class ";
     s = classname;
     while ( *s != 0 && *s != '<') {
         cout << *s;
 	s++;
     }
-    cout << " {" << newline;
-    cout << "public:" << newline;
+    cout << " {" << indNewline;
+    cout << "public:" << indNewline;
     cout << indent;
 }
 
 void handleClassTemplateEnd( void) {
     cout << outdent;
-    cout << newline;
-    cout << "}" << newline;
+    cout << indNewline;
+    cout << "}" << indNewline;
 }
 
 
 void handleDeclaration( const char* decl) {
-    cout << endl << newline;
+    cout << endl << indNewline;
     cout << decl;
 }
 
 void handleFunctionDeclaration( const char* decl) {
-    cout << endl << newline;
+    cout << endl << indNewline;
     cout << decl;
 }
 
 void handleFunctionTemplateDeclaration( const char* templ, const char* decl) {
-    cout << endl << newline;
+    cout << endl << indNewline;
     cout << "template < class ";
     const char* s = templ;
     int nesting = 0;
@@ -176,7 +176,7 @@ void handleFunctionTemplateDeclaration( const char* templ, const char* decl) {
     }
     if ( nesting != 0)
         printErrorMessage( MalformedTemplateParamError);
-    cout << " >" << newline;
+    cout << " >" << indNewline;
     cout << decl;
 }
 

@@ -44,6 +44,7 @@ void yyparse();
 /* ========================== */
 void init_scanner( FILE* in);
 extern int line_number;
+extern int unchecked_tag;
 
 /* Name the scanned file */
 /* ===================== */
@@ -78,7 +79,7 @@ const char* patternText( char c, char d = 'X') {
     case '\t':
     case '\r':
     case '\n':
-        return "\"{ws}+\"";
+        return "\"{ws}*\"";
     case '\\':
         return "\\\\";
     case '"':
@@ -173,11 +174,13 @@ void printProlog( ostream& out_pattern, ostream& out_errmessage) {
     out_pattern << "%x FUNNEL" << endl;
     out_pattern << endl;
     out_pattern << "/* A couple of abbreviations */" << endl;
-    out_pattern << "ws                   [ \\t\\n\\r]" << endl;
-    out_pattern << "optionalclass        {ws}*(class{ws}*)?" << endl;
-    out_pattern << "optionalkeywords     ([a-z]+{ws}+)*" << endl;
     out_pattern << "cccomment            \"//\".*$" << endl;
+    out_pattern << "cccommentnl          \"//\".*[\\n]" << endl;
     out_pattern << "fwcomment            [@][!].*$" << endl;
+    out_pattern << "ws                   [ \\t\\n\\r]|{cccommentnl}" << endl;
+    out_pattern << "nol                  [^a-zA-Z0-9_]" << endl;
+    out_pattern << "optionalclass        {ws}*(class{ws}*)?" << endl;
+    out_pattern << "optionalkeywords     ([a-z]+({ws}+[a-z]+)*)?" << endl;
     out_pattern << endl;
     out_pattern << "%%" << endl;
     out_pattern << "    /* The matching rules */" << endl;
@@ -344,8 +347,13 @@ void printEpilog( ostream& out_pattern, ostream& out_errmessage) {
     out_errmessage << "/* EOF */" << endl;
 }
 
+// Simplify the pattern: remove redundent sequences of "" and white spaces
+//------------------------------------------------------------------------
 void printReducedPattern( ostream& out_pattern, const char* s, int l) {
     // checks for multiple {ws}* and "" occurences.
+    bool ws_plus = false;
+    if ( l > 2 && s[l-1] == '"' && s[l-2] == '"')
+        l -= 2;
     for ( int i=0; i<l; i++) {
         if ( i<l-1 && s[i] == '"' && s[i+1] == '"')
 	    i ++;
@@ -354,39 +362,49 @@ void printReducedPattern( ostream& out_pattern, const char* s, int l) {
 		  && s[i+1] == 'w'
 		  && s[i+2] == 's'
 		  && s[i+3] == '}'
-		  && s[i+4] == '*'
 		  && s[i+5] == '"'
 		  && s[i+6] == '"'
 		  && s[i+7] == '{'
 		  && s[i+8] == 'w'
 		  && s[i+9] == 's'
 		  && s[i+10] == '}'
-		  && s[i+11] == '*')
+		  && ( s[i+4]  == '*' || s[i+4]  == '+')
+		  && ( s[i+11] == '*' || s[i+11] == '+'))
+	{
+	    if ( s[i+4] == '+' && ! ws_plus) {
+	        out_pattern << "{ws}+";
+		ws_plus = true;
+	    }
 	    i += 6;
-	else if ( i+11 < l
+	} else if ( i+4 < l
 		  && s[i] == '{'
 		  && s[i+1] == 'w'
 		  && s[i+2] == 's'
 		  && s[i+3] == '}'
-		  && s[i+4] == '+'
-		  && s[i+5] == '"'
-		  && s[i+6] == '"'
-		  && s[i+7] == '{'
-		  && s[i+8] == 'w'
-		  && s[i+9] == 's'
-		  && s[i+10] == '}'
-		  && s[i+11] == '*') {
-	    i += 11;
-	    out_pattern << "{ws}+";
-	} else
+		  && ( s[i+4]  == '*' || s[i+4]  == '+'))
+	 {
+	     if ( i+5 < l && ! ws_plus) {
+	         out_pattern << "{ws}" << s[i+4];
+		 ws_plus = (s[i+4] == '+');
+	     }
+	     i += 4;
+	 } else {
 	    out_pattern << s[i];
+	    ws_plus = false;
+	}
     }
 }
 
+// Print a simple declaration, results in a single matching rule
+// -------------------------------------------------------------
 void printPattern( ostream& out_pattern, 
 		   ostream& out_errmessage,
 		   Buffer *err,
 		   Buffer *pat = 0) {
+    if ( unchecked_tag) {
+        unchecked_tag = 0;
+	return;
+    }
     int i;
     int l = err->length();
     const char *str = err->string();
@@ -419,11 +437,19 @@ void printPattern( ostream& out_pattern,
     n_pattern++;
 } 
 
+// Print a function declaration, results in two matching rules,
+// one for the exact match and one for possibly trailing
+// default parameters.
+// -------------------------------------------------------------
 void printFunctionPattern( ostream& out_pattern, 
 			   ostream& out_errmessage,
 			   Buffer *err,
 			   Buffer *pat  = 0,
 			   Buffer *pat2 = 0) {
+    if ( unchecked_tag) {
+        unchecked_tag = 0;
+	return;
+    }
     int  i;
     bool default_params = false;
     bool nonzero_param_list = false;
@@ -581,8 +607,7 @@ void handleClassTemplate( const char* classname) {
 	pattern->add(    *s);
 	s++;
     }
-    errmessage->add( ' ');
-    pattern->add(    "\"{ws}+");
+    pattern->add(    "\"{nol}");
     printPattern( *p_out_pattern, *p_out_errmessage, errmessage, pattern);
 }
 
@@ -643,7 +668,7 @@ void handleFunctionTemplateDeclaration( const char* templ, const char* decl) {
 	        if ( nesting == 0) {
 		    errmessage->add( *s);
 		    errmessage->add( " ...");
-		    pattern->add(    ",\"{classopt}\"");
+		    pattern->add(    "\"{ws}*\",\"{optionalclass}\"");
 		} else {
 		    errmessage->add( *s);
 		    pattern->add(    patternText( *s, s[1]));
@@ -659,7 +684,7 @@ void handleFunctionTemplateDeclaration( const char* templ, const char* decl) {
     if ( nesting != 0)
         printErrorMessage( MalformedTemplateParamError);
     errmessage->add( "> ... ");
-    pattern->add(    ">\"{optionalkeywords}\"");
+    pattern->add(    "\"{ws}*\">\"{ws}*{optionalkeywords}{ws}*\"");
 
     int l = strlen( decl);
     while ( l > 0 && decl[ l-1] == ' ') l--;
