@@ -1,3 +1,27 @@
+30 May 2004:  Menelaos Karavelas
+- added test suite for one-level and hierarchy algorithms
+Documentation:
+- added spec for the draw_dual_edge method that takes an edge circulator
+- added specs for the draw_dual_edge method that takes an edge
+  iterator (either All_edges_iterator or Finite_edges_iterator)
+- removed preconditions that were not preconditions in draw_dual_edge
+Code:
+- Segment_Voronoi_diagram_2 class: added draw_dual_edge methods
+  that take edge iterators and circulators
+- Segment_Voronoi_diagram_2 class: fixed bug in swap method
+- Segment_Voronoi_diagram_2 class: fixed bug in insertion of a segment
+- Segment_Voronoi_diagram_2 class: renamed the ds() method to
+  data_structure() so that it conforms with the doc
+- Segment_Voronoi_diagram_2 class: added code for copy constructor and
+  assignment operator
+- Simple_container_wrapper class: added type for const_iterator
+- Simple_container_wrapper class: added begin() and end() methods
+- fixed bug in traits related to the usage Filtered_exact as the
+  number type
+- added constructor in hierarchy that takes two input interators
+- fixed bugs in copy constructor, assignment operator and swap method
+  of the segment Voronoi hierarchy class
+
 27 May 2004:  Menelaos Karavelas
 - added the method
      Vertex_handle  insert(const Site_2& t, Vertex_handle vnear);
