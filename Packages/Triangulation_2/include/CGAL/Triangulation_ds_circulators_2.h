@@ -142,7 +142,7 @@ public:
   bool is_empty() const;
   bool operator==(CGAL_NULL_TYPE n) const;
   bool operator!=(CGAL_NULL_TYPE n) const;
-};
+ };
 
 
 template < class Vertex, class Face >

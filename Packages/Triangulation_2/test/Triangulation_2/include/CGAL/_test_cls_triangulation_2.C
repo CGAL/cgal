@@ -712,13 +712,13 @@ _test_cls_triangulation_2( const Triangulation & )
   assert( T2_1.number_of_vertices() == 0 );
 
   T2_3.remove(v2_3_0); assert(T2_3.is_valid());
-  T2_3.remove(v2_3_1);
-  T2_3.remove(v2_3_9);
-  T2_3.remove(v2_3_8);
-  T2_3.remove(v2_3_5);
-  T2_3.remove(v2_3_3);
-  T2_3.remove(v2_3_4);
-  T2_3.remove(v2_3_2);
+  T2_3.remove(v2_3_1); assert(T2_3.is_valid());
+  T2_3.remove(v2_3_9); assert(T2_3.is_valid());
+  T2_3.remove(v2_3_8); assert(T2_3.is_valid()); 
+  T2_3.remove(v2_3_5); assert(T2_3.is_valid()); 
+  T2_3.remove(v2_3_3); assert(T2_3.is_valid());
+  T2_3.remove(v2_3_4); assert(T2_3.is_valid());
+  T2_3.remove(v2_3_2); assert(T2_3.is_valid());
   T2_3.remove(v2_3_6); assert(T2_3.is_valid());
   T2_3.remove(v2_3_7); assert(T2_3.is_valid()); 
   T2_3.remove(v2_3_10); assert(T2_3.is_valid());

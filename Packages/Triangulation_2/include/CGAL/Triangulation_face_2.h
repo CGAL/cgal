@@ -80,7 +80,7 @@ public:
  
   // Vertex access functions
   Vertex_handle vertex(int i) const;
-  Vertex_handle opposite_vertex(int i) const;
+  Vertex_handle mirror_vertex(int i) const;
   bool has_vertex(const Vertex_handle& v) const;
   bool has_vertex(const Vertex_handle& v, int& i) const;
   int index(const Vertex_handle& v) const;
@@ -90,7 +90,7 @@ public:
   int index(const Face_handle& f) const;
   bool has_neighbor(const Face_handle& f) const;
   bool has_neighbor(const Face_handle& f, int &i) const;
-  int opposite_index(int i) const;
+  int mirror_index(int i) const;
   Face_handle handle() const;
   
   //Setting
@@ -120,9 +120,9 @@ template < class Gt, class Tds >
 inline
 Triangulation_vertex_handle_2<Gt,Tds>
 Triangulation_face_2<Gt,Tds>::
-opposite_vertex(int i) const
+mirror_vertex(int i) const
 {
-  return ((Vertex *)(Fa::opposite_vertex(i)));
+  return ((Vertex *)(Fa::mirror_vertex(i)));
 }
  
 template < class Gt, class Tds >
@@ -193,9 +193,9 @@ template < class Gt, class Tds >
 inline
 int
 Triangulation_face_2<Gt,Tds>::
-opposite_index(int i) const
+mirror_index(int i) const
 {
-  return Fa::opposite_index(i);
+  return Fa::mirror_index(i);
 }
 
 template < class Gt, class Tds >

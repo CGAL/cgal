@@ -38,7 +38,7 @@
 
 int main()
 {
-  std::cout << "Testing Triangulation_2 " << std::endl; 
+ //  std::cout << "Testing Triangulation_2 " << std::endl; 
   std::cout << " with Euclidean_traits_2<Cartesian> : " << std::endl ;
   typedef CGAL::Triangulation_euclidean_traits_2<Test_rep_cartesian> Gt1;
   typedef CGAL::Triangulation_vertex_base_2<Gt1>                     Vb1;

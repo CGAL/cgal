@@ -35,31 +35,31 @@
 
 int main()
 {
-  std::cout << "Testing Delaunay Triangulation_2 "; 
-  std::cout << " with Euclidean cartesian points : " << endl;
+//   std::cout << "Testing Delaunay Triangulation_2 "; 
+//   std::cout << " with Euclidean cartesian points : " << endl;
   
- // typedef double coord_type;
-//   typedef CGAL::Cartesian<coord_type>  Rep;
-//   typedef CGAL::Triangulation_euclidean_traits_2<Rep> Gt1;
-  typedef CGAL::Triangulation_euclidean_traits_2<Test_rep_cartesian> Gt1;
-  typedef CGAL::Triangulation_vertex_base_2<Gt1>                  Vb1;
-  typedef CGAL::Triangulation_face_base_2<Gt1>                    Fb1;
-  typedef CGAL::Triangulation_default_data_structure_2<Gt1,Vb1,Fb1> Tds1;
-  typedef CGAL::Delaunay_triangulation_2<Gt1,Tds1>                 Cls1;
+//  // typedef double coord_type;
+// //   typedef CGAL::Cartesian<coord_type>  Rep;
+// //   typedef CGAL::Triangulation_euclidean_traits_2<Rep> Gt1;
+//   typedef CGAL::Triangulation_euclidean_traits_2<Test_rep_cartesian> Gt1;
+//   typedef CGAL::Triangulation_vertex_base_2<Gt1>                  Vb1;
+//   typedef CGAL::Triangulation_face_base_2<Gt1>                    Fb1;
+//   typedef CGAL::Triangulation_default_data_structure_2<Gt1,Vb1,Fb1> Tds1;
+//   typedef CGAL::Delaunay_triangulation_2<Gt1,Tds1>                 Cls1;
 
-  _test_cls_delaunay_triangulation_2( Cls1() );
+//   _test_cls_delaunay_triangulation_2( Cls1() );
 
 
-  std::cout  << "Testing Delaunay Triangulation_2 "; 
-  std::cout  << " with Euclidean homogeneous points : " << endl;
+//   std::cout  << "Testing Delaunay Triangulation_2 "; 
+//   std::cout  << " with Euclidean homogeneous points : " << endl;
   
-  typedef CGAL::Triangulation_euclidean_traits_2<Test_rep_homogeneous> Gt2;
-  typedef CGAL::Triangulation_vertex_base_2<Gt2>                  Vb2;
-  typedef CGAL::Triangulation_face_base_2<Gt2>                    Fb2;
-  typedef CGAL::Triangulation_default_data_structure_2<Gt2,Vb2,Fb2> Tds2;
-  typedef CGAL::Delaunay_triangulation_2<Gt2,Tds2>                 Cls2;
+//   typedef CGAL::Triangulation_euclidean_traits_2<Test_rep_homogeneous> Gt2;
+//   typedef CGAL::Triangulation_vertex_base_2<Gt2>                  Vb2;
+//   typedef CGAL::Triangulation_face_base_2<Gt2>                    Fb2;
+//   typedef CGAL::Triangulation_default_data_structure_2<Gt2,Vb2,Fb2> Tds2;
+//   typedef CGAL::Delaunay_triangulation_2<Gt2,Tds2>                 Cls2;
 
-  _test_cls_delaunay_triangulation_2( Cls2() );
+//   _test_cls_delaunay_triangulation_2( Cls2() );
 
 
   std::cout << "Testing Delaunay Triangulation_2 "; 

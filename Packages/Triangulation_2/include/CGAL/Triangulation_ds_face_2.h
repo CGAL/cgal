@@ -67,7 +67,7 @@ public:
  
   //Vertex Access Member Functions
   Vertex* vertex(int i) const;
-  Vertex* opposite_vertex(int i) const;
+  Vertex* mirror_vertex(int i) const;
   bool has_vertex(const Vertex* v) const;
   bool has_vertex(const Vertex* v, int& i) const;
   int index(const Vertex* v) const;
@@ -77,7 +77,7 @@ public:
   bool has_neighbor(const Face* n) const;
   bool has_neighbor(const Face* n, int& i) const;
   int index(const Face* n) const;
-  int opposite_index(int i) const;
+  int mirror_index(int i) const;
 
   //Miscelleanous
   bool is_valid(bool verbose = false, int level = 0) const;
@@ -133,7 +133,7 @@ template < class Vb, class Fb >
 inline
 Triangulation_ds_vertex_2<Vb,Fb> *
 Triangulation_ds_face_2<Vb,Fb>::
-opposite_vertex(int i) const
+mirror_vertex(int i) const
 {
   CGAL_triangulation_precondition ( neighbor(i) != NULL);
   return neighbor(i)->vertex(neighbor(i)->index(this));
@@ -142,7 +142,7 @@ opposite_vertex(int i) const
 template < class Vb, class Fb >
 inline int
 Triangulation_ds_face_2<Vb,Fb>::
-opposite_index(int i) const
+mirror_index(int i) const
 {
   CGAL_triangulation_precondition (neighbor(i) != NULL);
   return neighbor(i)->index(this);

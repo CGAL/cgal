@@ -133,15 +133,15 @@ _test_cls_tds_face( const Face &, const Gt & )
   assert( f4.neighbor(1) == &f2 );
   assert( f4.neighbor(2) == &f3 );
 
-  //Test opposite_vertex() opposite_index()
-  assert( f4.opposite_vertex(0) == &v4);
-  assert( f1.opposite_vertex(0) == &v1);
-  assert( f2.opposite_vertex(1) == &v2);
-  assert( f3.opposite_vertex(2) == &v3);
-  assert( f4.opposite_index(0) == 0);
-  assert( f1.opposite_index(0) == 0);
-  assert( f2.opposite_index(1) == 1);
-  assert( f3.opposite_index(2) == 2);
+  //Test mirror_vertex() mirror_index()
+  assert( f4.mirror_vertex(0) == &v4);
+  assert( f1.mirror_vertex(0) == &v1);
+  assert( f2.mirror_vertex(1) == &v2);
+  assert( f3.mirror_vertex(2) == &v3);
+  assert( f4.mirror_index(0) == 0);
+  assert( f1.mirror_index(0) == 0);
+  assert( f2.mirror_index(1) == 1);
+  assert( f3.mirror_index(2) == 2);
 
   // Test is_valid
   assert( f4.is_valid() );
@@ -173,10 +173,10 @@ _test_cls_tds_face( const Face &, const Gt & )
   assert (h1.dimension() == 0);
   assert (h1.is_valid()); 
 
-  assert(g1.opposite_vertex(0) == &v1);
-  assert(g1.opposite_vertex(1) == &v1);
-  assert(g1.opposite_index(0) == 1);
-  assert(g1.opposite_index(1) == 0);
+  assert(g1.mirror_vertex(0) == &v1);
+  assert(g1.mirror_vertex(1) == &v1);
+  assert(g1.mirror_index(0) == 1);
+  assert(g1.mirror_index(1) == 0);
 
   return;
 }

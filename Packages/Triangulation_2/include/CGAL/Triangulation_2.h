@@ -261,6 +261,12 @@ protected:
   void remove_2D(Vertex_handle v);
   bool test_dim_down(Vertex_handle v);
   void make_hole ( Vertex_handle v, std::list<Edge> & hole);
+  Face_handle add_face(Face_handle f1, int i1,
+		       Face_handle f2, int i2,
+		       Face_handle f3, int i3);
+  Face_handle add_face(Face_handle f1, int i1,
+		       Face_handle f2, int i2);
+  Face_handle add_face(Face_handle f, int i, Vertex_handle v);
   Vertex_handle file_input(std::istream& is);
   void file_output(std::ostream& os) const;
 
@@ -270,7 +276,6 @@ private:
   void   fill_hole ( Vertex_handle v, std::list<Edge> & hole);
 
 public:
-#ifndef CGAL_CFG_NO_MEMBER_TEMPLATES
 template < class Stream >
 Stream&  draw_triangulation(Stream& os) const 
 {
@@ -280,69 +285,17 @@ Stream&  draw_triangulation(Stream& os) const
   }
   return os;
 }
-#endif
 
-#ifndef CGAL_CFG_NO_MEMBER_TEMPLATES
-    template < class InputIterator >
-    int insert(InputIterator first, InputIterator last)
-    {
-        int n = number_of_vertices();
-        while(first != last){
-            insert(*first);
-            ++first;
-        }
-        return number_of_vertices() - n;
-    }
-#else
-#if defined(LIST_H) || defined(__SGI_STL_LIST_H)
-    int insert(std::list<Point>::const_iterator first,
-               std::list<Point>::const_iterator last)
-    {
-        int n = number_of_vertices();
-        while(first != last){
-            insert(*first);
-            ++first;
-        }
-        return number_of_vertices() - n;
-    }
-#endif // LIST_H
-#if defined(VECTOR_H) || defined(__SGI_STL_VECTOR_H)
-    int insert(std::vector<Point>::const_iterator first,
-               std::vector<Point>::const_iterator last)
-    {
-        int n = number_of_vertices();
-        while(first != last){
-            insert(*first);
-            ++first;
-        }
-        return number_of_vertices() - n;
-    }
-#endif // VECTOR_H
-  //#ifdef ITERATOR_H
-    int insert(std::istream_iterator<Point, std::ptrdiff_t> first,
-               std::istream_iterator<Point, std::ptrdiff_t> last)
-    {
-        int n = number_of_vertices();
-        while(first != last){
-            insert(*first);
-            ++first;
-        }
-        return number_of_vertices() - n;
-    }
-  //#endif // ITERATOR_H
-    int insert(Point* first,
-               Point* last)
-    {
-        int n = number_of_vertices();
-        while(first != last){
-            insert(*first);
-            ++first;
-        }
-        return number_of_vertices() - n;
-    }
-#endif // TEMPLATE_MEMBER_FUNCTIONS
-    
-
+template < class InputIterator >
+int insert(InputIterator first, InputIterator last)
+{
+  int n = number_of_vertices();
+  while(first != last){
+    insert(*first);
+    ++first;
+  }
+  return number_of_vertices() - n;
+}
 
 };
 
@@ -630,10 +583,10 @@ flip(Face_handle& f, int i)
   CGAL_triangulation_precondition( 
     geom_traits().orientation(f->vertex(i)->point(),
 			      f->vertex(cw(i))->point(),
-			      f->opposite_vertex(i)->point()) == RIGHTTURN &&
+			      f->mirror_vertex(i)->point()) == RIGHTTURN &&
     geom_traits().orientation(f->vertex(i)->point(),
 			      f->vertex(ccw(i))->point(),
-			      f->opposite_vertex(i)->point()) == LEFTTURN); 
+			      f->mirror_vertex(i)->point()) == LEFTTURN); 
   _tds.flip( &(*f), i);
   return;
 }
@@ -710,11 +663,11 @@ insert_outside_convex_hull_1(const Point& p, Face_handle f)
   CGAL_triangulation_precondition( is_infinite(f) && dimension()==1);
   CGAL_triangulation_precondition(  
     geom_traits().orientation(
-	     f->opposite_vertex(f->index(infinite_vertex()))->point(),
+	     f->mirror_vertex(f->index(infinite_vertex()))->point(),
 	     f->vertex(1- f->index(infinite_vertex()))->point(),
 	     p) == COLLINEAR &&
     collinear_between( 
-	     f->opposite_vertex(f->index(infinite_vertex()))->point(),
+	     f->mirror_vertex(f->index(infinite_vertex()))->point(),
 	     f->vertex(1- f->index(infinite_vertex()))->point(),
 	     p) );
    Vertex_handle v=static_cast<Vertex*>(_tds.insert_in_edge( &(*f), 2));
@@ -1012,74 +965,56 @@ Triangulation_2<Gt, Tds>::
 fill_hole ( Vertex_handle v, std::list< Edge > & hole )
 {
   typedef std::list<Edge> Hole;
-	
-  Point p = v->point();
+
   Face_handle  ff, fn;
   int ii =0, in =0; 
   Vertex_handle v0, v1, v2;
-  Point   p0, p1, p2;
   Bounded_side side;
-  Orientation or;
-  int nhole;
+  
 
+  //stack algorithm to create faces
+  // create face v0,v1,v2
+  //if v0,v1,v2 are finite vertices
+  // and form a leftturn
+  // and triangle v0v1v2 does not contain v->point()
   if( hole.size() != 3) {
-    //  find the first edge  v0v1 on the hole boundary
-    //  such that
-    //  v0, v1 and the next vertex v2 are all finite
-    //   v0v1v2 is a left turn and
-    //  triangle v0v1v2 does not contain the removed point
-
-    // if found create face v0v1v2
-    // stop when no more faces can be created that way
-                  
-    nhole= hole.size(); 
-    // nhole decount the number of hole edges passed
-    // from the last created edges
-    while (hole.size()>3 && nhole>0) {           
-      //ff  = (Face *) ( (hole.front()).first);
-      ff =  hole.front().first;
-      ii  = (hole.front()).second;
-      hole.pop_front();
-
+    Hole::iterator hit = hole.begin();
+    Hole::iterator next= hit; 
+    while( hit != hole.end() && hole.size() != 3) {
+      ff = (*hit).first;  
+      ii = (*hit).second;
       v0 = ff->vertex(cw(ii));
       v1 = ff->vertex(ccw(ii));
       if( !is_infinite(v0) && !is_infinite(v1)) {
-	//fn  = (Face *) ( (hole.front()).first);
-	fn =  hole.front().first;
-	in  = (hole.front()).second;
-            
-	v2 = fn->vertex(ccw(in));
-	if( !is_infinite(v2)) {
-	  p0 = v0->point();
-	  p1 = v1->point();
-	  p2 = v2->point();
-	  or = geom_traits().orientation(p0,p1,p2);
-	  if ( or  == LEFTTURN) {
-	    side = bounded_side(p0,p1,p2, p);
-	    if( side == ON_UNBOUNDED_SIDE || 
-		(side == ON_BOUNDARY && collinear_between(p0, p, p2)) ) {
-	      //create face
-	      Face_handle  newf = new Face(v0,v1,v2);
-	      newf->set_neighbor(2,ff);
-	      newf->set_neighbor(0,fn);
-	      ff->set_neighbor(ii, newf);
-	      fn->set_neighbor(in,newf);
-	      hole.pop_front();
-	      //hole.push_front(Hole_neighbor(&(*newf),1));
-	      hole.push_front(Edge(newf,1));
-	      nhole = hole.size();
-	      continue;
-	    }
+	next=hit; next++;
+	if(next == hole.end()) next=hole.begin();
+	fn = (*next).first; 
+	in = (*next).second;
+	v2 = fn->vertex(ccw(in));	
+	if ( !is_infinite(v2) &&
+	     geom_traits().orientation(v0->point(), v1->point(), v2->point()) 
+	     == LEFTTURN ) {
+	  side =  bounded_side(v0->point(), v1->point(), v2->point(),
+			       v->point());
+	  if( side == ON_UNBOUNDED_SIDE || 
+	      (side == ON_BOUNDARY && collinear_between(v0->point(), 
+							v->point(), 
+							v2->point()) )) {
+	    //create face
+	    Face_handle  newf = add_face(ff,ii,fn,in); 
+	    Hole::iterator tempo=hit;
+	    hit = hole.insert(hit,Edge(newf,1)); //push newf
+	    hole.erase(tempo); //erase ff
+	    hole.erase(next); //erase fn
+	    if (hit != hole.begin() ) --hit;
+	    continue;
 	  }
 	}
       }
-
-      // not possible to create face v0,v1,v2;
-      //hole.push_back(Hole_neighbor(&(*ff),ii));
-      hole.push_back( Edge (ff,ii));
-      nhole--;
-    }
+      ++hit; 
+    } 
   }
+
   // either the hole has only three edges
   // or all its finite vertices are reflex or flat
   // except may be one vertex whose corresponding ear 
@@ -1087,43 +1022,26 @@ fill_hole ( Vertex_handle v, std::list< Edge > & hole )
 
   // deal with the last leftturn if any
   if(hole.size() != 3) {
-    nhole = hole.size();
-    while ( nhole>0) {
-      //ff = (Face *) ((hole.front()).first);
-      ff = ((hole.front()).first);
-      ii = (hole.front()).second;
-      hole.push_back(hole.front());
-      hole.pop_front();
-      nhole--;
-	  
-      v0 = ff->vertex(cw(ii));
-      v1 = ff->vertex(ccw(ii));
-      if(is_infinite(v0) || is_infinite(v1))  continue;
-
-      //fn = (Face *) ((hole.front()).first);
-      fn = ((hole.front()).first);
-      in = (hole.front()).second;
-      v2 = fn->vertex(ccw(in));
-      if( is_infinite(v2) ) continue;
-      p0 = v0->point();
-      p1 = v1->point();
-      p2 = v2->point();
-      Orientation or = geom_traits().orientation(p0,p1,p2);
-      if ( or  == LEFTTURN) {
-	Face_handle  newf = new Face(v0,v1,v2);
-	newf->set_neighbor(2,ff);
-	newf->set_neighbor(0,fn);
-	ff->set_neighbor(ii, newf);
-	fn->set_neighbor(in,newf);
-	hole.pop_back();
-	hole.pop_front();
-	hole.push_front(Edge(newf,1));
-	break;
-      }
+    Hole::iterator hit=hole.begin();
+    while(hit != hole.end()) {
+      ff = (*hit).first;  ii = (*hit).second;
+      hit++;
+      if(hit != hole.end()) { fn = (*hit).first; in = (*hit).second;}
+      else { fn = ((hole.front()).first); in = (hole.front()).second;}
+      if ( !is_infinite(ff->vertex(cw(ii))) &&
+	   !is_infinite(fn->vertex(cw(in))) &&
+	   !is_infinite(fn->vertex(ccw(in))) &&
+	   geom_traits().orientation(ff->vertex(cw(ii))->point(),
+				     fn->vertex(cw(in))->point(),
+				     fn->vertex(ccw(in))->point()) 
+	   == LEFTTURN) {
+	  add_face(ff,ii,fn,in);
+	  break;
+	}
     }
   }
 
-
+  // deal with a reflex chain of convex hull edges
   if(hole.size() != 3) {
     // look for infinite vertex
     ff = (hole.front()).first;
@@ -1131,49 +1049,65 @@ fill_hole ( Vertex_handle v, std::list< Edge > & hole )
     while ( ! is_infinite(ff->vertex(cw(ii)))){
       hole.push_back(hole.front());
       hole.pop_front();
-      //ff = (Face *)((hole.front()).first);
       ff = (hole.front()).first;
       ii = (hole.front()).second;
     }
     //create faces
     while(hole.size() != 3){
-      //ff = (Face *)((hole.front()).first);
       ff = (hole.front()).first;
-      //ff = ((hole.front()).first)->handle();
       ii = (hole.front()).second;
       hole.pop_front();
-      //fn = (Face *)((hole.front()).first);
       fn = (hole.front()).first;
-      //fn = ((hole.front()).first)->handle();
       in = (hole.front()).second;
       hole.pop_front();
-      Face_handle  newf = new Face(infinite_vertex(),fn->vertex(cw(in)),
-				   fn->vertex(ccw(in)));
-      ff->set_neighbor(ii,newf);
-      fn->set_neighbor(in,newf);
-      newf->set_neighbor(0,fn);
-      newf->set_neighbor(2,ff);
-      //hole.push_front(Hole_neighbor(&(*newf),1));
+      Face_handle  newf = add_face(ff,ii,fn,in);
       hole.push_front(Edge(newf,1));
     }
   }
     
   // now hole has three edges
   Hole::iterator hit;
-  Face_handle  newf = new Face();
   hit = hole.begin();
-  for(int j = 0;j<3;j++) {
-    //ff = (Face *)((*hit).first);
-    ff = (*hit).first;
-    //ff = ((*hit).first)->handle();
-    ii = (*hit).second;
-    hit++;
-    ff->set_neighbor(ii,newf);
-    newf->set_neighbor(j,ff);
-    newf->set_vertex(newf->ccw(j),ff->vertex(ff->cw(ii)));
-  }
+  //  I don't know why the following yelds a segmentation fault
+  //    add_face( (*hit).first, (*hit).second,
+  // 	     (* ++hit).first, (*hit).second,
+  // 	     (* ++hit).first, (*hit).second);
+  ff = (*hit).first;      ii = (*hit).second;
+  fn = (* ++hit).first;   in = (*hit).second;
+  Face_handle f3 = (* ++hit).first;
+  int i3 = (*hit).second;
+  add_face(ff,ii,fn,in,f3,i3);
 }
   
+template <class Gt, class Tds >    
+inline
+Triangulation_2<Gt, Tds>::Face_handle
+Triangulation_2<Gt, Tds>::
+add_face(Face_handle f1, int i1,
+	 Face_handle f2, int i2,
+	 Face_handle f3, int i3)
+{
+  return static_cast<Face*>(_tds.add_face(&(*f1),i1, &(*f2),i2, &(*f3),i3));
+}
+
+template <class Gt, class Tds >    
+inline
+Triangulation_2<Gt, Tds>::Face_handle
+Triangulation_2<Gt, Tds>::
+add_face(Face_handle f1, int i1,
+	 Face_handle f2, int i2)
+{
+  return static_cast<Face*>(_tds.add_face(&(*f1),i1, &(*f2),i2));
+}
+
+template <class Gt, class Tds >    
+inline
+Triangulation_2<Gt, Tds>::Face_handle
+Triangulation_2<Gt, Tds>::
+add_face(Face_handle f, int i, Vertex_handle v)
+{
+  return static_cast<Face*>(_tds.add_face(&(*f),i, &(*v)));
+}
 
 
 // POINT LOCATION

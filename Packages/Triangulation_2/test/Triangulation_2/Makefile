@@ -6,8 +6,8 @@
 
 
 
-#CGAL_MAKEFILE = /u/alcor/0/prisme_util/CGAL/CGAL-I/make/makefile_i686_Linux-2.2.7_eg++-egcs-2.91.66_LEDA
-CGAL_MAKEFILE = /u/alcor/0/prisme_util/CGAL/CGAL-2.1-I-11/make/makefile_i686_Linux-2.2.7_g++-2.95._LEDA/
+#CGAL_MAKEFILE = /0/prisme_util/CGAL/CGAL-I/make/makefile_i686_Linux-2.2.7_eg++-egcs-2.91.66_LEDA
+CGAL_MAKEFILE = /0/prisme_util/CGAL/CGAL-I/make/makefile_i686_Linux-2.2.7_g++-2.95._LEDA/
 include $(CGAL_MAKEFILE)
 
 
@@ -20,16 +20,7 @@ CXXFLAGS = \
 	-I./include \
 	$(TESTSUITE_CXXFLAGS) \
 	$(CGAL_CXXFLAGS)\
-	-DCGAL_NO_PRECONDITIONS -DCGAL_NO_ASSERTIONS -DCGAL_NO_POSTCONDITIONS
-#	-O
-#	-g 
-#	-B$(UTIL)/Binutils/SunOS/bin/ 
-#	$(LONG_NAME_PROBLEM_CXXFLAGS) 
-#	-g \
-#       -B$(UTIL)/Binutils/SunOS/bin/ 
-#	-DCGAL_NO_PRECONDITIONS -DCGAL_NO_ASSERTIONS -DCGAL_NO_POSTCONDITIONS
-#	-fhonor-std
-#	-I /u/rigel/0/prisme/spion/prog/Cgal/Triangulation/include \
+	-g 
 
 
 #---------------------------------------------------------------------#

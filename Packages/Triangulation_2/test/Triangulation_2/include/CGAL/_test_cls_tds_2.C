@@ -65,40 +65,6 @@ _test_cls_tds_2( const Tds &, const Gt &)
   tds1.is_valid();
   // (), = and  swap to be tested later again with non trivial tds 
 
-//   // Setting functions - access functions
-//   std::cout << "    setting functions  access functions" << std::endl;
-//   assert(tds1.dimension() == -1);
-//   assert(tds1.number_of_vertices() == 0 );
-  
-//   tds1.set_number_of_vertices(1);
-//   assert( tds1.number_of_vertices() == 1 );
-//   tds1.set_dimension(0);
-//   assert(tds1.dimension() == 0);
-
-//   Vertex* vt1 = new Vertex; 
-//   Face* f1 = new Face(vt1,NULL,NULL);
-//   Vertex *vt2 = new Vertex; 
-//   Face *f2  = new Face(vt2,NULL,NULL);
-//   vt2->set_face(f2);
-//   tds1.set_infinite_vertex(vt2);
- 
-//   // Finite and infinite vertices and faces
-//   std::cout << "    finite/infinite faces and vertices" << std::endl;
-//   assert( !tds1.is_infinite(vt1) );
-//   assert( tds1.is_infinite(vt2) );
-//   assert( !tds1.is_infinite(f1) );
-//   assert( tds1.is_infinite(f2) );
-//   assert( tds1.is_infinite(f2,1) );
-
-//   //assert( tds1.infinite_face() == f2 );
-//   assert( tds1.infinite_vertex() == vt2 );
-//   //assert( tds1.finite_vertex() == vt1 );
-
-   // make tds1 valid in order to allow clear() to work
-//   tds1.set_number_of_vertices(0);
-//   tds1.set_dimension(-1);
-  //  tds1.set_infinite_vertex(NULL);
-  //  assert( tds1.is_valid() );
 
  
   // misc.

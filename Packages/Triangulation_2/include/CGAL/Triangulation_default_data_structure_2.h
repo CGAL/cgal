@@ -135,6 +135,10 @@ public:
   void remove_first(Vertex* v);
   void remove_dim_down(Vertex* v);
 
+  Face* add_face(Face* f1, int i1, Face* f2, int i2, Face* f3, int i3);
+  Face* add_face(Face* f1, int i1, Face* f2, int i2);
+  Face* add_face(Face* f1, int i1, Vertex* v);
+
   // CHECKING
   bool is_valid(bool verbose = false, int level = 0) const;
   
@@ -726,6 +730,46 @@ remove_first(Vertex* v)
   return;
 }
 
+template < class Gt , class Vb, class Fb>
+Triangulation_default_data_structure_2<Gt,Vb,Fb>::Face*
+Triangulation_default_data_structure_2<Gt,Vb,Fb>::
+add_face(Face* f1, int i1, Face* f2, int i2, Face* f3, int i3)
+{
+  Face* newf = new Face(f1->vertex(cw(i1)),
+			f2->vertex(cw(i2)),
+			f3->vertex(cw(i3)),
+			f2, f3, f1);
+  f1->set_neighbor(i1,newf);
+  f2->set_neighbor(i2,newf);
+  f3->set_neighbor(i3,newf);
+  return newf;
+}
+
+template < class Gt , class Vb, class Fb>
+Triangulation_default_data_structure_2<Gt,Vb,Fb>::Face*
+Triangulation_default_data_structure_2<Gt,Vb,Fb>::
+add_face(Face* f1, int i1, Face* f2, int i2)
+{
+  Face* newf = new Face(f1->vertex(cw(i1)),
+			f2->vertex(cw(i2)),
+			f2->vertex(ccw(i2)),
+			f2, NULL, f1);
+  f1->set_neighbor(i1,newf);
+  f2->set_neighbor(i2,newf);
+  return newf;
+}
+
+template < class Gt , class Vb, class Fb>
+Triangulation_default_data_structure_2<Gt,Vb,Fb>::Face*
+Triangulation_default_data_structure_2<Gt,Vb,Fb>::
+add_face(Face* f1, int i1, Vertex* v)
+{
+Face* newf = new Face(f1->vertex(cw(i1)), f1->vertex(ccw(i1)),v,
+		  NULL, NULL, f1);
+  f1->set_neighbor(i1,newf);
+  return newf;
+}
+
 // CHECKING
 template < class Gt , class Vb, class Fb>
 bool
@@ -1093,7 +1137,7 @@ file_input( std::istream& is, bool skip_first)
 
   // Creation of the faces
   int index;
-  for(int i = 0; i < m; ++i) {
+  for(i = 0; i < m; ++i) {
     F[i] = new Face() ;
     for(int j = 0; j < dimension()+1; ++j){
       is >> index;
@@ -1105,7 +1149,7 @@ file_input( std::istream& is, bool skip_first)
   }
 
   // Setting the neighbor pointers 
-  for(int i = 0; i < m; ++i) {
+  for(i = 0; i < m; ++i) {
     for(int j = 0; j < dimension()+1; ++j){
       is >> index;
       F[i]->set_neighbor(j, F[index]);

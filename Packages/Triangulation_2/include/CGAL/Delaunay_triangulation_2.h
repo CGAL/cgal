@@ -98,89 +98,33 @@ private:
 			      Distance& closer) const;
 
 public:
-#ifndef CGAL_CFG_NO_MEMBER_TEMPLATES
-template < class Stream>
-Stream& draw_dual(Stream & ps)
-{
-  Finite_edges_iterator eit= finite_edges_begin();
-  for (; eit != finite_edges_end(), eend; ++eit) {
-    Object o = t.dual(eit);
-    Ray r;
-    Segment s;
-    Line l;
-    if (CGAL::assign(s,o)) ps << s;
-    if (CGAL::assign(r,o)) ps << r;
-    if (CGAL::assign(l,o)) ps << l;
-  }
-  return ps;
-}
-#endif //CGAL_CFG_NO_MEMBER_TEMPLATES 
+  template < class Stream>
+  Stream& draw_dual(Stream & ps)
+    {
+      Finite_edges_iterator eit= finite_edges_begin();
+      for (; eit != finite_edges_end(), eend; ++eit) {
+	Object o = t.dual(eit);
+	Ray r;
+	Segment s;
+	Line l;
+	if (CGAL::assign(s,o)) ps << s;
+	if (CGAL::assign(r,o)) ps << r;
+	if (CGAL::assign(l,o)) ps << l;
+      }
+      return ps;
+    }
 
-#ifndef CGAL_CFG_NO_MEMBER_TEMPLATES
   template < class InputIterator >
   int
   insert(InputIterator first, InputIterator last)
-  {
+    {
       int n = number_of_vertices();
       while(first != last){
-          insert(*first);
-          ++first;
+	insert(*first);
+	++first;
       }
       return number_of_vertices() - n;
-  }
-  #else
-  #if defined(LIST_H) || defined(__SGI_STL_LIST_H)
-  int
-  insert(std::list<Point>::const_iterator first,
-         std::list<Point>::const_iterator last)
-  {
-      int n = number_of_vertices();
-      while(first != last){
-          insert(*first);
-          ++first;
-      }
-      return number_of_vertices() - n;
-  }
-  #endif // LIST_H
-  #if defined(VECTOR_H) || defined(__SGI_STL_VECTOR_H)
-  int
-  insert(std::vector<Point>::const_iterator first,
-         std::vector<Point>::const_iterator last)
-  {
-      int n = number_of_vertices();
-      while(first != last){
-          insert(*first);
-          ++first;
-      }
-      return number_of_vertices() - n;
-  }
-  #endif // VECTOR_H
-  #ifdef ITERATOR_H
-  int
-  insert(std::istream_iterator<Point, std::ptrdiff_t> first,
-         std::istream_iterator<Point, std::ptrdiff_t> last)
-  {
-      int n = number_of_vertices();
-      while(first != last){
-          insert(*first);
-          ++first;
-      }
-      return number_of_vertices() - n;
-  }
-  #endif // ITERATOR_H
-  
-  int
-  insert(Point* first,
-         Point* last)
-  {
-      int n = number_of_vertices();
-      while(first != last){
-          insert(*first);
-          ++first;
-      }
-      return number_of_vertices() - n;
-   }
-  #endif //CGAL_CFG_NO_MEMBER_TEMPLATES
+    }
 
 };
 
@@ -195,9 +139,9 @@ is_valid(bool verbose = false, int level = 0) const
   for( Finite_faces_iterator it = finite_faces_begin(); 
        it != finite_faces_end() ; it++) {
     for(int i=0; i<3; i++) {
-      if ( ! is_infinite( it->opposite_vertex(i))) {
+      if ( ! is_infinite( it->mirror_vertex(i))) {
 	result = result &&  ON_POSITIVE_SIDE != 
-	  side_of_oriented_circle( it, it->opposite_vertex(i)->point());
+	  side_of_oriented_circle( it, it->mirror_vertex(i)->point());
       }
       CGAL_triangulation_assertion( result );
     }
@@ -301,7 +245,7 @@ nearest_vertex_1D(const Point& p) const
   nn = vit->handle();
   do {
     closer.set_point( 3-min, (++vit)->point());
-    if (  ( (min==1)? LARGER : SMALLER )
+     if (  ( (min==1)? LARGER : SMALLER )
 	  == closer.compare() ) {
       min = 3-min;
       nn=vit->handle();
@@ -510,7 +454,7 @@ fill_hole(Vertex_handle v, std::list<Edge> & first_hole)
   typedef std::list<Edge> Hole;
   typedef std::list<Hole> Hole_list;
   
-  Face_handle  ff, fn;
+  Face_handle  f, ff, fn;
   int i =0,ii =0, in =0;
   Hole_list hole_list;
   Hole hole;
@@ -525,16 +469,11 @@ fill_hole(Vertex_handle v, std::list<Edge> & first_hole)
   
       // if the hole has only three edges, create the triangle
       if (hole.size() == 3) {
-	Face_handle  newf = new Face();
 	hit = hole.begin();
-	for(int j = 0;j<3;j++) {
-	  ff = (*hit).first;
-	  ii = (*hit).second;
-	  hit++;
-	  ff->set_neighbor(ii,newf);
-	  newf->set_neighbor(j,ff);
-	  newf->set_vertex(newf->ccw(j),ff->vertex(ff->cw(ii)));
-	}
+	f = (*hit).first;        i = (*hit).second;
+	ff = (* ++hit).first;    ii = (*hit).second;
+	fn = (* ++hit).first;    in = (*hit).second;
+	add_face(f,i,ff,ii,fn,in);
 	continue;
       }
   
@@ -600,9 +539,10 @@ fill_hole(Vertex_handle v, std::list<Edge> & first_hole)
   
   
       // create new triangle and update adjacency relations
-      Face_handle  newf = new Face(v0,v1,v2);
-      newf->set_neighbor(2,ff);
-      ff->set_neighbor(ii, newf);
+      // Face_handle  newf = new Face(v0,v1,v2);
+//       newf->set_neighbor(2,ff);
+//       ff->set_neighbor(ii, newf);
+      Face_handle newf;
   
   
       //update the hole and push back in the Hole_List stack
@@ -613,8 +553,9 @@ fill_hole(Vertex_handle v, std::list<Edge> & first_hole)
       fn = (hole.front()).first;
       in = (hole.front()).second;
       if (fn->has_vertex(v2, i) && i == fn->ccw(in)) {
-	newf->set_neighbor(0,fn);
-	fn->set_neighbor(in,newf);
+	//newf->set_neighbor(0,fn);
+	//fn->set_neighbor(in,newf);
+	newf = add_face(ff,ii,fn,in);
 	hole.pop_front();
 	hole.push_front(Edge( &(*newf),1));
 	hole_list.push_front(hole);
@@ -623,14 +564,17 @@ fill_hole(Vertex_handle v, std::list<Edge> & first_hole)
 	fn = (hole.back()).first;
 	in = (hole.back()).second;
 	if (fn->has_vertex(v2, i) && i== fn->cw(in)) {
-	  newf->set_neighbor(1,fn);
-	  fn->set_neighbor(in,newf);
+	  //newf->set_neighbor(1,fn);
+	  //fn->set_neighbor(in,newf);
+	  newf = add_face(fn,in,ff,ii);
 	  hole.pop_back();
-	  hole.push_back(Edge(&(*newf),0));
+	  //hole.push_back(Edge(&(*newf),0));
+	  hole.push_back(Edge(&(*newf),1));
 	  hole_list.push_front(hole);
 	}
 	else{
 	  // split the hole in two holes
+	  newf = add_face(ff,ii,v2);
 	  Hole new_hole;
 	  ++cut_after;
 	  while( hole.begin() != cut_after )
