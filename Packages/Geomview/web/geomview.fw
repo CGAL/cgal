@@ -144,7 +144,7 @@ operator<<(CGAL_Geomview_stream &gv,
     char *id = os.str();
 
     gv << ascii
-       << "(geometry " << id << " {{appearance {linewidth "
+       << "(geometry " << id << " {appearance {linewidth "
        << gv.get_line_width() << "}{VECT "
        << 1 <<  2 << 1    // 1 polyline, two vertices, 1 color
        << 2               // the first polyline contains 2 vertices
