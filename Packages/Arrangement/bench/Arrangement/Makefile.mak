@@ -52,10 +52,10 @@ ifeq ($(TRAITS), CONIC_TRAITS)
 ifneq ($(NT), REAL_NT)
 error "Conic traits implies real number type!"
 endif
-ifneq ($(KERNEL), LEDA_KERNEL)
+ifeq ($(KERNEL), LEDA_KERNEL)
 error "Conic traits implies non leda kernel!"
 endif
-ifneq ($(KERNEL), MY_KERNEL)
+ifeq ($(KERNEL), MY_KERNEL)
 error "Conic traits implies non my kernel!"
 endif
 endif
@@ -324,7 +324,7 @@ insert_old_inst:
 	$(MAKEF) "USE_INSERT_OLD=1" "NT=RATIONAL_NT" "KERNEL=CARTESIAN_KERNEL" "TRAITS=SEGMENT_TRAITS" install
 
 conic_traits_inst:
-	$(MAKEF) "NT=RATIONAL_NT" "TRAITS=CONIC_TRAITS" install
+	$(MAKEF) "NT=REAL_NT" "TRAITS=CONIC_TRAITS" "KERNEL=CARTESIAN_KERNEL" install
 
 polyline_traits_inst:
 	$(MAKEF) "NT=RATIONAL_NT" "KERNEL=CARTESIAN_KERNEL" "TRAITS=POLYLINE_TRAITS" install
@@ -362,7 +362,7 @@ double_cached_traits_inst:
 	$(MAKEF) "NT=DOUBLE_NT" "KERNEL=CARTESIAN_KERNEL" "TRAITS=SEGMENT_CACHED_TRAITS" install
 
 #
-all_non_cached_inst: cartesian_inst \
+seg_std_inst: cartesian_inst \
         simple_cartesian_inst \
 	leda_kernel_inst \
 	quotient_mp_float_inst \
