@@ -421,6 +421,8 @@ Packages/Triangulation_3/doc_tex/Triangulation_3/orient.eps -text
 Packages/Triangulation_3/doc_tex/Triangulation_3/orient.gif -text svneol=unset#unset
 Packages/Triangulation_3/doc_tex/Triangulation_3/ortho.eps -text
 Packages/Triangulation_3/doc_tex/Triangulation_3/ortho.gif -text svneol=unset#unset
+Packages/Triangulation_3/doc_tex/Triangulation_3/remimpos.eps -text
+Packages/Triangulation_3/doc_tex/Triangulation_3/remimpos.gif -text svneol=unset#unset
 Packages/Triangulation_3/doc_tex/Triangulation_3/repres.gif svneol=native#unset
 Packages/Triangulation_3/doc_tex/Triangulation_3/sidedim2.eps -text
 Packages/Triangulation_3/doc_tex/Triangulation_3/sidedim2.gif -text svneol=unset#unset
@@ -445,6 +447,8 @@ Packages/Triangulation_3/doc_tex/basic/Triangulation_3/orient.eps -text
 Packages/Triangulation_3/doc_tex/basic/Triangulation_3/orient.gif -text svneol=unset#unset
 Packages/Triangulation_3/doc_tex/basic/Triangulation_3/ortho.eps -text
 Packages/Triangulation_3/doc_tex/basic/Triangulation_3/ortho.gif -text svneol=unset#unset
+Packages/Triangulation_3/doc_tex/basic/Triangulation_3/remimpos.eps -text
+Packages/Triangulation_3/doc_tex/basic/Triangulation_3/remimpos.gif -text svneol=unset#unset
 Packages/Triangulation_3/doc_tex/basic/Triangulation_3/repres.gif svneol=native#unset
 Packages/Triangulation_3/doc_tex/basic/Triangulation_3/sidedim2.eps -text
 Packages/Triangulation_3/doc_tex/basic/Triangulation_3/sidedim2.gif -text svneol=unset#unset
