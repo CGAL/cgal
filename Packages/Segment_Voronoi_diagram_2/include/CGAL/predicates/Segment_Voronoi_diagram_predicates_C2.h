@@ -31,7 +31,7 @@
 #include <CGAL/predicates/Svd_finite_edge_interior_2.h>
 #include <CGAL/predicates/Svd_infinite_edge_interior_2.h>
 #include <CGAL/predicates/Svd_is_degenerate_edge_2.h>
-#include <CGAL/predicates/Svd_do_intersect_C2.h>
+#include <CGAL/predicates/Svd_arrangement_type_C2.h>
 #include <CGAL/predicates/Svd_oriented_side_C2.h>
 
 #endif // CGAL_SEGMENT_VORONOI_DIAGRAM_PREDICATES_2_H

@@ -20,8 +20,8 @@
 
 
 
-#ifndef CGAL_SVD_DO_INTERSECT_C2_H
-#define CGAL_SVD_DO_INTERSECT_C2_H
+#ifndef CGAL_SVD_ARRANGEMENT_TYPE_C2_H
+#define CGAL_SVD_ARRANGEMENT_TYPE_C2_H
 
 #include <CGAL/enum.h>
 #include <CGAL/determinant.h>
@@ -31,24 +31,60 @@
 
 CGAL_BEGIN_NAMESPACE
 
+struct Svd_arrangement_enum {
+  enum Arrangement_type {
+    DISJOINT = 0, // obvious
+    TOUCH_1, // (p1,p2) and q, and p1 and q are identical
+    TOUCH_2, // (p1,p2) and q, and p2 and q are identical
+    TOUCH_11, // (p1,p2), (q1,q2), and p1, q1 are identical
+    TOUCH_12, // (p1,p2), (q1,q2), and p1, q2 are identical
+    TOUCH_21, // (p1,p2), (q1,q2), and p2, q1 are identical
+    TOUCH_22, // (p1,p2), (q1,q2), and p2, q2 are identical
+    CROSSING, // two segments intersecting at interior points
+    IDENTICAL, // either two segments or two points that are identical
+    INTERIOR_1, // (p1,p2) and (q1,q2), and q1, q2 are interior
+                // points of (p1,p2)
+    INTERIOR_2, // (p1,p2) and (q1,q2), and p1, p2 are interior
+                // points of (q1,q2)
+    INTERIOR,  // (p1,p2) and q, and q is an interior point of (p1,p2)
+    TOUCH_11_INTERIOR_1, // (p1,p2) and (q1,q2), and p1, q1 are
+			 // identical and q2 is an interior point of (p1,p2)
+    TOUCH_11_INTERIOR_2, // (p1,p2) and (q1,q2), and p1, q1 are
+			 // identical and p2 is an interior point of
+			 // (q1,q2)
+    TOUCH_12_INTERIOR_1, // (p1,p2) and (q1,q2), and p1, q2 are
+			 // identical and q1 is an interior point of (p1,p2)
+    TOUCH_12_INTERIOR_2, // (p1,p2) and (q1,q2), and p1, q2 are
+			 // identical and p2 is an interior point of (q1,q2)
+    TOUCH_21_INTERIOR_1, // (p1,p2) and (q1,q2), and p2, q1 are
+			 // identical and q2 is an interior point of (p1,p2)
+    TOUCH_21_INTERIOR_2, // (p1,p2) and (q1,q2), and p2, q1 are
+			 // identical and p1 is an interior point of (q1,q2)
+    TOUCH_22_INTERIOR_1, // (p1,p2) and (q1,q2), and p2, q2 are
+			 // identical and q1 is an interior point of (p1,p2)
+    TOUCH_22_INTERIOR_2  // (p1,p2) and (q1,q2), and p2, q2 are
+		         // identical and p1 is an interior point of (q1,q2)
+  };
+};
+
 //---------------------------------------------------------------------
 
 template<class RT>
 std::pair<int,int>
-svd_do_intersect_C2(const RT& x1, const RT& y1,
-		    const RT& x2, const RT& y2,
-		    const RT& x3, const RT& y3,
-		    const RT& x4, const RT& y4)
+svd_arrangement_type_C2(const RT& x1, const RT& y1,
+			const RT& x2, const RT& y2,
+			const RT& x3, const RT& y3,
+			const RT& x4, const RT& y4)
 {
   RT delta = -det2x2_by_formula(x2 - x1, x4 - x3, y2 - y1, y4 - y3);
 
   Sign s = CGAL::sign( delta );
   if ( s != CGAL::ZERO ) {
-    return svd_do_intersect_non_parallel_C2(x1, y1, x2, y2,
-					    x3, y3, x4, y4, delta);
+    return svd_arrangement_type_non_parallel_C2(x1, y1, x2, y2,
+						x3, y3, x4, y4, delta);
   } else {
-    return svd_do_intersect_parallel_C2(x1, y1, x2, y2,
-					x3, y3, x4, y4);
+    return svd_arrangement_type_parallel_C2(x1, y1, x2, y2,
+					    x3, y3, x4, y4);
   }
 }
 
@@ -58,11 +94,11 @@ svd_do_intersect_C2(const RT& x1, const RT& y1,
 
 template<class RT>
 std::pair<int,int>
-svd_do_intersect_non_parallel_C2(const RT& x1, const RT& y1,
-				 const RT& x2, const RT& y2,
-				 const RT& x3, const RT& y3,
-				 const RT& x4, const RT& y4,
-				 const RT& D)
+svd_arrangement_type_non_parallel_C2(const RT& x1, const RT& y1,
+				     const RT& x2, const RT& y2,
+				     const RT& x3, const RT& y3,
+				     const RT& x4, const RT& y4,
+				     const RT& D)
 {
   RT Dt = -det2x2_by_formula(x3 - x1, x4 - x3,
 			     y3 - y1, y4 - y3);
@@ -114,10 +150,10 @@ svd_do_intersect_non_parallel_C2(const RT& x1, const RT& y1,
 
 template<class RT>
 std::pair<int,int>
-svd_do_intersect_parallel_C2(const RT& x1, const RT& y1,
-			     const RT& x2, const RT& y2,
-			     const RT& x3, const RT& y3,
-			     const RT& x4, const RT& y4)
+svd_arrangement_type_parallel_C2(const RT& x1, const RT& y1,
+				 const RT& x2, const RT& y2,
+				 const RT& x3, const RT& y3,
+				 const RT& x4, const RT& y4)
 {
   RT D1 = det2x2_by_formula(x2 - x1, x3 - x1,
 			    y2 - y1, y3 - y1);
@@ -198,7 +234,7 @@ svd_do_intersect_parallel_C2(const RT& x1, const RT& y1,
 //---------------------------------------------------------------------
 
 template<class K>
-class Svd_do_intersect_C2
+class Svd_arrangement_type_C2
   : public Svd_basic_predicates_C2<K>
 {
 public:
@@ -228,8 +264,8 @@ private:
   //------------------------------------------------------------------------
 
   result_type
-  do_intersect_same_point(const Site_2& p, const Site_2& q,
-			  unsigned int ip, unsigned int iq) const
+  arrangement_type_same_point(const Site_2& p, const Site_2& q,
+			      unsigned int ip, unsigned int iq) const
   {
     CGAL_precondition( ip < 2 && iq < 2 );
 
@@ -278,10 +314,10 @@ private:
       Segment_2 s2 = q.segment();
 
       return
-	svd_do_intersect_parallel_C2( s1.source().x(), s1.source().y(),
-				      s1.target().x(), s1.target().y(),
-				      s2.source().x(), s2.source().y(),
-				      s2.target().x(), s2.target().y() );
+	svd_arrangement_type_parallel_C2( s1.source().x(), s1.source().y(),
+					  s1.target().x(), s1.target().y(),
+					  s2.source().x(), s2.source().y(),
+					  s2.target().x(), s2.target().y() );
     }
   }
 
@@ -297,13 +333,13 @@ public:
     }
 
     if ( same_points(p.source_site(), q.source_site()) ) {
-      return do_intersect_same_point(p, q, 0, 0);
+      return arrangement_type_same_point(p, q, 0, 0);
     } if ( same_points(p.source_site(), q.target_site()) ) {
-      return do_intersect_same_point(p, q, 0, 1);
+      return arrangement_type_same_point(p, q, 0, 1);
     } else if ( same_points(p.target_site(), q.source_site()) ) {
-      return do_intersect_same_point(p, q, 1, 0);
+      return arrangement_type_same_point(p, q, 1, 0);
     } else if ( same_points(p.target_site(), q.target_site()) ) {
-      return do_intersect_same_point(p, q, 1, 1);
+      return arrangement_type_same_point(p, q, 1, 1);
     }
     
 
@@ -311,10 +347,10 @@ public:
     Segment_2 s2 = q.segment();
 
     std::pair<int,int> res =
-      svd_do_intersect_C2( s1.source().x(), s1.source().y(),
-			   s1.target().x(), s1.target().y(),
-			   s2.source().x(), s2.source().y(),
-			   s2.target().x(), s2.target().y() );
+      svd_arrangement_type_C2( s1.source().x(), s1.source().y(),
+			       s1.target().x(), s1.target().y(),
+			       s2.source().x(), s2.source().y(),
+			       s2.target().x(), s2.target().y() );
 
     return res;
   }
@@ -324,4 +360,4 @@ public:
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_SVD_DO_INTERSECT_C2_H
+#endif // CGAL_SVD_ARRANGEMENT_TYPE_C2_H

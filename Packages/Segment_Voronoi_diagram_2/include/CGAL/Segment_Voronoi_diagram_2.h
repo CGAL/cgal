@@ -785,8 +785,8 @@ protected:
 		     const Vertex_handle& v,
 		     Sign sgn) const;
 
-  bool do_intersect(const Site_2& t, Vertex_handle v) const;
-  bool do_intersect(const Site_2& p, const Site_2& q) const;
+  bool arrangement_type(const Site_2& t, Vertex_handle v) const;
+  bool arrangement_type(const Site_2& p, const Site_2& q) const;
 
   bool are_parallel(const Site_2& p, const Site_2& q) const {
     return geom_traits().are_parallel_2_object()(p, q);

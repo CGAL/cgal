@@ -319,7 +319,7 @@ public:
 //-----------------------------------------------------------------------
 
 template< class K, class Method_tag >
-class Svd_do_intersect_2
+class Svd_arrangement_type_2
 {
 public:
   typedef typename K::Site_2     Site_2;
@@ -330,7 +330,7 @@ public:
   result_type operator()(const Site_2& p, const Site_2& q) const
   {
     return
-      svd_do_intersect_C2<K,Method_tag>(p, q, Method_tag());
+      svd_arrangement_type_C2<K,Method_tag>(p, q, Method_tag());
   }
 };
 
@@ -423,7 +423,7 @@ public:
   typedef CGAL::Svd_infinite_edge_interior_conflict_2<K,MTag>
   /*                                    */ Infinite_edge_interior_conflict_2;
   typedef CGAL::Svd_is_degenerate_edge_2<K,MTag>        Is_degenerate_edge_2;
-  typedef CGAL::Svd_do_intersect_2<K,MTag>              Do_intersect_2;
+  typedef CGAL::Svd_arrangement_type_2<K,MTag>          Arrangement_type_2;
   typedef CGAL::Svd_oriented_side_2<K,MTag>             Oriented_side_2;
 
 
@@ -510,9 +510,9 @@ public:
     return Is_degenerate_edge_2();
   }
 
-  Do_intersect_2
-  do_intersect_2_object() const {
-    return Do_intersect_2();
+  Arrangement_type_2
+  arrangement_type_2_object() const {
+    return Arrangement_type_2();
   }
 
   Oriented_side_2

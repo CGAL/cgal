@@ -543,13 +543,13 @@ svd_is_degenerate_edge_ftC2(const typename K::Site_2& p,
 template<class K, class Method_tag>
 inline
 std::pair<int,int>
-svd_do_intersect_C2(const typename K::Site_2& p,
-		    const typename K::Site_2& q,
-		    Method_tag mtag)
+svd_arrangement_type_C2(const typename K::Site_2& p,
+			const typename K::Site_2& q,
+			Method_tag mtag)
 {
   typename K::Site_2 site_vec[2] = {p, q};
   return
-    svd_predicate_C2<Svd_do_intersect_C2,std::pair<int,int>,K,2>(site_vec);
+    svd_predicate_C2<Svd_arrangement_type_C2,std::pair<int,int>,K,2>(site_vec);
 }
 
 //--------------------------------------------------------------------------

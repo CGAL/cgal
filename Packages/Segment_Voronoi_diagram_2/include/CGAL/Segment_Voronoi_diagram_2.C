@@ -263,7 +263,7 @@ insert_point(const Storage_site_2& ss, const Site_2& t,
   Vertex_circulator vc_start = vc;
   do {
     Vertex_handle vv(vc);
-    if ( do_intersect(t, vv) ) {
+    if ( arrangement_type(t, vv) ) {
       // ADD HERE CODE THAT DOES THE APPROPRIATE INSERTION
       return Vertex_handle();
     }
@@ -498,7 +498,7 @@ insert_segment_interior(const Site_2& t, const Storage_site_2& ss,
   CGAL_assertion( vnearest != Vertex_handle() );
   // MK: add here code that checks if the inserted segment has already
   // been inserted; MAYBE THIS IS NOT NEEDED; I ALREADY DO IT IN
-  // do_intersect
+  // arrangement_type
 
   // find the first conflict
 
@@ -510,7 +510,7 @@ insert_segment_interior(const Site_2& t, const Storage_site_2& ss,
     if ( same_segments(t, vv) ) {
       return vv;
     }
-    if ( do_intersect(t, vv) ) {
+    if ( arrangement_type(t, vv) ) {
       if ( t.is_segment() ) {
 	Intersections_tag itag;
 	return insert_intersecting_segment(ss, t, vv, itag);
@@ -689,7 +689,7 @@ expand_conflict_region(const Face_handle& f, const Site_2& t,
 
   for (int i = 0; i < 3; i++) {
     Vertex_handle vf = f->vertex(i);
-    if ( do_intersect(t, vf) ) {
+    if ( arrangement_type(t, vf) ) {
       vcross.first = true;
       vcross.second = vf;
       l.clear();
@@ -1500,10 +1500,10 @@ edge_interior(const Face_handle& f, int i,
 template<class Gt, class PC, class DS, class LTag>
 bool
 Segment_Voronoi_diagram_2<Gt,PC,DS,LTag>::
-do_intersect(const Site_2& p, const Site_2& q) const
+arrangement_type(const Site_2& p, const Site_2& q) const
 {
   std::pair<int,int> res =
-    geom_traits().do_intersect_2_object()(p, q);
+    geom_traits().arrangement_type_2_object()(p, q);
   
 #if 1
   CGAL_assertion( res.first <= 4 && res.second <= 4 );
@@ -1530,7 +1530,7 @@ template<class Gt, class PC, class DS, class LTag>
 inline
 bool
 Segment_Voronoi_diagram_2<Gt,PC,DS,LTag>::
-do_intersect(const Site_2& t, Vertex_handle v) const
+arrangement_type(const Site_2& t, Vertex_handle v) const
 {
   if ( is_infinite(v) ) { return false; }
   // add here the cases where t is a segment and intersects a point
@@ -1550,7 +1550,7 @@ do_intersect(const Site_2& t, Vertex_handle v) const
 #endif
 #endif
 
-  if ( do_intersect(t, v->site()) ) {
+  if ( arrangement_type(t, v->site()) ) {
     //	print_error_message();
     return true;
   }

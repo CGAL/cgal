@@ -291,7 +291,7 @@ insert_segment_interior(const Site_2& t, const Storage_site_2& ss,
   CGAL_assertion( vertices[0] != Vertex_handle() );
   // MK: add here code that checks if the inserted segment has already
   // been inserted; MAYBE THIS IS NOT NEEDED; I ALREADY DO IT IN
-  // do_intersect
+  // arrangement_type
 
   // the tags
   static Intersections_tag          itag;
@@ -307,7 +307,7 @@ insert_segment_interior(const Site_2& t, const Storage_site_2& ss,
     if ( same_segments(t, vv) ) {
       return vv;
     }
-    if ( do_intersect(t, vv) ) {
+    if ( arrangement_type(t, vv) ) {
       if ( t.is_segment() ) {
 	return insert_intersecting_segment_with_tag(ss, t, vv, level,
 						    itag, stag);
@@ -485,7 +485,7 @@ insert_intersecting_segment_with_tag(const Storage_site_2& ss,
 {
   CGAL_precondition( t.is_segment() && v->is_segment() );
 
-  CGAL_expensive_precondition( do_intersect(t, v->site()) );
+  CGAL_expensive_precondition( arrangement_type(t, v->site()) );
 
   const Storage_site_2& ssitev = v->storage_site();
   Site_2 sitev = ssitev.site();
@@ -506,7 +506,7 @@ insert_intersecting_segment_with_tag(const Storage_site_2& ss,
   int k = 0;
   while ( k <= levelv ) {
     // MK::ERROR: I have to remove this; too expensive...
-    CGAL_expensive_precondition( do_intersect(t, vertex->site()) );
+    CGAL_expensive_precondition( arrangement_type(t, vertex->site()) );
 
     Vertex_handle vcross_up = vcross->up();
 

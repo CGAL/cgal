@@ -220,7 +220,7 @@ private:
   typedef typename FK_traits::Is_degenerate_edge_2
   FK_Is_degenerate_edge_2;
 
-  typedef typename FK_traits::Do_intersect_2     FK_Do_intersect_2;
+  typedef typename FK_traits::Arrangement_type_2 FK_Arrangement_type_2;
   typedef typename FK_traits::Oriented_side_2    FK_Oriented_side_2;
 
   // Predicates for the exact kernel
@@ -244,7 +244,7 @@ private:
   typedef typename EK_traits::Is_degenerate_edge_2
   EK_Is_degenerate_edge_2;
 
-  typedef typename EK_traits::Do_intersect_2     EK_Do_intersect_2;
+  typedef typename EK_traits::Arrangement_type_2 EK_Arrangement_type_2;
   typedef typename EK_traits::Oriented_side_2    EK_Oriented_side_2;
 
 
@@ -299,8 +299,8 @@ public:
   Is_degenerate_edge_2;
 
   typedef
-  Filtered_predicate<EK_Do_intersect_2,	FK_Do_intersect_2, C2E, C2F>
-  Do_intersect_2;
+  Filtered_predicate<EK_Arrangement_type_2, FK_Arrangement_type_2, C2E, C2F>
+  Arrangement_type_2;
 
   typedef
   Filtered_predicate<EK_Oriented_side_2, FK_Oriented_side_2, C2E, C2F>
@@ -389,9 +389,9 @@ public:
     return Is_degenerate_edge_2();
   }
 
-  Do_intersect_2
-  do_intersect_2_object() const {
-    return Do_intersect_2();
+  Arrangement_type_2
+  arrangement_type_2_object() const {
+    return Arrangement_type_2();
   }
 
   Oriented_side_2
