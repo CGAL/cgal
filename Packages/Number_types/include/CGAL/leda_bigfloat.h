@@ -28,13 +28,6 @@
 #include <CGAL/basic.h>
 #include <CGAL/LEDA_basic.h>
 
-// #ifndef IO_IO_TAGS_H
-// #include <CGAL/IO/io_tags.h>
-// #endif // IO_IO_TAGS_H
-// #ifndef CGAL_NUMBER_TYPE_TAGS_H
-// #include <CGAL/number_type_tags.h>
-// #endif // CGAL_NUMBER_TYPE_TAGS_H
-
 #ifndef CGAL_PROTECT_LEDA_BIGFLOAT_H
 #include <LEDA/bigfloat.h>
 #define CGAL_PROTECT_LEDA_BIGFLOAT_H
