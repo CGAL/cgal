@@ -1,3 +1,29 @@
+// ======================================================================
+//
+// Copyright (c) 1997 The CGAL Consortium
+//
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
+//
+// ----------------------------------------------------------------------
+//
+// release       : 
+// release_date  : 
+//
+// file          : include/CGAL/predicates/comparator_profiler.h
+// package       : Apollonius_graph_2
+// source        : $RCSfile$
+// revision      : $Revision$
+// revision_date : $Date$
+// author(s)     : Menelaos Karavelas <mkaravel@cse.nd.edu>
+//
+// coordinator   : Mariette Yvinec  <Mariette Yvinec@sophia.inria.fr>
+//
+// ======================================================================
+
+
+
 #ifndef CGAL_COMPARATOR_PROFILER_H
 #define CGAL_COMPARATOR_PROFILER_H
 
