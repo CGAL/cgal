@@ -1,0 +1,360 @@
+#include <iostream>
+#include <fstream>
+
+#include <qapplication.h>
+#include <qmainwindow.h>
+
+//#include <CGAL/IO/Color.h>
+#include <CGAL/IO/Qt_widget.h>
+#include <CGAL/IO/Qt_widget_layer.h>
+#include <CGAL/IO/Qt_widget_standard_toolbar.h>
+#include <CGAL/IO/Qt_widget_get_segment.h>
+#include <CGAL/IO/Qt_widget_get_point.h>
+#include <CGAL/IO/Qt_widget_get_simple_polygon.h>
+
+#include <CGAL/Timer.h>
+
+#include <list>
+#include <vector>
+
+#include "typedefs.h"
+
+#include "qt_file_toolbar.h"
+#include "qt_layers_toolbar.h"
+#include "qt_layers.h"
+
+
+#if 0
+Point
+to_nt(const Point_double_2& p)
+{
+  return Point(p.x(), p.y());
+}
+
+Segment
+to_nt(const Segment_double_2& s)
+{
+  return Segment(to_nt(s.source()), to_nt(s.target()));
+}
+#endif
+
+
+//************************************
+// global variables
+//************************************
+SVD_2 svd;
+int num_selected;
+std::vector<SVD_2::Site> sitelist;
+
+//************************************
+// my window
+//************************************
+class My_Window : public QMainWindow {
+  Q_OBJECT
+
+  friend class Layers_toolbar;
+private:
+  CGAL::Qt_widget *widget;
+  Layers_toolbar *layers_toolbar;
+  File_toolbar   *file_toolbar;
+  CGAL::Qt_widget_standard_toolbar *stoolbar;
+  CGAL::Qt_widget_get_segment<Rep> get_segment;
+  CGAL::Qt_widget_get_point<Rep> get_point;
+  CGAL::Qt_widget_get_simple_polygon<Polygon> get_polygon;
+  Input_mode input_mode;
+  bool is_remove_mode;
+  bool is_snap_mode;
+
+public:
+  My_Window(int x, int y)
+  {
+
+    //******************
+    num_selected = 0;
+
+    is_remove_mode = false;
+    input_mode = SEGMENT;
+    is_snap_mode = false;
+
+    widget = new CGAL::Qt_widget(this);
+    setCentralWidget(widget);
+
+    *widget << CGAL::BackgroundColor(CGAL::YELLOW);
+    resize(x,y);
+    widget->set_window(0, x, 0, y);
+    widget->show();
+
+    //    setUsesBigPixmaps(TRUE);
+
+    //How to attach the standard toolbar
+    stoolbar = new CGAL::Qt_widget_standard_toolbar(widget, this);
+    this->addToolBar(stoolbar->toolbar(), Top, FALSE);
+
+    file_toolbar = new File_toolbar(this);
+    this->addToolBar(file_toolbar->toolbar(), Top, FALSE);
+
+    layers_toolbar = new Layers_toolbar(widget, this, svd);
+    this->addToolBar(layers_toolbar->toolbar(), Top, FALSE);
+
+    connect(widget, SIGNAL(new_cgal_object(CGAL::Object)), this,
+	    SLOT(get_object(CGAL::Object)));
+
+    connect(layers_toolbar, SIGNAL(inputModeChanged(Input_mode)), this,
+    	    SLOT(get_input_mode(Input_mode)));
+
+    connect(layers_toolbar, SIGNAL(insertModeChanged(bool)), this,
+    	    SLOT(get_remove_mode(bool)));
+
+    connect(layers_toolbar, SIGNAL(snapModeChanged(bool)), this,
+    	    SLOT(get_snap_mode(bool)));
+
+    connect(file_toolbar, SIGNAL(fileToRead(const QString&)), this,
+	    SLOT(read_from_file(const QString&)));
+
+    connect(file_toolbar, SIGNAL(fileToWrite(const QString&)), this,
+	    SLOT(write_to_file(const QString&)));
+
+    connect(file_toolbar, SIGNAL(printScreen()), this,
+	    SLOT(print_screen()));
+
+    connect(file_toolbar, SIGNAL(clearAll()), this,
+	    SLOT(remove_all()));
+
+    setMouseTracking(true);
+    widget->setMouseTracking(true);
+
+    widget->attach(&get_point);
+    widget->attach(&get_segment);
+    widget->attach(&get_polygon);
+
+    get_segment.activate();
+    get_point.deactivate();
+    get_polygon.deactivate();
+  }
+
+  ~My_Window(){}
+
+  void set_window(double xmin, double xmax,
+		  double ymin, double ymax)
+  {
+    widget->set_window(xmin, xmax, ymin, ymax);
+  }
+
+private slots:
+  void get_object(CGAL::Object obj)
+  {
+    if ( is_remove_mode ) {
+      std::cout << "in remove mode" << std::endl;
+#if 1
+      if ( svd.number_of_vertices() == 0 ) { return; }
+
+      Point p;
+      if ( CGAL::assign(p, obj) ) {
+	SVD_2::Vertex_handle v = svd.nearest_neighbor(p);
+	*widget << CGAL::BLACK;
+	if ( v->is_point() ) {
+	  std::cout << v->point() << std::endl;
+	  *widget << v->point();
+	} else {
+	  std::cout << v->segment() << std::endl;
+	  *widget << v->segment();
+	}
+      }
+      return;
+
+#else
+      if ( svd.number_of_vertices() == 0 ) { return; }
+
+      Point q;
+
+      if ( CGAL::assign(q, obj) ) {
+	SVD_2::Vertex_handle v = svd.nearest_neighbor(q);
+	svd.remove(v, is_snap_mode);
+	widget->redraw();
+      }
+      return;
+#endif
+    }
+    if ( input_mode == POINT ) {
+      if ( is_snap_mode ) {
+	Point p;
+	if ( CGAL::assign(p, obj) ) {
+	  SVD_2::Vertex_handle v;
+	  v = svd.nearest_neighbor(p);
+	  unsigned int n = svd.number_of_incident_segments(v);
+	  char msg[100];
+	  CGAL_CLIB_STD::sprintf(msg,
+				 "number of incident segments is: %d",
+				 n);
+	  statusBar()->message(msg);
+	}
+	return;
+      }
+
+      Point p;
+      if ( CGAL::assign(p, obj) ) {
+	svd.insert(p);
+      }
+    } else if ( input_mode == SEGMENT ) {
+      Segment s;
+
+      if ( is_snap_mode ) {	
+	if( CGAL::assign(s, obj) ) {
+	  SVD_2::Vertex_handle v1, v2;
+	  v1 = svd.nearest_neighbor(s.source());
+	  v2 = svd.nearest_neighbor(s.target());
+	  if ( v1 != NULL && v1->is_point() &&
+	       v2 != NULL && v2->is_point() ) {
+	    svd.insert( Segment(v1->point(), v2->point()) );
+	  }
+	}
+      } else {
+	if( CGAL::assign(s, obj) ) {
+	  svd.insert(s);
+	}
+      }
+    } else if ( input_mode == POLYGON ) {
+      Polygon pgn;
+      if ( CGAL::assign(pgn, obj) ) {
+	for (int i = 0; i < pgn.size(); i++ ) {
+	  svd.insert( pgn.edge(i) );
+	}
+      }
+    }
+    //    std::cout << "insertion done..." << std::endl;
+    svd.is_valid(true,1);
+    //    assert( svd.is_valid(true,1) );
+    std::cout << std::endl;
+    widget->redraw();
+  }
+
+  void get_remove_mode(bool b)
+    {
+      is_remove_mode = b;
+
+      if ( is_remove_mode ) {	
+	get_point.activate();
+	get_segment.deactivate();
+	get_polygon.deactivate();
+      } else {
+	if ( input_mode == SEGMENT ) {
+	  get_point.deactivate();
+	  get_segment.activate();
+	} else if ( input_mode == POLYGON ) {
+	  get_point.deactivate();
+	  get_polygon.activate();
+	}
+      }
+
+    }
+
+
+  void get_input_mode(Input_mode im) {
+    input_mode = im;
+
+    if ( input_mode == POINT ) {
+      get_point.activate();
+      get_segment.deactivate();
+      get_polygon.deactivate();
+    } else if ( input_mode == SEGMENT ) {
+      get_point.deactivate();
+      get_segment.activate();
+      get_polygon.deactivate();
+    } else if ( input_mode == POLYGON ) {
+      get_point.deactivate();
+      get_segment.deactivate();
+      get_polygon.activate();
+    }
+  }
+
+  void get_snap_mode(bool b) {
+    is_snap_mode = b;
+  }
+
+  void read_from_file(const QString& fileName)
+  {
+    CGAL::Timer timer;
+    svd.clear();
+
+    std::ifstream f(fileName);
+    assert( f );
+    //    int n;
+    //    f >> n;
+
+    Site t;
+    int counter = 0;
+    timer.start();
+
+    char msg[100];
+
+    while ( f >> t ) {
+      svd.insert(t);
+      counter++;
+      if ( counter % 500 == 0 ) {
+	std::cout << "\r" << counter
+		  << " sites haved been inserted..." << std::flush;
+
+	sprintf(msg, "%d sites have been inserted...", counter);
+	statusBar()->message(msg);
+      }
+    }
+    std::cout << "\r" << counter
+	      << " sites haved been inserted... Done!" << std::endl;
+
+    timer.stop();
+    std::cout << "Insertion time: " << timer.time() << std::endl;
+
+    svd.is_valid(true, 1);
+    std::cerr << std::endl;
+
+    CGAL_CLIB_STD::sprintf(msg,
+			   "%d sites inserted. Insertion time: %f",
+			   counter, timer.time());
+    statusBar()->message(msg);
+
+    widget->redraw();
+  }
+
+  void write_to_file(const QString& fileName)
+  {
+    std::ofstream f(fileName);
+    assert( f );
+    f.precision(18);
+    svd.write_sites(f);
+  }
+
+  void print_screen()
+  {
+    widget->print_to_ps();
+  }
+
+  void remove_all()
+    {
+      sitelist.clear();
+      num_selected = 0;
+      svd.clear();
+      widget->redraw();
+    }
+
+};
+
+#include "qt_file_toolbar.moc"
+#include "qt_layers_toolbar.moc"
+#include "demo.moc"
+
+int
+main(int argc, char* argv[])
+{
+  int size = 750;
+
+  QApplication app( argc, argv );
+  My_Window W(size,size);
+  app.setMainWidget( &W );
+  W.show();
+  W.set_window(0,size,0,size);
+  W.setCaption("Segment Voronoi diagram 2");
+  return app.exec();
+}
+
+
+// moc_source_file: demo.C
