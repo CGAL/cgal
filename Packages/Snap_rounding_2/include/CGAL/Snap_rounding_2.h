@@ -19,7 +19,7 @@
 //
 // ======================================================================
 #ifndef CGAL_SR_2_H
-#define CGAL_SR_2_H
+#define CGAL_SR_2_Ha
 
 #include <CGAL/leda_rational.h> 
 
@@ -411,11 +411,15 @@ bool Hot_Pixel<Rep_>::intersect_left(Segment_2 &seg) const
     result = CGAL::intersection(seg,*left_seg);//!!!! change: create instance and call its intersection
 
     if(CGAL::assign(p,result)) {
-      NT tmp = y + pixel_size / 2.0;
-      return(p.y() != tmp || Snap_rounding_2<Rep_>::get_direction() ==
-             Snap_rounding_2<Rep_>::UP_LEFT && seg.source().y() != tmp ||
+      Point_2 tmp(0,y + pixel_size / 2.0);
+      Comparison_result c_p = _gt.compare_y_2_object()(p,tmp);
+      Comparison_result c_target = _gt.compare_y_2_object()(seg.target(),tmp);
+      Comparison_result c_source = _gt.compare_y_2_object()(seg.source(),tmp);
+
+      return(c_p != EQUAL || Snap_rounding_2<Rep_>::get_direction() ==
+             Snap_rounding_2<Rep_>::UP_LEFT && c_source != EQUAL ||
              Snap_rounding_2<Rep_>::get_direction() ==
-             Snap_rounding_2<Rep_>::DOWN_RIGHT && seg.target().y() != tmp);
+             Snap_rounding_2<Rep_>::DOWN_RIGHT && c_target != EQUAL);
     } else if(CGAL::assign(s,result))
       return(true);
     else
@@ -445,8 +449,10 @@ bool Hot_Pixel<Rep_>::intersect_right(Segment_2 &seg) const
         return(false);// was checked
       else {
         Point_2 p_check(x + pixel_size / 2.0,0);
-        Comparison_result c_target = _gt.compare_x_2_object()(p_check,seg.target());
-        Comparison_result c_source = _gt.compare_x_2_object()(p_check,seg.source());
+        Comparison_result c_target =
+             _gt.compare_x_2_object()(p_check,seg.target());
+        Comparison_result c_source =
+             _gt.compare_x_2_object()(p_check,seg.source());
 
         return((Snap_rounding_2<Rep_>::get_direction() ==
                 Snap_rounding_2<Rep_>::LEFT ||
@@ -505,7 +511,12 @@ bool Hot_Pixel<Rep_>::intersect_top(Segment_2 &seg) const
       // corner points was checked in intersect_bot
       NT tar_y = seg.target().y(),sou_y = seg.source().y();
 
-      if(p.x() == x - pixel_size / 2.0 || p.x() == x + pixel_size / 2.0)
+      Point_2 tmp1(x - pixel_size / 2.0,0);
+      Point_2 tmp2(x + pixel_size / 2.0,0);
+      Comparison_result c1 = _gt.compare_x_2_object()(p,tmp1);
+      Comparison_result c2 = _gt.compare_x_2_object()(p,tmp2);
+
+      if(c1 == EQUAL || c2 == EQUAL)
         return(false);// were checked
       else
         return((Snap_rounding_2<Rep_>::get_direction() ==
@@ -578,8 +589,6 @@ bool hot_pixel_dir_cmp<Rep_>::operator ()(const Hot_Pixel<Rep_> *h1,\
     Snap_rounding_2<Rep_>::RIGHT &&
     h1->get_x() < h2->get_x());
 }
-
-
 
 template<class Rep_>
 void Snap_rounding_2<Rep_>::find_hot_pixels_and_create_kd_trees()
