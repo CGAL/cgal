@@ -2,7 +2,7 @@
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/Triangulation_euclidean_traits_xy_3.h>
 #include <CGAL/Interval_skip_list.h>
-#include <CGAL/Face_interval.h>
+#include <CGAL/Level_interval.h>
 #include <iostream>
 #include <fstream>
 
@@ -12,7 +12,7 @@ typedef CGAL::Triangulation_euclidean_traits_xy_3<SC> K;
 typedef CGAL::Delaunay_triangulation_2<K>             Delaunay;
 typedef Delaunay::Face_handle                         Face_handle;
 typedef Delaunay::Finite_faces_iterator               Finite_faces_iterator;
-typedef CGAL::Face_interval<Face_handle>              Interval;
+typedef CGAL::Level_interval<Face_handle>             Interval;
 typedef CGAL::Interval_skip_list<Interval>            Interval_skip_list;
 
 int main()
