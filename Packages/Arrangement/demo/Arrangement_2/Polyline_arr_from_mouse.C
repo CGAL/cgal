@@ -54,15 +54,7 @@ int main()
 #include <CGAL/leda_real.h>
 #include <LEDA/string.h>
 
-#ifndef CGAL_IO_FILE_DRAWER_H
-#include <CGAL/IO/Pm_drawer.h>
-#endif
-
-#ifndef CGAL_IO_DRAW_PM_H
-#include <CGAL/IO/draw_pm.h>
-#endif
-
-#include <CGAL/IO/Window_stream.h>
+#include <Draw_preferences.h>
 
 typedef leda_real                            NT;
 typedef CGAL::Cartesian<NT>                  R;
@@ -117,54 +109,16 @@ CGAL::Window_stream& operator<<(CGAL::Window_stream& os,
 }
 
 CGAL_BEGIN_NAMESPACE
-
-class My_Arr_drawer : public Pm_drawer< Arr_2, Window_stream >{
-private:
-  typedef Pm_drawer<Arr_2,Window_stream>  Base;
-public:
-  My_Arr_drawer( Window_stream& W ): Pm_drawer<Arr_2,Window_stream>( W ){}
-  
-  void draw_face(Face_handle f) {
-    if (f->does_outer_ccb_exist()) {
-      Arr_2::Ccb_halfedge_circulator cc=f->outer_ccb();
-      do {
-	W << cc->curve();
-      } while (++cc != f->outer_ccb());  
-    }
-
-    Arr_2::Holes_iterator hit=f->holes_begin(),eit=f->holes_end();
-    for (;hit!=eit; ++hit) {
-      Arr_2::Ccb_halfedge_circulator cc=*hit; 
-      do {
-	W << cc->curve();
-	} while (++cc != *hit);  
-    }      
-  }
-
-  void draw_vertices(Vertex_const_iterator Vertices_begin, 
-		     Vertex_const_iterator Vertices_end) {
-    W << GREEN;
-    Base::draw_vertices(Vertices_begin, Vertices_end);
-  }
-  
-  void draw_halfedges(Halfedge_const_iterator Halfedges_begin, 
-		      Halfedge_const_iterator Halfedges_end) {
-    W << BLUE;
-    Base base(window());
-    base.draw_halfedges(Halfedges_begin, Halfedges_end);
-  }
-  
-};
- 
 Window_stream& operator<<(Window_stream& os, Arr_2 &A)
 {
-  My_Arr_drawer drawer(os);
+  My_Arr_drawer< Arr_2,
+                 Arr_2::Ccb_halfedge_circulator, 
+                 Arr_2::Holes_iterator> drawer(os);
   
   draw_pm(arr, drawer, os);
   
   return os;
 }
-
 CGAL_END_NAMESPACE
 
 void show_welcome_message()
