@@ -1,3 +1,6 @@
+4.33	 (17 September 01)
+- Added missing #include <iterator> detected by GCC 3.1.
+
 4.32	 (29 August 01)
 - changed ccSection commands to section commands since pdf converter that 
   creates bookmarks can't handle the former.

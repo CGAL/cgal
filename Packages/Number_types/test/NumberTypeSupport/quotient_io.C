@@ -3,6 +3,7 @@
 #include <fstream>
 #include <vector>
 #include <algorithm>
+#include <iterator>
 #include <CGAL/Quotient.h>
 
 int
