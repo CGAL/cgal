@@ -4,7 +4,7 @@
 
 #include <CGAL/basic.h>
 
-// Workaround for crappy compilers.
+// Workaround for buggy compilers.
 #ifdef CGAL_CFG_MATCHING_BUG_2
 #define CGAL_IA_CT double
 #define CGAL_IA_PROTECTED true
@@ -52,21 +52,6 @@ typedef CGAL::Filtered_exact<double, leda_real> NT;
 typedef CGAL::Filtered_exact<double, CGAL::Quotient<CGAL::MP_Float> > NT;
 #endif
 
-
-int test(void);
-void bench(void);
-
-// Now try the higher level predicates (C2/C3/H2/H3).
-// Well, that is: make a real test-suite !
-int main()
-{
-  // Interval_nt ia (2);
-  // double d = CGAL::to_double(ia);
-  // cin >> ia;
-  // std::cout << ia << std::endl;
-  bench();
-  return test();
-}
 
 void bench()
 {
@@ -127,4 +112,10 @@ int test()
   std::cout << " ( == 0 ) (not sure, it depends of the first approx)\n";
   std::cout << a << std::endl;
   return 0;
+}
+
+int main()
+{
+  bench();
+  return test();
 }
