@@ -6,11 +6,11 @@
 #endif
 
 #ifndef CGAL_BITANGENT_2_H
-#include <CGAL/Bitangent_2.h>
+#include <CEP/Visibility_complex/Bitangent_2.h>
 #endif
 
 #ifndef CGAL_CONVEX_ARC_2
-#include <CGAL/Arc_2.h>
+#include <CEP/Visibility_complex/Arc_2.h>
 #endif
 
 CGAL_BEGIN_NAMESPACE
