@@ -12,9 +12,9 @@
 // release_date  : 
 //
 // file          : include/CGAL/Real_timer.h
-// package       : Timer (2.0)
+// package       : Timer (2.1)
 // maintainer    : Matthias Baesken <baesken@informatik.uni-trier.de>
-// revision      : 2.0
+// revision      : 2.1
 // revision_date : 28 September 2001 
 // author(s)     : Lutz Kettner  <kettner@inf.ethz.ch>
 //                 Matthias Baesken <baesken@informatik.uni-halle.de>
