@@ -1,5 +1,5 @@
-// polyhedron_prog_off.C
-// -------------------------------------------
+// examples/Polyhedron/polyhedron_prog_off.C
+// -----------------------------------------
 #include <CGAL/Cartesian.h>
 #include <CGAL/Polyhedron_3.h>
 #include <iostream>

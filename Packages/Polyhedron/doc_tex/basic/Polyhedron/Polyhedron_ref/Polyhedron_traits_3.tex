@@ -32,18 +32,23 @@ it suitable for kernels with local state.
 \ccc{PolyhedronTraits_3}
 
 \ccTypes
-\ccThree{typedef Kernel::Vector_3;}{Plane_3;;}{}
+\ccThree{typedef Kernel::Construct_opposite_plane_3;}
+    {Construct_opposite_plane_3;;}{}
+\ccTwo{Polyhedron_traits_3<Kernel> traits ( Kernel kernel);;;;}{}
 
+\ccNestedType{Kernel}{the \ccc{Kernel} model.}
+\ccGlue
 \ccTypedef{typedef Kernel::Point_3 Point_3;}{}
 \ccGlue
 \ccTypedef{typedef Kernel::Plane_3 Plane_3;}{}
-
+\ccGlue
 \ccTypedef{typedef Kernel::Construct_opposite_plane_3 
     Construct_opposite_plane_3;}{}
 
 \ccCreation
 \ccCreationVariable{traits}  %% choose variable name
-\ccTwo{CGAL::Polyhedron_traits_3<R> traits;;;}{}
+%\ccThree{typedef Kernel::Vector_3;}{Plane_3;;}{}
+%\ccTwo{CGAL::Polyhedron_traits_3<R> traits;;;}{}
 
 \ccConstructor{Polyhedron_traits_3();}{default constructor, uses 
     \ccc{Kernel()} as local reference to the kernel.}
@@ -52,9 +57,15 @@ it suitable for kernels with local state.
     as local reference.}
 
 \ccOperations
+\ccThree{Construct_opposite_plane_3}
+    {traits.construct_opposite_plane_3_object();}{}
 
 \ccMethod{Construct_opposite_plane_3 construct_opposite_plane_3_object();}{
     forwarded to \ccc{Kernel}.}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Polyhedron_traits_with_normals_3<Kernel>}
 
 \ccImplementation
 

@@ -1,5 +1,5 @@
-// polyhedron_prog_normals.C
-// ------------------------------------------
+// examples/Polyhedron/polyhedron_prog_normals.C
+// ---------------------------------------------
 #include <CGAL/Homogeneous.h>
 #include <CGAL/Polyhedron_traits_with_normals_3.h>
 #include <CGAL/Polyhedron_3.h>

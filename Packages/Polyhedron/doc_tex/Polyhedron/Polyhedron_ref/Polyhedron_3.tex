@@ -371,8 +371,9 @@ unchanged.
     {splits the facet incident to \ccc{h} and \ccc{g} into two facets
      with a new diagonal between the two vertices denoted by \ccc{h} and
      \ccc{g} respectively. The second (new) facet is a copy of the
-     first facet. It returns the new diagonal. The new face is to the 
-     right of the new diagonal, the old face is to the left. The time is
+     first facet. Returns \ccc{h->next()} after the
+     operation, i.e., the new diagonal. The new face is to the right of the 
+     new diagonal, the old face is to the left. The time is
      proportional to the distance from \ccc{h} to \ccc{g} around the facet.
     \ccPrecond \ccc{h} and \ccc{g} are incident to the same facet.
                \ccc{h != g} (no loops). \ccc{h->next() != g} and
@@ -397,15 +398,17 @@ unchanged.
 \ccMethod{Halfedge_handle split_vertex( Halfedge_handle h,
                                         Halfedge_handle g);}
     {splits the vertex incident to \ccc{h} and \ccc{g} into two vertices,
-     the old vertex remains and a new copy is created,
-     and connects them with a new edge. Let \ccc{hnew} be one halfedge 
-     of the new edge. The split regroups the halfedges around the two 
-     vertices. The halfedge sequence \ccc{hnew}, \ccc{g->next()->opposite()},
-     \ldots, \ccc{h} remains around the old vertex, while the 
-     halfedge sequence \ccc{hnew->opposite()}, \ccc{h->next()->opposite()},
-     \ldots, \ccc{g} is regrouped around the new vertex. The split returns 
-     \ccc{hnew}, i.e., the new halfedge incident to the old vertex. The time is
-     proportional to the distance from \ccc{h} to \ccc{g} around the vertex.
+    the old vertex remains and a new copy is created,
+    and connects them with a new edge. Let \ccc{hnew} be 
+    \ccc{h->next()->opposite()} after the split, i.e., a halfedge
+    of the new edge. The split regroups the halfedges around the two 
+    vertices. The halfedge sequence \ccc{hnew}, \ccc{g->next()->opposite()},
+    \ldots, \ccc{h} remains around the old vertex, while the 
+    halfedge sequence \ccc{hnew->opposite()}, \ccc{h->next()->opposite()} 
+    (before the split), \ldots, \ccc{g} is regrouped around the new
+    vertex. The split returns \ccc{hnew}, i.e., the new halfedge incident 
+    to the old vertex. The time is proportional to the distance from 
+    \ccc{h} to \ccc{g} around the vertex.
     \ccPrecond \ccc{h} and \ccc{g} are incident to the same vertex.
                \ccc{h != g} (antennas are not allowed).
     \ccCommentHeading{Note} A special application of the split is 
@@ -416,11 +419,11 @@ unchanged.
 \ccMethod{Halfedge_handle join_vertex( Halfedge_handle h);}
     {joins the two vertices incident to $h$. The vertex denoted by
       \ccc{h->opposite()} gets removed. Returns the predecessor of
-    $h$ around the vertex. The invariant 
-    \ccc{join_vertex( split_vertex( h, g))} returns
+    $h$ around the vertex, i.e., \ccc{h->opposite()->prev()}. 
+    The invariant \ccc{join_vertex( split_vertex( h, g))} returns
     $h$ and keeps the polyhedron unchanged. 
     The time is proportional to the degree of the vertex removed and 
-    the time to compute \ccc{h->prev()}.
+    the time to compute \ccc{h->prev()} and \ccc{h->opposite()->prev()}.
     \ccPrecond \ccc{Supports_removal} $\equiv$ \ccc{CGAL::Tag_true}. The
     size of both facets incident to $h$ is at least four (no multi-edges).}
 
@@ -443,9 +446,9 @@ unchanged.
      a copy of \ccc{h->vertex()}, and connects it to each vertex incident 
      to \ccc{h->facet()} splitting \ccc{h->facet()} into triangles. 
      \ccc{h} remains incident to the original facet, all other triangles 
-     are copies of this facet. Returns the halfedge next to \ccc{h}
-     that is pointing to the new vertex. The time is proportional
-     to the size of the facet.
+     are copies of this facet. Returns the halfedge \ccc{h->next()}
+     after the operation, i.e., a halfedge pointing to the new vertex.
+     The time is proportional to the size of the facet.
      \ccPrecond \ccc{h} is not a border halfedge.}
 
 \ccMethod{Halfedge_handle erase_center_vertex( Halfedge_handle g);}
@@ -561,12 +564,11 @@ unchanged.
 
 \ccMethod{Halfedge_handle add_facet_to_border( Halfedge_handle h,
                                                Halfedge_handle g);}
-   {creates a new facet within the hole incident to $h$
-   and $g$ by connecting the tip of $g$ with the tip of $h$ 
-   with a new halfedge and filling this separated part
-   of the hole with a new facet, such that the new
-   facet is incident to $g$. Returns the halfedge of the new edge that
-   is incident to the new facet.
+   {creates a new facet within the hole incident to $h$ and $g$ by
+    connecting the vertex denoted by $g$ with the vertex denoted by $h$
+    with a new halfedge and filling this separated part of the hole with
+    a new facet, such that the new facet is incident to $g$. 
+    Returns the halfedge of the new edge that is incident to the new facet.
    \ccPrecond \ccc{h->is_border()}, \ccc{g->is_border()}, \ccc{h != g}, 
    \ccc{h->next() != g}, and $g$ can be reached along the same hole
    starting with $h$.}
@@ -579,6 +581,7 @@ unchanged.
     {removes the incident facet of $h$ and changes all halfedges incident 
      to the facet into border edges or removes them from the
      polyhedral surface if they were already border edges.
+     If this creates isolated vertices they get removed as well.
      See \ccc{make_hole(h)} for a more specialized variant.    
      \ccPrecond \ccc{Supports_removal} $\equiv$ \ccc{CGAL::Tag_true}.}
 
@@ -613,7 +616,7 @@ border halfedge (the first one is a non-border halfedge in conformance
 normalization stores the number of border halfedges and the halfedge
 iterator the border edges start at within the data
 structure.  Halfedge insertion or removal and changing the border
-status of a halfedge may invalidate these values, which are not
+status of a halfedge may invalidate these values that are not
 automatically updated.
 
 \ccThree{Halfe}{dge_handleP.split_f}{}

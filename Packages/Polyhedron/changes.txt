@@ -1,6 +1,16 @@
 Polyhedron Package: Release changes:
 ---------------------------------------------------------------------
 
+3.12 (29 Jun 2001)
+
+     - Smaller corrections in the doc.
+     - Added pathname to example program header line.
+     - Added doc for Polyhedron_traits_with_normals_3.
+     - Replaced __GNUC__ excpetions with new workaround flag
+       CGAL_CFG_NO_NESTED_TEMPLATE_KEYWORD.
+     - Added missing Polyhedron_traits_with_normals_3.h to cvs.
+     - New example polyhedron_prog_subdiv_with_boundary.C.
+
 3.11 (25 Jun 2001)
 
      - Fixed Wrapper<> problem for Borland.

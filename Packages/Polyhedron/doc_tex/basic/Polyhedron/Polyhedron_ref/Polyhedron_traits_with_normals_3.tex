@@ -30,11 +30,15 @@ with local state.
 
 \ccIsModel
 
-\ccc{PolyhedronTraits_3}
+\ccRefIdfierPage{PolyhedronTraits_3}
 
 \ccTypes
-\ccThree{typedef Kernel::Vector_3;}{Plane_3;;}{}
+\ccThree{typedef Kernel::Construct_opposite_vector_3;}
+    {Construct_opposite_plane_3;;}{}
+\ccTwo{Polyhedron_traits_with_normals_3<Kernel> traits ( Kernel kernel);;;;}{}
 
+\ccNestedType{Kernel}{the \ccc{Kernel} model.}
+\ccGlue
 \ccTypedef{typedef Kernel::Point_3 Point_3;}{}
 \ccGlue
 \ccTypedef{typedef Kernel::Vector_3 Plane_3;}{}
@@ -44,7 +48,6 @@ with local state.
 
 \ccCreation
 \ccCreationVariable{traits}  %% choose variable name
-\ccTwo{CGAL::Polyhedron_traits_with_normals_3<R> traits;;;}{}
 
 \ccConstructor{Polyhedron_traits_with_normals_3();}{default constructor, uses 
     \ccc{Kernel()} as local reference to the kernel.}
@@ -57,10 +60,16 @@ with local state.
 \ccMethod{Construct_opposite_plane_3 construct_opposite_plane_3_object();}{
     forwarded to \ccc{Kernel}.}
 
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Polyhedron_traits_3<Kernel>}
+
 \ccExample
 
-Instantiation of a polyhedral surface with the 
-Cartesian kernel based on double coordinates. 
+We use this traits class to instantiate a polyhedral surface with a
+normal vector and no plane equation for each facet. We compute the
+normal vector assuming exact arithmetic (integers in this example)
+and convex planar facets.
 
 \ccIncludeExampleCode{Polyhedron/polyhedron_prog_normals.C}
 

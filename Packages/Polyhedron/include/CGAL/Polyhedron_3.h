@@ -408,36 +408,36 @@ public:
     template < class Refs, class Traits>
     class Vertex_wrapper {
     public:
-#ifdef __GNUC__
+#ifdef CGAL_CFG_NO_NESTED_TEMPLATE_KEYWORD
         typedef typename Items::Vertex_wrapper<Refs,Traits> VWrapper;
-#else // __GNUC__ //
+#else // CGAL_CFG_NO_NESTED_TEMPLATE_KEYWORD //
         typedef Items::template Vertex_wrapper<Refs,Traits> VWrapper;
         // here is the standard conforming way
-#endif // __GNUC__ //
+#endif // CGAL_CFG_NO_NESTED_TEMPLATE_KEYWORD //
         typedef typename VWrapper::Vertex Vertex_base;
         typedef I_Polyhedron_vertex< Vertex_base> Vertex;
     };
     template < class Refs, class Traits>
     class Halfedge_wrapper {
     public:
-#ifdef __GNUC__
+#ifdef CGAL_CFG_NO_NESTED_TEMPLATE_KEYWORD
         typedef typename Items::Halfedge_wrapper<Refs,Traits> HWrapper;
-#else // __GNUC__ //
+#else // CGAL_CFG_NO_NESTED_TEMPLATE_KEYWORD //
         typedef Items::template Halfedge_wrapper<Refs,Traits> HWrapper;
         // here is the standard conforming way
-#endif // __GNUC__ //
+#endif // CGAL_CFG_NO_NESTED_TEMPLATE_KEYWORD //
         typedef typename HWrapper::Halfedge Halfedge_base;
         typedef I_Polyhedron_halfedge< Halfedge_base> Halfedge;
     };
     template < class Refs, class Traits>
     class Face_wrapper {
     public:
-#ifdef __GNUC__
+#ifdef CGAL_CFG_NO_NESTED_TEMPLATE_KEYWORD
         typedef typename Items::Face_wrapper<Refs,Traits> FWrapper;
-#else // __GNUC__ //
+#else // CGAL_CFG_NO_NESTED_TEMPLATE_KEYWORD //
         // here is the standard conforming way
         typedef Items::template Face_wrapper<Refs,Traits> FWrapper;
-#endif // __GNUC__ //
+#endif // CGAL_CFG_NO_NESTED_TEMPLATE_KEYWORD //
         typedef typename FWrapper::Face Face_base;
         typedef I_Polyhedron_facet< Face_base> Face;
     };
@@ -477,12 +477,12 @@ public:
 #ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
     typedef T_HDS< Traits, Derived_items>         HDS;
 #else
-#ifdef __GNUC__
+#ifdef CGAL_CFG_NO_NESTED_TEMPLATE_KEYWORD
     typedef typename T_HDS::HDS< Traits, Derived_items>  HDS;
-#else // __GNUC__ //
+#else // CGAL_CFG_NO_NESTED_TEMPLATE_KEYWORD //
     // here is the standard conforming way
     typedef T_HDS::template HDS< Traits, Derived_items>  HDS;
-#endif // __GNUC__ //
+#endif // CGAL_CFG_NO_NESTED_TEMPLATE_KEYWORD //
 #endif
     typedef HDS                                   HalfedgeDS;
 

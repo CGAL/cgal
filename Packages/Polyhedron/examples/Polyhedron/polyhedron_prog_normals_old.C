@@ -1,5 +1,5 @@
-// polyhedron_prog_normals_old.C
-// -----------------------------------------------------------
+// examples/Polyhedron/polyhedron_prog_normals_old.C
+// -------------------------------------------------
 #define CGAL_USE_POLYHEDRON_DESIGN_ONE 1
 #include <CGAL/Homogeneous.h>
 #include <iostream>

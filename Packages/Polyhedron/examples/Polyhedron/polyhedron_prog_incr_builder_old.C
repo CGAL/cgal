@@ -1,5 +1,5 @@
-// polyhedron_prog_incr_builder_old.C
-// -----------------------------------------------------------
+// examples/Polyhedron/polyhedron_prog_incr_builder_old.C
+// ------------------------------------------------------
 #define CGAL_USE_POLYHEDRON_DESIGN_ONE 1
 #include <CGAL/Cartesian.h>
 #include <CGAL/Halfedge_data_structure_polyhedron_default_3.h>

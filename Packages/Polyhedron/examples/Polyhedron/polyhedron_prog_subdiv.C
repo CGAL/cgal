@@ -1,5 +1,5 @@
-// polyhedron_prog_subdiv.C
-// -----------------------------------------
+// examples/Polyhedron/polyhedron_prog_subdiv.C
+// --------------------------------------------
 #include <CGAL/Cartesian.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
@@ -32,14 +32,13 @@ void create_center_vertex( Polyhedron& P, Facet_iterator f) {
     Point center =  CGAL::ORIGIN + (vec / order);
     Halfedge_handle new_center = P.create_center_vertex( f->halfedge());
     new_center->vertex()->point() = center;
-    CGAL_postcondition( P.is_valid());
 }
 
 struct Smooth_old_vertex {
     Point operator()( const Vertex& v) const {
         CGAL_precondition((CGAL::circulator_size( v.vertex_begin()) & 1) == 0);
         std::size_t old_degree = CGAL::circulator_size( v.vertex_begin()) / 2;
-        double alpha = ( 4.0 + 2.0 * cos( 2.0 * M_PI / old_degree)) / 9.0;
+        double alpha = ( 4.0 - 2.0 * cos( 2.0 * M_PI / old_degree)) / 9.0;
         Vector vec = (v.point() - CGAL::ORIGIN) * ( 1.0 - alpha);
         HV_circulator h = v.vertex_begin();
         do {
@@ -90,6 +89,7 @@ void subdiv( Polyhedron& P) {
         ++e; // careful, flip_edge destroys current edge
         flip_edge( P, h);
     };
+    CGAL_postcondition( P.is_valid());
 }
 
 int main() {

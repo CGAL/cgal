@@ -1,5 +1,5 @@
-// polyhedron_prog_color.C
-// ------------------------------------------
+// examples/Polyhedron/polyhedron_prog_color.C
+// -------------------------------------------
 #include <CGAL/Cartesian.h>
 #include <CGAL/IO/Color.h>
 #include <CGAL/Polyhedron_3.h>

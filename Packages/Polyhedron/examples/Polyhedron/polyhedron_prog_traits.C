@@ -1,5 +1,5 @@
-// polyhedron_prog_traits.C
-// ------------------------------------------
+// examples/Polyhedron/polyhedron_prog_traits.C
+// --------------------------------------------
 #include <CGAL/Cartesian.h>
 #include <CGAL/Polyhedron_traits_3.h>
 #include <CGAL/Polyhedron_3.h>
