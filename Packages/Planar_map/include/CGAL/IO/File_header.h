@@ -58,24 +58,12 @@ private:
 public:
   typedef  File_header           Self;
   
-  File_header():
+  File_header(bool verbose = false, bool no_comments = false, 
+              bool ascii = true, int offset = 0, bool colors = false,
+              int dim = 2) :
     n_vertices(0),
     n_halfedges(0),
     n_faces(0),
-    m_verbose(false),
-    m_no_comments(false),
-    m_ascii(true),
-    m_offset(0),
-    m_colors(false),
-    m_dim(2)
-  {} 
-
- 
-  File_header( int v, int h, int f, bool verbose = false, bool no_comments = false, 
-               bool ascii = true, int offset = 0, bool colors = false, int dim = 2):
-    n_vertices(v),
-    n_halfedges(h),
-    n_faces(f),
     m_verbose(verbose),
     m_no_comments(no_comments),
     m_ascii(ascii),
@@ -85,7 +73,7 @@ public:
   {}
  
   // copy constructor
-  File_header(const Self& file_header):
+  File_header(const Self & file_header):
     n_vertices(file_header.number_of_vertices()),
     n_halfedges(file_header.number_of_halfedges()),
     n_faces(file_header.number_of_faces()),
@@ -146,19 +134,3 @@ public:
 
 CGAL_END_NAMESPACE
 #endif // CGAL_IO_FILE_HEADER_PM_H //
-// EOF //
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

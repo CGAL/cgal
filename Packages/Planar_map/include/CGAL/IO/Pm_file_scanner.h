@@ -67,9 +67,11 @@ public:
   typedef typename Planar_map::Dcel::Halfedge            D_halfedge;
   typedef typename Planar_map::Dcel::Face	         D_face;
 
-  Pm_file_scanner( std::istream& in) : File_header(), m_in(in) { skip_comment(); }
+  Pm_file_scanner(std::istream & in) : File_header(), m_in(in)
+  { skip_comment(); }
   
-  Pm_file_scanner( std::istream& in, const File_header& header) : File_header(header), m_in(in) { skip_comment(); }
+  Pm_file_scanner(std::istream & in, const File_header & header) :
+      File_header(header), m_in(in) { skip_comment(); }
   
   std::istream& in() { return m_in; }
  
