@@ -2,6 +2,7 @@
 //#define  OVL_DEBUG_TEST
 
 #include <CGAL/config.h> // needed for the LONGNAME flag
+#include <iostream>
 
 // Making sure test doesn't fail if LEDA is not installed
 #if ! defined(CGAL_USE_LEDA)
