@@ -2,19 +2,9 @@ Stuff to look at, as time permits:
 ----------------------------------
 
 - Tests :
-  - M$VC++ before submitting (especially for CGAL_TYPENAME_BUG).
-    maybe simply put the "#define typename" back.
   - GCOV
   - G++ 2.97.
   - Write a Checker for full kernels, like Pm_traits_checker.h ?
-
-- Cd must come back to life somehow...  Currently, I've disabled it ~totally
-  in Cartesian.h.  Same thing for Conics...
-
-- Factorize all the new kernel traits stuff of the different kernels in a
-  separate .def file, included by all kernels ?
-  Already done, but let's try it on SimpleCartesian_v2 when ready to test,
-  then propose it to Stefan.
 
 - Handles :
   - Having a proper Handle_for_virtual<> is becoming important...
@@ -30,15 +20,26 @@ Stuff to look at, as time permits:
     on the command line, and not in config.h...
   - Have a separate (top-level) kernel for the advanced cartesian ? 
 
+- Pierre reported that the operator>>() should test for empty stream,
+  something like :
+diff -ru CGAL-2.3-I-6/include/CGAL/SimpleCartesian/CircleS2.h CGAL-2.3-I-6-new/include/CGAL/SimpleCartesian/CircleS2.h
+--- CGAL-2.3-I-6/include/CGAL/SimpleCartesian/CircleS2.h        Fri Oct 27 16:48:01 2000
++++ CGAL-2.3-I-6-new/include/CGAL/SimpleCartesian/CircleS2.h    Tue Oct 31 11:15:41 2000
+@@ -333,7 +333,7 @@
+         cerr << "Stream must be in ascii or binary mode" << std::endl;
+         break;
+     }
+-    c = CircleS2<FT>(center, squared_radi, (Orientation)o);
++    if (is) c = CircleS2<FT>(center, squared_radi, (Orientation)o);
+     return is;
+ }
+ #endif // CGAL_NO_ISTREAM_EXTRACT_CIRCLES2
+
 - Use CGAL_TYPENAME_MSVC_NULL instead of "#define typename".
   Only in the template parameters, right ?
-- Merging Cartesian and SimpleCartesian :
-  Benefits are :
-  - possibility to specify a different allocator easily, including different
-    ones in the same kernel.
-  - easy to have Iso_rectangleC2 being a twotuple of non ref-counted points,
-    whereas now it's a twotuple of ref-counted points, which is a pure lost.
-    (all local, temporary objects don't need any ref-counting)
+- Iso_rectangleC2 should store a twotuple of _non_ ref-counted points ?
+  whereas now it's a twotuple of ref-counted points, which is a pure lost.
+  (all local, temporary objects don't need any ref-counting)
 - ::bbox() robustness issues : it's not robust, since basically, we use
   to_double().
   The homogeneous kernel uses an epsilon to get this right, in the case
@@ -79,13 +80,15 @@ Stuff to look at, as time permits:
   [ why compare_angle_with_x_axisC2() is not filtered,
     while orientationC2() is ???!!!??? ]
   Currently, there are 10/27 like that for C2, and 10/21 for C3.
-  This defiitely must be cleaned up.  Maybe after some work on the filtered
+  This definitely must be cleaned up.  Maybe after some work on the filtered
   kernel ?
 - There are still a few predicates and constructions that are not FT-based,
   but mainly they are the simple ones, just needing to compute an opposite or
   something.  I need to think about what to do with these, it's painful to have
   a 3-stage calling sequence for not that much...
 - Merge Intersection package ?  What about Conic ?
+- Cd must come back to life somehow...  Currently, I've disabled it ~totally
+  in Cartesian.h.  Same thing for Conics...
 - line_get_pointC2() could take "i" as "const FT&" directly, not "int", it
   will avoid several constructions.  Also, propagating that to the higher
   level will also bring more functionality at the top level...
