@@ -12,12 +12,12 @@
 // release_date  : $CGAL_Date$
 //
 // file          : test/Min_circle_2/test_Min_circle_2.C
-// package       : Min_circle_2 3.10.3 (19 Mar 2001)
+// package       : Min_circle_2 3.10.4 (19 Mar 2001)
 // chapter       : Geometric Optimisation
 //
 // source        : web/Min_circle_2.aw
-// revision      : 5.29
-// revision_date : 2000/09/18 09:56:37
+// revision      : 5.30
+// revision_date : 2001/03/19 18:06:10
 //
 // author(s)     : Sven Schönherr, Bernd Gärtner
 // maintainer    : Sven Schönherr <sven@inf.ethz.ch>
