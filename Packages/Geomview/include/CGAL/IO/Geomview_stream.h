@@ -180,13 +180,13 @@ public:
         pickplane(get_bbox());
     }
 
+    static char* nth(char* s, int count);
     static void parse_point(const char* pickpoint,
 		     double &x, double &y, double &z, double &w);
 private:
     void setup_geomview(const char *machine, const char *login);
     void frame(const Bbox_3 &bbox);
     void pickplane(const Bbox_3 &bbox);
-    static char* nth(char* s, int count);
 
     Bbox_3 bb;
     Color vertex_color, edge_color, face_color;

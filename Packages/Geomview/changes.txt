@@ -1,5 +1,8 @@
 CHANGES to the Geomview package.
 
+Ver 3.25 (22 September 2001)
+- Fix private/public buglet just introduced.
+
 Ver 3.24 (21 September 2001)
 - SunPro workaround.
 
