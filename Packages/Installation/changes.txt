@@ -8,9 +8,11 @@
 //---------------------------------------------------------------------
 
 GLOB: Fixes for QT.
-GLOB: Cleanup moc files.
 GLOB: src/Interval_arithmetic/workaround_4_ms.obj is no longer necessary.
 GLOB: Add -D_RWSTD__ALLOCATOR for SunPro.
+GLOB: QT fixed from Radu.
+GLOB: Yet other fixes for Qt (Qt support hasn't been yet tested enough)
+GLOB: Added .moc to REMOVE_EXT_LIST.
 GLOB: Fixed qtlib option.
 GLOB: Fixed several things for qt-support. (<- Laurent)
 GLOB: Added CGAL_QT_LDFLAGS.
@@ -44,6 +46,7 @@ GLOB: Make blank after EXE_OPT, except for msvc and borland.
 GLOB: Fixed test_gmp for sunpro 5.3.
 GLOB: Updated sunpro_version detection for 5.3.
 GLOB: Update CGAL version to 2.4.
+DOCS: Updated KAI CC url.
 DOCS: Added Qt stuff.
 DOCS: fixed URLs containing \_ to please HTML covertor
 DOCS: updated URLs for Cygwin
