@@ -1,3 +1,7 @@
+2.8.1       (23 May 2001)
+- changed __USE_CGAL_WINDOW__ to the better name
+  CGAL_USE_CGAL_WINDOW (suggested by Sylvain)
+
 2.8.0       (17 May 2001)
 - file cgal_window added to make the package work with
   the CGAL::window - class (port of the LEDA window,
