@@ -52,6 +52,7 @@ int main()
 //#error Currently not supported (July 2000)
   #include <CGAL/leda_rational.h>
   #include <CGAL/Arr_leda_polyline_traits.h>
+  #include <CGAL/Pm_segment_traits_leda_kernel_2.h>
 #elif CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_CIRCLE_TRAITS
   #include <CGAL/leda_real.h>
   #include <CGAL/Arr_segment_circle_traits.h>
@@ -108,7 +109,8 @@ int main()
 
 #elif CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_LEDA_TRAITS
   typedef leda_rational                                 NT;
-  typedef CGAL::Arr_leda_polyline_traits<NT>            Traits;
+  typedef CGAL::Pm_segment_traits_leda_kernel_2         Kernel;
+  typedef CGAL::Arr_leda_polyline_traits<Kernel>        Traits;
 
 #elif CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_CIRCLE_TRAITS
   typedef leda_real                                     NT;
@@ -642,4 +644,4 @@ int main(int argc, char* argv[])
   return 0;
 }
 
-#endif // CGAL_ARR_TEST_LEDA_CONFLICT
+#endif
