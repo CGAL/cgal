@@ -1,4 +1,8 @@
 2 September 2004 Menelaos Karavelas
+- number_types_basic.h: added "#include <CGAL/MP_Float.h>"; needed for
+  specializations of Quotient
+
+2 September 2004 Menelaos Karavelas
 - removed occurences of CGAL_USE_ADL_FOR_NT
 - number_types_basic.h: added declarations for CORE::Expr
 
