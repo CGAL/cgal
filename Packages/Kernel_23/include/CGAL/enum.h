@@ -17,11 +17,13 @@
 // revision_date : $Date$
 // author(s)     : Stefan Schirra
 //
-// coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
+// coordinator   : MPI, Saarbruecken
 // ======================================================================
 
 #ifndef CGAL_ENUM_H
 #define CGAL_ENUM_H
+
+// If you add/change one type here, please update Is_a_predicate.h as well.
 
 CGAL_BEGIN_NAMESPACE
 

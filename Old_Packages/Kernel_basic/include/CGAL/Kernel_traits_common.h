@@ -23,9 +23,7 @@
 // It's aimed at being included from within a kernel traits class, this
 // way we share more code.
 
-#define CGAL_Kernel_pred(X,Y,Z) typedef X Y; Y Z() const { return Y(); }
-#define CGAL_Kernel_cons(X,Y,Z) CGAL_Kernel_pred(X,Y,Z)
-#define CGAL_Kernel_pred2(W,X,Y,Z) typedef W,X Y; Y Z() const { return Y(); }
-#define CGAL_Kernel_cons2(W,X,Y,Z) CGAL_Kernel_pred2(W,X,Y,Z)
+#define CGAL_Kernel_pred(Y,Z) typedef CGALi::Y<R> Y; Y Z() const {return Y();}
+#define CGAL_Kernel_cons(Y,Z) CGAL_Kernel_pred(Y,Z)
 
 #include <CGAL/Kernel/interface_macros.h>

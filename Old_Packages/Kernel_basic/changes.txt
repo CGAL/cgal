@@ -1,3 +1,7 @@
+3.93   (5 October 2002)
+- Functors rewrite.
+- New Is_a_predicate<> to differentiate predicate functors from constructions.
+
 3.92   (12 August 2002)
 - Test if CGAL_ALLOCATOR is already defined before defining it.
 - Introduce CGAL_MEMORY, similar to LEDA_MEMORY.
