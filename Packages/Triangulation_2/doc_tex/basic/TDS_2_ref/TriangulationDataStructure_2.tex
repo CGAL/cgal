@@ -136,6 +136,10 @@ number of faces stored in the triangulation data structure.}
 \ccMethod{bool is_vertex(Vertex_handle v) const;}{returns true if
 \ccc{v} is a vertex of \ccVar.}
 \ccGlue
+\ccMethod{bool is_edge(Face_handle fh, int i) const;}
+{Tests whether \ccc{(fh,i)} is an edge of \ccVar. Answers \ccc{false} when
+\ccc{dimension()} $<1$ .}
+\ccGlue
 \ccMethod{bool is_edge(Vertex_handle va, Vertex_handle vb) const;}{returns true if
 \ccc{va vb} is an edge of \ccVar.}
 \ccGlue
@@ -144,6 +148,10 @@ int &i) const;}{as previous. In addition, if true is returned
 \ccc{fr} and \ccc{i} are set such that the pair \ccc{(fr,i)}
 is the descrition 
 of  the ordered edge \ccc{va vb}.}
+\ccGlue
+\ccMethod{bool is_face(Face_handle fh) const;}
+{Tests whether \ccc{fh} is a face of \ccVar. Answers \ccc{false} when
+\ccc{dimension()} $<2$ .}
 \ccGlue
 \ccMethod{bool is_face(Vertex_handle v1, Vertex_handle v2, const
 Vertex* v3) const;}{\ccc{true} if there is a face having \ccc{v1}, \ccc{v2} and\ccc{v3} 
