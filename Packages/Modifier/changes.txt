@@ -1,5 +1,9 @@
 Modifier Package: Release changes:
 ---------------------------------------------------------------------
+1.3.4 (29 Aug 2001)
+     changed ccSection to section command since pdf converter that creates
+     bookmarks can't handle the former.
+
 1.3.3 (25 July 2001)
      fixed unresolved figure reference in html manual
 
