@@ -61,6 +61,7 @@ MyWindow::MyWindow(int w, int h)
   testlayer = new Qt_layer( myBar );
   colors_flag = true;
   statusBar();
+  strategy = TRAP;  // the first tab will be created with trapezoidal point location
 
   m_scailing_factor = 2;
   
@@ -264,6 +265,9 @@ MyWindow::MyWindow(int w, int h)
   options->insertSeparator();
   options->insertItem("Ray-Shooting Direction...", this, 
 	                                       SLOT(rayShootingDirection()));
+  options->insertItem("Point-Locaiton Strategy....", this ,
+                                         SLOT(pointLocationStrategy()));
+                                          
   
   // help menu
   QPopupMenu * help = new QPopupMenu( this );
@@ -360,7 +364,7 @@ MyWindow::MyWindow(int w, int h)
   
   //state flag 
   old_state = 0;
-  add_segment_tab();
+  add_segment_tab(); 
   resize(m_width,m_height);  
 }
 

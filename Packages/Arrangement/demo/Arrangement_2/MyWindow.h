@@ -96,7 +96,7 @@ private slots:
     /*! connect the timer to main window */
     void timer_done();
     /*! change the traits type of current tab */
-       void updateTraitsType( QAction *action );
+    void updateTraitsType( QAction *action );
     /*! update the window buttons according to change in traits type */
     void setTraits( TraitsType t );
     /*! on/off snap mode */
@@ -154,6 +154,8 @@ private slots:
     void changePmColor();    
     /*! choose the ray shoot diraction */
     void rayShootingDirection();
+    /*! choose the point location strategy */
+    void pointLocationStrategy();
     /*! change the conic type of current tab */
        void updateConicType( QAction *action );
     /*! update the window buttons according to change in conic type */
@@ -204,7 +206,7 @@ private:
     QAction *zoominBt;
     /*! zoomout button */
     QAction *zoomoutBt;
-    /*! the name of the file to be saved */
+    ///*! the name of the file to be saved */
     QString m_filename;
     /*! window hight */
     int m_height; 
@@ -240,8 +242,10 @@ private:
     QAction *setHyperbola;
     /*! conic type tool bar */
     QToolBar *conicTypeTool;
-	/*! color dialog action (for filling faces) */
-	QAction *color_dialog_bt;
+	  /*! color dialog action (for filling faces) */
+  	QAction *color_dialog_bt;
+    /* strategy for point location*/
+    Strategy strategy;
 };
 
 #endif // MYWINDOW_H
