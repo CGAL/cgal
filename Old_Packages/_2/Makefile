@@ -30,7 +30,7 @@ submit: clean Version $(Package).tar.gz
 	echo "submission::" >> $(TMP_file)
 	echo "http://www.mpi-sb.mpg.de/~hert/CGAL/submissions" >> $(TMP_file)
 	echo "/$(Package)/$(Package).tar.gz" >> $(TMP_file)
-	mail -s"autohandle" cgal-submit@cs.uu.nl $(USER) < $(TMP_file)
+	Mail -s"autohandle" cgal-submit@cs.uu.nl $(USER) < $(TMP_file)
 	rm -f $(TMP_file)
 
 $(Package).tar.gz:
