@@ -53,17 +53,11 @@
 
 #ifdef __linux__
 #include <fpu_control.h>
-#endif
-
-#ifdef __SUNPRO_CC
+#elif defined __SUNPRO_CC
 #include <ieeefp.h>
-#endif
-
-#if defined(__osf) || defined (__osf__)
+#elif defined __osf || defined __osf__
 #include <float.h>
-#endif
-
-#ifdef __sgi
+#elif defined __sgi
     // The 3 C functions do not work on IRIX 6.5 !!!!!
     // So we use precompiled (by gcc) binaries linked into libCGAL.
     // See revision 2.23 for the old code.
@@ -71,7 +65,7 @@ extern "C" {
   void CGAL_workaround_IRIX_set_FPU_cw (int);
   int  CGAL_workaround_IRIX_get_FPU_cw (void);
 }
-#endif // __sgi
+#endif
 
 CGAL_BEGIN_NAMESPACE
 
@@ -87,9 +81,8 @@ enum {
     FPU_cw_up   = 0x800 | 0x127f,
     FPU_cw_down = 0x400 | 0x127f
 };
-#endif // __i386__
 
-#ifdef __powerpc__
+#elif defined __powerpc__
 #define CGAL_IA_SETFPCW(CW) _FPU_SETCW(CW)
 #define CGAL_IA_GETFPCW(CW) _FPU_GETCW(CW)
 typedef fpu_control_t FPU_CW_t;
@@ -99,21 +92,8 @@ enum {
     FPU_cw_up   = _FPU_RC_UP      | _FPU_DEFAULT,
     FPU_cw_down = _FPU_RC_DOWN    | _FPU_DEFAULT
 };
-#endif // __powerpc__
 
-#ifdef __sparc__
-#define CGAL_IA_SETFPCW(CW) asm volatile ("ld %0,%%fsr" : :"m" (CW))
-#define CGAL_IA_GETFPCW(CW) asm volatile ("st %%fsr,%0" : "=m" (CW))
-typedef unsigned int FPU_CW_t;
-enum {  //        rounding   | precision  | def.mask
-    FPU_cw_near = 0x0        | 0x20000000 | 0x1f,
-    FPU_cw_zero = 0x40000000 | 0x20000000 | 0x1f,
-    FPU_cw_up   = 0x80000000 | 0x20000000 | 0x1f,
-    FPU_cw_down = 0xc0000000 | 0x20000000 | 0x1f
-};
-#endif // __sparc__
-
-#ifdef __SUNPRO_CC
+#elif defined __SUNPRO_CC
 #define CGAL_IA_GETFPCW(CW) CW = fpgetround()
 #define CGAL_IA_SETFPCW(CW) fpsetround(fp_rnd(CW))
 typedef unsigned int FPU_CW_t;
@@ -123,9 +103,19 @@ enum {
     FPU_cw_up   = FP_RP,
     FPU_cw_down = FP_RM
 };
-#endif // __SUNPRO_CC
 
-#ifdef __sgi
+#elif defined __sparc__
+#define CGAL_IA_SETFPCW(CW) asm volatile ("ld %0,%%fsr" : :"m" (CW))
+#define CGAL_IA_GETFPCW(CW) asm volatile ("st %%fsr,%0" : "=m" (CW))
+typedef unsigned int FPU_CW_t;
+enum {  //        rounding   | precision  | def.mask
+    FPU_cw_near = 0x0        | 0x20000000 | 0x1f,
+    FPU_cw_zero = 0x40000000 | 0x20000000 | 0x1f,
+    FPU_cw_up   = 0x80000000 | 0x20000000 | 0x1f,
+    FPU_cw_down = 0xc0000000 | 0x20000000 | 0x1f
+};
+
+#elif defined __sgi
 #define CGAL_IA_GETFPCW(CW) CW = CGAL_workaround_IRIX_get_FPU_cw()
 #define CGAL_IA_SETFPCW(CW) CGAL_workaround_IRIX_set_FPU_cw(CW)
 typedef unsigned int FPU_CW_t;
@@ -135,9 +125,8 @@ enum {
     FPU_cw_up   = 0x2,
     FPU_cw_down = 0x3
 };
-#endif // __sgi
 
-#if defined(__mips__) && !defined(__sgi)
+#elif defined __mips__ // && !defined __sgi
 #define CGAL_IA_SETFPCW(CW) asm volatile ("ctc1 %0,$31" : :"r" (CW))
 #define CGAL_IA_GETFPCW(CW) asm volatile ("cfc1 %0,$31" : "=r" (CW))
 typedef unsigned int FPU_CW_t;
@@ -147,9 +136,19 @@ enum {
     FPU_cw_up   = 0x2,
     FPU_cw_down = 0x3
 };
-#endif // __mips__ && !__sgi
 
-#ifdef __alpha__ // This one is not really supported [yet].
+#elif defined __osf || defined __osf__  // Not yet supported.
+#define CGAL_IA_GETFPCW(CW) CW = read_rnd()
+#define CGAL_IA_SETFPCW(CW) write_rnd(CW)
+typedef unsigned int FPU_CW_t;
+enum {
+    FPU_cw_near = FP_RND_RN,
+    FPU_cw_zero = FP_RND_RZ,
+    FPU_cw_up   = FP_RND_RP,
+    FPU_cw_down = FP_RND_RM
+};
+
+#elif defined __alpha__  // This one is not really supported [yet].
 #define CGAL_IA_SETFPCW(CW) asm volatile ("mt_fpcr %0; excb" : :"f" (CW))
 #define CGAL_IA_GETFPCW(CW) asm volatile ("excb; mf_fpcr %0" : "=f" (CW))
 typedef unsigned long FPU_CW_t;
@@ -160,21 +159,8 @@ enum { //         rounding
     FPU_cw_up   = 0x0c00000000000000UL,
     FPU_cw_down = 0x0400000000000000UL
 };
-#endif // __alpha__
 
-#if defined(__osf) || defined(__osf__)  // Not yet supported.
-#define CGAL_IA_GETFPCW(CW) CW = read_rnd()
-#define CGAL_IA_SETFPCW(CW) write_rnd(CW)
-typedef unsigned int FPU_CW_t;
-enum {
-    FPU_cw_near = FP_RND_RN,
-    FPU_cw_zero = FP_RND_RZ,
-    FPU_cw_up   = FP_RND_RP,
-    FPU_cw_down = FP_RND_RM
-};
-#endif // __osf || __osf__
-
-#ifdef _MSC_VER
+#elif defined _MSC_VER
 // Found in BIAS:
 // #define CGAL_IA_SETFPCW(CW) _asm {fldcw word ptr ds:OFFSET CW}
 // #define CGAL_IA_GETFPCW(CW) _asm {fstcw word ptr ds:OFFSET CW}
@@ -189,9 +175,8 @@ enum {
     FPU_cw_up   = 0x800 | 0x127f,
     FPU_cw_down = 0x400 | 0x127f
 };
-#endif // _MSC_VER
 
-#ifndef CGAL_IA_SETFPCW
+#else
 #error Architecture not supported
 #endif
 
