@@ -1,4 +1,4 @@
-3.25   (?? Feb 2001)
+3.25   (21 Feb 2001)
 - Added Construct_cross_product_vector_3, with corresponding template class
   v_Cross_product<>.
 - iterator_traits_pointer_specs_for_simple_cartesian_kernel.h fixes

@@ -19,7 +19,7 @@ CXXFLAGS = \
 	-I../../include \
 	$(TESTSUITE_CXXFLAGS) \
 	$(CGAL_CXXFLAGS) \
-	-g # -O2 -mcpu=pentiumpro -march=pentiumpro -fstrict-aliasing -W -Wall # -pedantic
+	-g -Wreturn-type -W -Wold-style-casts # -O2 -mcpu=pentiumpro -march=pentiumpro -fstrict-aliasing -W -Wall # -pedantic
 	# -g -W -Wall -Winline
 	# -O2 -mcpu=pentiumpro -march=pentiumpro -W -Wall -DLOOPS=10000000
 	# -O2 -W -Winline -Wunused -malign-double
