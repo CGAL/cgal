@@ -35,8 +35,7 @@
 \subsection{Definition}
 \label{Triangulation3-sec-def}
 A three-dimensional triangulation is a three-dimensional simplicial
-complex, pure connected and without singularities. (See
-\cite{by-ag-98} or Chapter~\ref{I1_Chapter_Triangulations}.) Its
+complex, pure connected and without singularities \cite{by-ag-98}. Its
 cells ($3$-faces) are such that two cells either do not intersect or
 share a common facet ($2$-face), edge ($1$-face) or vertex ($0$-face).
 
@@ -55,7 +54,7 @@ fourth vertex an auxiliary vertex called the \ccc{infinite vertex}.  In
 that way, each facet is incident to exactly two cells and special cases
 at the boundary of the convex hull are simple to deal with.
 
-The class \ccc{Triangulation_3<Triangulation_traits_3,Tds_3>} of \cgal\ implements this
+The class \ccc{Triangulation_3<TriangulationTraits_3,TriangulationDataStructure_3>} of \cgal\ implements this
 point of view and therefore considers the triangulation of the set
 of points as a set of finite and infinite tetrahedra.  Notice that the
 infinite vertex has no significant coordinates and that no
@@ -102,7 +101,7 @@ endpoints are the vertices of \ccc{c} with indices \ccc{i} and
 \subsection{Degenerate Dimensions}
 \label{Triangulation3-sec-degen_dim}
 
-The class \ccc{Triangulation_3<Triangulation_traits_3,Tds_3>} can also deal with
+The class \ccc{Triangulation_3<TriangulationTraits_3,TriangulationDataStructure_3>} can also deal with
 triangulations whose dimension is less than~3. A triangulation of a
 set of points in $\R^d$ covers the whole space $\R^d$ and consists of
 cells having $d+1$ vertices: some of them are infinite, they are
@@ -164,7 +163,7 @@ sufficient for practical cases.
 \section{Software Design}
 \label{Triangulation3-sec-design}
 
-The class \ccc{Triangulation_3<Triangulation_traits_3,Tds_3>} is
+The class \ccc{Triangulation_3<TriangulationTraits_3,TriangulationDataStructure_3>} is
 designed to be used as  
 a layer upon a 3D-triangulation data structure as presented in 
 Section~\ref{TDS3-sec-design} of Chapter~\ref{chapter-TDS3}.
@@ -176,38 +175,44 @@ the geometric validity. This class is parameterized by two classes:
 specify the type of points to use as well as the elementary
 operations on them (predicates,\ldots). The concept of such a class is
 introduced in Section~\ref{Triangulation3-sec-Traits}\lcTex{ and described in 
-\ccRefPage{Triangulation_traits_3}} and a
-model is provided by \cgal\
-(see \ccc{CGAL::Triangulation_geom_traits_3<R>}\lcTex{
-(\ccRefPage{CGAL::Triangulation_geom_traits_3<R>})} and  
-\ccc{CGAL::Regular_triangulation_euclidean_traits_3<R,Weight>}\lcTex{
-(\ccRefPage{CGAL::Regular_triangulation_euclidean_traits_3<R,Weight>})}.
+\ccRefPage{TriangulationTraits_3}} and the homegeneous and cartesian
+kernels of \cgal\ are models for this concept
+(see also \ccc{CGAL::Regular_triangulation_euclidean_traits_3<R,Weight>}\lcTex{
+(\ccRefPage{CGAL::Regular_triangulation_euclidean_traits_3<R,Weight>})} 
+for the Regular triangulation).
 \item {} the \textbf{triangulation data structure} class of the middle level, 
 described in Chapter~\ref{chapter-TDS3}.
 \end{itemize}	
 
 Delaunay triangulations as well as triangulation hierarchies
 \cite{d-iirdt-98} are also implemented in the package: 
-\ccc{Delaunay_triangulation_3<Triangulation_traits_3,Tds_3>} inherits from 
-\ccc{Triangulation_3<Triangulation_traits_3,Tds_3>}, and 
+\ccc{Delaunay_triangulation_3<DelaunayTriangulationTraits_3,TriangulationDataStructure_3>}
+inherits from  
+\ccc{Triangulation_3<DelaunayTriangulationTraits_3,TriangulationDataStructure_3>}, and 
 \ccc{Triangulation_hierarchy_3<Tr>} inherits from \ccc{Tr}.
 
-\ccc{Triangulation_3<Triangulation_traits_3,Tds_3>} derives from
-\ccc{Triangulation_utils_3<Triangulation_traits_3,Tds_3>}, 
+\ccc{Triangulation_3<TriangulationTraits_3,TriangulationDataStructure_3>} derives from
+\ccc{Triangulation_utils_3<TriangulationTraits_3,TriangulationDataStructure_3>}, 
 which defines a set of tools
 working on the indices of vertices in cells\lcTex{ 
 (\ccRefPage{CGAL::Triangulation_utils_3})}. 
 
 \subsection{Basic Triangulation}
 
-\ccc{Triangulation_3<Triangulation_traits_3,Tds_3>} expects a model of a 
+\ccc{Triangulation_3<TriangulationTraits_3,TriangulationDataStructure_3>} expects a model of a 
 \textit{geometric traits class} as its first template argument and a model 
 of a \textit{triangulation data structure} as its second argument. The
 requirements and defaults for these classes are described in
-the reference pages for Triangulation\_traits\_3\lcTex{ (
-\ccRefPage{Triangulation_traits_3})},
-\ccc{CGAL::Triangulation_geom_traits_3<R>}\lcTex{
-(\ccRefPage{CGAL::Triangulation_geom_traits_3<R>})} and
+the reference pages for 
+\ccc{TriangulationTraits_3}\lcTex{
+(\ccRefPage{TriangulationTraits_3})},
+\ccc{DelaunayTriangulationTraits_3}\lcTex{
+(\ccRefPage{DelaunayTriangulationTraits_3})}, 
+\ccc{TriangulationHierarchyTraits_3}\lcTex{
+(\ccRefPage{TriangulationHierarchyTraits_3})}
+ \ccc{RegularTriangulationTraits_3}\lcTex{
+(\ccRefPage{RegularTriangulationTraits_3})}, 
+and
 \ccc{CGAL::Regular_triangulation_euclidean_traits_3<R,Weight>}\lcTex{
 (\ccRefPage{CGAL::Regular_triangulation_euclidean_traits_3<R,Weight>})}.
 
@@ -242,7 +247,7 @@ the reference pages for Triangulation\_traits\_3\lcTex{ (
 
 \subsection{Delaunay Triangulation} 
 
-The class \ccc{Delaunay_triangulation_3<Triangulation_traits_3,Tds_3>}
+The class \ccc{Delaunay_triangulation_3<DelaunayTriangulationTraits_3,TriangulationDataStructure_3>}
 represents a three-dimensional Delaunay triangulation. 
 
 \subsection{Triangulation hierarchy} 
@@ -269,7 +274,7 @@ by one of the \cgal\ triangulation classes.
 \subsection{Regular Triangulation} 
 \label{Triangulation3-sec-class-Regulartriangulation}
 
-\ccc{Regular_triangulation_3<Triangulation_traits_3,Tds_3>} implements
+\ccc{Regular_triangulation_3<RegularTriangulationTraits_3,TriangulationDataStructure_3>} implements
 regular triangulations.
 
 Let ${S}^{(w)}$ be a set of weighted points in $\R^3$. Let
@@ -387,7 +392,7 @@ point $p\in\R^3$ or the weighted point ${p}^{(w)}=(p,w_p)$.
 \label{Triangulation3-sec-Traits}
 
 The first template parameter of the triangulation class
-\ccc{Triangulation_3<Triangulation_traits_3,Tds_3>} of \cgal\ is the geometric traits class.
+\ccc{Triangulation_3<TriangulationTraits_3,TriangulationDataStructure_3>} of \cgal\ is the geometric traits class.
 
 The geometric traits class must define the geometric
 objects (points, segments, triangles and tetrahedra) forming the
@@ -399,34 +404,37 @@ In addition to the requirements described before, the geometric traits
 class of a Delaunay triangulation must define predicates for the
 \textit{empty sphere property}.
 
+\cgal\ provides two predefined geometric traits classes
+\ccc{Cartesian<R>} and \ccc{Homogeneous<R>} using the kernel
+geometric objects and predicates.
+These classes are templated with a representation class.
+They supply the user with all
+the functionalities described for the concepts
+\ccc{TriangulationTraits_3}\lcTex{
+(\ccRefPage{TriangulationTraits_3})},
+\ccc{DelaunayTriangulationTraits_3}\lcTex{
+(\ccRefPage{DelaunayTriangulationTraits_3})}and
+\ccc{TriangulationHierarchyTraits_3}\lcTex{
+(\ccRefPage{TriangulationHierarchyTraits_3})}.
+So, any of them can be used as a default traits
+class for \ccc{Triangulation_3<TriangulationTraits_3,TriangulationDataStructure_3>},
+\ccc{Delaunay_triangulation_3<DelaunayTriangulationTraits_3,TriangulationDataStructure_3>}
+and for the parameter \ccc{Tr} of \ccc{TriangulationHierarchy_3<Tr>}.
+
 To be used as the traits class for the regular triangulation provided
 by \cgal, a class must provide definitions for the \textit{power tests}.
 (See Section~\ref{Triangulation3-sec-class-Regulartriangulation}.)
-	
-\cgal\ provides a predefined geometric traits class 
-\ccc{Triangulation_geom_traits_3<R>} using the kernel
-geometric objects and predicates.
-This class is templated with a representation class.
-
-The traits class \ccClassTemplateName\ is designed to deal with \cgal\ 
-three-dimensional points. It supplies the user with all
-the functionalities described for the concept
-Triangulation\_traits\_3\lcTex{ (\ccRefPage{Triangulation_traits_3})}.
-So, it can be used as a default traits
-class for \ccc{Triangulation_3<Triangulation_traits_3,Tds_3>},
-\ccc{Delaunay_triangulation_3<Triangulation_traits_3,Tds_3>}.
-
 \ccc{Regular_triangulation_euclidean_traits_3<R,Weight>} is a traits class 
  designed to be used by the class
-\ccc{Regular_triangulation_3<Triangulation_traits_3,Tds_3>}. It provides
+\ccc{Regular_triangulation_3<RegularTriangulationTraits_3,TriangulationDataStructure_3>}. It provides
 \ccc{Weighted_point}, a class for weighted points
 provided by the class, which derives from the \cgal\ three dimensional
 point class. It supplies
 the user with all the functionalities 
-described for the concept Triangulation\_traits\_3\lcTex{
-(\ccRefPage{Triangulation_traits_3})}. 
+described for the concept \ccc{TriangulationTraits_3}\lcTex{
+(\ccRefPage{TriangulationTraits_3})}. 
  It can be used as a default traits
-class for \ccc{Regular_triangulation_3<Triangulation_traits_3,Tds_3>}.
+class for \ccc{Regular_triangulation_3<RegularTriangulationTraits_3,TriangulationDataStructure_3>}.
 
 %		\subsection{Weighted point}	
 %		\label{Triangulation3-sec-class-Weightedpoints}
@@ -453,7 +461,7 @@ class for \ccc{Regular_triangulation_3<Triangulation_traits_3,Tds_3>}.
 \label{Triangulation3-sec-tds}
 
 The second template parameter of the basic triangulation class
-\ccc{Triangulation_3<Triangulation_traits_3,Tds_3>} is a triangulation 
+\ccc{Triangulation_3<TriangulationTraits_3,TriangulationDataStructure_3>} is a triangulation 
 data structure class.  This class can be seen as a container for the
 cells and vertices maintaining incidence and adjacency relations (see
 Chapter~\ref{chapter-TDS3}).  A model of this triangulation data
@@ -466,5 +474,5 @@ This example shows the incremental construction of a 3D triangulation,
 the location of a point, and how to manipulate elementary operations
 on indices in a cell.
 
-\ccIncludeExampleCode{Triangulation3/example1.C}
+\ccIncludeExampleCode{Triangulation_3/example1.C}
 

@@ -1,9 +1,9 @@
 #  Makefile for CGAL's Triangulation3 package.
 
-Package=Triangulation3
+Package=Triangulation_3
 
 TEXINPUTS=.:../../../examples:/0/prisme_util/latex:
-LATEX_CONV_INPUTS=.:../../../examples:/0/prisme/teillaud/CGAL/Triangulation3/examples
+LATEX_CONV_INPUTS=.:../../../examples:/0/prisme/teillaud/CGAL/Triangulation_3/examples
 
 .PHONY: doc package test
 

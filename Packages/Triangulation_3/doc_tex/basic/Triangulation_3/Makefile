@@ -1,9 +1,9 @@
 .PHONY: dvi ps
 
-ps: Triangulation3.ps
+ps: Triangulation_3.ps
 
-Triangulation3.ps: wrapper.dvi
-	dvips -o Triangulation3.ps wrapper.dvi
+Triangulation_3.ps: wrapper.dvi
+	dvips -o Triangulation_3.ps wrapper.dvi
 
 dvi: wrapper.dvi
 

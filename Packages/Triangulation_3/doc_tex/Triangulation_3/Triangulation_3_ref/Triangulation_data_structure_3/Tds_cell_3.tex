@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefConcept}[Tds_3::]{Cell}
+\begin{ccRefConcept}[TriangulationDataStructure_3::]{Cell}
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[concept]{} %% add further index entries
@@ -34,13 +34,13 @@ Section~\ref{TDS3-sec-degen_dim}.)
 \ccThreeToTwo
 The class \ccClassName\ defines the following types.
 
-\ccTypedef{typedef Tds_3::Vertex Vertex;}{}
+\ccTypedef{typedef TriangulationDataStructure_3::Vertex Vertex;}{}
 \ccGlue
-\ccTypedef{typedef Tds_3::Cell Cell;}{}
+\ccTypedef{typedef TriangulationDataStructure_3::Cell Cell;}{}
 
 \ccCreation
 \ccCreationVariable{c}  %% choose variable name
-\ccThree{Tds::Vertex}{v(const Point & p, Cell* c);}{}
+\ccThree{TriangulationDataStructure::Vertex}{v(const Point & p, Cell* c);}{}
 
 The constructors of a cell do not insert it into any triangulation
 data structure. To add a cell into a given triangulation
@@ -146,7 +146,7 @@ a precise indication of the kind of invalidity encountered.}
 
 \ccSeeAlso
 
-\ccc{Tds_3::Vertex}.
+\ccc{TriangulationDataStructure_3::Vertex}.
 
 %% \ccExample
 
