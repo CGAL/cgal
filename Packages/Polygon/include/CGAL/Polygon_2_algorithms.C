@@ -418,7 +418,8 @@ Simplicity_test_2<ForwardIterator, Traits>::Test(ForwardIterator first,
   cout << "--- Simplicity test ----------------------------" << endl;
   cout << endl;
   cout << "Vertices:" << endl;
-  std::vector<ForwardIterator>::size_type i;
+  typedef typename std::vector<ForwardIterator>::size_type Size_type;
+  Size_type i;
   for (i=0; i<d_index.size(); i++)
     cout << i << " " << Vertex(i) << endl;
   cout << endl;
