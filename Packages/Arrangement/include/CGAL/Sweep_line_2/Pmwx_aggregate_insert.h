@@ -43,8 +43,8 @@ class Pmwx_aggregate_insert
                                    Arr,
                                    Change_notification>             Visitor;
 
-  typedef Pmwx_sweep_line_curve<Traits,Visitor, Halfedge_handle>    Subcurve; 
-  typedef Pmwx_sweep_line_event<Traits, Subcurve, Visitor>          Event;
+  typedef Pmwx_sweep_line_curve<Traits, Halfedge_handle>    Subcurve; 
+  typedef Pmwx_sweep_line_event<Traits, Subcurve>          Event;
 
  
   typedef Sweep_line_2_impl<Traits,

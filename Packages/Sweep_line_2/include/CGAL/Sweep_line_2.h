@@ -55,11 +55,9 @@ OutputIterator get_intersection_points(CurveInputIterator curves_begin,
   typedef Sweep_line_points_visitor<Traits,OutputIterator> Visitor;
   Visitor visitor(points, endpoints);
   
-  typedef Sweep_line_subcurve<Traits,
-                              Sweep_line_points_visitor<Traits,OutputIterator>
-                              >                         Subcurve;
+  typedef Sweep_line_subcurve<Traits>                         Subcurve;
   
-  typedef Sweep_line_event<Traits, Subcurve, Visitor>            Event;
+  typedef Sweep_line_event<Traits, Subcurve>            Event;
   typedef Sweep_line_2_impl< Traits,
                              Event,
                              Subcurve,
@@ -99,11 +97,9 @@ OutputIterator get_subcurves(CurveInputIterator curves_begin,
   Visitor visitor(subcurves, overlapping);
 
 
-  typedef Sweep_line_subcurve<Traits,
-                              Sweep_line_subcurves_visitor<Traits,OutputIterator>
-                              >                         Subcurve;
+  typedef Sweep_line_subcurve<Traits>                         Subcurve;
   
-  typedef Sweep_line_event<Traits, Subcurve, Visitor>            Event;
+  typedef Sweep_line_event<Traits, Subcurve>            Event;
   typedef Sweep_line_2_impl< Traits,
                              Event,
                              Subcurve,
@@ -157,11 +153,9 @@ bool do_curves_intersect(CurveInputIterator curves_begin,
   typedef Sweep_line_do_curves_x_visitor<Traits>  Visitor;
   Visitor visitor;
 
-  typedef Sweep_line_subcurve<Traits,
-                              Sweep_line_do_curves_x_visitor<Traits>
-                              >                         Subcurve;
+  typedef Sweep_line_subcurve<Traits>                         Subcurve;
   
-  typedef Sweep_line_event<Traits, Subcurve, Visitor>            Event;
+  typedef Sweep_line_event<Traits, Subcurve>            Event;
   typedef Sweep_line_2_impl< Traits,
                              Event,
                              Subcurve,

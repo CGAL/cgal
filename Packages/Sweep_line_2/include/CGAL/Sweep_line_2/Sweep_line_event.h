@@ -24,7 +24,6 @@
 
 #include <CGAL/Sweep_line_2/Sweep_line_functors.h>
 #include <CGAL/Sweep_line_2/Sweep_line_traits.h>
-#include <CGAL/Sweep_line_2/Sweep_line_subcurve.h>
 #include <list>
 #include <set>
 
@@ -51,7 +50,7 @@ CGAL_BEGIN_NAMESPACE
 
 
 
-template<class SweepLineTraits_2, class CurveWrap, class SweepVisitor>
+template<class SweepLineTraits_2, class CurveWrap>
 class Sweep_line_event
 {
 public:
@@ -66,10 +65,6 @@ public:
   typedef Status_line_curve_less_functor<Traits, SubCurve>  StatusLineCurveLess;
   typedef std::set<SubCurve*, StatusLineCurveLess>          StatusLine;
   typedef typename StatusLine::iterator                     StatusLineIter;
-
-
-  typedef Sweep_line_subcurve<Traits, SweepVisitor>                    BaseSubCurve;
-  typedef Sweep_line_event<Traits, BaseSubCurve, SweepVisitor>          BaseEvent; 
 
   typedef std::pair<bool, SubCurveIter>                     Pair;
 
@@ -419,9 +414,9 @@ public:
 
 
 #ifndef NDEBUG
-template<class SweepLineTraits_2, class CurveWrap, class SweepVisitor>
+template<class SweepLineTraits_2, class CurveWrap>
 void 
-Sweep_line_event<SweepLineTraits_2, CurveWrap, SweepVisitor>::
+Sweep_line_event<SweepLineTraits_2, CurveWrap>::
 Print() 
 {
   std::cout << "\tEvent id: " << id << "\n" ;

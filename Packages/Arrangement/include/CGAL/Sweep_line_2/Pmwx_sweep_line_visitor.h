@@ -33,8 +33,8 @@ class Pmwx_sweep_line_visitor
   typedef Pmwx_sweep_line_visitor<Traits,
                                   Arr,
                                   Arr_notif>                       Self;
-  typedef Pmwx_sweep_line_curve<Traits,Self, Halfedge_handle>      Subcurve;
-  typedef Pmwx_sweep_line_event<Traits, Subcurve, Self>            Event;
+  typedef Pmwx_sweep_line_curve<Traits, Halfedge_handle>      Subcurve;
+  typedef Pmwx_sweep_line_event<Traits, Subcurve>            Event;
   typedef typename Traits::X_monotone_curve_2                      X_monotone_curve_2;
   typedef typename Traits::Point_2                                 Point_2;
 

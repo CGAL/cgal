@@ -29,8 +29,8 @@ template <class Traits,class OutputIerator>
 class Sweep_line_points_visitor 
 {
   typedef Sweep_line_points_visitor<Traits,OutputIerator>     Self;
-  typedef Sweep_line_subcurve<Traits,Self>                    Subcurve;
-  typedef Sweep_line_event<Traits, Subcurve, Self>            Event;
+  typedef Sweep_line_subcurve<Traits>                    Subcurve;
+  typedef Sweep_line_event<Traits, Subcurve>            Event;
 
   typedef Sweep_line_2_impl<Traits,
                             Event,
