@@ -382,7 +382,6 @@ Packages/Triangulation_2/doc_tex/Triangulation_2/constraints.gif -text svneol=un
 Packages/Triangulation_2/doc_tex/Triangulation_2/constraints.ipe -text
 Packages/Triangulation_2/doc_tex/Triangulation_2/degenerate.ipe -text
 Packages/Triangulation_2/doc_tex/Triangulation_2/del_poisson.gif -text svneol=unset#unset
-Packages/Triangulation_2/doc_tex/Triangulation_2/del_poisson.png svneol=native#unset
 Packages/Triangulation_2/doc_tex/Triangulation_2/del_poisson.ps -text
 Packages/Triangulation_2/doc_tex/Triangulation_2/empty.ipe -text
 Packages/Triangulation_2/doc_tex/Triangulation_2/flip.ltex -text
@@ -401,7 +400,6 @@ Packages/Triangulation_2/doc_tex/Triangulation_2/neighbors.gif -text svneol=unse
 Packages/Triangulation_2/doc_tex/Triangulation_2/neighbors.ltex -text
 Packages/Triangulation_2/doc_tex/Triangulation_2/point.ipe -text
 Packages/Triangulation_2/doc_tex/Triangulation_2/poisson.gif -text svneol=unset#unset
-Packages/Triangulation_2/doc_tex/Triangulation_2/poisson.png svneol=native#unset
 Packages/Triangulation_2/doc_tex/Triangulation_2/poisson.ps -text
 Packages/Triangulation_2/doc_tex/Triangulation_2/polygon.ipe -text
 Packages/Triangulation_2/doc_tex/Triangulation_2/remove.gif -text svneol=unset#unset
@@ -434,7 +432,6 @@ Packages/Triangulation_2/doc_tex/basic/Triangulation_2/constraints.gif -text svn
 Packages/Triangulation_2/doc_tex/basic/Triangulation_2/constraints.ipe -text
 Packages/Triangulation_2/doc_tex/basic/Triangulation_2/degenerate.ipe -text
 Packages/Triangulation_2/doc_tex/basic/Triangulation_2/del_poisson.gif -text svneol=unset#unset
-Packages/Triangulation_2/doc_tex/basic/Triangulation_2/del_poisson.png svneol=native#unset
 Packages/Triangulation_2/doc_tex/basic/Triangulation_2/del_poisson.ps -text
 Packages/Triangulation_2/doc_tex/basic/Triangulation_2/empty.ipe -text
 Packages/Triangulation_2/doc_tex/basic/Triangulation_2/flip.ltex -text
@@ -453,7 +450,6 @@ Packages/Triangulation_2/doc_tex/basic/Triangulation_2/neighbors.gif -text svneo
 Packages/Triangulation_2/doc_tex/basic/Triangulation_2/neighbors.ltex -text
 Packages/Triangulation_2/doc_tex/basic/Triangulation_2/point.ipe -text
 Packages/Triangulation_2/doc_tex/basic/Triangulation_2/poisson.gif -text svneol=unset#unset
-Packages/Triangulation_2/doc_tex/basic/Triangulation_2/poisson.png svneol=native#unset
 Packages/Triangulation_2/doc_tex/basic/Triangulation_2/poisson.ps -text
 Packages/Triangulation_2/doc_tex/basic/Triangulation_2/polygon.ipe -text
 Packages/Triangulation_2/doc_tex/basic/Triangulation_2/remove.gif -text svneol=unset#unset
