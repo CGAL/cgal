@@ -53,7 +53,7 @@ public:
     ++m_right_curves_counter;
   }
 
-  unsigned int get_right_curves_counter()
+  unsigned int get_right_curves_counter() const
   {
     return m_right_curves_counter;
   }

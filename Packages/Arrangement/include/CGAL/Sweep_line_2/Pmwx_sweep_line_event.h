@@ -24,8 +24,6 @@
 #include <CGAL/Sweep_line_2/Pmwx_sweep_line_functors.h>
 #include <CGAL/assertions.h>
 
-#include<functional>
-
 CGAL_BEGIN_NAMESPACE
 
 /*! @class Pmwx_sweep_line_event
@@ -38,12 +36,6 @@ CGAL_BEGIN_NAMESPACE
  * The additional infomation contains the following:
  * - among the left curves of the event, we keep the highest halfedge that 
  *   was inserted into the planar map at any given time.
- * - an array of booleans that indicates for each curve to the right of 
- *   the event, whether it is already in the planar map or not. This is 
- *   used to speed insertions of curves into the planar map.
- * - an array of events that occur on the vertical curves that go through 
- *   this event. This is used instead of the array of points that is kept 
- *   in the base class.
  *
  * Inherits from Sweep_line_event.
  * \sa Sweep_line_event
@@ -64,6 +56,7 @@ public:
   typedef CurveWrap SubCurve;
   typedef std::list<SubCurve *> SubcurveContainer;
   typedef typename SubcurveContainer::iterator SubCurveIter;
+  typedef typename SubcurveContainer::reverse_iterator SubCurveRevIter;
 
   typedef typename CurveWrap::PmwxInsertInfo PmwxInsertInfo;
 
@@ -103,56 +96,29 @@ public:
   }
 
 
-  /*! Initialize the array that indicates wheter a curve to the right of the
-   * event was already inserted into the planar map.
-   */
-  void init_right_curves()
-  {
-    unsigned int num_right_curves = get_num_right_curves();
-    m_isCurveInPm.resize(num_right_curves);
-    for ( unsigned int i = 0 ; i < num_right_curves ; i++ )
-      m_isCurveInPm[i] = false;
-  }
-  
-  /*! Caculates the number of halfedges in the planar map between the highest
-   *  halfedge to the left of the event (which is stored in the insertInfo 
-   *  member) and the position of the the specified curve around the vertex 
-   *  in the planar map.
-   *
-   * @param curve a pointer to a curve that is going to be inserted 
-   * @return the number of halfedges to skip before inserting the curve
-   */
   int get_halfedge_jump_count(CurveWrap *curve)
   {
     int i = 0;
-    int counter = 0;
     int skip = 0;
-    unsigned int _size = m_isCurveInPm.size();
    
-    for (unsigned int j = 0 ; j < _size ; j++ ) {
-      if ( m_isCurveInPm[j] == true ) {
+    SubCurveIter iter = m_rightCurves.begin();
+    for(; iter!=m_rightCurves.end(); ++iter)
+    {
+      if((*iter) == NULL)
         skip++;
-      }
     }
     skip--;  // now 'skip' holds the amount of the right curves of the event
 		         // that are already inserted to the planar map  - 1 (minus 1)
 
-    SubCurveIter iter = this->m_rightCurves.end();
+    iter = m_rightCurves.end();
     --iter;
-    
-
-	 
-    // a boolean indictes if there is a vertical that was inserted to the map with endpoint as the
-    // event point.
-    /*bool exist_vertical = m_insertInfo.get_vertical_below_event_flag() ||
-                          m_insertInfo.get_vertical_above_event_flag();*/
-	   
+     
     unsigned int num_left_curves = get_num_left_curves();
     for ( ; iter != m_rightCurves.begin() ; --iter )
     {
       if(curve == (*iter))
       {
-        m_isCurveInPm[counter] = true;
+        (*iter) = NULL; 
         if (( i == 0 ) && ( num_left_curves == 0 )) 
         {
           return skip;
@@ -163,41 +129,37 @@ public:
         }
         return i;
       }
-      if ( m_isCurveInPm[counter] == true )
+      if ( (*iter) == NULL )
         i++;
-      counter++;
     }
 
     CGAL_assertion(curve == (*iter));
-    m_isCurveInPm[counter] = true;
+    (*iter) = NULL; 
     
     if ( num_left_curves == 0 )
       i--;
     return i;
   }
 
-  /*! Returns true if the curve is the highest one among the right curves 
-   *  that were already inserted into the planar map.
-   */
+ 
+
   bool is_curve_largest(CurveWrap *curve)
   {
-    int counter = 0;
-    SubCurveIter iter = this->m_rightCurves.end();
-    --iter;
-   
-    while(curve != (*iter))
+    SubCurveIter iter = m_rightCurves.end();
+
+    for( SubCurveRevIter rev_iter = m_rightCurves.rbegin();
+         rev_iter != m_rightCurves.rend() && curve != (*rev_iter) ;
+         ++rev_iter)
     {
-      if ( m_isCurveInPm[counter] == true )
-        return false;
-      counter++;
-      --iter;
+      if((*rev_iter) == NULL)
+         return false;
     }
     return true;
   }
+  
 
 private:
   PmwxInsertInfo m_insertInfo;
-  std::vector<bool> m_isCurveInPm;
 };
 
 CGAL_END_NAMESPACE

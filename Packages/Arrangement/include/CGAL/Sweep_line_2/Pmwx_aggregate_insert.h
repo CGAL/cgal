@@ -342,7 +342,7 @@ protected:
     }  
     
     // when done handling the left curves, we prepare for the right curves
-    m_currentEvent->init_right_curves();
+   // m_currentEvent->init_right_curves();
   }
   /////////////////////////////////////////////////////////////////////////////
   void handle_left_curves_no_overlap(PM &pm, SweepLinePlanarmap &tag)
@@ -425,7 +425,7 @@ protected:
     }  
     
     // when done handling the left curves, we prepare for the right curves
-    m_currentEvent->init_right_curves();
+   // m_currentEvent->init_right_curves();
   }
   ////////////////////////////////////////////////////////////////////////
 
