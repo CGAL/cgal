@@ -58,7 +58,7 @@ CGAL_BEGIN_NAMESPACE
 //!!! This will eventually be integrated into function_objects.h
 template < class Array, class Index, class Element >
 struct Index_operator
-: public binary_function< Array, Index, Element >
+: public CGAL_STD::binary_function< Array, Index, Element >
 {
 public:
   Element&
@@ -102,10 +102,10 @@ public:
 
 #ifndef CGAL_CFG_NO_ITERATOR_TRAITS
   typedef typename
-    iterator_traits< RandomAccessIC_object >::value_type
+    std::iterator_traits< RandomAccessIC_object >::value_type
   Object;
   typedef typename
-    iterator_traits< RandomAccessIC_value >::value_type
+    std::iterator_traits< RandomAccessIC_value >::value_type
   Value;
 #else
   typedef _Object                Object;
@@ -357,6 +357,10 @@ _CGAL_maximum_inscribed_rooted_k_gon(
 // of $P_k$'s vertices to o and
 // returns the past-the-end iterator of that sequence.
 {
+#ifndef CGAL_CFG_NO_NAMESPACE
+  using std::max_element;
+#endif
+
   // counter :)
   int i;
 
@@ -559,6 +563,9 @@ extremal_polygon(
 // of $P_k$'s vertices to o and
 // returns the past-the-end iterator of that sequence.
 {
+#ifndef CGAL_CFG_NO_NAMESPACE
+  using std::bind1st;
+#endif
   // check preconditions:
   CGAL_precondition_code(
     int number_of_points(
@@ -617,6 +624,7 @@ _CGAL_maximum_inscribed_k_gon(
 
 #ifndef CGAL_CFG_NO_NAMESPACE
   using std::min;
+  using std::copy;
 #endif
 
   typedef typename Traits::FT   FT;
@@ -781,6 +789,10 @@ _CGAL_maximum_inscribed_k_gon(
   typedef _FT                               FT;
 #endif
   typedef vector< int >       Index_cont;
+
+#ifndef CGAL_CFG_NO_NAMESPACE
+  using std::copy;
+#endif
 
   // check preconditions:
   CGAL_precondition( k >= t.min_k());

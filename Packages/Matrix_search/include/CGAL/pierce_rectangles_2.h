@@ -131,6 +131,14 @@ remove_if_adjacent( ForwardIterator first,
 // pred( *x, *++x) is not true by dropping the second of
 // any two adjacent items for which pred( *x, *++x) is true
 {
+#ifndef CGAL_CFG_NO_NAMESPACE
+  using std::adjacent_find;
+  using std::find_if;
+  using std::bind1st;
+  using std::logical_not;
+  using std::compose1;
+#endif
+
   first = adjacent_find( first, last, pred);
   if ( first == last)
     return last;
@@ -457,6 +465,13 @@ public:
   //   lie to the left of (not including) the line x = v.
   // TIME: O( log(#elements in set i))
   {
+  #ifndef CGAL_CFG_NO_NAMESPACE
+    using std::lower_bound;
+    using std::less;
+    using std::identity;
+    using std::greater_equal;
+  #endif
+  
     CGAL_optimisation_precondition( i == BL || i == BT);
     const_iterator p;
     if ( i == BL) {
@@ -464,8 +479,8 @@ public:
                        s[BL].end(),
                        v,
                        compose2_2( less< FT >(),
-                                        xmax,
-                                        identity< FT >()));
+                                   xmax,
+                                   identity< FT >()));
       CGAL_optimisation_postcondition(
         p == begin(i) || xmax( *(p - 1)) < v);
     } else {
@@ -473,8 +488,8 @@ public:
                        s[i].end(),
                        v,
                        compose2_2( greater_equal< FT >(),
-                                        xmax,
-                                        identity< FT >()));
+                                   xmax,
+                                   identity< FT >()));
       CGAL_optimisation_postcondition( p == end(i) || xmax( *p) < v);
     }
     CGAL_optimisation_postcondition( p >= begin(i) && p <= end(i));
@@ -509,14 +524,19 @@ public:
   // lie to the right of (not including) the line x = v.
   // TIME: O( log(#elements in set i))
   {
+  #ifndef CGAL_CFG_NO_NAMESPACE
+    using std::lower_bound;
+    using std::identity;
+    using std::greater;
+  #endif
     CGAL_optimisation_precondition( i == BR || i == BT);
     const_iterator p =
       lower_bound( begin( i),
                    s[i].end(),
                    v,
                    compose2_2( greater< FT >(),
-                                    Xmin(),
-                                    identity< FT >()));
+                               Xmin(),
+                               identity< FT >()));
     CGAL_optimisation_postcondition( p >= begin(i) && p <= end(i));
     CGAL_optimisation_postcondition(
       p == begin(i) || Xmin()( *(p - 1)) > v);
@@ -567,14 +587,19 @@ public:
   //   lie above (not including) the line y = v.
   // TIME: O( log(#elements in set i))
   {
+  #ifndef CGAL_CFG_NO_NAMESPACE
+    using std::lower_bound;
+    using std::identity;
+    using std::less_equal;
+  #endif
     CGAL_optimisation_precondition( i == TL || i == TR || i == LR);
     const_iterator p =
       lower_bound( begin( i),
                    s[i].end(),
                    v,
                    compose2_2( less_equal< FT >(),
-                                    Ymin(),
-                                    identity< FT >()));
+                               Ymin(),
+                               identity< FT >()));
     CGAL_optimisation_postcondition( p >= begin(i) && p <= end(i));
     CGAL_optimisation_postcondition( p == end(i) || Ymin()( *p) > v);
     return p;
@@ -584,6 +609,12 @@ private:
   void
   sort_set( set_id i)
   {
+  #ifndef CGAL_CFG_NO_NAMESPACE
+    using std::sort;
+    using std::less;
+    using std::greater;
+  #endif
+  
     CGAL_optimisation_precondition( i >= BL && i <= LR);
     CGAL_optimisation_precondition( s[i].begin() + 1 == begin( i));
   
@@ -610,6 +641,11 @@ private:
   // two rectangles such that if they are clipped
   // against the location domain, one contains the other.
   {
+  #ifndef CGAL_CFG_NO_NAMESPACE
+    using std::greater_equal;
+    using std::less_equal;
+  #endif
+  
     iterator new_end;
   
     // NB: only used in constructor.
@@ -877,6 +913,13 @@ two_pierce_rectangles(
   OutputIterator o,
   bool& ok)
 {
+#ifndef CGAL_CFG_NO_NAMESPACE
+  using std::logical_and;
+  using std::compose2;
+  using std::bind2nd;
+  using std::find_if;
+#endif
+
   CGAL_optimisation_precondition( f != l);
 
   // typedefs:
@@ -965,10 +1008,15 @@ three_pierce_rectangles(
   OutputIterator o,
   bool& ok)
 {
+#ifndef CGAL_CFG_NO_NAMESPACE
+  using std::find_if;
+  using std::bind2nd;
+#endif
+
 #ifdef CGAL_CFG_NO_ITERATOR_TRAITS
   typedef ptrdiff_t difference_type;
 #else  // CGAL_CFG_NO_ITERATOR_TRAITS //
-  typedef typename iterator_traits< RandomAccessIC >::difference_type
+  typedef typename std::iterator_traits< RandomAccessIC >::difference_type
     difference_type;
 #endif // CGAL_CFG_NO_ITERATOR_TRAITS //
   difference_type number_of_points( iterator_distance( f, l));
@@ -1116,6 +1164,9 @@ four_pierce_rectangles(
   using std::pair;
   using std::min;
   using std::max;
+  using std::greater;
+  using std::less;
+  using std::find_if;
   #endif
   
   typedef typename Traits::Iso_rectangle_2     Iso_rectangle_2;
@@ -1255,11 +1306,11 @@ four_pierce_rectangles(
       I_B = Intervall( d.xmin(), d.xmax());
     else {
       ip = min_max_element( p.begin( RP::B),
-                                 p.end( RP::B),
-                                 compose2_2(
-                                   less< FT >(), Xmax(), Xmax()),
-                                 compose2_2(
-                                   greater< FT >(), Xmin(), Xmin()));
+                            p.end( RP::B),
+                            compose2_2(
+                              less< FT >(), Xmax(), Xmax()),
+                            compose2_2(
+                              greater< FT >(), Xmin(), Xmin()));
     
       I_B = Intervall( Xmin()(*(ip.second)), Xmax()(*(ip.first)));
       CGAL_optimisation_assertion(
@@ -1278,11 +1329,11 @@ four_pierce_rectangles(
       I_L = Intervall( d.ymin(), d.ymax());
     else {
       ip = min_max_element( p.begin( RP::L),
-                                 p.end( RP::L),
-                                 compose2_2(
-                                   less< FT >(), Ymax(), Ymax()),
-                                 compose2_2(
-                                   greater< FT >(), Ymin(), Ymin()));
+                            p.end( RP::L),
+                            compose2_2(
+                              less< FT >(), Ymax(), Ymax()),
+                            compose2_2(
+                              greater< FT >(), Ymin(), Ymin()));
     
       I_L = Intervall( Ymin()(*(ip.second)), Ymax()(*(ip.first)));
       CGAL_optimisation_assertion(
@@ -1301,11 +1352,11 @@ four_pierce_rectangles(
       I_T = Intervall( d.xmin(), d.xmax());
     else {
       ip = min_max_element( p.begin( RP::T),
-                                 p.end( RP::T),
-                                 compose2_2(
-                                   less< FT >(), Xmax(), Xmax()),
-                                 compose2_2(
-                                   greater< FT >(), Xmin(), Xmin()));
+                            p.end( RP::T),
+                            compose2_2(
+                              less< FT >(), Xmax(), Xmax()),
+                            compose2_2(
+                              greater< FT >(), Xmin(), Xmin()));
     
       I_T = Intervall( Xmin()(*(ip.second)), Xmax()(*(ip.first)));
       CGAL_optimisation_assertion(
@@ -1324,11 +1375,11 @@ four_pierce_rectangles(
       I_R = Intervall( d.ymin(), d.ymax());
     else {
       ip = min_max_element( p.begin( RP::R),
-                                 p.end( RP::R),
-                                 compose2_2(
-                                   less< FT >(), Ymax(), Ymax()),
-                                 compose2_2(
-                                   greater< FT >(), Ymin(), Ymin()));
+                            p.end( RP::R),
+                            compose2_2(
+                              less< FT >(), Ymax(), Ymax()),
+                            compose2_2(
+                              greater< FT >(), Ymin(), Ymin()));
     
       I_R = Intervall( Ymin()(*(ip.second)), Ymax()(*(ip.first)));
       CGAL_optimisation_assertion(

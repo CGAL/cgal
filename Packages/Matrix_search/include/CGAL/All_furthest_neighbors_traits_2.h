@@ -46,7 +46,7 @@ CGAL_BEGIN_NAMESPACE
 
 template < class T1, class T2 >
 struct Squared_distance
-: public binary_function< T1, T2, typename T1::R::FT >
+: public CGAL_STD::binary_function< T1, T2, typename T1::R::FT >
 {
   typename T1::R::FT
   operator()( const T1& t1, const T2& t2) const
@@ -107,7 +107,7 @@ all_furthest_neighbors( RandomAccessIC points_begin,
     points_begin,
     points_end,
     o,
-    value_type( points_begin));
+    std::value_type( points_begin));
 } // all_furthest_neighbors( ... )
 
 template < class RandomAccessIC,

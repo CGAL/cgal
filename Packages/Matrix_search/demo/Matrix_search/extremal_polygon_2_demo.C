@@ -24,9 +24,6 @@
 // Demo program: Compute extremal polygons of a convex polygon
 // ============================================================================
 
-#include <cstdlib>
-#include <cstdio>
-#include <algorithm>
 #ifndef CGAL_CARTESIAN_H
 #include <CGAL/Cartesian.h>
 #endif // CGAL_CARTESIAN_H
@@ -62,9 +59,14 @@
 #define CGAL_PROTECT_LEDA_POINT_SET_H
 #endif // CGAL_PROTECT_LEDA_POINT_SET_H
 #include <iostream>
+#include <cstdlib>
+#include <cstdio>
+#include <algorithm>
 
 using CGAL::cgalize;
 using CGAL::RED;
+using std::back_inserter;
+using std::max;
 
 using std::vector;
 using CGAL::Cartesian;
@@ -166,8 +168,8 @@ main()
       // compute convex hull:
       PointCont ch_points;
       convex_hull_points_2( points.begin(),
-                                 points.end(),
-                                 back_inserter( ch_points));
+                            points.end(),
+                            back_inserter( ch_points));
     
       // replace points by ch_points:
       points.erase( points.begin(), points.end());

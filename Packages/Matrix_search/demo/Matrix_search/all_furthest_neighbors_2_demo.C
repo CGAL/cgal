@@ -56,6 +56,7 @@
 #include <iostream>
 
 using std::vector;
+using std::back_inserter;
 using CGAL::Cartesian;
 using CGAL::Polygon_traits_2;
 using CGAL::Creator_uniform_2;
@@ -75,7 +76,7 @@ typedef CGAL::Polygon_2< P_traits, Point_cont >      Polygon;
 typedef Creator_uniform_2< FT, Point >               Creator;
 typedef Random_points_in_square_2< Point, Creator >  Point_generator;
 #include <LEDA/REDEFINE_NAMES.h>
-typedef point                              LEDA_Point;
+typedef point                            LEDA_Point;
 typedef point_set< Point >               LEDA_Point_set_Point;
 #include <LEDA/UNDEFINE_NAMES.h>
 void

@@ -41,7 +41,7 @@
 CGAL_BEGIN_NAMESPACE
 
 template < class OutputIterator, class Operation >
-class Transform_iterator : public output_iterator {
+class Transform_iterator : public CGAL_STD::output_iterator {
 public:
   typedef Transform_iterator< OutputIterator, Operation >
     self;
@@ -83,7 +83,7 @@ transform_iterator( const OutputIterator& o,
 { return Transform_iterator< OutputIterator, Operation >( o, op); }
 
 template < class OutputIterator, class Operation > inline
-output_iterator_tag
+std::output_iterator_tag
 iterator_category(
   const Transform_iterator< OutputIterator, Operation >&)
 { return output_iterator_tag(); }

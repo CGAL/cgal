@@ -324,6 +324,7 @@ rectangular_p_center_2_matrix_search(
 #ifndef CGAL_CFG_NO_NAMESPACE
   using std::minus;
   using std::bind1st;
+  using std::sort;
 #endif
 
   // typedefs:
@@ -465,7 +466,7 @@ rectangular_p_center_2( ForwardIterator f,
                              int p)
 {
   return _CGAL_rectangular_p_center_2(
-    f, l, o, r, p, value_type( f));
+    f, l, o, r, p, std::value_type( f));
 } // rectangular_p_center_2( ... )
 
 CGAL_END_NAMESPACE

@@ -61,7 +61,11 @@
 #include <cstdlib>
 
 using std::vector;
+using std::copy;
+using std::back_inserter;
 using std::ostream_iterator;
+using std::transform;
+using std::bind2nd;
 using CGAL::Cartesian;
 using CGAL::Random;
 using CGAL::rectangular_p_center_2;
@@ -113,7 +117,7 @@ Measure = clock(); \
 // around a point p with radius r
 template < class Point, class FT, class Box >
 struct Build_box
-: public binary_function< Point, FT, Box >
+: public CGAL_STD::binary_function< Point, FT, Box >
 {
   Box
   operator()( const Point& p, const FT& r) const

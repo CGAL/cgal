@@ -58,9 +58,9 @@ Kgon_triangle_area( const Point_2< R >& p,
 
 template < class _R >
 class _Kgon_area_operator
-: public binary_function< Point_2< _R >,
-                          Point_2< _R >,
-                          typename _R::FT >
+: public CGAL_STD::binary_function< Point_2< _R >,
+                                    Point_2< _R >,
+                                    typename _R::FT >
 {
 public:
   typedef _R                 R;
@@ -199,9 +199,11 @@ CGAL_END_NAMESPACE
 #include <cmath>
 #define CGAL_PROTECT_CMATH
 #endif
+#ifdef CGAL_USE_LEDA
 #ifndef CGAL_LEDA_REAL_H
 #include <CGAL/leda_real.h>
 #endif // CGAL_LEDA_REAL_H
+#endif
 CGAL_BEGIN_NAMESPACE
 
 #ifndef CGAL_CFG_NO_NAMESPACE
@@ -209,14 +211,16 @@ inline double
 sqrt( double x)
 { return ::sqrt( x); }
 
+#ifdef CGAL_USE_LEDA
 inline leda_real
 sqrt( const leda_real& x)
 { return ::sqrt( x); }
 #endif
+#endif
 
 template < class _FT >
 struct Sqrt
-: public binary_function< _FT, _FT, _FT >
+: public CGAL_STD::binary_function< _FT, _FT, _FT >
 {
   typedef _FT  FT;
 
@@ -227,9 +231,9 @@ struct Sqrt
 };
 template < class _R >
 class _Kgon_perimeter_operator
-: public binary_function< Point_2< _R >,
-                          Point_2< _R >,
-                          typename _R::FT >
+: public CGAL_STD::binary_function< Point_2< _R >,
+                                    Point_2< _R >,
+                                    typename _R::FT >
 {
 public:
   typedef _R              R;
@@ -301,6 +305,12 @@ public:
   //  perimeter to o in counterclockwise order and return the
   //  past-the-end iterator for that range (== o + min_k()).
   {
+#ifndef CGAL_CFG_NO_NAMESPACE
+    using std::bind2nd;
+    using std::less;
+    using std::max_element;
+#endif
+
     CGAL_optimisation_precondition_code(
       int number_of_points(
         iterator_distance( points_begin, points_end));)
@@ -380,7 +390,7 @@ maximum_area_inscribed_k_gon(
     points_end,
     k,
     o,
-    value_type( points_begin));
+    std::value_type( points_begin));
 } // maximum_area_inscribed_k_gon( ... )
 
 template < class RandomAccessIC,
@@ -458,7 +468,7 @@ maximum_perimeter_inscribed_k_gon(
     points_end,
     k,
     o,
-    value_type( points_begin));
+    std::value_type( points_begin));
 } // maximum_perimeter_inscribed_k_gon( ... )
 
 template < class RandomAccessIC,

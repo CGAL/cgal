@@ -48,7 +48,7 @@ monotone_matrix_search(
   RandomAccessIterator t)
 {
   typedef typename Matrix::Value V;
-  monotone_matrix_search( M, t, less< V >());
+  monotone_matrix_search( M, t, std::less< V >());
 } // monotone_matrix_search( M, t)
 template < class Matrix,
            class RandomAccessIterator,

@@ -73,7 +73,7 @@ public:
   }
 
   Value
-  operator()( pair< int, int > p) const
+  operator()( std::pair< int, int > p) const
   {
     return (*this)( p.first, p.second);
   }

@@ -46,6 +46,7 @@
 
 using std::equal;
 using std::vector;
+using std::back_inserter;
 using CGAL::Cartesian;
 using CGAL::Polygon_traits_2;
 using CGAL::Creator_uniform_2;

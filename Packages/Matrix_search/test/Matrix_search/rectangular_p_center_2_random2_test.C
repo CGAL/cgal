@@ -57,6 +57,9 @@
 #include <cstdlib>
 
 using std::vector;
+using std::bind2nd;
+using std::transform;
+using std::copy;
 using std::back_inserter;
 using CGAL::Cartesian;
 using CGAL::Creator_uniform_2;
@@ -70,7 +73,7 @@ using CGAL::ORIGIN;
 // around a point p with radius r
 template < class Point, class FT, class Box >
 struct Build_box
-: public binary_function< Point, FT, Box >
+: public CGAL_STD::binary_function< Point, FT, Box >
 {
   Box
   operator()( const Point& p, const FT& r) const
