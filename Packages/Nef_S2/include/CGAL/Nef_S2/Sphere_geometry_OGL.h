@@ -354,7 +354,7 @@ public:
   Sphere_triangle() {}
 
   Sphere_triangle(const CGAL::Sphere_triangle<R>& t,
-    CGAL::Color c = CGAL::GREY) 
+    CGAL::Color c = CGAL::Color(100,100,120)) 
     : VTriangle(Approximator<R>::approximate(t)), t_(t), c_(c) {}
 
   Sphere_triangle(const Sphere_triangle<R>& t) : VTriangle(t)
