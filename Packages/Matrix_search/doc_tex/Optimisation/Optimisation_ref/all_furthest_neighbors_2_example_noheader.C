@@ -1,3 +1,5 @@
+#line 1509 "mon_search.aw"
+#line 780 "afn.awi"
 #include <CGAL/Cartesian.h>
 #include <CGAL/Point_2.h>
 #include <CGAL/Polygon_2.h>
@@ -37,3 +39,4 @@ main()
     Oiterator( cout));
   cout << endl;
 } 
+#line 1510 "mon_search.aw"

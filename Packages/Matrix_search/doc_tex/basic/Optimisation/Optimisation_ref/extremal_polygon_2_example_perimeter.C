@@ -1,3 +1,5 @@
+#line 1562 "mon_search.aw"
+#line 781 "testprog.awi"
 #include <CGAL/Cartesian.h>
 #include <CGAL/Point_2.h>
 #include <CGAL/Polygon_2.h>
