@@ -1,6 +1,6 @@
 # Makefile for the Geomwiew package.
 
-.PHONY: test demo
+.PHONY: test demo version
 
 WWW_CGAL=/net/servers/www-sop/prisme/CGAL/DR:/Members
 WWW_dir=$(WWW_CGAL)/Geomview
@@ -14,15 +14,14 @@ package:
 	@echo "---- editer changes.txt  ---------"
 	@echo "---- cvs update; cvs commit ------"
 	@echo "---- more version ----------------"
-	@echo "---- VERSION=2.9; export VERSION -"
 	@echo "---- make Doc --------------------"
-	@echo "---- make Version ----------------"
+	@echo "---- make VERSION=X.Y version ----"
 	@echo "---- cvs commit ------------------"
-	@echo "---- make tag --------------------"
+	@echo "---- make VERSION=X.Y tag --------"
 	@echo "---- make submit -----------------"
 	@echo "----------------------------------"
 
-Version:
+version:
 	echo "$(VERSION) (`date '+%e %b %Y'`)" > version
 
 tag:
