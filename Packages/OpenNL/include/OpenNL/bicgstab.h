@@ -156,11 +156,11 @@ public:
             BLAS<Vector>::axpy(-omega,t,r);						// r = r - omega*t
 	        rTr=BLAS<Vector>::dot(r,r);							// Current error rTr = (r|r)
             BLAS<Vector>::axpy(-omega,t,h);						// h = h - omega*t
-#ifndef NDEBUG 
-			// Debug trace
-			if (its < 10)
-				std::cerr << "solve: " << STREAM_TRACE(its) << STREAM_TRACE(rTr) << STREAM_TRACE(alpha) << STREAM_TRACE(beta) << STREAM_TRACE(omega) << STREAM_TRACE(rTh) << std::endl;
-#endif
+//#ifndef NDEBUG 
+//			// Debug trace
+//			if (its < 10)
+//				std::cerr << "solve: " << STREAM_TRACE(its) << STREAM_TRACE(rTr) << STREAM_TRACE(alpha) << STREAM_TRACE(beta) << STREAM_TRACE(omega) << STREAM_TRACE(rTh) << std::endl;
+//#endif
 			if( IsZero(omega) )									// LS 03/2005: break to avoid division by zero (see Laspack implementation)
 				break;		
 			assert( ! IsZero(rTh) );							// LS 03/2005: don't know what do do if division by zero 
