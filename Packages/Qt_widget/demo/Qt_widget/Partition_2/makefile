@@ -7,6 +7,7 @@
 # Choose the right include file from the <cgalroot>/make directory.
 
 # CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE
+#CGAL_MAKEFILE = ~/CGAL-2.4-I-47/make/makefile_sparc_SunOS-5.6_g++-2.95
 include $(CGAL_MAKEFILE)
 
 #---------------------------------------------------------------------#
@@ -27,50 +28,45 @@ LIBPATH = \
 
 LDFLAGS = \
           $(LONG_NAME_PROBLEM_LDFLAGS) \
-          $(CGAL_LDFLAGS)
+          $(CGAL_LDFLAGS) \
+	  -lCGALQt
 
 #---------------------------------------------------------------------#
 #                    target entries
 #---------------------------------------------------------------------#
 
-SOURCES = Qt_widget_toolbar$(OBJ_EXT) Qt_widget_toolbar_views$(OBJ_EXT)
+#SOURCES = ../../../src/CGALQt/Qt_widget$(OBJ_EXT) \
+	../../../src/CGALQt/Qt_widget_tool$(OBJ_EXT) \
+	../../../src/CGALQt/Qt_widget_view$(OBJ_EXT) \
+	../../../src/CGALQt/Qt_widget_standard_toolbar$(OBJ_EXT)
 
 all: partition_2
 
 Qt_widget_toolbar$(OBJ_EXT): Qt_widget_toolbar.C Qt_widget_toolbar.moc
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) Qt_widget_toolbar.C
 
-Qt_widget_toolbar.moc: Qt_widget_toolbar.h \
-                      ../../../include/CGAL/IO/Qt_widget.h \
-                      ../../../include/CGAL/IO/Qt_widget_zoom.h \
-                      ../../../include/CGAL/IO/Qt_widget_zoomrect.h \
-                      ../../../include/CGAL/IO/Qt_widget_move_point.h \
-                      ../../../include/CGAL/IO/Qt_widget_get_line.h \
-                      ../../../include/CGAL/IO/Qt_widget_get_point.h \
-                      ../../../include/CGAL/IO/Qt_widget_handtool.h
+Qt_widget_toolbar.moc: Qt_widget_toolbar.h
 	$(QT_MOC) -o Qt_widget_toolbar.moc $<
 
 Qt_widget_toolbar_views$(OBJ_EXT): Qt_widget_toolbar_views.C \
 		Qt_widget_toolbar_views.moc
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) Qt_widget_toolbar_views.C
 
-Qt_widget_toolbar_views.moc: Qt_widget_toolbar_views.h \
-                      ../../../include/CGAL/IO/Qt_widget.h \
-                      ../../../include/CGAL/IO/Qt_widget_show_voronoi.h \
-                      ../../../include/CGAL/IO/Qt_widget_show_triangulation.h \
-                      ../../../include/CGAL/IO/Qt_widget_nearest_vertex.h \
-                      ../../../include/CGAL/IO/Qt_widget_show_points.h \
-                      ../../../include/CGAL/IO/Qt_widget_mouse_coordinates.h
+Qt_widget_toolbar_views.moc: Qt_widget_toolbar_views.h
 	$(QT_MOC) -o Qt_widget_toolbar_views.moc $<
 
-partition_2.moc: partition_2.C
+partition_2.moc: partition_2.C \
+		 Qt_widget_toolbar$(OBJ_EXT) \
+		 Qt_widget_toolbar_views$(OBJ_EXT)
 	${QT_MOC} -o partition_2.moc partition_2.C
 
 partition_2$(OBJ_EXT): partition_2.C partition_2.moc
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) partition_2.C
 
 partition_2$(EXE_EXT): partition_2$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)partition_2 partition_2$(OBJ_EXT) $(LDFLAGS)
+	$(CGAL_CXX) $(EXE_OPT)partition_2 partition_2$(OBJ_EXT) \
+		Qt_widget_toolbar$(OBJ_EXT) \
+		Qt_widget_toolbar_views$(OBJ_EXT) $(LDFLAGS)
 
 clean: partition_2.clean
 
