@@ -4,16 +4,19 @@
 @! ----------------------------------------------------------------------------
 @! file  : web/file_header.awlib
 @! author: Sven Schönherr (sven@inf.fu-berlin.de)
-@! $Id$
+@! ----------------------------------------------------------------------------
+@! $Revision$
+@! $Date$
 @! ============================================================================
 
 @p maximum_input_line_length = 120
 
 A formatted file header allows easy identification of the files. It is
 parameterized with the title of the implementation, the product file
-name, the source file name and the author name.
+name, the source file name, the author name, and the RCS variables
+@em{Revision} and @em{Date} of the source file.
 
-@macro <file header>(4) zero many = @begin
+@macro <file header>(6) zero many = @begin
 // ============================================================================
 // The CGAL Project
 // Implementation: @1
@@ -21,7 +24,9 @@ name, the source file name and the author name.
 // file  : @2
 // source: web/@3.aw
 // author: @4
-// $Id$
+// ----------------------------------------------------------------------------
+// @5
+// @6
 // ============================================================================
 @end
 
