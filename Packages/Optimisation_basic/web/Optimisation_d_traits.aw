@@ -270,7 +270,7 @@ number type. They have default type \ccc{K::RT}.
 @end
 
 The interface consists of the types and member functions described in
-Section~\ref{ccRef_CGAL::Optimisation_d_traits_3<R,ET,NT>}.4.
+Section~\ref{ccRef_CGAL::Optimisation_d_traits_3<K,ET,NT>}.4.
 
 @macro <Optimisation_d_traits_3 interface> = @begin
     template < class K_, class ET_, class NT_>
@@ -280,7 +280,7 @@ Section~\ref{ccRef_CGAL::Optimisation_d_traits_3<R,ET,NT>}.4.
         typedef  K_                         K;
         typedef  ET_                        ET;
         typedef  NT_                        NT;
-        typedef  Optimisation_d_traits_3<R,ET,NT>
+        typedef  Optimisation_d_traits_3<K,ET,NT>
                                             Self;
 
         // types
@@ -337,7 +337,7 @@ number type. They have default type \ccc{K::RT}.
 @end
 
 The interface consists of the types and member functions described in
-Section~\ref{ccRef_CGAL::Optimisation_d_traits_d<R,ET,NT>}.5.
+Section~\ref{ccRef_CGAL::Optimisation_d_traits_d<K,ET,NT>}.5.
 
 @macro <Optimisation_d_traits_d interface> = @begin
     template < class K_, class ET_, class NT_>
@@ -347,7 +347,7 @@ Section~\ref{ccRef_CGAL::Optimisation_d_traits_d<R,ET,NT>}.5.
         typedef  K_                         K;
         typedef  ET_                        ET;
         typedef  NT_                        NT;
-        typedef  Optimisation_d_traits_d<R,ET,NT>
+        typedef  Optimisation_d_traits_d<K,ET,NT>
                                             Self;
 
         // types
