@@ -7,6 +7,7 @@
 //	actual revision
 //---------------------------------------------------------------------
 
+GLOB: Fix order of libraries (gmp must come after gmpxx and qt).
 GLOB: Fix support for GMP++
 GLOB: Update GMP to version 4.1
 GLOB: Add support for GMP++

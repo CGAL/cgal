@@ -1504,10 +1504,11 @@ gmp_ldflags()
 	    libpath_option "`_where_is 'GMP_LIB_DIR'`"
 	    ${_printf} "%s" "`rpath_directive 'GMP_LIB_DIR'` "
 	fi
-	lib_option "gmp"
+	# Note : gmpxx must come before gmp since it depends on it.
 	if [ -n "${GMPXX_SUPPORT}" ]; then
 	    lib_option "gmpxx"
 	fi
+	lib_option "gmp"
     fi
 }
 
@@ -1715,9 +1716,10 @@ compiler_flags()
 
 # print ldflags for current setting (do not link with cgal lib,
 # used for test before lib is compiled)
+# NOTE : the order matters, if A depends on B, then B must come after A.
 linker_flags_no_cgal_lib()
 {
-    ${_printf} "%s" "${CUSTOM_LDFLAGS} `cgal_ldflags``leda_ldflags``gmp_ldflags``cln_ldflags``qt_ldflags``math_ldflags`"
+    ${_printf} "%s" "${CUSTOM_LDFLAGS} `cgal_ldflags``leda_ldflags``qt_ldflags``cln_ldflags``gmp_ldflags``math_ldflags`"
 }
 
 # print compiler description/version of compiler $1 (executable)
@@ -5391,14 +5393,15 @@ write_linker_flags()
 	fi
 	RUNTIME_LIB_PATH="${RUNTIME_LIB_PATH}:\$(GMP_LIB_DIR)"
     fi
-    LIBS="${LIBS} `lib_option gmp`"
-    GEOWLIBS="${GEOWLIBS} `lib_option gmp`"
-    WLIBS="${WLIBS} `lib_option gmp`"
+    # gmpxx must be before gmp since it depends on it.
     if [ -n "${GMPXX_SUPPORT}" ]; then
         LIBS="${LIBS} `lib_option gmpxx`"
         GEOWLIBS="${GEOWLIBS} `lib_option gmpxx`"
         WLIBS="${WLIBS} `lib_option gmpxx`"
     fi
+    LIBS="${LIBS} `lib_option gmp`"
+    GEOWLIBS="${GEOWLIBS} `lib_option gmp`"
+    WLIBS="${WLIBS} `lib_option gmp`"
   fi
   if [ -n "${CLN_SUPPORT}" ]; then
     if [ "${CLN_INSTALLATION}" = 'x' -o \
