@@ -27,6 +27,9 @@
 
 bool del = false;
 
+// Explicit instantiation of the whole class :
+template class CGAL::Triangulation_3<K>;
+
 int main()
 {
   // Using vertex_base_pointer induces a memory leak (not a bug, but the test

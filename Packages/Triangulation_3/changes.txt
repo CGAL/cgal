@@ -4,6 +4,7 @@ Version 1.116 (???)
 - Remove src/Triangulation_3.C .
 - Remove deprecated functions incident_vertices() and indicent_cells()
   taking std::set & as argument.
+- Explicit instantiation of the big classes in the test-suite.
 
 Version 1.115 (29 May 02)
 - Replace max2 by maxless.

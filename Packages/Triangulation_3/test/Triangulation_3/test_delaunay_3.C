@@ -27,6 +27,9 @@
 
 bool del=true;
 
+// Explicit instantiation of the whole class :
+template class CGAL::Delaunay_triangulation_3<K>;
+
 int main()
 {
   typedef CGAL::Delaunay_triangulation_3<K>  Cls;

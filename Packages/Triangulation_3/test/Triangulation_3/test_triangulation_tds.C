@@ -32,12 +32,16 @@ public:
   class Point_3 {};
 };
 
+typedef empty_traits                                              traits;
+typedef CGAL::Triangulation_vertex_base_3<traits>                 Vb;
+typedef CGAL::Triangulation_cell_base_3<void>                     Cb;
+typedef CGAL::Triangulation_data_structure_3<Vb,Cb>               Tds;
+
+// Explicit instantiation :
+template class CGAL::Triangulation_data_structure_3<Vb,Cb>;
+
 int main()
 {
-  typedef empty_traits                                              traits;
-  typedef CGAL::Triangulation_vertex_base_3<traits>                 Vb;
-  typedef CGAL::Triangulation_cell_base_3<void>                     Cb;
-  typedef CGAL::Triangulation_data_structure_3<Vb,Cb>               Tds;
   _test_cls_tds_3(Tds());
   return 0;
 }

@@ -32,11 +32,14 @@
 
 bool del=true;
 
+typedef CGAL::Regular_triangulation_euclidean_traits_3<K> traits;
+
+// Explicit instantiation of the whole class :
+template class CGAL::Regular_triangulation_3<traits>;
+
 int main()
 {
   std::cout << " with CGAL::Regular_triangulation_euclidean_traits_3: " << std::endl;
-
-  typedef CGAL::Regular_triangulation_euclidean_traits_3<K> traits;
 
   typedef CGAL::Regular_triangulation_3<traits>                 Cls;
 
