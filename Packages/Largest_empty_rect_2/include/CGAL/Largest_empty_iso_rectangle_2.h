@@ -32,6 +32,30 @@
 
 CGAL_BEGIN_NAMESPACE
 
+/*!
+  Largest_empty_iso_rectangle_2 is a class that implements the largest
+  empty rectangle algorithm based on the algorithm described in
+
+  M. Orlowski. A new algorithm for the largest empty rectangle problem.
+  Algorithmica, 5:65-73, 1990.
+
+  The problem is the following. Given a set of points and a bounding box that
+  include the points, find the largest axis parallel rectangle that contains
+  no points inside it.
+
+  The algorithm is extended to support the degenerate case in which two points
+  have the same x or y coordinates.
+
+  The algorithm checks all the empty rectangles that are bounded by either
+  points or edges of the bounding box (other empty rectangles can be enlarged
+  and remain empty). There are O(n^2) such rectangles. It is done in three phases.
+  In the first one empty rectangles that are bounded by two opposite edges of
+  the bounding box are checked. In the second one, other empty rectangles that
+  are bounded by one or two edges of the bounding box are checked. In the
+  third phase, all other empty rectangles, namely the ones that are bounded
+  by four points, are checked.
+*/
+
 template<class T>
 class Largest_empty_iso_rectangle_2 {
 public:
@@ -46,8 +70,8 @@ public:
   typedef typename T::Iso_rectangle_2   Iso_rectangle_2;
   typedef T                             Traits;
 
-
 private:
+
   /* this struct is the point representation. It is composed of two points
    * such that one holds the x coordinate and the other holds the y coordinate
    */
@@ -77,10 +101,12 @@ private:
        : x_part(p.x_part), y_part(q.y_part) {}
   };
 
-  /* false if no points were inserted or removed, thus the previous
-     results hold. Otherwise there is a need to find the new LER
+  /*! false if no points were inserted or removed, thus the previous
+     results hold. Otherwise there is a need to find the new largest
+     empty rectangle..
   */
   bool cache_valid;
+
   Traits _gt;
   class Less_yx;
   class Less_xy;
@@ -91,15 +117,23 @@ private:
   friend class Less_xy;
   friend class Less_yx;
 
-  /* this class holds points' data as needed in the LER process
+  /*! this class holds points' data as needed in the LER process.
    */
   class Point_data {
   public:
 
     Point p;
 
+    /*! the next two members save set of points that are needed
+        for the third phase.
+    */
     std::set<Point_data *,Less_yx> *right_tent;
     std::set<Point_data *,Less_yx> *left_tent;
+    
+    /* detemine whether the point is a bounding box corner
+       (thus not implicitely inserted as a point, or not.
+    */
+
     Point_type type;
 
     Point_data(const Point& _p) 
@@ -131,28 +165,21 @@ private:
       delete right_tent;
       delete left_tent;
     }
-
   }; 
 
 private:
-  // was x_smaller
   bool less_xy(const Point_data *a, const Point_data *b) const
   {
-    //return traits().less_xy_2_object()(a->p, b->p);
     return(!larger_xy(a,b));
   }
 
-  // was y_smaller
   bool less_yx(const Point_data *a, const Point_data *b) const
   {
-    //return traits().less_yx_2_object()(a->p, b->p);
     return(!larger_yx(a,b));
   }
 
-  // was x_larger
   bool larger_xy(const Point_data *a, const Point_data *b) const
   {
-    //return traits().compare_xy_2_object()(a->p, b->p) == LARGER;
     Comparison_result c = traits().compare_x_2_object()
            (a->p.x_part, b->p.x_part);
     if(c == LARGER) {
@@ -163,7 +190,6 @@ private:
     return false;
   }
 
-  // was y_larger
   bool larger_yx(const Point_data *a, const Point_data *b) const
   {
     Comparison_result c = traits().compare_y_2_object()
@@ -219,7 +245,6 @@ private:
 
     bool operator()(const Point_data *a, const Point_data *b) const
     {
-      // return gt.less_xy_2_object()(a->p, b->p);
       Comparison_result c = traits().compare_x_2_object()
              (b->p.x_part, a->p.x_part);
       if(c == LARGER) {
@@ -255,7 +280,7 @@ private:
   bool insert(const Point_2& _p,Point_type i_type);
   
   /* the phases of the algorithm as described in the paper
-     and auxilary methods they use
+     and auxilary methods they use.
   */
   void phase_1();
   void phase_1_on_x();
@@ -1158,7 +1183,7 @@ Largest_empty_iso_rectangle_2<T>::get_bounding_box()
   return bbox_p;
 }
 
-/* Performs the computation if the cache is invalid
+/* Performs the computation if the cache is invalid.
  *
  */
 template<class T>
@@ -1191,7 +1216,7 @@ Largest_empty_iso_rectangle_2<T>::get_largest_empty_iso_rectangle()
 }
 
 /* Some applications might be more interested in the four points
- * that are from the input and that define the empty rectangle
+ * that are from the input and that define the empty rectangle.
  */
 /*
 template<class T>
