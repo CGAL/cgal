@@ -1,3 +1,23 @@
+// ============================================================================
+//
+// Copyright (c) 1997-2002 The CGAL Consortium
+//
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
+//
+// ----------------------------------------------------------------------------
+//
+// file          : include/CGAL/apply_to_range.h
+// package       : Qt_widget
+// author(s)     : Radu Ursu<rursu@sophia.inria.fr>
+// release       : 
+// release_date  : 
+//
+// coordinator   : Andreas Fabri<afabri@sophia.inria.fr>
+//
+// ============================================================================
+
 #ifndef CGAL_apply_to_range_h
 #define CGAL_apply_to_range_h
 

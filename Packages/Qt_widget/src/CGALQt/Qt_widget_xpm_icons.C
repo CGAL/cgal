@@ -1,3 +1,26 @@
+// ======================================================================
+//
+// Copyright (c) 1997-2003 The CGAL Consortium
+//
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
+//
+// ----------------------------------------------------------------------
+//
+// file          : src/CGALQt/Qt_widget_xpm_icons.C
+// package       : Qt_widget
+// maintainer    : Laurent Rineau <rineau@clipper.ens.fr>
+// author(s)     : Radu Ursu <rursu@geometryfactory.com>
+// release       : $CGAL_Revision: CGAL-2.5-I-130 $
+// release_date  : 
+//
+// coordinator   : Laurent Rineau <rineau@clipper.ens.fr>
+//
+// ======================================================================
+
+
+
 /* XPM */
 const char *  alpha_shape_xpm[] = {
 "32 32 3 1",
