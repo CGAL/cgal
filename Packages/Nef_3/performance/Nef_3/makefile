@@ -30,6 +30,7 @@ CXXFLAGS = \
 	   -DCGAL_NEF3_TIMER_BINARY_OPERATION \
            -I/home/hachenb/CGAL/Nef_3/include \
            -I/home/hachenb/CGAL/Nef_S2/include \
+           -I/home/hachenb/CGAL/Nef_2/include \
            $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS) \
 	   $(DEBUG_OPT)
