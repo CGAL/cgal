@@ -23,9 +23,11 @@
 
 #include <cassert>
 
+CGAL_BEGIN_NAMESPACE
+
 template <class Face, class Gt>
 void
-CGAL::_test_cls_tds_face( const Face &, const Gt & )
+_test_cls_tds_face( const Face &, const Gt & )
 {
   cout << "    face" << endl;
 
@@ -140,3 +142,5 @@ CGAL::_test_cls_tds_face( const Face &, const Gt & )
   assert( f1.cw(1) == 0 );
   assert( f1.cw(2) == 1 );
 }
+
+CGAL_END_NAMESPACE

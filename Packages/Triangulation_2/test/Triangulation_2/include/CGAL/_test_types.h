@@ -24,6 +24,6 @@ typedef CGAL::Homogeneous<CGAL::Gmpz> Test_rep_homogeneous;
 //the following define shorter names to make the (g++/egcs) linker work 
 //#define CGAL::_Triangulation_test_traits CGAL::Ttt
 
- class _Triangulation_test_traits;
+//class CGAL::_Triangulation_test_traits;
 
 #endif

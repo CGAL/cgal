@@ -33,13 +33,15 @@
 int
 main()
 {
-  cout << "Testing Triangulation_defaut_data_structure_2" << endl;
-  typedef CGAL::_Triangulation_test_traits Gt;
-  typedef CGAL::Triangulation_vertex_base_2<Gt> Vb;
-  typedef CGAL::Triangulation_face_base_2<Gt>  Fb;
-  typedef CGAL::Triangulation_default_data_structure_2<Gt,Vb,Fb> Cls;
+  using namespace CGAL;  
 
-  CGAL::_test_cls_tds_2( Cls(), Gt() );
+  cout << "Testing Triangulation_defaut_data_structure_2" << endl;
+  typedef _Triangulation_test_traits Gt;
+  typedef Triangulation_vertex_base_2<Gt> Vb;
+  typedef Triangulation_face_base_2<Gt>  Fb;
+  typedef Triangulation_default_data_structure_2<Gt,Vb,Fb> Cls;
+
+  _test_cls_tds_2( Cls(), Gt() );
   
   return 0;
 }

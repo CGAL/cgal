@@ -22,10 +22,11 @@
 
 
 #include <cassert>
+CGAL_END_NAMESPACE
 
 template <class Vertex, class Gt>
 void
-CGAL::_test_cls_tds_vertex( const Vertex &, const Gt & )
+_test_cls_tds_vertex( const Vertex &, const Gt & )
 {
   cout << "    vertex" << endl;
 
@@ -86,3 +87,5 @@ CGAL::_test_cls_tds_vertex( const Vertex &, const Gt & )
   // Test degree()
   assert( v1.degree() == 0 );
 }
+
+CGAL_END_NAMESPACE
