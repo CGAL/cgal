@@ -117,6 +117,44 @@ public:
 
 CGAL_END_NAMESPACE
 
+// skip the next three functions as they will go to Unique_hash_map.h
+namespace boost {
+
+  template <typename KeyType, typename ValueType>
+  class associative_property_map<CGAL::Unique_hash_map<KeyType,ValueType> >
+  {
+    typedef CGAL::Unique_hash_map<KeyType,ValueType> C;
+  public:
+    typedef KeyType key_type;
+    typedef ValueType value_type;
+    typedef value_type& reference;
+    typedef lvalue_property_map_tag category;
+    associative_property_map() : m_c(0) { }
+    associative_property_map(C& c) : m_c(&c) { }
+    reference operator[](const key_type& k) const {
+      return (*m_c)[k];
+    }
+  private:
+    C* m_c;
+  };
+  
+  
+  template <typename KeyType, typename ValueType>
+  ValueType&  get(const associative_property_map<CGAL::Unique_hash_map<KeyType,ValueType> >& uhm, const KeyType& key)
+  {
+    return uhm[key];
+  }
+  
+  template <typename KeyType, typename ValueType>
+  void put(associative_property_map<CGAL::Unique_hash_map<KeyType,ValueType> >& uhm, const KeyType& key, const ValueType& val)
+  {
+    uhm[key] = val;
+  }
+} // namespace boost 
+
+
+
+
 #endif // CGAL_UNIQUE_HASH_MAP_H
 // EOF
 
