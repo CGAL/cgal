@@ -1,4 +1,7 @@
-17 September
+22 September 2004 Andreas Fabri
+- Copied Point.h and distance.h from examples to test, as relative include paths in #includes do not work
+
+17 September 2004 Andreas Fabri
 - Added CGAL::force_ieee_double_precision() to see, if this makes that Euclidean_distance and squared_distance compute the same
 
 14 September
