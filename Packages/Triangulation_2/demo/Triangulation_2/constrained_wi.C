@@ -36,8 +36,7 @@ typedef CGAL::Filtered_kernel<K1>       K;
 typedef K::Point_2  Point;
 typedef K::Segment_2 Segment;
 typedef CGAL::Constrained_Delaunay_triangulation_2<K> CDT;
-typedef CGAL::Tag_exact_predicates   I_tag;
-typedef CGAL::Constrained_triangulation_plus_2<CDT, I_tag> CDTplus;
+typedef CGAL::Constrained_triangulation_plus_2<CDT> CDTplus;
 
 typedef CGAL::Window_stream  Window_stream;
 

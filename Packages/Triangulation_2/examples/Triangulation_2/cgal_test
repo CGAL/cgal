@@ -74,5 +74,6 @@ else
   compile_and_run terrain
   compile_and_run regular
   compile_and_run constrained
+  compile_and_run constrained_plus
 fi
 

@@ -110,8 +110,9 @@ public:
   }
 
     //Helping
+  void clear() { Tr::clear(); hierarchy.clear();}
   void copy(const Constrained_triangulation_plus_2 &ctp);
-  // void swap(Triangulation_2 &tr);
+  void swap(Constrained_triangulation_plus_2 &ctp);
 
   // INSERTION
   virtual Vertex_handle insert(const Point& a, 
@@ -200,6 +201,16 @@ copy(const Constrained_triangulation_plus_2 &ctp)
   hierarchy.copy(ctp.hierarchy, vmap);
 }
 
+template <class Tr>
+void
+Constrained_triangulation_plus_2<Tr>::
+swap(Constrained_triangulation_plus_2 &ctp)
+{
+  Tr::swap(ctp);
+  Constraint_hierarchy temp = hierarchy;
+  hierarchy = ctp.hierarchy;
+  ctp.hierarchy = temp;  
+}
 
 template <class Tr>
 inline
@@ -337,7 +348,7 @@ intersect(Face_handle f, int i,
 // compute the intersection of the constraint edge (f,i) 
 // with the subconstraint (vaa,vbb) being inserted
 // insert the intersection point
-// split constraint edge (f,i) in hierarchy
+// (the  constraint edge (f,i) will be splitted in hierarchy by insert)
 // and return the Vertex_handle of the new Vertex
 {
   Vertex_handle  vc, vd, va, vb;
@@ -356,7 +367,7 @@ intersect(Face_handle f, int i,
   CGAL_triangulation_assertion(assign(pi, result));
 
   Vertex_handle vi = insert(pi, EDGE, f, i);
-  hierarchy.split_constraint(vcc,vdd,vi);
+  //hierarchy.split_constraint(vcc,vdd,vi);
   return vi; 
 }
 

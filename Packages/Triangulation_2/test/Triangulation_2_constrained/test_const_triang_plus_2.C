@@ -49,7 +49,8 @@ int main()
   typedef CGAL::Triangulation_data_structure_2<Vbb,Fbb>         TDSS;
   typedef CGAL::Exact_intersections_tag                         EItag;
   typedef CGAL::Constrained_Delaunay_triangulation_2<EK,TDSS,EItag>  CDtei;
-  _test_cls_constrained_triangulation(CDtei());
+  typedef CGAL::Constrained_triangulation_plus_2<CDtei>   CDteiplus;
+  _test_cls_const_triang_plus_2(CDteiplus());
 
   return 0;
 }

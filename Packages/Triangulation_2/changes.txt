@@ -1,6 +1,11 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+Ver 7.14 (25/03/02)
+- added copy and swap to Constrained_triangulation_plus_2
+- fixed Constrained_triangulation_plus_2 with Exact_intersections_tag
+- fixed examples and demo of Constrained_triangulation_plus_2
+
 Ver 7.13 (22/03/02)
 - fixed copy of Constrained_triangulation_plus_2
 
