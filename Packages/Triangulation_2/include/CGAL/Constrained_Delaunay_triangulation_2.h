@@ -40,8 +40,6 @@
 
 CGAL_BEGIN_NAMESPACE
 template <class Gt, class Tds>
-
-
 class Constrained_Delaunay_triangulation_2
   : public Constrained_triangulation_2<Gt,Tds>
 {
@@ -50,11 +48,16 @@ public:
   typedef Constrained_triangulation_2<Gt,Tds> Constrained_triangulation;
   typedef Constrained_Delaunay_triangulation_2<Gt,Tds>  CD_triangulation;
   typedef typename Constrained_triangulation::Constraint Constraint;
+  typedef typename Constrained_triangulation::Vertex Vertex;
   typedef typename Constrained_triangulation::Vertex_handle Vertex_handle;
   typedef typename Constrained_triangulation::Face_handle Face_handle;
   typedef typename Constrained_triangulation::Edge  Edge;
+  typedef typename Constrained_triangulation::Finite_faces_iterator
+                                              Finite_faces_iterator;
+  typedef typename Constrained_triangulation::Face_circulator
+                                              Face_circulator;
 
-  //don't know why this typedef makes the compilation crash
+  //don't know why these typedef makes the compilation crash
   // typedef typename Constrained_triangulation::List_edges List_edges;  
   // typedef typename Constrained_triangulation::List_faces List_faces;
   // typedef typename Constrained_triangulation::List_vertices  List_vertices;
@@ -62,6 +65,8 @@ public:
   typedef std::list<Edge> List_edges;
   typedef std::list<Vertex_handle> List_vertices;  
   typedef std::list<Face_handle> List_faces;
+
+  typedef typename Gt::Point Point;
 
   Constrained_Delaunay_triangulation_2(const Gt& gt=Gt() ) : 
     Constrained_triangulation(gt) { }
@@ -225,7 +230,7 @@ void
 Constrained_Delaunay_triangulation_2<Gt, Tds>::
 flip_around(List_vertices& new_vertices)
 {
-  List_vertices::iterator itv=new_vertices.begin();
+  typename List_vertices::iterator itv=new_vertices.begin();
   for( ; itv != new_vertices.end(); itv++) {
     flip_around(*itv);
   }
@@ -261,10 +266,10 @@ propagating_flip(List_edges & edges)
   int i, ii, indf, indn;
   Face_handle ni, f,ff;
   Edge ei,eni; 
-  Constrained_triangulation::Edge_set edge_set;
-  Constrained_triangulation::Less_edge less_edge;
+  typename Constrained_triangulation::Edge_set edge_set;
+  typename Constrained_triangulation::Less_edge less_edge;
   Edge e[4];
-  List_edges:: iterator itedge=edges.begin();
+  typename List_edges::iterator itedge=edges.begin();
 
   // initialization of the set of edges to be flip
 
@@ -357,8 +362,8 @@ find_conflicts(Point p, std::list<Edge>& le, Face_handle hint) const
   le.push_back(Edge(fh->neighbor(1),fh->neighbor(1)->index(fh)));
   le.push_back(Edge(fh->neighbor(2),fh->neighbor(2)->index(fh)));
 
-  std::list<Edge>::iterator lit=le.begin();
-  std::list<Edge>::iterator litt;
+  typename std::list<Edge>::iterator lit=le.begin();
+  typename std::list<Edge>::iterator litt;
   int ih;
   while(lit != le.end()){
     if ( !((*lit).first->is_constrained((*lit).second)) && 
@@ -733,7 +738,7 @@ refine_face(Face_handle & f,
   c=circumcenter(f);
   find_conflicts(c, hole_edges, f);
 
-  List_edges::iterator edgeit(hole_edges.begin());
+  typename List_edges::iterator edgeit(hole_edges.begin());
   while (edgeit != hole_edges.end()) {
     ff = (*edgeit).first;
     ic = (*edgeit).second;
@@ -831,9 +836,9 @@ refine(List_edges & list_of_constraints,
   List_faces set_of_bad_faces; // a remplacer par un set avec
   // comparaison basee sur l'aspect ratio
   List_edges list_of_non_gabriel_constraints;
-  Face_iterator face_it=faces_begin(); 
+  Finite_faces_iterator face_it=faces_begin(); 
   Face_handle f;
-  List_edges :: iterator constraint_it=list_of_constraints.begin();
+  typename List_edges::iterator constraint_it=list_of_constraints.begin();
 
   // init. list_of_non_gabriel_constraints
 

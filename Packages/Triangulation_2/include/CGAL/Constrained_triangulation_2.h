@@ -48,11 +48,19 @@ public:
   typedef Constrained_triangulation_sweep_2<Gt,Tds>  Sweep;
   
   typedef typename Triangulation::Edge Edge;
+  typedef typename Triangulation::Vertex Vertex;
   typedef typename Triangulation::Vertex_handle Vertex_handle;
   typedef typename Triangulation::Face_handle Face_handle;
+  typedef typename Triangulation::Locate_type Locate_type;
+  typedef typename Triangulation::Face_circulator Face_circulator;
+  typedef typename Triangulation::Edge_circulator Edge_circulator;
+  typedef typename Triangulation::Vertex_circulator Vertex_circulator;
+  typedef typename Triangulation::Line_face_circulator Line_face_circulator;
+  
 
   typedef Gt Geom_traits;
   typedef typename Geom_traits::Point          Point;
+  typedef typename Geom_traits::Segment    Segment;
   typedef std::pair<Point,Point> Constraint;
   typedef std::list<Edge> List_edges;
   typedef std::list<Face_handle> List_faces;
@@ -302,7 +310,7 @@ void
 Constrained_triangulation_2<Gt,Tds>:: 
 update_constraints( const std::list<Edge> &hole)
 {
-  std::list<Edge>::iterator it = hole.begin();
+  typename std::list<Edge>::iterator it = hole.begin();
   Face_handle f;
   int i;
   for ( ; it != hole.end(); it ++) {
@@ -689,7 +697,7 @@ triangulate(List_edges & list_edges, List_faces &
   int ind1, ind2,ind;
   Orientation orient;
     
-  List_edges :: iterator current, next, tempo;
+  typename List_edges::iterator current, next, tempo;
   current=list_edges.begin();
   tempo=list_edges.end(); 
   --tempo; 

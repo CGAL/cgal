@@ -347,7 +347,7 @@ make_event_queue()
           event_less(p,(*look_up).first) ) {
         // the event p does not yet exists
         Out_edges* out= new Out_edges();
-        Event_queue::value_type event(p,out);
+        typename Event_queue::value_type event(p,out);
         look_up=queue.insert(look_up,event);
       }
 
@@ -364,7 +364,7 @@ make_event_queue()
            event_less(q,(*look_up).first)){
         // the event q does not yet exists
         Out_edges* out= new Out_edges();
-        Event_queue::value_type  event(q,out);
+        typename Event_queue::value_type  event(q,out);
         look_up=queue.insert(look_up,event);
         }
       }
@@ -511,7 +511,7 @@ treat_out_edges(const Event_queue_iterator & event,
 {
   Point p = (*event).first;
   Out_edges* out = (*event).second;
-  Out_edges::iterator outit= (*out).begin();
+  typename Out_edges::iterator outit= (*out).begin();
   Chain* newpc;
   Chain* pc_up;
   Constraint c;
@@ -603,7 +603,7 @@ set_infinite_faces()
     newf = _tr->create_face(infinite, first->vertex(1), NULL);
     first = last = newf;
     infinite->set_face(first);
-    Neighbor_list::iterator it = lower_list->begin();
+    typename Neighbor_list::iterator it = lower_list->begin();
     for( ; it != lower_list->end(); it++) {
       fn = (*it).first;
       //turn the vertex [vww] into [wvNULL]

@@ -50,7 +50,10 @@ public:
   typedef typename Triangulation::Edge                  Edge;
   typedef typename Triangulation::Edge_circulator       Edge_circulator;
   typedef typename Triangulation::Finite_edges_iterator Finite_edges_iterator;
-  
+  typedef typename Triangulation::Finite_faces_iterator Finite_faces_iterator;
+  typedef typename Triangulation::Finite_vertices_iterator 
+                                                     Finite_vertices_iterator;
+
   Delaunay_triangulation_2(const Gt& gt = Gt())
   : Triangulation_2<Gt,Tds>(gt) {}
   

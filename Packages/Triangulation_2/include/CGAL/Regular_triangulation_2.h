@@ -38,13 +38,16 @@ public:
   typedef typename Gt::Bare_point     Point;
   typedef typename Gt::Weighted_point Weighted_point;
   typedef typename Gt::Weight         Weight;
-  
-  // the following typedef to satisfy MIPS CC 7.3
+
   typedef typename Triangulation::Face_handle    Face_handle;
   typedef typename Triangulation::Vertex_handle  Vertex_handle;
   typedef typename Triangulation::Edge           Edge;
   typedef typename Triangulation::Locate_type    Locate_type;
-
+  typedef typename Triangulation::Face_circulator       Face_circulator;
+  typedef typename Triangulation::Finite_edges_iterator Finite_edges_iterator;
+  typedef typename Triangulation::Finite_faces_iterator Finite_faces_iterator;
+  typedef typename Triangulation::Finite_vertices_iterator 
+                                                     Finite_vertices_iterator;
   // a list to memorise temporary the faces around a point
   typedef std::list<Face_handle>      Faces_around_stack; 
 
@@ -195,8 +198,8 @@ is_valid(bool verbose, int level) const
       CGAL_triangulation_assertion(result);
     }
     
-    Weighted_point_list::iterator plit   = it->point_list().begin(),
-                                  pldone = it->point_list().end();
+    typename Weighted_point_list::iterator plit = it->point_list().begin(),
+                                         pldone = it->point_list().end();
     for (; plit != pldone; plit++)
     {
       result = result && power_test(it, *plit) == ON_NEGATIVE_SIDE;
@@ -249,7 +252,7 @@ affiche_tout()
 	   <<"/"<<(fi->neighbor(2))->vertex(2)->point()<<"]"
 	   <<std::endl;
 
-      Weighted_point_list::iterator current;
+      typename Weighted_point_list::iterator current;
       std::cerr << "  +++++>>>    ";
       for (current= fi->point_list().begin() ; 
 	   current!= fi->point_list().end() ; current++ )
@@ -268,7 +271,7 @@ affiche_tout()
     std::cerr<<(void*)&(*fc) <<" = "<< fc->vertex(0)->point()<<" / "
 	<< fc->vertex(1)->point()<<" / "<< fc->vertex(2)->point()
 	<<" / ";
-    Weighted_point_list::iterator current;
+    typename Weighted_point_list::iterator current;
     std::cerr << "  +++++>>>    ";
     for (current= fc->point_list().begin() ; 
 	 current!= fc->point_list().end() ; current++ )
@@ -512,7 +515,7 @@ fill_hole_regular(std::list<Edge> & first_hole)
     {
       hole = hole_list.front();
       hole_list.pop_front();
-      Hole::iterator hit = hole.begin();
+      typename Hole::iterator hit = hole.begin();
 	    
       // if the hole has only three edges, create the triangle
       if (hole.size() == 3)
@@ -568,9 +571,9 @@ fill_hole_regular(std::list<Edge> & first_hole)
       Vertex_handle  vv;
       Weighted_point p;
  
-      Hole::iterator hdone = hole.end();
+      typename Hole::iterator hdone = hole.end();
       hit = hole.begin();
-      Hole::iterator cut_after(hit);
+      typename Hole::iterator cut_after(hit);
  
       // if tested vertex is c with respect to the vertex opposite
       // to NULL neighbor,
