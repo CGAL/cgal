@@ -5,14 +5,11 @@
 \ccFunction{ template<class CDT> void make_conforming_Delaunay_2 (CDT &t); } 
 { Refines the constrained Delaunay triangulation \ccc{t} into a
   conforming Delaunay triangulation. After a call to this function,
-  all edges of \ccc{t} are Delaunay edges. 
-  \ccPrecond The template parameter \ccc{CDT} has to be instantiated
-  by a \ccc{Constrained_Delaunay_triangulation_2<Gt, Tds>}, or a
-  \ccc{Constrained_triangulation_plus_2<CDT2>} or a
-  \ccc{Triangulation_hierarchy_2<CDT2>} where \ccc{CDT2} is a
-  \ccc{Constrained_Delaunay_triangulation_2<Gt, Tds>}, and the
-  geometric traits class of this instance must be a model of
-  \ccc{ConformingDelaunayTriangulationTraits_2}. }
+  all edges of \ccc{t} are Delaunay edges.   
+  \ccPrecond The template parameter \ccc{CDT} \meshcdtrequires{}
+  The geometric traits class plugged in the constrained Delaunay
+  triangulation must be a model of
+  \ccc{ConformingDelaunayTriangulationTraits_2}.} 
 
 \end{ccRefFunction}
 

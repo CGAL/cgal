@@ -110,10 +110,10 @@ constraints of the domain.
 
 The PSLG divides the plan into several connected components.  The
 domain is usually defined as the union of the bounded connected
-components including the seed points.  Conversely, the seed points can
-be used to mark the connected components which are outside the domain.
-\new{If the set of seeds is empty, the domain is the union of the
-  bounded connected components.}
+components \new{including no seed points, meaning that seeds defines \emph{holes} is the domain.} Conversely, the seed points can
+be used to mark the connected components which are \newnomargin{inside} the domain.
+If the set of seeds is empty, the domain is the union of the
+  bounded connected components.
 
 \subsection{Shape and size criteria}
 \label{sec:Mesh_2_criteria}
@@ -176,7 +176,7 @@ class such as \ccc{Constrained_triangulation_plus_2<CDT2>} or
 \ccc{Constrained_Delaunay_triangulation_2<Gt, Tds>}.
 
 The geometric traits class of the instance of \ccc{CDT} has to be a
-model of the concept \ccc{DelaunayMeshTraits_2}.  \new{This concept}
+model of the concept \ccc{DelaunayMeshTraits_2}.  This concept
 refines the concept \ccc{ConformingGabrielTriangulationTraits_2}
 adding the geometric criteria that the triangles have to satisfy.
 \cgal\ provides models for this concept such as:
@@ -196,34 +196,34 @@ function is called again.
 
 \subsection{Example using the global function}
 
-\new{The following example inserts several segments in a constrained
+The following example inserts several segments in a constrained
   triangulation, then mesh it using the global function
   \ccc{refine_Delaunay_mesh_2}. The size and shape criteria are the
   defaults provided by the traits class
   \ccc{Delaunay_mesh_traits_2<K>}. No seeds are given, meaning that
-  the mesh domain covers all the plan except the unbounded component.}
+  the mesh domain covers all the plan except the unbounded component.
 
 \ccIncludeExampleCode{Mesh_2/mesh_global.C}
 
 \subsection{Example using the class \ccc{Delaunay_mesh_2<CDT>}}
 
-\new{This example uses the class \ccc{Delaunay_mesh_2<CDT>} and calls
+This example uses the class \ccc{Delaunay_mesh_2<CDT>} and calls
   the \ccc{refine_mesh()} member function twice changing the size and
   shape criteria inbetween. In such a case, using twice the global
   function \ccc{refine_Delaunay_mesh_2} would be less efficient,
   because some internal structures needed by the algorithm would be
-  calculated twice.}
+  calculated twice.
 
 \ccIncludeExampleCode{Mesh_2/mesh_class.C}
 
 \subsection{Example using seeds}
 
-\new{Like the previous one, this example uses the class
+Like the previous one, this example uses the class
   \ccc{Delaunay_mesh_2<CDT>} but defines a domain by using one seed.
   The size and shape criteria are the defaults provided by the traits
-  class \ccc{Delaunay_mesh_traits_2<K>}. }
+  class \ccc{Delaunay_mesh_traits_2<K>}.
 
-\ccIncludeExampleCode{Mesh_2/mesh_global_with_seeds.C}
+\ccIncludeExampleCode{Mesh_2/mesh_with_seeds.C}
 
 %%% For emacs/AucTeX:
 %%% Local Variables: ***

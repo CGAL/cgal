@@ -9,31 +9,31 @@ fonctions \ccc{make_conforming_Gabriel_2} and
 
 \ccParameters 
 
-The template parameter \ccc{CDT} has to be instantiated by a
-\ccc{Constrained_Delaunay_triangulation_2<Gt, Tds>}, or a
-\ccc{Constrained_triangulation_plus_2<CDT2>} or a
-\ccc{Triangulation_hierarchy_2<CDT2>} where \ccc{CDT2} is a
-\ccc{Constrained_Delaunay_triangulation_2<Gt, Tds>}. The geometric
-traits class of the instance of \ccc{CDT} has to be a model of the
-concept \ccc{ConformingGabrielTriangulationTraits_2}. This traits class
-provides constructors and predicates needed by the conforming
-algorithm.
+The template parameter \ccc{CDT} \meshcdtrequires{}
 
-Every methods of this class (but \ccc{clear()}) exists in two
-versions: one suffixed by \ccc{_Delaunay} and one suffixed by
-\ccc{_Gabriel}. If only \emph{Delaunay} methods are called, the
-geometric traits class of the instance of \ccc{CDT} can be a model of
-\ccc{ConformingDelaunayTriangulationTraits_2}, which is a lighter
-requirement than the \ccc{ConformingGabrielTriangulationTraits_2}.
+The geometric traits class of the instance of \ccc{CDT} has to be
+  a model of the concept \ccc{ConformingGabrielTriangulationTraits_2}
+  or \ccc{ConformingDelaunayTriangulationTraits_2}. Every methods of
+  this class (but \ccc{clear()}) exists in two versions: one suffixed
+  by \ccc{_Delaunay} and one suffixed by \ccc{_Gabriel}. If only
+  \emph{Delaunay} methods are called, the geometric traits class of
+  the instance of \ccc{CDT} can be a model of
+  \ccc{ConformingDelaunayTriangulationTraits_2}. If some
+  \emph{Gabriel} methods are called, the geometric traits class of
+  the instance of \ccc{CDT} has to be a model of
+  \ccc{ConformingGabrielTriangulationTraits_2}.
 
 \ccHeading{Using this class}
 
-A call to the method \ccc{make_conforming_Delaunay()}
-(resp. \ccc{make_conforming_Gabriel()}) will refine the contrained
-Delaunay triangulation into a conforming Delaunay (resp. conforming
-Gabriel) triangulation. After that, if one inserts vertices of
-contrained edges, the triangulation is no longer guaranted to be
-conforming, until next call to a conforming method.
+The class \ccRefName\ derives from \ccc{CDT}. A call to the
+  method \ccc{make_conforming_Delaunay()} (resp.
+  \ccc{make_conforming_Gabriel()}) will refine the contrained Delaunay
+  triangulation into a conforming Delaunay (resp. conforming Gabriel)
+  triangulation. Note that the insertion methods of vertices or
+  constrained edges are not overridden. Thus insertions of new vertices
+  or new constrained edges break the conforming Delaunay (or
+  conforming Gabriel) property, until a conforming method is called
+  again.
 
 The conforming methods insert points into constrained edges, splitting
 them into sub-constraints. You can have access to initial inserted
@@ -118,9 +118,11 @@ the corresponding of \ccc{init_XX}.
   \ccc{false}. If not (when the algorithm is not done), returns
   \ccc{true}.}
 
-\ccMethod{ void init_Gabriel(); }{}
-\ccGlue
-\ccMethod{ void step_by_step_conforming_Gabriel (); }{Gabriel version.}
+\ccMethod{ void init_Gabriel(); }{Analog to
+    \ccc{init_Delaunay} for Gabriel conforming.}
+
+\ccMethod{ void step_by_step_conforming_Gabriel (); }{Analog to
+  \ccc{step_by_step_conforming_Delaunay()} for Gabriel conforming.}
 
 \ccMethod{ bool is_conforming_done(); }
 { Tests if the step by step conforming algorithm if done or not. If if

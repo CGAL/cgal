@@ -1,32 +1,49 @@
 \begin{ccRefClass}{Delaunay_mesh_2<CDT>}
 
+This class implements a 2D mesh generator.
+
+\ccParameters
+The template parameter \ccc{CDT} \meshcdtrequires{}
+
+The geometric traits class of the instance of \ccc{CDT} has to be
+  a model of the concept \ccc{DelaunayMeshTraits_2}. This traits class
+  provides not only constructors and predicates needed by the mesh
+  algorithm, but also defines the shape and size criteria on the
+  triangles of the mesh.
+
+\ccHeading{Using this class}
+
 The class \ccRefName{} derives from
-\ccc{Conforming_Delaunay_triangulation_2<CDT>}. The template parameter
-\ccc{CDT} has to be a \cgal\ constrained Delaunay triangulation and its
-geometric traits class must be a model of the concept
-\ccc{DelaunayMeshTraits_2}. This traits class provides not only
-constructors and predicates needed by the mesh algorithm, but also defines
-the shape and size criteria on the triangles of the mesh.
+  \ccc{Conforming_Delaunay_triangulation_2<CDT>} and therefore from
+  the constrained Delaunay triangulation \ccc{CDT}. A \ccRefName{}
+  object is then a \ccc{CDT}, in which one can insert points and
+  constrained segments and performs every \ccc{CDT}'s availlable
+  operations. In addition, the class \ccRefName\ has a refinement
+  method \ccc{refine_mesh()}. A call to this method refines the
+  constrained Delaunay triangulation into a mesh satisfying the size
+  and shape criteria specified in the traits class. Note that vertices
+  and contrained edges insertions are not overridden. Therefore, any
+  insertion can ruin the mesh guarantees until \ccc{refine_mesh()} is
+  called again.
+  
+  The domain to be mesh is defined by the constrained edges and a set
+  of seed points. The constrained edges divide the plan into several
+  connected components. Usually, the seeds are used to mesh the holes,
+  that is the connected components which do not have to be meshed and
+  and the domain of the mesh is the union of the bounded components
+  not including a seed point. Conversely, the seed points can be used
+  to mark the connected components which are inside the domain.
+  
+  The domain has to be bounded. Therefore the unbounded component will
+  not be part of it\new{, whatever is the set of seed points}. By
+  default, if the set of seeds is empty, the domain to be meshed is
+  the union of of bounded components. Note that the constrained edges
+  have to bound the domain to be meshed and that the domain will be
+  empty if constrained edges do not define bounded components.
 
-A \ccRefName{} object is a \ccc{CDT} CDT, in which one can insert points
-and constrained segments and every \ccc{CDT}'s availlable operations. After
-a call to one of meshing methods, the CDT is meshed according to the
-criteria defined in the traits class.
-
-Before the first call to a meshing method, one can insert points and
-constrained segments in the \ccRefName{} object, like in a CDT. Meshing
-methods will mesh the CDT by refining triangles that are in the default
-domain or the domain defined by the seeds. The refinement process needs to
-know which faces have to be refined, that's why the base face of the
-triangulation \ccc{CDT} has to be a model of the concept
-\ccc{MeshFaceBase_2}.
-
-Once a meshing method is called, the CDT is meshed according to
-criteria on shape and size defined in the traits. If points or
-constrained segments are inserted again in the CDT, the criterias are
-no longer garanted.
-
-\todo{Je dois copier-coller la d\'efinition des domaines, et des crit\`eres?}
+The refinement process needs to know which faces have to be
+  refined, that's why the base face of the triangulation \ccc{CDT} has
+  to be a model of the concept \ccc{MeshFaceBase_2}.
 
 \ccInclude{CGAL/Delaunay_mesh_2.h}
 
@@ -66,12 +83,18 @@ The following functions are used to define seeds.
 
 \ccMethod{template<class InputIterator>
           void set_seeds(InputIterator begin, InputIterator end,
-                         const bool mark=false);}
-{ Sets seeds to the sequence [\ccc{begin}, \ccc{end}]. This defines
-  conmnected components of the constrained triangulation that will be
-  refined (if \ccc{mark=true}) or not refined (if \ccc{mark=false}).
-  \ccPrecond The \ccc{value_type} of \ccc{begin} and \ccc{end}
-  is \ccc{Geom_traits::Point_2}.}
+                         const bool mark=false);}                   
+                       { Sets seeds to the sequence [\ccc{begin},
+                         \ccc{end}]. \newnomargin{If \ccc{mark=true}, the mesh domain
+                         is the union of the bounded connected
+                         components including at least one seed. If
+                         \ccc{mark=false}, the domain is the union of
+                         the bounded components including no seed. Note
+                         that the unbounded component of the plane is
+                         never meshed.}
+                         \ccPrecond The \ccc{value_type} of
+                         \ccc{begin} and \ccc{end} is
+                         \ccc{Geom_traits::Point_2}.}
 
 These ones give the sequences of seeds.
 
@@ -83,15 +106,10 @@ These ones give the sequences of seeds.
 
 \ccHeading{Meshing methods}
 
-The following method should be called after all points and constrained
-segments are inserted in the CDT. It meshes the CDT according to the
-\ccc{Geom_traits::Is_bad} predicates on triangles\footnote{Some
-  triangles can remain bad according to these criteria. See the user
-  manual for details.}. The mesh can be further refined by changing
-the geometric traits class and calling \ccc{refine_mesh()} again.
-
 \ccMethod{void refine_mesh(); }
-{ Meshes the CDT. }
+{ Refines the constrained Delaunay triangulation into a mesh
+  satisfying the criteria defined by the traits.
+}
 
 \ccMethod{ void set_geom_traits(Geom_traits gt);}
 { Assigns \ccc{gt} to the geometric traits object. }
@@ -103,7 +121,7 @@ the geometric traits class and calling \ccc{refine_mesh()} again.
   faces can then be done by a call to \ccc{set_bad_faces}.
   
   \ccMethod{ void set_geom_traits(Geom_traits gt, bool
-    recalculate_bad_faces = true);}
+    recalculate_bad_faces);}
   { Assigns \ccc{gt} to the geometric traits object. If
     \ccc{recalculate_bad_faces} is \ccc{false}, the list of bad faces is
     let empty and the function \ccc{set_bad_faces} should be called before
@@ -129,10 +147,13 @@ The \ccRefName{} class allows, for debugging or demos, to play the
 meshing algorithm step by step, using the following methods.
 
 \ccMethod{ void init(); }
-         { The method must be called after all points and constrained
-           segments are inserted and before any call to the following
-           method. If some points or segments are then inserted 
-           in the CDT, this method must be called again. }
+         { This method must be called just before the first
+             call to the following step by step refinement method,
+             that is when all vertices and constrained edges have been
+             inserted in the constrained Delaunay triangulation. It
+             must be called again before any subsequent calls of the
+             step by step refinement if new vertices of constrained
+             edges have been inserted since the last call.}
 
 \ccMethod{ bool step_by_step_refine_mesh(); }
          { Applies one step of the algorithm. At one step of the algorithm,
