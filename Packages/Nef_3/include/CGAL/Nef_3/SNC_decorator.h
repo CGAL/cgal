@@ -64,7 +64,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
   typedef CGAL::SM_decorator<Sphere_map>               SM_decorator;
   typedef CGAL::SM_const_decorator<Sphere_map>         SM_const_decorator;
   typedef CGAL::SNC_SM_overlayer<SM_decorator>         SM_overlayer;
-  typedef CGAL::SM_point_locator<SM_const_decorator>   SM_point_locator;
+  typedef CGAL::SM_point_locator<SM_decorator>         SM_point_locator;
   typedef CGAL::SNC_intersection<SNC_structure>        SNC_intersection;
   typedef CGAL::SNC_point_locator<SNC_decorator>       SNC_point_locator;
   typedef CGAL::SNC_simplify<SNC_structure>            SNC_simplify;
@@ -304,8 +304,8 @@ class SNC_decorator : public SNC_const_decorator<Map> {
   SFace_handle adjacent_sface(Halffacet_handle f) const {
     Halffacet_cycle_iterator fc(f->facet_cycles_begin());
     CGAL_assertion( fc != f->facet_cycles_end());
-    SHalfedge_handle se;
-    if ( assign(se, fc) ) { 
+    if ( fc.is_shalfedge() ) {
+      SHalfedge_handle se(fc);
       CGAL_assertion( facet(se) == f);
       CGAL_assertion( sface(se) != SFace_handle());
       CGAL_assertion( volume(sface(twin(se))) == volume(f));
@@ -501,10 +501,8 @@ class SNC_decorator : public SNC_const_decorator<Map> {
     SM_point_locator L(&*v);
     Object_handle o = L.locate(sp);
 
-    SFace_const_handle sf;
-    //    CGAL_assertion(assign(sf,o));
-    //    assign(sf,o);
-    if(!assign( sf, o)) {
+    SFace_handle sf;
+    if(!CGAL::assign(sf,o)) {
       CGAL_assertion_msg( 0, "it is not possible to decide which one is a visible facet (if any)");
       return Halffacet_handle();
     }
@@ -514,36 +512,38 @@ class SNC_decorator : public SNC_const_decorator<Map> {
       return Halffacet_handle();  
     */
 
-    SFace_cycle_const_iterator fc = sf->sface_cycles_begin(),
+    SFace_cycle_iterator fc = sf->sface_cycles_begin(),
       fce = sf->sface_cycles_end();
     if( is_empty_range( fc, fce)) {
 	TRACEN( "no adjacent facet found.");
 	f_visible =  Halffacet_handle();
     }
     else {
-      SHalfedge_handle se; 
-      SHalfloop_handle sl;
-      SVertex_handle sv;
-      if ( assign( se, fc)) {
+      if ( fc.is_shalfedge()) {
+	SHalfedge_handle se(fc);
 	TRACEN( "adjacent facet found (SEdges cycle).");
 	TRACEN("se"<<PH(se));
 	SM_decorator SD;
-	TRACEN(plane(facet(se))<<"/"<<plane(facet(SD.next(se)))<<"/"<<plane(facet(SD.next(SD.next(se)))));
-	f_visible = facet(twin(se));
+	TRACEN(se->incident_facet()->plane() <<"/"<<
+	       se->snext()->incident_facet()->plane()  <<"/"<< 
+	       se->snext()->snext()->incident_facet()->plane());
+	f_visible = se->twin()->incident_facet();
 	TRACEN("f_visible"<<plane(f_visible));
       }
-      else if ( assign( sl, fc)) {
+      else if ( fc.is_shalfloop()) {
+	SHalfloop_handle sl(fc);
 	SM_decorator SD;
 	TRACEN( "adjacent facet found (SHalfloop cycle)."<<SD.circle(sl) 
 		<< " with facet "<<plane(facet(sl)));
 	f_visible = facet(twin(sl));
 	TRACEN("f_visible"<<plane(f_visible));
       }
-      else if( assign( sv, fc)) {
+      else if(fc.is_svertex()) {
+	SVertex_handle sv(fc);
 #ifdef _DEBUG
 	// TODO: is there any warranty that the outter facet cycle enty point is always at first
 	// in the cycles list?
-	++fc; while( fc != fce)  { CGAL_assertion( assign( sv, fc)); ++fc; }
+	++fc; while( fc != fce)  { CGAL_assertion( fc.is_svertex()); ++fc; }
 #endif
 	TRACEN( "no adjacent facets were found (but incident edge(s)).");
 	f_visible = Halffacet_handle();
@@ -669,31 +669,30 @@ class SNC_decorator : public SNC_const_decorator<Map> {
     SM_point_locator L(v);
     Object_handle o = L.locate(sp);
 
-    SFace_const_handle sf;
-    CGAL_assertion(assign(sf,o));
-    assign( sf, o);
+    SFace_handle sf;
+    CGAL_assertion(CGAL::assign(sf,o));
+    CGAL::assign(sf,o);
 
-    SFace_cycle_const_iterator fc = sf->sface_cycles_begin(),
+    SFace_cycle_iterator fc = sf->sface_cycles_begin(),
       fce = sf->sface_cycles_end();
     if( is_empty_range( fc, fce)) {
 	TRACEN( "no adjacent facets were found.");
 	f_visible =  Halffacet_handle();
     }
     else {
-      SHalfedge_handle se; 
-      SHalfloop_handle sl;
-      SVertex_handle sv;
-      if ( assign( se, fc)) {
+      if (fc.is_shalfege()) {
+	SHalfedge_handle se(fc);
 	TRACEN( "adjacent facet found (SEdges cycle).");
 	TRACEN("se"<<PH(se));
 	f_visible = facet(twin(se));
 	TRACEN("f_visible"<<&f_visible);
       }
-      else if ( assign( sl, fc)) {
+      else if (fc.is_shalfloop()) {
+	SHalfloop_handle sl(fc);
 	TRACEN( "adjacent facet found (SHalfloop cycle).");
 	f_visible = facet(twin(sl));
       }
-      else if( assign( sv, fc)) {
+      else if(fc.is_svertex()) {
 	TRACEN( "no adjacent facets were found (but incident edge(s)).");
 	f_visible = Halffacet_handle();
       }
@@ -850,19 +849,19 @@ class SNC_decorator : public SNC_const_decorator<Map> {
     Volume_handle c;
     Self D(result);
     Object_handle o = pl1->locate(p);
-    if( assign( v, o)) {
+    if( CGAL::assign( v, o)) {
       TRACEN("<-> vertex local view on "<<point(v));
       return v;
     }
-    else if( assign( e, o)) {
+    else if( CGAL::assign( e, o)) {
       TRACEN("<-> edge local view of "<<p<<" on "<<&*e);
       return D.create_local_view_on( p, e);
     }
-    else if( assign( f, o)) {
+    else if( CGAL::assign( f, o)) {
       TRACEN("<-> facet local view of "<<p<<" on "<<&*f);
       return D.create_local_view_on( p, f);
     }
-    else if( assign( c, o)) {
+    else if( CGAL::assign( c, o)) {
       TRACEN("<-> volume local view of "<<p<<" on "<<&*c);
       return D.create_local_view_on( p, c);
     }
@@ -877,9 +876,9 @@ class SNC_decorator : public SNC_const_decorator<Map> {
 			  const SNC_structure& snc) {
     Halfedge_const_handle e;
     Halffacet_handle f;
-    if( assign( e, o))
+    if( CGAL::assign( e, o))
       return create_local_view_on( p, e);
-    else if( assign( f, o))
+    else if( CGAL::assign( f, o))
       return create_local_view_on( p, f);
     else 
       CGAL_assertion_msg( 0, "wrong handle");
@@ -909,17 +908,17 @@ class SNC_decorator : public SNC_const_decorator<Map> {
       TRACEN("Intersection_call_back: intersection reported on " << p << " (normalized: " << normalized(p) << " )");
 #ifdef _DEBUG
       TRACEN("edge 0 has source " << e0->source()->point() << " and direction " << e0->vector());
-      if( assign( e, o1)) {
+      if( CGAL::assign( e, o1)) {
 	TRACEN("edge 1 has source " << e->source()->point() << " and direction " << e->vector());
       }
-      else if( assign( f, o1)) {
+      else if( CGAL::assign( f, o1)) {
 	TRACEN("face 1 has plane equation " << f->plane());
       }
       else 
       	CGAL_assertion_msg( 0, "wrong handle");
 #endif      
 
-      if( assign( e, o1)) {
+      if( CGAL::assign( e, o1)) {
 	Self D(result);
 	Vertex_handle v0, v1;
 	v0 = D.create_local_view_on( p, e0);
@@ -930,7 +929,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
 	result.delete_vertex(v0);
 	result.delete_vertex(v1);
       }
-      else if( assign( f, o1)) {
+      else if( CGAL::assign( f, o1)) {
 	SNC_constructor C(result);
 	Sphere_map* M0 = C.create_edge_facet_overlay(e0, f, p, bop, inverse_order);
 	SM_overlayer O(M0);
@@ -994,24 +993,24 @@ class SNC_decorator : public SNC_const_decorator<Map> {
       Volume_handle c;
       TRACEN("Locating point " << p0);
       Object_handle o = pl2->locate(p0);
-      if( assign( v, o)) {
+      if( CGAL::assign( v, o)) {
 	binop_local_views( v0, v, BOP, *sncp());
 	ignore[v] = true;
 	TRACEN("p0 found on vertex");
       }
-      else if( assign( e, o)) {
+      else if( CGAL::assign( e, o)) {
 	Vertex_handle v1 = create_local_view_on( p0, e);
 	binop_local_views( v0, v1, BOP, *sncp());
 	sncp()->delete_vertex(v1);
 	TRACEN("p0 found on edge");
       }
-      else if( assign( f, o)) {
+      else if( CGAL::assign( f, o)) {
 	Vertex_handle v1 = create_local_view_on( p0, f);
 	binop_local_views( v0, v1, BOP, *sncp());
 	sncp()->delete_vertex(v1);
 	TRACEN("p0 found on facet");
       }
-      else if( assign( c, o)) {
+      else if( CGAL::assign( c, o)) {
 	if( BOP( true, mark(c)) != BOP( false, mark(c))) {
 
 	  SNC_constructor C(*sncp());
@@ -1038,20 +1037,20 @@ class SNC_decorator : public SNC_const_decorator<Map> {
       TRACEN("Locating point " << p1);
       Object_handle o = pl1->locate(p1);
       CGAL_assertion_code(Vertex_handle v);
-      CGAL_assertion( !assign( v, o));
-      if( assign( e, o)) {
+      CGAL_assertion( !CGAL::assign( v, o));
+      if( CGAL::assign( e, o)) {
 	Vertex_handle v1 = create_local_view_on( p1, e);
 	binop_local_views( v1, v0, BOP, *sncp());
 	sncp()->delete_vertex(v1);
 	TRACEN("p1 found on edge");
       } 
-      else if( assign( f, o)) {
+      else if( CGAL::assign( f, o)) {
 	Vertex_handle v1 = create_local_view_on( p1, f);
 	binop_local_views( v1, v0, BOP, *sncp());
 	sncp()->delete_vertex(v1);
 	TRACEN("p1 found on facet");
       } 
-      else if( assign( c, o)) {
+      else if( CGAL::assign( c, o)) {
 	if( BOP( mark(c), true) != BOP( mark(c), false)) {
 	  SNC_constructor C(*sncp());
 	  Vertex_handle v1 = C.clone_SM(v0);
@@ -1249,7 +1248,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
       Halffacet_cycle_iterator hfci;
       CGAL_forall_facet_cycles_of(hfci,hfi) { 
 	if(hfci.is_shalfedge()) {
-	  SHalfedge_handle sheh = SHalfedge_handle(hfci);
+	  SHalfedge_handle sheh(hfci);
 	  valid = valid && (sheh != SHalfedge_handle());
 	  SHalfedge_around_facet_circulator shec1(sheh), shec2(shec1);
        	  CGAL_For_all(shec1, shec2) {
@@ -1416,15 +1415,16 @@ visit_shell_objects(SFace_handle f, Visitor& V) const
       V.visit(f); // report facet
       Halffacet_cycle_iterator fc;
       CGAL_forall_facet_cycles_of(fc,f) {
-        SHalfedge_handle e; SHalfloop_handle l;
-        if ( assign(e,fc) ) {
+        if (fc.is_shalfedge() ) {
+	  SHalfedge_handle e(fc);
           SHalfedge_around_facet_circulator ec(e),ee(e);
           CGAL_For_all(ec,ee) { e = twin(ec);
             if ( Done[sface(e)] ) continue;
             SFaceCandidates.push_back(sface(e));
             Done[sface(e)] = true;
           }
-        } else if ( assign(l,fc) ) { 
+        } else if (fc.is_shalfloop()) {
+	  SHalfloop_handle l(fc);
 	  l = twin(l);
           if ( Done[sface(l)] ) continue;
           SFaceCandidates.push_back(sface(l));
