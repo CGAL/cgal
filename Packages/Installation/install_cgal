@@ -880,6 +880,15 @@ set_compiler_flags()
 	    RUNTIME_LINKER_FLAG="-R "
 	    PRINT_STACKTRACE_PROGRAM="gdb"
 	    ;;
+         *alpha*Linux*g++*)
+             #### settings for g++ on alpha-linux (special FPU handling)
+             #### LONG_NAME_PROBLEM is cured by disabling debugging
+             ADDITIONAL_CXXFLAGS="-Wall -mieee -mfp-rounding-mode=d"
+             CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -Xlinker -shared"
+             WINDOW_DIR="/usr/X11R6/lib"
+             RUNTIME_LINKER_FLAG='-Wl,-R'
+             PRINT_STACKTRACE_PROGRAM="gdb"
+             ;;
 	*Linux*g++*)
 	    #### settings for egcs/gcc2.8 on linux
 	    ADDITIONAL_CXXFLAGS="-Wall"
