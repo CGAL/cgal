@@ -114,15 +114,23 @@ public:
     CGAL_precondition(!operator!());
     return *(const Self*)&ptr()->rightPtr;
   }
-  reference operator*() const
+  reference get_data() const
   {
     CGAL_precondition(!operator!());
     return ptr()->data;
   }
-  pointer operator->() const
+  reference operator*() const
+  {
+    return get_data();
+  }
+  pointer get_data_ptr() const
   {
     CGAL_precondition(!operator!());
     return &operator*();
+  }
+  pointer operator->() const
+  {
+    return get_data_ptr();
   }
   bool is_inner_node() const 
   {return !operator!() && ptr()->is_inner_node();}
@@ -239,6 +247,8 @@ public:
     set_left(left);
     set_right(right);
   }
+
+  // Td_dag implementation not thread safe!
   void visit_none() const
   {
     if (!operator!())
@@ -294,23 +304,31 @@ public:
     visit_none();
     return recursive_filter(c,pr);
   }
+#if 0
+  template <class Container,class Predicate>
+  Container& hash_filter(Container& c,const Predicate& pr) const
+  {
+    visit_none();
+    return recursive_hash_filter(c,pr);
+  }
+#endif
 protected:
   void rebalance_depth() const
   {
     if (is_inner_node()) 
-      {  
-        unsigned long depth_=depth();
-        if (left().depth()<depth_+1)
-          {
-            left().set_depth(depth_+1);
-            left().rebalance_depth();
-          }
-        if (right().depth()<depth_+1)
-          {
-            right().set_depth(depth_+1);
-            right().rebalance_depth();
-          }
+    {  
+      unsigned long depth_=depth();
+      if (left().depth()<depth_+1)
+      {
+        left().set_depth(depth_+1);
+        left().rebalance_depth();
       }
+      if (right().depth()<depth_+1)
+      {
+        right().set_depth(depth_+1);
+        right().rebalance_depth();
+      }
+    }
   }
   
   unsigned long recursive_size() const
@@ -331,51 +349,66 @@ protected:
   Container& recursive_filter(Container& c,const Predicate& pr) const
   {
     if (!operator!() && !ptr()->visited())
-      {
-        if (pr(operator*())) 
-          c.insert(c.end(),operator*());
-        visit_one();
-        left().recursive_filter(c,pr);
-        right().recursive_filter(c,pr);
-      }
+    {
+      if (pr(operator*())) 
+        c.insert(c.end(),operator*());
+      visit_one();
+      left().recursive_filter(c,pr);
+      right().recursive_filter(c,pr);
+    }
     return c;
   }
-private:
+#if 0
+  template <class Container, class Predicate> 
+  Container& recursive_hash_filter(Container& c, const Predicate& ptr) const 
+    /* Generate a copy of the Dag filtered according to the predicate */
+  {
+    if (!operator!() && !ptr()->visited())
+    {
+      if (pr(operator*())) 
+        c.insert(pair<&operator*(), new X_trapezoid(operator*()));
+      // The hash links between the old trapezoid to the new one.
+      visit_one();
+      left().recursive_hash_filter(c,pr);
+      right().recursive_hash_filter(c,pr);
+    }
+    return c;
+  }
+#endif
+ private:
   node* ptr() const {return (node*)PTR;}
 };
 
 template<class T,class Traits> 
-std::ostream& write(
-	std::ostream&  out, 
-	const Td_dag<T>& t,
-	const Traits& traits)
+std::ostream& write(std::ostream&  out, 
+                    const Td_dag<T>& t,
+                    const Traits& traits)
 {
   static int depth;
   int i;
-  if (!!t)
-	{
-		out << "\n";
-		for(i=0;i<depth;i++)out << ">";
-		out << "Data=";
-		write(out,*t,traits);
-		{
-			depth++;
-			out << "\n";
-			for(i=0;i<depth;i++)out << ">";
-			out << "left=";
-			write(out,t.left(),traits);
-			out << "\n";
-			for(i=0;i<depth;i++)out << ">";
-			out << "right=";
-			write(out,t.right(),traits);
-			depth--;
-		}
-	}
-	else
-	{
-		out << "Empty";
-	}
-	return out ;
+  if (!!t) {
+    out << "\n";
+    for(i=0;i<depth;i++)out << ">";
+    out << "Data=";
+    write(out,*t,traits);
+    {
+      depth++;
+      out << "\n";
+      for(i=0;i<depth;i++)out << ">";
+      out << "left=";
+      write(out,t.left(),traits);
+      out << "\n";
+      for(i=0;i<depth;i++)out << ">";
+      out << "right=";
+      write(out,t.right(),traits);
+      depth--;
+    }
+  }
+  else
+  {
+    out << "Empty";
+  }
+  return out ;
 }
 
 template<class T> std::ostream& operator<<(std::ostream&  out, 
@@ -383,32 +416,32 @@ template<class T> std::ostream& operator<<(std::ostream&  out,
 {
   static int depth;
   int i;
-  if (!!t)
-	{
-		out << "\n";
-		for(i=0;i<depth;i++)out << ">";
-		out << "Data=" << *t;
-		{
-			depth++;
-			out << "\n";
-			for(i=0;i<depth;i++)out << ">";
-			out << "left=" << t.left();
-			out << "\n";
-			for(i=0;i<depth;i++)out << ">";
-			out << "right=" <<t.right();
-			depth--;
-		}
-	}
-	else
-	{
-		out << "Empty";
-	}
-	return out ;
+  if (!!t) {
+    out << "\n";
+    for(i=0;i<depth;i++)out << ">";
+    out << "Data=" << *t;
+    {
+      depth++;
+      out << "\n";
+      for(i=0;i<depth;i++)out << ">";
+      out << "left=" << t.left();
+      out << "\n";
+      for(i=0;i<depth;i++)out << ">";
+      out << "right=" <<t.right();
+      depth--;
+    }
+  }
+  else
+  {
+    out << "Empty";
+  }
+  return out ;
 }
 
 CGAL_END_NAMESPACE
 
 #endif
+
 /* 
    tech notes:
    The code is Handle designed.
@@ -418,17 +451,3 @@ CGAL_END_NAMESPACE
    operator*() returns data type
    output is done as a binary tree.
 */
-
-
-
-
-
-
-
-
-
-
-
-
-
-

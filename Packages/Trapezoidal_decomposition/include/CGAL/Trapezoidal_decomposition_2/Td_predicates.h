@@ -33,49 +33,48 @@ template < class Td_traits> class Trapezoidal_decomposition_2;
 template <class X_trapezoid>
 struct Td_active_trapezoid : public std::unary_function<X_trapezoid,bool>
 {
-	bool operator()(const X_trapezoid& tr) const
-	{
-		return tr.is_active();
-	}
+  bool operator()(const X_trapezoid& tr) const
+  {
+    return tr.is_active();
+  }
 };
+
 template <class X_trapezoid,class Traits>
 struct Td_active_non_degenerate_trapezoid : 
 public std::unary_function<X_trapezoid,bool>
 {
-	Td_active_non_degenerate_trapezoid(Traits& t) : traits(t) {}
-	bool operator()(const X_trapezoid& tr) const
-	{
-		return tr.is_active() && !traits.is_degenerate(tr);
-	}
-	protected:
-		const Traits& traits;
+  Td_active_non_degenerate_trapezoid(Traits& t) : traits(t) {}
+  bool operator()(const X_trapezoid& tr) const
+  {
+    return tr.is_active() && !traits.is_degenerate(tr);
+  }
+protected:
+  const Traits& traits;
 };
+
 template <class X_trapezoid,class Traits>
 struct Td_active_right_degenerate_curve_trapezoid:
-public std::unary_function<X_trapezoid,bool>
+  public std::unary_function<X_trapezoid,bool>
 {
-	Td_active_right_degenerate_curve_trapezoid(Traits& t) : traits(t) {}
-	bool operator()(const X_trapezoid& tr) const
-	{
-		return tr.is_active() && traits.is_degenerate_curve(tr) && 
-			!tr.right_bottom_neighbour();
-	}
-	protected:
-		const Traits& traits;
+  typedef const Traits& const_Traits_ref;
+  Td_active_right_degenerate_curve_trapezoid(const_Traits_ref t) : traits(t) {}
+  bool operator()(const X_trapezoid& tr) const
+  {
+    return tr.is_active() && traits.is_degenerate_curve(tr) && 
+      !tr.right_bottom_neighbour();
+  }
+  protected:
+  const Traits& traits;
 };
+
+template <class _Tp>
+struct Trapezoid_handle_less : public std::binary_function<_Tp, _Tp, bool>
+{
+  bool operator()(const _Tp& __x, const _Tp& __y) const { 
+    return __x->id() < __y->id(); }
+};
+/* Return if two trapezoids are the same */
 
 CGAL_END_NAMESPACE
 
 #endif //CGAL_TD_PREDICATES_H
-
-
-
-
-
-
-
-
-
-
-
-

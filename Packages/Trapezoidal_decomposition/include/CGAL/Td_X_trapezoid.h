@@ -255,10 +255,14 @@ public:
     
     return (ptr()->e4&CGAL_TRAPEZOIDAL_DECOMPOSITION_2_TOTALLY_UNBOUNDED)!=0;
   }
-  pointer left_bottom_neighbour() const {return ptr()->e5;}
-  pointer left_top_neighbour() const {return ptr()->e6;}
-  pointer right_bottom_neighbour() const {return ptr()->e7;}
-  pointer right_top_neighbour() const {return ptr()->e8;}
+  pointer get_lb() const {return ptr()->e5;}
+  pointer get_lt() const {return ptr()->e6;}
+  pointer get_rb() const {return ptr()->e7;}
+  pointer get_rt() const {return ptr()->e8;}
+  pointer left_bottom_neighbour() const {return get_lb();}
+  pointer left_top_neighbour() const {return get_lt();}
+  pointer right_bottom_neighbour() const {return get_rb();}
+  pointer right_top_neighbour() const {return get_rt();}
   Data_structure* get_node() const {return node;}
   bool is_active() const 
   {return right_bottom_neighbour()!=
