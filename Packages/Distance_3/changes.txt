@@ -1,3 +1,6 @@
+23 May 2004 Sylvain Pion
+- Remove useless .cvsignore.
+
 1 Feb 2004 Sylvain Pion
 - Remove "extern".
 
