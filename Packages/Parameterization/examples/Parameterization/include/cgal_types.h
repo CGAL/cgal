@@ -1570,10 +1570,16 @@ class Polyhedron_ex : public Polyhedron
 		for(pVertex = vertices_begin(); pVertex != vertices_end(); pVertex++)
 			fprintf(pFile,"v %g %g %g\n", (double)pVertex->point().x(), (double)pVertex->point().y(), (double)pVertex->point().z());
 
-		// Write UVs (1 UV / vertex)
+		//// Write UVs (1 UV / vertex)
+		//fprintf(pFile, "# uv coordinates\n") ;
+		//for(pVertex = vertices_begin(); pVertex != vertices_end(); pVertex++)
+		//	fprintf(pFile, UV_FORMAT, (float)pVertex->u(), (float)pVertex->v());
+
+		// Write UVs (1 UV / halfedge)
 		fprintf(pFile, "# uv coordinates\n") ;
-		for(pVertex = vertices_begin(); pVertex != vertices_end(); pVertex++)
-			fprintf(pFile, UV_FORMAT, (float)pVertex->u(), (float)pVertex->v());
+		Halfedge_iterator pHalfedge;
+		for(pHalfedge = halfedges_begin(); pHalfedge != halfedges_end(); pHalfedge++)
+			fprintf(pFile, UV_FORMAT, (float)pHalfedge->u(), (float)pHalfedge->v());
 
 		// Write faces using the unique material # 1
 		fprintf(pFile, "# faces\nusemtl Mat_1\n");
@@ -1583,7 +1589,7 @@ class Polyhedron_ex : public Polyhedron
 			Halfedge_around_facet_circulator h = pFacet->facet_begin();
 			fprintf(pFile,"f ");
 			do
-				fprintf(pFile, "%d/%d ", (int)h->vertex()->index()+1, (int)h->vertex()->index()+1);
+				fprintf(pFile, "%d/%d ", (int)h->vertex()->index()+1, (int)h->index()+1);
 			while(++h != pFacet->facet_begin());
 			fprintf(pFile,"\n");
 		}
@@ -1610,7 +1616,7 @@ class Polyhedron_ex : public Polyhedron
     return 0;
   }
   // is vertex on border ?
-  static bool is_border(Vertex_handle pVertex)
+  static bool is_border(Vertex_const_handle pVertex)
   {
     Halfedge_around_vertex_const_circulator pHalfedge = pVertex->vertex_begin();
     Halfedge_around_vertex_const_circulator end = pHalfedge;

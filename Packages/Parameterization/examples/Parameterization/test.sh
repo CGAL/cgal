@@ -15,5 +15,5 @@ mkdir test >/dev/null 2>/dev/null
 # echo on
 set -x
 
-$PARAM_APPLICATION -t "$1" -b "$2" -o obj data/"$3".off > test/test_"$3"_"$1"_"$2".obj
+$PARAM_APPLICATION -t "$1" -b "$2" -o obj data/"$3".off test/test_"$3"_"$1"_"$2".obj 2>&1
 
