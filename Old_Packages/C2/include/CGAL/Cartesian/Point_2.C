@@ -11,8 +11,8 @@
 // release       :
 // release_date  :
 //
-// file          : include/CGAL/Cartesian/Point_2.h
-// source        : include/CGAL/Cartesian/Point_2.h
+// file          : include/CGAL/Cartesian/Point_2.C
+// source        : include/CGAL/Cartesian/Point_2.C
 // revision      : $2.14$
 // revision_date : $Date$
 // author(s)     : Andreas.Fabri@sophia.inria.fr

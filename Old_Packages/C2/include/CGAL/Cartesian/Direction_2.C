@@ -11,9 +11,9 @@
 // release       :
 // release_date  :
 //
-// file          : include/CGAL/Cartesian/Direction_2.h
-// source        : include/CGAL/Cartesian/Cartesian_2/Direction_2.h
-// revision      : include/CGAL/Cartesian/Cartesian_2/Direction_2.h
+// file          : include/CGAL/Cartesian/Direction_2.C
+// source        : include/CGAL/Cartesian/Cartesian_2/Direction_2.C
+// revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Andreas.Fabri@sophia.inria.fr
 //                 Herve Bronnimann@sophia.inria.fr

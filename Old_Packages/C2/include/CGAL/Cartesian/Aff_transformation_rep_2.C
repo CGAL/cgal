@@ -11,8 +11,8 @@
 // release       :
 // release_date  :
 //
-// file          : include/CGAL/Cartesian/Aff_transformation_rep_2.h
-// source        : include/CGAL/Cartesian/Aff_transformation_rep_2.h
+// file          : include/CGAL/Cartesian/Aff_transformation_rep_2.C
+// source        : include/CGAL/Cartesian/Aff_transformation_rep_2.C
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Andreas.Fabri@sophia.inria.fr, kettner@inf.fu-berlin.de
