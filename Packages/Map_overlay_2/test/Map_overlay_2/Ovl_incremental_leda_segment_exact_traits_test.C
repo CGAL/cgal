@@ -23,8 +23,8 @@ int main(int argc, char* argv[])
 
 #include "Map_overlay_base_test.h"
 
-#ifndef CGAL_MAP_OVERLAY_NAIVE_H
-#include <CGAL/Map_overlay_naive.h>
+#ifndef CGAL_MAP_OVERLAY_INCREMENTAL_H
+#include <CGAL/Map_overlay_incremental.h>
 #endif
 
 typedef CGAL::Arr_leda_segment_exact_traits  Traits;
@@ -34,10 +34,12 @@ typedef Traits::X_curve                               X_curve;
 typedef Traits::Curve                                 Curve;
 
 typedef CGAL::Map_overlay_default_dcel<Traits>        Dcel;
-typedef CGAL::Planar_map_2<Dcel, Traits>               Planar_map;
+typedef CGAL::Planar_map_2<Dcel, Traits>              Planar_map;
 typedef CGAL::Planar_map_with_intersections_2<Planar_map>   Pmwx;
-typedef CGAL::Map_overlay_default_notifier<Planar_map>      MapOverlay_change_notification;
-typedef CGAL::Map_overlay_naive<Pmwx, MapOverlay_change_notification>   MapOverlay_naive;
+typedef CGAL::Map_overlay_default_notifier<Planar_map>      
+                                                 MapOverlay_change_notification;
+typedef CGAL::Map_overlay_incremental<Pmwx,MapOverlay_change_notification>   
+                                                               MapOverlay_incremental;
 
 class Read_segment {
 public:
@@ -64,9 +66,14 @@ int main(int argc, char* argv[])
     exit(1);
   }
 
-  MapOverlay_naive       ovl_incremental;
+  MapOverlay_incremental    ovl_incremental;
   test.start(argv[1], &ovl_incremental);
   return 0;
 }
 
 #endif // CGAL_ARR_TEST_LEDA_CONFLICT
+
+
+
+
+
