@@ -58,16 +58,26 @@ private:
     std::set<Point_data *,Less_yx> *left_tent;
     Point_type type;
 
-    Point_data(const Point& p);
+    Point_data(const Point& _p) 
+      :  p(_p),type(REG)
+    {
+      right_tent = 0;
+      left_tent = 0;
+    }
 
-    Point_data(const Point& p,
+    Point_data(const Point& _p,
 	       std::set<Point_data *,Less_yx> *r_tent,
-	       std::set<Point_data *,Less_yx> *l_tent);
+	       std::set<Point_data *,Less_yx> *l_tent)
+      : p(_p),right_tent(r_tent),left_tent(l_tent),type(REG) 
+    {}
 
-    Point_data(const Point& p,
+    Point_data(const Point& _p,
 	       std::set<Point_data *,Less_yx> *r_tent,
 	       std::set<Point_data *,Less_yx> *l_tent,
-	       Point_type i_type);
+	       Point_type i_type)
+      : p(_p),right_tent(r_tent),left_tent(l_tent),type(i_type) 
+    {}
+
 
     Point_data (const Point_data &other) : 
       p(other.p), right_tent(other.right_tent), left_tent(other.left_tent) 
@@ -387,28 +397,8 @@ Largest_empty_iso_rectangle_2(
   copy_memory(ler);
 }
 
-template<class T>
-Largest_empty_iso_rectangle_2<T>::Point_data::Point_data(const Point& _p) :
-  p(_p),type(REG)
-{
-  right_tent = 0;
-  left_tent = 0;
-}
 
-template<class T>
-Largest_empty_iso_rectangle_2<T>::Point_data::Point_data(const Point& _p,
-							 Point_data_set_of_y *r_tent,
-							 Point_data_set_of_y *l_tent)
-  : p(_p),right_tent(r_tent),left_tent(l_tent),type(REG) 
-{}
 
-template<class T>
-Largest_empty_iso_rectangle_2<T>::Point_data::Point_data(const Point& _p,
-							 Point_data_set_of_y *r_tent,
-							 Point_data_set_of_y *l_tent,
-							 Point_type i_type) 
-  : p(_p),right_tent(r_tent),left_tent(l_tent),type(i_type) 
-{}
 
 
 template<class T>
@@ -717,7 +707,7 @@ void
 Largest_empty_iso_rectangle_2<T>::phase_2_on_bot()
 {
   std::list<Point_data *> Point_data_list;
-  std::copy(x_sorted.begin(), x_sorted.end(), back_inserter(Point_data_list));
+  std::copy(x_sorted.begin(), x_sorted.end(), std::back_inserter(Point_data_list));
   typename std::list<Point_data *>::iterator iter1 = Point_data_list.begin(),
                                iter2,iter3,first_iter,
                                beyond = Point_data_list.end();
@@ -766,7 +756,7 @@ Largest_empty_iso_rectangle_2<T>::phase_2_on_top()
   std::list<Point_data *> Point_data_list;
    std::copy(x_sorted.begin(),
 	     x_sorted.end(),
-	     back_inserter(Point_data_list));
+	     std::back_inserter(Point_data_list));
 
   typename std::list<Point_data *>::iterator iter1 = Point_data_list.begin(),
     iter2, iter3, first_iter,
@@ -811,7 +801,7 @@ void
 Largest_empty_iso_rectangle_2<T>::phase_2_on_left()
 {
   std::list<Point_data *> Point_data_list;
-  std::copy(y_sorted.begin(), y_sorted.end(), back_inserter(Point_data_list));
+  std::copy(y_sorted.begin(), y_sorted.end(), std::back_inserter(Point_data_list));
   typename std::list<Point_data *>::iterator iter1 = Point_data_list.begin(),
     iter2, iter3, first_iter,
     beyond = Point_data_list.end();
@@ -854,7 +844,7 @@ void
 Largest_empty_iso_rectangle_2<T>::phase_2_on_right()
 {
   std::list<Point_data *> Point_data_list;
-  std::copy(y_sorted.begin(), y_sorted.end(), back_inserter(Point_data_list));
+  std::copy(y_sorted.begin(), y_sorted.end(), std::back_inserter(Point_data_list));
   typename std::list<Point_data *>::iterator iter1 = Point_data_list.begin(),
     iter2, iter3, first_iter, 
     beyond = Point_data_list.end();
