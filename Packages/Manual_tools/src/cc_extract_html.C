@@ -272,6 +272,13 @@ main( int argc, char **argv) {
 		assert_trailing_slash_in_path( s);
 		insertGlobalMacro( "\\lciHeaderPath", 
 				   "<command line option>", 0, s);
+                if ( s[0] == '/') {
+                    insertGlobalMacro( "\\lciIfRelativeHeaderPath", 
+                                       "<command line option>", 0,"\\lcFalse");
+                } else {
+                    insertGlobalMacro( "\\lciIfRelativeHeaderPath", 
+                                       "<command line option>", 0, "\\lcTrue");
+                }
 	    } else {
 	        cerr << "*** Error: option -header needs an additional "
 		        "parameter" << endl;
