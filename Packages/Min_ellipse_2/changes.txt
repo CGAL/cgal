@@ -1,5 +1,8 @@
 Changes done to the `Min_ellipse_2' package.
 
+Version 3.28 on 16-Sep-2003
+- Undo 17-Jun change, but protect the indexing commands by \lcTex.
+
 Version 3.27 on 10-Sep-2003 [rursu]
 - Qt_help_window is in the CGAL namespace now.
 

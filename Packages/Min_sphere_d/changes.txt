@@ -124,3 +124,6 @@ Changes from 2.32
 
 Changes from 2.33
    - Replace \ccFont by \ccc for the HTML index.
+
+Changes from 2.34
+   - Undo last change, but protect the indexing commands by \lcTex.

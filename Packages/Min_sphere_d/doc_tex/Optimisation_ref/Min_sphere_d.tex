@@ -120,7 +120,7 @@ or clear operation.
 \begin{ccIndexMemberFunctions}
 \ccIndexMemberFunctionGroup{access}
 
-\ccIndexSubitem[t]{support set}{\ccc{Min_sphere_d}}
+\lcTex{\ccIndexSubitem[t]{support set}{\ccFont Min_sphere_d}}
 \ccMemberFunction{ int  number_of_points( ) const;}{
         returns the number of points of \ccVar, i.e.\ $|P|$.}
 
@@ -190,7 +190,7 @@ bounded side, i.e.\ its unbounded side equals the whole space $\E_d$.
         returns \ccc{true}, iff \ccVar\ is empty (this implies
         degeneracy).}
 
-\ccIndexSubitem[t]{degeneracies}{\ccc{Min_sphere_d}}
+\lcTex{\ccIndexSubitem[t]{degeneracies}{\ccFont Min_sphere_d}}
 \ccMemberFunction{ bool  is_degenerate( ) const;}{
         returns \ccc{true}, iff \ccVar\ is degenerate, i.e.\ if
         \ccVar\ is empty or equal to a single point, equivalently if
@@ -237,7 +237,7 @@ bounded side, i.e.\ its unbounded side equals the whole space $\E_d$.
 % -----------------------------------------------------------------------------
     \ccHeading{Validity Check}
     \ccIndexMemberFunctionGroup{validity check}
-  \ccIndexSubitem[t]{validity check}{\ccc{Min_sphere_d}}
+  \lcTex{\ccIndexSubitem[t]{validity check}{\ccFont Min_sphere_d}}
   An object \ccVar\ is valid, iff
   \begin{itemize}
     \item \ccVar\ contains all points of its defining set $P$,
@@ -302,8 +302,8 @@ bounded side, i.e.\ its unbounded side equals the whole space $\E_d$.
 \ccImplementation
 \ccIndexImplementation
 
-    \ccIndexSubitem[t]{incremental algorithm}{\ccc{Min_sphere_d}}
-    \ccIndexSubitem[t]{move-to-front heuristic}{\ccc{Min_sphere_d}}
+    \lcTex{\ccIndexSubitem[t]{incremental algorithm}{\ccFont Min_sphere_d}}
+    \lcTex{\ccIndexSubitem[t]{move-to-front heuristic}{\ccFont Min_sphere_d}}
 We implement the algorithm of Welzl with move-to-front
 heuristic~\cite{w-sedbe-91a} for small point sets, combined with a new
 efficient method for large sets, which is particularly tuned for
