@@ -31,7 +31,8 @@ int main(int argc, char* argv[])
 #include <CGAL/IO/Window_stream.h>
 
 typedef CGAL::Simple_cartesian<double>  K1;
-typedef CGAL::Filtered_kernel<K1>       K;
+typedef CGAL::Filtered_kernel<K1>       K2;
+struct K : public K2 {};
 
 typedef K::Point_2  Point;
 typedef K::Segment_2 Segment;
