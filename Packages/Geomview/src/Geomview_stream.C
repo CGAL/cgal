@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (c) 1997 The CGAL Consortium
+// Copyright (c) 1999 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -8,21 +8,22 @@
 //
 // ----------------------------------------------------------------------------
 //
-
 // release       :
 // release_date  :
 //
 // file          : src/Geomview_stream.C
-// source        : $RCSfile$
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Andreas Fabri and Herve Bronnimann
 //
-// coordinator   : Mariette Yvinec  <Mariette Yvinec@sophia.inria.fr>
+// coordinator   : INRIA Sophia-Antipolis (<Mariette.Yvinec@sophia.inria.fr>)
 //
 // ============================================================================
 
+// Geomview doesn't work on M$ at the moment, so we don't compile this file.
+#if !defined(__BORLANDC__) && !defined(_MSC_VER)
 
+#include <CGAL/basic.h>
 #include <CGAL/IO/Geomview_stream.h>
 
 #include <unistd.h>
@@ -60,9 +61,7 @@ Geomview_stream::~Geomview_stream()
     kill(pid, SIGKILL);  // kills geomview
 }
 
-
-void Geomview_stream::setup_geomview(const char *machine,
-				     const char *login)
+void Geomview_stream::setup_geomview(const char *machine, const char *login)
 {
     bflag = 0;
     _trace = false;
@@ -93,7 +92,6 @@ void Geomview_stream::setup_geomview(const char *machine,
     case 0:               // The child process
         close(pipe_out[1]); // does not write to the out pipe,
         close(pipe_in[0]);  // does not read from the in pipe.
-
 
         close (0);          // this is the file descriptor of cin
         dup(pipe_out[0]);   // we connect it to the pipe
@@ -149,7 +147,6 @@ void Geomview_stream::setup_geomview(const char *machine,
     }
 }
 
-
 void
 Geomview_stream::pickplane(const Bbox_3 &bbox)
 {
@@ -166,7 +163,6 @@ Geomview_stream::pickplane(const Bbox_3 &bbox)
             << "}) (pickable pickplane no)"
             << ascii ;
 }
-
 
 void
 Geomview_stream::set_binary_mode()
@@ -191,13 +187,14 @@ Geomview_stream::in_ascii_mode() const
 {
     return ! bflag;
 }
+
 Geomview_stream&
-Geomview_stream::operator<<
-(Geomview_stream&(*fct)(Geomview_stream&))
+Geomview_stream::operator<<(Geomview_stream&(*fct)(Geomview_stream&))
 {
   (*fct)(*this);
   return *this;
 }
+
 bool
 Geomview_stream::get_trace() const
 {
@@ -212,36 +209,32 @@ Geomview_stream::set_trace(bool b)
     return old;
 }
 
-
 void
 Geomview_stream::trace(const char *cptr) const
 {
-    if(_trace){
+    if (_trace)
         std::cerr << cptr;
-    }
 }
 
 void
 Geomview_stream::trace(double d) const
 {
-    if(_trace){
+    if (_trace)
         std::cerr << d << ' ';
-    }
 }
 
 void
 Geomview_stream::trace(int i) const
 {
-    if(_trace){
+    if (_trace)
         std::cerr << i << ' ';
-    }
 }
+
 double
 Geomview_stream::get_vertex_radius() const
 {
     return _radius;
 }
-
 
 double
 Geomview_stream::set_vertex_radius(double r)
@@ -250,12 +243,12 @@ Geomview_stream::set_vertex_radius(double r)
     _radius = r;
     return old;
 }
+
 int
 Geomview_stream::get_line_width() const
 {
     return _line_width;
 }
-
 
 int
 Geomview_stream::set_line_width(int w)
@@ -264,6 +257,7 @@ Geomview_stream::set_line_width(int w)
     _line_width = w;
     return old;
 }
+
 void
 Geomview_stream::clear()
 {
@@ -276,6 +270,7 @@ Geomview_stream::look_recenter() const
     Geomview_stream* ncthis = (Geomview_stream*)this;
     (*ncthis) << "(look-recenter World)";
 }
+
 Geomview_stream&
 Geomview_stream::operator<<(const char *cptr)
 {
@@ -289,6 +284,7 @@ Geomview_stream::operator<<(const char *cptr)
 
     return *this;
 }
+
 Geomview_stream&
 Geomview_stream::operator<<(int i)
 {
@@ -307,6 +303,7 @@ Geomview_stream::operator<<(int i)
 
     return *this;
 }
+
 Geomview_stream&
 Geomview_stream::operator<<(double d)
 {
@@ -326,10 +323,8 @@ Geomview_stream::operator<<(double d)
     return *this;
 }
 
-
 Geomview_stream&
-operator<<(Geomview_stream &gv,
-           const Bbox_2 &bbox)
+operator<<(Geomview_stream &gv, const Bbox_2 &bbox)
 {
     std::ostrstream os;
     os << "bbox" << gv.bbox_count++ << ends ;
@@ -350,14 +345,13 @@ operator<<(Geomview_stream &gv,
 
     return gv;
 }
+
 Geomview_stream&
-operator<<(Geomview_stream &gv,
-           const Bbox_3 &bbox)
+operator<<(Geomview_stream &gv, const Bbox_3 &bbox)
 {
     std::ostrstream os;
     os << "bbox" << gv.bbox_count++ << ends ;
     char *id = os.str();
-
 
     gv << ascii
        << "(geometry " << id << " {appearance {material {edgecolor "
@@ -382,6 +376,7 @@ operator<<(Geomview_stream &gv,
 
     return gv;
 }
+
 void
 Geomview_stream::set_bg_color(const Color &c)
 {
@@ -396,13 +391,9 @@ Geomview_stream::set_bg_color(const Color &c)
 Geomview_stream&
 Geomview_stream::operator<<(const Color &c)
 {
-    col = c;
-    vertex_color = c;
-    edge_color = c;
-    face_color = c;
+    col = vertex_color = edge_color = face_color = c;
     return (*this);
 }
-
 
 Color
 Geomview_stream::get_vertex_color() const
@@ -410,20 +401,17 @@ Geomview_stream::get_vertex_color() const
     return vertex_color;
 }
 
-
 Color
 Geomview_stream::get_edge_color() const
 {
     return edge_color;
 }
 
-
 Color
 Geomview_stream::get_face_color() const
 {
     return face_color;
 }
-
 
 Color
 Geomview_stream::set_vertex_color(const Color &c)
@@ -433,7 +421,6 @@ Geomview_stream::set_vertex_color(const Color &c)
     return old;
 }
 
-
 Color
 Geomview_stream::set_edge_color(const Color &c)
 {
@@ -442,7 +429,6 @@ Geomview_stream::set_edge_color(const Color &c)
     return old;
 }
 
-
 Color
 Geomview_stream::set_face_color(const Color &c)
 {
@@ -450,7 +436,6 @@ Geomview_stream::set_face_color(const Color &c)
     face_color = c;
     return old;
 }
-
 
 double
 Geomview_stream::vcr() const
@@ -469,7 +454,6 @@ Geomview_stream::vcb() const
 {
     return double(vertex_color.b())/255.0;
 }
-
 
 double
 Geomview_stream::ecr() const
@@ -507,7 +491,6 @@ Geomview_stream::fcb() const
     return double(face_color.b())/255.0;
 }
 
-
 void
 Geomview_stream::frame(const Bbox_3 &bbox)
 {
@@ -515,7 +498,6 @@ Geomview_stream::frame(const Bbox_3 &bbox)
             << ascii
             << "(look-recenter g0 c0)(delete bbox0)" ;
 }
-
 
 Geomview_stream&
 Geomview_stream::operator>>(char *expr)
@@ -608,18 +590,17 @@ nth(char* s, int count)
 bool
 is_prefix(const char* p, const char* w)
 {
-    while((*p != '\0') && (*w != '\0')){
-        if(*p != *w){
+    while((*p != '\0') && (*w != '\0'))
+    {
+        if(*p != *w)
             return false;
-        }
         ++p;
         ++w;
     }
-    if((*w == '\0') && (*p != '\0')){
-        return false;
-    }
-    return true;
+
+    return ! ((*w == '\0') && (*p != '\0'));
 }
 
-
 CGAL_END_NAMESPACE
+
+#endif // ! M$
