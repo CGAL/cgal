@@ -17,26 +17,41 @@ const float PS_Stream::POINT=1.0;
  extern const PS_Stream::Context CTXT_DEFAULT=PS_Stream::Context();
 
 
- //  PS_Stream::PS_Stream(const PS_BBox &bb)
-//   : _bbox(bb), _mode(GS_VIEW) _os(cerr)
-//   {
-//   FILE *fp = popen("gs -","w");
-//   if(!fp){
-//   cerr << "Could not open pipe to gs" << endl ;
-//   exit(-1);
-//   }
-//   os().attach(fileno(fp));
-//   insert_catalogue();
-//   }
 
-//   PS_Stream::PS_Stream(const PS_BBox &bb,float L, float H)
-//   : _bbox(bb), _os(cerr), _mode(GS_VIEW), _width(L), _height(H)
-//   {
-//   insert_catalogue();
-//   _xratio=_width/(_bbox.xmax()-_bbox.xmin());
-//   _yratio=_height/(_bbox.ymax()-_bbox.ymin());
-//   }; 
 
+PS_Stream::PS_Stream(ostream& os, OutputMode
+		     mode)
+   :_bbox(PS_BBox(-2,-2,2,2)),_mode(mode),_width((int)(21*CM)),
+    _height((int)(29.7*CM)),_os(cerr)
+{
+_os=os;
+ insert_catalogue();
+}
+
+PS_Stream::PS_Stream(const char* fname, OutputMode mode)
+  :_bbox(PS_BBox(-2,-2,2,2)),_mode(mode),_width((int)(21*CM)),_height((int)(29.7*CM)),_os(clog)
+{ 
+  static ofstream os(fname,ios::out);
+  _os=os;
+  insert_catalogue();
+}
+
+PS_Stream::PS_Stream(float H, ostream& os, OutputMode
+		     mode)
+   :_bbox(PS_BBox(-2,-2,2,2)),_mode(mode),
+    _height((int)(H)),_os(cerr)
+{
+ _os=os;
+
+}
+
+PS_Stream::PS_Stream(float H, const char* fname, OutputMode mode)
+  :_bbox(PS_BBox(-2,-2,2,2)),_mode(mode),_height((int)(H)),_os(clog)
+{ 
+  static ofstream os(fname,ios::out);
+  _os=os;
+  
+}
 
 PS_Stream::PS_Stream(const PS_BBox& bb, ostream& os,
                                 OutputMode mode)
@@ -44,24 +59,19 @@ PS_Stream::PS_Stream(const PS_BBox& bb, ostream& os,
    _width((int)(21*CM)), _height((int)(29.7*CM)), _os(cerr)
  {
    _os=os;
-   _xratio=_width/(_bbox.xmax()-_bbox.xmin());
-   _yratio=_height/(_bbox.ymax()-_bbox.ymin());
-    insert_catalogue();
+   set_scale(bb);
+   insert_catalogue();
  }
-
-
-
 
 
 PS_Stream::PS_Stream(const PS_BBox& bb, const char* fname,
                                OutputMode mode)
   : _bbox(bb),_mode(mode),_width((int)(21*CM)),
-    _height((int)(29.7*CM)),_os(cerr) 
+    _height((int)(29.7*CM)),_os(clog) 
 {
   static ofstream os(fname,ios::out);
   _os=os;
-  _xratio=_width/(_bbox.xmax()-_bbox.xmin());
-  _yratio=_height/(_bbox.ymax()-_bbox.ymin());
+  set_scale(bb);
   insert_catalogue();
 }
 
@@ -70,21 +80,21 @@ PS_Stream::PS_Stream(const PS_BBox& bb,float H, ostream& os,
   : _bbox(bb), _mode(mode), _height((int)H), _os(cerr)
 {
   _os=os;
-  _width=(int)((bb.xmax()-bb.xmin())*H/(bb.ymax()-bb.ymin()));
-  _xratio=_width/(_bbox.xmax()-_bbox.xmin());
-  _yratio=_height/(_bbox.ymax()-_bbox.ymin());
+  // _width=(int)((bb.xmax()-bb.xmin())*H/(bb.ymax()-bb.ymin()));
+  set_window(bb,H);
+  set_scale(bb);
   insert_catalogue();
 }
 
 PS_Stream::PS_Stream(const PS_BBox& bb,float H, const char* fname,
                                OutputMode m)
-  : _bbox(bb), _mode(m), _height((int)H), _os(cerr)
+  : _bbox(bb), _mode(m), _height((int)H), _os(clog)
 {
   static ofstream os(fname,ios::out);
   _os=os; 
-  _width=(int)((bb.xmax()-bb.xmin())*H/(bb.ymax()-bb.ymin()));
-  _xratio=_width/(_bbox.xmax()-_bbox.xmin());
-  _yratio=_height/(_bbox.ymax()-_bbox.ymin());
+  // _width=(int)((bb.xmax()-bb.xmin())*H/(bb.ymax()-bb.ymin()));
+  set_window(bb,H);
+  set_scale(bb);
   insert_catalogue();
 }
 
@@ -93,19 +103,17 @@ PS_Stream::PS_Stream(const PS_BBox& bb,float L, float H,
   : _bbox(bb), _mode(mode), _width((int)L), _height((int)H), _os(cerr)
 {
   _os=os;
-  _xratio=_width/(_bbox.xmax()-_bbox.xmin());
-  _yratio=_height/(_bbox.ymax()-_bbox.ymin());
+  set_scale(bb);
   insert_catalogue();
 }
 
 PS_Stream::PS_Stream(const PS_BBox& bb,float L, float H,
                                const char* fname, OutputMode mode)
-  : _bbox(bb), _mode(mode),_width((int)L),_height((int)H), _os(cerr)
+  : _bbox(bb), _mode(mode),_width((int)L),_height((int)H), _os(clog)
 {
   static ofstream os(fname,ios::out);
   _os=os; 
-  _xratio=_width/(_bbox.xmax()-_bbox.xmin());
-  _yratio=_height/(_bbox.ymax()-_bbox.ymin());
+  set_scale(bb);
   insert_catalogue();
 }
 
