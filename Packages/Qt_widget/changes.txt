@@ -1,3 +1,8 @@
+1.2.48 - 25-10-2002
+-------------------
+	Removed precision problem in output operator for segments. The intersection between iso_rectangle and the segment is done in simple_cartesian<double>
+	Nef_2 complained about that.
+
 1.2.47 - 22-10-2002
 -------------------
 	The alpha_shape, triangulation, triangulation_constrained resize the widget to fit the bounding box of loaded triangulation
