@@ -78,8 +78,6 @@ inline
 VectorC2<R CGAL_CTAG>::~VectorC2()
 {}
 
-
-
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 VectorC2<R CGAL_CTAG>::
@@ -93,6 +91,22 @@ VectorC2<R CGAL_CTAG>::
 VectorC2(const typename VectorC2<R CGAL_CTAG>::Direction_2 &d)
   : Handle_for<Twotuple<typename R::FT> > (d)
 {}
+
+template < class R >
+inline
+typename VectorC2<R CGAL_CTAG>::FT
+VectorC2<R CGAL_CTAG>::x() const
+{
+  return ptr->e0;
+}
+
+template < class R >
+inline
+typename VectorC2<R CGAL_CTAG>::FT
+VectorC2<R CGAL_CTAG>::y() const
+{
+  return ptr->e1;
+}
 
 template < class R >
 CGAL_KERNEL_INLINE
@@ -124,23 +138,6 @@ bool
 VectorC2<R CGAL_CTAG>::operator!=(const Null_vector &v) const
 {
   return !(*this == v);
-}
-
-
-template < class R >
-inline
-typename VectorC2<R CGAL_CTAG>::FT
-VectorC2<R CGAL_CTAG>::x() const
-{
-  return ptr->e0;
-}
-
-template < class R >
-inline
-typename VectorC2<R CGAL_CTAG>::FT
-VectorC2<R CGAL_CTAG>::y() const
-{
-  return ptr->e1;
 }
 
 template < class R >

@@ -32,7 +32,6 @@
 
 CGAL_BEGIN_NAMESPACE
 
-
 template < class R >
 inline
 Iso_rectangleC2<R CGAL_CTAG>::Iso_rectangleC2()
@@ -67,7 +66,6 @@ inline
 Iso_rectangleC2<R CGAL_CTAG>::~Iso_rectangleC2()
 {}
 
-
 template < class R >
 inline
 bool
@@ -85,7 +83,6 @@ operator!=(const Iso_rectangleC2<R CGAL_CTAG> &r) const
 {
   return !(*this == r);
 }
-
 
 template < class R >
 inline
