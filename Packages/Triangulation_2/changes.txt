@@ -1,6 +1,9 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+Ver 7.57 (06/02/03)
+- Changed the vertex base in regular_demo.C [af]
+
 Ver 7.56 (06/02/03)
 - fixes by Andreas in Regular_triangulation_2.h
 
