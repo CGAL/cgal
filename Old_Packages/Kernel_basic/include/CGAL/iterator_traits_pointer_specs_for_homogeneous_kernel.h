@@ -767,53 +767,25 @@ CGAL_STL_BEGIN_NAMESPACE                                                        
     };                                                                                            \
 CGAL_STL_END_NAMESPACE                                                                               \
 
-#define CGAL_ITERATOR_TRAITS_POINTER_SPECHD(NT)                                                       \
-CGAL_STL_BEGIN_NAMESPACE                                                                \
-    template <>                                                                      \
-    struct iterator_traits<const CGAL::PointHd< CGAL::Quotient< NT >, NT >*> {       \
-        typedef random_access_iterator_tag                        iterator_category; \
-        typedef CGAL::PointHd< CGAL::Quotient< NT >, NT >         value_type;        \
-        typedef ptrdiff_t                                         difference_type;   \
-        typedef const CGAL::PointHd< CGAL::Quotient< NT >, NT >*  pointer;           \
-        typedef const CGAL::PointHd< CGAL::Quotient< NT >, NT >&  reference;         \
-    };                                                                               \
-    template <>                                                                      \
-    struct iterator_traits<CGAL::PointHd< CGAL::Quotient< NT >, NT >*> {             \
-        typedef random_access_iterator_tag                        iterator_category; \
-        typedef CGAL::PointHd< CGAL::Quotient< NT >, NT >         value_type;        \
-        typedef ptrdiff_t                                         difference_type;   \
-        typedef CGAL::PointHd< CGAL::Quotient< NT >, NT >*        pointer;           \
-        typedef CGAL::PointHd< CGAL::Quotient< NT >, NT >&        reference;         \
-    };                                                                               \
-CGAL_STL_END_NAMESPACE                                                                  \
-
 
 
 CGAL_ITERATOR_TRAITS_POINTER_SPEC_2H( int )
 CGAL_ITERATOR_TRAITS_POINTER_SPEC_3H( int )
-CGAL_ITERATOR_TRAITS_POINTER_SPEC_DH( int )
 CGAL_ITERATOR_TRAITS_POINTER_SPEC_2H( long )
 CGAL_ITERATOR_TRAITS_POINTER_SPEC_3H( long )
-CGAL_ITERATOR_TRAITS_POINTER_SPEC_DH( long )
 CGAL_ITERATOR_TRAITS_POINTER_SPEC_2H( float )
 CGAL_ITERATOR_TRAITS_POINTER_SPEC_3H( float )
-CGAL_ITERATOR_TRAITS_POINTER_SPEC_DH( float )
 CGAL_ITERATOR_TRAITS_POINTER_SPEC_2H( double )
 CGAL_ITERATOR_TRAITS_POINTER_SPEC_3H( double )
-CGAL_ITERATOR_TRAITS_POINTER_SPEC_DH( double )
 
 CGAL_ITERATOR_TRAITS_POINTER_SPECH2( int )
 CGAL_ITERATOR_TRAITS_POINTER_SPECH3( int )
-CGAL_ITERATOR_TRAITS_POINTER_SPECHD( int )
 CGAL_ITERATOR_TRAITS_POINTER_SPECH2( long )
 CGAL_ITERATOR_TRAITS_POINTER_SPECH3( long )
-CGAL_ITERATOR_TRAITS_POINTER_SPECHD( long )
 CGAL_ITERATOR_TRAITS_POINTER_SPECH2( float )
 CGAL_ITERATOR_TRAITS_POINTER_SPECH3( float )
-CGAL_ITERATOR_TRAITS_POINTER_SPECHD( float )
 CGAL_ITERATOR_TRAITS_POINTER_SPECH2( double )
 CGAL_ITERATOR_TRAITS_POINTER_SPECH3( double )
-CGAL_ITERATOR_TRAITS_POINTER_SPECHD( double )
 
 class leda_real;
 class leda_integer;
@@ -822,40 +794,30 @@ class leda_bigfloat;
 
 CGAL_ITERATOR_TRAITS_POINTER_SPEC_2H( leda_real )
 CGAL_ITERATOR_TRAITS_POINTER_SPEC_3H( leda_real )
-CGAL_ITERATOR_TRAITS_POINTER_SPEC_DH( leda_real )
 CGAL_ITERATOR_TRAITS_POINTER_SPEC_2H( leda_integer )
 CGAL_ITERATOR_TRAITS_POINTER_SPEC_3H( leda_integer )
-CGAL_ITERATOR_TRAITS_POINTER_SPEC_DH( leda_integer )
 CGAL_ITERATOR_TRAITS_POINTER_SPEC_2H( leda_rational )
 CGAL_ITERATOR_TRAITS_POINTER_SPEC_3H( leda_rational )
-CGAL_ITERATOR_TRAITS_POINTER_SPEC_DH( leda_rational )
 CGAL_ITERATOR_TRAITS_POINTER_SPEC_2H( leda_bigfloat )
 CGAL_ITERATOR_TRAITS_POINTER_SPEC_3H( leda_bigfloat )
-CGAL_ITERATOR_TRAITS_POINTER_SPEC_DH( leda_bigfloat )
 
 CGAL_ITERATOR_TRAITS_POINTER_SPECH2( leda_real )
 CGAL_ITERATOR_TRAITS_POINTER_SPECH3( leda_real )
-CGAL_ITERATOR_TRAITS_POINTER_SPECHD( leda_real )
 CGAL_ITERATOR_TRAITS_POINTER_SPECH2( leda_integer )
 CGAL_ITERATOR_TRAITS_POINTER_SPECH3( leda_integer )
-CGAL_ITERATOR_TRAITS_POINTER_SPECHD( leda_integer )
 CGAL_ITERATOR_TRAITS_POINTER_SPECH2( leda_rational )
 CGAL_ITERATOR_TRAITS_POINTER_SPECH3( leda_rational )
-CGAL_ITERATOR_TRAITS_POINTER_SPECHD( leda_rational )
 CGAL_ITERATOR_TRAITS_POINTER_SPECH2( leda_bigfloat )
 CGAL_ITERATOR_TRAITS_POINTER_SPECH3( leda_bigfloat )
-CGAL_ITERATOR_TRAITS_POINTER_SPECHD( leda_bigfloat )
 
 
 namespace CGAL { class Gmpz; }
 
 CGAL_ITERATOR_TRAITS_POINTER_SPEC_2H( CGAL::Gmpz )
 CGAL_ITERATOR_TRAITS_POINTER_SPEC_3H( CGAL::Gmpz )
-CGAL_ITERATOR_TRAITS_POINTER_SPEC_DH( CGAL::Gmpz )
 
 CGAL_ITERATOR_TRAITS_POINTER_SPECH2( CGAL::Gmpz )
 CGAL_ITERATOR_TRAITS_POINTER_SPECH3( CGAL::Gmpz )
-CGAL_ITERATOR_TRAITS_POINTER_SPECHD( CGAL::Gmpz )
 
 // Quotient.h must be have been included
 #ifndef CGAL_QUOTIENT_H
@@ -864,47 +826,33 @@ CGAL_ITERATOR_TRAITS_POINTER_SPECHD( CGAL::Gmpz )
 
 CGAL_ITERATOR_TRAITS_POINTER_SPEC_2H( CGAL::Quotient<int> )
 CGAL_ITERATOR_TRAITS_POINTER_SPEC_3H( CGAL::Quotient<int> )
-CGAL_ITERATOR_TRAITS_POINTER_SPEC_DH( CGAL::Quotient<int> )
 CGAL_ITERATOR_TRAITS_POINTER_SPEC_2H( CGAL::Quotient<long> )
 CGAL_ITERATOR_TRAITS_POINTER_SPEC_3H( CGAL::Quotient<long> )
-CGAL_ITERATOR_TRAITS_POINTER_SPEC_DH( CGAL::Quotient<long> )
 CGAL_ITERATOR_TRAITS_POINTER_SPEC_2H( CGAL::Quotient<float> )
 CGAL_ITERATOR_TRAITS_POINTER_SPEC_3H( CGAL::Quotient<float> )
-CGAL_ITERATOR_TRAITS_POINTER_SPEC_DH( CGAL::Quotient<float> )
 CGAL_ITERATOR_TRAITS_POINTER_SPEC_2H( CGAL::Quotient<double> )
 CGAL_ITERATOR_TRAITS_POINTER_SPEC_3H( CGAL::Quotient<double> )
-CGAL_ITERATOR_TRAITS_POINTER_SPEC_DH( CGAL::Quotient<double> )
 CGAL_ITERATOR_TRAITS_POINTER_SPEC_2H( CGAL::Quotient<leda_real> )
 CGAL_ITERATOR_TRAITS_POINTER_SPEC_3H( CGAL::Quotient<leda_real> )
-CGAL_ITERATOR_TRAITS_POINTER_SPEC_DH( CGAL::Quotient<leda_real> )
 CGAL_ITERATOR_TRAITS_POINTER_SPEC_2H( CGAL::Quotient<leda_integer> )
 CGAL_ITERATOR_TRAITS_POINTER_SPEC_3H( CGAL::Quotient<leda_integer> )
-CGAL_ITERATOR_TRAITS_POINTER_SPEC_DH( CGAL::Quotient<leda_integer> )
 CGAL_ITERATOR_TRAITS_POINTER_SPEC_2H( CGAL::Quotient<CGAL::Gmpz> )
 CGAL_ITERATOR_TRAITS_POINTER_SPEC_3H( CGAL::Quotient<CGAL::Gmpz> )
-CGAL_ITERATOR_TRAITS_POINTER_SPEC_DH( CGAL::Quotient<CGAL::Gmpz> )
 
 CGAL_ITERATOR_TRAITS_POINTER_SPECH2( CGAL::Quotient<int> )
 CGAL_ITERATOR_TRAITS_POINTER_SPECH3( CGAL::Quotient<int> )
-CGAL_ITERATOR_TRAITS_POINTER_SPECHD( CGAL::Quotient<int> )
 CGAL_ITERATOR_TRAITS_POINTER_SPECH2( CGAL::Quotient<long> )
 CGAL_ITERATOR_TRAITS_POINTER_SPECH3( CGAL::Quotient<long> )
-CGAL_ITERATOR_TRAITS_POINTER_SPECHD( CGAL::Quotient<long> )
 CGAL_ITERATOR_TRAITS_POINTER_SPECH2( CGAL::Quotient<float> )
 CGAL_ITERATOR_TRAITS_POINTER_SPECH3( CGAL::Quotient<float> )
-CGAL_ITERATOR_TRAITS_POINTER_SPECHD( CGAL::Quotient<float> )
 CGAL_ITERATOR_TRAITS_POINTER_SPECH2( CGAL::Quotient<double> )
 CGAL_ITERATOR_TRAITS_POINTER_SPECH3( CGAL::Quotient<double> )
-CGAL_ITERATOR_TRAITS_POINTER_SPECHD( CGAL::Quotient<double> )
 CGAL_ITERATOR_TRAITS_POINTER_SPECH2( CGAL::Quotient<leda_real> )
 CGAL_ITERATOR_TRAITS_POINTER_SPECH3( CGAL::Quotient<leda_real> )
-CGAL_ITERATOR_TRAITS_POINTER_SPECHD( CGAL::Quotient<leda_real> )
 CGAL_ITERATOR_TRAITS_POINTER_SPECH2( CGAL::Quotient<leda_integer> )
 CGAL_ITERATOR_TRAITS_POINTER_SPECH3( CGAL::Quotient<leda_integer> )
-CGAL_ITERATOR_TRAITS_POINTER_SPECHD( CGAL::Quotient<leda_integer> )
 CGAL_ITERATOR_TRAITS_POINTER_SPECH2( CGAL::Quotient<CGAL::Gmpz> )
 CGAL_ITERATOR_TRAITS_POINTER_SPECH3( CGAL::Quotient<CGAL::Gmpz> )
-CGAL_ITERATOR_TRAITS_POINTER_SPECHD( CGAL::Quotient<CGAL::Gmpz> )
 
 #endif // CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT
 #endif // CGAL_ITERATOR_TRAITS_POINTER_SPECS_FOR_HOMOGENEOUS_KERNEL_H
