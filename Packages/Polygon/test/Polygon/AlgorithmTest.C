@@ -2,9 +2,11 @@
 #include <CGAL/Homogeneous.h>
 #include <CGAL/Polygon_2_algorithms.h>
 
-#include <CGAL/std/fstream>
-#include <CGAL/std/vector>
-#include <CGAL/std/cstdlib>
+#include <fstream>
+#include <vector>
+#include <cstdlib>
+
+using std::cout;
 
 //------------------------------------------------------------------------------//
 //      test the polygon algorithms for a specific choice of the
@@ -13,18 +15,18 @@
 template <class R, class Point>
 void test_polygon(const R&, const Point&, const char* FileName)
 {
-  typedef typename CGAL_STD::vector<Point>::iterator iterator;
+  typedef typename std::vector<Point>::iterator iterator;
 
   // read a point and a polygon from the file 'FileName'
-  CGAL_STD::ifstream from(FileName);
+  std::ifstream from(FileName);
   if (!from) {
-    CGAL_STD::cerr << "could not open file " << FileName << "!" << endl;
+    std::cerr << "could not open file " << FileName << "!" << endl;
     exit(1);
   }
   CGAL::set_ascii_mode(from);
 
   Point point;
-  CGAL_STD::vector<Point> polygon;
+  std::vector<Point> polygon;
 
   from >> point;
   copy(istream_iterator<Point, ptrdiff_t>(from),
@@ -33,11 +35,11 @@ void test_polygon(const R&, const Point&, const char* FileName)
   );
 
     // show the point and the polygon
-    CGAL_STD::cout << "point: " << point << endl;
-    CGAL_STD::cout << "polygon:" << endl;
+    cout << "point: " << point << endl;
+    cout << "polygon:" << endl;
     copy(polygon.begin(), polygon.end(),
-	ostream_iterator<Point>(CGAL_STD::cout, "\n"));
-    CGAL_STD::cout << endl;
+	ostream_iterator<Point>(cout, "\n"));
+    cout << endl;
 
     iterator left =
 	CGAL::left_vertex_2(polygon.begin(), polygon.end());
@@ -62,52 +64,52 @@ void test_polygon(const R&, const Point&, const char* FileName)
     CGAL::Orientation orientation =
 	CGAL::orientation_2(polygon.begin(), polygon.end());
 
-    CGAL_STD::cout << "left   = " << *left << endl;
-    CGAL_STD::cout << "right  = " << *right << endl;
-    CGAL_STD::cout << "top    = " << *top << endl;
-    CGAL_STD::cout << "bottom = " << *bottom << endl;
-    CGAL_STD::cout << "the polygon is ";
-    if (!simple) CGAL_STD::cout << "not ";
-    CGAL_STD::cout << "simple" << endl;
-    CGAL_STD::cout << "the polygon is ";
-    if (!convex) CGAL_STD::cout << "not ";
-    CGAL_STD::cout << "convex" << endl;
-    CGAL_STD::cout << "the bounding box is " << bbox << endl;
-    CGAL_STD::cout << "the area is " << area << endl;
+    cout << "left   = " << *left << endl;
+    cout << "right  = " << *right << endl;
+    cout << "top    = " << *top << endl;
+    cout << "bottom = " << *bottom << endl;
+    cout << "the polygon is ";
+    if (!simple) cout << "not ";
+    cout << "simple" << endl;
+    cout << "the polygon is ";
+    if (!convex) cout << "not ";
+    cout << "convex" << endl;
+    cout << "the bounding box is " << bbox << endl;
+    cout << "the area is " << area << endl;
 
     switch (bside) {
     case CGAL::ON_BOUNDED_SIDE:
-	CGAL_STD::cout << "the point is on bounded side" << endl;
+	cout << "the point is on bounded side" << endl;
 	break;
     case CGAL::ON_BOUNDARY:
-	CGAL_STD::cout << "the point is on the boundary" << endl;
+	cout << "the point is on the boundary" << endl;
 	break;
     case CGAL::ON_UNBOUNDED_SIDE:
-	CGAL_STD::cout << "the point is on the unbounded side" << endl;
+	cout << "the point is on the unbounded side" << endl;
 	break;
     }
 
     switch (oside) {
     case CGAL::ON_NEGATIVE_SIDE:
-	CGAL_STD::cout << "the point is on the negative side" << endl;
+	cout << "the point is on the negative side" << endl;
 	break;
     case CGAL::ON_ORIENTED_BOUNDARY:
-	CGAL_STD::cout << "the point is on the oriented boundary" << endl;
+	cout << "the point is on the oriented boundary" << endl;
 	break;
     case CGAL::ON_POSITIVE_SIDE:
-	CGAL_STD::cout << "the point is on the positive side" << endl;
+	cout << "the point is on the positive side" << endl;
 	break;
     }
 
     switch(orientation) {
     case CGAL::CLOCKWISE:
-	CGAL_STD::cout << "the orientation is clockwise" << endl;
+	cout << "the orientation is clockwise" << endl;
 	break;
     case CGAL::COUNTERCLOCKWISE:
-	CGAL_STD::cout << "the orientation is counter clockwise" << endl;
+	cout << "the orientation is counter clockwise" << endl;
 	break;
     case CGAL::COLLINEAR:
-	CGAL_STD::cout << "the orientation is collinear" << endl;
+	cout << "the orientation is collinear" << endl;
 	break;
     }
 }
@@ -118,24 +120,24 @@ void test_polygon(const R&, const Point&, const char* FileName)
 
 int main()
 {
-  CGAL::set_pretty_mode(CGAL_STD::cout);
+  CGAL::set_pretty_mode(cout);
 
-  CGAL_STD::cout << endl;
-  CGAL_STD::cout << "--------------------------------------------------------" << endl;
-  CGAL_STD::cout << "-   testing polygon algorithms with cartesian/double   -" << endl;
-  CGAL_STD::cout << "--------------------------------------------------------" << endl;
-  CGAL_STD::cout << endl;
+  cout << endl;
+  cout << "--------------------------------------------------------" << endl;
+  cout << "-   testing polygon algorithms with cartesian/double   -" << endl;
+  cout << "--------------------------------------------------------" << endl;
+  cout << endl;
   typedef CGAL::Cartesian<double> R1;
 //  CGAL::Polygon_traits_2<R1> traits1;
 
   typedef CGAL::Point_2<R1> Point1;
   test_polygon(R1(), Point1(), "data/polygon_cartesian.dat");
 
-  CGAL_STD::cout << endl;
-  CGAL_STD::cout << "--------------------------------------------------------" << endl;
-  CGAL_STD::cout << "-   testing polygon algorithms with homogeneous/double -" << endl;
-  CGAL_STD::cout << "--------------------------------------------------------" << endl;
-  CGAL_STD::cout << endl;
+  cout << endl;
+  cout << "--------------------------------------------------------" << endl;
+  cout << "-   testing polygon algorithms with homogeneous/double -" << endl;
+  cout << "--------------------------------------------------------" << endl;
+  cout << endl;
   typedef CGAL::Homogeneous<double> R2;
   typedef CGAL::Point_2<R2> Point2;
   test_polygon(R2(), Point2(), "data/polygon_homogeneous.dat");
