@@ -108,8 +108,8 @@ public:
   virtual void remove_edge(Halfedge_handle e) = 0;
 
   // - undocumented functions -
-  virtual void remove_edge(const Halfedge_handle_iterator& begin,
-		const Halfedge_handle_iterator& end) {};
+  virtual void remove_edge(const Halfedge_handle_iterator&,
+		const Halfedge_handle_iterator&) {};
   virtual void clear() {};
   virtual void update(const Halfedge_handle_iterator&,
                       const Halfedge_handle_iterator&,
@@ -130,17 +130,3 @@ public:
 CGAL_END_NAMESPACE
 
 #endif //CGAL_PM_POINT_LOCATION_BASE_H
-
-
-
-
-
-
-
-
-
-
-
-
-
-

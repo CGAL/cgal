@@ -115,23 +115,23 @@ public:
 	~Pm_unbounding_box(){}
 	
 	
-	void init(Planar_map& pmp, Traits& tr) {
+	void init(Planar_map&, Traits&) {
 	/*
     pm = &pmp;
     traits = (Traits_wrap*)(&tr);
 		*/
 	}
 	
-	bool insert(const Point& p) {return true;}
-	bool insert(const Point_iterator& begin,const Point_iterator& end
+	bool insert(const Point&) {return true;}
+	bool insert(const Point_iterator&, const Point_iterator&
 #ifndef _MSC_VER
   )
 #else
 		,Point* dummy=0) 	// workaround for MSVC6.0
 #endif
           {return true;}
-	bool insert(const X_curve& cv) {return true;}
-	bool insert(const X_curve_iterator& begin,const X_curve_iterator& end
+	bool insert(const X_curve&) {return true;}
+	bool insert(const X_curve_iterator&,const X_curve_iterator&
 #ifndef _MSC_VER
   )
 #else
@@ -141,32 +141,32 @@ public:
           {return true;}
 	/* The point location query function may updates the resulting 
 	halfedge handle and locate type as expected from the bounding box */
-	bool locate(const Point& p, Locate_type& lt,Halfedge_handle& h)
+	bool locate(const Point&, Locate_type&,Halfedge_handle&)
         {return true;}	
-	bool vertical_ray_shoot(const Point& p, Locate_type& lt, bool up,
+	bool vertical_ray_shoot(const Point&, Locate_type&, bool,
 		Halfedge_handle& h){return true;}
 	
-	void split_edge(const X_curve &cv,
-		Halfedge_handle e1,
-		Halfedge_handle e2,
-		const X_curve& cv1, 
-		const X_curve& cv2
+	void split_edge(const X_curve &,
+		Halfedge_handle,
+		Halfedge_handle,
+		const X_curve&, 
+		const X_curve&
 		) {}
 
-	void split_boundary_edge(const Halfedge_handle &h,
-		Halfedge_handle h1,
-		Halfedge_handle h2,
-		const Point& p) {}
+	void split_boundary_edge(const Halfedge_handle &,
+		Halfedge_handle,
+		Halfedge_handle,
+		const Point&) {}
 	
-	void merge_edge(const X_curve &cv1,
-		const X_curve &cv2,
-		Halfedge_handle e
+	void merge_edge(const X_curve &,
+		const X_curve &,
+		Halfedge_handle
 		//additions by iddo for arrangement
-		,const X_curve& cv
+		,const X_curve&v
 		//end additions
 		) {}
 	
-	void remove_edge(Halfedge_handle e) {}
+	void remove_edge(Halfedge_handle) {}
 	inline bool is_empty() const {return false;}
 
 #ifdef CGAL_PM_DEBUG
