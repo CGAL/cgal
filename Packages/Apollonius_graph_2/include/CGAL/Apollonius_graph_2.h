@@ -43,7 +43,7 @@
 
 #include <CGAL/Iterator_project.h>
 #include <CGAL/Nested_iterator.h>
-#include <CGAL/Combined_iterator.h>
+#include <CGAL/Concatenate_iterator.h>
 
 
 CGAL_BEGIN_NAMESPACE
@@ -117,8 +117,8 @@ public:
 			  Hidden_sites_nested_iterator_traits>
   /*                                          */ Hidden_sites_iterator;
 
-  typedef Combined_iterator<Visible_sites_iterator,
-			    Hidden_sites_iterator>      Sites_iterator;
+  typedef Concatenate_iterator<Visible_sites_iterator,
+			       Hidden_sites_iterator>   Sites_iterator;
 
   typedef Site_2               value_type; // to have a back_inserter
   typedef const value_type&    const_reference; 
