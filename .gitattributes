@@ -1524,7 +1524,6 @@ Packages/Qt_widget/demo/Qt_widget/Alpha_shapes_2/data/m30f.jpg svneol=native#uns
 Packages/Qt_widget/demo/Qt_widget/Convex_Hull_2/convex_hull_2.vcproj -text
 Packages/Qt_widget/demo/Qt_widget/Generator/generator.vcproj -text
 Packages/Qt_widget/demo/Qt_widget/Max_k-gon/max_k-gon.vcproj -text
-Packages/Qt_widget/demo/Qt_widget/Nef_2/nef_2.vcproj -text
 Packages/Qt_widget/demo/Qt_widget/Partition_2/partition_2.vcproj -text
 Packages/Qt_widget/demo/Qt_widget/Triangulation_2_constrained/constrained_delaunay_triangulation_2.vcproj -text
 Packages/Qt_widget/demo/Qt_widget/Triangulation_2_constrained/help/input_point_layer.gif svneol=native#unset
