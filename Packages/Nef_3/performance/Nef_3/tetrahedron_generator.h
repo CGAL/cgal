@@ -6,6 +6,7 @@ template <typename Kernel_>
 class tetrahedron_generator {
 
   typedef Kernel_ Kernel;
+  typedef typename Kernel::RT RT;
   typedef typename Kernel::Point_3 Point_3;
   typedef typename Kernel::Plane_3 Plane_3;
   typedef typename Kernel::Vector_3 Vector_3;

@@ -71,7 +71,7 @@ typedef Nef_polyhedron::Aff_transformation_3 Aff_transformation_3;
 typedef Nef_polyhedron::Vertex_const_iterator Vertex_const_iterator;
 typedef tetrahedron_generator<Kernel> tgen;
 
-Vector_3 compute_translation(const Nef_polyhedron& N) {
+void transform_big(Nef_polyhedron& N,int n, int s) {
   Vertex_const_iterator vi(N.vertices_begin());
   RT x_min = vi->point().hx()/vi->point().hw();
   RT x_max = vi->point().hx()/vi->point().hw();
@@ -93,18 +93,20 @@ Vector_3 compute_translation(const Nef_polyhedron& N) {
     if(vi->point().hz()/vi->point().hw() > z_max) 
       z_max = vi->point().hz()/vi->point().hw();
   }
-  
-  x_min-=(x_min<=0?0:1);
-  y_min-=(y_min<=0?0:1);
+
+  x_min-=(x_min<=0?1:2);
+  y_min-=(y_min<=0?1:2);
   z_max+=(z_max<=0?1:0);
   
-  return Vector_3(-x_min,-y_min,-z_max);
+  N.transform(Aff_transformation_3(CGAL::TRANSLATION, Vector_3(-x_min,-y_min,-z_max)));
+  N.transform(Aff_transformation_3(CGAL::SCALING, n*s+2,x_max-x_min));
+  N.transform(Aff_transformation_3(CGAL::TRANSLATION, Vector_3(0,0,s/2)));
 }
 
 int main(int argc, char* argv[]) {
 
-  int n = argc>1 ? std::atoi(argv[1]) : 10;
-  int s = argc>2 ? std::atoi(argv[4]) : 100;
+  int n = argc>2 ? std::atoi(argv[2]) : 10;
+  int s = argc>3 ? std::atoi(argv[3]) : 100;
 
   std::ostringstream out1;
   tgen t1(out1);
@@ -115,11 +117,9 @@ int main(int argc, char* argv[]) {
   CGAL_assertion(N1.is_valid());
 
   Nef_polyhedron N2;
-  std::cin >> N2;
-  N2.transform(Aff_transformation_3(CGAL::SCALING, n*s+2,2));
-  Vector_3 vec = compute_translation(N2);
-  N2.transform(Aff_transformation_3(CGAL::TRANSLATION, vec));
-  N2.transform(Aff_transformation_3(CGAL::TRANSLATION, Vector_3(0,0,s/2)));
+  std::ifstream in2(argv[1]);
+  in2 >> N2;
+  transform_big(N2,n,s);
   N1=N2.join(N1);
   std::cout << N1;
 
