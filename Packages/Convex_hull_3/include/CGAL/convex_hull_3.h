@@ -448,8 +448,17 @@ ch_quickhull_polyhedron_3(std::list<typename Traits::Point_3>& points,
   Dist_compare compare_dist = 
                 traits.less_signed_distance_to_plane_3_object(plane);
   
-  P3_iterator max_it = 
-     std::max_element(points.begin(), points.end(), compare_dist);
+  // find both min and max here since using signed distance.  If all points
+  // are on the negative side of ths plane, the max element will be on the
+  // plane.
+  std::pair<P3_iterator, P3_iterator> min_max;
+  min_max = CGAL::min_max_element(points.begin(), points.end(), compare_dist,
+                                  compare_dist);
+  P3_iterator max_it;
+  if (coplanar(*point1_it, *point2_it, *point3_it, *min_max.second))
+     max_it = min_max.first;
+  else
+     max_it = min_max.second;
 
   typename Traits::Coplanar_3  coplanar = traits.coplanar_3_object(); 
 
@@ -464,7 +473,8 @@ ch_quickhull_polyhedron_3(std::list<typename Traits::Point_3>& points,
      points.erase(point2_it);
      points.erase(point3_it);
      points.erase(max_it);
-     non_coplanar_quickhull_3(points, P, traits);
+     if (!points.empty())
+        non_coplanar_quickhull_3(points, P, traits);
   }
 }
 

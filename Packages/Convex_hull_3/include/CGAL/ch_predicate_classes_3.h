@@ -40,7 +40,7 @@ class Less_signed_dist_to_plane_3
  public:
   Less_signed_dist_to_plane_3( const Plane& p) : _p(p) {}
   bool operator()( const Point& q, const Point& r)
-       { return has_smaller_signed_dist_to_plane( _p,q,r); }
+  { return has_smaller_signed_dist_to_plane( _p,q,r); }
  private:
   Plane _p;
 };
