@@ -147,7 +147,7 @@ public:
 	}
       }
     }
-    // assert(cut_dim >= 0);
+    // CGAL_assertion(cut_dim >= 0);
     return cut_dim;
   }
 
@@ -169,7 +169,7 @@ public:
     FT small_piece = max_span_upper_without_dim(d) / Aspect_ratio;
     FT low_cut = bbox.min_coord(d) + small_piece; // lowest legal cut;
     FT high_cut = bbox.max_coord(d) - small_piece; //highest legal cut;
-    // assert (high_cut >= low_cut);
+    // CGAL_assertion (high_cut >= low_cut);
     FT split_value = median(d);
     if (split_value < low_cut) split_value = low_cut;
     if (split_value > high_cut) split_value = high_cut;
@@ -182,7 +182,7 @@ public:
     FT small_piece = max_span_upper_without_dim(d) / Aspect_ratio;
     FT low_cut = bbox.min_coord(d) + small_piece; // lowest legal cut;
     FT high_cut = bbox.max_coord(d) - small_piece; //highest legal cut;
-    // assert (high_cut >= low_cut);
+    // CGAL_assertion (high_cut >= low_cut);
     FT split_value = median(d);
     FT max_span_lower = tbox.min_coord(d);
     FT max_span_upper = tbox.max_coord(d);
@@ -303,8 +303,8 @@ public:
     if(empty()) return true;
     bool b = true;
     for (int i = 0; i < dimension(); i++){
-      assert( b = (b && (bbox.min_coord(i) <= tbox.min_coord(i))));
-      assert( b = (b && (bbox.max_coord(i) >= tbox.max_coord(i))));
+      CGAL_assertion( b = (b && (bbox.min_coord(i) <= tbox.min_coord(i))));
+      CGAL_assertion( b = (b && (bbox.max_coord(i) >= tbox.max_coord(i))));
 
       Between<Traits> between(i,tbox.min_coord(i), tbox.max_coord(i));
       for(iterator it = begin(); it != end(); it++){
@@ -320,8 +320,8 @@ public:
   void split(Point_container<Traits>& c, Separator& sep,  
 	     bool sliding=false) 
   {
-    assert(dimension()==c.dimension());
-    assert(is_valid());
+    CGAL_assertion(dimension()==c.dimension());
+    CGAL_assertion(is_valid());
     c.bbox=bbox;
     
     const int split_coord = sep.cutting_dimension();
@@ -367,8 +367,8 @@ public:
     c.bbox.set_upper_bound(split_coord, cutting_value);
     c.tbox.update_from_point_pointers(c.begin(),
 				      c.end());
-    assert(is_valid());
-    assert(c.is_valid());
+    CGAL_assertion(is_valid());
+    CGAL_assertion(c.is_valid());
   }
 
 

@@ -257,7 +257,7 @@ namespace CGAL {
 	      if (old_off>FT(0.0)) old_off=FT(0.0);
 	      new_rd=
 		Orthogonal_distance_instance.new_distance(copy_rd,old_off,new_off,new_cut_dim);
-	      assert(new_rd >= copy_rd);
+	      CGAL_assertion(new_rd >= copy_rd);
 	      if (search_nearest_neighbour) {
 		Node_with_distance *Upper_Child =
 		  new Node_with_distance(N->upper(), new_rd);
@@ -278,7 +278,7 @@ namespace CGAL {
 		*(query_point_it+new_cut_dim);
 	      if (old_off>FT(0.0)) old_off=FT(0.0);
 	      new_rd=Orthogonal_distance_instance.new_distance(copy_rd,old_off,new_off,new_cut_dim);  
-	      assert(new_rd >= copy_rd);
+	      CGAL_assertion(new_rd >= copy_rd);
 	      if (search_nearest_neighbour) {
 		Node_with_distance *Lower_Child =
 		  new Node_with_distance(N->lower(), new_rd);

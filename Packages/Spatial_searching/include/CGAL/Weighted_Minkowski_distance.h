@@ -67,10 +67,10 @@ namespace CGAL {
 				 const Weight_vector& weights) 
       : power(pow)
     {
-      assert(power >= FT(0));
-      assert(dim==weights.size());
+      CGAL_assertion(power >= FT(0));
+      CGAL_assertion(dim==weights.size());
       for (unsigned int i = 0; i < weights.size(); ++i)
-	assert(weights[i]>=FT(0));
+	CGAL_assertion(weights[i]>=FT(0));
       the_weights.resize(weights.size());
       the_weights = weights;
     }
@@ -80,15 +80,15 @@ namespace CGAL {
 				 InputIterator begin, InputIterator end) 
       : power(pow)
     {
-      assert(power >= FT(0));
+      CGAL_assertion(power >= FT(0));
       the_weights.resize(dim);
       std::copy(begin, end, the_weights.begin());
       for (int i = 0; i < dim; ++i){
 	the_weights[i] = *begin;
 	++begin;
-	assert(the_weights[i]>=FT(0));
+	CGAL_assertion(the_weights[i]>=FT(0));
       }
-      assert(begin == end);
+      CGAL_assertion(begin == end);
     }
 
 

@@ -19,10 +19,11 @@
 
 #ifndef CGAL_KD_TREE_RECTANGLE_H
 #define CGAL_KD_TREE_RECTANGLE_H
+
 #include <functional>
 #include <algorithm>
 #include <new>
-#include <cassert>
+#include <CGAL/assertions.h>
 
 namespace CGAL {
 
@@ -69,8 +70,8 @@ namespace CGAL {
     inline void 
     set_upper_bound(int i, const FT& x) 
     {
-      assert(i >= 0 && i < dim);
-      assert(x >= lower_[i]);
+      CGAL_assertion(i >= 0 && i < dim);
+      CGAL_assertion(x >= lower_[i]);
       upper_[i] = x;
       set_max_span();
     }
@@ -78,8 +79,8 @@ namespace CGAL {
     inline void 
     set_lower_bound(int i, const FT& x) 
     {
-      assert(i >= 0 && i < dim);
-      assert(x <= upper_[i]);
+      CGAL_assertion(i >= 0 && i < dim);
+      CGAL_assertion(x <= upper_[i]);
       lower_[i] = x;
       set_max_span();
     }
@@ -176,7 +177,7 @@ namespace CGAL {
     inline FT 
     min_coord(int i) const 
     {
-      assert(lower_ != NULL);
+      CGAL_assertion(lower_ != NULL);
       return lower_[i];
     }
     
@@ -211,8 +212,8 @@ namespace CGAL {
     void
     split(Kd_tree_rectangle& r, int d, FT value)
     {
-      assert(d >= 0 && d < dim);
-      assert(lower_[d] <= value && value <= upper_[d]);
+      CGAL_assertion(d >= 0 && d < dim);
+      CGAL_assertion(lower_[d] <= value && value <= upper_[d]);
       
       //Kd_tree_rectangle* r = new Kd_tree_rectangle(*this);
       upper_[d]=value;
@@ -239,7 +240,7 @@ namespace CGAL {
     Kd_tree_rectangle<SearchTraits>& 
     operator=(const Kd_tree_rectangle<SearchTraits>& r) 
     {
-      assert(dimension() == r.dimension());
+      CGAL_assertion(dimension() == r.dimension());
       if (this != &r) {
         std::copy(r.lower_, r.lower_+dim, lower_);
 	std::copy(r.upper_, r.upper_+dim, upper_);
@@ -261,5 +262,5 @@ namespace CGAL {
 
   
 } // namespace CGAL
-#endif // CGAL_KD_TREE_RECTANGLE_H
 
+#endif // CGAL_KD_TREE_RECTANGLE_H

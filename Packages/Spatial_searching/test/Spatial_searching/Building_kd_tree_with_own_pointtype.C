@@ -4,6 +4,7 @@
 #include <CGAL/Search_traits.h>
 #include <CGAL/point_generators_3.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
+#include <cassert>
 #include "Point.h"
 #include "Distance.h"
 

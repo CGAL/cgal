@@ -19,9 +19,10 @@
 
 #ifndef CGAL_KD_TREE_H
 #define CGAL_KD_TREE_H
+
 #include <CGAL/basic.h>
-#include <cassert>
-#include<vector>
+#include <CGAL/assertions.h>
+#include <vector>
 
 #include <CGAL/algorithm.h>
 #include <CGAL/Kd_tree_node.h>
@@ -124,8 +125,8 @@ private:
     nh->low_val = c_low.bounding_box().min_coord(cd);
     nh->high_val = c.bounding_box().max_coord(cd);
     
-    assert(nh->separator().cutting_value() >= nh->low_val);
-    assert(nh->separator().cutting_value() <= nh->high_val);
+    CGAL_assertion(nh->separator().cutting_value() >= nh->low_val);
+    CGAL_assertion(nh->separator().cutting_value() <= nh->high_val);
 
     if (c_low.size() > split.bucket_size()){
       nh->lower_ch = create_internal_node_use_extension(c_low);
@@ -178,7 +179,7 @@ public:
 	  Splitter s = Splitter()) 
     : split(s), built_(false) 
   {
-    assert(first != beyond);
+    CGAL_assertion(first != beyond);
     std::copy(first, beyond, std::back_inserter(pts));
   }
 
@@ -323,4 +324,5 @@ public:
 };
 
 } // namespace CGAL
+
 #endif // CGAL_KD_TREE_H

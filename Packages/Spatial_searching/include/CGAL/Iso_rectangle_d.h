@@ -19,10 +19,11 @@
 
 #ifndef CGAL_ISO_RECTANGLE_D_H
 #define CGAL_ISO_RECTANGLE_D_H
+
 #include <functional>
 #include <algorithm>
 #include <new>
-#include <cassert>
+#include <CGAL/assertions.h>
 
 namespace CGAL {
   
@@ -40,7 +41,7 @@ namespace CGAL {
   public:
 
     Iso_rectangle_d(const Point_d& p, const Point_d& q)
-    { assert(p.dimension() == q.dimension());
+    { CGAL_assertion(p.dimension() == q.dimension());
       dim = p.dimension();
       lower = new FT[dim];
       upper = new FT[dim];
@@ -90,5 +91,5 @@ namespace CGAL {
   }; // end of class
 
 } // namespace CGAL
-#endif // CGAL_ISO_RECTANGLE_D_H
 
+#endif // CGAL_ISO_RECTANGLE_D_H
