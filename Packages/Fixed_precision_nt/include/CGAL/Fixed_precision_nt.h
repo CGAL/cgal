@@ -172,9 +172,6 @@ inline std::istream &operator>>(std::istream &is, Fixed_precision_nt& a)
 //--------- non official mysterious NT requirement
 // ======================================================================
 
-inline Number_tag number_type_tag(Fixed_precision_nt)
-{ return Number_tag(); }
-
 inline io_Operator io_tag(Fixed_precision_nt)
 { return io_Operator(); }
 
