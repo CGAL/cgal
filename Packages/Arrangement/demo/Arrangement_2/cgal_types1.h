@@ -1,6 +1,15 @@
 #ifndef CGAL_TYPES_HEADER
 #define CGAL_TYPES_HEADER
 
+//#include <CGAL/IO/Qt_widget.h>
+#include "Qt_widget.h"
+#include <CGAL/IO/Qt_widget_Polygon_2.h>
+#include <CGAL/IO/Qt_help_window.h>
+#include <CGAL/IO/leda_window.h>
+#include <CGAL/IO/Postscript_file_stream.h>
+#include <CGAL/IO/Pm_drawer.h>
+#include <CGAL/IO/draw_pm.h>
+
 #include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/MP_Float.h>
@@ -20,6 +29,8 @@
 #include <CGAL/IO/write_pm.h>
 #include <CGAL/IO/Pm_iostream.h>
 #include <CGAL/leda_real.h>
+#include <CGAL/Planar_map_2.h>
+#include <CGAL/Bbox_2.h>
 
 #include <iostream>
 
@@ -62,7 +73,9 @@ typedef CGAL::Planar_map_2<Seg_dcel, Seg_traits>                          Seg_pm
 typedef CGAL::Planar_map_with_intersections_2<Seg_pm>		              Seg_arr;
 typedef Seg_arr::Locate_type                                              Seg_locate_type;
 typedef Seg_arr::Halfedge_handle                                          Seg_halfedge_handle;
-
+typedef Seg_arr::Face_handle											  Seg_face_handle;
+typedef Seg_arr::Ccb_halfedge_circulator								  Seg_ccb_halfedge_circulator;
+typedef Seg_arr::Holes_iterator											  Seg_holes_iterator;
 typedef std::list<Pm_seg_2*>						                      Pm_seg_list;
 typedef Pm_seg_list::const_iterator							              Pm_seg_const_iter;
 typedef Pm_seg_list::iterator								              Pm_seg_iter;
@@ -125,10 +138,19 @@ typedef CGAL::Planar_map_2<Conic_dcel, Conic_traits>                      Conic_
 typedef CGAL::Planar_map_with_intersections_2<Conic_pm>                   Conic_arr;
 typedef Conic_arr::Locate_type                                            Conic_locate_type;
 typedef Conic_arr::Halfedge_handle                                        Conic_halfedge_handle;
+typedef Conic_arr::Face_handle											  Conic_face_handle;
+typedef Conic_arr::Ccb_halfedge_circulator								  Conic_ccb_halfedge_circulator;
+typedef Conic_arr::Holes_iterator										  Conic_holes_iterator;
 typedef CGAL::Pm_file_scanner<Conic_arr>                                  Pm_scanner;
 
 typedef std::list<Pm_xconic_2*>								              Pm_xconic_list;
 typedef Pm_xconic_list::const_iterator						              Pm_xconic_const_iter;
 typedef Pm_xconic_list::iterator							              Pm_xconic_iter;
+
+
+enum TraitsType { SEGMENT_TRAITS, POLYLINE_TRAITS , CONIC_TRAITS};
+enum SnapMode   { NONE , GRID , POINT};
+enum Mode       { INSERT , DELETE , POINT_LOCATION , RAY_SHOOTING , DRAG };
+
 
 #endif

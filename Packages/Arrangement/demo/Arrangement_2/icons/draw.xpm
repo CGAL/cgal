@@ -1,0 +1,88 @@
+/* XPM */
+ char *draw_xpm[] = {
+/* columns rows colors chars-per-pixel */
+"32 32 4 1",
+"  c opaque",
+". c navy",
+"X c #c0c0c0",
+"o c None",
+/* pixels */
+"oooooooooooooooooooooooooooooooo",
+"oooooooooooooooooooooooooooooooo",
+"oooooooooooooooooooooooooooooooo",
+"oooooooooooooooooooooooooooooooo",
+"ooooooooooooooooooooooooo...oooo",
+"oooooooooooooooooooooooo.o....oo",
+"ooooooooooooooooooooooo.ooooo.oo",
+"oooooooooooooooooooooo.ooooo.ooo",
+"ooooooooooooooooooooo.ooooo.oooo",
+"oooooooooooooooooooo.ooooo.ooooo",
+"ooooooooooooooooooo.ooooo.oooooo",
+"oooooooooooooooooo.ooooo.ooooooo",
+"ooooooooooooooooo.ooooo.oooooooo",
+"oooooooooooooooo.ooooo.ooooooooo",
+"ooooooooooooooo.ooooo.oooooooooo",
+"oooooooooooooo.ooooo.ooooooooooo",
+"ooooooooooooo.ooooo.oooooooooooo",
+"oooooooooooo.ooooo.ooooooooooooo",
+"ooooooooooo.ooooo.oooooooooooooo",
+"oooooooooo.ooooo.ooooooooooooooo",
+"ooooooooo.ooooo.oooooooooooooooo",
+"oooooooo...ooo.ooooooooooooooooo",
+"oooooooo.oo...oooooooooooooooooo",
+"oooooooo.ooo.ooooooooooooooooooo",
+"oooooooo..o.oooooooooooooooooooo",
+"oooooooo...ooooooooooooooooooooo",
+"oooooooo.ooooooooooooooooooooooo",
+"oooooooooooooooooooooooooooooooo",
+"oooooooooooooooooooooooooooooooo",
+"oooooooooooooooooooooooooooooooo",
+"oooooooooooooooooooooooooooooooo",
+"oooooooooooooooooooooooooooooooo"
+};
+
+/* XPM */
+ char *small_draw_xpm[] = {
+/* columns rows colors chars-per-pixel */
+"32 32 4 1",
+"  c opaque",
+". c navy",
+"X c #c0c0c0",
+"o c None",
+/* pixels */
+"oooooooooooooooooooooooooooooooo",
+"oooooooooooooooooooooooooooooooo",
+"oooooooooooooooooooooooooooooooo",
+"oooooooooooooooooooooooooooooooo",
+"ooooooooooooooooooooooo..ooooooo",
+"oooooooooooooooooooooo.oo..ooooo",
+"ooooooooooooooooooooo.ooo.oooooo",
+"oooooooooooooooooooo.ooo.ooooooo",
+"ooooooooooooooooooo.ooo.oooooooo",
+"oooooooooooooooooo.ooo.ooooooooo",
+"ooooooooooooooooo.ooo.oooooooooo",
+"oooooooooooooooo.ooo.ooooooooooo",
+"ooooooooooooooo.ooo.oooooooooooo",
+"oooooooooooooo.ooo.ooooooooooooo",
+"oooooooooooooo....oooooooooooooo",
+"oooooooooooooo..oooooooooooooooo",
+"oooooooooooooooooooooooooooooooo",
+"oooooooooooooooooooooooooooooooo",
+"oooooooooooooooooooooooooooooooo",
+"oooooooooooooooooooooooooooooooo",
+"oooooooooooooooooooooooooooooooo",
+"oooooooooooooooooooooooooooooooo",
+"oooooooooooooooooooooooooooooooo",
+"oooooooooooooooooooooooooooooooo",
+"oooooooooooooooooooooooooooooooo",
+"oooooooooooooooooooooooooooooooo",
+"oooooooooooooooooooooooooooooooo",
+"oooooooooooooooooooooooooooooooo",
+"oooooooooooooooooooooooooooooooo",
+"oooooooooooooooooooooooooooooooo",
+"oooooooooooooooooooooooooooooooo",
+"oooooooooooooooooooooooooooooooo"
+};
+
+
+

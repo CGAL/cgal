@@ -750,6 +750,19 @@ Packages/Apollonius_graph_2/doc_tex/Apollonius_graph_2/apollonius_graph_bw.eps -
 Packages/Apollonius_graph_2/doc_tex/Apollonius_graph_2_ref/insert_degree_2.eps -text
 Packages/Apollonius_graph_2/doc_tex/Apollonius_graph_2_ref/insert_degree_2.fig -text
 Packages/Apollonius_graph_2/doc_tex/Apollonius_graph_2_ref/insert_degree_2.gif -text svneol=unset#unset
+Packages/Arrangement/demo/Arrangement_2/icons/conic.xpm -text
+Packages/Arrangement/demo/Arrangement_2/icons/delete.xpm -text
+Packages/Arrangement/demo/Arrangement_2/icons/draw.xpm -text
+Packages/Arrangement/demo/Arrangement_2/icons/grid.xpm -text
+Packages/Arrangement/demo/Arrangement_2/icons/hand.xpm -text
+Packages/Arrangement/demo/Arrangement_2/icons/insert.xpm -text
+Packages/Arrangement/demo/Arrangement_2/icons/none.xpm -text
+Packages/Arrangement/demo/Arrangement_2/icons/po.xpm -text
+Packages/Arrangement/demo/Arrangement_2/icons/points.xpm -text
+Packages/Arrangement/demo/Arrangement_2/icons/polyline.xpm -text
+Packages/Arrangement/demo/Arrangement_2/icons/ray_shooting.xpm -text
+Packages/Arrangement/demo/Arrangement_2/icons/ray_shooting2.xpm -text
+Packages/Arrangement/demo/Arrangement_2/icons/voronoi.xpm -text
 Packages/Arrangement/demo/Qt_widget/Arrangement_2/polyline.xpm -text
 Packages/Arrangement/doc_tex/Arrangement_2/arr_circ.gif -text svneol=unset#unset
 Packages/Arrangement/doc_tex/Arrangement_2/arr_circ.ps -text
