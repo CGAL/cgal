@@ -1876,6 +1876,30 @@
   \ccTagDefaults\def\ccLongParamLayout{\ccFalse}
 \end{ccRefFunctionObjectClass}
 
+\begin{ccRefFunctionObjectClass}{Creator_uniform_d<Arg, Result>}
+  \ccDefinition The concept \ccRefName\ defines types and operations
+  for creating objects from two arguments of the same type.
+
+  \ccInclude{CGAL/function_objects.h}
+
+  \ccRequirements \ccc{Result} defines a constructor from three arguments: 
+  one \ccc{d} dimension and two \ccc{Arg} arguments.
+
+  \def\ccLongParamLayout{\ccTrue}
+  \ccTagFullDeclarations\ccCreationVariable{c}
+  \ccNestedType{argument_type}{type of arguments; typedef to
+    \ccc{Arg}.}
+  \ccNestedType{result_type}{type of object to create; typedef to
+    \ccc{Result}.}
+  \ccThree{result_type;;}{operator()(argument_type a) const;;}{}
+
+  \ccMethod{result_type operator()(argument_type a1, argument_type a2)
+    const;}{returns \ccc{result_type(d, a1, a2)}.}
+
+  \ccTagDefaults\def\ccLongParamLayout{\ccFalse}
+\end{ccRefFunctionObjectClass}
+
+
 %% +--------------------------------------------------------+
 
 \begin{ccRefClass}{Triple<T1, T2, T3>}

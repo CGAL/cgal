@@ -356,6 +356,26 @@ public:
                       return Result(a1,a2,a3,a4,a5,a6,a7,a8,a9);
                     }
 };
+
+template < class Arg, class  Result >
+class Creator_uniform_d {
+  int d;
+
+ private:
+  Creator_uniform_d(){}
+
+ public:
+  typedef Arg   argument1_type;
+  typedef Result result_type;
+  typedef Arity_tag<2> Arity;
+
+  Creator_uniform_d(int dim)
+    : d(dim)
+    {}
+
+  Result operator()(Arg a1, Arg a2) const { return Result(d, a1,a2);}
+};
+
 template < class Op1, class Op2 >
 class Unary_compose_1
 : public CGAL_STD::unary_function< typename Op2::argument_type,
