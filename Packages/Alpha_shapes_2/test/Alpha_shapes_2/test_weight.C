@@ -83,6 +83,8 @@ typedef Alpha_shape_2::Edge_circulator  Edge_circulator;
 
 typedef Alpha_shape_2::Coord_type Coord_type;
 typedef Alpha_shape_2::Alpha_iterator Alpha_iterator;
+typedef Alpha_shape_2::Alpha_shape_vertices_iterator alpha_vertices_iterator;
+typedef Alpha_shape_2::Alpha_shape_edges_iterator alpha_edges_iterator;
 
 //---------------------------------------------------------------------
 
@@ -96,6 +98,7 @@ Construct_Alpha_shape(const std::list<Point> &V_p,
   Alpha_shape_2 A;
   
   int  n = A.make_alpha_shape(V_p.begin(), V_p.end());
+  std::cout << "Weighted Alpha Shape computed" << std::endl;
   std::cout << "Inserted " << n  << " points" << std::endl;
   
   if (mode) 
@@ -104,6 +107,27 @@ Construct_Alpha_shape(const std::list<Point> &V_p,
     { A.set_mode(Alpha_shape_2::REGULARIZED); };
   A.set_alpha(Alpha);
 
+  alpha_vertices_iterator A_v_it;
+  alpha_edges_iterator A_e_it;
+  Point p, q;
+
+  for(A_v_it = A.Alpha_shape_vertices_begin(); A_v_it !=
+ 	A.Alpha_shape_vertices_end(); A_v_it++)
+    { 
+      p = (*A_v_it)->point();
+      //std::cout << p << std::endl;
+    }
+
+  //std::cout << std::endl << "=============================================" << std::endl;
+
+  for(A_e_it = A.Alpha_shape_edges_begin(); A_e_it !=
+	A.Alpha_shape_edges_end(); A_e_it++)
+    {
+      p = A.segment(A_e_it->first,A_e_it->second).source();
+      q = A.segment(A_e_it->first,A_e_it->second).target();
+      //std::cout << p << " ----- " << q << std::endl;
+    }
+  std::cout << "Weighted Alpha Shape checked" << std::endl;
   //  V_seg << A;
   
   return V_seg;
@@ -144,6 +168,5 @@ int main(int argc,  char* argv[])
   file_input(L);
   std::vector<Gt::Segment> V =
     Construct_Alpha_shape(L,Coord_type(10000),Alpha_shape_2::GENERAL);
-  std::cout << "Weighted Alpha Shape computed" << std::endl;
   return 0;
 }
