@@ -42,6 +42,7 @@ namespace CGAL {
   public slots:
     void delete_point();
     void move_point();
+    void stateChanged(int);
 };
 
 

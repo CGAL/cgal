@@ -146,7 +146,7 @@ public:
     this->addToolBar(stoolbar->toolbar(), Top, FALSE);
     this->addToolBar(newtoolbar->toolbar(), Top, FALSE);
   
-    *widget << CGAL::LineWidth(1) << CGAL::BackgroundColor (CGAL::BLACK);
+    *widget << CGAL::LineWidth(2) << CGAL::BackgroundColor (CGAL::BLACK);
   
     resize(w,h);
 
