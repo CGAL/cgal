@@ -135,7 +135,7 @@ public:
     *widget << CGAL::BackgroundColor (CGAL::BLACK);
 
     resize(w,h);
-    widget->show();
+    widget->set_window(-1, 1, -1, 1);
 
     widget->setMouseTracking(TRUE);
 	
@@ -152,12 +152,6 @@ public:
     xmin = -1; xmax = 1;
     ymin = -1; ymax = 1;
   }
-
-  void set_window(double xmin, double xmax,
-			  double ymin, double ymax){
-    widget->set_window(xmin, xmax, ymin, ymax);
-  }
-
 
 private slots:
   void new_instance(){
@@ -229,8 +223,7 @@ private slots:
 
   void new_window(){
     Window *ed = new Window(500, 500);
-    ed->setCaption("Layer");
-    ed->show();
+    ed->setCaption("Layer");    
     if(tr1.number_of_vertices() > 1){
       Vertex_iterator it = tr1.vertices_begin();
       xmin = xmax = (*it).point().x();
@@ -247,7 +240,8 @@ private slots:
         it++;
       }
     }
-    ed->set_window(xmin, xmax, ymin, ymax);
+    ed->widget->set_window(xmin, xmax, ymin, ymax);
+    ed->show();
     something_changed();
   }
 
@@ -371,8 +365,7 @@ main(int argc, char **argv)
   W.setMouseTracking(TRUE);
   W.show();
   // because Qt send resizeEvent only on show.
-  W.init_coordinates();
-  W.set_window(-1, 1, -1, 1);
+  W.init_coordinates();  
   current_state = -1;
   return app.exec();
 }
