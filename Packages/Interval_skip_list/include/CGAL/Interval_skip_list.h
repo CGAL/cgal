@@ -29,11 +29,12 @@
 #include <cassert>
 #include <iostream>
 #include <CGAL/Random.h>
-//#define CCC
+#define CCC
 //#define ISL_LIST
 
+#if defined(CCC) || ! defined(ISL_LIST)
 #include <CGAL/Compact_container.h>
-
+#endif
 
 namespace CGAL {
 
