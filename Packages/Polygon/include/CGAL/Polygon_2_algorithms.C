@@ -42,29 +42,14 @@ CGAL_BEGIN_NAMESPACE
 //      PolygonTraits::Point_2
 
 
-template <class ForwardIterator, class PolygonTraits, class ItTag>
-bool is_simple_aux_2(ForwardIterator first, ForwardIterator last, 
-	PolygonTraits const &traits, ItTag tag)
-{
-    std::vector<CGAL_TYPENAME_MSVC_NULL PolygonTraits::Point_2> data_copy(first, last);
-    return is_simple_polygon(data_copy.begin(), data_copy.end(), traits);
-}
-
 template <class ForwardIterator, class PolygonTraits>
-bool is_simple_aux_2(ForwardIterator first, ForwardIterator last, 
-	PolygonTraits const &traits,  std::random_access_iterator_tag)
+inline bool is_simple_2(ForwardIterator first,
+                      ForwardIterator last,
+                      const PolygonTraits& traits)
 {
     return is_simple_polygon(first, last, traits);
 }
 
-template <class ForwardIterator, class PolygonTraits>
-bool is_simple_2(ForwardIterator first,
-                      ForwardIterator last,
-                      const PolygonTraits& traits)
-{
-    return is_simple_aux_2(first, last, traits,
-            std::iterator_category(first));
-}
 
 //-----------------------------------------------------------------------//
 //                          left_vertex_2
