@@ -8,7 +8,7 @@
 typedef CGAL::Cartesian<double> Rep;
 typedef CGAL::Polygon_traits_2<Rep> Traits;
 typedef CGAL::Point_2<Rep> Point;
-typedef CGAL::Polygon_2<Traits, list<Point> > Polygon;
+typedef CGAL::Polygon_2<Traits, std::list<Point> > Polygon;
 typedef CGAL::Circulator_from_container< std::vector<Point> >  Circulator;
 
 int main()

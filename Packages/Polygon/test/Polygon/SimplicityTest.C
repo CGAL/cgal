@@ -13,6 +13,7 @@
 #include <cassert>
 
 using std::cout;
+using std::endl;
 
 bool TestSimplicity(const char* FileName)
 // tests the simplicity of the polygon in the file FileName
@@ -25,7 +26,7 @@ bool TestSimplicity(const char* FileName)
   cout << "-----------------------------------------------" << endl;
   std::ifstream from(FileName);
   if (!from) {
-    cerr << "Error: could not open file " << FileName << endl;
+    std::cerr << "Error: could not open file " << FileName << endl;
     return false;
   }
 

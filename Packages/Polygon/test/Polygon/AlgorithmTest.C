@@ -30,8 +30,8 @@ void test_polygon(const R&, const Point&, const char* FileName)
   std::vector<Point> polygon;
 
   from >> point;
-  std::copy(std::istream_iterator<Point, ptrdiff_t>(from),
-       std::istream_iterator<Point, ptrdiff_t>(),
+  std::copy(std::istream_iterator<Point>(from),
+       std::istream_iterator<Point>(),
        std::back_inserter(polygon)
   );
 
