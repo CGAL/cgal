@@ -80,25 +80,95 @@ int main()
   //  _test_cls_triangulation_3( Cls() );
 
   // temporary version
-  Cls T;
 
-  // 4 first points to ensure that dimension is non degenerate
+  std::cout << " test dimension 2 " << std::endl;
+  std::cout << " number of inserted points : " ;
+  Cls T2;
+  // 3 particular first points 
+  T2.insert( Weighted_point(Point(0,0,0),1) );
+  T2.insert( Weighted_point(Point(1,0,0),1) );
+  T2.insert( Weighted_point(Point(0,1,0),1) );
+  int count = 3 ;
+  int n,m;
+  int px=1, py=1;
+  int qx=-1, qy=2;
+  for (m=0; m<10; m++)
+    for (n=0; n<10; n++) {
+      T2.insert( Weighted_point( Point(m*px+n*qx, m*py+n*qy, 0), 1 ) );
+      count++;
+      if (count <10)
+	std::cout << count << '\b' ;
+      else
+	if (count < 100)
+	  std::cout << count << '\b' << '\b' ;
+	else
+	  std::cout << count << '\b' << '\b' << '\b' ;
+      std::cout.flush();
+    }
+  for (m=10; m<20; m++)
+    for (n=0; n<10; n++) {
+      T2.insert( Weighted_point( Point(m*px+n*qx, m*py+n*qy, 0), -1 ) );
+      count++;
+      if (count <10)
+	std::cout << count << '\b' ;
+      else
+	if (count < 100)
+	  std::cout << count << '\b' << '\b' ;
+	else
+	  std::cout << count << '\b' << '\b' << '\b' ;
+      std::cout.flush();
+    }
+  for (m=0; m<10; m++)
+    for (n=10; n<20; n++) {
+      T2.insert( Weighted_point( Point(m*px+n*qx, m*py+n*qy, 0), -2 ) );
+      count++;
+      if (count <10)
+	std::cout << count << '\b' ;
+      else
+	if (count < 100)
+	  std::cout << count << '\b' << '\b' ;
+	else
+	  std::cout << count << '\b' << '\b' << '\b' ;
+      std::cout.flush();
+    }
+  for (m=10; m<20; m++)
+    for (n=10; n<20; n++) {
+      T2.insert( Weighted_point( Point(m*px+n*qx, m*py+n*qy, 0), 5 ) );
+      count++;
+      if (count <10)
+	std::cout << count << '\b' ;
+      else
+	if (count < 100)
+	  std::cout << count << '\b' << '\b' ;
+	else
+	  std::cout << count << '\b' << '\b' << '\b' ;
+      std::cout.flush();
+    }
+ 
+  std::cout << std::endl << " number of vertices : " 
+	    << T2.number_of_vertices() << std::endl;
+  assert( T2.dimension()==2 );
+  assert( T2.is_valid() );
+
+ // dimension 3
+  std::cout << " test dimension 3" << std::endl;
+  Cls T;
+  // 3 particular first points 
   T.insert( Weighted_point(Point(0,0,0),1) );
   T.insert( Weighted_point(Point(1,0,0),1) );
   T.insert( Weighted_point(Point(0,1,0),1) );
-  T.insert( Weighted_point(Point(0,0,1),1) );
-
 
   list_point lp;
   int a, b, d;
   for (a=0;a!=10;a++)
     for (b=0;b!=10;b++)
       for (d=0;d!=10;d++)
-	lp.push_back(Weighted_point( Point(a*b-d*a + (a-b)*10 +a ,a-b+d +5*b,
+	lp.push_back(Weighted_point( Point(a*b-d*a + (a-b)*10 +a ,
+					   a-b+d +5*b,
 					   a*a-d*d+b),
 				     a*b-a*d) );
   list_point::iterator it;
-  int count = 0 ;
+  count = 0 ;
   std::cout << " number of inserted points : " ;
   for (it=lp.begin(); it!=lp.end();it++){
     count++;
@@ -117,7 +187,6 @@ int main()
   }
 
   std::cout << " number of vertices : " << T.number_of_vertices() << std::endl;
-
   assert(T.is_valid(true));
   assert(T.dimension()==3);
 
