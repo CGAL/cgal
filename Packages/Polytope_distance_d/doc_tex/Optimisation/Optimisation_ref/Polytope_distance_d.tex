@@ -14,6 +14,10 @@
 
 \begin{ccRefClass}{Polytope_distance_d<Traits>}
 
+\ccIndexSubitem       [t]{distance}{of polytopes}
+\ccIndexSubitem       [t]{polytope}{distance of polytopes}
+\ccIndexSubitem       [t]{optimal distances}{distance of polytopes}
+
 \ccSaveThreeColumns
 \cgalPolytopeDistanceLayout
 
@@ -28,17 +32,19 @@ An object of the class \ccRefName\ represents the (squared) distance
 between two convex polytopes, given as the convex hulls of two finite point
 sets in $d$-dimensional Euclidean space $\E_d$. For point sets $P$ and $Q$
 we denote by $pd(P,Q)$ the distance between the convex hulls of $P$ and
-$Q$.  Note that $pd(P,Q)$ can be degenerate, i.e.~$pd(P,Q)=\infty$ if $P$
-or $Q$ is empty.
+$Q$. Note that $pd(P,Q)$ can be
+degenerate\ccIndexSubitem[t]{degeneracies}{\ccFont Polytope_distance_d},
+i.e.~$pd(P,Q)=\infty$ if $P$ or $Q$ is empty.
 
 Two inclusion-minimal subsets $S_P$ of $P$ and $S_Q$ of $Q$ with
-$pd(S_P,S_Q)=pd(P,Q)$ are called \emph{pair of support sets}, the points in
-$S_P$ and $S_Q$ are the \emph{support points}. A pair of support sets has
-size at most $d+2$ (by size we mean $|S_P|+|S_Q|$). The distance between
-the two polytopes is \emph{realized} by a pair of points $p$ and $q$
-lying in the convex hull of $S_P$ and $S_Q$, repectively,
-i.e.~$\sqrt{||p-q||}=pd(P,Q)$. In general, neither the support sets nor
-the realizing points are necessarily unique.
+$pd(S_P,S_Q)=pd(P,Q)$ are called \emph{pair of support
+  sets}\ccIndexSubitem[t]{support set}{\ccFont Polytope_distance_d}, the
+points in $S_P$ and $S_Q$ are the \emph{support points}. A pair of support
+sets has size at most $d+2$ (by size we mean $|S_P|+|S_Q|$). The distance
+between the two polytopes is \emph{realized} by a pair of points $p$ and
+$q$ lying in the convex hull of $S_P$ and $S_Q$, repectively,
+i.e.~$\sqrt{||p-q||}=pd(P,Q)$. In general, neither the support sets nor the
+realizing points are necessarily unique.
 
 The underlying algorithm can cope with all kinds of input, e.g.~$P$ and~$Q$
 may be in non-convex position or points may occur more than once. The
@@ -50,6 +56,7 @@ operation.
 
 % -----------------------------------------------------------------------------
 \ccRequirements
+\ccIndexRequirements
 
 The template parameter \ccc{Traits} is a model for
 \ccc{Polytope_distance_d_traits}.
@@ -60,6 +67,7 @@ using the two-, three-, and $d$-dimensional \cgal~kernel, respectively.
 
 % -----------------------------------------------------------------------------
 \ccTypes
+\ccIndexClassTypes
 
 \ccSetTwoColumns{\ccRefName:: Point}{}
 
@@ -92,13 +100,13 @@ using the two-, three-, and $d$-dimensional \cgal~kernel, respectively.
 
 % -----------------------------------------------------------------------------
 \ccCreation
+\ccIndexClassCreation
 \ccCreationVariable{poly_dist}
 
 \ccConstructor{ Polytope_distance_d( const Traits&  traits  = Traits(),
                                      int            verbose = 0,
                                      std::ostream&  stream  = std::cout);}{
-        creates a variable of type \ccRefName\ and initializes it
-        to \PDempty.}
+        initializes \ccVar\ to \PDempty.}
 
 \ccConstructor{ template < class InputIterator1, class InputIterator2 >
                 Polytope_distance_d( InputIterator1  p_first,
@@ -108,13 +116,12 @@ using the two-, three-, and $d$-dimensional \cgal~kernel, respectively.
                                      const Traits&   traits = Traits(),
                                      int             verbose = 0,
                                      std::ostream&   stream  = std::cout);}{
-        creates a variable \ccVar\ of type \ccRefName.
-        It is initialized to $pd(P,Q)$ with $P$ and $Q$ being the sets of
-        points in the range [\ccc{p_first},\ccc{p_last}) and
+        initializes \ccVar\ to $pd(P,Q)$ with $P$ and $Q$ being the
+        sets of points in the range [\ccc{p_first},\ccc{p_last}) and
         [\ccc{q_first},\ccc{q_last}), respectively.
-        \ccPrecond  The value type of \ccc{InputIterator1} and
-        \ccc{InputIterator2} is \ccc{Point}, and all points have the same
-        dimension.}
+        \ccRequire  The value type of \ccc{InputIterator1} and
+        \ccc{InputIterator2} is \ccc{Point}.
+        \ccPrecond  All points have the same dimension.}
 
 \begin{ccAdvanced}
   If \ccc{verbose} is set to $1$, $2$, or $3$ then some, more, or full
@@ -124,6 +131,8 @@ using the two-, three-, and $d$-dimensional \cgal~kernel, respectively.
 
 % -----------------------------------------------------------------------------
 \ccAccessFunctions
+\begin{ccIndexMemberFunctions}
+\ccIndexMemberFunctionGroup{access}
 
 \ccMemberFunction{ int  ambient_dimension( ) const;}{
         returns the dimension of the points in $P$ and $Q$.
@@ -145,6 +154,7 @@ using the two-, three-, and $d$-dimensional \cgal~kernel, respectively.
 \ccGlueBegin
 \ccMemberFunction{ int  number_of_support_points( ) const;}{
         returns the number of support points of \ccVar, i.e.~$|S_P|+|S_Q|$.}
+\ccIndexSubitem[t]{support set}{\ccFont Polytope_distance_d}
 %
 \ccMemberFunction{ int  number_of_support_points_p( ) const;}{
         returns the number of support points in $S_P$.}
@@ -247,6 +257,7 @@ using the two-, three-, and $d$-dimensional \cgal~kernel, respectively.
 
 % -----------------------------------------------------------------------------
 \ccPredicates
+\ccIndexMemberFunctionGroup{predicates}
 
 \ccMemberFunction{ bool  is_finite( ) const;}{
         returns \ccc{true}, if $pd(P,Q)$ is finite,
@@ -259,9 +270,11 @@ using the two-, three-, and $d$-dimensional \cgal~kernel, respectively.
 \ccMemberFunction{ bool  is_degenerate( ) const;}{
         returns \ccc{true}, iff $pd(P,Q)$ is degenerate,
         i.e.~$pd(P,Q)$ is not finite.}
+\ccIndexSubitem[t]{degeneracies}{\ccFont Polytope_distance_d}
 
 % -----------------------------------------------------------------------------
 \ccModifiers
+\ccIndexMemberFunctionGroup{modifiers}
 
 \ccMemberFunction{ void  clear( );}{
         resets \ccVar\ to \PDempty.}
@@ -274,27 +287,27 @@ using the two-, three-, and $d$-dimensional \cgal~kernel, respectively.
         sets \ccVar\ to $pd(P,Q)$ with $P$ and $Q$ being the sets of
         points in the ranges [\ccc{p_first},\ccc{p_last}) and
         [\ccc{q_first},\ccc{q_last}), respectively.
-        \ccPrecond  The value type of \ccc{InputIterator1} and
-        \ccc{InputIterator2} is \ccc{Point}, and all points have the same
-        dimension.}
+        \ccRequire  The value type of \ccc{InputIterator1} and
+        \ccc{InputIterator2} is \ccc{Point}.
+        \ccPrecond  All points have the same dimension.}
 
 \ccMemberFunction{ template < class InputIterator >
                    void  set_p( InputIterator p_first,
                                 InputIterator p_last );}{
         sets \ccVar\ to $pd(P,Q)$ with $P$ being the set of points
         in the range [\ccc{p_first},\ccc{p_last}) ($Q$ remains unchanged).
-        \ccPrecond  The value type of \ccc{InputIterator} is \ccc{Point},
-        and all points in $P$ have dimension \ccVar\ccc{.ambient_dimension()}
-        if $Q$ is not empty.}
+        \ccRequire  The value type of \ccc{InputIterator} is \ccc{Point}.
+        \ccPrecond  All points in $P$ have dimension
+        \ccVar\ccc{.ambient_dimension()} if $Q$ is not empty.}
 
 \ccMemberFunction{ template < class InputIterator >
                    void  set_q( InputIterator q_first,
                                 InputIterator q_last );}{
         sets \ccVar\ to $pd(P,Q)$ with $Q$ being the set of points
         in the range [\ccc{q_first},\ccc{q_last}) ($P$ remains unchanged).
-        \ccPrecond  The value type of \ccc{InputIterator} is \ccc{Point},
-        and all points in $Q$ have dimension \ccVar\ccc{.ambient_dimension()}
-        if $P$ is not empty.}
+        \ccRequire  The value type of \ccc{InputIterator} is \ccc{Point}.
+        \ccPrecond  All points in $Q$ have dimension
+        \ccVar\ccc{.ambient_dimension()} if $P$ is not empty.}
 
 \ccMemberFunction{ void  insert_p( const Point& p);}{
         inserts \ccc{p} into $P$.
@@ -314,9 +327,10 @@ using the two-, three-, and $d$-dimensional \cgal~kernel, respectively.
         inserts the points in the range [\ccc{p_first},\ccc{p_last})
         and [\ccc{q_first},\ccc{q_last}) into $P$ and $Q$, respectively,
         and recomputes the (squared) distance.
-        \ccPrecond  The value type of \ccc{InputIterator1} and
-        \ccc{InputIterator2} is \ccc{Point}, and all points have the same
-        dimension. If \ccVar\ is not \PDempty, this dimension must be equal to
+        \ccRequire  The value type of \ccc{InputIterator1} and
+        \ccc{InputIterator2} is \ccc{Point}.
+        \ccPrecond  All points have the same dimension.
+        If \ccVar\ is not \PDempty, this dimension must be equal to
         \ccVar\ccc{.ambient_dimension()}.}
 
 \ccMemberFunction{ template < class InputIterator >
@@ -324,8 +338,8 @@ using the two-, three-, and $d$-dimensional \cgal~kernel, respectively.
                                    InputIterator  p_last );}{
         inserts the points in the range [\ccc{p_first},\ccc{p_last}) into
         $P$ and recomputes the (squared) distance ($Q$ remains unchanged).
-        \ccPrecond  The value type of \ccc{InputIterator} is \ccc{Point},
-        and all points have the same dimension.
+        \ccRequire  The value type of \ccc{InputIterator} is \ccc{Point}.
+        \ccPrecond  All points have the same dimension.
         If \ccVar\ is not empty, this dimension must be equal to
         \ccVar\ccc{.ambient_dimension()}.}
 
@@ -334,13 +348,15 @@ using the two-, three-, and $d$-dimensional \cgal~kernel, respectively.
                                    InputIterator  q_last );}{
         inserts the points in the range [\ccc{q_first},\ccc{q_last}) into
         $Q$ and recomputes the (squared) distance ($P$ remains unchanged).
-        \ccPrecond  The value type of \ccc{InputIterator} is \ccc{Point},
-        and all points have the same dimension.
+        \ccRequire  The value type of \ccc{InputIterator} is \ccc{Point}.
+        \ccPrecond  All points have the same dimension.
         If \ccVar\ is not empty, this dimension must be equal to
         \ccVar\ccc{.ambient_dimension()}.}
 
 % -----------------------------------------------------------------------------
 \ccHeading{Validity Check}
+\ccIndexMemberFunctionGroup{validity check}
+\ccIndexSubitem[t]{validity check}{\ccFont Polytope_distance_d}
 
 An object \ccVar\ is valid, iff
 \ldots
@@ -360,6 +376,7 @@ An object \ccVar\ is valid, iff
 
 % -----------------------------------------------------------------------------
 \ccHeading{Miscellaneous}
+\ccIndexMemberFunctionGroup{miscellaneous}
 
 \def\ccTagRmConstRefPair{\ccFalse}
 
@@ -368,9 +385,13 @@ An object \ccVar\ is valid, iff
 
 \def\ccTagRmConstRefPair{\ccTrue}
 
+\end{ccIndexMemberFunctions}
+
 % -----------------------------------------------------------------------------
 \ccHeading{I/O}
+\begin{ccIndexGlobalFunctions}
 
+\ccIndexGlobalFunctionGroup{output}
 \ccFunction{ std::ostream&
              operator << ( std::ostream& os,
                            const Polytope_distance_d<Traits>& poly_dist);}{
@@ -383,21 +404,25 @@ An object \ccVar\ is valid, iff
         reads \ccVar\ from input stream \ccc{is}.
         \ccRequire  The input operator is defined for \ccc{Point_d}.}
 
+\end{ccIndexGlobalFunctions}
+
 % -----------------------------------------------------------------------------
 \ccSeeAlso
 
 \ccRefIdfierPage{CGAL::Polytope_distance_d_traits_2<R,ET,NT>}\\
 \ccRefIdfierPage{CGAL::Polytope_distance_d_traits_3<R,ET,NT>}\\
 \ccRefIdfierPage{CGAL::Polytope_distance_d_traits_d<R,ET,NT>}\\[1ex]
-\ccRefIdfierPage{Polytope_distance_d_traits}
+\ccRefConceptPage{Polytope_distance_d_traits}
 
 % -----------------------------------------------------------------------------
 \ccImplementation
+\ccIndexImplementation
 
 The problem of finding the distance between two convex polytopes given as
 the convex hulls of two finite point sets can be formulated as an
 optimization problem with linear constraints and a convex quadratic
-objective function. The solution is obtained using our exact solver for
+objective function\ccIndexSubitem[t]{quadratic program}{\ccFont
+  Polytope_distance_d}. The solution is obtained using our exact solver for
 quadratic programs~\cite{gs-eegqp-00}.
 
 The creation time is almost always linear in the number of points.  Access

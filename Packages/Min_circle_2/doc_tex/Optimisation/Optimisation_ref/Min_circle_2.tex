@@ -14,6 +14,12 @@
 
 \begin{ccRefClass}{Min_circle_2<Traits>}
 
+\ccIndexSubitem       [t]{circle }{smallest enclosing}
+\ccIndexSubitemSeeAlso[t]{ellipse}{smallest enclosing circle}
+\ccIndexSubitemSeeAlso[t]{sphere }{smallest enclosing circle}
+\ccIndexSubitem       [t]{smallest enclosing}{circle}
+\ccIndexSubitem       [t]{bounding volumes}{smallest enclosing circle}
+
 \ccSaveThreeColumns
 \cgalMinCircleLayout
 
@@ -21,18 +27,19 @@
 \ccDefinition
 
 An object of the class \ccRefName\ is the unique circle of smallest area
-enclosing a finite set of points in two-dimensional Euclidean space~$\E_2$.
-For a point set $P$ we denote by $mc(P)$ the smallest circle that contains
-all points of $P$. Note that $mc(P)$ can be degenerate,
+enclosing a finite (multi)set of points in two-dimensional Euclidean
+space~$\E_2$.  For a point set $P$ we denote by $mc(P)$ the smallest circle
+that contains all points of $P$. Note that $mc(P)$ can be
+degenerate\ccIndexSubitem[t]{degeneracies}{\ccFont Min_circle_2},
 i.e.~$mc(P)=\mbox{\ccTexHtml{$\;\emptyset$}{&Oslash;}}$ if
 $P=\mbox{\ccTexHtml{$\;\emptyset$}{&Oslash;}}$ and $mc(P)=\{p\}$ if
 $P=\{p\}$.
 
 An inclusion-minimal subset $S$ of $P$ with $mc(S)=mc(P)$ is called a
-\emph{support set}, the points in $S$ are the \emph{support points}.
-A support set has size at most three, and all its points lie on the
-boundary of $mc(P)$. In general, neither the support set nor its size
-are necessarily unique.
+\emph{support set}\ccIndexSubitem[t]{support set}{\ccFont Min_circle_2},
+the points in $S$ are the \emph{support points}.  A support set has size at
+most three, and all its points lie on the boundary of $mc(P)$. In general,
+neither the support set nor its size are necessarily unique.
 
 The underlying algorithm can cope with all kinds of input, e.g.~$P$ may be
 empty or points may occur more than once. The algorithm computes a support
@@ -42,6 +49,7 @@ set $S$ which remains fixed until the next insert or clear operation.
 
 % -----------------------------------------------------------------------------
 \ccRequirements
+\ccIndexRequirements
 
 The template parameter \ccc{Traits} is a model for \ccc{Min_circle_2_traits}.
 
@@ -50,6 +58,7 @@ We provide the model \ccc{Min_circle_2_traits_2} using the two-dimensional
 
 % -----------------------------------------------------------------------------
 \ccTypes
+\ccIndexClassTypes
 
 \ccSetTwoColumns{\ccRefName:: Circle}{}
 
@@ -71,12 +80,14 @@ We provide the model \ccc{Min_circle_2_traits_2} using the two-dimensional
 
 % -----------------------------------------------------------------------------
 \ccCreation
+\ccIndexClassCreation
 \ccCreationVariable{min_circle}
 
 A \ccRefName\ object can be created from an arbitrary point set $P$ and by
 specialized construction methods expecting no, one, two or three points as
 arguments. The latter methods can be useful for reconstructing $mc(P)$ from
-a given support set $S$ of $P$.
+a given support~set\ccIndexSubitem[t]{support set}{\ccFont Min_circle_2}
+$S$ of $P$.
 
 \ccConstructor{ template < class InputIterator >
                 Min_circle_2( InputIterator  first,
@@ -84,8 +95,7 @@ a given support set $S$ of $P$.
                               bool           randomize,
                               Random&        random    = CGAL::default_random,
                               const Traits&  traits    = Traits()   );}{
-        creates a variable \ccVar\ of type \ccClassTemplateName.
-        It is initialized to $mc(P)$ with $P$ being the set of points
+        initializes \ccVar\ to $mc(P)$ with $P$ being the set of points
         in the range [\ccc{first},\ccc{last}). If \ccc{randomize} is
         \ccc{true}, a random permutation of $P$ is computed in
         advance, using the random numbers generator \ccc{random}.
@@ -93,43 +103,42 @@ a given support set $S$ of $P$.
         efficiency depends on the order in which the points are
         processed, and a bad order might lead to extremely poor
         performance (see example below).
-        \ccPrecond The value type of \ccc{first} and \ccc{last}
+        \ccRequire The value type of \ccc{first} and \ccc{last}
         is \ccc{Point}.}
 
 \ccConstructor{ Min_circle_2( const Traits&  traits = Traits());}{
-        creates a variable \ccVar\ of type \ccClassTemplateName.
-        It is initialized to
+        initializes \ccVar\ to
         $mc(\mbox{\ccTexHtml{$\emptyset$}{&Oslash;}})$, the empty set.
         \ccPostcond  \ccVar\ccc{.is_empty()} = \ccc{true}.}
 
 \ccConstructor{ Min_circle_2( const Point&   p,
                               const Traits&  traits = Traits());}{
-        creates a variable \ccVar\ of type \ccClassTemplateName.
-        It is initialized to $mc(\{p\})$, the set $\{p\}$.
+        initializes \ccVar\ to $mc(\{p\})$, the set $\{p\}$.
         \ccPostcond  \ccVar\ccc{.is_degenerate()} = \ccc{true}.}
 
 \ccConstructor{ Min_circle_2( const Point&   p1,
                               const Point&   p2,
                               const Traits&  traits = Traits());}{
-        creates a variable \ccVar\ of type \ccClassTemplateName.
-        It is initialized to $mc(\{p1,p2\})$, the circle with diameter
+        initializes \ccVar\ to $mc(\{p1,p2\})$, the circle with diameter
         equal to the segment connecting $p1$ and $p2$.}
 
 \ccConstructor{ Min_circle_2( const Point&   p1,
                               const Point&   p2,
                               const Point&   p3,
                               const Traits&  traits = Traits());}{
-        creates a variable \ccVar\ of type \ccClassTemplateName.
-        It is initialized to $mc(\{p1,p2,p3\})$.}
+        initializes \ccVar\ to $mc(\{p1,p2,p3\})$.}
 
 % -----------------------------------------------------------------------------
 \ccAccessFunctions
+\begin{ccIndexMemberFunctions}
+\ccIndexMemberFunctionGroup{access}
 
 \ccMemberFunction{ int  number_of_points( ) const;}{
         returns the number of points of \ccVar, i.e.\ $|P|$.}
 
 \ccMemberFunction{ int  number_of_support_points( ) const;}{
         returns the number of support points of \ccVar, i.e.\ $|S|$.}
+\ccIndexSubitem[t]{support set}{\ccFont Min_circle_2}
 
 \ccGlueBegin
 \ccMemberFunction{ Point_iterator  points_begin() const;}{
@@ -159,6 +168,7 @@ a given support set $S$ of $P$.
 
 % -----------------------------------------------------------------------------
 \ccPredicates
+\ccIndexMemberFunctionGroup{predicates}
 
 By definition, an empty \ccClassTemplateName\ has no boundary and no
 bounded side, i.e.\ its unbounded side equals the whole space $\E_2$.
@@ -188,9 +198,11 @@ bounded side, i.e.\ its unbounded side equals the whole space $\E_2$.
         returns \ccc{true}, iff \ccVar\ is degenerate,
         i.e.~if \ccVar\ is empty or equal to a single point, equivalently
         if the number of support points is less than 2.}
+\ccIndexSubitem[t]{degeneracies}{\ccFont Min_circle_2}
 
 % -----------------------------------------------------------------------------
 \ccModifiers
+\ccIndexMemberFunctionGroup{modifiers}
 
 New points can be added to an existing \ccVar, allowing to build $mc(P)$
 incrementally, e.g.~if $P$ is not known in advance. Compared to the direct
@@ -208,7 +220,7 @@ method is incremental itself.
         into \ccVar\ and recomputes the smallest enclosing circle by
         calling \ccc{insert(p)} for each point \ccc{p} in
         [\ccc{first},\ccc{last}).
-        \ccPrecond  The value type of \ccc{first} and \ccc{last} is
+        \ccRequire  The value type of \ccc{first} and \ccc{last} is
         \ccc{Point}.}
 
 \ccMemberFunction{ void clear( );}{
@@ -217,6 +229,8 @@ method is incremental itself.
 
 % -----------------------------------------------------------------------------
 \ccHeading{Validity Check}
+\ccIndexMemberFunctionGroup{validity check}
+\ccIndexSubitem[t]{validity check}{\ccFont Min_circle_2}
 
 An object \ccVar\ is valid, iff
 \begin{itemize}
@@ -224,9 +238,6 @@ An object \ccVar\ is valid, iff
   \item \ccVar\ is the smallest circle spanned by its support set $S$, and
   \item $S$ is minimal, i.e.\ no support point is redundant.
 \end{itemize}
-The following function is mainly intended for
-debugging user supplied traits classes but also for convincing the
-anxious user that the traits class implementation is correct.
 
 \ccMemberFunction{ bool is_valid( bool verbose = false,
                                   int  level   = 0    ) const;}{
@@ -238,6 +249,7 @@ anxious user that the traits class implementation is correct.
 
 % -----------------------------------------------------------------------------
 \ccHeading{Miscellaneous}
+\ccIndexMemberFunctionGroup{miscellaneous}
 
 \def\ccTagRmConstRefPair{\ccFalse}
 
@@ -246,9 +258,13 @@ anxious user that the traits class implementation is correct.
 
 \def\ccTagRmConstRefPair{\ccTrue}
 
+\end{ccIndexMemberFunctions}
+
 % -----------------------------------------------------------------------------
 \ccHeading{I/O}
+\begin{ccIndexGlobalFunctions}
 
+\ccIndexGlobalFunctionGroup{output}
 \ccFunction{ std::ostream&
              operator << ( std::ostream& os,
                            const Min_circle_2<Traits>& min_circle);}{
@@ -256,6 +272,7 @@ anxious user that the traits class implementation is correct.
         \ccRequire  The output operator is defined for \ccc{Point}
         (and for \ccc{Circle}, if pretty printing is used).}
 
+\ccIndexGlobalFunctionGroup{input}
 \ccFunction{ std::istream&
              operator >> ( std::istream& is,
                            Min_circle_2<Traits> min_circle&);}{
@@ -264,6 +281,7 @@ anxious user that the traits class implementation is correct.
 
 \ccInclude{CGAL/IO/Window_stream.h}
 
+\ccIndexGlobalFunctionGroup{window output}
 \ccFunction{ CGAL::Window_stream&
              operator << ( CGAL::Window_stream& ws,
                            const Min_circle_2<Traits>& min_circle);}{
@@ -271,29 +289,36 @@ anxious user that the traits class implementation is correct.
         \ccRequire  The window stream output operator is defined for
         \ccc{Point} and \ccc{Circle}.}
 
+\end{ccIndexGlobalFunctions}
+
 % -----------------------------------------------------------------------------
 \ccSeeAlso
 
 \ccRefIdfierPage{CGAL::Min_ellipse_2<Traits>}\\
 \ccRefIdfierPage{CGAL::Min_sphere_d<Traits>}\\[1ex]
 \ccRefIdfierPage{CGAL::Min_circle_2_traits_2<R>}\\[1ex]
-\ccRefIdfierPage{Min_circle_2_traits}
+\ccRefConceptPage{Min_circle_2_traits}
 
 % -----------------------------------------------------------------------------
 \ccImplementation
+\ccIndexImplementation
 
-We implement the algorithm of Welzl, with move-to-front
-heuristic~\cite{w-sedbe-91a}. The whole implementation is described
+We implement the incremental algorithm\ccIndexSubitem[t]{incremental
+  algorithm}{\ccFont Min_circle_2} of Welzl, with move-to-front
+heuristic~\cite{w-sedbe-91a}\ccIndexSubitem[t]{move-to-front
+  heuristic}{\ccFont Min_circle_2}. The whole implementation is described
 in~\cite{gs-seceg-98}.
 
-If randomization is chosen, the creation time is almost always linear in
-the number of points. Access functions and predicates take constant time,
-inserting a point might take up to linear time, but substantially less than
-computing the new smallest enclosing circle from scratch. The clear
-operation and the check for validity each takes linear time.
+If randomization\ccIndexSubitem[t]{randomization}{\ccFont Min_circle_2} is
+chosen, the creation time is almost always linear in the number of points.
+Access functions and predicates take constant time, inserting a point might
+take up to linear time, but substantially less than computing the new
+smallest enclosing circle from scratch. The clear operation and the check
+for validity each takes linear time.
 
 % -----------------------------------------------------------------------------
 \ccExample
+\ccIndexSubitem[C]{Min_circle_2}{example}
 
 To illustrate the creation of \ccRefName\ and to show that
 randomization can be useful in certain cases, we give an example.

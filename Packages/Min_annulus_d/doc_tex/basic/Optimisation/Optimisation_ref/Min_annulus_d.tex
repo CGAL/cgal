@@ -14,6 +14,11 @@
 
 \begin{ccRefClass}{Min_annulus_d<Traits>}
 
+\ccIndexSubitem       [t]{annulus}{smallest enclosing}
+\ccIndexSubitemSeeAlso[t]{sphere}{smallest enclosing annulus}
+\ccIndexSubitem       [t]{smallest enclosing}{annulus}
+\ccIndexSubitem       [t]{bounding volumes}{smallest enclosing annulus}
+
 \ccSaveThreeColumns
 \cgalMinAnnulusLayout
 
@@ -25,14 +30,16 @@ two concentric spheres with radii $r$ and $R$, $r \leq R$) enclosing a
 finite set of points in $d$-dimensional Euclidean space $\E_d$, where the
 difference $R^2-r^2$ is minimal. For a point set $P$ we denote by $ma(P)$
 the smallest annulus that contains all points of $P$.  Note that $ma(P)$
-can be degenerate, i.e.~$ma(P)=\mbox{\ccTexHtml{$\;\emptyset$}{&Oslash;}}$
-if $P=\mbox{\ccTexHtml{$\;\emptyset$}{&Oslash;}}$ and $ma(P)=\{p\}$ if
+can be degenerate\ccIndexSubitem[t]{degeneracies}{\ccFont Min_annulus_d},
+i.e.~$ma(P)=\mbox{\ccTexHtml{$\;\emptyset$}{&Oslash;}}$ if
+$P=\mbox{\ccTexHtml{$\;\emptyset$}{&Oslash;}}$ and $ma(P)=\{p\}$ if
 $P=\{p\}$.
 
 An inclusion-minimal subset $S$ of $P$ with $ma(S)=ma(P)$ is called a
-\emph{support set}, the points in $S$ are the \emph{support points}.
-A support set has size at most $d+2$, and all its points lie on the
-boundary of $ma(P)$. In general, the support set is not necessarily unique.
+\emph{support set}\ccIndexSubitem[t]{support set}{\ccFont Min_annulus_d},
+the points in $S$ are the \emph{support points}.  A support set has size at
+most $d+2$, and all its points lie on the boundary of $ma(P)$. In general,
+the support set is not necessarily unique.
 
 The underlying algorithm can cope with all kinds of input, e.g.~$P$ may be
 empty or points may occur more than once. The algorithm computes a support
@@ -42,6 +49,7 @@ set $S$ which remains fixed until the next set, insert, or clear operation.
 
 % -----------------------------------------------------------------------------
 \ccRequirements
+\ccIndexRequirements
 
 The template parameter \ccc{Traits} is a model for \ccc{Min_annulus_d_traits}.
 
@@ -51,6 +59,7 @@ two-, three-, and $d$-dimensional \cgal~kernel, respectively.
 
 % -----------------------------------------------------------------------------
 \ccTypes
+\ccIndexClassTypes
 
 \ccSetTwoColumns{\ccRefName:: Point}{}
 
@@ -94,13 +103,13 @@ two-, three-, and $d$-dimensional \cgal~kernel, respectively.
 
 % -----------------------------------------------------------------------------
 \ccCreation
+\ccIndexClassCreation
 \ccCreationVariable{min_annulus}
 
 \ccConstructor{ Min_annulus_d( const Traits&  traits  = Traits(),
                                int            verbose = 0,
                                std::ostream&  stream  = std::cout);}{
-        creates a variable of type \ccRefName\ and initializes it
-        to $ma(\mbox{\ccTexHtml{$\emptyset$}{&Oslash;}})$.}
+        initializes \ccVar\ to $ma(\mbox{\ccTexHtml{$\emptyset$}{&Oslash;}})$.}
 
 \ccConstructor{ template < class InputIterator >
                 Min_annulus_d( InputIterator  first,
@@ -108,11 +117,10 @@ two-, three-, and $d$-dimensional \cgal~kernel, respectively.
                                const Traits&  traits = Traits(),
                                int            verbose = 0,
                                std::ostream&  stream  = std::cout);}{
-        creates a variable \ccVar\ of type \ccRefName.
-        It is initialized to $ma(P)$ with $P$ being the set of points
+        initializes \ccVar\ to $ma(P)$ with $P$ being the set of points
         in the range [\ccc{first},\ccc{last}).
-        \ccPrecond  The value type of \ccc{InputIterator} is \ccc{Point},
-        and all points have the same dimension.}
+        \ccRequire  The value type of \ccc{InputIterator} is \ccc{Point}.
+        \ccPrecond  All points have the same dimension.}
 
 \begin{ccAdvanced}
   If \ccc{verbose} is set to $1$, $2$, or $3$ then some, more, or full
@@ -122,6 +130,8 @@ two-, three-, and $d$-dimensional \cgal~kernel, respectively.
 
 % -----------------------------------------------------------------------------
 \ccAccessFunctions
+\begin{ccIndexMemberFunctions}
+\ccIndexMemberFunctionGroup{access}
 
 \ccMemberFunction{ int  ambient_dimension( ) const;}{
         returns the dimension of the points in $P$.
@@ -132,6 +142,7 @@ two-, three-, and $d$-dimensional \cgal~kernel, respectively.
 
 \ccMemberFunction{ int  number_of_support_points( ) const;}{
         returns the number of support points of \ccVar, i.e.~$|S|$.}
+\ccIndexSubitem[t]{support set}{\ccFont Min_annulus_d}
 
 \ccMemberFunction{ int  number_of_inner_support_points( ) const;}{
         returns the number of support points of \ccVar{}
@@ -228,6 +239,7 @@ two-, three-, and $d$-dimensional \cgal~kernel, respectively.
 
 % -----------------------------------------------------------------------------
 \ccPredicates
+\ccIndexMemberFunctionGroup{predicates}
 
 The bounded area of the smallest enclosing annulus lies between the inner
 and the outer sphere. The boundary is the union of both spheres. By
@@ -265,9 +277,11 @@ unbounded side equals the whole space $\E_d$.
 \ccMemberFunction{ bool  is_degenerate( ) const;}{
         returns \ccc{true}, iff \ccVar\ is degenerate, i.e.~if \ccVar\
         is empty or equal to a single point.}
+\ccIndexSubitem[t]{degeneracies}{\ccFont Min_annulus_d}
 
 % -----------------------------------------------------------------------------
 \ccModifiers
+\ccIndexMemberFunctionGroup{modifiers}
 
 \ccMemberFunction{ void  clear( );}{
         resets \ccVar\ to $ma(\mbox{\ccTexHtml{$\emptyset$}{&Oslash;}})$.}
@@ -277,8 +291,8 @@ unbounded side equals the whole space $\E_d$.
                               InputIterator last );}{
         sets \ccVar\ to $ma(P)$, where $P$ is the set of points in
         the range [\ccc{first},\ccc{last}).
-        \ccPrecond  The value type of \ccc{InputIterator} is \ccc{Point},
-        and all points have the same dimension.}
+        \ccRequire  The value type of \ccc{InputIterator} is \ccc{Point}.
+        \ccPrecond  All points have the same dimension.}
 
 \ccMemberFunction{ void  insert( const Point& p);}{
         inserts \ccc{p} into \ccVar.
@@ -290,13 +304,15 @@ unbounded side equals the whole space $\E_d$.
                                  InputIterator  last );}{
         inserts the points in the range [\ccc{first},\ccc{last}) into
         \ccVar\ and recomputes the smallest enclosing annulus.
-        \ccPrecond  The value type of \ccc{InputIterator} is \ccc{Point},
-        and all points have the same dimension.
+        \ccRequire  The value type of \ccc{InputIterator} is \ccc{Point}.
+        \ccPrecond  All points have the same dimension.
         If \ccVar\ is not empty, this dimension must be equal to
         \ccVar\ccc{.ambient_dimension()}.}
 
 % -----------------------------------------------------------------------------
 \ccHeading{Validity Check}
+\ccIndexMemberFunctionGroup{validity check}
+\ccIndexSubitem[t]{validity check}{\ccFont Min_annulus_d}
 
 An object \ccVar\ is valid, iff
 \begin{itemize}
@@ -317,6 +333,7 @@ validity check.
 
 % -----------------------------------------------------------------------------
 \ccHeading{Miscellaneous}
+\ccIndexMemberFunctionGroup{miscellaneous}
 
 \def\ccTagRmConstRefPair{\ccFalse}
 
@@ -325,20 +342,27 @@ validity check.
 
 \def\ccTagRmConstRefPair{\ccTrue}
 
+\end{ccIndexMemberFunctions}
+
 % -----------------------------------------------------------------------------
 \ccHeading{I/O}
+\begin{ccIndexGlobalFunctions}
 
+\ccIndexGlobalFunctionGroup{output}
 \ccFunction{ std::ostream&
              operator << ( std::ostream& os,
                            const Min_annulus_d<Traits>& min_annulus);}{
         writes \ccVar\ to output stream \ccc{os}.
         \ccRequire  The output operator is defined for \ccc{Point}.}
 
+\ccIndexGlobalFunctionGroup{input}
 \ccFunction{ std::istream&
              operator >> ( std::istream& is,
                            Min_annulus_d<Traits> min_annulus&);}{
         reads \ccVar\ from input stream \ccc{is}.
         \ccRequire  The input operator is defined for \ccc{Point}.}
+
+\end{ccIndexGlobalFunctions}
 
 % -----------------------------------------------------------------------------
 \ccSeeAlso
@@ -347,16 +371,17 @@ validity check.
 \ccRefIdfierPage{CGAL::Min_annulus_d_traits_2<R,ET,NT>}\\
 \ccRefIdfierPage{CGAL::Min_annulus_d_traits_3<R,ET,NT>}\\
 \ccRefIdfierPage{CGAL::Min_annulus_d_traits_d<R,ET,NT>}\\[1ex]
-\ccRefIdfierPage{Min_annulus_d_traits}
+\ccRefConceptPage{Min_annulus_d_traits}
 
 % -----------------------------------------------------------------------------
 \ccImplementation
+\ccIndexImplementation
 
-The problem of finding the smallest enclosing annulus of a finite
-point set can be formulated as an optimization problem with linear
-constraints and a linear objective function. The solution is obtained
-using our exact solver for linear and quadratic
-programs~\cite{gs-eegqp-00}.
+The problem of finding the smallest enclosing annulus of a finite point set
+can be formulated as an optimization problem with linear constraints and a
+linear objective function\ccIndexSubitem[t]{linear program}{\ccFont
+  Min_annulus_d}. The solution is obtained using our exact
+solver for linear and quadratic programs~\cite{gs-eegqp-00}.
 
 The creation time is almost always linear in the number of points.  Access
 functions and predicates take constant time, inserting a point takes almost
