@@ -79,8 +79,14 @@ with the rounding modes used in this package.
   not to work correctly !  So we had to provide C functions compiled by GCC,
   and link them into libCGAL.
 
-  I think there's another problem on this platform...
+  Another "problem" is that when you don't parenthesize an expression with
+  doubles, MipsPro believes it can optimize more than it should (reordering
+  computations).  so I had to add additionnal parenthesis...
+  For example, MipsPro compiles "a*-b" to "-(a*b)" instead of "a*(-b)".
+  
+  Solution: adding parenthesis.
 
+  Also, it seems it optimizes "d<=d" to true, even if d is NaN...
 
 --
 Sylvain
