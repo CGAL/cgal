@@ -1,3 +1,9 @@
+Version 3.6.3 (October 12 1999)
+- Reverted the typename R::FT in *.C to typename Classname<R>::FT [Geert-Jan]
+  Should now work on M$VC++ as well because of that change
+- Will work on egcs 1.1.2 once direction.vector() is changed to
+  to_vector() everywhere in CGAL (pending decision).
+
 Version 3.6.2 (October 11 1999)
 - Fixed projection_lineC3 that led to bug of version 3.6.1
 

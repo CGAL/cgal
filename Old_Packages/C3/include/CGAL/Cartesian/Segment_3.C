@@ -1,4 +1,4 @@
-// ==========================================================================
+// ======================================================================
 //
 // Copyright (c) 1998 The CGAL Consortium
 //
@@ -6,12 +6,13 @@
 // of the Computational Geometry Algorithms Library (CGAL). It is not
 // intended for general use.
 //
-// --------------------------------------------------------------------------
+// ----------------------------------------------------------------------
 //
-// release       :
-// release_date  :
+// release       : $CGAL_Revision: CGAL-2.1-I-28 $
+// release_date  : $CGAL_Date: 1999/10/12 $
 //
 // file          : include/CGAL/Cartesian/Segment_3.C
+// package       : C3 (3.6.2)
 // source        : include/CGAL/Cartesian/Segment_3.C
 // revision      : $Revision$
 // revision_date : $Date$
@@ -19,7 +20,7 @@
 //
 // coordinator   : INRIA Sophia-Antipolis (Herve.Bronnimann@sophia.inria.fr)
 //
-// ==========================================================================
+// ======================================================================
 
 #ifndef CGAL_CARTESIAN_REDEFINE_NAMES_3_H
 #define CGAL_CTAG
@@ -171,7 +172,7 @@ SegmentC3<R CGAL_CTAG>::operator[](int i) const
 
 template < class R >
 inline
-typename R::FT
+typename SegmentC3<R CGAL_CTAG>::FT
 SegmentC3<R CGAL_CTAG>::squared_length() const
 {
   return squared_distance(target(), source());

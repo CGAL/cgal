@@ -1,4 +1,4 @@
-// ==========================================================================
+// ======================================================================
 //
 // Copyright (c) 1998 The CGAL Consortium
 //
@@ -6,12 +6,13 @@
 // of the Computational Geometry Algorithms Library (CGAL). It is not
 // intended for general use.
 //
-// --------------------------------------------------------------------------
+// ----------------------------------------------------------------------
 //
-// release       :
-// release_date  :
+// release       : $CGAL_Revision: CGAL-2.1-I-28 $
+// release_date  : $CGAL_Date: 1999/10/12 $
 //
 // file          : include/CGAL/Cartesian/Plane_3.C
+// package       : C3 (3.6.2)
 // source        : include/CGAL/Cartesian/Plane_3.C
 // revision      : $Revision$
 // revision_date : $Date$
@@ -19,7 +20,7 @@
 //
 // coordinator   : INRIA Sophia-Antipolis (Herve.Bronnimann@sophia.inria.fr)
 //
-// ==========================================================================
+// ======================================================================
 
 #ifndef CGAL_CARTESIAN_REDEFINE_NAMES_3_H
 #define CGAL_CTAG
@@ -50,10 +51,10 @@ template < class R >
 inline
 void
 PlaneC3<R CGAL_CTAG>::
-new_rep(const typename R::FT &a,
-        const typename R::FT &b,
-        const typename R::FT &c,
-        const typename R::FT &d)
+new_rep(const typename PlaneC3<R CGAL_CTAG>::FT &a,
+        const typename PlaneC3<R CGAL_CTAG>::FT &b,
+        const typename PlaneC3<R CGAL_CTAG>::FT &c,
+        const typename PlaneC3<R CGAL_CTAG>::FT &d)
 {
   PTR = new _Fourtuple<FT>(a, b, c, d);
 }
@@ -118,10 +119,10 @@ PlaneC3(const typename PlaneC3<R CGAL_CTAG>::Point_3 &p,
 template < class R >
 inline
 PlaneC3<R CGAL_CTAG>::
-PlaneC3(const typename R::FT &a,
-        const typename R::FT &b,
-        const typename R::FT &c,
-        const typename R::FT &d)
+PlaneC3(const typename PlaneC3<R CGAL_CTAG>::FT &a,
+        const typename PlaneC3<R CGAL_CTAG>::FT &b,
+        const typename PlaneC3<R CGAL_CTAG>::FT &c,
+        const typename PlaneC3<R CGAL_CTAG>::FT &d)
 {
   new_rep(a, b, c, d);
 }
@@ -191,7 +192,7 @@ long PlaneC3<R CGAL_CTAG>::id() const
 
 template < class R >
 inline
-typename R::FT
+typename PlaneC3<R CGAL_CTAG>::FT
 PlaneC3<R CGAL_CTAG>::a() const
 {
   return ptr()->e0;
@@ -199,7 +200,7 @@ PlaneC3<R CGAL_CTAG>::a() const
 
 template < class R >
 inline
-typename R::FT
+typename PlaneC3<R CGAL_CTAG>::FT
 PlaneC3<R CGAL_CTAG>::b() const
 {
   return ptr()->e1;
@@ -207,7 +208,7 @@ PlaneC3<R CGAL_CTAG>::b() const
 
 template < class R >
 inline
-typename R::FT
+typename PlaneC3<R CGAL_CTAG>::FT
 PlaneC3<R CGAL_CTAG>::c() const
 {
   return ptr()->e2;
@@ -215,7 +216,7 @@ PlaneC3<R CGAL_CTAG>::c() const
 
 template < class R >
 inline
-typename R::FT
+typename PlaneC3<R CGAL_CTAG>::FT
 PlaneC3<R CGAL_CTAG>::d() const
 {
   return ptr()->e3;
