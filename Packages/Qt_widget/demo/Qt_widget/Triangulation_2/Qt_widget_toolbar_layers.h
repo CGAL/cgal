@@ -26,13 +26,7 @@
 #include <CGAL/Delaunay_triangulation_2.h>
 
 #include <CGAL/IO/Qt_widget.h>
-
-
-#include "Qt_layer_show_triangulation.h"
-#include "Qt_layer_show_voronoi.h"
-#include "Qt_layer_show_points.h"
-#include "Qt_layer_show_nearest_vertex.h"
-#include "Qt_layer_show_circum_circle.h"
+#include "triangulation_2_layers.h"
 
 #include <qobject.h>
 #include <qmainwindow.h>

@@ -161,6 +161,12 @@ public:
     got_point = FALSE;
     old_state = 0;
   };
+
+  void  init_coordinates(){
+    xmin = -1; xmax = 1;
+    ymin = -1; ymax = 1;
+  }
+
   void set_window(double xmin, double xmax,
 			  double ymin, double ymax)
   {
@@ -251,16 +257,24 @@ private slots:
   void generate_triangulation()
   {
     tr1.clear();
-    widget->clear_history();
-    widget->lock();
-    widget->set_window(-1.1, 1.1, -1.1, 1.1); // set the Visible Area to the Interval
-
-    // send resizeEvent only on show.
-    widget->unlock();
     CGAL::Random_points_in_disc_2<Point> g(0.5);
     for(int count=0; count<200; count++)
-      tr1.insert(*g++);  
-    widget->redraw();
+      tr1.insert(*g++);
+    xmin = ymin = xmax = ymax = 0;
+    Vertex_iterator it = tr1.vertices_begin();
+    while(it != tr1.vertices_end()) {
+      if(xmin > (*it).point().x())
+	xmin = (*it).point().x();
+      if(xmax < (*it).point().x())
+	xmax = (*it).point().x();
+      if(ymin > (*it).point().y())
+	ymin = (*it).point().y();
+      if(ymax < (*it).point().y())
+	ymax = (*it).point().y();
+      it++;
+    }
+    widget->clear_history();
+    widget->set_window(xmin, xmax, ymin, ymax);
     something_changed();
   }
 	
@@ -301,6 +315,7 @@ private slots:
 	ymax = (*it).point().y();
       it++;
     }
+    widget->clear_history();
     widget->set_window(xmin, xmax, ymin, ymax);
     something_changed();
   }
@@ -354,6 +369,7 @@ main(int argc, char **argv)
   W.setMouseTracking(TRUE);
   W.show();
   // because Qt send resizeEvent only on show.
+  W.init_coordinates();
   W.set_window(-1, 1, -1, 1);
   current_state = -1;
   return app.exec();
