@@ -106,11 +106,11 @@ public:
   }
 
   inline
-  CGAL_Triangulation_data_structure_3(const Tds & Triangulation_data_structure_3)
+  CGAL_Triangulation_data_structure_3(const Tds & tds)
     : _number_of_vertices(0), _list_of_cells()
-    // _number_of_vertices is set to 0 so that clear() in copy_Triangulation_data_structure_3() works
+    // _number_of_vertices is set to 0 so that clear() in copy_tds() works
   {
-    copy_Triangulation_data_structure_3(Triangulation_data_structure_3);
+    copy_tds(tds);
   }
 
   // DESTRUCTOR
@@ -123,9 +123,9 @@ public:
   // ASSIGNEMENT
 
   inline
-  Tds & operator= (const Tds & Triangulation_data_structure_3)
+  Tds & operator= (const Tds & tds)
   {
-    copy_Triangulation_data_structure_3(Triangulation_data_structure_3);
+    copy_tds(tds);
     return *this;
   }  
     
@@ -702,7 +702,91 @@ public:
   }
   // end insert_in_cell
 
-    
+  void star_region( set<void*, less<void*> > & region, Vertex* v,
+		     Cell* c, int li )
+    // region is a set of connected cells
+    // c belongs to region and has facet i on the boundary of region 
+    // replaces the cells in region  
+    // by linking v to the boundary of region 
+  {
+    CGAL_triangulation_precondition( dimension() >= 2 );
+    CGAL_triangulation_precondition( region.find( (void *) c )  
+				     != region.end() );
+    // does not check whether region is connected 
+    Cell* nouv = create_star( region, v, c, li );
+    v->set_cell( nouv );
+    // v->set_cell( create_star( region, v, c, li ) );
+    set<void*, less<void*> >::const_iterator it;
+    for( it = region.begin(); it != region.end(); ++it) {
+      cerr << "delete : " << endl;
+      pp_tds_cell((Cell*)*it);
+      delete( (Cell *) *it);
+    }
+  }
+private:
+  Cell* create_star( set<void*, less<void*> > & region, Vertex* v,
+		     Cell* c, int li )
+    // creates the cells needed by star_region
+  {
+    Cell* cnew;
+    if ( dimension() == 3 ) {
+      int i[3];
+      if ( (li%2) == 1 ) {
+	i[0] = (li+1)&3;
+	i[1] = (li+2)&3;
+	i[2] = (li+3)&3;
+      }
+      else {
+	i[0] = (li+2)&3;
+	i[1] = (li+1)&3;
+	i[2] = (li+3)&3;
+      }
+      cnew = new Cell( *this,
+		       c->vertex(i[0]), c->vertex(i[1]), c->vertex(i[2]), v,
+		       NULL, NULL, NULL, c->neighbor(li) );
+      c->neighbor(li)->set_neighbor( c->neighbor(li)->index(c), cnew);
+
+      // look for the other three neighbors of cnew
+      int j1, j2;
+      Cell* cur;
+      Cell* n;
+      for (int ii=0; ii<3; ii++) {
+	cnew->vertex(ii)->set_cell(cnew);
+	// indices of the vertices of cnew such that i[ii],j1,j2,li positive
+	j1 = nextposaroundij(i[ii],li);
+	j2 = 6-i[ii]-li-j1;
+	// turn around the oriented edge j1 j2
+	cur = c;
+	n = c->neighbor(i[ii]);
+	CGAL_triangulation_assertion( nextposaroundij(j1,j2)==i[ii] );//debug
+	while (true) {
+	  j1 = n->index( cur->vertex(j1) );
+	  j2 = n->index( cur->vertex(j2) );
+	  if ( region.find( (void*) n) == region.end() ) { 
+	    //not in conflict
+            break;
+	  }
+	  CGAL_triangulation_assertion( n != c );
+	  cur = n;
+	  n = n->neighbor( nextposaroundij(j1,j2) );
+	}
+	// now n is outside region, cur is inside
+	if ( n->neighbor( nextposaroundij(j2,j1) ) == cur ) {
+	  // neighbor relation is reciprocical, ie
+	  // the cell we are looking for is not yet created
+	  cnew->set_neighbor(ii,create_star(region,v,cur,cur->index(n)));
+	  continue;
+	}
+	// else the cell we are looking for was already created
+	cnew->set_neighbor(ii,n->neighbor( nextposaroundij(j2,j1) ));
+      }
+      return cnew;
+    } // endif dimension 3
+    // dimension 2 :
+    // tbd
+  }
+public:
+
   // ITERATOR METHODS
 
   Cell_iterator cells_begin() const
@@ -879,7 +963,7 @@ public:
     {
     }
 
-  void copy_Triangulation_data_structure_3(const Tds & Triangulation_data_structure_3)
+  void copy_tds(const Tds & tds)
   {
     map< void*, void*, less<void*> > V;
     map< void*, void*, less<void*> > F;
@@ -888,24 +972,24 @@ public:
 
     clear();
 
-    int n = Triangulation_data_structure_3.number_of_vertices();
+    int n = tds.number_of_vertices();
     set_number_of_vertices(n);
-    set_dimension(Triangulation_data_structure_3.dimension());
+    set_dimension(tds.dimension());
 
     if(n == 0){ return ; }
 
     { // create the vertices
 
-      Vertex_iterator it=Triangulation_data_structure_3.vertices_begin();
-      while (it != Triangulation_data_structure_3.vertices_end()) {
+      Vertex_iterator it=tds.vertices_begin();
+      while (it != tds.vertices_end()) {
 	V[&(*it)] = new Vertex( it->point() );
 	++it;
       }
     }
 
     { // create the cells
-      Cell* it = Triangulation_data_structure_3._list_of_cells._next_cell;
-      while ( it != Triangulation_data_structure_3.past_end_cell() ){
+      Cell* it = tds._list_of_cells._next_cell;
+      while ( it != tds.past_end_cell() ){
 	F[&(*it)]=  new Cell( *this,
 			      (Vertex*) V[it->vertex(0)],
 			      (Vertex*) V[it->vertex(1)],
@@ -917,8 +1001,8 @@ public:
 
 //    only works in dimension 3
 //     { // create the cells
-//       Cell_iterator it = Triangulation_data_structure_3.cells_begin();
-//       while(it != Triangulation_data_structure_3.cells_end()){
+//       Cell_iterator it = tds.cells_begin();
+//       while(it != tds.cells_end()){
 // 	F[&(*it)]=  new Cell( *this,
 // 			      (Vertex*) V[it->vertex(0)],
 // 			      (Vertex*) V[it->vertex(1)],
@@ -929,8 +1013,8 @@ public:
 //     }
 
     { // link the vertices to a cell
-      Vertex_iterator it = Triangulation_data_structure_3.vertices_begin();
-      while(it != Triangulation_data_structure_3.vertices_end()) {
+      Vertex_iterator it = tds.vertices_begin();
+      while(it != tds.vertices_end()) {
             v = (Vertex*) V[&(*it)];
             v->set_cell( (Cell*) F[it->cell()] );
             ++it;
@@ -938,8 +1022,8 @@ public:
     }
 
     { // hook neighbor pointers of the cells
-      Cell* it = Triangulation_data_structure_3._list_of_cells._next_cell;
-      while ( it != Triangulation_data_structure_3.past_end_cell() ){
+      Cell* it = tds._list_of_cells._next_cell;
+      while ( it != tds.past_end_cell() ){
 	for(int j = 0; j < 4; j++){
             f = ((Cell*) F[&(*it)]);
             f->set_neighbor(j, (Cell*) F[it->neighbor(j)] );
@@ -950,8 +1034,8 @@ public:
 
 //     only works in dimension 3
 //     { // hook neighbor pointers of the cells
-//       Cell_iterator it = Triangulation_data_structure_3.cells_begin();
-//       while(it != Triangulation_data_structure_3.cells_end()){
+//       Cell_iterator it = tds.cells_begin();
+//       while(it != tds.cells_end()){
 //           for(int j = 0; j < 3; j++){
 //             f = ((Cell*) F[&(*it)]);
 //             f->set_neighbor(j, (Cell*) F[it->neighbor(j)] );
@@ -964,19 +1048,19 @@ public:
   }
  
   
-  void swap(Tds &Triangulation_data_structure_3)
+  void swap(Tds &tds)
   {
     int dim = dimension();
     int nb = number_of_vertices();
     Cell *l = list_of_cells().next_cell;
 
-    set_dimension(Triangulation_data_structure_3.dimension());
-    set_number_of_vertices(Triangulation_data_structure_3.number_of_vertices());
-    _list_of_cells.next_cell = Triangulation_data_structure_3.list_of_cells().next_cell;
+    set_dimension(tds.dimension());
+    set_number_of_vertices(tds.number_of_vertices());
+    _list_of_cells.next_cell = tds.list_of_cells().next_cell;
 
-    Triangulation_data_structure_3._dimension = dim;
-    Triangulation_data_structure_3._number_of_vertices = nb;
-    Triangulation_data_structure_3._list_of_cells.next_cell = l;
+    tds._dimension = dim;
+    tds._number_of_vertices = nb;
+    tds._list_of_cells.next_cell = l;
   }
 
   void clear()
@@ -1129,7 +1213,7 @@ private:
 
 template < class Vb, class Cb>
 istream& operator>>
-(istream& is, CGAL_Triangulation_data_structure_3<Vb,Cb>& Triangulation_data_structure_3)
+(istream& is, CGAL_Triangulation_data_structure_3<Vb,Cb>& tds)
 {
 
   return is;
@@ -1138,7 +1222,7 @@ istream& operator>>
 
 template < class Vb, class Cb>
 ostream& operator<<
-(ostream& os, const  CGAL_Triangulation_data_structure_3<Vb,Cb>  &Triangulation_data_structure_3)
+(ostream& os, const  CGAL_Triangulation_data_structure_3<Vb,Cb>  &tds)
 {
   
   return os;

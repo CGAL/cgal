@@ -64,7 +64,7 @@ template < class GT, class Tds>
 class CGAL_Triangulation_cell_circulator_3;
 
 template < class GT, class Tds>
-class CGAL_T_cell;
+class CGAL_Triangulation_cell_3;
 
 template < class GT, class Tds >
 class CGAL_Triangulation_3
@@ -74,7 +74,7 @@ class CGAL_Triangulation_3
 //   friend ostream& operator<< CGAL_NULL_TMPL_ARGS
 //   (ostream& os, const CGAL_Triangulation_3<GT,Tds> &tr);
 
-  friend class CGAL_T_cell<GT,Tds>;
+  friend class CGAL_Triangulation_cell_3<GT,Tds>;
   friend class CGAL_Triangulation_vertex_3<GT,Tds>;
 
   friend CGAL_Triangulation_cell_iterator_3<GT,Tds>;
@@ -94,7 +94,7 @@ public:
   typedef CGAL_Triangulation_cell_handle_3<GT,Tds> Cell_handle;
   typedef CGAL_Triangulation_vertex_handle_3<GT,Tds> Vertex_handle;
 
-  typedef CGAL_T_cell<GT,Tds> Cell;
+  typedef CGAL_Triangulation_cell_3<GT,Tds> Cell;
   typedef CGAL_Triangulation_vertex_3<GT,Tds> Vertex;
   typedef pair<Cell_handle, int> Facet;
   typedef CGAL_triple<Cell_handle, int, int> Edge;
@@ -130,9 +130,6 @@ private:
 //   {
 //   }
 
-  void set_number_of_vertices(int n) 
-    { _tds.set_number_of_vertices(n+1); }
-
   void init_tds()
     {
       infinite = new Vertex(Point(500,500,500)); // ?? debug
@@ -162,11 +159,11 @@ public:
     : _tds(tr._tds), _gt(tr._gt), infinite(tr.infinite)
   {}
 
-  // pour la demo
+  // debug
   CGAL_Triangulation_3(const Point & p0,
-		     const Point & p1,
-		     const Point & p2,
-		     const Point & p3)
+		       const Point & p1,
+		       const Point & p2,
+		       const Point & p3)
     : _tds(), _gt()
     {
       init_tds();
@@ -201,7 +198,7 @@ public:
     { return _gt;}
   
   inline
-  const Tds & Triangulation_data_structure_3() const 
+  Tds & tds() 
     { return _tds;}
   
   inline
@@ -228,6 +225,9 @@ public:
 
   
    // ASSIGNMENT
+  void set_number_of_vertices(int n) 
+    { _tds.set_number_of_vertices(n+1); }
+
   CGAL_Triangulation_3 & operator=(const CGAL_Triangulation_3 & tr)
   {
     clear();
@@ -1781,15 +1781,15 @@ public:
 	  v3=c->vertex((inf+3)&3);
 	if ( inf%2 == 0 ) {
 	  o = geom_traits().orientation(p,
-			       v1->point(),
-			       v2->point(),
-			       v3->point());
+					v1->point(),
+					v2->point(),
+					v3->point());
 	}
 	else {
 	  o =  geom_traits().orientation(v3->point(),
-				p,
-				v1->point(),
-				v2->point());
+					 p,
+					 v1->point(),
+					 v2->point());
 	}
 	switch (o) {
 	case CGAL_POSITIVE:

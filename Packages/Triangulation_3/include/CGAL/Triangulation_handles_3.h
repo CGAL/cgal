@@ -25,7 +25,7 @@
 #include <CGAL/Triangulation_short_names_3.h>
 
 template < class Gt, class Tds >
-class CGAL_T_cell;
+class CGAL_Triangulation_cell_3;
 
 template <  class Gt, class Tds >
 class CGAL_Triangulation_vertex_3;
@@ -92,11 +92,11 @@ CGAL_debug(const CGAL_Triangulation_vertex_handle_3<Gt,Tds> v)
 
 template <class Gt, class Tds>
 class CGAL_Triangulation_cell_handle_3
-  :public CGAL_Pointer<CGAL_T_cell<Gt,Tds> > 
+  :public CGAL_Pointer<CGAL_Triangulation_cell_3<Gt,Tds> > 
 {
 public:
-  typedef CGAL_Pointer<CGAL_T_cell<Gt,Tds> > Pointer;
-  typedef CGAL_T_cell<Gt,Tds> Cell;
+  typedef CGAL_Pointer<CGAL_Triangulation_cell_3<Gt,Tds> > Pointer;
+  typedef CGAL_Triangulation_cell_3<Gt,Tds> Cell;
   typedef CGAL_Triangulation_cell_handle_3<Gt,Tds> Cell_handle;
   
   typedef CGAL_Triangulation_cell_iterator_3<Gt,Tds> Cell_iterator;
@@ -137,7 +137,7 @@ public:
 };
 
 template <class Gt, class Tds>
-CGAL_T_cell<Gt,Tds> * 
+CGAL_Triangulation_cell_3<Gt,Tds> * 
 CGAL_debug(const CGAL_Triangulation_cell_handle_3<Gt,Tds> c)
 {
   return c.ptr();

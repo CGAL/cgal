@@ -40,7 +40,7 @@ class CGAL_Triangulation_geom_traits_3
 public:
 
   typedef CGAL_Point_3<R>  Point;
-  typedef CGAL_Point_2<R>  Point2;
+  typedef CGAL_Point_2< CGAL_Cartesian< CGAL_Quotient<R::RT> > >  Point2;
   typedef CGAL_Segment_3<R> Segment;
   typedef CGAL_Triangle_3<R> Triangle;
   typedef CGAL_Tetrahedron_3<R> Tetrahedron;
@@ -165,6 +165,30 @@ public:
     {
       return CGAL_collinear(p,q,r);
     }
+
+  // DELAUNAY
+
+  CGAL_Oriented_side 
+  side_of_oriented_sphere(const Point & p,
+			  const Point & q,
+			  const Point & r,
+			  const Point & s,
+			  const Point & test) const
+    {
+      return CGAL_side_of_oriented_sphere(p, q, r, s, test);
+    }
+
+  CGAL_Oriented_side 
+  side_of_oriented_circle_in_plane(const Point & p,
+				   const Point & q,
+				   const Point & r,
+				   const Point & test) const
+    {
+      cerr<< "side_of_oriented_circle_in_plane not yet implemented" << endl;
+      CGAL_triangulation_assertion(false);
+      return CGAL_ON_POSITIVE_SIDE;
+    }
+
 };
 
 

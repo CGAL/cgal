@@ -38,13 +38,13 @@ class CGAL_Triangulation_cell_3;
 
 template < class Gt, class Tds>
 class CGAL_Triangulation_cell_circulator_3
-  : public CGAL_Bidirectional_circulator_base<CGAL_T_cell<Gt,Tds>, ptrdiff_t, size_t>
+  : public CGAL_Bidirectional_circulator_base<CGAL_Triangulation_cell_3<Gt,Tds>, ptrdiff_t, size_t>
 {
 public:
   typedef typename Tds::Cell CTriangulation_data_structure_3;
   typedef typename Tds::Cell_circulator Circulator_base;
 
-  typedef CGAL_T_cell<Gt,Tds> Cell;
+  typedef CGAL_Triangulation_cell_3<Gt,Tds> Cell;
   typedef CGAL_Triangulation_vertex_3<Gt,Tds> Vertex;
   typedef typename Vertex::Vertex_handle Vertex_handle;
   typedef typename Cell::Cell_handle Cell_handle;

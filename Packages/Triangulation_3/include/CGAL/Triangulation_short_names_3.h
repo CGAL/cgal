@@ -39,7 +39,7 @@
 
 #define CGAL_Triangulation_3 CGAL_Tr
 #define CGAL_Triangulation_vertex_3 CGAL_V
-#define CGAL_T_cell CGAL_C
+#define CGAL_Triangulation_cell_3 CGAL_C
 #define CGAL_Triangulation_vertex_handle_3 CGAL_VH
 #define CGAL_Triangulation_cell_handle_3 CGAL_CH
 

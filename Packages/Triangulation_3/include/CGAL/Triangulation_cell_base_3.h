@@ -45,7 +45,7 @@ public:
   }
 
   inline
-  CGAL_Triangulation_cell_base_3 void* v0, void* v1, void* v2, void* v3)
+  CGAL_Triangulation_cell_base_3(void* v0, void* v1, void* v2, void* v3)
   {
     set_vertices(v0, v1, v2, v3);
     set_neighbors();
@@ -53,7 +53,7 @@ public:
 
   inline
   CGAL_Triangulation_cell_base_3(void* v0, void* v1, void* v2, void* v3,
-				      void* n0, void* n1, void* n2, void* n3)
+				 void* n0, void* n1, void* n2, void* n3)
   {
     set_vertices(v0, v1, v2, v3);
     set_neighbors(n0, n1, n2, n3);

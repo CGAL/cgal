@@ -29,7 +29,7 @@
 
 
 template < class Gt, class Tds >
-class CGAL_T_cell;
+class CGAL_Triangulation_cell_3;
 
 template < class Gt, class Tds >
 class CGAL_Triangulation_vertex_handle_3;
@@ -54,10 +54,10 @@ public:
   
   typedef typename Gt::Point Point;
 
-  typedef typename Tds::Vertex VTriangulation_data_structure_3;
-  typedef typename Tds::Cell CTriangulation_data_structure_3;
+  typedef typename Tds::Vertex Vtds;
+  typedef typename Tds::Cell Ctds;
 
-  typedef CGAL_T_cell<Gt,Tds> Cell;
+  typedef CGAL_Triangulation_cell_3<Gt,Tds> Cell;
   typedef CGAL_Triangulation_vertex_3<Gt,Tds> Vertex;
   
   typedef CGAL_Triangulation_vertex_handle_3<Gt,Tds> Vertex_handle;
@@ -70,25 +70,25 @@ public:
 
   
   CGAL_Triangulation_vertex_3()
-     : VTriangulation_data_structure_3()
+     : Vtds()
   {}
 
   CGAL_Triangulation_vertex_3(const Point & p)
-    :  VTriangulation_data_structure_3(p)
+    :  Vtds(p)
   {}
     
 //   CGAL_Triangulation_vertex_3(const Point & p, Cell_handle c)
-//     :  VTriangulation_data_structure_3(p, &(*c))
+//     :  Vtds(p, &(*c))
 //   {}
 
   inline void set_cell(const Cell_handle & c)
   {
-    VTriangulation_data_structure_3::set_cell(&(*c));
+    Vtds::set_cell(&(*c));
   }
     
   inline Cell_handle cell() const
   {
-    return (Cell *) VTriangulation_data_structure_3::cell();
+    return (Cell *) Vtds::cell();
   }
         
   inline Vertex_handle handle() const

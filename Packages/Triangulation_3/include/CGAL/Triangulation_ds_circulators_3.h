@@ -46,18 +46,18 @@ public:
   // CONSTRUCTORS
 
   CGAL_Triangulation_ds_cell_circulator_3()
-    : _Triangulation_data_structure_3(NULL), _e(NULL), pos(NULL), prev(NULL)
+    : _tds(NULL), _e(NULL), pos(NULL), prev(NULL)
   {}
         
-  CGAL_Triangulation_ds_cell_circulator_3(Tds * Triangulation_data_structure_3, Edge e)
-    : _Triangulation_data_structure_3(Triangulation_data_structure_3), _e(e)
+  CGAL_Triangulation_ds_cell_circulator_3(Tds * tds, Edge e)
+    : _tds(tds), _e(e)
   {
     CGAL_triangulation_precondition( e.first != NULL && 
 				     (e.second==0 || e.second==1 ||
 				      e.second==2 || e.second==3 ) &&
 				     (e.third==0 || e.third==1 ||
 				      e.third==2 || e.third==3 ) );
-//     if ( _Triangulation_data_structure_3->dimension() <3 ) useless since precondition in Triangulation_data_structure_3 incident_cells
+//     if ( _tds->dimension() <3 ) useless since precondition in tds incident_cells
 //       {
 // 	pos = NULL;
 // 	prev = NULL;
@@ -70,7 +70,7 @@ public:
   }
 
   CGAL_Triangulation_ds_cell_circulator_3(const Cell_circulator & ccir)
-    : _Triangulation_data_structure_3(ccir._Triangulation_data_structure_3), _e(ccir._e), pos(ccir.pos), prev(ccir.prev)
+    : _tds(ccir._tds), _e(ccir._e), pos(ccir.pos), prev(ccir.prev)
   {}
         
   Cell_circulator & operator++()
@@ -136,7 +136,7 @@ public:
   
   bool operator==(const Cell_circulator & ccir) const
   {
-    return ( (_Triangulation_data_structure_3 == ccir._Triangulation_data_structure_3) && (_e == ccir._e) && 
+    return ( (_tds == ccir._tds) && (_e == ccir._e) && 
 	     (pos == ccir.pos) && (prev == ccir.prev) );
   }
         
@@ -161,7 +161,7 @@ public:
 //   }
         
 private: 
-  Tds* _Triangulation_data_structure_3;
+  Tds* _tds;
   Edge _e;
   Cell* pos; // current cell
   Cell* prev; // preceding cell

@@ -35,7 +35,7 @@ template < class Gt, class Tds >
 class CGAL_Triangulation_3;
 
 template < class Gt, class Tds >
-class CGAL_T_cell;
+class CGAL_Triangulation_cell_3;
 
 template < class Gt, class Tds >
 class CGAL_Triangulation_vertex_3;
@@ -58,13 +58,13 @@ class CGAL_Triangulation_vertex_iterator_3;
 
 template < class Gt, class Tds>
 class CGAL_Triangulation_cell_iterator_3
-  : public bidirectional_iterator<CGAL_T_cell<Gt,Tds>,ptrdiff_t>
+  : public bidirectional_iterator<CGAL_Triangulation_cell_3<Gt,Tds>,ptrdiff_t>
 {
 public:
-  typedef typename Tds::Cell CTriangulation_data_structure_3;
+  typedef typename Tds::Cell Ctds;
   typedef typename Tds::Cell_iterator Iterator_base;
 
-  typedef CGAL_T_cell<Gt,Tds> Cell;
+  typedef CGAL_Triangulation_cell_3<Gt,Tds> Cell;
   typedef CGAL_Triangulation_vertex_3<Gt,Tds> Vertex;
   typedef typename Vertex::Vertex_handle Vertex_handle;
   typedef typename Cell::Cell_handle Cell_handle;
@@ -77,10 +77,10 @@ public:
   {}
         
   CGAL_Triangulation_cell_iterator_3(CGAL_Triangulation_3<Gt,Tds> *tr, bool inf)
-    : _ib( &(tr->_Triangulation_data_structure_3)), _tr(tr), _inf(inf)
+    : _ib( &(tr->_tds)), _tr(tr), _inf(inf)
     { 
       if (! _inf) {
-	while ( // ( _ib != _tr->_Triangulation_data_structure_3.cells_end() ) &&
+	while ( // ( _ib != _tr->_tds.cells_end() ) &&
 	       // useless : there must be at least one finite cell
 	       // since precond in _ib : dimension == 3
 	       _tr->is_infinite(Cell_handle( (Cell *) &(*(_ib)) )) )
@@ -91,7 +91,7 @@ public:
   // for past-end iterator
   // does not need to find a finite cell
   CGAL_Triangulation_cell_iterator_3(CGAL_Triangulation_3<Gt,Tds> *tr)
-    : _ib( &(tr->_Triangulation_data_structure_3), 1), _tr(tr), _inf(true)
+    : _ib( &(tr->_tds), 1), _tr(tr), _inf(true)
   { }
        
   CGAL_Triangulation_cell_iterator_3(const Cell_iterator & cit)
@@ -128,7 +128,7 @@ public:
     else {
       do {
 	++_ib; 
-      } while ( ( _ib != _tr->_Triangulation_data_structure_3.cells_end() )
+      } while ( ( _ib != _tr->_tds.cells_end() )
 		&& _tr->is_infinite(Cell_handle( (Cell *) &(*(_ib)) )) );
     }
     return *this;   
@@ -143,7 +143,7 @@ public:
     else{
       do {
 	--_ib;
-      } while ( ( _ib != _tr->_Triangulation_data_structure_3.cells_end() )
+      } while ( ( _ib != _tr->_tds.cells_end() )
 		&& _tr->is_infinite(Cell_handle( (Cell *) &(*(_ib)) )) );
     }
     return *this;   
@@ -202,7 +202,7 @@ public:
   {}
         
   CGAL_Triangulation_vertex_iterator_3(CGAL_Triangulation_3<Gt,Tds> * tr, bool inf)
-    : _ib( &(tr->_Triangulation_data_structure_3)), _tr(tr), _inf(inf)
+    : _ib( &(tr->_tds)), _tr(tr), _inf(inf)
     { 
       if (! _inf) {
 	if ( _tr->is_infinite(Vertex_handle( (Vertex *) &(*(_ib)) )) ) {
@@ -214,7 +214,7 @@ public:
   // for past-end iterator
   // does not need to find a finite cell
   CGAL_Triangulation_vertex_iterator_3(CGAL_Triangulation_3<Gt,Tds> * tr)
-    : _ib( &(tr->_Triangulation_data_structure_3), 1), _tr(tr)
+    : _ib( &(tr->_tds), 1), _tr(tr)
   { }
        
   CGAL_Triangulation_vertex_iterator_3(const Vertex_iterator & vi)
@@ -311,7 +311,7 @@ class CGAL_Triangulation_edge_iterator_3
   : public bidirectional_iterator<typename CGAL_Triangulation_3<Gt,Tds>::Edge,ptrdiff_t>
 {
 public:
-  typedef typename Tds::Edge ETriangulation_data_structure_3;
+  typedef typename Tds::Edge Etds;
   typedef typename Tds::Edge_iterator  Iterator_base;
 
   typedef typename CGAL_Triangulation_3<Gt,Tds>::Edge Edge;
@@ -326,10 +326,10 @@ public:
   {}
         
   CGAL_Triangulation_edge_iterator_3(CGAL_Triangulation_3<Gt,Tds> *tr, bool inf)
-    : _ib( &(tr->_Triangulation_data_structure_3)), _tr(tr), _inf(inf)
+    : _ib( &(tr->_tds)), _tr(tr), _inf(inf)
   { 
     if (! _inf) {
-	while ( // ( _ib != _tr->_Triangulation_data_structure_3.cells_end() ) &&
+	while ( // ( _ib != _tr->_tds.cells_end() ) &&
 	   // useless : there must be at least one finite cell
 	   // since precond in _ib : dimension == 3
 	       _tr->is_infinite(CGAL_make_triple(Cell_handle( (Cell *) (*_ib).first), (*_ib).second, (*_ib).third )) )
@@ -338,7 +338,7 @@ public:
   }
         
   CGAL_Triangulation_edge_iterator_3(CGAL_Triangulation_3<Gt,Tds> *tr)
-    : _ib( &(tr->_Triangulation_data_structure_3), 1), _tr(tr)
+    : _ib( &(tr->_tds), 1), _tr(tr)
   { }
        
   CGAL_Triangulation_edge_iterator_3(const Edge_iterator & ei)
@@ -375,7 +375,7 @@ public:
     else {
       do {
 	++_ib; 
-      } while ( ( _ib != _tr->_Triangulation_data_structure_3.edges_end() )
+      } while ( ( _ib != _tr->_tds.edges_end() )
 		&& _tr->is_infinite(CGAL_make_triple(Cell_handle( (Cell *) (*_ib).first), (*_ib).second, (*_ib).third )) );
     }
     return *this;   
@@ -390,7 +390,7 @@ public:
     else{
       do {
 	--_ib;
-      } while ( ( _ib != _tr->_Triangulation_data_structure_3.edges_end() )
+      } while ( ( _ib != _tr->_tds.edges_end() )
 	      && _tr->is_infinite(CGAL_make_triple(Cell_handle( (Cell *) (*_ib).first), (*_ib).second, (*_ib).third )) );
     }
     return *this;   
@@ -430,7 +430,7 @@ class CGAL_Triangulation_facet_iterator_3
   : public bidirectional_iterator<typename CGAL_Triangulation_3<Gt,Tds>::Facet,ptrdiff_t>
 {
 public:
-  typedef typename Tds::Facet FTriangulation_data_structure_3;
+  typedef typename Tds::Facet Ftds;
   typedef typename Tds::Facet_iterator  Iterator_base;
 
   typedef typename CGAL_Triangulation_3<Gt,Tds>::Facet Facet;
@@ -445,10 +445,10 @@ public:
   {}
         
   CGAL_Triangulation_facet_iterator_3(CGAL_Triangulation_3<Gt,Tds> *tr, bool inf)
-    : _ib( &(tr->_Triangulation_data_structure_3)), _tr(tr), _inf(inf)
+    : _ib( &(tr->_tds)), _tr(tr), _inf(inf)
   {       
     if (! _inf) {
-      while ( // ( _ib != _tr->_Triangulation_data_structure_3.cells_end() ) &&
+      while ( // ( _ib != _tr->_tds.cells_end() ) &&
 	     // useless : there must be at least one finite cell
 	     // since precond in _ib : dimension == 3
 	     _tr->is_infinite(make_pair(Cell_handle( (Cell *) (*_ib).first), (*_ib).second )) )
@@ -457,7 +457,7 @@ public:
   }
         
   CGAL_Triangulation_facet_iterator_3(CGAL_Triangulation_3<Gt,Tds> *tr)
-    : _ib( &(tr->_Triangulation_data_structure_3), 1), _tr(tr), _inf(true)
+    : _ib( &(tr->_tds), 1), _tr(tr), _inf(true)
   { }
        
   CGAL_Triangulation_facet_iterator_3(const Facet_iterator & fi)
@@ -494,7 +494,7 @@ public:
     else {
       do {
 	++_ib; 
-      } while ( ( _ib != _tr->_Triangulation_data_structure_3.facets_end() )
+      } while ( ( _ib != _tr->_tds.facets_end() )
 		&& _tr->is_infinite(make_pair(Cell_handle( (Cell *) (*_ib).first), (*_ib).second )) );
     }
     return *this;   
@@ -509,7 +509,7 @@ public:
     else{
       do {
 	--_ib;
-      } while ( ( _ib != _tr->_Triangulation_data_structure_3.edges_end() )
+      } while ( ( _ib != _tr->_tds.edges_end() )
 		&& _tr->is_infinite(make_pair(Cell_handle( (Cell *) (*_ib).first), (*_ib).second )) );
     }
     return *this;   
