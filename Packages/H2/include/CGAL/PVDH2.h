@@ -52,36 +52,35 @@ public:
             PointH2();
             PointH2(const Origin & o);
             PointH2(const PointH2<R> & p);
+            PointH2(const VectorH2<R>& v);
             PointH2(const RT& hx, const RT& hy );
             PointH2(const RT& hx, const RT& hy, const RT& hw );
 
     bool    operator==( const PointH2<R>& p) const;
     bool    operator!=( const PointH2<R>& p) const;
 
-    FT      x()  const;
-    FT      y()  const;
+    RT      hx() const { return Ptr()->e0; };
+    RT      hy() const { return Ptr()->e1; };
+    RT      hw() const { return Ptr()->e2; };
 
-    RT      hx() const;
-    RT      hy() const;
-    RT      hw() const;
+    FT      x()  const { return FT(hx()) / FT(hw()); };
+    FT      y()  const { return FT(hy()) / FT(hw()); };
 
     FT      cartesian(int i)   const;
     FT      operator[](int i)  const;
     RT      homogeneous(int i) const;
 
     // and for efficiency in the predicates:
-    const RT&     hx_ref() const;
-    const RT&     hy_ref() const;
-    const RT&     hw_ref() const;
+    const RT&     hx_ref() const { return Ptr()->e0; };
+    const RT&     hy_ref() const { return Ptr()->e1; };
+    const RT&     hw_ref() const { return Ptr()->e2; };
 
     int     dimension() const;
     Bbox_2  bbox() const;
 
     PointH2<R> transform( const Aff_transformationH2<R> & t) const;
-    DirectionH2<R>
-            direction() const;
+    DirectionH2<R> direction() const;
 
-            PointH2(const VectorH2<R>& v);
  friend CGAL_FRIEND_INLINE
         PointH2<R>
         CGAL_SCOPE origin_plus_vector CGAL_NULL_TMPL_ARGS ( const VectorH2<R> & v);
@@ -113,28 +112,24 @@ public:
     bool    operator==( const Null_vector&) const;
     bool    operator!=( const Null_vector& v) const;
 
-    FT      x()  const;
-    FT      y()  const;
-    RT      hx() const;
-    RT      hy() const;
-    RT      hw() const;
+    RT      hx() const { return Ptr()->e0; };
+    RT      hy() const { return Ptr()->e1; };
+    RT      hw() const { return Ptr()->e2; };
+
+    FT      x()  const { return FT(hx()) / FT(hw()); };
+    FT      y()  const { return FT(hy()) / FT(hw()); };
+
     FT      cartesian(int i)   const;
     RT      homogeneous(int i) const;
     FT      operator[](int i)  const;
 
     int     dimension() const;
-    DirectionH2<R>
-            direction() const;
-    VectorH2<R>
-            transform(const Aff_transformationH2<R>& t ) const;
-    VectorH2<R>
-            perpendicular(const Orientation& o ) const;
+    DirectionH2<R> direction() const;
+    VectorH2<R> transform(const Aff_transformationH2<R>& t ) const;
+    VectorH2<R> perpendicular(const Orientation& o ) const;
 
-    VectorH2<R>
-            operator-() const;
-
-    VectorH2<R>
-            opposite() const;
+    VectorH2<R> operator-() const;
+    VectorH2<R> opposite() const;
 
 // undocumented:
             VectorH2(const DirectionH2<R> & dir);
@@ -213,25 +208,19 @@ public:
     bool    counterclockwise_in_between( const DirectionH2<R>& d1,
                                          const DirectionH2<R>& d2 ) const;
 
-    DirectionH2<R>
-            operator-() const;
-
+    DirectionH2<R> operator-() const;
 
     VectorH2<R>    to_vector() const;
-    // VectorH2<R>    vector() const;
 
-    RT      x() const;
-    RT      y() const;
+    RT      x() const { return Ptr()->e0; };
+    RT      y() const { return Ptr()->e1; };
 
     RT      delta(int i) const;
-    RT      dx() const;
-    RT      dy() const;
+    RT      dx() const { return Ptr()->e0; };
+    RT      dy() const { return Ptr()->e1; };
 
-    DirectionH2<R>
-          perpendicular(const Orientation &o) const;
-    DirectionH2<R>
-          transform(const Aff_transformationH2<R> &) const ;
-
+    DirectionH2<R> perpendicular(const Orientation &o) const;
+    DirectionH2<R> transform(const Aff_transformationH2<R> &) const;
 };
 
 
@@ -288,47 +277,14 @@ PointH2<R>::operator!=( const PointH2<R>& p) const
 { return !(*this == p); }   /* XXX */
 
 template < class R >
-inline
-typename R::FT
-PointH2<R>::x()  const
-{ return ( FT( hx() ) / FT( hw() )); }
-
-template < class R >
-inline
-typename R::FT
-PointH2<R>::y()  const
-{ return ( FT( hy() ) / FT( hw() )); }
-
-template < class R >
-inline
-typename R::RT
-PointH2<R>::hx() const
-{ return Ptr()->e0 ; }
-
-template < class R >
-inline
-typename R::RT
-PointH2<R>::hy() const
-{ return Ptr()->e1 ; }
-
-template < class R >
-inline
-typename R::RT
-PointH2<R>::hw() const
-{ return Ptr()->e2; }
-
-template < class R >
 CGAL_KERNEL_INLINE
 typename R::FT
 PointH2<R>::cartesian(int i) const
 {
   CGAL_kernel_precondition( (i==0 || i==1) );
-  switch (i)
-  {
-    case 0:  return x();
-    case 1:  return y();
-  }
-  return FT(RT());
+  if (i==0)
+      return x();
+  return y();
 }
 
 template < class R >
@@ -337,13 +293,11 @@ typename R::RT
 PointH2<R>::homogeneous(int i) const
 {
   CGAL_kernel_precondition( (i>=0) && (i<=2) );
-  switch (i)
-  {
-    case 0:   return hx();
-    case 1:   return hy();
-    case 2:   return hw();
-  }
-  return RT();
+  if (i==0)
+      return hx();
+  if (i==1)
+      return hy();
+  return hw();
 }
 
 template < class R >
@@ -351,24 +305,6 @@ inline
 typename R::FT
 PointH2<R>::operator[](int i) const
 { return cartesian(i); }
-
-template < class R >
-inline
-const typename R::RT&
-PointH2<R>::hx_ref() const
-{ return Ptr()->e0 ; }
-
-template < class R >
-inline
-const typename R::RT&
-PointH2<R>::hy_ref() const
-{ return Ptr()->e1 ; }
-
-template < class R >
-inline
-const typename R::RT&
-PointH2<R>::hw_ref() const
-{ return Ptr()->e2; }
 
 
 template < class R >
@@ -384,7 +320,6 @@ PointH2<R>::direction() const
 { return DirectionH2<R>(*this); }
 
 
-
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 VectorH2<R>::VectorH2()
@@ -398,8 +333,7 @@ VectorH2<R>::VectorH2(const Null_vector &)
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 VectorH2<R>::VectorH2(const VectorH2<R>& v)
-  : Vector_handle_2_ (v)
-{}
+  : Vector_handle_2_ (v) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
@@ -419,14 +353,12 @@ VectorH2<R>::VectorH2(const RT& x, const RT& y, const RT& w)
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 VectorH2<R>::VectorH2(const PointH2<R> & p)
-  : Vector_handle_2_ ( p)
-{}
+  : Vector_handle_2_ ( p) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 VectorH2<R>::VectorH2(const DirectionH2<R> & dir)
-  : Vector_handle_2_ ( dir)
-{}
+  : Vector_handle_2_ ( dir) {}
 
 template < class R >
 inline
@@ -456,53 +388,14 @@ VectorH2<R>::operator!=( const VectorH2<R>& v) const
 { return !(*this == v); }  /* XXX */
 
 template < class R >
-inline
-typename R::FT
-VectorH2<R>::x()  const
-{
-    typedef typename R::FT FT;
-    return FT(Ptr()->e0 )/FT(Ptr()->e2 ) ;
-}
-
-template < class R >
-inline
-typename R::FT
-VectorH2<R>::y()  const
-{
-    typedef typename R::FT FT;
-    return FT(Ptr()->e1 )/FT(Ptr()->e2 ) ;
-}
-
-template < class R >
-inline
-typename R::RT
-VectorH2<R>::hx() const
-{ return  Ptr()->e0 ; }
-
-template < class R >
-inline
-typename R::RT
-VectorH2<R>::hy() const
-{ return  Ptr()->e1 ; }
-
-template < class R >
-inline
-typename R::RT
-VectorH2<R>::hw() const
-{ return  Ptr()->e2 ; }
-
-template < class R >
 CGAL_KERNEL_INLINE
 typename R::FT
 VectorH2<R>::cartesian(int i) const
 {
   CGAL_kernel_precondition( (i==0 || i==1) );
-  switch (i)
-  {
-    case 0:  return x();
-    case 1:  return y();
-  }
-  return FT(RT());
+  if (i==0)
+      return x();
+  return y();
 }
 
 template < class R >
@@ -511,13 +404,11 @@ typename R::RT
 VectorH2<R>::homogeneous(int i) const
 {
   CGAL_kernel_precondition( (i>=0) && (i<=2) );
-  switch (i)
-  {
-    case 0:  return hx();
-    case 1:  return hy();
-    case 2:  return hw();
-  }
-  return RT();
+  if (i==0)
+      return hx();
+  if (i==1)
+      return hy();
+  return hw();
 }
 
 template < class R >
@@ -557,20 +448,17 @@ DirectionH2<R>::DirectionH2()
 template <class R >
 CGAL_KERNEL_CTOR_INLINE
 DirectionH2<R>::DirectionH2(const DirectionH2<R>& d )
-  : Direction_handle_2_ ( d )
-{}
+  : Direction_handle_2_ ( d ) {}
 
 template <class R >
 CGAL_KERNEL_CTOR_INLINE
 DirectionH2<R>::DirectionH2(const PointH2<R> & p )
-  : Direction_handle_2_ ( p)
-{}
+  : Direction_handle_2_ ( p) {}
 
 template <class R >
 CGAL_KERNEL_CTOR_INLINE
 DirectionH2<R>::DirectionH2(const VectorH2<R> & v )
-  : Direction_handle_2_ ( v)
-{}
+  : Direction_handle_2_ ( v) {}
 
 template <class R >
 CGAL_KERNEL_CTOR_INLINE
@@ -611,41 +499,15 @@ DirectionH2<R>::operator-() const
 { return DirectionH2<R>( - x(), - y() ); }
 
 template <class R >
-inline
-typename R::RT
-DirectionH2<R>::dx() const
-{ return Ptr()->e0; }
-
-template <class R >
-inline
-typename R::RT
-DirectionH2<R>::dy() const
-{ return Ptr()->e1; }
-
-template <class R >
 CGAL_KERNEL_INLINE
 typename R::RT
 DirectionH2<R>::delta(int i) const
 {
   CGAL_kernel_precondition( ( i == 0 ) || ( i == 1 ) );
   if (i == 0)
-  {
       return dx();
-  }
   return dy();
 }
-
-template <class R >
-inline
-typename R::RT
-DirectionH2<R>::x() const
-{ return Ptr()->e0; }
-
-template <class R >
-inline
-typename R::RT
-DirectionH2<R>::y() const
-{ return Ptr()->e1; }
 
 
 template <class R>
