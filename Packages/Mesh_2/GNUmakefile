@@ -21,6 +21,9 @@ run: all
 doc: 
 	${MAKE} -C doc_tex
 
+doxygen:
+	doxygen
+
 # clean all object files
 clean: 
 	${MAKE} -C demo/Mesh_2 clean
