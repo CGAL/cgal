@@ -83,8 +83,23 @@ public:
       seq[i] = s.seq[i];
   }
 
+  const Sturm &operator=(const Sturm &o){
+    if (this == &o) return *this;
+    if (len != 0) delete[] seq;
+    seq=NULL;
+    NEWTON_DIV_BY_ZERO=o.NEWTON_DIV_BY_ZERO;
+    len= o.len;
+    if (len !=0){
+      seq = new Polynomial<NT> [len];
+      for (int i=0; i<len; i++)
+        seq[i] = o.seq[i];
+    }
+    return *this;
+  }
+
+
   ~Sturm() {
-    delete[] seq;
+    if (len != 0) delete[] seq;
   }
 
   // METHODS
