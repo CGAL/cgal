@@ -20,7 +20,7 @@
 
 #ifdef CGAL_USE_QT
 
-#include <CGAL/IO/Qt_Widget_MovePoint.h>
+#include <CGAL/IO/Qt_widget_move_point.h>
 
 namespace CGAL {
 
@@ -29,6 +29,6 @@ void Qt_widget_movepoint_helper::move_point() { move_pointi(); };
 
 } // namespace CGAL
 
-#include "Qt_Widget_MovePoint.moc"
+#include "Qt_widget_move_point.moc"
 
 #endif

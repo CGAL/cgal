@@ -41,13 +41,13 @@ Qt_widget_toolbar$(OBJ_EXT): Qt_widget_toolbar.C Qt_widget_toolbar.moc
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) Qt_widget_toolbar.C
 
 Qt_widget_toolbar.moc: Qt_widget_toolbar.h \
-                      ../../../include/CGAL/IO/Qt_Widget.h \
-                      ../../../include/CGAL/IO/Qt_Widget_Zoom.h \
-                      ../../../include/CGAL/IO/Qt_Widget_Zoomrect.h \
-                      ../../../include/CGAL/IO/Qt_Widget_MovePoint.h \
-                      ../../../include/CGAL/IO/Qt_Widget_Get_line.h \
-                      ../../../include/CGAL/IO/Qt_Widget_Get_point.h \
-                      ../../../include/CGAL/IO/Qt_Widget_Handtool.h
+                      ../../../include/CGAL/IO/Qt_widget.h \
+                      ../../../include/CGAL/IO/Qt_widget_zoom.h \
+                      ../../../include/CGAL/IO/Qt_widget_zoomrect.h \
+                      ../../../include/CGAL/IO/Qt_widget_move_point.h \
+                      ../../../include/CGAL/IO/Qt_widget_get_line.h \
+                      ../../../include/CGAL/IO/Qt_widget_get_point.h \
+                      ../../../include/CGAL/IO/Qt_widget_handtool.h
 	$(QT_MOC) -o Qt_widget_toolbar.moc $<
 
 Qt_widget_toolbar_views$(OBJ_EXT): Qt_widget_toolbar_views.C \
@@ -55,12 +55,12 @@ Qt_widget_toolbar_views$(OBJ_EXT): Qt_widget_toolbar_views.C \
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) Qt_widget_toolbar_views.C
 
 Qt_widget_toolbar_views.moc: Qt_widget_toolbar_views.h \
-                      ../../../include/CGAL/IO/Qt_Widget.h \
-                      ../../../include/CGAL/IO/Qt_Widget_Show_voronoi.h \
-                      ../../../include/CGAL/IO/Qt_Widget_Show_triangulation.h \
-                      ../../../include/CGAL/IO/Qt_Widget_Nearest_vertex.h \
-                      ../../../include/CGAL/IO/Qt_Widget_Show_points.h \
-                      ../../../include/CGAL/IO/Qt_Widget_Mouse_coordinates.h
+                      ../../../include/CGAL/IO/Qt_widget.h \
+                      ../../../include/CGAL/IO/Qt_widget_show_voronoi.h \
+                      ../../../include/CGAL/IO/Qt_widget_show_triangulation.h \
+                      ../../../include/CGAL/IO/Qt_widget_nearest_vertex.h \
+                      ../../../include/CGAL/IO/Qt_widget_show_points.h \
+                      ../../../include/CGAL/IO/Qt_widget_mouse_coordinates.h
 	$(QT_MOC) -o Qt_widget_toolbar_views.moc $<
 
 partition_2.moc: partition_2.C

@@ -180,6 +180,6 @@ namespace CGAL {
 
 }//end namespace
 
-#include "Qt_Widget_standard_toolbar.moc"
+#include "Qt_widget_standard_toolbar.moc"
 
 #endif

@@ -44,34 +44,34 @@ all: 	Qt_Widget$(OBJ_EXT) \
 	Qt_Widget_standard_toolbar$(OBJ_EXT)
 	#Qt_ScenesWidget$(OBJ_EXT)
 
-Qt_Widget$(OBJ_EXT): Qt_Widget.C Qt_Widget.moc
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) Qt_Widget.C
+Qt_widget$(OBJ_EXT): Qt_widget.C Qt_widget.moc
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) Qt_widget.C
 
-Qt_Widget.moc: ../include/CGAL/IO/Qt_Widget.h 
-	$(QT_MOC) -o Qt_Widget.moc $<
+Qt_widget.moc: ../include/CGAL/IO/Qt_widget.h 
+	$(QT_MOC) -o Qt_widget.moc $<
 
-Qt_Widget_tool$(OBJ_EXT): Qt_Widget_tool.C Qt_Widget_tool.moc
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) Qt_Widget_tool.C
+Qt_widget_tool$(OBJ_EXT): Qt_widget_tool.C Qt_widget_tool.moc
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) Qt_widget_tool.C
 
-Qt_Widget_tool.moc: ../include/CGAL/IO/Qt_Widget_tool.h \
-                    ../include/CGAL/IO/Qt_Widget.h
-	$(QT_MOC) -o Qt_Widget_tool.moc $<
+Qt_widget_tool.moc: ../include/CGAL/IO/Qt_widget_tool.h \
+                    ../include/CGAL/IO/Qt_widget.h
+	$(QT_MOC) -o Qt_widget_tool.moc $<
 
-Qt_Widget_MovePoint$(OBJ_EXT): Qt_Widget_MovePoint.C Qt_Widget_MovePoint.moc
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) Qt_Widget_MovePoint.C
+Qt_widget_move_point$(OBJ_EXT): Qt_widget_move_point.C Qt_widget_move_point.moc
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) Qt_widget_move_point.C
 
-Qt_Widget_MovePoint.moc: ../include/CGAL/IO/Qt_Widget_MovePoint.h \
-			../include/CGAL/IO/Qt_Widget_tool.h \
-	                ../include/CGAL/IO/Qt_Widget.h
-	$(QT_MOC) -o Qt_Widget_MovePoint.moc $<
+Qt_widget_move_point.moc: ../include/CGAL/IO/Qt_widget_move_point.h \
+			../include/CGAL/IO/Qt_widget_tool.h \
+	                ../include/CGAL/IO/Qt_widget.h
+	$(QT_MOC) -o Qt_widget_move_point.moc $<
 
-Qt_Widget_standard_toolbar$(OBJ_EXT): Qt_Widget_standard_toolbar.C Qt_Widget_standard_toolbar.moc
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) Qt_Widget_standard_toolbar.C
+Qt_widget_standard_toolbar$(OBJ_EXT): Qt_widget_standard_toolbar.C Qt_widget_standard_toolbar.moc
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) Qt_widget_standard_toolbar.C
 
-Qt_Widget_standard_toolbar.moc: ../include/CGAL/IO/Qt_Widget_standard_toolbar.h \
-			../include/CGAL/IO/Qt_Widget_tool.h \
-	                ../include/CGAL/IO/Qt_Widget.h
-	$(QT_MOC) -o Qt_Widget_standard_toolbar.moc $<
+Qt_widget_standard_toolbar.moc: ../include/CGAL/IO/Qt_widget_standard_toolbar.h \
+			../include/CGAL/IO/Qt_widget_tool.h \
+	                ../include/CGAL/IO/Qt_widget.h
+	$(QT_MOC) -o Qt_widget_standard_toolbar.moc $<
 
 Qt_ScenesWidget$(OBJ_EXT): Qt_ScenesWidget.C Qt_ScenesWidget.moc
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) Qt_ScenesWidget.C
@@ -81,12 +81,6 @@ Qt_ScenesWidget.moc: ../include/CGAL/IO/Qt_ScenesWidget.h \
 		../include/CGAL/IO/Qt_Scene.h
 	$(QT_MOC) -o Qt_ScenesWidget.moc $<
 
-Qt_Scene$(OBJ_EXT): Qt_Scene.C Qt_Scene.moc
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) Qt_Scene.C
-
-Qt_Scene.moc: ../include/CGAL/IO/Qt_Scene.h \
-		../include/CGAL/IO/Qt_Widget.h
-	$(QT_MOC) -o Qt_Scene.moc $<
 
 clean:
 	rm -f *$(OBJ_EXT)

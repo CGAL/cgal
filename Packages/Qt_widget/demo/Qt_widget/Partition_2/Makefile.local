@@ -46,32 +46,32 @@ Qt_Widget_toolbar$(OBJ_EXT): Qt_Widget_toolbar.C Qt_Widget_toolbar.moc
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) Qt_Widget_toolbar.C
 
 Qt_Widget_toolbar.moc: Qt_Widget_toolbar.h \
-                      $(CGAL_INCL)/CGAL/IO/Qt_Widget.h \
-                      $(CGAL_INCL)/CGAL/IO/Qt_Widget_Zoom.h \
-                      $(CGAL_INCL)/CGAL/IO/Qt_Widget_Zoomrect.h \
-                      $(CGAL_INCL)/CGAL/IO/Qt_Widget_MovePoint.h \
-                      $(CGAL_INCL)/CGAL/IO/Qt_Widget_Get_point.h \
-		      $(CGAL_INCL)/CGAL/IO/Qt_Widget_Get_polygon.h \
-                      $(CGAL_INCL)/CGAL/IO/Qt_Widget_Handtool.h
+                      $(CGAL_INCL)/CGAL/IO/Qt_widget.h \
+                      $(CGAL_INCL)/CGAL/IO/Qt_widget_Zoom.h \
+                      $(CGAL_INCL)/CGAL/IO/Qt_widget_Zoomrect.h \
+                      $(CGAL_INCL)/CGAL/IO/Qt_widget_MovePoint.h \
+                      $(CGAL_INCL)/CGAL/IO/Qt_widget_Get_point.h \
+		      $(CGAL_INCL)/CGAL/IO/Qt_widget_Get_polygon.h \
+                      $(CGAL_INCL)/CGAL/IO/Qt_widget_Handtool.h
 	$(QT_MOC) -o Qt_Widget_toolbar.moc $<
 
-Qt_Widget_toolbar_views$(OBJ_EXT): Qt_Widget_toolbar_views.C \
-		Qt_Widget_toolbar_views.moc
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) Qt_Widget_toolbar_views.C
+Qt_widget_toolbar_views$(OBJ_EXT): Qt_widget_toolbar_views.C \
+		Qt_widget_toolbar_views.moc
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) Qt_widget_toolbar_views.C
 
-Qt_Widget_toolbar_views.moc: Qt_Widget_toolbar_views.h \
-                      $(CGAL_INCL)/CGAL/IO/Qt_Widget.h \
-                      $(CGAL_INCL)/CGAL/IO/Qt_Widget_Nearest_vertex.h \
-                      $(CGAL_INCL)/CGAL/IO/Qt_Widget_Show_points.h \
-		      $(CGAL_INCL)/CGAL/IO/Qt_Scene_Show_polygon.h \
-		      $(CGAL_INCL)/CGAL/IO/Qt_Scene_Show_green_approximation.h \
-		      $(CGAL_INCL)/CGAL/IO/Qt_Scene_Show_ymonotone.h \
-                      $(CGAL_INCL)/CGAL/IO/Qt_Widget_Mouse_coordinates.h \
-		      $(CGAL_INCL)/CGAL/IO/Qt_Scene_Show_polygon_points.h
-	$(QT_MOC) -o Qt_Widget_toolbar_views.moc $<
+Qt_widget_toolbar_views.moc: Qt_widget_toolbar_views.h \
+                      $(CGAL_INCL)/CGAL/IO/Qt_widget.h \
+                      $(CGAL_INCL)/CGAL/IO/Qt_widget_Nearest_vertex.h \
+                      $(CGAL_INCL)/CGAL/IO/Qt_widget_Show_points.h \
+		      $(CGAL_INCL)/CGAL/IO/Qt_view_show_polygon.h \
+		      $(CGAL_INCL)/CGAL/IO/Qt_view_show_green_approximation.h \
+		      $(CGAL_INCL)/CGAL/IO/Qt_view_show_ymonotone.h \
+                      $(CGAL_INCL)/CGAL/IO/Qt_view_mouse_coordinates.h \
+		      $(CGAL_INCL)/CGAL/IO/Qt_view_show_polygon_points.h
+	$(QT_MOC) -o Qt_widget_toolbar_views.moc $<
 
-partition_2.moc: partition_2.C $(CGAL_INCL)/CGAL/IO/Qt_Widget.h \
-			Qt_Widget_toolbar_views.h Qt_Widget_toolbar.h \
+partition_2.moc: partition_2.C $(CGAL_INCL)/CGAL/IO/Qt_widget.h \
+			Qt_widget_toolbar_views.h Qt_widget_toolbar.h \
 			$(CGAL_INCL)/CGAL/IO/Qt_ScenesWidget.h
 	${QT_MOC} -o partition_2.moc partition_2.C
 
@@ -81,8 +81,8 @@ partition_2$(OBJ_EXT): partition_2.C partition_2.moc
 partition_2$(EXE_EXT): partition_2$(OBJ_EXT) $(SOURCES)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)partition_2 $(SOURCES) partition_2$(OBJ_EXT) $(LDFLAGS)
 
-clean: partition_2.clean Qt_Widget_toolbar_views.clean \
-	Qt_Widget_toolbar.clean
+clean: partition_2.clean Qt_widget_toolbar_views.clean \
+	Qt_widget_toolbar.clean
 
 #---------------------------------------------------------------------#
 #                    suffix rules
