@@ -1,3 +1,6 @@
+4 July 2004 Andreas Fabri
+- In Delaunay_mesh_2: Removed const& on an object in a stack that gets popped before it gets used
+
 1 July 2004 Laurent Rineau
 - Added Extras in Delaunay_mesh_2<Tr, Extras> too.
 

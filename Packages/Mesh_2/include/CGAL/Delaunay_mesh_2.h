@@ -409,9 +409,10 @@ inline
 void Delaunay_mesh_2<Tr, Extras>::
 process_one_face()
 {
-  Face_handle f = bad_faces.front()->second;
-  const Quality& q = bad_faces.front()->first;
   is_bad_faces_valid();
+
+  Face_handle f = bad_faces.front()->second;
+  Quality q = bad_faces.front()->first;
   bad_faces.pop_front();
   refine_face(f, q);
 }
