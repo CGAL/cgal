@@ -1,0 +1,47 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Polygons_bops_traits.tex (Map Overlay)
+% +------------------------------------------------------------------------+
+% | 
+% | Package: ovl (Map Overlay)
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\begin{ccRefClass}{Polygons_bops_traits_2<Kernel>}
+%%    \ccSubsection{Exact (Rationals) Traits}
+    
+\ccDefinition 
+    The class \ccStyle{Polygons_bops_traits_2<Kernel>}
+    is employed when using the polygons boolean operations 
+    of the \ccc{Map_Overlay} package.  
+    To avoid robustness problems, 
+    the representation type \ccStyle{Kernel} must be an exact type such as
+    \ccStyle{Cartesian<leda_rational>},
+    \ccStyle{Homogeneous<leda_integer>} or any other exact type,
+    although other representation types could be used at the user's own risk.
+
+\ccInclude{CGAL/Bops/Polygons_bops_traits_2.h}
+ 
+\ccIsModel
+    \ccc{PolygonBopsTraits_2}
+
+\ccInheritsFrom
+  \ccc{Arr_segment_exact_traits<Kernel>}
+ 
+\end{ccRefClass} % Polygons_bops_traits_2
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+
+
+
+
+
+
