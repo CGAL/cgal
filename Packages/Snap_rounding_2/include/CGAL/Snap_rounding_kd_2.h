@@ -115,7 +115,8 @@ private:
     Direction_2 d(seg);
     int i = 0;
     bool found = false;
-    typename std::list<Direction_2>::const_iterator iter = kd_tree_direction.begin();
+    typename std::list<Direction_2>::const_iterator
+        iter = kd_tree_direction.begin();
 
     while(i < n && !found) {
       if(*iter > d)
@@ -222,8 +223,8 @@ public:
       --right_iter;
     }
 
-    Iso_rectangle_2 rec = _gt.bounding_box_of_minkowski_sum_2_object()(s,unit_squere,
-			  right_iter->second);
+    Iso_rectangle_2 rec = _gt.bounding_box_of_minkowski_sum_2_object()
+        (s,unit_squere,right_iter->second);
 
     Point_2 p1 = rec.vertex(0);
     Point_2 p2 = rec.vertex(2);

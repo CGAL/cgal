@@ -108,12 +108,6 @@ class Rotate_point_2 {
 
     return(Point_2(x,y));
   }
-
-  //  Rotate_point_2()
-    //  {
-    //    init_angle_appr();
-    //    }
-
 };
 
 Rotate_point_2 rotate_point_2_object() const {return Rotate_point_2(); }
