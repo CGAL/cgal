@@ -16,4 +16,4 @@ wrapper.dvi: *.tex *.eps
 all: ps
 
 clean:
-	rm -f *.aux *.log *.dvi *.ps *.blg *.bbl *.toc
+	rm -f *.aux *.log *.dvi *.ps *.blg *.bbl *.toc *.idx
