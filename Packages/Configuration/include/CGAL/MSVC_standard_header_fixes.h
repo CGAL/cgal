@@ -21,7 +21,7 @@
 #pragma warning(once: 4291)
 #pragma warning(once:4503)
 
-#ifdef _MSC_VER >= 1300
+#if defined _MSC_VER && _MSC_VER >= 1300
 #include <CGAL/config/msvc7/iterator_specializations.h>
 #endif
 
