@@ -1,14 +1,12 @@
-#include <CGAL/basic.h>
 #include <CGAL/Cartesian_d.h>
-#include <CGAL/Iso_box_d.h>
 #include <vector>
 #include <iostream>
 #include <fstream>
+#include <cassert>
 
-typedef CGAL::Cartesian_d<double> R;
-typedef R::Point_d Point;
-
-typedef CGAL::Iso_box_d<R> Box;
+typedef CGAL::Cartesian_d<double> Kernel;
+typedef Kernel::Point_d           Point;
+typedef Kernel::Iso_box_d         Box;
 
 int main() {
 

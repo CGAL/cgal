@@ -1,15 +1,13 @@
-#include <CGAL/basic.h>
 #include <CGAL/Homogeneous_d.h>
 #include <CGAL/MP_Float.h>
-#include <CGAL/Iso_box_d.h>
 #include <vector>
 #include <iostream>
 #include <fstream>
+#include <cassert>
 
-typedef CGAL::Homogeneous_d<CGAL::MP_Float> R;
-typedef R::Point_d Point;
-
-typedef CGAL::Iso_box_d<R> Box;
+typedef CGAL::Homogeneous_d<CGAL::MP_Float>  Kernel;
+typedef Kernel::Point_d                      Point;
+typedef Kernel::Iso_box_d                    Box;
 
 int main() {
 
