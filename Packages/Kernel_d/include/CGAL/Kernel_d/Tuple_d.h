@@ -84,7 +84,7 @@ public:
 
   bool operator==(const self& x) const { return _it==x._it; }
   bool operator!=(const self& x) const { return ! (*this==x); }
-  bool operator<(self x) const { (x - *this) > 0; }
+  bool operator<(const self& x) const { return (x - *this) > 0; }
 
   private:
     const_iterator _it, _w;  
