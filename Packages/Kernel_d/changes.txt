@@ -1,5 +1,8 @@
 Kernel_d Package: Release changes
 ----------------------------------------------------------------------
+0.99 (26 September 2003)
+- New file headers.
+
 0.98 (22 September 2003) [af]
 - Added typenames in include/CGAL/Cartesian_d.h and in include/CGAL/Homogeneous_d.h
 
