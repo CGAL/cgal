@@ -1149,7 +1149,7 @@ public:
 	     twin(Dt.source(cet)) == D.source(ce) ) 
           break;
       
-      //    DEBUG 
+      /*    DEBUG 
 	    
       if( Dt.circle(cet) != D.circle(ce).opposite() )
 	TRACEN("assertion failed!");
@@ -1182,6 +1182,7 @@ public:
       char c;
       cin >> c;
       #endif
+      */
 
       CGAL_assertion( Dt.circle(cet) == D.circle(ce).opposite() ); 
       CGAL_assertion( twin(Dt.source(cet)) == D.source(ce)); 
