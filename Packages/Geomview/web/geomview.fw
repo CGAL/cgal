@@ -690,6 +690,7 @@ operator<<(CGAL_Geomview_stream &gv,
 }
 #endif // CGAL_GV_OUT_CGAL_TETRAHEDRALIZATION_VERTEX_H
 #endif  // CGAL_TETRAHEDRALIZATION_VERTEX_H
+
 @}
 
 \subsection{Tetrahedralization Vertex Input}
@@ -740,9 +741,9 @@ operator>>(CGAL_Geomview_stream &gv,
 \subsection{Tetrahedralization Output}
 
 @$@<output operator templates for geometric objects@>+=@{@-
-#ifdef CGAL_DELAUNAY_TETRAHEDRALIZATION_H
-#ifndef CGAL_GV_OUT_CGAL_DELAUNAY_TETRAHEDRALIZATION_H
-#define CGAL_GV_OUT_CGAL_DELAUNAY_TETRAHEDRALIZATION_H
+#ifdef CGAL_DELAUNAY_TETRAHEDRALIZATION_3_H
+#ifndef CGAL_GV_OUT_CGAL_DELAUNAY_TETRAHEDRALIZATION_3_H
+#define CGAL_GV_OUT_CGAL_DELAUNAY_TETRAHEDRALIZATION_3_H
 template < class I >
 CGAL_Geomview_stream&
 operator<<(CGAL_Geomview_stream& gv,
@@ -761,8 +762,8 @@ operator<<(CGAL_Geomview_stream& gv,
   }
   return gv;
 }
-#endif // CGAL_GV_OUT_CGAL_DELAUNAY_TETRAHEDRALIZATION_H
-#endif // CGAL_DELAUNAY_TETRAHEDRALIZATION_H
+#endif // CGAL_GV_OUT_CGAL_DELAUNAY_TETRAHEDRALIZATION_3_H
+#endif // CGAL_DELAUNAY_TETRAHEDRALIZATION_3_H
 @}
 
 \section{Auxiliary Output Operators}
@@ -1682,6 +1683,10 @@ private:
 @<Lisp template functions@>
 
 @<input operator templates for geometric objects@>
+
+#ifdef CGAL_POLYHEDRON_3
+#include <CGAL/IO/Polyhedron_geomview_ostream.h>
+#endif
 
 #endif // CGAL_GEOMVIEW_STREAM_H
 @}
