@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (c) 1999 The CGAL Consortium
+// Copyright (c) 1999,2000,2001,2002,2003  The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -250,7 +250,7 @@ public:
       }
   }
 
-  bool remove(Vertex_handle v);
+  void remove(Vertex_handle v);
 private:
   typedef Facet Edge_2D;
   void remove_2D(Vertex_handle v);
@@ -326,9 +326,7 @@ private:
   void make_hole_3D_ear( Vertex_handle v, 
 	                 std::vector<Facet> & boundhole,
 	                 std::vector<Cell_handle> & hole);
-  void undo_make_hole_3D_ear(const std::vector<Facet> & boundhole,
-		             const std::vector<Cell_handle> & hole);
-  bool fill_hole_3D_ear(const std::vector<Facet> & boundhole);
+  void fill_hole_3D_ear(const std::vector<Facet> & boundhole);
 
   class Conflict_tester_3
   {
@@ -613,7 +611,7 @@ make_hole_2D(Vertex_handle v, std::list<Edge_2D> & hole)
 }
 
 template < class Gt, class Tds >
-bool
+void
 Delaunay_triangulation_3<Gt,Tds>::
 remove(Vertex_handle v)
 {
@@ -632,19 +630,19 @@ remove(Vertex_handle v)
 	      tds().reorient();
       }
       CGAL_triangulation_expensive_postcondition(is_valid());
-      return true;
+      return;
   }
 
   if (dimension() == 1) {
       tds().remove_from_maximal_dimension_simplex(v);
       CGAL_triangulation_expensive_postcondition(is_valid());
-      return true;
+      return;
   }
 
   if (dimension() == 2) {
       remove_2D(v);
       CGAL_triangulation_expensive_postcondition(is_valid());
-      return true;
+      return;
   }
 
   CGAL_triangulation_assertion( dimension() == 3 );
@@ -656,16 +654,11 @@ remove(Vertex_handle v)
 
   make_hole_3D_ear(v, boundhole, hole);
 
-  bool filled = fill_hole_3D_ear(boundhole);
-  if(filled){
-    tds().delete_vertex(v);
-    tds().delete_cells(hole.begin(), hole.end());
-  } else {
-    undo_make_hole_3D_ear(boundhole, hole);
-  }
+  fill_hole_3D_ear(boundhole);
+  tds().delete_vertex(v);
+  tds().delete_cells(hole.begin(), hole.end());
 
   CGAL_triangulation_expensive_postcondition(is_valid());
-  return filled;
 }
 
 template < class Gt, class Tds >
@@ -1121,26 +1114,8 @@ make_hole_3D_ear( Vertex_handle v,
   }
 }
 
-// obsolete
 template < class Gt, class Tds >
 void
-Delaunay_triangulation_3<Gt,Tds>::
-undo_make_hole_3D_ear(const std::vector<Facet> & boundhole,
-		      const std::vector<Cell_handle> & hole)
-{
-  typename std::vector<Cell_handle>::const_iterator cit = hole.begin();
-  for(typename std::vector<Facet>::const_iterator fit = boundhole.begin();	
-      fit != boundhole.end(); ++fit) {
-    Cell_handle ch = (*fit).first;
-    ch->set_neighbor((*fit).second, *cit);
-    ++cit;
-    // the vertices on the boundary of the hole still
-    // point to the cells that form the boundary of the hole
-  }
-}
-
-template < class Gt, class Tds >
-bool
 Delaunay_triangulation_3<Gt,Tds>::
 fill_hole_3D_ear(const std::vector<Facet> & boundhole)
 {
@@ -1148,11 +1123,6 @@ fill_hole_3D_ear(const std::vector<Facet> & boundhole)
   typedef typename Surface::Face_3_2          Face_3_2;
   typedef typename Surface::Face_handle_3_2   Face_handle_3_2;
   typedef typename Surface::Vertex_handle_3_2 Vertex_handle_3_2;
-
-  // The list of cells that gets created, so that we know what
-  // we have to delete, in case that we cannot fill the hole
-  std::vector<Cell_handle> cells;
-  cells.reserve(32); // 20 on average.
 
   Surface surface(boundhole);
 
@@ -1171,14 +1141,7 @@ fill_hole_3D_ear(const std::vector<Facet> & boundhole)
     if(k == 3) {
       // The faces form a circular list. With f->n() we go to the next face.
       f = (Face_3_2*) f->n();
-      if(f == last_op) {
-	// We looked at all edges without doing anything, that is we are
-	// in an infinite loop. ==> Panic mode, delete created cells.
-	std::cerr << "\nUnable to find an ear\n" << std::endl;
-	//	std::cerr <<  surface  << std::endl;
-        tds().delete_cells(cells.begin(), cells.end());
-	return false;
-      }
+      CGAL_assertion_msg(f != last_op, "Unable to find an ear");
       k = 0;
     }
 
@@ -1246,7 +1209,6 @@ fill_hole_3D_ear(const std::vector<Facet> & boundhole)
     // We are ready to plug a new cell
 
     Cell_handle ch = tds().create_cell(v0, v1, v2, v3);
-    cells.push_back(ch);
 
     // The new cell touches the faces that form the ear
     Facet fac = n->info();
@@ -1291,16 +1253,11 @@ fill_hole_3D_ear(const std::vector<Facet> & boundhole)
       surface.remove_degree_3(f->vertex(i), f);
       f->mark_adjacent_edges();
       f->set_info(Facet(ch,1));
-    } else if (surface.number_of_vertices() != 4) {
-      // this should not happen at all  => panic mode, 
-      //clean up, and say that it didn't work
-      CGAL_triangulation_warning_msg(true, "panic");
-      tds().delete_cells(cells.begin(), cells.end());
-      return false;
     } else {
+      CGAL_assertion(surface.number_of_vertices() == 4);
       // when we leave the function the vertices and faces of the surface
       // are deleted by the destructor
-      return true;
+      return;
     }
 
     // we successfully inserted a cell

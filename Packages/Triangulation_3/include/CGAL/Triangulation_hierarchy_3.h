@@ -107,7 +107,7 @@ public:
       return number_of_vertices() - n;
     }
 
-  bool remove(Vertex_handle v);
+  void remove(Vertex_handle v);
 
   //LOCATE
   Cell_handle locate(const Point& p, Locate_type& lt, int& li, int& lj) const;
@@ -314,23 +314,20 @@ insert(const Point &p)
 }
 
 template <class Tr>
-bool
+void
 Triangulation_hierarchy_3<Tr>::
 remove(Vertex_handle v)
 {
   CGAL_triangulation_precondition(v != NULL);
   void * u = v->up();
   int l = 0;
-  bool result = true;
   while (1) {
-    if (! hierarchy[l++]->remove(v))
-	result = false;
+    hierarchy[l++]->remove(v);
     if (!u || l>Triangulation_hierarchy_3__maxlevel)
 	break;
     v = (Vertex*) u;
     u = v->up();
   }
-  return result;
 }
 
 template <class Tr>
