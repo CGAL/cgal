@@ -355,9 +355,28 @@ bool Simplicity_test_2<ForwardIterator, Traits>::edge_compare_consecutive(
   int f2 = (e2<n-1) ? e2+1 : e2+1-n;  // edge(e2) = (vertex(e2), vertex(f2))
 
   if (f1 == e2)
-    return has_on_left_side(Vertex(e1), Vertex(e2), Vertex(f2));
-  else
-    return has_on_left_side(Vertex(f1), Vertex(f2), Vertex(e2));
+    if (d_traits.compare_y(Vertex(e2), Vertex(f2)) != EQUAL)
+       return has_on_left_side(Vertex(e1), Vertex(e2), Vertex(f2));
+    else if (d_traits.compare_x(Vertex(e2), Vertex(f2)) == SMALLER)
+    // Precondition 1) implies that e1 is on or above line (e2, f2).
+    // If above the line, then say segment e1 is smaller.  If on the line,
+    // vertex e1 is to the right of e2; by convention make the edge
+    // with the smaller other endpoint the smaller one.
+       return (d_traits.compare_y(Vertex(e1), Vertex(f2)) != EQUAL) ||
+              (d_traits.compare_x(Vertex(e1), Vertex(f2)) == SMALLER);
+    else // vertex e1 is on or below line (e2, f2); edge e1 is smaller only
+         // if vertex e1 is on the line and to the left of f2
+       return (d_traits.compare_y(Vertex(e1), Vertex(f2)) == EQUAL) &&
+              (d_traits.compare_x(Vertex(e1), Vertex(f2)) == SMALLER);
+  else // f2 and e1 are the same
+    if (d_traits.compare_y(Vertex(e2), Vertex(f2)) != EQUAL)
+       return has_on_left_side(Vertex(f1), Vertex(f2), Vertex(e2));
+    else if (d_traits.compare_x(Vertex(e2), Vertex(f2)) == LARGER)
+       return (d_traits.compare_y(Vertex(f1), Vertex(e2)) != EQUAL) ||
+              (d_traits.compare_x(Vertex(f1), Vertex(e2)) == SMALLER);
+    else
+       return (d_traits.compare_y(Vertex(f1), Vertex(e2)) == EQUAL) &&
+              (d_traits.compare_x(Vertex(f1), Vertex(e2)) == SMALLER);
 }
 
 template <class ForwardIterator, class Traits>
