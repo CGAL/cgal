@@ -2,6 +2,10 @@
 //	Revision History for package Installation
 //=====================================================================
 
+12 July 2004 Radu Ursu
+- added corresponding files to build the modules in the Modules directory.
+- each module name ends with _module
+
 13 June 2004 Menelaos Karavelas
 - install_cgal: added variable for shared library extension and set it
   to .dylib for Darwin
