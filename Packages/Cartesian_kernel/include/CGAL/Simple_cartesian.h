@@ -40,7 +40,7 @@ struct Cartesian_base_no_ref_count
     struct Handle { typedef Simple_Handle_for<T>   type; };
 
     template < typename Kernel2 >
-    struct base { typedef Cartesian_base_no_ref_count<FT_, Kernel2>  other; };
+    struct Base { typedef Cartesian_base_no_ref_count<FT_, Kernel2>  Type; };
 
     // TODO: cleanup (use Rational_traits<> instead)
     static   FT make_FT(const RT & num, const RT& denom) { return num/denom;}

@@ -42,8 +42,8 @@ struct Homogeneous_base_ref_count
     struct Handle { typedef Handle_for<T>    type; };
 
     template < typename Kernel2 >
-    struct base {
-        typedef Homogeneous_base_ref_count<RT_,FT_,Kernel2> other;
+    struct Base {
+        typedef Homogeneous_base_ref_count<RT_,FT_,Kernel2> Type;
     };
 
     // TODO: cleanup (use Rational_traits<> instead)
