@@ -24,6 +24,8 @@
 #ifndef CGAL_IA_GMPZ_H
 #define CGAL_IA_GMPZ_H
 
+#include <CGAL/Quotient.h> // Just for the converter double -> Quotient<Gmpz>.
+
 CGAL_BEGIN_NAMESPACE
 
 // We choose the lazy approach, which is good enough: we take the double
@@ -42,7 +44,8 @@ convert_from_to (const Interval_nt_advanced&, const Gmpz & z)
 	FPU_set_cw(FPU_cw_up);
 	Interval_nt_advanced result = approx + CGAL_IA_SMALLEST;
 	CGAL_expensive_assertion_code(FPU_set_cw(FPU_cw_near);)
-	CGAL_expensive_assertion(Gmpz(result.inf()) <= z && Gmpz(result.sup()) >= z);
+	CGAL_expensive_assertion(Gmpz(result.inf()) <= z &&
+		                 Gmpz(result.sup()) >= z);
 	CGAL_expensive_assertion_code(FPU_set_cw(FPU_cw_up);)
 	return result;
 }
@@ -59,6 +62,45 @@ struct converter<Interval_nt_advanced,Gmpz>
 #endif // CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 
 
+// Now we also have an exact converter from double to Quotient<Gmpz>, so that
+// Filtered_exact<double, Quotient<Gmpz> > is useful.
+
+
+// The following is an accessory function,
+// which ideally should be moved to double.h.
+// It tests if a double has an integral value.
+// Result is unspecified for NaNs or Infs.
+inline bool has_integral_value (const double d)
+{
+  return ceil(d) == d;
+}
+
+inline
+Quotient<Gmpz>
+convert_from_to (const Quotient<Gmpz>&, const double& d)
+{ 
+  // We multiply the value by 2, until it reaches an integral value.
+  // Then it can be converted exactly to a Gmpz.
+  // Note: it's not really optimized (it'll do 1000 iterations at worst).
+  double num=d;
+  double den=1.0;
+  while ( ! CGAL::has_integral_value(num) )
+  {
+    den*=2.0;
+    num*=2.0;
+  }
+  return Quotient<Gmpz>(Gmpz(num), Gmpz(den));
+}
+
+#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+template <>
+struct converter<Quotient<Gmpz>,double>
+{
+  static inline Quotient<Gmpz> do_it (const double & z)
+  { return convert_from_to(Quotient<Gmpz>(), z); }
+};
+#endif // CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+
 CGAL_END_NAMESPACE
 
-#endif	 // CGAL_IA_GMPZ_H
+#endif // CGAL_IA_GMPZ_H
