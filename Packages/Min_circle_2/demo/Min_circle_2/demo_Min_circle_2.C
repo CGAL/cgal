@@ -64,7 +64,7 @@ main( int, char**)
     // open window
     CGAL::Window_stream ws( "CGAL Demo: Smallest Enclosing Circle in 2D");
     ws.set_icon_label("CGAL");
-    ws.set_icon_pixrect( ws.create_pixrect( CGAL::esprit_logo));
+    ws.set_icon_pixrect( ws.create_pixrect( CGAL::cgal_logo));
     ws.set_node_width( 5);
     ws.init( -100.0, 100.0, -100.0);
     ws.display();

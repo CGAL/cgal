@@ -1,5 +1,8 @@
 Changes done to the `Min_circle_2' package
 
+Version 3.14 on 12-Feb-2002
+- Replace esprit_logo by cgal_logo.
+
 Version 3.13 on 5-Feb-2002
 - GCC 3.1 fixes.
 
