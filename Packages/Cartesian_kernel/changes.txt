@@ -1,3 +1,6 @@
+Version 6.26 (16 August 2001)
+- Missing typenames.
+
 Version 6.25 (15 August 2001)
 - Workaround for SunPro.
 
