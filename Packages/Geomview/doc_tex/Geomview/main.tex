@@ -180,14 +180,6 @@ is at the same time the color of vertices.
 \ccMethod{double set_vertex_radius(double r) const;}
 {Sets the radius of vertices to \ccc{d}. Returns the previous value.}
 
-\ccMethod{bool get_trace();}
-{Returns \ccc{true} iff tracing is on.}
-
-\ccMethod{bool set_trace(bool b);} 
-{Sets tracing on. The data that are sent to \ccc{Geomview} are also
- sent to \ccc{cerr}.  Returns the previous value. By default tracing is
- off.}
-
 
 
 \newpage
@@ -211,10 +203,17 @@ from Geomview and to read data sent back by Geomview.
 {Inserts integer \ccc{i} into the stream. Puts whitespace around if the
 stream is in ascii mode.}
 
-
 \ccMethod{Geomview_stream& operator<<(double d);}
 {Inserts double \ccc{d} into the stream. Puts whitespace around if the
 stream is in ascii mode.}
+
+\ccMethod{bool get_trace();}
+{Returns \ccc{true} iff tracing is on.}
+
+\ccMethod{bool set_trace(bool b);} 
+{Sets tracing on. The data that are sent to \ccc{Geomview} are also
+ sent to \ccc{cerr}.  Returns the previous value. By default tracing is
+ off.}
 
 \ccMethod{bool in_binary_mode();}
 {Returns \ccc{true} iff \ccVar\ is in binary mode.}
