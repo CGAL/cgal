@@ -565,11 +565,11 @@ public:
 	// c will be modified to have v replacing vertex(i+3)
 	int i1,i2,i3;
 
-	if ( i%2 == 0 ) {
-	  i1=(i+1)%4; i2=(i+2)%4; i3=6-i-i1-i2;
+	if ( i&1 == 0 ) {
+	  i1=(i+1)&3; i2=(i+2)&3; i3=6-i-i1-i2;
 	}
 	else {
-	  i1=(i+1)%4; i2=(i+3)%4; i3=6-i-i1-i2;
+	  i1=(i+1)&3; i2=(i+3)&3; i3=6-i-i1-i2;
 	}
 	// i,i1,i2,i3 is well oriented
 	// so v will "replace" the vertices in this order
