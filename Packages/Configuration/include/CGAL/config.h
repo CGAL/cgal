@@ -100,6 +100,13 @@
 #  define CGAL_TEMPLATE_NULL template <>
 #endif
 
+
+#ifdef CGAL_CFG_NO_STDC_NAMESPACE
+#define CGAL_CLIB_STD
+#else
+#define CGAL_CLIB_STD std
+#endif
+
 //----------------------------------------------------------------------//
 //             include separate workaround files
 //----------------------------------------------------------------------//
@@ -112,15 +119,6 @@
 #endif
 #include <CGAL/workaround_return_type.h>
 #include <CGAL/workaround_casts.h>
-
-//----------------------------------------------------------------------//
-//             definition of type bool
-//----------------------------------------------------------------------//
-
-// if there is no built-in bool then we borrow the definition from STL
-#ifdef CGAL_CFG_NO_BUILTIN_BOOL
-#  include <pair.h>
-#endif
 
 //----------------------------------------------------------------------//
 //             select old or new style headers
