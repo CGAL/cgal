@@ -33,7 +33,7 @@
 #endif
 
 #ifndef CGAL_SWEEP_CURVES_TO_SUBCURVES_H
-#include <CGAL/Sweep_curves_to_subcurves.h>
+#include <CGAL/Sweep_line_2/Sweep_curves_to_subcurves.h>
 #endif
 
 CGAL_BEGIN_NAMESPACE

@@ -33,7 +33,7 @@
 #endif
 
 #ifndef CGAL_SWEEP_CURVES_TO_PLANAR_MAP_H
-#include <CGAL/Sweep_curves_to_planar_map.h>
+#include <CGAL/Sweep_line_2/Sweep_curves_to_planar_map.h>
 #endif
 
 CGAL_BEGIN_NAMESPACE
