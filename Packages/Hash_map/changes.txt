@@ -1,6 +1,9 @@
 Hash_map Package: Release changes
 ----------------------------------------------------------------------
 
+1.5 (21 Oct 2003)
+- new headers
+
 1.4 (27 Sep 2003)
 - new headers
 
