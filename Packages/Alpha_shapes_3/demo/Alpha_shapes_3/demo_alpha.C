@@ -79,7 +79,7 @@ construct_alpha_shape(const std::list<Point> &V_p,
 		      Alpha_shape_3& A)
   // Generate Alpha Shape
 { 
-  std::vector<Segment_3> V_seg;
+  std::vector<Segment> V_seg;
   
   int  n = A.make_alpha_shape(V_p.begin(), V_p.end());
   std::cout << "Inserted " << n  << " points" << std::endl;
