@@ -62,12 +62,13 @@
 
 \thispagestyle{empty}
 
+{\it
 {\scriptsize
 This document is the abstract of the tutorial on CGAL
 polyhedron for subdivision algorithms. The complete 
-version of the tutorial and the accompanied sorce code 
+version of the tutorial and the accompanied source code 
 can be downloaded at [...].
-}
+}}
 
 % ------------------------------------------------------------------------
 \subsection*{Introduction}
@@ -89,21 +90,21 @@ surfaces in two different mechanisms provided by \cgalpoly :
 A $\sqrt{3}$ subdivision implementation is designed based on the
 Euler operators and a Quad-Triangle subdivision implementation
 is designed based on overloading the modifier.  
-Extened from the previous design, a 
+Extended from the previous design, a 
 \emph{combinatorial subdivision library} (CSL) is
 then proposed with the increased sophistication and 
 abstraction. CSL abstracts the geometry operations from 
 the refinements. Subdivisions in CSL is structured as a 
 combination of a refinement host and the template geometry 
-policies. With several fundanmental refinement schemes in stock,
-CSL is established by specilaizing the refinements with a set of 
+policies. With several fundamental refinement schemes in stock,
+CSL is established by specializing the refinements with a set of 
 user-defined geometry policies.
 
 \begin{figure}[htb]
   \centering
-  \includegraphics[width=\linewidth]{figs/teaser}\\ {\scriptsize Demo
-  application running on Windows. A coarse polygon mesh is subdivided
-  using the quad-triangle subdivision scheme.}
+  \includegraphics[width=\linewidth]{figs/teaser}
+  \caption{The polyhedron viewer running on Windows. A coarse polygon 
+    mesh is subdivided using the quad-triangle subdivision scheme.}
   \label{fig:viewer}
 \end{figure}
 
@@ -143,6 +144,80 @@ core data structure of a mesh processing application: \\
                   style of the \CC\ STL.
 
 
+% ------------------------------------------------------------------------
+\subsubsection*{Subdivision Surfaces}
+
+A subdivision algorithm recursively 
+applies \emph{refinement} and \emph{geometry smoothing} 
+on the control mesh (\figurename\ \ref{fig:sqrt3},  
+\ref{fig:quad-triangle}), 
+and approximates the limit surface of the control mesh.
+Several refinement schemes in practice are illustrated in 
+\figurename\ \ref{fig:RefSchemes}. The stencils of the
+geometry smoothing are depended on the refinement schemes, 
+i.e.\ the reparametrizations. A stencil defines a control
+submesh that is associated with normalized weights of the 
+nodes. \figurename\ \ref{fig:RefMap} 
+demonstrates the stencils of the PQQ scheme  
+in Catmull-Clark subdivision and DQQ scheme in Doo-Sabin
+subdivision. For further details about subdivisions, readers
+should refer to \cite{Warren:subdivision} and \cite{Sub:course:2000}.
+   
+\begin{figure}[tb]
+  \centering
+  \psfrag{PQQ}[]{\scriptsize PQQ} 
+  \psfrag{PTQ}[]{\scriptsize PTQ}
+  \psfrag{DQQ}[]{\scriptsize DQQ} 
+  \psfrag{Sqrt3}[]{\scriptsize $\sqrt{3}$} 
+  \epsfig{file=figs/RefSchemes.eps, width=7cm}
+  \caption{Examples of refinement schemes: 
+    primal quadrilateral quadrisection (PQQ),
+    primal triangle quadrisection (PTQ),
+    dual quadrilateral quadrisection (DQQ) and
+    $\sqrt{3}$ triangulation. The control meshes are shown
+    in the first row.}
+  \label{fig:RefSchemes}\vspace*{-4mm}
+\end{figure}
+
+\begin{figure}[tb]
+  \centering
+  \psfrag{A}[]{(a)}
+  \psfrag{B}[]{(b)}
+  \psfrag{C}[]{(c)}
+  \psfrag{D}[]{(d)}
+  \epsfig{file=figs/RefMap.eps, width=7cm}
+  \caption{The stencil ({\itshape top blue}) and its 
+           vertex ({\itshape bottom red}) in 
+	   Catmull-Clark subdivision (a-c)
+           and Doo-Sabin subdivision (d). Catmull-Clark
+           subdivision has three stencils: facet-stencil (a), 
+           edge-stencil (b) and vertex-stencil (c). 
+           Doo-Sabin subdivision has only corner-stencil (d).
+	   The stencil weights are not shown.}
+  \label{fig:RefMap}\vspace*{-4mm}
+\end{figure}
+
+% ------------------------------------------------------------------------
+\subsection*{(Our) FAQs}
+
+\begin{itemize}
+\item Why should I read this tutorial? I am not interested in subdivisions. 
+\item Why do you use CGAL polyhedron? How about OpenMesh and its 
+subdivision library?
+\item Is is difficult or what's the difficulties to use CGAL Polyhedron?
+\item How about the performance?
+\item I don't like the subdivisions you have, how can I build my own 
+subdivision on your solution?
+\item What's the future plan for CSL? 
+\end{itemize}
+
+% ------------------------------------------------------------------------
+\subsection*{Intended Audience}
+
+The intended audience of the tutorial are researchers, developers or
+students developing algorithms around meshes. Experience in advanced
+\CC\ design (i.e.\ generic programming using templates) and knowledge
+of the halfedge data structure and subdivisions are prerequisites.
 
 
 % ------------------------------------------------------------------------
@@ -209,7 +284,7 @@ CGAL Polyhedron.
 %The topology and the geometry
 %operations are the two basic operations required by most geometry
 %algorithms. 
-The key to implement a subdivision algorithm is to effficiently support
+The key to implement a subdivision algorithm is to efficiently support
 the refinement, i.e.\ the connectivity modifications. Two approaches
 are introduced to support the refinement: the \italic{
 Euler operators} (operator scheme) and
@@ -269,14 +344,6 @@ CSL accepts a polyhedron mesh specialized from the
 %not just the enriched polyhedron we used in the polyhedron
 %viewer. 
 
-
-% ------------------------------------------------------------------------
-\subsection*{Intended Audience}
-
-The intended audience of the tutorial are researchers, developers or
-students developing algorithms around meshes. Experience in advanced
-\CC\ design (i.e.\ generic programming using templates) and knowledge
-of the halfedge data structure and subdivisions are prerequisites.
 
 % references
 {\footnotesize
