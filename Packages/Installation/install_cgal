@@ -6224,7 +6224,7 @@ test_menu()
 # search for files in ${UPGRADE_DIR} that should be copied into the 
 # ${CGAL_DIR} tree
 # $1 = descriptive string of file type
-# $2 = subdirectory (of UPGRADE_DIR) to search
+# $2 = subdirectory (of UPGRADE_DIR) to search (must not match .../CGAL/file)
 # $3 = directory to copy files to
 # $4 = list of filenames patterns to search for
 upgrade_copy()
@@ -6236,13 +6236,16 @@ upgrade_copy()
     log_print "${1}"
     for j in ${4}; do
 	for i in `${_find} ${UPGRADE_FROM}/${2} -follow -name "${j}" -print`; do
-	    go_up_lines 1
-	    print_line "`${_printf} ${i} | ${_awk} 'BEGIN {FS=\"/\"} {printf "%s/%s\n",$(NF-1),$(NF)}'`"
-	    print_filled_line
-	    flush_buffer
-	    newdir=`${_dirname} ${i} | ${_sed} "s${UPGRADE_FROM}/${2}${3}g"`
-	    _check_dir_exists_create ${newdir}
-	    cp ${i} ${newdir}
+            tmpdir=`${_dirname} $i`
+            if [ `${_basename} $tmpdir` != "CGAL" ]; then
+	        go_up_lines 1
+	        print_line "`${_printf} ${i} | ${_awk} 'BEGIN {FS=\"/\"} {printf "%s/%s\n",$(NF-1),$(NF)}'`"
+	        print_filled_line
+	        flush_buffer
+	        newdir=`${_dirname} ${i} | ${_sed} "s${UPGRADE_FROM}/${2}${3}g"`
+	        _check_dir_exists_create ${newdir}
+	        cp ${i} ${newdir}
+            fi
 	done
     done
 }

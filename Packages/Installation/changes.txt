@@ -1,3 +1,6 @@
+1 September 2004 Sylvain Pion
+- upgrade_copy does not override files in .../CGAL/...
+
 30 August 2004 Radu Ursu
 - fixed warning for cl and icl compilers concerning the EXE_OPT in install_cgal
 
