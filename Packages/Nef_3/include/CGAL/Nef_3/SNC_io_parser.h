@@ -198,6 +198,7 @@ class sort_sfaces : public SNC_decorator<T> {
   typedef T SNC_structure;
   typedef SNC_decorator<T>                  Base;
   typedef typename T::SM_decorator          SM_decorator;
+  typedef typename T::Point_3               Point_3;
   typedef typename T::Vector_3              Vector_3;
   typedef typename T::SVertex_handle        SVertex_handle;
   typedef typename T::SHalfedge_handle      SHalfedge_handle;
@@ -226,14 +227,17 @@ class sort_sfaces : public SNC_decorator<T> {
     SFace_cycle_iterator fc;
 
     Vector_3 vec1 = plus;
+    Point_3 svc1;
     SHalfloop_handle sl1;
     CGAL_nef3_forall_sface_cycles_of(fc,sf1) {
       
       if(assign(se,fc)) {
 	SHalfedge_around_sface_circulator ec(se),ee(se);
 	CGAL_For_all(ec,ee) { 
-	  if(ml(SD.circle(ec).orthogonal_vector(), vec1))
+	  if(ml(SD.circle(ec).orthogonal_vector(), vec1)) {
 	    vec1 = SD.circle(ec).orthogonal_vector();
+	    svc1 = ssource(ec)->tmp_point();
+	  }
 	}
       }
       else if(!assign(sl1,fc))
@@ -241,14 +245,17 @@ class sort_sfaces : public SNC_decorator<T> {
     }
 
     Vector_3 vec2 = plus;
+    Point_3 svc2;
     SHalfloop_handle sl2;
     CGAL_nef3_forall_sface_cycles_of(fc,sf2) {
       
       if(assign(se,fc)) {
 	SHalfedge_around_sface_circulator ec(se),ee(se);
 	CGAL_For_all(ec,ee) { 
-	  if(ml(SD.circle(ec).orthogonal_vector(), vec2))
+	  if(ml(SD.circle(ec).orthogonal_vector(), vec2)) {
 	    vec2 = SD.circle(ec).orthogonal_vector();
+	    svc2 = ssource(ec)->tmp_point();
+	  }
 	}
       }
       else if(!assign(sl2,fc))
@@ -272,8 +279,21 @@ class sort_sfaces : public SNC_decorator<T> {
     }
 
     CGAL_assertion(vec1 != plus && vec2 != plus);
-  
-    return ml(vec1, vec2);
+
+    if(vec1 != vec2)
+      return ml(vec1, vec2);
+    return ml(Vector_3(svc1-Point_3(0,0,0)), 
+	      Vector_3(svc2-Point_3(0,0,0)));
+
+    /*
+    int rv;
+    if(rv = ml(vec1, vec2, Vector_3(-1,0,0)) != 0)
+      return rv < 0;
+    if(rv = ml(vec1, vec2, Vector_3(0,-1,0)) != 0)
+      return rv < 0;
+    if(rv = ml(vec1, vec2, Vector_3(0,0,-1)) != 0)
+      return rv < 0;   
+    */ 
   }
 
 };

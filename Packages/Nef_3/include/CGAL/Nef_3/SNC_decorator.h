@@ -1132,7 +1132,7 @@ public:
     O.print();
 #endif
     
-    CGAL_assertion( !result.is_empty());
+    //    CGAL_assertion( !result.is_empty());
     SNC_constructor C(result, plresult);
     C.build_external_structure();
 

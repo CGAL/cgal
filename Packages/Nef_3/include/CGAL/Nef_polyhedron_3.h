@@ -348,7 +348,11 @@ protected:
 	      Object_index<Vertex_iterator>& vi) : VI(vi), B(BB), D(sd){}
 
       void visit(Halffacet_handle opposite_facet) {
+
+	TRACEN("Build_polyhedron: visit facet " << D.plane(opposite_facet));
  
+	CGAL_nef3_assertion(Infi_box::is_standard(D.plane(opposite_facet)));
+	
 	SHalfedge_handle se;
 	Halffacet_cycle_iterator fc;
      	
@@ -361,6 +365,7 @@ protected:
 	SHalfedge_around_facet_circulator hc_start(se);
 	SHalfedge_around_facet_circulator hc_end(hc_start);
 	CGAL_For_all(hc_start,hc_end) {
+	  TRACEN("   add vertex " << D.vertex(hc_start)->point());
 	  B.add_vertex_to_facet(VI[D.vertex(hc_start)]);
 	}
 	B.end_facet();
@@ -384,30 +389,35 @@ protected:
       SNC_decorator D(snc);
 
       Polyhedron_incremental_builder_3<HDS> B(hds, true);
+
+      int skip_volumes;
+      if(Infi_box::extended_Kernel()) {
+	B.begin_surface(D.number_of_vertices()-8, 
+			D.number_of_facets()-6,
+			D.number_of_edges()-12);
+	skip_volumes = 2;
+      }
+      else {
+	B.begin_surface(D.number_of_vertices(), 
+			D.number_of_facets(),
+			D.number_of_edges());
+	skip_volumes = 1;
+      }
       
-      B.begin_surface(D.number_of_vertices()-8, 
-		      D.number_of_facets()-6,
-		      D.number_of_edges()-12);
-      
-      int vertex_index = -8;
+      int vertex_index = 0;
       Vertex_iterator v;
       CGAL_nef3_forall_vertices(v,snc) {
-	if(vertex_index >= 0) {
-	  VI[v]=vertex_index;
+	if(Infi_box::is_standard(v->point())) {
+	  VI[v]=vertex_index++;
 	  B.add_vertex(v->point());
 	}
-	vertex_index++;
       }     
-        
-      int outer_volume = 0;
-      //Shell_entry_iterator it;
+      
       Visitor V(B,D,VI);
       Volume_handle c;
-      CGAL_nef3_forall_volumes(c,snc) {
-	if(outer_volume++ > 1)
+      CGAL_nef3_forall_volumes(c,snc)
+	if(skip_volumes-- <= 0)
 	  D.visit_shell_objects(SFace_handle(c->shells_begin()),V);
-      }
-   
       B.end_surface();
     }
 
@@ -553,7 +563,7 @@ protected:
 
   void simplify() {
     bool simplified = snc().simplify();
-    TRACEN( "simpliy(): structure simplified? "<<simplified);
+    TRACEN( "simplify(): structure simplified? "<<simplified);
     
     if( simplified) {
 #ifdef CGAL_NEF3_UPDATE_K3TREE_AFTER_SIMPLIFICATION

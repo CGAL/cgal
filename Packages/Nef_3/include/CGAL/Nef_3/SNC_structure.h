@@ -1621,6 +1621,8 @@ public:
 
     bool load(std::ifstream& in) {
 
+      TRACEN("load");
+      
       int i;
       char cc;
       bool OK = true;
@@ -1628,7 +1630,7 @@ public:
       OK = OK && test_string("Nef", in);
       OK = OK && test_string("Complex", in);
 
-      if(!OK) return false;
+      CGAL_nef3_assertion(OK);
 
       int v;
       OK = OK && test_string("vertices", in);
@@ -1679,6 +1681,8 @@ public:
       for(i = 0; i < sf; i++)
 	SF[i] = new_sface_only();
 
+      CGAL_nef3_assertion(OK);
+
       int index;
       RT hx, hy, hz, hw;
       for(i = 0; i < v; i++) {
@@ -1712,6 +1716,8 @@ public:
 	in >> vh->mark_;
       }
 
+      CGAL_nef3_assertion(OK);
+
       for(i = 0; i < e; i++) {
 	in >> index;
 	OK = OK && (index == i);
@@ -1738,6 +1744,8 @@ public:
 	OK = OK && test_string("}",in);
 	in >> eh->mark_;
       }
+
+      CGAL_nef3_assertion(OK);
       
       for(i = 0; i < f; i++) {
 	in >> index;
@@ -1774,6 +1782,8 @@ public:
 	in >> fh->mark_;
       }
 
+      CGAL_nef3_assertion(OK);
+
       for(i = 0; i < c; i++) {
 	in >> index;
 	OK = OK && (index == i);
@@ -1789,6 +1799,8 @@ public:
 	}
 	in >> ch->mark_;
       }	
+
+      CGAL_nef3_assertion(OK);
 
       for(i = 0; i < se; i++) {
 	in >> index;
@@ -1826,6 +1838,8 @@ public:
 	in >> seh->mark_;
       }
 
+      CGAL_nef3_assertion(OK);
+
       for(i = 0; i < sl; i++) {
 	in >> index;
 	OK = OK && (index == i);
@@ -1846,6 +1860,8 @@ public:
 	OK = OK && test_string("}",in);	
 	in >> slh->mark_;
       }
+
+      CGAL_nef3_assertion(OK);
 
       for(i = 0; i < sf; i++) {
 	in >> index;
@@ -1887,10 +1903,14 @@ public:
 	in >> sfh->mark_;
       }
 
+      CGAL_nef3_assertion(OK);
+
       for(i = 0; i<v; i++) {
 	SM_point_locator PL(V[i]);
 	PL.init_marks_of_halfspheres(); 
       }
+
+      CGAL_nef3_assertion(OK);
 
       delete[] V;
       delete[] E;
