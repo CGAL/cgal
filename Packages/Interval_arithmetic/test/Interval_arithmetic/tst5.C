@@ -4,7 +4,11 @@
 // Workaround for crappy compilers.
 #ifdef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 #define CGAL_IA_CT double
+#ifdef CGAL_USE_LEDA
 #define CGAL_IA_ET leda_real
+#else
+#define CGAL_IA_ET double
+#endif
 #define CGAL_IA_CACHE No_Filter_Cache
 #endif
 
