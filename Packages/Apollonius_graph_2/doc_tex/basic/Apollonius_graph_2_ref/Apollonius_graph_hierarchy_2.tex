@@ -20,7 +20,7 @@
 We provide an alternative to the class
 \ccc{Apollonius_graph_2<Gt,Agds>} for the dynamic
 construction of the Apollonius graph. The \ccRefName\ class maintains
-an hierarchy of Apollonius graphs. The bottom-most level of the
+a hierarchy of Apollonius graphs. The bottom-most level of the
 hierarchy contains the full Apollonius diagram. A site that
 is in level $i$, is in level $i+1$ with probability $1/\alpha$
 where $\alpha > 1$ is some constant. The difference between the
@@ -28,23 +28,24 @@ where $\alpha > 1$ is some constant. The difference between the
 \ccRefName\ is on how the nearest neighbor location is done. Given a
 point $p$ the location is done as follows: at the top most level we
 find the nearest neighbor of $p$ as in the
-\ccc{Apollonius_graph_2<Gt,Agds>} class. At every
-subsequent level $i$ we use the nearest neighbor found at level $i+1$
-to find the nearest neighbor. This is a variant of the corresponding
+\ccc{Apollonius_graph_2<Gt,Agds>} class. At every subsequent level $i$
+we use the nearest neighbor found at level $i+1$ to find the nearest
+neighbor at level $i$. This is a variant of the corresponding
 hierarchy for points found in \cite{d-iirdt-98}.
 %
-The class has two template parameters which have the same meaning as
-in the \ccc{Apollonius_graph_2<Gt,Agds>}. The second
-template parameter defaults to \ccc{true}, whereas the third one
-defaults to \ccc{Apollonius_graph_data_structure_2<
+The class has two template parameters which have essentially the same
+meaning as in the \ccc{Apollonius_graph_2<Gt,Agds>} class. The first
+template parameter must be a model of the
+\ccc{ApolloniusGraphTraits_2} concept.
+The second template parameter must be a model of the
+\ccc{ApolloniusGraphDataStructure_2} concept. However, the vertex base
+class that is to be used in the Apollonius graph data structure must
+be a model of the \ccc{ApolloniusGraphHierarchyVertexBase_2} concept.
+The second template parameter defaults to
+\ccc{Apollonius_graph_data_structure_2<
 Apollonius_graph_hierarchy_vertex_base_2< 
 Apollonius_graph_vertex_base_2<Gt,true> >,
 Apollonius_graph_face_base_2<Gt> >}. 
-In the case of the Apollonius graph hierarchy, the vertex and face
-base used in the \ccc{Apollonius_graph_data_structure_2<Vb,Fb>} class
-must be models of the concepts
-\ccc{ApolloniusGraphHierarchyVertexBase_2} and
-\ccc{ApolloniusGraphFaceBase_2}.
 
 The \ccRefName\ class derives publicly from the
 \ccc{Apollonius_graph_2<Gt,Agds>} class. The interface is
@@ -71,7 +72,7 @@ its base class \ccc{Apollonius_graph_2<Gt,Agds>}.
 {agh(Gt gt=Gt());}{}
 \ccThreeToTwo
 %
-\ccConstructor{Apollonius_graph_hierarchy_2(const Gt&
+\ccConstructor{Apollonius_graph_hierarchy_2(Gt
 gt=Gt())}{Creates an hierarchy of Apollonius graphs using \ccc{gt} as
 geometric traits.}
 \ccGlue
@@ -86,14 +87,14 @@ range [\ccc{first}, \ccc{beyond}).}
 (Apollonius_graph_hierarchy_2<Gt,Agds> other)}
 {Copy constructor. All faces, vertices and inter-level pointers
 are duplicated. After the construction, \ccVar\ and \ccc{other} refer
-to two different Apollonius graph hierarchies~: if 
+to two different Apollonius graph hierarchies: if 
 \ccc{other} is modified, \ccVar\ is not.}
 \ccGlue
 \ccMethod{Apollonius_graph_hierarchy_2<Gt,Agds>
 operator=(Apollonius_graph_hierarchy_2<Gt,Agds>
 other);}{Assignment. All faces, vertices and inter-level pointers
 are duplicated. After the construction, \ccVar\ and \ccc{other} refer
-to two different Apollonius graph hierarchies~: if 
+to two different Apollonius graph hierarchies: if 
 \ccc{other} is modified, \ccVar\ is not.} 
 
 
@@ -120,7 +121,7 @@ is visible then the vertex handle of \ccc{s} is returned, otherwise
 \ccMethod{Vertex_handle insert(Site_2 s, Vertex_handle
 vnear);}{Inserts \ccc{s} in the Apollonius graph hierarchy using the
 site associated with \ccc{vnear} as
-an estimate for the nearest neighbor of the center of \ccc{s}. If
+an estimate for the nearest neighbor of the center of \ccc{s}.
 If \ccc{s} is visible then the vertex handle of \ccc{s} is
 returned, otherwise \ccc{Vertex_handle(NULL)} is returned.
 A call to this method is equivalent to \ccc{agh.insert(s);} and it has
@@ -142,13 +143,16 @@ vertex of the Apollonius graph hierarchy.}}
 %
 \ccMethod{Vertex_handle  nearest_neighbor(Point p);}
 {Finds the nearest neighbor of the point \ccc{p}. In other words it
-finds the site the Apollonius region of which contains
-\ccc{p}. Ties are broken arbitrarily and one of the nearest neighbors
-of \ccc{p} is returned.}
+finds the site whose Apollonius cell contains \ccc{p}. Ties are broken
+arbitrarily and one of the nearest neighbors of \ccc{p} is
+returned. If there are no visible sites in the Apollonius diagram
+\ccc{Vertex_handle(NULL)} is returned.}
 \ccGlue
 \ccMethod{Vertex_handle  nearest_neighbor(Point p,
 Vertex_handle vnear);}{Finds the nearest neighbor of the point
-\ccc{p}. A call to this method is equivalent to 
+\ccc{p}. If there are no visible sites in the Apollonius diagram
+\ccc{Vertex_handle(NULL)} is returned.
+A call to this method is equivalent to 
 \ccc{agh.nearest_neighbor(p);} and it has been added for the sake of
 conformity with the interface of the
 \ccc{Apollonius_graph_2<Gt,Agds>} class.}
@@ -187,9 +191,9 @@ other} or to \ccVar\ccc{(other)} if \ccc{other} is deleted afterwards.}
 \ccc{ApolloniusGraphTraits_2}\\
 \ccc{ApolloniusGraphHierarchyVertexBase_2}\\
 \ccc{CGAL::Apollonius_graph_2<Gt,Agds>}\\
+\ccc{CGAL::Apollonius_graph_data_structure_2<Vb,Fb>}\\
 \ccc{CGAL::Apollonius_graph_traits_2<K,Method_tag>}\\
-\ccc{CGAL::Apollonius_graph_data_structure_2<Vb,Fb>}
-
+\ccc{CGAL::Apollonius_graph_hierarchy_vertex_base_2<Agvb>}
 
 
 

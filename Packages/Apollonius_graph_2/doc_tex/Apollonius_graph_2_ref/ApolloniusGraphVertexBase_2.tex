@@ -17,11 +17,11 @@
 \ccCreationVariable{vb}
 \ccDefinition
 
-The concept \ccRefName\ describes the requirements for the 
+The concept \ccc{\ccRefName} describes the requirements for
 the vertex base class of the \ccc{ApolloniusGraphDataStructure_2}
 concept. A vertex stores an Apollonius site and
 provides access to one of its incident faces through a
-\ccc{Face_handle}. In addition to that it maintains a container of
+\ccc{Face_handle}. In addition, it maintains a container of
 sites. The container stores the hidden sites related to the vertex.
 
 \ccTypes
@@ -33,7 +33,7 @@ define the type \ccc{Site_2}.}}
 \ccGlue
 \ccNestedType{Store_hidden}{An enumeration type that indicates if
   hidden sites are actually stored or not. Its value is \ccc{true} if
-  hidden site are stored, \ccc{false} otherwise.}
+  hidden sites are stored, \ccc{false} otherwise.}
 %
 \ccGlue
 \ccNestedType{Site_2}{A type for the site stored.
@@ -41,7 +41,7 @@ define the type \ccc{Site_2}.}}
 \ccc{Geom_traits::Site_2}.}}
 %
 \ccGlue
-\ccNestedType{Apollonius_graph_data_structure}{A type for the
+\ccNestedType{Apollonius_graph_data_structure_2}{A type for the
   Apollonius graph data structure, to which the vertex belongs to.}
 %
 \ccGlue
@@ -54,7 +54,7 @@ define the type \ccc{Site_2}.}}
 %
 \ccGlue
 \ccNestedType{Hidden_sites_iterator}{An iterator that
-iterates over the hidden site in the hidden site
+iterates over the hidden sites in the hidden sites
 container of the vertex.
 \ccPrecond Must be a model of \ccc{Iterator}.}
 
@@ -129,8 +129,9 @@ hidden_sites_begin();}
 
 \ccSeeAlso
 
-\ccc{ApolloniusGraphDataStructure_2}
-
+\ccc{ApolloniusGraphDataStructure_2}\\
+\ccc{ApolloniusGraphTraits_2}\\
+\ccc{CGAL::Apollonius_graph_vertex_base_2<Gt,StoreHidden>}
 
 \end{ccRefConcept}
 

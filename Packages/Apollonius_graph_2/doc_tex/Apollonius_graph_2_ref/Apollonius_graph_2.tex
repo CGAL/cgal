@@ -54,27 +54,21 @@ The vertices and faces of the Apollonius graph are accessed
 through \ccc{handles}, 
 \ccc{iterators} and \ccc{circulators}. 
 The iterators and circulators
-are all bidirectional and non mutable.
+are all bidirectional and non-mutable.
 The circulators and iterators are assignable to the 
 corresponding handle types, and they are also convertible to the
 corresponding handles.
 The edges of the Apollonius graph can also be visited through iterators
 and circulators,
 the edge circulators and iterators
-are also bidirectional and non mutable.
+are also bidirectional and non-mutable.
 In the following, we called {\it infinite} any face or edge 
 incident  to the infinite vertex and the infinite vertex itself.
 Any other feature (face, edge or vertex) of the Apollonius graph is said 
 to be {\it finite}.
 Some iterators (the \ccc{All} iterators ) allow to visit finite or 
 infinite features while the others (the \ccc{Finite} iterators) visit only
-finite features. Circulators visit infinite features as well as finite 
-ones.
-
-In addition to iterators and circulators for vertices and faces,
-iterators for sites are provided. In particular there are iterators
-for the entire set of sites, the hidden sites and the visible sites of
-the Apollonius graph.
+finite features. Circulators visit both infinite and finite features.
 
 \ccThree{typedef std::pair<Face_handle, int>}{}{the apollonius graph,
 the apollonius graph, the graph}
@@ -90,36 +84,53 @@ The \ccc{Edge(f,i)} is the edge common to faces \ccc{f} and
 {}
 %
 \ccGlue
-\ccNestedType{Vertex_handle}{handle to a vertex.}
+\ccNestedType{Vertex_handle}{A type for a handle to a vertex.}
 \ccGlue
-\ccNestedType{Face_handle}{handle to a face.}
+\ccNestedType{Face_handle}{A type for a handle to a face.}
 \ccGlue
-\ccNestedType{Vertex_circulator}{circulator over vertices incident to
-a given vertex.}
+\ccNestedType{Vertex_circulator}
+{A type for a circulator over vertices incident to a given vertex.}
 \ccGlue
-\ccNestedType{Face_circulator}{circulator over faces incident to a
-given vertex.}
+\ccNestedType{Face_circulator}
+{A type for a circulator over faces incident to a given vertex.}
 \ccGlue
-\ccNestedType{Edge_circulator}{circulator over edges incident to a
-given vertex.}
+\ccNestedType{Edge_circulator}
+{A type for a circulator over edges incident to a given vertex.}
 \ccGlue
-\ccNestedType{All_vertices_iterator}{iterator over all vertices.}
+\ccNestedType{All_vertices_iterator}
+{A type for an iterator over all vertices.}
 \ccGlue
-\ccNestedType{Finite_vertices_iterator}{iterator over finite vertices.}
+\ccNestedType{Finite_vertices_iterator}
+{A type for an iterator over finite vertices.}
 \ccGlue
-\ccNestedType{All_faces_iterator}{iterator over all faces.}
+\ccNestedType{All_faces_iterator}
+{A type for an iterator over all faces.}
 \ccGlue
-\ccNestedType{Finite_faces_iterator}{iterator over finite faces.}
+\ccNestedType{Finite_faces_iterator}
+{A type for an iterator over finite faces.}
 \ccGlue
-\ccNestedType{All_edges_iterator}{iterator over all edges.}
+\ccNestedType{All_edges_iterator}
+{A type for an iterator over all edges.}
 \ccGlue
-\ccNestedType{Finite_edges_iterator}{iterator over finite edges.}
+\ccNestedType{Finite_edges_iterator}
+{A type for an iterator over finite edges.}
+
+
+In addition to iterators and circulators for vertices and faces,
+iterators for sites are provided. In particular there are iterators
+for the entire set of sites, the hidden sites and the visible sites of
+the Apollonius graph.
+
+
 \ccGlue
-\ccNestedType{Sites_iterator}{iterator over all sites.}
+\ccNestedType{Sites_iterator}
+{A type for an iterator over all sites.}
 \ccGlue
-\ccNestedType{Visible_sites_iterator}{iterator over all visible sites.}
+\ccNestedType{Visible_sites_iterator}
+{A type for an iterator over all visible sites.}
 \ccGlue
-\ccNestedType{Hidden_sites_iterator}{iterator over all hidden sites.}
+\ccNestedType{Hidden_sites_iterator}
+{A type for an iterator over all hidden sites.}
 
 \ccCreationVariable{ag}
 
@@ -160,28 +171,28 @@ operator=(const Apollonius_graph_2<Gt,Agds>& other);}
 % MK:: in the following copy text from TDS
 \ccThree{Vertex_handle}{ag.number_of_vertices()+}{}
 %
-\ccMethod{const Geom_traits& geom_traits();}
-{Returns a const reference to the Apollonius graph traits object.}
+\ccMethod{Geom_traits geom_traits();}
+{Returns a reference to the Apollonius graph traits object.}
 \ccGlue
-\ccMethod{int dimension() const;}
+\ccMethod{int dimension();}
 {Returns the dimension of the Apollonius graph.}
 \ccGlue
-\ccMethod{int number_of_vertices() const;}
+\ccMethod{int number_of_vertices();}
 {Returns the number of finite vertices.}
 \ccGlue
-\ccMethod{int number_of_faces() const;}
-{Returns the number of faces (finite or infinite) of the Apollonius
-  graph.}
+\ccMethod{int number_of_faces();}
+	 {Returns the number of faces (both finite and infinite) of the
+	   Apollonius graph.}
 \ccGlue
-\ccMethod{Face_handle infinite_face() const;}
-{a  face incident to the \ccc{infinite_vertex}.}
+\ccMethod{Face_handle infinite_face();}
+{Returns a  face incident to the \ccc{infinite_vertex}.}
 \ccGlue
 \ccMethod{Vertex_handle
           infinite_vertex();}
-{the \ccc{infinite_vertex}.}
+{Returns the \ccc{infinite_vertex}.}
 \ccGlue
-\ccMethod{Vertex_handle finite_vertex() const;}
-{a vertex distinct from  the \ccc{infinite_vertex}.
+\ccMethod{Vertex_handle finite_vertex();}
+{Returns a vertex distinct from  the \ccc{infinite_vertex}.
 \ccPrecond{The number of (visible) vertices in the Apollonius graph must
   be at least one.}}
 
@@ -208,38 +219,49 @@ bidirectional and their value types are respectively
 \ccc{Face}, \ccc{Edge} and \ccc{Vertex}. 
 They are all invalidated by any change in the Apollonius graph.
 
-\ccMethod{Finite_vertices_iterator finite_vertices_begin() const;}{Starts at an arbitrary finite vertex}
+\ccMethod{Finite_vertices_iterator finite_vertices_begin();}
+{Starts at an arbitrary finite vertex.}
 \ccGlue
-\ccMethod{Finite_vertices_iterator finite_vertices_end() const;}{Past-the-end iterator}
+\ccMethod{Finite_vertices_iterator finite_vertices_end();}
+{Past-the-end iterator.}
 
-\ccMethod{Finite_edges_iterator finite_edges_begin() const;}{Starts at an arbitrary finite edge}
+\ccMethod{Finite_edges_iterator finite_edges_begin();}
+{Starts at an arbitrary finite edge.}
 \ccGlue
-\ccMethod{Finite_edges_iterator finite_edges_end() const;}{Past-the-end iterator}
+\ccMethod{Finite_edges_iterator finite_edges_end();}
+{Past-the-end iterator.}
 
-\ccMethod{Finite_faces_iterator finite_faces_begin() const;}{Starts at an arbitrary finite face}
+\ccMethod{Finite_faces_iterator finite_faces_begin();}
+{Starts at an arbitrary finite face.}
 \ccGlue
 \ccMethod{Finite_faces_iterator finite_faces_end()
-const;}{Past-the-end iterator}
+const;}{Past-the-end iterator.}
 
 The following iterators allow respectively to visit all
-(finite or infinite) faces, edges and vertices
+(both finite and infinite) faces, edges and vertices
 of the Apollonius graph. These iterators are non-mutable, bidirectional
 and their value types are respectively
 \ccc{Face}, \ccc{Edge} and \ccc{Vertex}. 
 They are all invalidated by any change in the Apollonius graph.
 
 
-\ccMethod{All_vertices_iterator all_vertices_begin() const;}{Starts at an arbitrary  vertex}
+\ccMethod{All_vertices_iterator all_vertices_begin();}
+{Starts at an arbitrary  vertex.}
 \ccGlue
-\ccMethod{All_vertices_iterator all_vertices_end() const;}{Past-the-end iterator}
+\ccMethod{All_vertices_iterator all_vertices_end();}
+{Past-the-end iterator.}
 
-\ccMethod{All_edges_iterator all_edges_begin() const;}{Starts at an arbitrary edge}
+\ccMethod{All_edges_iterator all_edges_begin();}
+{Starts at an arbitrary edge.}
 \ccGlue
-\ccMethod{All_edges_iterator all_edges_end() const;}{Past-the-end iterator}
+\ccMethod{All_edges_iterator all_edges_end();}
+{Past-the-end iterator.}
 
-\ccMethod{All_faces_iterator all_faces_begin() const;}{Starts at an arbitrary face}
+\ccMethod{All_faces_iterator all_faces_begin();}
+{Starts at an arbitrary face.}
 \ccGlue
-\ccMethod{All_faces_iterator all_faces_end() const;}{Past-the-end iterator}
+\ccMethod{All_faces_iterator all_faces_end();}
+{Past-the-end iterator.}
 
 
 
@@ -252,22 +274,23 @@ is \ccc{Site_2}. They are all invalidated by any change in the
 Apollonius graph.
 
 
-\ccMethod{Sites_iterator sites_begin() const;}{Starts at an abritrary
-  site}
+\ccMethod{Sites_iterator sites_begin();}
+{Starts at an abritrary site.}
 \ccGlue
-\ccMethod{Sites_iterator sites_end() const;}{Past-the-end iterator}
+\ccMethod{Sites_iterator sites_end();}
+{Past-the-end iterator.}
 
-\ccMethod{Visible_sites_iterator visible_sites_begin() const;}{Starts
-  at an arbitrary visible site}
+\ccMethod{Visible_sites_iterator visible_sites_begin();}
+{Starts at an arbitrary visible site.}
 \ccGlue
-\ccMethod{Visible_sites_iterator visible_sites_end()
-  const;}{Past-the-end iterator}
+\ccMethod{Visible_sites_iterator visible_sites_end();}
+{Past-the-end iterator.}
 
-\ccMethod{Hidden_sites_iterator hidden_sites_begin() const;}{Starts
-  at an arbitrary hidden site}
+\ccMethod{Hidden_sites_iterator hidden_sites_begin();}
+{Starts at an arbitrary hidden site.}
 \ccGlue
-\ccMethod{Hidden_sites_iterator hidden_sites_end()
-  const;}{Past-the-end iterator}
+\ccMethod{Hidden_sites_iterator hidden_sites_end();}
+{Past-the-end iterator.}
 
 
 \ccThree{Vertex_circulator}{t.number_of_vertices()x}{}
@@ -285,31 +308,31 @@ These circulators are non-mutable and bidirectional.
 counterclockwise around the vertex while
 the \ccc{operator--} moves clockwise.
 A face circulator is invalidated by any modification of the face pointed to.
-Edge and a vertex circulators is invalidated by any modification
-of one of the two faces incident to the edge pointed to.
+Edge and vertex circulators is invalidated by any modification
+in one of the two faces incident to the edge pointed to.
 
-\ccMethod{Face_circulator incident_faces(Vertex_handle v) const;}
+\ccMethod{Face_circulator incident_faces(Vertex_handle v);}
 {Starts at an arbitrary face incident
 to \ccc{v}.}
 \ccGlue
-\ccMethod{Face_circulator incident_faces(Vertex_handle v, Face_handle f) const;}
+\ccMethod{Face_circulator incident_faces(Vertex_handle v, Face_handle f);}
 {Starts at face \ccc{f}.
 \ccPrecond Face \ccc{f} is incident to vertex \ccc{v}.}
 \ccGlue
-\ccMethod{Edge_circulator incident_edges(Vertex_handle v) const;}
+\ccMethod{Edge_circulator incident_edges(Vertex_handle v);}
 {Starts at an arbitrary edge incident
 to \ccc{v}.}
 \ccGlue
-\ccMethod{Edge_circulator incident_edges(Vertex_handle v, Face_handle f) const;}
+\ccMethod{Edge_circulator incident_edges(Vertex_handle v, Face_handle f);}
 {Starts at the first edge of \ccc{f} incident to 
 \ccc{v}, in counterclockwise order around \ccc{v}.
 \ccPrecond Face \ccc{f} is incident to vertex \ccc{v}.}
 \ccGlue
-\ccMethod{Vertex_circulator incident_vertices(Vertex_handle v) const;}
+\ccMethod{Vertex_circulator incident_vertices(Vertex_handle v);}
 {Starts at an arbitrary  vertex incident
 to \ccc{v}.}
 \ccGlue
-\ccMethod{Vertex_circulator incident_vertices(Vertex_handle v, Face_handle f) ;}
+\ccMethod{Vertex_circulator incident_vertices(Vertex_handle v, Face_handle f);}
 {Starts at the first vertex of \ccc{f} adjacent  to \ccc{v}
 in  counterclockwise order around \ccc{v}.
 \ccPrecond Face \ccc{f} is incident to vertex \ccc{v}.}
@@ -324,17 +347,20 @@ the infinite edges and faces. Note that a counterclockwise
 traversal of the vertices adjacent to the \ccc{infinite_vertex} is
 a clockwise traversal of the convex hull.
 
-\ccMethod{Face_circulator incident_faces(ag.infinite_vertex()) const;}{}
+\ccMethod{Face_circulator incident_faces(ag.infinite_vertex());}{}
 \ccGlue
-\ccMethod{Face_circulator incident_faces(ag.infinite_vertex(), Face_handle f) const;}{}
+\ccMethod{Face_circulator incident_faces(ag.infinite_vertex(),
+  Face_handle f);}{}
 \ccGlue
-\ccMethod{Edge_circulator incident_edges(ag.infinite_vertex()) const;}{}
+\ccMethod{Edge_circulator incident_edges(ag.infinite_vertex());}{}
 \ccGlue
-\ccMethod{Edge_circulator incident_edges(ag.infinite_vertex(), Face_handle f);}{}
+\ccMethod{Edge_circulator incident_edges(ag.infinite_vertex(),
+  Face_handle f);}{}
 \ccGlue
-\ccMethod{Vertex_circulator incident_vertices(ag.infinite_vertex()) ;} {}
+\ccMethod{Vertex_circulator incident_vertices(ag.infinite_vertex());}{}
 \ccGlue
-\ccMethod{Vertex_circulator incident_vertices(ag.infinite_vertex(), Face_handle f) ;}{}
+\ccMethod{Vertex_circulator incident_vertices(ag.infinite_vertex(),
+  Face_handle f);}{}
 
 
 
@@ -386,14 +412,14 @@ unsigned int insert(Input_iterator first, Input_iterator beyond);}
 \ccMethod{Vertex_handle  insert(Site_2 s);}{Inserts the
 site \ccc{s} in the Apollonius graph. If \ccc{s} is visible then the
 vertex handle of \ccc{s} is returned, otherwise 
-the \ccc{Vertex_handle(NULL)} is returned.}
+\ccc{Vertex_handle(NULL)} is returned.}
 %
 \ccGlue
 \ccMethod{Vertex_handle insert(Site_2 s, Vertex_handle
 vnear);}{Inserts \ccc{s} in the Apollonius graph using the site
 associated with \ccc{vnear} as an estimate for the nearest neighbor of
 the center of \ccc{s}. If \ccc{s} is visible then the vertex handle of
-\ccc{s} is returned, otherwise the \ccc{Vertex_handle(NULL)} is
+\ccc{s} is returned, otherwise \ccc{Vertex_handle(NULL)} is
 returned.}
 
 
@@ -412,16 +438,18 @@ vertex of the Apollonius graph.}}
 %
 \ccMethod{Vertex_handle  nearest_neighbor(Point_2 p);}
 {Finds the nearest neighbor of the point \ccc{p}. In other words it
-finds the site the Apollonius region of which contains
-\ccc{p}. Ties are broken arbitrarily and one of the nearest neighbors
-of \ccc{p} is returned.}
+finds the site whose Apollonius cell contains \ccc{p}. Ties are broken
+arbitrarily and one of the nearest neighbors of \ccc{p} is
+returned. If there are no visible sites in the Apollonius diagram
+\ccc{Vertex_handle(NULL)} is returned.}
 \ccGlue
 \ccMethod{Vertex_handle  nearest_neighbor(Point_2 p,
 Vertex_handle vnear);}{Finds the nearest neighbor of the point
 \ccc{p} using the site associated with \ccc{vnear} as an
 estimate for the nearest neighbor of \ccc{p}. Ties are broken
-arbitrarily and one of the nearest neighbors 
-of \ccc{p} is returned.}
+arbitrarily and one of the nearest neighbors of \ccc{p} is
+returned. If there are no visible sites in the Apollonius diagram
+\ccc{Vertex_handle(NULL)} is returned.}
 
 
 \ccHeading{Access to the dual}
@@ -511,11 +539,11 @@ be preferred to \ccVar\ccc{ = other} or to \ccVar\ccc{(other)} if
 
 
 \ccSeeAlso
-\ccc{ApolloniusGraphDataStructure_2}\\
 \ccc{ApolloniusGraphTraits_2}\\
+\ccc{ApolloniusGraphDataStructure_2}\\
 \ccc{ApolloniusGraphVertexBase_2}\\
 \ccc{ApolloniusGraphFaceBase_2}\\
-\ccc{CGAL::Apollonius_graph_euclidean_traits_2<K,Method_tag>}\\
+\ccc{CGAL::Apollonius_graph_traits_2<K,Method_tag>}\\
 \ccc{CGAL::Apollonius_graph_data_structure_2<Vb,Fb>}\\
 \ccc{CGAL::Apollonius_graph_vertex_base_2<Gt,StoreHidden>}\\
 \ccc{CGAL::Apollonius_graph_face_base_2<Gt>}

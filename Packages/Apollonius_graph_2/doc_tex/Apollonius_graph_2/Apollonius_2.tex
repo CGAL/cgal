@@ -25,16 +25,16 @@
 
 \minitoc
 
-This chapter describes the two dimensional Apollonius graph
+This chapter describes the two-dimensional Apollonius graph
 of \cgal. We start with a few definitions in 
 Section~\ref{sec:apollonius2-definitions}.
 The software design of the 2D Apollonius graph package is described 
 in Section~\ref{sec:apollonius2-design}.
 In Section~\ref{sec:apollonius2-traits} we discuss the geometric
 traits of the 2D Apollonius graph package and in Section
-\ref{sec:apollonius2-hierarchy} the Apollonius graph hierarchy is
-briefly described, which is a data structure suitable for fast nearest
-neighbor queries.
+\ref{sec:apollonius2-hierarchy} the Apollonius graph hierarchy, a data
+structure suitable for fast nearest neighbor queries, is briefly
+described.
 
 
 \section{Definitions}
@@ -68,10 +68,10 @@ dual of the {\em Apollonius diagram} or, as it is also known, the
 implemented is dynamic, which means that we can perform insertions and
 deletions on line. The corresponding \cgal\ class is called
 \ccc{Apollonius_graph_2<ApolloniusGraphTraits_2,ApolloniusGraphDataStructure_2>}
-and will be discussed in
-more detail below. The interested reader may want to refer to the
-paper by Karavelas and Yvinec \cite{ky-dawvd-02} for the general idea
-as well as the details of the algorithm implemented.
+and will be discussed in more detail in the sequel. The interested
+reader may want to refer to the paper by Karavelas and Yvinec
+\cite{ky-dawvd-02} for the general idea as well as the details of the
+algorithm implemented.
 
 
 Before describing the details of the implementation we make a brief
@@ -84,7 +84,7 @@ Fig. \ref{fig-apollonius}(left)). The cell of a
 site $P_i$ is the locus of points on the plane that are
 closer to $P_i$ than any other site $P_j$, $j\neq i$.
 The distance $\delta(x, P_i)$ of a point $x$ in the plane to a
-circle $P_i$ is defined as: 
+site $P_i$ is defined as: 
 \[      \delta(x,P_i)=\|x-c_i\|-w_i,\]
 where $\|\cdot\|$ denotes the Euclidean norm.
 It can easily be seen that it is a generalization of the Voronoi
@@ -103,7 +103,7 @@ $\{P_1,\ldots, P_n\}$, where $c_i$ is the center of the circle $P_i$
 and $w_i$ its radius. If the weights are allowed to be negative,
 we need to go to 3D in order to explain what the Apollonius diagram
 means geometrically. We identify the 2D Euclidean plane with the
-$xy$-plane in 3D. Then Voronoi diagram of a set of points can be
+$xy$-plane in 3D. Then the Voronoi diagram of a set of points can be
 seen as the vertical projection on the $xy$-plane of the lower
 envelope of a set of 3D cones defined as follows: for each point $p$
 in the set of 2D points we have a cone $C_p$ whose apex is the point
@@ -114,7 +114,7 @@ positive $z$-direction (that is, $C_p$ is contained in the positive
 $z$-halfspace).
 The Apollonius diagram corresponds to shifting the
 apexes of these cones in the $z$-direction by a quantity equal to the
-weight. So site with negative weight will give rise to
+weight. Sites with negative weight will give rise to
 cones whose apex is in the negative $z$-halfspace and sites
 with positive weight will give rise to cones whose apex is in the
 positive $z$-halfspace. In a manner analogous to the case of points,
@@ -145,12 +145,12 @@ every face has exactly three edges). Near the convex hull we may
 have some spikes (i.e., vertices of degree 1). To unify our approach
 and handling of the Apollonius graph we add to the set of (finite)
 circles a fictitious circle at infinity, which we call the
-{\em point at infinity}. We can then connect all vertices of the outer
-face of the Apollonius graph to the point at infinity which gives us
-a graph with the property that all its faces are now
+{\em site at infinity}. We can then connect all vertices of the outer
+face of the Apollonius graph to the site at infinity which gives us
+a graph with the property that all of its faces are now
 triangular. However, the Apollonius graph is not a triangulation for
 two main reasons: we cannot always embed it on the plane with straight
-line segments that yield a triangulation and moreover we may have two
+line segments that yield a triangulation and, moreover, we may have two
 faces of the graph that have two edges in common, which is not allowed
 in a triangulation. Both of these particularities appear when we
 consider the Apollonius graph of the set of circles in
@@ -159,17 +159,17 @@ Fig. \ref{fig-apollonius}(right).
 
 We would like to finish our brief introduction to the theory of
 Apollonius graphs by discussing the concept of general position. We say
-that a set of circles is in general position if no two triples of
+that a set of circles is in general position if no two triplets of
 circles have the same tritangent circle. This statement is rather
 technical and it is best understood in the context of points. The
-equivalent statement for points is that we have no two triples of
+equivalent statement for points is that we have no two triplets of
 points that define the same circumcircle, or equivalently that no
-four circles are co-circular. The statement about general position made
+four points are co-circular. The statement about general position made
 above is a direct generalization of the (much simpler to understand)
 statement about points. On the contrary, when we have circles in
 degenerate position, the Apollonius graph has faces with more than
 three edges on their boundary. We can get a triangulated version of
-the graph by simply {\em triangulating} the corresponding face in an
+the graph by simply {\em triangulating} the corresponding faces in an
 arbitrary way. In fact the algorithm that has been implemented in
 \cgal\ has the property that it always returns a valid
 {\em triangulated} version of the Apollonius graph. By valid we mean
@@ -191,19 +191,19 @@ contained in the closure of the disk of another circle (see again
 Fig. \ref{fig-apollonius}). Hidden circles pose an additional
 difficulty to our algorithm and software design. Since we allow
 circles to be inserted and deleted at wish, it is possible that a
-circle that was hidden at some point, may become visible at another
-point; for example this can happen if we delete the circle that
-hides it. For this purpose we store hidden circles and have them
-reappear when they become visible. We will discuss this issue in
-detail below. For the time being it suffices to say that the user has
-the ability to control this behavior. More specifically it is possible
-to discard the circles that become hidden. This choice is totally
-natural when for example we expect to do only insertions, since in
-this case a circle that becomes hidden will never reappear. On the
-other hand if deletions are expected as well, then we lose the ability
-to have the hidden circles reappear.
+circle that was hidden at some point in time, may become visible at
+a later point in time; for example this can happen if we delete the
+circle that hides it. For this purpose we store hidden circles and
+have them reappear when they become visible. We will discuss this
+issue in detail below. For the time being it suffices to say that the
+user has the ability to control this behavior. More specifically it is
+possible to discard the circles that become hidden. This choice is
+totally natural when for example we expect to do only insertions,
+since in this case a circle that becomes hidden will never
+reappear. On the other hand if deletions are expected as well, then we
+lose the ability to have the hidden circles reappear.
 
-\paragraph{Degenerate dimensions}
+\paragraph{Degenerate dimensions.}
 The dimension of the Apollonius graph is in general 2. The exceptions
 to this rule are as follows:
 \begin{itemize}
@@ -223,18 +223,20 @@ The 2D Apollonius graph class
 follows the design of the triangulation package of \cgal. It is
 parametrized by two arguments:
 \begin{itemize}
-\item the {\bf geometric traits} class. The user can specify the
-  type of geometric objects to be used such as sites, points
+\item the {\bf geometric traits} class. It provides the basic
+  geometric objects involved in the algorithm, such as sites, points
   etc. It also provides the geometric predicates for the computation
   of the Apollonius graph, as well as some basic constructions that
   can be used, for example, to visualize the Apollonius graph or the
-  Apollonius diagram.
+  Apollonius diagram. The geometric traits for the Apollonius graph
+  will be discussed in more detail in the next section.
 \item the {\bf Apollonius graph data structure}. This is essentially
   the same as the triangulation data structure (discussed in Chapter
   \ref{Chapter_2D_Triangulation_Data_structure}), augmented with some
-  additional operations that are specific to Apollonius graphs. In
-  fact it is a refinement of the
-  \ccc{TriangulationDataStructure_2}. The class
+  additional operations that are specific to Apollonius graphs. The
+  corresponding concept is that of
+  \ccc{ApolloniusGraphDataStructure_2}, which in fact is a refinement
+  of the \ccc{TriangulationDataStructure_2} concept. The class
   \ccc{Apollonius_graph_data_structure_2<Vb,Fb>} is a model of
   the concept \ccc{ApolloniusGraphDataStructure_2}. A default value
   for the corresponding template parameter is provided, so the user
@@ -253,21 +255,22 @@ To store hidden circles we assign to every visible circle a list. This
 list is comprised of the hidden circles that are contained in the
 visible circle. The user can access the hidden circles associated with
 a visible circle through an iterator called
-\ccc{Hidden_sites_iterator}. This iterator is defined by the
+\ccc{Hidden_sites_iterator}. This iterator is defined in the
 \ccc{ApolloniusGraphVertexBase_2} concept and is implemented by its
-model, the \ccc{Apollonius_graph_vertex_base_2} class. It is also
-possible to iterate through the entire set of hidden sites using an
-homonymous iterator defined by the \ccc{Apollonius_graph_2} class.
+model, the \ccc{Apollonius_graph_vertex_base_2<Gt,StoreHidden>}
+class. It is also possible to iterate through the entire set of hidden
+sites using an homonymous iterator defined by the
+\ccc{Apollonius_graph_2<Gt,Agds>} class. 
 
 Since storing hidden sites may not be of interest in some cases (e.g.,
 for example this is the case if we only perform insertions in the
 Apollonius graph), the user has the possibility of controllong this
 behavior. More precisely, the class
-\ccc{Apollonius_graph_vertex_base_2} has two template parameters, the
-second of which is a boolean value. This value is by default
-\ccc{true} and it indicates that hidden sites should be stored. The
-user may indicate that hidden sites need not be stored by setting this
-value to \ccc{false}.
+\ccc{Apollonius_graph_vertex_base_2<Gt,StoreHidden>} has two template
+parameters, the second of which is a boolean value. This value is by
+default \ccc{true} and it indicates that hidden sites should be
+stored. The user can indicate that hidden sites may be discarded
+by setting this value to \ccc{false}.
 
 
 \section{The Geometric Traits}
@@ -346,7 +349,9 @@ alt="The Vertex_conflict_2 predicate returns true">
 What we essentially want to compute when we construct incrementally a
 Voronoi diagram, is whether the object to be inserted destroys an edge
 of the Voronoi diagram or not. In the case of points this is really
-easy and it amounts to the well known {\em incircle} test. In the case
+easy and it amounts to the well known {\em incircle} test. 
+% add a pointer to the kernel for the incircle test
+In the case
 of circles the situation is more complicated. We can have six possible
 outcomes as to what portion of an edge of the Apollonius diagram the
 new circle destroys (see Fig. \ref{fig-ag2edgeconflict}). The first
@@ -361,7 +366,7 @@ what the \ccc{Finite_edge_interior_conflict_2} and
 is the same predicate (same idea) applied to two different types of
 edges in the Apollonius diagram: a finite or an infinite edge. An edge
 is infinite if its dual edge in the Apollonius graph connects the
-point at infinity with the vertex corresponding to a (finite) circle; 
+site at infinity with the vertex corresponding to a (finite) circle; 
 otherwise it is a finite edge.
 
 \begin{figure}[!t]
@@ -393,8 +398,8 @@ otherwise it is a finite edge.
   inserted. Top left: only a neighborhood around the left-most
   endpoint of the edge will be destroyed. Top right: only a
   neighborhood around the right-most endpoint of the edge will be
-  destroyed. Middle left: the green circle does not destroy anything
-  from the edge. Middle right: the entire edge will be
+  destroyed. Middle left: the green circle does not destroy any
+  portion of the edge. Middle right: the entire edge will be
   destroyed. Bottom left: a neighborhood in the interior of the edge
   will be destroyed; the regions near the endpoints remain
   unaffected. Bottom right: The neighborhood around the two endpoints
@@ -419,7 +424,8 @@ The last predicate that we want to discuss is called
 \ccc{Is_degenerate_edge_2}. It tells us whether an edge in the
 Apollonius diagram is degenerate, that is if its two endpoints
 coincide. In the Apollonius graph such an edge corresponds to one of
-the additional edges that we use to triangulate non-triangular faces.
+the additional edges that we use to triangulate the non-triangular
+faces.
 
 
 
@@ -438,7 +444,9 @@ has exactly the same interface and functionality as the
 class. Using the Apollonius graph hierarchy involves an additional
 cost in space and time for maintaining the hierarchy. Our experiments
 have shown that it usually pays off to use the hierarchy for inputs
-consisting of more than 1,000 circles.
+consisting of more than 1,000 circles. This threshold holds for both
+the construction of the Apollonius diagram itself, as well as for
+nearest neighbor queries.
 
 
 \section{Examples}

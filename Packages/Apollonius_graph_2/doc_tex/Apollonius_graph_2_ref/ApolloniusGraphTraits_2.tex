@@ -17,10 +17,10 @@
 %% \ccHtmlIndexC[concept]{} %% add further index entries
 \ccDefinition
   
-The concept \ccRefName\ provides the traits requirements for the
+The concept \ccc{\ccRefName} provides the traits requirements for the
 \ccc{Apollonius_graph_2} class. In particular,
 it provides a type \ccc{Site_2}, which must be a model of the concept
-\ccc{Apollonius_site_2}. It also provides
+\ccc{ApolloniusSite_2}. It also provides
 constructions for sites and several function object
 types for the predicates. The way the predicates are evaluated is
 discussed in \cite{ke-ppawv-02,ke-rctac-03}.
@@ -38,11 +38,13 @@ discussed in \cite{ke-ppawv-02,ke-rctac-03}.
   the dual of the Apollonius graph is required or if the primal
   or dual diagram are inserted in a stream.}
 \ccGlue
-\ccNestedType{Ray_2}{A type for a ray. Only required if the primal or
-  dual diagram are inserted in a stream.}
+\ccNestedType{Ray_2}{A type for a ray. Only required if access to
+  the dual of the Apollonius graph is required or if the primal
+  or dual diagram are inserted in a stream.}
 \ccGlue
-\ccNestedType{Segment_2}{A type for a segment. Only required if the
-  primal or dual diagram are inserted in a stream.}
+\ccNestedType{Segment_2}{A type for a segment. Only required if access to
+  the dual of the Apollonius graph is required or if the primal
+  or dual diagram are inserted in a stream.}
 \ccGlue
 \ccNestedType{Object_2}{A type representing different types of objects
   in two dimensions.}
@@ -81,9 +83,10 @@ dual site whose center $c$ is equidistant from \ccc{s1}, \ccc{s2} and
 \ccc{s3}, and its weight is equal to the (signed) distance of $c$
 from \ccc{s1} (or \ccc{s2} or \ccc{s3}).\\
 Must also provide \ccc{Line_2 operator()(Site_2 s1, Site_2 s2)}, which
-a line bitangent to \ccc{s1} and \ccc{s2}. This line is the dual site
-of \ccc{s1}, \ccc{s2} and the site at infinity; its center is at
-infinity and its weight is infinite.
+constructs a line bitangent to \ccc{s1} and \ccc{s2}. This line is the
+dual site of \ccc{s1}, \ccc{s2} and the site at infinity; it can be
+viewed as a dual Apollonius site whose center is at infinity
+and its weight is infinite.
 }
 %
 \ccTwo{ApolloniusGraphTraits_2}{}
@@ -125,8 +128,11 @@ to \ccc{s1}, \ccc{false} otherwise.}
 Must provide \ccc{Oriented_side operator()(Site_2 s1,
 Site_2 s2, Point_2 p)}, which returns
 the oriented side of the bisector of \ccc{s1} and \ccc{s2} that
-contains \ccc{p}. The orientation of the bisector is such that the
-positive halfspace corresponds to \ccc{s1}.}
+contains \ccc{p}. Returns \ccc{ON_POSITIVE_SIDE} if \ccc{p} lies in
+the half-space of \ccc{s1} (i.e., \ccc{p} is closer to \ccc{s1} than
+\ccc{s2}); returns \ccc{ON_NEGATIVE_SIDE} if \ccc{p} lies in the
+half-space of \ccc{s2}; returns \ccc{ON_ORIENTED_BOUNDARY} if \ccc{p}
+lies on the bisector of \ccc{s1} and \ccc{s2}.}
 %
 \ccGlue
 \ccNestedType{Vertex_conflict_2}{A predicate object type.
@@ -148,7 +154,7 @@ Site_2 s2, Site_2 s3, Site_2 s4,
 Site_2 q, bool b)}. The sites \ccc{s1}, \ccc{s2},
 \ccc{s3} and \ccc{s4} define an Apollonius edge that lies on the
 bisector of \ccc{s1} and \ccc{s2} and has as endpoints the Apollonius
-vertices defined by the triples \ccc{s1}, \ccc{s2}, \ccc{s3} and
+vertices defined by the triplets \ccc{s1}, \ccc{s2}, \ccc{s3} and
 \ccc{s1}, \ccc{s4} and \ccc{s2}. The boolean \ccc{b} denotes if the
 two Apollonius vertices are in conflict with the site
 \ccc{q} (in which case \ccc{b} should be \ccc{true}, otherwise
@@ -158,39 +164,39 @@ conflict with \ccc{q}. If \ccc{b} is \ccc{false}, the predicate returns
 \ccc{false} if and only if \ccc{q} is not in conflict with the
 Apollonius edge.
 \ccPrecond{the Apollonius vertices of \ccc{s1}, \ccc{s2},
-\ccc{s3}, and \ccc{s1}, \ccc{s4}, \ccc{s2} must exist.}
+\ccc{s3}, and \ccc{s1}, \ccc{s4}, \ccc{s2} must exist.}\\
 %
 Must also provide \ccc{bool operator()(Site_2 s1,
 Site_2 s2, Site_2 s3, Site_2 q, bool b)}. The
 sites \ccc{s1}, \ccc{s2}, \ccc{s3} and the site at infinity
 $s_\infty$ define an Apollonius edge that lies on the bisector of
 \ccc{s1} and \ccc{s2} and has as endpoints the Apollonius vertices
-defined by the triples \ccc{s1}, \ccc{s2}, \ccc{s3} and \ccc{s1},
+defined by the triplets \ccc{s1}, \ccc{s2}, \ccc{s3} and \ccc{s1},
 $s_\infty$ and \ccc{s2} (the second Apollonius vertex is actually at
 infinity). The boolean \ccc{b} denotes if the two Apollonius vertices
 are in conflict with the site \ccc{q} (in which case \ccc{b}
 should be \ccc{true}, otherwise \ccc{false}). 
 In case that \ccc{b} is \ccc{true}, the predicate
 returns \ccc{true} if and only if the entire Apollonius edge is in
-conflict with \ccc{q}. If \ccc{b} is \ccc{false}, the predicate return 
+conflict with \ccc{q}. If \ccc{b} is \ccc{false}, the predicate returns
 \ccc{false} if and only if \ccc{q} is not in conflict with the
 Apollonius edge.
 \ccPrecond{the Apollonius vertex of \ccc{s1}, \ccc{s2},
-\ccc{s3} must exist.}
+\ccc{s3} must exist.}\\
 %
 Must finally provide \ccc{bool operator()(Site_2 s1,
 Site_2 s2, Site_2 q, bool b)}. The
 sites \ccc{s1}, \ccc{s2} and the site at infinity
 $s_\infty$ define an Apollonius edge that lies on the bisector of
 \ccc{s1} and \ccc{s2} and has as endpoints the Apollonius vertices
-defined by the triples \ccc{s1}, \ccc{s2}, $s_\infty$ and \ccc{s1},
+defined by the triplets \ccc{s1}, \ccc{s2}, $s_\infty$ and \ccc{s1},
 $s_\infty$ and \ccc{s2} (both Apollonius vertices are actually at
 infinity). The boolean \ccc{b} denotes if the two Apollonius vertices
 are in conflict with the site \ccc{q} (in which case \ccc{b}
 should be \ccc{true}, otherwise \ccc{false}). 
 In case that \ccc{b} is \ccc{true}, the predicate
 returns \ccc{true} if and only if the entire Apollonius edge is in
-conflict with \ccc{q}. If \ccc{b} is \ccc{false}, the predicate return 
+conflict with \ccc{q}. If \ccc{b} is \ccc{false}, the predicate returns 
 \ccc{false} if and only if \ccc{q} is not in conflict with the
 Apollonius edge.}
 %
@@ -200,14 +206,14 @@ object type. Must provide \ccc{bool operator()(Site_2 s1,
 Site_2 s2, Site_2 s3, Site_2 q, bool b)}. The
 sites $s_\infty$, \ccc{s1}, \ccc{s2} and \ccc{s3} define an
 Apollonius edge that lies on the bisector of $s_\infty$ and \ccc{s1}
-and has as endpoints the Apollonius vertices defined by the triples
+and has as endpoints the Apollonius vertices defined by the triplets
 $s_\infty$, \ccc{s1}, \ccc{s2} and $s_\infty$, \ccc{s3} and
 \ccc{s1}. The boolean \ccc{b} denotes if the two Apollonius vertices
 are in conflict with the site \ccc{q} (in which case \ccc{b}
-should be \ccc{true}, otherwise \ccc{false}. It returns true of the
+should be \ccc{true}, otherwise \ccc{false}.
 In case that \ccc{b} is \ccc{true}, the predicate
 returns \ccc{true} if and only if the entire Apollonius edge is in
-conflict with \ccc{q}. If \ccc{b} is \ccc{false}, the predicate return 
+conflict with \ccc{q}. If \ccc{b} is \ccc{false}, the predicate returns
 \ccc{false} if and only if \ccc{q} is not in conflict with the
 Apollonius edge.}
 %
@@ -293,11 +299,12 @@ construct_Apollonius_site_2_object();}{}
 
 \ccHasModels
 
-\ccc{CGAL::Apollonius_graph_euclidean_traits_2<K,Method_tag>}
+\ccc{CGAL::Apollonius_graph_traits_2<K,Method_tag>}
 
 
 \ccSeeAlso
-\ccc{CGAL::Apollonius_graph_2<Gt,Agds>}
+\ccc{CGAL::Apollonius_graph_2<Gt,Agds>}\\
+\ccc{CGAL::Apollonius_graph_traits_2<K,Method_tag>}
 
 \end{ccRefConcept}
 

@@ -21,7 +21,8 @@
 The class \ccRefName\ provides a model for the concept
 \ccc{ApolloniusGraphFaceBase_2}. It is templetized by the geometric
 traits of the Apollonius graph. It derives publicly from the class
-\ccc{CGAL::Triangulation_face_base_2<Gt>}.
+\ccc{CGAL::Triangulation_face_base_2<Gt>}. \ccc{Gt} must be a model of
+the \ccc{ApolloniusGraphTraits_2} concept.
 
 \ccInheritsFrom
 \ccc{CGAL::Triangulation_face_base_2<Gt>}
@@ -48,8 +49,11 @@ traits of the Apollonius graph. It derives publicly from the class
 
 \ccSeeAlso
 \ccc{ApolloniusGraphFaceBase_2}\\
+\ccc{ApolloniusGraphDataStructure_2}\\
+\ccc{ApolloniusGraphTraits_2}\\
 \ccc{CGAL::Triangulation_face_base_2<Gt>}\\
-\ccc{CGAL::Apollonius_graph_data_structure_2<Vb,Fb>}
+\ccc{CGAL::Apollonius_graph_data_structure_2<Vb,Fb>}\\
+\ccc{CGAL::Apollonius_graph_traits_2<K,Method_tag>}
 
 \end{ccRefClass}
 

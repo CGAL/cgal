@@ -23,8 +23,8 @@ included in an Apollonius graph hierarchy has to provide
 some pointers to the corresponding vertices in the
 graphs of the next and preceeding levels.
 Therefore, the concept \ccc{ApolloniusGraphHierarchyVertexBase_2}
-extends the concept \ccc{ApolloniusGraphVertexBase_2}, by
-adding two vertex handles to the correponding vertices in the
+refines the concept \ccc{ApolloniusGraphVertexBase_2}, by
+adding two vertex handles to the correponding vertices for the
 next and previous level graphs.
 
 
@@ -59,7 +59,8 @@ and pointing to face \ccc{f}.}
 \ccThree{Vertex_handle}{v.set_down(Vertex_handle d)+}{}
 %
 \ccMethod{Vertex_handle up();}{Returns a handle to the corresponding
-  vertex (if any) of the next level Apollonius graph.}
+  vertex of the next level Apollonius graph. If such a vertex does not
+  exist \ccc{Vertex_handle(NULL)} is returned.}
 \ccGlue
 \ccMethod{Vertex_handle down();}{Returns a handle to the corresponding
   vertex of the previous level Apollonius graph.}
@@ -82,7 +83,10 @@ and pointing to face \ccc{f}.}
 
 \ccc{ApolloniusGraphDataStructure_2} \\
 \ccc{ApolloniusGraphVertexBase_2}\\
-\ccc{CGAL::Apollonius_graph_hierarchy_2<Gt,Agds>}
+\ccc{CGAL::Apollonius_graph_hierarchy_2<Gt,Agds>}\\
+\ccc{CGAL::Apollonius_graph_data_structure_2<Vb,Fb>}\\
+\ccc{CGAL::Apollonius_graph_vertex_base_2<Gt,StoreHidden>}\\
+\ccc{CGAL::Apollonius_graph_hierarchy_vertex_base_2<Agvb>}
 
 \end{ccRefConcept}
 
