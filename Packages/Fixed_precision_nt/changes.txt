@@ -1,3 +1,6 @@
+2.32 (21 March 2002)
+- converted doc to new manual style
+
 2.31 (20 March 2002)
 - removed _tag suffix from names of number type traits names
 
