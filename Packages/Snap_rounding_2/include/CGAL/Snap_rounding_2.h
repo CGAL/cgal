@@ -73,7 +73,7 @@ public:
   Point_2 source() const {return(p);}
   Point_2 target() const {return(q);}
   inline void set_data(const Point_2& inp_p,const Point_2& inp_q);
-  void determine_direction();
+  void determine_direction(Direction &seg_dir);
   bool equal(const Segment_2& s);
   Segment_data(const Segment_data &other);
 };
@@ -206,7 +206,6 @@ private:
         bool do_isr);
   //  void list_copy(std::list<Point_2>& target,std::list<Point_2>& source);
   static inline Direction get_direction() {return(seg_dir);}
-  static inline void set_direction(Direction dir) {seg_dir = dir;}
 };
 
 template<class Rep>
@@ -242,32 +241,32 @@ bool Segment_data<Rep_>::equal(const Segment_2& s)
 }
 
 template<class Rep_>
-void Segment_data<Rep_>::determine_direction()
+void Segment_data<Rep_>::determine_direction(Direction &seg_dir)
 {
   Comparison_result cx = _gt.compare_x_2_object()(p,q);
   Comparison_result cy = _gt.compare_y_2_object()(p,q);
 
   if(cx == SMALLER) {
-   if(cy == SMALLER)
-      Snap_rounding_2<Rep_>::set_direction(SEG_UP_RIGHT);
+    if(cy == SMALLER)
+      seg_dir = SEG_UP_RIGHT;
     else if(cy == EQUAL)
-      Snap_rounding_2<Rep_>::set_direction(SEG_RIGHT);
+      seg_dir = SEG_RIGHT;
     else
-      Snap_rounding_2<Rep_>::set_direction(SEG_DOWN_RIGHT);
+      seg_dir = SEG_DOWN_RIGHT;
   } else if(cx == EQUAL) {
     if(cy == SMALLER)
-      Snap_rounding_2<Rep_>::set_direction(SEG_UP);
+      seg_dir = SEG_UP;
     else if(cy == EQUAL)
-      Snap_rounding_2<Rep_>::set_direction(SEG_POINT_SEG);
+      seg_dir = SEG_POINT_SEG;
     else
-      Snap_rounding_2<Rep_>::set_direction(SEG_DOWN);
+      seg_dir = SEG_DOWN;
   } else {
     if(cy == SMALLER)
-      Snap_rounding_2<Rep_>::set_direction(SEG_UP_LEFT);
+      seg_dir = SEG_UP_LEFT;
     else if(cy == EQUAL)
-      Snap_rounding_2<Rep_>::set_direction(SEG_LEFT);
+      seg_dir = SEG_LEFT;
     else
-      Snap_rounding_2<Rep_>::set_direction(SEG_DOWN_LEFT);
+      seg_dir = SEG_DOWN_LEFT;
   }
 }
 
@@ -604,7 +603,7 @@ void Snap_rounding_2<Rep_>::find_intersected_hot_pixels(Segment_data<Rep_>
     typename std::list<Hot_Pixel<Rep_> *>::iterator iter;
 
     hot_pixels_intersected_set.clear();
-    seg.determine_direction();
+    seg.determine_direction(seg_dir);
     number_of_intersections = 0;
 
     std::list<Hot_Pixel<Rep_> *> hot_pixels_list;
@@ -659,7 +658,7 @@ void Snap_rounding_2<Rep_>::reroute_isr(std::set<Hot_Pixel<Rep_> *,
         ++next_hot_pixel_iter;
         seg.set_data((*hot_pixel_iter)->get_center(),
                      (*next_hot_pixel_iter)->get_center());
-        seg.determine_direction();
+        seg.determine_direction(seg_dir);
         find_intersected_hot_pixels(seg,hot_pixels_intersected_set,
             number_of_intersections,pixel_size);
         reroute_isr(hot_pixels_intersected_set,seg_output,
@@ -702,7 +701,7 @@ void Snap_rounding_2<Rep_>::iterate(
     for(typename std::list<Segment_data<Rep_> >::iterator iter =
         seg_list.begin();iter != seg_list.end();++iter) {
       seg_output.clear();
-      iter->determine_direction();
+      iter->determine_direction(seg_dir);
       find_intersected_hot_pixels(*iter,hot_pixels_intersected_set,
         number_of_intersections,pixel_size);
       // hot_pixels_intersected_set must have at least two hot pixels when the
