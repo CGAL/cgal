@@ -1,5 +1,8 @@
 Changes done to the `Optimisation_basic' package
 
+Version 3.8.9 on 17-Jul-2001
+- renamed concept 'Optimisation_d_traits' to 'OptimisationDTraits' (again)
+
 Version 3.8.8 on 16-Jul-2001
 - renamed concept 'Optimisation_d_traits' to 'OptimisationDTraits'
 
