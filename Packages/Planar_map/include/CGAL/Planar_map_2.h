@@ -61,10 +61,7 @@
 
 #include <CGAL/IO/Pm_file_scanner.h>
 
-#if 0
-#include <CGAL/sweep_to_construct_planar_map_2.h>
-#endif
-
+#include <CGAL/Pm_insert_utils.h>
 #include <list>
 
 CGAL_BEGIN_NAMESPACE
@@ -126,11 +123,48 @@ public:
   typedef Point_2                               Point;
   typedef X_curve_2                             X_curve;
 
+  // sweep related types
+  typedef Pm_less_point_xy<Point, Traits>      PointLessFunctor;
+  typedef std::list<X_curve_2>                 X_curve_list;
+  typedef typename X_curve_list::iterator      X_curve_list_iterator;
+  typedef Point_plus_handle<Planar_map_2>      Point_plus;
+  typedef typename std::map<Point_2, Point_plus, PointLessFunctor>
+                                               PointContainer;
+  typedef typename PointContainer::value_type  PointContainer_value_type; 
+  typedef typename PointContainer::iterator    PointContainer_iterator;
+  typedef Pm_point_node<Traits, Point_plus, X_curve_2>   
+                                               Point_node;
+  typedef typename std::map<Point_2,Point_node, PointLessFunctor >
+                                               Event_queue;
+  typedef typename Event_queue::value_type     Event_queue_value_type;
+  typedef typename Event_queue::iterator       Event_queue_iterator;  
+  typedef Pm_curve_node<Traits, Point_plus, X_curve> Curve_node_;
+  typedef typename Point_node::Curve_node_iterator 
+                                               Curve_node_iterator;
+
   // Implementation Types
   // --------------------
 protected:
   typedef std::list<X_curve_2>                  X_curve_2_container;
   
+  // sweep related types
+  typedef Pm_less_point_xy<Point, Traits>      PointLessFunctor;
+  typedef typename X_curve_2_container::iterator X_curve_2_container_iterator;
+  typedef Point_plus_handle<Planar_map_2>      Point_plus;
+  typedef typename std::map<Point_2, Point_plus, PointLessFunctor>
+                                               PointContainer;
+  typedef typename PointContainer::value_type  PointContainer_value_type; 
+  typedef typename PointContainer::iterator    PointContainer_iterator;
+  typedef Pm_point_node<Traits, Point_plus, X_curve_2>   
+                                               Point_node;
+  typedef typename std::map<Point_2,Point_node, PointLessFunctor >
+                                               Event_queue;
+  typedef typename Event_queue::value_type     Event_queue_value_type;
+  typedef typename Event_queue::iterator       Event_queue_iterator;  
+  typedef Pm_curve_node<Traits, Point_plus, X_curve> Curve_node_;
+  typedef typename Point_node::Curve_node_iterator 
+                                               Curve_node_iterator;
+
 public:
   typedef enum { 
     VERTEX = 1, 
@@ -190,39 +224,32 @@ public:
   //! iterates through a given range of curves, inserting the curves into the
   // map.
 
-  /*! insert() iterates through a given range of curves, inserting a new couple
-   * of halfedges into the planar map for each curve.
+  /*! insert() inserts a range of curves, using a simplified sweep
+   * algorithm.
    * \param begin the input iterator that points to the first curve in the
    * range.
    * \param end the input past-the-end iterator of the range.
    * \param en the notification class.
    * \return a handle to a new halfedge directed in the same way as the last 
    * curve in the range.
+   * \todo probably doesn't need to return anything.
    */
   template <class X_curve_2_iterator>
   Halfedge_iterator insert(const X_curve_2_iterator & begin,
                            const X_curve_2_iterator & end,
                            Change_notification * en = NULL)
   {
-#if 0
-    /*! \todo efi: this causes a compilation error when compiling example1 on
-     * windows!
-     */
-    sweep_to_construct_planar_map_2(begin, end, *traits, *this);
+    PointLessFunctor  event_queue_pred(traits);
+    Event_queue event_queue(event_queue_pred);
+    init_for_insert(begin, end, event_queue);
+    
+    while ( !(event_queue.empty()) ) {
+      Event_queue_iterator event = event_queue.begin();  
+      update_subdivision(event->second, en);
+      event_queue.erase(event);
+    }
+
     return halfedges_begin();
-#else
-    X_curve_2_iterator it = begin;
-    Halfedge_iterator out;
-    if (it!=end) {
-      out=insert(*it, en);
-      it++;
-    }
-    while (it != end) {
-      insert(*it, en);
-      it++;
-    }
-    return out;
-#endif
   }
 
   //! inserts a given curve into the map as a new inner component of a given
@@ -281,6 +308,9 @@ public:
    * \return a handle to a new halfedge that has v1 as its source vertex.
    */
   Halfedge_handle insert_from_vertex(const X_curve_2 & cv, 
+                                     Vertex_handle v1, 
+                                     Change_notification * en = NULL);
+  Halfedge_handle non_intersecting_insert_from_vertex(const X_curve_2 & cv, 
                                      Vertex_handle v1, 
                                      Change_notification * en = NULL);
 
@@ -688,6 +718,18 @@ private:
   bool use_delete_pl;
   bool use_delete_bb;
   bool use_delete_traits;
+
+
+
+ private:
+  template <class X_curve_2_iterator>
+  void init_for_insert(X_curve_2_iterator curves_begin, 
+		       X_curve_2_iterator curves_end,
+		       Event_queue &event_queue);
+
+  void update_subdivision(Point_node& point_node, 
+			  Change_notification *pm_change_notf);
+
 };
 
 //-----------------------------------------------------------------------------
@@ -1012,6 +1054,16 @@ insert_from_vertex(const typename Planar_map_2< Dcel, Traits >::X_curve_2 & cv,
 
   return insert_from_vertex(cv, prev, en);
 }
+template < class Dcel, class Traits >
+typename Planar_map_2< Dcel, Traits >::Halfedge_handle 
+Planar_map_2< Dcel, Traits >::
+non_intersecting_insert_from_vertex(
+       const typename Planar_map_2< Dcel, Traits >::X_curve_2 & cv,
+       typename Planar_map_2< Dcel, Traits >::Vertex_handle v1, 
+       Change_notification * en)
+{
+  return insert_from_vertex(cv, v1, en);
+}
 
 // Obsolete
 template < class Dcel, class Traits >
@@ -1115,7 +1167,6 @@ insert_at_vertices(const typename Planar_map_2<Dcel, Traits>::X_curve_2 & cv,
   //pl->insert(h);
   //iddo - for arrangement
   pl->insert(h, cv);
-    
   // Notifying change.
   if (en != NULL) {
     Face_handle orig_face =
@@ -1673,8 +1724,185 @@ x_curve_container(X_curve_2_container &l) const
     ++it;
   }
 }
-//-----------------------------------------------------------------------------
-  
+
+/*!
+ * Given a container of curves, this function modifies the current
+ * planar map to contain all previously existing curves and the 
+ * specified curves.
+ * \param curves_begin the input iterator that points to the first curve 
+ * in the range.
+ * \param curves_end the input past-the-end iterator of the range.
+ * \param en the notification class.
+*/
+
+
+/*! Initializes the event queue according to the input:
+ *  - create a list of curves consisting of the curves of the input planar
+ *    map and the input curves given in the container
+ *  - create a curve_node for each curve
+ *
+ * Note: At the end of this function the specified planar map is empty.
+ *
+ * \param curves_begin the input iterator that points to the first curve 
+ * in the range.
+ * \param curves_end the input past-the-end iterator of the range.
+ * \param en the notification class.
+ */
+template <class PlanarMapDcel_2, class PlanarMapTraits_2> 
+template <class X_curve_2_iterator>
+inline void
+Planar_map_2<PlanarMapDcel_2, PlanarMapTraits_2>::
+init_for_insert(X_curve_2_iterator curves_begin, 
+		X_curve_2_iterator curves_end,
+		Event_queue &event_queue)
+{
+  X_curve_2_iterator cv_iter;
+  X_curve_2_container_iterator xcv_iter;
+  X_curve_2_container all_curves;
+
+  // take the curves from the planar map and insert them to
+  // the curve list. Clear the planar map.
+  for (Halfedge_iterator h_iter = halfedges_begin(); 
+       h_iter != halfedges_end(); ++h_iter, ++h_iter)
+    all_curves.push_back(h_iter->curve());
+
+  // clear the planar map
+  clear(); 
+    
+  // add the inout curves to the container
+  for (cv_iter = curves_begin; cv_iter != curves_end; ++cv_iter)
+    all_curves.push_back(*cv_iter);
+
+    
+  // Create the point_plus handles: for any pair of
+  // overlapping points from the input we ensure we have only one
+  // handle. - not having such a structure as input_vertices caused
+  // a bug.
+  PointLessFunctor pred(traits);
+  PointContainer input_vertices(pred);
+  for (xcv_iter = all_curves.begin(); 
+       xcv_iter != all_curves.end(); ++xcv_iter){
+    if (input_vertices.find(traits->curve_source(*xcv_iter)) == 
+	input_vertices.end())  
+      input_vertices.insert( PointContainer_value_type
+			     (traits->curve_source(*xcv_iter), 
+			      Point_plus(traits->curve_source(*xcv_iter))) );
+    if (input_vertices.find(traits->curve_target(*xcv_iter)) == 
+	input_vertices.end())  
+      input_vertices.insert( PointContainer_value_type
+			     (traits->curve_target(*xcv_iter), 
+			      Point_plus(traits->curve_target(*xcv_iter))) );
+  }
+
+  // Create the Curve_node handles and the event queue.
+  unsigned int id = 0;
+  for(xcv_iter = all_curves.begin(); 
+      xcv_iter != all_curves.end(); ++xcv_iter, ++id) {
+
+    X_curve cv(*xcv_iter);
+      
+    PointContainer_iterator curr_point_plus = 
+      input_vertices.find( traits->curve_source(cv) );
+
+    // defining one cv_node for both source and target event points.  
+    Curve_node_  cv_node = Curve_node_(cv, curr_point_plus->second, traits); 
+
+    // look for the interection point in the queue. if does not exist, add it
+    // if exists, merge it with the existing one (add the curve)
+    Event_queue_iterator  edge_point = 
+      event_queue.find( traits->curve_source(cv) );
+
+    if (edge_point == event_queue.end() || 
+	edge_point->second.get_point() != curr_point_plus->second) {
+      Point_node  new_ix = 
+	Point_node(cv_node, curr_point_plus->second, traits );
+      event_queue.insert(Event_queue_value_type(traits->curve_source(cv), 
+						new_ix));
+    }
+    else
+      edge_point->second.add_curve(cv_node);
+      
+
+    // same as above for the curve's target
+    edge_point = event_queue.find( traits->curve_target(cv) );
+    curr_point_plus = input_vertices.find( traits->curve_target(cv) );
+
+    if (edge_point == event_queue.end() || 
+	edge_point->second.get_point() != curr_point_plus->second) {
+      Point_node  new_ix = 
+	Point_node(cv_node, curr_point_plus->second, traits );
+      event_queue.insert(Event_queue_value_type(traits->curve_target(cv), 
+						new_ix));
+    }
+    else
+      edge_point->second.add_curve(cv_node);
+  }
+}
+
+
+/*!
+ * Given an intersection point, add all curves going through this 
+ * intersection point to the planar map.
+ *
+ * \param point_node a point to be handled
+ * \param en the notification class. It's default value is NULL, which
+ *        implies no notification on insertion.
+ */
+template <class PlanarMapDcel_2, class PlanarMapTraits_2> 
+inline void
+Planar_map_2<PlanarMapDcel_2, PlanarMapTraits_2>::
+update_subdivision(Point_node& point_node, 
+		   Change_notification *en)
+{
+  for (Curve_node_iterator cv_iter = point_node.curves_begin(); 
+       cv_iter != point_node.curves_end(); ++cv_iter) {
+
+    // if the point is the source of the curve, we ignore it for now.
+    // the curve will be handled when we get to its target
+    if ( traits->curve_source(cv_iter->get_curve()) == 
+	 point_node.get_point().point())  {
+      continue;
+    }
+
+    Point_plus &source = cv_iter->get_point();
+
+    Halfedge_handle h;
+    X_curve  cv = cv_iter->get_curve();
+
+    // if the source file is already in the map...
+    if (source.vertex() != Vertex_handle(NULL)){
+      //if the intersection pint is already int he map....
+      if (point_node.get_point().vertex() != Vertex_handle(NULL)) {
+	h = insert_at_vertices(cv, 
+			       cv_iter->get_point().vertex(),
+			       point_node.get_point().vertex(), 
+			       en);
+      }
+      else {
+	h = insert_from_vertex(cv, cv_iter->get_point().vertex(), en);
+      }
+    }
+    else if (point_node.get_point().vertex() != Vertex_handle(NULL)) {
+      h = insert_from_vertex(cv, point_node.get_point().vertex(), en);
+    }
+    else {
+      h = insert_in_face_interior(cv, unbounded_face(), en);
+    }
+
+    // Update the vertex handle of each point, for future use
+    if (h->source()->point() == cv_iter->get_point().point())
+      cv_iter->get_point().set_vertex(h->source());
+    else if (h->target()->point() == 
+	     cv_iter->get_point().point())
+      cv_iter->get_point().set_vertex(h->target());
+    
+    if (h->source()->point() == point_node.get_point().point())
+      point_node.get_point().set_vertex(h->source());
+    else if (h->target()->point() == point_node.get_point().point())
+      point_node.get_point().set_vertex(h->target());
+  }
+}
+
 CGAL_END_NAMESPACE
 
 #endif // CGAL_PLANAR_MAP_2_H
