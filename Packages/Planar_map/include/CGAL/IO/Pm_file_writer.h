@@ -218,7 +218,7 @@ public:
   
   void write_face(Face_handle f) {
     int ck;
-    //Holes_const_iterator iccbit;
+    Holes_const_iterator iccbit;
 
     write_comment("writing face");
     out() << "# ------------------------------------------"<< std::endl;
@@ -251,11 +251,11 @@ public:
       out() << std::endl;
     }
     
-    for (ck=0, iccbit = f->holes_begin(); iccbit != f->holes_end(); ++iccbit, ck++);
+    for (ck=0, iccbit = (Holes_const_iterator)f->holes_begin(); iccbit != (Holes_const_iterator)f->holes_end(); ++iccbit, ck++);
     write_comment("number of holes");
     write_value(ck);
     
-    for (iccbit = f->holes_begin(); iccbit != f->holes_end(); ++iccbit){
+    for (iccbit = (Holes_const_iterator)f->holes_begin(); iccbit != (Holes_const_iterator)f->holes_end(); ++iccbit){
       write_comment("inner ccb");
       
       Ccb_halfedge_const_circulator ccb_circ = (*iccbit);
@@ -288,7 +288,7 @@ public:
   
   void write_face(Face_const_handle f) {
     int ck;
-    Holes_const_iterator iccbit;
+	Holes_const_iterator iccbit;
 
     write_comment("writing face");
     out() << "# ------------------------------------------"<< std::endl;
@@ -323,11 +323,11 @@ public:
       out() << std::endl;
     }
     
-    for (ck=0, iccbit = f->holes_begin(); iccbit != f->holes_end(); ++iccbit, ck++);
+    for (ck=0, iccbit = (Holes_const_iterator)f->holes_begin(); iccbit != (Holes_const_iterator)f->holes_end(); ++iccbit, ck++);
     write_comment("number of holes");
     write_value(ck);
     
-    for (iccbit = f->holes_begin(); iccbit != f->holes_end(); ++iccbit){
+    for (iccbit = (Holes_const_iterator)f->holes_begin(); iccbit != (Holes_const_iterator)f->holes_end(); ++iccbit){
       write_comment("inner ccb");
       
       Ccb_halfedge_const_circulator ccb_circ = (*iccbit);
