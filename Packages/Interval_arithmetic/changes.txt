@@ -1,5 +1,13 @@
 Changes done to the Interval Arithmetic package.
 
+Version 2.4 on 12 November 1998
+- Mips + GNU uses assembly versions (thanks to Christoph Burnikel).
+- CGAL_{sign,compare,abs,min,max,is_valid,is_finite} specialized for speed and
+  correctness.
+- <CGAL/Filter.h>: new file containing the wrapper for filtered predicates.
+- include/CGAL/Filter/predicates_on_ft_C2.h: new file containing the
+  specializations for the filtering scheme.
+
 Version 2.3 on 23 October 1998
 - the test-suite now includes some benchmark.
 - the code is optimized, even uses the GNU extension "named return value".
