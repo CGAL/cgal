@@ -33,7 +33,7 @@ submit: clean Version $(Package).tar.gz
 	rm -f $(TMP_file)
 
 $(Package).tar.gz:
-	tar -zcvf $(Package).tar.gz \
+	gtar -zcvf $(Package).tar.gz \
 	--exclude=CVS --exclude=wrapper.tex --exclude=Makefile \
 	--exclude=TODO --exclude="*~" --exclude="*.old" \
 	version maintainer description.txt changes.txt include src
