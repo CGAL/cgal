@@ -1,3 +1,8 @@
+
+Version 1.162 (8 July 03)
+- Changed access from private to protected for some functions 
+  in class Delaunay_remove_tds_face_3_2  [af]
+
 Version 1.161 (7 July 03)
 - bug fix in is_valid() for Delaunay and Regular
 
