@@ -7,34 +7,14 @@
 typedef CGAL::Interval_nt_advanced NT_adv;
 typedef CGAL::Interval_nt<>        NT;
 
-// temporary functions to test the inlining of the compiler.
-NT triv_add (NT x)
-{ return x+x; }
-
-bool triv_test_1 ()
-{ return NT_adv(1.0) < NT_adv(2.0); }
-
-bool triv_test_2 ()
-{ return true; }
-
-NT_adv triv_mul_1 (NT_adv x)
-{ return x * NT_adv(1.0); }
-
-NT_adv triv_1_mul (NT_adv x)
-{ return NT_adv(1.0) * x; }
-
-NT_adv triv (NT_adv x)
-{ return x; }
-
 void print_res (bool res)
 { std::cout << (res ? "ok" : "ERROR") << std::endl; }
 
+// This variable is global in order to stop constant propagation.
+double m = 0.5;
+
 CGAL::FPU_CW_t FPU_empiric_test_mul ()
 {
-    // If not marked "volatile", the result is false when optimizing
-    // because the constants are pre-computed at compile time !!!
-    // volatile const double m = CGAL_IA_MIN_DOUBLE;
-    volatile double m = 0.5;
     int i;
     for (i=0; i<10; i++) {m*=m; /* std::cout <<c << std::endl; */ }
     double a = m*m;
@@ -55,7 +35,7 @@ void print_rounding_name (CGAL::FPU_CW_t r)
   case CGAL_FE_DOWNWARD:   std::cout << "DOWN\n"; break;
   case CGAL_FE_UPWARD:     std::cout << "UP\n"; break;
   case CGAL_FE_TOWARDZERO: std::cout << "ZERO\n"; break;
-  default:          std::cout << "unknown !\n";
+  default:                 std::cout << "unknown !\n";
   }
 }
 
