@@ -1074,8 +1074,8 @@ fill_hole ( Vertex_handle v, std::list< Edge > & hole )
   // and form a leftturn
   // and triangle v0v1v2 does not contain v->point()
   if( hole.size() != 3) {
-    Hole::iterator hit = hole.begin();
-    Hole::iterator next= hit; 
+    typename Hole::iterator hit = hole.begin();
+    typename Hole::iterator next= hit; 
     while( hit != hole.end() && hole.size() != 3) {
       ff = (*hit).first;  
       ii = (*hit).second;
@@ -1104,7 +1104,7 @@ fill_hole ( Vertex_handle v, std::list< Edge > & hole )
 	    {
 	      //create face
 	      Face_handle  newf = create_face(ff,ii,fn,in); 
-	      Hole::iterator tempo=hit;
+	      typename Hole::iterator tempo=hit;
 	      hit = hole.insert(hit,Edge(newf,1)); //push newf
 	      hole.erase(tempo); //erase ff
 	      hole.erase(next); //erase fn
@@ -1124,7 +1124,7 @@ fill_hole ( Vertex_handle v, std::list< Edge > & hole )
 
   // deal with the last leftturn if any
   if(hole.size() != 3) {
-    Hole::iterator hit=hole.begin();
+    typename Hole::iterator hit=hole.begin();
     while(hit != hole.end()) {
       ff = (*hit).first;  ii = (*hit).second;
       hit++;
@@ -1168,7 +1168,7 @@ fill_hole ( Vertex_handle v, std::list< Edge > & hole )
   }
     
   // now hole has three edges
-  Hole::iterator hit;
+  typename Hole::iterator hit;
   hit = hole.begin();
   //  I don't know why the following yelds a segmentation fault
   //    create_face( (*hit).first, (*hit).second,
@@ -1200,7 +1200,7 @@ fill_hole_delaunay(std::list<Edge> & first_hole)
     {
       hole = hole_list.front();
       hole_list.pop_front();
-      Hole::iterator hit = hole.begin();
+      typename Hole::iterator hit = hole.begin();
   
       // if the hole has only three edges, create the triangle
       if (hole.size() == 3) {
@@ -1243,9 +1243,9 @@ fill_hole_delaunay(std::list<Edge> & first_hole)
       Vertex_handle v2 = infinite_vertex(); Point p2;
       Vertex_handle vv; Point p;
   
-      Hole::iterator hdone = hole.end();
+      typename Hole::iterator hdone = hole.end();
       hit =  hole.begin();
-      Hole::iterator cut_after(hit);
+      typename Hole::iterator cut_after(hit);
   
       // if tested vertex is c with respect to the vertex opposite
       // to NULL neighbor,
