@@ -33,15 +33,13 @@
 #include <cmath>
 #endif
 
-// CGAL uses std::min and std::max
-// (see ISO C++ 25.3.7, page 562),
-// if feasible
+// CGAL uses std::min and std::max if feasible
 
 #include <algorithm>
 
 CGAL_BEGIN_NAMESPACE
 
-#if !defined CGAL_CFG_USING_USING_BUG && !defined CGAL_CFG_RETURN_TYPE_BUG
+#if !defined CGAL_CFG_RETURN_TYPE_BUG
 
 using std::min;
 using std::max;
