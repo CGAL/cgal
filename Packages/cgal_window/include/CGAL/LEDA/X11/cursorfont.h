@@ -14,8 +14,8 @@
 // file          : include/CGAL/LEDA/X11/cursorfont.h
 // package       : cgal_window (0.9.7)
 // maintainer    : Matthias Baesken <baesken@informatik.uni-trier.de>
-// revision      : 0.9.7
-// revision_date : 23 May 2001
+// revision      : 1.0.4
+// revision_date : 02 July 2001
 // author(s)     : Matthias Baesken, Algorithmic Solutions
 //
 // coordinator   : Matthias Baesken, Trier  (<baesken@informatik.uni-trier.de>) 
