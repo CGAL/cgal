@@ -233,6 +233,13 @@ void compute_plane_equation(Facet_handle f)
    (*f).plane() = Plane_3(h->opposite()->vertex()->point(),
                           h->vertex()->point(),
                           h->next()->vertex()->point());
+/*
+   (*f).plane() = Plane_3(
+                          h->next()->vertex()->point(),
+                          h->vertex()->point(),
+                          h->opposite()->vertex()->point()
+                         );
+*/
 }
 
 template <class Facet_handle, class Traits>
@@ -309,6 +316,15 @@ ch_quickhull_3_scan(
      pending_facets.pop_back();
      Point_3 farthest_pt = 
           farthest_outside_point(f_handle, outside_sets[f_handle], traits);
+#ifdef CGAL_CH_3_WINDOW_DEBUG
+     window << CGAL::RED;
+     window << farthest_pt;
+     cout << "farthest point is in red" << endl;
+     char ch;
+     cin >> ch;
+     assert (P.is_valid(true));
+     window.clear();
+#endif
 
      find_visible_set(farthest_pt, f_handle, visible_set, traits);
      // for each visible facet
@@ -323,6 +339,15 @@ ch_quickhull_3_scan(
         P.erase_facet((*(*vis_set_it)).halfedge());
         outside_sets[*vis_set_it].clear();
      }
+#ifdef CGAL_CH_3_WINDOW_DEBUG
+     window << CGAL::RED;
+     window << farthest_pt;
+     window << CGAL::BLUE;
+     window << P;
+     cout << "farthest point is in red" << endl;
+     cout << "after erasing visibile facets";
+     cin >> ch;
+#endif
      for (hole_halfedge = P.halfedges_begin(); 
           hole_halfedge != P.halfedges_end() && !(*hole_halfedge).is_border();
           hole_halfedge++) 
@@ -370,6 +395,14 @@ ch_quickhull_3_scan(
      // fill in the last triangular hole with a facet
      new_halfedge = P.fill_hole(curr_halfedge);
      new_facets.push_back(new_halfedge->facet());
+#ifdef CGAL_CH_3_WINDOW_DEBUG
+     window << CGAL::BLUE;
+     window << P;
+     cout << "after filling hole" << endl;
+     char c;
+     cin >> c;
+     assert (P.is_valid(true));
+#endif
 
      // now partition the set of outside set points among the new facets.
      partition_outside_sets(new_facets, vis_outside_set, outside_sets,
@@ -399,11 +432,17 @@ void non_coplanar_quickhull_3(std::list<typename Traits::Point_3>& points,
 
   // for each facet, look at each unassigned point and decide if it belongs
   // to the outside set of this facet.
+#ifdef CGAL_CH_3_WINDOW_DEBUG
+  window << CGAL::GREEN;
+#endif
   for (f_it = P.facets_begin(); f_it != P.facets_end(); f_it++)
   {
      compute_plane_equation(f_it);
      for (P3_iterator point_it = points.begin() ; point_it != points.end();)
      {
+#ifdef CGAL_CH_3_WINDOW_DEBUG
+        window << *point_it;
+#endif
         if ( has_on_positive_side((*f_it).plane(), *point_it) )
         {
            outside_sets[f_it].push_back(*point_it);
@@ -444,8 +483,7 @@ ch_quickhull_polyhedron_3(std::list<typename Traits::Point_3>& points,
          traits.construct_plane_3_object();
   Plane_3 plane = construct_plane(*point3_it, *point2_it, *point1_it);
   typedef typename Traits::Less_signed_distance_to_plane_3      Dist_compare; 
-  Dist_compare compare_dist = 
-                traits.less_signed_distance_to_plane_3_object();
+  Dist_compare compare_dist = traits.less_signed_distance_to_plane_3_object();
   
   typename Traits::Coplanar_3  coplanar = traits.coplanar_3_object(); 
   // find both min and max here since using signed distance.  If all points
@@ -457,9 +495,26 @@ ch_quickhull_polyhedron_3(std::list<typename Traits::Point_3>& points,
                                   bind_1(compare_dist, plane));
   P3_iterator max_it;
   if (coplanar(*point1_it, *point2_it, *point3_it, *min_max.second))
+  {
+    cout << "using min element" << endl;
      max_it = min_max.first;
+     // want the orientation of the points defining the plane to be positive
+     // so have to reorder these points if all points were on negative side
+     // of plane
+     std::swap(*point1_it, *point3_it);
+  }
   else
      max_it = min_max.second;
+#ifdef CGAL_CH_3_WINDOW_DEBUG
+  window << CGAL::GREEN;
+  window << *point1_it;
+  window << *point2_it;
+  window << *point3_it;
+  window << CGAL::RED;
+  window << *max_it;
+  char ch;
+  cin >> ch;
+#endif
 
   // if the maximum distance point is on the plane then all are coplanar
   if (coplanar(*point1_it, *point2_it, *point3_it, *max_it)) 
@@ -467,6 +522,11 @@ ch_quickhull_polyhedron_3(std::list<typename Traits::Point_3>& points,
   else
   {
      P.make_tetrahedron(*point1_it, *point2_it, *point3_it, *max_it);
+#ifdef CGAL_CH_3_WINDOW_DEBUG
+     cout << "first tetrahedron" << endl;
+     window << P;
+     assert (P.is_valid(true));
+#endif
      points.erase(point1_it);
      points.erase(point2_it);
      points.erase(point3_it);
