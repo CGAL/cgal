@@ -27,9 +27,8 @@
 #define CGAL_OPTIMISATION_CONSTRUCT_POINT_D_H
 
 // includes
-#ifndef CGAL_POINT_D_H
-#  include <CGAL/Point_d.h>
-#endif
+#  include <CGAL/Kernel_d/Interface_classes.h>
+#  include <CGAL/Kernel_d/Point_d.h>
 
 CGAL_BEGIN_NAMESPACE
 

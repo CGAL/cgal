@@ -1,4 +1,4 @@
-// ============================================================================
+// ======================================================================
 //
 // Copyright (c) 1997-2001 The CGAL Consortium
 //
@@ -6,13 +6,14 @@
 // of the Computational Geometry Algorithms Library (CGAL). It is not
 // intended for general use.
 //
-// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------
 //
-// release       : $CGAL_Revision: CGAL-I $
-// release_date  : $CGAL_Date$
+// release       : $CGAL_Revision: CGAL-2.4-I-65 $
+// release_date  : $CGAL_Date: 2002/03/19 $
 //
 // file          : include/CGAL/Optimisation/Access_coordinates_begin_d.h
-// package       : $CGAL_Package: Optimisation_basic $
+// package       : Optimisation_basic (3.8.11)
+// maintainer    : Sven Schönherr <sven@inf.ethz.ch>
 //
 // revision      : $Revision$
 // revision_date : $Date$
@@ -21,15 +22,14 @@
 // coordinator   : ETH Zürich (Bernd Gärtner <gaertner@inf.ethz.ch>)
 //
 // implementation: dD data accessor `coordinates'
-// ============================================================================
+// ======================================================================
 
 #ifndef CGAL_OPTIMISATION_ACCESS_COORDINATES_BEGIN_D_H
 #define CGAL_OPTIMISATION_ACCESS_COORDINATES_BEGIN_D_H
 
 // includes
-#ifndef CGAL_POINT_D_H
-#  include <CGAL/Point_d.h>
-#endif
+#  include <CGAL/Kernel_d/Interface_classes.h>
+#  include <CGAL/Kernel_d/Point_d.h>
 
 CGAL_BEGIN_NAMESPACE
 
