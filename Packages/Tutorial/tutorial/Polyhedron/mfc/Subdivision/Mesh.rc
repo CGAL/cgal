@@ -13,7 +13,7 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// English (U.S.) resources
+// Anglais (États-Unis) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
 #ifdef _WIN32
@@ -93,7 +93,6 @@ IDR_MAINFRAME MENU
 BEGIN
     POPUP "&File"
     BEGIN
-        MENUITEM "&New\tCtrl+N",                ID_FILE_NEW
         MENUITEM "&Open...\tCtrl+O",            ID_FILE_OPEN
         MENUITEM SEPARATOR
         MENUITEM "P&rint Setup...",             ID_FILE_PRINT_SETUP
@@ -266,12 +265,12 @@ STYLE DS_SETFONT | DS_FIXEDSYS | WS_POPUP | WS_SYSMENU | WS_THICKFRAME
 FONT 8, "MS Shell Dlg", 0, 0, 0x1
 BEGIN
     LTEXT           "CGAL tutorial on Polyhedron / Version 1.0",IDC_STATIC,
-                    110,23,136,8,SS_NOPREFIX
-    LTEXT           "Copyright (C) INRIA / GEOMETRICA 2003",IDC_STATIC,120,
-                    40,137,8
+                    108,12,136,8,SS_NOPREFIX
+    LTEXT           "Copyright (C) INRIA 2004",IDC_STATIC,122,30,137,8
     DEFPUSHBUTTON   "Close",IDOK,186,72,50,16,WS_GROUP
     CONTROL         "",IDC_STATIC_FRAME,"Static",SS_BLACKFRAME,7,7,92,82
-    LTEXT           "Copyright (C) SurfaceLab 2003",IDC_STATIC,120,54,137,8
+    LTEXT           "Copyright (C) SurfaceLab 2004",IDC_STATIC,122,42,137,8
+    LTEXT           "Copyright (C) MPII 2004",IDC_STATIC,122,54,137,8
 END
 
 
@@ -522,12 +521,12 @@ BEGIN
                             "Show bounding box when moving\nShow bounding box when moving"
 END
 
-#endif    // English (U.S.) resources
+#endif    // Anglais (États-Unis) resources
 /////////////////////////////////////////////////////////////////////////////
 
 
 /////////////////////////////////////////////////////////////////////////////
-// French (France) resources
+// Français (France) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_FRA)
 #ifdef _WIN32
@@ -635,7 +634,7 @@ END
 
 #endif    // APSTUDIO_INVOKED
 
-#endif    // French (France) resources
+#endif    // Français (France) resources
 /////////////////////////////////////////////////////////////////////////////
 
 
