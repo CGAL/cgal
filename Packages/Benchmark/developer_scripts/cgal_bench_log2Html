@@ -25,6 +25,7 @@ GetOptions("databaseFile=s" => \$databaseFile,
 	   "help" => \$help,
 	   "logFile=s" => \$logFile,
 	   "logDir=s" => \$logDir,
+	   "phpFile=s" => \$phpFile,
 	   "nameLength=i" => \$nameLength,
 	   ) or die "Bad command line option!";
 
@@ -45,13 +46,15 @@ $parser->parsefile($databaseFile);
 $logFile = findLogFile($logDir) if (!defined($logFile));
 
 my $date = $logFile;
-$date =~ s/cgalBench_(.*)%.*/$1/;
+$date =~ s/bcgal_(.*)%.*/$1/;
 my $day = substr($date, 0, 2);
 my $month = substr($date, 2, 2);
 my $year = substr($date, 4, 2);
 
-$phpFile = $logFile;
-$phpFile =~ s/(.*)\.log/$1\.php/;
+if (!defined($phpFile)) {
+  $phpFile = $logFile;
+  $phpFile =~ s/(.*)\.log/$1\.php/;
+}
 $logFile = $logDir . '/' . $logFile;
   
 $h = HTML::Element->new('html');
@@ -157,28 +160,43 @@ open(LOGFILE, "$logFile") or die "Can't open file: $logFile\n";
 $cnt = 0;
 %days = (Sun => 0, Mon => 1, Tue => 2, Wed => 3, Thu => 4, Fri => 5, Sat => 6);
 while ($line = <LOGFILE>) {
+    next if $line =~ /^\s*$/;		# skip empty lines
+    chop($line);			# remove 'end of line'
+    if ($line =~ /^COMPILER NAME: (.*)/) {
+      $compilerName = $1;
+    } elsif ($line =~ /^COMPILER INFO: (.*)/) {
+      $compilerInfo = $1;	
+    } elsif ($line =~ /^OS NAME: (.*)/) {
+      $osName = $1;
+    } elsif ($line =~ /^OS INFO: (.*)/) {
+      $osInfo = $1;
+    } elsif ($line =~ /^(Sun|Mon|Tue|Wed|Thu|Fri|Sat)/) {
+      @words = split ' ', $line;
+      if ($cnt == 0) {
+	@startTime = split /:/, $words[3];
+	$startDay = $days{$words[0]};
+	$cnt = 1;
+      } elsif ($cnt == 1) {
+	@endTime = split /:/, $words[3];
+	$endDay = $days{$words[0]};
+	$cnt = 2;
+      }
+      next;
+    }
     $offset = 0;
     $name = substr($line, $offset, $nameLength); $offset += $nameLength + 1;
     $name =~ s/\s*$//;
     if ($name =~ m/CGAL Kernel/) {
-	$kernel = 'cgal_kernel';
+      $kernel = 'cgal_kernel';
+      $time_class = 'cgal_kernel_time';
     } elsif ($name =~ m/My Leda Kernel/) {
-	$kernel = 'my_kernel';
+      $kernel = 'my_kernel';
+      $time_class = 'my_kernel_time';
     } elsif ($name =~ m/Leda Kernel/) {
-	$kernel = 'leda_kernel';
+      $kernel = 'leda_kernel';
+      $time_class = 'leda_kernel_time';
     } else {
-	@words = split ' ', $line;
-	next unless $words[0] =~ m/Sun|Mon|Tue|Wed|Thu|Fri|Sat/;
-	if ($cnt == 0) {
-	    @startTime = split /:/, $words[3];
-	    $startDay = $days{$words[0]};
-	    $cnt = 1;
-	} elsif ($cnt == 1) {
-	    @endTime = split /:/, $words[3];
-	    $endDay = $days{$words[0]};
-	    $cnt = 2;
-	}
-	next;
+      next;
     }
     $time = substr($line, $offset, 8);		 $offset += 9;
     $ops = substr($line, $offset, 8);		 $offset += 9;
@@ -205,7 +223,7 @@ while ($line = <LOGFILE>) {
     $td_total->push_content($total);
 
     $td_single = HTML::Element->new('td', align => 'right');
-    $td_single->attr('class', $kernel) if defined($kernel);
+    $td_single->attr('class', $time_class) if defined($time_class);
     $td_single->push_content($single);
 
     $td_num = HTML::Element->new('td', align => 'right');
@@ -270,38 +288,41 @@ $td2 = HTML::Element->new('td');
 $b = HTML::Element->new('b');
 $b->push_content('Operating System');
 $td1->push_content($b);
-$td2->push_content($OSNAME);
+$td2->push_content($osName);
 $tr->push_content($td1);
 $tr->push_content($td2);
 $table->push_content($tr);
 
 # System Information
-$sysInfo = `uname -a`;
 $tr = HTML::Element->new('tr');
 $td1 = HTML::Element->new('td');
 $td2 = HTML::Element->new('td');
 $b = HTML::Element->new('b');
 $b->push_content('System Information');
 $td1->push_content($b);
-$td2->push_content($sysInfo);
+$td2->push_content($osInfo);
 $tr->push_content($td1);
 $tr->push_content($td2);
 $table->push_content($tr);
 
-# compiler
-OS_SWITCH: {
-    $compilerInfo = `cl -? 2>&1`, last OS_SWITCH if $OSNAME =~ /MSWin32/;
-    $compilerInfo = 'gcc ' . `gcc --version`, last OS_SWITCH if $OSNAME =~ /Linux/;
-    $compilerInfo = 'unrecognized';
-}
-
-$compilerInfo =~ s/([^\n]*)\n.*/$1/g;	# only 1st line
-
+# compiler name
 $tr = HTML::Element->new('tr');
 $td1 = HTML::Element->new('td');
 $td2 = HTML::Element->new('td');
 $b = HTML::Element->new('b');
-$b->push_content('Compiler');
+$b->push_content('Compiler name');
+$td1->push_content($b);
+$td2->push_content($compilerName);
+$tr->push_content($td1);
+$tr->push_content($td2);
+$table->push_content($tr);
+
+# compiler info
+$tr = HTML::Element->new('tr');
+$td1 = HTML::Element->new('td');
+$td2 = HTML::Element->new('td');
+$b = HTML::Element->new('b');
+$b->push_content('Compiler info');
 $td1->push_content($b);
 $td2->push_content($compilerInfo);
 $tr->push_content($td1);
@@ -333,13 +354,13 @@ exit(0);
 
 ################
 sub usage {
-  printf "Usage: cgalBenchAnalyze [options]\n";
+  printf "Usage: cgal_bench_log2html [options]\n";
 printf "  -databaseFile <file>\tset database xml file to <file>
   -help\t\t\tprint this help message
   -root <root>\t\tset ROOT. Default \$ROOT (env. var.)
   -logDir <dir>\t\tset log directory. Default is $logDir
   -logFile <file>\tset log file.
-  \t\t\tDefault is most recent match cgalBench_*.log
+  \t\t\tDefault is most recent match bcgal_*.log
   -nameLength <length>\tset the length of the name field\n";
     
   exit(0);
@@ -387,20 +408,20 @@ sub findLogFile {
   $month = 0;
   $year = 0;
   foreach $newLogFile (@logFiles) {
-      $date = $newLogFile;
-      $date =~ s/bcgal_(.*)%.*/$1/;
-      $newDay = substr($date, 0, 2);
-      $newMonth = substr($date, 2, 2);
-      $newYear = substr($date, 4, 2);
-      if (($newYear > $year) ||
-	  (($newYear == $year) && ($newMonth > $month)) ||
-	  (($newYear == $year) && ($newMonth == $month) && ($newDay > $day)))
-      {
-	$day = $newDay;
-	$month = $newMonth;
-	$year = $newYear;
-	$logFile = $newLogFile;
-      }
+    $date = $newLogFile;
+    $date =~ s/bcgal_(.*)%.*/$1/;
+    $newDay = substr($date, 0, 2);
+    $newMonth = substr($date, 2, 2);
+    $newYear = substr($date, 4, 2);
+    if (($newYear > $year) ||
+	(($newYear == $year) && ($newMonth > $month)) ||
+	(($newYear == $year) && ($newMonth == $month) && ($newDay > $day)))
+    {
+      $day = $newDay;
+      $month = $newMonth;
+      $year = $newYear;
+      $logFile = $newLogFile;
+    }
   }
   return $logFile;
 }
