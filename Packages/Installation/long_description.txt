@@ -4,6 +4,19 @@
 
 
 //---------------------------------------------------------------------
+//	revision 1128
+//---------------------------------------------------------------------
+
+GLOB: Updated license header.
+GLOB: Show again LEDA (not) supported.
+GLOB: Added printout of CGAL_LIB_DIR in the end to ease CGALWin installation.
+DOCS: Replace CGALwin -> CGALWin.
+DOCS: Updated supported compilers (gcc-3.0), remark on gcc-2.96/7.
+DOCS: Removed reference to Getting-Started.
+DOCS: Added section on visualization and installation of CGALwin.
+DOCS: Some other minor changes/fixes.
+
+//---------------------------------------------------------------------
 //	revision 1127
 //---------------------------------------------------------------------
 
