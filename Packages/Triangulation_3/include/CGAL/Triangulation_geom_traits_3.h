@@ -43,6 +43,54 @@
 
 CGAL_BEGIN_NAMESPACE
 
+
+// The classes prefixed with Local_ ae only needed because the
+// kernel does not provide them yet.
+
+class Local_Coplanar_orientation
+{
+  public:
+    typedef Orientation   result_type;
+
+  template <class T1, class T2>
+    Orientation
+    operator()(const T1& q, const T1& r, const T1& s, const T2& p) const
+    {
+      return coplanar_orientation(q,r,s,p); 
+    }
+};
+
+
+
+
+class Local_Coplanar_side_of_oriented_circle
+{
+  public:
+    typedef Oriented_side  result_type;
+
+    template <class T1, class T2>
+    Oriented_side
+    operator()(const T1& p, const T1& q, const T1& r, const T1& t, const T2& v) const
+    { 
+      return coplanar_side_of_oriented_circle(p,q,r,t, v); 
+    }
+};
+
+template <class Vector>
+class Local_Cross_product
+{
+public:
+  typedef Vector result_type;
+
+  Vector
+  operator()(const Vector& v1, const Vector& v2) const {
+    return cross_product(v1, v2);
+  }
+};
+
+
+
+
 template < class Repres >
 class Triangulation_geom_traits_3 
 {
@@ -54,6 +102,30 @@ public:
   typedef Triangle_3<Repres> Triangle_3;
   typedef Tetrahedron_3<Repres> Tetrahedron_3;
 
+  typedef Vector_3<Repres> Vector_3;
+  //typedef typename R::Cross_product Cross_product;
+  typedef Local_Cross_product<Vector_3> Cross_product;
+
+  typedef typename Rep::Compare_x_3 Compare_x_3;
+  typedef typename Rep::Compare_y_3 Compare_y_3;
+  typedef typename Rep::Compare_z_3 Compare_z_3;
+  typedef typename Rep::Equal_3 Equal_3;
+  typedef typename Rep::Collinear_3 Collinear_3;
+  typedef typename Rep::Orientation_3 Orientation_3;
+  //typedef typename Rep::Coplanar_orientation_3 Coplanar_orientation_3;
+  typedef Local_Coplanar_orientation Coplanar_orientation_3;
+
+  typedef typename Rep::Side_of_oriented_sphere_3  Side_of_oriented_sphere_3;
+
+  // Uncomment the next line as soon as Kernels have this function
+  //typedef typename Rep::Side_of_oriented_circle_3 Coplanar_side_of_oriented_circle_3;
+  typedef Local_Coplanar_side_of_oriented_circle Coplanar_side_of_oriented_circle_3;
+
+  typedef typename Rep::Construct_segment_3 Construct_segment_3;
+  typedef typename Rep::Construct_triangle_3 Construct_triangle_3;
+  typedef typename Rep::Construct_tetrahedron_3 Construct_tetrahedron_3;
+
+
   Triangulation_geom_traits_3()
     {}
 
@@ -64,129 +136,74 @@ public:
   operator=(const Triangulation_geom_traits_3 & )
     {return *this;}
 
-  // PREDICATES ON POINTS
 
-  bool equal(const Point_3 & p, const Point_3 & q) const
-  {
-    return ( CGAL::compare_x(p, q)== EQUAL &&  
-	     CGAL::compare_y(p, q)== EQUAL &&
-	     CGAL::compare_z(p, q)== EQUAL );
+  Compare_x_3
+  compare_x_3_object() const { 
+    return Compare_x_3();
+  }
+
+
+  Compare_y_3
+  compare_y_3_object() const { 
+    return Compare_y_3();
   }
   
-  Comparison_result compare_x(const Point_3 & p, const Point_3 & q) const
-    {
-      return CGAL::compare_x(p, q);
-    }
 
 
-  Comparison_result compare_y(const Point_3 & p, const Point_3 & q) const
-    {
-      return CGAL::compare_y(p, q);
-    }
+  Compare_z_3
+  compare_z_3_object() const {
+    return Compare_z_3();
+}
 
-  Comparison_result compare_z(const Point_3 & p, const Point_3 & q) const
-    {
-      return CGAL::compare_z(p, q);
-    }
-
-  Orientation orientation(const Point_3 & p,
-			  const Point_3 & q,
-			  const Point_3 & r,
-			  const Point_3 & s) const
-  {
-    return CGAL::orientation(p, q, r, s);
+  
+  Equal_3
+  equal_3_object() const {
+    return Equal_3();
   }
 
-  Orientation orientation_in_plane(const Point_3 & q,
-					const Point_3 & r,
-					const Point_3 & s,
-					const Point_3 & p) const
-    // p,q,r,s supposed to be coplanar
-    // q,r,s supposed to be non collinear
-    // tests whether p is on the same side of q,r as s
-    // returns :
-    // COLLINEAR if pqr collinear
-    // POSITIVE if qrp and qrs have the same orientation
-    // NEGATIVE if qrp and qrs have opposite orientations
-  {
-    // should be used only when p,q,r,s are coplanar
-    CGAL_triangulation_precondition( ! CGAL::collinear(q,r,s) );
-    CGAL_triangulation_precondition( CGAL::orientation(p,q,r,s) == COPLANAR );
-    // projection on the x,y-plane
-    Point2 P(p.x(), p.y());
-    Point2 Q(q.x(), q.y());
-    Point2 R(r.x(), r.y());
-    Point2 S(s.x(), s.y());
-    Orientation oxy_qrs = CGAL::orientation(Q,R,S);
-
-    if ( oxy_qrs != COLLINEAR )
-      // the projection on x,y is OK
-      return Orientation( oxy_qrs * CGAL::orientation(Q,R,P) );
-
-    // else : must project on another plane
-    // tests on which plane :
-
-    if ( ( Q.x() != R.x() ) || 
-	 ( Q.x() != S.x() ) ) {
-      // projection on x,z-plane is ok
-      P = Point2(p.x(), p.z());
-      Q = Point2(q.x(), q.z());
-      R = Point2(r.x(), r.z());
-      S = Point2(s.x(), s.z());
-    }
-    else
-    { // projection on y,z-plane
-      P = Point2(p.y(), p.z());
-      Q = Point2(q.y(), q.z());
-      R = Point2(r.y(), r.z());
-      S = Point2(s.y(), s.z());
-    }
-
-    return Orientation ( CGAL::orientation(Q,R,S) * CGAL::orientation(Q,R,P) );
+  Cross_product
+  cross_product_object() const { 
+    return Cross_product();
   }
 
-  bool collinear(const Point_3 & p,
-		 const Point_3 & q,
-		 const Point_3 & r) const
-    {
-      return CGAL::collinear(p,q,r);
-    }
 
-  // DELAUNAY
+  Collinear_3
+  collinear_3_object() const {
+    return Collinear_3();
+  }
 
-  Oriented_side 
-  side_of_oriented_sphere(const Point_3 & p,
-			  const Point_3 & q,
-			  const Point_3 & r,
-			  const Point_3 & s,
-			  const Point_3 & test) const
-    {
-      return CGAL::side_of_oriented_sphere(p, q, r, s, test);
-    }
+  Orientation_3
+  orientation_3_object() const {
+    return Orientation_3();
+  }
 
-  Oriented_side 
-  side_of_oriented_circle(const Point_3 & p,
-			  const Point_3 & q,
-			  const Point_3 & r,
-			  const Point_3 & test) const
-    {
-      CGAL_triangulation_precondition( CGAL::orientation(p,q,r,test) ==
-				       COPLANAR );
-      CGAL_triangulation_precondition( ! CGAL::collinear(p,q,r) );
+  Coplanar_orientation_3
+  coplanar_orientation_3_object() const {
+    return Coplanar_orientation_3();
+  }
+  
+  Coplanar_side_of_oriented_circle_3
+  coplanar_side_of_oriented_circle_3_object() const {
+    return Coplanar_side_of_oriented_circle_3();
+  }
+  
+  Side_of_oriented_sphere_3
+  side_of_oriented_sphere_3_object() const {
+    return Side_of_oriented_sphere_3();
+  }
+ 
+  Construct_segment_3  construct_segment_3_object() const {
+    return Construct_segment_3();
+  }
 
-      // test belongs to the circle if and only if it belongs to a
-      // sphere passing through pqr
-      Orientation ori;
-      Point_3 O(0,0,0), A(1,0,0), B(0,1,0), C(0,0,1);
+  Construct_triangle_3  construct_triangle_3_object() const {
+    return Construct_triangle_3();
+  }
 
-      Point_3 P = ((ori = CGAL::orientation(p,q,r,O)) != ZERO) ? O:
-                ((ori = CGAL::orientation(p,q,r,A)) != ZERO) ? A:
-                ((ori = CGAL::orientation(p,q,r,B)) != ZERO) ? B:
-                ((ori = CGAL::orientation(p,q,r,C)) != ZERO) ? C: C;
+  Construct_tetrahedron_3  construct_tetrahedron_3_object() const {
+    return Construct_tetrahedron_3();
+  }
 
-      return Oriented_side( ori *
-	      CGAL::side_of_oriented_sphere(p, q, r, P, test));
-    }
 
 };
 

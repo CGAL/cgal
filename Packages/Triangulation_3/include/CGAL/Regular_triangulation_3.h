@@ -130,6 +130,27 @@ private:
 			const Weighted_point & p,
 			Cell_handle c, Cell_handle & ac, int & i);
 
+
+
+  // power test for non coplanar points
+  Oriented_side power_test(const Weighted_point &p,
+			   const Weighted_point &q,
+			   const Weighted_point &r,
+			   const Weighted_point &s,
+			   const Weighted_point &t) const;
+
+
+  Oriented_side power_test(const Weighted_point &p,
+			   const Weighted_point &q,
+			   const Weighted_point &r,
+			   const Weighted_point &t) const;
+
+
+  Oriented_side power_test(const Weighted_point &p,
+			   const Weighted_point &q,
+			   const Weighted_point &t) const;
+
+
   //  std::set<void*, std::less<void*> > 
   void
   star_region_delete_points( std::set<void*, std::less<void*> > & region, 
@@ -142,6 +163,52 @@ private:
     // deleted weighted points that are not in the triangulation
     // anymore, pts will be the list of deleted points
 };
+
+
+
+
+template < class Gt, class Tds >
+Oriented_side 
+Regular_triangulation_3<Gt,Tds>::
+  power_test(const Weighted_point &p,
+	     const Weighted_point &q,
+	     const Weighted_point &t) const
+{
+   return geom_traits().power_test_3_object()(p,q,t);
+  //  return geom_traits().power_test(p,q,t);
+}
+
+
+
+template < class Gt, class Tds >
+Oriented_side 
+Regular_triangulation_3<Gt,Tds>::
+  power_test(const Weighted_point &p,
+	     const Weighted_point &q,
+	     const Weighted_point &r,
+	     const Weighted_point &t) const
+{
+  return geom_traits().power_test_3_object()(p,q,r,t);
+  // return geom_traits().power_test(p,q,r,t);
+}
+
+
+
+template < class Gt, class Tds >
+Oriented_side 
+Regular_triangulation_3<Gt,Tds>::
+  power_test(const Weighted_point &p,
+	     const Weighted_point &q,
+	     const Weighted_point &r,
+	     const Weighted_point &s,
+	     const Weighted_point &t) const
+{
+  return geom_traits().power_test_3_object()(p,q,r,s,t);
+  //  return geom_traits().power_test(p,q,r,s,t);
+}
+
+
+
 
 template < class Gt, class Tds >
 void 
@@ -199,7 +266,7 @@ side_of_power_sphere( Cell_handle c, const Weighted_point &p) const
   CGAL_triangulation_precondition( dimension() == 3 );
   int i3;
   if ( ! c->has_vertex( infinite_vertex(), i3 ) ) {  
-    return Bounded_side( geom_traits().power_test
+    return Bounded_side( power_test
 			 (c->vertex(0)->point(),
 			  c->vertex(1)->point(),
 			  c->vertex(2)->point(),
@@ -220,7 +287,7 @@ side_of_power_sphere( Cell_handle c, const Weighted_point &p) const
 
   // general case
   Orientation
-    o = geom_traits().orientation(c->vertex(i0)->point(),
+    o = orientation(c->vertex(i0)->point(),
 				  c->vertex(i1)->point(),
 				  c->vertex(i2)->point(),
 				  p);
@@ -228,7 +295,7 @@ side_of_power_sphere( Cell_handle c, const Weighted_point &p) const
     return Bounded_side(o);
 
   // else p coplanar with i0,i1,i2
-  return Bounded_side( geom_traits().power_test
+  return Bounded_side( power_test
 		       ( c->vertex(i0)->point(),
 			 c->vertex(i1)->point(),
 			 c->vertex(i2)->point(), p ) );
@@ -246,7 +313,7 @@ side_of_power_circle( Cell_handle c, int i, const Weighted_point &p) const
     // the triangulation is supposed to be valid, ie the facet
     // with vertices 0 1 2 in this order is positively oriented
     if ( ! c->has_vertex( infinite_vertex(), i3 ) ) 
-      return Bounded_side( geom_traits().power_test
+      return Bounded_side( power_test
 			   (c->vertex(0)->point(),
 			    c->vertex(1)->point(),
 			    c->vertex(2)->point(),
@@ -262,13 +329,13 @@ side_of_power_circle( Cell_handle c, int i, const Weighted_point &p) const
     // to v1v2
     Cell_handle n = c->neighbor(i3);
     Orientation o =
-      geom_traits().orientation_in_plane( v1->point(), 
+      orientation_in_plane( v1->point(), 
 					  v2->point(), 
 					  n->vertex(n->index(c))->point(),
 					  p );
     if ( o != ZERO ) return Bounded_side( -o );
     // case when p collinear with v1v2
-    return Bounded_side( geom_traits().power_test
+    return Bounded_side( power_test
 			 ( v1->point(), v2->point(), p ) );
   }// dim 2
 
@@ -281,12 +348,12 @@ side_of_power_circle( Cell_handle c, int i, const Weighted_point &p) const
     int i0 = (i>0) ? 0 : 1;
     int i1 = (i>1) ? 1 : 2;
     int i2 = (i>2) ? 2 : 3;
-    CGAL_triangulation_precondition( geom_traits().orientation
+    CGAL_triangulation_precondition( orientation
 				     (c->vertex(i0)->point(),
 				      c->vertex(i1)->point(),
 				      c->vertex(i2)->point(),
 				      p) == COPLANAR );
-    return Bounded_side( geom_traits().power_test
+    return Bounded_side( power_test
 			  (c->vertex(i0)->point(),
 			   c->vertex(i1)->point(),
 			   c->vertex(i2)->point(),
@@ -299,7 +366,7 @@ side_of_power_circle( Cell_handle c, int i, const Weighted_point &p) const
     v1 = c->vertex( next_around_edge(i3,i) ),
     v2 = c->vertex( next_around_edge(i,i3) );
   Orientation o =
-    geom_traits().orientation_in_plane( v1->point(),
+    orientation_in_plane( v1->point(),
 					v2->point(),
 					c->vertex(i)->point(),
 					p );
@@ -308,7 +375,7 @@ side_of_power_circle( Cell_handle c, int i, const Weighted_point &p) const
   // because p is in f iff 
   // it is not on the same side of v1v2 as c->vertex(i)
   // case when p collinear with v1v2 :
-  return Bounded_side( geom_traits().power_test
+  return Bounded_side( power_test
 		       ( v1->point(), v2->point(), p ) );
 }
 
@@ -319,7 +386,7 @@ side_of_power_segment( Cell_handle c, const Weighted_point &p) const
 {
   CGAL_triangulation_precondition( dimension() == 1 );
   if ( ! is_infinite(c,0,1) ) 
-    return Bounded_side( geom_traits().power_test
+    return Bounded_side( power_test
 			 ( c->vertex(0)->point(), 
 			   c->vertex(1)->point(), 
 			   p ) );

@@ -47,6 +47,43 @@
 
 CGAL_BEGIN_NAMESPACE 
 
+
+
+template <class Point, class Weight>
+class Power_test_3
+{
+public:
+  typedef Weighted_point <Point, Weight>        Weighted_point;
+
+  Oriented_side operator() ( const Weighted_point & p,
+			     const Weighted_point & q,
+			     const Weighted_point & r,
+			     const Weighted_point & s,
+			     const Weighted_point & t) 
+    {
+      //CGAL_triangulation_precondition( ! collinear(p, q, r) );
+      return CGAL::power_test(p,q,r,s,t);
+    }
+  Oriented_side operator() ( const Weighted_point & p,
+			     const Weighted_point & q,
+			     const Weighted_point & r,
+			     const Weighted_point & s) 
+    {
+      //CGAL_triangulation_precondition( ! collinear(p, q, r) );
+      return CGAL::power_test(p,q,r,s);
+    }
+
+  Oriented_side operator() ( const Weighted_point & p,
+			     const Weighted_point & q,
+			     const Weighted_point & r) 
+    {
+      //CGAL_triangulation_precondition( ! collinear(p, q, r) );
+      return CGAL::power_test(p,q,r);
+    }
+};
+
+
+
 template < class Repres, class Weight = CGAL_TYPENAME_MSVC_NULL Repres::RT >
 class Regular_triangulation_euclidean_traits_3
   : public Triangulation_geom_traits_3<Repres>
@@ -55,47 +92,13 @@ public:
   typedef typename Triangulation_geom_traits_3<Repres>::Point_3 Bare_point;
   typedef Weighted_point <Bare_point, Weight>   Weighted_point;
   typedef Weighted_point                        Point_3;
+  typedef Power_test_3<Bare_point, Weight> Power_test_3;
 
-  // power test for non coplanar points
-  Oriented_side power_test(const Weighted_point &p,
-			   const Weighted_point &q,
-			   const Weighted_point &r,
-			   const Weighted_point &s,
-			   const Weighted_point &t) const
-    // Let S be the sphere orthogonal to weighted points p,q,r,s
-    //
-    // returns ON_ORIENTED_BOUNDARY if t is orthogonal to S
-    // ON_NEGATIVE_SIDE if the angle between t and S is > pi/2
-    // ON_POSITIVE_SIDE if the angle is < pi/2
-    //
-    // When all the weights are equal, the answer is exactly the same as
-    // side_of_oriented_sphere(p,q,r,s,t)
-  {
-    CGAL_triangulation_precondition( ! coplanar(p, q, r, s) );
-    return CGAL::power_test(p, q, r, s, t);
-  }
+  
+  Power_test_3 
+  power_test_3_object() const
+    {  return Power_test_3();}
 
-  // power test for coplanar points
-  Oriented_side power_test(const Weighted_point &p,
-			   const Weighted_point &q,
-			   const Weighted_point &r,
-			   const Weighted_point &t) const
-    // same as the previous test, for the circle orthogonal to p,q,r
-  {
-    CGAL_triangulation_precondition( ! collinear(p, q, r) );
-    CGAL_triangulation_precondition( orientation(p,q,r,t) == COPLANAR );
-    return CGAL::power_test(p, q, r, t);
-  }
-
-  // power test for collinear points
-  Oriented_side power_test(const Weighted_point &p,
-			   const Weighted_point &q,
-			   const Weighted_point &t) const
-  {
-    CGAL_triangulation_precondition( collinear(p, q, t) );
-    CGAL_triangulation_precondition( p.point() != q.point() );
-    return CGAL::power_test(p, q, t);
-  }
 };
 
 #if defined CGAL_CARTESIAN_H || defined CGAL_SIMPLE_CARTESIAN_V2_H || \

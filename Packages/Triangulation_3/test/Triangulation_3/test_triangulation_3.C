@@ -43,9 +43,10 @@ int main()
 {
 
 std::cout << " with Triangulation_test_traits_3 : " << std::endl;
-// typedef CGAL::Triangulation_geom_traits_3<Test_rep_cartesian>  traits;
-// works with both geom_traits
-  typedef _Triangulation_test_traits_3                        traits;
+ typedef CGAL::Triangulation_geom_traits_3<Test_rep_cartesian>  traits;
+// works no longer with the minimal traits class.
+ // It first has to be rewritten
+ //  typedef _Triangulation_test_traits_3                        traits;
   typedef CGAL::Triangulation_vertex_base_pointer_3<traits>        Vb;
   typedef CGAL::Triangulation_cell_base_3<traits>                   Fb;
   typedef CGAL::Triangulation_data_structure_3<Vb,Fb>               Tds;

@@ -31,75 +31,98 @@ in case of coplanar points, and collinearity tests.
 \ccTwo{Triangulation_traits_3::Tetrahedron}{}
 
 \ccNestedType{Point_3}
-{The type must provide a copy constructor and assignment operator.}
+{The point type. It must provide assignment and copy constructor.}
+\ccGlue
+\ccNestedType{Vector_3}
+{The vector type. It must be constructible as the difference of two points.}
 \ccGlue
 \ccNestedType{Segment_3}
-{The  type must provide a constructor that takes two points as arguments.}
+{The  segment type.}
 \ccGlue
 \ccNestedType{Triangle_3}
-{The type must provide a constructor that takes three points as
-arguments.}
+{The triangle type.}
 \ccGlue
 \ccNestedType{Tetrahedron_3}
-{The type must provide a constructor that takes four points as
-arguments.}
+{The tetrahedron type.}
 
-\ccCreation
-\ccCreationVariable{traits}  %% choose variable name
-\ccThree{Comparison_result}{compare_x()toto}{}
-
-\ccConstructor{Triangulation_Triangulation_traits_3_3();}{default constructor.}
-Only a default constructor is required.
-
-\ccConstructor{Triangulation_traits_3();} 
-{A default constructor.}
-
-\ccOperations
-
-\ccThree{Comparison_result}{traits.orientation_in_plane( Point q, Point r, Point s, Point test)}{} 
-
-\ccHeading{Predicates}
-\ccMethod{bool equal(const Point & p, const Point & q) const;}
-{Equality test.}
-
-\ccMethod{Comparison_result compare_x(const Point & p, const Point
-& q) const;}
-{Comparison of \ccc{x}-coordinates. Returns \ccc{LARGER}
-(resp. \ccc{EQUAL}, \ccc{SMALLER}) when the \ccc{x}
-coordinate of \ccc{p} is larger than (resp. equal to, smaller than)
-the \ccc{x} coordinate of \ccc{q}.} 
+\ccNestedType{Construct_segment_3} {A constructor object for
+\ccc{Segment_3}.Must provide \ccc{Segment_3 operator()(Point_3 p,Point_3
+                       q)}, which constructs a  segment from two points.}
 \ccGlue
-\ccMethod{Comparison_result compare_y(const Point & p, const Point
-& q) const;}
-{Comparison of \ccc{y}-coordinates.}
+\ccNestedType{Construct_triangle_3} {A constructor object for
+\ccc{Triangle_3}.Must provide \ccc{Triangle_3 operator()(Point_3 p,Point_3
+                       q,Point_3 r )}, which constructs a triangle from three points.}
 \ccGlue
-\ccMethod{Comparison_result compare_z(const Point & p, const Point
-& q) const;}
-{Comparison of \ccc{z}-coordinates.}
+\ccNestedType{Construct_tetrahedron_3} {A constructor object for
+\ccc{Tetrahedron_3}.Must provide \ccc{Tetrahedron_3 operator()(Point_3 p,Point_3
+                       q,Point_3 r, Point_3 s )}, which constructs a tetrahedron from four points.}
 
-\ccMethod{Orientation orientation(const Point& p0,
-                                       const Point& p1,
-                                       const Point& p2,
-                                       const Point& p3) const;}
-{Orientation test in three dimensions.}
-
-\ccMethod{Orientation orientation_in_plane
-				(const Point & q,	
-				 const Point & r,
-				 const Point & s,
-				 const Point & test) const;}
-{Tests whether \ccc{test} is on the same side of \ccc{(q, r)} as
+\ccNestedType{Equal_3}{Predicate object. Must provide
+the operator 
+\ccc{Comparison_result operator()(Point p, Point q)}
+which tests whether points \ccc{p} and \ccc{q} are equal.}
+%
+\ccGlue
+%
+\ccNestedType{Collinear_3}{Predicate object. Must provide
+the operator 
+\ccc{Comparison_result operator()(Point p, Point q, Point r)}
+which tests whether points \ccc{p}, \ccc{q} and \ccc{r} are collinear.}
+%
+\ccGlue
+%
+\ccNestedType{Compare_x_3}{Predicate object. Must provide
+the operator 
+\ccc{Comparison_result operator()(Point p, Point q)}
+which returns 
+\ccc{SMALLER, EQUAL} or \ccc{ LARGER}
+ according ding to the
+$x$-ordering of points \ccc{p} and \ccc{q}.}
+%
+\ccGlue
+%
+\ccNestedType{Compare_y_3}{Predicate object. Must proveide
+the operator 
+\ccc{Comparison_result operator()(Point p, Point q)}
+which returns the
+(\ccc{SMALLER, EQUAL} or \ccc{ LARGER})
+according to the
+$y$-ordering of points \ccc{p} and \ccc{q}.}
+%
+\ccGlue
+%
+\ccNestedType{Compare_z_3}{Predicate object. Must proveide
+the operator 
+\ccc{Comparison_result operator()(Point p, Point q)}
+which returns the
+(\ccc{SMALLER, EQUAL} or \ccc{ LARGER})
+according to the
+$z$-ordering of points \ccc{p} and \ccc{q}.}
+%
+\ccGlue
+%
+\ccNestedType{Orientation_3}{Predicate object. Must provide
+the  operator
+\ccc{Orientation operator()(Point p, Point q, Point r, Point s)}
+which returns
+\ccc{LEFTTURN} (resp. \ccc{RIGHTTURN}) is $s$ is on the left 
+(resp. on the right) of the oriented plane \ccc{pqr}
+and \ccc{COPLANAR} is the four points are coplanar.}
+%
+\ccGlue
+%
+\ccNestedType{Coplanar_orientation_3}{Predicate object. Must provide
+the  operator
+\ccc{Orientation operator()(Point q, Point r, Point s, Point test)}
+which tests whether \ccc{test} is on the same side of \ccc{(q, r)} as
 \ccc{s} in the common plane of the four points. Returns \ccc{COLLINEAR} if
 \ccc{test, q, r} are collinear, \ccc{POSITIVE} if \ccc{(q, r, test)}
 and \ccc{(q, r, s)} have the same orientation, \ccc{NEGATIVE} if
 \ccc{(q, r, test)} and \ccc{(q, r, s)} have opposite orientations. 
 \ccPrecond{\ccc{test, q, r, s} are coplanar and \ccc{q, r, s} are not
-collinear.}} 
+collinear.}
+}
 
-\ccMethod{bool collinear(const Point & p,
-		 	 const Point & q,
-		 	 const Point & r) const;}
-{Collinearity test.}
 
 \subsubsection{To be used by \protect 
 \ccc{Delaunay_triangulation_3<Triangulation_traits_3, Tds_3>}}
@@ -109,26 +132,25 @@ In addition to the requirements described before, the geometric traits
 class of a Delaunay triangulation must fulfill the following
 requirements:
 
-\ccHeading{Predicates}
+\ccNestedType{Side_of_oriented_sphere_3}{Predicate object. Must provide
+the  operator
+\ccc{Orientation operator()(Point p, Point q, Point r, Point s, Point test)}
+which determines on which side of the oriented sphere circumscribing 
+\ccc{p, q, r, s} the point \ccc{test} lies.}
+%
 
-\ccMethod{Oriented_side 
-  	side_of_oriented_sphere(const Point & p,
-			  const Point & q,
-			  const Point & r,
-			  const Point & s,
-			  const Point & test) const;}
-{Determines on which side of the oriented sphere circumscribing 
-\ccc{p, q, r, s} the point \ccc{test} lies.} 
-
-\ccMethod{Oriented_side 
-  side_of_oriented_circle(const Point & p,
-			  const Point & q,
-			  const Point & r,
-			  const Point & test) const;}
-{Determines on which side of the oriented circle circumscribing
+%
+\ccGlue
+%
+\ccNestedType{Coplanar_side_of_oriented_circle_3}{Predicate object. Must provide
+the  operator
+\ccc{Orientation operator()(Point p, Point q, Point r, Point test, Vector v)}
+which determines on which side of the oriented circle circumscribing
 \ccc{p, q, r} the point \ccc{test} lies. 
-\ccPrecond{\ccc{p, q, r, test} are coplanar and \ccc{p, q, r} are not
-collinear.}}  
+\ccPrecond{\ccc{p, q, r, test} are coplanar and \ccc{v} is the normal vector of this plane
+ and \ccc{p, q, r} are notcollinear.}}
+
+
 
 \subsubsection{To be used by \protect 
 \ccc{Delaunay_hierarchic_triangulation_3<Triangulation_traits_3, Tds_3>}}
@@ -146,11 +168,16 @@ by \cgal, a class must provide definitions for the \textit{power tests}.
 We use here the same notation as in
 Section~\ref{Triangulation3-sec-class-Regulartriangulation}. 
 
-\ccMethod{Oriented_side power_test(const Weighted_point &p,
-			   const Weighted_point &q,
-			   const Weighted_point &r,
-			   const Weighted_point &s,
-			   const Weighted_point &t) const;}
+\ccNestedType{Power_test_3}{Predicate object. Must provide the following
+operators:
+
+
+
+\ccc{Oriented_side operator()( Weighted_point p,
+			    Weighted_point q,
+			    Weighted_point r,
+			    Weighted_point s,
+			    Weighted_point t) ;}
 {Let ${z(p,q,r,s)}^{(w)}$ be the power sphere of the weighted points 
 $(p,q,r,s)$. Returns \\
 \ccc{ON_ORIENTED_BOUNDARY} if \ccc{t} is orthogonal to
@@ -165,10 +192,11 @@ Note that with this definition, if all the points have a weight equal
 to 0, then
 \ccc{power_test(p,q,r,s,t)} = \ccc{side_of_oriented_sphere(p,q,r,s,t)}.
 
-\ccMethod{Oriented_side power_test(const Weighted_point &p,
-			   const Weighted_point &q,
-			   const Weighted_point &r,
-			   const Weighted_point &t) const;}
+
+\ccc{Oriented_side operator()( Weighted_point p,
+			    Weighted_point q,
+			    Weighted_point r,
+			    Weighted_point t) ;}
 {Analogous definition as the previous method, for coplanar points,
 with the power circle ${z(p,q,r)}^{(w)}$.
 \ccPrecond{\ccc{p, q, r} are not collinear and \ccc{p, q, r, t} are
@@ -177,9 +205,9 @@ coplanar.}}
 If all the points have a weight equal to 0, then
 \ccc{power_test(p,q,r,s,t)} = \ccc{side_of_oriented_circle(p,q,r,s,t)}.
 
-\ccMethod{Oriented_side power_test(const Weighted_point &p,
-			   const Weighted_point &q,
-			   const Weighted_point &t) const;}
+\ccc{Oriented_side operator()( Weighted_point p,
+			    Weighted_point q,
+			    Weighted_point t) ;}
 {Same for collinear points, where ${z(p,q)}^{(w)}$ is the
 power segment of \ccc{p} and \ccc{q}.
 \ccPrecond{\ccc{p} and \ccc{q} have different Bare\_points, and
@@ -188,7 +216,58 @@ power segment of \ccc{p} and \ccc{q}.
 If all the points have a weight equal to 0, then
 \ccc{power_test(p,q,t)} gives the same answer as the kernel predicate
 \ccc{s(p,q).has_on(t)} would give, where  \ccc{s(p,q)} denotes the
-segment with endpoints \ccc{p} and \ccc{q}.
+segment with endpoints \ccc{p} and \ccc{q}.}
+
+
+
+\ccCreation
+\ccCreationVariable{traits}  %% choose variable name
+\ccThree{Comparison_result}{compare_x()toto}{}
+
+\ccConstructor{Triangulation_traits_3_3();}{default constructor.}
+Only a default constructor is required.
+
+\ccConstructor{Triangulation_traits_3();} 
+{A default constructor.}
+
+\ccOperations
+
+%\ccThree{Comparison_result}{traits.orientation_in_plane( Point q, Point r, Point s, Point test)}{} 
+
+\ccHeading{Predicate functions}
+The following functions give access to the  predicate 
+and constructor objects.
+\ccThree{Construct_segment_3}{gt.compare_x(Point p0, Point p1)x}{}
+%
+\ccMethod{Construct_segment_3 construct_segment_3_object();}{}
+\ccGlue
+\ccMethod{Construct_triangle_3 construct_triangle_3_object();}{}
+\ccGlue
+\ccMethod{Construct_tetrahedron_3 construct_tetrahedron_3_object();}{}
+\ccGlue
+\ccMethod{Comparison_x_3 compare_x_3_object();}{}
+\ccGlue
+\ccMethod{Comparison_y_3 compare_y_3_object();}{}
+\ccGlue
+\ccMethod{Comparison_z_3 compare_z_3_object();}{}
+\ccGlue
+\ccMethod{Orientation_3  orientation_3_object();}{}
+\ccGlue
+\ccMethod{Collinear_3  collinear_3_object();}{}
+\ccGlue
+\ccMethod{Coplanar_orientation_3  coplanar_orientation_3_object();}{}
+\ccGlue
+\ccGlue
+\ccMethod{{Side_of_oriented_sphere_3  side_of_oriented_sphere_3_object();}{}
+\ccGlue
+\ccGlue
+\ccMethod{coplanar_side_of_oriented_circle_3  coplanar_side_of_oriented_circle_3_object();}{}
+\ccGlue
+\ccGlue
+\ccMethod{Power_test_3  power_test_3_object();}{}
+\ccGlue
+
+
 
 \ccHasModels
 
