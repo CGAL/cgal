@@ -4909,15 +4909,21 @@ install_gmp()
 
     case ${CGAL_OS_COMPILER} in 
 	*CYGWIN*) 
-	    gmpdir="${CGAL_AUX_DIR}/wingmp/gmp-2.0.2"
+	    gmpdir="${CGAL_AUX_DIR}/wingmp/gmp-4.0.1"
 	    case `compiler_description` in
-		*VC++*)    _tmp_name=msvc/gmp.lib;;
-		*Borland*) _tmp_name=bcc/gmp.lib;;
-		*)         _tmp_name=gcc/libgmp.a;;
+		*VC++*)    _tmp_name=msvc
+			   _tmp_lib=gmp.lib
+			   ;;
+		*Borland*) _tmp_name=bcc
+			   _tmp_lib=gmp.lib
+			   ;;
+		*)         _tmp_name=gcc
+			   _tmp_lib=libgmp.a
+			   ;;
 	    esac
 	    _check_write ${CGAL_INCL_DIR}
-	    ${_cp} "${gmpdir}/gmp.h" "${CGAL_INCL_DIR}"
-	    ${_cp} "${gmpdir}/${_tmp_name}" \
+	    ${_cp} "${gmpdir}/${_tmp_name}/gmp.h" "${CGAL_INCL_DIR}"
+	    ${_cp} "${gmpdir}/${_tmp_name}/${_tmp_lib}" \
 		"${CGAL_LIB_DIR}/${CGAL_OS_COMPILER}"
 	    GMP_INSTALLATION='c'
 	    ;;
