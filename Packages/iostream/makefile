@@ -23,7 +23,7 @@ package:
 	echo "Penser a envoyer un mail a cgal-submit quand c'est pret"
 	echo "Penser a tagger les fichiers soumis avec le numero de version"
 
-doctex:
+doc:
 	cd /u/alcor/0/prisme_util/CGAL/Local/IO/iostream
 	cvs commit doc
 	rm -f doc_tex/general/*.*
@@ -31,6 +31,9 @@ doctex:
 	cp doc/*.tex doc/*.ltex doc/*.ipe doc_tex/general
 	cd doc;\
 	latex wrapper.tex ; bibtex wrapper.tex; latex wrapper.tex; \
-	dvips wrapper -o iostream.ps; gzip iostream.ps; rm wrapper.dvi
-	mv doc/iostream.ps.gz doc_ps
+	dvips wrapper; gzip wrapper.ps; rm wrapper.dvi
+	mv doc/wrapper.ps.gz doc_ps/iostream.ps.gz
+	cd doc; cc_manual_to_html -title iostreams -release $(VERSION) \
+		-o ../doc_html/general/iostream/ \
+		main.tex
 	echo "done"
