@@ -492,16 +492,16 @@ squared radius of the smallest enclosing sphere.
 @macro <Min_sphere_d types> += @begin
 
     typedef  typename ET_vector::const_iterator
-                                        Center_coordinate_iterator;
+                                        Coordinate_iterator;
 @end
 
 @macro <Min_sphere_d member functions> += @begin
 
     // access to center (rational representation)
-    Center_coordinate_iterator
+    Coordinate_iterator
     center_coordinates_begin( ) const { return center_coords.begin(); }
 
-    Center_coordinate_iterator
+    Coordinate_iterator
     center_coordinates_end  ( ) const { return center_coords.end  (); }
 
     // access to squared radius (rational representation)
@@ -1093,7 +1093,7 @@ radius of the smallest enclosing sphere.
     typedef  typename QP_rep::B_iterator B_it;
     typedef  typename QP_rep::D_iterator D_it;
     B_it  const_one( 1);
-    solver.set( points.size(), 1,
+    solver.set( points.size(), 1, d+1,
                 A_it( const_one),
                 const_one, c_vector.begin(),
                 D_it( points.begin(),
@@ -1148,15 +1148,24 @@ radius of the smallest enclosing sphere.
 
 @macro <Min_sphere_d private member functions> += @begin
     
+    #ifdef _MSC_VER
+    
     template < class NT >
     void  set_pricing_strategy( NT)
-    { /*strategyP = new CGAL::Partial_filtered_pricing<QP_rep>;
-      solver.set_pricing_strategy( *strategyP);*/ }
-  /*
+    { }
+    
+    #else
+    
+    template < class NT >
+    void  set_pricing_strategy( NT)
+        { strategyP = new CGAL::Partial_filtered_pricing<QP_rep>;
+          solver.set_pricing_strategy( *strategyP); }
+
     void  set_pricing_strategy( ET)
-    { strategyP = new CGAL::Partial_exact_pricing<QP_rep>;
-      solver.set_pricing_strategy( *strategyP); }
-  */
+        { strategyP = new CGAL::Partial_exact_pricing<QP_rep>;
+          solver.set_pricing_strategy( *strategyP); }
+
+    #endif
 @end
 
 
@@ -1457,7 +1466,7 @@ error stream.
 
         COVER( "center and squared radius",
             verrX << "center:";
-            typename Min_sphere::Center_coordinate_iterator  coord_it;
+            typename Min_sphere::Coordinate_iterator  coord_it;
             for ( coord_it  = min_sphere.center_coordinates_begin();
                   coord_it != min_sphere.center_coordinates_end();
                   ++coord_it) {
