@@ -166,11 +166,6 @@ public:
 					    const X_curve_2 & cv2,
 					    const Point_2 & p) const
   {
-    std::cout << "left "
-              << curve_source(cv1) << "," << curve_target(cv1) << " "
-              << curve_source(cv2) << "," << curve_target(cv2) << " "
-              << p << std::endl;
-      
     CGAL_assertion(is_x_monotone(cv1));
     CGAL_assertion(is_x_monotone(cv2));
 
@@ -218,10 +213,6 @@ public:
 					     const X_curve_2& cv2,
 					     const Point_2& p) const
   {
-    std::cout << "right ("
-              << curve_source(cv1) << "," << curve_target(cv1) << ") ("
-              << curve_source(cv2) << "," << curve_target(cv2) << ") ("
-              << p << std::endl;
     CGAL_assertion(is_x_monotone(cv1));
     CGAL_assertion(is_x_monotone(cv2));
 
