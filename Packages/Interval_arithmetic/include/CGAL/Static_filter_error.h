@@ -54,6 +54,14 @@ struct Static_filter_error
   Static_filter_error (const double &b, const double &e = 0, const int &d = 1)
       : _b(b), _e(e), _d(d) {}
 
+  static double ulp ()
+  {
+      FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_UPWARD);
+      double e = ulp(1);
+      FPU_set_cw(backup);
+      return e;
+  }
+
   static double ulp (const double &d)
   {
       // You are supposed to call this function with rounding towards
