@@ -130,7 +130,7 @@ circumcenter( const PointH2<R>& p,
   RT rhy = r.hy();
   RT rhw = r.hw();
 
-#ifdef EXPANDED_CIRCUMCENTER_COMPUTATION   /* strange flag -- XXX */
+#ifdef CGAL_EXPANDED_CIRCUMCENTER_COMPUTATION
   RT vvx =
      ( qhy*qhw*phw*phw - phy*phw*qhw*qhw )
     *( phx*phx*rhw*rhw + phy*phy*rhw*rhw - rhx*rhx*phw*phw - rhy*rhy*phw*phw )
@@ -148,7 +148,7 @@ circumcenter( const PointH2<R>& p,
      *( rhy*rhw*phw*phw - phy*phw*rhw*rhw )
    -  ( rhx*rhw*phw*phw - phx*phw*rhw*rhw )
      *( qhy*qhw*phw*phw - phy*phw*qhw*qhw ) );
-#endif // EXPANDED_CIRCUMCENTER_COMPUTATION
+#endif // CGAL_EXPANDED_CIRCUMCENTER_COMPUTATION
 
   RT qy_py = ( qhy*qhw*phw*phw - phy*phw*qhw*qhw );
   RT qx_px = ( qhx*qhw*phw*phw - phx*phw*qhw*qhw );
