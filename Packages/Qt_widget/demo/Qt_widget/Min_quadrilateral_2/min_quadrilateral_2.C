@@ -54,7 +54,7 @@ typedef CGAL::Segment_2<Rep>	      Segment;
 
 
 
-const QString my_title_string("Convex_Hull_2 Demo with"
+const QString my_title_string("Minimum Enclosed Quadrilateral with"
 			      " CGAL Qt_widget");
 
 //global flags and variables

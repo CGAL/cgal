@@ -83,7 +83,7 @@ typedef Delaunay::Edge                      Edge;
 typedef Triangulation::Line_face_circulator Line_face_circulator;
 
 const QString my_title_string("Triangulation Demo with"
-			      " CGAL Qt_scenes_widget");
+			      " CGAL Qt_widget");
 Delaunay	tr1;
 int		current_state;
 

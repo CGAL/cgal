@@ -56,7 +56,7 @@ typedef  CGAL::Min_ellipse_2< Traits >  Min_ellipse;
 
 
 
-const QString my_title_string("Convex_Hull_2 Demo with"
+const QString my_title_string("Minimum ellipse Demo with"
 			      " CGAL Qt_widget");
 
 //global flags and variables

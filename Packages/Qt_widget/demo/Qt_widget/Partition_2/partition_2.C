@@ -53,7 +53,7 @@ typedef CGAL::Random_points_in_square_2<Point_2>    Point_generator;
 #include "Qt_widget_toolbar_layers.h"
 
 const QString my_title_string("Polygon partition demo with"
-			      " CGAL Qt_scenes_widget");
+			      " CGAL Qt_widget");
 
 
 Polygon_2 polygon;
