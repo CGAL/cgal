@@ -46,7 +46,7 @@ typedef CGAL::Random_points_in_square_2<Point_2>    Point_generator;
 
 
 #include <CGAL/IO/Qt_Widget.h>
-#include <CGAL/IO/Qt_Widget_Standard_toolbar.h>
+#include <CGAL/IO/Qt_Widget_standard_toolbar.h>
 #include "Qt_Widget_toolbar.h"
 #include "Qt_Widget_toolbar_views.h"
 
