@@ -39,26 +39,26 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template <typename K, typename I, typename M> class Nef_polyhedron_S2;
-template <typename K, typename I, typename M> class Nef_polyhedron_S2_rep;
-template <typename K, typename I> class Nef_polyhedron_3;
+template <typename K, typename I, typename Mk, typename M> class Nef_polyhedron_S2;
+template <typename K, typename I, typename Mk, typename M> class Nef_polyhedron_S2_rep;
+template <typename K, typename I, typename Mk> class Nef_polyhedron_3;
 class SNC_items;
 
-template <typename K, typename I, typename M>
-std::ostream& operator<<(std::ostream&, const Nef_polyhedron_S2<K,I,M>&); 
-template <typename K, typename I, typename M>
-std::istream& operator>>(std::istream&, Nef_polyhedron_S2<K,I,M>&);
+template <typename K, typename I, typename Mk, typename M>
+std::ostream& operator<<(std::ostream&, const Nef_polyhedron_S2<K,I,Mk,M>&); 
+template <typename K, typename I, typename Mk, typename M>
+std::istream& operator>>(std::istream&, Nef_polyhedron_S2<K,I,Mk,M>&);
 
 
-template <typename K, typename I, typename M>
+template <typename K, typename I, typename Mk, typename M>
 class Nef_polyhedron_S2_rep { 
 
-  typedef Nef_polyhedron_S2_rep<K,I,M>        Self;
-  friend class Nef_polyhedron_S2<K,I,M>;
+  typedef Nef_polyhedron_S2_rep<K,I,Mk,M>        Self;
+  friend class Nef_polyhedron_S2<K,I,Mk,M>;
 
  public:
   typedef CGAL::Sphere_geometry<K>                     Sphere_kernel;
-  typedef bool                                         Mark;
+  typedef Mk                                           Mark;
   typedef M                                            Sphere_map;
   typedef CGAL::SM_const_decorator<Sphere_map>         Const_decorator;
   typedef CGAL::SM_decorator<Sphere_map>               Decorator;
@@ -89,19 +89,20 @@ The template parameter |Kernel| is specified via a kernel concept.
 |Kernel| must be a model of the concept |NefSphereKernelTraits_2|.
 }*/
 
-template <typename Kernel_, typename Items_ = SM_items, 
-	  typename Map_ = Sphere_map<Sphere_geometry<Kernel_>,Items_> >
-class Nef_polyhedron_S2 : public Handle_for< Nef_polyhedron_S2_rep<Kernel_,Items_,Map_> >, 
-			  public Nef_polyhedron_S2_rep<Kernel_,Items_,Map_>::Const_decorator { 
+template <typename Kernel_, typename Items_ = SM_items, typename Mark_ = bool,  
+	  typename Map_ = Sphere_map<Sphere_geometry<Kernel_>,Items_, Mark_> >
+class Nef_polyhedron_S2 : public Handle_for< Nef_polyhedron_S2_rep<Kernel_,Items_,Mark_,Map_> >, 
+			  public Nef_polyhedron_S2_rep<Kernel_,Items_,Mark_,Map_>::Const_decorator { 
   
 public:
   /*{\Mtypes 7}*/
   typedef Items_                                              Items;
   typedef Kernel_                                             Kernel;
   typedef Map_                                                Sphere_map;
+  typedef Mark_                                               Mark;
   typedef Nef_polyhedron_S2<Kernel,Items,Sphere_map>          Self;
-  typedef Nef_polyhedron_S2_rep<Kernel,Items,Sphere_map>      Rep;
-  typedef Handle_for< Nef_polyhedron_S2_rep<Kernel,Items,Sphere_map> >  Base;
+  typedef Nef_polyhedron_S2_rep<Kernel,Items,Mark,Sphere_map> Rep;
+  typedef Handle_for< Nef_polyhedron_S2_rep<Kernel,Items,Mark,Sphere_map> >  Base;
   typedef typename Rep::Sphere_kernel                         Sphere_kernel;
 //  typedef typename Rep::Sphere_map                            Sphere_map;
 
@@ -116,7 +117,8 @@ public:
 
   typedef typename Sphere_kernel::Sphere_direction Sphere_direction;
 
-  typedef typename Rep::Mark Mark;
+
+//  typedef typename Rep::Mark Mark;
   /*{\Xtypemember marking set membership or exclusion.}*/
 
   enum Boundary { EXCLUDED=0, INCLUDED=1 };
@@ -129,13 +131,13 @@ public:
 protected:
   Sphere_map& sphere_map() { return ptr()->sm_; } 
 
-  struct AND { bool operator()(bool b1, bool b2)  const { return b1&&b2; }  };
-  struct OR { bool operator()(bool b1, bool b2)   const { return b1||b2; }  };
-  struct DIFF { bool operator()(bool b1, bool b2) const { return b1&&!b2; } };
-  struct XOR { bool operator()(bool b1, bool b2)  const 
+  struct AND { bool operator()(const Mark& b1, const Mark& b2)  const { return b1&&b2; }  };
+  struct OR { bool operator()(const Mark& b1, const Mark& b2)   const { return b1||b2; }  };
+  struct DIFF { bool operator()(const Mark& b1, const Mark& b2) const { return b1&&!b2; } };
+  struct XOR { bool operator()(const Mark& b1, const Mark& b2)  const 
                { return (b1&&!b2)||(!b1&&b2); } };   
 
-  typedef Nef_polyhedron_S2_rep<Kernel,Items,Sphere_map>  Nef_rep;
+  typedef Nef_polyhedron_S2_rep<Kernel,Items,Mark,Sphere_map>  Nef_rep;
   typedef typename Nef_rep::Decorator                     Decorator;
   typedef typename Nef_rep::Const_decorator               Const_decorator;
   typedef typename Nef_rep::Overlayer                     Overlayer;
@@ -173,7 +175,7 @@ protected:
   typedef std::list<Sphere_segment>  SS_list;
   typedef typename SS_list::const_iterator SS_iterator;
 
-  friend class Nef_polyhedron_3<Kernel, SNC_items>;
+  friend class Nef_polyhedron_3<Kernel, SNC_items, Mark>;
 
 public:
   /*{\Mcreation 3}*/

@@ -51,7 +51,7 @@ struct move_edge_around_sface {
 
 /*{\Manpage {Sphere_map}{Kernel}{Sphere Maps}{M}}*/
 
-template <typename Kernel_, typename Items_>
+template <typename Kernel_, typename Items_, typename Mark_>
 class Sphere_map {
 
 /*{\Mdefinition selective sphere map container based on
@@ -59,9 +59,10 @@ the HDS design of Kettner.}*/
 
 public:
   /*{\Mtypes 7}*/
-  typedef Sphere_map<Kernel_, Items_>   Self;
-  typedef Kernel_                       Sphere_kernel;
-  typedef Items_                        Items;
+  typedef Sphere_map<Kernel_, Items_,Mark_>   Self;
+  typedef Kernel_                             Sphere_kernel;
+  typedef Items_                              Items;
+  typedef Mark_                               Mark;
 
   friend class SM_const_decorator<Self>;
   friend class SM_decorator<Self>;
@@ -74,7 +75,7 @@ public:
   /*{\Mtypemember segments on the unit sphere.}*/
   typedef typename Sphere_kernel::Sphere_direction Sphere_direction;
   /*{\Mtypemember directions on the unit sphere.}*/
-  typedef bool                                     Mark;
+  //  typedef bool                                     Mark;
   /*{\Mtypemember selective attributes of all objects.}*/
   typedef size_t   Size_type;
   /*{\Mtypemember size type.}*/
@@ -487,9 +488,9 @@ protected:
 }; // Sphere_map
 
 
-template <typename K, typename I>
-void Sphere_map<K, I>::
-pointer_update(const Sphere_map<K, I>& D)
+template <typename K, typename I, typename M>
+void Sphere_map<K, I, M>::
+pointer_update(const Sphere_map<K, I, M>& D)
 {
   CGAL::Unique_hash_map<SVertex_const_handle,SVertex_handle>     VM;
   CGAL::Unique_hash_map<SHalfedge_const_handle,SHalfedge_handle> EM;
@@ -566,9 +567,9 @@ pointer_update(const Sphere_map<K, I>& D)
   }
 }
 
-template <typename Kernel_, typename Items_> 
-typename Sphere_map<Kernel_, Items_>::Object_iterator
-Sphere_map<Kernel_, Items_>::undef_;
+template <typename Kernel_, typename Items_, typename Mark_> 
+typename Sphere_map<Kernel_, Items_, Mark_>::Object_iterator
+Sphere_map<Kernel_, Items_, Mark_>::undef_;
 
 
 CGAL_END_NAMESPACE
