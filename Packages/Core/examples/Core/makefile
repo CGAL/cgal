@@ -36,7 +36,7 @@ LIBPATH = \
 LDFLAGS = \
           $(TESTSUITE_LDFLAGS) \
           $(LONG_NAME_PROBLEM_LDFLAGS) \
-          $(CGAL_LDFLAGS) CORE.lib
+          $(CGAL_LDFLAGS) $(CGAL_CORE_LIB)
 
 #---------------------------------------------------------------------#
 #                    target entries
