@@ -1,10 +1,13 @@
+2.35    (6 Mar 2002)
+- fixed small bug in demo program
+
 2.34    (19 Feb 2002)
 - fixed typo in doc
 - fixed bug that caused the initial face of the polyhedron to be oriented
   incorrectly when all other points were on one side of this plane
 - added test for above case
 - added some changes for the M$ compiler (that may break things for the Borland
-  compile...)
+  compiler...)
 
 2.33    (5 Dec 2001)
 - changed from reinterpret_cast to Kernel_traits
