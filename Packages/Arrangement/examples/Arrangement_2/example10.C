@@ -1,10 +1,7 @@
 //examples/Arrangement_2/example10.C
 
 // Define shorter names to please linker (g++)
-#define Arrangement_2 Ar
-#define _In_place_list_iterator IPLI
-#define Cartesian CRTS
-#define Arr_polyline_traits APT
+#include "short_names.h"
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/MP_Float.h>
