@@ -492,7 +492,7 @@ web file.
     @<file name>(@1)
     @<file description>(
         "Geometric Optimisation",
-        "Optimisation_basic","Optimisation/optimisation_basic",
+        "Optimisation_basic","Optimisation_basic",
         "$Revision$","$Date$",
         "@3, Sven Schönherr",
         "Sven Schönherr <sven@@inf.ethz.ch>",
