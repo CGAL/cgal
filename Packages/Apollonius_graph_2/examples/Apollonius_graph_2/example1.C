@@ -27,11 +27,9 @@ typedef CGAL::Apollonius_graph_2<Traits> Apollonius_graph;
 
 
 
-int main(int argc, char* argv[])
+int main()
 {
-  assert( argc >= 2 );
-
-  std::ifstream ifs(argv[1]);
+  std::ifstream ifs("data/sites.cin");
   assert( ifs );
 
   Apollonius_graph ag;
