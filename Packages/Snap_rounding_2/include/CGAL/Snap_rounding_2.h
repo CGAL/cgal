@@ -179,13 +179,9 @@ public:
 private:
   Rep _gt;
 
-  static Direction seg_dir;
   static const int default_number_of_kd_trees = 1;
 
-  std::set<Hot_Pixel<Rep> *,hot_pixel_auclidian_cmp<Rep> > hp_set;
-  NT min_x,max_x,min_y,max_y;
   std::list<Segment_data<Rep> > seg_list;
-  std::list<std::list<Point_2> > segments_output_list;
   Multiple_kd_tree<Rep,Hot_Pixel<Rep> *> *mul_kd_tree;
 
   void find_hot_pixels_and_create_kd_trees(
@@ -210,9 +206,6 @@ private:
         bool do_isr);
   //  void list_copy(std::list<Point_2>& target,std::list<Point_2>& source);
 };
-
-template<class Rep>
-Direction Snap_rounding_2<Rep>::seg_dir;
 
 // ctor
 template<class Rep_>
@@ -570,6 +563,7 @@ void Snap_rounding_2<Rep_>::find_intersected_hot_pixels(Segment_data<Rep_>
                     NT pixel_size)
   {
     typename std::list<Hot_Pixel<Rep_> *>::iterator iter;
+    Direction seg_dir;
 
     hot_pixels_intersected_set.clear();
     seg.determine_direction(seg_dir);
@@ -618,6 +612,7 @@ void Snap_rounding_2<Rep_>::reroute_isr(std::set<Hot_Pixel<Rep_> *,
     Segment_data<Rep_> seg;
     std::set<Hot_Pixel<Rep_> *,hot_pixel_dir_cmp<Rep_> >
       hot_pixels_intersected_set;
+    Direction seg_dir;
 
     if(number_of_intersections > 2 || first_time) {
       before_last_hot_pixel_iter = inp_hot_pixels_intersected_set.end();
@@ -668,6 +663,7 @@ void Snap_rounding_2<Rep_>::iterate(
       iterator hot_pixel_iter;
     int number_of_intersections;
     Hot_Pixel<Rep_> *hp;
+    Direction seg_dir;
 
     for(typename std::list<Segment_data<Rep_> >::iterator iter =
         seg_list.begin();iter != seg_list.end();++iter) {
