@@ -1,4 +1,7 @@
 30 March 2005 Sylvain Pion
+- Switch IPE pictures to IPE 6, and regenerate PDF and EPS versions.
+
+30 March 2005 Sylvain Pion
 - Remove internal Triangulation_ds_{vertex|cell} layer.
 - Added mirror_vertex(), mirror_index(), is_valid(Cell_handle),
   is_valid(Vertex_handle) at the TDS and Triangulation level.
