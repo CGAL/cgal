@@ -1,3 +1,7 @@
+10 September 2004:  Menelaos Karavelas
+- test.h: fixed typo that was creating an error in Microsoft and
+  Intel compilers.
+
 7 September 2004:  Menelaos Karavelas
 - Documentation & code: replaced Agds_2 by Tds_2
 
