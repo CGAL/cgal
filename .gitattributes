@@ -1996,6 +1996,9 @@ Packages/wininst/demo/Generator/VC6/random_polygons_demo.dsp -text
 Packages/wininst/demo/Generator/VC6/rcs_demo.dsp -text
 Packages/wininst/demo/Generator/VC6/rcs_manual_demo.dsp -text
 Packages/wininst/demo/Largest_empty_rect_2/VC6/demo.dsp -text
+Packages/wininst/demo/Matrix_search/VC6/all_furthest_neighbors_2_demo.dsp -text
+Packages/wininst/demo/Matrix_search/VC6/extremal_polygon_2_demo.dsp -text
+Packages/wininst/demo/Matrix_search/VC6/rectangular_p_center_2_demo.dsp -text
 Packages/wininst/demo/Min_circle_2/VC6/demo_Min_circle_2.dsp -text
 Packages/wininst/demo/Min_ellipse_2/VC6/demo_Min_ellipse_2.dsp -text
 Packages/wininst/demo/Min_quadrilateral_2/VC6/minimum_enclosing_quadrilateral_2_demo.dsp -text
