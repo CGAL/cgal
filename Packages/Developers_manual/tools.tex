@@ -274,7 +274,16 @@ gunzip} found in {\tt \$PATH}.
 
 {\tt SENDMAIL} has the default value {\tt ''mail''}.
 
-{\tt CGAL\_TESTER} has the default value {\tt `whoami`}.
+{\tt CGAL\_TESTER} has the default value {\tt `whoami`}.  It is used to
+identify the tester.  You should specify a kind of login name for this
+variable.
+
+{\tt CGAL\_TESTER\_NAME} has the default value {\tt `whoami`}.  It is used to
+identify the tester.  You should specify your full name for this variable.
+
+{\tt CGAL\_TESTER\_ADDRESS} has the default value {\tt `whoami`}.  It is used
+to identify the tester.  You should specify your email address for this
+variable.
 
 {\tt MAIL\_ADDRESS} has no value by default. In case you want to
 set it in {\tt .autocgalrc}, the script will send an additional email to
@@ -286,6 +295,10 @@ is used to keep local log files.
 {\tt CONSOLE\_OUTPUT} has the default value ``y''. If you want that the script
  also shows messages to the console, the value is ``y'' otherwise the value 
 should be ``''.
+
+{\tt TEST\_DIR\_ROOT} specifies where the test-suite will be copied before
+being run.  For example, this can be set to \ccc{/tmp}, instead of the default
+which is {\tt \$CGAL}.  This directory can be local to the testing machine.
 
 \index{.autocgalrc configuration file@{\tt .autocgalrc} configuration file|)}
 \index{autotest_cgal script@{\tt autotest\_cgal} script|)}

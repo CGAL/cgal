@@ -1,3 +1,7 @@
+29 July 2004 Sylvain Pion
+- autotest_cgal : Document CGAL_TESTER_NAME, CGAL_TESTER_ADDRESS and
+  TEST_DIR_ROOT.
+
 20 June 2004 Sylvain Pion
 - Remove references to lexicographical_sign (dead for 2 years).
 
