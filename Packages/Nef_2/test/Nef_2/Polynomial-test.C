@@ -1,8 +1,8 @@
 #include <CGAL/basic.h>
 #ifndef _MSC_VER
-#include <CGAL/RPolynomial.h>
+#include <CGAL/Nef_2/Polynomial.h>
 #else
-#include <CGAL/RPolynomial_MSC.h>
+#include <CGAL/Nef_2/Polynomial_MSC.h>
 #endif
 #include <CGAL/test_macros.h>
 
@@ -36,7 +36,7 @@ using namespace CGAL;
 
 #ifdef _MSC_VER
 #define MSCCAST(n) static_cast<RP>(n)
-#define RPolynomial RPolynomial_MSC
+#define Polynomial Polynomial_MSC
 CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC(Integer)
 typedef std::iterator_traits<int*>::iterator_category iiii;
 #else
@@ -50,7 +50,7 @@ int main()
   //SETDTHREAD(3); CGAL::set_pretty_mode ( std::cerr );
   CGAL_TEST_START;
   { PRT(Integer,Integer);
-    typedef Integer NT; typedef RPolynomial<Integer> RP;
+    typedef Integer NT; typedef Polynomial<Integer> RP;
       RP::NT seq[4] = { 0, 1, 2, 0 };
       RP p1, p2(NT(1)), p3(NT(1),NT(1)), p4(5,2), p5(-2,5), p6(4,1), 
          p7(3,0), p8(seq,seq+4);
@@ -136,7 +136,7 @@ int main()
 
   }
   { PRT(int,Integer);
-    typedef int NT; typedef RPolynomial<Integer> RP;
+    typedef int NT; typedef Polynomial<Integer> RP;
       RP::NT seq[4] = { 0, 1, 2, 0 };
       RP p1, p2(NT(1)), p3(NT(1),NT(1)), p4(5,2), p5(-2,5), p6(4,1), 
          p7(3,0), p8(seq,seq+4);
@@ -222,7 +222,7 @@ int main()
 
   }
   { PRT(double,Integer);
-    typedef double NT; typedef RPolynomial<Integer> RP;
+    typedef double NT; typedef Polynomial<Integer> RP;
       RP::NT seq[4] = { 0, 1, 2, 0 };
       RP p1, p2(NT(1)), p3(NT(1),NT(1)), p4(5,2), p5(-2,5), p6(4,1), 
          p7(3,0), p8(seq,seq+4);
@@ -308,7 +308,7 @@ int main()
 
   }
   { PRT(int,int);
-    typedef int NT; typedef RPolynomial<int> RP;
+    typedef int NT; typedef Polynomial<int> RP;
       RP::NT seq[4] = { 0, 1, 2, 0 };
       RP p1, p2(NT(1)), p3(NT(1),NT(1)), p4(5,2), p5(-2,5), p6(4,1), 
          p7(3,0), p8(seq,seq+4);
@@ -394,7 +394,7 @@ int main()
 
   }
   { PRT(double,int);
-    typedef double NT; typedef RPolynomial<int> RP;
+    typedef double NT; typedef Polynomial<int> RP;
       RP::NT seq[4] = { 0, 1, 2, 0 };
       RP p1, p2(NT(1)), p3(NT(1),NT(1)), p4(5,2), p5(-2,5), p6(4,1), 
          p7(3,0), p8(seq,seq+4);

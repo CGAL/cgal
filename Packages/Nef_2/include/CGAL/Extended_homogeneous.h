@@ -34,10 +34,10 @@
 #include <CGAL/Line_2_Line_2_intersection.h> 
 #include <CGAL/squared_distance_2.h> 
 #ifndef _MSC_VER
-#include <CGAL/RPolynomial.h>
+#include <CGAL/Nef_2/Polynomial.h>
 #else
-#include <CGAL/RPolynomial_MSC.h>
-#define RPolynomial RPolynomial_MSC
+#include <CGAL/Nef_2/Polynomial_MSC.h>
+#define Polynomial Polynomial_MSC
 #endif
 #undef _DEBUG
 #define _DEBUG 5
@@ -55,7 +55,7 @@ template <class T> class Extended_homogeneous;
 
 template <class RT_>
 class Extended_homogeneous : public 
-  CGAL::Homogeneous< CGAL::RPolynomial<RT_> > { public:
+  CGAL::Homogeneous< CGAL::Polynomial<RT_> > { public:
 
 /*{\Mdefinition |\Mname| is a kernel concept providing extended
 geometry\footnote{It is called extended geometry for simplicity,
@@ -93,7 +93,7 @@ functionality for changing between standard affine and extended
 geometry. At the same time it provides extensible geometric primitives
 on the extended geometric objects.}*/
 
-  typedef CGAL::Homogeneous< CGAL::RPolynomial<RT_> >  Base;
+  typedef CGAL::Homogeneous< CGAL::Polynomial<RT_> >  Base;
   typedef Extended_homogeneous<RT_> Self;
 
   /*{\Mtypes 8.5}*/
@@ -523,7 +523,7 @@ on the extended geometric objects.}*/
 };
 
 
-#undef RPolynomial
+#undef Polynomial
 CGAL_END_NAMESPACE
 #endif // CGAL_EXTENDED_HOMOGENEOUS_H
 

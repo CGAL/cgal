@@ -32,10 +32,10 @@
 #include <CGAL/Point_2.h> 
 #include <CGAL/Line_2_Line_2_intersection.h>
 #ifndef _MSC_VER
-#include <CGAL/RPolynomial.h>
+#include <CGAL/Nef_2/Polynomial.h>
 #else
-#include <CGAL/RPolynomial_MSC.h>
-#define RPolynomial RPolynomial_MSC
+#include <CGAL/Nef_2/Polynomial_MSC.h>
+#define Polynomial Polynomial_MSC
 #endif
 #undef _DEBUG
 #define _DEBUG 51
@@ -50,8 +50,8 @@ template <class T> class Extended_cartesian;
 
 template <class pFT>
 class Extended_cartesian : public 
-  CGAL::Cartesian< CGAL::RPolynomial<pFT> > { public:
-typedef CGAL::Cartesian< CGAL::RPolynomial<pFT> > Base;
+  CGAL::Cartesian< CGAL::Polynomial<pFT> > { public:
+typedef CGAL::Cartesian< CGAL::Polynomial<pFT> > Base;
 typedef Extended_cartesian<pFT> Self;
 
 /*{\Xdefinition |\Mname| is a kernel model realizing the concept
@@ -434,7 +434,7 @@ const char* output_identifier() const { return "Extended_cartesian"; }
 
 
 
-#undef RPolynomial
+#undef Polynomial
 CGAL_END_NAMESPACE
 #endif // CGAL_EXTENDED_CARTESIAN_H
 

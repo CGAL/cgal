@@ -35,7 +35,7 @@ typedef long Integer;
 
 int main()
 {
-  SETDTHREAD(41);
+  SETDTHREAD(911); // 911
   CGAL::set_pretty_mode ( std::cerr );
   std::cerr << "using " << CGAL::pointlocationversion << std::endl;
   std::cerr << "using " << CGAL::sweepversion << std::endl;

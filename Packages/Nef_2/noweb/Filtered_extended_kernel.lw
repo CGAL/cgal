@@ -1,69 +1,123 @@
-// ============================================================================
-//
-// Copyright (c) 1997-2000 The CGAL Consortium
-//
-// This software and related documentation is part of an INTERNAL release
-// of the Computational Geometry Algorithms Library (CGAL). It is not
-// intended for general use.
-//
-// ----------------------------------------------------------------------------
-//
-// release       : $CGAL_Revision$
-// release_date  : $CGAL_Date$
-//
-// file          : include/CGAL/Filtered_extended_homogeneous.h
-// package       : Nef_2 
-// chapter       : Nef Polyhedra
-//
-// source        : nef_2d/Filtered_extended_points.lw
-// revision      : $Revision$
-// revision_date : $Date$
-//
-// author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
-// maintainer    : Michael Seel <seel@mpi-sb.mpg.de>
-// coordinator   : Michael Seel <seel@mpi-sb.mpg.de>
-//
-// implementation: Filtered extended homogeneous kernel
-// ============================================================================
-#ifndef CGAL_FILTERED_EXTENDED_HOMOGENEOUS_H
-#define CGAL_FILTERED_EXTENDED_HOMOGENEOUS_H
+%------------------------------------------------------------------------------
+%KILLSTART DISS REP
+%LDEL TRACE.*?\)\;
+\documentclass[a4paper]{article}
+\usepackage{MyLweb}
+\input{defs}
 
-#include <CGAL/basic.h>
-#include <CGAL/Handle_for.h>
-#include <CGAL/Interval_arithmetic.h>
-#include <CGAL/Homogeneous.h>
-#undef _DEBUG
-#define _DEBUG 59
-#include <CGAL/Nef_2/debug.h>
+\excludeversion{ignoreindiss}
+\excludeversion{ignore}
 
-#define REDUCE_INTERSECTION_POINTS
-//#define KERNEL_ANALYSIS
-//#define KERNEL_CHECK
+\begin{document}
 
-#ifdef  KERNEL_CHECK
-#include <CGAL/Extended_homogeneous.h>
-#define CHECK(c1,c2) CGAL_assertion((c1) == (c2));
-#define PRINT_CHECK_ENABLED std::cout << "kernel check enabled!\n"
-#else
-#define CHECK(c1,c2)
-#define PRINT_CHECK_ENABLED std::cout << "no kernel check!\n"
-#endif
+\title{Filtered Extended Kernel}
+\author{Michael Seel}
+\maketitle
 
-#ifdef KERNEL_ANALYSIS
-#define DEFCOUNTER(c) \
-  static int c##_total=0; static int c##_exception=0;
-#define INCTOTAL(c) c##_total++
-#define INCEXCEPTION(c) c##_exception++
-#define PRINT_STATISTICS(c) \
-std::cout << #c##" " << c##_exception << "/" << c##_total << std::endl
-#else
-#define DEFCOUNTER(c)
-#define INCTOTAL(c)
-#define INCEXCEPTION(c)
-#define PRINT_STATISTICS(c)
-#endif
+%KILLEND REP
+\section{Introduction}
 
-CGAL_BEGIN_NAMESPACE
+It is convenient to extend the vision of standard rational points by
+so-called {\em non-standard} points.  We have one non-standard point
+for each equivalence class of rays. Two rays are called equivalent if
+one is contained in the other. The geometric properties of
+non-standard points are derived by giving them a geometric
+interpretation by means of an infinimaximal $R$. $R$ is a real
+variable. The value of $R$ is finite but larger than the value of any
+concrete real number. Let $F$ be the square box with corners
+|NW(-R,R)|, |NE(R,R)|, |SE(R,-R)|, and |SW(-R,-R)|. Let $p$ be a
+non-standard point and let $r$ be a ray defining it. If the frame $F$
+contains the source point of $r$ then let $p(R)$ be the intersection
+of $r$ with the frame $F$, if $F$ does not contain the source of $r$
+then $p(R)$ is undefined.  For a standard point let $p(R)$ be equal to
+$p$ if $p$ is contained in the frame $F$ and let $p(R)$ be undefined
+otherwise. Clearly, for any standard or non-standard point $p(R)$ is
+defined for any sufficiently large $R$.
+
+Let $f$ be any function on standard points, say with $k$ arguments. We
+call $f$ {\em extensible} if for any $k$ points $p_1$, \ldots, $p_k$
+the function value $f(p_1(R),\ldots,p_k(R))$ is constant for all
+sufficiently large $R$ and has the same value as the function
+evaluated at a fixed large enough value $R_0$.  We also consider
+geometric constructions. Let $g$ be a construction on standard points
+constructing a tuple of $l$ points from a tuple of $k$ points. We call
+$g$ {\em extensible} if for any $k$ points $p_1$, \ldots, $p_k$ the
+construction is closed in our set of extended points: if it constructs
+a point tuple $q_1$, \ldots, $q_l$ of extended points for all
+sufficiently large $R$ with the property that by fixing a large enough
+$R_0$ the tuple is the result of the standard construction.  As we
+will see in a moment the predicates |lexicographic order| of points,
+|orientation|, and |side_of_circle| are extensible. Also the
+calculation of the point in the |intersection| of line segments
+defined on two pairs of points is extensible.
+
+For a formal definition of extended points, extended segments and the
+corresponding predicates see the technical
+report~\cite{TR:infimaximalframes}.
+
+\section{Implementation}
+%KILLEND DISS
+
+In this section we descibe a more advanced extended kernel than
+|Simple_extended_kernel|. This kernel tries to optimize runtime by use
+of a filter stage. It does not rely on polynomial arithmetic but on
+unrolled polynomial expressions directly programmed for the evaluation
+of the predicates and constructions. We explain the techniques used.
+We implement specialized kernel types that store the arbitrary
+precision coordinates but also intervals of number type double
+approximating them.  Then we show how our running example, the
+orientation test, is implemented in its unrolled fashion. We finally
+present the intersection operation based on a case-dependent
+implementation. Our description covers all ideas needed to implement
+the whole extended kernel concept.
+
+
+\subsection*{Kernel types}
+In contrast to the first approach based on a polynomial arithmetic
+type |Polynomial<>| plugged into CGAL homogeneous points, we implement
+an extended kernel based on specialized types. The components are the
+types listed below plus the predicates and constructions that are
+required to construct a model of our |ExtendedKernelTraits_2|
+concept. The types that we implement are
+@c
+SPolynomial<RT>
+SQuotient<RT>
+Extended_point<RT>
+Extended_segment<RT>
+Extended_direction<RT>
+
+@ We shortly elaborate on the usage of the above types and their
+design. Let |RT| be a multi-precision integer number type like LEDA
+|integer|. |SPolynomial<RT>| is a container type storing linear
+polynomials of the form $mR+n$. |SQuotient<RT>| stores a two tuple
+consisting of an |SPolynomial<RT>| and an |RT| object and represents
+the corresponding quotient.
+
+Our definition tells us that an extended point $p$ in homogeneous
+representation has the form $(m_x R + n_x, m_y R + n_y, w)$, where $R$
+is our frame defining variable and all other identifiers are numbers
+from |RT|. |p.hx()| returns the x-polynomial $m_x R + n_x$ and
+|p.hy()| the y-polynomial $m_y R + n_y$ (of type
+|SPolynomial<RT>|). |p.hw()| returns $w$.  These are the homogeneous
+$x$- and $y$- coordinates of $p$ with common denominator $w$. For
+completeness $p$ also provides a Cartesian interface |p.x()| returning
+an |SQuotient<RT>| of the form $(m_x R + n_x)/w$. In analogy $|p.y()|
+= (m_y R + n_y)/w$.
+
+All number entries of $p$ can be accessed as multi-precision numbers as
+well as as double approximations stored in an interval of type
+|CGAL::Interval_nt_advanced|. Thus a point stores 5 |RT| entries and
+10 double precision entries. The number type interface consists of the
+operations |p.mx()|, |p.nx()|, |p.my()|, |p.ny()|, |p.hw()|, and
+|p.mxD()|, |p.nxD()|, |p.myD()|, |p.nyD()|, |p.hwD()| for the
+intervals. The operation |p.is_standard()| returns true, iff both
+$m_x$ and $m_y$ are zero.
+
+The points are programmed along the lines of the LEDA and CGAL
+geometric kernel design. They have I/O stream operators, and they can
+be drawn in a LEDA window, when our frame parameter $R$ is fixed.
+\begin{ignoreindiss}
+<<simple polynomials>>=
 template <typename RT>
 class SPolynomial {
   RT _m,_n;
@@ -160,6 +214,10 @@ CGAL::io_Operator io_tag(const SPolynomial<RT>&)
 { return CGAL::io_Operator(); }
 
 
+@ We need a container quotient type to return cartesian coordinates.
+We only need it for visualization and interface completion. It has no
+number type functionality.
+<<simple polynomials>>=
 template <typename RT>
 class SQuotient {
   SPolynomial<RT> _p;
@@ -180,6 +238,14 @@ inline double to_double(const SQuotient<RT>& q)
           CGAL::to_double(q.denominator())); }
 
 
+@ \end{ignoreindiss} 
+
+Points are realized by a smart-pointer scheme.  There is a backend
+object type |Extended_point_rep<RT>| (the representation) and a
+frontend handle type |Extended_point<RT>|. We only elaborate on the
+representation type. Details on smart pointers are offered in the
+LEDA book \cite{ledabook}.
+<<extended points>>=
 template <typename RT> class Extended_point;
 template <typename RT> class Extended_point_rep;
 
@@ -190,34 +256,90 @@ class Extended_point_rep {
   typedef Interval_nt_advanced DT;
   DT mxd,myd,nxd,nyd,wd;
 public:
-  Extended_point_rep(const RT& x, const RT& y, const RT& w) :
-    x_(x),y_(y),w_(w)
-  { CGAL_assertion_msg(w!=0,"denominator is zero.");
-    nxd=CGAL::to_interval(x);
-    nyd=CGAL::to_interval(y);
-    wd=CGAL::to_interval(w);
-    mxd=myd=0;
-  }
-
-  Extended_point_rep(const SPolynomial<RT>& x, 
-                     const SPolynomial<RT>& y, 
-                     const RT& w) : x_(x),y_(y),w_(w)
-  { CGAL_assertion_msg(w!=0,"denominator is zero.");
-    mxd=CGAL::to_interval(x.m());
-    myd=CGAL::to_interval(y.m());
-    nxd=CGAL::to_interval(x.n());
-    nyd=CGAL::to_interval(y.n());
-    wd=CGAL::to_interval(w);
-  }
-
-  Extended_point_rep() : x_(),y_(),w_() {}
-  ~Extended_point_rep() {}
-  void negate() 
-  { x_ = -x_; y_ = -y_; w_ = -w_; 
-    mxd = -mxd; myd = -myd; nxd = -nxd; nyd = -nyd; wd = -wd; }
-
+  <<construction>>
 };
 
+@ \newcommand{\OP}{\mathrm{\ op\ }}%
+For the filter stage we use interval approximations of type
+|CGAL::Interval_nt_advanced|. See H. Br{\"o}nnimann et.al
+\cite{bbp-ia-98scg} for more information.  An object of this type is
+an interval of two doubles representing any number in the interval. An
+arithmetic operation |op| of $+$, $-$, $*$, $/$ on two intervals $X$
+and $Y$ calculates an interval $X \OP Y$ such that $\forall x \in X, y
+\in Y : (x \OP y) \in (X \OP Y)$. This allows us to determine the
+correct sign of an interval expression as long as the interval does
+not contain zero. The type uses exceptions to tell user code that a
+sign determination does not lead to a secure result. That exception
+can be catched to repair the resulting uncertainty. We will see how
+this works in our predicates below. The type |Interval_nt_advanced|
+implements dynamic filtering. Rounding errors are accumulated during
+the execution of the program. The type requires its user to take the
+responsibility for the rounding mode of the processor. Whenever an
+arithmetic interval expression is evaluated the processor should be
+in its correct rounding mode (switching the processor is an expensive
+operation, thereby the user's care does pay-off). The switching is done by
+class declaration statement |Protect_FPU_rounding<true> P|. The
+construction of object |P| sets the correct rounding mode, its
+destruction resets the previous mode which ensures correct execution
+of code parts that rely on different rounding modes.
+
+The following conversion routine constructs an interval that contains
+a |double| approximation |cn| from its parameter |n| (a LEDA
+|integer|). Only two cases can occur: |n| can be approximated
+accurately by an interval $[cn,cn]$ of zero width if the bit
+representation of |n| has less than $53$ bits. Otherwise we add the
+smallest representable |double| to make the interval contain |n|. By
+the addition the interval is expanded by exactly the radius of the
+machine accuracy. For more information on rounding problems please
+refer to D. Goldberg \cite{goldberg:csfloat}.
+@c
+DT to_interval(const leda_integer& n)
+{ double cn = CGAL::to_double(n);
+  leda_integer pn = ( n>0 ? n : -n);
+  if ( pn.iszero() || log(pn) < 53 ) return DT(cn);
+  else { 
+    Protect_FPU_rounding<true> P;
+    return DT(cn)+CGAL::Interval_base::Smallest;
+  }
+}
+
+@ On construction of the representation we construct the |double|
+approximation of the multi-precision entries. Note that we trade space
+for execution time.
+<<construction>>=
+Extended_point_rep(const RT& x, const RT& y, const RT& w) :
+  x_(x),y_(y),w_(w)
+{ CGAL_assertion_msg(w!=0,"denominator is zero.");
+  nxd=CGAL::to_interval(x);
+  nyd=CGAL::to_interval(y);
+  wd=CGAL::to_interval(w);
+  mxd=myd=0;
+}
+
+Extended_point_rep(const SPolynomial<RT>& x, 
+                   const SPolynomial<RT>& y, 
+                   const RT& w) : x_(x),y_(y),w_(w)
+{ CGAL_assertion_msg(w!=0,"denominator is zero.");
+  mxd=CGAL::to_interval(x.m());
+  myd=CGAL::to_interval(y.m());
+  nxd=CGAL::to_interval(x.n());
+  nyd=CGAL::to_interval(y.n());
+  wd=CGAL::to_interval(w);
+}
+
+@ We do not show the implementation of the class |Extended_point<RT>|.
+It mainly serves as an interface of the representation class and
+inherits the handle maintainance code from the front end class
+|CGAL::Handle_for|.
+\begin{ignoreindiss}
+<<construction>>=
+Extended_point_rep() : x_(),y_(),w_() {}
+~Extended_point_rep() {}
+void negate() 
+{ x_ = -x_; y_ = -y_; w_ = -w_; 
+  mxd = -mxd; myd = -myd; nxd = -nxd; nyd = -nyd; wd = -wd; }
+
+<<extended points>>=
 template <typename RT_>
 class Extended_point : public Handle_for< Extended_point_rep<RT_> > {
   typedef Extended_point_rep<RT_> Rep;
@@ -271,20 +393,7 @@ public:
   Extended_point<RT> opposite() const 
   { return Extended_point<RT>(-mx(),nx(),-my(),ny(),w()); }
 
-#ifdef KERNEL_CHECK
-typedef CGAL::Extended_homogeneous<RT_> CheckKernel;
-typedef typename CheckKernel::Point_2   CheckPoint;
-typedef typename CheckKernel::RT        CheckRT;
-
-CheckRT convert(const CGAL::SPolynomial<RT_>& p) const
-{ return CheckRT(p.n(),p.m()); }
-CheckRT convert(const RT_& t) const
-{ return CheckRT(t); }
-CheckPoint checkrep() const
-{ return CheckPoint(convert(hx()),convert(hy()),convert(w())); }
-
-#endif // KERNEL_CHECK
-
+<<point check ops>>
 
 };
 
@@ -322,6 +431,32 @@ std::istream& operator>>(std::istream& is, Extended_point<RT>& p)
 }
 
 
+@ \end{ignoreindiss} 
+\subsection*{Predicates}
+We show the implementation of the orientation predicate of extended
+points. All other predicates follow the same strategy. For three
+homogeneous points in polynomials we derive the formula for the
+orientation determinant and build up a filter cascade. We implement
+three template functions that code the unrolled coefficients of the
+polynomial in $R$ of degree $2$. We do not prove the derivation of the
+following algebraic expressions, we instead explain how we obtained
+them. We used the math package Maple \cite{maple5-refman92} to do the
+algebra. The following script executed in maple produces the code
+expressions below. The lines with the comments have to be executed for
+the corresponding indices.
+@c
+> pxi := mxi*R+nxi // i=1,2,3
+> pyi := myi*R+nyi // i=1,2,3
+> M := array([[px1,py1,w1],[px2,py2,w2],[px3,py3,w3]]);
+> orient := collect(det(M),R);
+> coeffi := coeff(orient,R,i); // i=0,1,2
+> C(coeffi); // i=0,1,2
+
+@ Finally just paste the coefficient code into the template functions.
+The following operations code the coefficient of the squared, linear,
+and constant term of the function in $R$ that is the result of the
+determinant evaluation of $M$.
+<<orientation predicate>>=
 template <typename NT> inline
 int orientation_coeff2(const NT& mx1, const NT& /*nx1*/, 
                        const NT& my1, const NT& /*ny1*/, const NT& w1,
@@ -362,9 +497,22 @@ int orientation_coeff0(const NT& /*mx1*/, const NT& nx1,
   return CGAL_NTS sign(coeff0);
 }
 
+@ \begin{ignoreindiss}
+<<orientation predicate>>=
 DEFCOUNTER(or0)
 DEFCOUNTER(or1)
 DEFCOUNTER(or2)
+@ \end{ignoreindiss} 
+
+Now the final orientation predicate consists of three |try|-|catch|
+blocks. Each |try| block contains the filtered coefficient evaluation.
+If the sign evaluation is not defined (the resulting interval contains
+zero) then the |unsafe_comparison| exception is thrown. The |catch|
+block evaluates the expression with |RT| arithmetic. Note again the
+protection of the rounding mode with the |Protect_FPU_rounding<true>|
+class declaration. The macros |INCTOTAL()| and |INCEXCEPTION()| are
+used to accumulate the statistics of the filter stages.
+<<orientation predicate>>=
 template <typename RT>
 int orientation(const Extended_point<RT>& p1, 
                 const Extended_point<RT>& p2, 
@@ -408,6 +556,14 @@ int orientation(const Extended_point<RT>& p1,
   return res;
 }
 
+@ Corresponding implementations are provided for the predicates
+|compare_x()|, |compare_y()|, |compare_xy()|, and
+|compare_pair_dist()|.  The latter realizes the squared distance
+comparison of two pairs of points. The resulting polynomial has again
+degree $2$ but contains more complicated expressions than the
+orientation predicate above.
+\begin{ignoreindiss}
+<<comparison predicate>>=
 template <typename NT> 
 inline
 int compare_expr(const NT& n1, const NT& d1, 
@@ -633,6 +789,16 @@ int compare_pair_dist(
 }
 
 
+@ \end{ignoreindiss}
+\subsection*{Extended segments and intersection}
+
+We provide extended segments and some primitives. We mostly
+concentrate on the intersection predicate of lines supported by
+non-trivial extended segments. In this implementation we want to avoid
+the calculation of the polynomial |gcd|. Therefore, we extract the
+possible intersection configurations in advance and avoid higher
+degree polynomials resulting from the general algebraic term.
+<<extended segments>>=
 template <typename RT>
 class Extended_segment {
   Extended_point<RT> _p1,_p2;
@@ -652,6 +818,8 @@ public:
   void line_equation(RT& a, RT& b, SPolynomial<RT>& c) const;
 };
 
+@ \begin{ignoreindiss}
+<<extended segments>>=
 template <class RT> 
 std::ostream& operator<<(std::ostream& os, const Extended_segment<RT>& s)
 { os << s.source() << s.target(); return os; }
@@ -660,6 +828,14 @@ std::istream& operator>>(std::istream& is, Extended_segment<RT>& s)
 { Extended_point<RT> p1,p2;
   is >> p1 >> p2; s=Extended_segment<RT>(p1,p2); return is; }
 
+@ \end{ignoreindiss}%
+We extract the line equation $ax + by + c = 0$ directly from
+non-standard points if the extended segment is just a segment.  Note
+that for all lines crossing the interior of our box $a, b,c$ are just
+constants from our integer ring type |RT|. However the frame segments
+also support lines of the from $x \pm R = 0$ and $y \pm R = 0$.
+Therefore, we allow a linear polynomial for the coefficient $c$.
+<<extended segment primitives>>=
 template <typename RT>
 void Extended_segment<RT>::
 line_equation(RT& a, RT& b, SPolynomial<RT>& c) const
@@ -667,49 +843,115 @@ line_equation(RT& a, RT& b, SPolynomial<RT>& c) const
   bool sstandard = _p1.is_standard();
   bool tstandard = _p2.is_standard();
   if (sstandard && tstandard) {
-    a = _p1.ny()*_p2.hw() - _p2.ny()*_p1.hw();
-    b = _p1.hw()*_p2.nx() - _p2.hw()*_p1.nx();
-    c = SPolynomial<RT>(_p1.nx()*_p2.ny() - _p2.nx()*_p1.ny());
-    return;
-
+    <<standard segment>>
   }
   Extended_point<RT> p;
   bool correct_orientation=true;
   if (!sstandard && !tstandard) {
-    bool x_equal = (_p1.hx()*_p2.hw() - _p2.hx()*_p1.hw()).is_zero();
-    bool y_equal = (_p1.hy()*_p2.hw() - _p2.hy()*_p1.hw()).is_zero();
-    if (x_equal && CGAL_NTS abs(_p1.mx())==_p1.hw() && _p1.nx()==0 ) 
-    { int dy = (_p2.hy()-_p1.hy()).sign(); 
-      a=-dy; b=0; c = SPolynomial<RT>(dy*_p1.hx().sign(),0); return; }
-    if (y_equal && CGAL_NTS abs(_p1.my())==_p1.hw() && _p1.ny()==0 ) 
-    { int dx = (_p2.hx()-_p1.hx()).sign(); 
-      a=0; b=dx; c = SPolynomial<RT>(-dx*_p1.hy().sign(),0); return; }
-    p = _p2; // evaluation according to mixed case
-
+    <<two points on the frame box>>
   } 
   else if (sstandard && !tstandard) 
   { p = _p2; }
   else if (!sstandard && tstandard) 
   { p = _p1; correct_orientation=false; }
-  RT x1 = p.nx(), y1 = p.ny();               // R==0
-  RT x2 = p.mx()+p.nx(), y2 = p.my()+p.ny(); // R==1
-  RT w = p.hw();
-  RT ci;
-  if ( correct_orientation ) {
-    a = -p.my(); // (y1*w-w*y2)/w
-    b =  p.mx(); // (x2*w-w*x1)/w
-    ci = (p.nx()*p.my()-p.ny()*p.mx())/w; // (x1*y2-x2*y1)/w;
-  } else {
-    a =  p.my(); // (y2*w-w*y1)
-    b = -p.mx(); // (x1*w-w*x2)
-    ci = (p.ny()*p.mx()-p.nx()*p.my())/w; // (x2*y1-x1*y2)/w;
-  }
-  c = SPolynomial<RT>(ci);
-
-
+  <<one point on the frame box>>
 
 }
 
+@ If two points span a standard segment then the three coefficients of
+the line through the points can be derived from the following
+determinant equation (just resolve for the variables in the last row).
+\begin{eqnarray*}
+\begin{vmatrix}
+ x1 & y1 & w1 \\
+ x2 & y2 & w2 \\
+  a &  b & c 
+\end{vmatrix} 
+& = & 0
+\end{eqnarray*}. 
+<<standard segment>>=
+a = _p1.ny()*_p2.hw() - _p2.ny()*_p1.hw();
+b = _p1.hw()*_p2.nx() - _p2.hw()*_p1.nx();
+c = SPolynomial<RT>(_p1.nx()*_p2.ny() - _p2.nx()*_p1.ny());
+return;
+
+@ Two points on the box produce two basic configurations. Either the
+points are both on one frame segment. Or they are part of one affine
+line crossing the box. If they lie on the same frame segment then
+their corresponding coordinate polynomials are equal in homogeneous
+representation and equal to $\pm R$. Note that we keep the algebraic
+calculation within the polynomials of degree less than 2. When both
+points lie on the same frame segment then the minimal representation
+of the corresponding coordinate polynomial is $\pm 1R+0$. This leads
+to line equations of the form $0x + 1y + \mp R = 0$ when the
+y-coordinates are equal and to $1x + 0y + \mp R = 0$ when the
+x-coordinates are equal. In case that the points span a standard
+affine line we forward the treatment to the mixed case by setting $p$
+to one of the points.
+<<two points on the frame box>>=
+bool x_equal = (_p1.hx()*_p2.hw() - _p2.hx()*_p1.hw()).is_zero();
+bool y_equal = (_p1.hy()*_p2.hw() - _p2.hy()*_p1.hw()).is_zero();
+if (x_equal && CGAL_NTS abs(_p1.mx())==_p1.hw() && _p1.nx()==0 ) 
+{ int dy = (_p2.hy()-_p1.hy()).sign(); 
+  a=-dy; b=0; c = SPolynomial<RT>(dy*_p1.hx().sign(),0); return; }
+if (y_equal && CGAL_NTS abs(_p1.my())==_p1.hw() && _p1.ny()==0 ) 
+{ int dx = (_p2.hx()-_p1.hx()).sign(); 
+  a=0; b=dx; c = SPolynomial<RT>(-dx*_p1.hy().sign(),0); return; }
+p = _p2; // evaluation according to mixed case
+
+@ Finally we have the point $p$ at the tip of a line (somewhere on the
+frame box).  Obviously we can extract the affine equation of the line
+from the polynomial representation. We just set the parameter $R$ to
+$0$ and $1$, obtain two points, and calculate the equation. Note that
+by the special structure of our non-standard points the $2\times2$
+determinants reduce nicely. |p.hw()| is a common factor of all
+coefficients $a, b, c$ of the line:
+\[ a = y_1 w_1 - y_2 w_1, b = x_2 w_1 - x_1 w_2, c = x_1 y_2 - x_2 y_1\]
+where 
+\[ x_1 = |p.nx()|, y_1 = |p.ny()|, w_1 = |p.hw()|,
+x_2 = |p.mx() + p.nx()|, y_2 = |p.my() + p.ny()|, w_2 = |p.hw()| \]
+For $a$ and $b$ it is obvious that |p.hw()| can be canceled out, and
+the difference simplified.  $c$ can be reduced to |p.nx()*p.my() -
+p.ny()*p.mx()| due to the special choice of our points. Remember that
+for non-standard points either their x- or y-coordinate is equal to
+$\pm R$. In the homogeneous representation this means that either
+$|p.mx()| = \pm |p.hw()|$ and $|p.nx()| = 0$, or $|p.my()| = \pm
+|p.hw()|$ and $|p.ny()| = 0$. In either case one can safely divide by
+|p.hw()|.
+<<one point on the frame box>>=
+RT x1 = p.nx(), y1 = p.ny();               // R==0
+RT x2 = p.mx()+p.nx(), y2 = p.my()+p.ny(); // R==1
+RT w = p.hw();
+RT ci;
+if ( correct_orientation ) {
+  a = -p.my(); // (y1*w-w*y2)/w
+  b =  p.mx(); // (x2*w-w*x1)/w
+  ci = (p.nx()*p.my()-p.ny()*p.mx())/w; // (x1*y2-x2*y1)/w;
+} else {
+  a =  p.my(); // (y2*w-w*y1)
+  b = -p.mx(); // (x1*w-w*x2)
+  ci = (p.ny()*p.mx()-p.nx()*p.my())/w; // (x2*y1-x1*y2)/w;
+}
+c = SPolynomial<RT>(ci);
+
+
+@ We finally provide the intersection construction of two lines
+supported by two segments. We use the linear system that defines the
+common point of two lines.
+\begin{eqnarray*}
+\begin{pmatrix}
+ a1 & b1 \\
+ a2 & b2 
+\end{pmatrix} 
+\begin{pmatrix} x \\ y \end{pmatrix} & = & 
+%{x \choose y} & = & 
+\begin{pmatrix} -c_1 \\ -c_2 \end{pmatrix} 
+%{-c1 \choose -c2}
+\end{eqnarray*}
+Note that the line equations are either standard affine lines or lines
+supporting box segments. The expressions for $x$ and $y$ are
+polynomials in $R$ up to degree $1$, for $w$ it is just a constant.
+<<extended segment primitives>>=
 template <typename RT>
 Extended_point<RT> intersection(
   const Extended_segment<RT>& s1, const Extended_segment<RT>& s2)
@@ -721,20 +963,36 @@ Extended_point<RT> intersection(
   SPolynomial<RT> x = c2*b1 - c1*b2;
   SPolynomial<RT> y = c1*a2 - c2*a1;
   RT w = a1*b2 - a2*b1; CGAL_assertion(w!=0);
-  #ifdef REDUCE_INTERSECTION_POINTS
-  RT xgcd,ygcd;
-  if ( x.m() == RT(0) )  xgcd = ( x.n() == 0 ? RT(1) : x.n() ); 
-  else /* != 0 */    xgcd = ( x.n() == 0 ? x.m() : gcd(x.m(),x.n()) ); 
-  if ( y.m() == RT(0) )  ygcd = ( y.n() == 0 ? RT(1) : y.n() ); 
-  else /* != 0 */    ygcd = ( y.n() == 0 ? y.m() : gcd(y.m(),y.n()) ); 
-  RT d = gcd(w,gcd(xgcd,ygcd));
-  x /= d;
-  y /= d;
-  w /= d;
-  #endif // REDUCE_INTERSECTION_POINTS
+  <<reduce point representation by gcd operation>>
   return Extended_point<RT>(x,y,w);
 }
 
+@ We introduce an option that allows us to reduce the homogeneous
+representation of points by dividing both polynomials by the gcd of
+their content\footnote{Remember: the content of a polynomial is the
+gcd of all nonzero coefficients.} and their common denominator. This
+leads to a representation of minimal bitlength. We found that this
+reduction pays off a lot. Remember that we use the kernel in binary
+operations of Nef polyhedra and their recursive usage of intermediate
+structures accumulates long point representations without this
+reduction.
+<<reduce point representation by gcd operation>>=
+#ifdef REDUCE_INTERSECTION_POINTS
+RT xgcd,ygcd;
+if ( x.m() == RT(0) )  xgcd = ( x.n() == 0 ? RT(1) : x.n() ); 
+else /* != 0 */    xgcd = ( x.n() == 0 ? x.m() : gcd(x.m(),x.n()) ); 
+if ( y.m() == RT(0) )  ygcd = ( y.n() == 0 ? RT(1) : y.n() ); 
+else /* != 0 */    ygcd = ( y.n() == 0 ? y.m() : gcd(y.m(),y.n()) ); 
+RT d = gcd(w,gcd(xgcd,ygcd));
+x /= d;
+y /= d;
+w /= d;
+#endif // REDUCE_INTERSECTION_POINTS
+@ \begin{ignoreindiss}
+We introduce the two primitives |orientation| and |is_degenerate|
+for user comfort. The |contains| predicate checks if a point is part
+of a relatively closed segment.
+<<extended segment primitives>>=
 template <typename RT>
 inline
 int orientation(const Extended_segment<RT>& s, const Extended_point<RT>& p) 
@@ -757,6 +1015,9 @@ bool contains(const Extended_segment<RT>& s,
 }
 
 
+@ \subsection*{Direction predicates}
+
+<<extended directions>>=
 template <typename RT>
 class Extended_direction {
   Extended_point<RT> _p1,_p2;
@@ -793,6 +1054,7 @@ std::istream& operator>>(std::istream& is, Extended_direction<RT>& d)
   return is; }
 
 
+<<direction predicates>>=
 template <typename NT>
 inline
 int coeff2_dor(const NT& mx1, const NT& /*nx1*/, 
@@ -895,6 +1157,15 @@ int orientation(const Extended_direction<RT>& d1,
   return res;
 }
 
+@ In affine geometry two directions are equal iff
+@c
+d1.dx()*d2.dy() == d1.dy()*d2.dx() &&
+sign(d1.dx()) == sign(d2.dx()) &&
+sign(d1.dy()) == sign(d2.dy())
+
+@ We thus translate the first into a filtered determinant expression
+and check the second and third line directly.
+<<direction predicates>>=
 template <typename RT>
 inline
 bool operator==(const Extended_direction<RT>& d1,
@@ -938,6 +1209,51 @@ bool operator<(const Extended_direction<RT>& d1,
          strictly_ordered_ccw(d0,d1,d2) && !d0d2eq;
 }
 
+@ \end{ignoreindiss}
+\subsection*{The kernel wrapper}
+
+All operations are either mapped to the above primitives or similar to
+the ones in the default homogeneous kernel. We do not present the
+layout of the kernel class |Filtered_extended_homogeneous<RT>|. It is
+similar to |Extended_homogeneous<RT>|. We only present the usefulness
+of |Extended_homogeneous<RT>| with respect to checking of our advanced
+kernel. We used the naive approach to back-up the results of our
+filtered code. As the expressions in this code base are much more
+complicated, errors were hard to determine. We enriched the filtered
+kernel by checking statements that we switched on when runtime
+examples seemed to produce problems. (Of course we had to log our
+random test inputs to allow checking in case of errors). When switched
+on by using the compile flag |KERNEL_CHECK| our checking macro is
+defined to be
+@c
+#define CHECK(c1,c2) CGAL_assertion((c1) == (c2));
+
+@ Then the orientation member of |Filtered_extended_homogeneous<RT>|
+is just defined as:
+@c
+int orientation(const Point_2& p1, const Point_2& p2, const Point_2& p3) 
+const
+{ CHECK(K.orientation(p1.checkrep(),p2.checkrep(),p3.checkrep()),
+        CGAL::orientation(p1,p2,p3))
+  return CGAL::orientation(p1,p2,p3); }
+
+@ where |Point_2| is the extended point type in the local scope of
+|Filtered_extended_homogeneous<RT>|. |p.checkrep()| returns an
+extended point of type |Extended_homogeneous<RT>::Point_2| based on
+the |Polynomial<RT>| number type. And |K| is a kernel object of type
+|Extended_homogeneous<RT>| in the local scope.
+
+At last the filtered kernel has a member method |print_statistics()|
+that outputs the total number of failed filter stages in its base
+version.  If the kernel is used with the compile flag
+|KERNEL_ANALYSIS| then each filtered code section is evaluated
+separately. All sections give the number of failed stages and the
+number of total evaluations thereby the efficiency of the filter can
+be evaluated with respect to the input used. This ends the description
+of the filtered extended kernel model.
+
+\begin{ignoreindiss}
+<<extended kernel>>=
 
 template <typename RT_>
 class Filtered_extended_homogeneous {
@@ -960,28 +1276,18 @@ typedef SQuotient<RT_>          FT;
 typedef Extended_point<RT_>     Point_2;
 typedef Extended_segment<RT_>   Segment_2;
 typedef Extended_direction<RT_> Direction_2;
-#ifdef KERNEL_CHECK
-typedef Extended_homogeneous<RT_>         CheckKernel;
-typedef typename CheckKernel::Point_2     CheckPoint;
-typedef typename CheckKernel::Direction_2 CheckDirection;
-typedef typename CheckKernel::Segment_2   CheckSegment;
-CheckKernel K;
-
-CheckSegment convert(const Segment_2& s) const
-{ return CheckSegment(s.source().checkrep(),
-                      s.target().checkrep()); }
-CheckDirection convert(const Direction_2& d) const
-{ return K.construct_direction(d.p2().checkrep(),d.p1().checkrep()); }
-
-#endif // KERNEL_CHECK
-
-
-
+<<kernel check ops>>
 
 enum Point_type { SWCORNER=1, LEFTFRAME, NWCORNER, 
                   BOTTOMFRAME, STANDARD, TOPFRAME,
                   SECORNER, RIGHTFRAME, NECORNER };
 
+<<extended filtered homogeneous kernel members>>
+
+};
+
+
+<<extended filtered homogeneous kernel members>>=
 Standard_RT dx(const Standard_line_2& l) const { return l.b(); }
 Standard_RT dy(const Standard_line_2& l) const { return -l.a(); }
 Standard_FT abscissa_distance(const Standard_line_2& l) const 
@@ -1237,10 +1543,56 @@ const char* output_identifier() const
 { return "Filtered_extended_homogeneous"; }
 
 
+<<Filtered_extended_homogeneous.h>>=
+<<CGAL EH Header>>
+#ifndef CGAL_FILTERED_EXTENDED_HOMOGENEOUS_H
+#define CGAL_FILTERED_EXTENDED_HOMOGENEOUS_H
 
-};
+#include <CGAL/basic.h>
+#include <CGAL/Handle_for.h>
+#include <CGAL/Interval_arithmetic.h>
+#include <CGAL/Homogeneous.h>
+#undef _DEBUG
+#define _DEBUG 59
+#include <CGAL/Nef_2/debug.h>
 
+#define REDUCE_INTERSECTION_POINTS
+//#define KERNEL_ANALYSIS
+//#define KERNEL_CHECK
 
+#ifdef  KERNEL_CHECK
+#include <CGAL/Extended_homogeneous.h>
+#define CHECK(c1,c2) CGAL_assertion((c1) == (c2));
+#define PRINT_CHECK_ENABLED std::cout << "kernel check enabled!\n"
+#else
+#define CHECK(c1,c2)
+#define PRINT_CHECK_ENABLED std::cout << "no kernel check!\n"
+#endif
+
+#ifdef KERNEL_ANALYSIS
+#define DEFCOUNTER(c) \
+  static int c##_total=0; static int c##_exception=0;
+#define INCTOTAL(c) c##_total++
+#define INCEXCEPTION(c) c##_exception++
+#define PRINT_STATISTICS(c) \
+std::cout << #c##" " << c##_exception << "/" << c##_total << std::endl
+#else
+#define DEFCOUNTER(c)
+#define INCTOTAL(c)
+#define INCEXCEPTION(c)
+#define PRINT_STATISTICS(c)
+#endif
+
+CGAL_BEGIN_NAMESPACE
+<<simple polynomials>>
+<<extended points>>
+<<orientation predicate>>
+<<comparison predicate>>
+<<extended segments>>
+<<extended segment primitives>>
+<<extended directions>>
+<<direction predicates>>
+<<extended kernel>>
 
 CGAL_END_NAMESPACE
 
@@ -1255,4 +1607,79 @@ CGAL_END_NAMESPACE
 #undef PRINT_CHECK_ENABLED
 
 #endif // CGAL_FILTERED_EXTENDED_HOMOGENEOUS_H
+
+@ Within our extended point type we add conversion to the polynomial
+based version.
+<<point check ops>>=
+#ifdef KERNEL_CHECK
+typedef CGAL::Extended_homogeneous<RT_> CheckKernel;
+typedef typename CheckKernel::Point_2   CheckPoint;
+typedef typename CheckKernel::RT        CheckRT;
+
+CheckRT convert(const CGAL::SPolynomial<RT_>& p) const
+{ return CheckRT(p.n(),p.m()); }
+CheckRT convert(const RT_& t) const
+{ return CheckRT(t); }
+CheckPoint checkrep() const
+{ return CheckPoint(convert(hx()),convert(hy()),convert(w())); }
+
+#endif // KERNEL_CHECK
+
+<<kernel check ops>>=
+#ifdef KERNEL_CHECK
+typedef Extended_homogeneous<RT_>         CheckKernel;
+typedef typename CheckKernel::Point_2     CheckPoint;
+typedef typename CheckKernel::Direction_2 CheckDirection;
+typedef typename CheckKernel::Segment_2   CheckSegment;
+CheckKernel K;
+
+CheckSegment convert(const Segment_2& s) const
+{ return CheckSegment(s.source().checkrep(),
+                      s.target().checkrep()); }
+CheckDirection convert(const Direction_2& d) const
+{ return K.construct_direction(d.p2().checkrep(),d.p1().checkrep()); }
+
+#endif // KERNEL_CHECK
+
+
+
+@ \begin{ignore}
+<<CGAL EH Header>>=
+// ============================================================================
+//
+// Copyright (c) 1997-2000 The CGAL Consortium
+//
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
+//
+// ----------------------------------------------------------------------------
+//
+// release       : $CGAL_Revision$
+// release_date  : $CGAL_Date$
+//
+// file          : include/CGAL/Filtered_extended_homogeneous.h
+// package       : Nef_2 
+// chapter       : Nef Polyhedra
+//
+// source        : nef_2d/Filtered_extended_points.lw
+// revision      : $Revision$
+// revision_date : $Date$
+//
+// author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
+// maintainer    : Michael Seel <seel@mpi-sb.mpg.de>
+// coordinator   : Michael Seel <seel@mpi-sb.mpg.de>
+//
+// implementation: Filtered extended homogeneous kernel
+// ============================================================================
+@ \end{ignore}
+\end{ignoreindiss}
+%KILLSTART DISS REP
+\bibliographystyle{alpha}
+\bibliography{comp_geo,general,diss}
+\newpage
+\section{Appendix}
+\input manpages/ExtendedKernelTraits_2.man
+\end{document}
+%KILLEND DISS REP
 

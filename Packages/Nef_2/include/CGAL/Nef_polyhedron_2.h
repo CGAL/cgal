@@ -65,7 +65,7 @@ std::ostream& operator<<(std::ostream&, const Nef_polyhedron_2<T>&);
 template <typename T>
 std::istream& operator>>(std::istream&, Nef_polyhedron_2<T>&);
 template <typename T>
-class Nef_polyhedron_2_rep : public Ref_counted
+class Nef_polyhedron_2_rep 
 { typedef Nef_polyhedron_2_rep<T> Self;
   friend class Nef_polyhedron_2<T>;
 #ifndef CGAL_SIMPLE_HDS
@@ -99,10 +99,10 @@ class Nef_polyhedron_2_rep : public Ref_counted
   void init_locator() 
   { if ( !pl_ ) pl_ = new Locator(pm_); }
   void clear_locator() 
-  { if ( pl_ ) delete pl_; pl_=0; }
+  { if ( pl_ ) { delete pl_; pl_=0; } }
 public:
-  Nef_polyhedron_2_rep() : Ref_counted(), pm_(), pl_(0) {}
-  Nef_polyhedron_2_rep(const Self& R) : Ref_counted(), pm_(), pl_(0) {}
+  Nef_polyhedron_2_rep() : pm_(), pl_(0) {}
+  Nef_polyhedron_2_rep(const Self& R) : pm_(), pl_(0) {}
   ~Nef_polyhedron_2_rep() { pm_.clear(); clear_locator(); }
 };
 
@@ -168,8 +168,8 @@ protected:
   typedef typename Nef_rep::Slocator        Slocator;
   typedef typename Nef_rep::Locator         Locator;
 
-  Plane_map& pm() { return ptr->pm_; } 
-  const Plane_map& pm() const { return ptr->pm_; } 
+  Plane_map& pm() { return ptr()->pm_; } 
+  const Plane_map& pm() const { return ptr()->pm_; } 
 
   friend std::ostream& operator<< CGAL_NULL_TMPL_ARGS
       (std::ostream& os, const Nef_polyhedron_2<T>& NP);
@@ -417,7 +417,7 @@ public:
 
   void extract_complement()
   { TRACEN("extract complement");
-    if ( ptr->is_shared() ) clone_rep();
+    if ( is_shared() ) clone_rep();
     Overlayer D(pm());
     Vertex_iterator v, vend = D.vertices_end();
     for(v = D.vertices_begin(); v != vend; ++v)      D.mark(v) = !D.mark(v);
@@ -430,7 +430,7 @@ public:
 
   void extract_interior()
   { TRACEN("extract interior");
-    if ( ptr->is_shared() ) clone_rep();
+    if ( is_shared() ) clone_rep();
     Overlayer D(pm());
     Vertex_iterator v, vend = D.vertices_end();
     for(v = D.vertices_begin(); v != vend; ++v)      D.mark(v) = false;
@@ -442,7 +442,7 @@ public:
 
   void extract_boundary()
   { TRACEN("extract boundary");
-    if ( ptr->is_shared() ) clone_rep();
+    if ( is_shared() ) clone_rep();
     Overlayer D(pm());
     Vertex_iterator v, vend = D.vertices_end();
     for(v = D.vertices_begin(); v != vend; ++v)      D.mark(v) = true;
@@ -654,9 +654,10 @@ public:
 
   /*{\Moperations 3 1 }*/
 
-  void init_locator() const { ptr->init_locator(); }
+  void init_locator() const 
+  { const_cast<Self*>(this)->ptr()->init_locator(); }
   const Locator& locator() const 
-  { assert(ptr->pl_); return *(ptr->pl_); }
+  { assert(ptr()->pl_); return *(ptr()->pl_); }
 
 
   bool contains(Object_handle h) const
@@ -682,7 +683,7 @@ public:
   between different point location strategies.}*/
   { 
     if (m == DEFAULT || m == LMWT) {
-      ptr->init_locator();
+      init_locator();
       Extended_point ep = EK.construct_point(p);
       return locator().locate(ep);
     } else if (m == NAIVE) {
@@ -715,7 +716,7 @@ public:
   strategies.}*/
   { 
     if (m == DEFAULT || m == LMWT) {
-      ptr->init_locator();
+      init_locator();
       Extended_point ep = EK.construct_point(p), 
                      eq = EK.construct_point(p,d);
       return locator().ray_shoot(EK.construct_segment(ep,eq),
@@ -748,7 +749,7 @@ public:
   location strategies.}*/
   { 
     if (m == DEFAULT || m == LMWT) {
-      ptr->init_locator();
+      init_locator();
       Extended_point ep = EK.construct_point(p), 
                      eq = EK.construct_point(p,d);
       return locator().ray_shoot(EK.construct_segment(ep,eq),INSKEL()); 

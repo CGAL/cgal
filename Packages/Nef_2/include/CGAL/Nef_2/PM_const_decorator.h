@@ -46,6 +46,9 @@ class CircFromIt : public Iter {
     // Ptr  node;    // The internal node ptr inherited from It.
     typedef CircFromIt<Iter,Move> ThisClass;
 public:
+    typedef typename Iter::iterator_category Icategory;
+    typedef I_Circulator_from_iterator_traits<Icategory> CTraits;
+    typedef typename CTraits::iterator_category iterator_category;
 
     CircFromIt() : Iter(0) {}
     CircFromIt(Iter i) : Iter(i) {}
