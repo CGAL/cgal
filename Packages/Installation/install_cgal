@@ -290,7 +290,7 @@ print_usage_information()
        --upgrade <dir> | --build-all | --rebuild-all |
        --build <config> | --rebuild <config> |
        -ni <comp> | --non-interactive <comp> | -os <comp>]
-      [-leda] [-core] [-gmp] [-gmpxx] [-qt] [--verbose]
+      [-leda] [-core] [-gmp] [-gmpxx] [-qt] [-qt_mt] [--verbose]
       [--CGAL_DIR <dir>] [--leda-sys-incl] [--leda-sys-lib]
       [--LEDA_INCL_DIR <dir>] [--LEDA_LIB_DIR <dir>]
       [--GMP_INCL_DIR <dir>] [--GMP_LIB_DIR <dir>]
@@ -304,6 +304,7 @@ print_usage_information()
   -gmp         enables support for GMP
   -gmpxx       enables support for GMP built-in C++ interface
   -qt          enables support for Qt
+  -qt_mt       enables thread support for Qt
   --verbose    give report for each test that fails
                (not generally recommended)
   --help       gives this message
@@ -6993,6 +6994,11 @@ while [ ${#} -gt 0 ]; do
 		QT_ADVANCED_MODE='y'
 		shift
 	    fi
+	    ;;
+	-qt_mt*|-QT_MT*|--qt_mt*|--QT_MT*)
+	    _ANY_OPT='y'
+	    QT_T_SUPPORT='y'
+	    write_buffer "${_LEFTSPACE}Enable Qt Thread support.\n"
 	    ;;
 	-qt*|-QT*|--qt*|--QT*)
 	    _ANY_OPT='y'
