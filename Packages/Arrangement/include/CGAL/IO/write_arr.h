@@ -1,3 +1,7 @@
+// ======================================================================
+//
+// Copyright (c) 1997 The CGAL Consortium
+//
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
 // intended for general use.
@@ -8,7 +12,7 @@
 // release_date  : $CGAL_Date: 2001/03/09 $
 //
 // file          : include/CGAL/IO/write_arr.h
-// package       : Arrangement (1.81)
+// package       : pm (1.81)
 // maintainer    : Eyal Flato <flato@math.tau.ac.il>
 // source        : 
 // revision      : 
@@ -20,6 +24,7 @@
 //
 // Chapter       : 
 // ======================================================================
+
 #ifndef CGAL_IO_WRITE_ARR_H
 #define CGAL_IO_WRITE_ARR_H 
 
@@ -27,27 +32,27 @@
 #include <CGAL/basic.h>
 #endif
 
-#ifndef CGAL_ARRANGEMENT_2_H
-#include <CGAL/Arrangement_2.h>
-#endif
+//#ifndef CGAL_ARRANGEMENT_2_H
+//#include <CGAL/Arrangement_2.h>
+//#endif
 
 #ifndef CGAL_INVERSE_INDEX_H
 #include <CGAL/Inverse_index.h>
 #endif
 
-#ifndef CGAL_IO_GENERIC_PRINT_PLANAR_MAP_H
+#ifndef CGAL_IO_WRITE_PM_H
 #include <CGAL/IO/write_pm.h>
-#endif // CGAL_IO_GENERIC_PRINT_PLANAR_MAP_H
+#endif // CGAL_IO_WRITE_PM_H
 
 #include <iostream>
 
 CGAL_BEGIN_NAMESPACE
 
 
-template <class Dcel, class Traits, class Base_node, class Writer>
-void write_arr(const Arrangement_2<Dcel, Traits, Base_node>& arr, 
-                       Writer& writer, 
-                       std::ostream& o) 
+template <class Arrangement, class Writer>
+void write_arr(const Arrangement& arr, 
+               Writer& writer, 
+               std::ostream& o) 
 {
   typedef Arrangement_2<Dcel,Traits, Base_node>                   Arrangement;
   typedef typename Arrangement::Planar_map                                 PM;
