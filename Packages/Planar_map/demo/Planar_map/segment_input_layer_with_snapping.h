@@ -29,6 +29,9 @@
 template <class R>
 class Segment_input_layer : public CGAL::Qt_widget_get_segment<R>{
 private:
+  typedef CGAL::Qt_widget_get_segment<R>        Base;
+  typedef typename Base::RasterOp               RasterOp;
+
   std::list<Curve>              *curveslist;
   Planar_map                    *pm;
   //true if the user selected the first vertex
@@ -36,7 +39,6 @@ private:
   QCursor                       cursor;
 
 #ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_3
-  typedef CGAL::Qt_widget_get_segment<R> Base;
   using Base::x1;
   using Base::y1;
   using Base::x2;
@@ -44,7 +46,6 @@ private:
   using Base::widget;  
   using Base::firstpoint;
   using Base::oldcursor;
-  using Base::RasterOp;
 #endif
   
 public:
