@@ -159,10 +159,7 @@ public:
  
   // REMOVAL
   void remove_constraint(Vertex_handle va, Vertex_handle vb);
-  //  template <class OutpuItFaces>
-  //  OutputItFaces    remove_constraint(Vertex_handle va, 
-  //				         Vertex_handle vb, 
-  //                                     OutputItFaces out);
+
   
   // Query of the constraint hierarchy
   Constraint_iterator constraints_begin() const;
@@ -212,28 +209,29 @@ public:
     return number_of_vertices() - n;
   }
 
-  template <class OutputItFaces>
-    OutputItFaces
-    remove_constraint(Vertex_handle va, 
-		      Vertex_handle vb, 
-		      OutputItFaces out) {
-    CGAL_triangulation_precondition(hierarchy.is_constrained_edge(va,vb));
-    for(Vertices_in_constraint_iterator it = 
-	  hierarchy.vertices_in_constraint_begin(va,vb),  succ = it; 
-	++succ != hierarchy.vertices_in_constraint_end(va,vb); 
-	++it){
-      Face_handle fh;
-      int i;
-      CGAL_triangulation_assertion_code( bool b = )
-	Triangulation::is_edge(*it, *succ, fh, i);
-      CGAL_triangulation_assertion(b);
-      // this does also flipping if necessary.
-      Triangulation::remove_constrained_edge(fh,i,out);
+   template <class OutputItFaces>  
+     OutputItFaces  
+     remove_constraint(Vertex_handle va,   
+ 		      Vertex_handle vb,   
+ 		      OutputItFaces out) {  
+     CGAL_triangulation_precondition(hierarchy.is_constrained_edge(va,vb));  
+     for(Vertices_in_constraint_iterator it =   
+ 	  hierarchy.vertices_in_constraint_begin(va,vb),  succ = it;   
+ 	++succ != hierarchy.vertices_in_constraint_end(va,vb);   
+ 	++it){  
+       Face_handle fh;  
+       int i;  
+       CGAL_triangulation_assertion_code( bool b = )  
+ 	Triangulation::is_edge(*it, *succ, fh, i);  
+       CGAL_triangulation_assertion(b);  
+       // this does also flipping if necessary.  
+       Triangulation::remove_constrained_edge(fh,i,out);  
  
-    } 
-    hierarchy.remove_constraint(va,vb);
-    return out;
-  }
+     }   
+     hierarchy.remove_constraint(va,vb);  
+     return out;  
+   }  
+
 };
 
 template <class Tr>

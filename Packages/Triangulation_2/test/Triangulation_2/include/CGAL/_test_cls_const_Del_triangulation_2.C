@@ -117,7 +117,7 @@ _test_cls_const_Del_triangulation(const Triangul&)
   assert(T2.is_valid());
 
   //test remove_constrained_edge
-  std::cout << "test_remove_constrained_edge " << std::endl;
+  std::cout << "test_remove_constrained_edge with output" << std::endl;
   Triangul T3;
   Vertex_handle v0=T3.insert(Point(0,0));
   T3.insert(Point(1,1));
@@ -129,8 +129,6 @@ _test_cls_const_Del_triangulation(const Triangul&)
   Face_handle fh;
   int i;
   assert(T3.is_edge(v0,v4,fh,i));
-  T3.remove_constrained_edge(fh,i);
-  T3.insert_constraint(v0,v4);
   assert(T3.is_edge(v0,v4,fh,i));
   std::set<Face_handle> deleted;
   T3.remove_constrained_edge(fh,i,inserter(deleted, deleted.begin()));

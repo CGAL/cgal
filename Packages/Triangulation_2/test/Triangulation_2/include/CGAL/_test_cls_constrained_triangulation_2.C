@@ -54,7 +54,7 @@ _test_cls_constrained_triangulation(const Triang &)
    _test_cls_triangulation_short_2( Triang() );
 
   // Constructors
-  std::cout << "    constructors    " << std::endl;
+  std::cout << "constructors    " << std::endl;
   list_constraints l;
 
   // Empty triangulation (0-dimensional)
@@ -117,7 +117,7 @@ _test_cls_constrained_triangulation(const Triang &)
 
  
   // Build triangulation with iterator
-   std::cout << "    With input iterator" << std::endl;
+   std::cout << "    with input iterator" << std::endl;
    list_iterator first=l.begin();
    list_iterator last=l.end();
    Triang T2_3(first,last);
@@ -141,7 +141,7 @@ _test_cls_constrained_triangulation(const Triang &)
 
    /********************/
   /******** I/O *******/
-  std::cout << "    output to a file" << std::endl;
+  std::cout << "output to a file" << std::endl;
 
   std::ofstream of0_1("T01.triangulation", std::ios::out);
   CGAL::set_ascii_mode(of0_1);
@@ -167,7 +167,7 @@ _test_cls_constrained_triangulation(const Triang &)
   CGAL::set_ascii_mode(of2_2);
   of2_2 << T2_2; of2_2.close();
 
-  std::cout << "    input from a file" << std::endl;
+  std::cout << "input from a file" << std::endl;
   std::ifstream if0_1("T01.triangulation"); CGAL::set_ascii_mode(if0_1);
   Triang T0_1_copy;   if0_1 >> T0_1_copy;
 
