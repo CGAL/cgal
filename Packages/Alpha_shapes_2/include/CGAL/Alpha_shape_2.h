@@ -550,8 +550,8 @@ public:
 	case VERTEX            : return classify(pFace->vertex(i), alpha);
 	case EDGE              : return classify(pFace, i, alpha);
 	case FACE              : return classify(pFace, alpha);
-	case OUTSIDE           : 
-	case COLLINEAR_OUTSIDE : return EXTERIOR;
+	case OUTSIDE_CONVEX_HULL : 
+	case OUTSIDE_AFFINE_HULL : return EXTERIOR;
 	default                : return EXTERIOR;
 	}
     }
