@@ -10,13 +10,13 @@ function \ccc{convex_hull_3}.
 
 \ccTypes
 \ccAutoIndexingOff
-\ccNestedType{Point}{ type of point stored in a vertex }
+\ccNestedType{Point_3}{ type of point stored in a vertex }
 \ccGlue
-\ccNestedType{Vertex}{ a model of \ccc{Polyhedron_Vertex}}
+\ccNestedType{Vertex}{ a model of \ccc{ConvexHullPolyhedronVertex_3}}
 \ccGlue
-\ccNestedType{Halfedge}{ a model of \ccc{Polyhedron_Halfedge}}
+\ccNestedType{Halfedge}{ a model of \ccc{ConvexHullPolyhedronHalfedge_3}}
 \ccGlue
-\ccNestedType{Facet}{ a model of \ccc{Polyhedron_Facet}}
+\ccNestedType{Facet}{ a model of \ccc{ConvexHullPolyhedronFacet_3} }
 \ccGlue
 \ccNestedType{Halfedge_data_structure}{halfedge data structure}
 \ccGlue
@@ -46,7 +46,7 @@ Only a default constructor is required.
 \ccMethod{Halfedge_iterator border_halfedges_begin();}{halfedge iterator starting with the border edges.}
 
 \ccMethod{
-Halfedge_handle make_tetrahedron(Point p1, Point p2, Point p3, Point p4);
+Halfedge_handle make_tetrahedron(Point_3 p1, Point_3 p2, Point_3 p3, Point_3 p4);
 }{
 adds a new tetrahedron to the polyhedral surface with its
 vertices initialized with \ccc{p1}, \ccc{p2}, \ccc{p3} and \ccc{p4}. 
