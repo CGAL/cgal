@@ -36,7 +36,6 @@
 #include <CGAL/Triangulation_data_structure_2.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/Triangulation_hierarchy_2.h>
-
 #include <CGAL/_test_cls_delaunay_hierarchy_2.C>
 
 typedef double                      Coord_type;
