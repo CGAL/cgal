@@ -69,7 +69,7 @@ namespace CGAL {
 			if ((*cit) < r.min_coord(i))
 				distance += 
 				(r.min_coord(i)-(*cit))*(r.min_coord(i)-(*cit));
-			if ((*cit) > r.max_coord(i))
+			else if ((*cit) > r.max_coord(i))
 				distance +=  
 				((*cit)-r.max_coord(i))*((*cit)-r.max_coord(i));
 			

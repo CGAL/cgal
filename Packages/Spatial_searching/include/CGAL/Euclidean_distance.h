@@ -66,7 +66,7 @@ namespace CGAL {
 		  if((*qit) < r.min_coord(i))
 				distance += 
 				(r.min_coord(i)-(*qit))*(r.min_coord(i)-(*qit));
-			if ((*qit) > r.max_coord(i))
+		  else if ((*qit) > r.max_coord(i))
 				distance +=  
 				((*qit)-r.max_coord(i))*((*qit)-r.max_coord(i));
 			
@@ -90,7 +90,7 @@ namespace CGAL {
 	}
 
 	inline FT new_distance(FT dist, FT old_off, FT new_off,
-			int cutting_dimension)  const {
+			       int cutting_dimension)  const {
 		
 		FT new_dist = dist + new_off*new_off - old_off*old_off;
                 return new_dist;

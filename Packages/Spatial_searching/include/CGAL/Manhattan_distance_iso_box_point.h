@@ -58,7 +58,7 @@ namespace CGAL {
 		for (; qmaxit != qe; ++qmaxit) {
 			if ((*pit)>(*qmaxit)) distance += 
 			(*pit)-(*qmaxit); 
-			if ((*pit)<(*qminit)) distance += 
+			else if ((*pit)<(*qminit)) distance += 
 			(*qminit)-(*pit);	
 		}
         	return distance;
