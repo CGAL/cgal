@@ -22,10 +22,7 @@
 #ifndef CGAL_SR_2_H
 #define CGAL_SR_2_H
 
-#include <CGAL/leda_rational.h> 
-
 #include <iostream>
-
 #include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Quotient.h>
@@ -38,7 +35,6 @@
 #include <CGAL/Sweep_line_2.h>
 #include <list>
 #include <set>
-#include <CGAL/leda_real.h>
 #include "Snap_rounding_kd_2.h"
 #include <CGAL/utility.h>
 #include <CGAL/Iterator_project.h>

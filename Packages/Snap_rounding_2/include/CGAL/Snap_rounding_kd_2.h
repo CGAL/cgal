@@ -27,7 +27,6 @@
 #include <CGAL/config.h>
 #include <CGAL/kdtree_d.h>
 #include <CGAL/predicates_on_points_2.h>
-#include <CGAL/leda_rational.h> 
 #include <iostream>
 #include <CGAL/predicates_on_points_2.h>
 #include <CGAL/utility.h>
