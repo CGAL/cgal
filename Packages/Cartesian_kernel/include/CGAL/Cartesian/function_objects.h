@@ -538,7 +538,6 @@ namespace CartesianKernelFunctors {
   {
     typedef typename K::Point_2    Point_2;
     typedef typename K::Line_2     Line_2;
-    typedef typename K::Segment_2  Segment_2;
   public:
     typedef Comparison_result      result_type;
     typedef Arity_tag< 2 >     Arity;
@@ -565,16 +564,6 @@ namespace CartesianKernelFunctors {
       return compare_xC2(l1.a(), l1.b(), l1.c(), h1.a(), h1.b(), h1.c(),
 			 l2.a(), l2.b(), l2.c(), h2.a(), h2.b(), h2.c());
     }
-
-    // The 2 following are not documented (temporary try for TAU).
-    Comparison_result
-    operator()( const Segment_2& s1, int i1,
-                const Segment_2& s2, int i2) const
-    { return operator()(s1.vertex(i1), s2.vertex(i2)); }
-
-    Comparison_result
-    operator()( const Segment_2& s1, int i1, const Point_2& p) const
-    { return operator()(s1.vertex(i1), p); }
   };
 
   template <typename K>
