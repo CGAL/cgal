@@ -2,6 +2,7 @@
 #define CGAL_Postscript_STREAM
 
 // For g++ compiler... //
+// CVS essai //
 
 #include <CGAL/Cartesian.h>
 #include <stdlib.h>
