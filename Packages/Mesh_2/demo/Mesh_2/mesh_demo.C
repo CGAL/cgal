@@ -58,6 +58,8 @@ int main(int, char*)
 #include <qbuttongroup.h>
 #include <qradiobutton.h>
 #include <qlabel.h>
+#include <qlineedit.h>
+#include <qtimer.h>
 
 typedef CGAL::Simple_cartesian<double>  K1;
 typedef CGAL::Filtered_kernel<K1>       Kernel;
@@ -155,7 +157,25 @@ public:
 
       QPushButton *pbMeshStep = 
 	new QPushButton("Mesh step", toolBarActions);
-      connect(pbMeshStep, SIGNAL(clicked()), this, SLOT(refineMeshStep()));
+      connect(pbMeshStep, SIGNAL(clicked()), this,
+	      SLOT(refineMeshStep()));
+
+      // TIMER
+      timer = new QTimer(this);
+      connect(timer, SIGNAL(timeout()),
+	      this, SLOT(refineMeshStep()));
+
+      QPushButton *pbMeshTimer = 
+	new QPushButton("Auto step", toolBarActions);
+      pbMeshTimer->setToggleButton(true);
+      connect(pbMeshTimer, SIGNAL(stateChanged(int)),
+	      this, SLOT(updateTimer(int)));
+
+      QLineEdit *leTimerInterval = 
+	new QLineEdit("1000",toolBarActions);
+      timer_interval=1000;
+      connect(leTimerInterval, SIGNAL(textChanged(const QString&)),
+	      this, SLOT(updateTimerInterval(const QString&)));
 
       // Inputs: polygons or points
       QToolBar *toolbarInputs = new QToolBar("Inputs",this);
@@ -382,6 +402,26 @@ public slots:
       widget->redraw();
     }
 
+  void updateTimer(int i)
+    {
+      if(i==0)
+	timer->stop();
+      else
+	timer->start(timer_interval);
+    }
+
+  void updateTimerInterval(const QString& s)
+    {
+      bool ok;
+      int interval = s.toInt(&ok);
+      if(ok)
+	{
+	  timer_interval=interval;
+	  if(timer->isActive())
+	    timer->changeInterval(timer_interval);
+	}
+    }
+
   void clearMesh()
     {
       mesh.reset();
@@ -437,6 +477,8 @@ private:
   CGAL::Qt_layer_mouse_coordinates* show_mouse;
 
   QLabel* aspect_ratio_label;
+  QTimer* timer;
+  int timer_interval;
 };
 
 
