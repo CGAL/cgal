@@ -33,9 +33,9 @@
 
 namespace CGAL_MINIBALL_NAMESPACE {
 
-  // We provide several algorithms to solve the Miniball problem.
-  // The following types are used by the client to select the
-  // algorithm he or she wants to run.
+  // We provide several algorithms to solve the Miniball problem.  The
+  // following types are used by the client to select the algorithm he
+  // or she wants to run.
   struct LP_algorithm {};
   struct Farthest_first_heuristic {};
   typedef Farthest_first_heuristic Default_algorithm;
@@ -45,8 +45,10 @@ namespace CGAL_MINIBALL_NAMESPACE {
   public: // some short hands:
     typedef typename Traits::Sphere Sphere;
     typedef typename Traits::FT FT;
-    typedef typename Selector<FT>::Result Result;
-    typedef typename Selector<FT>::Is_exact Is_exact;
+    typedef typename Min_sphere_of_spheres_d_impl::
+                     Selector<FT>::Result Result;
+    typedef typename Min_sphere_of_spheres_d_impl::
+                     Selector<FT>::Is_exact Is_exact;
     typedef typename Traits::Use_square_roots Use_sqrt;
     typedef typename Traits::Algorithm Algorithm;
     static const int D = Traits::D;
@@ -159,7 +161,8 @@ namespace CGAL_MINIBALL_NAMESPACE {
   private:
     std::vector<Sphere> S;         // list of the added bals
     std::vector<const Sphere *> l; // list of pointers to the added bals
-    Support_set<Traits> ss;        // current support set
+    Min_sphere_of_spheres_d_impl::
+      Support_set<Traits> ss;      // current support set
     int e;                         // l[0..(e-1)] is a basis
   
   private: // forbid copy constructing and assignment (because our
