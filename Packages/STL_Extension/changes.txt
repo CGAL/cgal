@@ -1,3 +1,6 @@
+20 May 2004 Sylvain Pion
+- Add Compare_to_less.
+
 27 April 2004 Sylvain Pion
 - Much more symbol names shortening for Compact_container's iterators.
 

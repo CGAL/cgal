@@ -8,6 +8,7 @@ using CGAL::compose1_1;
 using CGAL::compose1_2;
 using CGAL::compose2_1;
 using CGAL::compose2_2;
+using CGAL::compare_to_less;
 using std::binder1st;
 using std::bind1st;
 using std::accumulate;
@@ -48,6 +49,10 @@ int main()
   transform(b, b + 5, a, compose2_1(pl, op2, op2));
   transform(b, b + 5, b, bind1st(mu, 4));
   CGAL_assertion(equal(a, a + 5, b));
+
+  // compare_to_less
+  bool boo = compare_to_less(CGAL::Compare<int>())(3,5);
+  (void) boo;
 
   return 0;
 }

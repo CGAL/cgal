@@ -749,6 +749,28 @@
   
 \end{ccRefFunction}
 
+\begin{ccRefFunction}{compare_to_less}
+  \ccDefinition The function \ccRefName\ is used to change a functor
+  returning a \ccc{Comparison_result} to one which returns a bool.
+  The returned functor will return \ccc{true} iff the original one
+  returns \ccc{SMALLER}.
+  
+  \ccInclude{CGAL/function_objects.h}
+  
+  \ccThree{typename Compare_to_less< F >::Type}{compare_to_less}{}
+  
+  \ccFunction{template < class F > Compare_to_less< F >
+     compare_to_less(const F& f);}{returns a functor
+    equivalent to \ccc{f}, but which returns a bool instead of a
+    \ccc{Comparison_result}.  \ccRequire F is a model for
+    \ccc{AdaptableFunctor}.}
+  
+  \ccSeeAlso
+  \ccRefIdfierPage{CGAL::Compare_to_less<F>}\\
+  \ccRefConceptPage{AdaptableFunctor}
+  
+\end{ccRefFunction}
+
 \begin{ccRefFunction}{compose}
   \ccDefinition The function \ccRefName\ is used to compose functors
   $f_0,\,\ldots,\,f_n$ into each other, thereby creating a new functor
@@ -938,6 +960,25 @@
 
   \ccSeeAlso
   \ccRefIdfierPage{CGAL::compose}\\
+  \ccRefConceptPage{AdaptableFunctor}
+  
+\end{ccRefClass}
+
+\begin{ccRefClass}{Compare_to_less<F>}
+  \ccDefinition The class \ccRefName\ is used to convert a functor which
+  returns a \ccc{Comparison_result} to a predicate (returning bool) : it
+  will return true iff the return value of \ccc{F} is \ccc{SMALLER}.
+  The class is used in conjunction with the \ccc{compare_to_less}
+  function; see there for an explanation on how exactly the functors
+  are combined.
+
+  \ccInclude{CGAL/function_objects.h}
+  
+  \ccTypes
+  \ccNestedType{Type}{type of the composed functor.}
+  
+  \ccSeeAlso
+  \ccRefIdfierPage{CGAL::compare_to_less}\\
   \ccRefConceptPage{AdaptableFunctor}
   
 \end{ccRefClass}

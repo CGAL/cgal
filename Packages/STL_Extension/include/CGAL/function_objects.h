@@ -1,4 +1,4 @@
-// Copyright (c) 2003  Utrecht University (The Netherlands),
+// Copyright (c) 2003,2004  Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
 // INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
 // (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
@@ -21,7 +21,7 @@
 //
 // Author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
 //                 Lutz Kettner <kettner@mpi-sb.mpg.de>
-//                 Sylvain Pion <Sylvain.Pion@mpi-sb.mpg.de>
+//                 Sylvain Pion <Sylvain.Pion@sophia.inria.fr>
 
 #ifndef CGAL_FUNCTION_OBJECTS_H
 #define CGAL_FUNCTION_OBJECTS_H 1
@@ -482,6 +482,44 @@ compose2_2(const Op1& op1, const Op2& op2, const Op3& op3)
 { return Binary_compose_2< Op1, Op2, Op3 >(op1, op2, op3); }
 
 
+template < class Op >
+class Compare_to_less
+  : public Op
+{
+public:
+  typedef Op      Type;
+  typedef bool    result_type;
+
+  Compare_to_less(const Op& op) : Op(op) {}
+
+  template < typename A1 >
+  bool
+  operator()(const A1 &a1) const
+  { return Op::operator()(a1) == SMALLER; }
+
+  template < typename A1, typename A2 >
+  bool
+  operator()(const A1 &a1, const A2 &a2) const
+  { return Op::operator()(a1, a2) == SMALLER; }
+
+  template < typename A1, typename A2, typename A3 >
+  bool
+  operator()(const A1 &a1, const A2 &a2, const A3 &a3) const
+  { return Op::operator()(a1, a2, a3) == SMALLER; }
+
+  template < typename A1, typename A2, typename A3, typename A4 >
+  bool
+  operator()(const A1 &a1, const A2 &a2, const A3 &a3, const A4 &a4) const
+  { return Op::operator()(a1, a2, a3, a4) == SMALLER; }
+
+  // More can be added.
+};
+
+template < class Op >
+inline Compare_to_less<Op>
+compare_to_less(const Op& op)
+{ return Compare_to_less<Op>(op); }
+
 CGAL_END_NAMESPACE
-#endif // CGAL_FUNCTION_OBJECTS_H //
-// EOF //
+
+#endif // CGAL_FUNCTION_OBJECTS_H
