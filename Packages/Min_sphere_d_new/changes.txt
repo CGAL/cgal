@@ -1,5 +1,8 @@
 Changes done to the `Min_sphere_d_new' package
 
+Version 0.11.1 on 20-Mar-2001
+- no changes (moved to cvs-server)
+
 Version 0.11 on 01-Nov-2000
 - removed `Min_sphere_d.tex' from submission to avoid conflicts with old Min.
 
