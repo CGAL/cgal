@@ -49,6 +49,8 @@ private:
   class Less_yx;
   class Less_xy;
 
+  // We make class Point_data public for Sun CC
+public:
   class Point_data {
   public:
 
@@ -90,6 +92,7 @@ private:
 
   }; 
 
+private:
   // was x_smaller
   bool less_xy(const Point_data *a, const Point_data *b) const
   {
