@@ -1,0 +1,35 @@
+% to be written by pierre
+
+\label{sec:remeshing}
+
+Few words on remeshing (why it became a key ingredient of mesh
+processing).
+
+\subsection{Isotropic Remeshing}
+
+Building blocks taken from CGAL:
+- Polyhedron (enriched halfedges to store 
+              uv coordinates per corner)
+- 2D constrained Delaunay triangulation
+- fast location in a triangulation (CGAL)
+
+Algorithms:
+- Conformal parameterization
+- Error diffusion
+- Spanning tree
+- Lloyd relaxation to build a weighted 
+  centroidal Voronoi diagram
+
+\subsection{Anisotropic Remeshing}
+
+Building blocks taken from CGAL:
+- Polyhedron (enriched primitives to store curvature tensors per
+vertex or per corner, plus uv coordinates)
+- 2D constrained Delaunay triangulation
+
+Algorithms:
+- Conformal parameterization
+- Curvature tensor estimator
+- Placement of streamlines
+- A bunch of algorithms which I cannot list here
+
