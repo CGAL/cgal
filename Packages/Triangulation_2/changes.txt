@@ -1,6 +1,8 @@
-
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
+
+Ver 7.50 (29/10.02)
+- fixes by Sylvain on Trivial_iterator.h
 
 
 Ver 7.49 (25/10/02)
