@@ -1,5 +1,8 @@
 Timer Package: Release changes:
 ---------------------------------------------------------------------
+1.9 (4  April 2001)
+    changes in Real_timer.h to avoid warnings
+
 1.8 (11 August 2000)
     change to ccRefName in the manual
 
