@@ -181,8 +181,8 @@ public:
 
    bool is_valid(bool verbose = false, int level = 0) const
   {
-    bool result = Fb::is_valid();
-    for(int i = 0; i < dimension()+1; i++) {
+    bool result = Fb::is_valid(verbose, level);
+    for(int i = 0; i < 3; i++) {
       Face* n = neighbor(i);
             
       // The following seems natural, but it may fail if the faces

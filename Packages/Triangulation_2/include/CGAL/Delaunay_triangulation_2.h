@@ -361,7 +361,7 @@ is_valid(bool verbose = false, int level = 0) const
             return true;
        }
 
-    bool result = Triangulation_2<Gt,Tds>::is_valid();
+    bool result = Triangulation_2<Gt,Tds>::is_valid(verbose, level);
 
     for( Face_iterator it = faces_begin(); it != faces_end() ; it++) {
 

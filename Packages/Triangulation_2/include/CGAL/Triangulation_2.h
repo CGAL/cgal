@@ -595,8 +595,8 @@ template <class Gt, class Tds >
 bool
 Triangulation_2<Gt, Tds>::
 is_valid(bool verbose = false, int level = 0) const
-  {
-    bool result = _tds.is_valid();
+{
+    bool result = _tds.is_valid(verbose, level);
 
     Face_iterator it;
     switch(dimension()) {

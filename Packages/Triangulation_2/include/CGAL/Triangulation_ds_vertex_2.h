@@ -15,7 +15,6 @@
 // source        : $RCSfile$
 // revision      : $Revision$
 // revision_date : $Date$
-//
 // author(s)     : Mariette Yvinec
 //
 // coordinator   : Mariette Yvinec  < Mariette Yvinec@sophia.inria.fr>
@@ -124,7 +123,7 @@ public:
     
    bool is_valid(bool verbose = false, int level = 0) const
   {
-    bool result = Vb::is_valid();
+    bool result = Vb::is_valid(verbose, level);
     CGAL_triangulation_assertion(result);
     CGAL_triangulation_assertion(face() != NULL);
     result = result && face()->has_vertex(this);

@@ -9,113 +9,75 @@
 // ----------------------------------------------------------------------
 //
 // release       : 
-// release_date  :         :
+// release_date  :
 //
 // file          : include/CGAL/Pointer.h
 // source        : $RCSfile$
 // revision      : $Revision$
 // revision_date : $Date$
-// author(s)     : Olivier Devillers, Mariette Yvinec
+// author(s)     : Olivier Devillers, Mariette Yvinec, Sylvain Pion
 //
-// coordinator   : Mariette Yvinec  <Mariette Yvinec@sophia.inria.fr>
+// coordinator   : Mariette Yvinec  <Mariette.Yvinec@sophia.inria.fr>
 //
 // ======================================================================
-
-
 
 #ifndef CGAL_POINTER_H
 #define CGAL_POINTER_H
 
-#include <cassert>
 #include <iterator>
+#include <CGAL/assertions.h>
 #include <CGAL/circulator.h>
 
 CGAL_BEGIN_NAMESPACE 
 
-template<class T>
-class Pointer
+template <class T>
+struct Pointer
 {
-
-    private:
-    T* _pointer;
-    
-    public:
     typedef T value_type;
-  //typedef Pointer<T> Pointer;
 
-    inline Pointer<T>()
-        : _pointer(NULL)
-    {}
-    
-    inline Pointer<T>(const T* p)
-        : _pointer((T*)p)
-    {}
-    
-    inline Pointer<T>& operator=(const T*& p)
+    Pointer(const T* p = NULL) : _pointer((T*)p) {}
+
+    Pointer& operator=(const T*& p)
     {
-        ptr() = p ;
+        ptr() = p;
         return *this;
     }
-    
-    inline Pointer<T>& operator=(const Pointer<T>& p)
+
+    Pointer& operator=(const Pointer& p)
     {
         ptr() = p.ptr();
         return *this;
     }
-    inline T& operator*() const
-    {
-        return *ptr();
-    }
-    
-    inline T* operator->() const
-    {
-        return ptr();
-    }
-    inline void Delete()
+
+    T& operator*() const { return *ptr(); }
+    T* operator->() const { return ptr(); }
+
+    void clear() { ptr() = NULL; }
+
+    void Delete()
     {
         delete ptr();
         clear();
     }
-    
-    inline void clear()
-    {
-        ptr() = NULL;
-    }
-    
-    
-    inline bool operator==(const Pointer<T>& p) const
-    {
-        return ( ptr() == p.ptr() );
-    }
-    
-    inline bool operator!=(const Pointer<T>& p) const
-    {
-        return !(*this == p);
-    }
-    
-  inline bool is_null()
-  {
-    return (ptr() == NULL );
-  }
 
+    bool is_null() const { return ptr() == NULL; }
 
-  inline bool operator==(CGAL_NULL_TYPE n) const
+    bool operator==(const Pointer& p) const { return ptr() == p.ptr(); }
+    bool operator!=(const Pointer& p) const { return !(*this == p); }
+
+    bool operator==(CGAL_NULL_TYPE n) const
     {
-        assert( n == 0);
-        return ( ptr() == NULL );
-    }
-    
-    inline bool operator!=(CGAL_NULL_TYPE n) const
-    {
-        return !(*this == n);
+        CGAL_assertion(n == 0);
+        return ptr() == NULL;
     }
 
+    bool operator!=(CGAL_NULL_TYPE n) const { return !(*this == n); }
  
-    public:
-    inline T*& ptr()       {return _pointer;}
-    inline T*  ptr() const {return _pointer;}
-    
+    T*& ptr()       { return _pointer; }
+    T*  ptr() const { return _pointer; }
 
+private:
+    T* _pointer;
 };
 
 CGAL_END_NAMESPACE

@@ -28,30 +28,30 @@
 //Define shorter names to please linker (g++/egcs)
 
    #define Triangulation_default_data_structure_2 Tdds
-   #define Triangulation_vertex_base_2  Trvb
-   #define Triangulation_face_base_2  Trfb
+   #define Triangulation_vertex_base_2  Tvb
+   #define Triangulation_face_base_2  Tfb
    #define Triangulation_euclidean_traits_2 Et2
    #define Triangulation_euclidean_traits_xy_3 Etxy3
    #define Triangulation_euclidean_traits_xz_3 Etxz3
    #define Triangulation_euclidean_traits_yz_3 Etyz3
 
-   #define Constrained_triangulation_face_base_2  Ctrfb
+   #define Constrained_triangulation_face_base_2  Ctfb
    #define Regular_triangulation_euclidean_traits_2 Rtet2
 
    #define Triangulation_ds_vertex_2 Tdsv
    #define Triangulation_ds_face_2  Tdsf
-   #define Triangulation_vertex_2 Trv
-   #define Triangulation_face_2 Trf
-   #define Triangulation_vertex_handle_2 Trvh
-   #define Triangulation_face_handle_2 Trfh
-   #define Triangulation_vertex_iterator_2 Trvi
-   #define Triangulation_face_iterator_2 Trfi
-   #define Triangulation_edge_iterator_2 Trei
-   #define Triangulation_vertex_circulator_2 Trvc
-   #define Triangulation_face_circulator_2 Trfc
-   #define Triangulation_edge_circulator_2 Trec
+   #define Triangulation_vertex_2 Tv
+   #define Triangulation_face_2 Tf
+   #define Triangulation_vertex_handle_2 Tvh
+   #define Triangulation_face_handle_2 Tfh
+   #define Triangulation_vertex_iterator_2 Tvi
+   #define Triangulation_face_iterator_2 Tfi
+   #define Triangulation_edge_iterator_2 Tei
+   #define Triangulation_vertex_circulator_2 Tvc
+   #define Triangulation_face_circulator_2 Tfc
+   #define Triangulation_edge_circulator_2 Tec
 
-   #define Regular_triangulation_face_base_2  Rtrfb
+   #define Regular_triangulation_face_base_2  Rtfb
 
 
 

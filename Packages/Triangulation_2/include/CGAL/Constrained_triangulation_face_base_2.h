@@ -15,7 +15,6 @@
 // source        : $RCSfile$
 // revision      : $Revision$
 // revision_date : $Date$
-//
 // author(s)     : Mariette Yvinec
 //
 // coordinator   : Mariette Yvinec  <Mariette Yvinec@sophia.inria.fr>
@@ -92,7 +91,7 @@ public:
   
   bool is_valid(bool verbose = false, int level = 0) const
   {
-    bool result = Fab::is_valid();
+    bool result = Fab::is_valid(verbose, level);
     CGAL_triangulation_assertion(result);
     for(int i = 0; i < 3; i++) {
       Constrained_face_base*  n = (Constrained_face_base*)neighbor(i);

@@ -16,86 +16,56 @@
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Mariette Yvinec
+//                 Sylvain Pion
 //
-// coordinator   : Mariette Yvinec  <Mariette Yvinec@sophia.inria.fr>
+// coordinator   : Mariette Yvinec <Mariette.Yvinec@sophia.inria.fr>
 //
 // ============================================================================
 
 #ifndef CGAL_DISTANCE_2_H
 #define CGAL_DISTANCE_2_H
 
-#include<CGAL/number_utils.h>
+#include <CGAL/assertions.h>
+#include <CGAL/distance_predicates_2.h>
 
 CGAL_BEGIN_NAMESPACE
 
-
 template <class I>
-class Distance_2{
-public:
-    typedef typename I::Point Point;
-    Distance_2(const I* traits = NULL)
-    {}
+struct Distance_2
+{
+  typedef typename I::Point Point;
 
-    Distance_2(const Point& p0,
-                    const I* traits = NULL)
-        : _p0(p0)
-    {}
+  Distance_2(const I* = NULL) {}
 
+  Distance_2(const Point& p0, const I* = NULL)
+  { p[0]=p0; }
 
-    Distance_2(const Point& p0,
-                    const Point& p1,
-                    const I* traits = NULL)
-        : _p0(p0), _p1(p1)
-    {}
+  Distance_2(const Point& p0, const Point& p1, const I* = NULL)
+  { p[0]=p0; p[1]=p1; }
 
+  Distance_2(const Point& p0, const Point& p1, const Point& p2, 
+	     const I* = NULL)
+  { p[0]=p0; p[1]=p1; p[2]=p2; }
 
-    Distance_2(const Point& p0,
-                    const Point& p1,
-                    const Point& p2,
-                    const I* traits = NULL)
-        : _p0(p0), _p1(p1), _p2(p2)
-    {}
+  void set_point(int i, const Point& q)
+  {
+    CGAL_precondition( ((unsigned int) i) < 3 );
+    p[i] = q;
+  }
 
-    void
-    set_point(int i, const Point& p)
-    {
-        CGAL_triangulation_precondition(i == 0 || i == 1 || i == 2);
-        switch(i){
-        case 0:
-            _p0 = p;
-            break;
-        case 1:
-            _p1 = p;
-            break;
-        default:
-            _p2 = p;
-        }
-    }
+  Point get_point(int i) const
+  {
+    CGAL_precondition( ((unsigned int) i) < 3 );
+    return p[i];
+  }
 
-    Point
-    get_point(int i) const
-    {
-      CGAL_triangulation_precondition(i == 0 || i == 1 || i == 2);
-      switch(i){
-      case 0:
-        return _p0;
-      case 1:
-        return _p1;
-      }
-      return _p2;
-    }
-
-    Comparison_result
-    compare() const
-    {
-        return CGAL::compare(
-          (typename Point::R::FT)squared_distance(_p0, _p1),
-          (typename Point::R::FT)squared_distance(_p0, _p2));
-
-    }
+  Comparison_result compare() const
+  {
+    return cmp_dist_to_point(p[0], p[1], p[2]);
+  }
 
 private:
-    Point _p0, _p1, _p2;
+  Point p[3];
 };
 
 CGAL_END_NAMESPACE

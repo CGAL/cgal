@@ -202,7 +202,7 @@ public:
   //the following trivial is_valid to allow
   // the user of derived face base classes 
   // to add their own purpose checking
-  bool is_valid() const
+  bool is_valid(bool /* verbose */ = false, int /* level */ = 0) const
   {return true;}
 
 

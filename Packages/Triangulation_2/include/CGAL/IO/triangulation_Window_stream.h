@@ -112,16 +112,15 @@ CGAL_END_NAMESPACE
 #endif // CGAL_CONSTRAINED_TRIANGULATION_2_H
 
 
-#ifdef CGAL_WEIGHTED_POINT_2_H
-#ifndef CGAL_WINDOW_STREAM_WEIGHTED_POINT_2_H
-#define CGAL_WINDOW_STREAM_WEIGHTED_POINT_2_H
+#ifdef CGAL_WEIGHTED_POINT_H
+#ifndef CGAL_WINDOW_STREAM_WEIGHTED_POINT_H
+#define CGAL_WINDOW_STREAM_WEIGHTED_POINT_H
 
 CGAL_BEGIN_NAMESPACE
 
 template < class Point, class We >
 Window_stream&
-operator<<(Window_stream& os,
-           const Weighted_point_2< Point, We > &p)
+operator<<(Window_stream& os, const Weighted_point< Point, We > &p)
 {
   double cx = to_double(p.point().x()),
          cy = to_double(p.point().y()),
@@ -133,28 +132,24 @@ operator<<(Window_stream& os,
 }
 
 template < class Point, class We >
-Window_stream& operator>>(Window_stream &os,
-                               Weighted_point_2< Point, We > &wp)
+Window_stream& operator>>(Window_stream &os, Weighted_point< Point, We > &wp)
 {
   double cx, cy, x1, y1;
   os.read_mouse(cx,cy);
   os.read_mouse_circle(cx,cy, x1, y1);
   Point center(cx, cy);
 
-  We sr = We (sqrt( (cx-x1)*(cx-x1)+(cy-y1)*(cy-y1) ) );
+  We sr = We (sqrt( square(cx-x1)+square(cy-y1) ) );
 
   os.draw_circle(cx, cy , sr );
-  wp = Weighted_point_2< Point, We >(center, sr);
+  wp = Weighted_point< Point, We >(center, sr);
   return os;
 }
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_WINDOW_STREAM_WEIGHTED_POINT_2_H
-#endif // CGAL_WEIGHTED_POINT_2_H
-
-
-
+#endif // CGAL_WINDOW_STREAM_WEIGHTED_POINT_H
+#endif // CGAL_WEIGHTED_POINT_H
 
 
 #ifdef CGAL_REGULAR_TRIANGULATION_2_H
@@ -204,7 +199,6 @@ operator<<(Window_stream& os,
 	     plit!=fit->point_list().end(); ++plit) {
 	    os<<BLUE<< *plit;}
 	}
-
 	
 	Regular_triangulation_2<Gt,Tds>::Face_circulator 
 	  fc = T.infinite_vertex()->incident_faces(),done(fc);
@@ -222,4 +216,3 @@ CGAL_END_NAMESPACE
 
 #endif // CGAL_WINDOW_STREAM_REGULAR_TRIANGULATION_2_H
 #endif // CGAL_REGULAR_TRIANGULATION_2_H
-
