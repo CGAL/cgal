@@ -164,8 +164,7 @@ void show_dual( Delaunay &T, Window_stream &W )
 
 template <class TRIANGULATION>
 void window_input(TRIANGULATION &T,
-		  Window_stream &W,
-		  const Options& opt)
+		  Window_stream &W)
 {
   Point p;
   Vertex_handle hv;
@@ -212,7 +211,7 @@ int main(int argc, char* argv[])
   Delaunay T;
   file_input(T, W, opt);
   W << T;
-  window_input(T, W, opt);
+  window_input(T, W);
   show_nearest_vertex(T,W);
   show_dual(T, W);
  }

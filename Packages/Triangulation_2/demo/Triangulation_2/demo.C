@@ -61,8 +61,7 @@ typedef CGAL::Window_stream  Window_stream;
 
 template <class TRIANGULATION>
 void window_input(TRIANGULATION &tr,
-		  Window_stream &win,
-		  const Options& opt)
+		  Window_stream &win)
 {
   std::cerr << "Enter points with the left button" << std::endl;
   std::cerr << "Remove points with the middle button" << std::endl;
@@ -300,7 +299,7 @@ int main(int argc, char* argv[])
     
     file_input(T, W, opt);
     W << T;
-    window_input(T, W, opt);
+    window_input(T, W);
 
     //container_input(T, W);
     draw_faces_along_line(T, W);
