@@ -64,55 +64,34 @@ show_triangulation_edges(Geomview_stream &gv, const Triangulation_3<GT,TDS> &T)
   }
 }
 
-// This one outputs the facets.
-template < class GT, class TDS >
-void
-show_triangulation_faces(Geomview_stream &gv, const Triangulation_3<GT,TDS> &T)
-{
-  // Header.
-  gv.set_binary_mode();
-  gv << "(geometry " << gv.get_new_id("triangulation")
-     << " {appearance {}{ OFF BINARY\n"
-     << T.number_of_vertices() << T.number_of_finite_facets() << 0;
-
-  // Finite vertices coordinates.
-  std::map<typename Triangulation_3<GT, TDS>::Vertex_handle, int> V;
-  int inum = 0;
-  for( typename Triangulation_3<GT, TDS>::Finite_vertices_iterator
-      vit = T.finite_vertices_begin(); vit != T.finite_vertices_end(); ++vit) {
-    V[&*vit] = inum++;
-    gv << vit->point();
-  }
-  
-  // Finite facets indices.
-  for( typename Triangulation_3<GT, TDS>::Finite_facets_iterator
-	  fit = T.finite_facets_begin(); fit != T.finite_facets_end(); ++fit) {
-      gv << 3;
-      for (int i=0; i<4; i++)
-          if (i != (*fit).second)
-	      gv << V[(*fit).first->vertex(i)];
-      gv << 0; // without color.
-      // gv << 4 << drand48() << drand48() << drand48() << 1.0; // random color
-  }
-}
-
 template < class GT, class TDS >
 Geomview_stream&
 operator<<( Geomview_stream &gv, const Triangulation_3<GT,TDS> &T)
 {
-    bool ascii_bak = gv.get_ascii_mode();
-    bool raw_bak = gv.set_raw(true);
+    if (gv.get_wired()) {
+        // We draw the edges.
+        bool ascii_bak = gv.get_ascii_mode();
+        bool raw_bak = gv.set_raw(true);
 
-    if (gv.get_wired())
         show_triangulation_edges(gv, T);
-    else
-        show_triangulation_faces(gv, T);
 
-    // Footer.
-    gv << "}})";
+        // Footer.
+        gv << "}})";
 
-    gv.set_raw(raw_bak);
-    gv.set_ascii_mode(ascii_bak);
+        gv.set_raw(raw_bak);
+        gv.set_ascii_mode(ascii_bak);
+    }
+    else {
+        // We draw the facets.
+        std::vector<typename GT::Triangle_3> triangles;
+
+        for (typename Triangulation_3<GT, TDS>::Finite_facets_iterator
+	     fit = T.finite_facets_begin(); fit != T.finite_facets_end();
+	     ++fit)
+            triangles.push_back(T.triangle(*fit));
+
+        gv.draw_triangles(triangles.begin(), triangles.end());
+    }
     return gv;
 }
 

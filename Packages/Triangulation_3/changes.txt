@@ -1,3 +1,6 @@
+Version 1.124 (13 Dec 02)
+- Geomview_stream output operator uses the new gv.draw_triangles() function.
+
 Version 1.123 (10 Dec 02)
 - Give non-const access to .tds().
 
