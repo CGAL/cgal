@@ -1645,14 +1645,14 @@ public:
 
   Vertex_iterator finite_vertices_begin() const
   {
-    if ( dimension() < 0 ) return vertices_end();
+    if ( number_of_vertices() <= 0 ) return vertices_end();
     CGAL_Triangulation_3<GT, Tds>* ncthis 
       = (CGAL_Triangulation_3<GT, Tds>*)this;
     return Vertex_iterator(ncthis, false);
   }
   Vertex_iterator all_vertices_begin() const
   {
-    if ( dimension() < 0 ) return vertices_end();
+    if ( number_of_vertices() <= 0 ) return vertices_end();
     CGAL_Triangulation_3<GT, Tds>* ncthis 
       = (CGAL_Triangulation_3<GT, Tds>*)this;
     return Vertex_iterator(ncthis, true);

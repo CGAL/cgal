@@ -884,7 +884,7 @@ public:
 
   Vertex_iterator vertices_begin() const
   {
-    if ( dimension() < 0 ) return vertices_end();
+    if ( number_of_vertices() <= 0 ) return vertices_end();
 //    CGAL_triangulation_precondition( number_of_vertices() > 0 );
     Tds* ncthis = (Tds*)this;
     return Vertex_iterator(ncthis);
