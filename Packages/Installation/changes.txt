@@ -7,6 +7,7 @@
 //	actual revision
 //---------------------------------------------------------------------
 
+GLOB: Changed EXE_OPT back to '-Fp" for MSVC.
 GLOB: Fixed leda_lib_options for UNIX-compilers.
 GLOB: Added leda_lib_option flag.
 GLOB: Added -Zm400 to ADDITIONAL_CXXFLAGS for msvc.
