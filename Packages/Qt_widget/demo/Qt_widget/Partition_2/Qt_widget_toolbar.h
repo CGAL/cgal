@@ -30,7 +30,7 @@
 
 // TODO: check if some of those includes shouldn't be in the .C file
 #include <CGAL/IO/Qt_widget.h>
-#include <CGAL/IO/Qt_widget_Get_simple_polygon.h>
+#include <CGAL/IO/Qt_widget_get_simple_polygon.h>
 
 
 #include <qobject.h>

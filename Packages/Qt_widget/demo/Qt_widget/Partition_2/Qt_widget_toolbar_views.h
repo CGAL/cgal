@@ -27,7 +27,7 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/Partition_traits_2.h>
 
-#include <CGAL/IO/Qt_Widget.h>
+#include <CGAL/IO/Qt_widget.h>
 
 #include <qobject.h>
 #include <qtoolbutton.h>
