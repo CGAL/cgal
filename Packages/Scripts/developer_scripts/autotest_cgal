@@ -340,9 +340,7 @@ copy_old_stuff()
 
     # copy gmp header and libs
     log ${ACTUAL_LOGFILE} "copy gmp header"
-    if [ -f ${OLD_CGAL_INCL_DIR}/gmp.h ]; then
-	cp ${OLD_CGAL_INCL_DIR}/gmp.h ${CGAL_INCL_DIR}
-    fi
+    cp -r ${OLD_CGAL_INCL_DIR}/CGAL/config/* ${CGAL_INCL_DIR}/CGAL/config
     log_done ${ACTUAL_LOGFILE}
     log ${ACTUAL_LOGFILE} "copy gmp libs"
     printf "\n" >> ${ACTUAL_LOGFILE}
