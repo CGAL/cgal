@@ -1,3 +1,5 @@
+2.3.10 modified the demos to compile if the LEDA is not present
+
 2.3.9  bug fix
 
 2.3.8  and still more handle()s and *(& removed
