@@ -1651,9 +1651,15 @@ protected:
   void  print_points_on_curves(const _Curve_node& cv);
 #endif
 
+#if 0
+  // This doesn't compile with MSVC 6.0
   friend class  Less_xy; // less_point_xy;
   friend class  Less_yx; // less_curve_xy;
-
+#else
+  friend class less_point_xy;
+  friend class less_curve_xy;
+#endif
+    
   Traits   *traits;
   bool      use_delete_traits;
   bool      intersection_exist_;
