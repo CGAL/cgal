@@ -129,10 +129,14 @@ class Window : public QMainWindow
 {
   Q_OBJECT
 public:
-  Window(int w, int h)
+  Window(int w, int h, int lw = 1, int ps = 4, CGAL::PointStyle pt = CGAL::PLUS)
     { 
       widget = new CGAL::Qt_widget(this);
       setCentralWidget(widget);
+
+      widget->setLineWidth (lw);
+      widget->setPointSize (ps);
+      widget->setPointStyle (pt);
 
       // file menu
       QPopupMenu * file = new QPopupMenu( this );
@@ -320,10 +324,28 @@ get_new_object(CGAL::Object obj){
 int
 main(int argc, char **argv)
 {
-  if (argc > 1) {
+  int linewidth = 1, pointsize = 4;
+  CGAL::PointStyle style = CGAL::PLUS;
+
+  if (argc > 2 && !strcmp (argv[1], "-style")) {
+    std::cout << "parsing style string `"<<argv[2]<<"'";
+    char *pointstyle;
+    sscanf (strtok (argv[2], ":"), "%d", &linewidth);
+    std::cout << "  line width = " << linewidth << "\n";
+    sscanf (strtok (NULL, ":"), "%d", &pointsize);
+    std::cout << "  point size = " << pointsize << "\n";
+    pointstyle = strtok (NULL, ":");
+    if (!strcmp (pointstyle, "cross")) style = CGAL::CROSS;
+    else if (!strcmp (pointstyle, "plus")) style = CGAL::PLUS;
+    std::cout << "  point style = " << pointstyle << " (" << style << ")\n" ;
+
+    argc -= 2; argv += 2;
+  }
+ if (argc > 1) {
     std::cout << "loading " << argv[1] << "...\n";
     std::ifstream fin (argv[1]);
     load (fin);
+    argc--; argv++;
   }
 
   std::cout << "Initializing Qt window...\n";

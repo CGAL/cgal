@@ -18,6 +18,10 @@ CXXFLAGS = -I../../include \
            $(LONG_NAME_PROBLEM_CXXFLAGS) \
            $(DEBUG_OPT)
 
+CXXFLAGS += -DCHR_NOTRACE
+CXXFLAGS += -DCHR_FILTERED_EXACT
+CXXFLAGS += -O2
+
 #---------------------------------------------------------------------#
 #                    linker flags
 #---------------------------------------------------------------------#
