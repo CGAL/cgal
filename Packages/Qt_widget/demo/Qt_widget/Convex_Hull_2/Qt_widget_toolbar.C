@@ -97,7 +97,7 @@ namespace CGAL {
   {
     if (but[1]->isOn())
     {
-      widget->attach(pointbut);
+      widget->attach(&pointbut);
       activebutton = 1;
       is_active = true;
     }
@@ -112,7 +112,7 @@ namespace CGAL {
   {
     if (but[2]->isOn())
     {
-      widget->attach(*move_deletebut);
+      widget->attach(move_deletebut);
       activebutton = 2;
       is_active = true;
     }
