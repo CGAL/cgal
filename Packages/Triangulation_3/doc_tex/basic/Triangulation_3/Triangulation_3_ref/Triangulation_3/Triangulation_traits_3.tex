@@ -140,7 +140,8 @@ The triangulation hierarchy uses the traits class provided by
 \ccc{Tr::Geom_traits}, which must satisfy the following additional predicate:
 
 \ccNestedType{Compare_distance_3}{Predicate object.
-Must provide the operator \ccc{bool operator()(Point p, Point q, Point r)}
+Must provide the operator
+\ccc{Comparison_result operator()(Point p, Point q, Point r)}
 which compares the distance between \ccc{p} and \ccc{q} to the distance
 between \ccc{p} and \ccc{r}.}
 
