@@ -31,10 +31,11 @@ template<class C>
 class Simple_container_wrapper
 {
 public:
-  typedef C                               Container;
-  typedef typename Container::value_type  value_type;
-  typedef typename Container::iterator    iterator;
-  typedef typename Container::size_type   size_type;
+  typedef C                                    Container;
+  typedef typename Container::value_type       value_type;
+  typedef typename Container::iterator         iterator;
+  typedef typename Container::const_iterator   const_iterator;
+  typedef typename Container::size_type        size_type;
 
 private:
   typedef Simple_container_wrapper<Container> Self;
@@ -42,6 +43,9 @@ private:
 public:
   Simple_container_wrapper(const Container& c = Container())
     : c(c) {}
+
+  iterator begin() { return c.begin(); }
+  iterator end()   { return c.end(); }
 
   iterator insert(const value_type& t)
   {
