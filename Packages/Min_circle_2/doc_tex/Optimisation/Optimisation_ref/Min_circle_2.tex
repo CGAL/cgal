@@ -3,7 +3,7 @@
 % Chapter: Optimisation
 % Section: 2D Smallest Enclosing Circle
 % -----------------------------------------------------------------------------
-% file  : spec/Optimisation/Min_circle_2.tex
+% file  : doc_tex/basic/Optimisation/Min_circle_2.tex
 % author: Bernd Gärtner, Sven Schönherr (sven@inf.fu-berlin.de)
 % -----------------------------------------------------------------------------
 % $Revision$
@@ -97,17 +97,18 @@ reconstructing $mc(P)$ from a given support set $S$ of $P$.
                                    bool           randomize = false,
                                    CGAL_Random&   random    = CGAL_random,
                                    Traits const&  traits    = Traits()   );}{
-        creates a variable \ccVar\ of type \ccClassTemplateName. It
-        is initialized to $mc(P)$ with $P$ being the set of points in
-        the range [\ccc{first},\ccc{last}). If \ccc{randomize} is
+        creates a variable \ccVar\ of type \ccClassTemplateName%
+\SaveSpaceByHand{$\!$}{}.
+        It is initialized to $mc(P)$ with $P$ being the set of points
+        in the range [\ccc{first},\ccc{last}). If \ccc{randomize} is
         \ccc{true}, a random permutation of $P$ is computed in
         advance, using the random numbers generator \ccc{random}.
         Usually, this will not be necessary, however, the algorithm's
         efficiency depends on the order in which the points are
         processed, and a bad order might lead to extremely poor
         performance (see example below).
-        \ccPrecond  The value type of \ccc{first} and \ccc{last} is
-        \ccc{Point}.}
+        \ccPrecond The value type of \ccc{first} and \ccc{last}
+        is \ccc{Point}.}
 
 \emph{Note:} Since most compilers do not support template member functions
 yet, we provide specialized constructors instead. In the current release
@@ -142,21 +143,24 @@ the \stl\ input stream iterator \ccc{istream_iterator<Point>}.
 
 
 \ccConstructor{ CGAL_Min_circle_2( Traits const&  traits = Traits());}{
-        creates a variable \ccVar\ of type \ccClassTemplateName.
+        creates a variable \ccVar\ of type \ccClassTemplateName%
+\SaveSpaceByHand{$\!$}{}.
         It is initialized to
         $mc(\mbox{\ccTexHtml{$\emptyset$}{&Oslash;}})$, the empty set.
         \ccPostcond  \ccVar\ccc{.is_empty()} = \ccc{true}.}
 
 \ccConstructor{ CGAL_Min_circle_2( Point  const&  p,
                                    Traits const&  traits = Traits());}{
-        creates a variable \ccVar\ of type \ccClassTemplateName.
+        creates a variable \ccVar\ of type \ccClassTemplateName%
+\SaveSpaceByHand{$\!$}{}.
         It is initialized to $mc(\{p\})$, the set $\{p\}$.
         \ccPostcond  \ccVar\ccc{.is_degenerate()} = \ccc{true}.}
 
 \ccConstructor{ CGAL_Min_circle_2( Point  const&  p1,
                                    Point  const&  p2,
                                    Traits const&  traits = Traits());}{
-        creates a variable \ccVar\ of type \ccClassTemplateName.
+        creates a variable \ccVar\ of type \ccClassTemplateName%
+\SaveSpaceByHand{$\!$}{}.
         It is initialized to $mc(\{p1,p2\})$, the circle with diameter
         equal to the segment connecting $p1$ and $p2$.}
 
@@ -164,7 +168,8 @@ the \stl\ input stream iterator \ccc{istream_iterator<Point>}.
                                    Point  const&  p2,
                                    Point  const&  p3,
                                    Traits const&  traits = Traits());}{
-        creates a variable \ccVar\ of type \ccClassTemplateName.
+        creates a variable \ccVar\ of type \ccClassTemplateName%
+\SaveSpaceByHand{$\!$}{}.
         It is initialized to $mc(\{p1,p2,p3\})$.}
 
 \ccUnchecked
@@ -201,7 +206,9 @@ the \stl\ input stream iterator \ccc{istream_iterator<Point>}.
 
 \ccGlueBegin
 \ccMemberFunction{ Support_point_iterator  support_points_begin() const;}{
-        returns an iterator referring to the first support point of \ccVar.}
+        returns an iterator referring to the first support point of
+\linebreakByHand
+                                                                    \ccVar.}
 %
 \ccMemberFunction{ Support_point_iterator  support_points_end() const;}{
         returns the corresponding past-the-end iterator.}
@@ -225,10 +232,13 @@ bounded side, i.e.\ its unbounded side equals the whole plane $\E_2$.
 
 \ccMemberFunction{ CGAL_Bounded_side
                    bounded_side( Point const& p) const;}{
-        returns \ccc{CGAL_ON_BOUNDED_SIDE},\ccTexHtml{$\:$}{ }%
-        \ccc{CGAL_ON_BOUNDARY}, or \ccc{CGAL_ON_UNBOUNDED_SIDE}
-        iff \ccc{p} lies properly inside, on the boundary, or properly
-        outside of \ccVar, resp.}
+        returns \ccc{CGAL_ON_BOUNDED_SIDE},%
+\SaveSpaceByHand{}{ }%
+                                            \ccc{CGAL_ON_BOUNDARY}%
+\SaveSpaceByHand{$\!$}{},
+                                                                    or
+        \ccc{CGAL_ON_UNBOUNDED_SIDE} iff \ccc{p} lies properly inside,
+        on the boundary, or properly outside of \ccVar, resp.}
 
 \ccMemberFunction{ bool  has_on_bounded_side( Point const& p) const;}{
         returns \ccc{true}, iff \ccc{p} lies properly inside \ccVar.}

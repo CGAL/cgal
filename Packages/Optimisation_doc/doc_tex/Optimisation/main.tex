@@ -2,22 +2,25 @@
 % The CGAL Reference Manual
 % Chapter: Optimisation
 % -----------------------------------------------------------------------------
-% file  : spec/Optimisation/Optimisation.tex
+% file  : doc_tex/basic/Optimisation/main.tex
 % author: Bernd Gärtner, Sven Schönherr (sven@inf.fu-berlin.de)
 % -----------------------------------------------------------------------------
 % $Revision$
 % $Date$
 % =============================================================================
 
-\newcommand{\SaveSpaceByHand}[1]{}
 \newcommand{\ccSetThreeColumnsByHand}{\ccSetThreeColumns}
+\newcommand{\linebreakByHand}{\ccTexHtml{\\}{}}
+\newcommand{\SaveSpaceByHand}[2]{\ccTexHtml{#1}{#2}}
 
 \chapter{Optimisation} \label{Optimisation}
-\RCSdef{\OptRCSRev}{$Revision$}
 \RCSdefDate{\OptRCSDate}{$Date$}
-\ccChapterSubTitle{\OptRCSRev \quad \OptRCSDate} \\[1ex]
-\ccChapterAuthor{Bernd Gärtner} \\
+
+\ccChapterRelease{Release: 1.2 \quad \OptRCSDate}
+
+\ccChapterAuthor{Bernd Gärtner} \par
 \ccChapterAuthor{Sven Schönherr}
+
 \ccTexHtml{\thispagestyle{empty}}{}
 
 \section{Introduction}
@@ -36,7 +39,7 @@ while maintaining the smallest enclosing circle resp.\ ellipse.
 
 \subsubsection*{Traits Class}
 The class templates are parameterized with a traits class which
-defines the abstract interface between the optimisation algorithma and
+defines the abstract interface between the optimisation algorithm and
 the primitives it uses. We provide a traits class implementation that
 interfaces the optimisation algorithms with the \cgal\ kernel. It is
 presented in Section~\ref{sec:opt_traits_impl}. In addition, we

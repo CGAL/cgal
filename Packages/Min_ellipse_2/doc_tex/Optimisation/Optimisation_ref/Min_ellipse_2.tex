@@ -3,7 +3,7 @@
 % Chapter: Optimisation
 % Section: 2D Smallest Enclosing Ellipse
 % -----------------------------------------------------------------------------
-% file:   spec/Optimisation/Min_ellipse_2.tex
+% file:   doc_tex/basic/Optimisation/Min_ellipse_2.tex
 % author: Bernd Gärtner, Sven Schönherr (sven@inf.fu-berlin.de)
 % -----------------------------------------------------------------------------
 % $Revision$
@@ -99,18 +99,19 @@ useful for reconstructing $me(P)$ from a given support set $S$ of $P$.
                                    CGAL_Random&   random    = CGAL_random,
                                    Traits const&  traits    = Traits()   );}{
         creates
-\SaveSpaceByHand{a}
-                  variable \ccVar\ of type \ccClassTemplateName. It
-        is initialized to $mc(P)$ with $P$ being the set of points in
-        the range [\ccc{first},\ccc{last}). If \ccc{randomize} is
+\SaveSpaceByHand{}{a}
+                  variable \ccVar\ of type \ccClassTemplateName%
+\SaveSpaceByHand{$\!$}{}.
+        It is initialized to $mc(P)$ with $P$ being the set of points
+        in the range [\ccc{first},\ccc{last}). If \ccc{randomize} is
         \ccc{true}, a random permutation of $P$ is computed in
         advance, using the random numbers generator \ccc{random}.
         Usually, this will not be necessary, however, the algorithm's
         efficiency depends on the order in which the points are
         processed, and a bad order might lead to extremely poor
         performance (see example below).
-        \ccPrecond  The value type of \ccc{first} and \ccc{last} is
-        \ccc{Point}.}
+        \ccPrecond The value type of \ccc{first} and \ccc{last}
+        is \ccc{Point}.}
 
 \emph{Note:} Since most compilers do not support template member functions
 yet, we provide specialized constructors instead. In the current release
@@ -146,8 +147,9 @@ the \stl\ input stream iterator \ccc{istream_iterator<Point>}.
 
 \ccConstructor{ CGAL_Min_ellipse_2( Traits const& traits = Traits());}{
         creates
-\SaveSpaceByHand{a}
-                  variable \ccVar\ of type \ccClassTemplateName.
+\SaveSpaceByHand{}{a}
+                  variable \ccVar\ of type \ccClassTemplateName%
+\SaveSpaceByHand{$\!$}{}.
         It is initialized to
         $me(\mbox{\ccTexHtml{$\emptyset$}{&Oslash;}})$, the empty set.
         \ccPostcond \ccVar\ccc{.is_empty()} = \ccc{true}.}
@@ -155,6 +157,9 @@ the \stl\ input stream iterator \ccc{istream_iterator<Point>}.
 \ccConstructor{ CGAL_Min_ellipse_2( Point  const&  p,
                                     Traits const&  traits = Traits());}{
         creates
+\SaveSpaceByHand{}{a}
+                  variable \ccVar\ of type \ccClassTemplateName%
+\SaveSpaceByHand{$\!$}{}.
 \SaveSpaceByHand{a}
                   variable \ccVar\ of type \ccClassTemplateName.
         It is initialized to $me(\{p\})$, the set $\{p\}$.
@@ -164,8 +169,9 @@ the \stl\ input stream iterator \ccc{istream_iterator<Point>}.
                                     Point  const&  q,
                                     Traits const&  traits = Traits());}{
         creates
-\SaveSpaceByHand{a}
-                  variable \ccVar\ of type \ccClassTemplateName.
+\SaveSpaceByHand{}{a}
+                  variable \ccVar\ of type \ccClassTemplateName%
+\SaveSpaceByHand{$\!$}{}.
         It is initialized to $me(\{p,q\})$, the set
         $\{ (1-\lambda)p + \lambda q \mid 0 \leq \lambda \leq 1 \}$.
         \ccPostcond \ccVar\ccc{.is_degenerate()} = \ccc{true}.}
@@ -175,8 +181,9 @@ the \stl\ input stream iterator \ccc{istream_iterator<Point>}.
                                     Point  const&  p3,
                                     Traits const&  traits = Traits());}{
         creates
-\SaveSpaceByHand{a}
-                  variable \ccVar\ of type \ccClassTemplateName.
+\SaveSpaceByHand{}{a}
+                  variable \ccVar\ of type \ccClassTemplateName%
+\SaveSpaceByHand{$\!$}{}.
         It is initialized to $me(\{p1,p2,p3\})$.}
 
 \ccConstructor{ CGAL_Min_ellipse_2( Point  const&  p1,
@@ -185,8 +192,9 @@ the \stl\ input stream iterator \ccc{istream_iterator<Point>}.
                                     Point  const&  p4,
                                     Traits const&  traits = Traits());}{
         creates
-\SaveSpaceByHand{a}
-                  variable \ccVar\ of type \ccClassTemplateName.
+\SaveSpaceByHand{}{a}
+                  variable \ccVar\ of type \ccClassTemplateName%
+\SaveSpaceByHand{$\!$}{}.
         It is initialized to $me(\{p1,p2,p3,p4\})$.}
 
 \ccConstructor{ CGAL_Min_ellipse_2( Point  const&  p1,
@@ -196,8 +204,9 @@ the \stl\ input stream iterator \ccc{istream_iterator<Point>}.
                                     Point  const&  p5,
                                     Traits const&  traits = Traits());}{
         creates
-\SaveSpaceByHand{a}
-                  variable \ccVar\ of type \ccClassTemplateName.
+\SaveSpaceByHand{}{a}
+                  variable \ccVar\ of type \ccClassTemplateName%
+\SaveSpaceByHand{$\!$}{}.
         It is initialized to $me(\{p1,p2,p3,p4,p5\})$.}
 
 \ccUnchecked
@@ -233,15 +242,21 @@ the \stl\ input stream iterator \ccc{istream_iterator<Point>}.
 
 \ccGlueBegin
 \ccMemberFunction{ Support_point_iterator  support_points_begin() const;}{
-        returns an iterator referring to the first support point of \ccVar.}
+        returns an iterator referring to the first support point of
+\linebreakByHand
+                                                                    \ccVar.}
 %
 \ccMemberFunction{ Support_point_iterator  support_points_end() const;}{
         returns the corresponding past-the-end iterator.}
 \ccGlueEnd
 
 \ccMemberFunction{ Point const& support_point( int i) const;}{
-        returns the \ccc{i}-th support point of \ccVar. Between two
-        modifying operations (see below) any call to
+        returns the \ccc{i}-th support point of \ccVar%
+\SaveSpaceByHand{$\!$}{}.
+                                                        Between two
+        modifying operations (see
+\SaveSpaceByHand{$\!$}{}
+                                  below) any call to
         \ccVar\ccc{.support_point(i)} with the same \ccc{i} returns
         the same point.
         \ccPrecond $0 \leq i< \mbox{\ccVar\ccc{.number_of_support_points()}}$.}
@@ -257,10 +272,13 @@ bounded side, i.e.\ its unbounded side equals the whole plane $\E_2$.
 
 \ccMemberFunction{ CGAL_Bounded_side
                    bounded_side( Point const& p) const;}{
-        returns \ccc{CGAL_ON_BOUNDED_SIDE},\ccTexHtml{$\:$}{ }%
-        \ccc{CGAL_ON_BOUNDARY}, or \ccc{CGAL_ON_UNBOUNDED_SIDE}
-        iff \ccc{p} lies properly inside, on the boundary, or properly
-        outside of \ccVar, resp.}
+        returns \ccc{CGAL_ON_BOUNDED_SIDE},%
+\SaveSpaceByHand{}{ }%
+                                            \ccc{CGAL_ON_BOUNDARY}%
+\SaveSpaceByHand{$\!$}{},
+                                                                    or
+        \ccc{CGAL_ON_UNBOUNDED_SIDE} iff \ccc{p} lies properly inside,
+        on the boundary, or properly outside of \ccVar, resp.}
 
 \ccMemberFunction{ bool  has_on_bounded_side( Point const& p) const;}{
         returns \ccc{true}, iff \ccc{p} lies properly inside \ccVar.}
@@ -340,6 +358,9 @@ An object \ccVar\ is valid, iff
   \item \ccVar\ is the smallest ellipse spanned by its support set $S$, and
   \item $S$ is minimal, i.e.\ no support point is redundant.
 \end{itemize}
+\emph{Note:} In this release only the first item is considered by the
+validity check.
+
 Using the traits class implementation for the \cgal\ kernel with exact
 arithmetic as described in Section~\ref{sec:opt_traits_impl}
 guarantees validity of \ccVar. The following function is mainly
@@ -349,11 +370,12 @@ correct.
 \begin{ccAdvanced}
 \ccMemberFunction{ bool is_valid( bool verbose = false,
                                   int  level   = 0    ) const;}{
-        returns \ccc{true}, iff \ccVar\ is valid. If \ccc{verbose}
-        is \ccc{true}, some messages concerning the performed checks
-        are written to standard error stream. The second parameter
-        \ccc{level} is not used, we provide it only for consistency
-        with interfaces of other classes.}
+        returns \ccc{true}, iff \ccVar\ contains all points of its
+        defining set $P$. If \ccc{verbose} is \ccc{true}, some
+        messages concerning the performed checks are written to
+        standard error stream. The second parameter \ccc{level} is not
+        used, we provide it only for consistency with interfaces of
+        other classes.}
 \end{ccAdvanced}
 
 % -----------------------------------------------------------------------------
@@ -392,7 +414,7 @@ correct.
 
 We implement the algorithm of Welzl, with move-to-front
 heuristic~\cite{w-sedbe-91a}, using the primitives as described
-in~\cite{gs-epsee-97,gs-seefe-97}. If randomization is chosen, the
+in~\cite{gs-epsee-97,gs-seefe-97a}. If randomization is chosen, the
 creation time is almost always linear in the number of points. Access
 functions and predicates take constant time, inserting a point might
 take up to linear time, but substantially less than computing the new
@@ -402,10 +424,33 @@ check for validity each takes linear time.
 % -----------------------------------------------------------------------------
 \ccExample
 
-To illustrate the creation of \ccClassTemplateName\ and to show that
-randomization can be useful in certain cases, we give an example.
+To illustrate the creation of \ccClassTemplateName, we give an example.
 
-\ldots
+\begin{cprog}
+  #include <CGAL/Gmpz.h>
+  #include <CGAL/Homogeneous.h>
+  #include <CGAL/Point_2.h>
+  #include <CGAL/Optimisation_traits_2.h>
+  #include <CGAL/Min_ellipse_2.h>
+
+  typedef  CGAL_Gmpz                      NT;
+  typedef  CGAL_Homogeneous<NT>           R;
+  typedef  CGAL_Point_2<R>                Point;
+  typedef  CGAL_Optimisation_traits_2<R>  Traits;
+  typedef  CGAL_Min_ellipse_2<Traits>     Min_ellipse;
+
+  int          n = 1000;
+  Point*       P = new Point[ n];
+
+  for ( int i = 0; i < n; ++i)
+      P[ i] = Point( (i%2 == 0 ? i : -i), 0);
+  /* (0,0), (-1,0), (2,0), (-3,0), ... */
+
+  Min_ellipse  me1( P, P+n);           /* very slow */
+  Min_ellipse  me2( P, P+n, true);     /* fast      */
+
+  delete[] P;
+\end{cprog}
 
 \end{ccClassTemplate}
 
