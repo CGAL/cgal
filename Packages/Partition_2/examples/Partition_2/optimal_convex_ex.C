@@ -25,14 +25,12 @@ typedef CGAL::Partition_is_valid_traits_2<Traits, Is_convex_2>
 typedef CGAL::Creator_uniform_2<int, Point_2>              Creator;
 typedef CGAL::Random_points_in_square_2<Point_2, Creator> Point_generator;
 
-
 int main()
 {
    Polygon_2             polygon;
    Polygon_list          partition_polys;
    Traits                partition_traits;
    Validity_traits       validity_traits;
-
    CGAL::random_polygon_2(50, std::back_inserter(polygon), 
                           Point_generator(100));
    CGAL::optimal_convex_partition_2(polygon.vertices_begin(), 
