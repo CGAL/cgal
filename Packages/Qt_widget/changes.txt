@@ -1,3 +1,9 @@
+1.3.31 - 03/06/2003 (rursu)
+---------------------------
+	- written demo HowTo for Nef_2 polyhedron
+	- layers that create objects know about the ESC key
+	- added doc for Qt_widget_history clas.
+
 1.3.30 - 16/05/2003 (rursu)
 -------------------
 	radu:
