@@ -2733,7 +2733,7 @@ check_CGAL_INSTALL_VERSION()
 
 check_COMPILER()
 {
-    _check_comp_executable `quote \`compiler_bin\``
+    #_check_comp_executable "`compiler_bin`"
     return 1
 }
 
@@ -6331,7 +6331,7 @@ case ${_WHAT_TO_DO} in
 	${_printf} "%s\n" "Settings from Command Line:"
 	${_printf} "%s\n" \
 	    "--------------------------------------------------------"
-	_check_comp_executable ${COMPILER}
+	_check_comp_executable "${COMPILER}"
 	INSTALL_LOGFILE_REDIRECTION='>/dev/null'
 	COMPILER="`compiler_absolute ${COMPILER}`"
 	INSTALL_LOGFILE_REDIRECTION='|print_with_indent'
