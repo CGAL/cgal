@@ -1,0 +1,45 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Pm_bounding_box_traits.tex (Planar_map)
+% +------------------------------------------------------------------------+
+% | 
+% | Package: pm (Planar_map_2)
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+%sweep_to_produce_planar_map_subcurves
+\begin{ccRefFunction}{sweep_to_produce_planar_map_subcurves<Curve_iterator,Traits,Containe>(Curve_iterator curves_begin, Curve_iterator curves_end, Container &subcurves, bool overlapping = false);}
+
+\ccCreationVariable{sweep_to_produce_planar_map_subcurves}
+
+\ccDefinition
+\ccc{sweep_to_produce_planar_map_subcurves} is a global function defined for reporting all the  interior non intersecting subcurves induced by the curves given in the range \ccStyle{[curves_begin, curves_end)}. The parameter \ccStyle{subcurves} is a container which will evantually hold all the reported subcurves.
+\ccc{sweep_to_produce_planar_map_subcurve} supports curves which are interior intersect, overlap or non x-monotone, and hence the user may provide his curves as input without any resriction of the kind mentioned above. When providing overlapping curves as input the user can make a choice by the boolean parameter \ccStyle{overlapping} whether the output he will get will contain each overlapping subcurve only once or that the reported subcurves will have each overlapping subcurve per each original curve it created of. The default choice provides the first possibility.
+
+
+\end{ccRefFunction} % sweep_to_produce_planar_map_subcurves
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+
+
+
+
+
+
+
+
+
+
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "Pm_file_scanner"
+%%% End: 
