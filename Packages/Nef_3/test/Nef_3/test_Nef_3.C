@@ -235,6 +235,13 @@ private:
     }
   }
 
+  void newell() {
+
+    Nef_polyhedron N = load_off("data/star.off");
+    CGAL_assertion(N.is_valid(1,0));    
+    CGAL_assertion(does_nef3_equals_file(N,"newell.nef3.SH")); 
+  }
+
   void construction(char* suffix) {
 
     if(suffix[1] == 'E') {
@@ -418,148 +425,146 @@ private:
 
   void intersection(char* suffix) {
 
-    if(suffix[1] == 'E') {
-      Nef_polyhedron N = load_nef3("star.nef3",suffix);
-      SNC_explorer E(N.SNCexplorer());
-      SNC_intersection is(*E.sncp());
+    Nef_polyhedron N = load_nef3("star.nef3.SH");
+    SNC_explorer E(N.SNCexplorer());
+    SNC_intersection is(*E.sncp());
 
-      Point_3 p;
-      
-      CGAL_nef3_assertion(!is.does_contain_internally(
+    Point_3 p;
+    
+    CGAL_nef3_assertion(!is.does_contain_internally(
 			    Segment_3(Point_3(0,0,0), Point_3(2,0,0)),
 			    Point_3(0,0,0)));
-      CGAL_nef3_assertion(!is.does_contain_internally(
+    CGAL_nef3_assertion(!is.does_contain_internally(
 			    Segment_3(Point_3(0,0,0), Point_3(2,0,0)),
 			    Point_3(2,0,0)));
-      CGAL_nef3_assertion(!is.does_contain_internally(
+    CGAL_nef3_assertion(!is.does_contain_internally(
 			    Segment_3(Point_3(0,0,0), Point_3(2,0,0)),
 			    Point_3(3,0,0)));
-      CGAL_nef3_assertion(!is.does_contain_internally(
+    CGAL_nef3_assertion(!is.does_contain_internally(
 			    Segment_3(Point_3(0,0,0), Point_3(2,0,0)),
 			    Point_3(-1,0,0)));
-      CGAL_nef3_assertion(!is.does_contain_internally(
+    CGAL_nef3_assertion(!is.does_contain_internally(
 			    Segment_3(Point_3(0,0,0), Point_3(2,0,0)),
 			    Point_3(1,1,0)));
-      CGAL_nef3_assertion(!is.does_contain_internally(
+    CGAL_nef3_assertion(!is.does_contain_internally(
 			    Segment_3(Point_3(0,0,0), Point_3(2,0,0)),
 			    Point_3(7,25,11)));
-      CGAL_nef3_assertion(is.does_contain_internally(
+    CGAL_nef3_assertion(is.does_contain_internally(
 			   Segment_3(Point_3(0,0,0), Point_3(2,0,0)),
 			   Point_3(1,0,0)));
 
-      CGAL_nef3_assertion(!is.does_intersect_internally(
+    CGAL_nef3_assertion(!is.does_intersect_internally(
 			   Segment_3(Point_3(0,0,0), Point_3(0,0,0)),
 		       	   Segment_3(Point_3(1,0,0), Point_3(-1,0,0)), p));
-      CGAL_nef3_assertion(!is.does_intersect_internally(
+    CGAL_nef3_assertion(!is.does_intersect_internally(
 			   Segment_3(Point_3(0,1,0), Point_3(0,-1,0)),
 		       	   Segment_3(Point_3(0,0,0), Point_3(0,0,0)), p));
-      CGAL_nef3_assertion(!is.does_intersect_internally(
+    CGAL_nef3_assertion(!is.does_intersect_internally(
 			   Segment_3(Point_3(0,0,0), Point_3(0,0,0)),
 		       	   Segment_3(Point_3(1,0,0), Point_3(1,0,0)), p));
-      CGAL_nef3_assertion(!is.does_intersect_internally(
+    CGAL_nef3_assertion(!is.does_intersect_internally(
 			   Segment_3(Point_3(0,1,0), Point_3(0,0,0)),
 		       	   Segment_3(Point_3(1,0,0), Point_3(1,0,0)), p));
-      CGAL_nef3_assertion(!is.does_intersect_internally(
+    CGAL_nef3_assertion(!is.does_intersect_internally(
 			   Segment_3(Point_3(0,0,0), Point_3(0,-1,0)),
 		       	   Segment_3(Point_3(1,0,0), Point_3(1,0,0)), p));
-      CGAL_nef3_assertion(!is.does_intersect_internally(
+    CGAL_nef3_assertion(!is.does_intersect_internally(
 			   Segment_3(Point_3(0,1,0), Point_3(0,-1,0)),
 		       	   Segment_3(Point_3(0,0,0), Point_3(-1,0,0)), p));
-      CGAL_nef3_assertion(!is.does_intersect_internally(
+    CGAL_nef3_assertion(!is.does_intersect_internally(
 			   Segment_3(Point_3(0,1,0), Point_3(0,-1,0)),
 		       	   Segment_3(Point_3(1,0,0), Point_3(0,0,0)), p));
-      CGAL_nef3_assertion(!is.does_intersect_internally(
+    CGAL_nef3_assertion(!is.does_intersect_internally(
 			   Segment_3(Point_3(0,1,0), Point_3(0,-1,1)),
 		       	   Segment_3(Point_3(1,0,0), Point_3(-1,0,0)), p));
-      CGAL_nef3_assertion(!is.does_intersect_internally(
+    CGAL_nef3_assertion(!is.does_intersect_internally(
 			   Segment_3(Point_3(0,1,0), Point_3(0,-1,0)),
 		       	   Segment_3(Point_3(0,2,0), Point_3(0,0,0)), p));
-      CGAL_nef3_assertion(!is.does_intersect_internally(
+    CGAL_nef3_assertion(!is.does_intersect_internally(
 			   Segment_3(Point_3(0,1,0), Point_3(0,-1,0)),
 		       	   Segment_3(Point_3(0,3,0), Point_3(0,1,0)), p));
-      CGAL_nef3_assertion(!is.does_intersect_internally(
+    CGAL_nef3_assertion(!is.does_intersect_internally(
 			   Segment_3(Point_3(0,1,0), Point_3(0,-1,0)),
 		       	   Segment_3(Point_3(0,4,0), Point_3(0,2,0)), p));
-      CGAL_nef3_assertion(!is.does_intersect_internally(
+    CGAL_nef3_assertion(!is.does_intersect_internally(
 			   Segment_3(Point_3(0,1,0), Point_3(0,-1,0)),
 		       	   Segment_3(Point_3(1,5,0), Point_3(1,7,0)), p));
-      CGAL_nef3_assertion(!is.does_intersect_internally(
+    CGAL_nef3_assertion(!is.does_intersect_internally(
 			   Segment_3(Point_3(0,1,0), Point_3(0,-1,0)),
 		       	   Segment_3(Point_3(1,7,0), Point_3(1,5,0)), p));
-      CGAL_nef3_assertion(!is.does_intersect_internally(
+    CGAL_nef3_assertion(!is.does_intersect_internally(
 			   Segment_3(Point_3(0,1,0), Point_3(0,-1,0)),
 		       	   Segment_3(Point_3(3,0,0), Point_3(1,0,0)), p));
-      CGAL_nef3_assertion(!is.does_intersect_internally(
+    CGAL_nef3_assertion(!is.does_intersect_internally(
 			   Segment_3(Point_3(0,1,0), Point_3(0,-1,0)),
 		       	   Segment_3(Point_3(1,0,0), Point_3(3,0,0)), p));
-      CGAL_nef3_assertion(!is.does_intersect_internally(
+    CGAL_nef3_assertion(!is.does_intersect_internally(
 			   Segment_3(Point_3(0,3,0), Point_3(0,1,0)),
 		       	   Segment_3(Point_3(1,0,0), Point_3(-1,0,0)), p));
-      CGAL_nef3_assertion(!is.does_intersect_internally(
+    CGAL_nef3_assertion(!is.does_intersect_internally(
 			   Segment_3(Point_3(0,1,0), Point_3(0,3,0)),
 		       	   Segment_3(Point_3(1,0,0), Point_3(-1,0,0)), p));
-      CGAL_nef3_assertion(!is.does_intersect_internally(
+    CGAL_nef3_assertion(!is.does_intersect_internally(
 			   Segment_3(Point_3(0,3,0), Point_3(0,1,0)),
 		       	   Segment_3(Point_3(1,0,0), Point_3(3,0,0)), p));
-      CGAL_nef3_assertion(!is.does_intersect_internally(
+    CGAL_nef3_assertion(!is.does_intersect_internally(
 			   Segment_3(Point_3(0,1,0), Point_3(0,3,0)),
 		       	   Segment_3(Point_3(1,0,0), Point_3(3,0,0)), p));
-      CGAL_nef3_assertion(!is.does_intersect_internally(
+    CGAL_nef3_assertion(!is.does_intersect_internally(
 			   Segment_3(Point_3(0,3,0), Point_3(0,1,0)),
 		       	   Segment_3(Point_3(3,0,0), Point_3(1,0,0)), p));
-      CGAL_nef3_assertion(!is.does_intersect_internally(
+    CGAL_nef3_assertion(!is.does_intersect_internally(
 			   Segment_3(Point_3(0,1,0), Point_3(0,3,0)),
 		       	   Segment_3(Point_3(3,0,0), Point_3(1,0,0)), p));
-      CGAL_nef3_assertion(is.does_intersect_internally(
+    CGAL_nef3_assertion(is.does_intersect_internally(
 			   Segment_3(Point_3(0,1,0), Point_3(0,-1,0)),
 		       	   Segment_3(Point_3(1,0,0), Point_3(-1,0,0)), p));
-      CGAL_nef3_assertion(p == Point_3(0,0,0));
+    CGAL_nef3_assertion(p == Point_3(0,0,0));
 
-      Halffacet_const_iterator hf;
+    Halffacet_const_iterator hf;
     
-      CGAL_nef3_assertion(!is.does_contain_internally(
+    CGAL_nef3_assertion(!is.does_contain_internally(
 			    E.halffacets_begin(), Point_3(0,0,0)));
-      CGAL_nef3_forall_halffacets(hf, E)
-	CGAL_nef3_assertion(!is.does_intersect_internally(
+    CGAL_nef3_forall_halffacets(hf, E)
+      CGAL_nef3_assertion(!is.does_intersect_internally(
 			    Segment_3(Point_3(-31,15,0),Point_3(-31,15,0)),hf,p));
-      CGAL_nef3_forall_halffacets(hf, E)
+    CGAL_nef3_forall_halffacets(hf, E)
 	CGAL_nef3_assertion(!is.does_intersect_internally(
 			    Segment_3(Point_3(-31,15,0),Point_3(-31,15,1)),hf,p));
-      CGAL_nef3_forall_halffacets(hf, E)
-	CGAL_nef3_assertion(!is.does_intersect_internally(
+    CGAL_nef3_forall_halffacets(hf, E)
+      CGAL_nef3_assertion(!is.does_intersect_internally(
 			    Segment_3(Point_3(-31,15,-1),Point_3(-31,15,0)),hf,p));
-      CGAL_nef3_forall_halffacets(hf, E)
-	CGAL_nef3_assertion(!is.does_intersect_internally(
+    CGAL_nef3_forall_halffacets(hf, E)
+      CGAL_nef3_assertion(!is.does_intersect_internally(
 			    Segment_3(Point_3(-31,15,0),Point_3(-30,15,0)),hf,p));
-      CGAL_nef3_forall_halffacets(hf, E)
-	CGAL_nef3_assertion(!is.does_intersect_internally(
+    CGAL_nef3_forall_halffacets(hf, E)
+      CGAL_nef3_assertion(!is.does_intersect_internally(
 			    Segment_3(Point_3(-32,15,-1),Point_3(-32,15,0)),hf,p));
-      CGAL_nef3_forall_halffacets(hf, E)
-	CGAL_nef3_assertion(!is.does_intersect_internally(
+    CGAL_nef3_forall_halffacets(hf, E)
+      CGAL_nef3_assertion(!is.does_intersect_internally(
 			    Segment_3(Point_3(-16,8,-1),Point_3(-16,8,0)),hf,p));
-      CGAL_nef3_forall_halffacets(hf, E)
-	CGAL_nef3_assertion(!is.does_intersect_internally(
+    CGAL_nef3_forall_halffacets(hf, E)
+      CGAL_nef3_assertion(!is.does_intersect_internally(
 			    Segment_3(Point_3(0,0,-1),Point_3(0,0,1)),hf,p));    
 
-      int i=0;
-      CGAL_nef3_forall_halffacets(hf, E) {
-	bool b = (i == 2 || i == 3);
-	CGAL_nef3_assertion( b == is.does_intersect_internally(
+    int i=0;
+    CGAL_nef3_forall_halffacets(hf, E) {
+      bool b = (i == 2 || i == 3);
+      CGAL_nef3_assertion( b == is.does_intersect_internally(
 				  Segment_3(Point_3(-31,15,-1),Point_3(-31,15,1)), 
                                   hf, p));
-	if(b) CGAL_nef3_assertion(p == Point_3(-31,15,0));
-	i++;
-      }
+      if(b) CGAL_nef3_assertion(p == Point_3(-31,15,0));
+      i++;
+    }
 
-      i=0;
-      CGAL_nef3_forall_halffacets(hf, E) {
-	bool b = (i == 4 || i == 5);
-	CGAL_nef3_assertion( b == is.does_intersect_internally(
+    i=0;
+    CGAL_nef3_forall_halffacets(hf, E) {
+      bool b = (i == 4 || i == 5);
+      CGAL_nef3_assertion( b == is.does_intersect_internally(
 				   Segment_3(Point_3(-15,7,-1), Point_3(-15,7,1)), 
                                    hf, p));
-	if(b) CGAL_nef3_assertion(p == Point_3(-15,7,0));
-	i++;
-      }
+      if(b) CGAL_nef3_assertion(p == Point_3(-15,7,0));
+      i++;
     }
   }
 
@@ -902,6 +907,7 @@ public:
   void run_test(char* suffix) {
 
     //        loadSave(suffix);
+    newell();
     //        construction(suffix); 
     //        point_location_SNC(suffix);
     //        intersection(suffix);   
@@ -909,7 +915,7 @@ public:
     //        simplification_SNC(suffix);
     //        simplification_SM(suffix);
     //	      synthesis(suffix);
-            unary_operations(suffix);
+    //        unary_operations(suffix);
     //        mark_evaluation(suffix);
   }
 
