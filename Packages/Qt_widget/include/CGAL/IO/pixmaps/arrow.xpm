@@ -39,3 +39,25 @@ static char *arrow_xpm[] = {
 "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
 "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
 };
+
+/* XPM */
+static char * arrow_small_xpm[] = {
+"16 16 2 1",
+" 	c None",
+".	c #000000",
+"                ",
+"                ",
+"    .           ",
+"    ..          ",
+"    ...         ",
+"    ....        ",
+"    .....       ",
+"    ......      ",
+"    .......     ",
+"    .. .        ",
+"    .   .       ",
+"    .   .       ",
+"         .      ",
+"         .      ",
+"                ",
+"                "};
