@@ -20,9 +20,9 @@
 
 #ifdef CGAL_USE_QT
 
-#include <CGAL/IO/Qt_widget.h>
 #include <CGAL/Bbox_2.h>
 #include <CGAL/IO/Qt_widget_tool.h>
+#include <CGAL/IO/Qt_widget.h>
 
 namespace CGAL {
 
