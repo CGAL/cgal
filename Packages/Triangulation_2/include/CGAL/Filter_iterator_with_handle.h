@@ -33,6 +33,7 @@ template <class It, class Filter, class Handle>
 class Filter_iterator_with_handle
   : public Filter_iterator<It, Filter>
 {
+  typedef Filter_iterator_with_handle<It, Filter, Handle> Self;
 public:
   typedef Filter_iterator<It, Filter> Base;
 

@@ -47,6 +47,7 @@ public:
 
   typedef typename Base::Face_handle    Face_handle;
   typedef typename Base::Vertex_handle  Vertex_handle;
+  typedef typename Base::Vertex         Vertex;
   typedef typename Base::Edge           Edge;
   typedef typename Base::Locate_type    Locate_type;
   typedef typename Base::Face_circulator       Face_circulator;
@@ -58,17 +59,17 @@ public:
 private:
   class Hidden_tester {
   public:
-    bool operator()(const Base::All_vertices_iterator&  it){
+    bool operator()(const typename Base::All_vertices_iterator&  it){
       return it->is_hidden();
     }
-    bool operator()(const Base::Finite_vertices_iterator&  it){
+    bool operator()(const typename Base::Finite_vertices_iterator&  it){
       return it->is_hidden();
     }
   };
 
   class Unhidden_tester {
   public:
-    bool operator()(const Base::Finite_vertices_iterator&  it){
+    bool operator()(const typename Base::Finite_vertices_iterator&  it){
       return ! it->is_hidden();
     }
   };
@@ -676,7 +677,8 @@ reinsert(Vertex_handle v, Face_handle start)
     fc++;
   }while(fc != done);
   v->set_face(*(faces.begin()));
-  for(std::list<Face_handle>::iterator it = faces.begin(); it != faces.end(); it++){
+  for(typename std::list<Face_handle>::iterator it = faces.begin();
+      it != faces.end(); it++){
     Face_handle fh = *it;
     int i = fh->index(vh);
     fh->set_vertex(i, v);
