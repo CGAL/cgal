@@ -30,8 +30,8 @@ LCPPDEFS+= -DUSE_LAZY_RAT
 TARGET0 := $(TARGET0)LazyRat
 LOBJDIR :=$(LOBJDIR)_lazy_rat
 else
-ifeq ($(USE_MP_FLOAT), 1)
-LCPPDEFS+= -DUSE_MP_FLOAT
+ifeq ($(USE_QUOTIENT_MP_FLOAT), 1)
+LCPPDEFS+= -DUSE_QUOTIENT_MP_FLOAT
 TARGET0 := $(TARGET0)MPFloat
 LOBJDIR :=$(LOBJDIR)_mp_float
 else
@@ -49,6 +49,12 @@ ifeq ($(USE_LAZY_GMPQ), 1)
 LCPPDEFS+= -DUSE_LAZY_GMPQ
 TARGET0 := $(TARGET0)LazyGmpq
 LOBJDIR :=$(LOBJDIR)_lazy_gmpq
+else
+ifeq ($(USE_DOUBLE), 1)
+LCPPDEFS+= -DUSE_DOUBLE
+TARGET0 := $(TARGET0)Double
+LOBJDIR :=$(LOBJDIR)_double
+endif
 endif
 endif
 endif
@@ -79,7 +85,8 @@ endif
 TARGET0 := $(TARGET0)$(EXEFILESUFFIX)
 LOBJDIR := $(LOBJDIR)_$(COMPILER)$(COMPILER_VER)
 
-LCPPINCS = -I$(BASEDIR)/../../include
+LCPPINCS = -I$(BASEDIR)
+LCPPINCS+= -I$(BASEDIR)/../../include
 LCPPINCS+= -I$(BASEDIR)/../../../Benchmark/include
 LCPPINCS+= -I$(BASEDIR)/../../../Planar_map/include
 LCPPINCS+= -I$(BASEDIR)/../../../Trapezoidal_decomposition/include
@@ -99,7 +106,7 @@ lazy_rat:
 	$(MAKEF) "USE_LAZY_RAT=1"
 
 quotient_mp_float:
-	$(MAKEF) "USE_MP_FLOAT=1"
+	$(MAKEF) "USE_QUOTIENT_MP_FLOAT=1"
 
 lazy_quotient_mp_float:
 	$(MAKEF) "USE_LAZY_QUOTIENT=1"
@@ -109,6 +116,9 @@ gmpq:
 
 lazy_gmpq:
 	$(MAKEF) "USE_LAZY_GMPQ=1"
+
+double:
+	$(MAKEF) "USE_DOUBLE=1"
 
 # 
 insert_tight:
@@ -132,7 +142,7 @@ lazy_rat_cached_traits:
 	$(MAKEF) "USE_LAZY_RAT=1" "USE_CACHED_TRAITS=1"
 
 quotient_mp_float_cached_traits:
-	$(MAKEF) "USE_MP_FLOAT=1" "USE_CACHED_TRAITS=1"
+	$(MAKEF) "USE_QUOTIENT_MP_FLOAT=1" "USE_CACHED_TRAITS=1"
 
 lazy_quotient_mp_float_cached_traits:
 	$(MAKEF) "USE_LAZY_QUOTIENT=1" "USE_CACHED_TRAITS=1"
@@ -143,13 +153,17 @@ gmpq_cached_traits:
 lazy_gmpq_cached_traits:
 	$(MAKEF) "USE_LAZY_GMPQ=1" "USE_CACHED_TRAITS=1"
 
+double_cached_traits:
+	$(MAKEF) "USE_DOUBLE=1" "USE_CACHED_TRAITS=1"
+
 all_non_cached: cartesian \
 	leda_kernel \
 	lazy_rat \
 	quotient_mp_float \
 	lazy_quotient_mp_float \
 	gmpq \
-	lazy_gmpq
+	lazy_gmpq \
+	double
 
 all_cached: cached_traits \
 	leda_kernel_cached_traits \
@@ -157,7 +171,8 @@ all_cached: cached_traits \
 	lazy_rat_cached_traits \
 	lazy_quotient_mp_float_cached_traits \
 	gmpq_cached_traits \
-	lazy_gmpq_cached_traits
+	lazy_gmpq_cached_traits \
+	double_cached_traits
 
 # install:
 
@@ -171,7 +186,7 @@ lazy_rat_inst:
 	$(MAKEF) "USE_LAZY_RAT=1" install
 
 quotient_mp_float_inst:
-	$(MAKEF) "USE_MP_FLOAT=1" install
+	$(MAKEF) "USE_QUOTIENT_MP_FLOAT=1" install
 
 lazy_quotient_mp_float_inst:
 	$(MAKEF) "USE_LAZY_QUOTIENT=1" install
@@ -181,6 +196,9 @@ gmpq_inst:
 
 lazy_gmpq_inst:
 	$(MAKEF) "USE_LAZY_GMPQ=1" install
+
+double_inst:
+	$(MAKEF) "USE_DOUBLE=1" install
 
 # 
 insert_tight_inst:
@@ -204,7 +222,7 @@ lazy_rat_cached_traits_inst:
 	$(MAKEF) "USE_LAZY_RAT=1" "USE_CACHED_TRAITS=1" install
 
 quotient_mp_float_cached_traits_inst:
-	$(MAKEF) "USE_MP_FLOAT=1" "USE_CACHED_TRAITS=1" install
+	$(MAKEF) "USE_QUOTIENT_MP_FLOAT=1" "USE_CACHED_TRAITS=1" install
 
 lazy_quotient_mp_float_cached_traits_inst:
 	$(MAKEF) "USE_LAZY_QUOTIENT=1" "USE_CACHED_TRAITS=1" install
@@ -215,13 +233,18 @@ gmpq_cached_traits_inst:
 lazy_gmpq_cached_traits_inst:
 	$(MAKEF) "USE_LAZY_GMPQ=1" "USE_CACHED_TRAITS=1" install
 
+double_cached_traits_inst:
+	$(MAKEF) "USE_DOUBLE=1" "USE_CACHED_TRAITS=1" install
+
+#
 all_non_cached_inst: cartesian_inst \
 	leda_kernel_inst \
 	quotient_mp_float_inst \
 	lazy_rat_inst \
 	lazy_quotient_mp_float_inst \
 	gmpq_inst \
-	lazy_gmpq_inst
+	lazy_gmpq_inst \
+	double_inst
 
 all_cached_inst: cached_traits_inst \
 	leda_kernel_cached_traits_inst \
@@ -229,4 +252,5 @@ all_cached_inst: cached_traits_inst \
 	lazy_rat_cached_traits_inst \
 	lazy_quotient_mp_float_cached_traits_inst \
 	gmpq_cached_traits_inst \
-	lazy_gmpq_cached_traits_inst
+	lazy_gmpq_cached_traits_inst \
+	double_cached_traits_inst

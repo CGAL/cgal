@@ -21,13 +21,15 @@
 #elif defined(USE_LAZY_GMPQ)
 #include <CGAL/Gmpq.h>
 #include <CGAL/Lazy_exact_nt.h>
-#elif defined(USE_MP_FLOAT)
+#elif defined(USE_QUOTIENT_MP_FLOAT)
 #include <CGAL/MP_Float.h>
 #include <CGAL/Quotient.h>
 #elif defined(USE_LAZY_QUOTIENT)
 #include <CGAL/MP_Float.h>
 #include <CGAL/Quotient.h>
 #include <CGAL/Lazy_exact_nt.h>
+#elif defined(USE_DOUBLE)
+#include "Double.h"
 #else
 #include <CGAL/leda_rational.h>
 #endif
@@ -54,7 +56,7 @@ typedef NT                                              WNT;
 typedef CGAL::Gmpq                                      NT;
 typedef CGAL::Lazy_exact_nt<NT>                         WNT;
 #define NUMBER_TYPE "Lazy Gmpq"
-#elif defined(USE_MP_FLOAT)
+#elif defined(USE_QUOTIENT_MP_FLOAT)
 typedef CGAL::Quotient<CGAL::MP_Float>                  NT;
 typedef NT                                              WNT;
 #define NUMBER_TYPE "Quotient MP Float"
@@ -62,6 +64,10 @@ typedef NT                                              WNT;
 typedef CGAL::Quotient<CGAL::MP_Float>                  NT;
 typedef CGAL::Lazy_exact_nt<NT>                         WNT;
 #define NUMBER_TYPE "Lazy Quotient MP Float"
+#elif defined(USE_DOUBLE)
+typedef CGAL::Double                                    NT;
+typedef NT                                              WNT;
+#define NUMBER_TYPE "Double"
 #else
 typedef leda_rational                                   NT;
 typedef NT                                              WNT;
