@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (c) 1998 The CGAL Consortium
+// Copyright (c) 1998,1999 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -29,7 +29,7 @@
 
 #include <iostream.h>	// Because we declare operator<< and >>.
 #include <CGAL/enum.h>  // Because we overload CGAL_{sign,compare,abs,min,max}
-#include <CGAL/IO/io_tags.h>            // For CGAL_io_Operator().
+#include <CGAL/IO/io_tags.h>            // For CGAL_io_tag().
 #include <CGAL/number_type_tags.h>      // For CGAL_number_type_tag()
 
 // Check that the filtering stuff will work...
@@ -37,15 +37,15 @@
 #  warning CGAL_IA_NO_EXCEPTION is defined !
 #endif
 
-// CT = construction type (filtered)
-// ET = exact type, used for exact predicate evaluation
+// CT = construction type
+// ET = exact type (used for exact predicate evaluation)
 // (CGAL_Interval_nt_advanced) = used for filtering.
 //
 // 2 exact conversion functions must be provided:
 // - CGAL_convert_to<CGAL_Interval_nt_advanced> (CT)
-//     which gives an interval surely containing the CT value.
+//     which gives an interval SURELY containing the CT value.
 // - CGAL_convert_to<ET> (CT)
-//     which converts _exactly_ the CT value to ET.
+//     which converts EXACTLY the CT value to ET.
 
 template <class CT, class ET>
 struct CGAL_Filtered_exact
@@ -55,12 +55,23 @@ struct CGAL_Filtered_exact
   CGAL_Filtered_exact () {}
   template <class NT>
   CGAL_Filtered_exact (const NT & nt) : value(nt)  {}
+  // The following one for Quotient<>.
+  template <class NT>
+  CGAL_Filtered_exact (const NT & num, const NT & den) : value(num, den)  {}
   CGAL_Filtered_exact (const CGAL_Filtered_exact<CT,ET> & fil)
       : value(fil.value)  {}
   // CGAL_Filtered_exact (const double & d)	: value(d)  {}
   // CGAL_Filtered_exact (const CT & ct)	: value(ct) {}
 
   typedef CGAL_Filtered_exact<CT,ET> Fil;
+  typedef CGAL_Interval_nt_advanced IA;
+
+  // The two conversion functions are provided by the global scope.
+  // Note that we could "cache" interval_value() [will be done].
+  IA interval() const { return CGAL_convert_to<IA>(value); }
+  ET exact()    const { return CGAL_convert_to<ET>(value); }
+  // This one should not be needed, at least for now.
+  // CT stored_value()   const { return value; }
 
   // Check Stroustrup if it's ok for assignment/ctors.
   Fil& operator= (const Fil& fil) { value = fil.value; return *this; }
