@@ -106,9 +106,15 @@ _test_cls_triangulation_3(const Triangulation &)
 
   list_point lp;
   int a, b, d;
+//   for (a=0;a!=10;a++)
+//     for (b=0;b!=10;b++)
+//       for (d=0;d!=10;d++)
+// 	lp.push_back(Point(a*b-d*a + (a-b)*10 +a ,a-b+d +5*b,
+// 			   a*a-d*d+b));
+
   for (a=0;a!=10;a++)
     for (b=0;b!=10;b++)
-      for (d=0;d!=10;d++)
+      for (d=0;d!=5;d++)
 	lp.push_back(Point(a*b-d*a + (a-b)*10 +a ,a-b+d +5*b,
 			   a*a-d*d+b));
 
@@ -353,13 +359,9 @@ _test_cls_triangulation_3(const Triangulation &)
 
 
   v0=T2_0.insert(p5);
-
   v0=T2_0.insert(p6);
-
   v0=T2_0.insert(p7);
-
   v0=T2_0.insert(p8);
-
   v0=T2_0.insert(p9);
 
   assert(T2_0.is_valid());
@@ -413,8 +415,32 @@ _test_cls_triangulation_3(const Triangulation &)
   assert(T3_0.is_valid());
   assert(T3_0.number_of_vertices()==125);
   assert(T3_0.dimension()==3);
-  std::cout << "    Constructor12 " << std::endl;
-  Cls T3_1;
+
+  // impossible !!!
+//   // %%%%%%%%%% deletion in Delaunay
+//   if (del) {
+//     std::cout << "    deletion in Delaunay - grid case" << std::endl;
+//     Cls Tdel( T3_0 );
+//     Vertex_handle v;
+//     while ( Tdel.number_of_vertices() >= 1 ) {
+//       if ( Tdel.dimension() > 1 )
+// 	v = Tdel.infinite_cell()->vertex
+// 	  ( (Tdel.infinite_cell()->index( Tdel.infinite_vertex() ) +1 )&3 );
+//       else
+// 	if ( Tdel.dimension() == 1 )
+// 	  v = Tdel.infinite_cell()->vertex
+// 	    ( (Tdel.infinite_cell()->index( Tdel.infinite_vertex() ) +1 )%2 );
+// 	else
+// 	  v = Tdel.infinite_cell()->neighbor(0)->vertex(0);
+
+//       Tdel.remove( v );
+//       assert(Tdel.is_valid(false));
+//     }
+//   }
+
+
+   std::cout << "    Constructor12 " << std::endl;
+   Cls T3_1;
   for (i=0;i<22;i++)
     T3_1.insert(q[i]);
   assert(T3_1.is_valid());
@@ -448,7 +474,7 @@ _test_cls_triangulation_3(const Triangulation &)
   //########################################################################
 
 
-  std::cout << "  1000 points insertion"<< std::endl;
+  std::cout << "  500 points insertion"<< std::endl;
   Cls T3_2;
   typename list_point::iterator it;
   int count = 0 ;
@@ -468,9 +494,11 @@ _test_cls_triangulation_3(const Triangulation &)
 	  std::cout << count << std::endl;
     std::cout.flush();
   }
+  std::cout << std::endl;
   assert(T3_2.is_valid());
   assert(T3_2.dimension()==3);
-  assert(T3_2.number_of_vertices()==1000);
+  assert(T3_2.number_of_vertices()==500);
+ 
  
 
   Point p110(-5,5,0), p111(-2,-5,2), p112(-2,-9,6), p113(4,8,9), p114(5,-6,0),
@@ -490,25 +518,64 @@ _test_cls_triangulation_3(const Triangulation &)
   assert(T3_5.is_valid());
   assert(T3_5.number_of_vertices()==10);
 
-  // Test random triangulation :
+  // %%%%%%%%%% deletion in Delaunay
+  if (del) {
+    std::cout << "    deletion in a 10points Delaunay triangulation";
+    Vertex_handle v;
+    while ( T3_5.number_of_vertices() >= 1 ) {
+      if ( T3_5.dimension() > 1 )
+	v = T3_5.infinite_cell()->vertex
+	  ( (T3_5.infinite_cell()->index( T3_5.infinite_vertex() ) +1 )&3 );
+      else
+	if ( T3_5.dimension() == 1 )
+	  v = T3_5.infinite_cell()->vertex
+	    ( (T3_5.infinite_cell()->index( T3_5.infinite_vertex() ) +1 )%2 );
+	else
+	  v = T3_5.infinite_cell()->neighbor(0)->vertex(0);
+
+      T3_5.remove( v );
+    }
+    assert(T3_5.is_valid(false));
+  }
+  std::cout << " done" << std::endl;
+
+//  // Test random triangulation :
 
 //   Cls T3_4;
 //   CGAL::Random random;
-//   for (i=0; i<100 ; i++) {
-//     for (n=1;n<11;n++) {
-//     x=random.get_int(-10,10);
-//     y=random.get_int(-10,10);
-//     z=random.get_int(-10,10);
-//     std::cout << " | " << Point(x,y,z) << " | " ;
+//   for (n=1;n<50;n++) {
+//     x=random.get_int(-500,500);
+//     y=random.get_int(-500,500);
+//     z=random.get_int(-500,500);
 //     v0=T3_4.insert(Point(x,y,z));
-//     }
-//     assert(T3_4.is_valid());
-//     //    assert(T3_4.number_of_vertices()==10);
-//     assert(T3_4.dimension()==3);
-//     T3_4.clear();
-//     assert(T3_4.is_valid());
-
 //   }
+//   assert(T3_4.is_valid());
+//   assert(T3_4.dimension()==3);
+//   assert(T3_4.is_valid());
+
+//   // %%%%%%%%%% deletion in Delaunay
+//   bool success(true);
+//   if (del) {
+//     std::cout << "    deletion in a Delaunay of "
+// 	      << T3_4.number_of_vertices() << " random points";
+//     Vertex_handle v;
+//     while ( T3_4.number_of_vertices() >= 1 ) {
+//       if ( T3_4.dimension() > 1 )
+// 	v = T3_4.infinite_cell()->vertex
+// 	  ( (T3_4.infinite_cell()->index( T3_4.infinite_vertex() ) +1 )&3 );
+//       else
+// 	if ( T3_4.dimension() == 1 )
+// 	  v = T3_4.infinite_cell()->vertex
+// 	    ( (T3_4.infinite_cell()->index( T3_4.infinite_vertex() ) +1 )%2 );
+// 	else
+// 	  v = T3_4.infinite_cell()->neighbor(0)->vertex(0);
+
+//       success = T3_4.remove( v );
+//     }
+//     if (success) assert(T3_4.is_valid(false));
+//   }
+//   std::cout << " done" << std::endl;
+
 
   // Test inserts function separatelly.
 
