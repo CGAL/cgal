@@ -148,7 +148,8 @@ private:
       widget->y_real(e->y(), y);
       Point_2 p(x, y);
       Vertex_handle v = ag->nearest_neighbor(p);
-      //      RasterOp old = widget->rasterOp();   //save the initial raster mode
+      //save the initial raster mode
+      //      RasterOp old = widget->rasterOp();
       CGAL::PointStyle pstyle = widget->pointStyle();
       int psize = widget->pointSize();
       //      widget->setRasterOp(XorROP);
