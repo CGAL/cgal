@@ -1,4 +1,8 @@
 //-----------------------------------------------------------------------//
+// 2.9.1
++ Added a typename in Polygon_2_algorithms.C
+
+//-----------------------------------------------------------------------//
 // 2.9
 + Demo checks if LEDA is available. If not, it compiles but just gives
   an informative message at runtime.
