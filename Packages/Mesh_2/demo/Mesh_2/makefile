@@ -50,7 +50,8 @@ Qt_widget_style_editor.moc:  Qt_widget_style_editor.h
 Qt_widget_style_editor-aux.moc:  Qt_widget_style_editor-aux.h
 	$(QT_MOC) -o Qt_widget_style_editor-aux.moc  Qt_widget_style_editor-aux.h
 
-Qt_widget_style_editor(OBJ_EXT): Qt_widget_style_editor-aux.moc Qt_widget_style_editor.moc
+Qt_widget_style_editor$(OBJ_EXT): Qt_widget_style_editor-aux.moc Qt_widget_style_editor.moc
+
 
 Show_points.moc: Show_points.h
 	$(QT_MOC) -o Show_points.moc Show_points.h
@@ -105,8 +106,8 @@ clean: \
 		Show_points.clean \
 		Show_segments_base.clean \
 		Qt_widget_styled_layer.clean \
-		Qt_widget_style_editor.clean
-	rm -f Show_clusters.moc
+		Qt_widget_style_editor.clean 
+	rm -f Show_clusters.moc Qt_widget_style_editor-aux.moc
 
 #---------------------------------------------------------------------#
 #                    suffix rules

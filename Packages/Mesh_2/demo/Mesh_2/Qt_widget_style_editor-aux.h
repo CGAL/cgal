@@ -19,6 +19,7 @@
 // Author(s)     : Laurent Rineau
 
 #ifndef CGAL_QT_WIDGET_STYLE_EDITOR_AUX_H
+#define CGAL_QT_WIDGET_STYLE_EDITOR_AUX_H
 
 #include <qcolor.h>
 #include <qcolordialog.h>

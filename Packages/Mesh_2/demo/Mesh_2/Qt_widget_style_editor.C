@@ -119,7 +119,7 @@ void Qt_widget_style_editor::map(bool b)
 } // end namespace CGAL
 
 // moc_source_file: Qt_widget_style_editor.h
-//#include "Qt_widget_style_editor.moc"
+#include "Qt_widget_style_editor.moc"
 
 // moc_source_file: Qt_widget_style_editor-aux.h
 #include "Qt_widget_style_editor-aux.moc"
