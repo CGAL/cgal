@@ -1,3 +1,6 @@
+Version 0.9 (30 July 03) [af]
+- Fixed typo in makefile_Core
+
 Version 0.8 (4 July 03) [af]
 - Replaced CORE.lib with $(CGAL_CORE_LIB) to get it platform independent
 
