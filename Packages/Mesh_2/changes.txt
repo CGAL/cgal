@@ -1,3 +1,6 @@
+version 0.9.4 (2003/11/5) [Laurent]
+--------------------------
+o submitted to the testsuite
 
 version 0.9.4 (2003/10/9) [af]
 --------------------------
