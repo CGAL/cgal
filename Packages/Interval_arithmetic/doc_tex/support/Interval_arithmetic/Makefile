@@ -1,4 +1,6 @@
-.PHONY: dvi
+.PHONY: dvi ps
+
+ps: Interval_arithmetic.ps
 
 Interval_arithmetic.ps: dvi
 	dvips -o Interval_arithmetic.ps wrapper.dvi
