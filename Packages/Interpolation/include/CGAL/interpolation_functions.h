@@ -25,51 +25,80 @@
 
 CGAL_BEGIN_NAMESPACE 
 
+//Functor class for accessing the function values/gradients
+template< class Map >  
+struct DataAccess : public std::unary_function< typename Map::key_type,
+		    std::pair< typename Map::mapped_type, bool> > {
+  typedef typename Map::mapped_type Data_type;
+  typedef typename Map::key_type  Point;
+  
+  DataAccess< Map >(const Map& m): map(m){};
+  
+  std::pair< Data_type, bool> 
+  operator()(const Point& p) { 
+    typename Map::const_iterator mit = map.find(p);
+    if(mit!= map.end())
+      return std::make_pair(mit->second, true);
+    return std::make_pair(Data_type(), false);
+  };
+  
+  const Map& map;
+};
 
+//the interpolation functions:
 template < class ForwardIterator, class Functor>
-typename Functor::result_type 
+typename Functor::result_type::first_type
 linear_interpolation(ForwardIterator first, ForwardIterator beyond,
 		     const typename
 		     std::iterator_traits<ForwardIterator>::value_type::
-		     second_type& norm, Functor f)
+		     second_type& norm, Functor function_value)
 {  
   CGAL_precondition(norm>0);
-  typedef typename Functor::result_type Value_type;
+  typedef typename Functor::result_type::first_type Value_type;
   Value_type result(0);
-  for(; first !=beyond; first++)
-    result += (first->second/norm) * f(first->first);
-  
+  typename Functor::result_type val;
+  for(; first !=beyond; ++first){
+    val = function_value(first->first);
+    CGAL_assertion(val.second);
+    result += (first->second/norm) * val.first;
+  }
   return result;
 };
 
 
 template < class ForwardIterator, class Functor, class GradFunctor,class Gt>
-typename Functor::result_type 
+std::pair< typename Functor::result_type::first_type, bool> 
 quadratic_interpolation(ForwardIterator first, ForwardIterator beyond,  
 			const typename
 			std::iterator_traits<ForwardIterator>::
 			value_type::second_type& norm, const typename
 			std::iterator_traits<ForwardIterator>::value_type::
-			first_type& p,
-			Functor f, GradFunctor grad_f,
+			first_type& p, Functor function_value, 
+			GradFunctor function_gradient,
 			const Gt& geom_traits)
 {  
   CGAL_precondition(norm >0);
-  typedef typename Functor::result_type Value_type;
+  typedef typename Functor::result_type::first_type Value_type;
   Value_type result(0);
-  
-  for(; first !=beyond; first++)
+  typename Functor::result_type f;
+  typename GradFunctor::result_type grad;
+  for(; first !=beyond; ++first){
+    f = function_value(first->first);
+    grad = function_gradient(first->first);
+    if(!f.second || !grad.second)
+      //test is the values are correct:
+      return std::make_pair(Value_type(0), false);
     result += (first->second/norm) 
-      *( f(first->first) + grad_f(first->first)*
+      *( f.first + grad.first*
 	 geom_traits.construct_scaled_vector_object()
-	 (geom_traits.construct_vector_object()(first->first, p),0.5));
-  
-  return result;
+	 (geom_traits.construct_vector_object()(first->first, p),0.5)); 
+  }
+  return std::make_pair(result, true);
 };
 
 
 template < class ForwardIterator, class Functor, class GradFunctor, class Gt>
-typename Functor::result_type 
+std::pair< typename Functor::result_type::first_type, bool> 
 sibson_c1_interpolation(ForwardIterator first, ForwardIterator beyond,
 			const typename
 			std::iterator_traits<ForwardIterator>::
@@ -77,17 +106,25 @@ sibson_c1_interpolation(ForwardIterator first, ForwardIterator beyond,
 			norm, const typename
 			std::iterator_traits<ForwardIterator>::value_type::
 			first_type& p, 
-			Functor f, GradFunctor grad_f, 
+			Functor function, GradFunctor grad_f, 
 			const Gt& geom_traits)
 {  
   CGAL_precondition(norm >0);
-  typedef typename Functor::result_type Value_type;
+  typedef typename Functor::result_type::first_type Value_type;
   typedef typename Gt::FT   Coord_type;
 
   Coord_type term1(0), term2(term1), term3(term1), term4(term1);
   Value_type linear_int(0),gradient_int(0);
+  typename Functor::result_type f;
+  typename GradFunctor::result_type grad;
   
-  for(; first !=beyond; first++){
+  for(; first !=beyond; ++first){
+    
+    f = function_value(first->first);
+    grad = function_gradient(first->first);
+    if(!f.second || !grad.second)
+      //the values are not correct:
+      return std::make_pair(Value_type(0), false);
     
     Coord_type coeff = first->second/norm;
     Coord_type squared_dist = geom_traits.
@@ -97,7 +134,7 @@ sibson_c1_interpolation(ForwardIterator first, ForwardIterator beyond,
     if(squared_dist ==0){
       ForwardIterator it = first;
       CGAL_assertion(it++==beyond);
-      return f(first->first);
+      return std::make_pair(f.first, true);
     }
     //three different terms to mix linear and gradient
     //interpolation
@@ -105,18 +142,18 @@ sibson_c1_interpolation(ForwardIterator first, ForwardIterator beyond,
     term2 +=  coeff * squared_dist;
     term3 +=  coeff * dist;
     
-    linear_int += coeff * f(first->first);
+    linear_int += coeff * f.first;
     
     gradient_int += (coeff/dist)
-      *(f(first->first) + grad_f(first->first)*
-	geom_traits.construct_vector_object()(first->first, p));
+      * f.first + grad.first *
+      geom_traits.construct_vector_object()(first->first, p);
   }
-      
+  
   term4 = term3/ term1;
   gradient_int = gradient_int / term1;
  
-  return (term4* linear_int + term2 * gradient_int)/
-    (term4 + term2);
+  return std::make_pair((term4* linear_int + term2 * gradient_int)/
+			(term4 + term2), true);
 };
 
 //this method works with rational number types:
@@ -134,24 +171,35 @@ sibson_c1_interpolation(ForwardIterator first, ForwardIterator beyond,
 
 template < class ForwardIterator, class Functor, class GradFunctor,
   class Gt>
-typename Functor::result_type 
-sibson_c1_interpolation_square(ForwardIterator first, ForwardIterator beyond,
+std::pair< typename Functor::result_type::first_type, bool> 
+sibson_c1_interpolation_square(ForwardIterator first, ForwardIterator 
+			       beyond, const typename
+			       std::iterator_traits<ForwardIterator>::
+			       value_type::second_type& norm, 
 			       const typename
 			       std::iterator_traits<ForwardIterator>::
-			       value_type::second_type& norm, const typename
-			       std::iterator_traits<ForwardIterator>::
 			       value_type::first_type& p, 
-			       Functor f, GradFunctor grad_f, 
+			       Functor function_value, 
+			       GradFunctor function_gradient, 
 			       const Gt& geom_traits)
 {  
   CGAL_precondition(norm >0);
-  typedef typename Functor::result_type Value_type;
-  typedef typename Gt::FT               Coord_type;
+  typedef typename Functor::result_type::first_type Value_type;
+  typedef typename Gt::FT                           Coord_type;
 
   Coord_type term1(0), term2(term1), term3(term1), term4(term1);
   Value_type linear_int(0),gradient_int(0);
-
-  for(; first !=beyond; first++){
+  typename Functor::result_type f;
+  typename GradFunctor::result_type grad;
+  
+  for(; first !=beyond; ++first){
+    
+    f = function_value(first->first);
+    grad = function_gradient(first->first);
+    CGAL_assertion(f.second);
+    if(!grad.second)
+      //the gradient is not known
+      return std::make_pair(Value_type(0), false);
     
     Coord_type coeff = first->second/norm;
     Coord_type squared_dist = geom_traits.
@@ -160,7 +208,7 @@ sibson_c1_interpolation_square(ForwardIterator first, ForwardIterator beyond,
     if(squared_dist ==0){
       ForwardIterator it = first;
       CGAL_assertion(++it==beyond);
-      return f(first->first);
+      return std::make_pair(f.first,true);
     }
     //three different terms to mix linear and gradient
     //interpolation
@@ -168,25 +216,25 @@ sibson_c1_interpolation_square(ForwardIterator first, ForwardIterator beyond,
     term2 +=  coeff * squared_dist;
     term3 +=  coeff;
     
-    linear_int += coeff * f(first->first);
+    linear_int += coeff * f.first;
     
     gradient_int += (coeff/squared_dist)
-      *(f(first->first) + grad_f(first->first)*
+      *(f.first + grad.first*
 	geom_traits.construct_vector_object()(first->first, p));
   }
-      
+  
   term4 = term3/ term1;
   gradient_int = gradient_int / term1;
   
   
-  return (term4* linear_int + term2 * gradient_int)/
-    (term4 + term2);
+  return std::make_pair((term4* linear_int + term2 * gradient_int)/
+			(term4 + term2), true);
 };
 
 
 template < class RandomAccessIterator, class Functor, class
 GradFunctor, class Gt>
-typename Functor::result_type 
+std::pair< typename Functor::result_type::first_type, bool>
 farin_c1_interpolation(RandomAccessIterator first,
 		       RandomAccessIterator beyond,
 		       const typename 
@@ -194,17 +242,26 @@ farin_c1_interpolation(RandomAccessIterator first,
 		       value_type::second_type& norm, const typename
 		       std::iterator_traits<RandomAccessIterator>::
 		       value_type::first_type& p, 
-		       Functor f, GradFunctor grad_f, const Gt& geom_traits)
+		       Functor function_value, GradFunctor
+		       function_gradient, 
+		       const Gt& geom_traits)
 { 
   CGAL_precondition(norm >0);
-  typedef typename Functor::result_type  Value_type;
+  //the function value is available for all points
+  //if a gradient value is not availble: function returns false
+  typedef typename Functor::result_type::first_type  Value_type;
   typedef typename Gt::FT                Coord_type;
   
- 
-  int n= beyond - first;
-  if( n==1)
-    return f(first->first);
+  typename Functor::result_type f;
+  typename GradFunctor::result_type grad;
 
+  int n= beyond - first;
+  if( n==1){
+    f= function_value(first->first);
+    CGAL_assertion(f.second);
+    return std::make_pair(f.first, true);
+  }
+  
   //there must be one or at least three NN-neighbors:
   CGAL_assertion(n > 2);
    
@@ -213,15 +270,18 @@ farin_c1_interpolation(RandomAccessIterator first,
   Value_type result(0);
   const Coord_type fac3(3);
 
+  
   std::vector< std::vector<Value_type> > 
     ordinates(n,std::vector<Value_type>(n, Value_type(0)));
   
-  for(int i =0; i<n; i++){
+  for(int i =0; i<n; ++i){
     it = first+i;
     Coord_type coord_i_square = CGAL_NTS square(it->second);
     
-    //for later:
-    ordinates[i][i] =  f(it->first);
+    //for later: the function value of it->first:
+    f = function_value(it->first);
+    CGAL_assertion(f.second);
+    ordinates[i][i] = f.first;
     
     //control point = data point
     result += coord_i_square * it->second* ordinates[i][i];
@@ -229,11 +289,17 @@ farin_c1_interpolation(RandomAccessIterator first,
     
     //compute tangent plane control point (one 2, one 1 entry)
     Value_type res_i(0);
-    for(int j =0; j<n; j++){
+    for(int j =0; j<n; ++j){
       if(i!=j){
 	it2 = first+j;
-	//  ordinates[i][j] = (p_j - p_i) * g_i
-	ordinates[i][j] = grad_f(it->first) * 
+	
+	grad = function_gradient(it->first);
+	if(!grad.second)
+	  //the gradient is not known
+	  return std::make_pair(Value_type(0), false);
+	
+	//ordinates[i][j] = (p_j - p_i) * g_i
+	ordinates[i][j] = grad.first * 
 	  geom_traits.construct_vector_object()(it->first,it2->first);
 	
 	// a point in the tangent plane: 
@@ -247,9 +313,9 @@ farin_c1_interpolation(RandomAccessIterator first,
   }
   
   //the third type of control points: three 1 entries i,j,k
-  for(int i=0; i< n; i++)
-    for(int j=i+1; j< n; j++)
-      for(int k=j+1; k<n; k++){
+  for(int i=0; i< n; ++i)
+    for(int j=i+1; j< n; ++j)
+      for(int k=j+1; k<n; ++k){
 	// add 6* (u_i*u_j*u_k) * b_ijk
 	//  b_ijk = 1.5 * a - 0.5*c 
 	//where 
@@ -268,7 +334,7 @@ farin_c1_interpolation(RandomAccessIterator first,
     
  
   
-  return(result/(CGAL_NTS square(norm)*norm)); 
+  return std::make_pair(result/(CGAL_NTS square(norm)*norm), true); 
 }
 
 CGAL_END_NAMESPACE
