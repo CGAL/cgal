@@ -1,3 +1,6 @@
+1.92 (Susan)
+- moved doc_tex/*_ref directories up one level
+
 1.91 (Susan)
 - made changes in doc necessary to do the manual split
 
