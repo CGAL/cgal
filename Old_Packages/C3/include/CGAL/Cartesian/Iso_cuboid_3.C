@@ -48,10 +48,10 @@ Iso_cuboidC3(const Iso_cuboidC3<R CGAL_CTAG>::Point_3& p,
   FT minx, maxx, miny, maxy, minz, maxz;
   if (p.x() < q.x()) { minx = p.x(); maxx = q.x(); }
   else               { minx = q.x(); maxx = p.x(); }
-  if (p.y() < q.y()) { minx = p.y(); maxx = q.y(); }
-  else               { minx = q.y(); maxx = p.y(); }
-  if (p.z() < q.z()) { minx = p.z(); maxx = q.z(); }
-  else               { minx = q.z(); maxx = p.z(); }
+  if (p.y() < q.y()) { miny = p.y(); maxy = q.y(); }
+  else               { miny = q.y(); maxy = p.y(); }
+  if (p.z() < q.z()) { minz = p.z(); maxz = q.z(); }
+  else               { minz = q.z(); maxz = p.z(); }
   PTR = new _Twotuple<Point_3 >(Point_3(minx, miny, minz),
                                 Point_3(maxx, maxy, maxz) );
 }
@@ -191,11 +191,11 @@ Bounded_side
 Iso_cuboidC3<R CGAL_CTAG>::
 bounded_side(const Iso_cuboidC3<R CGAL_CTAG>::Point_3& p) const
 {
-  Comparison_result m = compare_dominance(p,min());
-  Comparison_result M = compare_submittance(p,max());
-  if (m == SMALLER || M == SMALLER) return ON_UNBOUNDED_SIDE;
-  if (m == LARGER  && M == LARGER)  return ON_BOUNDED_SIDE;
-  return ON_BOUNDARY;
+  if (strict_dominance(p,min()) && strict_dominance(max(),p) )
+    return ON_BOUNDED_SIDE;
+  if (dominance(p,min()) && dominance(max(),p))
+    return ON_BOUNDARY;
+  return ON_UNBOUNDED_SIDE;
 }
 
 template < class R >
