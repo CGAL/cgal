@@ -9,7 +9,7 @@
 #define Planar_ma2p_traits_wrap PMTW
 #define _List_iterator Lit
 #define bidirectional_iterator_tag Bitt
-#define Planar_map_2 Pm2
+//#define Planar_map_2 Pm2
 #define Pm_default_dcel A2dd
 #define Point_2 Pt2
 #define allocator Altr
