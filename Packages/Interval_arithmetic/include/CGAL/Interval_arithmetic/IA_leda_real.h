@@ -25,6 +25,19 @@
 
 CGAL_BEGIN_NAMESPACE
 
+#if 0
+inline // hum...
+Interval_base
+to_interval (const leda_real & z)
+{
+  Protect_FPU_rounding<> P (CGAL_FE_TONEAREST);
+  double approx = z.to_double();
+  double rel_error = z.get_double_error();
+  FPU_set_cw(CGAL_FE_UPWARD);
+  return ( Interval_nt_advanced(-rel_error,rel_error) + 1 ) * approx;
+}
+#endif
+
 inline
 Interval_nt_advanced
 convert_from_to (const Interval_nt_advanced&, const leda_real & z)

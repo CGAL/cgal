@@ -28,8 +28,17 @@ CGAL_BEGIN_NAMESPACE
 // We don't know anything about the internal RT type, so there is a risk of
 // overflow, but we can't do better than the following trivial conversion.
 
+#if 0
 template <class RT>
-inline
+Interval_base
+to_interval (const Quotient<RT> & z)
+{
+  return Interval_nt<>(CGAL::to_interval(z.numerator())) /
+	 Interval_nt<>(CGAL::to_interval(z.denominator()));
+}
+#endif
+
+template <class RT>
 Interval_nt_advanced
 convert_from_to (const Interval_nt_advanced&, const Quotient<RT> & z)
 {

@@ -25,6 +25,16 @@
 
 CGAL_BEGIN_NAMESPACE
 
+#if 0
+template <class RT>
+inline
+Interval_base
+to_interval (const Lazy_exact_nt<RT> & z)
+{
+  return z.approx();
+}
+#endif
+
 template <class RT>
 inline
 Interval_nt_advanced

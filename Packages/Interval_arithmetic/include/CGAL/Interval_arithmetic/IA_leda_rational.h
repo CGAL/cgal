@@ -29,6 +29,20 @@ CGAL_BEGIN_NAMESPACE
 // conversion.  Since LEDA types (except real) don't give information on the
 // precision of to_double(), we can't do much...
 
+#if 0
+inline // well, at that point...  big fat function.
+Interval_base
+to_interval (const leda_rational & z)
+{
+  Protect_FPU_rounding<> P (CGAL_FE_TONEAREST);
+  Interval_nt_advanced approx (z.to_double());
+  FPU_set_cw(CGAL_FE_UPWARD);
+
+  return ( (approx + Interval_base::Smallest) + Interval_base::Smallest)
+	 + Interval_base::Smallest;
+}
+#endif
+
 inline
 Interval_nt_advanced
 convert_from_to (const Interval_nt_advanced&, const leda_rational & z)

@@ -31,6 +31,18 @@ CGAL_BEGIN_NAMESPACE
 // LEDA integer's internal representation, which is not possible without
 // modifying LEDA.
 
+#if 0
+inline // ?
+Interval_base
+to_interval (const leda_integer & z)
+{
+  Protect_FPU_rounding<> P (CGAL_FE_TONEAREST);
+  Interval_nt_advanced approx (z.to_double());
+  FPU_set_cw(CGAL_FE_UPWARD);
+  return approx + Interval_base::Smallest;
+}
+#endif
+
 inline
 Interval_nt_advanced
 convert_from_to (const Interval_nt_advanced&, const leda_integer & z)

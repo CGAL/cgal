@@ -31,8 +31,20 @@ CGAL_BEGIN_NAMESPACE
 // We choose the lazy approach, which is good enough: we take the double
 // approximation, which is guaranted 1 bit error max (when rounding to
 // nearest), and return an interval around this value.
-// It should be much faster to have a low level function especially designed
+// It could be better to have a low level function especially designed
 // for that using rounding to infinity.
+
+#if 0
+inline // better in libCGAL...
+Interval_base
+to_interval(const Gmpz & z)
+{
+  Protect_FPU_rounding<> P(CGAL_FE_TONEAREST);
+  Interval_nt_advanced approx (CGAL::to_double(z));
+  FPU_set_cw(CGAL_FE_UPWARD);
+  return approx + Interval_base::Smallest;
+}
+#endif
 
 inline
 Interval_nt_advanced

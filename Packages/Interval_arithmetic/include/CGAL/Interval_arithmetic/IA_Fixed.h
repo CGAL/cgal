@@ -27,6 +27,15 @@ CGAL_BEGIN_NAMESPACE
 
 // Fixed is in fact a float => trivial conversion.
 
+#if 0
+inline
+Interval_base
+to_interval (const Fixed_precision_nt & z)
+{
+  return CGAL::to_double(z);
+}
+#endif
+
 inline
 Interval_nt_advanced
 convert_from_to (const Interval_nt_advanced&, const Fixed_precision_nt & z)
