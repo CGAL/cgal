@@ -52,8 +52,6 @@
 
 // Some useful constants
 
-#define CGAL_IA_MIN_DOUBLE (5e-324) // subnormal
-#define CGAL_IA_MAX_DOUBLE (1.7976931348623157081e+308)
 // Smallest interval strictly around zero.
 #define CGAL_IA_SMALLEST (Interval_nt_advanced(-CGAL_IA_MIN_DOUBLE, \
                                                 CGAL_IA_MIN_DOUBLE))
@@ -126,7 +124,7 @@ public:
   IA  operator+(const IA & d) const
   {
 #ifdef CGAL_IA_DEBUG
-      CGAL_assertion(FPU_get_rounding_mode() == FPU_PLUS_INFINITY);
+      CGAL_assertion(FPU_get_cw() == FPU_cw_up);
 #endif
       return IA (-(-inf - d.inf), sup + d.sup);
   }
@@ -135,7 +133,7 @@ public:
   IA  operator-(const IA & d) const
   {
 #ifdef CGAL_IA_DEBUG
-      CGAL_assertion(FPU_get_rounding_mode() == FPU_PLUS_INFINITY);
+      CGAL_assertion(FPU_get_cw() == FPU_cw_up);
 #endif
       return IA (-(d.sup - inf), sup - d.inf);
   }
@@ -207,7 +205,7 @@ Interval_nt_advanced
 Interval_nt_advanced::operator* (const Interval_nt_advanced & d) const
 {
 #ifdef CGAL_IA_DEBUG
-      CGAL_assertion(FPU_get_rounding_mode() == FPU_PLUS_INFINITY);
+      CGAL_assertion(FPU_get_cw() == FPU_cw_up);
 #endif
   if (inf>=0)					// this>=0
   {
@@ -257,7 +255,7 @@ Interval_nt_advanced
 Interval_nt_advanced::operator* (const double d) const
 {
 #ifdef CGAL_IA_DEBUG
-      CGAL_assertion(FPU_get_rounding_mode() == FPU_PLUS_INFINITY);
+      CGAL_assertion(FPU_get_cw() == FPU_cw_up);
 #endif
   return (d>=0) ? IA (-(d*-inf), d*sup) : IA (-(d*-sup), d*inf);
 }
@@ -267,7 +265,7 @@ Interval_nt_advanced
 Interval_nt_advanced::operator/ (const double d) const
 {
 #ifdef CGAL_IA_DEBUG
-      CGAL_assertion(FPU_get_rounding_mode() == FPU_PLUS_INFINITY);
+      CGAL_assertion(FPU_get_cw() == FPU_cw_up);
 #endif
   if (d>0) return IA (-((-inf)/d), sup/d);
   if (d<0) return IA (-((-sup)/d), inf/d);
@@ -337,7 +335,7 @@ Interval_nt_advanced
 Interval_nt_advanced::operator/ (const Interval_nt_advanced & d) const
 {
 #ifdef CGAL_IA_DEBUG
-      CGAL_assertion(FPU_get_rounding_mode() == FPU_PLUS_INFINITY);
+      CGAL_assertion(FPU_get_cw() == FPU_cw_up);
 #endif
   if (d.inf>0)				// d>0
   {
@@ -397,13 +395,13 @@ inline
 Interval_nt_advanced
 sqrt (const Interval_nt_advanced & d)
 {
-  FPU_set_rounding_to_minus_infinity();
+  FPU_set_cw(FPU_cw_down);
   Interval_nt_advanced tmp;
   // sqrt([+a,+b]) => [sqrt(+a);sqrt(+b)]
   // sqrt([-a,+b]) => [0;sqrt(+b)] => assumes roundoff error.
   // sqrt([-a,-b]) => [0;sqrt(-b)] => assumes user bug (unspecified result).
   tmp.inf = (d.inf>0) ? std::sqrt(d.inf) : 0;
-  FPU_set_rounding_to_infinity();
+  FPU_set_cw(FPU_cw_up);
   tmp.sup = std::sqrt(d.sup);
   return tmp;
 }
@@ -575,11 +573,12 @@ Interval_nt
 Interval_nt::operator+ (const Interval_nt & d) const
 CGAL_NAMED_RETURN_VALUE_OPT_1
 {
-  FPU_set_rounding_to_infinity();
+  FPU_CW_t backup = FPU_get_cw();
+  FPU_set_cw(FPU_cw_up);
   CGAL_NAMED_RETURN_VALUE_OPT_2
   tmp.inf = -(-inf - d.inf);
   tmp.sup = sup + d.sup;
-  FPU_set_rounding_to_nearest();
+  FPU_set_cw(backup);
   CGAL_NAMED_RETURN_VALUE_OPT_3
 }
 
@@ -588,11 +587,12 @@ Interval_nt
 Interval_nt::operator- (const Interval_nt & d) const
 CGAL_NAMED_RETURN_VALUE_OPT_1
 {
-  FPU_set_rounding_to_infinity();
+  FPU_CW_t backup = FPU_get_cw();
+  FPU_set_cw(FPU_cw_up);
   CGAL_NAMED_RETURN_VALUE_OPT_2
   tmp.inf = -(d.sup - inf);
   tmp.sup = sup - d.inf;
-  FPU_set_rounding_to_nearest();
+  FPU_set_cw(backup);
   CGAL_NAMED_RETURN_VALUE_OPT_3
 }
 
@@ -600,9 +600,10 @@ inline
 Interval_nt
 Interval_nt::operator* (const Interval_nt & d) const
 {
-  FPU_set_rounding_to_infinity();
+  FPU_CW_t backup = FPU_get_cw();
+  FPU_set_cw(FPU_cw_up);
   Interval_nt tmp ( Interval_nt_advanced::operator*(d) );
-  FPU_set_rounding_to_nearest();
+  FPU_set_cw(backup);
   return tmp;
 }
 
@@ -611,7 +612,8 @@ Interval_nt
 Interval_nt::operator* (const double d) const
 CGAL_NAMED_RETURN_VALUE_OPT_1
 {
-  FPU_set_rounding_to_infinity();
+  FPU_CW_t backup = FPU_get_cw();
+  FPU_set_cw(FPU_cw_up);
   CGAL_NAMED_RETURN_VALUE_OPT_2
   if (d>=0) {
       tmp.inf = - (inf*-d);
@@ -620,7 +622,7 @@ CGAL_NAMED_RETURN_VALUE_OPT_1
       tmp.inf = - (sup*-d);
       tmp.sup = inf*d;
   }
-  FPU_set_rounding_to_nearest();
+  FPU_set_cw(backup);
   CGAL_NAMED_RETURN_VALUE_OPT_3
 }
 
@@ -633,9 +635,10 @@ inline
 Interval_nt
 Interval_nt::operator/ (const Interval_nt & d) const
 {
-  FPU_set_rounding_to_infinity();
+  FPU_CW_t backup = FPU_get_cw();
+  FPU_set_cw(FPU_cw_up);
   Interval_nt tmp ( Interval_nt_advanced::operator/(d) );
-  FPU_set_rounding_to_nearest();
+  FPU_set_cw(backup);
   return tmp;
 }
 
@@ -663,8 +666,9 @@ inline
 Interval_nt
 sqrt (const Interval_nt & d)
 {
+  FPU_CW_t backup = FPU_get_cw();
   Interval_nt tmp = sqrt( (Interval_nt_advanced) d);
-  FPU_set_rounding_to_nearest();
+  FPU_set_cw(backup);
   return tmp;
 }
 
@@ -672,9 +676,10 @@ inline
 Interval_nt
 square (const Interval_nt & d)
 {
-  FPU_set_rounding_to_infinity();
+  FPU_CW_t backup = FPU_get_cw();
+  FPU_set_cw(FPU_cw_up);
   Interval_nt tmp = square( (Interval_nt_advanced) d);
-  FPU_set_rounding_to_nearest();
+  FPU_set_cw(backup);
   return tmp;
 }
 
@@ -737,9 +742,10 @@ inline
 Interval_nt
 convert_to (const FT & z)
 {
-    FPU_set_rounding_to_infinity();
+    FPU_CW_t backup = FPU_get_cw();
+    FPU_set_cw(FPU_cw_up);
     Interval_nt tmp(convert_to<Interval_nt_advanced>(z));
-    FPU_set_rounding_to_nearest();
+    FPU_set_cw(backup);
     return tmp;
 }
 
