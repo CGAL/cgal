@@ -31,6 +31,7 @@ mode:
 
 version:
 	echo "$(VERSION) (`date '+%e %b %Y'`)" > version
+        echo "Maintainer : Frank Da <Frank.Da@sophia.inria.fr>" >> version
 
 rtag:
 	cvs rtag v`echo $(VERSION) | sed -e "s/\./_/g"` $(CVS_MODULE_NAME)
