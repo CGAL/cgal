@@ -3199,6 +3199,11 @@ _set_support()
 		*) CGAL_SUPPORT_COMPILER='';;
 	    esac
 	    ;;
+	*KAI*)
+	    case `compiler_version` in
+		4.*) CGAL_SUPPORT_COMPILER='y';;
+	    esac
+	    ;;
 	*SUNPRO*) CGAL_SUPPORT_COMPILER='';;
 	*MIPSPRO*n32*) 
 	    case `compiler_version` in
