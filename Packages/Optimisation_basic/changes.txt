@@ -1,5 +1,8 @@
 Changes done to the `Optimisation_basic' package
 
+Version 3.8.14 on 26-Mar-2002
+- Use Construct_point_(2/3) instead of the ones from Kernel.
+
 Version 3.8.13 on 22-Mar-2002
 - Fixed Access_coordinates_d.
 
