@@ -1,3 +1,9 @@
+
+- Introduced caching for the alpha shape vertex and edge lists
+
+Version 11.35 [af]
+- resubmission, as something went wrong with cgal_submit
+
 Version 11.34 (16/07/03) [af]
 - Alpha_shape_2 used backward compatible functions of Triangulation_2
 
