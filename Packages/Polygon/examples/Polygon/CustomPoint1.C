@@ -18,20 +18,22 @@
 
 enum MyColor { Red, Green, Blue };
 
+using namespace CGAL;
+
 template <class R>
-class MyPoint: public CGAL::Point_2<R>
+class MyPoint: public Point_2<R>
 {
   public:
     MyColor color; // additional attribute for points
 
     MyPoint(): color(Red) {}
     MyPoint(const typename R::RT &x, const typename R::RT &y, MyColor c)
-      : CGAL::Point_2<R>(x,y), color(c) {}
+      : Point_2<R>(x,y), color(c) {}
 };
 // N.B. The class MyPoint derives from CGAL::Point_2. This is not always a
 // good idea, since the class CGAL::Point_2 doesn't have a virtual destructor.
 
-typedef CGAL::Cartesian<double> R;
+typedef Cartesian<double> R;
 typedef MyPoint<R> Point;
 
 //#ifdef CGAL_CFG_NO_TEMPLATE_FUNCTION_MATCHING
@@ -42,13 +44,13 @@ typedef MyPoint<R> Point;
 #include <CGAL/Polygon_2.h>
 #include <list.h>
 
-typedef CGAL::Polygon_traits_2_aux<R, R::FT, Point> Traits;
+typedef Polygon_traits_2_aux<R, R::FT, Point> Traits;
 // The class MyPoint derives from CGAL::Point, so the polygon traits class
 // CGAL::Polygon_traits_2_aux can be reused.
 
-typedef CGAL::Polygon_2<Traits, list<Point> > Polygon;
-typedef CGAL::Polygon_2<Traits, list<Point> >::Vertex_iterator VI;
-typedef CGAL::Polygon_2<Traits, list<Point> >::Edge_const_iterator EI;
+typedef Polygon_2<Traits, list<Point> > Polygon;
+typedef Polygon_2<Traits, list<Point> >::Vertex_iterator VI;
+typedef Polygon_2<Traits, list<Point> >::Edge_const_iterator EI;
 
 //-----------------------------------------------------------------------//
 //                          main
@@ -64,7 +66,7 @@ int main()
   p.push_back(Point(2,2,Red));
   p.push_back(Point(0,4,Red));
 
-  CGAL::set_pretty_mode(cout);
+  set_pretty_mode(cout);
   cout << "created the polygon p:" << endl;
   cout << p << endl;
   cout << endl;
