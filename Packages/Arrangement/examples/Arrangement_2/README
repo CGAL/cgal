@@ -22,12 +22,6 @@ performs a vertical ray shoot on it.
 example9-10: Examples from the documentation. These demonstrate using
 an arrangement with Polyline Traits.
 
-example11: Examples for the usage for I/O functions. The input file for this 
-example is example11.cin and the user has to use the example when redirecting 
-the input file.
-
-
-
 
 example11: Example of the usage for I/O functions. 
 The input file for this program is example11.cin, 
@@ -35,3 +29,11 @@ and users have to use the example when redirecting
 the input file.
 By: Eti Ezra.
 
+
+example12: Example of the usage for I/O functions when taking the polyline Traits.
+A demonstration of defining I/O operator for polyline curve by the user is presented 
+in this example.
+The input file for this program is example12.cin, 
+and users have to use the example when redirecting 
+the input file. 
+By: Eti Ezra.
