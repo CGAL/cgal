@@ -1,3 +1,6 @@
+Version 1.31 (11 fev 00)
+small bug fixes (only appearing when disabling preconditions)
+
 Version 1.30 (4 fev 00)
 changes for -pedantic (thank you Geert-Jan)
 
