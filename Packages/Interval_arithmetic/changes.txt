@@ -1,5 +1,11 @@
 Changes done to the Interval Arithmetic package.
 
+Version 3.1 on 12 March 1999
+- New functions FPU_get_cw() and FPU_set_cw() replace the old ones.
+- Major cleanup of _FPU.h.
+- Updated documentation.
+- Added a counter of failures "Interval_nt_advanced::number_of_failures".
+
 Version 3.0 on 11 March 1999
 - Namespace CGAL.
 - Introduced .exact() and .interval() member functions to the filtered type.

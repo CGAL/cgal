@@ -5,28 +5,25 @@
   - (-a)>0    => a<0
   - (-a)+b    => b-a ...
   - (-a)*b    => -(a*b) ssi -ffast-math
-  - bug à fixer: cf get_rounding_mode(), où "volatile" est nécessaire.
+  - bug à fixer: cf get_empiric_rounding_mode(), où "volatile" est nécessaire.
+- Comment intégrer ces foutus pré-calculs ?  Faire un draft de propal.
+- Faire aussi une propal pour include/CGAL/Predicates/*.
 
 Concerning the code itself:
 
-- -ffast-math (essayer la test/bench-suite, et lire la doc, c'est compatible?)
 - Avoir un flag dynamic (static member) qui dit si exception ou pas, voire un
   function pointer pour overlap_action() ?
   Et modifier le comportement dans les fonctions save/restore ?
-- FPU: Finir les 2 fonctions "save" et "restore" pour protéger le FPCR.
-  Save/Restore -> dans une variable locale => plutôt un get/set.
+- MipsPro: Essayer de faire marcher (ask Michael).
 - essayer de mettre a et b "register", et voir le changement de l'assembly.
-- sign_det_2x2() optimisé pour l'IA.
-- Overload orientation_2() to be filtered for Interval_nt (and bench
-  Triangulation).
+- sign_det_2x2() optimisé pour l'IA (+ bench de triangulation).
 - converter (long longs), (long doubles)...  au moins documenter que c'est pas
   supporté pour le moment.  Hint: (double) +/- 1ulp.
 - Faire un testfile pour vérifier que la version assembleur est supportée.
+  Tester IRIX5 profiterai aussi pour __SGI_ieeefp_h...
 - Permettre de cacher (NT tag ?) les conversions en intervalles.
   C'est pas un cache, mais un stockage forcé, et il faut l'updater
   si la value est modifiée...
-- Comment intégrer ces foutus pré-calculs ?  Faire un draft de propal.
-- Faire aussi une propal pour include/CGAL/Predicates/*.
 ? try if __attribute__((const)) for GNU on my operators is ok, and speed up ?
   what about putting it on predicates too ?
 ? Currently, some types (leda_*, GMP) need the rounding to nearest for doing
@@ -35,14 +32,12 @@ Concerning the code itself:
   needs the rounding to do the conversion ?
   Remark: the fast case is for the builtin types, so others (that care of the
   rounding mode) can be slowed down...
-- Include a counter of failures of the filter.
-  (in the code produced by the script -> static member of Filtered_exact<> ?)
 ? SUN: Add "-Wa,-xarch=v8plus" to fix the following "error":
   /usr/ccs/bin/as: "/var/tmp/ccBHnU0T.s", line 861: warning: 3 instructions
   required between ldfsr and next FBfcc; nops inserted
-- MipsPro: Essayer de faire marcher (ask Michael).
-- Looker BIAS s'il utiliser l'assembleur pour Borland/MipsPro/SunPro/Visual...
+? Looker BIAS s'il utiliser l'assembleur pour Borland/MipsPro/SunPro/Visual...
   Visiblement, BIAS, c'est très nacze.
+? -ffast-math (essayer la test/bench-suite, et lire la doc, c'est compatible?)
 
 Concerning the script:
 
@@ -59,34 +54,22 @@ Concerning the script:
   +characters.
 ? Clean it up, and comment it... I won't maintain it, but users might want to
   change it a little bit...
-? Should I add "#include <Arithmetic_filter.h>" in the produced file ?  I
-  guess not since they are not supposed to be included alone.  But it breaks
-  my own great [tm] rule ?
 
 Concerning the doc:
 
-- documenter le fait que convert_to est par défaut le constructeur, et que
-  donc il y a besoin de redefinir convert_to que s'il n'y en a pas, ou s'il
-  n'est pas exact.  Et en plus maintenant, c'est "struct converter"...
-- say we advise <double, leda_rational> or (<double, Quotient<Gmpz>> ?).
+- change the status of homogeneous predicates when available...
+- faire un fichier long_description comme ça doit se faire.
 - say we don't have Assembly on Mips by default (and change the code), but
   should work on IRIX 6.
 - Document CGAL_IA_DONT_USE_ASSEMBLY which disables the use of assembly.  It's
   on by default, but is needed on IRIX 5.3 and its buggy assembler.  Will be
   the default solution till I have some machine language code.
   Or better, add a flag to the install procedure ?
-- documenter qu'on peut utiliser l'IA pour représenter des données avec
-  tolérance, mais que pour le moment, aucun modèle rigoureux n'est implanté
-  dans CGAL pour gérer ça.  De même BBox == Point<Cartesian<IA> >.
-- document is_same(), .is_point() (same as IA == IA), ||, &&, .overlap().
 - add a pointer to my MISC'99 paper.
-? when a "implementor's doc" will be available, shift the IA specific stuff in
-  it ?
+- Documenter "IA::number_of_failures".
 
 Concerning the test-suite:
 
 - test new converter functions ?  [use flag -DCGAL_IA_DEBUG]
 - test NaNs (and Infs?).  Comparisons with these should throw the exception...
   Et vérifier s'ils sont bien propagés correctement (par min/max, ou même *).
-- try to fix the x86 bug.  Currently, it hides the problem for the test-suite
-  to work.
