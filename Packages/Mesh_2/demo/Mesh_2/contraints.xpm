@@ -1,5 +1,5 @@
 /* XPM */
-char * contraints_xpm[] = {
+const char * contraints_xpm[] = {
 "32 32 2 1",
 " 	c None",
 ".	c #FF0000",

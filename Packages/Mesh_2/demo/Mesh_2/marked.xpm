@@ -1,5 +1,5 @@
 /* XPM */
-char * marked_xpm[] = {
+const char * marked_xpm[] = {
 "32 32 4 1",
 " 	c None",
 ".	c #000080",
