@@ -1092,8 +1092,7 @@ subdivide(const Map* M0, const Map* M1)
   CGAL_assertion_code(SVertex_iterator svi);
   CGAL_assertion_code(
     for(svi=this->svertices_begin(); svi!=this->svertices_end(); svi++) {
-      GenPtr i = info(svi);
-      TRACEN("vertex "<<point(svi)<<" info "<<i<<
+      TRACEN("vertex "<<point(svi)<<" info "<<info(svi)<<
 	     " marks "<<mark(svi,0)<<" "<<mark(svi,1));
     }
   )
