@@ -52,16 +52,21 @@ struct Triangulation_mesher_level_traits_2
                                  std::back_inserter(zone.faces),
                                  std::back_inserter(zone.boundary_edges)
                                  );
-    std::cerr << zone.faces.size() << " " 
+    std::cerr << "get_conflicts_and_boundary(" << p << "):\n"
+              << "faces: " << zone.faces.size() << "\nedges: " 
               << zone.boundary_edges.size() << std::endl;
     return zone;
   }
 
   Vertex_handle insert(Tr&t, const Point& p, Zone& zone)
   {
+    std::cerr << "insert(" << p << "): " 
+              << zone.boundary_edges.size() << " edges.\n";
     return t.star_hole(p,
                        zone.boundary_edges.begin(),
-                       zone.boundary_edges.end());
+                       zone.boundary_edges.end(),
+                       zone.faces.begin(),
+                       zone.faces.end());
   }
 
 }; // end Triangulation_mesher_level_traits_2
