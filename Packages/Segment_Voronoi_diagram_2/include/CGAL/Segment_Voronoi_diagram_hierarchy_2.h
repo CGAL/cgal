@@ -347,10 +347,12 @@ insert(const Site& t, int hierarchy_level)
     return vertices[0];
   }
 
+  CGAL_assertion( t.is_segment() );
+
   insert(t.source(), vertex_level, vertices);
   insert(t.target(), vertex_level, NULL);
 
-  Vertex_handle vertex = hierarchy[0]->insert(t, vertices[0]);
+  Vertex_handle vertex = hierarchy[0]->insert(t, vertices[0], false);
 
   // this is the case when the new site is a segment and it intersects
   // existing segments
@@ -370,7 +372,7 @@ insert(const Site& t, int hierarchy_level)
       
   int level = 1;
   while (level <= vertex_level ){
-    vertex = hierarchy[level]->insert(t, vertices[level]);
+    vertex = hierarchy[level]->insert(t, vertices[level], false);
     vertex->set_down(previous); // link with level above
     previous->set_up(vertex);
     previous = vertex;
