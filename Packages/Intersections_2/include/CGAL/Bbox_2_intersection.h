@@ -26,3 +26,4 @@
 
 #include <CGAL/Bbox_2_Line_2_intersection.h>
 #include <CGAL/Ray_2_Bbox_2_intersection.h>
+#endif // CGAL_BBOX_2_INTERSECTIONS_H

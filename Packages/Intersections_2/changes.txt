@@ -1,3 +1,6 @@
+2.7.1 (19 June 2001)
+Added a  #endif
+
 2.7 (22 May 2001)
 Implemented segment segment intersection without making use of collinear_has_on.
 
