@@ -27,10 +27,16 @@
 //
 // TODO:
 // - at the moment, it's restricted to IA filtering, but this should be
-//   generalized to allow filters (static...).
+//   generalized to allow other kinds of filters (static...).
 // - at the moment, only the predicates are filtered.
 //   Constructions will come later.
 // - the kernel only works with traits only and as a pure traits only.
+//   However it should be easy (and desirable for anything using
+//   Kernel_traits<>) to have the type equality.
+//   Having the global functions working is another story...
+// - The converters are more a property of the types rather than anything else,
+//   so maybe they should not be passed as template parameter, but use a
+//   traits-like mecanism ?
 
 #include <CGAL/basic.h>
 #include <CGAL/Filtered_predicate.h>
@@ -75,12 +81,6 @@ public:
 #define CGAL_Filter_pred(P, Pf) \
     typedef Filtered_predicate<typename EK::P, typename FK::P, \
 	                     C2E, C2F> P; \
-    P Pf() const { return P(); }
-
-    // The following could be used instead for some Cartesian predicates
-    // that are exact : compare* and exact*.
-#define CGAL_Filter_already_exact_pred(P, Pf) \
-    typedef typename CK::P P; \
     P Pf() const { return P(); }
 
 #define CGAL_Filter_cons(C, Cf) \
