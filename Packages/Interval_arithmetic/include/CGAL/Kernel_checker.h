@@ -40,8 +40,8 @@ CGAL_BEGIN_NAMESPACE
 template <class O1, class O2, class Conv>
 class Predicate_checker
 {
-    const O1 & o1;
-    const O2 & o2;
+    O1 o1;
+    O2 o2;
     Conv c;
 
 public:
@@ -50,6 +50,25 @@ public:
 	: o1(oo1), o2(oo2) {}
 
     typedef typename O1::result_type result_type;
+
+    template <class A1>
+    result_type
+    operator()(const A1 &a1) const
+    {
+	typename O1::result_type res1 = o1(a1);
+	typename O2::result_type res2 = o2(c(a1));
+	if (res1 != res2)
+	{
+	    std::cerr << "Kernel_checker error : " << res1 << " != " << res2
+		      << " for the inputs : " << std::endl;
+	    std::cerr << a1 << std::endl;
+#ifdef __GNUG__
+	    std::cerr << __PRETTY_FUNCTION__ << std::endl;
+#endif
+	    CGAL_kernel_assertion(false);
+	}
+	return res1;
+    }
 
     template <class A1, class A2>
     result_type
