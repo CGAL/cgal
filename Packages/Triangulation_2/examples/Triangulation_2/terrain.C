@@ -4,7 +4,6 @@
 #include <CGAL/Homogeneous.h>
 #include <CGAL/Triangulation_euclidean_traits_xy_3.h>
 #include <CGAL/Delaunay_triangulation_2.h>
-#include <CGAL/IO/Geomview_stream.h>
 
 using namespace CGAL;
 
@@ -20,9 +19,9 @@ int main()
     Delaunay dt;
 
     Point_3<Rp> p;
-    while(cin >> p){
+    while(std::cin >> p){
         dt.insert(p);
     }
-    
+    return 1;
 }
 

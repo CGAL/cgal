@@ -1,5 +1,7 @@
-to compule and run these examples type :
+to compule and run all these examples type :
 ./cgal_test
+To compute and run only some of them type
+./cgal_test name-of_wanted_example
 
 example: 
 Illustrates features of the triangulation package.
@@ -13,9 +15,13 @@ points:
 Illustrates how to input user defined points and a user provided traits
 class in a Triangulation 
 
-triangulation_prog1.C :
+triangulation_prog1:
 the first example in the documentation
 
-colored_face.C
-illustrates how the user can derive its own base face from the default
+colored_face
+Illustrates how the user can derive its own base face from the default
 one to add e. g. a color.
+
+terrain
+Build a terrain using a Delaunay triangulation with the traits class for 
+terrains.
