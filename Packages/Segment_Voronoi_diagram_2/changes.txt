@@ -1,3 +1,7 @@
+30 August 2004:  Menelaos Karavelas
+- SVD_kernel_wrapper_2 : removed unused variable (it was creating warnings
+  on some compilers)
+
 28 August 2004:  Menelaos Karavelas
 - moved split_vertex from Segment_Voronoi_diagram_data_structure_2 to TDS2
 - replaced Segment_Voronoi_diagram_data_structure_2 (which is now obsolete)

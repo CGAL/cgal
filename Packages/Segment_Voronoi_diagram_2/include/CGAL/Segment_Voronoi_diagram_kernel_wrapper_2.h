@@ -129,7 +129,6 @@ private:
 	( Base::operator()(t.source_of_supporting_site()),
 	  Base::operator()(t.target_of_supporting_site()) );
     } else {
-      K1_Site_2 supp = t.supporting_site();
       if ( t.is_input(0) ) {
 	return K2_Site_2::construct_site_2
 	  ( Base::operator()(t.source_of_supporting_site()),
