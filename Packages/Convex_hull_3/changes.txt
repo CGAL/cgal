@@ -1,3 +1,6 @@
+2.48 (19 September 2003) [af]
+- New license headers
+
 2.47 (08 May 2003) [lk]
 - Fixed demos: removed superfluous default traits file of Polyhedron_3.
 
