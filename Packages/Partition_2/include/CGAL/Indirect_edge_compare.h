@@ -37,7 +37,7 @@ namespace CGAL {
 // makes finding the edge directly left of a given edge (needed for the 
 // y-monotone decomposition algorithm) easy. 
 //
-template <class Traits>
+template <class ForwardCirculator, class Traits>
 class Indirect_edge_compare 
 {
    public:
@@ -56,7 +56,6 @@ class Indirect_edge_compare
      
      // determines if the edge (edge_vtx_1, edge_vtx_1++) has a larger
      // x value than vertex.x() at y-value vertex.y()
-     template <class ForwardCirculator>
      bool
      larger_x_at_vertex_y(ForwardCirculator edge_vtx_1, 
                           ForwardCirculator vertex) const
@@ -80,7 +79,6 @@ class Indirect_edge_compare
         }
      }               
 
-     template <class ForwardCirculator>
      bool 
      operator()(ForwardCirculator p, ForwardCirculator q) const
      {
