@@ -1,9 +1,5 @@
 - revoir fonctions "dual" (robustesse dans le cas des tetraedres presque plats)
 
-- bien tester le output_stream de T_3 et le copy_tds (ordre de creation des
-  sommets). 
-- Verifier qu'il n'y a pas d'autres operations du meme style a modifier. 
-
 -------------- POUR DES QU'ON PEUT
 
 - nettoyer hierarchie
@@ -24,12 +20,11 @@ public:
   facettes vues de l'interieur en iterateur de facettes vues de l'exterieur.
 
 General
-- constructeurs pour avoir Triangulation T(points.begin(), points.end()); 
 - mettre des locate_2D, locate_3D, insert idem, pour eviter les tests 
   redondants sur la dimension a chaque insertion.
 - trouver une interface avec T_2 qui permette d'eviter de reprogrammer 
   tout le 2d dans le 3d
-- insure
+- valgrind
 - const handle, const it, const circ ...
 - utiliser le cell_container_iterator partout ou c'est possible 
   (unifier le code pour differentes dimensions) 
@@ -83,7 +78,7 @@ Regular :
 - faire marcher la hierarchie avec.  Le probleme est qu'on delete des
   vertex, et donc la hierarchie est perdue avec ses pointeurs up/down qui
   pointent dans l'espace, du coup...
-  La solution qu'on a discute est :
+  La solution qu'on a discutee est :
   - la hierarchy devrait avoir tous les etages superieurs simplement Delaunay,
     et pas autre chose.
   - le insert() (ou find_conflict) de Regular devrait fournir un iterator sur
