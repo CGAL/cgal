@@ -1,3 +1,6 @@
+3.28 (29 October 2001)
+- Submission bug.
+
 3.27 (24 October 2001)
 - Simple_Sixtuple -> Sixtuple.
 
