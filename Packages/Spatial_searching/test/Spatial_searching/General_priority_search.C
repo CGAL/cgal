@@ -53,7 +53,7 @@ int main() {
         data_points.push_front(Random_point);
   }
   
-  Splitter split(bucket_size, 3.0, false);
+  Splitter split(bucket_size);
 
   std::cout << "constructing tree started" << std::endl;
   Tree d(data_points.begin(), data_points.end(), split);

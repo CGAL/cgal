@@ -24,7 +24,6 @@ typedef CGAL::Orthogonal_k_neighbor_search<Traits, Distance>
 typedef CGAL::K_neighbor_search<Traits, Distance> 
   NN_general_search;
 
-typedef NN_general_search::Tree Tree;
 typedef NN_general_search::Splitter Splitter;
 typedef std::vector<Point> Vector;
 typedef std::vector<Point> Query_vector;
@@ -42,9 +41,9 @@ int main() {
   CGAL::copy_n( g, data_point_number, std::back_inserter(data_points));
   
   
-  Splitter split1(bucket_size, 3.0, true);
+  Splitter split1(bucket_size);
 
-  Tree d1(data_points.begin(), data_points.end(), split1);
+  NN_orthogonal_search::Tree d1(data_points.begin(), data_points.end(), split1);
 
   
   
@@ -53,9 +52,8 @@ int main() {
   d1.statistics(std::cout);
 
   
-  Splitter split2(bucket_size, 3.0, false);
-  typedef CGAL::Kd_tree<Traits> Tree;
-  Tree d2(data_points.begin(), data_points.end(), split2);
+  Splitter split2(bucket_size);
+  NN_general_search::Tree d2(data_points.begin(), data_points.end(), split2);
 
   std::cout << "created kd tree using no extended nodes containing "
   << data_point_number << " points. " << std::endl;
@@ -76,6 +74,7 @@ int main() {
   // nearest_neighbours2.reserve(query_point_number+1);
   
   for (int i=1; i < query_point_number+1; ++i) { 
+
      NN_orthogonal_search NN1(d1, query_points[i], 1, 0.0);
      std::cout << "neighbour searching statistics using extended nodes: " << std::endl;
      NN1.statistics(std::cout);

@@ -40,7 +40,7 @@ int main() {
         data_points.push_front(random_point);
   }
   
-  Splitter split(bucket_size, 3.0, false);
+  Splitter split(bucket_size);
  
   Tree d(data_points.begin(), data_points.end(), split);
 

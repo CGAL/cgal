@@ -51,9 +51,9 @@ int main() {
   CGAL::copy_n( g, data_point_number, std::back_inserter(data_points));
   
   
-  Splitter split1(bucket_size, 3.0, true);
+  Splitter split1(bucket_size);
 
-  Tree d1(data_points.begin(), data_points.end(), split1);
+  NN_orthogonal_search::Tree d1(data_points.begin(), data_points.end(), split1);
 
   
   
@@ -62,8 +62,8 @@ int main() {
   d1.statistics(std::cout);
 
   
-  Splitter split2(bucket_size, 3.0, false);
-  Tree d2(data_points.begin(), data_points.end(), split2);
+  Splitter split2(bucket_size);
+  NN_general_search::Tree d2(data_points.begin(), data_points.end(), split2);
 
   std::cout << "created kd tree using no extended nodes containing "
   << data_point_number << " points. " << std::endl;

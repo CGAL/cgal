@@ -65,7 +65,7 @@ int main() {
   }; 
   */
   
-Splitter split(bucket_size, 3.0, true);
+Splitter split(bucket_size);
 
    
   t.reset(); t.start(); 

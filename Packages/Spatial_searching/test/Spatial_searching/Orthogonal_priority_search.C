@@ -56,7 +56,7 @@ int main() {
   }
   
   
-  Splitter split(bucket_size, 3.0, true);
+  Splitter split(bucket_size);
 
   std::cout << "constructing tree started" << std::endl;
 

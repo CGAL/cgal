@@ -27,7 +27,7 @@ int main() {
   CGAL::Random_points_in_cube_3<Point,Creator> g( 1.0);
   CGAL::copy_n( g, data_point_number, std::back_inserter(data_points));
 
-  Splitter split(bucket_size, 3.0, true);
+  Splitter split(bucket_size);
   Tree d(data_points.begin(), data_points.end(), split);
 
   std::cout << "created kd tree using splitting rule "  
