@@ -4,6 +4,14 @@
 
 
 //---------------------------------------------------------------------
+//	revision 1.39
+//---------------------------------------------------------------------
+
+GLOB: added -DLEDA_STD_HEADERS if compiling with LEDA support
+GLOB: undefine evt. existing cctype macros (see CGAL_CFG_CCTYPE_MACRO_BUG)
+GLOB: in cctype, use the functions instead
+
+//---------------------------------------------------------------------
 //	revision 1.38
 //---------------------------------------------------------------------
 

@@ -7,6 +7,9 @@
 //	actual revision
 //---------------------------------------------------------------------
 
+GLOB: added -DLEDA_STD_HEADERS if compiling with LEDA support
+GLOB: undefine evt. existing cctype macros (see CGAL_CFG_CCTYPE_MACRO_BUG)
+GLOB: in cctype, use the functions instead
 GLOB: added strstream to the redirection headers
 GLOB: do not add the cctype symbols to namespace std (they are macros)
 GLOB: added using directives to replacement headers to put symbols into
