@@ -18,7 +18,7 @@
 // revision_date : $Date$
 // author(s)     : Andreas Fabri
 //
-// coordinator   : Herve Bronnimann (Herve.Bronnimann@sophia.inria.fr)
+// coordinator   : Mariette Yvinec (Mariette.Yvinec@sophia.inria.fr)
 //
 // ============================================================================
 

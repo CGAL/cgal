@@ -13,12 +13,13 @@
 // release_date  : 
 //
 // file          : include/CGAL/IO/io_tags.h
+// package       : iostream
 // source        : $RCSfile$
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Andreas Fabri
 //
-// coordinator   : Herve Bronnimann (Herve.Bronnimann@sophia.inria.fr)
+// coordinator   : Mariette Yvinec (Mariette.Yvinec@sophia.inria.fr)
 //
 // ============================================================================
 
