@@ -2628,17 +2628,27 @@ test_leda()
 	${_printf} "%s\n" '
 	    #include <cassert>
 	    #include <LEDA/integer.h>
+	    #if defined(_MSC_VER) || defined(__BORLANDC__)
+	    #ifndef LEDA_STD_HEADERS
+	    #error "LEDA_STD_HEADERS is not defined. Please consult the troubleshooting section of the installation manual."
+	    #endif // ! LEDA_STD_HEADERS
+	    #endif // MSVC || BORLAND
+
 	    #include <LEDA/REDEFINE_NAMES.h>
 	    typedef integer I;
 	    #include <LEDA/UNDEFINE_NAMES.h>
+
 	    int main() {
-	    I a( 123456); 
-	    I b( 456789);
+	    I a(123456); 
+	    I b(456789);
 	    
-	    assert( a + b == I( 580245));
-	    assert( a - b == I( -333333));
+	    if (a + b != I(580245))
+	      return 1;
+	    if (a - b != I(-333333))
+	      return 1;
+
 	    return 0;
-	    }' > ${TMP_CXX_FILE}.C
+	  }' > ${TMP_CXX_FILE}.C
 
 	if _compile_test LEDA "`leda_test_cxxflags`" $1 && \
 	    _link_run_test LEDA \
