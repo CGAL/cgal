@@ -5752,11 +5752,11 @@ prepare_lib_makefiles()
 	    "CGAL_MAKEFILE = ${CGAL_MAKEFILE}"
     done
     if [ -d ${CGAL_SRC_DIR}/Core ]; then
-	replace_line ${CGAL_SRC_DIR}/Core/makefile_Core \
+	replace_line ${CGAL_SRC_DIR}/Core/makefile \
 	    CGAL_MAKEFILE "CGAL_MAKEFILE = ${CGAL_MAKEFILE}"
     fi
     if [ -d ${CGAL_SRC_DIR}/CGALQt ]; then
-	replace_line ${CGAL_SRC_DIR}/CGALQt/makefile_Qt \
+	replace_line ${CGAL_SRC_DIR}/CGALQt/makefile \
 	    CGAL_MAKEFILE "CGAL_MAKEFILE = ${CGAL_MAKEFILE}"
     fi
 }

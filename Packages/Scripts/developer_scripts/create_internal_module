@@ -510,7 +510,6 @@ sub CreateCoreTestDir()
     print "Creating $MODULE_NAME/test/Core directory ...\n";
     chdir "$RELEASEDIR/$MODULE_NAME/" or die;
     system('cp', '-r', 'src/Core', 'test');
-    rename('test/Core/makefile_Core','test/Core/makefile');
     open(CGAL_TEST,">test/Core/cgal_test");
     print CGAL_TEST <<'EOF';
 #! /bin/sh

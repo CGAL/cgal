@@ -536,7 +536,6 @@ sub CreateSrcQtTestDir()
     print "Creating $VERSION/test/src_Qt directory ...\n";
     chdir "$RELEASEDIR/$VERSION/" or die;
     system('cp', '-r', 'src/CGALQt', 'test/src_Qt');
-    rename('test/src_Qt/makefile_Qt','test/src_Qt/makefile');
     open(CGAL_TEST,">test/src_Qt/cgal_test");
     print CGAL_TEST <<'EOF';
 #! /bin/sh
@@ -608,7 +607,6 @@ sub CreateSrcCoreTestDir()
     print "Creating $VERSION/test/src_Core directory ...\n";
     chdir "$RELEASEDIR/$VERSION/" or die;
     system('cp', '-r', 'src/Core', 'test/src_Core');
-    rename('test/src_Core/makefile_Core','test/src_Core/makefile');
     open(CGAL_TEST,">test/src_Core/cgal_test");
     print CGAL_TEST <<'EOF';
 #! /bin/sh

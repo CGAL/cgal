@@ -1,4 +1,9 @@
 18 December 2004 Sylvain Pion
+- Rename makefile_Core and makefile_Qt simply makefile.
+
+================================  CGAL 3.1 ==================================
+
+18 December 2004 Sylvain Pion
 - Create test/src_Core and test/src_Qt.
 
 17 December 2004 Sylvain Pion
