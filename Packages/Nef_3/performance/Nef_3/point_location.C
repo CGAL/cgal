@@ -90,7 +90,7 @@ int main(int argc, char* argv[]) {
   std::ifstream in(argv[1]);
   Nef_polyhedron Nin;
   in >> Nin;
-  Nin.transform(Aff_transformation_3(CGAL::SCALING,2,1));
+  Nin.transform(Aff_transformation_3(CGAL::SCALING,2000,1));
   std::ostringstream out1;
   ggen g(out1, Nin);
   g.print(nx,ny,nz);
