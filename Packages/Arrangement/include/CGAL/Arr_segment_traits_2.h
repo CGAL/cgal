@@ -75,9 +75,9 @@ public:
    */
   bool is_x_monotone(const Curve_2 &) {return true;}
   
-  /*! curve_make_x_monotone() cuts the given curve into x-monotone subcurves and
-   * stores them in the given list. The order in which they are inserted into
-   * the list defines their order in the hierarchy tree.
+  /*! curve_make_x_monotone() cuts the given curve into x-monotone subcurves
+   * and stores them in the given list. The order in which they are inserted
+   * into the list defines their order in the hierarchy tree.
    * While segments are x_monotone, still need to cast their type.
    */
   void curve_make_x_monotone(const Curve_2 & cv,

@@ -104,7 +104,8 @@ class Arr_conic_traits_2
 
   // Check whether the x co-ordinate of the given point is contained in the
   // x-range of the given x-monotone curve.
-  bool point_in_x_range(const X_monotone_curve_2& curve, const Point_2& p) const
+  bool point_in_x_range(const X_monotone_curve_2& curve,
+                        const Point_2& p) const
   {
     CGAL_precondition(is_x_monotone(curve));
 

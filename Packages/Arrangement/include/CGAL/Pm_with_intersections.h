@@ -53,7 +53,7 @@ public:
   typedef typename Planar_map::Halfedge_handle              Halfedge_handle;
   typedef typename Planar_map::Vertex_handle                Vertex_handle;
   typedef typename Planar_map::Face_handle                  Face_handle;
-  typedef typename Traits::X_monotone_curve_2                        X_monotone_curve_2;
+  typedef typename Traits::X_monotone_curve_2               X_monotone_curve_2;
   typedef typename Traits::Curve_2                          Curve_2;
   typedef typename Traits::Point_2                          Point_2;
   typedef typename Planar_map::Change_notification      Change_notification;
@@ -62,7 +62,7 @@ public:
     
   // Obsolete, for backward compatability
   typedef Point_2                               Point;
-  typedef X_monotone_curve_2                             X_curve;
+  typedef X_monotone_curve_2                    X_curve;
   typedef Curve_2                               Curve;
   typedef Change_notification                   Pmwx_change_notification;
 
@@ -138,14 +138,15 @@ public:
   // halfedge <he>. The returned intersections is based on the intersection
   // of the supporting curves (if they exist).
   bool 
-  directed_nearest_intersection_with_halfedge(const X_monotone_curve_2 & /* cv */,
-                                              const X_monotone_curve_2 & orig_cv,
-                                              Halfedge_handle he,
-                                              const Point_2 & ref_point,
-                                              bool direction_right,
-                                              Point_2 & xp1,
-                                              Point_2 & xp2,
-                                              Change_notification * en)
+  directed_nearest_intersection_with_halfedge
+  (const X_monotone_curve_2 & /* cv */,
+   const X_monotone_curve_2 & orig_cv,
+   Halfedge_handle he,
+   const Point_2 & ref_point,
+   bool direction_right,
+   Point_2 & xp1,
+   Point_2 & xp2,
+   Change_notification * en)
   {
     bool intersection_exists;
 
@@ -222,7 +223,7 @@ public:
     CGAL_PM_START_OP(1);
      
     typename Planar_map::Halfedge_around_vertex_circulator next, prev, start, 
-                                                           last_next_checked;
+      last_next_checked;
     X_monotone_curve_2 xcv;
     Point_2 xp1, xp2;
     Point_2 start_point;
@@ -847,7 +848,7 @@ public:
 
         
   Halfedge_handle 
-  insert_intersecting_xcurve(const X_monotone_curve_2 &cv_,           // inserted curve
+  insert_intersecting_xcurve(const X_monotone_curve_2 &cv_, // inserted curve
                              Vertex_handle &source_vertex,
                              // to be set by the function :  
                              Vertex_handle &target_vertex, 
@@ -1230,9 +1231,10 @@ public:
   //! iterates through a given range of curves, inserting the curves into the
   // map.
   template <class X_monotone_curve_2_iterator>
-  Halfedge_iterator non_intersecting_insert(const X_monotone_curve_2_iterator & begin,
-                                            const X_monotone_curve_2_iterator & end,
-                                            Change_notification * en = NULL)
+  Halfedge_iterator
+  non_intersecting_insert(const X_monotone_curve_2_iterator & begin,
+                          const X_monotone_curve_2_iterator & end,
+                          Change_notification * en = NULL)
   { return Planar_map::insert(begin, end, en); }
 
   //! inserts a given curve as a new inner component of a given face.
@@ -1244,48 +1246,54 @@ public:
 
   //! inserts a given curve that one of its endpoints is held by the target
   // vertex of a given halfedge into the map.
-  Halfedge_handle non_intersecting_insert_from_vertex(const X_monotone_curve_2 & cv, 
-                                                      Halfedge_handle h,
-                                                      Change_notification *
-                                                        en = NULL) 
+  Halfedge_handle
+  non_intersecting_insert_from_vertex(const X_monotone_curve_2 & cv, 
+                                      Halfedge_handle h,
+                                      Change_notification *
+                                      en = NULL) 
   { return Planar_map::insert_from_vertex(cv, h, en); }
 
   //! inserts a given curve that both of its endpoints are held by the target
   // vertices of two given halfedges respectively into the map.
-  Halfedge_handle non_intersecting_insert_at_vertices(const X_monotone_curve_2 & cv, 
-                                                      Halfedge_handle h1, 
-                                                      Halfedge_handle h2,
-                                                      Change_notification *
-                                                        en = NULL)
+  Halfedge_handle
+  non_intersecting_insert_at_vertices(const X_monotone_curve_2 & cv, 
+                                      Halfedge_handle h1, 
+                                      Halfedge_handle h2,
+                                      Change_notification *
+                                      en = NULL)
   { return Planar_map::insert_at_vertices(cv, h1, h2, en); } 
 
   //! inserts a given curve that one of its endpoints is held by a given vertex
   // into the map.
-  Halfedge_handle non_intersecting_insert_from_vertex(const X_monotone_curve_2 & cv, 
-                                                      Vertex_handle v1,
-                                                      Change_notification *
-                                                        en = NULL) 
+  Halfedge_handle
+  non_intersecting_insert_from_vertex(const X_monotone_curve_2 & cv, 
+                                      Vertex_handle v1,
+                                      Change_notification *
+                                      en = NULL) 
   { return Planar_map::insert_from_vertex(cv, v1, en); }
 
   //! inserts a given curve that both of its endpoints are held by two given
   // vertices respectively into the map.
-  Halfedge_handle non_intersecting_insert_at_vertices(const X_monotone_curve_2 & cv, 
-                                                      Vertex_handle v1, 
-                                                      Vertex_handle v2,
-                                                      Change_notification *
-                                                        en = NULL)
+  Halfedge_handle
+  non_intersecting_insert_at_vertices(const X_monotone_curve_2 & cv, 
+                                      Vertex_handle v1, 
+                                      Vertex_handle v2,
+                                      Change_notification *
+                                      en = NULL)
   { return Planar_map::insert_at_vertices(cv, v1, v2, en); } 
     
   // Data Members
   // ------------
 protected:
 
-  bool in_x_range(const X_monotone_curve_2 & cv1, const X_monotone_curve_2 & cv2)
+  bool in_x_range(const X_monotone_curve_2 & cv1,
+                  const X_monotone_curve_2 & cv2)
   {
     return  (curve_in_x_range(cv1,cv2) || curve_in_x_range(cv2,cv1));   
   }
   
-  bool curve_in_x_range(const X_monotone_curve_2 & cv1, const X_monotone_curve_2 & cv2)
+  bool curve_in_x_range(const X_monotone_curve_2 & cv1,
+                        const X_monotone_curve_2 & cv2)
   {
     
     return ((traits->point_in_x_range(cv1, traits->curve_source(cv2)) ||
@@ -1321,7 +1329,7 @@ private:
 
 };
 
-//-----------------------------------------------------------------------------
+//!
 template<class Pm>
 Planar_map_with_intersections_2<Pm>::
 Planar_map_with_intersections_2(const Self & rhs)
@@ -1331,7 +1339,7 @@ Planar_map_with_intersections_2(const Self & rhs)
   pmwx_traits = (Pmwx_traits_wrap*)traits;
 }
 
-//-----------------------------------------------------------------------------
+//!
 template<class Pm>
 Planar_map_with_intersections_2<Pm>::
 Planar_map_with_intersections_2(const Planar_map& pm) : 
@@ -1342,7 +1350,7 @@ Planar_map_with_intersections_2(const Planar_map& pm) :
   //use_delete_pmwx_traits = true;
 }
 
-//-----------------------------------------------------------------------------
+//!
 template<class Pm>
 Planar_map_with_intersections_2<Pm>::~Planar_map_with_intersections_2()
 {
@@ -1354,7 +1362,6 @@ Planar_map_with_intersections_2<Pm>::~Planar_map_with_intersections_2()
   }
 }
 
-//-----------------------------------------------------------------------------
 CGAL_END_NAMESPACE
 
 #endif

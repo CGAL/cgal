@@ -57,14 +57,15 @@ public:
   // Obsolete, for backward compatibility
   typedef Point_2                                       Point;
   typedef Vector_2                                      Vector;
-  typedef X_monotone_curve_2                                     X_curve;
+  typedef X_monotone_curve_2                            X_curve;
   typedef Curve_2                                       Curve;
   typedef Segment_2                                     Segment;
 
 
   Arr_leda_polyline_traits() { }
 
-  Comparison_result compare_x(const Point_2& p0, const Point_2& p1) const {
+  Comparison_result compare_x(const Point_2& p0, const Point_2& p1) const
+  {
     return (Comparison_result)(
 
 #if (__LEDA__ >= 380)
@@ -76,7 +77,8 @@ public:
                                );
   }
     
-  Comparison_result compare_xy(const Point_2& p0, const Point_2& p1) const {
+  Comparison_result compare_xy(const Point_2& p0, const Point_2& p1) const
+  {
     int res;
 #if (__LEDA__ >= 380)
                                // full specification is required for msvc:
@@ -94,20 +96,22 @@ public:
   }
 
   //on X_curve only - not Curve!
-  bool curve_is_vertical(const X_monotone_curve_2& cv) const {
+  bool curve_is_vertical(const X_monotone_curve_2& cv) const
+  {
     CGAL_assertion(is_x_monotone(cv));
     return compare_x(curve_source(cv),curve_target(cv))==EQUAL;
   } 
 
-  bool point_in_x_range(const X_monotone_curve_2& cv, const Point_2& p) const {
+  bool point_in_x_range(const X_monotone_curve_2& cv, const Point_2& p) const
+  {
     CGAL_assertion(is_x_monotone(cv));
     return (compare_x(p,curve_source(cv)) * 
             compare_x(p,curve_target(cv))) <=0 ;
   }
 
   Comparison_result curves_compare_y_at_x(const X_monotone_curve_2& cv1, 
-                                       const X_monotone_curve_2& cv2, 
-                                       const Point_2& p) const 
+                                          const X_monotone_curve_2& cv2, 
+                                          const Point_2& p) const 
   {
     CGAL_assertion(is_x_monotone(cv1));
     CGAL_assertion(is_x_monotone(cv2));
@@ -138,13 +142,14 @@ public:
       l2 = l2.reversal();
       
     //leda function :
-    return (Comparison_result)CGAL_LEDA_SCOPE::cmp_segments_at_xcoord(l1,l2,p);
+    return
+      (Comparison_result)CGAL_LEDA_SCOPE::cmp_segments_at_xcoord(l1,l2,p);
   }
   
   
-  Comparison_result curves_compare_y_at_x_left(const X_monotone_curve_2& cv1, 
-                                            const X_monotone_curve_2& cv2,
-                                            const Point_2& p) const 
+  Comparison_result curves_compare_y_at_x_left(const X_monotone_curve_2& cv1,
+                                               const X_monotone_curve_2& cv2,
+                                               const Point_2& p) const 
   {
     CGAL_assertion(is_x_monotone(cv1));
     CGAL_assertion(is_x_monotone(cv2));
@@ -199,8 +204,8 @@ public:
 
 
   Comparison_result curves_compare_y_at_x_right(const X_monotone_curve_2& cv1, 
-                                             const X_monotone_curve_2& cv2,
-                                             const Point_2& p) const 
+                                                const X_monotone_curve_2& cv2,
+                                                const Point_2& p) const 
   {
     CGAL_assertion(is_x_monotone(cv1));
     CGAL_assertion(is_x_monotone(cv2));
@@ -274,10 +279,10 @@ public:
       
     //taken from Eyal's LedaTraits
     Orientation o;
-    if (compare_x(l.source(), l.target()) < 0)
-      o = (Orientation)CGAL_LEDA_SCOPE::orientation(l.source(), l.target(), p);
-    else
-      o = (Orientation)CGAL_LEDA_SCOPE::orientation(l.target(), l.source(), p);
+    
+      o = (compare_x(l.source(), l.target()) < 0) ?
+        (Orientation)CGAL_LEDA_SCOPE::orientation(l.source(), l.target(), p) :
+        (Orientation)CGAL_LEDA_SCOPE::orientation(l.target(), l.source(), p);
       
     if (o < 0)
       return LARGER;
@@ -291,7 +296,9 @@ public:
     return is_same(p, q);
   }
   
-  bool curve_equal(const X_monotone_curve_2& cv1, const X_monotone_curve_2& cv2) const {
+  bool curve_equal(const X_monotone_curve_2& cv1,
+                   const X_monotone_curve_2& cv2) const
+  {
     CGAL_assertion(is_x_monotone(cv1));
     CGAL_assertion(is_x_monotone(cv2));
     
@@ -320,7 +327,8 @@ public:
 
 
 
-  X_monotone_curve_2 curve_opposite(const X_monotone_curve_2& cv) const {
+  X_monotone_curve_2 curve_opposite(const X_monotone_curve_2& cv) const
+  {
     X_monotone_curve_2 cv1(cv);
     std::reverse(cv1.begin(),cv1.end()); //more generic
     return cv1; 
@@ -394,7 +402,8 @@ public:
     
   }
 
-  void curve_split(const X_monotone_curve_2& cv, X_monotone_curve_2& c1, X_monotone_curve_2& c2, 
+  void curve_split(const X_monotone_curve_2& cv,
+                   X_monotone_curve_2& c1, X_monotone_curve_2& c2, 
                    const Point_2& split_pt) {
     
     //split curve at split point into c1 and c2
@@ -619,7 +628,8 @@ public:
     // if the x point is at the end of a segment, then there might be 
     // an overlap in the continious of the polyline
     if ( found && CGAL_LEDA_SCOPE::compare( p1, p2 ) == 0 ){
-      typename X_monotone_curve_2::const_iterator s1=i1s, t1=i1t, s2=i2s, t2=i2t;
+      typename X_monotone_curve_2::const_iterator s1=i1s,
+        t1=i1t, s2=i2s, t2=i2t;
       s1++; t1++; s2++; t2++;
       if( t1 != i1e && t2 != i2e){
 
@@ -656,7 +666,8 @@ public:
     return found;
   }
 
-  bool curves_overlap (const X_monotone_curve_2& ca, const X_monotone_curve_2& cb) const 
+  bool curves_overlap (const X_monotone_curve_2& ca,
+                       const X_monotone_curve_2& cb) const 
   {
     CGAL_assertion(is_x_monotone(ca));
     CGAL_assertion(is_x_monotone(cb));
@@ -730,7 +741,8 @@ public:
     }
   }
 
-  X_monotone_curve_2 curve_reflect_in_x_and_y( const X_monotone_curve_2& cv) const
+  X_monotone_curve_2
+  curve_reflect_in_x_and_y(const X_monotone_curve_2 & cv) const
   {
     X_monotone_curve_2 reflected_cv;
     typename Curve_2::const_iterator it  = cv.begin();
@@ -752,7 +764,8 @@ public:
   /////////////////////////////////////////////////////////////////
 private:
 
-  Comparison_result _compare_y(const Point_2& p0, const Point_2& p1) const {
+  Comparison_result _compare_y(const Point_2& p0, const Point_2& p1) const
+  {
     return (Comparison_result)(
 
 #if (__LEDA__ >= 380)
@@ -776,7 +789,8 @@ private:
     return Point_2(p.xcoord()+1, p.ycoord());
   }
 
-  //returns true iff the intersection is lexicographically strictly right of pt
+  //returns true iff the intersection is lexicographically strictly right of
+  // pt
   bool _do_curves_intersect_to_right (const X_monotone_curve_2 & ca, 
 				      const X_monotone_curve_2 & cb,
 				      const Point_2   & pt) const 
@@ -880,8 +894,8 @@ private:
 
   
 protected:
-  Point_2 point_normalize(const Point_2 &pt) const {
-
+  Point_2 point_normalize(const Point_2 &pt) const
+  {
     leda_integer g, x, y, w;
     x = pt.X();
     y = pt.Y();
@@ -903,4 +917,4 @@ protected:
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_ARR_LEDA_POLYLINE_TRAITS_H
+#endif

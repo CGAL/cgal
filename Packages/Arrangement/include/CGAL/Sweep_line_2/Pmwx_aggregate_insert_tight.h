@@ -631,7 +631,7 @@ private:
    *  @param hhandle a prev halfedge handle (may be NULL)
    *  @param pm a reference to the planar map
    */
-  Halfedge_handle insertToPm(const X_monotone_curve_2 &cv, SubCurve *leftCurve, 
+  Halfedge_handle insertToPm(const X_monotone_curve_2 &cv, SubCurve *leftCurve,
 			     Halfedge_handle hhandle, PM &pm)
   {
 

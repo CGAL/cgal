@@ -670,7 +670,7 @@ private:
 
     return res;
   }
-  Halfedge_handle insertToPmV(const X_monotone_curve_2 &a, SubCurve *origCurve, 
+  Halfedge_handle insertToPmV(const X_monotone_curve_2 &a, SubCurve *origCurve,
 			      Event *topEvent, Event *bottomEvent,
 			      Halfedge_handle hhandle, PM &pm)
   {

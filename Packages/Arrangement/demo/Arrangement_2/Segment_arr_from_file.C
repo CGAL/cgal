@@ -39,7 +39,7 @@ typedef CGAL::Pm_default_dcel<Traits>                   Dcel;
 typedef CGAL::Planar_map_2<Dcel,Traits>                 Pm;
 typedef CGAL::Planar_map_with_intersections_2<Pm>       Pmwx;
 typedef Traits::Point_2                                 Point;
-typedef Traits::X_monotone_curve_2                               Curve;
+typedef Traits::X_monotone_curve_2                      Curve;
 typedef std::list<Curve>                                CurveList;
 
 typedef CGAL::Pm_default_point_location<Pm>             Trap_point_location;
@@ -150,7 +150,8 @@ public:
 
 /*! redraw
  */
-static void redraw(leda_window * wp, double x0, double y0, double x1, double y1)
+static void redraw(leda_window * wp, double x0, double y0,
+                   double x1, double y1)
 { wp->flush_buffer(x0, y0, x1, y1); }
 
 /*!

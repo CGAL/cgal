@@ -325,9 +325,10 @@ public:
    * \return The relative position of cv1 with respect to cv2 to the right of
    * x(q): LARGER, SMALLER or EQUAL.
    */
-  Comparison_result curves_compare_y_at_x_right(const X_monotone_curve_2 & cv1,
-                                                const X_monotone_curve_2 & cv2, 
-                                                const Point_2 & q) const 
+  Comparison_result
+  curves_compare_y_at_x_right(const X_monotone_curve_2 & cv1,
+                              const X_monotone_curve_2 & cv2, 
+                              const Point_2 & q) const 
   {
     // The two curves must not be vertical.
     CGAL_precondition(! cv1.is_vert);
@@ -513,8 +514,8 @@ public:
    * Find the nearest intersection point (or points) of two given curves to
    * the right lexicographically of a given point not includin the point
    * itself, (with one exception explained below).
-   * If the intersection of the two curves is an X_monotone_curve_2, that is, they
-   * overlap at infinitely many points, then if the right endpoint and the
+   * If the intersection of the two curves is an X_monotone_curve_2, that is,
+   * they overlap at infinitely many points, then if the right endpoint and the
    * left endpoint of the overlapping subcurve are strickly to the right of
    * the given point, they are returned through the two other point
    * references respectively. If the given point is between the
