@@ -73,14 +73,14 @@ class Triangulation_hierarchy_2
 : public Tr
 {
  public:
-  typedef Tr                        Tr_Base;
+  typedef Tr                                   Tr_Base;
   typedef typename Tr_Base::Geom_traits        Geom_traits;
   typedef typename Geom_traits::Point_2        Point;
-  typedef typename Tr_Base::Vertex_handle     Vertex_handle;
-  typedef typename Tr_Base::Face_handle       Face_handle;
-  typedef typename Tr_Base::Vertex_iterator   Vertex_iterator;
-  typedef typename Tr_Base::Vertex           Vertex;
-  typedef typename Tr_Base::Locate_type       Locate_type;
+  typedef typename Tr_Base::Vertex_handle      Vertex_handle;
+  typedef typename Tr_Base::Face_handle        Face_handle;
+  typedef typename Tr_Base::Vertex_iterator    Vertex_iterator;
+  typedef typename Tr_Base::Vertex             Vertex;
+  typedef typename Tr_Base::Locate_type        Locate_type;
 
  private:
   // here is the stack of triangulations which form the hierarchy
@@ -103,7 +103,11 @@ public:
   bool is_valid() const;
 
   // INSERT REMOVE
-  Vertex_handle insert(const Point &p);
+  // Vertex_handle insert(const Point &p);
+  Vertex_handle insert(const Point &p, Face_handle start = Face_handle() );
+  Vertex_handle insert(const Point& p,
+		       Locate_type lt,
+		       Face_handle loc, int li );
   Vertex_handle push_back(const Point &p);
  
   template < class InputIterator >
@@ -123,36 +127,51 @@ public:
   void remove(Vertex_handle  v);
 
   //LOCATE
-  Face_handle  locate(const Point& p, Locate_type& lt,int& li) const;
-  Face_handle  locate(const Point& p) const;
+  Face_handle
+  locate(const Point& p,
+	 Locate_type& lt,
+	 int& li,
+	 Face_handle start = Face_handle()) const;
+
+  Face_handle
+  locate(const Point &p,
+	 Face_handle start = Face_handle()) const;
+
+  // Face_handle  locate(const Point& p, Locate_type& lt,int& li) const;
+  // Face_handle  locate(const Point& p) const;
 
 private:
-  void  locate(const Point& p,
-	       Locate_type& lt,
-	       int& li,
-	       Face_handle pos[Triangulation_hierarchy_2__maxlevel]) const;
+  void  locate_in_all(const Point& p,
+	    Locate_type& lt,
+	    int& li,
+	    Face_handle pos[Triangulation_hierarchy_2__maxlevel]) const;
   int random_level();
 
 
- // added to make the test program of usual triangulations work
-  // undocuumented
-public:
+//  // added to make the test program of usual triangulations work
+//   // undocuumented
+//   // TO BE FIXED
+// public:
   
-  Vertex_handle insert(const Point  &p, Face_handle start){
-    return Tr_Base::insert(p,start);
-  }
-  Vertex_handle insert(const Point& p,
-		       Locate_type lt,
-		       Face_handle loc, int li ){
-    return Tr_Base::insert(p);
-  }
+//   Vertex_handle insert(const Point  &p, Face_handle start){
+//     return Tr_Base::insert(p,start);
+//     //return insert(p);
+//   }
+//   Vertex_handle insert(const Point& p,
+// 		       Locate_type lt,
+// 		       Face_handle loc, int li ){
+//     Tr_Base::insert(p);
+//     // TO BE FIXED
+//     //return insert(p);
+//   }
 
-  Face_handle  locate(const Point& p, 
-		      Locate_type& lt,
-		      int& li,
-		      Face_handle start) const{
-    return Tr_Base::locate(p, lt, li, start);
-  }
+//   Face_handle  locate(const Point& p, 
+// 		      Locate_type& lt,
+// 		      int& li,
+// 		      Face_handle start) const{
+//     return Tr_Base::locate(p, lt, li, start);
+//     //return locate(p,lt,li);
+//   }
 
 };
 
@@ -292,16 +311,16 @@ is_valid() const
 template <class Tr>
 typename Triangulation_hierarchy_2<Tr>::Vertex_handle
 Triangulation_hierarchy_2<Tr>::
-insert(const Point &p)
+insert(const Point &p, Face_handle)
 {
   int vertex_level = random_level();
   Locate_type lt;
   int i;
   // locate using hierarchy
   Face_handle positions[Triangulation_hierarchy_2__maxlevel];
-  locate(p,lt,i,positions);
+  locate_in_all(p,lt,i,positions);
   //insert at level 0
-  Vertex_handle vertex=hierarchy[0]->insert(p,positions[0]);
+  Vertex_handle vertex=hierarchy[0]->insert(p,lt,positions[0],i);
   Vertex_handle previous=vertex;
   Vertex_handle first = vertex;
       
@@ -315,6 +334,40 @@ insert(const Point &p)
   }
   return first;
 }
+
+template <class Tr>
+typename Triangulation_hierarchy_2<Tr>::Vertex_handle
+Triangulation_hierarchy_2<Tr>::
+insert(const Point& p,
+       Locate_type lt,
+       Face_handle loc, 
+       int li )
+{
+  int vertex_level = random_level();
+  //insert at level 0
+  Vertex_handle vertex=hierarchy[0]->insert(p,lt,loc,li);
+  Vertex_handle previous=vertex;
+  Vertex_handle first = vertex;
+
+  if (vertex_level > 0) {
+    // locate using hierarchy
+    Locate_type ltt;
+    int lii;
+    Face_handle positions[Triangulation_hierarchy_2__maxlevel];
+    locate_in_all(p,ltt,lii,positions);
+    //insert in higher levels
+    int level  = 1;
+    while (level <= vertex_level ){
+      vertex=hierarchy[level]->insert(p,positions[level]);
+      vertex->set_down((void *) &*previous);// link with level above
+      previous->set_up((void *) &*vertex);
+      previous=vertex;
+      level++;
+    }
+  }
+  return first;
+}
+
 
 template <class Tr>
 inline
@@ -364,20 +417,21 @@ remove_second(Vertex_handle v )
   remove(v);
 }
 
+
 template <class Tr>
 typename Triangulation_hierarchy_2<Tr>::Face_handle 
 Triangulation_hierarchy_2<Tr>::
-locate(const Point& p, Locate_type& lt, int& li) const
+locate(const Point& p, Locate_type& lt, int& li, Face_handle) const
 {
   Face_handle positions[Triangulation_hierarchy_2__maxlevel];
-  locate(p,lt,li,positions);
+  locate_in_all(p,lt,li,positions);
   return positions[0];
 }
 
 template <class Tr>
 typename Triangulation_hierarchy_2<Tr>::Face_handle 
 Triangulation_hierarchy_2<Tr>::
-locate(const Point& p) const
+locate(const Point& p, Face_handle ) const
 {
   Locate_type lt;
   int li;
@@ -387,10 +441,10 @@ locate(const Point& p) const
 template <class Tr>
 void
 Triangulation_hierarchy_2<Tr>::
-locate(const Point& p,
-       Locate_type& lt,
-       int& li,
-       Face_handle pos[Triangulation_hierarchy_2__maxlevel]) const
+locate_in_all(const Point& p,
+    Locate_type& lt,
+    int& li,
+    Face_handle pos[Triangulation_hierarchy_2__maxlevel]) const
 {
   Face_handle position;
   Vertex_handle nearest;

@@ -34,7 +34,7 @@ _test_cls_delaunay_hierarchy_2( const Dh & )
 
 
   // makes i686_CYGWINNT-5.0-1.1.4-0.26-3-2_CL.EXE-12.00.8804 crash
-  //_test_cls_delaunay_triangulation_2( Delaunay_hierarchy());
+  _test_cls_delaunay_triangulation_2( Delaunay_hierarchy());
 
   
   std::cout << "    insertion removal of 1000 points" << std::endl;

@@ -1,6 +1,11 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+- fixed overloaded insert and locate of Triangulation_hiererachy_2
+- remove depraated files in the doc 
+  Triangulation_2_ref/Triangulation_face_2.tex
+  and Triangulation_2_ref/Triangulation_vertex_2.tex
+
 Ver 7.37 (29/05/02)
 - added Trivial_iterator.h 
 - added DS_Container.h to package Triangulation_2 to reduce dependencies wrto

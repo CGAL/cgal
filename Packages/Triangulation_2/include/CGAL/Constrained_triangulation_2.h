@@ -297,7 +297,7 @@ insert(const Point& a, Face_handle start)
   int li;
   Locate_type lt;
   loc = locate(a, lt, li, start);
-  return insert(a,lt,loc,li);
+  return Constrained_triangulation::insert(a,lt,loc,li);
 }
 
 template < class Gt, class Tds, class Itag >
