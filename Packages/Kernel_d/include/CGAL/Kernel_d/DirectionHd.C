@@ -63,7 +63,7 @@ cmp(const DirectionHd<RT,LA>& h1,
 
 template <class RT, class LA>
 std::istream& operator>>(std::istream& I, DirectionHd<RT,LA>& dir)
-{ dir.copy_on_write(); dir.ptr->read(I); 
+{ dir.copy_on_write(); dir.ptr()->read(I); 
   CGAL_assertion_msg((dir.D()>=0), 
   "operator>>: denominator of direction must be nonnegative."); 
   return I; 
@@ -71,7 +71,7 @@ std::istream& operator>>(std::istream& I, DirectionHd<RT,LA>& dir)
 
 template <class RT, class LA>
 std::ostream& operator<<(std::ostream& O, const DirectionHd<RT,LA>& dir)
-{ dir.ptr->print(O,"DirectionHd"); return O; } 
+{ dir.ptr()->print(O,"DirectionHd"); return O; } 
 
 template <class RT, class LA>
 inline CGAL::io_Operator io_tag(const DirectionHd<RT,LA>&) 

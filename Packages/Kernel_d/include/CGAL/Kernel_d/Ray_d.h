@@ -76,7 +76,7 @@ Ray_d(const Point_d<R>& p, const Point_d<R>& q)
 /*{\Mcreate introduces a ray through |p| and |q| and starting at |p|.
 \precond $p$ and $q$ are distinct and have the same dimension. }*/
  : Base( Pair(p,q) )
-{ CGAL_assertion_msg(!ptr->is_degenerate(), 
+{ CGAL_assertion_msg(!ptr()->is_degenerate(), 
     "Ray_d::constructor: the two points must be different." );
   CGAL_assertion_msg((p.dimension()==q.dimension()), 
     "Ray_d::constructor: the two points must have the same dimension." );
@@ -105,21 +105,21 @@ Ray_d(const Ray_d<R>& r) : Base(r) {}
 
 /*{\Moperations 3 3}*/
 
-int dimension() const { return (ptr->_p[0].dimension()); }
+int dimension() const { return (ptr()->_p[0].dimension()); }
 /*{\Mop returns the dimension of the underlying space.}*/
 
-Point_d<R> source() const { return (ptr->_p[0]); }
+Point_d<R> source() const { return (ptr()->_p[0]); }
 /*{\Mop returns the source point of |\Mvar|. }*/
 
 Point_d<R> point(int i) const 
 /*{\Mop returns a point on |\Mvar|. |point(0)| is the source.
 |point(i)|, with $i>0$, is different from the source. \precond $i
 \geq 0$.}*/ 
-{ return (ptr->_p[i%2]); }
+{ return (ptr()->_p[i%2]); }
 
 Direction_d<R> direction() const 
 /*{\Mop returns the direction of |\Mvar|. }*/
-{ return ptr->direction(); }
+{ return ptr()->direction(); }
 
 inline Line_d<R> supporting_line() const; 
 /*{\Mop returns the supporting line of |\Mvar|.}*/
@@ -174,7 +174,7 @@ are parallel and false otherwise. }*/
 
 template <class R>
 std::istream& operator>>(std::istream& I, Ray_d<R>& r) 
-{ r.copy_on_write(); r.ptr->read(I); 
+{ r.copy_on_write(); r.ptr()->read(I); 
   CGAL_assertion_msg(r.point(0)!=r.point(1),
     "Line_d::operator>>: trivial ray.");
   CGAL_assertion_msg(r.point(0).dimension()==r.point(1).dimension(),
@@ -184,7 +184,7 @@ std::istream& operator>>(std::istream& I, Ray_d<R>& r)
 
 template <class R>
 std::ostream& operator<<(std::ostream& O, const Ray_d<R>& r)
-{ r.ptr->print(O,"Ray_d"); return O; }
+{ r.ptr()->print(O,"Ray_d"); return O; }
 
 template <class R>
 inline CGAL::io_Operator io_tag(const Ray_d<R>&) 

@@ -32,7 +32,7 @@ template <class R> class Sphere_d;
 template <class R> bool equal_as_sets(const Sphere_d<R>&, const Sphere_d<R>&);
 
 template <class R>
-class  Sphere_d_rep : public Ref_counted {
+class  Sphere_d_rep  {
 
   typedef typename R::Point_d Point_d;
 
@@ -108,9 +108,9 @@ is initialized to the empty sphere centered at the origin of
 $d$-dimensional space. }*/
 { 
   Point_d p(d);
-  for (int i = 0; i <= d; i++) ptr->P[i] = p;
-  ptr->orient = ZERO;
-  ptr->cp = new Point_d(p); 
+  for (int i = 0; i <= d; i++) ptr()->P[i] = p;
+  ptr()->orient = ZERO;
+  ptr()->cp = new Point_d(p); 
 }
 
 template <class ForwardIterator>
@@ -127,30 +127,30 @@ Sphere_d(const Self& c) : Base(c) {}
 
 int dimension() const 
 /*{\Mop returns the dimension of |\Mvar|.}*/
-{ return ptr->P.size() - 1; }
+{ return ptr()->P.size() - 1; }
 
 Point_d point(int i) const
 /*{\Mop returns the $i$-th defining point. \precond $0 \le i \le |dim|$.}*/
 { CGAL_assertion_msg((0<=i && i<=dimension()), 
     "Sphere_d::point(): index out of range.");
-  return ptr->P[i]; 
+  return ptr()->P[i]; 
 }
 
-point_iterator points_begin() const { return ptr->P.begin(); }
+point_iterator points_begin() const { return ptr()->P.begin(); }
 /*{\Mop returns an iterator pointing to the first defining point.}*/
 
-point_iterator points_end() const { return ptr->P.end(); }
+point_iterator points_end() const { return ptr()->P.end(); }
 /*{\Mop returns an iterator pointing beyond the last defining point.}*/
 
-bool is_degenerate() const { return (ptr->orient == CGAL::ZERO); }
+bool is_degenerate() const { return (ptr()->orient == CGAL::ZERO); }
 /*{\Mop returns true iff the defining points are not full dimenional.}*/
 
 bool is_legal() const
 /*{\Mop returns true iff the set of defining points is legal.
 A set of defining points is legal iff their orientation is
 non-zero or if they are all equal.}*/
-{ if (ptr->orient != ZERO ) return true;
-  const std::vector< Point_d >& A = ptr->P;
+{ if (ptr()->orient != ZERO ) return true;
+  const std::vector< Point_d >& A = ptr()->P;
   Point_d po = A[0];
   for (int i = 1; i < int(A.size()); ++i) 
     if (A[i] != po) return false;
@@ -161,20 +161,21 @@ Point_d center() const
 /*{\Mop  returns the center of |\Mvar|. \precond The orientation 
 of |\Mvar| is non-zero. }*/
 { 
-  if (ptr->cp == 0) {
-    if (ptr->orient == 0) {
-      const std::vector< Point_d >& A = ptr->P;
+  if (ptr()->cp == 0) {
+    if (ptr()->orient == 0) {
+      const std::vector< Point_d >& A = ptr()->P;
       Point_d po = A[0];
       for (int i = 1; i < int(A.size()); ++i) 
         if (A[i] != po)
           CGAL_assertion_msg(0,"Sphere_d::center(): points are illegal.");
-      ptr->cp = new Point_d(A[0]); 
-      return *(ptr->cp);
+      const_cast<Self&>(*this).ptr()->cp = new Point_d(A[0]);
+      return *(ptr()->cp);
     }
     typename R::Center_of_sphere_d center_of_sphere_;
-    ptr->cp = new Point_d(center_of_sphere_(points_begin(),points_end()));
+    const_cast<Self&>(*this).ptr()->cp = 
+      new Point_d(center_of_sphere_(points_begin(),points_end()));
   }
-  return *(ptr->cp);
+  return *(ptr()->cp);
 }
 
 
@@ -185,7 +186,7 @@ FT squared_radius() const
   return (point(0)-center()).squared_length();
 }
 
-Orientation orientation()  const { return ptr->orient; }
+Orientation orientation()  const { return ptr()->orient; }
 /*{\Mop returns the orientation of |\Mvar|.}*/
 
 Oriented_side oriented_side(const Point_d& p) const
@@ -218,11 +219,11 @@ which is the same as |\Mvar.bounded_side(p)==ON_BOUNDARY|.}*/
 
 bool has_on_bounded_side (const Point_d& p) const
 /*{\Mop returns |\Mvar.bounded_side(p)==ON_BOUNDED_SIDE|.}*/
-{ return (int(ptr->orient) * int(oriented_side(p))) > 0 ; }
+{ return (int(ptr()->orient) * int(oriented_side(p))) > 0 ; }
 
 bool has_on_unbounded_side (const Point_d& p) const
 /*{\Mop returns |\Mvar.bounded_side(p)==ON_UNBOUNDED_SIDE|.}*/
-{ return (int(ptr->orient) * int(oriented_side(p))) < 0; }
+{ return (int(ptr()->orient) * int(oriented_side(p))) < 0; }
 
 Sphere_d<R> opposite() const
 /*{\Mop returns the sphere with the same center and squared

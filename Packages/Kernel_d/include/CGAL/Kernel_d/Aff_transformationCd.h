@@ -64,7 +64,7 @@ typedef typename _LA::Vector Vector;
 Aff_transformationCd(int d = 0) : Base( Rep(d) ) {}
 
 Aff_transformationCd(int d, Identity_transformation) : Base( Rep(d) )
-{ for (int i = 0; i <= d; ++i) ptr->M_(i,i) = FT(1); }
+{ for (int i = 0; i <= d; ++i) ptr()->M_(i,i) = FT(1); }
 
 Aff_transformationCd(const Matrix& M) : Base( Rep(M) )
 { CGAL_assertion_msg((M.row_dimension()==M.column_dimension()),
@@ -83,13 +83,13 @@ Aff_transformationCd(Scaling, Forward_iterator start, Forward_iterator end) :
 diagonal matrix with entries |set [start,end)| on the diagonal 
 (a scaling of the space). \precond |set [start,end)| is a vector of 
 dimension $d+1$.}*/
-{ int i=0; while (start != end) { ptr->M_(i,i) = *start++;++i; } }
+{ int i=0; while (start != end) { ptr()->M_(i,i) = *start++;++i; } }
 
 #else
 #define FIXATCD(I) \
 Aff_transformationCd(Scaling, I start, I end) : \
   Base( Rep(end-start-1) ) \
-{ int i=0; while (start != end) { ptr->M_(i,i) = *start++;++i; } }
+{ int i=0; while (start != end) { ptr()->M_(i,i) = *start++;++i; } }
 
 FIXATCD(int*)
 FIXATCD(const int*)
@@ -102,15 +102,15 @@ Aff_transformationCd(Translation, const VectorCd<RT,LA>& v) :
   Base( Rep(v.dimension()) )
 { register int d = v.dimension();
   for (int i = 0; i < d; ++i) {
-    ptr->M_(i,i) = FT(1);
-    ptr->M_(i,d) = v.cartesian(i);
+    ptr()->M_(i,i) = FT(1);
+    ptr()->M_(i,d) = v.cartesian(i);
   }
-  ptr->M_(d,d) = FT(1);
+  ptr()->M_(d,d) = FT(1);
 }
 
 Aff_transformationCd(int d, Scaling, const RT& num, const RT& den) 
   : Base( Rep(d) ) 
-{ Matrix& M = ptr->M_;
+{ Matrix& M = ptr()->M_;
   for (int i = 0; i < d; ++i) M(i,i) = num/den;
   M(d,d) = FT(1);
 }
@@ -123,7 +123,7 @@ Aff_transformationCd(int d, Rotation,
     "planar_rotation: rotation parameters disobey precondition.");
   CGAL_assertion_msg((0<=e1 && e1<=e2 && e2<d), 
     "planar_rotation: base vector indices wrong.");
-  Matrix& M = ptr->M_;
+  Matrix& M = ptr()->M_;
   for (int i=0; i<d; i++) M(i,i) = 1;
   M(e1,e1) = cos_num/den; M(e1,e2) = -sin_num/den;
   M(e2,e1) = sin_num/den; M(e2,e2) = cos_num/den;
@@ -135,7 +135,7 @@ Aff_transformationCd(int d, Rotation, const DirectionCd<RT,LA>& dir,
   : Base( Rep(d) )
 {
   CGAL_assertion(dir.dimension()==2);
-  Matrix& M = ptr->M_;
+  Matrix& M = ptr()->M_;
   for (int i=0; i<d; i++) M(i,i) = FT(1);
   RT sin_num, cos_num, denom;
   rational_rotation_approximation(dir.dx(), dir.dy(),
@@ -148,16 +148,16 @@ Aff_transformationCd(int d, Rotation, const DirectionCd<RT,LA>& dir,
 }
 
 int dimension() const 
-{ return ptr->M_.row_dimension()-1; }
+{ return ptr()->M_.row_dimension()-1; }
 
-const Matrix& matrix() const { return ptr->M_; }
+const Matrix& matrix() const { return ptr()->M_; }
 
 bool is_odd() const 
 { return LA::sign_of_determinant(matrix())<0; }
 
 Vector operator()(const Vector& v) const
 { CGAL_assertion(matrix().row_dimension()-1==v.dimension());
-  Matrix& M = ptr->M_;
+  const Matrix& M = ptr()->M_;
   int i,j,d(v.dimension());
   Vector res(d);
   for (i=0; i<d; ++i) { // all rows
@@ -171,7 +171,7 @@ Vector operator()(const Vector& v) const
 
 Vector transform_linearly(const Vector& v) const
 { CGAL_assertion(matrix().row_dimension()-1==v.dimension());
-  Matrix& M = ptr->M_;
+  const Matrix& M = ptr()->M_;
   int i,j,d(v.dimension());
   Vector res(d);
   for (i=0; i<d; ++i) { // all rows
@@ -186,9 +186,9 @@ Vector transform_linearly(const Vector& v) const
 Aff_transformationCd<RT,LA> inverse() const
 { Aff_transformationCd<RT,LA> Inv; RT D; 
   Vector dummy;
-  if ( !LA::inverse(matrix(),Inv.ptr->M_,D,dummy) ) 
+  if ( !LA::inverse(matrix(),Inv.ptr()->M_,D,dummy) ) 
   CGAL_assertion_msg(0,"Aff_transformationCd::inverse: not invertible."); 
-  if ( D < FT(0) ) Inv.ptr->M_ = -Inv.ptr->M_;
+  if ( D < FT(0) ) Inv.ptr()->M_ = -Inv.ptr()->M_;
   return Inv;
 }
   

@@ -44,7 +44,7 @@ template <typename FT, typename LA> class HyperplaneCd;
 template <typename NT, typename LA> class Aff_transformationCd;
 
 template <typename NT, typename LA>
-class Tuple_d : public Ref_counted {
+class Tuple_d  {
   typedef Tuple_d<NT,LA> Self;
   typedef typename LA::Vector Vector;
   Vector v;

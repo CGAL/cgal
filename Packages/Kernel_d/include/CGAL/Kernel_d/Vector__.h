@@ -263,7 +263,7 @@ NT& operator[](int i)
   return v_[i];
 }
   
-NT operator[](int i) const
+const NT& operator[](int i) const
 { CGAL_assertion_msg((0<=i && i<d_), 
     "Vector_::operator[]: index out of range.");
   return v_[i];

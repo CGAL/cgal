@@ -36,14 +36,14 @@ VectorHd<RT,LA> PointHd<RT,LA>::operator-(const Origin&) const
 template <class RT, class LA>
 PointHd<RT,LA> PointHd<RT,LA>::operator+(const VectorHd<RT,LA> &v) const
 { PointHd<RT,LA> res(dimension()); 
-  res.ptr->homogeneous_add(ptr, v.ptr); 
+  res.ptr()->homogeneous_add(ptr(), v.ptr()); 
   return res; 
 }
 
 template <class RT, class LA>
 PointHd<RT,LA> PointHd<RT,LA>::operator-(const VectorHd<RT,LA> &v) const
 { PointHd<RT,LA> res(dimension()); 
-  res.ptr->homogeneous_sub(ptr, v.ptr); 
+  res.ptr()->homogeneous_sub(ptr(), v.ptr()); 
   return res; 
 }
 
@@ -52,7 +52,7 @@ PointHd<RT,LA>& PointHd<RT,LA>::operator+= (const VectorHd<RT,LA>& v)
 { int d = dimension(); 
   PointHd<RT,LA> old(*this); 
   *this = PointHd<RT,LA>(d); 
-  ptr->homogeneous_add(old.ptr, v.ptr); 
+  ptr()->homogeneous_add(old.ptr(), v.ptr()); 
   return *this; 
 }
 
@@ -61,13 +61,13 @@ PointHd<RT,LA>& PointHd<RT,LA>::operator-= (const VectorHd<RT,LA>& v)
 { int d = dimension(); 
   PointHd<RT,LA> old(*this); 
   *this = PointHd<RT,LA>(d); 
-  ptr->homogeneous_sub(old.ptr, v.ptr); 
+  ptr()->homogeneous_sub(old.ptr(), v.ptr()); 
   return *this; 
 }
 
 template <class RT, class LA>
 std::istream& operator>>(std::istream& I, PointHd<RT,LA>& p)
-{ p.copy_on_write(); p.ptr->read(I); 
+{ p.copy_on_write(); p.ptr()->read(I); 
   CGAL_assertion_msg((p.homogeneous(p.dimension()) > 0), 
   "operator>>: denominator of point must be larger than zero.");
   return I; 
@@ -75,7 +75,7 @@ std::istream& operator>>(std::istream& I, PointHd<RT,LA>& p)
 
 template <class RT, class LA>
 std::ostream& operator<<(std::ostream& O, const PointHd<RT,LA>& p)
-{ p.ptr->print(O,"PointHd"); return O; } 
+{ p.ptr()->print(O,"PointHd"); return O; } 
 
 template <class RT, class LA>
 inline CGAL::io_Operator io_tag(const PointHd<RT,LA>&) 

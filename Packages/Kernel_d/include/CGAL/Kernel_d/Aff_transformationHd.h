@@ -93,7 +93,7 @@ Aff_transformationHd(int d = 0) : Base( Rep(d) ) {}
 Aff_transformationHd(int d, Identity_transformation) : Base( Rep(d) )
 /*{\Mcreate introduces the identity transformation in $d$-dimensional 
     space.}*/
-{ for (int i = 0; i <= d; ++i) ptr->M_(i,i) = RT(1); }
+{ for (int i = 0; i <= d; ++i) ptr()->M_(i,i) = RT(1); }
 
 Aff_transformationHd(const Matrix& M) : Base( Rep(M) )
 /*{\Mcreate introduces the transformation of $d$ - space specified by
@@ -112,13 +112,13 @@ Aff_transformationHd(Scaling, Forward_iterator start, Forward_iterator end) :
 diagonal matrix with entries |set [start,end)| on the diagonal 
 (a scaling of the space). \precond |set [start,end)| is a vector of 
 dimension $d+1$.}*/
-{ int i=0; while (start != end) { ptr->M_(i,i) = *start++;++i; } }
+{ int i=0; while (start != end) { ptr()->M_(i,i) = *start++;++i; } }
 
 #else
 #define FIXATHD(I) \
 Aff_transformationHd(Scaling, I start, I end) : \
   Base( Rep(end-start-1) ) \
-{ int i=0; while (start != end) { ptr->M_(i,i) = *start++;++i; } }
+{ int i=0; while (start != end) { ptr()->M_(i,i) = *start++;++i; } }
 
 FIXATHD(int*)
 FIXATHD(const int*)
@@ -132,16 +132,16 @@ Aff_transformationHd(Translation, const VectorHd<RT,LA>& v) :
 /*{\Mcreate introduces the translation by vector $v$.}*/ 
 { register int d = v.dimension();
   for (int i = 0; i < d; ++i) {
-    ptr->M_(i,i) = v.homogeneous(d);
-    ptr->M_(i,d) = v.homogeneous(i);
+    ptr()->M_(i,i) = v.homogeneous(d);
+    ptr()->M_(i,d) = v.homogeneous(i);
   }
-  ptr->M_(d,d) = v.homogeneous(d);
+  ptr()->M_(d,d) = v.homogeneous(d);
 }
 
 Aff_transformationHd(int d, Scaling, const RT& num, const RT& den) 
   : Base( Rep(d) ) 
 /*{\Mcreate returns a scaling by a scale factor |num/den|.}*/
-{ Matrix& M = ptr->M_;
+{ Matrix& M = ptr()->M_;
   for (int i = 0; i < d; ++i) M(i,i) = num;
   M(d,d) = den;
 }
@@ -160,7 +160,7 @@ and $0 \leq e_1 < e_2 < d$}*/
     "planar_rotation: rotation parameters disobey precondition.");
   CGAL_assertion_msg((0<=e1 && e1<=e2 && e2<d),
     "planar_rotation: base vector indices wrong.");
-  Matrix& M = ptr->M_;
+  Matrix& M = ptr()->M_;
   for (int i=0; i<d; i++) M(i,i) = 1;
   M(e1,e1) = cos_num; M(e1,e2) = -sin_num;
   M(e2,e1) = sin_num; M(e2,e2) = cos_num;
@@ -179,7 +179,7 @@ is positive and $0 \leq e_1 < e_2 < d$ }*/
   : Base( Rep(d) )  
 {
   CGAL_assertion(dir.dimension()==2);
-  Matrix& M = ptr->M_;
+  Matrix& M = ptr()->M_;
   for (int i=0; i<d; i++) M(i,i) = RT(1);
   RT sin_num, cos_num, denom;
   rational_rotation_approximation(dir.dx(), dir.dy(),
@@ -194,10 +194,10 @@ is positive and $0 \leq e_1 < e_2 < d$ }*/
 /*{\Moperations 5 3}*/
 
 int dimension() const 
-{ return ptr->M_.row_dimension()-1; }
+{ return ptr()->M_.row_dimension()-1; }
 /*{\Mop the dimension of the underlying space }*/
 
-const Matrix& matrix() const { return ptr->M_; }
+const Matrix& matrix() const { return ptr()->M_; }
 /*{\Mop returns the transformation matrix }*/
 
 Vector operator()(const Vector& iv) const
@@ -213,9 +213,9 @@ Aff_transformationHd<RT,LA> inverse() const
 \precond |\Mvar.matrix()| is invertible.}*/
 { Aff_transformationHd<RT,LA> Inv; RT D; 
   Vector dummy;
-  if ( !LA::inverse(matrix(),Inv.ptr->M_,D,dummy) ) 
+  if ( !LA::inverse(matrix(),Inv.ptr()->M_,D,dummy) ) 
   CGAL_assertion_msg(0,"Aff_transformationHd::inverse: not invertible.");
-  if ( D < 0 ) Inv.ptr->M_ = -Inv.ptr->M_;
+  if ( D < 0 ) Inv.ptr()->M_ = -Inv.ptr()->M_;
   return Inv;
 }
   

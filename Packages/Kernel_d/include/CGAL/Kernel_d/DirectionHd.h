@@ -65,9 +65,10 @@ which are of type |Quotient<RT>|.  Two directions are equal if their
 Cartesian coordinates are positive multiples of each other. Directions
 are in one-to-one correspondence to points on the unit sphere.}*/
 
-const typename _LA::Vector& vector_rep() const { return ptr->v; }
-_RT& entry(int i) const { return ptr->v[i]; }
-void invert_rep() { ptr->invert(); }
+const typename _LA::Vector& vector_rep() const { return ptr()->v; }
+_RT& entry(int i) { return ptr()->v[i]; }
+const _RT& entry(int i) const { return ptr()->v[i]; }
+void invert_rep() { ptr()->invert(); }
 
 public: 
 /*{\Mtypes 4}*/
@@ -147,7 +148,7 @@ DirectionHd(const DirectionHd<RT,LA>& p) : Base(p)  {}
 
 /*{\Moperations 5 3}*/
 
-int dimension() const { return ptr->size()-1; }
+int dimension() const { return ptr()->size()-1; }
 /*{\Mop returns the dimension of |\Mvar|. }*/ 
 
 RT delta(int i) const  
@@ -166,9 +167,9 @@ RT operator[](int i) const
 \precond $0 \leq i < d$.}*/
 { return delta(i); }
 
-Delta_const_iterator deltas_begin() const { return ptr->begin(); }
+Delta_const_iterator deltas_begin() const { return ptr()->begin(); }
 /*{\Mop  returns an iterator pointing to the first delta of |\Mvar|. }*/
-Delta_const_iterator deltas_end() const { return ptr->last(); }
+Delta_const_iterator deltas_end() const { return ptr()->last(); }
 /*{\Mop  returns an iterator pointing beyond the last delta of |\Mvar|. }*/
 
 VectorHd<RT,LA> vector() const; 
@@ -186,7 +187,7 @@ DirectionHd<RT,LA>  opposite() const
 /*{\Mop returns the direction opposite to |\Mvar|. }*/
 { DirectionHd<RT,LA> result(*this); // creates a copied object!
   result.copy_on_write(); // creates a copied object!
-  result.ptr->invert(dimension()); 
+  result.ptr()->invert(dimension()); 
   return result; 
 }
 

@@ -52,7 +52,7 @@ transform(const Aff_transformationHd<RT,LA>& t) const
 
 template <class RT, class LA>
 std::istream& operator>>(std::istream& I, VectorHd<RT,LA>& v)
-{ v.copy_on_write(); v.ptr->read(I); 
+{ v.copy_on_write(); v.ptr()->read(I); 
   CGAL_assertion_msg((v.homogeneous(v.dimension()) > 0),
   "operator>>: denominator of vector must be larger than zero.");
   return I; 
@@ -60,7 +60,7 @@ std::istream& operator>>(std::istream& I, VectorHd<RT,LA>& v)
 
 template <class RT, class LA>
 std::ostream& operator<<(std::ostream& O, const VectorHd<RT,LA>& v)
-{ v.ptr->print(O,"VectorHd"); return O; } 
+{ v.ptr()->print(O,"VectorHd"); return O; } 
 
 template <class RT, class LA>
 inline CGAL::io_Operator io_tag(const VectorHd<RT,LA>&) 

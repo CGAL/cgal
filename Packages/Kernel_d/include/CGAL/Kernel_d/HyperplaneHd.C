@@ -95,11 +95,11 @@ strong_cmp(const HyperplaneHd<RT,LA>& h1,
 
 template <class RT, class LA>
 std::istream& operator>>(std::istream& I, HyperplaneHd<RT,LA>& h) 
-{ h.copy_on_write(); h.ptr->read(I); return I; }
+{ h.copy_on_write(); h.ptr()->read(I); return I; }
 
 template <class RT, class LA>
 std::ostream& operator<<(std::ostream& O, const HyperplaneHd<RT,LA>& h)
-{ h.ptr->print(O,"HyperplaneHd"); return O; } 
+{ h.ptr()->print(O,"HyperplaneHd"); return O; } 
 
 template <class RT, class LA>
 inline CGAL::io_Operator io_tag(const HyperplaneHd<RT,LA>&) 

@@ -41,9 +41,10 @@ class HyperplaneCd : public Handle_for< Tuple_d<_FT,_LA> > {
   typedef Handle_for<Tuple> Base;
   typedef HyperplaneCd<_FT,_LA> Self;
 
-const typename _LA::Vector& vector_rep() const { return ptr->v; }
-_FT& entry(int i) const { return ptr->v[i]; }
-void invert_rep() { ptr->invert(); }
+const typename _LA::Vector& vector_rep() const { return ptr()->v; }
+_FT& entry(int i) { return ptr()->v[i]; }
+const _FT& entry(int i) const { return ptr()->v[i]; }
+void invert_rep() { ptr()->invert(); }
 
 public: 
 typedef _FT RT;
@@ -102,7 +103,7 @@ construct_from_points(ForwardIterator first, ForwardIterator last,
    "HyperplaneCd::constructor: set P is full dimensional.");
 
   if (side == ON_ORIENTED_BOUNDARY) 
-  { ptr->v = spanning_vecs.column(0); return; }
+  { ptr()->v = spanning_vecs.column(0); return; }
 
   FT sum = 0; int j;
   for (j = 0; j < dim; j++) { 
@@ -115,7 +116,7 @@ construct_from_points(ForwardIterator first, ForwardIterator last,
   CGAL_assertion_msg(j != dim,
     "HyperplaneCd::constructor: cannot use o to determine side.");
 
-  ptr->v = spanning_vecs.column(j);
+  ptr()->v = spanning_vecs.column(j);
   if ( CGAL_NTS sign(sum) > 0 && side == ON_NEGATIVE_SIDE ||
        CGAL_NTS sign(sum) < 0 && side == ON_POSITIVE_SIDE)
     invert_rep();
@@ -189,7 +190,7 @@ HyperplaneCd(int a, int b, int c, int d) :
 HyperplaneCd(const HyperplaneCd<FT,LA>& h) : Base(h) {}
 ~HyperplaneCd()  {}    
 
-int dimension() const { return ptr->size()-1; }
+int dimension() const { return ptr()->size()-1; }
 
 FT operator[](int i) const
 { CGAL_assertion_msg((0<=i && i<=(dimension())), 
@@ -202,9 +203,9 @@ const typename LA::Vector& coefficient_vector() const
 { return vector_rep(); }
 
 Coefficient_const_iterator coefficients_begin() const 
-{ return ptr->begin(); }
+{ return ptr()->begin(); }
 Coefficient_const_iterator coefficients_end() const
-{ return ptr->end(); }
+{ return ptr()->end(); }
 
 inline VectorCd<FT,LA> orthogonal_vector() const; 
 

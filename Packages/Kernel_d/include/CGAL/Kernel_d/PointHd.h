@@ -66,9 +66,10 @@ We call $p_i$, $0 \leq i < d$ the $i$-th Cartesian coordinate and
 $h_i$, $0 \le i \le d$, the $i$-th homogeneous coordinate. We call $d$
 the dimension of the point.}*/
 
-const typename _LA::Vector& vector_rep() const { return ptr->v; }
-_RT& entry(int i) const { return ptr->v[i]; }
-void invert_rep() const { ptr->invert(); }
+const typename _LA::Vector& vector_rep() const { return ptr()->v; }
+_RT& entry(int i) { return ptr()->v[i]; }
+const _RT& entry(int i) const { return ptr()->v[i]; }
+void invert_rep() { ptr()->invert(); }
 PointHd(const Base& b) : Base(b) {}
 
 public: 
@@ -189,7 +190,7 @@ PointHd(const PointHd<RT,LA>& p) : Base(p) {}
 
 /*{\Moperations 4 3}*/
 
-int dimension() const  { return ptr->size()-1; }
+int dimension() const  { return ptr()->size()-1; }
 /*{\Mop  returns the dimension of |\Mvar|. }*/
 
 Quotient<RT> cartesian(int i) const
@@ -207,30 +208,30 @@ Quotient<RT> operator[](int i) const  { return cartesian(i); }
 RT homogeneous(int i) const 
 /*{\Mop  returns the $i$-th homogeneous coordinate of |\Mvar|.
    \precond $0 \leq i \leq d$.}*/
-{ CGAL_assertion_msg((0<=i && i<=(dimension())), "PointHd::homogeneous():\
-  index out of range.");
+{ CGAL_assertion_msg((0<=i && i<=(dimension())), 
+    "PointHd::homogeneous():index out of range.");
   return entry(i);
 }
 
 Cartesian_const_iterator cartesian_begin() const 
 /*{\Mop returns an iterator pointing to the zeroth Cartesian coordinate 
 $p_0$ of |\Mvar|. }*/
-{ return Cartesian_const_iterator(ptr->begin(),ptr->last()); }
+{ return Cartesian_const_iterator(ptr()->begin(),ptr()->last()); }
 
 Cartesian_const_iterator cartesian_end() const 
 /*{\Mop returns an iterator pointing beyond the last Cartesian coordinate 
 of |\Mvar|. }*/
-{ return Cartesian_const_iterator(ptr->last(),ptr->last()); }
+{ return Cartesian_const_iterator(ptr()->last(),ptr()->last()); }
 
 Homogeneous_const_iterator homogeneous_begin() const 
 /*{\Mop returns an iterator pointing to the zeroth homogeneous coordinate 
 $h_0$ of |\Mvar|. }*/
-{ return ptr->begin(); }
+{ return ptr()->begin(); }
 
 Homogeneous_const_iterator homogeneous_end() const 
 /*{\Mop returns an iterator pointing beyond the last homogeneous coordinate 
 of |\Mvar|. }*/
-{ return ptr->end(); }
+{ return ptr()->end(); }
 
 PointHd<RT,LA> transform(const Aff_transformationHd<RT,LA>& t) const; 
 /*{\Mop returns $t(p)$. }*/
@@ -243,7 +244,7 @@ inline VectorHd<RT,LA> operator-(const Origin& o) const;
 VectorHd<RT,LA> operator-(const PointHd<RT,LA>& q) const 
 /*{\Mbinop  returns $p - q$. \precond |p.dimension() == q.dimension()|.}*/
 { VectorHd<RT,LA> res(dimension()); 
-  res.ptr->homogeneous_sub(ptr,q.ptr); 
+  res.ptr()->homogeneous_sub(ptr(),q.ptr());
   return res; 
 }
 

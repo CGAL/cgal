@@ -43,11 +43,11 @@ class VectorCd : public Handle_for< Tuple_d<_FT,_LA> > {
   typedef Handle_for<Tuple> Base;
   typedef VectorCd<_FT,_LA> Self;
 
-typename _LA::Vector& vector_rep() { return ptr->v; }
-const typename _LA::Vector& vector_rep() const { return ptr->v; }
-_FT& entry(int i) { return ptr->v[i]; }
-const _FT& entry(int i) const { return ptr->v[i]; }
-void invert_rep() { ptr->invert(); }
+typename _LA::Vector& vector_rep() { return ptr()->v; }
+const typename _LA::Vector& vector_rep() const { return ptr()->v; }
+_FT& entry(int i) { return ptr()->v[i]; }
+const _FT& entry(int i) const { return ptr()->v[i]; }
+void invert_rep() { ptr()->invert(); }
 VectorCd(const Base& b) : Base(b) {}
 
 public: 
@@ -135,7 +135,7 @@ VectorCd(int x, int y, int z, int w) :
 VectorCd(const VectorCd<FT,LA>& p) : Base(p)  {}
 ~VectorCd() {}     
 
-int dimension() const { return ptr->size(); } 
+int dimension() const { return ptr()->size(); } 
 
 FT cartesian(int i) const 
 { CGAL_assertion_msg((0<=i && i<(dimension())), 
@@ -153,14 +153,14 @@ FT squared_length() const
 { return vector_rep()*vector_rep(); }
 
 Cartesian_const_iterator cartesian_begin() const 
-{ return ptr->begin(); }
+{ return ptr()->begin(); }
 Cartesian_const_iterator cartesian_end() const 
-{ return ptr->end(); }
+{ return ptr()->end(); }
 
 Homogeneous_const_iterator homogeneous_begin() const 
-{ return Homogeneous_const_iterator(ptr->begin(),ptr->end()); }
+{ return Homogeneous_const_iterator(ptr()->begin(),ptr()->end()); }
 Homogeneous_const_iterator homogeneous_end() const 
-{ return Homogeneous_const_iterator(ptr->beyondend()); }
+{ return Homogeneous_const_iterator(ptr()->beyondend()); }
 
 inline PointCd<FT,LA> to_point() const;
 
@@ -201,18 +201,18 @@ FT operator* (const VectorCd<FT,LA>& w) const
 
 VectorCd<FT,LA> operator+(const VectorCd<FT,LA>& w) const 
 { VectorCd<FT,LA> result(w.dimension()); 
-  result.ptr->cartesian_add(ptr,w.ptr);
+  result.ptr()->cartesian_add(ptr(),w.ptr());
   return result; }
 
 VectorCd<FT,LA> operator-(const VectorCd<FT,LA>& w) const 
 { VectorCd<FT,LA> result(w.dimension());
-  result.ptr->cartesian_sub(ptr,w.ptr);
+  result.ptr()->cartesian_sub(ptr(),w.ptr());
   return result; }
 
 VectorCd<FT,LA> operator-() const 
 { VectorCd<FT,LA> result(*this);
   result.copy_on_write(); // creates a copied object!
-  result.ptr->invert();
+  result.ptr()->invert();
   return result; 
 }
 

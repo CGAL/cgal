@@ -85,13 +85,13 @@ Segment_d(const Segment_d<R>& s) : Base(s) {}
 
 /*{\Moperations 3 3}*/
 
-int dimension() const { return (ptr->_p[0].dimension()); }
+int dimension() const { return (ptr()->_p[0].dimension()); }
 /*{\Mop returns the dimension of the underlying space. }*/
 
-Point_d<R>  source() const { return ptr->_p[0]; }
+Point_d<R>  source() const { return ptr()->_p[0]; }
 /*{\Mop    returns the source point of segment |\Mvar|. }*/ 
 
-Point_d<R>  target() const { return ptr->_p[1]; } 
+Point_d<R>  target() const { return ptr()->_p[1]; } 
 /*{\Mop    returns the target point of segment |\Mvar|. }*/ 
 
 // defined for historical reasons
@@ -100,7 +100,7 @@ Point_d<R>  vertex(int i) const
 source, |vertex(1)| returns the target. The parameter $i$ is taken
 modulo $2$, which gives easy access to the other vertex.
 \precond $i \geq 0$.}*/
-{ CGAL_assertion(i>=0); return ptr->_p[i%2]; }
+{ CGAL_assertion(i>=0); return ptr()->_p[i%2]; }
 
 Point_d<R>  point(int i) const { return vertex(i); }
 /*{\Mop returns |vertex(i)|.}*/ 
@@ -132,12 +132,12 @@ Direction_d<R> direction() const
 \precond |\Mvar| is non-degenerate. }*/
 { CGAL_assertion_msg((!is_degenerate()), 
   "Segment_d::direction(): degenerate segment cannot be converted.");
-  return ptr->direction(); 
+  return ptr()->direction(); 
 }
 
 Vector_d<R> vector() const
 /*{\Mop returns the vector from source to target.}*/
-{ return ptr->vector(); }
+{ return ptr()->vector(); }
 
 FT squared_length() const
 /*{\Mop returns the square of the length of |\Mvar|.}*/
@@ -168,7 +168,7 @@ Segment_d<R> operator+(const Vector_d<R>& v) const
 bool is_degenerate() const 
 /*{\Mop returns true if |\Mvar| is degenerate i.e. 
 |\Mvar.source()=\Mvar.target()|. }*/
-{ return ptr->is_degenerate(); } 
+{ return ptr()->is_degenerate(); } 
 
 bool operator==(const Segment_d<R>& t) const
 { if (identical(t)) return true;
@@ -215,7 +215,7 @@ result is |false|. }*/
 
 template <class R> 
 std::istream& operator>>(std::istream& I, Segment_d<R>& s)
-{ s.copy_on_write(); s.ptr->read(I); 
+{ s.copy_on_write(); s.ptr()->read(I); 
   CGAL_assertion_msg(s.source().dimension()==s.target().dimension(),
   "Segment_d::operator>>: dimensions disagree.");
   return I; 
@@ -223,7 +223,7 @@ std::istream& operator>>(std::istream& I, Segment_d<R>& s)
 
 template <class R> 
 std::ostream& operator<<(std::ostream& O, const Segment_d<R>& s)
-{ s.ptr->print(O,"Segment_d"); return O; }
+{ s.ptr()->print(O,"Segment_d"); return O; }
 
 template <class R>
 inline CGAL::io_Operator io_tag(const Segment_d<R>&) 

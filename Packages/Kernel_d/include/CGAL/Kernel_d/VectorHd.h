@@ -67,10 +67,10 @@ main difference between position vectors and free vectors is their
 behavior under affine transformations, e.g., free vectors are
 invariant under translations.}*/
 
-const typename _LA::Vector& vector_rep() const { return ptr->v; }
-_RT& entry(int i) { return ptr->v[i]; }
-const _RT& entry(int i) const { return ptr->v[i]; }
-void invert_rep() { ptr->invert(); }
+const typename _LA::Vector& vector_rep() const { return ptr()->v; }
+_RT& entry(int i) { return ptr()->v[i]; }
+const _RT& entry(int i) const { return ptr()->v[i]; }
+void invert_rep() { ptr()->invert(); }
 VectorHd(const Base& b) : Base(b) {}
 
 public: 
@@ -201,7 +201,7 @@ VectorHd(const VectorHd<RT,LA>& p) : Base(p)  {}
 
 /*{\Moperations 5 3 }*/
 
-int dimension() const { return ptr->size()-1; } 
+int dimension() const { return ptr()->size()-1; } 
 /*{\Mop returns the dimension of |\Mvar|. }*/ 
 
 Quotient<RT> cartesian(int i) const 
@@ -236,22 +236,22 @@ Quotient<RT> squared_length() const
 Cartesian_const_iterator cartesian_begin() const 
 /*{\Mop returns an iterator pointing to the zeroth Cartesian coordinate 
 of |\Mvar|. }*/
-{ return Cartesian_const_iterator(ptr->begin(),ptr->last()); }
+{ return Cartesian_const_iterator(ptr()->begin(),ptr()->last()); }
 
 Cartesian_const_iterator cartesian_end() const 
 /*{\Mop returns an iterator pointing beyond the last Cartesian coordinate 
 of |\Mvar|. }*/
-{ return Cartesian_const_iterator(ptr->last(),ptr->last()); }
+{ return Cartesian_const_iterator(ptr()->last(),ptr()->last()); }
 
 Homogeneous_const_iterator homogeneous_begin() const 
 /*{\Mop returns an iterator pointing to the zeroth homogeneous coordinate 
 of |\Mvar|. }*/
-{ return ptr->begin(); }
+{ return ptr()->begin(); }
 
 Homogeneous_const_iterator homogeneous_end() const 
 /*{\Mop returns an iterator pointing beyond the last homogeneous
 coordinate of |\Mvar|. }*/ 
-{ return ptr->end(); }
+{ return ptr()->end(); }
 
 inline PointHd<RT,LA> to_point() const;
 
@@ -332,7 +332,7 @@ VectorHd<RT,LA> operator+(const VectorHd<RT,LA>& w) const
 /*{\Mbinop returns the vector with Cartesian coordinates 
 $v_i+w_i, 0 \leq i < d$.}*/
 { VectorHd<RT,LA> res(dimension()); 
-  res.ptr->homogeneous_add(ptr, w.ptr); 
+  res.ptr()->homogeneous_add(ptr(), w.ptr()); 
   return res; 
 }
 
@@ -341,7 +341,7 @@ VectorHd<RT,LA>& operator+=(const VectorHd<RT,LA>& w)
 { int d = dimension(); 
   VectorHd<RT,LA> old(*this); 
   *this = VectorHd<RT,LA>(d); 
-  ptr->homogeneous_add(old.ptr, w.ptr); 
+  ptr()->homogeneous_add(old.ptr(), w.ptr()); 
   return *this; 
 }
 
@@ -349,7 +349,7 @@ VectorHd<RT,LA> operator-(const VectorHd<RT,LA>& w) const
 /*{\Mbinop returns the vector with Cartesian coordinates 
 $v_i-w_i, 0 \leq i < d$.}*/
 { VectorHd<RT,LA> res(dimension()); 
-  res.ptr->homogeneous_sub(ptr, w.ptr); 
+  res.ptr()->homogeneous_sub(ptr(), w.ptr()); 
   return res; 
 }
 
@@ -358,7 +358,7 @@ VectorHd<RT,LA>& operator-=(const VectorHd<RT,LA>& w)
 { int d = dimension(); 
   VectorHd<RT,LA> old(*this); 
   *this = VectorHd<RT,LA>(d); 
-  ptr->homogeneous_sub(old.ptr, w.ptr); 
+  ptr()->homogeneous_sub(old.ptr(), w.ptr()); 
   return *this; 
 }
 
@@ -366,7 +366,7 @@ VectorHd<RT,LA> operator-() const
 /*{\Munop returns the vector in opposite direction.}*/
 { VectorHd<RT,LA> result(*this); 
   result.copy_on_write(); // creates a copied object!
-  result.ptr->invert(dimension()); 
+  result.ptr()->invert(dimension()); 
   return result; 
 }
 

@@ -63,13 +63,13 @@ cmp(const DirectionCd<FT,LA>& h1,
 
 template <class FT, class LA>
 std::istream& operator>>(std::istream& I, DirectionCd<FT,LA>& dir)
-{ dir.copy_on_write(); dir.ptr->read(I);
+{ dir.copy_on_write(); dir.ptr()->read(I);
   return I; 
 } 
 
 template <class FT, class LA>
 std::ostream& operator<<(std::ostream& O, const DirectionCd<FT,LA>& dir)
-{ dir.ptr->print(O,"DirectionCd"); return O; } 
+{ dir.ptr()->print(O,"DirectionCd"); return O; } 
 
 template <class FT, class LA>
 inline CGAL::io_Operator io_tag(const DirectionCd<FT,LA>&) 

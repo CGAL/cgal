@@ -76,7 +76,7 @@ Line_d(const Point_d<R>& p, const Point_d<R>& q)
 from |p| to |q|. \precond $p$ and $q$ are distinct and have the same 
 dimension.}*/
  : Base( Pair(p,q) )
-{ CGAL_assertion_msg(!ptr->is_degenerate(), 
+{ CGAL_assertion_msg(!ptr()->is_degenerate(), 
     "Line_d::constructor: the two points must be different." );
   CGAL_assertion_msg((p.dimension()==q.dimension()), 
     "Line_d::constructor: the two points must have the same dimension." );
@@ -110,14 +110,14 @@ Line_d(const Line_d<R>& l) : Base(l) {}
 
 /*{\Moperations 3 3}*/
 
-int dimension() const { return (ptr->_p[0].dimension()); }
+int dimension() const { return (ptr()->_p[0].dimension()); }
 /*{\Mop returns the dimension of the underlying space.}*/
 
 Point_d<R> point(int i) const 
 /*{\Mop returns an arbitrary point on |l|.  It holds that |point(i) ==
 point(j)|, iff |i==j|. Furthermore, |l| is directed from |point(i)| to
 |point(j)|, for all |i < j|.}*/
-{ return (ptr->_p[i%2]); }
+{ return (ptr()->_p[i%2]); }
 
 Line_d<R> opposite() const 
 /*{\Mop returns the line |(point(2),point(1))|. }*/
@@ -125,7 +125,7 @@ Line_d<R> opposite() const
 
 Direction_d<R> direction() const 
 /*{\Mop  returns the direction of |\Mvar|. }*/
-{ return ptr->direction(); }
+{ return ptr()->direction(); }
 
 Line_d<R> transform(const Aff_transformation_d<R> & t) const
 /*{\Mop returns $t(l)$. }*/
@@ -187,7 +187,7 @@ and false otherwise. }*/
 
 template <class R>
 std::istream& operator>>(std::istream& I, Line_d<R>& l) 
-{ l.copy_on_write(); l.ptr->read(I); 
+{ l.copy_on_write(); l.ptr()->read(I); 
   CGAL_assertion_msg(l.point(0)!=l.point(1),
     "Line_d::operator>>: trivial line.");
   CGAL_assertion_msg(l.point(0).dimension()==l.point(1).dimension(),
@@ -197,7 +197,7 @@ std::istream& operator>>(std::istream& I, Line_d<R>& l)
 
 template <class R>
 std::ostream& operator<<(std::ostream& O, const Line_d<R>& l)
-{ l.ptr->print(O,"Line_d"); return O; }
+{ l.ptr()->print(O,"Line_d"); return O; }
 
 template <class R>
 inline CGAL::io_Operator io_tag(const Line_d<R>&) 

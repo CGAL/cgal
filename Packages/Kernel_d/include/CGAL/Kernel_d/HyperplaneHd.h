@@ -72,9 +72,10 @@ coefficient vectors are positive multiples of each other and they are
 (weakly) equal if their coefficient vectors are multiples of each
 other.}*/
 
-const typename _LA::Vector& vector_rep() const { return ptr->v; }
-_RT& entry(int i) const { return ptr->v[i]; }
-void invert_rep() { ptr->invert(); }
+const typename _LA::Vector& vector_rep() const { return ptr()->v; }
+_RT& entry(int i) { return ptr()->v[i]; }
+const _RT& entry(int i) const { return ptr()->v[i]; }
+void invert_rep() { ptr()->invert(); }
 
 public: 
 /*{\Mtypes 4}*/
@@ -164,7 +165,7 @@ construct_from_points(ForwardIterator first, ForwardIterator last,
     set P is full dimensional."); 
 
   if (side == ON_ORIENTED_BOUNDARY) { 
-    ptr->v = spanning_vecs.column(0); 
+    ptr()->v = spanning_vecs.column(0); 
     return; 
   }
 
@@ -180,7 +181,7 @@ construct_from_points(ForwardIterator first, ForwardIterator last,
     CGAL_assertion_msg(0,"HyperplaneHd::constructor: \
     cannot use o to determine side.");
 
-  ptr->v = spanning_vecs.column(j);
+  ptr()->v = spanning_vecs.column(j);
   if ( CGAL_NTS sign(sum) > 0 && side == ON_NEGATIVE_SIDE || 
        CGAL_NTS sign(sum) < 0 && side == ON_POSITIVE_SIDE)   
     invert_rep();
@@ -271,7 +272,7 @@ HyperplaneHd(const HyperplaneHd<RT,LA>& h) : Base(h) {}
 
 /*{\Moperations 4 2}*/
 
-int dimension() const { return ptr->size()-1; }
+int dimension() const { return ptr()->size()-1; }
 /*{\Mop returns the dimension of |\Mvar|. }*/
 
 RT operator[](int i) const
@@ -290,11 +291,11 @@ const typename LA::Vector& coefficient_vector() const
 
 Coefficient_const_iterator coefficients_begin() const 
 /*{\Mop returns an iterator pointing to the first coefficient.}*/
-{ return ptr->begin(); }
+{ return ptr()->begin(); }
 
 Coefficient_const_iterator coefficients_end() const 
 /*{\Mop returns an iterator pointing beyond the last coefficient.}*/
-{ return ptr->end(); }
+{ return ptr()->end(); }
 
 VectorHd<RT,LA> orthogonal_vector() const; 
 /*{\Mop returns the orthogonal vector of |\Mvar|. It points from the 

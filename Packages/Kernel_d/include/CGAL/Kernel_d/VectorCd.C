@@ -58,13 +58,13 @@ VectorCd<FT,LA> operator*(const FT& n, const VectorCd<FT,LA>& v)
 
 template <class FT, class LA>
 std::istream& operator>>(std::istream& I, VectorCd<FT,LA>& v)
-{ v.copy_on_write(); v.ptr->read(I);
+{ v.copy_on_write(); v.ptr()->read(I);
   return I; 
 }
 
 template <class FT, class LA>
 std::ostream& operator<<(std::ostream& O, const VectorCd<FT,LA>& v)
-{ v.ptr->print(O,"VectorCd"); return O; } 
+{ v.ptr()->print(O,"VectorCd"); return O; } 
 
 template <class FT, class LA>
 inline CGAL::io_Operator io_tag(const VectorCd<FT,LA>&) 
