@@ -33,7 +33,7 @@ LDFLAGS = \
 #                    target entries
 #---------------------------------------------------------------------#
 
-all:largest_emty_rect_2.moc
+all:largest_empty_rect_2
 
 Qt_widget_toolbar$(OBJ_EXT): Qt_widget_toolbar.C Qt_widget_toolbar.moc
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) Qt_widget_toolbar.C
@@ -46,15 +46,16 @@ Qt_widget_move_list_point$(OBJ_EXT): Qt_widget_move_list_point.moc \
 Qt_widget_move_list_point.moc: Qt_widget_move_list_point.h
 	$(QT_MOC) -o Qt_widget_move_list_point.moc $<
 
-largest_emty_rect_2$(OBJ_EXT): largest_emty_rect_2.C largest_emty_rect_2.moc
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) largest_emty_rect_2.C
-largest_emty_rect_2.moc: largest_emty_rect_2.C
-	${QT_MOC} -o largest_emty_rect_2.moc $<
+largest_empty_rect_2$(OBJ_EXT): largest_empty_rect_2.C largest_empty_rect_2.moc
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) largest_empty_rect_2.C
+largest_empty_rect_2.moc: largest_empty_rect_2.C
+	${QT_MOC} -o largest_empty_rect_2.moc $<
 
-largest_emty_rect_2$(EXE_EXT): largest_emty_rect_2$(OBJ_EXT) \
+largest_empty_rect_2$(EXE_EXT): largest_empty_rect_2$(OBJ_EXT) \
 			Qt_widget_move_list_point$(OBJ_EXT) \
 			Qt_widget_toolbar$(OBJ_EXT) 
-	$(CGAL_CXX) $(EXE_OPT)largest_emty_rect_2 largest_emty_rect_2$(OBJ_EXT) \
+	$(CGAL_CXX) $(EXE_OPT)largest_empty_rect_2 \
+	largest_empty_rect_2$(OBJ_EXT) \
 	 Qt_widget_toolbar$(OBJ_EXT) Qt_widget_move_list_point$(OBJ_EXT) \
 	$(LDFLAGS)
 

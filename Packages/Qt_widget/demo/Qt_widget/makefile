@@ -38,6 +38,7 @@ DEMO_SUBDIRS= \
 ./Max_k-gon \
 ./Min_ellipse_2 \
 ./Min_quadrilateral_2 \
+./Largest_empty_rect_2 \
 ./Partition_2 \
 ./Alpha_shapes_2 \
 ./Triangulation_2 \
