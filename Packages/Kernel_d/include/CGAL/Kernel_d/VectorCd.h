@@ -92,7 +92,7 @@ VectorCd(int d, Base_vector, int i) : Base( Tuple(d) )
 
 VectorCd(const FT& x, const FT& y, const FT& w = 1) 
   : Base( Tuple(x,y) ) 
-{ CGAL_assertion_msg((w!=0), "VectorCd::construction: w == 0.");
+{ CGAL_assertion_msg((w!= FT(0)), "VectorCd::construction: w == 0.");
   vector_rep()/=w; }
 
 VectorCd(int x, int y, int w = 1) 
@@ -102,7 +102,7 @@ VectorCd(int x, int y, int w = 1)
 
 VectorCd(const FT& x, const FT& y, const FT& z, const FT& w) 
   : Base( Tuple(x,y,z) ) 
-{ CGAL_assertion_msg((w!=0), "VectorCd::construction: w == 0.");
+{ CGAL_assertion_msg((w!=FT(0)), "VectorCd::construction: w == 0.");
   vector_rep()/=w; }
 
 VectorCd(int x, int y, int z, int w) :
