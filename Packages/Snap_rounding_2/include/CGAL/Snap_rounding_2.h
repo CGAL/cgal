@@ -37,7 +37,7 @@
 
 //#endif
 
-//#include <CGAL/Sweep_line_tight_2.h>
+//#include <CGAL/Sweep_line_tight_2.h> ********
 #include <CGAL/Sweep_line_2.h>
 
 #include <CGAL/Arr_segment_traits_2.h>
@@ -45,7 +45,7 @@
 #include <list>
 #include <set>
 #include <CGAL/leda_real.h>
-#include <CGAL/Snap_rounding_kd_2.h>
+#include <CGAL/Snap_rounding_kd_2.h.
 
 #include <CGAL/utility.h>
 #include <CGAL/Iterator_project.h>
@@ -70,6 +70,7 @@ private:
 public:
   Segment_data();
   Segment_data(Point_2 p_inp,Point_2 q_inp);
+  Segment_2 segment() const {return(Segment_2(p,q));}
   Point_2 source() const {return(p);}
   Point_2 target() const {return(q);}
   NT get_x1() const;
@@ -141,6 +142,9 @@ typedef typename Traits::X_curve                     X_curve;
 typedef typename Traits::Curve                       Curve;
 typedef std::list<X_curve>                           CurveContainer;
 typedef typename CurveContainer::iterator            CurveContainerIter;
+
+//typedef typename Traits::compare_x_2_object                  compare_x_2_object;
+//typedef typename Traits::compare_y_2_object                  compare_y_2_object;
 
 public:
   friend class Segment_data<Rep>;
@@ -518,8 +522,7 @@ bool Hot_Pixel<Rep_>::intersect_top(Segment_2 &seg) const
 template<class Rep_>
 bool Hot_Pixel<Rep_>::intersect(Segment_data<Rep_> &seg) const
   {
-    Segment_2 s(Point_2(seg.get_x1(),seg.get_y1()),Point_2(seg.get_x2(),
-                seg.get_y2()));
+    Segment_2 s = seg.segment();
 
     return(intersect_bot(s) || intersect_left(s) || intersect_right(s) ||
            intersect_top(s));
@@ -582,8 +585,7 @@ void Snap_rounding_2<Rep_>::find_hot_pixels_and_create_kd_trees()
 
     list<X_curve> segments;
     for(iter1 = seg_list.begin();iter1 != seg_list.end();++iter1)
-      segments.push_back(X_curve(Point_2(iter1->get_x1(),iter1->get_y1()),
-                                 Point_2(iter1->get_x2(),iter1->get_y2())));
+      segments.push_back(X_curve(iter1->source(),iter1->target()));
 
     //    PM pm(new CGAL::Pm_naive_point_location<PM>);
     // sweep_to_construct_planar_map(segments.begin(), segments.end(), pm);
@@ -646,8 +648,7 @@ void Snap_rounding_2<Rep_>::find_intersected_hot_pixels(Segment_data<Rep_>
 
     std::list<Hot_Pixel<Rep_> *> hot_pixels_list;
     mul_kd_tree->get_intersecting_points(hot_pixels_list,
-	   Segment_2(Point_2(seg.get_x1(),seg.get_y1()),
-           Point_2(seg.get_x2(),seg.get_y2())),pixel_size);
+	   Segment_2(seg.segment()),pixel_size);
 
     for(iter = hot_pixels_list.begin();iter != hot_pixels_list.end();++iter) {
       if((*iter)->intersect(seg))
