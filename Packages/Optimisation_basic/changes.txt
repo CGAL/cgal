@@ -1,5 +1,8 @@
 Changes done to the `Optimisation_basic' package
 
+Version 3.6.1 on 05-Sep-2000
+- no changes (problem with submission script)
+
 Version 3.6 on 05-Sep-2000
 - data accessors moved to separate header files
 
