@@ -7,6 +7,8 @@ Package=Interval_arithmetic
 WWW_base=/u/www/0/www/htdocs/files/equipes/prisme/CGAL/DR:/Members
 WWW_dir=$(WWW_base)/$(Package)
 TMP_file=/tmp/submit-mail
+TAG_VERSION:= v$(shell echo $(VERSION) | sed -e "s/\./_/g")
+CGAL_VERSION:= "$(VERSION) ($(shell date '+%e %b %Y'))"
 
 package: doc filters example clean $(Package).tar.gz
 	@echo "-----------------------------------"
@@ -22,10 +24,10 @@ package: doc filters example clean $(Package).tar.gz
 	@echo "-----------------------------------"
 
 version:
-	echo "$(VERSION) (`date '+%e %b %Y'`)" > version
+	echo $(CGAL_VERSION) > version
 
 tag:
-	cvs tag -c v`echo $(VERSION) | sed -e "s/\./_/g"`
+	cvs tag -c $(TAG_VERSION)
 
 submit: package
 	cp $(Package).tar.gz doc_ps/$(Package).ps version description.txt \
