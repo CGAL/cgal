@@ -1,3 +1,7 @@
+2.49    (17 Apr 2002)
+- added sentence in Choosing a kernel about Filtered_kernel and fixed typos
+  in number type concepts.
+
 2.48    (8 Apr 2002)
 - fixed return type of side of oriented sphere concept.
 

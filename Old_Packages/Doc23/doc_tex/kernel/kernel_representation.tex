@@ -209,8 +209,11 @@ the ring type into \ccc{Homogeneous}.
 Other valid field types are \ccc{leda_rational} and \ccc{leda_real}.
 
 If it is crucial for you that the computation is reliable, 
-the right choice are probably number types that guarantee
-exact computation. 
+the right choice is probably a number type that guarantees
+exact computation. The kernel \ccc{Filtered_kernel}
+provides an a way to apply filtering techniques
+\cite{bbp-iayea-98} to achieve a kernel with exact and efficient predicates
+given an exact kernel and a filtering kernel.
 %The number type \ccc{leda_real} guarantees
 %that all decisions and hence all branchings in a computation
 %are correct. They also allow you to compute approximations to whatever
