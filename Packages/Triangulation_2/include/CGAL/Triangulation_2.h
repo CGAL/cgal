@@ -108,6 +108,8 @@ public:
   typedef Triangulation_line_face_circulator_2<Gt,Tds>  Line_face_circulator;
 
   typedef Point value_type; // to have a back_inserter
+  typedef const value_type&    const_reference; 
+  
 
   enum Locate_type {VERTEX=0, EDGE, FACE, 
 		    OUTSIDE_CONVEX_HULL,
