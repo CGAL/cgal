@@ -14,12 +14,11 @@
 
 # TODO list:
 #      - Parse the _whole_ file as a string, process with regexps.
+#      - We should definitely simply match a balanced { ... }.
 #      - Introduce a EPSILON_COMPUTATION section, so that the user can provide
 #        in place the alternative code to be used to recompute the epsilons,
 #        when the default is not correct or fast enough.
 #      - String templates for the epsilons variants ?
-#      - double needs to be replaced with "Restricted_double".
-#        (make the epsilons by Restricted_double's ? )
 
 use vars qw($opt_p $opt_h $opt_s $opt_d $opt_v); # Suppress stupid warnings
 require 'getopt.pl';
@@ -108,12 +107,13 @@ letstry:
   try
   {
     // Check the bounds.  All arguments must be <= _bound.
+    // The throw mecanism is not useful here, it should be before the try{}.
     if (__BOUNDS_CHECK__)
-      throw (CGAL::Static_adaptatif_filter::unsafe_comparison);
+      throw CGAL::Restricted_double::unsafe_comparison();
     // Try the epsilon variant of the predicate.
     return __FUNCTION_NAME___SAF(__ARGUMENTS_VALUE__,__ARGUMENTS_EPSILON__);
   }
-  catch (CGAL::Static_adaptatif_filter::unsafe_comparison)
+  catch (CGAL::Restricted_double::unsafe_comparison)
   {
     // It failed once, we re-adjust (bound, epsilons).
     if (!tried)
@@ -284,16 +284,16 @@ sub print_static_adaptatif {
 
   # Print the epsilon version of the predicate.
   print FO give_new_body($ret_type, $fct_name, $new_body, $t, $eps,
-  			 "double", "const ", @args);
+  			 "Restricted_double", "const ", @args);
 
   # Print the function declaration
-  my $bounds_check = arg_string("\n        fabs(", ") > _bound", " ||", @args);
-  my $args_value   = arg_string("\n\t\t", ".value()", ",", @args);
+  my $bounds_check = arg_string("\n        fabs(", ".value()) > _bound", " ||", @args);
+  my $args_value   = arg_string("\n\t\tRestricted_double(", ".value())", ",", @args);
   my $args_error   = "\n\t\tStatic_filter_error(_bound,0,1)," x ($#args+1);
   my $args_exact   = arg_string("\n\t\t", ".exact()", ",", @args);
   my $args_epsilons = eps_string("\n\t\tFilter_epsilon_${fct_name}_".scalar(@args)."_", "", ",", $eps);
   my $args_call = arg_string("\n    const ${CGAL}Static_adaptatif_filter &", "", ",", @args);
-  my $compute_new_bounds = arg_string("\n      _bound = max(_bound, fabs(", "));", "", @args);
+  my $compute_new_bounds = arg_string("\n      _bound = std::max(_bound, fabs(", ".value()));", "", @args);
 
   $_=$Static_adaptif_template;
   s#CGAL::#$CGAL#msg;
@@ -313,7 +313,6 @@ sub print_static_adaptatif {
 # Parse from "template" to end of body "}"
 sub parse_function_definition {
   my ($def) = @_;
-  # TODO: We should definitely simply match a balanced { ... }.
   while (<FI>) {
     $def .= $_;
     last if /^}\s*$/;
@@ -477,8 +476,7 @@ sub parse_dependancy_files {
 
 # Main program
 sub main {
-  for ("Sign", "Comparison_result", "Orientation", "Oriented_side",
-            "Bounded_side") {
+  for ("Sign","Comparison_result","Orientation","Oriented_side","Bounded_side"){
     $known_ret_types{$_}=1;
     $known_ret_types{"CGAL::$_"}=1;
   }
