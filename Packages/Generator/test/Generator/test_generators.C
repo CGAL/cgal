@@ -27,7 +27,6 @@
 
 #include <CGAL/basic.h>
 #include <cstddef>
-#include <cassert>
 #include <vector>
 #include <algorithm>
 #include <CGAL/Cartesian.h>

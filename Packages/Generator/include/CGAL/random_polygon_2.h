@@ -26,7 +26,6 @@
 #include <list>
 #include <set>
 #include <vector>
-#include <assert.h>
 #include <CGAL/Random_polygon_2_sweep.h>
 #include <CGAL/Kernel_traits.h>
 
