@@ -11,7 +11,7 @@
   \cs\CCdate$Date$
 }
 
-%\tracingmacros=1
+\tracingmacros=1
 
 % +--------------------------------------------------------------------------
 % | Dimensions (from the LEDA Manual):
@@ -845,17 +845,21 @@
 % The declaration has to be terminated with "\end".
 \def\CCprintOperator #1#2operator#3(#4)#5\end{%
                        \ifnum#1=0
-                           \CCprintOperatorOne{#1}{\purevar,}{#4}#3\end
+                           \isEmpty{#4}\ifnum\CCbool=\CCtrue
+                               \CCprintOperatorOne{#1}{\purevar}{#4}#3\end
+                           \else
+                               \CCprintOperatorOne{#1}{\purevar,}{#4}#3\end
+                           \fi
                        \else
                            \CCprintOperatorOne{#1}{}{#4}#3\end
                        \fi}
 
 % Formats a parenthesis () operator declaration:
-%   o  The first parameter contains a 0 for a method call, a 1 for a function.
-%   o  The second parameter contains the return type.
-%   o  The third parameter contains the operator name.
-%   o  The fourth parameter contains the parameter list (maybe empty).
-%   o  The fifth parameter contains the optional const specifier for methods.
+%   o  The #1 parameter contains a 0 for a method call, a 1 for a function.
+%   o  The #2 parameter contains the return type.
+%   o  The #3, #4, #5 parameters have to be empty.
+%   o  The #6 parameter contains the parameter list (maybe empty).
+%   o  The #7 parameter contains the optional const specifier for methods.
 % The declaration has to be terminated with "\end".
 \def\CCprintParOperator #1#2operator#3(#4)#5(#6)#7\end{%
                        \isEmpty{#3}\ifnum\CCbool=\CCfalse\errmessage{Malformed
@@ -865,7 +869,11 @@
                        \isEmpty{#5}\ifnum\CCbool=\CCfalse\errmessage{Malformed
                            parenthesis operator}\fi
                        \ifnum#1=0
-                           \CCprintOperatorOne{#1}{\purevar,}{#6}()\end
+                           \isEmpty{#6}\ifnum\CCbool=\CCtrue
+                               \CCprintOperatorOne{#1}{\purevar}{#6}()\end
+                           \else
+                               \CCprintOperatorOne{#1}{\purevar,}{#6}()\end
+                           \fi
                        \else
                            \CCprintOperatorOne{#1}{}{#6}()\end
                        \fi}
