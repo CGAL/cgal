@@ -454,7 +454,7 @@ template <class K>
 inline bool do_intersect(const Triangle_3<K> &t1, 
 			 const Triangle_3<K> &t2) 
 {
-  return CGALi::do_intersect(t1,t2,K());
+  return typename K::Do_intersect_3()(t1,t2);
 }
 	
 

@@ -1,3 +1,6 @@
+17 April Andreas Fabri
+- Global functions call functor call internal global function
+
 15 Feb 2004 Sylvain Pion
 - Add intersection(Plane_3, Plane_3, Plane_3). [bug#185]
 

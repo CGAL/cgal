@@ -101,14 +101,14 @@ template <class K>
 inline bool do_intersect(const Point_3<K> &p, 
 			 const Triangle_3<K> &t)
 { 
-  return do_intersect(t,p,K());
+  return typename K::Do_intersect_3()(t,p);
 } 
 
 template <class K>
 inline bool do_intersect(const Triangle_3<K> &t, 
 			 const Point_3<K> &p)
 { 
-  return do_intersect(t,p,K());
+  return typename K::Do_intersect_3()(t,p);
 } 
 
 /*

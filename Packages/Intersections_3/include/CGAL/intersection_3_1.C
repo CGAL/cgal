@@ -753,7 +753,7 @@ inline
 Object 
 intersection(const Plane_3<K> &plane1, const Plane_3<K> &plane2)
 {
-  return CGALi::intersection(plane1, plane2, K());
+  return typename K::Intersect_3()(plane1, plane2);
 }
 
 template <class K>
@@ -762,7 +762,7 @@ Object
 intersection(const Plane_3<K> &plane1, const Plane_3<K> &plane2,
              const Plane_3<K> &plane3)
 {
-  return CGALi::intersection(plane1, plane2, plane3, K());
+  return typename K::Intersect_3()(plane1, plane2, plane3);
 }
 
 
@@ -771,7 +771,7 @@ inline
 Object
 intersection(const Plane_3<K>  &plane, const Line_3<K> &line)
 {
-  return CGALi::intersection(plane, line, K());
+  return typename K::Intersect_3()(plane, line);
 }
 
 template <class K>
@@ -779,7 +779,7 @@ inline
 bool
 do_intersect(const Plane_3<K> &plane, const Line_3<K> &line)
 {
-  return CGALi::do_intersect(plane, line, K());
+  return typename K::Do_intersect_3()(plane, line);
 }
 
 template <class K>
@@ -787,7 +787,7 @@ inline
 Object
 intersection(const Plane_3<K> &plane, const Ray_3<K> &ray)
 {
-  return CGALi::intersection(plane, ray, K());
+  return typename K::Intersect_3()(plane, ray);
 }
 
 template <class K>
@@ -795,7 +795,7 @@ inline
 bool
 do_intersect(const Plane_3<K> &plane, const Ray_3<K> &ray)
 {
-  return CGALi::do_intersect(plane, ray, K());
+  return typename K::Do_intersect_3()(plane, ray);
 }
 
 template <class K>
@@ -803,7 +803,7 @@ inline
 Object
 intersection(const Plane_3<K> &plane, const Segment_3<K> &seg)
 {
-  return CGALi::intersection(plane, seg, K());
+  return typename K::Intersect_3()(plane, seg);
 }
 
 
@@ -812,7 +812,7 @@ inline
 bool
 do_intersect(const Plane_3<K>  &plane, const Segment_3<K> &seg)
 {
-  return CGALi::do_intersect(plane, seg, K());
+  return typename K::Do_intersect_3()(plane, seg);
 }
 
 template <class K>
@@ -821,7 +821,7 @@ Object
 intersection(const Line_3<K> &line,
 	     const Bbox_3 &box)
 {
-  return CGALi::intersection(line, box, K());
+  return typename K::Intersect_3()(line, box);
 }
 
 template <class K>
@@ -830,7 +830,7 @@ Object
 intersection(const Ray_3<K> &ray,
 	     const Bbox_3 &box)
 {
-  return CGALi::intersection(ray, box, K());
+  return typename K::Intersect_3()(ray, box);
 }
 
 template <class K>
@@ -839,7 +839,7 @@ Object
 intersection(const Segment_3<K> &seg,
 	     const Bbox_3 &box)
 {
-  return CGALi::intersection(seg, box, K());
+  return typename K::Intersect_3()(seg, box);
 }
 
 template <class K>
@@ -848,7 +848,7 @@ Object
 intersection(const Line_3<K> &line,
 	     const Iso_cuboid_3<K> &box)
 {
-  return CGALi::intersection(line, box, K());
+  return typename K::Intersect_3()(line, box);
 }
 
 template <class K>
@@ -857,7 +857,7 @@ Object
 intersection(const Ray_3<K> &ray,
 	     const Iso_cuboid_3<K> &box)
 {
-  return CGALi::intersection(ray, box, K());
+  return typename K::Intersect_3()(ray, box);
 }
 
 template <class K>
@@ -866,7 +866,7 @@ Object
 intersection(const Segment_3<K> &seg,
 	     const Iso_cuboid_3<K> &box)
 {
-  return CGALi::intersection(seg, box, K());
+  return typename K::Intersect_3()(seg, box);
 }
 
 
@@ -876,7 +876,7 @@ Object
 intersection(const Iso_cuboid_3<K> &icub1,
 	     const Iso_cuboid_3<K> &icub2)
 {
-  return CGALi::intersection(icub1, icub2, K());
+  return typename K::Intersect_3()(icub1, icub2);
 }
 
 CGAL_END_NAMESPACE

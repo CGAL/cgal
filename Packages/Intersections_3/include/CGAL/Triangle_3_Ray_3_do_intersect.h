@@ -314,7 +314,7 @@ inline bool do_intersect(const Ray_3<K> &r,
 			 const Triangle_3<K> &t)
 
 {
-  return CGALi::do_intersect(t,r,K());
+  return typename K::Do_intersect_3()(t,r);
 }
 
 
@@ -324,7 +324,7 @@ inline bool do_intersect(const Triangle_3<K> &t,
 			 const Ray_3<K> &r)
 
 {
-  return CGALi::do_intersect(t,r,K());
+  return typename K::Do_intersect_3()(t,r);
 }
 
 
