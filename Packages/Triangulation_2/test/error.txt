@@ -1,5 +1,5 @@
 ---------------------------------------------------------------
-- TEST RESULTS FROM PLATFORM sparc_SunOS-5.6_eg++-egcs-2.91.57_LEDA
+- TEST RESULTS FROM PLATFORM sparc_SunOS-5.6_eg++-egcs-2.91.60_LEDA
 ---------------------------------------------------------------
 
 DIRECTORY CVS:
