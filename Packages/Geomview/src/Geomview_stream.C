@@ -118,13 +118,55 @@ void Geomview_stream::setup_geomview(const char *machine, const char *login)
         in = pipe_in[0];
         out = pipe_out[1];
 
+	// Necessary to wait a little bit for Geomview,
+        // otherwise you won't be able to ask for points...
+        sleep(1);
+
+#if 1
+        // We want to get rid of the requirement in the CGAL doc about
+	// (echo "started").  But we want to be backward compatible, that is,
+	// people who have this echo in their .geomview must still have CGAL
+	// working, at least for a few public releases.
+        // So the plan is to send, from CGAL, the command : (echo "CGAL-3D")
+        // It's the same length as "started", 7.
+        // Then we read 7 characters from Geomview, and test which string it is.
+        // If it's "CGAL-3D", then fine, the user doesn't have .geomview with
+        // the back-compatible echo command.
+        // In the very long run, we'll be able to get rid of all this code as
+        // well.
+
+        *this << "(echo \"CGAL-3D\")";
+
+        char inbuf[10];
+        ::read(in, inbuf, 7);
+
+        if (::strncmp(inbuf, "started", 7) = 0)
+        {
+            std::cerr << "You still have a .geomview file with the\n"
+                      << "(echo \"started\") command. Note that this is not\n"
+                      << "compulsory anymore, since CGAL 2.3" << std::endl;
+
+            // Then the next one is supposed to be CGAL-3D.
+            ::read(in, inbuf, 7);
+            if (::strncmp(inbuf, "CGAL-3D", 7) != 0)
+                std::cerr << "Unexpected string from Geomview !" << std::endl;
+        }
+        else if (::strncmp(inbuf, "CGAL-3D", 7) = 0)
+        {
+            std::cerr << "Good, you don't have a .geomview file with the\n"
+                      << "(echo \"started\") command" << std::endl;
+        }
+        else
+        {
+            std::cerr << "Unexcepted string from Geomview at initialization !\n"
+                      << "Going on nevertheless !" << std::endl;
+        }
+#else
+        // Old original version
         char inbuf[10];
         // Waits for "started" from the .geomview file.
-        ::read(in, inbuf, ::strlen("started"));
-
-	// Necessary to wait a little bit for Geomview, otherwise you won't be
-	// able to ask for points...
-        sleep(1);
+        ::read(in, inbuf, 7);
+#endif
 
         std::cout << "done." << std::endl;
 

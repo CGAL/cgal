@@ -8,7 +8,8 @@
   http://www.cmla.ens-cachan.fr/Utilisateurs/dosreis/C++/FAQ/
   It's harder than I thought, since g++ 2.95 doesn't have <sstream>.
   Maybe CGAL should define it ?
-- Remove the requirement to have a .geomview file with (echo "started")
+---->>> Test what I checked in, then update the doc.
+  Remove the requirement to have a .geomview file with (echo "started")
   inside.  Synchronization can probably be done with select() ?
   There are other problems (sleep(1) is needed), so maybe don't touch...
   It must be backward-compatible...
