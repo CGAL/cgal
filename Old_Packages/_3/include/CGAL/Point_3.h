@@ -25,6 +25,8 @@
 
 CGAL_BEGIN_NAMESPACE
 
+class Origin;
+
 template <class R_>
 class Point_3 : public R_::Point_3_base
 {

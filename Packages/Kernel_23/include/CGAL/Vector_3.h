@@ -25,6 +25,8 @@
 
 CGAL_BEGIN_NAMESPACE
 
+class Null_vector;
+
 template <class R_>
 class Vector_3 : public R_::Vector_3_base
 {
