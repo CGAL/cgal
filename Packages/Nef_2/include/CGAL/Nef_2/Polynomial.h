@@ -35,6 +35,7 @@
 #include <CGAL/number_utils.h>
 #include <CGAL/Number_type_traits.h>
 #include <CGAL/IO/io.h>
+#include <cstddef>
 #undef _DEBUG
 #define _DEBUG 3
 #include <CGAL/Nef_2/debug.h>
