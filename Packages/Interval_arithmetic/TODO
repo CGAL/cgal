@@ -50,8 +50,6 @@ Concerning the code itself:
   Et modifier le comportement dans les fonctions save/restore ?
 - converter (long longs), (long doubles)...  au moins documenter que c'est pas
   supporté pour le moment.  Hint: (double) +/- 1ulp.
-? try if __attribute__((const)) for GNU on my operators is ok, and speed up ?
-  what about putting it on predicates too ?
 ? Currently, some types (leda_*, GMP) need the rounding to nearest for doing
   the conversion to Interval.  That's bad because double doesn't, and is the
   case that must be optimized.  Maybe have a Tag for each NT saying if/how it
@@ -66,41 +64,25 @@ Concerning the code itself:
 
 Concerning the script:
 
-- Try to match the types "CGAL::Sign" ?
-  et ne pas être pédantic sur les espaces qui manquent...
+- Try to be less pedantic (accept more C++).
 - Add a warning/check to the argument being "const".
 - Add determinant_signs.h to the list of filtered files ?  And send the 3
   lines to Stefan to add to the end of the original determinant.h.
 - Produire un fichier avec juste les déclarations, et un autre avec les
   définitions, ça aidera à faire une library séparée de trucs précompilés.
-- Add a comment for the parser script, e.g. /*No_Filter*/, because some
-  predicates don't need to be filtered:
-   - compare_lexicographically_xyC2
-   - collinear_are_ordered_along_lineC2
-   - collinear_are_strictly_ordered_along_lineC2
-   - compare_lexicographically_xyzC3
-   - collinear_are_ordered_along_lineC3
-   - collinear_are_strictly_ordered_along_lineC3
-  There's no way to guess when parsing.
-  Anyway for the filtered constructions, the scheme will have to be rethought.
-? Clean it up, and comment it...
 
 Concerning the doc:
 
 - Dans la doc html de CGAL-2.0, mes enums sont répertoriés 2 fois dans
   l'index, sûrement un bug de cc_manual compliance de ma part.
   de même plus loin, ma fct to_double(Ia) n'est pas pareille que les autres.
-- documenter une fonction CGAL::force_ieee_754_double_precision(), dans la
-  doc, pour que le user puisse forcer sur __i386 si ça lui chante.  Dans la
-  doc, à l'endroit de l'intro de la support library (rajouter un
-  include/CGAL/FPU.h qui fasse juste ça ?)
-- documenter le mécanisme pour les prédicats? Il me semblerait utile de
+- RV: "documenter le mécanisme pour les prédicats? Il me semblerait utile de
   rajouter une section d'introduction ou bien à la fin du chapitre, pour
   expliquer comment utiliser les filtres. Peut-être une référence à ton
-  chapitre sur l'arithmétique d'intervalles...
-- change the status of homogeneous predicates when available...
+  chapitre sur l'arithmétique d'intervalles..."
 - add a pointer to my MISC'99 paper.
-- Document "IA::number_of_failures".
+- Document "IA::number_of_failures", once overlap_action() is made
+  customisable.
 - Documenter le mécanisme de cache.
 - Documenter .exact(), .interval() et .value().
 - Passer au nouveau format de doc.

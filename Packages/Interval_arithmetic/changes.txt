@@ -1,5 +1,16 @@
 Changes done to the Interval Arithmetic package.
 
+Version 4.19 on 6 July 1999
+- The script now locally (in the produced file) defines
+  "CGAL_DONT_NEED_FILTER", so the user can conditionnaly exclude some code
+  in the produced file with "#ifndef CGAL_DONT_NEED_FILTER".  For example,
+  some predicates that don't need to be filtered because they are already
+  exact (e.g. lexico*).
+- Fix for MipsPro.
+- New function force_ieee_double_precision(), that sets the correct IEEE
+  double precision on Intel only.
+- CygWin compiles.
+
 Version 4.18 on 30 June 1999
 - Cleaned up _FPU.h, no more CGAL_*ASSEMBLY* macros, using GNU libc macros
   on Linux/PPC (x86 keeps the old asm() for compatibility with libc5).

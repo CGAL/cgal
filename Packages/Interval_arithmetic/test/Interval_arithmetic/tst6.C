@@ -11,6 +11,15 @@ double force2mem(const double a)
   return CGAL_IA_FORCE_TO_DOUBLE(a);
 }
 
+CGAL::Interval_nt_advanced add( const CGAL::Interval_nt_advanced & a,
+				const CGAL::Interval_nt_advanced & b)
+{
+    CGAL::Interval_nt_advanced c,d;
+    c = a+b;
+    d = a+b;
+    return c+d;
+}
+
 template < class NT >
 void test (const NT &)
 {
