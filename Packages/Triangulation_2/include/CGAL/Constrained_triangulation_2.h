@@ -3,11 +3,14 @@
 
 #include <pair.h>
 #include <list.h>
+#include <vector.h>
+#include <map.h> 
 
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Triangulation_short_names_2.h>
 #include <CGAL/Triangulation_2.h>
-#include <CGAL/Constrained_triangulation_sweep.h>
+#include <CGAL/Constrained_triangulation_face_base_2.h>
+#include <CGAL/Constrained_triangulation_sweep_2.h>
 
 
 template < class Gt, class Tds>
@@ -20,18 +23,21 @@ public:
   typedef CGAL_Constrained_triangulation_2<Gt,Tds> Constrained_triangulation;
   typedef pair<Point,Point> Constraint;
 
-  typedef CGAL_Constrained_triangulation_sweep<Gt,Tds>  Sweep;
+  typedef CGAL_Constrained_triangulation_sweep_2<Gt,Tds>  Sweep;
 
   CGAL_Constrained_triangulation_2() : Triangulation() { }
 
   CGAL_Constrained_triangulation_2(const Gt& gt) : Triangulation(gt) { }
 
-  CGAL_Constrained_triangulation_2(list<Constraint>& lc, Gt& gt=Gt())
+  CGAL_Constrained_triangulation_2(const Vertex_handle&  v, const Gt& gt) 
+    : Triangulation(v,gt) {}
+
+  CGAL_Constrained_triangulation_2(list<Constraint>& lc, const Gt& gt=Gt())
       : CGAL_Triangulation_2<Gt,Tds>(gt)
   {
     Sweep sweep(lc,gt);
-    init(sweep.vertex());
-    CGAL_triangulation_postcondition( is_valid() );
+    CGAL_Triangulation_2<Gt,Tds> Tr ( sweep.vertex(), gt);
+    swap(Tr);
   }
 
  #ifdef CGAL_CFG_NO_MEMBER_TEMPLATES
@@ -125,7 +131,7 @@ template < class Gt, class Tds >
 ostream &
 operator<<(ostream& os, const CGAL_Constrained_triangulation_2<Gt,Tds> &Ct)
 {
-  return os << (const CGAL_Triangulation_2<T>&)Ct;
+  return os << (const CGAL_Triangulation_2<Gt,Tds>&)Ct;
 }
 
 
