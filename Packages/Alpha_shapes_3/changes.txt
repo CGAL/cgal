@@ -1,3 +1,6 @@
+05 May 2004 Andreas Fabri
+- Added missing std:: to find in Alpha_shape_3.h
+
 29 April 2004 Mariette Yvinec
 - removed an old test file which I had forgotten to remove from cvs
 
