@@ -175,8 +175,16 @@ inline ET CGAL_to_exact_type (const ET & e)
 #include <CGAL/Filter/predicates_on_ftC2.h>
 #endif
 
+#ifdef CGAL_PREDICATES_ON_FTC3_H
+#include <CGAL/Filter/predicates_on_ftC3.h>
+#endif
+
 #ifdef CGAL_PREDICATES_ON_RTH2_H
 #include <CGAL/Filter/predicates_on_rtH2.h>
+#endif
+
+#ifdef CGAL_PREDICATES_ON_RTH3_H
+#include <CGAL/Filter/predicates_on_rtH3.h>
 #endif
 
 #endif // CGAL_FILTER_H
