@@ -1,0 +1,116 @@
+
+\begin{ccRefClass}{leda_rat_kernel_traits}
+
+\ccDefinition
+
+\ccInclude{CEP/Leda_rat_kernel/leda_rat_kernel_traits.h}
+
+The class \ccRefName\  is a model for a CGAL kernel. This model uses the LEDA rational geometry
+for the geometric predicates of the kernel.
+
+\ccCreationVariable{LRK}
+
+
+\ccHtmlLinksOff
+
+
+\ccTypes
+
+The class \ccRefName\ provides all type definitions required by the CGAL kernel concept
+for Two-dimensional and Three-dimensional kernel. Please notice that
+you have to define the macro \ccc{CGAL\_PROVIDE\_LEDA\_RAT\_KERNEL\_TRAITS\_3} before
+including \ccc{leda\_rat\_kernel\_traits.h} when you want to use the Three-dimensional kernel.
+We list only the geometric object types and some special types in this manual page; the type names
+for the constructors and generalized predicate functors are documented for all CGAL
+compatible kernels in the kernel manual (that's why they are not listed here, but of course
+they are also in the class \ccRefName\ ).
+Some of the type names in the documentation are prefixed by \ccc{LEDA\_NAMESPACE\_NAME};
+that means that these types are in global scope for LEDA versions without a namespace
+(LEDA 4.3) and that they are in namespace \ccc{leda} for LEDA versions with a namespace 
+(LEDA 4.4 or higher).
+The class \ccRefName\ obviously provides no type equality for its types with the CGAL types.
+
+\ccThree{typedef leda_rat_point Point_2;}{the point type}{}
+\ccThreeToTwo
+\ccTypedef{typedef leda_rational FT;}{the field number type}
+\ccTypedef{typedef leda_integer  RT;}{the ring number type}
+\ccTypedef{typedef leda_rat_point Point_2;}{the 2d point type}
+\ccTypedef{typedef leda_rat_vector Vector_2;}{the 2d vector type}
+\ccTypedef{typedef LEDA_NAMESPACE_NAME::rat_direction Direction_2;}{the 2d direction type}
+\ccTypedef{typedef leda_rat_line Line_2;}{the 2d line type}
+\ccTypedef{typedef leda_rat_ray  Ray_2;}{the 2d ray type}
+\ccTypedef{typedef leda_rat_segment Segment_2;}{the 2d segment type}
+\ccTypedef{typedef leda_rat_triangle   Triangle_2;}{the 2d triangle type}
+\ccTypedef{typedef leda_rat_rectangle  Iso_rectangle_2;}{the 2d isorectangle type}
+
+If the macro \ccc{CGAL\_COMPATIBLE\_CIRCLES} is defined we provide a CGAL-compatible circle class
+storing a center point and a squared radius.
+
+\ccTypedef{typedef LEDA_NAMESPACE_NAME::cgal_rat_circle  Circle_2;}{the 2d circle type}
+
+Otherwise our circle class is the default class from the LEDA kernel:
+
+\ccTypedef{typedef leda_rat_circle Circle_2;}{the 2d circle type}
+\ccTypedef{typedef CGAL::Object  Object_2;}{the 2d object type}
+
+3d kernel types (use macro  \ccc{CGAL\_PROVIDE\_LEDA\_RAT\_KERNEL\_TRAITS\_3} ):
+
+\ccTypedef{typedef leda_d3_rat_point Point_3;}{the 3d point type}
+\ccTypedef{typedef leda_rat_vector   Vector_3;}{the 3d vector type}
+\ccTypedef{typedef LEDA_NAMESPACE_NAME::rat_direction  Direction_3;}{the 3d direction type}
+\ccTypedef{typedef LEDA_NAMESPACE_NAME::d3_rat_iso_cuboid  Iso_cuboid_3;}{the 3d isocuboid type}
+\ccTypedef{typedef leda_d3_rat_line     Line_3;}{the 3d line type}
+\ccTypedef{typedef leda_d3_rat_ray      Ray_3;}{the 3d ray type}
+\ccTypedef{typedef leda_d3_rat_segment  Segment_3;}{the 3d segment type}
+
+If the macro \ccc{CGAL\_COMPATIBLE\_SPHERES} is defined we provide a CGAL-compatible sphere class
+storing a center point and a squared radius.
+
+\ccTypedef{typedef LEDA_NAMESPACE_NAME::cgal_d3_rat_sphere  Sphere_3;}{the 3d sphere type}
+
+Otherwise our sphere class is the default class from the LEDA 3d kernel:
+
+\ccTypedef{typedef leda_d3_rat_sphere   Sphere_3;}{the 3d sphere type} 
+ 
+\ccTypedef{typedef leda_d3_rat_plane         Plane_3;}{the 3d plane type}
+\ccTypedef{typedef leda_d3_rat_triangle      Triangle_3;}{the 3d triangle type}
+\ccTypedef{typedef LEDA_NAMESPACE_NAME::d3_rat_simplex       Tetrahedron_3;}{the 3d tetrahedron type}
+\ccTypedef{typedef CGAL::Object              Object_3;}{the 3d object type}
+
+Some packages of the CGAL basic library that are not fully kernel traits compatible
+have an additional requirements for their traits classes - they need a polygon type definition.
+An example is the Partition package. To meet this requirement we give the option to have a
+polygon type definition in the LEDA rational kernel traits class; 
+compile with the macro \ccc{CGAL\_PROVIDE\_LEDA\_PARTITION\_TRAITS} to
+include the following polygon type definition in \ccRefName\ :
+
+\ccTypedef{typedef CGAL::Polygon_2<CGAL::leda_rat_kernel_traits, std::list<leda_rat_point> > Polygon_2;}{the polygon type} 
+
+All the type definitions for construction functors and for generalized predicate functors that
+are required in a model for a 2-d/3-d CGAL kernel are provided. The type names
+can be found in the CGAL kernel manual. I give one example:
+
+\ccTypedef{typedef Construct_leda_rat_point  Construct_point_2;}{the construction functor for 2d points}
+
+
+\ccHtmlLinksOn
+
+
+\ccCreation
+
+\ccConstructor{leda_rat_kernel_traits();}
+{creates an object of type \ccRefName\ .}
+
+
+\ccOperations
+
+All access functions needed in a model for the CGAL 2-d/3-d kernel concept are provided.
+The names of these access functions are the same in all kernels (see the CGAL kernel manual 
+for details). I give one example for the point constructor:
+
+\ccMethod{Construct_point_2  construct_point_2_object();}
+{ returns a point construction object.}
+
+\ccHtmlLinksOn
+
+\end{ccRefClass} 

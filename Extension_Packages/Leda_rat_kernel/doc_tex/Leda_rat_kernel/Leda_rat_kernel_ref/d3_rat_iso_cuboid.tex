@@ -1,0 +1,72 @@
+\ccDefGlobalScope{}
+\begin{ccRefClass}{d3_rat_iso_cuboid}
+
+\ccDefinition
+
+\ccInclude{CEP/Leda_rat_kernel/LEDA_RATKERNEL/d3_rat_iso_cuboid.h}
+
+The class \ccRefName\  is an iso-oriented cuboid (box)
+in 3d space with rational coordinates. It uses the LEDA rational kernel. 
+The class is in namespace \ccc{leda} for LEDA versions with a namespace
+(4.4 or higher) and else in global scope.
+
+
+\ccCreationVariable{I}
+
+\ccCreation
+
+\ccConstructor{d3_rat_iso_cuboid();}
+{introduces a variable of type \ccRefName\ .}  
+  
+\ccConstructor{d3_rat_iso_cuboid(leda_integer xmin, leda_integer xmax, leda_integer ymin, leda_integer ymax, leda_integer zmin, leda_integer zmax);}
+{introduces a variable with minimal/maximal $x/y/z$ - coordinates $xmin,xmax,ymin,ymax,zmin,zmax$
+of type \ccRefName\ . } 
+
+\ccConstructor{d3_rat_iso_cuboid(leda_integer xmin, leda_integer xmax, leda_integer ymin, leda_integer ymax, leda_integer zmin, leda_integer zmax,
+                                 leda_integer w);}
+{introduces a variable with diagonal opposite vertices $(xmin,ymin,zmin,w)$ and $(xmax,ymax,zmax,w)$
+of type \ccRefName\ .}
+  
+\ccConstructor{d3_rat_iso_cuboid(const leda_d3_rat_point& p,const leda_d3_rat_point& q);}
+{introduces a variable of type \ccRefName\ with diagonal opposite vertices $p$ and $q$ . }  
+
+
+
+\ccOperations
+
+\ccMethod{leda_d3_rat_point vertex(int i);}
+{returns a vertex (corner). Precondition: \ccc{0<=i<=7} .
+The ordering of the vertices is compatible to the CGAL class \ccc{Iso\_cuboid\_3}.
+The following vertices are returned:
+}
+\begin{itemize}
+\item i==0: lower left front 
+\item i==1: lower right front
+\item i==2: lower right back
+\item i==3: lower left back
+\item i==4: upper left front
+\item i==5: upper left back
+\item i==6: upper right front
+\item i==7: upper right back
+\end{itemize}
+
+\ccMethod{leda_rational xmin();}
+{returns the smallest x-coordinate.}
+  
+\ccMethod{leda_rational xmax();}
+{returns the largest x-coordinate.}  
+  
+\ccMethod{leda_rational ymin();}
+{returns the smallest y-coordinate.} 
+  
+\ccMethod{leda_rational ymax();}
+{returns the largest y-coordinate.} 
+  
+\ccMethod{leda_rational zmin();}
+{returns the smallest z-coordinate.}  
+  
+\ccMethod{leda_rational zmax();}
+{returns the largest z-coordinate.}
+
+
+\end{ccRefClass} 

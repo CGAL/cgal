@@ -1,0 +1,31 @@
+% +------------------------------------------------------------------------+
+% | CGAL Reference Manual
+% +------------------------------------------------------------------------+
+
+
+\ccParDims
+
+%\clearpage
+
+\chapter{LEDA Rational kernel traits}
+
+\section*{Summary}
+
+The LEDA Rational kernel traits class is a model for a CGAL kernel.
+All types and functors of a CGAL 2-d and 3-d kernel are provided by
+this traits class.
+This model uses the geometric classes and functions of the rational geometry kernel
+of LEDA. Because for some geometry classes in the CGAL kernels there are no equivalent
+data types in LEDA the package also contains additional classes for directions, 3d isocuboids
+and CGAL compatible circles and spheres enhancing LEDA.
+
+These enhancements are in namespace \ccc{leda} if you use a LEDA version supporting namespaces
+(LEDA 4.4 or higher), else (LEDA 4.3) they are in the global scope.
+
+\subsection*{Classes}
+\ccc{CGAL::leda_rat_kernel_traits}\\
+\ccc{cgal_rat_circle}\\
+\ccc{rat_direction}\\
+\ccc{cgal_d3_rat_sphere}\\
+\ccc{d3_rat_iso_cuboid}\\
+

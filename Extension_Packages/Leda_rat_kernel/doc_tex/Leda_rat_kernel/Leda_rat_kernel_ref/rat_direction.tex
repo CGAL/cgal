@@ -1,0 +1,51 @@
+\ccDefGlobalScope{}
+\begin{ccRefClass}{rat_direction}
+
+\ccDefinition
+
+\ccInclude{CEP/Leda_rat_kernel/LEDA_RATKERNEL/rat_direction.h}
+
+The class \ccRefName\  is a vector in the 2-d or 3-d vector space where we forget about its length.
+It is the corresponding class to \ccc{CGAL::Direction_2} and \ccc{CGAL::Direction_3} for the LEDA
+rational kernel.
+The class is in namespace \ccc{leda} for LEDA versions with a namespace
+(4.4 or higher) and else in global scope.
+
+
+\ccCreationVariable{D}
+
+\ccCreation
+
+\ccConstructor{rat_direction();}
+{introduces a variable of type \ccRefName\ .}      
+   
+\ccConstructor{rat_direction(const leda_rat_vector& vec);}
+{introduces a variable of type \ccRefName\ with the direction of vector $vec$.}   
+   
+\ccConstructor{rat_direction(leda_integer x, leda_integer y, leda_integer w);}
+{introduces a variable of type \ccRefName\ with the direction passing
+through the origin and point $p=(x/w,y/w)$.}  
+
+\ccConstructor{rat_direction(leda_rational x, leda_rational y);}
+{introduces a variable of type \ccRefName\ with the direction passing
+through the origin and point $p=(x,y)$.}   
+   
+\ccConstructor{rat_direction(leda_integer x, leda_integer y, leda_integer z, leda_integer w);}
+{introduces a variable of type \ccRefName\ with the direction passing
+through the origin and point $p=(x/w,y/w,z/w)$.}    
+
+\ccConstructor{rat_direction(leda_rational x, leda_rational y, leda_rational z);}
+{introduces a variable of type \ccRefName\ with the direction passing
+through the origin and point $p=(x,y,z)$.}  
+
+
+\ccOperations
+
+\ccMethod{int dim();}
+{returns the dimension of the underlying vector.}   
+   
+\ccMethod{const leda_rat_vector& get_vector();}
+{returns the underlying vector.}  
+ 
+
+\end{ccRefClass} 

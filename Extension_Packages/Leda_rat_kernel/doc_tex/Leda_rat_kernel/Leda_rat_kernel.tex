@@ -1,0 +1,183 @@
+% +------------------------------------------------------------------------+
+% | CEP User Manual:  Leda_rat_kernel.tex
+% +------------------------------------------------------------------------+
+
+
+\chapter{LEDA Rational kernel traits}
+\label{chapterLeda_rat_kernel}
+\ccChapterAuthor{Matthias B\"asken}
+
+%---------------------------------------------
+% Introduction
+%---------------------------------------------
+\section{Introduction}
+
+The Computational Geometry Algorithms Library (CGAL) defines the concept of a geometry
+kernel. Such a kernel provides types, construction objects and generalized
+predicates. Most implementations of CG algorithms and data structures 
+in the basic library of CGAL were done in a way that the classes or functions can be
+parametrized with a geometric traits class. 
+
+In most cases this geometric traits class must be a model of a CGAL geometry kernel
+(but there are some exceptions).
+
+The CGAL distribution comes with a number of models (or geometry kernels), for instance
+the cartesian kernel (\ccc{CGAL::Cartesian}) or the homogeneous kernel (\ccc{CGAL::Homogeneous}).
+
+This package provides another model for a CGAL geometry kernel - the rational LEDA kernel.
+This model uses the classes and functions of the rational geometry kernel of the LEDA
+library.
+
+LEDA (Library of Efficient Data types and Algorithms) is a popular software library
+for combinatorial and geometric computing and contains two geometry kernels,
+a floating-point kernel (cartesian double coordinates) and a rational kernel (homogeneous LEDA integer
+coordinates). CGAL already comes with support for LEDA visualization classes (\ccc{GeoWin} and
+\ccc{leda_window}) and for the LEDA number types (for example the integer or rational numbers
+of the LEDA library). This package provides support for the LEDA rational kernel, so that
+many packages of the basic library can be used directly with geometric LEDA types and functions.
+The LEDA rational kernel guarantees robustness (the floating-point kernel does not), so in most cases
+this is the recommended geometry kernel when you use LEDA. This is also the reason why this
+package supports the rational kernel and not the floating-point kernel.
+
+If you want to use this package you must have CGAL (version 2.4) and LEDA (version 4.3 or 4.4) 
+installed. The package only consists of header files, so you don't have to build an additional
+library.
+
+The package supports the two- and three-dimensional part of the CGAL kernel concept. The d-dimensional
+part is not supported because LEDA has no d-d kernel.
+
+Some benefits of the LEDA rational kernel traits are:
+\begin{itemize}
+\item easy interfacing of CGAL and LEDA geometry components
+\item fast geometric predicates (the LEDA rational kernel uses floating-point filtering)
+\item developers of CGAL or CGALized code can use the package for testing kernel traits compatibility of
+      their code with another kernel model (very useful to find little incompatibilities)
+\item LEDA users get access to a number of algorithms and data structures not present in LEDA, and these
+      can be used with existing LEDA types
+\end{itemize}
+
+
+\section{Examples}
+
+Two example programs show the usage of the LEDA rational kernel traits. The first example uses this traits
+class for computing the two-dimensional convex hull of some points. The second example shows  the usage
+of the LEDA rational kernel traits with the polyhedral surface package of CGAL. This package needs the 3-d
+part of a kernel, so we give an example for using the 3-d LEDA rational kernel with a CGAL package.
+Both programs can be found in the demo directory of the LEDA rational kernel traits package.
+
+\subsection{Two-dimensional convex hull}
+
+The example program for 2-d convex hull computation uses the \ccc{GeoWin} visualization library for
+graphical output and input. 
+The example has two scenes of geometric objects. One scene ($my\_scene$) contains the input point set, the other
+scene is dependent from this scene and contains the output (the convex hull of the input point set).
+An update object of type $geo\_hull$ is used for recomputing the output when the content of the input scene
+changes.
+\ccHtmlLinksOff
+
+{\bf CGAL\_convex\_hull\_2.C :}
+
+\begin{ccExampleCode}
+#include <CGAL/basic.h>
+#include <CEP/Leda_rat_kernel/leda_rat_kernel_traits.h>
+#include <CEP/Leda_rat_kernel/geowin_leda_rat_kernel.h>
+#include <CGAL/convex_hull_2.h>
+#include <CGAL/geowin_support.h>
+
+#if defined(LEDA_NAMESPACE)
+using namespace leda;
+#endif
+
+typedef CGAL::leda_rat_kernel_traits      K;
+typedef K::Point_2                        Point;
+typedef K::Segment_2                      Segment;
+
+class geo_hull : public geowin_update<std::list<Point>, std::list<Segment> >
+{
+public:
+ void update(const std::list<Point>& L, std::list<Segment>& Sl)
+ {
+  Sl.clear();
+  std::list<Point> out;
+  
+  K traits;
+  CGAL::convex_hull_points_2(L.begin(),L.end(), std::back_inserter(out), traits);   
+
+  if( out.size() > 1 ) {
+    Point pakt,prev,pstart;
+
+    std::list<Point>::const_iterator it=out.begin();
+    prev= *it; pstart=prev;
+    it++;
+
+    for(; it != out.end(); ++it) {
+       pakt= *it;
+       Sl.push_back(Segment(prev,pakt));
+       prev=pakt;
+    }
+    Sl.push_back(Segment(pakt,pstart));
+  }
+ }
+ 
+};
+
+int main()
+{
+  geowin_init_default_type((std::list<Point>*)0, leda_string("LEDA-rat_point"));
+ 
+  std::list<Point> L;
+
+  GeoWin GW("2d convex hull");
+  geo_hull update_obj;
+  geo_scene my_scene= GW.new_scene(L);  
+  geo_scene result  = GW.new_scene(update_obj,my_scene,leda_string("Convex Hull")); 
+  GW.set_visible(result,true);
+ 
+  GW.edit(my_scene);
+  
+  return 0;  
+}
+\end{ccExampleCode}
+
+\ccHtmlLinksOn
+
+\subsection{Polyhedral surfaces example}
+
+This example is a version of the example program $polyhedron\_prog\_simple.C$ from the Polyhedron examples
+of CGAL, but this time we use the LEDA rational kernel (the original example program uses a CGAL kernel).
+Please note that we define a macro \ccc{CGAL\_PROVIDE\_LEDA\_RAT\_KERNEL\_TRAITS\_3} at the beginning of the
+program. This macro indicates that we want to use not only the 2-d part of the LEDA rational kernel
+traits, but also the 3-d part.
+If you want to use the 3-d part of the LEDA rational kernel traits you have to define this macro before
+including \ccc{leda\_rat\_kernel\_traits.h} and you have to link with the 3-d library of LEDA ($-lD3$ on
+UNIX systems).
+\ccHtmlLinksOff
+
+{\bf polyhedron\_prog\_simple\_leda.C :}
+
+\begin{ccExampleCode}
+#define CGAL_PROVIDE_LEDA_RAT_KERNEL_TRAITS_3
+
+#include <CGAL/Cartesian.h>
+#include <CEP/Leda_rat_kernel/leda_rat_kernel_traits.h>
+#include <CGAL/Polyhedron_3.h>
+
+#if defined(LEDA_NAMESPACE)
+using namespace leda;
+#endif
+
+typedef CGAL::leda_rat_kernel_traits       Kernel;
+
+typedef CGAL::Polyhedron_3<Kernel>         Polyhedron;
+typedef Polyhedron::Halfedge_handle        Halfedge_handle;
+
+int main() {
+    Polyhedron P;
+    Halfedge_handle h = P.make_tetrahedron();
+    if ( P.is_tetrahedron(h))
+        return 0;
+    return 1;
+}
+\end{ccExampleCode}
+
+\ccHtmlLinksOn

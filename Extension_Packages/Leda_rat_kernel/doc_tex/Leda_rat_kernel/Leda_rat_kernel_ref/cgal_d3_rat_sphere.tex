@@ -1,0 +1,53 @@
+\ccDefGlobalScope{}
+\begin{ccRefClass}{cgal_d3_rat_sphere}
+
+\ccDefinition
+
+\ccInclude{CEP/Leda_rat_kernel/LEDA_RATKERNEL/cgal_d3_rat_sphere.h}
+
+The class \ccRefName\  is a 3d sphere class using the LEDA rational kernel. It stores a center point
+and a squared radius (like CGAL). The class is in namespace \ccc{leda} for LEDA versions with a namespace
+(4.4 or higher) and else in global scope.
+
+
+\ccCreationVariable{S}
+
+\ccCreation
+
+\ccConstructor{cgal_d3_rat_sphere();}
+{introduces a variable of type \ccRefName\ .} 
+  
+\ccConstructor{cgal_d3_rat_sphere(const leda_d3_rat_point& p1, const leda_d3_rat_point& p2, 
+               CGAL::Orientation ori = CGAL::COUNTERCLOCKWISE);}
+{introduces a variable of type \ccRefName\ with center $p1$, a point
+$p2$ on the sphere and orientation $ori$. }		  
+  
+\ccConstructor{cgal_d3_rat_sphere(const leda_d3_rat_point& p1, 
+               CGAL::Orientation ori = CGAL::COUNTERCLOCKWISE);}
+{introduces a variable of type \ccRefName\ with center $p1$, orientation $ori$
+and radius $0$.}	
+  
+\ccConstructor{cgal_d3_rat_sphere(const leda_d3_rat_point& p1, const leda_rational& sqrad, 
+               CGAL::Orientation ori = CGAL::COUNTERCLOCKWISE);}
+{introduces a variable of type \ccRefName\ with center $p1$, orientation $ori$
+and squared radius $sqrad$.}	 
+
+
+\ccOperations
+
+\ccMethod{leda_d3_rat_point  center();}
+{returns the center of the sphere.}  
+  
+\ccMethod{leda_rational squared_radius();}
+{returns the square of the radius.} 
+
+\ccMethod{leda_rational sqr_radius();} 
+{returns the square of the radius.} 
+  
+\ccMethod{CGAL::Orientation orientation();}
+{returns the orientation of the sphere.}  
+  
+\ccMethod{bool is_degenerate();}
+{returns $true$ if the radius is 0, $false$ otherwise.} 
+
+\end{ccRefClass} 
