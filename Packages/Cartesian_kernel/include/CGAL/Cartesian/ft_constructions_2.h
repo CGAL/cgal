@@ -11,7 +11,7 @@
 // release       :
 // release_date  :
 //
-// file          : include/CGAL/Cartesian/distance_computations_2.h
+// file          : include/CGAL/Cartesian/ft_constructions_2.h
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Herve Bronnimann
@@ -19,8 +19,8 @@
 //
 // ======================================================================
 
-#ifndef CGAL_CARTESIAN_DISTANCE_COMPUTATIONS_2_H
-#define CGAL_CARTESIAN_DISTANCE_COMPUTATIONS_2_H
+#ifndef CGAL_CARTESIAN_FT_CONSTRUCTIONS_2_H
+#define CGAL_CARTESIAN_FT_CONSTRUCTIONS_2_H
 
 #include <CGAL/Cartesian/redefine_names_2.h>
 
@@ -54,6 +54,24 @@ scaled_distance_to_line( PointC2<R CGAL_CTAG> const& p,
   return scaled_distance_to_lineC2(p.x(),p.y(),q.x(),q.y(),r.x(),r.y());
 }
 
+template < class R >
+inline
+typename R::FT
+line_y_at_x( LineC2<R CGAL_CTAG> const& l,
+             typename R::FT const& x)
+{
+  return line_y_at_xC2(l.a(), l.b(), l.c(), x);
+}
+
+template < class R >
+inline
+typename R::FT
+line_x_at_y( LineC2<R CGAL_CTAG> const& l,
+             typename R::FT const& y)
+{
+  return line_y_at_xC2(l.b(), l.a(), l.c(), y);
+}
+
 CGAL_END_NAMESPACE
 
-#endif // CGAL_CARTESIAN_DISTANCE_COMPUTATIONS_2_H
+#endif // CGAL_CARTESIAN_FT_CONSTRUCTIONS_2_H

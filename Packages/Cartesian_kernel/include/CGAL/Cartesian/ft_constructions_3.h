@@ -11,7 +11,7 @@
 // release       :
 // release_date  :
 //
-// file          : include/CGAL/Cartesian/distance_computations_3.h
+// file          : include/CGAL/Cartesian/ft_constructions_3.h
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Herve Bronnimann
@@ -19,8 +19,8 @@
 //
 // ======================================================================
 
-#ifndef CGAL_CARTESIAN_DISTANCE_COMPUTATIONS_3_H
-#define CGAL_CARTESIAN_DISTANCE_COMPUTATIONS_3_H
+#ifndef CGAL_CARTESIAN_FT_CONSTRUCTIONS_3_H
+#define CGAL_CARTESIAN_FT_CONSTRUCTIONS_3_H
 
 #include <CGAL/Cartesian/redefine_names_3.h>
 #include <CGAL/Cartesian/Point_3.h>
@@ -65,4 +65,4 @@ scaled_distance_to_plane(const PointC3<R CGAL_CTAG> &hp,
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_CARTESIAN_DISTANCE_COMPUTATIONS_3_H
+#endif // CGAL_CARTESIAN_FT_CONSTRUCTIONS_3_H
