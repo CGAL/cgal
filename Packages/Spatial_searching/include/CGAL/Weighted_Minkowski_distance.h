@@ -55,7 +55,7 @@ namespace CGAL {
     { 
        Point p;
        the_dimension=p.dimension();  the_weights = new Weight_vector(the_dimension);
-       for (unsigned int i = 0; i < The_dimension; ++i) (*the_weights)[i]=NT(1);
+       for (unsigned int i = 0; i < the_dimension; ++i) (*the_weights)[i]=NT(1);
        assert(the_dimension>0);
     }
 
