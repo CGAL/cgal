@@ -1,5 +1,9 @@
 Nef_2 Package: Release changes
 ----------------------------------------------------------------------
+1.44 (7. September 2003) [rursu]
+- demo use now the new class Qt_help_window instead of HelpWindow
+- demo use the new demo icon demoicon
+
 1.43 (3. September 2003) [af]
 - Unenabled specialisation of sign and of gcd for VC7
 
