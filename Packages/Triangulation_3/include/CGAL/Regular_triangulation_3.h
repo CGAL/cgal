@@ -128,7 +128,7 @@ public:
   nearest_power_vertex(const Bare_point& p, Cell_handle c =
 		       Cell_handle()) const;
 
-  Bare_point dual(Cell_handle c) const;
+  Weighted_point dual(Cell_handle c) const;
 
 //   Object dual(const Facet & f) const
 //     { return dual( f.first, f.second ); }
@@ -164,14 +164,13 @@ private:
       geom_traits().compare_power_distance_3_object()(p, q, r) == SMALLER;
   }
 
-  Bare_point
-  construct_weighted_circumcenter(const Bare_point &p, 
-				  const Bare_point &q, 
-				  const Bare_point &r, 
-				  const Bare_point &s) const
+  Weighted_point
+  construct_weighted_circumcenter(const Weighted_point &p, 
+				  const Weighted_point &q, 
+				  const Weighted_point &r, 
+				  const Weighted_point &s) const
   {
-     return 
-       geom_traits().construct_weighted_circumcenter_3_object()(p,q,r,s);
+     return geom_traits().construct_weighted_circumcenter_3_object()(p,q,r,s);
   }
 
   Vertex_handle
@@ -376,7 +375,7 @@ nearest_power_vertex(const Bare_point& p, Cell_handle start) const
 }
 
 template < class Gt, class Tds >
-typename Regular_triangulation_3<Gt,Tds>::Bare_point
+typename Regular_triangulation_3<Gt,Tds>::Weighted_point
 Regular_triangulation_3<Gt,Tds>::
 dual(Cell_handle c) const
 {

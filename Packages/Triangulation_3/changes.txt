@@ -1,11 +1,12 @@
+26 Feb 2004 Sylvain Pion
+- Fix Regular_3.
 
-
-12/02/2004 Mariette
+12 Feb 2004 Mariette Yvinec
 - gathered preducates and constructions for weigthed points
   in constructions/constructions_on_weighted_points_cartesian_3.h
   and predicates/predicates_on_weighted_points_cartesian_3.h
 
-10/02/2004 Mariette
+10 Feb 2004 Mariette Yvinec
 - added nearest_power_vertex in Regular_triangulation_3 +test + doc
 - added doc for nearest_vertex_in_cell in Delaunay_triangulation_3.tex 
 
