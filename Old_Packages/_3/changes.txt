@@ -1,3 +1,6 @@
+3.20 (20 Jun 2001)
+- nothing, just to resubmit in time...
+
 3.19 (20 Jun 2001)
 - remove global function predicates.
 
