@@ -126,8 +126,6 @@ public:
   void insert_constraint(Vertex_handle va, Vertex_handle  vb);
   void push_back(const Constraint& c);
 
-  Vertex_handle special_insert_in_edge(const Point & a, Face_handle f, int i);
-
   void remove(Vertex_handle  v);
   void remove_constraint(Face_handle f, int i);
   void remove_incident_constraints(Vertex_handle  v);
@@ -161,6 +159,7 @@ public:
   void file_output(std::ostream& os) const;
 
 protected:
+  Vertex_handle special_insert_in_edge(const Point & a, Face_handle f, int i);
   void update_constraints_incident(Vertex_handle va, 
 				   Vertex_handle c1,
 				   Vertex_handle c2);
