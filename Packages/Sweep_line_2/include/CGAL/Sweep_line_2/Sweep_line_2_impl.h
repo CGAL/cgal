@@ -1495,10 +1495,13 @@ init_curve(X_monotone_curve_2 &curve)
   
   // handle the source point
   EventQueueIter eventIter = m_queue->find(&source); 
-  if ( eventIter != m_queue->end() ) {
+  if ( eventIter != m_queue->end() )  // check if the event already in the event queue
+  {
     SL_DEBUG(std::cout << "event " << source << " already exists\n";)
     e = eventIter->second;
-  } else  {
+  }
+  else  // the event is not in the event-queue
+  {
     e = new Event(source, m_traits); 
 #ifndef NDEBUG
     e->id = m_eventId++;
@@ -1511,10 +1514,13 @@ init_curve(X_monotone_curve_2 &curve)
     
   // handle the target point
   eventIter = m_queue->find(&target);
-  if ( eventIter != m_queue->end() ) {
+  if ( eventIter != m_queue->end() )
+  {
     SL_DEBUG(std::cout << "event " << target << " already exists\n";)
     e = eventIter->second;
-  } else  {
+  }
+  else 
+  {
     e = new Event(target, m_traits); 
 #ifndef NDEBUG
     e->id = m_eventId++;
@@ -1840,6 +1846,8 @@ remove_curve_from_status_line(Subcurve *leftCurve)
  * @param curve2 a pointer to the second curve
  * @return true if the two curves overlap.
 */
+
+
 template <class CurveInputIterator, class SweepLineTraits_2,
          class SweepEvent, class CurveWrap>
 inline bool 
@@ -1871,9 +1879,11 @@ intersect(Subcurve *c1, Subcurve *c2)
   if (!res.is_empty())
   {
     Point_2 xp;
-    if (!CGAL::assign(xp, res)) {
+    if (!CGAL::assign(xp, res))
+    {
       X_monotone_curve_2 cv;
-      if (CGAL::assign(cv, res)) {
+      if (CGAL::assign(cv, res))
+      {
         xp = m_traits->curve_source(cv);
         Point_2 xp1 = m_traits->curve_target(cv);
         if ( m_traits->compare_x(xp1, xp) == LARGER )
@@ -1913,17 +1923,22 @@ intersect(Subcurve *c1, Subcurve *c2)
       PRINT_NEW_EVENT(xp, e);
       m_queue->insert(EventQueueValueType(&(e->get_point()), e));
       return isOverlap;
-    } else 
+    } 
+    else 
     {
       SL_DEBUG(std::cout << "event already exists,updating.. (" << xp <<")\n";)
       e = eqi->second;
+    
       e->add_curve_to_left(c1, m_sweepLinePos);
-      if ( !scv1->is_end_point(xp)) { 
-	e->add_curve_to_right(c1);
+      if ( !scv1->is_end_point(xp)) 
+      { 
+	      e->add_curve_to_right(c1);
       }
+
       e->add_curve_to_left(c2, m_sweepLinePos);
-      if ( !scv2->is_end_point(xp) ) {
-	e->add_curve_to_right(c2);
+      if ( !scv2->is_end_point(xp) ) 
+      {
+	      e->add_curve_to_right(c2);
       }
       SL_DEBUG(e->Print();)
     }
@@ -2005,7 +2020,7 @@ handle_vertical_curve_x_at_end(Subcurve *vcurve, Subcurve *curve,
     if ( ! (curve)->is_right_end(currentPoint)) {
       m_currentEvent->add_curve_to_right(curve);
     }
-    return true;;
+    return true;
   }
   return false;
 }

@@ -59,7 +59,7 @@ public:
 
   //typedef Sweep_line_subcurve<Traits> SubCurve;
   typedef CurveWrap SubCurve;
-  typedef std::list<SubCurve *> SubcurveContainer;
+  typedef std::list<SubCurve *> SubcurveContainer; //TODO - change it to SET (faster?)
   typedef typename SubcurveContainer::iterator SubCurveIter;
 
   typedef Status_line_curve_less_functor<Traits, SubCurve> StatusLineCurveLess;
@@ -112,16 +112,20 @@ public:
     {
       m_verticalCurves.push_back(scurve);
 
-    } else 
+    }
+    else 
     {
       const Point_2 *rel = &(source);
       if ( m_traits->point_equal(m_point, source) )
-	rel = &(target);
+	      rel = &(target);
       
-      if ( m_traits->compare_x(m_point, *rel) == LARGER ) {
-	add_curve_to_left(scurve, m_rightmostPointToLeft, true);
-      } else {
-	add_curve_to_right(scurve);
+      if ( m_traits->compare_x(m_point, *rel) == LARGER )
+      {
+	      add_curve_to_left(scurve, m_rightmostPointToLeft, true);
+      } 
+      else 
+      {
+      	add_curve_to_right(scurve);
       }
     }
   }
@@ -466,6 +470,12 @@ protected:
 	  m_rightmostPointToLeft = curve->get_target();
     }
   }
+
+
+
+
+  
+
 
   /*! The point of the event */
   Point_2 m_point;
