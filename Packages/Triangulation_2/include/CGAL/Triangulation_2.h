@@ -2091,7 +2091,7 @@ show_all() const
 
   std::cerr <<" faces infinies "<<std::endl;
   All_faces_iterator afi;
-  for(afi = all_faces_begin(); afi != all_finite_faces_end(); afi++) {
+  for(afi = all_faces_begin(); afi != all_faces_end(); afi++) {
     if(is_infinite(afi)) show_face(afi);
   }
   
