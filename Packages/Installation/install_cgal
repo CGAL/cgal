@@ -5267,7 +5267,7 @@ write_compiler_flags()
     print_as_shell_comment \
       "*** We fake QT_MOC to let the testsuite pass ***" \
       >> ${FILE}
-    ${_printf} "%s\\\\\n\n" "QT_MOC = echo dummymoc" >> ${FILE}
+    ${_printf} "%s\n\n" "QT_MOC = echo dummymoc" >> ${FILE}
   fi
 
   #
