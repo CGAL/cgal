@@ -337,24 +337,24 @@ template <>
 Comparison_result
 compare_xC2(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &px,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &l1a,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &l1b,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &l1c,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &l2a,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &l2b,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &l2c)
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &la,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &lb,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &lc,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &ha,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &hb,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &hc)
 {
   FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_UPWARD);
   try
   {
     Comparison_result result = compare_xC2(
 		px.interval(),
-		l1a.interval(),
-		l1b.interval(),
-		l1c.interval(),
-		l2a.interval(),
-		l2b.interval(),
-		l2c.interval());
+		la.interval(),
+		lb.interval(),
+		lc.interval(),
+		ha.interval(),
+		hb.interval(),
+		hc.interval());
     FPU_set_cw(backup);
     return result;
   } 
@@ -363,12 +363,12 @@ compare_xC2(
     FPU_set_cw(backup);
     return compare_xC2(
 		px.exact(),
-		l1a.exact(),
-		l1b.exact(),
-		l1c.exact(),
-		l2a.exact(),
-		l2b.exact(),
-		l2c.exact());
+		la.exact(),
+		lb.exact(),
+		lc.exact(),
+		ha.exact(),
+		hb.exact(),
+		hc.exact());
   }
 }
 
@@ -381,36 +381,36 @@ template <>
 Comparison_result
 compare_xC2(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &px,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &l1a,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &l1b,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &l1c,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &l2a,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &l2b,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &l2c)
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &la,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &lb,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &lc,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &ha,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &hb,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &hc)
 {
   CGAL_expensive_assertion(FPU_empiric_test() == CGAL_FE_UPWARD);
   try
   {
     return compare_xC2(
 		px.interval(),
-		l1a.interval(),
-		l1b.interval(),
-		l1c.interval(),
-		l2a.interval(),
-		l2b.interval(),
-		l2c.interval());
+		la.interval(),
+		lb.interval(),
+		lc.interval(),
+		ha.interval(),
+		hb.interval(),
+		hc.interval());
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
     FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_TONEAREST);
     Comparison_result result = compare_xC2(
 		px.exact(),
-		l1a.exact(),
-		l1b.exact(),
-		l1c.exact(),
-		l2a.exact(),
-		l2b.exact(),
-		l2c.exact());
+		la.exact(),
+		lb.exact(),
+		lc.exact(),
+		ha.exact(),
+		hb.exact(),
+		hc.exact());
     FPU_set_cw(backup);
     return result;
   }
@@ -427,20 +427,20 @@ struct Static_Filtered_compare_xC2_7
 
   static Comparison_result update_epsilon(
 	const Static_filter_error &px,
-	const Static_filter_error &l1a,
-	const Static_filter_error &l1b,
-	const Static_filter_error &l1c,
-	const Static_filter_error &l2a,
-	const Static_filter_error &l2b,
-	const Static_filter_error &l2c,
+	const Static_filter_error &la,
+	const Static_filter_error &lb,
+	const Static_filter_error &lc,
+	const Static_filter_error &ha,
+	const Static_filter_error &hb,
+	const Static_filter_error &hc,
 	double & epsilon_0,
 	double & epsilon_1)
   {
     typedef Static_filter_error FT;
   
     
-    FT num = det2x2_by_formula( l1b, l1c, l2b, l2c);
-    FT den = det2x2_by_formula( l1a, l1b, l2a, l2b);
+    FT num = det2x2_by_formula( lb, lc, hb, hc);
+    FT den = det2x2_by_formula( la, lb, ha, hb);
     Sign s = CGAL::Static_Filtered_sign_1::update_epsilon(den,
   		epsilon_0);
     CGAL_kernel_assertion( s != ZERO );
@@ -461,20 +461,20 @@ struct Static_Filtered_compare_xC2_7
 
   static Comparison_result epsilon_variant(
 	const Restricted_double &px,
-	const Restricted_double &l1a,
-	const Restricted_double &l1b,
-	const Restricted_double &l1c,
-	const Restricted_double &l2a,
-	const Restricted_double &l2b,
-	const Restricted_double &l2c,
+	const Restricted_double &la,
+	const Restricted_double &lb,
+	const Restricted_double &lc,
+	const Restricted_double &ha,
+	const Restricted_double &hb,
+	const Restricted_double &hc,
 	const double & epsilon_0,
 	const double & epsilon_1)
   {
     typedef Restricted_double FT;
   
     
-    FT num = det2x2_by_formula( l1b, l1c, l2b, l2c);
-    FT den = det2x2_by_formula( l1a, l1b, l2a, l2b);
+    FT num = det2x2_by_formula( lb, lc, hb, hc);
+    FT den = det2x2_by_formula( la, lb, ha, hb);
     Sign s = CGAL::Static_Filtered_sign_1::epsilon_variant(den,
   		epsilon_0);
     CGAL_kernel_assertion( s != ZERO );
@@ -492,12 +492,12 @@ template <>
 Comparison_result
 compare_xC2(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &px,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &l1a,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &l1b,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &l1c,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &l2a,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &l2b,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &l2c)
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &la,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &lb,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &lc,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &ha,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &hb,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &hc)
 {
 //   bool re_adjusted = false;
   const double SAF_bound = Static_Filtered_compare_xC2_7::_bound;
@@ -505,23 +505,23 @@ compare_xC2(
   // Check the bounds.  All arguments must be <= SAF_bound.
   if (
 	fabs(px.to_double()) > SAF_bound ||
-	fabs(l1a.to_double()) > SAF_bound ||
-	fabs(l1b.to_double()) > SAF_bound ||
-	fabs(l1c.to_double()) > SAF_bound ||
-	fabs(l2a.to_double()) > SAF_bound ||
-	fabs(l2b.to_double()) > SAF_bound ||
-	fabs(l2c.to_double()) > SAF_bound)
+	fabs(la.to_double()) > SAF_bound ||
+	fabs(lb.to_double()) > SAF_bound ||
+	fabs(lc.to_double()) > SAF_bound ||
+	fabs(ha.to_double()) > SAF_bound ||
+	fabs(hb.to_double()) > SAF_bound ||
+	fabs(hc.to_double()) > SAF_bound)
   {
 // re_adjust:
     // Compute the new bound.
     double NEW_bound = 0.0;
     NEW_bound = std::max(NEW_bound, fabs(px.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(l1a.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(l1b.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(l1c.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(l2a.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(l2b.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(l2c.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(la.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(lb.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(lc.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(ha.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(hb.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(hc.to_double()));
     // Re-adjust the context.
     Static_Filtered_compare_xC2_7::new_bound(NEW_bound);
   }
@@ -530,12 +530,12 @@ compare_xC2(
   {
     return Static_Filtered_compare_xC2_7::epsilon_variant(
 		px.dbl(),
-		l1a.dbl(),
-		l1b.dbl(),
-		l1c.dbl(),
-		l2a.dbl(),
-		l2b.dbl(),
-		l2c.dbl(),
+		la.dbl(),
+		lb.dbl(),
+		lc.dbl(),
+		ha.dbl(),
+		hb.dbl(),
+		hc.dbl(),
 		Static_Filtered_compare_xC2_7::_epsilon_0,
 		Static_Filtered_compare_xC2_7::_epsilon_1);
   }
@@ -548,12 +548,12 @@ compare_xC2(
     Static_Filtered_compare_xC2_7::number_of_failures++;
     return compare_xC2(
 		px.exact(),
-		l1a.exact(),
-		l1b.exact(),
-		l1c.exact(),
-		l2a.exact(),
-		l2b.exact(),
-		l2c.exact());
+		la.exact(),
+		lb.exact(),
+		lc.exact(),
+		ha.exact(),
+		hb.exact(),
+		hc.exact());
   }
 }
 
@@ -566,34 +566,34 @@ template <>
 Comparison_result
 compare_xC2(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &px,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &l1a,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &l1b,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &l1c,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &l2a,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &l2b,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &l2c)
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &la,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &lb,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &lc,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &ha,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &hb,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &hc)
 {
   CGAL_assertion_code(
     const double SAF_bound = Static_Filtered_compare_xC2_7::_bound; )
   CGAL_assertion(!(
 	fabs(px.to_double()) > SAF_bound ||
-	fabs(l1a.to_double()) > SAF_bound ||
-	fabs(l1b.to_double()) > SAF_bound ||
-	fabs(l1c.to_double()) > SAF_bound ||
-	fabs(l2a.to_double()) > SAF_bound ||
-	fabs(l2b.to_double()) > SAF_bound ||
-	fabs(l2c.to_double()) > SAF_bound));
+	fabs(la.to_double()) > SAF_bound ||
+	fabs(lb.to_double()) > SAF_bound ||
+	fabs(lc.to_double()) > SAF_bound ||
+	fabs(ha.to_double()) > SAF_bound ||
+	fabs(hb.to_double()) > SAF_bound ||
+	fabs(hc.to_double()) > SAF_bound));
 
   try
   {
     return Static_Filtered_compare_xC2_7::epsilon_variant(
 		px.dbl(),
-		l1a.dbl(),
-		l1b.dbl(),
-		l1c.dbl(),
-		l2a.dbl(),
-		l2b.dbl(),
-		l2c.dbl(),
+		la.dbl(),
+		lb.dbl(),
+		lc.dbl(),
+		ha.dbl(),
+		hb.dbl(),
+		hc.dbl(),
 		Static_Filtered_compare_xC2_7::_epsilon_0,
 		Static_Filtered_compare_xC2_7::_epsilon_1);
   }
@@ -602,12 +602,12 @@ compare_xC2(
     Static_Filtered_compare_xC2_7::number_of_failures++;
     return compare_xC2(
 		px.exact(),
-		l1a.exact(),
-		l1b.exact(),
-		l1c.exact(),
-		l2a.exact(),
-		l2b.exact(),
-		l2c.exact());
+		la.exact(),
+		lb.exact(),
+		lc.exact(),
+		ha.exact(),
+		hb.exact(),
+		hc.exact());
   }
 }
 
@@ -621,12 +621,9 @@ template <>
 /* CGAL_KERNEL_MEDIUM_INLINE */
 Comparison_result
 compare_xC2(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &l1a,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &l1b,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &l1c,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &l2a,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &l2b,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &l2c,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &la,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &lb,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &lc,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &h1a,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &h1b,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &h1c,
@@ -638,12 +635,9 @@ compare_xC2(
   try
   {
     Comparison_result result = compare_xC2(
-		l1a.interval(),
-		l1b.interval(),
-		l1c.interval(),
-		l2a.interval(),
-		l2b.interval(),
-		l2c.interval(),
+		la.interval(),
+		lb.interval(),
+		lc.interval(),
 		h1a.interval(),
 		h1b.interval(),
 		h1c.interval(),
@@ -657,12 +651,9 @@ compare_xC2(
   {
     FPU_set_cw(backup);
     return compare_xC2(
-		l1a.exact(),
-		l1b.exact(),
-		l1c.exact(),
-		l2a.exact(),
-		l2b.exact(),
-		l2c.exact(),
+		la.exact(),
+		lb.exact(),
+		lc.exact(),
 		h1a.exact(),
 		h1b.exact(),
 		h1c.exact(),
@@ -680,12 +671,9 @@ template <>
 /* CGAL_KERNEL_MEDIUM_INLINE */
 Comparison_result
 compare_xC2(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &l1a,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &l1b,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &l1c,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &l2a,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &l2b,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &l2c,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &la,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &lb,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &lc,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &h1a,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &h1b,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &h1c,
@@ -697,12 +685,9 @@ compare_xC2(
   try
   {
     return compare_xC2(
-		l1a.interval(),
-		l1b.interval(),
-		l1c.interval(),
-		l2a.interval(),
-		l2b.interval(),
-		l2c.interval(),
+		la.interval(),
+		lb.interval(),
+		lc.interval(),
 		h1a.interval(),
 		h1b.interval(),
 		h1c.interval(),
@@ -714,15 +699,365 @@ compare_xC2(
   {
     FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_TONEAREST);
     Comparison_result result = compare_xC2(
-		l1a.exact(),
-		l1b.exact(),
-		l1c.exact(),
-		l2a.exact(),
-		l2b.exact(),
-		l2c.exact(),
+		la.exact(),
+		lb.exact(),
+		lc.exact(),
 		h1a.exact(),
 		h1b.exact(),
 		h1c.exact(),
+		h2a.exact(),
+		h2b.exact(),
+		h2c.exact());
+    FPU_set_cw(backup);
+    return result;
+  }
+}
+
+#ifdef CGAL_IA_NEW_FILTERS
+
+struct Static_Filtered_compare_xC2_9
+{
+  static double _bound;
+  static double _epsilon_0,_epsilon_1,_epsilon_2,_epsilon_3;
+  static unsigned number_of_failures; // ?
+  static unsigned number_of_updates;
+
+  static Comparison_result update_epsilon(
+	const Static_filter_error &la,
+	const Static_filter_error &lb,
+	const Static_filter_error &lc,
+	const Static_filter_error &h1a,
+	const Static_filter_error &h1b,
+	const Static_filter_error &h1c,
+	const Static_filter_error &h2a,
+	const Static_filter_error &h2b,
+	const Static_filter_error &h2c,
+	double & epsilon_0,
+	double & epsilon_1,
+	double & epsilon_2,
+	double & epsilon_3)
+  {
+    typedef Static_filter_error FT;
+  
+    
+    FT num1 = det2x2( la, lc, h1a, h1c);
+    FT num2 = det2x2( la, lc, h2a, h2c);
+    FT num  = det2x2(h1a,h1c,h2a,h2c)*lb+det2x2(num1,num2,h1b,h2b);
+    FT den1 = det2x2( la, lb, h1a, h1b);
+    FT den2 = det2x2( la, lb, h2a, h2b);
+    return Comparison_result( CGAL::Static_Filtered_sign_1::update_epsilon(lb,
+  		epsilon_0) * CGAL::Static_Filtered_sign_1::update_epsilon(num,
+  		epsilon_1) *
+                              CGAL::Static_Filtered_sign_1::update_epsilon(den1,
+  		epsilon_2) * CGAL::Static_Filtered_sign_1::update_epsilon(den2,
+  		epsilon_3));
+  }
+
+  // Call this function from the outside to update the context.
+  static void new_bound (const double b) // , const double error = 0)
+  {
+    _bound = b;
+    number_of_updates++;
+    // recompute the epsilons: "just" call it over Static_filter_error.
+    // That's the tricky part that might not work for everything.
+    (void) update_epsilon(b,b,b,b,b,b,b,b,b,_epsilon_0,_epsilon_1,_epsilon_2,_epsilon_3);
+    // TODO: We should verify that all epsilons have really been updated.
+  }
+
+  static Comparison_result epsilon_variant(
+	const Restricted_double &la,
+	const Restricted_double &lb,
+	const Restricted_double &lc,
+	const Restricted_double &h1a,
+	const Restricted_double &h1b,
+	const Restricted_double &h1c,
+	const Restricted_double &h2a,
+	const Restricted_double &h2b,
+	const Restricted_double &h2c,
+	const double & epsilon_0,
+	const double & epsilon_1,
+	const double & epsilon_2,
+	const double & epsilon_3)
+  {
+    typedef Restricted_double FT;
+  
+    
+    FT num1 = det2x2( la, lc, h1a, h1c);
+    FT num2 = det2x2( la, lc, h2a, h2c);
+    FT num  = det2x2(h1a,h1c,h2a,h2c)*lb+det2x2(num1,num2,h1b,h2b);
+    FT den1 = det2x2( la, lb, h1a, h1b);
+    FT den2 = det2x2( la, lb, h2a, h2b);
+    return Comparison_result( CGAL::Static_Filtered_sign_1::epsilon_variant(lb,
+  		epsilon_0) * CGAL::Static_Filtered_sign_1::epsilon_variant(num,
+  		epsilon_1) *
+                              CGAL::Static_Filtered_sign_1::epsilon_variant(den1,
+  		epsilon_2) * CGAL::Static_Filtered_sign_1::epsilon_variant(den2,
+  		epsilon_3));
+  }
+};
+
+#ifndef CGAL_CFG_MATCHING_BUG_2
+template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#else
+template <>
+#endif
+/* CGAL_KERNEL_MEDIUM_INLINE */
+Comparison_result
+compare_xC2(
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &la,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &lb,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &lc,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &h1a,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &h1b,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &h1c,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &h2a,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &h2b,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &h2c)
+{
+//   bool re_adjusted = false;
+  const double SAF_bound = Static_Filtered_compare_xC2_9::_bound;
+
+  // Check the bounds.  All arguments must be <= SAF_bound.
+  if (
+	fabs(la.to_double()) > SAF_bound ||
+	fabs(lb.to_double()) > SAF_bound ||
+	fabs(lc.to_double()) > SAF_bound ||
+	fabs(h1a.to_double()) > SAF_bound ||
+	fabs(h1b.to_double()) > SAF_bound ||
+	fabs(h1c.to_double()) > SAF_bound ||
+	fabs(h2a.to_double()) > SAF_bound ||
+	fabs(h2b.to_double()) > SAF_bound ||
+	fabs(h2c.to_double()) > SAF_bound)
+  {
+// re_adjust:
+    // Compute the new bound.
+    double NEW_bound = 0.0;
+    NEW_bound = std::max(NEW_bound, fabs(la.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(lb.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(lc.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(h1a.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(h1b.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(h1c.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(h2a.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(h2b.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(h2c.to_double()));
+    // Re-adjust the context.
+    Static_Filtered_compare_xC2_9::new_bound(NEW_bound);
+  }
+
+  try
+  {
+    return Static_Filtered_compare_xC2_9::epsilon_variant(
+		la.dbl(),
+		lb.dbl(),
+		lc.dbl(),
+		h1a.dbl(),
+		h1b.dbl(),
+		h1c.dbl(),
+		h2a.dbl(),
+		h2b.dbl(),
+		h2c.dbl(),
+		Static_Filtered_compare_xC2_9::_epsilon_0,
+		Static_Filtered_compare_xC2_9::_epsilon_1,
+		Static_Filtered_compare_xC2_9::_epsilon_2,
+		Static_Filtered_compare_xC2_9::_epsilon_3);
+  }
+  catch (...)
+  {
+    // if (!re_adjusted) {  // It failed, we re-adjust once.
+      // re_adjusted = true;
+      // goto re_adjust;
+    // }
+    Static_Filtered_compare_xC2_9::number_of_failures++;
+    return compare_xC2(
+		la.exact(),
+		lb.exact(),
+		lc.exact(),
+		h1a.exact(),
+		h1b.exact(),
+		h1c.exact(),
+		h2a.exact(),
+		h2b.exact(),
+		h2c.exact());
+  }
+}
+
+#ifndef CGAL_CFG_MATCHING_BUG_2
+template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#else
+template <>
+#endif
+/* CGAL_KERNEL_MEDIUM_INLINE */
+Comparison_result
+compare_xC2(
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &la,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &lb,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &lc,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &h1a,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &h1b,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &h1c,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &h2a,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &h2b,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &h2c)
+{
+  CGAL_assertion_code(
+    const double SAF_bound = Static_Filtered_compare_xC2_9::_bound; )
+  CGAL_assertion(!(
+	fabs(la.to_double()) > SAF_bound ||
+	fabs(lb.to_double()) > SAF_bound ||
+	fabs(lc.to_double()) > SAF_bound ||
+	fabs(h1a.to_double()) > SAF_bound ||
+	fabs(h1b.to_double()) > SAF_bound ||
+	fabs(h1c.to_double()) > SAF_bound ||
+	fabs(h2a.to_double()) > SAF_bound ||
+	fabs(h2b.to_double()) > SAF_bound ||
+	fabs(h2c.to_double()) > SAF_bound));
+
+  try
+  {
+    return Static_Filtered_compare_xC2_9::epsilon_variant(
+		la.dbl(),
+		lb.dbl(),
+		lc.dbl(),
+		h1a.dbl(),
+		h1b.dbl(),
+		h1c.dbl(),
+		h2a.dbl(),
+		h2b.dbl(),
+		h2c.dbl(),
+		Static_Filtered_compare_xC2_9::_epsilon_0,
+		Static_Filtered_compare_xC2_9::_epsilon_1,
+		Static_Filtered_compare_xC2_9::_epsilon_2,
+		Static_Filtered_compare_xC2_9::_epsilon_3);
+  }
+  catch (...)
+  {
+    Static_Filtered_compare_xC2_9::number_of_failures++;
+    return compare_xC2(
+		la.exact(),
+		lb.exact(),
+		lc.exact(),
+		h1a.exact(),
+		h1b.exact(),
+		h1c.exact(),
+		h2a.exact(),
+		h2b.exact(),
+		h2c.exact());
+  }
+}
+
+#endif // CGAL_IA_NEW_FILTERS
+
+#ifndef CGAL_CFG_MATCHING_BUG_2
+template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#else
+template <>
+#endif
+/* CGAL_KERNEL_MEDIUM_INLINE */
+Comparison_result
+compare_xC2(
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &l1a,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &l1b,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &l1c,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &h1a,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &h1b,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &h1c,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &l2a,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &l2b,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &l2c,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &h2a,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &h2b,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &h2c)
+{
+  FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_UPWARD);
+  try
+  {
+    Comparison_result result = compare_xC2(
+		l1a.interval(),
+		l1b.interval(),
+		l1c.interval(),
+		h1a.interval(),
+		h1b.interval(),
+		h1c.interval(),
+		l2a.interval(),
+		l2b.interval(),
+		l2c.interval(),
+		h2a.interval(),
+		h2b.interval(),
+		h2c.interval());
+    FPU_set_cw(backup);
+    return result;
+  } 
+  catch (Interval_nt_advanced::unsafe_comparison)
+  {
+    FPU_set_cw(backup);
+    return compare_xC2(
+		l1a.exact(),
+		l1b.exact(),
+		l1c.exact(),
+		h1a.exact(),
+		h1b.exact(),
+		h1c.exact(),
+		l2a.exact(),
+		l2b.exact(),
+		l2c.exact(),
+		h2a.exact(),
+		h2b.exact(),
+		h2c.exact());
+  }
+}
+
+#ifndef CGAL_CFG_MATCHING_BUG_2
+template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#else
+template <>
+#endif
+/* CGAL_KERNEL_MEDIUM_INLINE */
+Comparison_result
+compare_xC2(
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &l1a,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &l1b,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &l1c,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &h1a,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &h1b,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &h1c,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &l2a,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &l2b,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &l2c,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &h2a,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &h2b,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &h2c)
+{
+  CGAL_expensive_assertion(FPU_empiric_test() == CGAL_FE_UPWARD);
+  try
+  {
+    return compare_xC2(
+		l1a.interval(),
+		l1b.interval(),
+		l1c.interval(),
+		h1a.interval(),
+		h1b.interval(),
+		h1c.interval(),
+		l2a.interval(),
+		l2b.interval(),
+		l2c.interval(),
+		h2a.interval(),
+		h2b.interval(),
+		h2c.interval());
+  } 
+  catch (Interval_nt_advanced::unsafe_comparison)
+  {
+    FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_TONEAREST);
+    Comparison_result result = compare_xC2(
+		l1a.exact(),
+		l1b.exact(),
+		l1c.exact(),
+		h1a.exact(),
+		h1b.exact(),
+		h1c.exact(),
+		l2a.exact(),
+		l2b.exact(),
+		l2c.exact(),
 		h2a.exact(),
 		h2b.exact(),
 		h2c.exact());
@@ -744,12 +1079,12 @@ struct Static_Filtered_compare_xC2_12
 	const Static_filter_error &l1a,
 	const Static_filter_error &l1b,
 	const Static_filter_error &l1c,
-	const Static_filter_error &l2a,
-	const Static_filter_error &l2b,
-	const Static_filter_error &l2c,
 	const Static_filter_error &h1a,
 	const Static_filter_error &h1b,
 	const Static_filter_error &h1c,
+	const Static_filter_error &l2a,
+	const Static_filter_error &l2b,
+	const Static_filter_error &l2c,
 	const Static_filter_error &h2a,
 	const Static_filter_error &h2b,
 	const Static_filter_error &h2c,
@@ -759,15 +1094,16 @@ struct Static_Filtered_compare_xC2_12
   {
     typedef Static_filter_error FT;
   
-    FT numl = det2x2_by_formula( l1b, l1c, l2b, l2c);
-    FT denl = det2x2_by_formula( l1a, l1b, l2a, l2b);
-    FT numh = det2x2_by_formula( h1b, h1c, h2b, h2c);
-    FT denh = det2x2_by_formula( h1a, h1b, h2a, h2b);
-    Sign s = Sign (CGAL::Static_Filtered_sign_1::update_epsilon(denl,
-  		epsilon_0) * CGAL::Static_Filtered_sign_1::update_epsilon(denh,
+    FT num1 = det2x2_by_formula( l1b, l1c, h1b, h1c);
+    FT den1 = det2x2_by_formula( l1a, l1b, h1a, h1b);
+    FT num2 = det2x2_by_formula( l2b, l2c, h2b, h2c);
+    FT den2 = det2x2_by_formula( l2a, l2b, h2a, h2b);
+    Sign s = Sign (CGAL::Static_Filtered_sign_1::update_epsilon(den1,
+  		epsilon_0) * CGAL::Static_Filtered_sign_1::update_epsilon(den2,
   		epsilon_1));
     CGAL_kernel_assertion( s != ZERO );
-    return Comparison_result( s * Static_Filtered_sign_of_determinant2x2_4::update_epsilon(denh, numh, denl, numl,
+    return Comparison_result( s * Static_Filtered_sign_of_determinant2x2_4::update_epsilon(num1, 
+  						       num2, den1, den2,
   		epsilon_2));
   }
 
@@ -786,12 +1122,12 @@ struct Static_Filtered_compare_xC2_12
 	const Restricted_double &l1a,
 	const Restricted_double &l1b,
 	const Restricted_double &l1c,
-	const Restricted_double &l2a,
-	const Restricted_double &l2b,
-	const Restricted_double &l2c,
 	const Restricted_double &h1a,
 	const Restricted_double &h1b,
 	const Restricted_double &h1c,
+	const Restricted_double &l2a,
+	const Restricted_double &l2b,
+	const Restricted_double &l2c,
 	const Restricted_double &h2a,
 	const Restricted_double &h2b,
 	const Restricted_double &h2c,
@@ -801,15 +1137,16 @@ struct Static_Filtered_compare_xC2_12
   {
     typedef Restricted_double FT;
   
-    FT numl = det2x2_by_formula( l1b, l1c, l2b, l2c);
-    FT denl = det2x2_by_formula( l1a, l1b, l2a, l2b);
-    FT numh = det2x2_by_formula( h1b, h1c, h2b, h2c);
-    FT denh = det2x2_by_formula( h1a, h1b, h2a, h2b);
-    Sign s = Sign (CGAL::Static_Filtered_sign_1::epsilon_variant(denl,
-  		epsilon_0) * CGAL::Static_Filtered_sign_1::epsilon_variant(denh,
+    FT num1 = det2x2_by_formula( l1b, l1c, h1b, h1c);
+    FT den1 = det2x2_by_formula( l1a, l1b, h1a, h1b);
+    FT num2 = det2x2_by_formula( l2b, l2c, h2b, h2c);
+    FT den2 = det2x2_by_formula( l2a, l2b, h2a, h2b);
+    Sign s = Sign (CGAL::Static_Filtered_sign_1::epsilon_variant(den1,
+  		epsilon_0) * CGAL::Static_Filtered_sign_1::epsilon_variant(den2,
   		epsilon_1));
     CGAL_kernel_assertion( s != ZERO );
-    return Comparison_result( s * Static_Filtered_sign_of_determinant2x2_4::epsilon_variant(denh, numh, denl, numl,
+    return Comparison_result( s * Static_Filtered_sign_of_determinant2x2_4::epsilon_variant(num1, 
+  						       num2, den1, den2,
   		epsilon_2));
   }
 };
@@ -825,12 +1162,12 @@ compare_xC2(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &l1a,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &l1b,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &l1c,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &l2a,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &l2b,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &l2c,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &h1a,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &h1b,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &h1c,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &l2a,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &l2b,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &l2c,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &h2a,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &h2b,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &h2c)
@@ -843,12 +1180,12 @@ compare_xC2(
 	fabs(l1a.to_double()) > SAF_bound ||
 	fabs(l1b.to_double()) > SAF_bound ||
 	fabs(l1c.to_double()) > SAF_bound ||
-	fabs(l2a.to_double()) > SAF_bound ||
-	fabs(l2b.to_double()) > SAF_bound ||
-	fabs(l2c.to_double()) > SAF_bound ||
 	fabs(h1a.to_double()) > SAF_bound ||
 	fabs(h1b.to_double()) > SAF_bound ||
 	fabs(h1c.to_double()) > SAF_bound ||
+	fabs(l2a.to_double()) > SAF_bound ||
+	fabs(l2b.to_double()) > SAF_bound ||
+	fabs(l2c.to_double()) > SAF_bound ||
 	fabs(h2a.to_double()) > SAF_bound ||
 	fabs(h2b.to_double()) > SAF_bound ||
 	fabs(h2c.to_double()) > SAF_bound)
@@ -859,12 +1196,12 @@ compare_xC2(
     NEW_bound = std::max(NEW_bound, fabs(l1a.to_double()));
     NEW_bound = std::max(NEW_bound, fabs(l1b.to_double()));
     NEW_bound = std::max(NEW_bound, fabs(l1c.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(l2a.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(l2b.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(l2c.to_double()));
     NEW_bound = std::max(NEW_bound, fabs(h1a.to_double()));
     NEW_bound = std::max(NEW_bound, fabs(h1b.to_double()));
     NEW_bound = std::max(NEW_bound, fabs(h1c.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(l2a.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(l2b.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(l2c.to_double()));
     NEW_bound = std::max(NEW_bound, fabs(h2a.to_double()));
     NEW_bound = std::max(NEW_bound, fabs(h2b.to_double()));
     NEW_bound = std::max(NEW_bound, fabs(h2c.to_double()));
@@ -878,12 +1215,12 @@ compare_xC2(
 		l1a.dbl(),
 		l1b.dbl(),
 		l1c.dbl(),
-		l2a.dbl(),
-		l2b.dbl(),
-		l2c.dbl(),
 		h1a.dbl(),
 		h1b.dbl(),
 		h1c.dbl(),
+		l2a.dbl(),
+		l2b.dbl(),
+		l2c.dbl(),
 		h2a.dbl(),
 		h2b.dbl(),
 		h2c.dbl(),
@@ -902,12 +1239,12 @@ compare_xC2(
 		l1a.exact(),
 		l1b.exact(),
 		l1c.exact(),
-		l2a.exact(),
-		l2b.exact(),
-		l2c.exact(),
 		h1a.exact(),
 		h1b.exact(),
 		h1c.exact(),
+		l2a.exact(),
+		l2b.exact(),
+		l2c.exact(),
 		h2a.exact(),
 		h2b.exact(),
 		h2c.exact());
@@ -925,12 +1262,12 @@ compare_xC2(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &l1a,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &l1b,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &l1c,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &l2a,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &l2b,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &l2c,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &h1a,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &h1b,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &h1c,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &l2a,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &l2b,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &l2c,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &h2a,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &h2b,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &h2c)
@@ -941,12 +1278,12 @@ compare_xC2(
 	fabs(l1a.to_double()) > SAF_bound ||
 	fabs(l1b.to_double()) > SAF_bound ||
 	fabs(l1c.to_double()) > SAF_bound ||
-	fabs(l2a.to_double()) > SAF_bound ||
-	fabs(l2b.to_double()) > SAF_bound ||
-	fabs(l2c.to_double()) > SAF_bound ||
 	fabs(h1a.to_double()) > SAF_bound ||
 	fabs(h1b.to_double()) > SAF_bound ||
 	fabs(h1c.to_double()) > SAF_bound ||
+	fabs(l2a.to_double()) > SAF_bound ||
+	fabs(l2b.to_double()) > SAF_bound ||
+	fabs(l2c.to_double()) > SAF_bound ||
 	fabs(h2a.to_double()) > SAF_bound ||
 	fabs(h2b.to_double()) > SAF_bound ||
 	fabs(h2c.to_double()) > SAF_bound));
@@ -957,12 +1294,12 @@ compare_xC2(
 		l1a.dbl(),
 		l1b.dbl(),
 		l1c.dbl(),
-		l2a.dbl(),
-		l2b.dbl(),
-		l2c.dbl(),
 		h1a.dbl(),
 		h1b.dbl(),
 		h1c.dbl(),
+		l2a.dbl(),
+		l2b.dbl(),
+		l2c.dbl(),
 		h2a.dbl(),
 		h2b.dbl(),
 		h2c.dbl(),
@@ -977,12 +1314,12 @@ compare_xC2(
 		l1a.exact(),
 		l1b.exact(),
 		l1c.exact(),
-		l2a.exact(),
-		l2b.exact(),
-		l2c.exact(),
 		h1a.exact(),
 		h1b.exact(),
 		h1c.exact(),
+		l2a.exact(),
+		l2b.exact(),
+		l2c.exact(),
 		h2a.exact(),
 		h2b.exact(),
 		h2c.exact());

@@ -45,6 +45,16 @@ unsigned Static_Filtered_compare_xC2_7::number_of_updates = 0;
 
 unsigned Static_Filtered_compare_xC2_7::number_of_failures = 0;
 
+double Static_Filtered_compare_xC2_9::_epsilon_0;
+double Static_Filtered_compare_xC2_9::_epsilon_1;
+double Static_Filtered_compare_xC2_9::_epsilon_2;
+double Static_Filtered_compare_xC2_9::_epsilon_3;
+double Static_Filtered_compare_xC2_9::_bound = -1.0;
+
+unsigned Static_Filtered_compare_xC2_9::number_of_updates = 0;
+
+unsigned Static_Filtered_compare_xC2_9::number_of_failures = 0;
+
 double Static_Filtered_compare_xC2_12::_epsilon_0;
 double Static_Filtered_compare_xC2_12::_epsilon_1;
 double Static_Filtered_compare_xC2_12::_epsilon_2;
