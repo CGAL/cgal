@@ -43,7 +43,7 @@
 
 The \ccc{Curve_2} class nested within the polylines' traits is used to
 represent piecewise linear curves and support their construction from
-arbitrary containers of points. The copy and default constructor as well as 
+any range of points. The copy and default constructor as well as 
 the assignment operator are provided for polyline curves. In addition, 
 an \ccc{operator<<} for the curves is defined for standard output streams.
 
@@ -60,17 +60,17 @@ an \ccc{operator<<} for the curves is defined for standard output streams.
     \ccCreation
     \ccCreationVariable{cv}
 
-    \ccStyle{template <class Container>} \\
-    \ccConstructor{Curve_2 (const Container& points);}
-  {constructs a polyline defined by the sequence of points in the container.
-   The \ccc{Container} class must provide a \ccc{const_iterator} whose type
-   is \ccc{Segment_traits::Point_2}.
-   If the container contains $n$ points labeled $p_{0},p_{1},\ldots,p_{n-1}$,
-   the generate polyline consists of $n-1$ segments, where the $k$th segment 
+    \ccStyle{template <class Iterator>} \\
+    \ccConstructor{Curve_2 (const Iterator& begin,
+                            const Iterator& end);}
+  {constructs a polyline defined by the given range of points.
+   The \ccc{Iterator} type must be \ccc{Segment_traits::Point_2}.
+   If the range contains $n$ points labeled $(p_{0},p_{1},\ldots,p_{n-1})$,
+   the generated polyline consists of $n-1$ segments, where the $k$th segment 
    is defined by the endpoints $[p_{k-1},p_{k}]$. The first point in the 
-   container is considered as the source point of the polyline while the last 
+   range is considered as the source point of the polyline while the last 
    point is considered as its target.
-   \ccPrecond{There are at least two points in the container}.}
+   \ccPrecond{There are at least two points in the range}.}
 
 \ccOperations
 

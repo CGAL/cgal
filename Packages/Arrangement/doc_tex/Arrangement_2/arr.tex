@@ -231,8 +231,8 @@ Edge 2 2 3 3 is covered by a single edge.
 
 The \ccc{Arr_polyline_traits_2<Segment_traits>} class can be used to 
 handle arrangements of polylines (a.k.a. poly-segment). A polyline can be
-created from any container of points, where the $i$th and $(i+1)$st points 
-in the container represent the endpoints of the $i$th segment of the polyline.
+created from any range of points, where the $i$th and $(i+1)$st points 
+in the range represent the endpoints of the $i$th segment of the polyline.
 The polyline traits class is templated with another traits class that supports
 the basic operations on segments. 
 
@@ -420,8 +420,8 @@ Users of I/O functions for the arrangement package are required to define I/O
 operators for the curves defined in their \ccc{Traits} classes. 
 When using \ccc{Traits} classes in which this operators are already defined 
 (as \ccc{Segment Traits}) the operator definition is not obligated, 
-however using \ccc{Traits} classes as the \ccc{Polyline Traits} will force 
-the users to define I/O operators on their polyline curve.
+however using \ccc{Traits} classes as the \ccc{Conic Traits} will force 
+the users to define I/O operators on their conic curve.
 
 The \ccc{Arrangement} class data consists of the induced planar map and the 
 obtained hierarchy tree. Hence, the data sent to the output stream or 
