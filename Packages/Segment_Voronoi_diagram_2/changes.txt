@@ -1,3 +1,10 @@
+3 September 2004:  Menelaos Karavelas
+- test_svd_2_et.C: in definition of sqrt for Gmpq, I qualified the calls to
+  to_double and sqrt by CGAL::
+- polygon Voronoi diagram demo: fixed bugs in class
+  Segment_Voronoi_diagram_vertex_base_with_info_2
+- pvd_typedefs.h: replaced SVD_data_structure_2 by AG_data_structure_2
+
 30 August 2004:  Menelaos Karavelas
 - SVD_kernel_wrapper_2 : removed unused variable (it was creating warnings
   on some compilers)
