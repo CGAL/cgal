@@ -434,7 +434,6 @@ public:
     // Create the conic (or circular) arc.
     if (is_circle)
     {
-#if BENCH_TRAITS != CK_CIRCLE_TRAITS
 #if BENCH_TRAITS == CORE_CONIC_TRAITS
       cv = Curve_2 (x0, y0, a, CGAL::CLOCKWISE, source, target);
 #else
@@ -452,9 +451,11 @@ public:
       }
 #elif BENCH_TRAITS == CORE_CONIC_TRAITS
       cv = Curve_2 (r, s, t, u, v, w, CGAL::CLOCKWISE, source, target);
-#else
+#elif BENCH_TRAITS == CONIC_TRAITS
       cv = Curve_2 (r, s, t, u, v, w, source, target);
-#endif
+#elif BENCH_TRAITS != CK_CIRCLE_TRAITS
+      std::cerr << "Skipping Ellipse" << std::endl;
+      return false;
 #endif
     }
     
