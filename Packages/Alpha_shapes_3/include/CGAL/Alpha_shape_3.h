@@ -24,7 +24,6 @@
 
 #include <CGAL/basic.h>
 
-#include <cassert>
 #include <set>
 #include <map>
 #include <list>
@@ -377,7 +376,8 @@ public:
     // Returns the n-th alpha-value.
     // n < size()
     {
-      assert( n > 0 && n <= static_cast<int>(alpha_spectrum.size()) );
+      CGAL_triangulation_assertion( n > 0 && 
+		      n <= static_cast<int>(alpha_spectrum.size()) );
       return alpha_spectrum[n-1];
     }
   
@@ -1456,7 +1456,7 @@ Alpha_shape_3<Dt>::number_of_solid_components(const NT& alpha) const
   for( cell_it = finite_cells_begin(); cell_it != done; ++cell_it)
     {
       Cell_handle pCell = cell_it;
-      assert(pCell != NULL);
+      CGAL_triangulation_assertion(pCell != NULL);
       
       if (classify(pCell, alpha) == INTERIOR){
 	Data& data = marked_cell_set[pCell];
@@ -1488,7 +1488,7 @@ void Alpha_shape_3<Dt>::traverse(Cell_handle pCell,
     for (int i=0; i<=3; i++)
       {
 	pNeighbor = pCell->neighbor(i);
-	assert(pNeighbor != NULL);
+	CGAL_triangulation_assertion(pNeighbor != NULL);
 	if (classify(pNeighbor, alpha) == INTERIOR){
 	  Data& data = marked_cell_set[pNeighbor];
 	  if(data == false){

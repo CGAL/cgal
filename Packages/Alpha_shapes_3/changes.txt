@@ -1,3 +1,10 @@
+
+27 December 2004 Mariette
+- changed assert() to cgal_triangulation_assertion()
+
+17 december 2004 Mariette
+-fixed include in doc file Alpha_status.tex
+
 19 novembre 2004 Mariette
 - changed authors
 

@@ -15,13 +15,11 @@ include $(CGAL_MAKEFILE)
 
 CXXFLAGS = \
            -I../../include \
-	   -I../../../Triangulation_3/include \
-           $(TESTSUITE_CXXFLAGS) \
+	   $(TESTSUITE_CXXFLAGS) \
            $(EXTRA_FLAGS) \
            $(CGAL_CXXFLAGS) \
            -Iinclude \
-           $(LONG_NAME_PROBLEM_CXXFLAGS) \
-	   -pedantic 
+           $(LONG_NAME_PROBLEM_CXXFLAGS) 
 
 
 #---------------------------------------------------------------------#
