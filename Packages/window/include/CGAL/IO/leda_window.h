@@ -388,7 +388,9 @@ operator<<(leda_window& w, const Triangle_2<R>& t)
   leda_color cl = w.get_fill_color();
   
   if (cl != leda_invisible) { // draw filled triangle ...
-    w.draw_filled_triangle(leda_point(x0,y0), leda_point(x1,y1), leda_point(x2,y2), cl); 
+    w.draw_filled_triangle(leda_point(x0,y0), 
+                           leda_point(x1,y1), 
+                           leda_point(x2,y2), cl); 
   }	 
 	 
 	 
@@ -463,7 +465,9 @@ operator>>(leda_window& w, Triangle_2<R>& t)
   leda_color cl = w.get_fill_color();
   
   if (cl != leda_invisible) { // draw filled triangle ...
-    w.draw_filled_triangle(leda_point(x0,y0), leda_point(x1,y1), leda_point(x2,y2), cl); 
+    w.draw_filled_triangle(leda_point(x0,y0), 
+                           leda_point(x1,y1), 
+                           leda_point(x2,y2), cl); 
   }  
   
   w.draw_segment(x0,y0, x1, y1);
