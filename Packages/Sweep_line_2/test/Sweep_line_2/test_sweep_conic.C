@@ -1,10 +1,10 @@
 #include <CGAL/basic.h>
 
-#if !defined(CGAL_USE_LEDA)
+#if !defined(CGAL_USE_CORE)
 #include <iostream>
 int main()
 {
-  std::cout << "LEDA is not installed. Test aborted!" << std::endl;
+  std::cout << "CORE is not installed. Test aborted!" << std::endl;
   return 0;
 }
 #else
