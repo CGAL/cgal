@@ -70,7 +70,7 @@ query( I i) {
 
 // A function to match bidirectional iterators.
 inline
-int discr( bidirectional_iterator_tag tag) { return 42; }
+int discr( std::bidirectional_iterator_tag tag) { return 42; }
 
 int main() {
     std::vector<int> v;
