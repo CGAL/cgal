@@ -1,6 +1,6 @@
 Changes done for the Interval Arithmetic package.
 
-Version 2.2 ???
+Version 2.2 on 16 October 1998
 - removed more spurious constructors.
 - removed bugs in _FPU.h
 - much improved test suite, 100% coverage (except casts).
