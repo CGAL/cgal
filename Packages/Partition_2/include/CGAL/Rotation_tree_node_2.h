@@ -30,7 +30,7 @@
 #define  CGAL_ROTATION_TREE_NODE_H
 
 #include <utility>
-#include <vector>
+#include <CGAL/vector.h>
 
 namespace CGAL {
 
@@ -41,10 +41,11 @@ class Rotation_tree_node_2 : public Traits::Point_2
 {
 public:
 
-   typedef typename Traits::Point_2                         Base_point;
-   typedef Rotation_tree_node_2<Traits>                     Self;
-   typedef typename std::vector< Self >::iterator           Tree_iterator;
-   typedef std::pair<Tree_iterator, bool>                   Node_ref;
+   typedef typename Traits::Point_2          Base_point;
+   typedef Rotation_tree_node_2<Traits>      Self;
+   typedef CGALi::vector< Self >             Tree;
+   typedef typename Tree::iterator           Tree_iterator;
+   typedef std::pair<Tree_iterator, bool>    Node_ref;
 
 
    Rotation_tree_node_2(Base_point p) : Base_point(p)
