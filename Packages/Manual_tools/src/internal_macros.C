@@ -4,8 +4,7 @@
   =============================================================
   Project   : Tools for the CC manual writing task around cc_manual.sty.
   Function  : Internal macro definitions.
-  System    : bison, flex, C++ (g++)
-  Author    : (c) 1998 Lutz Kettner
+  System    : bison, flex, C++ (g++)  Author    : (c) 1998 Lutz Kettner
               as of version 3.3 (Sept. 1999) maintained by Susan Hert
   Revision  : $Revision$
   Date      : $Date$
@@ -289,6 +288,8 @@ void CloseFileforIndex() {
   current_ostream = temp_current_stream;
   main_filename = temp_main_filename;
   current_filename = temp_current_filename; 
+  insertInternalGlobalMacro( "\\lciOutputFilename", current_filename);
+  insertInternalGlobalMacro( "\\lciMainFilename",   main_filename);
 }
 
 
