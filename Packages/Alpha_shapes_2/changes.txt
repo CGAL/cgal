@@ -1,3 +1,7 @@
+13 April 2004 Mariette Yvinec
+- fixed typedefs in test  demo examples to account for changes
+  in traits
+
 24 March 2004 Radu Ursu
 - made doc work with our current tools 
 

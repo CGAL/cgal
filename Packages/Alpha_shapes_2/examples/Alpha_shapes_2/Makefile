@@ -4,7 +4,7 @@
 #                    include platform specific settings
 #---------------------------------------------------------------------#
 # Choose the right include file from the <cgalroot>/make directory.
-CGAL_MAKEFILE = d:/cgal/CGAL-2.5-I-139/make/makefile_i686_CYGWINNT-5.0-1.3.12_ICL.EXE-7
+
 #CGAL_MAKEFILE =$(UTIL)/CGAL/CGAL-2.3/make/makefile_sparc_SunOS-5.6_g++-2.95.3_LEDA
 
 # for cygwin
