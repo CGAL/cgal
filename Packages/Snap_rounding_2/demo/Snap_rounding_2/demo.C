@@ -210,8 +210,6 @@ void redraw(Snap_rounding_2 &s,CGAL::Window_stream &W)
 
 int main(int argc,char *argv[])
 {
-  std::cout << "rrr 111\n";
-
   CGAL::Window_stream W(600, 600);
   std::ifstream *is_ptr;
   bool automatic_show = false;
@@ -290,16 +288,18 @@ int main(int argc,char *argv[])
 
   // main loop over input points
   for (;;) {
-    mouse_input = W.read_mouse_seg(x3,y3,x4,y4);
+    mouse_input = W.read_mouse(x3,y3);
     if(mouse_input == -1 && 
        x3 >= x1 && x3 <= x2 &&
-       x4 >= x1 && x4 <= x2 &&
-       y3 >= y1 && y3 <= y2 &&
-       y4 >= y1 && y4 <= y2) {
-      if(sr_shown) {
-        // remove biggest rectangle
-        sr_shown = false;
-        redraw(s,W);
+       y3 >= y1 && y3 <= y2) {
+      mouse_input = W.read_mouse_seg(x3,y3,x4,y4);
+      if(x4 >= x1 && x4 <= x2 &&
+         y4 >= y1 && y4 <= y2) {
+        if(sr_shown) {
+          // remove biggest rectangle
+          sr_shown = false;
+          redraw(s,W);
+        }
       }
 
       if(remove_segments) {// !!!! need a point

@@ -63,7 +63,7 @@ void read_data(int argc,char *argv[],Number_Type &prec,std::list<Segment_2> &seg
   }
 }
 
-void print_out(Snap_rounding_2 s)
+void print_out(Snap_rounding_2 &s)
 {
   int counter = 0;
   for(Polyline_const_iterator i = s.polylines_begin();
@@ -114,7 +114,7 @@ int main(int argc,char *argv[])
   s1.insert(*(seg_list.begin()));
   print_out(s1);
 
-  std::cout << "\ncheking clear\n";
+  std::cout << "\ntesting clear\n";
   s1.clear();
   s1.insert(*(seg_list.begin()));
   print_out(s1);
@@ -137,7 +137,7 @@ int main(int argc,char *argv[])
   s3.update_number_of_kd_trees(2);
   print_out(s3);
 
-  std::cout << "\ntesting cctor\n";
+  /*  std::cout << "\ntesting cctor\n";
   Snap_rounding_2 s4(s3);
   print_out(s3);
 
@@ -145,7 +145,7 @@ int main(int argc,char *argv[])
   Snap_rounding_2 s5(prec,true,4);
   s5 = s4;
   print_out(s5);
-
+  */
   return(0);
 }
 
