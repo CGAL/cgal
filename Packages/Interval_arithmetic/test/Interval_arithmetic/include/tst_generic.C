@@ -279,8 +279,8 @@ void print_res (bool res)
 int main()
 {
 #ifdef ADVANCED
-  FPU_CW_t backup = FPU_get_cw();
-  FPU_set_cw(FPU_cw_up);
+  CGAL::FPU_CW_t backup = CGAL::FPU_get_cw();
+  CGAL::FPU_set_cw(CGAL::FPU_cw_up);
   std::cout << "Stress-testing the class Interval_nt_advanced.\n";
 #else
   std::cout << "Stress-testing the class Interval_nt.\n";
@@ -312,7 +312,7 @@ int main()
   print_res(0.0 < IA_nt(1));
 
 #ifdef ADVANCED
-  FPU_set_cw(backup);
+  CGAL::FPU_set_cw(backup);
 #endif
 
   return !flag;
