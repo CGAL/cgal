@@ -54,6 +54,8 @@ namespace CGAL {
     typedef typename Item::R::FT NT;
     typedef Point_container<Item> Self;
 
+    
+
   private:
     Point_list p_list; // list of pointers to points
     int built_coord;    // a coordinate for which the pointer list is built
@@ -315,24 +317,25 @@ template <class Item_>
 */ 
 // replaced by
 
+template <class Item_, class Value>
+	struct comp_coord_val {
+        
+	private:
+                Value coord;   
 
-template <class Item_>
-	class comp_coord_val {
-        public:
-    		int coord; 
-    		comp_coord_val(const int i) : coord(i) {}
+	public:
+		comp_coord_val (const Value& coordinate) : coord(coordinate) {}
+
     		bool operator() (const Item_ *a, const Item_ *b) {
-      		return (*a)[coord] < (*b)[coord];
+  	    		return (*a)[coord] < (*b)[coord];
     		}
   	};
 
 
-
       NT median(const int split_coord) {
         
-      comp_coord_val<Item> Compare(split_coord);
-      p_list.sort(Compare);
-      // }
+      p_list.sort(comp_coord_val<Item,int>(split_coord));
+      
       typename Point_list::iterator 
       median_point_ptr=p_list.begin();
       for (unsigned int i = 0; i < p_list.size()/2-1; i++, 

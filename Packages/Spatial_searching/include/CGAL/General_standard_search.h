@@ -110,7 +110,7 @@ Distance* distance_instance;
 		typename NN_list::iterator it=l.begin(); 
 		for (; it != l.end(); it++) { *res= *it; res++; }
 		return res;     
-	};
+	}
 
 
     // constructor

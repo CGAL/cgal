@@ -1,7 +1,6 @@
 // Approximate spatial searching: Example08.C
 // Example illustrating for each separate splitting rule 
-// building a kd-tree 
-
+// building a kd-tree using orthogonal priority search
 
 #include <vector>
 #include <numeric>
@@ -18,7 +17,6 @@
 #include <CGAL/Splitting_rules.h>
 #include <CGAL/Orthogonal_priority_search.h>
 #include <CGAL/algorithm.h>
-
 
   // create own Point type (adapted from example3.C from kdtree and Point_3.h)
  
@@ -134,6 +132,7 @@ inline double min_distance_to_queryitem(const Point& p,
     if (h > b.upper(2)) distance += (h-b.upper(2))*(h-b.upper(2));
     return distance;
 }
+
 
 inline double max_distance_to_queryitem(const Point& p,
 					      const CGAL::Kd_tree_rectangle<double>& b) 

@@ -209,7 +209,7 @@ class iterator;
 
     NT distance_to_root;
 
-    bool search_nearest;
+    bool search_nearest_neighbour;
 
     NT rd;
 
@@ -274,6 +274,7 @@ class Distance_smaller
         NT Eps=0.0, bool search_nearest=true)
     {
         
+	
         PriorityQueue = new std::priority_queue<Cell_with_distance*, 
 	Cell_with_distance_vector, Priority_higher> 
         (Priority_higher(search_nearest));
@@ -289,7 +290,8 @@ class Distance_smaller
 	Distance_instance->transformed_distance(1.0+Eps);
 
         Node_box *bounding_box = new Node_box(*(tree.bounding_box()));
-
+        
+        search_nearest_neighbour=search_nearest;
 
         if (search_nearest) distance_to_root=
         Distance_instance->min_distance_to_queryitem(q,*bounding_box);
@@ -316,6 +318,7 @@ class Distance_smaller
 
         // rd is the distance of the top of the priority queue to q
         rd=The_Root->second;
+        
         Compute_the_next_nearest_neighbour();
     }
 
@@ -382,7 +385,7 @@ class Distance_smaller
         // compute the next item
         bool next_neighbour_found=false;
         if (!(Item_PriorityQueue->empty())) {
-        if (search_nearest)
+        if (search_nearest_neighbour)
         	next_neighbour_found=
 		(multiplication_factor*rd > Item_PriorityQueue->top()->second);
         else
@@ -408,11 +411,11 @@ class Distance_smaller
                         Node_box* upper_box = 
 			lower_box->split(new_cut_dim, new_cut_val);
 			delete B;
-			if (search_nearest) {
+			if (search_nearest_neighbour) {
 NT distance_to_box_lower =
 Distance_instance->min_distance_to_queryitem(*query_point, *lower_box);
 NT distance_to_box_upper =
-Distance_instance->max_distance_to_queryitem(*query_point, *upper_box);
+Distance_instance->min_distance_to_queryitem(*query_point, *upper_box);
 if (distance_to_box_lower <= distance_to_box_upper) {
 	Cell* C_upper = new Cell(upper_box, N->upper());
 	Cell_with_distance *Upper_Child =
@@ -470,7 +473,7 @@ else {
                   // hence update rd
                   if (!PriorityQueue->empty()) {
                         rd = PriorityQueue->top()->second;
-                        if (search_nearest)
+                        if (search_nearest_neighbour)
 				next_neighbour_found =
                   (multiplication_factor*rd > Item_PriorityQueue->top()->second);
                         else
@@ -486,7 +489,7 @@ else {
         }   // next_neighbour_found or priority queue is empty
         // in the latter case also the item priority quee is empty
     }
-}; // class Iterator_implementaion
+}; // class Iterator_implementation
 }; // class iterator
 }; // class 
 

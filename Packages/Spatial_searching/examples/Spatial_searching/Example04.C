@@ -229,21 +229,15 @@ int generate_kd_tree(CGAL::Split_rule_enumeration::Split_rule s) {
 
   // nearest neighbour searching using extended nodes
   std::vector<NN_orthogonal_search::Item_with_distance> nearest_neighbours1;
-  nearest_neighbours1.reserve(query_point_number+1);
+  // nearest_neighbours1.reserve(query_point_number+1);
   
-  /*
-  for (int i=1; i < query_point_number+1; ++i) { 
-     NN_standard_search NN(d1, query_points[i], tr1, tr_dist, 1, 0.0);
-     std::cout << "nearest neighbour searching statistics: " << std::endl;
-     NN.statistics();
-     NN.the_k_nearest_neighbours(std::back_inserter(nearest_neighbours1));
-  }*/
+  
   // nearest neighbour searching using no extended nodes
   std::vector<NN_general_search::Item_with_distance> nearest_neighbours2;
-  nearest_neighbours2.reserve(query_point_number+1);
+  // nearest_neighbours2.reserve(query_point_number+1);
   
   for (int i=1; i < query_point_number+1; ++i) { 
-     NN_orthogonal_search NN1(d1, query_points[i], tr_dist, 1, 0.0, false);
+     NN_orthogonal_search NN1(d1, query_points[i], tr_dist, 1, 0.0);
      std::cout << "neighbour searching statistics using extended nodes: " << std::endl;
      NN1.statistics();
      NN1.the_k_neighbours(std::back_inserter(nearest_neighbours1));
@@ -256,8 +250,8 @@ int generate_kd_tree(CGAL::Split_rule_enumeration::Split_rule s) {
   std::cout << "results neighbour searching:" << std::endl;
 
   for (int i=0; i < query_point_number; ++i) { 
-     std::cout << " d(q,nn1)= " << nearest_neighbours1[i].second << 
-     " d(q,nn2)= " << nearest_neighbours2[i].second << std::endl; 
+     std::cout << " d(q,nearest neighbour)=" << nearest_neighbours1[i].second << 
+     " d(q,furthest neighbour)=" << nearest_neighbours2[i].second << std::endl; 
   } 
 
   return 0;

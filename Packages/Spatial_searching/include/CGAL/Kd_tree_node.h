@@ -73,9 +73,11 @@ namespace CGAL {
 
         Kd_tree_node(Point_container<Item>& c) :
     		n(c.size()) {
-                if (n>0) data=new Item*[n];
-		the_node_type=LEAF;
-    		std::copy(c.begin(), c.end(), data);
+                the_node_type=LEAF;
+                if (n>0) { 
+			data=new Item*[n];
+		        std::copy(c.begin(), c.end(), data);
+		}
   	};
 	// constructor for internal node or extended internal node;
 	Kd_tree_node(Point_container<Item>& c, Traits& t, bool use_extension) {
@@ -164,7 +166,7 @@ namespace CGAL {
 	template <class OutputIterator>
 	void tree_items(OutputIterator& it) {
             	if (is_leaf()) 
-				for (Item_iterator i=begin(); i != end(); i++) *it=**i;
+			     if (n>0) for (Item_iterator i=begin(); i != end(); i++) *it=**i;
 			else {
 				lower()->tree_items(it);
 				upper()->tree_items(it);

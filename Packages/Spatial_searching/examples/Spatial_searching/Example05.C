@@ -66,8 +66,7 @@ int test_range_searching(CGAL::Split_rule_enumeration::Split_rule s) {
   }
 
   std::vector<NN_standard_search::Item_with_distance> nearest_neighbours;
-  nearest_neighbours.reserve(nearest_neighbour_number);
-
+  
   NN_standard_search NN(d, query_rectangle, tr_dist, nearest_neighbour_number, 0.0);
   std::cout << "neighbour searching statistics using no extended nodes: " << std::endl;
   NN.statistics();
