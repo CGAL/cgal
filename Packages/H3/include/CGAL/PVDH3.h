@@ -428,13 +428,13 @@ CGAL_KERNEL_INLINE
 typename R::FT
 PointH3<R>::cartesian(int i) const
 {
+  CGAL_kernel_precondition(i == 0 || i == 1 || i == 2);
   switch (i)
   {
       case 0:  return x();
       case 1:  return y();
-      case 2:  return z();
-      default: return cartesian( i%3 );
   }
+  return z();
 }
 
 template < class R >
@@ -591,13 +591,13 @@ CGAL_KERNEL_INLINE
 typename R::FT
 VectorH3<R>::cartesian(int i) const
 {
+  CGAL_kernel_precondition(i == 0 || i == 1 || i == 2);
   switch (i)
   {
       case 0:   return x();
       case 1:   return y();
-      case 2:   return z();
-      default:  return cartesian( i%3 );
   }
+  return z();
 }
 
 template < class R >
