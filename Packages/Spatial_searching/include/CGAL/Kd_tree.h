@@ -20,11 +20,12 @@
 #ifndef CGAL_KD_TREE_H
 #define CGAL_KD_TREE_H
 #include <CGAL/basic.h>
-#include <CGAL/Kd_tree_traits_point.h>
-#include <CGAL/point_generators_2.h>
+#include <vector>
+//#include <CGAL/Kd_tree_traits_point.h>
+#include <CGAL/Random.h>
 #include <CGAL/algorithm.h>
-#include <CGAL/Orthogonal_standard_search.h>
-#include <CGAL/Euclidean_distance.h>
+//#include <CGAL/Orthogonal_standard_search.h>
+//#include <CGAL/Euclidean_distance.h>
 #include <CGAL/Kd_tree_node.h>
 #include <cassert>
 #include <CGAL/Compact_container.h>

@@ -1,3 +1,7 @@
+
+Version 4.25 (20 October 2003) [af]
+- Added #include <vector> to Kd_tree.h
+
 Version 4.24 (20 October 2003) [af]
 - Removed #include<CGAL/Cartesian.h> from Kd_tree.h and put it in the examples 
 
