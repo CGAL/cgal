@@ -30,11 +30,11 @@ CGAL_BEGIN_NAMESPACE
 
 template <class FT>
 Oriented_side
-power_testC3( const FT &px, const FT &py, const FT &pwt,
-              const FT &qx, const FT &qy, const FT &qwt,
-              const FT &rx, const FT &ry, const FT &rwt,
-              const FT &sx, const FT &sy, const FT &swt,
-              const FT &tx, const FT &ty, const FT &twt)
+power_testC3( const FT &px, const FT &py, const FT &pz, const FT &pwt,
+              const FT &qx, const FT &qy, const FT &qz, const FT &qwt,
+              const FT &rx, const FT &ry, const FT &rz, const FT &rwt,
+              const FT &sx, const FT &sy, const FT &sz, const FT &swt,
+              const FT &tx, const FT &ty, const FT &tz, const FT &twt)
 {
     // We translate the points so that T becomes the origin.
     FT dpx = px - tx;
@@ -54,10 +54,10 @@ power_testC3( const FT &px, const FT &py, const FT &pwt,
     FT dsz = sz - tz;
     FT dst = square(dsx) + square(dsy) + square(dsz) - swt + twt;
 
-    return Oriented_side(sign_of_determinant4x4(dpx, dpy, dpz, dpt,
-                                                dqx, dqy, dqz, dqt,
-                                                drx, dry, drz, drt,
-						dsx, dsy, dsz, dst));
+    return Oriented_side( - sign_of_determinant4x4(dpx, dpy, dpz, dpt,
+						   dqx, dqy, dqz, dqt,
+						   drx, dry, drz, drt,
+						   dsx, dsy, dsz, dst));
 }
 
 

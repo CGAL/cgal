@@ -74,12 +74,13 @@ power_testH3(
 	                                        dthx, dthy, dthz, dtz, dthw));
 }
 
-#error This one is not yet ported to 3D.
+//#error This one is not yet ported to 3D.
 template <class RT>
 Oriented_side
-power_testH3( const RT &phx, const RT &phy, const RT &phw, const RT &pwt,
-              const RT &qhx, const RT &qhy, const RT &qhw, const RT &qwt,
-              const RT &thx, const RT &thy, const RT &thw, const RT &twt)
+power_testH3( const RT &phx, const RT &phy, const RT &phz, const RT &phw, const RT &pwt,
+              const RT &qhx, const RT &qhy, const RT &qhz, const RT &qhw, const RT &qwt,
+              const RT &rhx, const RT &rhy, const RT &rhz, const RT &rhw, const RT &rwt,
+	      const RT &thx, const RT &thy, const RT &thz, const RT &thw, const RT &twt)
 {
     // Test if we can project on the (x) axis.  If not, then on the
     // (y) axis
@@ -113,7 +114,7 @@ power_testH3( const RT &phx, const RT &phy, const RT &phw, const RT &pwt,
 				                ta, dtz, dthw));
 }
 
-#error one more predicate needed in 3D...
+//#error one more predicate needed in 3D...
 
 CGAL_END_NAMESPACE
 
