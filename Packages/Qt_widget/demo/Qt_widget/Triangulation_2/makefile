@@ -33,20 +33,20 @@ LDFLAGS = \
 #                    target entries
 #---------------------------------------------------------------------#
 
-all: triangulation_2 regular_triangulation_2
+all: delaunay_triangulation_2 regular_triangulation_2
 
-triangulation_2_toolbar$(OBJ_EXT): triangulation_2_toolbar.C triangulation_2_toolbar.moc
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) triangulation_2_toolbar.C
+delaunay_triangulation_2_toolbar$(OBJ_EXT): delaunay_triangulation_2_toolbar.C delaunay_triangulation_2_toolbar.moc
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) delaunay_triangulation_2_toolbar.C
 
-triangulation_2_toolbar.moc: triangulation_2_toolbar.h
-	$(QT_MOC) -o triangulation_2_toolbar.moc triangulation_2_toolbar.h
+delaunay_triangulation_2_toolbar.moc: delaunay_triangulation_2_toolbar.h
+	$(QT_MOC) -o delaunay_triangulation_2_toolbar.moc delaunay_triangulation_2_toolbar.h
 
-triangulation_2_toolbar_layers$(OBJ_EXT): triangulation_2_toolbar_layers.C \
-		triangulation_2_toolbar_layers.moc
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) triangulation_2_toolbar_layers.C
+delaunay_triangulation_2_toolbar_layers$(OBJ_EXT): delaunay_triangulation_2_toolbar_layers.C \
+		delaunay_triangulation_2_toolbar_layers.moc
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) delaunay_triangulation_2_toolbar_layers.C
 
-triangulation_2_toolbar_layers.moc: triangulation_2_toolbar_layers.h
-	$(QT_MOC) -o triangulation_2_toolbar_layers.moc triangulation_2_toolbar_layers.h
+delaunay_triangulation_2_toolbar_layers.moc: delaunay_triangulation_2_toolbar_layers.h
+	$(QT_MOC) -o delaunay_triangulation_2_toolbar_layers.moc delaunay_triangulation_2_toolbar_layers.h
 
 triangulation_2_edit_vertex$(OBJ_EXT): triangulation_2_edit_vertex.C triangulation_2_edit_vertex.moc
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) triangulation_2_edit_vertex.C
@@ -54,16 +54,16 @@ triangulation_2_edit_vertex$(OBJ_EXT): triangulation_2_edit_vertex.C triangulati
 triangulation_2_edit_vertex.moc: triangulation_2_edit_vertex.h
 	$(QT_MOC) -o triangulation_2_edit_vertex.moc triangulation_2_edit_vertex.h
 
-triangulation_2.moc: triangulation_2.C triangulation_2_edit_vertex$(OBJ_EXT) \
-			triangulation_2_toolbar$(OBJ_EXT) \
-			triangulation_2_toolbar_layers$(OBJ_EXT)
-	${QT_MOC} -o triangulation_2.moc triangulation_2.C
+delaunay_triangulation_2.moc: delaunay_triangulation_2.C triangulation_2_edit_vertex$(OBJ_EXT) \
+			delaunay_triangulation_2_toolbar$(OBJ_EXT) \
+			delaunay_triangulation_2_toolbar_layers$(OBJ_EXT)
+	${QT_MOC} -o delaunay_triangulation_2.moc delaunay_triangulation_2.C
 
-triangulation_2$(OBJ_EXT): triangulation_2.C triangulation_2.moc
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) triangulation_2.C
+delaunay_triangulation_2$(OBJ_EXT): delaunay_triangulation_2.C delaunay_triangulation_2.moc
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) delaunay_triangulation_2.C
 
-triangulation_2$(EXE_EXT): triangulation_2$(OBJ_EXT)
-	$(CGAL_CXX) $(EXE_OPT)triangulation_2 triangulation_2$(OBJ_EXT)  triangulation_2_edit_vertex$(OBJ_EXT) triangulation_2_toolbar$(OBJ_EXT) triangulation_2_toolbar_layers$(OBJ_EXT) $(LDFLAGS)
+delaunay_triangulation_2$(EXE_EXT): delaunay_triangulation_2$(OBJ_EXT)
+	$(CGAL_CXX) $(EXE_OPT)delaunay_triangulation_2 delaunay_triangulation_2$(OBJ_EXT)  triangulation_2_edit_vertex$(OBJ_EXT) delaunay_triangulation_2_toolbar$(OBJ_EXT) delaunay_triangulation_2_toolbar_layers$(OBJ_EXT) $(LDFLAGS)
 
 
 #--------------------------------#
@@ -104,9 +104,9 @@ regular_triangulation_2$(EXE_EXT): regular_triangulation_2$(OBJ_EXT)
 	$(CGAL_CXX) $(EXE_OPT)regular_triangulation_2 regular_triangulation_2$(OBJ_EXT)  triangulation_2_edit_vertex$(OBJ_EXT) regular_triangulation_2_toolbar$(OBJ_EXT) regular_triangulation_2_toolbar_layers$(OBJ_EXT) $(LDFLAGS)
 
 
-clean: triangulation_2.clean \
-       triangulation_2_toolbar_layers.clean \
-       triangulation_2_toolbar.clean \
+clean: delaunay_triangulation_2.clean \
+       delaunay_triangulation_2_toolbar_layers.clean \
+       delaunay_triangulation_2_toolbar.clean \
        triangulation_2_edit_vertex.clean \
        regular_triangulation_2.clean \
        regular_triangulation_2_toolbar_layers.clean \

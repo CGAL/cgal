@@ -8,7 +8,7 @@
 //
 // ----------------------------------------------------------------------------
 //
-// file          : triangulation_2.C
+// file          : delaunay_triangulation_2.C
 // package       : Qt_widget
 // author(s)     : Radu Ursu 
 // release       : 
@@ -37,8 +37,8 @@ int main(int, char*)
 
 //Application headers
 #include "cgal_types.h"
-#include "triangulation_2_toolbar.h"
-#include "triangulation_2_toolbar_layers.h"
+#include "delaunay_triangulation_2_toolbar.h"
+#include "delaunay_triangulation_2_toolbar_layers.h"
 
 //Qt_widget headers
 #include <CGAL/IO/Qt_widget.h>
@@ -66,7 +66,7 @@ int main(int, char*)
 
 
 
-const QString my_title_string("Triangulation Demo with"
+const QString my_title_string("Delaunay Triangulation Demo with"
 			      " CGAL Qt_widget");
 Delaunay	tr1;
 int		current_state;
@@ -212,7 +212,7 @@ private slots:
 
   void about(){
     QMessageBox::about( this, my_title_string,
-		"This is a demo for Triangulation,\n"
+		"This is a demo for Delaunay Triangulation 2,\n"
   		"Copyright CGAL @2001");
   }
 
@@ -353,7 +353,7 @@ private:
   int                               old_state;
 };//endclass
 
-#include "triangulation_2.moc"
+#include "delaunay_triangulation_2.moc"
 
 int
 main(int argc, char **argv)

@@ -8,7 +8,7 @@
 //
 // ----------------------------------------------------------------------------
 //
-// file          : triangulation_2_toolbar_layers.C
+// file          : delaunay_triangulation_2_toolbar_layers.C
 // package       : Qt_widget
 // author(s)     : Ursu Radu
 // release       : 
@@ -21,7 +21,7 @@
 
 #ifdef CGAL_USE_QT
 
-#include "triangulation_2_toolbar_layers.h"
+#include "delaunay_triangulation_2_toolbar_layers.h"
 
 // icons
 #include <CGAL/IO/pixmaps/points.xpm>
@@ -175,6 +175,6 @@ static char * circum_circle_small_xpm[] = {
   }
   
 
-#include "triangulation_2_toolbar_layers.moc"
+#include "delaunay_triangulation_2_toolbar_layers.moc"
 
 #endif

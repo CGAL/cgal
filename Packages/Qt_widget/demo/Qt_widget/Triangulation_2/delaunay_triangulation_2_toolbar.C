@@ -8,7 +8,7 @@
 //
 // ----------------------------------------------------------------------------
 //
-// file          : triangulation_2_toolbar.C
+// file          : delaunay_triangulation_2_toolbar.C
 // package       : Qt_widget
 // author(s)     : Radu Ursu
 // release       : 
@@ -21,7 +21,7 @@
 #ifdef CGAL_USE_QT
 
 #include <CGAL/IO/Qt_widget.h>
-#include "triangulation_2_toolbar.h"
+#include "delaunay_triangulation_2_toolbar.h"
 
 // icons
 #include <CGAL/IO/pixmaps/point.xpm>
@@ -87,6 +87,6 @@
 
 
 
-#include "triangulation_2_toolbar.moc"
+#include "delaunay_triangulation_2_toolbar.moc"
 
 #endif

@@ -8,7 +8,7 @@
 //
 // ----------------------------------------------------------------------------
 //
-// file          : triangulation_2_toolbar_layers.h
+// file          : delaunay_triangulation_2_toolbar_layers.h
 // package       : Qt_widget
 // author(s)     : Radu Ursu
 // release       : 
@@ -18,12 +18,12 @@
 //
 // ============================================================================
 
-#ifndef CGAL_TRIANGULATION_2_TOOLBAR_LAYERS_H
-#define CGAL_TRIANGULATION_2_TOOLBAR_LAYERS_H
+#ifndef CGAL_DELAUNAY_TRIANGULATION_2_TOOLBAR_LAYERS_H
+#define CGAL_DELAUNAY_TRIANGULATION_2_TOOLBAR_LAYERS_H
 
 #include "cgal_types.h"
 #include <CGAL/IO/Qt_widget.h>
-#include "triangulation_2_layers.h"
+#include "delaunay_triangulation_2_layers.h"
 
 #include <qobject.h>
 #include <qmainwindow.h>
