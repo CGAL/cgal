@@ -3105,8 +3105,8 @@ _choose_compiler()
     log_print \
 	"Choosing `extended_compiler_description` as compiler."
     set_ostype
-    retrieve_compiler_settings
     set_compiler_flags
+    retrieve_compiler_settings
     if [ -z "${SETUP_COMPLETE}" ]; then
 	# reset all TEST_PASSED variables
 	reset_all_test_variables
