@@ -1,53 +1,66 @@
 % Related work and background
 
 % C++ and generic programming
-\noindent \textbf{Design patterns and generic programming.}
-
+\noindent \textbf{CGAL and generic programming paradigm.}
 Before using CGAL, it is mandatory to be familiar with C++,
 \emph{design patterns} and the \emph{generic programming paradigm}. 
 Design patterns \cite{Gamma:1995:DP} describe successful and
-\emph{reusable} solutions to standard software problems.  The generic
+\emph{reusable} solutions to standard software problems. The generic
 programming paradigm \cite{Alexandrescu:2001:MCD} features the notion
 of C++ class templates and function templates, which is at the corner
-stone of all features provided by CGAL. Details of the design of the
-CGAL polyhedron data structure are given in next section.
+stone of all features provided by CGAL. 
 
-An example illustrating design patterns and the generic programming is
-the Standard Template Library (STL)~\cite{ms-stl-96}. Generality and
-flexibility is achieved with a set of \italic{concepts}, where a
-concept is a well defined set of requirements. One of them is the
-\italic{iterator} concept, which allows both referring to an item and
-traversing a sequence of items. Those items are stored in a data
-structure called \italic{container} in STL. Another concept, so-called
-\italic{circulator}, allows traversing some circular sequences. They
-share most of the requirements with iterators, except the lack of
-past-the-end position in the sequence. Since CGAL is strongly inspired
+The generic programming paradigm provides a
+soft-coupled framework to support data structures and algorithms. 
+It focuses on representing families of the data structures 
+or the algorithms by identifying 
+the \emph{abstract representations}.
+With the \CC\ template, the standard template library
+\cite{ms-stl-96} (STL) is the pioneer library based on
+the generic programming paradigm. The STL provides a set of 
+data structure families (or containers), such as vectors, 
+lists and trees, and a set of generic algorithms 
+that can be dynamicly coupled with a container. In general, 
+the abstract representation of a data structure family
+is the \emph{entity type} and of an algorithm family
+is the \emph{operation type}. 
+%For example are the entity sorting and searching where users
+%supply the equality predicates to specialize the algorithms.  
+To soft couple the containers and the algorithms, STL 
+use the \italic{iterator} concept to be the interface.
+An iterator allows both referring to an enitity (as a \CC\ pointer) 
+and visiting a sequence of entities in the container.
+The STL frees software engineers from rebuilding the fundamental 
+data structures and let them focus on the design of the algorithms.
+Since CGAL is strongly inspired
 from the generality of STL, it is important to become familiar with
 its concepts before starting using it.
 
-%% The generic programming paradigm provides a
-%% soft-coupled framework to support data structures and algorithms. 
-%% It focuses on representing families of the data structures 
-%% or the algorithms by identifying the \emph{abstract representations}.
-%% With the \CC\ template, the standard template library
-%% \cite{ms-stl-96} (STL) is the pioneer library based on
-%% the generic programming paradigm. The STL provides a set of 
-%% data structure families, such as vectors, lists and trees,
-%% and a set of generic algorithms that can be dynamicly
-%% coupled with a data structure. In general, 
-%% the abstract representation of a data structure family
-%% is the \emph{entity type} and of an algorithm family
-%% is the \emph{operation type}.
-%% %For example are the entity sorting and searching where users
-%% %supply the equality predicates to specialize the algorithms.  
-%% The STL frees software engineers from rebuilding the fundamental 
-%% data structures and let them focus on the design of the algorithms.
+\noindent \textbf{Geometry data structures.}
+A polyhedral mesh consists the adjacency relationships
+among a set of primitives, i.e.\ vertices, edges and 
+facets. A polyhedron data structure describes 
+the adjacency relationships and the storage of the
+primitives. Several different data structures
+of polyhedral meshes are proposed in the past.
+Most prominent of them are the so-called
+edge-based data structures 
+\cite{Weiler:1985:EDS,Baumgart:1975:PRCV,Guibas:1983:PMG}.
+Edge-based data structures highlight the
+adjacency relationships among the edges
+and link the incidental vertices and facets
+by the stored pointers. Edge-based data structures
+are commonly used and allow for maximal flexibility.
+Among them, the \emph{halfedge data structure} is the most
+commonly used. 
 
-\noindent \textbf{Halfedge data structure.}
 \input hds
 
-\noindent \textbf{Geometry data structure and algorithms}
-A subdivision surface is the limit surface resulted from the
+OpenMesh \cite{Botsch:2002:OPENMESH} is ...
+
+\noindent \textbf{Geometry algorithms.}
+Subdivision surfaces \cite{cc,ds,loop,sqrt3,qts}
+is the limit surface resulted from the
 application of a subdivision algorithm to a control polyhedron.
 Subdivision algorithms recursively \emph{refine} (subdivide) the
 control polyhedron and \emph{modify} (smooth) the geometry according
@@ -60,6 +73,6 @@ to the stencils of the source mesh.
 %connectivity operations are more complex than most other
 %algorithms. Some other simple algorithms, e.g.\ displacement map, the
 %connectivity operation is a null operation. In other words, the source
-%and the target mesh have the same connectivity.  
-Further details on
-subdivisions can be found at \cite{Sub:course:2000}.
+%and the target mesh have the same connectivity.
+Further details on subdivisions can be found at \cite{Sub:course:2000}
+and \cite{Warren:subdivision}.
