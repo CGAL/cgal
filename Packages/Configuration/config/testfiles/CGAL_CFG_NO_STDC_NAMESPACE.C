@@ -43,7 +43,6 @@ using std::jmp_buf;
 using std::va_list;
 
 #include <ctime>
-using std::size_t;   
 using std::time_t;   
 using std::clock_t;  
 using std::tm;       
@@ -132,7 +131,6 @@ using std::wctype;
 #endif
 
 #include <cstring>
-using std::size_t;
 using std::memchr;
 using std::memcmp;
 using std::memcpy;
@@ -158,7 +156,6 @@ using std::strxfrm;
 #if 0
 #include <cwchar>
 using std::wint_t;
-using std::size_t;
 /* These do not exist in egcs-1.1.1
 using std::mbstate_t;
 using std::btowc;
@@ -219,7 +216,6 @@ using std::wcsxfrm;
 #include <cstdio>
 using std::FILE;
 using std::fpos_t;
-using std::size_t;
 using std::clearerr;
 using std::fclose;
 using std::feof;
