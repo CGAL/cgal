@@ -57,7 +57,7 @@ namespace CGAL {
 	  typename SearchTraits::Cartesian_const_iterator_d begin = construct_it(p),
 	    end = construct_it(p,1);
 	  dim = end - begin;
-	  box = SearchTraits::Construct_iso_box_d(p,q);
+	  box = SearchTraits::Construct_iso_box_d()(p,q);
 	}
 
         	
