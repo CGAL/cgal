@@ -1,10 +1,10 @@
 \begin{ccRefClass} {Plane_3<Kernel>}
 
-\ccDefinition
+\ccDefinition 
 An object \ccStyle{h} of the data type \ccRefName\ is an oriented
 plane in the three-dimensional Euclidean space $\E^3$. It is defined
-by the set of points with coordinates Cartesian $(x,y,z)$ that satisfy 
-the plane equation 
+by the set of points with Cartesian coordinates $(x,y,z)$ that satisfy
+the plane equation
 
 \begin{ccTexOnly}
 \[h :\;  a\, x +b\, y +c\, z + d = 0.\]
@@ -13,17 +13,15 @@ the plane equation
 h : a x + b y + c z + d = 0
 \end{ccHtmlOnly}
 
-The plane splits $\E^3$ in a {\em positive} and a {\em negative
-side}. 
-A point $p$ with Cartesian coordinates $(px, py, pz)$ is on the positive side of
-\ccStyle{h}, iff \ccTexHtml{$a\, px +b\, py +c\, pz + d > 0$}{a px + b py +c pz + d > 0}, it is on the
-negative side, iff \ccTexHtml{$a\, px +b\, py\, +c\, pz + d < 0$}{a px + b py +c pz + d < 0}.
-
-
+The plane splits $\E^3$ in a {\em positive} and a {\em negative side}.
+A point $p$ with Cartesian coordinates $(px, py, pz)$ is on the
+positive side of \ccStyle{h}, iff \ccTexHtml{$a\, px +b\, py +c\, pz +
+  d > 0$}{a px + b py +c pz + d > 0}. It is on the negative side, iff
+\ccTexHtml{$a\, px +b\, py\, +c\, pz + d < 0$}{a px + b py +c pz + d <
+  0}.
 
 \ccCreation
 \ccCreationVariable{h}
-
 
 \ccHidden \ccConstructor{Plane_3();}
              {introduces an uninitialized variable \ccVar.}
@@ -31,10 +29,10 @@ negative side, iff \ccTexHtml{$a\, px +b\, py\, +c\, pz + d < 0$}{a px + b py +c
 \ccHidden \ccConstructor{Plane_3(const Plane_3<Kernel> &h);}
             {copy constructor.}
 
-\ccConstructor{Plane_3(const R::RT &a, 
-                       const R::RT &b,
-                       const R::RT &c,
-                       const R::RT &d)}
+\ccConstructor{Plane_3(const Kernel::RT &a, 
+                       const Kernel::RT &b,
+                       const Kernel::RT &c,
+                       const Kernel::RT &d)}
 {creates a plane \ccVar\ defined by the equation
  \ccTexHtml{$a\, px +b\, py +c\, pz + d = 0$}{a px + b py + c pz + d = 0}.
 Notice that \ccVar\ is degenerate if \ccTexHtml{$a = b = c$}{a = b = c}.}
@@ -80,16 +78,16 @@ Notice that \ccVar\ is degenerate if the points are collinear.}
 \ccMethod{bool operator!=(const Plane_3<Kernel> &h2) const;}
        {Test for inequality.}
 
-\ccMethod{R::RT a() const;}
+\ccMethod{Kernel::RT a() const;}
        {returns the first coefficient of \ccVar.}
 \ccGlue
-\ccMethod{R::RT b() const;}
+\ccMethod{Kernel::RT b() const;}
        {returns the second coefficient of \ccVar.}
 \ccGlue
-\ccMethod{R::RT c() const;}
+\ccMethod{Kernel::RT c() const;}
        {returns the third coefficient of \ccVar.}
 \ccGlue
-\ccMethod{R::RT d() const;}
+\ccMethod{Kernel::RT d() const;}
        {returns the fourth coefficient of \ccVar.}
 
 \ccMethod{Line_3<Kernel> perpendicular_line(const Point_3<Kernel> &p) const;}

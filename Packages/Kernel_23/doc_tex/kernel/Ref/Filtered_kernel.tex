@@ -5,17 +5,18 @@
 \ccDefinition
 
 \ccClassTemplateName is a kernel that uses the filtering technique
-\cite{bbp-iayea-98} to achieve a kernel with exact and efficient predicates
-given an exact kernel \ccc{EK} and a filtering kernel \ccc{FK}.  The geometric
-objects and constructions are exactly those of the kernel \ccc{CK}, which
-means that there is no type equality between, say \ccc{Point_2<Kernel>} and
-\ccc{R::Point_2}, when \ccc{R} is \ccClassTemplateName, which means that you
-should always use \ccc{R::Point_2} instead of \ccc{Point_2<Kernel>}.
+\cite{bbp-iayea-98} to achieve a kernel with exact and efficient
+predicates given an exact kernel \ccc{EK} and a filtering kernel
+\ccc{FK}.  The geometric objects and constructions are exactly those
+of the kernel \ccc{CK}, which means that there is no type equality
+between, say \ccc{Point_2<Kernel>} and \ccc{Kernel::Point_2}, when
+\ccc{Kernel} is \ccClassTemplateName. Hence, you should always use
+\ccc{Kernel::Point_2} instead of \ccc{Point_2<Kernel>}.
 
 This is achieved by converting the geometric objects of \ccc{CK} arguments of
 each predicate to the filtering kernel \ccc{FK} using \ccc{C2F}, then applying
 the corresponding predicate from \ccc{FK}, which should throw an exception in
-case it can't determine the result exactly.  In this case the exception is
+case it cannot determine the result exactly.  In this case the exception is
 caught and the corresponding predicate from the kernel \ccc{EK} is called to
 obtain the exact result (after having converted the arguments using
 \ccc{C2E}).
@@ -36,9 +37,9 @@ The default parameters are \ccc{EK = Simple_cartesian<MP_Float>},
 
 \ccExample
 
-The following example shows how to produce a kernel traits class \ccc{K} which
-geometric objects and constructions are those of
-\ccc{Simple_cartesian<double>} and which predicates are exact.
+The following example shows how to produce a kernel whose geometric
+objects and constructions are those of \ccc{Simple_cartesian<double>}
+but the predicates are exact.
 
 \begin{verbatim}
 #include <CGAL/Simple_cartesian.h>

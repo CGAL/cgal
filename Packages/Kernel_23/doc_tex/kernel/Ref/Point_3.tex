@@ -10,14 +10,12 @@ Euclidean space $\E^3$.
 %% access its dimension as it is dimensionless.
 %% 
 
-Remember that \ccStyle{R::RT} and \ccStyle{R::FT} denote a ring type 
-and a field type.
-For the representation class \ccStyle{Cartesian<T>}, the two types are 
-equivalent.
-However, for the representation class \ccStyle{Homogeneous<T>} the ring 
-type is \ccStyle{R::RT} is equal to \ccStyle{T} and the field type is 
-\ccStyle{R::FT} is equal to \ccStyle{Quotient<T>}.
-
+Remember that \ccStyle{Kernel::RT} and \ccStyle{Kernel::FT} denote a
+RingNumberType and a FieldNumberType, respectively. For the kernel
+model \ccStyle{Cartesian<T>}, the two types are the same. For the
+kernel model \ccStyle{Homogeneous<T>}, \ccStyle{Kernel::RT} is equal
+to \ccStyle{T}, and \ccStyle{Kernel::FT} is equal to
+\ccStyle{Quotient<T>}.
 
 \ccCreation
 \ccCreationVariable{p}
@@ -27,16 +25,14 @@ type is \ccStyle{R::RT} is equal to \ccStyle{T} and the field type is
              {introduces an uninitialized variable \ccVar.}
 
 \ccHidden \ccConstructor{Point_3(const Point_3<Kernel> &q);}
- 	    {copy constructor.}
+            {copy constructor.}
 
 \ccConstructor{Point_3(const Origin &ORIGIN);}
- 	    {introduces a point with \ccHtmlNoLinks{Cartesian} coordinates$(0,0,0)$.}
+            {introduces a point with \ccHtmlNoLinks{Cartesian} coordinates$(0,0,0)$.}
 
-\ccConstructor{Point_3(const R::RT &hx, const R::RT &hy, const R::RT &hz, const R::RT &hw = R::RT(1));}
+\ccConstructor{Point_3(const Kernel::RT &hx, const Kernel::RT &hy, const Kernel::RT &hz, const Kernel::RT &hw = RT(1));}
             {introduces a point \ccVar\ initialized to $(hx/hw,hy/hw, hz/hw)$.
-             If the third argument is not explicitly given it defaults
-             to \ccStyle{R::RT(1)}.
-	     \ccPrecond \ccc{hw} $\neq$ \ccc{Kernel::RT(0)}.}
+             \ccPrecond \ccc{hw} $\neq$ \ccc{RT(0)}.}
 
 
 \ccOperations
@@ -52,51 +48,47 @@ type is \ccStyle{R::RT} is equal to \ccStyle{T} and the field type is
 \ccMethod{bool operator!=(const Point_3<Kernel> &q) const;}
        {Test for inequality.}
 
-
-
 There are two sets of coordinate access functions, namely to the
-homogeneous and to the \ccHtmlNoLinks{Cartesian} coordinates. They can be used
-independently from the chosen representation type \ccStyle{R}.
+homogeneous and to the \ccHtmlNoLinksFrom{Cartesian} coordinates. They can be used
+independently from the chosen kernel model.
 
-\ccMethod{R::RT hx() const;}
+\ccMethod{Kernel::RT hx() const;}
        {returns the homogeneous $x$ coordinate.}
 \ccGlue
-\ccMethod{R::RT hy() const;}
+\ccMethod{Kernel::RT hy() const;}
        {returns the homogeneous $y$ coordinate.}
 \ccGlue
-\ccMethod{R::RT hz() const;}
+\ccMethod{Kernel::RT hz() const;}
        {returns the homogeneous $z$ coordinate.}
 \ccGlue
-\ccMethod{R::RT hw() const;}
-       {returns the homogenizing  coordinate.}
+\ccMethod{Kernel::RT hw() const;}
+       {returns the homogenizing coordinate.}
 
-Here come the \ccHtmlNoLinks{Cartesian} access functions. Note that you do not loose
-information with the homogeneous representation, because then the field
-type is a quotient.
+Note that you do not loose information with the homogeneous
+representation, because the FieldNumberType is a quotient.
 
-\ccMethod{R::FT x() const;}
+\ccMethod{Kernel::FT x() const;}
        {returns the \ccHtmlNoLinks{Cartesian} $x$ coordinate, that is $hx/hw$.}
 \ccGlue
-\ccMethod{R::FT y() const;}
+\ccMethod{Kernel::FT y() const;}
        {returns the \ccHtmlNoLinks{Cartesian} $y$ coordinate, that is $hy/hw$.}
 \ccGlue
-\ccMethod{R::FT z() const;}
+\ccMethod{Kernel::FT z() const;}
        {returns the \ccHtmlNoLinks{Cartesian} $z$ coordinate, that is $hz/hw$.}
 
+The following operations are for convenience and for compatibility
+with code for higher dimensional points. Again they come in a
+\ccHtmlNoLinksFrom{Cartesian} and in a homogeneous flavor.
 
-The following operations are for convenience and for making this
-point class compatible with code for higher dimensional points.
-Again they come in a \ccHtmlNoLinks{Cartesian} and homogeneous flavor.
-
-\ccMethod{R::RT homogeneous(int i) const;}
+\ccMethod{Kernel::RT homogeneous(int i) const;}
        {returns the i'th homogeneous coordinate of \ccVar, starting with 0.
         \ccPrecond $0\leq i \leq 3$.}
 
-\ccMethod{R::FT cartesian(int i) const;}
+\ccMethod{Kernel::FT cartesian(int i) const;}
        {returns the i'th \ccHtmlNoLinks{Cartesian} coordinate of \ccVar, starting with 0.
         \ccPrecond $0\leq i \leq 2$.}
 
-\ccMethod{R::FT operator[](int i) const;}
+\ccMethod{Kernel::FT operator[](int i) const;}
        {returns \ccStyle{cartesian(i)}.
         \ccPrecond $0\leq i \leq 2$.}
 
@@ -116,8 +108,8 @@ The following operations can be applied on points:
 \ccFunction{Vector_3<Kernel> operator-(const Point_3<Kernel> &p,
                                   const Point_3<Kernel> &q);}
        {returns the difference vector between \ccStyle{q} and \ccStyle{p}. 
-        You can substitute \ccc{ORIGIN} for either \ccc{p} or \ccc{q}
-        ,but not for both.}
+        You can substitute \ccc{ORIGIN} for either \ccc{p} or \ccc{q}, 
+        but not for both.}
 
 \ccFunction{Point_3<Kernel> operator+(const Point_3<Kernel> &p,
                                  const Vector_3<Kernel> &v);}

@@ -6,7 +6,7 @@ An object of type \ccRefName\ is a circle in the
 two-dimensional Euclidean plane $\E^2$. The circle is oriented, i.e.\ 
 its boundary has clockwise or counterclockwise \ccHtmlNoLinksFrom{orientation}. The
 boundary splits $\E^2$ into a positive and a negative side, where the
-positive side is to the left of the boundary. The boundary further
+positive side is to the left of the boundary. The boundary also
 splits $\E^2$ into a bounded and an unbounded side. Note that the
 circle can be degenerated, i.e.\ the squared radius may be zero.
 
@@ -21,7 +21,7 @@ circle can be degenerated, i.e.\ the squared radius may be zero.
         \ccClassTemplateName.}
 
 \ccConstructor{ Circle_2( Point_2<Kernel>  const& center, 
-                               R::FT  const& squared_radius,
+                               Kernel::FT  const& squared_radius,
                                Orientation const& ori = COUNTERCLOCKWISE);}{
         introduces a variable \ccVar\ of type \ccClassTemplateName.
         It is initialized to the circle with center \ccc{center},
@@ -73,10 +73,10 @@ circle can be degenerated, i.e.\ the squared radius may be zero.
 \ccMemberFunction{Point_2<Kernel> const& center( ) const;}{
         returns the center of \ccVar.}
 \ccGlue
-\ccMemberFunction{ R::FT const& squared_radius( ) const;}{
+\ccMemberFunction{Kernel::FT const& squared_radius( ) const;}{
         returns the squared radius of \ccVar.}
 \ccGlue
-\ccMemberFunction{ Orientation const& orientation( ) const;}{
+\ccMemberFunction{Orientation const& orientation( ) const;}{
         returns the \ccHtmlNoLinksFrom{orientation} of \ccVar.}
 
 % -----------------------------------------------------------------------------

@@ -6,7 +6,7 @@ An object of type \ccRefName\ is a sphere in the
 three-dimensional Euclidean space $\E^3$. The sphere is oriented, i.e.\ 
 its boundary has clockwise or counterclockwise orientation. The
 boundary splits $\E^3$ into a positive and a negative side, where the
-positive side is to the left of the boundary. The boundary further
+positive side is to the left of the boundary. The boundary also
 splits $\E^3$ into a bounded and an unbounded side. Note that the
 sphere can be degenerated, i.e.\ the squared radius may be zero.
 
@@ -21,7 +21,7 @@ sphere can be degenerated, i.e.\ the squared radius may be zero.
         \ccRefName.}
 
 \ccConstructor{ Sphere_3( Point_3<Kernel>  const& center, 
-                          R::FT  const& squared_radius,
+                          Kernel::FT  const& squared_radius,
                           Orientation const& orientation = COUNTERCLOCKWISE);}{
         introduces a variable \ccVar\ of type \ccRefName.
         It is initialized to the sphere with center \ccc{center},
@@ -84,7 +84,7 @@ sphere can be degenerated, i.e.\ the squared radius may be zero.
 \ccMemberFunction{Point_3<Kernel> const& center( ) const;}{
         returns the center of \ccVar.}
 \ccGlue
-\ccMemberFunction{ R::FT const& squared_radius( ) const;}{
+\ccMemberFunction{ Kernel::FT const& squared_radius( ) const;}{
         returns the squared radius of \ccVar.}
 \ccGlue
 \ccMemberFunction{ orientation const& orientation( ) const;}{

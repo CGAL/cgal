@@ -22,22 +22,21 @@ the user.
              {introduces an uninitialized variable \ccVar.}
 
 \ccHidden \ccConstructor{Iso_rectangle_2(const Iso_rectangle_2<Kernel> &u);}
- 	    {copy constructor.}
+            {copy constructor.}
 
 \ccConstructor{Iso_rectangle_2(const Point_2<Kernel> &p, 
-	                       const Point_2<Kernel> &q);}
+                               const Point_2<Kernel> &q);}
             {introduces an iso-oriented rectangle \ccVar\ with diagonal
              opposite vertices $p$ and $q$. Note that the object is 
              brought in the canonical form.}
 
-\ccConstructor{Iso_rectangle_2(const RT& min_hx, const RT& min_hy, 
-                               const RT& max_hx, const RT& max_hy, 
-                               const RT& hw = R::RT(1));}
+\ccConstructor{Iso_rectangle_2(const Kernel::RT& min_hx, const Kernel::RT& min_hy, 
+                               const Kernel::RT& max_hx, const Kernel::RT& max_hy, 
+                               const Kernel::RT& hw = RT(1));}
             {introduces an iso-oriented rectangle \ccVar\ with diagonal
              opposite vertices (\ccc{min_hx/hw}, \ccc{min_hy/hw}) and 
-             (\ccc{max_hx/hw}, \ccc{max_hy/hw}).  If the last argument 
-             is not explicitly given, it defaults to \ccStyle{R::RT(1)}.
-             \ccPrecond \ccc{hw} $\neq$ \ccc{R::RT(0)} }
+             (\ccc{max_hx/hw}, \ccc{max_hy/hw}).  
+             \ccPrecond \ccc{hw} $\neq$ \ccc{RT(0)} }
 
 \ccOperations
 \ccHidden \ccMethod{Iso_rectangle_2<Kernel> & operator=(const Iso_rectangle_2<Kernel> &q);}
@@ -64,25 +63,25 @@ the user.
 \ccMethod{Point_2<Kernel> max() const;}
        {returns the upper right vertex of \ccVar\ (= \ccStyle{vertex(2)}).}
 
-\ccMethod{FT xmin() const;}
+\ccMethod{Kernel::FT xmin() const;}
        {returns the $x$ coordinate of lower left vertex of \ccVar.}
 \ccGlue
-\ccMethod{FT ymin() const;}
+\ccMethod{Kernel::FT ymin() const;}
        {returns the $y$ coordinate of lower left vertex of \ccVar.}
 \ccGlue
-\ccMethod{FT xmax() const;}
+\ccMethod{Kernel::FT xmax() const;}
        {returns the $x$ coordinate of upper right vertex of \ccVar.}
 \ccGlue
-\ccMethod{FT ymax() const;}
+\ccMethod{Kernel::FT ymax() const;}
        {returns the $y$ coordinate of upper right vertex of \ccVar.}
 
-\ccMethod{FT min_coord(int i) const;}
+\ccMethod{Kernel::FT min_coord(int i) const;}
        {returns the $i$'th \ccHtmlNoLinksFrom{Cartesian} coordinate of the
         lower left vertex of \ccVar. 
 %        (\ccc{min_coord(0) == xmin()}; \ccc{min_coord(1) == ymin()})
         \ccPrecond $0 \leq i \leq 1$.}
 
-\ccMethod{FT max_coord(int i) const;}
+\ccMethod{Kernel::FT max_coord(int i) const;}
        {returns the $i$'th \ccHtmlNoLinksFrom{Cartesian} coordinate of the
         upper right vertex of \ccVar. 
 %        (\ccc{max_coord(0) == xmin()}; \ccc{max_coord(1) == ymin()})
@@ -112,7 +111,7 @@ the user.
 
 \ccHeading{Miscellaneous}
 
-\ccMethod{FT area() const;}
+\ccMethod{Kernel::FT area() const;}
        {returns the area of \ccVar. }
 
 \ccMethod{Bbox bbox() const;}

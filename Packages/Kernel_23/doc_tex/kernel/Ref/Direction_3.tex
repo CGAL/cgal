@@ -35,7 +35,7 @@ orthogonal to an oriented plane, or the direction of an oriented line.
 \ccConstructor{Direction_3(const Segment_3<Kernel> &s);}
             {introduces the direction \ccVar\ of segment $s$.}
 
-\ccConstructor{Direction_3(const R::RT &x, const R::RT &y, const R::RT &z);}
+\ccConstructor{Direction_3(const Kernel::RT &x, const Kernel::RT &y, const Kernel::RT &z);}
             {introduces a direction \ccVar\ initialised with the direction 
              from the origin to the point with Cartesian coordinates $(x, y, z)$.}
 
@@ -47,17 +47,17 @@ orthogonal to an oriented plane, or the direction of an oriented line.
 \ccHidden \ccMethod{Direction_3<Kernel> & operator=(const Direction_3<Kernel> &e);}
         {Assignment.}
 
-\ccMethod{R::RT delta(int i) const;}
+\ccMethod{Kernel::RT delta(int i) const;}
        {returns values, such that \ccVar \ccc{== Direction_3<Kernel>(delta(0),delta(1),delta(2))}.
         \ccPrecond: $0 \leq i \leq 2$.}
 
-\ccMethod{R::RT dx() const;}
+\ccMethod{Kernel::RT dx() const;}
        {returns \ccc{delta(0)}.}
 \ccGlue
-\ccMethod{R::RT dy() const;}
+\ccMethod{Kernel::RT dy() const;}
        {returns \ccc{delta(1)}.}
 \ccGlue
-\ccMethod{R::RT dz() const;}
+\ccMethod{Kernel::RT dz() const;}
        {returns \ccc{delta(2)}.}
 
 

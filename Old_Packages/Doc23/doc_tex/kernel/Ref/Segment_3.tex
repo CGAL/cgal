@@ -10,7 +10,7 @@ is called the {\em target} of $s$. The length of $s$ is the
 Euclidean distance between $p$ and $q$. Note that there is only a function
 to compute the square of the length, because otherwise we had to
 perform a square root operation which is not defined for all
-number types, is expensive, and may not be exact.
+number types, which is expensive, and may not be exact.
 
 \ccCreation
 \ccCreationVariable{s}
@@ -20,7 +20,7 @@ number types, is expensive, and may not be exact.
              {introduces an uninitialized variable \ccVar.}
 
 \ccHidden \ccConstructor{Segment_3(const Segment_3<Kernel> &q);}
- 	    {copy constructor.}
+            {copy constructor.}
 
 \ccConstructor{Segment_3(const Point_3<Kernel> &p, const Point_3<Kernel> &q);}
             {introduces a segment \ccVar\ with source $p$
@@ -65,7 +65,7 @@ number types, is expensive, and may not be exact.
 \ccMethod{Point_3<Kernel> operator[](int i) const;}
        {returns \ccStyle{vertex(i)}.}
 
-\ccMethod{R::FT squared_length() const;}
+\ccMethod{Kernel::FT squared_length() const;}
        {returns the squared length of \ccVar. }
 
 \ccMethod{Direction_3<Kernel> direction() const;}

@@ -20,18 +20,16 @@ instead of a vector initialized with zeros.
              {introduces an uninitialized variable \ccVar.}
 
 \ccHidden \ccConstructor{Vector_3(const Vector_3<Kernel> &w);}
- 	    {copy constructor.}
+            {copy constructor.}
 
 \ccConstructor{Vector_3(const Point_3<Kernel> &a, const Point_3<Kernel> &b);}
- 	    {introduces the vector $b-a$.}
+            {introduces the vector $b-a$.}
 
 \ccConstructor{Vector_3(const Null_vector &NULL_VECTOR);}
- 	    {introduces a null vector \ccVar.}
+            {introduces a null vector \ccVar.}
 
-\ccConstructor{Vector_3(const R::RT &hx, const R::RT &hy, const R::FT &hz, const R::RT &hw = R::RT(1));}
-            {introduces a vector \ccVar\ initialized to $(hx/hw, hy/hw, hz/hw)$.
-             If the third argument is not explicitly given it defaults
-             to \ccStyle{R::RT(1)}.}
+\ccConstructor{Vector_3(const Kernel::RT &hx, const Kernel::RT &hy, const Kernel::FT &hz, const Kernel::RT &hw = RT(1));}
+            {introduces a vector \ccVar\ initialized to $(hx/hw, hy/hw, hz/hw)$.}
 
 
 \ccOperations
@@ -48,50 +46,47 @@ instead of a vector initialized with zeros.
        {Test for inequality. You can compare a vector with the
         \ccStyle{NULL_VECTOR}.}
 
-
 There are two sets of coordinate access functions, namely to the
 homogeneous and to the \ccHtmlNoLinksFrom{Cartesian} coordinates. They can be used
-independently from the chosen representation type \ccStyle{R}.
+independently from the chosen kernel model.
 
-\ccMethod{R::RT hx() const;}
+\ccMethod{Kernel::RT hx() const;}
        {returns the homogeneous $x$ coordinate.}
 \ccGlue
-\ccMethod{R::RT hy() const;}
+\ccMethod{Kernel::RT hy() const;}
        {returns the homogeneous $y$ coordinate.}
 \ccGlue
-\ccMethod{R::RT hz() const;}
+\ccMethod{Kernel::RT hz() const;}
        {returns the homogeneous $z$ coordinate.}
 \ccGlue
-\ccMethod{R::RT hw() const;}
+\ccMethod{Kernel::RT hw() const;}
        {returns the homogenizing  coordinate.}
 
-Here come the \ccHtmlNoLinksFrom{Cartesian} access functions. Note that you do not loose
-information with the homogeneous representation, because then the field
-type is a quotient.
+Note that you do not loose information with the homogeneous
+representation, because the FieldNumberType is a quotient.
 
-
-\ccMethod{R::FT x() const;}
+\ccMethod{Kernel::FT x() const;}
        {returns the \ccStyle{x}-coordinate of \ccVar, that is $hx/hw$.}
 \ccGlue
-\ccMethod{R::FT y() const;}
+\ccMethod{Kernel::FT y() const;}
        {returns the \ccStyle{y}-coordinate of \ccVar, that is $hy/hw$.}
 \ccGlue
-\ccMethod{R::FT z() const;}
+\ccMethod{Kernel::FT z() const;}
        {returns the \ccStyle{z} coordinate of \ccVar, that is $hz/hw$.}
 
-The following operations are for convenience and for making the
-class \ccRefName\ compatible with code for higher dimensional vectors.
-Again they come in a \ccHtmlNoLinksFrom{Cartesian} and homogeneous flavor.
+The following operations are for convenience and for compatibility
+with higher dimensional vectors.  Again they come in a
+\ccHtmlNoLinksFrom{Cartesian} and homogeneous flavor.
 
-\ccMethod{R::RT homogeneous(int i) const;}
+\ccMethod{Kernel::RT homogeneous(int i) const;}
        {returns the i'th homogeneous coordinate of \ccVar, starting with 0.
         \ccPrecond $0\leq i \leq 3$.}
 
-\ccMethod{R::FT cartesian(int i) const;}
+\ccMethod{Kernel::FT cartesian(int i) const;}
        {returns the i'th \ccHtmlNoLinksFrom{Cartesian} coordinate of \ccVar, starting at 0.
         \ccPrecond $0\leq i \leq 2$.}
 
-\ccMethod{R::FT operator[](int i) const;}
+\ccMethod{Kernel::FT operator[](int i) const;}
        {returns  \ccStyle{cartesian(i)}.
         \ccPrecond $0\leq i \leq 2$.}
 
@@ -117,11 +112,11 @@ The following operations can be applied on vectors:
 \ccMethod{Vector_3<Kernel>        operator-() const;}
        {Negation.}
 
-\ccMethod{R::FT              operator*(const Vector_3<Kernel> &w) const;}
+\ccMethod{Kernel::FT              operator*(const Vector_3<Kernel> &w) const;}
        {returns the scalar product (= inner product) of the two vectors.}
 
 
-\ccMethod{Vector_3<Kernel> operator*(const R::RT &s) const;}
+\ccMethod{Vector_3<Kernel> operator*(const Kernel::RT &s) const;}
        {Multiplication with a scalar from the right. Although it would
         be more natural, \cgal\ does not offer a multiplication with a 
         scalar from the left. (This is due to problems of some compilers.)}
@@ -131,11 +126,11 @@ The following operations can be applied on vectors:
        {Multiplication with a scalar from the right.}
 
 
-%\ccFunction{Vector_3<Kernel> operator*(const R::RT &s, 
-%				   const Vector_3<Kernel> &w);}
+%\ccFunction{Vector_3<Kernel> operator*(const Kernel::RT &s, 
+%                                  const Vector_3<Kernel> &w);}
 %       {Multiplication with a scalar from the left.}
 
-\ccMethod{Vector_3<Kernel>        operator/(const R::RT &s) const;}
+\ccMethod{Vector_3<Kernel>        operator/(const Kernel::RT &s) const;}
        {Division by a scalar.}
 
 
