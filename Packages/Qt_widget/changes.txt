@@ -1,3 +1,8 @@
+1.2.46
+--------
+	The Qt_widget_standard_toolbar contains a layer to display mouse real world coordinates.
+	The demos no longer use this layer in their toolbar_layer.
+
 1.2.45
 -------
 	patched Triangulation_2_constrained for Windows
