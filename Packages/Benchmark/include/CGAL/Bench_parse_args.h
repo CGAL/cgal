@@ -88,17 +88,17 @@ public:
 public:    
   Bench_parse_args(int argc, char * argv[]) :
       m_argc(argc), m_argv(argv), m_filename(0),
-      m_verbose(false), m_typeMask(0xffffffff), m_strategyMask(0xffffffff),
-      m_inputFormat(FORMAT_RAT),
-      m_printHeader(true), m_nameLength(32), m_seconds(10), m_samples(0),
+      m_verbose(false), m_type_mask(0xffffffff), m_strategy_mask(0xffffffff),
+      m_input_format(FORMAT_RAT),
+      m_print_header(true), m_name_length(32), m_seconds(1), m_samples(0),
 #if (defined _MSC_VER)
       m_iterations(10)
 #else
       m_iterations(0)
 #endif
   {
-    m_progName = strrchr(argv[0], '\\');
-    m_progName = (m_progName) ? m_progName+1 : argv[0];
+    m_prog_name = strrchr(argv[0], '\\');
+    m_prog_name = (m_prog_name) ? m_prog_name+1 : argv[0];
 
     m_dirs.add(".");
     const char * root = getenv("ROOT");
@@ -108,21 +108,31 @@ public:
 
   /*!
    */
-  unsigned int getTypeMask() const { return m_typeMask; }
-  unsigned int getStrategyMask() const { return m_strategyMask; }
-  bool getVerbose() const { return m_verbose; }
-  FormatId getInputFormat() const { return m_inputFormat; }
-  int getSamples() const { return m_samples; }
-  int getIterations() const { return m_iterations; }
-  int getSeconds() const { return m_seconds; }
-  bool getPrintHeader()const { return m_printHeader; }
-  int getNameLength()const { return m_nameLength; }
-  const char * getFilename() const { return m_filename; }
-  const char * getFullname() const { return m_fullname.c_str(); }
-  const char * getTypeName(TypeId id) const { return s_typeOpts[id]; }
-  const char * getStrategyName(StrategyId id) const
-  { return s_strategyOpts[id]; }
+  unsigned int get_type_mask() const { return m_type_mask; }
+  unsigned int get_strategy_mask() const { return m_strategy_mask; }
+  bool get_verbose() const { return m_verbose; }
+  FormatId get_input_format() const { return m_input_format; }
+  int get_samples() const { return m_samples; }
+  int get_iterations() const { return m_iterations; }
+  int get_seconds() const { return m_seconds; }
+  bool get_print_header()const { return m_print_header; }
+  int get_name_length()const { return m_name_length; }
+  const char * get_full_name() const { return m_fullname.c_str(); }
+  const char * get_type_name(TypeId id) const { return s_type_opts[id]; }
+  const char * get_strategy_name(StrategyId id) const
+  { return s_strategy_opts[id]; }
 
+  /*!
+   */
+  const char * get_file_name() const
+  {
+    if (!m_filename) {
+      std::cerr << "Data file missing!" << std::endl;
+      return NULL;
+    }
+    return m_filename;
+  }
+  
   /*!
    */
   void printHelp(void)
@@ -158,60 +168,58 @@ public:
   -s <samples>\tset number of samples to <samples> (default 10)\n\
   -t <seconds>\tset number of seconds to <seconds> (default 1)\n\
   -v\t\ttoggle verbosity (default false)\n",
-           m_progName);
+           m_prog_name);
   }
 
   int parse()
   {
     int c;
-    while ((c = getopt(m_argc, m_argv, s_optionStr)) != EOF) {
+    while ((c = getopt(m_argc, m_argv, s_option_str)) != EOF) {
       switch (c) {
-        case 'b': if (getBenchParam(optarg) < 0) return -1; break;
+        case 'b': if (get_bench_param(optarg) < 0) return -1; break;
         case 'd': m_dirs.add(optarg); break;
         case 'h': printHelp(); return 1;
-        case 'I': if (getIOParm(optarg)) return -1; break;
+        case 'I': if (get_io_param(optarg)) return -1; break;
         case 'i': m_iterations = atoi(optarg); break;
         case 's': m_samples = atoi(optarg); break;
         case 't': m_seconds = atoi(optarg); break;
         case 'v': m_verbose = !m_verbose; break;
         default:
-          std::cerr << m_progName << ": invalid option -- "
+          std::cerr << m_prog_name << ": invalid option -- "
                     << static_cast<char>(c) << std::endl;
-          std::cerr << "Try `" << m_progName << " -h' for more information."
+          std::cerr << "Try `" << m_prog_name << " -h' for more information."
                     << std::endl;
           return -1;
       }
     }
   
-    if (optind >= m_argc) {
-      std::cerr << "Data file missing!" << std::endl;
-      return -1;
+    if (optind < m_argc) {
+      m_filename = m_argv[optind];
+      if (!m_dirs.find(m_filename, m_fullname)) {
+        std::cerr << "Cannot find file " << m_filename << "!" << std::endl;
+        return -1;
+      }
     }
-
-    m_filename = m_argv[optind];
-    if (!m_dirs.find(m_filename, m_fullname)) {
-      std::cerr << "Cannot find file " << m_filename << "!" << std::endl;
-      return -1;
-    }
+    
     return 0;
   }
     
 private:
   /*!
    */
-  int getIOParm(char * optarg)
+  int get_io_param(char * optarg)
   {
     char * options = optarg;
     char * value = 0;
     if (*options == '\0') return 0;
     while (*options != '\0') {
-      switch (getsubopt(&options, s_IOOpts, &value)) {
+      switch (getsubopt(&options, s_io_opts, &value)) {
         case IO_FORMAT:
-        case IO_F: if (getFormatParam(value) < 0) return -1; break;
+        case IO_F: if (get_format_param(value) < 0) return -1; break;
         default:
           std::cerr << "Unrecognized IO option '" << optarg << "'!"
                     << std::endl;
-          std::cerr << "Try `" << m_progName << " -h' for more information."
+          std::cerr << "Try `" << m_prog_name << " -h' for more information."
                     << std::endl;
           return -1;
       }
@@ -221,32 +229,32 @@ private:
 
   /*!
    */
-  int getFormatParam(char * value)
+  int get_format_param(char * value)
   {
     if (value) {
       char * subvalue;
-      switch (getsubopt(&value, s_formatOpts, &subvalue)) {
+      switch (getsubopt(&value, s_format_opts, &subvalue)) {
         case FORMAT_INT:
-        case FORMAT_I: m_inputFormat = FORMAT_INT; return 0;
+        case FORMAT_I: m_input_format = FORMAT_INT; return 0;
         case FORMAT_RAT:
-        case FORMAT_R: m_inputFormat = FORMAT_RAT; return 0;
+        case FORMAT_R: m_input_format = FORMAT_RAT; return 0;
         case FORMAT_FLT:
-        case FORMAT_F: m_inputFormat = FORMAT_FLT; return 0;
+        case FORMAT_F: m_input_format = FORMAT_FLT; return 0;
       }
     }
     std::cerr << "Unrecognized Format option '" << optarg << "'!" << std::endl;
-    std::cerr << "Try `" << m_progName << " -h' for more information."
+    std::cerr << "Try `" << m_prog_name << " -h' for more information."
               << std::endl;
     return -1;
   }
 
   /*!
    */
-  int getBoolParam(bool & param, char * value)
+  int get_bool_param(bool & param, char * value)
   {
     if (value) {
       char * subvalue;
-      switch (getsubopt(&value, s_boolOpts, &subvalue)) {
+      switch (getsubopt(&value, s_bool_opts, &subvalue)) {
         case BOOL_TRUE:
         case BOOL_T: param = true; return 0;
         case BOOL_FALSE:
@@ -254,53 +262,53 @@ private:
       }
     }
     std::cerr << "Unrecognized Bool option '" << optarg << "'!" << std::endl;
-    std::cerr << "Try `" << m_progName << " -h' for more information."
+    std::cerr << "Try `" << m_prog_name << " -h' for more information."
               << std::endl;
     return -1;
   }    
     
   /*!
    */
-  int getBenchParam(char * optarg)
+  int get_bench_param(char * optarg)
   {
     char * options = optarg;
     char * value = 0;
     if (*options == '\0') return 0;
     while (*options != '\0') {
-      switch(getsubopt(&options, s_benchOpts, &value)) {
+      switch(getsubopt(&options, s_bench_opts, &value)) {
         case BENCH_TYPE_NAME:
-        case BENCH_TN: if (getTypeNameParam(value) < 0) return -1; break;
+        case BENCH_TN: if (getType_name_param(value) < 0) return -1; break;
 
         case BENCH_STRATEGY_NAME:
-        case BENCH_SN: if (getStrategyNameParam(value) < 0) return -1; break;
+        case BENCH_SN: if (get_strategy_name_param(value) < 0) return -1; break;
           
         case BENCH_TYPE_MASK:
         case BENCH_TM:
           if (!value) goto err;
-          m_typeMask = strtoul(value, 0, 0);
+          m_type_mask = strtoul(value, 0, 0);
           break;
 
         case BENCH_STRATEGY_MASK:
         case BENCH_SM:
           if (!value) goto err;
-          m_strategyMask = strtoul(value, 0, 0);
+          m_strategy_mask = strtoul(value, 0, 0);
           break;
 
         case BENCH_HEADER:
         case BENCH_H:
-          if (getBoolParam(m_printHeader, value) < 0) return -1;
+          if (get_bool_param(m_print_header, value) < 0) return -1;
           break;
 
         case BENCH_NAME_LENGTH:
         case BENCH_NL:
           if (!value) goto err;
-          m_nameLength = atoi(value);
+          m_name_length = atoi(value);
           break;
         default:
       err:
           std::cerr << "Unrecognized Bench option '" << optarg << "'!"
                     << std::endl;
-          std::cerr << "Try `" << m_progName << " -h' for more information."
+          std::cerr << "Try `" << m_prog_name << " -h' for more information."
                     << std::endl;
           return -1;
       }
@@ -310,74 +318,74 @@ private:
 
   /*
    */
-  int getTypeNameParam(char * value)
+  int getType_name_param(char * value)
   {
     if (value) {
       char * subvalue;
-      switch (getsubopt(&value, s_typeOpts, &subvalue)) {
+      switch (getsubopt(&value, s_type_opts, &subvalue)) {
         case TYPE_INCREMENT:
         case TYPE_I:
-          m_typeMask = 0x1 << TYPE_INCREMENT; return 0;
+          m_type_mask = 0x1 << TYPE_INCREMENT; return 0;
         case TYPE_AGGREGATE:
         case TYPE_A:
-          m_typeMask = 0x1 << TYPE_AGGREGATE; return 0;
+          m_type_mask = 0x1 << TYPE_AGGREGATE; return 0;
         case TYPE_DISPLAY:
         case TYPE_D:
-          m_typeMask = 0x1 << TYPE_DISPLAY; return 0;
+          m_type_mask = 0x1 << TYPE_DISPLAY; return 0;
         case TYPE_SUBCURVES:
         case TYPE_C:
-	  m_typeMask = 0x1 << TYPE_SUBCURVES; return 0;
+	  m_type_mask = 0x1 << TYPE_SUBCURVES; return 0;
         case TYPE_POINTS:
         case TYPE_P:
-	  m_typeMask = 0x1 << TYPE_POINTS; return 0;
+	  m_type_mask = 0x1 << TYPE_POINTS; return 0;
       }
     }
-    std::cerr << "Unrecognized Bench Name option '" << optarg << "'!"
+    std::cerr << "Unrecognized Bench name option '" << optarg << "'!"
               << std::endl;
-    std::cerr << "Try `" << m_progName << " -h' for more information."
+    std::cerr << "Try `" << m_prog_name << " -h' for more information."
               << std::endl;
     return -1;
   }
 
   /*
    */
-  int getStrategyNameParam(char * value)
+  int get_strategy_name_param(char * value)
   {
     if (value) {
       char * subvalue;
-      switch (getsubopt(&value, s_strategyOpts, &subvalue)) {
+      switch (getsubopt(&value, s_strategy_opts, &subvalue)) {
         case STRATEGY_TRAPEZOIDAL:
         case STRATEGY_T:
-          m_strategyMask = 0x1 << STRATEGY_TRAPEZOIDAL; return 0;
+          m_strategy_mask = 0x1 << STRATEGY_TRAPEZOIDAL; return 0;
         case STRATEGY_NAIVE:
         case STRATEGY_N:
-          m_strategyMask = 0x1 << STRATEGY_NAIVE; return 0;
+          m_strategy_mask = 0x1 << STRATEGY_NAIVE; return 0;
         case STRATEGY_WALK:
         case STRATEGY_W:
-          m_strategyMask = 0x1 << STRATEGY_WALK; return 0;
+          m_strategy_mask = 0x1 << STRATEGY_WALK; return 0;
         case STRATEGY_DUMMY:
         case STRATEGY_D:
-          m_strategyMask = 0x1 << STRATEGY_DUMMY; return 0;
+          m_strategy_mask = 0x1 << STRATEGY_DUMMY; return 0;
       }
     }
     std::cerr << "Unrecognized Bench Name option '" << optarg << "'!"
               << std::endl;
-    std::cerr << "Try `" << m_progName << " -h' for more information."
+    std::cerr << "Try `" << m_prog_name << " -h' for more information."
               << std::endl;
     return -1;
   }
 
 private:
-  static char * s_formatOpts[];
-  static char * s_IOOpts[];
-  static char * s_benchOpts[];
-  static char * s_typeOpts[];
-  static char * s_strategyOpts[];
-  static char * s_boolOpts[];
+  static char * s_format_opts[];
+  static char * s_io_opts[];
+  static char * s_bench_opts[];
+  static char * s_type_opts[];
+  static char * s_strategy_opts[];
+  static char * s_bool_opts[];
     
 private:
-  static char s_optionStr[];
-  const char * m_progName;
+  static char s_option_str[];
+  const char * m_prog_name;
 
   std::string m_fullname;
   Dir_search m_dirs;
@@ -386,11 +394,11 @@ private:
   char ** m_argv;
   const char * m_filename;
   bool m_verbose;
-  unsigned int m_typeMask;
-  unsigned int m_strategyMask;
-  FormatId m_inputFormat;
-  bool m_printHeader;
-  int m_nameLength;
+  unsigned int m_type_mask;
+  unsigned int m_strategy_mask;
+  FormatId m_input_format;
+  bool m_print_header;
+  int m_name_length;
   int m_seconds;
   int m_samples;
   int m_iterations;

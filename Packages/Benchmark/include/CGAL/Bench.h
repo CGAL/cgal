@@ -5,6 +5,8 @@
 #include <signal.h>
 #include <stdio.h>
 #include <string>
+#include <iostream>
+#include <iomanip>
 
 #if !(defined _MSC_VER)
 #include <unistd.h>
@@ -18,20 +20,20 @@ class Bench_base {
 public:
   /*!
    */
-  static int getNameLength() { return m_nameLength; }
-  static void setNameLength(int nameLength) { m_nameLength = nameLength; }
+  static int get_name_length() { return m_name_length; }
+  static void set_name_length(int nameLength) { m_name_length = nameLength; }
     
   /*!
    */
-  static void printHeader()
+  static void print_header()
   {
-    std::cout << std::setw(m_nameLength) << std::left << "Bench"
+    std::cout << std::setw(m_name_length) << std::left << "Bench"
               << " Bench    Ops      Total    Single   Num Ops \n";
 
-    std::cout << std::setw(m_nameLength) << std::left << "    Name"
+    std::cout << std::setw(m_name_length) << std::left << "    Name"
               << "     Time      Num Ops Time  Op Time  Per Sec\n";
 
-    std::cout << std::setw(m_nameLength) << std::setfill('-') << ""
+    std::cout << std::setw(m_name_length) << std::setfill('-') << ""
               << " -------- -------- -------- -------- --------\n"
               << std::setfill(' ');
   }
@@ -40,45 +42,45 @@ protected:
 #if (!defined _MSC_VER)
   /*!
    */
-  static void processSignal(int sig) { m_gotSignal = true; }
+  static void process_signal(int sig) { m_got_signal = true; }
 #endif
 
-  static bool m_gotSignal;
-  static int m_nameLength;    
+  static bool m_got_signal;
+  static int m_name_length;    
 };
 
-template <class Bench_user>
+template <class Benchable>
 class Bench : public Bench_base {
 private:
-  typedef Bench<Bench_user> Self;
+  typedef Bench<Benchable> Self;
     
 public:
   /*!
    */
-  Bench(std::string name = "", int seconds = 1, bool printHeader = true) :
+  Bench(std::string name = "", int seconds = 1, bool print_header = true) :
       m_name(name), 
-      m_printHeader(printHeader),
-      m_headerPrinted(false),
+      m_print_header(print_header),
+      m_header_printed(false),
       m_factor(1.0f), m_seconds(seconds),
       m_samples(0), m_period(0.0f), m_iterations(0)
   {}
     
-  int getIterations() const { return m_iterations; }
-  int getSeconds() const { return m_seconds; }
-  int getSamples() const { return m_samples; }
+  int get_iterations() const { return m_iterations; }
+  int get_seconds() const { return m_seconds; }
+  int get_samples() const { return m_samples; }
 
-  void setIterations(int iterations) { m_iterations = iterations; }
-  void setSeconds(int seconds) { m_seconds = seconds; }
-  void setSamples(int samples) { m_samples = samples; }
+  void set_iterations(int iterations) { m_iterations = iterations; }
+  void set_seconds(int seconds) { m_seconds = seconds; }
+  void set_samples(int samples) { m_samples = samples; }
 
   /*!
    */
   void operator()()
   {
-    if (m_user.init() < 0) return;
+    if (m_benchable.init() < 0) return;
     loop();
-    m_user.clean();
-    printResults();
+    m_benchable.clean();
+    print_results();
   }
 
   /*!
@@ -87,12 +89,12 @@ public:
   {
     int i;
 
-    m_user.sync();
+    m_benchable.sync();
     if (m_samples == 0) {
       if (m_iterations != 0) {
         clock_t time_start = clock();
-        for (i = 0; i < m_iterations; i++) m_user.op();
-        m_user.sync();
+        for (i = 0; i < m_iterations; i++) m_benchable.op();
+        m_benchable.sync();
         clock_t time_end = clock();
         float time_interval = (float) (time_end - time_start) /
           (float) CLOCKS_PER_SEC;
@@ -105,24 +107,24 @@ public:
                   << "Set the number of iterations directly "
                   << "or set the number of samples." << std::endl;
 #else
-        m_gotSignal = false;
+        m_got_signal = false;
         
-        signal(SIGALRM, &Self::processSignal);
+        signal(SIGALRM, &Self::process_signal);
         alarm(m_seconds);
         do {
-          m_user.op();
+          m_benchable.op();
           m_samples++;
-        } while (!m_gotSignal);
+        } while (!m_got_signal);
 #endif
       }
     } else {
       m_seconds = 0;
     }
 
-    m_user.sync();
+    m_benchable.sync();
     clock_t time_start = clock();
-    for (i = 0; i < m_samples; i++) m_user.op();
-    m_user.sync();
+    for (i = 0; i < m_samples; i++) m_benchable.op();
+    m_benchable.sync();
     clock_t time_end = clock();
     m_period = (float) (time_end - time_start) / (float) CLOCKS_PER_SEC;
 
@@ -132,14 +134,14 @@ public:
 
   /*!
    */
-  void printResults()
+  void print_results()
   {
     fflush(stdout);
-    if (!m_headerPrinted && m_printHeader) printHeader();
-    m_headerPrinted = true;
+    if (!m_header_printed && m_print_header) print_header();
+    m_header_printed = true;
     int count = (int) ((float) m_samples * m_factor);
-    std::cout << std::setw(m_nameLength) << std::left
-              << m_name.substr(0, m_nameLength).c_str() << " "
+    std::cout << std::setw(m_name_length) << std::left
+              << m_name.substr(0, m_name_length).c_str() << " "
               << std::setw(8) << std::right << m_seconds << " "
               << std::setw(8) << std::right << count << " "
               << std::setw(8) << std::right << std::setprecision(4)
@@ -151,14 +153,14 @@ public:
               << std::endl;
   }
 
-  Bench_user & getBenchUser() { return m_user; }
+  Benchable & get_benchable() { return m_benchable; }
     
 private:
-  Bench_user m_user;
+  Benchable m_benchable;
 
   std::string m_name;
-  bool m_printHeader;
-  bool m_headerPrinted;
+  bool m_print_header;
+  bool m_header_printed;
   float m_factor;
   int m_seconds;
   int m_samples;
