@@ -1,0 +1,129 @@
+% dessin effectue par JpDraw (un programme de JP. MERLET)
+% INRIA Sophia-Antipolis,France le: Fri Jul 10 11:45:28 1998
+% Directory de creation:/u/alioth/0/prisme/yvinec/Cgal/Triangulation/doc/Fig
+% Createur:yvinec
+\ifx\cs\tempdima \newdimen \tempdima\fi
+\ifx\cs\tempdimb \newdimen \tempdimb\fi
+\ifx\cs\jpdrawx \newcount \jpdrawx\fi
+\ifx\cs\jpspace \def\jpspace{ } \fi
+\jpdrawx=100 \tempdima=   1.00cm \tempdimb= 1.0cm
+\ifdim \unitlength = 1pt
+\unitlength=  1.00cm
+\fi
+\ifdim \unitlength < 0cm
+\multiply \unitlength by -10 \divide \unitlength by 90 \fi
+\ifdim \unitlength > \tempdima \tempdima=\unitlength \fi
+\ifdim \unitlength < \tempdima \tempdima=\unitlength \fi
+\multiply \jpdrawx by \tempdima \divide \jpdrawx by \tempdimb
+\setlength{\unitlength}{\tempdima}
+\begin{picture}(   9.0,   5.8)( 0.725, 6.104)
+\thinlines
+\large
+\put( 0.725, 6.104){\special{"
+\the\jpdrawx \space 100 div
+\the\jpdrawx \space 100 div scale
+%%BoundingBox: 0 0 256 164
+% initial value of unitlength : 1.000000
+/Ellipse { gsave moveto setgray /savematrix matrix
+currentmatrix def currentpoint translate rotate newpath
+scale arc closepath savematrix setmatrix stroke grestore 0 setgray} def
+/EllipseColor { gsave moveto setgray /savematrix matrix
+currentmatrix def currentpoint translate rotate newpath
+scale arc closepath savematrix setmatrix fill grestore 0 setgray} def
+/EllipseRVB { gsave moveto setrgbcolor /savematrix matrix
+currentmatrix def currentpoint translate rotate newpath
+scale arc closepath savematrix setmatrix fill grestore 0 setgray} def
+/EllipseBRVB { gsave moveto setrgbcolor /savematrix matrix
+currentmatrix def currentpoint translate rotate newpath
+scale arc closepath savematrix setmatrix stroke grestore 0 setgray} def
+/Ligne { gsave moveto currentpoint translate 0 0 moveto
+lineto currentpoint stroke moveto closepath grestore} def
+/LigneRVB { gsave setrgbcolor moveto currentpoint translate 0 0 moveto
+lineto currentpoint stroke moveto closepath grestore 0 setgray} def
+/ArrowNoire {gsave 0 setgray moveto currentpoint
+translate 0 0 moveto lineto lineto lineto lineto 
+currentpoint fill moveto closepath grestore 0 setgray} def
+/ArrowRVB {gsave setrgbcolor moveto currentpoint
+translate 0 0 moveto lineto lineto lineto lineto 
+currentpoint fill moveto closepath grestore 0 setgray} def
+/RectangleNoir {gsave setgray moveto currentpoint
+translate 0 0 moveto lineto lineto lineto lineto 
+currentpoint fill moveto closepath grestore 0 setgray} def
+/RectangleRVB {gsave setrgbcolor moveto currentpoint
+translate 0 0 moveto lineto lineto lineto lineto 
+currentpoint fill moveto closepath grestore 0 setgray} def
+/Rectangle {gsave moveto currentpoint
+translate 0 0 moveto lineto lineto lineto lineto 
+currentpoint stroke moveto closepath grestore} def
+/OpenPoly {gsave moveto currentpoint translate 0 0 moveto} def
+/Li {lineto} def
+/ClosePnoir {currentpoint fill moveto closepath grestore 0 setgray} def
+/ClosePoly {currentpoint stroke moveto closepath grestore 0 setgray} def
+gsave
+ /ulx where{pop ulx uly scale} if
+ %currentpoint translate
+0.3 setlinewidth
+[] 0  setdash
+ 36.581  65.764 OpenPoly
+  0.730 setgray
+ 18.907  48.912 Li
+ 42.335  19.318 Li
+ 43.157  19.729 Li
+  0.000   0.000 Li
+ClosePnoir
+189.893  67.819 OpenPoly
+  0.730 setgray
+ 18.907  48.912 Li
+ 42.335  19.318 Li
+ 43.157  19.729 Li
+  0.000   0.000 Li
+ClosePnoir
+0 0   2.835 0 360 1 1   0.000 0 218.254   4.521 EllipseColor
+0 0   2.835 0 360 1 1   0.000 0 218.254   4.521 Ellipse
+1.3 setlinewidth 
+153.723 122.485 OpenPoly
+ 17.674  40.691 Li
+ 70.285  41.102 Li
+101.934  -2.466 Li
+ 79.739 -35.348 Li
+ 36.581 -54.666 Li
+  6.165 -33.293 Li
+  5.754 -33.293 Li
+  0.000   0.000 Li
+ClosePoly
+  0.822 120.430 OpenPoly
+ 17.674  40.691 Li
+ 70.285  41.102 Li
+101.934  -2.466 Li
+ 79.739 -35.348 Li
+ 36.581 -54.666 Li
+  6.165 -33.293 Li
+  5.754 -33.293 Li
+  0.000   0.000 Li
+ClosePoly
+0.3 setlinewidth
+0 0   2.835 0 360 1 1   0.000 0  61.654   2.466 EllipseColor
+0 0   2.835 0 360 1 1   0.000 0  61.654   2.466 Ellipse
+1.3 setlinewidth 
+ 58.776 -85.904 159.477  88.370 Ligne
+-28.772  65.353 218.254   2.466 Ligne
+ 14.797  82.616 218.254   3.288 Ligne
+-37.403 -116.320 256.068 120.019 Ligne
+ 38.225 -54.666 153.312 122.074 Ligne
+-19.729  94.535 191.537  67.408 Ligne
+ 36.992 -47.268 171.808 161.943 Ligne
+ 16.030  48.090 208.800 114.676 Ligne
+ 46.035   3.699 209.622 115.498 Ligne
+ 23.839 -27.950 209.211 115.498 Ligne
+-16.852 -46.857 207.978 115.498 Ligne
+ 16.030  48.090  55.488 113.032 Ligne
+ 38.225 -54.666   0.000 120.430 Ligne
+-19.729  94.535  38.225  65.764 Ligne
+ 36.992 -47.268  18.496 160.299 Ligne
+-16.852 -46.857  54.666 113.854 Ligne
+ 23.839 -27.950  55.899 113.854 Ligne
+ 46.035   3.699  56.310 113.854 Ligne
+grestore
+}}
+\end{picture}
+\setlength{\unitlength}{1cm}

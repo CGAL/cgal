@@ -1,0 +1,104 @@
+% dessin effectue par JpDraw (un programme de JP. MERLET)
+% INRIA Sophia-Antipolis,France le: Fri Dec 11 20:02:42 1998
+% Directory de creation:/u/alcor/0/prisme_util/CGAL/Local/Triangulation/doc
+% Createur:yvinec
+\ifx\cs\tempdima \newdimen \tempdima\fi
+\ifx\cs\tempdimb \newdimen \tempdimb\fi
+\ifx\cs\jpdrawx \newcount \jpdrawx\fi
+\ifx\cs\jpspace \def\jpspace{ } \fi
+\jpdrawx=100 \tempdima=   1.00cm \tempdimb= 1.0cm
+\ifdim \unitlength = 1pt
+\unitlength=  1.00cm
+\fi
+\ifdim \unitlength < 0cm
+\multiply \unitlength by -10 \divide \unitlength by 90 \fi
+\ifdim \unitlength > \tempdima \tempdima=\unitlength \fi
+\ifdim \unitlength < \tempdima \tempdima=\unitlength \fi
+\multiply \jpdrawx by \tempdima \divide \jpdrawx by \tempdimb
+\setlength{\unitlength}{\tempdima}
+\begin{picture}(   9.0,   3.5)( 0.725, 8.425)
+\thinlines
+\large
+\put( 0.725, 8.425){\special{"
+\the\jpdrawx \space 100 div
+\the\jpdrawx \space 100 div scale
+%%BoundingBox: 0 0 256 98
+% initial value of unitlength : 1.000000
+/Ellipse { gsave moveto setgray /savematrix matrix
+currentmatrix def currentpoint translate rotate newpath
+scale arc closepath savematrix setmatrix stroke grestore 0 setgray} def
+/EllipseColor { gsave moveto setgray /savematrix matrix
+currentmatrix def currentpoint translate rotate newpath
+scale arc closepath savematrix setmatrix fill grestore 0 setgray} def
+/EllipseRVB { gsave moveto setrgbcolor /savematrix matrix
+currentmatrix def currentpoint translate rotate newpath
+scale arc closepath savematrix setmatrix fill grestore 0 setgray} def
+/EllipseBRVB { gsave moveto setrgbcolor /savematrix matrix
+currentmatrix def currentpoint translate rotate newpath
+scale arc closepath savematrix setmatrix stroke grestore 0 setgray} def
+/Ligne { gsave moveto currentpoint translate 0 0 moveto
+lineto currentpoint stroke moveto closepath grestore} def
+/LigneRVB { gsave setrgbcolor moveto currentpoint translate 0 0 moveto
+lineto currentpoint stroke moveto closepath grestore 0 setgray} def
+/ArrowNoire {gsave 0 setgray moveto currentpoint
+translate 0 0 moveto lineto lineto lineto lineto 
+currentpoint fill moveto closepath grestore 0 setgray} def
+/ArrowRVB {gsave setrgbcolor moveto currentpoint
+translate 0 0 moveto lineto lineto lineto lineto 
+currentpoint fill moveto closepath grestore 0 setgray} def
+/RectangleNoir {gsave setgray moveto currentpoint
+translate 0 0 moveto lineto lineto lineto lineto 
+currentpoint fill moveto closepath grestore 0 setgray} def
+/RectangleRVB {gsave setrgbcolor moveto currentpoint
+translate 0 0 moveto lineto lineto lineto lineto 
+currentpoint fill moveto closepath grestore 0 setgray} def
+/Rectangle {gsave moveto currentpoint
+translate 0 0 moveto lineto lineto lineto lineto 
+currentpoint stroke moveto closepath grestore} def
+/OpenPoly {gsave moveto currentpoint translate 0 0 moveto} def
+/Li {lineto} def
+/ClosePnoir {currentpoint fill moveto closepath grestore 0 setgray} def
+/ClosePoly {currentpoint stroke moveto closepath grestore 0 setgray} def
+gsave
+ /ulx where{pop ulx uly scale} if
+ %currentpoint translate
+0.3 setlinewidth
+[] 0  setdash
+1.3 setlinewidth 
+153.723  56.721 OpenPoly
+ 17.674  40.691 Li
+ 70.285  41.102 Li
+101.934  -2.466 Li
+ 79.739 -35.348 Li
+ 36.581 -54.666 Li
+  6.165 -33.293 Li
+  5.754 -33.293 Li
+  0.000   0.000 Li
+ClosePoly
+  0.822  54.666 OpenPoly
+ 17.674  40.691 Li
+ 70.285  41.102 Li
+101.934  -2.466 Li
+ 79.739 -35.348 Li
+ 36.581 -54.666 Li
+  6.165 -33.293 Li
+  5.754 -33.293 Li
+  0.000   0.000 Li
+ClosePoly
+ 38.225 -54.666 153.312  56.310 Ligne
+-19.729  94.535 191.537   1.644 Ligne
+ 16.030  48.090  55.488  47.268 Ligne
+ 38.225 -54.666   0.000  54.666 Ligne
+-19.729  94.535  38.225   0.000 Ligne
+ 36.992 -47.268  18.496  94.535 Ligne
+-16.852 -46.857  54.666  48.090 Ligne
+ 23.839 -27.950  55.899  48.090 Ligne
+ 46.035   3.699  56.310  48.090 Ligne
+0.3 setlinewidth
+0 0   6.165 0 360 1   1.000   0.000 0  55.488  48.912 Ellipse
+ 85.493 -43.157 170.986  97.824 Ligne
+ 62.065 -75.628 172.219  97.002 Ligne
+grestore
+}}
+\end{picture}
+\setlength{\unitlength}{1cm}

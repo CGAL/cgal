@@ -1,0 +1,108 @@
+% dessin effectue par JpDraw (un programme de JP. MERLET)
+% INRIA Sophia-Antipolis,France le: Fri Jul 10 11:42:16 1998
+% Directory de creation:/u/alioth/0/prisme/yvinec/Cgal/Triangulation/doc/Fig
+% Createur:yvinec
+\ifx\cs\tempdima \newdimen \tempdima\fi
+\ifx\cs\tempdimb \newdimen \tempdimb\fi
+\ifx\cs\jpdrawx \newcount \jpdrawx\fi
+\ifx\cs\jpspace \def\jpspace{ } \fi
+\jpdrawx=100 \tempdima=   1.00cm \tempdimb= 1.0cm
+\ifdim \unitlength = 1pt
+\unitlength=  1.00cm
+\fi
+\ifdim \unitlength < 0cm
+\multiply \unitlength by -10 \divide \unitlength by 88 \fi
+\ifdim \unitlength > \tempdima \tempdima=\unitlength \fi
+\ifdim \unitlength < \tempdima \tempdima=\unitlength \fi
+\multiply \jpdrawx by \tempdima \divide \jpdrawx by \tempdimb
+\setlength{\unitlength}{\tempdima}
+\begin{picture}(   8.8,   2.6)( 0.899,10.208)
+\thinlines
+\large
+\put( 0.899,10.208){\special{"
+\the\jpdrawx \space 100 div
+\the\jpdrawx \space 100 div scale
+%%BoundingBox: 0 0 249 72
+% initial value of unitlength : 1.000000
+/Ellipse { gsave moveto setgray /savematrix matrix
+currentmatrix def currentpoint translate rotate newpath
+scale arc closepath savematrix setmatrix stroke grestore 0 setgray} def
+/EllipseColor { gsave moveto setgray /savematrix matrix
+currentmatrix def currentpoint translate rotate newpath
+scale arc closepath savematrix setmatrix fill grestore 0 setgray} def
+/EllipseRVB { gsave moveto setrgbcolor /savematrix matrix
+currentmatrix def currentpoint translate rotate newpath
+scale arc closepath savematrix setmatrix fill grestore 0 setgray} def
+/EllipseBRVB { gsave moveto setrgbcolor /savematrix matrix
+currentmatrix def currentpoint translate rotate newpath
+scale arc closepath savematrix setmatrix stroke grestore 0 setgray} def
+/Ligne { gsave moveto currentpoint translate 0 0 moveto
+lineto currentpoint stroke moveto closepath grestore} def
+/LigneRVB { gsave setrgbcolor moveto currentpoint translate 0 0 moveto
+lineto currentpoint stroke moveto closepath grestore 0 setgray} def
+/ArrowNoire {gsave 0 setgray moveto currentpoint
+translate 0 0 moveto lineto lineto lineto lineto 
+currentpoint fill moveto closepath grestore 0 setgray} def
+/ArrowRVB {gsave setrgbcolor moveto currentpoint
+translate 0 0 moveto lineto lineto lineto lineto 
+currentpoint fill moveto closepath grestore 0 setgray} def
+/RectangleNoir {gsave setgray moveto currentpoint
+translate 0 0 moveto lineto lineto lineto lineto 
+currentpoint fill moveto closepath grestore 0 setgray} def
+/RectangleRVB {gsave setrgbcolor moveto currentpoint
+translate 0 0 moveto lineto lineto lineto lineto 
+currentpoint fill moveto closepath grestore 0 setgray} def
+/Rectangle {gsave moveto currentpoint
+translate 0 0 moveto lineto lineto lineto lineto 
+currentpoint stroke moveto closepath grestore} def
+/OpenPoly {gsave moveto currentpoint translate 0 0 moveto} def
+/Li {lineto} def
+/ClosePnoir {currentpoint fill moveto closepath grestore 0 setgray} def
+/ClosePoly {currentpoint stroke moveto closepath grestore 0 setgray} def
+gsave
+ /ulx where{pop ulx uly scale} if
+ %currentpoint translate
+0.3 setlinewidth
+[] 0  setdash
+1.3 setlinewidth 
+170.164  71.518 OpenPoly
+  0.800 setgray
+-30.827 -71.518 Li
+ 78.917 -71.518 Li
+ 77.272 -70.285 Li
+  0.000   0.000 Li
+ClosePnoir
+170.164  71.518 OpenPoly
+-30.827 -71.518 Li
+ 78.917 -71.518 Li
+ 77.272 -70.285 Li
+  0.000   0.000 Li
+ClosePoly
+0.3 setlinewidth
+0 0   2.835 0 360 1 1   0.000 0 184.550  22.195 EllipseColor
+0 0   2.835 0 360 1 1   0.000 0 184.550  22.195 Ellipse
+1.3 setlinewidth 
+ 30.827  72.340 OpenPoly
+  0.800 setgray
+-30.827 -71.518 Li
+ 78.917 -71.518 Li
+ 77.272 -70.285 Li
+  0.000   0.000 Li
+ClosePnoir
+ 30.827  72.340 OpenPoly
+-30.827 -71.518 Li
+ 78.917 -71.518 Li
+ 77.272 -70.285 Li
+  0.000   0.000 Li
+ClosePoly
+0.3 setlinewidth
+0 0   2.835 0 360 1 1   0.000 0  45.213  23.017 EllipseColor
+0 0   2.835 0 360 1 1   0.000 0  45.213  23.017 Ellipse
+1.3 setlinewidth 
+ 13.975 -48.501 170.986  70.696 Ligne
+ 63.709 -22.195 184.961  22.195 Ligne
+-45.624 -23.017 184.139  23.017 Ligne
+grestore
+}}
+\end{picture}
+\setlength{\unitlength}{1cm}
