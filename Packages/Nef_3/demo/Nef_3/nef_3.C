@@ -26,8 +26,6 @@
 // a manipulation language for stack ops, file loading and saving, etc.
 // ============================================================================
 #include <CGAL/basic.h>
-#include <CGAL/Gmpz.h>
-#include <CGAL/leda_integer.h>
 #include <CGAL/Simple_homogeneous.h>
 #include <CGAL/Extended_homogeneous_3.h>
 #include <CGAL/Extended_cartesian_3.h>
@@ -39,8 +37,8 @@
 #include <CGAL/Nef_3/SNC_items.h>
 
 #ifdef CGAL_USE_QT
-// #include <CGAL/IO/Qt_widget_Nef_3.h>
-#include "Qt_widget_Nef_3.h"
+#include <CGAL/IO/Qt_widget_Nef_3.h>
+#include <qapplication.h>
 #endif
 
 #include <iostream>
