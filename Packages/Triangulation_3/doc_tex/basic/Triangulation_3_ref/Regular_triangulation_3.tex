@@ -76,8 +76,8 @@ Regular_triangulation_3<RegularTriangulationTraits_3,TriangulationDataStructure_
                (InputIterator first, InputIterator last,
  const RegularTriangulationTraits_3& traits = RegularTriangulationTraits_3())}
 {Creates a regular triangulation of the points specified by the iterator range
-\ccc{[first,last)} of value type \ccc{Point}, eventually specifying a traits
-class \ccc{traits}.}
+\ccc{[first,last)} of value type \ccc{Weighted_point}, eventually specifying a
+traits class \ccc{traits}.}
 
 \ccOperations
 
@@ -92,7 +92,9 @@ overloaded to ensure the property that all power spheres are regular.
 NULL );}
 {Inserts weighted point \ccc{p} in the triangulation. If this
 insertion creates a vertex, this vertex is returned. Otherwise, this
-method returns \ccc{NULL}.
+method returns \ccc{NULL}.  If \ccc{p} coincides with an existing vertex and
+has a greater weight, then \ccc{p} replaces that point and the triangulation
+is updated.
 The optional argument \ccc{start} is used as a starting place for the search.}
 
 \ccMethod{Vertex_handle insert(const Weighted_point & p, Locate_type lt,

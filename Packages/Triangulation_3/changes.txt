@@ -1,3 +1,7 @@
+Version 1.126 (14 Jan 03)
+- Fix documentation.
+- Add new test code.
+
 Version 1.125 (14 Jan 03)
 - template ctor added to all triangulation classes taking an iterator range
   over points.

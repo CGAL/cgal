@@ -156,6 +156,59 @@ int main()
 
   assert(T11.is_valid());
 
+  // And another distilled bug report from the same guy.
+ {
+  Point p1(-0.07, 0.04, 0.04);
+  Point p2(0.09, 0.04, 0.04);
+  Point p3(0.09, -0.05, 0.04);
+  Point p4(0.05, -0.05, 0.04);
+  Point p5(0.05, 0.0, 0.04);
+  Point p6(-0.07, 0.0, 0.04);
+  Point p7(-0.07, 0.04, -0.04);
+  Point p8(0.09, 0.04, -0.04);
+  Point p9(0.09, -0.05, -0.04);
+  Point p10(0.05, -0.05, -0.04);
+  Point p11(0.05, 0.0, -0.04);
+  Point p12(-0.07, 0.0, -0.04);
+
+  Weighted_point wp1(p1,0);
+  Weighted_point wp2(p2,0);
+  Weighted_point wp3(p3,0);
+  Weighted_point wp4(p4,0);
+  Weighted_point wp5(p5,0);
+  Weighted_point wp6(p6,0);
+  Weighted_point wp7(p7,0);
+  Weighted_point wp8(p8,0);
+  Weighted_point wp9(p9,0);
+  Weighted_point wp10(p10,0);
+  Weighted_point wp11(p11,0);
+  Weighted_point wp12(p12,0);
+  Weighted_point wp13(p3,0.3); // wp13 has the same coordinates with wp3
+
+  Cls T111;
+
+  T111.insert(wp1);
+  T111.insert(wp2);
+  T111.insert(wp3);
+  T111.insert(wp13); // it doesnot work inserting wp13 here
+  T111.insert(wp4);
+  T111.insert(wp5);
+  T111.insert(wp6);
+  T111.insert(wp7);
+  T111.insert(wp8);
+  T111.insert(wp9);
+  T111.insert(wp10);
+  T111.insert(wp11);
+  T111.insert(wp12);
+
+  for(Cls::Finite_vertices_iterator vit = T111.finite_vertices_begin();
+      vit != T111.finite_vertices_end(); vit++){
+    std::cout << "Point : " << vit->point().point() << " Weight: "
+              << vit->point().weight() << " " << std::endl;
+  }
+
+  assert(T111.is_valid());
+ }
 
   std::cout << " test dimension 2 " << std::endl;
   std::cout << " number of inserted points : " ;
