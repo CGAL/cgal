@@ -664,7 +664,7 @@ public:
       CGAL_assertion(arr.is_valid());
 
       Arr_2  copy_arr(arr);
-
+      
       // Check validity of arrangement after copying
       CGAL_assertion(copy_arr.is_valid());
       
