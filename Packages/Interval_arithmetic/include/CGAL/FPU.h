@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (c) 1998,1999,2000 The CGAL Consortium
+// Copyright (c) 1998,1999,2000,2001,2002 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -29,11 +29,12 @@
 // It also contains the definition of the Protect_FPU_rounding<> classes,
 // a helper class which is a nice way to protect blocks of code needing a
 // particular rounding mode.
+
 #ifdef __MWERKS__
 #  include <fenv.h>
 #elif defined __alpha__  && defined __linux__ 
 extern "C" {
-#include <fenv.h>
+#  include <fenv.h>
 }
 #elif defined __linux__ 
 #  include <fpu_control.h>
@@ -49,13 +50,7 @@ extern "C" {
 #elif defined __BORLANDC__
 #  include <float.h>
 #elif defined __sgi
-    // The 3 C functions provided on IRIX 6.5 do not work !
-    // So we use precompiled (by gcc) object files linked into libCGAL.
-    // See revision 2.23 for the old code.
-extern "C" {
-  void CGAL_workaround_IRIX_set_FPU_cw (int);
-  int  CGAL_workaround_IRIX_get_FPU_cw (void);
-}
+#  include <sys/fpu.h>
 #endif
 
 CGAL_BEGIN_NAMESPACE
@@ -209,13 +204,30 @@ typedef unsigned int FPU_CW_t;
 #define CGAL_FE_DOWNWARD     (0xc0000000 | 0x20000000 | 0x1f)
 
 #elif defined __sgi
-#define CGAL_IA_SETFPCW(CW) CGAL_workaround_IRIX_set_FPU_cw(CW)
-#define CGAL_IA_GETFPCW(CW) CW = CGAL_workaround_IRIX_get_FPU_cw()
 typedef unsigned int FPU_CW_t;
-#define CGAL_FE_TONEAREST    (0x0)
-#define CGAL_FE_TOWARDZERO   (0x1)
-#define CGAL_FE_UPWARD       (0x2)
-#define CGAL_FE_DOWNWARD     (0x3)
+
+inline FPU_CW_t sgi_get_fpu_cw()
+{
+  fpc_csr csr;
+  csr.fc_word = get_fpc_csr();
+  return csr.fc_struct.rounding_mode;
+}
+
+inline void sgi_set_fpu_cw(FPU_CW_t cw)
+{
+  fpc_csr csr;
+  csr.fc_word = get_fpc_csr();
+  csr.fc_struct.rounding_mode = cw;
+  csr.fc_struct.flush = 0; // By default, denormals are flushed to zero !
+  set_fpc_csr(csr.fc_word);
+}
+
+#define CGAL_IA_SETFPCW(CW)  sgi_set_fpu_cw(CW)
+#define CGAL_IA_GETFPCW(CW)  CW = sgi_get_fpu_cw()
+#define CGAL_FE_TONEAREST    ROUND_TO_NEAREST
+#define CGAL_FE_TOWARDZERO   ROUND_TO_ZERO
+#define CGAL_FE_UPWARD       ROUND_TO_PLUS_INFINITY
+#define CGAL_FE_DOWNWARD     ROUND_TO_MINUS_INFINITY
 
 #elif defined __mips__ // && !defined __sgi
 #define CGAL_IA_SETFPCW(CW) asm volatile ("ctc1 %0,$31" : :"r" (CW))
