@@ -1,5 +1,7 @@
 Nef_S2 Package: Release changes
 ----------------------------------------------------------------------
+26 March 2004
+- made doc work with the new implementation of the manual tools
 
      - Rename USING in CGAL_USING.
      - Fixed the use of the 'or' keyword as variable. Changed to 'sor'.
