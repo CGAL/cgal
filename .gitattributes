@@ -730,10 +730,7 @@ Packages/Developers_manual/html/images/handle_allocate.gif -text svneol=unset#un
 Packages/Developers_manual/html/images/handle_rep.gif -text svneol=unset#unset
 Packages/Developers_manual/html/images/homogeneous_ipoint.gif -text svneol=unset#unset
 Packages/Developers_manual/html/images/homogeneous_orientation.gif -text svneol=unset#unset
-Packages/Developers_manual/html/images/jnis.gif svneol=native#unset
 Packages/Developers_manual/html/images/reference_counting.gif -text svneol=unset#unset
-Packages/Developers_manual/html/images/rmi.gif svneol=native#unset
-Packages/Developers_manual/html/images/rmifile.gif svneol=native#unset
 Packages/Developers_manual/html/images/title.gif -text svneol=unset#unset
 Packages/Developers_manual/html/images/use_real.gif -text svneol=unset#unset
 Packages/Developers_manual/pictures/Object.eps -text
