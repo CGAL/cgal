@@ -28,7 +28,7 @@ class Local_selection_vertex_base_3 : public CGAL::Triangulation_vertex_base_3<G
 public:
 
   typedef CGAL::Triangulation_vertex_base_3<Gt> Base;
-  typedef Base::Point Point;
+  typedef typename Base::Point Point;
   typedef double coord_type;
   
   typedef CGAL::Triple< void*, int, int > void_Edge;
@@ -183,7 +183,7 @@ public:
 
   //-------------------------------------------------------------------
 
-  inline bool is_on_border(const int& i)
+  inline bool is_on_border(const int& i) const
     {
       if (_incident_border == NULL) return false; //vh is interior
       if (_incident_border->first->first != NULL)
@@ -196,7 +196,7 @@ public:
       return false; //vh is still exterior   
     }
 
-  inline Next_border_elt* get_next_on_border(const int& i)
+  inline Next_border_elt* get_next_on_border(const int& i) const
     { 
       if (_incident_border == NULL) return NULL; //vh is interior
       if (_incident_border->first->first != NULL)
@@ -240,14 +240,14 @@ public:
 	}
     }
 
-  inline bool is_border_edge(void* v)
+  inline bool is_border_edge(void* v) const
     { 
       if (_incident_border == NULL) return false;
       return ((_incident_border->first->first == v)||
 	      (_incident_border->second->first == v));
     }
 
-  inline Next_border_elt* get_border_elt(void* v)
+  inline Next_border_elt* get_border_elt(void* v) const
     {
       if (_incident_border == NULL) return NULL;
       if (_incident_border->first->first == v) return _incident_border->first;
@@ -255,13 +255,13 @@ public:
       return NULL; 
     }
 
-  inline Next_border_elt* first_incident()
+  inline Next_border_elt* first_incident() const
     {
       if (_incident_border == NULL) return NULL;
       return _incident_border->first;
     }
 
-  inline Next_border_elt* second_incident()
+  inline Next_border_elt* second_incident() const
     {
       if (_incident_border == NULL) return NULL;
       return _incident_border->second;
@@ -285,7 +285,7 @@ public:
   // bord (en fait seule, les aretes interieures reliant 2 bords nous
   // interressent...)
 
-  inline bool is_interior_edge(void* v)
+  inline bool is_interior_edge(void* v) const
     {
 
       bool r1;
@@ -357,7 +357,7 @@ public:
       }
     }
 
-  inline bool is_incidence_requested()
+  inline bool is_incidence_requested() const
     {
       if(ir_last == incidence_requests.end()){
 	assert(ir_first == incidence_requests.end());

@@ -10,9 +10,9 @@
 
 
 ##  2.4    2.4    2.4
-CGAL_MAKEFILE =/cygdrive/d/cgal/CGAL-2.4-I-78/make/makefile_i686_CYGWINNT-5.0-1.3.3_bcc32.exe-5.51
+CGAL_MAKEFILE =/cygdrive/d/cgal/CGAL-2.4-I-84/make/makefile_i686_CYGWINNT-5.0-1.3.3_bcc32.exe-5.51
 
-#CGAL_MAKEFILE =/cygdrive/d/cgal/CGAL-2.4-I-78/make/makefile_i686_CYGWINNT-5.0-1.3.3_mwcc.exe-2.400
+#CGAL_MAKEFILE =/cygdrive/d/cgal/CGAL-2.4-I-84/make/makefile_i686_CYGWINNT-5.0-1.3.3_mwcc.exe-2.400
 
 #CGAL_MAKEFILE =/cygdrive/d/cgal/CGAL-2.4-I-78/make/makefile_i686_CYGWINNT-5.0-1.3.3_g++-2.95
 
@@ -58,6 +58,9 @@ all: nuage$(EXE_EXT)
 
 nuage$(EXE_EXT): nuage$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)nuage  nuage$(OBJ_EXT) $(LDFLAGS)
+
+fill$(EXE_EXT): fill$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)fill  fill$(OBJ_EXT) $(LDFLAGS)
 
 bug$(EXE_EXT): bug$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)bug  bug$(OBJ_EXT) $(LDFLAGS)

@@ -6,6 +6,7 @@
 #include <iomanip>
 #include <CGAL/algorithm.h>
 #include <CGAL/Unique_hash_map.h>
+#include <CGAL/Random.h>
 
 //#define AF_CGAL_CLIB_STD std
 #define AF_CGAL_CLIB_STD
@@ -58,7 +59,7 @@ file_input(char* finput, const int& number_of_points, std::vector<Point>& L)
   int n;
   is >> n;
   std::cout << "   reading " << n << " points" << std::endl;
-  Point p;
+
   L.reserve(n);
   CGAL::copy_n(std::istream_iterator<Point>(is), n, std::back_inserter(L));
 
@@ -841,6 +842,63 @@ dump_in_file_iv_selected_facets(char* foutput, const Triangulation_3& A,
 
 
 void
+fill_holes(std::ostream& os, const Triangulation_3& T)
+{  
+  CGAL::Random random;
+  _postprocessing_cont++;
+  for(Finite_vertices_iterator v_it = T.finite_vertices_begin();
+      v_it != T.finite_vertices_end(); 
+      v_it++) {
+    if ( (v_it->number_of_incident_border() > 0) &&
+	  (!v_it->is_post_marked(_postprocessing_cont))) {
+      std::list<Vertex_handle> L_v_tmp;
+      Vertex_handle vprev_it(v_it->handle()), done(vprev_it), vh_it;
+      int v_count(0);
+      // collect all vertices on the border
+      do {		      
+	vh_it = (Vertex*) vprev_it->first_incident()->first;
+	L_v_tmp.push_back(vh_it);
+	vh_it->set_post_mark(_postprocessing_cont);
+	vprev_it = vh_it;
+	v_count++;
+      } while((vprev_it != done)&&(v_count < 20));
+      // we stopped either because we did a complete tour, or because
+      // the border was so long that we consider it as too big to close
+      // e.g., if it is a terrain with only one real border at the exterior
+
+      double blue = random.get_double(0,1);
+
+	os << 
+	  "Shape {\n"
+	  "appearance Appearance {\n"
+	  "material Material { emissiveColor 1 0 " << blue << "}}\n"
+	  "geometry\n"
+	  "IndexedLineSet {\n"
+	  "coord Coordinate {\n"
+	  "point [ " << std::endl;
+	for(std::list<Vertex_handle>::iterator it = L_v_tmp.begin();
+	    it != L_v_tmp.end();
+	    it++){
+	  os << (*it)->point() << std::endl;
+	}
+	os << "]\n"
+	  "}\n"
+	  "coordIndex [\n";
+
+	for(unsigned int i = 0; i < L_v_tmp.size(); i++){
+	  os << i << ", ";
+	}
+	os << " -1\n";
+      os << "]\n" 
+	"}#IndexedLineSet\n"
+	"}# Shape\n"; 
+      }
+    }
+
+}
+
+
+void
 dump_in_file_vrml2_selected_facets(char* foutput, const Triangulation_3& A,
 				  const bool& contour)
 { 
@@ -941,6 +999,8 @@ dump_in_file_vrml2_selected_facets(char* foutput, const Triangulation_3& A,
     "}# Shape\n";
 
   if (contour)
+    fill_holes(os, A);
+  /*
     {
       os << 
 	"Shape {\n"
@@ -975,7 +1035,7 @@ dump_in_file_vrml2_selected_facets(char* foutput, const Triangulation_3& A,
       // pour afficher les points non selectionnes, ~bruit???
       //      dump_in_file_vrml_remaining_points(A, os);
     }
-
+  */
 
   os << "] # children\n"
     "} # Group\n";

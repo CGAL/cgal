@@ -7,7 +7,7 @@
 
 void
 construct_delaunay(const std::vector<Point> &V_p,
-		   Triangulation_3& A)
+		   Triangulation_3& T)
 {
   std::cout << "   Compute Delaunay Tetrahedrization" << std::endl; 
   t1.start();
@@ -15,16 +15,16 @@ construct_delaunay(const std::vector<Point> &V_p,
     for(std::vector<Point>::const_iterator v_it = V_p.begin();
 	v_it != V_p.end(); ++v_it)
       {
-	A.insert(*v_it);
+	T.insert(*v_it);
       }
   }
   t1.stop();
-  std::cout << "   Inserted " << A.number_of_vertices() << " points, "
-	    <<  A.number_of_cells() << " cells computed in "
+  std::cout << "   Inserted " << T.number_of_vertices() << " points, "
+	    <<  T.number_of_cells() << " cells computed in "
 	    << t1.time() << " secondes." << std::endl;
   std::cout << "   Number of filter failures : " << 
     CGAL::Interval_base::number_of_failures << std::endl;
-  if (A.dimension() < 3)
+  if (T.dimension() < 3)
     {
       std::cout << "-- 2D sample of points ???" 
 		<< std::endl;
@@ -66,12 +66,15 @@ inline IO_edge_type* set_again_border_elt(const Vertex_handle& v1, const Vertex_
 
 //---------------------------------------------------------------------
 
+//af: Why does key get changed??
+
 inline bool is_border_elt(Edge_like& key, Border_elt& result)
 {
   Next_border_elt* it12 =  key.first->get_border_elt((void*) &(*key.second));
   if (it12 != NULL)
     {    
       result = it12->second;
+      //af: Why the following line? 
       key = Edge_like(key.first, key.second);
       return true;
     }
@@ -80,12 +83,30 @@ inline bool is_border_elt(Edge_like& key, Border_elt& result)
   if (it21 != NULL)
     {    
       result = it21->second;
-      key = Edge_like(key.second, key.first);
+      key = Edge_like(key.second, key.first); // why not std::swap(key.first, key.second)?
       return true;
     }
   return false;
 }
 
+//---------------------------------------------------------------------
+inline bool is_border_elt(Edge_like& key)
+{
+  Next_border_elt* it12 =  key.first->get_border_elt((void*) &(*key.second));
+  if (it12 != NULL)
+    {    
+      key = Edge_like(key.first, key.second);
+      return true;
+    }
+
+  Next_border_elt* it21 =  key.second->get_border_elt((void*) &(*key.first));
+  if (it21 != NULL)
+    {    
+      key = Edge_like(key.second, key.first); // why not std::swap(key.first, key.second)?
+      return true;
+    }
+  return false;
+}
 //---------------------------------------------------------------------
 
 inline bool is_ordered_border_elt(const Edge_like& key, Border_elt& result)
@@ -275,15 +296,15 @@ visu_facet(const Cell_handle& c, const int& i)
 //=====================================================================
 
 void
-show_selected_facets(CGAL::Geomview_stream &gv, const Triangulation_3& A)
+show_selected_facets(CGAL::Geomview_stream &gv, const Triangulation_3& T)
 { 
 
   // Header.
   bool ascii_bak = gv.get_ascii_mode();
   bool raw_bak = gv.set_raw(true);
   _vh_number = 0;
-  for (Finite_vertices_iterator v_it = A.finite_vertices_begin();
-       v_it != A.finite_vertices_end();
+  for (Finite_vertices_iterator v_it = T.finite_vertices_begin();
+       v_it != T.finite_vertices_end();
        v_it++)
    if (!v_it->is_exterior())
      {
@@ -295,11 +316,11 @@ show_selected_facets(CGAL::Geomview_stream &gv, const Triangulation_3& A)
      << " {appearance {}{ OFF BINARY\n"
      << _vh_number << _facet_number << 0;
 
-  CGAL::Unique_hash_map<Vertex*, int> vertex_index_map(-1, A.number_of_vertices());
+  CGAL::Unique_hash_map<Vertex*, int> vertex_index_map(-1, T.number_of_vertices());
 
   int count(0);
-  for (Finite_vertices_iterator v_it = A.finite_vertices_begin();
-       v_it != A.finite_vertices_end();
+  for (Finite_vertices_iterator v_it = T.finite_vertices_begin();
+       v_it != T.finite_vertices_end();
        v_it++){
     CGAL::Unique_hash_map<Vertex*, int>::Data& d = vertex_index_map[&(*v_it)];
     if ((!v_it->is_exterior()) && d == -1){
@@ -309,8 +330,8 @@ show_selected_facets(CGAL::Geomview_stream &gv, const Triangulation_3& A)
     }
   }
 
-  for(Finite_facets_iterator f_it = A.finite_facets_begin(); 
-      f_it != A.finite_facets_end(); 
+  for(Finite_facets_iterator f_it = T.finite_facets_begin(); 
+      f_it != T.finite_facets_end(); 
       f_it++)
     {
       Cell_handle n, c = (*f_it).first;
@@ -357,19 +378,18 @@ show_selected_facets(CGAL::Geomview_stream &gv, const Triangulation_3& A)
 //=====================================================================
 //=====================================================================
 
-int border_counter(const Triangulation_3& A)
+int border_counter(const Triangulation_3& T)
 {
   int _border_count(0);
-  for(Finite_edges_iterator e_it=A.finite_edges_begin();
-      e_it!=A.finite_edges_end();
+  for(Finite_edges_iterator e_it=T.finite_edges_begin();
+      e_it!=T.finite_edges_end();
       e_it++)
     {
       Cell_handle c = (*e_it).first;
       int i1 = (*e_it).second, i2 = (*e_it).third;
       Edge_like key(c->vertex(i1), c->vertex(i2));
-      Border_elt result;
 
-      if (is_border_elt(key, result))
+      if (is_border_elt(key))
 	_border_count++;
     }
   return _border_count;

@@ -301,10 +301,10 @@ bool postprocessing(Triangulation_3& T, const int& NB_BORDER_MAX)
 	  (!v_it->is_post_marked(_postprocessing_cont)))
 	{
 	  std::list<Vertex_handle> L_v_tmp;
-	  Vertex_handle vprev_it, vh_it;
+	  Vertex_handle vprev_it(v_it->handle()), done(vprev_it), vh_it;
 // 	  Vertex_handle vsucc_it;
 	  int v_count(0);
-	  vprev_it = v_it->handle();
+	  // collect all vertices on the border
 	  do
 	    {		      
 	      vh_it = (Vertex*) vprev_it->first_incident()->first;
@@ -319,8 +319,10 @@ bool postprocessing(Triangulation_3& T, const int& NB_BORDER_MAX)
 	      vprev_it = vh_it;
 	      v_count++;
 	    }
-	  while((vprev_it != v_it->handle())&&(v_count < NB_BORDER_MAX));
-
+	  while((vprev_it != done)&&(v_count < NB_BORDER_MAX));
+	  // we stopped either because we did a complete tour, or because
+	  // the border was so long that we consider it as too big to close
+	  // e.g., if it is a terrain with only one real border at the exterior
 	  if (v_count < NB_BORDER_MAX)
 	    {
 	      L_v.insert(L_v.begin(), L_v_tmp.begin(), L_v_tmp.end());
@@ -370,6 +372,45 @@ bool postprocessing(Triangulation_3& T, const int& NB_BORDER_MAX)
 //     return true;
   return true;
 }
+
+
+
+void
+fill_holes(Triangulation_3& T)
+{  
+
+  for(Finite_vertices_iterator v_it = T.finite_vertices_begin();
+      v_it != T.finite_vertices_end(); 
+      v_it++) {
+    if (v_it->number_of_incident_border() > 0) {
+      std::list<Vertex_handle> L_v_tmp;
+      Vertex_handle vprev_it(v_it->handle()), done(vprev_it), vh_it;
+      // 	  Vertex_handle vsucc_it;
+      int v_count(0);
+      // collect all vertices on the border
+      do {		      
+	vh_it = (Vertex*) vprev_it->first_incident()->first;
+	L_v_tmp.push_back(vh_it);
+	vprev_it = vh_it;
+	v_count++;
+      } while((vprev_it != done)&&(v_count < 20));
+      // we stopped either because we did a complete tour, or because
+      // the border was so long that we consider it as too big to close
+      // e.g., if it is a terrain with only one real border at the exterior
+      if (v_count < 20){
+	std::cout << "Border begin" << std::endl;
+	for(std::list<Vertex_handle>::iterator it = L_v_tmp.begin();
+	    it != L_v_tmp.end();
+	    it++){
+	  std::cout << (*it)->point() << std::endl;
+	}
+	std::cout << "Border end" << std::endl;
+      }
+    }
+  }
+
+}
+
 
 //=====================================================================
 #endif //NUAGE_POSTPROCESSING_H

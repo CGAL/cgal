@@ -27,7 +27,7 @@ private:
   //-------------------- DATA MEMBERS ---------------------------------
 
   coord_type* _smallest_radius_facet_tab;
-  bool* _selected_facet;
+  unsigned char selected_facet;
 #ifndef NOLAZY
   D_Point* _circumcenter;
   coord_type* _squared_radius;
@@ -39,7 +39,7 @@ public:
   
   Local_selection_cell_base_3() 
     : CGAL::Triangulation_cell_base_3<Gt>(),
-      _smallest_radius_facet_tab(NULL), _selected_facet(NULL)
+      _smallest_radius_facet_tab(NULL), selected_facet(0)
 #ifndef NOLAZY
       , _circumcenter(NULL), _squared_radius(NULL)
 #endif //NOLAZY
@@ -47,7 +47,7 @@ public:
   
   Local_selection_cell_base_3(void* v0, void* v1, void* v2, void* v3)
     : CGAL::Triangulation_cell_base_3<Gt>( v0, v1, v2, v3),
-      _smallest_radius_facet_tab(NULL), _selected_facet(NULL)
+      _smallest_radius_facet_tab(NULL), selected_facet(0)
 #ifndef NOLAZY
       , _circumcenter(NULL), _squared_radius(NULL)
 #endif //NOLAZY
@@ -57,7 +57,7 @@ public:
 			      void* n0, void* n1, void* n2, void* n3)
     : CGAL::Triangulation_cell_base_3<Gt>(v0,  v1,  v2, v3,
 					  n0,  n1,  n2, n3),
-      _smallest_radius_facet_tab(NULL), _selected_facet(NULL)
+      _smallest_radius_facet_tab(NULL), selected_facet(0)
 #ifndef NOLAZY
       , _circumcenter(NULL), _squared_radius(NULL)
 #endif //NOLAZY
@@ -69,8 +69,6 @@ public:
     {
       if (_smallest_radius_facet_tab != NULL)
 	 delete[] _smallest_radius_facet_tab;
-      if (_selected_facet != NULL)
-	delete[] _selected_facet;
 #ifndef NOLAZY
       if (_circumcenter != NULL)
 	delete _circumcenter;
@@ -87,10 +85,8 @@ public:
     {
       if (_smallest_radius_facet_tab != NULL)
 	delete[] _smallest_radius_facet_tab;
-      if (_selected_facet != NULL)
-	delete[] _selected_facet;
       _smallest_radius_facet_tab = NULL;
-      _selected_facet = NULL;
+      selected_facet = 0;
 #ifndef NOLAZY
       if (_circumcenter != NULL)
 	delete _circumcenter;
@@ -136,24 +132,17 @@ public:
   
   inline void select_facet(const int& i)
     {
-      if (_selected_facet==NULL)
-	{
-	  _selected_facet = new bool[4];
-	   for(int i = 0; i < 4; i++)
-	     _selected_facet[i] = false;
-	}
-      _selected_facet[i] = true;
+      selected_facet |= (1 << i);
     }
   
   inline void unselect_facet(const int& i)
     { 
-      _selected_facet[i] = false;
+      selected_facet &= (15 - (1 << i));
     }
 
   inline bool is_selected_facet(const int& i)
     {
-      if (_selected_facet==NULL) return false;
-      return _selected_facet[i];
+      return selected_facet & (1 << i);
     }
  
 #ifndef NOLAZY

@@ -286,8 +286,7 @@ coord_type get_smallest_radius_delaunay_sphere(const Triangulation_3 & A,
 	    {
 #ifndef NOLAZY
 	      value = get_lazy_squared_radius(cc);
-#endif //NOLAZY
-#ifdef NOLAZY
+#else
 	      value = CGAL::squared_radius(pp0, pp1, pp2, pp3);
 #endif //NOLAZY
 	    }
@@ -300,8 +299,7 @@ coord_type get_smallest_radius_delaunay_sphere(const Triangulation_3 & A,
 #ifndef NOLAZY
 	  cc = get_lazy_circumcenter(c);
 	  cn = get_lazy_circumcenter(n);
-#endif //NOLAZY
-#ifdef NOLAZY
+#else
 	  cc = CGAL::circumcenter(cp0, cp1, cp2, cp3);
 	  cn = CGAL::circumcenter(np0, np1, np2, np3);
 #endif //NOLAZY
@@ -1266,8 +1264,7 @@ void
 loop(const Triangulation_3& A, 
      const coord_type& K_init, const coord_type& K_step, const coord_type& K_max, 
      CGAL::Geomview_stream& gv)
-#endif //BLIND
-#ifdef BLIND
+#else
 loop(const Triangulation_3& A, 
      const coord_type& K_init, const coord_type& K_step, const coord_type& K_max)
 #endif //BLIND
@@ -1490,8 +1487,7 @@ int main(int argc,  char* argv[])
 	  std::cout << ">> selection loop : " << std::endl;
 #ifndef BLIND
 	  loop(A, opt.K_init, opt.K_step, opt.K, gv_main);
-#endif //BLIND
-#ifdef BLIND
+#else
 	  loop(A, opt.K_init, opt.K_step, opt.K);
 #endif //BLIND
 	  std::cout << "-- selection loop finished after  " << t1.time() 
@@ -1521,8 +1517,7 @@ int main(int argc,  char* argv[])
 		      std::cout << std::endl << ">> selection loop : " << std::endl;
 #ifndef BLIND
 		      loop(A, opt.K_init, opt.K_step, opt.K, gv_main);
-#endif //BLIND
-#ifdef BLIND
+#else
 		      loop(A, opt.K_init, opt.K_step, opt.K);
 #endif //BLIND
 		      std::cout  << "-- selection loop finished after  " 
@@ -1551,9 +1546,7 @@ int main(int argc,  char* argv[])
 		      << " point(s) ignored." << std::endl;
 	    std::cout << "   Reconstructed surface: " << _facet_number << 
 	      " facets, " << _vh_number << " vertices." << std::endl << std::endl;
-#endif //BLIND
-
-#ifdef BLIND
+#else
 	    std::cout << std::endl;
 #endif //BLIND
 
@@ -1586,6 +1579,8 @@ int main(int argc,  char* argv[])
 	   ((number_of_connected_comp < opt.max_connected_comp)||
 	    (opt.max_connected_comp < 0)));
 
+  fill_holes(A);
+
   std::cout << "-- totalite de la selection terminee en  " <<
     total_time << " secondes." << std::endl;
 
@@ -1603,9 +1598,7 @@ int main(int argc,  char* argv[])
   std::cout << "   number of connected components <= " 
 	    << std::max(1, number_of_connected_comp-1)
 	    << std::endl << std::endl;
-#endif //BLIND
-
-#ifndef BLIND
+#else
   int end_int(1);
   while(end_int)
     std::cin >> end_int;
