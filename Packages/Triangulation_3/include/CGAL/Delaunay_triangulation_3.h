@@ -28,8 +28,7 @@
 #include <CGAL/basic.h>
 
 #include <set>
-#include <list>
-#include <algorithm>
+#include <utility>
 
 #include <CGAL/Triangulation_short_names_3.h>
 #include <CGAL/Triangulation_utils_3.h>
