@@ -111,11 +111,11 @@ SOURCE=.\Qt_widget_toolbar.C
 # End Source File
 # Begin Source File
 
-SOURCE=.\Qt_widget_toolbar_views.C
+SOURCE=.\Qt_widget_toolbar_layers.C
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\src\CGALQt\Qt_widget_view.C
+SOURCE=..\..\..\src\CGALQt\Qt_widget_layer.C
 # End Source File
 # End Group
 # Begin Group "Header Files"
@@ -203,17 +203,17 @@ InputPath=.\Qt_widget_toolbar.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\Qt_widget_toolbar_views.h
+SOURCE=.\Qt_widget_toolbar_layers.h
 
 !IF  "$(CFG)" == "demo - Win32 Release"
 
 !ELSEIF  "$(CFG)" == "demo - Win32 Debug"
 
 # Begin Custom Build
-InputPath=.\Qt_widget_toolbar_views.h
+InputPath=.\Qt_widget_toolbar_layers.h
 
-"Qt_widget_toolbar_views.moc" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	$(QTDIR)\bin\moc.exe -o "Qt_widget_toolbar_views.moc" "Qt_widget_toolbar_views.h"
+"Qt_widget_toolbar_layers.moc" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	$(QTDIR)\bin\moc.exe -o "Qt_widget_toolbar_layers.moc" "Qt_widget_toolbar_layers.h"
 
 # End Custom Build
 
@@ -222,17 +222,17 @@ InputPath=.\Qt_widget_toolbar_views.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\include\CGAL\IO\Qt_widget_view.h
+SOURCE=..\..\..\include\CGAL\IO\Qt_widget_layer.h
 
 !IF  "$(CFG)" == "demo - Win32 Release"
 
 !ELSEIF  "$(CFG)" == "demo - Win32 Debug"
 
 # Begin Custom Build
-InputPath=..\..\..\include\CGAL\IO\Qt_widget_view.h
+InputPath=..\..\..\include\CGAL\IO\Qt_widget_layer.h
 
-"../../../src/CGALQt/Qt_widget_view.moc" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	$(QTDIR)\bin\moc.exe -o "../../../src/CGALQt/Qt_widget_view.moc" "../../../Include/CGAL/IO/Qt_widget_view.h"
+"../../../src/CGALQt/Qt_widget_layer.moc" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	$(QTDIR)\bin\moc.exe -o "../../../src/CGALQt/Qt_widget_layer.moc" "../../../Include/CGAL/IO/Qt_widget_layer.h"
 
 # End Custom Build
 

@@ -9,22 +9,22 @@
 % +------------------------------------------------------------------------+
 
 % +-----------------------------------------------------+
-\begin{ccRefClass}{Qt_widget_view}
+\begin{ccRefClass}{Qt_widget_layer}
 
 \ccDefinition
 
-Views are classes that draw on the drawing area of a \ccc{Qt_widget}. The
-class \ccRefName\ is a base class for views and provides empty event
+Layers are classes that draw on the drawing area of a \ccc{Qt_widget}. The
+class \ccRefName\ is a base class for layers and provides empty event
 handlers. 
 
-\ccInclude{CGAL/IO/Qt_widget_view.h}
+\ccInclude{CGAL/IO/Qt_widget_layer.h}
 \ccGlue
 
 \ccCreation
-\ccCreationVariable{view}
-\ccSetTwoColumns{Qt_widget_view}{}
+\ccCreationVariable{layer}
+\ccSetTwoColumns{Qt_widget_layer}{}
 
-\ccConstructor{Qt_widget_view();}{The default constructor.}
+\ccConstructor{Qt_widget_layer();}{The default constructor.}
 \ccSetThreeColumns{const_iterator}{container.begin() const;}{}
 
 \ccMethod{virtual void mousePressEvent(QMouseEvent *, Qt_widget&);}{}
@@ -45,36 +45,36 @@ handlers.
 \ccGlue
 \ccMethod{virtual void leaveEvent(QEvent *, Qt_widget&);}{These virtual functions can
 be overloaded in the derived class. They are called by the \ccc{Qt_widget} 
-to which the view is attached.}
+to which the layer is attached.}
 \ccGlue
 
 \ccHeading{Public Slots}
 
 \ccMethod{virtual void draw(Qt_widget& q)=0;}{This virtual member function
  must be overloaded. This is where the drawing code goes. The argument \ccc{q} 
-refers to the widget the view can draw on.}
+refers to the widget the layer can draw on.}
 
 \ccExample
-The following example of a view draws the points of a triangulation in green.
+The following example of a layer draws the points of a triangulation in green.
 
 \begin{ccExampleCode}
-#include <CGAL/IO/Qt_widget_view.h>
+#include <CGAL/IO/Qt_widget_layer.h>
 #include <qobject.h>
 
 
 namespace CGAL {
 
 template <class T>
-class Qt_view_show_points : public Qt_widget_view {
+class Qt_layer_show_points : public Qt_widget_layer {
 public:
   typedef typename T::Point             Point;
   typedef typename T::Segment           Segment;
   typedef typename T::Vertex            Vertex;
   typedef typename T::Vertex_iterator   Vertex_iterator;
 
-  Qt_view_show_points(T &t) : tr(t){};
+  Qt_layer_show_points(T &t) : tr(t){};
 
-  void draw_view(Qt_widget &widget)
+  void draw_layer(Qt_widget &widget)
   {
     Vertex v;
     Vertex_iterator it = tr.vertices_begin(), 

@@ -8,8 +8,8 @@
 //
 // ----------------------------------------------------------------------------
 //
-// file          : include/CGAL/IO/Qt_view_show_ymonotone.h
-// package       : QT_window
+// file          : include/CGAL/IO/Qt_layer_show_optimal_convex_partition.h
+// package       : Qt_widget
 // author(s)     : Radu Ursu
 // release       : 
 // release_date  : 
@@ -18,10 +18,10 @@
 //
 // ============================================================================
 
-#ifndef CGAL_QT_VIEW_SHOW_YMONOTONE_H
-#define CGAL_QT_VIEW_SHOW_YMONOTONE_H
+#ifndef CGAL_QT_LAYER_SHOW_OPTIMAL_CONVEX_H
+#define CGAL_QT_LAYER_SHOW_OPTIMAL_CONVEX_H
 
-#include <CGAL/IO/Qt_widget_view.h>
+#include <CGAL/IO/Qt_widget_layer.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Partition_traits_2.h>
 #include <CGAL/partition_2.h>
@@ -30,7 +30,7 @@
 namespace CGAL {
 
 template <class T>
-class Qt_view_show_ymonotone : public Qt_widget_view
+class Qt_layer_show_optimal_convex : public Qt_widget_layer
 {
 public:
   typedef typename T::FT	      FT;
@@ -38,29 +38,31 @@ public:
   typedef CGAL::Partition_traits_2<K> Traits;
 
 
-  Qt_view_show_ymonotone(T &p) : polygon(p)
+  Qt_layer_show_optimal_convex(T &p) : polygon(p)
   {};
   void draw(Qt_widget &widget)
   {
-    ymonotone.clear();
+    optimal_convex.clear();
+    Traits  partition_traits;
     
-    CGAL::y_monotone_partition_2(polygon.vertices_begin(), 
-                                polygon.vertices_end(),
-                                std::back_inserter(ymonotone));
-
+    CGAL::optimal_convex_partition_2(polygon.vertices_begin(), 
+                                       polygon.vertices_end(),
+                           std::back_inserter(optimal_convex),
+                                            partition_traits);    
+    
     std::list<T>::const_iterator p_it;
-    for(p_it = ymonotone.begin(); p_it != ymonotone.end(); p_it++)
+    for(p_it = optimal_convex.begin(); p_it != optimal_convex.end(); p_it++)
     {
-      widget << CGAL::RED; 
+      widget << CGAL::YELLOW; 
       widget << *p_it;
     }
     
   };
 private:
   T		&polygon;
-  std::list<T>	ymonotone;
+  std::list<T>	optimal_convex;
 };//end class 
 
 } // namespace CGAL
 
-#endif // CGAL_QT_VIEW_SHOW_YMONOTONE_H
+#endif // CGAL_QT_LAYER_SHOW_OPTIMAL_CONVEX_H

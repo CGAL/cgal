@@ -8,7 +8,7 @@
 //
 // ----------------------------------------------------------------------------
 //
-// file          : include/CGAL/IO/Qt_view_show_optimal_convex_partition.h
+// file          : include/CGAL/IO/Qt_layer_show_greene_approximation.h
 // package       : Qt_widget
 // author(s)     : Radu Ursu
 // release       : 
@@ -18,10 +18,10 @@
 //
 // ============================================================================
 
-#ifndef CGAL_QT_VIEW_SHOW_OPTIMAL_CONVEX_H
-#define CGAL_QT_VIEW_SHOW_OPTIMAL_CONVEX_H
+#ifndef CGAL_QT_LAYER_SHOW_GREEN_APPROXIMATION_H
+#define CGAL_QT_LAYER_SHOW_GREEN_APPROXIMATION_H
 
-#include <CGAL/IO/Qt_widget_view.h>
+#include <CGAL/IO/Qt_widget_layer.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Partition_traits_2.h>
 #include <CGAL/partition_2.h>
@@ -30,7 +30,7 @@
 namespace CGAL {
 
 template <class T>
-class Qt_view_show_optimal_convex : public Qt_widget_view
+class Qt_layer_show_greene_approx : public Qt_widget_layer
 {
 public:
   typedef typename T::FT	      FT;
@@ -38,31 +38,33 @@ public:
   typedef CGAL::Partition_traits_2<K> Traits;
 
 
-  Qt_view_show_optimal_convex(T &p) : polygon(p)
+  Qt_layer_show_greene_approx(T &p) : polygon(p)
   {};
   void draw(Qt_widget &widget)
   {
-    optimal_convex.clear();
+    greene_approx_polys.clear();
     Traits  partition_traits;
     
-    CGAL::optimal_convex_partition_2(polygon.vertices_begin(), 
-                                       polygon.vertices_end(),
-                           std::back_inserter(optimal_convex),
-                                            partition_traits);    
+    CGAL::greene_approx_convex_partition_2(
+		polygon.vertices_begin(), 
+		polygon.vertices_end(),
+		std::back_inserter(greene_approx_polys),
+		partition_traits);
     
     std::list<T>::const_iterator p_it;
-    for(p_it = optimal_convex.begin(); p_it != optimal_convex.end(); p_it++)
+    for(p_it = greene_approx_polys.begin(); 
+		p_it != greene_approx_polys.end(); p_it++)
     {
-      widget << CGAL::YELLOW; 
+      widget << CGAL::GREEN; 
       widget << *p_it;
     }
     
   };
 private:
   T		&polygon;
-  std::list<T>	optimal_convex;
+  std::list<T>	greene_approx_polys;
 };//end class 
 
 } // namespace CGAL
 
-#endif // CGAL_QT_VIEW_SHOW_OPTIMAL_CONVEX_H
+#endif // CGAL_QT_WINDOW_GET_SEGMENT_H

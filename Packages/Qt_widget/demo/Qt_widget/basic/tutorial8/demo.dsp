@@ -103,7 +103,7 @@ SOURCE=..\..\..\..\src\Qt_widget\Qt_widget_tool.C
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\..\src\Qt_widget\Qt_widget_view.C
+SOURCE=..\..\..\..\src\Qt_widget\Qt_widget_layer.C
 # End Source File
 # Begin Source File
 
@@ -142,7 +142,7 @@ SOURCE=..\..\..\..\include\CGAL\IO\Qt_Widget_tool.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\..\include\CGAL\IO\Qt_widget_view.h
+SOURCE=..\..\..\..\include\CGAL\IO\Qt_widget_layer.h
 # End Source File
 # End Group
 # Begin Group "Resource Files"

@@ -8,7 +8,7 @@
 #include <qtoolbar.h>
 
 #include <CGAL/IO/Qt_widget.h>
-#include <CGAL/IO/Qt_widget_view.h>
+#include <CGAL/IO/Qt_widget_layer.h>
 #include <CGAL/IO/Qt_widget_standard_toolbar.h>
 #include <CGAL/IO/Qt_widget_get_point.h>
 #include <CGAL/IO/pixmaps/point.xpm>
@@ -19,7 +19,7 @@ typedef CGAL::Delaunay_triangulation_2<Rep> Delaunay;
 
 Delaunay dt;
 
-class My_View : public CGAL::Qt_widget_view{
+class My_Layer : public CGAL::Qt_widget_layer{
   void draw(CGAL::Qt_widget& win){
     win << CGAL::BLACK;
     win << dt;
@@ -77,7 +77,7 @@ private slots:
   }
 private:
   CGAL::Qt_widget win;	//the instance of Qt_widget
-  My_View v;		//an instance of a view
+  My_Layer v;		//an instance of a layer
   CGAL::Standard_toolbar *stoolbar; //the standard toolbar
   CGAL::Qt_widget_get_point<Rep> get_point;   //the generic tool that creates Cgal points
   QToolButton *get_point_but;	//the toolbar button

@@ -7,7 +7,7 @@
 #include <qmainwindow.h>
 
 #include <CGAL/IO/Qt_widget.h>
-#include <CGAL/IO/Qt_widget_view.h>
+#include <CGAL/IO/Qt_widget_layer.h>
 #include <CGAL/IO/Qt_widget_standard_toolbar.h>
 #include <CGAL/IO/Qt_widget_get_point.h>
 
@@ -17,7 +17,7 @@ typedef CGAL::Delaunay_triangulation_2<Rep> Delaunay;
 
 Delaunay dt;
 
-class My_View : public CGAL::Qt_widget_view{
+class My_Layer : public CGAL::Qt_widget_layer{
   void draw(CGAL::Qt_widget& win){
     win << CGAL::BLACK;
     win << dt;
@@ -56,7 +56,7 @@ private slots:
   }
 private:
   CGAL::Qt_widget win;
-  My_View v;
+  My_Layer v;
   CGAL::Standard_toolbar *stoolbar;
   CGAL::Qt_widget_get_point<Rep> get_point;
 };

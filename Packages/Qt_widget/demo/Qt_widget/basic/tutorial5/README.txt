@@ -6,7 +6,7 @@ application. The application has the same functionality but as you
 see you can now zoom in, zoom out and translate, using the tools from
 the standard toolbar.
 
-The view is still there, doing nothing but drawing the triangulation.
+The layer is still there, doing nothing but drawing the triangulation.
 
 The class My_Widget is like in the previous example an intance of
 Qt_widget, that you need in the class My_Window.

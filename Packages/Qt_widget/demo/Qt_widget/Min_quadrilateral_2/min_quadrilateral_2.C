@@ -27,9 +27,9 @@ int main(int, char*)
 //Qt_widget
 #include <CGAL/IO/Qt_widget.h>
 #include "Qt_widget_toolbar.h"
-#include "Qt_widget_toolbar_views.h"
+#include "Qt_widget_toolbar_layers.h"
 #include <CGAL/IO/Qt_widget_standard_toolbar.h>
-#include <CGAL/IO/Qt_widget_view.h>
+#include <CGAL/IO/Qt_widget_layer.h>
 
 //Qt
 #include <qplatinumstyle.h>
@@ -100,8 +100,8 @@ public:
   //the new tools toolbar
   setUsesBigPixmaps(TRUE);
   newtoolbar = new CGAL::Tools_toolbar(&win, this, list_of_points);	
-  //the views toolbar
-  vtoolbar = new CGAL::Views_toolbar(&win, this, &list_of_points);
+  //the layers toolbar
+  vtoolbar = new CGAL::Layers_toolbar(&win, this, &list_of_points);
   //the standard toolbar
   stoolbar = new CGAL::Standard_toolbar (&win, this);
   this->addToolBar(stoolbar->toolbar(), Top, FALSE);
@@ -171,7 +171,7 @@ private slots:
 
   void new_window(){
     MyWindow *ed = new MyWindow(500, 500);
-    ed->setCaption("View");
+    ed->setCaption("Layer");
     ed->show();
     ed->set_window(-1.1, 1.1, -1.1, 1.1);
     something_changed();
@@ -203,7 +203,7 @@ private:
   CGAL::Qt_widget	  win;		
   CGAL::Tools_toolbar	  *newtoolbar;
   CGAL::Standard_toolbar  *stoolbar;
-  CGAL::Views_toolbar	  *vtoolbar;
+  CGAL::Layers_toolbar	  *vtoolbar;
   int			  old_state;  	
 };
 

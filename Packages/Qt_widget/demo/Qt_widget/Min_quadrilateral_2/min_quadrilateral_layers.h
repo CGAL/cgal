@@ -1,4 +1,4 @@
-#include <CGAL/IO/Qt_widget_view.h>
+#include <CGAL/IO/Qt_widget_layer.h>
 
 //CGAL
 #include <CGAL/Cartesian.h>
@@ -11,7 +11,7 @@
 #include <CGAL/Polygon_2_algorithms.h>
 
 template <class R>
-class Qt_view_show_parallelogram : public CGAL::Qt_widget_view
+class Qt_layer_show_parallelogram : public CGAL::Qt_widget_layer
 {
 public:
   typedef typename R::Point_2	Point;
@@ -24,7 +24,7 @@ public:
   typedef CGAL::Polygon_2< Traits, Container >		    Polygon;
   typedef CGAL::Creator_uniform_2< double, Point >	    Creator;
 
-  Qt_view_show_parallelogram(std::list<Point> *pl){list_of_points = pl;};
+  Qt_layer_show_parallelogram(std::list<Point> *pl){list_of_points = pl;};
 
   void draw(CGAL::Qt_widget &win)
   {
@@ -57,7 +57,7 @@ private:
 
 
 template <class R>
-class Qt_view_show_strip : public CGAL::Qt_widget_view
+class Qt_layer_show_strip : public CGAL::Qt_widget_layer
 {
 public:
   typedef typename R::Point_2	Point;
@@ -70,7 +70,7 @@ public:
   typedef CGAL::Polygon_2< Traits, Container >		    Polygon;
   typedef CGAL::Creator_uniform_2< double, Point >	    Creator;
 
-  Qt_view_show_strip(std::list<Point> *pl){list_of_points = pl;};
+  Qt_layer_show_strip(std::list<Point> *pl){list_of_points = pl;};
 
   void draw(CGAL::Qt_widget &win)
   {
@@ -100,7 +100,7 @@ private:
 
 
 template <class R>
-class Qt_view_show_rectangle : public CGAL::Qt_widget_view
+class Qt_layer_show_rectangle : public CGAL::Qt_widget_layer
 {
 public:
   typedef typename R::Point_2	Point;
@@ -113,7 +113,7 @@ public:
   typedef CGAL::Polygon_2< Traits, Container >		    Polygon;
   typedef CGAL::Creator_uniform_2< double, Point >	    Creator;
 
-  Qt_view_show_rectangle(std::list<Point> *pl){list_of_points = pl;};
+  Qt_layer_show_rectangle(std::list<Point> *pl){list_of_points = pl;};
 
   void draw(CGAL::Qt_widget &win)
   {
@@ -147,12 +147,12 @@ private:
 
 
 template <class R>
-class Qt_view_show_points : public CGAL::Qt_widget_view
+class Qt_layer_show_points : public CGAL::Qt_widget_layer
 {
 public:
   typedef typename R::Point_2	Point;
   
-  Qt_view_show_points(std::list<Point> *pl){list_of_points = pl;};
+  Qt_layer_show_points(std::list<Point> *pl){list_of_points = pl;};
 
   void draw(CGAL::Qt_widget &win)
   {

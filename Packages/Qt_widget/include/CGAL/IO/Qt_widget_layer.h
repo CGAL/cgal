@@ -8,7 +8,7 @@
 //
 // ----------------------------------------------------------------------------
 //
-// file          : include/CGAL/IO/Qt_widget_view.h
+// file          : include/CGAL/IO/Qt_widget_layer.h
 // package       : Qt_widget
 // author(s)     : Laurent Rineau & Radu Ursu
 // release       : 
@@ -18,8 +18,8 @@
 //
 // ============================================================================
 
-#ifndef CGAL_QT_WIDGET_VIEW_H
-#define CGAL_QT_WIDGET_VIEW_H
+#ifndef CGAL_QT_WIDGET_LAYER_H
+#define CGAL_QT_WIDGET_LAYER_H
 
 #include <CGAL/IO/Qt_widget.h>
 #include <qobject.h>
@@ -28,10 +28,10 @@
 
 namespace CGAL {
 
-class Qt_widget_view : public QObject {
+class Qt_widget_layer : public QObject {
   Q_OBJECT
 public:
-  virtual ~Qt_widget_view(); // allow Qt_Scene_widget to
+  virtual ~Qt_widget_layer(); // allow Qt_Scene_widget to
 	                     // detach the scene
   // Event handlers
   virtual void mousePressEvent(QMouseEvent *, Qt_widget&) {} ;
@@ -47,11 +47,11 @@ public:
 public slots:
   virtual void draw(Qt_widget&)=0;
 signals:
-  void dying(Qt_widget_view*);
+  void dying(Qt_widget_layer*);
 public:
   CGAL::Qt_widget	*win;
 };
 
 } // namespace CGAL end
 
-#endif // CGAL_QT_WIDGET_VIEW_H
+#endif // CGAL_QT_WIDGET_LAYER_H

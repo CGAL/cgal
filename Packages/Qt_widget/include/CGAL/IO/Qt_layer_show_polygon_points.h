@@ -8,7 +8,7 @@
 //
 // ----------------------------------------------------------------------------
 //
-// file          : include/CGAL/IO/Qt_view_show_triangulation.h
+// file          : include/CGAL/IO/Qt_layer_show_polygon_points.h
 // package       : Qt_widget
 // author(s)     : Radu Ursu
 // release       : 
@@ -18,31 +18,42 @@
 //
 // ============================================================================
 
-#ifndef CGAL_QT_VIEW_SHOW_TRIANGULATION_H
-#define CGAL_QT_VIEW_SHOW_TRIANGULATION_H
+#ifndef CGAL_QT_LAYER_SHOW_POLYGON_POINTS_H
+#define CGAL_QT_LAYER_SHOW_POLYGON_POINTS_H
 
-#include <CGAL/IO/Qt_widget_view.h>
+#include <CGAL/IO/Qt_widget_layer.h>
+#include <qobject.h>
+
 
 namespace CGAL {
 
 template <class T>
-class Qt_view_show_triangulation : public Qt_widget_view
+class Qt_layer_show_polygon_points : public Qt_widget_layer
 {
+  typedef typename T::Point_2	Point_2;
 public:
-	
-  Qt_view_show_triangulation(T &t) : tr(t){};
+  
 
-
+  Qt_layer_show_polygon_points(T &p) : polygon(p){};
   void draw(Qt_widget &widget)
   {
-    widget << CGAL::BLUE; 
-    widget << tr;
+    typename T::const_iterator vert_it;
+
+    
+    for (vert_it = polygon.vertices_begin(); 
+		vert_it != polygon.vertices_end(); vert_it++)
+    {
+      
+      widget << CGAL::GREEN << CGAL::PointSize (5) 
+			<< CGAL::PointStyle (CGAL::DISC);
+      widget << Point_2((*vert_it).x(), (*vert_it).y());
+    }
   };
 	
 private:
-  T &tr;
+  T &polygon;
 };//end class 
 
 } // namespace CGAL
 
-#endif // CGAL_QT_VIEW_SHOW_TRIANGULATION_H
+#endif // CGAL_QT_LAYER_SHOW_POLYGON_POINTS_H

@@ -36,10 +36,10 @@ The most important class is the class \ccStyle{Qt_widget}. It provides
 a drawing area and output stream operators for \cgal\ objects, as well
 as zooming and panning functionality.
 
-The \ccStyle{Qt_widget} allows to attach {\em views}, and
-it are usually views that draw on the drawing area of the widget.
-Views can be activated and deactivated, and what you see in the drawing area
-is the overlay of all attached activated views.
+The \ccStyle{Qt_widget} allows to attach {\em layers}, and
+it are usually layers that draw on the drawing area of the widget.
+Layers can be activated and deactivated, and what you see in the drawing area
+is the overlay of all attached activated layers.
 
 The \ccStyle{Qt_widget} allows further to attach one {\em tool} at the time. 
 Tools are used for entering input, and \cgal\ provides input tools for the
@@ -72,7 +72,7 @@ set \ccStyle{Qt_widget}'s properties, like background and fill color, as well as
 width and point size.
 
 As the following examples show, simple applications can be written
-without the views and tools.
+without the layers and tools.
 
 \subsection{Example: Hello Segment}
 The first example draws a red segment on an orange background.
@@ -109,55 +109,55 @@ operations. Note that this function first calls
 \ccStyle{Qt\_widget::redraw()}. It is explained later why this must be
 done.
 
-\section{Views}
-\label{Qt_widget_views}
+\section{Layers}
+\label{Qt_widget_layers}
 
 In the examples from the previous section the code for drawing on the
 widget was in the \ccStyle{redraw()} function. As soon as the applications are more 
-involved it leads to a more modular design if one delegates the drawing task to {\em views}. 
+involved it leads to a more modular design if one delegates the drawing task to {\em layers}. 
 For example, if the application displays a Delaunay triangulation, the corresponding Voronoi diagram,
  and at the same time highlights the nearest vertex to the mouse coordinates, it makes
-sense to have three independent views. Besides better code, views have the advantage that they
+sense to have three independent layers. Besides better code, layers have the advantage that they
 can be activated and deactivated at runtime. Finally, more modularity means a higher potential
 for reuse.
 
-A view can be {\em attached} to a \ccc{Qt_widget}. The widget calls
-the method \ccc{Qt_widget_view::draw()} of all attached views, in the
-order that they were attached. It is a very simple rule: the last view
+A layer can be {\em attached} to a \ccc{Qt_widget}. The widget calls
+the method \ccc{Qt_widget_layer::draw()} of all attached layers, in the
+order that they were attached. It is a very simple rule: the last layer
 attached will be drawn on top.
 
-Also a view can be {\em activated} and {\em deactivated}. Only active
-views are drawn, and by default a view is activated when it gets
+Also a layer can be {\em activated} and {\em deactivated}. Only active
+layers are drawn, and by default a layer is activated when it gets
 attached.  Note that deactivating and activating do not influence the
-order of views.
+order of layers.
 
 
-\cgal\ provides some predefined view classes as well as a base class
-so that you can more easily write new views.
+\cgal\ provides some predefined layer classes as well as a base class
+so that you can more easily write new layers.
 
 
-\subsection{Example: Using A View for Output}
+\subsection{Example: Using A Layer for Output}
 \ccIncludeExampleCode{Qt_widget/basic/tutorial3/tutorial3.C}
 
 As you see, this example is very similar to the previous one, but
 the code for drawing the triangulation is no longer in the \ccStyle{redraw()}
- function, but in a view.
+ function, but in a layer.
 
-This example defines a class derived from \ccStyle{Qt_widget_view}. In the member
+This example defines a class derived from \ccStyle{Qt_widget_layer}. In the member
 function \ccStyle{draw()} it is the code for drawing the triangulation. In 
-\ccStyle{My_Window} class you need an instance of \ccStyle{My_View} and you will 
-have to attach it, if you want to see what the view draws on the
+\ccStyle{My_Window} class you need an instance of \ccStyle{My_Layer} and you will 
+have to attach it, if you want to see what the layer draws on the
 screen.
 
 Try to remove the line \ccStyle{attach(&v);} from the constructor to
 see what happens. The application will no longer display anything. Try
-to deactivate and activate the \ccStyle{view} to see what happens.
+to deactivate and activate the \ccStyle{layer} to see what happens.
 
 
 \section{Tools}
 \label{Qt_widget_tools}
 
-The main purpose of views is to have more modular code for drawing on
+The main purpose of layers is to have more modular code for drawing on
 the widget. Things are similar for handling input. In the previous
 examples, input went through the \ccc{Qt_widget::mousePressedEvent()}
 callback, which interpreted the input. In applications where you have
@@ -369,11 +369,11 @@ buttons, like this:
 \section{What Shall I Use?}
 
 The previous sections presented different ways of writing \qt\ based 
-applications. We recommend to use views for the drawing task and tools
+applications. We recommend to use layers for the drawing task and tools
 for input handling, even if you write tiny applications, because in general
-they grow over time.   Views and tools are a little bit more overhead, but 
+they grow over time.   Layers and tools are a little bit more overhead, but 
 it pays off in the long run, as you then do not have to completely
-reorganize your code, to first add views, and later add tools. 
+reorganize your code, to first add layers, and later add tools. 
 
 
 
@@ -382,7 +382,7 @@ reorganize your code, to first add views, and later add tools.
 \section{Tutorial}
 
 In the directories \ccc{demo/qt_widget/tutorial*} we provide some examples
-that illustrate the widget, views, tools, and the standard toolbar.
+that illustrate the widget, layers, tools, and the standard toolbar.
 
 % +-----------------------------------------------------+
 % EOF

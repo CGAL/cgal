@@ -23,7 +23,7 @@
 #include <CGAL/IO/Qt_widget.h>
 #include <CGAL/Bbox_2.h>
 #include <CGAL/IO/Qt_widget_tool.h>
-#include <CGAL/IO/Qt_widget_view.h>
+#include <CGAL/IO/Qt_widget_layer.h>
 
 namespace CGAL {
 
@@ -136,10 +136,10 @@ void Qt_widget::mousePressEvent(QMouseEvent *e)
   emit(mousePressed(e));
   if (has_tool())
     current_tool->mousePressEvent(e);
-  std::list<toggleview>::iterator it;
-  for(it = qt_toggle_views.begin(); it!= qt_toggle_views.end(); it++)
+  std::list<togglelayer>::iterator it;
+  for(it = qt_toggle_layers.begin(); it!= qt_toggle_layers.end(); it++)
     if((*it).active)
-      (*it).view->mousePressEvent(e, *this);
+      (*it).layer->mousePressEvent(e, *this);
 }
 
 void Qt_widget::mouseReleaseEvent(QMouseEvent *e)
@@ -147,10 +147,10 @@ void Qt_widget::mouseReleaseEvent(QMouseEvent *e)
   emit(mouseReleased(e));
   if (has_tool())
     current_tool->mouseReleaseEvent(e);
-  std::list<toggleview>::iterator it;
-  for(it = qt_toggle_views.begin(); it!= qt_toggle_views.end(); it++)
+  std::list<togglelayer>::iterator it;
+  for(it = qt_toggle_layers.begin(); it!= qt_toggle_layers.end(); it++)
     if((*it).active)
-      (*it).view->mouseReleaseEvent(e, *this);
+      (*it).layer->mouseReleaseEvent(e, *this);
 }
 
 void Qt_widget::mouseMoveEvent(QMouseEvent *e)
@@ -158,70 +158,70 @@ void Qt_widget::mouseMoveEvent(QMouseEvent *e)
   emit(mouseMoved(e));
   if (has_tool())
     current_tool->mouseMoveEvent(e);
-  std::list<toggleview>::iterator it;
-  for(it = qt_toggle_views.begin(); it!= qt_toggle_views.end(); it++)
+  std::list<togglelayer>::iterator it;
+  for(it = qt_toggle_layers.begin(); it!= qt_toggle_layers.end(); it++)
     if((*it).active)
-      (*it).view->mouseMoveEvent(e, *this);
+      (*it).layer->mouseMoveEvent(e, *this);
 }
 
 void Qt_widget::wheelEvent(QMouseEvent *e)
 {
   if (has_tool())
     current_tool->wheelEvent(e);
-  std::list<toggleview>::iterator it;
-  for(it = qt_toggle_views.begin(); it!= qt_toggle_views.end(); it++)
+  std::list<togglelayer>::iterator it;
+  for(it = qt_toggle_layers.begin(); it!= qt_toggle_layers.end(); it++)
     if((*it).active)
-    (*it).view->wheelEvent(e, *this);
+    (*it).layer->wheelEvent(e, *this);
 }
 
 void Qt_widget::mouseDoubleClickEvent(QMouseEvent *e)
 {
   if (has_tool())
     current_tool->mouseDoubleClickEvent(e);
-  std::list<toggleview>::iterator it;
-  for(it = qt_toggle_views.begin(); it!= qt_toggle_views.end(); it++)
+  std::list<togglelayer>::iterator it;
+  for(it = qt_toggle_layers.begin(); it!= qt_toggle_layers.end(); it++)
     if((*it).active)
-      (*it).view->mouseDoubleClickEvent(e, *this);
+      (*it).layer->mouseDoubleClickEvent(e, *this);
 }
 
 void Qt_widget::keyPressEvent(QKeyEvent *e)
 {
   if (has_tool())
     current_tool->keyPressEvent(e);
-  std::list<toggleview>::iterator it;
-  for(it = qt_toggle_views.begin(); it!= qt_toggle_views.end(); it++)
+  std::list<togglelayer>::iterator it;
+  for(it = qt_toggle_layers.begin(); it!= qt_toggle_layers.end(); it++)
     if((*it).active)
-      (*it).view->keyPressEvent(e, *this);
+      (*it).layer->keyPressEvent(e, *this);
 }
 
 void Qt_widget::keyReleaseEvent(QKeyEvent *e)
 {
   if (has_tool())
     current_tool->keyReleaseEvent(e);
-  std::list<toggleview>::iterator it;
-  for(it = qt_toggle_views.begin(); it!= qt_toggle_views.end(); it++)
+  std::list<togglelayer>::iterator it;
+  for(it = qt_toggle_layers.begin(); it!= qt_toggle_layers.end(); it++)
     if((*it).active)
-      (*it).view->keyReleaseEvent(e, *this);
+      (*it).layer->keyReleaseEvent(e, *this);
 }
 
 void Qt_widget::enterEvent(QEvent *e)
 {
   if (has_tool())
     current_tool->enterEvent(e);
-  std::list<toggleview>::iterator it;
-  for(it = qt_toggle_views.begin(); it!= qt_toggle_views.end(); it++)
+  std::list<togglelayer>::iterator it;
+  for(it = qt_toggle_layers.begin(); it!= qt_toggle_layers.end(); it++)
     if((*it).active)
-      (*it).view->enterEvent(e, *this);
+      (*it).layer->enterEvent(e, *this);
 }
 
 void Qt_widget::leaveEvent(QEvent *e)
 {
   if (has_tool())
     current_tool->leaveEvent(e);
-  std::list<toggleview>::iterator it;
-  for(it = qt_toggle_views.begin(); it!= qt_toggle_views.end(); it++)
+  std::list<togglelayer>::iterator it;
+  for(it = qt_toggle_layers.begin(); it!= qt_toggle_layers.end(); it++)
     if((*it).active)
-      (*it).view->leaveEvent(e, *this);
+      (*it).layer->leaveEvent(e, *this);
 }
 
 void Qt_widget::set_window(double  x_min, double x_max,
@@ -370,10 +370,10 @@ void Qt_widget::redraw()
     {
       clear();
       lock();
-      std::list<toggleview>::iterator it;
-      for(it = qt_toggle_views.begin(); it!= qt_toggle_views.end(); it++)
+      std::list<togglelayer>::iterator it;
+      for(it = qt_toggle_layers.begin(); it!= qt_toggle_layers.end(); it++)
 	if((*it).active)
-	  (*it).view->draw(*this);
+	  (*it).layer->draw(*this);
       
       unlock();
       if (has_tool())
@@ -382,24 +382,24 @@ void Qt_widget::redraw()
   };
   
   // add a scene in the list of displayable scenes
-  void Qt_widget::add_view(Qt_widget_view* s)
+  void Qt_widget::add_layer(Qt_widget_layer* s)
   {
-    //qt_views.push_back(s);
-    toggleview temp;
-    temp.view = s;
+    //qt_layers.push_back(s);
+    togglelayer temp;
+    temp.layer = s;
     temp.active = true;
-    qt_toggle_views.push_back(temp);
+    qt_toggle_layers.push_back(temp);
   }
 
-  void Qt_widget::activate(Qt_widget_view* s)
+  void Qt_widget::activate(Qt_widget_layer* s)
   {
-    toggleview temp;
-    temp.view = s;
-    std::list<toggleview>::iterator it = qt_toggle_views.begin();
+    togglelayer temp;
+    temp.layer = s;
+    std::list<togglelayer>::iterator it = qt_toggle_layers.begin();
     bool found = false;
-    while(it != qt_toggle_views.end() && !found)
+    while(it != qt_toggle_layers.end() && !found)
     {
-      if( s == (*it).view )
+      if( s == (*it).layer )
       {
 	(*it).active = true;
 	found = true;
@@ -409,15 +409,15 @@ void Qt_widget::redraw()
     }
   }
 
-  void Qt_widget::deactivate(Qt_widget_view* s)
+  void Qt_widget::deactivate(Qt_widget_layer* s)
   {
-    toggleview temp;
-    temp.view = s;
-    std::list<toggleview>::iterator it = qt_toggle_views.begin();
+    togglelayer temp;
+    temp.layer = s;
+    std::list<togglelayer>::iterator it = qt_toggle_layers.begin();
     bool found = false;
-    while(it != qt_toggle_views.end() && !found)
+    while(it != qt_toggle_layers.end() && !found)
     {
-      if( s == (*it).view )
+      if( s == (*it).layer )
       {
 	(*it).active = false;
 	found = true;
@@ -428,25 +428,25 @@ void Qt_widget::redraw()
   }
 
   // remove a scene from the list of displayable scenes
-  void Qt_widget::detach(Qt_widget_view* s)
+  void Qt_widget::detach(Qt_widget_layer* s)
   {
-    //qt_views.erase(std::find(qt_views.begin(),qt_views.end(),s));
-    toggleview temp;
-    temp.view = s;
-    std::list<toggleview>::iterator it = qt_toggle_views.begin();
+    //qt_layers.erase(std::find(qt_layers.begin(),qt_layers.end(),s));
+    togglelayer temp;
+    temp.layer = s;
+    std::list<togglelayer>::iterator it = qt_toggle_layers.begin();
     bool found = false;
-    while(it != qt_toggle_views.end() && !found)
+    while(it != qt_toggle_layers.end() && !found)
     {
-      if( s == (*it).view )
+      if( s == (*it).layer )
       {
-	qt_toggle_views.erase(it);
+	qt_toggle_layers.erase(it);
 	found = true;
       } else {
 	it++;
       }
     }
-    //qt_toggle_views.erase(std::find(qt_toggle_views.begin(),
-//	 qt_toggle_views.end(), temp));
+    //qt_toggle_layers.erase(std::find(qt_toggle_layers.begin(),
+//	 qt_toggle_layers.end(), temp));
   }
 
 } // namespace CGAL

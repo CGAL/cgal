@@ -8,7 +8,7 @@
 //
 // ----------------------------------------------------------------------------
 //
-// file          : src/Qt_Window_toolbar_views.C
+// file          : src/Qt_Window_toolbar_layers.C
 // package       : QT_window
 // author(s)     : Ursu Radu
 // release       : 
@@ -21,7 +21,7 @@
 
 #ifdef CGAL_USE_QT
 
-#include "Qt_widget_toolbar_views.h"
+#include "Qt_widget_toolbar_layers.h"
 
 // icons
 #include <CGAL/IO/pixmaps/points.xpm>
@@ -32,15 +32,15 @@
 
 
 namespace CGAL {
-  Views_toolbar::Views_toolbar(Qt_widget *w, QMainWindow *mw, std::list<Point>	*l_of_p) : 
+  Layers_toolbar::Layers_toolbar(Qt_widget *w, QMainWindow *mw, std::list<Point>	*l_of_p) : 
     nr_of_buttons(0)
   {
       
-    showMC  = new Qt_view_mouse_coordinates(*mw);
-    showPL  = new Qt_view_show_parallelogram<Rp>(l_of_p);
-    showP   = new Qt_view_show_points<Rp>(l_of_p);
-    showLS  = new Qt_view_show_strip<Rp>(l_of_p);
-    showR   = new Qt_view_show_rectangle<Rp>(l_of_p);
+    showMC  = new Qt_layer_mouse_coordinates(*mw);
+    showPL  = new Qt_layer_show_parallelogram<Rp>(l_of_p);
+    showP   = new Qt_layer_show_points<Rp>(l_of_p);
+    showLS  = new Qt_layer_show_strip<Rp>(l_of_p);
+    showR   = new Qt_layer_show_rectangle<Rp>(l_of_p);
     //set the widget
     widget = w;
     window = mw;
@@ -103,7 +103,7 @@ namespace CGAL {
     }
   }//end constructor
   	
-  void Views_toolbar::show_coordinates()
+  void Layers_toolbar::show_coordinates()
   {
     if (but[0]->isOn())
     {
@@ -114,7 +114,7 @@ namespace CGAL {
       window->statusBar()->clear();
     }
   }
-  void Views_toolbar::show_points()
+  void Layers_toolbar::show_points()
   {
     if (but[1]->isOn())
     {
@@ -126,7 +126,7 @@ namespace CGAL {
     }
   }
 
-  void Views_toolbar::show_parallelogram()
+  void Layers_toolbar::show_parallelogram()
   {
     if (but[2]->isOn())
     {
@@ -137,7 +137,7 @@ namespace CGAL {
       widget->redraw();
     }
   }
-  void Views_toolbar::show_strip()
+  void Layers_toolbar::show_strip()
   {
     if (but[3]->isOn())
     {
@@ -149,7 +149,7 @@ namespace CGAL {
     }
   }
 
-  void Views_toolbar::show_rectangle()
+  void Layers_toolbar::show_rectangle()
   {
     if (but[4]->isOn())
     {
@@ -164,6 +164,6 @@ namespace CGAL {
 
 }//end namespace
 
-#include "Qt_widget_toolbar_views.moc"
+#include "Qt_widget_toolbar_layers.moc"
 
 #endif

@@ -40,12 +40,12 @@
 namespace CGAL {
 
 class Qt_widget_tool;
-class Qt_widget_view;
+class Qt_widget_layer;
 typedef 
-struct toggleview{
-  CGAL::Qt_widget_view  *view;
+struct togglelayer{
+  CGAL::Qt_widget_layer  *layer;
   bool			active;
-}toggleview;
+}togglelayer;
 
 
 enum PointStyle { PIXEL, CROSS, PLUS, CIRCLE, DISC, RECT, BOX };
@@ -163,17 +163,17 @@ public:
 
   void new_object(CGAL::Object obj) { emit(new_cgal_object(obj)); };
   
-  //views
+  //layers
   virtual void redraw();
   inline
-  void attach(Qt_widget_view* view) { add_view(view);}
-  // add a view in the list of displayable views
-  void add_view(Qt_widget_view* s);
+  void attach(Qt_widget_layer* layer) { add_layer(layer);}
+  // add a layer in the list of displayable layers
+  void add_layer(Qt_widget_layer* s);
 
-  // remove a view from the list of displayable scenes
-  void detach(Qt_widget_view* s);
-  void activate(Qt_widget_view* s);
-  void deactivate(Qt_widget_view* s);
+  // remove a layer from the list of displayable scenes
+  void detach(Qt_widget_layer* s);
+  void activate(Qt_widget_layer* s);
+  void deactivate(Qt_widget_layer* s);
 
 signals:
   void mousePressed(QMouseEvent *e);
@@ -226,9 +226,9 @@ private:
   bool _has_tool;
   Qt_widget_tool *current_tool;
 
-  //for views
-  std::list<Qt_widget_view*>	qt_views;
-  std::list<toggleview>		qt_toggle_views;
+  //for layers
+  std::list<Qt_widget_layer*>	qt_layers;
+  std::list<togglelayer>		qt_toggle_layers;
 };//end Qt_widget class
 
 // manipulators

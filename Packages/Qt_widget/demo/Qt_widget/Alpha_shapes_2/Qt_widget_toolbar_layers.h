@@ -8,7 +8,7 @@
 //
 // ----------------------------------------------------------------------------
 //
-// file          : include/CGAL/IO/Qt_Window_toolbar_views.h
+// file          : include/CGAL/IO/Qt_Window_toolbar_layers.h
 // package       : QT_window
 // author(s)     : Radu Ursu
 // release       : 
@@ -18,22 +18,30 @@
 //
 // ============================================================================
 
-#ifndef CGAL_QT_WINDOW_TOOLBAR_VIEWS_H
-#define CGAL_QT_WINDOW_TOOLBAR_VIEWS_H
+#ifndef CGAL_QT_WINDOW_TOOLBAR_LAYERS_H
+#define CGAL_QT_WINDOW_TOOLBAR_LAYERS_H
 
+//CGAL
 #include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Delaunay_triangulation_2.h>
+#include <CGAL/Alpha_shape_vertex_base_2.h>
+#include <CGAL/Alpha_shape_face_base_2.h>
+#include <CGAL/Alpha_shape_euclidean_traits_2.h>
+#include <CGAL/Triangulation_face_base_2.h>
+#include <CGAL/Alpha_shape_face_base_2.h>
+#include <CGAL/Alpha_shape_2.h>
 
+//Qt_widget
 #include <CGAL/IO/Qt_widget.h>
 
+//Qt_widget_layer
+#include <CGAL/IO/Qt_layer_show_triangulation.h>
+#include <CGAL/IO/Qt_layer_show_voronoy.h>
+#include <CGAL/IO/Qt_layer_show_points.h>
+#include <CGAL/IO/Qt_layer_show_mouse_coordinates.h>
 
-#include <CGAL/IO/Qt_view_show_triangulation.h>
-#include <CGAL/IO/Qt_view_show_voronoy.h>
-#include <CGAL/IO/Qt_view_show_points.h>
-#include <CGAL/IO/Qt_view_show_nearest_vertex.h>
-#include <CGAL/IO/Qt_view_show_mouse_coordinates.h>
-
+//Qt
 #include <qobject.h>
 #include <qtoolbutton.h>
 #include <qtoolbar.h>
@@ -41,16 +49,21 @@
 
 typedef double Coord_type;
 typedef CGAL::Cartesian<Coord_type>  Rp;
-typedef CGAL::Delaunay_triangulation_2<Rp>  Delaunay;
+typedef CGAL::Alpha_shape_euclidean_traits_2<Rp> Gt;
+typedef CGAL::Alpha_shape_vertex_base_2<Gt>	  Vb;
+typedef CGAL::Triangulation_face_base_2<Gt>	  Df;
+typedef CGAL::Alpha_shape_face_base_2<Gt, Df>	  Fb;
+typedef CGAL::Triangulation_default_data_structure_2<Gt,Vb,Fb> Tds;
+typedef CGAL::Delaunay_triangulation_2<Gt,Tds> Delaunay;
 
 namespace CGAL {
 
-class Views_toolbar : public QObject
+class Layers_toolbar : public QObject
 {
 	Q_OBJECT
 public:
-	Views_toolbar(Qt_widget *w, QMainWindow *mw, Delaunay *t);
-	~Views_toolbar()
+	Layers_toolbar(Qt_widget *w, QMainWindow *mw, Delaunay *t);
+	~Layers_toolbar()
 	{
 		delete maintoolbar;
 	};
@@ -63,7 +76,6 @@ signals:
 private slots:
 	void draw_voronoi();
 	void draw_triangulation();
-	void draw_nearest_vertex();
 	void show_coordinates();
 	void draw_points();
 
@@ -78,11 +90,10 @@ private:
 	int			nr_of_buttons;
 	
 
-	CGAL::Qt_view_show_triangulation < Delaunay >	*showT;
-	CGAL::Qt_view_show_voronoi < Delaunay >		*showV;
-	CGAL::Qt_view_show_points < Delaunay >		*showP;
-	CGAL::Qt_view_nearest_vertex < Delaunay >	*showNV;
-	CGAL::Qt_view_mouse_coordinates			*showMC;
+	CGAL::Qt_layer_show_triangulation < Delaunay >	*showT;
+	CGAL::Qt_layer_show_voronoi < Delaunay >		*showV;
+	CGAL::Qt_layer_show_points < Delaunay >		*showP;
+	CGAL::Qt_layer_mouse_coordinates			*showMC;
 };//end class
 
 };//end namespace

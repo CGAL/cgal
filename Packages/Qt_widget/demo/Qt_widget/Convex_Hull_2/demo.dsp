@@ -111,7 +111,7 @@ SOURCE=.\Qt_widget_toolbar.C
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\src\CGALQt\Qt_widget_view.C
+SOURCE=..\..\..\src\CGALQt\Qt_widget_layer.C
 # End Source File
 # End Group
 # Begin Group "Header Files"

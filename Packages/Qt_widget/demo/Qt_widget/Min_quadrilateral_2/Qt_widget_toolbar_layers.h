@@ -8,7 +8,7 @@
 //
 // ----------------------------------------------------------------------------
 //
-// file          : include/CGAL/IO/Qt_Window_toolbar_views.h
+// file          : include/CGAL/IO/Qt_Window_toolbar_layers.h
 // package       : QT_window
 // author(s)     : Radu Ursu
 // release       : 
@@ -18,16 +18,16 @@
 //
 // ============================================================================
 
-#ifndef CGAL_QT_WINDOW_TOOLBAR_VIEWS_H
-#define CGAL_QT_WINDOW_TOOLBAR_VIEWS_H
+#ifndef CGAL_QT_WINDOW_TOOLBAR_LAYERS_H
+#define CGAL_QT_WINDOW_TOOLBAR_LAYERS_H
 
 #include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/IO/Qt_widget.h>
 
-#include "min_quadrilateral_views.h"
-#include <CGAL/IO/Qt_view_show_mouse_coordinates.h>
+#include "min_quadrilateral_layers.h"
+#include <CGAL/IO/Qt_layer_show_mouse_coordinates.h>
 
 #include <qobject.h>
 #include <qtoolbutton.h>
@@ -40,12 +40,12 @@ typedef Rp::Point_2   Point;
 
 namespace CGAL {
 
-class Views_toolbar : public QObject
+class Layers_toolbar : public QObject
 {
 	Q_OBJECT
 public:
-  Views_toolbar(Qt_widget *w, QMainWindow *mw, std::list<Point>	*l_of_p);
-	~Views_toolbar()
+  Layers_toolbar(Qt_widget *w, QMainWindow *mw, std::list<Point>	*l_of_p);
+	~Layers_toolbar()
 	{
 		delete maintoolbar;
 	};
@@ -68,11 +68,11 @@ private:
 	QMainWindow		*window;
 	int			nr_of_buttons;
 	
-	CGAL::Qt_view_mouse_coordinates	  *showMC;
-	Qt_view_show_points<Rp>		  *showP;
-	Qt_view_show_parallelogram<Rp>	  *showPL;
-	Qt_view_show_strip<Rp>	  *showLS;
-	Qt_view_show_rectangle<Rp>	  *showR;
+	CGAL::Qt_layer_mouse_coordinates	  *showMC;
+	Qt_layer_show_points<Rp>		  *showP;
+	Qt_layer_show_parallelogram<Rp>	  *showPL;
+	Qt_layer_show_strip<Rp>	  *showLS;
+	Qt_layer_show_rectangle<Rp>	  *showR;
 };//end class
 
 };//end namespace

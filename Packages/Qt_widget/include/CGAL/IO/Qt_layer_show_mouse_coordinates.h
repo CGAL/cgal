@@ -8,7 +8,7 @@
 //
 // ----------------------------------------------------------------------------
 //
-// file          : include/CGAL/IO/Qt_view_show_mouse_coordinates.h
+// file          : include/CGAL/IO/Qt_layer_show_mouse_coordinates.h
 // package       : Qt_widget
 // author(s)     : Ursu Radu
 // release       : 
@@ -18,10 +18,10 @@
 //
 // ============================================================================
 
-#ifndef CGAL_QT_VIEW_MOUSE_COORDINATES_H
-#define CGAL_QT_VIEW_MOUSE_COORDINATES_H
+#ifndef CGAL_QT_LAYER_MOUSE_COORDINATES_H
+#define CGAL_QT_LAYER_MOUSE_COORDINATES_H
 
-#include <CGAL/IO/Qt_widget_view.h>
+#include <CGAL/IO/Qt_widget_layer.h>
 #include <qobject.h>
 #include <qmainwindow.h>
 #include <qstatusbar.h>
@@ -29,11 +29,11 @@
 
 namespace CGAL {
 
-class Qt_view_mouse_coordinates : public Qt_widget_view
+class Qt_layer_mouse_coordinates : public Qt_widget_layer
 {
 public:
 	
-  Qt_view_mouse_coordinates(QMainWindow &mw) : qmw(mw){};
+  Qt_layer_mouse_coordinates(QMainWindow &mw) : qmw(mw){};
   void draw(Qt_widget &widget){};
   void mouseMoveEvent(QMouseEvent *e, Qt_widget &widget)
   {

@@ -8,7 +8,7 @@
 //
 // ----------------------------------------------------------------------------
 //
-// file          : include/CGAL/IO/Qt_view_show_polygon_points.h
+// file          : include/CGAL/IO/Qt_layer_show_voronoy.h
 // package       : Qt_widget
 // author(s)     : Radu Ursu
 // release       : 
@@ -18,42 +18,31 @@
 //
 // ============================================================================
 
-#ifndef CGAL_QT_VIEW_SHOW_POLYGON_POINTS_H
-#define CGAL_QT_VIEW_SHOW_POLYGON_POINTS_H
+#ifndef CGAL_QT_LAYER_SHOW_VORONOI_H
+#define CGAL_QT_LAYER_SHOW_VORONOI_H
 
-#include <CGAL/IO/Qt_widget_view.h>
+
 #include <qobject.h>
-
+#include <CGAL/IO/Qt_widget_layer.h>
 
 namespace CGAL {
 
 template <class T>
-class Qt_view_show_polygon_points : public Qt_widget_view
+class Qt_layer_show_voronoi : public Qt_widget_layer
 {
-  typedef typename T::Point_2	Point_2;
 public:
-  
+  Qt_layer_show_voronoi(T &t1) : tr(t1){};
 
-  Qt_view_show_polygon_points(T &p) : polygon(p){};
   void draw(Qt_widget &widget)
   {
-    typename T::const_iterator vert_it;
-
-    
-    for (vert_it = polygon.vertices_begin(); 
-		vert_it != polygon.vertices_end(); vert_it++)
-    {
-      
-      widget << CGAL::GREEN << CGAL::PointSize (5) 
-			<< CGAL::PointStyle (CGAL::DISC);
-      widget << Point_2((*vert_it).x(), (*vert_it).y());
-    }
+    widget << CGAL::RED ;
+    tr.draw_dual(widget);
   };
 	
 private:
-  T &polygon;
+  T	&tr;
 };//end class 
 
 } // namespace CGAL
 
-#endif // CGAL_QT_VIEW_SHOW_POLYGON_POINTS_H
+#endif // CGAL_QT_LAYER_SHOW_VORONOI_H

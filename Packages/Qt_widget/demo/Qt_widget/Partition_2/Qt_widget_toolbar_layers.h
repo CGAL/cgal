@@ -8,7 +8,7 @@
 //
 // ----------------------------------------------------------------------------
 //
-// file          : include/CGAL/IO/Qt_Window_toolbar_views.h
+// file          : include/CGAL/IO/Qt_Window_toolbar_layers.h
 // package       : QT_window
 // author(s)     : Radu Ursu
 // release       : 
@@ -18,8 +18,8 @@
 //
 // ============================================================================
 
-#ifndef CGAL_QT_WINDOW_TOOLBAR_VIEWS_H
-#define CGAL_QT_WINDOW_TOOLBAR_VIEWS_H
+#ifndef CGAL_QT_WINDOW_TOOLBAR_LAYERS_H
+#define CGAL_QT_WINDOW_TOOLBAR_LAYERS_H
 
 #include <list>
 
@@ -41,19 +41,19 @@ typedef Traits::Polygon_2                                 Polygon;
 
 namespace CGAL {
 
-class Qt_view_mouse_coordinates;
-template <class T> class Qt_view_show_polygon;
-template <class T> class Qt_view_show_greene_approx;
-template <class T> class Qt_view_show_ymonotone;
-template <class T> class Qt_view_show_optimal_convex;
-template <class T> class Qt_view_show_polygon_points;
+class Qt_layer_mouse_coordinates;
+template <class T> class Qt_layer_show_polygon;
+template <class T> class Qt_layer_show_greene_approx;
+template <class T> class Qt_layer_show_ymonotone;
+template <class T> class Qt_layer_show_optimal_convex;
+template <class T> class Qt_layer_show_polygon_points;
 
-class Views_toolbar : public QObject
+class Layers_toolbar : public QObject
 {
   Q_OBJECT
 public:
-  Views_toolbar(Qt_widget *w, QMainWindow *mw, Polygon *p);
-  ~Views_toolbar()
+  Layers_toolbar(Qt_widget *w, QMainWindow *mw, Polygon *p);
+  ~Layers_toolbar()
   {
     delete maintoolbar;
   };
@@ -77,12 +77,12 @@ private:
   QMainWindow		*window;	
   int			nr_of_buttons;
 
-  CGAL::Qt_view_mouse_coordinates		*showMC;
-  CGAL::Qt_view_show_polygon <Polygon>		*showP;
-  CGAL::Qt_view_show_greene_approx <Polygon >	*showGA;
-  CGAL::Qt_view_show_ymonotone <Polygon>	*showYM;
-  CGAL::Qt_view_show_optimal_convex <Polygon>	*showOC;
-  CGAL::Qt_view_show_polygon_points <Polygon>	*showPP;
+  CGAL::Qt_layer_mouse_coordinates		*showMC;
+  CGAL::Qt_layer_show_polygon <Polygon>		*showP;
+  CGAL::Qt_layer_show_greene_approx <Polygon >	*showGA;
+  CGAL::Qt_layer_show_ymonotone <Polygon>	*showYM;
+  CGAL::Qt_layer_show_optimal_convex <Polygon>	*showOC;
+  CGAL::Qt_layer_show_polygon_points <Polygon>	*showPP;
 
 };//end class
 

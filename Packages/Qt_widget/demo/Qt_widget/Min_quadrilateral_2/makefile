@@ -38,12 +38,12 @@ all: min_quadrilateral_2
 Qt_widget_toolbar$(OBJ_EXT): Qt_widget_toolbar.C Qt_widget_toolbar.moc
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) Qt_widget_toolbar.C
 
-Qt_widget_toolbar_views.moc: Qt_widget_toolbar_views.h
-	$(QT_MOC) -o Qt_widget_toolbar_views.moc $<
+Qt_widget_toolbar_layers.moc: Qt_widget_toolbar_layers.h
+	$(QT_MOC) -o Qt_widget_toolbar_layers.moc $<
 
-Qt_widget_toolbar_views$(OBJ_EXT): Qt_widget_toolbar_views.C \
-                                   Qt_widget_toolbar_views.moc 
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) Qt_widget_toolbar_views.C
+Qt_widget_toolbar_layers$(OBJ_EXT): Qt_widget_toolbar_layers.C \
+                                   Qt_widget_toolbar_layers.moc 
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) Qt_widget_toolbar_layers.C
 
 Qt_widget_toolbar.moc: Qt_widget_toolbar.h
 	$(QT_MOC) -o Qt_widget_toolbar.moc $<
@@ -55,15 +55,15 @@ min_quadrilateral_2$(OBJ_EXT): min_quadrilateral_2.C min_quadrilateral_2.moc
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) min_quadrilateral_2.C
 
 min_quadrilateral_2$(EXE_EXT): min_quadrilateral_2$(OBJ_EXT) \
-                               Qt_widget_toolbar_views$(OBJ_EXT) \
+                               Qt_widget_toolbar_layers$(OBJ_EXT) \
                                Qt_widget_toolbar$(OBJ_EXT)
 	$(CGAL_CXX) $(EXE_OPT)min_quadrilateral_2 \
 min_quadrilateral_2$(OBJ_EXT) Qt_widget_toolbar$(OBJ_EXT) \
-Qt_widget_toolbar_views$(OBJ_EXT) $(LDFLAGS)
+Qt_widget_toolbar_layers$(OBJ_EXT) $(LDFLAGS)
 
 clean: min_quadrilateral_2.clean \
        Qt_widget_toolbar.clean \
-       Qt_widget_toolbar_views.clean
+       Qt_widget_toolbar_layers.clean
 
 #---------------------------------------------------------------------#
 #                    suffix rules

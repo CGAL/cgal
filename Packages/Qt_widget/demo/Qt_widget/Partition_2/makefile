@@ -40,16 +40,16 @@ Qt_widget_toolbar$(OBJ_EXT): Qt_widget_toolbar.C Qt_widget_toolbar.moc
 Qt_widget_toolbar.moc: Qt_widget_toolbar.h
 	$(QT_MOC) -o Qt_widget_toolbar.moc $<
 
-Qt_widget_toolbar_views$(OBJ_EXT): Qt_widget_toolbar_views.C \
-		Qt_widget_toolbar_views.moc
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) Qt_widget_toolbar_views.C
+Qt_widget_toolbar_layers$(OBJ_EXT): Qt_widget_toolbar_layers.C \
+		Qt_widget_toolbar_layers.moc
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) Qt_widget_toolbar_layers.C
 
-Qt_widget_toolbar_views.moc: Qt_widget_toolbar_views.h
-	$(QT_MOC) -o Qt_widget_toolbar_views.moc $<
+Qt_widget_toolbar_layers.moc: Qt_widget_toolbar_layers.h
+	$(QT_MOC) -o Qt_widget_toolbar_layers.moc $<
 
 partition_2.moc: partition_2.C \
 		 Qt_widget_toolbar$(OBJ_EXT) \
-		 Qt_widget_toolbar_views$(OBJ_EXT)
+		 Qt_widget_toolbar_layers$(OBJ_EXT)
 	${QT_MOC} -o partition_2.moc partition_2.C
 
 partition_2$(OBJ_EXT): partition_2.C partition_2.moc
@@ -58,10 +58,10 @@ partition_2$(OBJ_EXT): partition_2.C partition_2.moc
 partition_2$(EXE_EXT): partition_2$(OBJ_EXT)
 	$(CGAL_CXX) $(EXE_OPT)partition_2 partition_2$(OBJ_EXT) \
 		Qt_widget_toolbar$(OBJ_EXT) \
-		Qt_widget_toolbar_views$(OBJ_EXT) $(LDFLAGS)
+		Qt_widget_toolbar_layers$(OBJ_EXT) $(LDFLAGS)
 
 clean: partition_2.clean \
-       Qt_widget_toolbar_views.clean \
+       Qt_widget_toolbar_layers.clean \
        Qt_widget_toolbar.clean
 
 #---------------------------------------------------------------------#

@@ -5,7 +5,7 @@ The fourth tutorial shows how to create a more complex application
 using the Qt class QMainWindow. With this class you can create a
 MDI(Multiple document interface) application.
 
-For drawing, the tutorial use the same view as for the previous one
+For drawing, the tutorial use the same layer as for the previous one
 but this time we use another class QMainWindow, as the main frame of
 the application. Further down is described how the flow is:
 
@@ -44,7 +44,7 @@ This lines tells the application that My_window is a parent for
 My_widget. Try to comment this lines to see what happens. Two
 windows will appear, one for My_window and one for My_widget.
 
-In the constructor it is win.attach(&v); This way, the view is
+In the constructor it is win.attach(&v); This way, the layer is
 attached by My_widget. The rest of the code does the same thing as the
 previous tutorials: insert a new point in a Delaunay triangulation and
 draw the triangulation every time you click on the window.

@@ -8,7 +8,7 @@
 //
 // ----------------------------------------------------------------------------
 //
-// file          : src/Qt_Window_toolbar_views.C
+// file          : src/Qt_Window_toolbar_layers.C
 // package       : QT_window
 // author(s)     : Ursu Radu
 // release       : 
@@ -21,7 +21,7 @@
 
 #ifdef CGAL_USE_QT
 
-#include "Qt_widget_toolbar_views.h"
+#include "Qt_widget_toolbar_layers.h"
 
 // icons
 #include <CGAL/IO/pixmaps/points.xpm>
@@ -32,14 +32,14 @@
 
 
 namespace CGAL {
-  Views_toolbar::Views_toolbar(Qt_widget *w, QMainWindow *mw, Delaunay *t) : 
+  Layers_toolbar::Layers_toolbar(Qt_widget *w, QMainWindow *mw, Delaunay *t) : 
     dt(t), nr_of_buttons(0)
   {
-    showT   = new Qt_view_show_triangulation< Delaunay >(*t);
-    showV   = new Qt_view_show_voronoi< Delaunay >(*t);
-    showP   = new Qt_view_show_points< Delaunay >(*t);
-    showNV  = new Qt_view_nearest_vertex< Delaunay >(*t);
-    showMC  = new Qt_view_mouse_coordinates(*mw);
+    showT   = new Qt_layer_show_triangulation< Delaunay >(*t);
+    showV   = new Qt_layer_show_voronoi< Delaunay >(*t);
+    showP   = new Qt_layer_show_points< Delaunay >(*t);
+    showNV  = new Qt_layer_nearest_vertex< Delaunay >(*t);
+    showMC  = new Qt_layer_mouse_coordinates(*mw);
 
     //set the widget
     widget = w;
@@ -106,7 +106,7 @@ namespace CGAL {
     }
     but[2]->toggle();
   }
-  void Views_toolbar::draw_triangulation()
+  void Layers_toolbar::draw_triangulation()
   {
     if (but[0]->isOn())
     {
@@ -117,7 +117,7 @@ namespace CGAL {
     widget->redraw();
   }
 
-  void Views_toolbar::draw_voronoi()
+  void Layers_toolbar::draw_voronoi()
   {
     if (but[1]->isOn())
     {
@@ -127,7 +127,7 @@ namespace CGAL {
     }
     widget->redraw();
   }
-  void Views_toolbar::draw_nearest_vertex()
+  void Layers_toolbar::draw_nearest_vertex()
   {
     if (but[2]->isOn())
     {
@@ -136,7 +136,7 @@ namespace CGAL {
       widget->deactivate(showNV);
     }
   }
-  void Views_toolbar::draw_points()
+  void Layers_toolbar::draw_points()
   {
     if (but[3]->isOn())
     {
@@ -147,7 +147,7 @@ namespace CGAL {
     widget->redraw();
   }
 	
-  void Views_toolbar::show_coordinates()
+  void Layers_toolbar::show_coordinates()
   {
     if (but[4]->isOn())
     {
@@ -162,6 +162,6 @@ namespace CGAL {
   
 }//end namespace
 
-#include "Qt_widget_toolbar_views.moc"
+#include "Qt_widget_toolbar_layers.moc"
 
 #endif

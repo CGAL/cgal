@@ -36,7 +36,7 @@ There is another line in the redraw():
 	Qt_widget::redraw();
 
 This line is meant to call the redraw() from the Qt_widget base class,
-used to draw the attached views as you'll see later. This function
+used to draw the attached layers as you'll see later. This function
 also clears the screen. If you remove this line it's necessary to add
 clear() instead.
 

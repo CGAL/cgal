@@ -8,7 +8,7 @@
 //
 // ----------------------------------------------------------------------------
 //
-// file          : include/CGAL/IO/Qt_view_show_points.h
+// file          : include/CGAL/IO/Qt_layer_show_points.h
 // package       : Qt_widget
 // author(s)     : Radu Ursu
 // release       : 
@@ -18,24 +18,24 @@
 //
 // ============================================================================
 
-#ifndef CGAL_QT_VIEW_SHOW_POINTS_H
-#define CGAL_QT_VIEW_SHOW_POINTS_H
+#ifndef CGAL_QT_LAYER_SHOW_POINTS_H
+#define CGAL_QT_LAYER_SHOW_POINTS_H
 
-#include <CGAL/IO/Qt_widget_view.h>
+#include <CGAL/IO/Qt_widget_layer.h>
 #include <qobject.h>
 
 
 namespace CGAL {
 
 template <class T>
-class Qt_view_show_points : public Qt_widget_view {
+class Qt_layer_show_points : public Qt_widget_layer {
 public:
   typedef typename T::Point		Point;
   typedef typename T::Segment		Segment;
   typedef typename T::Vertex		Vertex;
   typedef typename T::Vertex_iterator	Vertex_iterator;
 
-  Qt_view_show_points(T &t) : tr(t){};
+  Qt_layer_show_points(T &t) : tr(t){};
 
   void draw(Qt_widget &widget)
   {
@@ -58,4 +58,4 @@ private:
 
 } // namespace CGAL
 
-#endif // CGAL_QT_VIEW_SHOW_POINTS_H
+#endif // CGAL_QT_LAYER_SHOW_POINTS_H

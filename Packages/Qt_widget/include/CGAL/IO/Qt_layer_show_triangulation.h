@@ -8,7 +8,7 @@
 //
 // ----------------------------------------------------------------------------
 //
-// file          : include/CGAL/IO/Qt_view_show_polygon.h
+// file          : include/CGAL/IO/Qt_layer_show_triangulation.h
 // package       : Qt_widget
 // author(s)     : Radu Ursu
 // release       : 
@@ -18,37 +18,31 @@
 //
 // ============================================================================
 
-#ifndef CGAL_QT_VIEW_SHOW_POLYGON_H
-#define CGAL_QT_VIEW_SHOW_POLYGON_H
+#ifndef CGAL_QT_LAYER_SHOW_TRIANGULATION_H
+#define CGAL_QT_LAYER_SHOW_TRIANGULATION_H
 
-#include <CGAL/IO/Qt_widget_view.h>
-#include <qobject.h>
-
-
-
+#include <CGAL/IO/Qt_widget_layer.h>
 
 namespace CGAL {
 
 template <class T>
-class Qt_view_show_polygon : public Qt_widget_view
+class Qt_layer_show_triangulation : public Qt_widget_layer
 {
 public:
-  
-  Qt_view_show_polygon(T &p) : polygon(p){};
+	
+  Qt_layer_show_triangulation(T &t) : tr(t){};
+
+
   void draw(Qt_widget &widget)
   {
-    widget << LineWidth(3);
     widget << CGAL::BLUE; 
-    widget << polygon;
-    widget << LineWidth(1);
-    widget << CGAL::WHITE; 
-    widget << polygon;
+    widget << tr;
   };
 	
 private:
-  T &polygon;
+  T &tr;
 };//end class 
 
 } // namespace CGAL
 
-#endif // CGAL_QT_VIEW_SHOW_POLYGON_H
+#endif // CGAL_QT_LAYER_SHOW_TRIANGULATION_H

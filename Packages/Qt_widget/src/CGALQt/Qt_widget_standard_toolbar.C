@@ -83,12 +83,12 @@ namespace CGAL {
 			     "Zoom in a certain region");
     
     but[4] = new QToolButton(QPixmap( (const char**)zoomin_rect_xpm ),
-			     "View rectangle", 
+			     "Layer rectangle", 
 			     0, 
 			     this, 
 			     SLOT(zoominrect()), 
 			     maintoolbar, 
-			     "View rectangle");
+			     "Layer rectangle");
 		
     		
     but[5] = new QToolButton(QPixmap( (const char**)hand_xpm ),

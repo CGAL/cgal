@@ -29,7 +29,7 @@ int main(int, char*)
 #include <CGAL/IO/Qt_widget.h>
 #include "Qt_widget_toolbar.h"
 #include <CGAL/IO/Qt_widget_standard_toolbar.h>
-#include <CGAL/IO/Qt_widget_view.h>
+#include <CGAL/IO/Qt_widget_layer.h>
 
 #include <qplatinumstyle.h>
 #include <qapplication.h>
@@ -62,11 +62,11 @@ int current_state;
 std::list<Point>	  list_of_points;
 
 
-class Qt_view_show_ch : public CGAL::Qt_widget_view
+class Qt_layer_show_ch : public CGAL::Qt_widget_layer
 {
 public:
 	
-  Qt_view_show_ch(){};
+  Qt_layer_show_ch(){};
 
 
   void draw(CGAL::Qt_widget &win)
@@ -149,8 +149,8 @@ public:
   //application flag stuff
   old_state = 0;
 
-  //views
-  win.attach(&testview);
+  //layers
+  win.attach(&testlayer);
   };
 
   ~MyWindow()
@@ -200,7 +200,7 @@ private slots:
 
   void new_window(){
     MyWindow *ed = new MyWindow(500, 500);
-    ed->setCaption("View");
+    ed->setCaption("Layer");
     ed->show();
     ed->set_window(-1.1, 1.1, -1.1, 1.1);
     something_changed();
@@ -233,7 +233,7 @@ private:
   CGAL::Tools_toolbar	  *newtoolbar;
   CGAL::Standard_toolbar  *stoolbar;
   int			  old_state;  	
-  Qt_view_show_ch	  testview;
+  Qt_layer_show_ch	  testlayer;
 };
 
 #include "min_ellipse_2.moc"

@@ -8,7 +8,7 @@
 //
 // ----------------------------------------------------------------------------
 //
-// file          : src/Qt_Window_toolbar_views.C
+// file          : src/Qt_Window_toolbar_layers.C
 // package       : QT_window
 // author(s)     : Ursu Radu
 // release       : 
@@ -21,13 +21,13 @@
 
 #ifdef CGAL_USE_QT
 
-#include "Qt_widget_toolbar_views.h"
-#include <CGAL/IO/Qt_view_show_mouse_coordinates.h>
-#include <CGAL/IO/Qt_view_show_polygon.h>
-#include <CGAL/IO/Qt_view_show_greene_approximation.h>
-#include <CGAL/IO/Qt_view_show_ymonotone.h>
-#include <CGAL/IO/Qt_view_show_optimal_convex_partition.h>
-#include <CGAL/IO/Qt_view_show_polygon_points.h>
+#include "Qt_widget_toolbar_layers.h"
+#include <CGAL/IO/Qt_layer_show_mouse_coordinates.h>
+#include <CGAL/IO/Qt_layer_show_polygon.h>
+#include <CGAL/IO/Qt_layer_show_greene_approximation.h>
+#include <CGAL/IO/Qt_layer_show_ymonotone.h>
+#include <CGAL/IO/Qt_layer_show_optimal_convex_partition.h>
+#include <CGAL/IO/Qt_layer_show_polygon_points.h>
 
 // icons
 #include <CGAL/IO/pixmaps/mouse_coord.xpm>
@@ -39,15 +39,15 @@
 
 
 namespace CGAL {
-  Views_toolbar::Views_toolbar(Qt_widget *w, QMainWindow *mw, Polygon *p) : 
+  Layers_toolbar::Layers_toolbar(Qt_widget *w, QMainWindow *mw, Polygon *p) : 
      nr_of_buttons(0)
   {
-    showMC = new Qt_view_mouse_coordinates(*mw);
-    showP = new Qt_view_show_polygon<Polygon>(*p);
-    showGA = new Qt_view_show_greene_approx<Polygon>(*p);
-    showYM = new Qt_view_show_ymonotone<Polygon>(*p);
-    showOC = new Qt_view_show_optimal_convex<Polygon>(*p);
-    showPP = new Qt_view_show_polygon_points<Polygon>(*p);
+    showMC = new Qt_layer_mouse_coordinates(*mw);
+    showP = new Qt_layer_show_polygon<Polygon>(*p);
+    showGA = new Qt_layer_show_greene_approx<Polygon>(*p);
+    showYM = new Qt_layer_show_ymonotone<Polygon>(*p);
+    showOC = new Qt_layer_show_optimal_convex<Polygon>(*p);
+    showPP = new Qt_layer_show_polygon_points<Polygon>(*p);
 
     //set the widget
     widget = w;
@@ -122,7 +122,7 @@ namespace CGAL {
     }
 			    
   }	
-  void Views_toolbar::show_coordinates()
+  void Layers_toolbar::show_coordinates()
   {
     if (but[0]->isOn())
     {
@@ -134,7 +134,7 @@ namespace CGAL {
     }
   }
   
-  void Views_toolbar::show_polygon()
+  void Layers_toolbar::show_polygon()
   {
     if (but[1]->isOn())
     {
@@ -145,7 +145,7 @@ namespace CGAL {
     widget->redraw();
   }
 
-  void Views_toolbar::show_greene_approx()
+  void Layers_toolbar::show_greene_approx()
   {
     if (but[2]->isOn())
     {
@@ -155,7 +155,7 @@ namespace CGAL {
     }
     widget->redraw();
   }
-  void Views_toolbar::show_ymonotone()
+  void Layers_toolbar::show_ymonotone()
   {
     if (but[3]->isOn())
     {
@@ -165,7 +165,7 @@ namespace CGAL {
     }
     widget->redraw();
   }
-  void Views_toolbar::show_optimal()
+  void Layers_toolbar::show_optimal()
   {
     if (but[4]->isOn())
     {
@@ -175,7 +175,7 @@ namespace CGAL {
     }
     widget->redraw();
   }
-  void Views_toolbar::show_points()
+  void Layers_toolbar::show_points()
   {
     if (but[5]->isOn())
     {
@@ -189,6 +189,6 @@ namespace CGAL {
   
 }//end namespace
 
-#include "Qt_widget_toolbar_views.moc"
+#include "Qt_widget_toolbar_layers.moc"
 
 #endif

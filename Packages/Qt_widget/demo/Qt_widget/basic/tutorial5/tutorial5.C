@@ -7,7 +7,7 @@
 #include <qmainwindow.h>
 
 #include <CGAL/IO/Qt_widget.h>
-#include <CGAL/IO/Qt_widget_view.h>
+#include <CGAL/IO/Qt_widget_layer.h>
 #include <CGAL/IO/Qt_widget_standard_toolbar.h>
 
 typedef CGAL::Cartesian<double>		    Rep;
@@ -16,7 +16,7 @@ typedef CGAL::Delaunay_triangulation_2<Rep> Delaunay;
 
 Delaunay dt;
 
-class My_View : public CGAL::Qt_widget_view{
+class My_Layer : public CGAL::Qt_widget_layer{
   void draw(CGAL::Qt_widget& win){
     win << CGAL::BLACK;
     win << dt;
@@ -54,7 +54,7 @@ public:
   }
 private:
   My_Widget win;
-  My_View v;
+  My_Layer v;
   CGAL::Standard_toolbar *stoolbar;
 };
 

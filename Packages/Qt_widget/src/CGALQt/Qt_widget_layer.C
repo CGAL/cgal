@@ -8,7 +8,7 @@
 //
 // ----------------------------------------------------------------------------
 //
-// file          : include/CGAL/IO/Qt_widget_view.C
+// file          : include/CGAL/IO/Qt_widget_layer.C
 // package       : Qt_widget
 // author(s)     : Laurent Rineau & Radu Ursu
 // release       : 
@@ -20,14 +20,14 @@
 
 #ifdef CGAL_USE_QT
 
-#include <CGAL/IO/Qt_widget_view.h>
+#include <CGAL/IO/Qt_widget_layer.h>
 
 namespace CGAL {
 
-Qt_widget_view::~Qt_widget_view() { emit(dying(this)); };
+Qt_widget_layer::~Qt_widget_layer() { emit(dying(this)); };
 
 } // namespace CGAL
 
-#include "Qt_widget_view.moc"
+#include "Qt_widget_layer.moc"
 
 #endif // CGAL_USE_QT

@@ -102,21 +102,21 @@ tool is already attached this ges detached first.}
 
 \ccMethod{void detach_current_tool();}{Detaches the current tool from the widget.}
 
-%VIEWS
-\ccHeading{Views}
-\ccMethod{void attach(Qt_widget_view* s);}{Add the view s in the list of 
-views.The last added will be on top of the screen.}
-\ccMethod{void detach(Qt_widget_view* s);}{Remove the view s from the list. 
-s it's a pointer to an existing view.}
-\ccMethod{void activate(Qt_widget_view* s);}{Activate a view. s it's a 
-pointer to an existing attached view.}
-\ccMethod{void deactivate(Qt_widget_view* s);}{Deactivate a view. When you'll
-deactivate a view, that view will keep the order in the list of views. s it's
-a pointer to an existing attached view.}
+%LAYERS
+\ccHeading{Layers}
+\ccMethod{void attach(Qt_widget_layer* s);}{Add the layer s in the list of 
+layers.The last added will be on top of the screen.}
+\ccMethod{void detach(Qt_widget_layer* s);}{Remove the layer s from the list. 
+s it's a pointer to an existing layer.}
+\ccMethod{void activate(Qt_widget_layer* s);}{Activate a layer. s it's a 
+pointer to an existing attached layer.}
+\ccMethod{void deactivate(Qt_widget_layer* s);}{Deactivate a layer. When you'll
+deactivate a layer, that layer will keep the order in the list of layers. s it's
+a pointer to an existing attached layer.}
 \ccMethod{void redraw();}{If you derive from \ccc{Qt_widget} you have to 
 overload this function and put your code for drawing here if you don't use 
-\ccc{views}. Redraw the views situated in the list. Before 
-redraw the views, clears the screen. Also calls \ccc{widget\_repainted()} for 
+\ccc{layers}. Redraw the layers situated in the list. Before 
+redraw the layers, clears the screen. Also calls \ccc{widget\_repainted()} for 
 current tool.}
 
 %Cgal
@@ -158,7 +158,7 @@ the objects. The color returned is a Qt class.}
 %PAINTER
 \ccHeading{Painter and Pixmap}
 
-In order that views can draw on the drawing area of a widget, they have to access
+In order that layers can draw on the drawing area of a widget, they have to access
 the underlying pixmap and painter.
  
 \ccStyle{Qt_widget} use as a backbuffer for drawing a pixmap

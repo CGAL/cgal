@@ -8,7 +8,7 @@
 //
 // ----------------------------------------------------------------------------
 //
-// file          : include/CGAL/IO/Qt_view_show_voronoy.h
+// file          : include/CGAL/IO/Qt_layer_show_polygon.h
 // package       : Qt_widget
 // author(s)     : Radu Ursu
 // release       : 
@@ -18,31 +18,37 @@
 //
 // ============================================================================
 
-#ifndef CGAL_QT_VIEW_SHOW_VORONOI_H
-#define CGAL_QT_VIEW_SHOW_VORONOI_H
+#ifndef CGAL_QT_LAYER_SHOW_POLYGON_H
+#define CGAL_QT_LAYER_SHOW_POLYGON_H
 
-
+#include <CGAL/IO/Qt_widget_layer.h>
 #include <qobject.h>
-#include <CGAL/IO/Qt_widget_view.h>
+
+
+
 
 namespace CGAL {
 
 template <class T>
-class Qt_view_show_voronoi : public Qt_widget_view
+class Qt_layer_show_polygon : public Qt_widget_layer
 {
 public:
-  Qt_view_show_voronoi(T &t1) : tr(t1){};
-
+  
+  Qt_layer_show_polygon(T &p) : polygon(p){};
   void draw(Qt_widget &widget)
   {
-    widget << CGAL::RED ;
-    tr.draw_dual(widget);
+    widget << LineWidth(3);
+    widget << CGAL::BLUE; 
+    widget << polygon;
+    widget << LineWidth(1);
+    widget << CGAL::WHITE; 
+    widget << polygon;
   };
 	
 private:
-  T	&tr;
+  T &polygon;
 };//end class 
 
 } // namespace CGAL
 
-#endif // CGAL_QT_VIEW_SHOW_VORONOI_H
+#endif // CGAL_QT_LAYER_SHOW_POLYGON_H
