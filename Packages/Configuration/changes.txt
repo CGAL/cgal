@@ -1,3 +1,6 @@
+2.4 (8 June 2000)
++ added CGAL_CFG_USING_USING_BUG.C
+
 //-----------------------------------------------------------------------//
 // 2.3
 + added CGAL_CFG_NO_ITERATOR_TRAITS.C again. install_cgal depended on this.
