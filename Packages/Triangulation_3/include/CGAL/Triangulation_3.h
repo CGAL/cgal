@@ -61,7 +61,6 @@ class Triangulation_3
   friend std::istream& operator>> CGAL_NULL_TMPL_ARGS
   (std::istream& is, Triangulation_3<GT,Tds> &tr);
 
-  class Infinite_tester;
   typedef Triangulation_3<GT, Tds>             Self;
 public:
   typedef Tds                                  Triangulation_data_structure;
@@ -92,6 +91,42 @@ public:
   typedef Facet_iterator                       All_facets_iterator;
   typedef Edge_iterator                        All_edges_iterator;
   typedef Vertex_iterator                      All_vertices_iterator;
+
+private:
+  // This class is used to generate the Finite_*_iterators.
+  class Infinite_tester
+  {
+      const Self *t;
+
+  public:
+
+      Infinite_tester() {}
+
+      Infinite_tester(const Self *tr)
+	  : t(tr) {}
+
+      bool operator()(const Vertex_iterator & v) const
+      {
+	  return t->is_infinite(v);
+      }
+
+      bool operator()(const Cell_iterator & c) const
+      {
+	  return t->is_infinite(c);
+      }
+
+      bool operator()(const Edge_iterator & e) const
+      {
+	  return t->is_infinite(*e);
+      }
+
+      bool operator()(const Facet_iterator & f) const
+      {
+	  return t->is_infinite(*f);
+      }
+  };
+
+public:
 
   // We derive in order to add a conversion to handle.
   class Finite_cells_iterator
@@ -741,38 +776,6 @@ private:
       }
   };
 
-  // This class is used to generate the Finite_*_iterators.
-  class Infinite_tester
-  {
-      const Self *t;
-
-  public:
-
-      Infinite_tester() {}
-
-      Infinite_tester(const Self *tr)
-	  : t(tr) {}
-
-      bool operator()(const Vertex_iterator & v) const
-      {
-	  return t->is_infinite(v);
-      }
-
-      bool operator()(const Cell_iterator & c) const
-      {
-	  return t->is_infinite(c);
-      }
-
-      bool operator()(const Edge_iterator & e) const
-      {
-	  return t->is_infinite(*e);
-      }
-
-      bool operator()(const Facet_iterator & f) const
-      {
-	  return t->is_infinite(*f);
-      }
-  };
 
   // They access "Self", so need to be friend.
   friend class Conflict_tester_outside_convex_hull_3;
@@ -2409,7 +2412,7 @@ insert_in_facet(const Point & p, Cell_handle c, int i)
   CGAL_triangulation_precondition( dimension() == 2 || dimension() == 3);
   CGAL_triangulation_precondition( (dimension() == 2 && i == 3)
 	                        || (dimension() == 3 && i >= 0 && i <= 3) );
-  CGAL_triangulation_precondition_code
+  CGAL_triangulation_exactness_precondition_code
     ( Locate_type lt;
       int li; int lj; );
   CGAL_triangulation_exactness_precondition
@@ -2437,7 +2440,7 @@ insert_in_edge(const Point & p, Cell_handle c, int i, int j)
   CGAL_triangulation_precondition( dimension() >= 1 && dimension() <= 3 );
   CGAL_triangulation_precondition( i >= 0 && i <= dimension() 
 				   && j >= 0 && j <= dimension() );
-  CGAL_triangulation_precondition_code( Locate_type lt; int li; );
+  CGAL_triangulation_exactness_precondition_code( Locate_type lt; int li; );
   switch ( dimension() ) {
   case 3:
   case 2:

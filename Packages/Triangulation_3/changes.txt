@@ -1,3 +1,7 @@
+Version 1.160 (2 July 03)
+- VC++ workaround.
+- Fix warnings introduced by last change.
+
 Version 1.159 (1 July 03)
 - Change the preconditions in insert_in_facet() and insert_in_edge() to be
   exactness preconditions.
