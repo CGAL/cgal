@@ -741,6 +741,7 @@ set_compiler_flags()
     # defaults:
     ADDITIONAL_CXXFLAGS=""
     ADDITIONAL_LDFLAGS=""
+    LONG_NAME_PROBLEM_CXXFLAGS=""
     LONG_NAME_PROBLEM_LDFLAGS=""
     CGAL_LIB_CXXFLAGS=""
     CGAL_LIB_LDFLAGS=""
@@ -934,6 +935,7 @@ set_compiler_flags()
 	*SunOS*5.*g++*)
 	    #### settings for gcc on solaris
 	    #ADDITIONAL_CXXFLAGS="-Wall"
+	    LONG_NAME_PROBLEM_CXXFLAGS="-g"
 	    LONG_NAME_PROBLEM_LDFLAGS="-z nodefs -s"
 	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -G"
 	    CGAL_WINLIB_CXXFLAGS="-fpermissive"
@@ -5468,7 +5470,8 @@ write_compiler_flags()
   print_as_shell_comment \
     "*** to work around the long-name-problem with sun as/ld" >> ${FILE}
   if [ -n "${LONG_NAME_PROBLEM}" ]; then
-    ${_printf} "%s\n\n" "LONG_NAME_PROBLEM_CXXFLAGS = -g" >> ${FILE}
+    ${_printf} "%s\n\n" "LONG_NAME_PROBLEM_CXXFLAGS = ${LONG_NAME_PROBLEM_CXXFLAGS}" \
+    >> ${FILE}
   else
     ${_printf} "%s\n\n" "LONG_NAME_PROBLEM_CXXFLAGS =" >> ${FILE}
   fi
