@@ -382,6 +382,10 @@ private:
       N = Nef_polyhedron(Plane_3(0,0,1,10));
       CGAL_assertion(N.is_valid(0,0));
       CGAL_assertion(does_nef3_equals_file(N,"cube+p0-0-1-10.nef3.EH")); 
+
+      N = Nef_polyhedron(Plane_3(1,1,1,1));
+      CGAL_assertion(N.is_valid(0,0));
+      CGAL_assertion(does_nef3_equals_file(N,"cube+p1-1-1-1.nef3.EH")); 
     }      
   }
 
