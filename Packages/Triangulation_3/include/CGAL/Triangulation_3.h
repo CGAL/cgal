@@ -41,8 +41,7 @@
 #include <CGAL/Triangulation_vertex_base_3.h>
 
 #include <CGAL/Triangulation_iterators_3.h>
-#include <CGAL/Dummy_output_iterator.h>
-#include <CGAL/Get_one_output_iterator.h>
+#include <CGAL/iterator.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -595,13 +594,13 @@ protected:
 
     // Find the cells in conflict
     if (dimension() == 3)
-	find_conflicts_3(c, tester, Get_one_output_iterator<Facet>(facet),
+	find_conflicts_3(c, tester, Oneset_iterator<Facet>(facet),
 		                    std::back_inserter(cells),
-				    Dummy_output_iterator());
+				    Emptyset_iterator());
     else
-	find_conflicts_2(c, tester, Get_one_output_iterator<Facet>(facet),
+	find_conflicts_2(c, tester, Oneset_iterator<Facet>(facet),
 		                    std::back_inserter(cells),
-				    Dummy_output_iterator());
+				    Emptyset_iterator());
 
     // Create the new cells and delete the old.
     return _tds._star_hole(w, cells.begin(), cells.end(),
