@@ -94,11 +94,11 @@ public:
   // degree(), point(), is_on_boundary, set_point(p)
 
   Vertex_circulator incident_vertices() const;
-  Vertex_circulator incident_vertices(const Face_handle& f) const;
+  Vertex_circulator incident_vertices(Face_handle f) const;
   Face_circulator incident_faces() const;
-  Face_circulator incident_faces(const Face_handle& f) const;
+  Face_circulator incident_faces(Face_handle f) const;
   Edge_circulator incident_edges() const;
-  Edge_circulator incident_edges(const Face_handle& f) const;
+  Edge_circulator incident_edges(Face_handle f) const;
    
 };
 
@@ -141,7 +141,7 @@ template<class Gt, class Tds>
 inline   
 Triangulation_vertex_circulator_2<Gt,Tds>
 Triangulation_vertex_2<Gt,Tds>::
-incident_vertices(const Face_handle& f) const
+incident_vertices(Face_handle f) const
 {
   return Vertex_circulator(handle(), f);
 } 
@@ -159,7 +159,7 @@ template<class Gt, class Tds>
 inline   
 Triangulation_face_circulator_2<Gt,Tds>
 Triangulation_vertex_2<Gt,Tds>::
-incident_faces(const Face_handle& f) const
+incident_faces(Face_handle f) const
 {
   return Face_circulator(handle(), f);
 }
@@ -177,7 +177,7 @@ template<class Gt, class Tds>
 inline   
 Triangulation_edge_circulator_2<Gt,Tds>
 Triangulation_vertex_2<Gt,Tds>:: 
-incident_edges(const Face_handle& f) const
+incident_edges(Face_handle f) const
 {
   return Edge_circulator(handle(), f);
 }

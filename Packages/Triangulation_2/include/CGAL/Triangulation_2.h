@@ -48,17 +48,6 @@
 
 CGAL_BEGIN_NAMESPACE
 
-
-// template < class Gt, class Tds>
-// class Triangulation_all_faces_iterator_2;
-
-// template < class Gt, class Tds>
-// class Triangulation_all_vertices__iterator_2;
-
-// template < class Gt, class Tds>
-// class Triangulation_all_edges_iterator_2;
-
-
 template < class Gt, class Tds >
 class Triangulation_2
   : public Triangulation_cw_ccw_2
@@ -287,15 +276,12 @@ public:
   All_edges_iterator all_edges_begin() const;
   All_edges_iterator all_edges_end() const; 
 
-  Face_circulator incident_faces( const Vertex_handle& v) const;
-  Face_circulator incident_faces( const Vertex_handle& v, 
-				  const Face_handle& f) const;
-  Vertex_circulator incident_vertices(const Vertex_handle& v) const;
-  Vertex_circulator incident_vertices(const Vertex_handle& v,
-				      const Face_handle& f) const;
-  Edge_circulator incident_edges(const Vertex_handle& v) const;
-  Edge_circulator incident_edges(const Vertex_handle& v,
-				 const Face_handle& f) const;
+  Face_circulator incident_faces( Vertex_handle v, 
+				  Face_handle f = Face_handle()) const;
+  Vertex_circulator incident_vertices(Vertex_handle v,
+				      Face_handle f = Face_handle()) const;
+  Edge_circulator incident_edges(Vertex_handle v,
+				 Face_handle f = Face_handle()) const;
  
   Line_face_circulator    line_walk(const Point& p,
 				    const Point& q,
@@ -1470,61 +1456,30 @@ template <class Gt, class Tds >
 inline
 Triangulation_2<Gt, Tds>::Face_circulator
 Triangulation_2<Gt, Tds>::
-incident_faces( const Vertex_handle& v) const
+incident_faces(Vertex_handle v, Face_handle f) const
 {
-  return v->incident_faces();
-}
-
-template <class Gt, class Tds >
-inline
-Triangulation_2<Gt, Tds>::Face_circulator
-Triangulation_2<Gt, Tds>::
-incident_faces( const Vertex_handle& v, const Face_handle& f) const
-{
-  return v->incident_faces(f);
+  return Face_circulator(v,f);
 }  
 
 template <class Gt, class Tds >
 inline
 Triangulation_2<Gt, Tds>::Vertex_circulator
-Triangulation_2<Gt, Tds>::
-incident_vertices(const Vertex_handle& v) const
-{
-  return v->incident_vertices();
-}
-
-template <class Gt, class Tds >
-inline
-Triangulation_2<Gt, Tds>::Vertex_circulator
 Triangulation_2<Gt, Tds>::  
-incident_vertices(const Vertex_handle& v,
-		  const Face_handle& f) const
+incident_vertices(Vertex_handle v,
+		  Face_handle f) const
 {
-  return v->incident_vertices(f);
-}
-
-template <class Gt, class Tds >
-inline
-Triangulation_2<Gt, Tds>::Edge_circulator
-Triangulation_2<Gt, Tds>::  
-incident_edges(const Vertex_handle& v) const
-{
-  return v->incident_edges();
+  return Vertex_circulator(v,f);
 }
 
 template <class Gt, class Tds >
 inline
 Triangulation_2<Gt, Tds>::Edge_circulator
 Triangulation_2<Gt, Tds>::    
-incident_edges(const Vertex_handle& v,
-	       const Face_handle& f) const
+incident_edges(Vertex_handle v,
+	       Face_handle f) const
 {
-  return v->incident_edges(f);
+  return Edge_circulator(v,f);
 }
-
-
-
-
 
 template <class Gt, class Tds >
 Triangulation_2<Gt, Tds>::Line_face_circulator  

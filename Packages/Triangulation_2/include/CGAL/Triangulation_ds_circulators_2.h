@@ -55,11 +55,6 @@ public:
   
   Triangulation_ds_face_circulator_2(const Vertex* v, const Face* f=NULL);
         
-//   Triangulation_ds_face_circulator_2(const Face_circulator &fc)
-//     : _v(fc._v), pos(fc.pos)
-//   {}
-        
-   
   Face_circulator& operator++();
   Face_circulator operator++(int);
   Face_circulator& operator--();
@@ -97,12 +92,6 @@ public:
                 
   Triangulation_ds_vertex_circulator_2(const Vertex* v,const Face* f = NULL);
        
-//   Triangulation_ds_vertex_circulator_2(const Vertex_circulator &vc)
-//     :  _v(vc._v), pos(vc.pos), _ri(vc._ri)
-//   {}
-              
-  //  Vertex_circulator &operator=(const Vertex_circulator &vc);
- 
   Vertex_circulator& operator++();
   Vertex_circulator  operator++(int);
   Vertex_circulator& operator--();
@@ -142,12 +131,6 @@ public:
             
    Triangulation_ds_edge_circulator_2( const Vertex* v, const Face* f=NULL);
 
- //   Triangulation_ds_edge_circulator_2(const Edge_circulator &vc)
-//     : _ri(vc._ri), _v(vc._v), pos(vc.pos)
-//   {}
-        
-  //  Edge_circulator &operator=(const Edge_circulator &vc);
- 
   Edge operator*() const ;
   Edge_circulator& operator++();
   Edge_circulator operator++(int);
@@ -295,18 +278,6 @@ Triangulation_ds_vertex_circulator_2 (const Vertex* v,  const Face* f)
   return;
 }
 
-// template < class Vertex, class Face >
-// inline 
-// Triangulation_ds_vertex_circulator_2<Vertex,Face>&
-// Triangulation_ds_vertex_circulator_2<Vertex,Face> ::
-// operator=(const Vertex_circulator &vc)
-// {
-//   _v = vc._v;
-//   _ri = vc._ri;
-//   pos = vc.pos;
-//   return *this;
-// }   
-
 
 template < class Vertex, class Face >
 Triangulation_ds_vertex_circulator_2<Vertex,Face>&
@@ -445,17 +416,6 @@ Triangulation_ds_edge_circulator_2(const Vertex* v, const Face* f)
   return;
 }
 
-// template < class Vertex, class Face >
-// inline
-// Triangulation_ds_edge_circulator_2<Vertex,Face>&
-// Triangulation_ds_edge_circulator_2<Vertex,Face> ::
-// operator=(const Edge_circulator &vc)
-// {
-//   _v = vc._v;
-//   _ri = vc._ri;
-//   pos = vc.pos;
-//   return *this;
-// }
 
 template < class Vertex, class Face >
 inline std::pair<Face*, int> 

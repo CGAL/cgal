@@ -133,17 +133,6 @@ public:
     else _bvc=Base_vertex_circulator(&(*v), &(*f));
    }
 
-//   Triangulation_vertex_circulator_2(const Vertex_circulator &vc)
-//     : _bvc(vc._bvc)
-//    {}
-
-//   Triangulation_vertex_circulator_2 &
-//       operator=(const Vertex_circulator &vc)
-//   {
-//     _bvc = vc._bvc;
-//     return *this;
-//   }
-
   Vertex_circulator& operator++()  { ++_bvc; return *this; }
   Vertex_circulator& operator--()  { --_bvc; return *this; }      
   Vertex_circulator operator++(int);
@@ -194,16 +183,6 @@ public:
       else _bec=Base_edge_circulator(&(*v), &(*f));
     }
   
-//    Triangulation_edge_circulator_2(const Edge_circulator &ec)
-//     : _bec(ec._bec)
-//     {}
-   
-//   Triangulation_edge_circulator_2 &operator=(const Edge_circulator &ec)
-//   {
-//     _bec = ec._bec;
-//     return *this;
-//   }
-
   Edge_circulator& operator++()  { ++_bec; return *this;  }
   Edge_circulator& operator--()  { --_bec; return *this;  }      
   Edge_circulator operator++(int);
