@@ -9,6 +9,12 @@ on perd la hierarchie... (apparemment la copie preserve la hierarchie).
 	-> Surcharger les IO pour la preserver
 	-> ou modifier la doc pour dire que IO ne preserve pas. 
 
+doc
+- cf ci-dessus, hierarchie
+- constructeurs de vertex a virer puisque on ne doit utiliser que create_vertex
+- 2 mots sur randomisation des entrees
+- (optional) sphere et grille en couleur version eps
+
 a negocier 
 - mise a jour de la doc de Filtered_exact...
 
