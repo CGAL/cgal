@@ -1489,6 +1489,12 @@ Packages/Parameterization/examples/Parameterization/data/nefertiti.off -text
 Packages/Parameterization/examples/Parameterization/data/parameterization.mtl -text
 Packages/Parameterization/examples/Parameterization/data/rotor.off -text
 Packages/Parameterization/examples/Parameterization/data/three_peaks.off -text
+Packages/Parameterization/temporary-doc/Parameterization_package_presentation/Parameterization_package_presentation.ppt -text svneol=unset#unset
+Packages/Parameterization/temporary-doc/Parameterization_package_presentation/examples/authalic/dashboard.gif -text svneol=unset#unset
+Packages/Parameterization/temporary-doc/Parameterization_package_presentation/examples/conformal/dashboard.gif -text svneol=unset#unset
+Packages/Parameterization/temporary-doc/Parameterization_package_presentation/examples/floater/dashboard.gif -text svneol=unset#unset
+Packages/Parameterization/temporary-doc/Parameterization_package_presentation/examples/lscm/dashboard.gif -text svneol=unset#unset
+Packages/Parameterization/temporary-doc/Parameterization_package_presentation/examples/uniform/dashboard.gif -text svneol=unset#unset
 Packages/Parameterization/temporary-doc/specification/param.pdf -text svneol=unset#unset
 Packages/Parameterization/temporary-doc/uml_diagrams/Fixed[!!-~]border[!!-~]param.[!!-~]-[!!-~]class[!!-~]diagram.png -text svneol=unset#unset
 Packages/Parameterization/temporary-doc/uml_diagrams/Fixed[!!-~]border[!!-~]param.[!!-~]-[!!-~]sequence[!!-~]diagram.png -text svneol=unset#unset
