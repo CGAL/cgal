@@ -1,5 +1,9 @@
 Changes done to the `Min_circle_2' package
 
+Version 3.2.6 on 29-Sep-1999
+- added 'CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC(...).'
+- changed order of constructors (moved member template to the end).
+
 Version 3.2.5 on 22-Sep-1999
 - missing 'typename' added.
 - copy construction "syntactically" replaced by assignment operator.
