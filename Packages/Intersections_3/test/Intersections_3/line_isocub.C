@@ -25,7 +25,7 @@ void print(const point_t &pt)
 	zd = 0.0;
     std::cout.setf(std::ios::showpos, std::ios::showpos);
     std::cout << xd <<' '<< yd <<' '<< zd;
-    std::cout.setf(0, std::ios::showpos);
+    std::cout.unsetf(std::ios::showpos);
 }
 
 
