@@ -1,4 +1,7 @@
+3.27 (11 Dec 2001)
+
 - added #include <CGAL/stl_extensions.h> into segment_intersection_points_2.h.
+- added std:: to atoi and exit in example
 
 3.26 (05 Dec 2001)
 - Replaced all uses of ch_value_type with iterator_traits and Kernel_traits.
