@@ -55,9 +55,16 @@ int main()
   gv << CGAL::Bbox_2(10, 10, 30, 30);
   gv << CGAL::Bbox_3(10, 10, 10, 30, 30, 30);
 
+  gv << CGAL::RED;
+  gv << K::Ray_2(K::Point_2(205,205), K::Point_2(500,500));
+  gv << K::Ray_3(K::Point_3(250,250,250), K::Point_3(500,500,500));
+  gv << K::Line_2(K::Point_2(195,195), K::Point_2(500,500));
+  gv << K::Line_3(K::Point_3(150,150,150), K::Point_3(500,500,500));
+
   gv.look_recenter();
 
-  sleep(10);
+  std::cout << "Stopping in 1 minute" << std::endl;
+  sleep(60);
 
   return 0;
 }
