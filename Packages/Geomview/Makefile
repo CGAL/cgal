@@ -55,5 +55,8 @@ Doc_ps :
 	latex wrapper ; bibtex wrapper; \
 	dvips -o Geomview.ps wrapper.dvi; \
 	gzip Geomview.ps ;\
-	rm -f *.aux *.log *.dvi *.ps *.blg *.bbl *.toc ;
+	rm -f *.aux *.log *.dvi *.ps *.blg *.bbl *.toc *.idx ;
 	mv doc_tex/support/Geomview/Geomview.ps.gz doc_ps ;
+
+clean:
+	$(MAKE) -C test/Geomview clean
