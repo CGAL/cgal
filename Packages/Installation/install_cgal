@@ -116,7 +116,7 @@ CGAL_CONFIG_PREFIX='CGAL_CFG_'
 
 # ---------------------------------------------
 # set to empty string, if you want to disable testsuite 
-CGAL_TESTSUITE=''
+CGAL_TESTSUITE='y'
 
 # ---------------------------------------------
 # set to non-empty string, if MIPSPRO 64 compiler
@@ -191,19 +191,6 @@ GMP_LIB_DIR=''
 GMP_TEST_PASSED=''
 
 # ---------------------------------------------------------------------
-# GEOMVIEW specific
-# ---------------------------------------------------------------------
-
-# toggles use of GEOMVIEW ('' - no, '_GEOMVIEW' - use it)
-GEOMVIEW_SUPPORT=''
-
-# set rsh access path
-GEOMVIEW_RSH=rsh
-
-# set geomview access path
-GEOMVIEW_BIN=geomview
-
-# ---------------------------------------------------------------------
 # internal variables
 # ---------------------------------------------------------------------
 
@@ -265,17 +252,14 @@ print_usage_information()
       [--help | --version | -i | --interactive |
        -ni <comp> | --non-interactive <comp> | -os <comp> |
        --build-all | --rebuild-all]
-      [-leda] [-gmp] [-geomview] [--verbose]
+      [-leda] [-gmp] [--verbose]
       [--CGAL_DIR <dir>] [--STL_DIR <dir>]
       [--leda-sys-incl] [--leda-sys-lib]
       [--LEDA_INCL_DIR <dir>] [--LEDA_LIB_DIR <dir>]
       [--GMP_INCL_DIR <dir>] [--GMP_LIB_DIR <dir>]
-      [--GEOMVIEW_RSH <file>] [--GEOMVIEW_BIN <file>]
 
   -leda        enables LEDA support
   -gmp         enables support for GNU GMP
-  -geomview    enables support for GEOMVIEW
-               (the geometry center's popular viewer)
   --verbose    give report for each test that fails
                (not generally recommended)
   --help       gives this message
@@ -1807,27 +1791,6 @@ check_COMPILER()
     return 1
 }
 
-check_GEOMVIEW_SUPPORT()
-{
-    if [ -n "${GEOMVIEW_SUPPORT}" -a "${GEOMVIEW_SUPPORT}" != "_GEOMVIEW" ]; then
-	$1 "WARNING: GEOMVIEW_SUPPORT is not set correctly." 
-	return 0
-    fi
-    return 1
-}
-
-check_GEOMVIEW_RSH()
-{
-    _check_comp_executable "${GEOMVIEW_RSH}"
-    return 1
-}
-
-check_GEOMVIEW_BIN()
-{
-    _check_comp_executable "${GEOMVIEW_BIN}"
-    return 1
-}
-
 # try to read variable $1 from file $2 
 # (usually this is $CGAL_DIRECTORY_FILE)
 # (and run "check_$1", if you got it)
@@ -2479,8 +2442,6 @@ print_os_setting()
     ${1} "LEDA:\t\t${_tmp}supported" 
     _set_tmp_to_not_or_not "${GMP_SUPPORT}"
     ${1} "GMP:\t\t${_tmp}supported" 
-    _set_tmp_to_not_or_not "${GEOMVIEW_SUPPORT}"
-    ${1} "GEOMVIEW:\t${_tmp}supported" 
 }
 
 set_lib_compiled_flag()
@@ -2616,25 +2577,6 @@ retrieve_compiler_settings()
 	fi
     fi
    
-    # GEOMVIEW stuff:
-    if try_to_get_var_from_file GEOMVIEW_SUPPORT "${_file}"; then
-	GEOMVIEW_SUPPORT=''
-    fi
-    if try_to_get_var_from_file GEOMVIEW_RSH "${_file}"; then
-	GEOMVIEW_RSH='rsh'
-	if [ -n "${GEOMVIEW_SUPPORT}" ]; then
-	    GEOMVIEW_SUPPORT=''
-	    SETUP_COMPLETE=''
-	fi
-    fi
-    if try_to_get_var_from_file GEOMVIEW_BIN "${_file}"; then
-	GEOMVIEW_BIN='geomview'
-	if [ -n "${GEOMVIEW_SUPPORT}" ]; then
-	    GEOMVIEW_SUPPORT=''
-	    SETUP_COMPLETE=''
-	fi
-    fi
-
     set_lib_compiled_flag
 }
 
@@ -2685,9 +2627,6 @@ store_compiler_settings()
     _store_install_config_variable GMP_INSTALLATION >>${_file}
     _store_install_config_variable GMP_INCL_DIR >>${_file}
     _store_install_config_variable GMP_LIB_DIR >>${_file}
-    _store_install_config_variable GEOMVIEW_SUPPORT >>${_file}
-    _store_install_config_variable GEOMVIEW_RSH >>${_file}
-    _store_install_config_variable GEOMVIEW_BIN >>${_file}
     _store_install_config_variable CUSTOM_CXXFLAGS  >>${_file}
     _store_install_config_variable CUSTOM_LDFLAGS >>${_file}
     _store_install_config_variable CGAL_STL_VERSION >>${_file}
@@ -2832,8 +2771,6 @@ menu_header()
     print_line     "LEDA:                ${_tmp}supported." 
     _set_tmp_to_not_or_not "${GMP_SUPPORT}"
     print_line     "GMP:                 ${_tmp}supported." 
-    _set_tmp_to_not_or_not "${GEOMVIEW_SUPPORT}"
-    print_line     "GEOMVIEW:            ${_tmp}supported." 
     print_empty_line
     if [ -z "${SETUP_COMPLETE}" ]; then
 	print_line "The setup has ${_bold_on}not${_bold_off} been tested." 
@@ -3393,58 +3330,6 @@ install_gmp()
 }
 
 # ---------------------------------------------------------------------
-# geomview_menu to setup GEOMVIEW
-#
-
-geomview_menu()
-{
-    while [ 0 ]; do
-	menu_header 'GEOMVIEW'
-	print_line "${_bold_on}<G>${_bold_off}  Toggle GEOMVIEW support" 
-	if [ -n "${GEOMVIEW_SUPPORT}" ]; then
-	    print_line "${_bold_on}<R>${_bold_off}  RSH executable"
-	    _tmp="${GEOMVIEW_RSH}"
-	    print_line "     ${_tmp:-<undefined>}" 
-	    print_line "${_bold_on}<X>${_bold_off}  GEOMVIEW executable"
-	    _tmp="${GEOMVIEW_BIN}"
-	    print_line "     ${_tmp:-<undefined>}" 
-	    print_line ""
-	fi
-	print_line     "${_bold_on}<T>${_bold_off}  Test (and save) setup" 
-	menu_tailer 'Main Menu'
-
-	case $KEY in
-	    g|G)
-		if [ -z "${GEOMVIEW_SUPPORT}" ]; then 
-		    SETUP_COMPLETE=''
-		    GEOMVIEW_SUPPORT='_GEOMVIEW'
-		else
-		    GEOMVIEW_SUPPORT=''
-		fi
-		;;
-	    r|R)
-		if change_dir GEOMVIEW_RSH file; then
-		    SETUP_COMPLETE=''
-	        fi
-		;;
-	    x|X)
-		if change_dir GEOMVIEW_BIN file; then
-		    SETUP_COMPLETE=''
-	        fi
-		;;
-	    t|T)
-		go_down_lines 3
-		flush_buffer
-		test_setup;;
-	    q|Q|b|B)
-		return;;
-	    *);;
-	esac
-    done
-}
-
-
-# ---------------------------------------------------------------------
 # lib menu
 #
 
@@ -3572,9 +3457,6 @@ write_compiler_flags()
   makefile_print_line "\$(CUSTOM_CXXFLAGS)" >> ${FILE}
   makefile_print_line "${ADDITIONAL_CXXFLAGS}" >> ${FILE}
   makefile_print_line "\$(CGAL_STL_INCLUDE_DIRECTIVE)" >> ${FILE}
-  if [ -n "${GEOMVIEW_SUPPORT}" ]; then
-    makefile_print_line "-DCGAL_USE_GEOMVIEW" >> ${FILE}
-  fi
   if [ -n "${GMP_SUPPORT}" ]; then
     makefile_print_line "-DCGAL_USE_GMP" >> ${FILE}
     if [ "${GMP_INSTALLATION}" = 'x' -o \
@@ -3752,28 +3634,6 @@ create_include_makefile()
   write_compiler_flags
   write_linker_flags
 
-  #
-  # GEOMVIEW stuff
-  #
-  if [ -n "${GEOMVIEW_SUPPORT}" ]; then
-    makefile_header "variables used by the geomview stream" >> ${FILE}
-    print_as_shell_comment \
-	"*** Program to execute remote commands (e.g. rsh) ***" \
-	>> ${FILE}
-    ${_printf} "%s\n\n" \
-	"GEOMVIEW_RSH = ${GEOMVIEW_RSH}" \
-	>> ${FILE}
-    print_as_shell_comment \
-	"*** geomview executable ***" \
-	>> ${FILE}
-    ${_printf} "%s\n\n" \
-	"GEOMVIEW_BIN = ${GEOMVIEW_BIN}" \
-	>> ${FILE}
-    ${_printf} "%s\\\\\n" "GEOMVIEW_CXXFLAGS = " >> ${FILE}
-    makefile_print_line "-DCGAL_RSH=\\\"\$(GEOMVIEW_RSH)\\\"" >> ${FILE}
-    ${_printf} "\t%s\n\n" "-DCGAL_GEOMVIEW=\\\"\$(GEOMVIEW_BIN)\\\"" >> ${FILE}
-  fi
-
   makefile_header "commands and flags for creating libraries" \
     >> ${FILE}
 
@@ -3787,9 +3647,6 @@ create_include_makefile()
   # 
   ${_printf} "%s\\\\\n" "CGAL_LIB_CXXFLAGS = " >> ${FILE}
   makefile_print_line "${CGAL_LIB_CXXFLAGS}" >> ${FILE}
-  if [ -n "${GEOMVIEW_SUPPORT}" ]; then
-    makefile_print_line "\$(GEOMVIEW_CXXFLAGS)" >> ${FILE}
-  fi    
   ${_printf} "\t%s\n" "\$(CGAL_CXXFLAGS)" >> ${FILE}
 
   # 
@@ -3815,9 +3672,6 @@ create_include_makefile()
   # 
   ${_printf} "%s\\\\\n" "CGAL_SHARED_LIB_CXXFLAGS = " >> ${FILE}
   makefile_print_line "${CGAL_SHARED_LIB_CXXFLAGS}" >> ${FILE}
-  if [ -n "${GEOMVIEW_SUPPORT}" ]; then
-    makefile_print_line "\$(GEOMVIEW_CXXFLAGS)" >> ${FILE}
-  fi    
   ${_printf} "\t%s\n" "\$(CGAL_CXXFLAGS)" >> ${FILE}
 
   # 
@@ -4080,7 +3934,6 @@ main_menu()
 	print_line     "${_bold_on}<C>${_bold_off}  Compiler Menu" 
 	print_line     "${_bold_on}<L>${_bold_off}  LEDA Menu" 
 	print_line     "${_bold_on}<G>${_bold_off}  GMP Menu" 
-	print_line     "${_bold_on}<V>${_bold_off}  GEOMVIEW Menu" 
 	print_line     "${_bold_on}<T>${_bold_off}  Test (and save) setup" 
 	print_line     "${_bold_on}<A>${_bold_off}  Run all setup tests (no cache)" 
 	print_empty_line 
@@ -4094,7 +3947,6 @@ main_menu()
 	    c|C) compiler_menu;;
 	    l|L) leda_menu;;
 	    g|G) gmp_menu;;
-	    v|V) geomview_menu;;
 	    b|B) lib_menu;;
 	    a|A)
 		reset_all_test_variables
@@ -4298,18 +4150,6 @@ while [ ${#} -gt 0 ]; do
 	    fi
 	    GMP_INSTALLATION='e'
 	    ;;
-	--geomview_rsh*|--GEOMVIEW_RSH*|-geomview_rsh*|-GEOMVIEW_RSH*)
-	    _ANY_OPT='y'
-	    if set_variable_from_command_line 'GEOMVIEW_RSH' "$1" "$2"; then
-		shift
-	    fi
-	    ;;
-	--geomview_bin*|--GEOMVIEW_BIN*|-geomview_bin*|-GEOMVIEW_BIN*)
-	    _ANY_OPT='y'
-	    if set_variable_from_command_line 'GEOMVIEW_BIN' "$1" "$2"; then
-		shift
-	    fi
-	    ;;
 	-LEDA*|-leda*|--leda*|--LEDA*)
 	    _ANY_OPT='y'
 	    LEDA_SUPPORT='_LEDA'
@@ -4319,11 +4159,6 @@ while [ ${#} -gt 0 ]; do
 	    _ANY_OPT='y'
 	    GMP_SUPPORT='_GMP'
 	    write_buffer "${_LEFTSPACE}Enable GMP support.\n"
-	    ;;
-	-geomview*|-GEOMVIEW*|--geomview*|--GEOMVIEW*)
-	    _ANY_OPT='y'
-	    GEOMVIEW_SUPPORT='_GEOMVIEW'
-	    write_buffer "${_LEFTSPACE}Enable GEOMVIEW support.\n"
 	    ;;
 	-os*|-OS*)
 	    if [ -n "${_WHAT_TO_DO}" ]; then
