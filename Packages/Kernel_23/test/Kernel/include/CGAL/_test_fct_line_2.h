@@ -16,7 +16,7 @@
 // $Revision$ $Date$
 // $Name$
 //
-// Author(s)     : Susan Hert
+// Author(s)     : Susan Hert, Sylvain Pion
  
 
 #ifndef CGAL__TEST_FCT_LINE_2_H
@@ -45,6 +45,7 @@ _test_fct_line_2(const R& )
  Point_2 p9 ( RT( 6), RT(10), RT(1) );  // ( 6,10)
  Point_2 p10( RT( 8), RT( 5), RT(1) );  // ( 8, 5)
  Point_2 p11( RT( 7), RT( 5), RT(1) );  // ( 7, 5)
+ Point_2 p12( RT( 0), RT( 4), RT(1) );  // ( 0, 4)
 
  // vertical lines
  Line_2 l1(p1, p2);
@@ -113,6 +114,15 @@ _test_fct_line_2(const R& )
  // positive and negative slope
  assert( CGAL::compare_slopes(l6, l9) == CGAL::LARGER );
  assert( CGAL::compare_slopes(l9, l7) == CGAL::SMALLER );
+
+ std::cout <<'.';
+
+ // bisector construction
+ Line_2 bl1 = bisector(p2, p3);
+ Line_2 bl2 = bisector(p3, p2);
+ assert(bl1 == Line_2(p12, p1));
+ assert(bl2 == Line_2(p1, p12));
+ assert(bl1.oriented_side(p2) == CGAL::ON_POSITIVE_SIDE);
 
  std::cout << "done" << std::endl;
  return true;
