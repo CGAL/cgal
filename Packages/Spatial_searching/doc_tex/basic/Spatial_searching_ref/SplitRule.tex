@@ -1,0 +1,71 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: SplitRule.tex
+% +------------------------------------------------------------------------+
+% | 1.07.2001   Johan W.H. Tangelder
+% | Package: ASPAS
+% | 
+\RCSdef{\RCSSplitRuleRev}{$Revision$}
+\RCSdefDate{\RCSSplitRuleDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefFunctionObjectConcept}{SplitRule<Item>}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+
+\ccDefinition
+  
+The split rule concept defines the requirements on a function implementing a
+splitting rule. Some splitting rules, require that the ratio of the longest and shortest side
+of a node do not exceed the value specified by the \ccc{Aspect_ratio} parameter.  Other
+spitting rules do not require this parameter.
+
+\ccParameters
+
+Expects for the parameter \ccc{Item} an implementation of the
+\ccc{Point} concept, for example \ccc{CGAL::Point_d}.
+
+\ccTypes
+
+\ccTypedef{Item::FT NT;}{Number type.} 
+
+\ccCreation
+\ccCreationVariable{s}  %% choose variable name
+
+\ccConstructor{
+SplitRule();}{Default constructor.}
+
+\ccHeading{Member Functions}
+
+\ccMethod{
+Plane_separator<NT>* rule(Point_container<Item>& c, NT Aspect_ratio);} 
+{Computes and returns the splitter, that can split \ccc{c}. Note that the parameter \ccc{Aspect_ratio}
+is optional.}
+
+\ccHasModels
+
+\ccc{Median_of_max_spread},
+\ccc{Fair},
+\ccc{Sliding_fair},
+\ccc{Sliding_midpoint},
+\ccc{Median_of_box},
+\ccc{MidPoint_of_max_spread},
+\ccc{Midpoint_of_box}.
+
+\ccSeeAlso
+
+\ccc{Point_container},
+\ccc{Plane_separator}.
+
+
+\end{ccRefFunctionObjectConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

@@ -1,0 +1,50 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Split_rule_enumeration.tex
+% +------------------------------------------------------------------------+
+% | 1.07.2001   Johan W.H. Tangelder
+% | Package: ASPAS
+% |
+\RCSdef{\RCSSplitruleenumerationRev}{$Revision$}
+\RCSdefDate{\RCSSplitruleenumerationDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Split_rule_enumeration}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+
+The class \ccRefName\ provides a type to enumerate the splitting rules.
+
+\ccInclude{CGAL/Splitting_rules.h}
+
+
+
+\ccTypes
+
+\ccGlobalEnum{enum Split_rule {MEDIAN_OF_MAX_SPREAD, MEDIAN_OF_BOX,
+MIDPOINT_OF_MAX_SPREAD, MIDPOINT_OF_BOX, FAIR, SLIDING_MIDPOINT, SLIDING_FAIR};}{Available splitting rules}
+
+
+\ccSeeAlso
+
+SplitRule,
+\ccc{Median_of_max_spread},
+\ccc{Fair},
+\ccc{Sliding_fair},
+\ccc{Sliding_midpoint},
+\ccc{Median_of_box},
+\ccc{Midpoint_of_max_spread},
+\ccc{Midpoint_of_box}.
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

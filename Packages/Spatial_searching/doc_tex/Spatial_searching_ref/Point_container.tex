@@ -1,0 +1,202 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Point_container.tex
+% +------------------------------------------------------------------------+
+% | 1.07.2001   Johan W.H. Tangelder
+% | Package: ASPAS
+% |
+\RCSdef{\RCSPointcontainerRev}{$Revision$}
+\RCSdefDate{\RCSPointcontainerDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Point_container<Item>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+
+
+
+
+\ccDefinition
+A custom container for items used to build a search tree. Each point container
+holds the points from a rectangle associated with a node of a $k$-$d$ tree.
+In the remainder of this reference page this rectangle is called the
+associated rectangle.
+Provides a number of methods
+to support the implementation of splitting rules.
+
+\ccInclude{CGAL/Point_container.h}
+
+\ccParameters
+
+Expects for the parameter \ccc{Item} an implementation of the
+\ccc{Point} concept, for example \ccc{CGAL::Point_d}.
+
+\ccTypes
+
+\ccTypedef{Item::FT NT;}{Number type.}
+\ccTypedef{std::list<Item*> Point_list;}{(Sorted) list of pointers to points.}
+
+
+%----------------------------------------
+\ccCreation
+\ccCreationVariable{c}
+
+\ccConstructor{Point_container(const int d, Iter begin, Iter end);}
+{
+Construct the container of points of dimension \ccc{d}
+given by the iterator sequence \ccc{begin}, \ccc{end}.
+}
+
+\ccConstructor{Point_container(int d);}
+{
+Construct an empty container for storing \ccc{d}-dimensional items.
+}
+
+\ccHeading{Member Functions}
+
+\ccMethod{void swap(Point_container<Item>& C);}
+{Swap the contents of \ccc{c} and \ccc{C}}
+
+\ccMethod{void add_points_from_container(Point_container<Item>& C);}
+{Add the contents of \ccc{C} to \ccc{c}}
+
+\ccMethod{void recompute_tight_bounding_box();}
+{Recompute the bounding box of the points in the container.}
+
+\ccMethod{template <class Separator>
+void split_container(Point_container<Item>& C, Separator* sep, bool sliding=false);}
+{Given an empty container \ccc{C} with the same dimension as \ccc{c}, splits \ccc{c} into
+\ccc{c} and \ccc{C} using the separator \ccc{sep}. If sliding is true the splitting is adapted
+such that each container contains at least on point.}
+
+\ccMethod{Point_list::iterator begin();}
+{
+Return the iterator to the first item.
+}
+
+\ccMethod{Point_list::iterator end();}
+{
+Return the iterator to the correspondiing past-the-end iterator.
+}
+
+\ccMethod{int dimension() const;}
+{
+Return the dimension.
+}
+
+\ccMethod{int built_coordinate();}
+{
+Return coordinate for which the pointer list is built.
+}
+
+\ccMethod{int max_span_coord();}
+{
+Return coordinate where the associated rectangle has maximal span.
+}
+
+\ccMethod{int max_tight_span_coord();}
+{
+Return coordinate where the point coordinates have maximal span.
+}
+
+\ccMethod{NT max_span_lower();}
+{
+Return lower value of the interval corresponding to
+\ccc{max_span_coord()}.
+}
+
+
+\ccMethod{NT max_tight_span_lower();}
+{
+Return lower value of the interval corresponding to
+\ccc{max_tight_span_coord()}. That is, the smallest
+\ccc{max_tight_span_coord()}-th coordinate of the points in
+\ccc{c}.
+}
+
+
+\ccMethod{NT max_span_upper();}
+{
+Return upper value of the interval corresponding to
+\ccc{max_span_coord()}.
+}
+
+\ccMethod{NT max_span_upper_without_dim(int d);}
+{
+Return upper value of the interval over all dimensions
+without taking dimension \ccc{d} into account.
+}
+
+\ccMethod{NT max_tight_span_upper();}
+{
+Return upper value of the interval corresponding to
+\ccc{max_tight_span_coord()}.
+}
+
+\ccMethod{NT  max_spread();}
+{
+Return the size of the interval corresponding to \ccc{max_span_coord()}.
+}
+
+\ccMethod{NT max_tight_spread();}
+{
+Return the size of the interval corresponding to \ccc{max_tight_span_coord()}.
+}
+
+\ccMethod{NT median(int split_coord);}
+{
+Return the median value of the points stored in the container for
+dimension \ccc{split_coord}.
+}
+
+\ccMethod{Kd_tree_rectangle<NT>& bounding_box();}
+{Return the associated rectangle.}
+
+\ccMethod{Kd_tree_rectangle<NT>& tight_bounding_box();}
+{Return the bounding box of the items in associated rectangle.}
+
+\ccMethod{int max_tight_span_coord_balanced(NT Aspect_ratio);}
+{Return the dimension with the maximal point spread, for which after fair splitting
+the ratio of the length of the longest side and the smallest side of the bounding box of
+the items in associated rectangle,
+does not exceed \ccc{Aspect_ratio}.}
+
+\ccMethod{NT balanced_fair(int d, NT Aspect_ratio);}
+{Return the splitting value for fair splitting.}
+
+\ccMethod{NT balanced_sliding_fair(int d, NT Aspect_ratio);}
+{Return the splitting value for sliding fair splitting.}
+
+\ccMethod{int size();}
+{
+Return the number of points stored.
+}
+
+\ccMethod{bool empty();}
+{
+Return true is no points are present, false otherwise.
+}
+
+
+
+% -----------------------------------
+
+{\bf Non-Member functions related to \ccc{Point_container<Item>}}
+
+\ccGlueBegin
+\ccGlobalFunction{ template<class Item>
+std::ostream& operator<<(std::ostream& s, Point_container<Item>& c);}
+{Prints the points container \ccc{c} to the output stream \ccc{s} and returns \ccc{s}.}
+\ccGlueEnd
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

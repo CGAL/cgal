@@ -1,0 +1,82 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Plane_separator.tex
+% +------------------------------------------------------------------------+
+% | 1.07.2001   Johan W.H. Tangelder
+% | Package: ASPAS
+% | 
+\RCSdef{\RCSPlaneseparatorRev}{$Revision$}
+\RCSdefDate{\RCSPlaneseparatorDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Plane_separator<NT>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ implements a plane separator, i.e. a hyperplane that is used to separate two half spaces.
+This hyperplane is defined by a cutting dimension $d$ and a cutting value $v$
+as $x_d=v$, where $v$ denotes the $d^{th}$ coordinate value.
+
+\ccInclude{CGAL/Plane_separator.h}
+
+\ccIsModel
+
+Separator
+
+\ccCreation
+\ccCreationVariable{s}  %% choose variable name
+
+\ccConstructor{Plane_separator();}
+{Default constructor.}
+
+\ccConstructor{Plane_separator(int d, NT v);}
+{Constructs a separator that separates two half spaces by a hyperplane
+defined by $x_d=v$, where $v$ denotes the $d^{th}$ coordinate value.}
+
+\ccConstructor{Plane_separator(Plane_separator<NT>& p);}
+{Copy constructor.}
+
+\ccHeading{Member Functions}
+
+\ccMethod{
+void set_cutting_dim(int d);}
+{Sets the cutting dimension to \ccc{d}. }
+
+\ccMethod{
+void set_cutting_val(NT v);}
+{Sets the cutting value to \ccc{v}. }
+
+\ccMethod{int cutting_dimension();}{Returns the number of the cutting dimension.}
+
+\ccMethod{NT cutting_value();}{Returns the cutting value.}
+
+\ccMethod{template <class Item>
+bool below(Item& i);}
+{Returns true if and only if the item value in the cutting dimension is smaller than the cutting value.}
+
+\ccMethod{ 
+Plane_separator<NT>& operator=(Plane_separator<NT>& p);}
+{Assignment operator.}
+
+{\bf Non-Member functions related to \ccc{Plane_separator<NT>}}
+
+\ccGlueBegin
+\ccGlobalFunction{ template<class NT>
+std::ostream& operator<<(std::ostream& s, Plane_separator<NT>& p);}
+{Prints the plane separator \ccc{p} to the output stream \ccc{s} and returns \ccc{s}.}
+\ccGlueEnd
+
+
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

@@ -1,0 +1,88 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Kd_tree.tex
+% +------------------------------------------------------------------------+
+% | 1.07.2001   Johan W.H. Tangelder
+% | Package: ASPAS
+% | 
+\RCSdef{\RCSKdtreeRev}{$Revision$}
+\RCSdefDate{\RCSKdtreeDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Kd_tree<Traits>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ defines a $k$-$d$ tree.
+
+\ccInclude{CGAL/Kd_tree.h}
+
+\ccHeading{Parameters}
+
+Expects for the parameter \ccc{Traits} an implementation of the \ccc{Tree_traits}
+concept.
+
+\ccTypes
+
+\ccTypedef{Traits::InputIterator InputIterator;}{Input iterator over items.}
+\ccTypedef{Traits::Item Item;} {Items class.}
+\ccTypedef{Traits::NT NT;}{Number type.}
+\ccTypedef{Kd_tree_node<Traits> Node;}{Node type.}
+
+\ccCreation
+\ccCreationVariable{tree}
+
+\ccConstructor{template <class InputIterator>
+Kd_tree(InputIterator first, InputIterator beyond, traits t=Traits());}
+{
+Construct a $k$-$d$ tree on the elements from the sequence 
+\ccc{frist, beyond} using the splitting rule defined by \ccc{Traits()}. 
+}
+
+% -----------------------------------
+\ccHeading{Member Functions}
+
+\ccMethod{Traits traits();}
+{
+Returns an instance of the traits class.
+}
+\ccMethod{Node* root();}
+{
+Returns a pointer to the root node of the tree.
+}
+
+\ccMethod{Kd_tree_rectangle<NT>* bounding_box();}{returns a pointer to the bounding box 
+of the root node of the tree.}
+
+
+\ccMethod{int item_number();}
+{
+Returns the number of items that are stored in the tree.
+}
+
+\ccMethod{void statistics();}
+{
+Prints statistics of the tree.
+}
+
+
+
+% -----------------------------------
+
+\ccSeeAlso
+
+\ccc{Kd_tree_node},
+\ccc{Search_tree_traits}.
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

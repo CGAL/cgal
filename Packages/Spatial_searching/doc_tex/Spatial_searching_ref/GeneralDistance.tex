@@ -1,0 +1,72 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: GeneralDistance.tex
+% +------------------------------------------------------------------------+
+% | 1.07.2001   Johan W.H. Tangelder
+% | Package: ASPAS
+% |
+\RCSdef{\RCSGeneralDistanceRev}{$Revision$}
+\RCSdefDate{\RCSGeneralDistanceDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{GeneralDistance<Query_item, Item>}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+
+Requirements of a distance class defining a distance between a \ccc{Query_item}
+denoting a spatial object and a \ccc{Item} denoting a point.
+To optimize distance computations transformed distances are used.
+E.g., for an Euclidian distance the transformed distance is the squared Euclidean distance.
+
+\ccParameters
+
+Expects for the parameter \ccc{Query_item} an implementation of a spatial object, for
+example \ccc{Kd_tree_rectangle} implementing iso-rectangles.
+Expects for the parameter \ccc{Item} an implementation of the
+\ccc{Point} concept, for example \ccc{CGAL::Point_d}.
+
+\ccTypes
+
+\ccTypedef{Item::FT NT;}{Number type.}
+
+\ccCreation
+\ccCreationVariable{d}  %% choose variable name
+
+\ccConstructor{GeneralDistance();}{Default constructor.}
+
+\ccHeading{Member Functions}
+
+\ccMethod{NT transformed_distance(NT d);} {Returns the transformed distance.}
+
+\ccMethod{NT inverse_of_transformed_distance(NT d);} {Returns the inverse of the transformed distance.}
+
+\ccMethod{NT distance(Query_item& q, Item& p);}{Returns the transformed distance between \ccc{q} and \ccc{p}.}
+
+\ccMethod{NT min_distance_to_rectangle(Query_item& q, Kd_tree_rectangle<NT>& r;);}
+{Returns the transformed distance between \ccc{q} and
+the point on the boundary of \ccc{r} closest to \ccc{q}.}
+
+\ccMethod{NT max_distance_to_rectangle(Query_item& q, Kd_tree_rectangle<NT>& r;);}
+{Returns the transformed distance between \ccc{q} and
+the point on the boundary of \ccc{r} farthest to \ccc{q}.}
+
+\ccHasModels
+
+\ccc{L1_distance_to_rectangles}.
+
+\ccSeeAlso
+
+\ccc{L1_distance_to_rectangles}.
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

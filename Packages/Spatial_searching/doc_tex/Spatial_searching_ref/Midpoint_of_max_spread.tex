@@ -1,0 +1,56 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Midpoint_of_max_spread.tex
+% +------------------------------------------------------------------------+
+% | 1.07.2001   Johan W.H. Tangelder
+% | Package: ASPAS
+% | 
+\RCSdef{\RCSMidpointofmaxspreadRev}{$Revision$}
+\RCSdefDate{\RCSMidpointofmaxspreadDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefFunctionObjectClass}{Midpoint_of_max_spread<Item>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+Implements the midpoint of max spread splitting rule.
+
+\ccInclude{CGAL/Splitting_rules.h}
+
+\ccIsModel
+
+SplitRule
+
+\ccTypes
+
+\ccTypedef{Item::FT NT;}{Number type.} 
+
+\ccCreation
+\ccCreationVariable{s}  %% choose variable name
+
+\ccConstructor{
+Midpoint_of_max_spread();}{Default constructor.}
+
+\ccHeading{Member Functions}
+
+\ccMethod{
+Plane_separator<NT>* rule(Point_container<Item>& c);} 
+{Computes and returns the splitter, that can split \ccc{c}.}
+
+\ccSeeAlso
+
+SplitRule,
+\ccc{Point_container},
+\ccc{Plane_separator}.
+
+\end{ccRefFunctionObjectClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

@@ -1,0 +1,80 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: L1_distance_rectangle_point.tex
+% +------------------------------------------------------------------------+
+% | 1.07.2001   Johan W.H. Tangelder
+% | Package: ASPAS
+% |
+\RCSdef{\RCSLdistancerectanglepointRev}{$Revision$}
+\RCSdefDate{\RCSLdistancerectanglepointDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{L1_distance_rectangle_point<Query_item,Item>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+
+The class \ccRefName\ provides an implementation of the GeneralDistance concept
+for the L1 distance between two iso-rectangles and the L1 distance between an iso-rectangle
+and a point.
+
+\ccInclude{CGAL/L1_distance_rectangle_point.h}
+
+\ccParameters
+
+Expects for the parameter \ccc{Query_item}
+\ccc{item} an implementation of iso-rectangles
+for example \ccc{CGAL::Kd_tree_rectangle<NT>}.
+Expects for the parameter \ccc{Item} an implementation of the
+\ccc{Point} concept, for example \ccc{CGAL::Point_d<NT>}.
+
+\ccIsModel
+
+OrthogonalDistance
+
+\ccTypes
+
+\ccTypedef{Item::R::FT NT;}{Number type.}
+
+\ccCreation
+\ccCreationVariable{d}  %% choose variable name
+
+\ccConstructor{L1_distance_rectangle_point();}{Default constructor implementing $l_1$ metric for
+two-dimensional iso-rectangles.}
+
+\ccConstructor{L1_distance_rectangle_point(int d);}
+{Constructor implementing $l_1$ metric for
+$d$-dimensional iso-rectangles.}
+
+\ccHeading{Member Functions}
+
+\ccMethod{NT transformed_distance(NT d);} {Returns $d$.}
+
+\ccMethod{NT inverse_of_transformed_distance(NT d);} {Returns $d$.}
+
+\ccMethod{NT distance(Query_Item& q, Item&p);}{Returns the distance between \ccc{q} and \ccc{p}.}
+
+\ccMethod{NT min_distance_to_rectangle(Query_item& q, Kd_tree_rectangle<NT>& r;);}
+{Returns the minimal distance between a point from \ccc{q} and a point from
+\ccc{r}}
+
+\ccMethod{NT max_distance_to_rectangle(Query_item& q, Kd_tree_rectangle<NT>& r;);}
+{Returns the maximal distance between the iso-rectangle \ccc{q} and
+a point from \ccc{r} furthest to \ccc{q}.}
+
+
+\ccSeeAlso
+
+GeneralDistance.
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

@@ -1,0 +1,77 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: General_priority_search.tex
+% +------------------------------------------------------------------------+
+% | 1.07.2001   Johan W.H. Tangelder
+% | Package: ASPAS
+% |
+\RCSdef{\RCSGeneralprioritysearchRev}{$Revision$}
+\RCSdefDate{\RCSGeneralprioritysearchDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{General_priority_search}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+
+The class \ccRefName\ implements approximate $k$-nearest and $k$-furthest neighbour searching
+using priority search on a $k$-$d$ tree. It is not required that the $k$-$d$ tree is
+built with extended nodes.
+
+
+\ccInclude{CGAL/General_priority_search.h}
+
+\ccParameters
+
+Expects for the parameter \ccc{Traits} an implementation of the concept TreeTraits.
+Expects for the parameter \ccc{Query_item}  an implementation of the
+\ccc{Point} concept, for example \ccc{CGAL::Point_d}.
+Expects for the parameter \ccc{Distance} an implementation of the
+concept GeneralDistance.
+
+\ccTypes
+
+\ccTypedef{Traits::Item Item;}{Item type.}
+\ccTypedef{Traits::NT NT;}{Number type.}
+\ccTypedef{std::pair<Item*,NT> Item_with_distance;}{Pair of item and distance}
+\ccTypedef{Kd_tree<Traits> Tree;}{$k$-$d$ tree storing the items.}
+
+\ccNestedType{iterator}{Input iterator.}
+
+\ccCreation
+\ccCreationVariable{s}  %% choose variable name
+
+\ccConstructor{General_priority_search(Tree& tree, Query_item& q, Distance& d, int k, NT Eps,
+bool Search_nearest=true);}
+{Constructor for searching approximately $k$ neighbours of the query item \ccc{q}
+in the items stored in the $k$-$d$ tree \ccc{tree} using a distance
+traits class.}
+
+\ccHeading{Member Functions}
+
+\ccMethod{iterator begin();}{Returns an iterator to the approximate neighbour.}
+
+\ccMethod{iterator end();}{Past-the-end iterator. Denotes that all items in the search tree
+have been processed.}
+
+\ccMethod{void statistics();}
+{
+Prints statistics of the search process.
+}
+
+\ccSeeAlso
+
+\ccc{General_priority_search::iterator, Orthogonal_priority_search}.
+
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

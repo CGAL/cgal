@@ -1,0 +1,93 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Kd_tree_traits_point.tex
+% +------------------------------------------------------------------------+
+% | 1.07.2001   Johan W.H. Tangelder
+% | Package: ASPAS
+% | 
+\RCSdef{\RCSKdtreetraitspointRev}{$Revision$}
+\RCSdefDate{\RCSKdtreetraitspointDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Kd_tree_traits_point<Separator,Item>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ defines a model of tree traits class, which is used as
+a template class for the construction of a binary search tree by the class \ccc{Binary_Search_Tree}.
+The parameters \ccc{selected_split_rule}, \ccc{aspect_ratio}, \ccc{bucket_size}, and \ccc{use_extended_nodes}  
+define the way in which the binary search tree is constructed.
+
+
+\ccInclude{CGAL/Kd_tree_traits_point.h}
+
+\ccIsModel
+
+TreeTraits.
+
+\ccParameters
+
+Expects for the parameter \ccc{Separator} an implementation of a separator, for
+example \ccc{Plane_separator}.
+Expects for the parameter \ccc{Item} an implementation of the
+\ccc{Point} concept, for example \ccc{CGAL::Point_d}.
+
+
+\ccTypes
+
+\ccTypedef {Item::FT NT;}{Number type.}
+\ccTypedef {Item** Item_Iterator;}{Item iterator.}
+\ccTypedef {std::list<Item>::iterator InputIterator;}{Input iterator.}
+\ccTypedef {std::pair<Item*,NT> Item_with_distance;}{Pair of item and distance.}
+
+\ccCreation
+\ccCreationVariable{tr}  %% choose variable name
+
+\ccConstructor{Kd_tree_traits_point();}{Default constructor assigning the default values 
+\ccc{bucket_size=1}, \ccc{selected_split_rule=SLIDING_MIDPOINT}, \ccc{aspect_ratio=3.0}, and \ccc{use_extended_nodes=true}
+to the parameters.}
+
+\ccConstructor{Kd_tree_traits_point
+(int bucket_size=1, Split_rule My_split_rule=SLIDING_MIDPOINT, NT aspect_ratio=3.0, bool use_extended_nodes=true);}
+{Constructor assigning values to the parameters.}
+\ccHeading{Member Functions}
+
+\ccMethod{NT aspect_ratio();}{Returns the maximal ratio between the largest and smallest side
+of a cell allowed for fair splitting.}
+
+\ccMethod{Split_rule_enumeration::Split_rule selected_split_rule();}{Returns the selected splitting rule.}
+
+\ccMethod{int bucket_size();}{Returns the selected bucket size.}
+
+\ccMethod{bool use_extended_nodes();}{Returns boolean indicating whether extened internal nodes
+should be used.}
+
+\ccMethod{Separator* split(Point_container<Item>& c0, Point_container<Item>& c1);}
+{Splits \ccc{c0} into \ccc{c0} and \ccc{c1} and returns the separator.}
+
+\ccSeeAlso
+
+TreeTraits,
+\ccc{Split_rule_enumeration},
+\ccc{Median_of_max_spread},
+\ccc{Fair},
+\ccc{Sliding_fair},
+\ccc{Sliding_midpoint},
+\ccc{Median_of_box},
+\ccc{MidpPoint_of_max_spread},
+\ccc{Midpoint_of_box},
+\ccc{Kd_tree}.
+
+\end{ccRefClass}
+
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

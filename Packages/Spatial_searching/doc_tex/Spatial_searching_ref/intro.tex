@@ -1,0 +1,58 @@
+\chapter{Approximate Spatial Searching}
+
+\section{Introduction}
+
+The Approximate SPAtial Searching (ASPAS) package supports
+(approximate) nearest and furthest, (approximate) $k$-nearest and furthest, (approximate) incremental nearest
+and furthest searching of query items representing $d$-dimensional
+points using $d$-dimensional trees
+($k$-$d$) trees. Also, range searching is supported by using query items that represent
+$d$-dimensional iso-rectangles.
+
+ASPAS consists of the following concepts, function object concepts, classes, function object classes
+and enumerations that are described in the reference pages.
+
+{\bf Concepts}
+
+Separator \\
+TreeTraits \ccOpenAngle Separator, Item\ccCloseAngle \\
+GeneralDistance \ccOpenAngle Item\ccCloseAngle \\
+OrthogonalDistance \ccOpenAngle Item\ccCloseAngle
+
+{\bf Function object concepts}
+
+SplitRule \ccOpenAngle Item\ccCloseAngle
+
+{\bf Classes}
+
+\ccc{Kd_tree_rectangle<NT>} \\
+\ccc{Kd_tree_node<Traits>} \\
+\ccc{Kd_tree<Traits>} \\
+\ccc{Point_container<Item>} \\
+\ccc{Plane_separator<NT>} \\
+\ccc{Kd_tree_traits_point<Separator,Item>} \\
+\ccc{Weighted_Minkowski_distance<Query_item,Item>} \\
+\ccc{L1_distance_rectangle_point<Query_item,Item>} \\
+\ccc{General_standard_search<Traits,Query_item,Distance>} \\
+\ccc{Orthogonal_standard_search<Traits,Query_item,Distance>} \\
+\ccc{General_priority_search<Traits,Query_item,Distance>} \\
+\ccc{General_priority_search<Traits,Query_item,Distance>::iterator} \\
+\ccc{Orthogonal_priority_search<Traits,Query_item,Distance>} \\
+\ccc{Orthogonal_priority_search<Traits,Query_item,Distance>::iterator}
+
+{\bf Function object classes}
+
+\ccc{Midpoint_of_box<Item>} \\
+\ccc{Midpoint_of_max_spread<Item>} \\
+\ccc{Sliding_midpoint<Item>} \\
+\ccc{Median_of_box<Item>} \\
+\ccc{Median_of_max_spread<Item>} \\
+\ccc{Fair<Item>} \\
+\ccc{Sliding_fair<Item>}
+
+{\bf Enumerations}
+
+\ccc{Split_rule_enumeration::Split_rule}
+
+
+

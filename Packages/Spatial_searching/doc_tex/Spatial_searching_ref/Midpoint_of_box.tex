@@ -1,0 +1,62 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Midpoint_of_box.tex
+% +------------------------------------------------------------------------+
+% | 1.07.2001   Johan W.H. Tangelder
+% | Package: ASPAS
+% | 
+\RCSdef{\RCSMidpointofboxRev}{$Revision$}
+\RCSdefDate{\RCSMidpointofboxDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefFunctionObjectClass}{Midpoint_of_box}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+Implements the midpoint of box splitting rule.
+
+\ccInclude{CGAL/Splitting_rules.h}
+
+\ccParameters
+
+Expects for the parameter \ccc{Item} an implementation of the
+\ccc{Point} concept, for example \ccc{CGAL::Point_d}.
+
+\ccIsModel
+
+SplittingRule
+
+\ccTypes
+
+\ccTypedef{Item::FT NT;}{Number type.} 
+
+\ccCreation
+\ccCreationVariable{s}  %% choose variable name
+
+\ccConstructor{
+Midpoint_of_box();}{Default constructor.}
+
+\ccHeading{Member Functions}
+
+\ccMethod{
+Plane_separator<NT>* Rule(Point_container<Item>& c);} 
+{Computes and returns the splitter, that can split \ccc{c}.}
+
+\ccSeeAlso
+
+SplitRule,
+\ccc{Point_container},
+\ccc{Plane_separator}.
+
+\end{ccRefFunctionObjectClass}
+
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

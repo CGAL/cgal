@@ -1,0 +1,89 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: General_priority_search::iterator.tex
+% +------------------------------------------------------------------------+
+% | 1.07.2001   Johan W.H. Tangelder
+% | Package: ASPAS
+% |
+\RCSdef{\RCSGeneralprioritysearch::iteratorRev}{$Revision$}
+\RCSdefDate{\RCSGeneralprioritysearch::iteratorDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{General_priority_search<Traits, Query_item, Distance>::iterator}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+
+The class \ccRefName\ implements an input iterator
+for the computation of approximate neighbours.
+
+\ccInclude{CGAL/Priority_search.h}
+
+\ccParameters
+
+Expects for the parameter \ccc{Traits} an implementation of the concept TreeTraits.
+Expects for the parameter \ccc{Query_item}  an implementation of the
+\ccc{Point} concept, for example \ccc{CGAL::Point_d}.
+or an implementation of aspatial object, for
+example \ccc{Kd_tree_rectangle} implementing iso-rectangles.
+Expects for the parameter \ccc{Distance} an implementation of the concept OrthogonalDistance if extended
+nodes are used. Otherwise it expects for the parameter \ccc{Distance} an implementation of the
+concept GeneralDistance.
+
+\ccCreation
+\ccCreationVariable{i}  %% choose variable name
+
+\ccConstructor{iterator();}{Default constructor. Constructs an past-the-end iterator.}
+\ccConstructor{iterator(iterator& Iter);}{Copy constructor.}
+\ccConstructor{iterator(Tree& tree, Item& q, Traits tr, Distance& d, int k, NT Eps,
+bool Search_nearest=true);}
+{Creates an iterator for searching approximately neighbours of the query item \ccc{q}
+in the items stored in the $k$-$d$ tree \ccc{tree}.}
+
+\ccHeading{Member Functions}
+
+\ccMethod{Item_with_distance* operator*();}
+{Returns a pointer to the pair consisting of the next neighbour and its distance
+to the query item.}
+
+\ccMethod{
+iterator& operator++();}
+{Prefix operator.}
+
+\ccMethod{
+std::auto_ptr<Item_with_distance> iterator& operator++(int);}
+{Postfix operator.}
+
+\ccMethod{
+bool operator==(const iterator& It);}
+{The equality operator.}
+
+\ccMethod{
+bool operator!=(const iterator& It);}
+{The inequality operator.}
+
+{\bf Non-Member functions related to \ccc{General_priority_search<Traits,Query_item,Distance>::iterator}}
+
+\ccGlueBegin
+\ccGlobalFunction{ template <class Traits, Query_item, Distance>
+void swap(General_priority_search<Traits, Query_item, Distance>::iterator& x,
+General_priority_search<Traits, Query_item, Distance>::iterator& y);}
+{Swaps the contents of \ccc{x} and \ccc{y}.}
+\ccGlueEnd
+
+\ccSeeAlso
+
+\ccc{General_priority_search}.
+
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

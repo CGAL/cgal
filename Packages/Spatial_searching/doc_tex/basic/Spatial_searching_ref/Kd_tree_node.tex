@@ -1,0 +1,92 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Kd_tree_node.tex
+% +------------------------------------------------------------------------+
+% | 1.07.2001   Johan W.H. Tangelder
+% | Package: ASPAS
+% | 
+\RCSdef{\RCSKdtreenodeRev}{$Revision$}
+\RCSdefDate{\RCSKdtreenodeDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Kd_tree_node<Traits>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ implements a node class for a $k$-$d$ tree. 
+A node is either a leaf node, an internal node or an extended internal node.
+A leaf node contains one or more points. An internal node contains a pointer
+to its lower child and a pointer its upper child and a pointer to its separator.
+An extended internal node is an internal node containing the lower and 
+upper limit of an exteneded node's rectangle
+along the node's cutting dimension.
+
+\ccInclude{CGAL/Kd_tree_node.h}
+
+\ccHeading{Parameters}
+
+Expects for the parameter \ccc{Traits} an implementation
+of the \ccc{Treetraits}
+concept.
+
+\ccTypes
+
+\ccEnum{ enum Node_type { LEAF, INTERNAL, EXTENDED_INTERNAL};}{Denotes type of node.}
+
+\ccTypedef{Traits::Item Item;}{Item provided by the Traits class.}
+\ccTypedef{Traits::Item_iterator Item_iterator;}{Iterator over items.} 
+\ccTypedef{Traits::NT NT;}{Number type.}
+\ccTypedef{Traits::Separator Separator;}{Separator type.}
+
+\ccCreation
+\ccCreationVariable{n}  %% choose variable name
+
+\ccConstructor{Kd_tree_node();} {Default constructor.}
+
+\ccConstructor{Kd_tree_node(Point_container<Item>& c);}
+{
+Creates a leaf node \ccc{n} that stores the points from $c$.
+}
+
+\ccConstructor{Kd_tree_node(Point_container<Item>& c, Traits& t, bool use_extension);}
+{
+Creates an internal or extended internal node \ccc{n}, which is the root of a subtree 
+storing all the points 
+from \ccc{c}. The splitting rule denoted by \ccc{t.selected_split_rule()} is used to 
+divide these points in
+two subsets. One subset is stored at the lower child and the other subset at the upper child.
+For each of the childern either a leaf node or an internal node is created as follows.
+If the number of points in the subset does not exceed the \ccc{t.bucket_size()} a leaf node is
+created that stores the points. Otherwise an internal node is created, which is the root of
+a subtree storing the points from the subset. If and only if \ccc{use_extension} 
+is true an extended internal node is created. An extended internal node stores 
+the lower and upper limit of an extended node's rectangle. 
+}
+
+\ccHeading{Member Functions}
+
+\ccMethod{bool is_leaf();}{Indicates whether a node is a leaf node.}
+\ccMethod{int  size();}{Returns the number of items stored in a leaf node.}
+\ccMethod{Item_iterator begin();}{Returns the iterator to the first item in a leaf node.}
+\ccMethod{Item_iterator end();}{Returns the iterator to the correspondig past-the-end
+iterator in a leaf node.}
+\ccMethod{Node* lower();}{Returns a pointer to the lower child of an internal node.}
+\ccMethod{Node* upper();}{Returns a pointer to the upper child of an internal node.}
+\ccMethod{Separator* separator();}{Returns a pointer to the separator.}
+\ccMethod{NT low_val();}{Returns the lower limit of an exteneded node's rectangle
+along the node's cutting dimension.}
+\ccMethod{NT high_val();}{Returns the upper limit of an extended node's rectangle
+along the node's cutting dimension.}
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+
