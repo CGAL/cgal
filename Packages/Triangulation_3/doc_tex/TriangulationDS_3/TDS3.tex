@@ -3,7 +3,7 @@
 %
 % author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 
-
+\ccChapterAuthor{Sylvain Pion, Monique Teillaud}
 
 A geometric triangulation has two aspects: the combinatorial structure, which
 gives the incidence and adjacency relations between faces, and the
@@ -380,3 +380,13 @@ This example program illustrates how to setup a 2D and a 3D triangulation data
 structures whose vertices respectively store vertex handles of the other one.
 
 \ccIncludeExampleCode{Triangulation_3/example_linking_2d_and_3d.C}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Design and Implementation History}
+
+Monique Teillaud introduced the triangulation of the topological
+sphere $S^d$ in $\R^{d+1}$ to manage the underlying graph of geometric
+triangulations and handle degenerate diomensions \cite{t-tdtc-99}. 
+
+Sylvain Pion improved the software in several ways, in particular
+regarding the memory management.
