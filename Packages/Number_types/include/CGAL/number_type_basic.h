@@ -86,6 +86,5 @@ CGAL_END_NAMESPACE
 #include <CGAL/double.h>
 #include <CGAL/float.h>
 #include <CGAL/int.h>
-#include <CGAL/Interval_arithmetic.h>
 
 #endif // CGAL_NUMBER_TYPE_BASIC_H

@@ -27,7 +27,9 @@
 #include <CGAL/basic.h>
 #include <CGAL/Handle_for.h>
 #include <CGAL/Gmpz.h>
-#include <cassert>
+#include <CGAL/Interval_arithmetic.h>
+
+#include <utility>
 
 #include <gmp.h>
 
@@ -413,7 +415,7 @@ operator>>(std::istream& is, Gmpq &z)
   Gmpz n, d;
   is >> n;
   is >> c;
-  assert(c == '/');
+  CGAL_assertion(c == '/');
   is >> d;
   z = Gmpq(n,d);
   

@@ -24,6 +24,10 @@
 #define CGAL_GMPXX_H
 
 #include <CGAL/basic.h>
+#include <CGAL/Number_type_traits.h>
+#include <CGAL/Interval_arithmetic.h>
+#include <utility>
+
 #include <gmpxx.h>
 
 // This file gathers the necessary adaptors so that the following

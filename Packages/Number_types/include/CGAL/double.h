@@ -24,6 +24,7 @@
 #define CGAL_DOUBLE_H
 
 #include <CGAL/basic.h>
+#include <utility>
 #include <cmath>
 #if defined(_MSC_VER) || defined(__BORLANDC__) || \
     defined(CGAL_MASK_FINITE_VALID)

@@ -1,3 +1,7 @@
+4.97  (23 May 2003)
+- Remove #include <CGAL/Interval_arithmetic.h> from number_type_basic.h.
+- Add missing #includes.
+
 4.96  (15 May 2003)
 - Fix to_interval(leda_real).
 

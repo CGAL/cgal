@@ -24,6 +24,11 @@
 #define CGAL_CORE_EXPR_H
 
 #include <CGAL/basic.h>
+#include <CGAL/Number_type_traits.h>
+#include <CGAL/Interval_arithmetic.h>
+
+#include <utility>
+
 #define Level 4
 #include <CORE.h>
 

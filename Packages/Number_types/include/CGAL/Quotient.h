@@ -24,19 +24,22 @@
 // of the version of rational in LEDA release 3.3.
 // The modification was done by Stefan.Schirra@mpi-sb.mpg.de
 //
-// coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
+// coordinator   : MPI, Saarbruecken
 // ======================================================================
 
 #ifndef CGAL_QUOTIENT_H
 #define CGAL_QUOTIENT_H
 
 #include <CGAL/basic.h>
+#include <utility>
 
 #ifndef CGAL_CFG_NO_LOCALE
 #  include <locale>
 #else
 #  include <cctype>
 #endif
+
+#include <CGAL/Interval_arithmetic.h>
 
 CGAL_BEGIN_NAMESPACE
 

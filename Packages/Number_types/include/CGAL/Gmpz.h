@@ -27,6 +27,8 @@
 #include <CGAL/basic.h>
 #include <CGAL/Handle_for.h>
 #include <CGAL/Quotient.h>
+#include <CGAL/double.h> 
+#include <CGAL/Interval_arithmetic.h>
 
 #ifndef CGAL_CFG_NO_LOCALE
 #  include <locale>

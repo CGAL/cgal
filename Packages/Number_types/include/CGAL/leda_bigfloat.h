@@ -26,6 +26,11 @@
 #define CGAL_LEDA_BIGFLOAT_H
 
 #include <CGAL/basic.h>
+#include <CGAL/Number_type_traits.h>
+#include <CGAL/Interval_arithmetic.h>
+
+#include <utility>
+
 #include <CGAL/LEDA_basic.h>
 #include <LEDA/bigfloat.h>
 
