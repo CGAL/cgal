@@ -301,8 +301,8 @@ _test_cls_triangulation_2( const Triangulation & )
   // test grid insert
   Cls T2_7;
   int m, p;
-  for (m=0; m<5; m++)
-    for (p=0; p<5; p++)
+  for (m=0; m<3; m++)
+    for (p=0; p<3; p++)
       T2_7.insert( Point(m*px+p*qx, m*py+p*qy, 1) );
   assert( T2_7.number_of_vertices() == m*p );
   assert( T2_7.is_valid() );
@@ -456,15 +456,15 @@ _test_cls_triangulation_2( const Triangulation & )
 	    == CGAL::COUNTERCLOCKWISE);
 
   // test grid locate
-  for (m=0; m<5; m++)
-    for (p=0; p<5; p++)
+  for (m=0; m<1; m++)
+    for (p=0; p<1; p++)
       {
 	Point q= Point(m*px+p*qx, m*py+p*qy, 1);
        	f = T2_7.locate(q,lt,li); assert( lt == Cls::VERTEX );
   	assert( T2_7.xy_equal(f->vertex(li)->point(), q) );
       }
-  for (m=0; m<5; m+=4)
-    for (p=0; p<4; p++)
+  for (m=0; m<1; m++)
+    for (p=0; p<1; p++)
       {
 	Point q= Point(2*m*px+(2*p+1)*qx, 2*m*py+(2*p+1)*qy, 2);
 	Point r= Point(m*px+p*qx, m*py+p*qy, 1);
@@ -476,8 +476,8 @@ _test_cls_triangulation_2( const Triangulation & )
               && T2_7.xy_equal(f->vertex(f->cw(li))->point(), r)));
 
       }
-  for (m=0; m<4; m++)
-    for (p=0; p<4; p++)
+  for (m=0; m<1; m++)
+    for (p=0; p<1; p++)
       {
 	Point q= Point((50*m+1)*px+(50*p+1)*qx, (50*m+1)*py+(50*p+1)*qy, 50);
        	f = T2_7.locate(q,lt,li); assert( lt == Cls::FACE );

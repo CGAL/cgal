@@ -23,7 +23,6 @@
 #include <CGAL/basic.h>
 #include <utility>
 #include <list>
-//#include <vector>
 
 #include <CGAL/_test_types.h>
 
@@ -36,11 +35,11 @@
 
 #include <CGAL/_test_types.C>
 #include <CGAL/_test_cls_triangulation_2.C>
-//#include <CGAL/SegmentH2.h>
+
 
 int main()
 {
-  //  std::cout << "Testing Triangulation_2 " << std::endl; 
+  std::cout << "Testing Triangulation_2 " << std::endl; 
   std::cout << " with Euclidean_traits_2<Cartesian> : " << std::endl ;
   typedef CGAL::Triangulation_euclidean_traits_2<Test_rep_cartesian> Gt1;
   typedef CGAL::Triangulation_vertex_base_2<Gt1>                     Vb1;

@@ -60,7 +60,6 @@ int main()
 
   std::cout << "Testing Delaunay Triangulation_2 "; 
   std::cout << " with Triangulation_test_traits : " << std::endl;
-  
   typedef CGAL::_Triangulation_test_traits                       Gt;
   typedef CGAL::Triangulation_vertex_base_2<Gt>                  Vb;
   typedef CGAL::Triangulation_face_base_2<Gt>                    Fb;
