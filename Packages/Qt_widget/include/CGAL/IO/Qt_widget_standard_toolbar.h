@@ -60,10 +60,8 @@ public slots:
 private slots:
   void zoomin();
   void zoomout();
-  void toggle_nlb();
-  void toggle_zrb();
-  void toggle_fb();
-  void toggle_htb();
+  void group_clicked(int i);
+
 private:
   void fill_toolbar(QMainWindow *mw);
   
@@ -71,8 +69,6 @@ private:
   Qt_widget          *widget;
   Qt_widget_history  *history;
   QButtonGroup*      button_group;
-  QToolButton        *nolayerBt, *zoomrectBt, *focusBt, *handtoolBt;
-  bool               is_button_pressed[4];
   // this group has no parent and is destroyed manually in the
   // destructor
 

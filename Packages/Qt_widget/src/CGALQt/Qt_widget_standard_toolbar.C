@@ -39,6 +39,7 @@
 #include <qmainwindow.h>
 #include <qtoolbutton.h>
 #include <qstring.h>
+#include <qvariant.h>
 
 #include <CGAL/IO/Qt_widget.h>
 #include <CGAL/IO/Qt_widget_history.h>
@@ -71,8 +72,6 @@ namespace CGAL {
   
   void Qt_widget_standard_toolbar::fill_toolbar(QMainWindow *mw)
   {
-    is_button_pressed[0] = false; is_button_pressed[1] = false;
-    is_button_pressed[2] = false; is_button_pressed[3] = false;
     Qt_widget_focus* focuslayer = 
       new Qt_widget_focus(this, "focuslayer");
     Qt_widget_zoomrect* zoomrectlayer = 
@@ -99,18 +98,13 @@ namespace CGAL {
 	widget->setMouseTracking(true);
       }
 
-    QIconSet arrow_pixmap(QPixmap( (const char**)arrow_small_xpm ),
-			  QPixmap( (const char**)arrow_xpm ));
-    QIconSet back_pixmap(QPixmap( (const char**)back_small_xpm ),
-			 QPixmap( (const char**)back_xpm ));
-    QIconSet forward_pixmap(QPixmap( (const char**)forward_small_xpm ),
-			    QPixmap( (const char**)forward_xpm ));
+    const QIconSet 
+      back_pixmap(QPixmap(static_cast<const char **>(back_small_xpm) ),
+		  QPixmap(static_cast<const char **>(back_xpm) ));
 
-    nolayerBt = new QToolButton(this, "nolayer");
-    nolayerBt->setIconSet(arrow_pixmap);
-    nolayerBt->setTextLabel("Deactivate Standard Layer");
-  
-    addSeparator();
+    const QIconSet 
+      forward_pixmap(QPixmap(static_cast<const char **>(forward_small_xpm) ),
+		     QPixmap(static_cast<const char **>(forward_xpm) ));
 
     QToolButton* backBt = new QToolButton(this, "History Back");
     backBt->setIconSet(back_pixmap);
@@ -123,7 +117,7 @@ namespace CGAL {
     addSeparator();
 
     QToolButton* zoominBt =
-      new QToolButton(QPixmap( (const char**)zoomin_xpm ),
+      new QToolButton(QPixmap(zoomin_xpm ),
 			       "Zoom in", 
 			       0, 
 			       this, 
@@ -133,7 +127,7 @@ namespace CGAL {
     zoominBt->setTextLabel("Scaling factor X2");
 
     QToolButton* zoomoutBt = 
-      new QToolButton(QPixmap( (const char**)zoomout_xpm ),
+      new QToolButton(QPixmap(zoomout_xpm ),
 				"Zoom out", 
 				0, 
 				this, 
@@ -141,25 +135,25 @@ namespace CGAL {
 				this, 
 				"Zoom out");
     zoomoutBt->setTextLabel("Scaling factor 1/2");
-  
-    zoomrectBt = new QToolButton(this, "focus on region");
-    zoomrectBt->setPixmap(QPixmap( (const char**)zoomin_rect_xpm ));
-    zoomrectBt->setTextLabel("Focus on region");
 
     addSeparator();
 
-    focusBt = new QToolButton(this, "focus");
-    focusBt->setPixmap(QPixmap( (const char**)focus_xpm ));
+    QToolButton* zoomrectBt = new QToolButton(this, "focus on region");
+    zoomrectBt->setPixmap(QPixmap(zoomin_rect_xpm ));
+    zoomrectBt->setTextLabel("Focus on region");
+
+    QToolButton* focusBt = new QToolButton(this, "focus");
+    focusBt->setPixmap(QPixmap(focus_xpm ));
     focusBt->setTextLabel("Focus on point");
 
-    handtoolBt = new QToolButton(this, "handtool");
-    handtoolBt->setPixmap(QPixmap( (const char**)hand_xpm ));
+    QToolButton* handtoolBt = new QToolButton(this, "handtool");
+    handtoolBt->setPixmap(QPixmap(hand_xpm ));
     handtoolBt->setTextLabel("Pan tool");
 
     addSeparator();
 
     QToolButton* showcoordBt = new QToolButton(this, "mouse");
-    showcoordBt->setPixmap(QPixmap( (const char**)mouse_coord_xpm) );
+    showcoordBt->setPixmap(QPixmap(mouse_coord_xpm) );
     showcoordBt->setTextLabel("Mouse Coordinates");
 
     button_group = new QButtonGroup(0, "My_group");
@@ -167,16 +161,17 @@ namespace CGAL {
     // destructor
 
     // below is the list of buttons in the group
-    QToolButton* button_group_list[] = { nolayerBt,
-					zoomrectBt,
-					focusBt,
-					handtoolBt };
-    for(int i=0; i<4; ++i)
+    QToolButton* const button_group_list[] = { zoomrectBt,
+					       focusBt,
+					       handtoolBt };
+    for(int i=0; i<3; ++i)
       {
 	button_group_list[i]->setToggleButton(true);
 	button_group->insert(button_group_list[i]);
       }
-    button_group->setExclusive(true);
+    button_group->setExclusive(false);
+    connect(button_group, SIGNAL(clicked(int)),
+	    this, SLOT(group_clicked(int)));
 
     showcoordBt->setToggleButton(true);
     showcoordBt->toggle();
@@ -203,50 +198,18 @@ namespace CGAL {
     connect(history, SIGNAL(forwardAvaillable(bool)),
             forwardBt, SLOT(setEnabled(bool)));
     history->clear();
-
-    connect(nolayerBt, SIGNAL(clicked()),
-	    this, SLOT(toggle_nlb()));
-    connect(zoomrectBt, SIGNAL(clicked()),
-	    this, SLOT(toggle_zrb()));
-    connect(focusBt, SIGNAL(clicked()),
-	    this, SLOT(toggle_fb()));
-    connect(handtoolBt, SIGNAL(clicked()),
-	    this, SLOT(toggle_htb()));
-
   };
 
-  void Qt_widget_standard_toolbar::toggle_nlb(){
-    if(is_button_pressed[0])
-	nolayerBt->toggle();
-    is_button_pressed[0] = !is_button_pressed[0];
-    is_button_pressed[1] = false;
-    is_button_pressed[2] = false;
-    is_button_pressed[3] = false;
+  void Qt_widget_standard_toolbar::group_clicked(int i)
+  {
+    QButton* bt = button_group->find(i);
+    
+    if( bt->isOn() )
+      for(int n = 0; n < button_group->count(); n++)
+	if( n != i )
+	  button_group->find(n)->setProperty("on", false);
   }
-  void Qt_widget_standard_toolbar::toggle_zrb(){
-    if(is_button_pressed[1])
-	zoomrectBt->toggle();
-    is_button_pressed[1] = !is_button_pressed[1];
-    is_button_pressed[0] = false;
-    is_button_pressed[2] = false;
-    is_button_pressed[3] = false;
-  }
-  void Qt_widget_standard_toolbar::toggle_fb(){
-    if(is_button_pressed[2])
-	focusBt->toggle();
-    is_button_pressed[2] = !is_button_pressed[2];
-    is_button_pressed[0] = false;
-    is_button_pressed[1] = false;
-    is_button_pressed[3] = false;
-  }
-  void Qt_widget_standard_toolbar::toggle_htb(){
-    if(is_button_pressed[3])
-	handtoolBt->toggle();
-    is_button_pressed[3] = !is_button_pressed[3];
-    is_button_pressed[0] = false;
-    is_button_pressed[1] = false;
-    is_button_pressed[2] = false;
-  }
+
   void Qt_widget_standard_toolbar::zoomin()
   {
     widget->zoom(2); //
