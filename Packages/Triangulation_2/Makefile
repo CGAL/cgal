@@ -84,7 +84,7 @@ Doc_ps:
 	latex wrapper.tex; latex wrapper.tex; \
 	dvips -o Triangulation_2.ps wrapper.dvi; \
 	gzip Triangulation_2.ps;\
-	rm -f *.aux *.log *.dvi *.ps *.blg *.bbl *.toc ;
+	rm -f *.aux *.log *.dvi  *.blg *.bbl *.toc ;
 	mv doc_tex/basic/Triangulation_2/Triangulation_2.ps.gz doc_ps ; 
 	cd doc_ps; rm -f pointer.ps.gz;
 	cd doc_tex/support/Handle;\
@@ -92,7 +92,7 @@ Doc_ps:
 	latex wrapper.tex; latex wrapper.tex; \
 	dvips -o pointer.ps wrapper.dvi; \
 	gzip pointer.ps; \
-	rm -f *.aux *.log *.dvi *.ps *.blg *.bbl *.toc
+	rm -f *.aux *.log *.dvi *.blg *.bbl *.toc
 	mv doc_tex/support/Handle/pointer.ps.gz doc_ps ; \
 
 
