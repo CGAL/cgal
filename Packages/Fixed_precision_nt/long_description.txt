@@ -40,6 +40,9 @@ Versions
 2.0 (20 Apr 99)
   namespace CGAL
 
+2.1 (30 Apr 99)
+  few compiler problems, few minors corrections in documentation.
+
 CONTENTS:
 
 description.txt

@@ -801,7 +801,9 @@ bool  Fixed_precision_nt::is_perturbed_insphere()
 
 bool Fixed_precision_nt::init(float b) 
 { 
+#ifdef __i386               // processor Intel 386
   FPU_set_cw(FPU_cw_near);
+#endif
   return Fixed_init(b);
 }
 

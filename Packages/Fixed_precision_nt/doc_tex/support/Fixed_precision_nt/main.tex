@@ -80,6 +80,9 @@ but only the specialized predicates.
         {Assignment. 
 }
 
+The comparison operations 
+\ccStyle{==, !=, <, >, <=,} and \ccStyle{>=} are all available. 
+
 \ccFunction{bool is_valid(const Fixed_precision_nt &fval);}
 {In case of overflow or division by 0, numbers becomes invalid.
 If the precision is changed by usage of 
@@ -90,35 +93,15 @@ if they are non longer multiple of $2^b$.}
 { \ccClassName do not implement infinite numbers. 
   \ccStyle{is_finite} is identical to \ccStyle{is_valid}.}
 
-\ccMethod{bool operator==(const Fixed_precision_nt &f) const;}
-       {}
-
-\ccMethod{bool operator!=(const Fixed_precision_nt &f) const;}
-       {}
-
-\ccMethod{bool operator<(const Fixed_precision_nt &f) const;}
-       {}
-
-
-\ccMethod{bool operator>(const Fixed_precision_nt &f) const;}
-       {}
-
-
-\ccMethod{bool operator<=(const Fixed_precision_nt &f) const;}
-       {}
-
-
-\ccMethod{bool operator>=(const Fixed_precision_nt &f) const;}
-       {}
 
 \ccFunction{Fixed_precision_nt operator+(const Fixed_precision_nt &fval1, const Fixed_precision_nt &fval2);}
-       {rounds the result to nearest legal \ccStyle{ Fixed}.}
+       {rounds the result to nearest legal \ccStyle{ Fixed}. Overflow is possible.}
 
 \ccFunction{Fixed_precision_nt operator-(const Fixed_precision_nt &fval1, const Fixed_precision_nt &fval2);}
-       {rounds the result to nearest legal \ccStyle{ Fixed}.}
+       {rounds the result to nearest legal \ccStyle{ Fixed}. Overflow is possible.}
 
 \ccFunction{Fixed_precision_nt operator*(const Fixed_precision_nt &fval1, const Fixed_precision_nt &fval2);}
-       {rounds the result to nearest legal \ccStyle{ Fixed}. Overflow is probable.}
+       {rounds the result to nearest legal \ccStyle{ Fixed}. Overflow is possible (and even probable).}
 
 \ccFunction{Fixed_precision_nt operator-(const Fixed_precision_nt &fval);}
        {rounds the result to nearest legal \ccStyle{ Fixed}.}
@@ -130,10 +113,10 @@ if they are non longer multiple of $2^b$.}
        {rounds the result to nearest legal \ccStyle{ Fixed}.}
 
 \ccMethod{Fixed_precision_nt operator*=(const Fixed_precision_nt &f) const;}
-       {rounds the result to nearest legal \ccStyle{ Fixed}. Overflow is probable.}
+       {rounds the result to nearest legal \ccStyle{ Fixed}.}
 
 \ccMethod{Fixed_precision_nt operator/=(const Fixed_precision_nt &f) const;}
-       {rounds the result to nearest legal \ccStyle{ Fixed}. Overflow is probable.}
+       {rounds the result to nearest legal \ccStyle{ Fixed}. Overflow is possible (and even probable).}
 
 \ccFunction{double to_double(const Fixed_precision_nt &fval);}
          {casts to \ccStyle{double}.}
@@ -155,7 +138,7 @@ this number $b$ as to be defined before all use of \ccStyle{Fixed_precision_nt}.
 
 \ccFunction{static bool Fixed_precision_nt::init(float B);}
 {$B$ is an upper bound on the data, $b$ is the smallest integer such that 
-$|B|\leq 2^b$. The result of the fonction is false if initialization was
+$|B|\leq 2^b$. The result of the function is false if initialization was
 already done, in that case already existing \ccClassName\ may became invalid.}
 
 \ccFunction{static float Fixed_precision_nt::unit_value();}
@@ -169,7 +152,7 @@ already done, in that case already existing \ccClassName\ may became invalid.}
 \ccClassName\ implements perturbation scheme as described by
 Alliez, Devillers and Snoeyink
 \cite{ads-rdppw-98}.
-The perturbation mode can be activate or desactivate for different kinds
+The perturbation mode can be activate or deactivate for different kinds
 of perturbations. The default mode is no perturbation.
 
 \ccFunction{static void Fixed_precision_nt::perturb_incircle();}
