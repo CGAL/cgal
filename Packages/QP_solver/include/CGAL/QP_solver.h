@@ -270,6 +270,7 @@ private:
     S_art                    art_s;     // special artificial column for slacks
     int                      art_s_i;   // index of special artificial column
     int                      art_basic; // number of basic artificial variables
+    C_aux                    aux_c;     // objective function for phase I
     
     // current status
     Indices                  B_O;       // basis (original variables)
@@ -694,7 +695,10 @@ private:
     // 
     public:
     bool is_solution_feasible();
+    bool is_solution_feasible_aux();
     bool is_solution_optimal();
+    bool is_solution_optimal_aux();
+    bool is_solution_valid();
 
 // ----------------------------------------------------------------------------
 
