@@ -123,39 +123,39 @@ Users of I/O functions for the planar map package are required to define I/O
 operators for the curves defined in their \ccc{Traits} classes.
 
 
-\paragraph{Sweep Line}
-%-------------------------------------------------
-  The \ccc{Planar Map with Intersections} packge contains a sweep line
-  utility. The sweep line algorithm can be used to build a planar map
-  much quicker than in an incremental way, where each curve is
-  inserted after the other. Two global functions are provided. 
+% %\paragraph{Sweep Line}
+% %-------------------------------------------------
+%   The \ccc{Planar Map with Intersections} packge contains a sweep line
+%   utility. The sweep line algorithm can be used to build a planar map
+%   much quicker than in an incremental way, where each curve is
+%   inserted after the other. Two global functions are provided. 
 
-  The function \ccc{sweep_to_construct_planar_map} builds a planar map
-  as a result of the call. Mind that it is possible to call this
-  function also with an instance the \ccc{Planar_map_2} class rather
-  than an instance of \ccc{Planar_map_with_intersections_2}. If no
-  additional insertion of intersecting or non-$x$-monotone curves are
-  planned follwing the building of the map, then it would be more
-  efficient (in running time) and less demanding (in traits class
-  functionality) to use an instance of the former.
+%   The function \ccc{sweep_to_construct_planar_map} builds a planar map
+%   as a result of the call. Mind that it is possible to call this
+%   function also with an instance the \ccc{Planar_map_2} class rather
+%   than an instance of \ccc{Planar_map_with_intersections_2}. If no
+%   additional insertion of intersecting or non-$x$-monotone curves are
+%   planned follwing the building of the map, then it would be more
+%   efficient (in running time) and less demanding (in traits class
+%   functionality) to use an instance of the former.
 
-  The function \ccc{sweep_to_produce_planar_map_subcurves} does not
-  build a planar map but rather collects the $x$-monotone pairwise
-  disjoint subcurves in a container. It is possible to tune the
-  function so that it will avoid to produce repetitions of overlapping
-  subcurves in the container or not.
+%   The function \ccc{sweep_to_produce_planar_map_subcurves} does not
+%   build a planar map but rather collects the $x$-monotone pairwise
+%   disjoint subcurves in a container. It is possible to tune the
+%   function so that it will avoid to produce repetitions of overlapping
+%   subcurves in the container or not.
 
-  The sweep line utility calculates intersections of curves.  The
-  \ccc{PlanarMapWithIntersectionTraits_2} concepts requires this
-  very functionality.  Thus, the sweep line functions have to use
-  traits classes that model the above concept. This is true even for
-  the case where an instance of \ccc{Planar_map_2<Dcel, Traits>} is built.
+%   The sweep line utility calculates intersections of curves.  The
+%   \ccc{PlanarMapWithIntersectionTraits_2} concepts requires this
+%   very functionality.  Thus, the sweep line functions have to use
+%   traits classes that model the above concept. This is true even for
+%   the case where an instance of \ccc{Planar_map_2<Dcel, Traits>} is built.
 
-  %See the sweep line functions reference pages for implementation
-  %details (\ccc{sweep_to_construct_planar_map}\lcTex{
-  %\ccRefPage{CGAL::sweep_to_construct_planar_map}} and
-  %\ccc{sweep_to_produce_planar_map_subcurves}\lcTex{
-  %\ccRefPage{CGAL::sweep_to_produce_planar_map_subcurves}}).
+%   %See the sweep line functions reference pages for implementation
+%   %details (\ccc{sweep_to_construct_planar_map}\lcTex{
+%   %\ccRefPage{CGAL::sweep_to_construct_planar_map}} and
+%   %\ccc{sweep_to_produce_planar_map_subcurves}\lcTex{
+%   %\ccRefPage{CGAL::sweep_to_produce_planar_map_subcurves}}).
 
 \subsection*{Functionality}
 
