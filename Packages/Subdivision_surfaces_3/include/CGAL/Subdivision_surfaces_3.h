@@ -148,9 +148,9 @@ void Subdivision_surfaces_3<_P>::PQQ_1step(_P& p, _S<_P> rule) {
   // f_begin ... (end)     : store the positions of the face-vertices
   // The index of the vertices buffer should 1-1 map to the distance
   // of the corresponding iterator to the begin of the iterator.
-  int num_vertex = p.size_of_vertices();
-  int num_edge = p.size_of_halfedges()/2;
-  int num_facet = p.size_of_facets();
+  size_t num_vertex = p.size_of_vertices();
+  size_t num_edge = p.size_of_halfedges()/2;
+  size_t num_facet = p.size_of_facets();
 
   // If Polyhedron is using vector, we need to reserve the memory to prevent 
   // the CGAL_assertion.
@@ -164,22 +164,22 @@ void Subdivision_surfaces_3<_P>::PQQ_1step(_P& p, _S<_P> rule) {
   std::vector<bool> v_onborder(num_vertex);
 
   Facet_iterator fitr = p.facets_begin();
-  for (int i = 0; i < num_facet; i++, ++fitr)
+  for (size_t i = 0; i < num_facet; i++, ++fitr)
     rule.facet_node(fitr, face_point_buffer[i]);
 
-  int sb = p.size_of_border_edges();
+  size_t sb = p.size_of_border_edges();
 
   Edge_iterator eitr = p.edges_begin();
-  for (int i = 0; i < num_edge-sb; i++, ++eitr)
+  for (size_t i = 0; i < num_edge-sb; i++, ++eitr)
     rule.edge_node(eitr, edge_point_buffer[i]);
-  for (int i = num_edge-sb; i < num_edge; i++, ++eitr) {
-    int v = std::distance(p.vertices_begin(), eitr->vertex());
+  for (size_t i = num_edge-sb; i < num_edge; i++, ++eitr) {
+    int v = (int) std::distance(p.vertices_begin(), eitr->vertex());
     v_onborder[v] = true;
     rule.border_node(eitr, edge_point_buffer[i], vertex_point_buffer[v]);
   }
 
   Vertex_iterator vitr = p.vertices_begin();
-  for (int i = 0; i < num_vertex; i++, ++vitr)
+  for (size_t i = 0; i < num_vertex; i++, ++vitr)
     if (!v_onborder[i]) rule.vertex_node(vitr, vertex_point_buffer[i]);
 
   // Build the connectifty using insert_vertex() and insert_edge()
@@ -191,7 +191,7 @@ void Subdivision_surfaces_3<_P>::PQQ_1step(_P& p, _S<_P> rule) {
   //    the new inserted vertex of step 3
   // Step 1.
   eitr = p.edges_begin();
-  for (int i = 0; i < num_edge; i++, ++eitr) {
+  for (size_t i = 0; i < num_edge; i++, ++eitr) {
     Vertex_handle vh = insert_vertex(p, eitr);
     vh->point() = edge_point_buffer[i];
   }
@@ -199,7 +199,7 @@ void Subdivision_surfaces_3<_P>::PQQ_1step(_P& p, _S<_P> rule) {
 
   // TODO: the topoloy modification can be done by a template function
   //       and that gives the user a chance to create new topoly rules.
-  for (int i = 0; i < num_facet; i++, ++fitr) {
+  for (size_t i = 0; i < num_facet; i++, ++fitr) {
     // Step 2.
     Halfedge_around_facet_circulator hcir_begin = fitr->facet_begin();
     Halfedge_around_facet_circulator hcir = hcir_begin;
@@ -229,7 +229,7 @@ void Subdivision_surfaces_3<_P>::PQQ_1step(_P& p, _S<_P> rule) {
   // Update the geometry data of the newly inserted vertices by the 
   // vertices buffer
   vitr = p.vertices_begin();
-  for (int i = 0; i < num_vertex; i++, ++vitr) 
+  for (size_t i = 0; i < num_vertex; i++, ++vitr) 
     vitr->point() = vertex_point_buffer[i];
 
   delete []vertex_point_buffer;
@@ -248,9 +248,9 @@ void Subdivision_surfaces_3<_P>::PTQ_1step(_P& p, _S<_P> rule) {
   // e_begin ... (end)     : store the positions of the edge-vertices
   // The index of the vertices buffer should 1-1 map to the distance
   // of the corresponding iterator to the begin of the iterator.
-  int num_vertex = p.size_of_vertices();
-  int num_edge = p.size_of_halfedges()/2;
-  int num_facet = p.size_of_facets();
+  size_t num_vertex = p.size_of_vertices();
+  size_t num_edge = p.size_of_halfedges()/2;
+  size_t num_facet = p.size_of_facets();
 
   // If Polyhedron is using vector, we need to reserve the memory to prevent 
   // the CGAL_assertion.
@@ -261,19 +261,19 @@ void Subdivision_surfaces_3<_P>::PTQ_1step(_P& p, _S<_P> rule) {
   Point* edge_point_buffer = vertex_point_buffer + num_vertex;
 
   std::vector<bool> v_onborder(num_vertex);
-  int sb = p.size_of_border_edges();
+  size_t sb = p.size_of_border_edges();
 
   Edge_iterator eitr = p.edges_begin();
-  for (int i = 0; i < num_edge-sb; i++, ++eitr)
+  for (size_t i = 0; i < num_edge-sb; i++, ++eitr)
     rule.edge_node(eitr, edge_point_buffer[i]);
-  for (int i = num_edge-sb; i < num_edge; i++, ++eitr) {
-    int v = std::distance(p.vertices_begin(), eitr->vertex());
+  for (size_t i = num_edge-sb; i < num_edge; i++, ++eitr) {
+    int v = (int) std::distance(p.vertices_begin(), eitr->vertex());
     v_onborder[v] = true;
     rule.border_node(eitr, edge_point_buffer[i], vertex_point_buffer[v]);
   }
 
   Vertex_iterator vitr = p.vertices_begin();
-  for (int i = 0; i < num_vertex; i++, ++vitr)
+  for (size_t i = 0; i < num_vertex; i++, ++vitr)
     if (!v_onborder[i]) rule.vertex_node(vitr, vertex_point_buffer[i]);
 
   // Build the connectifty using insert_vertex() and insert_edge()
@@ -285,12 +285,12 @@ void Subdivision_surfaces_3<_P>::PTQ_1step(_P& p, _S<_P> rule) {
   //    the new inserted vertex of step 3
   // Step 1.
   eitr = p.edges_begin();
-  for (int i = 0; i < num_edge; i++, ++eitr) {
+  for (size_t i = 0; i < num_edge; i++, ++eitr) {
     Vertex_handle vh = insert_vertex(p, eitr);
     vh->point() = edge_point_buffer[i];
   }
   Facet_iterator fitr = p.facets_begin();
-  for (int i = 0; i < num_facet; i++, ++fitr) {
+  for (size_t i = 0; i < num_facet; i++, ++fitr) {
     // Step 2.
     Halfedge_around_facet_circulator hcir_begin = fitr->facet_begin();
     Halfedge_around_facet_circulator hcir = hcir_begin;
@@ -311,7 +311,7 @@ void Subdivision_surfaces_3<_P>::PTQ_1step(_P& p, _S<_P> rule) {
   // Update the geometry data of the newly inserted vertices by the 
   // vertices buffer
   vitr = p.vertices_begin();
-  for (int i = 0; i < num_vertex; i++, ++vitr)
+  for (size_t i = 0; i < num_vertex; i++, ++vitr)
     vitr->point() = vertex_point_buffer[i];
 
   delete []vertex_point_buffer;
@@ -326,11 +326,11 @@ template <class _P> template <template <typename> class _S>
 void Subdivision_surfaces_3<_P>::DQQ_1step(_P& p, _S<_P> rule) {
   p.normalize_border();
 
-  int num_v = p.size_of_vertices();
-  int num_e = p.size_of_halfedges()/2;
-  int num_f = p.size_of_facets();
+  size_t num_v = p.size_of_vertices();
+  size_t num_e = p.size_of_halfedges()/2;
+  size_t num_f = p.size_of_facets();
 
-	int num_be = p.size_of_border_edges();
+	size_t num_be = p.size_of_border_edges();
 
   Point* point_buffer = new Point[num_e*2];
 
@@ -430,13 +430,13 @@ void Subdivision_surfaces_3<_P>::DQQ_1step(_P& p, _S<_P> rule) {
   // Build the connectifty using insert_vertex() and insert_edge()
   vitr = p.vertices_begin();
   pi = 0;
-  for (int i = 0; i < num_v; ++i) {
+  for (size_t i = 0; i < num_v; ++i) {
     Vertex_handle vh = vitr;
     ++vitr;
 
     Halfedge_around_vertex_circulator vcir = vh->vertex_begin();  
-    int vn = circulator_size(vcir);
-    for (int j = 0; j < vn; ++j) {
+    size_t vn = circulator_size(vcir);
+    for (size_t j = 0; j < vn; ++j) {
       Halfedge_handle e = vcir;
       ++vcir;
 			if (!e->is_border()) {
@@ -446,7 +446,7 @@ void Subdivision_surfaces_3<_P>::DQQ_1step(_P& p, _S<_P> rule) {
     }
 
     vcir = vh->vertex_begin();
-		for (int j = 0; j < vn; ++j) {
+		for (size_t j = 0; j < vn; ++j) {
 			if (!vcir->is_border()) {
 				Halfedge_handle e1 = vcir->prev();
 				++vcir;
@@ -460,7 +460,7 @@ void Subdivision_surfaces_3<_P>::DQQ_1step(_P& p, _S<_P> rule) {
   }
 
   Edge_iterator eitr = p.edges_begin();
-  for (int i = 0; i < num_e; ++i) {
+  for (size_t i = 0; i < num_e; ++i) {
 		Halfedge_handle eh = eitr;
 		++eitr;
 		if (!eh->is_border_edge()) {
@@ -479,7 +479,7 @@ void Subdivision_surfaces_3<_P>::DQQ_1step(_P& p, _S<_P> rule) {
 
 	// after this point, the original border edges are in front!
 	eitr = p.edges_begin();
-	for (int i = 0; i < num_be; ++i) {
+	for (size_t i = 0; i < num_be; ++i) {
 		Halfedge_handle eh = eitr;
 		++eitr;
 
@@ -495,7 +495,7 @@ void Subdivision_surfaces_3<_P>::DQQ_1step(_P& p, _S<_P> rule) {
 	}
 
 	vitr = p.vertices_begin();
-	for (int i = 0; i < num_v-num_be; ++i) {
+	for (size_t i = 0; i < num_v-num_be; ++i) {
 	  Vertex_handle vh = vitr;
     ++vitr;
     p.erase_center_vertex(vh->vertex_begin());
@@ -514,28 +514,28 @@ void Subdivision_surfaces_3<_P>::Sqrt3_1step(_P& p, _S<_P> rule) {
   p.normalize_border();
 
   //
-  int num_v = p.size_of_vertices();
-  int num_e = p.size_of_halfedges()/2;
-  int num_f = p.size_of_facets();
+  size_t num_v = p.size_of_vertices();
+  size_t num_e = p.size_of_halfedges()/2;
+  size_t num_f = p.size_of_facets();
 
   p.reserve(num_v+num_f, (num_e+3*num_f)*2, 3*num_f);
  
   // prepare the smoothed center points
   Point* cpt = new Point[num_f]; 
   Facet_iterator fitr = p.facets_begin();
-  for (int i = 0; i < num_f; ++i, ++fitr) {
+  for (size_t i = 0; i < num_f; ++i, ++fitr) {
     //ASSERTION_MSG(circulator_size(fitr->facet_begin())==3, "(ERROR) Non-triangle facet!");
     rule.facet_node(fitr, cpt[i]);
   }
 
   // smooth the vertex points
   Vertex_iterator vitr = p.vertices_begin();
-  for (int i = 0; i < num_v; ++i, ++vitr)
+  for (size_t i = 0; i < num_v; ++i, ++vitr)
     rule.vertex_node(vitr, vitr->point());
   
   // insert the facet points
   fitr = p.facets_begin();
-  for (int i = 0; i < num_f; ++i, ++fitr) {
+  for (size_t i = 0; i < num_f; ++i, ++fitr) {
     Halfedge_handle center = p.create_center_vertex(fitr->halfedge());
     center->vertex()->point() = cpt[i];
   }
@@ -544,7 +544,7 @@ void Subdivision_surfaces_3<_P>::Sqrt3_1step(_P& p, _S<_P> rule) {
 
   // flip the old edges except the border edges
   Edge_iterator eitr = p.edges_begin();
-  for (int i = 0; i < num_e; ++i) {
+  for (size_t i = 0; i < num_e; ++i) {
     Halfedge_handle e = eitr;
     ++eitr; // move to next edge before flip since flip destroys current edge
     if (!e->is_border_edge()) {

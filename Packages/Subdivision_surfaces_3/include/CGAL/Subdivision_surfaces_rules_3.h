@@ -226,21 +226,21 @@ public:
   //
   void vertex_node(Vertex_handle vertex, Point& pt) {
     Halfedge_around_vertex_circulator vcir = vertex->vertex_begin();
-    int n = circulator_size(vcir);    
+    size_t n = circulator_size(vcir);    
 
     float R[] = {0.0, 0.0, 0.0};
     Point& S = vertex->point();
     
-    for (int i = 0; i < n; i++, ++vcir) {
+    for (size_t i = 0; i < n; i++, ++vcir) {
       Point& p = vcir->opposite()->vertex()->point();
       R[0] += p[0]; 	R[1] += p[1]; 	R[2] += p[2];
     }
     if (n == 6) {
       pt = Point((10*S[0]+R[0])/16, (10*S[1]+R[1])/16, (10*S[2]+R[2])/16);
     } else {
-      double Cn = 5.0/8.0 - std::sqrt(3+2*std::cos(6.283/n))/64.0;
-      double Sw = n*(1-Cn)/Cn;
-      double W = n/Cn;
+      FT Cn = (FT) (5.0/8.0 - std::sqrt(3+2*std::cos(6.283/n))/64.0);
+      FT Sw = n*(1-Cn)/Cn;
+      FT W = n/Cn;
       pt = Point((Sw*S[0]+R[0])/W, (Sw*S[1]+R[1])/W, (Sw*S[2]+R[2])/W);
     }
   }
@@ -305,7 +305,7 @@ public:
 public:
   //
   void corner_node(Halfedge_handle he, Point& pt) {
-    int n =  CGAL::circulator_size(he->facet()->facet_begin()); 
+    size_t n =  CGAL::circulator_size(he->facet()->facet_begin()); 
 
     Vector cv(0,0,0);
     if (n == 4) {
@@ -314,15 +314,15 @@ public:
       cv = cv + (he->next()->next()->vertex()->point()-CGAL::ORIGIN);
       cv = cv + (he->prev()->vertex()->point()-CGAL::ORIGIN)*3;
       cv = cv/16;
-    } else {
-      double a;
-      for (int k = 0; k < n; ++k, he = he->next()) {
-	if (k == 0) a = ((double)5/n) + 1;
-	else a = (3+2*std::cos(2*k*3.141593/n))/n;
-	cv = cv + (he->vertex()->point()-CGAL::ORIGIN)*a;
-      }
-      cv = cv/4;
-    }
+		} else {
+			FT a;
+			for (size_t k = 0; k < n; ++k, he = he->next()) {
+				if (k == 0) a = (FT) (((double)5/n) + 1);
+				else a = (FT) (3+2*std::cos(2*k*3.141593/n))/n;
+				cv = cv + (he->vertex()->point()-CGAL::ORIGIN)*a;
+			}
+			cv = cv/4;
+		}
     pt = CGAL::ORIGIN + cv;
   }
 };
@@ -357,13 +357,13 @@ public:
   //
   void vertex_node(Vertex_handle vertex, Point& pt) {
     Halfedge_around_vertex_circulator vcir = vertex->vertex_begin();
-    int n = circulator_size(vcir);
+    size_t n = circulator_size(vcir);
     const double pi = 3.1415926;
 
-    FT a = (4.0-2.0*cos(2.0*pi/n))/9.0;
+    FT a = (FT) ((4.0-2.0*cos(2.0*pi/n))/9.0);
 
-    Vector cv = (1.0-a) * (vertex->point() - CGAL::ORIGIN);
-    for (int i = 1; i <= n; ++i, --vcir) {
+    Vector cv = ((FT)(1.0-a)) * (vertex->point() - CGAL::ORIGIN);
+    for (size_t i = 1; i <= n; ++i, --vcir) {
       cv = cv + (a/n)*(vcir->opposite()->vertex()->point()-CGAL::ORIGIN);
     }
 
