@@ -40,28 +40,28 @@ template < class NT >
 struct Is_zero :public CGAL_STD::unary_function< NT, bool > {
   typedef Arity_tag< 1 > Arity;
   bool operator()( const NT& x) const
-  { return is_zero( x); }
+  { return CGAL_NTS is_zero( x); }
 };
 
 template < class NT >
 struct Is_one :public CGAL_STD::unary_function< NT, bool > {
   typedef Arity_tag< 1 > Arity;
   bool operator()( const NT& x) const
-  { return is_one( x); }
+  { return CGAL_NTS is_one( x); }
 };
 
 template < class NT >
 struct Is_negative :public CGAL_STD::unary_function< NT, bool > {
   typedef Arity_tag< 1 > Arity;
   bool operator()( const NT& x) const
-  { return is_negative( x); }
+  { return CGAL_NTS is_negative( x); }
 };
 
 template < class NT >
 struct Is_positive :public CGAL_STD::unary_function< NT, bool > {
   typedef Arity_tag< 1 > Arity;
   bool operator()( const NT& x) const
-  { return is_positive( x); }
+  { return CGAL_NTS is_positive( x); }
 };
 
 // Sign would result in a name clash with enum.h
@@ -69,7 +69,7 @@ template < class NT >
 struct Sgn :public CGAL_STD::unary_function< NT, int > {
   typedef Arity_tag< 1 > Arity;
   Sign operator()( const NT& x) const
-  { return sign( x); }
+  { return CGAL_NTS sign( x); }
 };
 
 template < class NT >
@@ -78,14 +78,14 @@ struct Lexicographical_sign
   typedef Arity_tag< 2 > Arity;
 
   Sign operator()( const NT& x, const NT& y) const
-  { return lexicographical_sign( x, y); }
+  { return CGAL_NTS lexicographical_sign( x, y); }
 };
 
 template < class NT >
 struct Abs :public CGAL_STD::unary_function< NT, NT > {
   typedef Arity_tag< 1 > Arity;
   NT operator()( const NT& x) const
-  { return abs( x); }
+  { return CGAL_NTS abs( x); }
 };
 
 template < class NT, class Compare = std::less< NT > >
@@ -94,7 +94,7 @@ struct Min :public CGAL_STD::binary_function< NT, NT, NT > {
   Min() {}
   Min(const Compare& c_) : c(c_) {}
   NT operator()( const NT& x, const NT& y) const
-  { return std::min( x, y, c); }
+  { return min( x, y, c); }
 protected:
   Compare c;
 };
@@ -105,7 +105,7 @@ struct Max :public CGAL_STD::binary_function< NT, NT, NT > {
   Max() {}
   Max(const Compare& c_) : c(c_) {}
   NT operator()( const NT& x, const NT& y) const
-  { return std::max( x, y, c); }
+  { return max( x, y, c); }
 protected:
   Compare c;
 };
@@ -117,16 +117,43 @@ struct Compare
 
   Comparison_result
   operator()( const NT& x, const NT& y) const
-  { return compare( x, y); }
+  { return CGAL_NTS compare( x, y); }
 };
 
 template < class NT >
-struct Square :public CGAL_STD::unary_function< NT, NT > {
-  typedef Arity_tag< 2 > Arity;
+struct Square : public CGAL_STD::unary_function< NT, NT > {
+  typedef Arity_tag< 1 > Arity;
 
   NT
   operator()( const NT& x) const
-  { return square( x ); }
+  { return CGAL_NTS square( x ); }
+};
+
+template < class NT >
+struct Sqrt : public CGAL_STD::unary_function< NT, NT > {
+  typedef Arity_tag< 1 > Arity;
+
+  NT
+  operator()( const NT& x) const
+  { return CGAL_NTS sqrt( x ); }
+};
+
+template < class NT >
+struct Div : public CGAL_STD::binary_function< NT, NT, NT > {
+  typedef Arity_tag< 2 > Arity;
+
+  NT
+  operator()( const NT& x, const NT& y) const
+  { return CGAL_NTS div( x, y ); }
+};
+
+template < class NT >
+struct Gcd : public CGAL_STD::binary_function< NT, NT, NT > {
+  typedef Arity_tag< 2 > Arity;
+
+  NT
+  operator()( const NT& x, const NT& y) const
+  { return CGAL_NTS gcd( x, y ); }
 };
 
 CGAL_END_NAMESPACE

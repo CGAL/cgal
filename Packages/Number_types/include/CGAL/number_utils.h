@@ -201,6 +201,12 @@ to_double( const NT& n)
 template <class NT>
 inline
 NT
+div( const NT& n1, const NT& n2)
+{ return CGAL::div(n1, n2); }
+
+template <class NT>
+inline
+NT
 sqrt( const NT& n)
 { return CGAL::sqrt(n); }
 

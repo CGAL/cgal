@@ -29,9 +29,9 @@ CGAL_BEGIN_NAMESPACE
 
 template < class NT >
 struct Number_type_traits {
-  typedef typename NT::Has_gcd_tag       Has_gcd_tag;
-  typedef typename NT::Has_division_tag  Has_division_tag;
-  typedef typename NT::Has_sqrt_tag      Has_sqrt_tag;
+  typedef typename NT::Has_gcd       Has_gcd;
+  typedef typename NT::Has_division  Has_division;
+  typedef typename NT::Has_sqrt      Has_sqrt;
 };
 
 CGAL_END_NAMESPACE
