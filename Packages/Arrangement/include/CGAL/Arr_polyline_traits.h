@@ -36,26 +36,28 @@
 #include <CGAL/Point_2.h>
 #include <CGAL/squared_distance_2.h>
 
-#include <CGAL/Pm_segment_exact_traits.h>
+#include <CGAL/Pm_segment_traits_2.h>
 
 CGAL_BEGIN_NAMESPACE
 
-template <class R,
-  class Container  = std::vector<CGAL_TYPENAME_MSVC_NULL R::Point_2 > >
-class Arr_polyline_traits {
+template <class Kernel_,
+  class Container  = std::vector<CGAL_TYPENAME_MSVC_NULL Kernel_::Point_2 > >
+class Arr_polyline_traits : public Kernel_
+{
 public:
-  typedef Arr_polyline_traits<R> Self;
+  typedef Kernel_                       Kernel;
+  typedef Arr_polyline_traits<Kernel>   Self;
 
-  typedef typename R::Point_2  Point_2;
-  typedef typename R::Vector_2 Vector_2;
-  typedef Container            Curve_2;
-  typedef Container            X_curve_2;
+  typedef typename Kernel::Point_2      Point_2;
+  typedef typename Kernel::Vector_2     Vector_2;
+  typedef Container                     Curve_2;
+  typedef Container                     X_curve_2;
 
   // Obsolete, for backward compatibility
-  typedef Point_2              Point;
-  typedef Vector_2             Vector;
-  typedef X_curve_2            X_curve;
-  typedef Curve_2              Curve;
+  typedef Point_2                       Point;
+  typedef Vector_2                      Vector;
+  typedef X_curve_2                     X_curve;
+  typedef Curve_2                       Curve;
 
   typedef enum
   {
@@ -66,13 +68,12 @@ public:
     //CURVE_VERTICAL = 3
   } Curve_point_status;
 
-  Arr_polyline_traits() {
-  }
+  Arr_polyline_traits() { }
 
-  Comparison_result compare_x(const Point_2& p0, const Point_2& p1) const {
+  Comparison_result compare_x(const Point_2 & p0, const Point_2 & p1) const {
     return CGAL::compare_x(p0,p1);
   }
-  Comparison_result compare_y(const Point_2& p0, const Point_2& p1) const {
+  Comparison_result compare_y(const Point_2 & p0, const Point_2 & p1) const {
     return CGAL::compare_y(p0,p1);
   }
 
@@ -114,9 +115,9 @@ public:
 	 ++pit_2,++after_2) {}
 
     // the R here is the template parameter (see class def. above)
-    Pm_segment_exact_traits<R> segment_traits;
+    Pm_segment_traits_2<Kernel> segment_traits;
     
-    const typename Pm_segment_exact_traits<R>::X_curve_2
+    const typename Pm_segment_traits_2<Kernel>::X_curve_2
       seg1(*pit_1, *after_1),
       seg2(*pit_2, *after_2);
 
@@ -157,13 +158,13 @@ public:
     
     for( ; (compare_x(*pit,p) * compare_x(*after,p)) > 0 ; ++pit,++after) {}
     
-    Line_2<R> l1(*pit,*after);
+    Line_2<Kernel> l1(*pit,*after);
     
     pit=cv2.begin();
     after=pit; ++after;
     for( ; (compare_x(*pit,p) * compare_x(*after,p)) > 0 ; ++pit,++after) {}
     
-    Line_2<R> l2(*pit,*after);
+    Line_2<Kernel> l2(*pit,*after);
     
     Comparison_result r=CGAL::compare_y_at_x(p,l1,l2); 
     
@@ -213,13 +214,13 @@ public:
     
     for( ; (compare_x(*pit,p) * compare_x(*after,p)) > 0 ; ++pit,++after) {}
     
-    Line_2<R> l1(*pit,*after);
+    Line_2<Kernel> l1(*pit,*after);
     
     pit=cv2.begin();
     after=pit; ++after;
     for( ; (compare_x(*pit,p) * compare_x(*after,p)) > 0 ; ++pit,++after) {}
 
-    Line_2<R> l2(*pit,*after);
+    Line_2<Kernel> l2(*pit,*after);
     
     Comparison_result r=CGAL::compare_y_at_x(p,l1,l2); 
     
@@ -265,7 +266,7 @@ public:
       ++pit; ++after;
     }
  
-    Line_2<R> l(*pit,*after);
+    Line_2<Kernel> l(*pit,*after);
 
     Comparison_result res = CGAL::compare_y_at_x(p, l);
 
@@ -363,13 +364,6 @@ public:
     //return *(--cv.end());
     typename X_curve_2::const_iterator it=cv.end(); --it;
     return *it;
-  }
-
-  Point_2 point_to_left(const Point_2& p) const {
-    return p+Vector_2(-1,0);;
-  }
-  Point_2 point_to_right(const Point_2& p) const {
-    return p+Vector_2(1,0);;
   }
 
   ///////////////////////////////////////////////////////
@@ -510,8 +504,6 @@ public:
 
   }
 
-public:
-
   //returns true iff the intersectionis lexicographically strictly right of pt
 
   bool do_intersect_to_right(const X_curve_2& ca, const X_curve_2& cb,
@@ -567,10 +559,10 @@ public:
       //check if intersection exists and is lex larger
       Object result;
       Point_2 i_pt;
-      Segment_2<R> i_seg;
+      Segment_2<Kernel> i_seg;
       
-      result = intersection(Segment_2<R>(*i1s,*i1t),
-			    Segment_2<R>(*i2s,*i2t));
+      result = intersection(Segment_2<Kernel>(*i1s,*i1t),
+			    Segment_2<Kernel>(*i2s,*i2t));
       if (assign(i_pt,result)) {
         //check if intersection point to the right of pt
         if (lexicographically_xy_larger (i_pt,pt)) 
@@ -607,8 +599,8 @@ public:
 
     while (1) {
       //check for intersection of the segments
-      if (do_intersect(Segment_2<R>(*i1s,*i1t),
-		       Segment_2<R>(*i2s,*i2t)))
+      if (do_intersect(Segment_2<Kernel>(*i1s,*i1t),
+		       Segment_2<Kernel>(*i2s,*i2t)))
 	{
 	  return true;
 	}
@@ -687,10 +679,10 @@ public:
       
     if (number_to_left==2) {
       //check if intersection exists and is lex larger
-      Object result=intersection(Segment_2<R>(*i1s,*i1t),
-				 Segment_2<R>(*i2s,*i2t));
+      Object result=intersection(Segment_2<Kernel>(*i1s,*i1t),
+				 Segment_2<Kernel>(*i2s,*i2t));
       Point_2 i_pt;
-      Segment_2<R> i_seg;
+      Segment_2<Kernel> i_seg;
       if (assign(i_pt,result)) {
 	//check if intersection point to the right of pt
 	if (lexicographically_xy_larger (i_pt,pt)) {
@@ -726,13 +718,13 @@ public:
             // shoot will return a segment instead of point.
             Point_2 ap1( pt.x(), i_seg.source().y() );
             Point_2 ap2( pt.x(), i_seg.target().y() );
-            Segment_2<R> vertical_pt_x_base( ap1, ap2 );
+            Segment_2<Kernel> vertical_pt_x_base( ap1, ap2 );
             Object i_obj = intersection( vertical_pt_x_base, i_seg );
             //assign( p1, i_obj ); // Causes a bug if the result is a segment.
             
             // Bug fix: Eti.
             Point_2 tmp_p1;
-            Segment_2<R> i_vertical;
+            Segment_2<Kernel> i_vertical;
             if ( assign( tmp_p1, i_obj ))
               p1=tmp_p1;
             else if ( assign(i_vertical, i_obj))
@@ -764,11 +756,11 @@ public:
         
       Object result;
         
-      result = intersection(Segment_2<R>(*i1s,*i1t),
-			    Segment_2<R>(*i2s,*i2t));
+      result = intersection(Segment_2<Kernel>(*i1s,*i1t),
+			    Segment_2<Kernel>(*i2s,*i2t));
         
       Point_2 i_pt;
-      Segment_2<R> i_seg;
+      Segment_2<Kernel> i_seg;
       if (assign(i_pt,result)) {
           
 #ifndef ARR_USES_LEDA_RATIONAL  //normalize if we are with rational numbers
@@ -798,13 +790,13 @@ public:
 	    // point to p1.
             Point_2 ap1( pt.x(), i_seg.source().y() );
             Point_2 ap2( pt.x(), i_seg.target().y() );
-            Segment_2<R> vertical_pt_x_base( ap1, ap2 );
+            Segment_2<Kernel> vertical_pt_x_base( ap1, ap2 );
             Object i_obj = intersection( vertical_pt_x_base, i_seg );
             //assign( p1, i_obj ); // Causes a bug if the result is a segment.
 
             // Bug fix: Eti.
             Point_2 tmp_p1;
-            Segment_2<R> i_vertical;
+            Segment_2<Kernel> i_vertical;
             if ( assign( tmp_p1, i_obj ))
               p1=tmp_p1;
             else if ( assign(i_vertical, i_obj))
@@ -840,19 +832,19 @@ public:
 
 	// check for overlap after x point
 	Object result;
-	Segment_2<R> i_seg;
+	Segment_2<Kernel> i_seg;
 
 	if ( is_same( p1, *i1t) && is_same( p1, *i2t)) {
-	  result = intersection(Segment_2<R>(*s1, *t1), 
-				Segment_2<R>(*s2, *t2));
+	  result = intersection(Segment_2<Kernel>(*s1, *t1), 
+				Segment_2<Kernel>(*s2, *t2));
 	}
 	else if ( is_same( p1, *i1t)) {
-	  result = intersection(Segment_2<R>(*s1, *t1),
-				Segment_2<R>(*i2s, *i2t));
+	  result = intersection(Segment_2<Kernel>(*s1, *t1),
+				Segment_2<Kernel>(*i2s, *i2t));
 	}
 	else if ( is_same( p1, *i2t)) {
-	  result = intersection(Segment_2<R>(*i1s, *i1t),
-				Segment_2<R>(*s2, *t2));
+	  result = intersection(Segment_2<Kernel>(*i1s, *i1t),
+				Segment_2<Kernel>(*s2, *t2));
 	}
 	if (assign(i_seg,result)) {
 	  // no need to check whether intersection seg to the right of pt, 
@@ -888,8 +880,8 @@ public:
 
     //now i1s holds the source vertex and i1t holds the target
     Point_2 i_pt;
-    Segment_2<R> i_seg;
-    Segment_2<R> s1(*i1s,*i1t),s2(*i2s,*i2t);
+    Segment_2<Kernel> i_seg;
+    Segment_2<Kernel> s1(*i1s,*i1t),s2(*i2s,*i2t);
     Object res=intersection(s1,s2);
     
     if (assign(i_seg,res)) {
@@ -909,8 +901,8 @@ public:
     //NOW we can start sweeping the chains
 
     while (1) {
-      Segment_2<R> i_seg;
-      Segment_2<R> s1(*i1s,*i1t),s2(*i2s,*i2t);
+      Segment_2<Kernel> i_seg;
+      Segment_2<Kernel> s1(*i1s,*i1t),s2(*i2s,*i2t);
       res=intersection(s1,s2);
       if (assign(i_seg,res)) {
 	if (!is_same(i_seg.source(),i_seg.target()))
@@ -948,7 +940,6 @@ public:
     return reflected_pt;
   }
 
-
   ////////////////////////////////////////////////////////////////////
   // PRIVATE
 private:
@@ -957,6 +948,13 @@ private:
   {
     return (compare_x(p1, p2) == EQUAL) &&
       (compare_y(p1, p2) == EQUAL);
+  }
+
+  Point_2 point_to_left(const Point_2& p) const {
+    return p+Vector_2(-1,0);;
+  }
+  Point_2 point_to_right(const Point_2& p) const {
+    return p+Vector_2(1,0);;
   }
 
 public:
@@ -971,5 +969,4 @@ public:
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_ARR_POLYLINE_TRAITS_H
-// EOF
+#endif

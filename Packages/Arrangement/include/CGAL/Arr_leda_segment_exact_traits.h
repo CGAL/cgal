@@ -26,44 +26,43 @@
 #include <list>
 
 #include <CGAL/LEDA_basic.h>
-#include <CGAL/Pm_leda_segment_traits_2.h>
+#include <CGAL/Pm_segment_traits_2.h>
+#include <CGAL/Pm_segment_traits_leda_kernel_2.h>
 
 CGAL_BEGIN_NAMESPACE
 
 #define CGAL_XT_SINGLE_POINT 1
 #define	CGAL_XT_ORIGINAL_POINT 2
 
-class Arr_leda_segment_exact_traits 
-  : public Pm_leda_segment_traits_2
+template< class FT_ >
+class Arr_leda_segment_exact_traits
+  : public Pm_segment_traits_2<Pm_segment_traits_leda_kernel_2<FT_> >
 {
 public:
-        Arr_leda_segment_exact_traits() 
-                : Pm_leda_segment_traits_2() {}
+  Arr_leda_segment_exact_traits() {}
 
 public:
-  typedef Pm_leda_segment_traits_2     Base;
+  typedef Pm_segment_traits_leda_kernel_2<FT_>  Kernel;
+  typedef Pm_segment_traits_2<Kernel>           Base;
   
-  typedef Base::Point_2                Point_2;
-  typedef Base::X_curve_2              X_curve_2;
-  typedef X_curve_2                    Curve_2;
+  typedef Base::Point_2                         Point_2;
+  typedef Base::X_curve_2                       X_curve_2;
+  typedef X_curve_2                             Curve_2;
 
-  typedef Base::Curve_point_status     Curve_point_status;
+  typedef Base::Curve_point_status              Curve_point_status;
 
   // Obsolete, for backward compatibility
-  typedef Point_2                      Point;
-  typedef X_curve_2                    X_curve;
-  typedef Curve_2                      Curve;
-
-protected:
-  typedef Base::Curve_status           Curve_status;
+  typedef Point_2                               Point;
+  typedef X_curve_2                             X_curve;
+  typedef Curve_2                               Curve;
 
 public:
-  bool is_x_monotone(const Curve& cv) {return true;}
+  bool is_x_monotone(const Curve & cv) {return true;}
   //segments are x_monotone:
-  void make_x_monotone(const Curve& cv, std::list<Curve>& l) {} 
+  void make_x_monotone(const Curve & cv, std::list<Curve>& l) {} 
 
-  X_curve curve_flip(const X_curve& cv) const {
-	return cv.reversal();
+  X_curve curve_flip(const X_curve & cv) const {
+      return cv.reversal();
   }
 
   void curve_split(const X_curve& cv, X_curve& c1, X_curve& c2, 
@@ -418,9 +417,6 @@ public:
 
     return false;
   }
-
-
-
 
 private:
   Point_2 point_normalize(const Point_2 &pt) const {

@@ -504,14 +504,6 @@ public:
     return cv.t;
   }
 
-  Point_2 point_to_left(const Point_2& p) const {
-    return Point_2(p.x()-NT(1),p.y());
-  }
-  Point_2 point_to_right(const Point_2& p) const {
-    return Point_2(p.x()+NT(1),p.y());
-  }
-  
-
   ///////////////////////////////////////////////////////
   //         ARRANGEMENT FUNCS
 
@@ -1185,12 +1177,4 @@ Window_stream& operator<<(Window_stream& os,
 
 CGAL_END_NAMESPACE
 
-
-
 #endif
-
-
-
-
-
-

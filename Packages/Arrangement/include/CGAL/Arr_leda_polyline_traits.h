@@ -32,31 +32,34 @@
 #include <CGAL/rat_leda_in_CGAL_2.h>
 #include <LEDA/rat_point.h>
 
+#include <CGAL/Pm_segment_traits_leda_kernel_2.h>
+
 //the following is for a type check (creates compiler problems,not implemented)
 //#include <typeinfo>
 
 CGAL_BEGIN_NAMESPACE
 
 
-template <class Container  = std::vector<leda_rat_point >
->
-class Arr_leda_polyline_traits {
+template <class FT_, class Container  = std::vector<leda_rat_point > >
+class Arr_leda_polyline_traits : public Pm_segment_traits_leda_kernel_2<FT_>
+{
 public:
-  typedef Arr_leda_polyline_traits<Container> Self;
+  typedef FT_                                           FT;
+  typedef Arr_leda_polyline_traits<FT,Container>        Self;
 
-  typedef leda_rat_point   Point_2;
-  typedef leda_rat_vector  Vector_2;
+  typedef leda_rat_point                                Point_2;
+  typedef leda_rat_vector                               Vector_2;
+  typedef leda_rat_segment                              Segment_2;
 
-  typedef leda_rat_segment Segment;
-
-  typedef Container        Curve_2;
-  typedef Container        X_curve_2;
+  typedef Container                                     Curve_2;
+  typedef Container                                     X_curve_2;
 
   // Obsolete, for backward compatibility
-  typedef Point_2          Point;
-  typedef Vector_2         Vector;
-  typedef X_curve_2        X_curve;
-  typedef Curve_2          Curve;
+  typedef Point_2                                       Point;
+  typedef Vector_2                                      Vector;
+  typedef X_curve_2                                     X_curve;
+  typedef Curve_2                                       Curve;
+  typedef Segment_2                                     Segment;
 
   typedef enum
   {
@@ -67,19 +70,17 @@ public:
   } Curve_point_status;
 
 
-  Arr_leda_polyline_traits() {
-  }
+  Arr_leda_polyline_traits() { }
 
   Comparison_result compare_x(const Point_2& p0, const Point_2& p1) const {
     return (Comparison_result)(
 
 #if (__LEDA__ >= 380)
                                // full specification is required for msvc:
-                               Arr_leda_polyline_traits::Point_2::cmp_x(p0,p1)
+                               Self::Point_2::cmp_x(p0,p1)
 #else // backward compatability to LEDA   
                                compare(p0.xcoord(),p1.xcoord()) 
 #endif
-
                                );
   }
     
@@ -88,11 +89,10 @@ public:
 
 #if (__LEDA__ >= 380)
                                // full specification is required for msvc:
-                               Arr_leda_polyline_traits::Point_2::cmp_y(p0,p1)
+                               Self::Point_2::cmp_y(p0,p1)
 #else // backward compatability to LEDA
                                compare(p0.ycoord(),p1.ycoord())
 #endif
-
                                );
   }
 
@@ -391,14 +391,6 @@ public:
     return *it;
   }
   
-  Point_2 point_to_left(const Point_2& p) const {
-    return Point_2(p.xcoord()-1, p.ycoord());  
-  }
-  Point_2 point_to_right(const Point_2& p) const {
-    return Point_2(p.xcoord()+1, p.ycoord());
-  }
-  
-
   ///////////////////////////////////////////////////////
   //         ARRANGEMENT FUNCS
 
@@ -525,9 +517,6 @@ public:
     }
 
   }
-
-public:
-
 
   bool do_intersect_to_right(const X_curve_2 & ca, 
                              const X_curve_2 & cb,
@@ -1000,6 +989,13 @@ private:
       (compare_y(p1, p2) == EQUAL);
   }
 
+  Point_2 point_to_left(const Point_2& p) const {
+    return Point_2(p.xcoord()-1, p.ycoord());  
+  }
+  Point_2 point_to_right(const Point_2& p) const {
+    return Point_2(p.xcoord()+1, p.ycoord());
+  }
+  
 protected:
   Point_2 point_normalize(const Point_2 &pt) const {
 

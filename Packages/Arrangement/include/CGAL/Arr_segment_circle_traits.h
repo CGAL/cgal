@@ -73,12 +73,12 @@ class Arr_segment_circle_traits
   ////////// Planar Map methods: //////////
 
   // Compare the co-ordinates of two given points.
-  Comparison_result compare_x(const Point_2& p0, const Point_2& p1) const
+  Comparison_result compare_x(const Point_2 & p0, const Point_2 & p1) const
   {
     return _compare_value(p0.x(),p1.x());
   }
 
-  Comparison_result compare_y(const Point_2& p0, const Point_2& p1) const
+  Comparison_result compare_y(const Point_2 & p0, const Point_2 & p1) const
   {
     return _compare_value(p0.y(),p1.y());
   }
@@ -944,17 +944,6 @@ class Arr_segment_circle_traits
     return (curve.target());
   }
 
-  // Return a point to the left or to the right of p.
-  Point_2 point_to_left (const Point_2& p) const
-  {
-    return (Point_2(p.x()-NT(1),p.y()));
-  }
-
-  Point_2 point_to_right (const Point_2& p) const
-  {
-    return (Point_2(p.x()+NT(1),p.y()));
-  }
-
   // Reflect a point in y.
   Point_2 point_reflect_in_y (const Point_2& p) const
   {
@@ -1335,7 +1324,12 @@ class Arr_segment_circle_traits
     return (curve1.overlaps (curve2, ovlp_arcs) > 0);
   }
 
- private:
+  /*! \todo replace indirect use point_is_same() with equal_2()
+   */
+  bool point_is_same(const Point_2 & p1, const Point_2 & p2) const
+  { return ((compare_x(p1, p2) == EQUAL) && (compare_y(p1, p2) == EQUAL)); }
+  
+private:
 
   ////////// Private auxiliary methods: //////////
 
@@ -1362,5 +1356,4 @@ class Arr_segment_circle_traits
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_ARR_CONIC_TRAITS_2_H
-// EOF
+#endif
