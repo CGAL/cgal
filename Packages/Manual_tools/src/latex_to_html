@@ -741,7 +741,10 @@ done
 
 # Make a subdirectory for the temp_path:
 # --------------------------------------
-TmpDir=${TmpPath}/latex_to_html_tmp_$USER
+TmpDir=${TmpPath}/latex_to_html_tmp_${USER}_${RANDOM}
+while [ -d ${TmpDir} ]; do
+    TmpDir=${TmpPath}/latex_to_html_tmp_${USER}_${RANDOM}
+done
 
 if [ $ShowDefaults == 1 ]; then
     echo "The variable settings (including commmandline options) are:"
@@ -781,6 +784,7 @@ fi
 # Make a subdirectory for the temp_path:
 # --------------------------------------
 if [ -d ${TmpDir} ]; then
+    # with the randomly chosen name above this should not happen anymore
     warning "the dir '$TmpDir' exists already."
     warning "         It will be removed."
     \rm -r ${TmpDir}
