@@ -1,3 +1,6 @@
+2.11.7 (22 January 2003)
+- Fix for new GCC.
+
 2.11.4 (29 October 2002)
 - Rename leftturn and co to left_turn and co.
 - Make it work with GMP++.
