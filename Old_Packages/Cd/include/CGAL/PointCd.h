@@ -53,7 +53,7 @@ class PointCd : public Handle
       if ( i < last ) 
       {
         FT h = *(i++);
-        CGAL_kernel_precondition( !is_zero (h) );
+        CGAL_kernel_precondition( !CGAL_NTS is_zero (h) );
         CGAL_kernel_precondition( i == last );
         for ( o=e; o < e+dim; *(o++) /= h ) ;
         // if ( h != FT(1) ) { for ( o=e; o < e+dim; *(o++) /= h ) {}; }
