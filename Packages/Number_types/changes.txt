@@ -1,3 +1,6 @@
+4.53     (28 March 02)
+- Fixed cgal_test.
+
 4.52     (27 March 02)
 - Fixed test makefile to include utilities test.
 
