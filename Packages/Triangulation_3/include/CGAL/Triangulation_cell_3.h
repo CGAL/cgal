@@ -100,7 +100,7 @@ public:
 
   Vertex_handle mirror_vertex(int i) const
     {
-      return Ctds::mirror_vertex(i);
+      return (Vertex *) Ctds::mirror_vertex(i);
     }
 
   bool has_neighbor(Cell_handle c) const
