@@ -1,4 +1,9 @@
 //-----------------------------------------------------------------------//
+// 2.8.1
++ Added typedef for pointer, reference and const_refernce in Polygon.
++ Renamed some template parameters (reserved names).
+
+//-----------------------------------------------------------------------//
 // 2.8
 +Updated demo directory
  - new makefile
