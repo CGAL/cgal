@@ -580,6 +580,17 @@ public:
 	left_node->transform(t);
  	right_node->transform(t);
   	splitting_plane = splitting_plane.transform(t);
+#ifdef CGAL_NEF3_TRIANGULATE_FACETS 
+    } else {
+      std::cerr << "transform node " << std::endl;
+      Halffacet_triangle_handle tri;
+      typename Object_list::iterator o;
+      for(o = object_list.begin(); o != object_list.end(); ++o)
+        if(assign(tri,*o)) {
+          tri.transform(t);
+	  *o = Object_handle(tri);
+        }
+#endif // CGAL_NEF3_TRIANGULATE_FACETS 
     }
   }
   void add_facet(Halffacet_handle f) {
