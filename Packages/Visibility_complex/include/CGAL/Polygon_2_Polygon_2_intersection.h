@@ -79,9 +79,9 @@ bool do_intersect( const Polygon_2<Traits,Container>& P,
 	// ---------------------------------------------------------------------
 	// Else Advance 
 	// ---------------------------------------------------------------------
-	Orientation chi2  = orientation( *apred , *a , *b + (*apred - *bpred) );
-	Orientation chi1b = orientation( *bpred, *b, *a );
-	Orientation chi1a = orientation( *apred, *a, *b );
+	Orientation chi2  = Traits().orientation_2_object()( *apred , *a , *b + (*apred - *bpred) );
+	Orientation chi1b = Traits().orientation_2_object()( *bpred, *b, *a );
+	Orientation chi1a = Traits().orientation_2_object()( *apred, *a, *b );
 	// ---------------------------------------------------------------------
 	if ( chi2 == COLLINEAR ) {
 	    if ( chi1b == RIGHT_TURN && chi1a == RIGHT_TURN ) return false;
