@@ -248,8 +248,7 @@ template <class Facet_handle, class Traits, class UHM>
 void     
 partition_outside_sets(const std::list<Facet_handle>& new_facets,
         std::list<typename Traits::Point_3>& vis_outside_set, 
-        //CGAL::Unique_hash_map<Facet_handle, std::list<typename Traits::Point_3> >& outside_sets,
-		UHM& outside_sets,
+        UHM& outside_sets,
         std::list<Facet_handle>& pending_facets, 
         const Traits& traits)
 {
@@ -312,8 +311,9 @@ template < class Tr, class Traits, class Items,
            class HDS, class Alloc>
 void 
 ch_quickhull_3_scan(Polyhedron_3<Tr,Items,HDS,Alloc>& P,
-  std::list<typename Polyhedron_3<Tr,Items,HDS,Alloc>::Facet_handle>& pending_facets,
- CGAL::Unique_hash_map<typename Polyhedron_3<Tr,Items,HDS,Alloc>::Facet_handle, 
+  std::list<typename Polyhedron_3<Tr,Items,HDS,Alloc>::Facet_handle>& 
+                                                               pending_facets,
+ CGAL::Unique_hash_map<typename Polyhedron_3<Tr,Items,HDS,Alloc>::Facet_handle,
  std::list<typename Traits::Point_3> >& outside_sets, const Traits& traits
 )
 #endif // CGAL_USE_POLYHEDRON_DESIGN_ONE //
