@@ -38,6 +38,7 @@ member templates of the STL classes.
 An #undef creates runtime errors for some packages, so it is not a 
 viable solution. Instead, we have to offer workarounds in CGAL
 code, whereever we use this feature.
+
 */
  
 #include <stdcomp.h>
@@ -53,7 +54,9 @@ code, whereever we use this feature.
 //----------------------------------------------------------------------//
 
 #include <iterator>
+
 namespace std {
+
   template <class Iterator> struct iterator_traits
   {
     typedef typename Iterator::value_type value_type;
@@ -62,6 +65,7 @@ namespace std {
     typedef typename Iterator::reference reference;
     typedef typename Iterator::iterator_category iterator_category;
   };
+
   template <class T> struct iterator_traits<T*>
   {
     typedef T value_type;
@@ -70,6 +74,7 @@ namespace std {
     typedef T& reference;
     typedef random_access_iterator_tag iterator_category;
   };
+
   template <class T> struct iterator_traits<const T*>
   {
     typedef T value_type;
@@ -78,6 +83,7 @@ namespace std {
     typedef const T& reference;
     typedef random_access_iterator_tag iterator_category;
   };
+
   template <class ForwardIterator>
   inline ptrdiff_t
   distance (ForwardIterator first, ForwardIterator last)
@@ -110,29 +116,19 @@ namespace CGAL {
     return tmp;
   }
 
-
-  //#if ( __SUNPRO_CC == 0x550)
-
   template < class T >
   inline T* __value_type(T*)
-  { 
-    return (T*)(0);
-  }
+  { return (T*)(0); }
 
   template <class T>
   inline std::ptrdiff_t* 
   __distance_type (T*)
-  { 
-    return (std::ptrdiff_t*)(0);
-  }
+  { return (std::ptrdiff_t*)(0); }
 
   template <class T>
-  inline random_access_iterator_tag 
+  inline std::random_access_iterator_tag 
   __iterator_category (T*)
-  {
-    return std::random_access_iterator_tag();
-  }
-  // #endif
+  { return std::random_access_iterator_tag(); }
 
 } // namespace CGAL
 
