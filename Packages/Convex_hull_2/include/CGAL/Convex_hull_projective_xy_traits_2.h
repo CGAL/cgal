@@ -17,8 +17,8 @@
 //
 // Author(s)     : Susan Hert
 
-#ifndef CONVEX_HULL_PROJECTIVE_XY_TRAITS_2_H
-#define CONVEX_HULL_PROJECTIVE_XY_TRAITS_2_H
+#ifndef CGAL_CONVEX_HULL_PROJECTIVE_XY_TRAITS_2_H
+#define CGAL_CONVEX_HULL_PROJECTIVE_XY_TRAITS_2_H
 
 #include <CGAL/predicates/kernel_ftC2.h>
 #include <CGAL/functional_base.h>
@@ -176,4 +176,4 @@ public:
 };
 
 }
-#endif // CONVEX_HULL_PROJECTIVE_XY_TRAITS_2_H
+#endif // CGAL_CONVEX_HULL_PROJECTIVE_XY_TRAITS_2_H
