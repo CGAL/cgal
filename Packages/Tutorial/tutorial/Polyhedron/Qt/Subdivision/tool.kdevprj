@@ -8,7 +8,7 @@ ldadd=\s$(LIB_QT)
 ldflags=-static      -L/usr/X11R6/lib -L/0/prisme_util/CGAL/CGAL-2.4/lib/i686_Linux-2.2.18_g++-2.95.3 -L/usr/local/gmp/lib -L/net/home/prisme/CLN/CLN-1.0.2/Linux_g++/lib -Wl,-R/0/prisme_util/CGAL/CGAL-2.4/lib/i686_Linux-2.2.18_g++-2.95.3:/usr/local/gmp/lib -lCGAL  -lgmp -lm -lGL -lGLU  -L$HOME/usr/lib -lm -lgslcblas -lgsl -lF77 -lI77 -lblas -lclapack -ltmglib_LINUX -static -static -static
 
 [General]
-AMChanged=false
+AMChanged=true
 author=Pierre Alliez
 configure_args=\s--build=i386-linux --host=i386-linux --target=i386-linux --with-qt-dir=/usr/local/qt2\s
 email=pierre.alliez@sophia.inria.fr
@@ -76,7 +76,7 @@ install_location=
 type=HEADER
 
 [tool/Makefile.am]
-files=tool/main.cpp,tool/tool.cpp,tool/tool.h,tool/tooldoc.cpp,tool/tooldoc.h,tool/toolview.cpp,tool/toolview.h,tool/lo32-app-tool.png,tool/lo16-app-tool.png,tool/filenew.xpm,tool/filesave.xpm,tool/fileopen.xpm,tool/cgal_types.h,tool/glview.h,tool/glview.cpp,tool/Arcball.h,tool/Arcball.cpp,tool/Camera.h,tool/Camera.cpp,tool/Quaternion.h,tool/Quaternion.cpp,tool/Vector3d.h,tool/Vector3d.cpp,tool/Matrix44.h,tool/Matrix44.cpp,tool/Viewport.h,tool/Viewport.cpp,tool/Vector2d.cpp,tool/Vector2d.h
+files=tool/main.cpp,tool/tool.cpp,tool/tool.h,tool/tooldoc.cpp,tool/tooldoc.h,tool/toolview.cpp,tool/toolview.h,tool/lo32-app-tool.png,tool/lo16-app-tool.png,tool/filenew.xpm,tool/filesave.xpm,tool/fileopen.xpm,tool/glview.h,tool/glview.cpp,tool/Arcball.h,tool/Arcball.cpp,tool/Camera.h,tool/Camera.cpp,tool/Quaternion.h,tool/Quaternion.cpp,tool/Vector3d.h,tool/Vector3d.cpp,tool/Matrix44.h,tool/Matrix44.cpp,tool/Viewport.h,tool/Viewport.cpp,tool/Vector2d.cpp,tool/Vector2d.h
 sub_dirs=
 type=prog_main
 
@@ -140,7 +140,7 @@ install=false
 install_location=
 type=HEADER
 
-[tool/cgal_types.h]
+[tool/builder.h]
 dist=true
 install=false
 install_location=
@@ -153,6 +153,12 @@ type=normal
 [tool/docs/en/Makefile.am]
 sub_dirs=
 type=normal
+
+[tool/enriched_polyhedron.h]
+dist=true
+install=false
+install_location=
+type=HEADER
 
 [tool/filenew.xpm]
 dist=true
@@ -201,6 +207,18 @@ dist=true
 install=false
 install_location=
 type=SOURCE
+
+[tool/quad-triangle.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
+[tool/sqrt3.h]
+dist=true
+install=false
+install_location=
+type=HEADER
 
 [tool/tool.cpp]
 dist=true

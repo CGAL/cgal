@@ -222,7 +222,8 @@ tool.o : \
  /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/Kernel_traits_common.h \
  /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/Kernel/interface_macros.h \
  /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/iterator_traits_pointer_specs_for_simple_cartesian_kernel.h \
- cgal_types.h /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/Cartesian.h \
+ enriched_polyhedron.h \
+ /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/Cartesian.h \
  /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/iterator_traits_pointer_specs_for_cartesian_kernel.h \
  /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/Polyhedron_3.h \
  /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/cstddef \
@@ -559,7 +560,7 @@ tooldoc.h :
 /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/Kernel_traits_common.h :
 /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/Kernel/interface_macros.h :
 /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/iterator_traits_pointer_specs_for_simple_cartesian_kernel.h :
-cgal_types.h :
+enriched_polyhedron.h :
 /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/Cartesian.h :
 /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/iterator_traits_pointer_specs_for_cartesian_kernel.h :
 /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/Polyhedron_3.h :

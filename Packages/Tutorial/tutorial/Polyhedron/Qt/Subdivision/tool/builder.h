@@ -1,33 +1,14 @@
-// ============================================================================
-//
-// Copyright (c) 1997 The CGAL Consortium
-//
-// This software and related documentation is part of an INTERNAL release
-// of the Computational Geometry Algorithms Library (CGAL). It is not
-// intended for general use.
-//
-// ----------------------------------------------------------------------------
-//
-// release       : $CGAL_Revision: $
-// release_date  : $CGAL_Date: $
-//
-// file          : include/CGAL/My_polyhedron_incremental_builder_3.h
-// package       : Polyhedron 2.9 (13 Sep 2000)
-// chapter       : 3D-Polyhedral Surfaces
-//
-// revision      : $Revision$
-// revision_date : $Date$
-//
-// author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>)
-// author(s)     : Pierre Alliez <pierre.alliez@sophia.inria.fr>
-// maintainer    :
-// coordinator   : MPI Saarbruecken
-//
-// Incremental Construction of Polyhedral Surfaces.
-// ============================================================================
+/***************************************************************************
+builder.h
+----------------------------------------------------------------------------
+begin                : june 2003
+copyright            : (C) 2003 by Pierre Alliez - INRIA
+email                : pierre.alliez@sophia.inria.fr
+Enriched incremental builder for CGAL Polyhedral Surfaces.
+***************************************************************************/
 
-#ifndef CGAL_My_polyhedron_incremental_builder_3_H
-#define CGAL_My_polyhedron_incremental_builder_3_H 1
+#ifndef Enriched_polyhedron_incremental_builder_3_H
+#define Enriched_polyhedron_incremental_builder_3_H 1
 
 #include <CGAL/basic.h>
 // MS Visual C++ 6.0 does not work with the new design.
@@ -52,7 +33,7 @@
 CGAL_BEGIN_NAMESPACE
 
 template < class HalfedgeDS_>
-class My_polyhedron_incremental_builder_3 {
+class Enriched_polyhedron_incremental_builder_3 {
 public:
     typedef HalfedgeDS_                     HDS; // internal
     typedef HalfedgeDS_                     HalfedgeDS;
@@ -164,7 +145,7 @@ protected:
 // ----------------------------------------------
 // DEFINITION
 //
-// My_polyhedron_incremental_builder_3<HDS> is an auxiliary class that
+// Enriched_polyhedron_incremental_builder_3<HDS> is an auxiliary class that
 // supports the incremental construction of polyhedral surfaces. This is
 // for example convinient when constructing polyhedral surfaces from
 // files. The incremental construction starts with a list of all point
@@ -186,7 +167,7 @@ protected:
 public:
     bool error() const { return m_error; }
 
-    My_polyhedron_incremental_builder_3( HDS& h, bool verbose = false)
+    Enriched_polyhedron_incremental_builder_3( HDS& h, bool verbose = false)
         // stores a reference to the halfedge data structure `h' in the
         // internal state. The previous polyhedral surface in `h'
         // remains unchanged. The incremental builder adds the new
@@ -195,7 +176,7 @@ public:
         CGAL_assertion_code(check_protocoll = 0;)
     }
 
-    ~My_polyhedron_incremental_builder_3() {
+    ~Enriched_polyhedron_incremental_builder_3() {
         CGAL_assertion( check_protocoll == 0);
     }
 
@@ -226,7 +207,7 @@ public:
         if ( hds.size_of_vertices() >= hds.capacity_of_vertices()) {
             Verbose_ostream verr( m_verbose);
             verr << " " << std::endl;
-            verr << "CGAL::My_polyhedron_incremental_builder_3<HDS>::"
+            verr << "CGAL::Enriched_polyhedron_incremental_builder_3<HDS>::"
                  << std::endl;
             verr << "add_vertex(): capacity error: more than " << new_vertices
                  << " vertices added." << std::endl;
@@ -258,7 +239,7 @@ public:
         if ( hds.size_of_faces() >= hds.capacity_of_faces()) {
             Verbose_ostream verr( m_verbose);
             verr << " " << std::endl;
-            verr << "CGAL::My_polyhedron_incremental_builder_3<HDS>::"
+            verr << "CGAL::Enriched_polyhedron_incremental_builder_3<HDS>::"
                  << std::endl;
             verr << "begin_facet(): capacity error: more than " << new_vertices
                  << " facets added." << std::endl;
@@ -412,7 +393,7 @@ protected:
                  && current_face == decorator.get_face(e)) {
                 Verbose_ostream verr( m_verbose);
                 verr << " " << std::endl;
-                verr << "CGAL::My_polyhedron_incremental_builder_3<HDS>::"
+                verr << "CGAL::Enriched_polyhedron_incremental_builder_3<HDS>::"
                      << std::endl;
                 verr << "lookup_halfedge(): input error: facet "
                      << new_faces << " has a self intersection at vertex "
@@ -426,7 +407,7 @@ protected:
                     if ( ! e->next()->is_border()) {
                         Verbose_ostream verr( m_verbose);
                         verr << " " << std::endl;
-                        verr << "CGAL::My_polyhedron_incremental_builder_3"
+                        verr << "CGAL::Enriched_polyhedron_incremental_builder_3"
                                 "<HDS>::" << std::endl;
                         verr << "lookup_halfedge(): input error: facet "
                              << new_faces << " shares a halfedge from "
@@ -446,7 +427,7 @@ protected:
                          decorator.get_face( e->next()->opposite())) {
                         Verbose_ostream verr( m_verbose);
                         verr << " " << std::endl;
-                        verr << "CGAL::My_polyhedron_incremental_builder_3"
+                        verr << "CGAL::Enriched_polyhedron_incremental_builder_3"
                                 "<HDS>::" << std::endl;
                         verr << "lookup_halfedge(): input error: facet "
                              << new_faces << " has a self intersection "
@@ -465,7 +446,7 @@ protected:
         if ( hds.size_of_halfedges() >= hds.capacity_of_halfedges()) {
             Verbose_ostream verr( m_verbose);
             verr << " " << std::endl;
-            verr << "CGAL::My_polyhedron_incremental_builder_3<HDS>::"
+            verr << "CGAL::Enriched_polyhedron_incremental_builder_3<HDS>::"
                  << std::endl;
             verr << "lookup_halfedge(): capacity error: more than "
                  << new_halfedges << " halfedges added while creating facet"
@@ -502,7 +483,7 @@ protected:
 
         Verbose_ostream verr( m_verbose);
         verr << " " << std::endl;
-        verr << "CGAL::My_polyhedron_incremental_builder_3<HDS>::" << std::endl;
+        verr << "CGAL::Enriched_polyhedron_incremental_builder_3<HDS>::" << std::endl;
         verr << "lookup_hole(): input error: at vertex "
              << find_vertex( e->vertex())
              << " a closed surface already exists and facet "
@@ -523,7 +504,7 @@ protected:
 
 template < class HDS>
 void
-My_polyhedron_incremental_builder_3<HDS>::
+Enriched_polyhedron_incremental_builder_3<HDS>::
 rollback() {
     CGAL_assertion( rollback_v <= hds.size_of_vertices());
     CGAL_assertion( rollback_h <= hds.size_of_halfedges());
@@ -545,7 +526,7 @@ rollback() {
 
 template < class HDS>  CGAL_MEDIUM_INLINE
 void
-My_polyhedron_incremental_builder_3<HDS>::
+Enriched_polyhedron_incremental_builder_3<HDS>::
 begin_surface( std::size_t v, std::size_t f, std::size_t h, int mode) {
     CGAL_assertion( check_protocoll == 0);
     CGAL_assertion_code( check_protocoll = 1;)
@@ -589,7 +570,7 @@ begin_surface( std::size_t v, std::size_t f, std::size_t h, int mode) {
 
 template < class HDS>
 void
-My_polyhedron_incremental_builder_3<HDS>::
+Enriched_polyhedron_incremental_builder_3<HDS>::
 add_vertex_to_facet( std::size_t v2) {
     if ( m_error)
         return;
@@ -597,7 +578,7 @@ add_vertex_to_facet( std::size_t v2) {
     if ( v2 >= new_vertices) {
         Verbose_ostream verr( m_verbose);
         verr << " " << std::endl;
-        verr << "CGAL::My_polyhedron_incremental_builder_3<HDS>::"
+        verr << "CGAL::Enriched_polyhedron_incremental_builder_3<HDS>::"
              << std::endl;
         verr << "add_vertex_to_facet(): vertex index " << v2
              << " is out-of-range [0," << new_vertices-1 << "]."
@@ -698,7 +679,7 @@ add_vertex_to_facet( std::size_t v2) {
                     } else {
                         Verbose_ostream verr( m_verbose);
                         verr << " " << std::endl;
-                        verr << "CGAL::My_polyhedron_incremental_builder_3<"
+                        verr << "CGAL::Enriched_polyhedron_incremental_builder_3<"
                                 "HDS>::" << std::endl;
                         verr << "add_vertex_to_facet(): input error: "
                                 "disconnected facet complexes at vertex "
@@ -737,7 +718,7 @@ add_vertex_to_facet( std::size_t v2) {
 
 template < class HDS>
 bool
-My_polyhedron_incremental_builder_3<HDS>::
+Enriched_polyhedron_incremental_builder_3<HDS>::
 test_facet_indices( std::vector< std::size_t> indices) {
     typedef typename HDS::Supports_halfedge_vertex Supports_halfedge_vertex;
     Assert_compile_time_tag( Supports_halfedge_vertex(), Tag_true());
@@ -794,7 +775,7 @@ test_facet_indices( std::vector< std::size_t> indices) {
 
 template < class HDS>  CGAL_MEDIUM_INLINE
 void
-My_polyhedron_incremental_builder_3<HDS>::
+Enriched_polyhedron_incremental_builder_3<HDS>::
 end_surface() {
     if ( m_error)
         return;
@@ -804,7 +785,7 @@ end_surface() {
 
 template < class HDS>
 bool
-My_polyhedron_incremental_builder_3<HDS>::
+Enriched_polyhedron_incremental_builder_3<HDS>::
 check_unconnected_vertices() {
     if ( m_error)
         return false;
@@ -812,7 +793,7 @@ check_unconnected_vertices() {
     Verbose_ostream verr( m_verbose);
     for ( std::size_t i = 0; i < new_vertices; i++) {
         if ( get_vertex_to_edge_map( i) == Halfedge_handle()) {
-            verr << "CGAL::My_polyhedron_incremental_builder_3<HDS>::\n"
+            verr << "CGAL::Enriched_polyhedron_incremental_builder_3<HDS>::\n"
                  << "check_unconnected_vertices( verb = true): "
                  << "vertex " << i << " is unconnected." << std::endl;
             unconnected = true;
@@ -823,7 +804,7 @@ check_unconnected_vertices() {
 
 template < class HDS>
 bool
-My_polyhedron_incremental_builder_3<HDS>::
+Enriched_polyhedron_incremental_builder_3<HDS>::
 remove_unconnected_vertices( Tag_true) {
     if ( m_error)
         return true;
@@ -838,5 +819,5 @@ remove_unconnected_vertices( Tag_true) {
 CGAL_END_NAMESPACE
 
 #endif // CGAL_USE_POLYHEDRON_DESIGN_ONE //
-#endif // CGAL_My_polyhedron_incremental_builder_3_H //
+#endif // CGAL_Enriched_polyhedron_incremental_builder_3_H //
 // EOF //

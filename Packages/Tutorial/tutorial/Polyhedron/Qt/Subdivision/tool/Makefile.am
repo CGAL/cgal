@@ -11,7 +11,7 @@ KDE_OPTIONS = qtonly
 tool_LDADD   =  $(LIB_QT) $(LIBSOCKET)
 
 
-EXTRA_DIST = main.cpp tool.cpp tool.h tooldoc.cpp tooldoc.h toolview.cpp toolview.h lo32-app-tool.png lo16-app-tool.png filenew.xpm filesave.xpm fileopen.xpm cgal_types.h glview.h glview.cpp Arcball.h Arcball.cpp Camera.h Camera.cpp Quaternion.h Quaternion.cpp Vector3d.h Vector3d.cpp Matrix44.h Matrix44.cpp Viewport.h Viewport.cpp Vector2d.cpp Vector2d.h 
+EXTRA_DIST = main.cpp tool.cpp tool.h tooldoc.cpp tooldoc.h toolview.cpp toolview.h lo32-app-tool.png lo16-app-tool.png filenew.xpm filesave.xpm fileopen.xpm glview.h glview.cpp Arcball.h Arcball.cpp Camera.h Camera.cpp Quaternion.h Quaternion.cpp Vector3d.h Vector3d.cpp Matrix44.h Matrix44.cpp Viewport.h Viewport.cpp Vector2d.cpp Vector2d.h 
 
 ####### kdevelop will overwrite this part!!! (end)############
 

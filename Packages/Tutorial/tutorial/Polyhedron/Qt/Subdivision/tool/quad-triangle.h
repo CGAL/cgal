@@ -9,7 +9,7 @@ email                : pierre.alliez@sophia.inria.fr
 #ifndef QUAD_TRIANGLE
 #define QUAD_TRIANGLE
 
-#include "cgal_types.h"
+#include "enriched_polyhedron.h"
 #include "builder.h"
 
 // "Quad/Triangle Subdivision"
@@ -25,7 +25,7 @@ private:
   typedef typename Vertex::Point        Point;
   typedef typename HDS::Face_handle     Face_handle;
   typedef typename HDS::Halfedge_handle Halfedge_handle;
-  typedef typename CGAL::My_polyhedron_incremental_builder_3<HDS> builder;
+  typedef typename CGAL::Enriched_polyhedron_incremental_builder_3<HDS> builder;
   typedef typename Polyhedron::Halfedge_around_vertex_circulator Halfedge_around_vertex_circulator;
   typedef typename Polyhedron::Facet_handle Facet_handle;
   typedef typename Polyhedron::Vertex_handle Vertex_handle;

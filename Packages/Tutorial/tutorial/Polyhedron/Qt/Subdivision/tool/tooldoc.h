@@ -28,7 +28,7 @@
 
 #include <CGAL/Simple_cartesian.h>
 
-#include "cgal_types.h"
+#include "enriched_polyhedron.h"
 
 // forward declaration of the Tool classes
 class ToolView;

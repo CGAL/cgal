@@ -43,9 +43,7 @@
 
 ToolApp::ToolApp()
 {
-#define VERSION "1.5"
-  setCaption(tr("Subdivision tool", VERSION ) );
-  //setFont( QFont("Helvetica",9) );
+  // setCaption("Subdivision tool", "1.5");
 
   printer = new QPrinter;
   untitledCount=0;
@@ -387,14 +385,12 @@ void ToolApp::initToolBar()
   bgcolor_button->setPaletteForegroundColor(QColor(0, 0, 0));
   connect(bgcolor_button, SIGNAL(clicked()), this, SLOT(slotSelectBgColor()));
   QLabel *l2 = new QLabel(renderingToolbar, "FG");
-  l1->setText("FG");
+  l2->setText("FG");
   fgcolor_button = new QToolButton(renderingToolbar, "fgcolor");
   fgcolor_button->setText("FG");
   fgcolor_button->setPaletteBackgroundColor(QColor(255, 255, 255));
   fgcolor_button->setPaletteForegroundColor(QColor(255, 255, 255));
   connect(fgcolor_button, SIGNAL(clicked()), this, SLOT(slotSelectFgColor()));
-
-
 
   renderingToolbar->addSeparator();
   renderVertex->addTo(renderingToolbar);
