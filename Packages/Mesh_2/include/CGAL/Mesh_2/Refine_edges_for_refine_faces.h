@@ -70,6 +70,7 @@ class Refine_edges_base_for_refine_faces :
   
   typedef typename Triangulation_mesher_level_traits_2<Tr>::Zone Zone;
 
+public:
   typedef std::set<Face_handle> Special_zone;
 
 private: // --- private data member
