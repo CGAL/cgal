@@ -81,27 +81,7 @@ useful for classes that are similar but not compatible to \ccc{std::istream}.
 The following program reads points from a \ccc{Window_stream} until
 the right mouse button gets clicked.
 
-\begin{verbatim}
-#include <CGAL/Cartesian.h>
-#include <CGAL/Point_2.h>
-#include <CGAL/IO/Istream_iterator.h>
-#include <CGAL/IO/Window_stream.h>
-#include <iostream>
-#include <algo>
-
-using namespace CGAL;
-
-typedef Point_2< Cartesian<double> >           Point;
-typedef Istream_iterator<Point, Window_stream> Iterator;
-
-int main () {
-    Window_stream window( 512, 512);
-    window.init( -1.0, 1.0, -1.0);
-    std::copy( Iterator(window), Iterator(), 
-               std::ostream_iterator<Point>(std::cout,"\n"));
-    return 0;
-}
-\end{verbatim}
+\ccIncludeExampleCode{Stream_support_LEDA/Istream_iterator.C}
 
 \end{ccClassTemplate}
 
@@ -132,27 +112,6 @@ its argument. If the state is inactive, nothing happens.
 
 \ccMethod{template < class T >
           Verbose_ostream&  operator<<( const T& t);}{}
-
-%% \ccGlueBegin
-%% \ccMethod{Verbose_ostream&  operator<<( char c);}{}
-%% \ccMethod{Verbose_ostream&  operator<<( const char* s);}{}
-%% \ccMethod{Verbose_ostream&  operator<<( int a);}{}
-%% \ccMethod{Verbose_ostream&  operator<<( long l);}{}
-%% \ccMethod{Verbose_ostream&  operator<<( double d);}{}
-%% \ccMethod{Verbose_ostream&  operator<<( float f);}{}
-%% \ccMethod{Verbose_ostream&  operator<<( unsigned int a);}{}
-%% \ccMethod{Verbose_ostream&  operator<<( unsigned long l);}{}
-%% \ccMethod{Verbose_ostream&  operator<<( long long ll);}{}
-%% \ccMethod{Verbose_ostream&  operator<<( unsigned long long ll);}{}
-%% \ccMethod{Verbose_ostream&  operator<<( void* p);}{}
-%% \ccMethod{Verbose_ostream&  operator<<( short i);}{}
-%% \ccMethod{Verbose_ostream&  operator<<( unsigned short i);}{}
-%% \ccMethod{Verbose_ostream&  operator<<( ostream& (*f)(ostream&));}{}
-%% \ccMethod{Verbose_ostream&  operator<<( ios& (*f)(ios&) );}{}
-%% \ccMethod{Verbose_ostream&  flush();}{}
-%% \ccMethod{Verbose_ostream&  put(char c);}{}
-%% \ccMethod{Verbose_ostream&  write(const char*  s,int n);}{}
-%% \ccGlueEnd
 
 \ccExample
 

@@ -34,12 +34,17 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:            \
-                stream_iterator 
+                Istream_iterator$(EXE_EXT) \
+                stream_iterator$(EXE_EXT) 
+
+Istream_iterator$(EXE_EXT): Istream_iterator$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Istream_iterator Istream_iterator$(OBJ_EXT) $(LDFLAGS)
 
 stream_iterator$(EXE_EXT): stream_iterator$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)stream_iterator stream_iterator$(OBJ_EXT) $(LDFLAGS)
 
 clean: \
+                   Istream_iterator.clean \
                    stream_iterator.clean 
 
 #---------------------------------------------------------------------#
