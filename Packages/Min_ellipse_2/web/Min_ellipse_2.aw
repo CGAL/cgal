@@ -40,7 +40,9 @@
 \newcommand{\RETURN}{\keyword{RETURN} }
 
 \newcommand{\me}{\texttt{me}}
-\newcommand{\SaveSpaceByHand}[1]{#1}
+
+\newcommand{\linebreakByHand}{\ccTexHtml{\\}{}}
+\newcommand{\SaveSpaceByHand}[2]{\ccTexHtml{#1}{#2}}
 
 @! ============================================================================
 @! Title
@@ -1255,7 +1257,7 @@ Given three or five points, the ellipse is represented as a conic,
 using the class \ccc{CGAL_Conic_2<R>}. The case with four boundary
 points is the most complicated one, since in general a direct
 representation with one conic has irrational
-coordinates~\cite{gs-seefe-97}. Therefore the ellipse is represented
+coordinates~\cite{gs-seefe-97a}. Therefore the ellipse is represented
 implicitly as a linear combination of two conics.
 
 @macro <Optimisation_ellipse_2 private data members> += @begin
@@ -1267,7 +1269,7 @@ vector of the linear combination for the volume derivative in the
 in-ellipse test.
 
 @macro <Optimisation_ellipse_2 private data members> += @begin
-    R::RT  dr, ds, dt, du, dv, dw;		// the gradient vector
+    _R::RT  dr, ds, dt, du, dv, dw;		// the gradient vector
 @end
 
 @! ----------------------------------------------------------------------------
@@ -1365,26 +1367,21 @@ its boundary points.
 	switch ( n_boundary_points) {
 	  case 0:
 	    return( true);
-	    break;
 	  case 1:
 	    return( boundary_point1 == e.boundary_point1);
-	    break;
 	  case 2:
 	    return(    (    ( boundary_point1 == e.boundary_point1)
 		         && ( boundary_point2 == e.boundary_point2))
 		    || (    ( boundary_point1 == e.boundary_point2)
 		         && ( boundary_point2 == e.boundary_point1)));
-	    break;
 	  case 3:
 	  case 5:
 	    return( conic1 == e.conic1);
-	    break;
 	  case 4:
 	    return(    (    ( conic1 == e.conic1)
 	                 && ( conic2 == e.conic2))
 	            || (    ( conic1 == e.conic2)
 	                 && ( conic2 == e.conic1)));
-	    break;
 	  default:
 	    CGAL_optimisation_assertion(    ( n_boundary_points >= 0)
 					 && ( n_boundary_points <= 5)); }
@@ -1417,22 +1414,18 @@ one.
 	switch ( n_boundary_points) {
 	  case 0:
 	    return( CGAL_ON_UNBOUNDED_SIDE);
-	    break;
 	  case 1:
 	    return( ( p == boundary_point1) ?
 			   CGAL_ON_BOUNDARY : CGAL_ON_UNBOUNDED_SIDE);
-	    break;
 	  case 2:
 	    return(    ( p == boundary_point1)
 		    || ( p == boundary_point2)
 		    || ( CGAL_are_ordered_along_line(
 		             boundary_point1, p, boundary_point2)) ?
 			 CGAL_ON_BOUNDARY : CGAL_ON_UNBOUNDED_SIDE);
-	    break;
 	  case 3:
 	  case 5:
 	    return( conic1.convex_side( p));
-	    break;
 	  case 4: {
 	    Conic c;
 	    c.set( conic1, conic2, p);
@@ -1445,7 +1438,6 @@ one.
 		int tau_star = -c.vol_derivative( dr, ds, dt, du, dv, dw);
 		return( CGAL_static_cast( CGAL_Bounded_side,
 					  CGAL_sign( tau_star))); } }
-	    break;
 	  default:
 	    CGAL_optimisation_assertion( ( n_boundary_points >= 0) &&
 					 ( n_boundary_points <= 5) ); }
@@ -1778,22 +1770,18 @@ it is declared \ccc{friend}.
 	    switch ( n_boundary_points) {
 	      case 0:
 		return( CGAL_ON_UNBOUNDED_SIDE);
-		break;
 	      case 1:
 		return( ( p == boundary_point1) ?
 			       CGAL_ON_BOUNDARY : CGAL_ON_UNBOUNDED_SIDE);
-		break;
 	      case 2:
 		return(    ( p == boundary_point1)
 			|| ( p == boundary_point2)
 			|| ( CGAL_are_ordered_along_lineC2( boundary_point1, p,
 			                       boundary_point2, conic1.da())) ?
 				    CGAL_ON_BOUNDARY : CGAL_ON_UNBOUNDED_SIDE);
-		break;
 	      case 3:
 	      case 5:
 		return( conic1.convex_side( p));
-		break;
 	      case 4: {
 		CT c( conic1.da());
 		c.set( conic1, conic2, p);
@@ -1806,7 +1794,6 @@ it is declared \ccc{friend}.
 		    int tau_star = -c.vol_derivative( dr, ds, dt, du, dv, dw);
 		    return( CGAL_static_cast( CGAL_Bounded_side,
 					      CGAL_sign( tau_star))); } }
-		break;
 	      default:
 		CGAL_optimisation_assertion( ( n_boundary_points >= 0) &&
 					     ( n_boundary_points <= 5) ); }
@@ -1855,26 +1842,21 @@ it is declared \ccc{friend}.
 	    switch ( n_boundary_points) {
 	      case 0:
 		return( true);
-		break;
 	      case 1:
 		return( boundary_point1 == e.boundary_point1);
-		break;
 	      case 2:
 		return(    (    ( boundary_point1 == e.boundary_point1)
 			     && ( boundary_point2 == e.boundary_point2))
 			|| (    ( boundary_point1 == e.boundary_point2)
 			     && ( boundary_point2 == e.boundary_point1)));
-		break;
 	      case 3:
 	      case 5:
 		return( conic1 == e.conic1);
-		break;
 	      case 4:
 		return(    (    ( conic1 == e.conic1)
 			     && ( conic2 == e.conic2))
 			|| (    ( conic1 == e.conic2)
 			     && ( conic2 == e.conic1)));
-		break;
 	      default:
 	        CGAL_optimisation_assertion(    ( n_boundary_points >= 0)
 					     && ( n_boundary_points <= 5)); }
@@ -2166,22 +2148,18 @@ it is declared \ccc{friend}.
 	    switch ( n_boundary_points) {
 	      case 0:
 		return( CGAL_ON_UNBOUNDED_SIDE);
-		break;
 	      case 1:
 		return( ( p == boundary_point1) ?
 			       CGAL_ON_BOUNDARY : CGAL_ON_UNBOUNDED_SIDE);
-		break;
 	      case 2:
 		return(    ( p == boundary_point1)
 			|| ( p == boundary_point2)
 			|| ( CGAL_are_ordered_along_lineH2( boundary_point1, p,
 			                       boundary_point2, conic1.da())) ?
 				    CGAL_ON_BOUNDARY : CGAL_ON_UNBOUNDED_SIDE);
-		break;
 	      case 3:
 	      case 5:
 		return( conic1.convex_side( p));
-		break;
 	      case 4: {
 		CT c( conic1.da());
 		c.set( conic1, conic2, p);
@@ -2194,7 +2172,6 @@ it is declared \ccc{friend}.
 		    int tau_star = -c.vol_derivative( dr, ds, dt, du, dv, dw);
 		    return( CGAL_static_cast( CGAL_Bounded_side,
 					      CGAL_sign( tau_star))); } }
-		break;
 	      default:
 		CGAL_optimisation_assertion( ( n_boundary_points >= 0) &&
 					     ( n_boundary_points <= 5) ); }
@@ -2243,26 +2220,21 @@ it is declared \ccc{friend}.
 	    switch ( n_boundary_points) {
 	      case 0:
 		return( true);
-		break;
 	      case 1:
 		return( boundary_point1 == e.boundary_point1);
-		break;
 	      case 2:
 		return(    (    ( boundary_point1 == e.boundary_point1)
 			     && ( boundary_point2 == e.boundary_point2))
 			|| (    ( boundary_point1 == e.boundary_point2)
 			     && ( boundary_point2 == e.boundary_point1)));
-		break;
 	      case 3:
 	      case 5:
 		return( conic1 == e.conic1);
-		break;
 	      case 4:
 		return(    (    ( conic1 == e.conic1)
 			     && ( conic2 == e.conic2))
 			|| (    ( conic1 == e.conic2)
 			     && ( conic2 == e.conic1)));
-		break;
 	      default:
 	        CGAL_optimisation_assertion(    ( n_boundary_points >= 0)
 					     && ( n_boundary_points <= 5)); }
@@ -2398,16 +2370,16 @@ number type \ccc{CGAL_Gmpz} or \ccc{integer}.
     #include <assert.h>
     #include <fstream.h>
 
-    #ifndef CGAL_USE_LEDA_BOOL
-    #  include <CGAL/Gmpz.h>
-       typedef  CGAL_Gmpz			Rt;
-       typedef  CGAL_Quotient< CGAL_Gmpz >	Ft;
-    #else
+    #ifdef CGAL_USE_LEDA
     #  include <CGAL/Integer.h>
     #  include <LEDA/REDEFINE_NAMES.h>
        typedef  integer				Rt;
        typedef  CGAL_Quotient< integer >	Ft;
     #  include <LEDA/UNDEFINE_NAMES.h>
+    #else
+    #  include <CGAL/Gmpz.h>
+       typedef  CGAL_Gmpz			Rt;
+       typedef  CGAL_Quotient< CGAL_Gmpz >	Ft;
     #endif
 
     typedef  CGAL_Cartesian< Ft >		 RepC;
@@ -2861,8 +2833,8 @@ end of each file.
 
 \subsection{Min\_ellipse\_2.h}
 
-@file <include/Optimisation/CGAL/Min_ellipse_2.h> = @begin
-    @<Min_ellipse_2 header>("include/Optimisation/CGAL/Min_ellipse_2.h")
+@file <include/CGAL/Optimisation/CGAL/Min_ellipse_2.h> = @begin
+    @<Min_ellipse_2 header>("include/CGAL/Optimisation/CGAL/Min_ellipse_2.h")
 
     #ifndef CGAL_MIN_ELLIPSE_2_H
     #define CGAL_MIN_ELLIPSE_2_H
@@ -2896,7 +2868,7 @@ end of each file.
     // ---
     @<Min_ellipse_2 I/O operators declaration>
 
-    #ifdef CGAL_INCLUDE_TEMPLATE_CODE
+    #ifdef CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
     #  include <CGAL/Min_ellipse_2.C>
     #endif
 
@@ -2911,8 +2883,8 @@ end of each file.
 
 \subsection{Min\_ellipse\_2.C}
 
-@file <include/Optimisation/CGAL/Min_ellipse_2.C> = @begin
-    @<Min_ellipse_2 header>("include/Optimisation/CGAL/Min_ellipse_2.C")
+@file <include/CGAL/Optimisation/CGAL/Min_ellipse_2.C> = @begin
+    @<Min_ellipse_2 header>("include/CGAL/Optimisation/CGAL/Min_ellipse_2.C")
 
     // Class implementation (continued)
     // ================================
@@ -2929,8 +2901,8 @@ end of each file.
 
 \subsection{Optimisation\_ellipse\_2.h}
 
-@file <include/Optimisation/CGAL/Optimisation_ellipse_2.h> = @begin
-    @<Optimisation_ellipse_2 header>("include/Optimisation/CGAL/Optimisation_ellipse_2.h")
+@file <include/CGAL/Optimisation/CGAL/Optimisation_ellipse_2.h> = @begin
+    @<Optimisation_ellipse_2 header>("include/CGAL/Optimisation/CGAL/Optimisation_ellipse_2.h")
 
     #ifndef CGAL_OPTIMISATION_ELLIPSE_2_H
     #define CGAL_OPTIMISATION_ELLIPSE_2_H
@@ -2948,6 +2920,9 @@ end of each file.
     #ifndef CGAL_CONIC_2_H
     #  include <CGAL/Conic_2.h>
     #endif
+    #ifndef CGAL_OPTIMISATION_ASSERTIONS_H
+    #  include <CGAL/optimisation_assertions.h>
+    #endif
 
     @<Optimisation_ellipse_2 interface>
 
@@ -2957,7 +2932,7 @@ end of each file.
     // ---
     @<Optimisation_ellipse_2 I/O operators declaration>
 
-    #ifdef CGAL_INCLUDE_TEMPLATE_CODE
+    #ifdef CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
     #  include <CGAL/Optimisation_ellipse_2.C>
     #endif
 
@@ -2972,8 +2947,8 @@ end of each file.
 
 \subsection{Optimisation\_ellipse\_2.C}
 
-@file <include/Optimisation/CGAL/Optimisation_ellipse_2.C> = @begin
-    @<Optimisation_ellipse_2 header>("include/Optimisation/CGAL/Optimisation_ellipse_2.C")
+@file <include/CGAL/Optimisation/CGAL/Optimisation_ellipse_2.C> = @begin
+    @<Optimisation_ellipse_2 header>("include/CGAL/Optimisation/CGAL/Optimisation_ellipse_2.C")
 
     // Class implementation (continued)
     // ================================
@@ -2995,8 +2970,8 @@ end of each file.
 
 \subsection{Min\_ellipse\_2\_adapterC2.h}
 
-@file <include/Optimisation/CGAL/Min_ellipse_2_adapterC2.h> = @begin
-    @<Min_ellipse_2 header>("include/Optimisation/CGAL/Min_ellipse_2_adapterC2.h")
+@file <include/CGAL/Optimisation/CGAL/Min_ellipse_2_adapterC2.h> = @begin
+    @<Min_ellipse_2 header>("include/CGAL/Optimisation/CGAL/Min_ellipse_2_adapterC2.h")
 
     #ifndef CGAL_MIN_ELLIPSE_2_ADAPTERC2_H
     #define CGAL_MIN_ELLIPSE_2_ADAPTERC2_H
@@ -3062,8 +3037,8 @@ end of each file.
 
 \subsection{Min\_ellipse\_2\_adapterH2.h}
 
-@file <include/Optimisation/CGAL/Min_ellipse_2_adapterH2.h> = @begin
-    @<Min_ellipse_2 header>("include/Optimisation/CGAL/Min_ellipse_2_adapterH2.h")
+@file <include/CGAL/Optimisation/CGAL/Min_ellipse_2_adapterH2.h> = @begin
+    @<Min_ellipse_2 header>("include/CGAL/Optimisation/CGAL/Min_ellipse_2_adapterH2.h")
 
     #ifndef CGAL_MIN_ELLIPSE_2_ADAPTERH2_H
     #define CGAL_MIN_ELLIPSE_2_ADAPTERH2_H
@@ -3177,14 +3152,18 @@ end of each file.
 @macro <Min_ellipse_2 header>(1) many = @begin
     @<file header>("2D Smallest Enclosing Ellipse",@1,
 		   "Optimisation/Min_ellipse_2",
-		   "Bernd Gärtner, Sven Schönherr",
+                   "Sven Schönherr <sven@@inf.fu-berlin.de>",
+                   "Bernd Gärtner",
+		   "ETH Zurich (Bernd Gärtner <gaertner@@inf.ethz.ch>)",
 		   "$Revision$","$Date$")
 @end
 
 @macro <Optimisation_ellipse_2 header>(1) many = @begin
     @<file header>("2D Optimisation Ellipse",@1,
-		   "Optimisation/Optimisation_ellipse_2",
-		   "Bernd Gärtner, Sven Schönherr",
+		   "Optimisation/Min_ellipse_2",
+                   "Sven Schönherr <sven@@inf.fu-berlin.de>",
+                   "Bernd Gärtner",
+		   "ETH Zurich (Bernd Gärtner <gaertner@@inf.ethz.ch>)",
 		   "$Revision$","$Date$")
 @end
 @! ============================================================================
