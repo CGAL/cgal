@@ -1,3 +1,6 @@
+1 September 2004 Sylvain Pion
+- basic.h : move CGAL_*_INLINE macros before the include files.
+
 25 August 2004 Sylvain Pion
 - Improve example in Filtered_predicate<> documentation.
 

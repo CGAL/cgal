@@ -44,17 +44,6 @@
 #  define CGAL_USE_CGAL_WINDOW
 #endif
 
-#include <CGAL/assertions.h>
-#include <CGAL/kernel_assertions.h>
-#include <CGAL/Object.h>
-#include <CGAL/enum.h>
-#include <CGAL/tags.h>
-#include <CGAL/number_type_basic.h>
-#include <CGAL/IO/io.h>
-#include <CGAL/Handle.h> // This should be removed ASAP.
-#include <CGAL/kernel_basic.h>
-#include <CGAL/known_bit_size_integers.h>
-
 // Symbolic constants to tailor inlining. Inlining Policy.
 // =======================================================
 #ifndef CGAL_MEDIUM_INLINE
@@ -68,5 +57,16 @@
 #ifndef CGAL_HUGE_INLINE
 #  define CGAL_HUGE_INLINE
 #endif
+
+#include <CGAL/assertions.h>
+#include <CGAL/kernel_assertions.h>
+#include <CGAL/Object.h>
+#include <CGAL/enum.h>
+#include <CGAL/tags.h>
+#include <CGAL/number_type_basic.h>
+#include <CGAL/IO/io.h>
+#include <CGAL/Handle.h> // This should be removed ASAP.
+#include <CGAL/kernel_basic.h>
+#include <CGAL/known_bit_size_integers.h>
 
 #endif // CGAL_BASIC_H
