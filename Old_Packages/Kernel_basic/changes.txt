@@ -1,3 +1,6 @@
+3.81   (6 February 2002)
+- Fix the impossibility to derive from Object.
+
 3.80   (25 January 2002)
 - Oops... Missed a "cvs update" before submitting...
 

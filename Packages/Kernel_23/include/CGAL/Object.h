@@ -48,7 +48,6 @@ class Wrapper : public Ref_counted_virtual
     T         _object;
 };
 
-
 class Object
   : public Handle_for_virtual<Ref_counted_virtual>
 {
@@ -57,13 +56,15 @@ class Object
 
   public:
 
+    struct private_tag{};
+
     Object()
     {
 	initialize_with(Wrapper<empty>());
     }
 
     template <class T>
-    Object(const T&t)
+    Object(const T&t, private_tag)
     {
 	initialize_with(Wrapper<T>(t));
     }
@@ -75,9 +76,9 @@ class Object
       try {
 #endif
         const Wrapper<T> *wp = dynamic_cast<const Wrapper<T> *>(Ptr());
-        if ( wp == static_cast<Wrapper<T> *>(0) )
+        if (wp == NULL)
             return false;
-        t = *(wp);
+        t = *wp;
 #ifdef _MSC_VER
       }
       catch (...) {
@@ -102,7 +103,7 @@ inline
 Object
 make_object(const T& t)
 {
-    return Object(t);
+    return Object(t, Object::private_tag());
 }
 
 template <class T>
