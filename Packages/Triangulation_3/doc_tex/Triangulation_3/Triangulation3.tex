@@ -23,7 +23,8 @@
 \label{chapter-Triangulation3}
 \begin{ccTexOnly}
 \vspace*{-2cm}
-\includegraphics{grille.eps} \hspace*{2cm} \includegraphics{sphere.eps} 
+\includegraphics{grille.eps} \hspace*{2cm} 
+\includegraphics{sphere.eps} 
 \end{ccTexOnly}
 \begin{ccHtmlOnly}
 <img border=0 src="./sphere.gif" align=center>
@@ -71,20 +72,21 @@ indexed with 0, 1, 2, 3 in such a way that the neighbor indexed by $i$
 is opposite to the vertex with the same index. See
 Figure~\ref{Triangulation3-fig-orient}.
 
-\begin{ccTexOnly}
 \begin{figure}[htbp]
+\begin{ccTexOnly}
 \begin{center} 
 \includegraphics{orient.eps} 
 \end{center}
-\caption{Orientation of a cell (3-dimensional case) 
-\label{Triangulation3-fig-orient}}
-\end{figure} 
 \end{ccTexOnly}
-
+\caption{Orientation of a cell (3-dimensional case).
+\label{Triangulation3-fig-orient}}
 \begin{ccHtmlOnly}
+<CENTER>
 <img border=0 src="./orient.gif" align=center alt="Orientation of a cell 
 (3-dimensional case)">
+</CENTER>
 \end{ccHtmlOnly}
+\end{figure} 
 
 As in the underlying combinatorial triangulation (see
 Chapter~\ref{chapter-TDS3}), edges ($1$-faces) and facets ($2$-faces)
@@ -316,18 +318,20 @@ Figure~\ref{Triangulation3-fig-utils}).
 \ccFunction{unsigned int cw(unsigned int i) const;}
 {Same for clockwise.}
 
-\begin{ccTexOnly}
 \begin{figure}[htbp]
+\begin{ccTexOnly}
 \begin{center} 
 \includegraphics{utils.eps} 
 \end{center}
-\caption{Operations on indices.\label{Triangulation3-fig-utils}}
-\end{figure} 
 \end{ccTexOnly}
-
+\caption{Operations on indices.
+\label{Triangulation3-fig-utils}}
 \begin{ccHtmlOnly}
+<CENTER>
 <img border=0 src="./utils.gif" align=center alt="Operations on indices">
+</CENTER>
 \end{ccHtmlOnly}
+\end{figure} 
 
 \end{ccClass}
 
@@ -768,19 +772,21 @@ hull of the triangulation
 - the points that will be vertices of the tetrahedra to be created are 
 in convex position.
 
-\begin{ccTexOnly}
 \begin{figure}
+\begin{ccTexOnly}
 \begin{center} 
 \includegraphics{flips.eps}
 \end{center}
-\caption{Flips \label{Triangulation3-fig-flips}}
-\end{figure} 
 \end{ccTexOnly}
-
+\caption{Flips.
+\label{Triangulation3-fig-flips}}
 \begin{ccHtmlOnly}
+<CENTER>
 <img border=0 src="./flips.gif" align=center
 alt="Flips">
+</CENTER>
 \end{ccHtmlOnly}
+\end{figure} 
 
 The following methods guarantee the validity of the resulting 3D
 triangulation.
@@ -922,19 +928,20 @@ Figure~\ref{Triangulation3-fig-insert_outside_convex_hull}.
 \ccPrecond{\ccVar.\ccc{dimension()} $>0$, \ccc{c}, and the $k$-face
 represented by \ccc{c} is infinite and contains \ccVar.}}
 
-\begin{ccTexOnly}
 \begin{figure}[htbp]
+\begin{ccTexOnly}
 \begin{center} 
 \includegraphics{insert_outside_convex_hull.eps} 
 \end{center}
-\caption{\protect\ccc{insert_outside_convex_hull} (2-dimensional case) 
-\label{Triangulation3-fig-insert_outside_convex_hull}}
-\end{figure} 
 \end{ccTexOnly}
-
+\caption{\protect\ccc{insert_outside_convex_hull} (2-dimensional case).
+\label{Triangulation3-fig-insert_outside_convex_hull}}
 \begin{ccHtmlOnly}
+<CENTER>
 <img border=0 src="./insert_outside_convex_hull.gif" align=center alt="insert_outside_convex_hull} (2-dimensional case)">
+</CENTER>
 \end{ccHtmlOnly}
+\end{figure} 
 
 \ccMethod{Vertex_handle insert_outside_affine_hull(const Point & p);}
 {\ccc{p} is linked to all the points, and the infinite vertex is linked
@@ -946,20 +953,21 @@ triangulation.
 \ccPrecond{\ccVar.\ccc{dimension()} $<3$ and \ccc{p} lies outside the
 affine hull of the points.}} 
 
-\begin{ccTexOnly}
 \begin{figure}[htbp]
+\begin{ccTexOnly}
 \begin{center} 
 \includegraphics{insert_outside_affine_hull.eps} 
 \end{center}
-\caption{\protect\ccc{insert_outside_affine_hull} (2-dimensional case) 
-\label{Triangulation3-fig-insert_outside_affine_hull}}
-\end{figure} 
 \end{ccTexOnly}
-
+\caption{\protect\ccc{insert_outside_affine_hull} (2-dimensional case).
+\label{Triangulation3-fig-insert_outside_affine_hull}}
 \begin{ccHtmlOnly}
+<CENTER>
 <img border=0 src="./insert_outside_affine_hull.gif" align=center
 alt="insert_outside_affine_hull} (2-dimensional case)">
+</CENTER>
 \end{ccHtmlOnly}
+\end{figure} 
 
 \ccHeading{Removal}
 
@@ -1557,20 +1565,21 @@ where $\|{p-z}\|$ is the Euclidean distance between $p$ and $z$.
 are said to be \textit{orthogonal} if $\Pi{({p}^{(w)}-{z}^{(w)})}
 = 0$ (see Figure~\ref{Triangulation3-fig-ortho}).
 
-\begin{ccTexOnly}
 \begin{figure}[htbp]
+\begin{ccTexOnly}
 \begin{center} 
 \includegraphics{ortho.eps} 
 \end{center}
-\caption{Orthogonal weighted points (picture in 2D)
-\label{Triangulation3-fig-ortho}}
-\end{figure} 
 \end{ccTexOnly}
-
+\caption{Orthogonal weighted points (picture in 2D).
+\label{Triangulation3-fig-ortho}}
 \begin{ccHtmlOnly}
+<CENTER>
 <img border=0 src="./ortho.gif" align=center alt="Orthogonal weighted
 points (picture in 2D)"> 
+</CENTER>
 \end{ccHtmlOnly}
+\end{figure} 
 
 Four weighted points have a unique common orthogonal weighted point called
 the \textit{power sphere}. A sphere ${z}^{(w)}$ is said to be
@@ -1668,19 +1677,21 @@ is equivalent to\\
 $\sqrt{w_p^2+w_z^2}$.}\\
 This remark helps provide an intuition about the following predicates.
 
-\begin{ccTexOnly}
 \begin{figure}[htbp]
+\begin{ccTexOnly}
 \begin{center} 
 \includegraphics{sidedim2.eps} 
 \end{center}
-\caption{side\_of\_power\_circle \label{Triangulation3-fig-sidedim2}}
-\end{figure} 
 \end{ccTexOnly}
-
+\caption{side\_of\_power\_circle.
+\label{Triangulation3-fig-sidedim2}}
 \begin{ccHtmlOnly}
+<CENTER>
 <img border=0 src="./sidedim2.gif" align=center
 alt="side\_of\_power\_circle"> 
+</CENTER>
 \end{ccHtmlOnly}
+\end{figure} 
 
 \ccMethod{Bounded_side
           side_of_power_sphere(Cell_handle c, const Weighted_point & p) const;}
