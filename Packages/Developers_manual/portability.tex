@@ -14,7 +14,8 @@
 \label{chap:portability}
 \ccChapterRelease{Chapter Version: 1.0} \\
 \ccChapterAuthor{Michael Hoffmann ({\tt hoffmann@inf.ethz.ch}) \&
-                 Stefan Schirra ({\tt stschirr@mpi-sb.mpg.de})}
+                 Stefan Schirra ({\tt stschirr@mpi-sb.mpg.de}) \&
+                 Sylvain Pion ({\tt Sylvain.Pion@sophia.inria.fr})}
 \ccIndexMainItemBegin{portability}
 
 This chapter gives an overview of issues related to the
@@ -61,6 +62,67 @@ CGAL_USE_LEDA, CGAL_USE_GMP
 \index{CGAL_USE_GMP flag@{\tt CGAL\_USE\_GMP} flag}
 \index{flag!for GMP}
 iff \cgal\ is configured with \leda\ or GMP support, respectively.
+
+\section{Using Boost}
+\label{sec:boost_support}
+\cgal\ code can rely on Boost libraries to some extent.
+
+Boost is always installed with \cgal, and is updated to the latest
+version of Boost available.  Note that users may supply a version
+of Boost of their own, which implies that some care must be taken
+about which version of Boost is used, which may imply using some
+configuration programs or testing explicitly the Boost version in
+use.
+
+Currently, only the header files of Boost are installed, but not the
+compiled libraries.  This represents the majority of Boost libraries
+however.  If the need arise in the future, we may think about extending
+the installation process to handle the libraries with compiled parts
+as well.
+
+Since portability and backward compatibility are a concern in \cgal,
+we have decided that the list of Boost libraries usable in \cgal\ will be
+decided by the \cgal\ editorial board.  The requirements are higher
+when it appears in the user visible interface than when Boost code
+is used only internally.  Requirements are even lower for code that
+is not released such as the test-suite.  Boost libraries already accepted
+in the C++ Standard Library Technical Report will be the first easy
+candidates (these are marked \texttt{[TR1]} in the list below).
+
+Finally, the policy is that if a better alternative exists in Boost and is
+allowed, then \cgal\ code must use it instead of a \cgal\ version (which
+probably must be deprecated and phased out), trying not to break backward
+compatibility too much.
+
+Here follows a list of Boost libraries allowed for use in \cgal\ (those
+with question marks are not decided yet) :
+\begin{itemize}
+\item ? Any --- Safe, generic container for single values of different value
+      types (what's the relation with \texttt{variant})
+\item ? Concept check --- Tools for generic programming
+\item ? Bind \texttt{[TR1]} and  mem\_fn --- Generalized binders for
+      function/object/pointers and member functions (overlaps with STL
+      Extensions)
+\item ? Graph --- Generic graph components and algorithms
+\item ? Interval --- Extends the usual arithmetic functions to mathematical intervals (overlaps with CGAL::Interval\_nt)
+\item ? Iterators --- Iterator construction framework, adaptors, concepts, and more
+\item ? MPL --- Template metaprogramming framework of compile-time algorithms, sequences and metafunction classes
+\item ? Operators --- Templates ease arithmetic classes and iterators
+\item ? Optional --- Discriminated-union wrapper for optional values
+\item ? Property map --- Concepts defining interfaces which map key objects to value objects
+\item ? Random \texttt{[TR1]} --- A complete system for random number generation
+      (overlaps with support library)
+\item ? Rational --- A rational number class (overlaps with CGAL::Quotient)
+\item ? Ref \texttt{[TR1]} --- A utility library for passing references to generic functions
+%\item ? Result\_of \texttt{[TR1]}
+\item ? Smart Pointers \texttt{[TR1]} --- Five smart pointer class templates
+\item ? Static assertions --- Static assertions (compile time assertions)
+\item ? Tuple \texttt{[TR1]} --- Ease definition of functions returning multiple values, and more
+\item ? Type traits \texttt{[TR1]} --- Templates for fundamental properties of types
+\item ? Variant --- Safe, generic, stack-based discriminated union container
+      (how does it relate to \texttt{any} ?)
+\end{itemize}
+
 
 \section{Identifying \cgal\ and \leda\ versions}
 \label{sec:which_versions}
@@ -159,16 +221,10 @@ SUN 5.3         & \texttt{\_\_SUNPRO\_CC}           & 0x530\\
 \label{sec:problems_and_workarounds}
 
 For (good) reasons that will not be discussed here, it was decided to
-use \CC\ for the development of \cgal. Unfortunately, an international
-standard for \CC\ has been sanctioned only recently
-\cite{cgal:ansi-is14882-98} and the level of compliance varies widely
-between different compilers\index{C++ standard@\CC\ standard}. 
-Even basic and vital features such as
-partial specialization of class templates and partial ordering of
-function templates are still not supported on all compilers.
-Especially, though not only, the Microsoft compiler (Visual \CC\ 6.0)
-has a broad list of bugs and limitations, and it is not clear whether
-or when these are going to be fixed.
+use \CC\ for the development of \cgal. An international standard for
+\CC\ has been sanctioned in 1998 \cite{cgal:ansi-is14882-98} and the
+level of compliance varies widely between different
+compilers\index{C++ standard@\CC\ standard}, let alone bugs.
 
 \subsection{Workaround flags}
 \label{sec:workaround_flags}
@@ -432,7 +488,8 @@ done to avoid some \texttt{\#ifdef}s in our actual code.
 \begin{description}
 \item[\textbf{Templated member functions}]
 
-For SunPRO \CC\, all the templated member functions must be inline. 
+For SunPRO \CC\, member function templates with dependent return type
+must be defined in the body of the class. 
 
 \item[\textbf{Function parameter matching}]
 
@@ -447,6 +504,7 @@ VC++ fails to distinguish that these parameters have different types.
 A workaround is to add some dummy parameters that are defaulted to
 certain values, and this affects only the places where the functions
 are defined, not the places where they are called.
+This may not be true anymore for recent VC++ versions.
 
 \item[\textbf{typedefs of derived classes}]
 Microsoft VC++ does not like the following sorts of typedefs that are 
@@ -463,6 +521,7 @@ enclosed by
 
 #endif
 \end{verbatim}
+This may not be true anymore for recent VC++ versions.
 
 \item[\textbf{parse error in constructions}]
 \ccIndexSubitem{parse error}{construction}

@@ -1,3 +1,6 @@
+23 May 2004 Sylvain Pion
+- Add Boost section and various fixes.
+
 09 March 2004 Sylvain Pion
 - Updates to Radu's change.
 
