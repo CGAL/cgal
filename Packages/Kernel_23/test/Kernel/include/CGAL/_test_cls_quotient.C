@@ -80,7 +80,7 @@ _test_cls_quotient(const NT& )
   assert( n1 < QT(n6,n4) );
   assert( q3_6 < n2 );
 
-  std::cout << q1_2 << "done";
+  std::cout << q1_2 << "done" << std::endl;
   return true;
 }
 

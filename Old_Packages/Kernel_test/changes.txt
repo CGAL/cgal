@@ -1,3 +1,6 @@
+3.24   (13 June 2001)
+- Add std::endl to test_cls_quotient so that it's more readable.
+
 3.23   (30 May 2001)
 - Remove Compare_distance_to_point_[23].
 
