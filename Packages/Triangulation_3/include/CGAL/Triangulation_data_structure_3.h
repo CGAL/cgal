@@ -1108,19 +1108,42 @@ public:
   }
  
   
-  void swap(Tds &tds)
+  void swap(Tds & tds)
   {
     int dim = dimension();
     int nb = number_of_vertices();
     Cell *l = list_of_cells()._next_cell;
+    Cell* p = list_of_cells()._previous_cell;
 
     set_dimension(tds.dimension());
     set_number_of_vertices(tds.number_of_vertices());
-    _list_of_cells._next_cell = tds.list_of_cells()._next_cell;
+
+    if ( tds.list_of_cells()._next_cell == &(tds.list_of_cells()) ) {
+      list_of_cells()._next_cell =
+	list_of_cells()._previous_cell =
+	&(list_of_cells());
+    }
+    else {
+      _list_of_cells._next_cell = tds.list_of_cells()._next_cell;
+      _list_of_cells._next_cell->_previous_cell = &(_list_of_cells);
+      _list_of_cells._previous_cell = tds.list_of_cells()._previous_cell;
+      _list_of_cells._previous_cell->_next_cell = &(_list_of_cells);
+    }
 
     tds._dimension = dim;
     tds._number_of_vertices = nb;
-    tds._list_of_cells._next_cell = l;
+
+    if ( l == &(list_of_cells()) ) {
+      tds._list_of_cells._next_cell = 
+	tds._list_of_cells._previous_cell =
+	&( tds._list_of_cells );
+    }
+    else {
+      tds._list_of_cells._next_cell = l;
+      tds._list_of_cells._next_cell->_previous_cell = &(tds._list_of_cells);
+      tds._list_of_cells._previous_cell = p;
+      tds._list_of_cells._previous_cell->_next_cell = &(tds._list_of_cells);
+    }
   }
 
   void clear()
