@@ -1,4 +1,7 @@
 Changes done to the `Min_circle_2' package
+Version 3.21  on 08-Sep-2003
+- demo use now the new help class Qt_help_window instead of HelpWindow [rursu]
+- demo use the new demo icon demoicon [rursu]
 
 Version 3.20  on 28-Jul-2003
 - patched demo/Min_circle_2/makefile for FreeBSD [rursu]
