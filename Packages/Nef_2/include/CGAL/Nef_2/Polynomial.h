@@ -1930,7 +1930,7 @@ void Polynomial<NT>::euclidean_div(
     qd = rd - gd + 1;
     q = Polynomial<NT>(std::size_t(qd)); 
   }
-  while ( rd >= gd ) {
+  while ( rd >= gd && !(r.is_zero())) {
     NT S = r[rd] / g[gd];
     qd = rd-gd;
     q.coeff(qd) += S;
