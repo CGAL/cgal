@@ -31,7 +31,8 @@ CGAL_BEGIN_NAMESPACE
 
 template < typename FT_ >
 class Simple_cartesian
-  : public Type_equality_wrapper< Cartesian_base< Simple_cartesian<FT_> > >
+  : public Type_equality_wrapper< Cartesian_base< Simple_cartesian<FT_> >,
+                                  Simple_cartesian<FT_> >
 {
     typedef Simple_cartesian<FT_>                         Kernel;
 

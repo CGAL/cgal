@@ -1,3 +1,6 @@
+2.79   (19 Feb 2003)
+- Fix Type_equality_wrapper<> for SunPro/MipsPro.
+
 2.78   (11 Feb 2003)
 - Add squared_radius(p, q).
 

@@ -35,10 +35,10 @@ CGAL_BEGIN_NAMESPACE
 template < typename RT_, typename FT_ = Quotient<RT_> >
 class Simple_homogeneous
   : public Type_equality_wrapper<
-              Homogeneous_base< Simple_homogeneous<RT_, FT_> > >
+              Homogeneous_base< Simple_homogeneous<RT_, FT_> >,
+              Simple_homogeneous<RT_, FT_> >
 {
     typedef Simple_homogeneous<RT_, FT_>                  Kernel;
-
 public:
 
     typedef RT_                                           RT;

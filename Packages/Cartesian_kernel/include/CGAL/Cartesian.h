@@ -31,7 +31,8 @@ CGAL_BEGIN_NAMESPACE
 
 template < typename FT_ >
 class Cartesian
-  : public Type_equality_wrapper< Cartesian_base< Cartesian<FT_> > >
+  : public Type_equality_wrapper< Cartesian_base< Cartesian<FT_> >,
+                                  Cartesian<FT_> >
 {
     typedef Cartesian<FT_>                                Kernel;
 
