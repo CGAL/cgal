@@ -1617,8 +1617,6 @@ Packages/Sweep_line_2/doc_tex/Sweep_line_2/sl_simple.gif -text svneol=unset#unse
 Packages/Sweep_line_2/doc_tex/Sweep_line_2/sl_simple.ps -text
 Packages/Sweep_line_2/doc_tex/basic/Sweep_line_2/sl_simple.gif -text svneol=unset#unset
 Packages/Sweep_line_2/doc_tex/basic/Sweep_line_2/sl_simple.ps -text
-Packages/Triangulation_2/demo/Triangulation_2/constrained_delaunay_triangulation_2.vcproj -text
-Packages/Triangulation_2/demo/Triangulation_2/delaunay_triangulation_2.vcproj -text
 Packages/Triangulation_2/demo/Triangulation_2/help/cinput_point_layer.gif -text svneol=unset#unset
 Packages/Triangulation_2/demo/Triangulation_2/help/conflict_zone.gif -text svneol=unset#unset
 Packages/Triangulation_2/demo/Triangulation_2/help/conflict_zone_after.gif -text svneol=unset#unset
@@ -1627,7 +1625,6 @@ Packages/Triangulation_2/demo/Triangulation_2/help/csegment_layer.gif -text svne
 Packages/Triangulation_2/demo/Triangulation_2/help/input_line_layer.gif -text svneol=unset#unset
 Packages/Triangulation_2/demo/Triangulation_2/help/input_point_layer.gif -text svneol=unset#unset
 Packages/Triangulation_2/demo/Triangulation_2/help/movedelete_point_layer.gif -text svneol=unset#unset
-Packages/Triangulation_2/demo/Triangulation_2/regular_triangulation_2.vcproj -text
 Packages/Triangulation_2/doc_tex/TDS_2/Flip.gif -text svneol=unset#unset
 Packages/Triangulation_2/doc_tex/TDS_2/Three.gif -text svneol=unset#unset
 Packages/Triangulation_2/doc_tex/TDS_2/flip.ltex -text
