@@ -1,3 +1,6 @@
+Version 1.28 (21 dec 99)
+newline removed in cout<<" " in demos
+
 Version 1.27 (17 dec 99)
 useful #include added in the demos
 a few small details changed in the doc
