@@ -7,46 +7,46 @@
 #include <iostream>
 #include <CGAL/Random.h>
 
-typedef CGAL::MP_Float MPI;
+typedef CGAL::MP_Float MPF;
 
 void test_equality(int i)
 {
-  assert(MPI(i) == MPI(i));
-  assert(MPI(i) <= MPI(i));
-  assert(MPI(i) >= MPI(i));
-  assert(! (MPI(i) < MPI(i)));
-  assert(! (MPI(i) > MPI(i)));
+  assert(MPF(i) == MPF(i));
+  assert(MPF(i) <= MPF(i));
+  assert(MPF(i) >= MPF(i));
+  assert(! (MPF(i) < MPF(i)));
+  assert(! (MPF(i) > MPF(i)));
 }
 
 void bench(int loops)
 {
-  MPI j (13579);
-  MPI k (9753);
-  MPI l (-149);
+  MPF j (13579);
+  MPF k (9753);
+  MPF l (-149);
   for(; loops>0; loops--)
   {
-    MPI m (loops);
-    MPI n = (j*k-l*m)*(j*m-k*l)*(j*j);
-    (void) (n>MPI(0));
+    MPF m (loops);
+    MPF n = (j*k-l*m)*(j*m-k*l)*(j*j);
+    (void) (n>MPF(0));
   }
 }
 
-MPI factoriel (short i)
+MPF factoriel (short i)
 {
-  MPI r(1);
+  MPF r(1);
   for (short j=1; j<=i; j++)
-    r = r * MPI(j);
+    r = r * MPF(j);
   return r;
 }
 
 void print_test()
 {
   for (int i=-2; i<3; i++)
-    std::cout << MPI(i) << "   ";
-  std::cout << endl;
+    std::cout << MPF(i) << "   ";
+  std::cout << std::endl;
   for (int i=-2; i<3; i++)
-    std::cout << MPI(i+65536) << "      ";
-  std::cout << endl;
+    std::cout << MPF(i+65536) << "      ";
+  std::cout << std::endl;
 }
 
 int main(int argc, char **argv)
@@ -73,14 +73,14 @@ int main(int argc, char **argv)
     // d = 1.9696110926449043849e+124;
     // d = 7.3074228557478900057e+47;
     // std::cout << d << std::endl;
-    // std::cout << MPI(d) << std::endl;
-    // std::cout << CGAL::to_double(MPI(d)) << std::endl;
-    if (CGAL::to_double(MPI(d)) != d)
+    // std::cout << MPF(d) << std::endl;
+    // std::cout << CGAL::to_double(MPF(d)) << std::endl;
+    if (CGAL::to_double(MPF(d)) != d)
       std::cerr << "CONVERSION ERROR with double : " << d << std::endl;
-    // MPI z(d);
+    // MPF z(d);
   }
 
-  MPI a(0);
+  MPF a(0);
   int j=0;
   for (int i=0; i<10000; i++)
   {
@@ -93,36 +93,36 @@ int main(int argc, char **argv)
         std::cout << " " << a.v[j];
     std::cout << std::endl;
 #endif
-    a = a + MPI(i);
+    a = a + MPF(i);
     j += i;
-    CGAL_assertion(a == MPI(j));
+    CGAL_assertion(a == MPF(j));
   }
 
   std::cout << a << std::endl;
-  CGAL_assertion ( a == MPI(5000*9999));
+  CGAL_assertion ( a == MPF(5000*9999));
 
-  MPI bb = factoriel(100);
+  MPF bb = factoriel(100);
   std::cout << "100! = " << bb << std::endl;
   
-  MPI b = factoriel(10);
+  MPF b = factoriel(10);
   std::cout << "10! = " << b << " =? 3628800 " << " =? " << CGAL::to_double(b);
   std::cout << std::endl;
-  CGAL_assertion ( b == MPI(3628800));
+  CGAL_assertion ( b == MPF(3628800));
 
   test_equality(0);
   test_equality(10);
   test_equality(-10);
 
-  MPI c = -10*65536+30; // Note : limb==short is hardcoded here
-  MPI d = c * 65536;
+  MPF c = -10*65536+30; // Note : limb==short is hardcoded here
+  MPF d = c * 65536;
 
   CGAL_assertion(c < (c+1));
   CGAL_assertion(c > (c-1));
   CGAL_assertion(d < (d+1));
   CGAL_assertion(d > (d-1));
 
-  MPI e =  7*65536 + 10;
-  MPI f = 10*65536 + 7;
+  MPF e =  7*65536 + 10;
+  MPF f = 10*65536 + 7;
   CGAL_assertion(e < f);
 
   print_test();
