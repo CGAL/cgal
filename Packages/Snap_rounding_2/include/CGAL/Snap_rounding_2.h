@@ -179,10 +179,8 @@ private:
 
   std::set<Hot_Pixel<Rep> *,hot_pixel_auclidian_cmp<Rep> > hp_set;
   NT min_x,max_x,min_y,max_y;
-  Segments_container seg_2_list;
   std::list<Segment_data<Rep> > seg_list;
   std::list<std::list<Point_2> > segments_output_list;
-  int number_of_segments;
   Multiple_kd_tree<Rep,Hot_Pixel<Rep> *> *mul_kd_tree;
 
   void find_hot_pixels_and_create_kd_trees(
@@ -738,14 +736,10 @@ Snap_rounding_2<Rep_>::Snap_rounding_2(
   bool int_output,
   unsigned int number_of_kd_trees)
   {
-    // initialize approximation angles map
-    number_of_segments = 0;
     // copy segments list
     while(begin != end) {
       seg_list.push_back(Segment_data<Rep_>(begin->source(),
                                             begin->target()));
-      seg_2_list.push_back(*begin);
-      ++number_of_segments;
       ++begin;
     }
 
