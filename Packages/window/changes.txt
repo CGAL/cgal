@@ -1,3 +1,8 @@
+2.8.5       (22 Jun 2001)
+- added 2 casts to cgal_window.h to avoid warnings on some
+  compilers
+
+
 2.8.4       (21 Jun 2001)
 - changed point output (no nodes are used any more)
 - input and output operators in IO/leda_window.h and IO/cgal_window.h

@@ -8,14 +8,14 @@
 //
 // ----------------------------------------------------------------------
 // 
-// release       : $CGAL_Revision: CGAL-2.3-I-73 $
-// release_date  : $CGAL_Date: 2001/06/19 $
+// release       : $CGAL_Revision: CGAL-2.3-I-75 $
+// release_date  : $CGAL_Date: 2001/06/21 $
 // 
 // file          : include/CGAL/IO/cgal_window.h
-// package       : window (2.8.4)
+// package       : window (2.8.5)
 // maintainer    : Susan Hert <hert@mpi-sb.mpg.de>
-// revision      : 2.8.4
-// revision_date : 21 June 2001 
+// revision      : 2.8.5
+// revision_date : 22 June 2001 
 // author(s)     : Matthias Baesken
 //
 // coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
@@ -60,7 +60,7 @@ create_demo_window( float w = 512.0, float h = 512.0,
                          const char* str = "CGAL",
                          double x_extension = 1.0)
 {
-  CGAL::window* Wptr = new CGAL::window( w, h);
+  CGAL::window* Wptr = new CGAL::window((int) w, (int) h);
   cgalize( *Wptr);
   double y_extension = x_extension * h / w;
   Wptr->init(-x_extension, x_extension, -y_extension);
@@ -75,7 +75,7 @@ create_and_display_demo_window(float w = 512.0, float h = 512.0,
                                     const char* str = "CGAL",
                                     double x_extension = 1.0)
 {
-  CGAL::window* Wptr = new CGAL::window( w, h);
+  CGAL::window* Wptr = new CGAL::window((int) w, (int) h);
   cgalize( *Wptr);
   double y_extension = x_extension * h / w;
   Wptr->init(-x_extension, x_extension, -y_extension);
