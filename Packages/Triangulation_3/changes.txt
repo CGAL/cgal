@@ -1,3 +1,9 @@
+Version 1.42 (26 sept 00)
+Minor modifications :
+- One more sentence in the doc
+- #include <CGAL/Cartesian.h> added in Triangulation_geom_traits_3.h (useful
+for degenerate dimensions)
+
 Version 1.41 (7 aug 00)
 - parameter dummy_for_windows added in the old versions of 
 Triangulation_3:: incident_vertices et al (kept for compatibility
