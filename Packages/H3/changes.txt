@@ -1,3 +1,6 @@
+2.67 (21 October 2003)
+- fix headers
+
 2.66 (18 September 2003)
 - New headers
 

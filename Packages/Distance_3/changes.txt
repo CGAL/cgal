@@ -1,3 +1,6 @@
+2.15
+- fix headers
+
 2.14
 - Added missing #include <CGAL/Vector_3.h>
 

@@ -1,5 +1,8 @@
 Circulator Package: Release changes:
 ---------------------------------------------------------------------
+3.35 (21 Oct 2003)
+- fix headers
+
 3.34 (22 Sep 2003)
 - new headers
 

@@ -1,5 +1,8 @@
 Generator Package: Release changes:
 ---------------------------------------------------------------------
+2.78 (21 Oct 2003)
+- fix headers
+
 2.77 (17 Oct 2003)
 - fixed the doc rcs_manual_demo.C and random_polygon_manual_demo.C 
   were converted to examples

@@ -1,6 +1,9 @@
 HalfedgeDS Package: Release changes:
 ---------------------------------------------------------------------
 
+3.36 (21 Oct 2003)
+- fix headers
+
 3.35 (22 Sep 2003)
 - new headers
 
