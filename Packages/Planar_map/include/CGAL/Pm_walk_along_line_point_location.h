@@ -74,11 +74,18 @@ protected:
   typedef const Self* cPLp;
 
 public:
+  // Constructor
   Pm_walk_along_line_point_location() : 
     Pm_point_location_base<Planar_map>(),
+    pm(0),
     traits(0) {}
   
-  void init(Planar_map& pmp, Traits& tr) {
+  void init(Planar_map& pmp, Traits& tr) 
+  {
+    CGAL_precondition_msg(pm == NULL,
+    "Point location instance should be uninitialized "
+    "(Do not use the same instance for more than one map).");
+
     pm = &pmp;
     traits = (Traits_wrap*)(&tr);
   }

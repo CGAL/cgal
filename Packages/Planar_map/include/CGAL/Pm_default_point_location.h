@@ -120,7 +120,10 @@ protected:
   
 	
 public:
-  Pm_default_point_location(bool rebuild=true) : traits(NULL){
+  Pm_default_point_location(bool rebuild=true) : 
+    pm(NULL),
+    traits(NULL)
+  {
     td.set_needs_update(rebuild);
   }
   ~Pm_default_point_location() 
@@ -241,7 +244,12 @@ public:
   
   inline const Pm_traits* get_traits() const {return traits;}
 
-  void init(Planar_map& pmp, Pm_traits& tr) {
+  void init(Planar_map& pmp, Pm_traits& tr) 
+  {
+    CGAL_precondition_msg(pm == NULL,
+    "Point location instance should be uninitialized "
+    "(Do not use the same instance for more than one map).");
+
     pm = &pmp;
     if (traits) delete traits;
     traits = new Td_traits(tr);

@@ -65,11 +65,22 @@ public:
   typedef typename Base::Token Token;
 
 public:	
-  Pm_naive_point_location() : Pm_point_location_base<Planar_map>(),traits(0) {}
+  // Constructors
+  Pm_naive_point_location() : 
+    Pm_point_location_base<Planar_map>(),
+    pm(0),
+    traits(0) 
+  {}
+
   Pm_naive_point_location(Planar_map* _pm,Traits_wrap* _traits) : 
     Pm_point_location_base<Planar_map>(),traits(_traits),pm(_pm) {}
-  
-  inline void init(Planar_map& pmp, Traits& tr) {
+
+  inline void init(Planar_map& pmp, Traits& tr) 
+  {
+    CGAL_precondition_msg(pm == NULL,
+    "Point location instance should be uninitialized "
+    "(Do not use the same instance for more than one map).");
+
     pm = &pmp;
     traits = (Traits_wrap*)(&tr);
   }
