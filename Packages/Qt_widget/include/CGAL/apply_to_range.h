@@ -113,7 +113,8 @@ void apply_to_range(const Tr &t,
   
   //HERE we begin to walkt hrough the faces DFS
   hFACE hf;
-  CGAL::Unique_hash_map<hFACE,bool>::Data& data_ref_start(visited[hf]);
+  typename CGAL::Unique_hash_map<hFACE,bool>::Data& 
+     data_ref_start(visited[hf]);
   data_ref_start = true;
   while(!face_stack.empty()){
     hf = face_stack.top();
@@ -125,7 +126,8 @@ void apply_to_range(const Tr &t,
           if(!((*hv).point().x() < xr_left || (*hv).point().x() > xr_right ||
                (*hv).point().y() < yr_bottom || (*hv).point().y() > yr_top)) //true if the vertex is outside
           face_stack.push((*hf).neighbor(i));
-          CGAL::Unique_hash_map<hFACE,bool>::Data& data_ref(visited[(*hf).neighbor(i)]);
+          typename CGAL::Unique_hash_map<hFACE,bool>::Data& 
+              data_ref(visited[(*hf).neighbor(i)]);
           data_ref = true;
         }
     }

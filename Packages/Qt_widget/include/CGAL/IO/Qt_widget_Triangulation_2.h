@@ -38,7 +38,7 @@ public:
   Draw_triangulation(const Triangulation_2<Gt, Tds>& _t, Qt_widget& _w)
     : t(_t), w(_w)
   {}
-  void operator()(Triangulation_2<Gt, Tds>::Face_handle fh)
+  void operator()(typename Triangulation_2<Gt, Tds>::Face_handle fh)
   {
     for (int i=0; i<3; i++)
       if ((*fh).neighbor(i) > fh || t.is_infinite((*fh).neighbor(i)))
@@ -55,7 +55,7 @@ operator<<(Qt_widget& w,  const Triangulation_2<Gt, Tds> &t)
     t.draw_triangulation(w);
     return w;
   }
-  typedef Triangulation_2<Gt, Tds>::Point         OpPoint;
+  typedef typename Triangulation_2<Gt, Tds>::Point OpPoint;
   w.lock();
   Draw_triangulation<Gt, Tds> draw(t, w);
   apply_to_range(t, OpPoint(w.x_min(), w.y_max()), 
