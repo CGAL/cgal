@@ -1,6 +1,11 @@
 HalfedgeDS Package: Release changes:
 ---------------------------------------------------------------------
 
+3.30 (15 Apr 2002)
+
+     - Changed get_iter functions to get_[vhf]_iter functions in 
+       HalfedgeDS_vector to solve ambiguity on MSVC7.
+
 3.29 (11 Apr 2002)
 
      - Added missing typedefs for *_I and *_CI types in HalfedgeDS_vector.

@@ -224,29 +224,29 @@ protected:
     Halfedge_iterator  border_halfedges;
 
 #ifdef CGAL__HALFEDGEDS_USE_INTERNAL_VECTOR
-    Vertex_I    get_iter( const Vertex_I&  i)   const { return i; }
-    Vertex_CI   get_iter( const Vertex_CI& i)   const { return i; }
-    Halfedge_I  get_iter( const Halfedge_I&  i) const { return i; }
-    Halfedge_CI get_iter( const Halfedge_CI& i) const { return i; }
-    Face_I      get_iter( const Face_I&  i)     const { return i; }
-    Face_CI     get_iter( const Face_CI& i)     const { return i; }
+    Vertex_I    get_v_iter( const Vertex_I&  i)   const { return i; }
+    Vertex_CI   get_v_iter( const Vertex_CI& i)   const { return i; }
+    Halfedge_I  get_h_iter( const Halfedge_I&  i) const { return i; }
+    Halfedge_CI get_h_iter( const Halfedge_CI& i) const { return i; }
+    Face_I      get_f_iter( const Face_I&  i)     const { return i; }
+    Face_CI     get_f_iter( const Face_CI& i)     const { return i; }
 #else // CGAL__HALFEDGEDS_USE_INTERNAL_VECTOR //
-    Vertex_I    get_iter( const Vertex_iterator&  i) const {
+    Vertex_I    get_v_iter( const Vertex_iterator&  i) const {
         return i.iterator();
     }
-    Vertex_CI   get_iter( const Vertex_const_iterator& i)   const {
+    Vertex_CI   get_v_iter( const Vertex_const_iterator& i)   const {
         return i.iterator();
     }
-    Halfedge_I  get_iter( const Halfedge_iterator&  i) const {
+    Halfedge_I  get_h_iter( const Halfedge_iterator&  i) const {
         return i.iterator();
     }
-    Halfedge_CI get_iter( const Halfedge_const_iterator& i) const {
+    Halfedge_CI get_h_iter( const Halfedge_const_iterator& i) const {
         return i.iterator();
     }
-    Face_I      get_iter( const Face_iterator&  i)     const {
+    Face_I      get_f_iter( const Face_iterator&  i)     const {
         return i.iterator();
     }
-    Face_CI     get_iter( const Face_const_iterator& i)     const {
+    Face_CI     get_f_iter( const Face_const_iterator& i)     const {
         return i.iterator();
     }
 #endif // CGAL__HALFEDGEDS_USE_INTERNAL_VECTOR //
@@ -512,11 +512,11 @@ public:
 #endif
 
 #define CGAL__V_UPDATE(v) (((v) == Vertex_handle()) ? (v) : \
-                           (v_new + ( Vertex_CI   (get_iter(v)) - v_old)))
+                           (v_new + ( Vertex_CI   (get_v_iter(v)) - v_old)))
 #define CGAL__H_UPDATE(h) (((h) == Halfedge_handle()) ? (h) : \
-                           (h_new + ( Halfedge_CI (get_iter(h)) - h_old)))
+                           (h_new + ( Halfedge_CI (get_h_iter(h)) - h_old)))
 #define CGAL__F_UPDATE(f) (((f) == Face_handle()) ? (f) : \
-                           (f_new + ( Face_CI     (get_iter(f)) - f_old)))
+                           (f_new + ( Face_CI     (get_f_iter(f)) - f_old)))
 
 template < class Traits_, class HalfedgeDSItems, class Alloc>
 void
@@ -596,7 +596,7 @@ normalize_border() {
                           // Pivot is in *ll, ll <= rr.
         while ( rr > ll && (rr->is_border() || rr->opposite()->is_border())) {
             if ( ! rr->opposite()->is_border()) {
-                CGAL_assertion( rr + 1 == get_iter(rr->opposite()));
+                CGAL_assertion( rr + 1 == get_h_iter(rr->opposite()));
                 std::swap( *rr, *(rr+1));
                 update_opposite( rr);
                 std::swap( *rrhv, *(rrhv+1));
@@ -606,8 +606,8 @@ normalize_border() {
         }
                           // Elements in [rr+1..end) >= pivot (border)
                           // *rr <= pivot, ll <= rr.
-        CGAL_assertion( rr + 1 == get_iter( rr->opposite()));
-        CGAL_assertion( ll + 1 == get_iter( ll->opposite()));
+        CGAL_assertion( rr + 1 == get_h_iter( rr->opposite()));
+        CGAL_assertion( ll + 1 == get_h_iter( ll->opposite()));
         std::swap( *(ll+1), *(rr+1));
         std::swap( *ll, *rr);
         update_opposite( ll);
@@ -625,8 +625,8 @@ normalize_border() {
                           // ll <= rr (since *rr is pivot.)
         CGAL_assertion( ll <= rr);
         CGAL_assertion( llhv <= rrhv);
-        CGAL_assertion( rr + 1 == get_iter( rr->opposite()));
-        CGAL_assertion( ll + 1 == get_iter( ll->opposite()));
+        CGAL_assertion( rr + 1 == get_h_iter( rr->opposite()));
+        CGAL_assertion( ll + 1 == get_h_iter( ll->opposite()));
         std::swap( *(ll+1), *(rr+1));
         std::swap( *ll, *rr);
         update_opposite( ll);
@@ -634,7 +634,7 @@ normalize_border() {
         std::swap( *(llhv+1), *(rrhv+1));
         std::swap( *llhv, *rrhv);
         if ( ! rr->opposite()->is_border()) {
-            CGAL_assertion( rr + 1 == get_iter( rr->opposite()));
+            CGAL_assertion( rr + 1 == get_h_iter( rr->opposite()));
             std::swap( *rr, *(rr+1));
             update_opposite( rr);
             std::swap( *rrhv, *(rrhv+1));
@@ -652,7 +652,7 @@ normalize_border() {
     if ( ll == rr) {
         // Check for the possibly missed swap.
         if ( rr->is_border() && ! rr->opposite()->is_border()) {
-            CGAL_assertion( rr + 1 == get_iter (rr->opposite()));
+            CGAL_assertion( rr + 1 == get_h_iter (rr->opposite()));
             std::swap( *rr, *(rr+1));
             update_opposite( rr);
             std::swap( *rrhv, *(rrhv+1));
