@@ -28,7 +28,7 @@
 // The goal of this class is to be run by some overloaded predicates,
 // This is just a wrapper for a double, but with limited functionality,
 // to detect non-intented use.
-// It's the type over which is run the _SAF epsilon variant, and which throws
+// It's the type over which is run the epsilon variant, and which throws
 // the exceptions.
 
 // TODO: I need to add some missing operators and functions, min/max...
@@ -43,6 +43,7 @@ struct Restricted_double
   typedef Restricted_double Self;
   struct unsafe_comparison {};          // Exception class.
 
+  Restricted_double () {}
   Restricted_double (const double &d) : _d(d) {}
   Restricted_double (const int &i) : _d(double(i)) {}
 // Add operator= for efficiency.
@@ -78,41 +79,6 @@ Restricted_double
 abs(const Restricted_double &f)
 {
     return std::fabs(f.dbl());
-}
-
-// Now the epsilon predicates, which might throw the exception.
-
-inline
-Sign
-lexicographical_sign_SAF(const Restricted_double &,
-       	    const Restricted_double &,
-       	    const double &)
-{
-    // Not finished...
-    throw Restricted_double::unsafe_comparison();
-}
-
-inline
-Comparison_result
-compare_SAF(const Restricted_double &a,
-       	    const Restricted_double &b,
-       	    const double &epsilon)
-{
-    if (a.dbl() > b.dbl()+epsilon) return LARGER;
-    if (a.dbl() < b.dbl()-epsilon) return SMALLER;
-    if (a.dbl()==b.dbl() && epsilon==0) return EQUAL;
-    throw Restricted_double::unsafe_comparison();
-}
-
-inline
-Sign
-sign_SAF(const Restricted_double &a, const double &epsilon)
-{
-    // return compare_SAF(a,0,epsilon);
-    if (a.dbl()> epsilon) return POSITIVE;
-    if (a.dbl()<-epsilon) return NEGATIVE;
-    if (a.dbl()==0 && epsilon==0) return ZERO;
-    throw Restricted_double::unsafe_comparison();
 }
 
 CGAL_END_NAMESPACE
