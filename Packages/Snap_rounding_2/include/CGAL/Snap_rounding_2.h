@@ -141,6 +141,9 @@ struct hot_pixel_dir_cmp
   bool operator ()(const Hot_Pixel<Rep_> *h1,const Hot_Pixel<Rep_> *h2);
 };
 
+template<class base_rep>
+class Snap_rounding_traits : public base_rep {
+};
 
 template<class Rep_>
 class Snap_rounding_2 {
