@@ -117,7 +117,7 @@ operator==(const Point& p, const Point& q)
   return ( (p[0] == q[0]) && (p[1] == q[1]) && (p[2] == q[2]) ) ;
 }
 
-typedef std::vector<Point> Vector;
+
 
 // typedef CGAL::Kernel_traits<Point>::Kernel K;
 // typedef K::FT NT;
@@ -128,6 +128,9 @@ typedef CGAL::Kd_tree_traits_point<Separator,Point> Traits;
 typedef CGAL::Creator_uniform_3<double,Point> Creator;
 typedef CGAL::Nearest_neighbour_L2_standard_search <Traits,CGAL::Search_nearest_neighbour> 
 Nearest_neighbours_type;
+
+// typedef std::vector<Point> Vector;  causes IRIS compiler problem
+typedef std::vector<Traits::Item> Vector;
 
 NT The_squared_distance(const Point& P, const Point& Q) {
 	NT distx= P.x()-Q.x();
