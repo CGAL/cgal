@@ -1,3 +1,6 @@
+Version 2.71 (14 May 2003) [af]
+- testfile now reads from a data file instead from std::cin
+
 Version 2.71 (7 May 2003) [af]
 - added dont_submit
 

@@ -13,7 +13,7 @@
 //
 // file          : include/CGAL/Range_tree_d.h
 // package       : SearchStructures (2.54)
-// maintainer    : Andreas.Fabri@geometryfactory.com
+// maintainer    : Andreas Fabri  <Andreas.Fabri@geometryfactory.com>
 // source        : include/CGAL/Range_tree_d.h
 // revision      : $Revision$
 // revision_date : $Date$

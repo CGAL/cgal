@@ -13,7 +13,7 @@
 //
 // file          : include/CGAL/Range_segment_tree_traits.h
 // package       : SearchStructures (2.54)
-// maintainer    : Philipp Kramer <kramer@inf.ethz.ch>
+// maintainer    : Andreas Fabri <Andreas.Fabri@geometryfactory.com>
 // source        : include/CGAL/Range_segment_tree_traits.h
 // revision      : $Revision$
 // revision_date : $Date$
@@ -45,7 +45,7 @@ template<class Key_1>
     
     bool operator()(const Key_1& k1, const Key_1& k2)
     {
-      return SMALLER == (int)compare_x(k1,k2);
+      return SMALLER == compare_x(k1,k2);
     }
   };
 
@@ -55,7 +55,7 @@ template<class Key_2>
     
     bool operator()(const Key_2& k1, const Key_2& k2)
     {
-      return SMALLER == (int)compare_y(k1,k2);
+      return SMALLER == compare_y(k1,k2);
     }
   };
 
@@ -65,7 +65,7 @@ template<class Key_3>
     
     bool operator()(const Key_3& k1, const Key_3& k2)
     {
-      return SMALLER == (int)compare_z(k1,k2);
+      return SMALLER == compare_z(k1,k2);
     }
   };
 
