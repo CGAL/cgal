@@ -318,26 +318,15 @@ ch_quickhull_3_scan(
         std::copy(outside_sets[*vis_set_it].begin(),
                   outside_sets[*vis_set_it].end(),
                   std::back_inserter(vis_outside_set));
-/*
-        // keep hold of a halfedge for a facet neighboring the hole
-        if (!(*(*vis_set_it)).halfedge()->is_border())
-          hole_halfedge = (*(*vis_set_it)).halfedge()->opposite();
-*/
         //   delete this visible facet
         P.erase_facet((*(*vis_set_it)).halfedge());
-//        hole_halfedge = P.make_hole((*(*vis_set_it)).halfedge());
+        CGAL_assertion (P.is_valid());
         outside_sets[*vis_set_it].clear();
      }
-     // at this point there should be one hole in the surface 
-     P.normalize_border();
-     assert ( P.size_of_border_halfedges() != 0 );
-     // ??? 
-     // not sure why you have to take the opposite of this halfedge
-     // to get a border halfedge, but you do.
-     // ??? 
-     hole_halfedge = P.border_halfedges_begin()->opposite();
-
-//     hole_halfedge = hole_halfedge->opposite();
+     for (hole_halfedge = P.halfedges_begin(); 
+          hole_halfedge != P.halfedges_end() && !(*hole_halfedge).is_border();
+          hole_halfedge++) 
+     {}
      assert (hole_halfedge->is_border());
      assert (hole_halfedge->next()->is_border());
      // add a new facet and vertex to the surface.  This is the first
@@ -381,11 +370,6 @@ ch_quickhull_3_scan(
      // fill in the last triangular hole with a facet
      new_halfedge = P.fill_hole(curr_halfedge);
      new_facets.push_back(new_halfedge->facet());
-/*
-     P.normalize_border();
-     // the hole should have been completely filled by now
-     assert ( P.size_of_border_halfedges() == 0 );
-*/
 
      // now partition the set of outside set points among the new facets.
      partition_outside_sets(new_facets, vis_outside_set, outside_sets,
