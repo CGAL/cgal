@@ -75,13 +75,10 @@ protected:
   {
     if(e->button() == Qt::LeftButton && is_pure(e->state()))
     {
-#ifdef CGAL_USE_GMP
-      FT x(widget->x_real_rational(e->x()));
-      FT y(widget->y_real_rational(e->y()));
-#else
-      FT x(widget->x_real(e->x()));
-      FT y(widget->y_real(e->y()));
-#endif
+      FT x, y;
+      widget->x_real(e->x(), x);
+      widget->y_real(e->y(), y);
+
       if(!active)
       {
         active=true;
@@ -154,8 +151,9 @@ protected:
   {
     if (active)
     {
-      FT x(widget->x_real(e->x()));
-      FT y(widget->y_real(e->y()));
+      FT x, y;
+      widget->x_real(e->x(), x);
+      widget->y_real(e->y(), y);
 
       rubber = Point_2(x, y);
       widget->lock();

@@ -43,15 +43,15 @@ namespace CGAL {
 class Qt_widget_focus : public Qt_widget_layer
 {
 private:
-  int	    x2, y2;
+  int     x2, y2;
   QPixmap *mouse_ico1,
           *mouse_ico2,
           *mouse_ico3;
-  QCursor	*cursor1,
+  QCursor *cursor1,
           *cursor2,
           *cursor3;
-  QBitmap	cb, cm;
-  int		  cycle;
+  QBitmap cb, cm;
+  int	  cycle;
   QCursor oldcursor;
 
 public:
@@ -108,9 +108,9 @@ private:
     if(e->button() == Qt::LeftButton
        && is_pure(e->state()))
     {
-      double x=widget->x_real(e->x());
-      double y=widget->y_real(e->y());
-	
+      double x, y;
+      widget->x_real(e->x(), x);
+      widget->y_real(e->y(), y);	
       widget->set_center(x, y);
       widget->redraw();
     }

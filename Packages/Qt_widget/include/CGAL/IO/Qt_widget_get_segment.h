@@ -60,8 +60,9 @@ private:
        && !firstpoint
        && is_pure(e->state()))
     {
-      FT x(widget->x_real(e->x()));
-      FT y(widget->y_real(e->y()));
+      FT x, y;
+      widget->x_real(e->x(), x);
+      widget->y_real(e->y(), y);
       x1 = x;
       y1 = y;
       x2 = x;
@@ -69,8 +70,9 @@ private:
       firstpoint = TRUE;
     } else if(e->button() == CGAL_QT_WIDGET_GET_POINT_BUTTON 
               && is_pure(e->state())){
-      FT x=static_cast<FT>(widget->x_real(e->x()));
-      FT y=static_cast<FT>(widget->y_real(e->y()));
+      FT x, y;
+      widget->x_real(e->x(), x);
+      widget->y_real(e->y(), y);
       if(x1!=x || y1!=y) {
         widget->new_object(
           make_object(Segment(Point(x1,y1),Point(x,y))));
@@ -99,24 +101,25 @@ private:
   {
     if(firstpoint)
     {
-      FT x=static_cast<FT>(widget->x_real(e->x()));
-      FT y=static_cast<FT>(widget->y_real(e->y()));
-	    RasterOp old_raster = widget->rasterOp();//save the initial raster mode
-	    QColor old_color = widget->color();
-	    widget->setRasterOp(XorROP);
-	    widget->lock();
-	    *widget << CGAL::GREEN;
-	    if(!firsttime)
-	      *widget << Segment(Point(x1,y1),Point(x2,y2));
-	    *widget << Segment(Point(x1,y1),Point(x,y));
-	    widget->unlock();
-	    widget->setRasterOp(old_raster);
-	    widget->setColor(old_color);
+      FT x, y;
+      widget->x_real(e->x(), x);
+      widget->y_real(e->y(), y);
+      RasterOp old_raster = widget->rasterOp();//save the initial raster mode
+      QColor old_color = widget->color();
+      widget->setRasterOp(XorROP);
+      widget->lock();
+      *widget << CGAL::GREEN;
+      if(!firsttime)
+      *widget << Segment(Point(x1,y1),Point(x2,y2));
+      *widget << Segment(Point(x1,y1),Point(x,y));
+      widget->unlock();
+      widget->setRasterOp(old_raster);
+      widget->setColor(old_color);
 
-	    //save the last coordinates to redraw the screen
-	    x2 = x;
-	    y2 = y;
-	    firsttime = false;
+      //save the last coordinates to redraw the screen
+      x2 = x;
+      y2 = y;
+      firsttime = false;
     }
   };
   void activating()
@@ -131,9 +134,9 @@ private:
     firstpoint = false;
   };
 
-  FT	x1, //the X of the first point
+  FT  x1, //the X of the first point
       y1; //the Y of the first point
-  FT	x2, //the old second point's X
+  FT  x2, //the old second point's X
       y2; //the old second point's Y
   bool	firstpoint, //true if the user left clicked once
         firsttime;  //true if the line is not drawn

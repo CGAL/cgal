@@ -217,14 +217,10 @@ of these two functions: \ccc{x_real_rational} and
 when you work with rationals. The double from the other function could 
 be more complex and can make you loose speed.
 
-\ccMethod{double x_real(int x) const;}{Returns the \ccc{x} real world
+\ccMethod{void x_real(int x, FT ) const;}{Returns the \ccc{x} real world
 coordinate of the \ccc{Qt_widget}.}
-\ccMethod{Gmpq y_real(int y) const;}{Returns the \ccc{y} real world
+\ccMethod{void y_real(int y, FT ) const;}{Returns the \ccc{y} real world
 coordinate of the \ccc{Qt_widget}.}
-\ccMethod{Gmpq x_real_rational(int x) const;}{Returns the \ccc{x} real world
-coordinate of the \ccc{Qt_widget}. Defined only if you built it with CGAL_USE_GMP.}
-\ccMethod{Gmpq y_real_rational(int y) const;}{Returns the \ccc{y} real world
-coordinate of the \ccc{Qt_widget}. Defined only if you built it with CGAL_USE_GMP.}
 \end{ccAdvanced}
 
 \begin{ccAdvanced}

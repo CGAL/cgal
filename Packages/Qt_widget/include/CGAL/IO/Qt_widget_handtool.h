@@ -84,11 +84,11 @@ private:
        && is_pure(e->state()))
     {
       widget->setCursor(QCursor( QPixmap( (const char**)hand_xpm)));
-      double
-	      x=widget->x_real(e->x()),
-	      y=widget->y_real(e->y()),
-	      xfirst2 = widget->x_real(first_x),
-	      yfirst2 = widget->y_real(first_y);
+      double x, y, xfirst2, yfirst2;
+      widget->x_real(e->x(), x);
+      widget->y_real(e->y(), y);
+      widget->x_real(first_x, xfirst2);
+      widget->y_real(first_y, yfirst2);
 			
       double	xmin, xmax, ymin, ymax, distx, disty;
       if(x < xfirst2) {xmin = x; xmax = xfirst2;}
@@ -105,6 +105,7 @@ private:
   void mouseMoveEvent(QMouseEvent *e)
   {
     char tempc1[130], tempc2[40];
+    double xcoord, ycoord;
     if(on_first)
     {
       int x = e->x();
@@ -115,20 +116,20 @@ private:
       widget->lock();
         *widget << CGAL::GRAY;
       if(!wasrepainted) {
-        CGAL_CLIB_STD::sprintf(tempc1, " dx=%20.6f",
-			widget->x_real(x2 - first_x));
-        CGAL_CLIB_STD::sprintf(tempc2, ", dy=%20.6f",
-			widget->x_real(y2 - first_y));
+	widget->x_real(x2 - first_x, xcoord);
+	widget->x_real(y2 - first_y, ycoord);
+        CGAL_CLIB_STD::sprintf(tempc1, " dx=%20.6f", xcoord);
+        CGAL_CLIB_STD::sprintf(tempc2, ", dy=%20.6f", ycoord);
         strcat(tempc1, tempc2);
         widget->get_painter().drawLine(first_x, first_y, x2, y2);
         *widget << CGAL::GREEN;
         widget->get_painter().drawText(x2, y2, tempc1, 49);
         *widget << CGAL::GRAY;
       }
-      CGAL_CLIB_STD::sprintf(tempc1, " dx=%20.6f",
-		  widget->x_real(x - first_x));
-      CGAL_CLIB_STD::sprintf(tempc2, ", dy=%20.6f",
-		  widget->x_real(y - first_y));
+      widget->x_real(x - first_x, xcoord);
+      widget->x_real(y - first_y, ycoord);
+      CGAL_CLIB_STD::sprintf(tempc1, " dx=%20.6f", xcoord);
+      CGAL_CLIB_STD::sprintf(tempc2, ", dy=%20.6f", ycoord);
       strcat(tempc1, tempc2);
       widget->get_painter().drawLine(first_x, first_y, x, y);
       *widget << CGAL::GREEN;

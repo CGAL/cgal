@@ -148,16 +148,20 @@ public:
 
   // coordinates system
   // ~~~~~~~~~~~~~~~~~~
-  // real coordinates
-  double x_real(int x) const;
-  double y_real(int y) const;
+  // real world coordinates
+  template <class FT>
+  void x_real(int, FT&) const;
+  template <class FT>
+  void y_real(int y, FT&) const;
+#ifdef CGAL_USE_GMP
+  void x_real(int, Gmpq&) const;
+  void y_real(int, Gmpq&) const;
+#endif
+
   double x_real_dist(double d) const;
   double y_real_dist(double d) const;
 
-#ifdef CGAL_USE_GMP
-  Gmpq x_real_rational(int x) const;
-  Gmpq y_real_rational(int y) const;
-#endif
+
   // pixel coordinates
   int x_pixel(double x) const;
   int y_pixel(double y) const;

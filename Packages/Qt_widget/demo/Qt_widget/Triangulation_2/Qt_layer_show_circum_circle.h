@@ -47,8 +47,9 @@ public:
   void mouseMoveEvent(QMouseEvent *e)
   {
     if (tr.dimension()<2) return;
-    FT x=static_cast<FT>(widget->x_real(e->x()));
-    FT y=static_cast<FT>(widget->y_real(e->y()));
+    FT x, y;
+    widget->x_real(e->x(), x);
+    widget->y_real(e->y(), y);
     Point p(x, y); //that's where the mouse is situated
     Face_handle f = tr.locate(p);
     if(!tr.is_infinite(f)){

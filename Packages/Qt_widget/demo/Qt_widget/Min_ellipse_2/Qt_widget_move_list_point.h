@@ -89,8 +89,9 @@ private:
         "Generate some points first or add it with the \
          input tool before using this tool!");
       else{
-        FT x=static_cast<FT>(widget->x_real(e->x()));
-	FT y=static_cast<FT>(widget->y_real(e->y()));
+	FT x, y;
+        widget->x_real(e->x(), x);
+	widget->y_real(e->y(), y);
         Point p(x, y);
         Point closest_p;  
         //this point is the closest one to the mouse coordinates
@@ -126,8 +127,9 @@ private:
   {
     if(on_first)
     {
-      FT x=static_cast<FT>(widget->x_real(e->x()));
-      FT y=static_cast<FT>(widget->y_real(e->y()));			
+      FT x, y;
+      widget->x_real(e->x(), x);
+      widget->y_real(e->y(), y);
       *widget << CGAL::GREEN << CGAL::PointSize (5) 
               << CGAL::PointStyle (CGAL::DISC);
       if(!wasrepainted)

@@ -43,9 +43,9 @@ public:
   void mouseMoveEvent(QMouseEvent *e)
   {
     if (tr.dimension()<1) return;
-    FT
-      x=static_cast<FT>(widget->x_real(e->x())),
-      y=static_cast<FT>(widget->y_real(e->y()));
+    FT x, y;
+    widget->x_real(e->x(), x),
+    widget->y_real(e->y(), y);
     Point p(x, y);
     RasterOp old = widget->rasterOp();	//save the initial raster mode
     widget->setRasterOp(XorROP);

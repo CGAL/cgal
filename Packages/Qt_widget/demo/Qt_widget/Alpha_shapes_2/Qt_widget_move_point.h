@@ -50,21 +50,21 @@ namespace CGAL {
   {
   public:
 
-    typedef typename T::Point			      Point;
+    typedef typename T::Point                       Point;
     typedef typename T::Segment			    Segment;
-    typedef typename T::Face_handle		  Face_handle;
-    typedef typename T::Vertex_handle		Vertex_handle;
-    typedef typename T::Geom_traits::Coord_type FT;
+    typedef typename T::Face_handle                 Face_handle;
+    typedef typename T::Vertex_handle               Vertex_handle;
+    typedef typename T::Geom_traits::Coord_type     FT;
   protected:
-    FT						first_x, first_y;
-    FT						x2, y2;
-    bool					wasrepainted;
-    bool					on_first;
+    FT            first_x, first_y;
+    FT            x2, y2;
+    bool          wasrepainted;
+    bool	  on_first;
 
-    Vertex_handle			current_v;	//the vertex that will be process
-    Point					    old_point;
-    T						      *dt;
-    QPopupMenu				*popup1;
+    Vertex_handle current_v;	//the vertex that will be process
+    Point	  old_point;
+    T		  *dt;
+    QPopupMenu	  *popup1;
   public:
     Qt_widget_movepoint() : wasrepainted(true), on_first(FALSE)
     {};
@@ -83,36 +83,37 @@ namespace CGAL {
       }
       if(e->button() == Qt::RightButton)
       {
-	      if (dt->dimension()<2) return;
-          FT x=static_cast<FT>(widget->x_real(e->x()));
-          FT y=static_cast<FT>(widget->y_real(e->y()));
+        if (dt->dimension()<2) return;
+	FT x, y;
+        widget->x_real(e->x(), x);
+        widget->y_real(e->y(), y);
 
-	      Point p(x, y);
-	      Vertex_handle v = dt->nearest_vertex(p);
-	      RasterOp old = widget->rasterOp();	//save the initial raster mode
-	      widget->setRasterOp(XorROP);
-	      widget->lock();
-        *widget << CGAL::GREEN << CGAL::PointSize (7) 
+	Point p(x, y);
+        Vertex_handle v = dt->nearest_vertex(p);
+	RasterOp old = widget->rasterOp();	//save the initial raster mode
+	widget->setRasterOp(XorROP);
+	widget->lock();
+          *widget << CGAL::GREEN << CGAL::PointSize (7) 
                 << CGAL::PointStyle (CGAL::DISC);
-	      if(!wasrepainted)
-	        *widget << old_point;
-	      *widget << v->point();
-	      widget->unlock();
-	      widget->setRasterOp(old);
-	      popup1->popup(widget->mapToGlobal(e->pos()));
-	      old_point = v->point();
-	      current_v = v;
-	      wasrepainted = FALSE;
-	      on_first = FALSE;
+	  if(!wasrepainted)
+	    *widget << old_point;
+	  *widget << v->point();
+	widget->unlock();
+	widget->setRasterOp(old);
+	popup1->popup(widget->mapToGlobal(e->pos()));
+	old_point = v->point();
+	current_v = v;
+	wasrepainted = FALSE;
+        on_first = FALSE;
       }	
     };
     void mouseMoveEvent(QMouseEvent *e)
     {
     if(on_first)
     {
-      FT
-	      x=static_cast<FT>(widget->x_real(e->x())),
-	      y=static_cast<FT>(widget->y_real(e->y()));
+      FT x, y;
+      widget->x_real(e->x(), x),
+      widget->y_real(e->y(), y);
 			
       *widget << CGAL::GREEN << CGAL::PointSize (5)
               << CGAL::PointStyle (CGAL::DISC);

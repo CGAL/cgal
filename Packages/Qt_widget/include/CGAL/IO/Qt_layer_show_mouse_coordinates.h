@@ -38,8 +38,11 @@ public:
   void mouseMoveEvent(QMouseEvent *e)
   {
     char xsir[40], ysir[40], final[80];
-    CGAL_CLIB_STD::sprintf(xsir, "%.15f", widget->x_real(e->x()));
-    CGAL_CLIB_STD::sprintf(ysir, "%.15f", widget->y_real(e->y()));
+    double xcoord, ycoord;
+    widget->x_real(e->x(), xcoord);
+    widget->y_real(e->y(), ycoord);
+    CGAL_CLIB_STD::sprintf(xsir, "%.15f", xcoord);
+    CGAL_CLIB_STD::sprintf(ysir, "%.15f", ycoord);
     CGAL_CLIB_STD::sprintf(final, "x=%s  y=%s", xsir, ysir);
     qmw.statusBar()->message(final);
   };

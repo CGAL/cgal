@@ -373,45 +373,51 @@ void Qt_widget::zoom(double ratio)
 }
 
 #ifdef CGAL_USE_GMP
-Gmpq Qt_widget::x_real_rational(int x) const
+void Qt_widget::x_real(int x, Gmpq& return_t) const
 {
-  Gmpq r = simplest_rational_in_interval<Gmpq>( xmin+x/xscal-(x/xscal-(x-1)/xscal)/2, xmin+x/xscal+((x+1)/xscal-x/xscal)/2);
-  return r;
+  return_t = simplest_rational_in_interval<Gmpq>( 
+                  xmin+x/xscal-(x/xscal-(x-1)/xscal)/2,
+                  xmin+x/xscal+((x+1)/xscal-x/xscal)/2);
+}
+
+void Qt_widget::y_real(int y, Gmpq& return_t) const
+{
+  return_t = simplest_rational_in_interval<Gmpq>( 
+                  ymax - y/yscal-(y/yscal-(y-1)/yscal)/2,
+                  ymax - y/xscal+((y+1)/yscal-y/yscal)/2);
 }
 #endif
 
-#ifdef CGAL_USE_GMP
-Gmpq Qt_widget::y_real_rational(int y) const
-{
-  Gmpq r = simplest_rational_in_interval<Gmpq>( ymax - y/yscal-(y/yscal-(y-1)/yscal)/2, ymax - y/xscal+((y+1)/yscal-y/yscal)/2);
-  return r;
-}
-#endif
-
-double Qt_widget::x_real(int x) const
+template <class FT>
+void Qt_widget::x_real(int x, FT& return_t) const
 {
   if(xscal<1)
-    return(xmin+(int)(x/xscal));
+    return_t = static_cast<FT>(xmin+(int)(x/xscal));
   else{
 #ifdef CGAL_USE_GMP
-    CGAL_Rational r = simplest_rational_in_interval<CGAL_Rational>( xmin+x/xscal-(x/xscal-(x-1)/xscal)/2, xmin+x/xscal+((x+1)/xscal-x/xscal)/2);
-    return CGAL::to_double(r);
+    CGAL_Rational r = simplest_rational_in_interval<CGAL_Rational>( 
+                            xmin+x/xscal-(x/xscal-(x-1)/xscal)/2, 
+                            xmin+x/xscal+((x+1)/xscal-x/xscal)/2);
+    return_t = static_cast<FT>(CGAL::to_double(r));
 #else
-    return (xmin+x/xscal);
+    return_t = static_cast<FT>(xmin+x/xscal);
 #endif
   }
 }
 
-double Qt_widget::y_real(int y) const
+template <class FT>
+void Qt_widget::y_real(int y, FT& return_t) const
 {
     if(yscal<1)
-      return(ymax-(int)(y/yscal));
+      return_t = static_cast<FT>(ymax-(int)(y/yscal));
     else{
 #ifdef CGAL_USE_GMP
-    CGAL_Rational r = simplest_rational_in_interval<CGAL_Rational>( ymax - y/yscal-(y/yscal-(y-1)/yscal)/2, ymax - y/xscal+((y+1)/yscal-y/yscal)/2);
-    return CGAL::to_double(r);
+    CGAL_Rational r = simplest_rational_in_interval<CGAL_Rational>( 
+                            ymax - y/yscal-(y/yscal-(y-1)/yscal)/2, 
+                            ymax - y/xscal+((y+1)/yscal-y/yscal)/2);
+    return_t = static_cast<FT>(CGAL::to_double(r));
 #else
-    return (ymax-y/xscal);
+    return_t = static_cast<FT>(ymax-y/xscal);
 #endif
   }  
 }

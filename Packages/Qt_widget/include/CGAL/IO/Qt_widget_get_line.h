@@ -63,9 +63,9 @@ private:
        && !firstpoint
        && is_pure(e->state()))
     {
-      FT
-	      x(widget->x_real_rational(e->x())),
-	      y(widget->y_real_rational(e->y()));
+      FT x, y;
+      widget->x_real(e->x(), x);
+      widget->y_real(e->y(), y);
       x1 = x;
       y1 = y;
       x2 = x;
@@ -73,9 +73,9 @@ private:
       firstpoint = TRUE;
     } else if(e->button() == CGAL_QT_WIDGET_GET_POINT_BUTTON
        && is_pure(e->state())){
-      FT
-	      x(widget->x_real(e->x())),
-	      y(widget->y_real(e->y()));
+      FT x, y;
+      widget->x_real(e->x(), x),
+      widget->y_real(e->y(), y);
       if(x1!=x || y1!=y) {
         widget->new_object(make_object(Line(Point(x1,y1),Point(x,y))));
         firstpoint = FALSE;
@@ -103,8 +103,9 @@ private:
   {
     if(firstpoint)
     {
-      FT x(widget->x_real(e->x()));
-      FT y(widget->y_real(e->y()));
+      FT x, y;
+      widget->x_real(e->x(), x);
+      widget->y_real(e->y(), y);
       RasterOp old_raster = widget->rasterOp();//save the initial raster mode
       QColor old_color = widget->color();
       widget->setRasterOp(XorROP);

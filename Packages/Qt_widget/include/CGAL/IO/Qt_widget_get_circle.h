@@ -62,19 +62,22 @@ private:
        && !firstpoint
        && is_pure(e->state()))
     {
-      FT x(widget->x_real(e->x()));
-	    FT y(widget->y_real(e->y()));
+      FT x, y;
+      widget->x_real(e->x(), x);
+      widget->y_real(e->y(), y);
       x1 = x;
       y1 = y;
       x2 = x;
       y2 = y;
       firstpoint = true;
     } else if(e->button() == CGAL_QT_WIDGET_GET_POINT_BUTTON){
-      FT x(widget->x_real(e->x()));
-	    FT y(widget->y_real(e->y()));
-	    widget->new_object(make_object(Circle(Point(x1,y1),
-		  squared_distance(Point(x1, y1), Point(x,y)))));
-	    firstpoint = false; firsttime = true;
+      FT x, y; 
+      widget->x_real(e->x(), x);
+      widget->y_real(e->y(), y);
+      widget->new_object(make_object(Circle(Point(x1,y1),
+	      squared_distance(Point(x1, y1), Point(x,y)))));
+      firstpoint = false;
+      firsttime = true;
     }
   };
 
@@ -86,10 +89,10 @@ private:
       RasterOp old_raster = widget->rasterOp();//save the initial raster mode
       
       widget->lock();
-	      widget->setRasterOp(XorROP);
-	      *widget << CGAL::GREEN;
-	      *widget << Circle(Point(x1,y1),
-		    squared_distance(Point(x1, y1), Point(x2,y2)));
+        widget->setRasterOp(XorROP);
+	*widget << CGAL::GREEN;
+        *widget << Circle(Point(x1,y1),
+        squared_distance(Point(x1, y1), Point(x2,y2)));
       widget->unlock();
       widget->setRasterOp(old_raster);
       widget->setColor(old_color);
@@ -101,18 +104,19 @@ private:
   {
     if(firstpoint==TRUE)
     {		
-      FT x(widget->x_real(e->x()));
-      FT y(widget->y_real(e->y()));
+      FT x, y;
+      widget->x_real(e->x(), x);
+      widget->y_real(e->y(), y);
       QColor old_color = widget->color();
       RasterOp old_raster = widget->rasterOp();//save the initial raster mode		
       widget->setRasterOp(XorROP);
       widget->lock();
       *widget << CGAL::GREEN;
       if(!firsttime)
-	      *widget << Circle(Point(x1,y1),
+	*widget << Circle(Point(x1,y1),
 		  squared_distance(Point(x1, y1), Point(x2,y2)));
       *widget << Circle(Point(x1,y1),
-		      squared_distance(Point(x1, y1), Point(x,y)));
+		  squared_distance(Point(x1, y1), Point(x,y)));
       widget->unlock();
       widget->setRasterOp(old_raster);
       widget->setColor(old_color);

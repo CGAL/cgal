@@ -1,3 +1,6 @@
+1.2.41
+---------
+	In Qt_widget x_real_rational and y_real_rational were removed. There is only x_real and y_real, specialized for Gmpq. They have no return type now and the result is passed through the second param.
 1.2.40
 ----------
 	Qt_widget have 2 new functions x_real_rational and y_real_rational.
