@@ -3200,15 +3200,15 @@ test_cln()
 
 qt_dir_has_changed()
 {
-    if [ -n "${WINDOWS_COMPILER}" ]; then
-	QT_INCL_DIR="${QT_DIR}\\include"
-	QT_LIB_DIR="${QT_DIR}\\lib"
-	QT_MOC="${QT_DIR}\\bin\\moc${EXE_EXT}"
-    else
+#    if [ -n "${WINDOWS_COMPILER}" ]; then
+#	QT_INCL_DIR="${QT_DIR}\\include"
+#	QT_LIB_DIR="${QT_DIR}\\lib"
+#	QT_MOC="${QT_DIR}\\bin\\moc${EXE_EXT}"
+#    else
 	QT_INCL_DIR="${QT_DIR}/include"
 	QT_LIB_DIR="${QT_DIR}/lib"
 	QT_MOC="${QT_DIR}/bin/moc${EXE_EXT}"
-    fi
+#    fi
 #    if [ -z "${NEED_EXTRA_QTDIR}" ]; then
 #	NEED_EXTRA_QTDIR='x'
 #    fi
@@ -5246,6 +5246,7 @@ write_linker_flags()
   fi
   LIBS="`lib_option CGAL`"
   WLIBS="`lib_option CGAL`"
+  QLIBS="`lib_option CGAL`"
   if [ -n "${LEDA_SUPPORT}" ] ; then
     if [ -n "${NEED_EXTRA_LEDA_LDIR}" ]; then
 	if [ -n "${CYGWIN_COMPILER}" ]; then
@@ -5297,14 +5298,13 @@ write_linker_flags()
 	fi
 	RUNTIME_LIB_PATH="${RUNTIME_LIB_PATH}:\$(QT_LIB_DIR)"
     fi
-    LIBS="${LIBS} `lib_option qt`"
-    GEOWLIBS="${GEOWLIBS} `lib_option qt`"
-    WLIBS="${WLIBS} `lib_option qt`"
+    QLIBS="${LIBS} `lib_option qt`"
   fi
 
   LIBS="${LIBS} `math_ldflags`"
   GEOWLIBS="${GEOWLIBS} `math_ldflags`"
   WLIBS="${WLIBS} `math_ldflags`"
+  QLIBS="${QLIBS} `math_ldflags`"
 
   #
   # LONG_NAME_PROBLEM_LDFLAGS
@@ -5390,6 +5390,40 @@ write_linker_flags()
   else
     ${_printf} "\t%s\n\n" "\$(CGAL_LDFLAGS)" >> ${FILE}
   fi
+
+  #
+  # CGAL_QT_LIBPATH
+  #
+  #if [ -n "${WINDOW_DIR}" ]; then 
+  #  LIB_PATH="${LIB_PATH} ${LIBPATH_OPT}${WINDOW_DIR}"
+  #  RUNTIME_LIB_PATH="${RUNTIME_LIB_PATH}:${WINDOW_DIR}"
+  #fi
+  if [ -n "${SEPARATE_LIBPATH}" ]; then
+    ${_printf}  "CGAL_QT_LD_LIBPATH =\n\n" >> ${FILE}
+    ${_printf}  "CGAL_QT_LIBPATH =" >> ${FILE}
+  else
+    ${_printf}  "CGAL_QT_LIBPATH =\n\n" >> ${FILE}
+    ${_printf}  "CGAL_QT_LD_LIBPATH =" >> ${FILE}
+  fi
+  makefile_print_continuationline "${CUSTOM_LIBPATH}" >> ${FILE}
+  makefile_print_continuationline "${LIB_PATH}" >> ${FILE}
+  if [ -n "${RUNTIME_LINKER_FLAG}" ]; then
+    makefile_print_continuationline "${RUNTIME_LINKER_FLAG}${RUNTIME_LIB_PATH}" \
+  	>> ${FILE}
+  fi
+  ${_printf} "\n\n"  >> ${FILE}
+
+  #
+  # CGAL_QT_LDFLAGS
+  #
+  ${_printf} "%s\\\\\n" "CGAL_QT_LDFLAGS = " >> ${FILE}
+  #if [ -n "${QT_SUPPORT}" ]; then
+  makefile_print_line "${START_LD_OPT}\$(CGAL_QT_LD_LIBPATH) ${ADDITIONAL_LDFLAGS}" >> ${FILE}
+  makefile_print_line "\$(CUSTOM_LDFLAGS)" >> ${FILE}
+  ${_printf} "\t%s\n\n" "${QLIBS}" >> ${FILE}
+  #else
+  #  ${_printf} "\t%s\n\n" "\$(CGAL_LDFLAGS)" >> ${FILE}
+  #fi
 }
 
 # create the include makefile for current configuration
