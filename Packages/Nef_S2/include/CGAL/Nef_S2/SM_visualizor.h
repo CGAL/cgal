@@ -34,10 +34,8 @@ public:
 /*{\Manpage {SM_visualizor}{Map_,Sphere_kernel_}
 {Drawing plane maps}{V}}*/
 
-template <typename Map_, typename Sphere_kernel_,
-	  typename Color_ = SM_BooleColor<Map_> >
-class SM_visualizor : public 
-  SM_triangulator< SM_decorator<Map_> >
+template <typename SM_explorer>
+class SM_visualizor : public SM_triangulator< SM_decorator<typename SM_explorer::Sphere_map> >
 {
 /*{\Mdefinition An instance |\Mvar| of the data type |\Mname| is a
 decorator to draw the structure of a sphere map into the surface
@@ -47,20 +45,20 @@ concept.}*/
 /*{\Mgeneralization SM_decorator}*/
 /*{\Mtypes 3}*/
 public:
-  typedef Map_    Map;
-  typedef Sphere_kernel_ Sphere_kernel;
-  typedef SM_visualizor<Map_,Sphere_kernel_,Color_> Self;
-  typedef SM_const_decorator<Map_>                  Explorer;
-  typedef SM_decorator<Map_>                        Decorator;
+  typedef typename SM_explorer::Sphere_map          Sphere_map;
+  typedef CGAL::SM_BooleColor<Sphere_map>           Color_;
+  typedef typename Sphere_map::Sphere_kernel        Sphere_kernel;
+  typedef SM_visualizor<SM_explorer>                Self;
+  typedef SM_decorator<Sphere_map>                  Decorator;
   typedef SM_triangulator<Decorator>                Base;
 
-  typedef typename Map_::SVertex_const_handle SVertex_const_handle;   
-  typedef typename Map_::SHalfedge_const_handle SHalfedge_const_handle; 
-  typedef typename Map_::SFace_const_handle SFace_const_handle;     
-  typedef typename Map_::SVertex_const_iterator SVertex_const_iterator;
-  typedef typename Map_::SHalfedge_const_iterator SHalfedge_const_iterator;
-  typedef typename Map_::SFace_const_iterator SFace_const_iterator;
-  typedef typename Map_::Mark Mark;
+  typedef typename Sphere_map::SVertex_const_handle SVertex_const_handle;   
+  typedef typename Sphere_map::SHalfedge_const_handle SHalfedge_const_handle; 
+  typedef typename Sphere_map::SFace_const_handle SFace_const_handle;     
+  typedef typename Sphere_map::SVertex_const_iterator SVertex_const_iterator;
+  typedef typename Sphere_map::SHalfedge_const_iterator SHalfedge_const_iterator;
+  typedef typename Sphere_map::SFace_const_iterator SFace_const_iterator;
+  typedef typename Sphere_map::Mark Mark;
 
   typedef typename Sphere_kernel::Sphere_point    Sphere_point;
   typedef typename Sphere_kernel::Sphere_segment  Sphere_segment;
@@ -70,18 +68,18 @@ public:
   typedef Color_                                  Color_objects;
 
 protected:
-  Explorer                E_;
+  const SM_explorer*      E_;
   const Color_objects&    CO_;
-  Map                     MT_;
+  Sphere_map              MT_;
   CGAL::OGL::Unit_sphere& S_;
 public:
 
 /*{\Mcreation 4}*/
-SM_visualizor(const Map& M, CGAL::OGL::Unit_sphere& S,
+SM_visualizor(const SM_explorer* M, CGAL::OGL::Unit_sphere& S,
 	      const Color_objects& C = Color_objects())
 /*{\Mcreate creates an instance |\Mvar| of type |\Mname| to visualize
     the vertices, edges, and faces of |D| in an open GL window.}*/
-  : Base(M,MT_), E_(&M), CO_(C), MT_(), S_(S)
+  : Base(&MT_,M), E_(M), CO_(C), MT_(), S_(S)
   { triangulate(); }
 
 /*{\Moperations 2 1}*/
@@ -95,26 +93,26 @@ void draw_map() const
 {
   // draw sphere segments underlying edges of E_:
   SHalfedge_const_iterator e;
-  CGAL_forall_sedges(e,E_) {
+  CGAL_forall_sedges(e,*E_) {
     if ( source(e) == target(e) ) {
-      S_.push_back(E_.circle(e), CO_.color(e,E_.mark(e))); 
+      S_.push_back(E_->circle(e), CO_.color(e,E_->mark(e))); 
     } else {
-      S_.push_back(Sphere_segment(E_.point(E_.source(e)),
-				  E_.point(E_.target(e)),
-				  E_.circle(e)),CO_.color(e,E_.mark(e)));
+      S_.push_back(Sphere_segment(E_->point(E_->source(e)),
+				  E_->point(E_->target(e)),
+				  E_->circle(e)),CO_.color(e,E_->mark(e)));
     }
   }
   // draw sphere circles underlying loops of E_:
 
-  if ( E_.has_shalfloop() )
+  if ( E_->has_shalfloop() )
     S_.push_back(
-      Sphere_circle(E_.circle(E_.shalfloop())),
-      CO_.color(E_.shalfloop(),E_.mark(E_.shalfloop())));
+      Sphere_circle(E_->circle(E_->shalfloop())),
+      CO_.color(E_->shalfloop(),E_->mark(E_->shalfloop())));
 
   // draw points underlying vertices of E_:
   SVertex_const_iterator v;
-  CGAL_forall_svertices(v,E_)
-    S_.push_back(E_.point(v),CO_.color(v,E_.mark(v)));
+  CGAL_forall_svertices(v,*E_)
+    S_.push_back(E_->point(v),CO_.color(v,E_->mark(v)));
 
   Unique_hash_map<SHalfedge_const_iterator,bool> Done(false);
   CGAL_forall_shalfedges(e,*this) {
@@ -133,9 +131,9 @@ void draw_map() const
   Done.clear(false);
   CGAL_forall_shalfedges(e,*this) {
     if ( Done[e] ) continue;
-    S_.push_back_triangle_edge(Sphere_segment(E_.point(E_.source(e)),
-					      E_.point(E_.target(e)),
-					      E_.circle(e)));
+    S_.push_back_triangle_edge(Sphere_segment(E_->point(E_->source(e)),
+					      E_->point(E_->target(e)),
+					      E_->circle(e)));
     Done[e]=Done[twin(e)]=true;
   }
 
