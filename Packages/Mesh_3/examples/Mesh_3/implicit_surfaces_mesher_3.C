@@ -50,6 +50,12 @@ typedef Simple_kernel::Iso_rectangle_2 Rectangle;
 typedef Simple_kernel::Segment_2 Segment;
 typedef Simple_kernel::Point_2 Point;
 
+typedef enum { RADIUS_RATIO, ANGLE} Distribution_type;
+
+#ifndef PI
+#define PI 3.1415926535897932
+#endif
+
 /// Global variables 
 std::ostream *out = 0;
 std::string filename = std::string();
@@ -60,6 +66,7 @@ std::string distribution_filename;
 int distribution_x = 200;
 int distribution_y = 100;
 int distribution_size = 50;
+Distribution_type distribution_type = RADIUS_RATIO;
 
 void usage(char *argv0, std::string error = "")
 {
@@ -67,7 +74,8 @@ void usage(char *argv0, std::string error = "")
     std:: cerr << "Error: " << error << std::endl;
   std::cerr << "Usage:\n  " 
             << argv0
-            << " [-d <output_distribution_pixmap.png> [-s x y] [-n N] ]"
+            << " [-d <output_distribution_pixmap.png>"
+            << "[-s x y] [-n N] [-t (ANGLE|RADIUS_RATIO)] ]"
             << " [-f function_name]"
             << " [output_file.mesh|-]\n"
             << "If output_file.mesh is '-', outputs to standard out.\n"
@@ -75,6 +83,8 @@ void usage(char *argv0, std::string error = "")
             << " output_distribution_pixmap.png\n"
             << "-s  define pixmap size (x, y), default is (200,100)\n" 
             << "-n  define size of the distribution, default is 50\n"
+            << "-t  define the type of distribution, "
+            << "default is RADIUS_RATIO\n"
             << "-f  define the implicite function to use\n"
             << std::endl;
   exit(1);
@@ -85,12 +95,25 @@ void parse_argv(int argc, char** argv, int extra_args = 0)
   if (argc >=(2 + extra_args))
     {
       std::string arg = argv[1+extra_args];
-      if( arg == "-d" )
+      if( arg == "-h" || arg == "--help")
+        usage(argv[0]);
+      else if( arg == "-d" )
 	{
 	  dump_distribution = true;
           if( argc < 3)
             usage(argv[0], "-d must be followed by a filename!");
           distribution_filename = argv[2 + extra_args];
+          parse_argv(argc, argv, extra_args + 2);
+        }
+      else if( arg == "-t" )
+	{
+          if( argc < 3 )
+            usage(argv[0], "-t must be followed by a ANGLE or RADIUS_RATIO!");
+          std::string arg2 = argv[2 + extra_args];
+          if( arg2 == "ANGLE" ) distribution_type = ANGLE;
+          else if( arg2 == "RADIUS_RATIO" ) distribution_type = RADIUS_RATIO;
+          else 
+            usage(argv[0], "Bad type. Should be ANGLE or RADIUS_RATIO!");
           parse_argv(argc, argv, extra_args + 2);
         }
       else if( arg == "-s" )
@@ -159,7 +182,7 @@ area(const CGAL::Tetrahedron_3<K>& t)
 template <typename K>
 double
 circumradius(const CGAL::Tetrahedron_3<K>& t)
-{
+{ // This function is (c) Pierre Alliez 2005
   typename K::Point_3 center = circumcenter( t.vertex(0),
                                              t.vertex(1),
                                              t.vertex(2),
@@ -179,9 +202,86 @@ radius_ratio(const typename CGAL::Tetrahedron_3<K>& t)
     return (3 * CGAL::to_double(inradius) / circ);
 }
 
+
+template <typename K>
+double
+len(const CGAL::Vector_3<K> &v)
+{ // This function is (c) Pierre Alliez 2005
+  return std::sqrt(CGAL::to_double(v*v));
+}
+
+double fix_sine(double sine)
+{ // This function is (c) Pierre Alliez 2005x
+  if(sine >= 1)
+    return 1;
+  else
+    if(sine <= -1)
+      return -1;
+    else
+      return sine;
+}
+
+template <typename K>
+double 
+angle_rad(const CGAL::Vector_3<K> &u,
+          const CGAL::Vector_3<K> &v)
+{ // This function is (c) Pierre Alliez 2005
+  // check
+  double product = len(u)*len(v);
+  if(product == 0.)
+    return 0.0;
+
+  // cosine
+  double dot = CGAL::to_double(u*v);
+  double cosine = dot / product;
+
+  // sine
+  typename K::Vector_3 w = CGAL::cross_product(u,v);
+  double AbsSine = len(w) / product;
+
+  if(cosine >= 0)
+    return std::asin(fix_sine(AbsSine));
+  else
+    return PI-std::asin(fix_sine(AbsSine));
+}
+
+template <typename K>
+double angle_deg(const CGAL::Vector_3<K> &u,
+                 const CGAL::Vector_3<K> &v)
+{
+  static const double conv = 1.0/PI*180.0;
+
+  return conv*angle_rad(u,v);
+}
+
+template <typename K>
+typename CGAL::Vector_3<K>
+normal(const CGAL::Point_3<K>& a,
+       const CGAL::Point_3<K>& b,
+       const CGAL::Point_3<K>& c)
+{
+  return CGAL::cross_product(b-a,c-a);
+}
+
+// dihedral angle at an edge [vi,vj]
+template <typename K>
+double dihedral_angle(const CGAL::Tetrahedron_3<K>& t,
+                      const int i,
+                      const int j)
+{
+  const CGAL::Vector_3<K> vi = normal(t[(i+1)&3],
+                                      t[(i+2)&3],
+                                      t[(i+3)&3]);
+  const CGAL::Vector_3<K> vj = normal(t[(j+1)&3],
+                                      t[(j+2)&3],
+                                      t[(j+3)&3]);
+  return 180-angle_deg(vi,vj);
+}
+
 template <typename Triangulation>
 void output_distribution_to_png(Triangulation& tr,
-                                const int number_of_classes = 100)
+                                const int number_of_classes = 100,
+                                Distribution_type type = RADIUS_RATIO)
 {
   typedef Triangulation Tr;
 
@@ -195,12 +295,24 @@ void output_distribution_to_png(Triangulation& tr,
       if(it->is_in_domain())
         {
           typename Tr::Tetrahedron t = tr.tetrahedron(it);
-          double q = CGAL::to_double(radius_ratio(t));
-          qualities.push_back(q);
-          max_quality = std::max(max_quality, q);
+          switch( type )
+            {
+            case ANGLE:
+              for(int i = 0; i < 4; ++i)
+                for(int j = i + 1; j < 4; j++)
+                  qualities.push_back(dihedral_angle(t, i, j));
+              break;
+            default: // RADIUS_RATIO
+              double q = CGAL::to_double(radius_ratio(t));
+              qualities.push_back(q);
+              //              max_quality = std::max(max_quality, q);
+            }
         }
     }
 
+  if( type == ANGLE ) max_quality = 180.;
+  else max_quality = 1.;
+  
   const int number_of_cells = qualities.size();
 
   std::vector<int> distribution(number_of_classes);
@@ -221,12 +333,11 @@ void output_distribution_to_png(Triangulation& tr,
   const int max_occurrence = *std::max_element(distribution.begin(), 
                                                distribution.end());
 
-//   QPixmap* pixmap = new QPixmap( distribution_x, 
-//                                  distribution_y);
   CGAL::Qt_widget *widget = new CGAL::Qt_widget();
   qApp->setMainWidget(widget);
   widget->resize(distribution_x, distribution_y);
-  widget->set_window(-0.2, 1.2, -0.2, 1.2); // x_min, x_max, y_min, y_max.
+  widget->set_window(-0.2, 1.2, -0.2, 1.2, true); // x_min, x_max,
+                                                  // y_min, y_max.
   widget->show();
   
   widget->lock();
@@ -247,16 +358,17 @@ void output_distribution_to_png(Triangulation& tr,
   std::cerr << "Max: " << max_quality << std::endl;
   
   widget->unlock();
+  if( widget->get_pixmap().save( QString(distribution_filename.c_str()),
+                                 "PNG") )
+    std::cerr << "Distribution saved to file " << distribution_filename
+              << std::endl;
+  else
+    {
+      std::cerr << "Error: cannot save distribution to file "
+                << distribution_filename << std::endl; 
+      exit(1);
+    }
   qApp->exec();
-//   if( pixmap->save( QString(distribution_filename.c_str()), "PNG") )
-//     std::cerr << "Distribution saved to file " << distribution_filename
-//               << std::endl;
-//   else
-//     {
-//       std::cerr << "Error: cannot save distribution to file "
-//                 << distribution_filename << std::endl; 
-//       exit(1);
-//     }
 }
 
 /////////////// Main function /////////////// 
@@ -347,6 +459,6 @@ int main(int argc, char **argv) {
       output_pslg_to_medit(*out, T);
     }
   if( dump_distribution )
-    output_distribution_to_png(T, distribution_size);
+    output_distribution_to_png(T, distribution_size, distribution_type);
   std::cerr << " done\n";
 }
