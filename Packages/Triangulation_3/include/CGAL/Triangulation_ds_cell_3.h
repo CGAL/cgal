@@ -40,6 +40,7 @@ template < class Tds> class Triangulation_ds_cell_iterator_3;
 template < class Tds> class Triangulation_ds_facet_iterator_3;
 template < class Tds> class Triangulation_ds_edge_iterator_3;
 template < class Tds> class Triangulation_ds_vertex_iterator_3;
+template < class Cell> class DS_Container;
 
 template < class Vb, class Cb >
 class Triangulation_ds_cell_3
@@ -69,24 +70,34 @@ public:
   typedef Triangulation_ds_vertex_3<Vb,Cb> Vertex;
   typedef Triangulation_ds_cell_3<Vb,Cb> Cell;
 
+  friend class DS_Container<Cell>;
+
   Triangulation_ds_cell_3()
-    : Cb(), in_conflict_flag(0)
-  {}
+    : Cb()
+  {
+      set_in_conflict_flag(0);
+  }
 
   Triangulation_ds_cell_3(Cell* c)
-    : Cb(*c), in_conflict_flag(0)
-  {}
+    : Cb(*c)
+  {
+      set_in_conflict_flag(0);
+  }
     
   Triangulation_ds_cell_3(Vertex* v0, Vertex* v1, 
 			  Vertex* v2, Vertex* v3)
-    : Cb(v0,v1,v2,v3), in_conflict_flag(0)
-  {}
+    : Cb(v0,v1,v2,v3)
+  {
+      set_in_conflict_flag(0);
+  }
 
   Triangulation_ds_cell_3(Vertex* v0, Vertex* v1, 
 			  Vertex* v2, Vertex* v3,
 			  Cell* n0, Cell* n1, Cell* n2, Cell* n3)
-    : Cb(v0,v1,v2,v3,n0,n1,n2,n3), in_conflict_flag(0)
-  {}
+    : Cb(v0,v1,v2,v3,n0,n1,n2,n3)
+  {
+      set_in_conflict_flag(0);
+  }
 
   // SETTING
 
@@ -171,19 +182,29 @@ public:
 
 private:
 
-  // to maintain the list of cells
-  Cell* _previous_cell;
-  Cell* _next_cell;
-  int in_conflict_flag;
+  union {
+    int in_conflict_flag;
+    void *list;
+  } extra;
   
   void set_in_conflict_flag(int f)
   {
-    in_conflict_flag = f;
+    extra.in_conflict_flag = f;
   }
 
   int get_in_conflict_flag() const
   {
-    return in_conflict_flag;
+    return extra.in_conflict_flag;
+  }
+
+  void set_list_pointer(void *p)
+  {
+      extra.list = p;
+  }
+
+  void * get_list_pointer() const
+  {
+      return extra.list;
   }
 
   void error_orient( Cell * , int i ) const

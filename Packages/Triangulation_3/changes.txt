@@ -4,6 +4,7 @@ Version 1.84 (?? August 01)
 - Test iterators/circulators for Delaunay too.
 - New cell container in DS_Container.h.
 - TDS uses DS_Container.
+- Remove list pointer from ds_cell, to make it more compact.
 
 Version 1.83 (3 August 01)
 - Susan added missing .gif and .eps files in the doc_tex/*_ref directories
