@@ -115,7 +115,7 @@ class Partial_exact_pricing
     // operations
     int  pricing( )
     {
-        typedef  CGAL::Access_by_index< CGAL_TYPENAME_MSVC_NULL
+        typedef  CGAL::Access_by_index< typename
                      std::iterator_traits<D_iterator>::value_type,
                      false,false>       Access_D_Bj;
         typedef  CGAL::Join_random_access_iterator_1<

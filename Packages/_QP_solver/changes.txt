@@ -1,3 +1,8 @@
+0.9.9  05-06-2003 rursu
+------------------
+ - replaced CGAL_TYPENAME_MSVC_NULL by typename keyword
+
+
 Changes done to the `_QP_solver' package
 
 Version 0.9.8 on 12-Apr-2003
