@@ -1,3 +1,6 @@
+2.11 (7 September 2003)
+* bug fixes
+
 2.10 (4 September 2003)
 * Removed CGAL_WRAPs in squared_distance_utils.h
 * More bug fixes
