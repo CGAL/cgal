@@ -90,32 +90,36 @@ throw_exception_for_assertion_violation( const char*  type,
 } // namespace CGAL
 
 
+// We use derivation instead of typedefs to shorten mangled symbols.
+// typedef CGAL::Cartesian<double>                 C_double;
+// typedef CGAL::Cartesian<exact_NT>               C_real;
+// typedef CGAL::Filtered_kernel<C_double, C_real> C_filtered;
+struct C_double   : public CGAL::Cartesian<double> {};
+struct C_real     : public CGAL::Cartesian<exact_NT> {};
+struct C_filtered : public CGAL::Filtered_kernel<C_double, C_real> {};
+
+typedef C_double::Point_2             double_Point;
+typedef C_double::Segment_2           double_Segment;
+typedef C_real::Point_2               real_Point;
+typedef C_real::Segment_2             real_Segment;
+typedef C_filtered::Point_2           C_filtered_Point;
+typedef C_filtered::Segment_2         C_filtered_Segment;
+typedef CGAL::Creator_uniform_2<double, double_Point> Point_creator;
+typedef CGAL::Random_points_in_square_2<double_Point, Point_creator> Source;
+typedef CGAL::Creator_uniform_2<double_Point,  double_Segment> Segment_creator;
+typedef CGAL::Join_input_iterator_2<Source, Source, Segment_creator>
+                                        Segment_iterator;
+
+typedef CGAL::Delaunay_triangulation_2<C_double>       DT_double;
+typedef CGAL::Delaunay_triangulation_2<C_filtered>     DT_filtered;
+typedef CGAL::Delaunay_triangulation_2<C_real>         DT_real;
+
+
 int
 main( int argc, char** argv)
 {
   CGAL::set_error_behaviour( CGAL::CONTINUE);
   CGAL::set_error_handler( CGAL::throw_exception_for_assertion_violation);
-
-  typedef CGAL::Cartesian<double>       C_double;
-  typedef CGAL::Cartesian<exact_NT>    C_real;
-  typedef CGAL::Filtered_kernel<C_double, C_real> C_filtered;
-  typedef C_double::Point_2             double_Point;
-  typedef C_double::Segment_2           double_Segment;
-  typedef C_real::Point_2               real_Point;
-  typedef C_real::Segment_2             real_Segment;
-  typedef C_filtered::Point_2           C_filtered_Point;
-  typedef C_filtered::Segment_2         C_filtered_Segment;
-  typedef CGAL::Creator_uniform_2<double, double_Point> Point_creator;
-  typedef CGAL::Random_points_in_square_2<double_Point, Point_creator>
-                                        Source;
-  typedef CGAL::Creator_uniform_2<double_Point,  double_Segment>
-                                        Segment_creator;
-  typedef CGAL::Join_input_iterator_2<Source, Source, Segment_creator>
-                                        Segment_iterator;
-
-  typedef CGAL::Delaunay_triangulation_2<C_double>       DT_double;
-  typedef CGAL::Delaunay_triangulation_2<C_filtered>     DT_filtered;
-  typedef CGAL::Delaunay_triangulation_2<C_real>         DT_real;
 
   Source RS(280);
   Segment_iterator g( RS, RS);

@@ -1,3 +1,9 @@
+1.13    (14 September 2002)
+- Use derivation instead of typedefs for the kernels to shorten the mangled
+  symbols (sylvain).
+
+====================  CGAL 2.4 =========================
+
 1.12    (4 December 2001)
 - Remove #include to decrease package dependencies (lutz).
 
