@@ -1,4 +1,4 @@
-2.23 (23 September 2003) [af]
+2.24 (23 September 2003) [af]
 - Made the code independent from K::Point.x()/y()/dimension()
 
 2.22 (10 September 2003)
