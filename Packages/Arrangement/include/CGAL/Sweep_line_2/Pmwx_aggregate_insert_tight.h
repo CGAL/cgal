@@ -42,9 +42,8 @@ class Pmwx_aggregate_insert_tight :
   public Sweep_line_tight_2<CurveInputIterator, SweepLineTraits_2,
     Pmwx_sweep_line_event<SweepLineTraits_2, 
       Pmwx_sweep_line_curve<SweepLineTraits_2, 
-                            typename PM_::Vertex_handle, 
                             typename PM_::Halfedge_handle> > ,
-        Pmwx_sweep_line_curve<SweepLineTraits_2, typename  PM_::Vertex_handle, 
+        Pmwx_sweep_line_curve<SweepLineTraits_2, 
                               typename PM_::Halfedge_handle> >
 {
 public:
@@ -55,10 +54,8 @@ public:
   typedef PM_ PM;
   typedef typename PM::Halfedge_iterator  Halfedge_iterator; 
   typedef typename PM::Halfedge_handle Halfedge_handle;
-  typedef typename PM::Vertex_handle Vertex_handle;
 
   typedef Pmwx_sweep_line_curve<SweepLineTraits_2, 
-                                Vertex_handle, 
                                 Halfedge_handle> SubCurve;
   typedef Pmwx_sweep_line_event<SweepLineTraits_2, SubCurve> Event;
   typedef typename SubCurve::PmwxInsertInfo PmwxInsertInfo;
@@ -70,7 +67,6 @@ public:
   typedef typename Event::VerticalXEventListIter VerticalXEventListIter;
 
   typedef Pmwx_sweep_line_curve<SweepLineTraits_2, 
-                                typename PM_::Vertex_handle, 
                                 typename PM_::Halfedge_handle>  Subcurve;
 
   // repeated typedefs from the base class to avoid warnings
@@ -84,10 +80,10 @@ public:
 
 
   Pmwx_aggregate_insert_tight() : 
-    Base() {}
+    Base(), m_change_not(NULL) {}
   
   Pmwx_aggregate_insert_tight(Traits *traits_) : 
-    Base(traits_) {} 
+    Base(traits_), m_change_not(NULL) {} 
   
   virtual ~Pmwx_aggregate_insert_tight() {}
   
@@ -115,6 +111,7 @@ public:
                      PM &planarMap,
                      Change_notification* change_notification)
   {
+    m_change_not = change_notification;
     std::vector<X_curve_2> subcurves;
     Init(begin, end, planarMap); 
     
@@ -389,7 +386,6 @@ protected:
 	  if ( e == prevEvent ) {
 	    if ( lastEventCreatedHere )
 	    {
-	      std::cout << "$$$$$ here\n";
 	      if ( !(*slIter)->isLeftEnd(p) ) 
 		e->addCurveToLeft(*slIter, m_sweepLinePos);
 	      if ( !(*slIter)->isRightEnd(p) ) 
@@ -397,7 +393,6 @@ protected:
 	    }
 	  }
 	  else {
-	    std::cout << "   lastEventCreatedHere = false \n";
 	    lastEventCreatedHere = false;
 	  }
 	
@@ -638,9 +633,9 @@ private:
   Halfedge_handle insertToPm(const X_curve_2 &cv, SubCurve *leftCurve, 
 			     Halfedge_handle hhandle, PM &pm)
   {
+
     SL_DEBUG(std::cout << "*X inserting " << cv << "(" 
 	               << leftCurve->getId() << ")\n";)
-
     static SubCurve *prevCurve = 0;
     static X_curve_2 prevXCv;
     
@@ -654,6 +649,11 @@ private:
     // if this is the same as the previous curve, don't add it again
     if ( prevCurve && SimilarCurves(cv, prevXCv)) {
       leftCurve->setLastEvent(m_currentEvent);
+
+      if ( m_change_not ) {
+	m_change_not->add_edge(cv, hhandle, true, true);
+      }
+
       return hhandle;
     }
     prevCurve = leftCurve;
@@ -662,19 +662,19 @@ private:
     Halfedge_handle res; 
     
     // if the previous event on the curve is not in the planar map yet
-    if ( insertInfo->getVertexHandle() == Vertex_handle(NULL) ) 
+    if ( insertInfo->getHalfedgeHandle() == Halfedge_handle(NULL) ) 
     {
       // we have a handle from the previous insert
       if ( hhandle != Halfedge_handle(NULL) ) {
 	SL_DEBUG(std::cout << "  from vertex (1)";
 		 std::cout << hhandle->source()->point() << " " 
 		 << hhandle->target()->point() << "\n";)
-        res = pm.non_intersecting_insert_from_vertex(cv, hhandle, 0);
+        res = pm.non_intersecting_insert_from_vertex(cv, hhandle, m_change_not);
 	res = res->twin();
       } else { 
 	// if this is the first left curve being inserted
 	SL_DEBUG(std::cout << "  in face interior\n";)
-	res = pm.insert_in_face_interior(cv, pm.unbounded_face(), 0);
+	res = pm.insert_in_face_interior(cv, pm.unbounded_face(), m_change_not);
 	if ( !leftCurve->isSourceLeftToTarget() ){
 	  res = res->twin();
 	}
@@ -697,13 +697,14 @@ private:
 		           << prev->target()->point();
 		 std::cout << hhandle->source()->point() << " " 
                            << hhandle->target()->point() << "\n";)
-	res = pm.non_intersecting_insert_at_vertices(cv, prev, hhandle, 0);
+	res = pm.non_intersecting_insert_at_vertices(cv, prev, hhandle, 
+						     m_change_not);
       } else {
 	// if this is the first left curve being inserted
 	SL_DEBUG(std::cout << "  from vertex (2)";
 		 std::cout << prev->source()->point() << " " 
 	                   << prev->target()->point() << "\n";)
-	res = pm.non_intersecting_insert_from_vertex(cv, prev, 0);
+	res = pm.non_intersecting_insert_from_vertex(cv, prev, m_change_not);
       }
     }
   
@@ -714,20 +715,20 @@ private:
     if ( lastEvent->getNumLeftCurves() == 0 &&
 	 lastEvent->isCurveLargest(leftCurve)) 
     {
-      insertInfo->setVertexHandle(res->source());
       insertInfo->setHalfedgeHandle(res->twin());
     }
   
     insertInfo = m_currentEvent->getInsertInfo();
-    insertInfo->setVertexHandle(res->target());
     insertInfo->setHalfedgeHandle(res);
     
     return res;
+
   }
 
   void insertToPmV(const X_curve_2 &a, SubCurve *origCurve, 
 		   Event *topEvent, Event *bottomEvent, PM &pm);
 
+  Change_notification *m_change_not;
 };
 
 /*! Insert a vertical curve to the planar map.
@@ -764,30 +765,36 @@ insertToPmV(const X_curve_2 &cv, SubCurve *origCurve,
 
   m_verticalSubCurves.push_back(cv);
 
-  if ( topII->getVertexHandle() == Vertex_handle(NULL))
+  if ( topII->getHalfedgeHandle() == Halfedge_handle(NULL))
   {
-    if ( bottomII->getVertexHandle() == Vertex_handle(NULL))
+    if ( bottomII->getHalfedgeHandle() == Halfedge_handle(NULL))
     {
       SL_DEBUG(std::cout << "  in face interior\n";)
-      res = pm.insert_in_face_interior(cv, pm.unbounded_face(), 0);
+      res = pm.insert_in_face_interior(cv, pm.unbounded_face(), m_change_not);
       if ( !origCurve->isSourceLeftToTarget() ){
 	res = res->twin();
       }	
     } else 
     {
       SL_DEBUG(std::cout << "  from vertex (2)";
-	       std::cout << bottomII->getVertexHandle()->point() << "\n";)
+	       std::cout << bottomII->getHalfedgeHandle()->source()->point() 
+	                 << bottomII->getHalfedgeHandle()->target()->point()
+	                 << "\n";)
       res = pm.non_intersecting_insert_from_vertex(cv, 
-					       bottomII->getHalfedgeHandle(), 0);
+					  bottomII->getHalfedgeHandle(), 
+						   m_change_not);
     }
   } else 
   {
-    if ( bottomII->getVertexHandle() == Vertex_handle(NULL))
+    if ( bottomII->getHalfedgeHandle() == Halfedge_handle(NULL))
     {
       SL_DEBUG(std::cout << "  from vertex (2)";
-	       std::cout << topII->getVertexHandle()->point() << "\n";)
+	       std::cout << topII->getHalfedgeHandle()->source()->point() 
+	                 << topII->getHalfedgeHandle()->target()->point() 
+                         << "\n";)
 	res = pm.non_intersecting_insert_from_vertex(cv, 
-						     topII->getHalfedgeHandle(), 0);
+					  topII->getHalfedgeHandle(),
+						     m_change_not);
       res = res->twin();
     } else 
     {
@@ -795,19 +802,19 @@ insertToPmV(const X_curve_2 &cv, SubCurve *origCurve,
 	       std::cout << bottomII->getHalfedgeHandle()->source()->point();
 	       std::cout << bottomII->getHalfedgeHandle()->target()->point();
 	       std::cout << topII->getHalfedgeHandle()->source()->point();
-	       std::cout << topII->getHalfedgeHandle()->target()->point() << "\n";)
+	       std::cout << topII->getHalfedgeHandle()->target()->point() 
+                         << "\n";)
       res = pm.non_intersecting_insert_at_vertices(cv,
 					     bottomII->getHalfedgeHandle(), 
-					     topII->getHalfedgeHandle(),0);
+					     topII->getHalfedgeHandle(),
+					     m_change_not);
     }
   }
 
   if ( topEvent->getNumLeftCurves() == 0 ) {
-    topII->setVertexHandle(res->target());
     topII->setHalfedgeHandle(res);
   }
 
-  bottomII->setVertexHandle(res->source());
   bottomII->setHalfedgeHandle(res->twin());
 
   SL_DEBUG(std::cout << "*** returning: (" << res->source()->point() << " " 

@@ -46,7 +46,7 @@ CGAL_BEGIN_NAMESPACE
  * \sa Sweep_line_subcurve
  */
 
-template<class SweepLineTraits_2, class VertexHandle, class HalfedgeHandle>
+template<class SweepLineTraits_2, class HalfedgeHandle>
 class Pmwx_sweep_line_curve : public Sweep_line_subcurve<SweepLineTraits_2>
 {
 public:
@@ -55,9 +55,9 @@ public:
   typedef typename Traits::Curve_2 Curve_2;
   typedef typename Traits::X_curve_2 X_curve_2;
   typedef Sweep_line_subcurve<SweepLineTraits_2> Base;
-  typedef Pmwx_sweep_line_curve<Traits, VertexHandle, HalfedgeHandle> Self;
+  typedef Pmwx_sweep_line_curve<Traits, HalfedgeHandle> Self;
 
-  typedef Pmwx_insert_info<VertexHandle,HalfedgeHandle> PmwxInsertInfo;
+  typedef Pmwx_insert_info<HalfedgeHandle> PmwxInsertInfo;
   typedef Pmwx_sweep_line_event<Traits, Self> Event;
 
   Pmwx_sweep_line_curve(int id, X_curve_2 &curve, Point_2 *reference, 

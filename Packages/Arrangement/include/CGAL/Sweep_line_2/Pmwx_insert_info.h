@@ -29,27 +29,17 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template<class _Vertex_handle, class _Halfedge_handle>
+template<class _Halfedge_handle>
 class Pmwx_insert_info
 {
 public:
 
-  typedef _Vertex_handle Vertex_handle;
   typedef _Halfedge_handle Halfedge_handle;
 
   /*! Constructor */
   Pmwx_insert_info() : 
-    m_vertex(Vertex_handle(NULL)), 
     m_halfedge(Halfedge_handle(NULL))
   {
-  }
-
-  void setVertexHandle(Vertex_handle vh) {
-    m_vertex = vh;
-  }
-
-  Vertex_handle getVertexHandle() const {
-    return m_vertex;
   }
 
   void setHalfedgeHandle(Halfedge_handle h) {
@@ -62,11 +52,6 @@ public:
 
   void Print()
   {
-    if ( m_vertex == Vertex_handle(NULL))
-      std::cout << "vertex: NULL\n";
-    else
-      std::cout << "vertex: " << m_vertex->point() << "\n";
-
     if ( m_halfedge == Halfedge_handle(NULL))
       std::cout << "halfedge: NULL\n";
     else 
@@ -75,7 +60,6 @@ public:
   }
  
 private:
-  Vertex_handle m_vertex;
   Halfedge_handle m_halfedge;
   
 };
