@@ -1,4 +1,4 @@
-Version 1.77 (?? July 01)
+Version 1.77 (20 July 01)
 - Don't put the traits' function objects as data members of the
   triangulations.
 
