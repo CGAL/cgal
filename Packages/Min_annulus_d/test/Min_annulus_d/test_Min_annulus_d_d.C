@@ -12,15 +12,14 @@
 // release_date  : $CGAL_Date$
 //
 // file          : test/Min_annulus_d/test_Min_annulus_d_d.C
-// package       : $CGAL_Package: Min_annulus_d $
 // chapter       : Geometric Optimisation
+// package       : $CGAL_Package: Min_annulus_d $
 //
 // source        : web/Min_annulus_d.aw
 // revision      : 1.8
 // revision_date : 2000/09/26
 //
 // author(s)     : Sven Schönherr
-// maintainer    : Sven Schönherr <sven@inf.ethz.ch>
 // coordinator   : ETH Zürich (Bernd Gärtner <gaertner@inf.ethz.ch>)
 //
 // implementation: test program for smallest enclosing annulus (dD traits class
