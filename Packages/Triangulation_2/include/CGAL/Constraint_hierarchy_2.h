@@ -85,6 +85,7 @@ public:
   Constraint_hierarchy_2() { }
   Constraint_hierarchy_2(const Constraint_hierarchy_2& ch); 
   ~Constraint_hierarchy_2(){ clear();}
+  void clear();
   Constraint_hierarchy_2& operator=(const Constraint_hierarchy_2& ch);
 
   // Query 
@@ -133,7 +134,6 @@ public:
  
   
 private:  
-  void clear();
   void copy(const Constraint_hierarchy_2& ch);
   H_edge    make_edge(T va, T vb) const;
   H_vertex_it     get_pos(T va, T vb) const;

@@ -29,6 +29,7 @@
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Triangulation_short_names_2.h>
 #include <CGAL/Constraint_hierarchy_2.h>
+#include <CGAL/squared_distance_2.h>
 
 CGAL_BEGIN_NAMESPACE
 

@@ -15,8 +15,6 @@
 - tenir compte remarque de sylvain a propos de design
 - documenter Constrained_triangulation_plus_2
 - tester Constrained_triangulation_plus_2 avec le Tag exact
-- Constrained_triangulation_plus_2 and ConstrainT_hierchy_2
-  to be done or redone : copy swap and delete
 - Constraint_hierarchy_3 
   to be done or redone : copy swap and delete
 

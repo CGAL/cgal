@@ -103,7 +103,12 @@ _test_cls_hierarchy_2()
 	   *vit++ == v[8]);
   co_it++;
   assert (co_it  == h.contexts_end(v[1],v[5]));
-  
+
+  //test clear() and copy()
+  Hierarchy ch(h);
+  ch.clear();
+  ch = h;
+  ch.clear();
   return;
 }
 
