@@ -296,8 +296,8 @@ An object \ccVar\ is valid, iff
 
 \ccRefIdfierPage{CGAL::Min_ellipse_2<Traits>}\\
 \ccRefIdfierPage{CGAL::Min_sphere_d<Traits>}\\[1ex]
-\ccRefIdfierPage{CGAL::Min_circle_2_traits_2<R>}\\[1ex]
-\ccRefConceptPage{Min_circle_2_traits}
+\ccRefIdfierPage{CGAL::Min_circle_2_traits_2<K>}\\[1ex]
+\ccRefConceptPage{MinCircle2Traits}
 
 % -----------------------------------------------------------------------------
 \ccImplementation
@@ -323,37 +323,7 @@ for validity each takes linear time.
 To illustrate the creation of \ccRefName\ and to show that
 randomization can be useful in certain cases, we give an example.
 
-\ccTexHtml{\small}{}
-\begin{verbatim}
-#include <CGAL/Gmpz.h>
-#include <CGAL/Homogeneous.h>
-#include <CGAL/Point_2.h>
-#include <CGAL/Min_circle_2.h>
-#include <CGAL/Min_circle_2_traits_2.h>
-
-typedef  CGAL::Gmpz                      NT;
-typedef  CGAL::Homogeneous<NT>           R;
-typedef  R::Point_2                      Point;
-typedef  CGAL::Min_circle_2_traits_2<R>  Traits;
-typedef  CGAL::Min_circle_2<Traits>      Min_circle;
-
-int main()
-{
-    int     n = 1000;
-    Point*  P = new Point[ n];
-
-    for ( int i = 0; i < n; ++i)
-        P[ i] = Point( (i%2 == 0 ? i : -i), 0);
-    // (0,0), (-1,0), (2,0), (-3,0), ...
-
-    Min_circle  mc1( P, P+n);           // very slow
-    Min_circle  mc2( P, P+n, true);     // fast
-
-    delete[] P;
-    return( 0);
-}
-\end{verbatim}
-\ccTexHtml{\normalsize}{}
+\ccIncludeExampleCode{Optimisation_ref/example_Min_circle_2_noheader.C}
 
 % -----------------------------------------------------------------------------
 

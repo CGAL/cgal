@@ -26,7 +26,6 @@
 
 // includes
 #include <CGAL/Homogeneous.h>
-#include <CGAL/Point_2.h>
 #include <CGAL/Min_circle_2.h>
 #include <CGAL/Min_circle_2_traits_2.h>
 #include <CGAL/Gmpz.h>
@@ -34,10 +33,11 @@
 
 // typedefs
 typedef  CGAL::Gmpz                      NT;
-typedef  CGAL::Homogeneous<NT>           R;
-typedef  CGAL::Point_2<R>                Point;
-typedef  CGAL::Min_circle_2_traits_2<R>  Traits;
+typedef  CGAL::Homogeneous<NT>           K;
+typedef  CGAL::Min_circle_2_traits_2<K>  Traits;
 typedef  CGAL::Min_circle_2<Traits>      Min_circle;
+
+typedef  K::Point_2                      Point;
 
 // main
 int

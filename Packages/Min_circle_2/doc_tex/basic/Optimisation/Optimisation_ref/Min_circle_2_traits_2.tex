@@ -2,7 +2,7 @@
 % =============================================================================
 % The CGAL Reference Manual
 % Chapter: Geometric Optimisation
-% Class  : CGAL::Min_circle_2_traits_2<R>
+% Class  : CGAL::Min_circle_2_traits_2<K>
 % -----------------------------------------------------------------------------
 % file   : doc_tex/basic/Optimisation/..._ref/Min_circle_2_traits_2.tex
 % package: Min_circle_2
@@ -14,7 +14,7 @@
 
 \ccAutoIndexingOff
 
-\begin{ccRefClass}{Min_circle_2_traits_2<R>}
+\begin{ccRefClass}{Min_circle_2_traits_2<K>}
 \ccIndexTraitsClassBegin{Min_circle_2_traits_2}{Min_circle_2}{}
 
 \ccAutoIndexingOn
@@ -30,20 +30,20 @@ using the two-dimensional \cgal\ kernel.
 % -----------------------------------------------------------------------------
 \ccRequirements
 
-The template parameter \ccc{R} is a model for \ccc{Kernel}.
+The template parameter \ccc{K} is a model for \ccc{Kernel}.
 
 % -----------------------------------------------------------------------------
 \ccIsModel
 
-\ccRefConceptPage{Min_circle_2_traits}
+\ccRefConceptPage{MinCircle2Traits}
 
 % -----------------------------------------------------------------------------
 \ccTypes
 
 \ccSaveThreeColumns
-\ccSetTwoColumns{Min_circle_2_traits_2<R>:: Circle}{}
+\ccSetTwoColumns{Min_circle_2_traits_2<K>:: Circle}{}
 
-\ccNestedType{Point }{typedef to \ccc{R::Point_2}.}
+\ccNestedType{Point }{typedef to \ccc{K::Point_2}.}
 \ccNestedType{Circle}{internal type.}
 
 % -----------------------------------------------------------------------------
@@ -52,7 +52,7 @@ The template parameter \ccc{R} is a model for \ccc{Kernel}.
 
 \ccConstructor{ Min_circle_2_traits_2( );}{default constructor.}
 \ccConstructor{ Min_circle_2_traits_2(
-                    const Min_circle_2_traits_2<R>&);}{copy constructor.}
+                    const Min_circle_2_traits_2<K>&);}{copy constructor.}
 
 % -----------------------------------------------------------------------------
 \ccOperations
@@ -69,7 +69,7 @@ The template parameter \ccc{R} is a model for \ccc{Kernel}.
 \ccSeeAlso
 
 \ccRefIdfierPage{CGAL::Min_circle_2<Traits>}\\[1ex]
-\ccRefConceptPage{Min_circle_2_traits}
+\ccRefConceptPage{MinCircle2Traits}
 
 % -----------------------------------------------------------------------------
 

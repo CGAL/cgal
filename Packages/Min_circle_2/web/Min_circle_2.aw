@@ -190,7 +190,7 @@ small probability.
 First, we declare the class template \ccc{Min_circle_2}.
 
 @macro<Min_circle_2 declaration> = @begin
-    template < class _Traits >
+    template < class Traits_ >
     class Min_circle_2;
 @end
 
@@ -202,7 +202,7 @@ case $\mc(\emptyset,B)$, see Section~\ref{sec:algo}.
 The class interface looks as follows.
 
 @macro <Min_circle_2 interface> = @begin
-    template < class _Traits >
+    template < class Traits_ >
     class Min_circle_2 {
       public:
         @<Min_circle_2 public interface>
@@ -212,9 +212,9 @@ The class interface looks as follows.
         @<Min_circle_2 private data members>
 
         // copying and assignment not allowed!
-        Min_circle_2( const Min_circle_2<_Traits>&);
-        Min_circle_2<_Traits>&
-            operator = ( const Min_circle_2<_Traits>&);
+        Min_circle_2( const Min_circle_2<Traits_>&);
+        Min_circle_2<Traits_>&
+            operator = ( const Min_circle_2<Traits_>&);
 
     @<dividing line>
 
@@ -270,9 +270,9 @@ section, so we do not comment on it here.
 
 @macro <Min_circle_2 public interface> = @begin
     // types
-    typedef           _Traits                           Traits;
-    typedef typename  _Traits::Point                    Point;
-    typedef typename  _Traits::Circle                   Circle;
+    typedef           Traits_                           Traits;
+    typedef typename  Traits_::Point                    Point;
+    typedef typename  Traits_::Circle                   Circle;
     typedef typename  std::list<Point>::const_iterator  Point_iterator;
     typedef           const Point *                     Support_point_iterator;
 
@@ -970,24 +970,24 @@ traits class object.
 \subsubsection{I/O}
 
 @macro <Min_circle_2 I/O operators declaration> = @begin
-    template < class _Traits >
+    template < class Traits_ >
     std::ostream&
-    operator << ( std::ostream& os, const Min_circle_2<_Traits>& mc);
+    operator << ( std::ostream& os, const Min_circle_2<Traits_>& mc);
 
-    template < class _Traits >
+    template < class Traits_ >
     std::istream&
-    operator >> ( std::istream& is,       Min_circle_2<_Traits>& mc);
+    operator >> ( std::istream& is,       Min_circle_2<Traits_>& mc);
 @end
 
 @macro <Min_circle_2 I/O operators> = @begin
-    template < class _Traits >
+    template < class Traits_ >
     std::ostream&
     operator << ( std::ostream& os,
-                  const Min_circle_2<_Traits>& min_circle)
+                  const Min_circle_2<Traits_>& min_circle)
     {
         CGAL_USING_NAMESPACE_STD
 
-        typedef  Min_circle_2<_Traits>::Point  Point;
+        typedef  Min_circle_2<Traits_>::Point  Point;
         typedef  ostream_iterator<Point>       Os_it;
 
         switch ( CGAL::get_mode( os)) {
@@ -1029,9 +1029,9 @@ traits class object.
         return( os);
     }
 
-    template < class _Traits >
+    template < class Traits_ >
     std::istream&
-    operator >> ( std::istream& is, CGAL::Min_circle_2<_Traits>& min_circle)
+    operator >> ( std::istream& is, CGAL::Min_circle_2<Traits_>& min_circle)
     {
         CGAL_USING_NAMESPACE_STD
        
@@ -1044,7 +1044,7 @@ traits class object.
 
           case CGAL::IO::ASCII:
           case CGAL::IO::BINARY:
-            typedef  CGAL::Min_circle_2<_Traits>::Point  Point;
+            typedef  CGAL::Min_circle_2<Traits_>::Point  Point;
             typedef  istream_iterator<Point>            Is_it;
             min_circle.clear();
             min_circle.insert( Is_it( is), Is_it());
@@ -1066,12 +1066,12 @@ traits class object.
     #ifndef CGAL_IO_WINDOW_STREAM_MIN_CIRCLE_2
     #define CGAL_IO_WINDOW_STREAM_MIN_CIRCLE_2
 
-    template< class R >
+    template< class Traits_ >
     CGAL::Window_stream&
     operator << ( CGAL::Window_stream &ws,
-                  const CGAL::Min_circle_2<R>& min_circle)
+                  const CGAL::Min_circle_2<Traits_>& min_circle)
     {
-        typedef  CGAL::Min_circle_2<R>::Point_iterator  Point_iterator;
+        typedef  CGAL::Min_circle_2<Traits_>::Point_iterator  Point_iterator;
 
         Point_iterator  first( min_circle.points_begin());
         Point_iterator  last ( min_circle.points_end());
@@ -1158,22 +1158,22 @@ pseudo-code above.
 @end
 
 @! ----------------------------------------------------------------------------
-@! Class template Optimisation_circle_2<R>
+@! Class template Optimisation_circle_2<K>
 @! ----------------------------------------------------------------------------
 
-\subsection{Class template \ccFont Optimisation\_circle\_2<R>}
+\subsection{Class template \ccFont Optimisation\_circle\_2<K>}
 
 First, we declare the class template \ccc{Optimisation_circle_2},
 
 @macro<Optimisation_circle_2 declaration> = @begin
-    template < class _R >
+    template < class K_ >
     class Optimisation_circle_2;
 @end
 
 The class interface looks as follows.
 
 @macro <Optimisation_circle_2 interface> = @begin
-    template < class _R >
+    template < class K_ >
     class Optimisation_circle_2 {
       public:
         @<Optimisation_circle_2 public interface>
@@ -1218,9 +1218,9 @@ section, so we do not comment on it here.
 
 @macro <Optimisation_circle_2 public interface> = @begin
     // types
-    typedef           _R                R;
-    typedef           CGAL::Point_2<R>  Point;
-    typedef typename  _R::FT            Distance;
+    typedef           K_                K;
+    typedef           CGAL::Point_2<K>  Point;
+    typedef typename  K_::FT            Distance;
 
     /**************************************************************************
     WORKAROUND: Some compilers are unable to match member functions defined
@@ -1241,8 +1241,8 @@ section, so we do not comment on it here.
     const Distance&  squared_radius( ) const
 
     // equality tests
-    bool  operator == ( const Optimisation_circle_2<R>& c) const;
-    bool  operator != ( const Optimisation_circle_2<R>& c) const;
+    bool  operator == ( const Optimisation_circle_2<K>& c) const;
+    bool  operator != ( const Optimisation_circle_2<K>& c) const;
 
     // predicates
     CGAL::Bounded_side  bounded_side( const Point& p) const;
@@ -1352,14 +1352,14 @@ squared radius, resp.
 
 @macro <Optimisation_circle_2 equality tests> = @begin
     bool
-    operator == ( const Optimisation_circle_2<R>& c) const
+    operator == ( const Optimisation_circle_2<K>& c) const
     {
         return( ( _center          == c._center        ) &&
                 ( _squared_radius  == c._squared_radius) );
     }
     
     bool
-    operator != ( const Optimisation_circle_2<R>& c) const
+    operator != ( const Optimisation_circle_2<K>& c) const
     {
         return( ! operator==( c));
     }
@@ -1420,19 +1420,19 @@ emptiness and degeneracy, resp.
 \subsubsection{I/O}
 
 @macro <Optimisation_circle_2 I/O operators declaration> = @begin
-    template < class _R >
+    template < class K_ >
     std::ostream&
-    operator << ( std::ostream&, const CGAL::Optimisation_circle_2<_R>&);
+    operator << ( std::ostream&, const CGAL::Optimisation_circle_2<K_>&);
 
-    template < class _R >
+    template < class K_ >
     std::istream&
-    operator >> ( std::istream&, CGAL::Optimisation_circle_2<_R>&);
+    operator >> ( std::istream&, CGAL::Optimisation_circle_2<K_>&);
 @end
 
 @macro <Optimisation_circle_2 I/O operators> = @begin
-    template < class _R >
+    template < class K_ >
     std::ostream&
-    operator << ( std::ostream& os, const CGAL::Optimisation_circle_2<_R>& c)
+    operator << ( std::ostream& os, const CGAL::Optimisation_circle_2<K_>& c)
     {
         switch ( CGAL::get_mode( os)) {
 
@@ -1459,12 +1459,12 @@ emptiness and degeneracy, resp.
         return( os);
     }
 
-    template < class _R >
+    template < class K_ >
     std::istream&
-    operator >> ( std::istream& is, CGAL::Optimisation_circle_2<_R>& c)
+    operator >> ( std::istream& is, CGAL::Optimisation_circle_2<K_>& c)
     {
-        typedef  CGAL::Optimisation_circle_2<_R>::Point     Point;
-        typedef  CGAL::Optimisation_circle_2<_R>::Distance  Distance;
+        typedef  CGAL::Optimisation_circle_2<K_>::Point     Point;
+        typedef  CGAL::Optimisation_circle_2<K_>::Distance  Distance;
 
         switch ( CGAL::get_mode( is)) {
 
@@ -1505,10 +1505,10 @@ emptiness and degeneracy, resp.
     #ifndef CGAL_IO_WINDOW_STREAM_OPTIMISATION_CIRCLE_2
     #define CGAL_IO_WINDOW_STREAM_OPTIMISATION_CIRCLE_2
 
-    template< class R >
+    template< class K_ >
     CGAL::Window_stream&
     operator << ( CGAL::Window_stream &ws,
-                  const CGAL::Optimisation_circle_2<R>& oc)
+                  const CGAL::Optimisation_circle_2<K_>& oc)
     {
         double  cx( CGAL::to_double( oc.center().x()));
         double  cy( CGAL::to_double( oc.center().y()));
@@ -1525,19 +1525,19 @@ emptiness and degeneracy, resp.
 
 
 @! ----------------------------------------------------------------------------
-@! Class template Min_circle_2_traits_2<R>
+@! Class template Min_circle_2_traits_2<K>
 @! ----------------------------------------------------------------------------
 
-\subsection{Class template \ccFont Min\_circle\_2\_traits\_2<R>}
+\subsection{Class template \ccFont Min\_circle\_2\_traits\_2<K>}
 
 First, we declare the class templates \ccc{Min_circle_2} and
 \ccc{Min_circle_2_traits_2}.
 
 @macro<Min_circle_2_traits_2 declarations> = @begin
-    template < class _Traits >
+    template < class Traits_ >
     class Min_circle_2;
 
-    template < class _R >
+    template < class K_ >
     class Min_circle_2_traits_2;
 @end
 
@@ -1550,25 +1550,25 @@ it. Since the algorithm needs to access and modify the current circle,
 it is declared \ccc{friend}.
 
 @macro <Min_circle_2_traits_2 interface and implementation> = @begin
-    template < class _R >
+    template < class K_ >
     class Min_circle_2_traits_2 {
       public:
         // types
-        typedef  _R                              R;
-        typedef  CGAL::Point_2<R>                Point;
-        typedef  CGAL::Optimisation_circle_2<R>  Circle;
+        typedef  K_                              K;
+        typedef  CGAL::Point_2<K>                Point;
+        typedef  CGAL::Optimisation_circle_2<K>  Circle;
 
     private:
         // data members
         Circle  circle;                                 // current circle
 
         // friends
-        friend  class CGAL::Min_circle_2< CGAL::Min_circle_2_traits_2< R > >;
+        friend  class CGAL::Min_circle_2< CGAL::Min_circle_2_traits_2<K> >;
 
       public:
         // creation (use default implementations)
         // CGAL::Min_circle_2_traits_2( );
-        // CGAL::Min_circle_2_traits_2( CGAL::Min_circle_2_traits_2<R> const&);
+        // CGAL::Min_circle_2_traits_2( CGAL::Min_circle_2_traits_2<K> const&);
 
         // operations
         inline
@@ -1591,13 +1591,13 @@ First, we declare the class templates \ccc{Min_circle_2},
 \ccc{_Min_circle_2_adapterC2__Circle}.
 
 @macro<Min_circle_2_adapterC2 declarations> = @begin
-    template < class _Traits >
+    template < class Traits_ >
     class Min_circle_2;
 
-    template < class _PT, class _DA >
+    template < class PT_, class DA_ >
     class Min_circle_2_adapterC2;
 
-    template < class _PT, class _DA >
+    template < class PT_, class DA_ >
     class _Min_circle_2_adapterC2__Circle;
 @end
 
@@ -1611,15 +1611,15 @@ it. Since the algorithm needs to access and modify the current circle,
 it is declared \ccc{friend}.
 
 @macro <Min_circle_2_adapterC2 interface and implementation> = @begin
-    template < class _PT, class _DA >
+    template < class PT_, class DA_ >
     class Min_circle_2_adapterC2 {
       public:
         // types
-        typedef  _PT  PT;
-        typedef  _DA  DA;
+        typedef  PT_  PT;
+        typedef  DA_  DA;
 
         // nested types
-        typedef  PT                                           Point;
+        typedef  PT                                            Point;
         typedef  CGAL::_Min_circle_2_adapterC2__Circle<PT,DA>  Circle;
 
       private:
@@ -1652,7 +1652,7 @@ it is declared \ccc{friend}.
     CGAL::Orientation
     orientation( const Point& p, const Point& q, const Point& r) const
     {
-        typedef  typename _DA::FT  FT;
+        typedef  typename DA_::FT  FT;
 
         FT  px;
         FT  py;
@@ -1674,24 +1674,24 @@ it is declared \ccc{friend}.
 \subsubsection{Nested Type \ccFont Circle}
 
 @macro <Min_circle_2_adapterC2 nested type `Circle'> = @begin
-    template < class _PT, class _DA >
+    template < class PT_, class DA_ >
     std::ostream&
     operator << ( std::ostream&,
-                  const CGAL::_Min_circle_2_adapterC2__Circle<_PT,_DA>&);
+                  const CGAL::_Min_circle_2_adapterC2__Circle<PT_,DA_>&);
 
-    template < class _PT, class _DA >
+    template < class PT_, class DA_ >
     std::istream&
     operator >> ( std::istream&,
-                  CGAL::_Min_circle_2_adapterC2__Circle<_PT,_DA>&);
+                  CGAL::_Min_circle_2_adapterC2__Circle<PT_,DA_>&);
 
-    template < class _PT, class _DA >
+    template < class PT_, class DA_ >
     class _Min_circle_2_adapterC2__Circle {
       public:
         // typedefs
-        typedef  _PT  PT;
-        typedef  _DA  DA;
+        typedef  PT_  PT;
+        typedef  DA_  DA;
 
-        typedef  typename _DA::FT  FT;
+        typedef  typename DA_::FT  FT;
 
       private:
         // data members
@@ -1711,10 +1711,10 @@ it is declared \ccc{friend}.
         }
 
         friend  std::ostream&  operator << CGAL_NULL_TMPL_ARGS ( std::ostream&,
-            const CGAL::_Min_circle_2_adapterC2__Circle<_PT,_DA>&);
+            const CGAL::_Min_circle_2_adapterC2__Circle<PT_,DA_>&);
 
         friend  std::istream&  operator >> CGAL_NULL_TMPL_ARGS ( std::istream&,
-            CGAL::_Min_circle_2_adapterC2__Circle<_PT,_DA>&);
+            CGAL::_Min_circle_2_adapterC2__Circle<PT_,DA_>&);
 
       public:
         // types
@@ -1833,7 +1833,7 @@ it is declared \ccc{friend}.
         // additional operations for checking
         bool
         operator == (
-            const CGAL::_Min_circle_2_adapterC2__Circle<_PT,_DA>& c) const
+            const CGAL::_Min_circle_2_adapterC2__Circle<PT_,DA_>& c) const
         {
             return( ( center_x == c.center_x) &&
                     ( center_y == c.center_y) &&
@@ -1842,7 +1842,7 @@ it is declared \ccc{friend}.
 
         bool
         operator != (
-            const CGAL::_Min_circle_2_adapterC2__Circle<_PT,_DA>& c) const
+            const CGAL::_Min_circle_2_adapterC2__Circle<PT_,DA_>& c) const
         {
             return( ! ( *this == c));
         }
@@ -1863,10 +1863,10 @@ it is declared \ccc{friend}.
     };
 
     // I/O
-    template < class _PT, class _DA >
+    template < class PT_, class DA_ >
     std::ostream&
     operator << ( std::ostream& os,
-                  const CGAL::_Min_circle_2_adapterC2__Circle<_PT,_DA>& c)
+                  const CGAL::_Min_circle_2_adapterC2__Circle<PT_,DA_>& c)
     {
         switch ( CGAL::get_mode( os)) {
 
@@ -1895,10 +1895,10 @@ it is declared \ccc{friend}.
         return( os);
     }
 
-    template < class _PT, class _DA >
+    template < class PT_, class DA_ >
     std::istream&
     operator >> ( std::istream& is,
-                  CGAL::_Min_circle_2_adapterC2__Circle<_PT,_DA>& c)
+                  CGAL::_Min_circle_2_adapterC2__Circle<PT_,DA_>& c)
     {
         switch ( CGAL::get_mode( is)) {
 
@@ -1937,13 +1937,13 @@ First, we declare the class templates \ccc{Min_circle_2},
 \ccc{_Min_circle_2_adapterH2__Circle}.
 
 @macro<Min_circle_2_adapterH2 declarations> = @begin
-    template < class _Traits >
+    template < class Traits_ >
     class Min_circle_2;
 
-    template < class _PT, class _DA >
+    template < class PT_, class DA_ >
     class Min_circle_2_adapterH2;
 
-    template < class _PT, class _DA >
+    template < class PT_, class DA_ >
     class _Min_circle_2_adapterH2__Circle;
 @end
 
@@ -1957,15 +1957,15 @@ it. Since the algorithm needs to access and modify the current circle,
 it is declared \ccc{friend}.
 
 @macro <Min_circle_2_adapterH2 interface and implementation> = @begin
-    template < class _PT, class _DA >
+    template < class PT_, class DA_ >
     class Min_circle_2_adapterH2 {
       public:
         // types
-        typedef  _PT  PT;
-        typedef  _DA  DA;
+        typedef  PT_  PT;
+        typedef  DA_  DA;
 
         // nested types
-        typedef  PT                                           Point;
+        typedef  PT                                            Point;
         typedef  CGAL::_Min_circle_2_adapterH2__Circle<PT,DA>  Circle;
 
       private:
@@ -1998,7 +1998,7 @@ it is declared \ccc{friend}.
     CGAL::Orientation
     orientation( const Point& p, const Point& q, const Point& r) const
     {
-        typedef  typename _DA::RT  RT;
+        typedef  typename DA_::RT  RT;
 
         RT  phx;
         RT  phy;
@@ -2024,24 +2024,24 @@ it is declared \ccc{friend}.
 \subsubsection{Nested Type \ccFont Circle}
 
 @macro <Min_circle_2_adapterH2 nested type `Circle'> = @begin
-    template < class _PT, class _DA >
+    template < class PT_, class DA_ >
     std::ostream&
     operator << ( std::ostream&,
-                  const CGAL::_Min_circle_2_adapterH2__Circle<_PT,_DA>&);
+                  const CGAL::_Min_circle_2_adapterH2__Circle<PT_,DA_>&);
 
-    template < class _PT, class _DA >
+    template < class PT_, class DA_ >
     std::istream&
     operator >> ( std::istream&,
-                  CGAL::_Min_circle_2_adapterH2__Circle<_PT,_DA>&);
+                  CGAL::_Min_circle_2_adapterH2__Circle<PT_,DA_>&);
 
-    template < class _PT, class _DA >
+    template < class PT_, class DA_ >
     class _Min_circle_2_adapterH2__Circle {
       public:
         // typedefs
-        typedef  _PT  PT;
-        typedef  _DA  DA;
+        typedef  PT_  PT;
+        typedef  DA_  DA;
 
-        typedef  typename _DA::RT             RT;
+        typedef  typename DA_::RT             RT;
         typedef           CGAL::Quotient<RT>  FT;
 
       private:
@@ -2065,10 +2065,10 @@ it is declared \ccc{friend}.
         }
 
         friend  std::ostream&  operator << CGAL_NULL_TMPL_ARGS ( std::ostream&,
-            const CGAL::_Min_circle_2_adapterH2__Circle<_PT,_DA>&);
+            const CGAL::_Min_circle_2_adapterH2__Circle<PT_,DA_>&);
 
         friend  std::istream&  operator >> CGAL_NULL_TMPL_ARGS ( std::istream&,
-            CGAL::_Min_circle_2_adapterH2__Circle<_PT,_DA>&);
+            CGAL::_Min_circle_2_adapterH2__Circle<PT_,DA_>&);
 
       public:
         // types
@@ -2213,7 +2213,7 @@ it is declared \ccc{friend}.
         // additional operations for checking
         bool
         operator == (
-            const CGAL::_Min_circle_2_adapterH2__Circle<_PT,_DA>& c) const
+            const CGAL::_Min_circle_2_adapterH2__Circle<PT_,DA_>& c) const
         {
             return( ( center_hx*c.center_hw == c.center_hx*center_hw) &&
                     ( center_hy*c.center_hw == c.center_hy*center_hw) &&
@@ -2222,7 +2222,7 @@ it is declared \ccc{friend}.
 
         bool
         operator != (
-            const CGAL::_Min_circle_2_adapterH2__Circle<_PT,_DA>& c) const
+            const CGAL::_Min_circle_2_adapterH2__Circle<PT_,DA_>& c) const
         {
             return( ! ( *this == c));
         }
@@ -2243,10 +2243,10 @@ it is declared \ccc{friend}.
     };
 
     // I/O
-    template < class _PT, class _DA >
+    template < class PT_, class DA_ >
     std::ostream&
     operator << ( std::ostream& os,
-                  const CGAL::_Min_circle_2_adapterH2__Circle<_PT,_DA>& c)
+                  const CGAL::_Min_circle_2_adapterH2__Circle<PT_,DA_>& c)
     {
         switch ( CGAL::get_mode( os)) {
 
@@ -2280,10 +2280,10 @@ it is declared \ccc{friend}.
         return( os);
     }
 
-    template < class _PT, class _DA >
+    template < class PT_, class DA_ >
     std::istream&
     operator >> ( std::istream& is,
-                  CGAL::_Min_circle_2_adapterH2__Circle<_PT,_DA>& c)
+                  CGAL::_Min_circle_2_adapterH2__Circle<PT_,DA_>& c)
     {
         switch ( CGAL::get_mode( is)) {
 
@@ -2346,10 +2346,10 @@ homogeneous representation with number type \ccc{Gmpz}.
        typedef  CGAL::Quotient< CGAL::Gmpz >      Ft;
     #endif
 
-    typedef  CGAL::Cartesian< Ft >                RepC;
-    typedef  CGAL::Homogeneous< Rt >              RepH;
-    typedef  CGAL::Min_circle_2_traits_2< RepC >  TraitsC;
-    typedef  CGAL::Min_circle_2_traits_2< RepH >  TraitsH;
+    typedef  CGAL::Cartesian< Ft >                KerC;
+    typedef  CGAL::Homogeneous< Rt >              KerH;
+    typedef  CGAL::Min_circle_2_traits_2< KerC >  TraitsC;
+    typedef  CGAL::Min_circle_2_traits_2< KerH >  TraitsH;
 @end
 
 The command line option \ccc{-verbose} enables verbose output.
@@ -2598,25 +2598,25 @@ representation) and corresponding data accessors.
       public:
         typedef  ::Ft  FT;
       private:
-        FT _x;
-        FT _y;
+        FT x_;
+        FT y_;
       public:
         MyPointC2( ) { }
-        MyPointC2( const FT& x, const FT& y) : _x( x), _y( y) { }
+        MyPointC2( const FT& x, const FT& y) : x_( x), y_( y) { }
 
-        const FT&  x( ) const { return( _x); }
-        const FT&  y( ) const { return( _y); }
+        const FT&  x( ) const { return( x_); }
+        const FT&  y( ) const { return( y_); }
 
         bool
         operator == ( const MyPointC2& p) const
         {
-            return( ( _x == p._x) && ( _y == p._y));
+            return( ( x_ == p.x_) && ( y_ == p.y_));
         }
 
         bool
         operator != ( const MyPointC2& p) const
         {
-            return( ( _x != p._x) || ( _y != p._y));
+            return( ( x_ != p.x_) || ( y_ != p.y_));
         }
 
         friend
@@ -2629,19 +2629,21 @@ representation) and corresponding data accessors.
     std::ostream&
     operator << ( std::ostream& os, const MyPointC2& p)
     {
-        return( os << p._x << ' ' << p._y);
+        return( os << p.x_ << ' ' << p.y_);
     }
 
     std::istream&
     operator >> ( std::istream& is, MyPointC2& p)
     {
-        return( is >> p._x >> p._y);
+        return( is >> p.x_ >> p.y_);
     }
     
     // 2D Cartesian point class data accessor
     class MyPointC2DA {
       public:
         typedef  ::Ft  FT;
+
+	MyPointC2DA( ) { }
 
         const FT&  get_x( const MyPointC2& p) const { return( p.x()); }
         const FT&  get_y( const MyPointC2& p) const { return( p.y()); }
@@ -2671,28 +2673,28 @@ representation) and corresponding data accessors.
       public:
         typedef  ::Rt  RT;
       private:
-        RT _hx;
-        RT _hy;
-        RT _hw;
+        RT hx_;
+        RT hy_;
+        RT hw_;
       public:
         MyPointH2( ) { }
         MyPointH2( const RT& hx, const RT& hy, const RT& hw = RT( 1))
-            : _hx( hx), _hy( hy), _hw( hw) { }
+            : hx_( hx), hy_( hy), hw_( hw) { }
 
-        const RT&  hx( ) const { return( _hx); }
-        const RT&  hy( ) const { return( _hy); }
-        const RT&  hw( ) const { return( _hw); }
+        const RT&  hx( ) const { return( hx_); }
+        const RT&  hy( ) const { return( hy_); }
+        const RT&  hw( ) const { return( hw_); }
 
         bool
         operator == ( const MyPointH2& p) const
         {
-            return( ( _hx*p._hw == p._hx*_hw) && ( _hy*p._hw == p._hy*_hw));
+            return( ( hx_*p.hw_ == p.hx_*hw_) && ( hy_*p.hw_ == p.hy_*hw_));
         }
 
         bool
         operator != ( const MyPointH2& p) const
         {
-            return( ( _hx*p._hw != p._hx*_hw) || ( _hy*p._hw != p._hy*_hw));
+            return( ( hx_*p.hw_ != p.hx_*hw_) || ( hy_*p.hw_ != p.hy_*hw_));
         }
 
         friend
@@ -2705,19 +2707,21 @@ representation) and corresponding data accessors.
     std::ostream&
     operator << ( std::ostream& os, const MyPointH2& p)
     {
-        return( os << p._hx << ' ' << p._hy << ' ' << p._hw);
+        return( os << p.hx_ << ' ' << p.hy_ << ' ' << p.hw_);
     }
 
     std::istream&
     operator >> ( std::istream& is, MyPointH2& p)
     {
-        return( is >> p._hx >> p._hy >> p._hw);
+        return( is >> p.hx_ >> p.hy_ >> p.hw_);
     }
 
     // 2D homogeneous point class data accessor
     class MyPointH2DA {
       public:
         typedef  ::Rt  RT;
+
+	MyPointH2DA( ) { }
 
         const RT&  get_hx( const MyPointH2& p) const { return( p.hx()); }
         const RT&  get_hy( const MyPointH2& p) const { return( p.hy()); }
