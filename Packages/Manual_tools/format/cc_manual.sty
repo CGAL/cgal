@@ -1606,10 +1606,11 @@
 % for functions or methods (if any)
 % 
 %   Param   the template declaration, delimited with \ccEnd
+%           #1 should be empty or whitespace
 
 \newbox\templatedeclbox
 
-\def\ccTemplateLineHandling template#1<#2>#3\ccEnd{%
+\def\ccTemplateLineHandling #1template#2<#3>#4\ccEnd{%
     % Note: The \templatedeclbox must also be deleted after each use
     %       which is done in \ccLayoutThreeColumns.
     \ifnum\ccTagRmTemplate=\ccTrue
@@ -1617,12 +1618,12 @@
     \else
         \ifnum\ccTagTemplateInline=\ccTrue
             \setbox\templatedeclbox=\hbox{\ccFont\ccPrintTokens 
-                template#1<#2>\ccEnd\ }%
+                template#2<#3>\ccEnd\ }%
         \else
             \setbox\templatedeclbox=\hbox{}%
             \ccTopSkip
             \hspace*{\ccwIndent}%
-            {\ccFont\ccPrintTokens template#1<#2>\ccEnd \ccEndFont}%
+            {\ccFont\ccPrintTokens template#2<#3>\ccEnd \ccEndFont}%
             \nopagebreak[4]\par
             \ccReverseTopSkip\vspace{-\parskip}%
         \fi
