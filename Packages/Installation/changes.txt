@@ -7,6 +7,7 @@
 //	actual revision
 //---------------------------------------------------------------------
 
+GLOB: Set -ftemplate-depth25 for gcc 2.* only. (gcc 3 has a default of 50.)
 GLOB: Fixed clocales -> clocale.
 GLOB: Replace "/" by "-" in compiler name (non-interactive mode).
 ALL : Added options for setting CUSTOM_CXX/LDFLAGS from command line.
