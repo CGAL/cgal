@@ -1,7 +1,7 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
-Ver 7.10()
+Ver 7.10(20/03/02)
 - change names of Context's member functions
 - fixed copy of the constraint_hierarchy
 - added  : #include  <CGAL/squared_distance_2.h> in 
