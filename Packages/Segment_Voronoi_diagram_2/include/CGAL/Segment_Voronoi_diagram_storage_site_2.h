@@ -112,6 +112,24 @@ public:
     return h_[i];
   }
 
+  Self source_site() const {
+    CGAL_precondition( is_segment() );
+    if ( is_exact() || is_exact(0) ) {
+      return Self(h_[0]);
+    } else {
+      return Self(h_[0], h_[1], h_[2], h_[3]);
+    }
+  }
+
+  Self target_site() const {
+    CGAL_precondition( is_segment() );
+    if ( is_exact() || is_exact(1) ) {
+      return Self(h_[1]);
+    } else {
+      return Self(h_[0], h_[1], h_[4], h_[5]);
+    }
+  }
+
   Self supporting_segment_site() const {
     CGAL_precondition( is_segment() );
     return Self(h_[0], h_[1]);

@@ -86,6 +86,19 @@ public:
     }
   }
 
+  Self source_site() const
+  {
+    CGAL_precondition( is_segment() );
+    return Self(h_[0]);
+  }
+
+  Self target_site() const
+  {
+    CGAL_precondition( is_segment() );
+    return Self(h_[1]);
+  }
+
+
 protected:
   // INITIALIZATION
   //---------------
