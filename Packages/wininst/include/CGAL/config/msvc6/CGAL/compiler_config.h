@@ -14,7 +14,7 @@
 // release       : 
 // release_date  : 
 //
-// coordinator   : Radu Ursu <rursu@sophia.inria.fr
+// coordinator   : Radu Ursu <rursu@sophia.inria.fr>
 //
 // ============================================================================
 

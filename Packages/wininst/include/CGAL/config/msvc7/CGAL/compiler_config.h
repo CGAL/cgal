@@ -8,7 +8,7 @@
 //
 // ----------------------------------------------------------------------------
 //
-// file          : include/CGAL/config/msvc7/compiler_config.h
+// file          : include/CGAL/config/msvc7/CGAL/compiler_config.h
 // package       : wininst
 // author(s)     : Radu Ursu
 // release       : 

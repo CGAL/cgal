@@ -1,6 +1,10 @@
-2.1.17(28/06/02)   All the dsps from demo directory were added 		   in binary mode.
+2.1.17(05/07/02)  Removed the CGALQt.dsp and CGALQt.vcproj from wininst package
+		  They should be in the Qt_widget package
+		  Have tried to put good headers in compiler_config.h
+
+2.1.17(28/06/02)   All the dsps from demo directory were added in binary mode.
 		   The same for the projects in src directory
-		   The file include/CGAL/config/msvc7/CGAL/ 		   compiler_config.h defined CGAL_CFG_NOMINMAX
+		   The file include/CGAL/config/msvc7/CGAL/compiler_config.h defined CGAL_CFG_NOMINMAX
 
 2.1.16(19/06/02)   Patched the release version of cgallib.dsp
 
