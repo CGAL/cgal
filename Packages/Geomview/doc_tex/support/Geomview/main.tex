@@ -25,10 +25,6 @@ Center in Minneapolis\footnote{\tt http://www.geom.umn.edu/}.
 the following requirement : the last line in the startup file \ccc{.geomview}
 must be \ccc{(echo "started")}.  This is no longer necessary.
 
-\noindent {\bf Important:} The commands \ccc{geomview} and \ccc{rsh} (when
-running on a remote machine) must be in the user's \ccc{PATH}, otherwise the
-program will not be able to execute.
-
 \begin{ccClass}{Geomview_stream}
 \ccDefinition
 An object of the class \ccClassName\ is a stream in which geometric
@@ -48,9 +44,9 @@ a remote machine.
 				    const char *machine = NULL,
                                     const char *login = NULL);}
 {Introduces a Geomview stream \ccVar\ with a camera that sees the
-bounding box. If \ccc{machine} and \ccc{login} are not \ccc{NULL},
-Geomview is started on the remote machine.}
-
+bounding box.  The command \ccc{geomview} must be in the user's \ccc{PATH}.
+If \ccc{machine} and \ccc{login} are not \ccc{NULL},
+Geomview is started on the remote machine using \ccc{rsh}.}
 
 \ccOperations
 
