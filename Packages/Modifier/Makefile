@@ -53,7 +53,7 @@ $(Package).tar.gz:
 	tar -zcvf $(Package).tar.gz \
 	--exclude=CVS --exclude=wrapper.tex --exclude=Makefile --exclude=TODO \
 	--exclude="*".swp \
-	version long_long_description.txt description.txt changes.txt \
+	version long_description.txt description.txt changes.txt \
 	test include doc_tex doc_ps
 
 doc: doc_ps/$(Package).ps
