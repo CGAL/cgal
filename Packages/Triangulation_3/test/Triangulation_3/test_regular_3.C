@@ -25,44 +25,22 @@
 #include <cassert>
 #include <list>
 #include <vector>
-
 #include <CGAL/triple.h>
+
+#include <CGAL/_test_types.h>
+
+#include <CGAL/Triangulation_geom_traits_3.h>
+#include <CGAL/Regular_triangulation_euclidean_traits_3.h>
+
 #include <CGAL/Triangulation_cell_base_3.h>
 #include <CGAL/Triangulation_vertex_base_3.h>
 
-#ifdef CGAL_USE_LEDA
-#include <CGAL/leda_integer.h>
-typedef leda_integer my_NT;
-#else
-#ifdef CGAL_USE_GMP
-#include <CGAL/Gmpz.h>
-typedef CGAL::Gmpz my_NT;
-#else
-#include <CGAL/double.h>
-typedef double my_NT;
-#endif
-#endif
-
-#ifndef CGAL_CARTESIAN_H
-#include <CGAL/Cartesian.h>
-#endif // CGAL_CARTESIAN_H
-#ifndef CGAL_HOMOGENEOUS_H
-#include <CGAL/Homogeneous.h>
-#endif // CGAL_HOMOGENEOUS_H
-
-#include <CGAL/Regular_triangulation_euclidean_traits_3.h>
-
 #include <CGAL/Triangulation_data_structure_3.h>
 
-#include <CGAL/Triangulation_3.h>
 #include <CGAL/Regular_triangulation_3.h>
 
 #include <CGAL/_test_types.C>
 #include <CGAL/_test_cls_regular_3.C>
-
-
-typedef CGAL::Cartesian<my_NT> Test_rep_cartesian;
-typedef CGAL::Homogeneous<my_NT> Test_rep_homogeneous;
 
 bool del=true;
 
@@ -70,8 +48,9 @@ int main()
 {
 
   std::cout << " with CGAL::Regular_triangulation_euclidean_traits_3: " << std::endl;
- 
+
   typedef CGAL::Regular_triangulation_euclidean_traits_3<Test_rep_cartesian>  traits;
+//  typedef CGAL::Regular_triangulation_euclidean_traits_3<Test_rep_cartesian>  traits;
 // works with both geom_traits
  // typedef CGAL::_Triangulation_test_traits_3                         traits;
   typedef CGAL::Triangulation_vertex_base_3<traits>                 Vb;
@@ -79,7 +58,178 @@ int main()
   typedef CGAL::Triangulation_data_structure_3<Vb,Fb>               Tds;
   typedef CGAL::Regular_triangulation_3<traits,Tds>                Cls;
 
-  _test_cls_regular_3( Cls() );
+  //  _test_cls_regular_3( Cls() );
+  typedef  traits::Bare_point Point;
+  typedef  traits::Weighted_point Weighted_point;
+
+  typedef std::list<Weighted_point>                        list_point;
+
+  // temporary version
+
+  int n,m;
+  int count = 0 ;
+
+  std::cout << " test dimension 1 " << std::endl;
+  Cls T1;
+  std::cout << " number of inserted points : " ;
+  for ( m=0; m<5; m++) {
+    if ( (m%2)== 0 ) 
+      T1.insert( Weighted_point( Point( 2*m,0,0 ), 2 ) );
+    else T1.insert( Weighted_point( Point( -2*m+1,0,0 ), 2 ) );
+    count++;
+    if (count <10)
+      std::cout << count << '\b' ;
+    else
+      if (count < 100)
+	std::cout << count << '\b' << '\b' ;
+      else
+	std::cout << count << '\b' << '\b' << '\b' ;
+    std::cout.flush();
+  }
+  assert( T1.is_valid() );
+  std::cout << std::endl << " number of vertices : " 
+	    << T1.number_of_vertices() << std::endl;
+
+  std::cout << " number of inserted points : " ;
+  for ( m=0; m<5; m++) {
+    if ( (m%2)== 0 ) 
+      T1.insert( Weighted_point( Point( 2*m+1,0,0 ), 5 ) );
+    else T1.insert( Weighted_point( Point( -2*m+1,0,0 ), 5 ) );
+    count++;
+    if (count <10)
+      std::cout << count << '\b' ;
+    else
+      if (count < 100)
+	std::cout << count << '\b' << '\b' ;
+      else
+	std::cout << count << '\b' << '\b' << '\b' ;
+    std::cout.flush();  
+  }
+  assert( T1.is_valid() );
+  std::cout << std::endl << " number of vertices : " 
+	    << T1.number_of_vertices() << std::endl;
+
+  std::cout << " number of inserted points : " ;
+  for ( m=0; m<10; m++) {
+    if ( (m%2)== 0 ) 
+      T1.insert( Weighted_point( Point( m,0,0 ), 1 ) );
+    else T1.insert( Weighted_point( Point( -m,0,0 ), 1 ) );
+    count++;
+    if (count <10)
+      std::cout << count << '\b' ;
+    else
+      if (count < 100)
+	std::cout << count << '\b' << '\b' ;
+      else
+	std::cout << count << '\b' << '\b' << '\b' ;
+    std::cout.flush();  
+  }
+  assert( T1.is_valid() );
+  std::cout << std::endl << " number of vertices : " 
+	    << T1.number_of_vertices() << std::endl;
+  assert( T1.dimension()==1 );
+
+  std::cout << " test dimension 2 " << std::endl;
+  std::cout << " number of inserted points : " ;
+  Cls T2;
+
+  count = 0 ;
+  int px=1, py=1;
+  int qx=-1, qy=2;
+  for (m=0; m<10; m++)
+    for (n=0; n<10; n++) {
+      T2.insert( Weighted_point( Point(m*px+n*qx, m*py+n*qy, 0), 1 ) );
+      count++;
+      if (count <10)
+	std::cout << count << '\b' ;
+      else
+	if (count < 100)
+	  std::cout << count << '\b' << '\b' ;
+	else
+	  std::cout << count << '\b' << '\b' << '\b' ;
+      std::cout.flush();
+    }
+  for (m=10; m<20; m++)
+    for (n=0; n<10; n++) {
+      T2.insert( Weighted_point( Point(m*px+n*qx, m*py+n*qy, 0), -1 ) );
+      count++;
+      if (count <10)
+	std::cout << count << '\b' ;
+      else
+	if (count < 100)
+	  std::cout << count << '\b' << '\b' ;
+	else
+	  std::cout << count << '\b' << '\b' << '\b' ;
+      std::cout.flush();
+    }
+  for (m=0; m<10; m++)
+    for (n=10; n<20; n++) {
+      T2.insert( Weighted_point( Point(m*px+n*qx, m*py+n*qy, 0), -2 ) );
+      count++;
+      if (count <10)
+	std::cout << count << '\b' ;
+      else
+	if (count < 100)
+	  std::cout << count << '\b' << '\b' ;
+	else
+	  std::cout << count << '\b' << '\b' << '\b' ;
+      std::cout.flush();
+    }
+  for (m=10; m<20; m++)
+    for (n=10; n<20; n++) {
+      T2.insert( Weighted_point( Point(m*px+n*qx, m*py+n*qy, 0), 5 ) );
+      count++;
+      if (count <10)
+	std::cout << count << '\b' ;
+      else
+	if (count < 100)
+	  std::cout << count << '\b' << '\b' ;
+	else
+	  std::cout << count << '\b' << '\b' << '\b' ;
+      std::cout.flush();
+    }
+ 
+  std::cout << std::endl << " number of vertices : " 
+	    << T2.number_of_vertices() << std::endl;
+  assert( T2.dimension()==2 );
+  assert( T2.is_valid() );
+
+ // dimension 3
+  std::cout << " test dimension 3" << std::endl;
+  Cls T;
+
+  list_point lp;
+  int a, b, d;
+  for (a=0;a!=10;a++)
+    for (b=0;b!=10;b++)
+      for (d=0;d!=10;d++)
+	lp.push_back(Weighted_point( Point(a*b-d*a + (a-b)*10 +a ,
+					   a-b+d +5*b,
+					   a*a-d*d+b),
+				     a*b-a*d) );
+  list_point::iterator it;
+  count = 0 ;
+  std::cout << " number of inserted points : " ;
+  for (it=lp.begin(); it!=lp.end();it++){
+    count++;
+    T.insert(*it);
+    if (count <10)
+      std::cout << count << '\b' ;
+    else
+      if (count < 100)
+        std::cout << count << '\b' << '\b' ;
+      else 
+        if (count < 1000)
+          std::cout << count << '\b' << '\b' << '\b' ;
+        else
+	  std::cout << count << std::endl;
+    std::cout.flush();
+  }
+
+  std::cout << " number of vertices : " 
+	    << T.number_of_vertices() << std::endl;
+  assert(T.is_valid());
+  assert(T.dimension()==3);
 
   return 0;
 }

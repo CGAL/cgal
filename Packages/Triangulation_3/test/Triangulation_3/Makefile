@@ -4,14 +4,9 @@
 #---------------------------------------------------------------------#
 # Choose the right include file from the <cgalroot>/make directory.
 
-#CGAL_MAKEFILE = /u/alcor/0/prisme_util/CGAL/CGAL-last/make/makefile_sparc_SunOS-5.6_g++-2.8.1_LEDA
-#CGAL_MAKEFILE = $(UTIL)/CGAL/CGAL-last/make/makefile_sparc_SunOS-5.6_eg++-egcs-2.91.60_LEDA
-#CGAL_MAKEFILE = /u/alcor/0/prisme_util/CGAL/CGAL-last/make/makefile_sparc_SunOS-5.6_CC-4.2_LEDA
-
 # pour purify, virer LEDA
-#CGAL_MAKEFILE = /0/prisme_util/CGAL/CGAL-last/make/makefile_sparc_SunOS-5.6_eg++-egcs-2.91.66
 
-CGAL_MAKEFILE = /0/prisme_util/CGAL/CGAL-2.1-I-21/make/makefile_sparc_SunOS-5.6_eg++-egcs-2.91.66_LEDA
+CGAL_MAKEFILE = /0/prisme_util/CGAL/CGAL-2.1-I-22/make/makefile_sparc_SunOS-5.6_g++-2.95.1_LEDA
 #CGAL_MAKEFILE = /0/prisme_util/CGAL/CGAL-2.1-I-21/make/makefile_i686_Linux-2.2.7_g++-2.95.1_LEDA
 include $(CGAL_MAKEFILE)
 
@@ -52,11 +47,13 @@ LDFLAGS = $(TESTSUITE_LDFLAGS) \
 #---------------------------------------------------------------------#
 
 all: test_triangulation_geom_traits test_triangulation_tds \
-     test_triangulation_3 test_delaunay_3 test_regular_3 
+     test_triangulation_3 test_delaunay_3 \
+     test_triangulation_regular_traits test_regular_3 
 	./test_triangulation_geom_traits
 	./test_triangulation_tds
 	./test_triangulation_3
 	./test_delaunay_3
+	./test_triangulation_regular_traits
 	./test_regular_3 
 
 test_triangulation_geom_traits : test_triangulation_geom_traits.o
@@ -71,12 +68,16 @@ test_triangulation_3: test_triangulation_3.o
 test_delaunay_3: test_delaunay_3.o 
 	$(CGAL_CXX) -o test_delaunay_3 test_delaunay_3.o $(LDFLAGS)
 
+test_triangulation_regular_traits: test_triangulation_regular_traits.o 
+	$(CGAL_CXX) -o test_triangulation_regular_traits test_triangulation_regular_traits.o $(LDFLAGS)
+
 test_regular_3: test_regular_3.o 
 	$(CGAL_CXX) -o test_regular_3 test_regular_3.o $(LDFLAGS)
+
 clean:
 	- rm -f *.o test_triangulation_3 test_triangulation_geom_traits \
 	            test_triangulation_tds test_delaunay_3 \
-		    test_regular_3 \
+		    test_regular_3 test_triangulation_regular_traits \
 	            Program* Error* Compiler* error* Test*_triangulation_IO_3 \
 	            Test_tds_IO_3 core
 
