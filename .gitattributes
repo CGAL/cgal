@@ -1436,6 +1436,7 @@ Packages/Partition_2/doc_tex/basic/Partition_2/Idar-Oberstein.appx_cvx.gif -text
 Packages/Partition_2/doc_tex/basic/Partition_2/Idar-Oberstein.appx_cvx.ps -text
 Packages/Partition_2/doc_tex/basic/Partition_2/Trier.opt_cvx.gif -text svneol=unset#unset
 Packages/Partition_2/doc_tex/basic/Partition_2/Trier.opt_cvx.ps -text
+Packages/Planar_map/demo/Qt_widget/Planar_map/planar_map.vcproj -text
 Packages/Planar_map/doc_tex/Planar_map/example_p.gif -text svneol=unset#unset
 Packages/Planar_map/doc_tex/Planar_map/example_p.ps -text
 Packages/Planar_map/doc_tex/Planar_map/face.gif -text svneol=unset#unset
