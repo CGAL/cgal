@@ -150,7 +150,7 @@ public:
 
 /*! redraw
  */
-static void redraw(leda_window * wp, double x0, double y0,
+static void redraw(CGAL::Window_stream * wp, double x0, double y0,
                    double x1, double y1)
 { wp->flush_buffer(x0, y0, x1, y1); }
 
