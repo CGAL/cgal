@@ -7,14 +7,14 @@
 # Sylvain Pion, 1998.
 
 # Tell where the script is.
-SCRIPT = ../../../script/filtered_predicate_converter
+SCRIPT = ../../../examples/Interval_arithmetic/filtered_predicate_converter
 
 # Tell which files must be parsed.
-OBJECTS = predicates_on_ftC2.h
+OBJECTS = predicates_on_ftC2.h predicates_on_ftC3.h predicates_on_rtH2.h
 
 #### Don't touch below.
 
-$(OBJECTS): %.h: $(CGAL)/include/CGAL/%.h $(SCRIPT)
+% :: $(CGAL)/include/CGAL/% $(SCRIPT)
 	$(SCRIPT) < $< > $@
 
 all: $(OBJECTS)
