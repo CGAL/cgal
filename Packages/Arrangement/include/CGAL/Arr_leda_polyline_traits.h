@@ -653,14 +653,28 @@ public:
   {
     bool res = nearest_intersection_to_right_1(cv1, cv2, pt, p1, p2);
 
-    Point_2 p3, p4;
-    Curve_2 cv3(cv1), cv4(cv2);
-    cv3=curve_flip(cv3);
-    cv4=curve_flip(cv4);
-    nearest_intersection_to_right_1(cv3, cv4, pt, p3, p4);
+    /*!\todo
+      The following lines have to be under comments, since they add
+      redundency in computation.
+      However, we found a bug. Try to use the test of map-overlay
+      with leda polyline traits.
+      There is a function in the test computing intersection points,
+      when using this function, we have that (may be the last) 
+      intersection point to be computed cause a bug, 
+      since the reversed curves (by flip) do not intersect.
+      Hence p3 and p4 remain uninitialized.
+    */
+    //Point_2 p3, p4;
+    //Curve_2 cv3(cv1), cv4(cv2);
+    //cv3=curve_flip(cv3);
+    //cv4=curve_flip(cv4);
+    //nearest_intersection_to_right_1(cv3, cv4, pt, p3, p4);
 
-    CGAL_assertion( p1 == p3 );
-    CGAL_assertion( p2 == p4 );
+    //cout<<"p1="<<p1<<"  p3="<<p3<<endl;
+    //cout<<"p2="<<p1<<"  p4="<<p3<<endl;
+
+    //CGAL_assertion( p1 == p3 );
+    //CGAL_assertion( p2 == p4 );
     
     return res;
   }
