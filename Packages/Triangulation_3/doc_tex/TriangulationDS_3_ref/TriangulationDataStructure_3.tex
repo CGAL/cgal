@@ -592,16 +592,38 @@ nothing.  Returns the resulting output iterator.
 {Returns the degree of a vertex, that is, the number of incident vertices.
 \ccPrecond{\ccc{v} $\neq$ \ccc{Vertex_handle()}, \ccVar.\ccc{is_vertex(v)}.}}
 
+\ccMethod{int mirror_index(Cell_handle c, int i) const;}
+{Returns the index of \ccc{c} in its $i^{th}$ neighbor.
+\ccPrecond{$i \in \{0, 1, 2, 3\}$.}}
+\ccGlue
+\ccMethod{Vertex_handle mirror_vertex(Cell_handle c, int i) const;}
+{Returns the vertex of the $i^{th}$ neighbor of \ccc{c} that is opposite to
+\ccc{c}.
+\ccPrecond{$i \in \{0, 1, 2, 3\}$.}}
+
 \begin{ccAdvanced}
 \ccHeading{Checking}
 
 \ccMethod{bool is_valid(bool verbose = false) const;}
 {Checks the combinatorial validity of the triangulation by checking
-the validity of all its cells and vertices. 
+the local validity of all its cells and vertices (see functions below). 
 (See Section~\ref{TDS3-sec-intro}.) Moreover, the Euler relation is
-tested.\\ 
+tested.\\
 When \ccc{verbose} is set to \ccc{true}, messages are printed to give
 a precise indication on the kind of invalidity encountered.}
+
+\ccMethod{bool is_valid(Vertex_handle v, bool verbose = false) const;}
+{Checks the local validity of the adjacency relations of the triangulation.
+It also calls the \ccc{is_valid} member function of the vertex.
+When \ccc{verbose} is set to \ccc{true}, messages are printed to give
+a precise indication on the kind of invalidity encountered.}
+
+\ccMethod{bool is_valid(Cell_handle c, bool verbose = false) const;}
+{Checks the local validity of the adjacency relations of the triangulation.
+It also calls the \ccc{is_valid} member function of the cell.
+When \ccc{verbose} is set to \ccc{true}, messages are printed to give
+a precise indication on the kind of invalidity encountered.}
+
 \end{ccAdvanced}
 
 \ccHeading{I/O}

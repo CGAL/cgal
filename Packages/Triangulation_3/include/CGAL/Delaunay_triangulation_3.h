@@ -111,6 +111,7 @@ public:
   using Tr_Base::infinite_vertex;
   using Tr_Base::next_around_edge;
   using Tr_Base::vertex_triple_index;
+  using Tr_Base::mirror_vertex;
 #endif
 
 protected:
@@ -1191,7 +1192,7 @@ side_of_circle(const Cell_handle& c, int i,
     Vertex_handle v1 = c->vertex( ccw(i3) ),
                   v2 = c->vertex( cw(i3) );
     CGAL_triangulation_assertion(coplanar_orientation(v1->point(), v2->point(),
-		                 (c->mirror_vertex(i3))->point()) == NEGATIVE);
+			         mirror_vertex(c, i3)->point()) == NEGATIVE);
     Orientation o = coplanar_orientation(v1->point(), v2->point(), p);
     if ( o != COLLINEAR )
 	return Bounded_side( o );
@@ -1520,7 +1521,7 @@ bool
 Delaunay_triangulation_3<Gt,Tds>::
 is_valid(Cell_handle c, bool verbose, int level) const
 {
-  if ( ! c->is_valid(dimension(),verbose,level) ) {
+  if ( ! Tr_Base::is_valid(c,verbose,level) ) {
     if (verbose) { 
       std::cerr << "combinatorically invalid cell" ;
       for (int i=0; i <= dimension(); i++ )

@@ -1,4 +1,4 @@
-// Copyright (c) 1999,2000,2001,2002,2003  INRIA Sophia-Antipolis (France).
+// Copyright (c) 1999-2005  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -16,6 +16,7 @@
 // $Name$
 //
 // Author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
+//                 Sylvain Pion <Sylvain.Pion@sophia.inria.fr>
 
 // cell of a triangulation data structure of any dimension <=3
 
@@ -36,6 +37,8 @@ public:
   typedef TDS                          Triangulation_data_structure;
   typedef typename TDS::Vertex_handle  Vertex_handle;
   typedef typename TDS::Cell_handle    Cell_handle;
+  typedef typename TDS::Vertex         Vertex;
+  typedef typename TDS::Cell           Cell;
 
   template <typename TDS2>
   struct Rebind_TDS { typedef Triangulation_ds_cell_base_3<TDS2> Other; };
@@ -44,6 +47,7 @@ public:
   {
     set_vertices();
     set_neighbors();
+    set_in_conflict_flag(0);
   }
 
   Triangulation_ds_cell_base_3(const Vertex_handle& v0, const Vertex_handle& v1,
@@ -51,6 +55,7 @@ public:
   {
     set_vertices(v0, v1, v2, v3);
     set_neighbors();
+    set_in_conflict_flag(0);
   }
 
   Triangulation_ds_cell_base_3(const Vertex_handle& v0, const Vertex_handle& v1,
@@ -60,6 +65,7 @@ public:
   {
     set_vertices(v0, v1, v2, v3);
     set_neighbors(n0, n1, n2, n3);
+    set_in_conflict_flag(0);
   }
 
   // ACCESS FUNCTIONS
@@ -68,13 +74,13 @@ public:
   {
     CGAL_triangulation_precondition( i >= 0 && i <= 3 );
     return V[i];
-  } 
+  }
 
   bool has_vertex(const Vertex_handle& v) const
   {
     return (V[0] == v) || (V[1] == v) || (V[2]== v) || (V[3]== v);
   }
-    
+
   bool has_vertex(const Vertex_handle& v, int & i) const
     {
       if (v == V[0]) { i = 0; return true; }
@@ -83,7 +89,7 @@ public:
       if (v == V[3]) { i = 3; return true; }
       return false;
     }
-    
+
   int index(const Vertex_handle& v) const
   {
     if (v == V[0]) { return 0; }
@@ -98,12 +104,12 @@ public:
     CGAL_triangulation_precondition( i >= 0 && i <= 3);
     return N[i];
   }
-    
+
   bool has_neighbor(const Cell_handle& n) const
   {
     return (N[0] == n) || (N[1] == n) || (N[2] == n) || (N[3] == n);
   }
-    
+
   bool has_neighbor(const Cell_handle& n, int & i) const
   {
     if(n == N[0]){ i = 0; return true; }
@@ -112,7 +118,7 @@ public:
     if(n == N[3]){ i = 3; return true; }
     return false;
   }
-    
+
   int index(const Cell_handle& n) const
   {
     if (n == N[0]) return 0;
@@ -121,7 +127,7 @@ public:
     CGAL_triangulation_assertion( n == N[3] );
     return 3;
   }
- 
+
   // SETTING
 
   void set_vertex(int i, const Vertex_handle& v)
@@ -129,7 +135,7 @@ public:
     CGAL_triangulation_precondition( i >= 0 && i <= 3);
     V[i] = v;
   }
-    
+
   void set_neighbor(int i, const Cell_handle& n)
   {
     CGAL_triangulation_precondition( i >= 0 && i <= 3);
@@ -140,7 +146,7 @@ public:
   {
     V[0] = V[1] = V[2] = V[3] = Vertex_handle();
   }
-    
+
   void set_vertices(const Vertex_handle& v0, const Vertex_handle& v1,
                     const Vertex_handle& v2, const Vertex_handle& v3)
   {
@@ -149,12 +155,12 @@ public:
     V[2] = v2;
     V[3] = v3;
   }
-    
+
   void set_neighbors()
   {
     N[0] = N[1] = N[2] = N[3] = Cell_handle();
   }
-    
+
   void set_neighbors(const Cell_handle& n0, const Cell_handle& n1,
                      const Cell_handle& n2, const Cell_handle& n3)
   {
@@ -167,24 +173,48 @@ public:
   // CHECKING
 
   // the following trivial is_valid allows
-  // the user of derived cell base classes 
+  // the user of derived cell base classes
   // to add their own purpose checking
-  bool is_valid(bool, int ) const
-    {return true;}
+  bool is_valid(bool = false, int = 0) const
+  { return true; }
 
-  // Obsolete : it's redundant with the default constructor.
-  void init() const
-  {}
+#ifndef CGAL_NO_DEPRECATED_CODE
+  // Obsolete, kept for backward compatibility.
+  // This should emit a warning.
+  int mirror_index(int i) const
+  {
+      bool WARNING_THIS_FUNCTION_IS_OBSOLETE;
+      CGAL_triangulation_precondition ( i>=0 && i<4 );
+      Cell_handle ni = neighbor(i);
+      if (&*ni->neighbor(0) == this) return 0;
+      if (&*ni->neighbor(1) == this) return 1;
+      if (&*ni->neighbor(2) == this) return 2;
+      CGAL_triangulation_assertion(&*ni->neighbor(3) == this);
+      return 3;
+  }
+
+  // Obsolete as above.
+  Vertex_handle mirror_vertex(int i) const
+  {
+      bool WARNING_THIS_FUNCTION_IS_OBSOLETE;
+      return neighbor(i)->vertex(mirror_index(i));
+  }
+#endif
 
   // For use by Compact_container.
-  void * for_compact_container() const
-  { return N[0].for_compact_container(); }
-  void * & for_compact_container()
-  { return N[0].for_compact_container(); }
+  void * for_compact_container() const { return N[0].for_compact_container(); }
+  void * & for_compact_container()     { return N[0].for_compact_container(); }
+
+  // Conflict flag access functions.
+  // This should become a property map or something at some point.
+  void set_in_conflict_flag(unsigned char f) { _in_conflict_flag = f; }
+  unsigned char get_in_conflict_flag() const { return _in_conflict_flag; }
 
 private:
+
   Cell_handle   N[4];
   Vertex_handle V[4];
+  unsigned char _in_conflict_flag;
 };
 
 template < class TDS >
@@ -205,7 +235,7 @@ operator<<(std::ostream &os, const Triangulation_ds_cell_base_3<TDS> &)
   return os;
 }
 
-// Specialisation for void.
+// Specialization for void.
 template <>
 class Triangulation_ds_cell_base_3<void>
 {

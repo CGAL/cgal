@@ -96,6 +96,8 @@ public:
   using Tr_Base::infinite_vertex;
   using Tr_Base::next_around_edge;
   using Tr_Base::vertex_triple_index;
+  using Tr_Base::mirror_vertex;
+  using Tr_Base::mirror_index;
 
   Regular_triangulation_3(const Gt & gt = Gt())
     : Tr_Base(gt)
@@ -547,7 +549,7 @@ side_of_power_circle( Cell_handle c, int i, const Weighted_point &p) const
     Vertex_handle v1 = c->vertex( ccw(i3) ),
                   v2 = c->vertex( cw(i3) );
     CGAL_triangulation_assertion(coplanar_orientation(v1->point(), v2->point(),
-                                 (c->mirror_vertex(i3))->point()) == NEGATIVE);
+                                 mirror_vertex(c, i3)->point()) == NEGATIVE);
     Orientation o = coplanar_orientation(v1->point(), v2->point(), p);
     if ( o != ZERO )
 	return Bounded_side( o );
@@ -1092,7 +1094,7 @@ remove_3D(Vertex_handle v)
   typename std::vector<Cell_handle>::iterator hi, hend;
   for (hi = hole.begin(), hend = hole.end(); hi != hend; ++hi) {
     int hole_i = (*hi)->index(v);
-    int out_i = (*hi)->mirror_index (hole_i);
+    int out_i = mirror_index(*hi, hole_i);
     Cell_handle out_ch = (*hi)->neighbor (hole_i);
     typename Cell::Point_iterator pi, pend;
     for (pi = (*hi)->hidden_points_begin(), pend = (*hi)->hidden_points_end();

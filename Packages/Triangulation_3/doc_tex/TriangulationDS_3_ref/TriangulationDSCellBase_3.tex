@@ -132,10 +132,11 @@ computes its index \ccc{i} in \ccVar.}
 {Sets the neighbors.}
 
 \ccHeading{Checking}
-\ccMethod{bool is_valid(bool verbose = false) const;}
+\ccMethod{bool is_valid(bool verbose = false, int level = 0) const;}
 {Performs any desired geometric test on a cell.\\
 When \ccc{verbose} is set to \ccc{true}, messages are printed to give
-a precise indication of the kind of invalidity encountered.}
+a precise indication of the kind of invalidity encountered. \ccc{level}
+increases the level of testing.}
 
 \ccHeading{Various}
 
@@ -145,6 +146,12 @@ a precise indication of the kind of invalidity encountered.}
 { These member functions are required by \ccc{Triangulation_data_structure_3}
   because it uses \ccc{Compact_container} to store its cells.  See the
   documentation of \ccc{Compact_container} for the exact requirements.}
+
+\ccMethod{void set_in_conflict_flag(unsigned char f);}{}
+\ccGlue
+\ccMethod{unsigned char get_in_conflict_flag() const;}{}
+{ These functions are used internally to mark cells with a flag.  The user is
+not encouraged to use them directly as they may change in the future.}
 
 \ccHeading{I/O}
 

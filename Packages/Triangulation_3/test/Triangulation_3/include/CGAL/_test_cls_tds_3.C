@@ -145,7 +145,7 @@ _test_cls_tds_3( const Tds &)
       tds6.incident_vertices( (*ccit)->vertex(i),
                               std::inserter(set_of_vertices,
                                             set_of_vertices.begin() ) );
-      if ( set_of_vertices.find((*ccit)->mirror_vertex(i)) 
+      if ( set_of_vertices.find(tds6.mirror_vertex(*ccit, i)) 
 	   == set_of_vertices.end() ) {
 	nbflips++;
 	tds6.flip_flippable( *ccit, i );

@@ -334,10 +334,9 @@ public:
       init_tds();
     }
 
-  Triangulation_3 & operator=(const Triangulation_3 & tr)
+  Triangulation_3 & operator=(Triangulation_3 tr)
     {
-      Triangulation_3 tmp = tr;
-      swap(tmp);
+      swap(tr);
       return *this;
     }
 
@@ -516,6 +515,13 @@ public:
       CGAL_triangulation_precondition( e.third == 1 );
       return side_of_edge(p, e.first, lt, li);
     }
+
+  // Functions forwarded from TDS.
+  int mirror_index(Cell_handle c, int i) const
+  { return _tds.mirror_index(c, i); }
+
+  Vertex_handle mirror_vertex(Cell_handle c, int i) const
+  { return _tds.mirror_vertex(c, i); }
 
   // MODIFIERS
   bool flip(const Facet &f)
@@ -2024,7 +2030,7 @@ side_of_facet(const Point & p,
                 v2 = c->vertex(i2);
 
   CGAL_triangulation_assertion(coplanar_orientation(v1->point(), v2->point(),
-	                       c->mirror_vertex(inf)->point()) == POSITIVE);
+	                       mirror_vertex(c, inf)->point()) == POSITIVE);
 
   switch (coplanar_orientation(v1->point(), v2->point(), p)) {
   case POSITIVE:
@@ -2115,7 +2121,7 @@ side_of_edge(const Point & p,
   // else infinite edge
   int inf = c->index(infinite);
   switch (collinear_position(c->vertex(1-inf)->point(), p,
-	                     c->mirror_vertex(inf)->point())) {
+	                     mirror_vertex(c, inf)->point())) {
       case SOURCE:
 	  lt = VERTEX;
 	  li = 1-inf;
@@ -2564,7 +2570,7 @@ bool
 Triangulation_3<GT,Tds>::
 is_valid(Cell_handle c, bool verbose, int level) const
 {
-  if ( ! c->is_valid(dimension(),verbose,level) ) {
+  if ( ! _tds.is_valid(c,verbose,level) ) {
     if (verbose) { 
       std::cerr << "combinatorially invalid cell";
       for (int i=0; i <= dimension(); i++ )

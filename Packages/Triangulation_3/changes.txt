@@ -1,3 +1,9 @@
+30 March 2005 Sylvain Pion
+- Remove internal Triangulation_ds_{vertex|cell} layer.
+- Added mirror_vertex(), mirror_index(), is_valid(Cell_handle),
+  is_valid(Vertex_handle) at the TDS and Triangulation level.
+- Remove calls to {Vertex|Cell}::init() (deprecated since long).
+
 8 March 2005 Sylvain Pion
 - Weighted_converter : allow operators on other kernel objects too.
 

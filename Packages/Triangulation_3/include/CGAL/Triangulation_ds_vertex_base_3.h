@@ -52,7 +52,7 @@ public:
   // the following trivial is_valid allows
   // the user of derived cell base classes 
   // to add their own purpose checking
-  bool is_valid(bool, int ) const
+  bool is_valid(bool = false, int = 0) const
   { 
     return cell() != Cell_handle();
   }

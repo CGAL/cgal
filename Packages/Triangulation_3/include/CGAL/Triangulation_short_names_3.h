@@ -28,9 +28,6 @@
 #define Triangulation_ds_vertex_base_3              TDS_vb3
 #define Triangulation_ds_cell_base_3                TDS_cb3
 
-#define Triangulation_ds_vertex_3                   TDS_v3
-#define Triangulation_ds_cell_3                     TDS_c3
-
 #define Triangulation_ds_edge_iterator_3            TDS_eit3
 #define Triangulation_ds_facet_iterator_3           TDS_fit3
 

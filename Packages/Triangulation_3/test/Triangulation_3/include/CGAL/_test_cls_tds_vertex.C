@@ -34,12 +34,12 @@ _test_vertex_tds_3(const Vertex &)
   v1->set_cell(c1);
   assert(v1->cell() == c1);
   c1->set_vertex(0, v1);
-  assert(v1->is_valid());
+  assert(tds.is_valid(v1));
 
   Cell_handle c2 = tds.create_cell();
   v1->set_cell(c2);
   c2->set_vertex(0, v1);
-  assert(v1->is_valid());
+  assert(tds.is_valid(v1));
 
   // Unicity of the default constructed handle.
   Vertex_handle v = Vertex_handle();

@@ -871,6 +871,16 @@ Facet start) const;}
 Cell_handle start, int f) const;}
 {As above for edge \ccc{(i,j)} of \ccc{c} and facet \ccc{(start,f)}.} 
 
+\ccMethod{int mirror_index(Cell_handle c, int i) const;}
+{Returns the index of \ccc{c} in its $i^{th}$ neighbor.
+\ccPrecond{$i \in \{0, 1, 2, 3\}$.}}
+\ccGlue
+\ccMethod{Vertex_handle mirror_vertex(Cell_handle c, int i) const;}
+{Returns the vertex of the $i^{th}$ neighbor of \ccc{c} that is opposite to
+\ccc{c}.
+\ccPrecond{$i \in \{0, 1, 2, 3\}$.}}
+
+
 \ccHeading{Traversal of the incident cells and facets, and the adjacent
 vertices of a given vertex} 
 \ccThree{OutputIterator}{t.inciden__cells()}{}

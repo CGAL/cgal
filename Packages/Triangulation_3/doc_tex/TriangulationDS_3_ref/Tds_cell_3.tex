@@ -82,13 +82,6 @@ computes its index \ccc{i} in \ccVar.}
 {Returns \ccc{true} if \ccc{n} is a neighbor of \ccVar,  and
 computes its index \ccc{i} in \ccVar.}
 
-\ccMethod{Vertex_handle mirror_vertex(int i) const;}
-{Returns the vertex of the neighbor of \ccVar\ that is opposite to \ccVar.
-\ccPrecond{$i \in \{0, 1, 2, 3\}$.}}
-\ccMethod{int mirror_index(int i) const;}
-{Returns the index of \ccVar\ in its $i^{th}$ neighbor.
-\ccPrecond{$i \in \{0, 1, 2, 3\}$.}}
-
 \ccHeading{Setting}
 
 \ccMethod{void set_vertex(int i, Vertex_handle v);}
@@ -114,30 +107,11 @@ computes its index \ccc{i} in \ccVar.}
 \ccHeading{Checking}
 \ccThree{Vertex_handle}{c.set_vertices(v);}{}
 
-\ccMethod{bool is_valid(int dim=3, bool verbose = false) const;}
-{\ccc{dim} is the dimension of the triangulation, with default
-value~3.\\
-In dimension 3 (resp. 2, 1) this function must check that the cell
-shares three (resp. two, one) vertices with its neighbors, and these
-neighbors have a correct reciprocal neighboring link. Moreover, the
-consistency of the orientations of common faces must be checked.\\ 
-The validity of all the vertices of the cell must be checked.\\
-The validity of the base cell is also checked.\\ 
-When \ccc{verbose} is set to \ccc{true}, messages are printed to give
-a precise indication of the kind of invalidity encountered.}
-
-%\ccHasModels
-
-%\ccc{CGAL::Triangulation_data_structure_3<Triangulation_vb_3,Triangulation_cb_3>::Cell}.
+\ccMethod{bool is_valid(bool verbose = false, int level = 0) const;}
+{User defined local validity checking function.}
 
 \ccSeeAlso
 
 \ccc{TriangulationDataStructure_3::Vertex}.
 
 \end{ccRefConcept}
-
-% +------------------------------------------------------------------------+
-%%RefPage: end of main body, begin of footer
-% EOF
-% +------------------------------------------------------------------------+
-
