@@ -14,7 +14,7 @@ int main(int argc, char* argv[])
 #define ISR_DEBUG
 
 #include <CGAL/Cartesian.h>
-#include <CGAL/Snap_rounding_2.h>
+#include "../../include/CGAL/Snap_rounding_2.h"
 
 #include <fstream>
 
@@ -36,8 +36,13 @@ void draw_orig(CGAL::Window_stream &w,std::list<Segment_2> &seg_list)
 }
 #endif		   
 
-void read_data(int argc,char *argv[],Number_Type &prec,std::list<Segment_2> &seg_list,
-               bool &wait_for_click,int &number_of_kd_trees,bool &do_isr)
+void read_data(int argc,
+               char *argv[],
+               Number_Type &prec,
+               std::list<Segment_2> &seg_list,
+               bool &wait_for_click,
+               int &number_of_kd_trees,
+               bool &do_isr)
 {
   int number_of_segments,i;
   CGAL::Segment_data<Rep> seg;
@@ -88,9 +93,7 @@ void read_data(int argc,char *argv[],Number_Type &prec,std::list<Segment_2> &seg
 }
 
 #ifdef ISR_DEBUG
-//inline Number_Type max(Number_Type a,Number_Type b) {return((a > b) ? a : b);}
 inline Number_Type max(Number_Type a,Number_Type b,Number_Type c) {Number_Type tmp = max(a,b);return(max(tmp,c));}
-//inline Number_Type min(Number_Type a,Number_Type b) {return((a > b) ? b : a);}
 inline Number_Type min(Number_Type a,Number_Type b,Number_Type c) {Number_Type tmp = min(a,b);return(min(tmp,c));}
 
 
