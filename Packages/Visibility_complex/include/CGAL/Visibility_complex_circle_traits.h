@@ -23,7 +23,6 @@
 #include <CGAL/basic.h>
 #include <CGAL/Circle_by_radius_2.h>
 #include <CGAL/Arc_2.h>
-#include <CGAL/Circle_2_Circle_2_intersection.h>
 #include <CGAL/Circle_2_Bitangent_2_intersection.h>
 #include <CGAL/predicates/kernel_ftC2.h>
 
