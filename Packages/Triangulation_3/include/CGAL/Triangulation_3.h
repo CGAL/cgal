@@ -2463,28 +2463,55 @@ public:
 	CGAL_triangulation_precondition( c->has_vertex(v) );
       }
 
+      set<Cell*, less<Cell*> > cells;
+      util_incident_vertices(v, vertices, cells, c);
+      return;
+      // previous buggy version !
+//       int found = 0;
+//       for ( j=0; j <= d; j++ ) {
+// 	if ( j != c->index(v) ) {
+// 	  if ( vertices.find( &(*(c->vertex(j))) ) == vertices.end() ) {
+// 	    vertices.insert( &(*(c->vertex(j))) );
+// 	  }
+// 	  else {
+// 	    found++; // c->vertex(j) was already found 
+// 	  }
+// 	}
+//       }
+//       if ( found == 3 ) return; // c was already visited
+      
+//       for ( j=0; j <= d; j++ ) {
+// 	if ( j != c->index(v) ) {
+// 	  incident_vertices( v, vertices, c->neighbor(j) );
+// 	}
+//       }
+    }
+private:
+  void 
+  util_incident_vertices(Vertex_handle v, 
+			 set<Vertex*, less<Vertex*> > & vertices,
+			 set<Cell*, less<Cell*> > & cells,
+			 Cell_handle c ) const
+    {
+      if ( cells.find( &(*c) ) != cells.end() ) {
+	return; // c was already visited
+      }
+      cells.insert( &(*c) );
+
       int d = dimension();
       int j;
-      int found = 0;
       for ( j=0; j <= d; j++ ) {
 	if ( j != c->index(v) ) {
 	  if ( vertices.find( &(*(c->vertex(j))) ) == vertices.end() ) {
 	    vertices.insert( &(*(c->vertex(j))) );
 	  }
-	  else {
-	    found++; // c->vertex(j) was already found 
-	  }
+	  util_incident_vertices( v, vertices, cells, c->neighbor(j) );
 	}
       }
-      if ( found == 3 ) return; // c was already visited
       
-      for ( j=0; j <= d; j++ ) {
-	if ( j != c->index(v) ) {
-	  incident_vertices( v, vertices, c->neighbor(j) );
-	}
-      }
     }
-  
+public:
+
   // CHECKING
   bool is_valid(Cell_handle c, bool verbose = false, int level = 0) const
     {
