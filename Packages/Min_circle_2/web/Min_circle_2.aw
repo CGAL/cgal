@@ -20,7 +20,7 @@
 @article
 
 \input{cprog.sty}
-\setlength{\parskip}{0.8ex}
+\setlength{\parskip}{0.6ex}
 
 @! LaTeX macros
 \newenvironment{pseudocode}[1]%
@@ -88,6 +88,7 @@ checks. Finally the product files are created in Section~5.
 @! The Algorithm
 @! ============================================================================
 
+\setlength{\parskip}{0.8ex}
 \clearpage
 \section{The Algorithm} \label{sec:algo}
 
@@ -235,6 +236,10 @@ The class interface looks as follows.
 	// Validity check
 	// --------------
 	@<Min_circle_2 validity check>
+
+	// I/O
+	// ---
+	@<Min_circle_2 I/O operators>
     };
 @end   
 
@@ -309,6 +314,10 @@ section, so we do not comment on it here.
 
     // validity check
     bool  is_valid( bool verbose = false, int level = 0) const;
+
+    // I/O
+    friend ostream& operator << ( ostream& os, CGAL_Min_circle_2<I> const& mc);
+    friend istream& operator >> ( istream& is, CGAL_Min_circle_2<I>      & mc);
     **************************************************************************/
 @end
 
@@ -727,8 +736,8 @@ only for consistency with interfaces of other classes.
     {
 	CGAL_Verbose_ostream verr( verbose);
 	verr << endl;
-	verr << "is_valid( true, "
-	     << level << "):" << endl;
+	verr << "CGAL_Min_circle_2<I>::" << endl;
+	verr << "is_valid( true, " << level << "):" << endl;
 	verr << "  |P| = " << number_of_points()
 	     << ", |S| = " << number_of_support_points() << endl;
 
@@ -891,6 +900,76 @@ contained in the triangle.
 @end
 
 @! ----------------------------------------------------------------------------
+\subsection{I/O}
+
+@macro <Min_circle_2 I/O operators> = @begin
+    friend
+    ostream&
+    operator << ( ostream& os, CGAL_Min_circle_2<I> const& min_circle)
+    {
+	switch ( os.iword( CGAL_IO::mode)) {
+
+	  case CGAL_IO::PRETTY:
+	    os << endl;
+	    os << "CGAL_Min_circle_2( |P| = " << min_circle.number_of_points()
+	       << ", |S| = " << min_circle.number_of_support_points() << endl;
+	    os << "  P = {" << endl;
+	    os << "    ";
+	    copy( min_circle.points_begin(), min_circle.points_end(),
+		  ostream_iterator<Point>( os, ",\n    "));
+	    os << "}" << endl;
+	    os << "  S = {" << endl;
+	    os << "    ";
+	    copy( min_circle.support_points_begin(),
+		  min_circle.support_points_end(),
+		  ostream_iterator<Point>( os, ",\n    "));
+	    os << "}" << endl;
+	    os << "  min_circle = " << min_circle.circle() << endl;
+	    os << ")" << endl;
+	    break;
+
+	  case CGAL_IO::ASCII:
+	    copy( min_circle.points_begin(), min_circle.points.end(),
+		  ostream_iterator<Point>( os, "\n"));
+	    break;
+
+	  case CGAL_IO::BINARY:
+	    copy( min_circle.points_begin(), min_circle.points.end(),
+		  ostream_iterator<Point>( os, " "));
+	    break;
+
+	  default:
+	    CGAL_optimisation_assertion_msg( false, "CGAL_IO::mode invalid!");
+	    break; }
+
+	return( os);
+    }
+
+    friend
+    istream&
+    operator >> ( istream& is, CGAL_Min_circle_2<I>& min_circle)
+    {
+	switch ( is.iword( CGAL_IO::mode)) {
+	  case CGAL_IO::PRETTY:
+	    break;
+	  case CGAL_IO::ASCII:
+	  case CGAL_IO::BINARY:
+	    min_circle.points.erase( min_circle.points.begin(),
+				     min_circle.points.end());
+	    copy( istream_iterator<Point, ptrdiff_t>( is),
+		  istream_iterator<Point, ptrdiff_t>(),
+		  back_inserter( min_circle.points));
+	    min_circle.mc( min_circle.points.end(), 0);
+	    break;
+	  default:
+	    CGAL_optimisation_assertion_msg( false, "CGAL_IO::mode invalid!");
+	    break; }
+
+	return( is);
+    }
+@end
+
+@! ----------------------------------------------------------------------------
 \subsection{Private Member Function {\ccFont compute\_circle}}
 
 This is the method for computing the basic case $\mc(\emptyset,B)$,
@@ -983,7 +1062,9 @@ representation and number type \ccc{integer}.
     #include <CGAL/Optimisation_default_interface_2.h>
     #include <CGAL/Min_circle_2.h>
     #include <CGAL/Random.h>
-    #include <CGAL/IO/ostream_2.h>
+    // #include <CGAL/IO/ostream_2.h>
+    #include <CGAL/IO/new_iostream.h>
+    #include <CGAL/IO/Verbose_ostream.h>
     #include <algo.h>
     #include <assert.h>
     #include <fstream.h>
@@ -1009,6 +1090,7 @@ enables verbose output.
         verbose = true;
 	--argc;
 	++argv; }
+    CGAL_Verbose_ostream verr( verbose);
 @end
 
 @macro <Min_circle_2 test (code coverage)> = @begin
@@ -1016,60 +1098,62 @@ enables verbose output.
     CGAL_Random	 random_x, random_y;
     Point	 random_points[ 10];
     int		 i;
+    verr << "10 random points from [0,100)^2:" << endl;
     for ( i = 0; i < 10; ++i)
 	random_points[ i] = Point( random_x( 100), random_y( 100));
-    if ( verbose) {
-	cerr << "10 random points from [0,100)^2:" << endl;
+    if ( verbose)
 	for ( i = 0; i < 10; ++i)
-	    cerr << i << ": " << random_points[ i] << endl; }
+	    cerr << i << ": " << random_points[ i] << endl;
 
-    // default constructor
+    verr << endl << "default constructor...";
     {
 	Min_circle mc;
 	assert( mc.is_empty());
 	assert( mc.is_valid( verbose));
     }
 
-    // one point constructor
+    verr << endl << "one point constructor...";
     {
 	Min_circle mc( random_points[ 0]);
 	assert( mc.is_degenerate());
 	assert( mc.is_valid( verbose));
     }
 
-    // two points constructor
+    verr << endl << "two points constructor...";
     assert( Min_circle( random_points[ 1],
 			random_points[ 2]).is_valid( verbose));
 
-    // three points constructor
+    verr << endl << "three points constructor...";
     assert( Min_circle( random_points[ 3],
 			random_points[ 4],
 			random_points[ 5]).is_valid( verbose));
 
-    // Point* constructor (without and with randomization)
+    verr << endl << "Point* constructor (without randomization)...";
     assert( Min_circle( random_points, random_points+9).is_valid( verbose));
+
+    verr << endl << "Point* constructor (with randomization)...";
     Min_circle mc( random_points, random_points+9, true);
     assert( mc.is_valid( verbose));
 
-    // list<Point>::const_iterator constructor
+    verr << endl << "list<Point>::const_iterator constructor...";
     assert( Min_circle( mc.points_begin(), mc.points_end(), true).circle()
 	                                                    == mc.circle());
 
-    // #points
+    verr << endl << "#points...";
     assert( mc.number_of_points() == 9);
 
-    // points access already called above
+    verr << endl << "points access already called above.";
 
-    // support points access
+    verr << endl << "support points access...";
     Min_circle::Support_point_iterator iter( mc.support_points_begin());
     for ( i = 0; i < mc.number_of_support_points(); ++i, ++iter)
 	assert( mc.support_point( i) == *iter);
     assert( iter == mc.support_points_end());
 
-    // circle access		   
+    verr << endl << "circle access...";
     Circle circle( mc.circle());
 
-    // in-circle predicates
+    verr << endl << "in-circle predicates...";
     for ( i = 0; i < 9; ++i) {
 	Point const& p( random_points[ i]);
 	assert( ( mc.bounded_side( p) != CGAL_ON_UNBOUNDED_SIDE       ) &&
@@ -1081,13 +1165,39 @@ enables verbose output.
 	    (mc.has_on_boundary(p)       == circle.has_on_boundary(p)    ) &&
 	    (mc.has_on_unbounded_side(p) == circle.has_on_unbounded_side(p)));}
 
-    // is_... predicates already called above
+    verr << endl << "is_... predicates already called above.";
 
-    // modifiers
+    verr << endl << "modifiers...";
     mc.insert( random_points[ 9]);
     assert( mc.is_valid( verbose));
 
-    // validity check already called several times
+    verr << endl << "validity check already called several times.";
+
+    verr << endl << "I/O...";
+    {
+	verr << endl << "  writing `test_Min_circle_2.pretty'...";
+	ofstream os( "test_Min_circle_2.pretty");
+	os << CGAL_pretty << mc;
+    }
+    {
+	verr << endl << "  writing `test_Min_circle_2.ascii'...";
+	ofstream os( "test_Min_circle_2.ascii");
+	os << CGAL_ascii << mc;
+    }
+    {
+	verr << endl << "  writing `test_Min_circle_2.binary'...";
+	ofstream os( "test_Min_circle_2.binary");
+	os << CGAL_binary << mc;
+    }
+    {
+	verr << endl << "  reading `test_Min_circle_2.ascii'...";
+	Min_circle mc_in;
+	ifstream is( "test_Min_circle_2.ascii");
+	is.iword( CGAL_IO::mode) = CGAL_IO::ASCII;
+	is >> mc_in;
+	assert( mc.circle() == mc_in.circle());
+    }
+    verr << endl;
 @end
 
 In addition, some data files can be given as command line
@@ -1100,8 +1210,7 @@ end of each file.
     while ( argc > 1) {
 
 	// read points from file
-	if ( verbose)
-	    cerr << endl << "input file: `" << argv[ 1] << "'" << flush;
+	verr << endl << "input file: `" << argv[ 1] << "'" << flush;
 
 	list<Point>  points;
 	int          n, x, y;
@@ -1152,6 +1261,7 @@ end of each file.
     #include <list.h>
     #include <vector.h>
     #include <algo.h>
+    #include <iostream.h>
 
     @<Min_circle_2 interface>
 

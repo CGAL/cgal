@@ -263,6 +263,28 @@ debugging user supplied interface classes.
 \end{ccAdvanced}
 
 % -----------------------------------------------------------------------------
+\ccHeading{I/O}
+
+\ccFunction{ ostream& operator << ( ostream& os,
+                                    CGAL_Min_circle_2<I> const& min_circle);}{
+        writes \ccVar\ to output stream \ccc{os}.
+        \ccPrecond The output operator is defined for \ccc{I::Point}.}
+
+\ccFunction{ istream& operator >> ( istream& is,
+                                    CGAL_Min_circle_2<I> &min_circle);}{
+        reads \ccVar\ from input stream \ccc{is}.
+        \ccPrecond The input operator is defined for \ccc{I::Point}.}
+
+\ccInclude{CGAL/IO/Window_stream.h}
+
+\ccFunction{ CGAL_Window_stream&
+             operator << ( CGAL_Window_stream& ws,
+                           CGAL_Min_circle_2<I> const& min_circle);}{
+        writes \ccVar\ to window stream \ccc{ws}.
+        \ccPrecond The window stream output operator is defined for
+        \ccc{I::Point} and \ccc{I::Circle}.}
+
+% -----------------------------------------------------------------------------
 \ccImplementation
 
 We implement the algorithm of Welzl, with move-to-front
