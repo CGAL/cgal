@@ -1,5 +1,3 @@
-#line 672 "pcenter.aw"
-#line 18 "code_formatting.awi"
 // ============================================================================
 //
 // Copyright (c) 1998 The CGAL Consortium
@@ -26,9 +24,6 @@
 // 2-4-Centering Axis-Parallel 2D-Rectangles - test program
 // ============================================================================
 
-#line 676 "pcenter.aw"
-#line 803 "pc_testprog.awi"
-#line 621 "pc_testprog.awi"
 #include <CGAL/Cartesian.h>
 #include <CGAL/Point_2.h>
 #include <CGAL/Vector_2.h>
@@ -83,7 +78,6 @@ typedef PCont::iterator                    iterator;
 typedef Creator_uniform_2< FT, Point >     Creator;
 typedef Random_points_in_square_2< Point, Creator >
                                            Point_generator;
-#line 103 "pc_testprog.awi"
 #ifdef _MSC_VER
 // that compiler cannot even distinguish between global
 // and class scope, so ...
@@ -163,7 +157,6 @@ private:
 #ifdef _MSC_VER
 #undef Base
 #endif // _MSC_VER
-#line 676 "pc_testprog.awi"
 
 int
 main(int argc, char* argv[])
@@ -199,7 +192,6 @@ main(int argc, char* argv[])
 #ifndef CGAL_PCENTER_NO_OUTPUT
   cerr << "random seed is " << random_seed << endl;
 #endif // CGAL_PCENTER_NO_OUTPUT
-#line 804 "pc_testprog.awi"
 
   FT result;
 
@@ -241,7 +233,6 @@ main(int argc, char* argv[])
 #endif // CGAL_PCENTER_NO_OUTPUT
 
 #ifdef CGAL_USE_LEDA
-      #line 751 "pc_testprog.awi"
       // check that all points are covered
       CGAL::Infinity_distance_2< R > dist;
       #ifndef _MSC_VER
@@ -291,7 +282,6 @@ main(int argc, char* argv[])
       if (!boundary)
         cerr << "Error: No square has two points on boundary." << endl;
       CGAL_assertion(boundary);
-#line 857 "pc_testprog.awi"
 #endif // CGAL_USE_LEDA
 
     } // for (int sz = 0; sz < 3; ++sz)
@@ -299,8 +289,6 @@ main(int argc, char* argv[])
 
   return 0;
 } 
-#line 677 "pcenter.aw"
-#line 12 "code_formatting.awi"
 // ----------------------------------------------------------------------------
 // ** EOF
 // ----------------------------------------------------------------------------

@@ -1,5 +1,3 @@
-#line 1464 "mon_search.aw"
-#line 18 "code_formatting.awi"
 // ============================================================================
 //
 // Copyright (c) 1998 The CGAL Consortium
@@ -26,21 +24,15 @@
 // Predefined Traits classes for Extremal Polygon Computation
 // ============================================================================
 
-#line 1468 "mon_search.aw"
-#line 54 "code_formatting.awi"
 #if ! (CGAL_EXTREMAL_POLYGON_TRAITS_2_H)
 #define CGAL_EXTREMAL_POLYGON_TRAITS_2_H 1
 
-#line 1449 "mon_search.aw"
 #include <CGAL/Optimisation/assertions.h>
 #include <CGAL/squared_distance_2.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/function_objects.h>
 
-#line 46 "code_formatting.awi"
 CGAL_BEGIN_NAMESPACE
-#line 1455 "mon_search.aw"
-#line 20 "traits.awi"
 template < class R > inline
 #ifndef CGAL_CFG_RETURN_TYPE_BUG_1
 typename R::FT
@@ -56,8 +48,6 @@ Kgon_triangle_area( const Point_2< R >& p,
                    r.x() * ( p.y() - q.y()));
 }
 
-#line 72 "traits.awi"
-#line 42 "traits.awi"
 template < class _R >
 class _Kgon_area_operator
 : public CGAL_STD::binary_function< Point_2< _R >,
@@ -82,7 +72,6 @@ private:
 };
 
 
-#line 73 "traits.awi"
 
 template < class _R >
 class Kgon_area_traits
@@ -131,7 +120,6 @@ public:
   //  of maximum area to o in counterclockwise order and return
   //  the past-the-end iterator for that range (== o + min_k()).
   {
-    #line 205 "traits.awi"
     int number_of_points(
       iterator_distance( points_begin, points_end));
     CGAL_optimisation_precondition( number_of_points > min_k());
@@ -173,10 +161,8 @@ public:
     *o++ = opt_p1;
     *o++ = 0;
     return o;
-#line 122 "traits.awi"
   } // compute_min_k_gon( ... )
 
-  #line 130 "traits.awi"
   #ifndef CGAL_CFG_NO_MEMBER_TEMPLATES
   template < class RandomAccessIC >
   #endif
@@ -194,23 +180,16 @@ public:
     Polygon_2 p( points_begin, points_end);
     return p.is_convex();
   } // is_convex( points_begin, points_end)
-#line 125 "traits.awi"
 
 };
 
-#line 1456 "mon_search.aw"
-#line 251 "traits.awi"
-#line 50 "code_formatting.awi"
 CGAL_END_NAMESPACE
-#line 252 "traits.awi"
 #include <CGAL/Optimisation/assertions.h>
 #include <cmath>
 #ifdef CGAL_USE_LEDA
 #include <CGAL/leda_real.h>
 #endif // CGAL_USE_LEDA
-#line 46 "code_formatting.awi"
 CGAL_BEGIN_NAMESPACE
-#line 258 "traits.awi"
 
 template < class _FT >
 struct Sqrt
@@ -223,8 +202,6 @@ struct Sqrt
   { return CGAL::sqrt( x); }
 
 };
-#line 315 "traits.awi"
-#line 281 "traits.awi"
 template < class _R >
 class _Kgon_perimeter_operator
 : public CGAL_STD::binary_function< Point_2< _R >,
@@ -253,7 +230,6 @@ private:
   const Point_2& root;
 };
 
-#line 316 "traits.awi"
 
 template < class _R >
 class Kgon_perimeter_traits
@@ -308,7 +284,6 @@ public:
     using std::max_element;
 #endif
 
-    #line 384 "traits.awi"
     CGAL_optimisation_precondition_code(
       int number_of_points(
         iterator_distance( points_begin, points_end));)
@@ -330,10 +305,8 @@ public:
     *o++ = 0;
     
     return o;
-#line 371 "traits.awi"
   } // compute_min_k_gon( ... )
 
-  #line 130 "traits.awi"
   #ifndef CGAL_CFG_NO_MEMBER_TEMPLATES
   template < class RandomAccessIC >
   #endif
@@ -351,13 +324,10 @@ public:
     Polygon_2 p( points_begin, points_end);
     return p.is_convex();
   } // is_convex( points_begin, points_end)
-#line 374 "traits.awi"
 
 };
 
-#line 1457 "mon_search.aw"
 
-#line 200 "mon_search.aw"
 template < class RandomAccessIC,
            class OutputIterator >
 inline
@@ -367,7 +337,6 @@ maximum_area_inscribed_k_gon(
   RandomAccessIC points_end,
   int k,
   OutputIterator o)
-#line 169 "mon_search.aw"
 //
 // preconditions:
 // --------------
@@ -376,22 +345,18 @@ maximum_area_inscribed_k_gon(
 //  * the range [points_begin, points_end) of size n > 0
 //    describes the vertices of a convex polygon $P$
 //    enumerated clock- or counterclockwise
-#line 210 "mon_search.aw"
 //  * value_type of RandomAccessIC (=: Point_2)
 //    is Point_2<R> for some representation class R
 //  * OutputIterator accepts Point_2 as value_type
 //  * k >= 3
-#line 186 "mon_search.aw"
 //
 // functionality:
 // --------------
 // computes maximum area inscribed k-gon $P_k$
 // of the polygon $P$,
-#line 194 "mon_search.aw"
 // writes the indices (relative to points_begin)
 // of $P_k$'s vertices to o and
 // returns the past-the-end iterator of that sequence.
-#line 216 "mon_search.aw"
 {
   return CGAL_maximum_area_inscribed_k_gon(
     points_begin,
@@ -412,7 +377,6 @@ CGAL_maximum_area_inscribed_k_gon(
   int k,
   OutputIterator o,
   Point_2< R >*)
-#line 169 "mon_search.aw"
 //
 // preconditions:
 // --------------
@@ -421,22 +385,18 @@ CGAL_maximum_area_inscribed_k_gon(
 //  * the range [points_begin, points_end) of size n > 0
 //    describes the vertices of a convex polygon $P$
 //    enumerated clock- or counterclockwise
-#line 237 "mon_search.aw"
 //  * R is a CGAL representation class
 //  * value_type of RandomAccessIC is Point_2<R>
 //  * OutputIterator accepts Point_2<R> as value_type
 //  * k >= 3
-#line 186 "mon_search.aw"
 //
 // functionality:
 // --------------
 // computes maximum area inscribed k-gon $P_k$
 // of the polygon $P$,
-#line 194 "mon_search.aw"
 // writes the indices (relative to points_begin)
 // of $P_k$'s vertices to o and
 // returns the past-the-end iterator of that sequence.
-#line 243 "mon_search.aw"
 {
   return extremal_polygon(
     points_begin,
@@ -446,7 +406,6 @@ CGAL_maximum_area_inscribed_k_gon(
     Kgon_area_traits< R >());
 } // CGAL_maximum_area_inscribed_k_gon( ... )
 
-#line 200 "mon_search.aw"
 template < class RandomAccessIC,
            class OutputIterator >
 inline
@@ -456,7 +415,6 @@ maximum_perimeter_inscribed_k_gon(
   RandomAccessIC points_end,
   int k,
   OutputIterator o)
-#line 169 "mon_search.aw"
 //
 // preconditions:
 // --------------
@@ -465,22 +423,18 @@ maximum_perimeter_inscribed_k_gon(
 //  * the range [points_begin, points_end) of size n > 0
 //    describes the vertices of a convex polygon $P$
 //    enumerated clock- or counterclockwise
-#line 210 "mon_search.aw"
 //  * value_type of RandomAccessIC (=: Point_2)
 //    is Point_2<R> for some representation class R
 //  * OutputIterator accepts Point_2 as value_type
 //  * k >= 2
-#line 186 "mon_search.aw"
 //
 // functionality:
 // --------------
 // computes maximum perimeter inscribed k-gon $P_k$
 // of the polygon $P$,
-#line 194 "mon_search.aw"
 // writes the indices (relative to points_begin)
 // of $P_k$'s vertices to o and
 // returns the past-the-end iterator of that sequence.
-#line 216 "mon_search.aw"
 {
   return CGAL_maximum_perimeter_inscribed_k_gon(
     points_begin,
@@ -501,7 +455,6 @@ CGAL_maximum_perimeter_inscribed_k_gon(
   int k,
   OutputIterator o,
   Point_2< R >*)
-#line 169 "mon_search.aw"
 //
 // preconditions:
 // --------------
@@ -510,22 +463,18 @@ CGAL_maximum_perimeter_inscribed_k_gon(
 //  * the range [points_begin, points_end) of size n > 0
 //    describes the vertices of a convex polygon $P$
 //    enumerated clock- or counterclockwise
-#line 237 "mon_search.aw"
 //  * R is a CGAL representation class
 //  * value_type of RandomAccessIC is Point_2<R>
 //  * OutputIterator accepts Point_2<R> as value_type
 //  * k >= 2
-#line 186 "mon_search.aw"
 //
 // functionality:
 // --------------
 // computes maximum perimeter inscribed k-gon $P_k$
 // of the polygon $P$,
-#line 194 "mon_search.aw"
 // writes the indices (relative to points_begin)
 // of $P_k$'s vertices to o and
 // returns the past-the-end iterator of that sequence.
-#line 243 "mon_search.aw"
 {
   return extremal_polygon(
     points_begin,
@@ -535,13 +484,10 @@ CGAL_maximum_perimeter_inscribed_k_gon(
     Kgon_perimeter_traits< R >());
 } // CGAL_maximum_perimeter_inscribed_k_gon( ... )
 
-#line 50 "code_formatting.awi"
 CGAL_END_NAMESPACE
-#line 1461 "mon_search.aw"
 
 #endif // ! (CGAL_EXTREMAL_POLYGON_TRAITS_2_H)
 
-#line 12 "code_formatting.awi"
 // ----------------------------------------------------------------------------
 // ** EOF
 // ----------------------------------------------------------------------------

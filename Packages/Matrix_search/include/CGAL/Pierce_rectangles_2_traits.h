@@ -1,5 +1,3 @@
-#line 70 "pierce_traits.awi"
-#line 18 "code_formatting.awi"
 // ============================================================================
 //
 // Copyright (c) 1998 The CGAL Consortium
@@ -26,17 +24,12 @@
 // 2-4-Piercing Axis-Parallel 2D-Rectangles
 // ============================================================================
 
-#line 74 "pierce_traits.awi"
-#line 54 "code_formatting.awi"
 #if ! (CGAL_PIERCE_RECTANGLES_2_TRAITS_H)
 #define CGAL_PIERCE_RECTANGLES_2_TRAITS_H 1
 
-#line 25 "pierce_traits.awi"
 #include <CGAL/Point_2.h>
 
-#line 46 "code_formatting.awi"
 CGAL_BEGIN_NAMESPACE
-#line 28 "pierce_traits.awi"
 
 template < class _R >
 struct Piercing_traits_cartesian {
@@ -53,15 +46,11 @@ struct Piercing_traits_cartesian {
   { return Infinity_distance_2(); }
 
 }; // Piercing_traits_cartesian
-#line 66 "pierce_traits.awi"
-#line 50 "code_formatting.awi"
 CGAL_END_NAMESPACE
-#line 67 "pierce_traits.awi"
 
 
 #endif // ! (CGAL_PIERCE_RECTANGLES_2_TRAITS_H)
 
-#line 12 "code_formatting.awi"
 // ----------------------------------------------------------------------------
 // ** EOF
 // ----------------------------------------------------------------------------

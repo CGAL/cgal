@@ -1,5 +1,3 @@
-#line 138 "pierce.awi"
-#line 18 "code_formatting.awi"
 // ============================================================================
 //
 // Copyright (c) 1998 The CGAL Consortium
@@ -26,26 +24,18 @@
 // 2-4-Piercing Axis-Parallel 2D-Rectangles
 // ============================================================================
 
-#line 142 "pierce.awi"
-#line 54 "code_formatting.awi"
 #if ! (CGAL_PIERCE_RECTANGLES_2_H)
 #define CGAL_PIERCE_RECTANGLES_2_H 1
 
-#line 110 "pierce.awi"
-#line 101 "pierce.awi"
 #include <CGAL/Optimisation/assertions.h>
 #include <CGAL/circulator.h>
 #include <CGAL/function_objects.h>
 #include <CGAL/algorithm.h>
 #include <algorithm>
 #include <vector>
-#line 111 "pierce.awi"
 
-#line 46 "code_formatting.awi"
 CGAL_BEGIN_NAMESPACE
-#line 113 "pierce.awi"
 
-#line 66 "pierce.awi"
 //!!! STL-extensions
 template < class T >
 struct Wastebasket : public CGAL_STD::output_iterator
@@ -68,9 +58,7 @@ struct Wastebasket : public CGAL_STD::output_iterator
   operator++( int)
   { return *this; }
 };
-#line 115 "pierce.awi"
 
-#line 90 "pc_intro.awi"
 template < class _Traits >
 struct Loc_domain {
   // ---------------------------------------------
@@ -220,8 +208,6 @@ public:
   Traits traits;
 
 }; // class Loc_domain
-#line 117 "pierce.awi"
-#line 57 "pierce_4.awi"
 template < class _Traits >
 struct Staircases : public Loc_domain< _Traits > {
   typedef _Traits                           Traits;
@@ -456,19 +442,13 @@ private:
   // exceeds the x-dimension of the location domain its y-dimension?
   bool xgy;
 };
-#line 118 "pierce.awi"
 
-#line 50 "code_formatting.awi"
 CGAL_END_NAMESPACE
-#line 120 "pierce.awi"
 //#ifdef CGAL_REP_CLASS_DEFINED
 //#include <CGAL/Pierce_rectangles_2_traits.h>
 //#endif // CGAL_REP_CLASS_DEFINED
-#line 46 "code_formatting.awi"
 CGAL_BEGIN_NAMESPACE
-#line 124 "pierce.awi"
 
-#line 11 "pierce_2.awi"
 template < class InputIC, class OutputIterator, class Traits >
 inline OutputIterator
 two_cover_points(
@@ -481,7 +461,6 @@ two_cover_points(
 
   return two_cover_points(d, o, ok, t);
 } // two_cover_points(f, l, o, ok, t)
-#line 11 "pierce_2.awi"
 template < class InputIC, class OutputIterator, class Traits >
 inline OutputIterator
 three_cover_points(
@@ -494,7 +473,6 @@ three_cover_points(
 
   return three_cover_points(d, o, ok, t);
 } // three_cover_points(f, l, o, ok, t)
-#line 11 "pierce_2.awi"
 template < class InputIC, class OutputIterator, class Traits >
 inline OutputIterator
 four_cover_points(
@@ -507,7 +485,6 @@ four_cover_points(
 
   return four_cover_points(d, o, ok, t);
 } // four_cover_points(f, l, o, ok, t)
-#line 41 "pierce_2.awi"
 template < class OutputIterator, class Traits >
 OutputIterator
 two_cover_points(
@@ -533,16 +510,13 @@ two_cover_points(
   Min< FT > minft;
   less< FT > lessft;
 
-  #line 85 "pierce_2.awi"
   if (sdist(d[2], d[0]) <= FT(0)) {
     // the location domain is degenerate and [f,l) is one-pierceable
     *o++ = d[0];
     ok = true;
     return o;
   }
-#line 70 "pierce_2.awi"
 
-  #line 98 "pierce_2.awi"
   
     // check whether {d[0], d[2]} forms a piercing set
     if (d.end() ==
@@ -558,7 +532,6 @@ two_cover_points(
         ok = true;
         return o;
       }
-  #line 98 "pierce_2.awi"
   
     // check whether {d[1], d[3]} forms a piercing set
     if (d.end() ==
@@ -579,8 +552,6 @@ two_cover_points(
   ok = false;
   return o;
 } // two_cover_points(d, o, ok, t)
-#line 129 "pierce.awi"
-#line 12 "pierce_3.awi"
 template < class OutputIterator, class Traits >
 OutputIterator
 three_cover_points(
@@ -605,15 +576,12 @@ three_cover_points(
     d.traits.infinity_distance_2_object();
   less< FT > lessft;
 
-  #line 57 "pierce_3.awi"
   // test the four corners:
   for (int k = 0; k < 4; ++k) {
-    #line 81 "pierce_3.awi"
     
     // extract all points which are close enough to d[k]
     Point_2 corner = d[k];
     
-    #line 92 "pierce_3.awi"
     // find first point not covered by the rectangle at d[k]
     Iterator i = find_if(d.begin(), d.end(),
                          compose1(bind1st(lessft, d.r),
@@ -691,8 +659,6 @@ three_cover_points(
   return o;
 
 } // three_cover_points(d, o, ok)
-#line 130 "pierce.awi"
-#line 324 "pierce_4.awi"
 CGAL_END_NAMESPACE
 CGAL_BEGIN_NAMESPACE
 template < class OutputIterator, class Traits >
@@ -700,7 +666,6 @@ OutputIterator
 four_cover_points(Staircases< Traits >& d, OutputIterator o, bool& ok)
 {
 
-  #line 380 "pierce_4.awi"
   #ifndef CGAL_CFG_NO_NAMESPACE
   using std::less;
   using std::iter_swap;
@@ -744,9 +709,7 @@ four_cover_points(Staircases< Traits >& d, OutputIterator o, bool& ok)
     d.traits.construct_point_2_below_right_implicit_point_2_object();
   
   
-#line 341 "pierce_4.awi"
 
-  #line 353 "pierce_4.awi"
   // test the four corners:
   for (int j = 0; j < 5; ++j) {
     const int k = j < 4 ? j : 3;
@@ -766,7 +729,6 @@ four_cover_points(Staircases< Traits >& d, OutputIterator o, bool& ok)
       }
   
   
-    #line 92 "pierce_3.awi"
     // find first point not covered by the rectangle at d[k]
     Iterator i = find_if(d.begin(), d.end(),
                          compose1(bind1st(lessft, d.r),
@@ -838,9 +800,7 @@ four_cover_points(Staircases< Traits >& d, OutputIterator o, bool& ok)
     
     d.end() = save_end;
   } // for (int k = 0; k < 4; ++k)
-#line 343 "pierce_4.awi"
 
-  #line 454 "pierce_4.awi"
   
   // test if four covering rectangles can be placed
   // on the boundary of d, one on each side
@@ -853,7 +813,6 @@ four_cover_points(Staircases< Traits >& d, OutputIterator o, bool& ok)
     // (no need to consider S_bl, since we move from left
     // to right and leaving a rectangle won't make piercing easier)
   
-    #line 497 "pierce_4.awi"
     
     Intervall top_i    = d.top_intervall();
     Intervall left_i   = d.left_intervall();
@@ -1034,18 +993,14 @@ four_cover_points(Staircases< Traits >& d, OutputIterator o, bool& ok)
       } // for (;;)
     } // if (tl != d.tlstc_end())
     
-  #line 470 "pierce_4.awi"
   
   } // if (!d.is_middle_empty())
-#line 345 "pierce_4.awi"
 
   ok = false;
   return o;
 
 } // four_cover_points(d, o, ok)
 
-#line 131 "pierce.awi"
-#line 55 "pierce_traits.awi"
 struct Two_covering_algorithm {
   template < class Traits, class OutputIterator >
   OutputIterator
@@ -1054,7 +1009,6 @@ struct Two_covering_algorithm {
              bool& ok) const
   { return two_cover_points(d, o, ok); }
 }; // class Two_covering_algorithm
-#line 55 "pierce_traits.awi"
 struct Three_covering_algorithm {
   template < class Traits, class OutputIterator >
   OutputIterator
@@ -1063,7 +1017,6 @@ struct Three_covering_algorithm {
              bool& ok) const
   { return three_cover_points(d, o, ok); }
 }; // class Three_covering_algorithm
-#line 55 "pierce_traits.awi"
 struct Four_covering_algorithm {
   template < class Traits, class OutputIterator >
   OutputIterator
@@ -1072,13 +1025,10 @@ struct Four_covering_algorithm {
              bool& ok) const
   { return four_cover_points(d, o, ok); }
 }; // class Four_covering_algorithm
-#line 50 "code_formatting.awi"
 CGAL_END_NAMESPACE
-#line 135 "pierce.awi"
 
 #endif // ! (CGAL_PIERCE_RECTANGLES_2_H)
 
-#line 12 "code_formatting.awi"
 // ----------------------------------------------------------------------------
 // ** EOF
 // ----------------------------------------------------------------------------

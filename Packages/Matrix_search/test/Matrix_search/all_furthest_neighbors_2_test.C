@@ -1,5 +1,3 @@
-#line 1497 "mon_search.aw"
-#line 18 "code_formatting.awi"
 // ============================================================================
 //
 // Copyright (c) 1998 The CGAL Consortium
@@ -26,9 +24,6 @@
 // Test program: All Furthest Neighbors for a Convex Polygon
 // ============================================================================
 
-#line 1501 "mon_search.aw"
-#line 680 "afn.awi"
-#line 542 "afn.awi"
 #include <CGAL/Cartesian.h>
 #include <CGAL/Point_2.h>
 #include <CGAL/Polygon_2.h>
@@ -37,10 +32,8 @@
 #include <CGAL/distance_predicates_2.h>
 #include <CGAL/all_furthest_neighbors_2.h>
 #include <vector>
-#line 681 "afn.awi"
 
 using std::equal;
-#line 559 "afn.awi"
 using std::vector;
 using std::back_inserter;
 using CGAL::Cartesian;
@@ -50,12 +43,10 @@ using CGAL::Random_points_in_square_2;
 using CGAL::random_convex_set_2;
 using CGAL::has_smaller_dist_to_point;
 using CGAL::all_furthest_neighbors;
-#line 684 "afn.awi"
 using CGAL::squared_distance;
 using CGAL::iterator_distance;
 
 typedef double                                 FT;
-#line 571 "afn.awi"
 typedef Cartesian< FT >                              R;
 typedef CGAL::Point_2< R >                           Point;
 typedef Polygon_traits_2< R >                        P_traits;
@@ -64,9 +55,7 @@ typedef vector< int >                                Index_cont;
 typedef CGAL::Polygon_2< P_traits, Point_cont >      Polygon;
 typedef Creator_uniform_2< FT, Point >               Creator;
 typedef Random_points_in_square_2< Point, Creator >  Point_generator;
-#line 689 "afn.awi"
 
-#line 725 "afn.awi"
 #include <CGAL/squared_distance_2.h>
 #include <CGAL/circulator.h>
 #include <algorithm>
@@ -91,7 +80,6 @@ afn_brute_force( RandomAccessIC b,
   } while ( ++i1 != e);
   return o;
 } // afn_brute_force( b, e, o)
-#line 691 "afn.awi"
 
 int
 main()
@@ -99,22 +87,17 @@ main()
   int size [] = { 3, 5, 20, 101, 534 };
   for ( int i( 0); i < 5; ++i) {
     int number_of_points( size[i]);
-    #line 594 "afn.awi"
     // generate random convex polygon:
     Polygon p;
     random_convex_set_2( number_of_points,
                          back_inserter( p),
                          Point_generator( 1));
-#line 699 "afn.awi"
-    #line 602 "afn.awi"
     // compute all furthest neighbors:
     Index_cont neighbors;
     all_furthest_neighbors(
       p.vertices_begin(),
       p.vertices_end(),
       back_inserter( neighbors));
-#line 700 "afn.awi"
-    #line 752 "afn.awi"
     // compute again brute force:
     Index_cont neighbors2;
     afn_brute_force(
@@ -126,7 +109,6 @@ main()
     CGAL_assertion( equal( neighbors.begin(),
                            neighbors.end(),
                            neighbors2.begin()));
-#line 701 "afn.awi"
   } // for ( int i( 0); i < 5; ++i)
 
 #if !defined(CGAL_CFG_NO_ITERATOR_TRAITS) && \
@@ -134,13 +116,11 @@ main()
 
   // try also once with a random-acccess iterator:
   int number_of_points( 222);
-  #line 594 "afn.awi"
   // generate random convex polygon:
   Polygon p;
   random_convex_set_2( number_of_points,
                        back_inserter( p),
                        Point_generator( 1));
-#line 709 "afn.awi"
   Index_cont neighbors( number_of_points);
   all_furthest_neighbors(
     p.vertices_begin(),
@@ -150,8 +130,6 @@ main()
 
   return 0;
 } // int main()
-#line 1502 "mon_search.aw"
-#line 12 "code_formatting.awi"
 // ----------------------------------------------------------------------------
 // ** EOF
 // ----------------------------------------------------------------------------

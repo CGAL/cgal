@@ -1,5 +1,3 @@
-#line 1328 "mon_search.aw"
-#line 18 "code_formatting.awi"
 // ============================================================================
 //
 // Copyright (c) 1998 The CGAL Consortium
@@ -26,18 +24,13 @@
 // A Representation for Cartesian Matrices
 // ============================================================================
 
-#line 1332 "mon_search.aw"
-#line 54 "code_formatting.awi"
 #if ! (CGAL_CARTESIAN_MATRIX_H)
 #define CGAL_CARTESIAN_MATRIX_H 1
 
-#line 28 "cartesian.awi"
 #include <CGAL/basic.h>
 #include <CGAL/Optimisation/assertions.h>
 
-#line 46 "code_formatting.awi"
 CGAL_BEGIN_NAMESPACE
-#line 32 "cartesian.awi"
 
 template < class Operation,
            class RandomAccessIC_row,
@@ -120,13 +113,10 @@ cartesian_matrix( RandomAccessIC_row r_f,
   ( r_f, r_l, c_f, c_l, o);
 }
 
-#line 50 "code_formatting.awi"
 CGAL_END_NAMESPACE
-#line 115 "cartesian.awi"
 
 #endif // ! (CGAL_CARTESIAN_MATRIX_H)
 
-#line 12 "code_formatting.awi"
 // ----------------------------------------------------------------------------
 // ** EOF
 // ----------------------------------------------------------------------------

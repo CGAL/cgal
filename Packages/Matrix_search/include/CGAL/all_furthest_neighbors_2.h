@@ -1,5 +1,3 @@
-#line 1383 "mon_search.aw"
-#line 18 "code_formatting.awi"
 // ============================================================================
 //
 // Copyright (c) 1998 The CGAL Consortium
@@ -26,12 +24,9 @@
 // Compute all furthest neighbors for the vertices of a convex polygon
 // ============================================================================
 
-#line 1387 "mon_search.aw"
-#line 54 "code_formatting.awi"
 #if ! (CGAL_ALL_FURTHEST_NEIGHBORS_2_H)
 #define CGAL_ALL_FURTHEST_NEIGHBORS_2_H 1
 
-#line 358 "afn.awi"
 #include <CGAL/Optimisation/assertions.h>
 
 #ifdef CGAL_REP_CLASS_DEFINED
@@ -44,10 +39,7 @@
 #include <functional>
 #include <algorithm>
 
-#line 46 "code_formatting.awi"
 CGAL_BEGIN_NAMESPACE
-#line 371 "afn.awi"
-#line 108 "afn.awi"
 #ifdef _MSC_VER
 // that compiler cannot even distinguish between global
 // and class scope, so ...
@@ -93,18 +85,13 @@ public:
 #ifdef _MSC_VER
 #undef Base
 #endif // _MSC_VER
-#line 372 "afn.awi"
 
 #if !defined(CGAL_CFG_NO_ITERATOR_TRAITS) && \
 !defined(CGAL_CFG_MATCHING_BUG_2)
 
-#line 50 "code_formatting.awi"
 CGAL_END_NAMESPACE
-#line 377 "afn.awi"
 #include <iterator>
-#line 46 "code_formatting.awi"
 CGAL_BEGIN_NAMESPACE
-#line 379 "afn.awi"
 
 template < class RandomAccessIC, class OutputIterator, class Traits >
 inline
@@ -222,13 +209,10 @@ all_furthest_neighbors( RandomAccessIC points_begin,
                     bind2nd( modulus< int >(), number_of_points));
 } // all_furthest_neighbors( ... )
 
-#line 50 "code_formatting.awi"
 CGAL_END_NAMESPACE
-#line 497 "afn.awi"
 
 #endif // ! (CGAL_ALL_FURTHEST_NEIGHBORS_2_H)
 
-#line 12 "code_formatting.awi"
 // ----------------------------------------------------------------------------
 // ** EOF
 // ----------------------------------------------------------------------------

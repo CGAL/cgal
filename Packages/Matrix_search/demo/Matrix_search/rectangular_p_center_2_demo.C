@@ -1,5 +1,3 @@
-#line 645 "pcenter.aw"
-#line 18 "code_formatting.awi"
 // ============================================================================
 //
 // Copyright (c) 1998 The CGAL Consortium
@@ -26,9 +24,6 @@
 // Demo: 2-4-Centering Axis-Parallel 2D-Rectangles
 // ============================================================================
 
-#line 649 "pcenter.aw"
-#line 185 "pc_testprog.awi"
-#line 12 "pc_testprog.awi"
 #include <CGAL/Cartesian.h>
 #include <CGAL/Iso_rectangle_2.h>
 #include <CGAL/Point_2.h>
@@ -78,7 +73,6 @@ using CGAL::RED;
 using CGAL::ORANGE;
 using CGAL::GREEN;
 
-#line 103 "pc_testprog.awi"
 #ifdef _MSC_VER
 // that compiler cannot even distinguish between global
 // and class scope, so ...
@@ -158,7 +152,6 @@ private:
 #ifdef _MSC_VER
 #undef Base
 #endif // _MSC_VER
-#line 62 "pc_testprog.awi"
 
 // typedefs
 //typedef Filtered_exact< double, leda_real > FT;
@@ -182,9 +175,7 @@ typedef Istream_iterator< Point, leda_window>
   Istream_iterator_point;
 
 
-#line 186 "pc_testprog.awi"
 
-#line 87 "pc_testprog.awi"
 // function class to construct a box
 // around a point p with radius r
 template < class Point, class FT, class Box >
@@ -198,7 +189,6 @@ struct Build_box
                Point(p.x() + r, p.y() + r));
   }
 };
-#line 188 "pc_testprog.awi"
 
 int
 main(int argc, char* argv[])
@@ -295,7 +285,6 @@ main(int argc, char* argv[])
     cerr << "random seed is " << random_seed << endl;
   } else if (argc >= 2 && argv[1][0] == 'i') {
 #ifndef _MSC_VER
-    #line 867 "pc_testprog.awi"
     // read parameters
     int p;
     cin >> p;
@@ -309,7 +298,6 @@ main(int argc, char* argv[])
       cin >> p;
       input_points.push_back(p);
     }
-#line 285 "pc_testprog.awi"
     number_of_points = n;
     number_of_clusters = p;
 #endif
@@ -583,8 +571,6 @@ main(int argc, char* argv[])
 
   return 0;
 }
-#line 650 "pcenter.aw"
-#line 12 "code_formatting.awi"
 // ----------------------------------------------------------------------------
 // ** EOF
 // ----------------------------------------------------------------------------

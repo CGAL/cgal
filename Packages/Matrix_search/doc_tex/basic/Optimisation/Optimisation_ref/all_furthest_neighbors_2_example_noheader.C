@@ -1,5 +1,3 @@
-#line 1493 "mon_search.aw"
-#line 768 "afn.awi"
 #include <CGAL/Cartesian.h>
 #include <CGAL/Point_2.h>
 #include <CGAL/Polygon_2.h>
@@ -41,4 +39,3 @@ main()
 
   return 0;
 } 
-#line 1494 "mon_search.aw"

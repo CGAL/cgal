@@ -1,5 +1,3 @@
-#line 623 "pcenter.aw"
-#line 18 "code_formatting.awi"
 // ============================================================================
 //
 // Copyright (c) 1998 The CGAL Consortium
@@ -26,12 +24,9 @@
 // 2,3-Center Computation for Axis-Parallel 2D-Rectangles
 // ============================================================================
 
-#line 627 "pcenter.aw"
-#line 54 "code_formatting.awi"
 #if ! (CGAL_RECTANGULAR_3_CENTER_2_H)
 #define CGAL_RECTANGULAR_3_CENTER_2_H 1
 
-#line 596 "pcenter.aw"
 #include <CGAL/Cartesian.h>
 #include <CGAL/function_objects.h>
 #include <CGAL/algorithm.h>
@@ -48,10 +43,7 @@
 #define Base B_B_Base
 #endif // _MSC_VER
 
-#line 46 "code_formatting.awi"
 CGAL_BEGIN_NAMESPACE
-#line 613 "pcenter.aw"
-#line 13 "pc_traits.awi"
 /*
 struct Wastebasket
 : public CGAL_STD::iterator< std::output_iterator_tag, void >
@@ -67,8 +59,6 @@ struct Wastebasket
 };
 */
 
-#line 614 "pcenter.aw"
-#line 12 "3cover.awi"
 template < class ForwardIterator, class OutputIterator,
            class FT, class Traits >
 OutputIterator
@@ -145,7 +135,6 @@ rectangular_2_center_2(
   }
   return o;
 }
-#line 91 "3cover.awi"
 template < class RandomAccessIterator,
            class OutputIterator,
            class Traits >
@@ -272,13 +261,11 @@ rectangular_3_center_2_type1(
   }
   return o;
 }
-#line 292 "3cover.awi"
 #ifndef _MSC_VER
 
 template < class R >
 struct Rectangular_3_center_2_type2_operations_base {
 
-  #line 220 "3cover.awi"
   typedef typename R::FT                         FT;
   typedef typename R::Point_2                    Point_2;
   typedef typename R::Iso_rectangle_2            Iso_rectangle_2;
@@ -348,7 +335,6 @@ struct Rectangular_3_center_2_type2_operations_base {
   private:
     R& r_;
     Delta delta_;
-#line 298 "3cover.awi"
 
 public:
 
@@ -357,7 +343,6 @@ public:
   {}
 
 };
-#line 406 "3cover.awi"
 template < class R >
 struct Rectangular_3_center_2_type2_operations0
 : public Rectangular_3_center_2_type2_operations_base< R >
@@ -375,7 +360,6 @@ struct Rectangular_3_center_2_type2_operations0
   : Rectangular_3_center_2_type2_operations_base< R >(r, p)
   {}
 
-  #line 309 "3cover.awi"
   X_compare  compare_x() const { return less_x_2_object(); }
   Y_compare  compare_y() const { return greater_y_2_object(); }
   
@@ -470,9 +454,7 @@ struct Rectangular_3_center_2_type2_operations0
   
   Point construct_y_square(const Point& p, FT r) const
   { return pt_a_l()(p, p, r); }
-#line 424 "3cover.awi"
 };
-#line 523 "3cover.awi"
 template < class R >
 struct Rectangular_3_center_2_type2_operations1
 : public Rectangular_3_center_2_type2_operations_base< R >
@@ -489,7 +471,6 @@ struct Rectangular_3_center_2_type2_operations1
   : Rectangular_3_center_2_type2_operations_base< R >(r, p)
   {}
 
-  #line 428 "3cover.awi"
   X_compare  compare_x() const { return greater_x_2_object(); }
   Y_compare  compare_y() const { return greater_y_2_object(); }
   
@@ -582,9 +563,7 @@ struct Rectangular_3_center_2_type2_operations1
   
   Point construct_y_square(const Point& p, FT r) const
   { return pt_a_r()(p, p, r); }
-#line 540 "3cover.awi"
 };
-#line 639 "3cover.awi"
 template < class R >
 struct Rectangular_3_center_2_type2_operations2
 : public Rectangular_3_center_2_type2_operations_base< R >
@@ -601,7 +580,6 @@ struct Rectangular_3_center_2_type2_operations2
   : Rectangular_3_center_2_type2_operations_base< R >(r, p)
   {}
 
-  #line 544 "3cover.awi"
   X_compare  compare_x() const { return greater_x_2_object(); }
   Y_compare  compare_y() const { return less_y_2_object(); }
   
@@ -694,9 +672,7 @@ struct Rectangular_3_center_2_type2_operations2
   
   Point construct_y_square(const Point& p, FT r) const
   { return pt_b_r()(p, p, r); }
-#line 656 "3cover.awi"
 };
-#line 822 "3cover.awi"
 template < class R >
 struct Rectangular_3_center_2_type2_operations3
 : public Rectangular_3_center_2_type2_operations_base< R >
@@ -713,7 +689,6 @@ struct Rectangular_3_center_2_type2_operations3
   : Rectangular_3_center_2_type2_operations_base< R >(r, p)
   {}
 
-  #line 660 "3cover.awi"
   X_compare  compare_x() const { return less_x_2_object(); }
   Y_compare  compare_y() const { return less_y_2_object(); }
   
@@ -806,7 +781,6 @@ struct Rectangular_3_center_2_type2_operations3
   
   Point construct_y_square(const Point& p, FT r) const
   { return pt_b_l()(p, p, r); }
-#line 839 "3cover.awi"
 };
 
 #else
@@ -814,7 +788,6 @@ struct Rectangular_3_center_2_type2_operations3
 #include <CGAL/rectangular_3_center_2_msvc.h>
 
 #endif // _MSC_VER
-#line 849 "3cover.awi"
 template < class RandomAccessIterator,
            class Rectangle,
            class OutputIterator,
@@ -1425,7 +1398,6 @@ rectangular_3_center_2_type2(
   *o++ = op.construct_y_square(q_r, rad / FT(2));
   return o;
 } // rectangular_3_center_2_type2( ... )
-#line 1462 "3cover.awi"
 template < class ForwardIterator, class OutputIterator, class Traits >
 OutputIterator
 rectangular_3_center_2(
@@ -1520,10 +1492,7 @@ rectangular_3_center_2(
 
 } // rectangular_3_center_2( ... )
 
-#line 615 "pcenter.aw"
-#line 50 "code_formatting.awi"
 CGAL_END_NAMESPACE
-#line 616 "pcenter.aw"
 
 #ifdef _MSC_VER
 #undef Base
@@ -1531,7 +1500,6 @@ CGAL_END_NAMESPACE
 
 #endif // ! (CGAL_RECTANGULAR_3_CENTER_2_H)
 
-#line 12 "code_formatting.awi"
 // ----------------------------------------------------------------------------
 // ** EOF
 // ----------------------------------------------------------------------------

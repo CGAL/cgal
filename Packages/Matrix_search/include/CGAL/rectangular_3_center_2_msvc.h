@@ -1,5 +1,3 @@
-#line 634 "pcenter.aw"
-#line 18 "code_formatting.awi"
 // ============================================================================
 //
 // Copyright (c) 1998 The CGAL Consortium
@@ -26,15 +24,11 @@
 // MSVC Workarounds
 // ============================================================================
 
-#line 638 "pcenter.aw"
-#line 54 "code_formatting.awi"
 #if ! (CGAL_RECTANGULAR_3_CENTER_2_MSVC_H)
 #define CGAL_RECTANGULAR_3_CENTER_2_MSVC_H 1
 
-#line 755 "3cover.awi"
 template < class R >
 struct Rectangular_3_center_2_type2_operations0 {
-  #line 220 "3cover.awi"
   typedef typename R::FT                         FT;
   typedef typename R::Point_2                    Point_2;
   typedef typename R::Iso_rectangle_2            Iso_rectangle_2;
@@ -104,7 +98,6 @@ struct Rectangular_3_center_2_type2_operations0 {
   private:
     R& r_;
     Delta delta_;
-#line 758 "3cover.awi"
 public:
   typedef Point_2              Point;
   typedef Iso_rectangle_2      Rectangle;
@@ -116,7 +109,6 @@ public:
   : r_(r), delta_(std::bind1st(r.infinity_distance_2_object(), p))
   {}
 
-  #line 309 "3cover.awi"
   X_compare  compare_x() const { return less_x_2_object(); }
   Y_compare  compare_y() const { return greater_y_2_object(); }
   
@@ -211,11 +203,9 @@ public:
   
   Point construct_y_square(const Point& p, FT r) const
   { return pt_a_l()(p, p, r); }
-#line 770 "3cover.awi"
 };
 template < class R >
 struct Rectangular_3_center_2_type2_operations1 {
-  #line 220 "3cover.awi"
   typedef typename R::FT                         FT;
   typedef typename R::Point_2                    Point_2;
   typedef typename R::Iso_rectangle_2            Iso_rectangle_2;
@@ -285,7 +275,6 @@ struct Rectangular_3_center_2_type2_operations1 {
   private:
     R& r_;
     Delta delta_;
-#line 774 "3cover.awi"
 public:
   typedef Point_2              Point;
   typedef Iso_rectangle_2      Rectangle;
@@ -297,7 +286,6 @@ public:
   : r_(r), delta_(std::bind1st(r.infinity_distance_2_object(), p))
   {}
 
-  #line 428 "3cover.awi"
   X_compare  compare_x() const { return greater_x_2_object(); }
   Y_compare  compare_y() const { return greater_y_2_object(); }
   
@@ -390,11 +378,9 @@ public:
   
   Point construct_y_square(const Point& p, FT r) const
   { return pt_a_r()(p, p, r); }
-#line 786 "3cover.awi"
 };
 template < class R >
 struct Rectangular_3_center_2_type2_operations2 {
-  #line 220 "3cover.awi"
   typedef typename R::FT                         FT;
   typedef typename R::Point_2                    Point_2;
   typedef typename R::Iso_rectangle_2            Iso_rectangle_2;
@@ -464,7 +450,6 @@ struct Rectangular_3_center_2_type2_operations2 {
   private:
     R& r_;
     Delta delta_;
-#line 790 "3cover.awi"
 public:
   typedef Point_2              Point;
   typedef Iso_rectangle_2      Rectangle;
@@ -476,7 +461,6 @@ public:
   : r_(r), delta_(std::bind1st(r.infinity_distance_2_object(), p))
   {}
 
-  #line 544 "3cover.awi"
   X_compare  compare_x() const { return greater_x_2_object(); }
   Y_compare  compare_y() const { return less_y_2_object(); }
   
@@ -569,11 +553,9 @@ public:
   
   Point construct_y_square(const Point& p, FT r) const
   { return pt_b_r()(p, p, r); }
-#line 802 "3cover.awi"
 };
 template < class R >
 struct Rectangular_3_center_2_type2_operations3 {
-  #line 220 "3cover.awi"
   typedef typename R::FT                         FT;
   typedef typename R::Point_2                    Point_2;
   typedef typename R::Iso_rectangle_2            Iso_rectangle_2;
@@ -643,7 +625,6 @@ struct Rectangular_3_center_2_type2_operations3 {
   private:
     R& r_;
     Delta delta_;
-#line 806 "3cover.awi"
 public:
   typedef Point_2              Point;
   typedef Iso_rectangle_2      Rectangle;
@@ -655,7 +636,6 @@ public:
   : r_(r), delta_(std::bind1st(r.infinity_distance_2_object(), p))
   {}
 
-  #line 660 "3cover.awi"
   X_compare  compare_x() const { return less_x_2_object(); }
   Y_compare  compare_y() const { return less_y_2_object(); }
   
@@ -748,12 +728,10 @@ public:
   
   Point construct_y_square(const Point& p, FT r) const
   { return pt_b_l()(p, p, r); }
-#line 818 "3cover.awi"
 };
 
 #endif // ! (CGAL_RECTANGULAR_3_CENTER_2_MSVC_H)
 
-#line 12 "code_formatting.awi"
 // ----------------------------------------------------------------------------
 // ** EOF
 // ----------------------------------------------------------------------------

@@ -1,5 +1,3 @@
-#line 1533 "mon_search.aw"
-#line 18 "code_formatting.awi"
 // ============================================================================
 //
 // Copyright (c) 1998 The CGAL Consortium
@@ -26,8 +24,6 @@
 // Example program: Compute extremal polygons of a convex polygon
 // ============================================================================
 
-#line 1537 "mon_search.aw"
-#line 757 "testprog.awi"
 #include <CGAL/Cartesian.h>
 #include <CGAL/Point_2.h>
 #include <CGAL/Polygon_2.h>
@@ -72,7 +68,6 @@ int main() {
 
   return 0;
 } 
-#line 12 "code_formatting.awi"
 // ----------------------------------------------------------------------------
 // ** EOF
 // ----------------------------------------------------------------------------

@@ -1,5 +1,3 @@
-#line 1506 "mon_search.aw"
-#line 18 "code_formatting.awi"
 // ============================================================================
 //
 // Copyright (c) 1998 The CGAL Consortium
@@ -26,8 +24,6 @@
 // Demo program: Compute extremal polygons of a convex polygon
 // ============================================================================
 
-#line 1510 "mon_search.aw"
-#line 23 "testprog.awi"
 #include <CGAL/Cartesian.h>
 #include <CGAL/Point_2.h>
 #include <CGAL/Segment_2.h>
@@ -53,7 +49,6 @@ using std::back_inserter;
 using std::copy;
 using std::max;
 
-#line 367 "testprog.awi"
 using std::vector;
 using CGAL::Cartesian;
 using CGAL::Random_access_circulator_from_container;
@@ -83,8 +78,6 @@ typedef vector< Vertex_iterator >                 Vertex_iteratorCont;
 typedef Vertex_iteratorCont::iterator             Vertex_iteratorIter;
 
 
-#line 49 "testprog.awi"
-#line 659 "afn.awi"
 void
 wait_for_button_release( leda_window& W)
 {
@@ -94,12 +87,10 @@ wait_for_button_release( leda_window& W)
   do {}
   while ( W.read_event( v, x, y) != button_release_event);
 }
-#line 50 "testprog.awi"
 
 int
 main()
 {
-  #line 177 "testprog.awi"
   leda_window W( 650, 650);
   int k( 3);
   W.int_item( "k", k, 2, 12, "#vertices of polygon to inscribe");
@@ -128,14 +119,12 @@ main()
   cgalize( W);
   W.display();
   W.init( -1.5, 1.5, -1.5);
-#line 55 "testprog.awi"
 
   PointCont points;
   Polygon p;
   bool polygon_changed(false);
 
   for (;;) {
-    #line 122 "testprog.awi"
     if (polygon_changed) {
       // compute convex hull:
       PointCont ch_points;
@@ -180,7 +169,6 @@ main()
     W.message( vertices_message);
     
     
-#line 62 "testprog.awi"
 
     if (compute_mode != 1) {
       // compute maximum area inscribed k-gon:
@@ -201,14 +189,12 @@ main()
         cout << "[time: " << t.time() << " msec]" << endl;
 #endif // EXTREMAL_POLYGON_MEASURE
         W.set_fg_color(leda_green);
-        #line 168 "testprog.awi"
         if ( !p.empty()) {
           PointIter i( k_gon.begin());
           while ( ++i != k_gon.end())
             W << Segment( *(i-1), *i);
           W << Segment( *--i, *(k_gon.begin()));
         } // if ( !p.empty())
-#line 83 "testprog.awi"
       } // if ( p.size() >= 3)
     } // if ( compute_mode != 1)
     if (compute_mode != 0) {
@@ -236,24 +222,20 @@ main()
       cout << "[time: " << t.time() << " msec]" << endl;
 #endif // EXTREMAL_POLYGON_MEASURE
       W.set_fg_color( leda_orange);
-      #line 168 "testprog.awi"
       if ( !p.empty()) {
         PointIter i( k_gon.begin());
         while ( ++i != k_gon.end())
           W << Segment( *(i-1), *i);
         W << Segment( *--i, *(k_gon.begin()));
       } // if ( !p.empty())
-#line 111 "testprog.awi"
     } // if ( compute_mode != 0)
 
-    #line 208 "testprog.awi"
     // wait for input:
     int input;
     for (;;) {
       double x( 0), y( 0);
       input = W.get_mouse( x, y);
       if ( input == MOUSE_BUTTON( 2)) {
-        #line 273 "testprog.awi"
         // move point
         
         // find nearest vertex
@@ -330,10 +312,8 @@ main()
           polygon_changed = true;
           break;
         }
-    #line 215 "testprog.awi"
       }
       else if ( input == MOUSE_BUTTON( 3)) {
-        #line 254 "testprog.awi"
         // delete point
         
         // find nearest vertex
@@ -350,7 +330,6 @@ main()
           polygon_changed = true;
           break;
         }    
-    #line 218 "testprog.awi"
       }
       else if ( input == help_button) {
         // display help text
@@ -373,7 +352,6 @@ main()
         return 0;
       else if ( input == generate_button) {
         // generate random convex polygon with n vertices
-        #line 352 "testprog.awi"
         typedef Random_points_in_square_2<
           Point,
           Creator_uniform_2< FT, Point >
@@ -386,7 +364,6 @@ main()
         
         polygon_changed = true;
         break;
-    #line 240 "testprog.awi"
       }
       else if ( input == compute_button)
         // recompute largest inscribing k-gon
@@ -398,15 +375,12 @@ main()
         break;
       }
     } // for (;;)
-#line 114 "testprog.awi"
   } // for (;;)
 
   return 0;
 } // int main()
 
 
-#line 1511 "mon_search.aw"
-#line 12 "code_formatting.awi"
 // ----------------------------------------------------------------------------
 // ** EOF
 // ----------------------------------------------------------------------------

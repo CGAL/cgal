@@ -1,5 +1,3 @@
-#line 585 "pcenter.aw"
-#line 18 "code_formatting.awi"
 // ============================================================================
 //
 // Copyright (c) 1998 The CGAL Consortium
@@ -26,26 +24,17 @@
 // 2-4-Center Computation for Axis-Parallel 2D-Rectangles
 // ============================================================================
 
-#line 589 "pcenter.aw"
-#line 54 "code_formatting.awi"
 #if ! (CGAL_RECTANGULAR_P_CENTER_TRAITS_2_H)
 #define CGAL_RECTANGULAR_P_CENTER_TRAITS_2_H 1
 
-#line 338 "pc_traits.awi"
-#line 565 "pc_traits.awi"
 #include <CGAL/Point_2.h>
 #include <CGAL/Iso_rectangle_2.h>
 #include <CGAL/basic_constructions_2.h>
 
 
-#line 339 "pc_traits.awi"
 
-#line 46 "code_formatting.awi"
 CGAL_BEGIN_NAMESPACE
-#line 341 "pc_traits.awi"
-#line 344 "pc_traits.awi"
 
-#line 30 "pc_traits.awi"
 template < class R >
 struct Less_x_2
 : public CGAL_STD::binary_function< Point_2< R >, Point_2< R >, bool >
@@ -83,7 +72,6 @@ struct Greater_y_2
                   const Point_2< R >& q) const
   { return p.y() > q.y(); }
 };
-#line 70 "pc_traits.awi"
 template < class R >
 struct Construct_min_point_2
 : public CGAL_STD::unary_function< Iso_rectangle_2< R >, Point_2< R > >
@@ -100,7 +88,6 @@ struct Construct_max_point_2
   { return r.max(); }
 };
 */
-#line 89 "pc_traits.awi"
 template < class A, class S >
 struct Select : public CGAL_STD::binary_function< A, A, A > {
   Select() {}
@@ -113,14 +100,12 @@ private:
   S s_;
 };
 
-#line 104 "pc_traits.awi"
 template < class R >
 struct Construct_iso_rectangle_2 {
   Iso_rectangle_2< R >
   operator()(const Point_2< R >& min, const Point_2< R >& max) const
   { return Iso_rectangle_2< R >(min, max); }
 };
-#line 215 "pc_traits.awi"
 template < class R >
 struct Signed_x_distance_2
 : public CGAL_STD::binary_function<
@@ -130,7 +115,6 @@ struct Signed_x_distance_2
   operator()(const Point_2< R >& q1, const Point_2< R >& q2) const
   { return q1.x() - q2.x(); }
 };
-#line 227 "pc_traits.awi"
 template < class R >
 struct Signed_y_distance_2
 : public CGAL_STD::binary_function<
@@ -140,7 +124,6 @@ struct Signed_y_distance_2
   operator()(const Point_2< R >& q1, const Point_2< R >& q2) const
   { return q1.y() - q2.y(); }
 };
-#line 239 "pc_traits.awi"
 template < class R >
 struct Infinity_distance_2
 : public CGAL_STD::binary_function<
@@ -152,7 +135,6 @@ struct Infinity_distance_2
                     CGAL::abs(q1.y() - q2.y()));
   }
 };
-#line 253 "pc_traits.awi"
 template < class R >
 struct Signed_infinity_distance_2
 : public CGAL_STD::binary_function<
@@ -162,7 +144,6 @@ struct Signed_infinity_distance_2
   operator()(const Point_2< R >& q1, const Point_2< R >& q2) const
   { return std::max(q1.x() - q2.x(), q1.y() - q2.y()); }
 };
-#line 265 "pc_traits.awi"
 template < class R >
 struct Construct_corner_2
 : public CGAL_STD::binary_function<
@@ -172,7 +153,6 @@ struct Construct_corner_2
   operator()(const Iso_rectangle_2< R >& q, unsigned int i) const
   { return q[i]; }
 };
-#line 277 "pc_traits.awi"
 template < class R >
 struct Construct_point_2_above_right_implicit_point_2 {
   // (p, q, r) |--> (p.x() + r, q.y() + r)
@@ -216,7 +196,6 @@ struct Construct_point_2_below_right_implicit_point_2 {
   operator()(const P& p, const P& q, FT r) const
   { return P(p.x() + r, q.y() - r); }
 };
-#line 323 "pc_traits.awi"
 // Point_2 x Point_2 --> Point_2
 // (p, q) |-> projection of p onto the horizontal line through q
 template < class R >
@@ -230,7 +209,6 @@ struct Construct_projection_onto_horizontal_implicit_line_2
   { return Point_2(p.x(), q.y()); }
 };
 
-#line 346 "pc_traits.awi"
 
 template < class R >
 struct Rectangular_p_center_default_traits_2 : public R
@@ -255,7 +233,6 @@ struct Rectangular_p_center_default_traits_2 : public R
   Less_y_2 less_y_2_object() const { return Less_y_2(); }
 
   // additions
-  #line 444 "pc_traits.awi"
   struct Greater_x_2 : public std::binary_function< Point_2, Point_2, bool >
   {
     Greater_x_2(const Less_x_2& l) : lessx2(l) {}
@@ -280,7 +257,6 @@ struct Rectangular_p_center_default_traits_2 : public R
   { return Greater_x_2(less_x_2_object()); }
   Greater_y_2 greater_y_2_object() const
   { return Greater_y_2(less_y_2_object()); }
-#line 371 "pc_traits.awi"
 
   // -----------------------------------------------------------------
   // constructions:
@@ -349,7 +325,6 @@ struct Rectangular_p_center_default_traits_2 : public R
 
   //!!! this shouldn't be here as it can be written in terms
   // of known stuff
-  #line 471 "pc_traits.awi"
   struct Min_x_2 : public Select< Point_2, Less_x_2 > {
     Min_x_2(const Less_x_2& l) : Select< Point_2, Less_x_2 >(l) {}
   };
@@ -374,9 +349,7 @@ struct Rectangular_p_center_default_traits_2 : public R
   { return Min_y_2(less_y_2_object()); }
   Max_y_2 max_y_2_object() const
   { return Max_y_2(greater_y_2_object()); }
-#line 440 "pc_traits.awi"
 };
-#line 501 "pc_traits.awi"
 
 template < class _Traits, class _PiercingFunction >
 struct Rectangular_p_center_matrix_search_traits_2 {
@@ -432,7 +405,6 @@ private:
 
 }; // Rectangular_p_center_matrix_search_traits_2< ... >
 
-#line 113 "pc_traits.awi"
 template < class ForwardIterator, class Traits >
 Iso_rectangle_2<
   typename std::iterator_traits< ForwardIterator >::value_type::R >
@@ -469,7 +441,6 @@ bounding_box_2(ForwardIterator f, ForwardIterator l, const Traits& t)
 
   return rect(pohil(*xmin, *ymin), pohil(*xmax, *ymax));
 } // bounding_box_2(f, l, t)
-#line 152 "pc_traits.awi"
 template < class ForwardIterator >
 inline typename
 std::iterator_traits< ForwardIterator >::value_type::R::Iso_rectangle_2
@@ -485,7 +456,6 @@ bounding_box_2(ForwardIterator f, ForwardIterator l)
   Traits t;
   return bounding_box_2(f, l, t);
 } // bounding_box_2(f, l)
-#line 170 "pc_traits.awi"
 template < class Rectangle, class Traits >
 inline Rectangle
 construct_bounding_box_union_2(const Rectangle& r1,
@@ -518,7 +488,6 @@ construct_bounding_box_union_2(const Rectangle& r1,
     pohil(lessx(maxpt(r2), maxpt(r1)) ? maxpt(r1) : maxpt(r2),
           lessy(maxpt(r2), maxpt(r1)) ? maxpt(r1) : maxpt(r2)));
 } // construct_bounding_box_union_2(r1, r2, t)
-#line 205 "pc_traits.awi"
 template < class Rectangle >
 inline Rectangle
 construct_bounding_box_union_2(const Rectangle& r1, const Rectangle& r2)
@@ -527,16 +496,12 @@ construct_bounding_box_union_2(const Rectangle& r1, const Rectangle& r2)
   return construct_bounding_box_union_2(r1, r2, t);
 } // construct_bounding_box_union_2(r1, r2)
 
-#line 557 "pc_traits.awi"
 
-#line 50 "code_formatting.awi"
 CGAL_END_NAMESPACE
-#line 559 "pc_traits.awi"
 
 
 #endif // ! (CGAL_RECTANGULAR_P_CENTER_TRAITS_2_H)
 
-#line 12 "code_formatting.awi"
 // ----------------------------------------------------------------------------
 // ** EOF
 // ----------------------------------------------------------------------------

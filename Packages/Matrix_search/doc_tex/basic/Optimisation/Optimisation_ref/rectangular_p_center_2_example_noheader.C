@@ -1,5 +1,3 @@
-#line 690 "pcenter.aw"
-#line 563 "pc_testprog.awi"
 #include <CGAL/Cartesian.h>
 #include <CGAL/Point_2.h>
 #include <CGAL/point_generators_2.h>
@@ -52,4 +50,3 @@ int main() {
 
   return 0;
 } 
-#line 691 "pcenter.aw"

@@ -1,5 +1,3 @@
-#line 346 "fj_testprog.awi"
-#line 18 "code_formatting.awi"
 // ============================================================================
 //
 // Copyright (c) 1998 The CGAL Consortium
@@ -26,8 +24,6 @@
 // Sorted matrix search: Example Program
 // ============================================================================
 
-#line 350 "fj_testprog.awi"
-#line 293 "fj_testprog.awi"
 #include <CGAL/Random.h>
 #include <CGAL/function_objects.h>
 #include <CGAL/Cartesian_matrix.h>
@@ -78,8 +74,6 @@ int main() {
 
   return 0;
 } 
-#line 351 "fj_testprog.awi"
-#line 12 "code_formatting.awi"
 // ----------------------------------------------------------------------------
 // ** EOF
 // ----------------------------------------------------------------------------

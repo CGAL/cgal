@@ -1,5 +1,3 @@
-#line 1484 "mon_search.aw"
-#line 18 "code_formatting.awi"
 // ============================================================================
 //
 // Copyright (c) 1998 The CGAL Consortium
@@ -26,8 +24,6 @@
 // Example program: All Furthest Neighbors for a Convex Polygon
 // ============================================================================
 
-#line 1488 "mon_search.aw"
-#line 768 "afn.awi"
 #include <CGAL/Cartesian.h>
 #include <CGAL/Point_2.h>
 #include <CGAL/Polygon_2.h>
@@ -69,8 +65,6 @@ main()
 
   return 0;
 } 
-#line 1489 "mon_search.aw"
-#line 12 "code_formatting.awi"
 // ----------------------------------------------------------------------------
 // ** EOF
 // ----------------------------------------------------------------------------

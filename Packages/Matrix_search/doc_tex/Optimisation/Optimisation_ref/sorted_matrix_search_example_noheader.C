@@ -1,5 +1,3 @@
-#line 355 "fj_testprog.awi"
-#line 293 "fj_testprog.awi"
 #include <CGAL/Random.h>
 #include <CGAL/function_objects.h>
 #include <CGAL/Cartesian_matrix.h>
@@ -50,4 +48,3 @@ int main() {
 
   return 0;
 } 
-#line 356 "fj_testprog.awi"
