@@ -30,8 +30,7 @@
 #include <functional>
 #include <cmath>
 
-// MP_Float : multiprecision scaled integer.
-// Not optimized for large operands at the moment.
+// MP_Float : multiprecision scaled integers.
 
 // Some invariants on the internal representation :
 // - zero is represented by an empty vector, and whatever exp.
@@ -46,8 +45,6 @@
 // - IOs
 
 // TODO :
-// - Should the MP_Float unconditionaly replace MP_Integer ?
-// - implement missing CGAL requirements.
 // - Documentation.
 // - Karatsuba (or other) ?  Would be fun to implement at least.
 // - Division, sqrt... : different options :

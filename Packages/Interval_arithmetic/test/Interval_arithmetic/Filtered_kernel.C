@@ -12,7 +12,6 @@
 
 #include <CGAL/Random.h>
 #include <CGAL/MP_Float.h>
-#include <CGAL/MP_Integer.h>
 
 #include <CGAL/Triangulation_data_structure_3.h>
 #include <CGAL/Triangulation_geom_traits_3.h>
@@ -23,7 +22,7 @@ typedef CGAL::Filtered_kernel<CGAL::Cartesian<double>,
                               CGAL::Simple_cartesian<CGAL::MP_Float> > Rep;
 #else
 typedef CGAL::Homogeneous<int> K1;
-typedef CGAL::Homogeneous<CGAL::MP_Integer> K2;
+typedef CGAL::Homogeneous<CGAL::MP_Float> K2;
 typedef CGAL::Homogeneous<CGAL::Interval_nt_advanced> K3;
 
 typedef CGAL::Filtered_kernel<K1, K2, K3,
