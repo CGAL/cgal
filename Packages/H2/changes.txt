@@ -1,3 +1,6 @@
+ 8 Mar 2003 Andreas Fabri
+- Added functor and function for constructing orthogilnal vector of three points
+
 29 Feb 2004 Sylvain Pion
 - Replace TriangleH2 by Cartesian's TriangleC2 !
 

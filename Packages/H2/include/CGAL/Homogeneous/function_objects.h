@@ -1823,6 +1823,27 @@ namespace HomogeneousKernelFunctors {
   };
 
   template <typename K>
+  class Construct_orthogonal_vector_3
+  {
+    typedef typename K::Point_3     Point_3;
+    typedef typename K::Vector_3    Vector_3;
+    typedef typename K::Plane_3     Plane_3;
+  public:
+    typedef Vector_3         result_type;
+    typedef Arity_tag< 1 >   Arity;
+
+    Vector_3
+    operator()( const Plane_3& p ) const
+    { return p.orthogonal_vector(); }
+
+    Vector_3
+    operator()( const Point_3& p, const Point_3& q, const Point_3& r ) const
+    {
+      return operator()(Plane_3(p, q, r));
+    }
+  };
+
+  template <typename K>
   class Construct_scaled_vector_2
   {
     typedef typename K::RT         RT;
