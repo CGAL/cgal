@@ -362,7 +362,8 @@ in contrast to the rules of previous paragraph.
 \ccIndexMainItemBegin{code format}
 
 \begin{itemize}
-\item Lines should not exceed 80 characters.%
+\item Lines should not exceed 80 characters (the CVS server warns about that
+      when committing)%
       \ccIndexSubitem{code format}{line length}
 \item Use indentation with at least two spaces extra per level.%
       \ccIndexSubitem{code format}{indentation}
@@ -381,9 +382,29 @@ in contrast to the rules of previous paragraph.
 \ccIndexSubitemBegin{source files}{headings for}
 
 Each \cgal\ source file must start with a heading that allows for an easy
-identification of the file.  The file header contains a copyright notice, the
-current release number and date, and a description of the file.  The name of
-the file in the header should be relative to the \texttt{CGAL\_HOME} directory.
+identification of the file.  The file header contains:
+\begin{itemize}
+\item a copyright notice, specifying all the years during which the file has
+been written or modified, as well as the owner(s) (typically the institutions
+employing the authors) of this work,
+\item the corresponding license (at the moment, only LGPL v2.1 and QPL v1.0
+are allowed in \cgal), and a pointer to the file containing its text in the
+\cgal\ distribution,
+\item a disclaimer notice,
+\item then, there are 4 keywords, which are automatically expanded by CVS
+(there are options to CVS to suppress these expansions if you need):
+\begin{itemize}
+\item \$Source$ : the name of the source file in the repository, it also
+helps figuring out which package the file comes from,
+\item \$Revision$ : the CVS revision of the file,
+\item \$Date$ : the date of this revision,
+\item \$Name$ : empty in general, otherwise contains the tag which has been
+used to checkout this file.  It is used to identify the corresponding release
+of \cgal\ (internal or public).
+\end{itemize}
+\item Then the authors of (non-negligible parts of) this file are listed, with
+optional affiliation or e-mail address.
+\end{itemize}
 
 \ccIndexSubitem{example programs}{headings for}
 \ccIndexSubitem{demo programs}{headings for}
@@ -394,6 +415,9 @@ the file realtive to the \texttt{CGAL\_HOME} directory
 (\eg, \nonlinkedpath|examples/Convex_hull_3/convex_hull_3.C|) 
 so the file can be located when seen out of context (\eg, in the documentation
 or from the demos web page).
+
+For the test-suite and the documentation source, these are not distributed at
+the moment, so there is no policy for now.
 
 \InternalOnly{
 \input{code_format_internal}
