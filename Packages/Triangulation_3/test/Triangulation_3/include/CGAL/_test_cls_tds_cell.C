@@ -32,6 +32,7 @@ _test_cell_tds_3(const Tds &)
   std::cout << "   Cells Tds Constructors " << std::endl;
   int ind;
   Tds tds;
+  tds.set_dimension(3);
   Vertex_handle v0= tds.create_vertex();
   Vertex_handle v1= tds.create_vertex();
   Vertex_handle v2= tds.create_vertex();

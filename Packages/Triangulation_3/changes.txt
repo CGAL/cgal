@@ -1,3 +1,7 @@
+Version 1.93 (?? September 01)
+- Use CGAL/iterator.h.
+- New function TDS::create_face() to prepare for the merge TDS_2/TDS_3.
+
 Version 1.92 (25 September 01)
 - Various fixes.
 

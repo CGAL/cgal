@@ -188,14 +188,13 @@ Triangulation_ds_cell_3<Tds>::is_valid
 	return false;
       }
       vertex(0)->is_valid(verbose,level);
-      if ( vertex(1) != NULL || vertex(2) != NULL || vertex(3) != NULL ) {
+      if ( vertex(1) != NULL || vertex(2) != NULL) {
 	if (verbose)
-	    std::cerr << "vertex 1,2 or 3 != NULL" << std::endl;
+	    std::cerr << "vertex 1 or 2 != NULL" << std::endl;
 	CGAL_triangulation_assertion(false);
 	return false;
       }
-      if ( neighbor(0) != NULL || neighbor(1) != NULL ||
-	   neighbor(2) != NULL || neighbor(3) != NULL ) {
+      if ( neighbor(0) != NULL || neighbor(1) != NULL || neighbor(2) != NULL) {
 	if (verbose)
 	    std::cerr << "one neighbor != NULL" << std::endl;
 	CGAL_triangulation_assertion(false);
@@ -219,16 +218,15 @@ Triangulation_ds_cell_3<Tds>::is_valid
 	CGAL_triangulation_assertion(false);
 	return false;
       }
-      if ( vertex(1) != NULL || vertex(2) != NULL || vertex(3) != NULL ) {
+      if ( vertex(1) != NULL || vertex(2) != NULL ) {
 	if (verbose)
-	    std::cerr << "vertex 1, 2 or 3 != NULL" << std::endl;
+	    std::cerr << "vertex 1 or 2 != NULL" << std::endl;
 	CGAL_triangulation_assertion(false);
 	return false;
       }
-      if ( neighbor(1) != NULL ||
-	   neighbor(2) != NULL || neighbor(3) != NULL ) {
+      if ( neighbor(1) != NULL || neighbor(2) != NULL ) {
 	if (verbose)
-	    std::cerr << "neighbor 1, 2 or 3 != NULL" << std::endl;
+	    std::cerr << "neighbor 1 or 2 != NULL" << std::endl;
 	CGAL_triangulation_assertion(false);
 	return false;
       }
@@ -263,15 +261,15 @@ Triangulation_ds_cell_3<Tds>::is_valid
 	CGAL_triangulation_assertion(false);
 	return false;
       }
-      if ( vertex(2) != NULL || vertex(3) != NULL ) {
+      if ( vertex(2) != NULL) {
 	if (verbose)
-	    std::cerr << "vertex 2 or 3 != NULL" << std::endl;
+	    std::cerr << "vertex 2 != NULL" << std::endl;
 	CGAL_triangulation_assertion(false);
 	return false;
       }
-      if ( neighbor(2) != NULL || neighbor(3) != NULL ) {
+      if ( neighbor(2) != NULL) {
 	if (verbose)
-	    std::cerr << "neighbor 2 or 3 != NULL" << std::endl;
+	    std::cerr << "neighbor 2 != NULL" << std::endl;
 	CGAL_triangulation_assertion(false);
 	return false;
       }
@@ -320,19 +318,6 @@ Triangulation_ds_cell_3<Tds>::is_valid
       vertex(0)->is_valid(verbose,level);
       vertex(1)->is_valid(verbose,level);
       vertex(2)->is_valid(verbose,level);
-      if ( vertex(3) != NULL ) {
-	if (verbose)
-	    std::cerr << "vertex 3 != NULL" << std::endl;
-	CGAL_triangulation_assertion(false);
-	return false;
-      }
-      if ( neighbor(3) != NULL ) {
-	if (verbose)
-	    std::cerr << "neighbor 3 != NULL" << std::endl;
-	CGAL_triangulation_assertion(false);
-	return false;
-      }
-
       int in;
       Cell_handle n;
       for(int i = 0; i < 3; i++) {
@@ -394,7 +379,7 @@ Triangulation_ds_cell_3<Tds>::is_valid
 	  }
 
 	  int in;
-	  if ( ! n->has_neighbor((Cell_handle)this,in) ) {
+	  if ( ! n->has_neighbor(this,in) ) {
 	    if (verbose)
               std::cerr << "neighbor of c has not c as neighbor" << std::endl;
 	    CGAL_triangulation_assertion(false);

@@ -167,7 +167,20 @@ public:
 	                  Vertex_handle v2, Vertex_handle v3)
     {
       Cell_handle c = get_new_cell();
-      c->set_vertices(v0,v1,v2,v3);
+      c->set_vertex(0, v0);
+      c->set_vertex(1, v1);
+      c->set_vertex(2, v2);
+      c->set_vertex(3, v3);
+      return c; 
+    }
+
+  Cell_handle create_face(Vertex_handle v0, Vertex_handle v1, Vertex_handle v2)
+    {
+      CGAL_triangulation_precondition(dimension()<3);
+      Cell_handle c = get_new_cell();
+      c->set_vertex(0, v0);
+      c->set_vertex(1, v1);
+      c->set_vertex(2, v2);
       return c; 
     }
 
@@ -716,10 +729,11 @@ create_star_2(Vertex_handle v, Cell_handle c, int li )
     }
     cur->neighbor(cw(i1))->set_in_conflict_flag(0);
     // here cur has an edge on the boundary of region
-    cnew = create_cell( v, v1, cur->vertex( ccw(i1) ), NULL,
-			cur->neighbor(cw(i1)), NULL, pnew, NULL);
-    cur->neighbor(cw(i1))->set_neighbor
-      ( cur->neighbor(cw(i1))->index(cur), cnew );
+    cnew = create_face( v, v1, cur->vertex( ccw(i1) ) );
+    set_adjacency(cnew, 0, cur->neighbor(cw(i1)),
+	                   cur->neighbor(cw(i1))->index(cur));
+    cnew->set_neighbor(1, NULL);
+    cnew->set_neighbor(2, pnew);
     // pnew is null at the first iteration
     v1->set_cell(cnew);
     //pnew->set_neighbor( cw(pnew->index(v1)), cnew );
@@ -1311,7 +1325,7 @@ read_cells(std::istream& is, std::map< int, Vertex_handle > &V,
 
       //      CGAL_triangulation_assertion( n == 2 );
       for (int i=0; i < 2; i++) {
-	Cell_handle c = create_cell(V[i], NULL, NULL, NULL);
+	Cell_handle c = create_face(V[i], NULL, NULL);
 	C[i] = c;
 	V[i]->set_cell(c);
       }
@@ -1325,7 +1339,7 @@ read_cells(std::istream& is, std::map< int, Vertex_handle > &V,
     {
       m = 1;
       //      CGAL_triangulation_assertion( n == 1 );
-      Cell_handle c = create_cell(V[0], NULL, NULL, NULL);
+      Cell_handle c = create_face(V[0], NULL, NULL);
       C[0] = c;
       V[0]->set_cell(c);
       break;
@@ -1595,13 +1609,13 @@ insert_in_facet(Vertex_handle v, Cell_handle c, int i)
     {
       CGAL_triangulation_expensive_precondition( is_facet(c,i) );
       Cell_handle n = c->neighbor(2);
-      Cell_handle cnew = create_cell(c->vertex(0),c->vertex(1),v,NULL);
+      Cell_handle cnew = create_face(c->vertex(0),c->vertex(1),v);
       set_adjacency(cnew, 2, n, n->index(c));
       set_adjacency(cnew, 0, c, 2);
       c->vertex(0)->set_cell(cnew);
 
       n = c->neighbor(1);
-      Cell_handle dnew = create_cell(c->vertex(0),v,c->vertex(2),NULL);
+      Cell_handle dnew = create_face(c->vertex(0),v,c->vertex(2));
       set_adjacency(dnew, 1, n, n->index(c));
       set_adjacency(dnew, 0, c, 1);
       set_adjacency(dnew, 2, cnew, 1);
@@ -1688,7 +1702,7 @@ insert_in_edge(Vertex_handle v, Cell_handle c, int i, int j)
   case 1:
     {
       CGAL_triangulation_expensive_precondition( is_edge(c,i,j) );
-      Cell_handle cnew = create_cell(v,c->vertex(1),NULL,NULL);
+      Cell_handle cnew = create_face(v,c->vertex(1),NULL);
       c->vertex(1)->set_cell(cnew);
       c->set_vertex(1,v);
       set_adjacency(cnew, 0, c->neighbor(0), 1);
@@ -1737,7 +1751,7 @@ insert_increase_dimension(Vertex_handle v, // new vertex
       // insertion of the first vertex
       // ( geometrically : infinite vertex )
     {
-      Cell_handle c = create_cell( v, NULL, NULL, NULL);
+      Cell_handle c = create_face( v, NULL, NULL);
       v->set_cell(c);
       break;
     }
@@ -1746,7 +1760,7 @@ insert_increase_dimension(Vertex_handle v, // new vertex
     // insertion of the second vertex
     // ( geometrically : first finite vertex )
     {
-      Cell_handle d = create_cell( v, NULL, NULL, NULL);
+      Cell_handle d = create_face( v, NULL, NULL);
       v->set_cell(d);
       set_adjacency(d, 0, star->cell(), 0);
       break;
@@ -1765,7 +1779,7 @@ insert_increase_dimension(Vertex_handle v, // new vertex
 	d->set_vertex(1,d->vertex(0));
 	d->set_vertex(0,v);
 	set_adjacency(c, 1, d, 0);
-	Cell_handle e = create_cell( star, v, NULL, NULL);
+	Cell_handle e = create_face( star, v, NULL);
 	set_adjacency(e, 0, d, 1);
 	set_adjacency(e, 1, c, 0);
       }
@@ -1773,7 +1787,7 @@ insert_increase_dimension(Vertex_handle v, // new vertex
 	c->set_vertex(1,d->vertex(0));
 	d->set_vertex(1,v);
 	d->set_neighbor(1,c);
-	Cell_handle e = create_cell( v, star, NULL, NULL);
+	Cell_handle e = create_face( v, star, NULL);
 	set_adjacency(e, 0, c, 1);
 	set_adjacency(e, 1, d, 0);
       }
@@ -1798,7 +1812,7 @@ insert_increase_dimension(Vertex_handle v, // new vertex
       Cell_handle enew=NULL;
 	
       while( e != d ){
-	enew = create_cell( );
+	enew = create_cell();
 	enew->set_vertex(i,e->vertex(j));
 	enew->set_vertex(j,e->vertex(i));
 	enew->set_vertex(2,star);
@@ -1846,18 +1860,20 @@ insert_increase_dimension(Vertex_handle v, // new vertex
       Cell_iterator it = cells_begin();
       // allowed since the dimension has already been set to 3
 
-      v->set_cell(&(*it)); // ok since there is at least one ``cell''
+      v->set_cell(it->handle()); // ok since there is at least one ``cell''
       for(; it != cells_end(); ++it) {
 	// Here we must be careful since we create_cells in a loop controlled
 	// by an iterator.  So we first take care of the cells newly created
 	// by the following test :
 	if (it->neighbor(0) == NULL)
 	  continue;
+	it->set_neighbor(3, NULL);
 	it->set_vertex(3,v);
 	if ( ! it->has_vertex(star) ) {
 	  Cell_handle cnew = create_cell( it->vertex(0), it->vertex(2),
 			                  it->vertex(1), star);
 	  set_adjacency(cnew, 3, it->handle(), 3);
+	  cnew->set_neighbor(0, NULL);
 	  new_cells.push_back(cnew);
 	}
       }
@@ -2147,13 +2163,13 @@ copy_tds(const Tds & tds, Vertex_handle vert )
   // Link the vertices to a cell.
   for (Vertex_iterator vit2 = tds.vertices_begin();
        vit2 != tds.vertices_end(); ++vit2)
-    V[&(*vit2)]->set_cell( F[vit2->cell()] );
+    V[vit2->handle()]->set_cell( F[vit2->cell()] );
 
   // Hook neighbor pointers of the cells.
   for (Cell_iterator cit2 = tds.cell_container().begin();
 	  cit2 != tds.cells_end(); ++cit2) {
     for (int j = 0; j < 4; j++)
-      F[&(*cit2)]->set_neighbor(j, F[cit2->neighbor(j)] );
+      F[cit2->handle()]->set_neighbor(j, F[cit2->neighbor(j)] );
   }
 
   CGAL_triangulation_postcondition( is_valid() );
@@ -2166,7 +2182,8 @@ void
 Triangulation_data_structure_3<Vb,Cb>::
 swap(Tds & tds)
 {
-  // tds and *this are supposed to be valid
+  CGAL_triangulation_expensive_precondition(tds.is_valid() && is_valid());
+
   std::swap(_dimension, tds._dimension);
   std::swap(_number_of_vertices, tds._number_of_vertices);
   cell_container().swap(tds.cell_container());

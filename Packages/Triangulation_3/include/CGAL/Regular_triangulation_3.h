@@ -459,21 +459,16 @@ insert(const Weighted_point & p, Cell_handle start, Vertex_handle v)
 	  if ( bound[0] != bound[1] ) {
 	    if ( (c != bound[0]) && (c != bound[1]) )
 	      (void) conflicts.insert(c);
-	    bound[0]->set_vertex(0,v);
-	    v->set_cell(bound[0]);
 	    bound[1]->set_vertex(1,v);
-	    _tds.set_adjacency(bound[0], 1, bound[1], 0);
 	  }
 	  else {
-	    bound[1] = _tds.create_cell(bound[0]->vertex(0), v, NULL, NULL,
-			       bound[0], bound[0]->neighbor(1), NULL, NULL);
-	    bound[0]->neighbor(1)->set_neighbor(0,bound[1]);
+	    bound[1] = _tds.create_face(bound[0]->vertex(0), v, NULL);
+	    _tds.set_adjacency(bound[1], 1, bound[0]->neighbor(1), 0);
 	    bound[0]->vertex(0)->set_cell(bound[1]);
-
-	    bound[0]->set_neighbor(1,bound[1]);
-	    bound[0]->set_vertex(0,v);
-	    v->set_cell(bound[0]);
 	  }
+	  bound[0]->set_vertex(0,v);
+	  _tds.set_adjacency(bound[1], 0, bound[0], 1);
+	  v->set_cell(bound[0]);
 
 	  _tds.delete_cells(conflicts.begin(), conflicts.end());
 	  return v;
