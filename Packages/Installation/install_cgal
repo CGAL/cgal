@@ -5670,7 +5670,8 @@ create_include_makefile()
   # CGAL_SHARED_LIB_LDFLAGS
   # 
   ${_printf} "%s\n" \
-       "CGAL_SHARED_LIB_LDFLAGS = ${CGAL_SHARED_LIB_LDFLAGS}" "\n" >> ${FILE}
+       "CGAL_SHARED_LIB_LDFLAGS = ${CGAL_SHARED_LIB_LDFLAGS}" >> ${FILE}
+  ${_printf} "%s\n" >> ${FILE}
 
   # 
   # CGAL_SHARED_LIB_CREATE
