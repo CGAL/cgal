@@ -175,6 +175,16 @@ Packages/Random_numbers/.tmp
 Packages/Random_numbers/Makefile
 Packages/Random_numbers/bin
 Packages/Random_numbers/doc_ps
+Packages/Tutorial/tutorial/Polyhedron/sgp2004/paper/paper.aux
+Packages/Tutorial/tutorial/Polyhedron/sgp2004/paper/paper.bbl
+Packages/Tutorial/tutorial/Polyhedron/sgp2004/paper/paper.blg
+Packages/Tutorial/tutorial/Polyhedron/sgp2004/paper/paper.brf
+Packages/Tutorial/tutorial/Polyhedron/sgp2004/paper/paper.dvi
+Packages/Tutorial/tutorial/Polyhedron/sgp2004/paper/paper.lbl
+Packages/Tutorial/tutorial/Polyhedron/sgp2004/paper/paper.log
+Packages/Tutorial/tutorial/Polyhedron/sgp2004/paper/paper.pdf
+Packages/Tutorial/tutorial/Polyhedron/sgp2004/paper/paper.ps
+Packages/Tutorial/tutorial/Polyhedron/sgp2004/paper/paper.ps.gz
 Packages/Visibility_complex/demo/*.moc
 Packages/Visibility_complex/demo/arrangments
 Packages/_QP_solver/*.aux
