@@ -1926,10 +1926,10 @@ web file.
     @<copyright notice>
     @<file name>(@1)
     @<file description>(
+        "Min_annulus_d",
         "Geometric Optimisation",
-        "Min_annulus_d", "Min_annulus_d",
+        "Min_annulus_d",
         "$Revision$","$Date$",
-        "Sven Schönherr",
         "Sven Schönherr <sven@@inf.ethz.ch>",
         "ETH Zürich (Bernd Gärtner <gaertner@@inf.ethz.ch>)",
         "@2")
