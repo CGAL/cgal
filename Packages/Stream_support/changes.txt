@@ -1,49 +1,68 @@
 Stream_support Package: Release changes:
 ---------------------------------------------------------------------
+
+2.17 (21 Mar 2002)
+
+     - Maintenance moved to Lutz Kettner, MPI Saarbruecken.
+     - Changed to new manual style.
+
 2.16 (29 Aug 01)
-- Susan changed ccSection to section commands since pdf converter can't handle
-  the former
+
+    - Susan changed ccSection to section commands since pdf converter 
+      can't handle the former
 
 2.15 (20 June 01)
-- Patches from Matthias to use the CGAL window in the demo.
-- Update header inclusion orders.
+
+     - Patches from Matthias to use the CGAL window in the demo.
+     - Update header inclusion orders.
 
 2.14 (18 June 01)
-- Test for LEDA in the demo that requires it, so that there's no "N" to look at
-  in the test-suite.
-- New demo program included in the documentation.
+
+     - Test for LEDA in the demo that requires it, so that there's no 
+       "N" to look at in the test-suite.
+     - New demo program included in the documentation.
 
 2.13 (5 June 01)
-- Recreate the makefile for BCC support.
+
+     - Recreate the makefile for BCC support.
 
 2.12 (30 Jan 01)
-- Readded some of the old code.
+
+     - Readded some of the old code.
 
 2.11 (23 Jan 01)
-- All compilers support member templates.
-- Don't specialize for efficiency when it's not useful.
+
+     - All compilers support member templates.
+     - Don't specialize for efficiency when it's not useful.
 
 2.10 (18 Jan 01)
-- Fix long long support "bug" caught by VC++ 7.
+
+     - Fix long long support "bug" caught by VC++ 7.
 
 2.9 (30 May 00)
-added to Istream_iterator
-operator!=( const Self& i)
+
+     added to Istream_iterator
+     operator!=( const Self& i)
 
 2.8 (10 Dec 99)
-fixes some bugs in Stream_support/demo/Stream_support_LEDA
-now, it works at least  on Linux 
+
+     fixes some bugs in Stream_support/demo/Stream_support_LEDA
+     now, it works at least  on Linux 
 
 2.7 (2 Dec 99)
-change the makefile in Stream_support/demo
+
+     change the makefile in Stream_support/demo
 
 2.6 (29 nov 99)
-resubmit to include makefile in demo
+
+     resubmit to include makefile in demo
 
 2.5 (12 November 99)
+
      Resubmit to make sure the makefile in test is not part of the submission
 
 2.4 (28 Jul 1999)
+
      Superfluous Istream_proxy removed. Mariette Yvinec (INRIA) takes
      over the maintenance of this package with this release.
 

@@ -1,0 +1,44 @@
+% +------------------------------------------------------------------------+
+\begin{ccRefClass}{Verbose_ostream}
+\ccThree{Verbose_ostreammm&}{rand}{}
+
+\ccDefinition
+
+The class \ccRefName\ can be used as an output stream. The stream
+output operator \ccc{<<} is defined for any type. The class
+\ccRefName\ stores in an internal state a stream and whether the
+output is active or not. If the state is active, the stream output
+operator \ccc{<<} uses the internal stream to output its argument. If
+the state is inactive, nothing happens.
+
+\ccInclude{CGAL/IO/Verbose_ostream.h}
+
+\ccCreation
+\ccCreationVariable{verr}
+
+\ccConstructor{Verbose_ostream( bool active = false, 
+  std::ostream& out = std::cerr);}{creates an output stream with state set to
+  \ccc{active} that writes to the stream \ccc{out}.}
+
+\ccOperations
+
+\ccMethod{template < class T >
+          Verbose_ostream&  operator<<( const T& t);}{}
+
+\ccExample
+
+The class \ccRefName\ can be conveniently used to implement for
+example the \ccc{is_valid()} member function for triangulations or
+other complex data structures.
+
+\begin{verbatim}
+    bool is_valid( bool verbose = false, int level = 0) {
+        Verbose_ostream verr( verbose);
+        verr << "Triangulation::is_valid( level = " << level << ')' << endl;
+        verr << "    Number of vertices = " << size_of_vertices() << endl;
+        // ...
+    }
+\end{verbatim}
+
+\end{ccRefClass}
+%% EOF
