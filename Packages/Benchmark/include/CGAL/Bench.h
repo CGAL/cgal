@@ -91,6 +91,8 @@ public:
   void set_seconds(int seconds) { m_seconds = seconds; }
   void set_samples(int samples) { m_samples = samples; }
 
+  float get_period() const { return m_period; }
+
   /*!
    */
   void operator()()
