@@ -1,3 +1,6 @@
+18 Apr 2004 Sylvain Pion
+- Added CGAL_CFG_DENORMALS_COMPILE_BUG.C for PGCC.
+
 8 Apr 2004 Sylvain Pion
 - Kill "unused variable" warning with PGCC.
 
