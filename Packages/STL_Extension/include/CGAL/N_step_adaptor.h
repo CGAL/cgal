@@ -62,14 +62,18 @@ public:
   typedef typename std::iterator_traits<I>::pointer   pointer;
 #endif
   // Special for circulators.
-  typedef _Circulator_size_traits<iterator_category,I> C_S_Traits;
-  typedef typename  C_S_Traits::size_type              size_type;
+  typedef I_Circulator_size_traits<iterator_category,I> C_S_Traits;
+  typedef typename  C_S_Traits::size_type               size_type;
 
   // CREATION
   // --------
 
   N_step_adaptor() {}
   N_step_adaptor( Iterator j) : nt(j) {}
+
+  template <class II>
+  N_step_adaptor( const N_step_adaptor<II,N>& j)
+    : nt( j.current_iterator()) {}
 
   // OPERATIONS Forward Category
   // ---------------------------
@@ -80,8 +84,8 @@ public:
 
   Iterator  current_iterator() const { return nt;}
   bool operator==( CGAL_NULL_TYPE p) const {
-    CGAL_assertion( p == NULL);
-    return ( nt == NULL);
+    CGAL_assertion( p == 0);
+    return ( nt == 0);
   }
   bool  operator!=( CGAL_NULL_TYPE p) const { return !(*this == p); }
   bool  operator==( const Self& i) const { return ( nt == i.nt); }

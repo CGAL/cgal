@@ -67,8 +67,8 @@ public:
   }
 
   bool operator==( CGAL_NULL_TYPE p) const {
-    CGAL_assertion( p == NULL);
-    return ( nt == NULL);
+    CGAL_assertion( p == 0);
+    return ( nt == 0);
   }
   bool  operator!=( CGAL_NULL_TYPE p) const { return !(*this == p); }
   bool  operator==( const Self& i) const { return ( nt == i.nt); }
