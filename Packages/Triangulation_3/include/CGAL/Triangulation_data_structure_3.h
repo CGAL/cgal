@@ -268,13 +268,10 @@ private:
 
 public:
   // not documented
-  std::istream& read_cells(std::istream& is,
-			   std::map< int, Vertex* > &V,
-			   int & m,
-			   std::map< int, Cell* > &C );
+  void read_cells(std::istream& is, std::map< int, Vertex* > &V,
+			   int & m, std::map< int, Cell* > &C );
   // not documented
-  std::ostream& print_cells(std::ostream& os, 
-			    std::map< void*, int > &V ) const;
+  void print_cells(std::ostream& os, std::map< void*, int > &V ) const;
 
   // ACCESS FUNCTIONS
 
@@ -685,7 +682,7 @@ operator>>(std::istream& is, Triangulation_data_structure_3<Vb,Cb>& tds)
   int m;
  
   tds.read_cells(is, V, m, C);
-  CGAL_triangulation_assertion( tds.is_valid(false) );
+  CGAL_triangulation_assertion( tds.is_valid() );
   return is;
 }
 
@@ -1244,24 +1241,21 @@ flip_really( Cell* c, int i, int j,
 }
 
 template < class Vb, class Cb >
-std::istream& 
+void
 Triangulation_data_structure_3<Vb,Cb>::
-read_cells(std::istream& is,
-	   std::map< int, Vertex* > &V,
-	   int & m,
-	   std::map< int, Cell* > &C)
+read_cells(std::istream& is, std::map< int, Vertex* > &V,
+	   int & m, std::map< int, Cell* > &C)
 {
   // creation of the cells and neighbors
   switch (dimension()) {
   case 3:
     {
       is >> m;
-      Cell* c;
 
       int i0, i1, i2, i3;
       for(int i = 0; i < m; i++) {
 	is >> i0 >> i1 >> i2 >> i3;
-	c = create_cell(V[i0], V[i1], V[i2], V[i3]);
+	Cell *c = create_cell(V[i0], V[i1], V[i2], V[i3]);
 	C[i] = c;
 	V[i0]->set_cell(c);
 	V[i1]->set_cell(c);
@@ -1270,7 +1264,7 @@ read_cells(std::istream& is,
       }
       for(int j = 0; j < m; j++) {
         is >> i0 >> i1 >> i2 >> i3;
-        c = C[j];
+        Cell *c = C[j];
         c->set_neighbor(0, C[i0]);
         c->set_neighbor(1, C[i1]);
         c->set_neighbor(2, C[i2]);
@@ -1281,12 +1275,11 @@ read_cells(std::istream& is,
   case 2:
     {
       is >> m;
-      Cell* c;
 
       int i0, i1, i2;
       for(int i = 0; i < m; i++) {
 	is >> i0 >> i1 >> i2;
-	c = create_cell(V[i0], V[i1], V[i2], NULL);
+	Cell *c = create_cell(V[i0], V[i1], V[i2], NULL);
 	C[i] = c;
 	V[i0]->set_cell(c);
 	V[i1]->set_cell(c);
@@ -1294,7 +1287,7 @@ read_cells(std::istream& is,
       }
       for(int j = 0; j < m; j++) {
         is >> i0 >> i1 >> i2;
-	c = C[j];
+	Cell *c = C[j];
         c->set_neighbor(0, C[i0]);
         c->set_neighbor(1, C[i1]);
         c->set_neighbor(2, C[i2]);
@@ -1304,19 +1297,18 @@ read_cells(std::istream& is,
   case 1:
     {
       is >> m;
-      Cell* c;
 
       int i0, i1;
       for(int i = 0; i < m; i++) {
 	is >> i0 >> i1;
-	c = create_cell(V[i0], V[i1], NULL, NULL);
+	Cell *c = create_cell(V[i0], V[i1], NULL, NULL);
 	C[i] = c;
 	V[i0]->set_cell(c);
 	V[i1]->set_cell(c);
       }
       for(int j = 0; j < m; j++) {
         is >> i0 >> i1;
-	c = C[j];
+	Cell *c = C[j];
         c->set_neighbor(0, C[i0]);
         c->set_neighbor(1, C[i1]);
       }
@@ -1325,16 +1317,15 @@ read_cells(std::istream& is,
   case 0:
     {
       m = 2;
-      Cell* c;
 
-      //      CGAL_triangulation_assertion( (n == 2) );
+      //      CGAL_triangulation_assertion( n == 2 );
       for (int i=0; i < 2; i++) {
-	c = create_cell(V[i], NULL, NULL, NULL);
+	Cell *c = create_cell(V[i], NULL, NULL, NULL);
 	C[i] = c;
 	V[i]->set_cell(c);
       }
       for (int j=0; j < 2; j++) {
-	c = C[j];
+	Cell *c = C[j];
         c->set_neighbor(0, C[1-j]);
       }
       break;
@@ -1342,22 +1333,19 @@ read_cells(std::istream& is,
   case -1:
     {
       m = 1;
-      Cell* c;
-      //      CGAL_triangulation_assertion( (n == 1) );
-      c = create_cell(V[0], NULL, NULL, NULL);
+      //      CGAL_triangulation_assertion( n == 1 );
+      Cell *c = create_cell(V[0], NULL, NULL, NULL);
       C[0] = c;
       V[0]->set_cell(c);
       break;
     }
   }
-  return is;
 }
 
 template < class Vb, class Cb>
-std::ostream& 
+void
 Triangulation_data_structure_3<Vb,Cb>::
-print_cells(std::ostream& os, 
-	    std::map< void*, int > &V ) const
+print_cells(std::ostream& os, std::map< void*, int > &V ) const
 {
   std::map< void*, int > C;
 
@@ -1487,7 +1475,6 @@ print_cells(std::ostream& os,
       break;
     }
   }
-  return os;
 }
 
 template <class Vb, class Cb >

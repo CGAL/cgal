@@ -1,3 +1,6 @@
+Version 1.73 (?? July 01)
+- print_cells and read_cells small cleanup.
+
 Version 1.72 (10 July 01)
 - New functions : TDS.create_vertex() and TDS.delete_vertex().
 
