@@ -283,41 +283,47 @@ _test_cls_constrained_triangulation(const Triangulation &)
   cout << "    output to a file" << endl;
 
   ofstream of0_1("T01.triangulation", ios::out);
-  of0_1 << T0_1; of0_1.close();
+  CGAL::set_ascii_mode(of0_1);
+   of0_1 << T0_1; of0_1.close();
 
   ofstream of0_2("T02.triangulation");
+  CGAL::set_ascii_mode(of0_2);
   of0_2 << T0_2; of0_2.close();
 
   ofstream of1_1("T11.triangulation");
+  CGAL::set_ascii_mode(of1_1);
   of1_1 << T1_1; of1_1.close();
 
   ofstream of1_2("T12.triangulation");
+  CGAL::set_ascii_mode(of1_2);
   of1_2 << T1_2; of1_2.close();
 
   ofstream of2_1("T21.triangulation");
+  CGAL::set_ascii_mode(of2_1);
   of2_1 << T2_1; of2_1.close();
 
   ofstream of2_2("T22.triangulation");
+  CGAL::set_ascii_mode(of2_2);
   of2_2 << T2_2; of2_2.close();
 
   cout << "    input from a file" << endl;
-  Cls T0_1_copy; ifstream if0_1("T01.triangulation");
-  if0_1 >> T0_1_copy;
+  ifstream if0_1("T01.triangulation"); CGAL::set_ascii_mode(if0_1);
+  Cls T0_1_copy;   if0_1 >> T0_1_copy;
 
-  Cls T0_2_copy; ifstream if0_2("T02.triangulation");
-  if0_2 >> T0_2_copy;
+  ifstream if0_2("T02.triangulation"); CGAL::set_ascii_mode(if0_2);
+  Cls T0_2_copy;  if0_2 >> T0_2_copy;
 
-  Cls T1_1_copy; ifstream if1_1("T11.triangulation");
-  if1_1 >> T1_1_copy;
+  ifstream if1_1("T11.triangulation"); CGAL::set_ascii_mode(if1_1);
+  Cls T1_1_copy; if1_1 >> T1_1_copy;
 
-  Cls T1_2_copy; ifstream if1_2("T12.triangulation");
-  if1_2 >> T1_2_copy;
+  ifstream if1_2("T12.triangulation"); CGAL::set_ascii_mode(if1_2);
+   Cls T1_2_copy; if1_2 >> T1_2_copy;
 
-  Cls T2_1_copy; ifstream if2_1("T21.triangulation");
-  if2_1 >> T2_1_copy;
+  ifstream if2_1("T21.triangulation"); CGAL::set_ascii_mode(if2_1);
+  Cls T2_1_copy; if2_1 >> T2_1_copy;
 
-  Cls T2_2_copy; ifstream if2_2("T22.triangulation");
-  if2_2 >> T2_2_copy;
+  ifstream if2_2("T22.triangulation"); CGAL::set_ascii_mode(if2_2);
+  Cls T2_2_copy; if2_2 >> T2_2_copy;
 
    // Actually need overloading functions insert and remove.
    // cout << " Insert and remove "<< endl;
