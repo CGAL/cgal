@@ -29,7 +29,7 @@ sub init_variables()
 	'/users/geert/CGAL/Geert/maintenance/check_headers';
     } else {
 	$packagedir='/users/www/CGAL/Members/Develop/updates/packages';
-	$oldpackagedir='/users/www/CGAL/Members/Develop/updates/old_packages';
+	$oldpackagedir='/projects/CGAL/old_packages';
 	$download_dir='/projects/CGAL/submissions/download';
 	$maintainer='geert@cs.uu.nl';
 	$console_output=0;
@@ -325,8 +325,9 @@ sub move_packagedir($)
   # move existing version to old packages
   if ( -d "$packagedir/$package_name" ) {
 #    log_msg "moving directory $packagedir/$package_name to $oldpackagedir/$package_name"
-	rename("$packagedir/$package_name",
-	    "$oldpackagedir/$package_name") or die;
+	print STDERR 'cp',' -r'," $packagedir/$package_name ", $oldpackagedir ,"\n";
+	(system('cp','-r',"$packagedir/$package_name", $oldpackagedir)==0) or die;
+	(system('rm','-r',"$packagedir/$package_name")==0) or die;
     }
 
 #  log_msg "moving directory $tempdir to $packagedir/$package_name"
