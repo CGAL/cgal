@@ -194,10 +194,10 @@ public:
 
   // The (join, union, ||) operator.
   IA operator|| (const IA & d) const
-  { return IA(min(inf,d.inf), max(sup,d.sup)); }
+  { return IA(std::min(inf,d.inf), std::max(sup,d.sup)); }
   // The (meet, intersection, &&) operator.  Valid if intervals overlap.
   IA operator&& (const IA & d) const
-  { return IA(max(inf,d.inf), min(sup,d.sup)); }
+  { return IA(std::max(inf,d.inf), std::min(sup,d.sup)); }
 };
 
 inline
@@ -246,7 +246,7 @@ Interval_nt_advanced::operator* (const Interval_nt_advanced & d) const
     double tmp2 = sup*-d.inf;
     double tmp3 = inf*d.inf;
     double tmp4 = sup*d.sup;
-    return IA (-max(tmp1,tmp2), max(tmp3,tmp4));
+    return IA (-std::max(tmp1,tmp2), std::max(tmp3,tmp4));
   };
 }
 
@@ -416,11 +416,11 @@ square (const Interval_nt_advanced & d)
   double b = d.sup*fabs(d.sup);
   if (d.inf >= 0) return Interval_nt_advanced(-a,b);
   if (d.sup <= 0) return Interval_nt_advanced(-b,a);
-  return Interval_nt_advanced(0, max(a,b));
+  return Interval_nt_advanced(0, std::max(a,b));
 #else
   if (d.inf>=0) return Interval_nt_advanced(-(d.inf*-d.inf), d.sup*d.sup);
   if (d.sup<=0) return Interval_nt_advanced(-(d.sup*-d.sup), d.inf*d.inf);
-  return Interval_nt_advanced(0.0, square(max(-d.inf, d.sup)));
+  return Interval_nt_advanced(0.0, square(std::max(-d.inf, d.sup)));
 #endif
 }
 
@@ -465,21 +465,21 @@ abs (const Interval_nt_advanced & d)
 {
   if (d.inf >= 0) return d;
   if (d.sup <= 0) return -d;
-  return Interval_nt_advanced(0, max(-d.inf,d.sup));
+  return Interval_nt_advanced(0, std::max(-d.inf,d.sup));
 }
 
 inline
 Interval_nt_advanced
 min (const Interval_nt_advanced & d, const Interval_nt_advanced & e)
 {
-  return Interval_nt_advanced(min(d.inf, e.inf), min(d.sup, e.sup));
+  return Interval_nt_advanced(std::min(d.inf, e.inf), std::min(d.sup, e.sup));
 }
 
 inline
 Interval_nt_advanced
 max (const Interval_nt_advanced & d, const Interval_nt_advanced & e)
 {
-  return Interval_nt_advanced(max(d.inf, e.inf), max(d.sup, e.sup));
+  return Interval_nt_advanced(std::max(d.inf, e.inf), std::max(d.sup, e.sup));
 }
 
 inline
