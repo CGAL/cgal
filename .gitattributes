@@ -772,7 +772,6 @@ Packages/Arrangement/doc_tex/Arrangement_2/arr_conics.ps -text
 Packages/Arrangement/doc_tex/Arrangement_2/arr_hier.fig -text
 Packages/Arrangement/doc_tex/Arrangement_2/arr_hier.gif -text svneol=unset#unset
 Packages/Arrangement/doc_tex/Arrangement_2/arr_hier.ps -text
-Packages/Auxiliary/auxiliary/boost-1.31.0.tar.gz svneol=native#unset
 Packages/Auxiliary/auxiliary/gmp-4.1.3.tar.gz -text svneol=unset#unset
 Packages/Auxiliary/auxiliary/wingmp/gmp-4.1.3/gcc/libmpfr.a -text svneol=unset#unset
 Packages/Auxiliary/auxiliary/wingmp/gmp-4.1.3/libgmp-3.dll -text svneol=unset#unset

@@ -1,3 +1,6 @@
+23 May 2004 Sylvain Pion
+- Move Boost into its own module.
+
 17 May 2004 Radu Ursu
 - removed gmp-4.1.2 from the repository
 
