@@ -1,3 +1,5 @@
+- Finish get rid of non standard compliant (and gcc 2.97 friendly) strstream.
+  http://www.cmla.ens-cachan.fr/Utilisateurs/dosreis/C++/FAQ/
 - Remove the requirement to have a ./.geomview file with (echo "started")
   inside.  Synchronization can probably be done with select() ?
   There are other problems (sleep(1) is needed), so maybe don't touch...
