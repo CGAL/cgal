@@ -4,6 +4,7 @@
 #include <CGAL/squared_distance_2.h> 
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/Regular_triangulation_2.h>
+#include <CGAL/Regular_triangulation_vertex_base_2.h>
 #include <CGAL/Regular_triangulation_face_base_2.h>
 #include <CGAL/Triangulation_2.h>
 #include <CGAL/Triangulation_face_base_2.h>
@@ -31,7 +32,8 @@ typedef std::list<Point>            CGALPointlist;
 
 //Weighted alpha_shape
 typedef CGAL::Weighted_alpha_shape_euclidean_traits_2<Rep> Gt_w;
-typedef CGAL::Alpha_shape_vertex_base_2<Gt_w>              Av_w;
+typedef CGAL::Alpha_shape_vertex_base_2<Gt_w>              Av;
+typedef CGAL::Regular_triangulation_vertex_base_2<Gt_w, Av> Av_w;
 typedef CGAL::Regular_triangulation_face_base_2<Gt_w>      Rf_w;
 typedef CGAL::Alpha_shape_face_base_2<Gt_w,Rf_w>           Af_w;
 typedef CGAL::Triangulation_default_data_structure_2<Gt_w,Av_w,Af_w> 
