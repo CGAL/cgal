@@ -73,11 +73,9 @@ namespace CGAL {
 
     IntervalSLnode* get_next();
 
-    // find intervals overlapping V
-    IntervalList<Interval>* find_intervals(const Value& searchKey); 
-
 
     void print(std::ostream& os) const;
+
     const Value& 
     getValue()
     {
@@ -117,43 +115,61 @@ namespace CGAL {
 
     int randomLevel();  // choose a new node level at random
 
-    void placeMarkers(IntervalSLnode<Interval>* left, 
-		      IntervalSLnode<Interval>* right, 
-		      const Interval_handle& I);
     // place markers for Interval I.  I must have been inserted in the list.
     // left is the left endpoint of I and right is the right endpoint if I.
     // *** needs to be fixed:
-    void removeMarkers(const Interval_handle& I);  
+    void placeMarkers(IntervalSLnode<Interval>* left, 
+		      IntervalSLnode<Interval>* right, 
+		      const Interval_handle& I);
+
+
     // remove markers for Interval I
+    void removeMarkers(const Interval_handle& I);  
+
+
+    // adjust markers after insertion of x with update vector "update"
     void adjustMarkersOnInsert(IntervalSLnode<Interval>* x, 
 			       IntervalSLnode<Interval>** update);
-    // adjust markers after insertion of x with update vector "update"
-    void adjustMarkersOnDelete(IntervalSLnode<Interval>* x, 
-			       IntervalSLnode<Interval>** update);
+
+
     // adjust markers to prepare for deletion of x, which has update vector
     // "update"
-    void remove(IntervalSLnode<Interval>* x, IntervalSLnode<Interval>** update);
+    void adjustMarkersOnDelete(IntervalSLnode<Interval>* x, 
+			       IntervalSLnode<Interval>** update);
+
+
     // remove node x, which has updated vector update.
-    Interval_handle removeMarkers(IntervalSLnode<Interval>* left, 
-				  const Interval& I);
+    void remove(IntervalSLnode<Interval>* x, IntervalSLnode<Interval>** update);
+
+
     // remove markers for Interval I starting at left, the left endpoint
     // of I, and and stopping at the right endpoint of I.
+    Interval_handle removeMarkers(IntervalSLnode<Interval>* left, 
+				  const Interval& I);
+
+
+    // Remove markers for interval m from the edges and nodes on the
+    // level i path from l to r.
     void removeMarkFromLevel(const Interval& m, int i,
 			     IntervalSLnode<Interval> *l, 
 			     IntervalSLnode<Interval>* r);
-    // Remove markers for interval m from the edges and nodes on the
-    // level i path from l to r.
-    IntervalSLnode<Interval>* search(const Value& searchKey, 
-				     IntervalSLnode<Interval>** update);
+
+
     // Search for search key, and return a pointer to the 
     // intervalSLnode x found, as well as setting the update vector 
     // showing pointers into x. 
-    IntervalSLnode<Interval>* insert(const Value& searchKey);  
+    IntervalSLnode<Interval>* search(const Value& searchKey, 
+				     IntervalSLnode<Interval>** update);
+
+  
     // insert a new single value 
     // into list, returning a pointer to its location. 
+    IntervalSLnode<Interval>* insert(const Value& searchKey);
 
 
-    void insert(const Interval_handle& I);  // insert an interval into list 
+    // insert an interval into list 
+    void insert(const Interval_handle& I);
+
   public:
 
     friend class IntervalSLnode<Interval>;
@@ -168,24 +184,28 @@ namespace CGAL {
       }
     }
 
+
     ~Interval_skip_list(); 
+
 
     void clear();
 
-    IntervalSLnode<Interval>* search(const Value& searchKey);  
+    int size() const 
+    {
+      return container.size();
+    }
+
+ 
     // return node containing
     // Value if found, otherwise null
+    IntervalSLnode<Interval>* search(const Value& searchKey); 
 
 
-    IntervalList<Interval>* find_intervals(const Value& searchKey); 
-    // find intervals overlapping V
 
     template <class OutputIterator>
     OutputIterator 
     find_intervals(const Value& searchKey, OutputIterator out )
     {
-      //   IntervalList* L = new IntervalList();
-      
       IntervalSLnode<Interval>* x = header;
       for(int i=maxLevel; 
 	  i >= 0 && (x->isHeader() || (x->key != searchKey)); i--) {
@@ -237,6 +257,7 @@ namespace CGAL {
 
   };
 
+
   template <class Interval_>
   class IntervalList
   {
@@ -244,15 +265,24 @@ namespace CGAL {
     typedef typename Interval::Value Value;
     typedef std::list<Interval>::iterator Interval_handle;
     IntervalListElt<Interval>* header;
+
   public:
     friend class IntervalListElt<Interval>;
+
     IntervalList();
+
     void insert(const Interval_handle& I);
+
     bool remove(const Interval& I, Interval_handle& res);
+
     void remove(const Interval& I);
+
     void removeAll(IntervalList* l);
+
     IntervalListElt<Interval>* get_first();
+
     IntervalListElt<Interval>* get_next(IntervalListElt<Interval>* element);
+
     void copy(IntervalList* from); // add contents of "from" to self
  
  
@@ -270,12 +300,19 @@ namespace CGAL {
     }
 
     void insertUnique(const Interval_handle& I);
+
     int contains(const Interval_handle& I) const;
+
     int isEqual(IntervalList* l);
+
     int length();
+
     void empty();  // delete elements of self to make self an empty list.
+
     int isEmpty(){return(header==0);} // return true if list is empty
+
     void print(std::ostream& os) const;
+
     ~IntervalList();
   };
 
@@ -288,10 +325,25 @@ namespace CGAL {
     IntervalListElt* next;
   public:
     friend class IntervalList<Interval>;
+
     IntervalListElt(const Interval_handle& anInterval);
-    void set_next(IntervalListElt* nextElt){next = nextElt;}
-    IntervalListElt* get_next(){return(next);}
-    Interval_handle getInterval(){return I;}
+
+    void 
+    set_next(IntervalListElt* nextElt)
+    {
+      next = nextElt;
+    }
+
+    IntervalListElt* get_next()
+    {
+      return(next);
+    }
+
+    Interval_handle getInterval()
+    {
+      return I;
+    }
+
     void print(std::ostream& os) const;
   };
 
@@ -347,12 +399,14 @@ namespace CGAL {
   template <class Interval>
   Interval_skip_list<Interval>::~Interval_skip_list()
   {
+    /*
     for (int i = 0; i< MAX_FORWARD; i++) {
       if(header->forward[i] != 0){
 	delete header->forward[i];
       }
     }
     delete header;
+    */
   }
 
   template <class Interval>
@@ -390,7 +444,7 @@ namespace CGAL {
   }
 
   template <class Interval>
-  ostream& operator<<(ostream& os, const Interval_skip_list<Interval>& isl)
+  std::ostream& operator<<(std::ostream& os, const Interval_skip_list<Interval>& isl)
   {
     isl.print(os);
     return os;
@@ -733,6 +787,7 @@ template <class Interval>
       delete markers[i];
     delete forward;
     delete markers;
+    //delete eqMarkers; // af: this line was not there
   }
 
   template <class Interval>
@@ -815,30 +870,6 @@ template <class Interval>
     }
     x = x->forward[0];
     return(x);
-  }
-
-  template <class Interval>
-  IntervalList<Interval>* 
-  Interval_skip_list<Interval>::find_intervals(const Value& searchKey)
-    // return list of intervals overlapping V
-  {
-    IntervalList<Interval>* L = new IntervalList<Interval>();
-
-    IntervalSLnode<Interval>* x = header;
-    for(int i=maxLevel; 
-	i >= 0 && (x->isHeader() || (x->key != searchKey)); i--) {
-      while (x->forward[i] != 0 && (searchKey >= x->forward[i]->key)) {
-	x = x->forward[i];
-      } 
-      // Pick up markers on edge as you drop down a level, unless you are at 
-      // the searchKey node already, in which case you pick up the
-      // eqMarkers just prior to exiting loop.
-      if(!x->isHeader() && (x->key != searchKey)) 
-	L->copy(x->markers[i]);  
-      else if (!x->isHeader()) // we're at searchKey
-	L->copy(x->eqMarkers);
-    }
-    return(L);
   }
 
 
@@ -1135,14 +1166,14 @@ template <class Interval>
   IntervalListElt<Interval>* 
   IntervalList<Interval>::get_first()
   {
-    return(header);
+    return header;
   }
 
   template <class Interval>
   IntervalListElt<Interval>* 
   IntervalList<Interval>::get_next(IntervalListElt<Interval>* element)
   {
-    return(element->next);
+    return element->next;
   }
 
   template <class Interval>
