@@ -20,6 +20,7 @@
 // $Name$
 //
 // Author(s)     : Francois Rebufat <Francois.Rebufat@sophia.inria.fr>
+
 #include <CGAL/IO/Color.h>
 #include <utility>
 // #include <vector>
@@ -29,13 +30,11 @@
 #include <GL/gl.h>
 #include <GL/glu.h>
 #define V_UTILS
-CGAL_BEGIN_NAMESPACE
 
+CGAL_BEGIN_NAMESPACE
 
 // typedef int           Size;
 // typedef unsigned char Precision;
-
-//extern double ID[16];
 
 
 void invert(double *, double *);
