@@ -45,7 +45,7 @@ void  sweep_to_produce_planar_map_subcurves(Curve_iterator curves_begin,
                                             Container &subcurves,
                                             bool overlapping = false)
 {
-  Sweep_curves_to_subcurves<Curve_iterator, Traits, Container>  sweep_line;
+  Sweep_curves_to_subcurves<Curve_iterator, Traits>  sweep_line;
   
   sweep_line.sweep_curves_to_subcurves(curves_begin, curves_end, 
                                        subcurves, overlapping);
