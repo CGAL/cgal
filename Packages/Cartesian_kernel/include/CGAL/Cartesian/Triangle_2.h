@@ -152,7 +152,8 @@ Bounded_side
 TriangleC2<R>::
 bounded_side(const typename TriangleC2<R>::Point_2 &p) const
 {
-  typename R::Collinear_are_ordered_along_line_2 collinear_are_ordered_along_line;
+  typename R::Collinear_are_ordered_along_line_2 
+    collinear_are_ordered_along_line;
   typename R::Orientation_2 orientation;
   Orientation o1 = orientation(vertex(0), vertex(1), p),
               o2 = orientation(vertex(1), vertex(2), p),
@@ -177,7 +178,8 @@ Oriented_side
 TriangleC2<R>::
 oriented_side(const typename TriangleC2<R>::Point_2 &p) const
 {
-  typename R::Collinear_are_ordered_along_line_2 collinear_are_ordered_along_line;
+  typename R::Collinear_are_ordered_along_line_2 
+    collinear_are_ordered_along_line;
   typename R::Orientation_2 orientation;
   // depends on the orientation of the vertices
   Orientation o1 = orientation(vertex(0), vertex(1), p),

@@ -173,7 +173,6 @@ CGAL_KERNEL_INLINE
 typename SegmentC2<R>::FT
 SegmentC2<R>::squared_length() const
 {
-  std::cout << "squared_distance(source(), target());" << std::endl;
   return squared_distance(source(), target());
 }
 
@@ -251,7 +250,9 @@ bool
 SegmentC2<R>::
 has_on(const typename SegmentC2<R>::Point_2 &p) const
 {
-  return R().collinear_are_ordered_along_line_2_object()(source(), p, target());
+  return R().collinear_are_ordered_along_line_2_object()(source(), 
+							 p, 
+							 target());
 }
 
 template < class R >
