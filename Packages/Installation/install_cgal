@@ -639,6 +639,18 @@ check_for_utils()
     _check_for_sysutil awk y
     _check_for_sysutil tee y
     _check_for_sysutil find y
+
+    # test whether sed respects newline (I have seen at least one
+    # Darwin version that does not...)
+    case `${_printf} '1\n2\n' | ${_sed} '/^1/c\\
+2'` in 
+	22) log_print "sed does not respect newline."
+	    _EXTRA_NEWLINE='
+';;
+	*) log_print "sed respects newline."
+	    _EXTRA_NEWLINE='';;
+    esac
+
     if [ -n "${PAGER}" -a ! -x "${PAGER}" ]; then
 	_check_for_sysutil `$_basename ${PAGER}` y
 	PAGER=`eval "echo \$\_$PAGER"`
@@ -969,6 +981,15 @@ set_compiler_flags()
 	    XLIBS="-luser32 -lgdi32 -lcomdlg32 -lshell32"
 	    PRINT_STACKTRACE_PROGRAM="gdb"
 	    EXE_EXT=".exe"
+	    ;;
+	*Darwin*g++*)
+	    #### settings for gcc on Darwin
+	    ADDITIONAL_CXXFLAGS="-Wall -fno-common"
+	    CGAL_SHARED_LIB_CXXFLAGS=""
+	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -Wl,dynamiclib"
+	    WINDOW_DIR="/usr/X11R6/lib"
+	    RUNTIME_LINKER_FLAG='-Wl,-R'
+	    PRINT_STACKTRACE_PROGRAM="gdb"
 	    ;;
 	*mwcc.exe*|*MWCC*)
 	    #### settings Metroworks C++ compiler 
@@ -2703,6 +2724,10 @@ check_CORE_SUPPORT()
     if [ "${CORE_SUPPORT}" != "" -a "${CORE_SUPPORT}" != "_CORE" ]; then
 	$1 "WARNING: CORE_SUPPORT is not set correctly." 
 	return 0
+    elif [ -n "${CORE_SUPPORT}" -a -z "${GMP_SUPPORT}" ]; then
+	$1 "WARNING: CORE_SUPPORT requires GMP_SUPPORT." 
+	$1 "   ==> Also set GMP_SUPPORT." 
+	GMP_SUPPORT='_GMP'
     fi
     return 1
 }
@@ -4839,6 +4864,13 @@ gmp_menu()
 			search_gmp "${INSTALL_VERBOSE}"
 		    fi
 		else
+		    if [ -n "${CORE_SUPPORT}" ]; then 
+			go_down_lines 1
+			print_filled_line
+			print_center_line "REMARK: Core requires GMP."
+			wait_for_enter
+			CORE_SUPPORT=''
+		    fi
 		    GMP_SUPPORT=''
 		    GMPXX_SUPPORT=''
 		fi
@@ -4938,6 +4970,17 @@ core_menu()
 	case $KEY in
 	    c|C)
 		if [ -z "${CORE_SUPPORT}" ]; then 
+		    if [ -z "${GMP_SUPPORT}" ]; then 
+			go_down_lines 1
+			print_filled_line
+			print_center_line "REMARK: Core requires GMP."
+			wait_for_enter
+			GMP_SUPPORT='_GMP'
+			if [ -z "${GMP_INSTALLATION}" ]; then
+			    flush_buffer
+			    search_gmp "${INSTALL_VERBOSE}"
+			fi
+		    fi
 		    SETUP_COMPLETE=''
 		    CORE_SUPPORT='_CORE'
 		    if [ -z "${CORE_INSTALLATION}" ]; then
@@ -6234,7 +6277,7 @@ replace_line()
     return
   fi
   if eval '${_sed} -e "/^$2/c\\
-$3" $1 > $1.TEMP' ; then
+$3${_EXTRA_NEWLINE}" $1 > $1.TEMP' ; then
     ${_mv} $1.TEMP $1
   else
     ${_printf} "%s\n" "Error sed replacement failed in replace_line()"
@@ -6611,13 +6654,11 @@ support_menu()
 {
     while [ 0 ]; do
 	menu_header 'Support'
-	print_empty_line 
 	print_line     "${_bold_on}<G>${_bold_off}  GMP Menu" 
 	print_line     "${_bold_on}<C>${_bold_off}  CORE Menu" 
 	print_line     "${_bold_on}<L>${_bold_off}  LEDA Menu" 
 	print_line     "${_bold_on}<K>${_bold_off}  Qt Menu" 
 	print_line     "${_bold_on}<T>${_bold_off}  Test (and save) setup" 
-	print_empty_line 
 	menu_tailer 'Main Menu'
 
 	case $KEY in
