@@ -74,10 +74,8 @@ void Qt_widget::set_scales()
 
   if(!constranges)
     {
-      double tempmin = min(width(), height());
-	    double div = min(xmax-xmin, ymax-ymin);
-      
-      xscal=yscal=(tempmin - 1)/(div);
+      xscal = yscal = min( width() / (xmax - xmin),
+			   height() / (ymax - ymin) );
       set_ranges_const_center();
     }
   else
