@@ -1,0 +1,59 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Map_overlay_DCEL.tex (Map_overlay)
+% +------------------------------------------------------------------------+
+% | 
+% | Package: ovl (Map_overlay_2)
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\begin{ccRefConcept}{MapOverlayDcel_2}
+
+   A model for the \ccRefName\ concept defines the underlying
+   combinatorial data structure (halfedge data structure) used in the
+   map overlay data structure \ccc{Map_Overlay_2<Subdivision,Notifier>}.
+
+%A planar map class is parameterized with the interface classes 
+%\ccStyle{Dcel} and \ccStyle{Traits} . The \ccStyle{Dcel} class is
+%a container class that defines the 
+%underlying combinatorial data structure (halfedge data structure) 
+%used by the planar map. 
+%The \ccStyle{Traits} class defines the abstract interface
+%between planar maps and the {\em geometric} primitives they use. 
+
+The
+% \ccc{\ccRefName} does no convert to html. The converter add \ccc by 
+% default to \ccRefName
+%{\ccFont \ccRefName}
+\lcTex{\ccc{\ccRefName}}\lcHtml{\ccRefName}
+% \ccTexHtml{\ccc{\ccRefName}}{\ccRefName} <== Does not work.
+concept is a refinement of the \ccc{PlanarMapDcel_2}. 
+Hence, the requirements for the latter are requirements for the former. 
+The difference in requirements is that the  
+\ccHtmlNoLinksFrom{\ccStyle{Vertex}, \ccStyle{Halfedge}, \ccStyle{Face}}
+types should be models of the more refined concepts 
+\ccc{MapOverlayDcelVertex_2}, \ccc{MapOverlayDcelHalfedge_2} and \ccc{MapOverlayDcelFace}.
+
+\ccTypes
+    \ccNestedType{Vertex}{
+       The vertex type. Should be a model of the
+       \ccc{MapOverlayDcelVertex_2} concept.}
+
+    \ccNestedType{Halfedge}{
+       The halfedge type. Should be a model of the
+       \ccc{MapOverlayDcelHalfedge_2} concept.}
+    
+    \ccNestedType{Face}{
+       The face type. Should be a model of the
+       \ccc{MapOverlayDcelFace_2} concept.}
+
+\end{ccRefConcept} % MapOverlayDcel_2
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
