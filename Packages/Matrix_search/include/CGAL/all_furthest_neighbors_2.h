@@ -1,5 +1,3 @@
-#line 1393 "mon_search.aw"
-#line 18 "code_formatting.awi"
 // ============================================================================
 //
 // Copyright (c) 1998 The CGAL Consortium
@@ -26,12 +24,9 @@
 // Compute all furthest neighbors for the vertices of a convex polygon
 // ============================================================================
 
-#line 1397 "mon_search.aw"
-#line 54 "code_formatting.awi"
 #if ! (ALL_FURTHEST_NEIGHBORS_2_H)
 #define ALL_FURTHEST_NEIGHBORS_2_H 1
 
-#line 356 "afn.awi"
 #ifndef CGAL_OPTIMISATION_ASSERTIONS_H
 #include <CGAL/optimisation_assertions.h>
 #endif // CGAL_OPTIMISATION_ASSERTIONS_H
@@ -60,10 +55,7 @@
 #define CGAL_PROTECT_ALGORITHM
 #endif
 
-#line 46 "code_formatting.awi"
 CGAL_BEGIN_NAMESPACE
-#line 383 "afn.awi"
-#line 108 "afn.awi"
 template < class Operation, class RandomAccessIC >
 class All_furthest_neighbor_matrix
 : public Cartesian_matrix< Operation, RandomAccessIC, RandomAccessIC >
@@ -99,21 +91,16 @@ public:
       return BaseClass::operator()( r, c);
   }
 };
-#line 384 "afn.awi"
 
 #if !defined(CGAL_CFG_NO_ITERATOR_TRAITS) && \
 !defined(CGAL_CFG_MATCHING_BUG_2)
 
-#line 50 "code_formatting.awi"
 CGAL_END_NAMESPACE
-#line 389 "afn.awi"
 #ifndef CGAL_PROTECT_ITERATOR
 #include <iterator>
 #define CGAL_PROTECT_ITERATOR
 #endif
-#line 46 "code_formatting.awi"
 CGAL_BEGIN_NAMESPACE
-#line 394 "afn.awi"
 
 template < class RandomAccessIC, class OutputIterator, class Traits >
 inline
@@ -225,13 +212,10 @@ all_furthest_neighbors( RandomAccessIC points_begin,
                     bind2nd( modulus< int >(), number_of_points));
 } // all_furthest_neighbors( ... )
 
-#line 50 "code_formatting.awi"
 CGAL_END_NAMESPACE
-#line 506 "afn.awi"
 
 #endif // ! (ALL_FURTHEST_NEIGHBORS_2_H)
 
-#line 12 "code_formatting.awi"
 // ----------------------------------------------------------------------------
 // ** EOF
 // ----------------------------------------------------------------------------

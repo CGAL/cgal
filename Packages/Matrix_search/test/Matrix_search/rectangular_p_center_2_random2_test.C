@@ -1,5 +1,3 @@
-#line 672 "pcenter.aw"
-#line 18 "code_formatting.awi"
 // ============================================================================
 //
 // Copyright (c) 1998 The CGAL Consortium
@@ -26,9 +24,6 @@
 // 2-4-Centering Axis-Parallel 2D-Rectangles - test program
 // ============================================================================
 
-#line 676 "pcenter.aw"
-#line 529 "pc_testprog.awi"
-#line 363 "pc_testprog.awi"
 #ifndef CGAL_CARTESIAN_H
 #include <CGAL/Cartesian.h>
 #endif // CGAL_CARTESIAN_H
@@ -74,7 +69,6 @@ using CGAL::default_random;
 using CGAL::rectangular_p_center_2;
 using CGAL::ORIGIN;
 
-#line 85 "pc_testprog.awi"
 // function class to construct a box
 // around a point p with radius r
 template < class Point, class FT, class Box >
@@ -88,7 +82,6 @@ struct Build_box
                 Point( p.x() + r, p.y() + r));
   }
 };
-#line 393 "pc_testprog.awi"
 
 typedef double                             FT;
 typedef Cartesian< FT >                    R;
@@ -151,7 +144,6 @@ main( int argc, char* argv[])
 #ifdef OUTPUT
   cerr << "random seed is " << random_seed << endl;
 #endif
-#line 530 "pc_testprog.awi"
 
   PCont points;
   Vector t;
@@ -168,7 +160,6 @@ main( int argc, char* argv[])
 #ifdef OUTPUT
   cerr << "** check two center **" << endl;
 #endif // OUTPUT
-  #line 578 "pc_testprog.awi"
   {
     // vectors to translate the clusters:
     Vector v1( 0,2);
@@ -193,7 +184,6 @@ main( int argc, char* argv[])
       cerr << "." << flush;
   #endif // OUTPUT
     }
-  #line 578 "pc_testprog.awi"
   {
     // vectors to translate the clusters:
     Vector v1( 2,0);
@@ -218,7 +208,6 @@ main( int argc, char* argv[])
       cerr << "." << flush;
   #endif // OUTPUT
     }
-  #line 578 "pc_testprog.awi"
   {
     // vectors to translate the clusters:
     Vector v1( 2,2);
@@ -243,7 +232,6 @@ main( int argc, char* argv[])
       cerr << "." << flush;
   #endif // OUTPUT
     }
-  #line 578 "pc_testprog.awi"
   {
     // vectors to translate the clusters:
     Vector v1( -2,2);
@@ -272,7 +260,6 @@ main( int argc, char* argv[])
 #ifdef OUTPUT
   cerr << "\n** check three center **" << endl;
 #endif // OUTPUT
-  #line 605 "pc_testprog.awi"
   {
     // vectors to translate the clusters:
     Vector v1( 0,4);
@@ -301,7 +288,6 @@ main( int argc, char* argv[])
       cerr << "." << flush;
   #endif // OUTPUT
     }
-  #line 605 "pc_testprog.awi"
   {
     // vectors to translate the clusters:
     Vector v1( -4,0);
@@ -330,7 +316,6 @@ main( int argc, char* argv[])
       cerr << "." << flush;
   #endif // OUTPUT
     }
-  #line 605 "pc_testprog.awi"
   {
     // vectors to translate the clusters:
     Vector v1( -4,0);
@@ -359,7 +344,6 @@ main( int argc, char* argv[])
       cerr << "." << flush;
   #endif // OUTPUT
     }
-  #line 605 "pc_testprog.awi"
   {
     // vectors to translate the clusters:
     Vector v1( -4,-4);
@@ -388,7 +372,6 @@ main( int argc, char* argv[])
       cerr << "." << flush;
   #endif // OUTPUT
     }
-  #line 605 "pc_testprog.awi"
   {
     // vectors to translate the clusters:
     Vector v1( -4,-4);
@@ -421,7 +404,6 @@ main( int argc, char* argv[])
 #ifdef OUTPUT
   cerr << "\n** check four center **" << endl;
 #endif // OUTPUT
-  #line 636 "pc_testprog.awi"
   {
     // vectors to translate the clusters:
     Vector v1( 0,-4);
@@ -454,7 +436,6 @@ main( int argc, char* argv[])
       cerr << "." << flush;
   #endif // OUTPUT
     }
-  #line 636 "pc_testprog.awi"
   {
     // vectors to translate the clusters:
     Vector v1( -4,0);
@@ -487,7 +468,6 @@ main( int argc, char* argv[])
       cerr << "." << flush;
   #endif // OUTPUT
     }
-  #line 636 "pc_testprog.awi"
   {
     // vectors to translate the clusters:
     Vector v1( 0,-2);
@@ -520,7 +500,6 @@ main( int argc, char* argv[])
       cerr << "." << flush;
   #endif // OUTPUT
     }
-  #line 636 "pc_testprog.awi"
   {
     // vectors to translate the clusters:
     Vector v1( 0,-2);
@@ -553,7 +532,6 @@ main( int argc, char* argv[])
       cerr << "." << flush;
   #endif // OUTPUT
     }
-  #line 636 "pc_testprog.awi"
   {
     // vectors to translate the clusters:
     Vector v1( -2,0);
@@ -593,8 +571,6 @@ main( int argc, char* argv[])
 
   return 0;
 } 
-#line 677 "pcenter.aw"
-#line 12 "code_formatting.awi"
 // ----------------------------------------------------------------------------
 // ** EOF
 // ----------------------------------------------------------------------------

@@ -1,5 +1,3 @@
-#line 1540 "mon_search.aw"
-#line 18 "code_formatting.awi"
 // ============================================================================
 //
 // Copyright (c) 1998 The CGAL Consortium
@@ -26,8 +24,6 @@
 // Test program: Compute extremal polygons of a convex polygon
 // ============================================================================
 
-#line 1544 "mon_search.aw"
-#line 540 "testprog.awi"
 #ifndef CGAL_CARTESIAN_H
 #include <CGAL/Cartesian.h>
 #endif // CGAL_CARTESIAN_H
@@ -79,7 +75,6 @@ typedef vector< Point_double >                    Cont_double;
 typedef Creator_uniform_2< double, Point_double > Creator;
 typedef Random_points_in_square_2< Point_double, Creator >
   Point_generator;
-#line 692 "testprog.awi"
 template < class RandomAccessIC,
            class OutputIterator >
 OutputIterator
@@ -116,7 +111,6 @@ brute_force_area_3( RandomAccessIC b,
   return o;
 
 } // brute_force_3( b, e, o)
-#line 731 "testprog.awi"
 template < class RandomAccessIC,
            class OutputIterator >
 OutputIterator
@@ -163,7 +157,6 @@ brute_force_area_4( RandomAccessIC b,
 
 } // brute_force_4( b, e, o)
 
-#line 580 "testprog.awi"
 
 /*
 struct D2R : public unary_function< Point_double, Point >
@@ -273,8 +266,6 @@ int main() {
 
   return 0;
 } // int main()
-#line 1545 "mon_search.aw"
-#line 12 "code_formatting.awi"
 // ----------------------------------------------------------------------------
 // ** EOF
 // ----------------------------------------------------------------------------

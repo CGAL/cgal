@@ -1,5 +1,3 @@
-#line 263 "fj_testprog.awi"
-#line 18 "code_formatting.awi"
 // ============================================================================
 //
 // Copyright (c) 1998 The CGAL Consortium
@@ -26,8 +24,6 @@
 // Sorted matrix search: Test Program
 // ============================================================================
 
-#line 267 "fj_testprog.awi"
-#line 255 "fj_testprog.awi"
 #ifndef CGAL_RANDOM_H
 #include <CGAL/Random.h>
 #endif // CGAL_RANDOM_H
@@ -41,8 +37,6 @@
 #include <CGAL/sorted_matrix_search.h>
 #endif // CGAL_SORTED_MATRIX_SEARCH_H
 #include <vector>
-#line 268 "fj_testprog.awi"
-#line 227 "fj_testprog.awi"
 template < class Matrix_iterator, class Value >
 Value
 compute_upper_bound( Matrix_iterator f,
@@ -66,9 +60,6 @@ compute_upper_bound( Matrix_iterator f,
   }
   return best;
 } // compute_upper_bound( f, l, b, max)
-#line 269 "fj_testprog.awi"
-#line 20 "fj_testprog.awi"
-#line 53 "fj_testprog.awi"
 using std::vector;
 using std::plus;
 using std::sort;
@@ -94,12 +85,10 @@ typedef Cartesian_matrix<
 typedef vector< Matrix >                 Matrix_cont;
 
 
-#line 21 "fj_testprog.awi"
 
 int
 main( int argc, char* argv[])
 {
-  #line 38 "fj_testprog.awi"
   // seed for random number generator:
   int random_seed;
   // number of matrices:
@@ -112,8 +101,6 @@ main( int argc, char* argv[])
   Matrix_cont matrices;
   // set of vectors the matrices are build from:
   Vector_cont vectors;
-#line 26 "fj_testprog.awi"
-  #line 84 "fj_testprog.awi"
   // handle command line arguments:
   if ( argc < 4 ||
        (num = atoi(argv[1])) <= 0 ||
@@ -142,8 +129,6 @@ main( int argc, char* argv[])
   #ifdef OUTPUT
   cout << "random seed is " << random_seed << endl;
   #endif
-#line 27 "fj_testprog.awi"
-  #line 124 "fj_testprog.awi"
   // maximum entry of all matrices:
   Value max_entry( -1);
   
@@ -199,8 +184,6 @@ main( int argc, char* argv[])
         Matrix( (*i).begin(), (*i).end(),
                 (*j).begin(), (*j).end()));
     }
-#line 28 "fj_testprog.awi"
-  #line 185 "fj_testprog.awi"
   // search lower bound for a random value v in matrices
   Value bound;
   // assure there is any feasible value in m:
@@ -237,10 +220,7 @@ main( int argc, char* argv[])
          << "\nresult was " << u << "\ntrivial algorithm gives "
          << brute_force << endl;
   #endif
-#line 29 "fj_testprog.awi"
 }
-#line 270 "fj_testprog.awi"
-#line 12 "code_formatting.awi"
 // ----------------------------------------------------------------------------
 // ** EOF
 // ----------------------------------------------------------------------------

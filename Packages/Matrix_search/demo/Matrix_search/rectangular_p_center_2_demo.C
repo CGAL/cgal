@@ -1,5 +1,3 @@
-#line 645 "pcenter.aw"
-#line 18 "code_formatting.awi"
 // ============================================================================
 //
 // Copyright (c) 1998 The CGAL Consortium
@@ -26,9 +24,6 @@
 // Demo: 2-4-Centering Axis-Parallel 2D-Rectangles
 // ============================================================================
 
-#line 649 "pcenter.aw"
-#line 101 "pc_testprog.awi"
-#line 12 "pc_testprog.awi"
 #ifndef CGAL_CARTESIAN_H
 #include <CGAL/Cartesian.h>
 #endif // CGAL_CARTESIAN_H
@@ -102,9 +97,7 @@ typedef ostream_iterator< Point >       Ostream_iterator_point;
 typedef ostream_iterator< Square_2 >    Ostream_iterator_square;
 typedef Istream_iterator< Point, leda_window>
   Istream_iterator_point;
-#line 102 "pc_testprog.awi"
 
-#line 68 "pc_testprog.awi"
 #include <ctime>
 static time_t Measure;
 static long long int measure;
@@ -119,9 +112,7 @@ Measure = clock(); \
   comm; \
   measure = (long long int)((float)(clock() - Measure) \
   * 1000 / CLOCKS_PER_SEC);
-#line 104 "pc_testprog.awi"
 
-#line 85 "pc_testprog.awi"
 // function class to construct a box
 // around a point p with radius r
 template < class Point, class FT, class Box >
@@ -135,7 +126,6 @@ struct Build_box
                 Point( p.x() + r, p.y() + r));
   }
 };
-#line 106 "pc_testprog.awi"
 
 int
 main( int argc, char* argv[])
@@ -231,8 +221,6 @@ main( int argc, char* argv[])
   double x, y;
   while ( W.read_mouse( x, y) != MOUSE_BUTTON( 1)) {}
 }
-#line 650 "pcenter.aw"
-#line 12 "code_formatting.awi"
 // ----------------------------------------------------------------------------
 // ** EOF
 // ----------------------------------------------------------------------------

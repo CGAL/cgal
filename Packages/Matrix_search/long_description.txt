@@ -1,48 +1,13 @@
-//=====================================================================
-//	Revision History for package Matrix_search
-//=====================================================================
+CHANGES:
 
+1.6:
+	- added package and chapter to file headers.
+	- removed htmlfiles (now in Optimisation_basic).
+	- changed pkg-name acc. to naming conventions.
+	- minor fix in the docs.
 
-//---------------------------------------------------------------------
-//	revision 1.15
-//---------------------------------------------------------------------
-
-DOCS: fixed preconditions in replace_column (reported by Mariette).
-
-//---------------------------------------------------------------------
-//	revision 1.14
-//---------------------------------------------------------------------
-
-ALL : added std:: in a number of places where it was missing
-
-//---------------------------------------------------------------------
-//	revision 1.13
-//---------------------------------------------------------------------
-
-ALL : Initial revision
-TEST: Added LONG_NAME_PROBLEM flags to makefile
-
-//---------------------------------------------------------------------
-//	revision 1.12
-//---------------------------------------------------------------------
-
-ALL : use namespace std and CGAL
-ALL : use standard header files
-DOCS: fixed preconditions in replace_column (reported by Mariette).
-DOCS: Initial revision
-
-//---------------------------------------------------------------------
-//	revision 1.11
-//---------------------------------------------------------------------
-
-
-//---------------------------------------------------------------------
-//	revision 1.10
-//---------------------------------------------------------------------
-
-
-//---------------------------------------------------------------------
-//	revision 1.9
-//---------------------------------------------------------------------
-
-SRC : fix signed <-> unsigned comparison warning on gcc.
+1.5: 
+	- Now rectangular 3- and 4-centers. 
+	- Uses Iso_square_static_2 instead of Iso_rectangle_2
+	  (improved performance and robustness).
+	- some fixes in the docs.

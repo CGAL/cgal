@@ -1,5 +1,3 @@
-#line 634 "pcenter.aw"
-#line 18 "code_formatting.awi"
 // ============================================================================
 //
 // Copyright (c) 1998 The CGAL Consortium
@@ -26,13 +24,9 @@
 // 2-4-Center Computation for Axis-Parallel 2D-Rectangles
 // ============================================================================
 
-#line 638 "pcenter.aw"
-#line 54 "code_formatting.awi"
 #if ! (RECTANGULAR_P_CENTER_2_TRAITS_H)
 #define RECTANGULAR_P_CENTER_2_TRAITS_H 1
 
-#line 16 "pc_traits.awi"
-#line 193 "pc_traits.awi"
 #ifndef CGAL_OPTIMISATION_ASSERTIONS_H
 #include <CGAL/optimisation_assertions.h>
 #endif // CGAL_OPTIMISATION_ASSERTIONS_H
@@ -50,13 +44,9 @@
 #endif
 
 #endif // ! (CGAL_CFG_NO_ITERATOR_TRAITS) && ...
-#line 17 "pc_traits.awi"
 
-#line 46 "code_formatting.awi"
 CGAL_BEGIN_NAMESPACE
-#line 19 "pc_traits.awi"
 
-#line 547 "pcenter.aw"
 #ifdef CGAL_CARTESIAN_REP_H
 template < class ForwardIterator,
            class OutputIterator,
@@ -111,9 +101,7 @@ _CGAL_rectangular_p_center_2(
   return rectangular_p_center_2( f, l, o, r, p, PTraits());
 } // rectangular_p_center_2( ... )
 #endif // CGAL_HOMOGENEOUS_REP_H
-#line 21 "pc_traits.awi"
 
-#line 156 "pc_traits.awi"
 template < class ForwardIterator, class FT >
 struct Blow_up_iso_square_static_2
 {
@@ -124,7 +112,6 @@ struct Blow_up_iso_square_static_2
       (*b).set_radius( v / FT( 2));
   }
 };
-#line 172 "pc_traits.awi"
 /*
 template < class ForwardIterator, class FT, class R >
 void
@@ -144,7 +131,6 @@ _rectangle_blow_up_to( ForwardIterator f,
 }
 */
 
-#line 23 "pc_traits.awi"
 
 template < class _PiercingFunction >
 class Pcenter_default_traits {
@@ -204,7 +190,6 @@ public:
 #ifndef CGAL_CFG_NO_MEMBER_TEMPLATES
   template < class OutputIterator >
 #else
-  #line 134 "pc_traits.awi"
   Wastebasket< Point_2 >
   operator()( FT v, Wastebasket< Point_2 > o, bool& ok)
   {
@@ -217,7 +202,6 @@ public:
                 ok);
   }
 #endif // CGAL_CFG_NO_MEMBER_TEMPLATES
-  #line 134 "pc_traits.awi"
   OutputIterator
   operator()( FT v, OutputIterator o, bool& ok)
   {
@@ -271,14 +255,11 @@ protected:
 
 }; // Pcenter_default_traits< PiercingFunction >
 
-#line 50 "code_formatting.awi"
 CGAL_END_NAMESPACE
-#line 128 "pc_traits.awi"
 
 
 #endif // ! (RECTANGULAR_P_CENTER_2_TRAITS_H)
 
-#line 12 "code_formatting.awi"
 // ----------------------------------------------------------------------------
 // ** EOF
 // ----------------------------------------------------------------------------

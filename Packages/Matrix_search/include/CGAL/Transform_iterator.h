@@ -1,5 +1,3 @@
-#line 1354 "mon_search.aw"
-#line 18 "code_formatting.awi"
 // ============================================================================
 //
 // Copyright (c) 1998 The CGAL Consortium
@@ -26,12 +24,9 @@
 // An OutputIterator Adaptor applying an unary function
 // ============================================================================
 
-#line 1358 "mon_search.aw"
-#line 54 "code_formatting.awi"
 #if ! (TRANSFORM_ITERATOR_H)
 #define TRANSFORM_ITERATOR_H 1
 
-#line 269 "mon_search.aw"
 #ifndef CGAL_OPTIMISATION_ASSERTIONS_H
 #include <CGAL/optimisation_assertions.h>
 #endif // CGAL_OPTIMISATION_ASSERTIONS_H
@@ -43,9 +38,7 @@
 #define CGAL_PROTECT_ITERATOR
 #endif
 
-#line 46 "code_formatting.awi"
 CGAL_BEGIN_NAMESPACE
-#line 279 "mon_search.aw"
 
 template < class OutputIterator, class Operation >
 class Transform_iterator : public CGAL_STD::output_iterator {
@@ -101,13 +94,10 @@ query_circulator_or_iterator(
   const Transform_iterator< OutputIterator, Operation >&)
 { return Iterator_tag(); }
 
-#line 50 "code_formatting.awi"
 CGAL_END_NAMESPACE
-#line 335 "mon_search.aw"
 
 #endif // ! (TRANSFORM_ITERATOR_H)
 
-#line 12 "code_formatting.awi"
 // ----------------------------------------------------------------------------
 // ** EOF
 // ----------------------------------------------------------------------------

@@ -1,5 +1,3 @@
-#line 681 "pcenter.aw"
-#line 18 "code_formatting.awi"
 // ============================================================================
 //
 // Copyright (c) 1998 The CGAL Consortium
@@ -26,8 +24,6 @@
 // 2-4-Centering Axis-Parallel 2D-Rectangles - example program
 // ============================================================================
 
-#line 685 "pcenter.aw"
-#line 307 "pc_testprog.awi"
 #ifndef CGAL_CARTESIAN_H
 #include <CGAL/Cartesian.h>
 #endif // CGAL_CARTESIAN_H
@@ -90,8 +86,6 @@ int main() {
   cout << "\n\n" << p << "-radius = " << p_radius << endl;
 
 } 
-#line 686 "pcenter.aw"
-#line 12 "code_formatting.awi"
 // ----------------------------------------------------------------------------
 // ** EOF
 // ----------------------------------------------------------------------------

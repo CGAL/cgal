@@ -1,5 +1,3 @@
-#line 949 "fjsearch.aw"
-#line 18 "code_formatting.awi"
 // ============================================================================
 //
 // Copyright (c) 1998 The CGAL Consortium
@@ -26,15 +24,10 @@
 // Frederickson-Johnson matrix search: traits class adaptor
 // ============================================================================
 
-#line 953 "fjsearch.aw"
-#line 54 "code_formatting.awi"
 #if ! (SORTED_MATRIX_SEARCH_TRAITS_ADAPTOR_H)
 #define SORTED_MATRIX_SEARCH_TRAITS_ADAPTOR_H 1
 
-#line 900 "fjsearch.aw"
-#line 46 "code_formatting.awi"
 CGAL_BEGIN_NAMESPACE
-#line 901 "fjsearch.aw"
 
 template < class _FeasibilityTest, class _Matrix >
 class Sorted_matrix_search_traits_adaptor {
@@ -79,13 +72,10 @@ sorted_matrix_search_traits_adaptor(
   return Traits( f);
 } // sorted_matrix_search_traits_adaptor( ... )
 
-#line 50 "code_formatting.awi"
 CGAL_END_NAMESPACE
-#line 946 "fjsearch.aw"
 
 #endif // ! (SORTED_MATRIX_SEARCH_TRAITS_ADAPTOR_H)
 
-#line 12 "code_formatting.awi"
 // ----------------------------------------------------------------------------
 // ** EOF
 // ----------------------------------------------------------------------------
