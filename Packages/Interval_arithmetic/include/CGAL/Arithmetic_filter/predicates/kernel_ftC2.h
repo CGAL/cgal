@@ -98,7 +98,7 @@ equal_lineC2(
     static Profile_counter calls("Lazy IA equal_lineC2 calls");
     ++calls;
 #endif
-    Protect_FPU_rounding<false> Protection;
+    Protect_FPU_rounding<true> Protection;
     return equal_lineC2(
 		l1a.interval(),
 		l1b.interval(),
@@ -113,7 +113,7 @@ equal_lineC2(
     static Profile_counter failures("Lazy IA equal_lineC2 failures");
     ++failures;
 #endif
-    Protect_FPU_rounding<true> Protection(CGAL_FE_TONEAREST);
+    Protect_FPU_rounding<false> Protection(CGAL_FE_TONEAREST);
     return equal_lineC2(
 		l1a.exact(),
 		l1b.exact(),
@@ -195,7 +195,7 @@ compare_xC2(
     static Profile_counter calls("Lazy IA compare_xC2 calls");
     ++calls;
 #endif
-    Protect_FPU_rounding<false> Protection;
+    Protect_FPU_rounding<true> Protection;
     return compare_xC2(
 		px.interval(),
 		la.interval(),
@@ -211,7 +211,7 @@ compare_xC2(
     static Profile_counter failures("Lazy IA compare_xC2 failures");
     ++failures;
 #endif
-    Protect_FPU_rounding<true> Protection(CGAL_FE_TONEAREST);
+    Protect_FPU_rounding<false> Protection(CGAL_FE_TONEAREST);
     return compare_xC2(
 		px.exact(),
 		la.exact(),
@@ -302,7 +302,7 @@ compare_xC2(
     static Profile_counter calls("Lazy IA compare_xC2 calls");
     ++calls;
 #endif
-    Protect_FPU_rounding<false> Protection;
+    Protect_FPU_rounding<true> Protection;
     return compare_xC2(
 		la.interval(),
 		lb.interval(),
@@ -320,7 +320,7 @@ compare_xC2(
     static Profile_counter failures("Lazy IA compare_xC2 failures");
     ++failures;
 #endif
-    Protect_FPU_rounding<true> Protection(CGAL_FE_TONEAREST);
+    Protect_FPU_rounding<false> Protection(CGAL_FE_TONEAREST);
     return compare_xC2(
 		la.exact(),
 		lb.exact(),
@@ -425,7 +425,7 @@ compare_xC2(
     static Profile_counter calls("Lazy IA compare_xC2 calls");
     ++calls;
 #endif
-    Protect_FPU_rounding<false> Protection;
+    Protect_FPU_rounding<true> Protection;
     return compare_xC2(
 		l1a.interval(),
 		l1b.interval(),
@@ -446,7 +446,7 @@ compare_xC2(
     static Profile_counter failures("Lazy IA compare_xC2 failures");
     ++failures;
 #endif
-    Protect_FPU_rounding<true> Protection(CGAL_FE_TONEAREST);
+    Protect_FPU_rounding<false> Protection(CGAL_FE_TONEAREST);
     return compare_xC2(
 		l1a.exact(),
 		l1b.exact(),
@@ -526,7 +526,7 @@ compare_y_at_xC2(
     static Profile_counter calls("Lazy IA compare_y_at_xC2 calls");
     ++calls;
 #endif
-    Protect_FPU_rounding<false> Protection;
+    Protect_FPU_rounding<true> Protection;
     return compare_y_at_xC2(
 		px.interval(),
 		py.interval(),
@@ -540,7 +540,7 @@ compare_y_at_xC2(
     static Profile_counter failures("Lazy IA compare_y_at_xC2 failures");
     ++failures;
 #endif
-    Protect_FPU_rounding<true> Protection(CGAL_FE_TONEAREST);
+    Protect_FPU_rounding<false> Protection(CGAL_FE_TONEAREST);
     return compare_y_at_xC2(
 		px.exact(),
 		py.exact(),
@@ -621,7 +621,7 @@ compare_y_at_xC2(
     static Profile_counter calls("Lazy IA compare_y_at_xC2 calls");
     ++calls;
 #endif
-    Protect_FPU_rounding<false> Protection;
+    Protect_FPU_rounding<true> Protection;
     return compare_y_at_xC2(
 		px.interval(),
 		l1a.interval(),
@@ -637,7 +637,7 @@ compare_y_at_xC2(
     static Profile_counter failures("Lazy IA compare_y_at_xC2 failures");
     ++failures;
 #endif
-    Protect_FPU_rounding<true> Protection(CGAL_FE_TONEAREST);
+    Protect_FPU_rounding<false> Protection(CGAL_FE_TONEAREST);
     return compare_y_at_xC2(
 		px.exact(),
 		l1a.exact(),
@@ -728,7 +728,7 @@ compare_y_at_xC2(
     static Profile_counter calls("Lazy IA compare_y_at_xC2 calls");
     ++calls;
 #endif
-    Protect_FPU_rounding<false> Protection;
+    Protect_FPU_rounding<true> Protection;
     return compare_y_at_xC2(
 		l1a.interval(),
 		l1b.interval(),
@@ -746,7 +746,7 @@ compare_y_at_xC2(
     static Profile_counter failures("Lazy IA compare_y_at_xC2 failures");
     ++failures;
 #endif
-    Protect_FPU_rounding<true> Protection(CGAL_FE_TONEAREST);
+    Protect_FPU_rounding<false> Protection(CGAL_FE_TONEAREST);
     return compare_y_at_xC2(
 		l1a.exact(),
 		l1b.exact(),
@@ -851,7 +851,7 @@ compare_y_at_xC2(
     static Profile_counter calls("Lazy IA compare_y_at_xC2 calls");
     ++calls;
 #endif
-    Protect_FPU_rounding<false> Protection;
+    Protect_FPU_rounding<true> Protection;
     return compare_y_at_xC2(
 		l1a.interval(),
 		l1b.interval(),
@@ -872,7 +872,7 @@ compare_y_at_xC2(
     static Profile_counter failures("Lazy IA compare_y_at_xC2 failures");
     ++failures;
 #endif
-    Protect_FPU_rounding<true> Protection(CGAL_FE_TONEAREST);
+    Protect_FPU_rounding<false> Protection(CGAL_FE_TONEAREST);
     return compare_y_at_xC2(
 		l1a.exact(),
 		l1b.exact(),
@@ -968,7 +968,7 @@ compare_y_at_x_segment_C2(
     static Profile_counter calls("Lazy IA compare_y_at_x_segment_C2 calls");
     ++calls;
 #endif
-    Protect_FPU_rounding<false> Protection;
+    Protect_FPU_rounding<true> Protection;
     return compare_y_at_x_segment_C2(
 		px.interval(),
 		s1sx.interval(),
@@ -986,7 +986,7 @@ compare_y_at_x_segment_C2(
     static Profile_counter failures("Lazy IA compare_y_at_x_segment_C2 failures");
     ++failures;
 #endif
-    Protect_FPU_rounding<true> Protection(CGAL_FE_TONEAREST);
+    Protect_FPU_rounding<false> Protection(CGAL_FE_TONEAREST);
     return compare_y_at_x_segment_C2(
 		px.exact(),
 		s1sx.exact(),
@@ -1059,7 +1059,7 @@ equal_directionC2(
     static Profile_counter calls("Lazy IA equal_directionC2 calls");
     ++calls;
 #endif
-    Protect_FPU_rounding<false> Protection;
+    Protect_FPU_rounding<true> Protection;
     return equal_directionC2(
 		dx1.interval(),
 		dy1.interval(),
@@ -1072,7 +1072,7 @@ equal_directionC2(
     static Profile_counter failures("Lazy IA equal_directionC2 failures");
     ++failures;
 #endif
-    Protect_FPU_rounding<true> Protection(CGAL_FE_TONEAREST);
+    Protect_FPU_rounding<false> Protection(CGAL_FE_TONEAREST);
     return equal_directionC2(
 		dx1.exact(),
 		dy1.exact(),
@@ -1140,7 +1140,7 @@ compare_slopesC2(
     static Profile_counter calls("Lazy IA compare_slopesC2 calls");
     ++calls;
 #endif
-    Protect_FPU_rounding<false> Protection;
+    Protect_FPU_rounding<true> Protection;
     return compare_slopesC2(
 		l1a.interval(),
 		l1b.interval(),
@@ -1153,7 +1153,7 @@ compare_slopesC2(
     static Profile_counter failures("Lazy IA compare_slopesC2 failures");
     ++failures;
 #endif
-    Protect_FPU_rounding<true> Protection(CGAL_FE_TONEAREST);
+    Protect_FPU_rounding<false> Protection(CGAL_FE_TONEAREST);
     return compare_slopesC2(
 		l1a.exact(),
 		l1b.exact(),
@@ -1237,7 +1237,7 @@ compare_slopesC2(
     static Profile_counter calls("Lazy IA compare_slopesC2 calls");
     ++calls;
 #endif
-    Protect_FPU_rounding<false> Protection;
+    Protect_FPU_rounding<true> Protection;
     return compare_slopesC2(
 		s1_src_x.interval(),
 		s1_src_y.interval(),
@@ -1254,7 +1254,7 @@ compare_slopesC2(
     static Profile_counter failures("Lazy IA compare_slopesC2 failures");
     ++failures;
 #endif
-    Protect_FPU_rounding<true> Protection(CGAL_FE_TONEAREST);
+    Protect_FPU_rounding<false> Protection(CGAL_FE_TONEAREST);
     return compare_slopesC2(
 		s1_src_x.exact(),
 		s1_src_y.exact(),
@@ -1326,7 +1326,7 @@ compare_deltax_deltayC2(
     static Profile_counter calls("Lazy IA compare_deltax_deltayC2 calls");
     ++calls;
 #endif
-    Protect_FPU_rounding<false> Protection;
+    Protect_FPU_rounding<true> Protection;
     return compare_deltax_deltayC2(
 		px.interval(),
 		qx.interval(),
@@ -1339,7 +1339,7 @@ compare_deltax_deltayC2(
     static Profile_counter failures("Lazy IA compare_deltax_deltayC2 failures");
     ++failures;
 #endif
-    Protect_FPU_rounding<true> Protection(CGAL_FE_TONEAREST);
+    Protect_FPU_rounding<false> Protection(CGAL_FE_TONEAREST);
     return compare_deltax_deltayC2(
 		px.exact(),
 		qx.exact(),
@@ -1415,7 +1415,7 @@ orientationC2(
     static Profile_counter calls("Lazy IA orientationC2 calls");
     ++calls;
 #endif
-    Protect_FPU_rounding<false> Protection;
+    Protect_FPU_rounding<true> Protection;
     return orientationC2(
 		px.interval(),
 		py.interval(),
@@ -1430,7 +1430,7 @@ orientationC2(
     static Profile_counter failures("Lazy IA orientationC2 failures");
     ++failures;
 #endif
-    Protect_FPU_rounding<true> Protection(CGAL_FE_TONEAREST);
+    Protect_FPU_rounding<false> Protection(CGAL_FE_TONEAREST);
     return orientationC2(
 		px.exact(),
 		py.exact(),
@@ -1508,7 +1508,7 @@ angleC2(
     static Profile_counter calls("Lazy IA angleC2 calls");
     ++calls;
 #endif
-    Protect_FPU_rounding<false> Protection;
+    Protect_FPU_rounding<true> Protection;
     return angleC2(
 		px.interval(),
 		py.interval(),
@@ -1523,7 +1523,7 @@ angleC2(
     static Profile_counter failures("Lazy IA angleC2 failures");
     ++failures;
 #endif
-    Protect_FPU_rounding<true> Protection(CGAL_FE_TONEAREST);
+    Protect_FPU_rounding<false> Protection(CGAL_FE_TONEAREST);
     return angleC2(
 		px.exact(),
 		py.exact(),
@@ -1609,7 +1609,7 @@ side_of_oriented_circleC2(
     static Profile_counter calls("Lazy IA side_of_oriented_circleC2 calls");
     ++calls;
 #endif
-    Protect_FPU_rounding<false> Protection;
+    Protect_FPU_rounding<true> Protection;
     return side_of_oriented_circleC2(
 		px.interval(),
 		py.interval(),
@@ -1626,7 +1626,7 @@ side_of_oriented_circleC2(
     static Profile_counter failures("Lazy IA side_of_oriented_circleC2 failures");
     ++failures;
 #endif
-    Protect_FPU_rounding<true> Protection(CGAL_FE_TONEAREST);
+    Protect_FPU_rounding<false> Protection(CGAL_FE_TONEAREST);
     return side_of_oriented_circleC2(
 		px.exact(),
 		py.exact(),
@@ -1714,7 +1714,7 @@ side_of_bounded_circleC2(
     static Profile_counter calls("Lazy IA side_of_bounded_circleC2 calls");
     ++calls;
 #endif
-    Protect_FPU_rounding<false> Protection;
+    Protect_FPU_rounding<true> Protection;
     return side_of_bounded_circleC2(
 		px.interval(),
 		py.interval(),
@@ -1731,7 +1731,7 @@ side_of_bounded_circleC2(
     static Profile_counter failures("Lazy IA side_of_bounded_circleC2 failures");
     ++failures;
 #endif
-    Protect_FPU_rounding<true> Protection(CGAL_FE_TONEAREST);
+    Protect_FPU_rounding<false> Protection(CGAL_FE_TONEAREST);
     return side_of_bounded_circleC2(
 		px.exact(),
 		py.exact(),
@@ -1811,7 +1811,7 @@ side_of_bounded_circleC2(
     static Profile_counter calls("Lazy IA side_of_bounded_circleC2 calls");
     ++calls;
 #endif
-    Protect_FPU_rounding<false> Protection;
+    Protect_FPU_rounding<true> Protection;
     return side_of_bounded_circleC2(
 		px.interval(),
 		py.interval(),
@@ -1826,7 +1826,7 @@ side_of_bounded_circleC2(
     static Profile_counter failures("Lazy IA side_of_bounded_circleC2 failures");
     ++failures;
 #endif
-    Protect_FPU_rounding<true> Protection(CGAL_FE_TONEAREST);
+    Protect_FPU_rounding<false> Protection(CGAL_FE_TONEAREST);
     return side_of_bounded_circleC2(
 		px.exact(),
 		py.exact(),
@@ -1904,7 +1904,7 @@ cmp_dist_to_pointC2(
     static Profile_counter calls("Lazy IA cmp_dist_to_pointC2 calls");
     ++calls;
 #endif
-    Protect_FPU_rounding<false> Protection;
+    Protect_FPU_rounding<true> Protection;
     return cmp_dist_to_pointC2(
 		px.interval(),
 		py.interval(),
@@ -1919,7 +1919,7 @@ cmp_dist_to_pointC2(
     static Profile_counter failures("Lazy IA cmp_dist_to_pointC2 failures");
     ++failures;
 #endif
-    Protect_FPU_rounding<true> Protection(CGAL_FE_TONEAREST);
+    Protect_FPU_rounding<false> Protection(CGAL_FE_TONEAREST);
     return cmp_dist_to_pointC2(
 		px.exact(),
 		py.exact(),
@@ -1997,7 +1997,7 @@ cmp_signed_dist_to_directionC2(
     static Profile_counter calls("Lazy IA cmp_signed_dist_to_directionC2 calls");
     ++calls;
 #endif
-    Protect_FPU_rounding<false> Protection;
+    Protect_FPU_rounding<true> Protection;
     return cmp_signed_dist_to_directionC2(
 		la.interval(),
 		lb.interval(),
@@ -2012,7 +2012,7 @@ cmp_signed_dist_to_directionC2(
     static Profile_counter failures("Lazy IA cmp_signed_dist_to_directionC2 failures");
     ++failures;
 #endif
-    Protect_FPU_rounding<true> Protection(CGAL_FE_TONEAREST);
+    Protect_FPU_rounding<false> Protection(CGAL_FE_TONEAREST);
     return cmp_signed_dist_to_directionC2(
 		la.exact(),
 		lb.exact(),
@@ -2098,7 +2098,7 @@ cmp_signed_dist_to_lineC2(
     static Profile_counter calls("Lazy IA cmp_signed_dist_to_lineC2 calls");
     ++calls;
 #endif
-    Protect_FPU_rounding<false> Protection;
+    Protect_FPU_rounding<true> Protection;
     return cmp_signed_dist_to_lineC2(
 		px.interval(),
 		py.interval(),
@@ -2115,7 +2115,7 @@ cmp_signed_dist_to_lineC2(
     static Profile_counter failures("Lazy IA cmp_signed_dist_to_lineC2 failures");
     ++failures;
 #endif
-    Protect_FPU_rounding<true> Protection(CGAL_FE_TONEAREST);
+    Protect_FPU_rounding<false> Protection(CGAL_FE_TONEAREST);
     return cmp_signed_dist_to_lineC2(
 		px.exact(),
 		py.exact(),
@@ -2191,7 +2191,7 @@ side_of_oriented_lineC2(
     static Profile_counter calls("Lazy IA side_of_oriented_lineC2 calls");
     ++calls;
 #endif
-    Protect_FPU_rounding<false> Protection;
+    Protect_FPU_rounding<true> Protection;
     return side_of_oriented_lineC2(
 		a.interval(),
 		b.interval(),
@@ -2205,7 +2205,7 @@ side_of_oriented_lineC2(
     static Profile_counter failures("Lazy IA side_of_oriented_lineC2 failures");
     ++failures;
 #endif
-    Protect_FPU_rounding<true> Protection(CGAL_FE_TONEAREST);
+    Protect_FPU_rounding<false> Protection(CGAL_FE_TONEAREST);
     return side_of_oriented_lineC2(
 		a.exact(),
 		b.exact(),

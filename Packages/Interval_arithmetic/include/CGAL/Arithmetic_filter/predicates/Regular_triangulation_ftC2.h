@@ -122,7 +122,7 @@ power_testC2(
     static Profile_counter calls("Lazy IA power_testC2 calls");
     ++calls;
 #endif
-    Protect_FPU_rounding<false> Protection;
+    Protect_FPU_rounding<true> Protection;
     return power_testC2(
 		px.interval(),
 		py.interval(),
@@ -143,7 +143,7 @@ power_testC2(
     static Profile_counter failures("Lazy IA power_testC2 failures");
     ++failures;
 #endif
-    Protect_FPU_rounding<true> Protection(CGAL_FE_TONEAREST);
+    Protect_FPU_rounding<false> Protection(CGAL_FE_TONEAREST);
     return power_testC2(
 		px.exact(),
 		py.exact(),
@@ -239,7 +239,7 @@ power_testC2(
     static Profile_counter calls("Lazy IA power_testC2 calls");
     ++calls;
 #endif
-    Protect_FPU_rounding<false> Protection;
+    Protect_FPU_rounding<true> Protection;
     return power_testC2(
 		px.interval(),
 		py.interval(),
@@ -257,7 +257,7 @@ power_testC2(
     static Profile_counter failures("Lazy IA power_testC2 failures");
     ++failures;
 #endif
-    Protect_FPU_rounding<true> Protection(CGAL_FE_TONEAREST);
+    Protect_FPU_rounding<false> Protection(CGAL_FE_TONEAREST);
     return power_testC2(
 		px.exact(),
 		py.exact(),

@@ -110,7 +110,7 @@ in_smallest_orthogonalcircleC2(
     static Profile_counter calls("Lazy IA in_smallest_orthogonalcircleC2 calls");
     ++calls;
 #endif
-    Protect_FPU_rounding<false> Protection;
+    Protect_FPU_rounding<true> Protection;
     return in_smallest_orthogonalcircleC2(
 		px.interval(),
 		py.interval(),
@@ -128,7 +128,7 @@ in_smallest_orthogonalcircleC2(
     static Profile_counter failures("Lazy IA in_smallest_orthogonalcircleC2 failures");
     ++failures;
 #endif
-    Protect_FPU_rounding<true> Protection(CGAL_FE_TONEAREST);
+    Protect_FPU_rounding<false> Protection(CGAL_FE_TONEAREST);
     return in_smallest_orthogonalcircleC2(
 		px.exact(),
 		py.exact(),

@@ -173,7 +173,7 @@ $fct_name($args_call2)
     static Profile_counter calls(\"Lazy IA $fct_name calls\");
     ++calls;
 #endif
-    ${CGAL}Protect_FPU_rounding<false> Protection;
+    ${CGAL}Protect_FPU_rounding<true> Protection;
     return $fct_name($args_inter);
   } 
   catch (${CGAL}Interval_nt_advanced::unsafe_comparison)
@@ -182,7 +182,7 @@ $fct_name($args_call2)
     static Profile_counter failures(\"Lazy IA $fct_name failures\");
     ++failures;
 #endif
-    ${CGAL}Protect_FPU_rounding<true> Protection(CGAL_FE_TONEAREST);
+    ${CGAL}Protect_FPU_rounding<false> Protection(CGAL_FE_TONEAREST);
     return $fct_name($args_exact);
   }
 }

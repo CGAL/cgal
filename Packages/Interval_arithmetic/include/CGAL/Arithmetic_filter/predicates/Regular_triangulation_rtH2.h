@@ -138,7 +138,7 @@ power_testH2(
     static Profile_counter calls("Lazy IA power_testH2 calls");
     ++calls;
 #endif
-    Protect_FPU_rounding<false> Protection;
+    Protect_FPU_rounding<true> Protection;
     return power_testH2(
 		phx.interval(),
 		phy.interval(),
@@ -163,7 +163,7 @@ power_testH2(
     static Profile_counter failures("Lazy IA power_testH2 failures");
     ++failures;
 #endif
-    Protect_FPU_rounding<true> Protection(CGAL_FE_TONEAREST);
+    Protect_FPU_rounding<false> Protection(CGAL_FE_TONEAREST);
     return power_testH2(
 		phx.exact(),
 		phy.exact(),
@@ -275,7 +275,7 @@ power_testH2(
     static Profile_counter calls("Lazy IA power_testH2 calls");
     ++calls;
 #endif
-    Protect_FPU_rounding<false> Protection;
+    Protect_FPU_rounding<true> Protection;
     return power_testH2(
 		phx.interval(),
 		phy.interval(),
@@ -296,7 +296,7 @@ power_testH2(
     static Profile_counter failures("Lazy IA power_testH2 failures");
     ++failures;
 #endif
-    Protect_FPU_rounding<true> Protection(CGAL_FE_TONEAREST);
+    Protect_FPU_rounding<false> Protection(CGAL_FE_TONEAREST);
     return power_testH2(
 		phx.exact(),
 		phy.exact(),

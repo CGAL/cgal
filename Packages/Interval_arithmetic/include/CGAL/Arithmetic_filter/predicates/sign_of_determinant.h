@@ -90,7 +90,7 @@ sign_of_determinant2x2(
     static Profile_counter calls("Lazy IA sign_of_determinant2x2 calls");
     ++calls;
 #endif
-    Protect_FPU_rounding<false> Protection;
+    Protect_FPU_rounding<true> Protection;
     return sign_of_determinant2x2(
 		a00.interval(),
 		a01.interval(),
@@ -103,7 +103,7 @@ sign_of_determinant2x2(
     static Profile_counter failures("Lazy IA sign_of_determinant2x2 failures");
     ++failures;
 #endif
-    Protect_FPU_rounding<true> Protection(CGAL_FE_TONEAREST);
+    Protect_FPU_rounding<false> Protection(CGAL_FE_TONEAREST);
     return sign_of_determinant2x2(
 		a00.exact(),
 		a01.exact(),
@@ -191,7 +191,7 @@ sign_of_determinant3x3(
     static Profile_counter calls("Lazy IA sign_of_determinant3x3 calls");
     ++calls;
 #endif
-    Protect_FPU_rounding<false> Protection;
+    Protect_FPU_rounding<true> Protection;
     return sign_of_determinant3x3(
 		a00.interval(),
 		a01.interval(),
@@ -209,7 +209,7 @@ sign_of_determinant3x3(
     static Profile_counter failures("Lazy IA sign_of_determinant3x3 failures");
     ++failures;
 #endif
-    Protect_FPU_rounding<true> Protection(CGAL_FE_TONEAREST);
+    Protect_FPU_rounding<false> Protection(CGAL_FE_TONEAREST);
     return sign_of_determinant3x3(
 		a00.exact(),
 		a01.exact(),
@@ -330,7 +330,7 @@ sign_of_determinant4x4(
     static Profile_counter calls("Lazy IA sign_of_determinant4x4 calls");
     ++calls;
 #endif
-    Protect_FPU_rounding<false> Protection;
+    Protect_FPU_rounding<true> Protection;
     return sign_of_determinant4x4(
 		a00.interval(),
 		a01.interval(),
@@ -355,7 +355,7 @@ sign_of_determinant4x4(
     static Profile_counter failures("Lazy IA sign_of_determinant4x4 failures");
     ++failures;
 #endif
-    Protect_FPU_rounding<true> Protection(CGAL_FE_TONEAREST);
+    Protect_FPU_rounding<false> Protection(CGAL_FE_TONEAREST);
     return sign_of_determinant4x4(
 		a00.exact(),
 		a01.exact(),
@@ -519,7 +519,7 @@ sign_of_determinant5x5(
     static Profile_counter calls("Lazy IA sign_of_determinant5x5 calls");
     ++calls;
 #endif
-    Protect_FPU_rounding<false> Protection;
+    Protect_FPU_rounding<true> Protection;
     return sign_of_determinant5x5(
 		a00.interval(),
 		a01.interval(),
@@ -553,7 +553,7 @@ sign_of_determinant5x5(
     static Profile_counter failures("Lazy IA sign_of_determinant5x5 failures");
     ++failures;
 #endif
-    Protect_FPU_rounding<true> Protection(CGAL_FE_TONEAREST);
+    Protect_FPU_rounding<false> Protection(CGAL_FE_TONEAREST);
     return sign_of_determinant5x5(
 		a00.exact(),
 		a01.exact(),
@@ -770,7 +770,7 @@ sign_of_determinant6x6(
     static Profile_counter calls("Lazy IA sign_of_determinant6x6 calls");
     ++calls;
 #endif
-    Protect_FPU_rounding<false> Protection;
+    Protect_FPU_rounding<true> Protection;
     return sign_of_determinant6x6(
 		a00.interval(),
 		a01.interval(),
@@ -815,7 +815,7 @@ sign_of_determinant6x6(
     static Profile_counter failures("Lazy IA sign_of_determinant6x6 failures");
     ++failures;
 #endif
-    Protect_FPU_rounding<true> Protection(CGAL_FE_TONEAREST);
+    Protect_FPU_rounding<false> Protection(CGAL_FE_TONEAREST);
     return sign_of_determinant6x6(
 		a00.exact(),
 		a01.exact(),

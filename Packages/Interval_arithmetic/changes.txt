@@ -1,3 +1,6 @@
+Version 4.162 on 6 March 2003
+- Fix stupid bug affecting Lazy_exact_nt's overloaded predicates...
+
 Version 4.161 on 21 February 2003
 - Filtered_kernel uses the new true extensibility.
 
