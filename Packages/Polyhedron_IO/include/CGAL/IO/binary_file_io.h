@@ -77,6 +77,10 @@ I_swap_to_big_endian( float& f) {
     I_swap_to_big_endian( u);
 }
 
+// Backwards compatible
+template <class T>
+inline void _swap_to_big_endian( T& t) { I_swap_to_big_endian(t); }
+
 inline void
 I_Binary_write_big_endian_integer32(std::ostream& out, Integer32 i) {
     I_swap_to_big_endian( i);

@@ -51,18 +51,18 @@ skip_to_next_vertex( int current_vertex) {
     if ( binary()) {
         float f;
         if ( has_normals() && ! normals_read) {
-            I_Binary_read_float32( m_in, f);
-            I_Binary_read_float32( m_in, f);
-            I_Binary_read_float32( m_in, f);
+            I_Binary_read_big_endian_float32( m_in, f);
+            I_Binary_read_big_endian_float32( m_in, f);
+            I_Binary_read_big_endian_float32( m_in, f);
             if ( is_homogeneous())
-                I_Binary_read_float32( m_in, f);
+                I_Binary_read_big_endian_float32( m_in, f);
         }
         if ( has_colors()) {
             // It is not well stated in the Geomview manual
             // how color is coded following a vertex. It is
             // parsed similar to the optional color for facets.
             Integer32 k;
-            I_Binary_read_integer32( m_in, k);
+            I_Binary_read_big_endian_integer32( m_in, k);
             if (k<0 || k>4) {
                 m_in.clear( std::ios::badbit);
                 if ( verbose()) {
@@ -77,7 +77,7 @@ skip_to_next_vertex( int current_vertex) {
             }
             while (k--) {
                 float dummy;
-                I_Binary_read_float32( m_in, dummy);
+                I_Binary_read_big_endian_float32( m_in, dummy);
             }
         }
     } else {
@@ -113,7 +113,7 @@ skip_to_next_facet( int current_facet) {
     // Take care of trailing informations like color triples.
     if ( binary()) {
         Integer32 k;
-        I_Binary_read_integer32( m_in, k);
+        I_Binary_read_big_endian_integer32( m_in, k);
         if (k<0 || k>4) {
             m_in.clear( std::ios::badbit);
             if ( verbose()) {
@@ -128,7 +128,7 @@ skip_to_next_facet( int current_facet) {
         }
         while (k--) {
             float dummy;
-            I_Binary_read_float32( m_in, dummy);
+            I_Binary_read_big_endian_float32( m_in, dummy);
         }
     } else {
         m_in >> skip_until_EOL;

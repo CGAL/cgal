@@ -4,6 +4,7 @@ Polyhedron_IO Package: Release changes:
 
      - Converted files in the demo and example directory to the new design.
      - Fixed geomview problem with polyhedron names.
+     - Fixed binary file IO problem with OFF file format.
 
 3.2 (18 Jun 2001)
 
