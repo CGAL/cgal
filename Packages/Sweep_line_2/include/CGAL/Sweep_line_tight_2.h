@@ -27,9 +27,7 @@
 #ifndef CGAL_SWEEP_LINE_BASE_H
 #define CGAL_SWEEP_LINE_BASE_H
 
-//#include <CGAL/Sweep_line_2/Sweep_line_event.h>
 #include <CGAL/Sweep_line_2/Sweep_line_functors.h>
-//#include <CGAL/Sweep_line_2/Sweep_line_subcurve.h>
 
 #include <map>
 #include <set>
@@ -486,8 +484,8 @@ protected:
       @param cv the curve to be added
   */
   template <class OutpoutIterator>
-  void AddCurveToOutput(OutpoutIterator out, 
-			const X_curve_2 &cv, Subcurve *curve)
+  void AddCurveToOutput(const X_curve_2 &cv, Subcurve *curve, 
+			OutpoutIterator out)
   {
     static Subcurve *prevCurve = 0;
     static X_curve_2 prevXCv;
@@ -627,24 +625,22 @@ protected:
     EventCurveIter leftCurveIter = m_currentEvent->leftCurvesBegin();
     m_currentPos = m_prevPos;
     const Point_2 &eventPoint = m_currentEvent->getPoint();
-    Point_2 prevLastPoint = eventPoint;
+
     while ( leftCurveIter != m_currentEvent->leftCurvesEnd() )  // ** fix here
     {
       Subcurve *leftCurve = *leftCurveIter; 
       const X_curve_2 &cv = leftCurve->getCurve();
       const Point_2 &lastPoint = leftCurve->getLastPoint();
 
-      prevLastPoint = lastPoint;
       if ( leftCurve->isSource(eventPoint))
       {
         if ( !leftCurve->isTarget(lastPoint) )
         {
           X_curve_2 a,b;
           m_traits->curve_split(cv, a, b, lastPoint);
-          AddCurveToOutput(out, a, leftCurve);
-	  //*out = a; ++out;
+          AddCurveToOutput(a, leftCurve, out);
         } else {
-          AddCurveToOutput(out, cv, leftCurve);
+          AddCurveToOutput(cv, leftCurve, out);
         }
       } else if ( leftCurve->isTarget(eventPoint))
       {
@@ -652,27 +648,27 @@ protected:
         {
           X_curve_2 a,b;
           m_traits->curve_split(cv, a, b, lastPoint);
-          AddCurveToOutput(out, b, leftCurve);
+          AddCurveToOutput(b, leftCurve, out);
         } else {
-          AddCurveToOutput(out, cv, leftCurve);
+          AddCurveToOutput(cv, leftCurve, out);
         }
 
       } else { 
         X_curve_2 a,b;
         if ( leftCurve->isSource(lastPoint)) {
           m_traits->curve_split(cv, a, b, eventPoint);
-          AddCurveToOutput(out, a, leftCurve);
+          AddCurveToOutput(a, leftCurve, out);
         } else if ( leftCurve->isTarget(lastPoint)) {
           m_traits->curve_split(cv, b, a, eventPoint);
-          AddCurveToOutput(out, a, leftCurve);
+          AddCurveToOutput(a, leftCurve, out);
         } else {
           const X_curve_2 &lastCurve = leftCurve->getLastCurve();
           if ( leftCurve->isSourceLeftToTarget() ) {
             m_traits->curve_split(lastCurve, a, b, eventPoint);
-            AddCurveToOutput(out, a, leftCurve);
+            AddCurveToOutput(a, leftCurve, out);
           } else {
             m_traits->curve_split(lastCurve, b, a, eventPoint);
-            AddCurveToOutput(out, a, leftCurve);
+            AddCurveToOutput(a, leftCurve, out);
           }
         }
         leftCurve->setLastPoint(eventPoint);
@@ -688,6 +684,7 @@ protected:
       ++leftCurveIter;
     }
   }
+
 
   /*! For each left-curve, if it is the "last" subcurve, i.e., the 
    * event point is the right-edge of the original curve, the 
@@ -1124,7 +1121,10 @@ HandleVerticalCurveBottom(SweepLineGetSubCurves &tag)
     EventQueueIter topEndEventIter = m_queue->find(topEnd);
     assert(topEndEventIter!=m_queue->end());
     Event *topEndEvent = topEndEventIter->second;
-    
+
+    bool lastEventCreatedHere = false;
+    Event *prevEvent = 0;
+
     while ( slIter != m_statusLine->end() &&
 	    m_traits->curve_get_point_status((*slIter)->getCurve(), topEnd) 
 	    != Traits::UNDER_CURVE &&
@@ -1164,19 +1164,33 @@ HandleVerticalCurveBottom(SweepLineGetSubCurves &tag)
 	e->addCurveToRight(*slIter);
 	PRINT_NEW_EVENT(p, e);
 	m_queue->insert(EventQueueValueType(p, e));
-	
+
+	lastEventCreatedHere = true;
+
       } else {
 	e = eqi->second;
-	if ( !(*slIter)->isLeftEnd(p) ) 
-	  e->addCurveToLeft(*slIter, m_sweepLinePos);
-	if ( !(*slIter)->isRightEnd(p) ) 
-	  e->addCurveToRight(*slIter);
+	
+	// the only time we need to update the event is when the event
+	// is created here (which also includes overlapping curves)
+	if ( e == prevEvent ) {
+	  if ( lastEventCreatedHere )
+	  {
+	    if ( !(*slIter)->isLeftEnd(p) ) 
+	      e->addCurveToLeft(*slIter, m_sweepLinePos);
+	    if ( !(*slIter)->isRightEnd(p) ) 
+	      e->addCurveToRight(*slIter);
+	  } 
+	}
+	else
+	  lastEventCreatedHere = false;
+
 	SL_DEBUG(std::cout << "Updating event \n";)
 	SL_DEBUG(e->Print();)
       }
       
       topEndEvent->addVerticalCurveXPoint(p);
       ++slIter;
+      prevEvent = e;
     }    
     vciter++;
   }
