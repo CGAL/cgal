@@ -34,6 +34,8 @@
 #include <utility>
 #include <iostream>
 #include <CGAL/circulator.h>
+#include <CGAL/Iterator_project.h>
+#include <CGAL/function_objects.h>
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Triangulation_short_names_2.h>
 #include <CGAL/Triangulation_utils_2.h>
@@ -45,8 +47,7 @@
 #include <CGAL/Triangulation_iterators_2.h>
 #include <CGAL/Triangulation_circulators_2.h>
 #include <CGAL/Triangulation_line_face_circulator_2.h>
-#include <CGAL/Iterator_project.h>
-#include <CGAL/function_objects.h>
+
 
 
 CGAL_BEGIN_NAMESPACE
@@ -117,10 +118,10 @@ public:
   typedef Triangulation_line_face_circulator_2<Gt,Tds>  Line_face_circulator;
 
   // Auxiliary iterators for convenience
-  //typedef Project_point<Vertex>                           Proj_point;
-  //typedef Iterator_project<Vertex_iterator, Proj_point, Point&, Point*>  
-  //                                                        Points_iterator;
-  
+  typedef Project_point<Vertex>                           Proj_point;
+  typedef Iterator_project<Vertex_iterator, Proj_point,
+	                    const Point&, const Point*>     Point_iterator;
+
   typedef Point value_type; // to have a back_inserter
   typedef const value_type&    const_reference; 
   
@@ -128,6 +129,34 @@ public:
   enum Locate_type {VERTEX=0, EDGE, FACE, 
 		    OUTSIDE_CONVEX_HULL,
 		    OUTSIDE_AFFINE_HULL};
+
+protected:
+  //Helping classes
+
+ //  to be used as adaptators from iterators with Edge value_type
+ //   to an iterator with Tds::Edge as value type
+  template<class I>
+  class To_tds_edge_iterator : public I {
+  public:
+    typedef typename Triangulation_data_structure::Edge  Tds_Edge;
+    To_tds_edge_iterator() {}
+    To_tds_edge_iterator(I i) : I(i) {} 
+    Tds_Edge  operator*() {
+      Edge e = I::operator*();
+      return Tds_Edge( &*(e.first), e.second);
+    }
+  };
+
+ //  to be used as adaptators from iterators with Face_jhandle value_type
+ //   to an iterator with Tds::Face* as value type
+  template<class I>
+  class To_tds_face_iterator : public I {
+  public:
+    typedef typename Triangulation_data_structure::Face  Tds_Face;
+    To_tds_face_iterator() {}
+    To_tds_face_iterator(I i) : I(i) {} 
+    Tds_Face* operator*() { return  &*(I::operator*() ); }
+  };
 
 protected:
   Gt  _gt;
@@ -246,8 +275,8 @@ public:
   Finite_vertices_iterator finite_vertices_end() const;
   Finite_edges_iterator finite_edges_begin() const;
   Finite_edges_iterator finite_edges_end() const; 
-  //Points_iterator points_begin() const;
-  //Points_iterator points_end() const;
+  Point_iterator points_begin() const;
+  Point_iterator points_end() const;
 
   All_faces_iterator all_faces_begin() const;
   All_faces_iterator all_faces_end() const;
@@ -278,6 +307,10 @@ public:
  // TO DEBUG
  void show_all();
  void show_face( Face_handle fh);
+
+  // IO
+// template < class Stream >
+// Stream&  draw_triangulation(Stream& os) const;
 
  //PREDICATES
  Oriented_side
@@ -310,9 +343,22 @@ protected:
   void remove_1D(Vertex_handle v);
   void remove_2D(Vertex_handle v);
   bool test_dim_down(Vertex_handle v);
-  void make_hole(Vertex_handle v, std::list<Edge> & hole);
   void fill_hole(Vertex_handle v, std::list<Edge> & hole);
   void fill_hole_delaunay(std::list<Edge> & hole);
+
+public:
+  void make_hole(Vertex_handle v, std::list<Edge> & hole);
+//   template<class EdgeIt>
+//   Vertex_handle star_hole( Point p, 
+// 			      EdgeIt edge_begin,
+// 			      EdgeIt edge_end);
+
+//   template<class EdgeIt, class FaceIt>
+//   Vertex_handle star_hole( Point p, 
+// 			      EdgeIt edge_begin,
+// 			      EdgeIt edge_end,
+// 			      FaceIt face_begin,
+// 			      FaceIt face_end);
 
   Face_handle create_face(Face_handle f1, int i1,
 			  Face_handle f2, int i2,
@@ -334,6 +380,7 @@ private:
   Vertex_handle insert_outside_convex_hull_1(const Point& p, Face_handle f);
   Vertex_handle insert_outside_convex_hull_2(const Point& p, Face_handle f);
   
+  // template members
 public:
 template < class Stream >
 Stream&  draw_triangulation(Stream& os) const 
@@ -355,6 +402,70 @@ int insert(InputIterator first, InputIterator last)
   }
   return number_of_vertices() - n;
 }
+
+public:
+  template<class EdgeIt>
+  Vertex_handle star_hole( Point p, 
+			   EdgeIt edge_begin,
+			   EdgeIt edge_end) {
+    std::list<Face_handle> empty_list;
+    return star_hole(p, 
+		     edge_begin, 
+		     edge_end, 
+		     empty_list.begin(),
+		     empty_list.end());
+  }
+
+  template<class EdgeIt, class FaceIt>
+  Vertex_handle star_hole( Point p, 
+			   EdgeIt edge_begin,
+			   EdgeIt edge_end,
+			   FaceIt face_begin,
+			   FaceIt face_end) {
+//     To_tds_edge funct1;
+//     To_tds_face funct2;
+//     typedef typename Triangulation_data_structure::Face  Tds_Face;
+//     typedef typename Triangulation_data_structure::Edge  Tds_Edge;
+//     Tds_Edge  e = funct1(*edge_begin);
+    //Tds_Face* fa = funct2(*face_begin);
+
+ //    typedef Iterator_project<EdgeIt, To_tds_edge>  Edge_adaptor; 
+//     typedef Iterator_project<FaceIt, To_tds_face>  Face_adaptor;
+
+//     Edge_adaptor ea = Edge_adaptor(edge_begin);
+//     //Face_adaptor fa = Face_adaptor(face_begin);
+//     ea++;
+    
+    typedef To_tds_edge_iterator<EdgeIt> Tds_ei;
+    typedef To_tds_face_iterator<FaceIt> Tds_fi;
+    Vertex_handle v = static_cast<Vertex*> 
+                       (_tds.star_hole( Tds_ei(edge_begin), 
+					Tds_ei(edge_end),
+					Tds_fi(face_begin),
+					Tds_fi(face_end)) );
+
+
+//     //provisoire tant que les iterator adaptors ne marche pas
+//     typedef typename Triangulation_data_structure::Face  Tds_Face;
+//     typedef typename Triangulation_data_structure::Edge  Tds_Edge;
+//     std::list<Tds_Face*> list_face;
+//     std::list<Tds_Edge> list_edge; 
+//     for( EdgeIt eit=edge_begin; eit != edge_end; eit++)
+//       list_edge.push_back( Tds_Edge(&(*(eit->first)), eit->second));
+//     for (FaceIt fit=face_begin; fit != face_end; fit++) {
+//        list_face.push_back( &**fit );
+//     }
+//      Vertex_handle v = static_cast<Vertex*> (
+//                        _tds.star_hole(list_edge.begin(),
+// 				      list_edge.end(),
+// 				      list_face.begin(),
+// 				      list_face.end() ) );
+
+    v->set_point(p);
+    return v;
+  }
+
+  
 
 };
 
@@ -1789,21 +1900,21 @@ finite_edges_end() const
   return Finite_edges_iterator(ncthis,1);
 }
 
-// template <class Gt, class Tds >
-// Triangulation_2<Gt, Tds>::Points_iterator
-// Triangulation_2<Gt, Tds>::
-// Points_begin() const
-// {
-//   return Points_iterator(Finite_vertices_iterator(ncthis));
-// }
+template <class Gt, class Tds >
+Triangulation_2<Gt, Tds>::Point_iterator
+Triangulation_2<Gt, Tds>::
+points_begin() const
+{
+  return Point_iterator(finite_vertices_begin());
+}
 
-// template <class Gt, class Tds >
-// Triangulation_2<Gt, Tds>::Points_iterator
-// Triangulation_2<Gt, Tds>::
-// Points_end() const
-// {
-//   return Points_iterator(Finite_vertices_iterator(ncthis,1));
-// }
+template <class Gt, class Tds >
+Triangulation_2<Gt, Tds>::Point_iterator
+Triangulation_2<Gt, Tds>::
+points_end() const
+{
+  return Point_iterator(finite_vertices_end());
+}
 
 template <class Gt, class Tds >
 Triangulation_2<Gt, Tds>::All_faces_iterator

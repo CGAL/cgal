@@ -28,6 +28,8 @@ _test_iterators( const Triangulation &T )
   int nv = _test_cls_vertex_iterator(T);
   int ne = _test_cls_edge_iterator(T);
   int nf = _test_cls_face_iterator(T);
+  int np = _test_cls_point_iterator(T);
+  assert( np == nv);
   // std::cout << "Euler's relation: " << nv -ne + nf << std::endl;
   switch (T.dimension()) {
   case 0 : 
@@ -37,9 +39,6 @@ _test_iterators( const Triangulation &T )
     break;
   case 2: assert ( nv == T.number_of_vertices() && nv - ne + nf == 1);
   }
-
-  //  int np = _test_cls_point_iterator(T);
-  //assert( np = nv);
 }
 
 template < class Triangulation >
@@ -95,33 +94,33 @@ _test_cls_vertex_iterator( const Triangulation &T )
   return nv;
 }
 
-// template < class Triangulation >
-// int
-// _test_cls_point_iterator( const Triangulation &T )
-// {
-//   typedef typename Triangulation::Points_iterator Points_iterator;
-//   typedef typename Triangulation::Points          Points;
+template < class Triangulation >
+int
+_test_cls_point_iterator( Triangulation &T )
+{
+  typedef typename Triangulation::Point_iterator Point_iterator;
+  typedef typename Triangulation::Point          Point;
 
-//   int np = 0:
-//   Points_iterator pit;
-//   Points p;
-//   for (pit = T.points_begin(); 
-//        pit != T.points_end(); 
-//        ++pit) {
-//     np ++;
-//     p = *pit;
-//   }
-//   assert( np == T.number_of_vertices() );
+  int np = 0;
+  Point_iterator pit;
+  Point p;
+  for (pit = T.points_begin(); 
+       pit != T.points_end(); 
+       ++pit) {
+    np ++;
+    p = *pit;
+  }
+  assert( np == T.number_of_vertices() );
 
-//   int n=np;
-//   for (pit = T.points_end(); 
-//        pit != T.points_begin(); 
-//        --pit)
-//     n--;
-//   assert( n == 0 );
+  int n=np;
+  for (pit = T.points_end(); 
+       pit != T.points_begin(); 
+       --pit)
+    n--;
+  assert( n == 0 );
 
-//   return np;  
-// }
+  return np;  
+}
 
 template < class Triangulation >
 int

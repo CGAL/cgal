@@ -533,6 +533,7 @@ _test_cls_triangulation_short_2( const Triangul &)
   T2_5.clear();
   assert( T2_5.number_of_vertices() == 0 );
 
+ 
   // test destructors and return
   std::cout << "    test destructors and return" << std::endl;
 }

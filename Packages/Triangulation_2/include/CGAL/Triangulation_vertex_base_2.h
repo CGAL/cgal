@@ -49,6 +49,11 @@ public:
   const Point&  point() const { return _p; }
   void* face() const { return _f;}
  
+  // the non const version of point() is undocument
+  // but needed to make the point iterator works
+  // using Lutz projection scheme
+  Point&        point() { return _p; }
+
     
   //the following trivial is_valid to allow
   // the user of derived face base classes 

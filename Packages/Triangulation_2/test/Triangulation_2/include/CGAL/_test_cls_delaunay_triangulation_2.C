@@ -116,6 +116,16 @@ _test_cls_delaunay_triangulation_2( const Del & )
   conflicts.clear();
   assert(T2.find_conflicts(Point(-1,-1,1), conflicts));
   assert(conflicts.size() == ns);
+
+  // test insertion through find_conflicts + star_hole
+  conflicts.clear();
+  hole_bd.clear();
+  T2.find_conflicts(Point(1,1,2), 
+		    std::back_inserter(conflicts),
+		    std::back_inserter(hole_bd));
+  T2.star_hole (Point(1,1,2), hole_bd.begin(), hole_bd.end(),
+		      conflicts.begin(), conflicts.end() );
+
   
 
   /********************/

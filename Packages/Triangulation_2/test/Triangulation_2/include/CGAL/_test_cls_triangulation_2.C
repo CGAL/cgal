@@ -323,6 +323,13 @@ _test_cls_triangulation_2( const Triangulation & )
      T2_8.flip(ff,0);
      assert( T2_8.is_valid() );
      
+  //make_hole star_hole
+  std::list<Edge> hole;
+  T2_3.make_hole(v2_3_10, hole);
+  T2_3.set_number_of_vertices(T2_3.number_of_vertices()-1);
+  v2_3_10 = T2_3.star_hole(p10, hole.begin(), hole.end());
+  assert( T2_3.is_valid());
+
 
   /****************************/
   /***** CONSTRUCTORS (2) *****/
@@ -718,7 +725,7 @@ _test_cls_triangulation_2( const Triangulation & )
   T1_5.remove(v1_5_9);
   assert( T1_5.number_of_vertices() == 0 );
 
-  // remove from 2-dimensional triangulations
+ // remove from 2-dimensional triangulations
   T2_1.remove(v2_1_10); assert( T2_1.is_valid());
   T2_1.remove(v2_1_9);
   T2_1.remove(v2_1_8);
@@ -733,7 +740,7 @@ _test_cls_triangulation_2( const Triangulation & )
   T2_1.remove(v2_1_1); assert(T2_1.is_valid());
   assert( T2_1.number_of_vertices() == 0 );
 
-  T2_3.remove(v2_3_0); assert(T2_3.is_valid());
+   T2_3.remove(v2_3_0); assert(T2_3.is_valid());
   T2_3.remove(v2_3_1); assert(T2_3.is_valid());
   T2_3.remove(v2_3_9); assert(T2_3.is_valid());
   T2_3.remove(v2_3_8); assert(T2_3.is_valid()); 

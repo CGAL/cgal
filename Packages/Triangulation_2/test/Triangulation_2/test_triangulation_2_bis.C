@@ -50,19 +50,5 @@ int main()
 
   _test_cls_triangulation_short_2( Cls2() );
 
-  std::cout << std::endl << "Testing Triangulation_2" <<std::endl;
-  std::cout << " with Triangulation data structure using lists : " 
-	    << std::endl;
-  std::cout << " this use double type coordinates " << std::endl;
-  typedef CGAL::Triangulation_data_structure_using_list_2<Vb2,Fb2>   Tds4;
-  typedef CGAL::Triangulation_2<Gt2,Tds4>    Cls4;
-
-  _test_cls_triangulation_short_2( Cls4() );
-
-  std::cout << std::endl;
-  std::cout << "Test defaults " << std::endl;
-  typedef CGAL::Triangulation_2<Gt2>  Cls5;
-  _test_cls_triangulation_short_2( Cls5() );
-
   return 0;
 }

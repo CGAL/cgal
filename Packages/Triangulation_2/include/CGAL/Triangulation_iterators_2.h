@@ -109,8 +109,8 @@ public:
   typedef Triangulation_all_vertices_iterator_2<Gt,Tds> All_vertices;
 
   typedef Vertex       value_type;
-  typedef Vertex *     pointer;
-  typedef Vertex &     reference;
+  typedef const Vertex *     pointer;
+  typedef const Vertex &     reference;
   typedef std::size_t     size_type;
   typedef std::ptrdiff_t  difference_type;
   typedef std::bidirectional_iterator_tag   iterator_category;
@@ -151,7 +151,7 @@ private:
 
 public:
   Triangulation_finite_vertices_iterator_2()    : All_vertices(),_tr(NULL)   {}
-        
+          
   Triangulation_finite_vertices_iterator_2(const Triangulation *tr);
     
   Triangulation_finite_vertices_iterator_2(const Triangulation *tr, int )

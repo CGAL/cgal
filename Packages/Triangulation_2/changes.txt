@@ -1,6 +1,12 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+Ver 4.92 ()
+- add function star_hole in Triangulation_default_data_structure_2
+  Triangulation_data_structure_using_list
+  and Triangulation_2
+- add a Point iterator to Triangulation_2
+
 Ver 4.91 (16/5/01)
 fixed previous unwanted change to Triangulation_2.h
 

@@ -193,6 +193,25 @@ public:
   Vertex* star_hole(List_edges& hole);
   void    star_hole(Vertex* v, List_edges& hole);
   void    make_hole(Vertex* v, List_edges& hole);
+
+//   template< class EdgeIt>
+//   Vertex* star_hole(EdgeIt edge_begin,EdgeIt edge_end);
+ 
+//   template< class EdgeIt>
+//   void  star_hole(Vertex* v, EdgeIt edge_begin,  EdgeIt edge_end);
+
+//   template< class EdgeIt, class FaceIt>
+//   Vertex* star_hole(EdgeIt edge_begin, 
+// 		    EdgeIt edge_end,
+// 		    FaceIt face_begin,
+// 		    FaceIt face_end);
+ 
+//   template< class EdgeIt, class FaceIt>
+//   void  star_hole(Vertex* v,
+// 		  EdgeIt edge_begin, 
+// 		  EdgeIt edge_end,
+// 		  FaceIt face_begin,
+// 		  FaceIt face_end);
   
   Vertex* create_vertex();
   Face* create_face(Face* f1, int i1, Face* f2, int i2, Face* f3, int i3);
@@ -231,6 +250,101 @@ public:
   // SETTING (had to make them public for use in remove from Triangulations)
   void set_number_of_vertices(int n) {_number_of_vertices = n;}
   void set_dimension (int n) {_dimension = n ;}
+
+  // template members definition
+public:
+  template< class EdgeIt>
+  Vertex* star_hole(EdgeIt edge_begin, EdgeIt edge_end)
+  // creates a new vertex 
+  // and stars from it
+  // the hole described by the range [edge_begin,edge_end[
+  // the triangulation is assumed to have dim=2
+  // hole is supposed to be ccw oriented
+  {
+     Vertex* newv = create_vertex();
+     star_hole(newv, edge_begin, edge_end);
+     return newv;
+  }
+ 
+  template< class EdgeIt>
+  void  star_hole(Vertex* v, EdgeIt edge_begin,  EdgeIt edge_end)
+  // uses vertex v
+  // to star the hole described by the range [edge_begin,edge_end[
+  // the triangulation is assumed to have dim=2
+  // the hole is supposed to be ccw oriented
+  { 
+    std::list<Face*> empty_list;
+    return star_hole(v, 
+		     edge_begin, 
+		     edge_end, 
+		     empty_list.begin(),
+		     empty_list.end());
+    
+  }
+
+
+  template< class EdgeIt, class FaceIt>
+  Vertex* star_hole(EdgeIt edge_begin, 
+		    EdgeIt edge_end,
+		    FaceIt face_begin,
+		    FaceIt face_end)
+  // creates a new vertex 
+  // and stars from it
+  // the hole described by the range [edge_begin,edge_end[
+  // reusing the faces in the range [face_begin,face_end[
+  // the triangulation is assumed to have dim=2
+  // the hole is supposed to be ccw oriented
+  {
+    Vertex* newv = create_vertex();
+    star_hole(newv, edge_begin, edge_end, face_begin, face_end);
+    return newv;
+  }
+ 
+  template< class EdgeIt, class FaceIt>
+  void  star_hole(Vertex* newv,
+		  EdgeIt edge_begin, 
+		  EdgeIt edge_end,
+		  FaceIt face_begin,
+		  FaceIt face_end)
+    // uses vertex v
+    // to star the hole described by the range [edge_begin,edge_end[
+    // reusing the faces in the range [face_begin,face_end[
+    // the triangulation is assumed to have dim=2
+    // hole is supposed to be ccw oriented
+  {
+       CGAL_triangulation_precondition(dimension() == 2);
+    EdgeIt eit = edge_begin;
+    FaceIt fit = face_begin;
+
+    Face* first_f =  reset_or_create_face((*eit).first, (*eit).second, newv,
+					  fit, face_end);
+    ++eit;
+    Face* previous_f=first_f, *next_f;
+    for( ; eit != edge_end ; eit++) {
+    next_f = reset_or_create_face((*eit).first, (*eit).second, newv,
+				  fit, face_end);
+    next_f->set_neighbor(1, previous_f);
+    previous_f->set_neighbor(0, next_f);
+    previous_f=next_f;
+    }
+    next_f->set_neighbor(0, first_f);
+    first_f->set_neighbor(1, next_f);
+    newv->set_face(first_f);
+    return;    
+  }
+
+private:
+  template< class FaceIt>
+  Face*  reset_or_create_face(Face* fn, 
+			      int in, 
+			      Vertex* v,
+			      FaceIt fit,
+			      FaceIt face_end) {
+    if (fit == face_end) return create_face(fn, in, v);
+    (*fit)->set_vertices(fn->vertex(cw(in)), fn->vertex(ccw(in)), v);
+    (*fit)->set_neighbors(0,0,fn);
+    return &(**fit++);    
+  }
 
 };
 
@@ -377,8 +491,8 @@ is_face(const Vertex* v1, const Vertex* v2, const Vertex* v3,
   if (!b) return false;
   else if (v3== f->vertex(i)) return true;
   f = f-> neighbor(i);
-  ind1= f->index(v1);
-  ind2= f->index(v2);
+  int ind1= f->index(v1);
+  int ind2= f->index(v2);
   if (v3 == f->vertex(3-ind1-ind2)) { return true;}
   return false;  
 }
@@ -800,23 +914,25 @@ star_hole(Vertex* newv, List_edges& hole)
   // the triangulation is assumed to have dim=2
   // hole is supposed to be ccw oriented
 {
-  CGAL_triangulation_precondition(dimension() == 2);
-  typedef typename  List_edges::const_iterator Hole_it;
-  Hole_it hit = hole.begin();
+//   CGAL_triangulation_precondition(dimension() == 2);
+//   typedef typename  List_edges::const_iterator Hole_it;
+//   Hole_it hit = hole.begin();
 
-  Face* first_f = create_face(hit->first, hit->second, newv);
-  ++hit;
-  Face* previous_f=first_f, *next_f;
-  for( ; hit != hole.end(); hit++) {
-    next_f = create_face(hit->first, hit->second, newv);
-    next_f->set_neighbor(1, previous_f);
-    previous_f->set_neighbor(0, next_f);
-    previous_f=next_f;
-  }
-  next_f->set_neighbor(0, first_f);
-  first_f->set_neighbor(1, next_f);
-  newv->set_face(first_f);
-  return;    
+//   Face* first_f = create_face(hit->first, hit->second, newv);
+//   ++hit;
+//   Face* previous_f=first_f, *next_f;
+//   for( ; hit != hole.end(); hit++) {
+//     next_f = create_face(hit->first, hit->second, newv);
+//     next_f->set_neighbor(1, previous_f);
+//     previous_f->set_neighbor(0, next_f);
+//     previous_f=next_f;
+//   }
+//   next_f->set_neighbor(0, first_f);
+//   first_f->set_neighbor(1, next_f);
+//   newv->set_face(first_f);
+//   return;    
+  star_hole(newv, hole.begin(), hole.end());
+  return;	    
 }
 
 template <class Vb, class Fb>

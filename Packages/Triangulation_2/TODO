@@ -1,11 +1,14 @@
-
+- rendre les iterator vraiment const
+  creer les classe const_handle
 - defaults template parameter pour triangulations reguliere,
-contrainte et delaunay contrainte
+  contrainte et delaunay contrainte
 - documenter les defaults et faire un exemple
 - ajouter des acces a la hierarchie dans
- Constrained_triangulation_plus
+  Constrained_triangulation_plus
 - documenter Constrained_triangulation_plus_2
-
+- factorize the code duplicated in
+  Triangulation_default_data_structure_2
+  Triangulation_data_structure_using_list_2
 
 - Corriger la doc pour includes_edge in Triangulation_2
 
