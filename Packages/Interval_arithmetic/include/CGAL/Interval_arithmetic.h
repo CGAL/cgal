@@ -157,8 +157,8 @@ struct Interval_nt_advanced
   
   bool operator== (const IA & d) const
   {
-    if ((d._inf >  _sup) || (d._sup  < _inf)) return false;
-    if ((d._inf == _sup) && (d._sup == _inf)) return true;
+    if (d._inf >  _sup || d._sup  < _inf) return false;
+    if (d._inf == _sup && d._sup == _inf) return true;
     overlap_action();
     return false;
   }
@@ -173,7 +173,7 @@ struct Interval_nt_advanced
   bool is_point() const { return (_sup == _inf); }
 
   bool overlap (const IA & d) const
-  { return !((d._inf > _sup) || (d._sup < _inf)); }
+  { return !(d._inf > _sup || d._sup < _inf); }
 
   double inf() const { return _inf; }
   double sup() const { return _sup; }
@@ -363,7 +363,7 @@ Interval_nt_advanced::operator/ (const Interval_nt_advanced & d) const
     {
 	b=a;
 	if (_sup<0)
-	    b=d._inf;
+	    a=d._inf;
     };
     return IA(-CGAL_IA_FORCE_TO_DOUBLE((-_sup)/a),
 	       CGAL_IA_FORCE_TO_DOUBLE(_inf/b));
@@ -429,7 +429,7 @@ to_double (const Interval_nt_advanced & d)
 inline
 bool
 is_valid (const Interval_nt_advanced & d)
-{ return is_valid(d.inf()) && is_valid(d.sup()) && (d.inf() <= d.sup()); }
+{ return is_valid(d.inf()) && is_valid(d.sup()) && d.inf() <= d.sup(); }
 
 inline
 bool
@@ -636,6 +636,12 @@ Interval_nt::operator/ (const Interval_nt & d) const
   FPU_set_cw(backup);
   return tmp;
 }
+
+
+inline
+Interval_nt
+operator/ (const double d, const Interval_nt & t)
+{ return Interval_nt(d)/t; }
 
 inline
 Interval_nt &
