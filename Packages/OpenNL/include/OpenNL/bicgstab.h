@@ -89,7 +89,8 @@ public:
 
     Solver_BICGSTAB() {
 		// LS 03/2005: change epsilon from 1e-6 to 1e-4 to parameterize venus-loop.off w/ authalic/square method
-        epsilon_ = 1e-4 ;										
+		// LS 04/2005: change epsilon back to 1e-6 to increase precision
+        epsilon_ = 1e-6 ;										
         max_iter_ = 0 ;
     }
 
