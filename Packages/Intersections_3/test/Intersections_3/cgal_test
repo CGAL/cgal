@@ -16,6 +16,7 @@ one_run()
 		succes=ja
 	    else
 		succes=nee
+		echo "input: ${datafile}" >> ProgramOutput.${base}.$PLATFORM
         	cat diffoutput >> ProgramOutput.${base}.$PLATFORM
 	    fi
 	else

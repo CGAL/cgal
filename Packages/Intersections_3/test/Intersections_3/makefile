@@ -38,6 +38,10 @@ all:            \
                 plane_line \
                 plane_plane \
                 plane_ray \
+                line_isocub \
+                ray_isocub \
+                seg_isocub \
+                isocub_isocub \
                 plane_seg 
 
 plane_line$(EXE_EXT): plane_line$(OBJ_EXT)
@@ -52,10 +56,26 @@ plane_ray$(EXE_EXT): plane_ray$(OBJ_EXT)
 plane_seg$(EXE_EXT): plane_seg$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)plane_seg plane_seg$(OBJ_EXT) $(LDFLAGS)
 
+line_isocub$(EXE_EXT): line_isocub$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)line_isocub line_isocub$(OBJ_EXT) $(LDFLAGS)
+
+ray_isocub$(EXE_EXT): ray_isocub$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)ray_isocub ray_isocub$(OBJ_EXT) $(LDFLAGS)
+
+seg_isocub$(EXE_EXT): seg_isocub$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)seg_isocub seg_isocub$(OBJ_EXT) $(LDFLAGS)
+
+isocub_isocub$(EXE_EXT): isocub_isocub$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)isocub_isocub isocub_isocub$(OBJ_EXT) $(LDFLAGS)
+
 clean: \
                    plane_line.clean \
                    plane_plane.clean \
                    plane_ray.clean \
+                   line_isocub.clean \
+                   ray_isocub.clean \
+                   seg_isocub.clean \
+                   isocub_isocub.clean \
                    plane_seg.clean 
 
 #---------------------------------------------------------------------#
