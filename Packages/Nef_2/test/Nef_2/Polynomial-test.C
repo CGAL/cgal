@@ -35,7 +35,6 @@ int main()
          p7(3,0), p8(std::make_pair(&seq[0], &seq[4]));
       RP p10(-1,0,1), p11(-1,1), p12(1,1);
       NT r1(2), r2(-2);
-      std::cout << "A" << std::endl;
       CGAL_TEST(p1.degree()==-1);
       CGAL_TEST(p2.degree()==0);
       CGAL_TEST(p4.degree()==1);
@@ -62,8 +61,6 @@ int main()
       CGAL_TEST(p5 > p4);
       CGAL_TEST(p5 >= p4);
 
-      std::cout << "B" << std::endl;
-
       CGAL_TEST(r1 != p2);
       CGAL_TEST(r2 < p2);
       CGAL_TEST(r2 <= p2);
@@ -74,8 +71,6 @@ int main()
       CGAL_TEST(p2 >= r2);
       CGAL_TEST(p2 < r1);
       CGAL_TEST(p2 <= r1);
-      
-      std::cout << "C" << std::endl;
       
       CGAL_TEST(CGAL_NTS sign(p5)==+1);
       CGAL_TEST(CGAL_NTS sign(-p5)==-1);
@@ -109,19 +104,14 @@ int main()
       CGAL_TEST(D*-qq1==-qq2*qq3+qq4);
       CGAL_TEST(p10/p11 == p12);
 
-      std::cout << "D" << std::endl;
-
       q3 = RP::gcd(q1,q2);
       CGAL_TEST(q3 == 1);
       //CGAL_IO_TEST(p4,p1,CGAL::IO::BINARY);
-      std::cout << "E" << std::endl;
       CGAL_IO_TEST(p4,p1,CGAL::IO::ASCII);
       CGAL_IO_TEST(p4,p1,CGAL::IO::PRETTY);
-      std::cout << "F" << std::endl;
       CGAL::to_double(p6);
       CGAL::is_finite(p6);
       CGAL::is_valid(p6);
-      std::cout << "G" << std::endl;
   }
   { PRT(int,Integer);
     typedef int NT; typedef Polynomial<Integer> RP;
