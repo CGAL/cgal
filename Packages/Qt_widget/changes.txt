@@ -1,4 +1,12 @@
-1.3.23 - 11/03/2002 (rursu)
+1.3.24 - 14/03/2003 (rursu)
+-------------------
+	radu:
+	- Added Regular_triangulation_2 demo in Triangulation_2 dir
+	- Modified names in Triangulation_2 dir of toolbar and toolbar_layers
+	- Modified the Makefile to compile the doc, ref pages and tutorial
+	
+
+1.3.23 - 11/03/2003 (rursu)
 -------------------
 	radu:
 	- Removed namespace CGAL from demos.
@@ -9,11 +17,11 @@
 	- Layers are QObject objects, with a parent and a name
 	- Fixed memory leak in src/CGALQt/Qt_widget_standard_toolbar.C (bug #37)
 
-1.3.22 - 26/02/2002 (rineau)
+1.3.22 - 26/02/2003 (rineau)
 -------------------
 	Rewritten the standard toolbar. See bug#49.
 
-1.3.21 - 21/02/2002
+1.3.21 - 21/02/2003
 -------------------
 	Rewritten the history stuff. See bug#38.
 
