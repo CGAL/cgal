@@ -54,9 +54,8 @@ namespace CGAL {
     {}
 
     Weighted_Minkowski_distance(const int d) 
-      : power(2)
+      : power(2), the_weights(d)
     {
-      the_weights.reserve(d);
       for (unsigned int i = 0; i < d; ++i) the_weights[i]=FT(1);
     }
 
