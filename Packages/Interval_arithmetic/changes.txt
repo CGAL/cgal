@@ -1,7 +1,21 @@
 Changes done to the Interval Arithmetic package.
 
-Version 4.54 on ?? August 2000
+Version 4.54 on 1 September 2000
 - Renamed Interval_base::overlap() to do_overlap().
+- Fixed min/max issue for VC++ in the test-suite.
+- G++ on x86 now uses an asm() instead of a statement-expression + volatile
+  for stopping compiler optimization.  It's faster, doesn't warn, and works
+  with 2.96.
+- Removed the default copy ctor and assignment ctor for the intervals.  This
+  did not show any difference on orientation() with G++ 2.9[56].
+- Removed warning in include/bench_generic.h with G++ 2.96.
+- Moved the constant propagation stoppers just where needed instead of in the
+  constructors : faster (but not pretty...).
+- src/Interval_arithmetic.C:FPU_empiric_test() doesn't use "volatile" anymore,
+  this should please KCC (and Stefan :).
+- CygWin now uses an inline assembly for the buggy sqrt().
+- Filtered predicates are now "static" for compilers not supporting partial
+  specialization (CGAL_CFG_MATCHING_BUG_2), i.e. M$VC++.
 
 Version 4.53 on 20 August 2000
 - Make the adaptative static filters kind of work again.
