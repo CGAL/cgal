@@ -1,4 +1,7 @@
-Version 11.44 [af]
+Version 11.45 (30 September 2003) [af]
+- Resubmission
+
+Version 11.44 (30 September 2003) [af]
 - Moved \chapter from alpha2.tex to main.tex
 
 Version 11.43
