@@ -38,12 +38,17 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:            \
+                concept_checking$(EXE_EXT) \
                 tuples$(EXE_EXT) 
+
+concept_checking$(EXE_EXT): concept_checking$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)concept_checking concept_checking$(OBJ_EXT) $(LDFLAGS)
 
 tuples$(EXE_EXT): tuples$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)tuples tuples$(OBJ_EXT) $(LDFLAGS)
 
 clean: \
+                   concept_checking.clean \
                    tuples.clean 
 
 #---------------------------------------------------------------------#

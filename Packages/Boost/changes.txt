@@ -1,3 +1,6 @@
+21 June 2004 Sylvain Pion
+- Add a test program for the concept checking library.
+
 25 May 2004 Sylvain Pion
 - Add LICENSE.BSL.
 
