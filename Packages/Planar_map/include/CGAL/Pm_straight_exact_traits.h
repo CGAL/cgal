@@ -1257,8 +1257,8 @@ public:
                          cv.current_state() == X_curve::RAY||
                          cv.current_state() == X_curve::LINE||
                          cv.current_state() == X_curve::EMPTY,
-                         "Wrong curve type in\nconst Bounding_box " .
-                         "get_bounding_box(const X_curve& cv) const");
+"Wrong curve type in\nconst Bounding_box \
+get_bounding_box(const X_curve& cv) const");
       return bbox;
     }
 
@@ -1788,11 +1788,11 @@ public:
 
 private:
   inline const Bounding_box& ref() const {return ref(bbox);}
-  inline const Bounding_box& ref(const Indirect_bounding_box & bbox) const 
-  { return bbox.pointer()->e0; }
+  //inline const Bounding_box& ref(const Indirect_bounding_box & bbox) const 
+  //{ return bbox.pointer()->e0; }
   inline Bounding_box& ref() {return ref(bbox);}
-  inline Bounding_box& ref(Indirect_bounding_box & bbox)
-  { return bbox.pointer()->e0; }
+  //inline Bounding_box& ref(Indirect_bounding_box & bbox)
+  //{ return bbox.pointer()->e0; }
   inline bool is_totally_unbounded() const
   { return is_totally_unbounded(ref()); }
   inline bool is_totally_unbounded(const Bounding_box & b) const
