@@ -7,6 +7,9 @@
 
 CGAL_BEGIN_NAMESPACE
 
+namespace Box_intersection_d {
+
+
 template<class T>
 struct box_limits {};
 
@@ -59,6 +62,10 @@ template<>
 box_limits<double>::X box_limits<double>::x;
 
 
+} // end namespace Box_intersection_d
+
+
 CGAL_END_NAMESPACE
+
 
 #endif

@@ -15,6 +15,8 @@
 
 CGAL_BEGIN_NAMESPACE
 
+namespace Box_intersection_d {
+
 #define BOX_INTERSECTION_DEBUG 0
 
 template< class RandomAccessIter, class Predicate_traits >
@@ -216,6 +218,9 @@ void segment_tree( RandomAccessIter p_begin, RandomAccessIter p_end,
     segment_tree( p_mid, p_end, i_span_end, i_mid, mi, hi,
                   callback, traits, cutoff, dim, in_order );
 }
+
+} // end namespace Box_intersection_d
+
 
 CGAL_END_NAMESPACE
 

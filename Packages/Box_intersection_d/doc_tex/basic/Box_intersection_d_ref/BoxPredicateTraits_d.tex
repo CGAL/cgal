@@ -12,25 +12,25 @@ The box predicate traits class specifies predicates between boxes. It propagates
 \ccNestedType{NT}  {Number type of the box vector components.}
 
 \ccNestedType{Compare}{Function object that compares two boxes with respect to the predicate \ccc{is_lo_less_lo.}}
-\ccNestedType{Lo_less}{Function object that compares the starting point of a box in a certain dimension against a fixed value. Lo\_less val dim box = get\_lo box dim $<$ val}
-\ccNestedType{Hi_greater}{Function object.}
-\ccNestedType{Spanning}{Function object.}
+\ccNestedType{Lo_less}{Function object that compares the starting point of a box in a certain dimension against a fixed value. Or, more compactly in math-like notation: \newline \ccc{Lo_less(val,dim)=fn box->get_lo(box,dim) < val}}
+\ccNestedType{Hi_greater}{Function object: \newline \ccc{Hi_greater(val,dim)=fn box->get_hi(box,dim) > val} }
+\ccNestedType{Spanning}{Function object: \newline \ccc{Spanning(lo,hi,dim)=fn box->get_lo(box,dim) < lo && get_hi(box,dim) > hi}}
 
 
 \ccOperations
 For all methods that require a dimension parameter, \ccc{dim < get_dim()} must hold. Otherwise, results are undefined.
 
 \ccMethod
-  {static bool is_lo_less_lo(Box a, Box b, unsigned int dim);}
+  {bool Traits::is_lo_less_lo(Box a, Box b, unsigned int dim);}
   {interval starting point of Box a is less or equal to b's, regarding dimension dim. If equal, the id of a and b are compared. If the id of a is less, return true.}
 \ccMethod
-  {static bool is_lo_less_hi(Box a, Box b, unsigned int dim);}
+  {bool Traits::is_lo_less_hi(Box a, Box b, unsigned int dim);}
   {interval starting point of a is then than end point of b, regarding dimension dim s.t. the intervals in dimension dim could possibly overlap.}
 \ccMethod
-  {static bool does_intersect (Box a, Box b, unsigned int dim);}
+  {bool Traits::does_intersect (Box a, Box b, unsigned int dim);}
   {intervals of box a and box b intersect in dimension dim.}
 \ccMethod
-  {static bool contains_lo_point(Box a, Box b, unsigned int dim);}
+  {bool Traits::contains_lo_point(Box a, Box b, unsigned int dim);}
   {interval of box a contains interval starting point of b in dimension dim, s.t. the intervals in dimension dim could possibly overlap.}
 
 \ccHasModels

@@ -16,10 +16,10 @@ Bounding box access is exclusively done using a box traits class, which serves a
 \ccOperations
 For all methods that require a dimension parameter, \ccc{dim < get_dim()} must hold. Otherwise, results are undefined.
 
-\ccMethod{static NT get_lo(Box b, unsigned int dim);} {returns low interval point of box in dimension index dim, starting at zero.}
-\ccMethod{static NT get_hi(Box b, unsigned int dim);} {returns high interval point of box in dimension index dim, starting at zero.}
-\ccMethod{static T get_id(Box b);} {returns a unique box id. T must be less-than comparable.}
-\ccMethod{static unsigned int get_dim();} {returns number of dimensions, starting at one.}
+\ccMethod{NT Traits::get_lo(Box b, unsigned int dim);} {returns low interval point of box in dimension index dim, starting at zero.}
+\ccMethod{NT Traits::get_hi(Box b, unsigned int dim);} {returns high interval point of box in dimension index dim, starting at zero.}
+\ccMethod{T Traits::get_id(Box b);} {returns a unique box id. T must be less-than comparable.}
+\ccMethod{unsigned int Traits::get_dim();} {returns number of dimensions, starting at one.}
 
 \ccHasModels
 \ccRefIdfierPage{CGAL::Box_traits_d<Box>}

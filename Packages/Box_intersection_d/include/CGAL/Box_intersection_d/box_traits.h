@@ -9,53 +9,30 @@
 
 CGAL_BEGIN_NAMESPACE
 
-struct Box_intersection_d {
-    enum Setting  { COMPLETE, BIPARTITE };
-    enum Topology { HALF_OPEN, CLOSED };
+namespace Box_intersection_d {
 
 
-    struct Unique_numbers {
-        Unique_numbers() : i(n++) {}
-        unsigned int get_id() const { return i; }
-    private:
-        static unsigned int n;
-        unsigned int i;
-    };
-    /*
-    template< class Box >
-    struct Select_box_traits {
-        typedef char True;
-        typedef struct { char a[2]; } False;
+enum Setting  { COMPLETE, BIPARTITE };
+enum Topology { HALF_OPEN, CLOSED };
 
-        template< class T >
-        True is_derived_from_base( typename
-          T::Unique_default_box_d_type_tag_which_does_not_appear_elsewhere=0);
-        template< class T >
-        False is_derived_from_base(...);
 
-        template< bool, typename A, typename B >
-        struct IF                { typedef A R; };
-        template<typename A, typename B>
-        struct IF< false, A, B > { typedef B R; };
-
-        typedef typename IF
-           < sizeof(is_derived_from_base<Box>()) == sizeof(True),
-             Default_box_d_traits< Box >,
-             void
-           >::R Box_traits;
-    };*/
-
+struct Unique_numbers {
+    Unique_numbers() : i(n++) {}
+    unsigned int get_id() const { return i; }
+private:
+    static unsigned int n;
+    unsigned int i;
 };
 
-unsigned int Box_intersection_d::Unique_numbers::n = 0;
+unsigned int Unique_numbers::n = 0;
 
 template<class NT_, unsigned int N>
-struct Default_box_d : public Box_intersection_d::Unique_numbers {
+struct Box_d : public Unique_numbers {
     typedef NT_ NT;
 
-    Default_box_d() { init(); }
-    Default_box_d(bool complete) { init(complete); }
-    Default_box_d(NT l[N], NT h[N]) {
+    Box_d() { init(); }
+    Box_d(bool complete) { init(complete); }
+    Box_d(NT l[N], NT h[N]) {
         std::copy( l, l + N, lo );
         std::copy( h, h + N, hi );
     }
@@ -84,7 +61,7 @@ protected:
 };
 
 template<class Box_>
-struct Default_box_traits_d {
+struct Box_traits_d {
     typedef const Box_&       Box;
     typedef typename Box_::NT NT;
 
@@ -102,7 +79,7 @@ struct Default_box_traits_d {
 
 // box pointer traits
 template<class Box_>
-struct Default_box_traits_d<Box_*> {
+struct Box_traits_d<Box_*> {
     typedef const Box_*       Box;
     typedef typename Box_::NT NT;
 
@@ -121,7 +98,7 @@ struct Default_box_traits_d<Box_*> {
 
 
 template< class BoxTraits, bool closed >
-struct Default_box_predicate_traits_d : public BoxTraits {
+struct Box_predicate_traits_d : public BoxTraits {
     typedef typename BoxTraits::Box        Box;
     typedef typename BoxTraits::NT         NT;
 
@@ -199,6 +176,9 @@ struct Default_box_predicate_traits_d : public BoxTraits {
     static bool contains_lo_point(Box a, Box b, unsigned int dim)
     { return is_lo_less_lo(a,b,dim) && is_lo_less_hi(b,a,dim);  }
 };
+
+} // end namespace Box_intersection_d
+
 
 CGAL_END_NAMESPACE
 

@@ -6,6 +6,9 @@
 
 CGAL_BEGIN_NAMESPACE
 
+namespace Box_intersection_d {
+
+
 template< class RandomAccessIter,
           class Callback,
           class Traits >
@@ -66,6 +69,9 @@ void modified_two_way_scan( RandomAccessIter p_begin, RandomAccessIter p_end,
     }
 
 }
+
+} // end namespace Box_intersection_d
+
 
 CGAL_END_NAMESPACE
 

@@ -37,8 +37,8 @@ void box_intersection_d(
   RandomAccessIter i_begin, RandomAccessIter i_end,
   Callback& callback,
   unsigned int cutoff = 10,
-  Setting  setting  = Box_intersection_d::BIPARTITE,
-  Topology topology = Box_intersection_d::CLOSED );}
+  Setting  setting  = BIPARTITE,
+  Topology topology = CLOSED );}
   {Invokation of box intersection with default box traits. The \ccc{value_type} of \ccc{RandomAccessIter} can be a class type, or a pointer to a class type. For both cases, box traits exists and will be chosen automatically.}
 
 \ccFunction{
@@ -49,8 +49,8 @@ void box_intersection_d(
   Callback& callback,
   BoxTraits traits,
   unsigned int cutoff = 10,
-  Setting  setting  = Box_intersection_d::BIPARTITE,
-  Topology topology = Box_intersection_d::CLOSED );}
+  Setting  setting  = BIPARTITE,
+  Topology topology = CLOSED );}
   {Invocation with custom box traits. \ccc{traits} acts as a box adapter. The predicate traits are instantiated using the provided \ccc{BoxTraits} type. }
 
 \ccFunction{
@@ -61,8 +61,8 @@ void box_intersection_d_custom(
   Callback& callback,
   BoxPredicateTraits traits,
   unsigned int cutoff = 10,
-  Setting  setting  = Box_intersection_d::BIPARTITE,
-  Topology topology = Box_intersection_d::CLOSED );}
+  Setting  setting  = BIPARTITE,
+  Topology topology = CLOSED );}
   {Invocation with custom box predicate traits. Predicate traits subsume box traits.  }
 
 
