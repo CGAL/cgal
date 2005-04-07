@@ -3,6 +3,8 @@
 
 #include <list>
 
+
+
 template <class CurveList, class Traits>
 class CompareCurveList
 {
@@ -16,6 +18,8 @@ public:
 
   CompareCurveList() {}
 
+  
+
   bool IsIdentical(CurveListIter begin1, CurveListIter end1,
 		   CurveListIter begin2, CurveListIter end2)
   {
@@ -26,10 +30,8 @@ public:
     while ( iter != end1 )
     {
       list1.push_back(*iter);
-      //std::cout << *iter << "\n";
       ++iter;
     }
-    //getc(stdin);
     int count1 = list1.size();
 
     int count2 = 0;
@@ -49,19 +51,19 @@ public:
     iter = begin2;
     while ( iter != end2 )
     {
-      //std::cout << "looking for " << *iter << " \n" ;
+      std::cout << "looking for " << *iter << " \n" ;
       CurveListIter i;
-      for ( i = list1.begin();
-	    i != list1.end() ; ++i )
+      for ( i = list1.begin(); i != list1.end() ; ++i )
       {
-	//std::cout << "\tcomparing to 1" << *i << " to " << *iter << "\n";
-	if ( traits.curve_equal(*i, *iter))
-	{
-	  //std::cout << *i << " is the same as  " << *iter << "\n";
-	  break;
-	}
+	      std::cout << "\tcomparing to 1" << *i << " to " << *iter << "\n";
+	      if ( traits.curve_equal(*i, *iter))
+	      {
+	        std::cout << *i << " is the same as  " << *iter << "\n";
+	        break;
+	      }
       }
-      if ( i == list1.end() ) return false;
+      if ( i == list1.end() )
+        return false;
       ++iter;
     }
     return true;

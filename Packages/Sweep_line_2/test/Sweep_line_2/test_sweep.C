@@ -33,7 +33,22 @@ int main()
 
   return 0;
 }
+#elif ! defined(CGAL_USE_GMP) && \
+        (CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_TRAITS)
+
+int main()
+{
+  std::cout << "A try to run test with GMP number type but GMP is not installed.";
+  std::cout << std::endl;
+  std::cout << "Test is not performed.";
+  std::cout << std::endl;
+
+  return 0;
+}
+
 #else
+
+
 
 // Choose traits
 
@@ -42,6 +57,7 @@ int main()
 #include <CGAL/MP_Float.h>
 #include <CGAL/Quotient.h>
 #include <CGAL/Arr_segment_traits_2.h>
+#include<CGAL/Gmpq.h>
 #elif CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS
 #include <CGAL/leda_rational.h>
 #include <CGAL/Pm_segment_traits_leda_kernel_2.h>
@@ -66,7 +82,7 @@ int main()
 #include "CompareCurveList.h"
 
 #if CGAL_ARR_TEST_TRAITS==CGAL_SEGMENT_TRAITS 
-  typedef CGAL::Quotient<int>                           NT;
+  typedef CGAL::Gmpq                                    NT;
   typedef CGAL::Cartesian<NT>                           Kernel;
   typedef CGAL::Arr_segment_traits_2<Kernel>            Traits;
 

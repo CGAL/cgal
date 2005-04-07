@@ -15,7 +15,7 @@ int main()
 
 #include <CGAL/Pm_default_dcel.h>
 #include <CGAL/Planar_map_2.h>
-#include <CGAL/Pm_with_intersections.h>
+//#include <CGAL/Pm_with_intersections.h>
 #include <CGAL/Sweep_line_2.h>
 #include <CGAL/Arr_conic_traits_2.h>
 
@@ -44,9 +44,9 @@ typedef Traits_2::X_monotone_curve_2                  X_monotone_curve_2;
 typedef Traits_2::Point_2                             Point_2;
 typedef std::list<Curve_2>                            CurveList;
 
-typedef CGAL::Pm_default_dcel<Traits_2>               Dcel;
-typedef CGAL::Planar_map_2<Dcel,Traits_2>             Pm_2;
-typedef CGAL::Planar_map_with_intersections_2<Pm_2>   Pmwx_2;
+//typedef CGAL::Pm_default_dcel<Traits_2>               Dcel;
+//typedef CGAL::Planar_map_2<Dcel,Traits_2>             Pm_2;
+//typedef CGAL::Planar_map_with_intersections_2<Pm_2>   Pmwx_2;
 
 typedef std::list<X_monotone_curve_2>     CurveContainer;
 typedef CurveContainer::iterator CurveContainerIter;
@@ -56,9 +56,9 @@ typedef PointList::iterator PointListIter;
 
 // global variables are used so that the redraw function for the LEDA window
 // can be defined to draw information found in these variables.
-CGAL::Pm_naive_point_location<Pmwx_2::Planar_map> pl; 
+//CGAL::Pm_naive_point_location<Pmwx_2::Planar_map> pl; 
 
-static Pmwx_2               arr(&pl);
+//static Pmwx_2               arr(&pl);
 
 /*! Conic reader */
 template <class Traits>
