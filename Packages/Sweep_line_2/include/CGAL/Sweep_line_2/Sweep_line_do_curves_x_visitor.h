@@ -23,6 +23,7 @@
 
 #include <CGAL/Sweep_line_2/Sweep_line_event.h>
 #include <CGAL/Sweep_line_2/Sweep_line_subcurve.h>
+#include <CGAL/Sweep_line_2/Sweep_line_points_visitor.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -40,6 +41,8 @@ class Sweep_line_do_curves_x_visitor
                             Self,
                             CGAL_ALLOCATOR(int)>            Sweep_line;
 
+   typedef Sweep_line_points_visitor<Traits,int>            PointsVisitor;
+
   public:
 
     Sweep_line_do_curves_x_visitor(): m_found_x(false) {}
@@ -52,7 +55,8 @@ class Sweep_line_do_curves_x_visitor
     void before_handle_event(Event* event){}
     bool after_handle_event(Event* event)
     {
-      if(event->is_internal_intersection_point())
+      //if(event->is_internal_intersection_point())
+      if(PointsVisitor::is_internal_intersection_point(event))
         m_found_x = true;
       return true;
     }

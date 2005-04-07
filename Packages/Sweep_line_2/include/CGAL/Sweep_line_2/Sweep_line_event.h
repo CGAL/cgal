@@ -41,7 +41,6 @@ CGAL_BEGIN_NAMESPACE
  *   the left of the event point.
  * - a list of curves that pass through the event point and defined to 
  *   the right of the event point.
- * and some more data that is used to help with the algorithm.
  *
  * The class mostly exists to store information and does not have any 
  * significant functionality otherwise.
@@ -72,19 +71,10 @@ public:
 
   Sweep_line_event(){}
 
-  /*! Constructor */
-  Sweep_line_event(const Point_2 &point) :
-    m_point(point),
-    m_isInitialized(false),
-    m_isInternalIntersectionPoint(false)
-  {}
-
-
+  
   void init(const Point_2 &point)
   {
     m_point = point;
-    m_isInitialized = false;
-    m_isInternalIntersectionPoint = false;
   }
 
 
@@ -95,129 +85,16 @@ public:
 
   
 
-  SubCurveIter add_curve_to_left(SubCurve *curve)
+  
+  void add_curve_to_left(SubCurve *curve)
   {
-    //insert the curve at the right place...
-    if (m_leftCurves.empty())
-    {
+    // look for the curve, and if exists, nothing to do
+    if(std::find(m_leftCurves.begin(), m_leftCurves.end(), curve) ==
+      m_leftCurves.end())
       m_leftCurves.push_back(curve);
-      if(!traits()->curve_is_vertical(curve->get_last_curve()))
-      {
-        m_isInitialized = true;
-        m_rightmostPointToLeft = curve->get_left_end();
-      }
-      return m_leftCurves.end();
-    }
-
-    //update_rightmost_point(ref) if curve is not vertical
-    if(!traits()->curve_is_vertical(curve->get_last_curve()))
-    {
-      if(! m_isInitialized)
-      {
-        m_rightmostPointToLeft = curve->get_last_point();
-        m_isInitialized = true;
-      }
-      else
-        if ( traits()->compare_x(curve->get_last_point() , m_rightmostPointToLeft) == LARGER )
-          m_rightmostPointToLeft = curve->get_last_point();  
-    
+  }
 
 
-      SubCurveIter iter = m_leftCurves.begin();
-      const X_monotone_curve_2 &cv = curve->get_last_curve();
-    
-      // look for the curve, and if exists, erase it.
-      while ( iter != m_leftCurves.end() ) 
-      {
-        if ( (*iter) ==  curve)
-        {
-          return ++iter;
-        }
-        ++iter;
-      }
-    
-      // insert the curve so that the list remains sorted...
-      Comparison_result res = SMALLER;
-      iter = m_leftCurves.begin();
-      while(iter != m_leftCurves.end() &&
-            traits()->curve_is_vertical((*iter)->get_last_curve()))
-      {
-        ++iter;
-      }
-
-
-      while ( iter != m_leftCurves.end() )
-      {
-        if(traits()->compare_x((*iter)->get_last_point(),
-          m_rightmostPointToLeft) == LARGER)
-          m_rightmostPointToLeft = (*iter)->get_last_point();
-
-        res = traits()->curves_compare_y_at_x(cv, 
-                                             (*iter)->get_last_curve(),
-                                              m_rightmostPointToLeft);
-        if (res == EQUAL)
-        {
-          res = traits()->curves_compare_y_at_x_right(cv, 
-                                                      (*iter)->get_last_curve(),
-                                                      m_rightmostPointToLeft);
-        }
-        if ( res != LARGER )
-          break;
-        ++iter;
-      }
-    
-      while ( iter != m_leftCurves.end() &&
-              res == EQUAL )
-    
-      {
-        if((*iter)->is_parent(curve))
-          return ++iter; 
-        ++iter;
-        if ( iter == m_leftCurves.end())
-          break;
-
-        res = traits()->curves_compare_y_at_x(cv, 
-                                             (*iter)->get_last_curve(),
-                                              m_rightmostPointToLeft);
-      }
-    
-      // insert the curve. If the curve is already in the list, it is not added
-      m_leftCurves.insert(iter, curve);
-      return iter;
-      }
-      else // the curve is vertical  
-      {
-        SubCurveIter iter = m_leftCurves.begin();
-
-         // look for the curve, and if exists, erase it.
-        while ( iter != m_leftCurves.end() ) 
-        {
-          if ( (*iter) ==  curve)
-          {
-                  m_leftCurves.erase(iter);
-                  break;
-          }
-          ++iter;
-        }
-        iter = m_leftCurves.begin();
-        while ( iter != m_leftCurves.end() &&
-                traits()->curve_is_vertical((*iter)->get_last_curve()))
-        {
-          if((*iter)->is_parent(curve))
-            return ++iter;
-          ++iter;
-          if ( iter == m_leftCurves.end())
-            break;
-        }
-        m_leftCurves.insert(iter, curve);
-        return iter;
-      }
-    }
-
-    void add_curve_to_left(SubCurveIter pos, SubCurve *curve)
-    {
-      m_leftCurves.insert(pos, curve);
-    }
 
     void push_back_curve_to_left(SubCurve *curve)
     {
@@ -267,6 +144,8 @@ public:
   }
   
 
+
+
   void remove_curve_from_left(SubCurve* curve)
   {
     for(SubCurveIter iter = m_leftCurves.begin();
@@ -280,6 +159,8 @@ public:
       }
     }
   }
+
+
 
 
   void replace_right_curve(SubCurve* sc1, SubCurve* sc2)
@@ -343,25 +224,10 @@ public:
   }
 
  
-  /*! Mark the event as an intersection point at an interior of a curve.
-   */
-  void mark_internal_intersection_point() {
-    m_isInternalIntersectionPoint = true;
-  }
-
-  /*!
-    @return returns true if the event is an intersection point at the 
-    interior of at least one of the curves passing throuogh the event 
-    point.
-   */
-  bool is_internal_intersection_point() const {
-    return m_isInternalIntersectionPoint;
-  }
-
- 
+  
 
 #ifndef NDEBUG
-  void Print();
+  void Print() const;
 #endif
  
 
@@ -371,32 +237,14 @@ public:
   /*! The point of the event */
   Point_2 m_point;
 
-  /*! A list of curves on the left side of the event, sorted by their y value
-      to the left of the point */
+  /*! A list of curves on the left side of the event (or traverse at event)*/
   SubcurveContainer m_leftCurves;
 
-  /*! A list of curves on the right side of the event, sorted by their y value
-      to the right of the point */
+  /*! A list of curves on the right side of the event(or traverse at event),
+      sorted by their y value to the right of the point */
   SubcurveContainer m_rightCurves;
 
-  /*! The rightmost curve end point that is to the left of the event
-      point. This point is used as a reference point when curves are compared
-      to the left of the event point. 
-  */
-  Point_2 m_rightmostPointToLeft;
-
-  /*! A boolean indicating that m_rightmostPointToLeft is initialized */
-  bool m_isInitialized;
-
-  
-  /*! a flag that inidcates whether the event is an "interior" intersection 
-      point, or just an end point of all curves passing through it.
-  */
-  bool m_isInternalIntersectionPoint;
-
  
-
-
   protected:
 
 
@@ -410,7 +258,7 @@ public:
 public:
   int id;
 #endif
-  
+
 };
 
 
@@ -421,7 +269,7 @@ public:
 template<class SweepLineTraits_2, class CurveWrap>
 void 
 Sweep_line_event<SweepLineTraits_2, CurveWrap>::
-Print() 
+Print() const
 {
   std::cout << "\tEvent id: " << id << "\n" ;
   std::cout << "\t" << m_point << "\n" ;

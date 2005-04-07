@@ -31,6 +31,7 @@ class Sweep_line_points_visitor
   typedef Sweep_line_points_visitor<Traits,OutputIerator>     Self;
   typedef Sweep_line_subcurve<Traits>                    Subcurve;
   typedef Sweep_line_event<Traits, Subcurve>            Event;
+  typedef typename Event::SubCurveIter                  SubCurveIter;
 
   typedef Sweep_line_2_impl<Traits,
                             Event,
@@ -61,7 +62,7 @@ public:
 
   bool after_handle_event(Event* event)
   {
-    if(m_includeEndPoints || event->is_internal_intersection_point())
+    if(m_includeEndPoints || is_internal_intersection_point(event))
       *m_out++ = event->get_point();
     return true;
   }
@@ -77,8 +78,32 @@ public:
 
   
 
+   static bool is_internal_intersection_point(Event* event)
+    {
+      for(SubCurveIter liter = event->left_curves_begin();
+          liter != event->left_curves_end();
+          ++liter)
+      {
+        if((Event*)((*liter)->get_right_event()) != event)
+          return true;
+      }
 
-  protected:
+      for(SubCurveIter riter = event->right_curves_begin();
+          riter != event->right_curves_end();
+          ++riter)
+      {
+        if((Event*)((*riter)->get_left_event()) != event )
+          return true;
+        if((*riter)->get_orig_subcurve1() != NULL)
+        {
+          if((Event*)((*riter)->get_orig_subcurve1()->get_left_event())!=event||
+             (Event*)((*riter)->get_orig_subcurve2()->get_left_event())!=event)
+             return true;
+        }
+      }
+      return false;
+    }
+     protected:
 
     OutputIerator m_out;
     bool m_includeEndPoints;

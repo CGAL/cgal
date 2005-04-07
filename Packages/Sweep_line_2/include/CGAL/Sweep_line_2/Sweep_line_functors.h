@@ -77,27 +77,13 @@ public:
     m_compare[1] = &Status_line_curve_less_functor::compare_right;
   }
 
-  /*bool operator()(const Subcurve * c1, const Subcurve * c2) const 
-  {
-    return (this->*m_compare[m_compare_param->m_compare_func])(c1, c2);
-  }*/
+ 
 
   bool operator()(const Subcurve * c1, const Subcurve * c2) const 
   {
     return (compare_right(c1,c2));
   }
 
- /* bool compare_at(const Subcurve * c1, const Subcurve * c2)  const 
-  {
-    Comparison_result r = 
-      m_compare_param->m_traits->curves_compare_y_at_x(c1->get_curve(), 
-                                       c2->get_curve(), 
-                                       *m_sweep_pos);
-    if ( r == SMALLER) {
-      return true;
-    } 
-    return false;
-  }*/
 
   //TODO : REMOVE 'compare_at'!!!
   bool compare_at(const Subcurve * c1, const Subcurve * c2)  const 

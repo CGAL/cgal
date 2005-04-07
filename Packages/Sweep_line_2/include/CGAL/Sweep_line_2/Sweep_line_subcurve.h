@@ -82,61 +82,33 @@ public:
 
 
 
-  Sweep_line_subcurve()
+  Sweep_line_subcurve() : m_overlap_subcurve(NULL),
+                          m_orig_subcurve1(NULL),
+                          m_orig_subcurve2(NULL)
   {
   }
 
-  Sweep_line_subcurve(X_monotone_curve_2 &curve);
+  Sweep_line_subcurve(const X_monotone_curve_2 &curve);
 
   void init(const X_monotone_curve_2 &curve)
   {
-    m_lastCurve = curve;
-
     Comparison_result res = traits()->compare_xy(traits()->curve_source(curve),
                                                  traits()->curve_target(curve));
-
     if ( res  == LARGER )
     {
-      m_lastPoint = traits()->curve_target(curve);
       m_isRightSide = false;
     }
     else 
     { 
       CGAL_assertion(res == SMALLER); //curves cannot be a degenerate point
-      m_lastPoint = traits()->curve_source(curve);
       m_isRightSide = true;
     }
     m_lastCurve = curve;
-    m_overlap_subcurve = NULL;
-    m_orig_subcurve1 = NULL;
-    m_orig_subcurve2 = NULL;
-
   }
 
   ~Sweep_line_subcurve() {}
 
-  /*!
-    @return a reference to the curve 
-  */
-  /*const X_monotone_curve_2 &get_curve() const { 
-    return m_curve;
-  }*/
-
-  /*! 
-    @return a reference to the rightmost intersection point 
-  */
-  const Point_2 &get_last_point()  const { 
-    return m_lastPoint; 
-  }
-
-  /*! 
-    Updates the rightmost intersection point.
-    @param point a reference to the point
-   */
-  void set_last_point(const Point_2 &point) { 
-    m_lastPoint = point; 
-  }
-
+ 
   /*!
     @return a const reference to the last intersecing curve so far
   */
@@ -144,6 +116,7 @@ public:
     return m_lastCurve; 
   }
 
+  
   /*! 
     updates the last intersecting curve so far.
     @param cv a reference to the curve
@@ -158,47 +131,12 @@ public:
     return m_isRightSide; 
   }
 
-  /*bool is_source(const Point_2 &p) { 
-    return traits()->point_equal(p, traits()->curve_source(m_curve));
-  }*/
-  bool is_source(const Point_2 &p) { 
-    return traits()->point_equal(p, traits()->curve_source(m_lastCurve));
-  }
-
-  template <class SweepEvent>
-  bool is_source(const SweepEvent* event) const
-  {
-    if(m_isRightSide)
-      return (m_left_event == (Event*)event);
-    return (m_right_event == (Event*)event);
-  }
-
-  /*bool is_target(const Point_2 &p)
-  { 
-    return traits()->point_equal(p, traits()->curve_target(m_curve) );
-  }*/
-
-  bool is_target(const Point_2 &p)
-  { 
-    return traits()->point_equal(p, traits()->curve_target(m_lastCurve) );
-  }
-
-  template <class SweepEvent>
-  bool is_target(const SweepEvent* event) const
-  {
-    if(m_isRightSide)
-      return(m_right_event == (Event*)event);
-    return (m_left_event == (Event*)event);
-  }
-
-  /*! returns true if the specified point is the source or the target
-      of the curve. Returns false otherwise.
-  */
-  bool is_end_point(const Point_2 &p) { 
-    return is_target(p) || is_source(p);
-  }
-
   
+  template<class SweepEvent>
+  bool is_end_point(const SweepEvent* event)const
+  {
+    return m_right_event == (Event*)event;
+  }
  
 
    Point_2 get_right_end() const {
@@ -290,23 +228,25 @@ public:
     return prev;
   }
 
-  Self* clip(const Point_2& pt) 
+  template<class SweepEvent>
+  Self* clip(const SweepEvent* e) 
   {
-    if(!traits()->point_equal(get_right_end(), pt))
+    //if(!traits()->point_equal(get_right_end(), pt))
+    if(get_right_event() != (Event*)e)
     {
       X_monotone_curve_2 dummy;
       if(m_isRightSide)
-        traits()->curve_split(m_lastCurve, dummy,m_lastCurve, pt);
+        traits()->curve_split(m_lastCurve, dummy,m_lastCurve, e->get_point());
       else
-        traits()->curve_split(m_lastCurve, m_lastCurve,dummy, pt);
-      m_lastPoint = pt;
+        traits()->curve_split(m_lastCurve, m_lastCurve,dummy, e->get_point());
+
       return this;
     }
     if(m_orig_subcurve1)
     {
       Self* res;
-      if((res = m_orig_subcurve1->clip(pt)) == NULL)
-        return m_orig_subcurve2->clip(pt);
+      if((res = m_orig_subcurve1->clip(e)) == NULL)
+        return m_orig_subcurve2->clip(e);
       return res;
     }
     return NULL;  
@@ -340,23 +280,20 @@ public:
   void Print() const;
 #endif
 
-private:
+
 
   
-  ///*! thecurve */
-  //X_monotone_curve_2 m_curve;
+ 
+  private:
+     /*! the portion of the curve to the right of the last event point 
+      on the curve */
+  X_monotone_curve_2 m_lastCurve;
 
+  
   Event* m_left_event;
 
   Event* m_right_event;
-  /*! the rightmost point handled so far on the curve. It is initialized 
-    to the left end of the curve and is updated with every intersection 
-    point on the curve. */
-  Point_2 m_lastPoint;
-
-  ///*! the portion of the curve to the right of the last event point 
-  //    on the curve */
-  X_monotone_curve_2 m_lastCurve;
+  
 
   /*! true if the source of the curve is to the left of the target. */
   bool m_isRightSide;
@@ -390,23 +327,19 @@ private:
 
 template<class SweepLineTraits_2>
 inline Sweep_line_subcurve<SweepLineTraits_2>::
-Sweep_line_subcurve( X_monotone_curve_2 &curve) : m_overlap_subcurve(NULL),
+Sweep_line_subcurve(const X_monotone_curve_2 &curve) : m_overlap_subcurve(NULL),
                                                   m_orig_subcurve1(NULL)  ,
                                                   m_orig_subcurve2(NULL)
-{
-  //m_curve = curve;
- 
+{ 
   Comparison_result res = traits()->compare_xy(traits()->curve_source(curve),
                                                traits()->curve_target(curve));
   if ( res  == LARGER )
   {
-    m_lastPoint = traits()->curve_target(curve);
     m_isRightSide = false;
   }
   else 
   { 
     CGAL_assertion(res == SMALLER); //curves cannot be a degenerate point
-    m_lastPoint = traits()->curve_target(curve);
     m_isRightSide = true;
   }
   m_lastCurve = curve;
@@ -418,9 +351,7 @@ void
 Sweep_line_subcurve<SweepLineTraits_2>::
 Print() const
 {
-  std::cout << "Curve " << this << "  (" << m_lastCurve << ") "
-            << "last P = (" << m_lastPoint << ")" << std::endl;
-  
+  std::cout << "Curve " << this << "  (" << m_lastCurve << ") " << std::endl;
 }
 
 #endif
