@@ -25,26 +25,6 @@
 #include<CGAL/enum.h>
 #include<CGAL/memory.h>
 
-//#ifdef _DEBUG
-//
-//  #include <assert.h>
-//
-//  #define PRECONDITION(b)       assert((b))
-//
-//  #define PRECONDITION_CODE(c)  c
-//
-//  #define ASSERTION(b)          assert((b))
-//
-//#else
-//
-//  #define PRECONDITION(b)
-//
-//  #define PRECONDITION_CODE(c)
-//
-//  #define ASSERTION(b)
-//
-//#endif
-
 
 CGAL_BEGIN_NAMESPACE
 
@@ -100,7 +80,11 @@ class Red_black_tree
     Node        *leftP;             // Points on the left child of the node.
 
 
-    Node(){}
+    Node() : 
+      parentP(NULL),
+      rightP(NULL),
+      leftP(NULL)
+    {}
 
     /*!
      * Constructor of a red-black tree node.
@@ -115,13 +99,10 @@ class Red_black_tree
       leftP(NULL)
     {}
 
-    void init(const TYPE& _object, const Node_color& _color)
+    void init(const TYPE& _object,  Node_color _color)
     {
       object  =  _object;
       color   =  _color;
-      parentP =  NULL;
-      rightP  =  NULL;
-      leftP   =  NULL;
     }
 
 
@@ -129,25 +110,7 @@ class Red_black_tree
      * Recursive destructor for the entire sub-tree.
      */
     ~Node ()
-    {
-      //// Delete the right sub-tree recursively. 
-      //if (rightP != NULL)
-      //{
-      //  //delete rightP;
-      //  m_node_allocator.destroy(rightP); 
-      //  m_node_allocator.deallocate(rightP, 1);
-      //}
-      //rightP = NULL;
-
-      //// Delete the left sub-tree recursively. 
-      //if (leftP != NULL)
-      //{
-      //  //delete leftP;
-      //  m_node_allocator.destroy(leftP); 
-      //  m_node_allocator.deallocate(leftP, 1);
-      //}
-      //leftP = NULL;
-    }  
+    {}  
 
     void clear( Node_allocator& node_alloc)
     {
@@ -193,15 +156,19 @@ public:
 
   private:
 
-    const Red_black_tree *treeP;  // Points to the tree owns the handle.
+    //const Red_black_tree *treeP;  // Points to the tree owns the handle.
     Node                 *nodeP;  // Points to a node in the tree.
 
     /*!
      * Private constructor.
      */
-    Handle (const Red_black_tree *_treeP,
+    /*Handle (const Red_black_tree *_treeP,
             Node *_nodeP) :
       treeP(_treeP),
+      nodeP(_nodeP)
+    {}*/
+
+    Handle (Node *_nodeP) :
       nodeP(_nodeP)
     {}
 
@@ -210,18 +177,26 @@ public:
     /*!
      * Deafult constructor.
      */
-    Handle () :
+    /*Handle () :
       treeP(NULL),
+      nodeP(NULL)
+    {}*/
+
+    Handle () :
       nodeP(NULL)
     {}
 
     /*!
      * Constructor of a NULL handle.
      */
-    Handle (const void* p) :
+    /*Handle (const void* p) :
       treeP(NULL),
       nodeP(reinterpret_cast<Node*>(const_cast<void*>(p)))
-    {}
+    {}*/
+
+    /*Handle (const void* p) :
+      nodeP(reinterpret_cast<Node*>(const_cast<void*>(p)))
+    {}*/
 
     /*!
      * Equality operators.
@@ -262,6 +237,7 @@ protected:
   COMP            *compP;         // Used to compare the TYPE objects.
   bool            own_comp;       // Does the tree own its COMP object.
   Node_allocator  m_node_allocator; // allocator for the nodes
+  Node            m_master_node;   // used by allocator when calling construct
 
 public:
 
@@ -523,6 +499,8 @@ protected:
   
   Node* _lower_bound (const TYPE& object) const;
 
+  Node* _allocate_node(const TYPE& object,typename Node::Node_color color);
+
 };
 
 //---------------------------------------------------------
@@ -672,7 +650,7 @@ template <class TYPE, class COMP, typename Alloc>
 typename Red_black_tree<TYPE, COMP,Alloc>::Handle 
         Red_black_tree<TYPE, COMP, Alloc>::get (const TYPE& object) const
 {
-  return (Handle(this, _get(object)));
+  return (Handle(_get(object)));
 }
 
 //---------------------------------------------------------
@@ -687,20 +665,22 @@ typename Red_black_tree<TYPE, COMP, Alloc>::Handle
     // In case the tree is empty, assign a new rootP.
     // Notice that the root is always black.
     //rootP = new Node (object, Node::Black);
-    rootP = m_node_allocator.allocate(1);
+    /*rootP = m_node_allocator.allocate(1);
     m_node_allocator.construct(rootP, Node());
-    rootP -> init(object, Node::Black);
+    rootP -> init(object, Node::Black);*/
+    rootP = _allocate_node(object, Node::Black);
     
     iSize = 1;
-    return (Handle(this, rootP));
+    return (Handle(rootP));
   }
 
   // Find a place for the new object, and insert it as a red leaf.    
   Node        *currentP = rootP;
   //Node        *newNodeP = new Node (object, Node::Red);
-  Node *newNodeP = m_node_allocator.allocate(1);
+ /* Node *newNodeP = m_node_allocator.allocate(1);
   m_node_allocator.construct(newNodeP, Node());
-  newNodeP -> init(object, Node::Red);
+  newNodeP -> init(object, Node::Red);*/
+  Node *newNodeP = _allocate_node(object, Node::Red);
   Comparison_result         iCompResult;
 
   while (currentP != NULL)
@@ -742,7 +722,7 @@ typename Red_black_tree<TYPE, COMP, Alloc>::Handle
       }
       else // iCompResult == EQUAL
       {
-        return (Handle(this,  currentP));
+        return (Handle(currentP));
       }
   }
 
@@ -752,7 +732,7 @@ typename Red_black_tree<TYPE, COMP, Alloc>::Handle
   // Fix up the tree properties.
   _insert_fixup (newNodeP);  
 
-  return (Handle(this, newNodeP));
+  return (Handle(newNodeP));
 }
 
 //---------------------------------------------------------
@@ -765,7 +745,7 @@ typename Red_black_tree<TYPE, COMP, Alloc>::Handle
 {
   Node  *nodeP = handle.nodeP;
 
-  CGAL_assertion(nodeP == NULL || handle.treeP == this);
+  //CGAL_assertion(nodeP == NULL || handle.treeP == this);
 
   if (rootP == NULL)
   {
@@ -775,20 +755,22 @@ typename Red_black_tree<TYPE, COMP, Alloc>::Handle
 
     // Assign a new root node. Notice that the root is always black.
     //rootP = new Node (object, Node::Black);
-    rootP = m_node_allocator.allocate(1);
+    /*rootP = m_node_allocator.allocate(1);
     m_node_allocator.construct(rootP, Node());
-    rootP -> init(object, Node::Black);
+    rootP -> init(object, Node::Black);*/
+    rootP = _allocate_node(object, Node::Black);
 
     iSize = 1;
-    return (Handle(this, rootP));
+    return (Handle(rootP));
   }
 
   // Insert the new object as a red leaf, being the successor of nodeP.
   Node        *parentP;
   //Node        *newNodeP = new Node (object, Node::Red);
-  Node *newNodeP = m_node_allocator.allocate(1);
+  /*Node *newNodeP = m_node_allocator.allocate(1);
   m_node_allocator.construct(newNodeP, Node());
-  newNodeP -> init(object, Node::Red);
+  newNodeP -> init(object, Node::Red);*/
+  newNodeP = _allocate_node(object, Node::Red);
 
   if (nodeP == NULL)
   {
@@ -833,7 +815,7 @@ typename Red_black_tree<TYPE, COMP, Alloc>::Handle
   // Fix up the tree properties.
   _insert_fixup (newNodeP);  
 
-  return (Handle (this, newNodeP));
+  return (Handle (newNodeP));
 }
 
 //---------------------------------------------------------
@@ -846,7 +828,7 @@ typename Red_black_tree<TYPE, COMP, Alloc>::Handle
 {
   Node  *nodeP = handle.nodeP;
 
-  CGAL_assertion(nodeP == NULL || handle.treeP == this);
+  //CGAL_assertion(nodeP == NULL || handle.treeP == this);
 
   if (rootP == NULL)
   {
@@ -856,20 +838,22 @@ typename Red_black_tree<TYPE, COMP, Alloc>::Handle
 
     // Assign a new root node. Notice that the root is always black.
     //rootP = new Node (object, Node::Black);
-    rootP = m_node_allocator.allocate(1);
+    /*rootP = m_node_allocator.allocate(1);
     m_node_allocator.construct(rootP, Node());
-    rootP -> init(object, Node::Black);
+    rootP -> init(object, Node::Black);*/
+    rootP = _allocate_node(object, Node::Black);
 
     iSize = 1;
-    return (Handle(this, rootP));
+    return (Handle(rootP));
   }
 
   // Insert the new object as a red leaf, being the predecessor of nodeP.
   Node        *parentP;
   //Node        *newNodeP = new Node (object, Node::Red);
-  Node *newNodeP = m_node_allocator.allocate(1);
+  /*Node *newNodeP = m_node_allocator.allocate(1);
   m_node_allocator.construct(newNodeP, Node());
-  newNodeP -> init(object, Node::Red);
+  newNodeP -> init(object, Node::Red);*/
+  newNodeP = _allocate_node(object, Node::Red);
 
   if (nodeP == NULL)
   {
@@ -914,7 +898,7 @@ typename Red_black_tree<TYPE, COMP, Alloc>::Handle
   // Fix up the tree properties.
   _insert_fixup (newNodeP);  
 
-  return (Handle(this, newNodeP));
+  return (Handle(newNodeP));
 }
 
 //---------------------------------------------------------
@@ -939,7 +923,7 @@ void Red_black_tree<TYPE, COMP, Alloc>::remove (const TYPE& object)
 template <class TYPE, class COMP, typename Alloc>
 void Red_black_tree<TYPE, COMP, Alloc>::remove_at (const Handle& handle)
 {
-  CGAL_precondition (handle.treeP == this);
+  //CGAL_precondition (handle.treeP == this);
 
   _remove_at (handle.nodeP);
   return;
@@ -952,7 +936,7 @@ template <class TYPE, class COMP, typename Alloc>
 void Red_black_tree<TYPE, COMP, Alloc>::replace (const Handle& handle,
                                           const TYPE& object)
 {
-  CGAL_precondition(handle.treeP == this);
+  //CGAL_precondition(handle.treeP == this);
 
   Node  *nodeP = handle.nodeP;
   CGAL_precondition(nodeP != NULL);
@@ -1003,10 +987,10 @@ typename Red_black_tree<TYPE, COMP, Alloc>::Handle
 {
   // In case the tree is empty.
   if (rootP == NULL)
-    return (Handle(this, NULL));
+    return (Handle(NULL));
 
   // Return the leftmost leaf in the tree.
-  return (Handle(this, _sub_minimum(rootP)));
+  return (Handle(_sub_minimum(rootP)));
 }
 
 //---------------------------------------------------------
@@ -1018,10 +1002,10 @@ typename Red_black_tree<TYPE, COMP, Alloc>::Handle
 {
   // In case the tree is empty.
   if (rootP == NULL)
-    return (Handle(this, NULL));
+    return (Handle(NULL));
 
   // Return the rightmost leaf in the tree.
-  return (Handle(this, _sub_maximum(rootP)));
+  return (Handle(_sub_maximum(rootP)));
 }
 
 //---------------------------------------------------------
@@ -1031,11 +1015,11 @@ template <class TYPE, class COMP, typename Alloc>
 typename Red_black_tree<TYPE, COMP, Alloc>::Handle
         Red_black_tree<TYPE, COMP, Alloc>::successor (const Handle& handle) const
 {
-  CGAL_precondition(handle.treeP == this);
+  //CGAL_precondition(handle.treeP == this);
   CGAL_precondition(handle.nodeP != NULL);
 
   // Get the successor.
-  return (Handle(this, _successor(handle.nodeP)));
+  return (Handle(_successor(handle.nodeP)));
 }
 
 //---------------------------------------------------------
@@ -1045,11 +1029,11 @@ template <class TYPE, class COMP, typename Alloc>
 typename Red_black_tree<TYPE, COMP, Alloc>::Handle 
         Red_black_tree<TYPE, COMP, Alloc>::predecessor (const Handle& handle) const
 {
-  CGAL_precondition(handle.treeP == this);
+  //CGAL_precondition(handle.treeP == this);
   CGAL_precondition(handle.nodeP != NULL);
 
   // Get the predecessor.
-  return (Handle(this, _predecessor(handle.nodeP)));
+  return (Handle(_predecessor(handle.nodeP)));
 }
 
 //---------------------------------------------------------
@@ -1079,7 +1063,7 @@ template <class TYPE, class COMP, typename Alloc>
 typename Red_black_tree<TYPE, COMP, Alloc>::Handle  
         Red_black_tree<TYPE, COMP, Alloc>::lower_bound (const TYPE& object) const
 {
-  return (Handle(this, _lower_bound(object)));
+  return (Handle(_lower_bound(object)));
 }
 
 
@@ -1520,9 +1504,11 @@ typename Red_black_tree<TYPE, COMP, Alloc>::Node*
 {
   // Create a node of the same color, containing the same object.
   //Node*        dupNodeP = new Node (nodeP->object, nodeP->color);
-  Node *dupNodeP = m_node_allocator.allocate(1);
+  /*Node *dupNodeP = m_node_allocator.allocate(1);
   m_node_allocator.construct(dupNodeP, Node());
-  dupNodeP -> init(nodeP->object, nodeP->color);
+  dupNodeP -> init(nodeP->object, nodeP->color);*/
+  dupNodeP = _allocate_node(nodeP->object, nodeP->color);
+
     
   // Duplicate the children recursively.
   if (nodeP->rightP != NULL)
@@ -1853,6 +1839,22 @@ void Red_black_tree<TYPE, COMP, Alloc>::_remove_fixup (Node* nodeP)
 
   return;
 }
+
+//------------------------------------------------------
+// _allocae_node
+//
+template <class TYPE, class COMP, typename Alloc>
+typename Red_black_tree<TYPE, COMP, Alloc>::Node* Red_black_tree<TYPE, COMP, Alloc>::
+_allocate_node(const TYPE& object, typename Node::Node_color color)
+{
+  Node* new_node = m_node_allocator.allocate(1);
+  m_node_allocator.construct(new_node, m_master_node);
+  new_node->init(object, color);
+  return new_node;
+}
+
+
+
 
 CGAL_END_NAMESPACE
 
