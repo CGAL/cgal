@@ -64,7 +64,7 @@ private:
 				struct														Project_halfedge_vertex;
 				struct														Project_halfedge_handle_vertex;
 				struct														Project_opposite_halfedge_vertex;
-				struct														Ignored;
+				struct														All_vertices_filter;
 				// Halfedge
 				typedef Polyhedron_ex::Halfedge								Halfedge;
 				typedef Polyhedron_ex::Halfedge_handle						Halfedge_handle;
@@ -73,8 +73,8 @@ private:
 				typedef Polyhedron_ex::Halfedge_const_iterator				Halfedge_const_iterator;
 				typedef Polyhedron_ex::Halfedge_around_vertex_circulator	Halfedge_around_vertex_circulator;
 				// Iterator over all mesh vertices
-				typedef CGAL::Filter_iterator<Halfedge_iterator, Ignored>	Vertex_iterator_base;
-				typedef CGAL::Filter_iterator<Halfedge_const_iterator, Ignored> Vertex_const_iterator_base;
+				typedef CGAL::Filter_iterator<Halfedge_iterator, All_vertices_filter>	Vertex_iterator_base;
+				typedef CGAL::Filter_iterator<Halfedge_const_iterator, All_vertices_filter> Vertex_const_iterator_base;
 				// Iterator over mesh boundary vertices
 				typedef CGAL::Iterator_project<std::list<Halfedge_handle>::iterator, 
 											   Project_halfedge_handle_vertex>	
@@ -173,18 +173,18 @@ public:
 
 				// Get iterator over first vertex of mesh
 				Vertex_iterator  mesh_vertices_begin () {
-					return Vertex_iterator_base(m_mesh->halfedges_end(), Ignored(), m_mesh->halfedges_begin());
+					return Vertex_iterator_base(m_mesh->halfedges_end(), All_vertices_filter(), m_mesh->halfedges_begin());
 				}
 				Vertex_const_iterator  mesh_vertices_begin () const {
-					return Vertex_const_iterator_base(m_mesh->halfedges_end(), Ignored(), m_mesh->halfedges_begin());
+					return Vertex_const_iterator_base(m_mesh->halfedges_end(), All_vertices_filter(), m_mesh->halfedges_begin());
 				}
 
 				// Get iterator over past-the-end vertex of mesh
 				Vertex_iterator  mesh_vertices_end () {
-					return Vertex_iterator_base(m_mesh->halfedges_end(), Ignored());
+					return Vertex_iterator_base(m_mesh->halfedges_end(), All_vertices_filter());
 				}
 				Vertex_const_iterator  mesh_vertices_end () const {
-					return Vertex_const_iterator_base(m_mesh->halfedges_end(), Ignored());
+					return Vertex_const_iterator_base(m_mesh->halfedges_end(), All_vertices_filter());
 				}
 
 				// Count the number of vertices of the mesh
@@ -369,51 +369,7 @@ public:
 					return (Vertex_around_vertex_const_circulator) adaptor_vertex->vertex_begin();
 				}
 
-// Private types
-private:
-				// Utility class to generate the Vertex_around_face_circulator type
-				struct Project_halfedge_vertex {
-					typedef Halfedge							argument_type;
-					typedef Mesh_adaptor_polyhedron_ex::Vertex	Vertex;
-					typedef Vertex								result_type;
-					typedef CGAL::Arity_tag<1>					Arity;
-					// Get the adaptor vertex of the halfedge 'h'
-					Vertex&       operator()(Halfedge& h)       const { return *(get_adaptor_vertex(&h)); }
-					const Vertex& operator()(const Halfedge& h) const { return *(get_adaptor_vertex(&h)); }
-				};
-
-				// Utility class to generate the Border_vertex_iterator type
-				struct Project_halfedge_handle_vertex {
-					typedef Halfedge_handle						argument_type;
-					typedef Mesh_adaptor_polyhedron_ex::Vertex	Vertex;
-					typedef Vertex								result_type;
-					typedef CGAL::Arity_tag<1>					Arity;
-					// Get the adaptor vertex of the halfedge handle 'h'
-					Vertex&       operator()(Halfedge_handle& h)       const { return *(get_adaptor_vertex(h)); }
-					const Vertex& operator()(const Halfedge_handle& h) const { return *(get_adaptor_vertex(h)); }
-				};
-
-				// Utility class to generate the Vertex_around_vertex_circulator type
-				struct Project_opposite_halfedge_vertex {
-					typedef Halfedge							argument_type;
-					typedef Mesh_adaptor_polyhedron_ex::Vertex	Vertex;
-					typedef Vertex								result_type;
-					typedef CGAL::Arity_tag<1>					Arity;
-					// Get the adaptor vertex of the halfedge opposite to h
-					Vertex&       operator()(Halfedge& h)       const { return *(get_adaptor_vertex(h.opposite())); }
-					const Vertex& operator()(const Halfedge& h) const { return *(get_adaptor_vertex(h.opposite())); }
-				};
-
-				// Utility class to generate the Vertex_iterator type
-				struct Ignored {
-					// Return true <=> the object is not exported by Mesh_adaptor_polyhedron_ex
-					bool operator()(const Halfedge_iterator& h) const		{ return get_adaptor_vertex(h) != h; }	// @@@ INONDATION
-					bool operator()(const Halfedge_const_iterator& h) const { return get_adaptor_vertex(h) != h; }	// @@@ INONDATION
-					bool operator()(const Face_iterator& f) const			{ return false; }						// @@@ INONDATION
-					bool operator()(const Face_const_iterator& f) const		{ return false; }						// @@@ INONDATION
-				};
-
- // Private operations
+// Private operations
 private:
 				// Extract mesh UNIQUE boundary
 				static std::list<Halfedge_handle> extract_unique_boundary(Polyhedron_ex* mesh)
@@ -513,6 +469,50 @@ private:
 private:
 				Polyhedron_ex*	m_mesh;							// The adapted mesh 
 				std::list<Halfedge_handle> m_boundary;			// Inner halfedges of the boundary of a topological disc inside m_mesh
+
+
+// Private types
+private:
+				// Utility class to generate the Vertex_iterator type
+				struct All_vertices_filter {
+					// Return true <=> the object is not exported by Mesh_adaptor_polyhedron_ex
+					bool operator()(const Halfedge_iterator& h) const		{ return get_adaptor_vertex(h) != h; }	// @@@ INONDATION
+					bool operator()(const Halfedge_const_iterator& h) const { return get_adaptor_vertex(h) != h; }	// @@@ INONDATION
+				};
+
+				// Utility class to generate the Vertex_around_face_circulator type
+				struct Project_halfedge_vertex {
+					typedef Halfedge							argument_type;
+					typedef Mesh_adaptor_polyhedron_ex::Vertex	Vertex;
+					typedef Vertex								result_type;
+					typedef CGAL::Arity_tag<1>					Arity;
+					// Get the adaptor vertex of the halfedge 'h'
+					Vertex&       operator()(Halfedge& h)       const { return *(get_adaptor_vertex(&h)); }
+					const Vertex& operator()(const Halfedge& h) const { return *(get_adaptor_vertex(&h)); }
+				};
+
+				// Utility class to generate the Border_vertex_iterator type
+				struct Project_halfedge_handle_vertex {
+					typedef Halfedge_handle						argument_type;
+					typedef Mesh_adaptor_polyhedron_ex::Vertex	Vertex;
+					typedef Vertex								result_type;
+					typedef CGAL::Arity_tag<1>					Arity;
+					// Get the adaptor vertex of the halfedge handle 'h'
+					Vertex&       operator()(Halfedge_handle& h)       const { return *(get_adaptor_vertex(h)); }
+					const Vertex& operator()(const Halfedge_handle& h) const { return *(get_adaptor_vertex(h)); }
+				};
+
+				// Utility class to generate the Vertex_around_vertex_circulator type
+				struct Project_opposite_halfedge_vertex {
+					typedef Halfedge							argument_type;
+					typedef Mesh_adaptor_polyhedron_ex::Vertex	Vertex;
+					typedef Vertex								result_type;
+					typedef CGAL::Arity_tag<1>					Arity;
+					// Get the adaptor vertex of the halfedge opposite to h
+					Vertex&       operator()(Halfedge& h)       const { return *(get_adaptor_vertex(h.opposite())); }
+					const Vertex& operator()(const Halfedge& h) const { return *(get_adaptor_vertex(h.opposite())); }
+				};
+
 };
 
 
