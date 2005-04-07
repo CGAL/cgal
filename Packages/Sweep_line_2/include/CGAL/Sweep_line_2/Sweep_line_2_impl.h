@@ -648,8 +648,6 @@ public:
   }
 
   
-
-
   // utility methods 
   void intersect(Subcurve *c1, Subcurve *c2);
   void remove_curve_from_status_line(Subcurve *leftCurve,bool remove_for_good);
