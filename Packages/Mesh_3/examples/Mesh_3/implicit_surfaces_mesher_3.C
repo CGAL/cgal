@@ -8,6 +8,8 @@
 #include <CGAL/Implicit_surfaces_mesher_3.h>
 #include <CGAL/Chew_4_surfaces/Criteria/Standard_criteria.h>
 
+#include <CGAL/Mesh_3/Slivers_exuder.h>
+
 #include <CGAL/IO/Complex_2_in_triangulation_3_file_writer.h>
 #include <CGAL/IO/File_medit.h>
 
@@ -30,7 +32,6 @@
 #include <algorithm> // std::max_element()
 #include <qpixmap.h>  // qt drawing to pixmap
 #include <sstream>
-#include <CGAL/Mesh_3/Slivers_exuder.h>
 
 /////////////// Types /////////////// 
 
@@ -60,6 +61,9 @@ typedef Simple_kernel::Point_2 Point;
 typedef enum { RADIUS_RATIO, ANGLE} Distribution_type;
 
 /// Global variables 
+typedef std::map<std::string, std::string> String_options;
+
+String_options string_options;
 std::ostream *out = 0;
 std::string filename = std::string();
 std::string function_name = "sphere";
@@ -70,6 +74,15 @@ int distribution_x = 200;
 int distribution_y = 100;
 int distribution_size = 50;
 Distribution_type distribution_type = RADIUS_RATIO;
+
+void init_string_options()
+{
+  string_options["distribution_after_filename"] = "";
+  string_options["mesh_after_filename"] = "";
+  string_options["initial_surface_off"] = "";
+  string_options["surface_off"] = "";
+  string_options["slivers_off"] = "";
+}
 
 void usage(char *argv0, std::string error = "")
 {
@@ -176,7 +189,21 @@ void parse_argv(int argc, char** argv, int extra_args = 0)
 	      parse_argv(argc, argv, extra_args + 2);
 	    }
 	  else
-	    usage(argv[0], ("Invalid option: " + arg + "!").c_str());
+          {
+            String_options::iterator opt_it = 
+                string_options.find(arg.substr(2, arg.length()-2));
+            if( opt_it != string_options.end() )
+            {
+              if( argc < (3 + extra_args) )
+                usage(argv[0],
+                      (arg + " must be followed by a string!").c_str());
+              std::string s = argv[extra_args + 2];
+              opt_it->second = s;
+              parse_argv(argc, argv, extra_args + 2);
+            }
+            else
+              usage(argv[0], ("Invalid option: " + arg + "!").c_str());
+          }
 	}
       else 
 	{
@@ -190,6 +217,7 @@ void parse_argv(int argc, char** argv, int extra_args = 0)
 template <typename Triangulation>
 void output_distribution_to_png(Triangulation& tr,
                                 const int number_of_classes = 100,
+                                std::string filename,
                                 Distribution_type type = RADIUS_RATIO)
 {
   typedef Triangulation Tr;
@@ -250,30 +278,32 @@ void output_distribution_to_png(Triangulation& tr,
   widget->show();
   
   widget->lock();
-  *widget << CGAL::RED << Segment(Point(0.,0.), Point(1., 0.))
-          << CGAL::BLACK;
+  *widget << CGAL::FillColor(CGAL::Color(200, 200, 200))
+          << CGAL::Color(200, 200, 200)
+          << Rectangle(Point(0, 0), Point(1,1));
   
   if( number_of_classes == 0 ) return;
   const double width = 1.0 / number_of_classes;
 
-  *widget << CGAL::FillColor(CGAL::BLACK);
-  *widget << Segment(Point(0., 0.), Point(1., 0.));
+  *widget << CGAL::FillColor(CGAL::BLACK) << CGAL::BLACK;
+//   *widget << Segment(Point(0., 0.), Point(1., 0.));
   for(int k=0;k<number_of_classes;k++)
-    {
-      double height = ( distribution[k]+0. ) / max_occurrence;
-      *widget << Rectangle(Point(k*width, 0),
-                           Point((k+1)*width, height));
-    }
+    if(distribution[k]>0)
+      {
+        double height = ( distribution[k]+0. ) / max_occurrence;
+        *widget << Rectangle(Point(k*width, 0),
+                             Point((k+1)*width, height));
+      }
   
   widget->unlock();
-  if( widget->get_pixmap().save( QString(distribution_filename.c_str()),
+  if( widget->get_pixmap().save( QString(filename.c_str()),
                                  "PNG") )
-    std::cerr << "Distribution saved to file " << distribution_filename
+    std::cerr << "Distribution saved to file " << filename
               << std::endl;
   else
     {
       std::cerr << "Error: cannot save distribution to file "
-                << distribution_filename << std::endl; 
+                << filename << std::endl; 
       exit(1);
     }
   qApp->exec();
@@ -286,6 +316,8 @@ int main(int argc, char **argv) {
   QApplication app (argc, argv);
   
   init_parameters();
+  
+  init_string_options();
 
   parse_argv(argc, argv);
 
@@ -333,9 +365,17 @@ int main(int argc, char **argv) {
   // Surface meshing
   Mesher mesher (T, O, C, tets_criteria);
   mesher.refine_surface();
+  std::string dump_initial_surface_filename = string_options["initial_surface_off"];
+  if( dump_initial_surface_filename != "" )
   {
-    std::ofstream dump("dump.off");
-    output_surface_facets_to_off(dump, T);
+    std::ofstream dump(dump_initial_surface_filename.c_str());
+    if( dump )
+    {
+      std::cerr << "Writing initial surface to off file " << dump_initial_surface_filename << "..." << std::endl;
+      output_surface_facets_to_off(dump, T);
+    }
+    else
+      usage(argv[0], ("Error: cannot create " + dump_initial_surface_filename).c_str());
   }
   mesher.refine_mesh();
 //   int i = 100;
@@ -375,12 +415,57 @@ int main(int argc, char **argv) {
       // Output
       output_pslg_to_medit(*out, T);
     }
+    
   if( dump_distribution )
-    output_distribution_to_png(T, distribution_size, distribution_type);
+    output_distribution_to_png(T, distribution_size, distribution_filename, distribution_type);
+  
   CGAL::Mesh_3::Slivers_exuder<Del> exuder(T);
-  exuder.init();
-  exuder.pump_vertices();
-  if( dump_distribution )
-    output_distribution_to_png(T, distribution_size, distribution_type);
+  int number_of_pump = static_cast<int>(double_options["number_of_pump"]);
+  for(int i = 0; i < number_of_pump; ++i)
+  {
+    exuder.init();
+    exuder.pump_vertices();
+  }
+  
+  std::string distribution_after_filename = string_options["distribution_after_filename"];
+  if( distribution_after_filename != "" )
+    output_distribution_to_png(T, distribution_size, distribution_after_filename, distribution_type);
+
+  std::string mesh_after_filename = string_options["mesh_after_filename"];
+  if( mesh_after_filename != "" )
+  {
+    std::ofstream file(mesh_after_filename.c_str());
+    if( file ) {
+      std::cerr << "Writing to file " << mesh_after_filename << "..." << std::endl;
+      output_pslg_to_medit(file, T);
+    }
+    else
+      usage(argv[0] , ("Error: cannot create " + mesh_after_filename).c_str());
+  }
+
+  std::string dump_final_surface_filename = string_options["surface_off"];
+  if( dump_final_surface_filename != "" )
+  {
+    std::ofstream dump(dump_final_surface_filename.c_str());
+    if( dump ) {
+      std::cerr << "Writing final surface to off file " << dump_final_surface_filename << "..." << std::endl;
+      output_surface_facets_to_off(dump, T);
+    }
+    else
+      usage(argv[0], ("Error: cannot create " + dump_final_surface_filename).c_str());
+  }
+  
+  std::string dump_slivers_filename = string_options["slivers_off"];
+  if( dump_slivers_filename != "" )
+  {
+    std::ofstream dump(dump_slivers_filename.c_str());
+    if( dump ) {
+      std::cerr << "Writing slivers to off file " << dump_slivers_filename << "..." << std::endl;
+      output_slivers_to_off(dump, T);
+    }
+    else
+      usage(argv[0], ("Error: cannot create " + dump_slivers_filename).c_str());
+  }
+
   std::cerr << " done\n";
 }

@@ -23,5 +23,6 @@ void init_parameters()
   double_options["center_y"] = 0.0;
   double_options["center_z"] = 0.0;
   double_options["number_of_initial_points"] = 20;
+  double_options["number_of_pump"] = 1;
   bipolar_oracle = true;
 }

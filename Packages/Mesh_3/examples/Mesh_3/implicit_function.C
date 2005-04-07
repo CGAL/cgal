@@ -54,6 +54,14 @@ int skull_function(double x, double y, double z)
   return image(x, y, z);
 }
 
+int skin_function(double x, double y, double z)
+{
+  static CGAL::Inrimage_isosurface image
+      = CGAL::Inrimage_isosurface("./skin_4.5.inr.gz", 4.5);
+
+  return image(x, y, z);
+}
+
 ///////////////// Definition of the current surface /////////////////
 int implicit_function (double x, double y, double z) {
   return tanglecube_function(x,y,z);
@@ -486,4 +494,5 @@ void init_functions()
   functions["ventricules_0"] = &ventricules_0_function;
   functions["visiblehuman"] = &visiblehuman_function;
   functions["skull"] = &skull_function;
+  functions["skin"] = &skin_function;
 }

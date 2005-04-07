@@ -1,3 +1,15 @@
+07 April 2005 Laurent Rineau
+- added skin implicit function
+- the option parser of examples/Mesh_3/implicite_surface_mesher_3.C now has string options
+- new options:
+  --distribution_after_filename
+  --mesh_after_filename
+  --initial_surface_off
+  --surface_off
+  --slivers_off
+- can output slivers to off
+- multi-passes of sliver exudation
+
 06 April 2005 Laurent Rineau
 - added sliver exudation: include/CGAL/Mesh_3/Sliver_exuder.h
   (perhaps should it be only a global function >> TODO)

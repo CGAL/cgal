@@ -80,7 +80,10 @@ output_pslg_to_medit (std::ostream& os, const Tr & T) {
       {
 	for (int i=0; i<4; i++)
 	  os << V[cit->vertex(i)] << " ";
-	os << "1" << std::endl; //ref
+        if( radius_ratio(T.tetrahedron(cit)) > 0.25)
+          os << "2" << std::endl;
+        else
+	  os << "1" << std::endl; //ref
       }
   
   // End

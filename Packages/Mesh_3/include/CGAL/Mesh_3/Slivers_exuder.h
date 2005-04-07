@@ -217,14 +217,14 @@ namespace Mesh_3 {
     }; // end class Value_of
 
     template <typename Gt, typename Vertex_handle>
-    class Squared_distance_from_v :
+    class Power_from_v :
       public std::unary_function<Vertex_handle, typename Gt::RT>
     {
       Vertex_handle * v;
       Gt gt;
     public:
-      Squared_distance_from_v(Vertex_handle& vh,
-			      Gt geom_traits = Gt()) 
+      Power_from_v(Vertex_handle& vh,
+		   Gt geom_traits = Gt()) 
 	: v(&vh), gt(geom_traits)
       {
       }
@@ -232,13 +232,14 @@ namespace Mesh_3 {
       typename Gt::RT
       operator()(const Vertex_handle& vh) const
       {
-	typedef typename Gt::Compute_squared_distance_3 Distance_3;
-	Distance_3 sq_distance =
-	  gt.compute_squared_distance_3_object();
+        typedef typename Gt::Compute_power_product_3
+            Compute_power_product_3;
+        Compute_power_product_3 product =
+            gt.compute_power_product_3_object();
 
-	return sq_distance((*v)->point(), vh->point());
+	return product((*v)->point(), vh->point());
       }
-    }; // end class Squared_distance_from_v
+    }; // end class Power_from_v
 
   } // end namespace details
 
@@ -260,7 +261,9 @@ public: //types
   typedef typename Geom_traits::Tetrahedron_3 Tetrahedron_3;
   
 public: // methods
-  Slivers_exuder(Tr& t, double d = 0.45) : tr(t), delta(d)
+  Slivers_exuder(Tr& t, double d = 0.45)
+    : tr(t), sq_delta(d*d), num_of_pumped_vertices(0),
+      num_of_ignored_vertices(0), total_pumping(0.0)
   {
   }
 
@@ -270,11 +273,19 @@ public: // methods
   
   void pump_vertices()
   {
+    num_of_pumped_vertices = 0;
+    num_of_ignored_vertices = 0;
+    total_pumping = 0.0;
+    
     for(typename Tr::Finite_vertices_iterator vit = tr.finite_vertices_begin();
 	vit != tr.finite_vertices_end();
 	++vit)
       if(vit->info() != true)
 	pump_vertex(vit);
+    
+    std::cerr << "Pumped vertices:  " << num_of_pumped_vertices << std::endl;
+    std::cerr << "Ignored vertices: " << num_of_ignored_vertices << std::endl;
+    std::cerr << "Average pumping:  " << (total_pumping / num_of_pumped_vertices) << std::endl;
   }
 //   void init()
 //   {
@@ -319,21 +330,25 @@ public: // methods
 
     std::vector<Cell_handle> incident_cells;
     std::vector<Vertex_handle> incident_vertices;
+    
     incident_cells.reserve(64);
     incident_vertices.reserve(128);
+    
     tr.incident_cells(v, std::back_inserter(incident_cells));
     tr.incident_vertices(v, std::back_inserter(incident_vertices));
+    
     std::map<Facet, double> ratios;
+    
     typedef CGAL::Double_map<Facet, double> Pre_star;
     Pre_star pre_star;
 
     double best_weight = 0;
     double worst_radius_ratio = 1;
 
-    details::Squared_distance_from_v<Geom_traits, Vertex_handle> 
+    details::Power_from_v<Geom_traits, Vertex_handle> 
       distance_from_v(v, tr.geom_traits());
 
-    const double d_v = 
+    const double sq_d_v = 
       *(std::min_element(make_transform_iterator(incident_vertices.begin(),
 						 distance_from_v),
 			 make_transform_iterator(incident_vertices.end(),
@@ -350,21 +365,27 @@ public: // methods
 	ratios[f] = r;
 	if( r < worst_radius_ratio ) worst_radius_ratio = r;
 	const Facet opposite_facet = compute_opposite_facet(f);
-	if(opposite_facet.first->is_in_domain())
-	  pre_star.insert(f, compute_critical_radius(v,
+        if(opposite_facet.first->is_in_domain())
+        {
+          CGAL_assertion( ! f.first->is_facet_on_surface(f.second) );
+          CGAL_assertion( ! opposite_facet.first->is_facet_on_surface(opposite_facet.second) );
+          pre_star.insert(f, compute_critical_radius(v,
 						     opposite_facet.first));
+        }
       }
 
+    double first_radius_ratio = worst_radius_ratio;
+    
     details::Map_value_of<Pre_star,
       std::map<Facet, double> > value_of_ratios(ratios);
 
-    std::cerr << "worst_radius_ratio=" << worst_radius_ratio << std::endl;
-    std::cerr << "=" << 
-	  *(std::min_element(make_transform_iterator(pre_star.begin(),
-						     value_of_ratios),
-			     make_transform_iterator(pre_star.end(),
-						     value_of_ratios)))
-	      << std::endl;
+//     std::cerr << "worst_radius_ratio=" << worst_radius_ratio << std::endl;
+//     std::cerr << "=" << 
+// 	  *(std::min_element(make_transform_iterator(pre_star.begin(),
+// 						     value_of_ratios),
+// 			     make_transform_iterator(pre_star.end(),
+// 						     value_of_ratios)))
+// 	      << std::endl;
 
     CGAL_assertion(!pre_star.empty());
 
@@ -373,43 +394,52 @@ public: // methods
     double critical_r = facet.first;
 //     pre_star.pop_front();
 
-    std::cerr << "v=" << &*v << std::endl;
-
-    while( (critical_r < ((delta*delta) * d_v)) &&
+//     std::cerr << "v=" << &*v << std::endl;
+    
+    while( (critical_r < (sq_delta * sq_d_v)) &&
            // La condition suivante teste que la facet qui va etre flippee
            // n'est pas contrainte.
            ! link.first->is_facet_on_surface(link.second) )
-      {  // link.first n'est pas contrainte donc on est dans le domaine.
-	std::cerr << "critical_r(" << &*link.first
-		  << "," << link.second
-		  << ", s=" << pre_star.size() << ")="
-		  << critical_r << " ";
+      {
+// 	std::cerr << "critical_r(" << &*link.first
+// 		  << "," << link.second
+// 		  << ", s=" << pre_star.size() << ")="
+// 		  << critical_r << " ";
 
-	CGAL_assertion( !tr.is_infinite(link.first) );
+        // link.first n'est pas contrainte donc on est dans le domaine.
+        CGAL_assertion( !tr.is_infinite(link.first) );
 	CGAL_assertion( link.first->is_in_domain() );
 	CGAL_assertion( ! link.first->
 			is_facet_on_surface(link.second) );
+ 
         Facet opposite_facet = compute_opposite_facet(link);
-
-        CGAL_assertion( ! opposite_facet.first->
-			is_facet_on_surface(opposite_facet.second) );
-	CGAL_assertion( !tr.is_infinite(opposite_facet.first) );
-	CGAL_assertion(	opposite_facet.first->is_in_domain() );
+        const Cell_handle& opposite_cell = opposite_facet.first;
+        const int& opposite_index = opposite_facet.second;
+        
+        CGAL_assertion( ! opposite_cell->
+                            is_facet_on_surface(opposite_index) );
+	CGAL_assertion( !tr.is_infinite(opposite_cell) );
+	CGAL_assertion(	opposite_cell->is_in_domain() );
+ 
 	
 	int number_of_erased_facets = 0;
 
         for(int i = 0; i<4 ; ++i)
           {
-            const Facet new_facet = Facet(opposite_facet.first,
-                                          (opposite_facet.second + i) & 3);
+            CGAL_assertion( critical_r < power_product(v->point(), opposite_cell->vertex(i)->point()) );
+            const Facet new_facet = Facet(opposite_cell, i);
 	    const Facet temp_facet = compute_opposite_facet(new_facet);
             if(!pre_star.erase(temp_facet))
 	      {
-		pre_star.insert(new_facet,
+                CGAL_assertion( opposite_cell->neighbor(i) != link.first);
+                pre_star.insert(new_facet,
 				compute_critical_radius(v,
 							new_facet.first));
 		const Cell_handle& c = new_facet.first;
 		const int& k = new_facet.second;
+  
+                CGAL_assertion( c != link.first );
+
 // 		std::cerr << &*(c->vertex((k+1)&3)) << "\n"
 // 			  << &*(c->vertex((k+2)&3)) << "\n"
 // 			  << &*(c->vertex((k+3)&3)) << std::endl;
@@ -427,14 +457,15 @@ public: // methods
 	      }
 	    else
 	      {
-		if(++number_of_erased_facets > 1)
-		  std::cerr << "[3-2]";
+                ++number_of_erased_facets;
+// 		if(number_of_erased_facets > 1)
+//  		  std::cerr << "[3-2]";
 	      }
           }
 
-	std::cerr << "n(" << number_of_erased_facets << ")";
-	CGAL_assertion( number_of_erased_facets > 0
-			&& number_of_erased_facets < 4 );
+// 	std::cerr << "n(" << number_of_erased_facets << ")";
+          CGAL_assertion( number_of_erased_facets > 0 );
+          CGAL_assertion( number_of_erased_facets < 4 );
 
 	double min_of_pre_star = 
 	  *(std::min_element(make_transform_iterator(pre_star.begin(),
@@ -458,26 +489,37 @@ public: // methods
 // 	pre_star.pop_front();
       }
 
-    if( link.first->is_facet_on_surface(link.second) )
+/*    if( link.first->is_facet_on_surface(link.second) )
       std::cerr << "X";
-    
+ */   
     Bare_point p = v->point().point();
-    std::cerr << "\nBest weight for point(" << p << ") is "
-	      << best_weight << " and worst_radius_ratio is "
-	      << worst_radius_ratio << std::endl;;
     //    tr.remove(v);
-    if(best_weight > 0)
+    if(best_weight > v->point().weight())
     {
+      ++num_of_pumped_vertices;
+//       std::cerr << "Best weight for point(" << p << ") is "
+//           << best_weight << "\nand worst_radius_ratio is "
+//           << worst_radius_ratio << " and was " << first_radius_ratio << std::endl;;
+      
+      total_pumping += (worst_radius_ratio - first_radius_ratio);
+      
       Weighted_point wp = Weighted_point(p, best_weight);
       Vertex_handle new_vertex = tr.insert(wp);
       restore_markers_around(new_vertex);
     }
+    else
+      ++num_of_ignored_vertices;
+    
   } // end pump_vertex
   
 private: // data
   Tr& tr;
-  double delta;
-    
+  double sq_delta;
+
+  int num_of_pumped_vertices;
+  int num_of_ignored_vertices;
+  double total_pumping;
+
   struct My_cell
   {
     My_cell(const Vertex_handle& v0, const Vertex_handle& v1,
@@ -516,22 +558,28 @@ private: // methods
 //              << (q_it++)->first << std::endl;
     // end DEBUG
   }
+  
+  typename Geom_traits::FT
+  power_product(const Weighted_point& p1, const Weighted_point& p2) const
+  {
+    typedef typename Geom_traits::Compute_power_product_3
+        Compute_power_product_3;
+    Compute_power_product_3 product =
+        tr.geom_traits().compute_power_product_3_object();
+    return product(p1, p2);
+  }
 
   double compute_critical_radius(const Vertex_handle& v,
 				 const Cell_handle& c) const
   {
-    typedef typename Geom_traits::Construct_weighted_circumcenter_3
+/*    typedef typename Geom_traits::Construct_weighted_circumcenter_3
       Construct_weighted_circumcenter_3;
-    typedef typename Geom_traits::Compute_power_product_3
-      Compute_power_product_3;
     typedef typename Geom_traits::
       Compute_squared_radius_smallest_orthogonal_sphere_3
       Compute_squared_radius_smallest_orthogonal_sphere_3;
 
     Construct_weighted_circumcenter_3 weighted_circumcenter =
       tr.geom_traits().construct_weighted_circumcenter_3_object();
-    Compute_power_product_3 power_product =
-      tr.geom_traits().compute_power_product_3_object();
     Compute_squared_radius_smallest_orthogonal_sphere_3
       squared_radius_smallest_orthogonal_sphere =
       tr.geom_traits().
@@ -548,28 +596,27 @@ private: // methods
 								wp2,
 								wp3));
 
-    return power_product(wc,v->point());
+    return CGAL::to_double(power_product(wc,v->point()));*/
     
 //     std::cerr << "c(";
-//     typedef typename Geom_traits::Compute_critical_squared_radius_3
-//       Critical_radius;
-//     Critical_radius critical_radius = 
-//       tr.geom_traits().compute_critical_squared_radius_3_object();
+    typedef typename Geom_traits::Compute_critical_squared_radius_3
+      Critical_radius;
+    Critical_radius critical_radius = 
+      tr.geom_traits().compute_critical_squared_radius_3_object();
     
-//     double result = -critical_radius(c->vertex(0)->point(),
-// 				     c->vertex(1)->point(),
-// 				     c->vertex(2)->point(),
-// 				     c->vertex(3)->point(),
-// 				     v->point());
+    double result = critical_radius(c->vertex(0)->point(),
+			            c->vertex(1)->point(),
+				    c->vertex(2)->point(),
+				    c->vertex(3)->point(),
+				    v->point());
 //     std::cerr << result << ")";
-//     return result;
+    return result;
   }
 
   static Facet compute_opposite_facet(Facet f)
   {
     const Cell_handle& neighbor_cell = f.first->neighbor(f.second);
     const int opposite_index = neighbor_cell->index(f.first);
-    // TODO:signaler que cell_index() n'existe pas, contrairement a la doc!!
     return Facet(neighbor_cell, opposite_index);
   }
 
@@ -579,7 +626,7 @@ private: // methods
     incident_cells.reserve(64);
     tr.incident_cells(v, std::back_inserter(incident_cells));
 
-    std::cerr << "S(" << incident_cells.size() << ")";
+//     std::cerr << "S(" << incident_cells.size() << ")";
     bool test = false;
 
     for(typename std::vector<Cell_handle>::const_iterator cit = 
@@ -596,12 +643,87 @@ private: // methods
 	test = test || marker;
 	(*cit)->set_in_domain(true);
       }
-    if( test ) 
-      std::cerr << "Y";
+//     if( test ) 
+//       std::cerr << "Y";
   }
 }; // end class Slivers_exuder
 
 } // end namespace Mesh_3
+
+template < class Tr>
+void
+output_slivers_to_off (std::ostream& os, const Tr & T, const double sliver_bound = 0.25) 
+{
+  typedef typename Tr::Finite_cells_iterator Finite_cells_iterator;
+  typedef typename Tr::Finite_vertices_iterator Finite_vertices_iterator;
+  typedef typename Tr::Vertex_handle Vertex_handle;
+  typedef typename Tr::Cell_handle Cell_handle;
+  typedef typename Tr::Point Point;
+  
+  typedef std::set<Cell_handle> Slivers;
+  Slivers slivers;
+  
+  for( Finite_cells_iterator cit = T.finite_cells_begin(); 
+       cit != T.finite_cells_end(); ++cit)
+  {
+    if( cit->is_in_domain() &&
+        radius_ratio(T.tetrahedron(cit)) < sliver_bound )
+      slivers.insert(cit);
+  }
+  
+  // Header.
+  os << "OFF \n"
+      << T.number_of_vertices() << " " <<
+      slivers.size() * 4 << 
+      " " << 0 << "\n";
+
+  os << std::setprecision(20);
+ 
+  // Finite vertices coordinates.
+  std::map<Vertex_handle, int> V;
+  
+  int inum = 0;
+  for( Finite_vertices_iterator
+       vit = T.finite_vertices_begin(); vit != T.finite_vertices_end(); ++vit) {
+    V[vit] = inum++;
+    Point p = static_cast<Point>(vit->point());
+    os << p.x() << " " << p.y() << " " << p.z() << "\n";
+  }
+  
+  int surface_slivers = 0;
+  int flat_slivers = 0;
+  
+  // Finite cells indices.
+  for( typename Slivers::iterator cit = slivers.begin();
+       cit != slivers.end(); ++cit)
+  {
+    const Cell_handle& c = *cit;
+    
+    if( c->vertex(0)->info() &&
+        c->vertex(1)->info() &&
+        c->vertex(2)->info() &&
+        c->vertex(3)->info() )
+      ++flat_slivers;
+    
+    if( c->vertex(0)->info() ||
+        c->vertex(1)->info() ||
+        c->vertex(2)->info() ||
+        c->vertex(3)->info() )
+      ++surface_slivers;
+    
+    for(int i = 0; i < 4; ++i)
+      {
+        os << "3 ";
+        for (int k=0; k<3; k++)
+          os << V[c->vertex((i+k)&3)] << " ";
+        
+	os << "\n"; // without color.
+      }
+   }
+   std::cerr << "Number of slivers: " << slivers.size()
+             << "\nNumber of surface slivers: " << surface_slivers
+             << "\nNumber of flat slivers: " << flat_slivers << std::endl;
+}
 } // end namespace CGAL
 
 

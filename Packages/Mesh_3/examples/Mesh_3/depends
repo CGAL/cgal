@@ -110,11 +110,11 @@ implicit_surfaces_mesher_3.o: \
   ../../../Chew_4_surfaces/include/CGAL/Complex_2_in_triangulation_3.h \
   ../../../Chew_4_surfaces/include/CGAL/Complex_2_in_triangulation_3_surface_mesh.h \
   ../../../Chew_4_surfaces/include/CGAL/Chew_4_surfaces/Criteria/Standard_criteria.h \
+  ../../include/CGAL/Mesh_3/Slivers_exuder.h \
   ../../../Chew_4_surfaces/include/CGAL/IO/Complex_2_in_triangulation_3_file_writer.h \
   ../../include/CGAL/IO/File_medit.h \
   ../../../Chew_4_surfaces/include/CGAL/Chew_4_surfaces/Oracles/Implicit_oracle.h \
   ../../include/CGAL/Mesh_criteria_3.h implicit_function.h parameters.h \
-  ../../include/CGAL/Mesh_3/Slivers_exuder.h \
 
 
 isosurface_mesher.o: \
