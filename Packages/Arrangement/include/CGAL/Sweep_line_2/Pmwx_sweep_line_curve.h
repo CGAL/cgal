@@ -61,7 +61,8 @@ public:
   typedef Pmwx_sweep_line_event<Traits, Self> Event;
 
 
-  Pmwx_sweep_line_curve()
+  Pmwx_sweep_line_curve(): Base(),
+                           m_lastEvent(0)                         
   {}
 
   Pmwx_sweep_line_curve( X_monotone_curve_2 &curve): Base( curve),
@@ -72,7 +73,6 @@ public:
   void init(const X_monotone_curve_2 &curve)
   {
     Base::init(curve);
-    m_lastEvent  = 0;
   }
 
 

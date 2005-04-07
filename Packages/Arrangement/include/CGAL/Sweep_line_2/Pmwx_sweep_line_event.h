@@ -69,10 +69,6 @@ public:
   Pmwx_sweep_line_event()
   {}
 
-  /*! Constructor */
-  Pmwx_sweep_line_event(const Point_2 &point) : Base(point)
-  {}
-
 
   /*! destructor */
   ~Pmwx_sweep_line_event()

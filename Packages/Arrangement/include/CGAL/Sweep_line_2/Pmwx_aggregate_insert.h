@@ -62,7 +62,7 @@ public:
       m_traits_owner(true),
       m_arr(arr),
       m_notif(ntf),
-      m_visitor(arr, ntf, m_traits),
+      m_visitor(arr, ntf),
       m_sweep_line(m_traits, &m_visitor)
       {}
 
@@ -72,7 +72,7 @@ public:
       m_traits_owner(false),
       m_arr(arr),
       m_notif(ntf),
-      m_visitor(arr, ntf, m_traits),
+      m_visitor(arr, ntf),
       m_sweep_line(m_traits, &m_visitor)
       {}
 
