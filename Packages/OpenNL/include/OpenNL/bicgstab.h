@@ -139,11 +139,11 @@ public:
         unsigned int its=0;										// Loop counter
         CoeffType err=epsilon_*epsilon_*BLAS<Vector>::dot(b,b);	// Error to reach
 
-        Vector r(n) ;											// Current residue r=Ax-b
+        Vector r(n) ;											// Current residue r=A*x-b
         mult(A,x,r);
         BLAS<Vector>::axpy(-1,b,r);
 
-	    // Initially, d=h=rT=r=Ax-b
+	    // Initially, d=h=rT=r=A*x-b
         BLAS<Vector>::copy(r,d);								// d = r
         BLAS<Vector>::copy(d,h);								// h = d
         BLAS<Vector>::copy(h,rT);								// rT = h
