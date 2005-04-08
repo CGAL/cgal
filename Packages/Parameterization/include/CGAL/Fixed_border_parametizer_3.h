@@ -42,10 +42,11 @@ CGAL_BEGIN_NAMESPACE
 //
 // Implementation note: Subclasses must at least implement compute_wij().
 
-template <class MeshAdaptor_3,														// 3D surface
-		  class BorderParametizer_3 = Circular_border_parametizer_3<MeshAdaptor_3>,	// Class to map the surface's border onto a 2D space
+template <class MeshAdaptor_3,		// 3D surface
+		  class BorderParametizer_3 = Circular_border_parametizer_3<MeshAdaptor_3>,	
+									// Class to map the surface's border onto a 2D space
 		  class SparseLinearAlgebraTraits_d = OpenNL::DefaultLinearSolverTraits<typename MeshAdaptor_3::NT> >	
-																					// Traits class for solving a sparse linear system "A*X = B"
+									// Traits class for solving a general sparse linear system 
 class Fixed_border_parametizer_3 : public Parametizer_3<MeshAdaptor_3>
 {
 // Public types
