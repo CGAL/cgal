@@ -57,7 +57,7 @@ public:
     typedef typename VECTOR::CoeffType CoeffType ;
     
     /** y <- y + a*x  */
-    static void axpy(CoeffType a, VectorType& x, VectorType& y) {
+    static void axpy(CoeffType a, const VectorType& x, VectorType& y) {
         assert(false) ;
     }
 
