@@ -32,7 +32,7 @@
 //needs an exact number type to test the traits class
 //typedef double NT;
 typedef CGAL::Quotient<CGAL::Gmpz>  NT;
-struct K : public  CGAL::Simple_cartesian<NT> {};
+typedef CGAL::Simple_cartesian<NT> K;
 
 // Explicit instantiation of the whole class :
 template class CGAL::Regular_triangulation_euclidean_traits_3<K>;

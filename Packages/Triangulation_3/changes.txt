@@ -1,3 +1,9 @@
+8 April 2005 Sylvain Pion
+- Change "struct K : ... {};" to "typedef ... K;" since it can cause some
+  problems (notably with Regular_[filtered]_traits) and we don't want to
+  advertise this workaround too much, especially since it may not be needed
+  anymore (crossing fingers).
+
 4 April 2005 Sylvain Pion
 - Rename R in K in the documentation.
 - doc : fix Cell::vertex_index() and Cell::cell_index() to index().

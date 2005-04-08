@@ -7,7 +7,7 @@
 #include <cassert>
 #include <vector>
 
-struct K : CGAL::Exact_predicates_inexact_constructions_kernel {};
+typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
 typedef CGAL::Regular_triangulation_euclidean_traits_3<K>   Traits;
 

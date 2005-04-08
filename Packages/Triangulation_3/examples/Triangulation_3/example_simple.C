@@ -9,7 +9,7 @@
 #include <list>
 #include <vector>
 
-struct K : CGAL::Exact_predicates_inexact_constructions_kernel {};
+typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
 typedef CGAL::Triangulation_3<K>      Triangulation;
 

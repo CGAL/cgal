@@ -32,7 +32,7 @@ public:
 };
 
 
-struct K : CGAL::Exact_predicates_inexact_constructions_kernel {};
+typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
 typedef CGAL::Triangulation_data_structure_3<My_vertex_base<K> >    Tds;
 typedef CGAL::Delaunay_triangulation_3<K, Tds>                      Delaunay;

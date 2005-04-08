@@ -24,7 +24,7 @@ int main()
 
 // exact constructions (circumcenter computations) are needed in this
 // demo, not only predicates 
-struct K : CGAL::Exact_predicates_exact_constructions_kernel {};
+typedef CGAL::Exact_predicates_exact_constructions_kernel K;
 
 typedef CGAL::Delaunay_triangulation_3<K> Triangulation;
 

@@ -25,8 +25,7 @@
 #include <iostream>
 #include <cassert>
 
-// Try to shorten symbol names (for VC++)
-struct K : CGAL::Exact_predicates_inexact_constructions_kernel {};
+typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::RT   NT;
 
 #endif
