@@ -42,6 +42,7 @@
  *		- Added OpenNL namespace
  *		- solve() returns true on success
  *		- test divisions by zero
+ *		- added comments and traces
  */
 
 #ifndef __BICGSTAB__
@@ -79,7 +80,7 @@ namespace OpenNL {
  * @param x initial value.
  * @param eps threshold for the residual.
  * @param max_iter maximum number of iterations.
-  */    
+ */
 
 template < class MATRIX, class VECTOR> class Solver_BICGSTAB {
 public:
@@ -90,7 +91,7 @@ public:
     Solver_BICGSTAB() {
 		// LS 03/2005: change epsilon from 1e-6 to 1e-4 to parameterize venus-loop.off w/ authalic/square method
 		// LS 04/2005: change epsilon back to 1e-6 to increase precision
-        epsilon_ = 1e-6 ;										
+        epsilon_ = 1e-6 ;
         max_iter_ = 0 ;
     }
 
@@ -108,23 +109,42 @@ public:
         assert(A.dimension() == x.dimension()) ;
         assert (A.dimension() > 0);
 
+        unsigned int n = A.dimension() ;						// (Square) matrix dimension
+
 //#ifndef NDEBUG 
 //		// Debug trace
-//		fprintf(stderr, "VVVVVVVVVVVVVVVVVV  A*x=b  VVVVVVVVVVVVVVVVVV\n");
-//		for (int i=0; i<A.dimension(); i++)
-//			for (int j=0; j<A.dimension(); j++)
-//				if ( ! IsZero(A.get_coef(i,j)) )
-//					fprintf(stderr, "A[i][j] = %10.18lf\n", (double)A.get_coef(i,j));
-//		for (int j=0; j<A.dimension(); j++)
-//			if ( ! IsZero(x[j]) )
-//				fprintf(stderr, "x[j] = %10.18lf\n", (double)x[j]);
-//		for (int j=0; j<A.dimension(); j++)
-//			if ( ! IsZero(b[j]) )
-//				fprintf(stderr, "b[j] = %10.18lf\n", (double)b[j]);
-//		fprintf(stderr, "^^^^^^^^^^^^^^^^^^  A*x=b  ^^^^^^^^^^^^^^^^^^\n");
+//		fprintf(stderr, "\n");
+//		if (n < 20)	// if small matrix, print it entirely
+//		{
+//			fprintf(stderr, "******************  A:  ******************\n");
+//			for (int i=0; i<n; i++)  {
+//				for (int j=0; j<n; j++)
+//					fprintf(stderr, "%lf\t", (double)A.get_coef(i,j));
+//				fprintf(stderr, "\n");
+//			}
+//			fprintf(stderr, "******************  B:  ******************\n");
+//			for (int j=0; j<n; j++)
+//				fprintf(stderr, "%lf\t", (double)b[j]);
+//			fprintf(stderr, "\n");
+//			fprintf(stderr, "******************************************\n");
+//		}
+//		else		// if large matrix, print only not null elements
+//		{
+//			fprintf(stderr, "******************  A*x=b  ******************\n");
+//			for (int i=0; i<n; i++)  {
+//				for (int j=0; j<n; j++)
+//					if ( ! IsZero(A.get_coef(i,j)) )
+//						fprintf(stderr, "A[%d][%d] = %lf\t", i, j, (double)A.get_coef(i,j));
+//				fprintf(stderr, "\n");
+//			}
+//			for (int j=0; j<n; j++)
+//				if ( ! IsZero(b[j]) )
+//					fprintf(stderr, "b[%d] = %lf\t", j, (double)b[j]);
+//			fprintf(stderr, "\n");
+//			fprintf(stderr, "******************************************\n");
+//		}
 //#endif
 
-        unsigned int n = A.dimension() ;						// (Square) matrix dimension
         unsigned int max_iter = max_iter_ ;						// Max number of iterations
         if(max_iter == 0) {
 			// LS 03/2005: change max_iter from 5*n to 10*n to parameterize venus-loop.off w/ authalic/square method
@@ -175,18 +195,18 @@ public:
             BLAS<Vector>::axpy(-omega,t,h);						// h = h - omega*t
 //#ifndef NDEBUG 
 //			// Debug trace
-//			std::cerr << "solve: " << STREAM_TRACE(its) << STREAM_TRACE(rTr) 
+//			std::cerr << "Solver_BICGSTAB<>::solve: " << STREAM_TRACE(its) << STREAM_TRACE(rTr) 
 //				      << STREAM_TRACE(alpha) << STREAM_TRACE(beta) << STREAM_TRACE(omega) 
 //					  << STREAM_TRACE(rTh) 
 //					  << STREAM_TRACE(rTAd) << STREAM_TRACE(ht) << STREAM_TRACE(tt) 
 //					  << std::endl;
 //#endif
 			if (IsZero(omega)) {								// LS 03/2005: break to avoid division by zero (see Laspack implementation)
-				std::cerr << "solve: error: omega = 0" << std::endl;
+				std::cerr << "Solver_BICGSTAB<>::solve: error: omega = 0" << std::endl;
 				break;		
 			}
 			if (IsZero(rTh)) {									// LS 04/2005: don't know what do do if division by zero 
-				std::cerr << "solve: error: rTh = 0" << std::endl;
+				std::cerr << "Solver_BICGSTAB<>::solve: error: rTh = 0" << std::endl;
 				break;	
 			}
             beta=(alpha/omega)/rTh; 
@@ -200,7 +220,7 @@ public:
 
 		bool success = (rTr <= err);
 #ifndef NDEBUG 
-		std::cerr << "solve: " << STREAM_TRACE(success) 
+		std::cerr << "Solver_BICGSTAB<>::solve: " << STREAM_TRACE(success) 
 			      << "(" << STREAM_TRACE(its) << STREAM_TRACE(max_iter) 
 				         << STREAM_TRACE(rTr) << STREAM_TRACE(err) << STREAM_TRACE(alpha) << STREAM_TRACE(beta) << STREAM_TRACE(omega) 
 						 << STREAM_TRACE(rTh) << STREAM_TRACE(rTAd) << STREAM_TRACE(ht) << STREAM_TRACE(tt) 
@@ -226,4 +246,5 @@ private:
 
 }; // namespace OpenNL
 
-#endif 
+#endif
+
