@@ -68,6 +68,16 @@ public: // private:
     Face_handle              _inf;
     // -------------------------------------------------------------------------
 public:    
+  using BT::target_object;
+  using BT::source_object;
+  using BT::is_xx_left;
+  using BT::is_left_xx;
+  using BT::type;
+  using BT::LL;
+  using BT::LR;
+  using BT::RL;
+  using BT::RR;
+
     // -------------------------------------------------------------------------
     // CONSTRUCTORS
     Visibility_complex_vertex_base() 

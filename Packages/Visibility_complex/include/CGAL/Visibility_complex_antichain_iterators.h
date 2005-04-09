@@ -98,8 +98,8 @@ public:
     Vc_antichain_face_iterator(const _Ant* a , Edge_const_iterator e) 
 	: Base(a,e) { }
     // -------------------------------------------------------------------------
-    reference operator*()  const { return *_f; }
-    pointer   operator->() const { return _f;  }
+    reference operator*()  const { return *this->_f; }
+    pointer   operator->() const { return this->_f;  }
     // -------------------------------------------------------------------------
 };
 
@@ -117,6 +117,8 @@ public:
     typedef _Tp   value_type;
     typedef _Ptr  pointer;
     typedef _Ref  reference;
+
+    using Base::increment;
     // -------------------------------------------------------------------------
     Vc_antichain_vertex_iterator() : Base() { }
     Vc_antichain_vertex_iterator(const _Ant* a , Edge_const_iterator e)
@@ -125,18 +127,18 @@ public:
     _Ref operator*() { 
 	_Sup sup;
 #ifdef ITERATOR_DEBUG
-	cout << "_f = " << long(_f) << " sup(_f) = " << long(sup(_f)) << endl;
+	cout << "_f = " << long(this->_f) << " sup(_f) = " << long(sup(this->_f)) << endl;
 #endif
-	while (sup(_f) == 0 && _e != _a->edges_end()) increment();
-	return *sup(_f);
+	while (sup(this->_f) == 0 && this->_e != this->_a->edges_end()) increment();
+	return *sup(this->_f);
     }
     _Ptr operator->() { 
 	_Sup sup;
 #ifdef ITERATOR_DEBUG
-	cout << "_f = " << long(_f) << " sup(_f) = " << long(sup(_f)) << endl;
+	cout << "_f = " << long(this->_f) << " sup(_f) = " << long(sup(this->_f)) << endl;
 #endif
-	while (sup(_f) == 0 && _e != _a->edges_end()) increment();
-	return sup(_f);
+	while (sup(this->_f) == 0 && this->_e != this->_a->edges_end()) increment();
+	return sup(this->_f);
     }
     // -------------------------------------------------------------------------
     Vc_antichain_vertex_iterator operator++() { 

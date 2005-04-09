@@ -61,6 +61,8 @@ public:    Edge_handle     _opposite;
 private:    Face_handle     face[3];
 
 public:
+  using CA::object;
+
     // CONSTRUCTORS ------------------------------------------------------------
     Visibility_complex_edge_base() 
 	: CA()   , _sign(true) ,

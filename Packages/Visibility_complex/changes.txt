@@ -1,3 +1,6 @@
+09 April 2005 Laurent Rineau
+- port to g++-3.4 (added a lot of using Base::foobar)
+
 14 October 2004 Laurent Rineau
 - Added back include/CGAL/predicates/Visibility_complex_ftC2.h.
 - Added typenames.

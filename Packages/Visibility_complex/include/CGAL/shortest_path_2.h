@@ -86,6 +86,12 @@ public:
     //typedef typename Arc::Vertex_const_iterator Arc_const_iterator;
     typedef Sh_atom<_Vc>                               Atom;
 
+  using Base::inf;
+  using Base::sup;
+  using Base::object;
+  using Base::sign;
+
+  
 private:
     Exact_NT      _distance;
     Atom          _prev;
@@ -143,6 +149,17 @@ public:
     typedef typename Base::Disk_handle                   Disk_handle;
     typedef typename Base::Type                             Type;
     typedef Sh_atom<_Vc>                           Atom;
+
+  using Base::is_constraint;
+  using Base::source_object;
+  using Base::target_object;
+  using Base::is_left_right;
+  using Base::is_right_left;
+  using Base::is_xx_left;
+  using Base::cw_source_edge;
+  using Base::cw_target_edge;
+  using Base::ccw_source_edge;
+  using Base::ccw_target_edge;
 
 private:
     Exact_NT _distance;

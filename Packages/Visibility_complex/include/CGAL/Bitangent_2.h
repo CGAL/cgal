@@ -141,6 +141,14 @@ struct Bitangent_2 < Polygon_2<R_,C_> >
     typedef typename CCC::Vertex_const_iterator Vertex_const_iterator;
     typedef typename Disk::Vertex_const_circulator Vertex_circulator;
     typedef typename Disk::Vertex_const_circulator Vertex_const_circulator;
+
+  using Base::LL;
+  using Base::LR;
+  using Base::RL;
+  using Base::RR;
+  using Base::source_object;
+  using Base::target_object;
+
     // Constructeurs -----------------------------------------------------------
     Bitangent_2() : Base() { }
     Bitangent_2(const Point_2& v1 , const Point_2& v2 , Type t ,
@@ -210,7 +218,8 @@ struct Bitangent_2 < Polygon_2<R_,C_> >
 		else ++it_source;
 	    }
 	} while (t1 == 0 || t2 == 0);
-	*this = Bitangent_2(p_source,p_target,t,source_obj,target_obj);
+	*this = Bitangent_2(p_source,p_target,t,
+			    source_object(),target_object());
     }
     Bitangent_2(Type t ,  Disk_handle o1 , Disk_handle o2){ 
 	bool exists = true;
@@ -474,6 +483,11 @@ public:
     typedef Arc_2<Disk>                 Arc_2;
     typedef typename Base::Type                  Type;
     // -------------------------------------------------------------------------
+    using Base::LL;
+    using Base::LR;
+    using Base::RL;
+    using Base::RR;
+
 public:
     // Constructeurs -----------------------------------------------------------
     Bitangent_2() : Base() { }
@@ -506,7 +520,7 @@ private:
     bool is_bitangent(Type t , const Point_2& p1, const Point_2& p2,
 			       const Point_2& q1, const Point_2& q2)
     {
-	return ((t == LL 
+	return ((t == this->LL 
 		 && (left_turn (p1,p2,q1) ||
 		     (collinear(p1,p2,q1) && are_ordered_along_line(q1,p1,p2)))
 		 && (left_turn (p1,p2,q2) ||

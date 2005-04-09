@@ -158,6 +158,7 @@ public:
     typedef typename Edge_wrapper::Edge                   Edge_base;
     typedef Visibility_complex_edge< Edge_base>           Edge;
     typedef Edge*                           		  Edge_handle;
+  typedef In_place_list<Edge,false> Base;
     typedef typename In_place_list<Edge,false>::iterator           Edge_iterator;
     typedef typename In_place_list<Edge,false>::reverse_iterator   Edge_reverse_iterator;
     typedef typename In_place_list<Edge,false>::const_iterator     Edge_const_iterator;
@@ -205,6 +206,13 @@ public:
     // -------------------------------------------------------------------------
     typedef typename BT::Type_util               Type_util;
     // -------------------------------------------------------------------------
+  using Base::destroy;
+  using Base::begin;
+  using Base::end;
+  using Base::rbegin;
+  using Base::rend;
+
+
 private:
     bool                        _valid;
     bool                        _straight_sweep;

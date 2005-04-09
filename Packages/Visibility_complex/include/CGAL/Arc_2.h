@@ -98,6 +98,8 @@ public:
     typedef typename Disk::Vertex_const_circulator  Vertex_const_iterator;
     typedef typename Disk::Vertex_const_circulator  Vertex_iterator;
     // -------------------------------------------------------------------------
+  using Base::object;
+
 public:
     // -------------------------------------------------------------------------
     Arc_2() : Base(0) { }

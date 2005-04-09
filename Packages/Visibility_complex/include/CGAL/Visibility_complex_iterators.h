@@ -43,6 +43,7 @@ public:
     // -------------------------------------------------------------------------
     typedef std::forward_iterator_tag iterator_category;
     typedef std::ptrdiff_t            difference_type;
+
     // -------------------------------------------------------------------------
     Visibility_complex_iterator_base() : _v(0) {}
     Visibility_complex_iterator_base(iterator v) : _v(v) {}
@@ -80,6 +81,8 @@ public:
     typedef _Tp   value_type;
     typedef _Ptr  pointer;
     typedef _Ref  reference;
+
+  using Base::increment;
     // -------------------------------------------------------------------------
     Visibility_complex_vertex_iterator() : Base()  {}
     Visibility_complex_vertex_iterator(iterator v) : Base(v) {}
@@ -104,6 +107,9 @@ public:
     typedef _Tp   value_type;
     typedef _Ptr  pointer;
     typedef _Ref  reference;
+
+  using Base::increment;
+
     // -------------------------------------------------------------------------
     Visibility_complex_edge_iterator() : Base(),visited(false)  {}
     Visibility_complex_edge_iterator(iterator v) : Base(v), visited(false) {}
@@ -149,6 +155,9 @@ struct Visibility_complex_face_iterator
     typedef _Tp   value_type;
     typedef _Ptr  pointer;
     typedef _Ref  reference;
+
+  using Base::increment;
+
     // -------------------------------------------------------------------------
     Visibility_complex_face_iterator()       : Base()  {} 
     Visibility_complex_face_iterator(iterator v) : Base(v) {}

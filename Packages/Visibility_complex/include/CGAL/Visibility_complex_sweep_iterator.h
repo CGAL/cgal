@@ -78,6 +78,9 @@ public:
     typedef Visibility_complex_sweep_iterator<_Vc,_Tp,_Ref,_Ptr> Self;
 
   typedef typename Base::pointer pointer;
+
+  using Base::min;
+  using Base::a;
     // -------------------------------------------------------------------------
     Visibility_complex_sweep_iterator() : Base() { }
     Visibility_complex_sweep_iterator(_Vc* ant , pointer m) : Base(ant,m) { }
@@ -118,6 +121,9 @@ public:
 						     _Is_upward>       Self;
     typedef typename Base::pointer pointer;
     // -------------------------------------------------------------------------
+  using Base::min;
+  using Base::a;
+
     Visibility_complex_linear_sweep_iterator() : Base() { }
     Visibility_complex_linear_sweep_iterator(_Vc* ant , pointer m) 
 	: Base(ant,m) { }

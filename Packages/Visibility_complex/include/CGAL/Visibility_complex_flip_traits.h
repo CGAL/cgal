@@ -406,7 +406,7 @@ public:
     template < class _Tr >
     Vertex_handle operator()(const Vertex_handle& v , _Tr) const
     {
-	CGAL_precondition(!a->is_on_convex_hull(v));
+	CGAL_precondition(!this->a->is_on_convex_hull(v));
 	typename _Tr::Right_traits right;
 	typename _Tr::Left_traits  left;
 	typename _Tr::Ccw_source_edge  ccw_source_edge;
@@ -793,7 +793,7 @@ public:
     template < class _Tr >
     Vertex_handle operator()(const Vertex_handle& v , _Tr) const
     {
-	CGAL_precondition(!a->is_on_convex_hull(v));
+	CGAL_precondition(!this->a->is_on_convex_hull(v));
 	typename _Tr::Right_traits right;
 	typename _Tr::Left_traits  left;
 	return walk_backward<_Tr>(second_cusp_edge(v,right),
