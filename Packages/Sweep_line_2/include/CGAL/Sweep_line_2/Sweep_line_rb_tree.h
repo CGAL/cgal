@@ -203,6 +203,15 @@ public:
       return (nodeP != p);
     }
 
+    bool operator!= (const Handle& handle)
+    {
+      return (nodeP != handle.nodeP);
+    }
+
+    bool operator== (const Handle& handle)
+    {
+      return (nodeP == handle.nodeP);
+    }
 
     Handle& operator++()
     {
@@ -298,6 +307,18 @@ public:
    */
   const Red_black_tree<TYPE, COMP, Alloc>& 
   operator= (const Red_black_tree<TYPE, COMP, Alloc>& tree);
+
+  /*!*/
+  Handle begin()
+  {
+    return minimum();
+  }
+
+  /*!*/
+  Handle end()
+  {
+    return Handle();
+  }
 
   /*!
    * Get the size of the tree. [takes O(1) operations]
@@ -396,6 +417,9 @@ public:
    *         or a NULL handle if the tree is empty.
    */
   Handle minimum () const;
+
+  /*!*/
+  Handle minimum ();
 
   /*!
    *  Get a handle to the tree maximum. [takes O(log n) operations]
@@ -1075,8 +1099,19 @@ void Red_black_tree<TYPE, COMP, Alloc>::reset ()
 // Get a handle to the tree minimum.
 //
 template <class TYPE, class COMP, typename Alloc>
-typename Red_black_tree<TYPE, COMP, Alloc>::Handle 
+inline typename Red_black_tree<TYPE, COMP, Alloc>::Handle 
         Red_black_tree<TYPE, COMP, Alloc>::minimum () const
+{
+  // Return the leftmost leaf in the tree (or NULL if the tree is empty).
+  return (Handle(leftmostP));
+}
+
+//---------------------------------------------------------
+// Get a handle to the tree minimum (non-cost version)
+//
+template <class TYPE, class COMP, typename Alloc>
+inline typename Red_black_tree<TYPE, COMP, Alloc>::Handle 
+        Red_black_tree<TYPE, COMP, Alloc>::minimum () 
 {
   // Return the leftmost leaf in the tree (or NULL if the tree is empty).
   return (Handle(leftmostP));
