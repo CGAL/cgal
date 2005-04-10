@@ -442,7 +442,8 @@ public:
       SL_DEBUG(std::cout << " - handling special case " << std::endl;)
                                                      
       EventCurveIter currentOne = m_currentEvent->right_curves_begin();
-      StatusLineIter slIter = m_statusLine->lower_bound(*currentOne);
+      StatusLineIter slIter = m_status_line_insert_hint = 
+        m_statusLine->lower_bound(*currentOne);
       if ( slIter != m_statusLine->end() &&
            CurveStartsAtCurve(*currentOne, *slIter))
       {
@@ -467,6 +468,7 @@ public:
         }
         else
         {
+          ++m_status_line_insert_hint;
           ++numRightCurves;
           sc->set_last_curve(b);
         }
