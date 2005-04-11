@@ -95,7 +95,6 @@ void polyhedron_3_to_nef_3(Polyhedron_& P, SNC_structure& S)
   CGAL_NEF_TRACEN("  calculating facet's planes...");
   std::transform( P.facets_begin(), P.facets_end(),
 		  P.planes_begin(), Facet_plane_3());
-  SNC_decorator D(S);
 
   //  Progress_indicator_clog progress
   //    ( P.size_of_vertices(),
@@ -106,8 +105,8 @@ void polyhedron_3_to_nef_3(Polyhedron_& P, SNC_structure& S)
     //    progress++;
     typename Polyhedron::Vertex pv = *pvi;
     Vertex_handle nv = S.new_vertex();
-    D.point(nv) = pv.point();
-    D.mark(nv) = true;
+    nv->point() = pv.point();
+    nv->mark() = true;
     CGAL_NEF_TRACEN("v "<<pv.point());
 
     SM_decorator SM(&*nv);
@@ -119,7 +118,7 @@ void polyhedron_3_to_nef_3(Polyhedron_& P, SNC_structure& S)
     Point_3 sp_point_0(CGAL::ORIGIN+(pe_target_0-pv.point()));
     Sphere_point sp_0(sp_point_0);
     SVertex_handle sv_0 = SM.new_svertex(sp_0);
-    SM.mark(sv_0) = true; 
+    sv_0->mark() = true; 
     pe++;
     CGAL_assertion(pe != pv.vertex_begin());
 
@@ -135,7 +134,7 @@ void polyhedron_3_to_nef_3(Polyhedron_& P, SNC_structure& S)
       Point_3 sp_point = CGAL::ORIGIN+(pe_target-pv.point());
       Sphere_point sp(sp_point);
       SVertex_handle sv = SM.new_svertex(sp);
-      SM.mark(sv) = true;
+      sv->mark() = true;
       
       CGAL_NEF_TRACEN(pe_prev->facet()->plane());
       CGAL_NEF_TRACEN(pe_target);
@@ -159,12 +158,12 @@ void polyhedron_3_to_nef_3(Polyhedron_& P, SNC_structure& S)
       Sphere_circle ss_circle(ss_plane);
 
       CGAL_assertion(ss_circle.has_on(sp));
-      CGAL_assertion(ss_circle.has_on(SM.point(sv_prev)));
+      CGAL_assertion(ss_circle.has_on(sv_prev->point()));
 
       SHalfedge_handle e = SM.new_shalfedge_pair(sv_prev, sv);
-      SM.circle(e) = ss_circle;
-      SM.circle(SM.twin(e)) = ss_circle.opposite();
-      SM.mark(e) = SM.mark(SM.twin(e)) = true;
+      e->circle() = ss_circle;
+      e->twin()->circle() = ss_circle.opposite();
+      e->mark() = e->twin()->mark() = true;
 	  
       sv_prev = sv;
       pe_prev = pe;
@@ -176,7 +175,7 @@ void polyhedron_3_to_nef_3(Polyhedron_& P, SNC_structure& S)
     CGAL_assertion(pe_prev->face() == pe_0->opposite()->face());
     CGAL_assertion(pe_prev->vertex()->point()==pv.point());
     CGAL_assertion(pe_0->vertex()->point()==pv.point());
-    
+
     CGAL_NEF_TRACEN(pe_prev->facet()->plane());
     CGAL_NEF_TRACEN(pe_target_0);
     CGAL_NEF_TRACEN(pe_prev->opposite()->vertex()->point());
@@ -191,30 +190,32 @@ void polyhedron_3_to_nef_3(Polyhedron_& P, SNC_structure& S)
        pe_prev->facet()->plane().opposite().orthogonal_vector());
     Sphere_circle ss_circle(ss_plane);
 
-    CGAL_assertion(ss_plane.has_on(SM.point(sv_prev)));
+    CGAL_assertion(ss_plane.has_on(sv_prev->point()));
     CGAL_assertion(ss_circle.has_on(sp_0));
-    CGAL_assertion(ss_circle.has_on(SM.point(sv_prev)));
+    CGAL_assertion(ss_circle.has_on(sv_prev->point()));
     
     SHalfedge_handle e = SM.new_shalfedge_pair(sv_prev, sv_0);
-    SM.circle(e) = ss_circle;
-    SM.circle(SM.twin(e)) = ss_circle.opposite();
-    SM.mark(e) = SM.mark(SM.twin(e)) = true;
+    e->circle() = ss_circle;
+    e->twin()->circle() = ss_circle.opposite();
+    e->mark() = e->twin()->mark() = true;
 
     // create faces
     SFace_handle fint = SM.new_sface();
     SFace_handle fext = SM.new_sface();
     SM.link_as_face_cycle(e, fint);
-    SM.link_as_face_cycle(SM.twin(e), fext);
+    SM.link_as_face_cycle(e->twin(), fext);
     
     // mark faces properly...
-    SM.mark(fint) = true;
-    SM.mark(fext) = false;
+    fint->mark() = true;
+    fext->mark() = false;
     SM.check_integrity_and_topological_planarity();   
 
     //    SM_point_locator L(nv);
     //    L.init_marks_of_halfspheres(); 
   }
 }
+
+
 
 CGAL_END_NAMESPACE
 
