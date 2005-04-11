@@ -79,7 +79,7 @@ PrintStatusLine()
     return;
   }
   std::cout << std::endl << "Status line: (" 
-            << m_sweepLinePos << ")" << std::endl;
+            << m_currentEvent->get_point() << ")" << std::endl;
   StatusLineIter iter = m_statusLine->begin();
   while ( iter != m_statusLine->end() )
   {
