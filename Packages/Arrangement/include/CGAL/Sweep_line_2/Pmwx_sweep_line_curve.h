@@ -26,6 +26,7 @@
 #include <CGAL/Sweep_line_2/Sweep_line_subcurve.h>
 #include <CGAL/Sweep_line_2/Pmwx_insert_info.h>
 #include <CGAL/Sweep_line_2/Pmwx_sweep_line_event.h>
+#include <CGAL/Sweep_line_2/Sweep_line_rb_tree.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -54,7 +55,7 @@ public:
   typedef Pmwx_sweep_line_curve<Traits, HalfedgeHandle> Self;
 
   typedef Status_line_curve_less_functor<Traits, Self> StatusLineCurveLess;
-  typedef std::set<Self*, StatusLineCurveLess, CGAL_ALLOCATOR(int)> StatusLine;
+  typedef Red_black_tree<Self*, StatusLineCurveLess, CGAL_ALLOCATOR(int)> StatusLine;
   typedef typename StatusLine::iterator StatusLineIter;
 
   typedef Pmwx_insert_info<HalfedgeHandle> PmwxInsertInfo;

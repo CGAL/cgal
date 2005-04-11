@@ -58,7 +58,7 @@ public:
   typedef typename Traits::Point_2                          Point_2;
 
   typedef CurveWrap                                         SubCurve;
-  typedef std::list<SubCurve *> SubcurveContainer; 
+  typedef std::list<SubCurve*>                              SubcurveContainer; 
   typedef typename SubcurveContainer::iterator              SubCurveIter;
 
   typedef Status_line_curve_less_functor<Traits, SubCurve>  StatusLineCurveLess;
@@ -227,7 +227,7 @@ public:
   
 
 #ifndef NDEBUG
-  void Print() const;
+  void Print() ;
 #endif
  
 
@@ -269,7 +269,7 @@ public:
 template<class SweepLineTraits_2, class CurveWrap>
 void 
 Sweep_line_event<SweepLineTraits_2, CurveWrap>::
-Print() const
+Print() 
 {
   std::cout << "\tEvent id: " << id << "\n" ;
   std::cout << "\t" << m_point << "\n" ;

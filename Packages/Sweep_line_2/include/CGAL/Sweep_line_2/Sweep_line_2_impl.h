@@ -31,6 +31,8 @@
 #include <CGAL/Sweep_line_2/Sweep_line_traits.h>
 #include <CGAL/Sweep_line_2/Sweep_line_event.h>
 #include <CGAL/Sweep_line_2/Sweep_line_subcurve.h>
+#include <CGAL/Sweep_line_2/Sweep_line_rb_tree.h>
+
 
 
 #ifndef VERBOSE
@@ -47,7 +49,8 @@
 #define SL_DEBUG(a) {a}
 #define PRINT_INSERT(a) { std::cout << "+++ inserting "; \
                           (a)->Print(); \
-                          std::cout << "    currentPos = " << m_sweepLinePos \
+                          std::cout << "    currentPos = "  \
+                                    << m_currentEvent->get_point() \
                                     << "\n"; \
                           }
 #define PRINT_ERASE(a)  { std::cout << "--- erasing " ; \
@@ -120,7 +123,7 @@ public:
   typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
 
   typedef SweepEvent Event;
-  typedef Point_less_functor<Point_2, Traits> PointLess;
+  typedef Point_less_functor<Traits> PointLess;
   typedef std::map< Point_2 , Event*, PointLess> EventQueue; 
   typedef typename EventQueue::iterator EventQueueIter;
   typedef typename EventQueue::value_type EventQueueValueType;
@@ -132,9 +135,7 @@ public:
   typedef typename SubCurveList::iterator SubCurveListIter;
    
   typedef Status_line_curve_less_functor<Traits, Subcurve> StatusLineCurveLess;
-  typedef typename StatusLineCurveLess::Compare_param CompareParams;
- 
-  typedef std::set<Subcurve*, StatusLineCurveLess, CGAL_ALLOCATOR(int)> StatusLine;
+  typedef Red_black_tree<Subcurve*, StatusLineCurveLess, CGAL_ALLOCATOR(int)> StatusLine;
   typedef typename StatusLine::iterator StatusLineIter;
  
   typedef typename Allocator::template rebind<Event>      EventAlloc_rebind;
@@ -150,9 +151,9 @@ public:
       m_traits(new Traits()),
       m_sweep_line_traits(m_traits),
       m_traitsOwner(true),
-      m_comp_param(new CompareParams(m_traits)),
+      m_statusLineCurveLess(new StatusLineCurveLess(m_traits)),
       m_queue(new EventQueue(PointLess(m_traits))),
-      m_statusLine(new StatusLine(StatusLineCurveLess(m_comp_param, &m_sweepLinePos))),
+      m_statusLine(new StatusLine(m_statusLineCurveLess)),
       m_xcurves(0),
       m_status_line_insert_hint(m_statusLine->begin()),
       m_num_of_subCurves(0),
@@ -169,9 +170,9 @@ public:
       m_traits(t),
       m_sweep_line_traits(m_traits),
       m_traitsOwner(false),
-      m_comp_param(new CompareParams(m_traits)),
+      m_statusLineCurveLess(new StatusLineCurveLess(m_traits)),
       m_queue(new EventQueue(PointLess(m_traits))),
-      m_statusLine(new StatusLine(StatusLineCurveLess(m_comp_param, &m_sweepLinePos))),
+      m_statusLine(new StatusLine(m_statusLineCurveLess)),
       m_xcurves(0),
       m_status_line_insert_hint(m_statusLine->begin()),
       m_num_of_subCurves(0),
@@ -245,15 +246,14 @@ public:
   void sweep()
   {
     EventQueueIter eventIter = m_queue->begin();
-    m_sweepLinePos = eventIter->first;
-
     while ( eventIter != m_queue->end() )
     {
-      m_sweepLinePos = (eventIter->first);
       m_currentEvent = eventIter->second;
 
-      SL_DEBUG(std::cout << "------------- " << m_sweepLinePos << " --------------"
-               << std::endl;
+      SL_DEBUG(std::cout << "------------- " 
+                         << m_currentEvent->get_point() 
+                         << " --------------"
+                         << std::endl;
                PrintStatusLine();
                m_currentEvent->Print(););
       
@@ -428,7 +428,6 @@ public:
       return;
       
     
-    int numLeftCurves = m_currentEvent->get_num_left_curves();
     /* this block takes care of 
     //
     //           /
@@ -437,17 +436,20 @@ public:
     //          \
     //           \
     */
-    if ( numLeftCurves == 0 ) 
+    if ( m_currentEvent->get_num_left_curves() == 0 ) 
     {
       SL_DEBUG(std::cout << " - handling special case " << std::endl;)
                                                      
       EventCurveIter currentOne = m_currentEvent->right_curves_begin();
-      StatusLineIter slIter = m_status_line_insert_hint = 
-        m_statusLine->lower_bound(*currentOne);
-      if ( slIter != m_statusLine->end() &&
-           CurveStartsAtCurve(*currentOne, *slIter))
+      const std::pair<StatusLineIter, bool>& res =
+        m_statusLine->lower_bound(m_currentEvent->get_point(), m_statusLineCurveLess);
+      m_status_line_insert_hint = res.first;
+
+      if(res.second) // indicates that current event point starts at the 
+                     //interior of a curve at the y-str 
+                     //(can also indicates overlap)
       {
-        Subcurve* sc = *slIter;
+        Subcurve* sc = *m_status_line_insert_hint;
         X_monotone_curve_2 last_curve = sc->get_last_curve();
         m_currentEvent->add_curve_to_left(sc); 
         bool is_overlap = add_curve_to_right(m_currentEvent, sc);
@@ -458,54 +460,16 @@ public:
         }
         else
         {
-          m_traits->curve_split(last_curve, b, a, 
-            m_currentEvent->get_point());
+          m_traits->curve_split(last_curve, b, a, m_currentEvent->get_point());
         }
-        if(is_overlap)
+        ++m_status_line_insert_hint; 
+        m_statusLine->remove_at(res.first);
+        if(!is_overlap)
         {
-          m_status_line_insert_hint = slIter; ++m_status_line_insert_hint; 
-          m_statusLine->erase(slIter);
-        }
-        else
-        {
-          ++m_status_line_insert_hint;
           ++numRightCurves;
           sc->set_last_curve(b);
         }
         m_visitor->add_subcurve(a, sc);
-      }
-      else
-      {
-        if( slIter != m_statusLine->begin() &&
-          CurveStartsAtCurve(*currentOne, *(--slIter)))
-        {
-          Subcurve* sc = *slIter;
-          X_monotone_curve_2 last_curve = sc->get_last_curve();
-          m_currentEvent->add_curve_to_left(sc); 
-          bool is_overlap = add_curve_to_right(m_currentEvent,sc);
-          X_monotone_curve_2 a,b;
-          if ( sc->is_source_left_to_target() ) 
-          {
-            m_traits->curve_split(last_curve, a, b, 
-              m_currentEvent->get_point());
-          }
-          else
-          {
-            m_traits->curve_split(last_curve, b, a, 
-              m_currentEvent->get_point());
-          }
-          if(is_overlap)
-          {
-            m_status_line_insert_hint = slIter; ++m_status_line_insert_hint; 
-            m_statusLine->erase(slIter);
-          }
-          else
-          {
-            ++numRightCurves;
-            sc->set_last_curve(b);
-          }
-          m_visitor->add_subcurve(a,sc);
-        }
       }
     }
     if(numRightCurves == 1)
@@ -516,11 +480,11 @@ public:
         PRINT_INSERT(tmp1);
                );
 
-      StatusLineIter slIter = m_statusLine->insert(m_status_line_insert_hint, 
+      StatusLineIter slIter = 
+        m_statusLine->insert_predecessor(m_status_line_insert_hint, 
                                 *(m_currentEvent->right_curves_begin()));
       
-      (*(m_currentEvent->right_curves_begin()))->set_hint(slIter); //xxx
-      m_status_line_insert_hint = slIter; ++m_status_line_insert_hint;
+      (*(m_currentEvent->right_curves_begin()))->set_hint(slIter); 
      
       SL_DEBUG(PrintStatusLine(););
      
@@ -548,7 +512,7 @@ public:
       EventCurveIter rightCurveEnd = m_currentEvent->right_curves_end();
       PRINT_INSERT(*firstOne);
 
-      StatusLineIter slIter = m_statusLine->insert(m_status_line_insert_hint, 
+      StatusLineIter slIter = m_statusLine->insert_predecessor(m_status_line_insert_hint, 
                                                     *firstOne);
       ((Subcurve*)(*firstOne))->set_hint(slIter);
         
@@ -565,8 +529,7 @@ public:
       while ( currentOne != rightCurveEnd )
       {
         PRINT_INSERT(*currentOne);
-        ++slIter;
-        slIter = m_statusLine->insert(slIter, *currentOne);
+        slIter = m_statusLine->insert_predecessor(m_status_line_insert_hint, *currentOne);
         ((Subcurve*)(*currentOne))->set_hint(slIter);
           
         SL_DEBUG(PrintStatusLine(););
@@ -574,9 +537,7 @@ public:
         intersect(*prevOne, *currentOne);
         prevOne = currentOne;
         ++currentOne;
-      }
-      m_status_line_insert_hint = slIter; ++m_status_line_insert_hint;
-        
+      }        
       lastOne = currentOne; --lastOne;
         
       SL_DEBUG(PrintStatusLine(););
@@ -676,11 +637,8 @@ protected:
    */
   bool m_traitsOwner;
 
-  /*! The current position (in X) of the sweep line */
-  Point_2 m_sweepLinePos;
-
-  /*! a struct that holds params associated with the curve compare functor */
-  CompareParams *m_comp_param;
+  /*! a pointer to StatusLineCurveLess (comprasion functor) */
+  StatusLineCurveLess *m_statusLineCurveLess;
 
   /*! the queue of events (intersection points) to handle */
   EventQueue *m_queue;
@@ -728,18 +686,6 @@ protected:
 
  
 
-  bool CurveStartsAtCurve(Subcurve *one, Subcurve *two)
-  {
-    SL_DEBUG(std::cout << "CurveStartsAtCurve: \n";);
-    SL_DEBUG(std::cout << one->get_last_curve() << "\n" << two->get_last_curve() 
-                       << "\n";);
-
-    if ( m_traits->curve_compare_y_at_x(one->get_left_end(), 
-                                        two->get_last_curve()) == EQUAL )
-      return true;
-    return false;
-  }
-
   Event* allocate_event(const Point_2& pt)
   {
     Event *e =  m_eventAlloc.allocate(1); 
@@ -779,10 +725,8 @@ Sweep_line_2_impl<SweepLineTraits_2,SweepEvent,CurveWrap,SweepVisitor,
     m_subCurveAlloc.destroy(*itr);
     m_subCurveAlloc.deallocate(*itr, 1);
   }
- 
   delete m_queue;
   delete m_statusLine;
-  delete m_comp_param;
 }
 
 
@@ -854,9 +798,7 @@ init_curve(X_monotone_curve_2 &curve,unsigned int j)
       e->id = m_eventId++;
     #endif
     
-      (insertion_res2.first)->second = e;
-
-      
+      (insertion_res2.first)->second = e;  
     }
 
     else // the event is already exist
@@ -901,14 +843,13 @@ remove_curve_from_status_line(Subcurve *leftCurve, bool remove_for_good)
 
   if(! remove_for_good)
   {
-    m_statusLine->erase(sliter);
+    m_statusLine->remove_at(sliter);
     SL_DEBUG(std::cout << "remove_curve_from_status_line Done\n";)
     return;
   }
 
   CGAL_assertion(sliter!=m_statusLine->end());
-  StatusLineIter end = m_statusLine->end(); --end;
-  if ( sliter != m_statusLine->begin() && sliter != end ) 
+  if (sliter != m_statusLine->begin() && sliter != m_statusLine->maximum()) 
   {
     StatusLineIter prev = sliter; --prev;
     StatusLineIter next = sliter; ++next;
@@ -916,7 +857,7 @@ remove_curve_from_status_line(Subcurve *leftCurve, bool remove_for_good)
     // intersect *next with  *prev 
     intersect(*prev, *next);
   }
-  m_statusLine->erase(sliter);
+  m_statusLine->remove_at(sliter);
   SL_DEBUG(std::cout << "remove_curve_from_status_line Done\n";)
 } 
 
@@ -950,7 +891,6 @@ intersect(Subcurve *c1, Subcurve *c2)
   SL_DEBUG(std::cout << "\n";)
   SL_DEBUG(std::cout << "relative to " << m_currentEvent->get_point() << "\n";)
 
-
   CGAL_assertion(c1 != c2);
   
   Object res =
@@ -978,8 +918,7 @@ intersect(Subcurve *c1, Subcurve *c2)
       c1->Print();
       std::cout << "\t";
       c2->Print();
-      std::cout << "\trelative to ("
-                << m_sweepLinePos << ")\n\t at (" 
+      std::cout << ")\n\t at (" 
                 << xp << ")" << std::endl;
       )
 
@@ -1046,4 +985,3 @@ intersect(Subcurve *c1, Subcurve *c2)
 CGAL_END_NAMESPACE
 
 #endif
-

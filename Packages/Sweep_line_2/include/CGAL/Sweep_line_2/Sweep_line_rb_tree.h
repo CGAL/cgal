@@ -22,10 +22,10 @@
 #define RED_BLACK_TREE_H
 
 
-#include<CGAL/assertions.h>
-#include<CGAL/enum.h>
-#include<CGAL/memory.h>
-
+#include <CGAL/assertions.h>
+#include <CGAL/enum.h>
+#include <CGAL/memory.h>
+#include <utility>
 
 
 CGAL_BEGIN_NAMESPACE
@@ -285,10 +285,17 @@ public:
   Red_black_tree ();
 
   /*!
-   * Constructor with a comparison object. [takes O(1) operations]
+   * Constructor with a pointer to comparison object. [takes O(1) operations]
    * \param _compP A pointer to the comparison object to be used by the tree.
    */
   Red_black_tree (COMP* _compP);
+
+  /*!
+   * Constructor with a comparison object. [takes O(1) operations]
+   * \param _compP A pointer to the comparison object to be used by the tree.
+   */
+  Red_black_tree(const COMP& _compP);
+
   
   /*!
    * Copy constructor. [takes O(n) operations]
@@ -471,7 +478,20 @@ public:
    * \return The lower bound of object 
    *         or a NULL handle if there isn't one.
    */
-  Handle lower_bound (const TYPE& object) const;
+  std::pair<Handle, bool> lower_bound (const TYPE& object) const;
+
+  /*!
+   * Get the first element whose key is not less than object.
+   * [takes o(log(n)) operations.
+   * \param object the object to be looking for lower bound.
+   * \param funcor the comprator object which makes the comprasions
+   * \return The lower bound of object 
+   *         or a NULL handle if there isn't one.
+   */
+
+  template<class T, class FUNCTOR>
+  std::pair<Handle, bool> lower_bound (const T& object,
+                                       const FUNCTOR* functor) const;
 
 protected:
 
@@ -557,7 +577,11 @@ protected:
   void _remove_fixup (Node* nodeP);
 
   
-  Node* _lower_bound (const TYPE& object) const;
+  std::pair<Node*,bool> _lower_bound (const TYPE& object) const;
+
+  template<class T, class FUNCTOR>
+  std::pair<Node*,bool> _lower_bound (const T& object,
+                                      const FUNCTOR* functor) const;
 
   Node* _allocate_node(const TYPE& object, typename Node::Node_color color);
 
@@ -579,7 +603,7 @@ Red_black_tree<TYPE, COMP, Alloc>::Red_black_tree () :
 }
 
 //---------------------------------------------------------
-// Constructor with a comparison object.
+// Constructor with a pointer to comparison object.
 //
 template <class TYPE, class COMP, typename Alloc>
 Red_black_tree<TYPE, COMP, Alloc>::Red_black_tree (COMP* _compP) :
@@ -591,6 +615,21 @@ Red_black_tree<TYPE, COMP, Alloc>::Red_black_tree (COMP* _compP) :
   own_comp(false)
 {
   CGAL_precondition(_compP != NULL);
+}
+
+//---------------------------------------------------------
+// Constructor with a comparison object.
+//
+template <class TYPE, class COMP, typename Alloc>
+Red_black_tree<TYPE, COMP, Alloc>::Red_black_tree (const COMP& _compP) :
+  rootP(NULL),
+  leftmostP(NULL),
+  rightmostP(NULL),
+  iSize(0),
+  compP(NULL),
+  own_comp(true)
+{
+  compP = new COMP;
 }
 
 //---------------------------------------------------------
@@ -685,7 +724,7 @@ const Red_black_tree<TYPE, COMP, Alloc>& Red_black_tree<TYPE, COMP, Alloc>::oper
 // Get the number of objects stored in the tree.
 //
 template <class TYPE, class COMP, typename Alloc>
-unsigned int Red_black_tree<TYPE, COMP, Alloc>::size () const
+inline unsigned int Red_black_tree<TYPE, COMP, Alloc>::size () const
 {
   return (iSize);
 }
@@ -694,25 +733,20 @@ unsigned int Red_black_tree<TYPE, COMP, Alloc>::size () const
 // Get the depth of the tree.
 //
 template <class TYPE, class COMP, typename Alloc>
-int Red_black_tree<TYPE, COMP, Alloc>::depth () const
+inline int Red_black_tree<TYPE, COMP, Alloc>::depth () const
 {
   if (rootP == NULL)
-  {
     // Empty tree.
     return (0);
-  }
-  else
-  {
-    // Return the depth of the root's sub-tree (the entire tree).
-    return (_sub_depth(rootP));
-  }
+  // Return the depth of the root's sub-tree (the entire tree).
+  return (_sub_depth(rootP));
 }
 
 //---------------------------------------------------------
 // Check whether the tree contains the given object.
 //
 template <class TYPE, class COMP, typename Alloc>
-bool Red_black_tree<TYPE, COMP, Alloc>::contains (const TYPE& object) const
+inline bool Red_black_tree<TYPE, COMP, Alloc>::contains (const TYPE& object) const
 {
     return (_get(object) != NULL);
 }
@@ -721,7 +755,7 @@ bool Red_black_tree<TYPE, COMP, Alloc>::contains (const TYPE& object) const
 // Return a pointer to the node containing the given object.
 //
 template <class TYPE, class COMP, typename Alloc>
-typename Red_black_tree<TYPE, COMP,Alloc>::Handle 
+inline typename Red_black_tree<TYPE, COMP,Alloc>::Handle 
         Red_black_tree<TYPE, COMP, Alloc>::get (const TYPE& object) const
 {
   return (Handle(_get(object)));
@@ -836,7 +870,7 @@ typename Red_black_tree<TYPE, COMP, Alloc>::Handle
 {
   Node  *nodeP = handle.nodeP;
 
-  CGAL_assertion(nodeP == NULL || handle.treeP == this);
+  //CGAL_assertion(nodeP == NULL || handle.treeP == this);
 
   if (rootP == NULL)
   {
@@ -886,8 +920,8 @@ typename Red_black_tree<TYPE, COMP, Alloc>::Handle
   {
     // Make sure the insertion does not violate the tree order.
     CGAL_precondition_code(Node *_succP = _successor(nodeP));
-    //CGAL_precondition((*compP)(nodeP->object, object) >= 0);
-    CGAL_precondition((*compP)(nodeP->object, object) != LARGER);
+    //CGAL_precondition((*compP)(nodeP->object, object) != LARGER);
+    CGAL_precondition((*compP)(object, nodeP->object) != SMALLER);
     //CGAL_precondition(_succP == NULL || (*compP)(object, _succP->object) >= 0);
     CGAL_precondition(_succP == NULL || (*compP)(object, _succP->object) != LARGER);
 
@@ -931,7 +965,7 @@ typename Red_black_tree<TYPE, COMP, Alloc>::Handle
 {
   Node  *nodeP = handle.nodeP;
 
-  CGAL_assertion(nodeP == NULL || handle.treeP == this);
+  //CGAL_assertion(nodeP == NULL || handle.treeP == this);
 
   if (rootP == NULL)
   {
@@ -981,8 +1015,8 @@ typename Red_black_tree<TYPE, COMP, Alloc>::Handle
   {
     // Make sure the insertion does not violate the tree order.
     CGAL_precondition_code(Node *_predP = _predecessor(nodeP));
-    //CGAL_precondition((*compP)(nodeP->object, object) <= 0);
-    CGAL_precondition((*compP)(nodeP->object, object) != SMALLER);
+    //CGAL_precondition((*compP)(nodeP->object, object) != SMALLER);
+    CGAL_precondition((*compP)(object, nodeP->object) != LARGER);
     //CGAL_precondition(_predP == NULL || (*compP)(object, _predP->object) <= 0);
     CGAL_precondition(_predP == NULL || (*compP)(object, _predP->object) != SMALLER);
 
@@ -1020,7 +1054,7 @@ typename Red_black_tree<TYPE, COMP, Alloc>::Handle
 // Remove an object from the tree.
 //
 template <class TYPE, class COMP, typename Alloc>
-void Red_black_tree<TYPE, COMP, Alloc>::remove (const TYPE& object)
+inline void Red_black_tree<TYPE, COMP, Alloc>::remove (const TYPE& object)
 {
   // Find the node containing the object that should be removed.
   Node        *nodeP = _get(object);
@@ -1036,10 +1070,8 @@ void Red_black_tree<TYPE, COMP, Alloc>::remove (const TYPE& object)
 // Remove the object pointed by the given handle.
 //
 template <class TYPE, class COMP, typename Alloc>
-void Red_black_tree<TYPE, COMP, Alloc>::remove_at (const Handle& handle)
+inline void Red_black_tree<TYPE, COMP, Alloc>::remove_at (const Handle& handle)
 {
-  CGAL_precondition (handle.treeP == this);
-
   _remove_at (handle.nodeP);
   return;
 }
@@ -1048,10 +1080,10 @@ void Red_black_tree<TYPE, COMP, Alloc>::remove_at (const Handle& handle)
 // Replace the object pointed by the given handle.
 //
 template <class TYPE, class COMP, typename Alloc>
-void Red_black_tree<TYPE, COMP, Alloc>::replace (const Handle& handle,
+inline void Red_black_tree<TYPE, COMP, Alloc>::replace (const Handle& handle,
                                                  const TYPE& object)
 {
-  CGAL_precondition(handle.treeP == this);
+  //CGAL_precondition(handle.treeP == this);
 
   Node  *nodeP = handle.nodeP;
   CGAL_precondition(nodeP != NULL);
@@ -1121,7 +1153,7 @@ inline typename Red_black_tree<TYPE, COMP, Alloc>::Handle
 // Get a handle the tree maximum.
 //
 template <class TYPE, class COMP, typename Alloc>
-typename Red_black_tree<TYPE, COMP, Alloc>::Handle
+inline typename Red_black_tree<TYPE, COMP, Alloc>::Handle
         Red_black_tree<TYPE, COMP, Alloc>::maximum () const
 {
   // Return the rightmost leaf in the tree (or NULL if the tree is empty).
@@ -1132,10 +1164,10 @@ typename Red_black_tree<TYPE, COMP, Alloc>::Handle
 // Get a handle to the next node in the tree (according to the tree order).
 //
 template <class TYPE, class COMP, typename Alloc>
-typename Red_black_tree<TYPE, COMP, Alloc>::Handle
+inline typename Red_black_tree<TYPE, COMP, Alloc>::Handle
         Red_black_tree<TYPE, COMP, Alloc>::successor (const Handle& handle) const
 {
-  CGAL_precondition(handle.treeP == this);
+  //CGAL_precondition(handle.treeP == this);
   CGAL_precondition(handle.nodeP != NULL);
 
   // Get the successor.
@@ -1146,10 +1178,10 @@ typename Red_black_tree<TYPE, COMP, Alloc>::Handle
 // Get a handle to the previous node in the tree (according to the tree order).
 //
 template <class TYPE, class COMP, typename Alloc>
-typename Red_black_tree<TYPE, COMP, Alloc>::Handle 
+inline typename Red_black_tree<TYPE, COMP, Alloc>::Handle 
         Red_black_tree<TYPE, COMP, Alloc>::predecessor (const Handle& handle) const
 {
-  CGAL_precondition(handle.treeP == this);
+  //CGAL_precondition(handle.treeP == this);
   CGAL_precondition(handle.nodeP != NULL);
 
   // Get the predecessor.
@@ -1180,10 +1212,27 @@ bool Red_black_tree<TYPE, COMP, Alloc>::is_valid() const
 //
 
 template <class TYPE, class COMP, typename Alloc>
-typename Red_black_tree<TYPE, COMP, Alloc>::Handle  
+inline std::pair<typename Red_black_tree<TYPE, COMP, Alloc>::Handle, bool>
         Red_black_tree<TYPE, COMP, Alloc>::lower_bound (const TYPE& object) const
 {
-  return (Handle(_lower_bound(object)));
+  const std::pair<typename Red_black_tree<TYPE, COMP, Alloc>::Node*, bool>& res = 
+    _lower_bound(object);
+  return (std::pair<Handle,bool>(Handle(res.first),res.second));
+}
+
+//---------------------------------------------------------
+// Find the lower bound of object
+// overloaded version
+
+template <class TYPE, class COMP, typename Alloc>
+  template<class T, class FUNCTOR>
+inline std::pair<typename Red_black_tree<TYPE, COMP, Alloc>::Handle, bool>
+        Red_black_tree<TYPE, COMP, Alloc>::lower_bound (const T& object,
+                                                        const FUNCTOR* functor) const
+{
+  const std::pair<typename Red_black_tree<TYPE, COMP, Alloc>::Node*, bool>& res = 
+    _lower_bound(object, functor);
+  return (std::pair<Handle,bool>(Handle(res.first),res.second));
 }
 
 
@@ -1191,7 +1240,7 @@ typename Red_black_tree<TYPE, COMP, Alloc>::Handle
 // Check if handle is the minimum
 //---------------------------------------------------------
 template <class TYPE, class COMP, typename Alloc>
-bool Red_black_tree<TYPE, COMP, Alloc>::is_minimum(const Handle& handle) const
+inline bool Red_black_tree<TYPE, COMP, Alloc>::is_minimum(const Handle& handle) const
 {
   //TODO : add a precondition handle!=NULL
   if(_predecessor(handle.nodeP) == NULL)
@@ -1237,7 +1286,7 @@ typename Red_black_tree<TYPE, COMP, Alloc>::Node*
 // Return the pointer to the node of the lower bound of object
 //
 template <class TYPE, class COMP, typename Alloc>
-typename Red_black_tree<TYPE, COMP, Alloc>::Node*  
+std::pair<typename Red_black_tree<TYPE, COMP, Alloc>::Node*, bool>
         Red_black_tree<TYPE, COMP, Alloc>::_lower_bound (const TYPE& object) const
 {
   Node                      *currentP = rootP;
@@ -1245,14 +1294,14 @@ typename Red_black_tree<TYPE, COMP, Alloc>::Node*
   Comparison_result         iCompResult;
 
   if(rootP == NULL)
-    return NULL;
+    return std::pair<Node*,bool>(rootP,false);
 
   while (currentP != NULL)
   {
     if ((iCompResult = (*compP)(object, currentP->object)) == EQUAL)
     {
       // In case of equality, we can return the current node.
-      return (currentP);
+      return std::pair<Node*,bool>(currentP,true);
     }
     else if (iCompResult == SMALLER)
     {
@@ -1272,8 +1321,53 @@ typename Red_black_tree<TYPE, COMP, Alloc>::Node*
 
   // If we reached here, the object is not found in the tree.
   if(iCompResult == SMALLER)
-    return prevP;
-  return (_successor(prevP));
+    return std::pair<Node*,bool>(prevP,false);
+  return std::pair<Node*,bool>(_successor(prevP),false);
+}
+
+//---------------------------------------------------------
+// Return the pointer to the node of the lower bound of object
+// (overloaded version)
+template <class TYPE, class COMP, typename Alloc>
+  template<class T, class FUNCTOR>
+std::pair<typename Red_black_tree<TYPE, COMP, Alloc>::Node*, bool>
+        Red_black_tree<TYPE, COMP, Alloc>::
+        _lower_bound (const T& object, const FUNCTOR* func) const
+{
+  Node                      *currentP = rootP;
+  Node                      *prevP = currentP;
+  Comparison_result         iCompResult;
+
+  if(rootP == NULL)
+    return std::pair<Node*,bool>(rootP,false);
+
+  while (currentP != NULL)
+  {
+    if ((iCompResult = (*func)(object, currentP->object)) == EQUAL)
+    {
+      // In case of equality, we can return the current node.
+      return std::pair<Node*,bool>(currentP,true);
+    }
+    else if (iCompResult == SMALLER)
+    {
+      prevP = currentP;
+
+      // Go down to the left child.
+      currentP = currentP->leftP;
+    }
+    else // iCompResult == LARGER
+    {
+      prevP = currentP;
+
+      // Go down to the right child.
+      currentP = currentP->rightP;
+    }
+  }
+
+  // If we reached here, the object is not found in the tree.
+  if(iCompResult == SMALLER)
+    return std::pair<Node*,bool>(prevP,false);
+  return std::pair<Node*,bool>(_successor(prevP),false);
 }
 
 

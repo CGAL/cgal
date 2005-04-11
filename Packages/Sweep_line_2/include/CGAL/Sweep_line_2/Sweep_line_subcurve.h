@@ -27,6 +27,7 @@
 #include <CGAL/Sweep_line_2/Sweep_line_functors.h>
 #include <CGAL/Sweep_line_2/Sweep_line_event.h>
 #include <CGAL/Sweep_line_2/Sweep_line_traits.h>
+#include <CGAL/Sweep_line_2/Sweep_line_rb_tree.h>
 #include <CGAL/assertions.h>
 
 
@@ -74,7 +75,7 @@ public:
   typedef Sweep_line_subcurve<Traits> Self;
   typedef Status_line_curve_less_functor<Traits, Self> StatusLineCurveLess;
 
-  typedef std::set<Self*, StatusLineCurveLess, CGAL_ALLOCATOR(int)> StatusLine;
+  typedef Red_black_tree<Self*, StatusLineCurveLess, CGAL_ALLOCATOR(int)> StatusLine;
   typedef typename StatusLine::iterator StatusLineIter;
 
   typedef Sweep_line_event<Traits, Self>                Event;

@@ -26,27 +26,24 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template <class Point, class SweepLineTraits_2>
+template <class SweepLineTraits_2>
 class Point_less_functor 
 {
 public:
-  typedef SweepLineTraits_2 Traits;
+  typedef SweepLineTraits_2           Traits;
+  typedef typename Traits::Point_2    Point_2;
   
-  Point_less_functor(Traits * traits) : m_traits(traits){}
+  Point_less_functor(Traits * t) : m_traits(t)
+  {}
   
-  bool operator()(const Point* p1, const Point* p2) const 
-  { 
-    return (m_traits->compare_xy(*p1,*p2) == SMALLER);
-  }
-
-  bool operator()(const Point& p1,const Point& p2) const  
+  bool operator()(const Point_2& p1,const Point_2& p2) const  
   { 
     return (m_traits->compare_xy(p1,p2) == SMALLER);
   }
 
 private:
 
-  /*! a pointer to a traits class */
+  /*! a pointer to a traits object */
   Traits * m_traits;
 };
 
@@ -60,99 +57,28 @@ public:
   typedef SweepLineTraits_2 Traits;
   typedef typename Traits::Point_2 Point_2;
   typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
-  typedef bool (Status_line_curve_less_functor::*func)
-    (const Subcurve*, const Subcurve*) const;
+  
 
-  struct Compare_param {
-    Compare_param(Traits *t) : m_compare_func(1), m_traits(t)  {}
+  Status_line_curve_less_functor(Traits *t) : m_traits(t) 
+  {}
 
-    int m_compare_func;
-    Traits * m_traits;
-  };
-
-  Status_line_curve_less_functor(Compare_param *p ,Point_2 *pt) : m_compare_param(p),
-                                                                  m_sweep_pos(pt)
+  Comparison_result operator()(const Subcurve * c1, const Subcurve * c2) const 
   {
-    m_compare[0] = &Status_line_curve_less_functor::compare_at;
-    m_compare[1] = &Status_line_curve_less_functor::compare_right;
+    return m_traits->curve_compare_y_at_x (c1->get_left_end(),
+                                           c2->get_last_curve());
   }
 
- 
-
-  bool operator()(const Subcurve * c1, const Subcurve * c2) const 
+  Comparison_result operator()(const Point_2& pt, const Subcurve * c2) const 
   {
-    return (compare_right(c1,c2));
+    return m_traits->curve_compare_y_at_x (pt,c2->get_last_curve());
   }
 
-
-  //TODO : REMOVE 'compare_at'!!!
-  bool compare_at(const Subcurve * c1, const Subcurve * c2)  const 
-  {
-    return false;
-  }
-
-  bool compare_right(const Subcurve * c1, const Subcurve * c2)  const 
-  {
-    const X_monotone_curve_2 &cv1 = c1->get_last_curve();
-    const X_monotone_curve_2 &cv2 = c2->get_last_curve();
-
-    Traits *t = m_compare_param->m_traits;
-
-    Comparison_result r =  t->curves_compare_y_at_x (c1->get_last_curve(), 
-                                                     c2->get_last_curve(), 
-                                                     *m_sweep_pos);
-    if (r == EQUAL)
-    {
-      if(t->curve_is_vertical(cv1))
-      {
-        if(t->curve_is_vertical(cv2))
-          return (c1 < c2);  // both cv1, cvs are vertical
-        
-        //cv1 is vertical but cv2 is not vertical
-        r = t->curve_compare_y_at_x(*m_sweep_pos, cv2);
-        if(r == EQUAL)
-          return false;
-        if(r == LARGER)
-          return false;
-        else // if we've reached here , r == SMALLER
-          return true;
-      }
-      else 
-        if(t->curve_is_vertical(cv2))
-        {
-          //cv2 is vertical but cv1 is not vertical
-          r = t->curve_compare_y_at_x(*m_sweep_pos, cv1);
-          if(r == EQUAL)
-            return true;
-          if(r == LARGER)
-            return true;
-          else // if we've reached here , r == SMALLER
-            return false; 
-        }
-
-      // cv1 and cv2 are both not vertical
-        r = t->curves_compare_y_at_x_right(c1->get_last_curve(), 
-                                         c2->get_last_curve(), 
-                                         *m_sweep_pos);
-    }
-    if ( r == SMALLER) {
-      return true;
-    } 
-    if ( r == LARGER ) {
-      return false;
-    }
-
-    // r = EQUAL (e.g overlap curves)
-    return (c1 < c2);
-  }
-
-  Compare_param * m_compare_param;
+     
 
 private:
-  func m_compare[2];
 
-  const Point_2 *m_sweep_pos;
-
+  /*! a pointer to a traits object */
+  Traits * m_traits;
 };
 
 CGAL_END_NAMESPACE
