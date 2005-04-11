@@ -804,10 +804,17 @@ pivot_step( )
             CGAL_qpe_debug {
                 vout1 << "  ";
                 vout << "problem is UNBOUNDED" << std::endl;
+		//nu should be zero in this case
+		nu = inv_M_B.inner_product(     A_Cj.begin(), two_D_Bj.begin(),
+		    q_lambda.begin(),    q_x_O.begin());
+		if (j < qp_n) {
+		    nu -= et2*d*ET(qp_D[j][j]);
+		}
+		CGAL_qpe_assertion(nu == et0);
             }
             return;
         }
-
+	
         // update
         update_1();
 
@@ -1211,6 +1218,7 @@ update_1( )
 
     // compute current solution
     compute_solution();
+	 
 }
 
 // update (step 2)
@@ -1595,12 +1603,14 @@ leave_variable( )
     if ( no_ineq || ( i < qp_n)) {                      // original variable
 
 	// leave original variable [ out: i ]
-	in_B  [ i         ] = -1; 
 	in_B  [ B_O.back()] = k;
+	in_B  [ i         ] = -1; 
+	//in_B  [ B_O.back()] = k;
 	   B_O[ k] = B_O.back(); B_O.pop_back();
 
 	minus_c_B [ k] = minus_c_B [ B_O.size()];
 	  two_D_Bj[ k] =   two_D_Bj[ B_O.size()];
+	  
 
 	// diagnostic output
 	CGAL_qpe_debug {
