@@ -807,8 +807,10 @@ pivot_step( )
 		//nu should be zero in this case
 		nu = inv_M_B.inner_product(     A_Cj.begin(), two_D_Bj.begin(),
 		    q_lambda.begin(),    q_x_O.begin());
-		if (j < qp_n) {
-		    nu -= et2*d*ET(qp_D[j][j]);
+	        if (is_QP) {
+		    if (j < qp_n) {
+		        nu -= et2*d*ET(qp_D[j][j]);
+		    }
 		}
 		CGAL_qpe_assertion(nu == et0);
             }
