@@ -202,7 +202,7 @@ public:
 //					  << std::endl;
 //#endif
 			if (IsZero(omega)) {								// LS 03/2005: break to avoid division by zero (see Laspack implementation)
-				std::cerr << "Solver_BICGSTAB<>::solve: error: omega = 0" << std::endl;
+				std::cerr << "Solver_BICGSTAB<>::solve: warning: omega = 0" << std::endl;
 				break;		
 			}
 			if (IsZero(rTh)) {									// LS 04/2005: don't know what do do if division by zero 
