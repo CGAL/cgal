@@ -440,7 +440,6 @@ public:
     {
       SL_DEBUG(std::cout << " - handling special case " << std::endl;)
                                                      
-      EventCurveIter currentOne = m_currentEvent->right_curves_begin();
       const std::pair<StatusLineIter, bool>& res =
         m_statusLine->lower_bound(m_currentEvent->get_point(), m_statusLineCurveLess);
       m_status_line_insert_hint = res.first;
