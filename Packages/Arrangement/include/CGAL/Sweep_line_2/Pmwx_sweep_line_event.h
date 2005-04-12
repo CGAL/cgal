@@ -143,8 +143,6 @@ public:
 
   bool is_curve_largest(CurveWrap *curve)
   {
-    SubCurveIter iter = m_rightCurves.end();
-
     for( SubCurveRevIter rev_iter = m_rightCurves.rbegin();
          rev_iter != m_rightCurves.rend() && curve != (*rev_iter) ;
          ++rev_iter)
