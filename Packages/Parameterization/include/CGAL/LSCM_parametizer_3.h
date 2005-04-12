@@ -181,9 +181,7 @@ LSCM_parametizer_3<MeshAdaptor_3, BorderParametizer_3, SparseLinearAlgebraTraits
 	int nbVertices = mesh->count_mesh_vertices();
 
 	// Index vertices from 0 to nbVertices-1
-	std::cerr << "  index_mesh_vertices...";
 	mesh->index_mesh_vertices();
-	std::cerr << "ok (" << nbVertices << ")" << std::endl;
 
 	// Create sparse linear system "A*X = B" of size 2*nbVertices x 2*nbVertices (in fact, we need only 2 lines per triangle x 1 column per vertex)
 	LeastSquaresSolver solver(2*nbVertices);
@@ -259,9 +257,6 @@ LSCM_parametizer_3<MeshAdaptor_3, BorderParametizer_3, SparseLinearAlgebraTraits
 
 	// The whole package is restricted to surfaces
 	CGAL_parameterization_expensive_precondition((status = (mesh.get_mesh_genus()==0) ? OK : ERROR_NO_SURFACE_MESH) == OK);
-	if (status != OK)
-		return status;
-	CGAL_parameterization_expensive_precondition((status = (mesh.count_mesh_boundaries() == 1) ? OK : ERROR_NO_SURFACE_MESH) == OK);
 	if (status != OK)
 		return status;
 

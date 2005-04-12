@@ -189,9 +189,7 @@ Fixed_border_parametizer_3<MeshAdaptor_3, BorderParametizer_3, SparseLinearAlgeb
 	int nbVertices = mesh->count_mesh_vertices();
 
 	// Index vertices from 0 to nbVertices-1
-	std::cerr << "  index_mesh_vertices...";
 	mesh->index_mesh_vertices();
-	std::cerr << "ok (" << nbVertices << ")" << std::endl;
 
 	// Create 2 sparse linear systems solver_u = "A*Xu = Bu" and solver_v = "A*Xv = Bv" (1 line/column per vertex)
 	Solver solver_u(nbVertices);
@@ -280,9 +278,6 @@ Fixed_border_parametizer_3<MeshAdaptor_3, BorderParametizer_3, SparseLinearAlgeb
 
 	// The whole package is restricted to surfaces
 	CGAL_parameterization_expensive_precondition((status = (mesh.get_mesh_genus()==0) ? OK : ERROR_NO_SURFACE_MESH) == OK);
-	if (status != OK)
-		return status;
-	CGAL_parameterization_expensive_precondition((status = (mesh.count_mesh_boundaries() == 1) ? OK : ERROR_NO_SURFACE_MESH) == OK);
 	if (status != OK)
 		return status;
 
