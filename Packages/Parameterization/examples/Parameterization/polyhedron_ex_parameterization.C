@@ -354,7 +354,7 @@ int main(int argc,char * argv[])
 	else 
 	{
 		fprintf(stderr,"invalid choice\n");
-		return -1;
+		return 1;
 	}
 
 	// On parameterization error
