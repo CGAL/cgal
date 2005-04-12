@@ -221,8 +221,8 @@ inline
 typename Square_border_parametizer_3<MeshAdaptor_3>::Border_vertex_iterator 
 Square_border_parametizer_3<MeshAdaptor_3>::closest_iterator(MeshAdaptor_3* mesh, const Offset_map& offsets, double value)
 {
-	Border_vertex_iterator best;							// CAUTION: uninitialized iterator or iterator pointing to NULL?
-	double min = DBL_MAX;										// distance for 'best'
+	Border_vertex_iterator best;			// CAUTION: uninitialized iterator or iterator pointing to NULL?
+	double min = DBL_MAX;					// distance for 'best'
 
 	for (Border_vertex_iterator it = mesh->mesh_border_vertices_begin(); it != mesh->mesh_border_vertices_end(); it++)
 	{
