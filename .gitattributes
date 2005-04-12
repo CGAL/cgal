@@ -1481,10 +1481,13 @@ Packages/Optimisation_doc/doc_tex/Optimisation/polydist.gif -text svneol=unset#u
 Packages/Optimisation_doc/doc_tex/Optimisation/polydist.pdf -text svneol=unset#unset
 Packages/PS_Stream/doc_tex/PS_Stream/exemple.ps -text
 Packages/PS_Stream/doc_tex/PS_Stream/style.ps -text
-Packages/Parameterization/examples/Parameterization/data/dashboard.gif -text svneol=unset#unset
+Packages/Parameterization/examples/Parameterization/data/grid512.bmp -text svneol=unset#unset
+Packages/Parameterization/examples/Parameterization/data/holes.off -text
 Packages/Parameterization/examples/Parameterization/data/mannequin-devil.off -text
 Packages/Parameterization/examples/Parameterization/data/nefertiti.off -text
 Packages/Parameterization/examples/Parameterization/data/parameterization.mtl -text
+Packages/Parameterization/examples/Parameterization/data/rotor.off -text
+Packages/Parameterization/examples/Parameterization/data/sphere966.off -text
 Packages/Parameterization/examples/Parameterization/data/three_peaks.off -text
 Packages/Parameterization/temporary-doc/Parameterization_package_presentation/Parameterization_package_presentation.ppt -text svneol=unset#unset
 Packages/Parameterization/temporary-doc/specification/param.pdf -text svneol=unset#unset
