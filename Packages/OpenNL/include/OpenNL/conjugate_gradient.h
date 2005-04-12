@@ -42,16 +42,27 @@
  *		- Added OpenNL namespace
  *		- solve() returns true on success
  *		- test divisions by zero
+ *		- added comments and traces
  */
- 
+
 #ifndef __CONJUGATE_GRADIENT__
 #define __CONJUGATE_GRADIENT__
 
 #include "blas.h"
 
+#include <cmath>
+#include <cfloat>
+#include <climits>
 #include <cassert>
 
 namespace OpenNL {
+
+
+// Utility macro to display a variable's value
+// Usage: x=3.7; cerr << STREAM_TRACE(x) << endl;
+//        prints
+//        x=3.7
+#define STREAM_TRACE(var) #var << "=" << var << " "
 
 
 /**
@@ -99,6 +110,13 @@ public:
         assert (A.dimension() > 0);
 
         unsigned int n = A.dimension() ;						// (Square) matrix dimension
+
+		// Check that A is symmetric
+		for (int i=0; i < n; i++)
+			for (int j=0; j <= i; j++) {
+				assert(A.get_coef(i,j) == A.get_coef(j,i));
+			}
+
         unsigned int max_iter = max_iter_ ;						// Max number of iterations
         if(max_iter == 0) {
             max_iter = 5 * n ;
@@ -111,39 +129,60 @@ public:
         CoeffType t, tau, sig, rho, gam;
         CoeffType bnorm2 = BLAS<Vector>::dot(b,b) ; 
         CoeffType err=epsilon_*epsilon_*bnorm2 ;				// Error to reach
+        // Current residue g=b-A*x
         mult(A,x,g);
         BLAS<Vector>::axpy(-1,b,g);
         BLAS<Vector>::scal(-1,g);
-        BLAS<Vector>::copy(g,r);
-        gg=BLAS<Vector>::dot(g,g);								// Current error (g|g)
+	    // Initially, r=g=b-A*x
+        BLAS<Vector>::copy(g,r);								// r = g
+        gg=BLAS<Vector>::dot(g,g);								// Current error gg = (g|g)
 
         while ( gg>err && its < max_iter) 
 		{
-			// Debug trace
-			//if (its % 25 == 0)
-			//	std::cerr << "Solver_CG<>::solve: gg(=" << gg << ") > err(=" << err << ")" << std::endl;
-
             mult(A,r,p);
             rho=BLAS<Vector>::dot(p,p);
             sig=BLAS<Vector>::dot(r,p);
             tau=BLAS<Vector>::dot(g,r);
-			assert( fabs(sig)>1e-40 );
+			assert( ! IsZero(sig) );
             t=tau/sig;
             BLAS<Vector>::axpy(t,r,x);
             BLAS<Vector>::axpy(-t,p,g);
-			assert( fabs(tau)>1e-40 );
+			assert( ! IsZero(tau) );
             gam=(t*t*rho-tau)/tau;
             BLAS<Vector>::scal(gam,r);
             BLAS<Vector>::axpy(1,g,r);
-            gg=BLAS<Vector>::dot(g,g);
+	        gg=BLAS<Vector>::dot(g,g);								// Current error gg = (g|g)
             its++;
         }
 
-		bool success = (its < max_iter);
+		bool success = (gg <= err);
+#ifndef NDEBUG 
 		if ( ! success )
-			std::cerr << "Solver_CG<>::solve: failure: gg(=" << gg << ") > err(=" << err << ")" << std::endl;
+			std::cerr << "Solver_CG<>::solve failure: "
+				      << "(" << STREAM_TRACE(its) << STREAM_TRACE(max_iter) 
+					         << STREAM_TRACE(gg) << STREAM_TRACE(err)
+					  << ")" << std::endl;
+#endif
 		return success;
     }
+
+private:
+	// Test if a floating point number is (close to) 0.0
+	static inline bool IsZero(CoeffType a) 
+	{
+		// LS 04/2005: replace Lsolver test by Laspack test 
+		//#define IsZero(a) (fabs(a) < 1e-40)
+		return (fabs(a) < 10.0 * std::numeric_limits<CoeffType>::min());
+	}
+
+	// Test if 2 floating point numbers are very close
+	static inline bool AreEqual(CoeffType a, CoeffType b) 
+	{
+		if (IsZero(a))
+			return IsZero(b);
+		else
+			return IsZero(b/a - 1.0);
+	}
 
 private:
     CoeffType epsilon_ ;
