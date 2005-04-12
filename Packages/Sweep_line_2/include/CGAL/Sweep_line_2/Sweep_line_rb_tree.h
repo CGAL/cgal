@@ -56,8 +56,10 @@ template <class TYPE, class COMP , typename Alloc = CGAL_ALLOCATOR(int)>
 class Red_black_tree
 {
 
+public:
   struct Node;
 
+protected:
   typedef typename Alloc::template rebind <Node> Node_alloc_rebind;
   typedef typename Node_alloc_rebind::other        Node_allocator;
 
@@ -121,26 +123,26 @@ class Red_black_tree
 
     void clear( Node_allocator& node_alloc)
     {
-    // Delete the right sub-tree recursively. 
-    if (rightP != NULL)
-    {
-      //delete rightP;
-      rightP->clear(node_alloc);
-      node_alloc.destroy(rightP); 
-      node_alloc.deallocate(rightP, 1);
-    }
-    rightP = NULL;
+      // Delete the right sub-tree recursively. 
+      if (rightP != NULL)
+      {
+        //delete rightP;
+        rightP->clear(node_alloc);
+        node_alloc.destroy(rightP); 
+        node_alloc.deallocate(rightP, 1);
+      }
+      rightP = NULL;
 
-    // Delete the left sub-tree recursively. 
-    if (leftP != NULL)
-    {
-      //delete leftP;
-      leftP->clear(node_alloc);
-      node_alloc.destroy(leftP); 
-      node_alloc.deallocate(leftP, 1);
-    }
-    leftP = NULL;
-  }  
+      // Delete the left sub-tree recursively. 
+      if (leftP != NULL)
+      {
+        //delete leftP;
+        leftP->clear(node_alloc);
+        node_alloc.destroy(leftP); 
+        node_alloc.deallocate(leftP, 1);
+      }
+      leftP = NULL;
+    }  
 
   };
 
