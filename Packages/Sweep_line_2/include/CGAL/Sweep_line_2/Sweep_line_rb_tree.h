@@ -15,13 +15,13 @@
 // $Revision$ $Date$
 // $Name$
 //
-// Author(s)     : Ron Wein <wein@post.tau.ac.il>,
+// Author(s)     : Ron Wein <wein@post.tau.ac.il>
 
 
 #ifndef RED_BLACK_TREE_H
 #define RED_BLACK_TREE_H
 
-
+#include <CGAL/config.h>
 #include <CGAL/assertions.h>
 #include <CGAL/enum.h>
 #include <CGAL/memory.h>
