@@ -60,7 +60,7 @@ struct Facet_center
     }
 };
 
-template <class Refs, class T, class Norm>
+template <class Refs, class T>
 class My_facet : public CGAL::HalfedgeDS_face_base<Refs, T>
 {
   // face data
@@ -93,22 +93,23 @@ public:
   }
 };
 
-template <class Refs, class Tprev, class Tvertex, class Tface, class Norm>
+template <class Refs, class Tprev, class Tvertex, class Tface>
 class My_halfedge : public CGAL::HalfedgeDS_halfedge_base<Refs,Tprev,Tvertex,Tface>
 {
+private:
   int m_tag;
 
   // parameterization
   bool m_is_parameterized;
-  double m_u;  // texture coordinates
+  int m_seaming;	// seaming status
+  double m_u;				// texture coordinates
   double m_v;
-  int m_index; // for param.
+  int m_index;				// for parameterization
 
   // surface cutting
   float m_distance;
 
 public:
-
   // life cycle
   // no constructors to repeat, since only
   // default constructor mandatory
@@ -118,12 +119,17 @@ public:
     m_u = 0.0;
     m_v = 0.0;
     m_index = 0;
+    m_seaming = -1;			// uninitialized 
     m_is_parameterized = false;
   }
 
   // tag
   int tag() const { return m_tag; }
   void tag(int tag) { m_tag = tag; }
+
+  // seaming status
+  int seaming() const { return m_seaming; }
+  void seaming(int seaming) { m_seaming = seaming; }
 
   // precomputed distance
   float distance() const { return m_distance; }
@@ -147,8 +153,7 @@ public:
 
 
 // A redefined vertex class for the Polyhedron_3 
-
-template <class Refs, class T, class P, class Norm>
+template <class Refs, class T, class P>
 class My_vertex : public CGAL::HalfedgeDS_vertex_base<Refs, T, P>
 {
   // index
@@ -188,33 +193,27 @@ struct My_items : public CGAL::Polyhedron_items_3
     struct Vertex_wrapper
     {
         typedef typename Traits::Point_3  Point;
-        typedef typename Traits::Vector_3 Normal;
         typedef My_vertex<Refs,
                           CGAL::Tag_true,
-                          Point,
-                          Normal> Vertex;
+                          Point> Vertex;
     };
 
     // wrap face
     template <class Refs, class Traits>
     struct Face_wrapper
     {
-        typedef typename Traits::Vector_3 Normal;
         typedef My_facet<Refs,
-                         CGAL::Tag_true,
-                         Normal> Face;
+                         CGAL::Tag_true> Face;
     };
 
     // wrap halfedge
     template <class Refs, class Traits>
     struct Halfedge_wrapper
     {
-        typedef typename Traits::Vector_3 Normal;
         typedef My_halfedge<Refs,
                             CGAL::Tag_true,
                             CGAL::Tag_true,
-                            CGAL::Tag_true,
-                            Normal> Halfedge;
+                            CGAL::Tag_true> Halfedge;
     };
 };
 
@@ -223,14 +222,16 @@ typedef CGAL::Polyhedron_3<My_kernel,My_items> Polyhedron;
 
 class Polyhedron_ex : public Polyhedron
 {
-  private:
-
- private:
+public:
 
     // feature/boundary skeletons
     typedef Feature_backbone<Vertex_handle,Halfedge_handle> backbone;
     typedef Feature_skeleton<Vertex_handle,Halfedge_handle> skeleton;
-    skeleton m_skeleton;
+
+ private:
+
+    // feature/boundary skeletons
+	skeleton m_skeleton;
     backbone m_seaming_backbone;
   
   public:
@@ -401,7 +402,17 @@ class Polyhedron_ex : public Polyhedron
         pHalfedge->tag(tag);
     }
 
-    // Number all mesh vertices following the order of the vertices_begin() iterator
+    // Set seaming status of all halfedges
+    void flag_halfedges_seaming(int flag)
+    {
+      Halfedge_iterator pHalfedge;
+      for(pHalfedge = halfedges_begin();
+          pHalfedge != halfedges_end();
+          pHalfedge++)
+        pHalfedge->seaming(flag);
+    }
+
+    // Index all mesh vertices following the order of the vertices_begin() iterator
     void precompute_vertex_indices()
     {
       Vertex_iterator pVertex;
@@ -412,7 +423,7 @@ class Polyhedron_ex : public Polyhedron
         pVertex->index(i++);
     }
     
-    // Number all mesh half edges following the order of the halfedges_begin() iterator
+    // Index all mesh half edges following the order of the halfedges_begin() iterator
     void precompute_halfedge_indices()
     {
       Halfedge_iterator pHalfedge;
@@ -580,22 +591,17 @@ class Polyhedron_ex : public Polyhedron
     //********************************
     bool write_file_obj()  { return write_file_obj(stdout); }
 
-  // boundary
-  static bool is_border(const Vertex &v)
-  {
-    Halfedge_around_vertex_const_circulator c = v.vertex_begin();
-    if(c == NULL) // isolated vertex
-      return 1;
-    Halfedge_around_vertex_const_circulator d = c;
-    CGAL_For_all(c, d)
-      if(c->is_border())
-        return 1;
-    return 0;
-  }
   // is vertex on border ?
   static bool is_border(Vertex_const_handle pVertex)
   {
-	  return is_border(*pVertex);
+    Halfedge_around_vertex_const_circulator pHalfedge = pVertex->vertex_begin();
+    Halfedge_around_vertex_const_circulator end = pHalfedge;
+    if(pHalfedge == NULL) // isolated vertex
+      return true;
+    CGAL_For_all(pHalfedge,end)
+      if(pHalfedge->is_border())
+        return true;
+    return false;
   }
 
   // halfedge len
@@ -641,49 +647,92 @@ class Polyhedron_ex : public Polyhedron
     return index;
   }
 
-  // count #boundaries
-  // return the number of boundary backbones
-  int nb_boundaries()
-  {
-    int nb = 0;
-    tag_halfedges(0);
-    Halfedge_handle seed_halfedge = NULL;
-    while((seed_halfedge = get_border_halfedge_tag(0)) != NULL)
-    {
-      nb++;
-      seed_halfedge->tag(1);
-      Vertex_handle seed_vertex = seed_halfedge->prev()->vertex();
-      Halfedge_handle current_halfedge = seed_halfedge;
-      Halfedge_handle next_halfedge;
-      do
-      {
-        next_halfedge = current_halfedge->next();
-        next_halfedge->tag(1);
-        current_halfedge = next_halfedge;
-      }
-      while(next_halfedge->prev()->vertex() != seed_vertex);
-    }
-    return nb;
-  }
+	// count #boundaries
+	// return the number of boundary backbones
+	int nb_boundaries()
+	{
+		int nb = 0;
+		tag_halfedges(0);
+		Halfedge_handle seed_halfedge = NULL;
+		while((seed_halfedge = get_border_halfedge_tag(0)) != NULL)
+		{
+			nb++;
+			seed_halfedge->tag(1);
+			Vertex_handle seed_vertex = seed_halfedge->prev()->vertex();
+			Halfedge_handle current_halfedge = seed_halfedge;
+			Halfedge_handle next_halfedge;
+			do
+			{
+				next_halfedge = current_halfedge->next();
+				next_halfedge->tag(1);
+				current_halfedge = next_halfedge;
+			}
+			while(next_halfedge->prev()->vertex() != seed_vertex);
+		}
+		return nb;
+	}
 
-  // compute the genus
-  // V - E + F + B = 2 (C - G)
-  // C -> # of connected components
-  // G : genus
-  // B : # of boundaries
-  int genus()
-  {
-	int	c = 1;							// CAUTION: HARD CODED
-    int b = nb_boundaries();
-    int v = size_of_vertices();
-    int e = size_of_halfedges()/2;
-    int f = size_of_facets();
-//	int genus = (2  +e-b-f-v)/2;
-    int genus = (2*c+e-b-f-v)/2;
-    std::cerr << "  " << v << " vertices, " << f << " faces, ";
-    std::cerr << e << " edges, " << b << " boundary(ies), genus " << genus << std::endl;
-    return genus;
-  }
+	// tag component 
+	void tag_component(Facet_handle	pSeedFacet,
+					   const int tag_free,
+					   const int tag_done)
+	{
+		pSeedFacet->tag(tag_done);
+		std::list<Facet_handle> facets;
+		facets.push_front(pSeedFacet);
+		while(!facets.empty())
+		{
+			Facet_handle pFacet = facets.front();
+			facets.pop_front();
+			pFacet->tag(tag_done);
+			Halfedge_around_facet_circulator pHalfedge = pFacet->facet_begin();
+			Halfedge_around_facet_circulator end = pHalfedge;
+			CGAL_For_all(pHalfedge,end)
+			{
+				Facet_handle pNFacet = pHalfedge->opposite()->facet();
+				if(pNFacet != NULL && pNFacet->tag() == tag_free)
+				{
+					facets.push_front(pNFacet);
+					pNFacet->tag(tag_done);
+				}
+			}
+		}
+	}
+
+	// count # of connected components
+	unsigned int nb_components()
+	{
+		unsigned int nb = 0;
+		tag_facets(0);
+		Facet_handle seed_facet	= NULL;
+		while((seed_facet = get_any_facet_tag(0)) != NULL)
+		{
+			nb++;
+			tag_component(seed_facet,0,1);
+		}
+		return nb;
+	}
+
+	// compute the genus
+	// G = (2*C + E - B - F - V)/2 with
+	// G : genus
+	// C : # of connected components
+	// E : # of edges
+	// B : # of boundaries
+	// F : # of faces
+	// V : # of vertices
+	int genus()
+	{
+		int	c = nb_components();
+		int b = nb_boundaries();
+		int v = size_of_vertices();
+		int e = size_of_halfedges()/2;
+		int f = size_of_facets();
+		int genus = (2*c+e-b-f-v)/2;
+		std::cerr << "  " << v << " vertices, " << f << " faces, ";
+		std::cerr << e << " edges, " << b << " boundary(ies), genus " << genus << std::endl;
+		return genus;
+	}
 
   // compute  total len of a backbone
   double len(backbone *pBackbone)
