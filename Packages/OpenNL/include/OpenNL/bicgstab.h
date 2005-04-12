@@ -220,11 +220,12 @@ public:
 
 		bool success = (rTr <= err);
 #ifndef NDEBUG 
-		std::cerr << "Solver_BICGSTAB<>::solve: " << STREAM_TRACE(success) 
-			      << "(" << STREAM_TRACE(its) << STREAM_TRACE(max_iter) 
-				         << STREAM_TRACE(rTr) << STREAM_TRACE(err) << STREAM_TRACE(alpha) << STREAM_TRACE(beta) << STREAM_TRACE(omega) 
-						 << STREAM_TRACE(rTh) << STREAM_TRACE(rTAd) << STREAM_TRACE(ht) << STREAM_TRACE(tt) 
-				  << ")" << std::endl;
+		if ( ! success )
+			std::cerr << "Solver_BICGSTAB<>::solve failure: "
+			          << STREAM_TRACE(its) << STREAM_TRACE(max_iter) 
+				      << STREAM_TRACE(rTr) << STREAM_TRACE(err) << STREAM_TRACE(alpha) << STREAM_TRACE(beta) << STREAM_TRACE(omega) 
+					  << STREAM_TRACE(rTh) << STREAM_TRACE(rTAd) << STREAM_TRACE(ht) << STREAM_TRACE(tt) 
+				      << std::endl;
 #endif
 		return success;
     }
