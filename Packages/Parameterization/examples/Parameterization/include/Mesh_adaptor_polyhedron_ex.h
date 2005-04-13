@@ -223,16 +223,9 @@ public:
 
 	// Compute the genus of the mesh
 	int  get_mesh_genus () const {
-		//return m_mesh->genus();
 		// the exported mesh is a topological disc:
 		return 0; 
 	}
-
-	// LS+PA 04/2005: obsolete because we accept surfaces with holes 
-	//// Count the number of boundaries of the mesh
-	//int  count_mesh_boundaries () const {
-	//	return m_mesh->nb_boundaries();
-	//}
 
 	// Get iterator over first vertex of mesh's border.
 	Border_vertex_iterator  mesh_border_vertices_begin () {
@@ -252,21 +245,17 @@ public:
 
 	// Get iterator over first face of mesh
 	Face_iterator  mesh_faces_begin () {
-		//return m_mesh->facets_begin();
 		return Face_iterator_base(m_mesh->facets_end(), All_faces_filter(), m_mesh->facets_begin());
 	}
 	Face_const_iterator  mesh_faces_begin () const {
-		//return m_mesh->facets_begin();
 		return Face_const_iterator_base(m_mesh->facets_end(), All_faces_filter(), m_mesh->facets_begin());
 	}
 
 	// Get iterator over past-the-end face of mesh
 	Face_iterator  mesh_faces_end () {
-		//return m_mesh->facets_end();
 		return Face_iterator_base(m_mesh->facets_end(), All_faces_filter());
 	}
 	Face_const_iterator  mesh_faces_end () const {
-		//return m_mesh->facets_end();
 		return Face_const_iterator_base(m_mesh->facets_end(), All_faces_filter());
 	}
 
@@ -384,14 +373,10 @@ public:
 	// Get circulator over the vertices incident to 'adaptor_vertex'
 	Vertex_around_vertex_circulator  vertices_around_vertex_begin (Vertex_handle adaptor_vertex) {
 		assert(is_valid(adaptor_vertex));
-		//return (Vertex_around_vertex_circulator) adaptor_vertex->vertex_begin();
-		//return Vertex_around_vertex_circulator(adaptor_vertex->vertex_begin()->opposite(), adaptor_vertex);
 		return Vertex_around_vertex_circulator(adaptor_vertex->next(), adaptor_vertex);
 	}
 	Vertex_around_vertex_const_circulator  vertices_around_vertex_begin (Vertex_const_handle adaptor_vertex) const {
 		assert(is_valid(adaptor_vertex));
-		//return (Vertex_around_vertex_const_circulator) adaptor_vertex->vertex_begin();
-		//return Vertex_around_vertex_const_circulator(adaptor_vertex->vertex_begin()->opposite(), adaptor_vertex);
 		return Vertex_around_vertex_const_circulator(adaptor_vertex->next(), adaptor_vertex);
 	}
 
@@ -425,6 +410,7 @@ private:
 	{
 		assert(mesh != NULL);
 		m_mesh = mesh;
+		m_mesh_vertices_count = 0;	// not yet initialized
 
 #ifndef NDEBUG
 		// Index Polyhedron_ex vertices to ease debugging
@@ -446,13 +432,18 @@ private:
 			he_it->index(he_index--);
 		}
 		fprintf(stderr,"ok\n");
+
+		//// Dump input outer boundary (for debug purpose)
+		//fprintf(stderr,"  input boundary is: ");
+		//for (InputIterator border_it = first_boundary_halfedge; border_it != last_boundary_halfedge; border_it++)
+		//	fprintf(stderr, "%d->%d ", (int)(*border_it)->opposite()->vertex()->index(), (int)(*border_it)->vertex()->index());
+		//fprintf(stderr,"ok\n");
 #endif
 
 		// Check that the input boundary is a loop => it "cuts" a topological disc inside m_mesh
 		bool input_boundary_is_valid = (first_boundary_halfedge != last_boundary_halfedge);
 		assert(input_boundary_is_valid);
-		InputIterator border_it;
-		for (border_it = first_boundary_halfedge; border_it != last_boundary_halfedge; border_it++)
+		for (InputIterator border_it = first_boundary_halfedge; border_it != last_boundary_halfedge; border_it++)
 		{
 			// Get next halfedge iterator 
 			InputIterator next_boundary_it = border_it;
@@ -466,21 +457,14 @@ private:
 		// TO DO: check that the input boundary is not self-intersecting
 
 		// Copy input outer boundary
-		fprintf(stderr,"  parse input boundary: ");
 		assert(m_boundary.empty());
-		for (border_it = first_boundary_halfedge; border_it != last_boundary_halfedge; border_it++)
-		{
-//#ifndef NDEBUG
-//			fprintf(stderr, "%d->%d ", (int)(*border_it)->opposite()->vertex()->index(), (int)(*border_it)->vertex()->index());
-//#endif
+		for (InputIterator border_it = first_boundary_halfedge; border_it != last_boundary_halfedge; border_it++)
 			m_boundary.push_back(*border_it);
-		}
-		fprintf(stderr,"ok\n");
 
 		// Set seaming flag of all halfedges to INNER, BORDER and OUTER wrt the boundary m_boundary
 		flag_halfedges_seaming();
 
-		// Count the number of vertices of the mesh
+		// Count the number of vertices of the mesh (must be done after flagging the halfedges)
 		m_mesh_vertices_count = 0;
 		for (Vertex_iterator it = mesh_vertices_begin(); it != mesh_vertices_end(); it++) 
 			m_mesh_vertices_count++;
