@@ -112,17 +112,14 @@ class QPE_vector_accessor : public std::unary_function<
 // -------------------
 template < class MatrixIt, bool check_1st_lower, bool check_1st_upper,
                            bool check_2nd_lower, bool check_2nd_upper >
-class QPE_matrix_accessor : public std::binary_function<
-    int, int, typename std::iterator_traits<
-            typename std::iterator_traits<MatrixIt>::value_type>::value_type> {
+class QPE_matrix_accessor {
 
   public:    
-    typedef typename 
-       std::binary_function<
-         int, int, 
-         typename std::iterator_traits<
-             typename std::iterator_traits
-                <MatrixIt>::value_type>::value_type>::result_type  
+    typedef CGAL::Arity_tag<2> Arity;
+    typedef int argument1_type;
+    typedef int argument2_type;
+    typedef typename std::iterator_traits<
+            typename std::iterator_traits<MatrixIt>::value_type>::value_type  
     result_type;
 
     QPE_matrix_accessor( MatrixIt it, int lower_1 = 0, int upper_1 = 0,
@@ -148,7 +145,7 @@ class QPE_matrix_accessor : public std::binary_function<
     const result_type  z;
     MatrixIt           m;
     int   l1, u1, l2, u2;
-};
+};		 		 
 
 // ----------------------------------------------------------------------------
 
