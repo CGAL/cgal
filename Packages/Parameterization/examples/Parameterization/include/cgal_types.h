@@ -564,6 +564,7 @@ public:
 			fprintf(pFile,"v %g %g %g\n", (double)pVertex->point().x(), (double)pVertex->point().y(), (double)pVertex->point().z());
 
 		// Write UVs (1 UV / halfedge)
+		// Implementation note: the UV is meaningless for NON parameterized halfedges
 		fprintf(pFile, "# uv coordinates\n") ;
 		Halfedge_iterator pHalfedge;
 		for(pHalfedge = halfedges_begin(); pHalfedge != halfedges_end(); pHalfedge++)
@@ -575,10 +576,12 @@ public:
 		for(pFacet = facets_begin(); pFacet != facets_end(); pFacet++)
 		{
 			Halfedge_around_facet_circulator h = pFacet->facet_begin();
-			fprintf(pFile,"f ");
-			do
-				fprintf(pFile, "%d/%d ", (int)h->vertex()->index()+1, (int)h->index()+1);
-			while(++h != pFacet->facet_begin());
+			fprintf(pFile,"f");
+			do {
+				fprintf(pFile, " %d", (int)h->vertex()->index()+1);
+				if (h->is_parameterized())
+					fprintf(pFile, "/%d", (int)h->index()+1);
+			} while(++h != pFacet->facet_begin());
 			fprintf(pFile,"\n");
 		}
 
