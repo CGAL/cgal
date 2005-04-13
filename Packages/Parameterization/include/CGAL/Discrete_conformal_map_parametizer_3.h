@@ -33,8 +33,8 @@ CGAL_BEGIN_NAMESPACE
 template <class MeshAdaptor_3,		// 3D surface
 		  class BorderParametizer_3 = Circular_border_parametizer_3<MeshAdaptor_3>,	
 									// Class to map the surface's border onto a 2D space
-		  class SparseLinearAlgebraTraits_d = OpenNL::SymmetricLinearSolverTraits<typename MeshAdaptor_3::NT> >	
-									// CAUTION: the sparse linear system is symmetric <=> Fixed_border_parametizer_3 removes fixed vertices
+		  class SparseLinearAlgebraTraits_d = OpenNL::DefaultLinearSolverTraits<typename MeshAdaptor_3::NT> >	
+									// Implementation note: the sparse linear system is NOT symmetric for surfaces with holes
 class Discrete_conformal_map_parametizer_3 
 	: public Fixed_border_parametizer_3<MeshAdaptor_3, BorderParametizer_3, SparseLinearAlgebraTraits_d>
 {
