@@ -63,11 +63,16 @@ public:
   friend class Trapezoidal_decomposition_2<Traits>::In_face_iterator;
 #elif defined(__GNUC__)
 
-#if ((__GNUC__ < 3) || ((__GNUC__ == 3) && (__GNUC_MINOR__ <= 2)) \
-                    || ((__GNUC__ == 3) && (__GNUC_MINOR__ == 3) \
-                       && (__GNUC_PATCHLEVEL__ == 0)))    
+#if ((__GNUC__ < 3) || ((__GNUC__ == 3) && (__GNUC_MINOR__ <= 2)))                   
   friend typename Trapezoidal_decomposition_2<Traits>::Around_point_circulator;
   friend typename Trapezoidal_decomposition_2<Traits>::In_face_iterator;
+#elif ((__GNUC__ == 3) && (__GNUC_MINOR__ == 3) && (__GNUC_PATCHLEVEL__ == 0))
+  typedef typename Trapezoidal_decomposition_2<Traits>::Around_point_circulator
+    Friend_Around_point_circulator;
+  typedef typename Trapezoidal_decomposition_2<Traits>::In_face_iterator
+    Friend_In_face_iterator;
+  friend class Friend_Around_point_circulator;
+  friend class Friend_In_face_iterator;
 #else
   friend class Trapezoidal_decomposition_2<Traits>::Around_point_circulator;
   friend class Trapezoidal_decomposition_2<Traits>::In_face_iterator;
