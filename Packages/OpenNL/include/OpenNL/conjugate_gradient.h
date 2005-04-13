@@ -111,10 +111,44 @@ public:
 
         unsigned int n = A.dimension() ;						// (Square) matrix dimension
 
+//#ifndef NDEBUG 
+//		// Debug trace
+//		fprintf(stderr, "\n");
+//		if (n < 20)	// if small matrix, print it entirely
+//		{
+//			fprintf(stderr, "******************  A:  ******************\n");
+//			for (int i=0; i<n; i++)  {
+//				for (int j=0; j<n; j++)
+//					fprintf(stderr, "%lf\t", (double)A.get_coef(i,j));
+//				fprintf(stderr, "\n");
+//			}
+//			fprintf(stderr, "******************  B:  ******************\n");
+//			for (int j=0; j<n; j++)
+//				fprintf(stderr, "%lf\t", (double)b[j]);
+//			fprintf(stderr, "\n");
+//			fprintf(stderr, "******************************************\n");
+//		}
+//		else		// if large matrix, print only not null elements
+//		{
+//			fprintf(stderr, "******************  A*x=b  ******************\n");
+//			for (int i=0; i<n; i++)  {
+//				for (int j=0; j<n; j++)
+//					if ( ! IsZero(A.get_coef(i,j)) )
+//						fprintf(stderr, "A[%d][%d] = %lf\t", i, j, (double)A.get_coef(i,j));
+//				fprintf(stderr, "\n");
+//			}
+//			for (int j=0; j<n; j++)
+//				if ( ! IsZero(b[j]) )
+//					fprintf(stderr, "b[%d] = %lf\t", j, (double)b[j]);
+//			fprintf(stderr, "\n");
+//			fprintf(stderr, "******************************************\n");
+//		}
+//#endif
+
 		// Check that A is symmetric
 		for (int i=0; i < n; i++)
-			for (int j=0; j <= i; j++) {
-				assert(A.get_coef(i,j) == A.get_coef(j,i));
+			for (int j=0; j < i; j++) {
+				assert( AreEqual(A.get_coef(i,j), A.get_coef(j,i)) );
 			}
 
         unsigned int max_iter = max_iter_ ;						// Max number of iterations
