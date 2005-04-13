@@ -405,6 +405,8 @@ private:
 	// Utility method that contains the common part of the constructors:
 	// Initialize an adaptator for an existing Polyhedron_ex mesh
 	// The input mesh can be of any genus, but it has to come with a description of the boundary of a topological disc 
+	//
+	// Implementation note: at this stage, we cannot assume that the mesh is a triangular surface
 	template <class InputIterator>
 	void init(Polyhedron_ex* mesh, InputIterator first_boundary_halfedge, InputIterator last_boundary_halfedge) 
 	{
@@ -433,7 +435,7 @@ private:
 		}
 		fprintf(stderr,"ok\n");
 
-		//// Dump input outer boundary (for debug purpose)
+		// Dump input outer boundary (for debug purpose)
 		//fprintf(stderr,"  input boundary is: ");
 		//for (InputIterator border_it = first_boundary_halfedge; border_it != last_boundary_halfedge; border_it++)
 		//	fprintf(stderr, "%d->%d ", (int)(*border_it)->opposite()->vertex()->index(), (int)(*border_it)->vertex()->index());
@@ -490,22 +492,28 @@ private:
 		for (std::list<Halfedge_handle>::iterator it = m_boundary.begin(); it != m_boundary.end(); it++)
 			(*it)->seaming(BORDER);
 
-		// Set the seaming flag of the halfedges of the toplogical disc defined surrounded by m_boundary as INNER
+		// Set the seaming flag of the halfedges of the topological disc defined surrounded by m_boundary as INNER
 		flag_surface_halfedges_seaming((*m_boundary.begin())->opposite()->facet());
 
 		fprintf(stderr,"ok\n");
 	}
 
-	// Set the seaming flag of the toplogical disc defined by the boundary m_boundary as INNER
+	// Set the seaming flag of the topological disc defined by the boundary m_boundary as INNER
 	//
 	// Preconditions: 
 	// * inner halfedges are marked as OUTER, outer border halfedges as BORDER
+	// * pSeedFacet != NULL
 	// Posconditions: 
 	// * outer border halfedges are marked BORDER
 	// * inner border halfedges are marked INNER, except if they are outer border for the other side of a seam
 	// * outer halfedges are marked OUTER
+	//
+	// Implementation note: at this stage, we cannot assume that the mesh triangular
 	void flag_surface_halfedges_seaming(Face_handle pSeedFacet)
 	{
+		if (pSeedFacet == NULL)
+			return;							// Gloups... topological disc is empty!
+
 		// List of triangles to flag = pSeedFacet initially
 		std::list<Face_handle> facets;
 		facets.push_front(pSeedFacet);
@@ -516,40 +524,40 @@ private:
 		{
 			Face_handle pFacet = facets.front();
 			facets.pop_front();
-
 			assert(pFacet != NULL);
-			Halfedge_handle he = pFacet->halfedge();
-			assert(he != NULL);
-			assert(he->opposite() != NULL);
-			assert(he->next()->opposite() != NULL);
-			assert(he->next()->next() != NULL);
-			assert(he->next()->next()->opposite() != NULL);
-
-			// Skip this triangle if it is done
-			if (he->seaming() != OUTER && he->next()->seaming() != OUTER && he->next()->next()->seaming() != OUTER)
-				continue;
 
 			// Flag this triangle's halfedges as INNER (except outer border ones)
-			if (he->seaming() != BORDER)
-				he->seaming(INNER);
-			if (he->next()->seaming() != BORDER)
-				he->next()->seaming(INNER);
-			if (he->next()->next()->seaming() != BORDER)
-				he->next()->next()->seaming(INNER);
-
-			// Add surrounding triangles to list without crossing the border
+			bool already_done = true;
 			Halfedge_around_facet_circulator pHalfedge = pFacet->facet_begin(),
 											 end       = pHalfedge;
-			CGAL_For_all(pHalfedge,end)
+			CGAL_For_all(pHalfedge, end)
 			{
-				Halfedge_handle neighbor_face_halfedge = pHalfedge->opposite();
-				if (neighbor_face_halfedge->seaming() != BORDER)
+				assert(pHalfedge != NULL);
+				if (pHalfedge->seaming() == OUTER)
+				{
+					pHalfedge->seaming(INNER);
+					already_done = false;
+				}
+			}
+
+			// Skip this triangle if it is done
+			if (already_done)
+				continue;
+
+			// Add surrounding triangles to list without crossing the border
+			pHalfedge = pFacet->facet_begin();
+			end       = pHalfedge;
+			CGAL_For_all(pHalfedge, end)
+			{
+				Halfedge_handle opposite_he = pHalfedge->opposite();
+				assert(opposite_he != NULL);
+				if (opposite_he->seaming() != BORDER)
 				{
 					// If the neighbor face is a hole, flag the neighbor outer vertex as INNER
 					// Else, add the face to the list to flag it later
-					Face_handle neighbor_face = neighbor_face_halfedge->facet();
+					Face_handle neighbor_face = opposite_he->facet();
 					if (neighbor_face == NULL)
-						neighbor_face_halfedge->seaming(INNER);
+						opposite_he->seaming(INNER);
 					else
 						facets.push_front(neighbor_face);
 				}
@@ -583,16 +591,19 @@ private:
 		Seaming_status seaming = OUTER;
 		CGAL_For_all(pHalfedge,end) 
 		{
-			// Valid tags are:
-			assert( (pHalfedge->seaming() == INNER  && pHalfedge->opposite()->seaming() == BORDER)
-				 || (pHalfedge->seaming() == BORDER && pHalfedge->opposite()->seaming() == INNER)
-				 || (pHalfedge->seaming() == INNER  && pHalfedge->opposite()->seaming() == INNER)
-				 || (pHalfedge->seaming() == BORDER && pHalfedge->opposite()->seaming() == BORDER)
-				 || (pHalfedge->seaming() == OUTER  && pHalfedge->opposite()->seaming() == OUTER) );
+			Seaming_status current_he_seaming  = (Seaming_status) pHalfedge->seaming(),
+				           opposite_he_seaming = (Seaming_status) pHalfedge->opposite()->seaming();
 
-			if (pHalfedge->seaming() == INNER)
+			// Valid tags are:
+			assert( (current_he_seaming == INNER  && opposite_he_seaming == BORDER)
+				 || (current_he_seaming == BORDER && opposite_he_seaming == INNER)
+				 || (current_he_seaming == INNER  && opposite_he_seaming == INNER)
+				 || (current_he_seaming == BORDER && opposite_he_seaming == BORDER)
+				 || (current_he_seaming == OUTER  && opposite_he_seaming == OUTER) );
+
+			if (current_he_seaming == INNER)
 				seaming = INNER;
-			if (pHalfedge->opposite()->seaming() == BORDER)
+			if (opposite_he_seaming == BORDER)
 				return BORDER;
 		}
 		return seaming;
