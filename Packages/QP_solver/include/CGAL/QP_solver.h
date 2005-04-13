@@ -146,10 +146,17 @@ private:
                                         Value_const_iterator;
 
     // quotient functor
+    
     typedef  Creator_2< ET, ET, Quotient<ET> >
                                         Quotient_creator;
-    typedef  std::binder2nd< Quotient_creator >
+    
+    
+ //   typedef  std::binder2nd< Quotient_creator >
+ //                                       Quotient_maker;
+    typedef  typename CGAL::Bind<Quotient_creator,
+                 typename Quotient_creator::argument2_type,2>::Type
                                         Quotient_maker;
+    
     
     // access values by basic index functor
     typedef  Value_by_basic_index<Value_const_iterator>
@@ -180,8 +187,11 @@ private:
 
     typedef  QPE_matrix_accessor< A_iterator, false, true, false, false>
                                         A_accessor;
-    typedef  std::binder2nd< A_accessor >
+    typedef  typename CGAL::Bind< A_accessor,
+    	typename A_accessor::argument2_type,2>::Type
                                         A_row_by_index_accessor;
+ //   typedef  std::binder2nd< A_accessor >
+ //                                       A_row_by_index_accessor;
     typedef  QPE_transform_iterator_1<
 		 Index_iterator, A_row_by_index_accessor >
                                         A_row_by_index_iterator;
@@ -212,7 +222,7 @@ private:
                                         C_auxiliary_iterator;
 
     typedef  QPE_transform_iterator_1<
-                 Index_iterator, Value_by_basic_index >
+                 Index_const_iterator, Value_by_basic_index >
                                         Variable_numerator_iterator;
     typedef  QPE_transform_iterator_1<
                  Variable_numerator_iterator, Quotient_maker >
@@ -239,7 +249,7 @@ private:
     typedef  QPE_pricing_strategy<Rep>  Pricing_strategy;
 
   private:
-
+    Tag_false                is_perturbed;
     // some constants
     const ET                 et0, et1, et2;
 
@@ -583,6 +593,10 @@ private:
     void  init_solution__b_C( Tag_false has_no_inequalities);
 
     void  init_additional_data_members( );
+    int  signed_leading_exponent( int row);
+    void  set_up_auxiliary_problemI( Tag_true is_perturbed);
+    void  set_up_auxiliary_problem( Tag_true is_perturbed);
+    void  set_up_auxiliary_problem( Tag_false is_perturbed);
 
     // transition (to phase II)
     void  transition( );
@@ -1070,6 +1084,7 @@ ratio_test_1__t_j( Tag_false)
 	    mu +=     d*ET( qp_c[ j]);
 	    nu -= et2*d*ET( qp_D[ j][ j]);
 	}
+	CGAL_qpe_assertion(nu <= et0);
 
 	// check `t_j'
 	if ( ( nu < et0) && ( ( mu * q_i) > ( x_i * nu))) {
