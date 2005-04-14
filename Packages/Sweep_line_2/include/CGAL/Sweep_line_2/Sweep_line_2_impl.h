@@ -25,6 +25,7 @@
 #include <set>
 #include <list>
 #include <algorithm>
+#include <iterator>
 #include <CGAL/assertions.h>
 #include <CGAL/memory.h>
 #include <CGAL/Sweep_line_2/Sweep_line_functors.h>
@@ -148,14 +149,14 @@ public:
 
 
   Sweep_line_2_impl(SweepVisitor* visitor) :
-      m_traits(new Traits()),
-      m_sweep_line_traits(m_traits),
-      m_traitsOwner(true),
-      m_statusLineCurveLess(new StatusLineCurveLess(m_traits)),
-      m_queue(new EventQueue(PointLess(m_traits))),
-      m_statusLine(new StatusLine(m_statusLineCurveLess)),
+      //m_traits(new Traits()),
+      m_sweep_line_traits(&m_traits),
+      //m_traitsOwner(true),
+      m_statusLineCurveLess(new StatusLineCurveLess(&m_traits)),
+      m_queue(new EventQueue(PointLess(&m_traits))),
+      m_statusLine(m_statusLineCurveLess),
       m_xcurves(0),
-      m_status_line_insert_hint(m_statusLine->begin()),
+      m_status_line_insert_hint(m_statusLine.begin()),
       m_num_of_subCurves(0),
 #ifndef NDEBUG
       m_eventId(0),
@@ -167,14 +168,14 @@ public:
 
 
   Sweep_line_2_impl(Traits *t, SweepVisitor* visitor) :
-      m_traits(t),
-      m_sweep_line_traits(m_traits),
-      m_traitsOwner(false),
-      m_statusLineCurveLess(new StatusLineCurveLess(m_traits)),
-      m_queue(new EventQueue(PointLess(m_traits))),
-      m_statusLine(new StatusLine(m_statusLineCurveLess)),
+      m_traits(*t),
+      m_sweep_line_traits(&m_traits),
+      //m_traitsOwner(false),
+      m_statusLineCurveLess(new StatusLineCurveLess(&m_traits)),
+      m_queue(new EventQueue(PointLess(&m_traits))),
+      m_statusLine(m_statusLineCurveLess),
       m_xcurves(0),
-      m_status_line_insert_hint(m_statusLine->begin()),
+      m_status_line_insert_hint(m_statusLine.begin()),
       m_num_of_subCurves(0),
 #ifndef NDEBUG
       m_eventId(0),
@@ -202,9 +203,11 @@ public:
   template<class CurveInputIterator>
   void init(CurveInputIterator curves_begin, CurveInputIterator curves_end)
   {
+    //std::cout<<"distance is: " <<std::distance(curves_begin,curves_end) <<"!!\n";
+    //m_xcurves.reserve(std::distance(curves_begin,curves_end));
     for(CurveInputIterator iter = curves_begin; iter != curves_end; ++iter)
     {
-      m_traits->curve_make_x_monotone(*iter, std::back_inserter(m_xcurves));
+      m_traits.curve_make_x_monotone(*iter, std::back_inserter(m_xcurves));
     }
     m_num_of_subCurves = m_xcurves.size();
     m_subCurves = m_subCurveAlloc.allocate(m_num_of_subCurves);
@@ -219,9 +222,12 @@ public:
   void init(CurveInputIterator curves_begin, CurveInputIterator curves_end,
             XCurveInputIterator xcurves_begin, XCurveInputIterator xcurves_end)
   {
+   /* std::vector<X_monotone_curve_2> m_xcurves;
+    m_xcurves.reserve(std::distance(curves_begin,curves_end) +
+                      std::distance(xcurves_begin,xcurves_end));  */                                                           
     for(CurveInputIterator iter = curves_begin; iter != curves_end; ++iter)
     {
-      m_traits->curve_make_x_monotone(*iter, std::back_inserter(m_xcurves));
+      m_traits.curve_make_x_monotone(*iter, std::back_inserter(m_xcurves));
     }
     std::copy(xcurves_begin, xcurves_end, std::back_inserter(m_xcurves));
     m_num_of_subCurves = m_xcurves.size();
@@ -330,12 +336,12 @@ public:
         const X_monotone_curve_2 &lastCurve = leftCurve->get_last_curve();
         if ( leftCurve->is_source_left_to_target() ) 
         {
-          m_traits->curve_split(lastCurve, a, b, m_currentEvent->get_point());
+          m_traits.curve_split(lastCurve, a, b, m_currentEvent->get_point());
           m_visitor->add_subcurve(a, leftCurve);
         }
         else
         {
-          m_traits->curve_split(lastCurve, b, a, m_currentEvent->get_point());
+          m_traits.curve_split(lastCurve, b, a, m_currentEvent->get_point());
           m_visitor->add_subcurve(a, leftCurve);
         }
         leftCurve->set_last_curve(b);
@@ -363,7 +369,7 @@ public:
     while ( leftCurveIter != m_currentEvent->left_curves_end() )  
     {
       if( (*leftCurveIter)->get_overlap_subcurve() != NULL &&
-           m_traits->compare_xy(
+           m_traits.compare_xy(
             (*leftCurveIter)->get_overlap_subcurve()->get_left_end(),
              m_currentEvent->get_point()) == SMALLER)
       {
@@ -377,7 +383,7 @@ public:
     StatusLineIter slIter = curve->get_hint();
     CGAL_assertion(*slIter == curve);
     ++slIter;
-    for(;slIter != m_statusLine->end(); ++slIter)
+    for(;slIter != m_statusLine.end(); ++slIter)
     {
       if( std::find(m_currentEvent->left_curves_begin(),
                     m_currentEvent->left_curves_end(),
@@ -387,7 +393,7 @@ public:
     end = slIter;
 
     slIter = curve->get_hint();
-    for(;slIter != m_statusLine->begin(); --slIter)
+    for(;slIter != m_statusLine.begin(); --slIter)
     {
       if(std::find(m_currentEvent->left_curves_begin(),
                    m_currentEvent->left_curves_end(),
@@ -441,7 +447,7 @@ public:
       SL_DEBUG(std::cout << " - handling special case " << std::endl;)
                                                      
       const std::pair<StatusLineIter, bool>& res =
-        m_statusLine->lower_bound(m_currentEvent->get_point(), m_statusLineCurveLess);
+        m_statusLine.lower_bound(m_currentEvent->get_point(), m_statusLineCurveLess);
       m_status_line_insert_hint = res.first;
 
       if(res.second) // indicates that current event point starts at the 
@@ -455,14 +461,14 @@ public:
         X_monotone_curve_2 a,b;
         if ( sc->is_source_left_to_target() )
         {
-          m_traits->curve_split(last_curve, a, b,m_currentEvent->get_point());
+          m_traits.curve_split(last_curve, a, b,m_currentEvent->get_point());
         }
         else
         {
-          m_traits->curve_split(last_curve, b, a, m_currentEvent->get_point());
+          m_traits.curve_split(last_curve, b, a, m_currentEvent->get_point());
         }
         ++m_status_line_insert_hint; 
-        m_statusLine->remove_at(res.first);
+        m_statusLine.remove_at(res.first);
         if(!is_overlap)
         {
           ++numRightCurves;
@@ -480,7 +486,7 @@ public:
                );
 
       StatusLineIter slIter = 
-        m_statusLine->insert_predecessor(m_status_line_insert_hint, 
+        m_statusLine.insert_predecessor(m_status_line_insert_hint, 
                                 *(m_currentEvent->right_curves_begin()));
       
       (*(m_currentEvent->right_curves_begin()))->set_hint(slIter); 
@@ -488,18 +494,18 @@ public:
       SL_DEBUG(PrintStatusLine(););
      
       // if this is the only curve on the status line, nothing else to do
-      if ( m_statusLine->size() == 1 )
+      if ( m_statusLine.size() == 1 )
         return;
 
       StatusLineIter prev = slIter;
       StatusLineIter next = slIter;
       ++next;
-      if ( slIter != m_statusLine->begin() )
+      if ( slIter != m_statusLine.begin() )
       {
         --prev;
         intersect(*prev, *(m_currentEvent->right_curves_begin()));
       }
-      if ( next != m_statusLine->end() )
+      if ( next != m_statusLine.end() )
       { 
         intersect(*(m_currentEvent->right_curves_begin()), *next);
       } 
@@ -511,12 +517,12 @@ public:
       EventCurveIter rightCurveEnd = m_currentEvent->right_curves_end();
       PRINT_INSERT(*firstOne);
 
-      StatusLineIter slIter = m_statusLine->insert_predecessor(m_status_line_insert_hint, 
+      StatusLineIter slIter = m_statusLine.insert_predecessor(m_status_line_insert_hint, 
                                                     *firstOne);
       ((Subcurve*)(*firstOne))->set_hint(slIter);
         
       SL_DEBUG(PrintStatusLine(););
-      if ( slIter != m_statusLine->begin() )
+      if ( slIter != m_statusLine.begin() )
       { 
         //  get the previous curve in the y-str
         StatusLineIter prev = slIter; --prev;
@@ -528,7 +534,7 @@ public:
       while ( currentOne != rightCurveEnd )
       {
         PRINT_INSERT(*currentOne);
-        slIter = m_statusLine->insert_predecessor(m_status_line_insert_hint, *currentOne);
+        slIter = m_statusLine.insert_predecessor(m_status_line_insert_hint, *currentOne);
         ((Subcurve*)(*currentOne))->set_hint(slIter);
           
         SL_DEBUG(PrintStatusLine(););
@@ -541,7 +547,7 @@ public:
         
       SL_DEBUG(PrintStatusLine(););
       StatusLineIter next = slIter; ++next;
-      if ( next != m_statusLine->end() )
+      if ( next != m_statusLine.end() )
         intersect( *prevOne,*next);
     }
   }
@@ -558,7 +564,7 @@ public:
       
        X_monotone_curve_2 overlap_cv;
        Object cv_obj =
-        m_traits->nearest_intersection_to_right(curve->get_last_curve(),
+        m_traits.nearest_intersection_to_right(curve->get_last_curve(),
                                                 (*iter)->get_last_curve(), 
                                                 event->get_point());
       if (CGAL::assign(overlap_cv, cv_obj))
@@ -570,11 +576,11 @@ public:
          m_overlap_subCurves.push_back(overlap_sc);
          
          //get the right end of overlap_cv
-         Point_2 end_overlap = m_traits->curve_target(overlap_cv);
-         if(m_traits->compare_xy(end_overlap,
-                                 m_traits->curve_source(overlap_cv)) == SMALLER)
+         Point_2 end_overlap = m_traits.curve_target(overlap_cv);
+         if(m_traits.compare_xy(end_overlap,
+                                 m_traits.curve_source(overlap_cv)) == SMALLER)
          {
-           end_overlap = m_traits->curve_source(overlap_cv);
+           end_overlap = m_traits.curve_source(overlap_cv);
          }
  
          //find the event assiciated with end_overlap point (right end point)
@@ -625,7 +631,7 @@ public:
 protected:
 
   /*! a pointer to a traits object */
-  Traits *m_traits;
+  Traits m_traits;
 
   /*! an object that holds a static trait object 
    *  to be used by events and subcurves
@@ -634,7 +640,7 @@ protected:
 
   /*! an indication to whether the traits should be deleted in the destructor
    */
-  bool m_traitsOwner;
+  //bool m_traitsOwner;
 
   /*! a pointer to StatusLineCurveLess (comprasion functor) */
   StatusLineCurveLess *m_statusLineCurveLess;
@@ -646,7 +652,11 @@ protected:
   Subcurve *m_subCurves;
 
   /*! The status line (Y-str) */
-  StatusLine *m_statusLine;
+  StatusLine m_statusLine;
+
+ 
+
+
  
   /*! if non x-monotone are specified, this hold the x-monotone 
     curves created when splitting them into x-monotone curves. */
@@ -709,7 +719,7 @@ Sweep_line_2_impl<SweepLineTraits_2,SweepEvent,CurveWrap,SweepVisitor,
                   Allocator>::
 ~Sweep_line_2_impl() 
 {
-  if ( m_traitsOwner ) delete m_traits;
+  //if ( m_traitsOwner ) delete m_traits;
   
   for(unsigned int i=0 ; i < m_num_of_subCurves; ++i)
     m_subCurveAlloc.destroy(m_subCurves+i);
@@ -725,7 +735,7 @@ Sweep_line_2_impl<SweepLineTraits_2,SweepEvent,CurveWrap,SweepVisitor,
     m_subCurveAlloc.deallocate(*itr, 1);
   }
   delete m_queue;
-  delete m_statusLine;
+  //delete m_statusLine;
 }
 
 
@@ -750,13 +760,13 @@ init_curve(X_monotone_curve_2 &curve,unsigned int j)
   (m_subCurves+j)->init(curve);
  
   const Point_2 &left_end = ((m_subCurves+j)->is_source_left_to_target() ?
-    m_traits->curve_source(curve) :
-    m_traits->curve_target(curve));
+    m_traits.curve_source(curve) :
+    m_traits.curve_target(curve));
 
 
   const Point_2 &right_end = ((m_subCurves+j)->is_source_left_to_target() ?
-    m_traits->curve_target(curve) :
-    m_traits->curve_source(curve));
+    m_traits.curve_target(curve) :
+    m_traits.curve_source(curve));
     
 
     //handle the right end of the curve
@@ -842,13 +852,13 @@ remove_curve_from_status_line(Subcurve *leftCurve, bool remove_for_good)
 
   if(! remove_for_good)
   {
-    m_statusLine->remove_at(sliter);
+    m_statusLine.remove_at(sliter);
     SL_DEBUG(std::cout << "remove_curve_from_status_line Done\n";)
     return;
   }
 
-  CGAL_assertion(sliter!=m_statusLine->end());
-  if (sliter != m_statusLine->begin() && sliter != m_statusLine->maximum()) 
+  CGAL_assertion(sliter!=m_statusLine.end());
+  if (sliter != m_statusLine.begin() && sliter != m_statusLine.maximum()) 
   {
     StatusLineIter prev = sliter; --prev;
     StatusLineIter next = sliter; ++next;
@@ -856,7 +866,7 @@ remove_curve_from_status_line(Subcurve *leftCurve, bool remove_for_good)
     // intersect *next with  *prev 
     intersect(*prev, *next);
   }
-  m_statusLine->remove_at(sliter);
+  m_statusLine.remove_at(sliter);
   SL_DEBUG(std::cout << "remove_curve_from_status_line Done\n";)
 } 
 
@@ -893,7 +903,7 @@ intersect(Subcurve *c1, Subcurve *c2)
   CGAL_assertion(c1 != c2);
   
   Object res =
-    m_traits->nearest_intersection_to_right(c1->get_last_curve(),
+    m_traits.nearest_intersection_to_right(c1->get_last_curve(),
                                             c2->get_last_curve(), 
                                             m_currentEvent->get_point());
   if (!res.is_empty())
@@ -904,9 +914,9 @@ intersect(Subcurve *c1, Subcurve *c2)
       X_monotone_curve_2 cv;
       if (CGAL::assign(cv, res))
       {
-        xp = m_traits->curve_source(cv);
-        Point_2 xp1 = m_traits->curve_target(cv);
-        if ( m_traits->compare_xy(xp1, xp) == LARGER )
+        xp = m_traits.curve_source(cv);
+        Point_2 xp1 = m_traits.curve_target(cv);
+        if ( m_traits.compare_xy(xp1, xp) == LARGER )
           xp = xp1;
         SL_DEBUG(std::cout << "overlap detected\n";)
       }
