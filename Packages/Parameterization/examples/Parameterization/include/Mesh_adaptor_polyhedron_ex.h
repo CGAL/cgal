@@ -192,7 +192,10 @@ public:
 
 	// Get the number of vertices of the mesh
 	int  count_mesh_vertices () const {
-		return m_mesh_vertices_count;
+		int index = 0;
+		for (Vertex_const_iterator it = mesh_vertices_begin(); it != mesh_vertices_end(); it++) 
+			index++;
+		return index;
 	}
 
 	// Index vertices of the mesh for 0 to count_mesh_vertices()-1
@@ -353,13 +356,10 @@ public:
 	// Get/set vertex index (stored in "main" halfedge)
 	int  get_vertex_index (Vertex_const_handle adaptor_vertex) const {
 		assert(is_valid(adaptor_vertex));
-		int index = adaptor_vertex->index();		
-		assert(index >= 0 && index < m_mesh_vertices_count);
-		return index;
+		return adaptor_vertex->index();		
 	}
 	void  set_vertex_index (Vertex_handle adaptor_vertex, int index)  {
 		assert(is_valid(adaptor_vertex));
-		assert(index >= 0 && index < m_mesh_vertices_count);
 		adaptor_vertex->index(index);	
 	}
 
@@ -412,7 +412,6 @@ private:
 	{
 		assert(mesh != NULL);
 		m_mesh = mesh;
-		m_mesh_vertices_count = 0;	// not yet initialized
 
 #ifndef NDEBUG
 		// Index Polyhedron_ex vertices to ease debugging
@@ -465,11 +464,6 @@ private:
 
 		// Set seaming flag of all halfedges to INNER, BORDER and OUTER wrt the boundary m_boundary
 		flag_halfedges_seaming();
-
-		// Count the number of vertices of the mesh (must be done after flagging the halfedges)
-		m_mesh_vertices_count = 0;
-		for (Vertex_iterator it = mesh_vertices_begin(); it != mesh_vertices_end(); it++) 
-			m_mesh_vertices_count++;
 	}
 
 	// Set seaming flag of all halfedges to INNER, BORDER and OUTER wrt the boundary m_boundary
@@ -704,7 +698,6 @@ private:
 private:
 	Polyhedron_ex*	m_mesh;							// The adapted mesh 
 	std::list<Halfedge_handle> m_boundary;			// Inner halfedges of the boundary of a topological disc inside m_mesh
-	int m_mesh_vertices_count;						// Number of adaptor vertices of the mesh
 
 
 // Private types
