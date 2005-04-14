@@ -103,24 +103,24 @@ bool Two_vertices_parametizer_3<MeshAdaptor_3>::parameterize_border (MeshAdaptor
 
 	std::cerr << "  map 2 vertices...";
 
-	// Get surface's bounding box
-	double xmin = DBL_MAX ;
-	double ymin = DBL_MAX ;
-	double zmin = DBL_MAX ;
-	double xmax = DBL_MIN ;
-	double ymax = DBL_MIN ;
-	double zmax = DBL_MIN ;
+	// Get mesh's bounding box
+    double xmin =  1e30 ;
+    double ymin =  1e30 ;
+    double zmin =  1e30 ;
+    double xmax = -1e30 ;
+    double ymax = -1e30 ;
+    double zmax = -1e30 ;
 	for (it = mesh->mesh_vertices_begin(); it != mesh->mesh_vertices_end(); it++)
 	{
 		Point_3 position = mesh->get_vertex_position(it);
 
 		xmin = std::min(position.x(), xmin) ;
-		ymin = std::min(position.y(), ymin) ;
-		zmin = std::min(position.z(), zmin) ;
+		ymin = std::min(position.y(), ymin) ;		// LS 04/2005: was ", xmin)"
+		zmin = std::min(position.z(), zmin) ;		// LS 04/2005: was ", xmin)"
 
-		xmax = std::max(position.x(), xmax) ;
-		ymax = std::max(position.y(), ymax) ;
-		zmax = std::max(position.z(), zmax) ;
+		xmax = std::max(position.x(), xmax) ;		// LS 04/2005: was ", xmin)"
+		ymax = std::max(position.y(), ymax) ;		// LS 04/2005: was ", xmin)"
+		zmax = std::max(position.z(), zmax) ;		// LS 04/2005: was ", xmin)"
 	}
 
 	// Find longest bounding box axes
@@ -144,7 +144,7 @@ bool Two_vertices_parametizer_3<MeshAdaptor_3>::parameterize_border (MeshAdaptor
 			longest_axis        = Z_AXIS; 
 			second_longest_axis = X_AXIS;
 		}
-	} else if(dz < dx && dz < dy) {
+		} else { // (dz < dx && dz < dy)
 		if(dx > dy) {
 			longest_axis        = X_AXIS; 
 			second_longest_axis = Y_AXIS;
@@ -213,7 +213,7 @@ bool Two_vertices_parametizer_3<MeshAdaptor_3>::parameterize_border (MeshAdaptor
 		double u = position_as_vector * V1 ;	
 		double v = position_as_vector * V2 ;
 
-		// convert to unit square coordinates
+		// LS 04/2005: convert to unit square coordinates
 		assert(V1_max > V1_min);
 		assert(V2_max > V2_min);
 		u = (u - V1_min) / (V1_max - V1_min);		
@@ -233,9 +233,9 @@ bool Two_vertices_parametizer_3<MeshAdaptor_3>::parameterize_border (MeshAdaptor
 	mesh->set_vertex_parameterized(vxmin, true) ;
 	mesh->set_vertex_parameterized(vxmax, true) ;
 
-  std::cerr << "done" << std::endl;
+	std::cerr << "done" << std::endl;
 
-  return true;
+	return true;
 }
 
 
