@@ -1017,8 +1017,8 @@ Packages/Manual_tools/src/latex_converter_config/gif/cc_Diamond.gif -text svneol
 Packages/Manual_tools/src/latex_converter_config/gif/cc_Downarrow.gif -text svneol=unset#unset
 Packages/Manual_tools/src/latex_converter_config/gif/cc_Enum.gif -text svneol=unset#unset
 Packages/Manual_tools/src/latex_converter_config/gif/cc_Function.gif -text svneol=unset#unset
-Packages/Manual_tools/src/latex_converter_config/gif/cc_FunctionObjectClass.gif -text svneol=unset#unset
-Packages/Manual_tools/src/latex_converter_config/gif/cc_FunctionObjectConcept.gif -text svneol=unset#unset
+Packages/Manual_tools/src/latex_converter_config/gif/cc_FunctionObjectClass.gif -text
+Packages/Manual_tools/src/latex_converter_config/gif/cc_FunctionObjectConcept.gif -text
 Packages/Manual_tools/src/latex_converter_config/gif/cc_Gamma.gif -text svneol=unset#unset
 Packages/Manual_tools/src/latex_converter_config/gif/cc_Im.gif -text svneol=unset#unset
 Packages/Manual_tools/src/latex_converter_config/gif/cc_Join.gif -text svneol=unset#unset
