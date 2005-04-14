@@ -115,47 +115,91 @@ bool Two_vertices_parametizer_3<MeshAdaptor_3>::parameterize_border (MeshAdaptor
 		Point_3 position = mesh->get_vertex_position(it);
 
 		xmin = std::min(position.x(), xmin) ;
-		ymin = std::min(position.y(), xmin) ;
-		zmin = std::min(position.z(), xmin) ;
+		ymin = std::min(position.y(), ymin) ;
+		zmin = std::min(position.z(), zmin) ;
 
-		xmax = std::max(position.x(), xmin) ;
-		ymax = std::max(position.y(), xmin) ;
-		zmax = std::max(position.z(), xmin) ;
+		xmax = std::max(position.x(), xmax) ;
+		ymax = std::max(position.y(), ymax) ;
+		zmax = std::max(position.z(), zmax) ;
 	}
 
-	// Find shortest bounding box axis
-	Vector_3 V1,V2 ;
+	// Find longest bounding box axes
 	double dx = xmax - xmin ;
 	double dy = ymax - ymin ;
 	double dz = zmax - zmin ;
+	enum { X_AXIS, Y_AXIS, Z_AXIS } longest_axis, second_longest_axis;
 	if(dx < dy && dx < dz) {
 		if(dy > dz) {
-			V1 = Vector_3(0,1,0) ;
-			V2 = Vector_3(0,0,1) ;
+			longest_axis        = Y_AXIS; 
+			second_longest_axis = Z_AXIS;
 		} else {
-			V2 = Vector_3(0,1,0) ;
-			V1 = Vector_3(0,0,1) ;
+			longest_axis        = Z_AXIS; 
+			second_longest_axis = Y_AXIS;
 		}
 	} else if(dy < dx && dy < dz) {
 		if(dx > dz) {
-			V1 = Vector_3(1,0,0) ;
-			V2 = Vector_3(0,0,1) ;
+			longest_axis        = X_AXIS; 
+			second_longest_axis = Z_AXIS;
 		} else {
-			V2 = Vector_3(1,0,0) ;
-			V1 = Vector_3(0,0,1) ;
+			longest_axis        = Z_AXIS; 
+			second_longest_axis = X_AXIS;
 		}
 	} else if(dz < dx && dz < dy) {
 		if(dx > dy) {
-			V1 = Vector_3(1,0,0) ;
-			V2 = Vector_3(0,1,0) ;
+			longest_axis        = X_AXIS; 
+			second_longest_axis = Y_AXIS;
 		} else {
-			V2 = Vector_3(1,0,0) ;
-			V1 = Vector_3(0,1,0) ;
+			longest_axis        = Y_AXIS; 
+			second_longest_axis = X_AXIS;
 		}
 	}
+	Vector_3 V1,				// bounding box' longest axis
+		     V2 ;				// bounding box' 2nd longest axis
+	double V1_min, V1_max;		// bounding box' dimensions along V1
+	double V2_min, V2_max;		// bounding box' dimensions along V2
+	switch (longest_axis)
+	{
+	case X_AXIS:
+		V1 = Vector_3(1,0,0) ;
+		V1_min = xmin; 
+		V1_max = xmax; 
+		break;
+	case Y_AXIS:
+		V1 = Vector_3(0,1,0) ;
+		V1_min = ymin; 
+		V1_max = ymax; 
+		break;
+	case Z_AXIS:
+		V1 = Vector_3(0,0,1) ;
+		V1_min = zmin; 
+		V1_max = zmax; 
+		break;
+	default:
+		assert(false);
+	}
+	switch (second_longest_axis)
+	{
+	case X_AXIS:
+		V2 = Vector_3(1,0,0) ;
+		V2_min = xmin; 
+		V2_max = xmax; 
+		break;
+	case Y_AXIS:
+		V2 = Vector_3(0,1,0) ;
+		V2_min = ymin; 
+		V2_max = ymax; 
+		break;
+	case Z_AXIS:
+		V2 = Vector_3(0,0,1) ;
+		V2_min = zmin; 
+		V2_max = zmax; 
+		break;
+	default:
+		assert(false);
+	}
 
-	// Project onto shortest bounding box axis,
-	// and mark extrema vertices as "parameterized"
+	// Project onto longest bounding box axes,
+	// Set extrema vertices' (u,v) in unit square and mark them as "parameterized"
 	Vertex_handle vxmin = NULL ;
 	double  umin  = DBL_MAX ;
 	Vertex_handle vxmax = NULL ;
@@ -165,9 +209,17 @@ bool Two_vertices_parametizer_3<MeshAdaptor_3>::parameterize_border (MeshAdaptor
 		Point_3  position = mesh->get_vertex_position(it);
 		Vector_3 position_as_vector = position - Point_3(0,0,0);
 
-		double u = position_as_vector * V1 ;	/* dot product */
-		double v = position_as_vector * V2 ;	/* dot product */
-		mesh->set_vertex_uv(it, Point_2(u,v)) ;	// LS 02/05: I guess that this is useful only for *vxmin and *vxmax
+		// coordinate along the bounding box' main axes
+		double u = position_as_vector * V1 ;	
+		double v = position_as_vector * V2 ;
+
+		// convert to unit square coordinates
+		assert(V1_max > V1_min);
+		assert(V2_max > V2_min);
+		u = (u - V1_min) / (V1_max - V1_min);		
+		v = (v - V2_min) / (V2_max - V2_min);	
+
+		mesh->set_vertex_uv(it, Point_2(u,v)) ;	// useful only for vxmin and vxmax
 
 		if(u < umin) {
 			vxmin = it ;
