@@ -49,6 +49,9 @@ class QPE_transform_iterator_1;
 template < class Iterator1, class Iterator2, class Operation >
 class QPE_transform_iterator_2;
 
+template < class T>
+struct QPE_vector_const_iterator;
+
 // =====================
 // class implementations
 // =====================
@@ -87,6 +90,7 @@ class QPE_const_value_iterator {
 
     // equality operator
     bool       operator == ( const Self& x) const { return ( index==x.index); }
+    bool       operator != ( const Self& x) const { return ( index!=x.index); }
 
     // forward operations
     // ------------------
@@ -101,8 +105,8 @@ class QPE_const_value_iterator {
     // random access operations
     // ------------------------
     // access
-    Ref        operator [] ( Diff i)       { return value; }
-    const Ref  operator [] ( Diff i) const { return value; }
+    Ref        operator [] ( Diff i)       { return value;}
+    const Ref  operator [] ( Diff i) const { return value;}
 
     // less operator
     bool       operator <  ( const Self& x) const { return ( index < x.index);}
@@ -126,7 +130,9 @@ class QPE_const_value_iterator {
 // ------------------------
 // QPE_transform_iterator_1
 // ------------------------
-template < class Iterator, class Operation >
+template < class Iterator, class Operation = 
+QPE_vector_const_iterator<typename std::iterator_traits<Iterator>::value_type > 
+  >
 class QPE_transform_iterator_1 {
 
   public:
@@ -281,6 +287,20 @@ transformer( const Iterator1& it1, const Iterator2& it2, const Operation& op)
 {
     return QPE_transform_iterator_2<Iterator1,Iterator2,Operation>(it1,it2,op);
 }
+
+//--------------------
+// QPE_vector_const_iterator
+//--------------------
+template < class T>
+struct QPE_vector_const_iterator {
+  typedef typename T::const_iterator result_type;
+  typedef CGAL::Arity_tag<1> Arity;
+  result_type operator () (const T& v) const
+  {
+  	return v.begin();
+  } 
+};	
+
 
 CGAL_END_NAMESPACE
 
