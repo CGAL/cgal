@@ -37,7 +37,8 @@ class Sweep_line_points_visitor
                             Event,
                             Subcurve,
                             Self,
-                            CGAL_ALLOCATOR(int)>              Sweep_line;
+                            CGAL_ALLOCATOR(int)>           Sweep_line;
+  typedef typename Sweep_line::StatusLineIter              StatusLineIter;
 
    
   typedef typename Traits::X_monotone_curve_2                 X_monotone_curve_2;
@@ -60,7 +61,7 @@ public:
        
   void before_handle_event(Event* event){}
 
-  bool after_handle_event(Event* event)
+  bool after_handle_event(Event* event,StatusLineIter iter, bool flag)
   {
     if(m_includeEndPoints || is_internal_intersection_point(event))
       *m_out++ = event->get_point();

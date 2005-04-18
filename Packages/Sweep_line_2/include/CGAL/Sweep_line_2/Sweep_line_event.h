@@ -214,14 +214,60 @@ public:
 
   /*! Returns true if at least one intersecting curve is defined to 
       the left of the point. */
-  bool has_left_curves() {
+  bool has_left_curves() const{
     return !m_leftCurves.empty();
+  }
+
+  /*! Returns true if at least one intersecting curve is defined to 
+      the right of the point. */
+  bool has_right_curves() const{
+    return !m_rightCurves.empty();
   }
 
   /*! Returns the actual point of the event */
   const Point_2 &get_point() const {
     return m_point;
   }
+
+
+  ///*! relocate a left curve: relocate i before pos */
+  //void relocate_left_curve(SubCurveIter pos, SubCurveIter i)
+  //{
+  //  m_leftCurves.splice(pos, m_leftCurves, i);
+  //}
+
+  //void resize_left_curves(int size)
+  //{
+  //  m_leftCurves.resize(size);
+  //}
+  //  
+  ////remove all occurances of sc after iterator 'after'
+  //void remove_left_curve(SubCurveIter after, SubCurve* sc)
+  //{
+  //  SubCurveIter iter = ++after;
+  //  while( iter != m_leftCurves.end())
+  //  { 
+  //    if(*iter == sc)
+  //    {
+  //     iter = m_leftCurves.erase(iter); //iter is implicitly incremented
+  //    }
+  //    else
+  //      ++iter;
+  //  }
+  //}
+
+  template <class InputIterator>
+  void replace_left_curves(InputIterator begin, InputIterator end)
+  {
+    SubCurveIter left_iter = m_leftCurves.begin();
+    for(InputIterator itr = begin; itr != end; ++itr , ++left_iter)
+    {
+      *left_iter = *itr;
+    }
+    m_leftCurves.erase(left_iter, m_leftCurves.end());
+  }
+
+
 
  
   

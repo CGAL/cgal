@@ -23,6 +23,7 @@
 
 #include <CGAL/assertions.h>
 #include <CGAL/Sweep_line_2/Sweep_line_traits.h>
+#include <CGAL/enum.h>
 
 CGAL_BEGIN_NAMESPACE
 

@@ -28,16 +28,18 @@ CGAL_BEGIN_NAMESPACE
 template <class Traits,class OutputIerator>
 class Sweep_line_subcurves_visitor 
 {
-  typedef Sweep_line_subcurves_visitor<Traits,OutputIerator>         Self;
+  typedef Sweep_line_subcurves_visitor<Traits,OutputIerator>    Self;
   typedef Sweep_line_subcurve<Traits>                           Subcurve;
-  typedef Sweep_line_event<Traits, Subcurve>                   Event;
-  typedef typename Traits::X_monotone_curve_2                        X_monotone_curve_2;
+  typedef Sweep_line_event<Traits, Subcurve>                    Event;
+  typedef typename Traits::X_monotone_curve_2                   X_monotone_curve_2;
 
   typedef Sweep_line_2_impl<Traits,
                             Event,
                             Subcurve,
                             Self,
-                            CGAL_ALLOCATOR(int)>                     Sweep_line;
+                            CGAL_ALLOCATOR(int)>                Sweep_line;
+
+  typedef typename Sweep_line::StatusLineIter                   StatusLineIter;
 
 
 
@@ -56,7 +58,7 @@ public:
        
   void before_handle_event(Event* event){}
 
-  bool after_handle_event(Event* event)
+  bool after_handle_event(Event* event,StatusLineIter iter, bool flag)
   {
     return true;
   }

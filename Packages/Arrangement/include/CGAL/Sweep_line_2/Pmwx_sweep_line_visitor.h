@@ -43,7 +43,8 @@ class Pmwx_sweep_line_visitor
                             Event,
                             Subcurve,
                             Self,
-                            CGAL_ALLOCATOR(int)>                   Sweep_line;
+                            CGAL_ALLOCATOR(int)>           Sweep_line;
+  typedef typename Sweep_line::StatusLineIter              StatusLineIter;
 
   typedef Pmwx_insert_info<Halfedge_handle>                        PmwxInsertInfo;
   typedef std::list<Subcurve *>                                    SubcurveContainer;
@@ -67,7 +68,7 @@ public:
     m_currentEvent = event;
   }
 
-  bool after_handle_event(Event* event)
+  bool after_handle_event(Event* event, StatusLineIter iter, bool flag)
   {
     for(SubCurveIter itr = event->left_curves_begin();
         itr != event->left_curves_end();
