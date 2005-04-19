@@ -109,9 +109,9 @@ public:
 //
 // Implementation note: 
 // This method is a copy of Bruno Levy's LSCM::project() method in lscm_with_generic_api.cpp
-template <class MeshAdaptor_3>
+template <class Adaptor>
 inline bool
-Two_vertices_parametizer_3<MeshAdaptor_3>::parameterize_border(MeshAdaptor_3* mesh)
+Two_vertices_parametizer_3<Adaptor>::parameterize_border(Adaptor* mesh)
 {
 	Vertex_iterator it;
 

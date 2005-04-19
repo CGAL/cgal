@@ -32,14 +32,16 @@ CGAL_BEGIN_NAMESPACE
 // Implement Tutte's barycentric mapping
 // 1 to 1 mapping is guaranteed if surface's border is mapped to a convex polygon
 
-template <class MeshAdaptor_3, // 3D surface
-		  class BorderParametizer_3 
+template 
+<
+	class MeshAdaptor_3,			  // 3D surface mesh
+	class BorderParametizer_3		  // Strategy to parameterize the surface border
 				= Circular_border_parametizer_3<MeshAdaptor_3>,	
-							// Class to map the surface's border onto a 2D space
-		  class SparseLinearAlgebraTraits_d 
-				= OpenNL::SymmetricLinearSolverTraits<typename MeshAdaptor_3::NT> >	
-							// CAUTION: the sparse linear system is symmetric iff
-							// Fixed_border_parametizer_3 removes fixed vertices
+	class SparseLinearAlgebraTraits_d // Traits class to solve a sparse linear system
+				= OpenNL::SymmetricLinearSolverTraits<typename MeshAdaptor_3::NT>
+									  // CAUTION: the sparse linear system is symmetric iff
+									  // Fixed_border_parametizer_3 removes fixed vertices
+>			
 class Barycentric_mapping_parametizer_3 
 	: public Fixed_border_parametizer_3<MeshAdaptor_3, 
 										BorderParametizer_3, 

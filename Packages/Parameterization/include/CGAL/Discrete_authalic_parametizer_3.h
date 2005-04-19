@@ -32,13 +32,14 @@ CGAL_BEGIN_NAMESPACE
 // 1 to 1 mapping is guaranteed if surface's border is mapped onto a convex polygon
 // This is an authalic parameterization, i.e. it attempts to preserve areas
 
-template <class MeshAdaptor_3, // 3D surface
-		  class BorderParametizer_3 
+template 
+<
+	class MeshAdaptor_3,			  // 3D surface mesh
+	class BorderParametizer_3		  // Strategy to parameterize the surface border
 				= Circular_border_parametizer_3<MeshAdaptor_3>,	
-							// Class to map the surface's border onto a 2D space
-		  class SparseLinearAlgebraTraits_d 
-				= OpenNL::DefaultLinearSolverTraits<typename MeshAdaptor_3::NT> >	
-							// Traits class for solving a general sparse linear system 
+	class SparseLinearAlgebraTraits_d // Traits class to solve a sparse linear system
+				= OpenNL::DefaultLinearSolverTraits<typename MeshAdaptor_3::NT> 
+>			
 class Discrete_authalic_parametizer_3 
 	: public Fixed_border_parametizer_3<MeshAdaptor_3, 
 										BorderParametizer_3, 

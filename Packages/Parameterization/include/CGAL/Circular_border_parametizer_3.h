@@ -106,10 +106,10 @@ private:
 //
 
 // compute  total length of boundary
-template <class MeshAdaptor_3>
+template <class Adaptor>
 inline 
-double Circular_border_parametizer_3<MeshAdaptor_3>::compute_boundary_length(
-														const MeshAdaptor_3& mesh)
+double Circular_border_parametizer_3<Adaptor>::compute_boundary_length(
+														const Adaptor& mesh)
 {
 	double len = 0.0;
 	for(Border_vertex_const_iterator it = mesh.mesh_border_vertices_begin(); 
@@ -135,10 +135,10 @@ double Circular_border_parametizer_3<MeshAdaptor_3>::compute_boundary_length(
 // Assign to mesh's border vertices a 2D position (ie a (u,v) pair) 
 // on border's shape. Mark them as "parameterized".
 // Return false on error
-template <class MeshAdaptor_3>
+template <class Adaptor>
 inline 
-bool Circular_border_parametizer_3<MeshAdaptor_3>::parameterize_border (
-														MeshAdaptor_3* mesh)
+bool Circular_border_parametizer_3<Adaptor>::parameterize_border (
+														Adaptor* mesh)
 {
 	CGAL_parameterization_assertion(mesh != NULL);
 

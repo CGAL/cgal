@@ -119,10 +119,10 @@ private:
 //
 
 // compute  total length of boundary
-template <class MeshAdaptor_3>
+template <class Adaptor>
 inline 
-double Square_border_parametizer_3<MeshAdaptor_3>::compute_boundary_length(
-														const MeshAdaptor_3& mesh)
+double Square_border_parametizer_3<Adaptor>::compute_boundary_length(
+														const Adaptor& mesh)
 {
 	double len = 0.0;
 	for(Border_vertex_const_iterator it = mesh.mesh_border_vertices_begin(); 
@@ -148,10 +148,10 @@ double Square_border_parametizer_3<MeshAdaptor_3>::compute_boundary_length(
 // Assign to mesh's border vertices a 2D position (ie a (u,v) pair) 
 // on border's shape. Mark them as "parameterized".
 // Return false on error
-template <class MeshAdaptor_3>
+template <class Adaptor>
 inline 
-bool Square_border_parametizer_3<MeshAdaptor_3>::parameterize_border (
-														MeshAdaptor_3* mesh)
+bool Square_border_parametizer_3<Adaptor>::parameterize_border (
+														Adaptor* mesh)
 {
 	CGAL_parameterization_assertion(mesh != NULL);
 
@@ -245,12 +245,12 @@ bool Square_border_parametizer_3<MeshAdaptor_3>::parameterize_border (
 
 // Utility method for parameterize_border()
 // Compute mesh iterator whose offset is closest to 'value'
-template <class MeshAdaptor_3>
+template <class Adaptor>
 inline 
-typename Square_border_parametizer_3<MeshAdaptor_3>::Border_vertex_iterator 
-Square_border_parametizer_3<MeshAdaptor_3>::closest_iterator(MeshAdaptor_3* mesh, 
-															 const Offset_map& offsets, 
-															 double value)
+typename Square_border_parametizer_3<Adaptor>::Border_vertex_iterator 
+Square_border_parametizer_3<Adaptor>::closest_iterator(Adaptor* mesh, 
+													   const Offset_map& offsets, 
+													   double value)
 {
 	Border_vertex_iterator best;
 	double min = DBL_MAX;			// distance for 'best'

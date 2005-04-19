@@ -43,13 +43,17 @@ CGAL_BEGIN_NAMESPACE
 // but 1 to 1 mapping is NOT guaranteed.
 // This is a conformal parameterization, i.e. it attempts to preserve angles. 
 
-template <class MeshAdaptor_3, // 3D surface
-		  class BorderParametizer_3 
+template 
+<
+	class MeshAdaptor_3,			  // 3D surface mesh
+	class BorderParametizer_3		  // Strategy to parameterize the surface border
 				= Two_vertices_parametizer_3<MeshAdaptor_3>,	
-							// Class to map (at least 2) border vertices onto a 2D space
-		  class SparseLinearAlgebraTraits_d 
-				= OpenNL::SymmetricLinearSolverTraits<typename MeshAdaptor_3::NT> >	
-							// Symmetric solver for solving a sparse linear system in the least squares sense
+									  // Class to parameterize 2 border vertices 
+	class SparseLinearAlgebraTraits_d // Traits class to solve a sparse linear system
+				= OpenNL::SymmetricLinearSolverTraits<typename MeshAdaptor_3::NT>
+									  // Symmetric solver for solving a sparse linear 
+									  // system in the least squares sense
+>			
 class LSCM_parametizer_3 
 	: public Parametizer_3<MeshAdaptor_3>
 {
@@ -99,69 +103,81 @@ public:
 	// Constructor
 	// @param border_param	Object that maps (at least 2) border vertices
 	// @param sparse_la		Traits object to access a sparse linear system 
-	LSCM_parametizer_3 (Border_param border_param = Border_param(), 
+	LSCM_parametizer_3(Border_param border_param = Border_param(), 
 						Sparse_LA sparse_la = Sparse_LA()) 
 		: m_borderParametizer(border_param), m_linearAlgebra(sparse_la)
 	{}
 
 	// Default copy constructor and operator =() are fine
 
-	// Compute a 1 to 1 mapping from a triangular 3D surface 'mesh' to a piece of the 2D space. 
+	// Compute a 1 to 1 mapping from a triangular 3D surface 'mesh' 
+	// to a piece of the 2D space. 
 	// The mapping is linear by pieces (linear in each triangle).
 	// The result is the (u,v) pair image of each vertex of the 3D surface. 
 	// 
 	// Preconditions:
 	// * 'mesh' must be a surface with 1 connected component and no hole
 	// * 'mesh' must be a triangular mesh
-	virtual ErrorCode  parameterize (Adaptor* mesh);
+	virtual ErrorCode  parameterize(Adaptor* mesh);
 					
 // Private types
 private:
-	typedef typename OpenNL::LinearSolver<Sparse_LA>		LeastSquaresSolver ;
+	typedef typename OpenNL::LinearSolver<Sparse_LA>		
+											LeastSquaresSolver ;
 					
 // Private operations
 private:
 	// Check parameterize() preconditions:
 	// * 'mesh' must be a surface with 1 connected component and no hole
 	// * 'mesh' must be a triangular mesh
-	virtual ErrorCode  check_parameterize_preconditions (const Adaptor& mesh);
+	virtual ErrorCode  check_parameterize_preconditions(const Adaptor& mesh);
 
-	// Initialize "A*X = B" linear system after (at least 2) border vertices are parameterized
+	// Initialize "A*X = B" linear system after 
+	// (at least 2) border vertices are parameterized
 	//
 	// Preconditions:
 	// * vertices must be indexed
 	// * X and B must be allocated and empty
 	// * (at least 2) border vertices must be parameterized
-	void initialize_system_from_mesh_border(LeastSquaresSolver* solver, const Adaptor& mesh) ;
+	void initialize_system_from_mesh_border(LeastSquaresSolver* solver, 
+											const Adaptor& mesh) ;
 
 	// Utility for setup_triangle_relations():
 	// Computes the coordinates of the vertices of a triangle
 	// in a local 2D orthonormal basis of the triangle's plane.
-	void project_triangle(const Point_3& p0, const Point_3& p1, const Point_3& p2, Point_2* z0, Point_2* z1, Point_2* z2) ;
+	void project_triangle(const Point_3& p0, const Point_3& p1, const Point_3& p2, 
+						  Point_2* z0, Point_2* z1, Point_2* z2) ;
 
 	// Create 2 lines in the linear system per triangle (1 for u, 1 for v)
 	// 
 	// Preconditions:
 	// * vertices must be indexed
-	ErrorCode setup_triangle_relations(LeastSquaresSolver* solver, const Adaptor& mesh, Face_const_handle face) ;
+	ErrorCode setup_triangle_relations(LeastSquaresSolver* solver, 
+									   const Adaptor& mesh, 
+									   Face_const_handle face) ;
 
 	// Copy X coordinates into the (u,v) pair of each vertex
-	void set_mesh_uv_from_system(Adaptor* mesh, const LeastSquaresSolver& solver) ;
+	void set_mesh_uv_from_system(Adaptor* mesh, 
+								 const LeastSquaresSolver& solver) ;
 
 	// Check parameterize() postconditions:
-	// * "A*X = B" system is solvable (in the least squares sense) with a good conditioning
+	// * "A*X = B" system is solvable (in the least squares sense) 
+	//    with a good conditioning
 	// * 3D -> 2D mapping is 1 to 1
-	virtual ErrorCode check_parameterize_postconditions(const Adaptor& mesh, const LeastSquaresSolver& solver);
+	virtual ErrorCode check_parameterize_postconditions(const Adaptor& mesh, 
+													    const LeastSquaresSolver& solver);
 
 	// Check if 3D -> 2D mapping is 1 to 1
-	bool  is_one_to_one_mapping (const Adaptor& mesh, const LeastSquaresSolver& solver);
+	bool  is_one_to_one_mapping(const Adaptor& mesh, 
+								 const LeastSquaresSolver& solver);
 
 // Fields
 private:
 	// Object that maps (at least 2) border vertices onto a 2D space
-		Border_param			m_borderParametizer;
-	// Traits object to solve the "A*X = B" sparse linear system used by parameterization algorithms
-		Sparse_LA	m_linearAlgebra;
+	Border_param	m_borderParametizer;
+
+	// Traits object to solve a sparse linear system 
+	Sparse_LA		m_linearAlgebra;
 };
 
 
@@ -169,7 +185,8 @@ private:
 // Implementation 
 //
 
-// Compute a 1 to 1 mapping from a triangular 3D surface 'mesh' to a piece of the 2D space. 
+// Compute a 1 to 1 mapping from a triangular 3D surface 'mesh' 
+// to a piece of the 2D space. 
 // The mapping is linear by pieces (linear in each triangle).
 // The result is the (u,v) pair image of each vertex of the 3D surface. 
 // 
@@ -184,10 +201,11 @@ private:
 // 3) Construct the LSCM equation with OpenNL
 // 4) Solve the equation with OpenNL
 // 5) Copy OpenNL solution to the u,v coordinates
-template <class MeshAdaptor_3, class BorderParametizer_3, class SparseLinearAlgebraTraits_d>
+template <class Adaptor, class Border_param, class Sparse_LA>
 inline 
-typename Parametizer_3<MeshAdaptor_3>::ErrorCode  
-LSCM_parametizer_3<MeshAdaptor_3, BorderParametizer_3, SparseLinearAlgebraTraits_d>::parameterize (MeshAdaptor_3* mesh)
+typename Parametizer_3<Adaptor>::ErrorCode  
+LSCM_parametizer_3<Adaptor, Border_param, Sparse_LA>::
+parameterize(Adaptor* mesh)
 {
 	CGAL_parameterization_assertion(mesh != NULL);
 
@@ -202,28 +220,39 @@ LSCM_parametizer_3<MeshAdaptor_3, BorderParametizer_3, SparseLinearAlgebraTraits
 	// Index vertices from 0 to nbVertices-1
 	mesh->index_mesh_vertices();
 
-	// Create sparse linear system "A*X = B" of size 2*nbVertices x 2*nbVertices (in fact, we need only 2 lines per triangle x 1 column per vertex)
+	// Create sparse linear system "A*X = B" of size 2*nbVertices x 2*nbVertices 
+	// (in fact, we need only 2 lines per triangle x 1 column per vertex)
 	LeastSquaresSolver solver(2*nbVertices);
 	solver.set_least_squares(true) ;
 	
 	// Mark all vertices as NOT "parameterized"
-	for (Vertex_iterator vertexIt = mesh->mesh_vertices_begin(); vertexIt != mesh->mesh_vertices_end(); vertexIt++)
+	for (Vertex_iterator vertexIt = mesh->mesh_vertices_begin(); 
+		vertexIt != mesh->mesh_vertices_end(); 
+		vertexIt++)
+	{
 		mesh->set_vertex_parameterized(vertexIt, false);
+	}
 
-	// Compute (u,v) for (at least 2) border vertices and mark them as "parameterized"
+	// Compute (u,v) for (at least 2) border vertices 
+	// and mark them as "parameterized"
 	if ( ! m_borderParametizer.parameterize_border(mesh) )
 		return ERROR_NO_SURFACE_MESH;
 
-	// Initialize the "A*X = B" linear system after (at least 2) border vertices parameterization
-	initialize_system_from_mesh_border (&solver, *mesh);
+	// Initialize the "A*X = B" linear system after 
+	// (at least 2) border vertices parameterization
+	initialize_system_from_mesh_border(&solver, *mesh);
 
 	// Fill the matrix for the other vertices
-	fprintf(stderr,"  fill matrix (%d x %d)...", int(2*mesh->count_mesh_faces()), nbVertices);
+	fprintf(stderr,"  fill matrix (%d x %d)...", 
+					  int(2*mesh->count_mesh_faces()), 
+					  nbVertices);
 	solver.begin_system() ;
-	for (Face_iterator faceIt = mesh->mesh_faces_begin(); faceIt != mesh->mesh_faces_end(); faceIt++)
+	for (Face_iterator faceIt = mesh->mesh_faces_begin(); 
+		 faceIt != mesh->mesh_faces_end(); 
+		 faceIt++)
 	{
 		// Create 2 lines in the linear system per triangle (1 for u, 1 for v)
-		status = setup_triangle_relations (&solver, *mesh, faceIt);
+		status = setup_triangle_relations(&solver, *mesh, faceIt);
 		if (status != OK)
 			return status;
 	}
@@ -235,13 +264,14 @@ LSCM_parametizer_3<MeshAdaptor_3, BorderParametizer_3, SparseLinearAlgebraTraits
 	if ( ! solver.solve() )
 	{
 		std::cerr << "error" << std::endl;
-		CGAL_parameterization_postcondition_msg(false, "Parameterization error: cannot solve sparse linear system");
+		CGAL_parameterization_postcondition_msg(false, 
+					"Parameterization error: cannot solve sparse linear system");
 		return ERROR_CANNOT_SOLVE_LINEAR_SYSTEM;	
 	}
 	std::cerr << "ok" << std::endl;
 
 	// Copy X coordinates into the (u,v) pair of each vertex
-	set_mesh_uv_from_system (mesh, solver); 
+	set_mesh_uv_from_system(mesh, solver); 
 
 	// Check postconditions
 	status = check_parameterize_postconditions(*mesh, solver);
@@ -255,12 +285,13 @@ LSCM_parametizer_3<MeshAdaptor_3, BorderParametizer_3, SparseLinearAlgebraTraits
 // Check parameterize() preconditions:
 // * 'mesh' must be a surface with 1 connected component and no hole
 // * 'mesh' must be a triangular mesh
-template <class MeshAdaptor_3, class BorderParametizer_3, class SparseLinearAlgebraTraits_d>
+template <class Adaptor, class Border_param, class Sparse_LA>
 inline 
-typename Parametizer_3<MeshAdaptor_3>::ErrorCode  
-LSCM_parametizer_3<MeshAdaptor_3, BorderParametizer_3, SparseLinearAlgebraTraits_d>::check_parameterize_preconditions (const MeshAdaptor_3& mesh)
+typename Parametizer_3<Adaptor>::ErrorCode  
+LSCM_parametizer_3<Adaptor, Border_param, Sparse_LA>::
+check_parameterize_preconditions(const Adaptor& mesh)
 {
-	ErrorCode status = OK;									// returned value
+	ErrorCode status = OK;					// returned value
 
 	// Allways check that mesh is not empty
 	if (mesh.mesh_vertices_begin() == mesh.mesh_vertices_end())
@@ -270,33 +301,41 @@ LSCM_parametizer_3<MeshAdaptor_3, BorderParametizer_3, SparseLinearAlgebraTraits
 		return status;
 
 	// The whole surface parameterization package is restricted to triangular meshes
-	CGAL_parameterization_expensive_precondition((status = mesh.is_mesh_triangular() ? OK : ERROR_NON_TRIANGULAR_MESH) == OK);
+	CGAL_parameterization_expensive_precondition((status = mesh.is_mesh_triangular() 
+														 ? OK 
+														 : ERROR_NON_TRIANGULAR_MESH) == OK);
 	if (status != OK)
 		return status;
 
 	// The whole package is restricted to surfaces
-	CGAL_parameterization_expensive_precondition((status = (mesh.get_mesh_genus()==0) ? OK : ERROR_NO_SURFACE_MESH) == OK);
+	CGAL_parameterization_expensive_precondition((status = (mesh.get_mesh_genus()==0) 
+														 ? OK 
+														 : ERROR_NO_SURFACE_MESH) == OK);
 	if (status != OK)
 		return status;
 
 	return status;
 }
 
-// Initialize "A*X = B" linear system after (at least 2) border vertices are parameterized
+// Initialize "A*X = B" linear system after 
+// (at least 2) border vertices are parameterized
 //
 // Preconditions:
 // * vertices must be indexed
 // * X and B must be allocated and empty
 // * (at least 2) border vertices must be parameterized
-template <class MeshAdaptor_3, class BorderParametizer_3, class SparseLinearAlgebraTraits_d>
+template <class Adaptor, class Border_param, class Sparse_LA>
 inline 
-void LSCM_parametizer_3<MeshAdaptor_3, BorderParametizer_3, SparseLinearAlgebraTraits_d>::initialize_system_from_mesh_border(LeastSquaresSolver* solver, 
-																															 const MeshAdaptor_3& mesh) 
+void LSCM_parametizer_3<Adaptor, Border_param, Sparse_LA>::
+initialize_system_from_mesh_border(LeastSquaresSolver* solver, 
+								   const Adaptor& mesh) 
 {
 	CGAL_parameterization_assertion(solver != NULL);
 	CGAL_parameterization_assertion(solver != NULL);
 
-	for (Vertex_const_iterator it = mesh.mesh_vertices_begin(); it != mesh.mesh_vertices_end(); it++)
+	for (Vertex_const_iterator it = mesh.mesh_vertices_begin(); 
+		it != mesh.mesh_vertices_end(); 
+		it++)
 	{
 		// Get vertex index in sparse linear system
 		int index = mesh.get_vertex_index(it);
@@ -322,12 +361,14 @@ void LSCM_parametizer_3<MeshAdaptor_3, BorderParametizer_3, SparseLinearAlgebraT
 // Computes the coordinates of the vertices of a triangle
 // in a local 2D orthonormal basis of the triangle's plane.
 //
-// Note: this method is a copy of Bruno Levy's LSCM::project_triangle() method in lscm_with_generic_api.cpp
-template <class MeshAdaptor_3, class BorderParametizer_3, class SparseLinearAlgebraTraits_d>
+// Note: this method is a copy of Bruno Levy's LSCM::project_triangle() 
+// method in lscm_with_generic_api.cpp
+template <class Adaptor, class Border_param, class Sparse_LA>
 inline 
 void 
-LSCM_parametizer_3<MeshAdaptor_3, BorderParametizer_3, SparseLinearAlgebraTraits_d>::project_triangle(const Point_3& p0, const Point_3& p1, const Point_3& p2,
-																									  Point_2* z0, Point_2* z1, Point_2* z2) 
+LSCM_parametizer_3<Adaptor, Border_param, Sparse_LA>::
+project_triangle(const Point_3& p0, const Point_3& p1, const Point_3& p2,
+				 Point_2* z0, Point_2* z1, Point_2* z2) 
 {
 	Vector_3 X = p1 - p0 ;
 	//X.normalize() ;
@@ -367,30 +408,34 @@ LSCM_parametizer_3<MeshAdaptor_3, BorderParametizer_3, SparseLinearAlgebraTraits
 //       (Z1 - Z0)(U2 - U0) = (Z2 - Z0)(U1 - U0)
 // where Uk = uk + i.vk is the complex number corresponding to (u,v) coords
 //       Zk = xk + i.yk is the complex number corresponding to local (x,y) coords
-// cool: no divide with this expression; makes it more numerically stable in presence of degenerate triangles
+// cool: no divide with this expression; makes it more numerically stable 
+// in presence of degenerate triangles
 //
-// Note: this method is a copy of Bruno Levy's LSCM::setup_conformal_map_relations() method in lscm_with_generic_api.cpp
-template <class MeshAdaptor_3, class BorderParametizer_3, class SparseLinearAlgebraTraits_d>
+// Note: this method is a copy of Bruno Levy's LSCM::setup_conformal_map_relations() 
+// method in lscm_with_generic_api.cpp
+template <class Adaptor, class Border_param, class Sparse_LA>
 inline 
-typename Parametizer_3<MeshAdaptor_3>::ErrorCode 
-LSCM_parametizer_3<MeshAdaptor_3, BorderParametizer_3, SparseLinearAlgebraTraits_d>::setup_triangle_relations(LeastSquaresSolver* solver,
-																										      const MeshAdaptor_3& mesh, Face_const_handle face) 
+typename Parametizer_3<Adaptor>::ErrorCode 
+LSCM_parametizer_3<Adaptor, Border_param, Sparse_LA>::
+setup_triangle_relations(LeastSquaresSolver* solver,
+						 const Adaptor& mesh, 
+						 Face_const_handle face) 
 {
 	CGAL_parameterization_assertion(solver != NULL);
 
 	// Get the 3 vertices of the triangle
 	Vertex_const_handle v0, v1, v2;
 	int vertexIndex = 0;
-	Vertex_around_face_const_circulator vertexCir    = mesh.face_vertices_begin(face), 
-										vertexCirEnd = vertexCir;
-	CGAL_For_all(vertexCir, vertexCirEnd) 
+	Vertex_around_face_const_circulator cir = mesh.face_vertices_begin(face), 
+										end = cir;
+	CGAL_For_all(cir, end) 
 	{
 		if (vertexIndex == 0)
-			v0 = vertexCir;
+			v0 = cir;
 		else if (vertexIndex == 1)
-			v1 = vertexCir;
+			v1 = cir;
 		else if (vertexIndex == 2)
-			v2 = vertexCir;
+			v2 = cir;
 
 		vertexIndex++;
 	}
@@ -459,13 +504,16 @@ LSCM_parametizer_3<MeshAdaptor_3, BorderParametizer_3, SparseLinearAlgebraTraits
 }
 
 // Copy X coordinates into the (u,v) pair of each vertex
-template <class MeshAdaptor_3, class BorderParametizer_3, class SparseLinearAlgebraTraits_d>
+template <class Adaptor, class Border_param, class Sparse_LA>
 inline 
-void LSCM_parametizer_3<MeshAdaptor_3, BorderParametizer_3, SparseLinearAlgebraTraits_d>::set_mesh_uv_from_system(MeshAdaptor_3* mesh, 
-																												  const LeastSquaresSolver& solver) 
+void LSCM_parametizer_3<Adaptor, Border_param, Sparse_LA>::
+set_mesh_uv_from_system(Adaptor* mesh,
+						const LeastSquaresSolver& solver) 
 {
 	Vertex_iterator vertexIt;
-	for (vertexIt = mesh->mesh_vertices_begin(); vertexIt != mesh->mesh_vertices_end(); vertexIt++)
+	for (vertexIt = mesh->mesh_vertices_begin(); 
+		 vertexIt != mesh->mesh_vertices_end(); 
+		 vertexIt++)
 	{
 		int index = mesh->get_vertex_index(vertexIt);
 
@@ -481,27 +529,37 @@ void LSCM_parametizer_3<MeshAdaptor_3, BorderParametizer_3, SparseLinearAlgebraT
 }
 
 // Check parameterize() postconditions:
-// * "A*X = B" system is solvable (in the least squares sense) with a good conditioning
+// * "A*X = B" system is solvable (in the least squares sense) 
+//   with a good conditioning
 // * 3D -> 2D mapping is 1 to 1
-template <class MeshAdaptor_3, class BorderParametizer_3, class SparseLinearAlgebraTraits_d>
+template <class Adaptor, class Border_param, class Sparse_LA>
 inline 
-typename Parametizer_3<MeshAdaptor_3>::ErrorCode 
-LSCM_parametizer_3<MeshAdaptor_3, BorderParametizer_3, SparseLinearAlgebraTraits_d>::check_parameterize_postconditions(const MeshAdaptor_3& mesh, 
-																													   const LeastSquaresSolver& solver)
+typename Parametizer_3<Adaptor>::ErrorCode 
+LSCM_parametizer_3<Adaptor, Border_param, Sparse_LA>::
+check_parameterize_postconditions(const Adaptor& mesh,
+								  const LeastSquaresSolver& solver)
 {
 	ErrorCode status = OK;
 
-	// LS 02/2005: comment out this section because OpenNL::LinearSolver does not provide a is_solvable() method
+	// LS 02/2005: commented out this section because OpenNL::LinearSolver 
+	//             does not provide a is_solvable() method
+	//
 	//// Check if "A*Xu = Bu" and "A*Xv = Bv" systems are solvable with a good conditioning
-	//CGAL_parameterization_expensive_postcondition((status = get_linear_algebra_traits().is_solvable(A, Bu) ? OK : ERROR_BAD_MATRIX_CONDITIONING) == OK);
+	//CGAL_parameterization_expensive_postcondition((status = get_linear_algebra_traits().is_solvable(A, Bu) 
+	//													  ? OK 
+	//													  : ERROR_BAD_MATRIX_CONDITIONING) == OK);
 	//if (status != OK)
 	//	return status;
-	//CGAL_parameterization_expensive_postcondition((status = get_linear_algebra_traits().is_solvable(A, Bv) ? OK : ERROR_BAD_MATRIX_CONDITIONING) == OK);
+	//CGAL_parameterization_expensive_postcondition((status = get_linear_algebra_traits().is_solvable(A, Bv) 
+	//													  ? OK 
+	//													  : ERROR_BAD_MATRIX_CONDITIONING) == OK);
 	//if (status != OK)
 	//	return status;
 
 	// Check if 3D -> 2D mapping is 1 to 1
-	CGAL_parameterization_expensive_postcondition((status = is_one_to_one_mapping(mesh, solver) ? OK : ERROR_NO_1_TO_1_MAPPING) == OK);
+	CGAL_parameterization_expensive_postcondition((status = is_one_to_one_mapping(mesh, solver) 
+														  ? OK 
+														  : ERROR_NO_1_TO_1_MAPPING) == OK);
 	if (status != OK)
 		return status;
 
@@ -509,28 +567,31 @@ LSCM_parametizer_3<MeshAdaptor_3, BorderParametizer_3, SparseLinearAlgebraTraits
 }
 
 // Check if 3D -> 2D mapping is 1 to 1
-template <class MeshAdaptor_3, class BorderParametizer_3, class SparseLinearAlgebraTraits_d>
+template <class Adaptor, class Border_param, class Sparse_LA>
 inline 
-bool LSCM_parametizer_3<MeshAdaptor_3, BorderParametizer_3, SparseLinearAlgebraTraits_d>::is_one_to_one_mapping (const MeshAdaptor_3& mesh, 
-																												 const LeastSquaresSolver& solver)
+bool LSCM_parametizer_3<Adaptor, Border_param, Sparse_LA>::
+is_one_to_one_mapping(const Adaptor& mesh,
+					  const LeastSquaresSolver& solver)
 {
 	Vector_3	first_triangle_normal;
 
-	for (Face_const_iterator faceIt = mesh.mesh_faces_begin(); faceIt != mesh.mesh_faces_end(); faceIt++) 
+	for (Face_const_iterator faceIt = mesh.mesh_faces_begin(); 
+		 faceIt != mesh.mesh_faces_end(); 
+		 faceIt++) 
 	{
 		// Get 3 vertices of the face
 		Vertex_const_handle v0, v1, v2;
 		int vertexIndex = 0;
-		Vertex_around_face_const_circulator vertexCir    = mesh.face_vertices_begin(faceIt), 
-											vertexCirEnd = vertexCir;
-		CGAL_For_all(vertexCir, vertexCirEnd) 
+		Vertex_around_face_const_circulator cir = mesh.face_vertices_begin(faceIt), 
+											end = cir;
+		CGAL_For_all(cir, end) 
 		{
 			if (vertexIndex == 0)
-				v0 = vertexCir;
+				v0 = cir;
 			else if (vertexIndex == 1)
-				v1 = vertexCir;
+				v1 = cir;
 			else if (vertexIndex == 2)
-				v2 = vertexCir;
+				v2 = cir;
 
 			vertexIndex++;
 		}
@@ -549,8 +610,9 @@ bool LSCM_parametizer_3<MeshAdaptor_3, BorderParametizer_3, SparseLinearAlgebraT
 		Vector_3 v02_3D = p2_3D - p0_3D;
 		Vector_3 normal = CGAL::cross_product(v01_3D, v02_3D);
 
-		// Check that all normals are oriented the same way => no 2D triangle is flipped
-		if (vertexCir == mesh.face_vertices_begin(faceIt))
+		// Check that all normals are oriented the same way 
+		// => no 2D triangle is flipped
+		if (cir == mesh.face_vertices_begin(faceIt))
 		{
 			first_triangle_normal = normal;
 		}
@@ -561,7 +623,7 @@ bool LSCM_parametizer_3<MeshAdaptor_3, BorderParametizer_3, SparseLinearAlgebraT
 		}
 	}
 
-	return true;								// OK if we reach this point
+	return true;			// OK if we reach this point
 }
 
 
