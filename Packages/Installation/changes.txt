@@ -1,3 +1,7 @@
+19 April 2005 Sylvain Pion
+- Fix Intel compiler recognition.
+- Update G++ supported versions check.
+
 4 April 2005 Sylvain Pion
 - doc : remove g++ 2.95, and some obsolete VC++ problems, and other cleanups.
 

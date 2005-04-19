@@ -1799,13 +1799,13 @@ void output_first_ciff_separate(int x, int base)
 
 int main()
 {
-#if defined(__INTEL_COMPILER) && defined(__linux__)
-  // Intel Compiler for linux
-  // it has to be checked before the g++ compiler since it also
-  // defines __GNUC__
+#if defined(__INTEL_COMPILER)
+  // Intel Compiler
+  // it has to be checked before the g++ and VC++ compilers since it also
+  // defines __GNUC__ or _MSC_VER
   int intel_version_major = __INTEL_COMPILER / 100;
   int intel_version_minor = (__INTEL_COMPILER - intel_version_major * 100) / 10;
-  CGAL_STDCOUT << "ICC@" << intel_version_major << "." << intel_version_minor;
+  CGAL_STDCOUT << "Intel@" << intel_version_major << "." << intel_version_minor;
   CGAL_STDCOUT << CGAL_STDENDL;
 #elif defined(__GNUC__)
   // GNU cc
@@ -1850,10 +1850,6 @@ int main()
     output_first_ciff_separate(__MWERKS__, 16);
     CGAL_STDCOUT << CGAL_STDENDL;
 # endif // (__MWERKS__ == 1)
-#elif defined(__INTEL_COMPILER)
-  // Intel Compiler
-  CGAL_STDCOUT << "Intel@" << __INTEL_COMPILER / 100;
-  CGAL_STDCOUT << CGAL_STDENDL;
 #elif defined(__KCC)
   // KAI CC
   CGAL_STDCOUT << "KAI CC@";
@@ -3931,8 +3927,8 @@ _set_support()
 	    ;;
 	*GNU*)
 	    case `compiler_version` in
-		2.95*) CGAL_SUPPORT_COMPILER='y';;
 		3.[234]*) CGAL_SUPPORT_COMPILER='y';;
+		4.0*) CGAL_SUPPORT_COMPILER='y';;
 	    esac
 	    ;;
 	*Intel*)
