@@ -1,0 +1,1 @@
+Package Linear Least Squares Fitting: provides functions for linear fitting (in the least squares sense) of 2D and 3D kernel objects.

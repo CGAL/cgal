@@ -1,0 +1,42 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Linear_least_squares_fitting/intro.tex
+% +------------------------------------------------------------------------+
+% | March 2005  Pierre Alliez
+% | Package: Linear Least Squares Fitting
+% | 
+% |
+% +------------------------------------------------------------------------+
+
+\chapter{Linear Least Squares Fitting}
+\label{chap:PCA}
+\ccChapterAuthor{Pierre Alliez}
+
+Given a point set in $R^d$, linear least squares fitting amounts to
+find the linear sub-space of $R^d$ which minimizes the sum of squared
+distances from the points to their projection onto this linear
+sub-space. This problem is equivalent to search for the linear
+sub-space which maximizes the variance of projected points, the latter
+being obtained by eigen decomposition of the covariance
+matrix. Eigenvectors corresponding to large eigenvalues are the
+directions in which the data has strong component, or equivalently
+large variance. If eigenvalues are the same there is no preferable
+sub-space.\\
+
+This \cgal\ package implements the linear least squares fitting not
+only for point sets, but for several objects of a CGAL 2D or 3D
+kernel: the best fit 2D line for 2D point, segment and triangle sets,
+and the best fit 3D line/plane for point, segment, triangle and even
+tetrahedral sets. The interface is similar in spirit to that of the
+convex hull. It allows fitting a set of kernel primitive elements
+which are stored in an iterator range of a container.
+
+\ccHeading{Concepts}
+\ccRefConceptPage{FittingTraits}\\
+
+\ccHeading{Functions}
+\ccRefIdfierPage{CGAL::linear_least_squares_fitting}\\
+\ccRefIdfierPage{CGAL::centroid}\\
+\ccRefIdfierPage{CGAL::local_frame}\\
+\clearpage
+
+\lcHtml{\ccHeading{Alphabetical Listing of Reference Pages}}
