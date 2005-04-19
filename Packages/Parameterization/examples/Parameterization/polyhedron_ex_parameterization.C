@@ -18,9 +18,9 @@
 // Author(s)     : Laurent Saboret, Bruno Levy, Pierre Alliez
 
 
-// ------------------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
 // USAGE EXAMPLES
-// ------------------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
 
 //----------------------------------------------------------
 // conformal parameterization
@@ -28,7 +28,7 @@
 // output is a ps map
 // input file is mesh.off (the latter must be at the very end)
 //----------------------------------------------------------
-// ./polyhedron_ex_parameterization -t conformal -b circle -o eps mesh.off mesh.eps
+// polyhedron_ex_parameterization -t conformal -b circle -o eps mesh.off mesh.eps
 
 //----------------------------------------------------------
 // floater parameterization
@@ -36,7 +36,7 @@
 // output is a ps map
 // input file is mesh.off
 //----------------------------------------------------------
-// ./polyhedron_ex_parameterization -t floater -b square -o eps mesh.off mesh.eps
+// polyhedron_ex_parameterization -t floater -b square -o eps mesh.off mesh.eps
 
 //----------------------------------------------------------
 // natural parameterization
@@ -44,7 +44,7 @@
 // output is a ps map
 // input file is mesh.off
 //----------------------------------------------------------
-// ./polyhedron_ex_parameterization -t natural -o eps mesh.off mesh.eps
+// polyhedron_ex_parameterization -t natural -o eps mesh.off mesh.eps
 
 //----------------------------------------------------------
 // LSCM parameterization
@@ -52,20 +52,20 @@
 // output is a .obj
 // input file is mesh.off
 //----------------------------------------------------------
-// ./polyhedron_ex_parameterization -t lscm -o obj mesh.off mesh.obj
+// polyhedron_ex_parameterization -t lscm -o obj mesh.off mesh.obj
 
 
 #include <CGAL/basic.h>
 
-#include "CGAL/parameterization.h"
-#include "CGAL/Circular_border_parametizer_3.h"
-#include "CGAL/Square_border_parametizer_3.h"
-#include "CGAL/Two_vertices_parametizer_3.h"
-#include "CGAL/Barycentric_mapping_parametizer_3.h"
-#include "CGAL/Discrete_conformal_map_parametizer_3.h"
-#include "CGAL/Discrete_authalic_parametizer_3.h"
-#include "CGAL/Mean_value_coordinates_parametizer_3.h"
-#include "CGAL/LSCM_parametizer_3.h"
+#include <CGAL/parameterization.h>
+#include <CGAL/Circular_border_parametizer_3.h>
+#include <CGAL/Square_border_parametizer_3.h>
+#include <CGAL/Two_vertices_parametizer_3.h>
+#include <CGAL/Barycentric_mapping_parametizer_3.h>
+#include <CGAL/Discrete_conformal_map_parametizer_3.h>
+#include <CGAL/Discrete_authalic_parametizer_3.h>
+#include <CGAL/Mean_value_coordinates_parametizer_3.h>
+#include <CGAL/LSCM_parametizer_3.h>
 
 #include "options.h"
 #include "cgal_types.h"
@@ -83,20 +83,22 @@
 #include <cassert>
 
 
-// ------------------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
 // Private types
-// ------------------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
 
 // Type describing a seam in a Polyhedron_ex mesh
-typedef Feature_backbone<Polyhedron_ex::Vertex_handle, Polyhedron_ex::Halfedge_handle> Backbone;
+typedef Feature_backbone<Polyhedron_ex::Vertex_handle, 
+						 Polyhedron_ex::Halfedge_handle> Backbone;
 
 	
-// ------------------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
 // Private functions
-// ------------------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
 
-// Cut the mesh to make it homeomorphic to a disk or extract a region homeomorphic to a disc
-// Return the border of this region
+// Cut the mesh to make it homeomorphic to a disk 
+// or extract a region homeomorphic to a disc.
+// Return the border of this region.
 static const Backbone* cut_mesh(Polyhedron_ex* mesh)
 {
   // init
@@ -136,9 +138,9 @@ static const Backbone* cut_mesh(Polyhedron_ex* mesh)
 }
 
 
-// ------------------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
 // main
-// ------------------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
 
 // Parameters description for Options library
 static const char *  optv[] = {	
@@ -158,7 +160,7 @@ static const char *  optv[] = {
    //       lscm        -> Least Squares Conformal Maps
 
 
-   "b:boundary <string>", // -b or --boundary (for fixed border parameterizations)
+   "b:boundary <string>", // -b or --boundary (for fixed border param.)
    // -b circle		-> map mesh boundary onto a circle
    //    square		-> map mesh boundary onto a square
 
@@ -238,8 +240,8 @@ int main(int argc,char * argv[])
 
 	// Get file name arguments
 	int index = iter.index();
-	int first_file_arg = 0;								// index of 1st file name argument
-	int file_args_end   = 0;							// index of last file name argument + 1
+	int first_file_arg = 0;				// index of 1st file name argument
+	int file_args_end   = 0;			// index of last file name argument + 1
 	if ((npos > 0) || (index < argc))
 	{
 		first_file_arg = (npos > 0) ? 0    : index;
@@ -258,7 +260,8 @@ int main(int argc,char * argv[])
 
 	// File names are:
 	const char* input_filename  = argv[first_file_arg];
-	const char* output_filename = (strlen(output) > 0) ? argv[first_file_arg+1] : NULL;
+	const char* output_filename = (strlen(output) > 0) ? argv[first_file_arg+1]
+													   : NULL;
 
 	//***************************************     		
 	// check input file
@@ -290,12 +293,15 @@ int main(int argc,char * argv[])
 	// switch parameterization
 	//*************************************** 
 
-	// Cut the mesh to make it homeomorphic to a disk or extract a region homeomorphic to a disc
+	// Cut the mesh to make it homeomorphic to a disk 
+	// or extract a region homeomorphic to a disc
 	const Backbone* seam = cut_mesh(&mesh);
 	assert(seam != NULL);
 
 	// The parameterization package needs an adaptor to handle Polyhedrons   
-	Mesh_adaptor_polyhedron_ex mesh_adaptor(&mesh, seam->halfedges()->begin(), seam->halfedges()->end());
+	Mesh_adaptor_polyhedron_ex mesh_adaptor(&mesh, 
+											seam->halfedges()->begin(), 
+											seam->halfedges()->end());
 
 	// Switch parameterization. Defaults are:
 	// - floater mean value coordinates
@@ -309,47 +315,55 @@ int main(int argc,char * argv[])
 	}
 	else if ( (strcmp(type,"floater") == 0) && (strcmp(boundary,"square") == 0) )
 	{
-		err = CGAL::parameterize(&mesh_adaptor,
-								 CGAL::Mean_value_coordinates_parametizer_3<Mesh_adaptor_polyhedron_ex, 
-								 CGAL::Square_border_parametizer_3<Mesh_adaptor_polyhedron_ex> >());
+		err = CGAL::parameterize(
+			&mesh_adaptor,
+			CGAL::Mean_value_coordinates_parametizer_3<Mesh_adaptor_polyhedron_ex, 
+			CGAL::Square_border_parametizer_3<Mesh_adaptor_polyhedron_ex> >());
 	}
 	else if ( (strcmp(type,"uniform") == 0) && (strcmp(boundary,"circle") == 0) )
 	{
-		err = CGAL::parameterize(&mesh_adaptor,
-								 CGAL::Barycentric_mapping_parametizer_3<Mesh_adaptor_polyhedron_ex>());
+		err = CGAL::parameterize(
+			&mesh_adaptor,
+			CGAL::Barycentric_mapping_parametizer_3<Mesh_adaptor_polyhedron_ex>());
 	}
 	else if ( (strcmp(type,"uniform") == 0) && (strcmp(boundary,"square") == 0) )
 	{
-		err = CGAL::parameterize(&mesh_adaptor,
-								 CGAL::Barycentric_mapping_parametizer_3<Mesh_adaptor_polyhedron_ex, 
-								 CGAL::Square_border_parametizer_3<Mesh_adaptor_polyhedron_ex> >());
+		err = CGAL::parameterize(
+			&mesh_adaptor,
+			CGAL::Barycentric_mapping_parametizer_3<Mesh_adaptor_polyhedron_ex, 
+			CGAL::Square_border_parametizer_3<Mesh_adaptor_polyhedron_ex> >());
 	}
 	else if ( (strcmp(type,"conformal") == 0) && (strcmp(boundary,"circle") == 0) )
 	{
-		err = CGAL::parameterize(&mesh_adaptor,
-								 CGAL::Discrete_conformal_map_parametizer_3<Mesh_adaptor_polyhedron_ex >());
+		err = CGAL::parameterize(
+			&mesh_adaptor,
+			CGAL::Discrete_conformal_map_parametizer_3<Mesh_adaptor_polyhedron_ex>());
 	}
 	else if ( (strcmp(type,"conformal") == 0) && (strcmp(boundary,"square") == 0) )
 	{
-		err = CGAL::parameterize(&mesh_adaptor,
-								 CGAL::Discrete_conformal_map_parametizer_3<Mesh_adaptor_polyhedron_ex, 
-								 CGAL::Square_border_parametizer_3<Mesh_adaptor_polyhedron_ex> >());
+		err = CGAL::parameterize(
+			&mesh_adaptor,
+			CGAL::Discrete_conformal_map_parametizer_3<Mesh_adaptor_polyhedron_ex, 
+			CGAL::Square_border_parametizer_3<Mesh_adaptor_polyhedron_ex> >());
 	}
 	else if ( (strcmp(type,"authalic") == 0) && (strcmp(boundary,"circle") == 0) )
 	{
-		err = CGAL::parameterize(&mesh_adaptor,
-								 CGAL::Discrete_authalic_parametizer_3<Mesh_adaptor_polyhedron_ex>());
+		err = CGAL::parameterize(
+			&mesh_adaptor,
+			CGAL::Discrete_authalic_parametizer_3<Mesh_adaptor_polyhedron_ex>());
 	}
 	else if ( (strcmp(type,"authalic") == 0) && (strcmp(boundary,"square") == 0) )
 	{
-		err = CGAL::parameterize(&mesh_adaptor,
-								 CGAL::Discrete_authalic_parametizer_3<Mesh_adaptor_polyhedron_ex, 
-								 CGAL::Square_border_parametizer_3<Mesh_adaptor_polyhedron_ex> >());
+		err = CGAL::parameterize(
+			&mesh_adaptor,
+			CGAL::Discrete_authalic_parametizer_3<Mesh_adaptor_polyhedron_ex, 
+			CGAL::Square_border_parametizer_3<Mesh_adaptor_polyhedron_ex> >());
 	}
 	else if (strcmp(type,"lscm") == 0)
 	{
-		err = CGAL::parameterize(&mesh_adaptor,
-								 CGAL::LSCM_parametizer_3<Mesh_adaptor_polyhedron_ex>());
+		err = CGAL::parameterize(
+			&mesh_adaptor,
+			CGAL::LSCM_parametizer_3<Mesh_adaptor_polyhedron_ex>());
 	}
 	else 
 	{

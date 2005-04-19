@@ -18,10 +18,10 @@
 // Author(s)     : Laurent Saboret, Bruno Levy, Pierre Alliez
 
 
-#ifndef PARAMETERIZATION_H
-#define PARAMETERIZATION_H
+#ifndef CGAL_PARAMETERIZATION_H
+#define CGAL_PARAMETERIZATION_H
 
-#include "CGAL/Mean_value_coordinates_parametizer_3.h"
+#include <CGAL/Mean_value_coordinates_parametizer_3.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -44,27 +44,30 @@ CGAL_BEGIN_NAMESPACE
 //
 template <class MeshAdaptor_3>			
 typename Parametizer_3<MeshAdaptor_3>::ErrorCode 
-parameterize(MeshAdaptor_3* mesh)						// 3D mesh, model of MeshAdaptor_3 concept
+parameterize(MeshAdaptor_3* mesh)	// 3D mesh, model of MeshAdaptor_3 concept
 {
 	Mean_value_coordinates_parametizer_3<MeshAdaptor_3> parametizer;
 	return parametizer.parameterize(mesh);
 }
 
-// Compute a 1 to 1 mapping from a triangular 3D surface 'mesh' to a piece of the 2D space. 
+// Compute a 1 to 1 mapping from a triangular 3D surface 'mesh' 
+// to a piece of the 2D space. 
 // The mapping is linear by pieces (linear in each triangle).
 // The result is the (u,v) pair image of each vertex of the 3D surface. 
 //
-// 1 to 1 mapping may be guaranteed or not, depending of Parametizer_3_ algorithm chosen
+// 1 to 1 mapping may be guaranteed or not, depending of 
+// Parametizer_3_ algorithm chosen
 //
 // Preconditions:
 // * 'mesh' must be a surface with 1 connected component and no hole
 // * 'mesh' must be a triangular mesh
-// * the mesh border must be mapped onto a convex polygon (for fixed border parameterizations)
+// * the mesh border must be mapped onto a convex polygon 
+// (for fixed border parameterizations)
 //
 template <class MeshAdaptor_3, class Parametizer_3_>			
 typename Parametizer_3<MeshAdaptor_3>::ErrorCode 
-parameterize(MeshAdaptor_3* mesh,						// 3D mesh, model of MeshAdaptor_3 concept
-			Parametizer_3_ parametizer)					// Parameterization class for MeshAdaptor_3 meshes, model of Parametizer_3 concept
+parameterize(MeshAdaptor_3* mesh,		// 3D mesh, model of MeshAdaptor_3 concept
+			 Parametizer_3_ parametizer)// Parameterization class for MeshAdaptor_3 mesh
 {
 	return parametizer.parameterize(mesh);
 }
@@ -72,5 +75,5 @@ parameterize(MeshAdaptor_3* mesh,						// 3D mesh, model of MeshAdaptor_3 concep
 
 CGAL_END_NAMESPACE
 
-#endif //PARAMETERIZATION_H
+#endif //CGAL_PARAMETERIZATION_H
 

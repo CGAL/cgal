@@ -27,7 +27,7 @@ public:
 				typedef ... NT;
 
 				// Create a vector initialized with zeros
-				  Vector (int rows);
+				Vector (int rows);
 				
 				// Return the vector's number of coefficients
 				int  dimension () const;

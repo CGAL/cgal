@@ -17,7 +17,6 @@
 #ifndef _MY_KERNEL_
 #define _MY_KERNEL_
 
-
 #include <CGAL/Cartesian.h>
 #include <algorithm>
 #include <vector>
@@ -119,7 +118,6 @@ class My_kernel : public Kernel
         return sine;
   }
 };
-
 
 
 #endif // _MY_KERNEL_

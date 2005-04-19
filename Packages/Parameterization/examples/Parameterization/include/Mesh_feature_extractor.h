@@ -19,6 +19,7 @@
 
 #include "cgal_types.h"
 
+
 class Mesh_feature_extractor
 {
 public:
@@ -45,4 +46,5 @@ private:
   bool add_boundary_backbone(int tag_free,int tag_processed);
 };
 
-#endif
+
+#endif // MESH_FEATURE_EXTRACTOR_H

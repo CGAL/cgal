@@ -21,6 +21,7 @@
 #include "Feature_skeleton.h"
 #include <list>
 
+
 class Mesh_cutter
 {
 	typedef Feature_backbone<Polyhedron_ex::Vertex_handle,
@@ -53,8 +54,10 @@ private:
 	bool simplify();	
 	bool extend();
 	void precompute_distances();
-	Polyhedron_ex::Halfedge_handle pick_best_halfedge(std::list<Polyhedron_ex::Halfedge_handle>::iterator &pos);
+	Polyhedron_ex::Halfedge_handle pick_best_halfedge(
+					std::list<Polyhedron_ex::Halfedge_handle>::iterator &pos);
 	void recursive_tag(Polyhedron_ex::Facet_handle pFacet,int index);
 };
 
-#endif
+
+#endif // MESH_CUTTER_H

@@ -178,7 +178,7 @@ void Mesh_cutter::precompute_distances()
 // pick_best_halfedge
 //***************************************************
 Polyhedron_ex::Halfedge_handle Mesh_cutter::pick_best_halfedge(
-                               std::list<Polyhedron_ex::Halfedge_handle>::iterator &pos)
+	std::list<Polyhedron_ex::Halfedge_handle>::iterator &pos)
 {
   Polyhedron_ex::Halfedge_handle pBest = NULL;
   double min_distance = 1e308; //

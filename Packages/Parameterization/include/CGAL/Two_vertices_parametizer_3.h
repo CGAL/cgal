@@ -18,10 +18,10 @@
 // Author(s)     : Laurent Saboret, Bruno Levy, Pierre Alliez
 
 
-#ifndef Two_vertices_parametizer_3_H_INCLUDED
-#define Two_vertices_parametizer_3_H_INCLUDED
+#ifndef CGAL_TWO_VERTICES_PARAMETIZER_3_H_INCLUDED
+#define CGAL_TWO_VERTICES_PARAMETIZER_3_H_INCLUDED
 
-#include "CGAL/parameterization_assertions.h"
+#include <CGAL/parameterization_assertions.h>
 
 #include <cfloat>
 #include <climits>
@@ -35,49 +35,68 @@ CGAL_BEGIN_NAMESPACE
 
 // Class Two_vertices_parametizer_3
 // Model of BorderParametizer_3
-// This class parameterizes 2 extreme vertices of a 3D surface. This kind of border parameterization is used by free border parameterization algorithms.
+// This class parameterizes 2 extreme vertices of a 3D surface. 
+// This kind of border parameterization is used by free border parameterizations.
 //
-// Design pattern: Two_vertices_parametizer_3 is an Strategy (see [GOF95]): it implements a strategy of boundary parameterization for models of Parametizer_3
+// Design pattern: 
+// Two_vertices_parametizer_3 is an Strategy (see [GOF95]): it implements 
+// a strategy of boundary parameterization for models of Parametizer_3
 //
-// Implementation note: to simplify the implementation, BorderParametizer_3 models know only the MeshAdaptor_3 class. They don't 
-//                      know the parameterization algorithm requirements nor the kind of sparse linear system used.
+// Implementation note: 
+// To simplify the implementation, BorderParametizer_3 models know only the 
+// MeshAdaptor_3 class. They don't know the parameterization algorithm 
+// requirements nor the kind of sparse linear system used.
+
 template <class MeshAdaptor_3>			// 3D surface
 class Two_vertices_parametizer_3 
 {
 // Public types
 public:
-				// Export Mesh_Adaptor_3 type and subtypes
-				typedef MeshAdaptor_3													Mesh_adaptor_3;
-				typedef typename Parametizer_3<MeshAdaptor_3>::ErrorCode				ErrorCode;
-				typedef typename MeshAdaptor_3::NT										NT;
-				typedef typename MeshAdaptor_3::Face_handle								Face_handle;
-				typedef typename MeshAdaptor_3::Face_const_handle						Face_const_handle;
-				typedef typename MeshAdaptor_3::Vertex_handle							Vertex_handle;
-				typedef typename MeshAdaptor_3::Vertex_const_handle						Vertex_const_handle;
-				typedef typename MeshAdaptor_3::Point_3									Point_3;
-				typedef typename MeshAdaptor_3::Point_2									Point_2;
-				typedef typename MeshAdaptor_3::Vector_3								Vector_3;
-				typedef typename MeshAdaptor_3::Face_iterator							Face_iterator;
-				typedef typename MeshAdaptor_3::Face_const_iterator						Face_const_iterator;
-				typedef typename MeshAdaptor_3::Vertex_iterator							Vertex_iterator;
-				typedef typename MeshAdaptor_3::Vertex_const_iterator					Vertex_const_iterator;
-				typedef typename MeshAdaptor_3::Border_vertex_iterator					Border_vertex_iterator;
-				typedef typename MeshAdaptor_3::Border_vertex_const_iterator			Border_vertex_const_iterator;
-				typedef typename MeshAdaptor_3::Vertex_around_face_circulator			Vertex_around_face_circulator;
-				typedef typename MeshAdaptor_3::Vertex_around_face_const_circulator		Vertex_around_face_const_circulator;
-				typedef typename MeshAdaptor_3::Vertex_around_vertex_circulator			Vertex_around_vertex_circulator;
-				typedef typename MeshAdaptor_3::Vertex_around_vertex_const_circulator	Vertex_around_vertex_const_circulator;
+	// Export Mesh_Adaptor_3 type and subtypes
+	typedef MeshAdaptor_3					Adaptor;
+	typedef typename Parametizer_3<Adaptor>::ErrorCode	
+											ErrorCode;
+	typedef typename Adaptor::NT			NT;
+	typedef typename Adaptor::Face_handle	Face_handle;
+	typedef typename Adaptor::Face_const_handle	
+											Face_const_handle;
+	typedef typename Adaptor::Vertex_handle	Vertex_handle;
+	typedef typename Adaptor::Vertex_const_handle		
+											Vertex_const_handle;
+	typedef typename Adaptor::Point_3		Point_3;
+	typedef typename Adaptor::Point_2		Point_2;
+	typedef typename Adaptor::Vector_3		Vector_3;
+	typedef typename Adaptor::Vector_2		Vector_2;
+	typedef typename Adaptor::Face_iterator	Face_iterator;
+	typedef typename Adaptor::Face_const_iterator		
+											Face_const_iterator;
+	typedef typename Adaptor::Vertex_iterator Vertex_iterator;
+	typedef typename Adaptor::Vertex_const_iterator		
+											Vertex_const_iterator;
+	typedef typename Adaptor::Border_vertex_iterator	
+											Border_vertex_iterator;
+	typedef typename Adaptor::Border_vertex_const_iterator		
+											Border_vertex_const_iterator;
+	typedef typename Adaptor::Vertex_around_face_circulator		
+											Vertex_around_face_circulator;
+	typedef typename Adaptor::Vertex_around_face_const_circulator	
+											Vertex_around_face_const_circulator;
+	typedef typename Adaptor::Vertex_around_vertex_circulator		
+											Vertex_around_vertex_circulator;
+	typedef typename Adaptor::Vertex_around_vertex_const_circulator	
+											Vertex_around_vertex_const_circulator;
 
 // Public operations
 public:
-				// Default constructor, copy constructor and operator =() are fine
+	// Default constructor, copy constructor and operator =() are fine
 
-				// Map 2 extreme vertices of the 3D mesh and mark them as "parameterized"
-				// Return false on error
-				bool  parameterize_border (MeshAdaptor_3* mesh);
+	// Map 2 extreme vertices of the 3D mesh and mark them as "parameterized"
+	// Return false on error
+	bool  parameterize_border (Adaptor* mesh);
 
-				// Indicate if border's shape is convex. Meaningless for free border parameterization algorithms.
-				bool  is_border_convex () { return false; }
+	// Indicate if border's shape is convex. 
+	// Meaningless for free border parameterization algorithms.
+	bool  is_border_convex () { return false; }
 };
 
 
@@ -88,10 +107,11 @@ public:
 // Map 2 extreme vertices of the 3D mesh and mark them as "parameterized"
 // Return false on error
 //
-// Note: this method is a copy of Bruno Levy's LSCM::project() method in lscm_with_generic_api.cpp
+// Implementation note: 
+// This method is a copy of Bruno Levy's LSCM::project() method in lscm_with_generic_api.cpp
 template <class MeshAdaptor_3>
-inline 
-bool Two_vertices_parametizer_3<MeshAdaptor_3>::parameterize_border (MeshAdaptor_3* mesh)
+inline bool
+Two_vertices_parametizer_3<MeshAdaptor_3>::parameterize_border(MeshAdaptor_3* mesh)
 {
 	Vertex_iterator it;
 
@@ -241,5 +261,5 @@ bool Two_vertices_parametizer_3<MeshAdaptor_3>::parameterize_border (MeshAdaptor
 
 CGAL_END_NAMESPACE
 
-#endif //Two_vertices_parametizer_3_H_INCLUDED
+#endif //CGAL_TWO_VERTICES_PARAMETIZER_3_H_INCLUDED
 

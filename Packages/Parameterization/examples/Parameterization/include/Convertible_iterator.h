@@ -18,15 +18,16 @@
 // Author(s)     : Laurent Saboret, Bruno Levy, Pierre Alliez
 
 
-#ifndef Convertible_iterator_H
-#define Convertible_iterator_H
+#ifndef CGAL_CONVERTIBLE_ITERATOR_H
+#define CGAL_CONVERTIBLE_ITERATOR_H
 
 
 // Utility class for Mesh_adaptor_polyhedron_ex
 // This class adds a conversion to handle/const handle to an iterator class
-template <class Iter,						// base iterator
-          class ConstHandle,				// const-handle type to convert to
-          class Handle = void*>				// non-const-handle type to convert to (void* <=> none)
+template <class Iter,			// base iterator
+          class ConstHandle,	// const-handle type to convert to
+          class Handle = void*>	// non-const-handle type to convert to 
+								// (void* <=> none)
 class Convertible_iterator : public Iter 
 {
 	typedef Iter											Base; 
@@ -49,4 +50,4 @@ public:
 };
 
 
-#endif //Convertible_iterator_H
+#endif //CGAL_CONVERTIBLE_ITERATOR_H

@@ -18,15 +18,15 @@
 // Author(s)     : Laurent Saboret, Bruno Levy, Pierre Alliez
 
 
-#ifndef LSCM_PARAMETIZER_3_H
-#define LSCM_PARAMETIZER_3_H
+#ifndef CGAL_LSCM_PARAMETIZER_3_H
+#define CGAL_LSCM_PARAMETIZER_3_H
 
 #include <CGAL/circulator.h>
 #include <OpenNL/linear_solver.h>
 
-#include "CGAL/Parametizer_3.h"
-#include "CGAL/Two_vertices_parametizer_3.h"
-#include "CGAL/parameterization_assertions.h"
+#include <CGAL/Parametizer_3.h>
+#include <CGAL/Two_vertices_parametizer_3.h>
+#include <CGAL/parameterization_assertions.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -39,110 +39,129 @@ CGAL_BEGIN_NAMESPACE
 // Model of the Parametizer_3 concept
 //
 // Implement Least Square Conformal Maps parameterization (Levy et al)
-// No need to map the surface's border onto a convex polygon but 1 to 1 mapping is NOT guaranteed.
+// No need to map the surface's border onto a convex polygon 
+// but 1 to 1 mapping is NOT guaranteed.
 // This is a conformal parameterization, i.e. it attempts to preserve angles. 
 
-template <class MeshAdaptor_3,														// 3D surface
-		  class BorderParametizer_3 = Two_vertices_parametizer_3<MeshAdaptor_3>,	// Class to map (at least 2) border vertices onto a 2D space
-		  class SparseLinearAlgebraTraits_d = OpenNL::SymmetricLinearSolverTraits<typename MeshAdaptor_3::NT> >	
-																					// Symmetric solver for solving a sparse linear system in the least squares sense
-class LSCM_parametizer_3 : public Parametizer_3<MeshAdaptor_3>
+template <class MeshAdaptor_3, // 3D surface
+		  class BorderParametizer_3 
+				= Two_vertices_parametizer_3<MeshAdaptor_3>,	
+							// Class to map (at least 2) border vertices onto a 2D space
+		  class SparseLinearAlgebraTraits_d 
+				= OpenNL::SymmetricLinearSolverTraits<typename MeshAdaptor_3::NT> >	
+							// Symmetric solver for solving a sparse linear system in the least squares sense
+class LSCM_parametizer_3 
+	: public Parametizer_3<MeshAdaptor_3>
 {
 // Public types
 public:
-				// Export Mesh_Adaptor_3, BorderParametizer_3 and SparseLinearAlgebraTraits_d types and subtypes
-				typedef MeshAdaptor_3													Mesh_adaptor_3;
-				typedef typename Parametizer_3<MeshAdaptor_3>::ErrorCode				ErrorCode;
-				typedef typename MeshAdaptor_3::NT										NT;
-				typedef typename MeshAdaptor_3::Face_handle								Face_handle;
-				typedef typename MeshAdaptor_3::Face_const_handle						Face_const_handle;
-				typedef typename MeshAdaptor_3::Vertex_handle							Vertex_handle;
-				typedef typename MeshAdaptor_3::Vertex_const_handle						Vertex_const_handle;
-				typedef typename MeshAdaptor_3::Point_3									Point_3;
-				typedef typename MeshAdaptor_3::Point_2									Point_2;
-				typedef typename MeshAdaptor_3::Vector_3								Vector_3;
-				typedef typename MeshAdaptor_3::Vector_2								Vector_2;
-				typedef typename MeshAdaptor_3::Face_iterator							Face_iterator;
-				typedef typename MeshAdaptor_3::Face_const_iterator						Face_const_iterator;
-				typedef typename MeshAdaptor_3::Vertex_iterator							Vertex_iterator;
-				typedef typename MeshAdaptor_3::Vertex_const_iterator					Vertex_const_iterator;
-				typedef typename MeshAdaptor_3::Border_vertex_iterator					Border_vertex_iterator;
-				typedef typename MeshAdaptor_3::Border_vertex_const_iterator			Border_vertex_const_iterator;
-				typedef typename MeshAdaptor_3::Vertex_around_face_circulator			Vertex_around_face_circulator;
-				typedef typename MeshAdaptor_3::Vertex_around_face_const_circulator		Vertex_around_face_const_circulator;
-				typedef typename MeshAdaptor_3::Vertex_around_vertex_circulator			Vertex_around_vertex_circulator;
-				typedef typename MeshAdaptor_3::Vertex_around_vertex_const_circulator	Vertex_around_vertex_const_circulator;
-				typedef BorderParametizer_3												Border_parametizer_3;
-				typedef SparseLinearAlgebraTraits_d										Sparse_linear_algebra_traits_d;
+	// Export Mesh_Adaptor_3, BorderParametizer_3 
+	// and SparseLinearAlgebraTraits_d types
+	typedef MeshAdaptor_3					Adaptor;
+	typedef typename Parametizer_3<Adaptor>::ErrorCode	
+											ErrorCode;
+	typedef typename Adaptor::NT			NT;
+	typedef typename Adaptor::Face_handle	Face_handle;
+	typedef typename Adaptor::Face_const_handle	
+											Face_const_handle;
+	typedef typename Adaptor::Vertex_handle	Vertex_handle;
+	typedef typename Adaptor::Vertex_const_handle		
+											Vertex_const_handle;
+	typedef typename Adaptor::Point_3		Point_3;
+	typedef typename Adaptor::Point_2		Point_2;
+	typedef typename Adaptor::Vector_3		Vector_3;
+	typedef typename Adaptor::Vector_2		Vector_2;
+	typedef typename Adaptor::Face_iterator	Face_iterator;
+	typedef typename Adaptor::Face_const_iterator		
+											Face_const_iterator;
+	typedef typename Adaptor::Vertex_iterator Vertex_iterator;
+	typedef typename Adaptor::Vertex_const_iterator		
+											Vertex_const_iterator;
+	typedef typename Adaptor::Border_vertex_iterator	
+											Border_vertex_iterator;
+	typedef typename Adaptor::Border_vertex_const_iterator		
+											Border_vertex_const_iterator;
+	typedef typename Adaptor::Vertex_around_face_circulator		
+											Vertex_around_face_circulator;
+	typedef typename Adaptor::Vertex_around_face_const_circulator	
+											Vertex_around_face_const_circulator;
+	typedef typename Adaptor::Vertex_around_vertex_circulator		
+											Vertex_around_vertex_circulator;
+	typedef typename Adaptor::Vertex_around_vertex_const_circulator	
+											Vertex_around_vertex_const_circulator;
+	typedef BorderParametizer_3				Border_param;
+	typedef SparseLinearAlgebraTraits_d		Sparse_LA;
+	typedef typename Sparse_LA::Vector		Vector;
+	typedef typename Sparse_LA::Matrix		Matrix;
 
 // Public operations
 public:
-				// Constructor
-				// @param borderParametizer	Object that maps (at least 2) border vertices
-				// @param linearAlgebra		Traits object to solve the "A*X = B" sparse linear system used by parameterization algorithms
-				LSCM_parametizer_3 (BorderParametizer_3 borderParametizer = BorderParametizer_3(), 
-									SparseLinearAlgebraTraits_d linearAlgebra = SparseLinearAlgebraTraits_d()) 
-				  : m_borderParametizer(borderParametizer), m_linearAlgebra(linearAlgebra)
-				{}
+	// Constructor
+	// @param border_param	Object that maps (at least 2) border vertices
+	// @param sparse_la		Traits object to access a sparse linear system 
+	LSCM_parametizer_3 (Border_param border_param = Border_param(), 
+						Sparse_LA sparse_la = Sparse_LA()) 
+		: m_borderParametizer(border_param), m_linearAlgebra(sparse_la)
+	{}
 
-				// Default copy constructor and operator =() are fine
+	// Default copy constructor and operator =() are fine
 
-				// Compute a 1 to 1 mapping from a triangular 3D surface 'mesh' to a piece of the 2D space. 
-				// The mapping is linear by pieces (linear in each triangle).
-				// The result is the (u,v) pair image of each vertex of the 3D surface. 
-				// 
-				// Preconditions:
-				// * 'mesh' must be a surface with 1 connected component and no hole
-				// * 'mesh' must be a triangular mesh
-				virtual ErrorCode  parameterize (MeshAdaptor_3* mesh);
-								
+	// Compute a 1 to 1 mapping from a triangular 3D surface 'mesh' to a piece of the 2D space. 
+	// The mapping is linear by pieces (linear in each triangle).
+	// The result is the (u,v) pair image of each vertex of the 3D surface. 
+	// 
+	// Preconditions:
+	// * 'mesh' must be a surface with 1 connected component and no hole
+	// * 'mesh' must be a triangular mesh
+	virtual ErrorCode  parameterize (Adaptor* mesh);
+					
 // Private types
 private:
-				typedef typename OpenNL::LinearSolver<SparseLinearAlgebraTraits_d>		LeastSquaresSolver ;
-								
+	typedef typename OpenNL::LinearSolver<Sparse_LA>		LeastSquaresSolver ;
+					
 // Private operations
 private:
-				// Check parameterize() preconditions:
-				// * 'mesh' must be a surface with 1 connected component and no hole
-				// * 'mesh' must be a triangular mesh
-				virtual ErrorCode  check_parameterize_preconditions (const MeshAdaptor_3& mesh);
+	// Check parameterize() preconditions:
+	// * 'mesh' must be a surface with 1 connected component and no hole
+	// * 'mesh' must be a triangular mesh
+	virtual ErrorCode  check_parameterize_preconditions (const Adaptor& mesh);
 
-				// Initialize "A*X = B" linear system after (at least 2) border vertices are parameterized
-				//
-				// Preconditions:
-				// * vertices must be indexed
-				// * X and B must be allocated and empty
-				// * (at least 2) border vertices must be parameterized
-				void initialize_system_from_mesh_border(LeastSquaresSolver* solver, const MeshAdaptor_3& mesh) ;
+	// Initialize "A*X = B" linear system after (at least 2) border vertices are parameterized
+	//
+	// Preconditions:
+	// * vertices must be indexed
+	// * X and B must be allocated and empty
+	// * (at least 2) border vertices must be parameterized
+	void initialize_system_from_mesh_border(LeastSquaresSolver* solver, const Adaptor& mesh) ;
 
-				// Utility for setup_triangle_relations():
-				// Computes the coordinates of the vertices of a triangle
-				// in a local 2D orthonormal basis of the triangle's plane.
-				void project_triangle(const Point_3& p0, const Point_3& p1, const Point_3& p2, Point_2* z0, Point_2* z1, Point_2* z2) ;
+	// Utility for setup_triangle_relations():
+	// Computes the coordinates of the vertices of a triangle
+	// in a local 2D orthonormal basis of the triangle's plane.
+	void project_triangle(const Point_3& p0, const Point_3& p1, const Point_3& p2, Point_2* z0, Point_2* z1, Point_2* z2) ;
 
-				// Create 2 lines in the linear system per triangle (1 for u, 1 for v)
-				// 
-				// Preconditions:
-				// * vertices must be indexed
-				ErrorCode setup_triangle_relations(LeastSquaresSolver* solver, const MeshAdaptor_3& mesh, Face_const_handle face) ;
+	// Create 2 lines in the linear system per triangle (1 for u, 1 for v)
+	// 
+	// Preconditions:
+	// * vertices must be indexed
+	ErrorCode setup_triangle_relations(LeastSquaresSolver* solver, const Adaptor& mesh, Face_const_handle face) ;
 
-				// Copy X coordinates into the (u,v) pair of each vertex
-				void set_mesh_uv_from_system(MeshAdaptor_3* mesh, const LeastSquaresSolver& solver) ;
+	// Copy X coordinates into the (u,v) pair of each vertex
+	void set_mesh_uv_from_system(Adaptor* mesh, const LeastSquaresSolver& solver) ;
 
-				// Check parameterize() postconditions:
-				// * "A*X = B" system is solvable (in the least squares sense) with a good conditioning
-				// * 3D -> 2D mapping is 1 to 1
-				virtual ErrorCode check_parameterize_postconditions(const MeshAdaptor_3& mesh, const LeastSquaresSolver& solver);
+	// Check parameterize() postconditions:
+	// * "A*X = B" system is solvable (in the least squares sense) with a good conditioning
+	// * 3D -> 2D mapping is 1 to 1
+	virtual ErrorCode check_parameterize_postconditions(const Adaptor& mesh, const LeastSquaresSolver& solver);
 
-				// Check if 3D -> 2D mapping is 1 to 1
-				bool  is_one_to_one_mapping (const MeshAdaptor_3& mesh, const LeastSquaresSolver& solver);
+	// Check if 3D -> 2D mapping is 1 to 1
+	bool  is_one_to_one_mapping (const Adaptor& mesh, const LeastSquaresSolver& solver);
 
 // Fields
 private:
-				// Object that maps (at least 2) border vertices onto a 2D space
-				 BorderParametizer_3			m_borderParametizer;
-				// Traits object to solve the "A*X = B" sparse linear system used by parameterization algorithms
-				 SparseLinearAlgebraTraits_d	m_linearAlgebra;
+	// Object that maps (at least 2) border vertices onto a 2D space
+		Border_param			m_borderParametizer;
+	// Traits object to solve the "A*X = B" sparse linear system used by parameterization algorithms
+		Sparse_LA	m_linearAlgebra;
 };
 
 
@@ -548,5 +567,5 @@ bool LSCM_parametizer_3<MeshAdaptor_3, BorderParametizer_3, SparseLinearAlgebraT
 
 CGAL_END_NAMESPACE
 
-#endif //LSCM_PARAMETIZER_3_H
+#endif //CGAL_LSCM_PARAMETIZER_3_H
 
