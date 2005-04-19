@@ -45,8 +45,8 @@
  */
 
 
-#ifndef __FULL_VECTOR__
-#define __FULL_VECTOR__
+#ifndef __OPENNL_FULL_VECTOR__
+#define __OPENNL_FULL_VECTOR__
 
 #include <OpenNL/blas.h>
 

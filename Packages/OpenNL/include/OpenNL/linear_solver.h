@@ -44,8 +44,8 @@
  */
 
 
-#ifndef __LINEAR_SOLVER__
-#define __LINEAR_SOLVER__
+#ifndef __OPENNL_LINEAR_SOLVER__
+#define __OPENNL_LINEAR_SOLVER__
 
 #include <OpenNL/conjugate_gradient.h>
 #include <OpenNL/bicgstab.h>

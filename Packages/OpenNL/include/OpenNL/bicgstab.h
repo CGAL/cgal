@@ -57,10 +57,10 @@ namespace OpenNL {
 
 
 // Utility macro to display a variable's value
-// Usage: x=3.7; cerr << STREAM_TRACE(x) << endl;
+// Usage: x=3.7; cerr << OPENNL_STREAM_TRACE(x) << endl;
 //        prints
 //        x=3.7
-#define STREAM_TRACE(var) #var << "=" << var << " "
+#define OPENNL_STREAM_TRACE(var) #var << "=" << var << " "
 
 
 /**
@@ -195,10 +195,10 @@ public:
             BLAS<Vector>::axpy(-omega,t,h);						// h = h - omega*t
 //#ifndef NDEBUG 
 //			// Debug trace
-//			std::cerr << "Solver_BICGSTAB<>::solve: " << STREAM_TRACE(its) << STREAM_TRACE(rTr) 
-//				      << STREAM_TRACE(alpha) << STREAM_TRACE(beta) << STREAM_TRACE(omega) 
-//					  << STREAM_TRACE(rTh) 
-//					  << STREAM_TRACE(rTAd) << STREAM_TRACE(ht) << STREAM_TRACE(tt) 
+//			std::cerr << "Solver_BICGSTAB<>::solve: " << OPENNL_STREAM_TRACE(its) << OPENNL_STREAM_TRACE(rTr) 
+//				      << OPENNL_STREAM_TRACE(alpha) << OPENNL_STREAM_TRACE(beta) << OPENNL_STREAM_TRACE(omega) 
+//					  << OPENNL_STREAM_TRACE(rTh) 
+//					  << OPENNL_STREAM_TRACE(rTAd) << OPENNL_STREAM_TRACE(ht) << OPENNL_STREAM_TRACE(tt) 
 //					  << std::endl;
 //#endif
 			if (IsZero(omega)) {								// LS 03/2005: break to avoid division by zero (see Laspack implementation)
@@ -222,9 +222,9 @@ public:
 #ifndef NDEBUG 
 		if ( ! success )
 			std::cerr << "Solver_BICGSTAB<>::solve failure: "
-			          << STREAM_TRACE(its) << STREAM_TRACE(max_iter) 
-				      << STREAM_TRACE(rTr) << STREAM_TRACE(err) << STREAM_TRACE(alpha) << STREAM_TRACE(beta) << STREAM_TRACE(omega) 
-					  << STREAM_TRACE(rTh) << STREAM_TRACE(rTAd) << STREAM_TRACE(ht) << STREAM_TRACE(tt) 
+			          << OPENNL_STREAM_TRACE(its) << OPENNL_STREAM_TRACE(max_iter) 
+				      << OPENNL_STREAM_TRACE(rTr) << OPENNL_STREAM_TRACE(err) << OPENNL_STREAM_TRACE(alpha) << OPENNL_STREAM_TRACE(beta) << OPENNL_STREAM_TRACE(omega) 
+					  << OPENNL_STREAM_TRACE(rTh) << OPENNL_STREAM_TRACE(rTAd) << OPENNL_STREAM_TRACE(ht) << OPENNL_STREAM_TRACE(tt) 
 				      << std::endl;
 #endif
 		return success;

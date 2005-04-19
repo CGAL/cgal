@@ -59,10 +59,10 @@ namespace OpenNL {
 
 
 // Utility macro to display a variable's value
-// Usage: x=3.7; cerr << STREAM_TRACE(x) << endl;
+// Usage: x=3.7; cerr << OPENNL_STREAM_TRACE(x) << endl;
 //        prints
 //        x=3.7
-#define STREAM_TRACE(var) #var << "=" << var << " "
+#define OPENNL_STREAM_TRACE(var) #var << "=" << var << " "
 
 
 /**
@@ -193,8 +193,8 @@ public:
 #ifndef NDEBUG 
 		if ( ! success )
 			std::cerr << "Solver_CG<>::solve failure: "
-				      << "(" << STREAM_TRACE(its) << STREAM_TRACE(max_iter) 
-					         << STREAM_TRACE(gg) << STREAM_TRACE(err)
+				      << "(" << OPENNL_STREAM_TRACE(its) << OPENNL_STREAM_TRACE(max_iter) 
+					         << OPENNL_STREAM_TRACE(gg) << OPENNL_STREAM_TRACE(err)
 					  << ")" << std::endl;
 #endif
 		return success;

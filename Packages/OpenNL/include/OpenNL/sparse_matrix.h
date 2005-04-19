@@ -43,8 +43,8 @@
  *		- SparseMatrix is now a model of the SparseLinearAlgebraTraits_d::Matrix concept
 */
 
-#ifndef __SPARSE_MATRIX__
-#define __SPARSE_MATRIX__
+#ifndef __OPENNL_SPARSE_MATRIX__
+#define __OPENNL_SPARSE_MATRIX__
 
 #include <OpenNL/full_vector.h>
 
