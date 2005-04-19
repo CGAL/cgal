@@ -42,8 +42,8 @@
  *		- Added OpenNL namespace
  */
 
-#ifndef __BLAS__
-#define __BLAS__
+#ifndef __OPENNL_BLAS__
+#define __OPENNL_BLAS__
 
 #include <cassert>
 

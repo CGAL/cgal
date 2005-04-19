@@ -47,10 +47,11 @@
 #ifndef __LINEAR_SOLVER__
 #define __LINEAR_SOLVER__
 
-#include "conjugate_gradient.h"
-#include "bicgstab.h"
-#include "sparse_matrix.h"
-#include "full_vector.h"
+#include <OpenNL/conjugate_gradient.h>
+#include <OpenNL/bicgstab.h>
+#include <OpenNL/sparse_matrix.h>
+#include <OpenNL/full_vector.h>
+
 #include <vector>
 #include <iostream>
 #include <cassert>

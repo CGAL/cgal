@@ -45,8 +45,8 @@
  *		- added comments and traces
  */
 
-#ifndef __BICGSTAB__
-#define __BICGSTAB__
+#ifndef __OPENNL_BICGSTAB__
+#define __OPENNL_BICGSTAB__
 
 #include <cmath>
 #include <cfloat>

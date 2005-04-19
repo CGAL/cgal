@@ -45,10 +45,10 @@
  *		- added comments and traces
  */
 
-#ifndef __CONJUGATE_GRADIENT__
-#define __CONJUGATE_GRADIENT__
+#ifndef __OPENNL_CONJUGATE_GRADIENT__
+#define __OPENNL_CONJUGATE_GRADIENT__
 
-#include "blas.h"
+#include <OpenNL/blas.h>
 
 #include <cmath>
 #include <cfloat>

@@ -48,7 +48,8 @@
 #ifndef __FULL_VECTOR__
 #define __FULL_VECTOR__
 
-#include "blas.h"
+#include <OpenNL/blas.h>
+
 #include <cstdlib>
 #include <cassert>
 
