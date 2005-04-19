@@ -155,7 +155,7 @@ public:
         Vector h(n) ;
         Vector Ad(n) ;
         Vector t(n) ;
-        CoeffType rTh, rTAd, rTr, alpha, beta=0, omega=0, ht, tt;
+        CoeffType rTh, rTAd=0, rTr, alpha=0, beta=0, omega=0, ht=0, tt=0;
         unsigned int its=0;										// Loop counter
         CoeffType err=epsilon_*epsilon_*BLAS<Vector>::dot(b,b);	// Error to reach
 
