@@ -404,7 +404,7 @@ public:
       return;
     }
         
-    m_is_event_on_above = false;
+    m_is_event_on_above = false; 
     sort_left_curves();
     m_visitor->before_handle_event(m_currentEvent);
 
