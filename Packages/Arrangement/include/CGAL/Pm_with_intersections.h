@@ -1207,8 +1207,9 @@ public:
   non_intersecting_insert_at_vertices(const X_monotone_curve_2 & cv, 
                                       Halfedge_handle h1, 
                                       Halfedge_handle h2,
-                                      Change_notification * en = NULL)
-  { return Planar_map::insert_at_vertices(cv, h1, h2, en); } 
+                                      Change_notification * en = NULL,
+                                      bool prevs_order_known = false)
+  { return Planar_map::insert_at_vertices(cv, h1, h2, en, prevs_order_known);} 
 
   //! inserts a given curve that one of its endpoints is held by a given vertex
   // into the map.
