@@ -349,10 +349,8 @@ public:
   Halfedge_handle insert_at_vertices(const X_monotone_curve_2 & cv,
                                      Halfedge_handle prev1, 
                                      Halfedge_handle prev2,
-                                     Change_notification * en = NULL
-#ifdef _MSC_VER
-                                     ,int dummy = 0
-#endif
+                                     Change_notification * en = NULL,
+                                     bool prevs_order_known = false
                                      );
 
   //! inserts a given curve that both of its endpoints are held by two given
@@ -1288,11 +1286,8 @@ insert_at_vertices
 (const typename Planar_map_2<Dcel, Traits>::X_monotone_curve_2 & cv, 
  typename Planar_map_2<Dcel, Traits>::Halfedge_handle prev1, 
  typename Planar_map_2<Dcel, Traits>::Halfedge_handle prev2, 
- Change_notification                                  * en
-#ifdef _MSC_VER
-                   ,int
-#endif
-                   )
+ Change_notification                                  * en,
+ bool                                                 prevs_order_known)
 {
   CGAL_precondition_msg(traits->point_equal(prev1->target()->point(), 
                                               traits->curve_source(cv)) &&
@@ -1307,19 +1302,23 @@ insert_at_vertices
   Size num_before = number_of_faces();
 
   bool prev1_before_prev2 = true;
-  int cnt1 = path_length(prev1, prev2);
 
-  // If the 2 halfedge (targets) are disconnected, the insertion of the curve
-  // into the topological map does not generate a new face. Otherwise, it
-  // much more efficient to calculate the shortest path and apply the test
-  // to it.
-  if (cnt1 != -1) {
-    int cnt2 = path_length(prev2, prev1);
-    prev1_before_prev2 = (cnt1 < cnt2) ?
-      prev1_inside_hole(prev1, prev2, cv) :
-      !prev1_inside_hole(prev2, prev1, cv);
+  if (! prevs_order_known)
+  {
+    int cnt1 = path_length(prev1, prev2);
+
+    // If the 2 halfedge (targets) are disconnected, the insertion of the curve
+    // into the topological map does not generate a new face. Otherwise, it
+    // much more efficient to calculate the shortest path and apply the test
+    // to it.
+    if (cnt1 != -1) {
+      int cnt2 = path_length(prev2, prev1);
+      prev1_before_prev2 = (cnt1 < cnt2) ?
+        prev1_inside_hole(prev1, prev2, cv) :
+        !prev1_inside_hole(prev2, prev1, cv);
+    }
   }
-  
+ 
   // bool prev1_before_prev2 = prev1_inside_hole(prev1, prev2, cv);
   Halfedge_handle h = (prev1_before_prev2) ?
     Topological_map<Dcel>::insert_at_vertices(prev1, prev2) : 
@@ -1416,7 +1415,7 @@ insert_at_vertices
                   << "inserted curve " << std::endl;
         return Halfedge_handle();
       }
-    }
+		}
   }    
 
   Halfedge_around_vertex_circulator prev2 = v2->incident_halfedges();
