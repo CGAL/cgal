@@ -2549,6 +2549,17 @@ bool QPE_solver<Rep_>::
 is_solution_unbounded(Tag_false)		//QP case
 {
 
+    // doc:Test_suite.tex
+    // Note: the basic feasible direction w is defined such that 
+    // x'-tw yields feasible solutions where x' denotes the current
+    // solution.
+    // The following conditions for the basic feasible direction
+    // w defined as w^T=[q_B_O^T|q_B_S^T|-e_j^T], j in N, must be met
+    // 1.  w <= 0
+    // 2. A * w = 0
+    // 3. w^T * D * w > 0
+    // 4. (c^T + 2 * x'^T * D) * w > 0
+    //  
     Index_iterator i_it, M_i_it;
     Value_iterator v_it;
     Indices        M;
@@ -2557,25 +2568,27 @@ is_solution_unbounded(Tag_false)		//QP case
     
     CGAL_expensive_precondition(is_solution_feasible());
     
-    //check nonpositivity of q
-    Values q(qp_n, et0);
+    //check nonpositivity of w_B_O
     basic_vars_nonpos = true;
     v_it = q_x_O.begin();
     for (i_it = B_O.begin(); i_it != B_O.end(); ++v_it, ++i_it) {
         basic_vars_nonpos = basic_vars_nonpos && ((*v_it) <= et0);
-	q[*i_it] = *v_it;
     }
+    
+    //check nonpositivity of w_B_S
     v_it = q_x_S.begin();
     for (i_it = B_S.begin(); i_it != B_S.end(); ++v_it, ++i_it) {
         basic_vars_nonpos = basic_vars_nonpos && ((*v_it) <= et0);
     }
 
-    //check A|A_S_BxB_S*q=0
+    //check basic feasible direction w for A * w=0
     Values lhs_col(qp_m, et0);
     //initialize M
     for (int i = 0; i < qp_m; ++i) {
         M.push_back(i);
     }
+    
+    // A_CuS_B,B_O * w_B_O
     v_it = q_x_O.begin();
     for (i_it = B_O.begin(); i_it != B_O.end(); ++i_it, ++v_it) {
         A_by_index_accessor  a_accessor( qp_A[*i_it]);
@@ -2584,6 +2597,8 @@ is_solution_unbounded(Tag_false)		//QP case
 	        * (*A_by_index_iterator( M_i_it, a_accessor));
 	}
     }
+    
+    // A_CuS_B,B_S * w_B_S
     v_it = q_x_S.begin();
     for (i_it = B_S.begin(); i_it != B_S.end(); ++i_it, ++v_it) {
         sl_ind = *i_it - qp_n;
@@ -2592,50 +2607,69 @@ is_solution_unbounded(Tag_false)		//QP case
 	} else {
 	    lhs_col[slack_A[sl_ind].first] += *v_it;
 	}
-    }    
-    if (j < qp_n) {  // entering variable original
+    }
+    
+    //A_CuS_B,N * w_N
+    //
+    // nonbasic nonzero component of w_N corresponds to original variable            
+    if (j < qp_n) {
         A_by_index_accessor  a_accessor( qp_A[j]);
         for (M_i_it = M.begin(); M_i_it != M.end(); ++M_i_it) {
 	    lhs_col[*M_i_it] -= d
 	        * (*A_by_index_iterator( M_i_it, a_accessor));
         }
-    } else { // entering variable slack
+    // nonbasic nonzero component of w_N corresponds to slack variable	
+    } else {
         sl_ind = j - qp_n;
-	lhs_col[slack_A[sl_ind].first] -= d;
+	if (slack_A[sl_ind].second) {
+	    lhs_col[slack_A[sl_ind].first] += d;
+	} else {
+	    lhs_col[slack_A[sl_ind].first] -= d;
+	}
     }  
     unbounded = basic_vars_nonpos;    
     for (int row = 0; row < qp_m; ++row) {
         unbounded = unbounded && (lhs_col[row] == et0); 
     }
     
-    // check q^T * D * q = 0
-    Values D_q(qp_n, et0);
+    // check w^T * D * w = 0
+    // D_w contains D * w, will be reused later for the computation
+    // of (c + 2 * x'^T * D) * w
+    // Note: only original variables contribute
+    Values D_w(qp_n, et0);
     for (int row = 0; row < qp_n; ++row) {
        v_it = q_x_O.begin();
-       if (j < qp_n) D_q[row] = -qp_D[row][j];
+       // nonbasic nonzero component of w_N corresponds to original variable
+       if (j < qp_n) D_w[row] = -qp_D[row][j];
        for (i_it = B_O.begin(); i_it != B_O.end(); ++i_it, ++v_it) {
-           D_q[row] += qp_D[row][*i_it] * (*v_it);
+           D_w[row] += qp_D[row][*i_it] * (*v_it);
        }    
     }
+    // w^T * D_w
     ET sum = et0;
     v_it =q_x_O.begin();
     for (i_it = B_O.begin(); i_it != B_O.end(); ++i_it, ++v_it) {
-	sum += (*v_it) * D_q[*i_it];
+	sum += (*v_it) * D_w[*i_it];
     }
-    if (j < qp_n) sum -= D_q[j];
+    // nonbasic nonzero component of w_N corresponds to original variable 
+    if (j < qp_n) sum -= D_w[j];
     unbounded = unbounded && (sum == et0);
     
-    //check c*q + 2 * x'^T * D * q > 0
+    // check c * w + 2 * x'^T * D * w > 0
+    // reuse of D_w
+    // Note: only original variables contribute
     sum = et0;
     v_it = x_B_O.begin();
     for (i_it = B_O.begin(); i_it != B_O.end(); ++i_it, ++v_it) { 
-        sum += (*v_it) * D_q[*i_it];
+        sum += (*v_it) * D_w[*i_it];
     }
     sum *= et2;
+    // c * w
     v_it = q_x_O.begin();
     for (i_it = B_O.begin(); i_it != B_O.end(); ++i_it, ++v_it) {
         sum += (*v_it) * qp_c[*i_it];
     }
+    // nonbasic nonzero component of w_N corresponds to original variable
     if (j < qp_n) sum -= qp_c[j] * d;
     unbounded = unbounded && (sum > et0);
     return unbounded;
@@ -2647,6 +2681,16 @@ bool QPE_solver<Rep_>::
 is_solution_unbounded(Tag_true)		//LP case
 {
 
+    // doc:Test_suite.tex
+    // Note: the basic feasible direction w is defined such that 
+    // x'-tw yields feasible solutions where x' denotes the current
+    // solution.
+    // The following conditions for the basic feasible direction
+    // w defined as w^T=[q_B_O^T|q_B_S^T|-e_j^T], j in N, must be met
+    // 1.  w<=0
+    // 2. A * w=0
+    // 3. c^T * w>0
+    //
     Index_iterator i_it, M_i_it;
     Value_iterator v_it;
     Indices        M;
@@ -2655,25 +2699,27 @@ is_solution_unbounded(Tag_true)		//LP case
     
     CGAL_expensive_precondition(is_solution_feasible());
     
-    //check nonpositivity of q
-    Values q(qp_n, et0);
+    //check nonpositivity of w_B_O
     basic_vars_nonpos = true;
     v_it = q_x_O.begin();
     for (i_it = B_O.begin(); i_it != B_O.end(); ++v_it, ++i_it) {
         basic_vars_nonpos = basic_vars_nonpos && ((*v_it) <= et0);
-	q[*i_it] = *v_it;
     }
+    
+    //check nonpositivity of w_B_S
     v_it = q_x_S.begin();
     for (i_it = B_S.begin(); i_it != B_S.end(); ++v_it, ++i_it) {
         basic_vars_nonpos = basic_vars_nonpos && ((*v_it) <= et0);
     }
 
-    //check A|A_S_BxB_S*q=0
+    //check basic feasible direction w for A * w=0
     Values lhs_col(qp_m, et0);
     //initialize M
     for (int i = 0; i < qp_m; ++i) {
         M.push_back(i);
     }
+    
+    // A_CuS_B,B_O * w_B_O
     v_it = q_x_O.begin();
     for (i_it = B_O.begin(); i_it != B_O.end(); ++i_it, ++v_it) {
         A_by_index_accessor  a_accessor( qp_A[*i_it]);
@@ -2682,6 +2728,8 @@ is_solution_unbounded(Tag_true)		//LP case
 	        * (*A_by_index_iterator( M_i_it, a_accessor));
 	}
     }
+    
+    // A_CuS_B,B_S * w_B_S
     v_it = q_x_S.begin();
     for (i_it = B_S.begin(); i_it != B_S.end(); ++i_it, ++v_it) {
         sl_ind = *i_it - qp_n;
@@ -2690,28 +2738,39 @@ is_solution_unbounded(Tag_true)		//LP case
 	} else {
 	    lhs_col[slack_A[sl_ind].first] += *v_it;
 	}
-    }    
-    if (j < qp_n) {  // entering variable original
+    }
+    
+    //A_CuS_B,N * w_N
+    //
+    // nonbasic nonzero component of w_N corresponds to original variable    
+    if (j < qp_n) {
         A_by_index_accessor  a_accessor( qp_A[j]);
         for (M_i_it = M.begin(); M_i_it != M.end(); ++M_i_it) {
 	    lhs_col[*M_i_it] -= d
 	        * (*A_by_index_iterator( M_i_it, a_accessor));
         }
-    } else { // entering variable slack
+    // nonbasic nonzero component of w_N corresponds to slack variable
+    } else {
         sl_ind = j - qp_n;
-	lhs_col[slack_A[sl_ind].first] -= d;
+	if (slack_A[sl_ind].second) {
+	    lhs_col[slack_A[sl_ind].first] += d;
+	} else {
+	    lhs_col[slack_A[sl_ind].first] -= d;
+	}
     }  
     unbounded = basic_vars_nonpos;    
     for (int row = 0; row < qp_m; ++row) {
         unbounded = unbounded && (lhs_col[row] == et0); 
     }
         
-    //check c*q > 0
+    //check c^T*w > 0
+    // Note: only original variables contribute 
     ET sum = et0;
     v_it = q_x_O.begin();
     for (i_it = B_O.begin(); i_it != B_O.end(); ++i_it, ++v_it) {
         sum += (*v_it) * qp_c[*i_it];
     }
+    // nonbasic nonzero component of w_N corresponds to original variable
     if (j < qp_n) sum -= d * qp_c[j];
     unbounded = unbounded && (sum > et0);
     return unbounded;
