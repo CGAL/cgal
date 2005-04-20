@@ -20,25 +20,31 @@
 #ifndef PMWX_SWEEP_LINE_VISITOR_H
 #define PMWX_SWEEP_LINE_VISITOR_H
 
-#include <CGAL/Sweep_line_2/Pmwx_sweep_line_event.h>
-#include <CGAL/Sweep_line_2/Pmwx_sweep_line_curve.h>
+//#include <CGAL/Sweep_line_2/Pmwx_sweep_line_event.h>
+//#include <CGAL/Sweep_line_2/Pmwx_sweep_line_curve.h>
 #include <CGAL/Sweep_line_2/Pmwx_insert_info.h>
 
 CGAL_BEGIN_NAMESPACE
 
-template <class Traits, class Arr, class Arr_notif>
+template <class Traits, class Arr, class Arr_notif, class Event, class Subcurve>
 class Pmwx_sweep_line_visitor
 {
+protected:
+
   typedef typename Arr::Halfedge_handle                            Halfedge_handle;
-  typedef Pmwx_sweep_line_visitor<Traits,
+  /*typedef Pmwx_sweep_line_visitor<Traits,
                                   Arr,
                                   Arr_notif>                       Self;
   typedef Pmwx_sweep_line_curve<Traits, Halfedge_handle>           Subcurve;
-  typedef Pmwx_sweep_line_event<Traits, Subcurve>                  Event;
+  typedef Pmwx_sweep_line_event<Traits, Subcurve>                  Event;*/
+  typedef Pmwx_sweep_line_visitor<Traits, 
+                                  Arr,
+                                  Arr_notif,
+                                  Event,
+                                  Subcurve>                        Self;
   typedef typename Traits::X_monotone_curve_2                      X_monotone_curve_2;
   typedef typename Traits::Point_2                                 Point_2;
 
-  
   typedef Sweep_line_2_impl<Traits,
                             Event,
                             Subcurve,
@@ -49,6 +55,7 @@ class Pmwx_sweep_line_visitor
   typedef Pmwx_insert_info<Halfedge_handle>                        PmwxInsertInfo;
   typedef std::list<Subcurve *>                                    SubcurveContainer;
   typedef typename SubcurveContainer::iterator                     SubCurveIter;
+
 public:
 
   Pmwx_sweep_line_visitor(Arr *arr, Arr_notif *notif):
@@ -130,9 +137,9 @@ public:
       if ( hhandle != Halfedge_handle(NULL) ) 
       {
         CGAL_assertion(prev->face() == hhandle->face());
-         
-        res = m_arr->non_intersecting_insert_at_vertices(cv, prev, hhandle, 
-          m_notif);
+        res = m_arr->non_intersecting_insert_at_vertices(cv,hhandle,prev,
+          m_notif,true);
+        res = res ->twin();
       }
       else
       {

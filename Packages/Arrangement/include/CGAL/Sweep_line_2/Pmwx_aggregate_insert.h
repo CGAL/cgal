@@ -35,17 +35,19 @@ template <class SweepLineTraits_2,
           class Change_notification>
 class Pmwx_aggregate_insert 
 {
-  typedef typename Arr::Halfedge_handle                             Halfedge_handle;
-  typedef typename Arr::Edge_iterator                               Edge_iterator;
-  typedef SweepLineTraits_2                                         Traits;
-  typedef typename Traits::X_monotone_curve_2                       X_monotone_curve_2;
+  typedef typename Arr::Halfedge_handle                      Halfedge_handle;
+  typedef typename Arr::Edge_iterator                        Edge_iterator;
+  typedef SweepLineTraits_2                                  Traits;
+  typedef Pmwx_sweep_line_curve<Traits, Halfedge_handle>     Subcurve; 
+  typedef Pmwx_sweep_line_event<Traits, Subcurve>            Event;
+  typedef typename Traits::X_monotone_curve_2                X_monotone_curve_2;
   typedef Pmwx_sweep_line_visitor<Traits,
                                    Arr,
-                                   Change_notification>             Visitor;
+                                   Change_notification,
+                                   Event,
+                                   Subcurve>                 Visitor;
 
-  typedef Pmwx_sweep_line_curve<Traits, Halfedge_handle>    Subcurve; 
-  typedef Pmwx_sweep_line_event<Traits, Subcurve>          Event;
-
+  
  
   typedef Sweep_line_2_impl<Traits,
                             Event,

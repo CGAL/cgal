@@ -75,6 +75,7 @@ public:
   {}
 
 
+  // TODO - remove ?
   void init(const Point_2 &point)
   {
     Base::init(point);
