@@ -1,4 +1,4 @@
-#line 1061 "k3_tree.nw"
+#line 1278 "k3_tree.nw"
 // Copyright (c) 1997-2000  Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
@@ -55,14 +55,18 @@ public:
   typedef typename Kernel::Vector_3 Vector_3;  
   typedef typename Kernel::RT  RT;
 
-  Oriented_side operator()( const Plane_3& pl, Object_handle o);
-  Oriented_side operator()( const Plane_3& pl, Vertex_handle v);
-  Oriented_side operator()( const Plane_3& pl, Halfedge_handle e);
-  Oriented_side operator()( const Plane_3& pl, Halffacet_handle f);
-  Oriented_side operator()( const Plane_3& pl, Halffacet_triangle_handle f);
+  Side_of_plane(bool rc = false) : reference_counted(rc) {}
 
+  template<typename Depth> Oriented_side operator()( const Plane_3& pl, const Point_3& pop, Object_handle o, Depth depth);
+  template<typename Depth> Oriented_side operator()( const Plane_3& pl, const Point_3& pop, Vertex_handle v, Depth depth);
+  template<typename Depth> Oriented_side operator()( const Plane_3& pl, const Point_3& pop, Halfedge_handle e, Depth depth);
+  template<typename Depth> Oriented_side operator()( const Plane_3& pl, const Point_3& pop, Halffacet_handle f, Depth depth);
+  template<typename Depth> Oriented_side operator()( const Plane_3& pl, const Point_3& pop, Halffacet_triangle_handle f, Depth depth);
+
+  bool reference_counted;
   SNC_decorator D;
   Unique_hash_map<Vertex_handle, Oriented_side> OnSideMap;
+  Unique_hash_map<const RT*, Oriented_side> OnSideMapRC;
 };
 
 template <class SNC_decorator>
@@ -144,32 +148,29 @@ public:
     return Intersect();
   }
 
-  Side_of_plane side_of_plane_object() const {
-    return Side_of_plane();
-  }
-
   Objects_bbox objects_bbox_object() const {
     return Objects_bbox();
   }
 };
 
 template <class SNC_decorator>
+template <typename Depth>
 Oriented_side 
 Side_of_plane<SNC_decorator>::operator()
-  ( const Plane_3& pl, Object_handle o) {
+  ( const Plane_3& pl, const Point_3& pop, Object_handle o, Depth depth) {
   Vertex_handle v;
   Halfedge_handle e;
   Halffacet_handle f;
   if( CGAL::assign( v, o))
-    return (*this)( pl, v);
+    return (*this)( pl, pop, v, depth);
   else if( CGAL::assign( e, o))
-    return (*this)( pl, e);
+    return (*this)( pl, pop, e, depth);
   else if( CGAL::assign( f, o))
-    return (*this)( pl, f);
+    return (*this)( pl, pop, f, depth);
   else {
     Halffacet_triangle_handle t;
     if( CGAL::assign( t, o))
-      return (*this)( pl, t);
+      return (*this)( pl, pop, t, depth);
     else
       CGAL_assertion_msg( 0, "wrong handle");
   }
@@ -177,12 +178,58 @@ Side_of_plane<SNC_decorator>::operator()
 }
 
 template <class SNC_decorator>
+template <typename Depth>
 Oriented_side 
 Side_of_plane<SNC_decorator>::operator()
-( const Plane_3& pl, Vertex_handle v) {
-  if(!OnSideMap.is_defined(v))
-    OnSideMap[v] = pl.oriented_side(D.point(v));
-  return OnSideMap[v];
+( const Plane_3& pl, const Point_3& pop, Vertex_handle v, Depth depth) {
+  Comparison_result cr;
+  if(reference_counted) {
+    if(!OnSideMapRC.is_defined(&(v->point().hw())))
+      switch(depth%3) {
+      case 0: 
+        cr = CGAL::compare_x(v->point(), pop);
+        OnSideMapRC[&(v->point().hw())] = cr == LARGER ? ON_POSITIVE_SIDE :
+                         cr == SMALLER ? ON_NEGATIVE_SIDE : ON_ORIENTED_BOUNDARY;
+        break;
+      case 1:
+        cr = CGAL::compare_y(v->point(), pop);
+        OnSideMapRC[&(v->point().hw())] = cr == LARGER ? ON_POSITIVE_SIDE :
+                         cr == SMALLER ? ON_NEGATIVE_SIDE : ON_ORIENTED_BOUNDARY;
+        break;
+      case 2:
+        cr = CGAL::compare_z(v->point(), pop);
+        OnSideMapRC[&(v->point().hw())] = cr == LARGER ? ON_POSITIVE_SIDE :
+                         cr == SMALLER ? ON_NEGATIVE_SIDE : ON_ORIENTED_BOUNDARY;
+        break;
+      default: CGAL_assertion_msg(false, "wrong value");
+      }
+    return OnSideMapRC[&(v->point().hw())];
+  } else { 
+    if(!OnSideMap.is_defined(v))
+      switch(depth%3) {
+      case 0: 
+        cr = CGAL::compare_x(v->point(), pop);
+        OnSideMap[v] = cr == LARGER ? ON_POSITIVE_SIDE :
+                         cr == SMALLER ? ON_NEGATIVE_SIDE : ON_ORIENTED_BOUNDARY;
+        break;
+      case 1:
+        cr = CGAL::compare_y(v->point(), pop);
+        OnSideMap[v] = cr == LARGER ? ON_POSITIVE_SIDE :
+                         cr == SMALLER ? ON_NEGATIVE_SIDE : ON_ORIENTED_BOUNDARY;
+        break;
+      case 2:
+        cr = CGAL::compare_z(v->point(), pop);
+        OnSideMap[v] = cr == LARGER ? ON_POSITIVE_SIDE :
+                         cr == SMALLER ? ON_NEGATIVE_SIDE : ON_ORIENTED_BOUNDARY;
+        break;
+      default: CGAL_assertion_msg(false, "wrong value");
+      }
+    CGAL_NEF_TRACEN("Side_of_plane " << pl << "( " << pop << ")" << pop << ":" 
+	  << OnSideMap[v] << "," << pl.oriented_side(v->point()));  
+    CGAL_assertion(OnSideMap[v] == pl.oriented_side(v->point()));
+    return OnSideMap[v];
+  }
+  CGAL_assertion_msg(false, "should not be reached");
 }
 
 /* 
@@ -193,17 +240,57 @@ Side_of_plane<SNC_decorator>::operator()
  */
 
 template <class SNC_decorator>
+template <typename Depth>
 Oriented_side 
 Side_of_plane<SNC_decorator>::operator()
-( const Plane_3& pl, Halfedge_handle e) {
+( const Plane_3& pl, const Point_3& pop, Halfedge_handle e, Depth depth) {
   Vertex_handle v = e->source();
   Vertex_handle vt = e->twin()->source();
+  /*
+  Comparison_result cr;
   if(!OnSideMap.is_defined(v))
-    OnSideMap[v] = pl.oriented_side(v->point());  
+    switch(depth%3) {
+    case 0: 
+      cr = CGAL::compare_x(v->point(), pop);
+      OnSideMap[v] = cr == LARGER ? ON_POSITIVE_SIDE :
+                       cr == SMALLER ? ON_NEGATIVE_SIDE : ON_ORIENTED_BOUNDARY;
+      break;
+    case 1:
+      cr = CGAL::compare_y(v->point(), pop);
+      OnSideMap[v] = cr == LARGER ? ON_POSITIVE_SIDE :
+                       cr == SMALLER ? ON_NEGATIVE_SIDE : ON_ORIENTED_BOUNDARY;
+      break;
+    case 2:
+      cr = CGAL::compare_z(v->point(), pop);
+      OnSideMap[v] = cr == LARGER ? ON_POSITIVE_SIDE :
+                       cr == SMALLER ? ON_NEGATIVE_SIDE : ON_ORIENTED_BOUNDARY;
+      break;
+    default: CGAL_assertion_msg(false, "wrong value");
+    }
   if(!OnSideMap.is_defined(vt))
-    OnSideMap[vt] = pl.oriented_side(vt->point());  
+    switch(depth%3) {
+    case 0: 
+      cr = CGAL::compare_x(vt->point(), pop);
+      OnSideMap[vt] = cr == LARGER ? ON_POSITIVE_SIDE :
+                       cr == SMALLER ? ON_NEGATIVE_SIDE : ON_ORIENTED_BOUNDARY;
+      break;
+    case 1:
+      cr = CGAL::compare_y(vt->point(), pop);
+      OnSideMap[vt] = cr == LARGER ? ON_POSITIVE_SIDE :
+                       cr == SMALLER ? ON_NEGATIVE_SIDE : ON_ORIENTED_BOUNDARY;
+      break;
+    case 2:
+      cr = CGAL::compare_z(vt->point(), pop);
+      OnSideMap[vt] = cr == LARGER ? ON_POSITIVE_SIDE :
+                       cr == SMALLER ? ON_NEGATIVE_SIDE : ON_ORIENTED_BOUNDARY;
+      break;
+    default: CGAL_assertion_msg(false, "wrong value");
+    }
   Oriented_side src_side = OnSideMap[v];
   Oriented_side tgt_side = OnSideMap[vt];
+*/
+  Oriented_side src_side = (*this) (pl, pop, v, depth);
+  Oriented_side tgt_side = (*this) (pl, pop, vt, depth);
   if( src_side == tgt_side)
     return src_side;
   if( src_side == ON_ORIENTED_BOUNDARY)
@@ -214,13 +301,41 @@ Side_of_plane<SNC_decorator>::operator()
 }
 
 template <typename SNC_decorator>
+template <typename Depth>
 Oriented_side
 Side_of_plane<SNC_decorator>::operator()
-( const Plane_3& pl, Halffacet_triangle_handle t) {
+( const Plane_3& pl, const Point_3& pop, Halffacet_triangle_handle t, Depth depth) {
   bool on_positive_side = false, on_negative_side = false;
   Triangle_3 tr(t.get_triangle());
   for( int i = 0; i < 3; ++i) {
-    Oriented_side side = pl.oriented_side(tr[i]);
+    Oriented_side side = ON_ORIENTED_BOUNDARY;
+    Comparison_result cr;
+    if(!reference_counted || !OnSideMapRC.is_defined(&(tr[i].hw()))) {
+      switch(depth%3) {
+      case 0: 
+        cr = CGAL::compare_x(tr[i], pop);
+        side = cr == LARGER ? ON_POSITIVE_SIDE :
+                 cr == SMALLER ? ON_NEGATIVE_SIDE : ON_ORIENTED_BOUNDARY;
+        break;
+      case 1:
+        cr = CGAL::compare_y(tr[i], pop);
+        side = cr == LARGER ? ON_POSITIVE_SIDE :
+                 cr == SMALLER ? ON_NEGATIVE_SIDE : ON_ORIENTED_BOUNDARY;
+        break;
+      case 2:
+        cr = CGAL::compare_z(tr[i], pop);
+        side = cr == LARGER ? ON_POSITIVE_SIDE :
+                 cr == SMALLER ? ON_NEGATIVE_SIDE : ON_ORIENTED_BOUNDARY;
+        break;
+      default: CGAL_assertion_msg(false, "wrong value");
+      }
+      CGAL_NEF_TRACEN("Side_of_plane " << pl << "( " << pop << ")" << pop << ":" 
+	        << side << "," << pl.oriented_side(tr[i]));  
+      CGAL_assertion(side == pl.oriented_side(tr[i]));
+      if(reference_counted) 
+        OnSideMapRC[&(tr[i].hw())] = side;
+    } else if(reference_counted)
+      side = OnSideMapRC[&(tr[i].hw())];
     if( side == ON_POSITIVE_SIDE)
       on_positive_side = true;
     else if( side == ON_NEGATIVE_SIDE)
@@ -250,9 +365,10 @@ Side_of_plane<SNC_decorator>::operator()
 */
 
 template <class SNC_decorator>
+template <typename Depth>
 Oriented_side 
 Side_of_plane<SNC_decorator>::operator()
-  ( const Plane_3& pl, Halffacet_handle f) {
+  ( const Plane_3& pl, const Point_3& pop, Halffacet_handle f, Depth depth) {
     CGAL_assertion( std::distance( f->facet_cycles_begin(), f->facet_cycles_end()) > 0);
   Halffacet_cycle_iterator fc(f->facet_cycles_begin());
   SHalfedge_handle e;
@@ -265,9 +381,7 @@ Side_of_plane<SNC_decorator>::operator()
   Vertex_handle v;
   do {
     v = sc->source()->center_vertex();
-    if(!OnSideMap.is_defined(v))
-      OnSideMap[v] = pl.oriented_side(v->point());  
-    facet_side = OnSideMap[v];
+    facet_side = (*this) (pl, pop, v, depth);
     ++sc;
   }
   while( facet_side == ON_ORIENTED_BOUNDARY && sc != send);
