@@ -1,6 +1,6 @@
 % =============================================================================
 % The CGAL Developers' Manual
-% Chapter: Memory mangement
+% Chapter: Memory management
 % -----------------------------------------------------------------------------
 % file   : memory_management.tex
 % authors: Michael Seel <seel@mpi-sb.mpg.de>
@@ -43,9 +43,10 @@ an allocator:
 \label{sec:allocator_macro}
 \ccIndexSubitemBegin{allocator}{macro}
 
-The macro \ccc{CGAL_ALLOCATOR}\ccIndexMainItem{\ccFont CGAL_ALLOCATOR} is
-defined in the file \ccc{<CGAL/memory.h>} to be either the \leda\ allocator
-if \leda is present, or the standard allocator from \ccc{<memory>} if not:
+The macro \ccc{CGAL_ALLOCATOR}\ccIndexMainItem{\ccFont CGAL_ALLOCATOR}
+is defined in the file \ccc{<CGAL/memory.h>} to be either the \leda\ 
+allocator if \leda\ is present, or the standard allocator from
+\ccc{<memory>} if not:
 
 \begin{verbatim}
 #ifndef CGAL_MEMORY_H
@@ -133,7 +134,7 @@ Recommendations:
 \begin{itemize}
    \item Use an allocator template parameter (which defaults to
          \ccc{CGAL_ALLOCATOR}) for data structures for which an optimization
-         with regard to allocation and deallocation is benefcial.
+         with regard to allocation and deallocation is beneficial.
 \end{itemize}
 
 }
