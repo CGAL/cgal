@@ -55,6 +55,8 @@ The directory structure of a submission should be as follows:
       |
       |- description.txt
       |
+      |- dont_submit
+      |
       |- long_description.txt
       |
       |- maintainer
@@ -68,10 +70,9 @@ The directory structure of a submission should be as follows:
   \item[{\tt src}]\index{src directory@{\tt src} directory}
        \index{source\ files!{\tt .C} files}
        contains the {\tt .C} files (if any) for the package.
-  \item[{\tt test}]\index{test directory@{\tt test} directory!for packages}
-       contains the test suite code for the package.  See
-       Section~\ref{sec:test_subdirectory} for a detailed description of this 
-       subdirectory.
+     \item[{\tt test}]\index{test directory@{\tt test} directory!for
+         packages} contains the test suite code for the package. See
+       Section~\ref{sec:test_subdirectory} for a detailed description.
   \item[{\tt doc\_tex}]\index{doc_tex directory@{\tt doc\_tex} directory}
        \ccIndexSubitem{source files}{documentation}
        contains the documentation for the reference manuals.
@@ -92,22 +93,22 @@ The directory structure of a submission should be as follows:
        software and may require user interaction.  They are compiled but not
        run in the test suite. See Section~\ref{sec:demo_subdirectory} for a
        more detailed description of this subdirectory.
-  \item[{\tt auxiliary}]\index{auxiliary directory@{\tt auxiliary} directory}
-       contains auxiliary software for CGAL. For instance, GMP goes here,
-       and other things. The average package won't have this directory.
-  \item[{\tt scripts}]\index{scripts directory@{\tt scripts} directory}
-       contains scripts that are useful for users of CGAL.
-  \item[{\tt developer\_scripts}]\index{developers_scripts directory@{\tt developers\_scripts} directory}
-       contains scripts that are useful for
-       developers of CGAL. This directory is included only in internal
-       releases, not in public releases.
+     \item[{\tt auxiliary}]\index{auxiliary directory@{\tt auxiliary}
+         directory} contains auxiliary software for CGAL. For
+       instance, GMP goes here. The average package won't have this
+       directory.
+     \item[{\tt scripts}]\index{scripts directory@{\tt scripts}
+         directory} contains scripts that are of interest to CGAL
+       users.
+     \item[{\tt developer\_scripts}]\index{developers_scripts
+         directory@{\tt developers\_scripts} directory} contains
+       scripts that are of interest to CGAL developers. This directory
+       is included in internal releases only, not in public releases.
   \item[\ccAnchor{example/changes.txt}{{\tt changes.txt}}]%
-       \ccIndexMainItem{\tt changes.txt}
-       should be used to document important changes between 
-       subsequent versions. Each entry in this file should include
-       the date it was committed and the name of the commiter, as well as
-       a one line description of the change (most recent entries at the top),
-       in the following format, for example:
+    \ccIndexMainItem{\tt changes.txt} used to document important
+    changes between subsequent versions. Each entry must provide the
+    date of the change and the name of the person who committed it, as
+    in the following example:
        \begin{verse}
        2 Feb 2004  Sylvain Pion\\
        - Fix a memory-leak in file.h.\\
@@ -117,6 +118,14 @@ The directory structure of a submission should be as follows:
   \item[{\tt description.txt}]%
        \ccIndexMainItem{\tt description.txt}
        should give a very short description of the contents of the package. 
+  \item[{\tt dont\_submit}]%
+    \ccIndexMainItem{\tt dont_submit} specifies files and directories
+    that are to be excluded from the release, for example:
+    \begin{verse}
+      TODO\\
+      include/CGAL/my\_internal\_file.h\\
+      Benchmark      
+    \end{verse}
   \item[{\tt long\_description.txt}]%
        \ccIndexMainItem[c]{\tt long_description.txt}
        may be added with more detailed information about the submission. 
@@ -139,8 +148,10 @@ The directory structure of a submission should be as follows:
 \index{test directory@{\tt test} directory|(}
 \ccIndexMainItemBegin{test suite}
 
-The structure of the directory that contains the test suite files for 
-a package should be as follows: 
+This directory contains the test suite for the package. Here we just
+briefly list the files contained in such a directory. For more
+detailed information about testsuites for \cgal\ packages refer to
+Chapter~\ref{chap:testing}. 
 
 \begin{verbatim}
       test/<testdir>
@@ -164,47 +175,13 @@ name.
         test suite\index{data directory@{\tt data} directory}.
    \item[{\tt include/}] is a subdirectory that contains local include files for
         the test suite.
-   \item[{\tt cgal\_test}]\index{cgal_test script@{\tt cgal\_test} script|(}
-        is the script that will be called when the entire
-        test suite is run. It will be created automatically, so usually there
-        is no need to submit it. (Submitting it is {\bf discouraged}.)
-        It should rely on four environment variables:
-        \begin{description}
-            \item[{\tt \$CGAL\_MAKEFILE}]%
-                 \index{CGAL_MAKEFILE variable@{\tt CGAL\_MAKEFILE} variable}%
-                 \ccIndexSubitem{\tt makefile}{\cgal}
-                 (an included makefile, which {\bf must} include the full path
-                  name!!) 
-            \item[{\tt \$PLATFORM}]%
-                 \index{PLATFORM variable@{\tt PLATFORM} variable}
-                 (the extension of this makefile, that will 
-                 be used as an extension to the output files), 
-            \item[{\tt \$TESTSUITE\_CXXFLAGS}]%
-                 \index{TESTSUITE_CXXFLAGS variable@{\tt TESTSUITE\_CXXFLAGS} variable}
-                 (an additional compiler flag) 
-            \item[{\tt \$TESTSUITE\_LDFLAGS}] 
-                 \index{TESTSUITE_LDFLAGS variable@{\tt TESTSUITE\_LDFLAGS} variable}
-                 (an additional linker flag) 
-        \end{description}
-        The latter two flags must be passed to the makefile%
-        \ccIndexSubitem{\tt makefile}{test suite}
-        and they should 
-        precede all other compiler and linker flags. The script should then
-        perform all tests using the makefile \verb|$CGAL_MAKEFILE|. 
-
-        To indicate whether the tests are successful or not, the script should 
-        write two one-line messages to a file called {\tt error.txt}
-        \index{error.txt@{\tt error.txt}} 
-        for each target. If something 
-        goes wrong during compilation or during execution, an error message 
-        should be written that starts with the keyword {\tt ERROR:}; otherwise
-        a message indicating successful compilation or execution should be
-        written to this file. Running the script {\tt cgal\_test} should not 
-        require any user interaction and the script should clean up after 
-        itself by removing object files and executables (usually by using the
-        command {\tt make clean}).
-
-        This script can be created using the 
+      \item[{\tt cgal\_test}]\index{cgal_test script@{\tt cgal\_test}
+          script|(} is the script that will be called when the entire
+        test suite is run. As this file is created automatically
+        during the release process, submitting it is error-prone and
+        thus {\bf strongly discouraged}.
+        
+        For testing purposes, such a script can be created using the
         {\tt create\_cgal\_test}%
         \index{create_cgal_test script@{\tt create\_cgal\_test} script} 
         script (Section~\ref{sec:create_cgal_test}).  
@@ -212,16 +189,12 @@ name.
 
    \item[{\tt makefile}]\ccIndexSubitem{\tt makefile}{test suite} 
         is the makefile for the test programs. It is created
-        automatically, just like {\tt cgal\_test}. {\em Submitting it is 
-        {\bf discouraged} even more strongly}, because it is quite difficult 
+        automatically, just like {\tt cgal\_test}. Submitting it is 
+        {\bf discouraged even more strongly}, because it is quite difficult 
         to produce a makefile that works correctly on all supported platforms.
-        The makefile should use
-        the two variables \verb|$TESTSUITE_CXXFLAGS| 
-        \index{TESTSUITE_CXXFLAGS variable@{\tt TESTSUITE\_CXXFLAGS} variable}
-        and \verb|$TESTSUITE_LDFLAGS| 
-        \index{TESTSUITE_LDFLAGS variable@{\tt TESTSUITE\_LDFLAGS} variable}
-        as the first compiler and linker flags,
-        respectively.  The makefile can be created using the script
+        
+        For testing purposes, such a makefile can be created using the
+        script
         {\tt create\_makefile}%
         \index{create_makefile script@{\tt create\_makefile} script} 
         with the argument {\tt -t} 
@@ -229,7 +202,7 @@ name.
    \item[{\tt *.C}] source code for the test programs.
         \ccIndexSubitem{source files}{test suite}
 
-        Whan a test program runs correctly, it should return
+        When a test program runs correctly, it should return
         \ccIndexSubsubitem{test suite}{program}{return value} the
         value zero, or, more precisely, the value \verb|std::EXIT_WITH_SUCCESS|
         defined in \verb|<cstdlib>|.
@@ -246,6 +219,54 @@ name.
         ./program < program.cin
         \end{verbatim}
 \end{description} 
+
+\begin{ccAdvanced}
+  \textbf{Custom cgal\_test script.} In special cases, you may want to
+  provided a custom {\tt cgal\_test} script to fit special needs. The
+  script should rely on four environment variables:
+        \begin{description}
+            \item[{\tt \$CGAL\_MAKEFILE}]%
+                 \index{CGAL_MAKEFILE variable@{\tt CGAL\_MAKEFILE} variable}%
+                 \ccIndexSubitem{\tt makefile}{\cgal}
+                 (an included makefile, which {\bf must} include the full path
+                  name!!) 
+            \item[{\tt \$PLATFORM}]%
+                 \index{PLATFORM variable@{\tt PLATFORM} variable}
+                 (the extension of this makefile, that will 
+                 be used as an extension to the output files), 
+            \item[{\tt \$TESTSUITE\_CXXFLAGS}]%
+                 \index{TESTSUITE_CXXFLAGS variable@{\tt TESTSUITE\_CXXFLAGS} variable}
+                 (additional compiler flags) 
+            \item[{\tt \$TESTSUITE\_LDFLAGS}] 
+                 \index{TESTSUITE_LDFLAGS variable@{\tt TESTSUITE\_LDFLAGS} variable}
+                 (additional linker flags) 
+        \end{description}
+        The latter two flags must be passed to the makefile%
+        \ccIndexSubitem{\tt makefile}{test suite} and they should
+        precede all other compiler and linker flags. The script then
+        performs all tests using the makefile \verb|$CGAL_MAKEFILE|.
+        
+        To indicate whether the tests are successful or not, the
+        script writes two one-line messages to a file called {\tt
+          error.txt} \index{error.txt@{\tt error.txt}} for each
+        target. If something goes wrong during compilation or during
+        execution, an error message is written that starts with the
+        keyword {\tt ERROR:}; otherwise a message indicating
+        successful compilation or execution is written to this file.
+        Running the script {\tt cgal\_test} must not require any user
+        interaction and the script cleans up after itself by removing
+        object files and executables (usually by using the command
+        {\tt make clean}).
+        
+        \textbf{Custom makefile.} In special cases, you may want to
+        provided a custom {\tt makefile} to fit special needs. Use the
+        two variables \verb|$TESTSUITE_CXXFLAGS|
+        \index{TESTSUITE_CXXFLAGS variable@{\tt TESTSUITE\_CXXFLAGS}
+          variable} and \verb|$TESTSUITE_LDFLAGS|
+        \index{TESTSUITE_LDFLAGS variable@{\tt TESTSUITE\_LDFLAGS}
+          variable} as the first compiler and linker flags,
+        respectively.
+\end{ccAdvanced}
 \ccIndexMainItemEnd{test suite}
 \index{test directory@{\tt test} directory|)}
 
@@ -259,7 +280,7 @@ As described in Chapter~\ref{chap:specification}, the \cgal\ documentation is
 organized in subdirectories for each package and the different manuals
 are assembled from these packages. Contained in these
 subdirectories are the files required for producing a package's contributions
-to the different reference amd users' manuals. The users' manual input
+to the different reference and users' manuals. The users' manual input
 files are located in the package's directory; the reference manual files are
 be located in a directory named $<Package>${\tt \_ref}
 \index{ref directory@{\tt \_ref} directory}.  
@@ -271,7 +292,7 @@ see Section~\ref{sec:ref_manual}.), but there must be a file called
 all the other files for that manual part.
 ({\bf Note}: You should use the \verb|\input| command and NOT the 
 \verb|\include| command to input other source files in this file, and
-they have to include their files using relativ paths starting in the
+they have to include their files using relative paths starting in the
 \texttt{doc\_tex} directory.)  
 
 For example, the optimisation package of 
@@ -325,12 +346,15 @@ the basic library can have the following documentation.
 \ccIndexSubitemEnd{manuals}{source files} 
 \index{doc_tex directory@{\tt doc\_tex} directory|)}
 
-A note on files that were previously needed: The \texttt{htmlfiles} are
-not needed and also not evaluated anymore. They are replaced by an
-automatism in the \texttt{latex\_to\_html} converter to find and copy
-the included raster images automatically. The \texttt{cgal.bib} files
-are not used anymore. They are replaced by a common file
-\texttt{doc\_tex/Manual/cgal\_manual.bib}  in the \texttt{Manual} package.
+\textbf{Historical Notes.} Once upon a time a file called
+\texttt{htmlfiles} has been used to indicate files (e.g., images) to
+be used for the html conversion. This file is no longer needed nor is
+it evaluated anymore. The functionality is now provided by an
+mechanism in the \texttt{latex\_to\_html} converter to find and copy
+the included raster images automatically. Also the \texttt{cgal.bib}
+files are not used anymore. They are replaced by a common file
+\texttt{doc\_tex/Manual/cgal\_manual.bib} in the \texttt{Manual}
+package.
 
 \section{{\tt examples} subdirectory}
 \label{sec:examples_subdirectory}
