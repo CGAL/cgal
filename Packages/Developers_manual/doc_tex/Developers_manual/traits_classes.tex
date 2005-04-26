@@ -36,27 +36,28 @@ concept is a traits class for the given algorithm or data structure.
 \section{Why are traits classes in \cgal?}
 \label{sec:why_traits_classes}
 
-Using traits concepts as template parameters allows for customization of 
-the behavior of algorithms without changing implementations.
-At least one model for each traits concept should be provided in
-\cgal\ (and usually this should be the kernel traits class; see 
+Using traits concepts as template parameters allows for customization
+of the behavior of algorithms without changing implementations.  At
+least one model for each traits concept should be provided in \cgal\ 
+(in the simplest case, the kernel models fit; see
 Section~\ref{sec:kernel_traits}), but often more than one are provided
-in order to supply certain customizations that users may want.  The user 
-is also free to supply his or her own class as a model of the traits
-concept when the desired tailoring is not present in the library.
+in order to supply certain customizations that users may want.  The
+user is also free to supply his or her own class as a model of the
+traits concept when the desired tailoring is not present in the
+library.
 
-Traits classes allow for tailoring of algorithms not only at compile time
-but also at run time.  Some primitive operations that appear in the traits
-class (in the form of function object types) may need additional data that
-are not known at compile time.  A standard example is the following: we have
-three-dimensional points, but we want the convex hull of the two-dimensional 
-points that arise after projecting along some direction in space, which is
-computed as the program runs. How does the algorithm get to know about this 
-direction? If there is a traits class object as a parameter, the 
-information can be provided to the proper primitives through a proper 
-initialization of the traits class object.
-For this reason, traits class objects are passed
-as parameters to functions.\ccIndexSubitem{traits class}{as parameter} 
+Traits classes allow for tailoring of algorithms not only at compile
+time but also at run time.  Some primitive operations that appear in
+the traits class (in the form of functor types) may need additional
+data that are not known at compile time.  A standard example is the
+following: we have three-dimensional points, but we want the convex
+hull of the two-dimensional points that arise after projecting along
+some direction in space, which is computed as the program runs. How
+does the algorithm get to know about this direction? If there is a
+traits class object as a parameter, the information can be provided to
+the proper primitives through a proper initialization of the traits
+class object.  For this reason, traits class objects are passed as
+parameters to functions.\ccIndexSubitem{traits class}{as parameter}
 
 \section{An example -- planar convex hulls}
 \label{sec:traits_class_example}
@@ -151,27 +152,26 @@ object types must exist.
 \end{ccRefConcept}
 \ccAutoIndexingOn
 
-This ends the copied manual text. 
-Some comments are in order here. You might have expected \ccc{Less_xy_2}
-and \ccc{Left_turn_2} to be simply member functions of the traits class.
-\ccIndexMainItemBegin{function objects}
-Instead, they are function object types, and there are member 
-functions generating instances of these types, \ie, the actual function 
-objects. This might appear pretty complicated, but it is the way it should
-be done in \cgal. Reasons for this are the following.
+This ends the copied manual text.  Some comments are in order here.
+You might have expected \ccc{Less_xy_2} and \ccc{Left_turn_2} to be
+simply member functions of the traits class.
+\ccIndexMainItemBegin{functors} Instead, they are functor types, and
+there are member functions generating instances of these types, \ie,
+the actual functors. Reasons for this are the following.
 \begin{itemize}
-\item \cgal\ is designed to have an \stl-like look-and-feel. 
-      All algorithms in the \stl\ that depend on computational
-      primitives (like a sorting algorithm depending on a comparison operator),
-      receive those primitives as function object parameters. (The only way to
-      pass an actual function as a parameter would be via function pointers.)
-\item More flexibility. In contrast to member functions, function objects
-      can carry data. For example, repeated calls to a function with only
-      slightly different parameters might be handled efficiently by storing
-      intermediate results. Function objects are the natural framework here.
-      See~\cite{hhkps-aegk-01} for more exposition.
+\item \cgal\ is designed to have an \stl-like look-and-feel.  All
+  algorithms in the \stl\ that depend on computational primitives
+  (like a sorting algorithm depending on a comparison operator),
+  receive those primitives via parameters which are functors. (The
+  only way to pass an actual function as a parameter would be via
+  function pointers.)
+\item More flexibility. In contrast to member functions, functors can
+  carry data. For example, repeated calls to a function with only
+  slightly different parameters might be handled efficiently by
+  storing intermediate results. Functors are the natural framework
+  here. See~\cite{hhkps-aegk-01} for more exposition.
 \end{itemize}
-\ccIndexMainItemEnd{function objects}
+\ccIndexMainItemEnd{functors}
 If you really look up the documentation of the 
 \ccAnchor{http://www.cgal.org/Manual/doc_html/basic_lib/Convex_hull_2_ref/Concept_ConvexHullTraits_2.html}{concept} in the manual, you will find a larger
 list of requirements. 
@@ -221,21 +221,22 @@ the specified requirements.
 \ccIndexSubitemEnd{traits class}{example}
 
 
-\section{The kernel traits} 
+\section{Kernel as traits} 
 \label{sec:kernel_traits}
-\ccIndexMainItemBegin{kernel traits}
 
-Most default traits classes in \cgal\ are written in terms of the 
-types and classes provided in the \cgal\ kernel.  So one may wonder why
-it is not possible to plug the kernel in as a traits class directly. 
-Ideally, it provides all the primitives an algorithm needs. However, 
-some algorithms and data structures require specialized predicates that would
-not be appropriate to add to a general-purpose kernel.  The traits classes
-for these algorithms and data structures should use kernel primitives
-wherever possible, and for those primitives not provided by the kernel 
-the fixed naming scheme for predicates and constructions 
-(Section~\ref{sec:naming_scheme}) should be used to make the library more
-consistent and thus easier to use.
+\ccIndexSubitemBegin{kernel}{as traits} %
+Most default traits classes in \cgal\ are written in terms of the
+types and classes provided in the \cgal\ kernel.  So one may wonder
+why it is not possible to plug the kernel in as a traits class
+directly.  Ideally, it provides all the primitives an algorithm needs.
+However, some algorithms and data structures require specialized
+predicates that would not be appropriate to add to a general-purpose
+kernel.  The traits classes for these algorithms and data structures
+should use kernel primitives wherever possible, and for those
+primitives not provided by the kernel the fixed naming scheme for
+predicates and constructions (Section~\ref{sec:naming_scheme}) should
+be used to make the library more consistent and thus easier to use.
+\ccIndexSubitemEnd{kernel}{as traits} %
 
 \InternalOnly{
 \section{Requirements and recommendations}
@@ -257,20 +258,21 @@ have to observe when you design a traits class yourself.
       the algorithm. 
 
 \item Obey the naming conventions (Section~\ref{sec:naming_scheme}).
-
-\item Use function objects instead of member functions for the predicates
-      required. This is not only necessary for the kernel traits, it also 
-      gives the benefit of more flexibility. For each type you must provide
-      a member function to get the actual function object and thus this seems
-      to increase the size of the traits class.
-      However, if you follow the naming scheme, the 
-      signatures of these functions are obvious and obtainable mechanically.
-
+  
+\item Use functors instead of member functions for the predicates
+  required. This is not only necessary for the kernel traits, it also
+  gives the benefit of more flexibility. For each type you must
+  provide a member function to get the actual functor and thus this
+  seems to increase the size of the traits class.  However, if you
+  follow the naming scheme, the signatures of these functions are
+  obvious and obtainable mechanically.
+  
 \item Provide at least one model (which should normally be the kernel
-      traits class) for every traits concept.
-
-\item Define and document a  default traits class so the user need not provide 
-      a traits class argument if customization of the algorithm is not needed.
+  traits class) for every traits concept.
+  
+\item Define and document a default traits class so the user need not
+  provide a traits class argument if customization of the algorithm is
+  not needed.
 
 \end{itemize} 
 }
