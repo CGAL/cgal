@@ -1,3 +1,6 @@
+26 April 2005 Sylvain Pion
+- Fix rational_rotation bug (by Daniel).
+
 26 March 2005 Sylvain Pion
 - Handle_for : remove "optimization" of default ctor.
   It's painful to use, and is there really a need to optimize default ctors ?

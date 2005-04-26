@@ -135,7 +135,7 @@ rational_rotation_approximation( const NT &  dirx,     // dir.x()
   dx = dirx;
   dy = diry;
 
-  if (dy > dx ) { std::swap (sin,cos); }
+  if (CGAL_NTS abs(dy) > CGAL_NTS abs(dx) ) { std::swap (sin,cos); }
 
   if (dx < NT0) { cos = - cos; }
 
