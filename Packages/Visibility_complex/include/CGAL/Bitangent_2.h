@@ -409,6 +409,10 @@ public:
     typedef typename R::Point_2                    Point_2;
     typedef typename Base::Type                             Type;
     // -------------------------------------------------------------------------
+    using Base::source_object;
+    using Base::target_object;
+    using Base::is_left_xx;
+    using Base::is_xx_left;
 public:
     // Constructeurs -----------------------------------------------------------
     Bitangent_2() : Base() { }

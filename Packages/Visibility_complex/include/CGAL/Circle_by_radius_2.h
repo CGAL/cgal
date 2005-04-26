@@ -50,22 +50,22 @@ public:
       : Circle_2(center, radius*radius, COUNTERCLOCKWISE) , _radius(radius) { }
     Circle_by_radius_2(const Point_2&p, const Point_2&q, const Point_2&r)
       : Circle_2(p,q,r) , 
-	_radius(CGAL_NTS sqrt(squared_radius())) { }
+	_radius(CGAL_NTS sqrt(Circle_2::squared_radius())) { }
     Circle_by_radius_2(const Point_2& p, const Point_2& q,
 		       const Orientation &orientation)
       : Circle_2(p,q,orientation) , 
-	_radius(CGAL_NTS sqrt(squared_radius())) { }
+	_radius(CGAL_NTS sqrt(Circle_2::squared_radius())) { }
     Circle_by_radius_2(const Point_2& p,
 		       const Point_2& q)
       : Circle_2(p,q,COUNTERCLOCKWISE) ,
-	_radius(CGAL_NTS sqrt(squared_radius())) { }
+	_radius(CGAL_NTS sqrt(Circle_2::squared_radius())) { }
     Circle_by_radius_2(const Point_2& center,
 		       const Orientation& orientation)
       : Circle_2(center,FT(0),orientation) ,
-	_radius(CGAL_NTS sqrt(squared_radius())) { }
+	_radius(CGAL_NTS sqrt(Circle_2::squared_radius())) { }
     Circle_by_radius_2(const Point_2& center)
       : Circle_2(center,FT(0),COUNTERCLOCKWISE) ,
-	_radius(CGAL_NTS sqrt(squared_radius())) { }
+	_radius(CGAL_NTS sqrt(Circle_2::squared_radius())) { }
     // -------------------------------------------------------------------------
     FT radius() const { return _radius; }
 private:

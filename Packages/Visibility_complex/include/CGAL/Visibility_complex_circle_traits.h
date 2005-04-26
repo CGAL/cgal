@@ -66,14 +66,14 @@ struct Visibility_complex_circle_traits
     // -------------------------------------------------------------------------
     // The two follwing give the chi2 predicate with a point at infinity
     struct Compare_extreme_yx {
-	Comparison_result operator() (bool sa , const Disk& a,
-				      bool sb , const Bitangent_2& b) const 
+	Comparison_result operator() (bool, const Disk&,
+				      bool, const Bitangent_2&) const 
 	{ return EQUAL; } // FIXME - not implemented
-	Comparison_result operator() (bool sa , const Bitangent_2& a,
-				      bool sb , const Bitangent_2& b) const 
+	Comparison_result operator() (bool, const Bitangent_2&,
+				      bool, const Bitangent_2&) const 
 	{ return EQUAL; } // FIXME - not implemented
-	Comparison_result operator() (bool sa , const Bitangent_2& a,
-				      bool sb , const Disk& b) const 
+	Comparison_result operator() (bool, const Bitangent_2&,
+				      bool, const Disk&) const 
 	{ return EQUAL; } // FIXME - not implemented
 	Comparison_result operator() (bool sa , const Disk& a,
 				      bool sb , const Disk& b) const { 
@@ -98,11 +98,11 @@ struct Visibility_complex_circle_traits
     // The chi3 predicate
     struct Orientation_infinite {
 	// FIXME - not implemented
-	Orientation operator() (const Bitangent_2& a, 
-				const Disk& o) const{ return COLLINEAR; }
+	Orientation operator() (const Bitangent_2&, 
+				const Disk&) const{ return COLLINEAR; }
 	// FIXME - not implemented
-	Orientation operator() (const Disk& o, 
-				const Bitangent_2& b) const{ return COLLINEAR; } 
+	Orientation operator() (const Disk&, 
+				const Bitangent_2&) const{ return COLLINEAR; } 
 	Orientation operator() (const Bitangent_2& a, 
 				const Bitangent_2& b) const
 	{ return R().orientation_2_object()(a.source(),a.target(),b.target()); } 
@@ -204,8 +204,8 @@ public:
 	{ return EQUAL; } // FIXME - not implemented
 	Comparison_result operator() (bool sa , const Disk& a,
 				      bool sb , const Disk& b) const { 
-	    FT ar = (sa) ? a.radius() : -a.radius();
-	    FT br = (sb) ? b.radius() : -b.radius();
+	    FT ra = (sa) ? a.radius() : -a.radius();
+	    FT rb = (sb) ? b.radius() : -b.radius();
 	    return compare_lexicographically_xyC2(a.center().y() + ra,
 						  a.center().x(),
 						  b.center().y() + rb,

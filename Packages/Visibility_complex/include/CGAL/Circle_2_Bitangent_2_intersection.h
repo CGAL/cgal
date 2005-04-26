@@ -32,7 +32,8 @@ CGAL_BEGIN_NAMESPACE
 template < class R_ , class C_ >
 bool do_intersect( const Circle_2<R_>& c1, const Bitangent_2<C_>& c2 )
 {
-    cerr << "Not implemented Circle_2 - Bitangent_2 intersection !" << endl;
+    std::cerr << "Not implemented Circle_2 - Bitangent_2 intersection !" 
+	      << std::endl;
     return false;
 }
 

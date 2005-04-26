@@ -1,3 +1,8 @@
+26 April 2005 Laurent Rineau
+- port to g++-4.0.0
+- fix syntax errors and warnings.
+- example2.C style has to be fixed.
+
 09 April 2005 Laurent Rineau
 - port to g++-3.4 (added a lot of using Base::foobar)
 
