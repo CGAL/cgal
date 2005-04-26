@@ -150,38 +150,34 @@ there are \emph{convincing} reasons.
 \subsection*{Kernel traits}
 \ccIndexSubitemBegin{naming scheme}{kernel traits}
 \ccIndexSubitemBegin{kernel traits}{naming scheme}
-\ccIndexMainItemBegin{function objects}
+\ccIndexMainItemBegin{functors}
 
-With the goal in mind of allowing the kernel to be used as a default
-traits class for most data structures and algorithms, the following naming
-scheme was devised for kernel traits class objects.  All types in the
-kernel traits class are function object types\footnote{Technically, one
-should speak of function classes or function object classes, but the term
-``function object'' has become prevalent.}, and we 
-distinguish the following four categories:
+All types in the kernel concept are functor types. We distinguish the
+following four categories:
 \begin{enumerate}
-\item\textbf{generalized predicates} \ie,~standard predicates
-       returning a Boolean value as well as functions such as 
-       \ccc{orientation()} that return an
-       enumeration type (values from a finite discrete set).
-\item\textbf{construction objects}, which replace constructors in the kernel,
+\item\textbf{generalized predicates}, that is, standard predicates
+  returning a Boolean value as well as functions such as
+  \ccc{orientation()} that return an enumeration type (values from a
+  finite discrete set).
+\item\textbf{construction objects}, which replace constructors in the
+  kernel,
 \item\textbf{constructive procedures} and
-\item\textbf{function objects replacing operators}.
+\item\textbf{functors replacing operators}.
 \end{enumerate}
 
-\ccIndexSubitemBegin{function objects}{naming}
-As detailed below, the names of these function objects reflect the actions
-performed by calls to \ccc{operator()}.   This naming scheme was 
-chosen instead of one in which the computed object determines the name because
-this latter naming scheme is more natural for functions that compute values
-where the function call can be seen as a name for the object returned
-instead of function objects that simply maintain data associated with the
-computation.  It was also noted that the naming of functions and function
-objects is not consistent,
-either in \cgal\ or in the \stl\  (In some cases the action performed by a 
-function determines its name (\eg, \ccc{multiply()}) while in others the
-result of the action determines the name (\eg, \ccc{product()}).), so 
-achieving complete consistency with an existing naming scheme is not possible.
+\ccIndexSubitemBegin{functors}{naming} As detailed below, the names of
+these functors reflect the actions performed by calls to
+\ccc{operator()}.  This naming scheme was chosen instead of one in
+which the computed object determines the name because this latter
+naming scheme is more natural for functions that compute values where
+the function call can be seen as a name for the object returned
+instead of functors that simply maintain data associated with the
+computation.  It was also noted that the naming of functions and
+functors is not consistent, either in \cgal\ or in the \stl\ (In some
+cases the action performed by a function determines its name (\eg,
+\ccc{multiply()}) while in others the result of the action determines
+the name (\eg, \ccc{product()}).), so achieving complete consistency
+with an existing naming scheme is not possible.
 
 Here are the naming rules:
 \begin{itemize}
@@ -189,25 +185,27 @@ Here are the naming rules:
       This is necessary because in some cases (\eg, the \ccc{Orientation_2}
       object) the absence of the suffix would cause a name conflict with
       an existing type or class (\eg, the enumeration type \ccc{Orientation}).
-\item The names of generalized predicates are determined by their results.
-      Furthermore, names are as much as possible consistent with the current
-      kernel and the \stl. So, for example, we have objects like
-      \ccc{Has_on_bounded_side_2}, \ccc{Is_degenerate_2}, and
-      \ccc{Is_horizontal_2}.  According to the current kernel we also have
-      \ccc{Left_turn_2}.  For reasons of consistency with \stl, all
-      ``less-than''-objects start with \ccc{Less_}, \eg,~\ccc{Less_xy_2}.
-      Further examples are \ccc{Less_distance_to_point_2} and
+    \item The names of generalized predicates are determined by their
+      results.  Furthermore, names are as much as possible consistent
+      with the current kernel and the \stl. So, for example, we have
+      objects like \ccc{Has_on_bounded_side_2}, \ccc{Is_degenerate_2},
+      and \ccc{Is_horizontal_2}.  According to the current kernel we
+      also have \ccc{Left_turn_2}.  For reasons of consistency with
+      \stl, all ``less-than''-objects start with \ccc{Less_},
+      \eg,~\ccc{Less_xy_2}.  Further examples are
+      \ccc{Less_distance_to_point_2} and
       \ccc{Less_distance_to_line_2}. However, we have \ccc{Equal_2},
-      whereas the corresponding \stl\ function object is called
-      \ccc{equal_to}. Here, we give our dimension rule higher priority. 
-\item The names of construction objects (category 2 above) follow the pattern 
-      \ccc{Construct_{\tt type_d}}, where \texttt{type\_d} is the type 
-      constructed, \eg,~\ccc{Construct_point_2} and \ccc{Construct_line_2}.  
-      The \ccc{operator()} of these function object classes is overloaded.
-      This reduces the number of names to remember drastically, while
-      replacing one of the constructions gets more complicated, but is
-      still possible.
-\item Function objects in category 3 above can be further subdivided into
+      whereas the corresponding \stl\ functor is called
+      \ccc{equal_to}. Here, we give our dimension rule higher
+      priority.
+    \item The names of construction objects (category 2 above) follow
+      the pattern \ccc{Construct_{\tt type_d}}, where \texttt{type\_d}
+      is the type constructed, \eg,~\ccc{Construct_point_2} and
+      \ccc{Construct_line_2}.  The \ccc{operator()} of these functor
+      classes is overloaded.  This reduces the number of names to
+      remember drastically, while replacing one of the constructions
+      gets more complicated, but is still possible.
+    \item Functors in category 3 above can be further subdivided into
       two classes:
       \begin{itemize}
          \item constructive procedures that construct objects whose types are 
@@ -215,16 +213,17 @@ Here are the naming rules:
          \item procedures that construct objects whose types are not known 
                {\em a priori}
       \end{itemize}
-
-      The names of function objects in the first class also start with 
-      \ccc{Construct_} whenever a geometric object is constructed, otherwise 
-      they start with \ccc{Compute_}.  Here, real numbers are not considered 
-      to be 1-dimensional geometric objects.  For example, on the one hand 
-      we have \ccc{Construct_perpendicular_vector_2}, 
-      \ccc{Construct_midpoint_3},
-      \ccc{Construct_circumcenter_d}, \ccc{Construct_bisector_2}, and
-      \ccc{Construct_point_on_3}, while on the other hand there are
-      \ccc{Compute_area_2} and \ccc{Compute_squared_length_3}.  
+      
+      The names of functors in the first class also start with
+      \ccc{Construct_} whenever a geometric object is constructed,
+      otherwise they start with \ccc{Compute_}.  Here, real numbers
+      are not considered to be 1-dimensional geometric objects.  For
+      example, on the one hand we have
+      \ccc{Construct_perpendicular_vector_2},
+      \ccc{Construct_midpoint_3}, \ccc{Construct_circumcenter_d},
+      \ccc{Construct_bisector_2}, and \ccc{Construct_point_on_3},
+      while on the other hand there are \ccc{Compute_area_2} and
+      \ccc{Compute_squared_length_3}.
 
       For the second class, the names of the objects describe the (generic) 
       action, \eg~\ccc{Intersect_2}.
@@ -239,16 +238,16 @@ Here are the naming rules:
       object in the traits.
 \end{itemize}
 \ccIndexSubitemEnd{kernel traits}{naming scheme}
-\ccIndexSubitemEnd{function objects}{naming}
-\ccIndexMainItemEnd{function objects}
+\ccIndexSubitemEnd{functors}{naming}
+\ccIndexMainItemEnd{functors}
 
-In addition, for each function object the kernel traits class has
-a member function that returns an instance of this function object.
-The name of this function should be the (uncapitalized) name of the
-function object followed by the suffix \ccc{_object}.%
+In addition, for each functor the kernel traits class has a member
+function that returns an instance of this functor.  The name of this
+function should be the (uncapitalized) name of the
+functor followed by the suffix \ccc{_object}.%
 %\index{object functions@{\ccFont \_object} functions} 
-For example, the function that retuns an instance of the \ccc{Less_xy_2} 
-function object is called \ccc{less_xy_2_object}.
+For example, the function that retuns an instance of the
+\ccc{Less_xy_2} functor is called \ccc{less_xy_2_object}.
 \ccIndexSubitemEnd{naming scheme}{kernel traits}
 
 \subsection*{File names}
@@ -348,10 +347,12 @@ The following items can be seen as recommendations
 in contrast to the rules of previous paragraph.
 
 \begin{itemize}
-\item The macro \verb|#define| should be used sparingly.
-\item Try to avoid renaming the base types of \CC\ using {\ccFont typedef}.
+\item Use \verb|#define| sparingly.
+\item Do not rename the base types of \CC\ using {\ccFont typedef}.
 \item When using an overloaded call, always give the exact match. Use
-      explicit casting if necessary.
+  explicit casting if necessary.
+\item Do not call global functions unqualified, that is, always
+  specify explicitly the namespace where the function is defined.
 \end{itemize}
 \ccIndexMainItemEnd{programming conventions}
 
