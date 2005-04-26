@@ -34,7 +34,7 @@ int main()
     // Output the bitangents of the shortest path to cout
     CGAL::shortest_path_2(O.begin(),O.end(), 
 			  p,q, 
-			  std::ostream_iterator<Segment>(cout , "\n"),
+			  std::ostream_iterator<Segment>(std::cout , "\n"),
 			  Gt());
     return 0;
 }

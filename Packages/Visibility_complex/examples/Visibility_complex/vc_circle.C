@@ -23,8 +23,7 @@ int main()
     VComplex V(D.begin(),D.end());
 
     // Sice of V
-    int size = 0;
-    std::distance(V.vertices_begin(),V.vertices_end(),size);
+    int size = std::distance(V.vertices_begin(),V.vertices_end());
     std::cout << size << std::endl;
 
     return 0;

@@ -3,9 +3,9 @@
 #include <CGAL/basic.h>
 #include <CGAL/Gmpz.h>
 #include <CGAL/Simple_cartesian.h>
-#include <CEP/Visibility_complex/Visibility_complex_segment_traits.h>
-#include <CEP/Visibility_complex/Visibility_complex_items.h>
-#include <CEP/Visibility_complex/Visibility_complex_2.h>
+#include <CGAL/Visibility_complex_segment_traits.h>
+#include <CGAL/Visibility_complex_items.h>
+#include <CGAL/Visibility_complex_2.h>
 
 typedef CGAL::Gmpz   FT;
 typedef CGAL::Simple_cartesian<FT>                      Rep;
