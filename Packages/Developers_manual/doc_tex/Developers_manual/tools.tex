@@ -108,6 +108,7 @@ to indicate the kind of makefile to create:
 \item[-t]   create a makefile for the test suite
 \item[-w]   create a makefile with flags for LEDA windows
 \item[-g]   create a makefile with flags for GEOWIN
+\item[-q]   create a makefile with flags for QT
 \end{description}
 
 You should use this script to create makefiles for testing before submitting
@@ -237,14 +238,14 @@ The next step is to specify the name of the hosts. To do that, you must define
 the variable {\tt \$BUILD\_HOSTS} in the file {\tt .autocgalrc}. For every
 host that you define you must also specify the compiler-platform names on that
 host.  Here is an example:
-\begin{verbatim}
+{\small\begin{verbatim}
 BUILD_HOSTS="papillon electra winmachine localhost"
 COMPILERS_papillon="mips_IRIX64-6.5_CC-n32-7.30_LEDA mips_IRIX-6.5_g++-fsquangle-2.95.2_LEDA"
 COMPILERS_electra="sparc_SunOS-5.6_g++-2.95.2_LEDA"
 COMPILERS_winmachine="i686_CYGWINNT-5.0-1.3.22_CL.EXE-1300"
 COMPILERS_localhost="i686_Linux-2.4.17_g++-3.4.0"
 PROCESSORS_papillon="3"
-\end{verbatim}
+\end{verbatim}}
 You should take those names from the configuration files mentioned earlier.
 The {\tt PROCESSORS\_hostname} must be set if you have more than one 
 processor on that host and of course if you want to give all of them to the 
@@ -259,7 +260,7 @@ otherwise the script will not run.  You can use it to pass environment
 variables along to remote hosts.  Here is an example of {\tt MYSHELL}
 variable :
 \begin{verbatim}
-MYSHELL="TERM=vt100 PATH=$PATH:/bin:/usr/local/bin:$HOME/bin/SunOS:/usr/ccs/bin:/opt/SUNWspro/bin \
+MYSHELL="TERM=vt100 PATH=$PATH:/bin:/usr/local/bin:/usr/ccs/bin:/opt/SUNWspro/bin \
 QTDIR=/usr/local/qt2 PARASOFT=/usr/local/parasoft /usr/local/bin/zsh -c\"
 \end{verbatim}
 
@@ -337,16 +338,24 @@ The parameter {\tt -r} is used to specify the module version.
 The parameter {\tt -n} is used to specify the module version number. If you don't use the {\tt -n parameter}, the version number will be taken from the module version. The module version and version number will be used in the files version.h and version.tex. 
 The {\tt -s} parameter is used to specify the directory containing the scripts create\_makefile, and all the other scripts that CGAL made public for users. This is not the package Scripts, but the scripts directory in the Scripts package.  
 
-You must have {\tt wininst} package in the same directory with {\tt Scripts} package because the script is looking for C2vcproj script used to generate the projects in examples for VC++.
+You must have {\tt wininst} package in the same directory with {\tt
+  Scripts} package because the script is looking for C2vcproj script
+used to generate the projects in examples for VC++.
 
-The script also generates the makefiles in examples, which was done also by the mother script {\tt create\_internal\_release}. This is done only if there is no makefile called {\tt makefile} in the directory. 
-The script behavior concerning the {\tt src} dir of the module is as follows: 
+The script also generates the makefiles in examples, which was done
+also by the mother script {\tt create\_internal\_release}. This is
+done only if there is no makefile called {\tt makefile} in the
+directory.  The script behavior concerning the {\tt src} dir of the
+module is as follows:
 
-  - when there is a src dir in the module it generates the makefile\_lib file that is the makefile to build the CGAL library (only for the C files in the src dir).     
+- when there is a src dir in the module it generates the makefile\_lib
+file that is the makefile to build the CGAL library (only for the C
+files in the src dir).
 
   - when there is no src directory it simply does nothing.
-
-For the moment the script does not produce the tar.gz version of the module, this will be done in the future if it will be required.
+  
+  For the moment the script does not produce the tar.gz version of the
+  module, this will be done in the future if it will be required.
   
 
 
@@ -355,13 +364,26 @@ For the moment the script does not produce the tar.gz version of the module, thi
 \index{create_modules script@{\tt create\_modules} script|(}
 \ccIndexSubitem{test suite}{internal release}
 
-This script is used to trigger the previous script {\tt create\_internal\_module}. It looks in the {\tt \$MODULES\_DIRECTORY} directory for all the files containing the packages list that should generate the module. For example if the {\tt \$MODULES\_DIRECTORY} is ``Modules'', than it looks in the Modules directory for all the files. Each file in this directory represents a module to be created, the name of the file becoming the name of the module. Each file contains a list of packages, one package per line.
+This script is used to trigger the previous script {\tt
+  create\_internal\_module}. It looks in the {\tt
+  \$MODULES\_DIRECTORY} directory for all the files containing the
+packages list that should generate the module. For example if the {\tt
+  \$MODULES\_DIRECTORY} is ``Modules'', than it looks in the Modules
+directory for all the files. Each file in this directory represents a
+module to be created, the name of the file becoming the name of the
+module. Each file contains a list of packages, one package per line.
 
-For each file in Modules directory, for each package enumerated in the file, it checks out or updates the package in the {\tt \$CVSDIR}. {\tt \$CVSDIR} represents the directory where you store the packages. It is the same as the ``All packages dir'' from the previous script.
+For each file in Modules directory, for each package enumerated in the
+file, it checks out or updates the package in the {\tt \$CVSDIR}. {\tt
+  \$CVSDIR} represents the directory where you store the packages. It
+is the same as the ``All packages dir'' from the previous script.
 
-Once the update process is done, it calls {\tt create\_internal\_module} script with the right parameters.
+Once the update process is done, it calls {\tt
+  create\_internal\_module} script with the right parameters.
 
-The version and version number are preset and the way to determine those will be changed in the near future. I am just looking for the best way to do it. 
+The version and version number are preset and the way to determine
+those will be changed in the near future. I am just looking for the
+best way to do it.
   
 
 
