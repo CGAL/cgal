@@ -6,22 +6,18 @@ Author:           Angelier Pierre  <Pierre.Angelier@ens.fr>
 Maintainer:       Angelier Pierre  <Pierre.Angelier@ens.fr>
 		  Rineau Laurent   <Laurent.Rineau@ens.fr>
 
-Address:          Département d'Informatique de l'École Normale Supérieure
+Address:          Departement d'Informatique de l'Ecole Normale Superieure
 		  45 rue d'Ulm 75230 Paris Cedex 05 France
 
 URL:              http://www.di.ens.fr/~gecoal/Visibility_complex/Visibility_complex.tar.gz
 
-Version:          1.0.3 (23 March 2004)
+Version:          1.0.9.0 (26 April 2005)
 
-CGAL Versions:    2.4 and 3.0
+CGAL Versions:    3.0 and 3.1
 
 Supported Compilers & Platforms:
-     sparc_SunOS-5.8_g++-2.95
-     sparc_SunOS-5.7_g++-2.95.2_LEDA
-     i686_Linux-2.2.18_g++-2.95
-     i686_Linux-2.2.18_g++-2.95_LEDA
-     i686_Linux-2.2.18_g++-3.0.4
-     i686_Linux-2.2.18_g++-3.1.
+  i686_Linux-2.6.9-1.667_g++-3.4.2
+  i686_Linux-2.6.9-1.667_g++-4.0.0
 
 Purpose:
      This package implements the visibility complex data structure for planar
@@ -58,6 +54,7 @@ Changes:
              added a small word about shortest path in the user manual
       1.0.3  This version is usable with CGAL-3.0.
              Perhaps does it still work with CGAL-2.2 but it is not sure.
+      1.0.9.0 Version for CGAL-3.1 and gcc >= 3.4.
 Installation:
       
 Documentation:
