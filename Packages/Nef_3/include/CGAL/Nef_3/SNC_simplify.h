@@ -253,8 +253,8 @@ class SNC_simplify : public SNC_decorator<SNC_structure> {
     bool simplified = false;
 
 #ifdef CGAL_NEF_DEBUG
-    delete IO;
-    IO = new SNC_io_parser(std::cerr, *this->sncp());
+    //    delete IO;
+    //    IO = new SNC_io_parser(std::cerr, *this->sncp());
 #endif
 
     SNC_decorator D(*this->sncp());
@@ -311,8 +311,8 @@ class SNC_simplify : public SNC_decorator<SNC_structure> {
     SNC_decorator D(*this->sncp());
 
 #ifdef CGAL_NEF_DEBUG
-    delete IO;
-    IO = new SNC_io_parser(std::cerr, *this->sncp());
+    //    delete IO;
+    //    IO = new SNC_io_parser(std::cerr, *this->sncp());
 #endif
     
     Unique_hash_map< Volume_handle, UFH_volume> hash_volume;
@@ -427,6 +427,10 @@ class SNC_simplify : public SNC_decorator<SNC_structure> {
     create_boundary_links_forall_volumes( hash_volume, uf_volume);
     
     CGAL_NEF_TRACEN(">>> simplifying done ");
+
+#ifdef CGAL_NEF_DEBUG
+    //    delete IO;
+#endif
 
     return update_sfaces || update_facets || update_volumes;
   }
@@ -635,8 +639,8 @@ class SNC_simplify : public SNC_decorator<SNC_structure> {
     //  SFace_map linked(false);
 
 #ifdef CGAL_NEF_DEBUG
-    delete IO;
-    IO = new SNC_io_parser(std::cerr, *this->sncp());
+    //    delete IO;
+    //    IO = new SNC_io_parser(std::cerr, *this->sncp());
 #endif
 
     SNC_decorator D(*this->sncp());
