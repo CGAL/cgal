@@ -199,18 +199,6 @@ class Normalizing<Cartesian_tag> {
   template <typename R> static
   CGAL::Point_3<R> normalized(const CGAL::Point_3<R>& p) { 
     return p;
-    /*
-    typedef typename R::FT     FT;
-    
-    FT g = (p.x() != 0 ? p.x() : (p.y() != 0 ? p.y() : (p.z() != 0 ? p.z() : 1)));
-    g = CGAL_NTS abs(g);
-
-    FT x = p.x()/g;
-    FT y = p.y()/g;
-    FT z = p.z()/g;
-    
-    return CGAL::Point_3<R>(x,y,z);
-    */
   }
 
   template <typename R> static
@@ -220,7 +208,17 @@ class Normalizing<Cartesian_tag> {
 
   template <typename R> static
   CGAL::Sphere_point<R> normalized(const CGAL::Sphere_point<R>& p) { 
-    return p;
+
+    typedef typename R::RT     RT;
+    
+    RT g = (p.hx() != 0 ? p.hx() : (p.hy() != 0 ? p.hy() : p.hz()));
+    g = CGAL_NTS abs(g);
+
+    RT x = p.hx()/g;
+    RT y = p.hy()/g;
+    RT z = p.hz()/g;
+    
+    return CGAL::Sphere_point<R>(CGAL::Point_3<R>(x,y,z,1));
   }
 
   template <typename R> static
