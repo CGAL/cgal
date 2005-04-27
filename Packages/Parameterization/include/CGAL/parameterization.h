@@ -46,8 +46,8 @@ template <class MeshAdaptor_3>
 typename Parametizer_3<MeshAdaptor_3>::ErrorCode 
 parameterize(MeshAdaptor_3* mesh)	// 3D mesh, model of MeshAdaptor_3 concept
 {
-	Mean_value_coordinates_parametizer_3<MeshAdaptor_3> parametizer;
-	return parametizer.parameterize(mesh);
+    Mean_value_coordinates_parametizer_3<MeshAdaptor_3> parametizer;
+    return parametizer.parameterize(mesh);
 }
 
 // Compute a 1 to 1 mapping from a triangular 3D surface 'mesh' 
@@ -69,7 +69,7 @@ typename Parametizer_3<MeshAdaptor_3>::ErrorCode
 parameterize(MeshAdaptor_3* mesh,		// 3D mesh, model of MeshAdaptor_3 concept
 			 Parametizer_3_ parametizer)// Parameterization class for MeshAdaptor_3 mesh
 {
-	return parametizer.parameterize(mesh);
+    return parametizer.parameterize(mesh);
 }
 
 

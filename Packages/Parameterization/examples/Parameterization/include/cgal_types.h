@@ -88,13 +88,14 @@ public:
 	// distance
 	double distance(Point *pPoint) const 
 	{
-	Vector vec = (*pPoint-m_center);
-	return My_kernel::len(vec);
+	    Vector vec = (*pPoint-m_center);
+	    return My_kernel::len(vec);
 	}
 };
 
 template <class Refs, class Tprev, class Tvertex, class Tface>
-class My_halfedge : public CGAL::HalfedgeDS_halfedge_base<Refs,Tprev,Tvertex,Tface>
+class My_halfedge 
+    : public CGAL::HalfedgeDS_halfedge_base<Refs,Tprev,Tvertex,Tface>
 {
 private:
 	int m_tag;
@@ -249,43 +250,43 @@ public:
     }
     virtual ~Polyhedron_ex()
     {
-      free_skeleton();
+        free_skeleton();
     }
     
     void free_skeleton()
     {
-      m_skeleton.free();
+        m_skeleton.free();
     }
     
     
     // facet centers
     void compute_facet_centers()
     {
-      fprintf(stderr,"  compute facet centers...");
-      std::for_each(facets_begin(),facets_end(),Facet_center());
-      fprintf(stderr,"ok\n");
+        fprintf(stderr,"  compute facet centers...");
+        std::for_each(facets_begin(),facets_end(),Facet_center());
+        fprintf(stderr,"ok\n");
     }
 
     // tag all facets
     void tag_facets(const int tag)
     {
-      Facet_iterator pFace;
-      for(pFace = facets_begin();
-          pFace != facets_end();
-          pFace++)
+        Facet_iterator pFace;
+        for(pFace = facets_begin();
+            pFace != facets_end();
+            pFace++)
         pFace->tag(tag);
     }
 
     // get any facet with tag
     Facet_handle get_any_facet_tag(int tag)
     {
-      Facet_iterator pFace;
-      for(pFace = facets_begin();
-          pFace != facets_end();
-          pFace++)
+        Facet_iterator pFace;
+        for(pFace = facets_begin();
+            pFace != facets_end();
+            pFace++)
         if(pFace->tag() == tag)
-          return pFace;
-     return NULL;
+            return pFace;
+        return NULL;
     }
 
     // get closest inner face

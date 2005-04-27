@@ -185,7 +185,7 @@ public:
             gam=(t*t*rho-tau)/tau;
             BLAS<Vector>::scal(gam,r);
             BLAS<Vector>::axpy(1,g,r);
-	        gg=BLAS<Vector>::dot(g,g);								// Current error gg = (g|g)
+	        gg=BLAS<Vector>::dot(g,g);							// Current error gg = (g|g)
             its++;
         }
 
@@ -226,5 +226,5 @@ private:
 
 }; // namespace OpenNL
 
-#endif
+#endif // __OPENNL_CONJUGATE_GRADIENT__
 

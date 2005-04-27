@@ -39,8 +39,8 @@ CGAL_BEGIN_NAMESPACE
 // This class parameterizes the border of a 3D surface onto a square.
 //
 // Design pattern: 
-// Square_border_parametizer_3 is an Strategy (see [GOF95]): it implements 
-// a strategy of boundary parameterization for models of Parametizer_3
+// BorderParametizer_3 models are Strategies (see [GOF95]): they implement
+// a strategy of boundary parameterization for models of MeshAdaptor_3
 //
 // Implementation note: 
 // To simplify the implementation, BorderParametizer_3 models know only the 

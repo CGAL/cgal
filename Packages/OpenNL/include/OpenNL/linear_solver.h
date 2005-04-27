@@ -38,9 +38,10 @@
  *  Note that the GNU General Public License does not permit incorporating
  *  the Software into proprietary programs. 
  *
- *  Laurent Saboret 01/2005: Change for CGAL:
+ *  Laurent Saboret 01/2005-04/2005: Change for CGAL:
  *		- Added OpenNL namespace
  *		- DefaultLinearSolverTraits is now a model of the SparseLinearAlgebraTraits_d concept
+ *      - Added SymmetricLinearSolverTraits
  */
 
 
@@ -62,14 +63,18 @@ namespace OpenNL {
 
 /*
  * Class DefaultLinearSolverTraits
- * Traits class for solving general sparse linear systems (model of the SparseLinearAlgebraTraits_d concept)
+ * Traits class for solving general sparse linear systems 
+ * (model of the SparseLinearAlgebraTraits_d concept)
  * By default, it uses OpenNL BICGSTAB general purpose solver
  */ 
 
-template <class COEFFTYPE,										// type of matrix and vector coefficients
-		  class MATRIX = SparseMatrix<COEFFTYPE>,				// model of SparseLinearSolverTraits_d::Matrix concept
-		  class VECTOR = FullVector<COEFFTYPE>,					// model of SparseLinearSolverTraits_d::Vector concept
-		  class SOLVER = Solver_BICGSTAB<MATRIX, VECTOR> >		// BICGSTAB general purpose solver
+template 
+<
+    class COEFFTYPE,						// type of matrix and vector coefficients
+    class MATRIX = SparseMatrix<COEFFTYPE>,	// model of SparseLinearSolverTraits_d::Matrix
+	class VECTOR = FullVector<COEFFTYPE>,	// model of SparseLinearSolverTraits_d::Vector
+	class SOLVER = Solver_BICGSTAB<MATRIX,VECTOR> // BICGSTAB general purpose solver
+>                                           
 class DefaultLinearSolverTraits 
 {
 // Public types
@@ -77,7 +82,9 @@ public:
     typedef MATRIX							Matrix ;
     typedef VECTOR							Vector ;
 	typedef COEFFTYPE						CoeffType ;		
-	typedef COEFFTYPE						NT;					// added for SparseLinearAlgebraTraits_d::Vector concept
+
+    // added for SparseLinearAlgebraTraits_d::Vector concept
+	typedef COEFFTYPE						NT;					
 
 // Private types
 public:
@@ -95,8 +102,8 @@ public:
 	static bool linear_solver (const Matrix& A, const Vector& B, Vector& X, NT& D) 
 	{
         Solver solver ;
-		D = 1;													// Solver_BICGSTAB does not support homogeneous coordinates
-		X = B;													// mandatory
+		D = 1;		        // Solver_BICGSTAB does not support homogeneous coordinates
+		X = B;				// mandatory
 		return solver.solve(A, B, X) ;
 	}
 
@@ -118,15 +125,22 @@ public:
 
 /*
  * Class SymmetricLinearSolverTraits
- * Traits class for solving SYMMETRIC POSITIVE sparse linear systems (model of the SparseLinearAlgebraTraits_d concept)
+ * Traits class for solving SYMMETRIC POSITIVE sparse linear systems 
+ * (model of the SparseLinearAlgebraTraits_d concept)
  * By default, it uses OpenNL Conjugate Gradient algorithm without preconditioner
  */ 
 
-template <class COEFFTYPE,										// type of matrix and vector coefficients
-		  class MATRIX = SparseMatrix<COEFFTYPE>,				// model of SparseLinearSolverTraits_d::Matrix concept
-		  class VECTOR = FullVector<COEFFTYPE>,					// model of SparseLinearSolverTraits_d::Vector concept
-		  class SOLVER = Solver_CG<MATRIX, VECTOR> >			// Conjugate Gradient algorithm without preconditioner
-class SymmetricLinearSolverTraits : public DefaultLinearSolverTraits<COEFFTYPE, MATRIX, VECTOR, SOLVER> {};
+template 
+<
+    class COEFFTYPE,						// type of matrix and vector coefficients
+    class MATRIX = SparseMatrix<COEFFTYPE>,	// model of SparseLinearSolverTraits_d::Matrix
+	class VECTOR = FullVector<COEFFTYPE>,	// model of SparseLinearSolverTraits_d::Vector
+    class SOLVER = Solver_CG<MATRIX, VECTOR>// Conjugate Gradient algorithm without preconditioner
+>                                           
+class SymmetricLinearSolverTraits 
+    : public DefaultLinearSolverTraits<COEFFTYPE, MATRIX, VECTOR, SOLVER> 
+{
+};
 
 
 /*
@@ -332,7 +346,7 @@ public:
 		// Solve the sparse linear system "A*X = B". On success, the solution is (1/D) * X.
  		CoeffType D;
 		bool success = Traits::linear_solver(*A_, *b_, *x_, D) ;
-		assert(D == 1.0);												// WARNING: this library does not support homogeneous coordinates!
+		assert(D == 1.0);   // WARNING: this library does not support homogeneous coordinates!
 
 		vector_to_variables() ;
 

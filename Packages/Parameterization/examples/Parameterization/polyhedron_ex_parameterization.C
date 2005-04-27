@@ -101,40 +101,40 @@ typedef Feature_backbone<Polyhedron_ex::Vertex_handle,
 // Return the border of this region.
 static const Backbone* cut_mesh(Polyhedron_ex* mesh)
 {
-  // init
-  Backbone *pSeamingBackbone = mesh->get_seaming_backbone();
-  mesh->free_skeleton();
-  pSeamingBackbone->clear();
-  //mesh->flag_halfedges_seaming(false);
+    // init
+    Backbone *pSeamingBackbone = mesh->get_seaming_backbone();
+    mesh->free_skeleton();
+    pSeamingBackbone->clear();
+    //mesh->flag_halfedges_seaming(false);
 
-  Mesh_cutter cutter(mesh);
-  // cutter.keep_one_connected_component();
-  Mesh_feature_extractor feature_extractor(mesh);
+    Mesh_cutter cutter(mesh);
+    // cutter.keep_one_connected_component();
+    Mesh_feature_extractor feature_extractor(mesh);
 
-  // compute genus
-  int genus = mesh->genus();
-  if(genus == 0)
-  {
-    int nb_boundaries = feature_extractor.extract_boundaries(true);
-
-    // no boundary, we need to cut the mesh
-    if(nb_boundaries == 0)
-      cutter.cut(pSeamingBackbone); // simple cut
-    else
+    // compute genus
+    int genus = mesh->genus();
+    if(genus == 0)
     {
-      // must have one boundary, pick the first_file_arg
-      Backbone *pBackbone = (*mesh->get_skeleton()->backbones())[0];
-      pSeamingBackbone->copy_from(pBackbone);
-      //cutter.convert_to_seaming(pSeamingBackbone);
+        int nb_boundaries = feature_extractor.extract_boundaries(true);
 
-      // cleanup this one (has to be done later if has corners)
-      mesh->free_skeleton();
+        // no boundary, we need to cut the mesh
+        if(nb_boundaries == 0)
+            cutter.cut(pSeamingBackbone); // simple cut
+        else
+        {
+            // must have one boundary, pick the first_file_arg
+            Backbone *pBackbone = (*mesh->get_skeleton()->backbones())[0];
+            pSeamingBackbone->copy_from(pBackbone);
+            //cutter.convert_to_seaming(pSeamingBackbone);
+
+            // cleanup this one (has to be done later if has corners)
+            mesh->free_skeleton();
+        }
     }
-  }
-  else // genus > 0 -> cut the mesh
+    else // genus > 0 -> cut the mesh
     cutter.cut_genus(pSeamingBackbone);
 
-  return pSeamingBackbone;
+    return pSeamingBackbone;
 }
 
 
@@ -143,32 +143,32 @@ static const Backbone* cut_mesh(Polyhedron_ex* mesh)
 // ----------------------------------------------------------------------------
 
 // Parameters description for Options library
-static const char *  optv[] = {	
+static const char *  optv[] = 
+{	
+    //     '|' -- indicates that the option takes NO argument;
+    //     '?' -- indicates that the option takes an OPTIONAL argument;
+    //     ':' -- indicates that the option takes a REQUIRED argument;
+    //     '*' -- indicates that the option takes 0 or more arguments;
+    //     '+' -- indicates that the option takes 1 or more arguments;
 
-   //     '|' -- indicates that the option takes NO argument;
-   //     '?' -- indicates that the option takes an OPTIONAL argument;
-   //     ':' -- indicates that the option takes a REQUIRED argument;
-   //     '*' -- indicates that the option takes 0 or more arguments;
-   //     '+' -- indicates that the option takes 1 or more arguments;
-
-   "t:type <string>", // -t or --type
-   // -t    conformal   -> default
-   //       natural     -> free boundaries
-   //       floater     -> mean coordinate values
-   //       uniform     -> weight = 1
-   //       authalic    -> weak area-preserving
-   //       lscm        -> Least Squares Conformal Maps
+    "t:type <string>", // -t or --type
+    // -t    conformal   -> default
+    //       natural     -> free boundaries
+    //       floater     -> mean coordinate values
+    //       uniform     -> weight = 1
+    //       authalic    -> weak area-preserving
+    //       lscm        -> Least Squares Conformal Maps
 
 
-   "b:boundary <string>", // -b or --boundary (for fixed border param.)
-   // -b circle		-> map mesh boundary onto a circle
-   //    square		-> map mesh boundary onto a square
+    "b:boundary <string>", // -b or --boundary (for fixed border param.)
+    // -b circle		-> map mesh boundary onto a circle
+    //    square		-> map mesh boundary onto a square
 
-   "o:output <string>", // -o or --output
-   // -o eps   -> eps map       (-o eps file.off > file.eps)
-   //    obj   -> Wavefront obj (-o obj file.off > file.obj)
-   
-   NULL
+    "o:output <string>", // -o or --output
+    // -o eps   -> eps map       (-o eps file.off > file.eps)
+    //    obj   -> Wavefront obj (-o obj file.off > file.obj)
+
+    NULL
 } ;
 
 // Parameters description for usage

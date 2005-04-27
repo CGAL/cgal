@@ -40,7 +40,7 @@
 
 // Class Mesh_adaptor_polyhedron_ex 
 // Model of MeshAdaptor_3 concept, whose purpose is to allow 
-// the parameterization package to access meshes on an uniform manner
+// the parameterization package to access meshes on an uniform manner.
 //
 // Mesh_adaptor_polyhedron_ex is an adaptor class to access to a Polyhedron_ex 
 // 3D mesh using MeshAdaptor_3 interface. 
@@ -106,6 +106,7 @@ private:
 // Public types
 public:
 
+	// Number type
 	typedef Polyhedron_ex::Traits::FT		NT;
 	// Points and vectors
 	typedef Polyhedron_ex::Traits::Point_2	Point_2;
@@ -244,7 +245,7 @@ public:
 										  All_vertices_filter());
 	}
 
-	// Get the number of vertices of the mesh
+	// Count the number of vertices of the mesh
 	int  count_mesh_vertices () const {
 		int index = 0;
 		for (Vertex_const_iterator it=mesh_vertices_begin(); 
@@ -293,7 +294,10 @@ public:
 		return 0; 
 	}
 
-	// Get iterator over first vertex of mesh's border.
+	// Count the number of boundaries of the mesh
+	int  count_mesh_boundaries () const;
+	
+	// Get iterator over first vertex of mesh's border
 	Border_vertex_iterator  mesh_border_vertices_begin () {
 		return (Border_vertex_iterator_base) m_boundary.begin();
 	}

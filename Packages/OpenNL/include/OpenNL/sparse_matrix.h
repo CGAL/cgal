@@ -64,7 +64,9 @@ template <class T> class SparseMatrix
 public:
 
     typedef T CoeffType ;
-	typedef T NT;			// added for SparseLinearAlgebraTraits_d::Matrix concept
+
+    // added for SparseLinearAlgebraTraits_d::Matrix concept
+	typedef T NT;			
 
     struct Coeff {
         Coeff() { }
@@ -96,7 +98,8 @@ public:
                     return ;
 				}
             }
-            superclass::push_back(Coeff(index, val)) ;	// coefficient doesn't exist yet if we reach this point
+            // coefficient doesn't exist yet if we reach this point
+            superclass::push_back(Coeff(index, val)) ;	
         }
 
         // a_{index} <- val
@@ -113,7 +116,8 @@ public:
                     return ;
 				}
             }
-            superclass::push_back(Coeff(index, val)) ;	// coefficient doesn't exist yet if we reach this point
+            // coefficient doesn't exist yet if we reach this point
+            superclass::push_back(Coeff(index, val)) ;	
         }
 
         // return a_{index} (0 by default)
@@ -128,7 +132,8 @@ public:
                 if(it->index == index)
                     return it->a ;						// return value
             }
-            return 0 ;									// coefficient doesn't exist if we reach this point
+            // coefficient doesn't exist if we reach this point
+            return 0 ;									
         }
     } ;
 
@@ -143,7 +148,8 @@ public:
 		dimension_ = dim ;
         row_ = new Row[dimension_] ;
     }
-	// Create a matrix initialized with zeros (added for SparseLinearAlgebraTraits_d::Matrix concept)
+    // Create a rectangular matrix initialized with zeros
+    // (added for SparseLinearAlgebraTraits_d::Matrix concept)
 	// WARNING: this class supports square matrices only
 	SparseMatrix (unsigned int rows, unsigned int columns ) {
 		assert(rows == columns);
@@ -161,8 +167,11 @@ public:
     
 	// Return the matrix dimension
     unsigned int dimension() const {  return dimension_ ;  }
-	// added for SparseLinearAlgebraTraits_d::Matrix concept:
+
+	// Added for SparseLinearAlgebraTraits_d::Matrix concept:
+    // Return the matrix number of rows
 	unsigned int row_dimension() const    { return dimension(); }
+    // Return the matrix number of columns
 	unsigned int column_dimension() const { return dimension(); }
 
     Row& row(unsigned int i) {
@@ -179,8 +188,8 @@ public:
 	// (added for SparseLinearAlgebraTraits_d::Matrix concept)
 	// 
 	// Preconditions:
-	// * 0 <= row < row_dimension()
-	// * 0 <= column < column_dimension()
+	// * 0 <= i < row_dimension()
+	// * 0 <= j < column_dimension()
 	NT  get_coef (unsigned int i, unsigned int j) const {
         assert(i < dimension_) ;
         assert(j < dimension_) ;
@@ -190,8 +199,8 @@ public:
 	// Write access to 1 matrix coefficient: aij <- aij + val
 	// 
 	// Preconditions:
-	// * 0 <= row < row_dimension()
-	// * 0 <= column < column_dimension()
+	// * 0 <= i < row_dimension()
+	// * 0 <= j < column_dimension()
     void add_coef(unsigned int i, unsigned int j, T val) {
         assert(i < dimension_) ;
         assert(j < dimension_) ;
@@ -202,8 +211,8 @@ public:
 	//(added for SparseLinearAlgebraTraits_d::Matrix concept)
 	// 
 	// Preconditions:
-	// * 0 <= row < row_dimension()
-	// * 0 <= column < column_dimension()
+	// * 0 <= i < row_dimension()
+	// * 0 <= j < column_dimension()
     void set_coef(unsigned int i, unsigned int j, NT  val) {
         assert(i < dimension_) ;
         assert(j < dimension_) ;
@@ -224,7 +233,8 @@ private:
     unsigned int dimension_ ;
     Row* row_ ;
     
-    // SparseMatrix cannot be copied (for the moment, could be implemented if needed).
+    // SparseMatrix cannot be copied 
+    // (for the moment, could be implemented if needed).
     SparseMatrix(const SparseMatrix& rhs) ;
     SparseMatrix& operator=(const SparseMatrix& rhs) ;
 } ;
@@ -246,4 +256,4 @@ template <class T> void mult(const SparseMatrix<T>& M, const FullVector<T>& x, F
 
 }; // namespace OpenNL
 
-#endif
+#endif // __OPENNL_SPARSE_MATRIX__

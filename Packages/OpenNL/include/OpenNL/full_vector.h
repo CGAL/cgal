@@ -63,7 +63,9 @@ template <class T> class FullVector
 // Public types
 public:
     typedef T CoeffType ;
-	typedef T NT;								// for SparseLinearAlgebraTraits_d::Vector concept
+
+    // for SparseLinearAlgebraTraits_d::Vector concept
+	typedef T NT;								
 
 	// Create a vector initialized with zeros
     FullVector(unsigned int dim) { 
@@ -104,7 +106,7 @@ public:
 	// Read/write access to 1 vector coefficient.
 	// 
 	// Preconditions:
-	// * 0 <= row < dimension()
+	// * 0 <= i < dimension()
     const T& operator[](unsigned int i) const {
         assert(i < dimension_) ;
         return coeff_[i] ;
@@ -162,4 +164,4 @@ public:
 
 }; // namespace OpenNL
 
-#endif
+#endif // __OPENNL_FULL_VECTOR__

@@ -43,7 +43,7 @@ public:
 	int extract_boundaries(bool sort = true);
 	
 private:
-  bool add_boundary_backbone(int tag_free,int tag_processed);
+    bool add_boundary_backbone(int tag_free,int tag_processed);
 };
 
 
