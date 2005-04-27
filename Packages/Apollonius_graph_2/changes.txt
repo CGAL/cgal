@@ -1,3 +1,7 @@
+27 April 2005:  Menelaos Karavelas
+- fixed misprint sent by Anatoly.Zaretksy <anatoly.zaretsky@gmail.com>
+  in method: Object_2 dual(const Face_handle& f) of Apollonius_graph_2
+
 7 March 2005:  Menelaos Karavelas
 - replaced calls to the vertex handle methods degree() and
   incident_{edges,faces}() by calls to the corresponding TDS methods that

@@ -164,7 +164,7 @@ dual(const Face_handle& f) const
 
   int i_inf(-1);
   for (int i = 0; i < 3; i++) {
-    if ( is_infinite( f->vertex(0) ) ) {
+    if ( is_infinite( f->vertex(i) ) ) {
       i_inf = i;
       break;
     }
