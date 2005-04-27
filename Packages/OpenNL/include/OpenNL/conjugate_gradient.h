@@ -38,10 +38,10 @@
  *  Note that the GNU General Public License does not permit incorporating
  *  the Software into proprietary programs. 
  *
- *  Laurent Saboret 01/2005: Change for CGAL:
+ *  Laurent Saboret 01/2005-04/2005: Changes for CGAL:
  *		- Added OpenNL namespace
  *		- solve() returns true on success
- *		- test divisions by zero
+ *		- test divisions by zero with IsZero() method
  *		- added comments and traces
  */
 
@@ -98,52 +98,18 @@ public:
     void set_epsilon(CoeffType eps) { epsilon_ = eps ; }
     void set_max_iter(unsigned int max_iter) { max_iter_ = max_iter ; }
 
- 	// Solve the sparse linear system "A*x = b" for A SYMMETRIC POSITIVE. Return true on success.
+ 	// Solve the sparse linear system "A*x = b" for A SYMMETRIC POSITIVE
+    // Return true on success
 	// 
 	// Preconditions:
 	// * A.dimension() == b.dimension()
 	// * A.dimension() == x.dimension()
-	bool solve(const MATRIX &A, const VECTOR& b, VECTOR& x)
-	{
+	bool solve(const MATRIX &A, const VECTOR& b, VECTOR& x) {
         assert(A.dimension() == b.dimension()) ;
         assert(A.dimension() == x.dimension()) ;
         assert (A.dimension() > 0);
 
         unsigned int n = A.dimension() ;						// (Square) matrix dimension
-
-//#ifndef NDEBUG 
-//		// Debug trace
-//		fprintf(stderr, "\n");
-//		if (n < 20)	// if small matrix, print it entirely
-//		{
-//			fprintf(stderr, "******************  A:  ******************\n");
-//			for (int i=0; i<n; i++)  {
-//				for (int j=0; j<n; j++)
-//					fprintf(stderr, "%lf\t", (double)A.get_coef(i,j));
-//				fprintf(stderr, "\n");
-//			}
-//			fprintf(stderr, "******************  B:  ******************\n");
-//			for (int j=0; j<n; j++)
-//				fprintf(stderr, "%lf\t", (double)b[j]);
-//			fprintf(stderr, "\n");
-//			fprintf(stderr, "******************************************\n");
-//		}
-//		else		// if large matrix, print only not null elements
-//		{
-//			fprintf(stderr, "******************  A*x=b  ******************\n");
-//			for (int i=0; i<n; i++)  {
-//				for (int j=0; j<n; j++)
-//					if ( ! IsZero(A.get_coef(i,j)) )
-//						fprintf(stderr, "A[%d][%d] = %lf\t", i, j, (double)A.get_coef(i,j));
-//				fprintf(stderr, "\n");
-//			}
-//			for (int j=0; j<n; j++)
-//				if ( ! IsZero(b[j]) )
-//					fprintf(stderr, "b[%d] = %lf\t", j, (double)b[j]);
-//			fprintf(stderr, "\n");
-//			fprintf(stderr, "******************************************\n");
-//		}
-//#endif
 
 		// Check that A is symmetric
 		for (int i=0; i < n; i++)
@@ -158,7 +124,6 @@ public:
         Vector g(n) ;
         Vector r(n) ;
         Vector p(n) ;
-        CoeffType gg;
         unsigned int its=0;										// Loop counter
         CoeffType t, tau, sig, rho, gam;
         CoeffType bnorm2 = BLAS<Vector>::dot(b,b) ; 
@@ -169,7 +134,7 @@ public:
         BLAS<Vector>::scal(-1,g);
 	    // Initially, r=g=b-A*x
         BLAS<Vector>::copy(g,r);								// r = g
-        gg=BLAS<Vector>::dot(g,g);								// Current error gg = (g|g)
+        CoeffType gg=BLAS<Vector>::dot(g,g);					// Current error gg = (g|g)
 
         while ( gg>err && its < max_iter) 
 		{
@@ -191,6 +156,7 @@ public:
 
 		bool success = (gg <= err);
 #ifndef NDEBUG 
+		// Trace on error
 		if ( ! success )
 			std::cerr << "Solver_CG<>::solve failure: "
 				      << "(" << OPENNL_STREAM_TRACE(its) << OPENNL_STREAM_TRACE(max_iter) 
@@ -204,8 +170,6 @@ private:
 	// Test if a floating point number is (close to) 0.0
 	static inline bool IsZero(CoeffType a) 
 	{
-		// LS 04/2005: replace Lsolver test by Laspack test 
-		//#define IsZero(a) (fabs(a) < 1e-40)
 		return (fabs(a) < 10.0 * std::numeric_limits<CoeffType>::min());
 	}
 
