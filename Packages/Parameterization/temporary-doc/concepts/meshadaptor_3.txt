@@ -18,49 +18,49 @@
 // Author(s)     : Laurent Saboret, Bruno Levy, Pierre Alliez
 
 
-// MeshAdaptor_3 is a concept for a 3D mesh interface. 
-// 
-// Its main purpose is to allow 
+// MeshAdaptor_3 is a concept for a 3D mesh interface.
+//
+// Its main purpose is to allow
 // the parameterization package to access meshes on an uniform manner.
 // Adaptators for Polyhedron _3 and Triangulation_2 with 3D points are provided.
 //
-// The input mesh can be of any genus, but the parameterization package 
+// The input mesh can be of any genus, but the parameterization package
 // is restricted to triangular meshes which are topological discs.
 
-class MeshAdaptor_3 
+class MeshAdaptor_3
 {
 // Public types
 public:
     // Number type
-    typedef ...	NT;
+    typedef ... NT;
     // Points and vectors
-    typedef ...	Point_2;
-    typedef ...	Point_3;
-    typedef ...	Vector_2;
-    typedef ...	Vector_3;
+    typedef ... Point_2;
+    typedef ... Point_3;
+    typedef ... Vector_2;
+    typedef ... Vector_3;
     // Face
-    typedef ...	Face;
-    typedef ...	Face_handle;
+    typedef ... Face;
+    typedef ... Face_handle;
     typedef ... Face_const_handle;
     // Iterator over all mesh faces
-    typedef ...	Face_iterator;
-    typedef ...	Face_const_iterator;
-    // Vertex 
-    typedef ...	Vertex;
-    typedef ...	Vertex_handle;
+    typedef ... Face_iterator;
+    typedef ... Face_const_iterator;
+    // Vertex
+    typedef ... Vertex;
+    typedef ... Vertex_handle;
     typedef ... Vertex_const_handle;
     // Iterator over all mesh vertices
-    typedef ...	Vertex_iterator;
-    typedef ...	Vertex_const_iterator;
+    typedef ... Vertex_iterator;
+    typedef ... Vertex_const_iterator;
     // Iterator over mesh boundary vertices
-    typedef ...	Border_vertex_iterator;
-    typedef ...	Border_vertex_const_iterator;
+    typedef ... Border_vertex_iterator;
+    typedef ... Border_vertex_const_iterator;
     // Circulator over a face's vertices
-    typedef ...	Vertex_around_face_circulator;
-    typedef ...	Vertex_around_face_const_circulator;
+    typedef ... Vertex_around_face_circulator;
+    typedef ... Vertex_around_face_const_circulator;
     // Circulator over the vertices incident to a vertex
-    typedef ...	Vertex_around_vertex_circulator;
-    typedef ...	Vertex_around_vertex_const_circulator;
+    typedef ... Vertex_around_vertex_circulator;
+    typedef ... Vertex_around_vertex_const_circulator;
 
 // Public operations
 public:
@@ -118,7 +118,7 @@ public:
     // Get circulator over face's vertices
     Vertex_around_face_circulator face_vertices_begin(Face_handle face);
     Vertex_around_face_const_circulator face_vertices_begin(
-											    Face_const_handle face) const;
+                                                Face_const_handle face) const;
 
     // Count the number of vertices of a face
     int  count_face_vertices(Face_const_handle face) const;
@@ -130,11 +130,11 @@ public:
     // Get the 3D position of a vertex
     Point_3  get_vertex_position (Vertex_const_handle vertex) const;
 
-    // Get/set the 2D position (u/v pair) of a vertex 
+    // Get/set the 2D position (u/v pair) of a vertex
     Point_2  get_vertex_uv (Vertex_const_handle vertex) const;
     void  set_vertex_uv (Vertex_handle vertex, const Point_2& uv);
 
-    // Get/set "is parameterized" field of vertex 
+    // Get/set "is parameterized" field of vertex
     bool  is_vertex_parameterized (Vertex_const_handle vertex) const;
     void  set_vertex_parameterized (Vertex_handle vertex, bool parameterized);
 
@@ -147,8 +147,8 @@ public:
 
     // Get circulator over the vertices incident to 'vertex'
     Vertex_around_vertex_circulator  vertices_around_vertex_begin (
-									    Vertex_handle vertex);
+                                        Vertex_handle vertex);
     Vertex_around_vertex_const_circulator  vertices_around_vertex_begin (
-									    Vertex_const_handle vertex) const;
+                                        Vertex_const_handle vertex) const;
 };
 

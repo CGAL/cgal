@@ -20,26 +20,26 @@
 
 // Concept SparseLinearAlgebraTraits_d::Vector
 // Concept of the vector class used by the SparseLinearAlgebraTraits_d concept.
-class Vector 
+class Vector
 {
 // Public types
 public:
-	typedef ... NT;
+    typedef ... NT;
 
-	// Create a vector initialized with zeros
-	Vector (int rows);
-	
-	// Copy
-	Vector& operator=(const Vector& toCopy);
+    // Create a vector initialized with zeros
+    Vector (int rows);
 
-	// Return the vector's number of coefficients
-	int  dimension () const;
-		
-	// Read/write access to 1 vector coefficient.
-	// 
-	// Preconditions:
-	// * 0 <= row < dimension()
-	NT  operator[] (int row) const;
-	NT&  operator[] (int row);
+    // Copy
+    Vector& operator=(const Vector& toCopy);
+
+    // Return the vector's number of coefficients
+    int  dimension () const;
+
+    // Read/write access to 1 vector coefficient.
+    //
+    // Preconditions:
+    // * 0 <= row < dimension()
+    NT  operator[] (int row) const;
+    NT&  operator[] (int row);
 };
 

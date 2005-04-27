@@ -32,104 +32,104 @@ CGAL_BEGIN_NAMESPACE
 // Implement Tutte's barycentric mapping
 // 1 to 1 mapping is guaranteed if surface's border is mapped to a convex polygon
 
-template 
+template
 <
-	class MeshAdaptor_3,			  // 3D surface mesh
-	class BorderParametizer_3		  // Strategy to parameterize the surface border
-				= Circular_border_parametizer_3<MeshAdaptor_3>,	
-	class SparseLinearAlgebraTraits_d // Traits class to solve a sparse linear system
-				= OpenNL::SymmetricLinearSolverTraits<typename MeshAdaptor_3::NT>
-									  // CAUTION: the sparse linear system is symmetric iff
-									  // Fixed_border_parametizer_3 removes fixed vertices
->			
-class Barycentric_mapping_parametizer_3 
-	: public Fixed_border_parametizer_3<MeshAdaptor_3, 
-										BorderParametizer_3, 
-										SparseLinearAlgebraTraits_d>
+    class MeshAdaptor_3,              // 3D surface mesh
+    class BorderParametizer_3         // Strategy to parameterize the surface border
+                = Circular_border_parametizer_3<MeshAdaptor_3>,
+    class SparseLinearAlgebraTraits_d // Traits class to solve a sparse linear system
+                = OpenNL::SymmetricLinearSolverTraits<typename MeshAdaptor_3::NT>
+                                      // CAUTION: the sparse linear system is symmetric iff
+                                      // Fixed_border_parametizer_3 removes fixed vertices
+>
+class Barycentric_mapping_parametizer_3
+    : public Fixed_border_parametizer_3<MeshAdaptor_3,
+                                        BorderParametizer_3,
+                                        SparseLinearAlgebraTraits_d>
 {
 // Public types
 public:
-	// Export Mesh_Adaptor_3, BorderParametizer_3 
-	// and SparseLinearAlgebraTraits_d types
-	typedef MeshAdaptor_3					Adaptor;
-	typedef typename Parametizer_3<Adaptor>::ErrorCode	
-											ErrorCode;
-	typedef typename Adaptor::NT			NT;
-	typedef typename Adaptor::Face_handle	Face_handle;
-	typedef typename Adaptor::Face_const_handle	
-											Face_const_handle;
-	typedef typename Adaptor::Vertex_handle	Vertex_handle;
-	typedef typename Adaptor::Vertex_const_handle		
-											Vertex_const_handle;
-	typedef typename Adaptor::Point_3		Point_3;
-	typedef typename Adaptor::Point_2		Point_2;
-	typedef typename Adaptor::Vector_3		Vector_3;
-	typedef typename Adaptor::Vector_2		Vector_2;
-	typedef typename Adaptor::Face_iterator	Face_iterator;
-	typedef typename Adaptor::Face_const_iterator		
-											Face_const_iterator;
-	typedef typename Adaptor::Vertex_iterator Vertex_iterator;
-	typedef typename Adaptor::Vertex_const_iterator		
-											Vertex_const_iterator;
-	typedef typename Adaptor::Border_vertex_iterator	
-											Border_vertex_iterator;
-	typedef typename Adaptor::Border_vertex_const_iterator		
-											Border_vertex_const_iterator;
-	typedef typename Adaptor::Vertex_around_face_circulator		
-											Vertex_around_face_circulator;
-	typedef typename Adaptor::Vertex_around_face_const_circulator	
-											Vertex_around_face_const_circulator;
-	typedef typename Adaptor::Vertex_around_vertex_circulator		
-											Vertex_around_vertex_circulator;
-	typedef typename Adaptor::Vertex_around_vertex_const_circulator	
-											Vertex_around_vertex_const_circulator;
-	typedef BorderParametizer_3				Border_param;
-	typedef SparseLinearAlgebraTraits_d		Sparse_LA;
-	typedef typename Sparse_LA::Vector		Vector;
-	typedef typename Sparse_LA::Matrix		Matrix;
+    // Export Mesh_Adaptor_3, BorderParametizer_3
+    // and SparseLinearAlgebraTraits_d types
+    typedef MeshAdaptor_3                   Adaptor;
+    typedef typename Parametizer_3<Adaptor>::ErrorCode
+                                            ErrorCode;
+    typedef typename Adaptor::NT            NT;
+    typedef typename Adaptor::Face_handle   Face_handle;
+    typedef typename Adaptor::Face_const_handle
+                                            Face_const_handle;
+    typedef typename Adaptor::Vertex_handle Vertex_handle;
+    typedef typename Adaptor::Vertex_const_handle
+                                            Vertex_const_handle;
+    typedef typename Adaptor::Point_3       Point_3;
+    typedef typename Adaptor::Point_2       Point_2;
+    typedef typename Adaptor::Vector_3      Vector_3;
+    typedef typename Adaptor::Vector_2      Vector_2;
+    typedef typename Adaptor::Face_iterator Face_iterator;
+    typedef typename Adaptor::Face_const_iterator
+                                            Face_const_iterator;
+    typedef typename Adaptor::Vertex_iterator Vertex_iterator;
+    typedef typename Adaptor::Vertex_const_iterator
+                                            Vertex_const_iterator;
+    typedef typename Adaptor::Border_vertex_iterator
+                                            Border_vertex_iterator;
+    typedef typename Adaptor::Border_vertex_const_iterator
+                                            Border_vertex_const_iterator;
+    typedef typename Adaptor::Vertex_around_face_circulator
+                                            Vertex_around_face_circulator;
+    typedef typename Adaptor::Vertex_around_face_const_circulator
+                                            Vertex_around_face_const_circulator;
+    typedef typename Adaptor::Vertex_around_vertex_circulator
+                                            Vertex_around_vertex_circulator;
+    typedef typename Adaptor::Vertex_around_vertex_const_circulator
+                                            Vertex_around_vertex_const_circulator;
+    typedef BorderParametizer_3             Border_param;
+    typedef SparseLinearAlgebraTraits_d     Sparse_LA;
+    typedef typename Sparse_LA::Vector      Vector;
+    typedef typename Sparse_LA::Matrix      Matrix;
 
 // Public operations
 public:
-	// Constructor
-	// @param border_param	Object that maps the surface's border to 2D space
-	// @param sparse_la		Traits object to access a sparse linear system 
-	Barycentric_mapping_parametizer_3(Border_param border_param = Border_param(),
-									  Sparse_LA sparse_la = Sparse_LA()) 
-	:	Fixed_border_parametizer_3<Adaptor, 
-								   Border_param, 
-								   Sparse_LA>(border_param, sparse_la)
-	{}
+    // Constructor
+    // @param border_param  Object that maps the surface's border to 2D space
+    // @param sparse_la     Traits object to access a sparse linear system
+    Barycentric_mapping_parametizer_3(Border_param border_param = Border_param(),
+                                      Sparse_LA sparse_la = Sparse_LA())
+    :   Fixed_border_parametizer_3<Adaptor,
+                                   Border_param,
+                                   Sparse_LA>(border_param, sparse_la)
+    {}
 
-	// Default copy constructor and operator =() are fine
+    // Default copy constructor and operator =() are fine
 
 // Protected types
 protected:
-	typedef typename OpenNL::LinearSolver<Sparse_LA>	
-											Solver ;
-					
+    typedef typename OpenNL::LinearSolver<Sparse_LA>
+                                            Solver ;
+
 // Protected operations
 protected:
-	// compute wij = (i,j) coefficient of matrix A for j neighbor vertex of i
-	virtual	NT  compute_wij(const Adaptor& mesh, 
-						    Vertex_const_handle main_vertex_Vi, 
-							Vertex_around_vertex_const_circulator neighbor_vertex_Vj)
-	{
-		// Tutte algorithm is the most simple one: Wij = 1 for j neighbor vertex of i
-		return 1;
-	}
+    // compute wij = (i,j) coefficient of matrix A for j neighbor vertex of i
+    virtual NT  compute_wij(const Adaptor& mesh,
+                            Vertex_const_handle main_vertex_Vi,
+                            Vertex_around_vertex_const_circulator neighbor_vertex_Vj)
+    {
+        // Tutte algorithm is the most simple one: Wij = 1 for j neighbor vertex of i
+        return 1;
+    }
 
-	// Check if 3D -> 2D mapping is 1 to 1
-	virtual bool  is_one_to_one_mapping (const Adaptor& mesh, 
-										 const Solver& solver_u, 
-										 const Solver& solver_v)
-	{
-		// Theorem: 1 to 1 mapping is guaranteed if all Wij coefficients 
-		//          are > 0 (for j vertex neighbor of i) and if the surface 
-		//			boundary is mapped onto a 2D convex polygon.
-		// All Wij coefficients = 1 (for j vertex neighbor of i), thus mapping
-		// is guaranteed if the surface boundary is mapped onto a 2D convex polygon
-		return get_border_parametizer().is_border_convex ();
-	}
+    // Check if 3D -> 2D mapping is 1 to 1
+    virtual bool  is_one_to_one_mapping (const Adaptor& mesh,
+                                         const Solver& solver_u,
+                                         const Solver& solver_v)
+    {
+        // Theorem: 1 to 1 mapping is guaranteed if all Wij coefficients
+        //          are > 0 (for j vertex neighbor of i) and if the surface
+        //          boundary is mapped onto a 2D convex polygon.
+        // All Wij coefficients = 1 (for j vertex neighbor of i), thus mapping
+        // is guaranteed if the surface boundary is mapped onto a 2D convex polygon
+        return get_border_parametizer().is_border_convex ();
+    }
 };
 
 

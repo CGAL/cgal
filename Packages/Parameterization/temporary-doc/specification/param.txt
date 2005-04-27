@@ -19,28 +19,28 @@ The intended audience of this package is researchers, developers or students dev
 
 4 Specification
 
-	4.1 Input
+    4.1 Input
 
 * A triangulated mesh:
   - 2-manifold
   - Oriented
-  - One connected component. 
+  - One connected component.
 The input mesh can be of any genus, -but- it has to come with a description of a boundary (a list of oriented edges given by a set or vertices) which is the boundary of a topological disc. If no boundary is given, we assume that it coincides with the unique boundary already in the input mesh. Note that this way the user is responsible for cutting a closed mesh of arbitrary genus (even a topological disc with an intricate seam cut), as long as this condition is verified.
 
 * A set of constraints (a constraint specifies two u,v coordinates for each instance of a vertex along the boundary).
   - For free boundary methods: only two constraints (the pinned vertices). They have to be on the specified boundary.
   - For fixed boundary methods:
-	+ a list of constraints given by the user. The whole boundary has to be specified.
-	+ one convex shape specified by:
-		-> one shape among a set of standard ones (circle, square, equilateral triangle).
-		-> a convex polygon.
-		-> for both cases above the user can also select a boundary parameterization among two common methods: uniform or arc-length parameterization.
+    + a list of constraints given by the user. The whole boundary has to be specified.
+    + one convex shape specified by:
+        -> one shape among a set of standard ones (circle, square, equilateral triangle).
+        -> a convex polygon.
+        -> for both cases above the user can also select a boundary parameterization among two common methods: uniform or arc-length parameterization.
 
-	4.2 Output
+    4.2 Output
 
 One uv coordinate for each interior vertex, and one uv coordinate for each instance of a vertex along the input boundary. It can be e.g. output in a list of 2D points through an output iterator.
 
-	4.3 Features
+    4.3 Features
 
 * Parameterizations:
   - Fixed boundary:
@@ -73,13 +73,13 @@ main components:
   - Linear solver (direct or iterative)
 The CGAL parameterization package will be loosely linked to the solver. Replacing it will be easy.
 Which linear solver?
-  - OpenNL (Bruno Lévy) 
+  - OpenNL (Bruno Lévy)
   - others to be decided
 
 5 References
 
-[DMA02] Mathieu Desbrun, Mark Meyer, and Pierre Alliez. Intrinsic parameterizations of surface meshes. Computer Graphics Forum, 21(3):209–218, September 2002.  
+[DMA02] Mathieu Desbrun, Mark Meyer, and Pierre Alliez. Intrinsic parameterizations of surface meshes. Computer Graphics Forum, 21(3):209–218, September 2002.
 [FH05] M. S. Floater and K. Hormann. Surface parameterization: a tutorial and survey. In N. A.  Dodgson, M. S. Floater, and M. A. Sabin, editors, Advances in Multiresolution for Geometric Modelling, Mathematics and Visualization, pages 157–186. Springer, Berlin, Heidelberg, 2005.
-[Flo03] Michael Floater. Mean value coordinates. Computer Aided Design, 20(1):19–27, 2003.  
+[Flo03] Michael Floater. Mean value coordinates. Computer Aided Design, 20(1):19–27, 2003.
 [LPRM02] Bruno Lévy, Sylvain Petitjean, Nicolas Ray, and Jérome Maillot. Least squares conformal maps for automatic texture atlas generation.  In Proceedings of the 29th Conference on Computer Graphics and Interactive Techniques SIGGRAPH, volume 21(3) of ACM Transactions on Graphics, pages 362–371, 2002.
 

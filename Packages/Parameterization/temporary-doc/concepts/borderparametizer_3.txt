@@ -22,27 +22,27 @@
 // Concept of a class that parametrizes a given type of mesh,
 // Adaptor, model of the MeshAdaptor_3 concept.
 //
-// Design pattern: 
+// Design pattern:
 // BorderParametizer_3 models are Strategies (see [GOF95]): they implement
 // a strategy of boundary parameterization for models of MeshAdaptor_3
 //
-// Implementation note: 
-// To simplify the implementation, BorderParametizer_3 models know only the 
-// MeshAdaptor_3 class. They don't know the parameterization algorithm 
+// Implementation note:
+// To simplify the implementation, BorderParametizer_3 models know only the
+// MeshAdaptor_3 class. They don't know the parameterization algorithm
 // requirements nor the kind of sparse linear system used.
 
-class BorderParametizer_3 
+class BorderParametizer_3
 {
 // Public types
 public:
-	typedef ...	Adaptor;
+    typedef ... Adaptor;
 
 // Public operations
 public:
-	// Assign to mesh's border vertices a 2D position (ie a (u,v) pair) 
-	// on border's shape. Mark them as "parameterized".
-	// Return false on error
-	bool  parameterize_border (Adaptor* mesh);
+    // Assign to mesh's border vertices a 2D position (ie a (u,v) pair)
+    // on border's shape. Mark them as "parameterized".
+    // Return false on error
+    bool  parameterize_border (Adaptor* mesh);
 
     // Indicate if border's shape is convex
     bool  is_border_convex ();

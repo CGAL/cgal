@@ -16,10 +16,10 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  *
- *  In addition, as a special exception, the INRIA gives permission to link the 
- *  code of this program with the CGAL library, and distribute linked combinations 
- *  including the two. You must obey the GNU General Public License in all respects 
- *  for all of the code used other than CGAL. 
+ *  In addition, as a special exception, the INRIA gives permission to link the
+ *  code of this program with the CGAL library, and distribute linked combinations
+ *  including the two. You must obey the GNU General Public License in all respects
+ *  for all of the code used other than CGAL.
  *
  *  If you modify this software, you should include a notice giving the
  *  name of the person performing the modification, the date of modification,
@@ -30,18 +30,18 @@
  *     levy@loria.fr
  *
  *     ISA-ALICE Project
- *     LORIA, INRIA Lorraine, 
+ *     LORIA, INRIA Lorraine,
  *     Campus Scientifique, BP 239
- *     54506 VANDOEUVRE LES NANCY CEDEX 
+ *     54506 VANDOEUVRE LES NANCY CEDEX
  *     FRANCE
  *
  *  Note that the GNU General Public License does not permit incorporating
- *  the Software into proprietary programs. 
+ *  the Software into proprietary programs.
  *
  *  Laurent Saboret 01/2005: Change for CGAL:
- *		- Added OpenNL namespace
- *		- FullVector is now a model of the SparseLinearAlgebraTraits_d::Vector concept
- *		- Coefficients are initialized with zeros
+ *      - Added OpenNL namespace
+ *      - FullVector is now a model of the SparseLinearAlgebraTraits_d::Vector concept
+ *      - Coefficients are initialized with zeros
  */
 
 
@@ -65,48 +65,48 @@ public:
     typedef T CoeffType ;
 
     // for SparseLinearAlgebraTraits_d::Vector concept
-	typedef T NT;								
+    typedef T NT;
 
-	// Create a vector initialized with zeros
-    FullVector(unsigned int dim) { 
-        dimension_ = dim ; coeff_ = new T[dim] ; 
+    // Create a vector initialized with zeros
+    FullVector(unsigned int dim) {
+        dimension_ = dim ; coeff_ = new T[dim] ;
 
-		// init with zeros (for SparseLinearAlgebraTraits_d::Vector concept)
-		for (unsigned int i=0; i < dimension_; i++)
-			coeff_[i] = 0;
+        // init with zeros (for SparseLinearAlgebraTraits_d::Vector concept)
+        for (unsigned int i=0; i < dimension_; i++)
+            coeff_[i] = 0;
     }
-	// Copy constructor
-    FullVector(const FullVector& toCopy) { 
-		dimension_ = toCopy.dimension_ ; 
-		coeff_ = new T[dimension_] ; 
-		for (unsigned int i=0; i < dimension_; i++)
-			coeff_[i] = toCopy.coeff_[i];
+    // Copy constructor
+    FullVector(const FullVector& toCopy) {
+        dimension_ = toCopy.dimension_ ;
+        coeff_ = new T[dimension_] ;
+        for (unsigned int i=0; i < dimension_; i++)
+            coeff_[i] = toCopy.coeff_[i];
     }
-	// operator =()
-    FullVector& operator =(const FullVector& toCopy) { 
+    // operator =()
+    FullVector& operator =(const FullVector& toCopy) {
         delete[] coeff_ ;
 
-		dimension_ = toCopy.dimension_ ; 
-		coeff_ = new T[dimension_] ; 
-		for (unsigned int i=0; i < dimension_; i++)
-			coeff_[i] = toCopy.coeff_[i];
+        dimension_ = toCopy.dimension_ ;
+        coeff_ = new T[dimension_] ;
+        for (unsigned int i=0; i < dimension_; i++)
+            coeff_[i] = toCopy.coeff_[i];
 
-		return *this;
-	}
-
-	~FullVector() { 
-        delete[] coeff_ ;
-        coeff_ = NULL ; 
+        return *this;
     }
 
-	// Return the vector's number of coefficients
+    ~FullVector() {
+        delete[] coeff_ ;
+        coeff_ = NULL ;
+    }
+
+    // Return the vector's number of coefficients
     unsigned int dimension() const {
-        return dimension_ ; 
+        return dimension_ ;
     }
-	// Read/write access to 1 vector coefficient.
-	// 
-	// Preconditions:
-	// * 0 <= i < dimension()
+    // Read/write access to 1 vector coefficient.
+    //
+    // Preconditions:
+    // * 0 <= i < dimension()
     const T& operator[](unsigned int i) const {
         assert(i < dimension_) ;
         return coeff_[i] ;

@@ -24,29 +24,29 @@
 
 // Utility class for Mesh_adaptor_polyhedron_ex
 // This class adds a conversion to handle/const handle to an iterator class
-template <class Iter,			// base iterator
-          class ConstHandle,	// const-handle type to convert to
-          class Handle = void*>	// non-const-handle type to convert to 
-								// (void* <=> none)
-class Convertible_iterator : public Iter 
+template <class Iter,           // base iterator
+          class ConstHandle,    // const-handle type to convert to
+          class Handle = void*> // non-const-handle type to convert to
+                                // (void* <=> none)
+class Convertible_iterator : public Iter
 {
-	typedef Iter											Base; 
-	typedef Convertible_iterator<Iter, ConstHandle, Handle>	Self;
+    typedef Iter                                            Base;
+    typedef Convertible_iterator<Iter, ConstHandle, Handle> Self;
 
 public:
-	Convertible_iterator() {}
-	Convertible_iterator(Base toCopy) : Base(toCopy) {}
-	
-	Convertible_iterator(const Self& toCopy) : Base(toCopy) {}
-	Self& operator=(const Self& toCopy) { Base::operator=(toCopy); return *this; }
+    Convertible_iterator() {}
+    Convertible_iterator(Base toCopy) : Base(toCopy) {}
 
-	Self & operator++()		{ Base::operator++(); return *this; }
-	Self & operator--()		{ Base::operator--(); return *this; }
-	Self operator++(int)	{ Self tmp(*this); ++(*this); return tmp; }
-	Self operator--(int)	{ Self tmp(*this); --(*this); return tmp; }
+    Convertible_iterator(const Self& toCopy) : Base(toCopy) {}
+    Self& operator=(const Self& toCopy) { Base::operator=(toCopy); return *this; }
 
-	operator Handle()				{ return operator->(); }
-	operator ConstHandle() const	{ return operator->(); }
+    Self & operator++()     { Base::operator++(); return *this; }
+    Self & operator--()     { Base::operator--(); return *this; }
+    Self operator++(int)    { Self tmp(*this); ++(*this); return tmp; }
+    Self operator--(int)    { Self tmp(*this); --(*this); return tmp; }
+
+    operator Handle()               { return operator->(); }
+    operator ConstHandle() const    { return operator->(); }
 };
 
 

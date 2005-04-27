@@ -16,10 +16,10 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  *
- *  In addition, as a special exception, the INRIA gives permission to link the 
- *  code of this program with the CGAL library, and distribute linked combinations 
- *  including the two. You must obey the GNU General Public License in all respects 
- *  for all of the code used other than CGAL. 
+ *  In addition, as a special exception, the INRIA gives permission to link the
+ *  code of this program with the CGAL library, and distribute linked combinations
+ *  including the two. You must obey the GNU General Public License in all respects
+ *  for all of the code used other than CGAL.
  *
  *  If you modify this software, you should include a notice giving the
  *  name of the person performing the modification, the date of modification,
@@ -30,19 +30,19 @@
  *     levy@loria.fr
  *
  *     ISA-ALICE Project
- *     LORIA, INRIA Lorraine, 
+ *     LORIA, INRIA Lorraine,
  *     Campus Scientifique, BP 239
- *     54506 VANDOEUVRE LES NANCY CEDEX 
+ *     54506 VANDOEUVRE LES NANCY CEDEX
  *     FRANCE
  *
  *  Note that the GNU General Public License does not permit incorporating
- *  the Software into proprietary programs. 
+ *  the Software into proprietary programs.
  *
  *  Laurent Saboret 01/2005-04/2005: Changes for CGAL:
- *		- Added OpenNL namespace
- *		- solve() returns true on success
- *		- test divisions by zero with IsZero() method
- *		- added comments and traces
+ *      - Added OpenNL namespace
+ *      - solve() returns true on success
+ *      - test divisions by zero with IsZero() method
+ *      - added comments and traces
  */
 
 #ifndef __OPENNL_CONJUGATE_GRADIENT__
@@ -98,89 +98,89 @@ public:
     void set_epsilon(CoeffType eps) { epsilon_ = eps ; }
     void set_max_iter(unsigned int max_iter) { max_iter_ = max_iter ; }
 
- 	// Solve the sparse linear system "A*x = b" for A SYMMETRIC POSITIVE
+    // Solve the sparse linear system "A*x = b" for A SYMMETRIC POSITIVE
     // Return true on success
-	// 
-	// Preconditions:
-	// * A.dimension() == b.dimension()
-	// * A.dimension() == x.dimension()
-	bool solve(const MATRIX &A, const VECTOR& b, VECTOR& x) {
+    //
+    // Preconditions:
+    // * A.dimension() == b.dimension()
+    // * A.dimension() == x.dimension()
+    bool solve(const MATRIX &A, const VECTOR& b, VECTOR& x) {
         assert(A.dimension() == b.dimension()) ;
         assert(A.dimension() == x.dimension()) ;
         assert (A.dimension() > 0);
 
-        unsigned int n = A.dimension() ;						// (Square) matrix dimension
+        unsigned int n = A.dimension() ;                        // (Square) matrix dimension
 
-		// Check that A is symmetric
-		for (int i=0; i < n; i++)
-			for (int j=0; j < i; j++) {
-				assert( AreEqual(A.get_coef(i,j), A.get_coef(j,i)) );
-			}
+        // Check that A is symmetric
+        for (int i=0; i < n; i++)
+            for (int j=0; j < i; j++) {
+                assert( AreEqual(A.get_coef(i,j), A.get_coef(j,i)) );
+            }
 
-        unsigned int max_iter = max_iter_ ;						// Max number of iterations
+        unsigned int max_iter = max_iter_ ;                     // Max number of iterations
         if(max_iter == 0) {
             max_iter = 5 * n ;
         }
         Vector g(n) ;
         Vector r(n) ;
         Vector p(n) ;
-        unsigned int its=0;										// Loop counter
+        unsigned int its=0;                                     // Loop counter
         CoeffType t, tau, sig, rho, gam;
-        CoeffType bnorm2 = BLAS<Vector>::dot(b,b) ; 
-        CoeffType err=epsilon_*epsilon_*bnorm2 ;				// Error to reach
+        CoeffType bnorm2 = BLAS<Vector>::dot(b,b) ;
+        CoeffType err=epsilon_*epsilon_*bnorm2 ;                // Error to reach
         // Current residue g=b-A*x
         mult(A,x,g);
         BLAS<Vector>::axpy(-1,b,g);
         BLAS<Vector>::scal(-1,g);
-	    // Initially, r=g=b-A*x
-        BLAS<Vector>::copy(g,r);								// r = g
-        CoeffType gg=BLAS<Vector>::dot(g,g);					// Current error gg = (g|g)
+        // Initially, r=g=b-A*x
+        BLAS<Vector>::copy(g,r);                                // r = g
+        CoeffType gg=BLAS<Vector>::dot(g,g);                    // Current error gg = (g|g)
 
-        while ( gg>err && its < max_iter) 
-		{
+        while ( gg>err && its < max_iter)
+        {
             mult(A,r,p);
             rho=BLAS<Vector>::dot(p,p);
             sig=BLAS<Vector>::dot(r,p);
             tau=BLAS<Vector>::dot(g,r);
-			assert( ! IsZero(sig) );
+            assert( ! IsZero(sig) );
             t=tau/sig;
             BLAS<Vector>::axpy(t,r,x);
             BLAS<Vector>::axpy(-t,p,g);
-			assert( ! IsZero(tau) );
+            assert( ! IsZero(tau) );
             gam=(t*t*rho-tau)/tau;
             BLAS<Vector>::scal(gam,r);
             BLAS<Vector>::axpy(1,g,r);
-	        gg=BLAS<Vector>::dot(g,g);							// Current error gg = (g|g)
+            gg=BLAS<Vector>::dot(g,g);                          // Current error gg = (g|g)
             its++;
         }
 
-		bool success = (gg <= err);
-#ifndef NDEBUG 
-		// Trace on error
-		if ( ! success )
-			std::cerr << "Solver_CG<>::solve failure: "
-				      << "(" << OPENNL_STREAM_TRACE(its) << OPENNL_STREAM_TRACE(max_iter) 
-					         << OPENNL_STREAM_TRACE(gg) << OPENNL_STREAM_TRACE(err)
-					  << ")" << std::endl;
+        bool success = (gg <= err);
+#ifndef NDEBUG
+        // Trace on error
+        if ( ! success )
+            std::cerr << "Solver_CG<>::solve failure: "
+                      << "(" << OPENNL_STREAM_TRACE(its) << OPENNL_STREAM_TRACE(max_iter)
+                             << OPENNL_STREAM_TRACE(gg) << OPENNL_STREAM_TRACE(err)
+                      << ")" << std::endl;
 #endif
-		return success;
+        return success;
     }
 
 private:
-	// Test if a floating point number is (close to) 0.0
-	static inline bool IsZero(CoeffType a) 
-	{
-		return (fabs(a) < 10.0 * std::numeric_limits<CoeffType>::min());
-	}
+    // Test if a floating point number is (close to) 0.0
+    static inline bool IsZero(CoeffType a)
+    {
+        return (fabs(a) < 10.0 * std::numeric_limits<CoeffType>::min());
+    }
 
-	// Test if 2 floating point numbers are very close
-	static inline bool AreEqual(CoeffType a, CoeffType b) 
-	{
-		if (IsZero(a))
-			return IsZero(b);
-		else
-			return IsZero(b/a - 1.0);
-	}
+    // Test if 2 floating point numbers are very close
+    static inline bool AreEqual(CoeffType a, CoeffType b)
+    {
+        if (IsZero(a))
+            return IsZero(b);
+        else
+            return IsZero(b/a - 1.0);
+    }
 
 private:
     CoeffType epsilon_ ;

@@ -46,13 +46,13 @@ LDFLAGS = \
 
 all:            polyhedron_ex_parameterization$(EXE_EXT)
 
-clean:			polyhedron_ex_parameterization.clean
+clean:		polyhedron_ex_parameterization.clean
 
 polyhedron_ex_parameterization_objs = 	\
                	Mesh_cutter$(OBJ_EXT) \
                 Mesh_feature_extractor$(OBJ_EXT) \
                 options$(OBJ_EXT) \
-                polyhedron_ex_parameterization$(OBJ_EXT) 
+                polyhedron_ex_parameterization$(OBJ_EXT)
 
 polyhedron_ex_parameterization$(EXE_EXT): $(polyhedron_ex_parameterization_objs)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)polyhedron_ex_parameterization$(EXE_EXT) $(polyhedron_ex_parameterization_objs) $(LDFLAGS)

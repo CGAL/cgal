@@ -30,44 +30,44 @@ CGAL_BEGIN_NAMESPACE
 // Main entry points of the parameterization header as C functions
 //
 
-// Compute a 1 to 1 mapping from a triangular 3D surface 'mesh' to 2D circle, 
+// Compute a 1 to 1 mapping from a triangular 3D surface 'mesh' to 2D circle,
 // using Floater's mean value coordinates algorithm .
 // 1 to 1 mapping is guaranteed.
 //
 // The mapping is linear by pieces (linear in each triangle).
-// The result is the (u,v) pair image of each vertex of the 3D surface. 
+// The result is the (u,v) pair image of each vertex of the 3D surface.
 //
 // Preconditions:
 // * 'mesh' must be a surface with 1 connected component and no hole
 // * 'mesh' must be a triangular mesh
 // * the mesh border must be mapped onto a convex polygon
 //
-template <class MeshAdaptor_3>			
-typename Parametizer_3<MeshAdaptor_3>::ErrorCode 
-parameterize(MeshAdaptor_3* mesh)	// 3D mesh, model of MeshAdaptor_3 concept
+template <class MeshAdaptor_3>
+typename Parametizer_3<MeshAdaptor_3>::ErrorCode
+parameterize(MeshAdaptor_3* mesh)   // 3D mesh, model of MeshAdaptor_3 concept
 {
     Mean_value_coordinates_parametizer_3<MeshAdaptor_3> parametizer;
     return parametizer.parameterize(mesh);
 }
 
-// Compute a 1 to 1 mapping from a triangular 3D surface 'mesh' 
-// to a piece of the 2D space. 
+// Compute a 1 to 1 mapping from a triangular 3D surface 'mesh'
+// to a piece of the 2D space.
 // The mapping is linear by pieces (linear in each triangle).
-// The result is the (u,v) pair image of each vertex of the 3D surface. 
+// The result is the (u,v) pair image of each vertex of the 3D surface.
 //
-// 1 to 1 mapping may be guaranteed or not, depending of 
+// 1 to 1 mapping may be guaranteed or not, depending of
 // Parametizer_3_ algorithm chosen
 //
 // Preconditions:
 // * 'mesh' must be a surface with 1 connected component and no hole
 // * 'mesh' must be a triangular mesh
-// * the mesh border must be mapped onto a convex polygon 
+// * the mesh border must be mapped onto a convex polygon
 // (for fixed border parameterizations)
 //
-template <class MeshAdaptor_3, class Parametizer_3_>			
-typename Parametizer_3<MeshAdaptor_3>::ErrorCode 
-parameterize(MeshAdaptor_3* mesh,		// 3D mesh, model of MeshAdaptor_3 concept
-			 Parametizer_3_ parametizer)// Parameterization class for MeshAdaptor_3 mesh
+template <class MeshAdaptor_3, class Parametizer_3_>
+typename Parametizer_3<MeshAdaptor_3>::ErrorCode
+parameterize(MeshAdaptor_3* mesh,       // 3D mesh, model of MeshAdaptor_3 concept
+             Parametizer_3_ parametizer)// Parameterization class for MeshAdaptor_3 mesh
 {
     return parametizer.parameterize(mesh);
 }

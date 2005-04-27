@@ -23,25 +23,25 @@
 class Mesh_feature_extractor
 {
 public:
-	Mesh_feature_extractor(Polyhedron_ex *pPolyhedron);
-	~Mesh_feature_extractor();
-	
-	typedef Feature_skeleton<Polyhedron_ex::Vertex_handle,
-	                         Polyhedron_ex::Halfedge_handle> skeleton;
-	typedef Feature_backbone<Polyhedron_ex::Vertex_handle,
-	                         Polyhedron_ex::Halfedge_handle> backbone;
-	typedef Polyhedron_ex::Vertex_handle Vertex_handle;
-	typedef Polyhedron_ex::Halfedge_handle Halfedge_handle;
+    Mesh_feature_extractor(Polyhedron_ex *pPolyhedron);
+    ~Mesh_feature_extractor();
+
+    typedef Feature_skeleton<Polyhedron_ex::Vertex_handle,
+                             Polyhedron_ex::Halfedge_handle> skeleton;
+    typedef Feature_backbone<Polyhedron_ex::Vertex_handle,
+                             Polyhedron_ex::Halfedge_handle> backbone;
+    typedef Polyhedron_ex::Vertex_handle Vertex_handle;
+    typedef Polyhedron_ex::Halfedge_handle Halfedge_handle;
 
 private:
   Polyhedron_ex *m_pPolyhedron;
   skeleton *m_pSkeleton;
 
-public: 
+public:
 
-	// main functions	
-	int extract_boundaries(bool sort = true);
-	
+    // main functions
+    int extract_boundaries(bool sort = true);
+
 private:
     bool add_boundary_backbone(int tag_free,int tag_processed);
 };

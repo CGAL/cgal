@@ -16,10 +16,10 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  *
- *  In addition, as a special exception, the INRIA gives permission to link the 
- *  code of this program with the CGAL library, and distribute linked combinations 
- *  including the two. You must obey the GNU General Public License in all respects 
- *  for all of the code used other than CGAL. 
+ *  In addition, as a special exception, the INRIA gives permission to link the
+ *  code of this program with the CGAL library, and distribute linked combinations
+ *  including the two. You must obey the GNU General Public License in all respects
+ *  for all of the code used other than CGAL.
  *
  *  If you modify this software, you should include a notice giving the
  *  name of the person performing the modification, the date of modification,
@@ -30,17 +30,17 @@
  *     levy@loria.fr
  *
  *     ISA-ALICE Project
- *     LORIA, INRIA Lorraine, 
+ *     LORIA, INRIA Lorraine,
  *     Campus Scientifique, BP 239
- *     54506 VANDOEUVRE LES NANCY CEDEX 
+ *     54506 VANDOEUVRE LES NANCY CEDEX
  *     FRANCE
  *
  *  Note that the GNU General Public License does not permit incorporating
- *  the Software into proprietary programs. 
+ *  the Software into proprietary programs.
  *
  *  Laurent Saboret 01/2005-04/2005: Change for CGAL:
- *		- Added OpenNL namespace
- *		- DefaultLinearSolverTraits is now a model of the SparseLinearAlgebraTraits_d concept
+ *      - Added OpenNL namespace
+ *      - DefaultLinearSolverTraits is now a model of the SparseLinearAlgebraTraits_d concept
  *      - Added SymmetricLinearSolverTraits
  */
 
@@ -63,82 +63,82 @@ namespace OpenNL {
 
 /*
  * Class DefaultLinearSolverTraits
- * Traits class for solving general sparse linear systems 
+ * Traits class for solving general sparse linear systems
  * (model of the SparseLinearAlgebraTraits_d concept)
  * By default, it uses OpenNL BICGSTAB general purpose solver
- */ 
+ */
 
-template 
+template
 <
-    class COEFFTYPE,						// type of matrix and vector coefficients
-    class MATRIX = SparseMatrix<COEFFTYPE>,	// model of SparseLinearSolverTraits_d::Matrix
-	class VECTOR = FullVector<COEFFTYPE>,	// model of SparseLinearSolverTraits_d::Vector
-	class SOLVER = Solver_BICGSTAB<MATRIX,VECTOR> // BICGSTAB general purpose solver
->                                           
-class DefaultLinearSolverTraits 
+    class COEFFTYPE,                        // type of matrix and vector coefficients
+    class MATRIX = SparseMatrix<COEFFTYPE>, // model of SparseLinearSolverTraits_d::Matrix
+    class VECTOR = FullVector<COEFFTYPE>,   // model of SparseLinearSolverTraits_d::Vector
+    class SOLVER = Solver_BICGSTAB<MATRIX,VECTOR> // BICGSTAB general purpose solver
+>
+class DefaultLinearSolverTraits
 {
 // Public types
 public:
-    typedef MATRIX							Matrix ;
-    typedef VECTOR							Vector ;
-	typedef COEFFTYPE						CoeffType ;		
+    typedef MATRIX                          Matrix ;
+    typedef VECTOR                          Vector ;
+    typedef COEFFTYPE                       CoeffType ;
 
     // added for SparseLinearAlgebraTraits_d::Vector concept
-	typedef COEFFTYPE						NT;					
+    typedef COEFFTYPE                       NT;
 
 // Private types
 public:
-	typedef SOLVER							Solver ;		
+    typedef SOLVER                          Solver ;
 
 // Public operations
 public:
-	// Solve the sparse linear system "A*X = B"
-	// Return true on success. The solution is then (1/D) * X.
-	// (modified for SparseLinearAlgebraTraits_d concept)
-	// 
-	// Preconditions:
-	// * A.row_dimension()    == B.dimension()
-	// * A.column_dimension() == X.dimension()
-	static bool linear_solver (const Matrix& A, const Vector& B, Vector& X, NT& D) 
-	{
+    // Solve the sparse linear system "A*X = B"
+    // Return true on success. The solution is then (1/D) * X.
+    // (modified for SparseLinearAlgebraTraits_d concept)
+    //
+    // Preconditions:
+    // * A.row_dimension()    == B.dimension()
+    // * A.column_dimension() == X.dimension()
+    static bool linear_solver (const Matrix& A, const Vector& B, Vector& X, NT& D)
+    {
         Solver solver ;
-		D = 1;		        // Solver_BICGSTAB does not support homogeneous coordinates
-		X = B;				// mandatory
-		return solver.solve(A, B, X) ;
-	}
+        D = 1;              // Solver_BICGSTAB does not support homogeneous coordinates
+        X = B;              // mandatory
+        return solver.solve(A, B, X) ;
+    }
 
-	// Indicate if the linear system can be solved and if the matrix conditioning is good.
-	// (added for SparseLinearAlgebraTraits_d concept)
-	// 
-	// Preconditions:
-	// * A.row_dimension() == B.dimension()
-	static bool is_solvable (const Matrix& A, const Vector& B) 
-	{
-		// This feature is not implemented in Solver_BICGSTAB => we do only basic checking
-		if (A.row_dimension() != B.dimension())
-			return false;
+    // Indicate if the linear system can be solved and if the matrix conditioning is good.
+    // (added for SparseLinearAlgebraTraits_d concept)
+    //
+    // Preconditions:
+    // * A.row_dimension() == B.dimension()
+    static bool is_solvable (const Matrix& A, const Vector& B)
+    {
+        // This feature is not implemented in Solver_BICGSTAB => we do only basic checking
+        if (A.row_dimension() != B.dimension())
+            return false;
 
-		return true;
-	}
+        return true;
+    }
 } ;
 
 
 /*
  * Class SymmetricLinearSolverTraits
- * Traits class for solving SYMMETRIC POSITIVE sparse linear systems 
+ * Traits class for solving SYMMETRIC POSITIVE sparse linear systems
  * (model of the SparseLinearAlgebraTraits_d concept)
  * By default, it uses OpenNL Conjugate Gradient algorithm without preconditioner
- */ 
+ */
 
-template 
+template
 <
-    class COEFFTYPE,						// type of matrix and vector coefficients
-    class MATRIX = SparseMatrix<COEFFTYPE>,	// model of SparseLinearSolverTraits_d::Matrix
-	class VECTOR = FullVector<COEFFTYPE>,	// model of SparseLinearSolverTraits_d::Vector
+    class COEFFTYPE,                        // type of matrix and vector coefficients
+    class MATRIX = SparseMatrix<COEFFTYPE>, // model of SparseLinearSolverTraits_d::Matrix
+    class VECTOR = FullVector<COEFFTYPE>,   // model of SparseLinearSolverTraits_d::Vector
     class SOLVER = Solver_CG<MATRIX, VECTOR>// Conjugate Gradient algorithm without preconditioner
->                                           
-class SymmetricLinearSolverTraits 
-    : public DefaultLinearSolverTraits<COEFFTYPE, MATRIX, VECTOR, SOLVER> 
+>
+class SymmetricLinearSolverTraits
+    : public DefaultLinearSolverTraits<COEFFTYPE, MATRIX, VECTOR, SOLVER>
 {
 };
 
@@ -148,8 +148,8 @@ class SymmetricLinearSolverTraits
  *
  * Requirements for its traits class: must be a model of SparseLinearSolverTraits_d concept
  */
-template <class TRAITS> 
-class LinearSolver 
+template <class TRAITS>
+class LinearSolver
 {
 protected:
     enum State {
@@ -175,7 +175,7 @@ public:
             return (unsigned int)(index_) ;
         }
         void set_index(unsigned int index_in) {
-            index_ = index_in ; 
+            index_ = index_in ;
         }
     private:
         CoeffType x_ ;
@@ -183,7 +183,7 @@ public:
         bool locked_ ;
     }  ;
 
-    
+
     LinearSolver(unsigned int nb_variables) {
         state_ = INITIAL ;
         least_squares_ = false ;
@@ -206,19 +206,19 @@ public:
     void set_least_squares(bool x) { least_squares_ = x ; }
 
     // __________________ Access ____________________________
-    
+
     int nb_variables() const { return nb_variables_ ; }
-    
-    Variable& variable(unsigned int idx) { 
+
+    Variable& variable(unsigned int idx) {
         assert(idx < nb_variables_) ;
         return variable_[idx] ;
     }
-    
+
     const Variable& variable(unsigned int idx) const {
         assert(idx < nb_variables_) ;
         return variable_[idx] ;
     }
-    
+
     // _________________ Construction _______________________
 
     void begin_system() {
@@ -244,7 +244,7 @@ public:
         variables_to_vector() ;
     }
 
-    void begin_row() {    
+    void begin_row() {
         transition(IN_SYSTEM, IN_ROW) ;
         af_.clear() ;
         if_.clear() ;
@@ -282,7 +282,7 @@ public:
             norm += al_[i] * al_[i] ;
         }
         norm = sqrt(norm) ;
-		assert( fabs(norm)>1e-40 );
+        assert( fabs(norm)>1e-40 );
         scale_row(weight / norm) ;
     }
 
@@ -296,7 +296,7 @@ public:
          for(unsigned int i=0; i<nl; i++) {
              al_[i] *= s ;
          }
-         bk_ *= s ; 
+         bk_ *= s ;
     }
 
     void end_row() {
@@ -305,7 +305,7 @@ public:
             unsigned int nl = al_.size() ;
             for(unsigned int i=0; i<nf; i++) {
                 for(unsigned int j=0; j<nf; j++) {
-					A_->add_coef(if_[i], if_[j], af_[i] * af_[j]) ;	
+                    A_->add_coef(if_[i], if_[j], af_[i] * af_[j]) ;
                 }
             }
             CoeffType S = - bk_ ;
@@ -313,21 +313,21 @@ public:
                 S += al_[j] * xl_[j] ;
             }
             for(unsigned int i=0; i<nf; i++) {
-				(*b_)[if_[i]] -= af_[i] * S ;	
+                (*b_)[if_[i]] -= af_[i] * S ;
             }
         } else {
             unsigned int nf = af_.size() ;
             unsigned int nl = al_.size() ;
             for(unsigned int i=0; i<nf; i++) {
-				A_->add_coef(current_row_, if_[i], af_[i]) ;	
+                A_->add_coef(current_row_, if_[i], af_[i]) ;
             }
-            (*b_)[current_row_] = bk_ ;						
+            (*b_)[current_row_] = bk_ ;
             for(unsigned int i=0; i<nl; i++) {
-                (*b_)[current_row_] -= al_[i] * xl_[i] ;	
+                (*b_)[current_row_] -= al_[i] * xl_[i] ;
             }
         }
         current_row_++ ;
-        transition(IN_ROW, IN_SYSTEM) ; 
+        transition(IN_ROW, IN_SYSTEM) ;
     }
 
     void end_system() {
@@ -336,19 +336,19 @@ public:
 
     // ----------------------------- Solver -------------------------------
 
-	// Solves a linear system or minimizes a quadratic form
-	// Return true on success
-	// (modified for SparseLinearAlgebraTraits_d concept)
-    bool solve() 
-	{
+    // Solves a linear system or minimizes a quadratic form
+    // Return true on success
+    // (modified for SparseLinearAlgebraTraits_d concept)
+    bool solve()
+    {
         check_state(CONSTRUCTED) ;
 
-		// Solve the sparse linear system "A*X = B". On success, the solution is (1/D) * X.
- 		CoeffType D;
-		bool success = Traits::linear_solver(*A_, *b_, *x_, D) ;
-		assert(D == 1.0);   // WARNING: this library does not support homogeneous coordinates!
+        // Solve the sparse linear system "A*X = B". On success, the solution is (1/D) * X.
+        CoeffType D;
+        bool success = Traits::linear_solver(*A_, *b_, *x_, D) ;
+        assert(D == 1.0);   // WARNING: this library does not support homogeneous coordinates!
 
-		vector_to_variables() ;
+        vector_to_variables() ;
 
         transition(CONSTRUCTED, SOLVED) ;
 
@@ -356,9 +356,9 @@ public:
         delete b_ ; b_ = NULL ;
         delete x_ ; x_ = NULL ;
 
-		return success;
+        return success;
     }
-    
+
 protected:
 
     // ----------- Converting between user representation and the internal representation -----
@@ -367,40 +367,40 @@ protected:
         for(unsigned int ii=0; ii < nb_variables(); ii++) {
             Variable& v = variable(ii) ;
             if(!v.is_locked()) {
-                v.set_value( (*x_)[v.index()] ) ;	
+                v.set_value( (*x_)[v.index()] ) ;
             }
         }
     }
-    
+
     void variables_to_vector() {
         for(unsigned int ii=0; ii < nb_variables(); ii++) {
             Variable& v = variable(ii) ;
             if(!v.is_locked()) {
-                (*x_)[v.index()] = v.value() ;	
+                (*x_)[v.index()] = v.value() ;
             }
         }
     }
 
     // ----------- Finite state automaton (checks that calling sequence is respected) ---------
-    
+
     std::string state_to_string(State s) {
             switch(s) {
             case INITIAL:
                 return "initial" ;
             case IN_SYSTEM:
                 return "in system" ;
-            case IN_ROW: 
+            case IN_ROW:
                 return "in row" ;
-            case CONSTRUCTED: 
+            case CONSTRUCTED:
                 return "constructed" ;
             case SOLVED:
                 return "solved" ;
-            } 
+            }
             // Should not go there.
             assert(false) ;
             return "undefined" ;
     }
-    
+
     void check_state(State s) {
             if(state_ != s) {
                 std::cerr << "Wrong state, expected: "
@@ -412,7 +412,7 @@ protected:
             }
             assert(state_ == s) ;
     }
-    
+
     void transition(State from, State to) {
             check_state(from) ;
             state_ = to ;
