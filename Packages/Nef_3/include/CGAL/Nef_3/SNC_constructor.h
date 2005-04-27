@@ -196,7 +196,7 @@ public:
   typedef CGAL::SNC_decorator<SNC_structure>                 Base;
   typedef CGAL::SNC_decorator<SNC_structure>                 SNC_decorator;
   typedef typename CGAL::SNC_const_decorator<SNC_structure>  SNC_const_decorator;
-  typedef CGAL::SNC_point_locator<SNC_decorator>       SNC_point_locator;
+  typedef CGAL::SNC_point_locator<SNC_decorator>             SNC_point_locator;
   typedef CGAL::SNC_FM_decorator<SNC_structure>              FM_decorator;
   typedef CGAL::SNC_intersection<SNC_structure>              SNC_intersection;
 
@@ -2174,8 +2174,8 @@ public:
      if(cgal_nef3_timer_on)
       std::cout << "Runtime_pluecker: " 
 		<< timer_pluecker.time() << std::endl;
-#endif   
-     //    SNC_io_parser<SNC_structure> O0(std::cout,*this->sncp());
+#endif
+     //    SNC_io_parser<SNC_structure> O0(std::cerr,*this->sncp());
      //    O0.print();
     link_shalfedges_to_facet_cycles();
     categorize_facet_cycles_and_create_facets();
@@ -2190,7 +2190,7 @@ public:
   }
 
   void clear_external_structure() {
-    this->sncp()->clear_boundary();
+    this->sncp()->clear_snc_boundary();
 
     while(this->sncp()->volumes_begin()!= this->sncp()->volumes_end())
       this->sncp()->delete_volume(this->sncp()->volumes_begin());
