@@ -541,11 +541,6 @@ class SNC_decorator : public SNC_const_decorator<Map> {
       CGAL_assertion_msg( 0, "it is not possible to decide which one is a visible facet (if any)");
       return Halffacet_handle();
     }
-    /*    SM_decorator SD;
-    if(sncp()->halfedges_begin() == sncp()->halfedges_end() || 
-       SD.is_isolated(sncp()->halfedges_begin())) 
-      return Halffacet_handle();  
-    */
 
     SFace_cycle_iterator fc = sf->sface_cycles_begin(),
       fce = sf->sface_cycles_end();
@@ -672,7 +667,9 @@ class SNC_decorator : public SNC_const_decorator<Map> {
       piercing point of the |ray| on the local (virtual) view  of |f|.
       \precondition |ray| target belongs to |f| and the intersection between
       |ray| and is not coplanar with |f|. }*/ {
-
+    
+    CGAL_NEF_TRACEN("get visible facet " << ray << ", " << f->plane() 
+		    << " has on source " << f->plane().has_on(ray.source()));
     Halffacet_handle f_visible = f;
     // CGAL_assertion( !plane(f_visible).has_on(ray.source()));
     if( plane(f_visible).has_on_negative_side(ray.source()))
@@ -932,10 +929,14 @@ class SNC_decorator : public SNC_const_decorator<Map> {
   }
       */
 
-  template <typename Selection>
+  template <typename SNC_decorator, typename Selection>
   class Intersection_call_back : 
     public SNC_point_locator::Intersection_call_back 
   {
+    typedef typename SNC_decorator::Decorator_traits Decorator_traits;
+    typedef typename Decorator_traits::Halfedge_handle Halfedge_handle;
+    typedef typename Decorator_traits::Halffacet_handle Halffacet_handle;
+    
   public:
     Intersection_call_back( const SNC_structure& s0, const SNC_structure& s1,
 			    const Selection& _bop, SNC_structure& r, 
@@ -943,15 +944,15 @@ class SNC_decorator : public SNC_const_decorator<Map> {
       snc0(s0), snc1(s1), bop(_bop), result(r),
       inverse_order(invert_order) {}
 
-    void operator()( Halfedge_const_handle e0, Object_handle o1, const Point_3& ip)
+      void operator()(Halfedge_handle e0, Object_handle o1, const Point_3& ip)
       const {
 
 #ifdef CGAL_NEF3_DUMP_STATISTICS
       ++number_of_intersections;
 #endif
 
-      Halfedge_const_handle e;
-      Halffacet_const_handle f;
+      Halfedge_handle e;
+      Halffacet_handle f;
       
       Point_3 p(normalized(ip));
 
@@ -1118,11 +1119,11 @@ class SNC_decorator : public SNC_const_decorator<Map> {
 	sncp()->delete_vertex(v1);
       }
       else if( CGAL::assign( c, o)) {
-	CGAL_NEF_TRACEN("p0 found on volume with mark " << mark(c));
+	CGAL_NEF_TRACEN("p0 found on volume with mark " << c->mark());
 #ifdef CGAL_NEF3_OVERLAY_IF_NEEDED_OFF
         if(true) {
 #else
-	if( BOP( true, mark(c)) != BOP( false, mark(c))) {
+	if( BOP( true, c->mark()) != BOP( false, c->mark())) {
 #endif
 #ifdef CGAL_NEF3_OVERLAY_BY_HAND_OFF
 	  Vertex_handle v1 = create_local_view_on( p0, c);
@@ -1132,14 +1133,14 @@ class SNC_decorator : public SNC_const_decorator<Map> {
 	  SNC_constructor C(*sncp());
 	  Vertex_handle v1 = C.clone_SM(v0);
 	  SM_decorator SM(&*v1);
-	  SM.change_marks(BOP, mark(c));
+	  SM.change_marks(BOP, c->mark());
 	  SM_overlayer O(&*v1);
 	  O.simplify();
 #endif
 	} else {
 	  CGAL_NEF_TRACEN("vertex in volume deleted " << std::endl << 
 		 "  vertex: " <<  v0->point() << std::endl << 
-		 "  mark of volume: " << mark(c)); 
+		 "  mark of volume: " << c->mark()); 
 	}
       }
       else CGAL_assertion_msg( 0, "wrong handle");
@@ -1188,11 +1189,11 @@ class SNC_decorator : public SNC_const_decorator<Map> {
 	sncp()->delete_vertex(v1);
       } 
       else if( CGAL::assign( c, o)) {
-	CGAL_NEF_TRACEN("p1 found on volume with mark " << mark(c));
+	CGAL_NEF_TRACEN("p1 found on volume with mark " << c->mark());
 #ifdef CGAL_NEF3_OVERLAY_IF_NEEDED_OFF
         if(true) {
 #else
-	if( BOP( mark(c), true) != BOP( mark(c), false)) {
+	if( BOP( c->mark(), true) != BOP( c->mark(), false)) {
 #endif
 #ifdef CGAL_NEF3_OVERLAY_BY_HAND_OFF
 	Vertex_handle v1 = create_local_view_on( p1, c);
@@ -1202,14 +1203,14 @@ class SNC_decorator : public SNC_const_decorator<Map> {
 	  SNC_constructor C(*sncp());
 	  Vertex_handle v1 = C.clone_SM(v0);
 	  SM_decorator SM(&*v1);
-	  SM.change_marks(mark(c), BOP);
+	  SM.change_marks(c->mark(), BOP);
 	  SM_overlayer O(&*v1);
 	  O.simplify();
 #endif
 	} else {
 	  CGAL_NEF_TRACEN("vertex in volume deleted " << std::endl << 
 		 "  vertex: " <<  v0->point() << std::endl << 
-		 "  mark of volume: " << mark(c)); 
+		 "  mark of volume: " << c->mark()); 
 	}
       }
       else CGAL_assertion_msg( 0, "wrong handle");
@@ -1235,9 +1236,9 @@ class SNC_decorator : public SNC_const_decorator<Map> {
     //      (sncp()->number_of_edges(),
     //       "binary_operator: finding edge-edge intersections...");
 
-    Intersection_call_back<Selection> call_back0
+    Intersection_call_back<SNC_decorator, Selection> call_back0
       ( snc1, snc2, BOP, *sncp());
-    Intersection_call_back<Selection> call_back1 
+    Intersection_call_back<SNC_decorator, Selection> call_back1 
       ( snc2, snc2, BOP, *sncp(), true);
 
 #ifdef CGAL_NEF3_TIMER_INTERSECTION
@@ -1280,10 +1281,24 @@ class SNC_decorator : public SNC_const_decorator<Map> {
       pl1->intersect_with_facets( e1, call_back1);
     }
     CGAL_NEF_TRACEN("\nnumber of vertices (so far...) = "<< sncp()->number_of_vertices());
+#elif defined CGAL_NEF3_INTERSECTION_NAIVE
+    
+    CGAL::SNC_point_locator_naive<SNC_decorator> pln1;
+    CGAL::SNC_point_locator_naive<SNC_decorator> pln2;
+    pln1.initialize(const_cast<SNC_structure*>(&snc1));
+    pln2.initialize(const_cast<SNC_structure*>(&snc2));
+    Halfedge_iterator e0;   
+    CGAL_forall_edges(e0,const_cast<SNC_structure&>(snc1))
+      pln2.intersect_with_edges_and_facets(e0,call_back0);
+    CGAL_forall_edges(e0,const_cast<SNC_structure&>(snc2))
+      pln1.intersect_with_facets( e0, call_back1);
+
 #else
     {
-        binop_intersection_test_segment_tree<Self> binop_box_intersection;
-        binop_box_intersection(call_back0, call_back1, snc1, snc2);
+        binop_intersection_test_segment_tree<SNC_decorator> binop_box_intersection;
+        binop_box_intersection(call_back0, call_back1, 
+			       const_cast<SNC_structure&>(snc1), 
+			       const_cast<SNC_structure&>(snc2));
     }
 #endif
 
