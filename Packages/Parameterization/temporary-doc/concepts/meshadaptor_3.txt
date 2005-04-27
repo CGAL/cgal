@@ -19,124 +19,136 @@
 
 
 // MeshAdaptor_3 is a concept for a 3D mesh interface. 
-// Adaptators for Polyhedron _3 and Triangulation_2 with 3D points are provided.
 // 
-// This concept is mainly intended to provide a uniform access to Polyhedron _3 and Triangulation_2 for the parameterization package, but it may be adapted to other mesh structures and other algorithms.
+// Its main purpose is to allow 
+// the parameterization package to access meshes on an uniform manner.
+// Adaptators for Polyhedron _3 and Triangulation_2 with 3D points are provided.
+//
+// The input mesh can be of any genus, but the parameterization package 
+// is restricted to triangular meshes which are topological discs.
 
 class MeshAdaptor_3 
 {
 // Public types
 public:
-				typedef ...						NT;
-				typedef ...						Face;
-				typedef ...						Vertex;
-				typedef ...						Point_2;
-				typedef ...						Point_3;
-				typedef ...						Vector_2;
-				typedef ...						Vector_3;
-				// Iterator over all mesh faces
-				typedef ...						Face_iterator;
-				typedef ...			 			Face_const_iterator;
-				// Iterator over all mesh vertices
-				typedef ...						Vertex_iterator;
-				typedef ...						Vertex_const_iterator;
-				// Iterator over mesh boundary vertices
-				typedef ...						Border_vertex_iterator;
-				typedef ...						Border_vertex_const_iterator;
-				// Circulator over a face's vertices
-				typedef ...						Vertex_around_face_circulator;
-				typedef ...						Vertex_around_face_const_circulator;
-				// Circulator over the vertices incident to a vertex
-				typedef ...						Vertex_around_vertex_circulator;
-				typedef ...						Vertex_around_vertex_const_circulator;
+    // Number type
+    typedef ...	NT;
+    // Points and vectors
+    typedef ...	Point_2;
+    typedef ...	Point_3;
+    typedef ...	Vector_2;
+    typedef ...	Vector_3;
+    // Face
+    typedef ...	Face;
+    typedef ...	Face_handle;
+    typedef ... Face_const_handle;
+    // Iterator over all mesh faces
+    typedef ...	Face_iterator;
+    typedef ...	Face_const_iterator;
+    // Vertex 
+    typedef ...	Vertex;
+    typedef ...	Vertex_handle;
+    typedef ... Vertex_const_handle;
+    // Iterator over all mesh vertices
+    typedef ...	Vertex_iterator;
+    typedef ...	Vertex_const_iterator;
+    // Iterator over mesh boundary vertices
+    typedef ...	Border_vertex_iterator;
+    typedef ...	Border_vertex_const_iterator;
+    // Circulator over a face's vertices
+    typedef ...	Vertex_around_face_circulator;
+    typedef ...	Vertex_around_face_const_circulator;
+    // Circulator over the vertices incident to a vertex
+    typedef ...	Vertex_around_vertex_circulator;
+    typedef ...	Vertex_around_vertex_const_circulator;
 
 // Public operations
 public:
-				//
-				// MESH INTERFACE
-				//
+    //
+    // MESH INTERFACE
+    //
 
-				// Get iterator over first vertex of mesh
-				Vertex_iterator  mesh_vertices_begin ();
-				Vertex_const_iterator  mesh_vertices_begin () const;
+    // Get iterator over first vertex of mesh
+    Vertex_iterator  mesh_vertices_begin ();
+    Vertex_const_iterator  mesh_vertices_begin () const;
 
-				// Get iterator over past-the-end vertex of mesh
-				Vertex_iterator  mesh_vertices_end ();
-				Vertex_const_iterator  mesh_vertices_end () const;
-				
-				// Count the number of vertices of the mesh.
-				int  count_mesh_vertices () const;
+    // Get iterator over past-the-end vertex of mesh
+    Vertex_iterator  mesh_vertices_end ();
+    Vertex_const_iterator  mesh_vertices_end () const;
 
-				// Index vertices of the mesh for 0 to count_mesh_vertices()-1.
-				void  index_mesh_vertices ();
-				
+    // Count the number of vertices of the mesh
+    int  count_mesh_vertices () const;
 
-				// Return true of all mesh's faces are triangles
-				bool  is_mesh_triangular () const;
-				
-				// Compute the genus of the mesh
-				int  get_mesh_genus () const;
+    // Index vertices of the mesh for 0 to count_mesh_vertices()-1
+    void  index_mesh_vertices ();
 
-				// Count the number of boundaries of the mesh
-				int  count_mesh_boundaries () const;
-				
-				
-				// Get iterator over first vertex of mesh's border
-				Border_vertex_iterator  mesh_border_vertices_begin ();
-				Border_vertex_const_iterator  mesh_border_vertices_begin () const;
 
-				// Get iterator over past-the-end vertex of mesh's border
-				Border_vertex_iterator  mesh_border_vertices_end ();
-				Border_vertex_const_iterator  mesh_border_vertices_end () const;
-				
-				// Get iterator over first face of mesh
-				Face_iterator  mesh_faces_begin ();
-				Face_const_iterator  mesh_faces_begin () const;
-				// Get iterator over past-the-end face of mesh
-				Face_iterator  mesh_faces_end ();
-				Face_const_iterator  mesh_faces_end () const;
-				
-				// Count the number of faces of the mesh.
-				int  count_mesh_faces () const;
+    // Return true of all mesh's faces are triangles
+    bool  is_mesh_triangular () const;
 
-				//
-				// FACE INTERFACE
-				//
+    // Compute the genus of the mesh
+    int  get_mesh_genus () const;
 
-				// Get circulator over face's vertices
-				Vertex_around_face_circulator  face_vertices_begin (Face* face);
-				Vertex_around_face_const_circulator  face_vertices_begin (const Face& face) const;
-				
-				// Count the number of vertices of a face
-				int  count_face_vertices (const Face& face) const;
+    // Count the number of boundaries of the mesh
+    int  count_mesh_boundaries () const;
 
-				//
-				// VERTEX INTERFACE
-				//
+    // Get iterator over first vertex of mesh's border
+    Border_vertex_iterator  mesh_border_vertices_begin ();
+    Border_vertex_const_iterator  mesh_border_vertices_begin () const;
 
-				// Get the 3D position of a vertex
-				Point_3  get_vertex_position (const Vertex& vertex) const;
-				
-				// Get the 2D position of a vertex
-				Point_2  get_vertex_uv (const Vertex& vertex) const;
-				// Set the 2D position of a vertex
-				void  set_vertex_uv (Vertex* vertex, Point_2 uv);
-				
-				// Set "is parameterized" field of vertex
-				void  set_vertex_parameterized (Vertex* vertex, bool is_parameterized);
-				// Indicate if a vertex is already parameterized
-				bool  is_vertex_parameterized (const Vertex& vertex) const;
-				
-				// Set vertex index
-				void  set_vertex_index (Vertex* vertex, int index);
-				// Get the index of a vertex
-				int  get_vertex_index (const Vertex& vertex) const;
-				
-				// Return true if a vertex belongs to the mesh's boundary
-				bool  is_vertex_on_border (const Vertex& vertex) const;
-				
-				// Get circulator over the vertices incident to 'vertex'
-				Vertex_around_vertex_circulator  vertices_around_vertex_begin (Vertex* vertex);
-				Vertex_around_vertex_const_circulator  vertices_around_vertex_begin (const Vertex& vertex) const;
+    // Get iterator over past-the-end vertex of mesh's border
+    Border_vertex_iterator  mesh_border_vertices_end ();
+    Border_vertex_const_iterator  mesh_border_vertices_end () const;
+
+    // Get iterator over first face of mesh
+    Face_iterator  mesh_faces_begin ();
+    Face_const_iterator  mesh_faces_begin () const;
+
+    // Get iterator over past-the-end face of mesh
+    Face_iterator  mesh_faces_end ();
+    Face_const_iterator  mesh_faces_end () const;
+
+    // Count the number of faces of the mesh
+    int  count_mesh_faces () const;
+
+    //
+    // FACE INTERFACE
+    //
+
+    // Get circulator over face's vertices
+    Vertex_around_face_circulator face_vertices_begin(Face_handle face);
+    Vertex_around_face_const_circulator face_vertices_begin(
+											    Face_const_handle face) const;
+
+    // Count the number of vertices of a face
+    int  count_face_vertices(Face_const_handle face) const;
+
+    //
+    // VERTEX INTERFACE
+    //
+
+    // Get the 3D position of a vertex
+    Point_3  get_vertex_position (Vertex_const_handle vertex) const;
+
+    // Get/set the 2D position (u/v pair) of a vertex 
+    Point_2  get_vertex_uv (Vertex_const_handle vertex) const;
+    void  set_vertex_uv (Vertex_handle vertex, const Point_2& uv);
+
+    // Get/set "is parameterized" field of vertex 
+    bool  is_vertex_parameterized (Vertex_const_handle vertex) const;
+    void  set_vertex_parameterized (Vertex_handle vertex, bool parameterized);
+
+    // Get/set vertex index
+    int  get_vertex_index (Vertex_const_handle vertex) const;
+    void  set_vertex_index (Vertex_handle vertex, int index);
+
+    // Return true if a vertex belongs to the mesh's boundary
+    bool  is_vertex_on_border (Vertex_const_handle vertex) const;
+
+    // Get circulator over the vertices incident to 'vertex'
+    Vertex_around_vertex_circulator  vertices_around_vertex_begin (
+									    Vertex_handle vertex);
+    Vertex_around_vertex_const_circulator  vertices_around_vertex_begin (
+									    Vertex_const_handle vertex) const;
 };
 

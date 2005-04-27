@@ -28,33 +28,33 @@ public:
 
 // Public operations
 public:
-				// Create a matrix initialized with zeros
-				Matrix (int rows, int columns);
-				
-				// Return the matrix number of rows
-				int  row_dimension () const;
-				
-				// Return the matrix number of columns
-				int  column_dimension () const;
-				  
-				// Read access to 1 matrix coefficient.
-				// 
-				// Preconditions:
-				// * 0 <= row < row_dimension()
-				// * 0 <= column < column_dimension()
-				NT  get_coef (int row, int column) const;
-				// Write access to 1 matrix coefficient: aij <- aij + val
-				// 
-				// Preconditions:
-				// * 0 <= row < row_dimension()
-				// * 0 <= column < column_dimension()
-			    void add_coef(unsigned int i, unsigned int j, T val);
-				
-				// Write access to 1 matrix coefficient.
-				// 
-				// Preconditions:
-				// * 0 <= row < row_dimension()
-				// * 0 <= column < column_dimension()
-				void  set_coef (int row, int column, NT value);
+    // Create a rectangular matrix initialized with zeros
+    Matrix (int rows, int columns);
+
+    // Return the matrix number of rows
+    int  row_dimension () const;
+
+    // Return the matrix number of columns
+    int  column_dimension () const;
+    	
+    // Read access to 1 matrix coefficient.
+    // 
+    // Preconditions:
+    // * 0 <= row < row_dimension()
+    // * 0 <= column < column_dimension()
+    NT  get_coef (int row, int column) const;
+    // Write access to 1 matrix coefficient: aij <- aij + val
+    // 
+    // Preconditions:
+    // * 0 <= row < row_dimension()
+    // * 0 <= column < column_dimension()
+    void add_coef(int row, int column, NT value);
+
+    // Write access to 1 matrix coefficient.
+    // 
+    // Preconditions:
+    // * 0 <= row < row_dimension()
+    // * 0 <= column < column_dimension()
+    void  set_coef (int row, int column, NT value);
 };
 
