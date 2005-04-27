@@ -38,7 +38,7 @@ Meeting the first requirement, the interface needed is straightforward.  However
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/Nef_3/quotient_coordinates_to_homogeneous_point.h>
 
-#ifdef CGAL_NEF3_TRIANGULATE_FACETS
+#ifndef CGAL_NEF3_NOT_TRIANGULATE_FACETS
 #include <CGAL/Constrained_triangulation_2.h>
 #include <CGAL/Triangulation_data_structure_2.h>
 #include <CGAL/Triangulation_euclidean_traits_xy_3.h>
@@ -93,47 +93,11 @@ struct Compare_triangle_3 {
   }
 };
 
-template< class RandomAccessIter, class Pred>
-RandomAccessIter
-median_of_three( RandomAccessIter a, RandomAccessIter b, RandomAccessIter c, Pred smaller)
-{
-
-    if( smaller( *a, *b) )
-        if( smaller( *b, *c ) )
-            return b;
-        else if( smaller( *a, *c ) )
-            return c;
-        else
-            return a;
-    else if( smaller( *a, *c ) )
-        return a;
-    else if( smaller( *b, *c ) )
-        return c;
-    else
-        return b;
-}
-
-template< class RandomAccessIter, class Pred>
-RandomAccessIter
-iterative_radon( RandomAccessIter begin, RandomAccessIter end, Pred smaller, int num_levels)
-{
-    if( num_levels < 0 ) {
-        const unsigned int rnd = CGAL::default_random.get_int( 0, INT_MAX );
-        return begin + rnd % std::distance( begin, end );
-    }
-
-    return median_of_three(
-         iterative_radon( begin, end, smaller, num_levels - 1 ),
-         iterative_radon( begin, end, smaller, num_levels - 1 ),
-         iterative_radon( begin, end, smaller, num_levels - 1 ),
-	 smaller );
-}
-
 template <class Traits>
 class K3_tree
 {
 
-#ifdef CGAL_NEF3_TRIANGULATE_FACETS
+#ifndef CGAL_NEF3_NOT_TRIANGULATE_FACETS
   template<typename SNC_structure, typename Kernel>
   class Triangulation_handler {
 
@@ -351,7 +315,7 @@ public:
     CGAL_forall_edges( e, *W)
       objects.push_back(Object_handle(Halfedge_handle(e)));
     CGAL_forall_facets( f, *W) {
-#ifdef CGAL_NEF3_TRIANGULATE_FACETS
+#ifndef CGAL_NEF3_NOT_TRIANGULATE_FACETS
    
       Halffacet_cycle_iterator fci = f->facet_cycles_begin();
       CGAL_assertion(fci.is_shalfedge());
@@ -395,7 +359,7 @@ public:
         objects.push_back(Object_handle(Halffacet_handle(f)));
 #else
       objects.push_back(Object_handle(Halffacet_handle(f)));
-#endif // CGAL_NEF3_TRIANGULATE_FACETS
+#endif // CGAL_NEF3_NOT_TRIANGULATE_FACETS
     }
     Object_iterator oli=objects.begin()+v_end;
     root = build_kdtree( objects, oli, 0);
@@ -793,7 +757,7 @@ public:
 	left_node->transform(t);
  	right_node->transform(t);
   	splitting_plane = splitting_plane.transform(t);
-#ifdef CGAL_NEF3_TRIANGULATE_FACETS 
+#ifndef CGAL_NEF3_NOT_TRIANGULATE_FACETS 
     } else {
       Halffacet_triangle_handle tri;
       typename Object_list::iterator o;
@@ -802,7 +766,7 @@ public:
           tri.transform(t);
 	  *o = Object_handle(tri);
         }
-#endif // CGAL_NEF3_TRIANGULATE_FACETS 
+#endif // CGAL_NEF3_NOT_TRIANGULATE_FACETS 
     }
   }
 
@@ -1733,7 +1697,7 @@ Bounding_box_3<typename SNC_decorator::Kernel::Kernel_tag,
 	       typename SNC_decorator::Kernel>
 Objects_bbox<SNC_decorator>::operator()
   (Halfedge_handle e) const {
-  return (operator()(D.vertex(e)) + operator()(D.vertex(D.twin(e))));
+  return (operator()(e->source()) + operator()(e->twin()->source()));
 }
 
 template <class SNC_decorator>
@@ -1762,10 +1726,10 @@ Objects_bbox<SNC_decorator>::operator()
   e = SHalfedge_handle(fc);
   SHalfedge_around_facet_circulator sc(e), send(sc);
   CGAL_assertion( !is_empty_range( sc, send));
-  Bounding_box_3 b(operator()(D.vertex(sc)));
+  Bounding_box_3 b(operator()(sc->source()->source()));
   sc++;
   while( sc != send) {
-    b = b + operator()(D.vertex(sc));
+    b = b + operator()(sc->source()->source());
     sc++;
   }
   return b;
