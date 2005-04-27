@@ -741,9 +741,9 @@ public:
           q = normalized(q);
           call_back( e0, Object_handle(Halffacet_handle(t)), q);
           _CGAL_NEF_TRACEN("edge intersects facet triangle on plane "<<plane(t)<<" on "<<q);
-#ifdef CGAL_NEF3_TRIANGULATE_FACETS
+#ifndef CGAL_NEF3_NOT_TRIANGULATE_FACETS
 	  f_mark[t] = true;
-#endif // CGAL_NEF3_TRIANGULATE_FACETS
+#endif // CGAL_NEF3_NOT_TRIANGULATE_FACETS
         }
       }
       else
@@ -802,9 +802,9 @@ public:
     CGAL_assertion( initialized);
     _CGAL_NEF_TRACEN( "intersecting edge: "<< Segment_3(e0->source()->point(),
                                                e0->twin()->source()->point()));
-#ifdef CGAL_NEF3_TRIANGULATE_FACETS
+#ifndef CGAL_NEF3_NOT_TRIANGULATE_FACETS
     Unique_hash_map< Halffacet_triangle_handle, bool> f_mark(false);
-#endif // CGAL_NEF3_TRIANGULATE_FACETS
+#endif // CGAL_NEF3_NOT_TRIANGULATE_FACETS
     Segment_3 s(Segment_3(e0->source()->point(),e0->twin()->source()->point()));
     Vertex_handle v;
     Halfedge_handle e;
@@ -835,19 +835,19 @@ public:
       else if( CGAL::assign( t, *o)) {
         Point_3 q;
         Triangle_3 tr = t.get_triangle();
-#ifdef CGAL_NEF3_TRIANGULATE_FACETS
+#ifndef CGAL_NEF3_NOT_TRIANGULATE_FACETS
 	if( f_mark[t])
 	  continue;
-#endif // CGAL_NEF3_TRIANGULATE_FACETS
+#endif // CGAL_NEF3_NOT_TRIANGULATE_FACETS
 	_CGAL_NEF_TRACEN("trying with triangle "<<tr);
         if( is.does_intersect( s, tr, q) &&
             !is.does_contain_on_boundary( t, q)) {
           q = normalized(q);
           call_back( e0, Object_handle(Halffacet_handle(t)), q);
           _CGAL_NEF_TRACEN("edge intersects facet triangle on plane "<<plane(t)<<" on "<<q);
-#ifdef CGAL_NEF3_TRIANGULATE_FACETS
+#ifndef CGAL_NEF3_NOT_TRIANGULATE_FACETS
 	  f_mark[t] = true;
-#endif // CGAL_NEF3_TRIANGULATE_FACETS
+#endif // CGAL_NEF3_NOT_TRIANGULATE_FACETS
         }
       }
       else
