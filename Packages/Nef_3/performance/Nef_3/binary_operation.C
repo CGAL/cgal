@@ -14,8 +14,8 @@ typedef CGAL::Gmpq NT;
 #endif
 
 #ifdef CGAL_NEF3_USE_LAZY_EXACT_NT
-#include <CGAL/Lazy_nt.h>
-typedef CGAL::Lazy_nt<NT> RT;
+#include <CGAL/Lazy_exact_nt.h>
+typedef CGAL::Lazy_exact_nt<NT> RT;
 #else
 typedef NT RT;
 #endif
