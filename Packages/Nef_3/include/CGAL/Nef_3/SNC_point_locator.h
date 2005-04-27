@@ -29,7 +29,7 @@
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/Timer.h>
 
-#ifdef CGAL_NEF3_TRIANGULATE_FACETS
+#ifndef CGAL_NEF3_NOT_TRIANGULATE_FACETS
 #include <CGAL/Constrained_triangulation_2.h>
 #include <CGAL/Triangulation_data_structure_2.h>
 #include <CGAL/Triangulation_euclidean_traits_xy_3.h>
@@ -71,10 +71,10 @@ protected:
 
 public: 
   typedef typename SNC_structure::Object_handle Object_handle;
-  typedef typename SNC_structure::Halfedge_const_handle Halfedge_const_handle;
-  typedef typename SNC_structure::Halffacet_const_handle Halffacet_const_handle;
-  typedef typename SNC_structure::Halffacet_triangle_handle 
-                                  Halffacet_triangle_handle;
+  typedef typename Decorator_traits::Halfedge_handle Halfedge_handle;
+  typedef typename Decorator_traits::Halffacet_handle Halffacet_handle;
+  typedef typename Decorator_traits::Halffacet_triangle_handle 
+                                     Halffacet_triangle_handle;
   typedef typename SNC_structure::Point_3 Point_3;
   typedef typename SNC_structure::Segment_3 Segment_3;
   typedef typename SNC_structure::Ray_3 Ray_3;
@@ -97,21 +97,21 @@ public:
 
   virtual Object_handle shoot(const Ray_3& s, int mask=255) const = 0;
 
-  virtual void intersect_with_edges( Halfedge_const_handle edge,
+  virtual void intersect_with_edges( Halfedge_handle edge,
                                      const Intersection_call_back& call_back) 
     const = 0;
 
-  virtual void intersect_with_facets( Halfedge_const_handle edge,
+  virtual void intersect_with_facets( Halfedge_handle edge,
                                       const Intersection_call_back& call_back)
     const = 0;
 
-  virtual void intersect_with_edges_and_facets( Halfedge_const_handle edge,
+  virtual void intersect_with_edges_and_facets( Halfedge_handle edge,
 	const Intersection_call_back& call_back) const = 0;
 
   class Intersection_call_back 
   {
   public:
-    virtual void operator()( Halfedge_const_handle edge, Object_handle object, 
+    virtual void operator()( Halfedge_handle edge, Object_handle object, 
                              const Point_3& intersection_point) const = 0;
   };
 
@@ -167,10 +167,10 @@ public:
   typedef K3_tree SNC_candidate_provider;
   
   typedef typename SNC_structure::Object_handle Object_handle;
-  typedef typename SNC_structure::Halfedge_const_handle Halfedge_const_handle;
-  typedef typename SNC_structure::Halffacet_const_handle Halffacet_const_handle; 
-  typedef typename SNC_structure::Halffacet_triangle_handle 
-                                  Halffacet_triangle_handle;	
+  typedef typename Decorator_traits::Halfedge_handle Halfedge_handle;
+  typedef typename Decorator_traits::Halffacet_handle Halffacet_handle; 
+  typedef typename Decorator_traits::Halffacet_triangle_handle 
+                                     Halffacet_triangle_handle;	
   typedef typename SNC_structure::Point_3 Point_3;
   typedef typename SNC_structure::Segment_3 Segment_3;
   typedef typename SNC_structure::Ray_3 Ray_3;
@@ -205,7 +205,7 @@ public:
   SNC_point_locator_by_spatial_subdivision() : 
     initialized(false), candidate_provider(0) {}
 
-#ifdef CGAL_NEF3_TRIANGULATE_FACETS	
+#ifndef CGAL_NEF3_NOT_TRIANGULATE_FACETS	
   template<typename Kernel>
   class Triangulation_handler {
 
@@ -287,7 +287,7 @@ public:
 #else 
     TIMER(ct_t.start());
     strcpy( this->version_, "Point Locator by Spatial Subdivision (tm)");
-#ifdef CGAL_NEF3_TRIANGULATE_FACETS
+#ifndef CGAL_NEF3_NOT_TRIANGULATE_FACETS
     CLOG(version()<<" (with triangulated facets)");
 #else
     CLOG(version());
@@ -306,7 +306,7 @@ public:
     CGAL_forall_edges( e, *this->sncp())
       objects.push_back(Object_handle(Halfedge_handle(e)));
     CGAL_forall_facets( f, *this->sncp()) {
-#ifdef CGAL_NEF3_TRIANGULATE_FACETS
+#ifndef CGAL_NEF3_NOT_TRIANGULATE_FACETS
 
       Halffacet_cycle_iterator fci = f->facet_cycles_begin();
       CGAL_assertion(fci.is_shalfedge());
@@ -347,7 +347,7 @@ public:
         objects.push_back(Object_handle(Halffacet_handle(f)));
 #else
       objects.push_back(Object_handle(Halffacet_handle(f)));
-#endif // CGAL_NEF3_TRIANGULATE_FACETS
+#endif // CGAL_NEF3_NOT_TRIANGULATE_FACETS
     }
     Object_list_iterator oli=objects.begin()+v_end;
     candidate_provider = new SNC_candidate_provider(objects,oli);
@@ -663,7 +663,7 @@ public:
 	f = f->twin();
       return Object_handle(f->incident_volume());
     } else if( CGAL::assign(e, result)) {
-      SM_decorator SD(&*source(e));
+      SM_decorator SD(&*e->source());
       if( SD.is_isolated(e))
         return Object_handle(e->incident_sface()->volume());	
       return get_visible_facet(e,Ray_3(s.source(),s.to_vector()))->incident_volume();
@@ -673,7 +673,7 @@ public:
   }
   }
 
-  virtual void intersect_with_edges_and_facets( Halfedge_const_handle e0,
+  virtual void intersect_with_edges_and_facets( Halfedge_handle e0,
 	const typename SNC_point_locator::Intersection_call_back& call_back) const {
 
     TIMER(it_t.start());
@@ -681,9 +681,9 @@ public:
     _CGAL_NEF_TRACEN( "intersecting edge: "<<&*e0<<' '<<Segment_3(e0->source()->point(),
                                                          e0->twin()->source()->point()));
 
-#ifdef CGAL_NEF3_TRIANGULATE_FACETS
+#ifndef CGAL_NEF3_NOT_TRIANGULATE_FACETS
     Unique_hash_map< Halffacet_triangle_handle, bool> f_mark(false);
-#endif // CGAL_NEF3_TRIANGULATE_FACETS
+#endif // CGAL_NEF3_NOT_TRIANGULATE_FACETS
 
     Segment_3 s(Segment_3(e0->source()->point(),e0->twin()->source()->point()));
     Vertex_handle v;
@@ -706,7 +706,7 @@ public:
         if( is.does_intersect_internally( s, Segment_3(e->source()->point(),
 	                                               e->twin()->source()->point()), q)) {
           q = normalized(q);
-          call_back( e0, Object_handle(Halfedge_const_handle(e)), q);
+          call_back( e0, Object_handle(Halfedge_handle(e)), q);
           _CGAL_NEF_TRACEN("edge intersects edge "<<' '<<&*e<< Segment_3(e->source()->point(),
                                                                 e->twin()->source()->point())<<" on "<<q);
         }
@@ -719,17 +719,17 @@ public:
         Point_3 q;
         if( is.does_intersect_internally( s, f, q) ) {
           q = normalized(q);
-          call_back( e0, Object_handle(Halffacet_const_handle(f)), q);
+          call_back( e0, Object_handle(Halffacet_handle(f)), q);
           _CGAL_NEF_TRACEN("edge intersects facet on plane "<<plane(f)<<" on "<<q);
         }
       }
       else if( CGAL::assign( t, *o)) {
         Point_3 q;
         Triangle_3 tr = t.get_triangle();
-#ifdef CGAL_NEF3_TRIANGULATE_FACETS
+#ifndef CGAL_NEF3_NOT_TRIANGULATE_FACETS
 	if( f_mark[t])
 	  continue;
-#endif // CGAL_NEF3_TRIANGULATE_FACETS
+#endif // CGAL_NEF3_NOT_TRIANGULATE_FACETS
 	_CGAL_NEF_TRACEN("trying with triangle "<<tr);
         if( is.does_intersect( s, tr, q) &&
             !is.does_contain_on_boundary( t, q)) {
@@ -747,7 +747,7 @@ public:
     TIMER(it_t.stop());
   }
 
-  virtual void intersect_with_edges( Halfedge_const_handle e0,
+  virtual void intersect_with_edges( Halfedge_handle e0,
     const typename SNC_point_locator::Intersection_call_back& call_back) const {
     TIMER(it_t.start());
     CGAL_assertion( initialized);
@@ -774,7 +774,7 @@ public:
         if( is.does_intersect_internally( s, Segment_3(e->source()->point(),
 	                                               e->twin()->source()->point()), q)) {
           q = normalized(q);
-          call_back( e0, Object_handle(Halfedge_const_handle(e)), q);
+          call_back( e0, Object_handle(Halfedge_handle(e)), q);
           _CGAL_NEF_TRACEN("edge intersects edge "<<' '<<&*e<< Segment_3(e->source()->point(),
                                                                 e->twin()->source()->point())<<" on "<<q);
         }
@@ -791,7 +791,7 @@ public:
     TIMER(it_t.stop());
   }
 
-  virtual void intersect_with_facets( Halfedge_const_handle e0, 
+  virtual void intersect_with_facets( Halfedge_handle e0, 
     const typename SNC_point_locator::Intersection_call_back& call_back) const {
     TIMER(it_t.start());
     CGAL_assertion( initialized);
@@ -823,7 +823,7 @@ public:
         Point_3 q;
         if( is.does_intersect_internally( s, f, q) ) {
           q = normalized(q);
-          call_back( e0, Object_handle(Halffacet_const_handle(f)), q);
+          call_back( e0, Object_handle(Halffacet_handle(f)), q);
           _CGAL_NEF_TRACEN("edge intersects facet on plane "<<plane(f)<<" on "<<q);
         }
       }
@@ -872,9 +872,9 @@ private:
       f_below = get_visible_facet( e, ray);
       if( f_below != Halffacet_handle())
         return f_below->incident_volume();
-      CGAL_assertion_code(SM_decorator SD(&*source(e))); // now, the edge has no incident facets
+      CGAL_assertion_code(SM_decorator SD(&*e->source())); // now, the edge has no incident facets
       CGAL_assertion(SD.is_isolated(e));
-      return sface(e)->volume();
+      return e->incident_sface()->volume();
     }
     else if( CGAL::assign( f, o)) {
       _CGAL_NEF_TRACEN("facet hit, obtaining volume...");
@@ -906,27 +906,26 @@ private:
  std::list<Halffacet_triangle_handle> triangulation;
 };
 
-/*
 template <typename SNC_decorator>
 class SNC_point_locator_naive : 
-  public SNC_ray_shooter<SNC_structure>, 
-  public SNC_point_locator<SNC_structure>
+  public SNC_ray_shooter<SNC_decorator>, 
+  public SNC_point_locator<SNC_decorator>
 {
-  typedef SNC_ray_shooter<SNC_structure> Base;
-  typedef SNC_point_locator_naive<SNC_structure> Self;
-  typedef SNC_point_locator<SNC_structure> SNC_point_locator;
+  typedef typename SNC_decorator::SNC_structure SNC_structure;
+  typedef SNC_ray_shooter<SNC_decorator> Base;
+  typedef SNC_point_locator_naive<SNC_decorator> Self;
+  typedef SNC_point_locator<SNC_decorator> SNC_point_locator;
   typedef SNC_intersection<SNC_structure> SNC_intersection;
+  typedef typename SNC_decorator::Decorator_traits Decorator_traits;
+  typedef typename Decorator_traits::SM_decorator SM_decorator;
 
 public:
   typedef typename SNC_decorator::Object_handle Object_handle;
-  typedef typename SNC_decorator::Halfedge_const_handle Halfedge_const_handle;
-  typedef typename SNC_decorator::Halffacet_triangle_handle 
-                                  Halffacet_triangle_handle;
   typedef typename SNC_decorator::Point_3 Point_3;
   typedef typename SNC_decorator::Segment_3 Segment_3;
   typedef typename SNC_decorator::Ray_3 Ray_3;
-  typedef typename SNC_decorator::Triangle_3 Triangle_3;
-
+  typedef typename SNC_structure::Aff_transformation_3 
+                                  Aff_transformation_3;
 
   typedef typename Decorator_traits::Vertex_handle Vertex_handle;
   typedef typename Decorator_traits::Halfedge_handle Halfedge_handle;
@@ -935,7 +934,6 @@ public:
   typedef typename Decorator_traits::Vertex_iterator Vertex_iterator;
   typedef typename Decorator_traits::Halfedge_iterator Halfedge_iterator;
   typedef typename Decorator_traits::Halffacet_iterator Halffacet_iterator;
-
 
 public:
   SNC_point_locator_naive() : initialized(false) {}
@@ -971,14 +969,22 @@ public:
     return Base::locate(p);
   }
 
-  virtual Object_handle shoot(const Ray_3& r) const {
+  virtual Object_handle shoot(const Ray_3& r, int mask=0) const {
     TIMER(rs_t.start());
     CGAL_assertion( initialized);
     TIMER(rs_t.stop());
     return Base::shoot(r);
   }
 
-  virtual void intersect_with_edges( Halfedge_const_handle e0, 
+  virtual void transform(const Aff_transformation_3& aff) {}
+
+  virtual void intersect_with_edges_and_facets(Halfedge_handle e0,
+    const typename SNC_point_locator::Intersection_call_back& call_back) const {
+	intersect_with_edges(e0,call_back);
+	intersect_with_facets(e0,call_back);
+  }
+
+  virtual void intersect_with_edges( Halfedge_handle e0, 
     const typename SNC_point_locator::Intersection_call_back& call_back) const {
     TIMER(it_t.start());
     CGAL_assertion( initialized);
@@ -1005,7 +1011,7 @@ public:
     TIMER(it_t.stop());
   }
 
-  virtual void intersect_with_facets( Halfedge_const_handle e0, 
+  virtual void intersect_with_facets( Halfedge_handle e0, 
     const typename SNC_point_locator::Intersection_call_back& call_back) const {
     TIMER(it_t.start());
     CGAL_assertion( initialized);
@@ -1034,8 +1040,6 @@ public:
 private:
   bool initialized;
 };
-
-*/
 
 CGAL_END_NAMESPACE
 #endif // SNC_POINT_LOCATOR_H

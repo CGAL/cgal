@@ -1,4 +1,4 @@
-#line 1278 "k3_tree.nw"
+#line 1242 "k3_tree.nw"
 // Copyright (c) 1997-2000  Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
@@ -457,7 +457,7 @@ Bounding_box_3<typename SNC_decorator::Kernel::Kernel_tag,
 	       typename SNC_decorator::Kernel>
 Objects_bbox<SNC_decorator>::operator()
   (Halfedge_handle e) const {
-  return (operator()(D.vertex(e)) + operator()(D.vertex(D.twin(e))));
+  return (operator()(e->source()) + operator()(e->twin()->source()));
 }
 
 template <class SNC_decorator>
@@ -486,10 +486,10 @@ Objects_bbox<SNC_decorator>::operator()
   e = SHalfedge_handle(fc);
   SHalfedge_around_facet_circulator sc(e), send(sc);
   CGAL_assertion( !is_empty_range( sc, send));
-  Bounding_box_3 b(operator()(D.vertex(sc)));
+  Bounding_box_3 b(operator()(sc->source()->source()));
   sc++;
   while( sc != send) {
-    b = b + operator()(D.vertex(sc));
+    b = b + operator()(sc->source()->source());
     sc++;
   }
   return b;

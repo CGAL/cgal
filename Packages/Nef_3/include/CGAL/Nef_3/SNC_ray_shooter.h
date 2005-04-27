@@ -25,7 +25,6 @@
 #include <CGAL/basic.h>
 #include <CGAL/functional.h> 
 #include <CGAL/function_objects.h> 
-#include <CGAL/Circulator_project.h>
 #include <CGAL/Nef_3/Pluecker_line_3.h>
 #include <CGAL/Nef_3/SNC_decorator.h>
 #include <CGAL/Nef_3/SNC_SM_overlayer.h>
@@ -50,75 +49,37 @@ CGAL_BEGIN_NAMESPACE
 
 /*{\Manpage{SNC_ray_shooting}{SNC}{ray shoot functionality}{O}}*/
 
-template <typename SNC_structure_>
-class SNC_ray_shooter : public SNC_decorator<SNC_structure_>
+template <typename SNC_decorator>
+class SNC_ray_shooter : public SNC_decorator
 { 
-  typedef SNC_structure_ SNC_structure;
 
 protected:
-  typedef SNC_ray_shooter<SNC_structure>          Self;
-  typedef SNC_decorator<SNC_structure>            Base;
+  typedef typename SNC_decorator::SNC_structure   SNC_structure;
+  typedef SNC_ray_shooter<SNC_decorator>          Self;
+  typedef SNC_decorator                           Base;
 
 public:
-  typedef typename SNC_structure_::Kernel          Kernel;
-  typedef SNC_decorator<SNC_structure>             SNC_decorator;
-  typedef SM_decorator<SNC_structure>          SM_decorator;
-  typedef SM_point_locator<SM_decorator>       SM_point_locator;
-  typedef SM_const_decorator<SNC_structure>    SM_const_decorator;
+  typedef typename SNC_decorator::Decorator_traits Decorator_traits;
+  typedef typename Decorator_traits::SM_decorator SM_decorator;
+  typedef SM_point_locator<SM_decorator>           SM_point_locator;
   typedef SNC_intersection<SNC_structure>          SNC_intersection;
 
-  typedef typename SNC_structure::Vertex Vertex;
-  typedef typename SNC_structure::Halfedge Halfedge;
-  typedef typename SNC_structure::Halffacet Halffacet;
-  typedef typename SNC_structure::Volume Volume;
-  
-  typedef typename SNC_structure::Vertex_iterator Vertex_iterator;
-  typedef typename SNC_structure::Halfedge_iterator Halfedge_iterator;
-  typedef typename SNC_structure::Halffacet_iterator Halffacet_iterator;
-  typedef typename SNC_structure::Volume_iterator Volume_iterator;
+  typedef typename SNC_decorator::Decorator_traits Decorator_traits;
+  typedef typename Decorator_traits::SM_decorator SM_decorator;
 
-  typedef typename SNC_structure::Vertex_handle Vertex_handle;
-  typedef typename SNC_structure::Halfedge_handle Halfedge_handle;
-  typedef typename SNC_structure::Halffacet_handle Halffacet_handle;
-  typedef typename SNC_structure::Volume_handle Volume_handle;
+  typedef typename Decorator_traits::Vertex_handle Vertex_handle;
+  typedef typename Decorator_traits::Halfedge_handle Halfedge_handle;
+  typedef typename Decorator_traits::Halffacet_handle Halffacet_handle;
+  typedef typename Decorator_traits::Volume_handle Volume_handle;
 
-  typedef typename SNC_structure::Vertex_const_handle Vertex_const_handle;
-  typedef typename SNC_structure::Halfedge_const_handle Halfedge_const_handle;
-  typedef typename SNC_structure::Halffacet_const_handle Halffacet_const_handle;
-  typedef typename SNC_structure::Volume_const_handle Volume_const_handle;
-
-  typedef typename SNC_structure::SVertex_iterator SVertex_iterator;
-  typedef typename SNC_structure::SHalfedge_iterator SHalfedge_iterator;
-  typedef typename SNC_structure::SFace_iterator SFace_iterator;
-  typedef typename SNC_structure::SHalfloop_iterator SHalfloop_iterator;
-
-  typedef typename SNC_structure::SVertex SVertex;
-  typedef typename SNC_structure::SHalfedge SHalfedge;
-  typedef typename SNC_structure::SFace SFace;
-  typedef typename SNC_structure::SHalfloop SHalfloop;
-
-  typedef typename SNC_structure::SVertex_handle SVertex_handle;
-  typedef typename SNC_structure::SHalfedge_handle SHalfedge_handle;
-  typedef typename SNC_structure::SFace_handle SFace_handle;
-  typedef typename SNC_structure::SHalfloop_handle SHalfloop_handle;
-
-  typedef typename SNC_structure::SVertex_const_handle SVertex_const_handle; 
-  typedef typename SNC_structure::SHalfedge_const_handle SHalfedge_const_handle; 
-  typedef typename SNC_structure::SHalfloop_const_handle SHalfloop_const_handle; 
-  typedef typename SNC_structure::SFace_const_handle SFace_const_handle; 
+  typedef typename Decorator_traits::SVertex_handle SVertex_handle;
+  typedef typename Decorator_traits::SHalfedge_handle SHalfedge_handle;
+  typedef typename Decorator_traits::SFace_handle SFace_handle;
+  typedef typename Decorator_traits::SHalfloop_handle SHalfloop_handle;
 
   typedef typename SNC_structure::Object_handle Object_handle;
-  typedef typename SNC_structure::SObject_handle SObject_handle;
 
-  typedef typename SNC_structure::SHalfedge_around_facet_const_circulator SHalfedge_around_facet_const_circulator;
-  typedef typename SNC_structure::SHalfedge_around_facet_circulator SHalfedge_around_facet_circulator;
-  typedef typename SNC_structure::SFace_cycle_iterator SFace_cycle_iterator;
-  typedef typename SNC_structure::SFace_cycle_const_iterator SFace_cycle_const_iterator;
-  typedef typename SNC_structure::Halffacet_cycle_iterator Halffacet_cycle_iterator;
-  typedef typename SNC_structure::Halffacet_cycle_const_iterator Halffacet_cycle_const_iterator;
-  typedef typename SNC_structure::Shell_entry_iterator Shell_entry_iterator;
-  typedef typename SNC_structure::Shell_entry_const_iterator Shell_entry_const_iterator;
-
+  typedef typename SNC_structure::Kernel Kernel;
   typedef typename SNC_structure::Point_3 Point_3;
   typedef typename SNC_structure::Vector_3 Vector_3;
   typedef typename SNC_structure::Segment_3 Segment_3;
@@ -126,24 +87,12 @@ public:
   typedef typename SNC_structure::Line_3 Line_3;
   typedef typename SNC_structure::Plane_3 Plane_3;
 
-  typedef typename SNC_structure::Sphere_point Sphere_point;
-  typedef typename SNC_structure::Sphere_segment Sphere_segment;
-  typedef typename SNC_structure::Sphere_circle Sphere_circle;
-  typedef typename SNC_structure::Sphere_direction Sphere_direction;
-
   typedef typename SNC_structure::Mark Mark;
-  typedef typename SNC_structure::Infi_box Infi_box;
-
-
-  typedef typename SM_decorator::SHalfedge_around_svertex_const_circulator 
-                                 SHalfedge_around_svertex_const_circulator;
-  typedef typename SM_decorator::SHalfedge_around_svertex_circulator 
-                                 SHalfedge_around_svertex_circulator;
 
   typedef void* GenPtr;
 
   SNC_ray_shooter() {}
-  void initialize(SNC_structure* W) { Base::initialize(W); }
+  void initialize(SNC_structure* W) { *this = SNC_ray_shooter(*W);}
 
   SNC_ray_shooter(SNC_structure& W) : Base(W) {}
   /*{\Mcreate makes |\Mvar| a ray shooter on |W|.}*/
@@ -159,25 +108,25 @@ public:
       CGAL_NEF_TRACEN("facet below from from vertex...");
       f_below = get_visible_facet(v, ray);
       if(f_below != Halffacet_handle())
-	return volume(f_below);
-      SM_decorator SD(v);
+	return f_below->incident_volume();
+      SM_decorator SD(&*v);
       CGAL_assertion( SD.number_of_sfaces() == 1);
-      return volume(SD.sfaces_begin());
+      return SD.sfaces_begin()->volume();
     }
     else if( CGAL::assign(e, o)) {
       CGAL_NEF_TRACEN("facet below from from edge...");
       f_below = get_visible_facet(e, ray);
       if(f_below != Halffacet_handle())
-	return volume(f_below);
-      SM_decorator SD(source(e));
+	return f_below->incident_volume();
+      SM_decorator SD(&*e->source());
       CGAL_assertion(SD.is_isolated(e));
-      return volume(sface(e));
+      return e->incident_sface()->volume();
     }
     else if( CGAL::assign(f, o)) {
       CGAL_NEF_TRACEN("facet below from from facet...");
       f_below = get_visible_facet(f, ray);
       CGAL_assertion( f_below != Halffacet_handle());
-      return volume(f_below);
+      return f_below->incident_volume();
     }
     
     return Base(*this).volumes_begin();
