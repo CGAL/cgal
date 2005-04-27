@@ -22,13 +22,13 @@
 // maintainer    : Peter Hachenberger <hachenberger@mpi-sb.mpg.de>
 // coordinator   : MPI Saarbruecken
 //
-// Demo program maintaining a stack of Nef polyhedra in the space and
-// a manipulation language for stack ops, file loading and saving, etc.
 // ============================================================================
-#include <CGAL/Extended_homogeneous.h>
 #include <CGAL/Nef_2/Nef_polynomial.h>
 #include <CGAL/basic.h>
+#include <CGAL/Cartesian.h>
+#include <CGAL/Homogeneous.h>
 #include <CGAL/Simple_homogeneous.h>
+#include <CGAL/Extended_homogeneous.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/IO/Nef_polyhedron_iostream_3.h>
@@ -1228,7 +1228,11 @@ template<typename Kernel>
 const char* test<Kernel>::datadir="data/";
 
 int main() {
-  typedef CGAL::Simple_homogeneous<NT>       SH_kernel;
+  typedef CGAL::Cartesian<NT>              C_kernel;
+  typedef CGAL::Simple_cartesian<NT>       SC_kernel;
+  typedef CGAL::Extended_cartesian<NT>     EC_kernel;
+  typedef CGAL::Homogeneous<NT>            H_kernel;
+  typedef CGAL::Simple_homogeneous<NT>     SH_kernel;
   typedef CGAL::Extended_homogeneous<NT>   EH_kernel;
   
   //std::cin>>debugthread;
@@ -1236,9 +1240,17 @@ int main() {
   CGAL::Timer t;
   t.start();
 
+  test<SH_kernel> test_C;
+  test<SH_kernel> test_SC;
+  test<EH_kernel> test_EC;
+  test<SH_kernel> test_H;
   test<SH_kernel> test_SH;
   test<EH_kernel> test_EH;
 
+  test_C.run_test();
+  test_SC.run_test();
+  test_EC.run_test();
+  test_H.run_test();
   test_SH.run_test();
   test_EH.run_test();
 
