@@ -39,7 +39,7 @@ can be used directly. Outside a namespace, a name defined in the namespace
 has to be qualified\footnote{This is a somewhat simplified view; read further
 for more details.} by the namespace name, for example \ccc{CGAL::Object},%
 \ccIndexSubitem{qualification}{of names} 
-or they have to be made usable without qualificiation by a so-called 
+or they have to be made usable without qualification by a so-called 
 {\em using declaration},
 \ccIndexMainItem{using declaration}
 \begin{verbatim}
@@ -57,19 +57,16 @@ template library, are (supposed to be) in namespace \ccc{std}. This subsumes
 the I/O-library%
 \index{IO library@I/O library!and namespace std@and namespace \texttt{std}}
 and also the C-library%
-\index{C standard library!and namespace std@and namespace \ccStyle{std}}
-functions. 
-If rules are applied strictly\footnote{Not all compilers do that, but some 
-at least have a flag to force strict application of the rules.}, you have to
-qualify streams and so by \ccc{std::}, too.  That is:
+\index{C standard library!and namespace std@and namespace
+  \ccStyle{std}} functions. You have to qualify streams and so by
+\ccc{std::}, too.  That is:
 \begin{verbatim}
 std::cout << "Hello CGAL" << std::endl;
 \end{verbatim}
-or you have to add \ccc{using} declarations for the names you want to use 
-without \ccc{std::} qualification. Developers should of course assume that 
-the rules will be  applied strictly.  Whenever a platform does not put names 
-in namespace \ccc{std}, \cgal\ adds the names it needs to namespace \ccc{std}. 
-This is done by the configuration tools!
+or you have to add \ccc{using} declarations for the names you want to
+use without \ccc{std::} qualification. Whenever a platform does not
+put names into namespace \ccc{std}, \cgal\ adds the names it needs to
+namespace \ccc{std}. This is done by the configuration tools.
 \ccIndexMainItem{configuration}
 
 As for the C-library functions, you should use the macro 
@@ -98,9 +95,9 @@ Make sure not to have include statements nested between
 \verb+ namespace CGAL { + and \verb+ } // namespace CGAL+.
 Otherwise all names defined in the file included will be 
 added to namespace \ccc{CGAL}.  (Some people use the macros
-\ccc{CGAL_BEGIN_NAMESPACE} and \ccc{CGAL_END_NAMEPACE} 
+\ccc{CGAL_BEGIN_NAMESPACE} and \ccc{CGAL_END_NAMESPACE} 
 in place of the \texttt{namespace CGAL \{} and
-\texttt{\} // namespace CGAL}, respectively for better readability.)
+\texttt{\} // namespace CGAL}, respectively, for better readability.)
 
 \section{Name lookup}
 The process of searching for a definition of a name detected in
@@ -207,13 +204,27 @@ point of definition.
 
 \section{Namespace CGAL::NTS}
 
-{\em Note: this section is in the process of being revisited once CGAL 3.0
-is out.\footnote{It causes problems with g++ 3.4, which is more picky about
-two-phase name lookup.  At the moment (3.0), CGAL::NTS doesn't exist anymore,
-and the \ccc{CGAL_NTS} macro boils down to CGAL::.  The future interface
-is still not fixed, it could be to allow Koenig Lookup or to use a traits
-class interface for number types.  It's interesting to note that the standard
-library has similar issues, e.g. for swap(), see issues 225, 226, 299.}}
+{\em \textbf{Note:} This section will be revised once the forthcoming
+  revision of the \CC-standard gets into a more definite state. The
+  standard library has similar problems, e.g. for \ccc{swap()},
+  see\begin{ccTexOnly}\footnote{\path'http://www.open-std.org/jtc1/sc22/wg21/docs/cwg\_toc.html'}\end{ccTexOnly}
+  issues% 
+  \begin{ccHtmlOnly}%
+    <a href="http://www.open-std.org/jtc1/sc22/wg21/docs/lwg-defects.html#225">
+  \end{ccHtmlOnly}%
+  225\ccTexHtml{,}{</a>,}%
+  \begin{ccHtmlOnly}%
+    <a href="http://www.open-std.org/jtc1/sc22/wg21/docs/lwg-defects.html#226">
+  \end{ccHtmlOnly}%
+  226\ccTexHtml{,}{</a>,} and%
+  \begin{ccHtmlOnly}%
+    <a href="http://www.open-std.org/jtc1/sc22/wg21/docs/lwg-defects.html#229">
+  \end{ccHtmlOnly}%
+  229\ccTexHtml{.}{</a>.}
+  Currently, \ccc{CGAL::NTS} does not exist anymore, and the
+  \ccc{CGAL_NTS} macro boils down to \ccc{CGAL::}. As the future
+  interface is not yet fixed, people should still follow the
+  guidelines given below.}
 
 What are the conclusions from the previous subsection. If \ccc{A}
 plays the role of \ccc{std} and \ccc{B} the role of \cgal, we can
@@ -284,24 +295,25 @@ with \ccc{CGAL_NTS} besides \ccc{min} and \ccc{max}.
 
 Requirements:
 \begin{itemize}
-\item all names defined by \cgal\ are in namespace \ccc{CGAL} (including
-      namespaces nested in namespace \ccc{CGAL}).
-\item qualify calls of  \ccc{is_zero}, \ccc{is_one}, \ccc{is_negative},
-      \ccc{is_positive}, \ccc{sign}, \ccc{abs},
-      \ccc{compare}, \ccc{square} by \texttt{CGAL\_NTS}.
-      \ccIndexSubitem{qualification}{\ccFont CGAL_NTS}%
+\item all names defined by \cgal\ are in namespace \ccc{CGAL}
+  (including namespaces nested in namespace \ccc{CGAL}).
+\item qualify calls of \ccc{is_zero}, \ccc{is_one}, \ccc{is_negative},
+  \ccc{is_positive}, \ccc{sign}, \ccc{abs}, \ccc{compare},
+  \ccc{square} by \texttt{CGAL\_NTS}.
+  \ccIndexSubitem{qualification}{\ccFont CGAL_NTS}%
 \item use \texttt{CGAL\_CLIB\_STD} with C-library functions.
-      \index{cgal_clib_std macro@{\tt CGAL\_CLIB\_STD} macro}%
-      \ccIndexSubitem{qualification}{\ccFont CGAL_CLIB_STD}%
+  \index{cgal_clib_std macro@{\tt CGAL\_CLIB\_STD} macro}%
+  \ccIndexSubitem{qualification}{\ccFont CGAL_CLIB_STD}%
 \end{itemize}
 
-Recommendations:
-\begin{itemize}
-\item Don't qualify calls of \ccc{max} and \ccc{min}.
-\item Don't use \ccc{CGAL::} qualification inside namespace \ccc{CGAL},%
-\ccIndexSubitem{qualification}{\ccFont CGAL::}
-unless it is required by a compiler or to resolve a name conflict with a
-local type in a scope enclosed by namespace \ccc{CGAL}.
-\end{itemize}
+%% Recommendations:
+%% \begin{itemize}
+%% \item Don't qualify calls of \ccc{max} and \ccc{min}.
+%% \item Don't use \ccc{CGAL::} qualification inside namespace \ccc{CGAL},%
+%% \ccIndexSubitem{qualification}{\ccFont CGAL::}
+%% unless it is required by a compiler or to resolve a name conflict with a
+%% local type in a scope enclosed by namespace \ccc{CGAL}.
+%% \end{itemize}
 
 }
+
