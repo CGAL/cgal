@@ -29,30 +29,32 @@ CGAL_BEGIN_NAMESPACE
 template<class SNC_decorator>
 struct binop_intersection_test_segment_tree {
   typedef typename SNC_decorator::SNC_structure          SNC_structure;
-  typedef typename SNC_decorator::SNC_intersection       SNC_intersection;
+  typedef typename CGAL::SNC_intersection<SNC_structure> SNC_intersection;
 
-  typedef typename SNC_decorator::Object_handle              Object_handle;
-  typedef typename SNC_decorator::Vertex_const_iterator      Vertex_const_iterator;
-  typedef typename SNC_decorator::Vertex_const_handle        Vertex_const_handle;
-  typedef typename SNC_decorator::Halfedge_const_iterator    Halfedge_const_iterator;
-  typedef typename SNC_decorator::Halfedge_const_handle      Halfedge_const_handle;
-  typedef typename SNC_decorator::Halffacet_const_iterator   Halffacet_const_iterator;
-  typedef typename SNC_decorator::Halffacet_const_handle     Halffacet_const_handle;
-  typedef typename SNC_decorator::Halffacet_cycle_const_iterator
-                                  Halffacet_cycle_const_iterator;
+  typedef typename SNC_decorator::Decorator_traits       Decorator_traits;
+
+  typedef typename SNC_decorator::Object_handle                 Object_handle;
+  typedef typename Decorator_traits::Vertex_iterator      Vertex_iterator;
+  typedef typename Decorator_traits::Vertex_handle        Vertex_handle;
+  typedef typename Decorator_traits::Halfedge_iterator    Halfedge_iterator;
+  typedef typename Decorator_traits::Halfedge_handle      Halfedge_handle;
+  typedef typename Decorator_traits::Halffacet_iterator   Halffacet_iterator;
+  typedef typename Decorator_traits::Halffacet_handle     Halffacet_handle;
+  typedef typename Decorator_traits::Halffacet_cycle_iterator
+                                     Halffacet_cycle_iterator;
   typedef typename SNC_decorator::Infi_box               Infi_box;
   typedef typename SNC_decorator::Point_3                Point_3;
-  typedef typename SNC_decorator::SHalfedge_const_handle     SHalfedge_const_handle;
-  typedef typename SNC_decorator::SHalfedge_const_iterator   SHalfedge_const_iterator;
-  typedef typename SNC_decorator::SHalfedge_around_facet_const_circulator
-                                  SHalfedge_around_facet_const_circulator;
+  typedef typename Decorator_traits::SHalfedge_handle     SHalfedge_handle;
+  typedef typename Decorator_traits::SHalfedge_iterator   SHalfedge_iterator;
+  typedef typename Decorator_traits::SHalfedge_around_facet_circulator
+                                     SHalfedge_around_facet_circulator;
 
   typedef CGAL::SNC_const_decorator<SNC_structure>  Const_decorator;
 
   class Nef_box : public Box_intersection_d::Box_d< double, 3 >
   {
-    Halffacet_const_handle f;
-    Halfedge_const_handle  e;
+    Halffacet_handle f;
+    Halfedge_handle  e;
     enum Type { FACET, EDGE };
     Type type;
 
@@ -65,15 +67,15 @@ struct binop_intersection_test_segment_tree {
     }
 
   public:
-    Nef_box( Halffacet_const_handle f ) : f(f), type(FACET) {
+    Nef_box( Halffacet_handle f ) : f(f), type(FACET) {
       if( !Const_decorator::is_standard( f ) ) {
         init( true );
       } else {
         init( false );
-        Halffacet_cycle_const_iterator cycle_it = f->facet_cycles_begin();
+        Halffacet_cycle_iterator cycle_it = f->facet_cycles_begin();
         if( cycle_it.is_shalfedge() ) {
-	  SHalfedge_const_iterator edge_it(cycle_it);
-          SHalfedge_around_facet_const_circulator
+	  SHalfedge_iterator edge_it(cycle_it);
+          SHalfedge_around_facet_circulator
             start( edge_it ), end( edge_it );
           CGAL_For_all( start, end ) {
             const Point_3& p = start->prev()->source()->source()->point();
@@ -84,7 +86,7 @@ struct binop_intersection_test_segment_tree {
       }
     }
 
-    Nef_box( Halfedge_const_handle e ) :  e(e), type(EDGE)
+    Nef_box( Halfedge_handle e ) :  e(e), type(EDGE)
     {
       if(!Const_decorator::is_standard(e->source() ) ||
          !Const_decorator::is_standard(e->twin()->source() ) )
@@ -97,12 +99,12 @@ struct binop_intersection_test_segment_tree {
       }
     }
 
-    Halffacet_const_handle get_halffacet() {
+    Halffacet_handle get_halffacet() {
       assert( type == FACET );
       return f;
     }
 
-    Halfedge_const_handle get_halfedge() {
+    Halfedge_handle get_halfedge() {
       assert( type == EDGE );
       return e;
     }
@@ -138,8 +140,8 @@ struct binop_intersection_test_segment_tree {
       ++number_of_intersection_candidates;
 #endif
 
-      Halfedge_const_iterator  e0 = box0.get_halfedge();
-      Halffacet_const_iterator f1 = box1.get_halffacet();
+      Halfedge_iterator  e0 = box0.get_halfedge();
+      Halffacet_iterator f1 = box1.get_halffacet();
       if( Infi_box::degree( f1->plane().d() ) > 0 )
         return;
       Point_3 ip;
@@ -165,8 +167,8 @@ struct binop_intersection_test_segment_tree {
       ++number_of_intersection_candidates;
 #endif
 
-      Halfedge_const_iterator  e1 = box0.get_halfedge();
-      Halffacet_const_iterator f0 = box1.get_halffacet();
+      Halfedge_iterator  e1 = box0.get_halfedge();
+      Halffacet_iterator f0 = box1.get_halffacet();
       if( Infi_box::degree( f0->plane().d() ) > 0 )
         return;
       Point_3 ip;
@@ -191,8 +193,8 @@ struct binop_intersection_test_segment_tree {
       ++number_of_intersection_candidates;
 #endif
 
-      Halfedge_const_iterator e0 = box0.get_halfedge();
-      Halfedge_const_iterator e1 = box1.get_halfedge();
+      Halfedge_iterator e0 = box0.get_halfedge();
+      Halfedge_iterator e1 = box1.get_halfedge();
       Point_3 ip;
       if( is.does_intersect_internally( Const_decorator::segment( e0 ),
                                         Const_decorator::segment( e1 ), ip ))
@@ -203,11 +205,11 @@ struct binop_intersection_test_segment_tree {
   template<class Callback>
   void operator()(Callback& cb0,
                   Callback& cb1,
-                  const SNC_structure& sncp,
-                  const SNC_structure& snc1i)
+                  SNC_structure& sncp,
+                  SNC_structure& snc1i)
   {
-    Halfedge_const_iterator e0, e1;
-    Halffacet_const_iterator f0, f1;
+    Halfedge_iterator e0, e1;
+    Halffacet_iterator f0, f1;
     std::vector<Nef_box> a, b;
     SNC_intersection is( sncp );
 
