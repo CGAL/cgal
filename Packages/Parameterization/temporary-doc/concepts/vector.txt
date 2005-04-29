@@ -15,7 +15,7 @@
 // $Revision$
 // $Name$
 //
-// Author(s)     : Laurent Saboret, Bruno Levy, Pierre Alliez
+// Author(s)     : Laurent Saboret, Pierre Alliez
 
 
 // Concept SparseLinearAlgebraTraits_d::Vector
@@ -29,7 +29,7 @@ public:
     // Create a vector initialized with zeros
     Vector (int rows);
 
-    // Copy
+    // operator =()
     Vector& operator=(const Vector& toCopy);
 
     // Return the vector's number of coefficients
