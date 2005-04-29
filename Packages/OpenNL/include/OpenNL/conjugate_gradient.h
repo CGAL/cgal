@@ -111,12 +111,6 @@ public:
 
         unsigned int n = A.dimension() ;                        // (Square) matrix dimension
 
-        // Check that A is symmetric
-        for (int i=0; i < n; i++)
-            for (int j=0; j < i; j++) {
-                assert( AreEqual(A.get_coef(i,j), A.get_coef(j,i)) );
-            }
-
         unsigned int max_iter = max_iter_ ;                     // Max number of iterations
         if(max_iter == 0) {
             max_iter = 5 * n ;
@@ -158,7 +152,7 @@ public:
 #ifndef NDEBUG
         // Trace on error
         if ( ! success )
-            std::cerr << "Solver_CG<>::solve failure: "
+            std::cerr << "Solver_CG<>::solve: failure: "
                       << "(" << OPENNL_STREAM_TRACE(its) << OPENNL_STREAM_TRACE(max_iter)
                              << OPENNL_STREAM_TRACE(gg) << OPENNL_STREAM_TRACE(err)
                       << ")" << std::endl;
