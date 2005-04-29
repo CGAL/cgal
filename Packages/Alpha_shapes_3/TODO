@@ -1,15 +1,6 @@
-28 April 2004
- 
-Still to be done :
-
-- fixed the doc :
-  mainly fixes in Alpha_shapes_base_cell_3 +
-  new enum  value SUPER_REGULAR for vertices
-
-- Improve efficiency
-  - avoid to be build alpha_edge_maps and edge_alpha_map
-    in regularized mode
-    edges can be classify on the fly
- - replace memory allocation on the stack by a compaccontainer
-   for Alpha_status
-   Alpha_status for vertices can be stored in vertices
+ 29 April 2005
+ - test the  taking into account of paramater alpha in functions
+get_alpha_shape_edges
+get_alpha_shape_facets
+get_alpha_shape_vertices
+get_alpha_shape_cells

@@ -1,3 +1,8 @@
+29 April 2005 Mariette
+-  fix  the functions  get_alpha_shape_cells (facets, edges and cells)
+   to make them take  into account their parameter alpha.
+   I still need to add something in the testsuite for this.
+
 1 April 2005 Sylvain Pion
 - update obsolete mirror_index() call.
 

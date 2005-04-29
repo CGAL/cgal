@@ -782,7 +782,7 @@ public:
   {
     Finite_cells_iterator cit = finite_cells_begin();
     for( ; cit != finite_cells_end() ; ++cit){
-      if (classify(cit) == type) *it++ = Cell_handle(cit);
+      if (classify(cit, alpha) == type) *it++ = Cell_handle(cit);
     }
     return it;
   }
@@ -794,7 +794,7 @@ public:
   {
     Finite_facets_iterator fit = finite_facets_begin();
     for( ; fit != finite_facets_end() ; ++fit){
-      if (classify(*fit) == type) *it++ = *fit;
+      if (classify(*fit, alpha) == type) *it++ = *fit;
     }
     return it;
   }
@@ -806,7 +806,7 @@ public:
   {
     Finite_edges_iterator eit = finite_edges_begin();
     for( ; eit != finite_edges_end() ; ++eit){
-      if (classify(*eit) == type) *it++ = *eit;
+      if (classify(*eit, alpha) == type) *it++ = *eit;
     }
     return it;
   }
@@ -818,7 +818,7 @@ public:
   {
     Finite_vertices_iterator vit = finite_vertices_begin();
     for( ; vit != finite_vertices_end() ; ++vit){
-      if (classify(vit) == type) *it++ = Vertex_handle(vit);
+      if (classify(vit, alpha) == type) *it++ = Vertex_handle(vit);
     }
     return it;
   }
