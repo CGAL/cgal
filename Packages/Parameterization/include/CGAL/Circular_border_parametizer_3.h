@@ -15,7 +15,7 @@
 // $Revision$
 // $Name$
 //
-// Author(s)     : Laurent Saboret, Bruno Levy, Pierre Alliez
+// Author(s)     : Laurent Saboret, Pierre Alliez
 
 
 #ifndef CGAL_CIRCULARBORDERPARAMETIZER_3_H

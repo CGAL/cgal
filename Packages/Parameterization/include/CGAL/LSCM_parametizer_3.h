@@ -15,7 +15,7 @@
 // $Revision$
 // $Name$
 //
-// Author(s)     : Laurent Saboret, Bruno Levy, Pierre Alliez
+// Author(s)     : Laurent Saboret, Pierre Alliez
 
 
 #ifndef CGAL_LSCM_PARAMETIZER_3_H
@@ -360,9 +360,6 @@ initialize_system_from_mesh_border(LeastSquaresSolver* solver,
 // Utility for setup_triangle_relations():
 // Computes the coordinates of the vertices of a triangle
 // in a local 2D orthonormal basis of the triangle's plane.
-//
-// Note: this method is a copy of Bruno Levy's LSCM::project_triangle()
-// method in lscm_with_generic_api.cpp
 template <class Adaptor, class Border_param, class Sparse_LA>
 inline
 void
@@ -371,13 +368,11 @@ project_triangle(const Point_3& p0, const Point_3& p1, const Point_3& p2,
                  Point_2* z0, Point_2* z1, Point_2* z2)
 {
     Vector_3 X = p1 - p0 ;
-    //X.normalize() ;
     NT X_norm = std::sqrt(X*X);
     if (X_norm != 0.0)
         X = X / X_norm;
 
     Vector_3 Z = CGAL::cross_product(X, p2 - p0) ;
-    //Z.normalize() ;
     NT Z_norm = std::sqrt(Z*Z);
     if (Z_norm != 0.0)
         Z = Z / Z_norm;
@@ -410,9 +405,6 @@ project_triangle(const Point_3& p0, const Point_3& p1, const Point_3& p2,
 //       Zk = xk + i.yk is the complex number corresponding to local (x,y) coords
 // cool: no divide with this expression; makes it more numerically stable
 // in presence of degenerate triangles
-//
-// Note: this method is a copy of Bruno Levy's LSCM::setup_conformal_map_relations()
-// method in lscm_with_generic_api.cpp
 template <class Adaptor, class Border_param, class Sparse_LA>
 inline
 typename Parametizer_3<Adaptor>::ErrorCode

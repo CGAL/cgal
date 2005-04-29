@@ -15,7 +15,7 @@
 // $Revision$
 // $Name$
 //
-// Author(s)     : Laurent Saboret, Bruno Levy, Pierre Alliez
+// Author(s)     : Laurent Saboret, Pierre Alliez
 
 
 #ifndef CGAL_TWO_VERTICES_PARAMETIZER_3_H_INCLUDED
@@ -106,9 +106,6 @@ public:
 
 // Map 2 extreme vertices of the 3D mesh and mark them as "parameterized"
 // Return false on error
-//
-// Implementation note:
-// This method is a copy of Bruno Levy's LSCM::project() method in lscm_with_generic_api.cpp
 template <class Adaptor>
 inline bool
 Two_vertices_parametizer_3<Adaptor>::parameterize_border(Adaptor* mesh)
@@ -135,12 +132,12 @@ Two_vertices_parametizer_3<Adaptor>::parameterize_border(Adaptor* mesh)
         Point_3 position = mesh->get_vertex_position(it);
 
         xmin = std::min(position.x(), xmin) ;
-        ymin = std::min(position.y(), ymin) ;       // LS 04/2005: was ", xmin)"
-        zmin = std::min(position.z(), zmin) ;       // LS 04/2005: was ", xmin)"
+        ymin = std::min(position.y(), ymin) ; 
+        zmin = std::min(position.z(), zmin) ;       
 
-        xmax = std::max(position.x(), xmax) ;       // LS 04/2005: was ", xmin)"
-        ymax = std::max(position.y(), ymax) ;       // LS 04/2005: was ", xmin)"
-        zmax = std::max(position.z(), zmax) ;       // LS 04/2005: was ", xmin)"
+        xmax = std::max(position.x(), xmax) ;       
+        ymax = std::max(position.y(), ymax) ;       
+        zmax = std::max(position.z(), zmax) ;       
     }
 
     // Find longest bounding box axes
@@ -233,7 +230,7 @@ Two_vertices_parametizer_3<Adaptor>::parameterize_border(Adaptor* mesh)
         double u = position_as_vector * V1 ;
         double v = position_as_vector * V2 ;
 
-        // LS 04/2005: convert to unit square coordinates
+        // convert to unit square coordinates
         assert(V1_max > V1_min);
         assert(V2_max > V2_min);
         u = (u - V1_min) / (V1_max - V1_min);

@@ -15,7 +15,7 @@
 // $Revision$
 // $Name$
 //
-// Author(s)     : Laurent Saboret, Bruno Levy, Pierre Alliez
+// Author(s)     : Laurent Saboret, Pierre Alliez
 
 
 #ifndef CGAL_NATURAL_CONFORMAL_MAP_PARAMETIZER_3_H
