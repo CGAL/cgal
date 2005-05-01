@@ -383,6 +383,8 @@ template <typename ET>
 bool
 operator<(const Lazy_exact_nt<ET>& a, const Lazy_exact_nt<ET>& b)
 {
+  if (identical(a,b))
+    return false;
   std::pair<bool, bool> res = Certified::operator<(a.approx(), b.approx());
   if (res.second)
     return res.first;
@@ -393,6 +395,8 @@ template <typename ET>
 bool
 operator==(const Lazy_exact_nt<ET>& a, const Lazy_exact_nt<ET>& b)
 {
+  if (identical(a,b))
+    return true;
   std::pair<bool, bool> res = Certified::operator==(a.approx(), b.approx());
   if (res.second)
     return res.first;
@@ -476,6 +480,8 @@ inline
 Comparison_result
 compare(const Lazy_exact_nt<ET> & a, const Lazy_exact_nt<ET> & b)
 {
+  if (identical(a,b))
+    return EQUAL;
   std::pair<Comparison_result, bool> res =
                                     Certified::compare(a.approx(), b.approx());
   if (res.second)

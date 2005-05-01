@@ -1,3 +1,7 @@
+1 May 2005 Sylvain Pion
+- Lazy_exact_nt : optimize operator<(), operator==() and compare() in case
+  of identical variables.
+
 26 March 2005 Sylvain Pion
 - Lazy_exact_nt<ET> : allow ET == int and ET == double.
 - Lazy_exact_nt<ET> : add % and gcd (kills filtering, though).
