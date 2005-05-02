@@ -92,6 +92,8 @@ public:
 
 // Public operations
 public:
+    // Default contructor and destructor are fine
+
     // Solve the sparse linear system "A*X = B"
     // Return true on success. The solution is then (1/D) * X.
     // (modified for SparseLinearAlgebraTraits_d concept)
@@ -99,7 +101,7 @@ public:
     // Preconditions:
     // * A.row_dimension()    == B.dimension()
     // * A.column_dimension() == X.dimension()
-    static bool linear_solver (const Matrix& A, const Vector& B, Vector& X, NT& D)
+    bool linear_solver (const Matrix& A, const Vector& B, Vector& X, NT& D)
     {
         Solver solver ;
         D = 1;              // Solver_BICGSTAB does not support homogeneous coordinates
@@ -112,7 +114,7 @@ public:
     //
     // Preconditions:
     // * A.row_dimension() == B.dimension()
-    static bool is_solvable (const Matrix& A, const Vector& B)
+    bool is_solvable (const Matrix& A, const Vector& B)
     {
         // This feature is not implemented in Solver_BICGSTAB => we do only basic checking
         if (A.row_dimension() != B.dimension())
@@ -160,7 +162,7 @@ public:
     typedef TRAITS Traits ;
     typedef typename Traits::Matrix Matrix ;
     typedef typename Traits::Vector Vector ;
-    typedef typename Traits::CoeffType CoeffType ;
+    typedef typename Traits::NT CoeffType ;
 
     class Variable {
     public:
@@ -344,8 +346,9 @@ public:
         check_state(CONSTRUCTED) ;
 
         // Solve the sparse linear system "A*X = B". On success, the solution is (1/D) * X.
+        Traits solver_traits;
         CoeffType D;
-        bool success = Traits::linear_solver(*A_, *b_, *x_, D) ;
+        bool success = solver_traits.linear_solver(*A_, *b_, *x_, D) ;
         assert(D == 1.0);   // WARNING: this library does not support homogeneous coordinates!
 
         vector_to_variables() ;
