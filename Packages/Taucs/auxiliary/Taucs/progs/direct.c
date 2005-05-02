@@ -2,6 +2,27 @@
 /* TAUCS                                                 */
 /* Author: Sivan Toledo                                  */
 /*********************************************************/
+/* 
+
+TAUCS_CONFIG_BEGIN
+TAUCS_CONFIG_DEFAULT OFF
+TAUCS_CONFIG BASE
+TAUCS_CONFIG DREAL
+TAUCS_CONFIG FACTOR
+TAUCS_CONFIG OOC_LLT
+TAUCS_CONFIG INCOMPLETE_CHOL
+TAUCS_CONFIG OOC_LU
+TAUCS_CONFIG METIS
+TAUCS_CONFIG GENMMD
+TAUCS_CONFIG COLAMD
+TAUCS_CONFIG AMD
+TAUCS_CONFIG MALLOC_STUBS
+TAUCS_CONFIG MATRIX_GENERATORS
+TAUCS_CONFIG MATRIX_IO
+TAUCS_CONFIG AD_HOC_TEST
+TAUCS_CONFIG_END
+
+*/
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -615,7 +636,7 @@ int actual_main(int argc, char* argv[])
   }
 
   if (!L && !ooc_flag /* no L in ooc */) {
-    taucs_printf("\tFactorization Failed\n");
+    taucs_printf("FACTORIZATION FAILED!\n");
     exit(1);
   }
 
@@ -626,10 +647,10 @@ int actual_main(int argc, char* argv[])
   /* solve                                                   */
   /***********************************************************/
 
-  if (!L) {
+  /*if (!L) {
     taucs_printf("FACTORIZATION FAILED!\n");
     exit(1);
-  }
+  }*/
 
   if (A->flags & TAUCS_SYMMETRIC || A->flags & TAUCS_HERMITIAN) {
 
