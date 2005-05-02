@@ -8,7 +8,8 @@ configurator\configurator win32 %* > .lastconf
 
 for /F "usebackq" %%i IN (`type .lastconf`) DO set TAUCS_LASTCONF=%%i
 
-del .lastconf /a:h
+rem LS 04/2005: was "del .lastconf /a:h"
+del .lastconf
 
 goto :EOF
 

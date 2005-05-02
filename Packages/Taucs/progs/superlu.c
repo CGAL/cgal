@@ -79,6 +79,8 @@ void usage(int argc, char* argv[])
   printf("  RIGHT-HAND SIDE OPTIONS:\n");
   printf("        -n+rhs filename (order n followed by rhs, ascii)\n");
   printf("  FACTOR/SOLVE OPTIONS:\n");
+  printf("  -superlu\n");
+  printf("        SuperLU factorization\n");
   printf("  -snmf\n");
   printf("        supernodal-multifrontal\n");
   printf("  -snll\n");
