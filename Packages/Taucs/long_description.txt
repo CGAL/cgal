@@ -1,0 +1,57 @@
+
+General information
+===================
+
+
+TAUCS is a C library of sparse linear solvers created by Sivan Toledo, 
+with Doron Chen and Vladimir Rotkin.
+Copyright (c) 2001, 2002, 2003 by Sivan Toledo, Tel-Aviv Univesity, 
+stoledo@tau.ac.il. All Rights Reserved.
+
+The current version of the library (2.2) includes the following functionality:
+
+* Multifrontal Supernodal Cholesky Factorization. This code is quite fast (several 
+times faster than Matlab 6's sparse Cholesky) but not completely state of the art. 
+It uses the BLAS to factor and compute updates from fundamental supernodes, but it 
+does not use relaxed supernodes.
+* Left-Looking Supernodal Cholesky Factorization. Slower than the multifrontal 
+solver but uses less memory.
+* Drop-Tolerance Incomplete-Cholesky Factorization. Much slower than the supernodal 
+solvers when it factors a matrix completely, but it can drop small elements from 
+the factorization. It can also modify the diagonal elements to maintain row sums.
+The code uses a column-based left-looking approach with row lists.
+* LDL^T Factorization. Column-based left-looking with row lists. Use the supernodal 
+codes instead.
+* Out-of-Core, Left-Looking Supernodal Sparse Cholesky Factorization. Solves huge 
+systems by storing the Cholesky factors in files. Can work with factors whose size 
+is tens of gigabytes on 32-bit machines with 32-bit file systems.
+* Out-of-Core Sparse LU with Partial Pivoting Factor and Solve. Can solve huge 
+unsymmetric linear systems.
+* Ordering Codes and Interfaces to Existing Ordering Codes. The library includes 
+a unified interface to several ordering codes, mostly existing ones. The ordering 
+codes include Joseph Liu's genmmd (a minimum-degree code in Fortran), Tim Davis's 
+amd codes (approximate minimum degree), Metis (a nested-dissection/minimum-degree 
+code by George Karypis and Vipin Kumar), and a special-purpose minimum-degree code 
+for no-fill ordering of tree-structured matrices. All of these are symmetric orderings.
+* Matrix Operations. Matrix-vector multiplication, triangular solvers, matrix 
+reordering.
+* Matrix Input/Output. Routines to read and write sparse matrices using a simple 
+file format with one line per nonzero, specifying the row, column, and value. 
+Also routines to read matrices in Harwell-Boeing format.
+* Matrix Generators. Routines that generate finite-differences discretizations 
+of 2- and 3-dimensional partial differential equations. Useful for testing the 
+solvers.
+* Iterative Solvers. Preconditioned conjugate-gradients and preconditioned minres.
+* Vaidya's Preconditioners. Augmented Maximum-weight-basis preconditioners. 
+These preconditioners work by dropping nonzeros from the coefficient matrix 
+and them factoring the preconditioner directly.
+* Recursive Vaidya's Preconditioners. These preconditioners also drop nonzeros, 
+but they don't factor the resulting matrix completely. Instead, they eliminate 
+rows and columns which can be eliminated without producing much fill. They then 
+form the Schur complement of the matrix with respect to these rows and columns 
+and drop elements from the Schur complement, and so on. During the 
+preconditioning operation, we solve for the Schur complement elements iteratively.
+* Multilevel-Support-Graph Preconditioners. Similar to domain-decomposition 
+preconditioners. Includes the Gremban-Miller preconditioners.
+* Utility Routines. Timers (wall-clock and CPU time), physical-memory estimator, 
+and logging.

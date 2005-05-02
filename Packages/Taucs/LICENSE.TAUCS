@@ -1,0 +1,23 @@
+TAUCS Version 2.2, September 4, 2003. 
+Copyright (c) 2001, 2002, 2003 by Sivan Toledo, Tel-Aviv University, 
+stoledo@tau.ac.il. All Rights Reserved.
+
+TAUCS License:
+
+Your use or distribution of TAUCS or any derivative code implies that 
+you agree to this License.
+
+THIS MATERIAL IS PROVIDED AS IS, WITH ABSOLUTELY NO WARRANTY EXPRESSED 
+OR IMPLIED. ANY USE IS AT YOUR OWN RISK.
+
+Permission is hereby granted to use or copy this program, provided that the 
+Copyright, this License, and the Availability of the original version is 
+retained on all copies. User documentation of any code that uses this code 
+or any derivative code must cite the Copyright, this License, the Availability 
+note, and "Used by permission." If this code or any derivative code is 
+accessible from within MATLAB, then typing "help taucs" must cite the Copyright, 
+and "type taucs" must also cite this License and the Availability note. 
+Permission to modify the code and to distribute modified code is granted, 
+provided the Copyright, this License, and the Availability note are retained, 
+and a notice that the code was modified is included. This software is provided 
+to you free of charge. 

@@ -1,0 +1,2 @@
+TAUCS is a C library of sparse linear solvers by Sivan Toledo, Tel-Aviv University
+
