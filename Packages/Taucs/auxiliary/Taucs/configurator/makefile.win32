@@ -1,0 +1,7 @@
+
+configurator\configurator.exe: configurator\taucs_config.c configurator\taucs_structure.h
+	$(CC) /Fe$@ configurator\taucs_config.c
+	- del taucs_config.obj
+
+clean:
+	- del configurator\configurator.exe

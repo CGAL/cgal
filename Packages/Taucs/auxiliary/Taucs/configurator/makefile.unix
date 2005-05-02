@@ -1,0 +1,6 @@
+
+configurator/configurator: configurator/taucs_config.c configurator/taucs_structure.h
+	$(CC) -o $@ configurator/taucs_config.c
+
+clean:
+	- /bin/rm configurator/configurator

@@ -1,0 +1,90 @@
+#!/bin/sh
+### This is an automatically-generated script
+/bin/rm testscript.log
+echo 'TAUCS TEST LOG' > testscript.log
+hostname >> testscript.log
+uname    >> testscript.log
+date     >> testscript.log
+echo '==============' >> testscript.log
+echo 'trying to maximize stack size:' >> testscript.log
+ulimit -s >> testscript.log
+ulimit -s unlimited >> testscript.log
+ulimit -s >> testscript.log
+echo '==============' >> testscript.log
+echo =============== >> testscript.log
+echo = test_cilk_snmf = >> testscript.log
+. ./configure in=progs/test_cilk_snmf.c $*
+echo last conf is $TAUCS_LASTCONF >> testscript.log
+make -f build/${TAUCS_LASTCONF}/makefile
+if bin/${TAUCS_LASTCONF}/test_cilk_snmf >> testscript.log ; then
+echo = TEST PASSED test_cilk_snmf >> testscript.log
+else
+echo = TEST FAILED test_cilk_snmf >> testscript.log
+fi
+echo =============== >> testscript.log
+echo =============== >> testscript.log
+echo = test_complex = >> testscript.log
+. ./configure in=progs/test_complex.c $*
+echo last conf is $TAUCS_LASTCONF >> testscript.log
+make -f build/${TAUCS_LASTCONF}/makefile
+if bin/${TAUCS_LASTCONF}/test_complex >> testscript.log ; then
+echo = TEST PASSED test_complex >> testscript.log
+else
+echo = TEST FAILED test_complex >> testscript.log
+fi
+echo =============== >> testscript.log
+echo =============== >> testscript.log
+echo = test_linsolve = >> testscript.log
+. ./configure in=progs/test_linsolve.c $*
+echo last conf is $TAUCS_LASTCONF >> testscript.log
+make -f build/${TAUCS_LASTCONF}/makefile
+if bin/${TAUCS_LASTCONF}/test_linsolve >> testscript.log ; then
+echo = TEST PASSED test_linsolve >> testscript.log
+else
+echo = TEST FAILED test_linsolve >> testscript.log
+fi
+echo =============== >> testscript.log
+echo =============== >> testscript.log
+echo = test_memory = >> testscript.log
+. ./configure in=progs/test_memory.c $*
+echo last conf is $TAUCS_LASTCONF >> testscript.log
+make -f build/${TAUCS_LASTCONF}/makefile
+if bin/${TAUCS_LASTCONF}/test_memory >> testscript.log ; then
+echo = TEST PASSED test_memory >> testscript.log
+else
+echo = TEST FAILED test_memory >> testscript.log
+fi
+echo =============== >> testscript.log
+echo =============== >> testscript.log
+echo = test_notimer = >> testscript.log
+. ./configure in=progs/test_notimer.c $*
+echo last conf is $TAUCS_LASTCONF >> testscript.log
+make -f build/${TAUCS_LASTCONF}/makefile
+if bin/${TAUCS_LASTCONF}/test_notimer >> testscript.log ; then
+echo = TEST PASSED test_notimer >> testscript.log
+else
+echo = TEST FAILED test_notimer >> testscript.log
+fi
+echo =============== >> testscript.log
+echo =============== >> testscript.log
+echo = test_stack = >> testscript.log
+. ./configure in=progs/test_stack.c $*
+echo last conf is $TAUCS_LASTCONF >> testscript.log
+make -f build/${TAUCS_LASTCONF}/makefile
+if bin/${TAUCS_LASTCONF}/test_stack >> testscript.log ; then
+echo = TEST PASSED test_stack >> testscript.log
+else
+echo = TEST FAILED test_stack >> testscript.log
+fi
+echo =============== >> testscript.log
+echo =============== >> testscript.log
+echo = test_timer = >> testscript.log
+. ./configure in=progs/test_timer.c $*
+echo last conf is $TAUCS_LASTCONF >> testscript.log
+make -f build/${TAUCS_LASTCONF}/makefile
+if bin/${TAUCS_LASTCONF}/test_timer >> testscript.log ; then
+echo = TEST PASSED test_timer >> testscript.log
+else
+echo = TEST FAILED test_timer >> testscript.log
+fi
+echo =============== >> testscript.log
