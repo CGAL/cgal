@@ -15,7 +15,7 @@
 // $Revision$
 // $Name$
 //
-// Author(s)     : Laurent Saboret, Bruno Levy, Pierre Alliez
+// Author(s)     : Laurent Saboret, Pierre Alliez
 
 
 // Concept SparseLinearAlgebraTraits_d::Matrix
@@ -28,6 +28,9 @@ public:
 
 // Public operations
 public:
+    // Create a square matrix initialized with zeros
+    Matrix(int dimension);
+
     // Create a rectangular matrix initialized with zeros
     Matrix (int rows, int columns);
 

@@ -22,11 +22,12 @@
 #define CGAL_FIXED_BORDER_PARAMETIZER_3_H
 
 #include <CGAL/circulator.h>
-#include <OpenNL/linear_solver.h>
 
 #include <CGAL/Parametizer_3.h>
 #include <CGAL/Circular_border_parametizer_3.h>
 #include <CGAL/parameterization_assertions.h>
+
+#include <OpenNL/linear_solver.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -427,7 +428,7 @@ setup_inner_vertex_relations(Solver* solver_u,
     CGAL_For_all(vj, end)
     {
         // Call to virtual method to do the actual coefficient computation
-        NT Wij = compute_wij(mesh, vertex, vj);
+        NT Wij = -1.0 * compute_wij(mesh, vertex, vj);
 
         // Wii = - sum of Wij
         Wii -= Wij;

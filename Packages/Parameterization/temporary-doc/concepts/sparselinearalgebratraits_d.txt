@@ -15,7 +15,7 @@
 // $Revision$
 // $Name$
 //
-// Author(s)     : Laurent Saboret, Bruno Levy, Pierre Alliez
+// Author(s)     : Laurent Saboret, Pierre Alliez
 
 
 // Concept SparseLinearAlgebraTraits_d
@@ -32,18 +32,21 @@ public:
 
 // Public operations
 public:
+    // Default constructor
+    SparseLinearAlgebraTraits_d();
+
     // Solve the sparse linear system "A*X = B"
     // Return true on success. The solution is then (1/D) * X.
     //
     // Preconditions:
     // * A.row_dimension()    == B.dimension()
     // * A.column_dimension() == X.dimension()
-    static bool linear_solver (const Matrix& A, const Vector& B, Vector& X, NT& D);
+    bool linear_solver (const Matrix& A, const Vector& B, Vector& X, NT& D);
 
     // Indicate if the linear system can be solved and if the matrix conditioning is good.
     //
     // Preconditions:
     // * A.row_dimension() == B.dimension()
-    static bool is_solvable (const Matrix& A, const Vector& B);
+    bool is_solvable (const Matrix& A, const Vector& B);
 };
 
