@@ -15,7 +15,7 @@
 // $Revision$
 // $Name$
 //
-// Author(s)     : Laurent Saboret, Bruno Levy, Pierre Alliez
+// Author(s)     : Laurent Saboret, Pierre Alliez
 
 
 #ifndef CGAL_DISCRETE_CONFORMAL_MAP_PARAMETIZER_3_H
@@ -39,8 +39,9 @@ template
                 = Circular_border_parametizer_3<MeshAdaptor_3>,
     class SparseLinearAlgebraTraits_d // Traits class to solve a sparse linear system
                 = OpenNL::DefaultLinearSolverTraits<typename MeshAdaptor_3::NT>
-                                      // Implementation note: the sparse linear system
-                                      // is NOT symmetric for surfaces with holes
+                                      // Implementation note: the sparse linear 
+                                      // system is NOT symmetric around holes
+                                      // but it works anyway with OpenNL
 >
 class Discrete_conformal_map_parametizer_3
     : public Fixed_border_parametizer_3<MeshAdaptor_3,
