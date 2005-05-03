@@ -38,8 +38,8 @@ template
     class BorderParametizer_3         // Strategy to parameterize the surface border
                 = Circular_border_parametizer_3<MeshAdaptor_3>,
     class SparseLinearAlgebraTraits_d // Traits class to solve a sparse linear system
-                = OpenNL::SymmetricLinearSolverTraits<typename MeshAdaptor_3::NT>
-                                      // CAUTION: the sparse linear system is symmetric iff
+                = OpenNL::DefaultLinearSolverTraits<typename MeshAdaptor_3::NT>
+                                      // Note: the sparse linear system is symmetric iff
                                       // Fixed_border_parametizer_3 removes fixed vertices
 >
 class Barycentric_mapping_parametizer_3
@@ -120,8 +120,9 @@ protected:
 
     // Check if 3D -> 2D mapping is 1 to 1
     virtual bool  is_one_to_one_mapping (const Adaptor& mesh,
-                                         const Solver& solver_u,
-                                         const Solver& solver_v)
+                                         const Matrix& A, 
+                                         const Vector& Bu, 
+                                         const Vector& Bv)
     {
         // Theorem: 1 to 1 mapping is guaranteed if all Wij coefficients
         //          are > 0 (for j vertex neighbor of i) and if the surface

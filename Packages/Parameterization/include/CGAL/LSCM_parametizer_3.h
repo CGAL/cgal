@@ -260,15 +260,15 @@ parameterize(Adaptor* mesh)
     fprintf(stderr,"ok\n");
 
     // Solve the "A*X = B" linear system in the least squares sense
-    std::cerr << "  solver...";
+	std::cerr << "  solver start..." << std::endl;
     if ( ! solver.solve() )
     {
-        std::cerr << "error" << std::endl;
+        std::cerr << "  solver: error" << std::endl;
         CGAL_parameterization_postcondition_msg(false,
                     "Parameterization error: cannot solve sparse linear system");
         return ERROR_CANNOT_SOLVE_LINEAR_SYSTEM;
     }
-    std::cerr << "ok" << std::endl;
+    std::cerr << "  solver: ok" << std::endl;
 
     // Copy X coordinates into the (u,v) pair of each vertex
     set_mesh_uv_from_system(mesh, solver);
@@ -309,6 +309,11 @@ check_parameterize_preconditions(const Adaptor& mesh)
 
     // The whole package is restricted to surfaces
     CGAL_parameterization_expensive_precondition((status = (mesh.get_mesh_genus()==0)
+                                                         ? OK
+                                                         : ERROR_NO_SURFACE_MESH) == OK);
+    if (status != OK)
+        return status;
+    CGAL_parameterization_expensive_precondition((status = (mesh.count_mesh_boundaries() >= 1)
                                                          ? OK
                                                          : ERROR_NO_SURFACE_MESH) == OK);
     if (status != OK)
@@ -559,6 +564,7 @@ check_parameterize_postconditions(const Adaptor& mesh,
 }
 
 // Check if 3D -> 2D mapping is 1 to 1
+// The default implementation checks each normal
 template <class Adaptor, class Border_param, class Sparse_LA>
 inline
 bool LSCM_parametizer_3<Adaptor, Border_param, Sparse_LA>::

@@ -39,9 +39,9 @@ template
                 = Circular_border_parametizer_3<MeshAdaptor_3>,
     class SparseLinearAlgebraTraits_d // Traits class to solve a sparse linear system
                 = OpenNL::DefaultLinearSolverTraits<typename MeshAdaptor_3::NT>
-                                      // Implementation note: the sparse linear 
-                                      // system is NOT symmetric around holes
-                                      // but it works anyway with OpenNL
+                                      // Note: the sparse linear system is symmetric 
+                                      // (except around holes) iff 
+                                      // Fixed_border_parametizer_3 removes fixed vertices
 >
 class Discrete_conformal_map_parametizer_3
     : public Fixed_border_parametizer_3<MeshAdaptor_3,

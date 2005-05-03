@@ -290,12 +290,15 @@ public:
 
     // Compute the genus of the mesh
     int  get_mesh_genus () const {
-        // the exported mesh is a topological disc:
+        // NYI
         return 0;
     }
 
     // Count the number of boundaries of the mesh
-    int  count_mesh_boundaries () const;
+    int  count_mesh_boundaries () const {
+        // NYI
+        return 1;
+    }
 
     // Get iterator over first vertex of mesh's border
     Border_vertex_iterator  mesh_border_vertices_begin () {
