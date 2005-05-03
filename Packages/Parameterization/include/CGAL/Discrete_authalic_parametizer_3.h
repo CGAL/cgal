@@ -53,9 +53,9 @@ public:
     typedef typename Parametizer_3<Adaptor>::ErrorCode
                                             ErrorCode;
     typedef typename Adaptor::NT            NT;
-    typedef typename Adaptor::Face_handle   Face_handle;
-    typedef typename Adaptor::Face_const_handle
-                                            Face_const_handle;
+    typedef typename Adaptor::Facet_handle  Facet_handle;
+    typedef typename Adaptor::Facet_const_handle
+                                            Facet_const_handle;
     typedef typename Adaptor::Vertex_handle Vertex_handle;
     typedef typename Adaptor::Vertex_const_handle
                                             Vertex_const_handle;
@@ -63,9 +63,9 @@ public:
     typedef typename Adaptor::Point_2       Point_2;
     typedef typename Adaptor::Vector_3      Vector_3;
     typedef typename Adaptor::Vector_2      Vector_2;
-    typedef typename Adaptor::Face_iterator Face_iterator;
-    typedef typename Adaptor::Face_const_iterator
-                                            Face_const_iterator;
+    typedef typename Adaptor::Facet_iterator Facet_iterator;
+    typedef typename Adaptor::Facet_const_iterator
+                                            Facet_const_iterator;
     typedef typename Adaptor::Vertex_iterator Vertex_iterator;
     typedef typename Adaptor::Vertex_const_iterator
                                             Vertex_const_iterator;
@@ -73,10 +73,10 @@ public:
                                             Border_vertex_iterator;
     typedef typename Adaptor::Border_vertex_const_iterator
                                             Border_vertex_const_iterator;
-    typedef typename Adaptor::Vertex_around_face_circulator
-                                            Vertex_around_face_circulator;
-    typedef typename Adaptor::Vertex_around_face_const_circulator
-                                            Vertex_around_face_const_circulator;
+    typedef typename Adaptor::Vertex_around_facet_circulator
+                                            Vertex_around_facet_circulator;
+    typedef typename Adaptor::Vertex_around_facet_const_circulator
+                                            Vertex_around_facet_const_circulator;
     typedef typename Adaptor::Vertex_around_vertex_circulator
                                             Vertex_around_vertex_circulator;
     typedef typename Adaptor::Vertex_around_vertex_const_circulator

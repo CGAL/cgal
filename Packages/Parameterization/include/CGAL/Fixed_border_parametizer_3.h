@@ -63,9 +63,9 @@ public:
     typedef typename Parametizer_3<Adaptor>::ErrorCode
                                             ErrorCode;
     typedef typename Adaptor::NT            NT;
-    typedef typename Adaptor::Face_handle   Face_handle;
-    typedef typename Adaptor::Face_const_handle
-                                            Face_const_handle;
+    typedef typename Adaptor::Facet_handle  Facet_handle;
+    typedef typename Adaptor::Facet_const_handle
+                                            Facet_const_handle;
     typedef typename Adaptor::Vertex_handle Vertex_handle;
     typedef typename Adaptor::Vertex_const_handle
                                             Vertex_const_handle;
@@ -73,9 +73,9 @@ public:
     typedef typename Adaptor::Point_2       Point_2;
     typedef typename Adaptor::Vector_3      Vector_3;
     typedef typename Adaptor::Vector_2      Vector_2;
-    typedef typename Adaptor::Face_iterator Face_iterator;
-    typedef typename Adaptor::Face_const_iterator
-                                            Face_const_iterator;
+    typedef typename Adaptor::Facet_iterator Facet_iterator;
+    typedef typename Adaptor::Facet_const_iterator
+                                            Facet_const_iterator;
     typedef typename Adaptor::Vertex_iterator Vertex_iterator;
     typedef typename Adaptor::Vertex_const_iterator
                                             Vertex_const_iterator;
@@ -83,10 +83,10 @@ public:
                                             Border_vertex_iterator;
     typedef typename Adaptor::Border_vertex_const_iterator
                                             Border_vertex_const_iterator;
-    typedef typename Adaptor::Vertex_around_face_circulator
-                                            Vertex_around_face_circulator;
-    typedef typename Adaptor::Vertex_around_face_const_circulator
-                                            Vertex_around_face_const_circulator;
+    typedef typename Adaptor::Vertex_around_facet_circulator
+                                            Vertex_around_facet_circulator;
+    typedef typename Adaptor::Vertex_around_facet_const_circulator
+                                            Vertex_around_facet_const_circulator;
     typedef typename Adaptor::Vertex_around_vertex_circulator
                                             Vertex_around_vertex_circulator;
     typedef typename Adaptor::Vertex_around_vertex_const_circulator
@@ -510,14 +510,14 @@ is_one_to_one_mapping(const Adaptor& mesh,
 {
     Vector_3    first_triangle_normal;
 
-    for (Face_const_iterator faceIt = mesh.mesh_faces_begin();
-        faceIt != mesh.mesh_faces_end();
-        faceIt++)
+    for (Facet_const_iterator facetIt = mesh.mesh_facets_begin();
+        facetIt != mesh.mesh_facets_end();
+        facetIt++)
     {
-        // Get 3 vertices of the face
+        // Get 3 vertices of the facet
         Vertex_const_handle v0, v1, v2;
         int vertexIndex = 0;
-        Vertex_around_face_const_circulator cir = mesh.face_vertices_begin(faceIt),
+        Vertex_around_facet_const_circulator cir = mesh.facet_vertices_begin(facetIt),
                                             end = cir;
         CGAL_For_all(cir, end)
         {
@@ -537,7 +537,7 @@ is_one_to_one_mapping(const Adaptor& mesh,
         Point_2 p1 = mesh.get_vertex_uv(v1) ;
         Point_2 p2 = mesh.get_vertex_uv(v2) ;
 
-        // Compute the face normal
+        // Compute the facet normal
         Point_3 p0_3D(p0.x(), p0.y(), 0);
         Point_3 p1_3D(p1.x(), p1.y(), 0);
         Point_3 p2_3D(p2.x(), p2.y(), 0);
@@ -547,7 +547,7 @@ is_one_to_one_mapping(const Adaptor& mesh,
 
         // Check that all normals are oriented the same way
         // => no 2D triangle is flipped
-        if (cir == mesh.face_vertices_begin(faceIt))
+        if (cir == mesh.facet_vertices_begin(facetIt))
         {
             first_triangle_normal = normal;
         }

@@ -281,7 +281,7 @@ int main(int argc,char * argv[])
     stream >> mesh;
 
     // print mesh info
-    fprintf(stderr,"(%d faces, ",mesh.size_of_facets());
+    fprintf(stderr,"(%d facets, ",mesh.size_of_facets());
     fprintf(stderr,"%d vertices)\n",mesh.size_of_vertices());
 
     // compute misc.

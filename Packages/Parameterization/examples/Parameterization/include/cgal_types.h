@@ -63,7 +63,7 @@ struct Facet_center
 template <class Refs, class T>
 class My_facet : public CGAL::HalfedgeDS_face_base<Refs, T>
 {
-    // face data
+    // facet data
     int m_tag;
     Point m_center;
 
@@ -199,7 +199,7 @@ struct My_items : public CGAL::Polyhedron_items_3
                           Point> Vertex;
     };
 
-    // wrap face
+    // wrap facet
     template <class Refs, class Traits>
     struct Face_wrapper
     {
@@ -289,7 +289,7 @@ public:
         return NULL;
     }
 
-    // get closest inner face
+    // get closest inner facet
     Facet_handle get_closest_inner_facet(Point *pPoint)
     {
         Facet_iterator pFace = facets_begin();
@@ -571,8 +571,8 @@ public:
         for(pHalfedge = halfedges_begin(); pHalfedge != halfedges_end(); pHalfedge++)
             fprintf(pFile, "vt %f %f\n", round(pHalfedge->u()), round(pHalfedge->v()));
 
-        // Write faces using the unique material # 1
-        fprintf(pFile, "# faces\nusemtl Mat_1\n");
+        // Write facets using the unique material # 1
+        fprintf(pFile, "# facets\nusemtl Mat_1\n");
         Facet_iterator pFacet;
         for(pFacet = facets_begin(); pFacet != facets_end(); pFacet++)
         {
@@ -724,7 +724,7 @@ public:
     // C : # of connected components
     // E : # of edges
     // B : # of boundaries
-    // F : # of faces
+    // F : # of facets
     // V : # of vertices
     int genus()
     {
@@ -734,7 +734,7 @@ public:
         int e = size_of_halfedges()/2;
         int f = size_of_facets();
         int genus = (2*c+e-b-f-v)/2;
-        std::cerr << "  " << v << " vertices, " << f << " faces, ";
+        std::cerr << "  " << v << " vertices, " << f << " facets, ";
         std::cerr << e << " edges, " << b << " boundary(ies), genus " << genus << std::endl;
         return genus;
     }

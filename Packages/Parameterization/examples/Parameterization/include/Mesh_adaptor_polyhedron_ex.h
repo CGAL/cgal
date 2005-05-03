@@ -58,7 +58,7 @@
 // Polyhedron_ex interface to match the MeshAdaptor_3 concept
 //
 // Implementation note:
-// * Mesh_adaptor_polyhedron_ex::Face   = Polyhedron_ex::Facet (as you would expect)
+// * Mesh_adaptor_polyhedron_ex::Facet  = Polyhedron_ex::Facet (as you would expect)
 // * Mesh_adaptor_polyhedron_ex::Vertex = Polyhedron_ex::Halfedge.
 //   Mesh_adaptor_polyhedron_ex represents inner vertices by their first incident halfedge
 //   and border vertices by their halfedge on the inner side of the border.
@@ -80,7 +80,7 @@ private:
     // Forward references
     struct                                  Project_halfedge_vertex;
     struct                                  Project_halfedge_handle_vertex;
-    struct                                  All_faces_filter;
+    struct                                  All_facets_filter;
     struct                                  All_vertices_filter;
     template <class It, class Ctg> class    Adaptor_vertex_around_vertex_circulator;
     // Halfedge
@@ -100,7 +100,7 @@ private:
     typedef Polyhedron_ex::Halfedge_around_facet_const_circulator
                                             Halfedge_around_facet_const_circulator;
     typedef Halfedge::Supports_halfedge_prev Supports_prev;
-    // Seaming flag for faces, vertices and halfedges
+    // Seaming flag for facets, vertices and halfedges
     enum Seaming_status  { OUTER, INNER, BORDER /* = outer border for HE */};
 
 // Public types
@@ -113,27 +113,27 @@ public:
     typedef Polyhedron_ex::Traits::Point_3  Point_3;
     typedef Polyhedron_ex::Traits::Vector_2 Vector_2;
     typedef Polyhedron_ex::Traits::Vector_3 Vector_3;
-    // Face
-    typedef Polyhedron_ex::Facet            Face;
-    typedef Polyhedron_ex::Facet_handle     Face_handle;
-    typedef Polyhedron_ex::Facet_const_handle Face_const_handle;
+    // Facet
+    typedef Polyhedron_ex::Facet            Facet;
+    typedef Polyhedron_ex::Facet_handle     Facet_handle;
+    typedef Polyhedron_ex::Facet_const_handle Facet_const_handle;
     // Circulator category
     typedef CGAL::HalfedgeDS_circulator_traits<Supports_prev>
                                             Ctr;
     typedef Ctr::iterator_category          circulator_category;
-    // Iterator over all mesh faces
+    // Iterator over all mesh facets
     typedef CGAL::Filter_iterator<Polyhedron_ex::Facet_iterator,
-                                  All_faces_filter>
-                                            Face_iterator_base;
-    typedef Convertible_iterator<Face_iterator_base,
-                                 Face_const_handle, Face_handle>
-                                            Face_iterator;
+                                  All_facets_filter>
+                                            Facet_iterator_base;
+    typedef Convertible_iterator<Facet_iterator_base,
+                                 Facet_const_handle, Facet_handle>
+                                            Facet_iterator;
     typedef CGAL::Filter_iterator<Polyhedron_ex::Facet_const_iterator,
-                                  All_faces_filter>
-                                            Face_const_iterator_base;
-    typedef Convertible_iterator<Face_const_iterator_base,
-                                 Face_const_handle>
-                                            Face_const_iterator;
+                                  All_facets_filter>
+                                            Facet_const_iterator_base;
+    typedef Convertible_iterator<Facet_const_iterator_base,
+                                 Facet_const_handle>
+                                            Facet_const_iterator;
     // Mesh_adaptor_polyhedron_ex::Vertex = Polyhedron_ex::Halfedge
     typedef Polyhedron_ex::Halfedge         Vertex;
     typedef Polyhedron_ex::Halfedge_handle  Vertex_handle;
@@ -165,21 +165,21 @@ public:
     typedef Convertible_iterator<Border_vertex_const_iterator_base,
                                  Vertex_const_handle>
                                             Border_vertex_const_iterator;
-    // Circulator over a face's vertices
+    // Circulator over a facet's vertices
     typedef CGAL::Circulator_project<Halfedge_around_facet_circulator,
                                      Project_halfedge_vertex,
                                      Vertex&, Vertex*>
-                                            Vertex_around_face_circulator_base;
-    typedef Convertible_iterator<Vertex_around_face_circulator_base,
+                                            Vertex_around_facet_circulator_base;
+    typedef Convertible_iterator<Vertex_around_facet_circulator_base,
                                  Vertex_const_handle, Vertex_handle>
-                                            Vertex_around_face_circulator;
+                                            Vertex_around_facet_circulator;
     typedef CGAL::Circulator_project<Halfedge_around_facet_const_circulator,
                                      Project_halfedge_vertex,
                                      const Vertex&, const Vertex*>
-                                            Vertex_around_face_const_circulator_base;
-    typedef Convertible_iterator<Vertex_around_face_const_circulator_base,
+                                            Vertex_around_facet_const_circulator_base;
+    typedef Convertible_iterator<Vertex_around_facet_const_circulator_base,
                                  Vertex_const_handle>
-                                            Vertex_around_face_const_circulator;
+                                            Vertex_around_facet_const_circulator;
     // Circulator over the vertices incident to a vertex
     typedef Adaptor_vertex_around_vertex_circulator<Vertex_handle,
                                                     circulator_category>
@@ -280,10 +280,10 @@ public:
 //#endif
     }
 
-    // Return true of all mesh's faces are triangles
+    // Return true of all mesh's facets are triangles
     bool  is_mesh_triangular () const {
-        for (Face_const_iterator it = mesh_faces_begin(); it != mesh_faces_end(); it++)
-            if (count_face_vertices(it) != 3)
+        for (Facet_const_iterator it = mesh_facets_begin(); it != mesh_facets_end(); it++)
+            if (count_facet_vertices(it) != 3)
                 return false;
         return true;                        // mesh is triangular if we reach this point
     }
@@ -316,58 +316,58 @@ public:
         return (Border_vertex_const_iterator_base) m_boundary.end();
     }
 
-    // Get iterator over first face of mesh
-    Face_iterator  mesh_faces_begin () {
-        return Face_iterator_base(m_mesh->facets_end(),
-                                  All_faces_filter(),
+    // Get iterator over first facet of mesh
+    Facet_iterator  mesh_facets_begin () {
+        return Facet_iterator_base(m_mesh->facets_end(),
+                                  All_facets_filter(),
                                   m_mesh->facets_begin());
     }
-    Face_const_iterator  mesh_faces_begin () const {
-        return Face_const_iterator_base(m_mesh->facets_end(),
-                                        All_faces_filter(),
+    Facet_const_iterator  mesh_facets_begin () const {
+        return Facet_const_iterator_base(m_mesh->facets_end(),
+                                        All_facets_filter(),
                                         m_mesh->facets_begin());
     }
 
-    // Get iterator over past-the-end face of mesh
-    Face_iterator  mesh_faces_end () {
-        return Face_iterator_base(m_mesh->facets_end(),
-                                  All_faces_filter());
+    // Get iterator over past-the-end facet of mesh
+    Facet_iterator  mesh_facets_end () {
+        return Facet_iterator_base(m_mesh->facets_end(),
+                                  All_facets_filter());
     }
-    Face_const_iterator  mesh_faces_end () const {
-        return Face_const_iterator_base(m_mesh->facets_end(),
-                                        All_faces_filter());
+    Facet_const_iterator  mesh_facets_end () const {
+        return Facet_const_iterator_base(m_mesh->facets_end(),
+                                        All_facets_filter());
     }
 
-    // Count the number of faces of the mesh
-    int  count_mesh_faces () const {
+    // Count the number of facets of the mesh
+    int  count_mesh_facets () const {
         int index = 0;
-        for (Face_const_iterator it=mesh_faces_begin(); it!=mesh_faces_end(); it++)
+        for (Facet_const_iterator it=mesh_facets_begin(); it!=mesh_facets_end(); it++)
             index++;
         return index;
     }
 
     //
-    // FACE INTERFACE
+    // FACET INTERFACE
     //
 
-    // Get circulator over face's vertices
-    Vertex_around_face_circulator face_vertices_begin(Face_handle face)
+    // Get circulator over facet's vertices
+    Vertex_around_facet_circulator facet_vertices_begin(Facet_handle facet)
     {
-        assert(is_valid(face));
-        return (Vertex_around_face_circulator_base) face->facet_begin();
+        assert(is_valid(facet));
+        return (Vertex_around_facet_circulator_base) facet->facet_begin();
     }
-    Vertex_around_face_const_circulator face_vertices_begin(
-                                                Face_const_handle face) const
+    Vertex_around_facet_const_circulator facet_vertices_begin(
+                                                Facet_const_handle facet) const
     {
-        assert(is_valid(face));
-        return (Vertex_around_face_const_circulator_base) face->facet_begin();
+        assert(is_valid(facet));
+        return (Vertex_around_facet_const_circulator_base) facet->facet_begin();
     }
 
-    // Count the number of vertices of a face
-    int  count_face_vertices(Face_const_handle face) const {
-        assert(is_valid(face));
+    // Count the number of vertices of a facet
+    int  count_facet_vertices(Facet_const_handle facet) const {
+        assert(is_valid(facet));
         int index = 0;
-        Vertex_around_face_const_circulator cir     = face_vertices_begin(face),
+        Vertex_around_facet_const_circulator cir    = facet_vertices_begin(facet),
                                             cir_end = cir;
         CGAL_For_all(cir, cir_end) {
             index++;
@@ -639,24 +639,24 @@ private:
     // * inner border halfedges are marked INNER, except
     //   if they are outer border for the other side of a seam
     // * outer halfedges are marked OUTER
-    void flag_surface_halfedges_seaming(Face_handle pSeedFacet)
+    void flag_surface_halfedges_seaming(Facet_handle pSeedFacet)
     {
         if (pSeedFacet == NULL)
             return;                     // Gloups... topological disc is empty!
 
-        // List of faces to flag = pSeedFacet initially
-        std::list<Face_handle> facets;
+        // List of facets to flag = pSeedFacet initially
+        std::list<Facet_handle> facets;
         facets.push_front(pSeedFacet);
 
-        // For each face in the list: pop it out, flag it as INNER and
-        // add its surrounding faces to the list
+        // For each facet in the list: pop it out, flag it as INNER and
+        // add its surrounding facets to the list
         while(!facets.empty())
         {
-            Face_handle pFacet = facets.front();
+            Facet_handle pFacet = facets.front();
             facets.pop_front();
             assert(pFacet != NULL);
 
-            // Flag this face's halfedges as INNER (except outer border ones)
+            // Flag this facet's halfedges as INNER (except outer border ones)
             bool already_done = true;
             Halfedge_around_facet_circulator pHalfedge = pFacet->facet_begin(),
                                              end       = pHalfedge;
@@ -670,11 +670,11 @@ private:
                 }
             }
 
-            // Skip this face if it is done
+            // Skip this facet if it is done
             if (already_done)
                 continue;
 
-            // Add surrounding faces to list without crossing the border
+            // Add surrounding facets to list without crossing the border
             pHalfedge = pFacet->facet_begin();
             end       = pHalfedge;
             CGAL_For_all(pHalfedge, end)
@@ -683,23 +683,23 @@ private:
                 assert(opposite_he != NULL);
                 if (opposite_he->seaming() != BORDER)
                 {
-                    // If the neighbor face is a hole, flag the opposite vertex
-                    //  as INNER. Else, add the face to the list to flag it later
-                    Face_handle neighbor_face = opposite_he->facet();
-                    if (neighbor_face == NULL)
+                    // If the neighbor facet is a hole, flag the opposite vertex
+                    //  as INNER. Else, add the facet to the list to flag it later
+                    Facet_handle neighbor_facet = opposite_he->facet();
+                    if (neighbor_facet == NULL)
                         opposite_he->seaming(INNER);
                     else
-                        facets.push_front(neighbor_face);
+                        facets.push_front(neighbor_facet);
                 }
             }
         }
     }
 
-    // Get face seaming status (INNER or OUTER)
-    static Seaming_status seaming(Polyhedron_ex::Facet_const_handle face)
+    // Get facet seaming status (INNER or OUTER)
+    static Seaming_status seaming(Polyhedron_ex::Facet_const_handle facet)
     {
-        assert(face != NULL);
-        Halfedge_const_handle halfedge = face->halfedge();
+        assert(facet != NULL);
+        Halfedge_const_handle halfedge = facet->halfedge();
         assert(halfedge != NULL);
         return is_inner_or_inner_border(halfedge) ? INNER : OUTER;
     }
@@ -818,13 +818,13 @@ private:
         return adaptor_vertex;
     }
 
-    // Check if a Mesh_adaptor_polyhedron_ex face is valid (for debug purpose)
-    inline static bool is_valid (Face_const_handle face)
+    // Check if a Mesh_adaptor_polyhedron_ex facet is valid (for debug purpose)
+    inline static bool is_valid (Facet_const_handle facet)
     {
-        if (face == NULL)
+        if (facet == NULL)
             return false;
-        // outer faces are not exported
-        if (seaming(face) != INNER)
+        // outer facets are not exported
+        if (seaming(facet) != INNER)
             return false;
         // eventually: ok
         return true;
@@ -858,9 +858,9 @@ private:
 // Private types
 private:
 
-    // Utility class to generate the Face_iterator type
-    struct All_faces_filter {
-        // Return TRUE <=> the face IS NOT EXPORTED
+    // Utility class to generate the Facet_iterator type
+    struct All_facets_filter {
+        // Return TRUE <=> the facet IS NOT EXPORTED
         // by Mesh_adaptor_polyhedron_ex, ie is out of the topological disc
         bool operator()(const Polyhedron_ex::Facet_iterator& f) const       {
             return seaming(f) == OUTER;
@@ -886,7 +886,7 @@ private:
         }
     };
 
-    // Utility class to generate the Vertex_around_face_circulator type
+    // Utility class to generate the Vertex_around_facet_circulator type
     struct Project_halfedge_vertex {
         typedef Halfedge                            argument_type;
         typedef Mesh_adaptor_polyhedron_ex::Vertex  Vertex;

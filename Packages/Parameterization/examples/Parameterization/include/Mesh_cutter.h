@@ -29,7 +29,7 @@ class Mesh_cutter
 
     Polyhedron_ex *m_pPolyhedron;  // the model to cut
     backbone *m_pBackbone;
-    Polyhedron_ex::Face_handle m_pSeedFacet;
+    Polyhedron_ex::Facet_handle m_pSeedFacet;
     Polyhedron_ex::Vertex_handle m_pSeedVertex;
     enum {FREE,DONE,FIXED};
 

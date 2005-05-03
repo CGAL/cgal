@@ -38,13 +38,13 @@ public:
     typedef ... Point_3;
     typedef ... Vector_2;
     typedef ... Vector_3;
-    // Face
-    typedef ... Face;
-    typedef ... Face_handle;
-    typedef ... Face_const_handle;
-    // Iterator over all mesh faces
-    typedef ... Face_iterator;
-    typedef ... Face_const_iterator;
+    // Facet
+    typedef ... Facet;
+    typedef ... Facet_handle;
+    typedef ... Facet_const_handle;
+    // Iterator over all mesh facets
+    typedef ... Facet_iterator;
+    typedef ... Facet_const_iterator;
     // Vertex
     typedef ... Vertex;
     typedef ... Vertex_handle;
@@ -55,9 +55,9 @@ public:
     // Iterator over mesh boundary vertices
     typedef ... Border_vertex_iterator;
     typedef ... Border_vertex_const_iterator;
-    // Circulator over a face's vertices
-    typedef ... Vertex_around_face_circulator;
-    typedef ... Vertex_around_face_const_circulator;
+    // Circulator over a facet's vertices
+    typedef ... Vertex_around_facet_circulator;
+    typedef ... Vertex_around_facet_const_circulator;
     // Circulator over the vertices incident to a vertex
     typedef ... Vertex_around_vertex_circulator;
     typedef ... Vertex_around_vertex_const_circulator;
@@ -83,7 +83,7 @@ public:
     void  index_mesh_vertices ();
 
 
-    // Return true of all mesh's faces are triangles
+    // Return true of all mesh's facets are triangles
     bool  is_mesh_triangular () const;
 
     // Compute the genus of the mesh
@@ -100,28 +100,28 @@ public:
     Border_vertex_iterator  mesh_border_vertices_end ();
     Border_vertex_const_iterator  mesh_border_vertices_end () const;
 
-    // Get iterator over first face of mesh
-    Face_iterator  mesh_faces_begin ();
-    Face_const_iterator  mesh_faces_begin () const;
+    // Get iterator over first facet of mesh
+    Facet_iterator  mesh_facets_begin ();
+    Facet_const_iterator  mesh_facets_begin () const;
 
-    // Get iterator over past-the-end face of mesh
-    Face_iterator  mesh_faces_end ();
-    Face_const_iterator  mesh_faces_end () const;
+    // Get iterator over past-the-end facet of mesh
+    Facet_iterator  mesh_facets_end ();
+    Facet_const_iterator  mesh_facets_end () const;
 
-    // Count the number of faces of the mesh
-    int  count_mesh_faces () const;
+    // Count the number of facets of the mesh
+    int  count_mesh_facets () const;
 
     //
-    // FACE INTERFACE
+    // FACET INTERFACE
     //
 
-    // Get circulator over face's vertices
-    Vertex_around_face_circulator face_vertices_begin(Face_handle face);
-    Vertex_around_face_const_circulator face_vertices_begin(
-                                                Face_const_handle face) const;
+    // Get circulator over facet's vertices
+    Vertex_around_facet_circulator facet_vertices_begin(Facet_handle facet);
+    Vertex_around_facet_const_circulator facet_vertices_begin(
+                                                Facet_const_handle facet) const;
 
-    // Count the number of vertices of a face
-    int  count_face_vertices(Face_const_handle face) const;
+    // Count the number of vertices of a facet
+    int  count_facet_vertices(Facet_const_handle facet) const;
 
     //
     // VERTEX INTERFACE
