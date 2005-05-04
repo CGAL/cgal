@@ -1249,7 +1249,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
 
     // choose between intersection algorithms
 #ifdef CGAL_NEF3_INTERSECTION_BY_KDTREE
-    Halfedge_const_iterator e0, e1;
+    Halfedge_iterator e0, e1;
     /*
     CGAL_NEF_TRACEN("=> finding edge-edge intersections...");
     CGAL_forall_edges( e0, snc1) {
@@ -1271,12 +1271,12 @@ class SNC_decorator : public SNC_const_decorator<Map> {
     CGAL_NEF_TRACEN("\nnumber of vertices (so far...) = "<< sncp()->number_of_vertices());
     */
 
-    CGAL_forall_edges(e0,snc1)
+    CGAL_forall_edges(e0,const_cast<SNC_structure&>(snc1))
       pl2->intersect_with_edges_and_facets(e0,call_back0);
 
 
     CGAL_NEF_TRACEN("=> finding edge1-facet0 intersections...");
-    CGAL_forall_edges( e1, snc2) {
+    CGAL_forall_edges( e1,const_cast<SNC_structure&>(snc2)) {
       //      ef_intersections++;
       pl1->intersect_with_facets( e1, call_back1);
     }

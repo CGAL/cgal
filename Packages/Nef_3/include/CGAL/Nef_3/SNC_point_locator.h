@@ -232,12 +232,16 @@ public:
 	if(fci.is_shalfedge()) {
           SHalfedge_around_facet_circulator sfc(fci), send(sfc);
 	  CGAL_For_all(sfc,send) {
+            CGAL_NEF_TRACEN("  insert constraint" << sfc->source()->source()->point()
+	                     << "->" << sfc->source()->twin()->source()->point());
 	    ct.insert_constraint(sfc->source()->source()->point(),
 	                         sfc->source()->twin()->source()->point());
           }
         }
       }
       CGAL_assertion(ct.is_valid());
+
+      CGAL_NEF_TRACEN("number of finite triangles " << ct.number_of_faces());
 
       typename CT::Face_handle infinite = ct.infinite_face();
       typename CT::Vertex_handle ctv = infinite->vertex(1);
@@ -250,8 +254,16 @@ public:
       } while(!ct.is_constrained(CT::Edge(vc,vc->index(opposite))));
       typename CT::Face_handle first = vc;
 
+      CGAL_assertion(!ct.is_infinite(first));
       traverse_triangulation(first, first->index(opposite));
-      
+
+      /*
+      for(fi = ct.finite_faces_begin(); fi != ct.finite_faces_end(); ++fi)
+        CGAL_NEF_TRACEN("  finite face " 
+	  << Triangle_3(fi->vertex(0)->point(), fi->vertex(1)->point(), fi->vertex(2)->point())
+	   << "was visited " << visited[fi]);
+      */
+
       fi = ct.finite_faces_begin();
     }
 
@@ -261,19 +273,18 @@ public:
 	Face_handle child(f->neighbor(ct.cw(parent)));
 	traverse_triangulation(child, child->index(f));
       } 
-      if(!ct.is_constrained(Edge(f,ct.cw(parent))) && !visited[f->neighbor(ct.cw(parent))]) {
-	Face_handle child(f->neighbor(ct.cw(parent)));
+      if(!ct.is_constrained(Edge(f,ct.ccw(parent))) && !visited[f->neighbor(ct.ccw(parent))]) {
+	Face_handle child(f->neighbor(ct.ccw(parent)));
 	traverse_triangulation(child, child->index(f));
       } 
     } 
  
     template<typename Triangle_3>
     bool get_next_triangle(Triangle_3& tr) {
-      if(fi == ct.finite_faces_end()) return false;
-      ++fi;
       while(fi != ct.finite_faces_end() && visited[fi] == false) ++fi;
       if(fi == ct.finite_faces_end()) return false;
       tr = Triangle_3(fi->vertex(0)->point(), fi->vertex(1)->point(), fi->vertex(2)->point());
+      ++fi;
       return true;
     }
   };
@@ -307,11 +318,20 @@ public:
       objects.push_back(Object_handle(Halfedge_handle(e)));
     CGAL_forall_facets( f, *this->sncp()) {
 #ifndef CGAL_NEF3_NOT_TRIANGULATE_FACETS
+      
+#ifndef CGAL_NEF3_TRIANGULATION_MINIMUM
+#define CGAL_NEF3_TRIANGULATION_MINIMUM 25
+#endif
 
       Halffacet_cycle_iterator fci = f->facet_cycles_begin();
       CGAL_assertion(fci.is_shalfedge());
-      SHalfedge_around_facet_circulator safc(fci);
-      if(circulator_size(safc) > 10) {
+      SHalfedge_around_facet_circulator safc(fci), send(safc);
+      int length = 0;
+      int stop = CGAL_NEF3_TRIANGULATION_MINIMUM;
+      while(++length < stop && ++safc != send);
+      if(length >= stop) {
+
+      CGAL_NEF_TRACEN("triangulate facet " << f->plane());
 
       typedef typename CGAL::Triangulation_euclidean_traits_xy_3<Kernel>       XY;
       typedef typename CGAL::Triangulation_euclidean_traits_yz_3<Kernel>       YZ;
@@ -328,23 +348,28 @@ public:
         while(th.get_next_triangle(tr)) {
           Halffacet_triangle_handle th( f, tr);
           objects.push_back(Object_handle(th));
+	  CGAL_NEF_TRACEN("add triangle " << tr);
         }
       } else if(c == 1) {
         Triangulation_handler<XZ> th(f);
         while(th.get_next_triangle(tr)) {
           Halffacet_triangle_handle th( f, tr);
           objects.push_back(Object_handle(th));
+	  CGAL_NEF_TRACEN("add triangle " << tr);
         }
       } else if(c == 2) {
         Triangulation_handler<XY> th(f);
         while(th.get_next_triangle(tr)) {
           Halffacet_triangle_handle th( f, tr);
           objects.push_back(Object_handle(th));
+	  CGAL_NEF_TRACEN("add triangle " << tr);
         }
-      } else 
-      	CGAL_assertion_msg(false, "wrong value");
       } else
+      	CGAL_assertion_msg(false, "wrong value");
+      } else {
+        CGAL_NEF_TRACEN("add facet " << f->plane());
         objects.push_back(Object_handle(Halffacet_handle(f)));
+      }
 #else
       objects.push_back(Object_handle(Halffacet_handle(f)));
 #endif // CGAL_NEF3_NOT_TRIANGULATE_FACETS
