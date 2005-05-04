@@ -767,102 +767,6 @@ namespace CGALi {
     void * & for_compact_container()       { return (void * &) p; }
   };
 
-#if defined(__GNUG__) && __GNUG__==2 && __GNUC_MINOR__==95
-// G++ 2.95 has loosy namespace support,
-// and this produces conflicts with std::rel_ops...
-
-  template < class DSC, bool Const >
-  inline
-  bool operator==(const CC_iterator<DSC, Const> &rhs,
-                  const CC_iterator<DSC, Const> &lhs)
-  { return &*rhs == &*lhs; }
-
-  template < class DSC >
-  inline
-  bool operator==(const CC_iterator<DSC, false> &rhs,
-                  const CC_iterator<DSC, true> &lhs)
-  { return &*rhs == &*lhs; }
-
-  template < class DSC >
-  inline
-  bool operator==(const CC_iterator<DSC, true> &rhs,
-                  const CC_iterator<DSC, false> &lhs)
-  { return &*rhs == &*lhs; }
-
-  template < class DSC, bool Const >
-  inline
-  bool operator!=(const CC_iterator<DSC, Const> &rhs,
-                  const CC_iterator<DSC, Const> &lhs)
-  { return &*rhs != &*lhs; }
-
-  template < class DSC >
-  inline
-  bool operator!=(const CC_iterator<DSC, false> &rhs,
-                  const CC_iterator<DSC, true> &lhs)
-  { return &*rhs != &*lhs; }
-
-  template < class DSC >
-  inline
-  bool operator!=(const CC_iterator<DSC, true> &rhs,
-                  const CC_iterator<DSC, false> &lhs)
-  { return &*rhs != &*lhs; }
-
-  template < class DSC, bool Const >
-  inline
-  bool operator==(const CC_iterator<DSC, Const> &rhs,
-		  CGAL_NULL_TYPE CGAL_assertion_code(n))
-  {
-    CGAL_assertion( n == NULL);
-    return &*rhs == NULL;
-  }
-
-  template < class DSC >
-  inline
-  bool operator==(const CC_iterator<DSC, false> &rhs,
-		  CGAL_NULL_TYPE CGAL_assertion_code(n))
-  {
-    CGAL_assertion( n == NULL);
-    return &*rhs == NULL;
-  }
-
-
-  template < class DSC >
-  inline
-  bool operator==(const CC_iterator<DSC, true> &rhs,
-		  CGAL_NULL_TYPE CGAL_assertion_code(n))
-  {
-    CGAL_assertion( n == NULL);
-    return &*rhs == NULL;
-  }
-
-  template < class DSC, bool Const >
-  inline
-  bool operator!=(const CC_iterator<DSC, Const> &rhs,
-		  CGAL_NULL_TYPE CGAL_assertion_code(n))
-  {
-    CGAL_assertion( n == NULL);
-    return &*rhs != NULL;
-  }
-
-  template < class DSC >
-  inline
-  bool operator!=(const CC_iterator<DSC, false> &rhs,
-                  CGAL_NULL_TYPE CGAL_assertion_code(n))
-  {
-    CGAL_assertion( n == NULL);
-    return &*rhs != NULL;
-  }
-
-  template < class DSC >
-  inline
-  bool operator!=(const CC_iterator<DSC, true> &rhs,
-                  CGAL_NULL_TYPE CGAL_assertion_code(n))
-  {
-    CGAL_assertion( n == NULL);
-    return &*rhs != NULL;
-  }
-
-#else
   template < class DSC, bool Const1, bool Const2 >
   inline
   bool operator==(const CC_iterator<DSC, Const1> &rhs,
@@ -896,8 +800,6 @@ namespace CGALi {
     CGAL_assertion( n == NULL);
     return &*rhs != NULL;
   }
-
-#endif
 
 } // namespace CGALi
 

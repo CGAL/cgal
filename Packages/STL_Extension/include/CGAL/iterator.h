@@ -23,9 +23,9 @@
 //                 Lutz Kettner <kettner@mpi-sb.mpg.de>
 //                 Sylvain Pion <Sylvain.Pion@sophia.inria.fr>
 
-
 #ifndef CGAL_ITERATOR_H
 #define CGAL_ITERATOR_H 1
+
 #include <CGAL/circulator.h>
 #include <vector>
 #include <map>
@@ -39,15 +39,8 @@ CGAL_BEGIN_NAMESPACE
 // +----------------------------------------------------------------+
 
 struct Emptyset_iterator
-#if defined(__GNUC__) && (__GNUC__ < 3)
-  : public std::output_iterator
-#else
-  : public std::iterator< std::output_iterator_tag, void, void, void*, void >
-#endif // defined(__GNUC__) && (__GNUC__ < 3)
+  : public std::iterator< std::output_iterator_tag, void, void, void, void >
 {
-  Emptyset_iterator() {}
-  Emptyset_iterator(const Emptyset_iterator&) {}
-
   template< class T >
   Emptyset_iterator& operator=(const T&) { return *this; }
 
@@ -66,11 +59,7 @@ struct Emptyset_iterator
 
 template < class Container >
 class Insert_iterator
-#if defined(__GNUC__) && (__GNUC__ < 3)
-: public std::output_iterator
-#else
-: public std::iterator< std::output_iterator_tag, void, void, void*, void >
-#endif // defined(__GNUC__) && (__GNUC__ < 3)
+  : public std::iterator< std::output_iterator_tag, void, void, void, void >
 {
 protected:
   Container *container;
@@ -111,11 +100,7 @@ inserter(Container &x)
 
 template < class T >
 class Oneset_iterator
-#if defined(__GNUC__) && (__GNUC__ < 3)
-  : public std::output_iterator
-#else
-  : public std::iterator< std::output_iterator_tag, void, void, void*, void >
-#endif // defined(__GNUC__) && (__GNUC__ < 3)
+  : public std::iterator< std::output_iterator_tag, void, void, void, void >
 {
   T* t;
 public:
@@ -136,11 +121,7 @@ public:
 
 // Undocumented, because there is some hope to merge it into Counting_iterator
 class Counting_output_iterator
-#if defined(__GNUC__) && (__GNUC__ < 3)
-  : public std::output_iterator
-#else
-  : public std::iterator< std::output_iterator_tag, void, void, void*, void >
-#endif // defined(__GNUC__) && (__GNUC__ < 3)
+  : public std::iterator< std::output_iterator_tag, void, void, void, void >
 {
   std::size_t c;
 public:
@@ -786,7 +767,8 @@ public:
       ++*this;
       return tmp;
     }
-};    
+};
+
 template < class IC>
 class Inverse_index {
 
@@ -806,8 +788,7 @@ class Inverse_index {
   // CREATION
 
 protected:
-  typedef std::map< const void*, std::size_t, std::less<const void*> >
-    Index;
+  typedef std::map< const void*, std::size_t >  Index;
   Index   idx;
   IC      start;
   typedef typename Index::iterator        Index_iterator;
@@ -914,19 +895,6 @@ public:
   }
 };
 
-#if (defined(__GNUC__) && (__GNUC__ >= 3))
-template < class IC>
-void
-Inverse_index< IC>::ini_idx( IC i, const IC& j, std::input_iterator_tag) {
-  std::size_t n = 0;
-  if ( ! is_empty_range( i, j)) {
-    do {
-      idx.insert(Item( &*i, n));
-      n++;
-    } while ((++i) != (j));
-  }
-}
-#else
 template < class IC>
 void
 Inverse_index< IC>::ini_idx( IC i, const IC& j, std::input_iterator_tag) {
@@ -939,7 +907,6 @@ Inverse_index< IC>::ini_idx( IC i, const IC& j, std::input_iterator_tag) {
     } while ((++i) != (j));
   }
 }
-#endif // (__GNUC__ >= 3)
 
 template < class IC>
 class Random_access_adaptor {

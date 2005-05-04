@@ -74,11 +74,7 @@ void print_container(C c, bool is_concatenated = true)
 
 
 template<class C, class A, class B>
-#if defined(__GNUC__) && (__GNUC__ < 3)
-void copy1(C& c, A a, B b)
-#else
 void copy(C& c, A a, B b)
-#endif
 {
   c.clear();
 
@@ -89,17 +85,6 @@ void copy(C& c, A a, B b)
   for (typename B::iterator it = b.begin(); it != b.end(); it++) {
     c.push_back(*it);
   }
-}
-
-
-template<class C, class A, class B>
-void copy_wrapper(C& c, A a, B b)
-{
-#if defined(__GNUC__) && (__GNUC__ < 3)
-  copy1(c, a, b);
-#else
-  ::copy(c, a, b);
-#endif
 }
 
 
@@ -122,8 +107,6 @@ bool test_creation(C c, AB ab)
 template<class A, class B>
 int test(A a, B b)
 {
-
-  
   typedef Concatenate_container<A,B>        AB_container;
   typedef Concatenate_container<A,A>        AA_container;
   typedef Concatenate_container<B,A>        BA_container;
@@ -143,19 +126,19 @@ int test(A a, B b)
 
   AB_container ab(a, b);
 
-  copy_wrapper(c, a, b);
+  ::copy(c, a, b);
   assert( test_creation(c, ab) );
   assert( ab.size() == ab.lazy_size() && ab.size() == c.size() );
 
   AA_container aa(a, a);
 
-  copy_wrapper(c, a, a);
+  ::copy(c, a, a);
   assert( test_creation(c, aa) );
   assert( aa.size() == aa.lazy_size() && aa.size() == c.size() );
 
   BA_container ba(b, a);
 
-  copy_wrapper(c, b, a);
+  ::copy(c, b, a);
   assert( test_creation(c, ba) );
   assert( ba.size() == ba.lazy_size() && ba.size() == c.size() );
 
