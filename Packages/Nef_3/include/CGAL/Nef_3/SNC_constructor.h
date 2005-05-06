@@ -2157,7 +2157,7 @@ public:
   }
 
   void build_external_structure() {
-    CGAL_NEF_SETDTHREAD(503*509);
+//    CGAL_NEF_SETDTHREAD(503*509);
 
 #ifdef CGAL_NEF3_TIMER_EXTERNAL_STRUCTURE
     CGAL::Timer timer_external_structure;
