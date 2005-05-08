@@ -24,6 +24,7 @@
 #include <CGAL/Sweep_line_2/Sweep_line_event.h>
 #include <CGAL/Sweep_line_2/Pmwx_insert_info.h>
 #include <CGAL/assertions.h>
+#include <vector>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -63,6 +64,9 @@ public:
   typedef typename SubCurve::PmwxInsertInfo        PmwxInsertInfo;
   typedef typename PmwxInsertInfo::Halfedge_handle Halfedge_handle;
 
+  typedef std::vector<bool>       BitVector;
+  typedef BitVector::iterator     BitVectorIter;
+
   using Base::m_rightCurves;
 
 
@@ -95,29 +99,75 @@ public:
   }
 
 
+  //int get_halfedge_jump_count(CurveWrap *curve)
+  //{
+  //  int i = 0;
+  //  int skip = 0;
+  // 
+  //  SubCurveIter iter = m_rightCurves.begin();
+  //  for(; iter!=m_rightCurves.end(); ++iter)
+  //  {
+  //    if((*iter) == NULL)
+  //      skip++;
+  //  }
+  //  skip--;  // now 'skip' holds the amount of the right curves of the event
+		//         // that are already inserted to the planar map  - 1 (minus 1)
+
+  //  iter = m_rightCurves.end();
+  //  --iter;
+  //   
+  //  unsigned int num_left_curves = this->get_num_left_curves();
+  //  for ( ; iter != m_rightCurves.begin() ; --iter )
+  //  {
+  //    if(curve == (*iter))
+  //    {
+  //      (*iter) = NULL; 
+  //      if (( i == 0 ) && ( num_left_curves == 0 )) 
+  //      {
+  //        return skip;
+  //      }
+  //      if ( num_left_curves == 0 ) 
+	 //     {   
+  //        return i-1;
+  //      }
+  //      return i;
+  //    }
+  //    if ( (*iter) == NULL )
+  //      i++;
+  //  }
+
+  //  CGAL_assertion(curve == (*iter));
+  //  (*iter) = NULL; 
+  //  
+  //  if ( num_left_curves == 0 )
+  //    i--;
+  //  return i;
+  //}
   int get_halfedge_jump_count(CurveWrap *curve)
   {
     int i = 0;
     int skip = 0;
+    int counter = 0;
    
-    SubCurveIter iter = m_rightCurves.begin();
-    for(; iter!=m_rightCurves.end(); ++iter)
+    for (unsigned int j = 0 ; j < m_isCurveInArr.size() ; j++ )
     {
-      if((*iter) == NULL)
+      if ( m_isCurveInArr[j] == true ) 
+      {
         skip++;
+      }
     }
     skip--;  // now 'skip' holds the amount of the right curves of the event
 		         // that are already inserted to the planar map  - 1 (minus 1)
 
-    iter = m_rightCurves.end();
+    SubCurveIter iter = this->m_rightCurves.end();
     --iter;
-     
+    
     unsigned int num_left_curves = this->get_num_left_curves();
-    for ( ; iter != m_rightCurves.begin() ; --iter )
+    for ( ; iter != m_rightCurves.begin() ; --iter,++counter )
     {
       if(curve == (*iter))
       {
-        (*iter) = NULL; 
+        m_isCurveInArr[counter] = true;
         if (( i == 0 ) && ( num_left_curves == 0 )) 
         {
           return skip;
@@ -128,12 +178,12 @@ public:
         }
         return i;
       }
-      if ( (*iter) == NULL )
+       if(m_isCurveInArr[counter] == true)
         i++;
     }
 
     CGAL_assertion(curve == (*iter));
-    (*iter) = NULL; 
+    m_isCurveInArr[counter] = true;
     
     if ( num_left_curves == 0 )
       i--;
@@ -142,7 +192,7 @@ public:
 
  
 
-  bool is_curve_largest(CurveWrap *curve)
+  /*bool is_curve_largest(CurveWrap *curve)
   {
     for( SubCurveRevIter rev_iter = m_rightCurves.rbegin();
          rev_iter != m_rightCurves.rend() && curve != (*rev_iter) ;
@@ -152,11 +202,30 @@ public:
          return false;
     }
     return true;
+  }*/
+  bool is_curve_largest(CurveWrap *curve)
+  {
+	int counter = 0;
+    for( SubCurveRevIter rev_iter = m_rightCurves.rbegin();
+         rev_iter != m_rightCurves.rend() && curve != (*rev_iter) ;
+         ++rev_iter, ++ counter)
+    {
+      if(m_isCurveInArr[counter] == true)
+         return false;
+    }
+    return true;
+  }
+
+  BitVector& get_is_curve_in_arr()
+  {
+    return m_isCurveInArr;
   }
   
 
 protected:
   PmwxInsertInfo m_insertInfo;
+  BitVector m_isCurveInArr;
+
 };
 
 CGAL_END_NAMESPACE

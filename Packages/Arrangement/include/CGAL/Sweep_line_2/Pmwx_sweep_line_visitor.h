@@ -20,8 +20,7 @@
 #ifndef PMWX_SWEEP_LINE_VISITOR_H
 #define PMWX_SWEEP_LINE_VISITOR_H
 
-//#include <CGAL/Sweep_line_2/Pmwx_sweep_line_event.h>
-//#include <CGAL/Sweep_line_2/Pmwx_sweep_line_curve.h>
+
 #include <CGAL/Sweep_line_2/Pmwx_insert_info.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -32,11 +31,6 @@ class Pmwx_sweep_line_visitor
 protected:
 
   typedef typename Arr::Halfedge_handle                            Halfedge_handle;
-  /*typedef Pmwx_sweep_line_visitor<Traits,
-                                  Arr,
-                                  Arr_notif>                       Self;
-  typedef Pmwx_sweep_line_curve<Traits, Halfedge_handle>           Subcurve;
-  typedef Pmwx_sweep_line_event<Traits, Subcurve>                  Event;*/
   typedef Pmwx_sweep_line_visitor<Traits, 
                                   Arr,
                                   Arr_notif,
@@ -73,6 +67,7 @@ public:
   void before_handle_event(Event* event)
   {
     m_currentEvent = event;
+	event->get_is_curve_in_arr().resize(event->get_num_right_curves(),false);
   }
 
   bool after_handle_event(Event* event, StatusLineIter iter, bool flag)

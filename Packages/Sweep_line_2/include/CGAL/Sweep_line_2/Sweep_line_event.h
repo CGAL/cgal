@@ -60,10 +60,11 @@ public:
   typedef CurveWrap                                         SubCurve;
   typedef std::list<SubCurve*>                              SubcurveContainer; 
   typedef typename SubcurveContainer::iterator              SubCurveIter;
+  typedef typename SubcurveContainer::reverse_iterator      SubCurveRevIter;
 
-  typedef Status_line_curve_less_functor<Traits, SubCurve>  StatusLineCurveLess;
-  typedef std::set<SubCurve*, StatusLineCurveLess>          StatusLine;
-  typedef typename StatusLine::iterator                     StatusLineIter;
+  //typedef Status_line_curve_less_functor<Traits, SubCurve>  StatusLineCurveLess;
+  /*typedef std::set<SubCurve*, StatusLineCurveLess>          StatusLine;
+  typedef typename StatusLine::iterator                     StatusLineIter;*/
 
   typedef std::pair<bool, SubCurveIter>                     Pair;
 
@@ -199,6 +200,18 @@ public:
   SubCurveIter right_curves_end() {
     return m_rightCurves.end();
   }
+
+
+  SubCurveRevIter right_curves_rbegin()
+  {
+    return m_rightCurves.rbegin();
+  }
+
+  SubCurveRevIter right_curves_rend()
+  {
+    return m_rightCurves.rend();
+  }
+
 
   /*! Returns the number of intersecting curves that are defined
       to the right of the event point. */
