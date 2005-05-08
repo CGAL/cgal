@@ -185,7 +185,6 @@ public:
         // prev_he is valid, and the source vertex that represents the left
         // endpoint of cv is its source.
         source_v = prev_he.source();
-
       }
       else
       {
@@ -688,7 +687,9 @@ private:
     // Remove the next intersection associated with intersect_he, as we have
     // now reported it and do not want to encounter it again.
     if (found_intersect)
+    {
       _remove_next_intersection (intersect_he);
+    }
 
     return;
   }
@@ -898,7 +899,14 @@ private:
     // We are now able to insert the left subcurve of cv (which may be the
     // entire curve if we are done) between the source vertex (reprsenting
     // the left endpoint) and the vertex we have just obtained.
+    const typename Arrangement_2::Size  num_faces_before = 
+                                                         arr.number_of_faces();
+
     inserted_he = arr.insert_at_vertices (sub_cv1, source_v, curr_v);
+
+    // In case a new face is has been created, we invalidate the prev_he
+    // handle, as it may point to the wrong halfedge around curr_v.
+    next_face_valid = (num_faces_before == arr.number_of_faces());
 
     return (done);
   }

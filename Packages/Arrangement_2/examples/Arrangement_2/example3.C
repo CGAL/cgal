@@ -71,7 +71,7 @@ int main (int argc, char **argv)
   for (i = 1, seg_iter = segments.begin();
        seg_iter != segments.end(); i++, seg_iter++)
   {
-    std::cout << i << ". " << *seg_iter << std::endl;
+    //std::cout << i << ". " << *seg_iter << std::endl;
     arr_insert_x_monotone (arr, pl, *seg_iter);
   }
   timer.stop();
