@@ -197,10 +197,9 @@ public:
 
               if( this->imperatively || !ca.is_reduced() ||
                   ca.rmin >= shortest_edge_squared_length(fh) )
-                {
-                  add_constrained_edge_to_be_conformed(v1,v2);
-		  status = CONFLICT_AND_ELEMENT_SHOULD_BE_DROPPED;
-                }
+		add_constrained_edge_to_be_conformed(v1,v2);
+	      else
+		status = CONFLICT_AND_ELEMENT_SHOULD_BE_DROPPED;
             }
           }
       }; // after here edges encroached by p are in the list of edges to
