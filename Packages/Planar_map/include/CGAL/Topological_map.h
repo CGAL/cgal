@@ -1114,11 +1114,11 @@ Topological_map<Dcel>::merge_edge(Halfedge_handle e1, Halfedge_handle e2)
       f->add_hole(de1);
   }
 
-  if (ft->halfedge()==de2t) 
+  if (ft->halfedge()==de2t)
     ft->set_halfedge(de1t);
   else {
-    if (find_and_erase_hole(de2t,f))  
-      f->add_hole(de1t);
+    if (find_and_erase_hole(de2t,ft))
+      ft->add_hole(de1t);
   }
     
   //in case de2 is representative halfedge of the target vertex  
