@@ -542,7 +542,9 @@ Arrangement_2<Traits,Dcel>::split_edge (Halfedge_handle e,
   Halfedge       *he1 = e.p_he;
   Halfedge       *he2 = he1->opposite();
   const Point_2&  source = he2->vertex()->point();
-  const Point_2&  target = he1->vertex()->point();
+  CGAL_precondition_code (
+    const Point_2&  target = he1->vertex()->point();
+  );
 
   // Determine the point where we split the halfedge. We also determine which
   // curve should be associated with he1 (and he2) and which should be
@@ -550,7 +552,9 @@ Arrangement_2<Traits,Dcel>::split_edge (Halfedge_handle e,
   const Point_2&  cv1_left = traits->construct_min_vertex_2_object() (cv1);
   const Point_2&  cv1_right = traits->construct_max_vertex_2_object() (cv1);
   const Point_2&  cv2_left = traits->construct_min_vertex_2_object() (cv2);
-  const Point_2&  cv2_right = traits->construct_max_vertex_2_object() (cv2);
+  CGAL_precondition_code (
+    const Point_2&  cv2_right = traits->construct_max_vertex_2_object() (cv2);
+  );
   bool            split_at_cv1_right;
   bool            assign_cv1_to_he1;
 

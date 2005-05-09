@@ -27,7 +27,6 @@
 #include <CGAL/tags.h>
 #include <CGAL/intersections.h>
 
-#include <list>
 #include <fstream>
 
 CGAL_BEGIN_NAMESPACE
@@ -615,10 +614,9 @@ public:
     void operator() (const X_monotone_curve_2& cv, const Point_2 & p,
                      X_monotone_curve_2& c1, X_monotone_curve_2& c2) const
     {
-      Kernel                        kernel;
-
       // Make sure that p lies on the interior of the curve.
       CGAL_precondition_code (
+        Kernel                        kernel;
         typename Kernel::Compare_xy_2 compare_xy = 
                                                  kernel.compare_xy_2_object();
         Compare_y_at_x_2              compare_y_at_x;
