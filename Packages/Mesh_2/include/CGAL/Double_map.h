@@ -117,8 +117,8 @@ public :
       CGAL_assertion(is_valid());
       reverse_iterator rit = reverse_func.begin();
       direct_iterator pos = direct_func.find(rit->second);
-      assert(pos != direct_func.end());
-      assert(pos->second == rit);
+      CGAL_assertion(pos != direct_func.end());
+      CGAL_assertion(pos->second == rit);
       
       direct_func.erase(pos);
       reverse_func.erase(rit);
