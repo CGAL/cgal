@@ -1,3 +1,12 @@
+9 May 2005 Laurent Rineau
+- new (and last) optimization (for the moment) of Double_map
+- added a test for Double_map!
+- include/CGAL/Mesher_level.h splitted into:
+         include/CGAL/Mesher_level.h
+	 include/CGAL/Mesher_level_default_implementations.h
+	 include/CGAL/Mesher_level_visitors.h
+- new class Combine_mesh_visitor in include/CGAL/Mesher_level_visitors.h
+
 23 March 2005 Laurent Rineau
 - conflicts_zone_impl requirements have changed
 

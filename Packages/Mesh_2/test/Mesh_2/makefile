@@ -38,16 +38,22 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:            \
-                test_filtred_container$(EXE_EXT) 
+                test_filtred_container$(EXE_EXT) \
+                test_double_map$(EXE_EXT)
 
 test_filtred_container$(EXE_EXT): test_filtred_container$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_filtred_container test_filtred_container$(OBJ_EXT) $(LDFLAGS)
 
+test_double_map$(EXE_EXT): test_double_map$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_double_map test_double_map$(OBJ_EXT) $(LDFLAGS)
+
 clean: \
-                   test_filtred_container.clean 
+                   test_filtred_container.clean \
+                   test_double_map.clean 
 
 run: all
 	./test_filtred_container
+	./test_double_map
 
 #---------------------------------------------------------------------#
 #                    suffix rules

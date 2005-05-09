@@ -89,9 +89,10 @@ public :
   // Assignation
   bool insert(const Key& k, const Data& d)
     {
-      direct_iterator direct_hint = direct_func.find(k);
+      direct_iterator direct_hint = direct_func.lower_bound(k);
 
-      if(direct_hint != direct_func.end())
+      if(direct_hint != direct_func.end() &&
+	 direct_hint->first == k)
         return false;
       
       reverse_iterator reverse_it = reverse_func.insert(Reverse_entry(d, k));
@@ -102,7 +103,7 @@ public :
       return(true);
     }
 
-  void erase(Key& k);
+  bool erase(const Key& k);
 
   // Access
   reverse_iterator front()
@@ -163,21 +164,22 @@ public :
 
 template <class _Key, class _Data, class _Direct_order, 
   class _Reverse_order>
-void
+bool
 Double_map<_Key, _Data, _Direct_order, _Reverse_order>::
-erase(Key& k)
+erase(const Key& k)
 {
   CGAL_assertion(is_valid());
   direct_iterator pos = direct_func.find(k);
   if (pos == direct_func.end())
-    return;
+    return false;
   else
     {
-      direct_func.erase(pos);
       reverse_func.erase(pos->second);
+      direct_func.erase(pos);
     }
 
   CGAL_assertion(is_valid());
+  return true;
 }
 
 } // end namespace CGAL
