@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2004  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2003-2005  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE

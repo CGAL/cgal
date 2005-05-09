@@ -1,4 +1,4 @@
-// Copyright (c) 2004  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2004-2005  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -22,6 +22,7 @@
 
 #include <CGAL/Mesh_3/Refine_tets.h>
 #include <CGAL/Chew_4_surfaces/Chew_4_surfaces.h>
+#include <CGAL/Chew_4_surfaces/Chew_4_surfaces_visitor.h>
 
 namespace CGAL {
 
@@ -52,9 +53,15 @@ public:
                                         Tets_criteria, Oracle>, Facets_level>
                                                      Tets_level;
 
-  typedef typename Mesh_3::tets::Refine_tets_visitor<Tr,
-						     Tets_level> Tets_visitor;
-            
+  typedef typename Mesh_3::tets::Refine_facets_visitor<Tr,
+     Tets_level> Tets_facets_visitor;
+  typedef typename Chew_4_surfaces::Visitor<Tr, Facets_level>
+                 Chew_facets_visitor;
+  
+  typedef Combine_mesh_visitor<Chew_facets_visitor, Tets_facets_visitor>
+                 Facets_visitor;
+
+  typedef Null_mesh_visitor_level<Facets_visitor> Tets_visitor;
 
   typedef Complex_2_in_triangulation_3_surface_mesh<Tr> C2t3;
 
@@ -67,6 +74,8 @@ private:
   Facets_level facets;
   Tets_level tets;
 
+  Chew_facets_visitor chew_facets_visitor;
+  Tets_facets_visitor tets_facets_visitor;
   Tets_visitor tets_visitor;
 
   bool initialized;
@@ -77,7 +86,10 @@ public:
                              Tets_criteria tets_crit)
     : c2t3(t), oracle(o), 
       facets(t, c2t3, oracle, c), tets(t, tets_crit, oracle, facets),
-      tets_visitor(&tets),
+      chew_facets_visitor(&facets),
+      tets_facets_visitor(&tets),
+      tets_visitor(Facets_visitor(&chew_facets_visitor,
+				  &tets_facets_visitor)),
       initialized(false)
   {}
 
@@ -102,6 +114,14 @@ public:
       }
     
     facets.scan_triangulation();
+
+    for(typename Tr::Finite_vertices_iterator vit = 
+      tr.finite_vertices_begin();
+      vit != tr.finite_vertices_end();
+      ++vit)
+      vit->info()=true;
+    std::cerr << "Restore infos.\n";
+
     tets.scan_triangulation();
     initialized = true;
   }

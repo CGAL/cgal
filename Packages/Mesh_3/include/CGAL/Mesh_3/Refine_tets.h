@@ -47,7 +47,6 @@ class Refine_tets_base :
 {
 protected:
   typedef typename Tr::Point Point;
-  typedef typename Tr::Point Point;
   typedef typename Tr::Edge Edge;
   typedef typename Tr::Vertex_handle Vertex_handle;
   typedef typename Tr::Cell_handle Cell_handle;
@@ -196,13 +195,13 @@ public:
     return zone;
   }
 
-  void before_insertion_impl(const Cell_handle& c, const Point& ,
+  void before_insertion_impl(const Cell_handle&, const Point& ,
 			     Zone& zone)
   {
-    remove_star_from_bad_cells(c, zone); // FIXME: name
+    remove_star_from_cells_queue(zone); // FIXME: name
   }
 
-  void remove_star_from_bad_cells(const Cell_handle&, Zone& zone)
+  void remove_star_from_cells_queue(Zone& zone)
   {
     for(typename Zone::Cells_iterator cit = zone.cells.begin();
 	cit != zone.cells.end();
@@ -266,6 +265,8 @@ private:
       typedef typename Traits::Zone Zone;
       typedef typename Traits::Point Point;
 
+      typedef Null_mesh_visitor Previous_visitor;
+
       Refine_facets_visitor(Refine_tets* refine_tets_)
         : refine_tets(refine_tets_) {}
 
@@ -276,7 +277,7 @@ private:
                             const Point&,
                             Zone& zone) 
       {
-        refine_tets->remove_star_from_bad_cells(Cell_handle(), zone); // FIXME: BEURK
+        refine_tets->remove_star_from_cells_queue(zone);
       }
 
       void after_insertion(const Vertex_handle& v)
@@ -293,48 +294,8 @@ private:
       }
       
     }; // end Refine_facets_visitor
-
-    template <class Tr, typename Refine_tets>
-    class Refine_tets_visitor {
-    public:
-      typedef typename Tr::Cell_handle Cell_handle;
-      typedef typename Tr::Vertex_handle Vertex_handle;
-      typedef typename Tr::Facet Facet;
-      typedef typename Tr::Cell_iterator Cell_iterator;
-      typedef ::CGAL::Triangulation_mesher_level_traits_3<Tr> Traits;
-      typedef typename Traits::Zone Zone;
-      typedef typename Traits::Point Point;
-
-      typedef Refine_facets_visitor<Tr, Refine_tets> Previous_visitor;
-
-
-    private:
-      Previous_visitor previous;
-
-    public:
-      Refine_tets_visitor(Refine_tets* refine_tets_)
-        : previous(refine_tets_) {}
-
-      template <typename E, typename P>
-      void before_conflicts(E, P) const {}
-
-      template <typename E, typename P, typename Z>
-      void before_insertion(E, P, Z) const {}
-
-      template <typename V>
-      void after_insertion(V) const {}
-
-     template <typename E, typename P, typename Z>
-      void after_no_insertion(E, P, Z) const {}
-
-      Previous_visitor& previous_level()
-      {
-        return previous;
-      }
-    }; // end Refine_tets_visitor
-
   }; // end namespace Mesh_3::tets
-  
+
 template <typename Tr,
           typename Criteria,
           typename Oracle,
@@ -371,13 +332,13 @@ void before_insertion_impl(const typename Base::Cell_handle& c,
 			   const typename Base::Point& p,
 			   typename Base::Zone& zone)
 {
-  f_level.before_insertion_impl(typename Tr::Facet (), p, zone);
+  //  f_level.before_insertion_impl(typename Tr::Facet (), p, zone);
   Base::before_insertion_impl(c, p, zone);
 }
 
 void after_insertion_impl(const typename Base::Vertex_handle& v)
 {
-  f_level.restore_restricted_Delaunay(v);
+  //  f_level.restore_restricted_Delaunay(v);
   Base::after_insertion_impl(v);
 }
 

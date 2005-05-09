@@ -462,10 +462,10 @@ public: // methods
 //  		  std::cerr << "[3-2]";
 	      }
           }
-
-// 	std::cerr << "n(" << number_of_erased_facets << ")";
-          CGAL_assertion( number_of_erased_facets > 0 );
-          CGAL_assertion( number_of_erased_facets < 4 );
+	
+	// 	std::cerr << "n(" << number_of_erased_facets << ")";
+	CGAL_assertion( number_of_erased_facets > 0 );
+	CGAL_assertion( number_of_erased_facets < 3 );
 
 	double min_of_pre_star = 
 	  *(std::min_element(make_transform_iterator(pre_star.begin(),

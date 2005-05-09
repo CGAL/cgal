@@ -1,4 +1,5 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Complex_2_in_triangulation_vertex_base_3.h>
 #include <CGAL/Complex_2_in_triangulation_surface_mesh_cell_base_3.h>
 #include <CGAL/Mesh_3/Complex_2_in_triangulation_cell_base_3.h>
 #include <CGAL/Regular_triangulation_3.h>
@@ -37,7 +38,8 @@
 
 struct K : public CGAL::Exact_predicates_inexact_constructions_kernel {};
 typedef CGAL::Regular_triangulation_euclidean_traits_3<K> Regular_traits;
-typedef CGAL::Triangulation_vertex_base_with_info_3<bool, Regular_traits> Vb;
+typedef CGAL::Triangulation_vertex_base_with_info_3<bool, Regular_traits> Vb1;
+typedef CGAL::Complex_2_in_triangulation_vertex_base_3<Regular_traits, Vb1> Vb;
 typedef CGAL::Regular_triangulation_cell_base_3<Regular_traits> Cb1;
 typedef CGAL::Complex_2_in_triangulation_cell_base_3<Regular_traits, Cb1> Cb2;
 typedef CGAL::Complex_2_in_triangulation_surface_mesh_cell_base_3<Regular_traits, Cb2> Cb3;
