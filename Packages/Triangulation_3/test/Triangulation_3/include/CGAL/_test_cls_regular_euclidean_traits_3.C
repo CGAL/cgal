@@ -222,13 +222,16 @@ _test_cls_regular_euclidean_traits_3 (const Traits & )
               weighted_circumcenter(wq11,wq21,wq31,wq41),
 	      squared_radius_smallest_orthogonal_sphere(wq11,wq21,wq31,wq41));
   Weighted_point wt(Bare_point(1.,1.,1.), 0.);
+  // this test requires a weighted point with a zero weight 
   assert( power_product(wc,wt) == 
 	  critical_squared_radius(wq11,wq21,wq31,wq41,wt));
+
   wc = Weighted_point(
            weighted_circumcenter(wp0,wp1,wp2,wp3),
 	   squared_radius_smallest_orthogonal_sphere(wp0,wp1,wp2,wp3));
   assert( power_product(wc,wt) == 
 	  critical_squared_radius(wp0,wp1,wp2,wp3,wt));
+
   wc = Weighted_point(
            weighted_circumcenter(wp01,wp1,wp2,wp3),
 	   squared_radius_smallest_orthogonal_sphere(wp01,wp1,wp2,wp3));
