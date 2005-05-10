@@ -21,6 +21,8 @@
 #ifndef CGAL_TRIANGULATION_UTILS_2_H
 #define CGAL_TRIANGULATION_UTILS_2_H
 
+#include <CGAL/triangulation_assertions.h>
+
 CGAL_BEGIN_NAMESPACE 
 template < class T = void >
 struct Triangulation_cw_ccw_static_2 {
