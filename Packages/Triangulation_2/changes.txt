@@ -1,3 +1,10 @@
+10 May 2005 Menelaos Karavelas
+- added a necessary #include in Triangulation_utils_2 (needed for defining
+  CGAL_triangulation_precondition)
+- added missing template parameter of Triangulation_data_structure_2
+  when defining default value of template parameter Tds in
+  Delaunay_triangulation_2
+
 22 February Andreas Fabri
 - Removed derivation of vertex and face class in TDS
 
