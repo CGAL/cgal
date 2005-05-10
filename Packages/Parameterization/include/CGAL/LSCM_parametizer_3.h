@@ -201,7 +201,7 @@ private:
 // 3) Construct the LSCM equation with OpenNL
 // 4) Solve the equation with OpenNL
 // 5) Copy OpenNL solution to the u,v coordinates
-template <class Adaptor, class Border_param, class Sparse_LA>
+template<class Adaptor, class Border_param, class Sparse_LA>
 inline
 typename Parametizer_3<Adaptor>::ErrorCode
 LSCM_parametizer_3<Adaptor, Border_param, Sparse_LA>::
@@ -285,7 +285,7 @@ parameterize(Adaptor* mesh)
 // Check parameterize() preconditions:
 // * 'mesh' must be a surface with 1 connected component and no hole
 // * 'mesh' must be a triangular mesh
-template <class Adaptor, class Border_param, class Sparse_LA>
+template<class Adaptor, class Border_param, class Sparse_LA>
 inline
 typename Parametizer_3<Adaptor>::ErrorCode
 LSCM_parametizer_3<Adaptor, Border_param, Sparse_LA>::
@@ -329,7 +329,7 @@ check_parameterize_preconditions(const Adaptor& mesh)
 // * vertices must be indexed
 // * X and B must be allocated and empty
 // * (at least 2) border vertices must be parameterized
-template <class Adaptor, class Border_param, class Sparse_LA>
+template<class Adaptor, class Border_param, class Sparse_LA>
 inline
 void LSCM_parametizer_3<Adaptor, Border_param, Sparse_LA>::
 initialize_system_from_mesh_border(LeastSquaresSolver* solver,
@@ -365,7 +365,7 @@ initialize_system_from_mesh_border(LeastSquaresSolver* solver,
 // Utility for setup_triangle_relations():
 // Computes the coordinates of the vertices of a triangle
 // in a local 2D orthonormal basis of the triangle's plane.
-template <class Adaptor, class Border_param, class Sparse_LA>
+template<class Adaptor, class Border_param, class Sparse_LA>
 inline
 void
 LSCM_parametizer_3<Adaptor, Border_param, Sparse_LA>::
@@ -410,7 +410,7 @@ project_triangle(const Point_3& p0, const Point_3& p1, const Point_3& p2,
 //       Zk = xk + i.yk is the complex number corresponding to local (x,y) coords
 // cool: no divide with this expression; makes it more numerically stable
 // in presence of degenerate triangles
-template <class Adaptor, class Border_param, class Sparse_LA>
+template<class Adaptor, class Border_param, class Sparse_LA>
 inline
 typename Parametizer_3<Adaptor>::ErrorCode
 LSCM_parametizer_3<Adaptor, Border_param, Sparse_LA>::
@@ -501,7 +501,7 @@ setup_triangle_relations(LeastSquaresSolver* solver,
 }
 
 // Copy X coordinates into the (u,v) pair of each vertex
-template <class Adaptor, class Border_param, class Sparse_LA>
+template<class Adaptor, class Border_param, class Sparse_LA>
 inline
 void LSCM_parametizer_3<Adaptor, Border_param, Sparse_LA>::
 set_mesh_uv_from_system(Adaptor* mesh,
@@ -529,7 +529,7 @@ set_mesh_uv_from_system(Adaptor* mesh,
 // * "A*X = B" system is solvable (in the least squares sense)
 //   with a good conditioning
 // * 3D -> 2D mapping is 1 to 1
-template <class Adaptor, class Border_param, class Sparse_LA>
+template<class Adaptor, class Border_param, class Sparse_LA>
 inline
 typename Parametizer_3<Adaptor>::ErrorCode
 LSCM_parametizer_3<Adaptor, Border_param, Sparse_LA>::
@@ -565,7 +565,7 @@ check_parameterize_postconditions(const Adaptor& mesh,
 
 // Check if 3D -> 2D mapping is 1 to 1
 // The default implementation checks each normal
-template <class Adaptor, class Border_param, class Sparse_LA>
+template<class Adaptor, class Border_param, class Sparse_LA>
 inline
 bool LSCM_parametizer_3<Adaptor, Border_param, Sparse_LA>::
 is_one_to_one_mapping(const Adaptor& mesh,

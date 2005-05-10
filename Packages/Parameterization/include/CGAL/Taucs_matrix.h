@@ -36,7 +36,7 @@ CGAL_BEGIN_NAMESPACE
 
 
 // Forward declaration
-template <class T> struct Taucs_number;
+template<class T> struct Taucs_number;
 
 
 // Class Taucs_matrix
@@ -45,7 +45,7 @@ template <class T> struct Taucs_number;
 //
 // TODO: reallocate the array of non null elements when it's full
 
-template <class T>      // Tested with T = taucs_single or taucs_double
+template<class T>       // Tested with T = taucs_single or taucs_double
                         // May also work with T = taucs_dcomplex and taucs_scomplex
 class Taucs_matrix
 {
@@ -336,7 +336,7 @@ private:
 // (type taucs_ccs_matrix) 
 // It is also a model of the SparseLinearAlgebraTraits_d::Matrix concept
 
-template <class T>      // Tested with T = taucs_single or taucs_double
+template<class T>       // Tested with T = taucs_single or taucs_double
                         // May also work with T = taucs_dcomplex and taucs_scomplex
 class Taucs_symmetric_matrix
     : public Taucs_matrix<T>
@@ -370,7 +370,7 @@ public:
 
 // Utility class to Taucs_matrix
 // Convert matrix's T type to the corresponding TAUCS constant (called TAUCS_FLAG)
-template <class T> struct Taucs_number {};
+template<class T> struct Taucs_number {};
 template<> struct Taucs_number<taucs_double> { 
     enum { TAUCS_FLAG = TAUCS_DOUBLE }; 
 };

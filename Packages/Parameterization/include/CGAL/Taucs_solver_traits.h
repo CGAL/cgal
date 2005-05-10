@@ -40,7 +40,7 @@ CGAL_BEGIN_NAMESPACE
 //
 // Taucs_symmetric_solver_traits is a model of the SparseLinearAlgebraTraits_d concept
 
-template <class T>      // Tested with T = taucs_single or taucs_double
+template<class T>       // Tested with T = taucs_single or taucs_double
                         // May also work with T = taucs_dcomplex and taucs_scomplex
 class Taucs_symmetric_solver_traits
 {
@@ -123,7 +123,7 @@ private:
 //
 // Taucs_solver_traits is a model of the SparseLinearAlgebraTraits_d concept
 
-template <class T>      // Tested with T = taucs_single or taucs_double
+template<class T>       // Tested with T = taucs_single or taucs_double
                         // May also work with T = taucs_dcomplex and taucs_scomplex
 class Taucs_solver_traits
 {

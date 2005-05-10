@@ -43,7 +43,7 @@ typedef My_kernel::Segment_2 Segment_2;
 // compute facet center
 struct Facet_center
 {
-    template <class Facet>
+    template<class Facet>
     void operator()(Facet& f)
     {
         Vector vec(0.0,0.0,0.0);
@@ -60,7 +60,7 @@ struct Facet_center
     }
 };
 
-template <class Refs, class T>
+template<class Refs, class T>
 class My_facet : public CGAL::HalfedgeDS_face_base<Refs, T>
 {
     // facet data
@@ -93,7 +93,7 @@ public:
     }
 };
 
-template <class Refs, class Tprev, class Tvertex, class Tface>
+template<class Refs, class Tprev, class Tvertex, class Tface>
 class My_halfedge
     : public CGAL::HalfedgeDS_halfedge_base<Refs,Tprev,Tvertex,Tface>
 {
@@ -154,7 +154,7 @@ public:
 
 
 // A redefined vertex class for the Polyhedron_3
-template <class Refs, class T, class P>
+template<class Refs, class T, class P>
 class My_vertex : public CGAL::HalfedgeDS_vertex_base<Refs, T, P>
 {
     // index
@@ -190,7 +190,7 @@ class My_vertex : public CGAL::HalfedgeDS_vertex_base<Refs, T, P>
 struct My_items : public CGAL::Polyhedron_items_3
 {
     // wrap vertex
-    template <class Refs, class Traits>
+    template<class Refs, class Traits>
     struct Vertex_wrapper
     {
         typedef typename Traits::Point_3  Point;
@@ -200,7 +200,7 @@ struct My_items : public CGAL::Polyhedron_items_3
     };
 
     // wrap facet
-    template <class Refs, class Traits>
+    template<class Refs, class Traits>
     struct Face_wrapper
     {
         typedef My_facet<Refs,
@@ -208,7 +208,7 @@ struct My_items : public CGAL::Polyhedron_items_3
     };
 
     // wrap halfedge
-    template <class Refs, class Traits>
+    template<class Refs, class Traits>
     struct Halfedge_wrapper
     {
         typedef My_halfedge<Refs,

@@ -30,7 +30,7 @@ CGAL_BEGIN_NAMESPACE
 // This class is a C++ wrapper around TAUCS' vector type, which is a simple array. 
 // It is also a model of the SparseLinearAlgebraTraits_d::Vector concept
 
-template <class T>      // Tested with T = taucs_single or taucs_double
+template<class T>       // Tested with T = taucs_single or taucs_double
                         // May also work with T = taucs_dcomplex and taucs_scomplex
 class Taucs_vector
 {

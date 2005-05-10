@@ -24,9 +24,9 @@
 
 // Utility class for Mesh_adaptor_polyhedron_ex
 // This class adds a conversion to handle/const handle to an iterator class
-template <class Iter,           // base iterator
-          class ConstHandle,    // const-handle type to convert to
-          class Handle = void*> // non-const-handle type to convert to
+template<class Iter,            // base iterator
+         class ConstHandle,     // const-handle type to convert to
+         class Handle = void*>  // non-const-handle type to convert to
                                 // (void* <=> none)
 class Convertible_iterator : public Iter
 {

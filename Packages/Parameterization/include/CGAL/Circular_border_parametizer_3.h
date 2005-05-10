@@ -43,7 +43,7 @@ CGAL_BEGIN_NAMESPACE
 // MeshAdaptor_3 class. They don't know the parameterization algorithm
 // requirements nor the kind of sparse linear system used.
 
-template <class MeshAdaptor_3>          // 3D surface
+template<class MeshAdaptor_3>           // 3D surface
 class Circular_border_parametizer_3
 {
 // Public types
@@ -106,7 +106,7 @@ private:
 //
 
 // compute  total length of boundary
-template <class Adaptor>
+template<class Adaptor>
 inline
 double Circular_border_parametizer_3<Adaptor>::compute_boundary_length(
                                                         const Adaptor& mesh)
@@ -135,7 +135,7 @@ double Circular_border_parametizer_3<Adaptor>::compute_boundary_length(
 // Assign to mesh's border vertices a 2D position (ie a (u,v) pair)
 // on border's shape. Mark them as "parameterized".
 // Return false on error
-template <class Adaptor>
+template<class Adaptor>
 inline
 bool Circular_border_parametizer_3<Adaptor>::parameterize_border (
                                                         Adaptor* mesh)

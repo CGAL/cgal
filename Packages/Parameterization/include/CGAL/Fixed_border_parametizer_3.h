@@ -210,7 +210,7 @@ private:
 // * 'mesh' must be a surface with 1 connected component and no hole
 // * 'mesh' must be a triangular mesh
 // * the mesh border must be mapped onto a convex polygon
-template <class Adaptor, class Border_param, class Sparse_LA>
+template<class Adaptor, class Border_param, class Sparse_LA>
 inline
 typename Parametizer_3<Adaptor>::ErrorCode
 Fixed_border_parametizer_3<Adaptor, Border_param, Sparse_LA>::
@@ -310,7 +310,7 @@ parameterize(Adaptor* mesh)
 // * 'mesh' must be a surface with 1 connected component and no hole
 // * 'mesh' must be a triangular mesh
 // * the mesh border must be mapped onto a convex polygon
-template <class Adaptor, class Border_param, class Sparse_LA>
+template<class Adaptor, class Border_param, class Sparse_LA>
 inline
 typename Parametizer_3<Adaptor>::ErrorCode
 Fixed_border_parametizer_3<Adaptor, Border_param, Sparse_LA>::
@@ -362,7 +362,7 @@ check_parameterize_preconditions(const Adaptor& mesh)
 // * vertices must be indexed
 // * A, Bu and Bv must be allocated
 // * border vertices must be parameterized
-template <class Adaptor, class Border_param, class Sparse_LA>
+template<class Adaptor, class Border_param, class Sparse_LA>
 inline
 void Fixed_border_parametizer_3<Adaptor, Border_param, Sparse_LA>::
 initialize_system_from_mesh_border (Matrix* A, Vector* Bu, Vector* Bv, 
@@ -399,7 +399,7 @@ initialize_system_from_mesh_border (Matrix* A, Vector* Bu, Vector* Bv,
 // * vertices must be indexed
 // * vertex i musn't be already parameterized
 // * line i of A must contain only zeros
-template <class Adaptor, class Border_param, class Sparse_LA>
+template<class Adaptor, class Border_param, class Sparse_LA>
 inline
 typename Parametizer_3<Adaptor>::ErrorCode
 Fixed_border_parametizer_3<Adaptor, Border_param, Sparse_LA>::
@@ -440,7 +440,7 @@ setup_inner_vertex_relations(Matrix* A,
 }
 
 // Copy Xu and Xv coordinates into the (u,v) pair of each surface vertex
-template <class Adaptor, class Border_param, class Sparse_LA>
+template<class Adaptor, class Border_param, class Sparse_LA>
 inline
 void Fixed_border_parametizer_3<Adaptor, Border_param, Sparse_LA>::
 set_mesh_uv_from_system(Adaptor* mesh, 
@@ -465,7 +465,7 @@ set_mesh_uv_from_system(Adaptor* mesh,
 // Check parameterize() postconditions:
 // * "A*Xu = Bu" and "A*Xv = Bv" systems are solvable with a good conditioning
 // * 3D -> 2D mapping is 1 to 1
-template <class Adaptor, class Border_param, class Sparse_LA>
+template<class Adaptor, class Border_param, class Sparse_LA>
 inline
 typename Parametizer_3<Adaptor>::ErrorCode
 Fixed_border_parametizer_3<Adaptor, Border_param, Sparse_LA>::
@@ -500,7 +500,7 @@ check_parameterize_postconditions(const Adaptor& mesh,
 
 // Check if 3D -> 2D mapping is 1 to 1
 // The default implementation checks each normal
-template <class Adaptor, class Border_param, class Sparse_LA>
+template<class Adaptor, class Border_param, class Sparse_LA>
 inline
 bool Fixed_border_parametizer_3<Adaptor, Border_param, Sparse_LA>::
 is_one_to_one_mapping(const Adaptor& mesh,

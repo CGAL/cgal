@@ -47,7 +47,7 @@ CGAL_BEGIN_NAMESPACE
 // MeshAdaptor_3 class. They don't know the parameterization algorithm
 // requirements nor the kind of sparse linear system used.
 
-template <class MeshAdaptor_3>          // 3D surface
+template<class MeshAdaptor_3>           // 3D surface
 class Two_vertices_parametizer_3
 {
 // Public types
@@ -106,7 +106,7 @@ public:
 
 // Map 2 extreme vertices of the 3D mesh and mark them as "parameterized"
 // Return false on error
-template <class Adaptor>
+template<class Adaptor>
 inline bool
 Two_vertices_parametizer_3<Adaptor>::parameterize_border(Adaptor* mesh)
 {

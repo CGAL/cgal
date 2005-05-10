@@ -28,7 +28,7 @@ CGAL_BEGIN_NAMESPACE
 
 // Class Parametizer_3
 // Base class of parameterization objects for a MeshAdaptor_3 model
-template <class MeshAdaptor_3>      // 3D surface
+template<class MeshAdaptor_3>       // 3D surface
 class Parametizer_3
 {
 // Public types

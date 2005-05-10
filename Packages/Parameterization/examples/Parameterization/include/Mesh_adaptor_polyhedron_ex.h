@@ -82,7 +82,7 @@ private:
     struct                                  Project_halfedge_handle_vertex;
     struct                                  All_facets_filter;
     struct                                  All_vertices_filter;
-    template <class It, class Ctg> class    Adaptor_vertex_around_vertex_circulator;
+    template<class It, class Ctg> class    Adaptor_vertex_around_vertex_circulator;
     // Halfedge
     typedef Polyhedron_ex::Halfedge         Halfedge;
     typedef Polyhedron_ex::Halfedge_handle  Halfedge_handle;
@@ -208,7 +208,7 @@ public:
     // Create an adaptator for an existing Polyhedron_ex mesh
     // The input mesh can be of any genus, but it has to come
     // with a description of the boundary of a topological disc
-    template <class InputIterator>
+    template<class InputIterator>
     Mesh_adaptor_polyhedron_ex(Polyhedron_ex* mesh,
                                InputIterator first_boundary_halfedge,
                                InputIterator last_boundary_halfedge)
@@ -507,7 +507,7 @@ private:
     // Initialize an adaptator for an existing Polyhedron_ex mesh
     // The input mesh can be of any genus, but it has to come
     // with a description of the boundary of a topological disc
-    template <class InputIterator>
+    template<class InputIterator>
     void init(Polyhedron_ex* mesh,
               InputIterator first_boundary_halfedge,
               InputIterator last_boundary_halfedge)
@@ -920,8 +920,8 @@ private:
 
     // Circulator over the vertices incident to a vertex (clockwise)
     // Utility class to generate the Vertex_around_vertex_circulator type
-    template <class It,     // Mesh_adaptor_polyhedron_ex::Vertex_[const_]handle
-            class Ctg>      // Iterator category
+    template<class It,      // Mesh_adaptor_polyhedron_ex::Vertex_[const_]handle
+             class Ctg>     // Iterator category
     class Adaptor_vertex_around_vertex_circulator : public It
     {
     public:
@@ -977,7 +977,7 @@ private:
         }
 
         // Copy constructor
-        template <class It2, class Ctg2>
+        template<class It2, class Ctg2>
         Adaptor_vertex_around_vertex_circulator(
                     const Adaptor_vertex_around_vertex_circulator<It2,Ctg2> &c)
             : It((const It2&)(c)),
