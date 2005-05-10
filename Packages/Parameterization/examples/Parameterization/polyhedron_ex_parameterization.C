@@ -25,6 +25,7 @@
 //----------------------------------------------------------
 // conformal parameterization
 // circle boundary
+// OpenNL solver
 // output is a ps map
 // input file is mesh.off (the latter must be at the very end)
 //----------------------------------------------------------
@@ -33,22 +34,25 @@
 //----------------------------------------------------------
 // floater parameterization
 // square boundary
+// TAUCS solver
 // output is a ps map
 // input file is mesh.off
 //----------------------------------------------------------
-// polyhedron_ex_parameterization -t floater -b square -o eps mesh.off mesh.eps
+// polyhedron_ex_parameterization -t floater -b square -s taucs -o eps mesh.off mesh.eps
 
 //----------------------------------------------------------
 // natural parameterization
 // no explicitly pinned vertices
+// OpenNL solver
 // output is a ps map
 // input file is mesh.off
 //----------------------------------------------------------
-// polyhedron_ex_parameterization -t natural -o eps mesh.off mesh.eps
+// polyhedron_ex_parameterization -t natural -s opennl -o eps mesh.off mesh.eps
 
 //----------------------------------------------------------
 // LSCM parameterization
-// no explicitly pinned vertices
+// 2 pinned vertices (automatically picked)
+// OpenNL solver
 // output is a .obj
 // input file is mesh.off
 //----------------------------------------------------------
@@ -102,13 +106,12 @@ typedef Feature_backbone<Polyhedron_ex::Vertex_handle,
 static const Backbone* cut_mesh(Polyhedron_ex* mesh)
 {
     // init
+    mesh->compute_facet_centers();
     Backbone *pSeamingBackbone = mesh->get_seaming_backbone();
     mesh->free_skeleton();
     pSeamingBackbone->clear();
-    //mesh->flag_halfedges_seaming(false);
 
     Mesh_cutter cutter(mesh);
-    // cutter.keep_one_connected_component();
     Mesh_feature_extractor feature_extractor(mesh);
 
     // compute genus
@@ -125,7 +128,6 @@ static const Backbone* cut_mesh(Polyhedron_ex* mesh)
             // must have one boundary, pick the first_file_arg
             Backbone *pBackbone = (*mesh->get_skeleton()->backbones())[0];
             pSeamingBackbone->copy_from(pBackbone);
-            //cutter.convert_to_seaming(pSeamingBackbone);
 
             // cleanup this one (has to be done later if has corners)
             mesh->free_skeleton();
@@ -139,7 +141,7 @@ static const Backbone* cut_mesh(Polyhedron_ex* mesh)
 
 
 // ----------------------------------------------------------------------------
-// main
+// Usage
 // ----------------------------------------------------------------------------
 
 // Parameters description for Options library
@@ -164,6 +166,10 @@ static const char *  optv[] =
     // -b circle        -> map mesh boundary onto a circle
     //    square        -> map mesh boundary onto a square
 
+    "s:solver <string>", // -s or --solver
+    // -s opennl        -> OpenNL solver (GPL)
+    //    taucs         -> TAUCS solver
+
     "o:output <string>", // -o or --output
     // -o eps   -> eps map       (-o eps file.off > file.eps)
     //    obj   -> Wavefront obj (-o obj file.off > file.obj)
@@ -175,20 +181,23 @@ static const char *  optv[] =
 static const char * usage = "off-input-file [output-file]\n\
 where type is:     conformal, natural, floater, uniform, authalic or lscm\n\
       boundary is: circle or square\n\
+      solver is:   opennl or taucs\n\
       output is:   eps or obj";
 
-// Border parameterization methods
-enum boundary_type {BOUNDARY_CIRCLE, BOUNDARY_SQUARE};
+
+// ----------------------------------------------------------------------------
+// main()
+// ----------------------------------------------------------------------------
 
 int main(int argc,char * argv[])
 {
     std::cerr << "\nPARAMETERIZATION" << std::endl;
 
     // options
-    const char *type = "conformal";  // default: conformal param
-    const char *boundary = "circle"; // default: circle boundary
-    boundary_type boundary_type = BOUNDARY_CIRCLE;
-    const char *output = "";         // default:  output nothing
+    const char *type = "conformal";     // default: conformal param
+    const char *boundary = "circle";    // default: circle boundary
+    const char *solver = "opennl";      // default: OpenNL solver
+    const char *output = "";            // default:  output nothing
 
     // misc
     char  optchar;
@@ -218,12 +227,13 @@ int main(int argc,char * argv[])
         case 'b' :
             boundary = optarg;
             std::cerr << "  " << boundary << " boundary" << std::endl;
-            if(strcmp(boundary,"circle") == 0)
-            boundary_type = BOUNDARY_CIRCLE;
-            else
-            boundary_type = BOUNDARY_SQUARE;
             break;
 
+        // solver
+        case 's' :
+            solver = optarg;
+            std::cerr << "  " << solver << " solver" << std::endl;
+            break;
 
         // help
         case '?' :
@@ -284,11 +294,6 @@ int main(int argc,char * argv[])
     fprintf(stderr,"(%d facets, ",mesh.size_of_facets());
     fprintf(stderr,"%d vertices)\n",mesh.size_of_vertices());
 
-    // compute misc.
-    //mesh.compute_normals();
-    mesh.compute_facet_centers();
-    //mesh.compute_mean_curvature_normal();
-
     //***************************************
     // switch parameterization
     //***************************************
@@ -304,14 +309,15 @@ int main(int argc,char * argv[])
                                             seam->halfedges()->end());
 
     // Switch parameterization. Defaults are:
-    // - floater mean value coordinates
+    // - Floater mean value coordinates parameterization
     // - fixing border on a circle (for fixed parameterization)
     // - OpenNL sparse linear solver
     CGAL::Parametizer_3<Mesh_adaptor_polyhedron_ex>::ErrorCode err;
     if ( (strcmp(type,"floater") == 0) && (strcmp(boundary,"circle") == 0) )
     {
         // Floater/circle is the default parameterization algorithm
-        err = CGAL::parameterize(&mesh_adaptor);
+        //err = CGAL::parameterize(&mesh_adaptor);
+        err = CGAL::parameterize2<CGAL::Mean_value_coordinates_parametizer_3>(&mesh_adaptor);
     }
     else if ( (strcmp(type,"floater") == 0) && (strcmp(boundary,"square") == 0) )
     {
