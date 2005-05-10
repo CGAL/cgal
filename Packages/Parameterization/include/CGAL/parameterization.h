@@ -67,18 +67,8 @@ parameterize(MeshAdaptor_3* mesh)   // 3D mesh, model of MeshAdaptor_3 concept
 template <class MeshAdaptor_3, class Parametizer_3_>
 typename Parametizer_3<MeshAdaptor_3>::ErrorCode
 parameterize(MeshAdaptor_3* mesh,       // 3D mesh, model of MeshAdaptor_3 concept
-             Parametizer_3_ parametizer = Parametizer_3_())
-                                        // Parameterization class for MeshAdaptor_3 mesh
+             Parametizer_3_ parametizer)// Parameterization class for MeshAdaptor_3 mesh
 {
-    return parametizer.parameterize(mesh);
-}
-
-
-template <class Parametizer_3_, class MeshAdaptor_3>
-typename Parametizer_3<MeshAdaptor_3>::ErrorCode
-parameterize2(MeshAdaptor_3* mesh)       
-{
-    Parametizer_3_<MeshAdaptor_3> parametizer;
     return parametizer.parameterize(mesh);
 }
 
