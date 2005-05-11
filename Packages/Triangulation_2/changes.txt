@@ -1,3 +1,6 @@
+11 May 2005 Menelaos Karavelas
+- undo last change in Delaunay_triangulation_2
+
 10 May 2005 Menelaos Karavelas
 - added a necessary #include in Triangulation_utils_2 (needed for defining
   CGAL_triangulation_precondition)
