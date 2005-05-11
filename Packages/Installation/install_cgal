@@ -3931,7 +3931,7 @@ _set_support()
 		4.0*) CGAL_SUPPORT_COMPILER='y';;
 	    esac
 	    ;;
-	*Intel*)
+	*Intel*|*ICC*)
 	    case `compiler_version` in
 		[78]*) CGAL_SUPPORT_COMPILER='y';;
 	    esac

@@ -1,3 +1,6 @@
+11 May 2005 Sylvain Pion
+- Re-fix Intel compiler recognition.
+
 19 April 2005 Sylvain Pion
 - Fix Intel compiler recognition.
 - Update G++ supported versions check.
