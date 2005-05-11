@@ -1,3 +1,8 @@
+11 May 2005 Sylvain Pion
+- Remove orientation(2 Vector_2) (now in kernel proper).
+
+========================== CGAL 3.1 =================================
+
 5 June 2004 Sylvain Pion
 - Remove warning.
 

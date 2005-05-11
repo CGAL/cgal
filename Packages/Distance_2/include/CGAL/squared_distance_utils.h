@@ -202,19 +202,6 @@ inline bool is_obtuse_angle(const typename K::Point_2 &p,
     return RT(wdot(p, q, r, k)) < RT(0) ;
 }
 
-
-template <class K>
-Orientation orientation(const typename K::Vector_2 &u,
-			const typename K::Vector_2 &v,
-			const K& k)
-{
-    typedef typename K::RT RT;
-    RT wcr = wcross(u,v, k);
-    return (wcr > RT(0)) ? COUNTERCLOCKWISE :
-           (wcr < RT(0)) ? CLOCKWISE
-                            : COLLINEAR;
-}
-
 template <class K>
 inline bool counterclockwise(const typename K::Vector_2 &u,
 			     const typename K::Vector_2 &v,
