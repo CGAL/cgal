@@ -1,3 +1,6 @@
+11 May 2005 Sylvain Pion
+- Add using Base::operator(); in static filters.
+
 1 May 2005 Sylvain Pion
 - Lazy_exact_nt : optimize operator<(), operator==() and compare() in case
   of identical variables.

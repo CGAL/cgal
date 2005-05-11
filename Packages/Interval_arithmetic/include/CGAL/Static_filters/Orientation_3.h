@@ -38,6 +38,8 @@ class SF_Orientation_3
 
 public:
 
+  using Base::operator();
+
   Orientation operator()(const Point_3 &p, const Point_3 &q,
                          const Point_3 &r, const Point_3 &s) const
   {
