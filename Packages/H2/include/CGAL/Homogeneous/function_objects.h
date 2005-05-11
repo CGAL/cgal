@@ -2880,7 +2880,8 @@ namespace HomogeneousKernelFunctors {
   template <typename K>
   class Orientation_2
   {
-    typedef typename K::Point_2 Point_2;
+    typedef typename K::Point_2   Point_2;
+    typedef typename K::Vector_2  Vector_2;
   public:
     typedef Orientation      result_type;
     typedef Arity_tag< 3 >   Arity;
@@ -2910,12 +2911,20 @@ namespace HomogeneousKernelFunctors {
 
       return static_cast<Orientation>((int) CGAL_NTS compare(A*D, B*C));
     }
+
+    Orientation
+    operator()(const Vector_2& u, const Vector_2& v) const
+    { 
+      return Orientation (sign_of_determinant2x2(u.hx(), u.hy(),
+                                                 v.hx(), v.hy()));
+    }
   };
 
   template <typename K>
   class Orientation_3
   {
-    typedef typename K::Point_3 Point_3;
+    typedef typename K::Point_3   Point_3;
+    typedef typename K::Vector_3  Vector_3;
   public:
     typedef Orientation      result_type;
     typedef Arity_tag< 4 >   Arity;
@@ -2930,6 +2939,15 @@ namespace HomogeneousKernelFunctors {
 				r.hx(), r.hy(), r.hz(), r.hw(),
 				q.hx(), q.hy(), q.hz(), q.hw(),
 				s.hx(), s.hy(), s.hz(), s.hw());
+    }
+
+    Orientation
+    operator()( const Vector_3& u, const Vector_3& v, const Vector_3& w) const
+    { 
+      return (Orientation) 
+	sign_of_determinant3x3( u.hx(), u.hy(), u.hz(),
+				v.hx(), v.hy(), v.hz(),
+				w.hx(), w.hy(), w.hz());
     }
   };
 
