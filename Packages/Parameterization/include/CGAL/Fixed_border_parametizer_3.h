@@ -243,8 +243,9 @@ parameterize(Adaptor* mesh)
     }
 
     // compute (u,v) for border vertices and mark them as "parameterized"
-    if ( ! get_border_parametizer().parameterize_border(mesh) )
-        return ERROR_NO_SURFACE_MESH;
+    status = get_border_parametizer().parameterize_border(mesh);
+    if (status != OK)
+        return status;
 
     // Initialize A, Xu, Xv, Bu and Bv after boundary parameterization
     // Fill the border vertices' lines in both linear systems:
@@ -258,11 +259,11 @@ parameterize(Adaptor* mesh)
     // Wij for each neighbor j; then Wii = - sum of Wij
     fprintf(stderr,"  fill matrix (%d x %d)...",nbVertices,nbVertices);
     for (vertexIt = mesh->mesh_vertices_begin();
-        vertexIt != mesh->mesh_vertices_end();
-        vertexIt++)
+         vertexIt != mesh->mesh_vertices_end();
+         vertexIt++)
     {
         CGAL_parameterization_assertion(mesh->is_vertex_on_border(vertexIt)
-                                            == mesh->is_vertex_parameterized(vertexIt));
+                                    == mesh->is_vertex_parameterized(vertexIt));
 
         // inner vertices only
         if( ! mesh->is_vertex_on_border(vertexIt) )
@@ -282,17 +283,15 @@ parameterize(Adaptor* mesh)
     std::cerr << "  solver start..." << std::endl;
     NT Du, Dv;
     if ( !get_linear_algebra_traits().linear_solver(A, Bu, Xu, Du) || 
-            !get_linear_algebra_traits().linear_solver(A, Bv, Xv, Dv) )
+         !get_linear_algebra_traits().linear_solver(A, Bv, Xv, Dv) )
     {
-        std::cerr << "  solver: error" << std::endl;
-        CGAL_parameterization_postcondition_msg(false,
-                    "Parameterization error: cannot solve sparse linear system");
+        std::cerr << "  error ERROR_CANNOT_SOLVE_LINEAR_SYSTEM!" << std::endl;
         return ERROR_CANNOT_SOLVE_LINEAR_SYSTEM;
     }
     // WARNING: this package does not support homogeneous coordinates!
     CGAL_parameterization_assertion(Du == 1.0);
     CGAL_parameterization_assertion(Dv == 1.0);
-    std::cerr << "  solver: ok" << std::endl;
+    std::cerr << "  ...solver: ok" << std::endl;
 
     // Copy Xu and Xv coordinates into the (u,v) pair of each vertex
     set_mesh_uv_from_system (mesh, Xu, Xv); 
@@ -316,41 +315,52 @@ typename Parametizer_3<Adaptor>::ErrorCode
 Fixed_border_parametizer_3<Adaptor, Border_param, Sparse_LA>::
 check_parameterize_preconditions(const Adaptor& mesh)
 {
-    ErrorCode status = OK;                                  // returned value
+    ErrorCode status = OK;                  // returned value
 
     // Allways check that mesh is not empty
     if (mesh.mesh_vertices_begin() == mesh.mesh_vertices_end())
         status = ERROR_EMPTY_MESH;
-    CGAL_parameterization_precondition(status == OK);
-    if (status != OK)
+    if (status != OK) {
+        std::cerr << "  error ERROR_EMPTY_MESH!" << std::endl;
         return status;
+    }
 
     // The whole surface parameterization package is restricted to triangular meshes
-    CGAL_parameterization_expensive_precondition((status = mesh.is_mesh_triangular()
-                                                         ? OK
-                                                         : ERROR_NON_TRIANGULAR_MESH) == OK);
-    if (status != OK)
+    CGAL_parameterization_expensive_precondition_code(                       \
+        status = mesh.is_mesh_triangular() ? OK : ERROR_NON_TRIANGULAR_MESH; \
+    );
+    if (status != OK) {
+        std::cerr << "  error ERROR_NON_TRIANGULAR_MESH!" << std::endl;
         return status;
+    }
 
     // The whole package is restricted to surfaces
-    CGAL_parameterization_expensive_precondition((status = (mesh.get_mesh_genus()==0)
-                                                         ? OK
-                                                         : ERROR_NO_SURFACE_MESH) == OK);
-    if (status != OK)
+    CGAL_parameterization_expensive_precondition_code(                      \
+        status = (mesh.get_mesh_genus()==0) ? OK : ERROR_NO_SURFACE_MESH;   \
+    );
+    if (status != OK) {
+        std::cerr << "  error ERROR_NO_SURFACE_MESH!" << std::endl;
         return status;
-    CGAL_parameterization_expensive_precondition((status = (mesh.count_mesh_boundaries() >= 1)
-                                                         ? OK
-                                                         : ERROR_NO_SURFACE_MESH) == OK);
-    if (status != OK)
+    }
+    CGAL_parameterization_expensive_precondition_code(                             \
+        status = (mesh.count_mesh_boundaries() >= 1) ? OK : ERROR_NO_SURFACE_MESH; \
+    );
+    if (status != OK) {
+        std::cerr << "  error ERROR_NO_SURFACE_MESH!" << std::endl;
         return status;
+    }
 
     // 1 to 1 mapping is guaranteed if all Wij coefficients are > 0 (for j vertex neighbor of i)
     // and if the surface boundary is mapped onto a 2D convex polygon
-    CGAL_parameterization_expensive_precondition((status = get_border_parametizer().is_border_convex()
-                                                         ? OK
-                                                         : ERROR_NON_CONVEX_BORDER) == OK);
-    if (status != OK)
+    CGAL_parameterization_expensive_precondition_code(          \
+        status = get_border_parametizer().is_border_convex()    \
+               ? OK                                             \
+               : ERROR_INVALID_BOUNDARY;                        \
+    );
+    if (status != OK) {
+        std::cerr << "  error ERROR_INVALID_BOUNDARY!" << std::endl;
         return status;
+    }
 
     return status;
 }
@@ -414,8 +424,9 @@ setup_inner_vertex_relations(Matrix* A,
 
     int i = mesh.get_vertex_index(vertex);
 
-    // circulate over vertices around vertex to compute Wii and Wijs
+    // circulate over vertices around 'vertex' to compute Wii and Wijs
     NT Wii = 0;
+    int vertexIndex = 0;
     Vertex_around_vertex_const_circulator vj = mesh.vertices_around_vertex_begin(vertex),
                                           end = vj;
     CGAL_For_all(vj, end)
@@ -431,6 +442,13 @@ setup_inner_vertex_relations(Matrix* A,
 
         // Set Wij in matrix
         A->set_coef(i,j, Wij);
+
+        vertexIndex++;
+    }
+    if (vertexIndex < 2)
+    {
+        std::cerr << "  error ERROR_NON_TRIANGULAR_MESH!" << std::endl;
+        return ERROR_NON_TRIANGULAR_MESH;
     }
 
     // Set Wii in matrix
@@ -476,24 +494,40 @@ check_parameterize_postconditions(const Adaptor& mesh,
 {
     ErrorCode status = OK;
 
-    // Check if "A*Xu = Bu" and "A*Xv = Bv" systems are solvable with a good conditioning
-    CGAL_parameterization_expensive_postcondition((status = get_linear_algebra_traits().is_solvable(A, Bu) 
-                                                          ? OK 
-                                                          : ERROR_BAD_MATRIX_CONDITIONING) == OK);
-    if (status != OK)
+    // Check if "A*Xu = Bu" and "A*Xv = Bv" systems 
+    // are solvable with a good conditioning
+    CGAL_parameterization_expensive_postcondition_code(         \
+        status = get_linear_algebra_traits().is_solvable(A, Bu) \
+               ? OK                                             \
+               : ERROR_BAD_MATRIX_CONDITIONING;                 \
+    );
+    if (status != OK) {
+        std::cerr << "  error ERROR_BAD_MATRIX_CONDITIONING!" << std::endl;
+        //CGAL_parameterization_postcondition(false);
         return status;
-    CGAL_parameterization_expensive_postcondition((status = get_linear_algebra_traits().is_solvable(A, Bv) 
-                                                          ? OK 
-                                                          : ERROR_BAD_MATRIX_CONDITIONING) == OK);
-    if (status != OK)
+    }
+    CGAL_parameterization_expensive_postcondition_code(         \
+        status = get_linear_algebra_traits().is_solvable(A, Bv) \
+               ? OK                                             \
+               : ERROR_BAD_MATRIX_CONDITIONING;                 \
+    );
+    if (status != OK) {
+        std::cerr << "  error ERROR_BAD_MATRIX_CONDITIONING!" << std::endl;
+        //CGAL_parameterization_postcondition(false);
         return status;
+    }
 
     // Check if 3D -> 2D mapping is 1 to 1
-    CGAL_parameterization_expensive_postcondition((status = is_one_to_one_mapping(mesh, A, Bu, Bv)
-                                                          ? OK
-                                                          : ERROR_NO_1_TO_1_MAPPING) == OK);
-    if (status != OK)
+    CGAL_parameterization_expensive_postcondition_code( \
+        status = is_one_to_one_mapping(mesh, A, Bu, Bv) \
+               ? OK                                     \
+               : ERROR_NO_1_TO_1_MAPPING;               \
+    );
+    if (status != OK) {
+        std::cerr << "  error ERROR_NO_1_TO_1_MAPPING!" << std::endl;
+        //CGAL_parameterization_postcondition(false);
         return status;
+    }
 
     return status;
 }
@@ -558,7 +592,7 @@ is_one_to_one_mapping(const Adaptor& mesh,
         }
     }
 
-    return true;                                // OK if we reach this point
+    return true;            // OK if we reach this point
 }
 
 

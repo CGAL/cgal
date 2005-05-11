@@ -97,6 +97,7 @@
 // Type describing a seam in a Polyhedron_ex mesh
 typedef Feature_backbone<Polyhedron_ex::Vertex_handle,
                          Polyhedron_ex::Halfedge_handle> Backbone;
+typedef Backbone::Halfedge_list_iterator                 Backbone_iterator;
 
 
 // ----------------------------------------------------------------------------
@@ -105,7 +106,7 @@ typedef Feature_backbone<Polyhedron_ex::Vertex_handle,
 
 // Cut the mesh to make it homeomorphic to a disk
 // or extract a region homeomorphic to a disc.
-// Return the border of this region.
+// Return the border of this region (NULL on error)
 static const Backbone* cut_mesh(Polyhedron_ex* mesh)
 {
     // init
@@ -137,12 +138,36 @@ static const Backbone* cut_mesh(Polyhedron_ex* mesh)
         }
     }
     else // genus > 0 -> cut the mesh
-    cutter.cut_genus(pSeamingBackbone);
+    {
+        cutter.cut_genus(pSeamingBackbone);
+    }
+
+    // The Mesh_cutter class is quite buggy 
+    // => we check that pSeamingBackbone is valid
+    //
+    // 1) Check that pSeamingBackbone is not empty
+    if (pSeamingBackbone->halfedges()->begin() == pSeamingBackbone->halfedges()->end())
+        return NULL;
+    // 2) Check that pSeamingBackbone is a loop
+    for (Backbone_iterator he = pSeamingBackbone->halfedges()->begin();
+         he != pSeamingBackbone->halfedges()->end();
+         he++)
+    {
+        // Get next halfedge iterator
+        Backbone_iterator next_he = he;
+        next_he++;
+        if (next_he == pSeamingBackbone->halfedges()->end())
+            next_he = pSeamingBackbone->halfedges()->begin();
+        // Check that end of current HE == start of next one
+        if ((*he)->vertex() != (*next_he)->opposite()->vertex())
+            return NULL;
+    }
+    // 3) TO DO: check that the pSeamingBackbone is not self-intersecting
 
     return pSeamingBackbone;
 }
 
-// Switch parameterization
+// Call appropriate parameterization method based on application parameters
 template<class SparseLinearAlgebraTraits_d> 
                                     // Traits class to solve a sparse linear system
 CGAL::Parametizer_3<Mesh_adaptor_polyhedron_ex>::ErrorCode
@@ -245,7 +270,7 @@ parameterize(Mesh_adaptor_polyhedron_ex* mesh_adaptor,
     }
     else
     {
-        fprintf(stderr,"invalid choice\n");
+        fprintf(stderr, "\nFATAL ERROR: invalid parameter\n\n");
         exit(1);
     }
 
@@ -394,21 +419,21 @@ int main(int argc,char * argv[])
     // read the mesh
     //***************************************
 
-    fprintf(stderr,"\n  read file...%s...", input_filename);
+    fprintf(stderr, "\n  read file...%s...", input_filename);
     std::ifstream stream(input_filename);
     if(!stream) {
-        fprintf(stderr,"failed: cannot open file!\n");
+        fprintf(stderr, "\nFATAL ERROR: cannot open file!\n\n");
         return 1;
     }
 
     // read the mesh
     Polyhedron_ex mesh;
-    fprintf(stderr,"ok\n  fill mesh...");
+    fprintf(stderr, "ok\n  fill mesh...");
     stream >> mesh;
 
     // print mesh info
-    fprintf(stderr,"(%d facets, ",mesh.size_of_facets());
-    fprintf(stderr,"%d vertices)\n",mesh.size_of_vertices());
+    fprintf(stderr, "(%d facets, ",mesh.size_of_facets());
+    fprintf(stderr, "%d vertices)\n",mesh.size_of_vertices());
 
     //***************************************
     // switch parameterization
@@ -417,7 +442,11 @@ int main(int argc,char * argv[])
     // Cut the mesh to make it homeomorphic to a disk
     // or extract a region homeomorphic to a disc
     const Backbone* seam = cut_mesh(&mesh);
-    assert(seam != NULL);
+    if (seam == NULL)
+    {
+        fprintf(stderr, "\nFATAL ERROR: an unexpected error occurred while cutting the shape!\n\n");
+        return 1;
+    }
 
     // The parameterization package needs an adaptor to handle Polyhedrons
     Mesh_adaptor_polyhedron_ex mesh_adaptor(&mesh,
@@ -436,14 +465,14 @@ int main(int argc,char * argv[])
     }
     else
     {
-        fprintf(stderr,"invalid choice\n");
+        fprintf(stderr, "\nFATAL ERROR: invalid parameter\n\n");
         return 1;
     }
 
     // On parameterization error
     if (err != CGAL::Parametizer_3<Mesh_adaptor_polyhedron_ex>::OK)
     {
-        fprintf(stderr,"parameterization failure: error = %d\n", (int)err);
+        fprintf(stderr, "\nFATAL ERROR: parameterization error # %d\n\n", (int)err);
         return err;
     }
 
@@ -461,7 +490,7 @@ int main(int argc,char * argv[])
     }
     else
     {
-        fprintf(stderr,"invalid choice\n");
+        fprintf(stderr, "\nFATAL ERROR: invalid parameter\n\n");
         return 1;
     }
 

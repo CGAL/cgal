@@ -22,6 +22,7 @@
 #define CGAL_SQUAREBORDERPARAMETIZER_3_H
 
 #include <CGAL/parameterization_assertions.h>
+#include <CGAL/Parametizer_3.h>
 
 #include <cfloat>
 #include <climits>
@@ -92,8 +93,7 @@ public:
 
     // Assign to mesh's border vertices a 2D position (ie a (u,v) pair)
     // on border's shape. Mark them as "parameterized".
-    // Return false on error
-    bool  parameterize_border (Adaptor* mesh);
+    ErrorCode parameterize_border (Adaptor* mesh);
 
     // Indicate if border's shape is convex
     bool  is_border_convex () { return true; }
@@ -147,22 +147,28 @@ double Square_border_parametizer_3<Adaptor>::compute_boundary_length(
 
 // Assign to mesh's border vertices a 2D position (ie a (u,v) pair)
 // on border's shape. Mark them as "parameterized".
-// Return false on error
 template<class Adaptor>
 inline
-bool Square_border_parametizer_3<Adaptor>::parameterize_border (
-                                                        Adaptor* mesh)
+typename Parametizer_3<Adaptor>::ErrorCode
+Square_border_parametizer_3<Adaptor>::parameterize_border(Adaptor* mesh)
 {
     CGAL_parameterization_assertion(mesh != NULL);
 
     // Nothing to do if no boundary
     if (mesh->mesh_border_vertices_begin() == mesh->mesh_border_vertices_end())
-        return false;
+    {
+        std::cerr << "  error ERROR_INVALID_BOUNDARY!" << std::endl;
+        return Parametizer_3<Adaptor>::ERROR_INVALID_BOUNDARY;
+    }
 
     // compute the total boundary length
     double total_len = compute_boundary_length(*mesh);
     std::cerr << "  total boundary len: " << total_len << std::endl;
-    CGAL_parameterization_assertion(total_len != 0);
+    if (total_len == 0)
+    {
+        std::cerr << "  error ERROR_INVALID_BOUNDARY!" << std::endl;
+        return Parametizer_3<Adaptor>::ERROR_INVALID_BOUNDARY;
+    }
 
     // map to [0,4[
     std::cerr << "  map on a square...";
@@ -197,10 +203,13 @@ bool Square_border_parametizer_3<Adaptor>::parameterize_border (
     Border_vertex_iterator it1 = closest_iterator(mesh, offsets, 1.0);
     Border_vertex_iterator it2 = closest_iterator(mesh, offsets, 2.0);
     Border_vertex_iterator it3 = closest_iterator(mesh, offsets, 3.0);
-    assert(it1 != it0);
-    assert(it1 != it2);
-    assert(it2 != it3);
-    assert(it1 != it3);
+    //
+    // We may get into trouble if the boundary is too short
+    if (it0 == it1 || it1 == it2 || it2 == it3 || it3 == it0)
+    {
+        std::cerr << "  error ERROR_INVALID_BOUNDARY!" << std::endl;
+        return Parametizer_3<Adaptor>::ERROR_INVALID_BOUNDARY;
+    }
     //
     // Snap these vertices to corners
     offsets[mesh->get_vertex_index(it0)] = 0.0;
@@ -240,7 +249,7 @@ bool Square_border_parametizer_3<Adaptor>::parameterize_border (
 
     std::cerr << "done" << std::endl;
 
-    return true;
+    return Parametizer_3<Adaptor>::OK;
 }
 
 // Utility method for parameterize_border()

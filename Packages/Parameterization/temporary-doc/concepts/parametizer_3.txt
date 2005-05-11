@@ -27,14 +27,14 @@ public:
     // The various errors detected by this package
     enum ErrorCode {
     OK,
-    ERROR_NON_CONVEX_BORDER,        // parameterization requires a convex border
-    ERROR_BAD_MATRIX_CONDITIONING,  // result is mathematically unstable
+    ERROR_EMPTY_MESH,               // input mesh is empty
     ERROR_NON_TRIANGULAR_MESH,      // input mesh is not triangular
     ERROR_NO_SURFACE_MESH,          // input mesh is not a surface
-    ERROR_NO_1_TO_1_MAPPING,        // parameterization does not ensure 1 to 1 mapping
-    ERROR_EMPTY_MESH,               // input mesh is empty
-    ERROR_NOT_ENOUGH_MEMORY,        // it's time to buy some RAM :-)
+    ERROR_INVALID_BOUNDARY,         // parameterization requires a convex border
+    ERROR_BAD_MATRIX_CONDITIONING,  // result is mathematically unstable
     ERROR_CANNOT_SOLVE_LINEAR_SYSTEM,// cannot solve linear system
+    ERROR_NO_1_TO_1_MAPPING,        // parameterization does not ensure 1 to 1 mapping
+    ERROR_NOT_ENOUGH_MEMORY,        // it's time to buy some RAM :-)
     };
 
     typedef ... Adaptor;

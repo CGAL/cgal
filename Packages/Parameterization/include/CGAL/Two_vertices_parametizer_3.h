@@ -22,6 +22,7 @@
 #define CGAL_TWO_VERTICES_PARAMETIZER_3_H_INCLUDED
 
 #include <CGAL/parameterization_assertions.h>
+#include <CGAL/Parametizer_3.h>
 
 #include <cfloat>
 #include <climits>
@@ -91,8 +92,7 @@ public:
     // Default constructor, copy constructor and operator =() are fine
 
     // Map 2 extreme vertices of the 3D mesh and mark them as "parameterized"
-    // Return false on error
-    bool  parameterize_border (Adaptor* mesh);
+    ErrorCode parameterize_border (Adaptor* mesh);
 
     // Indicate if border's shape is convex.
     // Meaningless for free border parameterization algorithms.
@@ -107,7 +107,8 @@ public:
 // Map 2 extreme vertices of the 3D mesh and mark them as "parameterized"
 // Return false on error
 template<class Adaptor>
-inline bool
+inline
+typename Parametizer_3<Adaptor>::ErrorCode
 Two_vertices_parametizer_3<Adaptor>::parameterize_border(Adaptor* mesh)
 {
     Vertex_iterator it;
@@ -116,7 +117,10 @@ Two_vertices_parametizer_3<Adaptor>::parameterize_border(Adaptor* mesh)
 
     // Nothing to do if no boundary
     if (mesh->mesh_border_vertices_begin() == mesh->mesh_border_vertices_end())
-        return false;
+    {
+        std::cerr << "  error ERROR_INVALID_BOUNDARY!" << std::endl;
+        return Parametizer_3<Adaptor>::ERROR_INVALID_BOUNDARY;
+    }
 
     std::cerr << "  map 2 vertices...";
 
@@ -192,7 +196,7 @@ Two_vertices_parametizer_3<Adaptor>::parameterize_border(Adaptor* mesh)
         V1_max = zmax;
         break;
     default:
-        assert(false);
+        CGAL_parameterization_assertion(false);
     }
     switch (second_longest_axis)
     {
@@ -212,7 +216,7 @@ Two_vertices_parametizer_3<Adaptor>::parameterize_border(Adaptor* mesh)
         V2_max = zmax;
         break;
     default:
-        assert(false);
+        CGAL_parameterization_assertion(false);
     }
 
     // Project onto longest bounding box axes,
@@ -231,8 +235,8 @@ Two_vertices_parametizer_3<Adaptor>::parameterize_border(Adaptor* mesh)
         double v = position_as_vector * V2 ;
 
         // convert to unit square coordinates
-        assert(V1_max > V1_min);
-        assert(V2_max > V2_min);
+        CGAL_parameterization_assertion(V1_max > V1_min);
+        CGAL_parameterization_assertion(V2_max > V2_min);
         u = (u - V1_min) / (V1_max - V1_min);
         v = (v - V2_min) / (V2_max - V2_min);
 
@@ -252,7 +256,7 @@ Two_vertices_parametizer_3<Adaptor>::parameterize_border(Adaptor* mesh)
 
     std::cerr << "done" << std::endl;
 
-    return true;
+    return Parametizer_3<Adaptor>::OK;
 }
 
 

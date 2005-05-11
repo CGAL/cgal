@@ -14,7 +14,6 @@
  *                                                                         *
  ***************************************************************************/
 
-
 #ifndef FEATURE_SKELETON_H
 #define FEATURE_SKELETON_H
 
@@ -23,14 +22,19 @@
 #include <list>
 #include <vector>
 
+
 template<class VERTEX_HANDLE,class HALFEDGE_HANDLE>
 class Feature_backbone
 {
-private:
-    VERTEX_HANDLE m_begin;
-    VERTEX_HANDLE m_end;
-    std::list<HALFEDGE_HANDLE> m_halfedges;
+// Public types
+public:
+    typedef VERTEX_HANDLE                           Vertex_handle;
+    typedef HALFEDGE_HANDLE                         Halfedge_handle;
+    typedef typename std::list<HALFEDGE_HANDLE>     Halfedge_list;
+    typedef typename Halfedge_list::iterator        Halfedge_list_iterator;
+    typedef typename Halfedge_list::const_iterator  Halfedge_list_const_iterator;
 
+// Public operations
 public:
     Feature_backbone()
     {
@@ -53,9 +57,7 @@ public:
     void copy_from(Feature_backbone *pBackbone)
     {
         m_halfedges.clear();
-        typedef typename std::list<HALFEDGE_HANDLE> list_halfedges;
-        typedef typename list_halfedges::iterator iter_list_halfedges;
-        iter_list_halfedges iter;
+        Halfedge_list_iterator iter;
         for(iter  = pBackbone->halfedges()->begin();
             iter != pBackbone->halfedges()->end();
             iter++)
@@ -63,16 +65,18 @@ public:
     }
 
     // data access
-    std::list<HALFEDGE_HANDLE>* halfedges() { return &m_halfedges; }
-    const std::list<HALFEDGE_HANDLE>* halfedges() const { return &m_halfedges; }
+    Halfedge_list*       halfedges()        { return &m_halfedges; }
+    const Halfedge_list* halfedges() const  { return &m_halfedges; }
+    Vertex_handle begin()                   { return m_begin; }
+    Vertex_handle end()                     { return m_end;   }
+    void begin(Vertex_handle hVertex)       { m_begin = hVertex; }
+    void end(Vertex_handle hVertex)         { m_end = hVertex;   }
 
-    // misc
-    bool is_closed() const { return (m_begin == m_end); }
-    bool has_no_corner() const { return (m_begin == NULL && m_end == NULL); }
-    VERTEX_HANDLE begin()  { return m_begin; }
-    VERTEX_HANDLE end()    { return m_end;   }
-    void begin(VERTEX_HANDLE hVertex)  { m_begin = hVertex; }
-    void end(VERTEX_HANDLE hVertex)    { m_end = hVertex;   }
+// Fields
+private:
+    Vertex_handle  m_begin;
+    Vertex_handle  m_end;
+    Halfedge_list m_halfedges;
 
 }; // Feature_backbone
 

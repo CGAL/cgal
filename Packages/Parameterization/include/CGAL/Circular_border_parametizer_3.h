@@ -22,6 +22,7 @@
 #define CGAL_CIRCULARBORDERPARAMETIZER_3_H
 
 #include <CGAL/parameterization_assertions.h>
+#include <CGAL/Parametizer_3.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -89,7 +90,7 @@ public:
     // Assign to mesh's border vertices a 2D position (ie a (u,v) pair)
     // on border's shape. Mark them as "parameterized".
     // Return false on error
-    bool  parameterize_border (Adaptor* mesh);
+    ErrorCode parameterize_border (Adaptor* mesh);
 
     // Indicate if border's shape is convex
     bool  is_border_convex () { return true; }
@@ -137,19 +138,26 @@ double Circular_border_parametizer_3<Adaptor>::compute_boundary_length(
 // Return false on error
 template<class Adaptor>
 inline
-bool Circular_border_parametizer_3<Adaptor>::parameterize_border (
-                                                        Adaptor* mesh)
+typename Parametizer_3<Adaptor>::ErrorCode
+Circular_border_parametizer_3<Adaptor>::parameterize_border(Adaptor* mesh)
 {
     CGAL_parameterization_assertion(mesh != NULL);
 
     // Nothing to do if no boundary
     if (mesh->mesh_border_vertices_begin() == mesh->mesh_border_vertices_end())
-        return false;
+    {
+        std::cerr << "  error ERROR_INVALID_BOUNDARY!" << std::endl;
+        return Parametizer_3<Adaptor>::ERROR_INVALID_BOUNDARY;
+    }
 
     // compute the total boundary length
     double total_len = compute_boundary_length(*mesh);
     std::cerr << "  total boundary len: " << total_len << std::endl;
-    CGAL_parameterization_assertion(total_len != 0);
+    if (total_len == 0)
+    {
+        std::cerr << "  error ERROR_INVALID_BOUNDARY!" << std::endl;
+        return Parametizer_3<Adaptor>::ERROR_INVALID_BOUNDARY;
+    }
 
     std::cerr << "  map on a circle...";
     const double PI = 3.14159265359;
@@ -186,7 +194,7 @@ bool Circular_border_parametizer_3<Adaptor>::parameterize_border (
 
   std::cerr << "done" << std::endl;
 
-  return true;
+  return Parametizer_3<Adaptor>::OK;
 }
 
 

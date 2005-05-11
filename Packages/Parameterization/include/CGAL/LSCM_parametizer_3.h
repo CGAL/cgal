@@ -235,8 +235,9 @@ parameterize(Adaptor* mesh)
 
     // Compute (u,v) for (at least 2) border vertices
     // and mark them as "parameterized"
-    if ( ! m_borderParametizer.parameterize_border(mesh) )
-        return ERROR_NO_SURFACE_MESH;
+    status = m_borderParametizer.parameterize_border(mesh);
+    if (status != OK)
+        return status;
 
     // Initialize the "A*X = B" linear system after
     // (at least 2) border vertices parameterization
@@ -263,12 +264,10 @@ parameterize(Adaptor* mesh)
 	std::cerr << "  solver start..." << std::endl;
     if ( ! solver.solve() )
     {
-        std::cerr << "  solver: error" << std::endl;
-        CGAL_parameterization_postcondition_msg(false,
-                    "Parameterization error: cannot solve sparse linear system");
+        std::cerr << "  error ERROR_CANNOT_SOLVE_LINEAR_SYSTEM!" << std::endl;
         return ERROR_CANNOT_SOLVE_LINEAR_SYSTEM;
     }
-    std::cerr << "  solver: ok" << std::endl;
+    std::cerr << "  ...solver: ok" << std::endl;
 
     // Copy X coordinates into the (u,v) pair of each vertex
     set_mesh_uv_from_system(mesh, solver);
@@ -296,28 +295,35 @@ check_parameterize_preconditions(const Adaptor& mesh)
     // Allways check that mesh is not empty
     if (mesh.mesh_vertices_begin() == mesh.mesh_vertices_end())
         status = ERROR_EMPTY_MESH;
-    CGAL_parameterization_precondition(status == OK);
-    if (status != OK)
+    if (status != OK) {
+        std::cerr << "  error ERROR_EMPTY_MESH!" << std::endl;
         return status;
+    }
 
     // The whole surface parameterization package is restricted to triangular meshes
-    CGAL_parameterization_expensive_precondition((status = mesh.is_mesh_triangular()
-                                                         ? OK
-                                                         : ERROR_NON_TRIANGULAR_MESH) == OK);
-    if (status != OK)
+    CGAL_parameterization_expensive_precondition_code(                       \
+        status = mesh.is_mesh_triangular() ? OK : ERROR_NON_TRIANGULAR_MESH; \
+    );
+    if (status != OK) {
+        std::cerr << "  error ERROR_NON_TRIANGULAR_MESH!" << std::endl;
         return status;
+    }
 
     // The whole package is restricted to surfaces
-    CGAL_parameterization_expensive_precondition((status = (mesh.get_mesh_genus()==0)
-                                                         ? OK
-                                                         : ERROR_NO_SURFACE_MESH) == OK);
-    if (status != OK)
+    CGAL_parameterization_expensive_precondition_code(                      \
+        status = (mesh.get_mesh_genus()==0) ? OK : ERROR_NO_SURFACE_MESH;   \
+    );
+    if (status != OK) {
+        std::cerr << "  error ERROR_NO_SURFACE_MESH!" << std::endl;
         return status;
-    CGAL_parameterization_expensive_precondition((status = (mesh.count_mesh_boundaries() >= 1)
-                                                         ? OK
-                                                         : ERROR_NO_SURFACE_MESH) == OK);
-    if (status != OK)
+    }
+    CGAL_parameterization_expensive_precondition_code(                             \
+        status = (mesh.count_mesh_boundaries() >= 1) ? OK : ERROR_NO_SURFACE_MESH; \
+    );
+    if (status != OK) {
+        std::cerr << "  error ERROR_NO_SURFACE_MESH!" << std::endl;
         return status;
+    }
 
     return status;
 }
@@ -436,9 +442,11 @@ setup_triangle_relations(LeastSquaresSolver* solver,
 
         vertexIndex++;
     }
-    CGAL_parameterization_assertion(vertexIndex == 3);
     if (vertexIndex != 3)
+    {
+        std::cerr << "  error ERROR_NON_TRIANGULAR_MESH!" << std::endl;
         return ERROR_NON_TRIANGULAR_MESH;
+    }
 
     // Get the vertices index
     int id0 = mesh.get_vertex_index(v0) ;
@@ -460,7 +468,7 @@ setup_triangle_relations(LeastSquaresSolver* solver,
     NT b = z01.y() ;
     NT c = z02.x() ;
     NT d = z02.y() ;
-    assert(b == 0.0) ;
+    CGAL_parameterization_assertion(b == 0.0) ;
 
     // Create 2 lines in the linear system per triangle (1 for u, 1 for v)
     // LSCM equation is:
@@ -541,24 +549,40 @@ check_parameterize_postconditions(const Adaptor& mesh,
     // LS 02/2005: commented out this section because OpenNL::LinearSolver
     //             does not provide a is_solvable() method
     //
-    //// Check if "A*Xu = Bu" and "A*Xv = Bv" systems are solvable with a good conditioning
-    //CGAL_parameterization_expensive_postcondition((status = get_linear_algebra_traits().is_solvable(A, Bu)
-    //                                                    ? OK
-    //                                                    : ERROR_BAD_MATRIX_CONDITIONING) == OK);
-    //if (status != OK)
-    //  return status;
-    //CGAL_parameterization_expensive_postcondition((status = get_linear_algebra_traits().is_solvable(A, Bv)
-    //                                                    ? OK
-    //                                                    : ERROR_BAD_MATRIX_CONDITIONING) == OK);
-    //if (status != OK)
-    //  return status;
+    //// Check if "A*Xu = Bu" and "A*Xv = Bv" systems 
+    //// are solvable with a good conditioning
+    //CGAL_parameterization_expensive_postcondition_code(         \
+    //    status = get_linear_algebra_traits().is_solvable(A, Bu) \
+    //           ? OK                                             \
+    //           : ERROR_BAD_MATRIX_CONDITIONING;                 \
+    //);
+    //if (status != OK) {
+    //    std::cerr << "  error ERROR_BAD_MATRIX_CONDITIONING!" << std::endl;
+    //    //CGAL_parameterization_postcondition(false);
+    //    return status;
+    //}
+    //CGAL_parameterization_expensive_postcondition_code(         \
+    //    status = get_linear_algebra_traits().is_solvable(A, Bv) \
+    //           ? OK                                             \
+    //           : ERROR_BAD_MATRIX_CONDITIONING;                 \
+    //);
+    //if (status != OK) {
+    //    std::cerr << "  error ERROR_BAD_MATRIX_CONDITIONING!" << std::endl;
+    //    //CGAL_parameterization_postcondition(false);
+    //    return status;
+    //}
 
     // Check if 3D -> 2D mapping is 1 to 1
-    CGAL_parameterization_expensive_postcondition((status = is_one_to_one_mapping(mesh, solver)
-                                                          ? OK
-                                                          : ERROR_NO_1_TO_1_MAPPING) == OK);
-    if (status != OK)
+    CGAL_parameterization_expensive_postcondition_code( \
+        status = is_one_to_one_mapping(mesh, solver) 	\
+               ? OK                                     \
+               : ERROR_NO_1_TO_1_MAPPING;               \
+    );
+    if (status != OK) {
+        std::cerr << "  error ERROR_NO_1_TO_1_MAPPING!" << std::endl;
+        //CGAL_parameterization_postcondition(false);
         return status;
+    }
 
     return status;
 }
