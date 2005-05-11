@@ -24,10 +24,17 @@ class Vector
 {
 // Public types
 public:
+
     typedef ... NT;
+
+// Public operations
+public:
 
     // Create a vector initialized with zeros
     Vector (int rows);
+
+    // Copy constructor
+    Vector(const Vector& toCopy);
 
     // operator =()
     Vector& operator=(const Vector& toCopy);

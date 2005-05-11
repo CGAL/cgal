@@ -19,7 +19,7 @@
 
 
 // Concept of parameterization objects for a given type of mesh,
-// Adaptor, model of the MeshAdaptor_3 concept
+// 'Adaptor', which is a model of the MeshAdaptor_3 concept
 class Parametizer_3
 {
 // Public types

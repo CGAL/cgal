@@ -308,7 +308,7 @@ public:
         return (Border_vertex_const_iterator_base) m_boundary.begin();
     }
 
-    // Get iterator over past-the-end vertex of mesh's border.
+    // Get iterator over past-the-end vertex of mesh's border
     Border_vertex_iterator  mesh_border_vertices_end () {
         return (Border_vertex_iterator_base) m_boundary.end();
     }

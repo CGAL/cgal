@@ -31,6 +31,7 @@ class MeshAdaptor_3
 {
 // Public types
 public:
+
     // Number type
     typedef ... NT;
     // Points and vectors
@@ -64,6 +65,7 @@ public:
 
 // Public operations
 public:
+
     //
     // MESH INTERFACE
     //

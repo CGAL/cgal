@@ -20,7 +20,7 @@
 
 // Concept BorderParametizer_3
 // Concept of a class that parametrizes a given type of mesh,
-// Adaptor, model of the MeshAdaptor_3 concept.
+// 'Adaptor', which is a model of the MeshAdaptor_3 concept.
 //
 // Design pattern:
 // BorderParametizer_3 models are Strategies (see [GOF95]): they implement
@@ -36,13 +36,15 @@ class BorderParametizer_3
 // Public types
 public:
     typedef ... Adaptor;
+    typedef typename Parametizer_3<Adaptor>::ErrorCode
+                                            ErrorCode;
 
 // Public operations
 public:
     // Assign to mesh's border vertices a 2D position (ie a (u,v) pair)
     // on border's shape. Mark them as "parameterized".
     // Return false on error
-    bool  parameterize_border (Adaptor* mesh);
+    ErrorCode parameterize_border (Adaptor* mesh);
 
     // Indicate if border's shape is convex
     bool  is_border_convex ();
