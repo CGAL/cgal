@@ -36,7 +36,7 @@ template
 <
     class MeshAdaptor_3,              // 3D surface mesh
     class BorderParametizer_3         // Strategy to parameterize the surface border
-                = Circular_border_parametizer_3<MeshAdaptor_3>,
+                = Circular_border_arc_length_parametizer_3<MeshAdaptor_3>,
     class SparseLinearAlgebraTraits_d // Traits class to solve a sparse linear system
                 = OpenNL::DefaultLinearSolverTraits<typename MeshAdaptor_3::NT>
                                       // Note: the sparse linear system is symmetric 

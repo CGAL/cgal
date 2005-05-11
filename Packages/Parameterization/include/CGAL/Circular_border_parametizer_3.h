@@ -28,12 +28,12 @@ CGAL_BEGIN_NAMESPACE
 
 
 //
-// Declaration
+// Class Circular_border_parametizer_3
 //
 
-// Class Circular_border_parametizer_3
-// Model of BorderParametizer_3
-// This class parameterizes the border of a 3D surface onto a circle.
+// Base class of strategies that parameterize the border 
+// of a 3D surface onto a circle.
+// This class is a model of BorderParametizer_3 concept.
 //
 // Design pattern:
 // BorderParametizer_3 models are Strategies (see [GOF95]): they implement
@@ -89,22 +89,24 @@ public:
 
     // Assign to mesh's border vertices a 2D position (ie a (u,v) pair)
     // on border's shape. Mark them as "parameterized".
-    // Return false on error
     ErrorCode parameterize_border (Adaptor* mesh);
 
     // Indicate if border's shape is convex
     bool  is_border_convex () { return true; }
 
+// Protected operations
+protected:
+    // compute length of an edge
+    virtual double compute_edge_length(const Adaptor& mesh,
+                                       Vertex_const_handle source, 
+                                       Vertex_const_handle target) = 0;
+
 // Private operations
 private:
-    // compute  total length of boundary
+    // compute total length of boundary
     double compute_boundary_length(const Adaptor& mesh);
 };
 
-
-//
-// Implementation
-//
 
 // compute  total length of boundary
 template<class Adaptor>
@@ -125,17 +127,17 @@ double Circular_border_parametizer_3<Adaptor>::compute_boundary_length(
         if(next == mesh.mesh_border_vertices_end())
             next = mesh.mesh_border_vertices_begin();
 
-        // Add length of it -> next vector to 'len'
-        Vector_3 v = mesh.get_vertex_position(next)
-                   - mesh.get_vertex_position(it);
-        len += std::sqrt(v*v);
+        // Add 'length' of it -> next vector to 'len'
+        //Vector_3 v = mesh.get_vertex_position(next)
+        //           - mesh.get_vertex_position(it);
+        //len += std::sqrt(v*v);
+        len += compute_edge_length(mesh, it, next);
     }
     return len;
 }
 
 // Assign to mesh's border vertices a 2D position (ie a (u,v) pair)
 // on border's shape. Mark them as "parameterized".
-// Return false on error
 template<class Adaptor>
 inline
 typename Parametizer_3<Adaptor>::ErrorCode
@@ -186,16 +188,151 @@ Circular_border_parametizer_3<Adaptor>::parameterize_border(Adaptor* mesh)
         if(next == mesh->mesh_border_vertices_end())
             next = mesh->mesh_border_vertices_begin();
 
-        // Add length of it -> next vector to 'len'
-        Vector_3 v = mesh->get_vertex_position(next)
-                   - mesh->get_vertex_position(it);
-        len += std::sqrt(v*v);
+        // Add 'length' of it -> next vector to 'len'
+        //Vector_3 v = mesh->get_vertex_position(next)
+        //           - mesh->get_vertex_position(it);
+        //len += std::sqrt(v*v);
+        len += compute_edge_length(*mesh, it, next);
     }
 
-  std::cerr << "done" << std::endl;
+    std::cerr << "done" << std::endl;
 
-  return Parametizer_3<Adaptor>::OK;
+    return Parametizer_3<Adaptor>::OK;
 }
+
+
+//
+// Class Circular_border_uniform_parametizer_3
+//
+
+// This class is a model of BorderParametizer_3 concept.
+// It parameterizes the border of a 3D surface onto a circle
+// on an uniform manner: points are equally spaced.
+
+template<class MeshAdaptor_3>           // 3D surface
+class Circular_border_uniform_parametizer_3
+    : public Circular_border_parametizer_3<MeshAdaptor_3>
+{
+// Public types
+public:
+    // Export Mesh_Adaptor_3 type and subtypes
+    typedef MeshAdaptor_3                   Adaptor;
+    typedef typename Parametizer_3<Adaptor>::ErrorCode
+                                            ErrorCode;
+    typedef typename Adaptor::NT            NT;
+    typedef typename Adaptor::Facet_handle  Facet_handle;
+    typedef typename Adaptor::Facet_const_handle
+                                            Facet_const_handle;
+    typedef typename Adaptor::Vertex_handle Vertex_handle;
+    typedef typename Adaptor::Vertex_const_handle
+                                            Vertex_const_handle;
+    typedef typename Adaptor::Point_3       Point_3;
+    typedef typename Adaptor::Point_2       Point_2;
+    typedef typename Adaptor::Vector_3      Vector_3;
+    typedef typename Adaptor::Vector_2      Vector_2;
+    typedef typename Adaptor::Facet_iterator Facet_iterator;
+    typedef typename Adaptor::Facet_const_iterator
+                                            Facet_const_iterator;
+    typedef typename Adaptor::Vertex_iterator Vertex_iterator;
+    typedef typename Adaptor::Vertex_const_iterator
+                                            Vertex_const_iterator;
+    typedef typename Adaptor::Border_vertex_iterator
+                                            Border_vertex_iterator;
+    typedef typename Adaptor::Border_vertex_const_iterator
+                                            Border_vertex_const_iterator;
+    typedef typename Adaptor::Vertex_around_facet_circulator
+                                            Vertex_around_facet_circulator;
+    typedef typename Adaptor::Vertex_around_facet_const_circulator
+                                            Vertex_around_facet_const_circulator;
+    typedef typename Adaptor::Vertex_around_vertex_circulator
+                                            Vertex_around_vertex_circulator;
+    typedef typename Adaptor::Vertex_around_vertex_const_circulator
+                                            Vertex_around_vertex_const_circulator;
+
+// Public operations
+public:
+    // Default constructor, copy constructor and operator =() are fine
+
+// Protected operations
+protected:
+    // compute length of an edge
+    virtual double compute_edge_length(const Adaptor& mesh,
+                                       Vertex_const_handle source, 
+                                       Vertex_const_handle target)
+    {
+        // uniform boundary parameterization: points are equally spaced
+        return 1;
+    }
+};
+
+
+//
+// Class Circular_border_arc_length_parametizer_3
+//
+
+// This class is a model of BorderParametizer_3 concept.
+// It parameterizes the border of a 3D surface onto a circle
+// with an arc-length parameterization: (u,v) values are
+// proportional to the length of boundary edges.
+
+template<class MeshAdaptor_3>           // 3D surface
+class Circular_border_arc_length_parametizer_3
+    : public Circular_border_parametizer_3<MeshAdaptor_3>
+{
+// Public types
+public:
+    // Export Mesh_Adaptor_3 type and subtypes
+    typedef MeshAdaptor_3                   Adaptor;
+    typedef typename Parametizer_3<Adaptor>::ErrorCode
+                                            ErrorCode;
+    typedef typename Adaptor::NT            NT;
+    typedef typename Adaptor::Facet_handle  Facet_handle;
+    typedef typename Adaptor::Facet_const_handle
+                                            Facet_const_handle;
+    typedef typename Adaptor::Vertex_handle Vertex_handle;
+    typedef typename Adaptor::Vertex_const_handle
+                                            Vertex_const_handle;
+    typedef typename Adaptor::Point_3       Point_3;
+    typedef typename Adaptor::Point_2       Point_2;
+    typedef typename Adaptor::Vector_3      Vector_3;
+    typedef typename Adaptor::Vector_2      Vector_2;
+    typedef typename Adaptor::Facet_iterator Facet_iterator;
+    typedef typename Adaptor::Facet_const_iterator
+                                            Facet_const_iterator;
+    typedef typename Adaptor::Vertex_iterator Vertex_iterator;
+    typedef typename Adaptor::Vertex_const_iterator
+                                            Vertex_const_iterator;
+    typedef typename Adaptor::Border_vertex_iterator
+                                            Border_vertex_iterator;
+    typedef typename Adaptor::Border_vertex_const_iterator
+                                            Border_vertex_const_iterator;
+    typedef typename Adaptor::Vertex_around_facet_circulator
+                                            Vertex_around_facet_circulator;
+    typedef typename Adaptor::Vertex_around_facet_const_circulator
+                                            Vertex_around_facet_const_circulator;
+    typedef typename Adaptor::Vertex_around_vertex_circulator
+                                            Vertex_around_vertex_circulator;
+    typedef typename Adaptor::Vertex_around_vertex_const_circulator
+                                            Vertex_around_vertex_const_circulator;
+
+// Public operations
+public:
+    // Default constructor, copy constructor and operator =() are fine
+
+// Protected operations
+protected:
+    // compute length of an edge
+    virtual double compute_edge_length(const Adaptor& mesh,
+                                       Vertex_const_handle source, 
+                                       Vertex_const_handle target)
+    {
+        // arc-length boundary parameterization: (u,v) values are
+        // proportional to the length of boundary edges
+        Vector_3 v = mesh.get_vertex_position(target)
+                   - mesh.get_vertex_position(source);
+        return std::sqrt(v*v);
+    }
+};
 
 
 CGAL_END_NAMESPACE

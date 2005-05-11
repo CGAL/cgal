@@ -184,7 +184,7 @@ parameterize(Mesh_adaptor_polyhedron_ex* mesh_adaptor,
             mesh_adaptor,
             CGAL::Mean_value_coordinates_parametizer_3<
                 Mesh_adaptor_polyhedron_ex,
-                CGAL::Circular_border_parametizer_3<Mesh_adaptor_polyhedron_ex>,
+                CGAL::Circular_border_arc_length_parametizer_3<Mesh_adaptor_polyhedron_ex>,
                 SparseLinearAlgebraTraits_d
             >());
     }
@@ -194,7 +194,7 @@ parameterize(Mesh_adaptor_polyhedron_ex* mesh_adaptor,
             mesh_adaptor,
             CGAL::Mean_value_coordinates_parametizer_3<
                 Mesh_adaptor_polyhedron_ex,
-                CGAL::Square_border_parametizer_3<Mesh_adaptor_polyhedron_ex>,
+                CGAL::Square_border_arc_length_parametizer_3<Mesh_adaptor_polyhedron_ex>,
                 SparseLinearAlgebraTraits_d
             >());
     }
@@ -204,7 +204,7 @@ parameterize(Mesh_adaptor_polyhedron_ex* mesh_adaptor,
             mesh_adaptor,
             CGAL::Barycentric_mapping_parametizer_3<
                 Mesh_adaptor_polyhedron_ex,
-                CGAL::Circular_border_parametizer_3<Mesh_adaptor_polyhedron_ex>,
+                CGAL::Circular_border_uniform_parametizer_3<Mesh_adaptor_polyhedron_ex>,
                 SparseLinearAlgebraTraits_d
             >());
     }
@@ -214,7 +214,7 @@ parameterize(Mesh_adaptor_polyhedron_ex* mesh_adaptor,
             mesh_adaptor,
             CGAL::Barycentric_mapping_parametizer_3<
                 Mesh_adaptor_polyhedron_ex,
-                CGAL::Square_border_parametizer_3<Mesh_adaptor_polyhedron_ex>,
+                CGAL::Square_border_uniform_parametizer_3<Mesh_adaptor_polyhedron_ex>,
                 SparseLinearAlgebraTraits_d
             >());
     }
@@ -224,7 +224,7 @@ parameterize(Mesh_adaptor_polyhedron_ex* mesh_adaptor,
             mesh_adaptor,
             CGAL::Discrete_conformal_map_parametizer_3<
                 Mesh_adaptor_polyhedron_ex,
-                CGAL::Circular_border_parametizer_3<Mesh_adaptor_polyhedron_ex>,
+                CGAL::Circular_border_arc_length_parametizer_3<Mesh_adaptor_polyhedron_ex>,
                 SparseLinearAlgebraTraits_d
             >());
     }
@@ -234,7 +234,7 @@ parameterize(Mesh_adaptor_polyhedron_ex* mesh_adaptor,
             mesh_adaptor,
             CGAL::Discrete_conformal_map_parametizer_3<
                 Mesh_adaptor_polyhedron_ex,
-                CGAL::Square_border_parametizer_3<Mesh_adaptor_polyhedron_ex>,
+                CGAL::Square_border_arc_length_parametizer_3<Mesh_adaptor_polyhedron_ex>,
                 SparseLinearAlgebraTraits_d
             >());
     }
@@ -244,7 +244,7 @@ parameterize(Mesh_adaptor_polyhedron_ex* mesh_adaptor,
             mesh_adaptor,
             CGAL::Discrete_authalic_parametizer_3<
                 Mesh_adaptor_polyhedron_ex,
-                CGAL::Circular_border_parametizer_3<Mesh_adaptor_polyhedron_ex>,
+                CGAL::Circular_border_arc_length_parametizer_3<Mesh_adaptor_polyhedron_ex>,
                 SparseLinearAlgebraTraits_d
             >());
     }
@@ -254,7 +254,7 @@ parameterize(Mesh_adaptor_polyhedron_ex* mesh_adaptor,
             mesh_adaptor,
             CGAL::Discrete_authalic_parametizer_3<
                 Mesh_adaptor_polyhedron_ex,
-                CGAL::Square_border_parametizer_3<Mesh_adaptor_polyhedron_ex>,
+                CGAL::Square_border_arc_length_parametizer_3<Mesh_adaptor_polyhedron_ex>,
                 SparseLinearAlgebraTraits_d
             >());
     }
