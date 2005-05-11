@@ -79,11 +79,11 @@ public:
     {
         D = 1;          // TAUCS does not support homogeneous coordinates
 
-#ifndef NDEBUG 
-        // Turn on TAUCS trace
-        std::cerr.flush();
-        taucs_logfile("stderr");
-#endif
+//#ifndef NDEBUG 
+//        // Turn on TAUCS trace
+//        std::cerr.flush();
+//        taucs_logfile("stderr");
+//#endif
         
         // Factor, solve and free
         int success = taucs_linsolve((taucs_ccs_matrix*) A.get_taucs_matrix(),
@@ -147,11 +147,11 @@ public:
     {
         D = 1;          // TAUCS does not support homogeneous coordinates
 
-#ifndef NDEBUG 
-        // Turn on TAUCS trace
-        std::cerr.flush();
-        taucs_logfile("stderr");
-#endif
+//#ifndef NDEBUG 
+//        // Turn on TAUCS trace
+//        std::cerr.flush();
+//        taucs_logfile("stderr");
+//#endif
         
         int     success;
 
