@@ -25,6 +25,7 @@
 //----------------------------------------------------------
 // conformal parameterization
 // circle boundary
+// OpenNL solver
 // output is a ps map
 // input file is mesh.off (the latter must be at the very end)
 //----------------------------------------------------------
@@ -33,22 +34,25 @@
 //----------------------------------------------------------
 // floater parameterization
 // square boundary
+// TAUCS solver
 // output is a ps map
 // input file is mesh.off
 //----------------------------------------------------------
-// polyhedron_ex_parameterization -t floater -b square -o eps mesh.off mesh.eps
+// polyhedron_ex_parameterization -t floater -b square -s taucs -o eps mesh.off mesh.eps
 
 //----------------------------------------------------------
 // natural parameterization
 // no explicitly pinned vertices
+// OpenNL solver
 // output is a ps map
 // input file is mesh.off
 //----------------------------------------------------------
-// polyhedron_ex_parameterization -t natural -o eps mesh.off mesh.eps
+// polyhedron_ex_parameterization -t natural -s opennl -o eps mesh.off mesh.eps
 
 //----------------------------------------------------------
 // LSCM parameterization
-// no explicitly pinned vertices
+// 2 pinned vertices (automatically picked)
+// OpenNL solver
 // output is a .obj
 // input file is mesh.off
 //----------------------------------------------------------
@@ -82,6 +86,9 @@
 #include <fstream>
 #include <cassert>
 
+#include <OpenNL/linear_solver.h>
+#include <CGAL/Taucs_solver_traits.h>
+
 
 // ----------------------------------------------------------------------------
 // Private types
@@ -102,13 +109,12 @@ typedef Feature_backbone<Polyhedron_ex::Vertex_handle,
 static const Backbone* cut_mesh(Polyhedron_ex* mesh)
 {
     // init
+    mesh->compute_facet_centers();
     Backbone *pSeamingBackbone = mesh->get_seaming_backbone();
     mesh->free_skeleton();
     pSeamingBackbone->clear();
-    //mesh->flag_halfedges_seaming(false);
 
     Mesh_cutter cutter(mesh);
-    // cutter.keep_one_connected_component();
     Mesh_feature_extractor feature_extractor(mesh);
 
     // compute genus
@@ -125,7 +131,6 @@ static const Backbone* cut_mesh(Polyhedron_ex* mesh)
             // must have one boundary, pick the first_file_arg
             Backbone *pBackbone = (*mesh->get_skeleton()->backbones())[0];
             pSeamingBackbone->copy_from(pBackbone);
-            //cutter.convert_to_seaming(pSeamingBackbone);
 
             // cleanup this one (has to be done later if has corners)
             mesh->free_skeleton();
@@ -137,9 +142,119 @@ static const Backbone* cut_mesh(Polyhedron_ex* mesh)
     return pSeamingBackbone;
 }
 
+// Switch parameterization
+template<class SparseLinearAlgebraTraits_d> 
+                                    // Traits class to solve a sparse linear system
+CGAL::Parametizer_3<Mesh_adaptor_polyhedron_ex>::ErrorCode
+parameterize(Mesh_adaptor_polyhedron_ex* mesh_adaptor,
+                                    // Mesh parameterization adaptor
+             const char *type,      // type of parameterization (see usage)
+             const char *boundary)  // type of boundary parameterization (see usage)
+{
+    CGAL::Parametizer_3<Mesh_adaptor_polyhedron_ex>::ErrorCode err;
+
+    if ( (strcmp(type,"floater") == 0) && (strcmp(boundary,"circle") == 0) )
+    {
+        err = CGAL::parameterize(
+            mesh_adaptor,
+            CGAL::Mean_value_coordinates_parametizer_3<
+                Mesh_adaptor_polyhedron_ex,
+                CGAL::Circular_border_parametizer_3<Mesh_adaptor_polyhedron_ex>,
+                SparseLinearAlgebraTraits_d
+            >());
+    }
+    else if ( (strcmp(type,"floater") == 0) && (strcmp(boundary,"square") == 0) )
+    {
+        err = CGAL::parameterize(
+            mesh_adaptor,
+            CGAL::Mean_value_coordinates_parametizer_3<
+                Mesh_adaptor_polyhedron_ex,
+                CGAL::Square_border_parametizer_3<Mesh_adaptor_polyhedron_ex>,
+                SparseLinearAlgebraTraits_d
+            >());
+    }
+    else if ( (strcmp(type,"uniform") == 0) && (strcmp(boundary,"circle") == 0) )
+    {
+        err = CGAL::parameterize(
+            mesh_adaptor,
+            CGAL::Barycentric_mapping_parametizer_3<
+                Mesh_adaptor_polyhedron_ex,
+                CGAL::Circular_border_parametizer_3<Mesh_adaptor_polyhedron_ex>,
+                SparseLinearAlgebraTraits_d
+            >());
+    }
+    else if ( (strcmp(type,"uniform") == 0) && (strcmp(boundary,"square") == 0) )
+    {
+        err = CGAL::parameterize(
+            mesh_adaptor,
+            CGAL::Barycentric_mapping_parametizer_3<
+                Mesh_adaptor_polyhedron_ex,
+                CGAL::Square_border_parametizer_3<Mesh_adaptor_polyhedron_ex>,
+                SparseLinearAlgebraTraits_d
+            >());
+    }
+    else if ( (strcmp(type,"conformal") == 0) && (strcmp(boundary,"circle") == 0) )
+    {
+        err = CGAL::parameterize(
+            mesh_adaptor,
+            CGAL::Discrete_conformal_map_parametizer_3<
+                Mesh_adaptor_polyhedron_ex,
+                CGAL::Circular_border_parametizer_3<Mesh_adaptor_polyhedron_ex>,
+                SparseLinearAlgebraTraits_d
+            >());
+    }
+    else if ( (strcmp(type,"conformal") == 0) && (strcmp(boundary,"square") == 0) )
+    {
+        err = CGAL::parameterize(
+            mesh_adaptor,
+            CGAL::Discrete_conformal_map_parametizer_3<
+                Mesh_adaptor_polyhedron_ex,
+                CGAL::Square_border_parametizer_3<Mesh_adaptor_polyhedron_ex>,
+                SparseLinearAlgebraTraits_d
+            >());
+    }
+    else if ( (strcmp(type,"authalic") == 0) && (strcmp(boundary,"circle") == 0) )
+    {
+        err = CGAL::parameterize(
+            mesh_adaptor,
+            CGAL::Discrete_authalic_parametizer_3<
+                Mesh_adaptor_polyhedron_ex,
+                CGAL::Circular_border_parametizer_3<Mesh_adaptor_polyhedron_ex>,
+                SparseLinearAlgebraTraits_d
+            >());
+    }
+    else if ( (strcmp(type,"authalic") == 0) && (strcmp(boundary,"square") == 0) )
+    {
+        err = CGAL::parameterize(
+            mesh_adaptor,
+            CGAL::Discrete_authalic_parametizer_3<
+                Mesh_adaptor_polyhedron_ex,
+                CGAL::Square_border_parametizer_3<Mesh_adaptor_polyhedron_ex>,
+                SparseLinearAlgebraTraits_d
+            >());
+    }
+    else if (strcmp(type,"lscm") == 0)
+    {
+        err = CGAL::parameterize(
+            mesh_adaptor,
+            CGAL::LSCM_parametizer_3<
+                Mesh_adaptor_polyhedron_ex,
+                CGAL::Two_vertices_parametizer_3<Mesh_adaptor_polyhedron_ex>,
+                SparseLinearAlgebraTraits_d
+            >());
+    }
+    else
+    {
+        fprintf(stderr,"invalid choice\n");
+        exit(1);
+    }
+
+    return err;
+}
+
 
 // ----------------------------------------------------------------------------
-// main
+// Usage
 // ----------------------------------------------------------------------------
 
 // Parameters description for Options library
@@ -152,9 +267,9 @@ static const char *  optv[] =
     //     '+' -- indicates that the option takes 1 or more arguments;
 
     "t:type <string>", // -t or --type
-    // -t    conformal   -> default
+    // -t    floater     -> mean coordinate values (default)
+    //       conformal   -> conformal
     //       natural     -> free boundaries
-    //       floater     -> mean coordinate values
     //       uniform     -> weight = 1
     //       authalic    -> weak area-preserving
     //       lscm        -> Least Squares Conformal Maps
@@ -163,6 +278,10 @@ static const char *  optv[] =
     "b:boundary <string>", // -b or --boundary (for fixed border param.)
     // -b circle        -> map mesh boundary onto a circle
     //    square        -> map mesh boundary onto a square
+
+    "s:solver <string>", // -s or --solver
+    // -s opennl        -> OpenNL solver (GPL)
+    //    taucs         -> TAUCS solver
 
     "o:output <string>", // -o or --output
     // -o eps   -> eps map       (-o eps file.off > file.eps)
@@ -173,28 +292,35 @@ static const char *  optv[] =
 
 // Parameters description for usage
 static const char * usage = "off-input-file [output-file]\n\
-where type is:     conformal, natural, floater, uniform, authalic or lscm\n\
-      boundary is: circle or square\n\
-      output is:   eps or obj";
+where type is:     floater (default), conformal, natural, uniform, authalic or lscm\n\
+      boundary is: circle (default) or square\n\
+      solver is:   opennl (default) or taucs\n\
+      output is:   eps or obj (default is no output)";
 
-// Border parameterization methods
-enum boundary_type {BOUNDARY_CIRCLE, BOUNDARY_SQUARE};
+
+// ----------------------------------------------------------------------------
+// main()
+// ----------------------------------------------------------------------------
 
 int main(int argc,char * argv[])
 {
     std::cerr << "\nPARAMETERIZATION" << std::endl;
 
     // options
-    const char *type = "conformal";  // default: conformal param
-    const char *boundary = "circle"; // default: circle boundary
-    boundary_type boundary_type = BOUNDARY_CIRCLE;
-    const char *output = "";         // default:  output nothing
+    const char *type = "floater";       // default: Floater param
+    const char *boundary = "circle";    // default: circular boundary param.
+    const char *solver = "opennl";      // default: OpenNL solver
+    const char *output = "";            // default: no output 
 
     // misc
     char  optchar;
     const char *optarg;
     int  errors = 0;
     int  npos = 0;
+
+    //***************************************
+    // decode parameters
+    //***************************************
 
     Options opts(*argv, optv);
     OptArgvIter iter(--argc,++argv);
@@ -218,12 +344,13 @@ int main(int argc,char * argv[])
         case 'b' :
             boundary = optarg;
             std::cerr << "  " << boundary << " boundary" << std::endl;
-            if(strcmp(boundary,"circle") == 0)
-            boundary_type = BOUNDARY_CIRCLE;
-            else
-            boundary_type = BOUNDARY_SQUARE;
             break;
 
+        // solver
+        case 's' :
+            solver = optarg;
+            std::cerr << "  " << solver << " solver" << std::endl;
+            break;
 
         // help
         case '?' :
@@ -264,8 +391,9 @@ int main(int argc,char * argv[])
                                                        : NULL;
 
     //***************************************
-    // check input file
+    // read the mesh
     //***************************************
+
     fprintf(stderr,"\n  read file...%s...", input_filename);
     std::ifstream stream(input_filename);
     if(!stream) {
@@ -273,9 +401,7 @@ int main(int argc,char * argv[])
         return 1;
     }
 
-    //***************************************
     // read the mesh
-    //***************************************
     Polyhedron_ex mesh;
     fprintf(stderr,"ok\n  fill mesh...");
     stream >> mesh;
@@ -283,11 +409,6 @@ int main(int argc,char * argv[])
     // print mesh info
     fprintf(stderr,"(%d facets, ",mesh.size_of_facets());
     fprintf(stderr,"%d vertices)\n",mesh.size_of_vertices());
-
-    // compute misc.
-    //mesh.compute_normals();
-    mesh.compute_facet_centers();
-    //mesh.compute_mean_curvature_normal();
 
     //***************************************
     // switch parameterization
@@ -303,67 +424,15 @@ int main(int argc,char * argv[])
                                             seam->halfedges()->begin(),
                                             seam->halfedges()->end());
 
-    // Switch parameterization. Defaults are:
-    // - floater mean value coordinates
-    // - fixing border on a circle (for fixed parameterization)
-    // - OpenNL sparse linear solver
+    // Switch parameterization
     CGAL::Parametizer_3<Mesh_adaptor_polyhedron_ex>::ErrorCode err;
-    if ( (strcmp(type,"floater") == 0) && (strcmp(boundary,"circle") == 0) )
+    if (strcmp(solver,"opennl") == 0) 
     {
-        // Floater/circle is the default parameterization algorithm
-        err = CGAL::parameterize(&mesh_adaptor);
+        err = parameterize<OpenNL::DefaultLinearSolverTraits<double> >(&mesh_adaptor, type, boundary);
     }
-    else if ( (strcmp(type,"floater") == 0) && (strcmp(boundary,"square") == 0) )
+    else if (strcmp(solver,"taucs") == 0)
     {
-        err = CGAL::parameterize(
-            &mesh_adaptor,
-            CGAL::Mean_value_coordinates_parametizer_3<Mesh_adaptor_polyhedron_ex,
-            CGAL::Square_border_parametizer_3<Mesh_adaptor_polyhedron_ex> >());
-    }
-    else if ( (strcmp(type,"uniform") == 0) && (strcmp(boundary,"circle") == 0) )
-    {
-        err = CGAL::parameterize(
-            &mesh_adaptor,
-            CGAL::Barycentric_mapping_parametizer_3<Mesh_adaptor_polyhedron_ex>());
-    }
-    else if ( (strcmp(type,"uniform") == 0) && (strcmp(boundary,"square") == 0) )
-    {
-        err = CGAL::parameterize(
-            &mesh_adaptor,
-            CGAL::Barycentric_mapping_parametizer_3<Mesh_adaptor_polyhedron_ex,
-            CGAL::Square_border_parametizer_3<Mesh_adaptor_polyhedron_ex> >());
-    }
-    else if ( (strcmp(type,"conformal") == 0) && (strcmp(boundary,"circle") == 0) )
-    {
-        err = CGAL::parameterize(
-            &mesh_adaptor,
-            CGAL::Discrete_conformal_map_parametizer_3<Mesh_adaptor_polyhedron_ex>());
-    }
-    else if ( (strcmp(type,"conformal") == 0) && (strcmp(boundary,"square") == 0) )
-    {
-        err = CGAL::parameterize(
-            &mesh_adaptor,
-            CGAL::Discrete_conformal_map_parametizer_3<Mesh_adaptor_polyhedron_ex,
-            CGAL::Square_border_parametizer_3<Mesh_adaptor_polyhedron_ex> >());
-    }
-    else if ( (strcmp(type,"authalic") == 0) && (strcmp(boundary,"circle") == 0) )
-    {
-        err = CGAL::parameterize(
-            &mesh_adaptor,
-            CGAL::Discrete_authalic_parametizer_3<Mesh_adaptor_polyhedron_ex>());
-    }
-    else if ( (strcmp(type,"authalic") == 0) && (strcmp(boundary,"square") == 0) )
-    {
-        err = CGAL::parameterize(
-            &mesh_adaptor,
-            CGAL::Discrete_authalic_parametizer_3<Mesh_adaptor_polyhedron_ex,
-            CGAL::Square_border_parametizer_3<Mesh_adaptor_polyhedron_ex> >());
-    }
-    else if (strcmp(type,"lscm") == 0)
-    {
-        err = CGAL::parameterize(
-            &mesh_adaptor,
-            CGAL::LSCM_parametizer_3<Mesh_adaptor_polyhedron_ex>());
+        err = parameterize<CGAL::Taucs_solver_traits<double> >(&mesh_adaptor, type, boundary);
     }
     else
     {
@@ -381,10 +450,24 @@ int main(int argc,char * argv[])
     //***************************************
     // output
     //***************************************
+
     if(strcmp(output,"eps") == 0)
+    {
         mesh.dump_param(output_filename);               // write EPS file
+    }
     else if(strcmp(output,"obj") == 0)
+    {
         mesh.write_file_obj(output_filename);           // write Wavefront obj file
+    }
+    else
+    {
+        fprintf(stderr,"invalid choice\n");
+        return 1;
+    }
+
+    //***************************************
+    // cleanup
+    //***************************************
 
     // Flush cout and cerr
     cout << std::endl;
@@ -392,4 +475,5 @@ int main(int argc,char * argv[])
 
     return EXIT_SUCCESS;
 }
+
 
