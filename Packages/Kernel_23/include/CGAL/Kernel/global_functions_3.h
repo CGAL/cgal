@@ -592,6 +592,14 @@ orientation(const Point_3<K> &p,
 
 template <class K >
 inline
+Orientation
+orientation(const Vector_3<K> &u, const Vector_3<K> &v, const Vector_3<K> &w)
+{
+  return CGALi::orientation(u, v, w, K());
+}
+
+template <class K >
+inline
 typename K::Vector_3
 orthogonal_vector(const Point_3<K>& p,
 		  const Point_3<K>& q,

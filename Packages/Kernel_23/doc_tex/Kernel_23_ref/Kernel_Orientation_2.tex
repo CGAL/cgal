@@ -11,6 +11,12 @@ line $l$ defined by $p$ and $q$, returns \ccStyle{RIGHT_TURN} if $r$
 lies to the right of $l$, and returns \ccStyle{COLLINEAR} if $r$ lies
 on $l$.}
 
+\ccMemberFunction{Orientation operator()(const Kernel::Vector_2&u, 
+                                         const Kernel::Vector_2&v);}
+{returns \ccStyle{LEFT_TURN} if $u$ and $v$ form a left turn,
+returns \ccStyle{RIGHT_TURN} if $u$ and $v$ form a right turn,
+and returns \ccStyle{COLLINEAR} if $u$ and $v$ are collinear.}
+
 \ccRefines
 AdaptableFunctor (with three arguments)
 

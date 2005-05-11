@@ -3255,7 +3255,8 @@ public:
 template <typename K>
 class Orientation_2
 {
-    typedef typename K::Point_2 Point_2;
+    typedef typename K::Point_2   Point_2;
+    typedef typename K::Vector_2  Vector_2;
 public:
     typedef Orientation      result_type;
     typedef Arity_tag< 3 >   Arity;
@@ -3263,12 +3264,17 @@ public:
     Orientation
     operator()(const Point_2&, const Point_2&, const Point_2&) const
     { return CGAL::COLLINEAR; }
+
+    Orientation
+    operator()(const Vector_2&, const Vector_2&) const
+    { return CGAL::COLLINEAR; }
 };
 
 template <typename K>
 class Orientation_3
 {
-    typedef typename K::Point_3 Point_3;
+    typedef typename K::Point_3   Point_3;
+    typedef typename K::Vector_3  Vector_3;
 public:
     typedef Orientation      result_type;
     typedef Arity_tag< 4 >   Arity;
@@ -3276,6 +3282,10 @@ public:
     Orientation
     operator()( const Point_3&, const Point_3&,
 	        const Point_3&, const Point_3&) const
+    { return CGAL::COLLINEAR; }
+
+    Orientation
+    operator()( const Vector_3&, const Vector_3&, const Vector_3&) const
     { return CGAL::COLLINEAR; }
 };
 

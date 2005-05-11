@@ -403,6 +403,14 @@ orientationC2(const FT &px, const FT &py,
 
 template < class FT >
 inline
+Orientation
+orientationC2(const FT &ux, const FT &uy, const FT &vx, const FT &vy)
+{
+  return Orientation (sign_of_determinant2x2(ux, uy, vx, vy));
+}
+
+template < class FT >
+inline
 Angle
 angleC2(const FT &px, const FT &py,
         const FT &qx, const FT &qy,

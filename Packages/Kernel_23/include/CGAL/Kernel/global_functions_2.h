@@ -764,6 +764,14 @@ orientation(const Point_2<K> &p, const Point_2<K> &q, const Point_2<K> &r)
   return CGALi::orientation(p, q, r, K());
 }
 
+template <typename K>
+inline
+Orientation
+orientation(const Vector_2<K> &u, const Vector_2<K> &v)
+{
+  return CGALi::orientation(u, v, K());
+}
+
 // parallel() functions are in global_functions.h
 
 template <typename K>

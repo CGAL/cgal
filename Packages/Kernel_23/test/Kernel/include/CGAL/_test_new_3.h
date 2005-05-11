@@ -575,6 +575,7 @@ test_new_3(const R& rep)
   typename R::Orientation_3 orientation
         = rep.orientation_3_object();
   Orientation tmp31 = orientation(p2,p3,p4,p5);
+  tmp31 = orientation(v3,v4,v5);
   (void) tmp31;
 
 

@@ -128,6 +128,18 @@ orientationC3(const FT &px, const FT &py, const FT &pz,
 }
 
 template < class FT >
+CGAL_KERNEL_MEDIUM_INLINE
+Orientation
+orientationC3(const FT &ux, const FT &uy, const FT &uz,
+              const FT &vx, const FT &vy, const FT &vz,
+              const FT &wx, const FT &wy, const FT &wz)
+{
+  return Orientation(sign_of_determinant3x3(ux, vx, wx,
+                                            uy, vy, wy,
+                                            uz, vz, wz));
+}
+
+template < class FT >
 inline
 Angle
 angleC3(const FT &px, const FT &py, const FT &pz,

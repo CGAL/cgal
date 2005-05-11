@@ -463,6 +463,16 @@ orientation(const typename CGAL_WRAP(K)::Point_3 &p,
   return k.orientation_3_object()(p, q, r, s);
 }
 
+template <class K >
+inline
+Orientation
+orientation(const typename CGAL_WRAP(K)::Vector_3 &u,
+	    const typename CGAL_WRAP(K)::Vector_3 &v,
+	    const typename CGAL_WRAP(K)::Vector_3 &w, const K &k)
+{
+  return k.orientation_3_object()(u, v, w);
+}
+
 template < class K >
 inline
 typename K::Vector_3

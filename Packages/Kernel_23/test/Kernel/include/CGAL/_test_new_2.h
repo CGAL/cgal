@@ -479,6 +479,7 @@ test_new_2(const R& rep)
   typename R::Orientation_2 orientation
         = rep.orientation_2_object();
   Orientation tmp40 = orientation(p2,p3,p4);
+  tmp40 = orientation(v2,v3);
 
 
   typename R::Side_of_oriented_circle_2 side_of_oriented_circle

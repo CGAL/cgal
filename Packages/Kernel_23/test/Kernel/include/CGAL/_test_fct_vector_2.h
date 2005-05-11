@@ -54,6 +54,11 @@ _test_fct_vector_2(const R& )
  CGAL::Vector_2<R>  v10( n8,-n2, n4);       // (1.5,2)
  CGAL::Vector_2<R>  v11(-n6, n11, n8);      // ( 6, 8)
 
+ assert( orientation(v0, v0) == CGAL::COLLINEAR );
+ assert( orientation(v1, v1) == CGAL::COLLINEAR );
+ assert( orientation(v1, v0) == CGAL::COLLINEAR );
+ assert( orientation(v1, v2) == CGAL::RIGHT_TURN );
+ assert( orientation(v2, v1) == CGAL::LEFT_TURN );
 
  assert( v1 + v2 == v3 );
  assert( v1 - v2 == v4 );

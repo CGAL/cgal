@@ -645,6 +645,15 @@ orientation(const typename CGAL_WRAP(K)::Point_2 &p,
 
 template <typename K>
 inline
+Orientation
+orientation(const typename CGAL_WRAP(K)::Vector_2 &u,
+            const typename CGAL_WRAP(K)::Vector_2 &v, const K &k)
+{
+  return k.orientation_2_object()(u, v);
+}
+
+template <typename K>
+inline
 bool
 parallel(const typename CGAL_WRAP(K)::Line_2 &l1,
          const typename CGAL_WRAP(K)::Line_2 &l2, const K &k)

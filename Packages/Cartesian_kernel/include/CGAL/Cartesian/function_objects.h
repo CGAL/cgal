@@ -2090,7 +2090,8 @@ namespace CartesianKernelFunctors {
   template <typename K>
   class Orientation_2
   {
-    typedef typename K::Point_2 Point_2;
+    typedef typename K::Point_2   Point_2;
+    typedef typename K::Vector_2  Vector_2;
   public:
     typedef Orientation      result_type;
     typedef Arity_tag< 3 >   Arity;
@@ -2100,12 +2101,19 @@ namespace CartesianKernelFunctors {
     { 
       return orientationC2(p.x(), p.y(), q.x(), q.y(), r.x(), r.y());
     }
+
+    Orientation
+    operator()(const Vector_2& u, const Vector_2& v) const
+    { 
+      return orientationC2(u.x(), u.y(), v.x(), v.y());
+    }
   };
 
   template <typename K>
   class Orientation_3
   {
-    typedef typename K::Point_3 Point_3;
+    typedef typename K::Point_3   Point_3;
+    typedef typename K::Vector_3  Vector_3;
   public:
     typedef Orientation      result_type;
     typedef Arity_tag< 4 >   Arity;
@@ -2118,6 +2126,14 @@ namespace CartesianKernelFunctors {
 			   q.x(), q.y(), q.z(),
 			   r.x(), r.y(), r.z(),
 			   s.x(), s.y(), s.z());
+    }
+
+    Orientation
+    operator()( const Vector_3& u, const Vector_3& v, const Vector_3& w) const
+    { 
+      return orientationC3(u.x(), u.y(), u.z(),
+			   v.x(), v.y(), v.z(),
+			   w.x(), w.y(), w.z());
     }
   };
 

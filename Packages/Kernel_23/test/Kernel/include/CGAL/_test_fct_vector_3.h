@@ -55,6 +55,16 @@ _test_fct_vector_3(const R& )
 
  CGAL::Vector_3<R>  v10( n8,-n2,-n5, n4);  // (1.5,2,-4.5)
  CGAL::Vector_3<R>  v11(-n6, n11,-n12, n8);// ( 6, 8, -18)
+ CGAL::Vector_3<R>  v12(n1, n2, -n3, n4);  // ( 6,-2, -3)
+
+ assert( orientation(v0, v0, v0) == CGAL::COPLANAR );
+ assert( orientation(v1, v1, v1) == CGAL::COPLANAR );
+ assert( orientation(v1, v1, v2) == CGAL::COPLANAR );
+ assert( orientation(v1, v2, v1) == CGAL::COPLANAR );
+ assert( orientation(v2, v1, v1) == CGAL::COPLANAR );
+ assert( orientation(v1, v2, v3) == CGAL::COPLANAR );
+ assert( orientation(v1, v2, v12) == CGAL::POSITIVE );
+ assert( orientation(v1, v12, v2) == CGAL::NEGATIVE );
 
  assert( v1 + v2 == v3 );
  assert( v1 - v2 == v4 );

@@ -1,3 +1,8 @@
+11 May 2005 Sylvain Pion
+- New predicates : orientation(3 Vector_3) and orientation(2 Vector_2).
+
+============================= CGAL 3.1 ==========================
+
 17 September 2004 Sylvain Pion
 - Cartesian_converter.h : add #include <CGAL/Origin.h>.
 

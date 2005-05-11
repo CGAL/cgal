@@ -1,3 +1,6 @@
+11 May 2005 Sylvain Pion
+- New predicates : orientation(3 Vector_3) and orientation(2 Vector_2).
+
 26 April 2005 Sylvain Pion
 - Fix rational_rotation bug (by Daniel).
 
