@@ -1,3 +1,8 @@
+11 May 2005 Sylvain Pion
+- New predicate : orientation(3 Vector_3).
+
+================================ CGAL 3.1 ==========================
+
 14 September 2004 Sylvain Pion
 - More global functions call the functors.
 
