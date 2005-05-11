@@ -35,12 +35,11 @@
 
 
 \title{Degeneracy}
-\author{}
+\author{Frans Wessendorp}
 %
 \begin{document}
 \maketitle
 \section{Row rank and column rank assumption}
-\marginpar{variable index issue: section adapted}
 The QP-solver so far assumes nondegeneracy of the quadratic program to
 solve~\cite{Sven}, page 19. For ease of reference we will restate the
 nondegeneracy assumptions, that is given the QP,
@@ -71,7 +70,6 @@ must be met. In the following we will show how these
 assumptions can be dropped. To this end we will first describe how the auxiliary
 problem is set up. 
 \section{The auxiliary problem}
-\marginpar{variable index issue: section adapted}
 The auxiliary problem is constructed by augmenting the constraint matrix $A$
 with columns corresponding to slack and artificial variables. The slack columns
 are added in the standard way. For each of the equality constraints 
@@ -123,9 +121,9 @@ For later use we introduce the bijection $\sigma$ defined as
 \sigma: S \cup art \setminus \{\tilde{a}^{s}\} \rightarrow I \cup E
 \end{equation}
 which maps the index sets of slack and artificial variables to
-the index sets of their inequality and equality constraints. 
+the index sets of their inequality and equality constraints.
+ 
 \subsection{Initialization of the auxiliary problem}
-\marginpar{variable index issue: subsection adapted}
 Since only constraints which are satisfied with equality determine the values of
 the basic variables with respect to a given basis only the equality constraints
 as well as the currently active inequality constraints are
@@ -179,8 +177,8 @@ S_{B}^{(0)} &:=&I && S_{N}^{(0)}&:=& \emptyset
 \end{array}
 \end{equation}
 where $art$ does not contain a special artificial variable.
+
 \subsection{Expelling artificial variables from the Basis}
-\marginpar{variable index issue: subsection adapted}
 At the end of phase I some artificial variables may remain in the basis.
 In that case, if the original problem is to be feasible, the basis has to be
 degenerate.
@@ -201,9 +199,9 @@ For the sake of notational convenience we assume here that the index set of the
 artificial variables $art\setminus \{\tilde{a}^{s}\}$ is defined as
 $art\setminus \{\tilde{a}^{s}\}=\{l+1 \ldots l+\left|E\right| \}$,
 $l \geq n-1$ and that the basic artificial variable $x_{i+l}$ appears in the
-basis heading $B_{O}$ at position $i$. 
+basis heading $B_{O}$ at position $i$.
+ 
 \subsubsection{The special artificial variable}
-\marginpar{variable index issue: subsubsection adapted}
 \label{sec:spec_art_unpert}
 Suppose the special artificial variable is the $k$-th entry in the basis
 heading $B$. Then 
@@ -228,7 +226,6 @@ $r_{i} \neq 0$, which in turn implies that condition
 $j = \sigma^{-1} \left( i \right)$.
 
 \subsubsection{Pivoting the artificial variables out of the basis}
-\marginpar{variable index issue: subsubsection adapted}
 The procedure described in~\cite{Chvatal} is outlined in
 algorithm~(\ref{alg:expel_art_var}). We avoid iterating
 over sets that change during the computation, we only use member tests on such
@@ -263,9 +260,9 @@ the proof of which we omit here.
 \State $J \gets \sigma(B_{O} \cap art)$
 \end{algorithmic}
 \end{algorithm}
+
 \subsubsection{Removing the remaining artificial variables and their
 constraints}
-\marginpar{no variable index issue}
 Let $B^{(k)}$ and $N^{(k)}$ denote the set of indices of basic and nonbasic
 variables at the end of Algorithm~(\ref{alg:expel_art_var}).
 Since for the remaining basic artificial variables $x_{i}$,
@@ -299,7 +296,6 @@ $E^{\prime}:=E \setminus \{ \sigma(i)\}$, if $\check{A}_{B^{\prime}}$ denotes
 the basis matrix after the update. 
 
 \subsubsection{Dropping the row rank assumption}
-\marginpar{no variable index issue}
 Due to performance reasons alluded to in the last subsection above the feature
 of removing redundant equalities is provided only if the compile time tag
 \texttt{Has\_no\_inequalities} has type \texttt{Tag\_false}.
@@ -312,7 +308,6 @@ some small performance penalty. If on the other hand the compile time tag has
 type \texttt{Tag\_true}, in that case the solver aborts in case of $Rank(A)<m$.  
 
 \section{The lexicographic method}
-\marginpar{variable index issue subsubsection adapted}
 In order to being able to drop the second condition of
 Assumption~(\ref{ass:nondegeneracy}) we use a variation of the lexicographic
 method. Since the standard lexicographic method enlarges the feasible region
@@ -360,7 +355,6 @@ l_{c}(p(\varepsilon)):=\min_{0 \leq k \leq l:p_{k} \neq 0}k
 \end{equation}
   
 \subsection{The auxiliary problem for the lexicographic method}
-\marginpar{variable index issue subsection adapted}
 The slack columns are added in the standard way.
 Similar to Definition~\ref{def:art_col}, for each equality constraint the
 constraint matrix $A$ is augmented by an artificial column
@@ -417,11 +411,10 @@ holds.
 %\label{req:order_eps_spec_art}
 %\max_{i \in S \cup art \setminus \{\tilde{a}^{s} \}}i < ind(\tilde{a}^{s})
 %\end{equation} 
-\marginpar{may the mapping $\sigma: S \rightarrow I$ still be arbitrary?}
+\marginpar{may the mapping $\sigma: S \rightarrow I$ be arbitrary?}
 
 \subsection{Initialization of the auxiliary problem for the lexicographic
 method}
-\marginpar{variable index issue subsection adapted}
 The auxiliary problem is initialized as before, that is $B_{O}^{(0)}$
 $B_{S}^{(0)}$, $S_{B}^{(0)}$ and $S_{N}^{(0)}$ are defined as in
 Definitions~(\ref{def:headings_init_io}) and~(\ref{def:headings_init_fo}),
@@ -438,7 +431,6 @@ is now unique.
 \subsection{Resolving ties in phaseI}
 \label{sec:Res_ties_phaseI}
 \subsubsection{LP-case}
-\marginpar{variable index issue subsubsection adapted}
 Let $B$ be the current basis and $j \in N$ be the entering variable
 and define $\hat{N}:= N \setminus\{j\}$ and
 $q:= A_{B}^{-1}\tilde{A}_{\bullet,j}$.
@@ -478,7 +470,6 @@ $\tilde{p}_{x_{i_{1}}}^{(L)}\left(\varepsilon, B\right)$ and
 $\tilde{p}_{x_{i_{2}}}^{(L)}\left(\varepsilon, B\right)$. 
 
 \subsubsection{QP-case}
-\marginpar{variable index issue subsubsection adapted}
 In preparation of phaseII the QP-case in phaseI uses the QP-machinery for $D=0$.
 The basis $M_{B}$ in phaseI is, given the basis heading
 $\left[C \cup S_{B}, B_{O} \cup B_{S} \right]$,
@@ -607,14 +598,14 @@ artificial variables $art\setminus \{\tilde{a}^{s}\}$ is defined as
 $art\setminus \{\tilde{a}^{s}\}=\{l+1 \ldots l+\left|E\right| \}$,
 $l \geq n-1$ and that the basic artificial variable $x_{i+l}$ appears in the
 basis heading $B$ at position $i$.
+
 \subsubsection{Expelling artificial variables from the basis}
-\marginpar{variable index issue: subsubsection adapted}
 Let $N_{-1}:=N \cup \{-1\}$ denote the set of nonbasic variables extended
 by $-1$ with $\tilde{A}_{\bullet, -1}:=b$. Define for $i \in B \cap art$
 \begin{eqnarray*}
   l_{B}\left(i\right):=\min_{j \in R_{i}} j & \text{where}&
   R_{i}:=\{ j \in N_{-1} \left| \right.
-  \left(\tilde{A}_{B}^{-1}\tilde{A}_{\bullet, j}\right)_{i-l} \neq 0 \}
+  e_{i}^{T}A_{B}^{-1}\tilde{A}_{\bullet, j} \neq 0 \}
 \end{eqnarray*}
 \marginpar{Definition restricted to basic artificials only}  
 \begin{lemma}
@@ -622,33 +613,33 @@ by $-1$ with $\tilde{A}_{\bullet, -1}:=b$. Define for $i \in B \cap art$
 Let $x_{B}(\varepsilon)$ be the optimal solution of the auxiliary problem and
 $B \cap art \neq \emptyset$. Then for $i \in B \cap art$ either
 $l_{B}\left(i\right) = -1$ or $l_{B}\left(i\right) \geq 0$,
-$(\tilde{A}_{B}^{-1}\tilde{A}_{\bullet,j})_{i-l} = 0$
+$e_{i}^{T}A_{B}^{-1}\tilde{A}_{\bullet,j} = 0$
 for $j \in N \setminus art$.
 \end{lemma}
 \begin{proof}
 We only consider $l_{B}\left(i\right) \geq 0$ for all $i \in B \cap art$, for
 $l_{B}\left(i\right) = -1$ for some $i \in B \cap art$ implies infeasibility of
 the unperturbed problem. 
-Since $x_{B}(\varepsilon) = \tilde{A}_{B}^{-1}b - \tilde{A}_{B}^{-1}
+Since $x_{B}(\varepsilon) = A_{B}^{-1}b - A_{B}^{-1}
 \tilde{A}_{N}\epsilon_{N}$
 and the implicit constraints are $x_{j}(\varepsilon) \geq -\varepsilon^{j+1}$
 for variable $x_{j}(\varepsilon)$, feasibility requires
 for some variable $i \in B \cap art$ either $l_{B}\left(i\right) < i$,
-$(\tilde{A}_{B}^{-1}\tilde{A}_{\bullet, l_{B}\left(i\right)})_{i-l} > 0$ or
+$e_{i}^{T}A_{B}^{-1}\tilde{A}_{\bullet, l_{B}\left(i\right)} > 0$ or
 $l_{B}\left(i\right) > i$. Let
 \begin{equation*}
   \ell:= \min_{i \in B \cap art} l_{B}\left(i\right),
 \end{equation*}
 if $\ell \in N \setminus art$,
 then by definition of $\tilde{c}_{B}$ and $\ell$,
-$\tilde{c}_{B}\tilde{A}_{B}^{-1}\tilde{A}_{\bullet, \ell} > 0$,
+$\tilde{c}_{B}A_{B}^{-1}\tilde{A}_{\bullet, \ell} > 0$,
 in contradiction to optimality which requires
 $\tilde{c}_{\ell} \geq
-\tilde{c}_{B}\tilde{A}_{B}^{-1}\tilde{A}_{\bullet, \ell}$,
+\tilde{c}_{B}A_{B}^{-1}\tilde{A}_{\bullet, \ell}$,
 since $\tilde{c}_{\ell}=0$ for 
 $\ell \in N \setminus art$.
 So $\ell \in N \cap art$, which by requirement~(\ref{req:order_eps}) implies
-$(\tilde{A}_{B}^{-1}\tilde{A}_{\bullet, j})_{i-l}=0$, for
+$e_{i}^{T}A_{B}^{-1}\tilde{A}_{\bullet, j}=0$, for
 $i \in B \cap art$ and $j \in N \setminus art$. 
 \end{proof}
 
@@ -660,12 +651,12 @@ apply as in the unperturbed case, that is, by
 Section~(\ref{sec:spec_art_unpert}) there exists
 $j \in S \setminus B_{S}$ such that 
 \begin{equation*}
-\left(A_{B}^{-1}\tilde{A}_{\bullet,j}\right)_{k} \neq 0
+e_{k}^{T}A_{B}^{-1}\tilde{A}_{\bullet,j} \neq 0
 \end{equation*} 
 holds, if $\tilde{a}^{s}$ appears in $k$-th position in the basis heading
 $B$. By Lemma~(\ref{lem:art_BxN_zero}) on the other hand we have
 \begin{equation*}
-\left(A_{B}^{-1}\tilde{A}_{\bullet,j}\right)_{k} = 0,
+e_{k}^{T}A_{B}^{-1}\tilde{A}_{\bullet,j} = 0,
 \end{equation*}
 so $ind(\tilde{a}^{s}) \in N$.
 
@@ -676,8 +667,28 @@ e_{i}^{T}A_{B}^{-1}\tilde{A}_{N \setminus art}=0, \quad i \in B_{O} \cap art
 \end{equation}
 holds for the optimal solution of the auxiliary problem, such that by the proof
 in \cite{Chvatal}, Chapter~8, the equality constraints
-$A_{i}$, $i \in J=\sigma(art \cap B_{O})$ are linear combinations of the equality
-constraints $A_{i}$, $i \in E \setminus J$.
+$A_{i}$, $i \in J=\sigma(B_{O} \cap art)$ are linear combinations of the
+equality constraints $A_{i}$, $i \in E \setminus J$.
+
+The values of nonbasic artificial variables $x_{j}$, $j \in N \cap art$ are
+increased from $-\varepsilon^{j+1}$ to zero and then $x_{j}$ is removed. This
+may render the the solution infeasible if
+\begin{equation*}
+e_{i}^{T}A_{B}^{-1}\tilde{A}_{\bullet, j} > 0
+\end{equation*} 
+for some $i \in B$ and $j \in N \cap art$ with $j < i$, but does not affect the
+linear dependence of the constraints $A_{i}$, $i \in J$ on the constraints
+$A_{i}$, $i \in E \setminus J$.
+Thus by Requirement~(\ref{req:order_eps}) this may only affect
+the feasibility of the basic artificial variables
+$x_{i}$, $i \in B \cap art$, but since these
+basic artificial variables $i \in B \cap art$ can be removed together with
+their corresponding constraints $A_{\sigma(i)}$ we end up, after removal of
+basic artificial variables $x_{i}$, $i \in B \cap art$ and their corresponding
+constraints, with a basic feasible
+solution to the original perturbed problem. Like in the unperturbed case
+the basic artificial variables
+$i \in B \cap art$ are removed by updates of type $U8$.    
 \subsection{The lexicographic method in phaseII}
 Since the nonbasic variables are no longer zero, the objective function as well as
 the values of the basic variables are no longer independent of the nonbasic
@@ -1907,7 +1918,7 @@ Definition~(\ref{def:epsilon}) of $\epsilon$, we merely consider
 the subexpression
 \begin{equation}
 \label{def:tilde_n_p_x_i_L}
-\tilde{n}_{x_{i}}^{(L)}(B)[k]:=
+\tilde{n}_{x_{i}}^{(L)}(B)[i,k]:=
 (A_{B}^{-1}\tilde{A}_{k})_{x_{i}} 
 \end{equation}
 The correct value
@@ -2176,7 +2187,7 @@ since only LP-type ties can occur in the LP-case
 and these have already been treated in the last section. 
 
 \subsubsection{Ratio Test Step 1:
-$p_{x_{i}}^{(Q_{1})}(\varepsilon, B)$}
+$\px{i}{Q_{1}}{B}$}
 For ease of reference, we restate the Definition~(\ref{def:p_x_i_Q_1}),
 of $p_{x_{i}}^{(Q_{1})}(\varepsilon, B)$
 \begin{eqnarray*}
@@ -2212,7 +2223,7 @@ Definition~(\ref{def:epsilon}) of $\epsilon$, we merely consider
 the subexpression
 \begin{equation}
 \label{def:n_x_i_Q_1}
-n_{x_{i}}^{(Q_{1})}(B)[k]:=
+n_{x_{i}}^{(Q_{1})}(B)[i,k]:=
 \left(M_{B}^{-1}
            \left(\begin{array}{c}
                     A_{k}  \\
@@ -2498,7 +2509,7 @@ Step~1 of a given pivot step,
 we merely consider the subexpression
 \begin{equation}
 \label{def:n_mu_j_Q_1}
-n_{\mu_{j}}^{(Q_{1})}(B)[k]:=
+n_{\mu_{j}}^{(Q_{1})}(B)[j,k]:=
 2D_{j, k} -
     \left(q_{\lambda}^{T} \left| \right. q_{x}^{T} \right)
     \left(\begin{array}{c}
@@ -2805,7 +2816,7 @@ Because of $D_{B_{O},k}=0$, $D_{j,k}=0$ for $j \in S \cap N$
 
 \subsubsection{Ratio Test Step 2: \px{i}{Q_{2}}{\hat{B}}}
 For ease of reference, we restate the Definition~(\ref{def:p_x_i_Q_2}),
-of $p_{x_{i}}^{(Q_{2})}(\varepsilon, \hat{B})$
+of $\px{i}{Q_{2}}{\hat{B}}$
 \begin{eqnarray*}
 \px{i}{Q_{2}}{\hat{B}} &:=&
   \frac{\varepsilon^{i+1} -
@@ -2827,7 +2838,7 @@ Definition~(\ref{def:epsilon}) of $\epsilon$,
 we merely consider the subexpression
 \begin{equation}
 \label{def:n_x_i_Q_2}
-n_{x_{i}}^{(Q_{2})}(\hat{B})[k]:=
+n_{x_{i}}^{(Q_{2})}(\hat{B})[i,k]:=
 \left(
   M_{\hat{B}}^{-1}
   \left(\begin{array}{c}
@@ -2970,7 +2981,8 @@ $0 \leq k \leq \left|O \cup S\right|$, the coefficient of $\varepsilon^{k}$
 in the polynomial
 defined by Definition~(\ref{def:hat_mu_j_min_eps}), such that
 $\pmuz{Q_{1}}{B}[0]=-\frac{\mu_{j}(0,0)}{\nu}$.
-\marginpar{variable index issue: indices start with $0$,  $0 \in O \cup S$}
+Note, that subscripted variable names in the pseudocode snippets of the
+following subsections denote a single variable name.
 
 \subsection{Ratio Test Step 1}
 Since the Ratio Test Step~1 compares according to
@@ -2987,10 +2999,10 @@ leaving variables after consideration of of
 coefficients $\pxz{i}{Q_{1}}{B}[j]$, $0 \leq j \leq k$:
 
 \begin{algorithm}
-\caption{Perturbed Ratio Test 1\_0, $\check{t}(0, B)$}
+\caption{Perturbed Ratio Test 1, $\check{t}(0, B)$}
 \label{alg:ratio_test_step_1_0}
 \begin{algorithmic}
-\Function{ratio\_test\_1\_0\_t\_i}{}
+\Function{ratio\_test\_1\_\_t\_i\_$\varepsilon$}{$B_{O}, B_{S}$}
 \State $T_{0}^{\prime} \gets \emptyset,
   \quad x_{min} \gets 1, \quad  q_{min} \gets 0$
 \ForAll{$i \gets 0,  \left|B_{O}\right| - 1$}
@@ -3060,11 +3072,17 @@ variable.
 \caption{Perturbed Ratio Test 1}
 \label{alg:ratio_test_step_1_pert}
 \begin{algorithmic}
-\Function{ratio\_test\_1}{}
-\State $ratio\_test\_1\_\_q$
+\Function{ratio\_test\_1\_$\varepsilon$}{$B_{O},B_{S},j$}
+\State $ratio\_test\_1\_\_q(B_{O},B_{S},j)$
 \Comment{Initializes global $q_{B_{O}}$ and $q_{B_{S}}$}
-\State $(T_{k}, c_{min}, q_{min}) \gets RATIO\_TEST\_1\_0\_T\_I$
-\State $(c_{j,k}, \nu) \gets RATIO\_TEST\_1\_0\_T\_J$
+\State $(T_{k}, c_{min}, q_{min})
+  \gets RATIO\_TEST\_1\_\_T\_I\_\varepsilon(B_{O},B_{S})$
+\If{$q_{min}=0$}
+    \Comment{$\check{t}(\varepsilon, B)=\infty$}
+    \State \textbf{return} \texttt{unbounded}
+\EndIf
+\State $(c_{j,k}, \nu)
+  \gets RATIO\_TEST\_1\_\_T\_J(B_{O}, B_{S},j)$
 \If{$c_{j,k}*q_{min} > \nu * c_{min} \wedge \left|T_{k}\right| =1$}
   \Comment{$-\frac{\mu_{j}(0, 0)}{\nu}>\check{t}(0, B)
     \wedge \left|T_{k}\right|=1$}
@@ -3073,40 +3091,46 @@ variable.
   \Comment{$-\frac{\mu_{j}(0, 0)}{\nu}<\check{t}(0, B)$}
   \State \textbf{return} $\emptyset$
 \Else
+  \Comment{$-\frac{\mu_{j}(0,0)}{\nu}>\check{t}(0,B) \wedge
+  \left|T_{k}\right|>1 \vee -\frac{\mu_{j}(0,0)}{\nu}=\check{t}(0,B)$}
   \State $k \gets 0, \quad leaving \gets c_{j,k}*q_{min} > \nu * c_{min}$
   \Repeat
     \State $T_{k}^{\prime} \gets \emptyset,
       \quad c_{min} \gets 1,
       \quad q_{min} \gets 0$
     \ForAll{$i \in T_{k}$}
-      \State $c_{x_{i,k}} \gets n_{x_{i}}^{(Q_{1})}(B)[k]$
+      \State $c_{i,k} \gets n_{x_{i}}^{(Q_{1})}(B)[i,k]$
       \If{$i < n$} \Comment{$x_{i}$ is original variable}
-        \If{$c_{min}*q_{B_{O}}[\beta_{O}[i]]<c_{x_{i,k}}*q_{min}$}
-	  \State $c_{min} \gets c_{x_{i,k}},
+        \If{$c_{min}*q_{B_{O}}[\beta_{O}[i]]<c_{i,k}*q_{min}$}
+	  \State $c_{min} \gets c_{i,k},
             \quad q_{min} \gets q_{B_{O}}[\beta_{O}[i]],
             \quad T_{k}^{\prime} \gets \{i\}$
-	\ElsIf{$c_{min}*q_{B_{O}}[\beta_{O}[i]]=c_{x_{i,k}}*q_{min}$}
+	\ElsIf{$c_{min}*q_{B_{O}}[\beta_{O}[i]]=c_{i,k}*q_{min}$}
 	  \State $T_{k}^{\prime} \gets T_{k}^{\prime} \cup \{i\}$
 	\EndIf
       \Else \Comment{$x_{i}$ is slack variable}
-	\If{$c_{min}*q_{B_{S}}[\beta_{S}[i]]<c_{x_{i,k}}*q_{min}$}
-	  \State $c_{min} \gets c_{x_{i,k}},
+	\If{$c_{min}*q_{B_{S}}[\beta_{S}[i]]<c_{i,k}*q_{min}$}
+	  \State $c_{min} \gets c_{i,k},
             \quad q_{min} \gets q_{B_{S}}[\beta_{S}[i]],
 	    \quad T_{k}^{\prime} \gets \{i\}$
-	\ElsIf{$c_{min}*q_{B_{S}}[\beta_{S}[i]]=c_{x_{i,k}}*q_{min}$}
+	\ElsIf{$c_{min}*q_{B_{S}}[\beta_{S}[i]]=c_{i,k}*q_{min}$}
 	  \State $T_{k}^{\prime} \gets T_{k}^{\prime} \cup \{i\}$
 	\EndIf
       \EndIf
     \EndFor
     \If{$ \neg leaving$}
-      \State $c_{j,k} \gets n_{\mu_{j}}^{(Q_{1})}(B)[k]$
+      \State $c_{j,k} \gets n_{\mu_{j}}^{(Q_{1})}(B)[j,k]$
       \If{$c_{j,k} * q_{min} < \nu *c_{min}$}
+        \Comment{$-\frac{\mu_{j}(\varepsilon,0)}{\nu}<
+	  \check{t}(\varepsilon,B)$}
         \State \textbf{return} $\emptyset$
       \EndIf
       \State $leaving \gets c_{j,k} * q_{min} > \nu *c_{min}$
     \EndIf 
     \State $k \gets k+1, \quad T_{k} \gets T_{k}^{\prime}$
   \Until{$\left|T_{k}\right|=1 \wedge leaving$}
+  \Comment{$-\frac{\mu_{j}(\varepsilon,0)}{\nu}>\check{t}(\varepsilon,B)
+    \wedge \left|T_{k}\right|=1$}
   \State \textbf{return} $T_{k}$
 \EndIf    
 \EndFunction
@@ -3116,15 +3140,18 @@ The function that computes $\check{t}(0, B)$ is outlined in
 Algorithm~(\ref{alg:ratio_test_step_1_0}), the keeping of the set of candidate
 leaving variables $T_{0}$ is the only part in which it differs from the
 unperturbed variant.
-The function that computes $\mu_{j}(0,0)$ is omitted here, since it already
+The function \texttt{RATIO\_TEST\_1\_\_T\_J}
+which computes $-\frac{\mu_{j}(0,0)}{\nu}$ is omitted here, since it already
 occurs in the unperturbed problem.
 The function that performs the actual Ratio Test Step~1 by comparing
 $\pmuz{Q_{1}}{B}$ and $\pxz{i}{Q_{1}}{B}$
 coefficient by coefficient is outlined in
 Algorithm~(\ref{alg:ratio_test_step_1_pert}). It returns the unique index of
 the leaving variable if
-$-\frac{\mu_{j}(\varepsilon, 0)}{\nu} > \check{t}(\varepsilon,B)$ and the empty
-set otherwise. Note, that by the remarks of
+$-\frac{\mu_{j}(\varepsilon, 0)}{\nu} > \check{t}(\varepsilon,B)$, the empty
+set if $-\frac{\mu_{j}(\varepsilon, 0)}{\nu} < \check{t}(\varepsilon,B)$ 
+and \texttt{unbounded} if $\check{t}(\varepsilon, B)=\infty$.
+Note, that by the remarks of
 Section~(\ref{sec:Ties_ratio_test_step_1}) \px{i}{Q_{1}}{B} is unique and
 either $\px{i}{Q_{1}}{B} < \pmu{Q_{1}}{B}$ or
 $\px{i}{Q_{1}}{B} > \pmu{Q_{1}}{B}$
@@ -3148,10 +3175,10 @@ $0 \leq j \leq k$,
 we distinguish three cases with respect to
 $\check{\mu}_{j}(0, \hat{B})$:
 \begin{algorithm}
-\caption{Perturbed Ratio Test 2, zero}
+\caption{Perturbed Ratio Test 2, $\check{\mu}_{j}(0,\hat{B})$}
 \label{alg:ratio_test_step_2_0}
 \begin{algorithmic}
-\Function{ratio\_test\_2\_0}{}
+\Function{ratio\_test\_2\_0\_$\varepsilon$}{$B_{O},B_{S}$}
 \State $T_{0} \gets \emptyset,
   \quad x_{min} \gets 1, \quad  p_{min} \gets 0$
 \ForAll{$i \gets 0,  \left|B_{O}\right| - 1$}
@@ -3218,50 +3245,58 @@ variable.
 \caption{Perturbed Ratio Test 2}
 \label{alg:ratio_test_step_2_pert}
 \begin{algorithmic}
-\Function{ratio\_test\_2}{}
+\Function{ratio\_test\_2\_$\varepsilon$}{$B_{O},B_{S},j$}
 \State $ratio\_test\_2\_\_p$
 \Comment{Initializes global $p_{B_{O}}$ and $p_{B_{S}}$}
-\State $(T_{k}, c_{min}, p_{min}) \gets RATIO\_TEST\_2\_0$
-\If{$c_{min} < 0$}
-    \Comment{$\check{\mu}_{j}(\varepsilon, \hat{B}) > 0$}
+\State $(T_{k}, c_{min}, p_{min})
+  \gets RATIO\_TEST\_2\_0\_\varepsilon(B_{O},B_{S})$
+\If{$p_{min} = 0$}
+    \Comment{$\check{\mu}_{j}(\varepsilon, \hat{B}) = \infty$}
+    \State \textbf{return} $\emptyset$
+\ElsIf{$c_{min} < 0$}
+    \Comment{$\check{\mu}_{j}(0, \hat{B}) > 0$}
     \State \textbf{return} $\emptyset$
 \ElsIf{$c_{min} > 0 \wedge \left|T_{k}\right|=1$}
+    \Comment{$\check{\mu}_{j}(0, \hat{B}) < 0 \wedge
+      \left|T_{k}\right|=1$}
     \State \textbf{return} $T_{k}$
 \Else
-    \Comment{$\check{\mu}_{j}(\varepsilon, \hat{B}) \leq 0$}   
+    \Comment{$\check{\mu}_{j}(0, \hat{B}) < 0 \wedge \left|T_{k}\right|>1
+      \vee \check{\mu}_{j}(0, \hat{B})=0$}   
     \State $k \gets 0$
     \Repeat
         \State $T_{k}^{\prime} \gets \emptyset,
 	  \quad c_{min} \gets 1,
 	  \quad p_{min} \gets 0$
         \ForAll{$i \in T_{k}$}
-            \State $c_{x_{i,k}} \gets n_{x_{i}}^{(Q_{2})}(\hat{B})[k]$
+            \State $c_{i,k} \gets n_{x_{i}}^{(Q_{2})}(\hat{B})[i,k]$
 	    \If{$i < n$} \Comment{$x_{i}$ is original variable}
-	        \If{$c_{min}*p_{B_{O}}[\beta_{O}[i]]<c_{x_{i,k}}*p_{min}$}
-	            \State $c_{min} \gets c_{x_{i,k}},
+	        \If{$c_{min}*p_{B_{O}}[\beta_{O}[i]]<c_{i,k}*p_{min}$}
+	            \State $c_{min} \gets c_{i,k},
 		      \quad p_{min} \gets p_{B_{O}}[\beta_{O}[i]],
 		      \quad T_{k}^{\prime} \gets \{i\}$
-	        \ElsIf{$c_{min}*p_{B_{O}}[\beta_{O}[i]]=c_{x_{i,k}}*p_{min}$}
+	        \ElsIf{$c_{min}*p_{B_{O}}[\beta_{O}[i]]=c_{i,k}*p_{min}$}
 	            \State $T_{k}^{\prime} \gets T_{k}^{\prime} \cup \{i\}$
 	        \EndIf
 	    \Else \Comment{$x_{i}$ is slack variable}
-	        \If{$c_{min}*p_{B_{S}}[\beta_{S}[i]]<c_{x_{i,k}}*p_{min}$}
-	            \State $c_{min} \gets c_{x_{i,k}},
+	        \If{$c_{min}*p_{B_{S}}[\beta_{S}[i]]<c_{i,k}*p_{min}$}
+	            \State $c_{min} \gets c_{i,k},
 		      \quad p_{min} \gets p_{B_{S}}[\beta_{S}[i]],
 		      \quad T_{k}^{\prime} \gets \{i\}$
-	        \ElsIf{$c_{min}*p_{B_{S}}[\beta_{S}[i]]=c_{x_{i,k}}*p_{min}$}
+	        \ElsIf{$c_{min}*p_{B_{S}}[\beta_{S}[i]]=c_{i,k}*p_{min}$}
 	            \State $T_{k}^{\prime} \gets T_{k}^{\prime} \cup \{i\}$
 	        \EndIf
 	    \EndIf
         \EndFor
-        \State $k \gets k+1$
-        \State $T_{k} \gets T_{k}^{\prime}$ 
+        \State $k \gets k+1, \quad T_{k} \gets T_{k}^{\prime}$
+%        \State $T_{k} \gets T_{k}^{\prime}$ 
     \Until{$\left|T_{k}\right|=1 \wedge c_{min} > 0 \vee c_{min}<0$}
     \If{$c_{min} < 0$}
         \Comment{$\check{\mu}_{j}(\varepsilon, \hat{B}) > 0$}
         \State \textbf{return} $\emptyset$
     \Else
-        \Comment{$\check{\mu}_{j}(\varepsilon, \hat{B}) < 0$}
+        \Comment{$\check{\mu}_{j}(\varepsilon, \hat{B}) < 0 \wedge
+	  \left|T_{k}\right|=1$}
         \State \textbf{return} $T_{k}$
     \EndIf
 \EndIf    
