@@ -1,3 +1,8 @@
+13 May 2005:  Menelaos Karavelas
+- added typedefs for result_type, argument_type and Arity in
+  Svd_degenerate_edge_2 class; the operator() in this class was also made
+  const
+
 7 March 2005:  Menelaos Karavelas
 - replaced calls to the vertex handle methods degree() and
   incident_{edges,faces}() by calls to the corresponding TDS methods that

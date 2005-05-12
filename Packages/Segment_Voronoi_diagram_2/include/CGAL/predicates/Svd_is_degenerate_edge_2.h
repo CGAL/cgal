@@ -56,8 +56,12 @@ private:
   }
 
 public:
+  typedef bool          result_type;
+  typedef Site_2        argument_type;
+  typedef Arity_tag<4>  Arity;
+
   bool operator()(const Site_2& p, const Site_2& q,
-		  const Site_2& r, const Site_2& s)
+		  const Site_2& r, const Site_2& s) const
   {
     Voronoi_vertex_2 vpqr(p, q, r);
     if ( vpqr.incircle_no_easy(s) == POSITIVE ) { return false; }
