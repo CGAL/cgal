@@ -849,6 +849,10 @@ Packages/Convex_hull_2/demo/Convex_hull_2/convex_hull_2.vcproj -text
 Packages/Convex_hull_2/doc_tex/Convex_hull_2/saarhull.eps -text
 Packages/Convex_hull_2/doc_tex/Convex_hull_2/saarhull.gif -text svneol=unset#unset
 Packages/Convex_hull_2/doc_tex/Convex_hull_2/saarhull.pdf -text svneol=unset#unset
+Packages/Curved_kernel/demo/Curved_kernel/get_arc.xpm -text
+Packages/Curved_kernel/demo/Curved_kernel/planar_map_icon.xpm -text
+Packages/Curved_kernel/demo/Curved_kernel/sweeper.xpm -text
+Packages/Curved_kernel/demo/Curved_kernel/trash.xpm -text
 Packages/Developers_manual/doc_tex/Developers_manual/fig/Cartesian_ipoint.gif -text svneol=unset#unset
 Packages/Developers_manual/doc_tex/Developers_manual/fig/Cartesian_orientation.gif -text svneol=unset#unset
 Packages/Developers_manual/doc_tex/Developers_manual/fig/Object.eps -text
