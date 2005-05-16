@@ -96,12 +96,12 @@ public:
    *         vertex (in a clockwise order).
    */
   Halfedge_handle locate_around_vertex (Vertex_handle vh,
-					const X_monotone_curve_2& cv) const
+                                        const X_monotone_curve_2& cv) const
   {
     Halfedge*  he = p_arr->_locate_around_vertex (_vertex (vh), cv);
 
     CGAL_assertion (he != NULL);
-    return (_handle_for (he));
+    return (p_arr->_handle_for (he));
   }
 
   /*!
@@ -113,9 +113,10 @@ public:
    *         halfedges. Otherwise, it returns (-1).
    */
   int halfedge_distance (Halfedge_const_handle e1,
-			 Halfedge_const_handle e2) const
+                         Halfedge_const_handle e2) const
   {
-    return (p_arr->_halfedge_distance (_halfedge (e1), _halfedge(e2)));
+    return (p_arr->_halfedge_distance (p_arr->_halfedge (e1),
+                                       p_arr->_halfedge(e2)));
   }
 
   /*!
@@ -132,12 +133,12 @@ public:
    *         inside this new face.
    */
   bool is_inside_new_face (Halfedge_handle prev1,
-			   Halfedge_handle prev2,
-			   const X_monotone_curve_2& cv) const
+                           Halfedge_handle prev2,
+                           const X_monotone_curve_2& cv) const
   {
-    return (p_arr->_is_inside_new_face (_halfedge (prev1),
-					_halfedge (prev2),
-					cv));
+    return (p_arr->_is_inside_new_face (p_arr->_halfedge (prev1),
+                                        p_arr->_halfedge (prev2),
+                                        cv));
   }
 
   /*!
@@ -149,9 +150,9 @@ public:
    * \return (true) if the point lies within region, (false) otherwise.
    */
   bool point_is_in (const Point_2& p, 
-		    Halfedge_const_handle he) const
+                    Halfedge_const_handle he) const
   {
-    return (p_arr->_point_is_in (p, _halfedge (he)));
+    return (p_arr->_point_is_in (p, p_arr->_halfedge (he)));
   }
 
   /*!
@@ -161,10 +162,10 @@ public:
    * \param hole A holes iterator pointing at the hole.
    */
   void move_hole (Face_handle from_face, Face_handle to_face,
-		  Holes_iterator hole)
+                  Holes_iterator hole)
   {
-    p_arr->_move_hole (_face (from_face), _face (to_face),
-		       _holes_iterator (hole));
+    p_arr->_move_hole (p_arr->_face (from_face), p_arr->_face (to_face),
+                       p_arr->_holes_iterator (hole));
   }
 
   /*!
@@ -176,10 +177,10 @@ public:
    *         (false) otherwise.
    */
   bool is_on_outer_boundary (Face_const_handle f,
-			     Halfedge_const_handle e) const
+                             Halfedge_const_handle e) const
   {
-    return (p_arr->_is_on_outer_boundary (_face (f),
-					  _halfedge (e)) != NULL);
+    return (p_arr->_is_on_outer_boundary (p_arr->_face (f),
+                                          p_arr->_halfedge (e)) != NULL);
   }
 
   /*!
@@ -191,10 +192,10 @@ public:
    *         (false) otherwise.
    */
   bool is_on_inner_boundary (Face_const_handle f,
-			     Halfedge_const_handle e) const
+                             Halfedge_const_handle e) const
   {
-    return (p_arr->_is_on_inner_boundary (_face (f),
-					  _halfedge (e)) != NULL);
+    return (p_arr->_is_on_inner_boundary (p_arr->_face (f),
+                                          p_arr->_halfedge (e)) != NULL);
   }
 
   /*!
@@ -213,17 +214,17 @@ public:
    *         face of this halfedge.
    */
   Halfedge_handle insert_at_vertices_ex (const X_monotone_curve_2& cv,
-					 Halfedge_handle prev1, 
-					 Halfedge_handle prev2,
-					 bool& new_face)
+                                         Halfedge_handle prev1, 
+                                         Halfedge_handle prev2,
+                                         bool& new_face)
   {
     Halfedge*  he = p_arr->_insert_at_vertices (cv,
-						_halfegde (prev1),
-						_halfedge (prev2),
-						new_face);
+                                                p_arr->_halfedge (prev1),
+                                                p_arr->_halfedge (prev2),
+                                                new_face);
 
     CGAL_assertion (he != NULL);
-    return (_handle_for (he));
+    return (p_arr->_handle_for (he));
   }
 
   /*!
@@ -235,10 +236,10 @@ public:
    */
   Face_handle remove_edge_ex (Halfedge_handle e)
   {
-    Face*      f = p_arr->_remove_edge (_halfedge (e));
+    Face*      f = p_arr->_remove_edge (p_arr->_halfedge (e));
     
     CGAL_assertion (f != NULL);
-    return (_handle_for (f));
+    return (p_arr->_handle_for (f));
   }
   //@}
 
