@@ -185,7 +185,7 @@ void Arrangement_2<Traits,Dcel>::clear()
   curves.destroy();
 
   // Notify the observers that we have just cleared the arragement.
-  _notify_after_clear ();
+  _notify_after_clear (unbounded_face());
 
   return;
 }
