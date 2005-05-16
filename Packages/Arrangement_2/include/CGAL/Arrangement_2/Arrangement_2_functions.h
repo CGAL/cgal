@@ -444,7 +444,7 @@ Arrangement_2<Traits,Dcel>::insert_at_vertices (const X_monotone_curve_2& cv,
     
     CGAL_assertion (dist2 > 0);
 
-    prev1_before_prev2 = (dist1 < dist2) ?
+    prev1_before_prev2 = (dist1 > dist2) ?
       (_is_inside_new_face (p_prev1, p_prev2, cv)) :
       (! _is_inside_new_face (p_prev2, p_prev1, cv));
   }

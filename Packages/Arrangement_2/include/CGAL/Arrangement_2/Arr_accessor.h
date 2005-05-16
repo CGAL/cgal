@@ -67,35 +67,23 @@ public:
     p_arr (&arr)
   {}
 
-  /// \name Accessing the notification functions (for the insert functions).
+  /// \name Accessing the notification functions (for the global functions).
   //@{
 
-  /*! Notify that an incremental insertion operation is to take place. */
-  void notify_before_incremental_insert ()
+  /*! Notify that a global operation is about to take place. */
+  void notify_before_global_change ()
   {
-    p_arr->_notify_before_incremental_insert();
+    p_arr->_notify_before_global_change();
   }
 
-  /*! Notify that an incremental insertion operation was completed. */
-  void notify_after_incremental_insert ()
+  /*! Notify that a global operation was completed. */
+  void notify_after_global_change ()
   {
-    p_arr->_notify_after_incremental_insert();
-  }
-
-  /*! Notify that an aggregated insertion operation is to take place. */
-  void notify_before_aggregated_insert ()
-  {
-    p_arr->_notify_before_aggregated_insert();
-  }
-
-  /*! Notify that an aggregated insertion operation was completed. */
-  void notify_after_aggregated_insert ()
-  {
-    p_arr->_notify_after_aggregated_insert();
+    p_arr->_notify_after_global_change();
   }
   //@}
 
-  /// \name Notification functions on local changes in the arrangement.
+  /// \name Local operations and predicated for the arrangement.
   //@{
 
   /*!

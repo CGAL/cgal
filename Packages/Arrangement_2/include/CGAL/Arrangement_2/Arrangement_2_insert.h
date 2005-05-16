@@ -35,13 +35,12 @@ CGAL_BEGIN_NAMESPACE
  * \class Auxiliary class for inserting an intersecting x-monotone curve into
  * an arrangement.
  */
-template <class Arrangement_, class PointLocation_>
+template <class Arrangement_>
 class _Arr_x_monotone_curve_inserter
 {
 public:
 
   typedef Arrangement_                            Arrangement_2;
-  typedef PointLocation_                          Point_location;
   typedef typename Arrangement_2::Traits_2        Traits_2;
 
   typedef typename Arrangement_2::Vertex_handle   Vertex_handle;
@@ -64,7 +63,6 @@ protected:
 
   // Data members:
   Arrangement_2&          arr;      // The associated arrangement.
-  const Point_location&   pl;       // A point-location object.
   const Traits_wrapper_2 *traits;   // Its associated traits object.
 
   Intersect_map           inter_map;   // Stores all computed intersections.
@@ -77,9 +75,11 @@ protected:
   Halfedge_handle     prev_he;         // The predecessor of cv around this
                                        // vertex. Its incident face is the
                                        // next face that cv will penetrate.
-  bool                next_face_valid; // Whether prev_he is valid.
+  bool                prev_he_valid;   // Indicates whether prev_he is valid.
   
   Point_2             intersect_p;     // The next intersection point.
+  unsigned int        ip_mult;         // Its multiplicity 
+                                       // (0 in case of an overlap).
   bool                found_intersect; // Have we found an intersection
                                        // (or an overlap).
   X_monotone_curve_2  overlap_cv;      // The currently discovered overlap.
@@ -94,12 +94,9 @@ public:
   /*!
    * Constructor.
    * \param _arr The arrangement to insert curves into.
-   * \param _pl An associated point-location object.
    */
-  _Arr_x_monotone_curve_inserter (Arrangement_2& _arr,
-				  const Point_location& _pl) :
-    arr (_arr),
-    pl (_pl)
+  _Arr_x_monotone_curve_inserter (Arrangement_2& _arr) :
+    arr (_arr)
   {
     traits = static_cast<const Traits_wrapper_2*> (arr.get_traits());
   }
@@ -107,10 +104,12 @@ public:
   /*!
    * Insert an intersecting x-monotone curve into the arrangement.
    * \param _cv The x-monotone curve to be inserted.
+   * \param obj An object containing the left endpoint of the curve.
    * \return A handle to the rightmost edge in the zone of the
    *         inserted curve.
    */
-  Halfedge_handle insert (const X_monotone_curve_2& _cv)
+  Halfedge_handle insert (const X_monotone_curve_2& _cv,
+			  Object obj)
   {
     // Set the curve and its endpoints.
     cv = _cv;
@@ -120,7 +119,7 @@ public:
     // Initialize flags.
     bool    done = false;
 
-    next_face_valid = false;
+    prev_he_valid = false;
     found_overlap = false;
 
     // Locate the arrangement feature containing the left endpoint of the
@@ -133,9 +132,6 @@ public:
     typename Arrangement_2::Vertex_const_handle    vh;
     typename Arrangement_2::Halfedge_const_handle  hh;
     typename Arrangement_2::Face_const_handle      fh;
-    Object                                         obj;
-
-    obj = pl.locate (left_pt);
                        
     if (assign (vh, obj))
     {
@@ -180,11 +176,11 @@ public:
     while (! done)
     {
       // Check if we know the face the curve is going to penetrate now.
-      if (next_face_valid)
+      if (prev_he_valid)
       {
-        // prev_he is valid, and the source vertex that represents the left
-        // endpoint of cv is its source.
-        source_v = prev_he.source();
+        // prev_he is valid, and its target vertex that represents the left
+        // endpoint of cv.
+	source_v = prev_he.target();
       }
       else
       {
@@ -194,7 +190,7 @@ public:
         // Locate the curve around the source vertex - that is, find a halfedge
         // prev_he such that cv should be placed between prev_he and its
         // current successor around the vertex, going in a clockwise order.
-        found_overlap = _find_face_around_vertex ();
+        found_overlap = _find_prev_around_vertex ();
 
         if (found_overlap)
         {
@@ -219,7 +215,7 @@ public:
         {
           // If we have no overlap, we now know the identity of the next face:
           // It is the incident face of prev_he.
-          next_face_valid = true;
+          prev_he_valid = true;
         }
       }
 
@@ -254,7 +250,7 @@ private:
    * \return (true) if cv overlaps with the curve associated with cv;
    *         (false) if there is no overlap.
    */
-  bool _find_face_around_vertex ()
+  bool _find_prev_around_vertex ()
   {
     // Go over the incident halfedges of v, going in a clockwise order.
     typename Arrangement_2::Halfedge_around_vertex_circulator he_first;
@@ -290,7 +286,7 @@ private:
       }
 
       // We have no overlap - mark that prev_he is valid.
-      next_face_valid = true;
+      prev_he_valid = true;
       return (false);
     }
 
@@ -326,7 +322,7 @@ private:
         // We can conclude that cv should be placed between he_curr and
         // he_next (in a clockwise order), and no overlap occurs.
         prev_he = *he_curr;
-        next_face_valid = true;
+        prev_he_valid = true;
         return (false);
       }
 
@@ -338,7 +334,7 @@ private:
 
     // We should never reach here:
     CGAL_assertion (false);
-    next_face_valid = false;
+    prev_he_valid = false;
     return (false);
   }
 
@@ -556,6 +552,7 @@ private:
             {
               // Store the leftmost intersection point and the halfedge handle.
               intersect_p = ip;
+	      ip_mult = int_p.second;
               intersect_he = *he_curr;
               found_overlap = false;
             }
@@ -574,6 +571,7 @@ private:
             {
               // Store the leftmost intersection point and the halfedge handle.
               intersect_p = ip;
+	      ip_mult = 0;
               overlap_cv = icv;
               intersect_he = *he_curr;
               found_overlap = true;
@@ -648,6 +646,7 @@ private:
               // Store the leftmost intersection point and the halfedge
               // handle.
               intersect_p = ip;
+	      ip_mult = int_p.second;
               intersect_he = *he_curr;
               found_overlap = false;
             }
@@ -667,6 +666,7 @@ private:
               // Store the leftmost intersection point and the halfedge
               // handle.
               intersect_p = ip;
+	      ip_mult = 0;
               overlap_cv = icv;
               intersect_he = *he_curr;
               found_overlap = true;
@@ -737,10 +737,71 @@ private:
   }
 
   /*!
+   * Locate the previous halfedge for the insertion of the given subcurve
+   * around the vertex curr_v.
+   * \param cv_ins The curve to be inserted, whose right endpoint coincides 
+   *               with v.
+   * \param prev Output: The previous halfedge around the vertex (for the
+   *                     insertion of cv at v).
+   * \param next Output: The next halfedge (for the insertion of the
+   *                     continuation of the curve around v).
+   * \pre There are exactly two halfedges incident to v.
+   */
+  void _find_prev_around_new_vertex (const X_monotone_curve_2& cv_ins,
+				     Halfedge_handle& prev,
+				     Halfedge_handle& next)
+  {
+    CGAL_assertion (traits->equal_2_object()
+		    (traits->construct_max_vertex_2_object() (cv_ins),
+		     curr_v.point()));
+
+    // Get the two halfedges incident to the vertex.
+    typename Arrangement_2::Halfedge_around_vertex_circulator  circ;
+    Halfedge_handle                                            he1, he2;
+
+    circ = curr_v.incident_halfedges();
+    he1 = *circ;
+    ++circ;
+    he2 = *circ;
+
+    CGAL_assertion (++circ == curr_v.incident_halfedges());
+
+    // Check which halfedge is defined to the left of the vertex, and check
+    // whether cv_ins lies above or below it.
+    Comparison_result       he_res =
+      traits->compare_xy_2_object() (he1.source().point(), curr_v.point());
+    const Halfedge_handle&  he_left = (he_res == SMALLER) ? he1 : he2;
+    const Halfedge_handle&  he_right = (he_res == SMALLER) ? he2 : he1;
+    Comparison_result       pos_res = 
+      traits->compare_y_position_2_object() (cv_ins, he_left.curve());
+
+    if (pos_res == SMALLER)
+    {
+      // If cv_ins lies below the existing left halfegde, we should take the
+      // right halfedge to be its predecessor and the left one to be its 
+      // successor.
+      prev = he_right;
+      next = he_left;
+    }
+    else
+    {
+      CGAL_assertion (pos_res != EQUAL);
+
+      // If cv_ins lies above the existing left halfegde, we should take the
+      // left halfedge to be its predecessor and the right one to be its 
+      // successor.
+      prev = he_left;
+      next = he_right;
+    }
+    
+    return;
+  }
+  
+  /*!
    * Insert an x-monotone curve whose left endpoint lies inside a given face
    * of the arrangement.
    * This function updates cv and its left endpoint and also sets the curr_v,
-   * prev_he and next_face_valid.
+   * prev_he and prev_he_valid.
    * In case of overlaps, it sets also overlap_cv and intersect_he.
    * \param face The given face.
    * \return (true) if we are done with the inserion process;
@@ -760,7 +821,7 @@ private:
       inserted_he = arr.insert_in_face_interior (cv, face);
 
       // Mark that we are done with the insertion process.
-      next_face_valid = false;
+      prev_he_valid = false;
       return (true);
     }
 
@@ -798,22 +859,37 @@ private:
     new_vertex_created = _get_vertex_on_halfedge (intersect_p,
                                                   intersect_he);
 
-    // In case a new vertex has been created, we can obtain the next face that
-    // cv penetrates by taking the twin halfedge of the halfedge it intersects.
     if (new_vertex_created)
     {
-      prev_he = intersect_he.twin();
-      next_face_valid = true;
+      // In case a new vertex has been created, we can obtain the next face
+      // that cv penetrates by comparing it to the two existing halfedges
+      // around curr_v (which we have just split).
+      Halfedge_handle    prev_he_around_v, next_he_around_v;
+
+      _find_prev_around_new_vertex (sub_cv1, 
+				    prev_he_around_v, next_he_around_v);
+
+      inserted_he = arr.insert_from_vertex (sub_cv1, prev_he_around_v);
+
+      // In case cv crosses the halfedge (the multiplicity of the intersection
+      // is odd), assign a valid prev_he handle.
+      if ((ip_mult % 2) == 1)
+      {
+	prev_he = next_he_around_v;
+	prev_he_valid = true;
+      }
+      else
+      {
+	prev_he_valid = false;
+      }
     }
     else
     {
-      next_face_valid = false;
-    }
+      // We intersect an existing vertex and will have to locate cv around it.
+      inserted_he = arr.insert_from_vertex (sub_cv1, curr_v);
 
-    // We are now able to insert the left subcurve of cv (which may be the
-    // entire curve if we are done) from the vertex we have obtained. Notice
-    // that the left endpoint of the curve does not match any existing vertex.
-    inserted_he = arr.insert_from_vertex (sub_cv1, curr_v);
+      prev_he_valid = false;
+    }
 
     return (done);
   }
@@ -822,7 +898,7 @@ private:
    * Insert an x-monotone curve whose left endpoint lies on the boundary of a
    * given face of the arrangement - the incident face of prev_he.
    * This function updates cv and its left endpoint and also sets the curr_v,
-   * prev_he and next_face_valid.
+   * prev_he and prev_he_valid.
    * In case of overlaps, it sets also overlap_cv and intersect_he.
    * \param source_v The vertex representing the current left endpoint of cv.
    * \return (true) if we are done with the inserion process;
@@ -842,11 +918,11 @@ private:
     if (! found_intersect)
     {
       // In case we found no intersection with the face boundary, we can
-      // insert the curve from the source vertex,
-      inserted_he = arr.insert_from_vertex (cv, source_v);
+      // insert the curve from the source vertex, right after prev_he
+      inserted_he = arr.insert_from_vertex (cv, prev_he);
 
       // Mark that we are done with the insertion process.
-      next_face_valid = false;
+      prev_he_valid = false;
       return (true);
     }
 
@@ -888,25 +964,46 @@ private:
     // cv penetrates by taking the twin halfedge of the halfedge it intersects.
     if (new_vertex_created)
     {
-      prev_he = intersect_he.twin();
-      next_face_valid = true;
+      // Check if we have just split the halfedge that prev_he refers to.
+      // If so, prev_he's target is now the new vertex, and we have to proceed
+      // to the next halfedge (whose target is source_v).
+      if (intersect_he == prev_he)
+	prev_he = prev_he.next();
+
+      // In case a new vertex has been created, we can obtain the next face
+      // that cv penetrates by comparing it to the two existing halfedges
+      // around curr_v (which we have just split).
+      Halfedge_handle    prev_he_around_v, next_he_around_v;
+
+      _find_prev_around_new_vertex (sub_cv1,
+				    prev_he_around_v, next_he_around_v);
+
+      // The predecessor halfedge of the left end-vertex of sub_cv1 is prev_he,
+      // while the right predecessor is prev_he_around_cv:
+      inserted_he = arr.insert_at_vertices (sub_cv1, 
+					    prev_he, prev_he_around_v);
+
+      // In case cv crosses the halfedge (the multiplicity of the intersection
+      // is odd), assign a valid prev_he handle.
+      if ((ip_mult % 2) == 1)
+      {
+	prev_he = next_he_around_v;
+	prev_he_valid = true;
+      }
+      else
+      {
+	prev_he_valid = false;
+      }
     }
     else
     {
-      next_face_valid = false;
+      // Insert the left sub_cv1 between the source vertex (reprsenting
+      // the left endpoint) and the vertex we have just obtained. We will
+      // later have to locate the face cv penetrates next around this existing
+      // vertex.
+      inserted_he = arr.insert_at_vertices (sub_cv1, source_v, curr_v);
+      prev_he_valid = false;
     }
-
-    // We are now able to insert the left subcurve of cv (which may be the
-    // entire curve if we are done) between the source vertex (reprsenting
-    // the left endpoint) and the vertex we have just obtained.
-    const typename Arrangement_2::Size  num_faces_before = 
-                                                         arr.number_of_faces();
-
-    inserted_he = arr.insert_at_vertices (sub_cv1, source_v, curr_v);
-
-    // In case a new face is has been created, we invalidate the prev_he
-    // handle, as it may point to the wrong halfedge around curr_v.
-    next_face_valid = (num_faces_before == arr.number_of_faces());
 
     return (done);
   }
@@ -984,7 +1081,7 @@ private:
 
     // Mark that prev_he is no longer valid, and that we have to locate the
     // next incident face of cv around curr_v.
-    next_face_valid = false;
+    prev_he_valid = false;
 
     // Compare the right endpoint of cv to the right endpoint of cv.
     if (traits->equal_2_object() (p_right_cv, right_pt))
@@ -1020,15 +1117,11 @@ template <class Arrangement, class PointLocation>
 void arr_insert (Arrangement& arr, const PointLocation& pl,
                  const typename Arrangement::Traits_2::Curve_2& c)
 {
-  // Notify the arrangement observers that an incremental insertion operation
-  // is about to take place.
-  Arr_accessor<Arrangement>                             arr_access (arr);
-
-  arr_access.notify_before_incremental_insert();
+  // Obtain an arrangement accessor.
+  Arr_accessor<Arrangement>                           arr_access (arr);
 
   // Create an auxiliary inserter object.
-  _Arr_x_monotone_curve_inserter<Arrangement,
-                                 PointLocation>         arr_inserter (arr, pl);
+  _Arr_x_monotone_curve_inserter<Arrangement>         arr_inserter (arr);
 
   // Break the input curve into x-monotone subcurves.
   typedef Arr_traits_wrapper_2<typename Arrangement::Traits_2>  
@@ -1038,20 +1131,30 @@ void arr_insert (Arrangement& arr, const PointLocation& pl,
                         static_cast<const Traits_wrapper_2*>(arr.get_traits());
 
   typedef std::list<typename Arrangement::X_monotone_curve_2> Curves_list;
-
   Curves_list                             x_curves;
   typename Curves_list::const_iterator    x_iter; 
+  Object                                  obj;
 
   traits->make_x_monotone_2_object() (c,
                                       std::back_inserter (x_curves));
 
   // Insert each x-monotone curve into the arrangement.
   for (x_iter = x_curves.begin(); x_iter != x_curves.end(); ++x_iter)
-    arr_inserter.insert (*x_iter);
+  {
+    // Locate the left endpoint of the current x-monotone curve.
+    obj = pl.locate (traits->construct_min_vertex_2_object() (*x_iter));
 
-  // Notify the arrangement observers that the incremental insertion operation
-  // has been completed.
-  arr_access.notify_after_incremental_insert();
+    // Notify the arrangement observers that a global operation is about to 
+    // take place.
+    arr_access.notify_before_global_change();
+
+    // Insert the current x-monotone curve into the arrangement.
+    arr_inserter.insert (*x_iter, obj);
+
+    // Notify the arrangement observers that the global operation has been
+    // completed.
+    arr_access.notify_after_global_change();
+  }
 
   return;
 }
@@ -1065,19 +1168,19 @@ template <class Arrangement, class InputIterator>
 void arr_insert (Arrangement& arr,
                  InputIterator /* begin */, InputIterator /* end */)
 {
-  // Notify the arrangement observers that an aggregated insertion operation
-  // is about to take place.
+  // Notify the arrangement observers that a global operation is about to 
+  // take place.
   Arr_accessor<Arrangement>                             arr_access (arr);
 
-  arr_access.notify_before_aggregated_insert();
+  arr_access.notify_before_global_change();
 
   // ----------------------------------------------
   // For Baruch: Perform the sweep-line procedure!
   // ----------------------------------------------
 
-  // Notify the arrangement observers that the aggregated insertion operation
-  // has been completed.
-  arr_access.notify_after_aggregated_insert();
+  // Notify the arrangement observers that the global operation has been
+  // completed.
+  arr_access.notify_after_global_change();
 
   return;
 }
@@ -1090,25 +1193,25 @@ template <class Arrangement, class PointLocation>
 void arr_insert_x_monotone (Arrangement& arr, const PointLocation& pl,
 			    const typename Arrangement::X_monotone_curve_2& c)
 {
-  // Notify the arrangement observers that an incremental insertion operation
-  // is about to take place.
-  Arr_accessor<Arrangement>                             arr_access (arr);
-
-  arr_access.notify_before_incremental_insert();
+  // Obtain an arrangement accessor.
+  Arr_accessor<Arrangement>                           arr_access (arr);
 
   // Create an auxiliary inserter object and insert the x-monotone curve.
-  _Arr_x_monotone_curve_inserter<Arrangement,
-                                 PointLocation>         arr_inserter (arr, pl);
+  _Arr_x_monotone_curve_inserter<Arrangement>         arr_inserter (arr);
 
-  // Break the input curve into x-monotone subcurves.
-  typedef Arr_traits_wrapper_2<typename Arrangement::Traits_2>  
-                                                              Traits_wrapper_2;
+  // Locate the left endpoint of the x-monotone curve.
+  Object   obj = pl.locate (traits->construct_min_vertex_2_object() (*x_iter));
 
-  arr_inserter.insert (c);
+  // Notify the arrangement observers that a global operation is about to 
+  // take place.
+  arr_access.notify_before_global_change();
 
-  // Notify the arrangement observers that the incremental insertion operation
-  // has been completed.
-  arr_access.notify_after_incremental_insert();
+  // Insert the x-monotone curve into the arrangement.
+  arr_inserter.insert (c, obj);
+
+  // Notify the arrangement observers that the global operation has been
+  // completed.
+  arr_access.notify_after_global_change();
 
   return;
 }
@@ -1122,19 +1225,19 @@ template <class Arrangement, class InputIterator>
 void arr_insert_x_monotone (Arrangement& arr,
 			    InputIterator /* begin */, InputIterator /* end */)
 {
-  // Notify the arrangement observers that an aggregated insertion operation
-  // is about to take place.
+  // Notify the arrangement observers that a global operation is about to 
+  // take place.
   Arr_accessor<Arrangement>                             arr_access (arr);
 
-  arr_access.notify_before_aggregated_insert();
+  arr_access.notify_before_global_change();
 
   // ----------------------------------------------
   // For Baruch: Perform the sweep-line procedure!
   // ----------------------------------------------
 
-  // Notify the arrangement observers that the aggregated insertion operation
-  // has been completed.
-  arr_access.notify_after_aggregated_insert();
+  // Notify the arrangement observers that the global operation has been
+  // completed.
+  arr_access.notify_after_global_change();
 
   return;
 }
@@ -1150,17 +1253,17 @@ arr_insert_non_intersecting
                 (Arrangement& arr, const PointLocation& pl,
                  const typename Arrangement::X_monotone_curve_2& c)
 {
-  // Notify the arrangement observers that an incremental insertion operation
-  // is about to take place.
-  Arr_accessor<Arrangement>                             arr_access (arr);
-
-  arr_access.notify_before_incremental_insert();
-
   // Locate the curve endpoints.
   Object   obj1 =
             pl.locate (arr.get_traits()->construct_min_vertex_2_object() (c));
   Object   obj2 =
             pl.locate (arr.get_traits()->construct_max_vertex_2_object() (c));
+
+  // Notify the arrangement observers that a global operation is about to 
+  // take place.
+  Arr_accessor<Arrangement>                             arr_access (arr);
+
+  arr_access.notify_before_global_change();
 
   // In principal, the result of the point-location queries should not be
   // halfedges, because this function does not allow the inserted curve to
@@ -1224,9 +1327,9 @@ arr_insert_non_intersecting
     }
   }
 
-  // Notify the arrangement observers that the incremental insertion operation
-  // has been completed.
-  arr_access.notify_after_incremental_insert();
+  // Notify the arrangement observers that the global operation has been
+  // completed.
+  arr_access.notify_after_global_change();
 
   // Return the resulting halfedge from the insertion operation.
   return (res);
@@ -1242,19 +1345,19 @@ void arr_insert_non_intersecting
                 (Arrangement& arr,
                  InputIterator /* begin */, InputIterator /* end */)
 {
-  // Notify the arrangement observers that an aggregated insertion operation
-  // is about to take place.
+  // Notify the arrangement observers that a global operation is about to 
+  // take place.
   Arr_accessor<Arrangement>                             arr_access (arr);
 
-  arr_access.notify_before_aggregated_insert();
+  arr_access.notify_before_global_change();
 
   // ----------------------------------------------
   // For Baruch: Perform the sweep-line procedure!
   // ----------------------------------------------
 
-  // Notify the arrangement observers that the aggregated insertion operation
-  // has been completed.
-  arr_access.notify_after_aggregated_insert();
+  // Notify the arrangement observers that the global operation has been
+  // completed.
+  arr_access.notify_after_global_change();
 
   return;
 }
@@ -1269,6 +1372,12 @@ typename Arrangement::Face_handle
 arr_remove_edge (Arrangement& arr,
                  typename Arrangement::Halfedge_handle e)
 {
+  // Notify the arrangement observers that a global operation is about to 
+  // take place.
+  Arr_accessor<Arrangement>                             arr_access (arr);
+
+  arr_access.notify_before_global_change();
+
   // Keep track of the end-vertices of the edge we are about to remove.
   typename Arrangement::Vertex_handle  v_ends[2];
 
@@ -1314,6 +1423,10 @@ arr_remove_edge (Arrangement& arr,
       }
     }
   }
+
+  // Notify the arrangement observers that the global operation has been
+  // completed.
+  arr_access.notify_after_global_change();
 
   // Return the face remaining after the removal of the edge.
   return (face);

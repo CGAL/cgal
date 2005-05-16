@@ -788,40 +788,22 @@ private:
       (*iter)->after_clear (u);
   }
 
-  void _notify_before_incremental_insert ()
+  void _notify_before_global_change ()
   {
     Observers_iterater   iter;
     Observers_iterater   end = observers.end();
 
     for (iter = observers.begin(); iter != end; iter++)
-      (*iter)->before_incremental_insert();
+      (*iter)->before_global_change();
   }
 
-  void _notify_after_incremental_insert ()
+  void _notify_after_global_change ()
   {
     Observers_iterater   iter;
     Observers_iterater   end = observers.end();
 
     for (iter = observers.begin(); iter != end; iter++)
-      (*iter)->after_incremental_insert();
-  }
-
-  void _notify_before_aggregated_insert ()
-  {
-    Observers_iterater   iter;
-    Observers_iterater   end = observers.end();
-
-    for (iter = observers.begin(); iter != end; iter++)
-      (*iter)->before_aggregated_insert();
-  }
-
-  void _notify_after_aggregated_insert ()
-  {
-    Observers_iterater   iter;
-    Observers_iterater   end = observers.end();
-
-    for (iter = observers.begin(); iter != end; iter++)
-      (*iter)->after_aggregated_insert();
+      (*iter)->after_global_change();
   }
 
   /* Notify the observers on local changes in the arrangement: */

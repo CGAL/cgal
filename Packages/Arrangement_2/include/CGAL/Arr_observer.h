@@ -109,20 +109,12 @@ public:
   virtual void after_clear (Face_handle /* u */)
   {}
 
-  /*! Notification before an incremental insertion operation. */
-  virtual void before_incremental_insert ()
+  /*! Notification before a global operation modifies the arrangement. */
+  virtual void before_global_change ()
   {}
 
-  /*! Notification after an incremental insertion was completed. */
-  virtual void after_incremental_insert ()
-  {}
-
-  /*! Notification before an aggregated insertion operation. */
-  virtual void before_aggregated_insert ()
-  {}
-
-  /*! Notification after an aggregated insertion was completed. */
-  virtual void after_aggregated_insert ()
+  /*! Notification after a global operation is completed. */
+  virtual void after_global_change ()
   {}
   //@}
 
