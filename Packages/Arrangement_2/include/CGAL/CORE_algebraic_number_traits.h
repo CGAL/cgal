@@ -56,7 +56,7 @@ public:
    * \param q A rational number.
    * \return An algebraic number equivalent to q.
    */
-  Algebraic operator() (const Rational& q) const
+  Algebraic convert (const Rational& q) const
   {
     return (Algebraic (q));
   }

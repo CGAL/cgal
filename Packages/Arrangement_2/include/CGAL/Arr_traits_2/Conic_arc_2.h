@@ -92,7 +92,7 @@ protected:
     Algebraic     a;
     Algebraic     b;
     Algebraic     c;
-    int           side;
+    Sign          side;
   };
 
   Hyperbolic_arc_data *_hyper_data_P;
@@ -401,7 +401,7 @@ protected:
     
     rat_coeffs[0] = D*D;
     rat_coeffs[1] = D*D;
-    rat_coeffs[2] = _zero;
+    rat_coeffs[2] = 0;
     rat_coeffs[3] = -_two*D*Nx;
     rat_coeffs[4] = -_two*D*Ny;
     rat_coeffs[5] = 
@@ -707,7 +707,7 @@ protected:
     
     for (int i = 0; i < n; i++)
     {
-      ps[m] = Point_2 (p.x(), ys[i], _conic_id);
+      ps[m] = Point_2 (p.x(), ys[i]);
 
       if (is_full_conic() || _is_between_endpoints(ps[m]))
         m++;
@@ -738,7 +738,7 @@ protected:
     
     for (int i = 0; i < n; i++)
     {
-      ps[m] = Point_2 (xs[i], p.y(), _conic_id);
+      ps[m] = Point_2 (xs[i], p.y());
 
       if (is_full_conic() || _is_between_endpoints(ps[m]))
         m++;
@@ -799,7 +799,7 @@ private:
     if (CGAL::sign (4*_r*_s - _t*_t) == NEGATIVE)
       _build_hyperbolic_arc_data ();
     else
-      hyper_data_P = NULL;
+      _hyper_data_P = NULL;
 
     // Mark that this arc is not a full conic curve.
     _info = 0;
@@ -909,6 +909,7 @@ private:
     const Algebraic  s = nt_traits.convert (or_fact * _s);
     const Algebraic  t = nt_traits.convert (or_fact * _t);
     const Algebraic  cos_2phi = (r - s) / nt_traits.sqrt((r-s)*(r-s) + t*t);
+    const Algebraic  _zero = 0;
     const Algebraic  _one = 1;
     const Algebraic  _two = 2;
     Algebraic        sin_phi;
@@ -948,7 +949,7 @@ private:
       sin_phi = nt_traits.sqrt((_one + cos_2phi) / _two);
       cos_phi = -nt_traits.sqrt((_one - cos_2phi) / _two);
     }
-                               
+           
     // Calculate the center (x0, y0) of the conic, given by the formulae:
     //
     //        t*v - 2*s*u                t*u - 2*r*v
@@ -965,7 +966,7 @@ private:
     
     x0 = (t*v - _two*s*u) / det;
     y0 = (t*u - _two*r*v) / det;
-    
+   
     // The axis separating the two branches of the hyperbola is now given by:
     // 
     //  cos(phi)*x + sin(phi)*y - (cos(phi)*x0 + sin(phi)*y0) = 0
@@ -995,19 +996,19 @@ protected:
    * Find on which branch of the hyperbola is the given point located.
    * The point is assumed to be on the hyperbola.
    * \param p The query point.
-   * \return The branch ID (either -1 or 1).
+   * \return The branch ID (either NEGATIVE or POSITIVE).
    */
-  int _hyperbolic_arc_side (const Point_2& p) const
+  Sign _hyperbolic_arc_side (const Point_2& p) const
   {
     if (_hyper_data_P == NULL)
-      return (0);
+      return (ZERO);
 
     Algebraic         val = (_hyper_data_P->a*p.x() + _hyper_data_P->b*p.y() + 
                              _hyper_data_P->c);
     Sign              sign_val = CGAL::sign (val);
 
     CGAL_assertion (sign_val != ZERO);
-    return ((sign_val == POSITIVE) ? 1 : -1);
+    return (sign_val);
   }
  
   /*!
@@ -1281,6 +1282,17 @@ protected:
                                  const Algebraic& C,
                                  Algebraic& x_minus, Algebraic& x_plus) const
   {
+    // Check if we actually have a linear equation.
+    if (CGAL::sign(A) == ZERO)
+    {
+      if (CGAL::sign(B) == ZERO)
+	return (0);
+
+      x_minus = x_plus = -C / B;
+      return (1);
+    }
+
+    // Compute the discriminant and act according to its sign.
     const Algebraic  disc = B*B - 4*A*C;
     Sign             sign_disc = CGAL::sign (disc);
 

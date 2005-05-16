@@ -353,19 +353,30 @@ public:
       Algebraic  B = alg_t*p.x() + alg_v;
       Algebraic  C = (alg_r*p.x() + alg_u)*p.x() + alg_w;
 
-      Algebraic  disc = B*B - 4*A*C;
-    
-      CGAL_assertion (CGAL::sign (disc) != NEGATIVE);
-
-      // We take either the root involving -sqrt(disc) or +sqrt(disc)
-      // based on the information flags.
-      if ((_info & PLUS_SQRT_DISC_ROOT) != 0)
+      if (CGAL::sign(_s) == ZERO)
       {
-        y = (nt_traits.sqrt (disc) - B) / (2*A);
+	// In this case A is 0 and we have a linear equation.
+	CGAL_assertion (CGAL::sign (B) != ZERO);
+
+	y = -C / B;
       }
       else
       {
-        y = -(B + nt_traits.sqrt (disc)) / (2*A);
+	// Solve the quadratic equation.
+	Algebraic  disc = B*B - 4*A*C;
+    
+	CGAL_assertion (CGAL::sign (disc) != NEGATIVE);
+
+	// We take either the root involving -sqrt(disc) or +sqrt(disc)
+	// based on the information flags.
+	if ((_info & PLUS_SQRT_DISC_ROOT) != 0)
+	{
+	  y = (nt_traits.sqrt (disc) - B) / (2*A);
+	}
+	else
+	{
+	  y = -(B + nt_traits.sqrt (disc)) / (2*A);
+	}
       }
     }
 
