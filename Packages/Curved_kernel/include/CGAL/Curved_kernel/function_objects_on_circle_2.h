@@ -30,6 +30,8 @@ namespace CircularFunctors {
 
     typedef typename CK::Polynomial_for_circles_2_2 result_type;
 
+    using LinearFunctors::Get_equation<CK>::operator();
+
     result_type
     operator() ( const typename CK::Circle_2 & c )
       {
