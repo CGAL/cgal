@@ -27,6 +27,7 @@
 #include <CGAL/Arrangement_2/Arr_traits_wrapper_2.h>
 #include <CGAL/Arrangement_2/Arr_accessor.h>
 #include <CGAL/Sweep_line_2/Arr_aggregate_insert.h>
+#include <CGAL/Sweep_line_2/Arr_non_x_aggregate_insert.h>
 #include <list>
 #include <map>
 
@@ -1224,7 +1225,7 @@ void arr_insert_x_monotone (Arrangement& arr, const PointLocation& pl,
 //
 template <class Arrangement, class InputIterator>
 void arr_insert_x_monotone (Arrangement& arr,
-			    InputIterator /* begin */, InputIterator /* end */)
+			    InputIterator  begin , InputIterator  end )
 {
   // Notify the arrangement observers that a global operation is about to 
   // take place.
@@ -1235,6 +1236,9 @@ void arr_insert_x_monotone (Arrangement& arr,
   // ----------------------------------------------
   // For Baruch: Perform the sweep-line procedure!
   // ----------------------------------------------
+  // Perform the aggregated insertion.
+  Arr_aggregate_insert<Arrangement>  agg_insert_obj (arr.get_traits(), &arr);
+  agg_insert_obj.insert_x_curves(begin, end);
 
   // Notify the arrangement observers that the global operation has been
   // completed.
@@ -1344,7 +1348,7 @@ arr_insert_non_intersecting
 template <class Arrangement, class InputIterator>
 void arr_insert_non_intersecting
                 (Arrangement& arr,
-                 InputIterator /* begin */, InputIterator /* end */)
+                 InputIterator  begin , InputIterator  end )
 {
   // Notify the arrangement observers that a global operation is about to 
   // take place.
@@ -1355,6 +1359,8 @@ void arr_insert_non_intersecting
   // ----------------------------------------------
   // For Baruch: Perform the sweep-line procedure!
   // ----------------------------------------------
+  Arr_non_x_aggregate_insert<Arrangement>  agg_insert_obj (arr.get_traits(), &arr);
+  agg_insert_obj.insert_curves(begin, end);
 
   // Notify the arrangement observers that the global operation has been
   // completed.
