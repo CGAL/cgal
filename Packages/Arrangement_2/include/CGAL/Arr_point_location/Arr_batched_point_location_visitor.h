@@ -103,25 +103,12 @@ class Arr_batched_point_location_visitor
       *m_out++ = std::make_pair(event->get_point(),
                                 make_object(m_arr.unbounded_face()));
       return true;
-      //if(m_arr.halfedges_begin() == m_arr.halfedges_end()) // empty arr
-      //{
-      //  *m_out++ = PL_Triple(event->get_point(),
-      //                       Arrangement::UNBOUNDED_FACE , 
-      //                       m_arr.halfedges_end());
-      //  return true;
-      //}
-      //Halfedge_const_handle he = *(m_arr.unbounded_face()->holes_begin());
-      //*m_out++ = PL_Triple(event->get_point(),
-      //                     Arrangement::UNBOUNDED_FACE , 
-      //                     he);
-      //return true;
     }
 
     // EDGE
     if(above_on_event)
     {
       Halfedge_const_handle he = (*above)->get_last_curve().get_halfedge_handle();
-      //*m_out++ = PL_Triple(event->get_point(), Arrangement::EDGE, he);
       *m_out++ = std::make_pair(event->get_point(),make_object(he));
       return true;
     }
@@ -131,13 +118,6 @@ class Arr_batched_point_location_visitor
     *m_out++ = std::make_pair(event->get_point(),
                                 make_object(he.face()));
     return true;
-   /* if(he->face() == m_arr.unbounded_face())
-    {
-      *m_out++ = PL_Triple(event->get_point(), Arrangement::UNBOUNDED_FACE,he);
-      return true;
-    }
-    *m_out++ = PL_Triple(event->get_point(), Arrangement::FACE, he);
-    return true;*/
   }
 
 
