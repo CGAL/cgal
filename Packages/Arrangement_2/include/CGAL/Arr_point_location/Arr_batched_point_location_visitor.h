@@ -59,8 +59,8 @@ class Arr_batched_point_location_visitor
 
   Arr_batched_point_location_visitor(OutputIerator out,
                                      const Arrangement& arr):
-                                              m_out(out),
-                                              m_arr(arr)
+                                     m_out(out),
+                                     m_arr(arr)
   {}
 
   void attach(Sweep_line *sl)
@@ -81,18 +81,14 @@ class Arr_batched_point_location_visitor
     // VERTEX
     if(event->has_curves())
     {
+      Subcurve* sc = *(event->right_curves_begin());
+      Halfedge_const_handle he = sc->get_last_curve().get_halfedge_handle();
+
       if(event->has_right_curves())
       {
-        Subcurve* sc = *(event->right_curves_begin());
-        Halfedge_const_handle he = sc->get_last_curve().get_halfedge_handle();
-
-        //*m_out++ = PL_Triple(event->get_point(), Arrangement::VERTEX, he);
         *m_out++ = std::make_pair(event->get_point(), make_object(he.target()));
         return true;
       }
-      Subcurve* sc = *(event->left_curves_begin());
-      Halfedge_const_handle he = sc->get_last_curve().get_halfedge_handle().twin();
-      //*m_out++ = PL_Triple(event->get_point(), Arrangement::VERTEX, he);
       *m_out++ = std::make_pair(event->get_point(),make_object(he.source()));
       return true;
     }
@@ -150,15 +146,3 @@ protected:
 CGAL_END_NAMESPACE
 
 #endif
-
-
-
-
-
-
-
-
-
-
-
-
