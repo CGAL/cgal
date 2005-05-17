@@ -1,0 +1,2 @@
+This package provides an adaptor that takes Delaunay graphs
+and gives a non-mutable view of them as arrangements.
