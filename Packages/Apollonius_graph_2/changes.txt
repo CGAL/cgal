@@ -1,3 +1,6 @@
+17 May 2005:  Menelaos Karavelas
+- changed maintainer's email
+
 27 April 2005:  Menelaos Karavelas
 - fixed misprint sent by Anatoly.Zaretksy <anatoly.zaretsky@gmail.com>
   in method: Object_2 dual(const Face_handle& f) of Apollonius_graph_2

@@ -1,3 +1,6 @@
+17 May 2005:  Menelaos Karavelas
+- changed maintainer's email
+
 13 May 2005:  Menelaos Karavelas
 - added typedefs for result_type, argument_type and Arity in
   Svd_degenerate_edge_2 class; the operator() in this class was also made
