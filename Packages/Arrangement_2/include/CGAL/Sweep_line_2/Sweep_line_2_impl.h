@@ -227,6 +227,21 @@ public:
     }
   }
 
+  template<class XCurveInputIterator>
+  void init_x_curves(XCurveInputIterator curves_begin, XCurveInputIterator curves_end )
+  {
+    m_num_of_subCurves = std::distance(curves_begin,curves_end);
+    m_subCurves = m_subCurveAlloc.allocate(m_num_of_subCurves);
+    unsigned int index = 0;
+    for(XCurveInputIterator iter = curves_begin;
+        iter != curves_end;
+        ++iter, ++index)
+    {
+      init_curve(*iter,index);
+    }
+  }
+
+
   template<class CurveInputIterator, class XCurveInputIterator>
   void init(CurveInputIterator curves_begin, CurveInputIterator curves_end,
             XCurveInputIterator xcurves_begin, XCurveInputIterator xcurves_end)
@@ -635,7 +650,6 @@ public:
     std::pair<bool, SubCurveListIter> pair_res = event->add_curve_to_right(curve);
     if(pair_res.first == true) //overlap
     {
-      std::cout<<"Overlap detected at right insertion...\n"; //TODO : remove!!!
       // TODO: take care of polylines in which overlap can happen anywhere
       SL_DEBUG(std::cout<<"Overlap detected at right insertion...\n";);
       SubCurveListIter iter = pair_res.second;
@@ -986,6 +1000,8 @@ intersect(Subcurve *c1, Subcurve *c2)
                                          c2->get_last_curve(),
                                          vi);
  
+  if(vi == vi_end) return; // no intersection at all
+  
   // BZBZ
   // the two subCurves may start at the same point, in that case we will
   // ignore the first intersection point (if we got to that stage, they cannt 

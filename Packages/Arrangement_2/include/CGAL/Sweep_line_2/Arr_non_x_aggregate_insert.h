@@ -17,13 +17,14 @@
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
-#ifndef CGAL_ARR_AGGREGATE_INSERT_H
-#define CGAL_ARR_AGGREGATE_INSERT_H
+#ifndef ARR_NON_X_AGGREGATE_INSERT_H
+#define ARR_NON_X_AGGREGATE_INSERT_H
 
 #include <CGAL/Sweep_line_2/Sweep_line_2_impl.h>
 #include <CGAL/Sweep_line_2/Arr_sweep_line_event.h>
 #include <CGAL/Sweep_line_2/Arr_sweep_line_curve.h>
 #include <CGAL/Sweep_line_2/Arr_sweep_line_visitor.h>
+#include <CGAL/Sweep_line_2/Arr_non_x_traits.h>
 #include <CGAL/assertions.h>
 #include <list>
 #include <vector>
@@ -32,11 +33,12 @@
 CGAL_BEGIN_NAMESPACE
 
 template <class Arr>
-class Arr_aggregate_insert 
+class Arr_non_x_aggregate_insert 
 {
   typedef typename Arr::Halfedge_handle                      Halfedge_handle;
   typedef typename Arr::Edge_iterator                        Edge_iterator;
-  typedef typename Arr::Traits_2                             Traits;
+  typedef typename Arr::Traits_2                             Arr_traits;
+  typedef Arr_non_x_traits<Arr_traits>                       Traits;
   typedef Arr_sweep_line_curve<Traits, Halfedge_handle>      Subcurve; 
   typedef Arr_sweep_line_event<Traits, Subcurve>             Event;
   typedef typename Traits::X_monotone_curve_2                X_monotone_curve_2;
@@ -57,7 +59,7 @@ class Arr_aggregate_insert
 
 public:
 
-  Arr_aggregate_insert(Arr *arr):
+  Arr_non_x_aggregate_insert(Arr *arr):
       m_traits(new Traits()),
       m_traits_owner(true),
       m_arr(arr),
@@ -66,31 +68,18 @@ public:
       {}
 
 
-  Arr_aggregate_insert(const Traits *traits, Arr *arr):
-      m_traits(traits),
+  Arr_non_x_aggregate_insert(const Arr_traits *traits, Arr *arr):
+      m_traits(static_cast<const Traits*>(traits)), 
       m_traits_owner(false),
       m_arr(arr),
       m_visitor(arr),
       m_sweep_line(m_traits, &m_visitor)
       {}
 
-  template<class CurveInputIterator>
-  void insert_curves(CurveInputIterator begin, 
-                     CurveInputIterator end)
-  {
-    std::vector<X_monotone_curve_2>      xcurves_vec;
-    for (Edge_iterator eit = m_arr->edges_begin(); eit != m_arr->edges_end(); ++eit) 
-    {
-      xcurves_vec.push_back(eit->curve());
-    }
-    m_arr->clear();
-    m_sweep_line.init(begin, end, xcurves_vec.begin(), xcurves_vec.end());
-    m_sweep_line.sweep();
-  }
-
+  
   template<class XCurveInputIterator>
-  void insert_x_curves(XCurveInputIterator begin,
-                       XCurveInputIterator end)
+  void insert_curves(XCurveInputIterator  begin,
+                     XCurveInputIterator  end)
   {
     std::vector<X_monotone_curve_2>      xcurves_vec;
     for (Edge_iterator eit = m_arr->edges_begin(); eit != m_arr->edges_end(); ++eit) 
@@ -103,9 +92,9 @@ public:
     m_sweep_line.sweep();
   }
 
- 
+  
 
-  ~Arr_aggregate_insert()
+  ~Arr_non_x_aggregate_insert()
   {
     if(m_traits_owner)
       delete m_traits;

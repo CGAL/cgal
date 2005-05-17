@@ -26,17 +26,18 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template <class Arr, class Event, class Subcurve>
+template <class _Traits, class Arr, class Event, class Subcurve>
 class Arr_sweep_line_visitor
 {
 protected:
 
   typedef typename Arr::Halfedge_handle                            Halfedge_handle;
-  typedef Arr_sweep_line_visitor< Arr,
+  typedef Arr_sweep_line_visitor< _Traits,
+                                  Arr,
                                   Event,
                                   Subcurve>                        Self;
 
-  typedef typename Arr::Traits_2                                   Traits;
+  typedef  _Traits                                                 Traits;
   typedef typename Traits::X_monotone_curve_2                      X_monotone_curve_2;
   typedef typename Traits::Point_2                                 Point_2;
 
