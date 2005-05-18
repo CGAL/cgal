@@ -108,7 +108,7 @@ void Arrangement_2<Traits,Dcel>::assign (const Self& arr)
   Stored_point_2                      *dup_p;
   Vertex                              *p_v;
 
-  for (vit = dcel.vertices_begin(); vit != dcel.vertices_end(); vit++)
+  for (vit = dcel.vertices_begin(); vit != dcel.vertices_end(); ++vit)
   {
     // Create the duplicate point and store it in the points container.
     p_v = *vit;
@@ -124,7 +124,7 @@ void Arrangement_2<Traits,Dcel>::assign (const Self& arr)
   Stored_curve_2                      *dup_cv;
   Halfedge                            *p_e;
 
-  for (eit = dcel.edges_begin(); eit != dcel.edges_end(); eit++)
+  for (eit = dcel.edges_begin(); eit != dcel.edges_end(); ++eit)
   {
     // Create the duplicate curve and store it in the curves container.
     p_e = *eit;
@@ -473,14 +473,14 @@ Arrangement_2<Traits,Dcel>::insert_at_vertices (const X_monotone_curve_2& cv,
         // We increment the holes itrator before moving the hole, because
         // this operation invalidates the iterator.
         hole_to_move  = holes_it;
-        holes_it++;
+        ++holes_it;
 
         // Move the hole.
         _move_hole (old_face, new_face, hole_to_move);
       }
       else
       {
-        holes_it++;
+        ++holes_it;
       }
     }
   }
@@ -1740,7 +1740,7 @@ Arrangement_2<Traits,Dcel>::_remove_edge (Halfedge *e)
       // We increment the holes itrator before moving the hole, because
       // this operation invalidates the iterator.
       hole_to_move  = holes_it;
-      holes_it++;
+      ++holes_it;
 
       _move_hole (f2, f1, hole_to_move); 
     }
@@ -1808,7 +1808,7 @@ Arrangement_2<Traits,Dcel>::_remove_edge (Halfedge *e)
     // We increment the holes itrator before moving the hole, because
     // this operation invalidates the iterator.
     hole_to_move  = holes_it;
-    holes_it++;
+    ++holes_it;
 
     _move_hole (f2, f1, hole_to_move); 
   }

@@ -137,8 +137,8 @@ protected:
   _Conic_arc_2 (const Rational& r, const Rational& s, const Rational& t,
                 const Rational& u, const Rational& v, const Rational& w)
   {
-    // Make sure the given curve is an ellipse.
-    CGAL_precondition (CGAL_NTS compare(4*r*s - t*t, Rational(0)) == LARGER);
+    // Make sure the given curve is an ellipse (4rs - t^2 should be positive).
+    CGAL_precondition (CGAL::sign (4*r*s - t*t) == POSITIVE);
 
     // Set the arc to be the full conic (and compute the orientation).
     Rational    rat_coeffs [6];
@@ -221,7 +221,7 @@ protected:
     rat_coeffs[1] = _zero;
     rat_coeffs[2] = _zero;
 
-    if (CGAL_NTS compare (x1, x2) == EQUAL)
+    if (CGAL::compare (x1, x2) == EQUAL)
     {
       // The supporting conic is a vertical line, of the form x = CONST.
       rat_coeffs[3] = _one;

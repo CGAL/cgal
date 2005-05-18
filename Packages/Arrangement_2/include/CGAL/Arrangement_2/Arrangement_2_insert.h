@@ -16,6 +16,7 @@
 // $Name$
 //
 // Author(s)     : Ron Wein          <wein@post.tau.ac.il>
+//                 Baruch Zukerman   <baruchzu@post.tau.ac.il>
 //                 (based on old version by Eyal Flato)
 #ifndef CGAL_ARRANGEMENT_2_INSERT_H
 #define CGAL_ARRANGEMENT_2_INSERT_H
@@ -1168,7 +1169,7 @@ void arr_insert (Arrangement& arr, const PointLocation& pl,
 //
 template <class Arrangement, class InputIterator>
 void arr_insert (Arrangement& arr,
-                 InputIterator  begin , InputIterator  end)
+                 InputIterator begin, InputIterator end)
 {
   // Notify the arrangement observers that a global operation is about to 
   // take place.
@@ -1178,7 +1179,7 @@ void arr_insert (Arrangement& arr,
 
   // Perform the aggregated insertion.
   Arr_aggregate_insert<Arrangement>  agg_insert_obj (arr.get_traits(), &arr);
-  agg_insert_obj.insert_curves(begin, end);
+  agg_insert_obj.insert_curves (begin, end);
 
   // Notify the arrangement observers that the global operation has been
   // completed.
@@ -1233,12 +1234,9 @@ void arr_insert_x_monotone (Arrangement& arr,
 
   arr_access.notify_before_global_change();
 
-  // ----------------------------------------------
-  // For Baruch: Perform the sweep-line procedure!
-  // ----------------------------------------------
   // Perform the aggregated insertion.
   Arr_aggregate_insert<Arrangement>  agg_insert_obj (arr.get_traits(), &arr);
-  agg_insert_obj.insert_x_curves(begin, end);
+  agg_insert_obj.insert_x_curves (begin, end);
 
   // Notify the arrangement observers that the global operation has been
   // completed.
@@ -1348,7 +1346,7 @@ arr_insert_non_intersecting
 template <class Arrangement, class InputIterator>
 void arr_insert_non_intersecting
                 (Arrangement& arr,
-                 InputIterator  begin , InputIterator  end )
+                 InputIterator begin, InputIterator end)
 {
   // Notify the arrangement observers that a global operation is about to 
   // take place.
@@ -1356,10 +1354,9 @@ void arr_insert_non_intersecting
 
   arr_access.notify_before_global_change();
 
-  // ----------------------------------------------
-  // For Baruch: Perform the sweep-line procedure!
-  // ----------------------------------------------
-  Arr_non_x_aggregate_insert<Arrangement>  agg_insert_obj (arr.get_traits(), &arr);
+  // Perform the aggregated insertion.
+  Arr_non_x_aggregate_insert<Arrangement>  agg_insert_obj (arr.get_traits(), 
+							   &arr);
   agg_insert_obj.insert_curves(begin, end);
 
   // Notify the arrangement observers that the global operation has been

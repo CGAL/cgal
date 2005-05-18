@@ -1,3 +1,4 @@
+// Copyright (c) 2005  Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -16,9 +17,8 @@
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
-
-#ifndef ARR_BATCHED_POINT_LOCATION_H
-#define ARR_BATCHED_POINT_LOCATION_H
+#ifndef CGAL_ARR_BATCHED_POINT_LOCATION_H
+#define CGAL_ARR_BATCHED_POINT_LOCATION_H
 
 #include <CGAL/Sweep_line_2/Sweep_line_2_impl.h>
 #include <CGAL/Sweep_line_2/Sweep_line_subcurve.h>
@@ -29,54 +29,78 @@
 
 CGAL_BEGIN_NAMESPACE
 
-
-template<class _Arrangement, class PointsIterator, class OutputIterator> 
-OutputIterator locate(const _Arrangement& arr,
+/*!
+ * Perform a batched point-location operation on an arrangement.
+ * \param arr The arrangement.
+ * \param points_begin An iterator for the range of query points.
+ * \param points_end A past-the-end iterator for the range of query points.
+ * \param oi Output: An output iterator for the query results.
+ * \pre The value-type of PointsIterator is Arrangement::Point_2,
+ *      and the value-type of OutputIterator is pair<Point_2,Object>, where
+ *      the Object represents the arrangement feature containing the points.
+ */
+template<class Arrangement, class PointsIterator, class OutputIterator> 
+OutputIterator locate(const Arrangement& arr,
                       PointsIterator points_begin,
                       PointsIterator points_end,
-                      OutputIterator out)
+                      OutputIterator oi)
 {
-  typedef typename _Arrangement::Traits_2              Traits;
-  typedef typename Traits::X_monotone_curve_2        Base_X_monotone_curve_2;
-  typedef typename _Arrangement::Halfedge_const_handle   Halfedge_const_handle;
-  typedef typename _Arrangement::Halfedge_const_iterator   Halfedge_const_iterator;
+  // Arrangement types:
+  typedef typename Arrangement::Traits_2               Traits_2;
+  typedef typename Traits::X_monotone_curve_2          Base_X_monotone_curve_2;
+  typedef typename Arrangement::Halfedge_const_handle  Halfedge_const_handle;
+  typedef typename Arrangement::Halfedge_const_iterator 
+                                                       Halfedge_const_iterator;
 
-  typedef  Arr_batched_point_location_meta_traits
-    <Traits,Halfedge_const_handle>        Meta_traits;
-  typedef  typename Meta_traits::X_monotone_curve_2              
-    X_monotone_curve_2;
+  // Define meta-traits class for the batched point location:
+  typedef Arr_batched_point_location_meta_traits
+    <Traits_2, Halfedge_const_handle>                  Meta_traits_2;
 
-  typedef Arr_batched_point_location_visitor<Meta_traits,
+  typedef typename Meta_traits_2::X_monotone_curve_2   X_monotone_curve_2;
+
+  // Define the sweep-line visitor:
+  typedef Arr_batched_point_location_visitor<Meta_traits_2,
                                              OutputIterator,
-                                             _Arrangement>            Visitor;
-  typedef Sweep_line_subcurve<Meta_traits>                            Subcurve; 
-  typedef Arr_batched_point_location_event<Meta_traits, Subcurve>     Event;
+                                             Arrangement>  Visitor;
+  typedef Sweep_line_subcurve<Meta_traits_2>               Subcurve; 
+  typedef Arr_batched_point_location_event<Meta_traits_2,
+                                           Subcurve>       Event;
 
-  typedef Sweep_line_2_impl<Meta_traits,
+  typedef Sweep_line_2_impl<Meta_traits_2,
                             Event,
                             Subcurve,
                             Visitor,
-                            CGAL_ALLOCATOR(int)>              Sweep_line;
-  std::vector<X_monotone_curve_2>      xcurves_vec;
-  Traits tr;
-  for (Halfedge_const_iterator eit = arr.halfedges_begin();
-       eit != arr.halfedges_end();
-       ++eit,++eit) 
+                            CGAL_ALLOCATOR(int)>           Sweep_line;
+
+  // Go over all arrangement edges.
+  std::vector<X_monotone_curve_2>  xcurves_vec;
+  Traits_2::Compare_xy_2    comp_xy = arr->get_traits()->compare_xy_2_object();
+  Edge_const_iterator       eit;
+
+  for (eit = arr.edges_begin(); eit != arr.edges_end(); ++eit) 
   {
-    if(tr.compare_xy_2_object()((*eit).source().point(),
-                     (*eit).target().point()) == LARGER)
+    // Associate each x-monotone curve with the halfedge that represent it
+    // that is directed from right to left.
+    if(comp_xy((*eit).source().point(),
+	       (*eit).target().point()) == LARGER)
       xcurves_vec.push_back(X_monotone_curve_2((*eit).curve(),*eit));
     else
       xcurves_vec.push_back(X_monotone_curve_2((*eit).curve(),(*eit).twin()));
   }
-  Visitor visitor_obj(out, arr);
-  Sweep_line sweep_line_obj(&visitor_obj);
-  sweep_line_obj.init(xcurves_vec.begin(),
-                      xcurves_vec.end(),
-                      points_begin, 
-                      points_end,false);
-  sweep_line_obj.sweep();
-  return out;
+  
+  // Perform the sweep, while initializing it with all query points as event
+  // points.
+  Visitor     visitor (oi, arr);
+  Sweep_line  sweep_line (&visitor);
+
+  sweep_line.init (xcurves_vec.begin(),
+		   xcurves_vec.end(),
+		   points_begin, 
+		   points_end,
+		   false);
+  sweep_line.sweep();
+  
+  return (oi);
 }
 
 

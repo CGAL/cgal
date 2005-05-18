@@ -736,7 +736,7 @@ private:
     Observers_iterater   iter;
     Observers_iterater   end = observers.end();
 
-    for (iter = observers.begin(); iter != end; iter++)
+    for (iter = observers.begin(); iter != end; ++iter)
     {
       if ((*iter) == p_obs)
       {
@@ -757,7 +757,7 @@ private:
     Observers_iterater   iter;
     Observers_iterater   end = observers.end();
 
-    for (iter = observers.begin(); iter != end; iter++)
+    for (iter = observers.begin(); iter != end; ++iter)
       (*iter)->before_assign (arr);
   }
 
@@ -766,7 +766,7 @@ private:
     Observers_iterater   iter;
     Observers_iterater   end = observers.end();
 
-    for (iter = observers.begin(); iter != end; iter++)
+    for (iter = observers.begin(); iter != end; ++iter)
       (*iter)->after_assign();
   }
 
@@ -775,7 +775,7 @@ private:
     Observers_iterater   iter;
     Observers_iterater   end = observers.end();
 
-    for (iter = observers.begin(); iter != end; iter++)
+    for (iter = observers.begin(); iter != end; ++iter)
       (*iter)->before_clear();
   }
 
@@ -784,7 +784,7 @@ private:
     Observers_iterater   iter;
     Observers_iterater   end = observers.end();
 
-    for (iter = observers.begin(); iter != end; iter++)
+    for (iter = observers.begin(); iter != end; ++iter)
       (*iter)->after_clear (u);
   }
 
@@ -793,7 +793,7 @@ private:
     Observers_iterater   iter;
     Observers_iterater   end = observers.end();
 
-    for (iter = observers.begin(); iter != end; iter++)
+    for (iter = observers.begin(); iter != end; ++iter)
       (*iter)->before_global_change();
   }
 
@@ -802,7 +802,7 @@ private:
     Observers_iterater   iter;
     Observers_iterater   end = observers.end();
 
-    for (iter = observers.begin(); iter != end; iter++)
+    for (iter = observers.begin(); iter != end; ++iter)
       (*iter)->after_global_change();
   }
 
@@ -813,7 +813,7 @@ private:
     Observers_iterater   iter;
     Observers_iterater   end = observers.end();
 
-    for (iter = observers.begin(); iter != end; iter++)
+    for (iter = observers.begin(); iter != end; ++iter)
       (*iter)->before_create_edge (c);
   }
 
@@ -822,7 +822,7 @@ private:
     Observers_iterater   iter;
     Observers_iterater   end = observers.end();
 
-    for (iter = observers.begin(); iter != end; iter++)
+    for (iter = observers.begin(); iter != end; ++iter)
       (*iter)->after_create_edge (e);
   }
 
@@ -832,7 +832,7 @@ private:
     Observers_iterater   iter;
     Observers_iterater   end = observers.end();
 
-    for (iter = observers.begin(); iter != end; iter++)
+    for (iter = observers.begin(); iter != end; ++iter)
       (*iter)->before_modify_edge (e, c);
   }
 
@@ -841,7 +841,7 @@ private:
     Observers_iterater   iter;
     Observers_iterater   end = observers.end();
 
-    for (iter = observers.begin(); iter != end; iter++)
+    for (iter = observers.begin(); iter != end; ++iter)
       (*iter)->after_modify_edge (e);
   }
 
@@ -852,7 +852,7 @@ private:
     Observers_iterater   iter;
     Observers_iterater   end = observers.end();
 
-    for (iter = observers.begin(); iter != end; iter++)
+    for (iter = observers.begin(); iter != end; ++iter)
       (*iter)->before_split_edge (e, c1, c2);
   }
 
@@ -862,7 +862,7 @@ private:
     Observers_iterater   iter;
     Observers_iterater   end = observers.end();
 
-    for (iter = observers.begin(); iter != end; iter++)
+    for (iter = observers.begin(); iter != end; ++iter)
       (*iter)->after_split_edge (e1, e2);
   }
 
@@ -872,7 +872,7 @@ private:
     Observers_iterater   iter;
     Observers_iterater   end = observers.end();
 
-    for (iter = observers.begin(); iter != end; iter++)
+    for (iter = observers.begin(); iter != end; ++iter)
       (*iter)->before_split_face (f, e);
   }
 
@@ -883,7 +883,7 @@ private:
     Observers_iterater   iter;
     Observers_iterater   end = observers.end();
 
-    for (iter = observers.begin(); iter != end; iter++)
+    for (iter = observers.begin(); iter != end; ++iter)
       (*iter)->after_split_face (f, new_f, is_hole);
   }
 
@@ -893,7 +893,7 @@ private:
     Observers_iterater   iter;
     Observers_iterater   end = observers.end();
 
-    for (iter = observers.begin(); iter != end; iter++)
+    for (iter = observers.begin(); iter != end; ++iter)
       (*iter)->before_add_hole (f, e);
   }
 
@@ -902,7 +902,7 @@ private:
     Observers_iterater   iter;
     Observers_iterater   end = observers.end();
 
-    for (iter = observers.begin(); iter != end; iter++)
+    for (iter = observers.begin(); iter != end; ++iter)
       (*iter)->after_add_hole (h);
   }
 
@@ -913,7 +913,7 @@ private:
     Observers_iterater   iter;
     Observers_iterater   end = observers.end();
 
-    for (iter = observers.begin(); iter != end; iter++)
+    for (iter = observers.begin(); iter != end; ++iter)
       (*iter)->before_merge_edge (e1, e2, c);
   }
 
@@ -922,7 +922,7 @@ private:
     Observers_iterater   iter;
     Observers_iterater   end = observers.end();
 
-    for (iter = observers.begin(); iter != end; iter++)
+    for (iter = observers.begin(); iter != end; ++iter)
       (*iter)->after_merge_edge (e);
   }
 
@@ -933,7 +933,7 @@ private:
     Observers_iterater   iter;
     Observers_iterater   end = observers.end();
 
-    for (iter = observers.begin(); iter != end; iter++)
+    for (iter = observers.begin(); iter != end; ++iter)
       (*iter)->before_merge_face (f1, f2, e);
   }
 
@@ -942,7 +942,7 @@ private:
     Observers_iterater   iter;
     Observers_iterater   end = observers.end();
 
-    for (iter = observers.begin(); iter != end; iter++)
+    for (iter = observers.begin(); iter != end; ++iter)
       (*iter)->after_merge_face (f);
   }
 
@@ -953,7 +953,7 @@ private:
     Observers_iterater   iter;
     Observers_iterater   end = observers.end();
 
-    for (iter = observers.begin(); iter != end; iter++)
+    for (iter = observers.begin(); iter != end; ++iter)
       (*iter)->before_move_hole (from_f, to_f, h);
   }
 
@@ -962,7 +962,7 @@ private:
     Observers_iterater   iter;
     Observers_iterater   end = observers.end();
 
-    for (iter = observers.begin(); iter != end; iter++)
+    for (iter = observers.begin(); iter != end; ++iter)
       (*iter)->after_move_hole (h);
   }
 
@@ -971,7 +971,7 @@ private:
     Observers_iterater   iter;
     Observers_iterater   end = observers.end();
 
-    for (iter = observers.begin(); iter != end; iter++)
+    for (iter = observers.begin(); iter != end; ++iter)
       (*iter)->before_remove_edge (e);
   }
 
@@ -980,7 +980,7 @@ private:
     Observers_iterater   iter;
     Observers_iterater   end = observers.end();
 
-    for (iter = observers.begin(); iter != end; iter++)
+    for (iter = observers.begin(); iter != end; ++iter)
       (*iter)->before_remove_hole (h);
   }
   //@}

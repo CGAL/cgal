@@ -473,8 +473,7 @@ public:
   /*! Get a circulator for the boundary of the current hole. */
   _Ccb_halfedge_circulator<Traits_, Dcel> operator* () const
   {
-    _Ccb_halfedge_circulator<Traits_, Dcel>     circ (*holes_it);
-    return (circ);
+    return _Ccb_halfedge_circulator<Traits_, Dcel> (*holes_it);
   }
 };
 
@@ -563,8 +562,7 @@ public:
   /*! Get a const circulator for the boundary of the current hole. */
   _Ccb_halfedge_const_circulator<Traits_, Dcel> operator* () const
   {
-    _Ccb_halfedge_const_circulator<Traits_, Dcel>     circ (*holes_it);
-    return (circ);  
+    return _Ccb_halfedge_const_circulator<Traits_, Dcel> (*holes_it);  
   }
 };
 
@@ -665,8 +663,7 @@ public:
   /*! Get a circulator for the incident halfedges. */
   _Halfedge_around_vertex_circulator<Traits, Dcel> incident_halfedges () const
   {
-    _Halfedge_around_vertex_circulator<Traits, Dcel>   circ (p_v->halfedge());
-    return (circ);
+    return _Halfedge_around_vertex_circulator<Traits, Dcel> (p_v->halfedge());
   } 
 };
 
@@ -751,10 +748,8 @@ public:
   _Halfedge_around_vertex_const_circulator<Traits, Dcel>
     incident_halfedges () const
   {
-    _Halfedge_around_vertex_const_circulator<Traits, Dcel>
-      circ (p_v->halfedge());
-    
-    return (circ);
+    return _Halfedge_around_vertex_const_circulator<Traits, Dcel>
+                                                             (p_v->halfedge());
   } 
 };
 
@@ -812,22 +807,19 @@ public:
   /*! Get a circulator for the outer boundary of the face. */
   _Ccb_halfedge_circulator<Traits_, Dcel> outer_ccb () const
   {
-    _Ccb_halfedge_circulator<Traits_, Dcel>   circ (p_f->halfedge());
-    return (circ);
+    return _Ccb_halfedge_circulator<Traits_, Dcel> (p_f->halfedge());
   }
 
   /*! Get an iterator for the first hole inside the face. */
   _Holes_iterator<Traits_, Dcel> holes_begin () const
   {
-    _Holes_iterator<Traits_, Dcel>            iter (p_f->holes_begin());
-    return (iter);
+    return _Holes_iterator<Traits_, Dcel> (p_f->holes_begin());
   }
 
   /*! Get a past-the-end iterator for holes inside the face. */
   _Holes_iterator<Traits_, Dcel> holes_end () const
   {
-    _Holes_iterator<Traits_, Dcel>            iter (p_f->holes_end());
-    return (iter);
+    return _Holes_iterator<Traits_, Dcel> (p_f->holes_end());
   }
 };
 
@@ -889,22 +881,19 @@ public:
   /*! Get a circulator for the outer boundary of the face. */
   _Ccb_halfedge_const_circulator<Traits_, Dcel> outer_ccb () const
   {
-    _Ccb_halfedge_const_circulator<Traits_, Dcel> circ (p_f->halfedge());
-    return (circ);
+    return _Ccb_halfedge_const_circulator<Traits_, Dcel> (p_f->halfedge());
   }
 
   /*! Get an iterator for the first hole inside the face. */
   _Holes_const_iterator<Traits_, Dcel> holes_begin () const
   {
-    _Holes_const_iterator<Traits_, Dcel>          iter (p_f->holes_begin());
-    return (iter);
+    return _Holes_const_iterator<Traits_, Dcel> (p_f->holes_begin());
   }
 
   /*! Get a past-the-end iterator for holes inside the face. */
   _Holes_const_iterator<Traits_, Dcel> holes_end () const
   {
-    _Holes_const_iterator<Traits_, Dcel>          iter (p_f->holes_end());
-    return (iter);
+    return _Holes_const_iterator<Traits_, Dcel> (p_f->holes_end());
   }
 };
 
@@ -982,44 +971,38 @@ public:
   _Vertex_handle<Traits, Dcel> source () const
   {
     // Return the incident vertex of the opposite halfedge.
-    _Vertex_handle<Traits, Dcel>      vh (p_he->opposite()->vertex());
-    return (vh);
+    return _Vertex_handle<Traits, Dcel> (p_he->opposite()->vertex());
   }
 
   /*! Get the target vertex. */
   _Vertex_handle<Traits, Dcel> target () const
   {
     // Return the incident vertex of this halfedge.
-    _Vertex_handle<Traits, Dcel>      vh (p_he->vertex());
-    return (vh);
+    return _Vertex_handle<Traits, Dcel> (p_he->vertex());
   }
 
   /*! Get the incident face. */
   _Face_handle<Traits, Dcel> face () const
   {
-    _Face_handle<Traits, Dcel>        fh (p_he->face());
-    return (fh);
+    return _Face_handle<Traits, Dcel> (p_he->face());
   }
 
   /*! Get the twin halfedge. */
   Self twin () const
   {
-    Self                      hh (p_he->opposite());
-    return (hh);
+    return Self (p_he->opposite());
   }
 
   /*! Get the previous halfedge along the component boundary. */
   Self previous () const
   {
-    Self                      hh (p_he->previous());
-    return (hh);
+    return Self (p_he->previous());
   }
 
   /*! Get the next halfedge along the component boundary. */
   Self next () const
   {
-    Self                      hh (p_he->next());
-    return (hh);
+    return Self (p_he->next());
   }
 };
 
@@ -1028,16 +1011,14 @@ template <class Traits, class Dcel>
 _Halfedge_handle<Traits, Dcel> operator*
     (const _Halfedge_around_vertex_circulator<Traits, Dcel>& circ)
 {
-  _Halfedge_handle<Traits, Dcel>   hh (circ.halfedge());
-  return (hh);
+  return _Halfedge_handle<Traits, Dcel> (circ.halfedge());
 }
 
 template <class Traits, class Dcel>
 _Halfedge_handle<Traits, Dcel> operator* 
     (const _Ccb_halfedge_circulator<Traits, Dcel>& circ)
 {
-  _Halfedge_handle<Traits, Dcel>   hh (circ.halfedge());
-  return (hh);
+  return _Halfedge_handle<Traits, Dcel> (circ.halfedge());
 }
 
 /*! \class
@@ -1096,44 +1077,38 @@ public:
   _Vertex_const_handle<Traits, Dcel> source () const
   {
     // Return the incident vertex of the opposite halfedge.
-    _Vertex_const_handle<Traits, Dcel>      vh (p_he->opposite()->vertex());
-    return (vh);
+    return _Vertex_const_handle<Traits, Dcel> (p_he->opposite()->vertex());
   }
 
   /*! Get the target vertex. */
   _Vertex_const_handle<Traits, Dcel> target () const
   {
     // Return the incident vertex of this halfedge.
-    _Vertex_const_handle<Traits, Dcel>      vh (p_he->vertex());
-    return (vh);
+    return _Vertex_const_handle<Traits, Dcel> (p_he->vertex());
   }
 
   /*! Get the incident face. */
   _Face_const_handle<Traits, Dcel> face () const
   {
-    _Face_const_handle<Traits, Dcel>        fh (p_he->face());
-    return (fh);
+    return _Face_const_handle<Traits, Dcel> (p_he->face());
   }
 
   /*! Get the twin halfedge. */
   Self twin () const
   {
-    Self                      hh (p_he->opposite());
-    return (hh);
+    return Self (p_he->opposite());
   }
 
   /*! Get the previous halfedge along the component boundary. */
   Self previous () const
   {
-    Self                      hh (p_he->previous());
-    return (hh);
+    return Self (p_he->previous());
   }
 
   /*! Get the next halfedge along the component boundary. */
   Self next () const
   {
-    Self                      hh (p_he->next());
-    return (hh);
+    return Self (p_he->next());
   }
 };
 
@@ -1142,16 +1117,14 @@ template <class Traits, class Dcel>
 _Halfedge_const_handle<Traits, Dcel> operator* 
     (const _Halfedge_around_vertex_const_circulator<Traits, Dcel>& circ)
 {
-  _Halfedge_const_handle<Traits, Dcel>   hh (circ.halfedge());
-  return (hh);
+  return _Halfedge_const_handle<Traits, Dcel> (circ.halfedge());
 }
 
 template <class Traits, class Dcel>
 _Halfedge_const_handle<Traits, Dcel> operator*
     (const _Ccb_halfedge_const_circulator<Traits, Dcel>& circ)
 {
-  _Halfedge_const_handle<Traits, Dcel>   hh (circ.halfedge());
-  return (hh);
+  return (_Halfedge_const_handle<Traits, Dcel> (circ.halfedge()));
 }
 
 // --------------------------------------------------------------------------
@@ -1239,8 +1212,7 @@ public:
   /*! Get a handle to the current vertex. */
   _Vertex_handle<Traits_, Dcel> operator* () const
   {
-    _Vertex_handle<Traits_, Dcel>     vh (&(*vit));
-    return (vh);
+    return _Vertex_handle<Traits_, Dcel> (&(*vit));
   }
 
   /*! Get a pointer to the current vertex. */
@@ -1334,8 +1306,7 @@ public:
   /*! Get a handle to the current vertex. */
   _Vertex_const_handle<Traits_, Dcel> operator* () const
   {
-    _Vertex_const_handle<Traits_, Dcel>     vh (&(*vit));
-    return (vh);
+    return _Vertex_const_handle<Traits_, Dcel> (&(*vit));
   }
 
   /*! Get a pointer to the current vertex. */
@@ -1426,8 +1397,7 @@ public:
   /*! Get a handle to the current halfedge. */
   _Halfedge_handle<Traits_, Dcel> operator* () const
   {
-    _Vertex_handle<Traits_, Dcel>     hh (&(*hit));
-    return (hh);
+    return _Vertex_handle<Traits_, Dcel> (&(*hit));
   }
 
   /*! Get a pointer to the current halfedge. */
@@ -1521,8 +1491,7 @@ public:
   /*! Get a handle to the current halfedge. */
   _Halfedge_const_handle<Traits_, Dcel> operator* () const
   {
-    _Halfedge_const_handle<Traits_, Dcel>     hh (&(*hit));
-    return (hh);  
+    return _Halfedge_const_handle<Traits_, Dcel> (&(*hit));  
   }
 
   /*! Get a pointer to the current halfedge. */
@@ -1613,8 +1582,7 @@ public:
   /*! Get a handle to the current halfedge. */
   _Halfedge_handle<Traits_, Dcel> operator* () const
   {
-    _Halfedge_handle<Traits_, Dcel>     hh (&(*eit));
-    return (hh);
+    return _Halfedge_handle<Traits_, Dcel> (&(*eit));
   }
 
   /*! Get a pointer to the current halfedge. */
@@ -1708,8 +1676,7 @@ public:
   /*! Get a handle to the current halfedge. */
   _Halfedge_const_handle<Traits_, Dcel> operator* () const
   {
-    _Halfedge_const_handle<Traits_, Dcel>     hh (&(*eit));
-    return (hh);
+    return _Halfedge_const_handle<Traits_, Dcel> (&(*eit));
   }
 
   /*! Get a pointer to the current halfedge. */
@@ -1800,8 +1767,7 @@ public:
   /*! Get a handle to the current face. */
   _Face_handle<Traits_, Dcel> operator* () const
   {
-    _Face_handle<Traits_, Dcel>     fh (&(*fit));
-    return (fh);  
+    return _Face_handle<Traits_, Dcel> (&(*fit));  
   }
 
   /*! Get a pointer to the current face. */
@@ -1895,8 +1861,7 @@ public:
   /*! Get a handle to the current vertex. */
   _Face_const_handle<Traits_, Dcel> operator* () const
   {
-    _Face_const_handle<Traits_, Dcel>     fh (&(*fit));
-    return (fh);
+    return _Face_const_handle<Traits_, Dcel> (&(*fit));
   }
 
   /*! Get a pointer to the current face. */

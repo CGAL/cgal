@@ -389,12 +389,16 @@ public:
    * \param arc The compared arc.
    * \param p The reference intersection point.
    * \param mult Output: The multiplicity of the intersection point.
+   * \param is_vertical_slope1 Output: Does (*this) has a vertical slope at p.
+   * \param is_vertical_slope2 Output: Does arc has a vertical slope at p.
    * \return The relative position of the arcs to the right of p.
    * \pre Both arcs we compare are not vertical segments.
    */
   Comparison_result compare_to_right (const Self& arc,
                                       const Conic_point_2& p,
-                                      unsigned int& mult) const
+                                      unsigned int& mult,
+				      bool& is_vertical_slope1,
+				      bool& is_vertical_slope2) const
   {
     CGAL_precondition ((_info & IS_VERTICAL_SEGMENT) == 0 &&
                        (arc._info & IS_VERTICAL_SEGMENT) == 0);
@@ -424,8 +428,9 @@ public:
     _derive_by_x_at (p, 1, slope1_numer, slope1_denom);
     arc._derive_by_x_at (p, 1, slope2_numer, slope2_denom);
 
-    const bool     is_vertical_slope1 = (CGAL::sign (slope1_denom) == ZERO);
-    const bool     is_vertical_slope2 = (CGAL::sign (slope2_denom) == ZERO);
+    // Check if any of the slopes are vertical.
+    is_vertical_slope1 = (CGAL::sign (slope1_denom) == ZERO);
+    is_vertical_slope2 = (CGAL::sign (slope2_denom) == ZERO);
 
     if (!is_vertical_slope1 && !is_vertical_slope2)
     {
@@ -1198,7 +1203,9 @@ private:
     // Pair the coordinates of the intersection points. As the vectors of
     // x and y-coordinates are sorted in ascending order, we output the
     // intersection points in lexicographically ascending order.
-    int         i, j;
+    unsigned int  mult;
+    bool          vert_slope1, vert_slope2;
+    int           i, j;
 
     for (i = 0; i < n_xs; i++)
     {
@@ -1214,9 +1221,8 @@ private:
           ip.set_generating_conic (arc._id);
 
           // Compute the multiplicity of the intersection point.
-          unsigned int          mult;
-
-          compare_to_right (arc, ip, mult);
+          compare_to_right (arc, ip, mult,
+			    vert_slope1, vert_slope2);
 
           // Insert the intersection point to the output list.
           inter_list.push_back (Intersection_point_2 (ip, mult));
