@@ -1,0 +1,72 @@
+\begin{ccRefFunctionObjectConcept}{FaceDegeneracyTester}
+
+\ccRefines
+\ccc{DefaultConstructible}\\
+\ccc{CopyConstructible}\\
+\ccc{Assignable}\\
+\ccc{AdaptableFunctor} (with one argument)
+
+\ccTypes
+
+In addition to the types required by the \ccc{AdaptableFunctor}
+concept, a model of this concept must provide the following types:
+
+\ccThree{typedef typename Dual_graph::Finite_vertices_iterator}
+{Finite_vertices_iterator}{}
+\ccThreeToTwo
+
+\ccNestedType{Dual_graph}{A type for the Delaunay graph. It must be
+  model of the \ccc{DelaunayGraph_2} concept.}
+\ccGlue
+\ccTypedef{typedef typename Dual_graph::Vertex_handle Vertex_handle;}{}
+\ccGlue
+\ccTypedef{typedef typename Dual_graph::Vertex_circulator
+  Vertex_circulator;}{}
+\ccGlue
+\ccTypedef{typedef typename Dual_graph::All_vertices_iterator
+  All_vertices_iterator;}{}
+\ccGlue
+\ccTypedef{typedef typename Dual_graph::Finite_vertices_iterator
+  Finite_vertices_iterator;}{}
+
+\ccCreationVariable{fdt}
+
+%\ccCreation
+
+%In addition to the default and copy constructors and the assignment
+%operator, the following constructor must be defined:
+
+%\ccThree{EdgeDegeneracyTester et(Dual_graph* dg)+}{}
+%\ccThreeToTwo
+%\ccConstructor{EdgeDegeneracyTester(Dual_graph* dg);}{A constructor
+%  that is initialized by a pointer to a \ccc{Dual_graph} object.}
+
+\ccOperations
+It must also provide the following operations:
+
+\ccThree{bool}{fdt(Finite_vertices_iterator fvit)+}{}
+\ccThreeToTwo
+\ccMemberFunction{bool operator()(Vertex_handle v);}
+{return \ccStyle{true}, if the dual Voronoi face of \ccc{v} is
+  degenerate, i.e., it has zero area.}
+%
+\ccGlue
+\ccMemberFunction{bool operator()(Vertex_circulator vc);}
+{returns \ccStyle{true}, if the dual Voronoi face of \ccc{*vc} is
+  degenerate, i.e., it has zero area.}
+%
+\ccGlue
+\ccMemberFunction{bool operator()(All_vertices_iterator avit);}
+{returns \ccStyle{true}, if the dual Voronoi face of \ccc{*avit} is
+  degenerate, i.e., it has zero area.}
+%
+\ccGlue
+\ccMemberFunction{bool operator()(Finite_vertices_iterator fvit);}
+{returns \ccStyle{true}, if the dual Voronoi face of \ccc{*fvit} is
+  degenerate, i.e., it has zero area.}
+
+
+\ccSeeAlso
+\ccc{EdgeDegeneracyTester}
+
+\end{ccRefFunctionObjectConcept}

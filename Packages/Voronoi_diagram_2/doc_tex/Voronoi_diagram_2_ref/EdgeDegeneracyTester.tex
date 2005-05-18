@@ -1,0 +1,72 @@
+\begin{ccRefFunctionObjectConcept}{EdgeDegeneracyTester}
+
+\ccRefines
+\ccc{DefaultConstructible}\\
+\ccc{CopyConstructible}\\
+\ccc{Assignable}\\
+\ccc{AdaptableFunctor} (with one argument)
+
+\ccTypes
+
+In addition to the types required by the \ccc{AdaptableFunctor}
+concept, a model of this concept must provide the following types:
+
+\ccThree{typedef typename Dual_graph::Finite_edges_iterator}
+{Finite_edges_iterator}{}
+\ccThreeToTwo
+
+\ccNestedType{Dual_graph}{A type for the Delaunay graph. It must be
+  model of the \ccc{DelaunayGraph_2} concept.}
+\ccGlue
+\ccTypedef{typedef typename Dual_graph::Edge Edge;}{}
+\ccGlue
+\ccTypedef{typedef typename Dual_graph::Edge_circulator
+  Edge_circulator;}{}
+\ccGlue
+\ccTypedef{typedef typename Dual_graph::All_edge_iterator
+  All_edges_iterator;}{}
+\ccGlue
+\ccTypedef{typedef typename Dual_graph::Finite_edges_iterator
+  Finite_edges_iterator;}{}
+
+\ccCreationVariable{edt}
+
+%\ccCreation
+
+%In addition to the default and copy constructors and the assignment
+%operator, the following constructor must be defined:
+
+%\ccThree{EdgeDegeneracyTester et(Dual_graph* dg)+}{}
+%\ccThreeToTwo
+%\ccConstructor{EdgeDegeneracyTester(Dual_graph* dg);}{A constructor
+%  that is initialized by a pointer to a \ccc{Dual_graph} object.}
+
+\ccOperations
+It must also provide the following operations:
+
+\ccThree{bool}{fdt(Finite_edges_iterator feit)+}{}
+\ccThreeToTwo
+\ccMemberFunction{bool operator()(Edge e);}
+{return \ccStyle{true}, if the dual Voronoi edge of \ccc{e} is
+  degenerate, i.e., it has zero length.}
+%
+\ccGlue
+\ccMemberFunction{bool operator()(Edge_circulator ec);}
+{returns \ccStyle{true}, if the dual Voronoi edge of \ccc{*ec} is
+  degenerate, i.e., it has zero length.}
+%
+\ccGlue
+\ccMemberFunction{bool operator()(All_edges_iterator aeit);}
+{returns \ccStyle{true}, if the dual Voronoi edge of \ccc{*aeit} is
+  degenerate, i.e., it has zero length.}
+%
+\ccGlue
+\ccMemberFunction{bool operator()(Finite_edges_iterator feit);}
+{returns \ccStyle{true}, if the dual Voronoi edge of \ccc{*feit} is
+  degenerate, i.e., it has zero length.}
+
+
+\ccSeeAlso
+\ccc{FaceDegeneracyTester}
+
+\end{ccRefFunctionObjectConcept}

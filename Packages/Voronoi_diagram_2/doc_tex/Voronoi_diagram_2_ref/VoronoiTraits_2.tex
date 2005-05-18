@@ -1,0 +1,92 @@
+%% Copyright (c) 2005  University of Crete (Greece).
+%% All rights reserved.
+%%
+%% This file is part of CGAL (www.cgal.org); you may redistribute it under
+%% the terms of the Q Public License version 1.0.
+%% See the file LICENSE.QPL distributed with CGAL.
+%%
+%% Licensees holding a valid commercial license may use this file in
+%% accordance with the commercial license agreement provided with the software.
+%%
+%% This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+%% WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+%%
+%% $Source$
+%% $Revision$ $Date$
+%% $Name$
+%%
+%% Author(s)     : Menelaos Karavelas <mkaravel@tem.uoc.gr>
+
+
+
+\begin{ccRefConcept}{VoronoiTraits_2}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+\ccDefinition
+
+The concept \ccc{VoronoiTraits_2} defines the combinatorial predicate
+requirements for the \ccc{Voronoi_diagram_adaptor_2<DG,VT>} class. The
+\ccc{VoronoiTraits_2} concept essentially defines the requirements on
+the predicates that determine whether a feature of the triangulated
+Delaunay graph has a degenerate dual feature in the Voronoi diagram
+that is the dual of the triangulated Delaunay graph.
+
+\ccRefines
+\ccc{DefaultConstructible}\\
+\ccc{CopyConstructible}\\
+\ccc{Assignable}
+
+\ccTypes
+\ccTwo{VoronoiTraits_2::Face_degeneracy_tester+}{}
+%
+\ccNestedType{Dual_graph}{A type for the triangulated Delaunay
+  graph. The type \ccc{Dual_graph} must be a model of the
+  \ccc{DelaunayGraph_2} concept.}
+\ccGlue
+\ccNestedType{Edge_degeneracy_tester}{A type for the predicate that
+  tests whether a Voronoi edge is degenerate, i.e., it has zero
+  length. It must be a model of the EdgeDegeneracyTester concept.}
+\ccGlue
+\ccNestedType{Face_degeneracy_tester}{A type for the predicate that
+  tests whether a Voronoi face is degenerate, i.e., it has zero
+  area. It must be a model of the FaceDegeneracyTester concept.}
+
+
+\ccCreationVariable{vt}  %% choose variable name
+
+\ccCreation
+In addition to the default and constructors, as well as the assignment
+operator, the following constructors are required.
+
+\ccThree{VoronoiTraits_2}{vt(Dual_graph* dg)}{}
+\ccThreeToTwo
+\ccConstructor{VoronoiTraits_2(Dual_graph* dg);}{A constructor that is
+  initialized by a pointer to a \ccc{Dual_graph} object.}
+%
+
+
+\ccHeading{Access to predicate objects}
+\ccThree{Edge_degeneracy_tester}{vt.edge_degeneracy_tester_object()+}{}
+\ccMethod{Edge_degeneracy_tester edge_degeneracy_tester_object();}{}
+\ccGlue
+\ccMethod{Face_degeneracy_tester face_degeneracy_tester_object();}{}
+
+\ccHasModels
+\ccc{CGAL::Apollonius_graph_Voronoi_traits_2<DG>}\\
+\ccc{CGAL::Delaunay_triangulation_Voronoi_traits_2<DG>}\\
+\ccc{CGAL::Regular_triangulation_Voronoi_traits_2<DG>}\\
+\ccc{CGAL::Segment_Voronoi_diagram_Voronoi_traits_2<DG>}\\
+
+\ccSeeAlso
+\ccc{DelaunayGraph_2}\\
+\ccc{EdgeDegeneracyTester}\\
+\ccc{FaceDegeneracyTester}\\
+\ccc{CGAL::Voronoi_diagram_adaptor_2<DG,VT>}
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+
