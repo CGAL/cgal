@@ -147,8 +147,6 @@ protected:
   typedef Segment_Voronoi_diagram_traits_wrapper_2<Gt>  Modified_traits;
   typedef Triangulation_2<Modified_traits,DS>           DG;
   typedef DG                                            Delaunay_graph;
-  typedef typename DG::Vertex                           Vertex;
-  typedef typename DG::Face                             Face;
 
   typedef LTag                                          List_tag;
 
@@ -156,6 +154,7 @@ public:
   // PUBLIC TYPES
   //-------------
   typedef DS                                     Data_structure;
+  typedef DS                                     Triangulation_data_structure;
   typedef Gt                                     Geom_traits;
   typedef typename Gt::Site_2                    Site_2;
   typedef typename Gt::Point_2                   Point_2;
@@ -163,6 +162,8 @@ public:
   typedef typename DS::Edge                      Edge;
   typedef typename DS::Vertex_handle             Vertex_handle;
   typedef typename DS::Face_handle               Face_handle;
+  typedef typename DG::Vertex                    Vertex;
+  typedef typename DG::Face                      Face;
 
   typedef typename DS::Vertex_circulator         Vertex_circulator;
   typedef typename DS::Edge_circulator           Edge_circulator;
