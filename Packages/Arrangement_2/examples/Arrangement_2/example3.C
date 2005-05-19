@@ -4,6 +4,7 @@
 //#include "short_names.h"
 
 #include <CGAL/Cartesian.h>
+//#include <CGAL/Gmpq.h>
 #include <CGAL/MP_Float.h>
 #include <CGAL/Quotient.h>
 #include <CGAL/Arr_segment_traits_2.h>
@@ -13,6 +14,8 @@
 
 #include <fstream>
 
+//typedef double                                        Number_type;
+//typedef CGAL::Gmpq                                    Number_type;
 typedef CGAL::Quotient<CGAL::MP_Float>                Number_type;
 typedef CGAL::Cartesian<Number_type>                  Kernel;
 typedef CGAL::Arr_segment_traits_2<Kernel>            Traits_2;
@@ -25,9 +28,9 @@ typedef CGAL::Arr_naive_point_location<Arrangement_2> Point_location;
 int main (int argc, char **argv)
 {
   // Open the input file.
-  if (argc != 2)
+  if (argc < 2)
   {
-    std::cerr << "Usage: " << argv[0] << " <file name>" << std::endl;
+    std::cerr << "Usage: " << argv[0] << " <file name> [-a|-i]" << std::endl;
     return (1);
   }
 
@@ -39,6 +42,15 @@ int main (int argc, char **argv)
     return (1);
   }
 
+  // Decide on the operation.
+  bool       inc_insert = true;
+
+  if (argc > 2 && 
+      ((strcmp (argv[2], "-A") == 0) || (strcmp (argv[2], "-a") == 0)))
+  {
+    inc_insert = false;
+  }
+
   // Read the segments from the file.
   // The input file format should be:
   // <n>                                 // number of segments.
@@ -48,13 +60,19 @@ int main (int argc, char **argv)
   // <sx_n> <sy_n>  <tx_n> <ty_n>        // source and target of segment #n.
   int                n;
   Segments_list      segments;
+  int                isx, isy, itx, ity;
   Number_type        sx, sy, tx, ty;
   int                i;
 
   in_file >> n;
   for (i = 0; i < n; i++)
   {
-    in_file >> sx >> sy >> tx >> ty;
+    in_file >> isx >> isy >> itx >> ity;
+    sx = Number_type (isx);
+    sy = Number_type (isy);
+    tx = Number_type (itx);
+    ty = Number_type (ity);
+
     segments.push_back (Segment_2 (Point_2 (sx, sy), Point_2 (tx, ty)));
   }
 
@@ -63,17 +81,34 @@ int main (int argc, char **argv)
 
   // Construct the arrangement by incrementally inserting all segments.
   Arrangement_2                  arr;
-  Point_location                 pl (arr);
-  Segments_list::const_iterator  seg_iter;
   CGAL::Timer                    timer;
 
-  timer.start();
-  for (i = 1, seg_iter = segments.begin();
-       seg_iter != segments.end(); i++, seg_iter++)
+  if (inc_insert)
   {
-    arr_insert (arr, pl, *seg_iter);
+    // Perform incremental insertion.
+    Point_location                 pl (arr);
+    Segments_list::const_iterator  iter;
+
+    std::cout << "Preforming incremental insertion of " 
+	      << n << " curves." << std::endl;
+
+    timer.start();
+    for (iter = segments.begin(); iter != segments.end(); ++iter)
+    {
+      arr_insert (arr, pl, *iter);
+    }
+    timer.stop();
   }
-  timer.stop();
+  else
+  {
+    // Perform aggregated insertion.
+    std::cout << "Preforming aggregated insertion of " 
+	      << n << " curves." << std::endl;
+
+    timer.start();
+    arr_insert (arr, segments.begin(), segments.end());
+    timer.stop();
+  }
 
   // Print the arrangement dimensions.
   std::cout << "V = " << arr.number_of_vertices()
