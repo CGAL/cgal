@@ -6,6 +6,7 @@
 #include <fstream>
 #include <cassert>
 #include "vda_print_report.h"
+#include "vda_test_concept.h"
 
 template<class VD, class Projector, class Dual_primal_projector>
 class VDA_Tester
@@ -28,6 +29,9 @@ class VDA_Tester
   void test_vd(const DG& dg) const
   {
     VD vd(dg);
+
+    test_dual_graph_concept( vd.dual() );
+    test_voronoi_traits_concept( vd.voronoi_traits() );
 
     std::ofstream nos("");
 
