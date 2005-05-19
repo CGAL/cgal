@@ -202,22 +202,37 @@ Arrangement_2<Traits,Dcel>::insert_in_face_interior
 {
   Face      *p_f = f.p_f;
 
-  // Notify the observers that we are about to create a new edge.
-  _notify_before_create_edge (cv);
-
-  // Create two new vertices, associated with the curve endpoints.
-  Vertex         *v1 = dcel.new_vertex(); 
-  Vertex         *v2 = dcel.new_vertex();
+  // Create a new vertex associated with the curve's left endpoints.
+  // We also notify the observers on the creation of this vertex.
   Stored_point_2 *p1 = new Stored_point_2 
                                (traits->construct_min_vertex_2_object() (cv));
-  Stored_point_2 *p2 = new Stored_point_2 
-                               (traits->construct_max_vertex_2_object() (cv));
+
+  _notify_before_create_vertex (*p1);
+
+  Vertex         *v1 = dcel.new_vertex(); 
 
   points.push_back (*p1);
   v1->set_point (p1);
+
+  _notify_after_create_vertex (Vertex_handle (v1));
+
+  // Create a new vertex associated with the curve's right endpoint.
+  // We also notify the observers on the creation of this vertex.
+  Stored_point_2 *p2 = new Stored_point_2 
+                               (traits->construct_max_vertex_2_object() (cv));
+
+  _notify_before_create_vertex (*p2);
+
+  Vertex         *v2 = dcel.new_vertex();
+  
   points.push_back (*p2);
   v2->set_point (p2);
-  
+
+  _notify_after_create_vertex (Vertex_handle (v2));
+
+  // Notify the observers that we are about to create a new edge.
+  _notify_before_create_edge (cv);
+
   // Create a pair of twin halfedges connecting the two vertices,
   // and link them together to form a new connected component.
   Halfedge       *he1 = dcel.new_edge();
@@ -308,9 +323,6 @@ Arrangement_2<Traits,Dcel>::insert_from_vertex (const X_monotone_curve_2& cv,
                                traits->construct_max_vertex_2_object()(cv)),
      "The input halfedge's target should be a curve endpoint.");
 
-  // Notify the observers that we are about to create a new edge.
-  _notify_before_create_edge (cv);
-
   // Get the previous halfedge an its incident face. Note that this will also
   // be the incident face of the two new halfedges we are about to create. 
   Halfedge  *p_prev = prev.p_he;
@@ -318,8 +330,7 @@ Arrangement_2<Traits,Dcel>::insert_from_vertex (const X_monotone_curve_2& cv,
 
   // The first vertex is the one that the prev halfedge points to.
   // Create a new vertex and associate it with the unmatched endpoint.
-  Vertex         *v1 = p_prev->vertex();  
-  Vertex         *v2 = dcel.new_vertex();
+  // We also notify the observers on the creation of this vertex.
   Stored_point_2 *new_p;
 
   if (left_exists)
@@ -327,8 +338,19 @@ Arrangement_2<Traits,Dcel>::insert_from_vertex (const X_monotone_curve_2& cv,
   else
     new_p = new Stored_point_2 (traits->construct_min_vertex_2_object() (cv));
 
+  _notify_before_create_vertex (*new_p);
+
+  Vertex         *v1 = p_prev->vertex();  
+  Vertex         *v2 = dcel.new_vertex();
+
   points.push_back (*new_p);
   v2->set_point (new_p);
+
+  _notify_after_create_vertex (Vertex_handle (v2));
+
+  // Notify the observers that we are about to create a new edge, and that
+  // we are about to modify the existing vertex v1.
+  _notify_before_create_edge (cv);
 
   // Create a pair of twin halfedges connecting the two vertices,
   // and associate them with the given curve.
@@ -495,6 +517,40 @@ Arrangement_2<Traits,Dcel>::insert_at_vertices (const X_monotone_curve_2& cv,
 }
 
 //-----------------------------------------------------------------------------
+// Replace the point associated with the given vertex.
+//
+template<class Traits, class Dcel>
+typename Arrangement_2<Traits,Dcel>::Vertex_handle
+Arrangement_2<Traits,Dcel>::modify_vertex (Vertex_handle vh, 
+					   const Point_2& p)
+{
+  CGAL_precondition_msg (traits->equal_2_object() (vh.point(), p),
+                         "The new point is different from the current one.");
+
+  // Get the vertex pointer.
+  Vertex         *v = vh.p_v;
+
+  // Notify the observers that we are about to modify a vertex.
+  _notify_before_modify_vertex (vh, p);
+
+  // Destroy the point currently associated with the vertex.
+  Stored_point_2  *old_p = static_cast<Stored_point_2*>(&(v->point()));
+  points.erase (old_p);
+
+  // Associate it with the new point.
+  Stored_point_2  *dup_p = new Stored_point_2 (p);
+
+  points.push_back (*dup_p);
+  v->set_point (dup_p);
+
+  // Notify the observers that we have modified the vertex.
+  _notify_after_modify_vertex (vh);
+
+  // Return a handle to the modified vertex.
+  return (vh);
+}
+
+//-----------------------------------------------------------------------------
 // Replace the x-monotone curve associated with the given edge.
 //
 template<class Traits, class Dcel>
@@ -505,7 +561,7 @@ Arrangement_2<Traits,Dcel>::modify_edge (Halfedge_handle e,
   CGAL_precondition_msg (traits->equal_2_object() (e.curve(), cv),
                          "The new curve is different from the current one.");
 
-  // Get the split halfedge pointer.
+  // Get the halfedge pointer.
   Halfedge       *he = e.p_he;
 
   // Notify the observers that we are about to modify an edge.
@@ -601,14 +657,8 @@ Arrangement_2<Traits,Dcel>::split_edge (Halfedge_handle e,
     }
   }
 
-  // Notify the observers that we are about to split an edge.
-  if (assign_cv1_to_he1)
-    _notify_before_split_edge (e, cv1, cv2);
-  else
-    _notify_before_split_edge (e, cv2, cv1);
-
   // Allocate a new vertex and associate it with the split point.
-  Vertex         *v = dcel.new_vertex();
+  // We also notify the observers on the creation of this vertex.
   Stored_point_2 *dup_p;
 
   if (split_at_cv1_right)
@@ -616,8 +666,20 @@ Arrangement_2<Traits,Dcel>::split_edge (Halfedge_handle e,
   else
     dup_p = new Stored_point_2 (cv1_left);
 
+  _notify_before_create_vertex (*dup_p);
+
+  Vertex         *v = dcel.new_vertex();
+
   points.push_back (*dup_p);
   v->set_point (dup_p);
+
+  _notify_after_create_vertex (Vertex_handle (v));
+
+  // Notify the observers that we are about to split an edge.
+  if (assign_cv1_to_he1)
+    _notify_before_split_edge (e, cv1, cv2);
+  else
+    _notify_before_split_edge (e, cv2, cv1);
 
   // Allocate a pair of new halfedges. 
   Halfedge  *he3 = dcel.new_edge();
@@ -843,6 +905,9 @@ Arrangement_2<Traits,Dcel>::merge_edge (Halfedge_handle e1,
 
   he1->set_vertex (he3->vertex());
   he1->set_curve (dup_cv);
+
+  // Notify the observers that we are about to delete a vertex.
+  _notify_before_remove_vertex (Vertex_handle (v));
 
   // Delete the point associated with the merged vertex.
   Stored_point_2  *merged_pt = static_cast<Stored_point_2*>(&(v->point()));
@@ -1550,6 +1615,10 @@ Arrangement_2<Traits,Dcel>::_remove_edge (Halfedge *e)
       if (! _find_and_erase_hole (f1, he1))
         _find_and_erase_hole (f1, he2);
 
+      // Notify the observers that we are about to delete the two end-vertices.
+      _notify_before_remove_vertex (Vertex_handle (he1->vertex()));
+      _notify_before_remove_vertex (Vertex_handle (he2->vertex()));
+
       // Delete the two points associated with the end vertices and the curve
       // associated with the edge to be removed.
       Stored_point_2  *pt1 = 
@@ -1608,6 +1677,9 @@ Arrangement_2<Traits,Dcel>::_remove_edge (Halfedge *e)
       // replace it by prev1 (which also points at this vertex).
       if (he2->vertex()->halfedge() == he2)
           he2->vertex()->set_halfedge (prev1);
+
+      // Notify the observers that we are about to delete a vertex.
+      _notify_before_remove_vertex (Vertex_handle (he1->vertex()));
 
       // Delete the points associated with the tip of the "antenna" and the
       // curve associated with the edge to be removed.

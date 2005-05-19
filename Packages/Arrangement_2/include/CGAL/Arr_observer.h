@@ -122,6 +122,20 @@ public:
   //@{
 
   /*!
+   * Notification before the creation of a new vertex.
+   * \param p The point to be associated with the vertex.
+   */
+  virtual void before_create_vertex (const Point_2& /* p */)
+  {}
+
+  /*!
+   * Notification after the creation of a new vertex.
+   * \param v A handle to the created vertex.
+   */
+  virtual void after_create_vertex (Vertex_handle /* v */)
+  {}
+
+  /*!
    * Notification before the creation of a new edge.
    * \param c The x-monotone curve to be associated with the edge.
    */
@@ -133,6 +147,22 @@ public:
    * \param e A handle to one of the twin halfedges that were created.
    */
   virtual void after_create_edge (Halfedge_handle /* e */)
+  {}
+
+  /*!
+   * Notification before the modification of an existing vertex.
+   * \param v A handle to the vertex to be updated.
+   * \param p The point to be associated with the vertex.
+   */
+  virtual void before_modify_vertex (Vertex_handle /* v */,
+				     const Point_2& /* p */)
+  {}
+
+  /*!
+   * Notification after a vertex was modified.
+   * \param v A handle to the updated vertex.
+   */
+  virtual void after_modify_vertex (Vertex_handle /* v */)
   {}
 
   /*!
@@ -259,6 +289,13 @@ public:
    * \param h A circulator representing the boundary of the hole.
    */
   virtual void after_move_hole (Ccb_halfedge_circulator /* h */)
+  {}
+
+  /*!
+   * Notificaion before the removal of a vertex.
+   * \param v A handle to the vertex to be deleted.
+   */
+  virtual void before_remove_vertex (Vertex_handle /* v */)
   {}
 
   /*!

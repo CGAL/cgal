@@ -150,6 +150,8 @@ protected:
   typedef Arr_observer<Self>                      Observer;
   typedef std::list<Observer*>                    Observers_container;
   typedef typename Observers_container::iterator  Observers_iterater;
+  typedef typename Observers_container::reverse_iterator  
+                                                  Observers_rev_iterater;
 
   // Data members:
   Dcel                dcel;     // The DCEL representing the arrangement.
@@ -453,6 +455,17 @@ public:
 
   /// \name Halfedge manipulation functions.
   //@{
+
+  /*!
+   * Replace the point associated with the given vertex.
+   * \param v The vertex to modify.
+   * \param p The point that should be associated with the edge.
+   * \pre p is geometrically equivalent to the current point
+   *      associated with v.
+   * \return A handle for a the modified vertex (same as v).
+   */
+  Vertex_handle modify_vertex (Vertex_handle v, 
+			       const Point_2& p);
 
   /*!
    * Replace the x-monotone curve associated with the given edge.
@@ -763,10 +776,10 @@ private:
 
   void _notify_after_assign ()
   {
-    Observers_iterater   iter;
-    Observers_iterater   end = observers.end();
+    Observers_rev_iterater   iter;
+    Observers_rev_iterater   end = observers.rend();
 
-    for (iter = observers.begin(); iter != end; ++iter)
+    for (iter = observers.rbegin(); iter != end; ++iter)
       (*iter)->after_assign();
   }
 
@@ -781,10 +794,10 @@ private:
 
   void _notify_after_clear (Face_handle u)
   {
-    Observers_iterater   iter;
-    Observers_iterater   end = observers.end();
+    Observers_rev_iterater   iter;
+    Observers_rev_iterater   end = observers.rend();
 
-    for (iter = observers.begin(); iter != end; ++iter)
+    for (iter = observers.rbegin(); iter != end; ++iter)
       (*iter)->after_clear (u);
   }
 
@@ -799,14 +812,32 @@ private:
 
   void _notify_after_global_change ()
   {
-    Observers_iterater   iter;
-    Observers_iterater   end = observers.end();
+    Observers_rev_iterater   iter;
+    Observers_rev_iterater   end = observers.rend();
 
-    for (iter = observers.begin(); iter != end; ++iter)
+    for (iter = observers.rbegin(); iter != end; ++iter)
       (*iter)->after_global_change();
   }
 
   /* Notify the observers on local changes in the arrangement: */
+  
+  void _notify_before_create_vertex (const Point_2& p)
+  {
+    Observers_iterater   iter;
+    Observers_iterater   end = observers.end();
+
+    for (iter = observers.begin(); iter != end; ++iter)
+      (*iter)->before_create_vertex (p);
+  }
+
+  void _notify_after_create_vertex (Vertex_handle v)
+  {
+    Observers_rev_iterater   iter;
+    Observers_rev_iterater   end = observers.rend();
+
+    for (iter = observers.rbegin(); iter != end; ++iter)
+      (*iter)->after_create_vertex (v);
+  }
 
   void _notify_before_create_edge (const X_monotone_curve_2& c)
   {
@@ -819,11 +850,30 @@ private:
 
   void _notify_after_create_edge (Halfedge_handle e)
   {
+    Observers_rev_iterater   iter;
+    Observers_rev_iterater   end = observers.rend();
+
+    for (iter = observers.rbegin(); iter != end; ++iter)
+      (*iter)->after_create_edge (e);
+  }
+
+  void _notify_before_modify_vertex (Vertex_handle v,
+				     const Point_2& p)
+  {
     Observers_iterater   iter;
     Observers_iterater   end = observers.end();
 
     for (iter = observers.begin(); iter != end; ++iter)
-      (*iter)->after_create_edge (e);
+      (*iter)->before_modify_vertex (v, p);
+  }
+
+  void _notify_after_modify_vertex (Vertex_handle v)
+  {
+    Observers_rev_iterater   iter;
+    Observers_rev_iterater   end = observers.rend();
+
+    for (iter = observers.rbegin(); iter != end; ++iter)
+      (*iter)->after_modify_vertex (v);
   }
 
   void _notify_before_modify_edge (Halfedge_handle e,
@@ -838,10 +888,10 @@ private:
 
   void _notify_after_modify_edge (Halfedge_handle e)
   {
-    Observers_iterater   iter;
-    Observers_iterater   end = observers.end();
+    Observers_rev_iterater   iter;
+    Observers_rev_iterater   end = observers.rend();
 
-    for (iter = observers.begin(); iter != end; ++iter)
+    for (iter = observers.rbegin(); iter != end; ++iter)
       (*iter)->after_modify_edge (e);
   }
 
@@ -859,10 +909,10 @@ private:
   void _notify_after_split_edge (Halfedge_handle e1,
                                  Halfedge_handle e2)
   {
-    Observers_iterater   iter;
-    Observers_iterater   end = observers.end();
+    Observers_rev_iterater   iter;
+    Observers_rev_iterater   end = observers.rend();
 
-    for (iter = observers.begin(); iter != end; ++iter)
+    for (iter = observers.rbegin(); iter != end; ++iter)
       (*iter)->after_split_edge (e1, e2);
   }
 
@@ -880,10 +930,10 @@ private:
                                  Face_handle new_f,
                                  bool is_hole)
   {
-    Observers_iterater   iter;
-    Observers_iterater   end = observers.end();
+    Observers_rev_iterater   iter;
+    Observers_rev_iterater   end = observers.rend();
 
-    for (iter = observers.begin(); iter != end; ++iter)
+    for (iter = observers.rbegin(); iter != end; ++iter)
       (*iter)->after_split_face (f, new_f, is_hole);
   }
 
@@ -899,10 +949,10 @@ private:
 
   void _notify_after_add_hole (Ccb_halfedge_circulator h)
   {
-    Observers_iterater   iter;
-    Observers_iterater   end = observers.end();
+    Observers_rev_iterater   iter;
+    Observers_rev_iterater   end = observers.rend();
 
-    for (iter = observers.begin(); iter != end; ++iter)
+    for (iter = observers.rbegin(); iter != end; ++iter)
       (*iter)->after_add_hole (h);
   }
 
@@ -919,10 +969,10 @@ private:
 
   void _notify_after_merge_edge (Halfedge_handle e)
   {
-    Observers_iterater   iter;
-    Observers_iterater   end = observers.end();
+    Observers_rev_iterater   iter;
+    Observers_rev_iterater   end = observers.rend();
 
-    for (iter = observers.begin(); iter != end; ++iter)
+    for (iter = observers.rbegin(); iter != end; ++iter)
       (*iter)->after_merge_edge (e);
   }
 
@@ -939,10 +989,10 @@ private:
 
   void _notify_after_merge_face (Face_handle f)
   {
-    Observers_iterater   iter;
-    Observers_iterater   end = observers.end();
+    Observers_rev_iterater   iter;
+    Observers_rev_iterater   end = observers.rend();
 
-    for (iter = observers.begin(); iter != end; ++iter)
+    for (iter = observers.rbegin(); iter != end; ++iter)
       (*iter)->after_merge_face (f);
   }
 
@@ -959,11 +1009,20 @@ private:
 
   void _notify_after_move_hole (Ccb_halfedge_circulator h)
   {
+    Observers_rev_iterater   iter;
+    Observers_rev_iterater   end = observers.rend();
+
+    for (iter = observers.rbegin(); iter != end; ++iter)
+      (*iter)->after_move_hole (h);
+  }
+
+  void _notify_before_remove_vertex (Vertex_handle v)
+  {
     Observers_iterater   iter;
     Observers_iterater   end = observers.end();
 
     for (iter = observers.begin(); iter != end; ++iter)
-      (*iter)->after_move_hole (h);
+      (*iter)->before_remove_vertex (v);
   }
 
   void _notify_before_remove_edge (Halfedge_handle e)
