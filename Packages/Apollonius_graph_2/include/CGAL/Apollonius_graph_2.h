@@ -144,13 +144,12 @@ protected:
   typedef Triangulation_2<Modified_traits,Agds>  DG;
 
   typedef DG                                 Delaunay_graph;
-  typedef typename DG::Vertex                Vertex;
-  typedef typename DG::Face                  Face;
 
 public:
   // TYPES
   //------
   typedef Agds                                   Data_structure;
+  typedef Agds                                   Triangulation_data_structure;
   typedef Gt                                     Geom_traits;
   typedef typename Gt::Point_2                   Point_2;
   typedef typename Gt::Site_2                    Site_2;
@@ -158,6 +157,8 @@ public:
   typedef typename DG::Edge                      Edge;
   typedef typename DG::Vertex_handle             Vertex_handle;
   typedef typename DG::Face_handle               Face_handle;
+  typedef typename DG::Vertex                    Vertex;
+  typedef typename DG::Face                      Face;
 
   typedef typename DG::Vertex_circulator         Vertex_circulator;
   typedef typename DG::Edge_circulator           Edge_circulator;

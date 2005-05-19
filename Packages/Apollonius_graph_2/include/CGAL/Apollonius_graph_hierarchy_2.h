@@ -58,10 +58,7 @@ private:
   typedef Apollonius_graph_2<Gt,Agds,LTag>  Apollonius_graph_base;
   typedef Apollonius_graph_base             Ag_base;
 
-  typedef typename Ag_base::Vertex          Vertex;
-
 public:
-  typedef Agds                              Data_structure;
   typedef Gt                                Geom_traits;
   typedef typename Gt::Site_2               Site_2;
   typedef typename Gt::Point_2              Point_2;
