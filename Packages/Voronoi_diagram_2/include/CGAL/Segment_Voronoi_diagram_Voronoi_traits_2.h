@@ -28,6 +28,9 @@ class SVD_Edge_degeneracy_tester
   typedef typename Dual_graph::Finite_edges_iterator
   Finite_edges_iterator;
 
+  typedef bool           result_type;
+  typedef Arity_tag<1>   Arity;
+
  private:
   typedef SVD_Edge_degeneracy_tester<Dual_graph>   Self;
 
@@ -136,13 +139,20 @@ class SVD_Face_degeneracy_tester
 {
   // tests whether a face has zero area
  public:
-  typedef DG                                    Dual_graph;
-  typedef typename Dual_graph::Vertex_handle    Vertex_handle;
+  typedef DG                                      Dual_graph;
+  typedef typename Dual_graph::Vertex_handle      Vertex_handle;
+  typedef typename Dual_graph::Vertex_circulator  Vertex_circulator;
+
+  typedef typename Dual_graph::All_vertices_iterator
+  All_vertices_iterator;
 
   typedef typename Dual_graph::Finite_vertices_iterator
   Finite_vertices_iterator;
 
   typedef Edge_tester                           Edge_degeneracy_tester;
+
+  typedef bool           result_type;
+  typedef Arity_tag<1>   Arity;
 
  private:
   typedef SVD_Face_degeneracy_tester<Dual_graph,Edge_degeneracy_tester> Self;
@@ -153,9 +163,6 @@ class SVD_Face_degeneracy_tester
   typedef typename Dual_graph::size_type        size_type;
 
   typedef typename Dual_graph::Edge_circulator  Edge_circulator;
-
-  typedef typename Dual_graph::All_vertices_iterator
-  All_vertices_iterator;
 
   typedef typename Dual_graph::Site_2           Site_2;
 
@@ -238,6 +245,16 @@ class SVD_Face_degeneracy_tester
     return orientation(s_end[0], s_end[1], v->site()) == COLLINEAR;
   }
  
+  bool operator()(const Vertex_circulator& vc) const {
+    return operator()(Vertex_handle(vc));
+  }
+
+#ifndef CGAL_T2_USE_ITERATOR_AS_HANDLE
+  bool operator()(const All_vertices_iterator& vit) const {
+    return operator()(Vertex_handle(vit));
+  }
+#endif
+
   bool operator()(const Finite_vertices_iterator& vit) const {
     return operator()(Vertex_handle(vit));
   }

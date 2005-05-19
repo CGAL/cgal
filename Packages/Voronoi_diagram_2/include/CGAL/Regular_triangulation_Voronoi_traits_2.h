@@ -26,6 +26,9 @@ class RT_Edge_degeneracy_tester
   typedef typename Dual_graph::All_edges_iterator  All_edges_iterator;
   typedef typename Dual_graph::Finite_edges_iterator Finite_edges_iterator;
 
+  typedef bool           result_type;
+  typedef Arity_tag<1>   Arity;
+
  private:
   typedef RT_Edge_degeneracy_tester<Dual_graph>    Self;
 
@@ -88,13 +91,20 @@ class RT_Face_degeneracy_tester
 {
   // tests whether a face has zero area
  public:
-  typedef DG                                   Dual_graph;
-  typedef typename Dual_graph::Vertex_handle   Vertex_handle;
-  typedef typename Dual_graph::Edge            Edge;
-  typedef Edge_tester                          Edge_degeneracy_tester;
+  typedef DG                                      Dual_graph;
+  typedef typename Dual_graph::Vertex_handle      Vertex_handle;
+  typedef typename Dual_graph::Vertex_circulator  Vertex_circulator;
+  typedef typename Dual_graph::Edge               Edge;
+  typedef Edge_tester                             Edge_degeneracy_tester;
+
+  typedef typename Dual_graph::All_vertices_iterator
+  All_vertices_iterator;
 
   typedef typename Dual_graph::Finite_vertices_iterator
   Finite_vertices_iterator;
+
+  typedef bool           result_type;
+  typedef Arity_tag<1>   Arity;
 
  public:
   RT_Face_degeneracy_tester(const Dual_graph* dual = NULL) {}
@@ -105,7 +115,17 @@ class RT_Face_degeneracy_tester
   bool operator()(const Vertex_handle& v) const {
     return false;
   }
- 
+
+  bool operator()(const Vertex_circulator& vc) const {
+    return false;
+  }
+
+#ifndef CGAL_T2_USE_ITERATOR_AS_HANDLE
+  bool operator()(const All_vertices_iterator& vit) const {
+    return false;
+  }
+#endif
+
   bool operator()(const Finite_vertices_iterator& vit) const {
     return false;
   }

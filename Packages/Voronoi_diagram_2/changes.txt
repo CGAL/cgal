@@ -1,0 +1,2 @@
+19 May 2005:  Menelaos Karavelas
+- added types and methods to reach conformity with the concepts
