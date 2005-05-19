@@ -1,3 +1,6 @@
+19 May 2005 Sylvain Pion
+- Add centroid(Triangle_[23]) and centroid(Tetrahedron_3).
+
 11 May 2005 Sylvain Pion
 - New predicates : orientation(3 Vector_3) and orientation(2 Vector_2).
 

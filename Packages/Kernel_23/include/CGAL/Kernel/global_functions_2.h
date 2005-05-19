@@ -102,6 +102,14 @@ centroid(const Point_2<K> &p,
 template < class K >
 inline
 typename K::Point_2
+centroid(const Triangle_2<K> &t)
+{
+  return CGALi::centroid(t, K());
+}
+
+template < class K >
+inline
+typename K::Point_2
 centroid(const Point_2<K> &p,
          const Point_2<K> &q,
          const Point_2<K> &r,

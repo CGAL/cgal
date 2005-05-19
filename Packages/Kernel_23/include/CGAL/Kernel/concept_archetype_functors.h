@@ -903,13 +903,18 @@ public:
 template <typename K>
 class Construct_centroid_2
 {
-    typedef typename K::Point_2  Point_2;
+    typedef typename K::Point_2     Point_2;
+    typedef typename K::Triangle_2  Triangle_2;
 public:
     typedef Point_2          result_type;
     typedef Arity_tag< 3 >   Arity;
 
     Point_2
     operator()(const Point_2&, const Point_2&, const Point_2&) const
+    { Point_2 obj; return obj; }
+
+    Point_2
+    operator()(const Triangle_2&) const
     { Point_2 obj; return obj; }
 
     Point_2
@@ -921,13 +926,23 @@ public:
 template <typename K>
 class Construct_centroid_3
 {
-    typedef typename K::Point_3  Point_3;
+    typedef typename K::Point_3        Point_3;
+    typedef typename K::Triangle_3     Triangle_3;
+    typedef typename K::Tetrahedron_3  Tetrahedron_3;
 public:
     typedef Point_3          result_type;
     typedef Arity_tag< 3 >   Arity;
 
     Point_3
     operator()(const Point_3&, const Point_3&, const Point_3&) const
+    { Point_3 obj; return obj; }
+
+    Point_3
+    operator()(const Triangle_3&) const
+    { Point_3 obj; return obj; }
+
+    Point_3
+    operator()(const Tetrahedron_3&) const
     { Point_3 obj; return obj; }
 
     Point_3

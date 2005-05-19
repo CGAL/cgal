@@ -1512,8 +1512,9 @@ namespace HomogeneousKernelFunctors {
   template <typename K>
   class Construct_centroid_2
   {
-    typedef typename K::FT       FT;
-    typedef typename K::Point_2  Point_2;
+    typedef typename K::FT          FT;
+    typedef typename K::Point_2     Point_2;
+    typedef typename K::Triangle_2  Triangle_2;
   public:
     typedef Point_2          result_type;
     typedef Arity_tag< 3 >   Arity;
@@ -1529,6 +1530,12 @@ namespace HomogeneousKernelFunctors {
       RT hy(p.hy()*qhw*rhw + q.hy()*phw*rhw + r.hy()*phw*qhw);
       RT hw( phw*qhw*rhw * 3);
       return Point_2(hx, hy, hw);
+    }
+
+    Point_2
+    operator()(const Triangle_2& t) const
+    {
+      return this->operator()(t.vertex(0), t.vertex(1), t.vertex(2));
     }
 
     Point_2
@@ -1552,8 +1559,10 @@ namespace HomogeneousKernelFunctors {
   template <typename K>
   class Construct_centroid_3
   {
-    typedef typename K::RT       RT;
-    typedef typename K::Point_3  Point_3;
+    typedef typename K::RT             RT;
+    typedef typename K::Point_3        Point_3;
+    typedef typename K::Triangle_3     Triangle_3;
+    typedef typename K::Tetrahedron_3  Tetrahedron_3;
   public:
     typedef Point_3          result_type;
     typedef Arity_tag< 3 >   Arity;
@@ -1587,6 +1596,19 @@ namespace HomogeneousKernelFunctors {
 	    + s.hz()*phw*qhw*rhw);
       RT hw( phw*qhw*rhw*shw * RT(4));
       return Point_3(hx, hy, hz, hw);
+    }
+
+    Point_3
+    operator()(const Triangle_3& t) const
+    {
+      return this->operator()(t.vertex(0), t.vertex(1), t.vertex(2));
+    }
+
+    Point_3
+    operator()(const Tetrahedron_3& t) const
+    {
+      return this->operator()(t.vertex(0), t.vertex(1),
+                              t.vertex(2), t.vertex(3));
     }
   };
 

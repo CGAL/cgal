@@ -57,6 +57,7 @@ _test_fct_constructions_2(const R&)
   Point pe = p + Vector(RT1, RT0);
   assert( CGAL::centroid( pne, pse, pe) == pe);
   assert( CGAL::centroid( pne, psw, pse, pnw) == p);
+  assert( CGAL::centroid( Triangle(pne, pse, pe)) == pe);
 
   // general position intersection point
 

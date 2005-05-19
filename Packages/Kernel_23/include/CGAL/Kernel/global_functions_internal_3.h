@@ -104,6 +104,22 @@ centroid(const typename CGAL_WRAP(K)::Point_3 &p,
 template < class K >
 inline
 typename K::Point_3
+centroid(const typename CGAL_WRAP(K)::Tetrahedron_3 &t, const K &k)
+{
+  return k.construct_centroid_3_object()(t);
+}
+
+template < class K >
+inline
+typename K::Point_3
+centroid(const typename CGAL_WRAP(K)::Triangle_3 &t, const K &k)
+{
+  return k.construct_centroid_3_object()(t);
+}
+
+template < class K >
+inline
+typename K::Point_3
 circumcenter(const typename CGAL_WRAP(K)::Point_3 &p,
              const typename CGAL_WRAP(K)::Point_3 &q,
              const typename CGAL_WRAP(K)::Point_3 &r,

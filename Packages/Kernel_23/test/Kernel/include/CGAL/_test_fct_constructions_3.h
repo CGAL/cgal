@@ -75,6 +75,8 @@ _test_fct_constructions_3(const R&)
   Point p_11 = p + Vector(RT0, RT1, RT1);
   assert( CGAL::centroid( p111, p010, p101, p000) == p);
   assert( CGAL::centroid( p111, p_11, p011 ) == p_11);
+  assert( CGAL::centroid( Tetrahedron(p111, p010, p101, p000)) == p);
+  assert( CGAL::centroid( Triangle(p111, p_11, p011) ) == p_11);
 
   // orthogonal_vector
   Point p0(RT0, RT0, RT0), px1(RT1, RT0, RT0), py1(RT0, RT1, RT0);

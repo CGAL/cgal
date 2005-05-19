@@ -278,6 +278,7 @@ test_new_2(const R& rep)
         = rep.construct_centroid_2_object();
           tmp13 = construct_centroid(p2,p3,p4);
           tmp13 = construct_centroid(p2,p3,p4,p5);
+          tmp13 = construct_centroid(t2);
 
 
   typename R::Construct_bisector_2 construct_bisector
