@@ -102,6 +102,9 @@ class Delaunay_graph_concept
     //      int mirror_index(int) const { return 0; }
   };
 
+  typedef Vertex_handle Vertex;
+  typedef Face_handle   Face;
+
   template<class V, class F>
   struct Data_structure_t {
     typedef F Face_handle;
@@ -110,6 +113,7 @@ class Delaunay_graph_concept
   };
 
   typedef Data_structure_t<Vertex_handle,Face_handle> Data_structure;
+  typedef Data_structure        Triangulation_data_structure;
 
   //  typedef typename Data_structure::Face_handle     Face_handle;
   //  typedef typename Data_structure::Vertex_handle   Vertex_handle;
@@ -122,6 +126,10 @@ class Delaunay_graph_concept
   static const Data_structure& data_structure() {
     static Data_structure ds;
     return ds;
+  }
+
+  static const Data_structure& tds() {
+    return data_structure();
   }
 
   typedef std::pair<Face_handle,int>  Edge;
@@ -186,6 +194,7 @@ class Delaunay_graph_concept
   typedef Dummy_iterator  Finite_vertices_iterator;
 
   typedef Dummy_iterator  Vertex_circulator;
+  typedef Dummy_iterator  Face_circulator;
 
   struct Edge_circulator : public Dummy_edge_iterator
   {
@@ -296,6 +305,10 @@ class Delaunay_graph_concept
   }
 
   Vertex_circulator incident_vertices(const Vertex_handle&) const {
+    return dummy_it();
+  }
+
+  Face_circulator incident_faces(const Vertex_handle&) const {
     return dummy_it();
   }
 

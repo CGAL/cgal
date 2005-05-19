@@ -24,6 +24,16 @@ class Voronoi_traits_concept
 
   struct Edge_degeneracy_tester
   {
+    typedef DG  Dual_graph;
+
+    typedef typename DG::Edge                   Edge;
+    typedef typename DG::Edge_circulator        Edge_circulator;
+    typedef typename DG::All_edges_iterator     All_edges_iterator;
+    typedef typename DG::Finite_edges_iterator  Finite_edges_iterator;
+
+    typedef bool           result_type;
+    typedef Arity_tag<1>   Arity;
+
     Edge_degeneracy_tester(const DG* = NULL) {}
 
     bool operator()(const Edge&) const {
@@ -45,10 +55,24 @@ class Voronoi_traits_concept
 
   struct Face_degeneracy_tester
   {
+    typedef DG  Dual_graph;
+
+    typedef typename DG::Vertex_handle             Vertex_handle;
+    typedef typename DG::Vertex_circulator         Vertex_circulator;
+    typedef typename DG::All_vertices_iterator     All_vertices_iterator;
+    typedef typename DG::Finite_vertices_iterator  Finite_vertices_iterator;
+
+    typedef bool           result_type;
+    typedef Arity_tag<1>   Arity;
+
     Face_degeneracy_tester(const DG* = NULL) {}
     Face_degeneracy_tester(const DG*, const Edge_degeneracy_tester*) {}
 
     bool operator()(const Vertex_handle&) const {
+      return false;
+    }
+
+    bool operator()(const Vertex_circulator&) const {
       return false;
     }
   };
