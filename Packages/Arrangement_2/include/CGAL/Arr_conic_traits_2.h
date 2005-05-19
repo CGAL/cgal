@@ -308,23 +308,8 @@ public:
         return (LARGER);
       }
 
-      // Compare the two curves immediately to the right of p:
-      unsigned int       mult;
-      bool               vert_slope1, vert_slope2;
-      Comparison_result  res = cv1.compare_to_right (cv2, p, mult,
-						     vert_slope1, vert_slope2);
-
-      // In order to obtain the y-order to the left of p, we simply have to
-      // negate the result in case the multiplicity of p is odd.
-      if ((mult % 2) == 1 && ! vert_slope1 && ! vert_slope2)
-      {
-        if (res == SMALLER)
-          res = LARGER;
-        else if (res == LARGER)
-          res = SMALLER;
-      }
-
-      return (res);
+      // Compare the two curves immediately to the left of p:
+      return (cv1.compare_to_left (cv2, p));
     }
   };
 
@@ -380,12 +365,7 @@ public:
       }
 
       // Compare the two curves immediately to the right of p:
-      unsigned int       mult;
-      bool               vert_slope1, vert_slope2;
-      Comparison_result  res = cv1.compare_to_right (cv2, p, mult,
-						     vert_slope1, vert_slope2);
-
-      return (res);
+      return (cv1.compare_to_right (cv2, p));
     }
   };
 

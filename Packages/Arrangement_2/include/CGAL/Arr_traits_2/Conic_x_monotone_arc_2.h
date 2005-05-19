@@ -388,17 +388,11 @@ public:
    * Compare to arcs immediately to the right of their intersection point.
    * \param arc The compared arc.
    * \param p The reference intersection point.
-   * \param mult Output: The multiplicity of the intersection point.
-   * \param is_vertical_slope1 Output: Does (*this) has a vertical slope at p.
-   * \param is_vertical_slope2 Output: Does arc has a vertical slope at p.
    * \return The relative position of the arcs to the right of p.
    * \pre Both arcs we compare are not vertical segments.
    */
   Comparison_result compare_to_right (const Self& arc,
-                                      const Conic_point_2& p,
-                                      unsigned int& mult,
-				      bool& is_vertical_slope1,
-				      bool& is_vertical_slope2) const
+                                      const Conic_point_2& p) const
   {
     CGAL_precondition ((_info & IS_VERTICAL_SEGMENT) == 0 &&
                        (arc._info & IS_VERTICAL_SEGMENT) == 0);
@@ -407,8 +401,6 @@ public:
     // clear that the one facing upward is above the one facing downwards.
     if (_has_same_supporting_conic (arc))
     {
-      mult = 0;
-
       if ((_info & FACING_UP) != 0 && (arc._info & FACING_DOWN) != 0)
         return (LARGER);
       else if ((_info & FACING_DOWN) != 0 && (arc._info & FACING_UP) != 0)
@@ -428,24 +420,21 @@ public:
     _derive_by_x_at (p, 1, slope1_numer, slope1_denom);
     arc._derive_by_x_at (p, 1, slope2_numer, slope2_denom);
 
-    // Check if any of the slopes are vertical.
-    is_vertical_slope1 = (CGAL::sign (slope1_denom) == ZERO);
-    is_vertical_slope2 = (CGAL::sign (slope2_denom) == ZERO);
+    // Check if any of the slopes is vertical.
+    const bool     is_vertical_slope1 = (CGAL::sign (slope1_denom) == ZERO);
+    const bool     is_vertical_slope2 = (CGAL::sign (slope2_denom) == ZERO);
 
     if (!is_vertical_slope1 && !is_vertical_slope2)
     {
       // The two derivatives at p are well-defined: use them to determine
-      // which arx is above the other (the one with a larger slope is below).
+      // which arc is above the other (the one with a larger slope is below).
       Comparison_result slope_res = CGAL::compare (slope1_numer*slope2_denom,
                                                    slope2_numer*slope1_denom);
       
       if (slope_res != EQUAL)
-      {
-        mult = 1;
         return (slope_res);
-      }
 
-      // Use the second order derivative.
+      // Use the second-order derivative.
       _derive_by_x_at (p, 2, slope1_numer, slope1_denom);
       arc._derive_by_x_at (p, 2, slope2_numer, slope2_denom);
 
@@ -455,18 +444,14 @@ public:
       // \todo Handle higher-order derivatives:
       CGAL_assertion (slope_res != EQUAL);
 
-      mult = 2;
       return (slope_res);
     }
     else if (!is_vertical_slope2)
     {
       // The first arc has a vertical slope at p: check whether it is
       // facing upwards or downwards and decide accordingly.
-      // Note that the second arc has a well-defined slope at p, so the
-      // multiplicity of the intersection point p is 1.
       CGAL_assertion ((_info & FACING_MASK) != 0);
 
-      mult = 1;
       if ((_info & FACING_UP) != 0)
         return (LARGER);
       else
@@ -476,11 +461,8 @@ public:
     {
       // The second arc has a vertical slope at p_int: check whether it is
       // facing upwards or downwards and decide accordingly.
-      // Note that the first arc has a well-defined slope at p, so the
-      // multiplicity of the intersection point p is 1.
       CGAL_assertion ((arc._info & FACING_MASK) != 0);
 
-      mult = 1;
       if ((arc._info & FACING_UP) != 0)
         return (SMALLER);
       else
@@ -492,17 +474,11 @@ public:
       // First check whether one is facing up and one down. In this case the
       // comparison result is trivial.
       if ((_info & FACING_UP) != 0 && (arc._info & FACING_DOWN) != 0)
-      {
-        mult = 0;
         return (LARGER);
-      }
       else if ((_info & FACING_DOWN) != 0 && (arc._info & FACING_UP) != 0)
-      {
-        mult = 0;
         return (SMALLER);
-      }
 
-      // Compute the second order derivative by y and act according to it.
+      // Compute the second-order derivative by y and act according to it.
       _derive_by_y_at (p, 2, slope1_numer, slope1_denom);
       arc._derive_by_y_at (p, 2, slope2_numer, slope2_denom);
 
@@ -512,7 +488,127 @@ public:
       // \todo Handle higher-order derivatives:
       CGAL_assertion(slope_res != EQUAL);
 
-      mult = 2;
+      if ((_info & FACING_UP) != 0 && (arc._info & FACING_UP) != 0)
+      {
+        // Both are facing up.
+        return ((slope_res == LARGER) ? SMALLER : LARGER);
+      }
+      else
+      {
+        // Both are facing down.
+        return (slope_res);
+      }
+    }
+
+    // We should never reach here:
+    CGAL_assertion(false);
+    return (EQUAL);
+  }
+
+  /*!
+   * Compare to arcs immediately to the leftt of their intersection point.
+   * \param arc The compared arc.
+   * \param p The reference intersection point.
+   * \return The relative position of the arcs to the left of p.
+   * \pre Both arcs we compare are not vertical segments.
+   */
+  Comparison_result compare_to_left (const Self& arc,
+				     const Conic_point_2& p) const
+  {
+    CGAL_precondition ((_info & IS_VERTICAL_SEGMENT) == 0 &&
+                       (arc._info & IS_VERTICAL_SEGMENT) == 0);
+
+    // In case one arc is facing upwards and another facing downwards, it is
+    // clear that the one facing upward is above the one facing downwards.
+    if (_has_same_supporting_conic (arc))
+    {
+      if ((_info & FACING_UP) != 0 && (arc._info & FACING_DOWN) != 0)
+        return (LARGER);
+      else if ((_info & FACING_DOWN) != 0 && (arc._info & FACING_UP) != 0)
+        return (SMALLER);
+
+      // In this case the two arcs overlap.
+      CGAL_assertion ((_info & FACING_MASK) == (arc._info & FACING_MASK));
+
+      return (EQUAL);
+    }
+
+    // Compare the slopes of the two arcs at p, using their first-order
+    // partial derivatives.
+    Algebraic      slope1_numer, slope1_denom;
+    Algebraic      slope2_numer, slope2_denom;
+    
+    _derive_by_x_at (p, 1, slope1_numer, slope1_denom);
+    arc._derive_by_x_at (p, 1, slope2_numer, slope2_denom);
+
+    // Check if any of the slopes is vertical.
+    const bool     is_vertical_slope1 = (CGAL::sign (slope1_denom) == ZERO);
+    const bool     is_vertical_slope2 = (CGAL::sign (slope2_denom) == ZERO);
+    
+    if (!is_vertical_slope1 && !is_vertical_slope2)
+    {
+      // The two derivatives at p are well-defined: use them to determine
+      // which arc is above the other (the one with a larger slope is below).
+      Comparison_result  slope_res = CGAL::compare(slope2_numer*slope1_denom,
+                                                   slope1_numer*slope2_denom);
+      
+      if (slope_res != EQUAL)
+        return (slope_res);
+
+      // Use the second-order derivative.
+      _derive_by_x_at (p, 2, slope1_numer, slope1_denom);
+      arc._derive_by_x_at (p, 2, slope2_numer, slope2_denom);
+
+      slope_res = CGAL::compare (slope1_numer*slope2_denom, 
+                                 slope2_numer*slope1_denom);
+      
+      // \todo Handle higher-order derivatives:
+      CGAL_assertion (slope_res != EQUAL);
+
+      return (slope_res);
+    }
+    else if (!is_vertical_slope2)
+    {
+      // The first arc has a vertical slope at p: check whether it is
+      // facing upwards or downwards and decide accordingly.
+      CGAL_assertion ((_info & FACING_MASK) != 0);
+
+      if ((_info & FACING_UP) != 0)
+        return (LARGER);
+      else
+        return (SMALLER);
+    }
+    else if (!is_vertical_slope1)
+    {
+      // The second arc has a vertical slope at p_int: check whether it is
+      // facing upwards or downwards and decide accordingly.
+      CGAL_assertion ((arc._info & FACING_MASK) != 0);
+
+      if ((arc._info & FACING_UP) != 0)
+        return (SMALLER);
+      else
+        return (LARGER);
+    }
+    else
+    {
+      // The two arcs have vertical slopes at p_int: 
+      // First check whether one is facing up and one down. In this case the
+      // comparison result is trivial.
+      if ((_info & FACING_UP) != 0 && (arc._info & FACING_DOWN) != 0)
+        return (LARGER);
+      else if ((_info & FACING_DOWN) != 0 && (arc._info & FACING_UP) != 0)
+        return (SMALLER);
+
+      // Compute the second-order derivative by y and act according to it.
+      _derive_by_y_at (p, 2, slope1_numer, slope1_denom);
+      arc._derive_by_y_at (p, 2, slope2_numer, slope2_denom);
+
+      Comparison_result  slope_res = CGAL::compare(slope2_numer*slope1_denom, 
+                                                   slope1_numer*slope2_denom);
+
+      // \todo Handle higher-order derivatives:
+      CGAL_assertion(slope_res != EQUAL);
+
       if ((_info & FACING_UP) != 0 && (arc._info & FACING_UP) != 0)
       {
         // Both are facing up.
@@ -1204,7 +1300,6 @@ private:
     // x and y-coordinates are sorted in ascending order, we output the
     // intersection points in lexicographically ascending order.
     unsigned int  mult;
-    bool          vert_slope1, vert_slope2;
     int           i, j;
 
     for (i = 0; i < n_xs; i++)
@@ -1221,8 +1316,7 @@ private:
           ip.set_generating_conic (arc._id);
 
           // Compute the multiplicity of the intersection point.
-          compare_to_right (arc, ip, mult,
-			    vert_slope1, vert_slope2);
+	  mult = _multiplicity_of_intersection_point (arc, ip);
 
           // Insert the intersection point to the output list.
           inter_list.push_back (Intersection_point_2 (ip, mult));
@@ -1363,6 +1457,57 @@ private:
     xs_end = nt_traits.compute_polynomial_roots (c, degree,
 						 xs);
     return (xs_end - xs);
+  }
+
+  /*!
+   * Compute the multiplicity of an intersection point.
+   * \param arc The arc to intersect with.
+   * \param p The intersection point.
+   * \return The multiplicity of the intersection point.
+   */
+  unsigned int _multiplicity_of_intersection_point (const Self& arc,
+						    const Point_2& p) const
+  {
+    // Compare the slopes of the two arcs at p, using their first-order
+    // partial derivatives.
+    Algebraic      slope1_numer, slope1_denom;
+    Algebraic      slope2_numer, slope2_denom;
+    
+    _derive_by_x_at (p, 1, slope1_numer, slope1_denom);
+    arc._derive_by_x_at (p, 1, slope2_numer, slope2_denom);
+
+    if (CGAL::compare (slope1_numer*slope2_denom,
+		       slope2_numer*slope1_denom) != EQUAL)
+    {
+      // Different slopes at p - the mutiplicity of p is 1:
+      return (1);
+    }
+    
+    if (CGAL::sign (slope1_denom) != ZERO &&
+	CGAL::sign (slope2_denom) != ZERO)
+    {
+      // The curves do not have a vertical slope at p.
+      // Compare their second-order derivative by x:
+      _derive_by_x_at (p, 2, slope1_numer, slope1_denom);
+      arc._derive_by_x_at (p, 2, slope2_numer, slope2_denom);
+    }
+    else
+    {
+      // Both curves have a vertical slope at p.
+      // Compare their second-order derivative by y:
+      _derive_by_y_at (p, 2, slope1_numer, slope1_denom);
+      arc._derive_by_y_at (p, 2, slope2_numer, slope2_denom);
+    }
+
+    if (CGAL::compare (slope1_numer*slope2_denom,
+		       slope2_numer*slope1_denom) != EQUAL)
+    {
+      // Different curvatures at p - the mutiplicity of p is 2:
+      return (2);
+    }
+
+    // If we reached here, the multiplicity of the intersection point is 3:
+    return (3);
   }
   //@}
 
