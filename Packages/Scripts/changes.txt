@@ -1,3 +1,6 @@
+20 May 2005 Sylvain Pion
+- internal releases tarballs and test-suites moved.
+
 7 March 2005 Sylvain Pion
 - create_new_release : last minute catch : replace "==" by "=".
 - create_new_release : fix typo.

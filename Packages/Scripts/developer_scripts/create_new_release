@@ -25,8 +25,8 @@ BUGFIX_NUMBER="0"  # 1 digit  max
 VERSION_FILE="version_number"
 
 # Where to put the resulting tarball and where to send the announce.
-HTML_DIR="/net/servers/www-sop/geometrica/CGAL/Members/Releases"
-URL="https://www-sop.inria.fr/geometrica/CGAL/Members/Releases"
+HTML_DIR="/u/bombyx/geometrica/CGAL/Members/Releases"
+URL="http://cgal.inria.fr/CGAL/Members/Releases"
 MAILTO="cgal-develop-l@postino.mpi-sb.mpg.de"
 
 LOGFILEBASE="create_release.log"
