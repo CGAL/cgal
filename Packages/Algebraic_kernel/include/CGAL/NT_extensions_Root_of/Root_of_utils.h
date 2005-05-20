@@ -15,19 +15,9 @@
 #ifndef CGAL_ROOT_OF_ROOT_OF_UTILS_H
 #define CGAL_ROOT_OF_ROOT_OF_UTILS_H
 
-namespace CGAL{
-  namespace CGALi{
-   
-  // Mini helper to prevent clashes when RT == int (see CGAL/Quotient.h).
-//     template < typename T >
-//     struct Int_if_not_int { typedef int type; };
+#include <CGAL/Kernel/mpl.h>
 
-//     template <>
-//     struct Int_if_not_int<int> { struct type{}; };
-    
-    #define CGAL_CK_int(T) typename CGALi::Int_if_not_int<T>::type
-  }
-}
+#define CGAL_CK_int(T)    typename First_if_different<int, T>::Type
 
 #endif // CGAL_ROOT_OF_ROOT_OF_UTILS_H
 
