@@ -1,3 +1,6 @@
+20 May 2005 Sylvain Pion
+- Move internal releases and test-suite files.
+
 30 March 2005 Sylvain Pion
 - Add Parameterization to the internal releases.
 
