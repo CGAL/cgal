@@ -170,6 +170,27 @@ namespace CircularFunctors {
   };
 
   template < class CK >
+  class Construct_intersections_2
+  {
+    public:
+
+    typedef typename CK::Circle_2                 Circle;
+    typedef typename CK::Circular_arc_2           Circular_arc;
+
+    template < class OutputIterator >
+    OutputIterator
+    operator()(const Circle & c1, const Circle & c2, OutputIterator res)
+      { return construct_intersections_2<CK> (c1,c2,res); }
+
+     template < class OutputIterator >
+    OutputIterator
+    operator()(const Circular_arc & c1, const Circular_arc & c2, 
+	       OutputIterator res)
+      { return construct_intersections_2<CK> (c1,c2,res); }
+    
+  };
+
+  template < class CK >
   class Nearest_intersection_to_right_2
   {
     typedef typename CK::Circular_arc_2          Circular_arc_2;
@@ -193,11 +214,13 @@ namespace CircularFunctors {
     typedef typename CK::Circular_arc_endpoint_2 Circular_arc_endpoint_2;
 
   public:
-    typedef std::pair< Circular_arc_2, Circular_arc_2 > circle_result_type;
+    typedef void result_type;
 
-    circle_result_type 
-    operator()(const Circular_arc_2 &A, const Circular_arc_endpoint_2 &p) const
-    { return split<CK>(A, p); }
+    result_type
+    operator()(const Circular_arc_2 &A, 
+	       const Circular_arc_endpoint_2 &p,
+	       Circular_arc_2 &ca1, Circular_arc_2 &ca2) const
+    { return split<CK>(A, p, ca1, ca2); }
   };
 
 } // namespace CircularFunctors

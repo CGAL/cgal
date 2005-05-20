@@ -1,1 +1,8 @@
 add "using..." in all functors that derive from another
+
+implement construct_intersections for general (non monotone) arcs, it
+has a meaning. 
+
+with high probability, there is a stupid and huge bug for the case of
+full circles (constructor of Circular_arc or make_x_monotone or both) 
+

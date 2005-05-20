@@ -164,10 +164,10 @@ private:
 	    int y_screen = widget->y_pixel(CGAL::to_double(center.y()));
 	    int x_screen_b = widget->x_pixel(CGAL::to_double(on_the_boundary.x()));
 	    int y_screen_b = widget->y_pixel(CGAL::to_double(on_the_boundary.y()));
-	    int radius = (int)sqrt((x_screen_b - x_screen) *
+	    int radius = (int)sqrt(CGAL::to_double((x_screen_b - x_screen) *
 			  (x_screen_b - x_screen) +
 			  (y_screen_b - y_screen) *
-			  (y_screen_b - y_screen));
+			  (y_screen_b - y_screen)));
 	    double diff = 180/3.1415926;
 	
 	    double a = atan2( to_double(first_point.y() - center.y()),
@@ -287,10 +287,10 @@ private:
 	int x_screen_b = widget->x_pixel(CGAL::to_double(on_the_boundary.x()));
 	int y_screen_b = widget->y_pixel(CGAL::to_double(on_the_boundary.y()));
 
-	int radius = (int)sqrt((x_screen_b - x_screen) *
+	int radius = (int)sqrt(CGAL::to_double((x_screen_b - x_screen) *
 			  (x_screen_b - x_screen) +
 			  (y_screen_b - y_screen) *
-			  (y_screen_b - y_screen));
+			  (y_screen_b - y_screen)));
 	
 	double diff = 180/3.1415926;
 
@@ -348,7 +348,7 @@ public:
                  introduced_circle.squared_radius());
 
     if (clockwise)
-      swap(first_point, second_point);
+      std::swap(first_point, second_point);
 
     Line l1 (first_point, center);
     Line l2 (second_point, center);

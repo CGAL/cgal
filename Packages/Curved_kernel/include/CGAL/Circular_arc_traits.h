@@ -29,21 +29,96 @@ class Circular_arc_traits {
 
 public:
 
-  Circular_arc_traits(const CurvedKernel &k = CurvedKernel())
-    : ck(k) {}
-
   typedef CurvedKernel Kernel;
-  typedef typename CurvedKernel::Circular_arc_2  Curve;
   typedef typename CurvedKernel::Circular_arc_2  Curve_2;
-  typedef typename CurvedKernel::Circular_arc_2  X_curve;
   typedef typename CurvedKernel::Circular_arc_2  X_monotone_curve_2;
 
   typedef typename CurvedKernel::Circular_arc_endpoint_2      Point;
   typedef typename CurvedKernel::Circular_arc_endpoint_2      Point_2;
 
   typedef CGAL::Tag_false                        Has_left_category;
-  typedef CGAL::Tag_false 			Has_reflect_category;
+  typedef CGAL::Tag_false 			 Has_merge_category;
 
+  Circular_arc_traits(const CurvedKernel &k = CurvedKernel())
+    : ck(k) {}
+
+  typedef typename CurvedKernel::Compare_x_2           Compare_x_2;
+  typedef typename CurvedKernel::Compare_xy_2          Compare_xy_2;
+  typedef typename CurvedKernel::Compare_y_at_x_2      Compare_y_at_x_2;
+  typedef typename CurvedKernel::Compare_y_to_right_2  Compare_y_at_x_right_2; 
+  typedef typename CurvedKernel::Equal_2               Equal_2;
+  typedef typename CurvedKernel::Make_x_monotone_2     Make_x_monotone_2;
+  typedef typename CurvedKernel::Split_2               Split_2;
+  typedef typename CurvedKernel::Construct_intersections_2 Intersect_2;
+
+  class Construct_min_vertex_2
+  {
+  public:
+    const Point_2& operator() (const X_monotone_curve_2 & cv) const
+    {
+      return (cv.left());
+    }
+  };
+
+  class Construct_max_vertex_2
+  {
+  public:
+    /*!
+     * Get the right endpoint of the x-monotone curve (segment).
+     * \param cv The curve.
+     * \return The right endpoint.
+     */
+    const Point_2& operator() (const X_monotone_curve_2 & cv) const
+    {
+      return (cv.right());
+    }
+  };
+
+  class Is_vertical_2
+  {
+  public:
+    // TO BE IMPLEMENTED !!!!!!!
+    bool operator() (const X_monotone_curve_2& cv) const
+    {
+      return false;
+    }
+  };
+
+  
+  Compare_x_2 compare_x_2_object() const
+  { return ck.compare_x_2_object(); }
+
+  Compare_xy_2 compare_xy_2_object() const
+  { return ck.compare_xy_2_object(); }
+
+  Compare_y_at_x_2 compare_y_at_x_2_object() const 
+  { return ck.compare_y_at_x_2_object(); }
+
+  Compare_y_at_x_right_2 compare_y_at_x_right_2_object() const 
+  { return ck.compare_y_to_right_2_object(); }
+
+  Equal_2 equal_2_object() const
+  { return ck.equal_2_object(); }
+
+  Make_x_monotone_2 make_x_monotone_2_object() const
+  { return ck.make_x_monotone_2_object(); }
+
+  Split_2 split_2_object() const
+  { return ck.split_2_object(); }
+
+  Intersect_2 intersect_2_object() const
+    { return ck.construct_intersections_2_object(); }
+
+  Construct_min_vertex_2 construct_min_vertex_2_object() const
+    { return Construct_min_vertex_2(); }
+
+  Construct_max_vertex_2 construct_max_vertex_2_object() const
+    { return Construct_max_vertex_2(); }
+
+  Is_vertical_2 is_vertical_2_object() const
+    { return Is_vertical_2();}
+
+  //////////////////////////////////////////////
   CGAL::Comparison_result
   compare_x(const Point_2 &p, const Point_2 &q) const
   {

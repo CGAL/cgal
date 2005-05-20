@@ -6,7 +6,7 @@
 #---------------------------------------------------------------------#
 # Choose the right include file from the <cgalroot>/make directory.
 
-CGAL_MAKEFILE = /proj/geometrica/home/CGAL/CGAL-3.1-I-104/make/makefile_i686_Linux-2.4.28-pre3_g++-3.3.3
+#CGAL_MAKEFILE = /proj/geometrica/home/CGAL/CGAL-3.1-I-104/make/makefile_i686_Linux-2.4.28-pre3_g++-3.3.3
 # penser a enlever io.h de Conic_2.h en repassant a CGAL-I
 include $(CGAL_MAKEFILE)
 
@@ -16,6 +16,8 @@ include $(CGAL_MAKEFILE)
 
 CXXFLAGS = \
            -I../../include \
+	   -I$(HOME)/CGAL/Arrangement_2/include \
+	   -I$(HOME)/CGAL/Curved_kernel/include \
            -I$(HOME)/CGAL/Algebraic_kernel/include \
            $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS) \

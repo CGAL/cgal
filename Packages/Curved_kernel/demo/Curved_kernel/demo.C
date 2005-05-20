@@ -72,11 +72,15 @@ int main() {
 #include <CGAL/Circular_kernel.h>
 #include <CGAL/Circular_arc_traits.h>
 
-#include <CGAL/Pm_default_dcel.h>
-#include <CGAL/Planar_map_2.h>
-#include <CGAL/Pm_with_intersections.h>
+// #include <CGAL/Pm_default_dcel.h>
+// #include <CGAL/Planar_map_2.h>
+// #include <CGAL/Pm_with_intersections.h>
 
-typedef CGAL::Gmpq                                          NT;
+#include <CGAL/Arrangement_2.h>
+#include <CGAL/Arr_naive_point_location.h>
+
+typedef CGAL::MP_Float                                          NT;
+//typedef CGAL::Gmpq                                          NT;
 // typedef CGAL::Lazy_exact_nt<CGAL::Gmpq>                     NT;
 // typedef CGAL::Lazy_exact_nt<CGAL::Quotient<CGAL::MP_Float> >    NT;
 // typedef CGAL::Lazy_exact_nt<CGAL::Quotient<CGAL::Gmpz> >    NT;
@@ -91,10 +95,16 @@ typedef std::vector<Arc>                                    ArcContainer;
 
 typedef CGAL::Circular_arc_traits<Curved_k>                  Traits;
 
+typedef Traits::Point_2                             Point_2;
+typedef Traits::Curve_2                             Conic_arc_2;
+typedef CGAL::Arrangement_2<Traits>                 Pmwx;
+typedef CGAL::Arr_naive_point_location<Pmwx>        Point_location;
+
 typedef Traits::X_monotone_curve_2                          X_monotone_curve_2;
-typedef CGAL::Pm_default_dcel<Traits>                       Dcel;
-typedef CGAL::Planar_map_2<Dcel,Traits>                     Planar_map_2;
-typedef CGAL::Planar_map_with_intersections_2<Planar_map_2> Pmwx;
+
+// typedef CGAL::Pm_default_dcel<Traits>                       Dcel;
+// typedef CGAL::Planar_map_2<Dcel,Traits>                     Planar_map_2;
+// typedef CGAL::Planar_map_with_intersections_2<Planar_map_2> Pmwx;
 
 
 const QString my_title_string("CGAL :: "
@@ -105,18 +115,22 @@ class Qt_layer_do_sweep
   : public CGAL::Qt_widget_layer
 {
   Pmwx _pm;
+  Point_location _pl;
   bool show_pmwx;
 
 public:
 
   Qt_layer_do_sweep()
-    : show_pmwx(true) {}
+    : _pm(), _pl(_pm), show_pmwx(true) {}
 
   void swap_show() { show_pmwx = ! show_pmwx; }
 
   const Pmwx & pm() const { return _pm; }
         Pmwx & pm()       { return _pm; }
 
+  const Point_location & pl() const { return _pl; }
+        Point_location & pl()       { return _pl; }
+ 
   void draw()
   {
     if (! show_pmwx)
@@ -301,7 +315,8 @@ public slots:
   void get_arc()
   {
     arc_container().push_back(get_arc_layer->get_circular_arc());
-    pm().insert(arc_container().back());
+    arr_insert(pm(),pl(),arc_container().back());
+    //    pm().insert(arc_container().back());
 
     something_changed = true;
     widget->redraw();
@@ -312,7 +327,11 @@ public slots:
     std::cout << " Recomputing the Planar Map using a sweep." << std::endl;
     if (arc_container().size() != 0) { // because currently it crashes...
       pm().clear();
-      pm().insert(arc_container().begin(), arc_container().end());
+      for (ArcContainer::const_iterator it=arc_container().begin();
+	   it != arc_container().end(); ++it) {
+	arr_insert(pm(),pl(),*it);
+      };
+      //      pm().insert(arc_container().begin(), arc_container().end());
     }
     something_changed = true;
     widget->redraw();
@@ -435,6 +454,10 @@ private:
 
   Pmwx const & pm() const { return do_sweep_layer.pm(); }
   Pmwx       & pm()       { return do_sweep_layer.pm(); }
+
+  Point_location const & pl() const { return do_sweep_layer.pl(); }
+  Point_location       & pl()       { return do_sweep_layer.pl(); }
+  
 
   const ArcContainer & arc_container() const
   { return testlayer.arc_container(); }

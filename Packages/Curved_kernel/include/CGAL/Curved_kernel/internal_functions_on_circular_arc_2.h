@@ -269,10 +269,11 @@ namespace CircularFunctors {
   }
 
   template < class CK >
-  std::pair< typename CK::Circular_arc_2,
-             typename CK::Circular_arc_2 >
+  void
   split(const typename CK::Circular_arc_2 &A,
-	const typename CK::Circular_arc_endpoint_2 &p)
+	const typename CK::Circular_arc_endpoint_2 &p,
+	typename CK::Circular_arc_2 &ca1,
+	typename CK::Circular_arc_2 &ca2)
   {
     assert( A.is_x_monotone() );
     assert( point_in_range<CK>( A, p ) );
@@ -282,14 +283,16 @@ namespace CircularFunctors {
     typedef typename CK::Circular_arc_endpoint_2      Circular_arc_endpoint_2;
 
     if ( p.circle(0) == A.supporting_circle() )
-      return std::make_pair(
-                  Circular_arc_2( A, true,  p.circle(1), p.is_left() ),
-                  Circular_arc_2( A, false, p.circle(1), p.is_left() ));
+      {
+	ca1 = Circular_arc_2( A, true,  p.circle(1), p.is_left() );
+	ca2 = Circular_arc_2( A, false, p.circle(1), p.is_left() );
+      };
 
     if ( p.circle(1) == A.supporting_circle() )
-      return std::make_pair(
-                  Circular_arc_2( A, true,  p.circle(0), p.is_left() ),
-                  Circular_arc_2( A, false, p.circle(0), p.is_left() ));
+      {
+	ca1 = Circular_arc_2( A, true,  p.circle(0), p.is_left() );
+	ca2 = Circular_arc_2( A, false, p.circle(0), p.is_left() );
+      };
 
     // p is defined by another pair of circles.
     // Then we must determine which intersection it is of the supporting
@@ -298,9 +301,8 @@ namespace CircularFunctors {
     assert( b ||
              (p == Circular_arc_endpoint_2 (A.supporting_circle(), p.circle(0), false)));
 
-    return std::make_pair(
-                Circular_arc_2( A, true,  p.circle(0), b ),
-                Circular_arc_2( A, false, p.circle(0), b ));
+    ca1 = Circular_arc_2( A, true,  p.circle(0), b );
+    ca2 = Circular_arc_2( A, false, p.circle(0), b );
   }
 
   // Small accessory function
@@ -323,6 +325,120 @@ namespace CircularFunctors {
     return  cmp == 0 || (cmp > 0 &&  a.on_upper_part())
                      || (cmp < 0 && !a.on_upper_part());
   }
+
+  template< class CK, class OutputIterator>
+  OutputIterator
+  construct_intersections_2( const typename CK::Circular_arc_2 &a1,
+			     const typename CK::Circular_arc_2 &a2,
+			     OutputIterator res )
+  {
+    typedef typename CK::Circular_arc_endpoint_2  Circular_arc_endpoint_2;
+    typedef typename CK::Circular_arc_2           Circular_arc_2;
+
+    assert(a1.is_x_monotone());
+    assert(a2.is_x_monotone());
+    // todo : implement for general arcs
+
+    // Overlapping curves.
+    if (a1.supporting_circle() == a2.supporting_circle()) {
+      // The ranges need to overlap in order for the curves to overlap.
+      if (compare_x<CK>(a1.left(), a2.right()) > 0 ||
+          compare_x<CK>(a2.left(), a1.right()) > 0)
+        return res;
+
+      // They both need to be on the same upper/lower part.
+      if (a1.on_upper_part() != a2.on_upper_part()) {
+        // But they could share the right vertical tangent point.
+        if (a1.right() == a2.right()) {
+            *res++ = make_object(a1.right());
+            return res;
+        }
+        // Or they could share the left vertical tangent point.
+        if (a1.left() == a2.left()) {
+            *res++ = make_object(a1.left());
+            return res;
+        }
+        return res;
+      }
+
+      // We know they overlap, determine the extremities of the common subcurve
+      // TODO : We should use std::max and std::min, but they require less_x_2.
+      const Circular_arc_2 & arctmp = 
+	compare_x<CK>(a1.right(), a2.right()) < 0 ? a1 : a2;
+      // we know that the right endpoint is correct, let us look for
+      // the left now:
+
+
+      if ( compare_x<CK>(a1.left(), a2.left()) > 0 ) //? a1.left() : a2.left();
+	{ //the left endpoint is a1's
+	  if (a1.left().circle(0) == arctmp.supporting_circle()) {
+	    const Circular_arc_2 & arc =
+	      Circular_arc_2(arctmp.supporting_circle(), false,
+			     a1.left().circle(1), a1.left().is_left());
+	    assert(arc.left()==a1.left());
+	    assert(arc.right()==arctmp.right());
+	    *res++ = make_object(arc);
+	  }
+	  else {
+	    assert(a1.left().circle(1) == arctmp.supporting_circle());
+	    const Circular_arc_2 & arc =
+	      Circular_arc_2(arctmp.supporting_circle(), false,
+			     a1.left().circle(0), a1.left().is_left());
+	    assert(arc.left()==a1.left());
+	    assert(arc.right()==arctmp.right());
+	    *res++ = make_object(arc);
+	  };
+	}
+      else { //the left endpoint is a2's
+	if (a2.left().circle(0) == arctmp.supporting_circle()) {
+	    const Circular_arc_2 & arc =
+	      Circular_arc_2(arctmp.supporting_circle(), false,
+			     a2.left().circle(1), a2.left().is_left());
+	    assert(arc.left()==a2.left());
+	    assert(arc.right()==arctmp.right());
+	    *res++ = make_object(arc);
+	  }
+	  else {
+	    assert(a2.left().circle(1) == arctmp.supporting_circle());
+	    const Circular_arc_2 & arc =
+	      Circular_arc_2(arctmp.supporting_circle(), false,
+			     a2.left().circle(0), a2.left().is_left());
+	    assert(arc.left()==a2.left());
+	    assert(arc.right()==arctmp.right());
+	    *res++ = make_object(arc);
+	  };
+      };
+
+      return res;
+    }
+
+    // We need to check that the supporting circles
+    // do intersect before going further.
+    if (! do_intersect(a1.supporting_circle(),
+                       a2.supporting_circle())) {
+      return res;
+    }
+
+    // Get the two intersection points of the supporting circles.
+    Circular_arc_endpoint_2 
+      left (a1.supporting_circle(), a2.supporting_circle(), true);
+    Circular_arc_endpoint_2 
+      right(a1.supporting_circle(), a2.supporting_circle(), false);
+
+    // We also need to check that these intersection points are on the arc.
+    if (is_on_arc<CK>(a1, left) &&
+        is_on_arc<CK>(a2, left)) {
+      *res++ = make_object(left);
+    }
+
+    if (is_on_arc<CK>(a1, right) &&
+        is_on_arc<CK>(a2, right)) {
+      *res++ = make_object(right);
+    }
+
+    return res;
+  }
+
 
   template < class CK >
   bool

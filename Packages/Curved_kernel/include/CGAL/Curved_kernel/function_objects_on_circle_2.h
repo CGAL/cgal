@@ -39,20 +39,6 @@ namespace CircularFunctors {
       }
   };
 
-  template < class CK >
-  class Construct_intersections_2
-  {
-    public:
-
-    typedef typename CK::Circle_2 Circle;
-
-    template < class OutputIterator >
-    OutputIterator
-    operator()(const Circle & c1, const Circle & c2, OutputIterator res)
-      { return construct_intersections_2<CK> (c1,c2,res); }
-    
-  };
-
 } // namespace CircularFunctors
 } // namespace CGAL
 

@@ -25,6 +25,8 @@ class Circular_arc_2
   typedef typename CurvedKernel::Point_2        Point_2;
   typedef typename CurvedKernel::Line_2         Line_2;
   typedef typename CurvedKernel::Circle_2       Circle_2;
+  typedef typename CurvedKernel::Circular_arc_endpoint_2
+                                                Circular_arc_endpoint_2;
 
   typedef typename CurvedKernel::Kernel_base::Circular_arc_2 RCircular_arc_2; 
   // RCircular_arc_2 to avoid clash with self 
