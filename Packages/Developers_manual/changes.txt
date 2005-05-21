@@ -1,3 +1,6 @@
+21 May 2005 Sylvain Pion
+- Update URLs of testsuite and internal releases.
+
 30 March 2005 Sylvain Pion
 - Mention CropBox option of recent Ipe versions as alternative to epstopdf.
 
