@@ -5,6 +5,8 @@
   longer reported as edges or halfedges.
 - redesigned the degeneracy testers/traits to provide regular predicate
   functors instead of constructive predicate functors
+- removed file Projector_classes.h: classes in there are no longer necessary
+- added copyright headers
 
 19 May 2005:  Menelaos Karavelas
 - added types and methods to reach conformity with the concepts
