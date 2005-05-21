@@ -1,3 +1,6 @@
+21 May 2005 Sylvain Pion
+- update autotest_cgal following www server change.
+
 20 May 2005 Sylvain Pion
 - internal releases tarballs and test-suites moved.
 

@@ -24,7 +24,7 @@ umask 022
 
 
 WGET="wget"
-CGAL_URL="https://www-sop.inria.fr/geometrica/CGAL/Members/Releases"
+CGAL_URL="http://cgal.inria.fr/CGAL/Members/Releases"
 LATEST_LOCATION="${CGAL_URL}/LATEST"
 TAR="tar"
 GZIP="gzip"
