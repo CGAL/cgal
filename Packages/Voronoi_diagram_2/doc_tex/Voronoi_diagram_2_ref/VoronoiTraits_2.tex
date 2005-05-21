@@ -55,17 +55,6 @@ that is the dual of the triangulated Delaunay graph.
 
 \ccCreationVariable{vt}  %% choose variable name
 
-\ccCreation
-In addition to the default and constructors, as well as the assignment
-operator, the following constructors are required.
-
-\ccThree{VoronoiTraits_2}{vt(Dual_graph* dg)}{}
-\ccThreeToTwo
-\ccConstructor{VoronoiTraits_2(Dual_graph* dg);}{A constructor that is
-  initialized by a pointer to a \ccc{Dual_graph} object.}
-%
-
-
 \ccHeading{Access to predicate objects}
 \ccThree{Edge_degeneracy_tester}{vt.edge_degeneracy_tester_object()+}{}
 \ccMethod{Edge_degeneracy_tester edge_degeneracy_tester_object();}{}

@@ -1,10 +1,29 @@
+%% Copyright (c) 2005  University of Crete (Greece).
+%% All rights reserved.
+%%
+%% This file is part of CGAL (www.cgal.org); you may redistribute it under
+%% the terms of the Q Public License version 1.0.
+%% See the file LICENSE.QPL distributed with CGAL.
+%%
+%% Licensees holding a valid commercial license may use this file in
+%% accordance with the commercial license agreement provided with the software.
+%%
+%% This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+%% WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+%%
+%% $Source$
+%% $Revision$ $Date$
+%% $Name$
+%%
+%% Author(s)     : Menelaos Karavelas <mkaravel@tem.uoc.gr>
+
 \begin{ccRefFunctionObjectConcept}{EdgeDegeneracyTester}
 
 \ccRefines
 \ccc{DefaultConstructible}\\
 \ccc{CopyConstructible}\\
 \ccc{Assignable}\\
-\ccc{AdaptableFunctor} (with one argument)
+\ccc{AdaptableFunctor} (with two arguments)
 
 \ccTypes
 
@@ -44,25 +63,29 @@ concept, a model of this concept must provide the following types:
 \ccOperations
 It must also provide the following operations:
 
-\ccThree{bool}{fdt(Finite_edges_iterator feit)+}{}
+\ccThree{bool}{fdt(Dual_graph dg, Finite_edges_iterator feit)+}{}
 \ccThreeToTwo
-\ccMemberFunction{bool operator()(Edge e);}
-{return \ccStyle{true}, if the dual Voronoi edge of \ccc{e} is
+\ccMemberFunction{bool operator()(Dual_graph dg, Edge e);}
+{returns \ccStyle{true}, if the dual Voronoi edge of \ccc{e} (that
+  belongs to the dual Delaunay graph \ccc{dg}) is
   degenerate, i.e., it has zero length.}
 %
 \ccGlue
-\ccMemberFunction{bool operator()(Edge_circulator ec);}
-{returns \ccStyle{true}, if the dual Voronoi edge of \ccc{*ec} is
+\ccMemberFunction{bool operator()(Dual_graph dg, Edge_circulator ec);}
+{returns \ccStyle{true}, if the dual Voronoi edge of \ccc{*ec} (that
+  belongs to the dual Delaunay graph \ccc{dg}) is
   degenerate, i.e., it has zero length.}
 %
 \ccGlue
-\ccMemberFunction{bool operator()(All_edges_iterator aeit);}
-{returns \ccStyle{true}, if the dual Voronoi edge of \ccc{*aeit} is
+\ccMemberFunction{bool operator()(Dual_graph dg, All_edges_iterator aeit);}
+{returns \ccStyle{true}, if the dual Voronoi edge of \ccc{*aeit} (that
+  belongs to the dual Delaunay graph \ccc{dg}) is
   degenerate, i.e., it has zero length.}
 %
 \ccGlue
-\ccMemberFunction{bool operator()(Finite_edges_iterator feit);}
-{returns \ccStyle{true}, if the dual Voronoi edge of \ccc{*feit} is
+\ccMemberFunction{bool operator()(Dual_graph dg, Finite_edges_iterator feit);}
+{returns \ccStyle{true}, if the dual Voronoi edge of \ccc{*feit}  (that
+  belongs to the dual Delaunay graph \ccc{dg}) is
   degenerate, i.e., it has zero length.}
 
 
