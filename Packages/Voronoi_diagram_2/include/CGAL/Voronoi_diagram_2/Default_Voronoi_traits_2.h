@@ -23,9 +23,6 @@ class Default_Voronoi_traits_2
   typedef ET  Edge_degeneracy_tester;
   typedef FT  Face_degeneracy_tester;
 
-  Default_Voronoi_traits_2(const DG* dg = NULL)
-    : dg_(dg), e_tester_(dg_), f_tester_(dg_, &e_tester_) {}
-
   const Edge_degeneracy_tester& edge_degeneracy_tester_object() const {
     return e_tester_;
   }
@@ -35,7 +32,6 @@ class Default_Voronoi_traits_2
   }
 
  protected:
-  const DG* dg_;
   Edge_degeneracy_tester e_tester_;
   Face_degeneracy_tester f_tester_;
 };
@@ -44,21 +40,19 @@ class Default_Voronoi_traits_2
 //=========================================================================
 //=========================================================================
 
-template<class DG, class ET, class FT, class Project_t>
+template<class DG, class ET, class FT>
 class Default_cached_Voronoi_traits_2
 {
  private:
   typedef ET  Edge_degeneracy_tester_base;
   typedef FT  Face_degeneracy_tester_base;
 
-  typedef Default_cached_Voronoi_traits_2<DG,ET,FT,Project_t>  Self;
+  typedef Default_cached_Voronoi_traits_2<DG,ET,FT>  Self;
 
  public:
   typedef DG           Dual_graph;
-  typedef Project_t    Data_structure_project;
 
-  typedef Cached_edge_degeneracy_tester<Edge_degeneracy_tester_base,
-					Data_structure_project>
+  typedef Cached_edge_degeneracy_tester<Edge_degeneracy_tester_base>
   Edge_degeneracy_tester;
 
   typedef Cached_face_degeneracy_tester<Face_degeneracy_tester_base,
@@ -67,9 +61,6 @@ class Default_cached_Voronoi_traits_2
 
 
  public:
-  Default_cached_Voronoi_traits_2(const DG* dg = NULL)
-    : dg_(dg), e_tester_(dg_), f_tester_(dg_,&e_tester_) {}
-
   const Edge_degeneracy_tester& edge_degeneracy_tester_object() const {
     return e_tester_;
   }
@@ -79,7 +70,6 @@ class Default_cached_Voronoi_traits_2
   }
 
  protected:
-  const Dual_graph* dg_;
   Edge_degeneracy_tester e_tester_;
   Face_degeneracy_tester f_tester_;
 };
@@ -89,21 +79,19 @@ class Default_cached_Voronoi_traits_2
 //=========================================================================
 
 
-template<class DG, class ET, class FT, class Project_t>
+template<class DG, class ET, class FT>
 class Default_ref_counted_Voronoi_traits_2
 {
  private:
   typedef ET  Edge_degeneracy_tester_base;
   typedef FT  Face_degeneracy_tester_base;
 
-  typedef Default_ref_counted_Voronoi_traits_2<DG,ET,FT,Project_t>  Self;
+  typedef Default_ref_counted_Voronoi_traits_2<DG,ET,FT>  Self;
 
  public:
   typedef DG           Dual_graph;
-  typedef Project_t    Data_structure_project;
 
-  typedef Ref_counted_edge_degeneracy_tester<Edge_degeneracy_tester_base,
-					     Data_structure_project>
+  typedef Ref_counted_edge_degeneracy_tester<Edge_degeneracy_tester_base>
   Edge_degeneracy_tester;
 
   typedef Ref_counted_face_degeneracy_tester<Face_degeneracy_tester_base,
@@ -111,10 +99,6 @@ class Default_ref_counted_Voronoi_traits_2
   Face_degeneracy_tester;
 
  public:
-  Default_ref_counted_Voronoi_traits_2(const DG* dg = NULL)
-    : dg_(dg), e_tester_(dg_), f_tester_(dg_, &e_tester_) {}
-
-
   const Edge_degeneracy_tester& edge_degeneracy_tester_object() const {
     return e_tester_;
   }
@@ -124,7 +108,6 @@ class Default_ref_counted_Voronoi_traits_2
   }
 
  protected:
-  const Dual_graph* dg_;
   Edge_degeneracy_tester e_tester_;
   Face_degeneracy_tester f_tester_;
 };

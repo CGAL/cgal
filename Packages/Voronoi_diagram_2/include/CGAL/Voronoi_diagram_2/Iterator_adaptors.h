@@ -142,7 +142,9 @@ class Edge_iterator_adaptor
     typename VDA::Dual_edge e = this->value_.dual_edge();
 
     int j = CW_CCW_2::ccw( e.second );
-    if ( this->vda_->face_tester()(e.first->vertex(j)) ) {
+    if ( this->vda_->face_tester()(this->vda_->dual(),
+				   this->vda_->edge_tester(),
+				   e.first->vertex(j)) ) {
       this->value_ = *this->value_.opposite();
     }
   }

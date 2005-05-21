@@ -1,8 +1,6 @@
 #ifndef CGAL_VORONOI_DIAGRAM_ADAPTOR_2_H
 #define CGAL_VORONOI_DIAGRAM_ADAPTOR_2_H 1
 
-#define USE_FINITE_EDGES
-
 #include <CGAL/Voronoi_diagram_adaptor_2/basic.h>
 #include <CGAL/iterator.h>
 #include <CGAL/circulator.h>
@@ -16,10 +14,10 @@
 #include <CGAL/Voronoi_diagram_adaptor_2/Circulator_adaptors.h>
 #include <CGAL/Voronoi_diagram_adaptor_2/Iterator_adaptors.h>
 #include <CGAL/Voronoi_diagram_adaptor_2/Handle_adaptor.h>
-#include <CGAL/Voronoi_diagram_adaptor_2/Degeneracy_testers.h>
+#include <CGAL/Voronoi_diagram_adaptor_2/Validity_testers.h>
 #include <CGAL/Voronoi_diagram_adaptor_2/Dummy_iterator.h>
 #include <CGAL/Voronoi_diagram_adaptor_2/Unbounded_faces.h>
-
+#include <CGAL/Voronoi_diagram_adaptor_2/Degeneracy_tester_binders.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -43,9 +41,6 @@ class Voronoi_diagram_adaptor_2
   typedef typename Dual_graph::Geom_traits     Geom_traits;  
   typedef Tr                                   Voronoi_traits;
 
-  typedef typename Voronoi_traits::Dual_graph_data_structure
-  Dual_graph_data_structure;
-
   typedef typename Dual_graph::size_type       size_type;
   typedef size_type                            Size;
 
@@ -60,15 +55,10 @@ class Voronoi_diagram_adaptor_2
   typedef typename Dual_graph::Finite_faces_iterator
   Dual_faces_iterator;
 
-#ifdef USE_FINITE_EDGES
   typedef typename Dual_graph::Finite_edges_iterator
   Dual_edges_iterator;
   typedef typename Dual_graph::All_edges_iterator
   All_dual_edges_iterator;
-#else
-  typedef typename Dual_graph::All_edges_iterator
-  Dual_edges_iterator;
-#endif
 
   typedef typename Dual_graph::Edge_circulator
   Dual_edge_circulator;
@@ -80,8 +70,15 @@ class Voronoi_diagram_adaptor_2
   Face_degeneracy_tester;
 
  protected:
+  // DEGENERACY TESTER BINDERS
+  typedef CGAL_VORONOI_DIAGRAM_2_NS::Edge_degeneracy_tester_binder<Self>
+  Edge_degeneracy_tester_binder;
+
+  typedef CGAL_VORONOI_DIAGRAM_2_NS::Face_degeneracy_tester_binder<Self>
+  Face_degeneracy_tester_binder;
+
   // ITERATORS FOR EDGES
-  typedef Filter_iterator<Dual_edges_iterator,Edge_degeneracy_tester>
+  typedef Filter_iterator<Dual_edges_iterator,Edge_degeneracy_tester_binder>
   Non_degenerate_edges_iterator;
 
   typedef CGAL_VORONOI_DIAGRAM_2_NS::Edge_iterator_adaptor
@@ -104,7 +101,7 @@ class Voronoi_diagram_adaptor_2
 
  protected:
   // ITERATORS FOR FACES
-  typedef Filter_iterator<Dual_vertices_iterator,Face_degeneracy_tester>
+  typedef Filter_iterator<Dual_vertices_iterator,Face_degeneracy_tester_binder>
   Non_degenerate_faces_iterator;
 
  public:
@@ -167,7 +164,7 @@ class Voronoi_diagram_adaptor_2
   //-----------
   bool is_degenerate_edge(const Dual_face_handle& f, int i) const
   {
-    return edge_tester()(f, i);
+    return edge_tester()(dual_, f, i);
   }
 
   bool is_degenerate_edge(const Dual_edge& e) const
@@ -184,17 +181,15 @@ class Voronoi_diagram_adaptor_2
   {
     return is_degenerate_edge(*eit);
   }
-#ifdef USE_FINITE_EDGES
+
   bool is_degenerate_edge(const All_dual_edges_iterator& eit) const
   {
     return is_degenerate_edge(*eit);
   }
-#endif
-
 
   bool has_empty_Voronoi_cell_interior(const Dual_vertex_handle& v) const
   {
-    return face_tester()(v);
+    return face_tester()(dual(), edge_tester(), v);
   }
 
 
@@ -223,27 +218,12 @@ public:
   //--------------
   // CONSTRUCTORS
   //--------------
-  // there is a problem here with the traits; I have to pass the
-  // pointer of dual_ when constructing the Voronoi traits; it seems
-  // that the problem is the copy constructor of the traits
-#if 0
   Voronoi_diagram_adaptor_2(const Voronoi_traits& tr = Voronoi_traits())
-#if 0
-    : dual_(), tr_(&dual_), bf_tester_(this)
-#else
-    : dual_(), tr_(tr), bf_tester_(this)
-#endif
-  {}
-#endif
+    : dual_(), tr_(tr), bf_tester_(this) {}
 
   Voronoi_diagram_adaptor_2(const Dual_graph& dg,
 			    const Voronoi_traits& tr = Voronoi_traits())
-#if 1
-    : dual_(dg), tr_(&dual_), bf_tester_(this)
-#else
-    : dual_(dg), tr_(tr), bf_tester_(this)
-#endif
-  {}
+    : dual_(dg), tr_(tr), bf_tester_(this) {}
 
 
 public:
@@ -256,10 +236,6 @@ public:
 
   // VORONOI TRAITS
   const Voronoi_traits& voronoi_traits() const { return tr_; }
-
-  const Dual_graph_data_structure& dual_graph_data_structure() const {
-    return tr_.dual_graph_data_structure();
-  }
 
   // SIZE RELATED FUNCTIONS
   size_type size_of_vertices() const {
@@ -300,13 +276,13 @@ public:
  private:
   Non_degenerate_faces_iterator non_degenerate_faces_begin() const {
     return filter_iterator( dual_.finite_vertices_end(),
-			    face_tester(),
+			    Face_degeneracy_tester_binder(this),
 			    dual_.finite_vertices_begin() );
   }
 
   Non_degenerate_faces_iterator non_degenerate_faces_end() const {
     return filter_iterator( dual_.finite_vertices_end(),
-			    face_tester() );
+			    Face_degeneracy_tester_binder(this) );
   }
 
  public:
@@ -332,25 +308,14 @@ public:
   // EDGE ITERATORS
  private:
   Non_degenerate_edges_iterator non_degenerate_edges_begin() const {
-#ifdef USE_FINITE_EDGES
     return filter_iterator( dual_.finite_edges_end(),
-			    edge_tester(),
+			    Edge_degeneracy_tester_binder(this),
 			    dual_.finite_edges_begin() );
-#else
-    return filter_iterator( dual_.all_edges_end(),
-			    edge_tester(),
-			    dual_.all_edges_begin() );
-#endif
   }
 
   Non_degenerate_edges_iterator non_degenerate_edges_end() const {
-#ifdef USE_FINITE_EDGES
     return filter_iterator( dual_.finite_edges_end(),
-			    edge_tester() );
-#else
-    return filter_iterator( dual_.all_edges_end(),
-			    edge_tester() );
-#endif
+			    Edge_degeneracy_tester_binder(this) );
   }
 
 

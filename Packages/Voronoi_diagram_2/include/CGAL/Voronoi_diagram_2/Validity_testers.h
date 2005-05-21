@@ -34,16 +34,11 @@ class Edge_validity_tester
   Edge_validity_tester(const VDA* vda = NULL) : vda_(vda) {}
 
   bool operator()(const Edges_iterator_base& eit) const {
-#ifdef USE_PURE_FUNCTORS
     CGAL_assertion( !vda_->edge_tester()(vda_->dual(), eit->dual_edge()) );
-#else
-    CGAL_assertion( !vda_->edge_tester()(eit->dual_edge()) );
-#endif
 
     int cw_i = CW_CCW_2::cw( eit->dual_edge().second );
     int ccw_i = CW_CCW_2::ccw( eit->dual_edge().second );
 
-#ifdef USE_PURE_FUNCTORS
     CGAL_assertion
       ( !vda_->face_tester()( vda_->dual(), vda_->edge_tester(),
 			      eit->dual_edge().first->vertex(ccw_i) ) );
@@ -52,14 +47,6 @@ class Edge_validity_tester
 				eit->dual_edge().first->vertex(cw_i) )   ) {
       return false;
     }
-#else
-    CGAL_assertion
-      ( !vda_->face_tester()( eit->dual_edge().first->vertex(ccw_i) ) );
-
-    if (  !vda_->face_tester()( eit->dual_edge().first->vertex(cw_i) )   ) {
-      return false;
-    }
-#endif
 
     Halfedge_handle he(eit);
     Halfedge_handle he_opp = eit->opposite();

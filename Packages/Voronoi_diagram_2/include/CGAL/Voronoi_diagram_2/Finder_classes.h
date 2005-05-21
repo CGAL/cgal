@@ -12,7 +12,6 @@ CGAL_VORONOI_DIAGRAM_2_BEGIN_NAMESPACE
 //-------------------------------------------------------------------
 //-------------------------------------------------------------------
 
-
 template<class VDA>
 struct Find_next_halfedge
 {
@@ -29,10 +28,10 @@ struct Find_next_halfedge
     do {
       cw_i = CW_CCW_2::cw(icur);
       fnext = fcur->neighbor(cw_i);
-      inext = vda->dual_graph_data_structure().mirror_index(fcur, cw_i);
+      inext = vda->dual().tds().mirror_index(fcur, cw_i);
       fcur = fnext;
       icur = inext;
-    } while ( vda->edge_tester()(fnext, inext) );
+    } while ( vda->edge_tester()(vda->dual(), fnext, inext) );
   }
 };
 
@@ -49,15 +48,14 @@ struct Find_opposite_halfedge
   {
     Dual_face_handle f1;
     int i1;
+    int i_mirror = vda->dual().tds().mirror_index(f, i);
 
-    int i_mirror = vda->dual_graph_data_structure().mirror_index(f, i);
     Find_next_halfedge()(vda, f->neighbor(i), i_mirror, f1, i1);
 
     fopp = f1->neighbor(i1);
-    iopp = vda->dual_graph_data_structure().mirror_index(f1, i1);
+    iopp = vda->dual().tds().mirror_index(f1, i1);
   }
 };
-
 
 //-------------------------------------------------------------------
 
@@ -92,7 +90,7 @@ class Find_valid_vertex
 
     bool b[3];
     for (int i = 0; i < 3; i++) {
-      b[i] = !vda->edge_tester()(cur, i);
+      b[i] = !vda->edge_tester()(vda->dual(), cur, i);
     }
 
     if ( b[0] || b[1] || b[2] ) {

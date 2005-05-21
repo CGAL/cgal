@@ -45,18 +45,18 @@ class Vertex
     Dual_face_handle fvalid = find_valid_vertex(f_);
     for (int i = 0; i < 3; i++) {
       int ccw_i = CW_CCW_2::ccw(i);
-#ifdef USE_FINITE_EDGES
-      if ( !vda_->edge_tester()(fvalid, i) &&
+      
+      // if I want to return also infinite edges replace the test in
+      // the if statement by the following test (i.e., should omit the
+      // testing for infinity):
+      //           !vda_->edge_tester()(vda_->dual(), fvalid, i)
+      if ( !vda_->edge_tester()(vda_->dual(), fvalid, i) &&
 	   !vda_->dual().is_infinite(fvalid, i) ) {
-#else
-      if ( !vda_->edge_tester()(fvalid, i) ) {
-#endif
-	if ( vda_->face_tester()(fvalid->vertex(ccw_i)) ) {
+	if ( vda_->face_tester()(vda_->dual(), vda_->edge_tester(),
+				 fvalid->vertex(ccw_i)) ) {
 	  Dual_face_handle fopp;
-	  int iopp;
+	  int iopp, i_mirror = vda_->dual().tds().mirror_index(fvalid, i);
 
-	  int i_mirror =
-	    vda_->dual_graph_data_structure().mirror_index(fvalid, i);
 	  Find_opposite_halfedge<VDA>()(vda_,
 					fvalid->neighbor(i),
 					i_mirror,

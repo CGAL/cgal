@@ -49,7 +49,7 @@ public:
     : vda_(vda), f_(f), i_(i)
   {
 #ifndef CGAL_NO_PRECONDITIONS
-    CGAL_precondition( !vda_->edge_tester()(f_, i_) );
+    CGAL_precondition( !vda_->edge_tester()(vda_->dual(), f_, i_) );
     Dual_vertex_handle v = f_->vertex( CW_CCW_2::ccw(i_) );
 #if 0
     // the following test prohibit creating a halfedge which is
@@ -61,14 +61,14 @@ public:
 
   Halfedge_handle opposite() const {
     int cw_i = CW_CCW_2::cw(i_);
-    if ( vda_->face_tester()(f_->vertex(cw_i)) ) {
+    if ( vda_->face_tester()(vda_->dual(), vda_->edge_tester(),
+			     f_->vertex(cw_i)) ) {
       Dual_face_handle fopp;
       int iopp;
       find_opposite(f_, i_, fopp, iopp); //equivalent to: twin().next().twin();
       return Halfedge_handle( Self(vda_, fopp, iopp) );
     } else {
-      int i_mirror =
-	vda_->dual_graph_data_structure().mirror_index(f_, i_);
+      int i_mirror = vda_->dual().tds().mirror_index(f_, i_);
       return
 	Halfedge_handle( Self(vda_, f_->neighbor(i_), i_mirror) );
     }
@@ -83,7 +83,9 @@ public:
   }
 
   Halfedge_handle next() const {
-#ifdef USE_FINITE_EDGES
+    // if I want to return all edges and not just the finite ones,
+    // replace the do-while loop by the following statements:
+    //          find_next(f_, i_, f, i);
     Dual_face_handle f = f_, fnext;
     int i = i_, inext;
     do {
@@ -92,45 +94,27 @@ public:
       i = inext;
     } while ( vda_->dual().is_infinite(f, i) );
     return Halfedge_handle( Self(vda_, f, i) );
-#else
-    Dual_face_handle f;
-    int i;
-
-    find_next(f_, i_, f, i);
-    return Halfedge_handle( Self(vda_, f, i) );
-#endif
   }
 
-  Halfedge_handle previous() const {
-#ifdef USE_FINITE_EDGES
+  Halfedge_handle previous() const
+  {
     Dual_face_handle f, fprev = f_;
     int iprev = i_, i;
     
+    // if I want to return also infinite edges replace the test in
+    // the while loop by the following test (i.e., should omit the
+    // testing for infinity):
+    //           vda_->edge_tester()(vda_->dual(), f, i)
     do {
       f = fprev->neighbor(iprev);
-      int i_mirror =
-	vda_->dual_graph_data_structure().mirror_index(fprev, iprev);
+      int i_mirror = vda_->dual().tds().mirror_index(fprev, iprev);
       i = CW_CCW_2::ccw( i_mirror );
       fprev = f;
       iprev = i;
-    } while ( vda_->edge_tester()(f, i) ||
+    } while ( vda_->edge_tester()(vda_->dual(), f, i) ||
 	      vda_->dual().is_infinite(f, i) );
 
     return Halfedge_handle( Self(vda_, f, i) );
-#else
-    Dual_face_handle f, fprev = f_;
-    int iprev = i_, i;
-    do {
-      f = fprev->neighbor(iprev);
-      int i_mirror =
-	vda_->dual_graph_data_structure().mirror_index(fprev, iprev);
-      i = CW_CCW_2::ccw( i_mirror );
-      fprev = f;
-      iprev = i;
-    } while ( vda_->edge_tester()(f, i) );
-
-    return Halfedge_handle( Self(vda_, f, i) );
-#endif
   }
 
   Ccb_halfedge_circulator ccb() const {
@@ -174,11 +158,11 @@ public:
   bool is_valid() const {
     if ( vda_ == NULL ) { return true; }
 
-    bool valid = !vda_->edge_tester()(f_, i_);
+    bool valid = !vda_->edge_tester()(vda_->dual(), f_, i_);
 
     Dual_vertex_handle v = f_->vertex( CW_CCW_2::ccw(i_) );
 
-    valid = valid && !vda_->face_tester()(v);
+    valid = valid && !vda_->face_tester()(vda_->dual(),vda_->edge_tester(),v);
 
     Halfedge_handle h_this(*this);
 

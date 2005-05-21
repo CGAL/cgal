@@ -13,12 +13,11 @@ CGAL_VORONOI_DIAGRAM_2_BEGIN_NAMESPACE
 //=========================================================================
 
 
-template<class Edge_tester_t, class Project_t>
+template<class Edge_tester_t>
 class Cached_edge_degeneracy_tester
 {
  public:
   typedef Edge_tester_t    Edge_degeneracy_tester;
-  typedef Project_t        Data_structure_project;
   typedef typename Edge_degeneracy_tester::Dual_graph Dual_graph;
   typedef typename Edge_degeneracy_tester::Edge Edge;
   typedef typename Edge_degeneracy_tester::Face_handle Face_handle;
@@ -53,42 +52,39 @@ class Cached_edge_degeneracy_tester
   // true if degenerate, false otherwise
   typedef Unique_hash_map<Edge,bool,Edge_hash_function>  Edge_map;
 
-  Edge opposite(const Edge& e) const {
-    int i_mirror =
-      Data_structure_project()(dg_).mirror_index(e.first, e.second);
+  Edge opposite(const Dual_graph& dual, const Edge& e) const {
+    int i_mirror = dual.tds().mirror_index(e.first, e.second);
     return Edge( e.first->neighbor(e.second), i_mirror );
   }
 
  public:
-  Cached_edge_degeneracy_tester(const Dual_graph* dual = NULL)
-    : dg_(dual), e_tester(dual) {}
-
-  bool operator()(const Edge& e) const {
+  bool operator()(const Dual_graph& dual, const Edge& e) const {
     if ( emap.is_defined(e) ) { return emap[e]; }
-    bool b = e_tester(e);
+    bool b = e_tester(dual, e);
     emap[e] = b;
-    emap[opposite(e)] = b;
+    emap[opposite(dual, e)] = b;
     return b;
   }
 
-  bool operator()(const Face_handle& f, int i) const {
-    return operator()(Edge(f,i));
+  bool operator()(const Dual_graph& dual, const Face_handle& f, int i) const {
+    return operator()(dual, Edge(f,i));
   }
 
-  bool operator()(const Edge_circulator& ec) const {
-    return operator()(*ec);
+  bool operator()(const Dual_graph& dual, const Edge_circulator& ec) const {
+    return operator()(dual, *ec);
   }
 
-  bool operator()(const All_edges_iterator& eit) const {
-    return operator()(*eit);
+  bool operator()(const Dual_graph& dual,
+		  const All_edges_iterator& eit) const {
+    return operator()(dual, *eit);
   }
 
-  bool operator()(const Finite_edges_iterator& eit) const {
-    return operator()(*eit);
+  bool operator()(const Dual_graph& dual,
+		  const Finite_edges_iterator& eit) const {
+    return operator()(dual, *eit);
   }
 
  private:
-  const Dual_graph* dg_;
   Edge_degeneracy_tester e_tester;
   mutable Edge_map emap;
 };
@@ -125,36 +121,36 @@ class Cached_face_degeneracy_tester
   typedef Unique_hash_map<Vertex_handle,bool>   Vertex_map;
 
  public:
-  Cached_face_degeneracy_tester(const Dual_graph* dual = NULL)
-    : f_tester(dual) {}
-
-  Cached_face_degeneracy_tester(const Dual_graph* dual,
-				const Edge_degeneracy_tester* e_tester)
-    : dg_(dual), f_tester(dual, e_tester) {}
-
-  bool operator()(const Vertex_handle& v) const {
+  bool operator()(const Dual_graph& dual,
+		  const Edge_degeneracy_tester& e_tester,
+		  const Vertex_handle& v) const {
     if ( vmap.is_defined(v) ) { return vmap[v]; }
-    bool b = f_tester(v);
+    bool b = f_tester(dual, e_tester, v);
     vmap[v] = b;
     return b;
   }
  
-  bool operator()(const Vertex_circulator& vc) const {
-    return operator()(Vertex_handle(vc));
+  bool operator()(const Dual_graph& dual,
+		  const Edge_degeneracy_tester& e_tester,
+		  const Vertex_circulator& vc) const {
+    return operator()(dual, e_tester, Vertex_handle(vc));
   }
 
-  bool operator()(const Finite_vertices_iterator& vit) const {
-    return operator()(Vertex_handle(vit));
+  bool operator()(const Dual_graph& dual,
+		  const Edge_degeneracy_tester& e_tester,
+		  const Finite_vertices_iterator& vit) const {
+    return operator()(dual, e_tester, Vertex_handle(vit));
   }
 
 #ifndef CGAL_T2_USE_ITERATOR_AS_HANDLE
-  bool operator()(const All_vertices_iterator& vit) const {
-    return operator()(Vertex_handle(vit));
+  bool operator()(const Dual_graph& dual,
+		  const Edge_degeneracy_tester& e_tester,
+		  const All_vertices_iterator& vit) const {
+    return operator()(dual, e_tester, Vertex_handle(vit));
   }
 #endif
 
  private:
-  const Dual_graph* dg_;
   Face_degeneracy_tester f_tester;
   mutable Vertex_map vmap;
 };
@@ -167,36 +163,30 @@ class Cached_face_degeneracy_tester
 template<class Tester_handle_t, class Types_t>
 struct Handle_to_tester_adaptor : public Types_t
 {
+ private:
   typedef Tester_handle_t                       Tester_handle;
   typedef typename Tester_handle::element_type  Tester;
+
+ public:
   typedef typename Tester::result_type          result_type;
 
-  typedef typename Tester::Dual_graph           Dual_graph;
-
-  Handle_to_tester_adaptor() {}
-  Handle_to_tester_adaptor(const Dual_graph* dg = NULL)
-  {
-    Tester rc_tester(dg);
-    h_.initialize_with(rc_tester);
-  }
-
-  template<class Edge_tester>
-  Handle_to_tester_adaptor(const Dual_graph* dg,
-			   const Edge_tester& e_tester)
-  {
-    Tester rc_tester(dg, e_tester);
-    h_.initialize_with(rc_tester);
-  }
-
-  template<typename argument_type>
-  result_type operator()(const argument_type& arg) const {
-    return h_.Ptr()->operator()(arg);
+  Handle_to_tester_adaptor() {
+    Tester rc_tester;
+    h_.initialize_with(rc_tester);    
   }
 
   template<typename argument_type_1, typename argument_type_2>
   result_type operator()(const argument_type_1& arg1,
 			 const argument_type_2& arg2) const {
     return h_.Ptr()->operator()(arg1, arg2);
+  }
+
+  template<typename argument_type_1, typename argument_type_2,
+	   typename argument_type_3>
+  result_type operator()(const argument_type_1& arg1,
+			 const argument_type_2& arg2,
+			 const argument_type_3& arg3) const {
+    return h_.Ptr()->operator()(arg1, arg2, arg3);
   }
 
  private:
@@ -207,20 +197,15 @@ struct Handle_to_tester_adaptor : public Types_t
 //=========================================================================
 //=========================================================================
 
-template<class Edge_tester_t, class Project_t>
+template<class Edge_tester_t>
 class Ref_counted_edge_degeneracy_tester_base
-  : public Cached_edge_degeneracy_tester<Edge_tester_t,Project_t>,
+  : public Cached_edge_degeneracy_tester<Edge_tester_t>,
     public Ref_counted_virtual
 {
  private:
-  typedef Cached_edge_degeneracy_tester<Edge_tester_t,Project_t>  Base;
+  typedef Cached_edge_degeneracy_tester<Edge_tester_t>  Base;
 
  public:
-  typedef typename Base::Dual_graph      Dual_graph;
-
-  Ref_counted_edge_degeneracy_tester_base(const Dual_graph* dg = NULL)
-    : Base(dg) {}
-
   ~Ref_counted_edge_degeneracy_tester_base() {}
 };
 
@@ -235,15 +220,6 @@ class Ref_counted_face_degeneracy_tester_base
   typedef Cached_face_degeneracy_tester<Face_tester_t,Edge_tester_t> Base;
 
  public:
-  typedef typename Base::Dual_graph    Dual_graph;
-
-  Ref_counted_face_degeneracy_tester_base(const Dual_graph* dg = NULL)
-    : Base(dg) {}
-
-  Ref_counted_face_degeneracy_tester_base(const Dual_graph* dg,
-					  const Edge_tester_t* e_tester)
-    : Base(dg,e_tester) {}
-
   ~Ref_counted_face_degeneracy_tester_base() {}
 };
 
@@ -259,6 +235,7 @@ struct Edge_degeneracy_tester_types
   typedef typename T::result_type            result_type;
   typedef typename T::Arity                  Arity;
 
+  typedef typename T::Dual_graph             Dual_graph;
   typedef typename T::Edge                   Edge;
   typedef typename T::Edge_circulator        Edge_circulator;
   typedef typename T::All_edges_iterator     All_edges_iterator;
@@ -273,6 +250,7 @@ struct Face_degeneracy_tester_types
   typedef typename T::result_type               result_type;
   typedef typename T::Arity                     Arity;
 
+  typedef typename T::Dual_graph                Dual_graph;
   typedef typename T::Vertex_handle             Vertex_handle;
   typedef typename T::Vertex_circulator         Vertex_circulator;
   typedef typename T::All_vertices_iterator     All_vertices_iterator;
@@ -281,11 +259,11 @@ struct Face_degeneracy_tester_types
 
 //=========================================================================
 
-template<class Edge_tester_t, class Project_t>
+template<class Edge_tester_t>
 class Ref_counted_edge_degeneracy_tester
   : public Handle_to_tester_adaptor
   <Handle_for_virtual
-   <Ref_counted_edge_degeneracy_tester_base<Edge_tester_t,Project_t> >,
+   <Ref_counted_edge_degeneracy_tester_base<Edge_tester_t> >,
    Edge_degeneracy_tester_types<Edge_tester_t>
    >
 {
@@ -293,7 +271,7 @@ class Ref_counted_edge_degeneracy_tester
   typedef Edge_degeneracy_tester_types<Edge_tester_t>  Edge_tester_types;
 
   typedef
-  Ref_counted_edge_degeneracy_tester_base<Edge_tester_t,Project_t>
+  Ref_counted_edge_degeneracy_tester_base<Edge_tester_t>
   Ref_counted_tester_base;
 
   typedef Handle_for_virtual<Ref_counted_tester_base>
@@ -302,12 +280,6 @@ class Ref_counted_edge_degeneracy_tester
   typedef Handle_to_tester_adaptor<Ref_counted_tester_base_handle,
 				   Edge_tester_types>
   Base;
-
- public:
-  typedef typename Base::Dual_graph   Dual_graph;
-
-  Ref_counted_edge_degeneracy_tester(const Dual_graph* dg = NULL)
-    : Base(dg) {}
 };
 
 //=========================================================================
@@ -333,16 +305,6 @@ class Ref_counted_face_degeneracy_tester
   typedef Handle_to_tester_adaptor<Ref_counted_tester_base_handle,
 				   Face_tester_types>
   Base;
-
- public:
-  typedef typename Base::Dual_graph   Dual_graph;
-
-  Ref_counted_face_degeneracy_tester(const Dual_graph* dg = NULL)
-    : Base(dg) {}
-
-  Ref_counted_face_degeneracy_tester(const Dual_graph* dg,
-  				     const Edge_tester_t* e_tester)
-    : Base(dg, e_tester) {}
 };
 
 //=========================================================================

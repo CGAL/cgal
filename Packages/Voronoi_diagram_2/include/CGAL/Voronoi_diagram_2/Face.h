@@ -71,21 +71,20 @@ class Face
     // the edge circulator gives edges that have v_ as their target
     Dual_edge_circulator ec = vda_->dual().incident_edges(v_);
     Dual_edge_circulator ec_start = ec;
-#ifdef USE_FINITE_EDGES
-    while ( vda_->edge_tester()(ec) || vda_->dual().is_infinite(ec) ) {
+
+    // if I want to return also infinite edges replace the test in
+    // the while loop by the following test (i.e., should omit the
+    // testing for infinity):
+    //           vda_->edge_tester()(vda_->dual(), ec)
+    while ( vda_->edge_tester()(vda_->dual(), ec) ||
+	    vda_->dual().is_infinite(ec) ) {
       ++ec;
       CGAL_assertion( ec != ec_start );
     }
-#else
-    while ( vda_->edge_tester()(ec) ) {
-      ++ec;
-      CGAL_assertion( ec != ec_start );
-    }
-#endif
     CGAL_assertion(ec->first->vertex( CW_CCW_2::cw(ec->second) ) == v_);
 
-    int i_mirror =
-      vda_->dual_graph_data_structure().mirror_index(ec->first, ec->second);
+    int i_mirror = vda_->dual().tds().mirror_index(ec->first, ec->second);
+
 #ifndef CGAL_NO_ASSERTIONS
     Halfedge h(vda_, ec->first->neighbor(ec->second), i_mirror);
     Face_handle f_this(*this);
@@ -94,9 +93,7 @@ class Face
 
     return
       Halfedge_handle( 
-		      Halfedge( vda_,
-				ec->first->neighbor(ec->second),
-				i_mirror )
+		      Halfedge(vda_, ec->first->neighbor(ec->second), i_mirror)
 		      );
   }
 
@@ -130,14 +127,16 @@ class Face
     return !((*this) == other);
   }
 
-  // temporary
+  // temporary?
   const Dual_vertex_handle& dual_vertex() const { return v_; }
 
   bool is_valid() const {
     if ( vda_ == NULL ) { return true; }
 
-    bool valid = !vda_->face_tester()(v_);
-    valid = valid && !vda_->edge_tester()( halfedge()->dual_edge() );
+    bool valid = !vda_->face_tester()(vda_->dual(), vda_->edge_tester(), v_);
+
+    valid = valid && !vda_->edge_tester()( vda_->dual(),
+					   halfedge()->dual_edge() );
 
     Ccb_halfedge_circulator hc = outer_ccb();
     Ccb_halfedge_circulator hc_start = hc;

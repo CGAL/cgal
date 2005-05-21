@@ -12,21 +12,13 @@ class Voronoi_traits_concept
 {
  public:
   typedef DG                               Dual_graph;
-  typedef typename DG::Edge                Edge;
-  typedef typename DG::Edge_circulator     Edge_circulator;
-  typedef typename DG::All_edges_iterator  All_edges_iterator;
-  typedef typename DG::Face_handle         Face_handle;
-  typedef typename DG::Vertex_handle       Vertex_handle;
-
-  typedef typename DG::Data_structure      Dual_graph_data_structure;
-
-  Voronoi_traits_concept(const Dual_graph* = NULL) {}
 
   struct Edge_degeneracy_tester
   {
     typedef DG  Dual_graph;
 
     typedef typename DG::Edge                   Edge;
+    typedef typename DG::Face_handle            Face_handle;
     typedef typename DG::Edge_circulator        Edge_circulator;
     typedef typename DG::All_edges_iterator     All_edges_iterator;
     typedef typename DG::Finite_edges_iterator  Finite_edges_iterator;
@@ -34,23 +26,21 @@ class Voronoi_traits_concept
     typedef bool           result_type;
     typedef Arity_tag<1>   Arity;
 
-    Edge_degeneracy_tester(const DG* = NULL) {}
-
-    bool operator()(const Edge&) const {
+    bool operator()(const Dual_graph&, const Edge&) const {
       return false;
     }
 
-    bool operator()(const Face_handle&, int) const {
+    bool operator()(const Dual_graph&, const Face_handle&, int) const {
       return false;
     }
 
-    bool operator()(const Edge_circulator&) const {
+    bool operator()(const Dual_graph&, const Edge_circulator&) const {
       return false;
     }
 
-    bool operator()(const All_edges_iterator&) const {
+    bool operator()(const Dual_graph&, const All_edges_iterator&) const {
       return false;
-    }
+    } 
   };
 
   struct Face_degeneracy_tester
@@ -65,14 +55,13 @@ class Voronoi_traits_concept
     typedef bool           result_type;
     typedef Arity_tag<1>   Arity;
 
-    Face_degeneracy_tester(const DG* = NULL) {}
-    Face_degeneracy_tester(const DG*, const Edge_degeneracy_tester*) {}
-
-    bool operator()(const Vertex_handle&) const {
+    bool operator()(const Dual_graph&, const Edge_degeneracy_tester&,
+		    const Vertex_handle&) const {
       return false;
     }
 
-    bool operator()(const Vertex_circulator&) const {
+    bool operator()(const Dual_graph&, const Edge_degeneracy_tester&,
+		    const Vertex_circulator&) const {
       return false;
     }
   };
@@ -83,12 +72,6 @@ class Voronoi_traits_concept
 
   const Face_degeneracy_tester& face_degeneracy_tester_object() const {
     return f_tester_;
-  }
-
-  static const Dual_graph_data_structure& dual_graph_data_structure()
-  {
-    static Dual_graph_data_structure dual_graph_data_structure_static;
-    return dual_graph_data_structure_static;
   }
 
  private:

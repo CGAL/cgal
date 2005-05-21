@@ -2,6 +2,7 @@
 #define CGAL_VORONOI_DIAGRAM_2_BASIC_H 1
 
 #include <CGAL/basic.h>
+#include <cstdlib>
 
 #define CGAL_VORONOI_DIAGRAM_2_NS CGAL::Voronoi_diagram_adaptor_2_namespace
 
