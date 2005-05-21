@@ -408,7 +408,7 @@ on it.
 <B>N.B. The detection of warnings is not exact.
 Look at the output to be sure!</B>
 <OL>
-<LI><A HREF="http://cgal.inria.fr/CGAL/Members/Releases/?C=M;O=D">
+<LI><A HREF="http://cgal.inria.fr/CGAL/Members/Releases/">
 Downloading internal releases</A></LI>
 <LI><A HREF="http://www.cgal.org/Members/Manual_test/${release_name}/" style="color: red">
 The documentation of this release</A></LI>
