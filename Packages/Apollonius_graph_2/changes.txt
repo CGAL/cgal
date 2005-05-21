@@ -1,3 +1,6 @@
+21 May 2005:  Menelaos Karavelas
+- added tds() method that returns the triangulation data structure
+
 19 May 2005:  Menelaos Karavelas
 - added the types Vertex, Face and Triangulation_data_structure in the
   Apollonius_graph_2 class; these types should also appear in the doc of

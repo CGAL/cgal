@@ -274,6 +274,7 @@ public:
   const Geom_traits&  geom_traits() const { return DG::geom_traits(); }
 
   const Data_structure&   data_structure() const { return this->_tds; }
+  const Triangulation_data_structure& tds() const { return this->_tds; }
   const Point_container&  point_container() const { return pc_; }
 
   inline size_type number_of_input_sites() const {

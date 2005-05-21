@@ -286,6 +286,7 @@ public:
   }
 
   const Data_structure& data_structure() const { return this->_tds; }
+  const Triangulation_data_structure& tds() const { return this->_tds; }
 
   int dimension() const {
     return this->_tds.dimension();
