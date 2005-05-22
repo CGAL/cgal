@@ -2,6 +2,8 @@
 - re-wrote the face degeneracy testers so that they do not need the edge
   degeneracy tester as an argument. This simplifies both the code and the
   concepts.
+- fixed wrong names of types in the Voronoi_diagram_adaptor_2 class and
+  dependent classes
 
 21 May 2005:  Menelaos Karavelas
 - renamed Degeneracy_testers.h Validity_testers.h
