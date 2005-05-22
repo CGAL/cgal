@@ -1,0 +1,52 @@
+This directory contains the test suite for the Arrangement_2 package. In
+particular a list of tests follows:
+
+tst01 - Construct an arrangement using incremental insertion of (x-monotone)
+        segments that do not intersect in their interiors.
+
+	Print out the number of features (i.e., Faces, Halfedges, and Faces)
+	(This could be split into a separate test).
+
+	Issue point location and vertical-ray shooting queries, and print
+	out the results.
+
+	Run the test with all combinations of traits that support segments
+	(i.e., Segment, Kernel-Segment, Conic, and Polyline), and supported
+	point-location strategies (i.e., Trapezoidal-RIC, Naive, Walk, and
+	Landmark).
+
+tst02 - Construct an arrangement using incremental insertion of (x-monotone)
+        segments that do not intersect in their interiors.
+
+	Split and merge edges.
+
+	Run the test with all combinations of traits that support segments
+	(i.e., Segment, Kernel-Segment, Conic, and Polyline), and supported
+	point-location strategies (i.e., Trapezoidal-RIC, Naive, Walk, and
+	Landmark).
+	
+tst03 - Construct an arrangement using incremental insertion of (x-monotone)
+        segments that do not intersect in their interiors.
+
+	Test:
+	1. vertices traversal
+	2. halfedge around vertex traversal
+	3. connected component of the boundary traversal
+	4. holes traversal
+	5. halfedges traversal
+	6. edges traversal (missing)
+
+	Run the test with all combinations of traits that support segments
+	(i.e., Segment, Kernel-Segment, Conic, and Polyline), and supported
+	point-location strategies (i.e., Trapezoidal-RIC, Naive, Walk, and
+	Landmark).
+
+tst04 - Construct an arrangement using incremental insertion of (x-monotone)
+        segments that do not intersect in their interiors.
+
+	Remove halfedge
+
+	Run the test with all combinations of traits that support segments
+	(i.e., Segment, Kernel-Segment, Conic, and Polyline), and supported
+	point-location strategies (i.e., Trapezoidal-RIC, Naive, Walk, and
+	Landmark).
