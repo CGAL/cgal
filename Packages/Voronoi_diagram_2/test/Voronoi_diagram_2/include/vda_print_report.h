@@ -27,7 +27,7 @@ void print_report(const VDA& vda, const Projector& project,
     return;
   }
 
-  typename VDA::Edges_iterator eit;
+  typename VDA::Edge_iterator eit;
   for (eit = vda.edges_begin(); eit != vda.edges_end(); ++eit) {
     print_halfedge(vda, *eit, project, os);
   }
@@ -171,7 +171,7 @@ void print_report(const VDA& vda, const Projector& project,
     }
 
     // computing statistics in the primal (Voronoi diagram)
-    typename VDA::Edges_iterator eit;
+    typename VDA::Edge_iterator eit;
     for (eit = vda.edges_begin(); eit != vda.edges_end(); ++eit) {
       typename VDA::Dual_edge e = eit->dual_edge();
       if ( vda.dual().is_infinite(e) ) {

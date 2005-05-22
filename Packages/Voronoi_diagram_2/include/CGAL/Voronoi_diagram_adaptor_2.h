@@ -102,15 +102,15 @@ class Voronoi_diagram_adaptor_2
 
   typedef CGAL_VORONOI_DIAGRAM_2_NS::Edge_iterator_adaptor
   <Self,Non_degenerate_edges_iterator>
-  Edges_iterator_base;
+  Edge_iterator_base;
 
   typedef CGAL_VORONOI_DIAGRAM_2_NS::Edge_validity_tester
-  <Self,Edges_iterator_base>
+  <Self,Edge_iterator_base>
   Edge_validity_tester;
 
  public:
-  typedef Filter_iterator<Edges_iterator_base,Edge_validity_tester>
-  Edges_iterator;
+  typedef Filter_iterator<Edge_iterator_base,Edge_validity_tester>
+  Edge_iterator;
 
   typedef CGAL_VORONOI_DIAGRAM_2_NS::Halfedge_iterator_adaptor<Self>
   Halfedge_iterator;
@@ -167,13 +167,11 @@ class Voronoi_diagram_adaptor_2
   Ccb_halfedge_circulator;
 
  protected:
-  typedef typename Dual_graph::Vertex_circulator Dual_vertex_circulator;
-
- public:
   typedef CGAL_VORONOI_DIAGRAM_2_NS::Bounded_face_tester
   <Self,Non_degenerate_faces_iterator>
   Bounded_face_tester;
 
+ public:
   typedef
   Filter_iterator<Non_degenerate_faces_iterator,Bounded_face_tester>
   Unbounded_faces_iterator;
@@ -291,6 +289,11 @@ public:
     return tr_.face_degeneracy_tester_object();
   }
 
+  // UNBOUNDED FACE
+  Face_handle unbounded_face() const {
+    return Face_handle(*unbounded_faces_begin());
+  }
+
   // FACE ITERATORS
  private:
   Non_degenerate_faces_iterator non_degenerate_faces_begin() const {
@@ -338,22 +341,22 @@ public:
   }
 
 
-  Edges_iterator_base edges_base_begin() const {
-    return Edges_iterator_base(this, non_degenerate_edges_begin());
+  Edge_iterator_base edges_base_begin() const {
+    return Edge_iterator_base(this, non_degenerate_edges_begin());
   }
 
-  Edges_iterator_base edges_base_end() const {
-    return Edges_iterator_base(this, non_degenerate_edges_end());
+  Edge_iterator_base edges_base_end() const {
+    return Edge_iterator_base(this, non_degenerate_edges_end());
   }
 
  public:
-  Edges_iterator edges_begin() const {
+  Edge_iterator edges_begin() const {
     return filter_iterator( edges_base_end(),
 			    Edge_validity_tester(this),
 			    edges_base_begin() );
   }
 
-  Edges_iterator edges_end() const {
+  Edge_iterator edges_end() const {
     return filter_iterator( edges_base_end(),
 			    Edge_validity_tester(this) );
   }

@@ -187,7 +187,7 @@ template<class VDA>
 class Halfedge_iterator_adaptor
   : public Iterator_adaptor_base<VDA,
 				 Halfedge_iterator_adaptor<VDA>,
-				 typename VDA::Edges_iterator,
+				 typename VDA::Edge_iterator,
 				 typename VDA::Halfedge>
 {
 private:
@@ -196,7 +196,7 @@ private:
   typedef typename VDA::Halfedge_handle    Halfedge_handle;
   typedef typename VDA::Halfedge           Halfedge;
   typedef Halfedge                         Value;
-  typedef typename VDA::Edges_iterator     Base_iterator;
+  typedef typename VDA::Edge_iterator      Base_iterator;
   
   typedef Iterator_adaptor_base<VDA,Self,Base_iterator,Value> Base;
 
