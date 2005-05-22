@@ -47,10 +47,9 @@ OutputIterator locate(const Arrangement& arr,
 {
   // Arrangement types:
   typedef typename Arrangement::Traits_2               Traits_2;
-  typedef typename Traits::X_monotone_curve_2          Base_X_monotone_curve_2;
+  typedef typename Traits_2::X_monotone_curve_2        Base_X_monotone_curve_2;
   typedef typename Arrangement::Halfedge_const_handle  Halfedge_const_handle;
-  typedef typename Arrangement::Halfedge_const_iterator 
-                                                       Halfedge_const_iterator;
+  typedef typename Arrangement::Edge_const_iterator    Edge_const_iterator;
 
   // Define meta-traits class for the batched point location:
   typedef Arr_batched_point_location_meta_traits
@@ -74,7 +73,8 @@ OutputIterator locate(const Arrangement& arr,
 
   // Go over all arrangement edges.
   std::vector<X_monotone_curve_2>  xcurves_vec;
-  Traits_2::Compare_xy_2    comp_xy = arr->get_traits()->compare_xy_2_object();
+  typename Traits_2::Compare_xy_2    comp_xy =
+    arr.get_traits()->compare_xy_2_object();
   Edge_const_iterator       eit;
 
   for (eit = arr.edges_begin(); eit != arr.edges_end(); ++eit) 
@@ -100,7 +100,7 @@ OutputIterator locate(const Arrangement& arr,
 		   false);
   sweep_line.sweep();
   
-  return (oi);
+  return visitor.get_output_iterator();  // return a past_end iterator
 }
 
 
