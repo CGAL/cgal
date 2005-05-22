@@ -585,8 +585,7 @@ public:
                                const X_monotone_curve_2& cv2,
                                OutputIterator oi)
     {
-      cv1.intersect (cv2, _inter_map, oi);
-      return (oi);
+      return (cv1.intersect (cv2, _inter_map, oi));
     }
   };
 
