@@ -62,10 +62,15 @@ int main()
   Tester test(project_point, project_dual);
 
   RT_Predicate p;
+
+  test.reset_timers();
+
   test("data/empty.cin", p);
   test("data/data1.rt.cin", p);
   test("data/data2.rt.cin", p);
   test("data/degenerate.rt.cin", p);
+
+  test.print_times();
 
   return 0;
 }

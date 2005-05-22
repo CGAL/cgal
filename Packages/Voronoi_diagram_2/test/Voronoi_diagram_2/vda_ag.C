@@ -36,12 +36,16 @@ int main()
 
   Tester test(project_site, project_ag_dual);
 
+  test.reset_timers();
+
   test("data/empty.cin");
   test("data/data1.ag.cin");
   test("data/data2.ag.cin");
   test("data/data3.ag.cin");
   test("data/data4.ag.cin");
   test("data/degenerate.ag.cin");
+
+  test.print_times();
 
   return 0;
 }

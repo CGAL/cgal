@@ -13,7 +13,7 @@ void print_report(const VDA& vda, const Projector& project,
 {
   std::cout << std::endl;
   std::cout << "is Delaunay graph valid? "
-	    << (vda.dual().is_valid(true,1) ? "yes" : "no") << std::endl;
+	    << (vda.dual().is_valid() ? "yes" : "no") << std::endl;
   std::cout << std::endl;
 
 

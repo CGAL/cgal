@@ -44,6 +44,8 @@ int main()
 
   Tester test(project_site, project_primal);
 
+  test.reset_timers();
+
   test("data/empty.cin");
   test("data/complicated.svd.cin");
   test("data/non-degenerate.svd.cin");
@@ -57,6 +59,10 @@ int main()
   test("data/data7.svd.cin");
   test("data/data8.svd.cin");
   test("data/data9.svd.cin");
+  test("data/degenerate1.svd.cin");
+  test("data/degenerate2.svd.cin");
+
+  test.print_times();
 
   return 0;
 }

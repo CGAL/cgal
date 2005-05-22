@@ -25,8 +25,12 @@ int main()
 
   Tester test(project_site, project_dual);
 
+  test.reset_timers();
+
   test("data/empty.cin");
   test("data/data1.pt.cin");
+
+  test.print_times();
 
   return 0;
 }

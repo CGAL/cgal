@@ -54,11 +54,16 @@ int main()
   Tester test(project_point, project_dual);
 
   DT_Predicate p;
+
+  test.reset_timers();
+
   test("data/empty.cin", p);
   test("data/data1.dt.cin", p);
   test("data/data2.dt.cin", p);
   test("data/degenerate1.dt.cin", p);
   test("data/degenerate2.dt.cin", p);
+
+  test.print_times();
 
   return 0;
 }

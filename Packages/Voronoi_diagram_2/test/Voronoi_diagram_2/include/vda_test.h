@@ -2,6 +2,7 @@
 #define VDA_TEST_H 1
 
 #include <CGAL/basic.h>
+#include <CGAL/Timer.h>
 #include <iostream>
 #include <fstream>
 #include <cassert>
@@ -28,6 +29,7 @@ class VDA_Tester
 
   void test_vd(const DG& dg) const
   {
+    
     VD vd(dg);
 
     test_dual_graph_concept( vd.dual() );
@@ -58,10 +60,14 @@ class VDA_Tester
   {
     std::cout << "*** Testing data file: " << fname << std::endl
 	      << std::endl;
-
+    dg_timer_.start();
     DG dg;
     compute_dg(fname, dg);
+    dg_timer_.stop();
+
+    vda_timer_.start();
     test_vd(dg);
+    vda_timer_.stop();
     print_separators();
   }
 
@@ -73,19 +79,42 @@ class VDA_Tester
 
     // if the predicate p is true on the Delaunay graph we do not
     // test further...
+    dg_timer_.start();
     DG dg;
     compute_dg(fname, dg);
-    
+    dg_timer_.stop();
+
+    vda_timer_.start();
     if ( !p(dg) ) {
       test_vd(dg);
     }
 
+    vda_timer_.stop();
     print_separators();
+  }
+
+  double dg_time() const { return dg_timer_.time(); }
+  double vda_time() const { return vda_timer_.time(); }
+  double total_time() const { return dg_time() + vda_time(); }
+  void reset_timers() const {
+    dg_timer_.reset();
+    vda_timer_.reset();
+  }
+
+  void print_times() const {
+    std::cerr << "Elapsed time for the Delaunay graph (sec): "
+	      << dg_time() << std::endl << std::endl;
+    std::cerr << "Elapsed time for the Voronoi diagram adaptor (sec): "
+	      << vda_time() << std::endl << std::endl;
+    std::cerr << "Total elapsed time (sec): " << total_time()
+	      << std::endl << std::endl;
   }
 
  private:
   Projector              project_;
   Dual_primal_projector  dp_project_;
+  mutable CGAL::Timer    dg_timer_;
+  mutable CGAL::Timer    vda_timer_;
 };
 
 #endif // VDA_TEST_H
