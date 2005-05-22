@@ -152,7 +152,7 @@ class Face
   bool is_valid() const {
     if ( vda_ == NULL ) { return true; }
 
-    bool valid = !vda_->face_tester()(vda_->dual(), vda_->edge_tester(), v_);
+    bool valid = !vda_->face_tester()(vda_->dual(), v_);
 
     valid = valid && !vda_->edge_tester()( vda_->dual(),
 					   halfedge()->dual_edge() );

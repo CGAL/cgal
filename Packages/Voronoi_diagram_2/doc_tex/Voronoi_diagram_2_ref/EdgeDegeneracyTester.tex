@@ -30,13 +30,14 @@
 In addition to the types required by the \ccc{AdaptableFunctor}
 concept, a model of this concept must provide the following types:
 
+
+\ccTwo{EdgeDegeneractTester::Dual_graph+}{}
+\ccNestedType{Dual_graph}{A type for the Delaunay graph. It must be
+  model of the \ccc{DelaunayGraph_2} concept.}
 \ccThree{typedef typename Dual_graph::Finite_edges_iterator}
 {Finite_edges_iterator}{}
 \ccThreeToTwo
-
-\ccNestedType{Dual_graph}{A type for the Delaunay graph. It must be
-  model of the \ccc{DelaunayGraph_2} concept.}
-\ccGlue
+%
 \ccTypedef{typedef typename Dual_graph::Edge Edge;}{}
 \ccGlue
 \ccTypedef{typedef typename Dual_graph::Edge_circulator

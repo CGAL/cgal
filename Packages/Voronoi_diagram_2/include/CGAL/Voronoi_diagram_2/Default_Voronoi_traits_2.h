@@ -74,8 +74,9 @@ class Default_cached_Voronoi_traits_2
   typedef Cached_edge_degeneracy_tester<Edge_degeneracy_tester_base>
   Edge_degeneracy_tester;
 
-  typedef Cached_face_degeneracy_tester<Face_degeneracy_tester_base,
-					Edge_degeneracy_tester>
+  //  typedef Cached_face_degeneracy_tester<Face_degeneracy_tester_base,
+  //					Edge_degeneracy_tester>
+  typedef Cached_face_degeneracy_tester<Face_degeneracy_tester_base>
   Face_degeneracy_tester;
 
 
@@ -113,8 +114,9 @@ class Default_ref_counted_Voronoi_traits_2
   typedef Ref_counted_edge_degeneracy_tester<Edge_degeneracy_tester_base>
   Edge_degeneracy_tester;
 
-  typedef Ref_counted_face_degeneracy_tester<Face_degeneracy_tester_base,
-					     Edge_degeneracy_tester>
+  //  typedef Ref_counted_face_degeneracy_tester<Face_degeneracy_tester_base,
+  //					     Edge_degeneracy_tester>
+  typedef Ref_counted_face_degeneracy_tester<Face_degeneracy_tester_base>
   Face_degeneracy_tester;
 
  public:

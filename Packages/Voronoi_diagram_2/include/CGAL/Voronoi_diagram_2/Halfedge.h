@@ -80,8 +80,7 @@ public:
 
   Halfedge_handle opposite() const {
     int cw_i = CW_CCW_2::cw(i_);
-    if ( vda_->face_tester()(vda_->dual(), vda_->edge_tester(),
-			     f_->vertex(cw_i)) ) {
+    if (  vda_->face_tester()(vda_->dual(), f_->vertex(cw_i))  ) {
       Dual_face_handle fopp;
       int iopp;
       find_opposite(f_, i_, fopp, iopp); //equivalent to: twin().next().twin();
@@ -181,7 +180,7 @@ public:
 
     Dual_vertex_handle v = f_->vertex( CW_CCW_2::ccw(i_) );
 
-    valid = valid && !vda_->face_tester()(vda_->dual(),vda_->edge_tester(),v);
+    valid = valid && !vda_->face_tester()(vda_->dual(), v);
 
     Halfedge_handle h_this(*this);
 

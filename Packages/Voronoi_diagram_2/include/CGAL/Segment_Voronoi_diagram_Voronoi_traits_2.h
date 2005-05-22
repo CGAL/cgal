@@ -150,7 +150,7 @@ class SVD_Edge_degeneracy_tester
 //=========================================================================
 //=========================================================================
 
-template<class DG, class Edge_tester>
+template<class DG>
 class SVD_Face_degeneracy_tester
 {
   // tests whether a face has zero area
@@ -165,13 +165,12 @@ class SVD_Face_degeneracy_tester
   typedef typename Dual_graph::Finite_vertices_iterator
   Finite_vertices_iterator;
 
-  typedef Edge_tester                           Edge_degeneracy_tester;
-
   typedef bool           result_type;
-  typedef Arity_tag<3>   Arity;
+  typedef Arity_tag<2>   Arity;
 
  private:
-  typedef SVD_Face_degeneracy_tester<Dual_graph,Edge_degeneracy_tester> Self;
+  typedef SVD_Face_degeneracy_tester<Dual_graph>  Self;
+  typedef SVD_Edge_degeneracy_tester<Dual_graph>  Edge_tester;
 
   typedef typename Dual_graph::Geom_traits      Geom_traits;
   typedef typename Dual_graph::Edge             Edge;
@@ -183,8 +182,7 @@ class SVD_Face_degeneracy_tester
   typedef typename Dual_graph::Site_2           Site_2;
 
  public:
-  bool operator()(const Dual_graph& dual, const Edge_tester& e_tester,
-		  const Vertex_handle& v) const
+  bool operator()(const Dual_graph& dual, const Vertex_handle& v) const
   {
     if ( dual.is_infinite(v) ) { return false; }
 
@@ -204,6 +202,7 @@ class SVD_Face_degeneracy_tester
     size_type n_non_degen = 0;
       
     Edge e[2];
+    Edge_tester e_tester;
     do {
       if ( e_tester(dual, ec) ) { ++n_degen; }
       else if ( dual.is_infinite(ec) ) { ++n_inf; }
@@ -226,7 +225,7 @@ class SVD_Face_degeneracy_tester
     Site_2 s_end[2];
     for (int i = 0; i < 2; i++) {
       CGAL_assertion( !dual.is_infinite(e[i]) );
-      CGAL_assertion( !e_tester(dual, e[i]) );
+      CGAL_expensive_assertion( !e_tester(dual, e[i]) );
 
       Vertex_handle v1 = e[i].first->vertex( dual.ccw(e[i].second) );
       Vertex_handle v2 = e[i].first->vertex( dual.cw(e[i].second) );
@@ -255,21 +254,20 @@ class SVD_Face_degeneracy_tester
     return orientation(s_end[0], s_end[1], v->site()) == COLLINEAR;
   }
 
-  bool operator()(const Dual_graph& dual, const Edge_tester& e_tester,
-		  const Vertex_circulator& vc) const {
-    return operator()(dual, e_tester, Vertex_handle(vc));
+  bool operator()(const Dual_graph& dual, const Vertex_circulator& vc) const {
+    return operator()(dual, Vertex_handle(vc));
   }
 
 #ifndef CGAL_T2_USE_ITERATOR_AS_HANDLE
-  bool operator()(const Dual_graph& dual, const Edge_tester& e_tester,
+  bool operator()(const Dual_graph& dual,
 		  const All_vertices_iterator& vit) const {
-    return operator()(dual, e_tester, Vertex_handle(vit));
+    return operator()(dual, Vertex_handle(vit));
   }
 #endif
 
-  bool operator()(const Dual_graph& dual, const Edge_tester& e_tester,
+  bool operator()(const Dual_graph& dual,
 		  const Finite_vertices_iterator& vit) const {
-    return operator()(dual, e_tester, Vertex_handle(vit));
+    return operator()(dual, Vertex_handle(vit));
   }
 };
 
@@ -281,14 +279,12 @@ class SVD_Face_degeneracy_tester
 template<class SVD2>
 class Segment_Voronoi_diagram_Voronoi_traits_2
   : public CGAL_VORONOI_DIAGRAM_2_NS::Default_Voronoi_traits_2
-  <SVD2,
-   SVD_Edge_degeneracy_tester<SVD2>,
-   SVD_Face_degeneracy_tester<SVD2,SVD_Edge_degeneracy_tester<SVD2> >
+  <SVD2, SVD_Edge_degeneracy_tester<SVD2>, SVD_Face_degeneracy_tester<SVD2>
   >
 {
  private:
   typedef SVD_Edge_degeneracy_tester<SVD2>              Edge_tester;
-  typedef SVD_Face_degeneracy_tester<SVD2,Edge_tester>  Face_tester;
+  typedef SVD_Face_degeneracy_tester<SVD2>              Face_tester;
   typedef CGAL_VORONOI_DIAGRAM_2_NS::Default_Voronoi_traits_2
   <SVD2,Edge_tester,Face_tester>
   Base;
@@ -303,23 +299,12 @@ class Segment_Voronoi_diagram_Voronoi_traits_2
 template<class SVD2>
 class Segment_Voronoi_diagram_cached_Voronoi_traits_2
   : public CGAL_VORONOI_DIAGRAM_2_NS::Default_cached_Voronoi_traits_2
-  <SVD2,
-   SVD_Edge_degeneracy_tester<SVD2>,
-   SVD_Face_degeneracy_tester
-   <SVD2,CGAL_VORONOI_DIAGRAM_2_NS::Cached_edge_degeneracy_tester
-    <SVD_Edge_degeneracy_tester<SVD2> >
-   >
+  <SVD2, SVD_Edge_degeneracy_tester<SVD2>, SVD_Face_degeneracy_tester<SVD2>
   >
 {
  private:
   typedef SVD_Edge_degeneracy_tester<SVD2>            Edge_tester;
-
-  typedef CGAL_VORONOI_DIAGRAM_2_NS::Cached_edge_degeneracy_tester
-  <Edge_tester>
-  Cached_edge_tester;
-
-  typedef SVD_Face_degeneracy_tester<SVD2,Cached_edge_tester>
-  Face_tester;
+  typedef SVD_Face_degeneracy_tester<SVD2>            Face_tester;
 
   typedef CGAL_VORONOI_DIAGRAM_2_NS::Default_cached_Voronoi_traits_2
   <SVD2,Edge_tester,Face_tester>
@@ -335,23 +320,12 @@ class Segment_Voronoi_diagram_cached_Voronoi_traits_2
 template<class SVD2>
 class Segment_Voronoi_diagram_ref_counted_Voronoi_traits_2
   : public CGAL_VORONOI_DIAGRAM_2_NS::Default_ref_counted_Voronoi_traits_2
-  <SVD2,
-   SVD_Edge_degeneracy_tester<SVD2>,
-   SVD_Face_degeneracy_tester
-   <SVD2,CGAL_VORONOI_DIAGRAM_2_NS::Ref_counted_edge_degeneracy_tester
-    <SVD_Edge_degeneracy_tester<SVD2> >
-   >
+  <SVD2, SVD_Edge_degeneracy_tester<SVD2>, SVD_Face_degeneracy_tester<SVD2>
   >
 {
  private:
   typedef SVD_Edge_degeneracy_tester<SVD2>             Edge_tester;
-
-  typedef CGAL_VORONOI_DIAGRAM_2_NS::Ref_counted_edge_degeneracy_tester
-  <Edge_tester>
-  Ref_counted_edge_tester;
-
-  typedef SVD_Face_degeneracy_tester<SVD2,Ref_counted_edge_tester>
-  Face_tester;
+  typedef SVD_Face_degeneracy_tester<SVD2>             Face_tester;
 
   typedef
   CGAL_VORONOI_DIAGRAM_2_NS::Default_ref_counted_Voronoi_traits_2

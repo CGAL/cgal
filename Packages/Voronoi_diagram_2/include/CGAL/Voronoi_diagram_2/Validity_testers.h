@@ -43,11 +43,11 @@ class Edge_validity_tester
   const VDA* vda_;
 
  private:
-  typedef Triangulation_cw_ccw_2                CW_CCW_2;
+  typedef Triangulation_cw_ccw_2                   CW_CCW_2;
   // Base_it is essentially VDA::Edges_iterator_base
-  typedef Base_it                               Edges_iterator_base;
-  typedef typename VDA::Halfedge_handle         Halfedge_handle;
-  typedef typename VDA::Face_degeneracy_tester  Face_degeneracy_tester;
+  typedef Base_it                                  Edges_iterator_base;
+  typedef typename VDA::Halfedge_handle            Halfedge_handle;
+  typedef typename VDA::Dual_graph::Vertex_handle  Dual_vertex_handle;
 
  public:
   Edge_validity_tester(const VDA* vda = NULL) : vda_(vda) {}
@@ -58,12 +58,11 @@ class Edge_validity_tester
     int cw_i = CW_CCW_2::cw( eit->dual_edge().second );
     int ccw_i = CW_CCW_2::ccw( eit->dual_edge().second );
 
-    CGAL_assertion
-      ( !vda_->face_tester()( vda_->dual(), vda_->edge_tester(),
-			      eit->dual_edge().first->vertex(ccw_i) ) );
+    Dual_vertex_handle v_ccw_i = eit->dual_edge().first->vertex(ccw_i);
+    CGAL_assertion(  !vda_->face_tester()(vda_->dual(), v_ccw_i)  );
 
-    if (  !vda_->face_tester()( vda_->dual(), vda_->edge_tester(),
-				eit->dual_edge().first->vertex(cw_i) )   ) {
+    Dual_vertex_handle v_cw_i = eit->dual_edge().first->vertex(cw_i);
+    if (  !vda_->face_tester()(vda_->dual(), v_cw_i)  ) {
       return false;
     }
 

@@ -71,8 +71,7 @@ class Vertex
       //           !vda_->edge_tester()(vda_->dual(), fvalid, i)
       if ( !vda_->edge_tester()(vda_->dual(), fvalid, i) &&
 	   !vda_->dual().is_infinite(fvalid, i) ) {
-	if ( vda_->face_tester()(vda_->dual(), vda_->edge_tester(),
-				 fvalid->vertex(ccw_i)) ) {
+	if ( vda_->face_tester()(vda_->dual(), fvalid->vertex(ccw_i)) ) {
 	  Dual_face_handle fopp;
 	  int iopp, i_mirror = vda_->dual().tds().mirror_index(fvalid, i);
 

@@ -30,14 +30,10 @@
 In addition to the types required by the \ccc{AdaptableFunctor}
 concept, a model of this concept must provide the following types:
 
-\ccTwo{FaceDegeneracyTester::EdgeDegeneracyTester+}{}
+\ccTwo{FaceDegeneracyTester::Dual_graph+}{}
 %
 \ccNestedType{Dual_graph}{A type for the Delaunay graph. It must be
   model of the \ccc{DelaunayGraph_2} concept.}
-\ccGlue
-\ccNestedType{Edge_degeneracy_tester}{A type for a functor that tests
-  whether an edge of the dual Delaunay graph is degenerate. It must be
-  a model of the \ccc{EdgeDegeneracyTester} concept.}
 %
 \ccThree{typedef typename Dual_graph::Finite_vertices_iterator}
 {Finite_vertices_iterator}{}
@@ -68,31 +64,28 @@ concept, a model of this concept must provide the following types:
 \ccOperations
 It must also provide the following operations:
 
-\ccThree{bool}{fdt(Finite_vertices_iterator fvit)+}{}
+\ccThree{bool}{Dual_graph dg, fdt(Finite_vertices_iterator fvit)+}{}
 \ccThreeToTwo
-\ccMemberFunction{bool operator()(Dual_graph dg,
-  Edge_degeneracy_tester et, Vertex_handle v);}
+\ccMemberFunction{bool operator()(Dual_graph dg, Vertex_handle v);}
 {returns \ccStyle{true}, if the dual Voronoi face of \ccc{v} (that
   belongs to the dual Delaunay graph \ccc{dg}) is
   degenerate, i.e., it has zero area.}
 %
 \ccGlue
-\ccMemberFunction{bool operator()(Dual_graph dg,
-  Edge_degeneracy_tester et, Vertex_circulator vc);}
+\ccMemberFunction{bool operator()(Dual_graph dg, Vertex_circulator vc);}
 {returns \ccStyle{true}, if the dual Voronoi face of \ccc{*vc} (that
   belongs to the dual Delaunay graph \ccc{dg}) is
   degenerate, i.e., it has zero area.}
 %
 \ccGlue
-\ccMemberFunction{bool operator()(Dual_graph dg,
-  Edge_degeneracy_tester et, All_vertices_iterator avit);}
+\ccMemberFunction{bool operator()(Dual_graph dg, All_vertices_iterator avit);}
 {returns \ccStyle{true}, if the dual Voronoi face of \ccc{*avit} (that
   belongs to the dual Delaunay graph \ccc{dg}) is
   degenerate, i.e., it has zero area.}
 %
 \ccGlue
 \ccMemberFunction{bool operator()(Dual_graph dg,
-  Edge_degeneracy_tester et, Finite_vertices_iterator fvit);}
+  Finite_vertices_iterator fvit);}
 {returns \ccStyle{true}, if the dual Voronoi face of \ccc{*fvit} (that
   belongs to the dual Delaunay graph \ccc{dg}) is
   degenerate, i.e., it has zero area.}

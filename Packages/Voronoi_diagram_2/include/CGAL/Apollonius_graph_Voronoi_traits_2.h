@@ -103,7 +103,7 @@ class AG_Edge_degeneracy_tester
 //=========================================================================
 //=========================================================================
 
-template<class DG, class Edge_tester>
+template<class DG>
 class AG_Face_degeneracy_tester
 {
   // tests whether a face has zero area
@@ -112,7 +112,6 @@ class AG_Face_degeneracy_tester
   typedef typename Dual_graph::Vertex_handle      Vertex_handle;
   typedef typename Dual_graph::Vertex_circulator  Vertex_circulator;
   typedef typename Dual_graph::Edge               Edge;
-  typedef Edge_tester                             Edge_degeneracy_tester;
 
   typedef typename Dual_graph::Finite_vertices_iterator
   Finite_vertices_iterator;
@@ -121,11 +120,11 @@ class AG_Face_degeneracy_tester
   All_vertices_iterator;
 
   typedef bool           result_type;
-  typedef Arity_tag<3>   Arity;
+  typedef Arity_tag<2>   Arity;
 
  public:
   template<class A>
-  bool operator()(const Dual_graph&, const Edge_tester&, const A& a) const {
+  bool operator()(const Dual_graph&, const A&) const {
     return false;
   }
 };
@@ -138,14 +137,13 @@ class AG_Face_degeneracy_tester
 template<class AG2>
 class Apollonius_graph_Voronoi_traits_2
   : public CGAL_VORONOI_DIAGRAM_2_NS::Default_Voronoi_traits_2
-  <AG2,
-   AG_Edge_degeneracy_tester<AG2>,
-   AG_Face_degeneracy_tester<AG2,AG_Edge_degeneracy_tester<AG2> >
+  <AG2, AG_Edge_degeneracy_tester<AG2>, AG_Face_degeneracy_tester<AG2>
   >
 {
  private:
   typedef AG_Edge_degeneracy_tester<AG2>              Edge_tester;
-  typedef AG_Face_degeneracy_tester<AG2,Edge_tester>  Face_tester;
+  typedef AG_Face_degeneracy_tester<AG2>              Face_tester;
+
   typedef CGAL_VORONOI_DIAGRAM_2_NS::Default_Voronoi_traits_2
   <AG2,Edge_tester,Face_tester>
   Base;
@@ -160,21 +158,12 @@ class Apollonius_graph_Voronoi_traits_2
 template<class AG2>
 class Apollonius_graph_cached_Voronoi_traits_2
   : public CGAL_VORONOI_DIAGRAM_2_NS::Default_cached_Voronoi_traits_2
-  <AG2, AG_Edge_degeneracy_tester<AG2>,
-   AG_Face_degeneracy_tester
-   <AG2,CGAL_VORONOI_DIAGRAM_2_NS::Cached_edge_degeneracy_tester
-    <AG_Edge_degeneracy_tester<AG2> >
-   >
+  <AG2, AG_Edge_degeneracy_tester<AG2>, AG_Face_degeneracy_tester<AG2>
   >
 {
  private:
   typedef AG_Edge_degeneracy_tester<AG2>              Edge_tester;
-
-  typedef CGAL_VORONOI_DIAGRAM_2_NS::Cached_edge_degeneracy_tester<Edge_tester>
-  Cached_edge_tester;
-
-  typedef AG_Face_degeneracy_tester<AG2,Cached_edge_tester>
-  Face_tester;
+  typedef AG_Face_degeneracy_tester<AG2>              Face_tester;
 
   typedef CGAL_VORONOI_DIAGRAM_2_NS::Default_cached_Voronoi_traits_2
   <AG2,Edge_tester,Face_tester>
@@ -189,22 +178,12 @@ class Apollonius_graph_cached_Voronoi_traits_2
 template<class AG2>
 class Apollonius_graph_ref_counted_Voronoi_traits_2
   : public CGAL_VORONOI_DIAGRAM_2_NS::Default_ref_counted_Voronoi_traits_2
-  <AG2, AG_Edge_degeneracy_tester<AG2>,
-   AG_Face_degeneracy_tester
-   <AG2,CGAL_VORONOI_DIAGRAM_2_NS::Ref_counted_edge_degeneracy_tester
-    <AG_Edge_degeneracy_tester<AG2> >
-   >
+  <AG2, AG_Edge_degeneracy_tester<AG2>, AG_Face_degeneracy_tester<AG2>
   >
 {
  private:
   typedef AG_Edge_degeneracy_tester<AG2>              Edge_tester;
-
-  typedef CGAL_VORONOI_DIAGRAM_2_NS::Ref_counted_edge_degeneracy_tester
-  <Edge_tester>
-  Ref_counted_edge_tester;
-
-  typedef AG_Face_degeneracy_tester<AG2,Ref_counted_edge_tester>
-  Face_tester;
+  typedef AG_Face_degeneracy_tester<AG2>              Face_tester;
 
   typedef
   CGAL_VORONOI_DIAGRAM_2_NS::Default_ref_counted_Voronoi_traits_2

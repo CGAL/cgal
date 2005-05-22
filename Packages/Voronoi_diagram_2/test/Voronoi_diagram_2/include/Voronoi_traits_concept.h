@@ -24,7 +24,7 @@ class Voronoi_traits_concept
     typedef typename DG::Finite_edges_iterator  Finite_edges_iterator;
 
     typedef bool           result_type;
-    typedef Arity_tag<1>   Arity;
+    typedef Arity_tag<2>   Arity;
 
     bool operator()(const Dual_graph&, const Edge&) const {
       return false;
@@ -53,15 +53,13 @@ class Voronoi_traits_concept
     typedef typename DG::Finite_vertices_iterator  Finite_vertices_iterator;
 
     typedef bool           result_type;
-    typedef Arity_tag<1>   Arity;
+    typedef Arity_tag<2>   Arity;
 
-    bool operator()(const Dual_graph&, const Edge_degeneracy_tester&,
-		    const Vertex_handle&) const {
+    bool operator()(const Dual_graph&, const Vertex_handle&) const {
       return false;
     }
 
-    bool operator()(const Dual_graph&, const Edge_degeneracy_tester&,
-		    const Vertex_circulator&) const {
+    bool operator()(const Dual_graph&, const Vertex_circulator&) const {
       return false;
     }
   };

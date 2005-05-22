@@ -208,7 +208,7 @@ class Voronoi_diagram_adaptor_2
 
   bool has_empty_Voronoi_cell_interior(const Dual_vertex_handle& v) const
   {
-    return face_tester()(dual(), edge_tester(), v);
+    return face_tester()(dual(), v);
   }
 
 

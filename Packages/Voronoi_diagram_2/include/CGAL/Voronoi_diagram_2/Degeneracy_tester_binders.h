@@ -67,7 +67,7 @@ class Face_degeneracy_tester_binder
   template<class A>
   bool operator()(const A& a) const {
     CGAL_precondition( vda_ != NULL );
-    return vda_->face_tester()(vda_->dual(), vda_->edge_tester(), a);
+    return vda_->face_tester()(vda_->dual(), a);
   }
 
  private:
