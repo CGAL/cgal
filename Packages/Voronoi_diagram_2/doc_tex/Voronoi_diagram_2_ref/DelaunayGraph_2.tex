@@ -98,12 +98,13 @@ that the Voronoi diagram adaptor can use it.
 
 \ccCreationVariable{dg}  %% choose variable name
 
+\ccThree{DelaunayGraph_2}{dg(It begin, It beyond)+}{}
+\ccThreeToTwo
+
 \ccCreation
 In addition to the default and constructors, as well as the assignment
 operator, the following constructors are required.
-\ccThree{DelaunayGraph_2}{dg(It begin, It beyond)+}{}
-\ccThreeToTwo
-%
+
 \ccConstructor{template<class It> DelaunayGraph_2(It begin, It beyond);}
 {Constructor that takes an iterator range. The value type of the
   iterator must be \ccc{Site_2}.}

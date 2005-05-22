@@ -37,8 +37,322 @@ triangulated Delaunay graph and must be a model of the
 \ccc{DelaunayGraph_2} concept. The second template parameter must be a
 model of the \ccc{VoronoiTraits_2} concept.
 
-
 \ccInclude{CGAL/Voronoi_diagram_adaptor_2.h}
+
+
+
+\ccTypes
+
+%\ccThree{typedef Dual_graph::size_type}{Edge_degeneracy_tester+}{}
+\ccThree{typedef VT::Edge_degeneracy_tester}{Edge_degeneracy_tester+}{}
+\ccThreeToTwo
+%
+\ccTypedef{typedef DG  Dual_graph;}{A type for the dual Delaunay graph.}
+\ccGlue
+\ccTypedef{typedef VT Voronoi_traits;}{A type for the traits needed by
+  the Voronoi diagram adaptor.}
+\ccGlue
+\ccTypedef{typedef Dual_graph::size_type size_type;}{A type for sizes.}
+\ccGlue
+\ccTypedef{typedef size_type Size;}{A type for sizes in compliance
+  with the arrangement package API.}
+\ccGlue
+\ccTypedef{typedef VT::Edge_degeneracy_tester Edge_degeneracy_tester;}
+{A type for the degeneracy tester of Voronoi edges as seen in the dual graph.}
+\ccGlue
+\ccTypedef{typedef VT::Face_degeneracy_tester Face_degeneracy_tester;}
+{A type for the degeneracy tester of Voronoi faces as seen in the dual graph.}
+%
+%
+
+The vertices, edges and faces of the Voronoi diagram are accessed
+through \ccc{handles}, \ccc{iterators} and \ccc{circulators}. 
+The iterators and circulators are all bidirectional and non-mutable.
+The circulators and iterators are assignable to the 
+corresponding handle types, and they are also convertible to the
+corresponding handles.
+
+\ccTwo{Voronoi_diagram_adaptor_2<DG,VT>::Unbounded_faces_iterator+}{}
+%
+\ccNestedType{Halfedge}{A type for the halfedges of the Voronoi diagram.}
+\ccGlue
+\ccNestedType{Vertex}{A type for the vertices of the Voronoi diagram.}
+\ccGlue
+\ccNestedType{Face}{A type for the faces of the Voronoi diagram.}
+\ccGlue
+\ccNestedType{Halfedge_handle}{Handle for halfedges.}
+\ccGlue
+\ccNestedType{Vertex_handle}{Handle for vertices.}
+\ccGlue
+\ccNestedType{Face_handle}{Handle for faces.}
+\ccGlue
+\ccNestedType{Edge_iterator}{A type for an iterator over Voronoi
+  edges. Edges are considered non-oriented. Its value type is
+  \ccc{Halfedge}.}
+\ccGlue
+\ccNestedType{Halfedge_iterator}{A type for an iterator over Voronoi
+  halfedges. Halfedges are oriented and come in pairs. Its value type
+  is \ccc{Halfedge}.}
+\ccGlue
+\ccNestedType{Face_iterator}{A type for an iterator over Voronoi
+  faces. Its value type is \ccc{Face}.}
+\ccGlue
+\ccNestedType{Vertex_iterator}{A type for an iterator over Voronoi
+  vertices. Its value type is \ccc{Vertex}.}
+\ccGlue
+%%% difference here with the arrangement API; in the arrangement API
+%%% the value type of the circulator is Ccb_halfedge_circulator.
+\ccNestedType{Holes_iterator}{A type for an iterator to traverse all
+  holes (i.e., inner connected components of the boundary) of a
+  Voronoi face. Its value type is \ccc{Halfedge_handle}. Since Voronoi
+  diagrams supported by the \ccRefName\ class do not have holes in
+  their faces, this iterator is solely defined for compliance with the
+  arrangement package API.}
+\ccGlue
+%%% difference here with the arrangement API; in the arrangement API
+%%% the value type of the circulator is Halfedge.
+\ccNestedType{Halfedge_around_vertex_circulator}{A type for a
+  circulator over the halfedges that have a common vertex as their
+  target. Its value type is \ccc{Halfedge_handle}.}
+\ccGlue
+%%% difference here with the arrangement API; in the arrangement API
+%%% the value type of the circulator is Halfedge.
+\ccNestedType{Ccb_halfedge_circulator}{A type for a circulator over
+  the halfedges of a CCB (connected component of the boundary) of a
+  Voronoi face. Its value type of is \ccc{Halfedge_handle}.}
+\ccGlue
+\ccNestedType{Unbounded_faces_iterator}{A type for an iterator over
+  the unbounded faces of the Voronoi diagram. Its value type is
+  \ccc{Face}.}
+
+\ccCreationVariable{vda}
+
+\ccCreation
+\ccThree{Voronoi_diagram_adaptor_2<DG,VT>}{vda}{}
+\ccThreeToTwo
+%
+\ccConstructor{Voronoi_diagram_adaptor_2(Dual_graph dg, Voronoi_traits
+  tr = Voronoi_traits());}{Creates a Voronoi diagram adaptor for the
+  dual Delaunay graph \ccc{dg} using \ccc{tr} as Voronoi traits. The
+  dual Delaunay graph is copied.}
+%
+
+
+\ccAccessFunctions
+%
+\ccThree{Voronoi_traits}{vda.number_of_halfedges()+}{}
+%
+\ccMethod{Dual_graph dual();}
+{Returns a reference to the dual Delaunay graph.}
+\ccGlue
+\ccMethod{Voronoi_traits voronoi_traits();}
+{Returns a reference to the Voronoi traits.}
+\ccGlue
+\ccMethod{size_type number_of_vertices();}
+{Returns the number of Voronoi vertices.}
+\ccGlue
+\ccMethod{size_type number_of_faces();}
+{Returns the number of Voronoi faces (bounded and unbounded).}
+\ccGlue
+\ccMethod{size_type number_of_halfedges();}
+{Returns the number of halfedges in the Voronoi diagram. This is
+  always an even number.}
+\ccGlue
+\ccMethod{size_type size_of_vertices();}
+{Same as \ccc{number_of_vertices()}.}
+\ccGlue
+\ccMethod{size_type size_of_faces();}
+{Same as \ccc{number_of_faces()}.}
+\ccGlue
+\ccMethod{size_type size_of_halfedges();}
+{Same as \ccc{number_of_halfedges()}.}
+\ccGlue
+\ccMethod{Face_handle unbounded_face();}{Returns one of the unbounded
+  faces of the Voronoi diagram.}
+%
+\ccThree{Edge_degeneracy_tester}{vda.edge_tester()+}{}
+\ccMethod{Edge_degeneracy_tester edge_tester();}{Returns a reference
+  to the edge degeneracy tester.}
+\ccGlue
+\ccMethod{Face_degeneracy_tester face_tester();}{Returns a reference
+  to the face degeneracy tester.}
+
+
+
+\ccHeading{Traversal of the Voronoi diagram}
+
+
+A Voronoi diagram can be seen as a container of faces, vertices and
+halfedges. Therefore the Voronoi diagram provides several iterators
+and circulators that allow to traverse it.
+
+
+
+%\ccHeading{Face, Edge, Halfedge and Vertex Iterators}
+\ccHeading{Iterators}
+
+\ccThree{Unbounded_faces_iterator}{vda.unbounded_faces_begin()+}{}
+
+The following iterators allow respectively to visit the faces (all or
+only the unbounded ones), edges, halfedges and vertices of the Voronoi
+diagram. These iterators are non-mutable, bidirectional and their
+value types are respectively \ccc{Face}, \ccc{Halfedge},
+\ccc{Halfedge} and \ccc{Vertex}.
+Since the Voronoi diagram adaptor is non-mutable, they are never
+invalidated (provided of course that the corresponding instance of the
+Voronoi diagram adaptor has not be destroyed).
+
+\ccMethod{Face_iterator faces_begin();}{Starts at an arbitrary Voronoi face.}
+\ccGlue
+\ccMethod{Face_iterator faces_end();}{Past-the-end iterator.}
+
+\ccMethod{Unbounded_faces_iterator unbounded_faces_begin();}
+{Starts at an arbitrary unbounded Voronoi face.}
+\ccGlue
+\ccMethod{Unbounded_faces_iterator unbounded_faces_end();}
+{Past-the-end iterator.}
+
+\ccMethod{Edge_iterator edges_begin();}{Starts at an arbitrary Voronoi edge.}
+\ccGlue
+\ccMethod{Edge_iterator edges_end();}{Past-the-end iterator.}
+
+\ccMethod{Halfedge_iterator halfedges_begin();}
+{Starts at an arbitrary Voronoi halfedge.}
+\ccGlue
+\ccMethod{Halfedge_iterator halfedges_end();}{Past-the-end iterator.}
+
+\ccMethod{Vertex_iterator vertices_begin();}
+{Starts at an arbitrary Voronoi vertex.}
+\ccGlue
+\ccMethod{Vertex_iterator vertices_end();}{Past-the-end iterator.}
+
+
+
+
+\ccHeading{Circulators}
+
+The Voronoi diagram adaptor also provides circulators that allow to visit 
+all halfedges incident to a given vertex and all halfedges
+on the boundary of a connected component of the boundary (CCB) of a
+Voronoi face. These circulators are non-mutable and bidirectional.
+The operator \ccc{operator++} moves the former circulator counterclockwise
+around the vertex while the \ccc{operator--} moves clockwise.
+The latter circulator is moved by the operator \ccc{operator++} to the
+next halfedge on the boundary in the counterclockwise sense, while
+\ccc{operator--} moves clockwise.
+Given that the Voronoi diagram adaptor is non-mutable, the
+afore-mentioned circulators are never invalidated (provided of course
+that the corresponding instance of the Voronoi diagram adaptor has not
+be destroyed).
+
+\ccThree{Ccb_halfedge_circulator}{vda.ccb_halfedges(Face_handle f)+}{}
+\ccThreeToTwo
+%
+\ccMethod{Ccb_halfedge_circulator ccb_halfedges(Face_handle f);}
+{Starts at an arbitrary halfedge on the boundary of the Voronoi face
+  \ccc{*f}.}
+\ccGlue
+\ccMethod{Ccb_halfedge_circulator ccb_halfedges(Face_handle f,
+  Halfedge_handle h);} 
+{Returns a circulator over the halfedges on the boundary of
+  \ccc{*f}. The circulator is initialized with the halfedge \ccc{*h}.
+  \ccPrecond{The halfedge \ccc{*h} must lie on the boundary of \ccc{*f}.}}
+
+\ccThree{Halfedge_around_vertex_circulator}{vda.incident_halfedges+}{}
+%{vda.incident_halfedges(Vertex_handle v)+}{}
+\ccThreeToTwo
+%
+\ccMethod{Halfedge_around_vertex_circulator
+  incident_halfedges(Vertex_handle v);}
+{Starts at an arbitrary halfedge incident to Voronoi vertex \ccc{*v}.}
+\ccGlue
+\ccMethod{Halfedge_around_vertex_circulator
+  incident_halfedges(Vertex_handle v, Halfedge_handle h);}
+{Returns a circulator over the halfedges incident to the Voronoi
+  vertex \ccc{*v}. The circulator is initialized with the halfedge
+  \ccc{*h}.
+  \ccPrecond{The halfedge \ccc{*h} must be incident to \ccc{*v}.}}
+
+
+%% \ccHeading{Nearest neighbor location}
+%% \ccThree{Vertex_handle }{ag.nearest_neighbor(Point_2 p)+}{}
+%% %
+%% \ccMethod{Vertex_handle  nearest_neighbor(Point_2 p);}
+%% {Finds the nearest neighbor of the point \ccc{p}. In other words it
+%% finds the site whose Apollonius cell contains \ccc{p}. Ties are broken
+%% arbitrarily and one of the nearest neighbors of \ccc{p} is
+%% returned. If there are no visible sites in the Apollonius diagram
+%% \ccc{Vertex_handle(NULL)} is returned.}
+%% \ccGlue
+%% \ccMethod{Vertex_handle  nearest_neighbor(Point_2 p,
+%% Vertex_handle vnear);}{Finds the nearest neighbor of the point
+%% \ccc{p} using the site associated with \ccc{vnear} as an
+%% estimate for the nearest neighbor of \ccc{p}. Ties are broken
+%% arbitrarily and one of the nearest neighbors of \ccc{p} is
+%% returned. If there are no visible sites in the Apollonius diagram
+%% \ccc{Vertex_handle(NULL)} is returned.}
+
+%% \ccHeading{I/O}
+%% \ccThree{Stream& }{}
+%% {\ccc{Stream& operator<<(Stream&, Gt::Hyperbola_segment_2)+}}
+%% %
+%% \ccMethod{template< class Stream >
+%% Stream& draw_primal(Stream& str);}{Draws the Apollonius graph to
+%% the stream \ccc{str}.
+%% \ccPrecond{The following operators must be defined:\\
+%% \ccc{Stream& operator<<(Stream&, Gt::Segment_2)},\\
+%% \ccc{Stream& operator<<(Stream&, Gt::Ray_2)}.}
+%% }
+%% \ccGlue
+%% \ccMethod{template < class Stream > 
+%% Stream& draw_dual(Stream& str);}{Draws the dual of the
+%% Apollonius graph, i.e., the Apollonius diagram, to the stream
+%% \ccc{str}.
+%% \ccPrecond{The following operators must be defined:\\
+%% \ccc{Stream& operator<<(Stream&, Gt::Segment_2)},\\
+%% \ccc{Stream& operator<<(Stream&, Gt::Ray_2)},\\
+%% \ccc{Stream& operator<<(Stream&, Gt::Line_2)}.}
+%% }
+%% \ccGlue
+%% \ccMethod{template< class Stream >
+%% Stream& draw_primal_edge(Edge e, Stream& str);}{Draws the edge
+%%   \ccc{e} of the Apollonius graph to the stream \ccc{str}.
+%% \ccPrecond{The following operators must be defined:\\
+%% \ccc{Stream& operator<<(Stream&, Gt::Segment_2)},\\
+%% \ccc{Stream& operator<<(Stream&, Gt::Ray_2)}.}
+%% }
+%% \ccGlue
+%% \ccMethod{template< class Stream >
+%% Stream& draw_dual_edge(Edge e, Stream& str);}{Draws the dual of the
+%%   edge \ccc{e} to the stream \ccc{str}. The dual of \ccc{e} is an edge
+%%   of the Apollonius diagram.
+%% \ccPrecond{The following operators must be defined:\\
+%% \ccc{Stream& operator<<(Stream&, Gt::Segment_2)},\\
+%% \ccc{Stream& operator<<(Stream&, Gt::Ray_2)},\\
+%% \ccc{Stream& operator<<(Stream&, Gt::Line_2)}.}
+%% }
+
+
+
+\ccHeading{Validity check}
+\ccThree{bool}{vda.is_valid()+}{}
+%
+% MK:: change the output stream in the code
+\ccMethod{bool is_valid();}{Checks the validity of the dual Delaunay
+  graph and the Voronoi diagram adaptor.}
+
+%% \ccHeading{Miscellaneous}
+%% \ccThree{void}{ag.swap(& other)+}{}
+%% %
+%% \ccMethod{void clear();}{Clears all contents of the Apollonius graph.}
+%% \ccGlue
+%% % MK:: add this method make copy(...) protected and see doc of TDS
+%% \ccMethod{void swap(Apollonius_graph_2<Gt,Agds>
+%% other);}{The Apollonius graphs
+%% \ccc{other} and \ccVar\ are swapped. \ccVar.\ccc{swap(other)} should
+%% be preferred to \ccVar\ccc{ = other} or to \ccVar\ccc{(other)} if
+%% \ccc{other} is deleted afterwards.}
+
 
 
 \ccSeeAlso
@@ -59,8 +373,4 @@ model of \ccc{DelaunayGraph_2}\\
 
 \end{ccRefClass}
 
-% +------------------------------------------------------------------------+
-%%RefPage: end of main body, begin of footer
-% EOF
-% +------------------------------------------------------------------------+
-
+%% EOF
