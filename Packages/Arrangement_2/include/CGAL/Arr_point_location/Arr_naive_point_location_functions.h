@@ -113,22 +113,9 @@ Object Arr_naive_point_location<Arrangement>::_vertical_ray_shoot
     (const Point_2& p,
      bool shoot_up) const
 {
-  // set the flags for comparison acording to the ray direction.
-  Comparison_result res;
-  Comparison_result point_above_under;
-  Comparison_result curve_above_under;
-  bool              in_x_range;
-
-  if (shoot_up)
-  {
-    point_above_under = SMALLER;
-    curve_above_under = LARGER;
-  }
-  else
-  {
-    point_above_under = LARGER;
-    curve_above_under = SMALLER;
-  }
+  // Set the results for comparison acording to the ray direction.
+  const Comparison_result point_above_under = (shoot_up ? SMALLER : LARGER);
+  const Comparison_result curve_above_under = (shoot_up ? LARGER : SMALLER);
 
   // Go over all halfedges in the arrangement.
   typename Traits_wrapper_2::Is_in_x_range_2      is_in_x_range = 
@@ -142,6 +129,8 @@ Object Arr_naive_point_location<Arrangement>::_vertical_ray_shoot
 
   typename Arrangement::Edge_const_iterator    eit = p_arr->edges_begin();
   typename Arrangement::Halfedge_const_handle  closest_edge;
+  Comparison_result                            res;
+  bool                                         in_x_range;
   bool                                         found = false;
   
   while (eit != p_arr->edges_end())

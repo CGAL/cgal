@@ -625,21 +625,21 @@ public:
   /// \name Overriden functors.
   //@{
 
-  class Are_mergible_2
+  class Are_mergeable_2
   {
   public:
     /*!
      * Check whether it is possible to merge two given x-monotone curves.
      * \param cv1 The first curve.
      * \param cv2 The second curve.
-     * \return (true) if the two curves are mergible - if they are supported
+     * \return (true) if the two curves are mergeable - if they are supported
      *         by the same line and share a common endpoint; (false) otherwise.
      */
     bool operator() (const X_monotone_curve_2& cv1,
                      const X_monotone_curve_2& cv2) const
     {
       // The function is implemented based on the Has_merge category.
-      return (_are_mergible_imp (cv1, cv2, Has_merge_category()));
+      return (_are_mergeable_imp (cv1, cv2, Has_merge_category()));
     }
 
   private:
@@ -647,30 +647,30 @@ public:
     /*!
      * Implementation of the operator() in case the HasMerge tag is true.
      */
-    bool _are_mergible_imp (const X_monotone_curve_2& cv1,
-                            const X_monotone_curve_2& cv2,
-                            Tag_true) const
+    bool _are_mergeable_imp (const X_monotone_curve_2& cv1,
+			     const X_monotone_curve_2& cv2,
+			     Tag_true) const
     {
       Base                    tr;
-      return (tr.are_mergible_2_object() (cv1, cv2));      
+      return (tr.are_mergeable_2_object() (cv1, cv2));      
     }
 
     /*!
      * Implementation of the operator() in case the HasMerge tag is false.
      */
-    bool _are_mergible_imp (const X_monotone_curve_2& ,
-                            const X_monotone_curve_2& ,
-                            Tag_false) const
+    bool _are_mergeable_imp (const X_monotone_curve_2& ,
+			     const X_monotone_curve_2& ,
+			     Tag_false) const
     {
       // Curve merging is not supported:
       return (false);
     }
   };
 
-  /*! Get an Are_mergible_2 functor object. */
-  Are_mergible_2 are_mergible_2_object () const
+  /*! Get an Are_mergeable_2 functor object. */
+  Are_mergeable_2 are_mergeable_2_object () const
   {
-    return Are_mergible_2();
+    return Are_mergeable_2();
   }
 
   class Merge_2
@@ -681,8 +681,8 @@ public:
      * \param cv1 The first curve.
      * \param cv2 The second curve.
      * \param c Output: The merged curve.
-     * \pre The two curves are mergible, that is they are supported by the same
-     *      line and share a common endpoint.
+     * \pre The two curves are mergeable, that is they are supported by the
+     *      curve line and share a common endpoint.
      */
     void operator() (const X_monotone_curve_2& cv1,
                      const X_monotone_curve_2& cv2,

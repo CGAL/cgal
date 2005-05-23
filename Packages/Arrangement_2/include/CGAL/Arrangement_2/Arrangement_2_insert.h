@@ -1415,7 +1415,7 @@ arr_remove_edge (Arrangement& arr,
       e2 = *circ;
 
       // Check if it is possible to merge the two edges.
-      if (traits->are_mergible_2_object() (e1.curve(), e2.curve()))
+      if (traits->are_mergeable_2_object() (e1.curve(), e2.curve()))
       {
         // Merge the two curves.
         typename Arrangement::X_monotone_curve_2   cv;

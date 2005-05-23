@@ -830,7 +830,7 @@ public:
   /*!
    * Merge the current arc with the given arc.
    * \param arc The arc to merge with.
-   * \pre The two arcs are mergible.
+   * \pre The two arcs are mergeable.
    */
   void merge (const Self& arc)
   {

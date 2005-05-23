@@ -595,14 +595,14 @@ public:
     return (Intersect_2 (const_cast<Intersection_map&> (inter_map)));
   }
 
-  class Are_mergible_2
+  class Are_mergeable_2
   {
   public:
     /*!
      * Check whether it is possible to merge two given x-monotone curves.
      * \param cv1 The first curve.
      * \param cv2 The second curve.
-     * \return (true) if the two curves are mergible - if they are supported
+     * \return (true) if the two curves are mergeable - if they are supported
      *         by the same line and share a common endpoint; (false) otherwise.
      */
     bool operator() (const X_monotone_curve_2& cv1,
@@ -612,10 +612,10 @@ public:
     }
   };
 
-  /*! Get an Are_mergible_2 functor object. */
-  Are_mergible_2 are_mergible_2_object () const
+  /*! Get an Are_mergeable_2 functor object. */
+  Are_mergeable_2 are_mergeable_2_object () const
   {
-    return Are_mergible_2();
+    return Are_mergeable_2();
   }
 
   class Merge_2
@@ -626,8 +626,8 @@ public:
      * \param cv1 The first curve.
      * \param cv2 The second curve.
      * \param c Output: The merged curve.
-     * \pre The two curves are mergible, that is they are supported by the same
-     *      line and share a common endpoint.
+     * \pre The two curves are mergeable, that is they are supported by the
+     *      same conic curve and share a common endpoint.
      */
     void operator() (const X_monotone_curve_2& cv1,
                      const X_monotone_curve_2& cv2,
