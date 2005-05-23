@@ -212,15 +212,32 @@ public:
     return m_rightCurves.end();
   }
 
-
+  /*! Returns a reverse_iterator to the first curve of the reversed list
+      of the right curves of the event */
   SubCurveRevIter right_curves_rbegin()
   {
     return m_rightCurves.rbegin();
   }
 
+  /*! Returns a reverse_iterator to the past-end curve of the reversed list
+      of the right curves of the event */
   SubCurveRevIter right_curves_rend()
   {
     return m_rightCurves.rend();
+  }
+
+  /*! Returns a reverse_iterator to the first curve of the reversed list
+      of the left curves of the event */
+  SubCurveRevIter left_curves_rbegin()
+  {
+    return m_leftCurves.rbegin();
+  }
+
+  /*! Returns a reverse_iterator to the past-end curve of the reversed list
+      of the left curves of the event */
+  SubCurveRevIter left_curves_rend()
+  {
+    return m_leftCurves.rend();
   }
 
 

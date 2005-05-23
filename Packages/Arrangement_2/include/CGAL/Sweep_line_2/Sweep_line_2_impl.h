@@ -440,11 +440,6 @@ protected:
   void _handle_left_curves()
   { 
     SL_DEBUG(std::cout << "Handling left curve" << std::endl;);
-    SL_DEBUG(if (m_currentEvent->left_curves_begin() != 
-		 m_currentEvent->left_curves_end() )
-             {
-               m_currentEvent->Print();
-             });
 
     // For each left-curve, if it is the "last" subcurve, i.e., the 
     // event point is the right-edge of the original curve, the 
@@ -503,8 +498,22 @@ protected:
     }
         
     m_is_event_on_above = false; 
+
+    SL_DEBUG(std::cout<<"left curves before sorting: "<<"\n";);
+    SL_DEBUG(if (m_currentEvent->left_curves_begin() != 
+		 m_currentEvent->left_curves_end() )
+             {
+               m_currentEvent->Print();
+             });
     _sort_left_curves();
     m_visitor->before_handle_event(m_currentEvent);
+
+    SL_DEBUG(std::cout<<"left curves after sorting: "<<"\n";);
+    SL_DEBUG(if (m_currentEvent->left_curves_begin() != 
+		 m_currentEvent->left_curves_end() )
+             {
+               m_currentEvent->Print();
+             });
 
      // Check if the curve should be removed for good.
     bool remove_for_good = false; 
@@ -793,7 +802,7 @@ protected:
   }
 
   /*! Compute intersections between the two given curves. */ 
-  void _intersect(Subcurve *c1, Subcurve *c2);
+  void _intersect(Subcurve *c1, Subcurve *c2, bool after_remove = false);
 
   /*! Remove a curve from the status line. */
   void _remove_curve_from_status_line (Subcurve *leftCurve,
@@ -1029,7 +1038,7 @@ _remove_curve_from_status_line(Subcurve *leftCurve, bool remove_for_good)
     StatusLineIter next = sliter; ++next;
     
     // intersect *next with  *prev 
-    _intersect(*prev, *next);
+    _intersect(*prev, *next, true);
   }
   m_statusLine.remove_at(sliter);
   SL_DEBUG(std::cout << "remove_curve_from_status_line Done\n";)
@@ -1042,6 +1051,8 @@ _remove_curve_from_status_line(Subcurve *leftCurve, bool remove_for_good)
  * event.
  * @param curve1 a pointer to the first curve
  * @param curve2 a pointer to the second curve
+ * @param after_remove a boolean indicates if the intersection inovoked 
+ *        by removing some curve from the Y-str     
  * @return true if the two curves overlap.
 */
 
@@ -1051,14 +1062,13 @@ template < class SweepLineTraits_2,
 inline void 
 Sweep_line_2_impl<SweepLineTraits_2,SweepEvent,CurveWrap,SweepVisitor,
                   Allocator>::
-_intersect(Subcurve *c1, Subcurve *c2)
+_intersect(Subcurve *c1, Subcurve *c2, bool after_remove)
 {
   SL_DEBUG(std::cout << "Looking for intersection between:\n\t";)
   SL_DEBUG(c1->Print();)
   SL_DEBUG(std::cout << "\t";)
   SL_DEBUG(c2->Print();)
   SL_DEBUG(std::cout << "\n";)
-  SL_DEBUG(std::cout << "relative to " << m_currentEvent->get_point() << "\n";)
 
   CGAL_assertion(c1 != c2);
   
@@ -1077,16 +1087,33 @@ _intersect(Subcurve *c1, Subcurve *c2)
                                          c2->get_last_curve(),
                                          vi);
  
-  if(vi == vi_end) return; // no intersection at all
+  if(vi == vi_end) 
+  {
+    SL_DEBUG(std::cout<<"no intersection...\n";);
+    return; // no intersection at all
+  }
   
   // BZBZ
   // the two subCurves may start at the same point, in that case we will
-  // ignore the first intersection point (if we got to that stage, they cannt 
-  // be overlap
+  // ignore the first intersection point (if we got to that stage, they cannot 
+  // be overlap )
   if((SweepEvent*)c1->get_left_event() == m_currentEvent &&
      (SweepEvent*)c2->get_left_event() == m_currentEvent)
   {
      ++vi;
+  }
+
+
+  if(after_remove)
+  {
+    for( ; vi != vi_end ; ++vi)
+    {
+      std::pair<Point_2,unsigned int> xp_point;
+      CGAL::assign(xp_point, *vi); // TODO: add an assertion
+      if(m_traits.compare_xy_2_object()(m_currentEvent->get_point(),
+                                      xp_point.first) ==  SMALLER)
+        break;
+    }
   }
 
   for( ; vi != vi_end ; ++vi)
@@ -1107,6 +1134,7 @@ _intersect(Subcurve *c1, Subcurve *c2)
     {
       xp = xp_point.first;
       multiplicity = xp_point.second;
+      SL_DEBUG(std::cout<<"found an intersection point: " << xp << "\n";);
     }
 
   
@@ -1130,6 +1158,7 @@ _intersect(Subcurve *c1, Subcurve *c2)
       e->push_back_curve_to_left(c1);
       e->push_back_curve_to_left(c2);
       
+      //multiplicity = 0;  //TODO : remove !!!
       // Act according to the multiplicity:
       if (multiplicity == 0)
       {
@@ -1143,7 +1172,8 @@ _intersect(Subcurve *c1, Subcurve *c2)
 	{
 	  // The mutiplicity of the intersection point is odd: Swap their
 	  // order to the right of this point.
-          e->add_pair_curves_to_right(c2,c1);
+    std::swap(c1,c2);
+          e->add_pair_curves_to_right(c1,c2);
         }
 	else
         {

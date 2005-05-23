@@ -64,7 +64,7 @@ public:
       m_arr_access (*arr)
   {}
 
-  void attach(Sweep_line *sl)
+  void attach(void *sl)
   {
     m_sweep_line = sl;
   }
@@ -191,7 +191,7 @@ public:
 
     if(lastEvent->get_insert_info()->dec_right_curves_counter() == 0)
     {
-      m_sweep_line->deallocate_event(lastEvent);
+      (static_cast<Sweep_line*>(m_sweep_line))->deallocate_event(lastEvent);
     }
   }
 
@@ -207,7 +207,7 @@ public:
      
   Arr               *m_arr;
   Arr_accessor<Arr>  m_arr_access;
-  Sweep_line        *m_sweep_line;
+  void              *m_sweep_line;
   Event             *m_currentEvent;
 };
 
