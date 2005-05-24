@@ -263,6 +263,12 @@ class QPE_basis_inverse {
     template < class ForIt1, class ForIt2 >                     // LP case
     void  update_inplace_LP_( ForIt1 x_x_it, ForIt2 y_x_it,
 			      const ET&  d_new, const ET&  d_old);
+			      
+    template < class ForIt >                                  // QP case only
+    void  z_update_inplace_( ForIt psi1_l_it, ForIt psi1_x_it,
+                            ForIt psi2_l_it, ForIt psi2_x_it,
+			    const ET& omega0, const ET& omega1,
+			    const ET& omega2, const ET& omega3); 
 
     void  update_entry( ET& entry,   const ET& d_new,
 			const ET& y, const ET& d_old) const;
@@ -983,6 +989,74 @@ class QPE_basis_inverse {
             }
         }
     }
+    
+    
+    template < class ForIt >                                  // QP case only
+    void  z_update_inplace( ForIt psi1_l_it, ForIt psi1_x_it,
+                            ForIt psi2_l_it, ForIt psi2_x_it,
+			    const ET& omega0, const ET& omega1,
+			    const ET& omega2, const ET& omega3)
+    {
+        typename Matrix::      iterator  matrix_it;
+        typename Row   ::      iterator     row_it;
+        typename Row   ::const_iterator      y_it1_r, y_it1_c, y_it2_r, y_it2_c;
+	
+	unsigned int  row, col, k = l+b;
+	ET           u_elem;
+
+        // rows: 0..s-1  ( P )
+	for (  row = 0, matrix_it = M.begin(),
+	       y_it1_r = psi1_l_it,  y_it2_r = psi2_l_it;
+	       row < s;
+	       ++row, ++matrix_it, ++y_it1_r, ++y_it2_r  ) {
+	      
+            // columns: 0..row  ( P )
+            for (   row_it =  matrix_it->begin(),
+	            y_it1_c = psi1_l_it,  y_it2_c = psi2_l_it;
+                    row_it != matrix_it->end();
+                  ++row_it,  ++y_it1_c,  ++y_it2_c            ) {
+                
+		u_elem = *y_it1_r * *y_it2_c + *y_it2_r * *y_it1_c;
+		u_elem *= omega2;
+		u_elem += omega1 * *y_it1_r * *y_it1_c;
+                update_entry( *row_it, omega0, u_elem, omega3);
+            } 
+	}
+	
+	// rows: l..k-1  ( Q R )
+	for (  row = l, matrix_it = M.begin()+l,
+	       y_it1_r = psi1_x_it,  y_it2_r = psi2_x_it;
+	       row != k;
+	     ++row,  ++matrix_it,  ++y_it1_r,  ++y_it2_r ) {
+	    
+            // columns: 0..s-1  ( Q )
+            for (   col = 0,   row_it =  matrix_it->begin(),
+	            y_it1_c = psi1_l_it,  y_it2_c = psi2_l_it;
+                    col < s;
+                  ++col, ++row_it,  ++y_it1_c,  ++y_it2_c     ){
+    
+                u_elem = *y_it1_r * *y_it2_c + *y_it2_r * *y_it1_c;
+		u_elem *= omega2;
+		u_elem += omega1 * *y_it1_r * *y_it1_c; 
+		update_entry( *row_it, omega0, u_elem, omega3);
+            }
+    
+            // columns: l..k-1  ( R )
+            for (  row_it = matrix_it->begin()+l,
+	           y_it1_c = psi1_x_it,  y_it2_c = psi2_x_it;
+                   row_it != matrix_it->end();
+                 ++row_it,  ++y_it1_c,  ++y_it2_c            ){
+		 
+		u_elem = *y_it1_r * *y_it2_c + *y_it2_r * *y_it1_c;
+		u_elem *= omega2;
+		u_elem += omega1 * *y_it1_r * *y_it1_c;     
+                update_entry( *row_it, omega0, u_elem, omega3);
+            }
+	    
+	} 
+    } 
+
+    
     
     template < class RandomAccessIterator >
     typename std::iterator_traits<RandomAccessIterator>::value_type 
