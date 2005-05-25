@@ -192,6 +192,43 @@ class QPE_basis_inverse {
     
     // replacing of original by slack variable (update type U8)
     void  enter_slack_leave_original( );
+    
+    
+    // replacing of original by original variable with precondition in QP-case
+    // for phaseII                               (update type UZ_1)
+    template < class ForwardIterator >
+    void  z_replace_original_by_original(ForwardIterator y_l_it,
+                                         ForwardIterator y_x_it, const ET& k_2,
+					 unsigned int k_i);
+
+
+    // replacing of original by slack variable with precondition in QP-case
+    // for phaseII                               (update type UZ_2)
+    void  z_replace_original_by_slack(unsigned int k_j, unsigned int k_i);
+
+
+    // replacing of slack by original variable with precondition in QP-case
+    // for phaseII                               (update type UZ_3)
+    template < class ForwardIterator >
+    void  z_replace_slack_by_original(ForwardIterator y_l_it,
+                                      ForwardIterator y_x_it,
+				      ForwardIterator u_x_it, const ET& kappa,
+				      const ET& nu);
+
+
+    // replacing of slack by slack variable with precondition in QP-case
+    // for phaseII                               (update type UZ_4)
+    template < class ForwardIterator >
+    void  z_replace_slack_by_slack(ForwardIterator u_x_it, unsigned int k_j);
+
+    // copying of reduced basis inverse row in (upper) C-block
+    template < class OutIt >
+    void  copy_row_in_C(OutIt y_l_it, OutIt y_x_it, unsigned int k);
+    
+    // copying of reduced basis inverse row in (lower) B_O-block
+    template < class OutIt >
+    void  copy_row_in_B_O(OutIt y_l_it, OutIt y_x_it, unsigned int k);
+
 
     // swap functions
     void  swap_variable( unsigned int j)                // ``to the end'' of R
@@ -221,8 +258,8 @@ class QPE_basis_inverse {
 
     CGAL::Verbose_ostream&   vout;      // used for diagnostic output
 
-    Row                      x_l;       // used in the 
-    Row                      x_x;       // update functions
+    Row                      x_l, tmp_l;  // used in the 
+    Row                      x_x, tmp_x;  // update functions
 
     // private member functions
     // ------------------------
@@ -310,6 +347,10 @@ class QPE_basis_inverse {
 
         if ( x_x.size() < art_size) {
             x_x.insert( x_x.end(), art_size-x_x.size(), et0);
+        }
+	
+        if ( tmp_x.size() < art_size) {
+            tmp_x.insert( tmp_x.end(), art_size-tmp_x.size(), et0);
         }
         
         CGAL_qpe_debug {
@@ -425,6 +466,7 @@ class QPE_basis_inverse {
         } else {
             row_it = M.insert( M.end(), Row( k, et0))->begin();
             x_x.push_back( et0);
+	    tmp_x.push_back( et0);
         }
     
         // store entries in new row
@@ -730,10 +772,17 @@ class QPE_basis_inverse {
 	CGAL_qpe_precondition(rows >= row);
 	if (rows == row) {
             M.push_back(Row(row+1, et0));
+	    
 	    // do we have to grow x_x?
 	    CGAL_qpe_precondition(x_x.size() >= row-l);
 	    if (x_x.size() == row-l)
 	       x_x.push_back(et0);
+	    
+	    // do we have to grow tmp_x?
+	    CGAL_qpe_precondition(tmp_x.size() >= row-l);
+	    if (tmp_x.size() == row-l)
+	       tmp_x.push_back(et0);
+	    
             CGAL_qpe_postcondition(M[row].size()==row+1);
 	    CGAL_qpe_debug {
                 if ( vout.verbose()) {
