@@ -359,7 +359,7 @@ namespace CircularFunctors {
             return res;
         }
         return res;
-      }
+      };
 
       // We know they overlap, determine the extremities of the common subcurve
       // TODO : We should use std::max and std::min, but they require less_x_2.
@@ -377,6 +377,7 @@ namespace CircularFunctors {
 			     a1.left().circle(1), a1.left().is_left());
 	    assert(arc.left()==a1.left());
 	    assert(arc.right()==arctmp.right());
+	    assert(arc.is_x_monotone());
 	    *res++ = make_object(arc);
 	  }
 	  else {
@@ -386,6 +387,7 @@ namespace CircularFunctors {
 			     a1.left().circle(0), a1.left().is_left());
 	    assert(arc.left()==a1.left());
 	    assert(arc.right()==arctmp.right());
+	    assert(arc.is_x_monotone());
 	    *res++ = make_object(arc);
 	  };
 	}
@@ -396,6 +398,7 @@ namespace CircularFunctors {
 			     a2.left().circle(1), a2.left().is_left());
 	    assert(arc.left()==a2.left());
 	    assert(arc.right()==arctmp.right());
+	    assert(arc.is_x_monotone());
 	    *res++ = make_object(arc);
 	  }
 	  else {
@@ -405,6 +408,7 @@ namespace CircularFunctors {
 			     a2.left().circle(0), a2.left().is_left());
 	    assert(arc.left()==a2.left());
 	    assert(arc.right()==arctmp.right());
+	    assert(arc.is_x_monotone());
 	    *res++ = make_object(arc);
 	  };
       };
@@ -428,12 +432,12 @@ namespace CircularFunctors {
     // We also need to check that these intersection points are on the arc.
     if (is_on_arc<CK>(a1, left) &&
         is_on_arc<CK>(a2, left)) {
-      *res++ = make_object(left);
+      *res++ = make_object(std::make_pair(left,1));
     }
 
     if (is_on_arc<CK>(a1, right) &&
         is_on_arc<CK>(a2, right)) {
-      *res++ = make_object(right);
+      *res++ = make_object(std::make_pair(right,1));
     }
 
     return res;
