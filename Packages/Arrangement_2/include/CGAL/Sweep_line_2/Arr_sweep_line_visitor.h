@@ -114,7 +114,7 @@ public:
       // we have a handle from the previous insert
       if ( hhandle != Halfedge_handle(NULL) )
       {
-        res = m_arr->insert_from_vertex(cv, hhandle);
+        res = m_arr->insert_from_right_vertex(cv, hhandle);
         res = res.twin();
       }
       else
@@ -179,7 +179,7 @@ public:
       }
       else
       {
-        res = m_arr->insert_from_vertex(cv, prev);
+        res = m_arr->insert_from_left_vertex(cv, prev);
       }
     }
     if ( lastEvent->get_num_left_curves() == 0 &&  

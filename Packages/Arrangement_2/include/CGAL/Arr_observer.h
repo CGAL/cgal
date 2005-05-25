@@ -138,8 +138,12 @@ public:
   /*!
    * Notification before the creation of a new edge.
    * \param c The x-monotone curve to be associated with the edge.
+   * \param v1 A handle to the first end-vertex of the edge.
+   * \param v2 A handle to the second end-vertex of the edge.
    */
-  virtual void before_create_edge (const X_monotone_curve_2& /* c */)
+  virtual void before_create_edge (const X_monotone_curve_2& /* c */,
+				   Vertex_handle /* v1 */,
+				   Vertex_handle /* v2 */)
   {}
 
   /*!
@@ -299,6 +303,12 @@ public:
   {}
 
   /*!
+   * Notificaion after the removal of a vertex.
+   */
+  virtual void after_remove_vertex ()
+  {}
+
+  /*!
    * Notification before the removal of an edge.
    * \param e A handle to one of the twin halfedges to be deleted.
    */
@@ -306,11 +316,27 @@ public:
   {}
 
   /*!
+   * Notificaion after the removal of an edge.
+   */
+  virtual void after_remove_edge ()
+  {}
+
+  /*!
    * Notification before the removal of a hole.
+   * \param f The face containing the hole.
    * \param h A circulator representing the boundary of the hole.
    */
-  virtual void before_remove_hole (Ccb_halfedge_circulator /* h */)
+  virtual void before_remove_hole (Face_handle /* f */,
+				   Ccb_halfedge_circulator /* h */)
   {}
+
+  /*!
+   * Notificaion after the removal of a hole.
+    * \param f The face that used to contain the hole.
+  */
+  virtual void after_remove_hole (Face_handle /* f */)
+  {}
+
   //@}
 
 };

@@ -98,7 +98,7 @@ public:
   Halfedge_handle locate_around_vertex (Vertex_handle vh,
                                         const X_monotone_curve_2& cv) const
   {
-    Halfedge*  he = p_arr->_locate_around_vertex (_vertex (vh), cv);
+    Halfedge*  he = p_arr->_locate_around_vertex (p_arr->_vertex (vh), cv);
 
     CGAL_assertion (he != NULL);
     return (p_arr->_handle_for (he));

@@ -397,30 +397,56 @@ public:
                                            Face_handle f);
 
   /*!
-   * Insert an x-monotone curve into the arrangement, such that one of its
-   * endpoints corresponds to a given arrangement vertex.
+   * Insert an x-monotone curve into the arrangement, such that its left
+   * endpoint corresponds to a given arrangement vertex.
    * \param cv The given x-monotone curve.
    * \param v The given vertex.
-   * \pre v is one of cv's endpoints.
+   * \pre The left endpoint of cv is incident to the vertex v.
    * \return A handle for one of the halfedges corresponding to the inserted
-   *         curve, which is directed from left to right.
+   *         curve, whose target is the new vertex.
    */
-  Halfedge_handle insert_from_vertex (const X_monotone_curve_2& cv, 
-                                      Vertex_handle v);
+  Halfedge_handle insert_from_left_vertex (const X_monotone_curve_2& cv, 
+					   Vertex_handle v);
 
   /*! 
-   * Insert an x-monotone curve into the arrangement, such that one of its
+   * Insert an x-monotone curve into the arrangement, such that its left
    * endpoints corresponds to a given arrangement vertex, given the exact
    * place for the curve in the circular list around this vertex.
    * \param cv The given x-monotone curve.
    * \param prev The reference halfedge. We should represent cv as a pair
    *             of edges, one of them should become prev's successor.
-   * \pre The target vertex of prev is one of cv's endpoints.
+   * \pre The target vertex of prev is cv's left endpoint.
    * \return A handle for one of the halfedges corresponding to the inserted
    *         curve, whose target is the new vertex that was created.
    */
-  Halfedge_handle insert_from_vertex (const X_monotone_curve_2& cv,
-                                      Halfedge_handle prev);
+  Halfedge_handle insert_from_left_vertex (const X_monotone_curve_2& cv,
+					   Halfedge_handle prev);
+
+  /*!
+   * Insert an x-monotone curve into the arrangement, such that its right
+   * endpoint corresponds to a given arrangement vertex.
+   * \param cv The given x-monotone curve.
+   * \param v The given vertex.
+   * \pre The right endpoint of cv is incident to the vertex v.
+   * \return A handle for one of the halfedges corresponding to the inserted
+   *         curve, whose target is the new vertex.
+   */
+  Halfedge_handle insert_from_right_vertex (const X_monotone_curve_2& cv, 
+					    Vertex_handle v);
+
+  /*! 
+   * Insert an x-monotone curve into the arrangement, such that its right
+   * endpoints corresponds to a given arrangement vertex, given the exact
+   * place for the curve in the circular list around this vertex.
+   * \param cv The given x-monotone curve.
+   * \param prev The reference halfedge. We should represent cv as a pair
+   *             of edges, one of them should become prev's successor.
+   * \pre The target vertex of prev is cv's right endpoint.
+   * \return A handle for one of the halfedges corresponding to the inserted
+   *         curve, whose target is the new vertex that was created.
+   */
+  Halfedge_handle insert_from_right_vertex (const X_monotone_curve_2& cv,
+					    Halfedge_handle prev);
 
   /*! 
    * Insert an x-monotone curve into the arrangement, such that both its
@@ -487,8 +513,8 @@ public:
    * \pre cv1's source and cv2's target equal the endpoints of the curve
    *      currently assoicated with e (respectively), and cv1's target equals
    *      cv2's target, and this is the split point (ot vice versa).
-   * \return A handle for a new halfedge created by the split, whose target is
-   *         the split point.
+   * \return A handle for the halfedge whose source is the source of the the
+   *         original halfedge e, and whose target is the split point.
    */
   Halfedge_handle split_edge (Halfedge_handle e, 
                               const X_monotone_curve_2& cv1, 
@@ -694,6 +720,23 @@ protected:
    */
   bool _find_and_erase_hole (Face *f, Halfedge* e);
 
+  /*! 
+   * Insert an x-monotone curve into the arrangement, such that one of its
+   * endpoints corresponds to a given arrangement vertex, given the exact
+   * place for the curve in the circular list around this vertex.
+   * \param cv The given x-monotone curve.
+   * \param prev The reference halfedge. We should represent cv as a pair
+   *             of edges, one of them should become prev's successor.
+   * \param left_exists If (true), prev related to the vertex associated with
+   *                    the left endpoint of cv. Otherwise it relates to its
+   *                    right endpoint.
+   * \return A pointer to one of the halfedges corresponding to the inserted
+   *         curve, whose target is the new vertex that was created.
+   */
+  Halfedge* _insert_from_vertex (const X_monotone_curve_2& cv,
+				 Halfedge* prev,
+				 bool left_exists);
+
   /*!
    * Insert an x-monotone curve into the arrangement, where the end vertices
    * are given by the target points of two given halfedges.
@@ -839,13 +882,14 @@ private:
       (*iter)->after_create_vertex (v);
   }
 
-  void _notify_before_create_edge (const X_monotone_curve_2& c)
+  void _notify_before_create_edge (const X_monotone_curve_2& c,
+				   Vertex_handle v1, Vertex_handle v2)
   {
     Observers_iterater   iter;
     Observers_iterater   end = observers.end();
 
     for (iter = observers.begin(); iter != end; ++iter)
-      (*iter)->before_create_edge (c);
+      (*iter)->before_create_edge (c, v1, v2);
   }
 
   void _notify_after_create_edge (Halfedge_handle e)
@@ -1025,6 +1069,15 @@ private:
       (*iter)->before_remove_vertex (v);
   }
 
+  void _notify_after_remove_vertex ()
+  {
+    Observers_rev_iterater   iter;
+    Observers_rev_iterater   end = observers.rend();
+
+    for (iter = observers.rbegin(); iter != end; ++iter)
+      (*iter)->after_remove_vertex ();
+  }
+
   void _notify_before_remove_edge (Halfedge_handle e)
   {
     Observers_iterater   iter;
@@ -1034,13 +1087,32 @@ private:
       (*iter)->before_remove_edge (e);
   }
 
-  void _notify_before_remove_hole (Ccb_halfedge_circulator h)
+  void _notify_after_remove_edge ()
+  {
+    Observers_rev_iterater   iter;
+    Observers_rev_iterater   end = observers.rend();
+
+    for (iter = observers.rbegin(); iter != end; ++iter)
+      (*iter)->after_remove_edge ();
+  }
+
+  void _notify_before_remove_hole (Face_handle f,
+				   Ccb_halfedge_circulator h)
   {
     Observers_iterater   iter;
     Observers_iterater   end = observers.end();
 
     for (iter = observers.begin(); iter != end; ++iter)
-      (*iter)->before_remove_hole (h);
+      (*iter)->before_remove_hole (f, h);
+  }
+
+  void _notify_after_remove_hole (Face_handle f)
+  {
+    Observers_rev_iterater   iter;
+    Observers_rev_iterater   end = observers.rend();
+
+    for (iter = observers.rbegin(); iter != end; ++iter)
+      (*iter)->after_remove_hole (f);
   }
   //@}
 

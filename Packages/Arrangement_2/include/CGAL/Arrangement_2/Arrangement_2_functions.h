@@ -231,7 +231,7 @@ Arrangement_2<Traits,Dcel>::insert_in_face_interior
   _notify_after_create_vertex (Vertex_handle (v2));
 
   // Notify the observers that we are about to create a new edge.
-  _notify_before_create_edge (cv);
+  _notify_before_create_edge (cv, Vertex_handle (v1), Vertex_handle (v2));
 
   // Create a pair of twin halfedges connecting the two vertices,
   // and link them together to form a new connected component.
@@ -274,20 +274,19 @@ Arrangement_2<Traits,Dcel>::insert_in_face_interior
 }
 
 //-----------------------------------------------------------------------------
-// Insert an x-monotone curve into the arrangement, such that one of its 
-// endpoints corresponds to a given arrangement vertex.
+// Insert an x-monotone curve into the arrangement, such that its left 
+// endpoint corresponds to a given arrangement vertex.
 //
 template<class Traits, class Dcel>
 typename Arrangement_2<Traits,Dcel>::Halfedge_handle
-Arrangement_2<Traits,Dcel>::insert_from_vertex (const X_monotone_curve_2& cv, 
-                                                Vertex_handle v)
+Arrangement_2<Traits,Dcel>::insert_from_left_vertex
+    (const X_monotone_curve_2& cv, 
+     Vertex_handle v)
 {
   CGAL_precondition_msg 
     (traits->equal_2_object() (v.point(), 
-                               traits->construct_min_vertex_2_object()(cv)) ||
-     traits->equal_2_object() (v.point(), 
-                               traits->construct_max_vertex_2_object()(cv)),
-     "The input vertex should be a curve endpoint.");
+                               traits->construct_min_vertex_2_object()(cv)),
+     "The input vertex should be the left curve endpoint.");
 
   // Go over the incident halfedges around v and find the halfedge after
   // which the new curve should be inserted.
@@ -298,92 +297,86 @@ Arrangement_2<Traits,Dcel>::insert_from_vertex (const X_monotone_curve_2& cv,
      "The inserted curve should not exist in the arrangement.");
 
   // Perform the insertion.
-  return (insert_from_vertex (cv, 
-                              Halfedge_handle(prev)));
+  Halfedge  *new_he = _insert_from_vertex (cv, prev,
+					   true);
+
+  return (Halfedge_handle (new_he));
 }
 
 //-----------------------------------------------------------------------------
-// Insert an x-monotone curve into the arrangement, such that one of its 
-// endpoints corresponds to a given arrangement vertex, given the exact place 
+// Insert an x-monotone curve into the arrangement, such that one its left 
+// endpoint corresponds to a given arrangement vertex, given the exact place 
 // for the curve in the circular list around this vertex.
 //
 template<class Traits, class Dcel>
 typename Arrangement_2<Traits,Dcel>::Halfedge_handle
-Arrangement_2<Traits,Dcel>::insert_from_vertex (const X_monotone_curve_2& cv,
-                                                Halfedge_handle prev)
+Arrangement_2<Traits,Dcel>::insert_from_left_vertex
+    (const X_monotone_curve_2& cv,
+     Halfedge_handle prev)
 {
-  // Check which endpoint matches the existing vertex.
-  const bool   left_exists = 
-    traits->equal_2_object() (prev.target().point(), 
-                              traits->construct_min_vertex_2_object()(cv));
-
   CGAL_precondition_msg
-    (left_exists ||
-     traits->equal_2_object() (prev.target().point(), 
+    (traits->equal_2_object() (prev.target().point(), 
+                               traits->construct_min_vertex_2_object()(cv)),
+     "The input halfedge's target should be the left curve endpoint.");
+
+  // Perform the insertion.
+  Halfedge  *new_he = _insert_from_vertex (cv, prev.p_he,
+					   true);
+
+  return (Halfedge_handle (new_he));
+}
+
+//-----------------------------------------------------------------------------
+// Insert an x-monotone curve into the arrangement, such that its right 
+// endpoint corresponds to a given arrangement vertex.
+//
+template<class Traits, class Dcel>
+typename Arrangement_2<Traits,Dcel>::Halfedge_handle
+Arrangement_2<Traits,Dcel>::insert_from_right_vertex
+    (const X_monotone_curve_2& cv, 
+     Vertex_handle v)
+{
+  CGAL_precondition_msg 
+    (traits->equal_2_object() (v.point(), 
                                traits->construct_max_vertex_2_object()(cv)),
-     "The input halfedge's target should be a curve endpoint.");
+     "The input vertex should be the right curve endpoint.");
 
-  // Get the previous halfedge an its incident face. Note that this will also
-  // be the incident face of the two new halfedges we are about to create. 
-  Halfedge  *p_prev = prev.p_he;
-  Face      *p_f = p_prev->face();
+  // Go over the incident halfedges around v and find the halfedge after
+  // which the new curve should be inserted.
+  Halfedge  *prev = _locate_around_vertex (v.p_v, cv);
 
-  // The first vertex is the one that the prev halfedge points to.
-  // Create a new vertex and associate it with the unmatched endpoint.
-  // We also notify the observers on the creation of this vertex.
-  Stored_point_2 *new_p;
+  CGAL_assertion_msg
+    (prev != NULL,
+     "The inserted curve should not exist in the arrangement.");
 
-  if (left_exists)
-    new_p = new Stored_point_2 (traits->construct_max_vertex_2_object() (cv));
-  else
-    new_p = new Stored_point_2 (traits->construct_min_vertex_2_object() (cv));
+  // Perform the insertion.
+  Halfedge  *new_he = _insert_from_vertex (cv, prev,
+					   false);
 
-  _notify_before_create_vertex (*new_p);
+  return (Halfedge_handle (new_he));
+}
 
-  Vertex         *v1 = p_prev->vertex();  
-  Vertex         *v2 = dcel.new_vertex();
+//-----------------------------------------------------------------------------
+// Insert an x-monotone curve into the arrangement, such that its right 
+// endpoint corresponds to a given arrangement vertex, given the exact place 
+// for the curve in the circular list around this vertex.
+//
+template<class Traits, class Dcel>
+typename Arrangement_2<Traits,Dcel>::Halfedge_handle
+Arrangement_2<Traits,Dcel>::insert_from_right_vertex
+    (const X_monotone_curve_2& cv,
+     Halfedge_handle prev)
+{
+  CGAL_precondition_msg
+    (traits->equal_2_object() (prev.target().point(), 
+                               traits->construct_max_vertex_2_object()(cv)),
+     "The input halfedge's target should be the right curve endpoint.");
 
-  points.push_back (*new_p);
-  v2->set_point (new_p);
+  // Perform the insertion.
+  Halfedge  *new_he = _insert_from_vertex (cv, prev.p_he,
+					   false);
 
-  _notify_after_create_vertex (Vertex_handle (v2));
-
-  // Notify the observers that we are about to create a new edge, and that
-  // we are about to modify the existing vertex v1.
-  _notify_before_create_edge (cv);
-
-  // Create a pair of twin halfedges connecting the two vertices,
-  // and associate them with the given curve.
-  Halfedge       *he1 = dcel.new_edge();
-  Halfedge       *he2 = he1->opposite(); 
-  Stored_curve_2 *dup_cv = new Stored_curve_2 (cv);
-
-  curves.push_back (*dup_cv);
-  he1->set_curve (dup_cv);
-  
-  he1->set_vertex (v1);
-  he2->set_vertex (v2);
-
-  he1->set_face (p_f);
-  he2->set_face (p_f);
-  
-  // Associate the incident halfedge of the new vertex.
-  v2->set_halfedge (he2);
-
-  // Link the new halfedges around the existing vertex v1.
-  he2->set_next (he1);       
-  he1->set_next (p_prev->next());
-  
-  p_prev->set_next (he2);
-
-  // Create a handle to the new halfedge whose target is the new vertex.
-  Halfedge_handle   hh (he2);
-
-  // Notify the observers that we have created a new edge.
-  _notify_after_create_edge (hh);
-
-  // Return a handle to the new halfedge whose target is the new vertex.
-  return (hh);
+  return (Halfedge_handle (new_he));
 }
 
 //-----------------------------------------------------------------------------
@@ -748,9 +741,9 @@ Arrangement_2<Traits,Dcel>::split_edge (Halfedge_handle e,
   // Notify the observers that we have split an edge into two.
   _notify_after_split_edge (Halfedge_handle (he1), Halfedge_handle (he3));
 
-  // Return a handle for one of the new halfedges that is incident to the split
-  // point.
-  return (Halfedge_handle (he4));
+  // Return a handle for one of the existing halfedge that is incident to the 
+  // split point.
+  return (Halfedge_handle (he1));
 }
 
 //-----------------------------------------------------------------------------
@@ -914,9 +907,14 @@ Arrangement_2<Traits,Dcel>::merge_edge (Halfedge_handle e1,
 
   points.erase (merged_pt);
 
-  // Delete the redundant halfedge pair and the merged vertex.
-  dcel.delete_edge (he3);
+  // Delete the merged vertex.
   dcel.delete_vertex (v);
+
+  // Notify the observers that the vertex has been deleted.
+  _notify_after_remove_vertex ();
+
+  // Delete the redundant halfedge pair.
+  dcel.delete_edge (he3);
 
   // Create a handle for one of the merged halfedges.
   Halfedge_handle   hh (he1);
@@ -1416,6 +1414,75 @@ bool Arrangement_2<Traits,Dcel>::_find_and_erase_hole (Face *f, Halfedge* e)
 }
 
 //-----------------------------------------------------------------------------
+// Insert an x-monotone curve into the arrangement, such that one of its
+// endpoints corresponds to a given arrangement vertex, given the exact
+// place for the curve in the circular list around this vertex.
+//
+template<class Traits, class Dcel>
+typename Arrangement_2<Traits,Dcel>::Halfedge*
+Arrangement_2<Traits,Dcel>::_insert_from_vertex (const X_monotone_curve_2& cv,
+						 Halfedge* prev,
+						 bool left_exists)
+{
+  // Get the incident face of the previous halfedge . Note that this will also
+  // be the incident face of the two new halfedges we are about to create.
+  Face      *p_f = prev->face();
+
+  // The first vertex is the one that the prev halfedge points to.
+  // Create a new vertex and associate it with the unmatched endpoint.
+  // We also notify the observers on the creation of this vertex.
+  Stored_point_2 *new_p;
+
+  if (left_exists)
+    new_p = new Stored_point_2 (traits->construct_max_vertex_2_object() (cv));
+  else
+    new_p = new Stored_point_2 (traits->construct_min_vertex_2_object() (cv));
+
+  _notify_before_create_vertex (*new_p);
+
+  Vertex         *v1 = prev->vertex();  
+  Vertex         *v2 = dcel.new_vertex();
+
+  points.push_back (*new_p);
+  v2->set_point (new_p);
+
+  _notify_after_create_vertex (Vertex_handle (v2));
+
+  // Notify the observers that we are about to create a new edge.
+  _notify_before_create_edge (cv, Vertex_handle (v1), Vertex_handle (v2));
+
+  // Create a pair of twin halfedges connecting the two vertices,
+  // and associate them with the given curve.
+  Halfedge       *he1 = dcel.new_edge();
+  Halfedge       *he2 = he1->opposite(); 
+  Stored_curve_2 *dup_cv = new Stored_curve_2 (cv);
+
+  curves.push_back (*dup_cv);
+  he1->set_curve (dup_cv);
+  
+  he1->set_vertex (v1);
+  he2->set_vertex (v2);
+
+  he1->set_face (p_f);
+  he2->set_face (p_f);
+  
+  // Associate the incident halfedge of the new vertex.
+  v2->set_halfedge (he2);
+
+  // Link the new halfedges around the existing vertex v1.
+  he2->set_next (he1);       
+  he1->set_next (prev->next());
+  
+  prev->set_next (he2);
+
+  // Notify the observers that we have created a new edge.
+  _notify_after_create_edge (Halfedge_handle (he2));
+
+  // Return a pointer to the new halfedge whose target is the new vertex.
+  return (he2);
+}
+
+//-----------------------------------------------------------------------------
 // Insert an x-monotone curve into the arrangement, where the end vertices
 // are given by the target points of two given halfedges.
 // The two halfedges should be given such that in case a new face is formed,
@@ -1463,7 +1530,7 @@ Arrangement_2<Traits,Dcel>::_insert_at_vertices (const X_monotone_curve_2& cv,
   CGAL_assertion (ccb2 != NULL);
 
   // Notify the observers that we are about to create a new edge.
-  _notify_before_create_edge (cv);
+  _notify_before_create_edge (cv, Vertex_handle (v1), Vertex_handle (v2));
 
   // Create a pair of twin halfedges connecting v1 and v2 and associate them
   // with the given curve.
@@ -1600,7 +1667,7 @@ Arrangement_2<Traits,Dcel>::_remove_edge (Halfedge *e)
   _notify_before_remove_edge (hh);
 
   // Check if the two incident faces are equal, in which case no face will be
-  // merged and delted (and a hole may be created).
+  // merged and deleted (and a hole may be created).
   if (f1 == f2)
   {
     // Check if the two halfedges are successors along the face boundary.
@@ -1609,33 +1676,46 @@ Arrangement_2<Traits,Dcel>::_remove_edge (Halfedge *e)
       // The two halfedges form a "singleton" hole inside the incident face -
       // remove it. First notify the observers that we are about to remove
       // this hole.
-      _notify_before_remove_hole (Ccb_halfedge_circulator (he1));
+      Face_handle     fh (f1);
+      _notify_before_remove_hole (fh,
+				  Ccb_halfedge_circulator (he1));
 
       // Erase the hole.
       if (! _find_and_erase_hole (f1, he1))
         _find_and_erase_hole (f1, he2);
 
-      // Notify the observers that we are about to delete the two end-vertices.
-      _notify_before_remove_vertex (Vertex_handle (he1->vertex()));
-      _notify_before_remove_vertex (Vertex_handle (he2->vertex()));
+      _notify_after_remove_hole (fh);
 
-      // Delete the two points associated with the end vertices and the curve
-      // associated with the edge to be removed.
+      // Delete the first end-vertex and its associated point.
+      _notify_before_remove_vertex (Vertex_handle (he1->vertex()));
+
       Stored_point_2  *pt1 = 
                        static_cast<Stored_point_2*>(&(he1->vertex()->point()));
+
+      points.erase (pt1);
+      dcel.delete_vertex (he1->vertex());
+
+      _notify_after_remove_vertex ();
+
+      // Delete the second end-vertex and its associated point.
+      _notify_before_remove_vertex (Vertex_handle (he2->vertex()));
+      
       Stored_point_2  *pt2 = 
                        static_cast<Stored_point_2*>(&(he2->vertex()->point()));
 
-      points.erase (pt1);
       points.erase (pt2);
+      dcel.delete_vertex (he2->vertex());
 
+      _notify_after_remove_vertex ();
+
+      // Delete the curve associated with the edge to be removed.
       Stored_curve_2  *p_cv = static_cast<Stored_curve_2*>(&(he1->curve()));
       curves.erase (p_cv);
 
-      // Delete the two end vertices and the pair of twin halfedges.
-      dcel.delete_vertex (he1->vertex());
-      dcel.delete_vertex (he2->vertex());
       dcel.delete_edge (he1);
+
+      // Notify the observers that an edge has been deleted.
+      _notify_after_remove_edge();
 
       // Return the face that used to contain the hole.
       return (f1); 
@@ -1678,23 +1758,25 @@ Arrangement_2<Traits,Dcel>::_remove_edge (Halfedge *e)
       if (he2->vertex()->halfedge() == he2)
           he2->vertex()->set_halfedge (prev1);
 
-      // Notify the observers that we are about to delete a vertex.
+      // Delete the vertex that forms the tip of the "antenna"
       _notify_before_remove_vertex (Vertex_handle (he1->vertex()));
 
-      // Delete the points associated with the tip of the "antenna" and the
-      // curve associated with the edge to be removed.
       Stored_point_2  *pt1 = 
                        static_cast<Stored_point_2*>(&(he1->vertex()->point()));
 
       points.erase (pt1);
+      dcel.delete_vertex (he1->vertex());
 
+      _notify_after_remove_vertex();
+
+      // Delete the curve associated with the edge to be removed.
       Stored_curve_2  *p_cv = static_cast<Stored_curve_2*>(&(he1->curve()));
       curves.erase (p_cv);
 
-      // Remove the vertex that forms the tip of the "antenna", and the pair of
-      // twin halfedges.
-      dcel.delete_vertex (he1->vertex());
       dcel.delete_edge (he1);
+
+      // Notify the observers that an edge has been deleted.
+      _notify_after_remove_edge();
 
       // Return the incident face.
       return (f1); 
@@ -1773,6 +1855,9 @@ Arrangement_2<Traits,Dcel>::_remove_edge (Halfedge *e)
     // Delete the pair of halfedges.
     dcel.delete_edge (he1);
 
+    // Notify the observers that an edge has been deleted.
+    _notify_after_remove_edge();
+
     // Return the incident face.
     return (f1); 
   }
@@ -1846,6 +1931,9 @@ Arrangement_2<Traits,Dcel>::_remove_edge (Halfedge *e)
     // Notify the observers that the faces have been merged.
     _notify_after_merge_face (Face_handle (f1));
 
+    // Notify the observers that an edge has been deleted.
+    _notify_after_remove_edge();
+
     // Return the merged face.
     return (f1); 
   }
@@ -1915,6 +2003,9 @@ Arrangement_2<Traits,Dcel>::_remove_edge (Halfedge *e)
       
   // Notify the observers that the faces have been merged.
   _notify_after_merge_face (Face_handle (f1));
+
+  // Notify the observers that an edge has been deleted.
+  _notify_after_remove_edge();
 
   // Return the merged face.
   return (f1);
