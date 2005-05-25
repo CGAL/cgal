@@ -10,6 +10,7 @@
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Arr_naive_point_location.h>
+//#include <CGAL/Arr_walk_along_line_point_location.h>
 #include <CGAL/Timer.h>
 
 #include <fstream>
@@ -24,6 +25,7 @@ typedef Traits_2::X_monotone_curve_2                  Segment_2;
 typedef std::list<Segment_2>                          Segments_list;
 typedef CGAL::Arrangement_2<Traits_2>                 Arrangement_2;
 typedef CGAL::Arr_naive_point_location<Arrangement_2> Point_location;
+//typedef CGAL::Arr_walk_along_line_point_location<Arrangement_2> Point_location;
 
 int main (int argc, char **argv)
 {
@@ -89,7 +91,7 @@ int main (int argc, char **argv)
     Point_location                 pl (arr);
     Segments_list::const_iterator  iter;
 
-    std::cout << "Preforming incremental insertion of " 
+    std::cout << "Performing incremental insertion of " 
 	      << n << " curves." << std::endl;
 
     timer.start();
@@ -102,7 +104,7 @@ int main (int argc, char **argv)
   else
   {
     // Perform aggregated insertion.
-    std::cout << "Preforming aggregated insertion of " 
+    std::cout << "Performing aggregated insertion of " 
 	      << n << " curves." << std::endl;
 
     timer.start();

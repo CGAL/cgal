@@ -100,7 +100,7 @@ int main (int argc, char **argv)
     Point_location                   pl (arr);
     Conic_arcs_list::const_iterator  iter;
 
-    std::cout << "Preforming incremental insertion of " 
+    std::cout << "Performing incremental insertion of " 
 	      << n << " curves." << std::endl;
 
     timer.start();
@@ -113,7 +113,7 @@ int main (int argc, char **argv)
   else
   {
     // Perform aggregated insertion.
-    std::cout << "Preforming aggregated insertion of " 
+    std::cout << "Performing aggregated insertion of " 
 	      << n << " curves." << std::endl;
 
     timer.start();

@@ -9,6 +9,7 @@
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Arr_naive_point_location.h>
+//#include <CGAL/Arr_walk_along_line_point_location.h>
 #include <CGAL/Arr_observer.h>
 
 typedef CGAL::Quotient<CGAL::MP_Float>                Number_type;
@@ -19,6 +20,7 @@ typedef Traits_2::X_monotone_curve_2                  Segment_2;
 typedef CGAL::Arrangement_2<Traits_2>                 Arrangement_2;
 typedef Arrangement_2::Halfedge_handle                Halfedge_handle;
 typedef CGAL::Arr_naive_point_location<Arrangement_2> Point_location;
+//typedef CGAL::Arr_walk_along_line_point_location<Arrangement_2> Point_location;
 
 class My_observer : public CGAL::Arr_observer<Arrangement_2>
 {
@@ -59,9 +61,9 @@ int main ()
   Halfedge_handle h1 = arr.insert_in_face_interior (cv1, arr.unbounded_face());
   Halfedge_handle h2 = arr.insert_in_face_interior (cv2, arr.unbounded_face());
   Halfedge_handle h3 = arr.insert_at_vertices (cv3, h2, h1.twin());
-  Halfedge_handle h4 = arr.insert_from_vertex (cv4, h1.twin());
+  Halfedge_handle h4 = arr.insert_from_left_vertex (cv4, h1.twin());
   Halfedge_handle h5 = arr.insert_at_vertices (cv5, h1, h4);
-  Halfedge_handle h6 = arr.insert_from_vertex (cv6, h3.twin());
+  Halfedge_handle h6 = arr.insert_from_left_vertex (cv6, h3.twin());
   Halfedge_handle h7 = arr.insert_at_vertices(cv7, h5, h6);
 
   // Print the arrangement vertices.
