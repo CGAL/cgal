@@ -47,9 +47,16 @@ set( int n, int m, int nr_equalities)
     
     if ( ! x_l.empty()) x_l.clear();
     if ( ! x_x.empty()) x_x.clear();
-   
+       
     x_l.insert( x_l.end(), l, et0);
     x_x.insert( x_x.end(), l, et0); // has to grow later QP-case
+    
+    if ( ! tmp_l.empty()) tmp_l.clear();
+    if ( ! tmp_x.empty()) tmp_x.clear();
+
+    tmp_l.insert( tmp_l.end(), l, et0);
+    tmp_x.insert( tmp_x.end(), l, et0); // has to grow later QP-case
+
 }
 
 // update functions
@@ -156,6 +163,119 @@ enter_slack_leave_original( )
         if ( vout.verbose()) print();
     }
 }
+
+
+// replacing of original by original variable with precondition in QP-case
+// for phaseII                               (update type UZ_1)
+template < class ET_, class Is_LP_ >
+template < class ForwardIterator >
+void  QPE_basis_inverse<ET_,Is_LP_>::
+z_replace_original_by_original(ForwardIterator y_l_it,
+                               ForwardIterator y_x_it, const ET& k_2,
+			       unsigned int k_i)
+{
+    ET  hat_k_1 = *(y_x_it + k_i);
+    
+}
+
+// replacing of original by slack variable with precondition in QP-case
+// for phaseII                               (update type UZ_2)
+template < class ET_, class Is_LP_ >
+void  QPE_basis_inverse<ET_,Is_LP_>::
+z_replace_original_by_slack(unsigned int k_j, unsigned int k_i)
+{
+}
+
+// replacing of slack by original variable with precondition in QP-case
+// for phaseII                               (update type UZ_3)
+template < class ET_, class Is_LP_ >
+template < class ForwardIterator >
+void  QPE_basis_inverse<ET_,Is_LP_>::
+z_replace_slack_by_original(ForwardIterator y_l_it,
+                            ForwardIterator y_x_it,
+			    ForwardIterator u_x_it, const ET& kappa,
+		            const ET& nu)
+{
+}
+
+
+// replacing of slack by slack variable with precondition in QP-case
+// for phaseII                               (update type UZ_4)
+template < class ET_, class Is_LP_ >
+template < class ForwardIterator >
+void  QPE_basis_inverse<ET_,Is_LP_>::
+z_replace_slack_by_slack(ForwardIterator u_x_it, unsigned int k_j)
+{
+}
+
+
+// copying of reduced basis inverse row in (upper) C-block
+template < class ET_, class Is_LP_ >
+template < class OutIt >
+void  QPE_basis_inverse<ET_,Is_LP_>::
+copy_row_in_C(OutIt y_l_it, OutIt y_x_it, unsigned int r)
+{
+    typename Matrix::const_iterator  matrix_it;
+    typename Row   ::const_iterator     row_it;
+    unsigned int  count;
+    
+    // left of diagonal (including element on diagonal)
+    matrix_it = M.begin()+r;
+    for (  row_it = matrix_it->begin();
+           row_it != matrix_it->end(); 
+	 ++row_it, ++y_l_it            ) {
+        *y_l_it = *row_it;    
+    }
+    
+    // right of diagonal (excluding element on diagonal)
+    for (  matrix_it = M.begin()+r+1, count = r+1;
+           count < s; 
+	 ++matrix_it,  ++count                    ) {
+        *y_l_it = (*matrix_it)[r];
+    }
+    
+    // B_O x C -block
+    for (  matrix_it = M.begin()+l, count = 0;
+           count < b;
+	 ++matrix_it,  ++count                ) {
+	*y_x_it = (*matrix_it)[r]; 
+    } 
+}
+
+// copying of reduced basis inverse row in upper B_O-block
+template < class ET_, class Is_LP_ >
+template < class OutIt >
+void  QPE_basis_inverse<ET_,Is_LP_>::
+copy_row_in_B_O(OutIt y_l_it, OutIt y_x_it, unsigned int r)
+{
+    typename Matrix::const_iterator  matrix_it;
+    typename Row   ::const_iterator     row_it;
+    unsigned int  count;
+    
+    // B_O x C -block
+    matrix_it = M.begin()+l+r;
+    for (  row_it = matrix_it->begin(), count = 0;
+           count < s;
+	 ++row_it,  ++count                       ) {
+        *y_l_it = *row_it;
+    }
+    
+    // left of diagonal (including element on diagonal)
+    for (  row_it = matrix_it->begin()+l; 
+           row_it != matrix_it->end();
+	 ++row_it                     ) {
+        *y_x_it = *row_it;
+    }
+    
+    //right of diagonal (excluding element on diagonal)
+    for (  matrix_it = M.begin()+l+r+1, count = r+1;
+           count < b;
+	 ++matrix_it,  ++count                    ) {
+        *y_x_it = (*matrix_it)[l+r];
+    }
+
+}
+
 
 // swap functions
 // --------------
