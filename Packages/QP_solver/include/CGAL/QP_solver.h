@@ -694,6 +694,10 @@ private:
 
     void  enter_variable( );
     void  leave_variable( );
+    void  z_replace_variable_original_by_original( );
+    void  z_replace_variable_original_by_slack( );
+    void  z_replace_variable_slack_by_original( );
+    void  z_replace_variable_slack_by_slack( );
 
     bool  basis_matrix_stays_regular( );
 
