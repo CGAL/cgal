@@ -533,11 +533,10 @@ class SNC_decorator : public SNC_const_decorator<Map> {
     if(!CGAL::assign(sf,o)) {
       SHalfedge_handle se;
       if(CGAL::assign(se,o))
-	std::cerr << "on sedge " << PH(se) 
-		  << " on facet " << se->facet()->plane() << std::endl;
+	CGAL_NEF_TRACEN("on sedge " << PH(se) << " on facet " << se->facet()->plane());
       SVertex_handle sv;
       if(CGAL::assign(sv,o))
-	std::cerr << "on svertex " << sv->point() << std::endl; 
+	CGAL_NEF_TRACEN("on svertex " << sv->point());
       CGAL_assertion_msg( 0, "it is not possible to decide which one is a visible facet (if any)");
       return Halffacet_handle();
     }
@@ -938,7 +937,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
     typedef typename Decorator_traits::Halffacet_handle Halffacet_handle;
     
   public:
-    Intersection_call_back( const SNC_structure& s0, const SNC_structure& s1,
+    Intersection_call_back( SNC_structure& s0, SNC_structure& s1,
 			    const Selection& _bop, SNC_structure& r, 
 			    bool invert_order = false) :
       snc0(s0), snc1(s1), bop(_bop), result(r),
@@ -1237,9 +1236,9 @@ class SNC_decorator : public SNC_const_decorator<Map> {
     //       "binary_operator: finding edge-edge intersections...");
 
     Intersection_call_back<SNC_decorator, Selection> call_back0
-      ( snc1, snc2, BOP, *sncp());
+      ( const_cast<SNC_structure&>(snc1), const_cast<SNC_structure&>(snc2), BOP, *sncp());
     Intersection_call_back<SNC_decorator, Selection> call_back1 
-      ( snc2, snc2, BOP, *sncp(), true);
+      ( const_cast<SNC_structure&>(snc2), const_cast<SNC_structure&>(snc2), BOP, *sncp(), true);
 
 #ifdef CGAL_NEF3_TIMER_INTERSECTION
     double split_intersection = timer_overlay.time();
@@ -1294,12 +1293,11 @@ class SNC_decorator : public SNC_const_decorator<Map> {
       pln1.intersect_with_facets( e0, call_back1);
 
 #else
-    {
+    CGAL_NEF_TRACEN("intersection by fast box intersection");
         binop_intersection_test_segment_tree<SNC_decorator> binop_box_intersection;
         binop_box_intersection(call_back0, call_back1, 
 			       const_cast<SNC_structure&>(snc1), 
 			       const_cast<SNC_structure&>(snc2));
-    }
 #endif
 
 #ifdef CGAL_NEF3_TIMER_INTERSECTION
