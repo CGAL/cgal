@@ -8,6 +8,7 @@
 #include <CGAL/Arr_conic_traits_2.h>
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Arr_naive_point_location.h>
+#include <CGAL/Arr_walk_along_line_point_location.h>
 #include <CGAL/Timer.h>
 
 typedef CGAL::CORE_algebraic_number_traits            Nt_traits;
@@ -20,34 +21,53 @@ typedef CGAL::Arr_conic_traits_2<Rat_kernel,
 				 Nt_traits>           Traits_2;
 typedef Traits_2::Point_2                             Point_2;
 typedef Traits_2::Curve_2                             Conic_arc_2;
-typedef CGAL::Arrangement_2<Traits_2>                 Arrangement_2;
-typedef CGAL::Arr_naive_point_location<Arrangement_2> Point_location;
 typedef std::list<Conic_arc_2>                        Conic_arcs_list;
+typedef CGAL::Arrangement_2<Traits_2>                 Arrangement_2;
+typedef CGAL::Arr_naive_point_location<Arrangement_2>           Naive_pl;
+typedef CGAL::Arr_walk_along_line_point_location<Arrangement_2> Walk_pl;
 
 int main (int argc, char **argv)
 {
-  // Open the input file.
-  if (argc < 2)
+  // Check the number of program arguments.
+  if (argc < 3)
   {
-    std::cerr << "Usage: " << argv[0] << " <file name> [-a|-i]" << std::endl;
+    std::cerr << "Usage: " << argv[0] << " <file name> <method>"
+	      << std::endl
+	      << "method is either:" << std::endl
+	      << "    -a for aggragated insertion;" << std::endl
+	      << "    -n for incremental insertion with naive point-location;"
+	      << std::endl
+	      << "    -w for incremental insertion with walk point-location." 
+	      << std::endl;
+
     return (1);
   }
 
+  // Decide on the operation.
+  bool       inc_insert = true;
+  bool       use_naive_pl = true;
+
+  if ((strcmp (argv[2], "-A") == 0) || (strcmp (argv[2], "-a") == 0))
+  {
+    inc_insert = false;
+  }
+  else if ((strcmp (argv[2], "-W") == 0) || (strcmp (argv[2], "-w") == 0))
+  {
+    use_naive_pl = false;
+  }
+  else if ((strcmp (argv[2], "-N") != 0) && (strcmp (argv[2], "-n") != 0))
+  {
+    std::cerr << "Invalid insertion method: " << argv[2] << std::endl;
+    return (1);
+  }
+
+  // Open the input file.
   std::ifstream     in_file (argv[1]);
 
   if (! in_file.is_open())
   {
     std::cerr << "Failed to open " << argv[1] << " ..." << std::endl;
     return (1);
-  }
-
-  // Decide on the operation.
-  bool       inc_insert = true;
-
-  if (argc > 2 && 
-      ((strcmp (argv[2], "-A") == 0) || (strcmp (argv[2], "-a") == 0)))
-  {
-    inc_insert = false;
   }
 
   // Read the ellipses from the file.
@@ -96,25 +116,44 @@ int main (int argc, char **argv)
 
   if (inc_insert)
   {
-    // Perform incremental insertion.
-    Point_location                   pl (arr);
-    Conic_arcs_list::const_iterator  iter;
-
-    std::cout << "Performing incremental insertion of " 
-	      << n << " curves." << std::endl;
-
-    timer.start();
-    for (iter = ellipses.begin(); iter != ellipses.end(); ++iter)
+    if (use_naive_pl)
     {
-      arr_insert (arr, pl, *iter);
+      // Perform incremental insertion with the naive point-location strategy.
+      Naive_pl                         pl (arr);
+      Conic_arcs_list::const_iterator  iter;
+
+      std::cout << "Performing incremental insertion (with naive PL) of " 
+		<< n << " ellipses." << std::endl;
+
+      timer.start();
+      for (iter = ellipses.begin(); iter != ellipses.end(); ++iter)
+      {
+	arr_insert (arr, pl, *iter);
+      }
+      timer.stop();
     }
-    timer.stop();
+    else
+    {
+      // Perform incremental insertion with the walk point-location strategy.
+      Walk_pl                          pl (arr);
+      Conic_arcs_list::const_iterator  iter;
+
+      std::cout << "Performing incremental insertion (with walk PL) of " 
+		<< n << " ellipses." << std::endl;
+
+      timer.start();
+      for (iter = ellipses.begin(); iter != ellipses.end(); ++iter)
+      {
+	arr_insert (arr, pl, *iter);
+      }
+      timer.stop();
+    }
   }
   else
   {
     // Perform aggregated insertion.
     std::cout << "Performing aggregated insertion of " 
-	      << n << " curves." << std::endl;
+	      << n << " ellipses." << std::endl;
 
     timer.start();
     arr_insert (arr, ellipses.begin(), ellipses.end());

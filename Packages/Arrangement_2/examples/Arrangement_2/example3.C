@@ -10,7 +10,7 @@
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Arr_naive_point_location.h>
-//#include <CGAL/Arr_walk_along_line_point_location.h>
+#include <CGAL/Arr_walk_along_line_point_location.h>
 #include <CGAL/Timer.h>
 
 #include <fstream>
@@ -24,33 +24,50 @@ typedef Traits_2::Point_2                             Point_2;
 typedef Traits_2::X_monotone_curve_2                  Segment_2;
 typedef std::list<Segment_2>                          Segments_list;
 typedef CGAL::Arrangement_2<Traits_2>                 Arrangement_2;
-typedef CGAL::Arr_naive_point_location<Arrangement_2> Point_location;
-//typedef CGAL::Arr_walk_along_line_point_location<Arrangement_2> Point_location;
+typedef CGAL::Arr_naive_point_location<Arrangement_2>           Naive_pl;
+typedef CGAL::Arr_walk_along_line_point_location<Arrangement_2> Walk_pl;
 
 int main (int argc, char **argv)
 {
-  // Open the input file.
-  if (argc < 2)
+  // Check the number of program arguments.
+  if (argc < 3)
   {
-    std::cerr << "Usage: " << argv[0] << " <file name> [-a|-i]" << std::endl;
+    std::cerr << "Usage: " << argv[0] << " <file name> <method>" << std::endl
+	      << "method is either:" << std::endl
+	      << "    -a for aggragated insertion;" << std::endl
+	      << "    -n for incremental insertion with naive point-location;"
+	      << std::endl
+	      << "    -w for incremental insertion with walk point-location." 
+	      << std::endl;
+
     return (1);
   }
 
+  // Decide on the operation.
+  bool       inc_insert = true;
+  bool       use_naive_pl = true;
+
+  if ((strcmp (argv[2], "-A") == 0) || (strcmp (argv[2], "-a") == 0))
+  {
+    inc_insert = false;
+  }
+  else if ((strcmp (argv[2], "-W") == 0) || (strcmp (argv[2], "-w") == 0))
+  {
+    use_naive_pl = false;
+  }
+  else if ((strcmp (argv[2], "-N") != 0) && (strcmp (argv[2], "-n") != 0))
+  {
+    std::cerr << "Invalid insertion method: " << argv[2] << std::endl;
+    return (1);
+  }
+
+  // Open the input file.
   std::ifstream     in_file (argv[1]);
 
   if (! in_file.is_open())
   {
     std::cerr << "Failed to open " << argv[1] << " ..." << std::endl;
     return (1);
-  }
-
-  // Decide on the operation.
-  bool       inc_insert = true;
-
-  if (argc > 2 && 
-      ((strcmp (argv[2], "-A") == 0) || (strcmp (argv[2], "-a") == 0)))
-  {
-    inc_insert = false;
   }
 
   // Read the segments from the file.
@@ -87,25 +104,44 @@ int main (int argc, char **argv)
 
   if (inc_insert)
   {
-    // Perform incremental insertion.
-    Point_location                 pl (arr);
-    Segments_list::const_iterator  iter;
-
-    std::cout << "Performing incremental insertion of " 
-	      << n << " curves." << std::endl;
-
-    timer.start();
-    for (iter = segments.begin(); iter != segments.end(); ++iter)
+    if (use_naive_pl)
     {
-      arr_insert (arr, pl, *iter);
+      // Perform incremental insertion with the naive point-location strategy.
+      Naive_pl                       pl (arr);
+      Segments_list::const_iterator  iter;
+
+      std::cout << "Performing incremental insertion (with naive PL) of " 
+		<< n << " segments." << std::endl;
+
+      timer.start();
+      for (iter = segments.begin(); iter != segments.end(); ++iter)
+      {
+	arr_insert (arr, pl, *iter);
+      }
+      timer.stop();
     }
-    timer.stop();
+    else
+    {
+      // Perform incremental insertion with the walk point-location strategy.
+      Walk_pl                        pl (arr);
+      Segments_list::const_iterator  iter;
+
+      std::cout << "Performing incremental insertion (with walk PL) of " 
+		<< n << " segments." << std::endl;
+
+      timer.start();
+      for (iter = segments.begin(); iter != segments.end(); ++iter)
+      {
+	arr_insert (arr, pl, *iter);
+      }
+      timer.stop();
+    }
   }
   else
   {
     // Perform aggregated insertion.
     std::cout << "Performing aggregated insertion of " 
-	      << n << " curves." << std::endl;
+	      << n << " segments." << std::endl;
 
     timer.start();
     arr_insert (arr, segments.begin(), segments.end());

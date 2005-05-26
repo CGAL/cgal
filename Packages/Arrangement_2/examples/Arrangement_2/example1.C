@@ -9,7 +9,7 @@
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Arr_naive_point_location.h>
-//#include <CGAL/Arr_walk_along_line_point_location.h>
+#include <CGAL/Arr_walk_along_line_point_location.h>
 #include <CGAL/Arr_observer.h>
 
 typedef CGAL::Quotient<CGAL::MP_Float>                Number_type;
@@ -19,8 +19,8 @@ typedef Traits_2::Point_2                             Point_2;
 typedef Traits_2::X_monotone_curve_2                  Segment_2;
 typedef CGAL::Arrangement_2<Traits_2>                 Arrangement_2;
 typedef Arrangement_2::Halfedge_handle                Halfedge_handle;
-typedef CGAL::Arr_naive_point_location<Arrangement_2> Point_location;
-//typedef CGAL::Arr_walk_along_line_point_location<Arrangement_2> Point_location;
+//typedef CGAL::Arr_naive_point_location<Arrangement_2> Point_location;
+typedef CGAL::Arr_walk_along_line_point_location<Arrangement_2> Point_location;
 
 class My_observer : public CGAL::Arr_observer<Arrangement_2>
 {
