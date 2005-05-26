@@ -1169,7 +1169,7 @@ bool Arrangement_2<Traits,Dcel>::_point_is_in (const Point_2& p,
   // Keep a counter of the number of x-monotone curves that intersect an upward
   // vertical emanating from p (except for some degenerate cases that are
   // explained below).
-  int              n_ray_intersections = 0;
+  unsigned int              n_ray_intersections = 0;
 
   // Find the first halfedge whose associated curve is non-vertical along the
   // boundary of the given connected component.
@@ -1177,14 +1177,14 @@ bool Arrangement_2<Traits,Dcel>::_point_is_in (const Point_2& p,
                                             traits->is_vertical_2_object();
   typename Traits_wrapper_2::Equal_2          equal =
                                             traits->equal_2_object();
-  typename Traits_wrapper_2::Is_in_x_range_2  is_in_x_range = 
-                                            traits->is_in_x_range_2_object();
   typename Traits_wrapper_2::Compare_x_2      compare_x = 
                                             traits->compare_x_2_object();
   typename Traits_wrapper_2::Compare_y_at_x_2 compare_y_at_x = 
                                             traits->compare_y_at_x_2_object();
 
-  const Halfedge  *curr = he;
+  const Halfedge    *curr = he;
+  Comparison_result  res_source;
+  Comparison_result  res_target;
 
   do
   {
@@ -1204,72 +1204,71 @@ bool Arrangement_2<Traits,Dcel>::_point_is_in (const Point_2& p,
 
   do
   {
+    // Compare the x-coordinates of the current halfedge's endpoint with the
+    // query point.
+    res_source = compare_x (curr->opposite()->vertex()->point(), p);
+    res_target = compare_x (curr->vertex()->point(), p);
+
     // If the query point is a boundary vertex, it is obviuosly not in the
     // interior the component.
-    if (equal (curr->vertex()->point(), p))
+    if (res_target == EQUAL && equal (curr->vertex()->point(), p))
       return (false);
 
-    // Note that we do not have count intersections (actually these are 
-    // overlaps) of the vertical ray we shoot with vertical segments along
-    // the boundary.
-    if ( ! is_vertical (curr->curve())) 
+    // Check the query point is in the x-range (source, target] of this 
+    // the current curve and lies below it. Note that this condition rules
+    // out vertical segment (where the x-coordinates of the source and target
+    // are equal - and indeed, we do not have count intersections (actually
+    // these are overlaps) of the vertical ray we shoot with vertical
+    // segments along the boundary.
+    if (res_source != res_target && res_source != EQUAL &&
+	(compare_y_at_x (p, curr->curve()) == SMALLER))
     {
-      // The current curve is not vertical. Check the query point is in the
-      // x-range (source, target] of this curve and lies below it.
-      if (is_in_x_range (curr->curve(), p) &&
-          (compare_x (curr->opposite()->vertex()->point(), p) != EQUAL) &&
-          (compare_y_at_x (p, curr->curve()) == SMALLER))
+      // In the degenerate case where p lies below the target vertex of
+      // the current halfedge, we have to be a bit careful:
+      if (res_target == EQUAL)
       {
-        // In the degenerate case where p lies below the target vertex of
-        // the current halfedge, we have to be a bit careful:
-        if (compare_x (curr->vertex()->point(), p) == EQUAL)
-        {
-          // Locate the next halfedge along the boundary that does not
-          // contain a vertical segment.
-          const Halfedge  *next_non_vert = curr;
+	// Locate the next halfedge along the boundary that does not
+	// contain a vertical segment.
+	const Halfedge  *next_non_vert = curr;
 
-          do
-          {
-            next_non_vert = next_non_vert->next();
+	do
+	{
+	  next_non_vert = next_non_vert->next();
+	  
+	  CGAL_assertion_msg (next_non_vert != curr,
+			      "Infinite loop in _point_is_in().");
+	  
+	} while (is_vertical (next_non_vert->curve()));
+	
+	// In case the source of the current curve and the target of
+	// the next non-vertical curve lie on opposite sides of the
+	// ray we shoot from p (case (a)), we have to count an
+	// intersection. Otherwise, we have a "tangency" with the ray
+	// (case (b)) and it is not necessary to count it.
+	//
+	//            +--------+              +                 .
+	//            |   next                 \ next           .
+	//            |                         \               .
+	//            +                          +              .
+	//           /                          /               .
+	//     curr /                     curr /                .
+	//         /                          /                 .
+	//        +  (.)p                    +  (.)p            .
+	//
+	//          (a)                        (b)
+	//
+	res_target = compare_x (next_non_vert->vertex()->point(), p);
 
-            CGAL_assertion_msg (next_non_vert != curr,
-                                "Infinite loop in _point_is_in().");
-
-          } while (is_vertical (next_non_vert->curve()));
-
-          // In case the source of the current curve and the target of
-          // the next non-vertical curve lie on opposite sides of the
-          // ray we shoot from p (case (a)), we have to count an
-          // intersection. Otherwise, we have a "tangency" with the ray
-          // (case (b)) and it is not necessary to count it.
-          //
-          //            +--------+              +                 .
-          //            |   next                 \ next           .
-          //            |                         \               .
-          //            +                          +              .
-          //           /                          /               .
-          //     curr /                     curr /                .
-          //         /                          /                 .
-          //        +  (.)p                    +  (.)p            .
-          //
-          //          (a)                        (b)
-          //
-          Comparison_result    res_curr, res_next;
-          
-          res_curr = compare_x (curr->opposite()->vertex()->point(), p);
-          res_next = compare_x (next_non_vert->vertex()->point(), p);
-
-          CGAL_assertion (res_curr != EQUAL && res_next != EQUAL);
-
-          if (res_curr != res_next)
-            n_ray_intersections++;
-        }
-        else 
-        {
-          // In this case p lies under the interior of the current x-montone
-          // curve, so the vertical ray we shoot intersects it exactly once.
-          n_ray_intersections++;
-        }
+	CGAL_assertion (res_source != EQUAL && res_target != EQUAL);
+	  
+	if (res_source != res_target)
+	  n_ray_intersections++;
+      }
+      else 
+      {
+	// In this case p lies under the interior of the current x-montone
+	// curve, so the vertical ray we shoot intersects it exactly once.
+	n_ray_intersections++;
       }
     }
 

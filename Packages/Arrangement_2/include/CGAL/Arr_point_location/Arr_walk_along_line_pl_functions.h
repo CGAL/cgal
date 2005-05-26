@@ -36,80 +36,110 @@ Object Arr_walk_along_line_point_location<Arrangement>::locate
     (const Point_2& p) const
 {
   // Start from the unbounded face, and an invalid halfedge representing
-  // the closest edge to p from above it so far. 
-  Face_const_handle     face = p_arr->unbounded_face();
-  Face_const_handle     last_face;    
-  Halfedge_const_handle closest_he;
-  Holes_const_iterator  holes_it;
-  Locate_type           locate_type = WPL_UFACE;
+  // the closest edge to p from above it so far.
+  Holes_const_iterator   holes_it;
+  Face_const_handle      face = p_arr->unbounded_face();
+  Halfedge_const_handle  closest_he;
+  bool                   is_in_face;
+  bool                   is_on_edge;
+  bool                   found_containing_hole;
 
-  while (face != last_face)
+  do
   {
-    // Mark the last face visited.
-    last_face = face;
-    
     // Go over the holes in the current face.
-    for (holes_it = face.holes_begin(); 
-	 holes_it != face.holes_end() && last_face == face; 
+    found_containing_hole = false;
+    for (holes_it = face.holes_begin();
+	 holes_it != face.holes_end() && !found_containing_hole;
 	 ++holes_it)
     {
-      if (_find_closest_feature (p, *holes_it,
-				 true,           // Shoot up.
-				 true,           // Include the query point.
-				 closest_he, locate_type))
+      // Check if the point is inside the current hole.
+      is_in_face = _is_in_connected_component (p, *holes_it,
+					       true,        // Shoot up.
+					       true,        // Including p.
+					       closest_he, is_on_edge);
+
+      // Check if the query point is located on the returned edge.
+      if (is_on_edge)
       {
-        switch (locate_type)
+	// Check if the point is located on one of the edge endpoints.
+	if (traits->equal_2_object() (p, closest_he.source().point()))
 	{
-	case WPL_VERTEX:
-	  // Return the target vertex of the closest edge.
+	  // The query point is located on the source vertex:
+	  return (make_object (closest_he.source()));
+	}
+	else if (traits->equal_2_object() (p, closest_he.target().point()))
+	{
+	  // The query point is located on the target vertex:
 	  return (make_object (closest_he.target()));
+	}
 
-	case WPL_EDGE:
-	  // Return the closest edge (which contains p in its interior).
-	  return (make_object (closest_he));
+	// The query point is located in the edge iterior:
+	return (make_object (closest_he));
+      }
 
-	case WPL_FACE:
+      // Check if the point is contained in the interior of the current hole.
+      if (is_in_face)
+      {
+	// Move inside the faces that constitute the hole, the first one
+	// being incident face of the twin of closest halfedge found so far.
+	CGAL_assertion (face != closest_he.twin().face());
+
+	face = closest_he.twin().face();
+
+	// Perform a vertical walk along the faces of the hole until locating
+	// a face that contains the qeury point.
+	do
+	{
+	  CGAL_assertion_code (
+	    Halfedge_const_handle  old_closest_he = closest_he;
+	  );
+ 
+	  is_in_face = _is_in_connected_component (p, face.outer_ccb(),
+						   true,    // Shoot up.
+						   true,    // Including p.
+						   closest_he, is_on_edge);
+
+	  // Check if the query point was located on an edge.
+	  if (is_on_edge)
 	  {
-	    // Perform the walk from the face we have located.
-	    _walk_along_line (p,
-			      true,           // Shoot up.
-			      true,           // Include the query point.
-			      closest_he, locate_type);
-	    
-	    switch (locate_type)
+	    // Check if the point is located on one of the edge endpoints.
+	    if (traits->equal_2_object() (p, closest_he.source().point()))
 	    {
-	    case WPL_VERTEX:
-	      // Return the target vertex of the closest edge.
-	      return (make_object (closest_he.target()));
-	      
-	    case WPL_EDGE:
-	      // Return the closest edge (which contains p in its interior).
-	      return (make_object (closest_he));
-	      
-	    case WPL_FACE:
-	      // Proceed to the next face.
-	      face = closest_he.face();
-	      break;
-	      
-	    default:
-	      CGAL_assertion (false);
+	      // The query point is located on the source vertex:
+	      return (make_object (closest_he.source()));
 	    }
-	  }
-          break;
+	    else if (traits->equal_2_object() (p, closest_he.target().point()))
+	    {
+	      // The query point is located on the target vertex:
+	      return (make_object (closest_he.target()));
+	    }
 
-	case WPL_UFACE:
-	  // Stop the walk:
-          break;
-        }
+	    // The query point is located in the edge iterior:
+	    return (make_object (closest_he));
+	  }
+	  
+	  // If the point is not contained in the face, move to the neighboring
+	  // face from below, using the closest halfedge located so far.
+	  if (! is_in_face)
+	  {
+	    CGAL_assertion (old_closest_he != closest_he);
+	    face = closest_he.twin().face();
+	  }
+
+	} while (! is_in_face);
+
+	// We have located a face in the hole that contains the query point.
+	// This will break the internal loop on holes, and we shall proceed
+	// for another iteration of the external loop, trying to locate p in
+	// one of the hole of this new face.
+	found_containing_hole = true;
       }
     } // End loop on the current face's holes.
-  }
 
-  // Check if we should return the unbounded face:
-  if (locate_type == WPL_UFACE)
-    return (make_object (p_arr->unbounded_face()));
-    
-  // Return a handle to the face that contains p in its interior.
+  } while (found_containing_hole);
+
+  // If we reached here, we did not locate the query point in any of the holes
+  // inside the current face, so we conclude it is contained in this face:
   return (make_object (face));
 }
 
@@ -119,111 +149,10 @@ Object Arr_walk_along_line_point_location<Arrangement>::locate
 //
 template <class Arrangement>
 Object Arr_walk_along_line_point_location<Arrangement>::_vertical_ray_shoot
-    (const Point_2& p,
-     bool shoot_up) const
+(const Point_2& /*p*/,
+ bool /*shoot_up*/) const
 {
-  // Start from the unbounded face, and an invalid halfedge representing
-  // the closest edge to p from above it so far. 
-  Face_const_handle     face = p_arr->unbounded_face();
-  Face_const_handle     last_face;    
-  Halfedge_const_handle closest_he;
-  Holes_const_iterator  holes_it;
-  Locate_type           locate_type = WPL_UFACE;
-
-  while (f != last_face)
-  {
-    // Mark the last face visited.
-    last_face = face;
-    
-    // Go over the holes in the current face.
-    for (holes_it = face.holes_begin(); 
-	 holes_it != face.holes_end() && last_face == face; 
-	 ++holes_it)
-    {
-      if (_find_closest_feature (p, *holes_it,
-				 shoot_up,   // Shoot up or down.
-				 false,      // Do not include the query point.
-				 closest_he, locate_type))
-      {
-        switch (locate_type)
-	{
-	case WPL_VERTEX:
-	  // Return the target vertex of the closest edge.
-	  return (make_object (closest_he.target()));
-
-	case WPL_EDGE:
-	  {
-	    // Perform the walk from face incident to closest_he.
-	    _walk_along_line (p,
-			      shoot_up,   // Shoot up or down.
-			      false,      // Do not include the query point.
-			      closest_he, locate_type);
-	    
-	    switch (locate_type)
-	    {
-	    case WPL_VERTEX:
-	      // Proceed to the next face.
-	      face = closest_he.twin().face();
-	      break;
-	      
-	    case WPL_EDGE:
-	      // Proceed to the next face.
-	      face = closest_he.face();
-	      break;
-	      
-	    case WPL_UFACE:
-	      break;
-	      
-	    default:
-	      CGAL_assertion (false);
-	    }
-	  }
-          break;
-
-	default:
-	  CGAL_assertion (false);
-        }
-      }
-    } // End loop on the current face's holes.
-  }
-
-  // If we reached here, we have encountered no vertex or that above p
-  // (or below it, if we shoot down), so we return the unbounded face.
-  return (make_object (p_arr->unbounded_face()));
-}
-
-//-----------------------------------------------------------------------------
-// Walk along a the vertical line enamating from p from the given halfedge.
-//
-template <class Arrangement>
-void Arr_walk_along_line_point_location<Arrangement>::_walk_along_line
-    (const Point_2& p,
-     bool shoot_up, bool inclusive,
-     Halfedge_const_handle& closest_he,
-     Locate_type& locate_type) const     
-{
-  Face_const_handle   face = 
-    (inclusive || locate_type != WPL_VERTEX) ? closest_he.face() : 
-                                               closest_he.twin().face();
-  Face_const_handle   last_face;
-
-  do
-  {
-    last_face = face;
-
-    if (! face.is_unbounded()) 
-    {
-      _find_closest_feature (p, face.outer_ccb(),
-			     shoot_up, inclusive,
-			     closest_he, locate_type);
-    }
-        
-    face = (inclusive || locate_type != WPL_VERTEX) ? closest_he.face() : 
-                                                      closest_he.twin().face();
-  
-  } while((inclusive == (locate_type == WPL_UFACE)) && last_face != face);
-
-  return;
+  return Object();
 }
 
 //-----------------------------------------------------------------------------
@@ -231,272 +160,208 @@ void Arr_walk_along_line_point_location<Arrangement>::_walk_along_line
 // boundary of the given connected component.
 //
 template <class Arrangement>
-bool Arr_walk_along_line_point_location<Arrangement>::_find_closest_feature
-    (const Point_2& p,
-     Ccb_halfedge_const_circulator circ,
-     bool shoot_up, bool inclusive,
-     Halfedge_const_handle& closest_he,
-     Locate_type& locate_type) const
+bool Arr_walk_along_line_point_location<Arrangement>::
+_is_in_connected_component (const Point_2& p,
+			    Ccb_halfedge_const_circulator circ,
+			    bool shoot_up,
+			    bool inclusive,
+			    Halfedge_const_handle& closest_he,
+			    bool& is_on_edge) const
 {
   // Set the results for comparison acording to the ray direction.
   const Comparison_result point_above_under = (shoot_up ? SMALLER : LARGER);
   const Comparison_result curve_above_under = (shoot_up ? LARGER : SMALLER);
 
-  // The inclusive flag indicated whether the vertical ray includes its source:
-  // If not (in case of vertical ray shooting) we should find the edge or
-  // vertex right above (or below) the query point p.
-  // If it does (in case of point location) and p lies on a vertex of on an
-  // edge, we return this feature.
+  // Keep a counter of the number of halfedges of the connected component's
+  // boundary that intersect an upward (or downward, if shoot_up is false)
+  // vertical ray emanating from the query point p (except for some degenerate
+  // cases that are explained below).
+  unsigned int              n_ray_intersections = 0;
 
-  // Check whether we have already encountered an intersection of the ray with
-  // a previous halfedge (the parameter he is a handle to a valid edge).
-  // We use he to store the halfedge closest to p so far.
-  Halfedge_const_handle  invalid_halfedge;
-  bool                   closest_he_valid = (closest_he != invalid_halfedge);
- 
-  // This flag indicates whether p is inside the connected component, as
-  // determined by the number of times the vertical ray intersects the boundary
-  // egdes (in case of an odd number p is inside, in case of an even number
-  // p is outside). At the moment we have no intersections yet, so:
-  bool    inside_cc = false;
+  typename Traits_wrapper_2::Is_vertical_2        is_vertical = 
+                                            traits->is_vertical_2_object();
+  typename Traits_wrapper_2::Compare_x_2          compare_x = 
+                                            traits->compare_x_2_object();
+  typename Traits_wrapper_2::Compare_y_at_x_2     compare_y_at_x = 
+                                            traits->compare_y_at_x_2_object();
+  typename Traits_wrapper_2::Compare_y_position_2 compare_y_position =
+                                        traits->compare_y_position_2_object();
 
-  // Go over all edges in the connected components.
-  typename Traits_wrapper_2::Compare_xy_2           compare_xy = 
-                                      traits->compare_xy_2_object();
-  typename Traits_wrapper_2::Is_in_x_range_2        is_in_x_range = 
-                                      traits->is_in_x_range_2_object();
-  typename Traits_wrapper_2::Compare_y_at_x_2       compare_y_at_x = 
-                                      traits->compare_y_at_x_2_object();
-  typename Traits_wrapper_2::Is_vertical_2          is_vertical = 
-                                      traits->is_vertical_2_object();
-  typename Traits_wrapper_2::Compare_y_position_2   compare_y_position =
-                                      traits->compare_y_position_2_object();
-  Ccb_halfedge_const_circulator curr = circ;
-  Comparison_result             res1, res2;
-  Comparison_result             res;
-  Comparison_result             y_pos; 
-  bool                          in_x_range;
+  // Start from the first non-vertical segment in the connected component.
+  Ccb_halfedge_const_circulator  first = circ;
+  bool                           found_non_vertical = false;
 
   do
   {
-    // Check if the query point is in the x-range of the curve associated
-    // with the current halfedge.
-    const X_monotone_curve_2& cv = (*curr).curve();
+    // Stop if we found a non-vertical curve.
+    if (! is_vertical ((*first).curve()))
+    {
+      found_non_vertical = true;
+      break;
+    }
 
     if (inclusive)
     {
-      // Check if p is lexicographically in the x-range of the curve.
-      res1 = compare_xy (p, (*curr).source().point());
-      res2 = compare_xy (p, (*curr).target().point());
-
-      in_x_range = (res1 != res2 || res1 == EQUAL || res2 == EQUAL);
+      // Check if the current vertical curve contains the query point.
+      if (compare_x ((*first).source().point(), p) == EQUAL &&
+	  compare_y_at_x (p, (*first).curve()) == EQUAL)
+      {
+	closest_he = *first;
+	is_on_edge = true;
+	return (true);
+      }
     }
     else
     {
-      // Use a simple x-range query:
-      in_x_range = is_in_x_range (cv, p);
+      // \todo Deal with vertical ray-shooting.
     }
 
-    // Skip the current edge if p is not in its x-range. 
-    if (! in_x_range)
+    // Move to the next curve.
+    ++first;
+
+  } while (first != circ);
+
+  if (! found_non_vertical)
+  {
+    // In this case the entire component is comprised of vertical segments,
+    // so it has any empty interior and p cannot lie inside it.
+    return (false);
+  }
+
+  // Go over all curves of the boundary, starting from the non-vertical curve
+  // we have located, and count those which are above p.
+  const Halfedge_const_handle    invalid_he;
+  Ccb_halfedge_const_circulator  curr = first;
+  Comparison_result              source_res, target_res;
+  Comparison_result              res;
+
+  do
+  {
+    // Ignore the current edge if p is not in the x-range of its curve.
+    source_res = compare_x ((*curr).source().point(), p);
+    target_res = compare_x ((*curr).target().point(), p);
+
+    if (source_res == target_res && source_res != EQUAL)
     {
       ++curr;
       continue;
     }
-    
-    // Get the relative position of p with respect to the current curve.
-    res = compare_y_at_x (p, cv);
 
-    if (res == point_above_under)
+    // Check whether p lies above or below the curve.
+    res = compare_y_at_x (p, (*curr).curve());
+
+    if (res == EQUAL)
     {
-      // p is in the x-range of the current halfedge, which lies above it
-      // (if we shoot up) or below it (if we shoot the ray down).
-      // Flip the inside_cc flag, as we have found a new edge on the boundary
-      // that our ray intersects - unless the curve is vertical, in which case
-      // the vertical ray overlaps it.
-      if (! is_vertical (cv))
-	inside_cc = !inside_cc;
-
-      // Check if the current curve lies closer to p than the closest curve
-      // so far (associated with closest_he).
-      y_pos = EQUAL;
-      if (! closest_he_valid ||
-	  ((y_pos = compare_y_position (closest_he.curve(), cv)) ==
-	   curve_above_under))
+      // The current edge contains the query point.
+      if (inclusive)
       {
 	closest_he = *curr;
-	closest_he_valid = true;
-      }
-      
-      // Examine the case where the two curves are equal.
-      if (closest_he_valid && y_pos == EQUAL &&
-	  closest_he != *curr && closest_he != (*curr).twin())
-      {
-	// In this case closest_he and the current edge share an end-vertex
-	// lying right above the query point p. This means we have the
-	// following scenario:
-        //                   
-        //                   
-        //  (.)----(.)---(.) 
-        //          ^        
-        //          |        
-	//          |        
-        //          p        
-        //
-	// In this case, we take closest_he to be the edge "left" edge in case
-	// we shoot up, and the "right" edge, in case we shoot down.
-	bool    curr_to_right;
-
-	if ((*curr).source() == closest_he.source() || 
-	    (*curr).source() == closest_he.target())
-	{
-	  // The common endpoint is the current source point. Check if the
-	  // current halfedge extends to its left or to its right.
-	  curr_to_right = (compare_xy ((*curr).source().point(),
-				       (*curr).target().point()) == SMALLER);
-	}
-	else
-	{
-	  CGAL_assertion ((*curr).target() == closest_he.source() || 
-			  (*curr).target() == closest_he.target());
-
-	  // The common endpoint is the current target point. Check if the
-	  // current halfedge extends to its left or to its right.
-	  curr_to_right = (compare_xy ((*curr).source().point(),
-				       (*curr).target().point()) == LARGER);
-	}
-
-	if ((shoot_up && !curr_to_right) ||
-	    (!shoot_up && curr_to_right))
-	{
-	  closest_he = *curr;
-	}
-      }
-    }
-    else if (res == EQUAL)
-    {
-      // In this case p lies on the curve.
-      if (!inclusive)
-      {
-	// If we do not include p itself (in vertical ray-shooting queries),
-	// the only case we have to check is when p is located in the interior
-	// of a vertical segment. Otherwise, we ignore this edge.
-	if (is_vertical (cv) &&
-	    (compare_xy (p, traits->construct_max_vertex_2_object() (cv)) 
-	     == SMALLER))
-	{
-	  closest_he = *curr;
-	  locate_type = WPL_EDGE;
-	  return (true);
-	}
-      }
-      else
-      {
-	// Check if p is one of the edge endpoints. If so, return the halfedge
-	// whose target is the vertex that contains p.
-	if (compare_xy (p, (*curr).source().point()) == EQUAL)
-	{
-	  // p lies on the source vertex:
-	  closest_he = (*curr).twin();
-	  locate_type = WPL_VERTEX;
-	}
-	else if (compare_xy (p, (*curr).target().point()) == EQUAL)
-	{
-	  // p lies on the target vertex:
-	  closest_he = *curr;
-	  locate_type = WPL_VERTEX;
-	}
-	else
-	{
-	  // p lies in the interior of the current edge:
-	  closest_he = *curr;
-	  locate_type = WPL_EDGE;
-	}
-
+	is_on_edge = true;
 	return (true);
       }
+
+      // \todo Deal with the case of vertical ray-shooting.
     }
 
-    // Proceed to the next halfedge along the boundary.
+    // If the point is above the current edge (or below it, if we shoot down),
+    // move to the next edge.
+    if (res != point_above_under)
+    {
+      ++curr;
+      continue;
+    }
+
+    // Note that we do not have count intersections (actually these are 
+    // overlaps) of the vertical ray we shoot with vertical segments along
+    // the boundary.
+    if ( ! is_vertical ((*curr).curve())) 
+    {
+      // The current curve is not vertical. Check the query point is in the
+      // semi-open x-range (source, target] of this curve and lies below it.
+      if (source_res != EQUAL)
+      {
+	// If the current curve is closer to p than the closest curve found
+	// so far, assign its halfedge as the closest one.
+	if (closest_he == invalid_he ||
+	    compare_y_position (closest_he.curve(), 
+				(*curr).curve()) == curve_above_under)
+	{
+	  closest_he = *curr;
+	}
+
+        // In the degenerate case where p lies below the target vertex of
+        // the current halfedge, we have to be a bit careful:
+        if (target_res == EQUAL)
+        {
+          // Locate the next halfedge along the boundary that does not
+          // contain a vertical segment.
+          Halfedge_const_handle  next_non_vert = *curr;
+
+          do
+          {
+            next_non_vert = next_non_vert.next();
+
+            CGAL_assertion (next_non_vert != *curr);
+
+          } while (is_vertical (next_non_vert.curve()));
+
+          // In case the source of the current curve and the target of
+          // the next non-vertical curve lie on opposite sides of the
+          // ray we shoot from p (case (a)), we have to count an
+          // intersection. Otherwise, we have a "tangency" with the ray
+          // (case (b)) and it is not necessary to count it.
+          //
+          //            +--------+              +                 .
+          //            |   next                 \ next           .
+          //            |                         \               .
+          //            +                          +              .
+          //           /                          /               .
+          //     curr /                     curr /                .
+          //         /                          /                 .
+          //        +  (.)p                    +  (.)p            .
+          //
+          //          (a)                        (b)
+          //
+	  target_res = compare_x (next_non_vert.target().point(), p);
+
+          CGAL_assertion (source_res != EQUAL && target_res != EQUAL);
+
+          if (source_res != target_res)
+            n_ray_intersections++;
+        }
+        else 
+        {
+          // In this case p lies under the interior of the current x-montone
+          // curve, so the vertical ray we shoot intersects it exactly once.
+          n_ray_intersections++;
+        }
+      }
+    }
+    else
+    {
+      // Assign an edge associated with a vertical curve as the closest edge
+      // only if the vertical curve has an endpoint closer to p than the
+      // closest edge so far.
+      if (closest_he == invalid_he ||
+	  (compare_y_at_x ((*curr).source().point(),
+			   closest_he.curve()) == point_above_under) ||
+	  (compare_y_at_x ((*curr).target().point(),
+			   closest_he.curve()) == point_above_under))
+      {
+	closest_he = *curr;
+      }
+    }
+
+    // Proceed to the next halfedge along the component boundary.
     ++curr;
 
-  } while (curr != circ);
+  } while (curr != first);
 
-  // Check if we found no intersections:
-  if (! closest_he_valid)
-  {
-    locate_type = WPL_UFACE;
-    return (false);
-  }
-
-  if (inclusive)
-  {
-    // We are in point-location mode.
-    if (inside_cc)
-    {
-      // Make sure that the closest halfedge we return is directed from right
-      // to left (if we shoot up) - or from left to right (if we shoot down).
-      // This way, p is located in the incident face of closest_he.
-      const bool    closest_he_directed_right =
-	(compare_xy (closest_he.source().point(),
-		     closest_he.target().point()) == SMALLER);
-
-      if ((shoot_up && closest_he_directed_right) ||
-	  (!shoot_up && !closest_he_directed_right))
-      {
-	closest_he = closest_he.twin();
-      }
-
-      locate_type = WPL_FACE;
-    }
-    else
-    {
-      locate_type = WPL_UFACE;
-    }
-  }
-  else
-  {
-    // We are in vertical ray-shooting mode.
-    if (is_vertical (closest_he.curve()))
-    {
-      // p is below (or above, if we shoot down) a vertical segment.
-      // Direct the closest halfegde so that its target is the endpoint
-      // closer to p.
-      res = compare_xy (closest_he.source().point(), 
-			closest_he.target().point());
-
-      if ((shoot_up && res == SMALLER) ||
-	  (!shoot_up && res == LARGER))
-      {
-	closest_he = closest_he.twin();
-      }
-      locate_type = WPL_VERTEX;
-    }
-    else
-    {
-      if (traits->compare_x_2_object() (closest_he.source().point(),
-					p) == EQUAL)
-      {
-	// When we shoot a ray from p we ancounter the source vertex:
-	closest_he = closest_he.twin();
-	locate_type = WPL_VERTEX;
-      }
-      else if (traits->compare_x_2_object() (closest_he.target().point(),
-					     p) == EQUAL)
-      {
-	// When we shoot a ray from p we ancounter the target vertex:
-	locate_type = WPL_VERTEX;
-      }
-      else
-      {
-	locate_type = WPL_EDGE;
-      }
-    }
-  }
-
-  return (true);
+  // The query point lies inside the connected components if and only if the
+  // ray we shoot from it intersects the boundary an odd number of time.
+  is_on_edge = false;
+  return ((n_ray_intersections % 2) != 0);
 }
-
 
 CGAL_END_NAMESPACE
 

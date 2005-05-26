@@ -134,40 +134,7 @@ protected:
   Object _vertical_ray_shoot (const Point_2& p, bool shoot_up) const;
 
   /*!
-   * \struct An enumeration type specifying how to treat the halfedge returned
-   *         by the private functions.
-   */
-  enum Locate_type
-  {
-    WPL_VERTEX,            // Take the target vertex of the halfedge.
-    WPL_EDGE,              // Take the halfedge itself.
-    WPL_FACE,              // Take the face incident to the halfedge.
-    WPL_UFACE              // Take the unbounded face.
-  };
-  
-  /*!
-   * Walk along a the vertical line enamating from p from the given halfedge.
-   * \param p The query point.
-   * \param shoot_up Whether we shoot the vertical ray up or down.
-   * \param inclusive Indicates whether the vertical ray includes the point p:
-   *                  If not (in case of vertical ray shooting) we should find
-   *                  the edge or vertex right above (or below) the query point
-   *                  p. If it does (in case of point location) and p lies on
-   *                  a vertex of on an edge, we return this feature.
-   * \param closest_he Input: The closest halfedge to p so far.
-   *                   Output: The updated closest halfedge.
-   * \param locate_type Input: How to treat the input handle closest_he.
-   *                    Output: How to treat the output handle closest_he.
-   */
-  void _walk_along_line (const Point_2& p,
-			 bool shoot_up,
-			 bool inclusive,
-			 Halfedge_const_handle& he,
-			 Locate_type& lt) const;
-
-  /*!
-   * Find the closest feature to p (and lying above or below it) along the
-   * boundary of the given connected component. 
+   * Check whether the query point lies inside the given onncected component.
    * \param p The query point.
    * \param circ A circulator for the halfedges along the connected component
    *             boundary.
@@ -179,15 +146,16 @@ protected:
    *                  a vertex of on an edge, we return this feature.
    * \param closest_he Input: The closest halfedge to p so far.
    *                   Output: The updated closest halfedge.
-   * \param locate_type Input: How to treat the input handle closest_he.
-   *                    Output: How to treat the output handle closest_he.
-   * \return (true) if the closest_he is valid; (false) otherwise.
+   * \param is_on_edge Output: Is the query point located on closest_he.
+   * \return (true) if p is contained in the connected component;
+   *         (false) otherwise.
    */
-  bool _find_closest_feature (const Point_2& p,
-			      Ccb_halfedge_const_circulator circ,
-			      bool shoot_up, bool inclusive,
-			      Halfedge_const_handle& closest_he,
-			      Locate_type& locate_type) const;
+  bool _is_in_connected_component (const Point_2& p,
+				   Ccb_halfedge_const_circulator circ,
+				   bool shoot_up,
+				   bool inclusive,
+				   Halfedge_const_handle& closest_he,
+				   bool& is_on_edge) const;
 };
 
 CGAL_END_NAMESPACE
