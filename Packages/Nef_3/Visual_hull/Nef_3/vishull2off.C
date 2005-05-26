@@ -84,11 +84,10 @@ int main(int argc, char* argv[]) {
     VHC vhc(room_min, room_max, camera, polygon_list);
     N.delegate(vhc);
     N_list.push_back(N);
-    std::cerr << N_list.size() << std::endl;
     t.stop();
-  }
 
-  std::cerr << N_list.size() << std::endl;
+    std::cerr << "intermediate time " << t.time() << std::endl;
+  }
 
   t.start();
   Nef_polyhedron N1,N2;
@@ -97,18 +96,23 @@ int main(int argc, char* argv[]) {
     N_list.pop_front();
     N2 = N_list.front();
     N_list.pop_front();
+    N1.is_valid();
+    N2.is_valid();
     N_list.push_back(N1*N2);
   }
   t.stop();
 
   std::cerr << "Runtime Visual Hull :" << t.time() << std::endl;
-
+  
   Nef_polyhedron result(N_list.front());
+  //  std::cerr << result;
 
+  /*
   QApplication a(argc,argv);
   CGAL::Qt_widget_Nef_3<Nef_polyhedron>* w = 
     new CGAL::Qt_widget_Nef_3<Nef_polyhedron>(result);
   a.setMainWidget(w);
   w->show();
   a.exec();
+  */
 }
