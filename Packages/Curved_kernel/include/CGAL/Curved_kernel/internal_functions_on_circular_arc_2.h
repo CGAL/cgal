@@ -350,12 +350,12 @@ namespace CircularFunctors {
       if (a1.on_upper_part() != a2.on_upper_part()) {
         // But they could share the right vertical tangent point.
         if (a1.right() == a2.right()) {
-            *res++ = make_object(a1.right());
+            *res++ = make_object(std::make_pair(a1.right(),static_cast<unsigned>(1)));
             return res;
         }
         // Or they could share the left vertical tangent point.
         if (a1.left() == a2.left()) {
-            *res++ = make_object(a1.left());
+            *res++ = make_object(std::make_pair(a1.left(),static_cast<unsigned>(1)));
             return res;
         }
         return res;
@@ -432,12 +432,12 @@ namespace CircularFunctors {
     // We also need to check that these intersection points are on the arc.
     if (is_on_arc<CK>(a1, left) &&
         is_on_arc<CK>(a2, left)) {
-      *res++ = make_object(std::make_pair(left,1));
+      *res++ = make_object(std::make_pair(left,static_cast<unsigned>(1)));
     }
 
     if (is_on_arc<CK>(a1, right) &&
         is_on_arc<CK>(a2, right)) {
-      *res++ = make_object(std::make_pair(right,1));
+      *res++ = make_object(std::make_pair(right,static_cast<unsigned>(1)));
     }
 
     return res;

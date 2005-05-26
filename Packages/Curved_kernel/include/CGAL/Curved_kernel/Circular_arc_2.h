@@ -48,6 +48,9 @@ namespace CGALi {
 
        _begin = Circular_arc_endpoint_2(c, c1, true);
        _end   = Circular_arc_endpoint_2(c, c1, true);
+
+       //debug
+assert(is_x_monotone());
     }
 
     Circular_arc_2(const Circle_2 &support,
@@ -81,12 +84,18 @@ namespace CGALi {
 
       assert(do_intersect(support, c1));
       assert(do_intersect(support, c2));
+
+       //debug
+assert(is_x_monotone());
     }
 
     Circular_arc_2(const Circle_2 &c, 
 		   const Circle_2 &c1, const bool b_1,
 		   const Circle_2 &c2, const bool b_2)
-      : _begin(c, c1, b_1), _end(c, c2, b_2), _swap_source(false) {}
+      : _begin(c, c1, b_1), _end(c, c2, b_2), _swap_source(false) {
+       //debug
+assert(is_x_monotone());
+}
 
 
     // constructs a circular arc that is the arc included in A
@@ -114,6 +123,9 @@ namespace CGALi {
           _begin  = new_p;
           _end    = A._end;
         }
+
+       //debug
+assert(is_x_monotone());
       }
 
     // Constructs an arc supported by Circle_2(begin, middle, end),
@@ -131,6 +143,9 @@ namespace CGALi {
       Line_2   l2 (middle, end);
       *this = Circular_arc_2(c, l1, compare_xy(begin, middle) < 0,
                                 l2, compare_xy(end,   middle) < 0);
+
+       //debug
+assert(is_x_monotone());
     }
     
     // Constructs an arc supported by Circle_2,
@@ -147,6 +162,9 @@ namespace CGALi {
       Line_2   l (source, target);
       bool source_is_left =  (compare_xy(source, target) < 0) ;
       *this = Circular_arc_2(support, l, source_is_left ,l, !source_is_left);
+
+       //debug
+assert(is_x_monotone());
     }
 
   private:
