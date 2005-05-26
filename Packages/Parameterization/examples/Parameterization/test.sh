@@ -19,5 +19,5 @@
 # echo on
 set -x
 
-$PARAM_APPLICATION -t "$1" -b "$2" -s "$3" -o obj $SOURCE_FILE test/test_"$4"_"$1"_"$2"_"$3".obj 2>&1
+$PARAM_APPLICATION -t "$1" -b "$2" -s "$3" -o obj $SOURCE_FILE test/test_"$4"_"$1"_"$2".obj 2>&1
 
