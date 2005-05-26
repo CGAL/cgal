@@ -1,8 +1,10 @@
+!!! case of tangent arcs not implemented
+(highest priority is to be able to run at least *something* with 
+the new Arrangement_2...)
+
 add "using..." in all functors that derive from another
 
 implement construct_intersections for general (non monotone) arcs, it
 has a meaning. 
 
-with high probability, there is a stupid and huge bug for the case of
-full circles (constructor of Circular_arc or make_x_monotone or both) 
 
