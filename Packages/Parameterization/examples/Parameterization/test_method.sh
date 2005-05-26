@@ -9,7 +9,7 @@ echo "                                     *                                    
 echo "                                    ***                                    "
 echo "***************************************************************************"
 
-# ./test.sh "$1" "$2" "$3" cube
+./test.sh "$1" "$2" "$3" cube
 ./test.sh "$1" "$2" "$3" holes
 ./test.sh "$1" "$2" "$3" mannequin-devil
 ./test.sh "$1" "$2" "$3" mask_cone
