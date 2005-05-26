@@ -268,43 +268,6 @@ namespace CircularFunctors {
         && compare_x<CK>(A1.left(), A2.right()) < 0;
   }
 
-  template < class CK >
-  void
-  split(const typename CK::Circular_arc_2 &A,
-	const typename CK::Circular_arc_endpoint_2 &p,
-	typename CK::Circular_arc_2 &ca1,
-	typename CK::Circular_arc_2 &ca2)
-  {
-    assert( A.is_x_monotone() );
-    assert( point_in_range<CK>( A, p ) );
-    assert( A.on_upper_part() == (p.y() > A.supporting_circle().center().y()));
-
-    typedef typename CK::Circular_arc_2  Circular_arc_2;
-    typedef typename CK::Circular_arc_endpoint_2      Circular_arc_endpoint_2;
-
-    if ( p.circle(0) == A.supporting_circle() )
-      {
-	ca1 = Circular_arc_2( A, true,  p.circle(1), p.is_left() );
-	ca2 = Circular_arc_2( A, false, p.circle(1), p.is_left() );
-      };
-
-    if ( p.circle(1) == A.supporting_circle() )
-      {
-	ca1 = Circular_arc_2( A, true,  p.circle(0), p.is_left() );
-	ca2 = Circular_arc_2( A, false, p.circle(0), p.is_left() );
-      };
-
-    // p is defined by another pair of circles.
-    // Then we must determine which intersection it is of the supporting
-    // circle of A, with one of p's circles (whichever is ok).
-    bool b = (p == Circular_arc_endpoint_2 (A.supporting_circle(), p.circle(0), true));
-    assert( b ||
-             (p == Circular_arc_endpoint_2 (A.supporting_circle(), p.circle(0), false)));
-
-    ca1 = Circular_arc_2( A, true,  p.circle(0), b );
-    ca2 = Circular_arc_2( A, false, p.circle(0), b );
-  }
-
   // Small accessory function
   // Tests whether a given point is on an arc, with the precondition that
   // it's (symbolically) on the supporting circle.
@@ -324,6 +287,53 @@ namespace CircularFunctors {
 
     return  cmp == 0 || (cmp > 0 &&  a.on_upper_part())
                      || (cmp < 0 && !a.on_upper_part());
+  }
+
+  template < class CK >
+  void
+  split(const typename CK::Circular_arc_2 &A,
+	const typename CK::Circular_arc_endpoint_2 &p,
+	typename CK::Circular_arc_2 &ca1,
+	typename CK::Circular_arc_2 &ca2)
+  {
+    assert( A.is_x_monotone() );
+    assert( point_in_range<CK>( A, p ) );
+    assert( A.on_upper_part() == (p.y() >
+				  A.supporting_circle().center().y()));
+    assert( is_on_arc<CK>(A,p) );
+
+    typedef typename CK::Circular_arc_2  Circular_arc_2;
+    typedef typename CK::Circular_arc_endpoint_2      Circular_arc_endpoint_2;
+
+    if ( p.circle(0) == A.supporting_circle() )
+      {
+	assert( !(p.circle(1) == A.supporting_circle()) );
+	ca1 = Circular_arc_2( A, true,  p.circle(1), p.is_left() );
+	ca2 = Circular_arc_2( A, false, p.circle(1), p.is_left() );
+	return;
+      };
+
+    if ( p.circle(1) == A.supporting_circle() )
+      {
+	assert( !(p.circle(0) == A.supporting_circle()) );
+	ca1 = Circular_arc_2( A, true,  p.circle(0), p.is_left() );
+	ca2 = Circular_arc_2( A, false, p.circle(0), p.is_left() );
+	return;
+      };
+
+    assert( !(p.circle(0) == A.supporting_circle()) );
+    assert( !(p.circle(1) == A.supporting_circle()) );
+ 
+    // p is defined by another pair of circles.
+    // Then we must determine which intersection it is of the supporting
+    // circle of A, with one of p's circles (whichever is ok).
+    bool b = (p == Circular_arc_endpoint_2 (A.supporting_circle(), p.circle(0), true));
+    assert( b ||
+             (p == Circular_arc_endpoint_2 (A.supporting_circle(), p.circle(0), false)));
+
+    ca1 = Circular_arc_2( A, true,  p.circle(0), b );
+    ca2 = Circular_arc_2( A, false, p.circle(0), b );
+    return;
   }
 
   template< class CK, class OutputIterator>
