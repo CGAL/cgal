@@ -24,6 +24,7 @@ CXXFLAGS = \
            -I../../../Intersections_2/include \
            -I../../../Intersections_3/include \
            -I../../../Interval_arithmetic/include \
+           -I../../../Kernel_d/include \
            $(TESTSUITE_CXXFLAGS) \
            $(EXTRA_FLAGS) \
            $(CGAL_CXXFLAGS) \
@@ -49,6 +50,7 @@ LDFLAGS = \
 
 all:            \
                 Cartesian$(EXE_EXT) \
+                Dimension$(EXE_EXT) \
                 Filtered_cartesian$(EXE_EXT) \
                 Filtered_homogeneous$(EXE_EXT) \
                 Homogeneous$(EXE_EXT) \
@@ -61,6 +63,9 @@ all:            \
 
 Cartesian$(EXE_EXT): Cartesian$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Cartesian Cartesian$(OBJ_EXT) $(LDFLAGS)
+
+Dimension$(EXE_EXT): Dimension$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Dimension Dimension$(OBJ_EXT) $(LDFLAGS)
 
 Filtered_cartesian$(EXE_EXT): Filtered_cartesian$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Filtered_cartesian Filtered_cartesian$(OBJ_EXT) $(LDFLAGS)
@@ -91,6 +96,7 @@ test_kernel__$(EXE_EXT): test_kernel__$(OBJ_EXT)
 
 clean: \
                    Cartesian.clean \
+                   Dimension.clean \
                    Filtered_cartesian.clean \
                    Filtered_homogeneous.clean \
                    Homogeneous.clean \
