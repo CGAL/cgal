@@ -71,6 +71,7 @@ int main() {
 
 #include <CGAL/Circular_kernel.h>
 #include <CGAL/Circular_arc_traits.h>
+#include <CGAL/Circular_arc_traits_tracer.h>
 
 // #include <CGAL/Pm_default_dcel.h>
 // #include <CGAL/Planar_map_2.h>
@@ -79,8 +80,8 @@ int main() {
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Arr_naive_point_location.h>
 
-typedef CGAL::MP_Float                                          NT;
-//typedef CGAL::Gmpq                                          NT;
+//typedef CGAL::MP_Float                                          NT;
+typedef CGAL::Gmpq                                          NT;
 // typedef CGAL::Lazy_exact_nt<CGAL::Gmpq>                     NT;
 // typedef CGAL::Lazy_exact_nt<CGAL::Quotient<CGAL::MP_Float> >    NT;
 // typedef CGAL::Lazy_exact_nt<CGAL::Quotient<CGAL::Gmpz> >    NT;
@@ -93,7 +94,12 @@ typedef CGAL::Curved_kernel<Linear_k,Algebraic_k>           Curved_k;
 typedef Curved_k::Circular_arc_2                            Arc;
 typedef std::vector<Arc>                                    ArcContainer;
 
+#ifndef CGAL_CURVED_KERNEL_DEBUG
 typedef CGAL::Circular_arc_traits<Curved_k>                  Traits;
+#else
+typedef CGAL::Circular_arc_traits<Curved_k>                  Traits0;
+typedef CGAL::Circular_arc_traits_tracer<Traits0>            Traits;
+#endif
 
 typedef Traits::Point_2                             Point_2;
 typedef Traits::Curve_2                             Conic_arc_2;
