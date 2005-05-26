@@ -73,7 +73,7 @@ Object Arr_walk_along_line_point_location<Arrangement>::locate
 	  return (make_object (closest_he.target()));
 	}
 
-	// The query point is located in the edge iterior:
+	// The query point is located in the edge interior:
 	return (make_object (closest_he));
       }
 
@@ -148,11 +148,134 @@ Object Arr_walk_along_line_point_location<Arrangement>::locate
 // given point hits.
 //
 template <class Arrangement>
-Object Arr_walk_along_line_point_location<Arrangement>::_vertical_ray_shoot
-(const Point_2& /*p*/,
- bool /*shoot_up*/) const
+Object Arr_walk_along_line_point_location<Arrangement>::
+_vertical_ray_shoot (const Point_2& p,
+		     bool shoot_up) const
 {
-  return Object();
+  // Start from the unbounded face, and an invalid halfedge representing
+  // the closest edge to p from above it so far.
+  Holes_const_iterator   holes_it;
+  Face_const_handle      face = p_arr->unbounded_face();
+  Halfedge_const_handle  closest_he;
+  bool                   is_in_face;
+  bool                   is_on_edge;
+  bool                   found_containing_hole;
+
+  do
+  {
+    // Go over the holes in the current face.
+    found_containing_hole = false;
+    for (holes_it = face.holes_begin();
+	 holes_it != face.holes_end() && !found_containing_hole;
+	 ++holes_it)
+    {
+      // Check if the point is inside the current hole.
+      is_in_face = _is_in_connected_component (p, *holes_it,
+					       shoot_up,
+					       false,     // Not including p.
+					       closest_he, is_on_edge);
+
+      // Check if the query point is located on the returned edge.
+      // This can happen only if the edge is vertical.
+      if (is_on_edge)
+      {
+	CGAL_assertion (traits->is_vertical_2_object() (closest_he.curve()));
+	return (make_object (closest_he));
+      }
+
+      // Check if the point is contained in the interior of the current hole.
+      if (is_in_face)
+      {
+	// Move inside the faces that constitute the hole, the first one
+	// being incident face of the twin of closest halfedge found so far.
+	CGAL_assertion (face != closest_he.twin().face());
+
+	face = closest_he.twin().face();
+
+	// Perform a vertical walk along the faces of the hole until locating
+	// a face that contains the qeury point.
+	do
+	{
+	  CGAL_assertion_code (
+	    Halfedge_const_handle  old_closest_he = closest_he;
+	  );
+ 
+	  is_in_face = _is_in_connected_component (p, face.outer_ccb(),
+						   shoot_up,
+						   false,   // Not including p.
+						   closest_he, is_on_edge);
+
+	  // Check if the query point was located on an edge.
+	  // This can happen only if the edge is vertical.
+	  if (is_on_edge)
+	  {
+	    CGAL_assertion (traits->is_vertical_2_object() 
+			    (closest_he.curve()));
+	    return (make_object (closest_he));
+	  }
+	  
+	  // If the point is not contained in the face, move to the neighboring
+	  // face from below (or above, if we shoot downward), using the
+	  // closest halfedge located so far.
+	  if (! is_in_face)
+	  {
+	    CGAL_assertion (old_closest_he != closest_he);
+	    face = closest_he.twin().face();
+	  }
+
+	} while (! is_in_face);
+
+	// We have located a face in the hole that contains the query point.
+	// This will break the internal loop on holes, and we shall proceed
+	// for another iteration of the external loop, trying to locate p in
+	// one of the hole of this new face.
+	found_containing_hole = true;
+      }
+    } // End loop on the current face's holes.
+
+  } while (found_containing_hole);
+
+  // If we reached here, closest_he is the closest edge from above (below)
+  // the query point.
+  const Halfedge_const_handle  invalid_he;
+
+  if (closest_he == invalid_he)
+  {
+    // We did not encounter any edge above (below) the query point:
+    return Object();
+  }
+
+  // Check if one of closest_he's end vertices lies directly above (below) the
+  //  query point, and if so, return this vertex.
+  if (! traits->is_vertical_2_object() (closest_he.curve()))
+  {
+    if (traits->compare_x_2_object() (closest_he.source().point(), p) == EQUAL)
+      return (make_object (closest_he.source()));
+
+    if (traits->compare_x_2_object() (closest_he.target().point(), p) == EQUAL)
+      return (make_object (closest_he.target()));
+  }
+  else
+  {
+    // The entire vertical segment is above (below) the query point: Return the
+    // endpoint closest to it.
+    const bool    is_directed_up = 
+      traits->compare_xy_2_object (closest_he.source(),
+				   closest_he.target()) == SMALLER;
+
+    if ((shoot_up && is_directed_up) ||
+	(! shoot_up && ! is_directed_up))
+    {
+      return (make_object (closest_he.source()));
+    }
+    else
+    {
+      return (make_object (closest_he.target()));
+    }
+  }
+
+  // The interior of the edge is closest to the query point:
+  return (make_object (closest_he));
 }
 
 //-----------------------------------------------------------------------------
@@ -178,6 +301,8 @@ _is_in_connected_component (const Point_2& p,
   // cases that are explained below).
   unsigned int              n_ray_intersections = 0;
 
+  typename Traits_wrapper_2::Equal_2              equal = 
+                                            traits->equal_2_object();
   typename Traits_wrapper_2::Is_vertical_2        is_vertical = 
                                             traits->is_vertical_2_object();
   typename Traits_wrapper_2::Compare_x_2          compare_x = 
@@ -213,7 +338,17 @@ _is_in_connected_component (const Point_2& p,
     }
     else
     {
-      // \todo Deal with vertical ray-shooting.
+      // Check if the current vertical curve contains the query point in its
+      // interior.
+      if (compare_x ((*first).source().point(), p) == EQUAL &&
+	  compare_y_at_x (p, (*first).curve()) == EQUAL &&
+	  ! equal ((*first).source().point(), p) &&
+	  ! equal ((*first).target().point(), p))
+      {
+	closest_he = *first;
+	is_on_edge = true;
+	return (true);
+      }
     }
 
     // Move to the next curve.
@@ -252,15 +387,26 @@ _is_in_connected_component (const Point_2& p,
 
     if (res == EQUAL)
     {
-      // The current edge contains the query point.
+      // The current edge contains the query point. If the seach is inclusive
+      // we return the edge. Otherwise, we return it only if it is vertical,
+      // and contains p in its interior.
       if (inclusive)
       {
 	closest_he = *curr;
 	is_on_edge = true;
 	return (true);
       }
-
-      // \todo Deal with the case of vertical ray-shooting.
+      else
+      {
+	if (is_vertical ((*curr).curve()) &&
+	    ! equal ((*curr).source().point(), p) &&
+	    ! equal ((*curr).target().point(), p))
+	{
+	  closest_he = *curr;
+	  is_on_edge = true;
+	  return (true);
+	}
+      }
     }
 
     // If the point is above the current edge (or below it, if we shoot down),
