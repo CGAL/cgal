@@ -176,8 +176,8 @@ Circular_border_parametizer_3<Adaptor>::parameterize_border(Adaptor* mesh)
         // map vertex on unit circle
         Point_2 uv;
         uv = Point_2(0.5+0.5*cos(-angle),0.5+0.5*sin(-angle));
-//      std::cerr << "(" << uv.x() << "," << uv.y() << ") ";
         mesh->set_vertex_uv(it, uv);
+        //std::cerr << "#" << mesh->get_vertex_index(it) << "(" << it->vertex()->index() << ") <- (" << uv.x() << "," << uv.y() << ") ";
 
         // Mark vertex as "parameterized"
         mesh->set_vertex_parameterized(it, true);

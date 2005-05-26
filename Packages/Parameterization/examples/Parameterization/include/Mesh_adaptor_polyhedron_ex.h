@@ -216,7 +216,6 @@ public:
         // Call common part of the constructors
         init(mesh, first_boundary_halfedge, last_boundary_halfedge);
     }
-
     // Default copy constructor and operator =() are fine
 
     //
@@ -246,38 +245,26 @@ public:
     }
 
     // Count the number of vertices of the mesh
-    int  count_mesh_vertices () const {
+    int  count_mesh_vertices() const {
         int index = 0;
-        for (Vertex_const_iterator it=mesh_vertices_begin();
-             it!=mesh_vertices_end();
-             it++)
-        {
+        for (Vertex_const_iterator it=mesh_vertices_begin(); it!=mesh_vertices_end(); it++)
             index++;
-        }
         return index;
     }
 
-    // Index vertices of the mesh for 0 to count_mesh_vertices()-1
+    // Index vertices of the mesh from 0 to count_mesh_vertices()-1
     void  index_mesh_vertices ()
     {
         fprintf(stderr,"  index Mesh_adaptor_polyhedron_ex vertices... ");
         int index = 0;
         for (Vertex_iterator it=mesh_vertices_begin(); it!=mesh_vertices_end(); it++)
+        {
+            //fprintf(stderr, "#%d=%d ",
+            //                index,
+            //                (int)it->vertex()->index());
             set_vertex_index(it, index++);
+        }
         fprintf(stderr,"ok\n");
-
-//#ifndef NDEBUG
-//      // Print halfedges
-//      fprintf(stderr,"  print all halfedges... ");
-//      for (Halfedge_iterator he_it = m_mesh->halfedges_begin();
-//           he_it != m_mesh->halfedges_end();
-//           he_it++)
-//          fprintf(stderr, "HE %d=%d->%d ",
-//                          (int)he_it->index(),
-//                          (int)he_it->opposite()->vertex()->index(),
-//                          (int)he_it->vertex()->index());
-//      fprintf(stderr,"ok\n");
-//#endif
     }
 
     // Return true of all mesh's facets are triangles
@@ -523,11 +510,11 @@ private:
              vtx_it != m_mesh->vertices_end();
              vtx_it++)
         {
-            //fprintf(stderr, "#%d=(%f,%f,%f) ",
-            //              (int)vtx_index,
-            //              (float)vtx_it->point().x(),
-            //              (float)vtx_it->point().y(),
-            //              (float)vtx_it->point().z());
+            //fprintf(stderr, "%d=(%f,%f,%f) ",
+            //                (int)vtx_index,
+            //                (float)vtx_it->point().x(),
+            //                (float)vtx_it->point().y(),
+            //                (float)vtx_it->point().z());
             vtx_it->index(vtx_index++);
         }
         fprintf(stderr,"ok\n");
@@ -539,10 +526,6 @@ private:
              he_it != m_mesh->halfedges_end();
              he_it++)
         {
-            //fprintf(stderr, "HE %d=%d->%d ",
-            //              (int)he_index,
-            //              (int)he_it->opposite()->vertex()->index(),
-            //              (int)he_it->vertex()->index());
             he_it->index(he_index--);
         }
         fprintf(stderr,"ok\n");
@@ -593,6 +576,11 @@ private:
         // Set seaming flag of all halfedges to INNER, BORDER and OUTER
         // wrt the boundary m_boundary
         flag_halfedges_seaming();
+
+#ifndef NDEBUG
+        // Index vertices right away to ease debugging
+        index_mesh_vertices();
+#endif
     }
 
     // Set seaming flag of all halfedges to INNER, BORDER and OUTER

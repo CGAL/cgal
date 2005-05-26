@@ -257,7 +257,7 @@ parameterize(Adaptor* mesh)
 
     // Fill the matrix for the inner vertices Vi: compute A's coefficient
     // Wij for each neighbor j; then Wii = - sum of Wij
-    fprintf(stderr,"  fill matrix (%d x %d)...",nbVertices,nbVertices);
+    fprintf(stderr,"  matrix filling (%d x %d)...\n",nbVertices,nbVertices);
     for (vertexIt = mesh->mesh_vertices_begin();
          vertexIt != mesh->mesh_vertices_end();
          vertexIt++)
@@ -276,22 +276,22 @@ parameterize(Adaptor* mesh)
                 return status;
         }
     }
-    fprintf(stderr,"ok\n");
+    fprintf(stderr,"    matrix filling ok\n");
 
     // Solve "A*Xu = Bu". On success, solution is (1/Du) * Xu.
     // Solve "A*Xv = Bv". On success, solution is (1/Dv) * Xv.
-    std::cerr << "  solver start..." << std::endl;
+    std::cerr << "  solver..." << std::endl;
     NT Du, Dv;
     if ( !get_linear_algebra_traits().linear_solver(A, Bu, Xu, Du) || 
          !get_linear_algebra_traits().linear_solver(A, Bv, Xv, Dv) )
     {
-        std::cerr << "  error ERROR_CANNOT_SOLVE_LINEAR_SYSTEM!" << std::endl;
+        std::cerr << "    error ERROR_CANNOT_SOLVE_LINEAR_SYSTEM!" << std::endl;
         return ERROR_CANNOT_SOLVE_LINEAR_SYSTEM;
     }
     // WARNING: this package does not support homogeneous coordinates!
     CGAL_parameterization_assertion(Du == 1.0);
     CGAL_parameterization_assertion(Dv == 1.0);
-    std::cerr << "  ...solver: ok" << std::endl;
+    std::cerr << "    solver ok" << std::endl;
 
     // Copy Xu and Xv coordinates into the (u,v) pair of each vertex
     set_mesh_uv_from_system (mesh, Xu, Xv); 
@@ -425,6 +425,7 @@ setup_inner_vertex_relations(Matrix* A,
     int i = mesh.get_vertex_index(vertex);
 
     // circulate over vertices around 'vertex' to compute Wii and Wijs
+    //fprintf(stderr,"    neighbors of #%d are: ", i);
     NT Wii = 0;
     int vertexIndex = 0;
     Vertex_around_vertex_const_circulator vj = mesh.vertices_around_vertex_begin(vertex),
@@ -439,6 +440,7 @@ setup_inner_vertex_relations(Matrix* A,
 
         // Get j index
         int j = mesh.get_vertex_index(vj);
+        //fprintf(stderr,"#%d ", j);
 
         // Set Wij in matrix
         A->set_coef(i,j, Wij);
@@ -450,6 +452,7 @@ setup_inner_vertex_relations(Matrix* A,
         std::cerr << "  error ERROR_NON_TRIANGULAR_MESH!" << std::endl;
         return ERROR_NON_TRIANGULAR_MESH;
     }
+    //fprintf(stderr,"ok\n");
 
     // Set Wii in matrix
     A->set_coef(i,i, Wii);
@@ -552,7 +555,7 @@ is_one_to_one_mapping(const Adaptor& mesh,
         Vertex_const_handle v0, v1, v2;
         int vertexIndex = 0;
         Vertex_around_facet_const_circulator cir = mesh.facet_vertices_begin(facetIt),
-                                            end = cir;
+                                             end = cir;
         CGAL_For_all(cir, end)
         {
             if (vertexIndex == 0)

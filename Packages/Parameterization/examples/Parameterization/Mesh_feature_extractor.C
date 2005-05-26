@@ -56,7 +56,7 @@ int Mesh_feature_extractor::extract_boundaries(bool sort)
         (*pSkeleton->backbones())[index] = tmp;
     }
 
-    std::cerr << "  " << nb << " boundary backbones added" << std::endl;
+    std::cerr << "  " << nb << " boundary backbone(s) found" << std::endl;
     return nb;
 }
 
@@ -72,7 +72,7 @@ bool Mesh_feature_extractor::add_boundary_backbone(int tag_free,
         return false;
 
     // add one backbone
-    std::cerr << "  add one closed boundary backbone...";
+    std::cerr << "  find one closed boundary backbone...";
     backbone *pNewBackbone = new backbone;
     m_pSkeleton->backbones()->push_back(pNewBackbone);
 
