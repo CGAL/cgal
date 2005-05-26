@@ -115,6 +115,7 @@ public:
   }
 
   virtual void update_exact() = 0;
+  virtual int depth() const  { return 1; }
   virtual ~Lazy_exact_rep () { delete et; };
 };
 
@@ -159,6 +160,7 @@ struct Lazy_lazy_exact_Cst : public Lazy_exact_rep<ET>
       : Lazy_exact_rep<ET>(x.approx()), l(x) {}
 
   void update_exact()  { this->et = new ET(l.exact()); }
+  int depth() const { return l.depth() + 1; }
 
   Lazy_exact_nt<ET1> l;
 };
@@ -175,6 +177,8 @@ struct Lazy_exact_unary : public Lazy_exact_rep<ET>
 
   Lazy_exact_unary (const Interval_nt<true> &i, const Lazy_exact_nt<ET> &a)
       : Lazy_exact_rep<ET>(i), op1(a) {}
+
+  int depth() const { return op1.depth() + 1; }
 };
 
 // Base binary operation
@@ -186,6 +190,9 @@ struct Lazy_exact_binary : public Lazy_exact_unary<ET>
   Lazy_exact_binary (const Interval_nt<true> &i,
 		     const Lazy_exact_nt<ET> &a, const Lazy_exact_nt<ET> &b)
       : Lazy_exact_unary<ET>(i, a), op2(b) {}
+
+  int depth() const { return std::max(Lazy_exact_unary<ET>::op1.depth(),
+                                      op2.depth()) + 1; }
 };
 
 // Here we could use a template class for all operations (STL provides
@@ -358,6 +365,9 @@ public :
 
   const ET & exact() const
   { return ptr()->exact(); }
+
+  int depth() const
+  { return ptr()->depth(); }
 
   static const double & get_relative_precision_of_to_double()
   {

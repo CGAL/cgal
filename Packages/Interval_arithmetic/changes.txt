@@ -1,3 +1,6 @@
+26 May 2005 Sylvain Pion
+- Lazy_exact_nt : add depth() member function to compute the depth of the DAG.
+
 11 May 2005 Sylvain Pion
 - Add using Base::operator(); in static filters.
 
