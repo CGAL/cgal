@@ -48,7 +48,7 @@ barycenter(InputIterator begin, InputIterator end, const K & k)
   typedef typename std::iterator_traits<InputIterator>::value_type  pair;
   typedef typename pair::second_type                                FT;
   typedef typename pair::first_type                                 Point;
-  typedef typename Same_dimension_vector<Point, K>::type            Vector;
+  typedef typename Vector<Dimension<Point, K>::value, K>::type      Vector;
 
   CGAL_precondition(begin != end);
 
@@ -76,7 +76,7 @@ barycenter(PointInputIterator begin, PointInputIterator end,
 {
   typedef typename std::iterator_traits<PointInputIterator>::value_type  Point;
   typedef typename std::iterator_traits<WeightInputIterator>::value_type FT;
-  typedef typename Same_dimension_vector<Point, K>::type                 Vector;
+  typedef typename Vector<Dimension<Point, K>::value, K>::type           Vector;
 
   CGAL_precondition(begin != end);
 

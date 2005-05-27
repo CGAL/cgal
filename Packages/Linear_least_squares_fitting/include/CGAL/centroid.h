@@ -46,7 +46,7 @@ centroid(InputIterator begin, InputIterator end, const K & k)
 {
   typedef typename std::iterator_traits<InputIterator>::value_type  Point;
   typedef typename K::FT                                            FT;
-  typedef typename Same_dimension_vector<Point, K>::type            Vector;
+  typedef typename Vector<Dimension<Point, K>::value, K>::type      Vector;
 
 #if 0 // Another implementation (by Michael).
   // compute centroid of points:
