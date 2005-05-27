@@ -29,73 +29,154 @@
 
 CGAL_BEGIN_NAMESPACE
 
-// Some tools to find the type of a kernel object with the same dimension
-// as another given one.
-// E.g. : Same_dimension_vector<K::Point_2>::type  is  K::Vector_2.
+// Some tools to find the type of a kernel object given its dimension.
+// E.g. : Vector<2, K>::type  is  K::Vector_2.
 //
 // Currently undocumented => for CGAL internal use only.
 
 // TODO :
-// - Do the other missing types.
-// - What about functors ?  At least with a dimensional-insensitive interface.
+// - What about functors ?
+//   At least those with a dimensional-independent interface.
 // - Another thing which would be nice would be to make d-dimensional
 //   algorithms use the 2d-3d kernel interface with a smaller wrapper.
 //   (again, this forces a full kernel, not a sub-set traits, but at least...)
 //   Then, based on Dimension<>, it's possibly to automatically use it.
 //   cf Dimension_mapper<> at the end of the file.
 
-template < typename T,
-           typename K = typename Kernel_traits<T>::Kernel,
-           int dim = Dimension<T, K>::value >
-struct Same_dimension_point;
+template < int dim, typename K >  struct Point;
+template < int dim, typename K >  struct Vector;
+template < int dim, typename K >  struct Iso_box;
+template < int dim, typename K >  struct Direction;
+template < int dim, typename K >  struct Line;
+template < int dim, typename K >  struct Ray;
+template < int dim, typename K >  struct Segment;
+template < int dim, typename K >  struct Triangle;
+template < int dim, typename K >  struct Hypersphere;
+template < int dim, typename K >  struct Hyperplane;
+template < int dim, typename K >  struct Aff_transformation;
 
-template < typename T, typename K >
-struct Same_dimension_point <T, K, 2>
-{ typedef typename K::Point_2  type; };
-
-template < typename T, typename K >
-struct Same_dimension_point <T, K, 3>
-{ typedef typename K::Point_3  type; };
-
-template < typename T, typename K >
-struct Same_dimension_point <T, K, 0>
-{ typedef typename K::Point_d  type; };
+// Not-so generalizable stuff : Conic_2, Tetrahedron_3.
+template < int dim, typename K >  struct Tetrahedron;
 
 
-template < typename T,
-           typename K = typename Kernel_traits<T>::Kernel,
-           int dim = Dimension<T, K>::value >
-struct Same_dimension_vector;
+template < typename K >
+struct Point <2, K> { typedef typename K::Point_2 type; };
 
-template < typename T, typename K >
-struct Same_dimension_vector <T, K, 2>
-{ typedef typename K::Vector_2  type; };
+template < typename K >
+struct Point <3, K> { typedef typename K::Point_3 type; };
 
-template < typename T, typename K >
-struct Same_dimension_vector <T, K, 3>
-{ typedef typename K::Vector_3  type; };
-
-template < typename T, typename K >
-struct Same_dimension_vector <T, K, 0>
-{ typedef typename K::Vector_d  type; };
+template < typename K >
+struct Point <0, K> { typedef typename K::Point_d type; };
 
 
-template < typename T,
-           typename K = typename Kernel_traits<T>::Kernel,
-           int dim = Dimension<T, K>::value >
-struct Same_dimension_iso_box;
+template < typename K >
+struct Vector <2, K> { typedef typename K::Vector_2 type; };
 
-template < typename T, typename K >
-struct Same_dimension_iso_box <T, K, 2>
-{ typedef typename K::Iso_rectangle_2  type; };
+template < typename K >
+struct Vector <3, K> { typedef typename K::Vector_3 type; };
 
-template < typename T, typename K >
-struct Same_dimension_iso_box <T, K, 3>
-{ typedef typename K::Iso_cuboid_3  type; };
+template < typename K >
+struct Vector <0, K> { typedef typename K::Vector_d type; };
 
-template < typename T, typename K >
-struct Same_dimension_iso_box <T, K, 0>
-{ typedef typename K::Iso_box_d  type; };
+
+template < typename K >
+struct Iso_box <2, K> { typedef typename K::Iso_rectangle_2 type; };
+
+template < typename K >
+struct Iso_box <3, K> { typedef typename K::Iso_cuboid_3 type; };
+
+template < typename K >
+struct Iso_box <0, K> { typedef typename K::Iso_box_d type; };
+
+
+template < typename K >
+struct Direction <2, K> { typedef typename K::Direction_2 type; };
+
+template < typename K >
+struct Direction <3, K> { typedef typename K::Direction_3 type; };
+
+template < typename K >
+struct Direction <0, K> { typedef typename K::Direction_d type; };
+
+
+template < typename K >
+struct Line <2, K> { typedef typename K::Line_2 type; };
+
+template < typename K >
+struct Line <3, K> { typedef typename K::Line_3 type; };
+
+template < typename K >
+struct Line <0, K> { typedef typename K::Line_d type; };
+
+
+template < typename K >
+struct Ray <2, K> { typedef typename K::Ray_2 type; };
+
+template < typename K >
+struct Ray <3, K> { typedef typename K::Ray_3 type; };
+
+template < typename K >
+struct Ray <0, K> { typedef typename K::Ray_d type; };
+
+
+template < typename K >
+struct Segment <2, K> { typedef typename K::Segment_2 type; };
+
+template < typename K >
+struct Segment <3, K> { typedef typename K::Segment_3 type; };
+
+template < typename K >
+struct Segment <0, K> { typedef typename K::Segment_d type; };
+
+
+template < typename K >
+struct Triangle <2, K> { typedef typename K::Triangle_2 type; };
+
+template < typename K >
+struct Triangle <3, K> { typedef typename K::Triangle_3 type; };
+
+template < typename K >
+struct Triangle <0, K> { typedef typename K::Triangle_d type; };
+
+
+template < typename K >
+struct Tetrahedron <3, K> { typedef typename K::Tetrahedron_3 type; };
+
+template < typename K >
+struct Tetrahedron <0, K> { typedef typename K::Tetrahedron_d type; };
+
+
+template < typename K >
+struct Hypersphere <2, K> { typedef typename K::Circle_2 type; };
+
+template < typename K >
+struct Hypersphere <3, K> { typedef typename K::Sphere_3 type; };
+
+template < typename K >
+struct Hypersphere <0, K> { typedef typename K::Sphere_d type; };
+
+
+template < typename K >
+struct Hyperplane <2, K> { typedef typename K::Line_2 type; };
+
+template < typename K >
+struct Hyperplane <3, K> { typedef typename K::Plane_3 type; };
+
+template < typename K >
+struct Hyperplane <0, K> { typedef typename K::Hyperplane_d type; };
+
+
+template < typename K >
+struct Aff_transformation <2, K>
+{ typedef typename K::Aff_transformation_2 type; };
+
+template < typename K >
+struct Aff_transformation <3, K>
+{ typedef typename K::Aff_transformation_3 type; };
+
+template < typename K >
+struct Aff_transformation <0, K>
+{ typedef typename K::Aff_transformation_d type; };
 
 
 #if 0

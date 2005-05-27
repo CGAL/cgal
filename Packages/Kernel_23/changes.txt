@@ -1,3 +1,6 @@
+28 May 2005 Sylvain Pion
+- More on Kernel/Dimension_utils.h.
+
 27 May 2005 Sylvain Pion
 - Add more tools to abstract away dimension in Kernel/Dimension_utils.h.
 
