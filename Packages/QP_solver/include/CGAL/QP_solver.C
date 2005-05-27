@@ -824,6 +824,7 @@ pivot_step( )
 
     // ratio test & update (step 2)
     // ----------------------------
+/*    
     if ( i >= 0) {
 
 	// diagnostic output
@@ -847,6 +848,33 @@ pivot_step( )
 	    ratio_test_2( Is_linear());
 	}
     }
+*/
+    // instead of the above piece of code we now have
+    // diagnostic output
+    if (is_phaseII) {
+     
+        CGAL_qpe_debug {
+            vout2 << std::endl
+		  << "----------------------------" << std::endl
+		  << "Ratio Test & Update (Step 2)" << std::endl
+		  << "----------------------------" << std::endl;
+        }
+
+        // compute index of entering variable
+        j += in_B.size();
+
+        ratio_test_2( Is_linear());
+    
+        while ((i >= 0) && basis_matrix_stays_regular()) {
+        
+	    update_2(Is_linear());
+	
+	    ratio_test_2(Is_linear());
+	
+        }
+    } 
+
+
 
     // ratio test & update (step 3)
     // ----------------------------
@@ -1669,7 +1697,7 @@ z_replace_variable( )
 {
     CGAL_qpe_debug {
 	vout2 <<   "<--> nonbasic (" << variable_type( j) << ") variable " << j
-	      << " replaces basic (" << variable_type( i) << ") variable " << i
+	      << " z_replaces basic (" << variable_type( i) << ") variable " << i
 	      << std::endl << std::endl;
     }
 
@@ -1737,10 +1765,10 @@ z_replace_variable_original_by_original( )
     }
 	
     // compute \hat{k}_{2}
-    ET   k_2 = nu + et2 * d(ET(qp_D[i][j]) - ET(qp_D[j][j]));
+    ET   k_2 = nu + et2 * d*(ET(qp_D[i][j]) - ET(qp_D[j][j]));
     	    
     // update basis inverse
-    inv_M_B.z_replace_original_by_original( q_x_O.begin(), q_lambda.begin(), 
+    inv_M_B.z_replace_original_by_original( q_lambda.begin(), q_x_O.begin(), 
       k_2, k);
 
 }
