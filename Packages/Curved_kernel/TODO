@@ -1,6 +1,9 @@
-!!! case of tangent arcs not implemented
 (highest priority is to be able to run at least *something* with 
 the new Arrangement_2...)
+
+construct intersection for *arcs* should use solve or solve in range
+interface of operator() of construct intersection for circles is
+wrong, it should compute circular arc endpoints
 
 add "using..." in all functors that derive from another
 
