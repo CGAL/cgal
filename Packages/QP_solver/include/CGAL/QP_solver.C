@@ -1662,6 +1662,61 @@ leave_variable( )
 }
 
 
+// replace variable in basis QP-case, transition to Ratio Test Step 2
+template < class Rep_ >
+void QPE_solver<Rep_>::
+z_replace_variable( )
+{
+    CGAL_qpe_debug {
+	vout2 <<   "<--> nonbasic (" << variable_type( j) << ") variable " << j
+	      << " replaces basic (" << variable_type( i) << ") variable " << i
+	      << std::endl << std::endl;
+    }
+
+    // replace variable
+    z_replace_variable( Has_no_inequalities());
+
+    // pivot step done
+    i = j = -1;
+}
+
+
+template < class Rep_ >  inline                           // no inequalities
+void QPE_solver<Rep_>::
+z_replace_variable( Tag_true)
+{
+    z_replace_variable_original_by_original();
+    strategyP->leaving_basis(i);
+
+}
+
+
+template < class Rep_ >  inline                          // has inequalities
+void QPE_solver<Rep_>::
+z_replace_variable( Tag_false)
+{
+    // determine type of variables
+    bool  enter_original = ( (j < qp_n) || (j >= (int)( qp_n+slack_A.size())));
+    bool  leave_original = ( (i < qp_n) || (i >= (int)( qp_n+slack_A.size())));
+
+    // update basis and basis inverse
+    if ( leave_original) {
+        if ( enter_original) {               
+	    z_replace_variable_original_by_original();
+	} else {                             
+	    z_replace_variable_original_by_slack();
+	}
+    } else {
+        if ( enter_original) {
+	    z_replace_variable_slack_by_original();
+	} else {
+	    z_replace_variable_slack_by_slack();
+	}
+    }
+    strategyP->leaving_basis( i);
+}
+
+
 // replacement with precond det(M_{B \setminus \{i\}})=0
 template < class Rep_ >
 void  QPE_solver<Rep_>::
@@ -1681,12 +1736,12 @@ z_replace_variable_original_by_original( )
 	if ( vout2.verbose()) print_basis();
     }
 	
-    // compute k2
-    ET   k2 = nu + et2 * d(ET(qp_D[i][j]) - ET(qp_D[j][j]));
+    // compute \hat{k}_{2}
+    ET   k_2 = nu + et2 * d(ET(qp_D[i][j]) - ET(qp_D[j][j]));
     	    
     // update basis inverse
     inv_M_B.z_replace_original_by_original( q_x_O.begin(), q_lambda.begin(), 
-      k2, k);
+      k_2, k);
 
 }
 
@@ -1719,6 +1774,7 @@ z_replace_variable_original_by_slack( )
     in_C[ C.back()] = l;
     in_C[ old_row ] = -1;
        C.pop_back();
+    
     // diagnostic output
     CGAL_qpe_debug {
 	if ( vout2.verbose()) print_basis();
@@ -1761,23 +1817,29 @@ z_replace_variable_slack_by_original( )
      b_C[ C.size()] = ET( qp_b[ new_row]);
     in_C[ new_row ] = C.size();
        C.push_back( new_row);
+    
     // diagnostic output
     CGAL_qpe_debug {
 	if ( vout2.verbose()) print_basis();
     }
 
     // update basis inverse
+    // --------------------
+
+    // prepare u
     A_row_by_index_accessor  a_accessor( A_accessor( qp_A, 0, qp_n), new_row);
     std::copy( A_row_by_index_iterator( B_O.begin(), a_accessor),
 	       A_row_by_index_iterator( B_O.end  (), a_accessor),
 	       tmp_x.begin());
-    if ( art_s_i > 0) {                                 // special art.
-	tmp_x[ in_B[ art_s_i]] = ET( art_s[ new_row]);
-    }
-    ET  kappa = et0;
-    inv_M_B.z_replace_slack_by_original( q_lambda.begin(), q_x_O.begin(),
-                                          tmp_x.begin(), kappa, nu);
     
+    
+    // prepare kappa
+    ET  kappa = d * ET(qp_A[j][new_row]) 
+                - inv_M_B.inner_product_x( tmp_x.begin(), q_x_O.begin());
+		
+		 
+    inv_M_B.z_replace_slack_by_original( q_lambda.begin(), q_x_O.begin(),
+                                          tmp_x.begin(), kappa, nu);    
 }
 
 
@@ -1811,13 +1873,13 @@ z_replace_variable_slack_by_slack( )
     }
 
     // update basis inverse
+    // --------------------
     A_row_by_index_accessor  a_accessor( A_accessor( qp_A, 0, qp_n), new_row);
     std::copy( A_row_by_index_iterator( B_O.begin(), a_accessor),
 	       A_row_by_index_iterator( B_O.end  (), a_accessor),
 	       tmp_x.begin());
-    if ( art_s_i > 0) {                                 // special artificial
-	tmp_x[ in_B[ art_s_i]] = ET( art_s[ new_row]);
-    }
+
+
     inv_M_B.z_replace_slack_by_slack( tmp_x.begin(), k);
 }
 
