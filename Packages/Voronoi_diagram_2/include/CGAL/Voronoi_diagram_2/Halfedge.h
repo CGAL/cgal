@@ -61,6 +61,9 @@ public:
   typedef typename VDA::Halfedge_handle          Halfedge_handle;
   typedef typename VDA::Ccb_halfedge_circulator  Ccb_halfedge_circulator;
 
+  typedef typename VDA::Voronoi_traits::Curve    Curve;
+
+  typedef typename VDA::Dual_graph::Edge         Dual_edge;
 
   Halfedge(const VDA* vda = NULL)
     : vda_(vda), f_(Dual_face_handle()), i_(-1) {}
@@ -136,7 +139,7 @@ public:
   }
 
   Ccb_halfedge_circulator ccb() const {
-    return Ccb_halfedge_circulator( Halfedge_handle(*this) );
+    return Ccb_halfedge_circulator( *this );
   }
 
   bool operator==(const Self& other) const {
@@ -149,11 +152,21 @@ public:
     return !((*this) == other);
   }
 
+  bool has_source() const {
+    return opposite()->has_target();
+  }
+
+  bool has_target() const {
+    return !vda_->dual().is_infinite(f_);
+  }
+
   Vertex_handle source() const {
+    CGAL_precondition( has_source() );
     return opposite()->vertex();
   }
 
   Vertex_handle target() const {
+    CGAL_precondition( has_target() );
     return vertex();
   }
 
@@ -164,14 +177,35 @@ public:
   }
 
   Face_handle face() const {
-    return
-      Face_handle(   Face(vda_, f_->vertex( CW_CCW_2::ccw(i_) ))   );
+    Face f(vda_, f_->vertex( CW_CCW_2::ccw(i_) ));
+    return Face_handle(f);
+    //      Face_handle(   Face(vda_, f_->vertex( CW_CCW_2::ccw(i_) ))   );
   }
 
-  // this is temporary or maybe not
-  typename VDA::Dual_edge dual_edge() const {
-    return typename VDA::Dual_edge(f_, i_);
+  Curve curve() const {
+    Dual_vertex_handle v1 = f_->vertex( CW_CCW_2::cw(i_) ); // north
+    Dual_vertex_handle v2 = f_->vertex( CW_CCW_2::ccw(i_) ); // south
+    Dual_vertex_handle v3 = f_->vertex( i_ ); // west
+    Dual_vertex_handle v4 = vda_->dual().tds().mirror_vertex(f_,i_); // east
+
+    CGAL_precondition( !vda_->dual().is_infinite(v1) );
+    CGAL_precondition( !vda_->dual().is_infinite(v2) );
+
+    bool is_inf3 = vda_->dual().is_infinite(v3);
+    bool is_inf4 = vda_->dual().is_infinite(v4);
+
+    if ( is_inf3 && is_inf4 ) {
+      return VDA::Voronoi_traits::make_edge(v1, v2);
+    } else if ( is_inf3 ) {
+      return VDA::Voronoi_traits::make_edge(v1, v2, v4, false);
+    } else if ( is_inf4 ) {
+      return VDA::Voronoi_traits::make_edge(v1, v2, v3, true);
+    } else {
+      return VDA::Voronoi_traits::make_edge(v1, v2, v3, v4);
+    }
   }
+
+  Dual_edge dual_edge() const { return Dual_edge(f_, i_); }
 
   bool is_valid() const {
     if ( vda_ == NULL ) { return true; }
@@ -186,11 +220,15 @@ public:
 
     valid = valid && opposite()->opposite() == h_this;
 
-    valid = valid && source()->is_valid();
-    valid = valid && target()->is_valid();
+    if ( has_source() ) {
+      valid = valid && source()->is_valid();
+      valid = valid && source()->is_incident_edge( h_this );
+    }
 
-    valid = valid && source()->is_incident_edge( h_this );
-    valid = valid && target()->is_incident_edge( h_this );
+    if ( has_target() ) {
+      valid = valid && target()->is_valid();
+      valid = valid && target()->is_incident_edge( h_this );
+    }
 
     valid = valid && next()->previous() == h_this;
     valid = valid && previous()->next() == h_this;

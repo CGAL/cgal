@@ -30,6 +30,54 @@ CGAL_VORONOI_DIAGRAM_2_BEGIN_NAMESPACE
 
 //=========================================================================
 //=========================================================================
+#if 0
+template<class Vertex_handle, class Voronoi_vertex,
+	 class Voronoi_edge, bool Use_site>
+class Vertex_edge_maker;
+
+template<class Vertex_handle_t, class Voronoi_vertex, class Voronoi_edge>
+struct Vertex_edge_maker<Vertex_handle_t,Voronoi_vertex,Voronoi_edge,true>
+{
+  typedef Vertex_handle_t   Vertex_handle;
+  typedef Voronoi_vertex    Voronoi_vertex_2;
+  typedef Voronoi_edge      Voronoi_edge_2;
+
+  static Voronoi_vertex_2 make_vertex(const Vertex_handle& v1,
+				      const Vertex_handle& v2,
+				      const Vertex_handle& v3) {
+    Voronoi_vertex_2 vv;
+    vv.set_sites(v1->site(), v2->site(), v3->site());
+    return vv;
+  }
+
+  static Voronoi_edge_2 make_edge(const Vertex_handle& v1,
+				  const Vertex_handle& v2) {
+    Voronoi_edge_2 ve;
+    ve.set_sites(v1->site(), v2->site());
+    return ve;
+  }
+
+  static Voronoi_edge_2 make_edge(const Vertex_handle& v1,
+				  const Vertex_handle& v2,
+				  const Vertex_handle& v3,
+				  bool is_src) {
+    Voronoi_edge_2 ve;
+    ve.set_sites(v1->site(), v2->site(), v3->site(), is_src);
+    return ve;
+  }
+
+  static Voronoi_edge_2 make_edge(const Vertex_handle& v1,
+				  const Vertex_handle& v2,
+				  const Vertex_handle& v3,
+				  const Vertex_handle& v4) {
+    Voronoi_edge_2 ve;
+    ve.set_sites(v1->site(), v2->site(), v3->site(), v4->site());
+    return ve;
+  }
+};
+#endif
+
+//=========================================================================
 
 template<class DG, class ET, class FT>
 class Default_Voronoi_traits_2
@@ -41,6 +89,8 @@ class Default_Voronoi_traits_2
   typedef DG  Dual_graph;
   typedef ET  Edge_degeneracy_tester;
   typedef FT  Face_degeneracy_tester;
+
+  typedef typename DG::Vertex_handle  Vertex_handle;
 
   const Edge_degeneracy_tester& edge_degeneracy_tester_object() const {
     return e_tester_;

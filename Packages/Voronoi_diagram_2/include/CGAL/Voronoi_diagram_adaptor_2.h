@@ -37,6 +37,7 @@
 #include <CGAL/Voronoi_diagram_adaptor_2/Dummy_iterator.h>
 #include <CGAL/Voronoi_diagram_adaptor_2/Unbounded_faces.h>
 #include <CGAL/Voronoi_diagram_adaptor_2/Degeneracy_tester_binders.h>
+#include <CGAL/Voronoi_diagram_adaptor_2/Cached_degeneracy_testers.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -87,6 +88,17 @@ class Voronoi_diagram_adaptor_2
   Edge_degeneracy_tester;
   typedef typename Voronoi_traits::Face_degeneracy_tester
   Face_degeneracy_tester;
+
+#ifdef USE_CACHED_TESTERS
+ protected:
+  typedef CGAL_VORONOI_DIAGRAM_2_NS::Cached_edge_degeneracy_tester
+  <Edge_degeneracy_tester>
+  Cached_edge_degeneracy_tester;
+
+  typedef CGAL_VORONOI_DIAGRAM_2_NS::Cached_face_degeneracy_tester
+  <Face_degeneracy_tester>
+  Cached_face_degeneracy_tester;
+#endif
 
  protected:
   // DEGENERACY TESTER BINDERS
@@ -153,18 +165,18 @@ class Voronoi_diagram_adaptor_2
   typedef CGAL_VORONOI_DIAGRAM_2_NS::Handle_adaptor<Vertex>    Vertex_handle;
   typedef CGAL_VORONOI_DIAGRAM_2_NS::Handle_adaptor<Face>      Face_handle;
 
-  // THE HOLES ITERATOR
-  typedef CGAL_VORONOI_DIAGRAM_2_NS::Dummy_iterator<Halfedge_handle>
-  Holes_iterator;
-
   // CIRCULATORS
   typedef CGAL_VORONOI_DIAGRAM_2_NS::Halfedge_around_vertex_circulator_adaptor
-  <Halfedge_handle>
+  <Halfedge>
   Halfedge_around_vertex_circulator;
 
   typedef CGAL_VORONOI_DIAGRAM_2_NS::Ccb_halfedge_circulator_adaptor
-  <Halfedge_handle>
+  <Halfedge>
   Ccb_halfedge_circulator;
+
+  // THE HOLES ITERATOR
+  typedef CGAL_VORONOI_DIAGRAM_2_NS::Dummy_iterator<Ccb_halfedge_circulator>
+  Holes_iterator;
 
  protected:
   typedef CGAL_VORONOI_DIAGRAM_2_NS::Bounded_face_tester
@@ -177,40 +189,6 @@ class Voronoi_diagram_adaptor_2
   Unbounded_faces_iterator;
 
  public:
-  // PREDICATES
-  //-----------
-  bool is_degenerate_edge(const Dual_face_handle& f, int i) const
-  {
-    return edge_tester()(dual_, f, i);
-  }
-
-  bool is_degenerate_edge(const Dual_edge& e) const
-  {
-    return is_degenerate_edge(e.first, e.second);
-  }
-
-  bool is_degenerate_edge(const Dual_edge_circulator& ec) const
-  {
-    return is_degenerate_edge(*ec);
-  }
-
-  bool is_degenerate_edge(const Dual_edges_iterator& eit) const
-  {
-    return is_degenerate_edge(*eit);
-  }
-
-  bool is_degenerate_edge(const All_dual_edges_iterator& eit) const
-  {
-    return is_degenerate_edge(*eit);
-  }
-
-  bool has_empty_Voronoi_cell_interior(const Dual_vertex_handle& v) const
-  {
-    return face_tester()(dual(), v);
-  }
-
-
-public:
   struct Face_circulator {}; // 1. circulates through the Voronoi cells
 			     //    that are neighbors of the given
 			     //    Voronoi cell;
@@ -235,13 +213,18 @@ public:
   //--------------
   // CONSTRUCTORS
   //--------------
+#if 0
   Voronoi_diagram_adaptor_2(const Voronoi_traits& tr = Voronoi_traits())
-    : dual_(), tr_(tr), bf_tester_(this) {}
+    : dual_(), tr_(tr) {}
+#endif
 
   Voronoi_diagram_adaptor_2(const Dual_graph& dg,
 			    const Voronoi_traits& tr = Voronoi_traits())
-    : dual_(dg), tr_(tr), bf_tester_(this) {}
-
+#ifdef USE_CACHED_TESTERS
+    : dual_(dg), tr_(tr), cached_e_tester_(), cached_f_tester_() {}
+#else
+    : dual_(dg), tr_(tr) {}
+#endif
 
 public:
   //------------------
@@ -281,6 +264,25 @@ public:
   size_type number_of_halfedges() const { return size_of_halfedges(); }
 
   // DEGENERACY TESTERS
+#if 0
+  const Edge_degeneracy_tester& edge_degeneracy_tester() const {
+    return tr_.edge_degeneracy_tester_object();
+  }
+
+  const Face_degeneracy_tester& face_degeneracy_tester() const {
+    return tr_.face_degeneracy_tester_object();
+  }
+#endif
+
+#ifdef USE_CACHED_TESTERS
+  const Cached_edge_degeneracy_tester& edge_tester() const {
+    return cached_e_tester_;
+  }
+
+  const Cached_face_degeneracy_tester& face_tester() const {
+    return cached_f_tester_;
+  }
+#else
   const Edge_degeneracy_tester& edge_tester() const {
     return tr_.edge_degeneracy_tester_object();
   }
@@ -288,6 +290,7 @@ public:
   const Face_degeneracy_tester& face_tester() const {
     return tr_.face_degeneracy_tester_object();
   }
+#endif
 
   // UNBOUNDED FACE
   Face_handle unbounded_face() const {
@@ -318,13 +321,13 @@ public:
 
   Unbounded_faces_iterator unbounded_faces_begin() const {
     return filter_iterator( non_degenerate_faces_end(),
-			    bf_tester_,
+			    Bounded_face_tester(this),
 			    non_degenerate_faces_begin() );
   }
 
   Unbounded_faces_iterator unbounded_faces_end() const {
     return filter_iterator( non_degenerate_faces_end(),
-			    bf_tester_ );
+			    Bounded_face_tester(this) );
   }
 
   // EDGE ITERATORS
@@ -393,13 +396,13 @@ public:
 
   // CIRCULATORS
   Ccb_halfedge_circulator ccb_halfedges(const Face_handle& f) const {
-    return Ccb_halfedge_circulator(f->halfedge());
+    return Ccb_halfedge_circulator(*f->halfedge());
   }
 
   Ccb_halfedge_circulator ccb_halfedges(const Face_handle& f,
 					const Halfedge_handle& he) const {
     CGAL_precondition( he.face() == f );
-    return Ccb_halfedge_circulator(he);
+    return Ccb_halfedge_circulator(*he);
   }
 
 
@@ -411,7 +414,7 @@ public:
   Halfedge_around_vertex_circulator
   incident_halfedges(const Vertex_handle& v, const Halfedge_handle& he) const {
     CGAL_precondition( he->vertex() == v );
-    return Halfedge_around_vertex_circulator(he);
+    return Halfedge_around_vertex_circulator(*he);
   }
 
   bool is_valid() const {
@@ -426,13 +429,7 @@ public:
 
     for (Halfedge_iterator it = halfedges_begin(); it != halfedges_end();
 	 ++it) {
-      // I HAVE TO FIGURE OUT WHY THE FOLLOWING WORKS AND DOES NOT
-      // POSE ANY PROBLEMS... THIS HAS TO DO WITH WHAT HALFEDGE IS
-      // CONSIDERED INFINITE AND WHICH NOT...
-      if (  !dual_.is_infinite( it->dual_edge().first ) &&
-	    !dual_.is_infinite( it->opposite()->dual_edge().first )  ) {
-	valid = valid && it->is_valid();
-      }
+      valid = valid && it->is_valid();
     }
     return valid;
   }
@@ -441,7 +438,10 @@ public:
 private:
   Dual_graph  dual_;
   Voronoi_traits tr_;
-  Bounded_face_tester bf_tester_;
+#ifdef USE_CACHED_TESTERS
+  Cached_edge_degeneracy_tester cached_e_tester_;
+  Cached_face_degeneracy_tester cached_f_tester_;
+#endif
 };
 
 

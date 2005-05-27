@@ -117,7 +117,7 @@ class Face
   }
 
   Ccb_halfedge_circulator outer_ccb() const {
-    return Ccb_halfedge_circulator( halfedge() );
+    return Ccb_halfedge_circulator( *halfedge() );
   }
 
   bool is_halfedge_on_inner_ccb(const Halfedge_handle&) const {
@@ -146,7 +146,6 @@ class Face
     return !((*this) == other);
   }
 
-  // temporary?
   const Dual_vertex_handle& dual_vertex() const { return v_; }
 
   bool is_valid() const {
@@ -161,7 +160,9 @@ class Face
     Ccb_halfedge_circulator hc_start = hc;
     Face_handle f_this(*this);
     do {
-      valid = valid && (*hc)->face() == f_this;
+      valid = valid && hc->face() == f_this;
+      valid = valid && !vda_->edge_tester()( vda_->dual(),
+					     hc->dual_edge() );
       hc++;
     } while ( hc != hc_start );
 

@@ -22,7 +22,12 @@
 
 #include <CGAL/Voronoi_diagram_adaptor_2/basic.h>
 #include <CGAL/Unique_hash_map.h>
+#include <CGAL/edge_list.h>
 #include <cstdlib>
+
+// this is included so that we now if CGAL_T2_USE_ITERATOR_AS_HANDLE
+// is defined
+#include <CGAL/Triangulation_2.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -52,6 +57,7 @@ class Cached_edge_degeneracy_tester
   typedef typename Edge_degeneracy_tester::Arity        Arity;
 
  private:
+#if 0
   class Edge_hash_function
     : public Handle_hash_function
   {
@@ -67,9 +73,10 @@ class Cached_edge_degeneracy_tester
       return (Base::operator()(e.first)) << e.second;
     }
   };
+#endif
 
   // true if degenerate, false otherwise
-  typedef Unique_hash_map<Edge,bool,Edge_hash_function>  Edge_map;
+  typedef Unique_hash_map<Edge,bool,CGALi::Edge_hash_function>  Edge_map;
 
   Edge opposite(const Dual_graph& dual, const Edge& e) const {
     int i_mirror = dual.tds().mirror_index(e.first, e.second);

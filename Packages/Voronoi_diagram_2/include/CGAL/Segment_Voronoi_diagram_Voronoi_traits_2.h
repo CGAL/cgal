@@ -22,6 +22,8 @@
 
 #include <CGAL/Voronoi_diagram_adaptor_2/basic.h>
 #include <CGAL/Voronoi_diagram_adaptor_2/Default_Voronoi_traits_2.h>
+#include <CGAL/Voronoi_diagram_adaptor_2/Voronoi_vertex_base_2.h>
+#include <CGAL/Voronoi_diagram_adaptor_2/Voronoi_edge_base_2.h>
 #include <cstdlib>
 #include <algorithm>
 
@@ -276,6 +278,51 @@ class SVD_Face_degeneracy_tester
 //=========================================================================
 
 
+template<class DG> class Segment_Voronoi_diagram_Voronoi_traits_2;
+template<class DG> class SVD_Voronoi_edge_2;
+
+template<class DG>
+class SVD_Voronoi_vertex_2
+  : public CGAL_VORONOI_DIAGRAM_2_NS::Voronoi_vertex_base_2
+  <DG, typename DG::Point_2, typename DG::Site_2,
+   SVD_Voronoi_vertex_2<DG> >
+{
+  friend class Segment_Voronoi_diagram_Voronoi_traits_2<DG>;
+  friend class SVD_Voronoi_edge_2<DG>;
+  friend class SVD_Voronoi_edge_2<DG>::Base;
+
+ private:
+  typedef CGAL_VORONOI_DIAGRAM_2_NS::Voronoi_vertex_base_2
+  <DG, typename DG::Point_2, typename DG::Site_2, SVD_Voronoi_vertex_2<DG> >
+  Base;
+
+ public:
+  operator typename Base::Point_2() const {
+    return typename Base::Geom_traits().construct_svd_vertex_2_object()
+      (this->s_[0], this->s_[1], this->s_[2]);
+  }
+};
+
+//=========================================================================
+  
+template<class DG>
+class SVD_Voronoi_edge_2
+  : public CGAL_VORONOI_DIAGRAM_2_NS::Voronoi_edge_base_2
+  <DG,typename DG::Point_2,typename DG::Site_2,
+   SVD_Voronoi_edge_2<DG>,SVD_Voronoi_vertex_2<DG>, Tag_true>
+{
+  friend class Segment_Voronoi_diagram_Voronoi_traits_2<DG>;
+  friend class SVD_Voronoi_vertex_2<DG>;
+
+ private:
+  typedef CGAL_VORONOI_DIAGRAM_2_NS::Voronoi_edge_base_2
+  <DG,typename DG::Point_2,typename DG::Site_2,
+   SVD_Voronoi_edge_2<DG>,SVD_Voronoi_vertex_2<DG>, Tag_true>
+  Base;
+};
+
+//=========================================================================
+
 template<class SVD2>
 class Segment_Voronoi_diagram_Voronoi_traits_2
   : public CGAL_VORONOI_DIAGRAM_2_NS::Default_Voronoi_traits_2
@@ -290,7 +337,50 @@ class Segment_Voronoi_diagram_Voronoi_traits_2
   Base;
 
   typedef Segment_Voronoi_diagram_Voronoi_traits_2<SVD2>  Self;
+
+ public:
+  typedef typename SVD2::Point_2                   Point_2;
+  typedef typename SVD2::Site_2                    Site_2;
+  typedef typename SVD2::Vertex_handle             Vertex_handle;
+
+  typedef SVD_Voronoi_vertex_2<SVD2>               Voronoi_vertex_2;
+  typedef SVD_Voronoi_edge_2<SVD2>                 Voronoi_edge_2;
+  typedef Voronoi_edge_2                           Curve;
+
+  static Voronoi_vertex_2 make_vertex(const Vertex_handle& v1,
+				      const Vertex_handle& v2,
+				      const Vertex_handle& v3) {
+    Voronoi_vertex_2 vv;
+    vv.set_sites(v1->site(), v2->site(), v3->site());
+    return vv;
+  }
+
+  static Voronoi_edge_2 make_edge(const Vertex_handle& v1,
+				  const Vertex_handle& v2) {
+    Voronoi_edge_2 ve;
+    ve.set_sites(v1->site(), v2->site());
+    return ve;
+  }
+
+  static Voronoi_edge_2 make_edge(const Vertex_handle& v1,
+				  const Vertex_handle& v2,
+				  const Vertex_handle& v3,
+				  bool is_src) {
+    Voronoi_edge_2 ve;
+    ve.set_sites(v1->site(), v2->site(), v3->site(), is_src);
+    return ve;
+  }
+
+  static Voronoi_edge_2 make_edge(const Vertex_handle& v1,
+				  const Vertex_handle& v2,
+				  const Vertex_handle& v3,
+				  const Vertex_handle& v4) {
+    Voronoi_edge_2 ve;
+    ve.set_sites(v1->site(), v2->site(), v3->site(), v4->site());
+    return ve;
+  }
 };
+
 
 
 //=========================================================================

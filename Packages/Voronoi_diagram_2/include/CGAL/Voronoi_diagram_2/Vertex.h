@@ -54,6 +54,9 @@ class Vertex
   typedef typename VDA::Halfedge_around_vertex_circulator
   Halfedge_around_vertex_circulator;
 
+  typedef typename VDA::Voronoi_traits::Point_2           Point_2;
+  typedef typename VDA::Voronoi_traits::Voronoi_vertex_2  Voronoi_vertex_2;
+
  public:
   Vertex(const VDA* vda = NULL) : vda_(vda) {}
   Vertex(const VDA* vda, Dual_face_handle f) : vda_(vda), f_(f) {
@@ -82,14 +85,14 @@ class Vertex
 #ifndef CGAL_NO_ASSERTIONS
 	  Halfedge h(vda_, fopp, iopp);
 	  Vertex_handle v_this(*this);
-	  CGAL_assertion( h.target() == v_this );
+	  CGAL_assertion( h.has_target() && h.target() == v_this );
 #endif
 	  return Halfedge_handle( Halfedge(vda_, fopp, iopp) );
 	} else {
 #ifndef CGAL_NO_ASSERTIONS
 	  Halfedge h(vda_, fvalid, i);
 	  Vertex_handle v_this(*this);
-	  CGAL_assertion( h.target() == v_this );
+	  CGAL_assertion( h.has_target() && h.target() == v_this );
 #endif
 	  return Halfedge_handle( Halfedge(vda_, fvalid, i) );
 	}
@@ -102,20 +105,27 @@ class Vertex
   }
 
   Halfedge_around_vertex_circulator incident_halfedges() const {
-    CGAL_assertion( halfedge()->target() == Vertex_handle(*this) );
-    return Halfedge_around_vertex_circulator( halfedge() );
+    CGAL_assertion( halfedge()->has_target() &&
+		    halfedge()->target() == Vertex_handle(*this) );
+    return Halfedge_around_vertex_circulator( *halfedge() );
   }
 
   bool is_incident_edge(const Halfedge_handle& he) const {
-    return he->target() == Vertex_handle(*this) ||
-      he->source() == Vertex_handle(*this);
+    bool res = false;
+    if ( he->has_target() ) {
+      res = res || he->target() == Vertex_handle(*this);
+    }
+    if ( he->has_source() ) {
+      res = res || he->source() == Vertex_handle(*this);
+    }
+    return res;
   }
 
   bool is_incident_face(const Face_handle& f) const {
     Halfedge_around_vertex_circulator hc = incident_halfedges();
     Halfedge_around_vertex_circulator hc_start = hc;
     do {
-      if ( (*hc)->face() == f ) { return true; }
+      if ( hc->face() == f ) { return true; }
       ++hc;
     } while ( hc != hc_start );
     return false;
@@ -142,32 +152,44 @@ class Vertex
     return !((*this) == other);
   }
 
-  // temporary
   const Dual_face_handle& dual_face() const { return f_; }
+
+  Point_2 point() const {
+    Dual_face_handle fvalid = find_valid_vertex(f_);
+    CGAL_assertion( !vda_->dual().is_infinite(fvalid) );
+
+    return VDA::Voronoi_traits::make_vertex(fvalid->vertex(0),
+					    fvalid->vertex(1),
+					    fvalid->vertex(2));
+  }
 
   bool is_valid() const {
     if ( vda_ == NULL ) { return true; }
 
     bool valid = !vda_->dual().is_infinite(f_);
     // THE FOLLOWING LINE CREATES A PROBLEM FOR SOME REASON...
-    //    valid = valid && is_incident_edge( halfedge() );
+    valid = valid && is_incident_edge( halfedge() );
 
     Vertex_handle v_this(*this);
 
-    valid = valid && halfedge()->target() == v_this;
-    valid = valid && halfedge()->opposite()->source() == v_this;
+    if ( halfedge()->has_source() ) {
+      valid = valid && halfedge()->opposite()->source() == v_this;
+    }
+    if ( halfedge()->has_target() ) {
+      valid = valid && halfedge()->target() == v_this;
+    }
 
     Halfedge_around_vertex_circulator hc = incident_halfedges();
     Halfedge_around_vertex_circulator hc_start = hc;
     do {
-      valid = valid && (*hc)->target() == v_this;
+      valid = valid && hc->has_target() && hc->target() == v_this;
       ++hc;
     } while ( hc != hc_start );
 
     Halfedge_handle hhc = *incident_halfedges();
     Halfedge_handle hhc_start = hhc;
     do {
-      valid = valid && hhc->target() == v_this;
+      valid = valid && hhc->has_target() && hhc->target() == v_this;
       hhc = hhc->next()->twin();
     } while ( hhc != hhc_start );
 

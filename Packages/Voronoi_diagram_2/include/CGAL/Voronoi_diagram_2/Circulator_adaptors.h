@@ -30,17 +30,17 @@ CGAL_VORONOI_DIAGRAM_2_BEGIN_NAMESPACE
 //=========================================================================
 //=========================================================================
 
-template<class Halfedge_handle, class Circulator>
+template<class Arg, class Circulator>
 class Circulator_from_halfedge_adaptor
-  : public Bidirectional_circulator_base<Halfedge_handle>
+  : public Bidirectional_circulator_base<Arg>
 {
  private:
-  typedef Bidirectional_circulator_base<Halfedge_handle>     Base;
-  typedef Circulator_from_halfedge_adaptor<Halfedge_handle,Circulator>  Self;
+  typedef Bidirectional_circulator_base<Arg>                Base;
+  typedef Circulator_from_halfedge_adaptor<Arg,Circulator>  Self;
 
  public:
   Circulator_from_halfedge_adaptor() : cur_() {}
-  Circulator_from_halfedge_adaptor(const Halfedge_handle& he) : cur_(he) {}
+  Circulator_from_halfedge_adaptor(const Arg& he) : cur_(he) {}
 
   Circulator& operator++() {
     Circulator* ptr = static_cast<Circulator*>(this);
@@ -66,8 +66,11 @@ class Circulator_from_halfedge_adaptor
     return tmp;
   }
 
-  typename Base::pointer   operator->() const { return &cur_; }
+  typename Base::pointer   operator->() { return &cur_; }
   typename Base::reference operator*() { return cur_; }
+
+  const typename Base::pointer   operator->() const { return &cur_; }
+  const typename Base::reference operator*() const { return cur_; }
 
   bool operator==(const Circulator& other) const {
     return cur_ == other.cur_;
@@ -79,68 +82,69 @@ class Circulator_from_halfedge_adaptor
   }
 
  protected:
-  Halfedge_handle cur_;
+  Arg cur_;
 };
 
 //=========================================================================
 //=========================================================================
 
-template<class Halfedge_handle>
+template<class Halfedge>
 class Halfedge_around_vertex_circulator_adaptor
-  : public Circulator_from_halfedge_adaptor<Halfedge_handle,
-      Halfedge_around_vertex_circulator_adaptor<Halfedge_handle> >
+  : public Circulator_from_halfedge_adaptor<Halfedge,
+      Halfedge_around_vertex_circulator_adaptor<Halfedge> >
 {
  private:
-  typedef Halfedge_around_vertex_circulator_adaptor<Halfedge_handle> Self;
-  typedef Circulator_from_halfedge_adaptor<Halfedge_handle,Self>     Base;
+  typedef Halfedge                                         Arg;
+  typedef Halfedge_around_vertex_circulator_adaptor<Arg>   Self;
+  typedef Circulator_from_halfedge_adaptor<Arg,Self>       Base;
 
-  friend class Circulator_from_halfedge_adaptor<Halfedge_handle,Self>;
+  friend class Circulator_from_halfedge_adaptor<Arg,Self>;
 
  public:
   Halfedge_around_vertex_circulator_adaptor() : Base() {}
-  Halfedge_around_vertex_circulator_adaptor(const Halfedge_handle& he)
+  Halfedge_around_vertex_circulator_adaptor(const Arg& he)
     : Base(he) {}
 
  private:
   Halfedge_around_vertex_circulator_adaptor(const Base& b) : Base(b) {}
 
   void increment() {
-    this->cur_ = this->cur_->next()->opposite();
+    this->cur_ = *this->cur_.next()->opposite();
   }
 
   void decrement() {
-    //    this->cur_ = this->cur_->previous()->opposite();
-    this->cur_ = this->cur_->opposite()->previous();
+    this->cur_ = *this->cur_.opposite()->previous();
   }
 };
 
 //=========================================================================
 //=========================================================================
 
-template<class Halfedge_handle>
+template<class Halfedge>
 class Ccb_halfedge_circulator_adaptor
-  : public Circulator_from_halfedge_adaptor<Halfedge_handle,
-      Ccb_halfedge_circulator_adaptor<Halfedge_handle> >
+  : public Circulator_from_halfedge_adaptor<Halfedge,
+      Ccb_halfedge_circulator_adaptor<Halfedge> >
 {
  private:
-  typedef Ccb_halfedge_circulator_adaptor<Halfedge_handle>        Self;
-  typedef Circulator_from_halfedge_adaptor<Halfedge_handle,Self>  Base;
+  typedef Halfedge                                    Arg;
+  typedef Ccb_halfedge_circulator_adaptor<Arg>        Self;
+  typedef Circulator_from_halfedge_adaptor<Arg,Self>  Base;
 
-  friend class Circulator_from_halfedge_adaptor<Halfedge_handle,Self>;
+  friend class Circulator_from_halfedge_adaptor<Arg,Self>;
 
  public:
   Ccb_halfedge_circulator_adaptor() : Base() {}
-  Ccb_halfedge_circulator_adaptor(const Halfedge_handle& he) : Base(he) {}
+  Ccb_halfedge_circulator_adaptor(const Arg& he) : Base(he) {}
 
  private:
   Ccb_halfedge_circulator_adaptor(const Base& b) : Base(b) {}
 
   void increment() {
-    this->cur_ = this->cur_->next();
+    this->cur_ = *this->cur_.next();
   }
 
   void decrement() {
-    this->cur_ = this->cur_->previous();
+    this->cur_ = *this->cur_.previous();
   }
 };
 

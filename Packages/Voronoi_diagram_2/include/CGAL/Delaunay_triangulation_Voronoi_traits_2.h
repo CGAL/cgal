@@ -22,6 +22,8 @@
 
 #include <CGAL/Voronoi_diagram_adaptor_2/basic.h>
 #include <CGAL/Voronoi_diagram_adaptor_2/Default_Voronoi_traits_2.h>
+#include <CGAL/Voronoi_diagram_adaptor_2/Voronoi_vertex_base_2.h>
+#include <CGAL/Voronoi_diagram_adaptor_2/Voronoi_edge_base_2.h>
 #include <cstdlib>
 #include <algorithm>
 
@@ -129,6 +131,56 @@ class DT_Face_degeneracy_tester
 //=========================================================================
 //=========================================================================
 
+template<class DG> class Delaunay_triangulation_Voronoi_traits_2;
+template<class DG> class DT_Voronoi_edge_2;
+
+template<class DG>
+class DT_Voronoi_vertex_2
+  : public CGAL_VORONOI_DIAGRAM_2_NS::Voronoi_vertex_base_2
+  <DG, typename DG::Geom_traits::Point_2, typename DG::Geom_traits::Point_2,
+   DT_Voronoi_vertex_2<DG> >
+{
+  friend class Delaunay_triangulation_Voronoi_traits_2<DG>;
+  friend class DT_Voronoi_edge_2<DG>;
+  friend class DT_Voronoi_edge_2<DG>::Base;
+
+ private:
+  typedef typename DG::Geom_traits::Point_2  Point_2;
+
+  typedef CGAL_VORONOI_DIAGRAM_2_NS::Voronoi_vertex_base_2
+  <DG, Point_2, Point_2, DT_Voronoi_vertex_2<DG> >
+  Base;
+
+ public:
+  operator typename Base::Point_2() const {
+    return typename Base::Geom_traits().construct_circumcenter_2_object()
+      (this->s_[0], this->s_[1], this->s_[2]);
+  }
+};
+
+//=========================================================================
+  
+template<class DG>
+class DT_Voronoi_edge_2
+  : public CGAL_VORONOI_DIAGRAM_2_NS::Voronoi_edge_base_2
+  <DG, typename DG::Geom_traits::Point_2, typename DG::Geom_traits::Point_2,
+   DT_Voronoi_edge_2<DG>, DT_Voronoi_vertex_2<DG> >
+{
+  friend class Delaunay_triangulation_Voronoi_traits_2<DG>;
+  friend class DT_Voronoi_vertex_2<DG>;
+
+ private:
+  typedef typename DG::Geom_traits::Point_2  Point_2;
+
+  typedef CGAL_VORONOI_DIAGRAM_2_NS::Voronoi_edge_base_2
+  <DG,Point_2,Point_2,DT_Voronoi_edge_2<DG>,DT_Voronoi_vertex_2<DG> >
+  Base;
+};
+
+
+//=========================================================================
+
+
 
 template<class DT2>
 class Delaunay_triangulation_Voronoi_traits_2
@@ -145,6 +197,48 @@ class Delaunay_triangulation_Voronoi_traits_2
   Base;
 
   typedef Delaunay_triangulation_Voronoi_traits_2<DT2>  Self;
+
+ public:
+  typedef typename DT2::Geom_traits::Point_2      Point_2;
+  typedef Point_2                                 Site_2;
+  typedef typename Base::Vertex_handle            Vertex_handle;
+
+  typedef DT_Voronoi_vertex_2<DT2>                Voronoi_vertex_2;
+  typedef DT_Voronoi_edge_2<DT2>                  Voronoi_edge_2;
+  typedef Voronoi_edge_2                          Curve;
+
+  static Voronoi_vertex_2 make_vertex(const Vertex_handle& v1,
+				      const Vertex_handle& v2,
+				      const Vertex_handle& v3) {
+    Voronoi_vertex_2 vv;
+    vv.set_sites(v1->point(), v2->point(), v3->point());
+    return vv;
+  }
+
+  static Voronoi_edge_2 make_edge(const Vertex_handle& v1,
+				  const Vertex_handle& v2) {
+    Voronoi_edge_2 ve;
+    ve.set_sites(v1->point(), v2->point());
+    return ve;
+  }
+
+  static Voronoi_edge_2 make_edge(const Vertex_handle& v1,
+				  const Vertex_handle& v2,
+				  const Vertex_handle& v3,
+				  bool is_src) {
+    Voronoi_edge_2 ve;
+    ve.set_sites(v1->point(), v2->point(), v3->point(), is_src);
+    return ve;
+  }
+
+  static Voronoi_edge_2 make_edge(const Vertex_handle& v1,
+				  const Vertex_handle& v2,
+				  const Vertex_handle& v3,
+				  const Vertex_handle& v4) {
+    Voronoi_edge_2 ve;
+    ve.set_sites(v1->point(), v2->point(), v3->point(), v4->point());
+    return ve;
+  }
 };
 
 
