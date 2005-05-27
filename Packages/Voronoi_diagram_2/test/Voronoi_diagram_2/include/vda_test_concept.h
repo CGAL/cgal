@@ -42,6 +42,14 @@ void test_voronoi_traits_concept(const VT& vt)
   typedef typename VT::Edge_degeneracy_tester  EDT;
   typedef typename VT::Face_degeneracy_tester  FDT;
 
+  typedef typename VT::Vertex_handle           Vertex_handle;
+  typedef typename VT::Point_2                 Point_2;
+  typedef typename VT::Site_2                  Site_2;
+
+  typedef typename VT::Voronoi_vertex_2        VV2;
+  typedef typename VT::Voronoi_edge_2          VE2;
+  typedef typename VT::Curve                   Curve;
+
   test_edt_concept( vt.edge_degeneracy_tester_object() );
   test_fdt_concept( vt.face_degeneracy_tester_object() );
 }

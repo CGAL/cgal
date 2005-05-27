@@ -29,8 +29,8 @@ typedef CGAL::Triangulation_hierarchy_2<RTB>                     RT;
 #else
 typedef CGAL::Regular_triangulation_2<Gt>                        RT;
 #endif
-//typedef CGAL::Regular_triangulation_Voronoi_traits_2<RT>  VT;
-typedef CGAL::Regular_triangulation_cached_Voronoi_traits_2<RT>  VT;
+typedef CGAL::Regular_triangulation_Voronoi_traits_2<RT>  VT;
+//typedef CGAL::Regular_triangulation_cached_Voronoi_traits_2<RT>  VT;
 typedef CGAL::Voronoi_diagram_adaptor_2<RT,VT>                   VDA;
 
 

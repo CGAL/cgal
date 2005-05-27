@@ -68,6 +68,7 @@ class Delaunay_graph_concept
   //  struct Vertex_circulator {};
 
   struct Vertex_handle : public Dummy_iterator {
+    typedef Vertex_handle   value_type;
     typedef Vertex_handle&  reference;
     typedef Vertex_handle*  pointer;
 
@@ -84,6 +85,7 @@ class Delaunay_graph_concept
   };
 
   struct Face_handle : public Dummy_iterator {
+    typedef Face_handle   value_type;
     typedef Face_handle&  reference;
     typedef Face_handle*  pointer;
 
@@ -108,8 +110,12 @@ class Delaunay_graph_concept
   template<class V, class F>
   struct Data_structure_t {
     typedef F Face_handle;
+    typedef V Vertex_handle;
 
     int mirror_index(Face_handle, int) const { return 0; }
+    Vertex_handle mirror_vertex(Face_handle, int) const {
+      return Vertex_handle();
+    }
   };
 
   typedef Data_structure_t<Vertex_handle,Face_handle> Data_structure;
@@ -191,7 +197,10 @@ class Delaunay_graph_concept
   typedef Dummy_iterator  Finite_faces_iterator;
 
   typedef Dummy_iterator  All_vertices_iterator;
-  typedef Dummy_iterator  Finite_vertices_iterator;
+  struct Finite_vertices_iterator : public Dummy_iterator {
+    Finite_vertices_iterator() {}
+    Finite_vertices_iterator(const Dummy_iterator&) {}
+  };
 
   typedef Dummy_iterator  Vertex_circulator;
   typedef Dummy_iterator  Face_circulator;

@@ -28,8 +28,8 @@ typedef CGAL::Segment_Voronoi_diagram_hierarchy_2<Gt>                 SVD;
 #else
 typedef CGAL::Segment_Voronoi_diagram_2<Gt>                           SVD;
 #endif
-//typedef CGAL::Segment_Voronoi_diagram_Voronoi_traits_2<SVD>           VT;
-typedef CGAL::Segment_Voronoi_diagram_cached_Voronoi_traits_2<SVD>    VT;
+typedef CGAL::Segment_Voronoi_diagram_Voronoi_traits_2<SVD>           VT;
+//typedef CGAL::Segment_Voronoi_diagram_cached_Voronoi_traits_2<SVD>    VT;
 typedef CGAL::Voronoi_diagram_adaptor_2<SVD,VT>                       VDA;
 
 

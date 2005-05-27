@@ -22,8 +22,8 @@ typedef CGAL::Triangulation_hierarchy_2<DTB>                      DT;
 #else
 typedef CGAL::Delaunay_triangulation_2<K>                         DT;
 #endif
-typedef CGAL::Delaunay_triangulation_cached_Voronoi_traits_2<DT>  VT;
-//typedef CGAL::Delaunay_triangulation_Voronoi_traits_2<DT>         VT;
+//typedef CGAL::Delaunay_triangulation_cached_Voronoi_traits_2<DT>  VT;
+typedef CGAL::Delaunay_triangulation_Voronoi_traits_2<DT>         VT;
 typedef CGAL::Voronoi_diagram_adaptor_2<DT,VT>                    VDA;
 
 

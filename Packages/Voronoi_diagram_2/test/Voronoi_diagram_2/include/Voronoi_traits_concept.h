@@ -2,10 +2,62 @@
 #define CGAL_VORONOI_TRAITS_CONCEPT_H 1
 
 #include <CGAL/basic.h>
+#include <CGAL/Voronoi_diagram_adaptor_2/Voronoi_vertex_base_2.h>
+#include <CGAL/Voronoi_diagram_adaptor_2/Voronoi_edge_base_2.h>
 
 
 CGAL_BEGIN_NAMESPACE
 
+template<class DG> class Voronoi_traits_concept_2;
+template<class DG> class VTC_Voronoi_edge_2;
+
+template<class DG>
+class VTC_Voronoi_vertex_2
+  : public CGAL_VORONOI_DIAGRAM_2_NS::Voronoi_vertex_base_2
+  <DG, typename DG::Point_2, typename DG::Site_2, VTC_Voronoi_vertex_2<DG> >
+{
+  friend class Voronoi_traits_concept_2<DG>;
+  friend class VTC_Voronoi_edge_2<DG>;
+  friend class VTC_Voronoi_edge_2<DG>::Base;
+
+ private:
+  typedef CGAL_VORONOI_DIAGRAM_2_NS::Voronoi_vertex_base_2
+  <DG, typename DG::Point_2, typename DG::Site_2, VTC_Voronoi_vertex_2<DG> >
+  Base;
+
+  typedef VTC_Voronoi_vertex_2<DG>  Self;
+
+ public:
+  typedef typename DG::Geom_traits     Geom_traits;
+  typedef typename Base::Point_2       Point_2;
+  typedef typename Base::Site_2        Site_2;
+  typedef typename DG::Vertex_handle   Vertex_handle;
+
+ public:
+  operator Point_2() const { return Point_2(); }
+};
+
+//=========================================================================
+  
+template<class DG>
+class VTC_Voronoi_edge_2
+  : public CGAL_VORONOI_DIAGRAM_2_NS::Voronoi_edge_base_2
+  <DG,typename DG::Point_2,typename DG::Site_2,
+   VTC_Voronoi_edge_2<DG>, VTC_Voronoi_vertex_2<DG>
+  >
+{
+  friend class Voronoi_traits_concept_2<DG>;
+  friend class VTC_Voronoi_vertex_2<DG>;
+
+ private:
+  typedef CGAL_VORONOI_DIAGRAM_2_NS::Voronoi_edge_base_2
+  <DG,typename DG::Point_2,typename DG::Site_2,VTC_Voronoi_edge_2<DG>,
+   VTC_Voronoi_vertex_2<DG> >
+  Base;
+};
+
+
+//=========================================================================
 
 template<class DG>
 class Voronoi_traits_concept
@@ -70,6 +122,40 @@ class Voronoi_traits_concept
 
   const Face_degeneracy_tester& face_degeneracy_tester_object() const {
     return f_tester_;
+  }
+
+  typedef typename DG::Point_2        Point_2;
+  typedef typename DG::Site_2         Site_2;
+  typedef typename DG::Vertex_handle  Vertex_handle;
+
+  typedef VTC_Voronoi_vertex_2<DG>    Voronoi_vertex_2;
+  typedef VTC_Voronoi_edge_2<DG>      Voronoi_edge_2;
+  typedef Voronoi_edge_2              Curve;
+
+
+  static Voronoi_vertex_2 make_vertex(const Vertex_handle& v1,
+				      const Vertex_handle& v2,
+				      const Vertex_handle& v3) {
+    return Voronoi_vertex_2();
+  }
+
+  static Voronoi_edge_2 make_edge(const Vertex_handle& v1,
+				  const Vertex_handle& v2) {
+    return Voronoi_edge_2();
+  }
+
+  static Voronoi_edge_2 make_edge(const Vertex_handle& v1,
+				  const Vertex_handle& v2,
+				  const Vertex_handle& v3,
+				  bool is_src) {
+    return Voronoi_edge_2();
+  }
+
+  static Voronoi_edge_2 make_edge(const Vertex_handle& v1,
+				  const Vertex_handle& v2,
+				  const Vertex_handle& v3,
+				  const Vertex_handle& v4) {
+    return Voronoi_edge_2();
   }
 
  private:

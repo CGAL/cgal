@@ -11,6 +11,12 @@ void print_report(const VDA& vda, const Projector& project,
 		  const Dual_primal_projector& dp_project,
 		  Stream& os = std::cout)
 {
+  typename VDA::Edge_degeneracy_tester edge_tester =
+    vda.voronoi_traits().edge_degeneracy_tester_object();
+
+  typename VDA::Face_degeneracy_tester face_tester =
+    vda.voronoi_traits().face_degeneracy_tester_object();
+
   std::cout << std::endl;
   std::cout << "is Delaunay graph valid? "
 	    << (vda.dual().is_valid() ? "yes" : "no") << std::endl;
@@ -101,7 +107,7 @@ void print_report(const VDA& vda, const Projector& project,
 
   int n_all = 0, n_empty = 0, n_vert = 0;
   for (fit = vda.faces_begin(); fit != vda.faces_end(); ++fit) {
-    CGAL_assertion( !vda.has_empty_Voronoi_cell_interior(fit->dual_vertex()) );
+    CGAL_assertion( !face_tester(vda.dual(), fit->dual_vertex()) );
     n_all++;
   }
 
@@ -110,7 +116,7 @@ void print_report(const VDA& vda, const Projector& project,
 	vit != vda.dual().finite_vertices_end(); ++vit) {
     n_vert++;
     typename VDA::Dual_vertex_handle v(vit);
-    if ( vda.has_empty_Voronoi_cell_interior(v) ) {
+    if ( face_tester(vda.dual(), v) ) {
       n_empty++;
     }    
   }
@@ -138,7 +144,7 @@ void print_report(const VDA& vda, const Projector& project,
     for (deit = vda.dual().all_edges_begin();
 	 deit != vda.dual().all_edges_end(); ++deit) {
       n_dual_edges++;
-      if ( vda.is_degenerate_edge(deit) ) {
+      if ( edge_tester(vda.dual(), deit) ) {
 	os << "degenerate edge: " << std::flush;
 	print_dual_edge(vda, *deit, project, os);
 	n_edge_degen++;
@@ -165,7 +171,7 @@ void print_report(const VDA& vda, const Projector& project,
     typename VDA::Dual_vertices_iterator dvit;
     for ( dvit = vda.dual().finite_vertices_begin();
 	  dvit != vda.dual().finite_vertices_end(); ++dvit) {
-      if ( vda.has_empty_Voronoi_cell_interior(dvit) ) {
+      if ( face_tester(vda.dual(),dvit) ) {
 	n_empty_faces++;
       }
     }
@@ -186,6 +192,13 @@ void print_report(const VDA& vda, const Projector& project,
     for (heit = vda.halfedges_begin(); heit != vda.halfedges_end(); ++heit) {
       typename VDA::Halfedge_handle hh(heit);
       CGAL_assertion( heit->opposite()->opposite() == hh );
+      if ( heit->has_source() ) {
+	CGAL_assertion( heit->source() == heit->opposite()->target() );
+      }
+      if ( heit->has_target() ) {
+	CGAL_assertion( heit->target() == heit->opposite()->source() );
+	CGAL_assertion( heit->target() == heit->vertex() );
+      }
       n_hedges++;
     }
 
@@ -230,8 +243,8 @@ void print_report(const VDA& vda, const Projector& project,
       do {
 	hc++;
 	CGAL_assertion( vit->is_incident_edge(*hc) );
-	CGAL_assertion( vit->is_incident_face((*hc)->face()) );
-	CGAL_assertion( vit->is_incident_face((*hc)->opposite()->face()) );
+	CGAL_assertion( vit->is_incident_face(hc->face()) );
+	CGAL_assertion( vit->is_incident_face(hc->opposite()->face()) );
       } while ( hc != hc_start );
       sum_deg += vit->degree();
     }
@@ -264,12 +277,61 @@ void print_report(const VDA& vda, const Projector& project,
       n_unbounded_faces2++;
     }
 
+    // computing statistics on the Voronoi edges:
+    typename VDA::size_type n_bisectors = 0, n_rays = 0, n_segments = 0;
+    for (typename VDA::Edge_iterator eit = vda.edges_begin();
+	 eit != vda.edges_end(); ++eit) {
+      if ( eit->curve().is_bisector() ) { n_bisectors++; }
+      else if ( eit->curve().is_ray() ) { n_rays++; }
+      else { n_segments++; }
+    }
+
+    // print out the Voronoi vertices
+    os << "Voronoi vertices:" << std::endl;
+    int i = 1;
+    for (typename VDA::Vertex_iterator vit = vda.vertices_begin();
+	 vit != vda.vertices_end(); ++vit, ++i) {
+      os << i << " " << vit->point() << std::endl;
+    }
+    os << std::endl;
+
+
+    // print out the endpoints of Voronoi edges
+    os << "Voronoi edges:" << std::endl;
+    for (typename VDA::Edge_iterator eit = vda.edges_begin();
+	 eit != vda.edges_end(); ++eit) {
+      typename VDA::Voronoi_traits::Point_2 p_src, p_trg;
+      if ( eit->curve().is_bisector() ) {
+	os << "inf - inf" << std::endl;
+      } else if ( eit->curve().is_ray() ) {
+	if ( eit->curve().has_source() ) {
+	  p_src = eit->curve().source();
+	  os << p_src << " - inf" << std::endl;
+	} else {
+	  CGAL_assertion( eit->curve().has_target() );
+	  p_trg = eit->curve().target();
+	  os << "inf - " << p_trg << std::endl;
+	}
+      } else {
+	p_src = eit->curve().source();
+	p_trg = eit->curve().target();
+	os << p_src << " - " << p_trg << std::endl;
+      }
+    }
+    os << std::endl;
+
+
+
     std::cout << "STATISTICS:" << std::endl;
     std::cout << "-----------" << std::endl;
     std::cout << "# of Voronoi edges: "	<< n_edges << std::endl;
     std::cout << "# of finite Voronoi edges: "
 	      << n_edge_fin << std::endl;
     std::cout << "# of infinite Voronoi edges: " << n_edge_inf << std::endl;
+    std::cout << std::endl;
+    std::cout << "# of bisecting segments: " << n_segments << std::endl;
+    std::cout << "# of bisecting rays:     " << n_rays << std::endl;
+    std::cout << "# of full bisectors:     " << n_bisectors << std::endl;
     std::cout << std::endl;
     std::cout << "# of Voronoi halfedges: " << n_hedges << std::endl;
     std::cout << "# of Voronoi halfedges (2nd count): "
@@ -320,7 +382,7 @@ void print_report(const VDA& vda, const Projector& project,
        fit != vda.faces_end(); ++fit) {
     for (typename VDA::Face::Holes_iterator hit = fit->holes_begin();
 	 hit != fit->holes_end(); ++hit) {
-      typename VDA::Halfedge_handle he = *hit;
+      typename VDA::Ccb_halfedge_circulator hc = *hit;
       typename VDA::Halfedge_handle he_opp = (*hit)->opposite();
       n_holes++;
     }
