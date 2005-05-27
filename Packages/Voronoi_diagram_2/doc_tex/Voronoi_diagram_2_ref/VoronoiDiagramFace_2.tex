@@ -1,0 +1,79 @@
+%% Copyright (c) 2005  University of Crete (Greece).
+%% All rights reserved.
+%%
+%% This file is part of CGAL (www.cgal.org); you may redistribute it under
+%% the terms of the Q Public License version 1.0.
+%% See the file LICENSE.QPL distributed with CGAL.
+%%
+%% Licensees holding a valid commercial license may use this file in
+%% accordance with the commercial license agreement provided with the software.
+%%
+%% This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+%% WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+%%
+%% $Source$
+%% $Revision$ $Date$
+%% $Name$
+%%
+%% Author(s)     : Menelaos Karavelas <mkaravel@tem.uoc.gr>
+
+
+
+\begin{ccRefConcept}{VoronoiDiagramFace_2}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+\ccDefinition
+
+The concept \ccc{VoronoiDiagramFace_2} defines the requirements of the
+face provided by the Voronoi diagram adaptor. It refines
+the \ccc{PlanapMapDcelFace_2} concept (the non-mutable part), by
+adding some additional requirements specific to Voronoi diagrams.
+
+\ccRefines
+\ccc{DefaultConstructible}\\
+\ccc{CopyConstructible}\\
+\ccc{Assignable}\\
+\ccc{PlanarMapDcelFace_2}
+
+\ccTypes
+The \ccc{VoronoiDiagramFace_2} concept introduces the following
+types in addition to those of the \ccc{PlanarMapDcelFace_2} concept.
+
+\ccThree{typedef typename Dual_graph::Vertex_handle}{Dual_vertex_handle;}{}
+\ccThreeToTwo
+\ccNestedType{Dual_graph}{A type for the Delaunay graph. It must be a
+  model of the \ccc{DelaunayGraph_2} concept.}
+\ccTypedef{typedef typename Dual_graph::Vertex_handle
+  Dual_vertex_handle;}{A type for the dual edge.}
+
+\ccCreationVariable{f}  %% choose variable name
+
+\ccThree{Dual_vertex_handle}{f.dual_vertex()+}{}
+\ccThreeToTwo
+
+\ccHeading{Access Methods}
+\ccMethod{Dual_vertex_handle dual_vertex();}{returns the dual vertex, i.e., the
+  corresponding dual vertex in the Delaunay graph.}
+
+\ccHeading{Predicate Methods}
+
+\ccMethod{bool is_valid();}{returns \ccStyle{true} if the following
+  conditions are met: the face does not have zero area; all its
+  adjacent halfedges do not have zero length; all its adjacent
+  halfedges return the face as their adjacent face.}
+
+\ccHasModels
+\ccc{CGAL::Voronoi_diagram_adaptor_2<DG,VT>::Face}\\
+
+\ccSeeAlso
+\ccc{VoronoiDiagramVertex_2}\\
+\ccc{VoronoiDiagramHalfedge_2}\\
+\ccc{CGAL::Voronoi_diagram_adaptor_2<DG,VT>}
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

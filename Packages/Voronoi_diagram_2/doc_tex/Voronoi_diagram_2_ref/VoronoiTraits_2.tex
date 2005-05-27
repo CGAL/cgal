@@ -25,12 +25,15 @@
 %% \ccHtmlIndexC[concept]{} %% add further index entries
 \ccDefinition
 
-The concept \ccc{VoronoiTraits_2} defines the combinatorial predicate
-requirements for the \ccc{Voronoi_diagram_adaptor_2<DG,VT>} class. The
+The concept \ccc{VoronoiTraits_2} defines the combinatorial and
+geometric predicate requirements for the
+\ccc{Voronoi_diagram_adaptor_2<DG,VT>} class. The
 \ccc{VoronoiTraits_2} concept essentially defines the requirements on
 the predicates that determine whether a feature of the triangulated
 Delaunay graph has a degenerate dual feature in the Voronoi diagram
-that is the dual of the triangulated Delaunay graph.
+that is the dual of the triangulated Delaunay graph. It also provides
+the types for a Voronoi vertex or a Voronoi edge and methods for
+constructing these objects.
 
 \ccRefines
 \ccc{DefaultConstructible}\\
@@ -40,17 +43,36 @@ that is the dual of the triangulated Delaunay graph.
 \ccTypes
 \ccTwo{VoronoiTraits_2::Face_degeneracy_tester+}{}
 %
+\ccNestedType{Point_2}{A type for a point.}
+\ccGlue
+\ccNestedType{Site_2}{A type for the generators of the Voronoi
+  diagram.}
+\ccGlue
 \ccNestedType{Dual_graph}{A type for the triangulated Delaunay
   graph. The type \ccc{Dual_graph} must be a model of the
   \ccc{DelaunayGraph_2} concept.}
 \ccGlue
+\ccNestedType{Voronoi_vertex_2}{A type for Voronoi vertices. It must
+  be a model of the \ccc{VoronoiVertex_2} concept.}
+\ccGlue
+\ccNestedType{Voronoi_edge_2}{A type for Voronoi edges. It must
+  be a model of the \ccc{VoronoiEdge_2} concept.}
+\ccGlue
 \ccNestedType{Edge_degeneracy_tester}{A type for the predicate that
   tests whether a Voronoi edge is degenerate, i.e., it has zero
-  length. It must be a model of the EdgeDegeneracyTester concept.}
+  length. It must be a model of the \ccc{EdgeDegeneracyTester} concept.}
 \ccGlue
 \ccNestedType{Face_degeneracy_tester}{A type for the predicate that
   tests whether a Voronoi face is degenerate, i.e., it has zero
-  area. It must be a model of the FaceDegeneracyTester concept.}
+  area. It must be a model of the \ccc{FaceDegeneracyTester} concept.}
+\ccThree{typedef typename Dual_graph::Vertex_handle}{Vertex_handle+}{}
+\ccThreeToTwo
+
+\ccTypedef{typedef typename Dual_graph::Vertex_handle
+  Vertex_handle;}{Handle to the vertices of the Delaunay graph.}
+\ccTypedef{typedef Voronoi_edge_2 Curve;}{This type is provided in
+  order to comply with the
+  \ccc{CGAL::Arrangement_2<Dcel,Traits,Base_node>} API.}
 
 
 \ccCreationVariable{vt}  %% choose variable name
@@ -61,6 +83,52 @@ that is the dual of the triangulated Delaunay graph.
 \ccGlue
 \ccMethod{Face_degeneracy_tester face_degeneracy_tester_object();}{}
 
+%
+%
+% Construction of edges and vertices
+%
+\ccHeading{Construction of Voronoi vertices and edges}
+\ccThree{Voronoi_vertex_2}{make_vertex(Vertex)+}{}
+\ccThreeToTwo
+\ccMethod{Voronoi_vertex_2 make_vertex(Vertex_handle v1, Vertex_handle
+  v2, Vertex_handle v3);}
+{Creates the Voronoi vertex defined by the sites corresponding to the
+  vertex handles \ccc{v1}, \ccc{v2} and \ccc{v3}.}
+\ccGlue
+\ccMethod{Voronoi_edge_2 make_edge(Vertex_handle v1, Vertex_handle
+  v2);}
+{Creates the oriented Voronoi edge that is the bisector of the sites
+  corresponding to the vertices \ccc{v1} and \ccc{v2}. The Voronoi
+  edge in this case is a curve homeomorphic to a line and, thus, has
+  no adjacent Voronoi vertices. The site corresponding to \ccc{v1} is
+  on the positive halfspace w.r.t. the bisector.}
+\ccGlue
+\ccMethod{Voronoi_edge_2 make_edge(Vertex_handle v1, Vertex_handle
+  v2, Vertex_handle v3, bool is_src);}
+{Creates the oriented Voronoi edge that lies on the bisector of the sites
+  corresponding to the vertices \ccc{v1} and \ccc{v2}. The Voronoi
+  edge in this case is a curve homeomorphic to a ray and, thus, has
+  a single adjacent Voronoi vertex. If \ccc{is_src} is \ccStyle{true},
+  the Voronoi vertex is the source of the bisecting ray and, more precisely,
+  it is the Voronoi vertex of the sites of \ccc{v2}, \ccc{v1} and
+  \ccc{v3}. If \ccc{is_src} is \ccStyle{false}, the Voronoi vertex is
+  the target of the bisecting ray and corresponds to the Voronoi
+  vertex of the sites of \ccc{v1}, \ccc{v2} and \ccc{v3}. The site
+  corresponding to \ccc{v1} is on the positive halfspace w.r.t. the
+  supporting bisector.}
+\ccGlue
+\ccMethod{Voronoi_edge_2 make_edge(Vertex_handle v1, Vertex_handle
+  v2, Vertex_handle v3, Vertex_handle v4);}
+{Creates the oriented Voronoi edge that lies on the bisector of the sites
+  corresponding to the vertices \ccc{v1} and \ccc{v2}. The Voronoi
+  edge in this case is a curve homeomorphic to a segment and, thus, has
+  two adjacent Voronoi vertices. The source of the bisecting segment
+  is the Voronoi vertex of the sites of \ccc{v2}, \ccc{v1} and
+  \ccc{v3}, whereas the target of the bisecting segment is the Voronoi
+  vertex of the sites of \ccc{v1}, \ccc{v2} and \ccc{v4}. The site
+  corresponding to \ccc{v1} is on the positive halfspace w.r.t. the
+  supporting bisector.}
+
 \ccHasModels
 \ccc{CGAL::Apollonius_graph_Voronoi_traits_2<DG>}\\
 \ccc{CGAL::Delaunay_triangulation_Voronoi_traits_2<DG>}\\
@@ -69,6 +137,8 @@ that is the dual of the triangulated Delaunay graph.
 
 \ccSeeAlso
 \ccc{DelaunayGraph_2}\\
+\ccc{VoronoiVertex_2}\\
+\ccc{VoronoiEdge_2}\\
 \ccc{EdgeDegeneracyTester}\\
 \ccc{FaceDegeneracyTester}\\
 \ccc{CGAL::Voronoi_diagram_adaptor_2<DG,VT>}

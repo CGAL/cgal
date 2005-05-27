@@ -28,8 +28,10 @@
 \ccDefinition
 
 The class \ccRefName\ provides a model for the \ccc{VoronoiTraits_2}
-concept. {\bf The template parameter of the \ccRefName\ class must be a
-model of the \ccc{DelaunayGraph_2} concept.}
+concept. The template parameter of the \ccRefName\ class must be a
+model of the \ccc{DelaunayGraph_2} concept, and in particular it has
+the semantics of the (triangulated) dual graph of the 2D segment
+Voronoi diagram.
 
 
 \ccInclude{CGAL/Segment_Voronoi_diagram_Voronoi_traits_2.h}

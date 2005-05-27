@@ -1,0 +1,148 @@
+%% Copyright (c) 2005  University of Crete (Greece).
+%% All rights reserved.
+%%
+%% This file is part of CGAL (www.cgal.org); you may redistribute it under
+%% the terms of the Q Public License version 1.0.
+%% See the file LICENSE.QPL distributed with CGAL.
+%%
+%% Licensees holding a valid commercial license may use this file in
+%% accordance with the commercial license agreement provided with the software.
+%%
+%% This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+%% WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+%%
+%% $Source$
+%% $Revision$ $Date$
+%% $Name$
+%%
+%% Author(s)     : Menelaos Karavelas <mkaravel@tem.uoc.gr>
+
+
+
+\begin{ccRefConcept}{VoronoiEdge_2}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+\ccDefinition
+
+The concept \ccc{VoronoiEdge_2} defines the requirements of the
+\ccc{Voronoi_edge_2} type defined in the \ccc{VoronoiTraits_2}
+concept. Essentially it provides the requirements for a class
+representing oriented edges (arcs) in the Voronoi diagram.
+
+\ccRefines
+\ccc{DefaultConstructible}\\
+\ccc{CopyConstructible}\\
+\ccc{Assignable}
+
+\ccTypes
+\ccTwo{VoronoiEdge_2::Voronoi_vertex_2+}{}
+%
+\ccNestedType{Dual_graph}{A type for the Delaunay graph. It must be a
+  model of the \ccc{DelaunayGraph_2} concept.}
+\ccGlue
+\ccNestedType{Point_2}{A type for a point.}
+\ccGlue
+\ccNestedType{Site_2}{A type for the generators of the Voronoi diagram.}
+\ccGlue
+\ccNestedType{Voronoi_vertex_2}{A type for a vertex of the Voronoi
+  diagram. It must a model of the \ccc{VoronoiVertex_2} concept.}
+
+\ccCreationVariable{e}  %% choose variable name
+
+
+\ccHeading{Access Methods}
+\ccThree{Voronoi_vertex_2}{e.opposite()+}{}
+\ccThreeToTwo
+%
+\ccMethod{Voronoi_vertex_2 source();}{returns the source Voronoi
+  vertex of the Voronoi edge.
+\ccPrecond{\ccc{has_source()} must be true.}}
+\ccGlue
+\ccMethod{Voronoi_vertex_2 target();}{returns the target Voronoi
+  vertex of the Voronoi edge.
+\ccPrecond{\ccc{has_target()} must be true.}}
+%
+\ccGlue
+\ccMethod{VoronoiEdge_2 opposite();}{return the Voronoi edge with the
+  opposite orientation.}
+
+A Voronoi edge is defined by four generators, either finite or the
+site at infinity. If we consider Voronoi edges locally, we can think
+of them as lying on the horizontal axis with orientation from minus to
+plus infinity. In this setting the four defining generators can be
+thought of as occupying the four major directions \ccStyle{north},
+\ccStyle{south}, \ccStyle{west} and \ccStyle{east}, where
+\ccStyle{north} means above the horizontal axis (on the positive
+side of the axis), \ccStyle{south} means below the horizontal axis (on the
+negative side of the axis), \ccStyle{west} means towards minus
+infinity and \ccStyle{east} means towards plus infinity. Notice that
+then the Voronoi vertices, that is the endpoints of the Voronoi edge,
+are defined by the generator triplets $\{$\ccStyle{south},
+\ccStyle{north}, \ccStyle{west}$\}$ (this is the source of the Voronoi
+edge) and $\{$\ccStyle{north}, \ccStyle{south}, \ccStyle{east}$\}$
+(this is the target  of the Voronoi edge). Notice that \ccStyle{north}
+and \ccStyle{south} can never correspond to the site at infinity. If
+either \ccStyle{west} or \ccStyle{east}, but not both, are the
+site an infinity, then the Voronoi edge is essentially a bisecting
+ray, whereas if both \ccStyle{west} and \ccStyle{east} are the site at
+infinity the Voronoi edge is the entire bisector of \ccStyle{north}
+and \ccStyle{south}. The following methods provide access to these
+four defining sites:
+
+\ccThree{Site_2}{e.north()+}{}
+\ccThreeToTwo
+%
+\ccMethod{Site_2 north();}{return the defining site to the north of
+  the Voronoi edge.}
+\ccGlue
+\ccMethod{Site_2 south();}{return the defining site to the south of
+  the Voronoi edge.}
+\ccGlue
+\ccMethod{Site_2 west();}{return the defining site to the west of
+  the Voronoi edge.
+\ccPrecond{\ccc{has_source()} must be \ccStyle{true}.}}
+\ccGlue
+\ccMethod{Site_2 east();}{return the defining site to the east of
+  the Voronoi edge.
+\ccPrecond{\ccc{has_target()} must be \ccStyle{true}.}}
+
+
+\ccHeading{Predicate Methods}
+
+\ccThree{bool}{e.is_bisector()+}{}
+\ccThreeToTwo
+%
+\ccMethod{bool is_bisector();}{returns \ccStyle{true} iff the Voronoi
+  edge is an entire bisector.}
+\ccGlue
+\ccMethod{bool is_segment();}{returns \ccStyle{true} iff the Voronoi
+  edge has both a source and a target Voronoi vertex.}
+\ccGlue
+\ccMethod{bool is_ray();}{returns \ccStyle{true} iff the Voronoi
+  edge has either a source and a target Voronoi vertex, but not both;
+  in other words it is a bisecting ray.}
+\ccGlue
+\ccMethod{bool has_source();}{return \ccStyle{true} iff the Voronoi
+  edge has a source Voronoi vertex.}
+\ccGlue
+\ccMethod{bool has_target();}{return \ccStyle{true} iff the Voronoi
+  edge has a target Voronoi vertex.}
+
+
+\ccHasModels
+\ccc{CGAL::Apollonius_graph_Voronoi_traits_2<DG>::Voronoi_edge_2}\\
+\ccc{CGAL::Delaunay_triangulation_Voronoi_traits_2<DG>::Voronoi_edge_2}\\
+\ccc{CGAL::Regular_triangulation_Voronoi_traits_2<DG>::Voronoi_edge_2}\\
+\ccc{CGAL::Segment_Voronoi_diagram_Voronoi_traits_2<DG>::Voronoi_edge_2}\\
+
+\ccSeeAlso
+\ccc{VoronoiTraits_2}\\
+\ccc{VoronoiVertex_2}
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

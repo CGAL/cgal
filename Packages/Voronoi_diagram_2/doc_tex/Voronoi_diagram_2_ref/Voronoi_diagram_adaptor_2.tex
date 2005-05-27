@@ -74,11 +74,14 @@ corresponding handles.
 
 \ccTwo{Voronoi_diagram_adaptor_2<DG,VT>::Unbounded_faces_iterator+}{}
 %
-\ccNestedType{Halfedge}{A type for the halfedges of the Voronoi diagram.}
+\ccNestedType{Halfedge}{A type for the halfedges of the Voronoi diagram.
+  It is a model of the \ccc{VoronoiDiagramHalfedge_2} concept.}
 \ccGlue
-\ccNestedType{Vertex}{A type for the vertices of the Voronoi diagram.}
+\ccNestedType{Vertex}{A type for the vertices of the Voronoi diagram.
+  It is a model of the \ccc{VoronoiDiagramVertex_2} concept.}
 \ccGlue
-\ccNestedType{Face}{A type for the faces of the Voronoi diagram.}
+\ccNestedType{Face}{A type for the faces of the Voronoi diagram.
+  It is a model of the \ccc{VoronoiDiagramFace_2} concept.}
 \ccGlue
 \ccNestedType{Halfedge_handle}{Handle for halfedges.}
 \ccGlue
@@ -100,26 +103,20 @@ corresponding handles.
 \ccNestedType{Vertex_iterator}{A type for an iterator over Voronoi
   vertices. Its value type is \ccc{Vertex}.}
 \ccGlue
-%%% difference here with the arrangement API; in the arrangement API
-%%% the value type of the circulator is Ccb_halfedge_circulator.
 \ccNestedType{Holes_iterator}{A type for an iterator to traverse all
   holes (i.e., inner connected components of the boundary) of a
-  Voronoi face. Its value type is \ccc{Halfedge_handle}. Since Voronoi
-  diagrams supported by the \ccRefName\ class do not have holes in
-  their faces, this iterator is solely defined for compliance with the
-  arrangement package API.}
+  Voronoi face. Its value type is \ccc{Ccb_halfedge_circulator}. Since
+  Voronoi diagrams supported by the \ccRefName\ class do not have
+  holes in their faces, this iterator is solely defined for compliance
+  with the arrangement package API.}
 \ccGlue
-%%% difference here with the arrangement API; in the arrangement API
-%%% the value type of the circulator is Halfedge.
 \ccNestedType{Halfedge_around_vertex_circulator}{A type for a
   circulator over the halfedges that have a common vertex as their
-  target. Its value type is \ccc{Halfedge_handle}.}
+  target. Its value type is \ccc{Halfedge}.}
 \ccGlue
-%%% difference here with the arrangement API; in the arrangement API
-%%% the value type of the circulator is Halfedge.
 \ccNestedType{Ccb_halfedge_circulator}{A type for a circulator over
   the halfedges of a CCB (connected component of the boundary) of a
-  Voronoi face. Its value type of is \ccc{Halfedge_handle}.}
+  Voronoi face. Its value type of is \ccc{Halfedge}.}
 \ccGlue
 \ccNestedType{Unbounded_faces_iterator}{A type for an iterator over
   the unbounded faces of the Voronoi diagram. Its value type is
@@ -170,12 +167,12 @@ corresponding handles.
 \ccMethod{Face_handle unbounded_face();}{Returns one of the unbounded
   faces of the Voronoi diagram.}
 %
-\ccThree{Edge_degeneracy_tester}{vda.edge_tester()+}{}
-\ccMethod{Edge_degeneracy_tester edge_tester();}{Returns a reference
-  to the edge degeneracy tester.}
-\ccGlue
-\ccMethod{Face_degeneracy_tester face_tester();}{Returns a reference
-  to the face degeneracy tester.}
+%% \ccThree{Edge_degeneracy_tester}{vda.edge_tester()+}{}
+%% \ccMethod{Edge_degeneracy_tester edge_tester();}{Returns a reference
+%%   to the edge degeneracy tester.}
+%% \ccGlue
+%% \ccMethod{Face_degeneracy_tester face_tester();}{Returns a reference
+%%   to the face degeneracy tester.}
 
 
 
@@ -259,7 +256,6 @@ be destroyed).
   \ccPrecond{The halfedge \ccc{*h} must lie on the boundary of \ccc{*f}.}}
 
 \ccThree{Halfedge_around_vertex_circulator}{vda.incident_halfedges+}{}
-%{vda.incident_halfedges(Vertex_handle v)+}{}
 \ccThreeToTwo
 %
 \ccMethod{Halfedge_around_vertex_circulator
@@ -358,6 +354,9 @@ be destroyed).
 \ccSeeAlso
 \ccc{DelaunayGraph_2}\\
 \ccc{VoronoiTraits_2}\\
+\ccc{VoronoiDiagramHalfedge_2}\\
+\ccc{VoronoiDiagramVertex_2}\\
+\ccc{VoronoiDiagramFace_2}\\
 \ccc{CGAL::Delaunay_triangulation_2<Traits,Tds>}\\
 \ccc{CGAL::Regular_triangulation_2<Traits,Tds>}\\
 \ccc{CGAL::Triangulation_hierarchy_2<Tr>} provided that \ccc{Tr} is a

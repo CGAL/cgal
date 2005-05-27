@@ -98,7 +98,7 @@ that the Voronoi diagram adaptor can use it.
 
 \ccCreationVariable{dg}  %% choose variable name
 
-\ccThree{DelaunayGraph_2}{dg(It begin, It beyond)+}{}
+\ccThree{DelaunayGraph_2}{dg(It begin, It beyond, Geom_traits gt)+}{}
 \ccThreeToTwo
 
 \ccCreation
@@ -110,9 +110,9 @@ operator, the following constructors are required.
   iterator must be \ccc{Site_2}.}
 \ccGlue
 \ccConstructor{template<class It> DelaunayGraph_2(It begin, It beyond,
-  Voronoi_traits tr);}
+  Geom_traits gt);}
 {Constructor that takes an iterator range and an instance of the
-  Voronoi traits. The value type of the iterator must be \ccc{Site_2}.}
+  geometric traits. The value type of the iterator must be \ccc{Site_2}.}
 
 
 \ccHeading{Access methods}

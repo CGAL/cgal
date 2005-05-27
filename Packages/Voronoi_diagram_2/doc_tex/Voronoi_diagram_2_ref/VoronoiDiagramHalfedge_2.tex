@@ -1,0 +1,89 @@
+%% Copyright (c) 2005  University of Crete (Greece).
+%% All rights reserved.
+%%
+%% This file is part of CGAL (www.cgal.org); you may redistribute it under
+%% the terms of the Q Public License version 1.0.
+%% See the file LICENSE.QPL distributed with CGAL.
+%%
+%% Licensees holding a valid commercial license may use this file in
+%% accordance with the commercial license agreement provided with the software.
+%%
+%% This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+%% WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+%%
+%% $Source$
+%% $Revision$ $Date$
+%% $Name$
+%%
+%% Author(s)     : Menelaos Karavelas <mkaravel@tem.uoc.gr>
+
+
+
+\begin{ccRefConcept}{VoronoiDiagramHalfedge_2}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+\ccDefinition
+
+The concept \ccc{VoronoiDiagramHalfedge_2} defines the requirements of the
+halfedge provided by the Voronoi diagram adaptor. It refines
+the \ccc{PlanapMapDcelHalfedge_2} concept (the non-mutable part), by
+adding some additional requirements specific to Voronoi diagrams.
+
+\ccRefines
+\ccc{DefaultConstructible}\\
+\ccc{CopyConstructible}\\
+\ccc{Assignable}\\
+\ccc{PlanarMapDcelHalfedge_2}
+
+\ccTypes
+The \ccc{VoronoiDiagramHalfedge_2} concept introduces the following
+types in addition to those of the \ccc{PlanarMapDcelHalfedge_2} concept.
+
+\ccThree{typedef typename Dual_graph::Edge}{Dual_edge;}{}
+\ccThreeToTwo
+\ccNestedType{Dual_graph}{A type for the Delaunay graph. It must be a
+  model of the \ccc{DelaunayGraph_2} concept.}
+\ccTypedef{typedef typename Dual_graph::Edge Dual_edge;}{A type for
+  the dual edge.}
+
+\ccCreationVariable{e}  %% choose variable name
+
+\ccThree{Dual_edge}{e.has_source()+}{}
+\ccThreeToTwo
+
+\ccHeading{Access Methods}
+\ccMethod{Dual_edge dual_edge();}{returns the dual edge, i.e., the
+  corresponding dual edge in the Delaunay graph.}
+
+\ccHeading{Predicate Methods}
+
+\ccMethod{bool has_source();}{returns \ccStyle{true} iff the halfedge
+  corresponds to a bisecting segment or a bisecting ray oriented
+  appropriately so that its apex is its source.}
+\ccGlue
+\ccMethod{bool has_target();}{returns \ccStyle{true} iff the halfedge
+  corresponds to a bisecting segment or a bisecting ray oriented
+  appropriately so that its apex is its target.}
+\ccGlue
+\ccMethod{bool is_valid();}{returns \ccStyle{true} if the following
+  conditions are met: the halfedge does not have zero length; the
+  twin edge of its twin edge is itself; its adjacent face does not
+  have zero area; its source and target vertices are valid (provided
+  they exist, of course); the previous of its next halfedge is itself
+  and the next of its previous halfedge is itself.}
+
+\ccHasModels
+\ccc{CGAL::Voronoi_diagram_adaptor_2<DG,VT>::Halfedge}\\
+
+\ccSeeAlso
+\ccc{VoronoiDiagramVertex_2}\\
+\ccc{VoronoiDiagramFace_2}\\
+\ccc{CGAL::Voronoi_diagram_adaptor_2<DG,VT>}
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+
