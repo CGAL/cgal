@@ -1216,7 +1216,12 @@ update_1( Tag_false)
 	    // enter variable into basis, if
 	    // - no leaving variable was found  or
 	    // - basis matrix would become singular when variable i leaves
-	    enter_variable();
+
+	    if ( i < 0 ) {
+	        enter_variable();
+	    } else {
+	        z_replace_variable();
+	    }
 	}
     }
 }
