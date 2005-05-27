@@ -51,7 +51,7 @@ namespace CGAL {
 			  4*(dy*dry-py*dx2),
 			  CGAL::square(dry) - dx2*(2*(ry1+ry2)-dx2),
 			  true)),
-	  2 ); // multiplicity = 2
+	  static_cast<unsigned>(2) ); // multiplicity = 2
       return res;
     }
 
@@ -71,7 +71,7 @@ namespace CGAL {
 			  4*(dy*dry-py*dx2),
 			  CGAL::square(dry) - dx2*(2*(ry1+ry2)-dx2),
 			  low_y)),
-	  1 );
+	  static_cast<unsigned>(1) );
     
     low_y = slope ? false : true;
     * res++ = std::make_pair
@@ -84,7 +84,7 @@ namespace CGAL {
 			  4*(dy*dry-py*dx2),
 			  CGAL::square(dry) - dx2*(2*(ry1+ry2)-dx2),
 			  low_y)),
-	  1 );
+	  static_cast<unsigned>(1) );
 
 
    return res;
