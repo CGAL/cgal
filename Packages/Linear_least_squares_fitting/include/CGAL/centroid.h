@@ -27,7 +27,7 @@
 #include <CGAL/basic.h>
 #include <iterator>
 #include <CGAL/Kernel_traits.h>
-#include <CGAL/barycenter.h> // For CGALi::Vector_from_points.
+#include <CGAL/Kernel/Dimension_utils.h>
 
 // Functions to compute the centroid of N points.
 // Works in 2D and 3D.
@@ -46,7 +46,7 @@ centroid(InputIterator begin, InputIterator end, const K & k)
 {
   typedef typename std::iterator_traits<InputIterator>::value_type  Point;
   typedef typename K::FT                                            FT;
-  typedef typename CGALi::Vector_from_point<K, Point>::type         Vector;
+  typedef typename Same_dimension_vector<Point, K>::type            Vector;
 
 #if 0 // Another implementation (by Michael).
   // compute centroid of points:

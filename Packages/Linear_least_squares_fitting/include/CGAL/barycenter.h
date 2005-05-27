@@ -27,9 +27,10 @@
 #include <CGAL/basic.h>
 #include <iterator>
 #include <CGAL/Kernel_traits.h>
+#include <CGAL/Kernel/Dimension_utils.h>
 
 // Functions to compute the point given its barycentric coordinates.
-// Works in 2D and 3D.
+// Works in 2D and 3D (and dD ?).
 // Special case for the centroid.
 
 // TODO : Note : more numerically stable variants could be implemented as well.
@@ -39,28 +40,6 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace CGALi {
-
-// Small internal helper to find the Vector corresponding to a Point of the
-// same dimension.
-template < typename K, typename P >
-struct Vector_from_point;
-
-template < typename K >
-struct Vector_from_point <K, typename K::Point_2>
-{
-  typedef typename K::Vector_2  type;
-};
-
-template < typename K >
-struct Vector_from_point <K, typename K::Point_3>
-{
-  typedef typename K::Vector_3  type;
-};
-
-} // namespace CGALi
-
-
 // This one takes an iterator range over std::pair<K::Point_[23], K::FT>
 template < typename InputIterator, typename K >
 typename std::iterator_traits<InputIterator>::value_type::first_type
@@ -69,7 +48,7 @@ barycenter(InputIterator begin, InputIterator end, const K & k)
   typedef typename std::iterator_traits<InputIterator>::value_type  pair;
   typedef typename pair::second_type                                FT;
   typedef typename pair::first_type                                 Point;
-  typedef typename CGALi::Vector_from_point<K, Point>::type         Vector;
+  typedef typename Same_dimension_vector<Point, K>::type            Vector;
 
   CGAL_precondition(begin != end);
 
@@ -97,7 +76,7 @@ barycenter(PointInputIterator begin, PointInputIterator end,
 {
   typedef typename std::iterator_traits<PointInputIterator>::value_type  Point;
   typedef typename std::iterator_traits<WeightInputIterator>::value_type FT;
-  typedef typename CGALi::Vector_from_point<K, Point>::type              Vector;
+  typedef typename Same_dimension_vector<Point, K>::type                 Vector;
 
   CGAL_precondition(begin != end);
 
