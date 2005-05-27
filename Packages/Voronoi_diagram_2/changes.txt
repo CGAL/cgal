@@ -1,3 +1,51 @@
+27 May 2005:  Menelaos Karavelas
+- changes in the doc:
+  * fixed some open issues in the various models of the Voronoi traits concept.
+  * added concepts for halfedges, vertices, faces of the Voronoi diagram.
+  * added concepts for Voronoi edges and vertices, seen as geometric objects.
+  * extended the VoronoiTraits_2 concept to incorporate geometric objects,
+    such as Voronoi vertices and edges.
+  * fixed Voronoi_diagram_adaptor_2 doc to make references to appropriate
+    concepts and also fixed return types of various iterators/circuclator (in
+    compliance with the arrangements'API).
+- changes in the code:
+  * changed return type for Halfedge_around_vertex_circulator and
+    Ccb_halfedge_circulator to be Halfedge instead of Halfedge_handle.
+  * changed return type of Holes_iterator from Halfedge_handle to
+    Ccb_halfedge_circulator.
+  * added methods point() in Vertex and curve() in Halfedge; added the
+    corresponding support in the Voronoi traits classes and created the
+    appropriate base classes for representing Voronoi vertices and edges (seen
+    now as geometric objects).
+  * Voronoi_diagram_adaptor_2 class: removed predicate methods to simplify the
+    interface; these methods were simply shortcuts to other calls, accessible
+    publicly to the user.
+  * the Voronoi_diagram_adaptor_2 class now uses the cached testers by default;
+    however the interface is not very very clean since the edge_tester() and
+    face_tester() methods are still public.
+  * removed definition of Edge_hash_function in the
+    Cached_edge_degeneracy_tester since it was identical to that in
+    CGAL/edge_list.h; the definition in CGAL/edge_list.h is now used.
+- changes in testsuite:
+  * updated Delaunay_graph_concept and Voronoi_traits_concept classes in order
+    to comply with the recent changes.
+  * the vda_*.C testsuites are now using the normal traits classes and not
+    the cached traits classes.
+  * updated the concept checking method in include/vda_test_concept.h to test
+    for recently added types
+  * updated vda_print_report.h w.r.t. changes referring to eliminated predicate
+    methods in Voronoi_diagram_adaptor_2; also added tests for the geometric
+    objects returned by Vertex and Halfedge (point() and curve() respectively.
+- other changes:
+  * added example that computes the number of connected components of the
+    Voronoi skeleton.
+
+24 May 2005:  Menelaos Karavelas
+- changed the return type of the circulators to be Halfedge instead of
+  Halfedge_handle.
+- changed the return type of Holes_iterator from Halfedge_handle to
+  Ccb_halfedge_circulator.
+
 22 May 2005:  Menelaos Karavelas
 - re-wrote the face degeneracy testers so that they do not need the edge
   degeneracy tester as an argument. This simplifies both the code and the
