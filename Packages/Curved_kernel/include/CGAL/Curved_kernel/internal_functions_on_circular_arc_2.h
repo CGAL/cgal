@@ -360,12 +360,14 @@ namespace CircularFunctors {
       if (a1.on_upper_part() != a2.on_upper_part()) {
         // But they could share the right vertical tangent point.
         if (a1.right() == a2.right()) {
-            *res++ = make_object(std::make_pair(a1.right(),static_cast<unsigned>(1)));
+            *res++ = make_object
+	      (std::make_pair(a1.right(),static_cast<unsigned>(1)));
             return res;
         }
         // Or they could share the left vertical tangent point.
         if (a1.left() == a2.left()) {
-            *res++ = make_object(std::make_pair(a1.left(),static_cast<unsigned>(1)));
+            *res++ = make_object
+	      (std::make_pair(a1.left(),static_cast<unsigned>(1)));
             return res;
         }
         return res;
@@ -426,12 +428,13 @@ namespace CircularFunctors {
       return res;
     }
 
+    // SHOULD USE INTERSECTIONS ON CIRCLES INSTEAD
+    // OR AT LEAST SOLVE...
+
     // We need to check that the supporting circles
     // do intersect before going further.
-    if (! do_intersect(a1.supporting_circle(),
-                       a2.supporting_circle())) {
-      return res;
-    }
+    if (! do_intersect(a1.supporting_circle(), a2.supporting_circle())) 
+      { return res; }
 
     // Get the two intersection points of the supporting circles.
     Circular_arc_endpoint_2 
@@ -439,17 +442,22 @@ namespace CircularFunctors {
     Circular_arc_endpoint_2 
       right(a1.supporting_circle(), a2.supporting_circle(), false);
 
-    // We also need to check that these intersection points are on the arc.
-    if (is_on_arc<CK>(a1, left) &&
-        is_on_arc<CK>(a2, left)) {
-      *res++ = make_object(std::make_pair(left,static_cast<unsigned>(1)));
-    }
-
-    if (is_on_arc<CK>(a1, right) &&
-        is_on_arc<CK>(a2, right)) {
-      *res++ = make_object(std::make_pair(right,static_cast<unsigned>(1)));
-    }
-
+    if ( left != right ) // multiplicity 1
+      {
+	// We also need to check that these intersection points are on the arc.
+	if (is_on_arc<CK>(a1, left) && is_on_arc<CK>(a2, left)) {
+	  *res++ = make_object(std::make_pair(left,static_cast<unsigned>(1)));
+	}
+	if (is_on_arc<CK>(a1, right) && is_on_arc<CK>(a2, right)) {
+	  *res++ = make_object(std::make_pair(right,static_cast<unsigned>(1)));
+	}
+      }
+    else // multiplicity 2
+      {
+	if (is_on_arc<CK>(a1, left) && is_on_arc<CK>(a2, left)) 
+	  { *res++ = make_object
+	      (std::make_pair(left,static_cast<unsigned>(2))); }
+      }
     return res;
   }
 

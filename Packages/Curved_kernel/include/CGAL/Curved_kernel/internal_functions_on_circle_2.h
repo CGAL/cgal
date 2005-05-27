@@ -37,7 +37,7 @@ namespace CircularFunctors {
     typedef std::vector
       < std::pair 
           < std::pair<typename CK::Root_of_2,typename CK::Root_of_2>, 
-          int > > 
+          unsigned > > 
       solutions_container;
     solutions_container solutions;
     
