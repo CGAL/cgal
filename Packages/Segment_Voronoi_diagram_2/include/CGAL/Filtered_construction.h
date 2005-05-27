@@ -99,8 +99,8 @@ public:
     {
       Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
       return From_Exact( Exact_construction(To_Exact(a1),
-					    To_Exact(a3),
-					    To_Exact(a2)) );
+					    To_Exact(a2),
+					    To_Exact(a3)) );
     }
   }
 

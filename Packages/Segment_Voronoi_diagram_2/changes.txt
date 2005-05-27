@@ -1,3 +1,7 @@
+27 May 2005:  Menelaos Karavelas
+- fixed bug in Filtered_construction class: the Exact_construction was
+  called with its arguments in the wrong order
+
 21 May 2005:  Menelaos Karavelas
 - added tds() method that returns the triangulation data structure
 
