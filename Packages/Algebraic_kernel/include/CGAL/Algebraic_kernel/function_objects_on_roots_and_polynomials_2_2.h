@@ -17,7 +17,21 @@ namespace CGAL {
     OutputIterator
     operator()(const Equation & e1, const Equation & e2,OutputIterator res)
       { return solve<AK> ( e1, e2, res); }
+  };
 
+  template < class AK >
+  class Construct_polynomial_circle_2_2
+  {
+    typedef typename AK::RT    RT;
+    typedef typename AK::Polynomial_for_circles_2_2
+    Polynomial_for_circles_2_2;
+    
+  public:
+    Polynomial_for_circles_2_2
+    operator()( const RT& xc, const RT& yc, const RT& r_sq)
+      {
+	return Polynomial_for_circles_2_2(xc, yc, r_sq);
+      }
   };
 
   } // namespace AlgebraicFunctors

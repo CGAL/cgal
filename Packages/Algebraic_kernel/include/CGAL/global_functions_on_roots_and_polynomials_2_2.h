@@ -13,6 +13,16 @@ solve( const typename AK::Polynomial_for_circles_2_2 & e1,
   return AK().solve_object()(e1,e2,res);
 }
 
+  template < class AK >
+  inline 
+  typename AK::Polynomial_for_circles_2_2
+  construct_polynomial_cicle_2_2( const typename AK::RT& xc,
+				  const typename AK::RT& yc,
+				  const typename AK::RT& r_sq)
+  {
+    return AK().construct_polynomial_circle_2_2_object()(xc, yc, r_sq);
+  }
+
 } // namespace CGAL
 
 #endif // CGAL_CURVED_KERNEL_GLOBAL_FUNCTIONS_ON_ROOTS_AND_POLYNOMIALS_2_2_H

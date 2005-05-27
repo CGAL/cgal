@@ -10,7 +10,9 @@ namespace CircularFunctors {
   {
     typedef typename CK::RT RT;
  
-    return typename CK::Polynomial_for_circles_2_2
+    typedef typename CK::Algebraic_kernel   AK;
+
+    return AK().construct_polynomial_circle_2_2_object()
       ( c.center().x(), c.center().y(), c.squared_radius() );
   }
   

@@ -10,24 +10,37 @@
 
 namespace CGAL {
 
-  template< class RT >
+  template< class RT_ >
   struct Algebraic_kernel_2_2
   {
-    typedef Algebraic_kernel_2_2<RT>        Self;
+    typedef Algebraic_kernel_2_2<RT_>        Self;
+
+    typedef RT_  RT;
 
     typedef typename Root_of_traits< RT >::RootOf_2         Root_of_2;
     typedef typename Root_of_traits< RT >::RootOf_1         FT;
 
     typedef Polynomial_for_circles_2_2<RT>
     Polynomial_for_circles_2_2; // probleme RT / FT
+
     typedef Polynomial_1_2<RT>
     Polynomial_1_2; // probleme RT / FT
 
     typedef AlgebraicFunctors::Solve<Self>  Solve;
 
+    typedef AlgebraicFunctors::Construct_polynomial_circle_2_2<Self>
+    Construct_polynomial_circle_2_2;
+
     Solve 
     solve_object() const
       { return Solve(); }
+
+    Construct_polynomial_circle_2_2
+    construct_polynomial_circle_2_2_object() const
+    {
+      return Construct_polynomial_circle_2_2();
+    }
+
   };
 
 } // namespace CGAL
