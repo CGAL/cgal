@@ -1,1 +1,7 @@
-Package Linear Least Squares Fitting: provides functions for linear fitting (in the least squares sense) of 2D and 3D kernel objects.
+Package Linear Least Squares Fitting (name probably needs generalization now) :
+- provides functions for linear fitting (in the least squares sense)
+  of 2D and 3D kernel objects.
+- some basic shape analysis functions :
+  bounding_box()
+  centroid()
+  barycenter()
