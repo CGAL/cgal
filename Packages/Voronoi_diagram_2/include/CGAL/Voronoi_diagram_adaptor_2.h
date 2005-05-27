@@ -89,7 +89,7 @@ class Voronoi_diagram_adaptor_2
   typedef typename Voronoi_traits::Face_degeneracy_tester
   Face_degeneracy_tester;
 
-#ifdef USE_CACHED_TESTERS
+#ifndef VDA_NO_CACHED_TESTERS
  protected:
   typedef CGAL_VORONOI_DIAGRAM_2_NS::Cached_edge_degeneracy_tester
   <Edge_degeneracy_tester>
@@ -220,7 +220,7 @@ public:
 
   Voronoi_diagram_adaptor_2(const Dual_graph& dg,
 			    const Voronoi_traits& tr = Voronoi_traits())
-#ifdef USE_CACHED_TESTERS
+#ifndef VDA_NO_CACHED_TESTERS
     : dual_(dg), tr_(tr), cached_e_tester_(), cached_f_tester_() {}
 #else
     : dual_(dg), tr_(tr) {}
@@ -274,7 +274,7 @@ public:
   }
 #endif
 
-#ifdef USE_CACHED_TESTERS
+#ifndef VDA_NO_CACHED_TESTERS
   const Cached_edge_degeneracy_tester& edge_tester() const {
     return cached_e_tester_;
   }
@@ -438,7 +438,7 @@ public:
 private:
   Dual_graph  dual_;
   Voronoi_traits tr_;
-#ifdef USE_CACHED_TESTERS
+#ifndef VDA_NO_CACHED_TESTERS
   Cached_edge_degeneracy_tester cached_e_tester_;
   Cached_face_degeneracy_tester cached_f_tester_;
 #endif
