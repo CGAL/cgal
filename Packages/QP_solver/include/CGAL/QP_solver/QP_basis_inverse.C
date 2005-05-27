@@ -178,16 +178,20 @@ z_replace_original_by_original(ForwardIterator y_l_it,
     // assert QP case and phaseII
     CGAL_qpe_precondition(is_QP && is_phaseII);
 
+
     // prepare \hat{k}_{1} -scalar
-    ET  hat_k_1 = *y_x_it+k_i;
+    ET  hat_k_1 = *(y_x_it + k_i);
     
     // prepare \hat{v} -vector in tmp_l, tmp_x
-    std::copy(*y_l_it, *y_l_it+s, tmp_l.begin());
-    std::copy(*y_x_it, *y_x_it+b, tmp_x.begin());
+    std::copy(y_l_it, (y_l_it+s), tmp_l.begin());
+    std::copy(y_x_it, (y_x_it+b), tmp_x.begin());
     tmp_x[k_i] -= d;
     
     // prepare \hat{\rho} -vector in x_l, x_x
     copy_row_in_B_O(x_l.begin(), x_x.begin(), k_i);
+    
+    CGAL_qpe_precondition( d != et0);
+    
     
     // update matrix in place
     z_update_inplace(x_l.begin(), x_x.begin(), tmp_l.begin(), tmp_x.begin(),
@@ -195,6 +199,7 @@ z_replace_original_by_original(ForwardIterator y_l_it,
     
     // store new denominator
     d = hat_k_1 * hat_k_1 / d;
+
 
     CGAL_qpe_postcondition( d > et0);
 
@@ -222,10 +227,10 @@ z_replace_original_by_slack(unsigned int k_j, unsigned int k_i)
     copy_row_in_C(tmp_l.begin(), tmp_x.begin(), k_j);
     
     // prepare \hat{\kappa} -scalar
-    ET  hat_kappa = (*M.begin()+k_j)[k_i];
+    ET  hat_kappa = M[k_j][k_i];
     
     // prepare \hat{\xi} -scalar
-    ET hat_xi = (*M.begin()+k_j)[k_j];
+    ET hat_xi = M[k_j][k_j];
     
     // update matrix in place
     z_update_inplace(x_l.begin(), x_x.begin(), tmp_l.begin(), tmp_x.begin(),
@@ -365,7 +370,7 @@ z_replace_slack_by_slack(ForwardIterator u_x_it, unsigned int k_j)
     ET  hat_k_1 = inner_product_x(tmp_x.begin(), u_x_it);
     
     // prepare \hat{k}_{3} -scalar
-    ET  hat_k_3 = (*M.begin()+k_j)[k_j];
+    ET  hat_k_3 = M[k_j][k_j];
     
     // update matrix in place
     z_update_inplace(x_l.begin(), x_x.begin(), tmp_l.begin(), tmp_x.begin(),
@@ -478,7 +483,7 @@ z_update_inplace( ForIt psi1_l_it, ForIt psi1_x_it,
                 row_it != matrix_it->end();
               ++row_it,  ++y_it1_c,  ++y_it2_c            ) {
                 
-            u_elem = *y_it1_r * *y_it2_c + *y_it2_r * *y_it1_c;
+            u_elem = (*y_it1_r * *y_it2_c) + (*y_it2_r * *y_it1_c);
 	    u_elem *= omega2;
 	    u_elem += omega1 * *y_it1_r * *y_it1_c;
             update_entry( *row_it, omega0, u_elem, omega3);
