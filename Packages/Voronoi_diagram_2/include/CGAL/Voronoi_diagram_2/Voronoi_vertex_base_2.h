@@ -15,7 +15,7 @@ class Voronoi_vertex_base_2
 
  public:
   typedef DG                                   Dual_graph;
-  //  typedef typename Dual_graph::Geom_traits     Geom_traits;
+  typedef typename Dual_graph::Geom_traits     Geom_traits;
   //  typedef typename Dual_graph::Vertex_handle   Vertex_handle;
   typedef P                                    Point_2;
   typedef S                                    Site_2;
