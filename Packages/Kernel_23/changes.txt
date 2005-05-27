@@ -1,3 +1,6 @@
+27 May 2005 Sylvain Pion
+- Add more tools to abstract away dimension in Kernel/Dimension_utils.h.
+
 26 May 2005 Sylvain Pion
 - Add Dimension<> tool to get the static dimension of kernel objects.
 
