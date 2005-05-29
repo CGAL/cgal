@@ -25,6 +25,7 @@
  */
 
 #include <CGAL/Arr_traits_2/Conic_point_2.h>
+#include <CGAL/Arr_traits_2/Conic_intersections_2.h>
 #include <CGAL/Bbox_2.h>
 
 #include <ostream>
@@ -421,6 +422,282 @@ protected:
       _orient = COUNTERCLOCKWISE;
     else
       _orient = CLOCKWISE;
+
+    // Set the arc properties (no need to compute the orientation).
+    _set (rat_coeffs);
+  }
+
+  /*!
+   * Construct a conic arc from the given five points, specified by the
+   * points p1, p2, p3, p4 and p5.
+   * \param p1 The source point of the given arc.
+   * \param p2,p3,p4 Points lying on the conic arc, between p1 and p5.
+   * \param p5 The target point of the given arc.
+   * \pre No three points are collinear.
+   */
+  _Conic_arc_2 (const Rat_point_2& p1,
+		const Rat_point_2& p2,
+		const Rat_point_2& p3,
+		const Rat_point_2& p4,
+		const Rat_point_2& p5)
+  {
+    // Make sure that no three points are collinear.
+    Rat_kernel                         ker;
+    typename Rat_kernel::Orientation_2 orient_f = ker.orientation_2_object();
+
+    CGAL_precondition (orient_f (p1, p2, p3) == COLLINEAR ||
+		       orient_f (p1, p2, p4) == COLLINEAR ||
+		       orient_f (p1, p2, p5) == COLLINEAR ||
+		       orient_f (p1, p3, p4) == COLLINEAR ||
+		       orient_f (p1, p3, p5) == COLLINEAR ||
+		       orient_f (p1, p4, p5) == COLLINEAR ||
+		       orient_f (p2, p3, p4) == COLLINEAR ||
+		       orient_f (p2, p3, p5) == COLLINEAR ||
+		       orient_f (p2, p4, p5) == COLLINEAR ||
+		       orient_f (p3, p4, p5) == COLLINEAR);
+
+    // Set the source and target.
+    Rational          x1 = p1.x();
+    Rational          y1 = p1.y();
+    Rational          x5 = p5.x();
+    Rational          y5 = p6.y();
+    Nt_traits         nt_traits;
+
+    _source = Point_2 (nt_traits.convert (x1), nt_traits.convert (y1));
+    _target = Point_2 (nt_traits.convert (x5), nt_traits.convert (y5));
+
+    // Set a conic curve that passes through the five given point.
+    typename Rat_kernel::Conic_2   temp_conic;
+    Rational                       rat_coeffs [6];
+
+    temp_conic.set (p1, p2, p3, p4, p5);
+
+    // Get the conic coefficients.
+    rat_coeffs[0] = temp_conic.r();
+    rat_coeffs[1] = temp_conic.s();
+    rat_coeffs[2] = temp_conic.t();
+    rat_coeffs[3] = temp_conic.u();
+    rat_coeffs[4] = temp_conic.v();
+    rat_coeffs[5] = temp_conic.w();
+
+    // Determine the orientation: If one of the midpoints forms a left-turn
+    // with the source and the target points, the orientation is positive
+    // (going counterclockwise).
+    // Otherwise, it is negative (going clockwise).
+    const Orientation                  turn = orient_f(p1, p2, p5);
+    bool                               same_turn;
+
+    if (turn == LEFT_TURN)
+    {
+      _orient = COUNTERCLOCKWISE;
+      CGAL_precondition (orient_f(p1, p3, p5) == LEFT_TURN &&
+			 orient_f(p1, p4, p5) == LEFT_TURN);
+    }
+    else
+    {
+      _orient = CLOCKWISE;
+      CGAL_precondition (orient_f(p1, p3, p5) != LEFT_TURN &&
+			 orient_f(p1, p4, p5) != LEFT_TURN);
+    }
+
+    // Set the arc properties (no need to compute the orientation).
+    _set (rat_coeffs);
+
+    // Make sure that all midpoints are strictly between the
+    // source and the target.
+    CGAL_assertion_code (
+      Point_2  mp2 = Point_2 (nt_traits.convert (p2.x()),
+			      nt_traits.convert (p2.y()));
+      Point_2  mp3 = Point_2 (nt_traits.convert (p3.x()),
+			      nt_traits.convert (p3.y()));
+      Point_2  mp4 = Point_2 (nt_traits.convert (p4.x()),
+			      nt_traits.convert (p4.y()));
+    );
+
+    CGAL_assertion (_is_strictly_between_endpoints (mp2) &&
+		    _is_strictly_between_endpoints (mp3) &&
+		    _is_strictly_between_endpoints (mp4));
+  }
+
+  /*!
+   * Construct a conic arc which lies on the conic:
+   *   C: r*x^2 + s*y^2 + t*xy + u*x + v*y + w = 0
+   * The source and the target are specified by the intersection of the
+   * conic with:
+   *   C_1: r_1*x^2 + s_1*y^2 + t_1*xy + u_1*x + v_1*y + w_1 = 0
+   *   C_2: r_2*x^2 + s_2*y^2 + t_2*xy + u_2*x + v_2*y + w_2 = 0
+   * The user must also specify the source and the target with approximated
+   * coordinates. The actual intersection points that best fits the source 
+   * (or the target) will be selected.
+   */
+  _Conic_arc_2 (const Rational& r, const Rational& s, const Rational& t,
+		const Rational& u, const Rational& v, const Rational& w,
+		const Orientation& orient,
+		const Point_2& app_source,
+		const Rational& r_1, const Rational& s_1, const Rational& t_1,
+		const Rational& u_1, const Rational& v_1, const Rational& w_1,
+		const Point_2& app_target,
+		const Rational& r_2, const Rational& s_2, const Rational& t_2,
+		const Rational& u_2, const Rational& v_2, const Rational& w_2):
+    _orient(orient)
+  {
+    // Create the integer coefficients of the base conic.
+    Rational          rat_coeffs [6];
+    Nt_traits         nt_traits;
+    Integer           base_coeffs[6];
+    int               deg_base;
+
+    rat_coeffs[0] = r;
+    rat_coeffs[1] = s;
+    rat_coeffs[2] = t;
+    rat_coeffs[3] = u;
+    rat_coeffs[4] = v;
+    rat_coeffs[5] = w;
+
+    nt_traits.convert_coefficients (rat_coeffs, rat_coeffs + 6,
+                                    base_coeffs);
+
+    if (CGAL::sign (base_coeffs[0]) == ZERO &&
+	CGAL::sign (base_coeffs[1]) == ZERO &&
+	CGAL::sign (base_coeffs[2]) == ZERO)
+    {
+      deg_base = 1;
+    }
+    else
+    {
+      deg_base = 2;
+    }
+
+    // Compute the endpoints.
+    Rational          aux_rat_coeffs [6];
+    Integer           aux_coeffs[6];
+    int               deg_aux;
+    Algebraic         xs[4];
+    int               n_xs;
+    Algebraic         ys[4];
+    int               n_ys;
+    int               i, j;
+    Algebraic         val;
+    bool              found;
+    double            dx, dy;
+    double            curr_dist;
+    double            min_dist;
+    int               k;
+
+    for (k = 1; k <= 2; k++)
+    {
+      // Get the integer coefficients of the k'th auxiliary conic curve.
+      aux_rat_coeffs[0] = (k == 1) ? r_1 : r_2;
+      aux_rat_coeffs[1] = (k == 1) ? s_1 : s_2;;
+      aux_rat_coeffs[2] = (k == 1) ? t_1 : t_2;;
+      aux_rat_coeffs[3] = (k == 1) ? u_1 : u_2;;
+      aux_rat_coeffs[4] = (k == 1) ? v_1 : v_2;;
+      aux_rat_coeffs[5] = (k == 1) ? w_1 : w_2;;
+
+      nt_traits.convert_coefficients (aux_rat_coeffs, aux_rat_coeffs + 6,
+				      aux_coeffs);
+
+      if (CGAL::sign (aux_coeffs[0]) == ZERO &&
+	  CGAL::sign (aux_coeffs[1]) == ZERO &&
+	  CGAL::sign (aux_coeffs[2]) == ZERO)
+      {
+	deg_aux = 1;
+      }
+      else
+      {
+	deg_aux = 2;
+      }
+
+      // Compute the x- and y-coordinates of intersection points of the base
+      // conic and the k'th auxiliary conic.
+      n_xs = _compute_resultant_roots (nt_traits,
+				       base_coeffs[0], base_coeffs[1],
+				       base_coeffs[2],
+				       base_coeffs[3], base_coeffs[4],
+				       base_coeffs[5],
+				       deg_base,
+				       aux_coeffs[0], aux_coeffs[1],
+				       aux_coeffs[2],
+				       aux_coeffs[3], aux_coeffs[4],
+				       aux_coeffs[5],
+				       deg_aux,
+				       xs);
+
+      n_ys = _compute_resultant_roots (nt_traits,
+				       base_coeffs[1], base_coeffs[0],
+				       base_coeffs[2],
+				       base_coeffs[4], base_coeffs[3],
+				       base_coeffs[5],
+				       deg_base,
+				       aux_coeffs[1], aux_coeffs[0],
+				       aux_coeffs[2],
+				       aux_coeffs[4], aux_coeffs[3],
+				       aux_coeffs[5],
+				       deg_aux,
+				       ys);
+
+      // Find the intersection point which is nearest the given approximation
+      // and set it as the endpoint.
+      found = false;
+      for (i = 0; i < n_xs; i++)
+      {
+	for (j = 0; j < n_ys; j++)
+	{
+	  // Check if the point (xs[i], ys[j]) lies on both conics.
+	  val = nt_traits.convert(base_coeffs[0]) * xs[i]*xs[i] +
+	        nt_traits.convert(base_coeffs[1]) * ys[j]*ys[j] +
+	        nt_traits.convert(base_coeffs[2]) * xs[i]*ys[j] +
+	        nt_traits.convert(base_coeffs[3]) * xs[i] +
+                nt_traits.convert(base_coeffs[4]) * ys[j] +
+	        nt_traits.convert(base_coeffs[5]);
+
+	  if (CGAL::sign (val) != ZERO)
+	    continue;
+
+	  val = nt_traits.convert(aux_coeffs[0]) * xs[i]*xs[i] +
+	        nt_traits.convert(aux_coeffs[1]) * ys[j]*ys[j] +
+	        nt_traits.convert(aux_coeffs[2]) * xs[i]*ys[j] +
+	        nt_traits.convert(aux_coeffs[3]) * xs[i] +
+                nt_traits.convert(aux_coeffs[4]) * ys[j] +
+	        nt_traits.convert(aux_coeffs[5]);
+	  
+	  if (CGAL::sign (val) == ZERO)
+	  {
+	    // Compute the distance of (xs[i], ys[j]) from the approximated
+	    // endpoint.
+	    if (k == 1)
+	    {
+	      dx = CGAL::to_double (xs[i] - app_source.x());
+	      dy = CGAL::to_double (ys[i] - app_source.y());
+	    }
+	    else
+	    {
+	      dx = CGAL::to_double (xs[i] - app_target.x());
+	      dy = CGAL::to_double (ys[i] - app_target.y());
+	    }
+
+	    curr_dist = dx*dx + dy*dy;
+
+	    // Update the endpoint if (xs[i], ys[j]) is the nearest pair so
+	    // far.
+	    if (! found || curr_dist < min_dist)
+	    {
+	      if (k == 1)
+		_source = Point_2 (xs[i], ys[j]);
+	      else
+		_target = Point_2 (xs[i], ys[j]);
+
+	      min_dist = curr_dist;
+	      found = true;
+	    }
+	  }
+	}
+      }
+    }
+ 
+    // Make sure that the source and the taget are not the same.
+    CGAL_assertion (Alg_kernel().compare_xy_2_object() (_source,
+							_target) != EQUAL);
 
     // Set the arc properties (no need to compute the orientation).
     _set (rat_coeffs);

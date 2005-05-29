@@ -24,6 +24,7 @@
  * Header file for the _Conic_x_monotone_arc_2<Conic_arc_2> class.
  */
 
+#include <CGAL/Arr_traits_2/Conic_intersections_2.h>
 #include <map>
 #include <ostream>
 
@@ -327,6 +328,7 @@ public:
     CGAL_precondition_code (
       Alg_kernel   ker;
     );
+
     CGAL_precondition (ker.compare_x_2_object() (p, left()) != SMALLER &&
                        ker.compare_x_2_object() (p, right()) != LARGER);
 
@@ -1274,26 +1276,32 @@ private:
   void _intersect_supporting_conics (const Self& arc,
                                      Intersection_list& inter_list) const
   {
+    const int   deg1 = ((_info & DEGREE_MASK) == DEGREE_1) ? 1 : 2;
+    const int   deg2 = ((arc._info & DEGREE_MASK) == DEGREE_1) ? 1 : 2;
+    Nt_traits   nt_traits;
+
     // Compute the x-coordinates of the intersection points.
     Algebraic   xs[4];
     int         n_xs;
 
-    n_xs = _compute_resultant_roots (_r, _s, _t, _u, _v, _w,
-				     _info,
+    n_xs = _compute_resultant_roots (nt_traits,
+				     _r, _s, _t, _u, _v, _w,
+				     deg1,
                                      arc._r, arc._s, arc._t,
 				     arc._u, arc._v, arc._w,
-				     arc._info,
+				     deg2,
                                      xs);
 
     // Compute the y-coordinates of the intersection points.
     Algebraic   ys[4];
     int         n_ys;
 
-    n_ys = _compute_resultant_roots (_s, _r, _t, _v, _u, _w,
-				     _info,
+    n_ys = _compute_resultant_roots (nt_traits,
+				     _s, _r, _t, _v, _u, _w,
+				     deg1,
                                      arc._s, arc._r, arc._t,
                                      arc._v, arc._u, arc._w,
-				     arc._info,
+				     deg2,
                                      ys);
 
     // Pair the coordinates of the intersection points. As the vectors of
@@ -1325,138 +1333,6 @@ private:
     }
 
     return;
-  }
-
-  /*!
-   * Compute the roots of the resultants of the two bivariate polynomials:
-   *   C1:  r1*x^2 + s1*y^2 + t1*xy + u1*x + v1*y + w1 = 0
-   *   C2:  r2*x^2 + s2*y^2 + t2*xy + u2*x + v2*y + w2 = 0
-   * \param info1 The information flags of the first curve.
-   * \param info2 The information flags of the second curve.
-   * \param xs Output: The real-valued roots of the polynomial, sorted in an
-   *                   ascending order.
-   * \pre xs must be a vector of size 4.
-   * \return The number of distinct roots found.
-   */
-  int _compute_resultant_roots (const Integer& r1, const Integer& s1,
-				const Integer& t1, const Integer& u1,
-				const Integer& v1, const Integer& w1,
-				const int& info1,
-				const Integer& r2, const Integer& s2,
-				const Integer& t2, const Integer& u2,
-				const Integer& v2, const Integer& w2,
-				const int& info2,
-				Algebraic *xs) const
-  {
-    if ((info1 & DEGREE_MASK) == DEGREE_2 &&
-        (info2 & DEGREE_MASK) == DEGREE_1)
-    {
-      // If necessary, swap roles between the two curves, so that the first
-      // curve always has the minimal degree.
-      return (_compute_resultant_roots (r2, s2, t2, u2, v2, w2, 
-					info2,
-					r1, s1, t1, u1, v1, w1, 
-					info1,
-					xs));
-    }
-
-    // Act according to the degree of the first conic curve.
-    Nt_traits      nt_traits;
-    const Integer  _two = 2;
-    Integer        c[5];
-    unsigned int   degree = 4;
-    Algebraic     *xs_end;
-
-    if ((info1 & DEGREE_MASK) == DEGREE_1)
-    {
-      // The first curve has no quadratic coefficients, and represents a line.
-      if (CGAL::sign (v1) == ZERO)
-      {
-        // The first line is u1*x + w1 = 0, therefore:
-        xs[0] = nt_traits.convert(-w1) / nt_traits.convert(u1);
-        return (1);
-      }
-      
-      // We can write the first curve as: y = (u1*x + w1) / v1.
-      if ((info2 & DEGREE_MASK) == DEGREE_1)
-      {
-        // The second curve is also a line. We therefore get the linear
-        // equation c[1]*x + c[0] = 0:
-        c[1] = v1*u2 - u1*v2;
-        c[0] = v1*w2 - w1*v2;
-
-        if (CGAL::sign (c[1]) == ZERO)
-	  // The two lines are parallel:
-          return (0);
-
-        xs[0] =  nt_traits.convert(-c[0]) /  nt_traits.convert(c[1]);
-        return (1);
-      }
-
-      // We substitute this expression into the equation of the second
-      // conic, and get the quadratic equation c[2]*x^2 + c[1]*x + c[0] = 0:
-      c[2] = u1*u1*s2 - u1*v1*t2 + v1*v1*r2;
-      c[1] = _two*u1*w1*s2 - u1*v1*v2 - v1*w1*t2 + v1*v1*u2;
-      c[0] = w1*w1*s2 - v1*w1*v2 + v1*v1*w2;
-
-      xs_end = nt_traits.solve_quadratic_equation (c[2], c[1], c[0],
-						   xs);
-      return (xs_end - xs);
-    }
-
-    // At this stage, both curves have degree 2. We obtain a qaurtic polynomial
-    // whose roots are the x-coordinates of the intersection points.
-    if (CGAL::sign (s1) == ZERO && CGAL::sign (s2) == ZERO)
-    {
-      // If both s1 and s2 are zero, we can write the two curves as:
-      //   C1: (t1*x + v1)*y + (r1*x^2 + u1*x + w1) = 0
-      //   C2: (t2*x + v2)*y + (r2*x^2 + u2*x + w2) = 0
-      // By writing the resultant of these two polynomials we get a cubic
-      // polynomial, whose coefficients are given by:
-      c[3] = r2*t1 - r1*t2;
-      c[2] = t1*u2 - t2*u1 + r2*v1 - r1*v2;
-      c[1] = t1*w2 - t2*w1 + u2*v1 - u1*v2;
-      c[0] = v1*w2 - v2*w1;
-
-      degree = 3;
-    }
-    else
-    {
-      // We can write the two curves as:
-      //   C1: (s1)*y^2 + (t1*x + v1)*y + (r1*x^2 + u1*x + w1) = 0
-      //   C2: (s2)*y^2 + (t2*x + v2)*y + (r2*x^2 + u2*x + w2) = 0
-      // By writing the resultant of these two polynomials we get a quartic
-      // polynomial, whose coefficients are given by:
-      c[4] = -_two*s1*s2*r1*r2 + s1*t2*t2*r1 - s1*t2*t1*r2 +
-        s1*s1*r2*r2 - s2*t1*r1*t2 + s2*t1*t1*r2 + s2*s2*r1*r1;
-
-      c[3] = -t2*r1*v1*s2 - u2*t1*t2*s1 - v2*r1*t1*s2 -
-        r2*t1*v2*s1 - _two*s1*s2*r1*u2 - t2*u1*t1*s2 + u2*t1*t1*s2 -
-        r2*v1*t2*s1 + u1*t2*t2*s1 + _two*v2*r1*t2*s1 + _two*u2*r2*s1*s1 + 
-        _two*r2*v1*t1*s2 + _two*u1*r1*s2*s2 - _two*s1*s2*u1*r2;
-
-      c[2] = -r2*v1*v2*s1 + u2*u2*s1*s1 + _two*w2*r2*s1*s1 +
-        _two*u2*v1*t1*s2 - u2*v1*t2*s1 + w2*t1*t1*s2 - _two*s1*s2*u1*u2 - 
-        w2*t1*t2*s1 + v2*v2*r1*s1 + u1*u1*s2*s2 - v2*r1*v1*s2 +
-        _two*w1*r1*s2*s2 - u2*t1*v2*s1 - t2*u1*v1*s2 - _two*s1*s2*r1*w2 -
-        _two*s1*s2*w1*r2 + r2*v1*v1*s2 + w1*t2*t2*s1 - v2*u1*t1*s2 -
-        t2*w1*t1*s2 + _two*v2*u1*t2*s1;
-
-      c[1] = _two*w2*u2*s1*s1 + _two*w2*v1*t1*s2 - w2*v1*t2*s1 +
-        _two*v2*w1*t2*s1 + _two*w1*u1*s2*s2 - v2*u1*v1*s2 - _two*s1*s2*u1*w2 -
-        v2*w1*t1*s2 + u2*v1*v1*s2 - t2*w1*v1*s2 - w2*t1*v2*s1 + 
-        v2*v2*u1*s1 - u2*v1*v2*s1 - _two*s1*s2*w1*u2;
-
-      c[0] = s2*v1*v1*w2 - s1*v2*v1*w2 - s2*v1*w1*v2 + s2*s2*w1*w1 -
-        _two*s1*s2*w1*w2 + s1*w1*v2*v2 + s1*s1*w2*w2;
-
-      degree = 4;
-    }
-
-    // Compute the roots of the resultant polynomial.
-    xs_end = nt_traits.compute_polynomial_roots (c, degree,
-						 xs);
-    return (xs_end - xs);
   }
 
   /*!
