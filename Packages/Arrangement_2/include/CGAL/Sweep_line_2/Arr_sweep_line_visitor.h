@@ -31,7 +31,8 @@ class Arr_sweep_line_visitor
 {
 protected:
 
-  typedef typename Arr::Halfedge_handle                            Halfedge_handle;
+  typedef typename Arr::Halfedge_handle        Halfedge_handle;
+  typedef typename Arr::Face_handle            Face_handle;
   typedef Arr_sweep_line_visitor< _Traits,
                                   Arr,
                                   Event,
@@ -63,6 +64,8 @@ public:
       m_arr(arr),
       m_arr_access (*arr)
   {}
+
+  virtual ~Arr_sweep_line_visitor(){}
 
   void attach(void *sl)
   {
@@ -120,7 +123,7 @@ public:
       else
       {
         // if this is the first left curve being inserted
-        res = m_arr->insert_in_face_interior(cv, m_arr->unbounded_face());
+        res = insert_in_face_interior(cv, sc);
       }
     } 
     else 
@@ -139,9 +142,48 @@ public:
         CGAL_assertion(prev.face() == hhandle.face());
        
         //res = m_arr->insert_at_vertices(cv,hhandle,prev);
-        bool      new_face_created;
+        res = insert_at_vertices(cv,hhandle,prev);
+       
 
-        res = m_arr_access.insert_at_vertices_ex (cv, hhandle, prev,
+        res = res.twin();
+      }
+      else
+      {
+        res = m_arr->insert_from_left_vertex(cv, prev);
+      }
+    }
+    if ( lastEvent->get_num_left_curves() == 0 &&  
+      lastEvent->is_curve_largest((Subcurve*)sc) )
+    {
+      insertInfo->set_halfedge_handle(res.twin());
+    }
+    currentInfo->set_halfedge_handle(res);
+
+    if(lastEvent->get_insert_info()->dec_right_curves_counter() == 0)
+    {
+      (static_cast<Sweep_line*>(m_sweep_line))->deallocate_event(lastEvent);
+    }
+  }
+
+
+  void init_subcurve(Subcurve* sc)
+  {
+    sc -> set_last_event((Event*)(sc->get_left_event()));
+  }
+
+  virtual Halfedge_handle insert_in_face_interior(const X_monotone_curve_2& cv,
+                                          Subcurve* sc)
+  {
+    return m_arr->insert_in_face_interior(cv, m_arr->unbounded_face());
+  }
+
+  virtual Halfedge_handle insert_at_vertices(const X_monotone_curve_2& cv,
+                                             Halfedge_handle hhandle,
+                                             Halfedge_handle prev)
+  {
+     bool      new_face_created;
+
+        Halfedge_handle res = m_arr_access.insert_at_vertices_ex (cv, hhandle, prev,
 					                                        new_face_created);
 
         if (new_face_created)
@@ -174,32 +216,11 @@ public:
             }
           }
         }
-
-        res = res.twin();
-      }
-      else
-      {
-        res = m_arr->insert_from_left_vertex(cv, prev);
-      }
-    }
-    if ( lastEvent->get_num_left_curves() == 0 &&  
-      lastEvent->is_curve_largest((Subcurve*)sc) )
-    {
-      insertInfo->set_halfedge_handle(res.twin());
-    }
-    currentInfo->set_halfedge_handle(res);
-
-    if(lastEvent->get_insert_info()->dec_right_curves_counter() == 0)
-    {
-      (static_cast<Sweep_line*>(m_sweep_line))->deallocate_event(lastEvent);
-    }
+        return res;
   }
 
-
-  void init_subcurve(Subcurve* sc)
-  {
-    sc -> set_last_event((Event*)(sc->get_left_event()));
-  }
+    
+ 
 
  
    protected:

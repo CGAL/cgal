@@ -445,6 +445,9 @@ protected:
     // event point is the right-edge of the original curve, the 
     // last sub curve is created and added to the result. Otherwise
     // the curve is added as is to the result.
+
+    m_is_event_on_above = false;
+
     if(! m_currentEvent->has_left_curves())
     {
       /* this block takes care of
@@ -464,15 +467,14 @@ protected:
 
       if(res.second)
       {
-	// The current event point starts at the interior of a curve at the 
-	// y-structure (can also indicates overlap).
+	      // The current event point starts at the interior of a curve at the 
+	      // y-structure (can also indicates overlap).
         if(!m_currentEvent -> has_right_curves())
         {
           m_is_event_on_above = true;
           m_visitor->before_handle_event(m_currentEvent);
           return;
         }
-        m_is_event_on_above = false;
         Subcurve* sc = *m_status_line_insert_hint;
         X_monotone_curve_2 last_curve = sc->get_last_curve();
         m_currentEvent->add_curve_to_left(sc); 
@@ -483,21 +485,23 @@ protected:
 				   m_currentEvent->get_point(), 
 				   a, b);
         ++m_status_line_insert_hint; 
-        m_statusLine.remove_at(res.first);
-        if(!is_overlap)
+        
+        if(is_overlap)
         {
-          sc->set_last_curve(b);
+          m_statusLine.remove_at(res.first);
+          m_visitor->before_handle_event(m_currentEvent);
+          m_visitor->add_subcurve(a, sc);
+          return;
         }
+      }
+      else // no left curves for sure
+      {
         m_visitor->before_handle_event(m_currentEvent);
-        m_visitor->add_subcurve(a, sc);
         return;
       }
-      m_is_event_on_above = false;
-      m_visitor->before_handle_event(m_currentEvent);
-      return;
     }
+    
         
-    m_is_event_on_above = false; 
 
     SL_DEBUG(std::cout<<"left curves before sorting: "<<"\n";);
     SL_DEBUG(if (m_currentEvent->left_curves_begin() != 
@@ -750,6 +754,7 @@ protected:
     // An overlap occurs:
     // TODO: take care of polylines in which overlap can happen anywhere
     SL_DEBUG(std::cout<<"Overlap detected at right insertion...\n";);
+    std::cout<<"Overlap detected at right insertion...\n";
     SubCurveListIter iter = pair_res.second;
       
     X_monotone_curve_2 overlap_cv;
@@ -1158,7 +1163,6 @@ _intersect(Subcurve *c1, Subcurve *c2, bool after_remove)
       e->push_back_curve_to_left(c1);
       e->push_back_curve_to_left(c2);
       
-      //multiplicity = 0;  //TODO : remove !!!
       // Act according to the multiplicity:
       if (multiplicity == 0)
       {
