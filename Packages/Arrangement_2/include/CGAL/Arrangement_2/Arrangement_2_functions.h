@@ -333,6 +333,10 @@ Arrangement_2<Traits,Dcel>::insert_from_left_vertex
     (traits->equal_2_object() (prev.target().point(), 
                                traits->construct_min_vertex_2_object()(cv)),
      "The input halfedge's target should be the left curve endpoint.");
+  CGAL_precondition_msg
+    (_locate_around_vertex(prev.target().p_v, cv) == p_prev,
+    "In the clockwise order of curves around the vertex,\
+ cv must succeeds the curve of prev.");
 
   // Perform the insertion.
   Halfedge  *new_he = _insert_from_vertex (cv, prev.p_he,
@@ -340,6 +344,7 @@ Arrangement_2<Traits,Dcel>::insert_from_left_vertex
 
   return (Halfedge_handle (new_he));
 }
+
 
 //-----------------------------------------------------------------------------
 // Insert an x-monotone curve into the arrangement, such that its right 
@@ -386,6 +391,11 @@ Arrangement_2<Traits,Dcel>::insert_from_right_vertex
     (traits->equal_2_object() (prev.target().point(), 
                                traits->construct_max_vertex_2_object()(cv)),
      "The input halfedge's target should be the right curve endpoint.");
+  
+  CGAL_precondition_msg
+    (_locate_around_vertex(prev.target().p_v, cv) == p_prev,
+    "In the clockwise order of curves around the vertex,\
+ cv must succeeds the curve of prev.");
 
   // Perform the insertion.
   Halfedge  *new_he = _insert_from_vertex (cv, prev.p_he,
