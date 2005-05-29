@@ -1006,7 +1006,7 @@ expand_conflict_region(const Face_handle& f, const Site_2& t,
     Edge e = sym_edge(f, i);
 
     CGAL_assertion( l.is_in_list(e) );
-    int j = f->mirror_index(i);
+    int j = this->_tds.mirror_index(f, i);
     Edge e_before = sym_edge(n, ccw(j));
     Edge e_after = sym_edge(n, cw(j));
     if ( !l.is_in_list(e_before) ) {
@@ -1301,16 +1301,16 @@ Segment_Voronoi_diagram_2<Gt,DS,LTag>::
 finite_edge_interior(const Face_handle& f, int i, const Site_2& q,
 		     Sign sgn, int) const
 {
-  if ( !is_infinite( f->mirror_vertex(i) ) ) {
+  if ( !is_infinite( this->_tds.mirror_vertex(f, i) ) ) {
     CGAL_precondition( is_infinite(f->vertex(i)) );
 
     Face_handle g = f->neighbor(i);
-    int j = f->mirror_index(i);
+    int j = this->_tds.mirror_index(f, i);
 
     return finite_edge_interior(g, j, q, sgn, 0 /* degenerate */);
   }
 
-  CGAL_precondition( is_infinite( f->mirror_vertex(i) ) );
+  CGAL_precondition( is_infinite( this->_tds.mirror_vertex(f, i) ) );
 
   Site_2 t1 = f->vertex( ccw(i) )->site();
   Site_2 t2 = f->vertex(  cw(i) )->site();
@@ -1362,7 +1362,7 @@ infinite_edge_interior(const Face_handle& f, int i,
   if ( !is_infinite( f->vertex(ccw(i)) ) ) {
     CGAL_precondition( is_infinite( f->vertex(cw(i)) ) );
     Face_handle g = f->neighbor(i);
-    int j = f->mirror_index(i);
+    int j = this->_tds.mirror_index(f, i);
 
     return infinite_edge_interior(g, j, q, sgn);
   }
@@ -1371,7 +1371,7 @@ infinite_edge_interior(const Face_handle& f, int i,
 
   Site_2 t2 = f->vertex(  cw(i) )->site();
   Site_2 t3 = f->vertex(     i  )->site();
-  Site_2 t4 = f->mirror_vertex(i)->site();
+  Site_2 t4 = this->_tds.mirror_vertex(f, i)->site();
 
   return infinite_edge_interior(t2, t3, t4, q, sgn);
 }
@@ -1556,7 +1556,7 @@ primal(const Edge e) const
     Site_2 p = (e.first)->vertex( ccw(e.second) )->site();
     Site_2 q = (e.first)->vertex(  cw(e.second) )->site();
     Site_2 r = (e.first)->vertex(     e.second  )->site();
-    Site_2 s = (e.first)->mirror_vertex(e.second)->site();
+    Site_2 s = this->_tds.mirror_vertex(e.first, e.second)->site();
     return construct_svd_bisector_segment_2_object()(p,q,r,s);
   }
 
@@ -1580,7 +1580,7 @@ primal(const Edge e) const
 		  );
 
   CGAL_assertion(  is_infinite( e.first->vertex(e.second) ) ||
-		   is_infinite( e.first->mirror_vertex(e.second) )  );
+		   is_infinite(	tds().mirror_vertex(e.first, e.second) )  );
 
   Edge ee = e;
   if ( is_infinite( e.first->vertex(e.second) )  ) {
@@ -1624,7 +1624,7 @@ is_valid(bool verbose, int level) const
     Edge e = *eit;
     Face_handle f = e.first;
 
-    Vertex_handle v = f->mirror_vertex(e.second);
+    Vertex_handle v = this->_tds.mirror_vertex(f, e.second);
 
     if ( f->vertex(e.second) == v ) { continue; }
     if ( !is_infinite(v) ) {
@@ -1633,7 +1633,7 @@ is_valid(bool verbose, int level) const
     }
     Edge sym_e = sym_edge(e);
     f = sym_e.first;
-    v = f->mirror_vertex(sym_e.second);
+    v = this->_tds.mirror_vertex(f, sym_e.second);
 
     if ( !is_infinite(v) ) {
       result = result &&

@@ -744,7 +744,7 @@ protected:
 
   inline Edge sym_edge(const Face_handle& f, int i) const {
     Face_handle f_sym = f->neighbor(i);
-    return Edge(  f_sym, f_sym->index( f->mirror_vertex(i) )  );
+    return Edge(  f_sym, f_sym->index( this->_tds.mirror_vertex(f, i) )  );
   }
 
   Edge flip(Face_handle& f, int i) {
@@ -752,7 +752,7 @@ protected:
     CGAL_precondition (i == 0 || i == 1 || i == 2);
     CGAL_precondition( this->dimension()==2 ); 
 
-    CGAL_precondition( f->vertex(i) != f->mirror_vertex(i) );
+    CGAL_precondition( f->vertex(i) != this->_tds.mirror_vertex(f, i) );
 
     this->_tds.flip(f, i);
 
@@ -1174,7 +1174,7 @@ protected:
     return finite_edge_interior( f->vertex( ccw(i) )->site(),
 				 f->vertex(  cw(i) )->site(),
 				 f->vertex(     i  )->site(),
-				 f->mirror_vertex(i)->site(),
+				 this->_tds.mirror_vertex(f, i)->site(),
 				 q.site(), sgn);
   }
 
@@ -1369,7 +1369,8 @@ protected:
     return finite_edge_interior( f->vertex( ccw(i) )->site(),
 				 f->vertex(  cw(i) )->site(),
 				 f->vertex(     i  )->site(),
-				 f->mirror_vertex(i)->site(), q, sgn);
+				 this->_tds.mirror_vertex(f, i)->site(),
+				 q, sgn);
   }
 
   inline

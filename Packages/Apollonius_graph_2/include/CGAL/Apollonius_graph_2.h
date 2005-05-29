@@ -895,7 +895,7 @@ protected:
     Vertex_handle v1 = f->vertex( ccw(i) );
     Vertex_handle v2 = f->vertex(  cw(i) );
     Vertex_handle v3 = f->vertex(     i  );
-    Vertex_handle v4 = f->mirror_vertex(i);
+    Vertex_handle v4 = tds().mirror_vertex(f, i);
 
     return is_degenerate_edge(v1, v2, v3, v4);
   }
@@ -935,7 +935,7 @@ protected:
 
   Edge sym_edge(const Face_handle& f, int i) const {
     Face_handle f_sym = f->neighbor(i);
-    return Edge(  f_sym, f_sym->index( f->mirror_vertex(i) )  );
+    return Edge(  f_sym, f_sym->index( tds().mirror_vertex(f, i) )  );
   }
 
   Edge flip(Face_handle& f, int i);

@@ -61,7 +61,7 @@ is_valid(bool verbose, int level) const
        eit != all_edges_end(); ++eit) {
     Edge e = *eit;
     Face_handle f = e.first;
-    Vertex_handle v = f->mirror_vertex(e.second);
+    Vertex_handle v = tds().mirror_vertex(f, e.second);
     if ( f->vertex(e.second) == v ) { continue; }
     if ( !is_infinite(v) ) {
       result = result &&
@@ -70,7 +70,7 @@ is_valid(bool verbose, int level) const
     }
     Edge sym_e = sym_edge(e);
     f = sym_e.first;
-    v = f->mirror_vertex(sym_e.second);
+    v = tds().mirror_vertex(f, sym_e.second);
     if ( !is_infinite(v) ) {
       result = result &&
 	( incircle(f, v->site()) != NEGATIVE );
@@ -196,7 +196,7 @@ dual(const Edge e) const
     Site_2 p = (e.first)->vertex( ccw(e.second) )->site();
     Site_2 q = (e.first)->vertex(  cw(e.second) )->site();
     Site_2 r = (e.first)->vertex(     e.second  )->site();
-    Site_2 s = (e.first)->mirror_vertex(e.second)->site();
+    Site_2 s = tds().mirror_vertex(e.first, e.second)->site();
     return construct_Apollonius_bisector_segment_2_object()(p,q,r,s);
   }
 
@@ -220,7 +220,7 @@ dual(const Edge e) const
 
   CGAL_triangulation_assertion
     (  is_infinite( e.first->vertex(e.second) ) ||
-       is_infinite( e.first->mirror_vertex(e.second) )  );
+       is_infinite( tds().mirror_vertex(e.first, e.second) )  );
 
   Edge ee = e;
   if ( is_infinite( e.first->vertex(e.second) )  ) {
@@ -256,14 +256,14 @@ primal(const Edge e) const
       if (  is_infinite( e.first->vertex(cw(e.second)) )  ) {
 	Site_2 p = e.first->vertex( ccw(e.second) )->site();
 	Site_2 r = e.first->vertex( e.second )->site();
-	Site_2 s = e.first->mirror_vertex( e.second )->site();
+	Site_2 s = tds().mirror_vertex( e.first, e.second )->site();
 	ray = construct_Apollonius_primal_ray_2_object()(p,r,s);
       } else {
 	CGAL_triangulation_assertion
 	  (   is_infinite( e.first->vertex(ccw(e.second)) )   );
 	Site_2 q = e.first->vertex( cw(e.second) )->site();
 	Site_2 r = e.first->vertex( e.second )->site();
-	Site_2 s = e.first->mirror_vertex( e.second )->site();
+	Site_2 s = tds().mirror_vertex( e.first, e.second )->site();
 	ray = construct_Apollonius_primal_ray_2_object()(q,s,r);
       }
       return make_object(ray);
@@ -284,7 +284,7 @@ primal(const Edge e) const
     Site_2 p = (e.first)->vertex( ccw(e.second) )->site();
     Site_2 q = (e.first)->vertex(  cw(e.second) )->site();
     Site_2 r = (e.first)->vertex(     e.second  )->site();
-    Site_2 s = (e.first)->mirror_vertex(e.second)->site();
+    Site_2 s = tds().mirror_vertex(e.first, e.second)->site();
     return construct_Apollonius_primal_segment_2_object()(p,q,r,s);
   }
 
@@ -323,7 +323,7 @@ flip(Face_handle& f, int i)
   CGAL_triangulation_precondition (i == 0 || i == 1 || i == 2);
   CGAL_triangulation_precondition( dimension()==2 ); 
 
-  CGAL_triangulation_precondition( f->vertex(i) != f->mirror_vertex(i) );
+  CGAL_triangulation_precondition( f->vertex(i) != tds().mirror_vertex(f,i) );
 
   this->_tds.flip(f, i);
 
@@ -707,7 +707,6 @@ find_conflict_region_remove(const Vertex_handle& v,
   Sign s;
   do {
     Face_handle f(fc);
-    //    int id = f->mirror_indexf->index(vnearest)
     s = incircle(f, p);
 
     if ( s == NEGATIVE ) {
@@ -830,7 +829,7 @@ expand_conflict_region(const Face_handle& f, const Site_2& p,
     Edge e = sym_edge(f, i);
 
     CGAL_assertion( l.is_in_list(e) );
-    int j = f->mirror_index(i);
+    int j = tds().mirror_index(f, i);
     Edge e_before = sym_edge(n, ccw(j));
     Edge e_after = sym_edge(n, cw(j));
     if ( !l.is_in_list(e_before) ) {
@@ -1365,7 +1364,7 @@ finite_edge_interior(const Face_handle& f, int i,
   return finite_edge_interior( f->vertex( ccw(i) )->site(),
 			       f->vertex(  cw(i) )->site(),
 			       f->vertex(     i  )->site(),
-			       f->mirror_vertex(i)->site(), p, b);
+			       tds().mirror_vertex(f, i)->site(), p, b);
 }
 
 template<class Gt, class Agds, class LTag>
@@ -1421,16 +1420,16 @@ Apollonius_graph_2<Gt,Agds,LTag>::
 finite_edge_interior_degenerated(const Face_handle& f, int i,
 				 const Site_2& p, bool b) const
 {
-  if ( !is_infinite( f->mirror_vertex(i) ) ) {
+  if ( !is_infinite( tds().mirror_vertex(f, i) ) ) {
     CGAL_precondition( is_infinite(f->vertex(i)) );
 
     Face_handle g = f->neighbor(i);
-    int j = f->mirror_index(i);
+    int j = tds().mirror_index(f, i);
 
     return finite_edge_interior_degenerated(g, j, p, b);
   }
 
-  CGAL_precondition( is_infinite( f->mirror_vertex(i) ) );
+  CGAL_precondition( is_infinite( tds().mirror_vertex(f, i) ) );
 
   Site_2 p1 = f->vertex( ccw(i) )->site();
   Site_2 p2 = f->vertex(  cw(i) )->site();
@@ -1498,7 +1497,7 @@ infinite_edge_interior(const Face_handle& f, int i,
   if ( !is_infinite( f->vertex(ccw(i)) ) ) {
     CGAL_precondition( is_infinite( f->vertex(cw(i)) ) );
     Face_handle g = f->neighbor(i);
-    int j = f->mirror_index(i);
+    int j = tds().mirror_index(f, i);
 
     return infinite_edge_interior(g, j, p, b);
   }
@@ -1507,7 +1506,7 @@ infinite_edge_interior(const Face_handle& f, int i,
 
   Site_2 p2 = f->vertex(  cw(i) )->site();
   Site_2 p3 = f->vertex(     i  )->site();
-  Site_2 p4 = f->mirror_vertex(i)->site();
+  Site_2 p4 = tds().mirror_vertex(f, i)->site();
 
   return infinite_edge_interior(p2, p3, p4, p, b);
 }
@@ -1823,7 +1822,7 @@ remove_degree_d_vertex(Vertex_handle v)
       if ( (e.first->vertex(  cw(e.second) ) == vmap[(*vhq)[1]] &&
 	    e.first->vertex(     e.second  ) == vmap[(*vhq)[2]]) ||
 	   (e.first->vertex( ccw(e.second) ) == vmap[(*vhq)[1]] &&
-	    e.first->mirror_vertex(e.second) == vmap[(*vhq)[2]]) ) {
+	    tds().mirror_vertex(e.first,e.second) == vmap[(*vhq)[2]]) ) {
 	flip(e);
 	found = true;
 	break;
@@ -1864,7 +1863,7 @@ minimize_degree(Vertex_handle v)
     CGAL_assertion( f->vertex( cw(i) ) == v );
 
     Vertex_handle v0 = f->vertex( i );
-    Vertex_handle v1 = f->mirror_vertex( i );
+    Vertex_handle v1 = tds().mirror_vertex( f, i );
 
     bool is_admissible = (v0 != v1) &&
       !is_infinite(f) && !is_infinite( f->neighbor(i) );

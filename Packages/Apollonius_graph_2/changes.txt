@@ -1,3 +1,7 @@
+29 May 2005:  Menelaos Karavelas
+- calls to mirror_vertex and mirror_index made through the faces are
+  now made through the TDS
+
 21 May 2005:  Menelaos Karavelas
 - added tds() method that returns the triangulation data structure
 

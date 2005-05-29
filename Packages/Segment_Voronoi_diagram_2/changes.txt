@@ -1,3 +1,7 @@
+29 May 2005:  Menelaos Karavelas
+- calls to mirror_vertex and mirror_index made through the faces are
+  now made through the TDS
+
 27 May 2005:  Menelaos Karavelas
 - fixed bug in Filtered_construction class: the Exact_construction was
   called with its arguments in the wrong order
