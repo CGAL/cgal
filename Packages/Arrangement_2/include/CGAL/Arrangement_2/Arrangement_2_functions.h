@@ -112,8 +112,7 @@ void Arrangement_2<Traits,Dcel>::assign (const Self& arr)
   {
     // Create the duplicate point and store it in the points container.
     p_v = *vit;
-    dup_p = new Stored_point_2 (p_v->point());
-    points.push_back (*dup_p);
+    dup_p = _new_point (p_v->point());
 
     // Associate the vertex with the duplicated point.
     p_v->set_point (dup_p);
@@ -128,8 +127,7 @@ void Arrangement_2<Traits,Dcel>::assign (const Self& arr)
   {
     // Create the duplicate curve and store it in the curves container.
     p_e = *eit;
-    dup_cv = new Stored_curve_2 (p_e->curve());
-    curves.push_back (*dup_cv);
+    dup_cv = _new_curve (p_e->curve());
 
     // Associate the halfedge (and its twin) with the duplicated curve. 
     p_e->set_curve (dup_cv);
@@ -157,9 +155,29 @@ void Arrangement_2<Traits,Dcel>::assign (const Self& arr)
 template<class Traits, class Dcel>
 Arrangement_2<Traits,Dcel>::~Arrangement_2 ()
 {  
-  // Clear the DCEL and the point and curve containers.
+  // Clear the DCEL.
   dcel.delete_all();
+
+  // Free all stored points.
+  typename Points_container::iterator    pit = points.begin(), p_curr;
+
+  while (pit != points.end())
+  {
+    p_curr = pit;
+    ++pit;
+    _delete_point (*p_curr);
+  }
   points.destroy();
+
+  // Free all stores curves.
+  typename X_curves_container::iterator  cvit = curves.begin(), cv_curr;
+
+  while (cvit != curves.end())
+  {
+    cv_curr = cvit;
+    ++cvit;
+    _delete_curve (*cv_curr);
+  }
   curves.destroy();
 
   // Free the traits object, if necessary.
@@ -204,28 +222,26 @@ Arrangement_2<Traits,Dcel>::insert_in_face_interior
 
   // Create a new vertex associated with the curve's left endpoints.
   // We also notify the observers on the creation of this vertex.
-  Stored_point_2 *p1 = new Stored_point_2 
-                               (traits->construct_min_vertex_2_object() (cv));
+  Stored_point_2 *p1 =
+    _new_point (traits->construct_min_vertex_2_object()(cv));
 
   _notify_before_create_vertex (*p1);
 
   Vertex         *v1 = dcel.new_vertex(); 
 
-  points.push_back (*p1);
   v1->set_point (p1);
 
   _notify_after_create_vertex (Vertex_handle (v1));
 
   // Create a new vertex associated with the curve's right endpoint.
   // We also notify the observers on the creation of this vertex.
-  Stored_point_2 *p2 = new Stored_point_2 
-                               (traits->construct_max_vertex_2_object() (cv));
+  Stored_point_2 *p2 =
+    _new_point (traits->construct_max_vertex_2_object()(cv));
 
   _notify_before_create_vertex (*p2);
 
   Vertex         *v2 = dcel.new_vertex();
   
-  points.push_back (*p2);
   v2->set_point (p2);
 
   _notify_after_create_vertex (Vertex_handle (v2));
@@ -237,9 +253,8 @@ Arrangement_2<Traits,Dcel>::insert_in_face_interior
   // and link them together to form a new connected component.
   Halfedge       *he1 = dcel.new_edge();
   Halfedge       *he2 = he1->opposite(); 
-  Stored_curve_2 *dup_cv = new Stored_curve_2 (cv);
+  Stored_curve_2 *dup_cv = _new_curve (cv);
 
-  curves.push_back (*dup_cv);
   he1->set_curve (dup_cv);
   
   he1->set_next (he2);
@@ -527,13 +542,11 @@ Arrangement_2<Traits,Dcel>::modify_vertex (Vertex_handle vh,
   _notify_before_modify_vertex (vh, p);
 
   // Destroy the point currently associated with the vertex.
-  Stored_point_2  *old_p = static_cast<Stored_point_2*>(&(v->point()));
-  points.erase (old_p);
+  _delete_point (v->point());
 
   // Associate it with the new point.
-  Stored_point_2  *dup_p = new Stored_point_2 (p);
+  Stored_point_2  *dup_p = _new_point (p);
 
-  points.push_back (*dup_p);
   v->set_point (dup_p);
 
   // Notify the observers that we have modified the vertex.
@@ -561,13 +574,11 @@ Arrangement_2<Traits,Dcel>::modify_edge (Halfedge_handle e,
   _notify_before_modify_edge (e, cv);
 
   // Destroy the curve currently associated with the edge.
-  Stored_curve_2  *old_cv = static_cast<Stored_curve_2*>(&(he->curve()));
-  curves.erase (old_cv);
+  _delete_curve (he->curve());
 
   // Associate it with the new curve.
-  Stored_curve_2  *dup_cv = new Stored_curve_2 (cv);
+  Stored_curve_2  *dup_cv = _new_curve (cv);
 
-  curves.push_back (*dup_cv);
   he->set_curve (dup_cv);
 
   // Notify the observers that we have modified the edge.
@@ -655,15 +666,14 @@ Arrangement_2<Traits,Dcel>::split_edge (Halfedge_handle e,
   Stored_point_2 *dup_p;
 
   if (split_at_cv1_right)
-    dup_p = new Stored_point_2 (cv1_right);
+    dup_p = _new_point (cv1_right);
   else
-    dup_p = new Stored_point_2 (cv1_left);
+    dup_p = _new_point (cv1_left);
 
   _notify_before_create_vertex (*dup_p);
 
   Vertex         *v = dcel.new_vertex();
 
-  points.push_back (*dup_p);
   v->set_point (dup_p);
 
   _notify_after_create_vertex (Vertex_handle (v));
@@ -717,15 +727,11 @@ Arrangement_2<Traits,Dcel>::split_edge (Halfedge_handle e,
   he1->set_vertex(v);
 
   // Destroy the curve currently associated with he1 (and its twin he2).
-  Stored_curve_2  *old_cv = static_cast<Stored_curve_2*>(&(he1->curve()));
-  curves.erase (old_cv);
+  _delete_curve (he1->curve());
 
   // Associate cv1 and cv2 with the two pair of split halfedges.
-  Stored_curve_2  *dup_cv1 = new Stored_curve_2 (cv1);
-  Stored_curve_2  *dup_cv2 = new Stored_curve_2 (cv2);
-
-  curves.push_back (*dup_cv1);
-  curves.push_back (*dup_cv2);
+  Stored_curve_2  *dup_cv1 = _new_curve (cv1);
+  Stored_curve_2  *dup_cv2 = _new_curve (cv2);
 
   if (assign_cv1_to_he1)
   {
@@ -884,17 +890,12 @@ Arrangement_2<Traits,Dcel>::merge_edge (Halfedge_handle e1,
   }
 
   // Destroy the curve currently associated with the merged edges.
-  Stored_curve_2  *old_cv1 = static_cast<Stored_curve_2*>(&(he1->curve()));
-  Stored_curve_2  *old_cv2 = static_cast<Stored_curve_2*>(&(he3->curve()));
-
-  curves.erase (old_cv1);
-  curves.erase (old_cv2);
+  _delete_curve (he1->curve());
+  _delete_curve (he3->curve());
 
   // Set the properties of the merged edge and associate it with the merged
   // curve.
-  Stored_curve_2  *dup_cv = new Stored_curve_2 (cv);
-
-  curves.push_back (*dup_cv);
+  Stored_curve_2  *dup_cv = _new_curve (cv);
 
   he1->set_vertex (he3->vertex());
   he1->set_curve (dup_cv);
@@ -903,9 +904,7 @@ Arrangement_2<Traits,Dcel>::merge_edge (Halfedge_handle e1,
   _notify_before_remove_vertex (Vertex_handle (v));
 
   // Delete the point associated with the merged vertex.
-  Stored_point_2  *merged_pt = static_cast<Stored_point_2*>(&(v->point()));
-
-  points.erase (merged_pt);
+  _delete_point (v->point());
 
   // Delete the merged vertex.
   dcel.delete_vertex (v);
@@ -1433,16 +1432,15 @@ Arrangement_2<Traits,Dcel>::_insert_from_vertex (const X_monotone_curve_2& cv,
   Stored_point_2 *new_p;
 
   if (left_exists)
-    new_p = new Stored_point_2 (traits->construct_max_vertex_2_object() (cv));
+    new_p = _new_point (traits->construct_max_vertex_2_object() (cv));
   else
-    new_p = new Stored_point_2 (traits->construct_min_vertex_2_object() (cv));
+    new_p = _new_point (traits->construct_min_vertex_2_object() (cv));
 
   _notify_before_create_vertex (*new_p);
 
   Vertex         *v1 = prev->vertex();  
   Vertex         *v2 = dcel.new_vertex();
 
-  points.push_back (*new_p);
   v2->set_point (new_p);
 
   _notify_after_create_vertex (Vertex_handle (v2));
@@ -1454,9 +1452,8 @@ Arrangement_2<Traits,Dcel>::_insert_from_vertex (const X_monotone_curve_2& cv,
   // and associate them with the given curve.
   Halfedge       *he1 = dcel.new_edge();
   Halfedge       *he2 = he1->opposite(); 
-  Stored_curve_2 *dup_cv = new Stored_curve_2 (cv);
+  Stored_curve_2 *dup_cv = _new_curve (cv);
 
-  curves.push_back (*dup_cv);
   he1->set_curve (dup_cv);
   
   he1->set_vertex (v1);
@@ -1535,9 +1532,8 @@ Arrangement_2<Traits,Dcel>::_insert_at_vertices (const X_monotone_curve_2& cv,
   // with the given curve.
   Halfedge       *he1 = dcel.new_edge();
   Halfedge       *he2 = he1->opposite();
-  Stored_curve_2 *dup_cv = new Stored_curve_2 (cv);
+  Stored_curve_2 *dup_cv = _new_curve (cv);
 
-  curves.push_back (*dup_cv);
   he1->set_curve (dup_cv);
   
   he1->set_vertex (v1);
@@ -1688,10 +1684,7 @@ Arrangement_2<Traits,Dcel>::_remove_edge (Halfedge *e)
       // Delete the first end-vertex and its associated point.
       _notify_before_remove_vertex (Vertex_handle (he1->vertex()));
 
-      Stored_point_2  *pt1 = 
-                       static_cast<Stored_point_2*>(&(he1->vertex()->point()));
-
-      points.erase (pt1);
+      _delete_point (he1->vertex()->point());
       dcel.delete_vertex (he1->vertex());
 
       _notify_after_remove_vertex ();
@@ -1699,18 +1692,13 @@ Arrangement_2<Traits,Dcel>::_remove_edge (Halfedge *e)
       // Delete the second end-vertex and its associated point.
       _notify_before_remove_vertex (Vertex_handle (he2->vertex()));
       
-      Stored_point_2  *pt2 = 
-                       static_cast<Stored_point_2*>(&(he2->vertex()->point()));
-
-      points.erase (pt2);
+      _delete_point (he2->vertex()->point());
       dcel.delete_vertex (he2->vertex());
 
       _notify_after_remove_vertex ();
 
       // Delete the curve associated with the edge to be removed.
-      Stored_curve_2  *p_cv = static_cast<Stored_curve_2*>(&(he1->curve()));
-      curves.erase (p_cv);
-
+      _delete_curve (he1->curve());
       dcel.delete_edge (he1);
 
       // Notify the observers that an edge has been deleted.
@@ -1760,18 +1748,13 @@ Arrangement_2<Traits,Dcel>::_remove_edge (Halfedge *e)
       // Delete the vertex that forms the tip of the "antenna"
       _notify_before_remove_vertex (Vertex_handle (he1->vertex()));
 
-      Stored_point_2  *pt1 = 
-                       static_cast<Stored_point_2*>(&(he1->vertex()->point()));
-
-      points.erase (pt1);
+      _delete_point (he1->vertex()->point());
       dcel.delete_vertex (he1->vertex());
 
       _notify_after_remove_vertex();
 
       // Delete the curve associated with the edge to be removed.
-      Stored_curve_2  *p_cv = static_cast<Stored_curve_2*>(&(he1->curve()));
-      curves.erase (p_cv);
-
+      _delete_curve (he1->curve());
       dcel.delete_edge (he1);
 
       // Notify the observers that an edge has been deleted.
@@ -1848,8 +1831,7 @@ Arrangement_2<Traits,Dcel>::_remove_edge (Halfedge *e)
       he2->vertex()->set_halfedge (prev1);
 
     // Delete the curve associated with the edge to be removed.
-    Stored_curve_2  *p_cv = static_cast<Stored_curve_2*>(&(he1->curve()));
-    curves.erase (p_cv);
+    _delete_curve (he1->curve());
 
     // Delete the pair of halfedges.
     dcel.delete_edge (he1);
@@ -1920,8 +1902,7 @@ Arrangement_2<Traits,Dcel>::_remove_edge (Halfedge *e)
     prev2->set_next (he1->next());
       
     // Delete the curve associated with the edge to be removed.
-    Stored_curve_2  *p_cv = static_cast<Stored_curve_2*>(&(he1->curve()));
-    curves.erase (p_cv);
+    _delete_curve (he1->curve());
 
     // Delete the face f2 and the pair of halfdges.
     dcel.delete_face (f2);
@@ -1993,8 +1974,7 @@ Arrangement_2<Traits,Dcel>::_remove_edge (Halfedge *e)
   prev2->set_next (he1->next());
 
   // Delete the curve associated with the edge to be removed.
-  Stored_curve_2  *p_cv = static_cast<Stored_curve_2*>(&(he1->curve()));
-  curves.erase (p_cv);
+  _delete_curve (he1->curve());
 
   // Delete the face f2 and the pair of halfdges.
   dcel.delete_face (f2);

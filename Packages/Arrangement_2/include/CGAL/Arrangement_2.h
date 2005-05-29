@@ -144,6 +144,9 @@ protected:
     {}
   };
 
+  typedef CGAL_ALLOCATOR(Stored_point_2)          Points_alloc;
+  typedef CGAL_ALLOCATOR(Stored_curve_2)          Curves_alloc;
+
   typedef In_place_list<Stored_point_2, false>    Points_container;
   typedef In_place_list<Stored_curve_2, false>    X_curves_container;
 
@@ -154,13 +157,18 @@ protected:
                                                   Observers_rev_iterater;
 
   // Data members:
-  Dcel                dcel;     // The DCEL representing the arrangement.
-  Face               *un_face;  // The unbounded face of the DCEL.
-  Points_container    points;   // Storing the points that match the vertices.
-  X_curves_container  curves;   // Storing the curves that match the edges.
-  Observers_container observers;// Storing pointers to existing observers.
-  Traits_wrapper_2   *traits;   // The traits wrapper.
-  bool              own_traits; // Should we evetually free the traits object.
+  Dcel                dcel;         // The DCEL representing the arrangement.
+  Face               *un_face;      // The unbounded face of the DCEL.
+  Points_container    points;       // Container for the points that
+                                    // correspond to the vertices.
+  Points_alloc        points_alloc; // Allocator for the points.
+  X_curves_container  curves;       // Container for the x-monotone curves
+                                    // that correspond to the edges.
+  Curves_alloc        curves_alloc; // Allocator for the curves.
+  Observers_container observers;    // Storing pointers to existing observers.
+  Traits_wrapper_2   *traits;       // The traits wrapper.
+  bool                own_traits;   // Inidicate whether we should evetually
+                                    // free the traits object.
 
 public:
 
@@ -541,6 +549,50 @@ public:
   //@}
 
 protected:
+
+  /// \name Allocating and de-allocating points and curves.
+  //@{
+
+  /*! Allocate a new point. */
+  Stored_point_2 *_new_point (const Point_2& p)
+  {
+    Stored_point_2   *p_sp = points_alloc.allocate (1);
+
+    points_alloc.construct (p_sp, p);
+    points.push_back (*p_sp);
+    return (p_sp);
+  }
+
+  /*! De-allocate a point. */
+  void _delete_point (Point_2& p)
+  {
+    Stored_point_2   *p_sp = static_cast<Stored_point_2*> (&p);
+
+    points.erase (p_sp);
+    points_alloc.destroy (p_sp);
+    points_alloc.deallocate (p_sp, 1);
+  }
+
+  /*! Allocate a new curve. */
+  Stored_curve_2 *_new_curve (const X_monotone_curve_2& cv)
+  {
+    Stored_curve_2   *p_scv = curves_alloc.allocate (1);
+
+    curves_alloc.construct (p_scv, cv);
+    curves.push_back (*p_scv);
+    return (p_scv);
+  }
+
+  /*! De-allocate a curve. */
+  void _delete_curve (X_monotone_curve_2& cv)
+  {
+    Stored_curve_2   *p_scv = static_cast<Stored_curve_2*> (&cv);
+
+    curves.erase (p_scv);
+    curves_alloc.destroy (p_scv);
+    curves_alloc.deallocate (p_scv, 1);
+  }
+  //@}
 
   /// \name Converting handles to pointers (for the arrangement accessor).
   //@{
