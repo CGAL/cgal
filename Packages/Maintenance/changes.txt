@@ -1,3 +1,6 @@
+29 May 2005 Sylvain Pion
+- Add Voronoi_diagram_adaptor_2 to internal releases.
+
 20 May 2005 Sylvain Pion
 - Move internal releases and test-suite files.
 
