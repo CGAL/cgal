@@ -334,7 +334,7 @@ Arrangement_2<Traits,Dcel>::insert_from_left_vertex
                                traits->construct_min_vertex_2_object()(cv)),
      "The input halfedge's target should be the left curve endpoint.");
   CGAL_precondition_msg
-    (_locate_around_vertex(prev.target().p_v, cv) == p_prev,
+    (_locate_around_vertex(prev.target().p_v, cv) == prev.p_he,
     "In the clockwise order of curves around the vertex,\
  cv must succeeds the curve of prev.");
 
@@ -393,7 +393,7 @@ Arrangement_2<Traits,Dcel>::insert_from_right_vertex
      "The input halfedge's target should be the right curve endpoint.");
   
   CGAL_precondition_msg
-    (_locate_around_vertex(prev.target().p_v, cv) == p_prev,
+    (_locate_around_vertex(prev.target().p_v, cv) == prev.p_he,
     "In the clockwise order of curves around the vertex,\
  cv must succeeds the curve of prev.");
 
