@@ -315,7 +315,7 @@ public:
   {
   public:
     /*!
-     * Compares two points lexigoraphically: by x, then by y.
+     * Compare two points lexigoraphically: by x, then by y.
      * \param p1 The first point.
      * \param p2 The second point.
      * \return LARGER if x(p1) > x(p2), or if x(p1) = x(p2) and y(p1) > y(p2);
@@ -444,7 +444,7 @@ public:
   {
   public:
     /*!
-     * Compares the y value of two x-monotone curves immediately to the left
+     * Compare the y value of two x-monotone curves immediately to the left
      * of their intersection point.
      * \param cv1 The first curve.
      * \param cv2 The second curve.
@@ -493,7 +493,7 @@ public:
   {
   public:
     /*!
-     * Compares the y value of two x-monotone curves immediately to the right
+     * Compare the y value of two x-monotone curves immediately to the right
      * of their intersection point.
      * \param cv1 The first curve.
      * \param cv2 The second curve.
@@ -578,7 +578,7 @@ public:
   {
   public:
     /*!
-     * Cut the given curve into x-monotone subcurves and insert them to the
+     * Cut the given curve into x-monotone subcurves and insert them into the
      * given output iterator. As segments are always x_monotone, only one
      * x-monotone curve will be contained in the iterator.
      * \param cv The curve.
@@ -647,9 +647,9 @@ public:
   {
   public:
     /*!
-     * Find the intersections of the two given curves and insert them to the
+     * Find the intersections of the two given curves and insert them into the
      * given output iterator. As two segments may itersect only once, only a
-     * single will be contained in the iterator.
+     * single intersection will be contained in the iterator.
      * \param cv1 The first curve.
      * \param cv2 The second curve.
      * \param oi The output iterator.
