@@ -71,12 +71,17 @@ int main ()
 
   // Insert a parabolic arc that is supported by a parabola y = -x^2
   // (or: x^2 + y = 0) and whose end-points are (-sqrt(3), -3) ~ (-1.73, -3)
-  // and (sqrt(2), -2) ~ (1.41, -2).
-  Algebraic     _two = 2;
-  Algebraic     _three = 3;
-  Point_2       ps6 (- CGAL::sqrt(_three), - _three);
-  Point_2       pt6 (CGAL::sqrt(_two), - _two);
-  Conic_arc_2   cv6 (1, 0, 0, 0, 1, 0, CGAL::CLOCKWISE, ps6, pt6);
+  // and (sqrt(2), -2) ~ (1.41, -2). Notice that since the x-coordinates 
+  // of the end-points cannot be acccurately represented, we specify them
+  // as the intersections of the parabola with the lines y = -3 and y = -2.
+  // Note that the arc is clockwise oriented.
+  Conic_arc_2   cv6 =
+    Conic_arc_2 (1, 0, 0, 0, 1, 0,       // The parabola.
+		 CGAL::CLOCKWISE,
+		 Point_2 (-1.73, -3),    // Approximation of the source.
+		 0, 0, 0, 0, 1, 3,       // The line: y = -3.
+		 Point_2 (1.41, -2),     // Approximation of the target.
+		 0, 0, 0, 0, 1, 2);      // The line: y = -2.
 
   arr_insert (arr, pl, cv6);
 
