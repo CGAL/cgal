@@ -754,7 +754,6 @@ protected:
     // An overlap occurs:
     // TODO: take care of polylines in which overlap can happen anywhere
     SL_DEBUG(std::cout<<"Overlap detected at right insertion...\n";);
-    std::cout<<"Overlap detected at right insertion...\n";
     SubCurveListIter iter = pair_res.second;
       
     X_monotone_curve_2 overlap_cv;
