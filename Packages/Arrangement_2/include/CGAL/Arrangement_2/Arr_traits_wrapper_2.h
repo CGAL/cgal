@@ -709,7 +709,7 @@ public:
     /*!
      * Implementation of the operator() in case the HasMerge tag is false.
      */
-    bool _merge_imp (const X_monotone_curve_2& ,
+    void _merge_imp (const X_monotone_curve_2& ,
                      const X_monotone_curve_2& ,
                      X_monotone_curve_2& ,
                      Tag_false) const
