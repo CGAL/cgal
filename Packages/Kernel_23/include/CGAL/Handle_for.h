@@ -177,6 +177,18 @@ public:
 	return ptr_->count > 1;
     }
 
+    bool
+    unique() const
+    {
+	return !is_shared();
+    }
+
+    long
+    use_count() const
+    {
+	return ptr_->count;
+    }
+
     void
     swap(Handle_for& h)
     {
