@@ -109,8 +109,15 @@ public:
   class X_monotone_curve_2 : public Base_x_monotone_curve_2 
   {
   private:
+    typedef std::list<Data>                          Data_container;
 
-    std::list<Data>  m_data_list;
+  public:
+    typedef typename Data_container::iterator        Data_iterator;
+    typedef typename Data_container::const_iterator  Data_const_iterator;
+
+  private:
+
+    Data_container  m_data_list;
 
   public:
 
@@ -175,12 +182,12 @@ public:
     /*!
      * Get the data iterators (const version).
      */
-    typename std::list<Data>::const_iterator begin_data () const
+    Data_const_iterator  data_begin () const
     {
       return (m_data_list.begin());
     }
 
-    typename std::list<Data>::const_iterator end_data () const
+    Data_const_iterator data_end () const
     {
       return (m_data_list.end());
     }
@@ -188,12 +195,12 @@ public:
     /*!
      * Get the data iterators (non-const version).
      */
-    typename std::list<Data>::iterator begin_data ()
+    Data_iterator  data_begin ()
     {
       return (m_data_list.begin());
     }
 
-    typename std::list<Data>::iterator end_data ()
+    Data_iterator  data_end ()
     {
       return (m_data_list.end());
     }
@@ -359,8 +366,8 @@ public:
 			      base_c1, base_c2);
 
       // Attach data to the split curve.
-      c1 = X_monotone_curve_2 (base_c1, cv.begin_data(), cv.end_data());
-      c2 = X_monotone_curve_2 (base_c2, cv.begin_data(), cv.end_data());
+      c1 = X_monotone_curve_2 (base_c1, cv.data_begin(), cv.data_end());
+      c2 = X_monotone_curve_2 (base_c2, cv.data_begin(), cv.data_end());
 
       return;
     }
@@ -419,10 +426,10 @@ public:
 	  // The current intersection object is an overlapping x-monotone
 	  // curve: First attach data from the first curve.
 	  X_monotone_curve_2  cv (base_cv,
-				  cv1.begin_data(), cv1.end_data());
+				  cv1.data_begin(), cv1.data_end());
 
 	  // Add data from the second curve.
-	  cv.add_data (cv2.begin_data(), cv2.end_data());
+	  cv.add_data (cv2.data_begin(), cv2.data_end());
 
 	  // Output the curve:
 	  *oi = make_object (cv);
@@ -557,7 +564,7 @@ public:
       CGAL_precondition (cv1.has_same_data (cv2));
 
       c = X_monotone_curve_2 (base_cv,
-			      cv1.begin_data(), cv1.end_data());
+			      cv1.data_begin(), cv1.data_end());
       return;
     }
 
