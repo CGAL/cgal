@@ -684,7 +684,7 @@ public:
     Vertex_const_iterator     vit;
     Vertex                   *dup_v;
 
-    for (vit = dcel.vertices_begin(); vit != dcel.vertices_end(); vit++)
+    for (vit = dcel.vertices_begin(); vit != dcel.vertices_end(); ++vit)
     {
       dup_v = new_vertex();
       dup_v->assign (*vit);
@@ -695,7 +695,7 @@ public:
     Halfedge_const_iterator   hit;
     Halfedge                 *dup_h;
 
-    for (hit = dcel.halfedges_begin(); hit != dcel.halfedges_end(); hit++)
+    for (hit = dcel.halfedges_begin(); hit != dcel.halfedges_end(); ++hit)
     {
       dup_h = _new_halfedge();
       dup_h->assign (*hit);
@@ -706,7 +706,7 @@ public:
     Face_const_iterator       fit;
     Face                     *dup_f;
 
-    for (fit = dcel.faces_begin(); fit != dcel.faces_end(); fit++)
+    for (fit = dcel.faces_begin(); fit != dcel.faces_end(); ++fit)
     {
       dup_f = new_face();
       dup_f->assign (*fit);
@@ -714,14 +714,14 @@ public:
     }
 
     // Update the vertex records.
-    Vertex                   *v;
-    Halfedge                 *h;
-    Face                     *f;
+    const Vertex             *v;
+    const Halfedge           *h;
+    const Face               *f;
     
-    for (vit = dcel.vertices_begin(); vit != dcel.vertices_end(); vit++)
+    for (vit = dcel.vertices_begin(); vit != dcel.vertices_end(); ++vit)
     {
       v = &(*vit);
-      h = vit->halfedge();
+      h = v->halfedge();
 
       dup_v = (vm.find (v))->second;
       dup_h = (hm.find (h))->second;
@@ -730,17 +730,17 @@ public:
     }
 
     // Update the halfedge records.
-    Halfegde                 *opp, *prev, *next;
-    Halfegde                 *dup_opp, *dup_prev, *dup_next;
+    const Halfedge           *opp, *prev, *next;
+    Halfedge                 *dup_opp, *dup_prev, *dup_next;
 
-    for (hit = dcel.halfedges_begin(); hit != dcel.halfedges_end(); hit++)
+    for (hit = dcel.halfedges_begin(); hit != dcel.halfedges_end(); ++hit)
     {
       h = &(*hit);
-      v = hit->vertex();
-      f = hit->face();
-      opp = hit->opposite();
-      prev = hit->previous();
-      next = hit->next();
+      v = h->vertex();
+      f = h->face();
+      opp = h->opposite();
+      prev = h->previous();
+      next = h->next();
 
       dup_h = (hm.find (h))->second;
       dup_v = (vm.find (v))->second;
@@ -758,13 +758,13 @@ public:
 
     // Update the face records.
     typename Face::Holes_const_iterator  holes_it;
-    Halfegde                            *hole;
-    Halfegde                            *dup_hole;
+    const Halfedge                      *hole;
+    Halfedge                            *dup_hole;
     
-    for (fit = dcel.faces_begin(); fit != dcel.faces_end(); fit++)
+    for (fit = dcel.faces_begin(); fit != dcel.faces_end(); ++fit)
     {
       f = &(*fit);
-      h = fit->halfedge();
+      h = f->halfedge();
 
       // Set the pointer to the outer boundary edge (may be NULL in case that
       // the current face f is the unbounded face).
@@ -777,8 +777,8 @@ public:
       dup_f->set_halfedge (dup_h);
 
       // Assign the holes.
-      for (holes_it = fit->holes_begin(); 
-           holes_it != fit->holes_end(); holes++)
+      for (holes_it = f->holes_begin(); 
+           holes_it != f->holes_end(); ++holes_it)
       {
         hole = *holes_it;
 

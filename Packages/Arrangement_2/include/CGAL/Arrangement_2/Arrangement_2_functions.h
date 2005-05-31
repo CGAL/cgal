@@ -111,7 +111,7 @@ void Arrangement_2<Traits,Dcel>::assign (const Self& arr)
   for (vit = dcel.vertices_begin(); vit != dcel.vertices_end(); ++vit)
   {
     // Create the duplicate point and store it in the points container.
-    p_v = *vit;
+    p_v = &(*vit);
     dup_p = _new_point (p_v->point());
 
     // Associate the vertex with the duplicated point.
@@ -126,7 +126,7 @@ void Arrangement_2<Traits,Dcel>::assign (const Self& arr)
   for (eit = dcel.edges_begin(); eit != dcel.edges_end(); ++eit)
   {
     // Create the duplicate curve and store it in the curves container.
-    p_e = *eit;
+    p_e = &(*eit);
     dup_cv = _new_curve (p_e->curve());
 
     // Associate the halfedge (and its twin) with the duplicated curve. 

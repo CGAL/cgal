@@ -260,8 +260,8 @@ _vertical_ray_shoot (const Point_2& p,
     // The entire vertical segment is above (below) the query point: Return the
     // endpoint closest to it.
     const bool    is_directed_up = 
-      traits->compare_xy_2_object (closest_he.source(),
-				   closest_he.target()) == SMALLER;
+      (traits->compare_xy_2_object() (closest_he.source().point(),
+				      closest_he.target().point()) == SMALLER);
 
     if ((shoot_up && is_directed_up) ||
 	(! shoot_up && ! is_directed_up))
