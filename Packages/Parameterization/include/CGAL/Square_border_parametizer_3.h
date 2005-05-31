@@ -141,9 +141,6 @@ double Square_border_parametizer_3<Adaptor>::compute_boundary_length(
             next = mesh.mesh_border_vertices_begin();
 
         // Add 'length' of it -> next vector to 'len'
-        //Vector_3 v = mesh.get_vertex_position(next)
-        //           - mesh.get_vertex_position(it);
-        //len += std::sqrt(v*v);
         len += compute_edge_length(mesh, it, next);
     }
     return len;
@@ -175,7 +172,7 @@ Square_border_parametizer_3<Adaptor>::parameterize_border(Adaptor* mesh)
     }
 
     // map to [0,4[
-    std::cerr << "  map on a square...";
+    std::cerr << "  map on a square...\n";
     double len = 0.0;           // current position on square in [0, total_len[
     Offset_map offset;          // vertex index -> offset map
     offset.reserve(mesh->count_mesh_vertices());
@@ -224,32 +221,28 @@ Square_border_parametizer_3<Adaptor>::parameterize_border(Adaptor* mesh)
     {
         Point_2 uv(offset[mesh->get_vertex_index(it)], 0.0);
         mesh->set_vertex_uv(it, uv);
-        //std::cerr << "#" << mesh->get_vertex_index(it) << "(" << it->vertex()->index() << ") <- (" << uv.x() << "," << uv.y() << ") ";
         mesh->set_vertex_parameterized(it, true);
     }
     for(it = it1; it != it2; it++)                              // 2nd side
     {
         Point_2 uv(1.0, offset[mesh->get_vertex_index(it)]-1);
         mesh->set_vertex_uv(it, uv);
-        //std::cerr << "#" << mesh->get_vertex_index(it) << "(" << it->vertex()->index() << ") <- (" << uv.x() << "," << uv.y() << ") ";
         mesh->set_vertex_parameterized(it, true);
     }
     for(it = it2; it != it3; it++)                              // 3rd side
     {
         Point_2 uv(3-offset[mesh->get_vertex_index(it)], 1.0);
         mesh->set_vertex_uv(it, uv);
-        //std::cerr << "#" << mesh->get_vertex_index(it) << "(" << it->vertex()->index() << ") <- (" << uv.x() << "," << uv.y() << ") ";
         mesh->set_vertex_parameterized(it, true);
     }
     for(it = it3; it != mesh->mesh_border_vertices_end(); it++) // 4th side
     {
         Point_2 uv(0.0, 4-offset[mesh->get_vertex_index(it)]);
         mesh->set_vertex_uv(it, uv);
-        //std::cerr << "#" << mesh->get_vertex_index(it) << "(" << it->vertex()->index() << ") <- (" << uv.x() << "," << uv.y() << ") ";
         mesh->set_vertex_parameterized(it, true);
     }
 
-    std::cerr << "done" << std::endl;
+    std::cerr << "    done" << std::endl;
 
     return Parametizer_3<Adaptor>::OK;
 }

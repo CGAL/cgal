@@ -102,8 +102,8 @@ private:
 
     // parameterization
     bool m_is_parameterized;
-    int m_seaming;  // seaming status
-    double m_u;             // texture coordinates
+    int m_seaming;  			// seaming status
+    double m_u;                 // texture coordinates
     double m_v;
     int m_index;                // for parameterization
 
@@ -139,9 +139,19 @@ public:
     // texture coordinates
     double u() const { return m_u; }
     double v() const { return m_v; }
-    void u(double u) { m_u = u; }
-    void v(double v) { m_v = v; }
-    void uv(double u,double v) { m_u = u; m_v = v; }
+    void u(double u) { 
+        //std::cerr << "      H" << index() << "(" << opposite()->vertex()->index() << "->" << vertex()->index() << ") <- (u=" << u << ",-)\n";
+        m_u = u; 
+    }
+    void v(double v) { 
+        //std::cerr << "      H" << index() << "(" << opposite()->vertex()->index() << "->" << vertex()->index() << ") <- (-,v=" << v << ")\n";
+        m_v = v; 
+    }
+    void uv(double u, double v) { 
+        //std::cerr << "      H" << index() << "(" << opposite()->vertex()->index() << "->" << vertex()->index() << ") <- (u=" << u << ",v=" << v << ")\n";
+        m_u = u; 
+        m_v = v; 
+    }
 
     // param.
     bool is_parameterized() const { return m_is_parameterized; }
@@ -421,7 +431,7 @@ public:
         for(pVertex = vertices_begin();
             pVertex != vertices_end();
             pVertex++)
-        pVertex->index(i++);
+            pVertex->index(i++);
     }
 
     // Index all mesh half edges following the order of the halfedges_begin() iterator
@@ -536,10 +546,15 @@ public:
         return ok;
     }
 
-    float round(double x)
+    // Round number to ease files comparison
+    static float round(double x)
     {
-        return x;                                       // Default implementation
-        //return float(int(x*100.0 + 0.5))/100.0;       // Round number to ease files comparison
+        if (fabs(x) < 1E-7) {
+            return 0.0;
+        } else {
+            return x;                                   // Default implementation
+            //return float(int(x*100.0 + 0.5))/100.0;   // Round number to ease files comparison
+        }
     }
 
     // output to a Wavefront OBJ file
@@ -569,7 +584,12 @@ public:
         fprintf(pFile, "# uv coordinates\n") ;
         Halfedge_iterator pHalfedge;
         for(pHalfedge = halfedges_begin(); pHalfedge != halfedges_end(); pHalfedge++)
-            fprintf(pFile, "vt %f %f\n", round(pHalfedge->u()), round(pHalfedge->v()));
+        {
+            if (!pHalfedge->is_border())
+                fprintf(pFile, "vt %f %f\n", round(pHalfedge->u()), round(pHalfedge->v()));
+            else
+                fprintf(pFile, "vt %f %f\n", round(0.0), round(0.0));
+        }
 
         // Write facets using the unique material # 1
         fprintf(pFile, "# facets\nusemtl Mat_1\n");

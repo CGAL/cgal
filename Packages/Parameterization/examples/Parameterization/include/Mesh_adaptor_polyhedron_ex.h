@@ -259,8 +259,9 @@ public:
         int index = 0;
         for (Vertex_iterator it=mesh_vertices_begin(); it!=mesh_vertices_end(); it++)
         {
-            //fprintf(stderr, "#%d=%d ",
+            //fprintf(stderr, "H%d=%d->%d ",
             //                index,
+            //                (int)it->opposite()->vertex()->index(),
             //                (int)it->vertex()->index());
             set_vertex_index(it, index++);
         }
@@ -384,9 +385,14 @@ public:
         assert(is_valid(adaptor_vertex));
 
         // Update all halfedges sharing the same vertex (except outer halfedges)
+        //std::cerr << "    H" << adaptor_vertex->index() << "(" << adaptor_vertex->vertex()->index() << ") <- (" << uv.x() << "," << uv.y() << ")" << std::endl;
         Polyhedron_ex::Vertex_handle polyhedron_vertex = adaptor_vertex->vertex();
-        Halfedge_around_vertex_circulator cir     = polyhedron_vertex->vertex_begin(),
-                                          cir_end = cir;
+        Halfedge_around_vertex_circulator cir     = polyhedron_vertex->vertex_begin();
+//#ifndef NDEBUG
+//  // debug test
+//  cir --;
+//#endif
+        Halfedge_around_vertex_circulator cir_end = cir;
         CGAL_For_all(cir, cir_end) {
             // if on the same side of a seam
             if (get_adaptor_vertex(cir) == adaptor_vertex) {
@@ -395,8 +401,7 @@ public:
                 {
                     assert(Halfedge_handle(cir) == adaptor_vertex
                         || cir->index() < 0);
-                    cir->u(uv.x());
-                    cir->v(uv.y());
+                    cir->uv(uv.x(),uv.y());
                 }
             }
         }
@@ -580,6 +585,16 @@ private:
 #ifndef NDEBUG
         // Index vertices right away to ease debugging
         index_mesh_vertices();
+
+        //// Dump seam (for debug purpose)
+        //fprintf(stderr,"  seam is: ");
+        //for (Border_vertex_iterator border_it = mesh_border_vertices_begin();
+        //     border_it != mesh_border_vertices_end();
+        //     border_it++)
+        //{
+        //    fprintf(stderr, "H%d ", get_vertex_index(border_it));
+        //}
+        //fprintf(stderr,"ok\n");
 #endif
     }
 

@@ -425,11 +425,15 @@ setup_inner_vertex_relations(Matrix* A,
     int i = mesh.get_vertex_index(vertex);
 
     // circulate over vertices around 'vertex' to compute Wii and Wijs
-    //fprintf(stderr,"    neighbors of #%d are: ", i);
+    //fprintf(stderr,"    Fill line H%d: \n", i);
     NT Wii = 0;
     int vertexIndex = 0;
-    Vertex_around_vertex_const_circulator vj = mesh.vertices_around_vertex_begin(vertex),
-                                          end = vj;
+    Vertex_around_vertex_const_circulator vj = mesh.vertices_around_vertex_begin(vertex);
+//#ifndef NDEBUG
+//  // debug test
+//  vj --;
+//#endif
+    Vertex_around_vertex_const_circulator end = vj;
     CGAL_For_all(vj, end)
     {
         // Call to virtual method to do the actual coefficient computation
@@ -440,7 +444,7 @@ setup_inner_vertex_relations(Matrix* A,
 
         // Get j index
         int j = mesh.get_vertex_index(vj);
-        //fprintf(stderr,"#%d ", j);
+        //fprintf(stderr,"      neighbor H%d -> wij = %5.2f\n", j, (float)Wij);
 
         // Set Wij in matrix
         A->set_coef(i,j, Wij);
@@ -452,7 +456,7 @@ setup_inner_vertex_relations(Matrix* A,
         std::cerr << "  error ERROR_NON_TRIANGULAR_MESH!" << std::endl;
         return ERROR_NON_TRIANGULAR_MESH;
     }
-    //fprintf(stderr,"ok\n");
+    //fprintf(stderr,"      ok\n");
 
     // Set Wii in matrix
     A->set_coef(i,i, Wii);
@@ -467,6 +471,7 @@ void Fixed_border_parametizer_3<Adaptor, Border_param, Sparse_LA>::
 set_mesh_uv_from_system(Adaptor* mesh, 
                         const Vector& Xu, const Vector& Xv)
 {
+    fprintf(stderr,"  copy computed UVs to mesh\n");
     Vertex_iterator vertexIt;
     for (vertexIt = mesh->mesh_vertices_begin();
         vertexIt != mesh->mesh_vertices_end();
@@ -481,6 +486,7 @@ set_mesh_uv_from_system(Adaptor* mesh,
         mesh->set_vertex_uv(vertexIt, Point_2(u,v));
         mesh->set_vertex_parameterized(vertexIt, true);
     }
+    fprintf(stderr,"  ok\n");
 }
 
 // Check parameterize() postconditions:

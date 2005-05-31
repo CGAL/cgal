@@ -128,9 +128,6 @@ double Circular_border_parametizer_3<Adaptor>::compute_boundary_length(
             next = mesh.mesh_border_vertices_begin();
 
         // Add 'length' of it -> next vector to 'len'
-        //Vector_3 v = mesh.get_vertex_position(next)
-        //           - mesh.get_vertex_position(it);
-        //len += std::sqrt(v*v);
         len += compute_edge_length(mesh, it, next);
     }
     return len;
@@ -161,7 +158,7 @@ Circular_border_parametizer_3<Adaptor>::parameterize_border(Adaptor* mesh)
         return Parametizer_3<Adaptor>::ERROR_INVALID_BOUNDARY;
     }
 
-    std::cerr << "  map on a circle...";
+    std::cerr << "  map on a circle..." << std::endl;
     const double PI = 3.14159265359;
     const double tmp = 2*PI/total_len;
     double len = 0.0;           // current position on circle in [0, total_len]
@@ -177,7 +174,6 @@ Circular_border_parametizer_3<Adaptor>::parameterize_border(Adaptor* mesh)
         Point_2 uv;
         uv = Point_2(0.5+0.5*cos(-angle),0.5+0.5*sin(-angle));
         mesh->set_vertex_uv(it, uv);
-        //std::cerr << "#" << mesh->get_vertex_index(it) << "(" << it->vertex()->index() << ") <- (" << uv.x() << "," << uv.y() << ") ";
 
         // Mark vertex as "parameterized"
         mesh->set_vertex_parameterized(it, true);
@@ -189,13 +185,10 @@ Circular_border_parametizer_3<Adaptor>::parameterize_border(Adaptor* mesh)
             next = mesh->mesh_border_vertices_begin();
 
         // Add 'length' of it -> next vector to 'len'
-        //Vector_3 v = mesh->get_vertex_position(next)
-        //           - mesh->get_vertex_position(it);
-        //len += std::sqrt(v*v);
         len += compute_edge_length(*mesh, it, next);
     }
 
-    std::cerr << "done" << std::endl;
+    std::cerr << "    done" << std::endl;
 
     return Parametizer_3<Adaptor>::OK;
 }
