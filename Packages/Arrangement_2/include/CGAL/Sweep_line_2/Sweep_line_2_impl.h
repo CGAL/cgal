@@ -15,8 +15,8 @@
 // $Revision$ $Date$
 // $Name$
 //
-// Author(s)     : Tali Zvi <talizvi@post.tau.ac.il>,
-//                 Baruch Zukerman <baruchzu@post.tau.ac.il>
+// Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
+//                 (based on old version by Tali Zvi)
 
 #ifndef CGAL_SWEEP_LINE_2_IMPL_H
 #define CGAL_SWEEP_LINE_2_IMPL_H
@@ -531,27 +531,10 @@ protected:
       {  
         remove_for_good = true;
         m_visitor->add_subcurve(leftCurve->get_last_curve(), leftCurve);
-
         if(leftCurve->get_orig_subcurve1() != NULL)
-        {
-          leftCurve->get_orig_subcurve1()->set_overlap_subcurve(NULL);
-          leftCurve->get_orig_subcurve2()->set_overlap_subcurve(NULL);
-
-          // clip the two subcurves according to end_overlap point
-          Subcurve* res;
-          if(( res = (Subcurve*) (leftCurve->get_orig_subcurve1() -> 
-               clip(m_currentEvent))) != NULL)
-          {
-            _add_curve_to_right(m_currentEvent, res);
-
-          }
-
-          if(( res = (Subcurve*)(leftCurve->get_orig_subcurve2() -> 
-               clip(m_currentEvent))) != NULL)
-          {
-            _add_curve_to_right(m_currentEvent, res);
-          }
-        }
+          leftCurve->get_orig_subcurve1()->set_overlap_subcurve(NULL);//XXX
+        if(leftCurve->get_orig_subcurve2() != NULL)
+          leftCurve->get_orig_subcurve2()->set_overlap_subcurve(NULL);//XXX
       }
       else
       { 
@@ -586,15 +569,35 @@ protected:
     EventCurveIter leftCurveIter = m_currentEvent->left_curves_begin();
     while ( leftCurveIter != m_currentEvent->left_curves_end() )  
     {
+      Subcurve *leftCurve = *leftCurveIter;
       if( (*leftCurveIter)->get_overlap_subcurve() != NULL &&
              m_traits.compare_xy_2_object()(
              (*leftCurveIter)->get_overlap_subcurve()->get_left_end(),
              m_currentEvent->get_point()) == SMALLER)
       {
-        Subcurve *leftCurve = (Subcurve*)((*leftCurveIter)->getSubcurve());
+        leftCurve = (Subcurve*)((*leftCurveIter)->getSubcurve());
         m_currentEvent->replace_right_curve((*leftCurveIter), leftCurve);
         *leftCurveIter = leftCurve;
       }
+      if((Event*)leftCurve->get_right_event() == m_currentEvent)
+      {
+        if(leftCurve->get_orig_subcurve1() != NULL)
+        {          
+          // clip the two subcurves according to end_overlap point
+          Subcurve* res;
+          if(( res = (Subcurve*) (leftCurve->get_orig_subcurve1() -> 
+               clip(m_currentEvent))) != NULL)
+          {
+            _add_curve_to_right(m_currentEvent, res);
+          }
+  
+          if(( res = (Subcurve*)(leftCurve->get_orig_subcurve2() -> 
+               clip(m_currentEvent))) != NULL)
+          {
+            _add_curve_to_right(m_currentEvent, res);
+          }         
+        }
+      }     
       ++leftCurveIter;
     }
 
