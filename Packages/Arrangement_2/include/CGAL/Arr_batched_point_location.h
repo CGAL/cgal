@@ -50,6 +50,8 @@ OutputIterator locate(const Arrangement& arr,
   typedef typename Traits_2::X_monotone_curve_2        Base_X_monotone_curve_2;
   typedef typename Arrangement::Halfedge_const_handle  Halfedge_const_handle;
   typedef typename Arrangement::Edge_const_iterator    Edge_const_iterator;
+  typedef typename Arrangement::Size                   Size;
+
 
   // Define meta-traits class for the batched point location:
   typedef Arr_batched_point_location_meta_traits
@@ -73,19 +75,21 @@ OutputIterator locate(const Arrangement& arr,
 
   // Go over all arrangement edges.
   std::vector<X_monotone_curve_2>  xcurves_vec;
+  xcurves_vec.resize(arr.number_of_edges());
   typename Traits_2::Compare_xy_2    comp_xy =
     arr.get_traits()->compare_xy_2_object();
   Edge_const_iterator       eit;
 
-  for (eit = arr.edges_begin(); eit != arr.edges_end(); ++eit) 
+  Size i = 0;
+  for (eit = arr.edges_begin(); eit != arr.edges_end(); ++eit, ++i) 
   {
     // Associate each x-monotone curve with the halfedge that represent it
     // that is directed from right to left.
     if(comp_xy((*eit).source().point(),
 	       (*eit).target().point()) == LARGER)
-      xcurves_vec.push_back(X_monotone_curve_2((*eit).curve(),*eit));
+      xcurves_vec[i] = X_monotone_curve_2((*eit).curve(),*eit);
     else
-      xcurves_vec.push_back(X_monotone_curve_2((*eit).curve(),(*eit).twin()));
+      xcurves_vec[i] = X_monotone_curve_2((*eit).curve(),(*eit).twin());
   }
   
   // Perform the sweep, while initializing it with all query points as event
