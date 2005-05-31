@@ -244,7 +244,7 @@ parameterize(Adaptor* mesh)
     initialize_system_from_mesh_border(&solver, *mesh);
 
     // Fill the matrix for the other vertices
-    fprintf(stderr,"  fill matrix (%d x %d)...",
+    fprintf(stderr,"  matrix filling (%d x %d)...\n",
                       int(2*mesh->count_mesh_facets()),
                       nbVertices);
     solver.begin_system() ;
@@ -258,16 +258,16 @@ parameterize(Adaptor* mesh)
             return status;
     }
     solver.end_system() ;
-    fprintf(stderr,"ok\n");
+    fprintf(stderr,"    matrix filling ok\n");
 
     // Solve the "A*X = B" linear system in the least squares sense
-	std::cerr << "  solver start..." << std::endl;
+    std::cerr << "  solver..." << std::endl;
     if ( ! solver.solve() )
     {
         std::cerr << "  error ERROR_CANNOT_SOLVE_LINEAR_SYSTEM!" << std::endl;
         return ERROR_CANNOT_SOLVE_LINEAR_SYSTEM;
     }
-    std::cerr << "  ...solver: ok" << std::endl;
+    std::cerr << "    solver ok" << std::endl;
 
     // Copy X coordinates into the (u,v) pair of each vertex
     set_mesh_uv_from_system(mesh, solver);
@@ -452,6 +452,7 @@ setup_triangle_relations(LeastSquaresSolver* solver,
     int id0 = mesh.get_vertex_index(v0) ;
     int id1 = mesh.get_vertex_index(v1) ;
     int id2 = mesh.get_vertex_index(v2) ;
+    //fprintf(stderr,"    Fill line for triangle (H%d, H%d, H%d): \n", id0, id1, id2);
 
     // Get the vertices position
     const Point_3& p0 = mesh.get_vertex_position(v0) ;
@@ -504,6 +505,7 @@ setup_triangle_relations(LeastSquaresSolver* solver,
     solver->add_coefficient(v1_id,   -c) ;
     solver->add_coefficient(v2_id,    a) ;
     solver->end_row() ;
+    //fprintf(stderr,"      ok\n");
 
     return OK;
 }
@@ -515,6 +517,7 @@ void LSCM_parametizer_3<Adaptor, Border_param, Sparse_LA>::
 set_mesh_uv_from_system(Adaptor* mesh,
                         const LeastSquaresSolver& solver)
 {
+    fprintf(stderr,"  copy computed UVs to mesh\n");
     Vertex_iterator vertexIt;
     for (vertexIt = mesh->mesh_vertices_begin();
          vertexIt != mesh->mesh_vertices_end();
@@ -531,6 +534,7 @@ set_mesh_uv_from_system(Adaptor* mesh,
         mesh->set_vertex_uv(vertexIt, Point_2(u,v));
         mesh->set_vertex_parameterized(vertexIt, true);
     }
+    fprintf(stderr,"    ok\n");
 }
 
 // Check parameterize() postconditions:

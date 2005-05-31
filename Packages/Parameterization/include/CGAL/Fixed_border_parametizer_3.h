@@ -486,7 +486,7 @@ set_mesh_uv_from_system(Adaptor* mesh,
         mesh->set_vertex_uv(vertexIt, Point_2(u,v));
         mesh->set_vertex_parameterized(vertexIt, true);
     }
-    fprintf(stderr,"  ok\n");
+    fprintf(stderr,"    ok\n");
 }
 
 // Check parameterize() postconditions:

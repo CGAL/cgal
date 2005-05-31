@@ -122,7 +122,7 @@ Two_vertices_parametizer_3<Adaptor>::parameterize_border(Adaptor* mesh)
         return Parametizer_3<Adaptor>::ERROR_INVALID_BOUNDARY;
     }
 
-    std::cerr << "  map 2 vertices...";
+    std::cerr << "  map 2 vertices..." << std::endl;
 
     // Get mesh's bounding box
     double xmin =  1e30 ;
@@ -254,7 +254,7 @@ Two_vertices_parametizer_3<Adaptor>::parameterize_border(Adaptor* mesh)
     mesh->set_vertex_parameterized(vxmin, true) ;
     mesh->set_vertex_parameterized(vxmax, true) ;
 
-    std::cerr << "done" << std::endl;
+    std::cerr << "    done" << std::endl;
 
     return Parametizer_3<Adaptor>::OK;
 }
