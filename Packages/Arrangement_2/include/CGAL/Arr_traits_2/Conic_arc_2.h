@@ -64,13 +64,13 @@ public:
   typedef typename Rat_kernel::Segment_2                   Rat_segment_2;
   typedef typename Rat_kernel::Circle_2                    Rat_circle_2;
 
+  typedef typename Nt_traits::Integer                      Integer;
+
   typedef typename Alg_kernel::FT                          Algebraic;
   typedef typename Alg_kernel::Point_2                     Point_2;
   typedef _Conic_point_2<Alg_kernel>                       Conic_point_2;
 
 protected:
-
-  typedef typename Nt_traits::Integer                      Integer;
 
   Integer        _r;       //
   Integer        _s;       // The coefficients of the supporting conic curve:
@@ -81,9 +81,16 @@ protected:
 
   Orientation    _orient;  // The orientation of the conic.
 
+  // Bit masks for the _info field.
+  enum
+  {
+    IS_VALID = 1,
+    IS_FULL_CONIC = 2
+  };
+
   int            _info;    // Does the arc represent a full conic curve.
-  Conic_point_2  _source;  // The source of the arc (if _info is 0).
-  Conic_point_2  _target;  // The target of the arc (if _info is 0).
+  Conic_point_2  _source;  // The source of the arc (if not a full curve).
+  Conic_point_2  _target;  // The target of the arc (if not a full curve).
 
   // For arcs whose base is a hyperbola we store the axis (a*x + b*y + c = 0)
   // which separates the two bracnes of the hyperbola. We also store the side
@@ -392,10 +399,13 @@ protected:
     const Rational  D = A1*B2 - A2*B1;
 
     // Make sure the three points are not collinear.
-    CGAL_precondition_code(
-      const bool points_collinear = (CGAL::sign (D) == ZERO);
-    );
-    CGAL_precondition(!points_collinear);
+    const bool  points_collinear = (CGAL::sign (D) == ZERO);
+
+    if (points_collinear)
+    {
+      _info = 0;           // Inavlid arc.
+      return;
+    }
 
     // The equation of the underlying circle is given by:
     Rational          rat_coeffs[6];
@@ -444,23 +454,29 @@ protected:
     // Make sure that no three points are collinear.
     Rat_kernel                         ker;
     typename Rat_kernel::Orientation_2 orient_f = ker.orientation_2_object();
+    const bool                         point_collinear =
+      (orient_f (p1, p2, p3) == COLLINEAR ||
+       orient_f (p1, p2, p4) == COLLINEAR ||
+       orient_f (p1, p2, p5) == COLLINEAR ||
+       orient_f (p1, p3, p4) == COLLINEAR ||
+       orient_f (p1, p3, p5) == COLLINEAR ||
+       orient_f (p1, p4, p5) == COLLINEAR ||
+       orient_f (p2, p3, p4) == COLLINEAR ||
+       orient_f (p2, p3, p5) == COLLINEAR ||
+       orient_f (p2, p4, p5) == COLLINEAR ||
+       orient_f (p3, p4, p5) == COLLINEAR);
 
-    CGAL_precondition (orient_f (p1, p2, p3) == COLLINEAR ||
-		       orient_f (p1, p2, p4) == COLLINEAR ||
-		       orient_f (p1, p2, p5) == COLLINEAR ||
-		       orient_f (p1, p3, p4) == COLLINEAR ||
-		       orient_f (p1, p3, p5) == COLLINEAR ||
-		       orient_f (p1, p4, p5) == COLLINEAR ||
-		       orient_f (p2, p3, p4) == COLLINEAR ||
-		       orient_f (p2, p3, p5) == COLLINEAR ||
-		       orient_f (p2, p4, p5) == COLLINEAR ||
-		       orient_f (p3, p4, p5) == COLLINEAR);
+    if (point_collinear)
+    {
+      _info = 0;           // Inavlid arc.
+      return;
+    }
 
     // Set the source and target.
     Rational          x1 = p1.x();
     Rational          y1 = p1.y();
     Rational          x5 = p5.x();
-    Rational          y5 = p6.y();
+    Rational          y5 = p5.y();
     Nt_traits         nt_traits;
 
     _source = Point_2 (nt_traits.convert (x1), nt_traits.convert (y1));
@@ -505,18 +521,19 @@ protected:
 
     // Make sure that all midpoints are strictly between the
     // source and the target.
-    CGAL_assertion_code (
-      Point_2  mp2 = Point_2 (nt_traits.convert (p2.x()),
-			      nt_traits.convert (p2.y()));
-      Point_2  mp3 = Point_2 (nt_traits.convert (p3.x()),
-			      nt_traits.convert (p3.y()));
-      Point_2  mp4 = Point_2 (nt_traits.convert (p4.x()),
-			      nt_traits.convert (p4.y()));
-    );
-
-    CGAL_assertion (_is_strictly_between_endpoints (mp2) &&
-		    _is_strictly_between_endpoints (mp3) &&
-		    _is_strictly_between_endpoints (mp4));
+    Point_2  mp2 = Point_2 (nt_traits.convert (p2.x()),
+			    nt_traits.convert (p2.y()));
+    Point_2  mp3 = Point_2 (nt_traits.convert (p3.x()),
+			    nt_traits.convert (p3.y()));
+    Point_2  mp4 = Point_2 (nt_traits.convert (p4.x()),
+			    nt_traits.convert (p4.y()));
+    
+    if (! _is_strictly_between_endpoints (mp2) ||
+	! _is_strictly_between_endpoints (mp3) ||
+	! _is_strictly_between_endpoints (mp4))
+    {
+      _info = 0;               // Inalvid arc.
+    }
   }
 
   /*!
@@ -693,11 +710,21 @@ protected:
 	  }
 	}
       }
+
+      if (! found)
+      {
+	_info = 0;           // Invalis arc.
+	return;
+      }
     }
  
-    // Make sure that the source and the taget are not the same.
-    CGAL_assertion (Alg_kernel().compare_xy_2_object() (_source,
-							_target) != EQUAL);
+    // Make sure that the source and the target are not the same.
+    if (Alg_kernel().compare_xy_2_object() (_source,
+					    _target) == EQUAL)
+    {
+      _info = 0;      // Invalis arc.
+      return;
+    }
 
     // Set the arc properties (no need to compute the orientation).
     _set (rat_coeffs);
@@ -751,6 +778,14 @@ protected:
   /// \name Get the arc properties.
   //@{
 
+  /*!
+   * Check if the arc is valid.
+   */
+  bool is_valid () const
+  {
+    return ((_info & IS_VALID) != 0);
+  }
+
   /*! 
    * Get the coefficients of the underlying conic.
    */
@@ -766,7 +801,7 @@ protected:
    */
   bool is_full_conic () const
   {
-    return ((_info & 1) != 0);
+    return ((_info & IS_FULL_CONIC) != 0);
   }
 
   /*!
@@ -808,6 +843,8 @@ protected:
    */
   Bbox_2 bbox () const
   {
+    CGAL_precondition (is_valid());
+
     double    x_min, y_min;
     double    x_max, y_max;
 
@@ -890,6 +927,39 @@ protected:
     // Return the resulting bounding box.
     return (Bbox_2 (x_min, y_min, x_max, y_max));
   }
+  //@}
+
+  /// \name Modifying functions.
+  //@{
+
+  /*!
+   * Set the source point of the conic arc.
+   * \param ps The new source point.
+   * \pre The arc is not a full conic curve.
+   *      ps must lie on the supporting conic curve.
+   */
+  void set_source (const Point_2& ps)
+  {
+    CGAL_precondition (_is_on_supporting_conic (ps));
+
+    _source = ps;
+    return;
+  }
+
+  /*!
+   * Set the target point of the conic arc.
+   * \param pt The new source point.
+   * \pre The arc is not a full conic curve.
+   *      pt must lie on the supporting conic curve.
+   */
+  void set_target (const Point_2& pt)
+  {
+    CGAL_precondition (_is_on_supporting_conic (pt));
+
+    _target = pt;
+    return;
+  }
+
   //@}
 
   /// \name Compute points on the arc.
@@ -1071,6 +1141,14 @@ private:
       _w = -int_coeffs[5];
     }
 
+    // Make sure both endpoint lie on the supporting conic.
+    if (! _is_on_supporting_conic (_source) ||
+	! _is_on_supporting_conic (_target))
+    {
+      _info = 0;          // Invalid arc.
+      return;
+    }
+
     // In case the base conic is a hyperbola, build the hyperbolic data
     // (this happens when (4rs - t^2) < 0).
     if (CGAL::sign (4*_r*_s - _t*_t) == NEGATIVE)
@@ -1078,28 +1156,30 @@ private:
     else
       _hyper_data_P = NULL;
 
-    // Mark that this arc is not a full conic curve.
-    _info = 0;
-
     // In case of a non-degenerate parabola or a hyperbola, make sure 
     // the arc is not infinite.
-    CGAL_precondition_code (
-      if ((CGAL::sign (_r) != ZERO ||
-           CGAL::sign (_s) != ZERO ||
-           CGAL::sign (_t) != ZERO) &&
-          CGAL::sign (4*_r*_s - _t*_t) != POSITIVE)
-      {
-        Alg_kernel       ker;
-        Point_2          p_mid = ker.construct_midpoint_2_object() (_source,
-                                                                    _target);
-        Point_2          ps[2];
+    if ((CGAL::sign (_r) != ZERO ||
+	 CGAL::sign (_s) != ZERO ||
+	 CGAL::sign (_t) != ZERO) &&
+	CGAL::sign (4*_r*_s - _t*_t) != POSITIVE)
+    {
+      Alg_kernel       ker;
+      Point_2          p_mid = ker.construct_midpoint_2_object() (_source,
+								  _target);
+      Point_2          ps[2];
 
-        bool  finite_at_x = (get_points_at_x(p_mid, ps) > 0);
-        bool  finite_at_y = (get_points_at_y(p_mid, ps) > 0);
+      bool  finite_at_x = (get_points_at_x(p_mid, ps) > 0);
+      bool  finite_at_y = (get_points_at_y(p_mid, ps) > 0);
       
-        CGAL_precondition(finite_at_x && finite_at_y);
+      if (! finite_at_x && ! finite_at_y)
+      {
+	_info = 0;          // Invalid arc.
+	return;
       }
-    );
+    }
+
+    // Mark that this arc valid and is not a full conic curve.
+    _info = IS_VALID;
 
     return;
   }
@@ -1153,12 +1233,16 @@ private:
 
     // Make sure the conic is a non-degenerate ellipse:
     // The coefficients should satisfy (4rs - t^2) > 0.
-    CGAL_precondition (CGAL::sign (4*_r*_s - _t*_t) == POSITIVE);
+    const bool  is_ellipse = (CGAL::sign (4*_r*_s - _t*_t) == POSITIVE);
+    CGAL_assertion (is_ellipse);
 
     _hyper_data_P = NULL;
 
     // Mark that this arc is a full conic curve.
-    _info = 1;
+    if (is_ellipse)
+      _info = IS_VALID | IS_FULL_CONIC;
+    else
+      _info = 0;
 
     return;
   }
@@ -1286,6 +1370,26 @@ protected:
 
     CGAL_assertion (sign_val != ZERO);
     return (sign_val);
+  }
+
+  /*!
+   * Check whether the given point lies on the supporting conic of the arc.
+   * \param p The query point.
+   * \return (true) if p lies on the supporting conic; (false) otherwise.
+   */
+  bool _is_on_supporting_conic (const Point_2& p) const
+  {
+    // Check whether p satisfies the conic equation.
+    // The point must satisfy: r*x^2 + s*y^2 + t*xy + u*x + v*y + w = 0.
+    Nt_traits        nt_traits;
+    const Algebraic  val = (nt_traits.convert(_r)*p.x() + 
+			    nt_traits.convert(_t)*p.y() +
+			    nt_traits.convert(_u)) * p.x() +
+                           (nt_traits.convert(_s)*p.y() + 
+			    nt_traits.convert(_v)) * p.y() +
+                           nt_traits.convert(_w);
+
+    return (CGAL::sign (val) == ZERO);
   }
  
   /*!

@@ -36,7 +36,7 @@ CGAL_BEGIN_NAMESPACE
  */
 
 template <class Conic_arc_>
-class _Conic_x_monotone_arc_2 : private Conic_arc_
+class _Conic_x_monotone_arc_2 : public Conic_arc_
 {
 public:
 
@@ -83,19 +83,19 @@ protected:
   typedef typename Conic_arc_2::Integer           Integer;
   typedef typename Conic_arc_2::Nt_traits         Nt_traits;
 
-  // Bit mask for the _info field (the least significant bit is already used
-  // by the vase class).
+  // Bit masks for the _info field (the two least significant bits are already
+  // used by the base class).
   enum
   {
-    IS_VERTICAL_SEGMENT = 2,
-    IS_DIRECTED_RIGHT = 4,
-    DEGREE_1 = 8,
-    DEGREE_2 = 16,
-    DEGREE_MASK = 8 + 16,
-    PLUS_SQRT_DISC_ROOT = 32,
-    FACING_UP = 64,
-    FACING_DOWN = 128,
-    FACING_MASK = 64 + 128
+    IS_VERTICAL_SEGMENT = 4,
+    IS_DIRECTED_RIGHT = 8,
+    DEGREE_1 = 16,
+    DEGREE_2 = 32,
+    DEGREE_MASK = 16 + 32,
+    PLUS_SQRT_DISC_ROOT = 64,
+    FACING_UP = 128,
+    FACING_DOWN = 256,
+    FACING_MASK = 128 + 256
   };
 
   Algebraic      alg_r;      // The coefficients of the supporting conic curve:
@@ -144,6 +144,8 @@ public:
     Base (arc),
     _id (id)
   {
+    CGAL_precondition (arc.is_valid());
+
     _set ();
   }
   
@@ -160,6 +162,8 @@ public:
     Base (arc),
     _id (id)
   {
+    CGAL_precondition (arc.is_valid());
+
     // Set the two endpoints.
     _source = source;
     _target = target;
@@ -173,6 +177,8 @@ public:
    */
   const Self& operator= (const Self& arc)
   {
+    CGAL_precondition (arc.is_valid());
+
     if (this == &arc)
       return (*this);
 
@@ -890,7 +896,7 @@ private:
     _target.set_generating_conic (_id);
 
     // Clear the _info bits.
-    _info = 0;
+    _info = IS_VALID;
 
     // Check if the arc is directed right (the target is lexicographically
     // greater than the source point), or to the left.
