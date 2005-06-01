@@ -1,3 +1,7 @@
+1 June 2005:  Menelaos Karavelas
+- examples/svd-voronoi-edges.C: calls to mirror_vertex and mirror_index
+  made through the faces are now made through the TDS
+
 29 May 2005:  Menelaos Karavelas
 - calls to mirror_vertex and mirror_index made through the faces are
   now made through the TDS

@@ -76,7 +76,7 @@ int main()
     SVD2::Vertex_handle v[] = { e.first->vertex( svd.ccw(e.second) ),
                                 e.first->vertex( svd.cw(e.second) ),
                                 e.first->vertex( e.second ),
-                                e.first->mirror_vertex(e.second) };
+                                svd.tds().mirror_vertex(e.first, e.second) };
 
     cout << "--- Edge " << k << " ---" << endl;
     for (int i = 0; i < 4; i++) {
