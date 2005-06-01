@@ -621,16 +621,19 @@ Arrangement_2<Traits,Dcel>::split_edge (Halfedge_handle e,
   );
 
   // Determine the point where we split the halfedge. We also determine which
-  // curve should be associated with he1 (and he2) and which should be
-  // associated with the new pair of halfedges we are about to split.
+  // curve should be associated with he1 (and he2), which is the curve who
+  // has an endpoint that equals e's source, and which should be associated
+  // with the new pair of halfedges we are about to split (the one who has
+  // an endpoint which equals e's target).
   const Point_2&  cv1_left = traits->construct_min_vertex_2_object() (cv1);
   const Point_2&  cv1_right = traits->construct_max_vertex_2_object() (cv1);
   const Point_2&  cv2_left = traits->construct_min_vertex_2_object() (cv2);
   CGAL_precondition_code (
     const Point_2&  cv2_right = traits->construct_max_vertex_2_object() (cv2);
   );
-  bool            split_at_cv1_right;
-  bool            assign_cv1_to_he1;
+  const Point_2               *split_p;
+  const X_monotone_curve_2    *p_cv1;
+  const X_monotone_curve_2    *p_cv2;
 
   CGAL_precondition_msg (traits->equal_2_object() (cv1_right, cv2_left) ||
                          traits->equal_2_object() (cv2_right, cv1_left),
@@ -638,137 +641,48 @@ Arrangement_2<Traits,Dcel>::split_edge (Halfedge_handle e,
 
   if (traits->equal_2_object() (cv1_right, cv2_left))
   {
-    split_at_cv1_right = true;
+    split_p = &cv1_right;
 
     if (traits->equal_2_object() (source, cv1_left))
     {
       CGAL_precondition (traits->equal_2_object() (target, cv2_right));
 
-      assign_cv1_to_he1 = true;
+      p_cv1 = &cv1;
+      p_cv2 = &cv2;
     }
     else
     {
       CGAL_precondition (traits->equal_2_object() (source, cv2_right) && 
                          traits->equal_2_object() (target, cv1_left));
 
-      assign_cv1_to_he1 = false;
+      p_cv1 = &cv2;
+      p_cv2 = &cv1;
     }
   }
   else
   {
     CGAL_precondition (traits->equal_2_object() (cv2_right, cv1_left));
 
-    split_at_cv1_right = false;
+    split_p = &cv1_left;
 
     if (traits->equal_2_object() (source, cv2_left))
     {
       CGAL_precondition (traits->equal_2_object() (target, cv1_right));
 
-      assign_cv1_to_he1 = false;
+      p_cv1 = &cv2;
+      p_cv2 = &cv1;
     }
     else
     {
       CGAL_precondition (traits->equal_2_object() (source, cv1_right) && 
                          traits->equal_2_object() (target, cv2_left));
 
-      assign_cv1_to_he1 = true;
+      p_cv1 = &cv1;
+      p_cv2 = &cv2;
     }
   }
 
-  // Allocate a new vertex and associate it with the split point.
-  // We also notify the observers on the creation of this vertex.
-  Stored_point_2 *dup_p;
-
-  if (split_at_cv1_right)
-    dup_p = _new_point (cv1_right);
-  else
-    dup_p = _new_point (cv1_left);
-
-  _notify_before_create_vertex (*dup_p);
-
-  Vertex         *v = dcel.new_vertex();
-
-  v->set_point (dup_p);
-
-  _notify_after_create_vertex (Vertex_handle (v));
-
-  // Notify the observers that we are about to split an edge.
-  if (assign_cv1_to_he1)
-    _notify_before_split_edge (e, cv1, cv2);
-  else
-    _notify_before_split_edge (e, cv2, cv1);
-
-  // Allocate a pair of new halfedges. 
-  Halfedge  *he3 = dcel.new_edge();
-  Halfedge  *he4 = he3->opposite();
-
-  // Connect the new halfedges:
-  //
-  //            he1      he3
-  //         -------> ------->
-  //       (.)      (.)v     (.) 
-  //         <------- <-------
-  //            he2      he4
-  //
-  v->set_halfedge (he4);  
-
-  if (he1->next() != he2)
-  {
-    // Connect e3 between e1 and its successor.
-    he3->set_next (he1->next());
-
-    // Insert he4 between he2 and its predecessor.
-    he2->previous()->set_next (he4);
-  }
-  else
-  {
-    // he1 and he2 form an "antenna", so he4 becomes he3's successor.
-    he3->set_next (he4);
-  }
-
-  he3->set_face (he1->face());
-  he3->set_vertex (he1->vertex()); 
-  he4->set_vertex (v);
-  he4->set_next (he2);
-  he4->set_face (he2->face());
-  
-  if (he1->vertex()->halfedge() == he1)
-    // If he1 is the incident halfedge to its target, he3 replaces it.
-    he1->vertex()->set_halfedge (he3);
-  
-  // Update the properties of the twin halfedges we have just split.
-  he1->set_next(he3);
-  he1->set_vertex(v);
-
-  // Allocate two new curves that correspond to the split edges.
-  // Note it is important to create these curves before deleting the old
-  // redundant curve, so that the new curves will have a different memory
-  // address than the old one (crucial for intersection caching in the zone
-  // algorithm).
-  Stored_curve_2  *dup_cv1 = _new_curve (cv1);
-  Stored_curve_2  *dup_cv2 = _new_curve (cv2);
-
-  // Destroy the curve currently associated with he1 (and its twin he2).
-  _delete_curve (he1->curve());
-
-  // Associate cv1 and cv2 with the two pair of split halfedges.
-  if (assign_cv1_to_he1)
-  {
-    he1->set_curve (dup_cv1);
-    he3->set_curve (dup_cv2);
-  }
-  else
-  {
-    he1->set_curve (dup_cv2);    
-    he3->set_curve (dup_cv1);
-  }
-
-  // Notify the observers that we have split an edge into two.
-  _notify_after_split_edge (Halfedge_handle (he1), Halfedge_handle (he3));
-
-  // Return a handle for one of the existing halfedge that is incident to the 
-  // split point.
-  return (Halfedge_handle (he1));
+  return (Halfedge_handle (_split_edge (he1, *split_p, *p_cv1, *p_cv2)));
 }
 
 //-----------------------------------------------------------------------------
@@ -2008,6 +1922,101 @@ Arrangement_2<Traits,Dcel>::_remove_edge (Halfedge *e)
 
   // Return the merged face.
   return (f1);
+}
+
+//-----------------------------------------------------------------------------
+// Split a given edge into two at a given point, and associate the given
+// x-monotone curves with the split edges.
+//
+template<class Traits, class Dcel>
+typename Arrangement_2<Traits,Dcel>::Halfedge* 
+Arrangement_2<Traits,Dcel>::_split_edge (Halfedge *e,
+                                         const Point_2& p,
+                                         const X_monotone_curve_2& cv1, 
+                                         const X_monotone_curve_2& cv2)
+{
+  // Get the split halfedge and its twin, its source and target.
+  Halfedge       *he1 = e;
+  Halfedge       *he2 = he1->opposite();
+
+  // Allocate a new vertex and associate it with the split point.
+  // We also notify the observers on the creation of this vertex.
+  Stored_point_2 *dup_p = _new_point (p);
+
+  _notify_before_create_vertex (p);
+
+  Vertex         *v = dcel.new_vertex();
+
+  v->set_point (dup_p);
+
+  _notify_after_create_vertex (Vertex_handle (v));
+
+  // Notify the observers that we are about to split an edge.
+  _notify_before_split_edge (e, cv1, cv2);
+
+  // Allocate a pair of new halfedges. 
+  Halfedge  *he3 = dcel.new_edge();
+  Halfedge  *he4 = he3->opposite();
+
+  // Connect the new halfedges:
+  //
+  //            he1      he3
+  //         -------> ------->
+  //       (.)      (.)v     (.) 
+  //         <------- <-------
+  //            he2      he4
+  //
+  v->set_halfedge (he4);  
+
+  if (he1->next() != he2)
+  {
+    // Connect e3 between e1 and its successor.
+    he3->set_next (he1->next());
+
+    // Insert he4 between he2 and its predecessor.
+    he2->previous()->set_next (he4);
+  }
+  else
+  {
+    // he1 and he2 form an "antenna", so he4 becomes he3's successor.
+    he3->set_next (he4);
+  }
+
+  he3->set_face (he1->face());
+  he3->set_vertex (he1->vertex()); 
+  he4->set_vertex (v);
+  he4->set_next (he2);
+  he4->set_face (he2->face());
+  
+  if (he1->vertex()->halfedge() == he1)
+    // If he1 is the incident halfedge to its target, he3 replaces it.
+    he1->vertex()->set_halfedge (he3);
+  
+  // Update the properties of the twin halfedges we have just split.
+  he1->set_next(he3);
+  he1->set_vertex(v);
+
+  // Allocate two new curves that correspond to the split edges.
+  // Note it is important to create these curves before deleting the old
+  // redundant curve, so that the new curves will have a different memory
+  // address than the old one (crucial for intersection caching in the zone
+  // algorithm).
+  Stored_curve_2  *dup_cv1 = _new_curve (cv1);
+  Stored_curve_2  *dup_cv2 = _new_curve (cv2);
+
+  // Destroy the curve currently associated with he1 (and its twin he2).
+  _delete_curve (he1->curve());
+
+  // Associate cv1 and cv2 with the two pair of split halfedges.
+  he1->set_curve (dup_cv1);
+  he3->set_curve (dup_cv2);
+
+  // Notify the observers that we have split an edge into two.
+  _notify_after_split_edge (Halfedge_handle (he1), Halfedge_handle (he3));
+
+  // Return a handle for one of the existing halfedge that is incident to the 
+  // split point.
+  return (he1);
 }
 
 CGAL_END_NAMESPACE

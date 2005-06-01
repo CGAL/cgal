@@ -241,6 +241,31 @@ public:
     CGAL_assertion (f != NULL);
     return (p_arr->_handle_for (f));
   }
+
+  /*!
+   * Split a given edge into two at a given point, and associate the given
+   * x-monotone curves with the split edges.
+   * \param e The edge to split (one of the pair of twin halfegdes).
+   * \param p The split point.
+   * \param cv1 The curve that should be associated with the first split edge,
+   *            whose source equals e's source and its target is p.
+   * \param cv2 The curve that should be associated with the second split edge,
+   *            whose source is p and its target equals e's target.
+   * \return A handle for the first split halfedge, whose source equals the
+   *         source of e, and whose target is the split point.
+   */
+  Halfedge_handle split_edge_ex (Halfedge_handle e,
+                                 const Point_2& p,
+                                 const X_monotone_curve_2& cv1, 
+                                 const X_monotone_curve_2& cv2)
+  {
+    Halfedge*  he = p_arr->_split_edge (p_arr->_halfedge (e),
+                                        p,
+                                        cv1, cv2);
+
+    CGAL_assertion (he != NULL);
+    return (p_arr->_handle_for (he));
+  }
   //@}
 
 };
