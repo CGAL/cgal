@@ -643,19 +643,21 @@ public:
   template< class Stream >
   Stream& draw_primal_edge(const Edge& e, Stream &str) const
   {
-    //    if ( is_infinite(e) ) { return str; }
-    typename Gt::Object_2 o = primal(e);
-    typename Geom_traits::Segment_2  s;
-    typename Geom_traits::Ray_2      r;
+    typedef typename Geom_traits::Segment_2     Segment_2;
+    typedef typename Geom_traits::Ray_2         Ray_2;
+    typedef std::pair<Segment_2,Segment_2>      Segment_pair_2;
+
+    typename Geom_traits::Object_2 o = primal(e);
+    Segment_2       s;
+    Ray_2           r;
+    Segment_pair_2  s_pair;
     CGAL::Hyperbola_segment_2<Gt>    hs;
     CGAL::Parabola_segment_2<Gt>     ps;
     if (assign(hs, o))  hs.draw(str);
     if (assign(s, o))   str << s; 
     if (assign(ps, o))  ps.draw(str);
     if (assign(r, o))   str << r;
-    //      if (assign(hr, o))  str << hr;
-    //      if (assign(h, o))   str << h;
-    //      if (assign(l, o))   str << l;
+    if (assign(s_pair, o)) str << s_pair.first << s_pair.second;
     return str;
   }
 

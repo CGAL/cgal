@@ -69,6 +69,9 @@ public:
   typedef typename Gt::Point_2              Point_2;
   typedef typename Gt::Site_2               Site_2;
 
+  typedef Point_2       result_type;
+  typedef Arity_tag<3>  Arity;
+
   Point_2 operator() (const Site_2& p, const Site_2& q,
                       const Site_2& r) const
   {
@@ -120,6 +123,13 @@ public:
   typedef typename Gt::Line_2             Line_2;
   typedef typename Gt::Point_2            Point_2;
   typedef typename Gt::Site_2             Site_2;
+
+#if 0
+  // WARNING: the following two types are just a hack; none of the
+  // two is really valid
+  struct Arity {};
+  typedef Site_2 result_type;
+#endif
 
   inline Site_2 operator()(const Site_2& p,
 			   const Site_2& q,
@@ -190,9 +200,9 @@ public:
   typedef typename Gt::Site_2                Site_2;
   typedef typename Gt::Object_2              Object_2;
   typedef typename Gt::Construct_object_2    Construct_object_2;
+  typedef typename Gt::Construct_Apollonius_vertex_2  Apollonius_vertex_2;
   typedef CGAL::Hyperbola_ray_2<Gt>          Hyperbola_ray_2;
   typedef CGAL::Sign                              Hyperbola_direction;
-  typedef CGAL::Construct_Apollonius_vertex_2<Gt> Apollonius_vertex_2;
 
 private:
   template<class T>
@@ -249,8 +259,8 @@ public:
   typedef typename Gt::Site_2                  Site_2;
   typedef typename Gt::Object_2                Object_2;
   typedef typename Gt::Construct_object_2      Construct_object_2;
+  typedef typename Gt::Construct_Apollonius_vertex_2  Apollonius_vertex_2;
   typedef CGAL::Hyperbola_segment_2<Gt>        Hyperbola_segment_2;
-  typedef CGAL::Construct_Apollonius_vertex_2<Gt>     Apollonius_vertex_2;
 
 private:
   template<class T>
@@ -308,7 +318,7 @@ public:
   typedef typename Gt::Line_2                         Line_2;
   typedef typename Gt::Ray_2                          Ray_2;
   typedef typename Gt::Site_2                         Site_2;
-  typedef CGAL::Construct_Apollonius_site_2<Gt>       Apollonius_circle_2;
+  typedef typename Gt::Construct_Apollonius_site_2    Apollonius_circle_2;
 
   inline Ray_2 operator() (const Site_2& p,
 			   const Site_2& r,
@@ -344,8 +354,9 @@ public:
   typedef typename Gt::RT                             Weight;
   typedef CGAL::Hyperbola_segment_2<Gt>               Hyperbola_segment_2;
   typedef CGAL::Parabola_segment_2<Gt>                Parabola_segment_2;
-  typedef CGAL::Construct_Apollonius_site_2<Gt>       Apollonius_circle_2;
-
+  typedef typename Gt::Construct_Apollonius_site_2    Apollonius_circle_2;
+  typedef typename Gt::Construct_Apollonius_vertex_2  Apollonius_vertex_2;
+  typedef typename Gt::Is_degenerate_edge_2           Is_degenerate_edge_2;
 
 private:
   template<class T>
@@ -382,6 +393,12 @@ public:
 	      const Site_2& q,
 	      const Site_2& r,
 	      const Site_2& s) const {
+    if ( Is_degenerate_edge_2()(p, q, r, s) ) {
+      Point_2 v = Apollonius_vertex_2()(p, q, r);
+      Segment_2 seg1(p.point(), v);
+      Segment_2 seg2(v, q.point());
+      return make_object(std::pair<Segment_2,Segment_2>(seg1, seg2));
+    }
     Apollonius_circle_2 apollonius_circle_2;
     Site_2 c_pqr = apollonius_circle_2(p, q, r);
     Site_2 c_qps = apollonius_circle_2(q, p, s);

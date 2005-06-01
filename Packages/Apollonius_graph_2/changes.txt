@@ -1,3 +1,10 @@
+1 June 2005:  Menelaos Karavelas
+- added types Arity and result_type in Construct_Apollonius_vertex_2.
+- in Construct_Apollonius_*_2: the constructor object for the Apollonius
+  site or vertex is now taken from the geometric traits.
+- fixed bug in visualization of primal Apollonius graph when the dual Voronoi
+  edge is degenerate (zero length).
+
 29 May 2005:  Menelaos Karavelas
 - calls to mirror_vertex and mirror_index made through the faces are
   now made through the TDS

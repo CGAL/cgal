@@ -26,6 +26,7 @@
 #include <CGAL/Apollonius_graph_traits_2.h>
 
 #include <CGAL/Filtered_predicate.h>
+#include <CGAL/Filtered_construction.h>
 
 // includes for the default parameters of the filtered traits
 #include <CGAL/Simple_cartesian.h>
@@ -99,7 +100,22 @@ private:
   typedef
   Apollonius_graph_cartesian_converter<CK, FK, C2F_t>   C2F;
 
+#if 0
+  // the following typedefs have been made in the direction of
+  // providing filtered constructions; however, there is a problem,
+  // namely, the Construct_Apollonius_site_2 functor has two
+  // different operator()'s with two different return types; this
+  // functor should be split in two (along with the appropriate
+  // changes in the spec/concept); see also changes needed for the
+  // filtered construction below.
+  typedef Cartesian_converter<FK, CK, To_double<typename FK::RT> > F2C_t;
+  typedef Cartesian_converter<EK, CK, To_double<typename EK::RT> > E2C_t;
 
+  typedef
+  Apollonius_graph_cartesian_converter<FK, CK, F2C_t>   F2C;
+  typedef
+  Apollonius_graph_cartesian_converter<EK, CK, E2C_t>   E2C;
+#endif
 
   // Types for the construction kernel
   typedef typename CK::Point_2                CK_Point_2;
@@ -170,14 +186,55 @@ public:
   typedef typename CK_traits::Construct_object_2     Construct_object_2;
   typedef typename CK_traits::Assign_2               Assign_2;
 
-// CONSTRUCTIONS
+  // CONSTRUCTIONS
   //--------------
   // vertex and dual site
+protected:
+  typedef typename CK_traits::Construct_Apollonius_vertex_2
+  CK_Construct_Apollonius_vertex_2;
+
+  typedef typename CK_traits::Construct_Apollonius_site_2
+  CK_Construct_Apollonius_site_2;
+
+  typedef typename FK_traits::Construct_Apollonius_vertex_2
+  FK_Construct_Apollonius_vertex_2;
+
+  typedef typename FK_traits::Construct_Apollonius_site_2
+  FK_Construct_Apollonius_site_2;
+
+  typedef typename EK_traits::Construct_Apollonius_vertex_2
+  EK_Construct_Apollonius_vertex_2;
+
+  typedef typename EK_traits::Construct_Apollonius_site_2
+  EK_Construct_Apollonius_site_2;
+
+public:
+#if 0
+  // the following typedefs have been made in the direction of
+  // providing filtered constructions; however, there is a problem,
+  // namely, the Construct_Apollonius_site_2 functor has two
+  // different operator()'s with two different return types; this
+  // functor should be split in two (along with the appropriate
+  // changes in the spec/concept); see also changes needed for the
+  // filtered construction above.
+  typedef Filtered_construction<CK_Construct_Apollonius_vertex_2,
+				EK_Construct_Apollonius_vertex_2,
+				FK_Construct_Apollonius_vertex_2,
+				C2E, C2F, E2C, F2C>
+  Construct_Apollonius_vertex_2;
+
+  typedef Filtered_construction<CK_Construct_Apollonius_site_2,
+				EK_Construct_Apollonius_site_2,
+				FK_Construct_Apollonius_site_2,
+				C2E, C2F, E2C, F2C>
+  Construct_Apollonius_site_2;
+#else
   typedef typename CK_traits::Construct_Apollonius_vertex_2
   Construct_Apollonius_vertex_2;
 
   typedef typename CK_traits::Construct_Apollonius_site_2
   Construct_Apollonius_site_2;
+#endif
 
 private:
   // PREDICATES FOR THE TWO KERNELS
