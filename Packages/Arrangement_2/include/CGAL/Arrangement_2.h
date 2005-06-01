@@ -810,6 +810,22 @@ protected:
                                  bool& new_face);
 
   /*!
+   * Replace the point associated with the given vertex.
+   * \param v The vertex to modify.
+   * \param p The point that should be associated with the edge.
+   */
+  void _modify_vertex (Vertex *v, 
+		       const Point_2& p);
+
+  /*!
+   * Replace the x-monotone curve associated with the given edge.
+   * \param e The edge to modify.
+   * \param cv The curve that should be associated with the edge.
+   */
+  void _modify_edge (Halfedge *he, 
+		     const X_monotone_curve_2& cv);
+
+  /*!
    * Split a given edge into two at a given point, and associate the given
    * x-monotone curves with the split edges.
    * \param e The edge to split (one of the pair of twin halfegdes).

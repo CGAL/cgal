@@ -228,20 +228,37 @@ public:
   }
 
   /*!
-   * Remove a pair of twin halfedges from the arrangement.
-   * \param e A handle for one of the halfedges to be removed.
-   * \pre In case the removal causes the creation of a new hole, e should 
-   *      point at this hole.
-   * \return A handle for the remaining face.
+   * Modify the point associated with a given vertex. The point may be
+   * geometrically different than the one currently associated with the vertex.
+   * \param v The vertex to modify.
+   * \param p The new point to associate with v.
+   * \return A handle for the modified vertex (same as v).
    */
-  Face_handle remove_edge_ex (Halfedge_handle e)
+  Vertex_handle modify_vertex_ex (Vertex_handle v,
+				  const Point_2& p)
   {
-    Face*      f = p_arr->_remove_edge (p_arr->_halfedge (e));
-    
-    CGAL_assertion (f != NULL);
-    return (p_arr->_handle_for (f));
-  }
+    p_arr->_modify_vertex (p_arr->_vertex (v),
+			   p);
 
+    return (v);
+  }
+	
+  /*!
+   * Modify the x-monotone curve associated with a given edge. The curve may be
+   * geometrically different than the one currently associated with the edge.
+   * \param e The edge to modify.
+   * \param cv The new x-monotone curve to associate with e.
+   * \return A handle for the modified edge (same as e).
+   */
+  Halfedge_handle modify_edge_ex (Halfedge_handle e,
+				  const X_monotone_curve_2& cv)
+  {
+    p_arr->_modify_edge (p_arr->_halfedge (e),
+			 cv);
+
+    return (e);
+  }
+	  
   /*!
    * Split a given edge into two at a given point, and associate the given
    * x-monotone curves with the split edges.
@@ -265,6 +282,21 @@ public:
 
     CGAL_assertion (he != NULL);
     return (p_arr->_handle_for (he));
+  }
+
+  /*!
+   * Remove a pair of twin halfedges from the arrangement.
+   * \param e A handle for one of the halfedges to be removed.
+   * \pre In case the removal causes the creation of a new hole, e should 
+   *      point at this hole.
+   * \return A handle for the remaining face.
+   */
+  Face_handle remove_edge_ex (Halfedge_handle e)
+  {
+    Face*      f = p_arr->_remove_edge (p_arr->_halfedge (e));
+    
+    CGAL_assertion (f != NULL);
+    return (p_arr->_handle_for (f));
   }
   //@}
 
