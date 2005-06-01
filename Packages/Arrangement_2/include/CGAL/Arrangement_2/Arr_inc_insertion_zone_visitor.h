@@ -139,15 +139,9 @@ public:
       // and create the vertex.
       if (left_v == invalid_v)
       {
-	X_monotone_curve_2   sub_cv1, sub_cv2;
-	
-	traits->split_2_object() (left_he.curve(),
-				  traits->construct_min_vertex_2_object() (cv),
-				  sub_cv1, sub_cv2);
-
-	// Note that left_he stays valid (and so does prev_he_left).
-	p_arr->split_edge (left_he,
-			   sub_cv1, sub_cv2);
+	_split_edge (left_he,
+		     traits->construct_min_vertex_2_object() (cv),
+		     arr_access);
       }
     }
 
@@ -164,15 +158,9 @@ public:
       // endpoint and create the vertex.
       if (right_v == invalid_v)
       {
-	X_monotone_curve_2   sub_cv1, sub_cv2;
-	
-	traits->split_2_object() (right_he.curve(),
-				  traits->construct_max_vertex_2_object() (cv),
-				  sub_cv1, sub_cv2);
-
-	// Note that right_he stays valid (and so does prev_he_right).
-	p_arr->split_edge (right_he,
-			   sub_cv1, sub_cv2);
+	_split_edge (right_he,
+		     traits->construct_max_vertex_2_object() (cv),
+		     arr_access);
 
 	// Check if we have just split the halfedge that left_he refers to.
 	// If so, prev_he_right's target is now the new vertex, and we have to
@@ -329,6 +317,45 @@ public:
     return (res);
   }
 
+private:
+
+  /*!
+   * Split an arrangement edge.
+   * \param he The edge to split (one of the twin halfedges).
+   * \param p The split point.
+   * \param arr_access An arrangement accessor.
+   */
+  void _split_edge (Halfedge_handle he,
+		    const Point_2& p,
+		    Arr_accessor<Arrangement_2>& arr_access)
+  {
+    // Split the curve at the split point.
+    X_monotone_curve_2   sub_cv1, sub_cv2;
+	
+    traits->split_2_object() (he.curve(),
+			      p,
+			      sub_cv1, sub_cv2);
+
+    // Determine the order we send the split curves to the split_edge function,
+    // depending whether the left point of sub_cv1 equals he's source (if not,
+    // it equals its target).
+    if (traits->equal_2_object()
+	(he.source().point(),
+	 traits->construct_min_vertex_2_object() (sub_cv1)))
+    {
+      arr_access.split_edge_ex (he,
+				p,
+				sub_cv1, sub_cv2);
+    }
+    else
+    {
+      arr_access.split_edge_ex (he,
+				p,
+				sub_cv2, sub_cv1);
+    }
+
+    return;
+  }
 };
 
 CGAL_END_NAMESPACE
