@@ -583,12 +583,16 @@ Arrangement_2<Traits,Dcel>::modify_edge (Halfedge_handle e,
   // Notify the observers that we are about to modify an edge.
   _notify_before_modify_edge (e, cv);
 
+  // Allocate the updated curve.
+  // Note it is important to create this curve before deleting the old one,
+  // that the new curve will have a different memory address than the old one
+  // (crucial for intersection caching in the zone algorithm).
+  Stored_curve_2  *dup_cv = _new_curve (cv);
+
   // Destroy the curve currently associated with the edge.
   _delete_curve (he->curve());
 
-  // Associate it with the new curve.
-  Stored_curve_2  *dup_cv = _new_curve (cv);
-
+  // Associate the edge with the new curve.
   he->set_curve (dup_cv);
 
   // Notify the observers that we have modified the edge.
@@ -736,13 +740,18 @@ Arrangement_2<Traits,Dcel>::split_edge (Halfedge_handle e,
   he1->set_next(he3);
   he1->set_vertex(v);
 
+  // Allocate two new curves that correspond to the split edges.
+  // Note it is important to create these curves before deleting the old
+  // redundant curve, so that the new curves will have a different memory
+  // address than the old one (crucial for intersection caching in the zone
+  // algorithm).
+  Stored_curve_2  *dup_cv1 = _new_curve (cv1);
+  Stored_curve_2  *dup_cv2 = _new_curve (cv2);
+
   // Destroy the curve currently associated with he1 (and its twin he2).
   _delete_curve (he1->curve());
 
   // Associate cv1 and cv2 with the two pair of split halfedges.
-  Stored_curve_2  *dup_cv1 = _new_curve (cv1);
-  Stored_curve_2  *dup_cv2 = _new_curve (cv2);
-
   if (assign_cv1_to_he1)
   {
     he1->set_curve (dup_cv1);
@@ -899,14 +908,15 @@ Arrangement_2<Traits,Dcel>::merge_edge (Halfedge_handle e1,
     he4->previous()->set_next (he2);      
   }
 
+  // Allocate a new curve for the merged edge.
+  Stored_curve_2  *dup_cv = _new_curve (cv);
+
   // Destroy the curve currently associated with the merged edges.
   _delete_curve (he1->curve());
   _delete_curve (he3->curve());
 
   // Set the properties of the merged edge and associate it with the merged
   // curve.
-  Stored_curve_2  *dup_cv = _new_curve (cv);
-
   he1->set_vertex (he3->vertex());
   he1->set_curve (dup_cv);
 

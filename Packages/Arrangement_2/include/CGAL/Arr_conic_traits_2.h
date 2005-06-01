@@ -243,14 +243,28 @@ public:
         return (EQUAL);
 
       // Get a point q on the x-monotone arc with the same x coordinate as p.
-      Point_2  q;
+      Comparison_result  x_res; 
+      Point_2            q;
 
-      if (ker.compare_x_2_object() (p, cv.left()) == EQUAL)
+      if ((x_res = ker.compare_x_2_object() (p, cv.left())) == EQUAL)
+      {
         q = cv.left();
-      else if (ker.compare_x_2_object() (p, cv.right()) == EQUAL)
-        q = cv.right();
+      }
       else
-        q = cv.get_point_at_x (p);
+      {
+	CGAL_precondition (x_res != SMALLER);
+
+	if ((x_res = ker.compare_x_2_object() (p, cv.right())) == EQUAL)
+	{
+	  q = cv.right();
+	}
+	else
+	{
+	  CGAL_precondition (x_res != LARGER);
+
+	  q = cv.get_point_at_x (p);
+	}
+      }
 
       // Compare p with the a point of the curve with the same x coordinate.
       return (ker.compare_y_2_object() (p, q));

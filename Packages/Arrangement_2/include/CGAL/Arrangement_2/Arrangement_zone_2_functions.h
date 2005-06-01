@@ -276,7 +276,7 @@ Arrangement_zone_2<Arrangement,ZoneVisitor>::_direct_split_edge_to_right
 {
   // Make sure that the left endpoint of cv_ins lies on split_he.
   CGAL_assertion (traits->compare_y_at_x_2_object()
-		  (cv_left_pt, split_he.curve()) == EQUAL);
+  		  (cv_left_pt, split_he.curve()) == EQUAL);
 
   // Check whether the given halfedge is directed to the right.
   const bool               split_he_directed_right =
@@ -792,6 +792,7 @@ bool Arrangement_zone_2<Arrangement,ZoneVisitor>::_zone_in_face
     // Obtain the halfedge with the correct direction (which should be the
     // predecessor of sub_cv1 if we split the edge around this vertex).
     right_v = invalid_v;
+
     right_he = _direct_split_edge_to_left (sub_cv1, intersect_he); 
   }
 

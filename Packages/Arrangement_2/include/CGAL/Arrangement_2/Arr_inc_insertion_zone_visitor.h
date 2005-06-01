@@ -25,6 +25,7 @@
  */
 
 #include <CGAL/Arrangement_2/Arr_accessor.h>
+//#define ARR_INC_INSERT_DEBUG
 
 CGAL_BEGIN_NAMESPACE
 

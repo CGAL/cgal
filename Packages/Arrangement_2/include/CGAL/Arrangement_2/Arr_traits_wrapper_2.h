@@ -236,7 +236,7 @@ public:
       const Point_2&  p_r = ((compare_x (r1, r2) == SMALLER) ? r1 : r2);
 
       // The two curves overlap in their x-range if and only if p_l is not
-      // two the right of p_r.
+      // to the right of p_r.
       return (compare_x (p_l, p_r) != LARGER);
     }
   };
