@@ -88,6 +88,20 @@ linear_least_squares_fitting_2(InputIterator begin,
   }
 }
 
+
+// this one deduces the kernel from the point in container
+template < typename InputIterator, 
+           typename Line>
+void 
+linear_least_squares_fitting_2(InputIterator begin,
+                               InputIterator end, 
+                               Line& line)
+{
+  typedef typename std::iterator_traits<InputIterator>::value_type Point;
+  typedef typename Kernel_traits<Point>::Kernel                    K;
+  return CGAL::linear_least_squares_fitting_2(begin,end,line,K());
+}
+
 CGAL_END_NAMESPACE
 
 #endif // CGAL_LINEAR_LEAST_SQUARES_FITTING_3
