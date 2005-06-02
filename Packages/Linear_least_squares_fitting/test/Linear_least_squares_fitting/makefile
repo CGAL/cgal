@@ -39,13 +39,18 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:            \
-                barycenter$(EXE_EXT) 
+                barycenter$(EXE_EXT)\
+		pca$(EXE_EXT) 
 
 barycenter$(EXE_EXT): barycenter$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)barycenter barycenter$(OBJ_EXT) $(LDFLAGS)
 
+pca$(EXE_EXT): pca$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)pca pca$(OBJ_EXT) $(LDFLAGS)
+
 clean: \
-                   barycenter.clean 
+                barycenter.clean\
+		pca.clean
 
 #---------------------------------------------------------------------#
 #                    suffix rules

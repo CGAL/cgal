@@ -27,103 +27,64 @@
 #include <list>
 #include <string>
 #include <CGAL/eigen.h>
+#include <CGAL/centroid.h>
 
 CGAL_BEGIN_NAMESPACE
 
-// should return fitting quality
-template <class InputIterator, class Subspace, class Traits>
-void linear_least_squares_fitting_2(InputIterator first,
-                                    InputIterator past, 
-                                    Subspace& subspace,
-                                    const Traits& fitting_traits) // todo: add default traits
-{
-  // preconditions
-  CGAL_precondition(first != past);
-
-  linear_least_squares_fitting_3(first,past,subspace,fitting_traits);
-}
-
-// compute centroid of a point set
-template <class InputIterator, class Point, class Traits>
-Point centroid(InputIterator first,
-               InputIterator past,
-               const Traits& fitting_traits)
-{
-  typedef typename Traits::FT FT;
-  typedef typename Traits::Vector_3 Vector;
-
-  Vector sum = CGAL::NULL_VECTOR;
-  unsigned int nb_points = 0;
-  for(InputIterator it = first;
-			it != past;
-			it++,nb_points++)
-    sum = sum + (*it-CGAL::ORIGIN);
-  return (CGAL::ORIGIN + sum / (FT)nb_points);
-}
-
-template <class InputIterator, class Plane, class Traits>
-void linear_least_squares_fitting_3(InputIterator first,
-                                    InputIterator past, 
-                                    Plane& plane,
-                                    const Traits& fitting_traits)
+template < typename InputIterator, 
+           typename Line, 
+           typename K >
+void 
+linear_least_squares_fitting_2(InputIterator begin,
+                               InputIterator end, 
+                               Line& line,
+                               const K& k)
 {
   // types
-  typedef typename Traits::FT FT;
-  typedef typename Traits::Line_3 Line;
-  typedef typename Traits::Point_3 Point;
-  typedef typename Traits::Vector_3 Vector;
-  typedef typename Traits::Direction_3 Direction;
+  typedef typename K::FT          FT;
+  typedef typename K::Point_2     Point;
+  typedef typename K::Vector_2    Vector;
+  typedef typename K::Direction_2 Direction;
 
-  Point centroid = centroid<InputIterator,Point>(first,past,fitting_traits);
+  // compute centroid
+  Point c = centroid(begin,end,K());
 
-  // build covariance matrix (semi-definite)
-  FT covariance[6] = {0,
-                      0,0,
-                      0,0,0};
-  FT eigen_values[3] = {0,0,0};
-  FT eigen_vectors[9] = {0,0,0,
-                         0,0,0,
-                         0,0,0};
-  for(InputIterator it = first;
-			it != past;
-			it++)
+  // assemble covariance matrix (semi-definite)
+  // numbering:
+  // 0          
+  // 1 2        
+  FT covariance[3] = {0,0,0};
+  FT eigen_values[2] = {0,0};
+  FT eigen_vectors[4] = {0,0,0,0};
+  for(InputIterator it = begin;
+		    it != end;
+		    it++)
   {
     const Point& p = *it;
-    // numbering in covariance matrix
-    // 0          
-    // 1 2        
-    // 3 4 5      
-    FT dx = p.x()-centroid.x();
-    FT dy = p.y()-centroid.y();
-    FT dz = p.z()-centroid.z();
+    FT dx = p.x()-c.x();
+    FT dy = p.y()-c.y();
     covariance[0] += dx * dx;
     covariance[1] += dx * dy;
     covariance[2] += dy * dy;
-    covariance[3] += dx * dz;
-    covariance[4] += dy * dz;
-    covariance[5] += dz * dz;
   }
 
   // solve for eigenvalues and eigenvectors.
   // eigen values are sorted in descending order, 
   // eigen vectors are sorted in accordance.
-  eigen_semi_definite_symmetric(covariance,3,eigen_vectors,eigen_values);
+  eigen_semi_definite_symmetric(covariance,2,eigen_vectors,eigen_values);
 
-  // check unicity and build fitting plane accordingly
-  if(eigen_values[0] == eigen_values[1] &&
-     eigen_values[1] == eigen_values[2])
+  // check unicity and build fitting line accordingly
+  if(eigen_values[0] == eigen_values[1])
   {
-    // assemble a horizontal plane that goes
+    // isotropic case (infinite number of directions)
+    // by default: assemble a horizontal line that goes
     // through the centroid by default.
-    Direction direction(0,0,1);
-    plane = Plane(centroid,direction);
+    line = Line(c,Direction(1,0));
   }
   else
   {
-    Direction direction(eigen_vectors[6],
-                        eigen_vectors[7],
-                        eigen_vectors[8]);
-    plane = Plane(centroid,direction);
+    Direction direction(eigen_vectors[2],eigen_vectors[3]);
+    line = Line(c,direction);
   }
 }
 
