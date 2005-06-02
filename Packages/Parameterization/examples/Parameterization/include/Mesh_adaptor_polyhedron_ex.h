@@ -216,6 +216,120 @@ public:
         // Call common part of the constructors
         init(mesh, first_boundary_halfedge, last_boundary_halfedge);
     }
+
+private:
+
+    // Utility method that contains the common part of the constructors:
+    // Initialize an adaptator for an existing Polyhedron_ex mesh
+    // The input mesh can be of any genus, but it has to come
+    // with a description of the boundary of a topological disc
+    template<class InputIterator>
+    void init(Polyhedron_ex* mesh,
+              InputIterator first_boundary_halfedge,
+              InputIterator last_boundary_halfedge)
+    {
+        assert(mesh != NULL);
+        m_mesh = mesh;
+
+#ifndef NDEBUG
+        // Index Polyhedron_ex vertices to ease debugging
+        fprintf(stderr,"  index Polyhedron vertices: ");
+        int vtx_index = 0;
+        for (Polyhedron_ex::Vertex_iterator vtx_it = m_mesh->vertices_begin();
+             vtx_it != m_mesh->vertices_end();
+             vtx_it++)
+        {
+    #ifdef DEBUG_TRACE
+            fprintf(stderr, "%d=(%f,%f,%f) ",
+                            (int)vtx_index,
+                            (float)vtx_it->point().x(),
+                            (float)vtx_it->point().y(),
+                            (float)vtx_it->point().z());
+    #endif
+            vtx_it->index(vtx_index++);
+        }
+        fprintf(stderr,"ok\n");
+
+        // Index all halfedges with negative numbers to ease debugging
+        fprintf(stderr,"  index all halfedges with negative numbers: ");
+        int he_index = -1;
+        for (Halfedge_iterator he_it = m_mesh->halfedges_begin();
+             he_it != m_mesh->halfedges_end();
+             he_it++)
+        {
+            he_it->index(he_index--);
+        }
+        fprintf(stderr,"ok\n");
+
+    #ifdef DEBUG_TRACE
+        // Dump input outer boundary (for debug purpose)
+        fprintf(stderr,"  input boundary is: ");
+        for (InputIterator border_it = first_boundary_halfedge;
+          border_it != last_boundary_halfedge;
+          border_it++)
+        {
+          fprintf(stderr, "%d->%d ",
+                          (int)(*border_it)->opposite()->vertex()->index(),
+                          (int)(*border_it)->vertex()->index());
+        }
+        fprintf(stderr,"ok\n");
+    #endif
+#endif
+
+        // Check that the input boundary is a loop =>
+        // it "cuts" a topological disc inside m_mesh
+        bool input_boundary_is_valid =
+                            (first_boundary_halfedge != last_boundary_halfedge);
+        assert(input_boundary_is_valid);
+        for (InputIterator border_it = first_boundary_halfedge;
+             border_it != last_boundary_halfedge;
+             border_it++)
+        {
+            // Get next halfedge iterator
+            InputIterator next_it = border_it;
+            next_it++;
+            if (next_it == last_boundary_halfedge)
+                next_it = first_boundary_halfedge;
+            // Check that end of current HE == start of next one
+            input_boundary_is_valid =
+                ((*border_it)->vertex() == (*next_it)->opposite()->vertex());
+            assert(input_boundary_is_valid);
+        }
+        // TO DO: check that the input boundary is not self-intersecting
+
+        // Copy input outer boundary
+        assert(m_boundary.empty());
+        for (InputIterator border_it = first_boundary_halfedge;
+             border_it != last_boundary_halfedge;
+             border_it++)
+        {
+            m_boundary.push_back(*border_it);
+        }
+
+        // Set seaming flag of all halfedges to INNER, BORDER and OUTER
+        // wrt the boundary m_boundary
+        flag_halfedges_seaming();
+
+#ifndef NDEBUG
+        // Index vertices right away to ease debugging
+        index_mesh_vertices();
+
+    #ifdef DEBUG_TRACE
+        // Dump seam (for debug purpose)
+        fprintf(stderr,"  seam is: ");
+        for (Border_vertex_iterator border_it = mesh_border_vertices_begin();
+             border_it != mesh_border_vertices_end();
+             border_it++)
+        {
+            fprintf(stderr, "H%d ", get_vertex_index(border_it));
+        }
+        fprintf(stderr,"ok\n");
+    #endif
+#endif
+    }
+
+public :
+
     // Default copy constructor and operator =() are fine
 
     //
@@ -259,10 +373,12 @@ public:
         int index = 0;
         for (Vertex_iterator it=mesh_vertices_begin(); it!=mesh_vertices_end(); it++)
         {
-            //fprintf(stderr, "H%d=%d->%d ",
-            //                index,
-            //                (int)it->opposite()->vertex()->index(),
-            //                (int)it->vertex()->index());
+#ifdef DEBUG_TRACE
+            fprintf(stderr, "H%d=%d->%d ",
+                            index,
+                            (int)it->opposite()->vertex()->index(),
+                            (int)it->vertex()->index());
+#endif
             set_vertex_index(it, index++);
         }
         fprintf(stderr,"ok\n");
@@ -385,15 +501,17 @@ public:
         assert(is_valid(adaptor_vertex));
 
         // Update all halfedges sharing the same vertex (except outer halfedges)
-        //std::cerr << "    H" << adaptor_vertex->index() << "(" << adaptor_vertex->vertex()->index() << ") <- (" << uv.x() << "," << uv.y() << ")" << std::endl;
+#ifdef DEBUG_TRACE
+        std::cerr << "    H" << adaptor_vertex->index() << "(" << adaptor_vertex->vertex()->index() << ") <- (" << uv.x() << "," << uv.y() << ")" << std::endl;
+#endif
         Polyhedron_ex::Vertex_handle polyhedron_vertex = adaptor_vertex->vertex();
         Halfedge_around_vertex_circulator cir     = polyhedron_vertex->vertex_begin();
-//#ifndef NDEBUG
-//  // debug test
-//  cir --;
+//#ifdef DEBUG_TRACE
+//        cir --;
 //#endif
         Halfedge_around_vertex_circulator cir_end = cir;
-        CGAL_For_all(cir, cir_end) {
+        CGAL_For_all(cir, cir_end) 
+        {
             // if on the same side of a seam
             if (get_adaptor_vertex(cir) == adaptor_vertex) {
                 // skip outer halfedges
@@ -493,109 +611,6 @@ private:
         boundary = *(pBackbone->halfedges());
         mesh->free_skeleton();
         return boundary;
-    }
-
-    // Utility method that contains the common part of the constructors:
-    // Initialize an adaptator for an existing Polyhedron_ex mesh
-    // The input mesh can be of any genus, but it has to come
-    // with a description of the boundary of a topological disc
-    template<class InputIterator>
-    void init(Polyhedron_ex* mesh,
-              InputIterator first_boundary_halfedge,
-              InputIterator last_boundary_halfedge)
-    {
-        assert(mesh != NULL);
-        m_mesh = mesh;
-
-#ifndef NDEBUG
-        // Index Polyhedron_ex vertices to ease debugging
-        fprintf(stderr,"  index Polyhedron vertices: ");
-        int vtx_index = 0;
-        for (Polyhedron_ex::Vertex_iterator vtx_it = m_mesh->vertices_begin();
-             vtx_it != m_mesh->vertices_end();
-             vtx_it++)
-        {
-            //fprintf(stderr, "%d=(%f,%f,%f) ",
-            //                (int)vtx_index,
-            //                (float)vtx_it->point().x(),
-            //                (float)vtx_it->point().y(),
-            //                (float)vtx_it->point().z());
-            vtx_it->index(vtx_index++);
-        }
-        fprintf(stderr,"ok\n");
-
-        // Index all halfedges with negative numbers to ease debugging
-        fprintf(stderr,"  index all halfedges with negative numbers: ");
-        int he_index = -1;
-        for (Halfedge_iterator he_it = m_mesh->halfedges_begin();
-             he_it != m_mesh->halfedges_end();
-             he_it++)
-        {
-            he_it->index(he_index--);
-        }
-        fprintf(stderr,"ok\n");
-
-        //// Dump input outer boundary (for debug purpose)
-        //fprintf(stderr,"  input boundary is: ");
-        //for (InputIterator border_it = first_boundary_halfedge;
-        //  border_it != last_boundary_halfedge;
-        //  border_it++)
-        //{
-        //  fprintf(stderr, "%d->%d ",
-        //                  (int)(*border_it)->opposite()->vertex()->index(),
-        //                  (int)(*border_it)->vertex()->index());
-        //}
-        //fprintf(stderr,"ok\n");
-#endif
-
-        // Check that the input boundary is a loop =>
-        // it "cuts" a topological disc inside m_mesh
-        bool input_boundary_is_valid =
-                            (first_boundary_halfedge != last_boundary_halfedge);
-        assert(input_boundary_is_valid);
-        for (InputIterator border_it = first_boundary_halfedge;
-             border_it != last_boundary_halfedge;
-             border_it++)
-        {
-            // Get next halfedge iterator
-            InputIterator next_it = border_it;
-            next_it++;
-            if (next_it == last_boundary_halfedge)
-                next_it = first_boundary_halfedge;
-            // Check that end of current HE == start of next one
-            input_boundary_is_valid =
-                ((*border_it)->vertex() == (*next_it)->opposite()->vertex());
-            assert(input_boundary_is_valid);
-        }
-        // TO DO: check that the input boundary is not self-intersecting
-
-        // Copy input outer boundary
-        assert(m_boundary.empty());
-        for (InputIterator border_it = first_boundary_halfedge;
-             border_it != last_boundary_halfedge;
-             border_it++)
-        {
-            m_boundary.push_back(*border_it);
-        }
-
-        // Set seaming flag of all halfedges to INNER, BORDER and OUTER
-        // wrt the boundary m_boundary
-        flag_halfedges_seaming();
-
-#ifndef NDEBUG
-        // Index vertices right away to ease debugging
-        index_mesh_vertices();
-
-        //// Dump seam (for debug purpose)
-        //fprintf(stderr,"  seam is: ");
-        //for (Border_vertex_iterator border_it = mesh_border_vertices_begin();
-        //     border_it != mesh_border_vertices_end();
-        //     border_it++)
-        //{
-        //    fprintf(stderr, "H%d ", get_vertex_index(border_it));
-        //}
-        //fprintf(stderr,"ok\n");
-#endif
     }
 
     // Set seaming flag of all halfedges to INNER, BORDER and OUTER

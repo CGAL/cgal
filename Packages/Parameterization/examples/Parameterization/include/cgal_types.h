@@ -139,16 +139,25 @@ public:
     // texture coordinates
     double u() const { return m_u; }
     double v() const { return m_v; }
-    void u(double u) { 
-        //std::cerr << "      H" << index() << "(" << opposite()->vertex()->index() << "->" << vertex()->index() << ") <- (u=" << u << ",-)\n";
+    void u(double u) 
+    { 
+#ifdef DEBUG_TRACE
+        std::cerr << "      H" << index() << "(" << opposite()->vertex()->index() << "->" << vertex()->index() << ") <- (u=" << u << ",-)\n";
+#endif
         m_u = u; 
     }
-    void v(double v) { 
-        //std::cerr << "      H" << index() << "(" << opposite()->vertex()->index() << "->" << vertex()->index() << ") <- (-,v=" << v << ")\n";
+    void v(double v) 
+    { 
+#ifdef DEBUG_TRACE
+        std::cerr << "      H" << index() << "(" << opposite()->vertex()->index() << "->" << vertex()->index() << ") <- (-,v=" << v << ")\n";
+#endif
         m_v = v; 
     }
-    void uv(double u, double v) { 
-        //std::cerr << "      H" << index() << "(" << opposite()->vertex()->index() << "->" << vertex()->index() << ") <- (u=" << u << ",v=" << v << ")\n";
+    void uv(double u, double v) 
+    { 
+#ifdef DEBUG_TRACE
+        std::cerr << "      H" << index() << "(" << opposite()->vertex()->index() << "->" << vertex()->index() << ") <- (u=" << u << ",v=" << v << ")\n";
+#endif
         m_u = u; 
         m_v = v; 
     }

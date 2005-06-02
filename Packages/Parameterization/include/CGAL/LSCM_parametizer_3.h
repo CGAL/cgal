@@ -430,7 +430,7 @@ setup_triangle_relations(LeastSquaresSolver* solver,
     Vertex_const_handle v0, v1, v2;
     int vertexIndex = 0;
     Vertex_around_facet_const_circulator cir = mesh.facet_vertices_begin(facet),
-                                        end = cir;
+                                         end = cir;
     CGAL_For_all(cir, end)
     {
         if (vertexIndex == 0)
@@ -452,7 +452,10 @@ setup_triangle_relations(LeastSquaresSolver* solver,
     int id0 = mesh.get_vertex_index(v0) ;
     int id1 = mesh.get_vertex_index(v1) ;
     int id2 = mesh.get_vertex_index(v2) ;
-    //fprintf(stderr,"    Fill line for triangle (H%d, H%d, H%d): \n", id0, id1, id2);
+
+#ifdef DEBUG_TRACE
+    fprintf(stderr,"    Fill line for triangle (H%d, H%d, H%d): \n", id0, id1, id2);
+#endif
 
     // Get the vertices position
     const Point_3& p0 = mesh.get_vertex_position(v0) ;
@@ -470,6 +473,10 @@ setup_triangle_relations(LeastSquaresSolver* solver,
     NT c = z02.x() ;
     NT d = z02.y() ;
     CGAL_parameterization_assertion(b == 0.0) ;
+
+#ifdef DEBUG_TRACE
+    fprintf(stderr,"      a=%f b=%f c=%f d=%f\n", (float)a, (float)b, (float)c, (float)d);
+#endif
 
     // Create 2 lines in the linear system per triangle (1 for u, 1 for v)
     // LSCM equation is:
@@ -505,7 +512,10 @@ setup_triangle_relations(LeastSquaresSolver* solver,
     solver->add_coefficient(v1_id,   -c) ;
     solver->add_coefficient(v2_id,    a) ;
     solver->end_row() ;
-    //fprintf(stderr,"      ok\n");
+
+#ifdef DEBUG_TRACE
+    fprintf(stderr,"      ok\n");
+#endif
 
     return OK;
 }

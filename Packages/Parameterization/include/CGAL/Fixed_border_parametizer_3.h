@@ -424,14 +424,16 @@ setup_inner_vertex_relations(Matrix* A,
 
     int i = mesh.get_vertex_index(vertex);
 
+#ifdef DEBUG_TRACE
+    fprintf(stderr,"    Fill line H%d: \n", i);
+#endif
+
     // circulate over vertices around 'vertex' to compute Wii and Wijs
-    //fprintf(stderr,"    Fill line H%d: \n", i);
     NT Wii = 0;
     int vertexIndex = 0;
     Vertex_around_vertex_const_circulator vj = mesh.vertices_around_vertex_begin(vertex);
-//#ifndef NDEBUG
-//  // debug test
-//  vj --;
+//#ifdef DEBUG_TRACE
+//    vj --;
 //#endif
     Vertex_around_vertex_const_circulator end = vj;
     CGAL_For_all(vj, end)
@@ -444,10 +446,13 @@ setup_inner_vertex_relations(Matrix* A,
 
         // Get j index
         int j = mesh.get_vertex_index(vj);
-        //fprintf(stderr,"      neighbor H%d -> wij = %5.2f\n", j, (float)Wij);
 
         // Set Wij in matrix
         A->set_coef(i,j, Wij);
+
+#ifdef DEBUG_TRACE
+        fprintf(stderr,"      neighbor H%d -> wij = %5.2f\n", j, (float)Wij);
+#endif
 
         vertexIndex++;
     }
@@ -456,7 +461,10 @@ setup_inner_vertex_relations(Matrix* A,
         std::cerr << "  error ERROR_NON_TRIANGULAR_MESH!" << std::endl;
         return ERROR_NON_TRIANGULAR_MESH;
     }
-    //fprintf(stderr,"      ok\n");
+
+#ifdef DEBUG_TRACE
+    fprintf(stderr,"      ok\n");
+#endif
 
     // Set Wii in matrix
     A->set_coef(i,i, Wii);

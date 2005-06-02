@@ -254,6 +254,11 @@ Two_vertices_parametizer_3<Adaptor>::parameterize_border(Adaptor* mesh)
     mesh->set_vertex_parameterized(vxmin, true) ;
     mesh->set_vertex_parameterized(vxmax, true) ;
 
+#ifdef DEBUG_TRACE
+    std::cerr << "    H" << vxmin->index() << "(" << vxmin->vertex()->index() << ") parameterized " << std::endl;
+    std::cerr << "    H" << vxmax->index() << "(" << vxmax->vertex()->index() << ") parameterized " << std::endl;
+#endif
+
     std::cerr << "    done" << std::endl;
 
     return Parametizer_3<Adaptor>::OK;
