@@ -361,14 +361,12 @@ namespace CircularFunctors {
         // But they could share the right vertical tangent point.
         if (a1.right() == a2.right()) {
             *res++ = make_object
-	      (std::make_pair(a1.right(),static_cast<unsigned>(1)));
-            return res;
+	      (std::make_pair(a1.right(),static_cast<unsigned>(0)));
         }
         // Or they could share the left vertical tangent point.
         if (a1.left() == a2.left()) {
             *res++ = make_object
-	      (std::make_pair(a1.left(),static_cast<unsigned>(1)));
-            return res;
+	      (std::make_pair(a1.left(),static_cast<unsigned>(0)));
         }
         return res;
       };
