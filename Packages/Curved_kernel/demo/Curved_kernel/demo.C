@@ -80,7 +80,7 @@ int main() {
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Arr_naive_point_location.h>
 
-//typedef CGAL::MP_Float                                          NT;
+// typedef CGAL::MP_Float                                          NT;
 typedef CGAL::Gmpq                                          NT;
 // typedef CGAL::Lazy_exact_nt<CGAL::Gmpq>                     NT;
 // typedef CGAL::Lazy_exact_nt<CGAL::Quotient<CGAL::MP_Float> >    NT;

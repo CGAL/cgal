@@ -47,8 +47,9 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:            \
-                demo_conic$(EXE_EXT) \
-                demo$(EXE_EXT) 
+                demo$(EXE_EXT) \
+                demo_elias$(EXE_EXT) 
+#                demo_conic$(EXE_EXT) 
 
 demo.moc: demo.C
 	${QT_MOC} -o demo.moc $<
