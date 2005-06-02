@@ -57,7 +57,6 @@ private:
   typedef typename Arrangement_2::Halfedge              Halfedge;
   typedef typename Arrangement_2::Face                  Face;
   
-
   Arrangement_2  *p_arr;           // The associated arrangement.
 
 public:
@@ -297,6 +296,100 @@ public:
     
     CGAL_assertion (f != NULL);
     return (p_arr->_handle_for (f));
+  }
+  //@}
+
+  /// \name Obtaining wrapped pointers to DCEL features (for hashing purposes).
+  //@{
+
+  /*! \class
+   * A wrapper class for a DCEL vertex pointer.
+   */
+  class Vertex_pointer
+  {
+    friend class Arr_accessor<Arrangement_2>;
+
+  private:
+    const Vertex     *p_v;
+
+    /*! Constructor from a vertex pointer. */
+    Vertex_pointer (const Vertex *v) :
+      p_v (v)
+    {}
+
+  public:
+
+    /*! Get the vertex. */
+    const Vertex& operator* () const
+    {
+      return (*p_v);
+    }
+  };
+
+  /*! Convert a vertex handle to a DCEL vertex pointer. */
+  Vertex_pointer vertex_pointer (Vertex_handle v)
+  {
+    return (Vertex_pointer (p_arr->_vertex (v)));
+  }
+
+  /*! \class
+   * A wrapper class for a DCEL halfedge pointer.
+   */
+  class Halfedge_pointer
+  {
+    friend class Arr_accessor<Arrangement_2>;
+
+  private:
+    const Halfedge   *p_he;
+
+    /*! Constructor from a halfedge pointer. */
+    Halfedge_pointer (const Halfedge *he) :
+      p_he (he)
+    {}
+
+  public:
+
+    /*! Get the halfedge. */
+    const Halfedge& operator* () const
+    {
+      return (*p_he);
+    }
+  };
+
+  /*! Convert a halfedge handle to a DCEL halfedge pointer. */
+  Halfedge_pointer halfedge_pointer (Halfedge_handle e)
+  {
+    return (Halfedge_pointer (p_arr->_halfedge (e)));
+  }
+
+  /*! \class
+   * A wrapper class for a DCEL face pointer.
+   */
+  class Face_pointer
+  {
+    friend class Arr_accessor<Arrangement_2>;
+
+  private:
+    const Face       *p_he;
+
+    /*! Constructor from a face pointer. */
+    Face_pointer (const Face *he) :
+      p_he (he)
+    {}
+
+  public:
+
+    /*! Get the face. */
+    const Face& operator* () const
+    {
+      return (*p_he);
+    }
+  };
+
+  /*! Convert a face handle to a DCEL face pointer. */
+  Face_pointer face_pointer (Face_handle e)
+  {
+    return (Face_pointer (p_arr->_face (e)));
   }
   //@}
 
