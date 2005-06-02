@@ -183,12 +183,16 @@ namespace CGALi {
     const Circular_arc_endpoint_2 & left() const
     {
       assert(is_x_monotone());
+      assert(on_upper_part() ? compare_xy(_end,_begin)<0
+	     : compare_xy(_begin,_end)<0);
       return on_upper_part() ? _end : _begin;
     }
 
     const Circular_arc_endpoint_2 & right() const
     {
       assert(is_x_monotone());
+      assert(on_upper_part() ? compare_xy(_end,_begin)<0
+	     : compare_xy(_begin,_end)<0);
       return on_upper_part() ? _begin : _end;
     }
 
