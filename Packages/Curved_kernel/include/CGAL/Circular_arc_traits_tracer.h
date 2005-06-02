@@ -165,16 +165,17 @@ public:
   equal_2_object() const
   { return Equal_2(this); }
 
-  struct Construct_intersections_2 {
+  struct Intersect_2 {
 
-    Construct_intersections_2(const Self *tt) :t(tt) {}
+    Intersect_2(const Self *tt) :t(tt) {}
 
     const Self *t;
 
     template < class OutputIterator >
     OutputIterator
     CGAL_NO_INLINE
-    operator()(const Circle & c1, const Circle & c2, OutputIterator res)
+    operator()(const Circle & c1, const Circle & c2, 
+	       OutputIterator res) const
     {
       CGAL_PROFILER(__FUNCTION__);
       CGAL_DEBUG(2, c1.id() << ", " << c2.id());
@@ -182,7 +183,7 @@ public:
       t->traits().construct_intersections_2_object()(c1, c2,
                                                    std::back_inserter(ret));
       
-      if (level <= debug_level)
+      if (2 <= debug_level)
 	{
 	  std::cout << "         returns : ";
           for(int i=0; i<ret.size(); ++i) {
@@ -211,11 +212,52 @@ public:
       
       return std::copy(ret.begin(), ret.end(), res);
     }
+
+    template < class OutputIterator >
+    OutputIterator
+    CGAL_NO_INLINE
+    operator()(const Circular_arc & c1, const Circular_arc & c2, 
+	       OutputIterator res) const
+    {
+      CGAL_PROFILER(__FUNCTION__);
+      CGAL_DEBUG(2, c1.id() << ", " << c2.id());
+      std::vector<CGAL::Object> ret;
+      t->traits().intersect_2_object()(c1, c2, std::back_inserter(ret));
+      
+      if (2 <= debug_level)
+	{
+	  std::cout << "         returns : ";
+          for(unsigned i=0; i<ret.size(); ++i) {
+	    Point_2 p;
+	    Circular_arc c;
+	    std::pair<Point_2, unsigned> pp;
+	    if (assign(p, ret[i])) {
+	      std::cout << p << "  ";
+	    }
+	    else if (assign(c, ret[i])) {
+	      std::cout << c << "  ";
+	    }
+	    else if (assign(pp, ret[i])) {
+	      std::cout << " pair ( " << pp.first << " ; " <<
+		pp.second << " )  ";
+	    }
+	    else {
+	      std::cout << " [ something else ? ] ";
+	    }
+	  }
+	  --t->nested_level;
+	  if (t->nested_level != 0)
+	    std::cout << "   [ nested level " << t->nested_level << " ]";
+	  std::cout << std::endl;
+	}
+      
+      return std::copy(ret.begin(), ret.end(), res);
+    }
   };
 
-  Construct_intersections_2
-  construct_intersections_2_object() const
-  { return Construct_intersections_2(this); }
+  Intersect_2
+  intersect_2_object() const
+  { return Intersect_2(this); }
 
 
   CGAL::Comparison_result

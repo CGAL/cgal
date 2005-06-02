@@ -56,6 +56,7 @@ public:
   public:
     const Point_2& operator() (const X_monotone_curve_2 & cv) const
     {
+      assert( CurvedKernel().compare_xy_2_object()(cv.left(),cv.right())==CGAL::SMALLER);
       return (cv.left());
     }
   };
@@ -70,6 +71,7 @@ public:
      */
     const Point_2& operator() (const X_monotone_curve_2 & cv) const
     {
+      assert( CurvedKernel().compare_xy_2_object()(cv.left(),cv.right())==CGAL::SMALLER);
       return (cv.right());
     }
   };
@@ -77,6 +79,8 @@ public:
   class Is_vertical_2
   {
   public:
+    typedef bool result_type;
+
     // TO BE IMPLEMENTED !!!!!!!
     bool operator() (const X_monotone_curve_2& cv) const
     {
