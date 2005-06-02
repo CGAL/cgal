@@ -9,7 +9,7 @@ void eigen_semi_definite_symmetric(const FT *mat,
 {
   static const FT EPS = 0.00001;
   static int MAX_ITER = 100;
-  static const FT M_PI = 3.14159265358979323846;
+  static const FT PPI = 3.14159265358;
   FT *a,*v;
   FT a_norm,a_normEPS,thr,thr_nn;
   int nb_iter = 0;
@@ -103,7 +103,7 @@ void eigen_semi_definite_symmetric(const FT *mat,
                   delta = a_ll - a_mm;
                   
                   if( delta == 0.0 ) {
-                      x = - M_PI/4 ; 
+                      x = - PPI/4 ; 
                   } else {
                       x = - atan( (a_lm+a_lm) / delta ) / 2.0 ;
                   }

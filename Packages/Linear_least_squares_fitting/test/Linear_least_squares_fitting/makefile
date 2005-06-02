@@ -6,7 +6,7 @@
 #---------------------------------------------------------------------#
 # Choose the right include file from the <cgalroot>/make directory.
 
-# CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE
+CGAL_MAKEFILE = /proj/geometrica/home/CGAL/makefiles/internal-Linux
 include $(CGAL_MAKEFILE)
 
 #---------------------------------------------------------------------#
@@ -39,8 +39,8 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:            \
-                barycenter$(EXE_EXT)\
 		pca$(EXE_EXT) 
+                #barycenter$(EXE_EXT)\
 
 barycenter$(EXE_EXT): barycenter$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)barycenter barycenter$(OBJ_EXT) $(LDFLAGS)
