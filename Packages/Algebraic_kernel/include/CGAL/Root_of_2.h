@@ -269,8 +269,6 @@ template < typename RT >
 Comparison_result
 compare(const Root_of_2<RT> &a, const Root_of_2<RT> &b)
 {
-  std::cout<< "a: " << CGAL::to_double(a) 
-	   << " b: " << CGAL::to_double(b) << std::endl;
   assert(is_valid(a) && is_valid(b));
 
   // Now a and b are both of degree 2.
