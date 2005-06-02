@@ -1397,7 +1397,7 @@ public:
   /*! Get a handle to the current halfedge. */
   _Halfedge_handle<Traits_, Dcel> operator* () const
   {
-    return _Vertex_handle<Traits_, Dcel> (&(*hit));
+    return _Halfedge_handle<Traits_, Dcel> (&(*hit));
   }
 
   /*! Get a pointer to the current halfedge. */
