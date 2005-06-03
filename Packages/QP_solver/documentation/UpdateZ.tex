@@ -652,16 +652,16 @@ U_{Z_{4}}
 Due to the fact variable $x_{i}$ has been selected to be the leaving variable with $x_{j}$ entering by Ratio Test Step~1 we have
 \begin{equation}
 \label{precond:pivot}
-\left(M_{B}^{-1}\right)_{\beta(i), \bullet}\zeta \neq 0
+\left(M_{B}^{-1}\right)_{\beta(i), \bullet}\eta \neq 0
 \end{equation}
-where $\zeta$ denotes the entering column. 
+where $\eta$ denotes the entering column. 
 We distinguish according to Equations~(\ref{update:o_rep_o})
 to~(\ref{update:s_rep_s}) the following cases:
 
 \paragraph{$\mathbf{U_{Z_{1}}}$: $j \in O \setminus B$ replaces $i \in B_{O}$.}
-According to~(\ref{update:o_rep_o}) we have for the entering column $\zeta$
+According to~(\ref{update:o_rep_o}) we have for the entering column $\eta$
 \begin{equation}
-\zeta:=
+\eta:=
 \left(
 \begin{array}{c}
 A_{C, j} \\
@@ -678,7 +678,7 @@ such that the pivoting precondition~(\ref{precond:pivot})
 for the basis matrix inverse in terms of
 the reduced basis matrix inverse becomes
 \begin{eqnarray}
-\left(M_{B}^{-1}\right)_{\beta_{O}(i), \bullet} \zeta
+\left(M_{B}^{-1}\right)_{\beta_{O}(i), \bullet} \eta
 &=&
 \left(\check{M}_{B}^{-1}\right)_{\beta_{O}(i),C}A_{C,j}
 +\left(\check{M}_{B}^{-1}\right)_{\beta_{O}(i), B_{O}}2D_{B_{O},j}
@@ -706,9 +706,9 @@ According to~(\ref{update:s_rep_o}) and the fact that
 \begin{equation}
 A_{S_{B},j}=0, \quad 2D_{B_{O}, j}=0 \quad j \in S \setminus B
 \end{equation}
-we have for the entering column $\zeta$
+we have for the entering column $\eta$
 \begin{equation}
-\zeta:=
+\eta:=
 \left(
 \begin{array}{c}
 A_{C, j} \\
@@ -725,7 +725,7 @@ such that the pivoting precondition~(\ref{precond:pivot})
 for the basis matrix inverse in terms of
 the reduced basis matrix inverse becomes
 \begin{eqnarray}
-\left(M_{B}^{-1}\right)_{\beta_{O}(i), \bullet} \zeta
+\left(M_{B}^{-1}\right)_{\beta_{O}(i), \bullet} \eta
 &=&
 \left(\check{M}_{B}^{-1}\right)_{\beta_{O}(i),C}A_{C,j}
 \nonumber \\
@@ -741,9 +741,9 @@ Since $A_{\sigma(j),j} \neq 0$ the last inequality amounts to
 
 \paragraph{$\mathbf{U_{Z_{3}}}$: $j \in O \setminus B$ replaces $i \in B_{S}$.}
 According to~(\ref{update:o_rep_s})
-we have for the entering column $\zeta$
+we have for the entering column $\eta$
 \begin{equation}
-\zeta:=
+\eta:=
 \left(
 \begin{array}{c}
 A_{C, j} \\
@@ -760,7 +760,7 @@ such that ~(\ref{precond:pivot})
 for the basis matrix inverse in terms of
 the reduced basis matrix inverse becomes
 \begin{eqnarray}
-\left(M_{B}^{-1}\right)_{\beta_{S}(i), \bullet} \zeta
+\left(M_{B}^{-1}\right)_{\beta_{S}(i), \bullet} \eta
 &=&
 \left(\alpha\right)_{\beta_{S}(i), \bullet}
 \left(\check{M}_{B}^{-1}\right)_{B_{O},C}A_{C,j}
@@ -822,9 +822,9 @@ and the fact that
 \begin{equation}
 A_{S_{B},j}=0, \quad 2D_{B_{O}, j}=0, \quad j \in S \setminus B
 \end{equation}
-we have for the entering column $\zeta$
+we have for the entering column $\eta$
 \begin{equation}
-\zeta:=
+\eta:=
 \left(
 \begin{array}{c}
 A_{C, j} \\
@@ -841,7 +841,7 @@ such that the pivoting precondition~(\ref{precond:pivot})
 for the basis matrix inverse in terms of
 the reduced basis matrix inverse becomes
 \begin{eqnarray}
-\left(M_{B}^{-1}\right)_{\beta_{S}(i), \bullet} \zeta
+\left(M_{B}^{-1}\right)_{\beta_{S}(i), \bullet} \eta
 &=&
 \left(\alpha\right)_{\beta_{S}(i), \bullet}
 \left(\check{M}_{B}^{-1}\right)_{B_{O},C}A_{C,j}
@@ -874,7 +874,7 @@ Subsuming this for later reference we obtain
 \label{table:pivot_precond}
 \begin{array}{c|ccc}
 &
-\left(M_{B}^{-1}\right)_{\beta(i), \bullet} \zeta
+\left(M_{B}^{-1}\right)_{\beta(i), \bullet} \eta
 &\neq& 0
  \\
 \hline
@@ -1036,16 +1036,31 @@ and~(\ref{def:rho_varrho}) the
 Update~(\ref{def:update_Z1_Z4}) applied to $\check{M}_{B}^{-1}$
 leads to the following correspondences
 in~(\ref{def:update_Z1_Z4_entities})
-\begin{equation}
-\zeta = \theta,
-\quad
+\begin{eqnarray}
+\label{def:zeta_Z1}
+\zeta
+&=&
+\theta + \left(2D_{j,j}-\theta_{\beta_{O}(i)}\right)e_{\beta_{O}(i)}
+= \theta+2\left(D_{j,j}-D_{i,j}\right)e_{\beta_{O}(i)} \\
 M_{i, \bullet}^{-1}
-=
+&=&
 \left(\check{M}_{B}^{-1}\right)_{\beta_{O}(i), \bullet}
-=
-\rho^{T}
+= \rho^{T}
+\end{eqnarray}
+According to table~(\ref{table:leaving_precond})
+the leaving variable precondition~(\ref{precond:leaving})
+in terms of the reduced basis inverse for $U_{Z_{1}}$ is 
+\begin{equation}
+\label{precond:leaving_Z1}
+\left(\check{M}_{B}^{-1}\right)_{\beta_{O}(i),\beta_{O}(i)}=0 
 \end{equation}
-According to table~(\ref{table:pivot_precond}) the
+which, together with the Definitions~(\ref{def:update_Z1_Z4_entities}),
+implies
+\begin{equation}
+\label{eq:k_3_zero}
+k_{3} = 0
+\end{equation}
+Furthermore, according to table~(\ref{table:pivot_precond}) the
 pivoting precondition~(\ref{precond:pivot})
 in terms of the reduced basis inverse for $U_{Z_{1}}$ is
 \begin{equation*}
@@ -1053,22 +1068,17 @@ in terms of the reduced basis inverse for $U_{Z_{1}}$ is
 =
 \left(\check{M}_{B}^{-1}\right)_{\beta_{O}(i), \bullet}\theta \neq 0
 \end{equation*}
-which together with the Definitions~(\ref{def:update_Z1_Z4_entities}) implies 
+which, together with the leaving variable
+precondition~(\ref{precond:leaving_Z1}) and~(\ref{def:zeta_Z1}) is equivalent
+to
+\begin{equation*}
+\rho^{T}\zeta \neq 0,
+\end{equation*}  
+which in turn together with the Definitions~(\ref{def:update_Z1_Z4_entities})
+implies 
 \begin{equation}
 \label{ineq:Z_1_k_1}
 k_{1} \neq 0
-\end{equation}
-Furthermore according to table~(\ref{table:leaving_precond})
-the leaving variable precondition~(\ref{precond:leaving})
-in terms of the reduced basis inverse for $U_{Z_{1}}$ is 
-\begin{equation*}
-\left(\check{M}_{B}^{-1}\right)_{\beta_{O}(i),\beta_{O}(i)}=0 
-\end{equation*}
-which, again, together with the Definitions~(\ref{def:update_Z1_Z4_entities})
-implies
-\begin{equation}
-\label{eq:k_3_zero}
-k_{3} = 0
 \end{equation}
 (\ref{ineq:Z_1_k_1}) and~(\ref{eq:k_3_zero}) together with
 Equation~(\ref{eq:det(Q)}) imply, in accordance with Lemma~(\ref{lem:main}),  
@@ -1114,21 +1124,21 @@ where $\hat{z}$ is the new denominator and
 \begin{equation}
 \label{def:update_Z1_entities}
 \begin{array}{rclcrcl}
-\hat{v}
-&:=&
-\hat{\check{M}}_{B}^{-1}\theta - d e_{\beta_{O}(i)}
-&&
 \hat{\rho}
 &:=&
 \left(\hat{\check{M}}_{B}^{-1}\right)_{\bullet, \beta_{O}(i)}
+&&
+\hat{v}
+&:=&
+\hat{\check{M}}_{B}^{-1}\zeta - d e_{\beta_{O}(i)}
 \\
 \hat{k}_{1}
 &:=&
-\hat{\rho}^{T}\theta
+\hat{\rho}^{T}\zeta
 &&
 \hat{k}_{2}
 &:=&
-d\theta_{\beta_{O}(i)}- \theta^{T}\hat{\check{M}}_{B}^{-1}\theta
+d\zeta_{\beta_{O}(i)}- \zeta^{T}\hat{\check{M}}_{B}^{-1}\zeta
 \\
 \hat{z}
 &:=&
@@ -1147,20 +1157,32 @@ and~(\ref{def:rho_varrho})
 the Update~(\ref{def:update_Z1_Z4})
 applied to $\check{M}_{B}^{-1}$ leads to the follwing correspondences
 in~(\ref{def:update_Z1_Z4_entities})
-\begin{equation}
-\zeta=\vartheta^{T},
-\quad
-M_{i, \bullet}^{-1}
+\begin{eqnarray}
+\label{def:zeta_Z4}
+\zeta
+&=&
+\vartheta^{T} 
++ 
+\left(
+  \left(\check{M}_{B}\right)_{\gamma_{C}(\sigma(i)),\gamma_{C}(\sigma(i))}
+  - \vartheta_{\gamma_{C}(\sigma(j))}
+\right)
+e_{\gamma_{C}(\sigma(j))}^{T}
 =
+\vartheta^{T} 
+\\
+M_{i, \bullet}^{-1}
+&=&
 \left(\check{M}_{B}^{-1}\right)_{\bullet, \gamma_{C}(\sigma(j))}
 =
 \varrho^{T}
-\end{equation}
+\end{eqnarray}
 According to table~(\ref{table:pivot_precond}) the
 pivoting precondition~(\ref{precond:pivot})
-in terms of the reduced basis inverse for $U_{Z_{4}}$ is
+in terms of the reduced basis inverse for $U_{Z_{4}}$ is together
+with~(\ref{def:zeta_Z4})
 \begin{equation*}
-\vartheta \varrho^{T} \neq 0
+\vartheta \varrho^{T}= \zeta^{T} \varrho^{T} \neq 0,
 \end{equation*}
 which together with the Definitions~(\ref{def:update_Z1_Z4_entities}) implies 
 \begin{equation}
@@ -1169,9 +1191,12 @@ k_{1} \neq 0
 \end{equation}
 Furthermore according to table~(\ref{table:leaving_precond})
 the leaving variable precondition~(\ref{precond:leaving})
-in terms of the reduced basis inverse for $U_{Z_{4}}$ is 
+in terms of the reduced basis inverse for $U_{Z_{4}}$ is
+together with~(\ref{def:zeta_Z4})
 \begin{equation*}
-\vartheta\check{M}_{B}^{-1}\vartheta^{T} = 0 
+\vartheta\check{M}_{B}^{-1}\vartheta^{T}
+=
+\zeta_{\gamma_{C}(\sigma(j))}-\zeta^{T}\check{M}_{B}^{-1}\zeta= 0 
 \end{equation*}
 which, again, together with the Definitions~(\ref{def:update_Z1_Z4_entities})
 implies
@@ -1224,7 +1249,7 @@ where $\hat{z}$ is the new denominator and
 \begin{array}{rclcrcl}
 \hat{v}
 &:=&
-\hat{\check{M}}_{B}^{-1}\vartheta^{T} -de_{\gamma_{C}(\sigma(j))}
+\hat{\check{M}}_{B}^{-1}\zeta -de_{\gamma_{C}(\sigma(j))}
 &&
 \hat{\varrho}^{T}
 &:=&
@@ -1232,7 +1257,7 @@ where $\hat{z}$ is the new denominator and
 \\
 \hat{k}_{1}
 &:=&
-\hat{\varrho}\vartheta^{T}
+\hat{\varrho}\zeta
 &&
 \hat{k}_{3}
 &:=&
@@ -2256,27 +2281,27 @@ B_{O}^{\prime}
 \\
 \Psi_{1}
 & \hat{\rho}
-& \hat{\check{M}}_{B}^{-1}\vartheta^{T}-de_{\gamma_{C}(\sigma(j))}
+& \hat{\check{M}}_{B}^{-1}\zeta-de_{\gamma_{C}(\sigma(j))}
 \\
 \Psi_{2}
-& \hat{\check{M}}_{B}^{-1}\theta-de_{\beta_{O}(i)}
+& \hat{\check{M}}_{B}^{-1}\zeta-de_{\beta_{O}(i)}
 & \hat{\varrho}^{T}
 \\
 \omega_{0}
-& \left(\hat{\rho}^{T}\theta\right)^{2}
-& \left(\hat{\varrho}\vartheta^{T}\right)^{2}
+& \left(\hat{\rho}^{T}\zeta\right)^{2}
+& \left(\hat{\varrho}\zeta\right)^{2}
 \\
 \omega_{1}
 & -\left(
-   d\theta_{\beta_{O}(i)}-\theta^{T}\hat{\check{M}}_{B}^{-1}\theta
+   d\zeta_{\beta_{O}(i)}-\zeta^{T}\hat{\check{M}}_{B}^{-1}\zeta
   \right) 
 & -\left(
    \hat{\check{M}}_{B}^{-1}
   \right)_{\gamma_{C}(\sigma(j)), \gamma_{C}(\sigma(j))} 
 \\
 \omega_{2}
-& -\hat{\rho}^{T}\theta
-& -\hat{\varrho}\vartheta^{T}
+& -\hat{\rho}^{T}\zeta
+& -\hat{\varrho}\zeta
 \\
 \omega_{3}
 & d^{2}
@@ -2383,18 +2408,63 @@ Among other entities the Ratio Test Step~1 computes
 
 
 \subsection{Update $U_{Z_{1}}$}
-Using Definitions~(\ref{def:q_hat_nu_hat}) the entities used
+According to the Definitions~(\ref{def:zeta_Z1})
+and~(\ref{def:q_hat_nu_hat}) $\hat{v}$ of the 
+Definitions~(\ref{def:update_Z1_entities}) can be expressed in terms
+of the entering column $\theta$ as
+\begin{eqnarray*}
+\hat{v}
+&:=&
+\hat{\check{M}}_{B}^{-1}\zeta - de_{\beta_{O}(i)} \\
+&=&
+\hat{\check{M}}_{B}^{-1}\theta
++2\left(D_{j,j}-D_{i,j}\right)\hat{\check{M}}_{B}^{-1}e_{\beta_{O}(i)}
+-de_{\beta_{O}(i)} \\
+&=&
+\hat{q}+2\left(D_{j,j}-D_{i,j}\right)\hat{\rho}-de_{\beta_{O}(i)}
+\end{eqnarray*}
+Similarly we obtain for $\hat{k}_{2}$ using Definitions~(\ref{def:zeta_Z1})
+and~(\ref{def:q_hat_nu_hat})
+\begin{eqnarray*}
+\hat{k}_{2}
+&:=&
+d\zeta_{\beta_{O}(i)}-\zeta^{T}\hat{\check{M}}_{B}^{-1}\zeta \\
+&=&
+2dD_{j,j}
+-\left(\theta+2\left(D_{j,j}-D_{i,j}\right)\right)e_{\beta_{O}(i)}^{T}
+\hat{\check{M}}_{B}^{-1}
+\left(\theta+2\left(D_{j,j}-D_{i,j}\right)\right)e_{\beta_{O}(i)} \\
+&=&
+2dD_{j,j}-\theta^{T}\hat{\check{M}}_{B}^{-1}\theta
+-4\left(D_{j,j}-D_{i,j}\right)^{2}
+e_{\beta_{O}(i)}^{T}\hat{\check{M}}_{B}^{-1}e_{\beta_{O}(i)} \\
+&&
+-4\left(D_{j,j}-D_{i,j}\right)
+e_{\beta_{O}(i)}^{T}\hat{\check{M}}_{B}^{-1}\theta \\
+&=&
+\hat{\nu}
+-4\left(D_{j,j}-D_{i,j}\right)^{2}
+\left(\hat{\check{M}}_{B}^{-1}\right)_{\beta_{O}(i), \beta_{O}(i)}
+-4\left(D_{j,j}-D_{i,j}\right)\hat{\rho}^{T}\theta \\
+&=&
+\hat{\nu}
+-4\left(D_{j,j}-D_{i,j}\right)\hat{\rho}^{T}\theta \\
+&=&
+\hat{\nu}
+-4\left(D_{j,j}-D_{i,j}\right)\hat{q}_{\beta_{O}(i)}
+\end{eqnarray*}
+Using the above the entities used
 in~(\ref{def:update_Z1_entities}) can be expressed as
 \begin{equation}
 \label{def:update_Z1_entities_prep}
 \begin{array}{rclcrcl}
-\hat{v}
-&:=&
-\hat{q} - d e_{\beta_{O}(i)}
-&&
 \hat{\rho}
 &:=&
 \left(\hat{\check{M}}_{B}^{-1}\right)_{\bullet, \beta_{O}(i)}
+&&
+\hat{v}
+&:=&
+\hat{q}+2\left(D_{j,j}-D_{i,j}\right)\hat{\rho}-de_{\beta_{O}(i)}
 \\
 \hat{k}_{1}
 &:=&
@@ -2402,7 +2472,8 @@ in~(\ref{def:update_Z1_entities}) can be expressed as
 &&
 \hat{k}_{2}
 &:=&
-\hat{\nu} +2d(D_{i,j}-D_{j,j})
+\hat{\nu}
+-4\left(D_{j,j}-D_{i,j}\right)\hat{q}_{\beta_{O}(i)}
 \\
 \hat{z}
 &:=&
