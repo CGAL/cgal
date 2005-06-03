@@ -369,19 +369,19 @@ public :
     // Index vertices of the mesh from 0 to count_mesh_vertices()-1
     void  index_mesh_vertices ()
     {
-        fprintf(stderr,"  index Mesh_adaptor_polyhedron_ex vertices... ");
+        fprintf(stderr,"  index Mesh_adaptor_polyhedron_ex vertices:\n");
         int index = 0;
         for (Vertex_iterator it=mesh_vertices_begin(); it!=mesh_vertices_end(); it++)
         {
 #ifdef DEBUG_TRACE
-            fprintf(stderr, "H%d=%d->%d ",
+            fprintf(stderr, "  H%d=%d->%d\n",
                             index,
                             (int)it->opposite()->vertex()->index(),
                             (int)it->vertex()->index());
 #endif
             set_vertex_index(it, index++);
         }
-        fprintf(stderr,"ok\n");
+        fprintf(stderr,"  ok\n");
     }
 
     // Return true of all mesh's facets are triangles
