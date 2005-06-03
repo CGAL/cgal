@@ -135,10 +135,10 @@ protected:
         double delta_ij = compute_angle_rad(position_Vl, position_Vi, position_Vj);
 
         double weight = 0.0;
-        assert(len != 0.0);                             // 2 points are identical!
+        CGAL_parameterization_assertion(len != 0.0);    // 2 points are identical!
         if(len != 0.0)
             weight = (std::tan(0.5*gamma_ij) + std::tan(0.5*delta_ij)) / len;
-        assert(weight > 0);
+        CGAL_parameterization_assertion(weight > 0);
 
         return weight;
     }

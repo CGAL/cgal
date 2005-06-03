@@ -128,17 +128,17 @@ double Square_border_parametizer_3<Adaptor>::compute_boundary_length(
                                                         const Adaptor& mesh)
 {
     double len = 0.0;
-    for(Border_vertex_const_iterator it = mesh.mesh_border_vertices_begin();
-        it != mesh.mesh_border_vertices_end();
+    for(Border_vertex_const_iterator it = mesh.mesh_main_border_vertices_begin();
+        it != mesh.mesh_main_border_vertices_end();
         it++)
     {
-        CGAL_parameterization_assertion(mesh.is_vertex_on_border(it));
+        CGAL_parameterization_assertion(mesh.is_vertex_on_main_border(it));
 
         // Get next iterator (looping)
         Border_vertex_const_iterator next = it;
         next++;
-        if(next == mesh.mesh_border_vertices_end())
-            next = mesh.mesh_border_vertices_begin();
+        if(next == mesh.mesh_main_border_vertices_end())
+            next = mesh.mesh_main_border_vertices_begin();
 
         // Add 'length' of it -> next vector to 'len'
         len += compute_edge_length(mesh, it, next);
@@ -156,7 +156,7 @@ Square_border_parametizer_3<Adaptor>::parameterize_border(Adaptor* mesh)
     CGAL_parameterization_assertion(mesh != NULL);
 
     // Nothing to do if no boundary
-    if (mesh->mesh_border_vertices_begin() == mesh->mesh_border_vertices_end())
+    if (mesh->mesh_main_border_vertices_begin() == mesh->mesh_main_border_vertices_end())
     {
         std::cerr << "  error ERROR_INVALID_BOUNDARY!" << std::endl;
         return Parametizer_3<Adaptor>::ERROR_INVALID_BOUNDARY;
@@ -177,11 +177,11 @@ Square_border_parametizer_3<Adaptor>::parameterize_border(Adaptor* mesh)
     Offset_map offset;          // vertex index -> offset map
     offset.reserve(mesh->count_mesh_vertices());
     Border_vertex_iterator it;
-    for(it = mesh->mesh_border_vertices_begin();
-        it != mesh->mesh_border_vertices_end();
+    for(it = mesh->mesh_main_border_vertices_begin();
+        it != mesh->mesh_main_border_vertices_end();
         it++)
     {
-        CGAL_parameterization_assertion(mesh->is_vertex_on_border(it));
+        CGAL_parameterization_assertion(mesh->is_vertex_on_main_border(it));
 
         offset[mesh->get_vertex_index(it)] = 4.0f*len/total_len;
                                 // current position on square in [0,4[
@@ -189,8 +189,8 @@ Square_border_parametizer_3<Adaptor>::parameterize_border(Adaptor* mesh)
         // Get next iterator (looping)
         Border_vertex_iterator next = it;
         next++;
-        if(next == mesh->mesh_border_vertices_end())
-            next = mesh->mesh_border_vertices_begin();
+        if(next == mesh->mesh_main_border_vertices_end())
+            next = mesh->mesh_main_border_vertices_begin();
 
         // Add edge "length" to 'len'
         len += compute_edge_length(*mesh, it, next);
@@ -198,7 +198,7 @@ Square_border_parametizer_3<Adaptor>::parameterize_border(Adaptor* mesh)
 
     // First square corner is mapped to first vertex.
     // Then find closest points for three other corners.
-    Border_vertex_iterator it0 = mesh->mesh_border_vertices_begin();
+    Border_vertex_iterator it0 = mesh->mesh_main_border_vertices_begin();
     Border_vertex_iterator it1 = closest_iterator(mesh, offset, 1.0);
     Border_vertex_iterator it2 = closest_iterator(mesh, offset, 2.0);
     Border_vertex_iterator it3 = closest_iterator(mesh, offset, 3.0);
@@ -217,25 +217,25 @@ Square_border_parametizer_3<Adaptor>::parameterize_border(Adaptor* mesh)
     offset[mesh->get_vertex_index(it3)] = 3.0;
 
     // Set vertices along square's sides and mark them as "parameterized"
-    for(it = it0; it != it1; it++)  // 1st side
+    for(it = it0; it != it1; it++) // 1st side
     {
         Point_2 uv(offset[mesh->get_vertex_index(it)], 0.0);
         mesh->set_vertex_uv(it, uv);
         mesh->set_vertex_parameterized(it, true);
     }
-    for(it = it1; it != it2; it++)                              // 2nd side
+    for(it = it1; it != it2; it++) // 2nd side
     {
         Point_2 uv(1.0, offset[mesh->get_vertex_index(it)]-1);
         mesh->set_vertex_uv(it, uv);
         mesh->set_vertex_parameterized(it, true);
     }
-    for(it = it2; it != it3; it++)                              // 3rd side
+    for(it = it2; it != it3; it++) // 3rd side
     {
         Point_2 uv(3-offset[mesh->get_vertex_index(it)], 1.0);
         mesh->set_vertex_uv(it, uv);
         mesh->set_vertex_parameterized(it, true);
     }
-    for(it = it3; it != mesh->mesh_border_vertices_end(); it++) // 4th side
+    for(it = it3; it != mesh->mesh_main_border_vertices_end(); it++) // 4th side
     {
         Point_2 uv(0.0, 4-offset[mesh->get_vertex_index(it)]);
         mesh->set_vertex_uv(it, uv);
@@ -259,8 +259,8 @@ Square_border_parametizer_3<Adaptor>::closest_iterator(Adaptor* mesh,
     Border_vertex_iterator best;
     double min = DBL_MAX;           // distance for 'best'
 
-    for (Border_vertex_iterator it = mesh->mesh_border_vertices_begin();
-         it != mesh->mesh_border_vertices_end();
+    for (Border_vertex_iterator it = mesh->mesh_main_border_vertices_begin();
+         it != mesh->mesh_main_border_vertices_end();
          it++)
     {
         double d = fabs(offset[mesh->get_vertex_index(it)] - value);

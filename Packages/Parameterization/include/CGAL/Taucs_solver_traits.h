@@ -25,12 +25,9 @@
 #include <CGAL/taucs_vector.h>
 
 #include <cassert>
+#include <stdio.h>
 
-#ifdef WIN32
-    #include <Windows.h>
-#endif
-
-CGAL_BEGIN_NAMESPACE
+CGAL_BEGIN_NAMESPACE 
 
 
 // Class Taucs_symmetric_solver_traits
@@ -257,15 +254,9 @@ public:
             }
 
             // create multifile for out-of-core swapping
-    #ifdef WIN32
-            char matrixfile[512];
-            success = GetTempPath(512, matrixfile);
-            assert(success > 0);
-            strcat(matrixfile, "taucs.L");
-    #else
-            char*   matrixfile = "/tmp/taucs.L";
-    #endif
+            char*   matrixfile = tempnam(NULL, "taucs.L");
             taucs_io_handle* oocL = taucs_io_create_multifile(matrixfile);
+            free(matrixfile); matrixfile = NULL;
             if (oocL == NULL) {
                 taucs_printf("\tCannot Create Multifile\n");
                 return false;

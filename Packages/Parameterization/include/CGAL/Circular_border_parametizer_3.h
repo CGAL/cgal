@@ -115,17 +115,17 @@ double Circular_border_parametizer_3<Adaptor>::compute_boundary_length(
                                                         const Adaptor& mesh)
 {
     double len = 0.0;
-    for(Border_vertex_const_iterator it = mesh.mesh_border_vertices_begin();
-        it != mesh.mesh_border_vertices_end();
+    for(Border_vertex_const_iterator it = mesh.mesh_main_border_vertices_begin();
+        it != mesh.mesh_main_border_vertices_end();
         it++)
     {
-        CGAL_parameterization_assertion(mesh.is_vertex_on_border(it));
+        CGAL_parameterization_assertion(mesh.is_vertex_on_main_border(it));
 
         // Get next iterator (looping)
         Border_vertex_const_iterator next = it;
         next++;
-        if(next == mesh.mesh_border_vertices_end())
-            next = mesh.mesh_border_vertices_begin();
+        if(next == mesh.mesh_main_border_vertices_end())
+            next = mesh.mesh_main_border_vertices_begin();
 
         // Add 'length' of it -> next vector to 'len'
         len += compute_edge_length(mesh, it, next);
@@ -143,7 +143,7 @@ Circular_border_parametizer_3<Adaptor>::parameterize_border(Adaptor* mesh)
     CGAL_parameterization_assertion(mesh != NULL);
 
     // Nothing to do if no boundary
-    if (mesh->mesh_border_vertices_begin() == mesh->mesh_border_vertices_end())
+    if (mesh->mesh_main_border_vertices_begin() == mesh->mesh_main_border_vertices_end())
     {
         std::cerr << "  error ERROR_INVALID_BOUNDARY!" << std::endl;
         return Parametizer_3<Adaptor>::ERROR_INVALID_BOUNDARY;
@@ -162,11 +162,11 @@ Circular_border_parametizer_3<Adaptor>::parameterize_border(Adaptor* mesh)
     const double PI = 3.14159265359;
     const double tmp = 2*PI/total_len;
     double len = 0.0;           // current position on circle in [0, total_len]
-    for(Border_vertex_iterator it = mesh->mesh_border_vertices_begin();
-        it != mesh->mesh_border_vertices_end();
+    for(Border_vertex_iterator it = mesh->mesh_main_border_vertices_begin();
+        it != mesh->mesh_main_border_vertices_end();
         it++)
     {
-        CGAL_parameterization_assertion(mesh->is_vertex_on_border(it));
+        CGAL_parameterization_assertion(mesh->is_vertex_on_main_border(it));
 
         double angle = len*tmp; // current position on the circle in radians
 
@@ -181,8 +181,8 @@ Circular_border_parametizer_3<Adaptor>::parameterize_border(Adaptor* mesh)
         // Get next iterator (looping)
         Border_vertex_iterator next = it;
         next++;
-        if(next == mesh->mesh_border_vertices_end())
-            next = mesh->mesh_border_vertices_begin();
+        if(next == mesh->mesh_main_border_vertices_end())
+            next = mesh->mesh_main_border_vertices_begin();
 
         // Add 'length' of it -> next vector to 'len'
         len += compute_edge_length(*mesh, it, next);

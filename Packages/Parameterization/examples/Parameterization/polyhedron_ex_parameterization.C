@@ -62,6 +62,7 @@
 #include <CGAL/basic.h>
 
 #include <CGAL/parameterization.h>
+#include <CGAL/Mesh_adaptor_patch_3.h>
 #include <CGAL/Circular_border_parametizer_3.h>
 #include <CGAL/Square_border_parametizer_3.h>
 #include <CGAL/Two_vertices_parametizer_3.h>
@@ -97,10 +98,8 @@
 // Private types
 // ----------------------------------------------------------------------------
 
-// Type describing a seam in a Polyhedron_ex mesh
-typedef Feature_backbone<Polyhedron_ex::Vertex_handle,
-                         Polyhedron_ex::Halfedge_handle> Backbone;
-typedef Backbone::Halfedge_list_iterator                 Backbone_iterator;
+// Type describing a border or seam as a vertex list
+typedef std::list<Mesh_adaptor_polyhedron_ex::Vertex_handle> Seam;
 
 
 // ----------------------------------------------------------------------------
@@ -109,9 +108,21 @@ typedef Backbone::Halfedge_list_iterator                 Backbone_iterator;
 
 // Cut the mesh to make it homeomorphic to a disk
 // or extract a region homeomorphic to a disc.
-// Return the border of this region (NULL on error)
-static const Backbone* cut_mesh(Polyhedron_ex* mesh)
+// Return the border of this region (empty on error)
+//
+// CAUTION:
+// This method is provided "as is". It is very buggy and simply part of this example.
+// Developers using this package should implement a more robust cut algorithm!
+static Seam cut_mesh(Polyhedron_ex* mesh)
 {
+    // Type describing a border or seam as an halfedge list
+    typedef Feature_backbone<Polyhedron_ex::Vertex_handle,
+                            Polyhedron_ex::Halfedge_handle> Backbone;
+    typedef Backbone::Halfedge_list_iterator                Backbone_iterator;
+    typedef Backbone::Halfedge_list_const_iterator          Backbone_const_iterator;
+
+    Seam seam;              // returned list
+
     // init
     mesh->compute_facet_centers();
     Backbone *pSeamingBackbone = mesh->get_seaming_backbone();
@@ -150,7 +161,7 @@ static const Backbone* cut_mesh(Polyhedron_ex* mesh)
     //
     // 1) Check that pSeamingBackbone is not empty
     if (pSeamingBackbone->halfedges()->begin() == pSeamingBackbone->halfedges()->end())
-        return NULL;
+        return seam;
     // 2) Check that pSeamingBackbone is a loop
     for (Backbone_iterator he = pSeamingBackbone->halfedges()->begin();
          he != pSeamingBackbone->halfedges()->end();
@@ -163,118 +174,126 @@ static const Backbone* cut_mesh(Polyhedron_ex* mesh)
             next_he = pSeamingBackbone->halfedges()->begin();
         // Check that end of current HE == start of next one
         if ((*he)->vertex() != (*next_he)->opposite()->vertex())
-            return NULL;
+            return seam;
     }
     // 3) TO DO: check that the pSeamingBackbone is not self-intersecting
 
-    return pSeamingBackbone;
+    // Convert list of halfedges to a list of vertices
+    for (Backbone_const_iterator he = pSeamingBackbone->halfedges()->begin();
+         he != pSeamingBackbone->halfedges()->end();
+         he++)
+    {
+        seam.push_back((*he)->vertex());
+    }
+
+    return seam;
 }
 
 // Call appropriate parameterization method based on application parameters
-template<class SparseLinearAlgebraTraits_d> 
+template<class MeshAdaptor_3,       // 3D surface
+         class SparseLinearAlgebraTraits_d> 
                                     // Traits class to solve a sparse linear system
-CGAL::Parametizer_3<Mesh_adaptor_polyhedron_ex>::ErrorCode
-parameterize(Mesh_adaptor_polyhedron_ex* mesh_adaptor,
-                                    // Mesh parameterization adaptor
+typename CGAL::Parametizer_3<MeshAdaptor_3>::ErrorCode
+parameterize(MeshAdaptor_3* mesh,   // Mesh parameterization adaptor
              const char *type,      // type of parameterization (see usage)
              const char *boundary)  // type of boundary parameterization (see usage)
 {
-    CGAL::Parametizer_3<Mesh_adaptor_polyhedron_ex>::ErrorCode err;
+    typename CGAL::Parametizer_3<MeshAdaptor_3>::ErrorCode err;
 
     if ( (strcmp(type,"floater") == 0) && (strcmp(boundary,"circle") == 0) )
     {
         err = CGAL::parameterize(
-            mesh_adaptor,
+            mesh,
             CGAL::Mean_value_coordinates_parametizer_3<
-                Mesh_adaptor_polyhedron_ex,
-                CGAL::Circular_border_arc_length_parametizer_3<Mesh_adaptor_polyhedron_ex>,
+                MeshAdaptor_3,
+                CGAL::Circular_border_arc_length_parametizer_3<MeshAdaptor_3>,
                 SparseLinearAlgebraTraits_d
             >());
     }
     else if ( (strcmp(type,"floater") == 0) && (strcmp(boundary,"square") == 0) )
     {
         err = CGAL::parameterize(
-            mesh_adaptor,
+            mesh,
             CGAL::Mean_value_coordinates_parametizer_3<
-                Mesh_adaptor_polyhedron_ex,
-                CGAL::Square_border_arc_length_parametizer_3<Mesh_adaptor_polyhedron_ex>,
+                MeshAdaptor_3,
+                CGAL::Square_border_arc_length_parametizer_3<MeshAdaptor_3>,
                 SparseLinearAlgebraTraits_d
             >());
     }
     else if ( (strcmp(type,"uniform") == 0) && (strcmp(boundary,"circle") == 0) )
     {
         err = CGAL::parameterize(
-            mesh_adaptor,
+            mesh,
             CGAL::Barycentric_mapping_parametizer_3<
-                Mesh_adaptor_polyhedron_ex,
-                CGAL::Circular_border_uniform_parametizer_3<Mesh_adaptor_polyhedron_ex>,
+                MeshAdaptor_3,
+                CGAL::Circular_border_uniform_parametizer_3<MeshAdaptor_3>,
                 SparseLinearAlgebraTraits_d
             >());
     }
     else if ( (strcmp(type,"uniform") == 0) && (strcmp(boundary,"square") == 0) )
     {
         err = CGAL::parameterize(
-            mesh_adaptor,
+            mesh,
             CGAL::Barycentric_mapping_parametizer_3<
-                Mesh_adaptor_polyhedron_ex,
-                CGAL::Square_border_uniform_parametizer_3<Mesh_adaptor_polyhedron_ex>,
+                MeshAdaptor_3,
+                CGAL::Square_border_uniform_parametizer_3<MeshAdaptor_3>,
                 SparseLinearAlgebraTraits_d
             >());
     }
     else if ( (strcmp(type,"conformal") == 0) && (strcmp(boundary,"circle") == 0) )
     {
         err = CGAL::parameterize(
-            mesh_adaptor,
+            mesh,
             CGAL::Discrete_conformal_map_parametizer_3<
-                Mesh_adaptor_polyhedron_ex,
-                CGAL::Circular_border_arc_length_parametizer_3<Mesh_adaptor_polyhedron_ex>,
+                MeshAdaptor_3,
+                CGAL::Circular_border_arc_length_parametizer_3<MeshAdaptor_3>,
                 SparseLinearAlgebraTraits_d
             >());
     }
     else if ( (strcmp(type,"conformal") == 0) && (strcmp(boundary,"square") == 0) )
     {
         err = CGAL::parameterize(
-            mesh_adaptor,
+            mesh,
             CGAL::Discrete_conformal_map_parametizer_3<
-                Mesh_adaptor_polyhedron_ex,
-                CGAL::Square_border_arc_length_parametizer_3<Mesh_adaptor_polyhedron_ex>,
+                MeshAdaptor_3,
+                CGAL::Square_border_arc_length_parametizer_3<MeshAdaptor_3>,
                 SparseLinearAlgebraTraits_d
             >());
     }
     else if ( (strcmp(type,"authalic") == 0) && (strcmp(boundary,"circle") == 0) )
     {
         err = CGAL::parameterize(
-            mesh_adaptor,
+            mesh,
             CGAL::Discrete_authalic_parametizer_3<
-                Mesh_adaptor_polyhedron_ex,
-                CGAL::Circular_border_arc_length_parametizer_3<Mesh_adaptor_polyhedron_ex>,
+                MeshAdaptor_3,
+                CGAL::Circular_border_arc_length_parametizer_3<MeshAdaptor_3>,
                 SparseLinearAlgebraTraits_d
             >());
     }
     else if ( (strcmp(type,"authalic") == 0) && (strcmp(boundary,"square") == 0) )
     {
         err = CGAL::parameterize(
-            mesh_adaptor,
+            mesh,
             CGAL::Discrete_authalic_parametizer_3<
-                Mesh_adaptor_polyhedron_ex,
-                CGAL::Square_border_arc_length_parametizer_3<Mesh_adaptor_polyhedron_ex>,
+                MeshAdaptor_3,
+                CGAL::Square_border_arc_length_parametizer_3<MeshAdaptor_3>,
                 SparseLinearAlgebraTraits_d
             >());
     }
-    else if (strcmp(type,"lscm") == 0)
+    else if ( (strcmp(type,"lscm") == 0) && (strcmp(boundary,"2pts") == 0) )
     {
         err = CGAL::parameterize(
-            mesh_adaptor,
+            mesh,
             CGAL::LSCM_parametizer_3<
-                Mesh_adaptor_polyhedron_ex,
-                CGAL::Two_vertices_parametizer_3<Mesh_adaptor_polyhedron_ex>,
+                MeshAdaptor_3,
+                CGAL::Two_vertices_parametizer_3<MeshAdaptor_3>,
                 SparseLinearAlgebraTraits_d
             >());
     }
     else
     {
-        fprintf(stderr, "\nFATAL ERROR: invalid parameter\n\n");
-        exit(1);
+        fprintf(stderr, "\nFATAL ERROR: invalid parameters combination %s + %s\n", type, boundary);
+        err = CGAL::Parametizer_3<MeshAdaptor_3>::ERROR_WRONG_PARAMETER;
     }
 
     return err;
@@ -392,7 +411,7 @@ int main(int argc,char * argv[])
         case '?' :
         case 'H' :
             opts.usage(cerr, usage);
-            ::exit(0);
+            return(EXIT_SUCCESS);
             break;
 
         default :
@@ -418,7 +437,7 @@ int main(int argc,char * argv[])
     if (errors || nb_filename_arguments != nb_filenames_needed)
     {
         opts.usage(cerr, usage);
-        ::exit(1);
+        return(EXIT_FAILURE);
     }
 
     // File names are:
@@ -434,7 +453,7 @@ int main(int argc,char * argv[])
     std::ifstream stream(input_filename);
     if(!stream) {
         fprintf(stderr, "\nFATAL ERROR: cannot open file!\n\n");
-        return 1;
+        return EXIT_FAILURE;
     }
 
     // read the mesh
@@ -447,62 +466,76 @@ int main(int argc,char * argv[])
     fprintf(stderr, "%d vertices)\n",mesh.size_of_vertices());
 
     //***************************************
+    // Create mesh adaptor
+    //***************************************
+
+    // The parameterization package needs an adaptor to handle Polyhedrons
+    Mesh_adaptor_polyhedron_ex mesh_adaptor(&mesh);
+
+    // The parameterization package supports only meshes that 
+    // are toplogical disks => we need to virtually "cut" the mesh 
+    // to make it homeomorphic to a disk
+    //
+    // 1) Cut the mesh 
+    Seam seam = cut_mesh(&mesh);
+    if (seam.empty())
+    {
+        fprintf(stderr, "\nFATAL ERROR: an unexpected error occurred while cutting the shape!\n\n");
+        return EXIT_FAILURE;
+    }
+    //
+    // 2) Create adaptor that virtually "cuts" a patch in a Polyhedron_ex mesh
+    typedef CGAL::Mesh_adaptor_patch_3<Mesh_adaptor_polyhedron_ex> 
+                                                    Mesh_patch_polyhedron_ex;
+    Mesh_patch_polyhedron_ex   mesh_patch(&mesh_adaptor,
+                                          seam.begin(),
+                                          seam.end());
+
+    //***************************************
     // switch parameterization
     //***************************************
 
-    // Cut the mesh to make it homeomorphic to a disk
-    // or extract a region homeomorphic to a disc
-    const Backbone* seam = cut_mesh(&mesh);
-    if (seam == NULL)
-    {
-        fprintf(stderr, "\nFATAL ERROR: an unexpected error occurred while cutting the shape!\n\n");
-        return 1;
-    }
-
-    // The parameterization package needs an adaptor to handle Polyhedrons
-    Mesh_adaptor_polyhedron_ex mesh_adaptor(&mesh,
-                                            seam->halfedges()->begin(),
-                                            seam->halfedges()->end());
-
-    // Switch parameterization
-    CGAL::Parametizer_3<Mesh_adaptor_polyhedron_ex>::ErrorCode err;
+    CGAL::Parametizer_3<Mesh_patch_polyhedron_ex>::ErrorCode err;
     if (strcmp(solver,"opennl") == 0) 
     {
-        err = parameterize<OpenNL::DefaultLinearSolverTraits<double> >(&mesh_adaptor, type, boundary);
+        err = parameterize<Mesh_patch_polyhedron_ex, 
+                           OpenNL::DefaultLinearSolverTraits<double> >(&mesh_patch, type, boundary);
+        if (err != CGAL::Parametizer_3<Mesh_patch_polyhedron_ex>::OK)
+            fprintf(stderr, "\nFATAL ERROR: parameterization error # %d\n", (int)err);
     }
     else if (strcmp(solver,"taucs") == 0)
     {
-        err = parameterize<CGAL::Taucs_solver_traits<double> >(&mesh_adaptor, type, boundary);
+        err = parameterize<Mesh_patch_polyhedron_ex, 
+                           CGAL::Taucs_solver_traits<double> >(&mesh_patch, type, boundary);
+        if (err != CGAL::Parametizer_3<Mesh_patch_polyhedron_ex>::OK)
+            fprintf(stderr, "\nFATAL ERROR: parameterization error # %d\n", (int)err);
     }
     else
     {
-        fprintf(stderr, "\nFATAL ERROR: invalid parameter\n\n");
-        return 1;
-    }
-
-    // On parameterization error
-    if (err != CGAL::Parametizer_3<Mesh_adaptor_polyhedron_ex>::OK)
-    {
-        fprintf(stderr, "\nFATAL ERROR: parameterization error # %d\n\n", (int)err);
-        return err;
+        fprintf(stderr, "\nFATAL ERROR: invalid solver parameter %s\n", solver);
+        err = CGAL::Parametizer_3<Mesh_patch_polyhedron_ex>::ERROR_WRONG_PARAMETER;
     }
 
     //***************************************
     // output
     //***************************************
 
-    if(strcmp(output,"eps") == 0)
+    // On parameterization error
+    if (err == CGAL::Parametizer_3<Mesh_patch_polyhedron_ex>::OK)
     {
-        mesh.dump_param(output_filename);               // write EPS file
-    }
-    else if(strcmp(output,"obj") == 0)
-    {
-        mesh.write_file_obj(output_filename);           // write Wavefront obj file
-    }
-    else
-    {
-        fprintf(stderr, "\nFATAL ERROR: invalid parameter\n\n");
-        return 1;
+        if(strcmp(output,"eps") == 0)
+        {
+            mesh.dump_param(output_filename);           // write EPS file
+        }
+        else if(strcmp(output,"obj") == 0)
+        {
+            mesh.write_file_obj(output_filename);       // write Wavefront obj file
+        }
+        else
+        {
+            fprintf(stderr, "\nFATAL ERROR: cannot write to file %s\n", output);
+            err = CGAL::Parametizer_3<Mesh_patch_polyhedron_ex>::ERROR_WRONG_PARAMETER;
+        }
     }
 
     //***************************************
@@ -513,7 +546,9 @@ int main(int argc,char * argv[])
     cout << std::endl;
     cerr << std::endl;
 
-    return EXIT_SUCCESS;
+    return (err == CGAL::Parametizer_3<Mesh_patch_polyhedron_ex>::OK) ? 
+           EXIT_SUCCESS : 
+           EXIT_FAILURE;
 }
 
 

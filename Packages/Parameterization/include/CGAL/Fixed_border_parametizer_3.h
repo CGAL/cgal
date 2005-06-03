@@ -262,11 +262,11 @@ parameterize(Adaptor* mesh)
          vertexIt != mesh->mesh_vertices_end();
          vertexIt++)
     {
-        CGAL_parameterization_assertion(mesh->is_vertex_on_border(vertexIt)
-                                    == mesh->is_vertex_parameterized(vertexIt));
+        CGAL_parameterization_assertion(mesh->is_vertex_on_main_border(vertexIt)
+                                     == mesh->is_vertex_parameterized(vertexIt));
 
         // inner vertices only
-        if( ! mesh->is_vertex_on_border(vertexIt) )
+        if( ! mesh->is_vertex_on_main_border(vertexIt) )
         {
             // Compute the line i of matrix A for i inner vertex
             status = setup_inner_vertex_relations(&A, &Bu, &Bv,
@@ -382,8 +382,8 @@ initialize_system_from_mesh_border (Matrix* A, Vector* Bu, Vector* Bv,
     CGAL_parameterization_assertion(Bu != NULL);
     CGAL_parameterization_assertion(Bv != NULL);
 
-    for (Border_vertex_const_iterator it = mesh.mesh_border_vertices_begin();
-         it != mesh.mesh_border_vertices_end();
+    for (Border_vertex_const_iterator it = mesh.mesh_main_border_vertices_begin();
+         it != mesh.mesh_main_border_vertices_end();
          it++)
     {
         CGAL_parameterization_assertion(mesh.is_vertex_parameterized(it));
@@ -419,22 +419,19 @@ setup_inner_vertex_relations(Matrix* A,
                              const Adaptor& mesh,
                              Vertex_const_handle vertex)
 {
-    CGAL_parameterization_assertion( ! mesh.is_vertex_on_border(vertex) );
+    CGAL_parameterization_assertion( ! mesh.is_vertex_on_main_border(vertex) );
     CGAL_parameterization_assertion( ! mesh.is_vertex_parameterized(vertex) );
 
     int i = mesh.get_vertex_index(vertex);
 
 #ifdef DEBUG_TRACE
-    fprintf(stderr,"    Fill line H%d: \n", i);
+    fprintf(stderr,"    Fill line #%d: \n", i);
 #endif
 
     // circulate over vertices around 'vertex' to compute Wii and Wijs
     NT Wii = 0;
     int vertexIndex = 0;
     Vertex_around_vertex_const_circulator vj = mesh.vertices_around_vertex_begin(vertex);
-//#ifdef DEBUG_TRACE
-//    vj --;
-//#endif
     Vertex_around_vertex_const_circulator end = vj;
     CGAL_For_all(vj, end)
     {
@@ -451,7 +448,7 @@ setup_inner_vertex_relations(Matrix* A,
         A->set_coef(i,j, Wij);
 
 #ifdef DEBUG_TRACE
-        fprintf(stderr,"      neighbor H%d -> wij = %5.2f\n", j, (float)Wij);
+        fprintf(stderr,"      neighbor #%d -> wij = %5.2f\n", j, (float)Wij);
 #endif
 
         vertexIndex++;

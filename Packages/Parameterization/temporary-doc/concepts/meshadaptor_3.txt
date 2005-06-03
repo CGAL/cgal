@@ -22,15 +22,20 @@
 //
 // Its main purpose is to allow
 // the parameterization package to access meshes on an uniform manner.
+//
 // Adaptators for Polyhedron _3 and Triangulation_2 with 3D points are provided.
 //
-// The input mesh can be of any genus, but the parameterization package
-// is restricted to triangular meshes which are topological discs.
+// Design pattern:
+// MeshAdaptor_3 is an Adaptor (see [GOF95]): it changes the
+// interface of a 3D mesh to match the interface expected by the parameterization methods.
 
 class MeshAdaptor_3
 {
-// Public types
 public:
+
+    //******************************************************************
+    // Public types
+    //******************************************************************
 
     // Number type
     typedef ... NT;
@@ -56,19 +61,26 @@ public:
     // Iterator over mesh boundary vertices
     typedef ... Border_vertex_iterator;
     typedef ... Border_vertex_const_iterator;
-    // Circulator over a facet's vertices
+    // Counter-clockwise circulator over a facet's vertices
     typedef ... Vertex_around_facet_circulator;
     typedef ... Vertex_around_facet_const_circulator;
-    // Circulator over the vertices incident to a vertex
+    // Clockwise circulator over the vertices incident to a vertex
     typedef ... Vertex_around_vertex_circulator;
     typedef ... Vertex_around_vertex_const_circulator;
+    // Seaming flag
+    enum Seaming_status  { OUTER, INNER, BORDER };
 
 // Public operations
 public:
 
-    //
+    //******************************************************************
+    // LEVEL 1 INTERFACE:
+    // for classes attempting to parameterize complete topological disks
+    // and compute 1 (u,v) pair per vertex
+    // Example: all parameterization methods
+    //******************************************************************
+
     // MESH INTERFACE
-    //
 
     // Get iterator over first vertex of mesh
     Vertex_iterator  mesh_vertices_begin ();
@@ -81,7 +93,7 @@ public:
     // Count the number of vertices of the mesh
     int  count_mesh_vertices () const;
 
-    // Index vertices of the mesh for 0 to count_mesh_vertices()-1
+    // Index vertices of the mesh from 0 to count_mesh_vertices()-1
     void  index_mesh_vertices ();
 
 
@@ -94,13 +106,13 @@ public:
     // Count the number of boundaries of the mesh
     int  count_mesh_boundaries () const;
 
-    // Get iterator over first vertex of mesh's border
-    Border_vertex_iterator  mesh_border_vertices_begin ();
-    Border_vertex_const_iterator  mesh_border_vertices_begin () const;
+    // Get iterator over first vertex of mesh's main border
+    Border_vertex_iterator  mesh_main_border_vertices_begin ();
+    Border_vertex_const_iterator  mesh_main_border_vertices_begin () const;
 
-    // Get iterator over past-the-end vertex of mesh's border
-    Border_vertex_iterator  mesh_border_vertices_end ();
-    Border_vertex_const_iterator  mesh_border_vertices_end () const;
+    // Get iterator over past-the-end vertex of mesh's main border
+    Border_vertex_iterator  mesh_main_border_vertices_end ();
+    Border_vertex_const_iterator  mesh_main_border_vertices_end () const;
 
     // Get iterator over first facet of mesh
     Facet_iterator  mesh_facets_begin ();
@@ -113,21 +125,16 @@ public:
     // Count the number of facets of the mesh
     int  count_mesh_facets () const;
 
-    //
     // FACET INTERFACE
-    //
 
     // Get circulator over facet's vertices
     Vertex_around_facet_circulator facet_vertices_begin(Facet_handle facet);
-    Vertex_around_facet_const_circulator facet_vertices_begin(
-                                                Facet_const_handle facet) const;
+    Vertex_around_facet_const_circulator  facet_vertices_begin(Facet_const_handle facet) const;
 
     // Count the number of vertices of a facet
     int  count_facet_vertices(Facet_const_handle facet) const;
 
-    //
     // VERTEX INTERFACE
-    //
 
     // Get the 3D position of a vertex
     Point_3  get_vertex_position (Vertex_const_handle vertex) const;
@@ -144,13 +151,81 @@ public:
     int  get_vertex_index (Vertex_const_handle vertex) const;
     void  set_vertex_index (Vertex_handle vertex, int index);
 
-    // Return true if a vertex belongs to the mesh's boundary
-    bool  is_vertex_on_border (Vertex_const_handle vertex) const;
+    //// Return true if a vertex belongs to ANY mesh's boundary
+    //bool  is_vertex_on_border(Vertex_const_handle vertex) const;
+    
+    // Return true if a vertex belongs to the UNIQUE mesh's main boundary
+    bool  is_vertex_on_main_border(Vertex_const_handle vertex) const;
 
     // Get circulator over the vertices incident to 'vertex'
-    Vertex_around_vertex_circulator  vertices_around_vertex_begin (
-                                        Vertex_handle vertex);
-    Vertex_around_vertex_const_circulator  vertices_around_vertex_begin (
-                                        Vertex_const_handle vertex) const;
+    // 'start_position' defines the optional initial position of the circulator
+    Vertex_around_vertex_circulator vertices_around_vertex_begin(
+                            Vertex_handle vertex, 
+                            Vertex_handle start_position = NULL);
+    Vertex_around_vertex_const_circulator vertices_around_vertex_begin(
+                            Vertex_const_handle vertex, 
+                            Vertex_const_handle start_position = NULL) const;
+
+    //******************************************************************
+    // LEVEL 2 INTERFACE:
+    // for classes attempting to parameterize (part of) 3D surfaces
+    // of any genus and with any number of connected components.
+    // They compute 1 (u,v) pair per corner.
+    // Example: Mesh_adaptor_patch_3
+    //******************************************************************
+
+    // VERTEX INTERFACE
+
+    // Get/set vertex seaming flag, ie position of the vertex 
+    // wrt to the UNIQUE main boundary
+    Seaming_status  get_vertex_seaming(Vertex_const_handle vertex) const;
+    void set_vertex_seaming(Vertex_handle vertex, Seaming_status seaming);
+
+    // Set all vertices seaming flag, ie position of the vertices
+    // wrt to the UNIQUE main boundary
+    void set_vertices_seaming(Seaming_status seaming);
+
+    // EDGE INTERFACE
+
+    // Get/set oriented edge's seaming flag, ie position of the oriented edge 
+    // wrt to the UNIQUE main boundary
+    Seaming_status  get_edge_seaming(Vertex_const_handle source, Vertex_const_handle target) const;
+    void set_edge_seaming(Vertex_handle source, Vertex_handle target, Seaming_status seaming);
+
+    // Set all edges seaming flag, ie position of the edges
+    // wrt to the UNIQUE main boundary
+    void set_edges_seaming(Seaming_status seaming);
+
+    // CORNER INTERFACE
+
+    // Get/set the 2D position (= (u,v) pair) of corners at the "right" 
+    // of the prev_vertex -> vertex -> next_vertex line
+    Point_2 get_corners_uv(Vertex_const_handle vertex, 
+                           Vertex_const_handle prev_vertex,
+                           Vertex_const_handle next_vertex) const;
+    void  set_corners_uv(Vertex_handle vertex, 
+                        Vertex_const_handle prev_vertex,
+                        Vertex_const_handle next_vertex,
+                        const Point_2& uv);
+
+    // Get/set "is parameterized" field of corners at the "right" 
+    // of the prev_vertex -> vertex -> next_vertex line
+    bool  are_corners_parameterized(Vertex_const_handle vertex, 
+                                  Vertex_const_handle prev_vertex,
+                                  Vertex_const_handle next_vertex) const;
+    void  set_corners_parameterized(Vertex_handle vertex, 
+                                   Vertex_const_handle prev_vertex,
+                                   Vertex_const_handle next_vertex,
+                                   bool parameterized);
+
+    // Get/set vertex index of corners at the "right" 
+    // of the prev_vertex -> vertex -> next_vertex line
+    int get_corners_index(Vertex_const_handle vertex, 
+                          Vertex_const_handle prev_vertex,
+                          Vertex_const_handle next_vertex) const;
+    void set_corners_index(Vertex_handle vertex, 
+                           Vertex_const_handle prev_vertex,
+                           Vertex_const_handle next_vertex,
+                           int index);
 };
 

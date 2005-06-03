@@ -229,6 +229,15 @@
 				RelativePath="..\..\include\Cgal\Circular_Border_parametizer_3.h">
 			</File>
 			<File
+				RelativePath="..\..\include\Cgal\Convertible_circulator_project.h">
+			</File>
+			<File
+				RelativePath="..\..\include\Cgal\Convertible_filter_iterator.h">
+			</File>
+			<File
+				RelativePath="..\..\include\Cgal\Convertible_iterator_project.h">
+			</File>
+			<File
 				RelativePath="..\..\include\Cgal\Discrete_authalic_parametizer_3.h">
 			</File>
 			<File
@@ -242,6 +251,18 @@
 			</File>
 			<File
 				RelativePath="..\..\include\Cgal\Mean_value_coordinates_parametizer_3.h">
+			</File>
+			<File
+				RelativePath="..\..\include\Cgal\Mesh_adaptor_patch_3.h">
+			</File>
+			<File
+				RelativePath="..\..\include\Cgal\Mesh_adaptor_patch_circulators.h">
+			</File>
+			<File
+				RelativePath="..\..\include\Cgal\Mesh_adaptor_patch_iterators.h">
+			</File>
+			<File
+				RelativePath="..\..\include\Cgal\Mesh_adaptor_patch_vertex.h">
 			</File>
 			<File
 				RelativePath="..\..\include\Cgal\parameterization.h">

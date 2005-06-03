@@ -182,7 +182,10 @@ class My_vertex : public CGAL::HalfedgeDS_vertex_base<Refs, T, P>
     // misc
     int m_tag;
 
-    public:
+    // seaming status
+    int m_seaming;              
+
+public:
     // life cycle
     My_vertex()  { init(); }
     // repeat mandatory constructors
@@ -194,6 +197,7 @@ class My_vertex : public CGAL::HalfedgeDS_vertex_base<Refs, T, P>
 
     void init()
     {
+        m_seaming = -1;         // uninitialized
     }
 
     // index
@@ -203,6 +207,10 @@ class My_vertex : public CGAL::HalfedgeDS_vertex_base<Refs, T, P>
     // tag
     int tag() const { return m_tag; }
     void tag(int tag) { m_tag = tag; }
+
+    // seaming status
+    int seaming() const { return m_seaming; }
+    void seaming(int seaming) { m_seaming = seaming; }
 };
 
 // A redefined items class for the Polyhedron_3 with a refined vertex, facet and halfedge classes
@@ -420,16 +428,6 @@ public:
             pHalfedge != halfedges_end();
             pHalfedge++)
         pHalfedge->tag(tag);
-    }
-
-    // Set seaming status of all halfedges
-    void flag_halfedges_seaming(int flag)
-    {
-        Halfedge_iterator pHalfedge;
-        for(pHalfedge = halfedges_begin();
-            pHalfedge != halfedges_end();
-            pHalfedge++)
-        pHalfedge->seaming(flag);
     }
 
     // Index all mesh vertices following the order of the vertices_begin() iterator

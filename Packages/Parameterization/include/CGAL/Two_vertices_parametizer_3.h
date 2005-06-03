@@ -116,7 +116,7 @@ Two_vertices_parametizer_3<Adaptor>::parameterize_border(Adaptor* mesh)
     CGAL_parameterization_assertion(mesh != NULL);
 
     // Nothing to do if no boundary
-    if (mesh->mesh_border_vertices_begin() == mesh->mesh_border_vertices_end())
+    if (mesh->mesh_main_border_vertices_begin() == mesh->mesh_main_border_vertices_end())
     {
         std::cerr << "  error ERROR_INVALID_BOUNDARY!" << std::endl;
         return Parametizer_3<Adaptor>::ERROR_INVALID_BOUNDARY;
@@ -253,8 +253,8 @@ Two_vertices_parametizer_3<Adaptor>::parameterize_border(Adaptor* mesh)
     }
     mesh->set_vertex_parameterized(vxmin, true) ;
     mesh->set_vertex_parameterized(vxmax, true) ;
-    std::cerr << "    H" << vxmin->index() << "(" << vxmin->vertex()->index() << ") parameterized " << std::endl;
-    std::cerr << "    H" << vxmax->index() << "(" << vxmax->vertex()->index() << ") parameterized " << std::endl;
+    std::cerr << "    #" << mesh->get_vertex_index(vxmin) << "(" << vxmin->get_adaptor_vertex()->index() << ") parameterized " << std::endl;
+    std::cerr << "    #" << mesh->get_vertex_index(vxmax) << "(" << vxmax->get_adaptor_vertex()->index() << ") parameterized " << std::endl;
 
     std::cerr << "    done" << std::endl;
 

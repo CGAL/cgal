@@ -454,7 +454,7 @@ setup_triangle_relations(LeastSquaresSolver* solver,
     int id2 = mesh.get_vertex_index(v2) ;
 
 #ifdef DEBUG_TRACE
-    fprintf(stderr,"    Fill line for triangle (H%d, H%d, H%d): \n", id0, id1, id2);
+    fprintf(stderr,"    Fill line for triangle (#%d, #%d, #%d): \n", id0, id1, id2);
 #endif
 
     // Get the vertices position

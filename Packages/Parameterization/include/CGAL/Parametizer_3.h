@@ -44,6 +44,7 @@ public:
     ERROR_CANNOT_SOLVE_LINEAR_SYSTEM,// cannot solve linear system
     ERROR_NO_1_TO_1_MAPPING,        // parameterization does not ensure 1 to 1 mapping
     ERROR_NOT_ENOUGH_MEMORY,        // it's time to buy some RAM :-)
+    ERROR_WRONG_PARAMETER           // a method received an unexpected parameter
     };
 
     // Export Mesh_Adaptor_3 type and subtypes
