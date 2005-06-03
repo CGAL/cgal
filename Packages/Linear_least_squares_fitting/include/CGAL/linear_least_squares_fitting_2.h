@@ -83,7 +83,7 @@ linear_least_squares_fitting_2(InputIterator begin,
   }
   else
   {
-    Direction direction(eigen_vectors[2],eigen_vectors[3]);
+    Direction direction(eigen_vectors[0],eigen_vectors[1]);
     line = Line(c,direction);
   }
 }
