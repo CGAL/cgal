@@ -85,6 +85,9 @@
 #include <ctype.h>
 #include <fstream>
 #include <cassert>
+#ifdef WIN32
+#include <Windows.h>
+#endif
 
 #include <OpenNL/linear_solver.h>
 #include <CGAL/Taucs_solver_traits.h>
@@ -329,6 +332,14 @@ where type is:     floater (default), conformal, natural, uniform, authalic or l
 
 int main(int argc,char * argv[])
 {
+#if _WIN32_WINNT >= 0x0400
+    // Trick to be prompted by VisualC++ debugger when an assertion
+    // fails even though we use NON debug runtime libraries
+    // (the only ones compatible with TAUCS)
+    if (IsDebuggerPresent())
+        _set_error_mode(_OUT_TO_MSGBOX);
+#endif
+
     std::cerr << "\nPARAMETERIZATION" << std::endl;
 
     // options
