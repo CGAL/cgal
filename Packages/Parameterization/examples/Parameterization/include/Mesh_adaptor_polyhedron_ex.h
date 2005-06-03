@@ -233,14 +233,14 @@ private:
 
 #ifndef NDEBUG
         // Index Polyhedron_ex vertices to ease debugging
-        fprintf(stderr,"  index Polyhedron vertices: ");
+        fprintf(stderr,"  index Polyhedron vertices:\n");
         int vtx_index = 0;
         for (Polyhedron_ex::Vertex_iterator vtx_it = m_mesh->vertices_begin();
              vtx_it != m_mesh->vertices_end();
              vtx_it++)
         {
     #ifdef DEBUG_TRACE
-            fprintf(stderr, "%d=(%f,%f,%f) ",
+            fprintf(stderr, "    %d=(%f,%f,%f)\n",
                             (int)vtx_index,
                             (float)vtx_it->point().x(),
                             (float)vtx_it->point().y(),
@@ -248,7 +248,7 @@ private:
     #endif
             vtx_it->index(vtx_index++);
         }
-        fprintf(stderr,"ok\n");
+        fprintf(stderr,"    ok\n");
 
         // Index all halfedges with negative numbers to ease debugging
         fprintf(stderr,"  index all halfedges with negative numbers: ");
