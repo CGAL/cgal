@@ -47,6 +47,9 @@ public:
   iterator begin() { return c.begin(); }
   iterator end()   { return c.end(); }
 
+  const_iterator begin() const { return c.begin(); }
+  const_iterator end()   const { return c.end(); }
+
   std::pair<iterator,bool> insert(const value_type& t)
   {
     //    std::pair<iterator,bool> it_b = c.insert(t);

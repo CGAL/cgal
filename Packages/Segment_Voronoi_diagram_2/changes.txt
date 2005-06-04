@@ -1,3 +1,17 @@
+5 June 2005:  Menelaos Karavelas
+- Segment_Voronoi_diagram_2 and Segment_Voronoi_diagram_hierarchy_2: added
+  methods file_input and file_output that read and write from and to a file.
+  The data written consists of the sites (expressed through input sites) and
+  the triangulation data structure; in the case of the hierarchy, the entire
+  hierarchy is encoded.
+- Segment_Voronoi_diagram_2 and Segment_Voronoi_diagram_hierarchy_2: added
+  operator>> and operator<< that read and write from and to a stream;
+  the methods file_input and file_output are used to implement the two
+  operators.
+- modified the test suite to test the above mentioned I/O functionality.
+- fixed unused variable warnings when NDEBUG is defined
+- updated documentation to reflect the newly added I/O functionality.
+
 1 June 2005:  Menelaos Karavelas
 - examples/svd-voronoi-edges.C: calls to mirror_vertex and mirror_index
   made through the faces are now made through the TDS

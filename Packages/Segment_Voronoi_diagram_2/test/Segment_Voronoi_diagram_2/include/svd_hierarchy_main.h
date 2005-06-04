@@ -1,11 +1,17 @@
-#ifndef SVD_MAIN_H
-#define SVD_MAIN_H
+#ifndef SVD_MAIN_HIERARCHY_H
+#define SVD_MAIN_HIERARCHY_H
 
 #include <CGAL/basic.h>
 #include <iostream>
 #include <cassert>
 
 #include "IO/io_aux.h"
+
+bool assert_no_warning(bool b)
+{
+  assert(b);
+  return b;
+}
 
 int main(int argc, char* argv[])
 {
@@ -14,9 +20,9 @@ int main(int argc, char* argv[])
 
     SVD2 svd;
 
-    bool types_ok = CGAL::test_svd_hierarchy(std::cin, svd);
+    bool types_ok = CGAL::test_svd_hierarchy(std::cin, svd, "svdh.tmp");
 
-    assert( types_ok );
+    assert_no_warning( types_ok );
 
     print_separator();
 
@@ -28,9 +34,9 @@ int main(int argc, char* argv[])
 
     SVD2_wi svd;
 
-    bool types_ok = CGAL::test_svd_hierarchy(std::cin, svd);
+    bool types_ok = CGAL::test_svd_hierarchy(std::cin, svd, "svdh_wi.tmp");
 
-    assert( types_ok );
+    assert_no_warning( types_ok );
 
     print_separator();
 
@@ -40,4 +46,4 @@ int main(int argc, char* argv[])
   return 0;
 }
 
-#endif // SVD_MAIN_H
+#endif // SVD_MAIN_HIERARCHY_H

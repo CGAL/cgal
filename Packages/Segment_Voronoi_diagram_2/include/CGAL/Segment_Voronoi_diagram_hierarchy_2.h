@@ -353,6 +353,12 @@ public:
   void clear();
 
 public:
+  // FILE I/O
+  //---------
+  void file_input(std::istream&);
+  void file_output(std::ostream&) const;
+
+public:
   // VALIDITY CHECK
   //---------------
   bool is_valid(bool verbose = false, int level = 1) const;
@@ -400,6 +406,27 @@ protected:
   void print_error_message() const;
 };
 
+
+
+template<class Gt, class STag, class DS, class LTag>
+std::istream& operator>>(std::istream& is,
+			 Segment_Voronoi_diagram_hierarchy_2<Gt,STag,DS,LTag>&
+			 svdh)
+{
+  svdh.file_input(is);
+  return is;
+}
+
+template<class Gt, class STag, class DS, class LTag>
+std::ostream& operator<<(std::ostream& os,
+			 const
+			 Segment_Voronoi_diagram_hierarchy_2<Gt,STag,DS,LTag>&
+			 svdh)
+{
+  svdh.file_output(os);
+  return os;
+}
+			 
 
 CGAL_END_NAMESPACE
 

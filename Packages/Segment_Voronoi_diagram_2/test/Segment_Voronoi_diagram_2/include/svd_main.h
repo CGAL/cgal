@@ -7,6 +7,12 @@
 
 #include "IO/io_aux.h"
 
+bool assert_no_warning(bool b)
+{
+  assert(b);
+  return b;
+}
+
 int main(int argc, char* argv[])
 {
   {
@@ -14,9 +20,9 @@ int main(int argc, char* argv[])
 
     SVD2 svd;
 
-    bool types_ok = CGAL::test_svd(std::cin, svd);
+    bool types_ok = CGAL::test_svd(std::cin, svd, "svd.tmp");
 
-    assert( types_ok );
+    assert_no_warning( types_ok );
 
     print_separator();
 
@@ -28,9 +34,9 @@ int main(int argc, char* argv[])
 
     SVD2_wi svd;
 
-    bool types_ok = CGAL::test_svd(std::cin, svd);
+    bool types_ok = CGAL::test_svd(std::cin, svd, "svd_wi.tmp");
 
-    assert( types_ok );
+    assert_no_warning( types_ok );
 
     print_separator();
 

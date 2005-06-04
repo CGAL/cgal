@@ -6,9 +6,9 @@
 CGAL_BEGIN_NAMESPACE
 
 template<class SVD, class InputStream>
-bool test_svd_hierarchy(InputStream& is, const SVD& svd)
+bool test_svd_hierarchy(InputStream& is, const SVD& svd, char* fname)
 {
-  return test_svd(is, svd);
+  return test_svd(is, svd, fname);
 }
 
 CGAL_END_NAMESPACE

@@ -5,6 +5,7 @@
 #include <CGAL/enum.h>
 #include <iostream>
 #include <algorithm>
+#include <cassert>
 
 #include "IO/Null_output_stream.h"
 #include "IO/io_aux.h"
@@ -12,7 +13,7 @@
 CGAL_BEGIN_NAMESPACE
 
 template<class SVD, class InputStream>
-bool test_svd(InputStream& is, const SVD&)
+bool test_svd(InputStream& is, const SVD&, char* fname)
 {
   typedef SVD SVD2;
 
@@ -368,6 +369,27 @@ bool test_svd(InputStream& is, const SVD&)
     CGAL_assertion( svd.is_valid() );
   }
   end_testing("swap method");
+
+  Point_2 p5(0.625,0.125), p6(0.125,0.625);
+  Site_2 s5 = Site_2::construct_site_2(p5, p6);
+
+  svd.insert(s5);
+
+  start_testing("file I/O methods and I/O operators");
+  {
+    std::ofstream ofs(fname);
+    assert( ofs );
+    svd.file_output(ofs);
+    CGAL_assertion( svd.is_valid() );
+    ofs.close();
+      
+    std::ifstream ifs(fname);
+    assert( ifs );
+    svd.file_input(ifs);
+    CGAL_assertion( svd.is_valid() );
+    ifs.close();
+  }
+  end_testing("file I/O methods and I/O operators");
 
   start_testing("validity check and clear methods");
   std::cout << std::endl;

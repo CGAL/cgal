@@ -22,6 +22,7 @@
 #ifndef CGAL_SEGMENT_VORONOI_DIAGRAM_2_H
 #define CGAL_SEGMENT_VORONOI_DIAGRAM_2_H
 
+#include <iostream>
 #include <vector>
 #include <list>
 #include <set>
@@ -619,9 +620,42 @@ protected:
 				 Vertex_handle vnear) const;
 
 
-public:
+protected:
   // I/O METHODS
   //------------
+  typedef std::map<Point_handle,size_type,Point_handle_less_than>
+  Point_handle_mapper;
+
+  typedef std::vector<Point_handle> Point_handle_vector;
+
+  void file_output(std::ostream&, const Storage_site_2&,
+		   Point_handle_mapper&) const;
+
+  void file_output(std::ostream&, Point_handle_mapper&,
+		   bool print_point_container) const;
+
+  void file_input(std::istream&, Storage_site_2&,
+		  const Point_handle_vector&, const Tag_true&) const;
+  void file_input(std::istream&, Storage_site_2&,
+		  const Point_handle_vector&, const Tag_false&) const;
+  void file_input(std::istream&, bool read_handle_vector,
+		  Point_handle_vector&);
+
+public:
+  void file_input(std::istream& is) {
+    Point_handle_vector P;
+    file_input(is, true, P);
+  }
+
+  void file_output(std::ostream& os) const {
+    Point_handle_mapper P;
+    size_type inum = 0;
+    for (Point_handle ph = pc_.begin(); ph != pc_.end(); ++ph) {
+      P[ph] = inum++;
+    }
+    file_output(os, P, true);
+  }
+
   template< class Stream >
   Stream& draw_dual(Stream& str) const
   {
@@ -1511,6 +1545,22 @@ protected:
 
 }; // Segment_Voronoi_diagram_2
 
+
+template<class Gt, class DS, class LTag>
+std::istream& operator>>(std::istream& is,
+			 Segment_Voronoi_diagram_2<Gt,DS,LTag>& svd)
+{
+  svd.file_input(is);
+  return is;
+}
+
+template<class Gt, class DS, class LTag>
+std::ostream& operator<<(std::ostream& os,
+			 const Segment_Voronoi_diagram_2<Gt,DS,LTag>& svd)
+{
+  svd.file_output(os);
+  return os;
+}
 
 CGAL_END_NAMESPACE
 

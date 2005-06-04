@@ -151,6 +151,23 @@ range [\ccc{first}, \ccc{beyond}). \ccc{Input_iterator} must be a
 %% to two different hierarchies: if \ccc{other} is modified, \ccVar\ is
 %% not.}
 
+\ccHeading{I/O}
+\ccThree{std::ostream&}{std::ostream& os ++ svdh+}{}
+\ccThreeToTwo
+%
+\ccFunction{std::ostream& operator<<(std::ostream& os,
+  Segment_Voronoi_diagram_hierarchy_2<Gt,STag,DS> svdh);}
+{Writes the current state of the segment Voronoi diagram hierarchy to
+  an output stream. In particular, all sites in the diagram are
+  written to the stream (represented through appropriate input sites),
+  as well as the underlying combinatorial hierarchical data structure.}
+\ccGlue
+\ccFunction{std::istream& operator>>(std::istream& is,
+  Segment_Voronoi_diagram_hierarchy_2<Gt,STag,DS> svdh);}
+{Reads the state of the segment Voronoi diagram hierarchy from an
+  input stream.}
+
+
 \ccSeeAlso
 \ccc{SegmentVoronoiDiagramDataStructure_2}\\
 \ccc{SegmentVoronoiDiagramTraits_2}\\

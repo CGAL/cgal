@@ -600,6 +600,27 @@ The following operators must be defined:\\
 \ccc{Stream& operator<<(Stream&, Gt::Segment_2)}\\
 \ccc{Stream& operator<<(Stream&, Gt::Ray_2)}\\
 \ccc{Stream& operator<<(Stream&, Gt::Line_2)}}
+%
+\ccThree{std::ostream&}{svd.file_output(std::ostream& os)+}{}
+\ccThreeToTwo
+\ccGlue
+\ccMethod{void file_output(std::ostream& os);}{Writes the current
+  state of the segment Voronoi diagram to an output stream. In particular,
+  all sites in the diagram are written to the stream (represented
+  through appropriate input sites), as well as the underlying
+  combinatorial data structure.}
+\ccGlue
+\ccMethod{void file_input(std::istream& is);}{Reads the state of the
+  segment Voronoi diagram from an input stream.}
+%
+\ccGlue
+\ccFunction{std::ostream& operator<<(std::ostream& os,
+  Segment_Voronoi_diagram_2<Gt,DS> svd);}
+{Writes the current state of the segment Voronoi diagram to an output stream.}
+\ccGlue
+\ccFunction{std::istream& operator>>(std::istream& is,
+  Segment_Voronoi_diagram_2<Gt,DS> svd);}
+{Reads the state of the segment Voronoi diagram from an input stream.}
 
 
 \ccHeading{Validity check}

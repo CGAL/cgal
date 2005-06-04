@@ -350,7 +350,7 @@ insert_point2(const Storage_site_2& ss, const Site_2& t,
 
   // find the first conflict
 
-#ifndef CGAL_NO_ASSERTIONS
+#if !defined(CGAL_NO_ASSERTIONS) && !defined(NDEBUG)
   // verify that there are no intersections...
   Vertex_circulator vc = incident_vertices(vnearest);
   Vertex_circulator vc_start = vc;
@@ -1822,6 +1822,346 @@ copy(Segment_Voronoi_diagram_2& other, Handle_map& hm)
 
     Storage_site_2 new_ss_this = copy_storage_site(ss_other, hm, itag);
     vit_this->set_site( new_ss_this );
+  }
+}
+
+//--------------------------------------------------------------------
+//--------------------------------------------------------------------
+// file I/O
+//--------------------------------------------------------------------
+//--------------------------------------------------------------------
+
+template<class Gt, class DS, class LTag>
+void
+Segment_Voronoi_diagram_2<Gt,DS,LTag>::
+file_output(std::ostream& os, const Storage_site_2& t,
+	    Point_handle_mapper& P) const
+{
+  CGAL_precondition( t.is_defined() );
+
+  if ( t.is_point() ) {
+    // 0 for point
+    os << 0;
+    if ( is_ascii(os) ) { os << ' '; }
+    if ( t.is_input() ) {
+      // 0 for input
+      os << 0;
+      if ( is_ascii(os) ) { os << ' '; }
+      os << P[t.point()];
+    } else {
+      // 1 for non-input
+      os << 1;
+      if ( is_ascii(os) ) { os << ' '; }
+      os << P[t.source_of_supporting_site(0)];
+      if ( is_ascii(os) ) { os << ' '; }
+      os << P[t.target_of_supporting_site(0)];
+      if ( is_ascii(os) ) { os << ' '; }
+      os << P[t.source_of_supporting_site(1)];
+      if ( is_ascii(os) ) { os << ' '; }
+      os << P[t.target_of_supporting_site(1)];
+    }
+  } else { // t is a segment
+    // 1 for segment
+    os << 1;
+    if ( is_ascii(os) ) { os << ' '; }
+    if ( t.is_input() ) {
+      // 0 for input
+      os << 0;
+      if ( is_ascii(os) ) { os << ' '; }
+      os << P[t.source_of_supporting_site()];
+      if ( is_ascii(os) ) { os << ' '; }
+      os << P[t.target_of_supporting_site()];
+    } else if ( t.is_input(0) ) {
+      // 1 for input source
+      os << 1;
+      if ( is_ascii(os) ) { os << ' '; }
+      os << P[t.source_of_supporting_site()];
+      if ( is_ascii(os) ) { os << ' '; }
+      os << P[t.target_of_supporting_site()];
+      if ( is_ascii(os) ) { os << ' '; }
+      os << P[t.source_of_crossing_site(1)];
+      if ( is_ascii(os) ) { os << ' '; }
+      os << P[t.target_of_crossing_site(1)];
+    } else if ( t.is_input(1) ) {
+      // 2 for input target
+      os << 2;
+      if ( is_ascii(os) ) { os << ' '; }
+      os << P[t.source_of_supporting_site()];
+      if ( is_ascii(os) ) { os << ' '; }
+      os << P[t.target_of_supporting_site()];
+      if ( is_ascii(os) ) { os << ' '; }
+      os << P[t.source_of_crossing_site(0)];
+      if ( is_ascii(os) ) { os << ' '; }
+      os << P[t.target_of_crossing_site(0)];
+    } else {
+      // 3 for non-input src & trg
+      os << 3;
+      if ( is_ascii(os) ) { os << ' '; }
+      os << P[t.source_of_supporting_site()];
+      if ( is_ascii(os) ) { os << ' '; }
+      os << P[t.target_of_supporting_site()];
+      if ( is_ascii(os) ) { os << ' '; }
+      os << P[t.source_of_crossing_site(0)];
+      if ( is_ascii(os) ) { os << ' '; }
+      os << P[t.target_of_crossing_site(0)];
+      if ( is_ascii(os) ) { os << ' '; }
+      os << P[t.source_of_crossing_site(1)];
+      if ( is_ascii(os) ) { os << ' '; }
+      os << P[t.target_of_crossing_site(1)];
+    }
+  }
+}
+
+template<class Gt, class DS, class LTag>
+void
+Segment_Voronoi_diagram_2<Gt,DS,LTag>::
+file_input(std::istream& is, Storage_site_2& t,
+	   const Point_handle_vector& P, const Tag_false&) const
+{
+  int type, input;
+  is >> type >> input;
+  CGAL_assertion( type == 0 || type == 1 );
+  CGAL_assertion( input == 0 );
+  if ( type == 0 ) {
+    // we have an input point
+    size_type p;
+    is >> p;
+    t = Storage_site_2::construct_storage_site_2(P[p]);
+  } else {
+    CGAL_assertion( type == 1 );
+    // we have an input segment
+    size_type p1, p2;
+    is >> p1 >> p2;
+    t = Storage_site_2::construct_storage_site_2(P[p1], P[p2]);
+  }
+}
+
+template<class Gt, class DS, class LTag>
+void
+Segment_Voronoi_diagram_2<Gt,DS,LTag>::
+file_input(std::istream& is, Storage_site_2& t,
+	   const Point_handle_vector& P, const Tag_true&) const
+{
+  int type, input;
+  is >> type >> input;
+  CGAL_assertion( type == 0 || type == 1 );
+  CGAL_assertion( input >= 0 && input <= 3 );
+  if ( type == 0 ) {
+    // we have a point
+    if ( input == 0 ) {
+      // we have an input point
+      size_type p;
+      is >> p;
+      t = Storage_site_2::construct_storage_site_2(P[p]);
+    } else {
+      // we have a point that is the intersection of two segments
+      CGAL_assertion( input == 1 );
+      size_type p1, p2, q1, q2;
+      is >> p1 >> p2 >> q1 >> q2;
+      t = Storage_site_2::construct_storage_site_2(P[p1], P[p2], P[q1], P[q2]);
+    }
+  } else {
+    // we have a segment
+    CGAL_assertion( type == 1 );
+    if ( input == 0 ) {
+      // we have an input segment
+      size_type p1, p2;
+      is >> p1 >> p2;
+      t = Storage_site_2::construct_storage_site_2(P[p1], P[p2]);
+    } else if ( input < 3 ) {
+      // we have a segment whose source or target is input but not both
+      size_type p1, p2, q1, q2;
+      is >> p1 >> p2 >> q1 >> q2;
+      t = Storage_site_2::construct_storage_site_2(P[p1], P[p2],
+						   P[q1], P[q2], input == 1);
+    } else {
+      // we have a segment whose neither its source nor its target is input
+      CGAL_assertion( input == 3 );
+      size_type p1, p2, q1, q2, r1, r2;
+      is >> p1 >> p2 >> q1 >> q2 >> r1 >> r2;
+      t = Storage_site_2::construct_storage_site_2(P[p1], P[p2],
+						   P[q1], P[q2],
+						   P[r1], P[r2]);      
+    }
+  }
+}
+
+//--------------------------------------------------------------------
+
+template<class Gt, class DS, class LTag>
+void
+Segment_Voronoi_diagram_2<Gt,DS,LTag>::
+file_output(std::ostream& os, Point_handle_mapper& P,
+	    bool print_point_container) const
+{
+  // ouput to a file
+  size_type n = this->_tds.number_of_vertices();
+  size_type m = this->_tds.number_of_full_dim_faces();
+
+  CGAL_assertion( n >= 1 );
+
+  if( is_ascii(os) ) {
+    os << n << ' ' << m << ' ' << dimension() << std::endl;
+  } else {
+    os << n << m << dimension();
+  }
+
+  // points in point container
+  if ( print_point_container ) {
+    if ( is_ascii(os) ) { os << std::endl; }
+    os << pc_.size();
+    if ( is_ascii(os) ) { os << std::endl; }
+    for (Point_handle ph = pc_.begin(); ph != pc_.end(); ++ph) {
+      os << *ph;
+      if ( is_ascii(os) ) { os << std::endl; }
+    }
+  }
+
+  std::map<Vertex_handle,int> V;
+  std::map<Face_handle,int> F;
+
+  // first vertex (infinite vertex) 
+  size_type inum = 0;
+  V[infinite_vertex()] = inum++;
+  
+  // finite vertices
+  if (is_ascii(os)) os << std::endl;
+  for (Finite_vertices_iterator vit = finite_vertices_begin();
+       vit != finite_vertices_end(); ++vit) {
+    V[vit] = inum++;
+    //    os << vit->site();
+    file_output(os, vit->storage_site(), P);
+    // write non-combinatorial info of the vertex
+    //    os << *vit ;
+    if ( is_ascii(os) ) { os << std::endl; }
+  }
+  if ( is_ascii(os) ) { os << std::endl; }
+
+  // vertices of the faces
+  inum = 0;
+  int dim = (dimension() == -1 ? 1 :  dimension() + 1);
+  for(All_faces_iterator fit = all_faces_begin();
+      fit != all_faces_end(); ++fit) {
+    F[fit] = inum++;
+    for(int j = 0; j < dim ; ++j) {
+      os << V[ fit->vertex(j) ];
+      if( is_ascii(os) ) { os << ' '; }
+    }
+    // write non-combinatorial info of the face
+    //    os << *fit ;
+    if( is_ascii(os) ) { os << std::endl; }
+  }
+  if( is_ascii(os) ) { os << std::endl; }
+    
+  // neighbor pointers of the  faces
+  for( All_faces_iterator it = all_faces_begin();
+       it != all_faces_end(); ++it) {
+    for(int j = 0; j < dimension()+1; ++j){
+      os << F[ it->neighbor(j) ];
+      if( is_ascii(os) ) { os << ' '; }
+    }
+    if( is_ascii(os) ) { os << std::endl; }
+  }
+
+  if ( is_ascii(os) ) { os << std::endl; }
+}
+
+
+
+template<class Gt, class DS, class LTag>
+void
+Segment_Voronoi_diagram_2<Gt,DS,LTag>::
+file_input(std::istream& is, bool read_handle_vector,
+	   Point_handle_vector& P)
+{
+  //input from file
+  size_type n, m;
+  int d;
+  is >> n >> m >> d;
+
+  CGAL_assertion( n >= 1 );
+
+  size_type i = 0;
+  Storage_site_2 ss;
+
+  if ( read_handle_vector ) {
+    size_type np;
+    is >> np;
+    for (; i < np; i++) {
+      Point_2 p;
+      is >> p;
+      std::pair<Point_handle,bool> res = pc_.insert(p);
+      P.push_back(res.first);
+      CGAL_assertion( P[i] == res.first );
+    }
+  }
+
+  if ( n == 1 ) {
+    CGAL_assertion( d == -1 );
+    if ( number_of_vertices() > 0 ) { clear(); }
+    return;
+  }
+  if ( n == 2 ) {
+    CGAL_assertion( d == 0 );
+    if ( number_of_vertices() > 0 ) { clear(); }
+    file_input(is, ss, P, Intersections_tag());
+    insert_first(ss, *ss.point());
+    return;
+  }
+  if ( n == 3 ) {
+    CGAL_assertion( d == 1 );
+    if ( number_of_vertices() > 0 ) { clear(); }
+    file_input(is, ss, P, Intersections_tag());
+    insert_first(ss, *ss.point());  
+    file_input(is, ss, P, Intersections_tag());
+    insert_second(ss, *ss.point());  
+    return;
+  }
+
+  if (this->_tds.number_of_vertices() != 0) { this->_tds.clear(); }
+
+  this->_tds.set_dimension(d);
+
+  std::vector<Vertex_handle> V(n);
+  std::vector<Face_handle> F(m);
+
+  // first vertex (infinite vertex)
+  V[0] = this->_tds.create_vertex();
+  this->set_infinite_vertex(V[0]);
+  i = 1;
+
+  // read vertices
+  for (; i < n; ++i) {
+    V[i] = this->_tds.create_vertex();
+    file_input(is, ss, P, Intersections_tag());
+    V[i]->set_site(ss);
+    // read non-combinatorial info of the vertex
+    //    is >> *(V[i]);
+  }
+  
+  // Creation of the faces
+  int index;
+  int dim = (dimension() == -1 ? 1 : dimension() + 1);
+
+  for (i = 0; i < m; ++i) {
+    F[i] = this->_tds.create_face();
+    for (int j = 0; j < dim ; ++j){
+      is >> index;
+      F[i]->set_vertex(j, V[index]);
+      // The face pointer of vertices is set too often,
+      // but otherwise we had to use a further map
+      V[index]->set_face(F[i]);
+    }
+    // read in non-combinatorial info of the face
+    //      is >> *(F[i]) ;
+  }
+
+  // Setting the neighbor pointers 
+  for (i = 0; i < m; ++i) {
+    for (int j = 0; j < dimension()+1; ++j){
+      is >> index;
+      F[i]->set_neighbor(j, F[index]);
+    }
   }
 }
 
