@@ -104,7 +104,7 @@ class Face
 
     int i_mirror = vda_->dual().tds().mirror_index(ec->first, ec->second);
 
-#ifndef CGAL_NO_ASSERTIONS
+#if !defined(CGAL_NO_ASSERTIONS) && !defined(NDEBUG)
     Halfedge h(vda_, ec->first->neighbor(ec->second), i_mirror);
     Face_handle f_this(*this);
     CGAL_assertion( h.face() == f_this );

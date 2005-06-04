@@ -49,8 +49,6 @@ class Dummy_iterator : public Emptyset_iterator
 
   reference operator*()              { return *dummy_handle(); }
   pointer   operator->()             { return dummy_handle(); }
-  const reference operator*() const  { return *dummy_handle(); }
-  const pointer   operator->() const { return dummy_handle(); }
 
   bool operator==(const Self&) const { return true; }
   bool operator!=(const Self&) const { return false; }

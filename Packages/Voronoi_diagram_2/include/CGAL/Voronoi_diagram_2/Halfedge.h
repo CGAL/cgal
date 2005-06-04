@@ -70,13 +70,14 @@ public:
   Halfedge(const VDA* vda, Dual_face_handle f, int i)
     : vda_(vda), f_(f), i_(i)
   {
-#ifndef CGAL_NO_PRECONDITIONS
+#if !defined(CGAL_NO_PRECONDITIONS) && !defined(NDEBUG)
     CGAL_precondition( !vda_->edge_tester()(vda_->dual(), f_, i_) );
     Dual_vertex_handle v = f_->vertex( CW_CCW_2::ccw(i_) );
 #if 0
     // the following test prohibit creating a halfedge which is
-    // temporarily invalid...
-    CGAL_precondition( !vda_->face_tester()(v) );
+    // temporarily invalid...; this creates a problem for the
+    // segment Voronoi diagram
+    CGAL_precondition( !vda_->face_tester()(vda_->dual(), v) );
 #endif
 #endif
   }

@@ -1,3 +1,15 @@
+4 June 2005:  Menelaos Karavelas
+- in Dummy_iterator and Circulator_from_halfedge_adaptor: operator*() and
+  operator->() that returned a const reference and const pointer have been
+  removed (in order to avoid warnings by icc/icpc/icl and cl compilers);
+  moreover, these operators are not really used.
+- in *_Voronoi_traits_2 classes and in Voronoi_traits_concept class:
+  icc/icpc/icl and cl compilers have a problem with the declaration of
+  Voronoi_edge_base_2 as a friend when this declaration is done through the
+  parent class; created a CGAL config file and added the appropriate
+  #ifndef - #endif block that checks for this problem.
+- fixed warning for unused variables when NDEBUG is defined
+
 27 May 2005:  Menelaos Karavelas
 - changes in the doc:
   * fixed some open issues in the various models of the Voronoi traits concept.

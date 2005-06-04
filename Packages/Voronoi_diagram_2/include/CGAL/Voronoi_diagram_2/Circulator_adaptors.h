@@ -69,9 +69,6 @@ class Circulator_from_halfedge_adaptor
   typename Base::pointer   operator->() { return &cur_; }
   typename Base::reference operator*() { return cur_; }
 
-  const typename Base::pointer   operator->() const { return &cur_; }
-  const typename Base::reference operator*() const { return cur_; }
-
   bool operator==(const Circulator& other) const {
     return cur_ == other.cur_;
 

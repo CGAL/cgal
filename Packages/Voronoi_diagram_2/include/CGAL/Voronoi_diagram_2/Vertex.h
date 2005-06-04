@@ -82,14 +82,14 @@ class Vertex
 					fvalid->neighbor(i),
 					i_mirror,
 					fopp, iopp);
-#ifndef CGAL_NO_ASSERTIONS
+#if !defined(CGAL_NO_ASSERTIONS) && !defined(NDEBUG)
 	  Halfedge h(vda_, fopp, iopp);
 	  Vertex_handle v_this(*this);
 	  CGAL_assertion( h.has_target() && h.target() == v_this );
 #endif
 	  return Halfedge_handle( Halfedge(vda_, fopp, iopp) );
 	} else {
-#ifndef CGAL_NO_ASSERTIONS
+#if !defined(CGAL_NO_ASSERTIONS) && !defined(NDEBUG)
 	  Halfedge h(vda_, fvalid, i);
 	  Vertex_handle v_this(*this);
 	  CGAL_assertion( h.has_target() && h.target() == v_this );
@@ -99,8 +99,10 @@ class Vertex
       }
     }
 
+#if !defined(CGAL_NO_ASSERTIONS) && !defined(NDEBUG)
     bool this_line_should_never_have_been_reached = false;
     CGAL_assertion(this_line_should_never_have_been_reached);
+#endif
     return Halfedge_handle();
   }
 
@@ -167,7 +169,7 @@ class Vertex
     if ( vda_ == NULL ) { return true; }
 
     bool valid = !vda_->dual().is_infinite(f_);
-    // THE FOLLOWING LINE CREATES A PROBLEM FOR SOME REASON...
+
     valid = valid && is_incident_edge( halfedge() );
 
     Vertex_handle v_this(*this);

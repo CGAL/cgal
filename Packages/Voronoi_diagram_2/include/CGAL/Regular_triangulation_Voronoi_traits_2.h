@@ -144,7 +144,17 @@ class RT_Voronoi_vertex_2
 {
   friend class Regular_triangulation_Voronoi_traits_2<DG>;
   friend class RT_Voronoi_edge_2<DG>;
+#ifndef CGAL_CFG_NESTED_CLASS_FRIEND_DECLARATION_BUG
   friend class RT_Voronoi_edge_2<DG>::Base;
+#else
+  friend class
+  CGAL_VORONOI_DIAGRAM_2_NS::Voronoi_edge_base_2
+  <DG,
+   typename DG::Geom_traits::Point_2,
+   typename DG::Geom_traits::Weighted_point_2,
+   RT_Voronoi_edge_2<DG>,
+   RT_Voronoi_vertex_2<DG> >;
+#endif
 
  private:
   typedef CGAL_VORONOI_DIAGRAM_2_NS::Voronoi_vertex_base_2
