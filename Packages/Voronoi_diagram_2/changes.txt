@@ -9,6 +9,7 @@
   parent class; created a CGAL config file and added the appropriate
   #ifndef - #endif block that checks for this problem.
 - fixed warning for unused variables when NDEBUG is defined
+- fixed unused variable warning in Halfedge.h and vda_print_report.h
 
 27 May 2005:  Menelaos Karavelas
 - changes in the doc:

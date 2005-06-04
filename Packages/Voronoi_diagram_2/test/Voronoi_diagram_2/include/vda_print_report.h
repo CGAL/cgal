@@ -5,6 +5,9 @@
 #include "vda_aux.h"
 #include <iostream>
 
+template<class T>
+void kill_unused_variable_warning(const T&) {}
+
 template<class VDA, class Projector, class Dual_primal_projector,
 	 class Stream>
 void print_report(const VDA& vda, const Projector& project,
@@ -384,6 +387,8 @@ void print_report(const VDA& vda, const Projector& project,
 	 hit != fit->holes_end(); ++hit) {
       typename VDA::Ccb_halfedge_circulator hc = *hit;
       typename VDA::Halfedge_handle he_opp = (*hit)->opposite();
+      kill_unused_variable_warning(hc);
+      kill_unused_variable_warning(he_opp);
       n_holes++;
     }
   }
