@@ -72,8 +72,8 @@ public:
   {
 #if !defined(CGAL_NO_PRECONDITIONS) && !defined(NDEBUG)
     CGAL_precondition( !vda_->edge_tester()(vda_->dual(), f_, i_) );
-    Dual_vertex_handle v = f_->vertex( CW_CCW_2::ccw(i_) );
 #if 0
+    Dual_vertex_handle v = f_->vertex( CW_CCW_2::ccw(i_) );
     // the following test prohibit creating a halfedge which is
     // temporarily invalid...; this creates a problem for the
     // segment Voronoi diagram
