@@ -185,6 +185,11 @@ public:
   void clear();
   void swap(Apollonius_graph_hierarchy_2& agh);
 
+  // I/O
+  //----
+  void file_input(std::istream& is);
+  void file_output(std::ostream& os) const;
+
 private:
   // private methods
   void
@@ -201,6 +206,23 @@ private:
   Apollonius_graph_base*   hierarchy[ag_hierarchy_2__maxlevel];
   Random random; // random generator
 };
+
+
+template<class Gt, class Agds, class LTag>
+std::ostream& operator<<(std::ostream& os,
+			 const Apollonius_graph_hierarchy_2<Gt,Agds,LTag>& agh)
+{
+  agh.file_output(os);
+  return os;
+}
+
+template<class Gt, class Agds, class LTag>
+std::istream& operator>>(std::istream& is,
+			 Apollonius_graph_hierarchy_2<Gt,Agds,LTag>& agh)
+{
+  agh.file_input(is);
+  return is;
+}
 
 CGAL_END_NAMESPACE
 

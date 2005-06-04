@@ -1887,6 +1887,189 @@ minimize_degree(Vertex_handle v)
   } while ( found || fc != fc_start );
 }
 
+
+//----------------------------------------------------------------------
+// methods for I/O
+//----------------------------------------------------------------------
+
+template<class Gt, class Agds, class LTag>
+void
+Apollonius_graph_2<Gt,Agds,LTag>::file_output(std::ostream& os) const
+{
+  // ouput to a file
+  size_type n = this->_tds.number_of_vertices();
+  size_type m = this->_tds.number_of_full_dim_faces();
+
+  CGAL_assertion( n >= 1 );
+
+  if( is_ascii(os) ) {
+    os << n << ' ' << m << ' ' << dimension() << std::endl;
+  } else {
+    os << n << m << dimension();
+  }
+
+  std::map<Vertex_handle,int> V;
+  std::map<Face_handle,int> F;
+
+  // first vertex (infinite vertex) 
+  int inum = 0;
+  V[infinite_vertex()] = inum++;
+  
+  // finite vertices
+  if (is_ascii(os)) os << std::endl;
+  for (Finite_vertices_iterator vit = finite_vertices_begin();
+       vit != finite_vertices_end(); ++vit) {
+    V[vit] = inum++;
+    os << vit->site();
+    if ( is_ascii(os) ) { os << ' '; }
+    os << vit->number_of_hidden_sites();
+    typename Vertex::Hidden_sites_iterator hit;
+    for (hit = vit->hidden_sites_begin(); hit != vit->hidden_sites_end();
+	 ++hit) {
+      if ( is_ascii(os) ) { os << ' '; }
+      os << *hit;
+    }
+    // write non-combinatorial info of the vertex
+    //    os << *vit ;
+    if ( is_ascii(os) ) { os << std::endl; }
+  }
+  if ( is_ascii(os) ) { os << std::endl; }
+
+  // vertices of the faces
+  inum = 0;
+  int dim = (dimension() == -1 ? 1 :  dimension() + 1);
+  for(All_faces_iterator fit = all_faces_begin();
+      fit != all_faces_end(); ++fit) {
+    F[fit] = inum++;
+    for(int j = 0; j < dim ; ++j) {
+      os << V[ fit->vertex(j) ];
+      if( is_ascii(os) ) { os << ' '; }
+    }
+    // write non-combinatorial info of the face
+    //    os << *fit ;
+    if( is_ascii(os) ) { os << std::endl; }
+  }
+  if( is_ascii(os) ) { os << std::endl; }
+    
+  // neighbor pointers of the  faces
+  for( All_faces_iterator it = all_faces_begin();
+       it != all_faces_end(); ++it) {
+    for(int j = 0; j < dimension()+1; ++j){
+      os << F[ it->neighbor(j) ];
+      if( is_ascii(os) ) { os << ' '; }
+    }
+    if( is_ascii(os) ) { os << std::endl; }
+  }
+
+  if ( is_ascii(os) ) { os << std::endl; }
+}
+
+
+template<class Gt, class Agds, class LTag>
+void
+Apollonius_graph_2<Gt,Agds,LTag>::file_input(std::istream& is)
+{
+  //input from file
+  size_type n, m;
+  int d;
+  is >> n >> m >> d;
+
+  CGAL_assertion( n >= 1 );
+
+  if ( n == 1 ) {
+    CGAL_assertion( d == -1 );
+    if ( number_of_vertices() > 0 ) { clear(); }
+    return;
+  }
+  if ( n == 2 ) {
+    CGAL_assertion( d == 0 );
+    if ( number_of_vertices() > 0 ) { clear(); }
+    Site_2 s;
+    is >> s;
+    Vertex_handle v = insert(s);
+    unsigned int n_hidden;
+    is >> n_hidden;
+    for (unsigned int i = 0; i < n_hidden; i++) {
+      is >> s;
+      v->add_hidden_site(s);
+    }
+    return;
+  }
+  if ( n == 3 ) {
+    CGAL_assertion( d == 1 );
+    if ( number_of_vertices() > 0 ) { clear(); }
+    for (int j = 0; j < 2; j++) {
+      Site_2 s;
+      is >> s;
+      Vertex_handle v = insert(s);
+      unsigned int n_hidden;
+      is >> n_hidden;
+      for (unsigned int i = 0; i < n_hidden; i++) {
+	is >> s;
+	v->add_hidden_site(s);
+      }
+    }
+    return;
+  }
+
+  if (this->_tds.number_of_vertices() != 0) { this->_tds.clear(); }
+
+  this->_tds.set_dimension(d);
+
+  std::vector<Vertex_handle> V(n);
+  std::vector<Face_handle> F(m);
+
+  size_type i = 0;
+
+  // first vertex (infinite vertex)
+  V[0] = create_vertex();
+  this->set_infinite_vertex(V[0]);
+  i++;
+
+
+  // read vertices
+  for (; i < n; ++i) {
+    V[i] = create_vertex();
+    Site_2 s;
+    is >> s;
+    V[i]->set_site(s);
+    unsigned int n_hidden;
+    is >> n_hidden;
+    for (unsigned int j = 0; j < n_hidden; j++) {
+      is >> s;
+      V[i]->add_hidden_site(s);
+    }
+    // read non-combinatorial info of the vertex
+    //    is >> *(V[i]);
+  }
+  
+  // Creation of the faces
+  int index;
+  int dim = (dimension() == -1 ? 1 : dimension() + 1);
+
+  for (i = 0; i < m; ++i) {
+    F[i] = this->_tds.create_face();
+    for (int j = 0; j < dim ; ++j){
+      is >> index;
+      F[i]->set_vertex(j, V[index]);
+      // The face pointer of vertices is set too often,
+      // but otherwise we had to use a further map
+      V[index]->set_face(F[i]);
+    }
+    // read in non-combinatorial info of the face
+    //      is >> *(F[i]) ;
+  }
+
+  // Setting the neighbor pointers 
+  for (i = 0; i < m; ++i) {
+    for (int j = 0; j < dimension()+1; ++j){
+      is >> index;
+      F[i]->set_neighbor(j, F[index]);
+    }
+  }
+}
+
+
 CGAL_END_NAMESPACE
 
 

@@ -158,6 +158,27 @@ conformity with the interface of the
 \ccc{Apollonius_graph_2<Gt,Agds>} class.}
 
 
+\ccHeading{I/O}
+\ccThree{std::ostream&}{agh.file_output(std::ostream& os)+}{}
+\ccThreeToTwo
+%
+\ccMethod{void file_output(std::ostream& os);}{Writes the current
+  state of the Apollonius graph hierarchy to an output stream. In particular,
+  all visible and hidden sites are written as well as the
+  underlying combinatorial hierarchical data structure.}
+\ccGlue
+\ccMethod{void file_input(std::istream& is);}{Reads the state of the
+  Apollonius graph hierarchy from an input stream.}
+%
+\ccGlue
+\ccFunction{std::ostream& operator<<(std::ostream& os,
+  Apollonius_graph_hierarchy_2<Gt,Agds> agh);}
+{Writes the current state of the Apollonius graph hierarchy to an
+  output stream.}
+\ccGlue
+\ccFunction{std::istream& operator>>(std::istream& is,
+  Apollonius_graph_hierarchy_2<Gt,Agds> agh);}
+{Reads the state of the Apollonius graph hierarchy from an input stream.}
 
 
 \ccHeading{Validity check}

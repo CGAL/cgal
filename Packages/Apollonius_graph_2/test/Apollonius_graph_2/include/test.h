@@ -817,8 +817,33 @@ bool test_algo_generic(InputStream& is)
     ag.draw_dual_face(avit, nos);
   }
 #endif
-  
 
+  // file I/O methods
+  //--------------------------------------------------------------------
+  {
+    std::ofstream ofs("ag_testsuite.tmp");
+    assert( ofs );
+    ag.file_output(ofs);
+    ofs.close();
+
+    std::ifstream ifs("ag_testsuite.tmp");
+    assert( ifs );
+    ag.file_input(ifs);
+    ifs.close();
+    assert( ag.is_valid() );
+  }
+  {
+    std::ofstream ofs("ag_testsuite.tmp");
+    assert( ofs );
+    ofs << ag;
+    ofs.close();
+
+    std::ifstream ifs("ag_testsuite.tmp");
+    assert( ifs );
+    ifs >> ag;
+    ifs.close();
+    assert( ag.is_valid() );
+  }
   return true;
 }
 

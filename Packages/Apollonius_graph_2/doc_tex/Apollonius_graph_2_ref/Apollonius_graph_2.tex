@@ -500,8 +500,8 @@ be assignable to one of the following: \ccc{Site_2}, \ccc{Gt::Line_2}.}
 
 
 \ccHeading{I/O}
-\ccThree{Stream& }{}
-{\ccc{Stream& operator<<(Stream&, Gt::Hyperbola_segment_2)+}}
+\ccThree{Stream&}{ag.draw_primal(Stream& str)+}{}
+\ccThreeToTwo
 %
 \ccMethod{template< class Stream >
 Stream& draw_primal(Stream& str);}{Draws the Apollonius graph to
@@ -520,6 +520,8 @@ Apollonius graph, i.e., the Apollonius diagram, to the stream
 \ccc{Stream& operator<<(Stream&, Gt::Ray_2)},\\
 \ccc{Stream& operator<<(Stream&, Gt::Line_2)}.}
 }
+\ccThree{Stream&}{ag.draw_primal_edge(Edge e, Stream& str)+}{}
+\ccThreeToTwo
 \ccGlue
 \ccMethod{template< class Stream >
 Stream& draw_primal_edge(Edge e, Stream& str);}{Draws the edge
@@ -538,7 +540,26 @@ Stream& draw_dual_edge(Edge e, Stream& str);}{Draws the dual of the
 \ccc{Stream& operator<<(Stream&, Gt::Ray_2)},\\
 \ccc{Stream& operator<<(Stream&, Gt::Line_2)}.}
 }
-
+%
+\ccThree{std::ostream&}{ag.file_output(std::ostream& os)+}{}
+\ccThreeToTwo
+\ccGlue
+\ccMethod{void file_output(std::ostream& os);}{Writes the current
+  state of the Apollonius graph to an output stream. In particular,
+  all visible and hidden sites are written as well as the
+  underlying combinatorial data structure.}
+\ccGlue
+\ccMethod{void file_input(std::istream& is);}{Reads the state of the
+  Apollonius graph from an input stream.}
+%
+\ccGlue
+\ccFunction{std::ostream& operator<<(std::ostream& os,
+  Apollonius_graph_2<Gt,Agds> ag);}
+{Writes the current state of the Apollonius graph to an output stream.}
+\ccGlue
+\ccFunction{std::istream& operator>>(std::istream& is,
+  Apollonius_graph_2<Gt,Agds> ag);}
+{Reads the state of the Apollonius graph from an input stream.}
 
 
 \ccHeading{Validity check}

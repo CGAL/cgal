@@ -81,6 +81,8 @@ namespace CGALi {
 } // namespace CGALi
 
 
+template<class Gt,class Agds,class LTag>
+class Apollonius_graph_hierarchy_2;
 
 template < class Gt,
 	   class Agds = Triangulation_data_structure_2 < 
@@ -90,6 +92,7 @@ template < class Gt,
 class Apollonius_graph_2
   : private Triangulation_2<Apollonius_graph_traits_wrapper_2<Gt>,Agds>
 {
+  friend class Apollonius_graph_hierarchy_2<Gt,Agds,LTag>;
 private:
   // types and access methods needed for visualization
   //--------------------------------------------------
@@ -548,6 +551,9 @@ private:
 public:
   // I/O
   //----
+  void file_input(std::istream& is);
+  void file_output(std::ostream& os) const;
+
   template< class Stream >
   Stream& draw_primal(Stream &str) const
   {
@@ -1017,6 +1023,21 @@ protected:
 
 }; // Apollonius_graph_2
 
+template<class Gt, class Agds, class LTag>
+std::ostream& operator<<(std::ostream& os,
+			 const Apollonius_graph_2<Gt,Agds,LTag>& ag)
+{
+  ag.file_output(os);
+  return os;
+}
+
+template<class Gt, class Agds, class LTag>
+std::istream& operator>>(std::istream& is,
+			 Apollonius_graph_2<Gt,Agds,LTag>& ag)
+{
+  ag.file_input(is);
+  return is;
+}
 
 CGAL_END_NAMESPACE
 
