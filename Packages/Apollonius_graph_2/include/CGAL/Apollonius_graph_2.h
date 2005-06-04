@@ -22,6 +22,7 @@
 #ifndef CGAL_APOLLONIUS_GRAPH_2_H
 #define CGAL_APOLLONIUS_GRAPH_2_H
 
+#include <iostream>
 #include <vector>
 #include <map>
 
@@ -551,8 +552,8 @@ private:
 public:
   // I/O
   //----
-  void file_input(std::istream& is);
-  void file_output(std::ostream& os) const;
+  void file_input(std::istream&);
+  void file_output(std::ostream&) const;
 
   template< class Stream >
   Stream& draw_primal(Stream &str) const
