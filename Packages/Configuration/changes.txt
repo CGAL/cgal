@@ -1,3 +1,7 @@
+4 June 2005 Menelaos Karavelas
+- Add CGAL_CFG_NESTED_CLASS_FRIEND_DECLARATION_BUG.C for Intel compiler 8.x,
+  MSVC 7.1 and pgCC.
+
 6 March 2005 Sylvain Pion
 - Add CGAL_CFG_NO_LONG_DOUBLE_IO.C and CGAL_LONG_DOUBLE_IO for pgCC.
 
