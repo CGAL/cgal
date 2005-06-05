@@ -14,7 +14,7 @@
 typedef double               FT;
 typedef CGAL::Cartesian<FT>  K;
 typedef K::Point_2           Point_2;
-typedef K::Line_2           Line_2;
+typedef K::Line_2            Line_2;
 typedef K::Point_3           Point_3;
 
 //**********************************************
@@ -25,7 +25,6 @@ void dump_ps(char *pFilename,
              Line_2& line)
 {
   // try opening file
-  std::cerr << "dump to " << pFilename << "...";
   FILE *pFile = fopen(pFilename,"wt");
   if(pFile == NULL)
   {
@@ -83,6 +82,8 @@ Point_2 random_point_2()
 void test_2(const unsigned int nb_points,
             const FT epsilon)
 {
+  std::cout << "2D: fit a line to a point set" << std::endl;
+
   // create random points nearby a segment
   std::vector<Point_2> points;
   Point_2 p = random_point_2();
@@ -96,8 +97,9 @@ void test_2(const unsigned int nb_points,
   // fit a line
   std::cout << "  fit a 2D line...";
   Line_2 line;
-  linear_least_squares_fitting_2(points.begin(),points.end(),line);
-  std::cout << "done" << std::endl;
+  FT quality;
+  linear_least_squares_fitting_2(points.begin(),points.end(),line,quality);
+  std::cout << "done (quality: " << quality << ")" << std::endl;
 
   // dump to ps
   std::cout << "  dump to ps...";
@@ -107,6 +109,6 @@ void test_2(const unsigned int nb_points,
 
 int main()
 {
-  test_2(100,0.05);
+  test_2(1000,0.05);
   return 0;
 }

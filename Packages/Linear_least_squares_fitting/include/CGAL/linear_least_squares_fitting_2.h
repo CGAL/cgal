@@ -33,11 +33,13 @@ CGAL_BEGIN_NAMESPACE
 
 template < typename InputIterator, 
            typename Line, 
-           typename K >
-void 
+           typename K, 
+           typename Number_type>
+void
 linear_least_squares_fitting_2(InputIterator begin,
                                InputIterator end, 
                                Line& line,
+                               Number_type& quality,
                                const K& k)
 {
   // types
@@ -49,10 +51,10 @@ linear_least_squares_fitting_2(InputIterator begin,
   // compute centroid
   Point c = centroid(begin,end,K());
 
-  // assemble covariance matrix (semi-definite)
-  // numbering:
+  // assemble covariance matrix
+  // semi-definite matrix numbering:
   // 0          
-  // 1 2        
+  // 1 2
   FT covariance[3] = {0,0,0};
   FT eigen_values[2] = {0,0};
   FT eigen_vectors[4] = {0,0,0,0};
@@ -80,26 +82,31 @@ linear_least_squares_fitting_2(InputIterator begin,
     // by default: assemble a horizontal line that goes
     // through the centroid by default.
     line = Line(c,Direction(1,0));
+    if(eigen_values[0] == 0.0) // both eigen values are zero
+      quality = 0.0;
   }
   else
   {
     Direction direction(eigen_vectors[0],eigen_vectors[1]);
     line = Line(c,direction);
+    quality = (1.0 - eigen_values[1] / eigen_values[0]);
   }
 }
 
 
 // this one deduces the kernel from the point in container
 template < typename InputIterator, 
-           typename Line>
-void 
+           typename Line,
+           typename Number_type>
+void
 linear_least_squares_fitting_2(InputIterator begin,
                                InputIterator end, 
-                               Line& line)
+                               Line& line,
+                               Number_type& quality)
 {
   typedef typename std::iterator_traits<InputIterator>::value_type Point;
   typedef typename Kernel_traits<Point>::Kernel                    K;
-  return CGAL::linear_least_squares_fitting_2(begin,end,line,K());
+  return CGAL::linear_least_squares_fitting_2(begin,end,line,quality,K());
 }
 
 CGAL_END_NAMESPACE
