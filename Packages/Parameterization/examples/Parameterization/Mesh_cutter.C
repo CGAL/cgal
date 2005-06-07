@@ -81,7 +81,7 @@ bool Mesh_cutter::init()
     double xcenter = 0.5*(xmin+xmax);
     double ycenter = 0.5*(ymin+ymax);
     double zcenter = 0.5*(zmin+zmax);
-    Point center(xcenter,ycenter,zcenter);
+    Point_3 center(xcenter,ycenter,zcenter);
 
     // get closest facet
     m_pSeedFacet = m_pPolyhedron->get_closest_inner_facet(&center);

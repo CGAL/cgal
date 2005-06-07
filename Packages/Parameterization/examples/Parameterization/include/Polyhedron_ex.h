@@ -1,5 +1,5 @@
 /***************************************************************************
-cgal_types.h  -  description
+Polyhedron_ex.h  -  description
                              -------------------
 begin                : jan 2002
 copyright            : (C) 2002 by Pierre Alliez - INRIA
@@ -15,38 +15,37 @@ email                : pierre.alliez@sophia.inria.fr
  *                                                                         *
  ***************************************************************************/
 
-#ifndef CGAL_TYPES_H_INCLUDED
-#define CGAL_TYPES_H_INCLUDED
-
+#ifndef POLYHEDRON_EX_H_INCLUDED
+#define POLYHEDRON_EX_H_INCLUDED
 
 #include <CGAL/basic.h>
-
-// CGAL stuff
-
 #include <CGAL/Cartesian.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
+#include <CGAL/Cartesian.h>
+
 #include <algorithm>
 #include <vector>
 #include <list>
 #include <stdio.h>
 
-#include "my_kernel.h"
 #include "Feature_skeleton.h"
 
-typedef My_kernel::Vector_3 Vector;
-typedef My_kernel::Vector_2 Vector_2;
-typedef My_kernel::Point_3  Point;
-typedef My_kernel::Point_2  Point_2;
-typedef My_kernel::Segment_2 Segment_2;
+
+// CGAL kernel
+typedef CGAL::Cartesian<double> My_kernel;
+
 
 // compute facet center
 struct Facet_center
 {
+    typedef My_kernel::Vector_3 Vector_3;
+    typedef My_kernel::Point_3  Point_3;
+
     template<class Facet>
     void operator()(Facet& f)
     {
-        Vector vec(0.0,0.0,0.0);
+        Vector_3 vec(0.0,0.0,0.0);
         int degree = 0;
         typedef typename Facet::Halfedge_around_facet_const_circulator circ;
         circ h = f.facet_begin();
@@ -63,11 +62,10 @@ struct Facet_center
 template<class Refs, class T>
 class My_facet : public CGAL::HalfedgeDS_face_base<Refs, T>
 {
-    // facet data
-    int m_tag;
-    Point m_center;
-
 public:
+
+    typedef My_kernel::Vector_3 Vector_3;
+    typedef My_kernel::Point_3  Point_3;
 
     // life cycle
     // no constructors to repeat, since only
@@ -78,19 +76,26 @@ public:
     }
 
     // center
-    Point& center() { return m_center; }
-    const Point& center() const { return m_center; }
+    Point_3& center() { return m_center; }
+    const Point_3& center() const { return m_center; }
 
     // tag
     int tag() const { return m_tag; }
     void tag(int tag) { m_tag = tag; }
 
     // distance
-    double distance(Point *pPoint) const
+    double distance(Point_3 *pPoint) const
     {
-        Vector vec = (*pPoint-m_center);
-        return My_kernel::len(vec);
+        Vector_3 vec = (*pPoint-m_center);
+        return std::sqrt(vec*vec);
     }
+
+// Fields
+private:
+
+    // facet data
+    int m_tag;
+    Point_3 m_center;
 };
 
 template<class Refs, class Tprev, class Tvertex, class Tface>
@@ -213,17 +218,21 @@ public:
     void seaming(int seaming) { m_seaming = seaming; }
 };
 
+
 // A redefined items class for the Polyhedron_3 with a refined vertex, facet and halfedge classes
 struct My_items : public CGAL::Polyhedron_items_3
 {
+    typedef My_kernel::Vector_3 Vector_3;
+    typedef My_kernel::Point_3  Point_3;
+
     // wrap vertex
     template<class Refs, class Traits>
     struct Vertex_wrapper
     {
-        typedef typename Traits::Point_3  Point;
+        typedef typename Traits::Point_3  Point_3;
         typedef My_vertex<Refs,
                           CGAL::Tag_true,
-                          Point> Vertex;
+                          Point_3> Vertex;
     };
 
     // wrap facet
@@ -251,6 +260,9 @@ typedef CGAL::Polyhedron_3<My_kernel,My_items> Polyhedron;
 class Polyhedron_ex : public Polyhedron
 {
 public:
+
+    typedef My_kernel::Vector_3 Vector_3;
+    typedef My_kernel::Point_3  Point_3;
 
     // feature/boundary skeletons
     typedef Feature_backbone<Vertex_handle,Halfedge_handle> backbone;
@@ -317,7 +329,7 @@ public:
     }
 
     // get closest inner facet
-    Facet_handle get_closest_inner_facet(Point *pPoint)
+    Facet_handle get_closest_inner_facet(Point_3 *pPoint)
     {
         Facet_iterator pFace = facets_begin();
         Facet_handle pClosest = pFace;
@@ -639,7 +651,7 @@ public:
     // halfedge len
     double len(Polyhedron::Halfedge_handle halfedge)
     {
-        Vector v = (halfedge->vertex()->point()-
+        Vector_3 v = (halfedge->vertex()->point()-
                     halfedge->prev()->vertex()->point());
         return std::sqrt(v*v);
     }
@@ -777,8 +789,8 @@ public:
             pHalfedge++)
         {
             Polyhedron_ex::Halfedge_handle he = (*pHalfedge);
-            Vector v = (he->vertex()->point()-he->prev()->vertex()->point());
-            len += My_kernel::len(v);
+            Vector_3 v = (he->vertex()->point()-he->prev()->vertex()->point());
+            len += std::sqrt(v*v);
         }
         return len;
     }
@@ -788,13 +800,13 @@ public:
                     Halfedge_handle pHalfedge)
     {
         // we assume
-        Point center_facet = pFacet->center();
+        Point_3 center_facet = pFacet->center();
 
-        Vector v = (pHalfedge->opposite()->vertex()->point()
+        Vector_3 v = (pHalfedge->opposite()->vertex()->point()
                  - pHalfedge->vertex()->point());
-        Point center_halfedge = pHalfedge->vertex()->point() + (v/2);
-        Vector d = center_facet-center_halfedge;
-        return My_kernel::len(d);
+        Point_3 center_halfedge = pHalfedge->vertex()->point() + (v/2);
+        Vector_3 d = center_facet-center_halfedge;
+        return std::sqrt(d*d);
     }
 
     void farthest_point_aligned(Vertex_handle &pVertexMin,
@@ -831,5 +843,5 @@ public:
 }; // end class PolyhedronEx
 
 
-#endif // CGAL_TYPES_H_INCLUDED
+#endif // POLYHEDRON_EX_H_INCLUDED
 

@@ -198,9 +198,6 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
 			<File
-				RelativePath=".\include\cgal_types.h">
-			</File>
-			<File
 				RelativePath=".\include\Feature_skeleton.h">
 			</File>
 			<File
@@ -213,10 +210,10 @@
 				RelativePath=".\include\Mesh_feature_extractor.h">
 			</File>
 			<File
-				RelativePath=".\include\my_kernel.h">
+				RelativePath=".\include\options.h">
 			</File>
 			<File
-				RelativePath=".\include\options.h">
+				RelativePath=".\include\Polyhedron_ex.h">
 			</File>
 		</Filter>
 		<Filter

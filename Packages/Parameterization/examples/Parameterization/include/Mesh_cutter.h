@@ -17,21 +17,25 @@
 #ifndef MESH_CUTTER_H
 #define MESH_CUTTER_H
 
-#include "cgal_types.h"
+#include "Polyhedron_ex.h"
 #include "Feature_skeleton.h"
 #include <list>
 
 
 class Mesh_cutter
 {
+    // Private types
+    typedef My_kernel::Vector_3 Vector_3;
+    typedef My_kernel::Point_3  Point_3;
     typedef Feature_backbone<Polyhedron_ex::Vertex_handle,
                              Polyhedron_ex::Halfedge_handle> backbone;
+    enum {FREE,DONE,FIXED};
 
+    // Fields
     Polyhedron_ex *m_pPolyhedron;  // the model to cut
     backbone *m_pBackbone;
     Polyhedron_ex::Facet_handle m_pSeedFacet;
     Polyhedron_ex::Vertex_handle m_pSeedVertex;
-    enum {FREE,DONE,FIXED};
 
 public:
 

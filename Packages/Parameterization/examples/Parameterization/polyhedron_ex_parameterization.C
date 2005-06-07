@@ -73,7 +73,7 @@
 #include <CGAL/LSCM_parametizer_3.h>
 
 #include "options.h"
-#include "cgal_types.h"
+#include "Polyhedron_ex.h"
 #include "Feature_skeleton.h"
 #include "Mesh_cutter.h"
 #include "Mesh_feature_extractor.h"

@@ -17,7 +17,7 @@
 #ifndef MESH_FEATURE_EXTRACTOR_H
 #define MESH_FEATURE_EXTRACTOR_H
 
-#include "cgal_types.h"
+#include "Polyhedron_ex.h"
 
 
 class Mesh_feature_extractor

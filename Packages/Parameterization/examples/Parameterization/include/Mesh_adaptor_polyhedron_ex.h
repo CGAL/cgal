@@ -26,7 +26,7 @@
 #include <CGAL/Convertible_iterator_project.h>
 #include <CGAL/Convertible_circulator_project.h>
 
-#include "cgal_types.h"
+#include "Polyhedron_ex.h"
 #include "Mesh_feature_extractor.h"
 
 #include <cassert>
