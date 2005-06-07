@@ -21,21 +21,25 @@
 #ifndef CGAL_TAUCS_MATRIX
 #define CGAL_TAUCS_MATRIX
 
+// Include TAUCS main header
 #ifndef TAUCS_H_INCLUDED
     #define TAUCS_H_INCLUDED
-    #include <complex.h>
+
+    // GCC 3.3 complains if we include <complex.h> within "extern C {}"
+    #if defined(__GNUC__)
+        #include <complex.h>
+    #endif
+
+    // TAUCS is a C library
     extern "C" {
         #include <taucs.h>
     }
+
+    // Avoid error with std::min() and std::max()
     #undef min
     #undef max
+
 #endif
-// #ifndef TAUCS_H_INCLUDED
-//     #define TAUCS_H_INCLUDED
-//     #include <taucs.h>
-//     #undef min
-//     #undef max
-// #endif
 
 #include <cassert>
 

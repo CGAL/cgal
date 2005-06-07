@@ -315,10 +315,10 @@
 			Name="TAUCS"
 			Filter="">
 			<File
-				RelativePath="..\..\..\..\..\Taucs\src\taucs.h">
+				RelativePath="..\..\..\Taucs\auxiliary\Taucs\src\taucs.h">
 			</File>
 			<File
-				RelativePath="..\..\..\..\..\Taucs\src\taucs_private.h">
+				RelativePath="..\..\..\Taucs\auxiliary\Taucs\src\taucs_private.h">
 			</File>
 		</Filter>
 	</Files>
