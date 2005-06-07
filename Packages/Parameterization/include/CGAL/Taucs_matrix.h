@@ -23,12 +23,19 @@
 
 #ifndef TAUCS_H_INCLUDED
     #define TAUCS_H_INCLUDED
+    #include <complex.h>
     extern "C" {
         #include <taucs.h>
     }
     #undef min
     #undef max
 #endif
+// #ifndef TAUCS_H_INCLUDED
+//     #define TAUCS_H_INCLUDED
+//     #include <taucs.h>
+//     #undef min
+//     #undef max
+// #endif
 
 #include <cassert>
 
@@ -40,7 +47,7 @@ template<class T> struct Taucs_number;
 
 
 // Class Taucs_matrix
-// This class is a C++ wrapper around TAUCS' type taucs_ccs_matrix and 
+// This class is a C++ wrapper around TAUCS' type taucs_ccs_matrix and
 // is a model of the SparseLinearAlgebraTraits_d::Matrix concept
 //
 // TODO: reallocate the array of non null elements when it's full
@@ -83,12 +90,12 @@ public:
     }
 
     // Return the matrix number of rows
-    inline int row_dimension() const    { 
-        return m_matrix->m; 
+    inline int row_dimension() const    {
+        return m_matrix->m;
     }
     // Return the matrix number of columns
-    inline int column_dimension() const { 
-        return m_matrix->n; 
+    inline int column_dimension() const {
+        return m_matrix->n;
     }
 
     // Read access to 1 matrix coefficient
@@ -96,7 +103,7 @@ public:
     // Preconditions:
     // * 0 <= i < row_dimension()
     // * 0 <= j < column_dimension()
-    T  get_coef (int i, int j) const 
+    T  get_coef (int i, int j) const
     {
         // For symmetric matrices, we store only the lower triangle
         // => swap i and j if (i,j) belongs to the upper triangle
@@ -117,7 +124,7 @@ public:
     }
 
     // Write access to 1 matrix coefficient: aij <- val
-    // 
+    //
     // Optimization:
     // For symmetric matrices, Taucs_matrix stores only the lower triangle
     // set_coef() does nothing if (i,j) belongs to the upper triangle
@@ -125,7 +132,7 @@ public:
     // Preconditions:
     // * 0 <= i < row_dimension()
     // * 0 <= j < column_dimension()
-    void set_coef(int i, int j, T  val) 
+    void set_coef(int i, int j, T  val)
     {
         if (m_matrix->flags & TAUCS_SYMMETRIC)
         {
@@ -145,7 +152,7 @@ public:
     }
 
     // Write access to 1 matrix coefficient: aij <- aij + val
-    // 
+    //
     // Optimization:
     // For symmetric matrices, Taucs_matrix stores only the lower triangle
     // add_coef() does nothing if (i,j) belongs to the upper triangle
@@ -204,7 +211,7 @@ private:
         }
 
         // Compute default max number of non null elements
-        if (nb_max_elements <= 0) 
+        if (nb_max_elements <= 0)
         {
             // Pick a number larger than the average valence in a triangular mesh (6)
             int average_nb_elements_per_column = 16;    // 10 is not enough for LSCM
@@ -222,15 +229,15 @@ private:
         m_nb_elements = 0;
         m_nb_max_elements = nb_max_elements;
 
-        // Init m_matrix's colptr[] array 
-        // Implementation note: 
+        // Init m_matrix's colptr[] array
+        // Implementation note:
         // colptr[j] is the index of the first element of the column j (or where it
         // should be if it doesn't exist) + the past-the-end index of the last column
         for (int col=0; col <= columns; col++)
             m_matrix->colptr[col] = 0;
     }
 
-    // Read/write access to 1 matrix coefficient: 
+    // Read/write access to 1 matrix coefficient:
     // Get a pointer to a matrix element. Optionaly create it.
     // Return NULL if it doesn't exist (cannot happen if 'create' is true)
     //
@@ -238,7 +245,7 @@ private:
     // * 0 <= i < row_dimension()
     // * 0 <= j < column_dimension()
     // * j <= i for symmetric matrices (we store only the lower triangle)
-    T* find_element(int i, int j, bool create) 
+    T* find_element(int i, int j, bool create)
     {
         T* element = NULL;                          // returned value
         T* matrix_values = (T*)(m_matrix->values.v);// cast to actual array type
@@ -250,9 +257,9 @@ private:
             assert(m_matrix->flags & TAUCS_LOWER);
             assert(j <= i);
         }
-        
+
         // Search for the i element of the j column's range in rowind[] and values[]
-        // Implementation note: 
+        // Implementation note:
         // colptr[j] is the index of the first element of the column j (or where it
         // should be if it doesn't exist) + the past-the-end index of the last column
         for (int idx = m_matrix->colptr[j]; idx <= m_matrix->colptr[j+1]; idx++)
@@ -261,11 +268,11 @@ private:
             if ((m_matrix->rowind[idx] >= i)    // on element i position of the column j
              || (idx == m_matrix->colptr[j+1])) // or on the 1st index of column j+1
             {
-                // If the (i,j) element doesn't exist yet and 'create' is true, 
+                // If the (i,j) element doesn't exist yet and 'create' is true,
                 // shift the next elements and insert a new null element
                 if (((m_matrix->rowind[idx] > i)    // too far in the column j
                  || (idx == m_matrix->colptr[j+1])) // or on the column j+1
-                  && create ) 
+                  && create )
                 {
                     // TODO: reallocate m_matrix if it's full
                     assert(m_nb_elements < m_nb_max_elements);
@@ -302,7 +309,7 @@ private:
         return element;
     }
 
-    // Read access to 1 matrix coefficient: 
+    // Read access to 1 matrix coefficient:
     // Get a pointer to a matrix element. Return NULL if it doesn't exist.
     //
     // Preconditions:
@@ -333,7 +340,7 @@ private:
 
 // Class Taucs_symmetric_matrix
 // This class is a C++ wrapper around a TAUCS SYMMETRIC matrix
-// (type taucs_ccs_matrix) 
+// (type taucs_ccs_matrix)
 // It is also a model of the SparseLinearAlgebraTraits_d::Matrix concept
 
 template<class T>       // Tested with T = taucs_single or taucs_double
@@ -371,17 +378,17 @@ public:
 // Utility class to Taucs_matrix
 // Convert matrix's T type to the corresponding TAUCS constant (called TAUCS_FLAG)
 template<class T> struct Taucs_number {};
-template<> struct Taucs_number<taucs_double> { 
-    enum { TAUCS_FLAG = TAUCS_DOUBLE }; 
+template<> struct Taucs_number<taucs_double> {
+    enum { TAUCS_FLAG = TAUCS_DOUBLE };
 };
-template<> struct Taucs_number<taucs_single>  { 
-    enum { TAUCS_FLAG = TAUCS_SINGLE }; 
+template<> struct Taucs_number<taucs_single>  {
+    enum { TAUCS_FLAG = TAUCS_SINGLE };
 };
-template<> struct Taucs_number<taucs_dcomplex> { 
-    enum { TAUCS_FLAG = TAUCS_DCOMPLEX }; 
+template<> struct Taucs_number<taucs_dcomplex> {
+    enum { TAUCS_FLAG = TAUCS_DCOMPLEX };
 };
-template<> struct Taucs_number<taucs_scomplex> { 
-    enum { TAUCS_FLAG = TAUCS_SCOMPLEX }; 
+template<> struct Taucs_number<taucs_scomplex> {
+    enum { TAUCS_FLAG = TAUCS_SCOMPLEX };
 };
 
 

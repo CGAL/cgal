@@ -136,12 +136,12 @@ Two_vertices_parametizer_3<Adaptor>::parameterize_border(Adaptor* mesh)
         Point_3 position = mesh->get_vertex_position(it);
 
         xmin = std::min(position.x(), xmin) ;
-        ymin = std::min(position.y(), ymin) ; 
-        zmin = std::min(position.z(), zmin) ;       
+        ymin = std::min(position.y(), ymin) ;
+        zmin = std::min(position.z(), zmin) ;
 
-        xmax = std::max(position.x(), xmax) ;       
-        ymax = std::max(position.y(), ymax) ;       
-        zmax = std::max(position.z(), zmax) ;       
+        xmax = std::max(position.x(), xmax) ;
+        ymax = std::max(position.y(), ymax) ;
+        zmax = std::max(position.z(), zmax) ;
     }
 
     // Find longest bounding box axes
@@ -176,8 +176,8 @@ Two_vertices_parametizer_3<Adaptor>::parameterize_border(Adaptor* mesh)
     }
     Vector_3 V1,                // bounding box' longest axis
              V2 ;               // bounding box' 2nd longest axis
-    double V1_min, V1_max;      // bounding box' dimensions along V1
-    double V2_min, V2_max;      // bounding box' dimensions along V2
+    double V1_min=0, V1_max=0;  // bounding box' dimensions along V1
+    double V2_min=0, V2_max=0;  // bounding box' dimensions along V2
     switch (longest_axis)
     {
     case X_AXIS:

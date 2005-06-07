@@ -35,18 +35,18 @@ CGAL_BEGIN_NAMESPACE
 
 
 // Class Mesh_patch_vertex_around_vertex_cir
-// Represents a (clockwise) circulator around a vertex 
+// Represents a (clockwise) circulator around a vertex
 // of a Mesh_adaptor_patch_3<MeshAdaptor_3> mesh
 template<class MeshPatchPtrType,    // = [const] Mesh_adaptor_patch_3*
          class VertexHandleType,    // = Mesh_adaptor_patch_3::Vertex_[const_]handle
-         class AdaptorVertexAroundVertexCirculatorType>   
+         class AdaptorVertexAroundVertexCirculatorType>
                                     // = Adaptor::Vertex_around_vertex_[const_]circulator
-class Mesh_patch_vertex_around_vertex_cir 
+class Mesh_patch_vertex_around_vertex_cir
     : public VertexHandleType
 {
     typedef VertexHandleType                    Base;
     typedef Mesh_patch_vertex_around_vertex_cir Self;
-    typedef typename std::iterator_traits<MeshPatchPtrType>::value_type 
+    typedef typename std::iterator_traits<MeshPatchPtrType>::value_type
                                                 Mesh_patch;
     typedef typename Mesh_patch::Adaptor        Adaptor;
 
@@ -58,11 +58,11 @@ public:
     // Export template parameter types
     typedef MeshPatchPtrType                    Mesh_patch_ptr_t;
     typedef VertexHandleType                    Vertex_handle_t;
-    typedef AdaptorVertexAroundVertexCirculatorType 
+    typedef AdaptorVertexAroundVertexCirculatorType
                                                 Adaptor_vertex_around_vertex_cir_t;
 
     // Iterator types
-    typedef typename Adaptor_vertex_around_vertex_cir_t::iterator_category 
+    typedef typename Adaptor_vertex_around_vertex_cir_t::iterator_category
                                                 iterator_category;
     typedef typename Vertex_handle_t::value_type value_type;
     typedef std::ptrdiff_t                      difference_type;
@@ -81,8 +81,8 @@ public:
     // Implementation note:
     // If m_center_vertex is a seam/main boundary vertex, then [get_prev_seam_vertex(),
     // get_next_seam_vertex()] is the range of its inner neighbor vertices.
-    Mesh_patch_vertex_around_vertex_cir(Mesh_patch_ptr_t mesh, 
-                                        Vertex_handle_t vertex, 
+    Mesh_patch_vertex_around_vertex_cir(Mesh_patch_ptr_t mesh,
+                                        Vertex_handle_t vertex,
                                         Adaptor_vertex_around_vertex_cir_t adaptor_circulator)
         : m_mesh_patch(mesh),
           m_center_vertex(vertex),
@@ -97,7 +97,7 @@ public:
     }
 
     // Copy constructor
-    Self(const Self& cir)
+    Mesh_patch_vertex_around_vertex_cir(const Self& cir)
       : Base(cir),
         m_mesh_patch(cir.m_mesh_patch),
         m_center_vertex(cir.m_center_vertex),
@@ -108,7 +108,7 @@ public:
     }
 
     // operator =()
-    Self& operator =(const Self& cir) 
+    Self& operator =(const Self& cir)
     {
         Base::operator=()(cir);
         m_mesh_patch = cir.m_mesh_patch;
@@ -221,18 +221,18 @@ private:
     // Precondition: m_adaptor_circulator is valid
     void update_inherited_handle()
     {
-        // TODO: Support the case where the current vertex m_adaptor_circulator 
+        // TODO: Support the case where the current vertex m_adaptor_circulator
         //       and the center vertex m_center_vertex are on the same (non-oriented) seam.
-        //       See Mesh_patch_vertex_around_facet_cir::update_inherited_handle() 
+        //       See Mesh_patch_vertex_around_facet_cir::update_inherited_handle()
         //       which does it with 3 points. Use a rotation to get the 3rd point?
         assert(m_mesh_patch->m_mesh_adaptor->get_edge_seaming(
-                m_adaptor_circulator, m_center_vertex->get_adaptor_vertex()) != Adaptor::BORDER 
+                m_adaptor_circulator, m_center_vertex->get_adaptor_vertex()) != Adaptor::BORDER
             || m_mesh_patch->m_mesh_adaptor->get_edge_seaming(
                 m_center_vertex->get_adaptor_vertex(), m_adaptor_circulator) != Adaptor::BORDER);
 
         // Get current decorated vertex
-        Vertex_handle_t current_decorated_vertex 
-            = m_mesh_patch->get_decorated_vertex(m_adaptor_circulator, 
+        Vertex_handle_t current_decorated_vertex
+            = m_mesh_patch->get_decorated_vertex(m_adaptor_circulator,
                                                  m_center_vertex->get_adaptor_vertex());
 
         // Update the inherited vertex handle
@@ -253,18 +253,18 @@ private:
 
 
 // Class Mesh_patch_vertex_around_facet_cir
-// Represents a (clockwise) circulator around a facet 
+// Represents a (clockwise) circulator around a facet
 // of a Mesh_adaptor_patch_3<MeshAdaptor_3> mesh
 template<class MeshPatchPtrType,    // = [const] Mesh_adaptor_patch_3*
          class VertexHandleType,    // = Mesh_adaptor_patch_3::Vertex_[const_]handle
-         class AdaptorVertexAroundFacetCirculatorType>   
+         class AdaptorVertexAroundFacetCirculatorType>
                                     // = Adaptor::Vertex_around_facet_[const_]circulator
-class Mesh_patch_vertex_around_facet_cir 
+class Mesh_patch_vertex_around_facet_cir
     : public VertexHandleType
 {
     typedef VertexHandleType                    Base;
     typedef Mesh_patch_vertex_around_facet_cir  Self;
-    typedef typename std::iterator_traits<MeshPatchPtrType>::value_type 
+    typedef typename std::iterator_traits<MeshPatchPtrType>::value_type
                                                 Mesh_patch;
     typedef typename Mesh_patch::Adaptor        Adaptor;
     typedef typename Mesh_patch::Vertex         Vertex;
@@ -277,11 +277,11 @@ public:
     // Export template parameter types
     typedef MeshPatchPtrType                    Mesh_patch_ptr_t;
     typedef VertexHandleType                    Vertex_handle_t;
-    typedef AdaptorVertexAroundFacetCirculatorType 
+    typedef AdaptorVertexAroundFacetCirculatorType
                                                 Adaptor_vertex_around_facet_cir_t;
 
     // Iterator types
-    typedef typename Adaptor_vertex_around_facet_cir_t::iterator_category 
+    typedef typename Adaptor_vertex_around_facet_cir_t::iterator_category
                                                 iterator_category;
     typedef typename Vertex_handle_t::value_type value_type;
     typedef std::ptrdiff_t                      difference_type;
@@ -295,7 +295,7 @@ public:
     // Circulator pointing to NULL
     Mesh_patch_vertex_around_facet_cir() {}
 
-    Mesh_patch_vertex_around_facet_cir(Mesh_patch_ptr_t mesh, 
+    Mesh_patch_vertex_around_facet_cir(Mesh_patch_ptr_t mesh,
                                        Adaptor_vertex_around_facet_cir_t adaptor_circulator)
         : m_mesh_patch(mesh),
           m_adaptor_circulator(adaptor_circulator)
@@ -308,7 +308,7 @@ public:
     }
 
     // Copy constructor
-    Self(const Self& cir)
+    Mesh_patch_vertex_around_facet_cir(const Self& cir)
       : Base(cir),
         m_mesh_patch(cir.m_mesh_patch),
         m_adaptor_circulator(cir.m_adaptor_circulator)
@@ -318,7 +318,7 @@ public:
     }
 
     // operator =()
-    Self& operator =(const Self& cir) 
+    Self& operator =(const Self& cir)
     {
         Base::operator=(cir);
         m_mesh_patch = cir.m_mesh_patch;
@@ -398,7 +398,7 @@ private:
          || m_mesh_patch->m_mesh_adaptor->get_edge_seaming(
                         next_vertex, m_adaptor_circulator) != Adaptor::BORDER)
         {
-            current_decorated_vertex 
+            current_decorated_vertex
                     = m_mesh_patch->get_decorated_vertex(m_adaptor_circulator,
                                                          next_vertex);
         }
@@ -408,23 +408,23 @@ private:
          || m_mesh_patch->m_mesh_adaptor->get_edge_seaming(
                         prev_vertex, m_adaptor_circulator) != Adaptor::BORDER)
         {
-            current_decorated_vertex 
+            current_decorated_vertex
                     = m_mesh_patch->get_decorated_vertex(m_adaptor_circulator,
                                                          prev_vertex);
         }
         // Special case: Both edges belong to the seam
         else
         {
-            Vertex vertex((typename Adaptor::Vertex*)&*m_adaptor_circulator, 
+            Vertex vertex((typename Adaptor::Vertex*)&*m_adaptor_circulator,
                           (typename Adaptor::Vertex*)&*next_vertex,     // order...
                           (typename Adaptor::Vertex*)&*prev_vertex);    // ...inverted!
 
             // Implementation note:
-            // The next line seems to return a reference to a local Vertex variable. 
+            // The next line seems to return a reference to a local Vertex variable.
             // In fact, Vertex_[const_]handle constructor copies the Vertex object.
-            // The purpose is to save the time of searching the Vertex in 
+            // The purpose is to save the time of searching the Vertex in
             // m_inner_and_border_vertices list.
-            current_decorated_vertex = &vertex; 
+            current_decorated_vertex = &vertex;
         }
 
         // Update the inherited vertex handle

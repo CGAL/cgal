@@ -27,7 +27,7 @@
 // circle boundary
 // OpenNL solver
 // output is a ps map
-// input file is mesh.off (the latter must be at the very end)
+// input file is mesh.off
 //----------------------------------------------------------
 // polyhedron_ex_parameterization -t conformal -b circle -o eps mesh.off mesh.eps
 
@@ -156,7 +156,7 @@ static Seam cut_mesh(Polyhedron_ex* mesh)
         cutter.cut_genus(pSeamingBackbone);
     }
 
-    // The Mesh_cutter class is quite buggy 
+    // The Mesh_cutter class is quite buggy
     // => we check that pSeamingBackbone is valid
     //
     // 1) Check that pSeamingBackbone is not empty
@@ -191,7 +191,7 @@ static Seam cut_mesh(Polyhedron_ex* mesh)
 
 // Call appropriate parameterization method based on application parameters
 template<class MeshAdaptor_3,       // 3D surface
-         class SparseLinearAlgebraTraits_d> 
+         class SparseLinearAlgebraTraits_d>
                                     // Traits class to solve a sparse linear system
 typename CGAL::Parametizer_3<MeshAdaptor_3>::ErrorCode
 parameterize(MeshAdaptor_3* mesh,   // Mesh parameterization adaptor
@@ -365,7 +365,7 @@ int main(int argc,char * argv[])
     const char *type = "floater";       // default: Floater param
     const char *boundary = "circle";    // default: circular boundary param.
     const char *solver = "opennl";      // default: OpenNL solver
-    const char *output = "";            // default: no output 
+    const char *output = "";            // default: no output
 
     // misc
     char  optchar;
@@ -472,11 +472,11 @@ int main(int argc,char * argv[])
     // The parameterization package needs an adaptor to handle Polyhedrons
     Mesh_adaptor_polyhedron_ex mesh_adaptor(&mesh);
 
-    // The parameterization package supports only meshes that 
-    // are toplogical disks => we need to virtually "cut" the mesh 
+    // The parameterization package supports only meshes that
+    // are toplogical disks => we need to virtually "cut" the mesh
     // to make it homeomorphic to a disk
     //
-    // 1) Cut the mesh 
+    // 1) Cut the mesh
     Seam seam = cut_mesh(&mesh);
     if (seam.empty())
     {
@@ -485,7 +485,7 @@ int main(int argc,char * argv[])
     }
     //
     // 2) Create adaptor that virtually "cuts" a patch in a Polyhedron_ex mesh
-    typedef CGAL::Mesh_adaptor_patch_3<Mesh_adaptor_polyhedron_ex> 
+    typedef CGAL::Mesh_adaptor_patch_3<Mesh_adaptor_polyhedron_ex>
                                                     Mesh_patch_polyhedron_ex;
     Mesh_patch_polyhedron_ex   mesh_patch(&mesh_adaptor,
                                           seam.begin(),
@@ -496,16 +496,16 @@ int main(int argc,char * argv[])
     //***************************************
 
     CGAL::Parametizer_3<Mesh_patch_polyhedron_ex>::ErrorCode err;
-    if (strcmp(solver,"opennl") == 0) 
+    if (strcmp(solver,"opennl") == 0)
     {
-        err = parameterize<Mesh_patch_polyhedron_ex, 
+        err = parameterize<Mesh_patch_polyhedron_ex,
                            OpenNL::DefaultLinearSolverTraits<double> >(&mesh_patch, type, boundary);
         if (err != CGAL::Parametizer_3<Mesh_patch_polyhedron_ex>::OK)
             fprintf(stderr, "\nFATAL ERROR: parameterization error # %d\n", (int)err);
     }
     else if (strcmp(solver,"taucs") == 0)
     {
-        err = parameterize<Mesh_patch_polyhedron_ex, 
+        err = parameterize<Mesh_patch_polyhedron_ex,
                            CGAL::Taucs_solver_traits<double> >(&mesh_patch, type, boundary);
         if (err != CGAL::Parametizer_3<Mesh_patch_polyhedron_ex>::OK)
             fprintf(stderr, "\nFATAL ERROR: parameterization error # %d\n", (int)err);
@@ -546,8 +546,8 @@ int main(int argc,char * argv[])
     cout << std::endl;
     cerr << std::endl;
 
-    return (err == CGAL::Parametizer_3<Mesh_patch_polyhedron_ex>::OK) ? 
-           EXIT_SUCCESS : 
+    return (err == CGAL::Parametizer_3<Mesh_patch_polyhedron_ex>::OK) ?
+           EXIT_SUCCESS :
            EXIT_FAILURE;
 }
 

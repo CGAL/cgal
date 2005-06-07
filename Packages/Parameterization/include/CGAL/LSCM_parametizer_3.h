@@ -560,31 +560,32 @@ check_parameterize_postconditions(const Adaptor& mesh,
 {
     ErrorCode status = OK;
 
-    // LS 02/2005: commented out this section because OpenNL::LinearSolver
-    //             does not provide a is_solvable() method
-    //
-    //// Check if "A*Xu = Bu" and "A*Xv = Bv" systems 
-    //// are solvable with a good conditioning
-    //CGAL_parameterization_expensive_postcondition_code(         \
-    //    status = get_linear_algebra_traits().is_solvable(A, Bu) \
-    //           ? OK                                             \
-    //           : ERROR_BAD_MATRIX_CONDITIONING;                 \
-    //);
-    //if (status != OK) {
-    //    std::cerr << "  error ERROR_BAD_MATRIX_CONDITIONING!" << std::endl;
-    //    //CGAL_parameterization_postcondition(false);
-    //    return status;
-    //}
-    //CGAL_parameterization_expensive_postcondition_code(         \
-    //    status = get_linear_algebra_traits().is_solvable(A, Bv) \
-    //           ? OK                                             \
-    //           : ERROR_BAD_MATRIX_CONDITIONING;                 \
-    //);
-    //if (status != OK) {
-    //    std::cerr << "  error ERROR_BAD_MATRIX_CONDITIONING!" << std::endl;
-    //    //CGAL_parameterization_postcondition(false);
-    //    return status;
-    //}
+    /* LS 02/2005: commented out this section because OpenNL::LinearSolver
+     *             does not provide a is_solvable() method
+     *
+    // Check if "A*Xu = Bu" and "A*Xv = Bv" systems
+    // are solvable with a good conditioning
+    CGAL_parameterization_expensive_postcondition_code(         \
+        status = get_linear_algebra_traits().is_solvable(A, Bu) \
+               ? OK                                             \
+               : ERROR_BAD_MATRIX_CONDITIONING;                 \
+    );
+    if (status != OK) {
+        std::cerr << "  error ERROR_BAD_MATRIX_CONDITIONING!" << std::endl;
+        //CGAL_parameterization_postcondition(false);
+        return status;
+    }
+    CGAL_parameterization_expensive_postcondition_code(         \
+        status = get_linear_algebra_traits().is_solvable(A, Bv) \
+               ? OK                                             \
+               : ERROR_BAD_MATRIX_CONDITIONING;                 \
+    );
+    if (status != OK) {
+        std::cerr << "  error ERROR_BAD_MATRIX_CONDITIONING!" << std::endl;
+        //CGAL_parameterization_postcondition(false);
+        return status;
+    }
+     */
 
     // Check if 3D -> 2D mapping is 1 to 1
     CGAL_parameterization_expensive_postcondition_code( \
@@ -626,7 +627,9 @@ is_one_to_one_mapping(const Adaptor& mesh,
                 v0 = cir;
             else if (vertexIndex == 1)
                 v1 = cir;
-            else if (vertexIndex == 2)
+            else if (vertexIndex == 2)    //// Check if "A*Xu = Bu" and "A*Xv = Bv" systems
+    //// are solvable with a good conditioning
+
                 v2 = cir;
 
             vertexIndex++;

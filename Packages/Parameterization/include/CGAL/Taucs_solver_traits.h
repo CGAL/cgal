@@ -21,17 +21,17 @@
 #ifndef CGAL_TAUCS_SOLVER_TRAITS
 #define CGAL_TAUCS_SOLVER_TRAITS
 
-#include <CGAL/taucs_matrix.h>
-#include <CGAL/taucs_vector.h>
+#include <CGAL/Taucs_matrix.h>
+#include <CGAL/Taucs_vector.h>
 
 #include <cassert>
 #include <stdio.h>
 
-CGAL_BEGIN_NAMESPACE 
+CGAL_BEGIN_NAMESPACE
 
 
 // Class Taucs_symmetric_solver_traits
-// Traits class for solving SYMMETRIC DEFINIE POSITIVE sparse linear systems 
+// Traits class for solving SYMMETRIC DEFINIE POSITIVE sparse linear systems
 // using TAUCS solvers family
 // The default solver is the Multifrontal Supernodal Cholesky Factorization
 //
@@ -53,14 +53,14 @@ public:
 
     // Create a TAUCS sparse linear solver for SYMMETRIC DEFINIE POSITIVE matrices
     // The default solver is the Multifrontal Supernodal Cholesky Factorization
-    // See taucs_linsolve() documentation for the meaning of the 
+    // See taucs_linsolve() documentation for the meaning of the
     // 'options' and 'arguments' parameters
     Taucs_symmetric_solver_traits(
                     const char*  options[]   = NULL,  // must be persistent
 		    const void*  arguments[] = NULL)  // must be persistent
     {
-        static char* MULTIFRONTAL_LLT[] = {"taucs.factor.LLT=true", 
-                                           "taucs.factor.mf=true", 
+        static char* MULTIFRONTAL_LLT[] = {"taucs.factor.LLT=true",
+                                           "taucs.factor.mf=true",
                                            NULL};
         m_options   = (options == NULL) ? MULTIFRONTAL_LLT : options;
         m_arguments = arguments;
@@ -76,13 +76,13 @@ public:
     {
         D = 1;          // TAUCS does not support homogeneous coordinates
 
-//#ifndef NDEBUG 
+//#ifndef NDEBUG
 //        // Turn on TAUCS trace
 //        std::cerr.flush();
 //        taucs_logfile("stderr");
 //#endif
-        
-//#ifndef NDEBUG 
+
+//#ifndef NDEBUG
 //        // Debug trace
 //        fprintf(stderr, "\n");
 //        fprintf(stderr, "linear_solver:\n");
@@ -118,7 +118,7 @@ public:
 //        }
 //#endif
 
-        try 
+        try
         {
             // Factor, solve and free
             int success = taucs_linsolve((taucs_ccs_matrix*) A.get_taucs_matrix(),
@@ -166,7 +166,7 @@ private:
 
 
 // Class Taucs_solver_traits
-// Traits class for solving GENERAL (aka unsymmetric) sparse linear systems 
+// Traits class for solving GENERAL (aka unsymmetric) sparse linear systems
 // using TAUCS out-of-core LU factorization
 //
 // Taucs_solver_traits is a model of the SparseLinearAlgebraTraits_d concept
@@ -195,13 +195,13 @@ public:
     {
         D = 1;          // TAUCS does not support homogeneous coordinates
 
-//#ifndef NDEBUG 
+//#ifndef NDEBUG
 //        // Turn on TAUCS trace
 //        std::cerr.flush();
 //        taucs_logfile("stderr");
 //#endif
-        
-//#ifndef NDEBUG 
+
+//#ifndef NDEBUG
 //        // Debug trace
 //        fprintf(stderr, "\n");
 //        fprintf(stderr, "linear_solver:\n");
@@ -237,7 +237,7 @@ public:
 //        }
 //#endif
 
-        try 
+        try
         {
             int     success;
 
@@ -246,7 +246,7 @@ public:
             int*    invperm;
             taucs_ccs_order((taucs_ccs_matrix*) A.get_taucs_matrix(),
                             &perm,
-                            &invperm, 
+                            &invperm,
                             "colamd");
             if (perm == NULL) {
                 taucs_printf("\tOrdering Failed\n");
@@ -265,8 +265,8 @@ public:
             // factor
             int memory_mb = int(taucs_available_memory_size()/1048576.0);
             success = taucs_ooc_factor_lu((taucs_ccs_matrix*) A.get_taucs_matrix(),
-                                        perm, 
-                                        oocL, 
+                                        perm,
+                                        oocL,
                                         memory_mb*1048576.0);
             if (success != TAUCS_SUCCESS) {
                 taucs_printf("\tFactorization Failed\n");
@@ -274,8 +274,8 @@ public:
             }
 
             // solve
-            success = taucs_ooc_solve_lu(oocL, 
-                                        X.get_taucs_vector(), 
+            success = taucs_ooc_solve_lu(oocL,
+                                        X.get_taucs_vector(),
                                         (T*) B.get_taucs_vector());
             if (success != TAUCS_SUCCESS) {
                 taucs_printf("\tSolving Failed\n");

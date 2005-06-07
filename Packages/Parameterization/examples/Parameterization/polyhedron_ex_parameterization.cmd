@@ -1,1 +1,1 @@
--t floater -b square -o obj data/cone.off
+-t floater -b square -s opennl -o obj data/nefertiti.off ./nefertiti_parameterized.obj

@@ -36,9 +36,9 @@ template<class MeshAdaptor_3> class Mesh_adaptor_patch_vertex_const_handle;
 // Represents a vertex of a Mesh_adaptor_patch_3<MeshAdaptor_3> mesh
 //
 // Implementation note:
-// A Mesh_adaptor_patch_vertex object is basically a handle to a 
+// A Mesh_adaptor_patch_vertex object is basically a handle to a
 // MeshAdaptor_3::Vertex + its position / seam.
-// Mesh_adaptor_patch_vertex comparison methods basically compare 
+// Mesh_adaptor_patch_vertex comparison methods basically compare
 // the address of the MeshAdaptor_3::Vertex that it points to.
 //
 template<class MeshAdaptor_3>
@@ -53,7 +53,7 @@ public:
 // Public operations
 public:
 
-    // Default constructor 
+    // Default constructor
     Mesh_adaptor_patch_vertex()
     {
         m_adaptor_vertex = NULL;
@@ -72,7 +72,7 @@ public:
     }
 
     // Constructor from a SEAM/MAIN BORDER adaptor vertex
-    // prev_seam_vertex/next_seam_vertex are the previous/next 
+    // prev_seam_vertex/next_seam_vertex are the previous/next
     // vertices on the seam
     Mesh_adaptor_patch_vertex(typename Adaptor::Vertex_handle adaptor_vertex,
                               typename Adaptor::Vertex_handle prev_seam_vertex,
@@ -100,23 +100,23 @@ public:
     }
 
     // Get content
-    typename Adaptor::Vertex_handle get_adaptor_vertex() { 
-        return m_adaptor_vertex; 
+    typename Adaptor::Vertex_handle get_adaptor_vertex() {
+        return m_adaptor_vertex;
     }
-    typename Adaptor::Vertex_const_handle get_adaptor_vertex() const { 
-        return m_adaptor_vertex; 
+    typename Adaptor::Vertex_const_handle get_adaptor_vertex() const {
+        return m_adaptor_vertex;
     }
-    typename Adaptor::Vertex_handle get_prev_seam_vertex() { 
-        return m_prev_seam_vertex; 
+    typename Adaptor::Vertex_handle get_prev_seam_vertex() {
+        return m_prev_seam_vertex;
     }
-    typename Adaptor::Vertex_const_handle get_prev_seam_vertex() const { 
-        return m_prev_seam_vertex; 
+    typename Adaptor::Vertex_const_handle get_prev_seam_vertex() const {
+        return m_prev_seam_vertex;
     }
-    typename Adaptor::Vertex_handle get_next_seam_vertex() { 
-        return m_next_seam_vertex; 
+    typename Adaptor::Vertex_handle get_next_seam_vertex() {
+        return m_next_seam_vertex;
     }
-    typename Adaptor::Vertex_const_handle get_next_seam_vertex() const { 
-        return m_next_seam_vertex; 
+    typename Adaptor::Vertex_const_handle get_next_seam_vertex() const {
+        return m_next_seam_vertex;
     }
 
 // Fields
@@ -142,17 +142,17 @@ private:
 // Implementation note:
 // A Mesh_adaptor_patch_vertex_handle contains in fact a Mesh_adaptor_patch_vertex
 // object, which is basically a handle to a MeshAdaptor_3::Vertex.
-// Mesh_adaptor_patch_vertex_handle comparison methods basically compare 
+// Mesh_adaptor_patch_vertex_handle comparison methods basically compare
 // the address of the MeshAdaptor_3::Vertex pointed by the handles.
 //
 template<class MeshAdaptor_3>
-class Mesh_adaptor_patch_vertex_handle 
+class Mesh_adaptor_patch_vertex_handle
 {
 // Private types
 private:
 
     typedef Mesh_adaptor_patch_vertex_handle Self;
-    typedef Mesh_adaptor_patch_vertex<MeshAdaptor_3> 
+    typedef Mesh_adaptor_patch_vertex<MeshAdaptor_3>
                                             Vertex;
 
 // Public types
@@ -174,12 +174,12 @@ public:
     // Constructor
     Mesh_adaptor_patch_vertex_handle(pointer ptr = NULL)
     {
-        if (ptr == NULL) 
+        if (ptr == NULL)
         {
             m_vertex = Vertex();
             m_ptr = NULL;
-        } 
-        else 
+        }
+        else
         {
             m_vertex = *ptr;
             m_ptr = &m_vertex;
@@ -187,14 +187,14 @@ public:
     }
 
     // Copy constructor
-    Self(const Self& hdl)
+    Mesh_adaptor_patch_vertex_handle(const Self& hdl)
     {
-        if (hdl.m_ptr == NULL) 
+        if (hdl.m_ptr == NULL)
         {
             m_vertex = Vertex();
             m_ptr = NULL;
-        } 
-        else 
+        }
+        else
         {
             m_vertex = *hdl.m_ptr;
             m_ptr = &m_vertex;
@@ -202,14 +202,14 @@ public:
     }
 
     // operator =()
-    Self& operator =(const Self& hdl) 
+    Self& operator =(const Self& hdl)
     {
-        if (hdl.m_ptr == NULL) 
+        if (hdl.m_ptr == NULL)
         {
             m_vertex = Vertex();
             m_ptr = NULL;
-        } 
-        else 
+        }
+        else
         {
             m_vertex = *hdl.m_ptr;
             m_ptr = &m_vertex;
@@ -220,17 +220,17 @@ public:
 
     // Compare patch vertices instead of patch vertex pointers (2 patch
     // vertex handles are equal iff they point to the same adaptor vertex)
-    bool operator==(const Self& hdl) const 
-    { 
+    bool operator==(const Self& hdl) const
+    {
         if (m_ptr == NULL || hdl.m_ptr == NULL)
             return m_ptr == hdl.m_ptr;
         else
-            return *m_ptr == *(hdl.m_ptr); 
+            return *m_ptr == *(hdl.m_ptr);
     }
     bool operator!=(const Self& hdl) const { return ! (*this == hdl); }
 
     // Comparison to NULL pointer
-    bool operator==(CGAL_NULL_TYPE ptr) const { 
+    bool operator==(CGAL_NULL_TYPE ptr) const {
         CGAL_parameterization_assertion(ptr == NULL);
         return m_ptr == NULL;
     }
@@ -264,18 +264,18 @@ private:
 // Implementation note:
 // A Mesh_adaptor_patch_vertex_const_handle contains in fact a Mesh_adaptor_patch_vertex
 // object, which is basically a handle to a MeshAdaptor_3::Vertex.
-// Mesh_adaptor_patch_vertex_const_handle comparison methods basically compare 
+// Mesh_adaptor_patch_vertex_const_handle comparison methods basically compare
 // the address of the MeshAdaptor_3::Vertex pointed by the handles.
 //
 template<class MeshAdaptor_3>
-class Mesh_adaptor_patch_vertex_const_handle 
+class Mesh_adaptor_patch_vertex_const_handle
 {
 // Private types
 private:
 
-    typedef Mesh_adaptor_patch_vertex_const_handle 
+    typedef Mesh_adaptor_patch_vertex_const_handle
                                             Self;
-    typedef Mesh_adaptor_patch_vertex<MeshAdaptor_3> 
+    typedef Mesh_adaptor_patch_vertex<MeshAdaptor_3>
                                             Vertex;
 
 // Public types
@@ -297,12 +297,12 @@ public:
     // Constructor
     Mesh_adaptor_patch_vertex_const_handle(pointer ptr = NULL)
     {
-        if (ptr == NULL) 
+        if (ptr == NULL)
         {
             m_vertex = Vertex();
             m_ptr = NULL;
-        } 
-        else 
+        }
+        else
         {
             m_vertex = *ptr;
             m_ptr = &m_vertex;
@@ -310,14 +310,14 @@ public:
     }
 
     // Copy constructor
-    Self(const Self& hdl)
+    Mesh_adaptor_patch_vertex_const_handle(const Self& hdl)
     {
-        if (hdl.m_ptr == NULL) 
+        if (hdl.m_ptr == NULL)
         {
             m_vertex = Vertex();
             m_ptr = NULL;
-        } 
-        else 
+        }
+        else
         {
             m_vertex = *hdl.m_ptr;
             m_ptr = &m_vertex;
@@ -325,14 +325,14 @@ public:
     }
 
     // operator =()
-    Self& operator =(const Self& hdl) 
+    Self& operator =(const Self& hdl)
     {
-        if (hdl.m_ptr == NULL) 
+        if (hdl.m_ptr == NULL)
         {
             m_vertex = Vertex();
             m_ptr = NULL;
-        } 
-        else 
+        }
+        else
         {
             m_vertex = *hdl.m_ptr;
             m_ptr = &m_vertex;
@@ -343,17 +343,17 @@ public:
 
     // Compare patch vertices instead of patch vertex pointers (2 patch
     // vertex handles are equal iff they point to the same adaptor vertex)
-    bool operator==(const Self& hdl) const 
-    { 
+    bool operator==(const Self& hdl) const
+    {
         if (m_ptr == NULL || hdl.m_ptr == NULL)
             return m_ptr == hdl.m_ptr;
         else
-            return *m_ptr == *(hdl.m_ptr); 
+            return *m_ptr == *(hdl.m_ptr);
     }
     bool operator!=(const Self& hdl) const { return ! (*this == hdl); }
 
     // Comparison to NULL pointer
-    bool operator==(CGAL_NULL_TYPE ptr) const { 
+    bool operator==(CGAL_NULL_TYPE ptr) const {
         CGAL_parameterization_assertion(ptr == NULL);
         return m_ptr == NULL;
     }

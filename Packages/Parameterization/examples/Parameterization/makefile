@@ -23,6 +23,8 @@ CXXFLAGS = \
            -I../../../OpenNL/include \
            $(CGAL_CXXFLAGS) \
            $(TESTSUITE_CXXFLAGS) \
+           -I$(TAUCSROOT)/src \
+           -I$(TAUCSROOT)/build/$(TAUCS_OSTYPE) \
            $(EXTRA_FLAGS) \
            -Iinclude \
            $(LONG_NAME_PROBLEM_CXXFLAGS)
@@ -33,12 +35,16 @@ CXXFLAGS = \
 
 LIBPATH = \
           $(TESTSUITE_LIBPATH) \
-          $(CGAL_LIBPATH)
+          $(CGAL_LIBPATH) \
+          -L$(TAUCSROOT)/lib/$(TAUCS_OSTYPE) \
+          -L$(TAUCSROOT)/external/lib/$(TAUCS_OSTYPE)
 
 LDFLAGS = \
           $(TESTSUITE_LDFLAGS) \
           $(LONG_NAME_PROBLEM_LDFLAGS) \
-          $(CGAL_LDFLAGS)
+          $(CGAL_LDFLAGS) \
+          -ltaucs -llapack -lf77blas -lcblas -latlas -lmetis -lg2c
+
 
 #---------------------------------------------------------------------#
 #                    target entries

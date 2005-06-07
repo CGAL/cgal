@@ -41,7 +41,7 @@
 //
 // The input mesh can be of any genus.
 // It can have have any number of boundaries. Its "main border"
-// will be the mesh's longest boundary (if there is at least one boundary). 
+// will be the mesh's longest boundary (if there is at least one boundary).
 //
 // Design pattern:
 // Mesh_adaptor_polyhedron_ex is an Adaptor (see [GOF95]): it changes the
@@ -92,7 +92,7 @@ public:
     typedef Polyhedron_ex::Facet_const_handle Facet_const_handle;
     // Iterator over all mesh facets
     typedef Polyhedron_ex::Facet_iterator   Facet_iterator;
-    typedef Polyhedron_ex::Facet_const_iterator 
+    typedef Polyhedron_ex::Facet_const_iterator
                                             Facet_const_iterator;
     // Vertex
     typedef Polyhedron_ex::Vertex           Vertex;
@@ -100,12 +100,12 @@ public:
     typedef Polyhedron_ex::Vertex_const_handle Vertex_const_handle;
     // Iterator over all mesh vertices
     typedef Polyhedron_ex::Vertex_iterator  Vertex_iterator;
-    typedef Polyhedron_ex::Vertex_const_iterator 
+    typedef Polyhedron_ex::Vertex_const_iterator
                                             Vertex_const_iterator;
     // Iterator over mesh boundary vertices
     typedef CGAL::Convertible_iterator_project<std::list<Vertex_handle>::iterator,
                                                Project_vertex_handle_vertex,
-                                               Vertex_const_handle, 
+                                               Vertex_const_handle,
                                                Vertex_handle>
                                             Border_vertex_iterator;
     typedef CGAL::Convertible_iterator_project<std::list<Vertex_handle>::const_iterator,
@@ -115,28 +115,28 @@ public:
     // Counter-clockwise circulator over a facet's vertices
     typedef CGAL::Convertible_circulator_project<Halfedge_around_facet_circulator,
                                                  Project_halfedge_vertex,
-                                                 Vertex&, 
+                                                 Vertex&,
                                                  Vertex*,
-                                                 Vertex_const_handle, 
+                                                 Vertex_const_handle,
                                                  Vertex_handle>
                                             Vertex_around_facet_circulator;
     typedef CGAL::Convertible_circulator_project<Halfedge_around_facet_const_circulator,
                                                  Project_halfedge_vertex,
-                                                 const Vertex&, 
+                                                 const Vertex&,
                                                  const Vertex*,
                                                  Vertex_const_handle>
                                             Vertex_around_facet_const_circulator;
     // Clockwise circulator over the vertices incident to a vertex
     typedef CGAL::Convertible_circulator_project<Halfedge_around_vertex_circulator,
                                                  Project_opposite_halfedge_vertex,
-                                                 Vertex&, 
+                                                 Vertex&,
                                                  Vertex*,
-                                                 Vertex_const_handle, 
+                                                 Vertex_const_handle,
                                                  Vertex_handle>
                                             Vertex_around_vertex_circulator;
     typedef CGAL::Convertible_circulator_project<Halfedge_around_vertex_const_circulator,
                                                  Project_opposite_halfedge_vertex,
-                                                 const Vertex&, 
+                                                 const Vertex&,
                                                  const Vertex*,
                                                  Vertex_const_handle>
                                             Vertex_around_vertex_const_circulator;
@@ -153,7 +153,7 @@ public:
     // Create an adaptator for an existing Polyhedron_ex mesh.
     // The input mesh can be of any genus.
     // It can have have any number of boundaries. Its "main border"
-    // will be the mesh's longest boundary (if there is at least one boundary). 
+    // will be the mesh's longest boundary (if there is at least one boundary).
     Mesh_adaptor_polyhedron_ex(Polyhedron_ex* mesh)
     {
         assert(mesh != NULL);
@@ -189,7 +189,7 @@ public:
             set_vertex_seaming(*border_it, BORDER);
 
             // Get next iterator (looping)
-            std::list<Vertex_handle>::iterator next_border_it = border_it; 
+            std::list<Vertex_handle>::iterator next_border_it = border_it;
             next_border_it++;
             if (next_border_it == m_main_border.end())
                 next_border_it = m_main_border.begin();
@@ -250,8 +250,8 @@ public:
 #ifdef DEBUG_TRACE
             fprintf(stderr, "    %d=(%f,%f,%f)\n",
                             index,
-                            (float)position.x(), 
-                            (float)position.y(), 
+                            (float)position.x(),
+                            (float)position.y(),
                             (float)position.z());
 #endif
             set_vertex_index(it, index++);
@@ -279,18 +279,18 @@ public:
 
     // Get iterator over first vertex of mesh's main border
     Border_vertex_iterator  mesh_main_border_vertices_begin() {
-        return m_main_border.begin();
+        return Border_vertex_iterator(m_main_border.begin());
     }
     Border_vertex_const_iterator  mesh_main_border_vertices_begin() const {
-        return m_main_border.begin();
+        return Border_vertex_const_iterator(m_main_border.begin());
     }
 
     // Get iterator over past-the-end vertex of mesh's main border
     Border_vertex_iterator  mesh_main_border_vertices_end() {
-        return m_main_border.end();
+        return Border_vertex_iterator(m_main_border.end());
     }
     Border_vertex_const_iterator  mesh_main_border_vertices_end() const {
-        return m_main_border.end();
+        return Border_vertex_const_iterator(m_main_border.end());
     }
 
     // Get iterator over first facet of mesh
@@ -321,10 +321,10 @@ public:
 
     // Get circulator over facet's vertices
     Vertex_around_facet_circulator  facet_vertices_begin(Facet_handle facet) {
-        return facet->facet_begin();
+        return Vertex_around_facet_circulator(facet->facet_begin());
     }
     Vertex_around_facet_const_circulator  facet_vertices_begin(Facet_const_handle facet) const {
-        return facet->facet_begin();
+        return Vertex_around_facet_const_circulator(facet->facet_begin());
     }
 
     // Count the number of vertices of a facet
@@ -341,7 +341,7 @@ public:
 
     // Get the 3D position of a vertex
     Point_3 get_vertex_position(Vertex_const_handle vertex) const {
-        return vertex->point();    
+        return vertex->point();
     }
 
     // Get/set the 2D position (u/v pair) of a vertex
@@ -368,7 +368,7 @@ public:
         //return get_corners_index(vertex, NULL, NULL);
         return vertex->index();
     }
-    void  set_vertex_index(Vertex_handle vertex, int index)  
+    void  set_vertex_index(Vertex_handle vertex, int index)
     {
         //set_corners_index(vertex, NULL, NULL, index);
         vertex->index(index);
@@ -387,24 +387,26 @@ public:
     // Get circulator over the vertices incident to 'vertex'
     // 'start_position' defines the optional initial position of the circulator
     Vertex_around_vertex_circulator vertices_around_vertex_begin(
-                            Vertex_handle vertex, 
-                            Vertex_handle start_position = NULL) 
+                            Vertex_handle vertex,
+                            Vertex_handle start_position = NULL)
     {
-        if (start_position == NULL) 
-            return vertex->vertex_begin();
+        if (start_position == NULL)
+            return Vertex_around_vertex_circulator(vertex->vertex_begin());
         else
-            return Halfedge_around_vertex_circulator(get_halfedge(start_position, 
-                                                                  vertex));
+            return Vertex_around_vertex_circulator(
+            		Halfedge_around_vertex_circulator(
+                        	get_halfedge(start_position, vertex)));
     }
     Vertex_around_vertex_const_circulator vertices_around_vertex_begin(
-                            Vertex_const_handle vertex, 
+                            Vertex_const_handle vertex,
                             Vertex_const_handle start_position = NULL) const
     {
-        if (start_position == NULL) 
-            return vertex->vertex_begin();
+        if (start_position == NULL)
+            return Vertex_around_vertex_const_circulator(vertex->vertex_begin());
         else
-            return Halfedge_around_vertex_const_circulator(get_halfedge(start_position, 
-                                                                        vertex));
+            return Vertex_around_vertex_const_circulator(
+            		Halfedge_around_vertex_const_circulator(
+                        	get_halfedge(start_position, vertex)));
     }
 
     //******************************************************************
@@ -417,7 +419,7 @@ public:
 
     // VERTEX INTERFACE
 
-    // Get/set vertex seaming flag, ie position of the vertex 
+    // Get/set vertex seaming flag, ie position of the vertex
     // wrt to the UNIQUE main boundary
     Seaming_status  get_vertex_seaming(Vertex_const_handle vertex) const {
         return (Seaming_status) vertex->seaming();
@@ -440,7 +442,7 @@ public:
 
     // EDGE INTERFACE
 
-    // Get/set oriented edge's seaming flag, ie position of the oriented edge 
+    // Get/set oriented edge's seaming flag, ie position of the oriented edge
     // wrt to the UNIQUE main boundary
     Seaming_status  get_edge_seaming(Vertex_const_handle source, Vertex_const_handle target) const {
         return (Seaming_status) get_halfedge(source, target)->seaming();
@@ -463,12 +465,12 @@ public:
 
     // CORNER INTERFACE
 
-    // Get/set the 2D position (= (u,v) pair) of corners at the "right" 
+    // Get/set the 2D position (= (u,v) pair) of corners at the "right"
     // of the prev_vertex -> vertex -> next_vertex line
     // (stored in incident halfedges)
-    Point_2 get_corners_uv(Vertex_const_handle vertex, 
+    Point_2 get_corners_uv(Vertex_const_handle vertex,
                            Vertex_const_handle prev_vertex,
-                           Vertex_const_handle next_vertex) const 
+                           Vertex_const_handle next_vertex) const
     {
         // if inner vertex
         if (prev_vertex == NULL && next_vertex == NULL)
@@ -482,12 +484,12 @@ public:
             assert(next_vertex != NULL);
 
             // get (u,v) pair from first inner halfedge (clockwise)
-            Halfedge_around_vertex_const_circulator cir( 
+            Halfedge_around_vertex_const_circulator cir(
                                 get_halfedge(next_vertex, vertex) );
             return Point_2(cir->u(), cir->v());
         }
     }
-    void set_corners_uv(Vertex_handle vertex, 
+    void set_corners_uv(Vertex_handle vertex,
                         Vertex_const_handle prev_vertex,
                         Vertex_const_handle next_vertex,
                         const Point_2& uv)
@@ -507,26 +509,26 @@ public:
             assert(next_vertex != NULL);
 
             // first inner halfedge (for a clockwise rotation)
-            Halfedge_around_vertex_circulator cir( 
+            Halfedge_around_vertex_circulator cir(
                                 get_halfedge((Vertex*)&*next_vertex, vertex) );
 
             // past-the-end inner halfedge (for a clockwise rotation)
-            Halfedge_around_vertex_circulator cir_end( 
+            Halfedge_around_vertex_circulator cir_end(
                                 get_halfedge((Vertex*)&*prev_vertex, vertex) );
 
-            // Loop over incident halfedges at the "right" 
+            // Loop over incident halfedges at the "right"
             // of the prev_vertex -> vertex -> next_vertex line
             CGAL_For_all(cir, cir_end)
                 cir->uv(uv.x(), uv.y());
         }
     }
 
-    // Get/set "is parameterized" field of corners at the "right" 
+    // Get/set "is parameterized" field of corners at the "right"
     // of the prev_vertex -> vertex -> next_vertex line
     // (stored in incident halfedges)
-    bool are_corners_parameterized(Vertex_const_handle vertex, 
+    bool are_corners_parameterized(Vertex_const_handle vertex,
                                    Vertex_const_handle prev_vertex,
-                                   Vertex_const_handle next_vertex) const 
+                                   Vertex_const_handle next_vertex) const
     {
         // if inner vertex
         if (prev_vertex == NULL && next_vertex == NULL)
@@ -540,12 +542,12 @@ public:
             assert(next_vertex != NULL);
 
             // get "is parameterized" field from first inner halfedge (clockwise)
-            Halfedge_around_vertex_const_circulator cir( 
+            Halfedge_around_vertex_const_circulator cir(
                                 get_halfedge(next_vertex, vertex) );
             return cir->is_parameterized();
         }
     }
-    void set_corners_parameterized(Vertex_handle vertex, 
+    void set_corners_parameterized(Vertex_handle vertex,
                                    Vertex_const_handle prev_vertex,
                                    Vertex_const_handle next_vertex,
                                    bool parameterized)
@@ -565,26 +567,26 @@ public:
             assert(next_vertex != NULL);
 
             // first inner halfedge (for a clockwise rotation)
-            Halfedge_around_vertex_circulator cir( 
+            Halfedge_around_vertex_circulator cir(
                                 get_halfedge((Vertex*)&*next_vertex, vertex) );
 
             // past-the-end inner halfedge (for a clockwise rotation)
-            Halfedge_around_vertex_circulator cir_end( 
+            Halfedge_around_vertex_circulator cir_end(
                                 get_halfedge((Vertex*)&*prev_vertex, vertex) );
 
-            // Loop over incident halfedges at the "right" 
+            // Loop over incident halfedges at the "right"
             // of the prev_vertex -> vertex -> next_vertex line
             CGAL_For_all(cir, cir_end)
                 cir->is_parameterized(parameterized);
         }
     }
 
-    // Get/set index of corners at the "right" 
+    // Get/set index of corners at the "right"
     // of the prev_vertex -> vertex -> next_vertex line
     // (stored in incident halfedges)
-    int get_corners_index(Vertex_const_handle vertex, 
+    int get_corners_index(Vertex_const_handle vertex,
                           Vertex_const_handle prev_vertex,
-                          Vertex_const_handle next_vertex) const 
+                          Vertex_const_handle next_vertex) const
     {
         // if inner vertex
         if (prev_vertex == NULL && next_vertex == NULL)
@@ -598,15 +600,15 @@ public:
             assert(next_vertex != NULL);
 
             // get index from first inner halfedge (clockwise)
-            Halfedge_around_vertex_const_circulator cir( 
+            Halfedge_around_vertex_const_circulator cir(
                                 get_halfedge(next_vertex, vertex) );
             return cir->index();
         }
     }
-    void set_corners_index(Vertex_handle vertex, 
+    void set_corners_index(Vertex_handle vertex,
                            Vertex_const_handle prev_vertex,
                            Vertex_const_handle next_vertex,
-                           int index)  
+                           int index)
     {
         // if inner vertex
         if (prev_vertex == NULL && next_vertex == NULL)
@@ -623,14 +625,14 @@ public:
             assert(next_vertex != NULL);
 
             // first inner halfedge (for a clockwise rotation)
-            Halfedge_around_vertex_circulator cir( 
+            Halfedge_around_vertex_circulator cir(
                                 get_halfedge((Vertex*)&*next_vertex, vertex) );
 
             // past-the-end inner halfedge (for a clockwise rotation)
-            Halfedge_around_vertex_circulator cir_end( 
+            Halfedge_around_vertex_circulator cir_end(
                                 get_halfedge((Vertex*)&*prev_vertex, vertex) );
 
-            // Loop over incident halfedges at the "right" 
+            // Loop over incident halfedges at the "right"
             // of the prev_vertex -> vertex -> next_vertex line
             CGAL_For_all(cir, cir_end)
                 cir->index(index);
@@ -668,7 +670,7 @@ private:
 
     // Get halfedge from source and target vertices
     // Will assert if such an halfedge doesn't exist
-    Halfedge_const_handle get_halfedge(Vertex_const_handle source, 
+    Halfedge_const_handle get_halfedge(Vertex_const_handle source,
                                        Vertex_const_handle target) const
     {
         assert(source != NULL);
@@ -683,7 +685,7 @@ private:
         assert(false);              // error if we reach this point
         return NULL;
     }
-    inline Halfedge_handle get_halfedge(Vertex_handle source, 
+    inline Halfedge_handle get_halfedge(Vertex_handle source,
                                         Vertex_handle target)
     {
         Halfedge_const_handle halfedge =
@@ -740,10 +742,10 @@ private:
 
         // Get the source vertex of a halfedge
         Vertex&       operator()(Halfedge& h)       const {
-            return *(h.opposite()->vertex()); 
+            return *(h.opposite()->vertex());
         }
         const Vertex& operator()(const Halfedge& h) const {
-            return *(h.opposite()->vertex()); 
+            return *(h.opposite()->vertex());
         }
     };
 

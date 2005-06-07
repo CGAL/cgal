@@ -43,8 +43,8 @@ CGAL_BEGIN_NAMESPACE
 // in a MeshAdaptor_3 3D surface. Only the patch is exported,
 // making the 3D surface look like a topological disk.
 //
-// The input mesh can be of any genus, but it has to come with a "seam" that  
-// describes the boundary of a topological disc. This boundary may be an actual 
+// The input mesh can be of any genus, but it has to come with a "seam" that
+// describes the boundary of a topological disc. This boundary may be an actual
 // border of the mesh or a virtual border.
 //
 // Design pattern:
@@ -78,12 +78,12 @@ public:
     // Facet
     typedef typename Adaptor::Facet         Facet;
     typedef typename Adaptor::Facet_handle  Facet_handle;
-    typedef typename Adaptor::Facet_const_handle     
+    typedef typename Adaptor::Facet_const_handle
                                             Facet_const_handle;
     // Iterator over all mesh facets
     typedef Convertible_filter_iterator<typename Adaptor::Facet_iterator,
                                         Inner_facets_filter,
-                                        Facet_const_handle, 
+                                        Facet_const_handle,
                                         Facet_handle>
                                             Facet_iterator;
     typedef Convertible_filter_iterator<typename Adaptor::Facet_const_iterator,
@@ -91,16 +91,15 @@ public:
                                         Facet_const_handle>
                                             Facet_const_iterator;
     // Vertex
-    typedef typename Mesh_adaptor_patch_vertex<Adaptor>
-                                            Vertex;
-    typedef typename Mesh_adaptor_patch_vertex_handle<Adaptor>
-                                            Vertex_handle; 
-    typedef typename Mesh_adaptor_patch_vertex_const_handle<Adaptor>
+    typedef Mesh_adaptor_patch_vertex<Adaptor> Vertex;
+    typedef Mesh_adaptor_patch_vertex_handle<Adaptor>
+                                            Vertex_handle;
+    typedef Mesh_adaptor_patch_vertex_const_handle<Adaptor>
                                             Vertex_const_handle;
     // Iterator over all mesh vertices
-    typedef typename Mesh_adaptor_patch_vertex_list_iterator<Adaptor>
+    typedef Mesh_adaptor_patch_vertex_list_iterator<Adaptor>
                                             Vertex_iterator;
-    typedef typename Mesh_adaptor_patch_vertex_list_const_iterator<Adaptor>
+    typedef Mesh_adaptor_patch_vertex_list_const_iterator<Adaptor>
                                             Vertex_const_iterator;
     // Iterator over mesh boundary vertices
     typedef Vertex_iterator                 Border_vertex_iterator;
@@ -131,8 +130,6 @@ public:
     friend class Vertex_const_handle;
     friend class Vertex_iterator;
     friend class Vertex_const_iterator;
-    friend class Border_vertex_iterator;
-    friend class Border_vertex_const_iterator;
     friend class Vertex_around_facet_circulator;
     friend class Vertex_around_facet_const_circulator;
     friend class Vertex_around_vertex_circulator;
@@ -146,8 +143,8 @@ public:
     //******************************************************************
 
     // Create an decorator for an existing MeshAdaptor_3 mesh
-    // The input mesh can be of any genus, but it has to come with a "seam" that  
-    // describes the boundary of a topological disc. This boundary may be an actual 
+    // The input mesh can be of any genus, but it has to come with a "seam" that
+    // describes the boundary of a topological disc. This boundary may be an actual
     // border of the mesh or a virtual border.
     //
     // Preconditions:
@@ -177,11 +174,11 @@ public:
         // Construct the list of all exported vertices, ie INNER and BORDER vertices
         //
         // 1) add inner vertices
-        for (Adaptor::Vertex_iterator it = mesh->mesh_vertices_begin();
+        for (typename Adaptor::Vertex_iterator it = mesh->mesh_vertices_begin();
              it != mesh->mesh_vertices_end();
              it++)
         {
-            if (m_mesh_adaptor->get_vertex_seaming(it) == INNER)
+            if (m_mesh_adaptor->get_vertex_seaming(it) == Adaptor::INNER)
                 m_inner_and_border_vertices.push_back( Vertex(it) );
         }
         // 2) add seam vertices, wrt outer seam/boundary order
@@ -193,7 +190,7 @@ public:
             // Get outer border vertex
             Vertex v;
             // if border vertex
-            if (m_mesh_adaptor->get_edge_seaming(*border_it, *prev_border_it) != BORDER)
+            if (m_mesh_adaptor->get_edge_seaming(*border_it, *prev_border_it) != Adaptor::BORDER)
                 v = Vertex(*border_it, *prev_border_it, *next_border_it);
             else // if seam vertex
                 v = Vertex(*border_it, *next_border_it, *prev_border_it);   // order inverted!
@@ -213,8 +210,8 @@ public:
                 next_border_it = first_seam_vertex;
         }
 
-        // Initialize m_seam_begin = iterator to beginning of seam/main boundary 
-        // inside m_inner_and_border_vertices 
+        // Initialize m_seam_begin = iterator to beginning of seam/main boundary
+        // inside m_inner_and_border_vertices
         m_seam_begin = mesh_vertices_end();
         for (Vertex_iterator it=mesh_vertices_begin(); it!=mesh_vertices_end(); it++) {
             if (get_vertex_seaming(it) == BORDER) {
@@ -282,7 +279,7 @@ public:
         for (Vertex_iterator it=mesh_vertices_begin(); it!=mesh_vertices_end(); it++)
         {
 #ifdef DEBUG_TRACE
-            fprintf(stderr, "    #%d = {%s,%s,%s}\n", 
+            fprintf(stderr, "    #%d = {%s,%s,%s}\n",
                             index,
                             get_vertex_index_as_string(it->get_adaptor_vertex()).c_str(),
                             get_vertex_index_as_string(it->get_prev_seam_vertex()).c_str(),
@@ -302,7 +299,7 @@ public:
     }
 
     // Compute the genus of the mesh
-    int  get_mesh_genus() const 
+    int  get_mesh_genus() const
     {
         // We assume that cutting created a topological disk
         // TODO: compute genus
@@ -310,7 +307,7 @@ public:
     }
 
     // Count the number of boundaries of the mesh
-    int  count_mesh_boundaries() const 
+    int  count_mesh_boundaries() const
     {
         // We have at least 1 boundary (the "main one")
         // TODO: compute the number of boundaries
@@ -322,7 +319,7 @@ public:
         return m_seam_begin;
     }
     Border_vertex_const_iterator  mesh_main_border_vertices_begin() const {
-        return m_seam_begin;
+        return (Border_vertex_const_iterator) m_seam_begin;
     }
 
     // Get iterator over past-the-end vertex of mesh's main border (aka "seam")
@@ -459,12 +456,12 @@ public:
     // Get circulator over the vertices incident to 'vertex'
     // 'start_position' defines the optional initial position of the circulator
     Vertex_around_vertex_circulator vertices_around_vertex_begin(
-                            Vertex_handle vertex, 
-                            Vertex_handle start_position = NULL) 
+                            Vertex_handle vertex,
+                            Vertex_handle start_position = NULL)
     {
         CGAL_parameterization_assertion(is_valid(vertex));
 
-        // Construct an adaptor circulator over the vertices 
+        // Construct an adaptor circulator over the vertices
         // incident to vertex->get_adaptor_vertex()
         typename Adaptor::Vertex_around_vertex_circulator adaptor_circulator;
         if (start_position != NULL)
@@ -477,7 +474,7 @@ public:
         else
         {
             // If 'vertex' is a seam vertex, then vertex->get_prev_seam_vertex()
-            // is a valid neighbor; else it is NULL, which is 
+            // is a valid neighbor; else it is NULL, which is
             // a valid parameter for Adaptor::vertices_around_vertex_begin()
             adaptor_circulator = m_mesh_adaptor->vertices_around_vertex_begin(
                                             vertex->get_adaptor_vertex(),
@@ -487,12 +484,12 @@ public:
         return Vertex_around_vertex_circulator(this, vertex, adaptor_circulator);
     }
     Vertex_around_vertex_const_circulator vertices_around_vertex_begin(
-                                    Vertex_const_handle vertex, 
+                                    Vertex_const_handle vertex,
                                     Vertex_const_handle start_position = NULL) const
     {
         CGAL_parameterization_assertion(is_valid(vertex));
 
-        // Construct an adaptor circulator over the vertices 
+        // Construct an adaptor circulator over the vertices
         // incident to vertex->get_adaptor_vertex()
         typename Adaptor::Vertex_around_vertex_const_circulator adaptor_circulator;
         if (start_position != NULL)
@@ -505,7 +502,7 @@ public:
         else
         {
             // If 'vertex' is a seam vertex, then vertex->get_prev_seam_vertex()
-            // is a valid neighbor; else it is NULL, which is 
+            // is a valid neighbor; else it is NULL, which is
             // a valid parameter for Adaptor::vertices_around_vertex_begin()
             adaptor_circulator = m_mesh_adaptor->vertices_around_vertex_begin(
                                             vertex->get_adaptor_vertex(),
@@ -553,30 +550,30 @@ private:
         m_mesh_adaptor->set_edges_seaming(Adaptor::OUTER);
 
         // Set seaming flag of seam vertices to BORDER.
-        // Set seaming flag of outer seam edges to BORDER 
+        // Set seaming flag of outer seam edges to BORDER
         // and inner seam vertices to INNER.
         for (InputIterator border_it = first_seam_vertex;
              border_it != end_seam_vertex;
              border_it++)
         {
             // Set vertex seaming flag
-            m_mesh_adaptor->set_vertex_seaming(*border_it, 
+            m_mesh_adaptor->set_vertex_seaming(*border_it,
                                                Adaptor::BORDER);
 
             // Get next iterator (looping)
-            InputIterator next_border_it = border_it; 
+            InputIterator next_border_it = border_it;
             next_border_it++;
             if (next_border_it == end_seam_vertex)
                 next_border_it = first_seam_vertex;
 
             // Set outer seam edge to BORDER
-            m_mesh_adaptor->set_edge_seaming(*border_it, *next_border_it, 
+            m_mesh_adaptor->set_edge_seaming(*border_it, *next_border_it,
                                              Adaptor::BORDER);
 
             // Set inner seam edge to INNER (except if also BORDER)
-            if (m_mesh_adaptor->get_edge_seaming(*next_border_it, 
+            if (m_mesh_adaptor->get_edge_seaming(*next_border_it,
                                                  *border_it) != Adaptor::BORDER) {
-                m_mesh_adaptor->set_edge_seaming(*next_border_it, *border_it, 
+                m_mesh_adaptor->set_edge_seaming(*next_border_it, *border_it,
                                                 Adaptor::INNER);
             }
         }
@@ -587,18 +584,18 @@ private:
              border_it++)
         {
             // Get next iterator (looping)
-            InputIterator next_border_it = border_it; 
+            InputIterator next_border_it = border_it;
             next_border_it++;
             if (next_border_it == end_seam_vertex)
                 next_border_it = first_seam_vertex;
 
             // Get inner point at the "right" of *border_it
             // by a counter-clockwise rotation around the next seam vertex
-            typename Adaptor::Vertex_around_vertex_circulator cir = 
-                m_mesh_adaptor->vertices_around_vertex_begin(*next_border_it, 
+            typename Adaptor::Vertex_around_vertex_circulator cir =
+                m_mesh_adaptor->vertices_around_vertex_begin(*next_border_it,
                                                              *border_it);
             cir--;
-            
+
             // Fill topological disk
             if (m_mesh_adaptor->get_vertex_seaming(cir) != Adaptor::BORDER)
                 set_inner_region_seaming(cir);
@@ -612,12 +609,12 @@ private:
     //
     // Preconditions:
     // * Inner vertices are marked as OUTER, seam vertices as BORDER
-    // * Inner edges are marked as OUTER, 
+    // * Inner edges are marked as OUTER,
     //   outer seam edges as BORDER, inner seam edges as INNER
     // * pSeedVertex is in the inner region
     // * pSeedVertex != NULL
     //
-    // Implementation note: 
+    // Implementation note:
     // The seaming status of inner edges is unused, thus this part is not tested
     //
     void set_inner_region_seaming(typename Adaptor::Vertex_handle pSeedVertex)
@@ -640,7 +637,7 @@ private:
             // Flag this vertex as INNER
             if (m_mesh_adaptor->get_vertex_seaming(pVertex) == Adaptor::OUTER)
                 m_mesh_adaptor->set_vertex_seaming(pVertex, Adaptor::INNER);
-            else 
+            else
                 continue;           // Skip this vertex if it is already done
 
             // For each neighbor vertex
@@ -666,15 +663,15 @@ private:
         // don't call is_valid() to avoid an infinite loop
         CGAL_parameterization_assertion(facet != NULL);
 
-        typename Adaptor::Vertex_around_facet_const_circulator 
+        typename Adaptor::Vertex_around_facet_const_circulator
                             cir = m_mesh_adaptor->facet_vertices_begin(facet);
         CGAL_parameterization_assertion(cir != NULL);
-        return (m_mesh_adaptor->get_vertex_seaming(cir) == Adaptor::OUTER) ? 
-               OUTER : 
+        return (m_mesh_adaptor->get_vertex_seaming(cir) == Adaptor::OUTER) ?
+               OUTER :
                INNER;
     }
 
-    // Get/set vertex seaming flag, 
+    // Get/set vertex seaming flag,
     // ie position of the vertex wrt to the UNIQUE main boundary
     Seaming_status  get_vertex_seaming(Vertex_const_handle vertex) const {
         // don't call is_valid() to avoid an infinite loop
@@ -684,8 +681,8 @@ private:
                                                     vertex->get_adaptor_vertex());
     }
     void set_vertex_seaming(Vertex_handle vertex, Seaming_status seaming) {
-        m_mesh_adaptor->set_vertex_seaming(vertex->get_adaptor_vertex(), 
-                                           (Adaptor::Seaming_status)seaming);
+        m_mesh_adaptor->set_vertex_seaming(vertex->get_adaptor_vertex(),
+                                           (typename Adaptor::Seaming_status)seaming);
     }
 
     // Create a patch vertex from an adaptor vertex + one of its neighbors
@@ -694,16 +691,16 @@ private:
     // * adaptor_neighbor is a neighbor of adaptor_vertex
     // * (adaptor_vertex, adaptor_neighbor) must NOT be a seam (non-oriented) edge
     Vertex_const_handle get_decorated_vertex(
-                    typename Adaptor::Vertex_const_handle adaptor_vertex, 
+                    typename Adaptor::Vertex_const_handle adaptor_vertex,
                     typename Adaptor::Vertex_const_handle adaptor_neighbor) const
     {
         Vertex vertex;                      // returned variable
 
         // We need at least an inner neighbor as input
-        assert(m_mesh_adaptor->get_edge_seaming(adaptor_vertex, 
-                                                adaptor_neighbor) != BORDER 
-            || m_mesh_adaptor->get_edge_seaming(adaptor_neighbor, 
-                                                adaptor_vertex) != BORDER);
+        assert(m_mesh_adaptor->get_edge_seaming(adaptor_vertex,
+                                                adaptor_neighbor) != Adaptor::BORDER
+            || m_mesh_adaptor->get_edge_seaming(adaptor_neighbor,
+                                                adaptor_vertex) != Adaptor::BORDER);
 
         // if inner vertex
         if ( ! m_mesh_adaptor->is_vertex_on_main_border(adaptor_vertex) )
@@ -717,8 +714,8 @@ private:
             typename Adaptor::Vertex_around_vertex_const_circulator prev_seam_vertex_cir
                 = m_mesh_adaptor->vertices_around_vertex_begin(adaptor_vertex,
                                                                adaptor_neighbor);
-            while (m_mesh_adaptor->get_edge_seaming(prev_seam_vertex_cir, 
-                                                    adaptor_vertex) != BORDER)
+            while (m_mesh_adaptor->get_edge_seaming(prev_seam_vertex_cir,
+                                                    adaptor_vertex) != Adaptor::BORDER)
             {
                 prev_seam_vertex_cir++;
             }
@@ -727,27 +724,27 @@ private:
             typename Adaptor::Vertex_around_vertex_const_circulator next_seam_vertex_cir
                 = m_mesh_adaptor->vertices_around_vertex_begin(adaptor_vertex,
                                                                adaptor_neighbor);
-            while (m_mesh_adaptor->get_edge_seaming(adaptor_vertex, 
-                                                    next_seam_vertex_cir) != BORDER)
+            while (m_mesh_adaptor->get_edge_seaming(adaptor_vertex,
+                                                    next_seam_vertex_cir) != Adaptor::BORDER)
             {
                 next_seam_vertex_cir--;
             }
-            
+
             // The decorated vertex is then:
-            vertex = Vertex((typename Adaptor::Vertex*)&*adaptor_vertex, 
-                            (typename Adaptor::Vertex*)&*prev_seam_vertex_cir, 
+            vertex = Vertex((typename Adaptor::Vertex*)&*adaptor_vertex,
+                            (typename Adaptor::Vertex*)&*prev_seam_vertex_cir,
                             (typename Adaptor::Vertex*)&*next_seam_vertex_cir);
         }
 
         // Implementation note:
-        // The next line seems to return a reference to a local Vertex variable. 
+        // The next line seems to return a reference to a local Vertex variable.
         // In fact, Vertex_[const_]handle constructor copies the Vertex object.
-        // The purpose is to save the time of searching the Vertex in 
+        // The purpose is to save the time of searching the Vertex in
         // m_inner_and_border_vertices list.
         return &vertex;
     }
     Vertex_handle get_decorated_vertex(
-                        typename Adaptor::Vertex_handle adaptor_vertex, 
+                        typename Adaptor::Vertex_handle adaptor_vertex,
                         typename Adaptor::Vertex_const_handle adaptor_neighbor)
     {
         Vertex_const_handle vertex_hdl = get_decorated_vertex(
@@ -756,7 +753,7 @@ private:
         return (Vertex*) &*vertex_ref;
     }
 
-    // Debug utility: Check if a Mesh_adaptor_patch_3 facet is valid 
+    // Debug utility: Check if a Mesh_adaptor_patch_3 facet is valid
     bool is_valid(Facet_const_handle facet) const
     {
         if (facet == NULL)
@@ -768,7 +765,7 @@ private:
         return true;
     }
 
-    // Debug utility: Check if a Mesh_adaptor_patch_3 vertex is valid 
+    // Debug utility: Check if a Mesh_adaptor_patch_3 vertex is valid
     bool is_valid(Vertex_const_handle vertex) const
     {
         if (vertex == NULL)
@@ -809,11 +806,11 @@ private:
 private:
 
     // Utility class to generate the Facet_iterator type
-    struct Inner_facets_filter 
+    struct Inner_facets_filter
     {
         Inner_facets_filter(const Mesh_adaptor_patch_3* mesh) : m_mesh_patch(mesh) {}
 
-        // Return TRUE <=> the facet IS NOT EXPORTED by Mesh_adaptor_patch_3, 
+        // Return TRUE <=> the facet IS NOT EXPORTED by Mesh_adaptor_patch_3,
         // ie is out of the topological disc
         bool operator()(const typename Adaptor::Facet_iterator& f) const       {
             return m_mesh_patch->get_facet_seaming(f) == OUTER;
