@@ -465,9 +465,9 @@ public:
     }
 
 
-    // dump the param to an eps file
+    // dump the mesh to an eps file
     //********************************
-    bool dump_param(const char *pFilename)
+    bool dump_eps(const char *pFilename)
     {
         std::cerr << "  dump parameterization to " << pFilename << "..." << std::endl;
         FILE *pFile = fopen(pFilename,"wt");
@@ -476,19 +476,18 @@ public:
             std::cerr << "  unable to open file " << pFilename <<  " for writing" << std::endl;
             return false;
         }
-        dump_param(pFile);
+        dump_eps(pFile);
         fclose(pFile);
         return true;
     }
 
     // dump the param to the stdout
     //********************************
-    void dump_param()  { dump_param(stdout); }
+    void dump_eps()  { dump_eps(stdout); }
 
     // dump the param to an eps file
     //********************************
-    void dump_param(FILE *pFile,
-                    double scale = 500.0)
+    void dump_eps(FILE *pFile, double scale = 500.0)
     {
         // compute bounding box
         double xmin,xmax,ymin,ymax;
@@ -565,17 +564,6 @@ public:
         return ok;
     }
 
-    // Round number to ease files comparison
-    static float round(double x)
-    {
-        if (fabs(x) < 1E-7) {
-            return 0.0;
-        } else {
-            return x;                                   // Default implementation
-            //return float(int(x*100.0 + 0.5))/100.0;   // Round number to ease files comparison
-        }
-    }
-
     // output to a Wavefront OBJ file
     // v x y z
     // f 1 2 3 4 (1-based)
@@ -605,9 +593,9 @@ public:
         for(pHalfedge = halfedges_begin(); pHalfedge != halfedges_end(); pHalfedge++)
         {
             if (!pHalfedge->is_border())
-                fprintf(pFile, "vt %f %f\n", round(pHalfedge->u()), round(pHalfedge->v()));
+                fprintf(pFile, "vt %f %f\n", pHalfedge->u(), pHalfedge->v());
             else
-                fprintf(pFile, "vt %f %f\n", round(0.0), round(0.0));
+                fprintf(pFile, "vt %f %f\n", 0.0, 0.0);
         }
 
         // Write facets using the unique material # 1

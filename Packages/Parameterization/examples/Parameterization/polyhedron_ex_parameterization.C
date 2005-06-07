@@ -520,12 +520,12 @@ int main(int argc,char * argv[])
     // output
     //***************************************
 
-    // On parameterization error
+    // On parameterization success
     if (err == CGAL::Parametizer_3<Mesh_patch_polyhedron_ex>::OK)
     {
         if(strcmp(output,"eps") == 0)
         {
-            mesh.dump_param(output_filename);           // write EPS file
+            mesh.dump_eps(output_filename);           // write EPS file
         }
         else if(strcmp(output,"obj") == 0)
         {
