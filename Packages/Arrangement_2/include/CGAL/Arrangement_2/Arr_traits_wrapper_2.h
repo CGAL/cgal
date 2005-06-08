@@ -570,6 +570,88 @@ public:
     return Is_between_cw_2();
   }
   //@}
+
+  class Compare_y_at_x_cw_2
+  {
+  public:
+	  /*!
+	  * Compare the y value of two x-monotone curves in cw order
+	  * of their intersection point.
+	  * \param cv1 The first curve.
+	  * \param cv2 The second curve.
+	  * \param p The intersection point.
+	  * \pre The point p lies on both curves, and both of them must be also be
+	  *      defined (lexicographically) to the same side (left or right).
+	  *      (you can't have one curve defined to the left and the other defined
+	  *       to the right)
+	  * \return The relative position of cv1 with respect to cv2 in cw order
+	  *         SMALLER, LARGER or EQUAL.
+	  * in particular:	
+	  * if both curves are defined to the left - curves_compare_y_at_x_left()
+	  * if both curves are defined to the right - OPPOSITE of curves_compare_y_at_x_right() 
+	  *   (because the lower one is larger cw) 
+	  * if both curves are vertical up or both vertical down - return equal
+	  */
+	  Comparison_result operator() (const X_monotone_curve_2& cv1,
+		  const X_monotone_curve_2& cv2,
+		  const Point_2& p
+		  //,bool intersecting = true
+		  ) const
+	  {
+		  Equal_2					equal;
+		  Compare_y_at_x_left_2		compare_y_at_x_left;
+		  Compare_y_at_x_right_2	compare_y_at_x_right;
+
+		  bool cv1_left, cv2_left;
+		  if (equal(cv1.left(),p)) 
+		  {
+			  cv1_left = false;
+		  }
+		  else if (equal(cv1.right(),p)) 
+		  {
+			  cv1_left = true;
+		  }
+		  else 
+		  {
+			  CGAL_assertion (false);
+			  return EQUAL;
+		  }
+
+		  if (equal(cv2.left(),p)) 
+		  {
+			  cv2_left = false;
+		  }
+		  else if (equal(cv2.right(),p))
+		  {
+			  cv2_left = true;
+		  }
+		  else 
+		  {
+			  CGAL_assertion (false);
+			  return EQUAL;
+		  }
+
+		  if (cv1_left != cv2_left)
+		  {
+			  CGAL_assertion (false);
+			  return EQUAL;
+		  }
+
+		  if (cv1_left)
+		  {
+			  return (compare_y_at_x_left(cv1,cv2,p));
+		  }
+
+		  return (compare_y_at_x_right(cv2,cv1,p));
+	  }
+  };
+
+  /*! Get a Compare_y_at_x_cw_2 functor object. */
+  Compare_y_at_x_cw_2 compare_y_at_x_cw_2_object () const
+  {
+    return Compare_y_at_x_cw_2();
+  }
+
 };
 
 /*! \class
