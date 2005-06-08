@@ -27,7 +27,7 @@ CGAL_BEGIN_NAMESPACE
 
 /*!
  */
-template <class Halfedge_handle>
+template <class Halfedge_handle_red, class Halfedge_handle_blue>
 class Curve_info
 {
 
@@ -41,64 +41,60 @@ public:
 
 private:
 
-  Halfedge_handle    m_red_halfedge_handle;
-  Halfedge_handle    m_blue_halfedge_handle;
+  Halfedge_handle_red     m_red_halfedge_handle;
+  Halfedge_handle_blue    m_blue_halfedge_handle;
 
-  //hide default constructor
-  Curve_info(){}
 
 public:
 
   Curve_info() : m_red_halfedge_handle(),
-                 m_blue_halfedge_handle(),
+                 m_blue_halfedge_handle()
   {}
 
-  Curve_info(Halfedge_handle he, Color color)
-  {
-    if(color == RED)
-      m_red_halfedge_handle = he;
-    else
-    {
-      CGAL_assertion(color == BLUE);
-      m_blue_halfedge_handle = he;
-    }
-  }
 
-  // constructor for overlap halfedges
-  Curve_info(Halfedge_handle he1, Halfedge_handle he2) :
+
+  Curve_info(Halfedge_handle_red he1, Halfedge_handle_blue he2) :
     m_red_halfedge_handle(he1),
     m_blue_halfedge_handle(he2)
-  {}
-
- 
-  Halfedge_handle get_halfedge_handle() const 
   {
-    Halfedge_handle null_he;
-    if(m_red_halfedge_handle != null_he)
-      return m_red_halfedge_handle;
-
-    CGAL_assertion(m_blue_halfedge_handle != null_he);
-    return m_blue_halfedge_handle;
+    CGAL_assertion(he1 != Halfedge_handle_red() ||
+                   he2 != Halfedge_handle_blue());
   }
 
-  //should be called only when there's an overlap
-  std::pair<Halfedge_handle, Halfedge_handle> get_pair_halfedges() const
+ 
+  Halfedge_handle_red get_red_halfedge_handle()  const 
+  { 
+    return m_red_halfedge_handle;  
+  }
+
+  Halfedge_handle_blue get_blue_halfedge_handle() const 
   {
-    return std::make_object(m_red_halfedge_handle, m_blue_halfedge_handle);
+    return m_blue_halfedge_handle; 
+  }
+
+
+  //should be called only when there's an overlap
+  std::pair<Halfedge_handle_red, Halfedge_handle_blue> 
+    get_pair_halfedges() const
+  {
+    return std::make_pair(m_red_halfedge_handle, m_blue_halfedge_handle);
   }
 
   Color get_color() const 
   {
-    Halfedge_handle null_he;
-    if(m_red_halfedge_handle != null_he && m_blue_halfedge_handle == null_he)
+    Halfedge_handle_red     null_red_he;
+    Halfedge_handle_blue    null_blue_he;
+    if(m_red_halfedge_handle != null_red_he &&
+       m_blue_halfedge_handle == null_blue_he)
       return RED;
 
-    if(m_blue_halfedge_handle != null_he && m_red_halfedge_handle == null_he)
+    if(m_blue_halfedge_handle != null_blue_he &&
+       m_red_halfedge_handle == null_red_he)
       return BLUE;
 
     //overlap, the PURPLE color will be returned
-    CGAL_assertion(m_red_halfedge_handle != null_he && 
-                   m_blue_halfedge_handle != null_he);
+    CGAL_assertion(m_red_halfedge_handle != null_red_he && 
+                   m_blue_halfedge_handle != null_blue_he);
     return PURPLE;
   }
 
@@ -106,16 +102,22 @@ public:
 
 
 
-template <class Traits, class Halfedge_handle>
+template <class Traits,
+          class Halfedge_handle_red_,
+          class Halfedge_handle_blue_>
 class Overlay_meta_traits : public Traits
 {
 public:
 
+  typedef Halfedge_handle_red_                      Halfedge_handle_red;
+  typedef Halfedge_handle_blue_                     Halfedge_handle_blue;
   typedef typename Traits::X_monotone_curve_2       Base_X_monotone_curve_2;
   typedef typename Traits::Point_2                  Point_2;
   typedef typename Traits::Intersect_2              Base_Intersect_2;
   typedef typename Traits::Split_2                  Base_Split_2;
-  typedef Curve_info<Halfedge_handle>               Curve_info;
+  
+  typedef Curve_info<Halfedge_handle_red, Halfedge_handle_blue>
+                                                    Curve_info;
   typedef typename Curve_info::Color                Color;
 
 
@@ -126,7 +128,9 @@ public:
     typedef typename Traits::X_monotone_curve_2 Base;
     typedef typename Traits::Point_2            Point_2;
 
-    friend class Overlay_meta_traits<Traits, Halfedge_handle>;
+    friend class Overlay_meta_traits<Traits,
+                                     Halfedge_handle_red, 
+                                     Halfedge_handle_blue>;
     friend class Intersect_2;
 
     My_X_monotone_curve_2(): Base(),
@@ -142,14 +146,8 @@ public:
       m_curve_info(info)
     {}
 
-    My_X_monotone_curve_2(const Base&cv, Halfedge_handle he, Color col):
-      Base(cv),
-      m_curve_info(he, col)
-    {}
-
-    // should be called only when there's an overlap
-    My_X_monotone_curve_2(const Base&cv, Halfedge_handle he1,
-                                         Halfedge_handle he2): 
+    My_X_monotone_curve_2(const Base&cv, Halfedge_handle_red  he1,
+                                         Halfedge_handle_blue he2): 
       Base(cv),
       m_curve_info(he1, he2)
     {}
@@ -158,9 +156,14 @@ public:
 
     void set_curve_info(const Curve_info& cv_info ) {m_curve_info = cv_info;}
 
-    Halfedge_handle get_halfedge_handle() const
+    Halfedge_handle_red get_red_halfedge_handle() const
     {
-      return m_curve_info.get_halfedge_handle();
+      return m_curve_info.get_red_halfedge_handle();
+    }
+
+    Halfedge_handle_blue get_blue_halfedge_handle() const
+    {
+      return m_curve_info.get_blue_halfedge_handle();
     }
 
     Color get_color() const { return m_curve_info.get_color(); }
@@ -192,7 +195,7 @@ public:
                                const X_monotone_curve_2& cv2,
                                OutputIterator oi) const
     {
-      if (cv1.get_color() == cv2.get_color());
+      if (cv1.get_color() == cv2.get_color())
         return (oi); // the curves are disjoint-interior because they
                      // are already at the same Arrangement (have same color)
 
@@ -205,24 +208,24 @@ public:
         Base_X_monotone_curve_2 overlap_cv;
         if(CGAL::assign(overlap_cv, *oi))
         {
-          Halfedge_handle        red_he;
-          Halfedge_handle        blue_he;
+          Halfedge_handle_red        red_he;
+          Halfedge_handle_blue       blue_he;
 
           if(cv1.get_color() == Curve_info::RED)
           {
-            red_he = cv1.get_halfedge_handle();
+            red_he = cv1.get_red_halfedge_handle();
 
             // overlap can occur only between curves from a different color
             CGAL_assertion(cv2.get_color() == Curve_info::BLUE);
-            blue_he = cv2.get_halfedge_handle();
+            blue_he = cv2.get_blue_halfedge_handle();
           }
           else
           {
             CGAL_assertion(cv1.get_color() == Curve_info::BLUE &&
                            cv2.get_color() == Curve_info::RED);
 
-            red_he = cv2.get_halfedge_handle();
-            blue_he = cv1.get_halfedge_handle();
+            red_he = cv2.get_red_halfedge_handle();
+            blue_he = cv1.get_blue_halfedge_handle();
           }
 
           X_monotone_curve_2 new_overlap_cv(overlap_cv, red_he, blue_he);
@@ -270,7 +273,7 @@ public:
 
 
   bool  are_same_color(const X_monotone_curve_2& cv1,
-                       const X_monotone_curve_2& cv2)
+                       const X_monotone_curve_2& cv2) const
   {
     return  (cv1.get_color() == cv2.get_color());
   }

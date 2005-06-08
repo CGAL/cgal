@@ -17,8 +17,8 @@
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
-#ifndef OVERLAY_VISITOR
-#define OVERLAY_VISITOR
+#ifndef OVERLAY_VISITOR_H
+#define OVERLAY_VISITOR_H
 
 #include <CGAL/Sweep_line_2/Arr_sweep_line_visitor.h>
 #include <CGAL/Arrangement_2/Arr_accessor.h>
@@ -47,45 +47,63 @@ public:
 };
 
 
-template <class _Traits, class _Arrangement, class Event, class Subcurve>
-class Ovelay_visitor : 
+template <class _Traits,
+          class _Arrangement1,
+          class _Arrangement2,
+          class _Arrangement,
+          class Event,
+          class Subcurve,
+          class OverlayTraits>
+class Overlay_visitor : 
   public Arr_sweep_line_visitor<_Traits, _Arrangement, Event, Subcurve>
 {
 public:
 
-  typedef _Traits                                             Traits;
-  typedef _Arrangement                                        Arrangement;
-  typedef typename Arrangement::Halfedge_handle               Halfedge_handle;
-  typedef typename Arrangement::Face_handle                   Face_handle;
-  typedef typename Arrangement::Vertex_handle                 Vertex_handle;
+  typedef _Traits                                         Traits;
+  typedef _Arrangement1                                   Arrangement1;
+  typedef _Arrangement2                                   Arrangement2;
+  typedef typename Traits::Halfedge_handle_red            Halfedge_handle_red;
+  typedef typename Traits::Halfedge_handle_blue           Halfedge_handle_blue;
+  typedef _Arrangement                                    Arrangement;
+  typedef typename Arrangement::Halfedge_handle           Halfedge_handle;
+  typedef typename Arrangement::Face_const_handle         Face_const_handle;
+  typedef typename Arrangement::Face_handle               Face_handle;
+  typedef typename Arrangement::Vertex_handle             Vertex_handle;
   typedef typename Arrangement::Ccb_halfedge_circulator
                                                       Ccb_halfedge_circulator;
   
-  typedef Ovelay_visitor<Traits,Arrangement,Event, Subcurve>  Self;
+  typedef Overlay_visitor<Traits,
+                          Arrangement1,
+                          Arrangement2,
+                          Arrangement,
+                          Event,
+                          Subcurve,
+                          OverlayTraits> 
+                                                           Self;
   
   typedef Arr_sweep_line_visitor<Traits,Arrangement,Event, Subcurve>
-                                                              Base;
+                                                           Base;
   
-  typedef typename Event::SubCurveIter                        SubCurveIter;
-  typedef typename Event::SubCurveRevIter                     SubCurveRevIter;
+  typedef typename Event::SubCurveIter                     SubCurveIter;
+  typedef typename Event::SubCurveRevIter                  SubCurveRevIter;
 
   typedef Sweep_line_2_impl<Traits,
                             Event,
                             Subcurve,
                             Self,
-                            CGAL_ALLOCATOR(int)>              Sweep_line;
-  typedef typename Sweep_line::StatusLineIter                 StatusLineIter;
+                            CGAL_ALLOCATOR(int)>           Sweep_line;
+  typedef typename Sweep_line::StatusLineIter              StatusLineIter;
 
    
-  typedef typename Traits::X_monotone_curve_2            X_monotone_curve_2;
-  typedef typename Traits::Point_2                       Point_2;
+  typedef typename Traits::X_monotone_curve_2              X_monotone_curve_2;
+  typedef typename Traits::Point_2                         Point_2;
   
 
-  typedef typename Traits::Curve_info                    Curve_info;
-  typedef Hash_function<Arrangement>                     Hash_function;
+  typedef typename Traits::Curve_info                      Curve_info;
+  typedef Hash_function<Arrangement>                       Hash_function;
   
   typedef Unique_hash_map<Halfedge_handle, Curve_info, Hash_function>
-                                                         Hash_map;
+                                                           Hash_map;
   using Base::m_arr;
   using Base::m_arr_access;
   using Base::m_sweep_line;
@@ -94,28 +112,29 @@ public:
 
   private:
 
-  Ovelay_visitor (const Self& );
+  Overlay_visitor (const Self& );
   Self& operator= (const Self& );
 
 public:
 
   /*! Constructor */
-  Ovelay_visitor(Arrangement& res_arr,
-                 const Arrangement&  red_arr,
-                 const Arrangement&  blue_arr):
-    Arr_sweep_line_visitor(res_arr),
-    /*m_red_arr(&red_arr),
-    m_blue_arr(&blue_arr),*/
+  Overlay_visitor(const Arrangement1& red_arr,
+                  const Arrangement2& blue_arr,
+                  Arrangement& res_arr,
+                  const OverlayTraits& overlay_trairs):
+    Base(&res_arr),
+    m_red_arr(&red_arr),
+    m_blue_arr(&blue_arr),
     m_halfedges_map(Curve_info(),
-                    red_arr.number_of_halfedges() 
-                    + 
-                    blue_arr.number_of_halfedges(),
-                    Hash_function(res_arr))
+                    // initial size for the hash table
+                    red_arr.number_of_edges() + blue_arr.number_of_edges(),
+                    Hash_function(res_arr)),
+    m_overlay_traits(&overlay_trairs)
   {}
 
 
   /*! Destructor */
-  virtual ~Ovelay_visitor() {}
+  virtual ~Overlay_visitor() {}
 
 
   void before_handle_event(Event* event)
@@ -123,27 +142,40 @@ public:
     Base::before_handle_event(event);
   }
 
-  void after_handle_event(Event* event)
+  bool after_handle_event(Event* event, StatusLineIter iter, bool flag)
   {
-    Base::after_handle_event(event, StatusLineIter iter, bool flag);
+    bool res = Base::after_handle_event(event, iter, flag);
 
+    SubCurveRevIter rev_iter = event->right_curves_rbegin();
     Subcurve* sc_above = NULL;
     if( iter != static_cast<Sweep_line*>(m_sweep_line) -> StatusLine_end())
       sc_above = *iter;
+    else
+    { 
+      if(rev_iter != event->right_curves_rend())
+      {
+        (*rev_iter)->set_above(NULL);
+        sc_above = *rev_iter;
+        ++rev_iter;     
+      }
+      else
+        return res; // nothing else to do 
+    }
 
-    for(SubCurveRevIter rev_iter = event->right_curves_rbegin();
-        rev_iter != event->right_curves_rend();
-        ++rev_iter)
+    for( ;
+         rev_iter != event->right_curves_rend();
+         ++rev_iter )
     {
       Subcurve* curr_sc = *rev_iter;
 
       if(!curr_sc->has_same_color(sc_above))
-        curr_sc->set_above(above_sc);
+        curr_sc -> set_above(sc_above);
       else
-        curr_sc->set_above(above_sc->get_above());
+        curr_sc -> set_above(sc_above->get_above());
 
-      sc_above = curr_sc
+      sc_above = curr_sc;
     }
+    return res;
   }
 
   void init_subcurve(Subcurve* sc)
@@ -152,7 +184,9 @@ public:
   }
 
   void add_subcurve(const X_monotone_curve_2& cv,Subcurve* sc)
-  {}
+  {
+    Base::add_subcurve(cv, sc);
+  }
 
 
 
@@ -199,7 +233,7 @@ public:
                                              bool &new_face_created)
   {
     // res is directed from right to left
-    Halfedge_handle res = Base::insert_at_vertices(cv, hhandle, prev,
+    Halfedge_handle res = Base::insert_at_vertices(cv, hhandle, prev, sc,
                                                    new_face_created);
     //TODO: add an assertion that res is directed from right to left
 
@@ -208,9 +242,8 @@ public:
     // new face was created, need to update the new face's data
     if(new_face_created)
     {
-      Haldedge null_he(NULL);
-      Halfedge_handle red_he  (null_he);
-      Halfedge_handle blue_he (null_he);
+      Halfedge_handle_red  red_he  ;
+      Halfedge_handle_blue blue_he ;
 
       // get the new face
       Face_handle new_face = res.face();
@@ -220,28 +253,28 @@ public:
       Ccb_halfedge_circulator ccb_circ = ccb_end;
       do
       { 
-        //get the current halfedge on the fce boundary
+        //get the current halfedge on the face boundary
         Halfedge_handle he(ccb_circ.halfedge());
 
-        CGAL_assertion(m_halfedges_map.is_defined(he);
+        CGAL_assertion(m_halfedges_map.is_defined(he));
         const Curve_info& cv_info = m_halfedges_map[he];
         if(cv_info.get_color() == Curve_info::RED)
         {
-          red_he = cv_info.get_halfedge();
-          if(blue_he != null_he)
+          red_he = cv_info.get_red_halfedge_handle();
+          if(blue_he != Halfedge_handle_blue())
             break;
         }
         else
-          if(cv.info.get_color() == Curve_info::BLUE)
+          if(cv_info.get_color() == Curve_info::BLUE)
           {
-            blue_he = cv_info.get_halfedge();
-            if(red_he != null_he)
+            blue_he = cv_info.get_blue_halfedge_handle();
+            if(red_he != Halfedge_handle_red())
               break;
           }
           else 
           {
             // overlap
-            CGAL_assertion(cv_info.get_color() == Curve_info::PURPLR);
+            CGAL_assertion(cv_info.get_color() == Curve_info::PURPLE);
             red_he = cv_info.get_pair_halfedges().first;
             blue_he = cv_info.get_pair_halfedges().second;
             break;
@@ -251,29 +284,49 @@ public:
       while(ccb_circ != ccb_end);
       //finished traversing the boundary of the face
 
-      if(red_he != null_he && blue_he != null_he)
+      if(red_he != Halfedge_handle_red() && blue_he != Halfedge_handle_blue())
       {
-        Face_handle red_face = red_he.face();
-        Face_handle blue_handle = blue.face();
+        // red face and blue face intersects (or overlap)
+        Face_const_handle red_face = red_he.face();
+        Face_const_handle blue_handle = blue_he.face();
+        std::cout<<"<<<<1>>>>\n";
         //TODO : merge the two face's data
       }
       else
       {
-        if(red_he != null_he)
+        // red face inside blue face
+        if(red_he != Halfedge_handle_red())
         {
-          Face_handle red_face = red_he.face();
-          Face_handle blue_face = sc->get_above()->get_halfedge_handle().face();
+          Face_const_handle red_face = red_he.face();
+          Face_const_handle blue_face;
+          Subcurve* sc_above = sc->get_above();
+          if(!sc_above)
+            blue_face = m_blue_arr->unbounded_face();
+          else
+            Face_const_handle blue_face = 
+              sc_above->get_blue_halfedge_handle().face();
+          std::cout<<"<<<<2>>>>\n";
           //TODO : merge the two face's data
         }
         else
         {
-          CGAL_assertion(blue_he != null_he && red_he == null_he);
-           Face_handle red_face = sc->get_above()->get_halfedge_handle().face();
-          Face_handle blue_face = blue.face();
+          // blue face inside red face
+          CGAL_assertion(blue_he != Halfedge_handle_blue() && 
+                         red_he == Halfedge_handle_red());
+          Face_const_handle red_face;
+          Face_const_handle blue_face = blue_he.face();
+          Subcurve* sc_above = sc->get_above();
+          if(!sc_above)
+            red_face = m_red_arr->unbounded_face();
+          else
+            Face_const_handle red_face = 
+              sc_above->get_red_halfedge_handle().face();
+          std::cout<<"<<<3>>>\n";
           //TODO : merge the two face's data
         }
       }
     }
+    return res;
   }
 
 
@@ -285,21 +338,32 @@ public:
   void map_halfedge_and_twin(Halfedge_handle he, bool right_dir, 
                              const Curve_info& cv_info)
   {
-    // original halfedge that was stored is directed from right to left
-    Halfedge_handle he_info = cv_info.get_halfedge_handle();
+    // original halfedges that were stored is directed from right to left
+    Halfedge_handle_red     red_he_info = cv_info.get_red_halfedge_handle();
+    Halfedge_handle_blue    blue_he_info = cv_info.get_blue_halfedge_handle();
+    Halfedge_handle_red     red_he_info_twin;
+    Halfedge_handle_blue    blue_he_info_twin; 
+
+
+    if(red_he_info  != Halfedge_handle_red())
+      red_he_info_twin = red_he_info.twin();
+
+    if(blue_he_info != Halfedge_handle_blue())
+      blue_he_info_twin = blue_he_info.twin();
+
 
     //cv_info_twin will have the twin halfedge
-    Curve_info cv_info_twin(he_info.twin(), cv_info.get_color());
+    Curve_info cv_info_twin(red_he_info_twin, blue_he_info_twin);
 
     if(right_dir)
     {
       m_halfedges_map[he] = cv_info_twin;
-      m_halfedges_map[res->twin()] = cv_info;
+      m_halfedges_map[he.twin()] = cv_info;
     }
     else
     {
       m_halfedges_map[he] = cv_info;
-      m_halfedges_map[res->twin()] = cv_info_twin;
+      m_halfedges_map[he.twin()] = cv_info_twin;
     }
   }
 
@@ -309,9 +373,11 @@ public:
 
 protected:
 
-  /*const Arrangement*        m_red_arr;
-  const Arrangement*        m_blue_arr;*/
+
+  const Arrangement1*       m_red_arr;
+  const Arrangement2*       m_blue_arr;
   Hash_map                  m_halfedges_map;
+  const OverlayTraits*      m_overlay_traits;
 };
 
 

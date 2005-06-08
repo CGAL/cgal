@@ -17,18 +17,21 @@
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
+#ifndef OVERLAY_SUBCURVE_H
+#define OVERLAY_SUBCURVE_H
+
 #include <CGAL/Sweep_line_2/Arr_sweep_line_curve.h>
 
 CGAL_BEGIN_NAMESPACE
 
 template<class _Traits, class HalfedgeHandle>
-class Overlay_subcurve : public Arr_sweep_line_curve<_Traits, Halfedge_handle>
+class Overlay_subcurve : public Arr_sweep_line_curve<_Traits, HalfedgeHandle>
 {
 public:
   typedef _Traits                                          Traits;
   typedef typename Traits::Point_2                         Point_2;
   typedef typename Traits::X_monotone_curve_2              X_monotone_curve_2;
-  typedef Arr_sweep_line_curve<Traits, Halfedge_handle>    Base;
+  typedef Arr_sweep_line_curve<Traits, HalfedgeHandle>     Base;
   typedef Overlay_subcurve<Traits, HalfedgeHandle>         Self;
 
   typedef Status_line_curve_less_functor<Traits, Self>    StatusLineCurveLess;
@@ -38,10 +41,16 @@ public:
 
   typedef Arr_insert_info<HalfedgeHandle>                 ArrInsertInfo;
   typedef Arr_sweep_line_event<Traits, Self>              Event;
+  typedef Arr_sweep_line_event<Traits, Base>              BaseEvent;
 
   typedef typename Traits::Color                          Color;
+  typedef typename Traits::Halfedge_handle_red            Halfedge_handle_red;
+  typedef typename Traits::Halfedge_handle_blue           Halfedge_handle_blue;
+
+
 
   using Base::m_lastCurve;
+  using Base::m_lastEvent;
 
 protected:
 
@@ -94,12 +103,25 @@ public:
 
   bool has_same_color(const Self* sc) const
   {
-    return (m_lastCurve.get_color() == sc.get_color());
+    return (m_lastCurve.get_color() == sc->get_color());
   }
 
-  Halfedge_handle get_halfedge_handle() const
+  Halfedge_handle_red get_red_halfedge_handle() const
   {
-    return m_lastCurve.get_halfedge_handle();
+    return m_lastCurve.get_red_halfedge_handle();
+  }
+
+  Halfedge_handle_blue get_blue_halfedge_handle() const
+  {
+    return m_lastCurve.get_blue_halfedge_handle();
+  }
+
+  void set_last_event(Event *e) {
+    m_lastEvent = reinterpret_cast<BaseEvent*>(e);
+  }
+
+  Event *get_last_event() const {
+    return (reinterpret_cast<Event*>(m_lastEvent));
   }
 
 };
