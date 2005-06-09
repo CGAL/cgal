@@ -41,18 +41,25 @@ template < class Arrangement1,
 void arr_overlay (const Arrangement1  & arr1,
                   const Arrangement2  & arr2,
                   Res_Arrangement     & res,
-                  const OverlayTraits & traits)
+                  OverlayTraits & traits)
 {
-  typedef typename Arrangement1::Traits_2                Base_Traits;
-  typedef typename Base_Traits::X_monotone_curve_2     Base_X_monotone_curve_2;
+  typedef typename Arrangement1::Traits_2             Base_Traits;
+  typedef typename Base_Traits::X_monotone_curve_2    Base_X_monotone_curve_2;
 
-  typedef typename Arrangement1::Halfedge_const_handle Halfedge_const_handle_1;
-  typedef typename Arrangement1::Edge_const_iterator   Edge_const_iterator_1;
+  typedef typename Arrangement1::Halfedge_const_handle 
+                                                      Halfedge_const_handle_1;
+  typedef typename Arrangement1::Edge_const_iterator   
+                                                      Edge_const_iterator_1;
+  typedef typename Arrangement1::Face_const_handle    Face_handle1;
 
-  typedef typename Arrangement2::Halfedge_const_handle Halfedge_const_handle_2;
-  typedef typename Arrangement2::Edge_const_iterator   Edge_const_iterator_2;
+  typedef typename Arrangement2::Halfedge_const_handle 
+                                                      Halfedge_const_handle_2;
+  typedef typename Arrangement2::Edge_const_iterator  Edge_const_iterator_2;
 
-  typedef typename Res_Arrangement::Halfedge_handle    Halfedge_handle_res;
+  typedef typename Arrangement2::Face_const_handle    Face_handle2;
+
+  typedef typename Res_Arrangement::Halfedge_handle   Halfedge_handle_res;
+  typedef typename Res_Arrangement::Face_handle       Res_Face_handle;
 
   typedef Overlay_meta_traits<Base_Traits,
                               Halfedge_const_handle_1,
@@ -85,6 +92,8 @@ void arr_overlay (const Arrangement1  & arr1,
   arr2_curves.resize(arr2.number_of_edges());
 
     
+  typename Base_Traits::Compare_xy_2    comp_xy =
+    arr1.get_traits()->compare_xy_2_object();
     
   //iterate over arr1's edges and create X_monotone_curve_2 from each edge
   unsigned int i = 0;
@@ -93,9 +102,16 @@ void arr_overlay (const Arrangement1  & arr1,
       ++itr1, ++i)
   {
     Halfedge_const_handle_1 he = *itr1;
+
+    // Associate each x-monotone curve with the halfedge that represent it
+    // that is directed from right to left.
+    if(comp_xy(he.source().point(),
+	             he.target().point()) == SMALLER)
+       he = he.twin();
     const Base_X_monotone_curve_2& base_cv = he.curve();
 
-    arr1_curves[i] = X_monotone_curve_2(base_cv, he, Halfedge_const_handle_2());
+    arr1_curves[i] =
+      X_monotone_curve_2(base_cv, he, Halfedge_const_handle_2());
   }
 
   //iterate over arr2's edges and create X_monotone_curve_2 from each edge
@@ -105,9 +121,17 @@ void arr_overlay (const Arrangement1  & arr1,
       ++itr2, ++i)
   {
     Halfedge_const_handle_2 he = *itr2;
+
+    // Associate each x-monotone curve with the halfedge that represent it
+    // that is directed from right to left.
+    if(comp_xy(he.source().point(),
+	             he.target().point()) == SMALLER)
+       he = he.twin();
+
     const Base_X_monotone_curve_2& base_cv = he.curve();
 
-    arr2_curves[i] = X_monotone_curve_2(base_cv, Halfedge_const_handle_1(), he);
+    arr2_curves[i] =
+      X_monotone_curve_2(base_cv, Halfedge_const_handle_1(), he);
   }
 
   Visitor visitor(arr1, arr2, res, traits);
@@ -117,13 +141,14 @@ void arr_overlay (const Arrangement1  & arr1,
   sweep_object.init_x_curves(arr2_curves.begin(), arr2_curves.end());
   sweep_object.sweep();
 
-
+  //after sweep is finshed, merge the two unbouded_faces from each arrangment
+  traits.create_face(arr1.unbounded_face(),
+                     arr2.unbounded_face(),
+                     res .unbounded_face());
 }
 
 
 
-
 CGAL_END_NAMESPACE
-
 
 #endif

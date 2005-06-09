@@ -20,7 +20,6 @@
 #ifndef OVERLAY_META_TRAITS_H
 #define OVERLAY_META_TRAITS_H
 
-#include <utility>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -73,13 +72,6 @@ public:
   }
 
 
-  //should be called only when there's an overlap
-  std::pair<Halfedge_handle_red, Halfedge_handle_blue> 
-    get_pair_halfedges() const
-  {
-    return std::make_pair(m_red_halfedge_handle, m_blue_halfedge_handle);
-  }
-
   Color get_color() const 
   {
     Halfedge_handle_red     null_red_he;
@@ -116,8 +108,8 @@ public:
   typedef typename Traits::Intersect_2              Base_Intersect_2;
   typedef typename Traits::Split_2                  Base_Split_2;
   
-  typedef Curve_info<Halfedge_handle_red, Halfedge_handle_blue>
-                                                    Curve_info;
+  typedef Curve_info<Halfedge_handle_red,
+                     Halfedge_handle_blue>          Curve_info;
   typedef typename Curve_info::Color                Color;
 
 
@@ -125,8 +117,8 @@ public:
   class My_X_monotone_curve_2 : public Base_X_monotone_curve_2 
   {
   public:
-    typedef typename Traits::X_monotone_curve_2 Base;
-    typedef typename Traits::Point_2            Point_2;
+    typedef typename Traits::X_monotone_curve_2     Base;
+    typedef typename Traits::Point_2                Point_2;
 
     friend class Overlay_meta_traits<Traits,
                                      Halfedge_handle_red, 

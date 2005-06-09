@@ -28,24 +28,26 @@ template<class _Traits, class HalfedgeHandle>
 class Overlay_subcurve : public Arr_sweep_line_curve<_Traits, HalfedgeHandle>
 {
 public:
-  typedef _Traits                                          Traits;
-  typedef typename Traits::Point_2                         Point_2;
-  typedef typename Traits::X_monotone_curve_2              X_monotone_curve_2;
-  typedef Arr_sweep_line_curve<Traits, HalfedgeHandle>     Base;
-  typedef Overlay_subcurve<Traits, HalfedgeHandle>         Self;
+  typedef _Traits                                        Traits;
+  typedef typename Traits::Point_2                       Point_2;
+  typedef typename Traits::X_monotone_curve_2            X_monotone_curve_2;
+  typedef Arr_sweep_line_curve<Traits, HalfedgeHandle>   Base;
+  typedef Overlay_subcurve<Traits, HalfedgeHandle>       Self;
 
-  typedef Status_line_curve_less_functor<Traits, Self>    StatusLineCurveLess;
-  typedef Red_black_tree<Self*, StatusLineCurveLess, CGAL_ALLOCATOR(int)> 
-                                                          StatusLine;
-  typedef typename StatusLine::iterator                   StatusLineIter;
+  typedef Status_line_curve_less_functor<Traits, Self>   StatusLineCurveLess;
+  typedef Red_black_tree<Self*,
+                         StatusLineCurveLess,
+                         CGAL_ALLOCATOR(int)> 
+                                                         StatusLine;
+  typedef typename StatusLine::iterator                  StatusLineIter;
 
-  typedef Arr_insert_info<HalfedgeHandle>                 ArrInsertInfo;
-  typedef Arr_sweep_line_event<Traits, Self>              Event;
-  typedef Arr_sweep_line_event<Traits, Base>              BaseEvent;
+  typedef Arr_insert_info<HalfedgeHandle>                ArrInsertInfo;
+  typedef Arr_sweep_line_event<Traits, Self>             Event;
+  typedef Arr_sweep_line_event<Traits, Base>             BaseEvent;
 
-  typedef typename Traits::Color                          Color;
-  typedef typename Traits::Halfedge_handle_red            Halfedge_handle_red;
-  typedef typename Traits::Halfedge_handle_blue           Halfedge_handle_blue;
+  typedef typename Traits::Color                         Color;
+  typedef typename Traits::Halfedge_handle_red           Halfedge_handle_red;
+  typedef typename Traits::Halfedge_handle_blue          Halfedge_handle_blue;
 
 
 
