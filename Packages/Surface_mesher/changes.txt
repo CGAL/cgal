@@ -1,0 +1,57 @@
+12 may 2005 David Rey
+- create several surface meshers:
+  - with no verification about manifoldness
+  - constraint regulare edges
+  - constraint regular edges and no boundary
+  - constraint manifoldness
+
+- mv names into better ones:
+  - Chew_4_surfaces -> Surface_mesher
+  - Chew_4_surfaces_manifold -> Surface_mesher_regular_edges
+  - Chew_4_surfaces_manifold_without_boundary -> 
+    Surface_mesher_regular_edges_without_boundary
+  - Chew_4_surfaces_manifold_simple_vertices -> Surface_mesher_manifold
+
+
+
+
+
+8 February 2005 Laurent Rineau
+- new changes.txt file
+- removed files that are in Mesh_2 and Mesh_3:
+    - Mesher_level.h (Mesh_2)
+    - Triangulation_mesher_level_traits_3 (Mesh_3)
+- new template parameters for Mesher_level
+- modified Complex_2_in_triangulation_3:
+    - factorised set_in_complex and remove_from_complex
+    - new functions is_in_complex
+- rename Complex_2_in_triangulation_cell_base_* classes:
+    - Complex_2_in_triangulation_cell_base_3
+    - Complex_2_in_triangulation_surface_mesh_cell_base_3
+- new Mesher_level function names:
+    - Tr& triangulation_ref_impl()
+    - Vertex_handle insert_impl(p, z)
+    - Zone conflicts_zone_impl(p)
+    - void scan_triangulation_impl()
+    - bool no_longer_element_to_refine_impl()
+    - Element get_next_element_impl()
+    - void pop_next_element_impl()
+    - Point refinement_point_impl(e)
+    - void before_conflicts_impl(e, p)
+    - Mesher_level_conflict_status private_test_point_conflict_impl(p, zone)
+    - Mesher_level_conflict_status 
+        test_point_conflict_from_superior_impl(p, zone)
+    - void before_insertion_impl(e, p, zone)
+    - void after_insertion_impl(vh)
+    - void after_no_insertion_impl(e, p, zone)
+- new class in Mesher_level.h for default implementations:
+    - class Triangulation_ref_impl
+    - No_private_test_point_conflict
+    - No_test_point_conflict_from_superior
+    - No_test_point_conflict :
+    - No_before_insertion
+    - No_after_insertion
+    - No_after_no_insertion
+    - No_before_after_insertion
+- added implementation of:
+    Chew_4_surface::test_point_conflict_from_superior_impl()
