@@ -1,3 +1,14 @@
+11 June 2005:  Menelaos Karavelas
+- VC 7.1 and Intel 8.1 in the their implementation of std::set, the types for
+  iterator and const_iterator are different; this is not the case, however,
+  for g++ 3.4 or g++ 4.0: in their implementation of std::set, the types for
+  iterator and const_iterator are the same.
+  This caused a bug in the file_output method, namely, Point_handle_less_than
+  was not defined for const_iterators (i.e., const_Point_handle) for VC 7.1
+  and Intel 8.1, but only for iterators (i.e., Point_handle).
+  The fix is to define Point_handle_less_than only for const_iterators, since,
+  according to the C++ standard, iterators are convertible to const_iterators.
+
 5 June 2005:  Menelaos Karavelas
 - Segment_Voronoi_diagram_2 and Segment_Voronoi_diagram_hierarchy_2: added
   methods file_input and file_output that read and write from and to a file.

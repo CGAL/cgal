@@ -2011,7 +2011,7 @@ file_output(std::ostream& os, Point_handle_mapper& P,
     if ( is_ascii(os) ) { os << std::endl; }
     os << pc_.size();
     if ( is_ascii(os) ) { os << std::endl; }
-    for (Point_handle ph = pc_.begin(); ph != pc_.end(); ++ph) {
+    for (const_Point_handle ph = pc_.begin(); ph != pc_.end(); ++ph) {
       os << *ph;
       if ( is_ascii(os) ) { os << std::endl; }
     }

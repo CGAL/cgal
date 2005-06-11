@@ -207,10 +207,12 @@ public:
 protected:
   typedef CGALi::Svd_project_site_2<Vertex>      Proj_site;
 
+  typedef typename Point_container::const_iterator const_Point_handle;
+
   struct Point_handle_less_than {
     // less than
-    bool operator()(const Point_handle& x,
-		    const Point_handle& y) const {
+    bool operator()(const const_Point_handle& x,
+		    const const_Point_handle& y) const {
       return &(*x) < &(*y);
     }
   };
@@ -623,7 +625,7 @@ protected:
 protected:
   // I/O METHODS
   //------------
-  typedef std::map<Point_handle,size_type,Point_handle_less_than>
+  typedef std::map<const_Point_handle,size_type,Point_handle_less_than>
   Point_handle_mapper;
 
   typedef std::vector<Point_handle> Point_handle_vector;
@@ -650,7 +652,7 @@ public:
   void file_output(std::ostream& os) const {
     Point_handle_mapper P;
     size_type inum = 0;
-    for (Point_handle ph = pc_.begin(); ph != pc_.end(); ++ph) {
+    for (const_Point_handle ph = pc_.begin(); ph != pc_.end(); ++ph) {
       P[ph] = inum++;
     }
     file_output(os, P, true);
