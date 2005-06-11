@@ -1,4 +1,4 @@
-// Copyright (c) 2005 University of Crete (Greece).
+// Copyright (c) 2005 Foundation for Research and Technology-Hellas (Greece).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
@@ -29,7 +29,10 @@
 //| if the compiler cannot recognize the declaration of a nested
 //| class as friend.
 //| Compilers such as the Intel compiler 8.x (for linux or windows),
-//| MSVC 7.1 or pgCC have this bug.
+//| MSVC 7.1 or pgCC have this "bug". It should be noted that the C++
+//| standard is a bit vague on this issue, in other words what is referred
+//| to as "bug" above, may not really be a bug. Hopefully, the next standard
+//| will resolve this issue.
 
 #include <iostream>
 
