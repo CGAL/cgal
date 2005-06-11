@@ -1,3 +1,9 @@
+11 June 2005:  Menelaos Karavelas
+- added copyright headers in some files that did not have one
+- changed institution in copyright headers
+- added Connected_components.h which contains a generic algorithm for
+  computing the number of connected components of the Voronoi skeleton
+
 4 June 2005:  Menelaos Karavelas
 - in Dummy_iterator and Circulator_from_halfedge_adaptor: operator*() and
   operator->() that returned a const reference and const pointer have been
