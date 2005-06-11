@@ -1011,12 +1011,13 @@ void
 Segment_Voronoi_diagram_hierarchy_2<Gt,STag,DS,LTag>::
 file_output(std::ostream& os) const
 {
-  typedef std::map<Vertex_handle,int> Vertex_map;
+  typedef std::map<Vertex_handle,int>        Vertex_map;
+  typedef typename Base::const_Point_handle  const_Point_handle;
 
   // compute the point handle mapper
   typename Base::Point_handle_mapper P;
   size_type inum = 0;
-  for (Point_handle ph = this->pc_.begin(); ph != this->pc_.end(); ++ph) {
+  for (const_Point_handle ph = this->pc_.begin(); ph != this->pc_.end(); ++ph) {
     P[ph] = inum++;
   }
 
