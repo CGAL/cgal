@@ -155,13 +155,24 @@ class Edge_iterator_adaptor
   Edge_iterator_adaptor(const Base& base) : Base(base) {}
 
   void eval_pointer() const {
+    if ( this->vda_->dual().dimension() == 1 ) {
+      int cw_i  = CW_CCW_2::cw( this->cur_->second );
+      int ccw_i = CW_CCW_2::ccw( this->cur_->second );
+      this->value_ =
+	Halfedge(this->vda_, this->cur_->first->vertex(ccw_i),
+		 this->cur_->first->vertex(cw_i));
+      return;
+    }
+
     this->value_ =
       Halfedge(this->vda_, this->cur_->first, this->cur_->second);
 
     typename VDA::Dual_edge e = this->value_.dual_edge();
 
     int j = CW_CCW_2::ccw( e.second );
-    if ( this->vda_->face_tester()(this->vda_->dual(), e.first->vertex(j)) ) {
+    typename VDA::Dual_vertex_handle v = e.first->vertex(j);
+
+    if ( this->vda_->face_tester()(this->vda_->dual(), v) ) {
       this->value_ = *this->value_.opposite();
     }
   }

@@ -37,10 +37,21 @@ class Halfedge
 
   typedef typename VDA::Dual_face_handle        Dual_face_handle;
   typedef typename VDA::Dual_vertex_handle      Dual_vertex_handle;
+  typedef typename VDA::Dual_vertex_circulator  Dual_vertex_circulator;
   typedef typename VDA::Edge_degeneracy_tester  Edge_degeneracy_tester;
   typedef typename VDA::Face_degeneracy_tester  Face_degeneracy_tester;
 
  private:
+  Self find_next_1D() const {
+    Dual_vertex_circulator vc = vda_->dual().incident_vertices(v1_);
+
+    while ( v2_ == vc ) { ++vc; }
+
+    if ( vda_->dual().is_infinite(vc) ) { return *this; }
+
+    return Self(vda_, v1_, vc);
+  }
+
   void find_next(const Dual_face_handle& f, int i,
 		 Dual_face_handle& fnext, int& inext) const
   {
@@ -66,11 +77,14 @@ public:
   typedef typename VDA::Dual_graph::Edge         Dual_edge;
 
   Halfedge(const VDA* vda = NULL)
-    : vda_(vda), f_(Dual_face_handle()), i_(-1) {}
+    : vda_(vda), f_(Dual_face_handle()), i_(-1),
+      v1_(Dual_vertex_handle()), v2_(Dual_vertex_handle()) {}
   Halfedge(const VDA* vda, Dual_face_handle f, int i)
-    : vda_(vda), f_(f), i_(i)
+    : vda_(vda), f_(f), i_(i), v1_(Dual_vertex_handle()),
+      v2_(Dual_vertex_handle())
   {
 #if !defined(CGAL_NO_PRECONDITIONS) && !defined(NDEBUG)
+    CGAL_precondition( vda_->dual().dimension() == 2 );
     CGAL_precondition( !vda_->edge_tester()(vda_->dual(), f_, i_) );
 #if 0
     Dual_vertex_handle v = f_->vertex( CW_CCW_2::ccw(i_) );
@@ -82,7 +96,18 @@ public:
 #endif
   }
 
+  Halfedge(const VDA* vda, Dual_vertex_handle v1, Dual_vertex_handle v2)
+    : vda_(vda), f_(Dual_face_handle()), i_(-2), v1_(v1), v2_(v2)
+  {
+    CGAL_precondition( vda_->dual().dimension() == 1 );
+    CGAL_precondition( !vda_->dual().is_infinite(v1_) );
+  }
+
   Halfedge_handle opposite() const {
+    if ( vda_->dual().dimension() == 1 ) {
+      return Halfedge_handle( Self(vda_, v2_, v1_) );
+    }
+
     int cw_i = CW_CCW_2::cw(i_);
     if (  vda_->face_tester()(vda_->dual(), f_->vertex(cw_i))  ) {
       Dual_face_handle fopp;
@@ -105,6 +130,10 @@ public:
   }
 
   Halfedge_handle next() const {
+    if ( vda_->dual().dimension() == 1 ) {
+      return Halfedge_handle( find_next_1D() );
+    }
+
     // if I want to return all edges and not just the finite ones,
     // replace the do-while loop by the following statements:
     //          find_next(f_, i_, f, i);
@@ -120,6 +149,10 @@ public:
 
   Halfedge_handle previous() const
   {
+    if ( vda_->dual().dimension() == 1 ) {
+      return Halfedge_handle( find_next_1D() );
+    }
+
     Dual_face_handle f, fprev = f_;
     int iprev = i_, i;
     
@@ -146,7 +179,12 @@ public:
   bool operator==(const Self& other) const {
     if ( vda_ == NULL ) { return other.vda_ == NULL; }
     if ( other.vda_ == NULL ) { return vda_ == NULL; }
-    return ( vda_ == other.vda_ && f_ == other.f_ && i_ == other.i_ );
+
+    if ( vda_->dual().dimension() == 1 ) {
+      return ( vda_ == other.vda_ && v1_ == other.v1_ && v2_ == other.v2_ );
+    } else {
+      return ( vda_ == other.vda_ && f_ == other.f_ && i_ == other.i_ );
+    }
   }
   
   bool operator!=(const Self& other) const {
@@ -158,6 +196,7 @@ public:
   }
 
   bool has_target() const {
+    if ( vda_->dual().dimension() == 1 ) { return false; }
     return !vda_->dual().is_infinite(f_);
   }
 
@@ -178,12 +217,19 @@ public:
   }
 
   Face_handle face() const {
+    if ( vda_->dual().dimension() == 1 ) {
+      return Face_handle( Face(vda_, v1_) );
+    }
     Face f(vda_, f_->vertex( CW_CCW_2::ccw(i_) ));
     return Face_handle(f);
     //      Face_handle(   Face(vda_, f_->vertex( CW_CCW_2::ccw(i_) ))   );
   }
 
   Curve curve() const {
+    if ( vda_->dual().dimension() == 1 ) {
+      return VDA::Voronoi_traits::make_edge(v1_, v2_);
+    }
+
     Dual_vertex_handle v1 = f_->vertex( CW_CCW_2::cw(i_) ); // north
     Dual_vertex_handle v2 = f_->vertex( CW_CCW_2::ccw(i_) ); // south
     Dual_vertex_handle v3 = f_->vertex( i_ ); // west
@@ -206,16 +252,43 @@ public:
     }
   }
 
-  Dual_edge dual_edge() const { return Dual_edge(f_, i_); }
+  Dual_edge dual_edge() const {
+    if ( vda_->dual().dimension() == 1 ) {
+      typename VDA::Dual_graph::Edge_circulator ec;
+      if ( vda_->dual().is_infinite(v1_) ) {
+	CGAL_assertion( !vda_->dual().is_infinite(v2_) );
+	ec = vda_->dual().incident_edges(v2_);
+      } else {
+	ec = vda_->dual().incident_edges(v1_);
+      }
+      do {
+	Dual_edge e = *ec;
+	if ( (e.first->vertex(0) == v1_ && e.first->vertex(1) == v2_) ||
+	     (e.first->vertex(0) == v2_ && e.first->vertex(1) == v1_) ) {
+	  return e;
+	}
+	++ec;
+      } while ( true );
+    } else {
+      return Dual_edge(f_, i_);
+    }
+  }
 
   bool is_valid() const {
     if ( vda_ == NULL ) { return true; }
 
-    bool valid = !vda_->edge_tester()(vda_->dual(), f_, i_);
+    bool valid = true;
 
-    Dual_vertex_handle v = f_->vertex( CW_CCW_2::ccw(i_) );
+    if ( vda_->dual().dimension() == 1 ) {
+      valid = valid && v1_ != Dual_vertex_handle();
+      valid = valid && v2_ != Dual_vertex_handle();
+    } else {
+      valid = valid && !vda_->edge_tester()(vda_->dual(), f_, i_);
 
-    valid = valid && !vda_->face_tester()(vda_->dual(), v);
+      Dual_vertex_handle v = f_->vertex( CW_CCW_2::ccw(i_) );
+
+      valid = valid && !vda_->face_tester()(vda_->dual(), v);
+    }
 
     Halfedge_handle h_this(*this);
 
@@ -236,10 +309,11 @@ public:
     return valid;
   }
 
-private:
+ private:
   const VDA* vda_;
   Dual_face_handle f_;
   int i_;
+  Dual_vertex_handle v1_, v2_;
 };
 
 CGAL_VORONOI_DIAGRAM_2_END_NAMESPACE

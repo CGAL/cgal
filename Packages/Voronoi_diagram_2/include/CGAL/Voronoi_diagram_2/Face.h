@@ -34,6 +34,7 @@ class Face
  private:
   typedef Face<VDA>                              Self;
   typedef typename VDA::Dual_edge_circulator     Dual_edge_circulator;
+  typedef typename VDA::Dual_vertex_circulator   Dual_vertex_circulator;
   typedef typename VDA::Dual_vertex_handle       Dual_vertex_handle;
 
   typedef Triangulation_cw_ccw_2                 CW_CCW_2;
@@ -70,7 +71,7 @@ class Face
   }
 
   bool is_unbounded() const {
-    typedef typename VDA::Dual_graph::Vertex_circulator Dual_vertex_circulator;
+    if ( vda_->dual().dimension() == 1 ) { return true; }
 
     Dual_vertex_circulator vc = vda_->dual().incident_vertices(v_);
     Dual_vertex_circulator vc_start = vc;
@@ -87,6 +88,14 @@ class Face
 
   Halfedge_handle halfedge() const
   {
+    if ( vda_->dual().dimension() == 1 ) {
+      typename VDA::Dual_graph::Vertex_circulator vc;
+      vc = vda_->dual().incident_vertices(v_);
+      while ( vda_->dual().is_infinite(vc) ) { ++vc; }
+      Dual_vertex_handle vv(vc);
+      return Halfedge_handle( Halfedge(vda_, v_, vv) );
+    }
+
     // the edge circulator gives edges that have v_ as their target
     Dual_edge_circulator ec = vda_->dual().incident_edges(v_);
     Dual_edge_circulator ec_start = ec;

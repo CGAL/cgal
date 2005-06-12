@@ -43,6 +43,8 @@ class Bounded_face_tester
   Bounded_face_tester(const VDA* vda = NULL) : vda_(vda) {}
 
   bool operator()(const Base_iterator& it) const {
+    if ( vda_->dual().dimension() == 1 ) { return false; }
+
     Dual_vertex_handle v = it.base();
 
     Dual_vertex_circulator vc = vda_->dual().incident_vertices(v);

@@ -85,6 +85,7 @@ class Cached_edge_degeneracy_tester
 
  public:
   bool operator()(const Dual_graph& dual, const Edge& e) const {
+    if ( dual.dimension() == 1 ) { return false; }
     if ( emap.is_defined(e) ) { return emap[e]; }
     bool b = e_tester(dual, e);
     emap[e] = b;
