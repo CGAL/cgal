@@ -68,6 +68,9 @@ class Voronoi_diagram_adaptor_2
   typedef typename Dual_graph::Face_handle     Dual_face_handle;
   typedef typename Dual_graph::Edge            Dual_edge;
 
+  typedef typename Dual_graph::Edge_circulator    Dual_edge_circulator;
+  typedef typename Dual_graph::Vertex_circulator  Dual_vertex_circulator;
+  typedef typename Dual_graph::Face_circulator    Dual_face_circulator;
 
   typedef typename Dual_graph::Finite_vertices_iterator 
   Dual_vertices_iterator;
@@ -80,10 +83,11 @@ class Voronoi_diagram_adaptor_2
   typedef typename Dual_graph::All_edges_iterator
   All_dual_edges_iterator;
 
-  typedef typename Dual_graph::Edge_circulator
-  Dual_edge_circulator;
+  // POINT LOCATION RELATED TYPES
+  typedef typename Voronoi_traits::Has_point_locator  Has_point_locator;
+  typedef typename Voronoi_traits::Point_2            Point_2;
 
-
+  // TYPES FOR THE DEGENERACY TESTERS
   typedef typename Voronoi_traits::Edge_degeneracy_tester
   Edge_degeneracy_tester;
   typedef typename Voronoi_traits::Face_degeneracy_tester
@@ -237,7 +241,7 @@ public:
   // VORONOI TRAITS
   const Voronoi_traits& voronoi_traits() const { return tr_; }
 
-  // SIZE RELATED FUNCTIONS
+  // SIZE RELATED METHODS
   size_type size_of_vertices() const {
     size_type num_v = 0;
     for (Vertex_iterator it = vertices_begin();	it != vertices_end();
@@ -417,6 +421,7 @@ public:
     return Halfedge_around_vertex_circulator(*he);
   }
 
+  // VALIDITY TESTING
   bool is_valid() const {
     bool valid = dual_.is_valid();
     for (Vertex_iterator it = vertices_begin(); it != vertices_end(); ++it) {
@@ -432,6 +437,67 @@ public:
       valid = valid && it->is_valid();
     }
     return valid;
+  }
+
+  // POINT LOCATION
+ private:
+  typename Voronoi_traits::Object
+  locate(const Point_2& p, const Tag_false&) const {
+    static unsigned int i = 0;
+    if ( i == 0 ) {
+      i++;
+      std::cerr << "Point location is not supported..." << std::endl;
+    }
+
+    // to avoid warnings/errors...
+    Face_handle f;
+    return CGAL::make_object(f);
+  }
+
+  typename Voronoi_traits::Object
+  locate(const Point_2& p, const Tag_true&) const
+  {
+    typedef typename Voronoi_traits::Point_locator     Point_locator;
+    typedef typename Point_locator::Object             Object;
+    typedef typename Point_locator::Assign             Assign;
+
+    Dual_vertex_handle  dv;
+    Dual_face_handle    df;
+    Dual_edge           de;
+
+    Point_locator locate = tr_.point_locator_object();
+    Assign assign;
+    Object o = locate(dual_, p);
+
+    if ( assign(dv, o) ) {
+      Face_handle f( Face(this, dv) );
+      return tr_.construct_object_object()(f);
+    } else if ( assign(df, o) ) {
+      CGAL_VORONOI_DIAGRAM_2_NS::Find_valid_vertex<Self> vertex_finder;
+      Dual_face_handle dfvalid = vertex_finder(this, df);
+      Vertex_handle v( Vertex(this, dfvalid) );
+      return tr_.construct_object_object()(v);
+    } else if ( assign(de, o) ) {
+      CGAL_assertion(  !edge_tester()(dual_, de)  );
+      if ( dual_.dimension() == 1 ) {
+	Dual_vertex_handle v1 = de.first->vertex(CW_CCW_2::ccw(de.second));
+	Dual_vertex_handle v2 =	de.first->vertex(CW_CCW_2::cw(de.second) );
+	Halfedge_handle e( Halfedge(this, v1, v2) );
+	return tr_.construct_object_object()(e);
+      }
+      Halfedge_handle e( Halfedge(this, de.first, de.second) );
+      return tr_.construct_object_object()(e);
+    }
+
+    // I should never have reached this line;
+    CGAL_assertion( false );
+    Face_handle f;
+    return tr_.construct_object_object()(f);
+  }
+
+ public:
+  typename Voronoi_traits::Object locate(const Point_2& p) const {
+    return locate(p, Has_point_locator());
   }
 
 
