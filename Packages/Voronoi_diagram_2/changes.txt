@@ -1,3 +1,13 @@
+12 June 2005:  Menelaos Karavelas
+- added point location functionality for Delaunay triangulations, Apollonius
+  graphs and segment Voronoi diagrams (in their traits).
+- added point location functionality (and testing) in the Voronoi diagram
+  adaptor.
+- added one more example that does point location.
+- added support (and testing) for 1-dimensional Delaunay graphs.
+- added some more test data sets for testing point location and support
+  for 1-dimensional Delaunay graphs
+
 11 June 2005:  Menelaos Karavelas
 - added copyright headers in some files that did not have one
 - changed institution in copyright headers
