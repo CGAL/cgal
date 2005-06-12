@@ -1,3 +1,7 @@
+12 June 2005 Sylvain Pion
+- Add function operator in Construct_{min|max}_vertex_[23] taking
+  Segment_[23].
+
 30 May 2005 Sylvain Pion
 - Handle_for : add unique() and use_count() (as in tr1::shared_ptr).
 

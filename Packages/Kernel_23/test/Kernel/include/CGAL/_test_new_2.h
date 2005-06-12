@@ -218,10 +218,12 @@ test_new_2(const R& rep)
   typename R::Construct_min_vertex_2 construct_min_vertex_2
         = rep.construct_min_vertex_2_object();
           tmp6c = construct_min_vertex_2(rec2);
+          tmp6c = construct_min_vertex_2(s2);
 
   typename R::Construct_max_vertex_2 construct_max_vertex_2
         = rep.construct_max_vertex_2_object();
           tmp6c = construct_max_vertex_2(rec2);
+          tmp6c = construct_max_vertex_2(s2);
 
   typename R::Construct_bbox_2 construct_bbox_2
     = rep.construct_bbox_2_object();

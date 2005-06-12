@@ -477,6 +477,7 @@ namespace CommonKernelFunctors {
   class Construct_max_vertex_2
   {
     typedef typename K::Point_2          Point_2;
+    typedef typename K::Segment_2        Segment_2;
     typedef typename K::Iso_rectangle_2  Iso_rectangle_2;
   public:
     typedef Point_2   result_type;
@@ -485,12 +486,17 @@ namespace CommonKernelFunctors {
     Point_2
     operator()(const Iso_rectangle_2& r) const
     { return r.max(); }
+
+    Point_2
+    operator()(const Segment_2& s) const
+    { return s.max(); }
   };
 
   template <typename K>
   class Construct_min_vertex_2
   {
     typedef typename K::Point_2          Point_2;
+    typedef typename K::Segment_2        Segment_2;
     typedef typename K::Iso_rectangle_2  Iso_rectangle_2;
   public:
     typedef Point_2   result_type;
@@ -499,6 +505,10 @@ namespace CommonKernelFunctors {
     Point_2
     operator()(const Iso_rectangle_2& r) const
     { return r.min(); }
+
+    Point_2
+    operator()(const Segment_2& s) const
+    { return s.min(); }
   };
 
 
@@ -506,7 +516,8 @@ namespace CommonKernelFunctors {
   class Construct_max_vertex_3
   {
     typedef typename K::Point_3          Point_3;
-    typedef typename K::Iso_cuboid_3  Iso_cuboid_3;
+    typedef typename K::Segment_3        Segment_3;
+    typedef typename K::Iso_cuboid_3     Iso_cuboid_3;
   public:
     typedef Point_3   result_type;
     typedef Arity_tag< 1 >    Arity;
@@ -514,12 +525,17 @@ namespace CommonKernelFunctors {
     Point_3
     operator()(const Iso_cuboid_3& r) const
     { return r.max(); }
+
+    Point_3
+    operator()(const Segment_3& s) const
+    { return s.max(); }
   };
 
   template <typename K>
   class Construct_min_vertex_3
   {
     typedef typename K::Point_3          Point_3;
+    typedef typename K::Segment_3        Segment_3;
     typedef typename K::Iso_cuboid_3  Iso_cuboid_3;
   public:
     typedef Point_3   result_type;
@@ -528,6 +544,10 @@ namespace CommonKernelFunctors {
     Point_3
     operator()(const Iso_cuboid_3& r) const
     { return r.min(); }
+
+    Point_3
+    operator()(const Segment_3& s) const
+    { return s.min(); }
   };
 
 
