@@ -137,9 +137,27 @@ void eval_num_of_connected_components(char* fname)
 
   VD vd(ag);
 
+
+
   std::cout << "# of connected components: "
 	    << Connected_components<VD>()(vd) << std::endl;
   std::cout << std::endl;
+
+  // compute the number of bisectong segments, bisecting rays and
+  // full bisectors in the Voronoi diagram
+  VD::Edge_iterator eit;
+  VD::size_type n_bisectors = 0, n_rays = 0, n_segments = 0;
+  for (eit = vd.edges_begin(); eit != vd.edges_end(); ++eit) {
+    if ( eit->curve().is_bisector() ) { n_bisectors++; }
+    else if ( eit->curve().is_ray() ) { n_rays++; }
+    else { n_segments++; }
+  }
+
+  std::cout << "# of bisecting segments: " << n_segments << std::endl;
+  std::cout << "# of bisecting rays:     " << n_rays << std::endl;
+  std::cout << "# of full bisectors:     " << n_bisectors << std::endl;
+  std::cout << std::endl;
+
   std::cout << "==========================================="
 	    << std::endl;
 }
@@ -151,6 +169,7 @@ int main()
   eval_num_of_connected_components("data/data2.ag.cin");
   eval_num_of_connected_components("data/data3.ag.cin");
   eval_num_of_connected_components("data/degenerate.ag.cin");
+  eval_num_of_connected_components("data/1D.ag.cin");
 
   return 0;
 }
