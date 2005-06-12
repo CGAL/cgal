@@ -79,18 +79,49 @@ struct Vertex_edge_maker<Vertex_handle_t,Voronoi_vertex,Voronoi_edge,true>
 
 //=========================================================================
 
-template<class DG, class ET, class FT>
+template<class DG, class ET, class FT, class PL>
 class Default_Voronoi_traits_2
 {
  private:
-  typedef Default_Voronoi_traits_2<DG,ET,FT>   Self;
+  typedef Default_Voronoi_traits_2<DG,ET,FT,PL>   Self;
 
  public:
   typedef DG  Dual_graph;
   typedef ET  Edge_degeneracy_tester;
   typedef FT  Face_degeneracy_tester;
+  typedef PL  Point_locator;
 
-  typedef typename DG::Vertex_handle  Vertex_handle;
+  typedef Tag_true Has_point_locator;
+
+  typedef typename Dual_graph::Vertex_handle  Vertex_handle;
+
+  typedef CGAL::Object  Object;
+
+  struct Construct_object_object {
+    template<class T>
+    Object operator()(const T& t) const {
+      return CGAL::make_object(t);
+    }
+  };
+
+  struct Assign {
+    template<class T>
+    bool operator()(T& t, const Object& o) const {
+      return CGAL::assign(t, o);
+    }
+  };
+
+  Assign assign_object() const {
+    return Assign();
+  }
+
+  Construct_object_object construct_object_object() const {
+    return Construct_object_object();
+  }
+
+  Point_locator point_locator_object() const {
+    return Point_locator();
+  }
 
   const Edge_degeneracy_tester& edge_degeneracy_tester_object() const {
     return e_tester_;
@@ -104,6 +135,39 @@ class Default_Voronoi_traits_2
   Edge_degeneracy_tester e_tester_;
   Face_degeneracy_tester f_tester_;
 };
+
+
+template<class DG, class ET, class FT>
+class Default_Voronoi_traits_2<DG,ET,FT,Tag_false>
+{
+ private:
+  typedef Default_Voronoi_traits_2<DG,ET,FT,Tag_false>   Self;
+
+ public:
+  typedef DG  Dual_graph;
+  typedef ET  Edge_degeneracy_tester;
+  typedef FT  Face_degeneracy_tester;
+
+  typedef CGAL::Object  Object;
+
+  typedef Tag_false Has_point_locator;
+
+  typedef typename Dual_graph::Vertex_handle  Vertex_handle;
+
+  const Edge_degeneracy_tester& edge_degeneracy_tester_object() const {
+    return e_tester_;
+  }
+
+  const Face_degeneracy_tester& face_degeneracy_tester_object() const {
+    return f_tester_;
+  }
+
+ protected:
+  Edge_degeneracy_tester e_tester_;
+  Face_degeneracy_tester f_tester_;
+};
+
+
 
 
 //=========================================================================
