@@ -59,7 +59,10 @@ class RT_Edge_degeneracy_tester
   typedef typename Geom_traits::Weighted_point_2   Site_2;
 
  public:
-  bool operator()(const Dual_graph& dual, const Face_handle& f, int i) const {
+  bool operator()(const Dual_graph& dual, const Face_handle& f, int i) const
+  {
+    if ( dual.dimension() == 1 ) { return false; }
+
     if ( dual.is_infinite(f, i) ) { return false; }
 
     Vertex_handle v3 = f->vertex(     i  );
@@ -198,15 +201,15 @@ class RT_Voronoi_edge_2
 template<class RT2>
 class Regular_triangulation_Voronoi_traits_2
   : public CGAL_VORONOI_DIAGRAM_2_NS::Default_Voronoi_traits_2
-  <RT2, RT_Edge_degeneracy_tester<RT2>, RT_Face_degeneracy_tester<RT2>
-  >
+  <RT2, RT_Edge_degeneracy_tester<RT2>, RT_Face_degeneracy_tester<RT2>,
+   Tag_false>
 {
  private:
   typedef RT_Edge_degeneracy_tester<RT2>              Edge_tester;
   typedef RT_Face_degeneracy_tester<RT2>              Face_tester;
 
   typedef CGAL_VORONOI_DIAGRAM_2_NS::Default_Voronoi_traits_2
-  <RT2,Edge_tester,Face_tester>
+  <RT2,Edge_tester,Face_tester,Tag_false>
   Base;
 
   typedef Regular_triangulation_Voronoi_traits_2<RT2>  Self;

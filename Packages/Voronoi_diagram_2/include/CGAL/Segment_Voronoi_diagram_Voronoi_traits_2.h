@@ -34,6 +34,215 @@ CGAL_BEGIN_NAMESPACE
 //=========================================================================
 
 template<class DG>
+class SVD_Point_locator
+{
+ public:
+  typedef DG                                          Dual_graph;
+  typedef typename Dual_graph::Vertex_handle          Vertex_handle;
+  typedef typename Dual_graph::Face_handle            Face_handle;
+  typedef typename Dual_graph::Edge                   Edge;
+
+  typedef typename Dual_graph::Geom_traits::Object_2  Object;
+  typedef typename Dual_graph::Geom_traits::Assign_2  Assign;
+  typedef typename Dual_graph::Point_2                Point_2;
+
+  typedef Arity_tag<2>  Arity;
+  typedef Object        return_type;
+
+ private:
+  typedef Triangulation_cw_ccw_2                      CW_CCW_2;
+  typedef typename Dual_graph::Site_2                 Site_2;
+
+ public:
+  Assign assign_object() const {
+    return Assign();
+  }
+
+  Object operator()(const Dual_graph& dg, const Point_2& p) const {
+    CGAL_precondition( dg.dimension() >= 0 );
+
+    typename DG::Geom_traits::Construct_object_2 make_object =
+      dg.geom_traits().construct_object_2_object();
+
+    typename DG::Geom_traits::Oriented_side_of_bisector_2 side_of_bisector =
+      dg.geom_traits().oriented_side_of_bisector_2_object();
+
+    typename DG::Geom_traits::Equal_2 is_equal =
+      dg.geom_traits().equal_2_object();
+
+    Site_2 sp = Site_2::construct_site_2(p);
+
+    Vertex_handle v = dg.nearest_neighbor(p);
+    if ( dg.dimension() == 0 ) {
+      return make_object(v);
+    }
+
+    if ( dg.dimension() == 1 ) {
+      Edge e = *dg.finite_edges_begin();
+      Vertex_handle v1 = e.first->vertex(CW_CCW_2::ccw(e.second));
+      Vertex_handle v2 = e.first->vertex(CW_CCW_2::cw(e.second) );
+
+      Oriented_side os = side_of_bisector(v1->site(), v2->site(), sp);
+      
+      if ( os == ON_ORIENTED_BOUNDARY ) {
+	return make_object(e);
+      } else {
+	return make_object(v);
+      }
+    }
+
+    CGAL_assertion( dg.dimension() == 2 );
+
+    typename DG::Face_circulator fc_start = dg.incident_faces(v);
+    typename DG::Face_circulator fc = fc_start;
+
+    // first check if the point lies on a Voronoi vertex
+    do {
+      int index = fc->index(v);
+      Vertex_handle v1 = fc->vertex(CW_CCW_2::ccw(index));
+      Vertex_handle v2 = fc->vertex(CW_CCW_2::cw(index) );
+
+      Oriented_side os1 = ON_POSITIVE_SIDE, os2 = ON_POSITIVE_SIDE;
+
+      // check if the query point is identical to an endpoint of a
+      // segment that has a Voronoi face with zero area.
+      if ( !dg.is_infinite(v1) && !dg.is_infinite(v2) ) {
+	if ( v->is_point() && is_equal(v->site(), sp) &&
+	     v1->is_segment() && v2->is_segment() ) {
+	  bool b1 =
+	    is_equal(v->site(), v1->site().source_site()) ||
+	    is_equal(v->site(), v1->site().target_site());
+	  bool b2 =
+	    is_equal(v->site(), v2->site().source_site()) ||
+	    is_equal(v->site(), v2->site().target_site());
+
+	  if ( b1 && b2 ) { 
+	    Face_handle f(fc);
+	    return make_object(f);
+	  }
+	}
+      }
+
+      // do the generic check now
+      if ( !dg.is_infinite(v1) ) {
+	os1 = side_of_bisector(v->site(), v1->site(), sp);
+      }
+      if ( !dg.is_infinite(v2) ) {
+	os2 = side_of_bisector(v->site(), v2->site(), sp);
+      }
+
+      CGAL_assertion( os1 != ON_NEGATIVE_SIDE );
+      CGAL_assertion( os2 != ON_NEGATIVE_SIDE );
+
+      if ( os1 == ON_ORIENTED_BOUNDARY && os2 == ON_ORIENTED_BOUNDARY ) {
+	Face_handle f(fc);
+	return make_object(f);
+      }
+
+      ++fc;
+    } while ( fc != fc_start );
+
+    // now check if the point lies on a Voronoi edge
+    fc_start = dg.incident_faces(v);
+    fc = fc_start;
+    do {
+      int index = fc->index(v);
+      Vertex_handle v1 = fc->vertex(CW_CCW_2::ccw(index));
+      Vertex_handle v2 = fc->vertex(CW_CCW_2::cw(index) );
+
+      Oriented_side os1 = ON_POSITIVE_SIDE, os2 = ON_POSITIVE_SIDE;
+
+      // check if the query point is identical to an endpoint of a
+      // segment that has a Voronoi face with zero area.
+      if ( !dg.is_infinite(v1) && !dg.is_infinite(v2) ) {
+	if ( v->is_point() && is_equal(v->site(), sp) &&
+	     v1->is_segment() && v2->is_segment() ) {
+	  bool b1 =
+	    is_equal(v->site(), v1->site().source_site()) ||
+	    is_equal(v->site(), v1->site().target_site());
+	  bool b2 =
+	    is_equal(v->site(), v2->site().source_site()) ||
+	    is_equal(v->site(), v2->site().target_site());
+
+	  CGAL_assertion( !b1 || !b2 );
+
+	  if ( b1 ) {
+	    Face_handle f(fc);
+	    Edge e(f, CW_CCW_2::cw(index));
+	    return make_object(e);
+	  } else if ( b2 ) {
+	    Face_handle f(fc);
+	    Edge e(f, CW_CCW_2::ccw(index));
+	    return make_object(e);
+	  }
+	}
+      }
+
+      // check if the query point is lies on the bisector between a
+      // segment and its endpoint
+      if ( !dg.is_infinite(v1) ) {
+	if ( v->is_point() && is_equal(v->site(), sp) && v1->is_segment() ) {
+	  bool b =
+	    is_equal(v->site(), v1->site().source_site()) ||
+	    is_equal(v->site(), v1->site().target_site());
+
+	  if ( b ) {
+	    Face_handle f(fc);
+	    Edge e(f, CW_CCW_2::cw(index));
+	    return make_object(e);
+	  }
+	}
+      }
+
+      if ( !dg.is_infinite(v2) ) {
+	if ( v->is_point() && is_equal(v->site(), sp) && v2->is_segment() ) {
+	  bool b =
+	    is_equal(v->site(), v2->site().source_site()) ||
+	    is_equal(v->site(), v2->site().target_site());
+
+	  if ( b ) {
+	    Face_handle f(fc);
+	    Edge e(f, CW_CCW_2::ccw(index));
+	    return make_object(e);
+	  }
+	}
+      }
+
+      // do the generic check now
+      if ( !dg.is_infinite(v1) ) {
+	os1 = side_of_bisector(v->site(), v1->site(), sp);
+      }
+      if ( !dg.is_infinite(v2) ) {
+	os2 = side_of_bisector(v->site(), v2->site(), sp);
+      }
+
+      CGAL_assertion( os1 != ON_NEGATIVE_SIDE );
+      CGAL_assertion( os2 != ON_NEGATIVE_SIDE );
+      CGAL_assertion( os1 != ON_ORIENTED_BOUNDARY ||
+		      os2 != ON_ORIENTED_BOUNDARY );
+
+      if ( os1 == ON_ORIENTED_BOUNDARY ) {
+	Face_handle f(fc);
+	Edge e(f, CW_CCW_2::cw(index));
+	return make_object(e);
+      } else if ( os2 == ON_ORIENTED_BOUNDARY ) {
+	Face_handle f(fc);
+	Edge e(f, CW_CCW_2::ccw(index));
+	return make_object(e);
+      }
+
+      ++fc;
+    } while ( fc != fc_start );
+
+    return make_object(v);
+  }
+
+};
+
+//=========================================================================
+//=========================================================================
+
+template<class DG>
 class SVD_Edge_degeneracy_tester
 {
   // tests whether a dual edge has zero length
@@ -109,6 +318,8 @@ class SVD_Edge_degeneracy_tester
  public:
   bool operator()(const Dual_graph& dual, const Face_handle& f, int i) const
   {
+    if ( dual.dimension() == 1 ) { return false; }
+
     if ( dual.is_infinite(f, i) ) {
       return is_degenerate_infinite_edge(dual, f, i);
     }
@@ -186,6 +397,8 @@ class SVD_Face_degeneracy_tester
  public:
   bool operator()(const Dual_graph& dual, const Vertex_handle& v) const
   {
+    if ( dual.dimension() == 1 ) { return false; }
+
     if ( dual.is_infinite(v) ) { return false; }
 
     // THIS TEST NEEDS TO USE GEOMETRY; I CANNOT DO IT IN AN ENTIRELY
@@ -336,14 +549,16 @@ class SVD_Voronoi_edge_2
 template<class SVD2>
 class Segment_Voronoi_diagram_Voronoi_traits_2
   : public CGAL_VORONOI_DIAGRAM_2_NS::Default_Voronoi_traits_2
-  <SVD2, SVD_Edge_degeneracy_tester<SVD2>, SVD_Face_degeneracy_tester<SVD2>
-  >
+  <SVD2, SVD_Edge_degeneracy_tester<SVD2>, SVD_Face_degeneracy_tester<SVD2>,
+   SVD_Point_locator<SVD2> >
 {
  private:
   typedef SVD_Edge_degeneracy_tester<SVD2>              Edge_tester;
   typedef SVD_Face_degeneracy_tester<SVD2>              Face_tester;
+  typedef SVD_Point_locator<SVD2>                       SVD_Point_locator;
+
   typedef CGAL_VORONOI_DIAGRAM_2_NS::Default_Voronoi_traits_2
-  <SVD2,Edge_tester,Face_tester>
+  <SVD2,Edge_tester,Face_tester,SVD_Point_locator>
   Base;
 
   typedef Segment_Voronoi_diagram_Voronoi_traits_2<SVD2>  Self;

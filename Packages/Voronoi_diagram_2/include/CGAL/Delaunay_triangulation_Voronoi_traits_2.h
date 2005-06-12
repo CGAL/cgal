@@ -29,6 +29,159 @@
 
 CGAL_BEGIN_NAMESPACE
 
+//=========================================================================
+//=========================================================================
+
+
+template<class DG>
+class DT_Point_locator
+{
+ public:
+  typedef DG                                          Dual_graph;
+  typedef typename Dual_graph::Vertex_handle          Vertex_handle;
+  typedef typename Dual_graph::Face_handle            Face_handle;
+  typedef typename Dual_graph::Edge                   Edge;
+
+  typedef typename Dual_graph::Geom_traits::Object_2  Object;
+  typedef typename Dual_graph::Geom_traits::Assign_2  Assign;
+  typedef typename Dual_graph::Geom_traits::Point_2   Point_2;
+
+  typedef Arity_tag<2>  Arity;
+  typedef Object        return_type;
+
+ private:
+  typedef Triangulation_cw_ccw_2                      CW_CCW_2;
+  typedef typename Dual_graph::Vertex_circulator      Vertex_circulator;
+  typedef typename Dual_graph::Face_circulator        Face_circulator;
+  typedef typename Dual_graph::Edge_circulator        Edge_circulator;
+
+ public:
+  Assign assign_object() const {
+    return Assign();
+  }
+
+  Object operator()(const Dual_graph& dg, const Point_2& p) const {
+    CGAL_precondition( dg.dimension() >= 0 );
+
+    typename DG::Geom_traits::Construct_object_2 make_object =
+      dg.geom_traits().construct_object_2_object();
+
+    typename DG::Geom_traits::Compare_distance_2 compare_distance =
+      dg.geom_traits().compare_distance_2_object();
+
+    Vertex_handle v = dg.nearest_vertex(p);
+
+    if ( dg.dimension() == 0 ) {
+      return make_object(v);
+    }
+
+    if ( dg.dimension() == 1 ) {
+      Edge_circulator ec = dg.incident_edges(v);
+      Edge_circulator ec_start = ec;
+      Comparison_result cr;
+
+      do {
+	Edge e = *ec;
+	Vertex_handle v1 = e.first->vertex(CW_CCW_2::ccw(e.second));
+	Vertex_handle v2 = e.first->vertex(CW_CCW_2::cw(e.second) );
+
+	if ( v == v1 ) {
+	  if ( !dg.is_infinite(v2) ) {
+	    cr = compare_distance(p, v2->point(), v->point());
+	    CGAL_assertion( cr != SMALLER );
+	    if ( cr == EQUAL ) {
+	      return make_object( e );
+	    }
+	  }
+	} else {
+	  CGAL_assertion( v == v2 );
+	  if ( !dg.is_infinite(v1) ) {
+	    cr = compare_distance(p, v1->point(), v->point());
+	    CGAL_assertion( cr != SMALLER );
+	    if ( cr == EQUAL ) {
+	      return make_object( e );
+	    }
+	  }
+	}
+	++ec;
+      } while ( ec != ec_start );
+
+      return make_object(v);
+    }
+
+    CGAL_assertion( dg.dimension() == 2 );
+
+    Face_circulator fc_start = dg.incident_faces(v);
+    Face_circulator fc = fc_start;
+
+    // first check if the point lies on a Voronoi vertex
+    do {
+      int index = fc->index(v);
+      Vertex_handle v1 = fc->vertex((index+1)%3);
+      Vertex_handle v2 = fc->vertex((index+2)%3);
+
+      Comparison_result cr1 = LARGER, cr2 = LARGER;
+
+      // do the generic check now
+      if ( !dg.is_infinite(v1) ) {
+	cr1 = compare_distance(p, v1->point(), v->point());
+      }
+      if ( !dg.is_infinite(v2) ) {
+	cr2 = compare_distance(p, v2->point(), v->point());
+      }
+
+      CGAL_assertion( cr1 != SMALLER );
+      CGAL_assertion( cr2 != SMALLER );
+
+      if ( cr1 == EQUAL && cr2 == EQUAL ) {
+	Face_handle f(fc);
+	return make_object(f);
+      }
+
+      ++fc;
+    } while ( fc != fc_start );
+
+    // now check if the point lies on a Voronoi edge
+    fc_start = dg.incident_faces(v);
+    fc = fc_start;
+    do {
+      int index = fc->index(v);
+      Vertex_handle v1 = fc->vertex((index+1)%3);
+      Vertex_handle v2 = fc->vertex((index+2)%3);
+
+      Comparison_result cr1 = LARGER, cr2 = LARGER;
+
+      // do the generic check now
+      if ( !dg.is_infinite(v1) ) {
+	cr1 = compare_distance(p, v1->point(), v->point());
+      }
+      if ( !dg.is_infinite(v2) ) {
+	cr2 = compare_distance(p, v2->point(), v->point());
+      }
+
+      CGAL_assertion( cr1 != SMALLER );
+      CGAL_assertion( cr2 != SMALLER );
+      CGAL_assertion( cr1 != EQUAL || cr2 != EQUAL );
+
+      if ( cr1 == EQUAL ) {
+	Face_handle f(fc);
+	Edge e(f,(index+2)%3);
+	return make_object(e);
+      } else if ( cr2 == EQUAL ) {
+	Face_handle f(fc);
+	Edge e(f,(index+1)%3);
+	return make_object(e);
+      }
+
+      ++fc;
+    } while ( fc != fc_start );
+
+    return make_object(v);
+  }
+};
+
+
+
 
 //=========================================================================
 //=========================================================================
@@ -59,6 +212,8 @@ class DT_Edge_degeneracy_tester
  public:
   bool operator()(const Dual_graph& dual, const Face_handle& f, int i) const
   {
+    if ( dual.dimension() == 1 ) { return false; }
+
     if ( dual.is_infinite(f, i) ) { return false; }
 
     Vertex_handle v3 = f->vertex(     i  );
@@ -195,15 +350,16 @@ class DT_Voronoi_edge_2
 template<class DT2>
 class Delaunay_triangulation_Voronoi_traits_2
   : public CGAL_VORONOI_DIAGRAM_2_NS::Default_Voronoi_traits_2
-  <DT2, DT_Edge_degeneracy_tester<DT2>, DT_Face_degeneracy_tester<DT2>
-  >
+  <DT2, DT_Edge_degeneracy_tester<DT2>, DT_Face_degeneracy_tester<DT2>,
+   DT_Point_locator<DT2> >
 {
  private:
   typedef DT_Edge_degeneracy_tester<DT2>              Edge_tester;
   typedef DT_Face_degeneracy_tester<DT2>              Face_tester;
+  typedef DT_Point_locator<DT2>                       DT_Point_locator;
 
   typedef CGAL_VORONOI_DIAGRAM_2_NS::Default_Voronoi_traits_2
-  <DT2,Edge_tester,Face_tester>
+  <DT2,Edge_tester,Face_tester,DT_Point_locator>
   Base;
 
   typedef Delaunay_triangulation_Voronoi_traits_2<DT2>  Self;
