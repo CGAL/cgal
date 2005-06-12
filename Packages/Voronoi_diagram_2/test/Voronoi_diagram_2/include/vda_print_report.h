@@ -327,6 +327,8 @@ void print_report(const VDA& vda, const Projector& project,
 
     std::cout << "STATISTICS:" << std::endl;
     std::cout << "-----------" << std::endl;
+    std::cout << "Dimension of Delaunay graph: "
+	      << vda.dual().dimension() << std::endl << std::endl;
     std::cout << "# of Voronoi edges: "	<< n_edges << std::endl;
     std::cout << "# of finite Voronoi edges: "
 	      << n_edge_fin << std::endl;

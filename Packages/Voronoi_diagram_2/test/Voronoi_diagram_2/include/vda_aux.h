@@ -5,6 +5,9 @@
 #include <iostream>
 #include <CGAL/Triangulation_utils_2.h>
 
+//-------------------------------------------------------------------------
+//-------------------------------------------------------------------------
+
 template<class Vertex_handle, class Site_t>
 struct Project_site
 {
@@ -73,6 +76,8 @@ struct Project_ag_dual
 
 
 
+//-------------------------------------------------------------------------
+//-------------------------------------------------------------------------
 
 
 template<class VDA, class Projector>
@@ -101,21 +106,37 @@ void print_dual_edge(const VDA& vda,
 		     std::ostream& os = std::cout) {
   typedef CGAL::Triangulation_cw_ccw_2  CW_CCW_2;
 
-  if ( vda.dual().is_infinite( e.first->vertex( CW_CCW_2::cw(e.second) ) )
-       ) {
-    os << "inf - " << std::flush;
-  } else {
-    os << project(  e.first->vertex( CW_CCW_2::cw(e.second) )  )
-       << " - " << std::flush;
-  }
-  if ( vda.dual().is_infinite( e.first->vertex( CW_CCW_2::ccw(e.second) ) )
-       ) {
-    os << "inf" << std::endl;
-  } else {
-    os << project(  e.first->vertex( CW_CCW_2::ccw(e.second) )  )
-       << std::endl;
-  }
+  print_dual_edge(vda,
+		  e.first->vertex( CW_CCW_2::ccw(e.second) ),
+		  e.first->vertex( CW_CCW_2::cw(e.second) ),
+		  project,
+		  os);
 }
+
+
+template<class VDA, class Projector>
+void print_dual_edge(const VDA& vda,
+		     const typename VDA::Dual_vertex_handle& v_src,
+		     const typename VDA::Dual_vertex_handle& v_trg,
+		     const Projector& project,
+		     std::ostream& os = std::cout)
+{
+  if ( vda.dual().is_infinite(v_src) ) {
+    os << "inf";
+  } else {
+    os << project(v_src);
+  }
+  os << " - ";
+  if ( vda.dual().is_infinite(v_trg) ) {
+    os << "inf";
+  } else {
+    os << project(v_trg);
+  }
+  os << std::endl;
+}
+
+
+
 
 template<class VDA, class Projector>
 void print_dual_vertex(const VDA& vda,
@@ -129,4 +150,4 @@ void print_dual_vertex(const VDA& vda,
    }
 }
 
-#endif
+#endif // VDA_AUX_H

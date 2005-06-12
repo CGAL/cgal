@@ -74,6 +74,9 @@ class Voronoi_traits_concept
  public:
   typedef DG                               Dual_graph;
 
+  typedef CGAL::Object    Object;
+  typedef Tag_false       Has_point_locator;
+
   struct Edge_degeneracy_tester
   {
     typedef DG  Dual_graph;
