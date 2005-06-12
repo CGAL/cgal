@@ -53,17 +53,29 @@ int main()
 
   Tester test(project_point, project_dual);
 
-  DT_Predicate p;
+  //  DT_Predicate p;
 
   test.reset_timers();
 
-  test("data/empty.cin", p);
-  test("data/data1.dt.cin", p);
-  test("data/data2.dt.cin", p);
-  test("data/degenerate1.dt.cin", p);
-  test("data/degenerate2.dt.cin", p);
+  test("data/empty.cin");
+  test("data/1D.dt.cin");
+  test("data/data1.dt.cin");
+  test("data/data2.dt.cin");
+  test("data/degenerate1.dt.cin");
+  test("data/degenerate2.dt.cin");
 
   test.print_times();
+
+  test.print_separators();
+  test.print_separators();
+
+  test.reset_timers();
+
+  test("data/singleton.dt.cin", "data/queries4.cin");
+  test("data/1D.dt.cin", "data/queries3.cin");
+  test("data/degenerate1.dt.cin", "data/queries4.cin");
+
+  test.print_loc_times();
 
   return 0;
 }

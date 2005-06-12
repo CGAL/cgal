@@ -32,5 +32,15 @@ int main()
 
   test.print_times();
 
+  test.print_separators();
+  test.print_separators();
+
+  test.reset_timers();
+
+  test("data/data1.pt.cin", "data/queries1.cin");
+  test("data/data1.pt.cin", "data/queries1.cin");
+
+  test.print_loc_times();
+
   return 0;
 }

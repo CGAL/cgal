@@ -47,6 +47,7 @@ int main()
   test.reset_timers();
 
   test("data/empty.cin");
+  test("data/1D.svd.cin");
   test("data/complicated.svd.cin");
   test("data/non-degenerate.svd.cin");
   test("data/data0.svd.cin");
@@ -59,10 +60,24 @@ int main()
   test("data/data7.svd.cin");
   test("data/data8.svd.cin");
   test("data/data9.svd.cin");
+  test("data/data10.svd.cin");
+  test("data/data11.svd.cin");
   test("data/degenerate1.svd.cin");
   test("data/degenerate2.svd.cin");
 
   test.print_times();
+
+  test.print_separators();
+  test.print_separators();
+
+  test.reset_timers();
+
+  test("data/singleton.svd.cin", "data/queries2.cin");
+  test("data/1D.svd.cin", "data/queries3.cin");
+  test("data/data10.svd.cin", "data/queries2.cin");
+  test("data/data11.svd.cin", "data/queries3.cin");
+
+  test.print_loc_times();
 
   return 0;
 }

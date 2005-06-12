@@ -39,6 +39,7 @@ int main()
   test.reset_timers();
 
   test("data/empty.cin");
+  test("data/1D.ag.cin");
   test("data/data1.ag.cin");
   test("data/data2.ag.cin");
   test("data/data3.ag.cin");
@@ -46,6 +47,17 @@ int main()
   test("data/degenerate.ag.cin");
 
   test.print_times();
+
+  test.print_separators();
+  test.print_separators();
+
+  test.reset_timers();
+
+  test("data/singleton.ag.cin", "data/queries1.cin");
+  test("data/1D.ag.cin", "data/queries1.cin");
+  test("data/data5.ag.cin", "data/queries1.cin");
+
+  test.print_loc_times();
 
   return 0;
 }
