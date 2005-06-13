@@ -31,6 +31,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
+// fit a line to a 2D point set
 template < typename InputIterator, 
            typename Line, 
            typename K, 
@@ -48,11 +49,14 @@ linear_least_squares_fitting_2(InputIterator begin,
   typedef typename K::Vector_2    Vector;
   typedef typename K::Direction_2 Direction;
 
+  // precondition: at least one element in the container.
+  CGAL_precondition(begin != end);
+
   // compute centroid
   Point c = centroid(begin,end,K());
 
-  // assemble covariance matrix
-  // semi-definite matrix numbering:
+  // assemble covariance matrix as a
+  // semi-definite matrix. Numbering:
   // 0          
   // 1 2
   FT covariance[3] = {0,0,0};
@@ -73,6 +77,7 @@ linear_least_squares_fitting_2(InputIterator begin,
   // solve for eigenvalues and eigenvectors.
   // eigen values are sorted in descending order, 
   // eigen vectors are sorted in accordance.
+  // TODO: use explicit formula instead.
   eigen_semi_definite_symmetric(covariance,2,eigen_vectors,eigen_values);
 
   // check unicity and build fitting line accordingly
@@ -111,6 +116,6 @@ linear_least_squares_fitting_2(InputIterator begin,
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_LINEAR_LEAST_SQUARES_FITTING_3
+#endif // CGAL_LINEAR_LEAST_SQUARES_FITTING_2
 
 
