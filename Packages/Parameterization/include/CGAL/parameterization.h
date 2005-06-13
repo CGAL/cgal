@@ -38,7 +38,7 @@ CGAL_BEGIN_NAMESPACE
 // The result is the (u,v) pair image of each vertex of the 3D surface.
 //
 // Preconditions:
-// * 'mesh' must be a surface with 1 connected component and no hole
+// * 'mesh' must be a surface with 1 connected component
 // * 'mesh' must be a triangular mesh
 // * the mesh border must be mapped onto a convex polygon
 //
@@ -59,7 +59,7 @@ parameterize(MeshAdaptor_3* mesh)   // 3D mesh, model of MeshAdaptor_3 concept
 // Parametizer_3_ algorithm chosen
 //
 // Preconditions:
-// * 'mesh' must be a surface with 1 connected component and no hole
+// * 'mesh' must be a surface with 1 connected component
 // * 'mesh' must be a triangular mesh
 // * the mesh border must be mapped onto a convex polygon
 // (for fixed border parameterizations)

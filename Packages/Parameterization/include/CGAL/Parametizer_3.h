@@ -27,7 +27,7 @@ CGAL_BEGIN_NAMESPACE
 
 
 // Class Parametizer_3
-// Base class of parameterization objects for a MeshAdaptor_3 model
+// Base class and concept for parameterization methods
 template<class MeshAdaptor_3>       // 3D surface
 class Parametizer_3
 {
@@ -83,13 +83,13 @@ public:
 public:
     // Default constructor, copy constructor and operator =() are fine
 
-    // Compute a 1 to 1 mapping from a triangular 3D surface 'mesh'
+    // Compute a 1 to 1 mapping from a 3D surface 'mesh'
     // to a piece of the 2D space.
     // The mapping is linear by pieces (linear in each triangle).
     // The result is the (u,v) pair image of each vertex of the 3D surface.
     //
     // Preconditions:
-    // * 'mesh' must be a surface with 1 connected component and no hole
+    // * 'mesh' must be a surface with 1 connected component 
     // * 'mesh' must be a triangular mesh
     virtual ErrorCode  parameterize (Adaptor* mesh) = 0;
 
