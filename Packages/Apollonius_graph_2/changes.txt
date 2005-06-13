@@ -1,3 +1,6 @@
+13 June 2005:  Menelaos Karavelas
+- changed messages/captions of the file toolbar of the demo program
+
 4 June 2005:  Menelaos Karavelas
 - Apollonius_graph_2 and Apollonius_graph_hierarchy_2: added methods file_input
   and file_output that read and write from and to a file. The data written
