@@ -77,42 +77,44 @@ private:
       saveIcon = QPixmap(filesave);
       printIcon = QPixmap(fileprint);
 
-      fileNew = new QAction(tr("New File"), newIcon, tr("&New"),
+      fileNew = new QAction(tr("Clear diagram"), newIcon, tr("&New"),
 			    0, this);
-      fileNew->setStatusTip(tr("Creates a new document"));
-      fileNew->setWhatsThis(tr("New File\n\nCreates a new document"));
+      fileNew->setStatusTip(tr("Clears the current Voronoi diagram"));
+      fileNew->setWhatsThis
+	(tr("Clear diagram\n\nClears the current Voronoi diagram"));
       connect(fileNew, SIGNAL(activated()), this, SLOT(slotFileNew()));
 
-      fileOpen = new QAction(tr("Open File"), openIcon,
+      fileOpen = new QAction(tr("Open file"), openIcon,
 			     tr("&Open..."), 0, this);
-      fileOpen->setStatusTip(tr("Opens an existing document"));
-      fileOpen->setWhatsThis(tr("Open File\n\nOpens an existing document"));
+      fileOpen->setStatusTip(tr("Opens a file with input data"));
+      fileOpen->setWhatsThis(tr("Open file\n\nOpens a file with input data"));
       connect(fileOpen, SIGNAL(activated()), this, SLOT(slotFileOpen()));
 
-      fileSave = new QAction(tr("Save File"), saveIcon, tr("&Save"),
+      fileSave = new QAction(tr("Save to file"), saveIcon, tr("&Save"),
 			     0, this);
-      fileSave->setStatusTip(tr("Saves the actual document"));
-      fileSave->setWhatsThis(tr("Save File.\n\nSaves the actual document"));
+      fileSave->setStatusTip(tr("Saves the output sites to a file"));
+      str = "Save to file\n\nSaves the output sites to a file";
+      fileSave->setWhatsThis(tr(str));
       connect(fileSave, SIGNAL(activated()), this, SLOT(slotFileSave()));
 
-      fileSaveAs = new QAction(tr("Save File As"), saveIcon, tr("Save &as..."),
-			       0, this);
-      str = "Saves the actual document under a new filename";
+      fileSaveAs = new QAction(tr("Save to new file"), saveIcon,
+			       tr("Save &as..."), 0, this);
+      str = "Saves the output sites to a new file";
       fileSaveAs->setStatusTip(tr(str));
-      str = "Save As\n\nSaves the actual document under a new filename";
+      str = "Save as\n\nSaves the output sites to a new file";
       fileSaveAs->setWhatsThis(tr(str));
       connect(fileSaveAs, SIGNAL(activated()), this, SLOT(slotFileSaveAs()));
 
-      fileClose = new QAction(tr("Close File"), tr("&Close"),
+      fileClose = new QAction(tr("Close file"), tr("&Close"),
 			      0, this);
       fileClose->setStatusTip(tr("Closes the actual document"));
-      fileClose->setWhatsThis(tr("Close File\n\nCloses the actual document"));
+      fileClose->setWhatsThis(tr("Close file\n\nCloses the actual document"));
       connect(fileClose, SIGNAL(activated()), this, SLOT(slotFileClose()));
 
-      filePrint = new QAction(tr("Print File"), printIcon, tr("&Print"),
+      filePrint = new QAction(tr("Print canvas"), printIcon, tr("&Print"),
 			      0, this);
-      filePrint->setStatusTip(tr("Prints out the actual document"));
-      str = "Print File\n\nPrints out the actual document";
+      filePrint->setStatusTip(tr("Prints out the current canvas"));
+      str = "Print canvas\n\nPrints out the current canvas";
       filePrint->setWhatsThis(tr(str));
       connect(filePrint, SIGNAL(activated()), this, SLOT(slotFilePrint()));
     }
@@ -156,7 +158,7 @@ public slots:
     {
       QString fileName =
 	QFileDialog::getSaveFileName(tr("data.out"), QString::null,
-				     window, "Save file As...");
+				     window, "Save data as...");
 						      
       if ( !fileName.isNull() ) {
 	emit fileToWrite(fileName);

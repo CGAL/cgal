@@ -56,7 +56,7 @@ main(int argc, char* argv[])
 #endif
   W.show();
   W.set_window(0,size,0,size);
-  W.setCaption("Segment Voronoi diagram 2");
+  W.setCaption("Polygon Voronoi diagram 2");
   return app.exec();
 }
 
