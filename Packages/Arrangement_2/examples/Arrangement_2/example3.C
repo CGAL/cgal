@@ -4,9 +4,9 @@
 //#include "short_names.h"
 
 #include <CGAL/Cartesian.h>
-//#include <CGAL/Gmpq.h>
-#include <CGAL/MP_Float.h>
-#include <CGAL/Quotient.h>
+#include <CGAL/Gmpq.h>
+//#include <CGAL/MP_Float.h>
+//#include <CGAL/Quotient.h>
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Arr_naive_point_location.h>
@@ -16,8 +16,9 @@
 #include <fstream>
 
 //typedef double                                        Number_type;
-//typedef CGAL::Gmpq                                    Number_type;
-typedef CGAL::Quotient<CGAL::MP_Float>                Number_type;
+typedef CGAL::Gmpq                                    Number_type;
+//typedef CGAL::Quotient<CGAL::MP_Float>                Number_type;
+
 typedef CGAL::Cartesian<Number_type>                  Kernel;
 typedef CGAL::Arr_segment_traits_2<Kernel>            Traits_2;
 typedef Traits_2::Point_2                             Point_2;
@@ -116,7 +117,7 @@ int main (int argc, char **argv)
       timer.start();
       for (iter = segments.begin(); iter != segments.end(); ++iter)
       {
-	arr_insert (arr, pl, *iter);
+	insert (arr, pl, *iter);
       }
       timer.stop();
     }
@@ -132,7 +133,7 @@ int main (int argc, char **argv)
       timer.start();
       for (iter = segments.begin(); iter != segments.end(); ++iter)
       {
-	arr_insert (arr, pl, *iter);
+	insert (arr, pl, *iter);
       }
       timer.stop();
     }
@@ -144,7 +145,7 @@ int main (int argc, char **argv)
 	      << n << " segments." << std::endl;
 
     timer.start();
-    arr_insert (arr, segments.begin(), segments.end());
+    insert (arr, segments.begin(), segments.end());
     timer.stop();
   }
 

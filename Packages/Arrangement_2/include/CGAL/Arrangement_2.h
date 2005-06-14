@@ -109,8 +109,10 @@ protected:
 
   /*!
    * \class Representation of a point object stored in the points' container.
-   */  
-  class Stored_point_2 : public Point_2,
+   */
+  typedef typename Traits_2::Point_2                  Base_point_2;
+
+  class Stored_point_2 : public Base_point_2,
                          public In_place_list_base<Stored_point_2>
   {
   public:
@@ -120,8 +122,8 @@ protected:
     {}
 
     /*! Constructor from a point. */
-    Stored_point_2 (const Point_2& p) :
-      Point_2 (p)
+    Stored_point_2 (const Base_point_2& p) :
+      Base_point_2 (p)
     {}
   };
 
@@ -1214,9 +1216,10 @@ private:
  * \param pl A point-location object associated with the arrangement.
  * \param cv The curve to be inserted.
  */
-template <class Arrangement, class PointLocation>
-void arr_insert (Arrangement& arr, const PointLocation& pl,
-                 const typename Arrangement::Traits_2::Curve_2& c);
+template <class Traits, class Dcel, class PointLocation>
+void insert (Arrangement_2<Traits,Dcel>& arr,
+	     const PointLocation& pl,
+	     const typename Traits::Curve_2& c);
 
 /*!
  * Insert a range of curves into the arrangement (aggregated insertion). 
@@ -1227,9 +1230,9 @@ void arr_insert (Arrangement& arr, const PointLocation& pl,
  * \param end A past-the-end iterator for the curve range.
  * \pre The value type of the iterators must be Curve_2.
  */
-template <class Arrangement, class InputIterator>
-void arr_insert (Arrangement& arr,
-                 InputIterator begin, InputIterator end);
+template <class Traits, class Dcel, class InputIterator>
+void insert (Arrangement_2<Traits,Dcel>& arr,
+	     InputIterator begin, InputIterator end);
 
 /*!
  * Insert an x-monotone curve into the arrangement (incremental insertion).
@@ -1238,9 +1241,10 @@ void arr_insert (Arrangement& arr,
  * \param pl A point-location object associated with the arrangement.
  * \param cv The x-monotone curve to be inserted.
  */
-template <class Arrangement, class PointLocation>
-void arr_insert_x_monotone (Arrangement& arr, const PointLocation& pl,
-			    const typename Arrangement::X_monotone_curve_2& c);
+template <class Traits, class Dcel, class PointLocation>
+void insert_x_monotone (Arrangement_2<Traits,Dcel>& arr,
+			const PointLocation& pl,
+			const typename Traits::X_monotone_curve_2& c);
 
 /*!
  * Insert a range of x-monotone curves into the arrangement (aggregated
@@ -1251,9 +1255,9 @@ void arr_insert_x_monotone (Arrangement& arr, const PointLocation& pl,
  * \param end A past-the-end iterator for the curve range.
  * \pre The value type of the iterators must be X_monotone_curve_2.
  */
-template <class Arrangement, class InputIterator>
-void arr_insert_x_monotone (Arrangement& arr,
-			    InputIterator begin, InputIterator end);
+template <class Traits, class Dcel, class InputIterator>
+void insert_x_monotone (Arrangement_2<Traits,Dcel>& arr,
+			InputIterator begin, InputIterator end);
 
 /*!
  * Insert an x-monotone curve into the arrangement, such that the curve
@@ -1265,11 +1269,11 @@ void arr_insert_x_monotone (Arrangement& arr,
  * \pre The interior of c does not intersect any existing edge or vertex.
  * \return A handle for one of the new halfedges created by the insertion. 
  */
-template <class Arrangement, class PointLocation>
-typename Arrangement::Halfedge_handle
-arr_insert_non_intersecting
-                (Arrangement& arr, const PointLocation& pl,
-                 const typename Arrangement::X_monotone_curve_2& c);
+template <class Traits, class Dcel, class PointLocation>
+typename Arrangement_2<Traits,Dcel>::Halfedge_handle
+insert_non_intersecting (Arrangement_2<Traits,Dcel>& arr,
+			 const PointLocation& pl,
+			 const typename Traits::X_monotone_curve_2& c);
 
 /*!
  * Insert a range of pairwise interior-disjoint x-monotone curves into
@@ -1282,10 +1286,9 @@ arr_insert_non_intersecting
  *      The curves in the range are pairwise interior-disjoint, and their
  *      interiors do not intersect any existing edge or vertex.
  */
-template <class Arrangement, class InputIterator>
-void arr_insert_non_intersecting
-                (Arrangement& arr,
-                 InputIterator begin, InputIterator end);
+template <class Traits, class Dcel, class InputIterator>
+void insert_non_intersecting (Arrangement_2<Traits,Dcel>& arr,
+			      InputIterator begin, InputIterator end);
 
 /*!
  * Remove an edge from the arrangement. In case it is possible to merge
@@ -1295,10 +1298,10 @@ void arr_insert_non_intersecting
  * \param e The edge to remove (one of the pair of twin halfegdes).
  * \return A handle for the remaining face.
  */
-template <class Arrangement>
-typename Arrangement::Face_handle
-arr_remove_edge (Arrangement& arr,
-                 typename Arrangement::Halfedge_handle e);
+template <class Traits, class Dcel>
+typename Arrangement_2<Traits,Dcel>::Face_handle
+remove_edge (Arrangement_2<Traits,Dcel>& arr,
+	     typename Arrangement_2<Traits,Dcel>::Halfedge_handle e);
 
 CGAL_END_NAMESPACE
 

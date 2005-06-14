@@ -168,10 +168,10 @@ int main ()
   Segment_2       s3 (Point_2(0.0, 2.0), Point_2(1.0, 0.0));
   Segment_2       s4 (Point_2(-1.0, -2.0), Point_2(3.0, -2.0));
 
-  arr_insert_non_intersecting (arr, pl, s1);
-  arr_insert_non_intersecting (arr, pl, s2);
-  arr_insert_non_intersecting (arr, pl, s3);
-  arr_insert_non_intersecting (arr, pl, s4);
+  insert_non_intersecting (arr, pl, s1);
+  insert_non_intersecting (arr, pl, s2);
+  insert_non_intersecting (arr, pl, s3);
+  insert_non_intersecting (arr, pl, s4);
 
   // Perform point location again.
   obj = pl.locate (q);
@@ -198,7 +198,7 @@ int main ()
   // Test the insertion function (iis2 and iis3 cause some overlaps).
   Segment_2       iis1 (Point_2(0.0, -3.0), Point_2(5.0, 2.0));
 
-  arr_insert (arr, pl, iis1);
+  insert (arr, pl, iis1);
 
   std::cout << "V = " << arr.number_of_vertices()
 	    << ",  E = " << arr.number_of_edges() 
@@ -206,7 +206,7 @@ int main ()
   
   Segment_2       iis2 (Point_2(-0.0, -2.0), Point_2(5.0, -2.0));
 
-  arr_insert (arr, pl, iis2);
+  insert (arr, pl, iis2);
 
   std::cout << "V = " << arr.number_of_vertices()
 	    << ",  E = " << arr.number_of_edges() 
@@ -214,7 +214,7 @@ int main ()
 
   Segment_2       iis3 (Point_2(2.0, 2.0), Point_2(5.0, 0.5));
 
-  arr_insert (arr, pl, iis3);
+  insert (arr, pl, iis3);
 
   std::cout << "V = " << arr.number_of_vertices()
 	    << ",  E = " << arr.number_of_edges() 

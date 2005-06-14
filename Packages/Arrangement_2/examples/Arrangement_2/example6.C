@@ -128,7 +128,7 @@ int main (int argc, char **argv)
       timer.start();
       for (iter = ellipses.begin(); iter != ellipses.end(); ++iter)
       {
-	arr_insert (arr, pl, *iter);
+	insert (arr, pl, *iter);
       }
       timer.stop();
     }
@@ -144,7 +144,7 @@ int main (int argc, char **argv)
       timer.start();
       for (iter = ellipses.begin(); iter != ellipses.end(); ++iter)
       {
-	arr_insert (arr, pl, *iter);
+	insert (arr, pl, *iter);
       }
       timer.stop();
     }
@@ -156,7 +156,7 @@ int main (int argc, char **argv)
 	      << n << " ellipses." << std::endl;
 
     timer.start();
-    arr_insert (arr, ellipses.begin(), ellipses.end());
+    insert (arr, ellipses.begin(), ellipses.end());
     timer.stop();
   }
 

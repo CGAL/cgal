@@ -30,7 +30,7 @@
 	#define LM_CLOCK_DEBUG(cmd)
 #endif
 
-#define CGAL_LM_DEBUG
+//#define CGAL_LM_DEBUG
 
 #ifdef CGAL_LM_DEBUG
 	#define PRINT_DEBUG(expr)   std::cout << expr << std::endl
@@ -141,22 +141,6 @@ Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
 
 	return (out_obj) ;
 }
-
-//-----------------------------------------------------------------------------
-// Locate the arrangement feature which a vertical ray emanating from the
-// given point hits.
-//
-template <class Arrangement_2, class Arr_landmarks_generator>
-Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
-::_vertical_ray_shoot
-    (const Point_2& p,
-     bool shoot_up) const
-{
-	PRINT_ERROR( "not implemented yet" );
- 	CGAL_assertion (false);
-	return Object();
-}
-
 
 //----------------------------------------------------
 // walks from the vertex to the point
@@ -1339,76 +1323,6 @@ bool Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
 				check_approximate_intersection ");
 	LM_DEBUG(getchar());
 	return (false);
-}
-
-//-----------------------------------------------------------------------------
-// Find the first halfedge with a given source vertex, when going clockwise
-// from "6 o'clock" around this vertex.
-//
-template <class Arrangement_2, class Arr_landmarks_generator>
-typename Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
-::Halfedge_const_handle
-Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
-::_first_around_vertex (Vertex_const_handle v) const
-{
-  // Travrse the incident halfedges of the current vertex and locate the
-  // lowest one to its left and the topmost to its right.
-  typename Traits_wrapper_2::Compare_xy_2           compare_xy = 
-                                      traits->compare_xy_2_object();
-  typename Traits_wrapper_2::Compare_y_at_x_right_2 compare_y_at_x_right =
-                                      traits->compare_y_at_x_right_2_object();
-  typename Traits_wrapper_2::Compare_y_at_x_left_2  compare_y_at_x_left =
-                                      traits->compare_y_at_x_left_2_object();
-
-  Halfedge_const_handle   invalid_handle;
-  Halfedge_const_handle   lowest_left;
-  Halfedge_const_handle   top_right;
-
-  typename Arrangement_2::Halfedge_around_vertex_const_circulator 
-	  first = v.incident_halfedges();
-  typename Arrangement_2::Halfedge_around_vertex_const_circulator 
-	  curr = first;
-
-  do 
-  {
-    // Check whether the current halfedge is defined to the left or to the
-    // right of the given vertex.
-    if (compare_xy ((*curr).source().point(), v.point()) == SMALLER)
-    {
-      // The curve associated with the current halfedge is defined to the left
-      // of v.
-      if (lowest_left == invalid_handle ||
-          compare_y_at_x_left ((*curr).curve(),
-                               lowest_left.curve(), 
-                               v.point()) == SMALLER)
-      {
-        lowest_left = *curr;
-      }
-    }
-    else
-    {
-      // The curve associated with the current halfedge is defined to the right
-      // of v.
-      if (top_right == invalid_handle ||
-          compare_y_at_x_right ((*curr).curve(),
-                                top_right.curve(), 
-                                v.point()) == LARGER)
-      {
-        top_right = *curr;
-      }
-    }
-
-    curr++;
-  } while (curr != first);
-
-  // The first halfedge we encounter is the lowest to the left, but if there
-  // is no edge to the left, we first encounter the topmost halfedge to the 
-  // right. Note that as the halfedge we located has v as its target, we now
-  // have to return its twin.
-  if (lowest_left != invalid_handle)
-    return (lowest_left.twin());
-  else
-    return (top_right.twin());
 }
 
 CGAL_END_NAMESPACE

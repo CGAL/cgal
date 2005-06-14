@@ -56,10 +56,10 @@ int main ()
   Segment_2      cv3 (Point_2(1, 0), Point_2(0, -1));
   Segment_2      cv4 (Point_2(0, -1), Point_2(-1, 0));
 
-  arr_insert_non_intersecting (arr, pl, cv1);
-  arr_insert_non_intersecting (arr, pl, cv2);
-  arr_insert_non_intersecting (arr, pl, cv3);
-  arr_insert_non_intersecting (arr, pl, cv4);
+  insert_non_intersecting (arr, pl, cv1);
+  insert_non_intersecting (arr, pl, cv2);
+  insert_non_intersecting (arr, pl, cv3);
+  insert_non_intersecting (arr, pl, cv4);
 
   std::cout << "V = " << arr.number_of_vertices()
 	    << ",  E = " << arr.number_of_edges() 
@@ -68,7 +68,7 @@ int main ()
   // Insert a vertical segment dividing the diamond into two:
   Segment_2      cv_vert (Point_2(0, -1), Point_2(0, 1));
   Arrangement_2::Halfedge_handle
-                 he_vert = arr_insert_non_intersecting (arr, pl, cv_vert);
+                 he_vert = insert_non_intersecting (arr, pl, cv_vert);
 
   std::cout << "V = " << arr.number_of_vertices()
 	    << ",  E = " << arr.number_of_edges() 
@@ -77,14 +77,14 @@ int main ()
   // Insert a horizontal segment dividing the diamond into four:
   Segment_2      cv_horiz (Point_2(-1, 0), Point_2(1, 0));
 
-  arr_insert (arr, pl, cv_horiz);
+  insert (arr, pl, cv_horiz);
 
   std::cout << "V = " << arr.number_of_vertices()
 	    << ",  E = " << arr.number_of_edges() 
 	    << ",  F = " << arr.number_of_faces() << std::endl;
 
   // Now remove a portion of the vertical segment.
-  arr_remove_edge (arr, he_vert);
+  remove_edge (arr, he_vert);
  
   std::cout << "V = " << arr.number_of_vertices()
 	    << ",  E = " << arr.number_of_edges() 
@@ -98,7 +98,7 @@ int main ()
   {
     if (traits.is_vertical_2_object() ((*eit).curve()))
     {
-      arr_remove_edge (arr, *eit);
+      remove_edge (arr, *eit);
 
       std::cout << "V = " << arr.number_of_vertices()
 		<< ",  E = " << arr.number_of_edges() 

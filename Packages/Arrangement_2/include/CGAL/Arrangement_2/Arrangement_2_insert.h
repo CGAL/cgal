@@ -40,27 +40,30 @@ CGAL_BEGIN_NAMESPACE
 // Insert a curve into the arrangement (incremental insertion).
 // The inserted x-monotone curve may intersect the existing arrangement.
 //
-template <class Arrangement, class PointLocation>
-void arr_insert (Arrangement& arr, const PointLocation& pl,
-                 const typename Arrangement::Traits_2::Curve_2& c)
+template <class Traits, class Dcel, class PointLocation>
+void insert (Arrangement_2<Traits,Dcel>& arr, 
+	     const PointLocation& pl,
+	     const typename Traits::Curve_2& c)
 {
   // Obtain an arrangement accessor.
-  Arr_accessor<Arrangement>                           arr_access (arr);
+  typedef Arrangement_2<Traits,Dcel>                     Arrangement_2;
+
+  Arr_accessor<Arrangement_2>                      arr_access (arr);
 
   // Define a zone-computation object an a visitor that performs the
   // incremental insertion.
-  typedef Arr_inc_insertion_zone_visitor<Arrangement> Zone_visitor;
-  Zone_visitor                                   visitor;
-  Arrangement_zone_2<Arrangement, Zone_visitor>  arr_zone (arr, &visitor);
+  typedef Arr_inc_insertion_zone_visitor<Arrangement_2>  Zone_visitor;
+
+  Zone_visitor                                     visitor;
+  Arrangement_zone_2<Arrangement_2, Zone_visitor>  arr_zone (arr, &visitor);
 
   // Break the input curve into x-monotone subcurves.
-  typedef Arr_traits_wrapper_2<typename Arrangement::Traits_2>  
-                                                              Traits_wrapper_2;
+  typedef Arr_traits_wrapper_2<Traits>                   Traits_wrapper_2;
 
   const Traits_wrapper_2   *traits =
                         static_cast<const Traits_wrapper_2*>(arr.get_traits());
 
-  typedef std::list<typename Arrangement::X_monotone_curve_2> Curves_list;
+  typedef std::list<typename Traits::X_monotone_curve_2> Curves_list;
   Curves_list                             x_curves;
   typename Curves_list::const_iterator    x_iter; 
   Object                                  obj;
@@ -94,18 +97,20 @@ void arr_insert (Arrangement& arr, const PointLocation& pl,
 // The inserted curves may intersect one another and may also intersect the 
 // existing arrangement.
 //
-template <class Arrangement, class InputIterator>
-void arr_insert (Arrangement& arr,
-                 InputIterator begin, InputIterator end)
+template <class Traits, class Dcel, class InputIterator>
+void insert (Arrangement_2<Traits,Dcel>& arr,
+	     InputIterator begin, InputIterator end)
 {
   // Notify the arrangement observers that a global operation is about to 
   // take place.
-  Arr_accessor<Arrangement>                             arr_access (arr);
+  typedef Arrangement_2<Traits,Dcel>                     Arrangement_2;
+
+  Arr_accessor<Arrangement_2>                      arr_access (arr);
 
   arr_access.notify_before_global_change();
 
   // Perform the aggregated insertion.
-  Arr_aggregate_insert<Arrangement>  agg_insert_obj (arr.get_traits(), &arr);
+  Arr_aggregate_insert<Arrangement_2>  agg_insert_obj (arr.get_traits(), &arr);
   agg_insert_obj.insert_curves (begin, end);
 
   // Notify the arrangement observers that the global operation has been
@@ -119,18 +124,21 @@ void arr_insert (Arrangement& arr,
 // Insert an x-monotone curve into the arrangement (incremental insertion).
 // The inserted x-monotone curve may intersect the existing arrangement.
 //
-template <class Arrangement, class PointLocation>
-void arr_insert_x_monotone (Arrangement& arr, const PointLocation& pl,
-			    const typename Arrangement::X_monotone_curve_2& c)
+template <class Traits, class Dcel, class PointLocation>
+void insert_x_monotone (Arrangement_2<Traits,Dcel>& arr,
+			const PointLocation& pl,
+			const typename Traits::X_monotone_curve_2& c)
 {
   // Obtain an arrangement accessor.
-  Arr_accessor<Arrangement>                           arr_access (arr);
+  typedef Arrangement_2<Traits,Dcel>                     Arrangement_2;
+
+  Arr_accessor<Arrangement_2>                      arr_access (arr);
 
   // Define a zone-computation object an a visitor that performs the
   // incremental insertion.
-  typedef Arr_inc_insertion_zone_visitor<Arrangement> Zone_visitor;
-  Zone_visitor                                   visitor;
-  Arrangement_zone_2<Arrangement, Zone_visitor>  arr_zone (arr, &visitor);
+  typedef Arr_inc_insertion_zone_visitor<Arrangement_2>  Zone_visitor;
+  Zone_visitor                                     visitor;
+  Arrangement_zone_2<Arrangement_2, Zone_visitor>  arr_zone (arr, &visitor);
 
   // Initialize the zone-computation object with the given curve.
   arr_zone.init (*x_iter, pl);
@@ -154,18 +162,20 @@ void arr_insert_x_monotone (Arrangement& arr, const PointLocation& pl,
 // insertion). The inserted x-monotone curves may intersect one another and
 // may also intersect the existing arrangement.
 //
-template <class Arrangement, class InputIterator>
-void arr_insert_x_monotone (Arrangement& arr,
-			    InputIterator begin, InputIterator end)
+template <class Traits, class Dcel, class InputIterator>
+void insert_x_monotone (Arrangement_2<Traits,Dcel>& arr,
+			InputIterator begin, InputIterator end)
 {
   // Notify the arrangement observers that a global operation is about to 
   // take place.
-  Arr_accessor<Arrangement>                             arr_access (arr);
+  typedef Arrangement_2<Traits,Dcel>                     Arrangement_2;
+
+  Arr_accessor<Arrangement_2>                      arr_access (arr);
 
   arr_access.notify_before_global_change();
 
   // Perform the aggregated insertion.
-  Arr_aggregate_insert<Arrangement>  agg_insert_obj (arr.get_traits(), &arr);
+  Arr_aggregate_insert<Arrangement_2>  agg_insert_obj (arr.get_traits(), &arr);
   agg_insert_obj.insert_x_curves (begin, end);
 
   // Notify the arrangement observers that the global operation has been
@@ -180,11 +190,11 @@ void arr_insert_x_monotone (Arrangement& arr,
 // interior does not intersect with any existing edge or vertex in the
 // arragement (incremental insertion).
 //
-template <class Arrangement, class PointLocation>
-typename Arrangement::Halfedge_handle
-arr_insert_non_intersecting
-                (Arrangement& arr, const PointLocation& pl,
-                 const typename Arrangement::X_monotone_curve_2& c)
+template <class Traits, class Dcel, class PointLocation>
+typename Arrangement_2<Traits,Dcel>::Halfedge_handle
+insert_non_intersecting (Arrangement_2<Traits,Dcel>& arr,
+			 const PointLocation& pl,
+			 const typename Traits::X_monotone_curve_2& c)
 {
   // Locate the curve endpoints.
   Object   obj1 =
@@ -194,7 +204,9 @@ arr_insert_non_intersecting
 
   // Notify the arrangement observers that a global operation is about to 
   // take place.
-  Arr_accessor<Arrangement>                             arr_access (arr);
+  typedef Arrangement_2<Traits,Dcel>                     Arrangement_2;
+
+  Arr_accessor<Arrangement_2>                      arr_access (arr);
 
   arr_access.notify_before_global_change();
 
@@ -202,7 +214,7 @@ arr_insert_non_intersecting
   // halfedges, because this function does not allow the inserted curve to
   // intersect the interior of any existing halfedge.
   CGAL_precondition_code (
-    typename Arrangement::Halfedge_const_handle  hh;
+    typename Arrangement_2::Halfedge_const_handle  hh;
   );
   
   CGAL_precondition_msg (!(assign (hh, obj1)) && !(assign (hh, obj2)),
@@ -211,9 +223,9 @@ arr_insert_non_intersecting
   // Check whether the located features containing the curve endpoints
   // are vertices or faces, and use the proper specialized insertion function
   // accordingly.
-  typename Arrangement::Vertex_const_handle    vh1;
-  typename Arrangement::Vertex_const_handle    vh2;
-  typename Arrangement::Halfedge_handle        res;
+  typename Arrangement_2::Vertex_const_handle  vh1;
+  typename Arrangement_2::Vertex_const_handle  vh2;
+  typename Arrangement_2::Halfedge_handle      res;
 
   if (assign (vh1, obj1))
   {
@@ -243,8 +255,8 @@ arr_insert_non_intersecting
     {
       // Both endpoints are not associated with existing vertices, so
       // we must insert the curve in the interior of a face.
-      typename Arrangement::Face_const_handle      fh1;
-      typename Arrangement::Face_const_handle      fh2;
+      typename Arrangement_2::Face_const_handle  fh1;
+      typename Arrangement_2::Face_const_handle  fh2;
 
       bool    succ1 = assign (fh1, obj1); 
       bool    succ2 = assign (fh2, obj2);
@@ -273,20 +285,21 @@ arr_insert_non_intersecting
 // the arrangement, such that the curve interiors do not intersect with
 // any existing edge or vertex in the arragement (aggregated insertion).
 //
-template <class Arrangement, class InputIterator>
-void arr_insert_non_intersecting
-                (Arrangement& arr,
-                 InputIterator begin, InputIterator end)
+template <class Traits, class Dcel, class InputIterator>
+void insert_non_intersecting (Arrangement_2<Traits,Dcel>& arr,
+			      InputIterator begin, InputIterator end)
 {
   // Notify the arrangement observers that a global operation is about to 
   // take place.
-  Arr_accessor<Arrangement>                             arr_access (arr);
+  typedef Arrangement_2<Traits,Dcel>                     Arrangement_2;
+
+  Arr_accessor<Arrangement_2>                      arr_access (arr);
 
   arr_access.notify_before_global_change();
 
   // Perform the aggregated insertion.
-  Arr_non_x_aggregate_insert<Arrangement>  agg_insert_obj (arr.get_traits(), 
-							   &arr);
+  Arr_non_x_aggregate_insert<Arrangement_2>  agg_insert_obj (arr.get_traits(), 
+							     &arr);
   agg_insert_obj.insert_curves(begin, end);
 
   // Notify the arrangement observers that the global operation has been
@@ -301,38 +314,39 @@ void arr_insert_non_intersecting
 // the edges incident to the end-vertices of the removed edge after its
 // deletion, the function performs these merges as well.
 //
-template <class Arrangement>
-typename Arrangement::Face_handle
-arr_remove_edge (Arrangement& arr,
-                 typename Arrangement::Halfedge_handle e)
+template <class Traits, class Dcel>
+typename Arrangement_2<Traits,Dcel>::Face_handle
+remove_edge (Arrangement_2<Traits,Dcel>& arr,
+	     typename Arrangement_2<Traits,Dcel>::Halfedge_handle e)
 {
   // Notify the arrangement observers that a global operation is about to 
   // take place.
-  Arr_accessor<Arrangement>                             arr_access (arr);
+  typedef Arrangement_2<Traits,Dcel>                     Arrangement_2;
+
+  Arr_accessor<Arrangement_2>                      arr_access (arr);
 
   arr_access.notify_before_global_change();
 
   // Keep track of the end-vertices of the edge we are about to remove.
-  typename Arrangement::Vertex_handle  v_ends[2];
+  typename Arrangement_2::Vertex_handle  v_ends[2];
 
   v_ends[0] = e.source();
   v_ends[1] = e.target();
 
   // Remove the edge from the arrangement.
-  typename Arrangement::Face_handle    face = arr.remove_edge (e);
+  typename Arrangement_2::Face_handle    face = arr.remove_edge (e);
 
   // Examine the end-vertices: If a vertex has now two incident edges, and the
   // curves associated with these edges can be merged, merge the two edges and
   // remove the vertex.
-  typedef Arr_traits_wrapper_2<typename Arrangement::Traits_2>  
-                                                              Traits_wrapper_2;
+  typedef Arr_traits_wrapper_2<Traits>                   Traits_wrapper_2;
 
   const Traits_wrapper_2                *traits =
                         static_cast<const Traits_wrapper_2*>(arr.get_traits());
 
-  typename Arrangement::Halfedge_around_vertex_circulator  circ;
-  typename Arrangement::Halfedge_handle                    e1, e2;
-  int                                                      i;
+  typename Arrangement_2::Halfedge_around_vertex_circulator  circ;
+  typename Arrangement_2::Halfedge_handle                    e1, e2;
+  int                                                        i;
 
   for (i = 0; i < 2; i++)
   {
@@ -348,7 +362,7 @@ arr_remove_edge (Arrangement& arr,
       if (traits->are_mergeable_2_object() (e1.curve(), e2.curve()))
       {
         // Merge the two curves.
-        typename Arrangement::X_monotone_curve_2   cv;
+        typename Traits::X_monotone_curve_2   cv;
         traits->merge_2_object() (e1.curve(), e2.curve(),
                                   cv);
 

@@ -44,9 +44,9 @@ int main ()
   Rat_circle_2     circ3 = Rat_circle_2 (c3, sqr_r3, CGAL::CLOCKWISE);
   Conic_arc_2      cv3 = Conic_arc_2 (circ3);
 
-  arr_insert (arr, pl, cv1);
-  arr_insert (arr, pl, cv2);
-  arr_insert (arr, pl, cv3);
+  insert (arr, pl, cv1);
+  insert (arr, pl, cv2);
+  insert (arr, pl, cv3);
   
   // Print the arrangement vertices.
   Arrangement_2::Vertex_const_iterator  vit;

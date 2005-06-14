@@ -30,10 +30,6 @@
 
 #include <CGAL/Arrangement_2/Arr_traits_wrapper_2.h>
 #include <CGAL/Arr_point_location/Arr_lm_vertices_generator.h>
-//#include <CGAL/Random.h>
-//#include <iostream>
-//#include <stdio.h>
-//#include <time.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -43,8 +39,8 @@ CGAL_BEGIN_NAMESPACE
  * The Arrangement parameter corresponds to an arrangement instantiation.
  */
 template <class Arrangement_, 
-		  class Arr_landmarks_generator_ 
-			  = Arr_landmarks_vertices_generator<Arrangement_> >
+	  class Arr_landmarks_generator_ = 
+	                      Arr_landmarks_vertices_generator<Arrangement_> >
 class Arr_landmarks_point_location 
 {
 public:
@@ -67,13 +63,13 @@ public:
   typedef typename Arrangement_2::Holes_const_iterator	
 	  Holes_const_iterator;
 
-  typedef typename Traits_2::Point_2					Point_2;
-  typedef typename Traits_2::X_monotone_curve_2			X_monotone_curve_2;
+  typedef typename Traits_2::Point_2		    Point_2;
+  typedef typename Traits_2::X_monotone_curve_2	    X_monotone_curve_2;
 
-  typedef Arr_landmarks_generator_					Arr_landmarks_generator;
+  typedef Arr_landmarks_generator_		    Arr_landmarks_generator;
 
   typedef std::list<Halfedge_const_handle>          Edge_list;
-  typedef typename Edge_list::iterator		        Std_edge_iterator;
+  typedef typename Edge_list::iterator		    Std_edge_iterator;
 
 protected:
 
@@ -83,9 +79,10 @@ protected:
   const Arrangement_2     *p_arr;      // The associated arrangement.
   const Traits_wrapper_2  *traits;     // Its associated traits object.
   Arr_landmarks_generator *lm_gen;     // The associated generator of landmarks
-  mutable Edge_list		flipped_edges; // The list of edges that were flipped 
-						               // during this point location
-  bool	delete_generator;			   // if the generator was locally allocated
+  mutable Edge_list	   flipped_edges; // The list of edges that were
+                                          // flipped during this point location
+  bool	delete_generator;	       // Indicates whether the generator was
+                                       // locally allocated.
 
 public:
 
@@ -105,30 +102,28 @@ public:
 
   /*! Constructor given an arrangement, and landmarks generator. */
   Arr_landmarks_point_location (const Arrangement_2& arr, 
-								Arr_landmarks_generator *gen) :
+				Arr_landmarks_generator *gen) :
     p_arr (&arr), 
-	lm_gen (gen)
+    lm_gen (gen)
   {
-	  traits = static_cast<const Traits_wrapper_2*> (p_arr->get_traits());
+    traits = static_cast<const Traits_wrapper_2*> (p_arr->get_traits());
   }
 
-  /*! Distructor. */
+  /*! Destructor. */
   ~Arr_landmarks_point_location () 
   {
-	  if (delete_generator) 
-	  {
-		  delete lm_gen;
-	  }
+    if (delete_generator) 
+      delete lm_gen;
   }
         
   /*! Attach an arrangement object. */
   void init (const Arrangement_2& arr, Arr_landmarks_generator *gen) 
   {
     p_arr = &arr;
-	lm_gen = gen;
+    lm_gen = gen;
     traits = static_cast<const Traits_wrapper_2*> (p_arr->get_traits());
   }
-        
+  
   /*!
    * Locate the arrangement feature containing the given point.
    * \param p The query point.
@@ -138,51 +133,7 @@ public:
    */
   Object locate (const Point_2& p) const;
 
-  /*!
-   * Locate the arrangement feature which a upward vertical ray emanating from
-   * the given point hits.
-   * \param p The query point.
-   * \return An object representing the arrangement feature the ray hits.
-   *         This object is either an empty object or a
-   *         Halfedge_const_handle or a Vertex_const_handle.
-   */
-  Object ray_shoot_up (const Point_2& p) const
-  {
-    return (_vertical_ray_shoot (p, true));
-  }
-
-  /*!
-   * Locate the arrangement feature which a downward vertical ray emanating
-   * from the given point hits.
-   * \param p The query point.
-   * \return An object representing the arrangement feature the ray hits.
-   *         This object is either an empty object or a
-   *         Halfedge_const_handle or a Vertex_const_handle.
-   */
-  Object ray_shoot_down (const Point_2& p) const
-  {
-    return (_vertical_ray_shoot (p, false));
-  }
-
 protected:
-  /*!
-   * Locate the arrangement feature which a vertical ray emanating from the
-   * given point hits.
-   * \param p The query point.
-   * \param shoot_up Indicates whether the ray is directed upward or downward.
-   * \return An object representing the arrangement feature the ray hits.
-   *         This object is either a Face_const_handle or a
-   *         Halfedge_const_handle or a Vertex_const_handle.
-   */
-  Object _vertical_ray_shoot (const Point_2& p, bool shoot_up) const;
-
-  /*!
-   * Find the first halfedge with a given source vertex, when going clockwise
-   * from "6 o'clock" around this vertex.
-   * \param v The given vertex.
-   * \return The first halfedge.
-   */
-  Halfedge_const_handle _first_around_vertex (Vertex_const_handle v) const;
 
   /*!
    * Walks from the given vertex to the query point.
@@ -193,7 +144,7 @@ protected:
    *         Halfedge_const_handle or a Vertex_const_handle.
    */
   Object _walk_from_vertex(Vertex_const_handle vh, 
-	  const Point_2 & p) const;
+			   const Point_2 & p) const;
 
   /*!
    * Walks from a point on a given halfedge to the query point.
@@ -205,9 +156,9 @@ protected:
    *         Halfedge_const_handle or a Vertex_const_handle.
    */
   Object _walk_from_edge(Halfedge_const_handle eh, 
-	  const Point_2 & p, 
-	  const Point_2 & np) const;
-
+			 const Point_2 & p, 
+			 const Point_2 & np) const;
+  
   /*!
    * Walks from a point in a face to the query point.
    * \param eh A halfedge handle that points to the face.
@@ -218,8 +169,8 @@ protected:
    *         Halfedge_const_handle or a Vertex_const_handle.
    */
   Object _walk_from_face(Face_const_handle face, 
-	  const Point_2 & p, 
-	  const Point_2 & np) const;
+			 const Point_2 & p, 
+			 const Point_2 & np) const;
 
 
   //IXX: this is the new find face, and not the old one.
@@ -233,55 +184,24 @@ protected:
    *         Halfedge_const_handle or a Vertex_const_handle.
    */
   Object _find_face (const Point_2 & p, 
-	  Vertex_const_handle vh,
-	  //bool & found_vertex_or_edge, 
-	  bool & new_vertex
-	  //, bool & found_face
-	  ) const;
+		     Vertex_const_handle vh,
+		     bool & new_vertex) const;
 
   bool _is_point_in_face (const Point_2 & p, 
-	  const Ccb_halfedge_const_circulator & face, 
-	  bool & found_edge,             
-	  bool & found_vertex,         
-	  Halfedge_const_handle  & out_edge) const;
+			  const Ccb_halfedge_const_circulator & face, 
+			  bool & found_edge,             
+			  bool & found_vertex,         
+			  Halfedge_const_handle  & out_edge) const;
 
   bool _find_edge_to_flip (const Point_2 & p,            
-	  const Point_2 & np,     
-	  const Ccb_halfedge_const_circulator & face,                     
-	  Halfedge_const_handle  & out_edge) const ;
-
+			   const Point_2 & np,     
+			   const Ccb_halfedge_const_circulator & face,
+			   Halfedge_const_handle  & out_edge) const ;
+  
   bool _check_approximate_intersection (const X_monotone_curve_2 & seg,
-	  const X_monotone_curve_2 & cv, 
-	  bool & intersect) const ;
-
-  //bool find_real_intersection (const Point_2 & p,   
-	 // Vertex_handle  v,        
-	 // Halfedge_handle e,
-	 // Point_2 & out_point) const  ;			
-
-  //void find_face (const Point_2 & p, 
-	 // Vertex_handle vh,
-	 // bool & found_vertex_or_edge, 
-	 // bool & new_vertex, 
-	 // bool & found_face,
-	 // Vertex_handle & out_vertex, 
-	 // Halfedge_handle & out_edge,
-	 // Locate_type& lt  ) const;
-
-  //void find_intersection (const Point_2 & p, 
-	 // Curve_2 &seg, 
-	 // Halfedge_handle e,
-	 // int  & num_of_intersections, 
-	 // bool & change_side, 
-	 // bool & found_edge,
-	 // Point_2 & closest_interect_point,
-	 // bool & new_vertex, 
-	 // Vertex_handle & out_vertex ) const;
-
-  //bool find_closest_intersection_in_face (const Point_2 & p,            
-	 // Vertex_handle  v,     
-	 // const Ccb_halfedge_circulator & face,                     
-	 // Halfedge_handle  & out_edge) const ;
+					const X_monotone_curve_2 & cv, 
+					bool & intersect) const ;
+  
 };
 
 CGAL_END_NAMESPACE

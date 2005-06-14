@@ -47,10 +47,10 @@ int main ()
   Segment_2         seg4 (Point_2(-1, 0), Point_2(4, 1));
   Colored_segment_2 cs4 (seg4, BLUE);
 
-  arr_insert (arr, naive_pl, cs1);
-  arr_insert (arr, naive_pl, cs2);
-  arr_insert (arr, naive_pl, cs3);
-  arr_insert (arr, naive_pl, cs4);
+  insert (arr, naive_pl, cs1);
+  insert (arr, naive_pl, cs2);
+  insert (arr, naive_pl, cs3);
+  insert (arr, naive_pl, cs4);
 
   std::cout << "V = " << arr.number_of_vertices()
 	    << ",  E = " << arr.number_of_edges() 
