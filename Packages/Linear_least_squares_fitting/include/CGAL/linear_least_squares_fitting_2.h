@@ -123,7 +123,7 @@ linear_least_squares_fitting_2(InputIterator begin,
   CGAL_precondition(begin != end);
 
   // compute centroid
-  // Point c = centroid(begin,end,K());
+  Point c = centroid(begin,end,K());
 
   // assemble covariance matrix as a
   // semi-definite matrix. 

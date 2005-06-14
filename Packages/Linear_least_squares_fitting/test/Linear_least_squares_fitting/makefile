@@ -39,8 +39,8 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:            \
-		pca$(EXE_EXT) 
-                #barycenter$(EXE_EXT)\
+		pca$(EXE_EXT) \
+                barycenter$(EXE_EXT)\
 
 barycenter$(EXE_EXT): barycenter$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)barycenter barycenter$(OBJ_EXT) $(LDFLAGS)

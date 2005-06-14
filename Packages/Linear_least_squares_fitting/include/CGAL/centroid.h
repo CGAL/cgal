@@ -39,34 +39,104 @@
 
 CGAL_BEGIN_NAMESPACE
 
-// This one takes an iterator range over K::Point_[23]
-template < typename InputIterator, typename K >
-typename std::iterator_traits<InputIterator>::value_type
-centroid(InputIterator begin, InputIterator end, const K & k)
-{
-  typedef typename std::iterator_traits<InputIterator>::value_type  Point;
-  typedef typename K::FT                                            FT;
-  typedef typename Vector<Dimension<Point, K>::value, K>::type      Vector;
+namespace CGALi {
 
-#if 0 // Another implementation (by Michael).
-  // compute centroid of points:
-  Point_2 centroid(
-    scale(
-      accumulate( points.begin(), points.end(), t.origin(), Sum()),
-      FT( 1) / FT( n)));
-#endif
+// computes the centroid of 2D point set
+// takes an iterator range over K::Point_2
+template < typename InputIterator, 
+           typename K >
+typename K::Point_2
+centroid(InputIterator begin, 
+         InputIterator end, 
+         const K& k,
+         const typename K::Point_2*)
+{
+  typedef typename K::Vector_2 Vector;
 
   CGAL_precondition(begin != end);
 
   Vector v = NULL_VECTOR;
   int nb_pts = 0;
-
-  while (begin != end) {
+  while (begin != end) 
+  {
     v = v + (*begin++ - ORIGIN);
     ++nb_pts;
   }
-
   return ORIGIN + v / nb_pts;
+}
+
+// computes the centroid of 3D point set
+// takes an iterator range over K::Point_3
+template < typename InputIterator, 
+           typename K >
+typename K::Point_3
+centroid(InputIterator begin, 
+         InputIterator end, 
+         const K& k,
+         const typename K::Point_3*)
+{
+  typedef typename K::Vector_3 Vector;
+
+  CGAL_precondition(begin != end);
+
+  Vector v = NULL_VECTOR;
+  int nb_pts = 0;
+  while (begin != end) 
+  {
+    v = v + (*begin++ - ORIGIN);
+    ++nb_pts;
+  }
+  return ORIGIN + v / nb_pts;
+}
+
+// computes the centroid of 2D triangle set
+// takes an iterator range over K::Triangle_2
+template < typename InputIterator, 
+           typename K >
+typename K::Point_2
+centroid(InputIterator begin, 
+         InputIterator end, 
+         const K& k,
+         const typename K::Triangle_2*)
+{
+  typedef typename K::FT       FT;
+  typedef typename K::Vector_2 Vector;
+  typedef typename K::Point_2  Point;
+  typedef typename K::Triangle_2 Triangle;
+
+  CGAL_precondition(begin != end);
+
+  Vector v = NULL_VECTOR;
+  FT sum_area = 0;
+  for(InputIterator it = begin;
+      it != end;
+      it++)
+  while (begin != end) 
+  {
+    const Triangle& triangle = *it;
+    FT area = std::abs(triangle.area());
+    Point c = centroid(triangle[0],triangle[1],triangle[2]);
+    v = v + area * (c - ORIGIN);
+    sum_area += area;
+  }
+  return ORIGIN + v / sum_area;
+}
+
+} // namespace CGALi
+
+
+
+template < typename InputIterator, 
+           typename K >
+inline
+typename K::Point_2
+centroid(InputIterator begin,
+         InputIterator end, 
+         const K& k)
+{
+  typedef typename std::iterator_traits<InputIterator>::value_type
+    Value_type;
+  return CGALi::centroid(begin, end, k,(Value_type*) NULL);
 }
 
 // This one takes an iterator range over K::Point_[23]
@@ -78,7 +148,6 @@ centroid(InputIterator begin, InputIterator end)
 {
   typedef typename std::iterator_traits<InputIterator>::value_type  Point;
   typedef typename Kernel_traits<Point>::Kernel                     K;
-
   return CGAL::centroid(begin, end, K());
 }
 
