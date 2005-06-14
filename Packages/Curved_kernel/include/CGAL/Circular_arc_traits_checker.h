@@ -43,6 +43,10 @@ struct Predicate_checker {
   result_type
   operator()(const A1 & a1) const
     {
+      std::cout << " call " << __PRETTY_FUNCTION__ << std::endl
+		<< " [_1 ] " << a1.first << std::endl
+		<< " [_2 ] " << a1.second << std::endl;
+
       result_type r1 = p1(a1.first);
       result_type r2 = p2(a1.second);
       
@@ -64,6 +68,12 @@ struct Predicate_checker {
   result_type
   operator()(const A1 & a1, const A2 & a2 ) const
     {
+      std::cout << " call " << __PRETTY_FUNCTION__ << std::endl
+		<< " [_1 ] " << a1.first << " et " << a2.first
+		<< std::endl
+		<< " [_2 ] " << a1.second << " et " << a2.second 
+		<< std::endl;
+      
       result_type r1 = p1(a1.first, a2.first);
       result_type r2 = p2(a1.second, a2.second);
       
@@ -87,6 +97,14 @@ struct Predicate_checker {
   result_type
   operator()(const A1 & a1, const A2 & a2, const A3 & a3 ) const
     {
+      std::cout << " call " << __PRETTY_FUNCTION__ << std::endl
+		<< " [_1 ] " << a1.first << " et " << a2.first
+		<< " et " << a3.first
+		<< std::endl
+		<< " [_2 ] " << a1.second << " et " << a2.second 
+		<< " et " << a3.second 
+		<< std::endl;
+     
       result_type r1 = p1(a1.first, a2.first, a3.first);
       result_type r2 = p2(a1.second, a2.second, a3.second);
       
@@ -232,9 +250,10 @@ public:
 
     Point_2 operator()(const X_monotone_curve_2 & cv) const
     {
-      std::cout << " [Construct_min_vertex_2] [Point _1]  "
+      std::cout << " [Construct_min_vertex_2] "
+		<< std::endl << "[Point _1]  "
 		<< t->t1.construct_min_vertex_2_object()(cv.first)
-		<< std::endl << " [Point  _2] "
+		<< std::endl << "[Point  _2] "
 		<< t->t2.construct_min_vertex_2_object()(cv.second)
 		<< std::endl;
       return Point_2(t->t1.construct_min_vertex_2_object()(cv.first),
@@ -256,9 +275,10 @@ public:
 
     Point_2 operator()(const X_monotone_curve_2 & cv) const
     {
-      std::cout << " [Construct_max_vertex_2] [Point _1]  "
+      std::cout << " [Construct_max_vertex_2] "
+		<< std::endl << "[Point _1]  "
 		<< t->t1.construct_max_vertex_2_object()(cv.first)
-		<< std::endl << " [Point  _2] "
+		<< std::endl << "[Point  _2] "
 		<< t->t2.construct_max_vertex_2_object()(cv.second)
 		<< std::endl;
 	
@@ -291,12 +311,13 @@ public:
       if (cmp<Traits_2>()(ca1.second, ca2.second))
 	swap(ca1.second, ca2.second);
 
-      std::cout << " [Split_2] [Curve #1 _1] ";
-      CGALi::print(std::cout, ca1.first) << std::endl;
-      std::cout << " [Split_2] [Curve #2 _1] ";
-      CGALi::print(std::cout, ca2.first) << std::endl;
-      std::cout << " [Split_2] [Curve #1 _2] " << ca1.second << std::endl;
-      std::cout << " [Split_2] [Curve #2 _2] " << ca2.second << std::endl;
+      std::cout << " [Split_2]"
+		<< std::endl << "[Curve #1 _1] " << ca1.first;
+      std::cout << CGALi::print(std::cout, ca1.first) << std::endl;
+      std::cout << "[Curve #2 _1] " << ca2.first;
+      std::cout << CGALi::print(std::cout, ca2.first) << std::endl;
+      std::cout << "[Curve #1 _2] " << ca1.second << std::endl;
+      std::cout << "[Curve #2 _2] " << ca2.second << std::endl;
     }
   };
 
@@ -320,7 +341,7 @@ public:
 	t->t2.make_x_monotone_2_object()(a.second, std::back_inserter(v2));
 
 	assert(v1.size() == v2.size());
-	
+
 	std::sort(v1.begin(), v1.end(), cmp<Traits_1>());
 	std::sort(v2.begin(), v2.end(), cmp<Traits_2>());
 
@@ -328,11 +349,11 @@ public:
 	  *res++ = std::make_pair(v1[i], v2[i]);
 
 	for(unsigned int i=0; i<v1.size(); ++i) {
-	  std::cout << " [Monotone_2] [Curve  _1] : "
-		    << v1[i] 
-		    << " upper part : " << v1[i].on_upper_part() 
-		    << std::endl;
-	  std::cout << " [Monotone_2] [Curve  _2] : "
+	  std::cout << " [Monotone_2] "
+		    << std::endl << "[Curve  _1] : "
+		    << v1[i] << std::endl;
+	  std::cout << CGALi::print(std::cout, v1[i]) << std::endl;
+	  std::cout << "[Curve  _2] : "
 		    << v2[i] << std::endl;
 	}
 
@@ -399,10 +420,11 @@ public:
 	std::sort(vc2.begin(), vc2.end(), cmp<Traits_2>());
 
 	for(unsigned int i=0; i<vp1.size(); ++i) {
-	  std::cout << " [Intersect_2] [pair<Pt, int> _1] : "
+	  std::cout << " [Intersect_2] "
+		    << std::endl << "[pair<Pt, int> _1] : "
 		    << vp1[i].first << "  , multiplicite = "
 		    << vp1[i].second << std::endl;
-	  std::cout << " [Intersect_2] [pair<Pt, int> _2] : "
+	  std::cout << "[pair<Pt, int> _2] : "
 		    << vp2[i].first << "  , multiplicite = "
 		    << vp2[i].second << std::endl;
 	  *res++ = CGAL::make_object(std::pair<Point_2, unsigned>
@@ -411,9 +433,10 @@ public:
 	}
 
 	for(unsigned int i=0; i<vc1.size(); ++i) {
-	  std::cout << " [Intersect_2] [Curve  _1] : "
+	  std::cout << " [Intersect_2]"
+		    << std::endl << "[Curve  _1] : "
 		    << vc1[i] << std::endl;
-	  std::cout << " [Intersect_2] [Curve  _2] : "
+	  std::cout << "[Curve  _2] : "
 		    << vc2[i] << std::endl;
 	  *res++ = CGAL::make_object(X_monotone_curve_2(vc1[i], vc2[i]));
 	}
