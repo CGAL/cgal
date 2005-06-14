@@ -20,7 +20,7 @@
 #ifndef ARR_OVERLAY_H
 #define ARR_OVERLAY_H
 
-
+#include <CGAL/Arrangement_2.h>
 #include <CGAL/Sweep_line_2/Sweep_line_2_impl.h>
 #include <CGAL/Sweep_line_2/Arr_sweep_line_event.h>
 #include <CGAL/Arr_overlay_2/Overlay_subcurve.h>
@@ -33,30 +33,38 @@ CGAL_BEGIN_NAMESPACE
 
 
 /*! */
-template < class Arrangement1,
-           class Arrangement2,
-           class Res_Arrangement,
+template < class Traits_,
+           class Dcel1,
+           class Dcel2,
+           class ResDcel,
            class OverlayTraits >
 
-void arr_overlay (const Arrangement1  & arr1,
-                  const Arrangement2  & arr2,
-                  Res_Arrangement     & res,
+void arr_overlay (const Arrangement_2<Traits_, Dcel1>   & arr1,
+                  const Arrangement_2<Traits_, Dcel2>   & arr2,
+                  Arrangement_2<Traits_, ResDcel>       & res,
                   OverlayTraits & traits)
 {
-  typedef typename Arrangement1::Traits_2             Base_Traits;
+  typedef Traits_                                     Base_Traits;
   typedef typename Base_Traits::X_monotone_curve_2    Base_X_monotone_curve_2;
 
-  typedef typename Arrangement1::Halfedge_const_handle 
+  typedef Arrangement_2<Traits_, Dcel1>               Arrangement1;
+  typedef Arrangement_2<Traits_, Dcel2>               Arrangement2;
+  typedef Arrangement_2<Traits_, ResDcel>             Res_Arrangement;
+
+  typedef typename Arrangement1::Halfedge_const_handle       
                                                       Halfedge_const_handle_1;
-  typedef typename Arrangement1::Edge_const_iterator   
+  typedef typename Arrangement1::Edge_const_iterator         
                                                       Edge_const_iterator_1;
-  typedef typename Arrangement1::Face_const_handle    Face_handle1;
+  typedef typename Arrangement1::Face_const_handle
+                                                      Face_handle1;
 
-  typedef typename Arrangement2::Halfedge_const_handle 
+
+  typedef typename Arrangement2::Halfedge_const_handle       
                                                       Halfedge_const_handle_2;
-  typedef typename Arrangement2::Edge_const_iterator  Edge_const_iterator_2;
-
-  typedef typename Arrangement2::Face_const_handle    Face_handle2;
+  typedef typename Arrangement2::Edge_const_iterator  
+                                                      Edge_const_iterator_2;
+  typedef typename Arrangement2::Face_const_handle    
+                                                      Face_handle2;
 
   typedef typename Res_Arrangement::Halfedge_handle   Halfedge_handle_res;
   typedef typename Res_Arrangement::Face_handle       Res_Face_handle;
