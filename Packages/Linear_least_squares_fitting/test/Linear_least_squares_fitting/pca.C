@@ -97,8 +97,7 @@ void test_2(const unsigned int nb_points,
   // fit a line
   std::cout << "  fit a 2D line...";
   Line_2 line;
-  FT quality;
-  linear_least_squares_fitting_2(points.begin(),points.end(),line,quality);
+  FT quality = linear_least_squares_fitting_2(points.begin(),points.end(),line);
   std::cout << "done (quality: " << quality << ")" << std::endl;
 
   // dump to ps

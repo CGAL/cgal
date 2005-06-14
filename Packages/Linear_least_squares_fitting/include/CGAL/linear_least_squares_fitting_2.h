@@ -34,13 +34,11 @@ CGAL_BEGIN_NAMESPACE
 // fit a line to a 2D point set
 template < typename InputIterator, 
            typename Line, 
-           typename K, 
-           typename Number_type>
-void
+           typename K>
+K::FT
 linear_least_squares_fitting_2(InputIterator begin,
                                InputIterator end, 
                                Line& line,
-                               Number_type& quality,
                                const K& k)
 {
   // types
@@ -56,7 +54,7 @@ linear_least_squares_fitting_2(InputIterator begin,
   Point c = centroid(begin,end,K());
 
   // assemble covariance matrix as a
-  // semi-definite matrix. Numbering:
+  // semi-definite matrix. Matrix numbering:
   // 0          
   // 1 2
   FT covariance[3] = {0,0,0};
@@ -84,17 +82,15 @@ linear_least_squares_fitting_2(InputIterator begin,
   if(eigen_values[0] == eigen_values[1])
   {
     // isotropic case (infinite number of directions)
-    // by default: assemble a horizontal line that goes
-    // through the centroid by default.
-    line = Line(c,Direction(1,0));
-    if(eigen_values[0] == 0.0) // both eigen values are zero
-      quality = 0.0;
+    // by default: assemble a line that goes through 
+    // the centroid and with a default direction.
+    line = Line(c,Direction());
+    return (FT)0.0;
   }
   else
   {
-    Direction direction(eigen_vectors[0],eigen_vectors[1]);
-    line = Line(c,direction);
-    quality = (1.0 - eigen_values[1] / eigen_values[0]);
+    line = Line(c,Direction(eigen_vectors[0],eigen_vectors[1]);
+    return (1.0 - eigen_values[1] / eigen_values[0]);
   }
 }
 
@@ -102,16 +98,14 @@ linear_least_squares_fitting_2(InputIterator begin,
 // this one deduces the kernel from the point in container
 template < typename InputIterator, 
            typename Line,
-           typename Number_type>
-void
+void // todo: add return type
 linear_least_squares_fitting_2(InputIterator begin,
                                InputIterator end, 
-                               Line& line,
-                               Number_type& quality)
+                               Line& line)
 {
   typedef typename std::iterator_traits<InputIterator>::value_type Point;
   typedef typename Kernel_traits<Point>::Kernel                    K;
-  return CGAL::linear_least_squares_fitting_2(begin,end,line,quality,K());
+  CGAL::linear_least_squares_fitting_2(begin,end,line,K());
 }
 
 CGAL_END_NAMESPACE
