@@ -122,6 +122,9 @@ protected:
   Halfedge_handle     intersect_he;    // The halfedge that intersects cv
                                        // (or overlaps it).
 
+  X_monotone_curve_2  sub_cv1;         // Auxiliary variable (for curve split).
+  X_monotone_curve_2  sub_cv2;         // Auxiliary variable (for curve split).
+
 public:
 
   /*!

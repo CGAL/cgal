@@ -47,9 +47,6 @@ void Arrangement_zone_2<Arrangement,ZoneVisitor>::compute_zone ()
 
   // Locate the arrangement feature containing the left endpoint of the
   // curve (currently obj stores the object containing it).
-  X_monotone_curve_2     sub_cv1, sub_cv2;
-  X_monotone_curve_2     icv;
-
   typename Arrangement_2::Vertex_const_handle    vh;
   typename Arrangement_2::Halfedge_const_handle  hh;
   typename Arrangement_2::Face_const_handle      fh;
@@ -518,7 +515,6 @@ void Arrangement_zone_2<Arrangement,ZoneVisitor>::
   typename Arrangement_2::Ccb_halfedge_circulator  he_curr;
 
   Object                  obj;
-  X_monotone_curve_2      icv;
   Intersect_point_2       int_p;
   Point_2                 ip;
 
@@ -582,6 +578,8 @@ void Arrangement_zone_2<Arrangement,ZoneVisitor>::
 	{
 	  // We have located an overlapping curve. Assign ip as its left
 	  // endpoint.
+	  X_monotone_curve_2   icv;
+
 	  assign (icv, obj);
 	  ip = min_vertex (icv);
 
@@ -676,6 +674,8 @@ void Arrangement_zone_2<Arrangement,ZoneVisitor>::
 	{
 	  // We have located an overlapping curve. Assign ip as its left
 	  // endpoint.
+	  X_monotone_curve_2   icv;
+
 	  assign (icv, obj);
 	  ip = min_vertex (icv);
 
@@ -748,7 +748,6 @@ bool Arrangement_zone_2<Arrangement,ZoneVisitor>::_zone_in_face
   // overlapping subcurve. Otherwise, intersect_p is a simple intersection
   // point.
   bool                  done = false;
-  X_monotone_curve_2    sub_cv1, sub_cv2;
 
   if (traits->equal_2_object() (intersect_p, right_pt))
   {
@@ -964,8 +963,6 @@ bool Arrangement_zone_2<Arrangement,ZoneVisitor>::_zone_in_overlap ()
   found_overlap = false;
 
   // Split cv at right endpoint of the overlapping curve.
-  X_monotone_curve_2    sub_cv1, sub_cv2;
-
   traits->split_2_object() (cv,
 			    cv_right_pt,
 			    sub_cv1, sub_cv2);

@@ -475,22 +475,23 @@ protected:
           m_visitor->before_handle_event(m_currentEvent);
           return;
         }
-        Subcurve* sc = *m_status_line_insert_hint;
-        X_monotone_curve_2 last_curve = sc->get_last_curve();
-        m_currentEvent->add_curve_to_left(sc); 
-        bool is_overlap = _add_curve_to_right(m_currentEvent, sc);
-        X_monotone_curve_2 a,b;
-       
+        Subcurve                  *sc = *m_status_line_insert_hint;
+        const X_monotone_curve_2&  last_curve = sc->get_last_curve();
+        m_currentEvent->add_curve_to_left(sc);
+ 
+        bool       is_overlap = _add_curve_to_right(m_currentEvent, sc);
+
         m_traits.split_2_object() (last_curve,
 				   m_currentEvent->get_point(), 
-				   a, b);
+				   sub_cv1, sub_cv2);
+
         ++m_status_line_insert_hint; 
         
         if(is_overlap)
         {
-          m_statusLine.remove_at(res.first);
-          m_visitor->before_handle_event(m_currentEvent);
-          m_visitor->add_subcurve(a, sc);
+          m_statusLine.remove_at (res.first);
+          m_visitor->before_handle_event (m_currentEvent);
+          m_visitor->add_subcurve (sub_cv1, sc);
           return;
         }
       }
@@ -537,18 +538,18 @@ protected:
           leftCurve->get_orig_subcurve2()->set_overlap_subcurve(NULL);//XXX
       }
       else
-      { 
-        X_monotone_curve_2 a, b;
+      {
         const X_monotone_curve_2 &lastCurve = leftCurve->get_last_curve();
        
         m_traits.split_2_object()(lastCurve,
 				  m_currentEvent->get_point(), 
-				  a, b);
-        m_visitor->add_subcurve(a, leftCurve);
+				  sub_cv1, sub_cv2);
+       
+	m_visitor->add_subcurve(sub_cv1, leftCurve);
 
-        leftCurve->set_last_curve(b);
+        leftCurve->set_last_curve(sub_cv2);
       }
-       ++left_iter;
+      ++left_iter;
 
       // remove curve from the status line (also checks intersection 
       // between the neighbouring curves,only if the curve is removed for good)
@@ -890,7 +891,9 @@ protected:
   /*! a vector holds the intersection objects */
   std::vector<Object> m_x_objects;
 
- 
+  /*! Auxiliary varibales (for splitting curves). */
+  X_monotone_curve_2  sub_cv1;
+  X_monotone_curve_2  sub_cv2;
 
   Event* allocate_event(const Point_2& pt)
   {
@@ -942,7 +945,7 @@ template < class SweepLineTraits_2,
 inline void 
 Sweep_line_2_impl<SweepLineTraits_2,SweepEvent,CurveWrap,SweepVisitor,
                   Allocator>::
-_init_curve(X_monotone_curve_2 &curve,unsigned int j)
+_init_curve(X_monotone_curve_2& curve,unsigned int j)
 { 
   Event *e ;
  
