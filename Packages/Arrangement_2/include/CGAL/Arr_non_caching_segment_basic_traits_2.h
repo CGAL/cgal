@@ -79,14 +79,12 @@ public:
   /*! Compare two points lexigoraphically; by x, then by y */
   typedef typename Kernel::Compare_xy_2                 Compare_xy_2;
 
-#if 0
   // The following 2 should be added to the kernel and enabled accordingly
   /*! Obtain the left endpoint of a given segment */
   typedef typename Kernel::Construct_min_vertex_2       Construct_min_vertex_2;
 
   /*! Obtain the right endpoint of a given segment */
   typedef typename Kernel::Construct_max_vertex_2       Construct_max_vertex_2;
-#endif
   
   /*! Check whether a given segment is vertical */
   typedef typename Kernel::Is_vertical_2                Is_vertical_2;
@@ -101,56 +99,6 @@ public:
 
   /// \name Functor introduced here (based on the kernel)
   //@{
-
-  /*! A functor for obtaining the left endpoint */
-  class Construct_min_vertex_2 {
-  public:
-    /*!
-     * Get the left endpoint of the segment.
-     * \param cv The segment.
-     * \return The left endpoint.
-     */
-    const Point_2 & operator()(const X_monotone_curve_2 & cv) const
-    {
-      Kernel kernel;
-      typename Kernel::Construct_vertex_2 construct_vertex =
-        kernel.construct_vertex_2_object();
-      const Point_2 & source = construct_vertex(cv, 0);
-      const Point_2 & target = construct_vertex(cv, 1);
-      return (kernel.less_xy_2_object()(source, target)) ? source : target;
-    }
-  };
-
-  /*! Get a Construct_min_vertex_2 functor object. */
-  Construct_min_vertex_2 construct_min_vertex_2_object() const
-  {
-    return Construct_min_vertex_2();
-  }
-
-  /*! A functor for obtaining the right endpoint */
-  class Construct_max_vertex_2 {
-  public:
-    /*!
-     * Get the right endpoint of the segment.
-     * \param cv The segment.
-     * \return The right endpoint.
-     */
-    const Point_2 & operator()(const X_monotone_curve_2 & cv) const
-    {
-      Kernel kernel;
-      typename Kernel::Construct_vertex_2 construct_vertex =
-        kernel.construct_vertex_2_object();
-      const Point_2 & source = construct_vertex(cv, 0);
-      const Point_2 & target = construct_vertex(cv, 1);
-      return (kernel.less_xy_2_object()(source, target)) ? target : source;
-    }
-  };
-
-  /*! Get a Construct_max_vertex_2 functor object. */
-  Construct_max_vertex_2 construct_max_vertex_2_object() const
-  {
-    return Construct_max_vertex_2();
-  }
 
 #if !defined(HAS_LEFT_NOT)
 
