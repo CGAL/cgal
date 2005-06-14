@@ -1,3 +1,7 @@
+!!! penser a remettre assert(in_range...) dans compare_y_at_x
+(enlevee pour debug)
+et enlever messages de debug
+
 (highest priority is to be able to run at least *something* with 
 the new Arrangement_2...)
 
@@ -9,5 +13,3 @@ add "using..." in all functors that derive from another
 
 implement construct_intersections for general (non monotone) arcs, it
 has a meaning. 
-
-
