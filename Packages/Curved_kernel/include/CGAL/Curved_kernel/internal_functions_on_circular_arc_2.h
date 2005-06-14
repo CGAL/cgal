@@ -64,8 +64,15 @@ namespace CircularFunctors {
   compare_y_at_x(const typename CK::Circular_arc_endpoint_2 &p,
                  const typename CK::Circular_arc_2 &A1)
   {
+    // debug !!! 
+    std::cout << "[compare_y_at_x]"
+	      << std::endl << "arc : " << A1 << std::endl ; 
+    std::cout << CGALi::print(std::cout, A1) << std::endl;
+    std::cout << " point : " << p << std::endl;
+
     assert (A1.is_x_monotone());
-    assert (point_in_range<CK>(A1, p));
+    //    assert (point_in_range<CK>(A1, p)); 
+    // removed for DEBUG !!!
 
     // Compare the ordinate of p with the ordinate of the center.
     Comparison_result sgn =
@@ -336,6 +343,7 @@ namespace CircularFunctors {
     return;
   }
 
+  // !!!! a lot of useless assertions for debug
   template< class CK, class OutputIterator>
   OutputIterator
   construct_intersections_2( const typename CK::Circular_arc_2 &a1,

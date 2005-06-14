@@ -310,9 +310,9 @@ namespace CGALi {
   print(std::ostream & os, const Circular_arc_2<CK> &a)
   {
     return os << "Circular_arc_2( " << a.id() << std::endl
-              << "source : " << a.source() << " , " << std::endl
-              << "target : " << a.target() << " , " << std::endl
-              << "swap   : " << a.swap_source() << " )" << std::endl
+              << "left : " << a.left() << " , " << std::endl
+              << "right : " << a.right() << " , " << std::endl
+	      << "upper part : " << a.on_upper_part() << std::endl
               << "  [[ approximate circle is (x,y,r) : "
               << CGAL::to_double(a.supporting_circle().center().x()) << "  "
               << CGAL::to_double(a.supporting_circle().center().y()) << "  "
