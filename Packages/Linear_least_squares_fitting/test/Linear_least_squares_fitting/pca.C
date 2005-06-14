@@ -14,6 +14,7 @@
 typedef double               FT;
 typedef CGAL::Cartesian<FT>  K;
 typedef K::Point_2           Point_2;
+typedef K::Triangle_2        Triangle_2;
 typedef K::Line_2            Line_2;
 typedef K::Point_3           Point_3;
 
@@ -78,8 +79,8 @@ Point_2 random_point_2()
   return Point_2(x,y);
 }
 
-void test_2(const unsigned int nb_points,
-            const FT epsilon)
+void test_2_point_set(const unsigned int nb_points,
+                      const FT epsilon)
 {
   std::cout << "2D: fit a line to a point set" << std::endl;
 
@@ -103,10 +104,28 @@ void test_2(const unsigned int nb_points,
   std::cout << "  dump to ps...";
   dump_ps("test.ps",points,line);
   std::cout << "done" << std::endl;
+
+  std::vector<Triangle_2> triangles;
+}
+
+void test_2_triangle_set(const unsigned int nb_triangles,
+                         const FT epsilon)
+{
+  std::cout << "2D: fit a line to a point set" << std::endl;
+
+  // create random points nearby a segment
+  std::vector<Triangle_2> triangles;
+
+  // fit a line
+  std::cout << "  fit a 2D line...";
+  Line_2 line;
+  FT quality = linear_least_squares_fitting_2(triangles.begin(),triangles.end(),line);
+  std::cout << "done (quality: " << quality << ")" << std::endl;
 }
 
 int main()
 {
-  test_2(1000,0.05);
+  test_2_point_set(1000,0.01);
+  test_2_triangle_set(1000,0.01);
   return 0;
 }
