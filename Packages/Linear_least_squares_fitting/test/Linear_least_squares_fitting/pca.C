@@ -17,9 +17,8 @@ typedef K::Point_2           Point_2;
 typedef K::Line_2            Line_2;
 typedef K::Point_3           Point_3;
 
-//**********************************************
-// dump streamlines to ps
-//**********************************************
+
+// dump a point set and a line to a postscript file
 void dump_ps(char *pFilename,
              std::vector<Point_2>& points,
              Line_2& line)
