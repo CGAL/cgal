@@ -63,6 +63,11 @@ public:
   /// \name Construction and destruction functions.
   //@{
 
+  /*! Default constructor. */
+  Arr_observer () :
+    p_arr (NULL)
+  {}
+
   /*! Constructor with an associated arrangement. */
   Arr_observer (Arrangement_2& arr) :
     p_arr (&arr)
@@ -75,7 +80,43 @@ public:
   virtual ~Arr_observer ()
   {
     // Unregister the observer object from the arrangement.
-    p_arr->_unregister_observer (this);
+    if (p_arr != NULL)
+      p_arr->_unregister_observer (this);
+  }
+  //@}
+
+  /// \name Modifying the associated arrangement.
+  //@{
+
+  /*! Attach the observer to an arrangement. */
+  void attach (Arrangement_2& arr)
+  {
+    // Do nothing if the associated arrangement is not changed.
+    if (p_arr == &arr)
+      return;
+
+    // Unregister the observer object from the current arrangement.
+    if (p_arr != NULL)
+      p_arr->_unregister_observer (this);
+
+    // Register the observer object in the new arrangement.
+    p_arr = &arr;
+    p_arr->_register_observer (this);
+
+    return;
+  }
+
+  /*! Detach the observer to the arrangement. */
+  void detach ()
+  {
+    // Unregister the observer object from the current arrangement.
+    if (p_arr != NULL)
+      p_arr->_unregister_observer (this);
+
+    // Mark that the oberver is not attached to an arrangement.
+    p_arr = NULL;
+   
+    return;
   }
   //@}
 
