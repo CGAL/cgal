@@ -44,7 +44,6 @@ linear_least_squares_fitting_2(InputIterator begin,
                                Line& line,
                                const K& k)
 {
-  // types
   typedef typename K::FT          FT;
   typedef typename K::Point_2     Point;
   typedef typename K::Vector_2    Vector;
@@ -91,18 +90,19 @@ linear_least_squares_fitting_2(InputIterator begin,
   // check unicity and build fitting line accordingly
   if(eigen_values[0] == eigen_values[1])
   {
+    // regular case
+    line = Line(c,Direction(eigen_vectors[0],eigen_vectors[1]));
+    return (ft)1.0 - eigen_values[1] / eigen_values[0];
+  } // end regular case
+  else
+  {
     // isotropic case (infinite number of directions)
     // by default: assemble a line that goes through 
     // the centroid and with a default direction.
     line = Line(c,Direction());
     return (FT)0.0;
   } // end isotropic case
-  else
-  {
-    line = Line(c,Direction(eigen_vectors[0],eigen_vectors[1]));
-    return (1.0 - eigen_values[1] / eigen_values[0]);
-  }
-}
+} // end linear_least_squares_fitting_2
 
 
 // this one deduces the kernel from the point in container
