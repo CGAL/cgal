@@ -96,7 +96,7 @@ public:
   }
 
 
-private:
+protected:
 
   /*! the last event that was handled on the curve */
   Event *m_lastEvent;

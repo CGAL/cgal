@@ -293,7 +293,7 @@ public:
 
   
  
-  private:
+  protected:
      /*! the portion of the curve to the right of the last event point 
       on the curve */
   X_monotone_curve_2 m_lastCurve;

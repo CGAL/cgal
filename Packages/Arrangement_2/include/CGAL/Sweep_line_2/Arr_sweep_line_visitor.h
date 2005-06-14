@@ -117,13 +117,14 @@ public:
       // we have a handle from the previous insert
       if ( hhandle != Halfedge_handle(NULL) )
       {
-        res = m_arr->insert_from_right_vertex(cv, hhandle);
+        //res = m_arr->insert_from_right_vertex(cv, hhandle);
+        res = this->insert_from_right_vertex(cv, hhandle);
         res = res.twin();
       }
       else
       {
         // if this is the first left curve being inserted
-        res = insert_in_face_interior(cv, sc);
+        res = this->insert_in_face_interior(cv, sc);
       }
     } 
     else 
@@ -142,14 +143,16 @@ public:
         CGAL_assertion(prev.face() == hhandle.face());
        
         //res = m_arr->insert_at_vertices(cv,hhandle,prev);
-        res = insert_at_vertices(cv,hhandle,prev);
+        bool dummy;
+        res = this->insert_at_vertices(cv,hhandle,prev,sc, dummy);
        
 
         res = res.twin();
       }
       else
       {
-        res = m_arr->insert_from_left_vertex(cv, prev);
+        //res = m_arr->insert_from_left_vertex(cv, prev);
+        res = this->insert_from_left_vertex(cv, prev);
       }
     }
     if ( lastEvent->get_num_left_curves() == 0 &&  
@@ -179,9 +182,11 @@ public:
 
   virtual Halfedge_handle insert_at_vertices(const X_monotone_curve_2& cv,
                                              Halfedge_handle hhandle,
-                                             Halfedge_handle prev)
+                                             Halfedge_handle prev,
+                                             Subcurve* sc,
+                                             bool &new_face_created)
   {
-     bool      new_face_created;
+     //bool      new_face_created;
 
         Halfedge_handle res = m_arr_access.insert_at_vertices_ex (cv, hhandle, prev,
 					                                        new_face_created);
@@ -218,6 +223,22 @@ public:
         }
         return res;
   }
+
+  virtual Halfedge_handle insert_from_right_vertex
+                          (const X_monotone_curve_2& cv,
+                           Halfedge_handle he)
+  {
+    return m_arr->insert_from_right_vertex(cv, he);
+  }
+
+  virtual Halfedge_handle insert_from_left_vertex
+                          (const X_monotone_curve_2& cv,
+                           Halfedge_handle he)
+  {
+    return m_arr->insert_from_left_vertex(cv, he);
+  }
+
+
 
     
  
