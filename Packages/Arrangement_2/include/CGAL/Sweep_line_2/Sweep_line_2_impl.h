@@ -120,27 +120,27 @@ class Sweep_line_2_impl
 {
 public:
 
-  typedef SweepLineTraits_2 Traits;
-  typedef typename Traits::Point_2 Point_2;
-  typedef typename Traits::Curve_2 Curve_2;
-  typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
+  typedef SweepLineTraits_2                       Traits;
+  typedef typename Traits::Point_2                Point_2;
+  typedef typename Traits::Curve_2                Curve_2;
+  typedef typename Traits::X_monotone_curve_2     X_monotone_curve_2;
 
-  typedef SweepEvent Event;
-  typedef Point_less_functor<Traits> PointLess;
-  typedef std::map< Point_2 , Event*, PointLess> EventQueue; 
-  typedef typename EventQueue::iterator EventQueueIter;
-  typedef typename EventQueue::value_type EventQueueValueType;
+  typedef SweepEvent                              Event;
+  typedef Point_less_functor<Traits>              PointLess;
+  typedef std::map< Point_2 , Event*, PointLess>  EventQueue; 
+  typedef typename EventQueue::iterator           EventQueueIter;
+  typedef typename EventQueue::value_type         EventQueueValueType;
+  typedef typename Event::SubCurveIter            EventCurveIter;
 
-  typedef typename Event::SubCurveIter EventCurveIter;
-
-  typedef CurveWrap Subcurve;
-  typedef std::list<Subcurve*> SubCurveList;
-  typedef typename SubCurveList::iterator SubCurveListIter;
-   
-  typedef Status_line_curve_less_functor<Traits, Subcurve> StatusLineCurveLess;
-  typedef Red_black_tree<Subcurve*, StatusLineCurveLess, 
-			 CGAL_ALLOCATOR(int)>              StatusLine;
-  typedef typename StatusLine::iterator StatusLineIter;
+  typedef CurveWrap                               Subcurve;
+  typedef std::list<Subcurve*>                    SubCurveList;
+  typedef typename SubCurveList::iterator         SubCurveListIter; 
+  typedef Status_line_curve_less_functor<Traits, Subcurve> 
+                                                  StatusLineCurveLess;
+  typedef Red_black_tree<Subcurve*,
+                         StatusLineCurveLess, 
+			                   CGAL_ALLOCATOR(int)>             StatusLine;
+  typedef typename StatusLine::iterator                   StatusLineIter;
  
   typedef typename Allocator::template rebind<Event>      EventAlloc_rebind;
   typedef typename EventAlloc_rebind::other               EventAlloc;
@@ -153,6 +153,7 @@ public:
   typedef std::set<CurvesPair,CurvesPairLess>             CurvesTable;
 
   typedef random_access_input_iterator<std::vector<Object> > vector_inserter;
+
 
   /*!
    * Constructor.
@@ -895,6 +896,7 @@ protected:
   X_monotone_curve_2  sub_cv1;
   X_monotone_curve_2  sub_cv2;
 
+
   Event* allocate_event(const Point_2& pt)
   {
     Event *e =  m_eventAlloc.allocate(1); 
@@ -913,8 +915,11 @@ protected:
 
 };
 
-template <class SweepLineTraits_2, class SweepEvent, class CurveWrap, 
-	  class SweepVisitor, typename Allocator>
+template <class SweepLineTraits_2,
+          class SweepEvent,
+          class CurveWrap, 
+	        class SweepVisitor,
+          typename Allocator>
 Sweep_line_2_impl<SweepLineTraits_2,SweepEvent,CurveWrap,SweepVisitor,
 		  Allocator>::
 ~Sweep_line_2_impl() 
@@ -940,8 +945,10 @@ Sweep_line_2_impl<SweepLineTraits_2,SweepEvent,CurveWrap,SweepVisitor,
  *  For each curve create a Subcurve instance.
  */
 template < class SweepLineTraits_2,
-          class SweepEvent, class CurveWrap,class SweepVisitor,
-          typename Allocator>
+           class SweepEvent,
+           class CurveWrap,
+           class SweepVisitor,
+           typename Allocator >
 inline void 
 Sweep_line_2_impl<SweepLineTraits_2,SweepEvent,CurveWrap,SweepVisitor,
                   Allocator>::
@@ -1019,7 +1026,9 @@ _init_curve(X_monotone_curve_2& curve,unsigned int j)
  * @return an iterator to the position where the curve will be removed from.
  */
 template <class SweepLineTraits_2,
-          class SweepEvent, class CurveWrap, class SweepVisitor,
+          class SweepEvent,
+          class CurveWrap,
+          class SweepVisitor,
           typename Allocator>
 inline void
 Sweep_line_2_impl<SweepLineTraits_2,SweepEvent,CurveWrap,SweepVisitor,
@@ -1067,7 +1076,9 @@ _remove_curve_from_status_line(Subcurve *leftCurve, bool remove_for_good)
 */
 
 template < class SweepLineTraits_2,
-           class SweepEvent, class CurveWrap,class SweepVisitor,
+           class SweepEvent,
+           class CurveWrap,
+           class SweepVisitor,
            typename Allocator >
 inline void 
 Sweep_line_2_impl<SweepLineTraits_2,SweepEvent,CurveWrap,SweepVisitor,
@@ -1089,7 +1100,6 @@ _intersect(Subcurve *c1, Subcurve *c2, bool after_remove)
 
   //insert curves_pair to the table to avoid future checkings for intersection
   m_curves_table.insert(curves_pair);
-
 
   vector_inserter vi (m_x_objects) ;
   vector_inserter vi_end (m_x_objects);
