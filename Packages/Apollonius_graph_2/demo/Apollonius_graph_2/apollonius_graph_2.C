@@ -6,8 +6,11 @@
 #include <qapplication.h>
 #include <qmainwindow.h>
 #include <qpixmap.h>
+#include <qlabel.h>
+#include <qlayout.h>
 
 //#include <CGAL/IO/Color.h>
+#include <CGAL/Timer.h>
 #include <CGAL/IO/Qt_widget.h>
 #include <CGAL/IO/Qt_widget_layer.h>
 #include <CGAL/IO/Qt_widget_standard_toolbar.h>
@@ -47,6 +50,57 @@ to_circle(const Apollonius_site_2 &wp)
 
 
 //************************************
+// Layout_widget
+//************************************
+class Layout_widget
+  : public QWidget
+{
+ public:
+  Layout_widget(QWidget *parent, const char *name=0)
+    : QWidget(parent, name)
+  {
+    QBoxLayout* topLayout = new QVBoxLayout(this, QBoxLayout::TopToBottom);
+
+      // create/initialize the label
+    label = new QLabel(this, "label");
+    label->setText("");
+
+    // create/initialize Qt_widget
+    widget = new CGAL::Qt_widget(this);
+
+    // add widgets to layout
+    topLayout->addWidget(widget, 1);
+    topLayout->addWidget(label, 0);
+  }
+
+  ~Layout_widget() {}
+
+  CGAL::Qt_widget* get_qt_widget() { return widget; }
+  QLabel*          get_label() { return label; }
+
+  // methods to access functionality of CGAL::Qt_widget;
+  template<class T>
+  void attach(const T& t) { widget->attach(t); }
+  void redraw() { widget->redraw(); }
+  void print_to_ps() { widget->print_to_ps(); }
+  void set_window(double xmin, double xmax, double ymin, double ymax) {
+    widget->set_window(xmin, xmax, ymin, ymax);
+  }
+
+ private:
+  CGAL::Qt_widget *widget;
+  QLabel          *label;
+};
+
+template<class T>
+Layout_widget& operator<<(Layout_widget& lw, const T& t)
+{
+  *lw.get_qt_widget() << t;
+  return lw;
+}
+
+
+//************************************
 // my window
 //************************************
 class My_Window : public QMainWindow {
@@ -54,7 +108,7 @@ class My_Window : public QMainWindow {
 
   friend class Layers_toolbar;
 private:
-  CGAL::Qt_widget *widget;
+  Layout_widget  *widget;
   Layers_toolbar *layers_toolbar;
   File_toolbar   *file_toolbar;
   CGAL::Qt_widget_standard_toolbar *stoolbar;
@@ -63,6 +117,9 @@ private:
   bool is_edit_mode;
   bool is_remove_mode;
   bool is_insert_point_mode;
+  QString title_;
+  QString qmsg;
+  char msg[300];
 
 public:
   My_Window(int x, int y)
@@ -71,7 +128,7 @@ public:
     is_remove_mode = false;
     is_insert_point_mode = false;
 
-    widget = new CGAL::Qt_widget(this);
+    widget = new Layout_widget(this);
     setCentralWidget(widget);
 
     *widget << CGAL::BackgroundColor(CGAL::YELLOW);
@@ -82,20 +139,20 @@ public:
     //    setUsesBigPixmaps(TRUE);
 
     //How to attach the standard toolbar
-    stoolbar = new CGAL::Qt_widget_standard_toolbar(widget, this,
-						    this, FALSE, "");
+    stoolbar = new CGAL::Qt_widget_standard_toolbar(widget->get_qt_widget(),
+						    this, this, FALSE, "");
 
     file_toolbar = new File_toolbar("File Operations",
 				    this, this, FALSE,
 				    "File Operations");
 
-    layers_toolbar = new Layers_toolbar(widget, ag,
+    layers_toolbar = new Layers_toolbar(widget->get_qt_widget(), ag,
 					"Geometric Operations",
 					this, this, FALSE,
 					"Geometric Operations");
 
-    connect(widget, SIGNAL(new_cgal_object(CGAL::Object)), this,
-	    SLOT(get_object(CGAL::Object)));
+    connect(widget->get_qt_widget(), SIGNAL(new_cgal_object(CGAL::Object)), 
+	    this, SLOT(get_object(CGAL::Object)));
 
     connect(layers_toolbar, SIGNAL(inputModeChanged(bool)), this,
 	    SLOT(get_input_mode(bool)));
@@ -127,8 +184,39 @@ public:
     get_circle.activate();
     get_point.deactivate();
 
+
+    // Adding menus
+
+    // file menu
+    QPopupMenu* file = new QPopupMenu(this);
+    menuBar()->insertItem("&File", file);
+    file->insertItem("&Clear", this, SLOT(remove_all()), CTRL+Key_C);
+    file->insertSeparator();
+    file->insertItem("&Load Apollonius graph", this,
+		     SLOT(open_from_file()), CTRL+Key_O);
+    file->insertItem("&Save Apollonius graph", this,
+		     SLOT(save_to_file()), CTRL+Key_S);
+    file->insertSeparator();
+    file->insertItem("&Read input data", this,
+		     SLOT(read_input_from_file()), CTRL+Key_R);
+    file->insertItem("&Save output data", this,
+		     SLOT(write_output_to_file()), CTRL+Key_W);
+    file->insertSeparator();
+    file->insertItem("Print", this, SLOT(print_screen()), CTRL+Key_P);
+    //    file->insertSeparator();
+    //    file->insertItem("&Quit",this,SLOT(closeAll()),CTRL+Key_Q);
+
+    // about menu
+    QPopupMenu* about = new QPopupMenu(this);
+    menuBar()->insertItem("&About", about);
+    about->insertItem("&About", this, SLOT(about()), CTRL+Key_A );
+    about->insertItem("About &Qt", this, SLOT(aboutQt()) );
+
+    title_ = tr("Apollonius graph 2");
+
     //    get_circle.setMouseTracking(true);
   }
+
   ~My_Window(){}
 
   void set_window(double xmin, double xmax,
@@ -137,46 +225,42 @@ public:
     widget->set_window(xmin, xmax, ymin, ymax);
   }
 
+  const QString& get_title() const { return title_; }
+  void set_title(const QString& title) { title_ = title; }
+
+private:
+  void set_msg(const QString& str) {
+    widget->get_label()->setText(str);
+  }
+
 private slots:
   void get_object(CGAL::Object obj)
   {
+    set_msg("");
     if ( is_edit_mode ) { return; }
     if ( is_remove_mode ) {
       if ( ag.number_of_vertices() == 0 ) { return; }
       Point_2 p;
       if ( CGAL::assign(p, obj) ) {
 	Vertex_handle v = ag.nearest_neighbor(p);
-#if 0
-	AG_2::Vertex_circulator vc = v->incident_vertices();
-	AG_2::Vertex_circulator vc_start = vc;
-	widget->redraw();
-	*widget << CGAL::PURPLE;
-	std::cout << "==============================" << std::endl;
-	std::cout << v->point() << " " << v->timestamp() << std::endl;
-	std::cout << "------------------------------" << std::endl;
-	do {
-	  Vertex_handle v1(vc);
-	  if ( !ag.is_infinite(v1) ) {
-	    *widget << to_circle(v1->point());
-	    *widget << v1->point().point();
-	    std::cout << v1->point() << " " << v1->timestamp() << std::endl;
-	  }
-	  ++vc;
-	} while ( vc != vc_start );
-	std::cout << "==============================" << std::endl;
-#else
-	if ( &(*v) != NULL ) {
+	if ( v != Vertex_handle() ) {
+	  qmsg = "Removing input site...";
+	  set_msg(qmsg);
 	  ag.remove(v);
+	  qmsg = qmsg + " done! - Validating Apollonius diagram...";
+	  set_msg(qmsg);
 	  assert( ag.is_valid(false,1) );
-	  //	  std::cout << "--------" << std::endl;
+	  qmsg = qmsg + " done!";
+	  set_msg(qmsg);
 	}
-#endif
       }
       widget->redraw();
       return;
     }
     Circle_2 c;
     Point_2 p;
+
+    CGAL::Timer timer;
     if ( CGAL::assign(c, obj) ) {
       Apollonius_site_2 wp = to_site(c);
       ag.insert(wp);
@@ -184,9 +268,12 @@ private slots:
       Apollonius_site_2 wp(p, Weight(0));
       ag.insert(wp);
     }
+    CGAL_CLIB_STD::sprintf(msg, "Insertion time: %f.", timer.time());
+    qmsg = QString(msg) + " - Validating Apollonius graph...";
+    set_msg(qmsg);
     assert( ag.is_valid(false, 1) );
-    //    std::cout << "--------" << std::endl;
-    //      *widget << CGAL::RED << c;
+    qmsg = qmsg + " done!";
+    set_msg(qmsg);
     widget->redraw();
   }
 
@@ -237,52 +324,154 @@ private slots:
 
   void read_from_file(const QString& fileName)
   {
+    set_msg("");
     std::ifstream f(fileName);
     assert( f );
 
-    //      int n;
-    //      f >> n;
     Apollonius_site_2 wp;
 
     int counter = 0;
     std::cout << std::endl;
 
+    CGAL::Timer timer;
+    timer.start();
     while ( f >> wp ) {
       ag.insert(wp);
       counter++;
       if ( counter % 500 == 0 ) {
-	std::cout << "\r" << counter
-		  << " sites have been inserted..." << std::flush;
+	CGAL_CLIB_STD::sprintf(msg, "%d have been inserted...", counter);
+	set_msg(msg);
       }
     }
-    std::cout << "\r" << counter 
-	      << " sites have been inserted... Done!"
-	      << std::endl;
+    timer.stop();
+
+    CGAL_CLIB_STD::sprintf(msg,
+			   "%d sites inserted. Insertion time: %f "
+			   "- Validating Apollonius graph...",
+			   counter, timer.time());
+    set_msg(msg);
+
     assert( ag.is_valid(false, 1) );
+
+    qmsg = QString(msg) + " done!";
+    set_msg(qmsg);    
     widget->redraw();
   }
 
   void write_to_file(const QString& fileName)
   {
+    set_msg("");
     std::ofstream f(fileName);
     assert( f );
     f.precision(18);
 
+    QString qmsg = "Writing input sites to file...";
+    set_msg(qmsg);
     for( AG_2::Sites_iterator it = ag.sites_begin();
 	 it != ag.sites_end(); it++ ) {
       f << (*it) << std::endl;
+    }
+    qmsg = qmsg + " done!";
+    set_msg(qmsg);
+  }
+
+  void read_input_from_file()
+  {
+    set_msg("");
+    QString fileName =
+      QFileDialog::getOpenFileName(QString::null, QString::null,
+				   this, "Open file...");
+
+    if ( !fileName.isNull() ) {
+      read_from_file(fileName);
+    }
+  }
+
+  void write_output_to_file()
+  {
+    set_msg("");
+    QString fileName =
+      QFileDialog::getSaveFileName(tr("data.out"), QString::null,
+				   this, "Save as...");
+
+    if ( !fileName.isNull() ) {
+      write_to_file(fileName);
+    }
+  }
+
+  void open_from_file()
+  {
+    set_msg("");
+    QString fileName =
+      QFileDialog::getOpenFileName(QString::null, QString::null,
+				   this, "Open file...");
+
+    if ( !fileName.isNull() ) {
+      qmsg = "Reading Apollonius graph from file...";
+      set_msg(qmsg);
+
+      std::ifstream f(fileName);
+      assert(f);
+
+      CGAL::Timer timer;
+      timer.start();
+      f >> ag;
+      timer.stop();
+
+      int n_sites = static_cast<int>(ag.number_of_vertices()) +
+	static_cast<int>(ag.number_of_hidden_sites());
+      CGAL_CLIB_STD::sprintf(msg,
+			     "%d sites inserted. Insertion time: %f",
+			     n_sites, timer.time());
+      qmsg = qmsg + " done! " + msg;
+      set_msg(qmsg);
+      widget->redraw();
+    }
+  }
+
+  void save_to_file()
+  {
+    set_msg("");
+    QString fileName =
+      QFileDialog::getSaveFileName(tr("data.out"), QString::null,
+				   this, "Save as...");
+						      
+    if ( !fileName.isNull() ) {
+      qmsg = "Saving Apollonius graph to file...";
+      set_msg(qmsg);
+      std::ofstream f(fileName);
+      assert(f);      
+      f << ag;
+      qmsg = qmsg + " done!";
+      set_msg(qmsg);
     }
   }
 
   void print_screen()
   {
+    set_msg("");
     widget->print_to_ps();
   }
 
   void remove_all()
   {
+    set_msg("");
     ag.clear();
     widget->redraw();
+  }
+
+
+  void about()
+  {
+    QMessageBox::about( this, get_title(),
+			"This is a demo for the 2D Apollonius graph\n\n"
+			"Author: Menelaos Karavelas <mkaravel@tem.uoc.gr>\n\n"
+			"Copyright(c) INRIA 2003,2004,2005");
+  }
+
+  void aboutQt()
+  {
+    QMessageBox::aboutQt( this, get_title() );
   }
 
 };
@@ -305,7 +494,7 @@ main(int argc, char* argv[])
 #endif
   W.show();
   W.set_window(0,size,0,size);
-  W.setCaption("Apollonius diagram 2");
+  W.setCaption( W.get_title() );
   W.setMouseTracking(TRUE);
   return app.exec();
 }

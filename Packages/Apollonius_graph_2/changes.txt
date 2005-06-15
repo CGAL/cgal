@@ -1,3 +1,9 @@
+15 June 2005:  Menelaos Karavelas
+- added layout widget in demo including a label; messages about the actions
+  taken are now printed on the label.
+- added file menu in demo; used for file I/O.
+- added about boxes in demo.
+
 13 June 2005:  Menelaos Karavelas
 - changed messages/captions of the file toolbar of the demo program
 
