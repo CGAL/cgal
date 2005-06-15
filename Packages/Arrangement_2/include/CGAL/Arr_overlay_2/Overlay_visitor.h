@@ -262,7 +262,7 @@ public:
       do
       { 
         //get the current halfedge on the face boundary
-        Halfedge_handle he(ccb_circ.halfedge());
+        Halfedge_handle he (*ccb_circ);
 
         CGAL_assertion(m_halfedges_map.is_defined(he));
         const Curve_info& cv_info = m_halfedges_map[he];
