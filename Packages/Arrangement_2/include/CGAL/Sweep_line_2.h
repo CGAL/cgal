@@ -50,6 +50,7 @@ template <class Traits, class CurveInputIterator, class OutputIterator>
 OutputIterator get_intersection_points (CurveInputIterator curves_begin,
                                         CurveInputIterator curves_end,
                                         OutputIterator points,
+                                        Traits &tr,
                                         bool report_endpoints = false)
 {
   // Define the sweep-line types:
@@ -90,6 +91,7 @@ template <class Traits, class CurveInputIterator, class OutputIterator>
 OutputIterator get_subcurves (CurveInputIterator curves_begin,
 			      CurveInputIterator curves_end,
 			      OutputIterator subcurves,
+            Traits &tr,
 			      bool mult_overlaps = false)
 {
   // Define the sweep-line types:
@@ -123,7 +125,8 @@ OutputIterator get_subcurves (CurveInputIterator curves_begin,
  */
 template <class Traits, class CurveInputIterator>
 bool do_curves_intersect (CurveInputIterator curves_begin,
-                          CurveInputIterator curves_end)
+                          CurveInputIterator curves_end,
+                          Traits &tr)
 {
   // Define the sweep-line types:
   typedef Sweep_line_do_curves_x_visitor<Traits>      Visitor;
