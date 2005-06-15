@@ -377,17 +377,28 @@ bool test_svd(InputStream& is, const SVD&, char* fname)
 
   start_testing("file I/O methods and I/O operators");
   {
+    size_type nisc1 = svd.number_of_input_sites();
+    size_type npc1 = svd.point_container().size();
+    size_type nv1 = svd.number_of_vertices();
+
     std::ofstream ofs(fname);
     assert( ofs );
     svd.file_output(ofs);
     CGAL_assertion( svd.is_valid() );
     ofs.close();
-      
+
+    svd.clear();
+
     std::ifstream ifs(fname);
     assert( ifs );
     svd.file_input(ifs);
     CGAL_assertion( svd.is_valid() );
     ifs.close();
+
+    size_type nisc2 = svd.number_of_input_sites();
+    size_type npc2 = svd.point_container().size();
+    size_type nv2 = svd.number_of_vertices();
+    if ( nisc1 != nisc2 || npc1 != npc2 || nv1 != nv2 ) { return false; }
   }
   end_testing("file I/O methods and I/O operators");
 
