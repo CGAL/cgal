@@ -37,8 +37,10 @@ class Arr_aggregate_insert
   typedef typename Arr::Halfedge_handle                      Halfedge_handle;
   typedef typename Arr::Edge_iterator                        Edge_iterator;
   typedef typename Arr::Traits_2                             Traits;
-  typedef Arr_sweep_line_curve<Traits, Halfedge_handle>      Subcurve; 
-  typedef Arr_sweep_line_event<Traits, Subcurve>             Event;
+  typedef Arr_sweep_line_curve<Traits>                       Subcurve; 
+  typedef Arr_sweep_line_event<Traits,
+                               Subcurve,
+                               Halfedge_handle>              Event;
   typedef typename Traits::X_monotone_curve_2                X_monotone_curve_2;
   typedef Arr_sweep_line_visitor<Traits,
                                  Arr,

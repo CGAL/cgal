@@ -75,8 +75,8 @@ void arr_overlay (const Arrangement_2<Traits_, Dcel1>   & arr1,
 
   typedef typename Traits::X_monotone_curve_2          X_monotone_curve_2;
 
-  typedef Overlay_subcurve<Traits, Halfedge_handle_res>  Subcurve;
-  typedef Arr_sweep_line_event<Traits, Subcurve>         Event;
+  typedef Overlay_subcurve<Traits>  Subcurve;
+  typedef Arr_sweep_line_event<Traits, Subcurve,Halfedge_handle_res >         Event;
   typedef Overlay_visitor<Traits,
                           Arrangement1,
                           Arrangement2,

@@ -49,9 +49,8 @@ protected:
                             CGAL_ALLOCATOR(int)>           Sweep_line;
   typedef typename Sweep_line::StatusLineIter              StatusLineIter;
 
-  typedef Arr_insert_info<Halfedge_handle>                        ArrInsertInfo;
-  typedef std::list<Subcurve *>                                    SubcurveContainer;
-  typedef typename SubcurveContainer::iterator                     SubCurveIter;
+  typedef typename Event::Arr_insert_info                  Arr_insert_info;
+  typedef typename Event::SubCurveIter                     SubCurveIter;
 
 private:
 
@@ -103,10 +102,10 @@ public:
 
   void add_subcurve(const X_monotone_curve_2& cv,Subcurve* sc)
   {
-    Event *lastEvent = (sc)->get_last_event();
-    ArrInsertInfo *insertInfo = lastEvent->get_insert_info();
+    Event *lastEvent = reinterpret_cast<Event*>((sc)->get_last_event());
+    Arr_insert_info *insertInfo = lastEvent->get_insert_info();
     Halfedge_handle res; 
-    ArrInsertInfo *currentInfo = m_currentEvent -> get_insert_info();
+    Arr_insert_info *currentInfo = m_currentEvent -> get_insert_info();
     Halfedge_handle hhandle = currentInfo->get_halfedge_handle();
 
     int jump = lastEvent->get_halfedge_jump_count(sc);

@@ -31,8 +31,9 @@ CGAL_BEGIN_NAMESPACE
 template<class Traits, class OutputIerator, class _Arrangement>
 class Arr_batched_point_location_visitor
 {
-  typedef Arr_batched_point_location_visitor<Traits,OutputIerator,_Arrangement>
-    Self;
+  typedef Arr_batched_point_location_visitor<Traits,
+                                             OutputIerator,
+                                             _Arrangement>        Self;   
   typedef _Arrangement                                            Arrangement;
   typedef Sweep_line_subcurve<Traits>                             Subcurve;
   typedef Arr_batched_point_location_event<Traits, Subcurve>      Event;
@@ -138,6 +139,7 @@ protected:
   OutputIerator m_out;
 
   Sweep_line* m_sweep_line;
+
   const Arrangement& m_arr;
 };
 

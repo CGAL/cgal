@@ -42,8 +42,10 @@ class Arr_addition_insert
   typedef typename Arr::Face_handle                        Face_handle;
   typedef typename Arr::Traits_2                           Base_traits;
   typedef Arr_meta_traits<Base_traits, Halfedge_handle>    Traits;
-  typedef Arr_sweep_line_curve<Traits, Halfedge_handle>    Subcurve; 
-  typedef Arr_sweep_line_event<Traits, Subcurve>           Event;
+  typedef Arr_sweep_line_curve<Traits>                     Subcurve; 
+  typedef Arr_sweep_line_event<Traits,
+                               Subcurve,
+                               Halfedge_handle>            Event;
   
   typedef typename Traits::X_monotone_curve_2              X_monotone_curve_2;
   typedef Arr_agg_addition_visitor <Traits,

@@ -43,26 +43,28 @@ CGAL_BEGIN_NAMESPACE
  * \sa Sweep_line_event
  */
 
-template<class SweepLineTraits_2, class CurveWrap>
+template<class SweepLineTraits_2, class CurveWrap, class HalfedgeHandle>
 class Arr_sweep_line_event : 
   public Sweep_line_event<SweepLineTraits_2, CurveWrap>
 {
 public:
   typedef SweepLineTraits_2 Traits;
-  typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
-  typedef typename Traits::Point_2 Point_2;
+  typedef typename Traits::X_monotone_curve_2             X_monotone_curve_2;
+  typedef typename Traits::Point_2                        Point_2;
 
-  typedef Sweep_line_event<SweepLineTraits_2, CurveWrap> Base;
-  typedef Arr_sweep_line_event<Traits, CurveWrap> Self;
+  typedef Sweep_line_event<SweepLineTraits_2,
+                           CurveWrap>                     Base;
+  typedef Arr_sweep_line_event<Traits,
+                               CurveWrap,
+                               HalfedgeHandle>            Self;
 
-  typedef CurveWrap SubCurve;
-  typedef std::list<SubCurve *> SubcurveContainer;
-  typedef typename SubcurveContainer::iterator SubCurveIter;
-  typedef typename SubcurveContainer::reverse_iterator SubCurveRevIter;
-
-    
-  typedef typename SubCurve::ArrInsertInfo        ArrInsertInfo;
-  typedef typename ArrInsertInfo::Halfedge_handle Halfedge_handle;
+  typedef CurveWrap                                       SubCurve;
+  typedef typename Base::template SC_container<SubCurve*> SC_container_rebind;
+  typedef typename SC_container_rebind::other             SubcurveContainer;
+  typedef typename SubcurveContainer::iterator            SubCurveIter;
+  typedef typename SubcurveContainer::reverse_iterator    SubCurveRevIter;
+   
+  typedef Arr_insert_info<HalfedgeHandle>                 Arr_insert_info;
 
   typedef std::vector<bool>       BitVector;
   typedef BitVector::iterator     BitVectorIter;
@@ -85,7 +87,7 @@ public:
     Base::init(point);
   }
 
-  ArrInsertInfo *get_insert_info()
+  Arr_insert_info *get_insert_info()
   {
     return &m_insertInfo;
   }
@@ -108,50 +110,7 @@ public:
   }
 
 
-  //int get_halfedge_jump_count(CurveWrap *curve)
-  //{
-  //  int i = 0;
-  //  int skip = 0;
-  // 
-  //  SubCurveIter iter = m_rightCurves.begin();
-  //  for(; iter!=m_rightCurves.end(); ++iter)
-  //  {
-  //    if((*iter) == NULL)
-  //      skip++;
-  //  }
-  //  skip--;  // now 'skip' holds the amount of the right curves of the event
-		//         // that are already inserted to the planar map  - 1 (minus 1)
-
-  //  iter = m_rightCurves.end();
-  //  --iter;
-  //   
-  //  unsigned int num_left_curves = this->get_num_left_curves();
-  //  for ( ; iter != m_rightCurves.begin() ; --iter )
-  //  {
-  //    if(curve == (*iter))
-  //    {
-  //      (*iter) = NULL; 
-  //      if (( i == 0 ) && ( num_left_curves == 0 )) 
-  //      {
-  //        return skip;
-  //      }
-  //      if ( num_left_curves == 0 ) 
-	 //     {   
-  //        return i-1;
-  //      }
-  //      return i;
-  //    }
-  //    if ( (*iter) == NULL )
-  //      i++;
-  //  }
-
-  //  CGAL_assertion(curve == (*iter));
-  //  (*iter) = NULL; 
-  //  
-  //  if ( num_left_curves == 0 )
-  //    i--;
-  //  return i;
-  //}
+  
   int get_halfedge_jump_count(CurveWrap *curve)
   {
     int i = 0;
@@ -192,7 +151,6 @@ public:
     }
 
     CGAL_assertion(curve == (*iter));
-    //std::cout<<"m_isCurveInArr.size() == " <<m_isCurveInArr.size() << "\ncounter = "<< counter<<"\n";
     m_isCurveInArr[counter] = true;
     
     if ( num_left_curves == 0 )
@@ -201,18 +159,6 @@ public:
   }
 
  
-
-  /*bool is_curve_largest(CurveWrap *curve)
-  {
-    for( SubCurveRevIter rev_iter = m_rightCurves.rbegin();
-         rev_iter != m_rightCurves.rend() && curve != (*rev_iter) ;
-         ++rev_iter)
-    {
-      if((*rev_iter) == NULL)
-         return false;
-    }
-    return true;
-  }*/
   bool is_curve_largest(CurveWrap *curve)
   {
 	int counter = 0;
@@ -233,7 +179,7 @@ public:
   
 
 protected:
-  ArrInsertInfo m_insertInfo;
+  Arr_insert_info m_insertInfo;
   BitVector m_isCurveInArr;
 
 };

@@ -21,11 +21,8 @@
 #ifndef CGAL_SWEEP_LINE_EVENT_H
 #define CGAL_SWEEP_LINE_EVENT_H
 
-
-#include <CGAL/Sweep_line_2/Sweep_line_functors.h>
 #include <CGAL/Sweep_line_2/Sweep_line_traits.h>
 #include <list>
-#include <set>
 
  
 CGAL_BEGIN_NAMESPACE
@@ -58,14 +55,14 @@ public:
   typedef typename Traits::Point_2                          Point_2;
 
   typedef CurveWrap                                         SubCurve;
+  template<typename U>
+  struct SC_container { typedef std::list<U> other; };
+
   typedef std::list<SubCurve*>                              SubcurveContainer; 
   typedef typename SubcurveContainer::iterator              SubCurveIter;
   typedef typename SubcurveContainer::reverse_iterator      SubCurveRevIter;
 
-  //typedef Status_line_curve_less_functor<Traits, SubCurve>  StatusLineCurveLess;
-  /*typedef std::set<SubCurve*, StatusLineCurveLess>          StatusLine;
-  typedef typename StatusLine::iterator                     StatusLineIter;*/
-
+ 
   typedef std::pair<bool, SubCurveIter>                     Pair;
 
 
@@ -270,32 +267,6 @@ public:
     return m_point;
   }
 
-
-  ///*! relocate a left curve: relocate i before pos */
-  //void relocate_left_curve(SubCurveIter pos, SubCurveIter i)
-  //{
-  //  m_leftCurves.splice(pos, m_leftCurves, i);
-  //}
-
-  //void resize_left_curves(int size)
-  //{
-  //  m_leftCurves.resize(size);
-  //}
-  //  
-  ////remove all occurances of sc after iterator 'after'
-  //void remove_left_curve(SubCurveIter after, SubCurve* sc)
-  //{
-  //  SubCurveIter iter = ++after;
-  //  while( iter != m_leftCurves.end())
-  //  { 
-  //    if(*iter == sc)
-  //    {
-  //     iter = m_leftCurves.erase(iter); //iter is implicitly incremented
-  //    }
-  //    else
-  //      ++iter;
-  //  }
-  //}
 
   template <class InputIterator>
   void replace_left_curves(InputIterator begin, InputIterator end)

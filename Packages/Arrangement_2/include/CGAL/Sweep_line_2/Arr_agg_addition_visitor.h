@@ -34,10 +34,8 @@ protected:
   typedef typename Base::Sweep_line                        Sweep_line;
   typedef typename Base::StatusLineIter                    StatusLineIter;
   typedef typename Base::Halfedge_handle                   Halfedge_handle;
-  typedef Arr_insert_info<Halfedge_handle>                 ArrInsertInfo;
-  typedef std::list<Subcurve *>                            SubcurveContainer;
-  typedef typename SubcurveContainer::iterator             SubCurveIter;
-  typedef typename SubcurveContainer::reverse_iterator     SubCurveRevIter;
+  typedef typename Event::SubCurveIter                     SubCurveIter;
+  typedef typename Event::SubCurveRevIter                  SubCurveRevIter;
   typedef typename Traits::X_monotone_curve_2              X_monotone_curve_2;
   typedef typename Traits::Point_2                         Point_2;
   typedef Sweep_line_2_impl<Traits,

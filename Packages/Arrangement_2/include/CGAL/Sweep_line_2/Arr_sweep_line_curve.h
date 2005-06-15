@@ -21,12 +21,7 @@
 #ifndef CGAL_ARR_SWEEP_LINE_CURVE_H
 #define CGAL_ARR_SWEEP_LINE_CURVE_H
 
-#include <set>
-
 #include <CGAL/Sweep_line_2/Sweep_line_subcurve.h>
-#include <CGAL/Sweep_line_2/Arr_insert_info.h>
-#include <CGAL/Sweep_line_2/Arr_sweep_line_event.h>
-#include <CGAL/Sweep_line_2/Sweep_line_rb_tree.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -43,22 +38,20 @@ CGAL_BEGIN_NAMESPACE
  * \sa Sweep_line_subcurve
  */
 
-template<class SweepLineTraits_2, class HalfedgeHandle>
+template<class SweepLineTraits_2>
 class Arr_sweep_line_curve : public Sweep_line_subcurve<SweepLineTraits_2>
 {
 public:
-  typedef SweepLineTraits_2 Traits;
-  typedef typename Traits::Point_2 Point_2;
-  typedef typename Traits::Curve_2 Curve_2;
-  typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
-  typedef Sweep_line_subcurve<SweepLineTraits_2> Base;
-  typedef Arr_sweep_line_curve<Traits, HalfedgeHandle> Self;
+  typedef SweepLineTraits_2                        Traits;
+  typedef typename Traits::Point_2                 Point_2;
+  typedef typename Traits::X_monotone_curve_2      X_monotone_curve_2;
+
+  typedef Sweep_line_subcurve<SweepLineTraits_2>   Base;
+  typedef Arr_sweep_line_curve<Traits>             Self;
 
   
-  typedef typename Base::StatusLineIter         StatusLineIter;
-
-  typedef Arr_insert_info<HalfedgeHandle> ArrInsertInfo;
-  typedef Arr_sweep_line_event<Traits, Self> Event;
+  typedef typename Base::StatusLineIter            StatusLineIter;
+  typedef void*                                    Event_ptr;
 
 
   Arr_sweep_line_curve(): Base(),
@@ -75,11 +68,11 @@ public:
     Base::init(curve);
   }
 
-  void set_last_event(Event *e) {
+  void set_last_event(Event_ptr e) {
     m_lastEvent = e;
   }
 
-  Event *get_last_event() const {
+  Event_ptr get_last_event() const {
     return m_lastEvent;
   }
 
@@ -87,7 +80,7 @@ public:
 protected:
 
   /*! the last event that was handled on the curve */
-  Event *m_lastEvent;
+  Event_ptr  m_lastEvent;
   
 };
 

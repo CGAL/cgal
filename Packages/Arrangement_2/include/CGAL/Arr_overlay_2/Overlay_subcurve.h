@@ -24,26 +24,18 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template<class _Traits, class HalfedgeHandle>
-class Overlay_subcurve : public Arr_sweep_line_curve<_Traits, HalfedgeHandle>
+template<class _Traits>
+class Overlay_subcurve : public Arr_sweep_line_curve<_Traits>
 {
 public:
   typedef _Traits                                        Traits;
   typedef typename Traits::Point_2                       Point_2;
   typedef typename Traits::X_monotone_curve_2            X_monotone_curve_2;
-  typedef Arr_sweep_line_curve<Traits, HalfedgeHandle>   Base;
-  typedef Overlay_subcurve<Traits, HalfedgeHandle>       Self;
 
-  typedef Status_line_curve_less_functor<Traits, Self>   StatusLineCurveLess;
-  typedef Red_black_tree<Self*,
-                         StatusLineCurveLess,
-                         CGAL_ALLOCATOR(int)> 
-                                                         StatusLine;
-  typedef typename StatusLine::iterator                  StatusLineIter;
+  typedef Arr_sweep_line_curve<Traits>                   Base;
+  typedef Overlay_subcurve<Traits>                       Self;
 
-  typedef Arr_insert_info<HalfedgeHandle>                ArrInsertInfo;
-  typedef Arr_sweep_line_event<Traits, Self>             Event;
-  typedef Arr_sweep_line_event<Traits, Base>             BaseEvent;
+  typedef typename Base::StatusLineIter                  StatusLineIter;
 
   typedef typename Traits::Color                         Color;
   typedef typename Traits::Halfedge_handle_red           Halfedge_handle_red;
@@ -59,9 +51,7 @@ protected:
   /*! A Subcure from a different color that lies above */
   Self*        m_above;
   
-  /*! */
-  StatusLineIter m_hint2;
-
+  
 public:
 
   Overlay_subcurve() : Base(),
@@ -72,20 +62,9 @@ public:
                                                       m_above(NULL)
   {}
 
-   void init(const X_monotone_curve_2 &curve)
+  void init(const X_monotone_curve_2 &curve)
   {
     Base::init(curve);
-  }
-
-
-  void set_hint(StatusLineIter hint) 
-  {
-    m_hint2 = hint;
-  }
-
-  StatusLineIter get_hint() const 
-  {
-    return m_hint2;
   }
 
   void set_above(Self* sc)
@@ -116,14 +95,6 @@ public:
   Halfedge_handle_blue get_blue_halfedge_handle() const
   {
     return m_lastCurve.get_blue_halfedge_handle();
-  }
-
-  void set_last_event(Event *e) {
-    m_lastEvent = reinterpret_cast<BaseEvent*>(e);
-  }
-
-  Event *get_last_event() const {
-    return (reinterpret_cast<Event*>(m_lastEvent));
   }
 
 };

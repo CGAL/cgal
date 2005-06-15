@@ -31,13 +31,14 @@ class Arr_batched_point_location_event :
 {
 public:
 
-  typedef SweepLineTraits_2 Traits;
-  typedef CurveWrap SubCurve;
-  typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
-  typedef typename Traits::Point_2 Point_2;
-
-  typedef Sweep_line_event<Traits, SubCurve> Base;
-  typedef Arr_batched_point_location_event<Traits, SubCurve> Self;
+  typedef SweepLineTraits_2                             Traits;
+  typedef typename Traits::Point_2                      Point_2;
+  typedef typename Traits::X_monotone_curve_2           X_monotone_curve_2;
+ 
+  typedef CurveWrap                                     SubCurve;
+  typedef Sweep_line_event<Traits, SubCurve>            Base;
+  typedef Arr_batched_point_location_event<Traits,
+                                           SubCurve>    Self;
 
 
   /*! constructor*/

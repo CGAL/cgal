@@ -21,8 +21,6 @@
 #ifndef CGAL_SWEEP_LINE_SUBCURVE_H
 #define CGAL_SWEEP_LINE_SUBCURVE_H
 
-#include <set>
-#include <list>
 
 #include <CGAL/Sweep_line_2/Sweep_line_functors.h>
 #include <CGAL/Sweep_line_2/Sweep_line_event.h>
@@ -66,19 +64,19 @@ template<class SweepLineTraits_2>
 class Sweep_line_subcurve
 {
 public:
-  typedef SweepLineTraits_2 Traits;
-  typedef typename Traits::Point_2 Point_2;
-  typedef typename Traits::Curve_2 Curve_2;
 
-  typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
+  typedef SweepLineTraits_2                               Traits;
+  typedef typename Traits::Point_2                        Point_2;
+  typedef typename Traits::X_monotone_curve_2             X_monotone_curve_2;
 
   typedef Sweep_line_subcurve<Traits> Self;
-  typedef Status_line_curve_less_functor<Traits, Self> StatusLineCurveLess;
+  typedef Status_line_curve_less_functor<Traits, Self>    StatusLineCurveLess;
+  typedef Red_black_tree<Self*,
+                         StatusLineCurveLess,
+                         CGAL_ALLOCATOR(int)>             StatusLine;
+  typedef typename StatusLine::iterator                   StatusLineIter;
 
-  typedef Red_black_tree<Self*, StatusLineCurveLess, CGAL_ALLOCATOR(int)> StatusLine;
-  typedef typename StatusLine::iterator StatusLineIter;
-
-  typedef Sweep_line_event<Traits, Self>                Event;
+  typedef Sweep_line_event<Traits, Self>                  Event;
 
 
 
@@ -86,24 +84,12 @@ public:
   Sweep_line_subcurve() : m_overlap_subcurve(NULL),
                           m_orig_subcurve1(NULL),
                           m_orig_subcurve2(NULL)
-  {
-  }
+  {}
 
   Sweep_line_subcurve(const X_monotone_curve_2 &curve);
 
   void init(const X_monotone_curve_2 &curve)
   {
-    //Comparison_result res = traits()->compare_xy(traits()->curve_source(curve),
-    //                                             traits()->curve_target(curve));
-    //if ( res  == LARGER )
-    //{
-    //  m_isRightSide = false;
-    //}
-    //else 
-    //{ 
-    //  CGAL_assertion(res == SMALLER); //curves cannot be a degenerate point
-    //  m_isRightSide = true;
-    //}
     m_lastCurve = curve;
   }
 
@@ -127,11 +113,6 @@ public:
   }
 
   
-
-  /*bool is_source_left_to_target() const { 
-    return m_isRightSide; 
-  }*/
-
   
   template<class SweepEvent>
   bool is_end_point(const SweepEvent* event)const
@@ -140,22 +121,11 @@ public:
   }
  
 
-   /*Point_2 get_right_end() const {
-    if ( is_source_left_to_target() )
-      return traits()->curve_target(m_lastCurve);
-    return traits()->curve_source(m_lastCurve);
-  }*/
-
   Point_2 get_right_end() const {
    return traits()->construct_max_vertex_2_object()(m_lastCurve);
   }
 
-   /*Point_2 get_left_end() const {
-    if ( is_source_left_to_target() )
-      return traits()->curve_source(m_lastCurve);
-    return traits()->curve_target(m_lastCurve);
-  }*/
-
+  
   Point_2 get_left_end() const {
     return traits()->construct_min_vertex_2_object()(m_lastCurve);  
   }
@@ -243,10 +213,6 @@ public:
     if(get_right_event() != (Event*)e)
     {
       X_monotone_curve_2 dummy;
-      /*if(m_isRightSide)
-        traits()->curve_split(m_lastCurve, dummy,m_lastCurve, e->get_point());
-      else
-        traits()->curve_split(m_lastCurve, m_lastCurve,dummy, e->get_point());*/
       traits()->split_2_object()(m_lastCurve, e->get_point(), dummy,m_lastCurve);
 
       return this;
@@ -294,20 +260,15 @@ public:
   
  
   protected:
-     /*! the portion of the curve to the right of the last event point 
+  /*! the portion of the curve to the right of the last event point 
       on the curve */
   X_monotone_curve_2 m_lastCurve;
 
-  
   Event* m_left_event;
 
   Event* m_right_event;
   
-
-  /*! true if the source of the curve is to the left of the target. */
-  //bool m_isRightSide;
-
-  /*! */
+  /*! iterator at the Y-structure for the Subcurve */
   StatusLineIter m_hint;
 
   //the three below memvers relevant only with overlaps
@@ -336,21 +297,11 @@ public:
 
 template<class SweepLineTraits_2>
 inline Sweep_line_subcurve<SweepLineTraits_2>::
-Sweep_line_subcurve(const X_monotone_curve_2 &curve) : m_overlap_subcurve(NULL),
-                                                  m_orig_subcurve1(NULL)  ,
-                                                  m_orig_subcurve2(NULL)
+Sweep_line_subcurve(const X_monotone_curve_2 &curve): 
+  m_overlap_subcurve(NULL),
+  m_orig_subcurve1(NULL),
+  m_orig_subcurve2(NULL)
 { 
-  //Comparison_result res = traits()->compare_xy(traits()->curve_source(curve),
-  //                                             traits()->curve_target(curve));
-  //if ( res  == LARGER )
-  //{
-  //  m_isRightSide = false;
-  //}
-  //else 
-  //{ 
-  //  CGAL_assertion(res == SMALLER); //curves cannot be a degenerate point
-  //  m_isRightSide = true;
-  //}
   m_lastCurve = curve;
 }
 

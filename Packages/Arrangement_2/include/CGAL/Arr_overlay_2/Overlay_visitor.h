@@ -157,7 +157,7 @@ public:
     SubCurveRevIter rev_iter = event->right_curves_rbegin();
     Subcurve* sc_above = NULL;
     if( iter != static_cast<Sweep_line*>(m_sweep_line) -> StatusLine_end())
-      sc_above = *iter;
+      sc_above = static_cast<Subcurve*>(*iter);
     else
     { 
       if(rev_iter != event->right_curves_rend())
