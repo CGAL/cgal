@@ -54,16 +54,15 @@ public:
   typedef Sweep_line_subcurve<SweepLineTraits_2> Base;
   typedef Arr_sweep_line_curve<Traits, HalfedgeHandle> Self;
 
-  typedef Status_line_curve_less_functor<Traits, Self> StatusLineCurveLess;
-  typedef Red_black_tree<Self*, StatusLineCurveLess, CGAL_ALLOCATOR(int)> StatusLine;
-  typedef typename StatusLine::iterator StatusLineIter;
+  
+  typedef typename Base::StatusLineIter         StatusLineIter;
 
   typedef Arr_insert_info<HalfedgeHandle> ArrInsertInfo;
   typedef Arr_sweep_line_event<Traits, Self> Event;
 
 
   Arr_sweep_line_curve(): Base(),
-                           m_lastEvent(0)                         
+                          m_lastEvent(0)                         
   {}
 
   Arr_sweep_line_curve( X_monotone_curve_2 &curve): Base( curve),
@@ -74,17 +73,6 @@ public:
   void init(const X_monotone_curve_2 &curve)
   {
     Base::init(curve);
-  }
-
-
-  void set_hint(StatusLineIter hint) 
-  {
-    m_hint1 = hint;
-  }
-
-  StatusLineIter get_hint() const 
-  {
-    return m_hint1;
   }
 
   void set_last_event(Event *e) {
@@ -101,8 +89,6 @@ protected:
   /*! the last event that was handled on the curve */
   Event *m_lastEvent;
   
-  /*! */
-  StatusLineIter m_hint1;
 };
 
 

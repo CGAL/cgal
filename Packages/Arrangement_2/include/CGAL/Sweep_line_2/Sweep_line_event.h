@@ -303,7 +303,7 @@ public:
     SubCurveIter left_iter = m_leftCurves.begin();
     for(InputIterator itr = begin; itr != end; ++itr , ++left_iter)
     {
-      *left_iter = *itr;
+      *left_iter = static_cast<SubCurve*>(*itr);
     }
     m_leftCurves.erase(left_iter, m_leftCurves.end());
   }

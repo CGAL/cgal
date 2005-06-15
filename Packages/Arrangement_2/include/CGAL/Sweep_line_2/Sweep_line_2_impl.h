@@ -130,14 +130,17 @@ public:
   typedef std::map< Point_2 , Event*, PointLess>  EventQueue; 
   typedef typename EventQueue::iterator           EventQueueIter;
   typedef typename EventQueue::value_type         EventQueueValueType;
+
   typedef typename Event::SubCurveIter            EventCurveIter;
 
   typedef CurveWrap                               Subcurve;
   typedef std::list<Subcurve*>                    SubCurveList;
   typedef typename SubCurveList::iterator         SubCurveListIter; 
-  typedef Status_line_curve_less_functor<Traits, Subcurve> 
+
+  typedef Sweep_line_subcurve<Traits>             Base_subcurve;
+  typedef Status_line_curve_less_functor<Traits, Base_subcurve> 
                                                   StatusLineCurveLess;
-  typedef Red_black_tree<Subcurve*,
+  typedef Red_black_tree<Base_subcurve*,
                          StatusLineCurveLess, 
 			                   CGAL_ALLOCATOR(int)>             StatusLine;
   typedef typename StatusLine::iterator                   StatusLineIter;
@@ -476,7 +479,7 @@ protected:
           m_visitor->before_handle_event(m_currentEvent);
           return;
         }
-        Subcurve                  *sc = *m_status_line_insert_hint;
+        Subcurve *sc = static_cast<Subcurve*>(*m_status_line_insert_hint);
         const X_monotone_curve_2&  last_curve = sc->get_last_curve();
         m_currentEvent->add_curve_to_left(sc);
  
@@ -691,11 +694,13 @@ protected:
       if ( slIter != m_statusLine.begin() )
       {
         --prev;
-        _intersect(*prev, *(m_currentEvent->right_curves_begin()));
+        _intersect(static_cast<Subcurve*>(*prev),
+                   *(m_currentEvent->right_curves_begin()));
       }
       if ( next != m_statusLine.end() )
       { 
-        _intersect(*(m_currentEvent->right_curves_begin()), *next);
+        _intersect(*(m_currentEvent->right_curves_begin()),
+                   static_cast<Subcurve*>(*next));
       } 
     }
     else  // numRightCurves > 1
@@ -714,7 +719,8 @@ protected:
       { 
         //  get the previous curve in the y-str
         StatusLineIter prev = slIter; --prev;
-        _intersect(*prev, *slIter);
+        _intersect(static_cast<Subcurve*>(*prev),
+                   static_cast<Subcurve*>(*slIter));
       }
       
       EventCurveIter currentOne = firstOne; ++currentOne;
@@ -737,7 +743,8 @@ protected:
       SL_DEBUG(PrintStatusLine(););
       StatusLineIter next = slIter; ++next;
       if ( next != m_statusLine.end() )
-        _intersect( *prevOne,*next);
+        _intersect( static_cast<Subcurve*>(*prevOne),
+                    static_cast<Subcurve*>(*next));
     }
   }
 
@@ -1057,7 +1064,9 @@ _remove_curve_from_status_line(Subcurve *leftCurve, bool remove_for_good)
     StatusLineIter next = sliter; ++next;
     
     // intersect *next with  *prev 
-    _intersect(*prev, *next, true);
+    _intersect(static_cast<Subcurve*>(*prev),
+               static_cast<Subcurve*>(*next),
+               true);
   }
   m_statusLine.remove_at(sliter);
   SL_DEBUG(std::cout << "remove_curve_from_status_line Done\n";)
