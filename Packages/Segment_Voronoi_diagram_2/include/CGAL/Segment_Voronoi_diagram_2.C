@@ -2006,13 +2006,25 @@ file_output(std::ostream& os, Point_handle_mapper& P,
     os << n << m << dimension();
   }
 
-  // points in point container
+  // points in point container and input sites container
   if ( print_point_container ) {
     if ( is_ascii(os) ) { os << std::endl; }
     os << pc_.size();
     if ( is_ascii(os) ) { os << std::endl; }
     for (const_Point_handle ph = pc_.begin(); ph != pc_.end(); ++ph) {
       os << *ph;
+      if ( is_ascii(os) ) { os << std::endl; }
+    }
+
+    // print the input sites container
+    if ( is_ascii(os) ) { os << std::endl; }
+    os << isc_.size();
+    if ( is_ascii(os) ) { os << std::endl; }
+    for (typename Input_sites_container::const_iterator it = isc_.begin();
+	 it != isc_.end(); ++it) {
+      os << P[boost::tuples::get<0>(*it)];
+      if ( is_ascii(os) ) { os << " "; }
+      os << P[boost::tuples::get<1>(*it)];
       if ( is_ascii(os) ) { os << std::endl; }
     }
   }
@@ -2085,6 +2097,7 @@ file_input(std::istream& is, bool read_handle_vector,
   Storage_site_2 ss;
 
   if ( read_handle_vector ) {
+    pc_.clear();
     size_type np;
     is >> np;
     for (; i < np; i++) {
@@ -2093,6 +2106,16 @@ file_input(std::istream& is, bool read_handle_vector,
       std::pair<Point_handle,bool> res = pc_.insert(p);
       P.push_back(res.first);
       CGAL_assertion( P[i] == res.first );
+    }
+
+    // now read the input sites container
+    isc_.clear();
+    size_type nisc;
+    is >> nisc;
+    int id1, id2;
+    for (i = 0; i < nisc; i++) {
+      is >> id1 >> id2;
+      isc_.push_back( Site_rep_2(P[id1], P[id2], id1 == id2) );
     }
   }
 
