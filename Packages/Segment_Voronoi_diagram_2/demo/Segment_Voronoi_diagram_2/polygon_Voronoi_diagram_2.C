@@ -48,7 +48,7 @@ main(int argc, char* argv[])
   int size = 750;
 
   QApplication app( argc, argv );
-  My_Window W(size,size);
+  My_Window W(size,size,true);
   app.setMainWidget( &W );
 #if !defined (__POWERPC__)
   QPixmap cgal_icon = QPixmap((const char**)demoicon_xpm);
@@ -56,7 +56,7 @@ main(int argc, char* argv[])
 #endif
   W.show();
   W.set_window(0,size,0,size);
-  W.setCaption("Polygon Voronoi diagram 2");
+  W.setCaption( W.get_title() );
   return app.exec();
 }
 

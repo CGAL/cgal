@@ -33,7 +33,7 @@ public:
   Layers_toolbar(CGAL::Qt_widget *widget, SVD_2& svd,
 		 const QString& label, QMainWindow* mainWindow,
 		 QWidget* parent, bool newLine = FALSE,
-		 const char* name = 0, WFlags f = 0 )
+		 const char* name = 0, WFlags f = 0, bool is_pvd = false)
     : QToolBar(label, mainWindow, parent, newLine, name, f),
       nr_of_buttons(0), input_mode(SVD_SEGMENT)
   {
@@ -134,8 +134,13 @@ public:
     but[1]->toggle();
     //    but[2]->toggle();
     //    but[3]->toggle();
-    but[4]->toggle();
-    //    but[5]->toggle();
+    if ( is_pvd ) {
+      but[5]->toggle();
+      input_mode = SVD_POLYGON;
+    } else {
+      but[4]->toggle();
+      input_mode = SVD_SEGMENT;
+    }
     //    but[6]->toggle();
     //    but[7]->toggle();
   }

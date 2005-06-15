@@ -1,6 +1,61 @@
 #ifndef MY_WINDOW_H
 #define MY_WINDOW_H
 
+#include <qlayout.h>
+#include <qlabel.h>
+
+//************************************
+// Layout_widget
+//************************************
+
+class Layout_widget
+  : public QWidget
+{
+ public:
+  Layout_widget(QWidget *parent, const char *name=0)
+    : QWidget(parent, name)
+  {
+    QBoxLayout* topLayout = new QVBoxLayout(this, QBoxLayout::TopToBottom);
+
+      // create/initialize the label
+    label = new QLabel(this, "label");
+    label->setText("");
+
+    // create/initialize Qt_widget
+    widget = new CGAL::Qt_widget(this);
+
+    // add widgets to layout
+    topLayout->addWidget(widget, 1);
+    topLayout->addWidget(label, 0);
+  }
+
+  ~Layout_widget() {}
+
+  CGAL::Qt_widget* get_qt_widget() { return widget; }
+  QLabel*          get_label() { return label; }
+
+  // methods to access functionality of CGAL::Qt_widget;
+  template<class T>
+  void attach(const T& t) { widget->attach(t); }
+  void redraw() { widget->redraw(); }
+  void print_to_ps() { widget->print_to_ps(); }
+  void set_window(double xmin, double xmax, double ymin, double ymax) {
+    widget->set_window(xmin, xmax, ymin, ymax);
+  }
+
+ private:
+  CGAL::Qt_widget *widget;
+  QLabel          *label;
+};
+
+template<class T>
+Layout_widget& operator<<(Layout_widget& lw, const T& t)
+{
+  *lw.get_qt_widget() << t;
+  return lw;
+}
+
+
 //************************************
 // my window
 //************************************
@@ -9,7 +64,7 @@ class My_Window : public QMainWindow {
 
   friend class Layers_toolbar;
 private:
-  CGAL::Qt_widget *widget;
+  Layout_widget  *widget;
   Layers_toolbar *layers_toolbar;
   File_toolbar   *file_toolbar;
   CGAL::Qt_widget_standard_toolbar *stoolbar;
@@ -19,19 +74,28 @@ private:
   Input_mode input_mode;
   bool is_remove_mode;
   bool is_snap_mode;
+  QString title_;
+  QString qmsg;
+  char msg[300];
+  bool is_pvd_;
 
 public:
-  My_Window(int x, int y)
+  My_Window(int x, int y, bool is_pvd = false)
   {
+    is_pvd_ = is_pvd;
 
     //******************
     num_selected = 0;
 
     is_remove_mode = false;
-    input_mode = SVD_SEGMENT;
+    if ( is_pvd_ ) {
+      input_mode = SVD_POLYGON;
+    } else {
+      input_mode = SVD_SEGMENT;
+    }
     is_snap_mode = false;
 
-    widget = new CGAL::Qt_widget(this);
+    widget = new Layout_widget(this);
     setCentralWidget(widget);
 
     *widget << CGAL::BackgroundColor(CGAL::BLACK);
@@ -42,20 +106,20 @@ public:
     //    setUsesBigPixmaps(TRUE);
 
     //How to attach the standard toolbar
-    stoolbar = new CGAL::Qt_widget_standard_toolbar(widget, this,
-						    this, FALSE, "");
+    stoolbar = new CGAL::Qt_widget_standard_toolbar(widget->get_qt_widget(),
+						    this, this, FALSE, "");
 
     file_toolbar = new File_toolbar("File operations",
 				    this, this, FALSE,
 				    "File operations");
 
-    layers_toolbar = new Layers_toolbar(widget, svd,
+    layers_toolbar = new Layers_toolbar(widget->get_qt_widget(), svd,
 					"Geometric Operations",
 					this, this, FALSE,
-					"Geometric Operations");
+					"Geometric Operations", 0, is_pvd_);
 
-    connect(widget, SIGNAL(new_cgal_object(CGAL::Object)), this,
-	    SLOT(get_object(CGAL::Object)));
+    connect(widget->get_qt_widget(), SIGNAL(new_cgal_object(CGAL::Object)),
+	    this, SLOT(get_object(CGAL::Object)));
 
     connect(layers_toolbar, SIGNAL(inputModeChanged(Input_mode)), this,
     	    SLOT(get_input_mode(Input_mode)));
@@ -85,9 +149,57 @@ public:
     widget->attach(&get_segment);
     widget->attach(&get_polygon);
 
-    get_segment.activate();
     get_point.deactivate();
-    get_polygon.deactivate();
+    if ( is_pvd_ ) {
+      get_segment.deactivate();
+      get_polygon.activate();
+    } else {
+      get_segment.activate();
+      get_polygon.deactivate();
+    }
+
+    // Adding menus
+
+    // file menu
+    QPopupMenu* file = new QPopupMenu(this);
+    menuBar()->insertItem("&File", file);
+    file->insertItem("&Clear", this, SLOT(remove_all()), CTRL+Key_C);
+    file->insertSeparator();
+    if ( is_pvd_ ) {
+      file->insertItem("&Load polygon Voronoi diagram", this,
+		       SLOT(open_from_file()), CTRL+Key_O);
+    } else {
+      file->insertItem("&Load segment Voronoi diagram", this,
+		       SLOT(open_from_file()), CTRL+Key_O);
+    }
+    if ( is_pvd_ ) {
+      file->insertItem("&Save polygon Voronoi diagram", this,
+		       SLOT(save_to_file()), CTRL+Key_S);
+    } else {
+      file->insertItem("&Save segment Voronoi diagram", this,
+		       SLOT(save_to_file()), CTRL+Key_S);
+    }
+    file->insertSeparator();
+    file->insertItem("&Read input data", this,
+		     SLOT(read_input_from_file()), CTRL+Key_R);
+    file->insertItem("&Save output data", this,
+		     SLOT(write_output_to_file()), CTRL+Key_W);
+    file->insertSeparator();
+    file->insertItem("Print", this, SLOT(print_screen()), CTRL+Key_P);
+    //    file->insertSeparator();
+    //    file->insertItem("&Quit",this,SLOT(closeAll()),CTRL+Key_Q);
+
+    // about menu
+    QPopupMenu* about = new QPopupMenu(this);
+    menuBar()->insertItem("&About", about);
+    about->insertItem("&About", this, SLOT(about()), CTRL+Key_A );
+    about->insertItem("About &Qt", this, SLOT(aboutQt()) );
+
+    if ( is_pvd_ ) {
+      title_ = tr("Polygon Voronoi diagram 2");
+    } else {
+      title_ = tr("Segment Voronoi diagram 2");
+    }
   }
 
   ~My_Window(){}
@@ -98,7 +210,14 @@ public:
     widget->set_window(xmin, xmax, ymin, ymax);
   }
 
+  const QString& get_title() const { return title_; }
+  void set_title(const QString& title) { title_ = title; }
+
 private:
+  void set_msg(const QString& str) {
+    widget->get_label()->setText(str);
+  }
+
   void get_object_remove_mode(CGAL::Object obj)
   {
     std::cout << "in remove mode" << std::endl;
@@ -183,14 +302,15 @@ private:
 private slots:
   void get_object(CGAL::Object obj)
   {
+    set_msg("");
     if ( is_remove_mode ) {
       get_object_remove_mode(obj);
       return;
     }
 
     CGAL::Timer timer;
-    char msg[100];
 
+    bool is_polygon = false;
     if ( input_mode == SVD_POINT ) {
       if ( is_snap_mode ) {
 	Point_2 p;
@@ -208,7 +328,7 @@ private slots:
 	timer.stop();
 
 	CGAL_CLIB_STD::sprintf(msg, "Insertion time: %f", timer.time());
-	statusBar()->message(msg);
+	set_msg(msg);
       }
     } else if ( input_mode == SVD_SEGMENT ) {
       Segment s;
@@ -225,7 +345,7 @@ private slots:
 	    timer.stop();
 
 	    CGAL_CLIB_STD::sprintf(msg,	"Insertion time: %f", timer.time());
-	    statusBar()->message(msg);
+	    set_msg(msg);
 	  }
 	}
       } else {
@@ -234,19 +354,20 @@ private slots:
 	  insert_segment(svd, s.source(), s.target());
 	  timer.stop();
 
-	  CGAL_CLIB_STD::sprintf(msg,	"Insertion time: %f", timer.time());
-	  statusBar()->message(msg);
+	  CGAL_CLIB_STD::sprintf(msg, "Insertion time: %f", timer.time());
+	  set_msg(msg);
 	}
       }
     } else if ( input_mode == SVD_POLYGON ) {
+      is_polygon = true;
       Polygon_2 pgn;
       if ( CGAL::assign(pgn, obj) ) {
 	timer.start();
 	insert_polygon(svd, pgn);
 	timer.stop();
 
-	CGAL_CLIB_STD::sprintf(msg,	"Insertion time: %f", timer.time());
-	statusBar()->message(msg);
+	CGAL_CLIB_STD::sprintf(msg, "Insertion time: %f", timer.time());
+	set_msg(msg);
       }
     }
 
@@ -300,6 +421,7 @@ private slots:
 
   void read_from_file(const QString& fileName)
   {
+    set_msg("");
     typedef SVD_2::Vertex_handle Vertex_handle;
     CGAL::Timer timer;
     svd.clear();
@@ -310,7 +432,6 @@ private slots:
     int counter = 0;
     timer.start();
 
-    char msg[100];
     bool bbox_empty = true;
     CGAL::Bbox_2 bbox;
     char type;
@@ -357,27 +478,23 @@ private slots:
       }
 
       if ( counter % 500 == 0 ) {
-	std::cout << "\r" << counter
-		  << " sites haved been inserted..." << std::flush;
-
-	sprintf(msg, "%d sites have been inserted...", counter);
-	statusBar()->message(msg);
+	CGAL_CLIB_STD::sprintf(msg, "%d sites have been inserted...",
+			       counter);
+	set_msg(msg);
       }
-    }//endwhile
-
-    std::cout << "\r" << counter
-	      << " sites haved been inserted... Done!" << std::endl;
+    } // end while
 
     timer.stop();
-    std::cout << "Insertion time: " << timer.time() << std::endl;
+
+    CGAL_CLIB_STD::sprintf(msg, "%d sites inserted. Insertion time: %f",
+			   counter, timer.time());
+    qmsg = QString(msg) + " - Validating diagram...";
+    set_msg(qmsg);
 
     svd.is_valid(true, 1);
-    std::cerr << std::endl;
 
-    CGAL_CLIB_STD::sprintf(msg,
-			   "%d sites inserted. Insertion time: %f",
-			   counter, timer.time());
-    statusBar()->message(msg);
+    qmsg = qmsg + " done!";
+    set_msg(qmsg);
 
     double width =  bbox.xmax() - bbox.xmin();
     double height =  bbox.ymax() - bbox.ymin();
@@ -390,29 +507,137 @@ private slots:
 
   void write_to_file(const QString& fileName)
   {
+    set_msg("");
     std::ofstream f(fileName);
     assert( f );
     f.precision(18);
-    SVD_2::Finite_vertices_iterator vit;
-    for (vit = svd.finite_vertices_begin();
-	 vit != svd.finite_vertices_end(); ++vit) {
-      f << vit->site() << std::endl;
+
+    QString qmsg = "Writing input sites to file...";
+    set_msg(qmsg);
+    SVD_2::Input_sites_iterator sit;
+    for (sit = svd.input_sites_begin();
+	 sit != svd.input_sites_end(); ++sit) {
+      f << (*sit) << std::endl;
     }
-    //    svd.write_sites(f);
+    qmsg = qmsg + " done!";
+    set_msg(qmsg);
+  }
+
+  void read_input_from_file()
+  {
+    set_msg("");
+    QString fileName =
+      QFileDialog::getOpenFileName(QString::null, QString::null,
+				   this, "Open file...");
+
+    if ( !fileName.isNull() ) {
+      read_from_file(fileName);
+    }
+  }
+
+  void write_output_to_file()
+  {
+    set_msg("");
+    QString fileName =
+      QFileDialog::getSaveFileName(tr("data.out"), QString::null,
+				   this, "Save as...");
+
+    if ( !fileName.isNull() ) {
+      write_to_file(fileName);
+    }
+  }
+
+  void open_from_file()
+  {
+    set_msg("");
+    QString fileName =
+      QFileDialog::getOpenFileName(QString::null, QString::null,
+				   this, "Open file...");
+
+    if ( !fileName.isNull() ) {
+      if ( is_pvd_ ) {
+	qmsg = "Reading polygon Voronoi diagram from file...";
+      } else {
+	qmsg = "Reading segment Voronoi diagram from file...";
+      }
+      set_msg(qmsg);
+
+      std::ifstream f(fileName);
+      assert(f);
+
+      CGAL::Timer timer;
+      timer.start();
+      f >> svd;
+      timer.stop();
+
+      int n_sites = static_cast<int>(svd.number_of_input_sites());
+      CGAL_CLIB_STD::sprintf(msg,
+			     "%d sites inserted. Insertion time: %f",
+			     n_sites, timer.time());
+      qmsg = qmsg + " done! " + msg;
+      set_msg(qmsg);
+      widget->redraw();
+    }
+  }
+
+  void save_to_file()
+  {
+    set_msg("");
+    QString fileName =
+      QFileDialog::getSaveFileName(tr("data.out"), QString::null,
+				   this, "Save as...");
+
+    if ( !fileName.isNull() ) {
+      if ( is_pvd_ ) {
+	qmsg = "Saving polygon Voronoi diagram to file...";
+      } else {
+	qmsg = "Saving segment Voronoi diagram to file...";
+      }
+      set_msg(qmsg);
+      std::ofstream f(fileName);
+      assert(f);      
+      f << svd;
+      qmsg = qmsg + " done!";
+      set_msg(qmsg);
+    }
   }
 
   void print_screen()
   {
+    set_msg("");
     widget->print_to_ps();
   }
 
   void remove_all()
     {
+      set_msg("");
       sitelist.clear();
       num_selected = 0;
       svd.clear();
       widget->redraw();
     }
+
+  void about()
+  {
+    QString vd_type;
+    if ( is_pvd_ ) {
+      vd_type = "polygon";
+    } else {
+      vd_type = "segment";
+    }
+    QMessageBox::about( this, get_title(),
+			QString("This is a demo for the 2D ") + vd_type
+			+ " Voronoi diagram\n\n" +
+			+ "Author: Menelaos Karavelas <mkaravel@tem.uoc.gr>"
+			+ "\n\n"
+			+ "Copyright(c) INRIA and University of Notre Dame"
+			+ " 2003,2004,2005");
+  }
+
+  void aboutQt()
+  {
+    QMessageBox::aboutQt( this, get_title() );
+  }
 
 };
 
