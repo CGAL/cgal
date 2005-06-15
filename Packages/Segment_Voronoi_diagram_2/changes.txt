@@ -1,3 +1,12 @@
+15 June 2005:
+- added layout widget in demos including a label; messages about the actions
+  taken are now printed on the label.
+- added file menu in demos; used for file I/O.
+- added about boxes in demos.
+- fixed bug in file_{input,output}: the input sites container was not
+  read/stored at all; now the input sites container is correctly read/written
+  from/to the files.
+
 13 June 2005:  Menelaos Karavelas
 - changed messages/captions of the file toolbar of the demo programs for the
   segment and polygon Voronoi diagrams
