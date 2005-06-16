@@ -37,6 +37,110 @@ CGAL_BEGIN_NAMESPACE
 
 template < class CT, class ET, bool Protected, class Cache >
 /*  */
+Comparison_result
+compare_power_distanceH2(
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &phx,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &phy,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &phw,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &pwt,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &qhx,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &qhy,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &qhw,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &qwt,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &rhx,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &rhy,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &rhw)
+{
+  try
+  {
+    CGAL_PROFILER("IA compare_power_distanceH2 calls");
+    Protect_FPU_rounding<Protected> Protection;
+    return compare_power_distanceH2(
+		phx.interval(),
+		phy.interval(),
+		phw.interval(),
+		pwt.interval(),
+		qhx.interval(),
+		qhy.interval(),
+		qhw.interval(),
+		qwt.interval(),
+		rhx.interval(),
+		rhy.interval(),
+		rhw.interval());
+  } 
+  catch (Interval_nt_advanced::unsafe_comparison)
+  {
+    CGAL_PROFILER("IA compare_power_distanceH2 failures");
+    Protect_FPU_rounding<!Protected> Protection(CGAL_FE_TONEAREST);
+    return compare_power_distanceH2(
+		phx.exact(),
+		phy.exact(),
+		phw.exact(),
+		pwt.exact(),
+		qhx.exact(),
+		qhy.exact(),
+		qhw.exact(),
+		qwt.exact(),
+		rhx.exact(),
+		rhy.exact(),
+		rhw.exact());
+  }
+}
+
+template < class ET >
+/*  */
+Comparison_result
+compare_power_distanceH2(
+    const Lazy_exact_nt<ET> &phx,
+    const Lazy_exact_nt<ET> &phy,
+    const Lazy_exact_nt<ET> &phw,
+    const Lazy_exact_nt<ET> &pwt,
+    const Lazy_exact_nt<ET> &qhx,
+    const Lazy_exact_nt<ET> &qhy,
+    const Lazy_exact_nt<ET> &qhw,
+    const Lazy_exact_nt<ET> &qwt,
+    const Lazy_exact_nt<ET> &rhx,
+    const Lazy_exact_nt<ET> &rhy,
+    const Lazy_exact_nt<ET> &rhw)
+{
+  try
+  {
+    CGAL_PROFILER("Lazy IA compare_power_distanceH2 calls");
+    Protect_FPU_rounding<true> Protection;
+    return compare_power_distanceH2(
+		phx.interval(),
+		phy.interval(),
+		phw.interval(),
+		pwt.interval(),
+		qhx.interval(),
+		qhy.interval(),
+		qhw.interval(),
+		qwt.interval(),
+		rhx.interval(),
+		rhy.interval(),
+		rhw.interval());
+  } 
+  catch (Interval_nt_advanced::unsafe_comparison)
+  {
+    CGAL_PROFILER("Lazy IA compare_power_distanceH2 failures");
+    Protect_FPU_rounding<false> Protection(CGAL_FE_TONEAREST);
+    return compare_power_distanceH2(
+		phx.exact(),
+		phy.exact(),
+		phw.exact(),
+		pwt.exact(),
+		qhx.exact(),
+		qhy.exact(),
+		qhw.exact(),
+		qwt.exact(),
+		rhx.exact(),
+		rhy.exact(),
+		rhw.exact());
+  }
+}
+
+template < class CT, class ET, bool Protected, class Cache >
+/*  */
 Oriented_side
 power_testH2(
     const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &phx,

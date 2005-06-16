@@ -1,3 +1,7 @@
+17 June 2005 Menelaos Karavelas
+- Regular triangulation: added arithmetic filtering support for the
+  nearest_power_vertex predicate
+
 26 May 2005 Sylvain Pion
 - Lazy_exact_nt : add depth() member function to compute the depth of the DAG.
 

@@ -37,6 +37,92 @@ CGAL_BEGIN_NAMESPACE
 
 template < class CT, class ET, bool Protected, class Cache >
 /*  */
+Comparison_result
+compare_power_distanceC2(
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &px,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &py,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &pwt,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &qx,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &qy,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &qwt,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &rx,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &ry)
+{
+  try
+  {
+    CGAL_PROFILER("IA compare_power_distanceC2 calls");
+    Protect_FPU_rounding<Protected> Protection;
+    return compare_power_distanceC2(
+		px.interval(),
+		py.interval(),
+		pwt.interval(),
+		qx.interval(),
+		qy.interval(),
+		qwt.interval(),
+		rx.interval(),
+		ry.interval());
+  } 
+  catch (Interval_nt_advanced::unsafe_comparison)
+  {
+    CGAL_PROFILER("IA compare_power_distanceC2 failures");
+    Protect_FPU_rounding<!Protected> Protection(CGAL_FE_TONEAREST);
+    return compare_power_distanceC2(
+		px.exact(),
+		py.exact(),
+		pwt.exact(),
+		qx.exact(),
+		qy.exact(),
+		qwt.exact(),
+		rx.exact(),
+		ry.exact());
+  }
+}
+
+template < class ET >
+/*  */
+Comparison_result
+compare_power_distanceC2(
+    const Lazy_exact_nt<ET> &px,
+    const Lazy_exact_nt<ET> &py,
+    const Lazy_exact_nt<ET> &pwt,
+    const Lazy_exact_nt<ET> &qx,
+    const Lazy_exact_nt<ET> &qy,
+    const Lazy_exact_nt<ET> &qwt,
+    const Lazy_exact_nt<ET> &rx,
+    const Lazy_exact_nt<ET> &ry)
+{
+  try
+  {
+    CGAL_PROFILER("Lazy IA compare_power_distanceC2 calls");
+    Protect_FPU_rounding<true> Protection;
+    return compare_power_distanceC2(
+		px.interval(),
+		py.interval(),
+		pwt.interval(),
+		qx.interval(),
+		qy.interval(),
+		qwt.interval(),
+		rx.interval(),
+		ry.interval());
+  } 
+  catch (Interval_nt_advanced::unsafe_comparison)
+  {
+    CGAL_PROFILER("Lazy IA compare_power_distanceC2 failures");
+    Protect_FPU_rounding<false> Protection(CGAL_FE_TONEAREST);
+    return compare_power_distanceC2(
+		px.exact(),
+		py.exact(),
+		pwt.exact(),
+		qx.exact(),
+		qy.exact(),
+		qwt.exact(),
+		rx.exact(),
+		ry.exact());
+  }
+}
+
+template < class CT, class ET, bool Protected, class Cache >
+/*  */
 Oriented_side
 power_testC2(
     const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &px,
