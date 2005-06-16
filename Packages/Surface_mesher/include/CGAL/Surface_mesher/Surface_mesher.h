@@ -268,6 +268,22 @@ namespace CGAL {
       return false;
     }
     
+
+  /* returns the conflicts zone */
+    Zone conflicts_zone_impl(const Point& p, Facet f) const {
+	Zone zone;
+	
+       	zone.cell = triangulation_ref_impl().
+	  locate (p, zone.locate_type, zone.i, zone.j, f.first);
+	
+	triangulation_ref_impl().
+	  find_conflicts(p, zone.cell,
+			 std::back_inserter(zone.boundary_facets),
+			 std::back_inserter(zone.cells),
+			 std::back_inserter(zone.internal_facets));
+	return zone;
+    }
+
     ///////////////////////////////////////////////////////////////////////////
     // Deletes old facets from the restricted Delaunay triangulation
     
