@@ -27,6 +27,19 @@
 CGAL_BEGIN_NAMESPACE
 
 template <class FT>
+Comparison_result
+compare_power_distanceC2(const FT& px, const FT& py, const FT& pwt,
+			 const FT& qx, const FT& qy, const FT& qwt,
+			 const FT& rx, const FT& ry)
+{
+  // returns SMALLER if r is closer to p w.r.t. the power metric
+  FT d1 = CGAL_NTS square(rx - px) + CGAL_NTS square(ry - py) - pwt;
+  FT d2 = CGAL_NTS square(rx - qx) + CGAL_NTS square(ry - qy) - qwt;
+  return CGAL_NTS compare(d1, d2);
+}
+
+
+template <class FT>
 Oriented_side
 power_testC2( const FT &px, const FT &py, const FT &pwt,
               const FT &qx, const FT &qy, const FT &qwt,

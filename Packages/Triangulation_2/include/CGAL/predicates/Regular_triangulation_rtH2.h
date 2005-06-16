@@ -27,6 +27,29 @@
 CGAL_BEGIN_NAMESPACE
 
 template <class RT>
+Comparison_result
+compare_power_distanceH2(const RT& phx, const RT& phy, const RT& phw,
+			 const RT& pwt,
+			 const RT& qhx, const RT& qhy, const RT& qhw,
+			 const RT& qwt,
+			 const RT& rhx, const RT& rhy, const RT& rhw)
+{
+  // returns SMALLER if r is closer to p w.r.t. the power metric
+  RT dphx = rhx * phw - phx * rhw;
+  RT dphy = rhy * phw - phy * rhw;
+  RT dqhx = rhx * qhw - qhx * rhw;
+  RT dqhy = rhy * qhw - qhy * rhw;
+  RT dphw = CGAL_NTS square(phw);
+  RT dqhw = CGAL_NTS square(qhw);
+  RT drhw = CGAL_NTS square(rhw);
+
+  RT dh1 = CGAL_NTS square(dphx) + CGAL_NTS square(dphy) - pwt * dphw * drhw;
+  RT dh2 = CGAL_NTS square(dqhx) + CGAL_NTS square(dqhy) - qwt * dqhw * drhw;
+  return CGAL_NTS compare(d1, d2);
+}
+
+
+template <class RT>
 Oriented_side
 power_testH2( const RT &phx, const RT &phy, const RT &phw, const RT &pwt,
               const RT &qhx, const RT &qhy, const RT &qhw, const RT &qwt,

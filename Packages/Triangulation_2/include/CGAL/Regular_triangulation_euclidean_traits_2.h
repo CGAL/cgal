@@ -168,6 +168,62 @@ public:
 
 ///-----------------------------------------------------------
 
+template < class Bare_point, class Weight >
+inline
+Comparison_result
+compare_power_distance(const Weighted_point<Bare_point, Weight>& p,
+		       const Weighted_point<Bare_point, Weight>& q,
+		       const Bare_point& r, Cartesian_tag)
+{
+  typedef typename Bare_point::R::FT  FT;
+  return compare_power_distanceC2(p.x(), p.y(), FT(p.weight()),
+				  q.x(), q.y(), FT(q.weight()),
+				  r.x(), r.y());
+}
+
+template < class Bare_point, class Weight >
+inline
+Comparison_result
+compare_power_distance(const Weighted_point<Bare_point, Weight>& p,
+		       const Weighted_point<Bare_point, Weight>& q,
+		       const Bare_point& r, Homogeneous_tag)
+{
+  typedef typename Bare_point::R::RT  RT;
+  return compare_power_distanceH2(p.hx(), p.hy(), p.hw(), FT(p.weight()),
+				  q.hx(), q.hy(), q.hw(), FT(q.weight()),
+				  r.hx(), r.hy(), r.hw());
+}
+
+template < class Bare_point, class Weight >
+inline
+Comparison_result
+compare_power_distance(const Weighted_point<Bare_point, Weight>& p,
+		       const Weighted_point<Bare_point, Weight>& q,
+		       const Bare_point& r)
+{
+  typedef typename Bare_point::R::Rep_tag Tag;
+  return compare_power_distance(p, q, r, Tag());
+}
+
+template < typename K >
+class Compare_power_distance_2
+{
+public:
+  typedef typename K::Weighted_point_2         Weighted_point_2;
+  typedef typename K::Point_2                  Point_2;
+
+  typedef Arity_tag<3>        Arity;
+  typedef Comparison_result   result_type;
+
+  Comparison_result operator()(const Point_2& p,
+			       const Weighted_point_2& q,
+			       const Weighted_point_2& r) const
+  {
+    return CGAL::compare_power_distance(q, r, p);
+  }
+};
+
+///-----------------------------------------------------------
 
 template < class Bare_point, class Weight >
 inline
@@ -324,6 +380,8 @@ public:
   typedef Regular_triangulation_euclidean_traits_base_2<R, W>   Self;
 
   typedef CGAL::Power_test_2<Self>              Power_test_2;
+  typedef CGAL::Compare_power_distance_2<Self>  Compare_power_distance_2;
+
   // construction objects
   typedef CGAL::Construct_weighted_circumcenter_2<Self> 
                                             Construct_weighted_circumcenter_2;
@@ -332,6 +390,11 @@ public:
   Power_test_2 
   power_test_2_object() const
     {  return Power_test_2();}
+
+  Compare_power_distance_2
+  compare_power_distance_2_object() const {
+    return Compare_power_distance_2();
+  }
 
   //constructions for dual:
   Construct_weighted_circumcenter_2

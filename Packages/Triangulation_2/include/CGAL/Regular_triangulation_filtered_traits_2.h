@@ -72,8 +72,17 @@ public:
             Weighted_converter_2<C2E>,
             Weighted_converter_2<C2F> >  Power_test_2;
 
+  typedef Filtered_predicate<
+    typename Exact_traits::Compare_power_distance_2,
+    typename Filtering_traits::Compare_power_distance_2,
+    Weighted_converter_2<C2E>,
+    Weighted_converter_2<C2F> >  Compare_power_distance_2;
+
   Power_test_2 power_test_2_object() const
   { return Power_test_2();}
+
+  Compare_power_distance_2 compare_power_distance_2_object() const
+  { return Compare_power_distance_2(); }
 
   // The following are inherited since they are constructions :
   // Construct_weighted_circumcenter_2

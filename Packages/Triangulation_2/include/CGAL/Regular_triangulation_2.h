@@ -534,6 +534,8 @@ public:
       return pp.third;
     }
 
+  // nearest power vertex query
+  Vertex_handle nearest_power_vertex(const Bare_point& p) const;
 };
 
 template < class Gt, class Tds >
@@ -1966,6 +1968,44 @@ hidden_vertices_end () const
   return filter_iterator(Base::finite_vertices_end(), 
 			 Unhidden_tester() );
 }
+
+template < class Gt, class Tds >
+typename Regular_triangulation_2<Gt,Tds>::Vertex_handle
+Regular_triangulation_2<Gt,Tds>::
+nearest_power_vertex(const Bare_point& p) const
+{
+  if ( dimension() == -1 ) { return Vertex_handle(); }
+
+  if ( dimension() == 0 ) { return this->finite_vertex(); }
+
+  typename Geom_traits::Compare_power_distance_2 cmp_power_distance =
+    geom_traits().compare_power_distance_2_object();
+
+  Vertex_handle vclosest;
+  Vertex_handle v = this->finite_vertex();
+
+  //  if ( dimension() == 1 ) {
+  //  }
+
+  do {
+    vclosest = v;
+    Weighted_point wp = v->point();
+    Vertex_circulator vc_start = incident_vertices(v);
+    Vertex_circulator vc = vc_start;
+    do {
+      if ( !is_infinite(vc) ) {
+	if ( cmp_power_distance(p, vc->point(), wp) == SMALLER ) {
+	  v = vc;
+	  break;
+	}
+      }
+      ++vc;
+    } while ( vc != vc_start );
+  } while ( vclosest != v );
+
+  return vclosest;  
+}
+
 
 CGAL_END_NAMESPACE 
 
