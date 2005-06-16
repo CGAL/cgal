@@ -413,7 +413,16 @@ public:
    */
   void replace (const Handle& handle,
                 const TYPE& object);
-        
+     
+  /*!
+   * Swap the location two objects in the tree, given by their handles.
+   * [takes O(1) operations]
+   * \param handle1 A handle pointing the first object.
+   * \param handle2 A handle pointing the second object.
+   * \pre The operation does not violate the tree properties.
+   */
+  void swap (const Handle& handle1, const Handle& handle2);
+
   /*!
    * Reset the binary tree. [takes O(n) operations]
    */
@@ -1042,18 +1051,14 @@ template <class TYPE, class COMP, typename Alloc>
 inline void Red_black_tree<TYPE, COMP, Alloc>::replace (const Handle& handle,
                                                  const TYPE& object)
 {
-  //CGAL_precondition(handle.treeP == this);
-
   Node  *nodeP = handle.nodeP;
   CGAL_precondition(nodeP != NULL);
 
   // Make sure the replacement does not violate the tree order.
   CGAL_precondition_code(Node *_succP = _successor(nodeP));
-  //CGAL_precondition(_succP == NULL || (compP)(object, _succP->object) >= 0);
   CGAL_precondition(_succP == NULL || (compP)(object, _succP->object) != LARGER);
 
   CGAL_precondition_code(Node *_predP = _predecessor(nodeP));
-  //CGAL_precondition(_predP == NULL || (compP)(object, _predP->object) <= 0);
   CGAL_precondition(_predP == NULL || (compP)(object, _predP->object) != SMALLER);
   
   // Replace the object at nodeP.
@@ -1061,7 +1066,133 @@ inline void Red_black_tree<TYPE, COMP, Alloc>::replace (const Handle& handle,
 
   return;
 }
-        
+     
+//---------------------------------------------------------
+// Swap the location two objects in the tree, given by their handles.
+//
+template <class TYPE, class COMP, typename Alloc>
+inline void Red_black_tree<TYPE, COMP, Alloc>::swap (const Handle& handle1,
+                                                     const Handle& handle2)
+{
+  // Store the properties of the first node.
+  Node        *node1_P = handle1.nodeP;
+  typename Node::Node_color   color1 = node1_P->color;
+  Node        *parent1_P = node1_P->parentP;
+  Node        *right1_P = node1_P->rightP;
+  Node        *left1_P = node1_P->leftP;
+  
+  // Copy the properties of the second node.
+  Node        *node2_P = handle2.nodeP;
+
+  node1_P->color = node2_P->color;
+
+  if (node1_P != node2_P->parentP)
+  {
+    if (node2_P->parentP == NULL)
+    {
+      rootP = node1_P;
+    }
+    else
+    {
+      if (node2_P->parentP->leftP == node2_P)
+        node2_P->parentP->leftP = node1_P;
+      else
+        node2_P->parentP->rightP = node1_P;
+    }
+
+    node1_P->parentP = node2_P->parentP;
+  }
+  else
+  {
+    node1_P->parentP = node2_P;
+  }
+
+  if (node1_P != node2_P->rightP)
+  {
+    if (node2_P->rightP != NULL)
+      node2_P->rightP->parentP = node1_P;
+    
+    node1_P->rightP = node2_P->rightP;
+  }
+  else
+  {
+    node1_P->rightP = node2_P;
+  }
+
+  if (node1_P != node2_P->leftP)
+  {
+    if (node2_P->leftP != NULL)
+      node2_P->leftP->parentP = node1_P;
+    
+    node1_P->leftP = node2_P->leftP;
+  }
+  else
+  {
+    node1_P->leftP = node2_P;
+  }
+
+  // Set the properties of the second node.
+  node2_P->color = color1;
+
+  if (node2_P != parent1_P)
+  {
+    if (parent1_P == NULL)
+    {
+      rootP = node2_P;
+    }
+    else
+    {
+      if (parent1_P->leftP == node1_P)
+        parent1_P->leftP = node2_P;
+      else
+        parent1_P->rightP = node2_P;
+    }
+
+    node2_P->parentP = parent1_P;
+  }
+  else
+  {
+    node2_P->parentP = node1_P;
+  }
+
+  if (node2_P != right1_P)
+  {
+    if (right1_P != NULL)
+      right1_P->parentP = node2_P;
+
+    node2_P->rightP = right1_P;
+  }
+  else
+  {
+    node2_P->rightP = node1_P;
+  }
+
+  if (node2_P != left1_P)
+  {
+    if (left1_P != NULL)
+      left1_P->parentP = node2_P;
+
+    node2_P->leftP = left1_P;
+  }
+  else
+  {
+    node2_P->leftP = node1_P;
+  }
+
+  // Check if we should modify the tree properties.
+  if (leftmostP == node1_P)
+    leftmostP = node2_P;
+  else if (leftmostP == node2_P)
+    leftmostP = node1_P;
+
+  if (rightmostP == node1_P)
+    rightmostP = node2_P;
+  else if (rightmostP == node2_P)
+    rightmostP = node1_P;
+
+  return;
+}
+
 //---------------------------------------------------------
 // Remove all objects from the tree.
 //
