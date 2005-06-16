@@ -89,7 +89,7 @@ class Curves_pair
   public:
   Curves_pair(){}
 
-  Curves_pair(_Subcurve* sc1, _Subcurve* sc2)
+  Curves_pair (_Subcurve* sc1, _Subcurve* sc2)
   {
     //the smallest pointer will be the first 
     if(sc1 < sc2)
@@ -112,7 +112,7 @@ class Curves_pair_less_functor
 
 public:
 
-  bool operator()(const CurvesPair& pair1, const CurvesPair& pair2)
+  bool operator()(const CurvesPair& pair1, const CurvesPair& pair2) const
   {
     if(pair1.first() < pair2.first())
       return true;
@@ -124,6 +124,36 @@ public:
   }
 };
 
+template <class _Subcurve>
+class Curves_pair_hash_functor
+{
+  typedef Curves_pair<_Subcurve> CurvesPair;
+
+public:
+
+  size_t operator() (const CurvesPair& pair) const
+  {
+    const size_t  half_n_bits = sizeof(size_t) * 8 / 2;
+    const size_t  val1 = reinterpret_cast<size_t> (pair.first());
+    const size_t  val2 = reinterpret_cast<size_t> (pair.second());
+
+    return (((val1 << half_n_bits) | (val1 >> half_n_bits)) ^ val2);
+  }
+};
+
+template <class _Subcurve>
+class Curves_pair_equal_functor
+{
+  typedef Curves_pair<_Subcurve> CurvesPair;
+
+public:
+
+  bool operator() (const CurvesPair& pair1, const CurvesPair& pair2) const
+  {
+    return (pair1.first() == pair2.first() &&
+            pair1.second() == pair2.second());
+  }
+};
 
 template <class Container>
 class random_access_input_iterator
