@@ -50,20 +50,20 @@ template<class SweepLineTraits_2, class CurveWrap>
 class Sweep_line_event
 {
 public:
-  typedef SweepLineTraits_2                                 Traits;
-  typedef typename Traits::X_monotone_curve_2               X_monotone_curve_2;
-  typedef typename Traits::Point_2                          Point_2;
+  typedef SweepLineTraits_2                                Traits;
+  typedef typename Traits::X_monotone_curve_2              X_monotone_curve_2;
+  typedef typename Traits::Point_2                         Point_2;
 
-  typedef CurveWrap                                         SubCurve;
-  template<typename U>
-  struct SC_container { typedef std::list<U> other; };
+  typedef CurveWrap                                        SubCurve;
+  template<typename SC>
+  struct SC_container { typedef std::list<SC> other; };
 
-  typedef std::list<SubCurve*>                              SubcurveContainer; 
-  typedef typename SubcurveContainer::iterator              SubCurveIter;
-  typedef typename SubcurveContainer::reverse_iterator      SubCurveRevIter;
+  typedef std::list<SubCurve*>                             SubcurveContainer; 
+  typedef typename SubcurveContainer::iterator             SubCurveIter;
+  typedef typename SubcurveContainer::reverse_iterator     SubCurveRevIter;
 
  
-  typedef std::pair<bool, SubCurveIter>                     Pair;
+  typedef std::pair<bool, SubCurveIter>                    Pair;
 
 
 
@@ -119,9 +119,10 @@ public:
 
     iter = m_rightCurves.begin();
     Comparison_result res;
-    while ((res = traits()->compare_y_at_x_right_2_object()(curve->get_last_curve(),
-                                                      (*iter)->get_last_curve(), 
-                                                      m_point)) == LARGER)
+    while ((res = traits()->compare_y_at_x_right_2_object()
+                    (curve->get_last_curve(),
+                     (*iter)->get_last_curve(), 
+                     m_point)) == LARGER)
     {
       ++iter;
       if ( iter == m_rightCurves.end())
@@ -144,7 +145,8 @@ public:
 
   // add two Subcurves to the right of the event.
   //precondition: no right curves, the order of sc1, sc2 is correct
-  std::pair<bool, SubCurveIter> add_pair_curves_to_right(SubCurve *sc1, SubCurve *sc2)
+  std::pair<bool, SubCurveIter> add_pair_curves_to_right(SubCurve *sc1,
+                                                         SubCurve *sc2)
   {
     m_rightCurves.push_back(sc1);
     m_rightCurves.push_back(sc2);
