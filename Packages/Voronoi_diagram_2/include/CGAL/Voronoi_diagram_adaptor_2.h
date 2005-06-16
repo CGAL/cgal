@@ -38,16 +38,21 @@
 #include <CGAL/Voronoi_diagram_adaptor_2/Unbounded_faces.h>
 #include <CGAL/Voronoi_diagram_adaptor_2/Degeneracy_tester_binders.h>
 #include <CGAL/Voronoi_diagram_adaptor_2/Cached_degeneracy_testers.h>
+#include <CGAL/Voronoi_diagram_adaptor_2/Locate_type.h>
 
 CGAL_BEGIN_NAMESPACE
 
 
 template<class DG, class Tr>
 class Voronoi_diagram_adaptor_2
+  : public CGAL_VORONOI_DIAGRAM_2_NS::Locate_type_accessor
+  < Voronoi_diagram_adaptor_2<DG,Tr>, true>
 {
  private:
   typedef Voronoi_diagram_adaptor_2<DG,Tr>   Self;
   typedef Triangulation_cw_ccw_2             CW_CCW_2;
+
+  typedef CGAL_VORONOI_DIAGRAM_2_NS::Locate_type_accessor<Self,true> Base;
 
  public:
   //-------
@@ -440,9 +445,10 @@ public:
   }
 
   // POINT LOCATION
+  typedef CGAL_VORONOI_DIAGRAM_2_NS::Locate_type<Self,true>  Locate_type;
+
  private:
-  typename Voronoi_traits::Object
-  locate(const Point_2& p, const Tag_false&) const {
+  Locate_type locate(const Point_2& p, const Tag_false&) const {
     static unsigned int i = 0;
     if ( i == 0 ) {
       i++;
@@ -450,53 +456,46 @@ public:
     }
 
     // to avoid warnings/errors...
-    Face_handle f;
-    return CGAL::make_object(f);
+    //    Face_handle f;
+    return Locate_type(Face_handle());
   }
 
-  typename Voronoi_traits::Object
-  locate(const Point_2& p, const Tag_true&) const
+  Locate_type locate(const Point_2& p, const Tag_true&) const
   {
     typedef typename Voronoi_traits::Point_locator     Point_locator;
-    typedef typename Point_locator::Object             Object;
-    typedef typename Point_locator::Assign             Assign;
-
-    Dual_vertex_handle  dv;
-    Dual_face_handle    df;
-    Dual_edge           de;
+    typedef typename Point_locator::Locate_type        PL_Locate_type;
 
     Point_locator locate = tr_.point_locator_object();
-    Assign assign;
-    Object o = locate(dual_, p);
+    PL_Locate_type pl_lt = locate(dual_, p);
 
-    if ( assign(dv, o) ) {
-      Face_handle f( Face(this, dv) );
-      return tr_.construct_object_object()(f);
-    } else if ( assign(df, o) ) {
+    if ( pl_lt.is_vertex() ) {
+      Face_handle f( Face(this, pl_lt.vertex()) );
+      return Base::make_locate_type(f);
+    } else if ( pl_lt.is_face() ) {
       CGAL_VORONOI_DIAGRAM_2_NS::Find_valid_vertex<Self> vertex_finder;
-      Dual_face_handle dfvalid = vertex_finder(this, df);
+      Dual_face_handle dfvalid = vertex_finder(this, pl_lt.face());
       Vertex_handle v( Vertex(this, dfvalid) );
-      return tr_.construct_object_object()(v);
-    } else if ( assign(de, o) ) {
+      return Base::make_locate_type(v);
+    } else if ( pl_lt.is_edge() ) {
+      Dual_edge de = pl_lt.edge();
       CGAL_assertion(  !edge_tester()(dual_, de)  );
       if ( dual_.dimension() == 1 ) {
 	Dual_vertex_handle v1 = de.first->vertex(CW_CCW_2::ccw(de.second));
 	Dual_vertex_handle v2 =	de.first->vertex(CW_CCW_2::cw(de.second) );
 	Halfedge_handle e( Halfedge(this, v1, v2) );
-	return tr_.construct_object_object()(e);
+	return Base::make_locate_type(e);
       }
       Halfedge_handle e( Halfedge(this, de.first, de.second) );
-      return tr_.construct_object_object()(e);
+      return Base::make_locate_type(e);
     }
 
     // I should never have reached this line;
     CGAL_assertion( false );
-    Face_handle f;
-    return tr_.construct_object_object()(f);
+    return Base::make_locate_type(Face_handle());
   }
 
  public:
-  typename Voronoi_traits::Object locate(const Point_2& p) const {
+  Locate_type locate(const Point_2& p) const {
     return locate(p, Has_point_locator());
   }
 

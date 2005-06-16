@@ -24,10 +24,162 @@
 #include <CGAL/Voronoi_diagram_adaptor_2/Default_Voronoi_traits_2.h>
 #include <CGAL/Voronoi_diagram_adaptor_2/Voronoi_vertex_base_2.h>
 #include <CGAL/Voronoi_diagram_adaptor_2/Voronoi_edge_base_2.h>
+#include <CGAL/Voronoi_diagram_adaptor_2/Locate_type.h>
 #include <cstdlib>
 #include <algorithm>
 
 CGAL_BEGIN_NAMESPACE
+
+//=========================================================================
+//=========================================================================
+
+template<class DG>
+class RT_Point_locator
+  : public CGAL_VORONOI_DIAGRAM_2_NS::Locate_type_accessor<DG,false>
+{
+  typedef CGAL_VORONOI_DIAGRAM_2_NS::Locate_type_accessor<DG,false> Base;
+
+ public:
+  typedef DG                                          Dual_graph;
+  typedef typename Dual_graph::Vertex_handle          Vertex_handle;
+  typedef typename Dual_graph::Face_handle            Face_handle;
+  typedef typename Dual_graph::Edge                   Edge;
+
+ private:
+  typedef typename Dual_graph::Geom_traits            Geom_traits;
+
+ public:
+  typedef typename Geom_traits::Weighted_point_2      Weighted_point_2;
+  typedef typename Geom_traits::Point_2               Point_2;
+
+  typedef CGAL_VORONOI_DIAGRAM_2_NS::Locate_type<DG,false> Locate_type;
+
+  typedef Arity_tag<2>  Arity;
+  typedef Locate_type   return_type;
+
+ private:
+  typedef Triangulation_cw_ccw_2                      CW_CCW_2;
+  typedef typename Dual_graph::Vertex_circulator      Vertex_circulator;
+  typedef typename Dual_graph::Face_circulator        Face_circulator;
+  typedef typename Dual_graph::Edge_circulator        Edge_circulator;
+
+ public:
+  Locate_type operator()(const Dual_graph& dg, const Point_2& p) const {
+    CGAL_precondition( dg.dimension() >= 0 );
+
+    typename DG::Geom_traits::Compare_power_distance_2 cmp_power_distance =
+      dg.geom_traits().compare_power_distance_2_object();
+
+    Vertex_handle v = dg.nearest_power_vertex(p);
+
+    if ( dg.dimension() == 0 ) {
+      return Base::make_locate_type(v);
+    }
+
+    if ( dg.dimension() == 1 ) {
+      Edge_circulator ec = dg.incident_edges(v);
+      Edge_circulator ec_start = ec;
+      Comparison_result cr;
+
+      do {
+	Edge e = *ec;
+	Vertex_handle v1 = e.first->vertex(CW_CCW_2::ccw(e.second));
+	Vertex_handle v2 = e.first->vertex(CW_CCW_2::cw(e.second) );
+
+	if ( v == v1 ) {
+	  if ( !dg.is_infinite(v2) ) {
+	    cr = cmp_power_distance(p, v2->point(), v->point());
+	    CGAL_assertion( cr != SMALLER );
+	    if ( cr == EQUAL ) {
+	      return Base::make_locate_type( e );
+	    }
+	  }
+	} else {
+	  CGAL_assertion( v == v2 );
+	  if ( !dg.is_infinite(v1) ) {
+	    cr = cmp_power_distance(p, v1->point(), v->point());
+	    CGAL_assertion( cr != SMALLER );
+	    if ( cr == EQUAL ) {
+	      return Base::make_locate_type( e );
+	    }
+	  }
+	}
+	++ec;
+      } while ( ec != ec_start );
+
+      return Base::make_locate_type(v);
+    }
+
+    CGAL_assertion( dg.dimension() == 2 );
+
+    Face_circulator fc_start = dg.incident_faces(v);
+    Face_circulator fc = fc_start;
+
+    // first check if the point lies on a Voronoi vertex
+    do {
+      int index = fc->index(v);
+      Vertex_handle v1 = fc->vertex(CW_CCW_2::ccw(index));
+      Vertex_handle v2 = fc->vertex(CW_CCW_2::cw(index) );
+
+      Comparison_result cr1 = LARGER, cr2 = LARGER;
+
+      // do the generic check now
+      if ( !dg.is_infinite(v1) ) {
+	cr1 = cmp_power_distance(p, v1->point(), v->point());
+      }
+      if ( !dg.is_infinite(v2) ) {
+	cr2 = cmp_power_distance(p, v2->point(), v->point());
+      }
+
+      CGAL_assertion( cr1 != SMALLER );
+      CGAL_assertion( cr2 != SMALLER );
+
+      if ( cr1 == EQUAL && cr2 == EQUAL ) {
+	Face_handle f(fc);
+	return Base::make_locate_type(f);
+      }
+
+      ++fc;
+    } while ( fc != fc_start );
+
+    // now check if the point lies on a Voronoi edge
+    fc_start = dg.incident_faces(v);
+    fc = fc_start;
+    do {
+      int index = fc->index(v);
+      Vertex_handle v1 = fc->vertex(CW_CCW_2::ccw(index));
+      Vertex_handle v2 = fc->vertex(CW_CCW_2::cw(index) );
+
+      Comparison_result cr1 = LARGER, cr2 = LARGER;
+
+      // do the generic check now
+      if ( !dg.is_infinite(v1) ) {
+	cr1 = cmp_power_distance(p, v1->point(), v->point());
+      }
+      if ( !dg.is_infinite(v2) ) {
+	cr2 = cmp_power_distance(p, v2->point(), v->point());
+      }
+
+      CGAL_assertion( cr1 != SMALLER );
+      CGAL_assertion( cr2 != SMALLER );
+      CGAL_assertion( cr1 != EQUAL || cr2 != EQUAL );
+
+      if ( cr1 == EQUAL ) {
+	Face_handle f(fc);
+	Edge e(f, CW_CCW_2::cw(index));
+	return Base::make_locate_type(e);
+      } else if ( cr2 == EQUAL ) {
+	Face_handle f(fc);
+	Edge e(f, CW_CCW_2::ccw(index));
+	return Base::make_locate_type(e);
+      }
+
+      ++fc;
+    } while ( fc != fc_start );
+
+    return Base::make_locate_type(v);
+  }
+};
 
 
 //=========================================================================
@@ -202,14 +354,15 @@ template<class RT2>
 class Regular_triangulation_Voronoi_traits_2
   : public CGAL_VORONOI_DIAGRAM_2_NS::Default_Voronoi_traits_2
   <RT2, RT_Edge_degeneracy_tester<RT2>, RT_Face_degeneracy_tester<RT2>,
-   Tag_false>
+   RT_Point_locator<RT2> >
 {
  private:
   typedef RT_Edge_degeneracy_tester<RT2>              Edge_tester;
   typedef RT_Face_degeneracy_tester<RT2>              Face_tester;
+  typedef RT_Point_locator<RT2>                       RT_Point_locator;
 
   typedef CGAL_VORONOI_DIAGRAM_2_NS::Default_Voronoi_traits_2
-  <RT2,Edge_tester,Face_tester,Tag_false>
+  <RT2,Edge_tester,Face_tester,RT_Point_locator>
   Base;
 
   typedef Regular_triangulation_Voronoi_traits_2<RT2>  Self;

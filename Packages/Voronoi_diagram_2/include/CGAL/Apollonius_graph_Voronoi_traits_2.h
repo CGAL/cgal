@@ -24,6 +24,7 @@
 #include <CGAL/Voronoi_diagram_adaptor_2/Default_Voronoi_traits_2.h>
 #include <CGAL/Voronoi_diagram_adaptor_2/Voronoi_vertex_base_2.h>
 #include <CGAL/Voronoi_diagram_adaptor_2/Voronoi_edge_base_2.h>
+#include <CGAL/Voronoi_diagram_adaptor_2/Locate_type.h>
 #include <cstdlib>
 #include <algorithm>
 #include <CGAL/Triangulation_utils_2.h>
@@ -35,41 +36,36 @@ CGAL_BEGIN_NAMESPACE
 
 template<class DG>
 class AG_Point_locator
+  : public CGAL_VORONOI_DIAGRAM_2_NS::Locate_type_accessor<DG,false>
 {
+  typedef CGAL_VORONOI_DIAGRAM_2_NS::Locate_type_accessor<DG,false> Base;
+
  public:
   typedef DG                                          Dual_graph;
   typedef typename Dual_graph::Vertex_handle          Vertex_handle;
   typedef typename Dual_graph::Face_handle            Face_handle;
   typedef typename Dual_graph::Edge                   Edge;
-
-  typedef typename Dual_graph::Geom_traits::Object_2  Object;
-  typedef typename Dual_graph::Geom_traits::Assign_2  Assign;
   typedef typename Dual_graph::Point_2                Point_2;
 
+  typedef CGAL_VORONOI_DIAGRAM_2_NS::Locate_type<DG,false> Locate_type;
+
   typedef Arity_tag<2>  Arity;
-  typedef Object        return_type;
+  typedef Locate_type   return_type;
 
  private:
   typedef Triangulation_cw_ccw_2                      CW_CCW_2;
   typedef typename Dual_graph::Site_2                 Site_2;
 
  public:
-  Assign assign_object() const {
-    return Assign();
-  }
-
-  Object operator()(const Dual_graph& dg, const Point_2& p) const {
+  Locate_type operator()(const Dual_graph& dg, const Point_2& p) const {
     CGAL_precondition( dg.dimension() >= 0 );
-
-    typename DG::Geom_traits::Construct_object_2 make_object =
-      dg.geom_traits().construct_object_2_object();
 
     typename DG::Geom_traits::Oriented_side_of_bisector_2 side_of_bisector =
       dg.geom_traits().oriented_side_of_bisector_2_object();
 
     Vertex_handle v = dg.nearest_neighbor(p);
     if ( dg.dimension() == 0 ) {
-      return make_object(v);
+      return Base::make_locate_type(v);
     }
 
     if ( dg.dimension() == 1 ) {
@@ -80,9 +76,9 @@ class AG_Point_locator
       Oriented_side os = side_of_bisector(v1->site(), v2->site(), p);
       
       if ( os == ON_ORIENTED_BOUNDARY ) {
-	return make_object(e);
+	return Base::make_locate_type(e);
       } else {
-	return make_object(v);
+	return Base::make_locate_type(v);
       }
     }
 
@@ -94,8 +90,8 @@ class AG_Point_locator
     // first check if the point lies on a Voronoi vertex
     do {
       int index = fc->index(v);
-      Vertex_handle v1 = fc->vertex((index+1)%3);
-      Vertex_handle v2 = fc->vertex((index+2)%3);
+      Vertex_handle v1 = fc->vertex(CW_CCW_2::ccw(index));
+      Vertex_handle v2 = fc->vertex(CW_CCW_2::cw(index) );
 
       Oriented_side os1 = ON_POSITIVE_SIDE, os2 = ON_POSITIVE_SIDE;
 
@@ -112,7 +108,7 @@ class AG_Point_locator
 
       if ( os1 == ON_ORIENTED_BOUNDARY && os2 == ON_ORIENTED_BOUNDARY ) {
 	Face_handle f(fc);
-	return make_object(f);
+	return Base::make_locate_type(f);
       }
 
       ++fc;
@@ -123,8 +119,8 @@ class AG_Point_locator
     fc = fc_start;
     do {
       int index = fc->index(v);
-      Vertex_handle v1 = fc->vertex((index+1)%3);
-      Vertex_handle v2 = fc->vertex((index+2)%3);
+      Vertex_handle v1 = fc->vertex(CW_CCW_2::ccw(index));
+      Vertex_handle v2 = fc->vertex(CW_CCW_2::cw(index) );
 
       Oriented_side os1 = ON_POSITIVE_SIDE, os2 = ON_POSITIVE_SIDE;
 
@@ -143,18 +139,18 @@ class AG_Point_locator
 
       if ( os1 == ON_ORIENTED_BOUNDARY ) {
 	Face_handle f(fc);
-	Edge e(f,(index+2)%3);
-	return make_object(e);
+	Edge e(f, CW_CCW_2::cw(index));
+	return Base::make_locate_type(e);
       } else if ( os2 == ON_ORIENTED_BOUNDARY ) {
 	Face_handle f(fc);
-	Edge e(f,(index+1)%3);
-	return make_object(e);
+	Edge e(f, CW_CCW_2::ccw(index));
+	return Base::make_locate_type(e);
       }
 
       ++fc;
     } while ( fc != fc_start );
 
-    return make_object(v);
+    return Base::make_locate_type(v);
   }
 };
 
