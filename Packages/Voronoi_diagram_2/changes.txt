@@ -1,3 +1,9 @@
+16 June 2005:  Menelaos Karavelas
+- added some more data sets for testing with regular triangulation's point
+  location
+- added Locate_type classes
+- the locate methods now return proper Locate_type classes instead of Object
+
 12 June 2005:  Menelaos Karavelas
 - added point location functionality for Delaunay triangulations, Apollonius
   graphs and segment Voronoi diagrams (in their traits).
