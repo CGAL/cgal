@@ -22,7 +22,6 @@
 #define CGAL_SWEEP_LINE_2_IMPL_H
 
 #include <map>
-#include <set>
 #include <list>
 #include <vector>
 #include <algorithm>
@@ -34,6 +33,7 @@
 #include <CGAL/Sweep_line_2/Sweep_line_traits.h>
 #include <CGAL/Sweep_line_2/Sweep_line_subcurve.h>
 #include <CGAL/Sweep_line_2/Sweep_line_rb_tree.h>
+#include <CGAL/Arrangement_2/Open_hash.h>
 
 
 
@@ -152,8 +152,11 @@ public:
   typedef typename SubcurveAlloc_rebind::other            SubCurveAlloc;
 
   typedef Curves_pair<Subcurve>                           CurvesPair;
-  typedef Curves_pair_less_functor<Subcurve>              CurvesPairLess;
-  typedef std::set<CurvesPair,CurvesPairLess>             CurvesTable;
+  typedef Curves_pair_hash_functor<Subcurve>              CurvesPairHasher;
+  typedef Curves_pair_equal_functor<Subcurve>             CurvesPairEqual;
+  typedef Open_hash<CurvesPair,
+                    CurvesPairHasher,
+                    CurvesPairEqual>                      CurvesPairSet;
 
   typedef random_access_input_iterator<std::vector<Object> > vector_inserter;
 
@@ -176,7 +179,8 @@ public:
 #ifndef NDEBUG
       m_eventId(0),
 #endif
-      m_visitor(visitor)
+      m_visitor(visitor),
+      m_curves_pair_set(0)
   {
     m_visitor->attach(this);
   }
@@ -200,7 +204,8 @@ public:
 #ifndef NDEBUG
       m_eventId(0),
 #endif
-      m_visitor(visitor)
+      m_visitor(visitor),
+      m_curves_pair_set(0)
   {
     m_visitor->attach(this);
   }
@@ -346,6 +351,9 @@ public:
   /*! Preform the main sweep-line loop. */
   void sweep()
   {
+    // Resize the hash to be O(2*n), where n is the number of input curves.
+    m_curves_pair_set.resize (2 * m_num_of_subCurves);
+
     // Looping over the events in the queue.
     EventQueueIter eventIter = m_queue->begin();
 
@@ -383,6 +391,9 @@ public:
       m_queue->erase(eventIter);
       eventIter = m_queue->begin();
     }
+
+    // We can clean the set of curve pairs.
+    m_curves_pair_set.clear();
 
     return;
   }
@@ -706,9 +717,33 @@ protected:
     }
     else  // numRightCurves > 1
     {
+
       EventCurveIter firstOne = m_currentEvent->right_curves_begin();
       //EventCurveIter lastOne = m_currentEvent->right_curves_end(); --lastOne;
       EventCurveIter rightCurveEnd = m_currentEvent->right_curves_end();
+
+      //if( numRightCurves == 2)
+      //{
+      //  EventCurveIter lastOne = --rightCurveEnd;
+      //  m_statusLine.swap((*firstOne)->get_hint(),
+      //                    (*lastOne)->get_hint());
+      //  if ( (*firstOne)->get_hint() != m_statusLine.begin() )
+      //  { 
+      //    //  get the previous curve in the y-str
+      //    StatusLineIter prev =  (*firstOne)->get_hint(); --prev;
+      //    _intersect(static_cast<Subcurve*>(*prev),
+      //               static_cast<Subcurve*>(*((*firstOne)->get_hint())));
+      //  }
+
+      //  StatusLineIter next =  (*lastOne)->get_hint(); ++next;
+      //  if ( next != m_statusLine.end() )
+      //  {
+      //    
+      //    _intersect( static_cast<Subcurve*>(*((*lastOne)->get_hint())),
+      //                static_cast<Subcurve*>(*next));
+      //  }
+      //  return;
+      //}
       PRINT_INSERT(*firstOne);
 
       StatusLineIter slIter = m_statusLine.insert_predecessor
@@ -901,7 +936,7 @@ protected:
 
   /*! a lookup table of pairs of Subcurves that ahve been intersected */
   //TODO: replace set with hash 
-  CurvesTable m_curves_table;
+  CurvesPairSet m_curves_pair_set;
 
   /*! a vector holds the intersection objects */
   std::vector<Object> m_x_objects;
@@ -1110,14 +1145,20 @@ _intersect(Subcurve *c1, Subcurve *c2, bool after_remove)
 
   CGAL_assertion(c1 != c2);
   
-  // look up for (c1,c2) in the table
+  // look up for (c1,c2) in the table and insert if doesnt exist
   CurvesPair curves_pair(c1,c2);
-  if(m_curves_table.find(curves_pair) != m_curves_table.end())
+  if(! (m_curves_pair_set.insert(curves_pair)).second )
+  {
+    float load_factor = static_cast<float>(m_curves_pair_set.size()) /
+                        m_curves_pair_set.bucket_count();
+    // after lot of benchemarks, keeping load_factor<=6 is optimal
+    if(load_factor > 6.0f)
+      m_curves_pair_set.resize(m_curves_pair_set.size() * 6);
+
     return;  //the curves have already been checked for intersection
+  }
 
-  //insert curves_pair to the table to avoid future checkings for intersection
-  m_curves_table.insert(curves_pair);
-
+ 
   vector_inserter vi (m_x_objects) ;
   vector_inserter vi_end (m_x_objects);
   vi_end = m_traits.intersect_2_object()(c1->get_last_curve(),
