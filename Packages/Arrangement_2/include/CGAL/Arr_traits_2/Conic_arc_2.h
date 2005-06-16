@@ -598,7 +598,7 @@ protected:
     bool              found;
     double            dx, dy;
     double            curr_dist;
-    double            min_dist;
+    double            min_dist = -1;
     int               k;
 
     for (k = 1; k <= 2; k++)
