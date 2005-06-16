@@ -361,13 +361,15 @@ public:
                      X_monotone_curve_2& c1, X_monotone_curve_2& c2) const
     {
       // Split the original curve.
-      Base_x_monotone_curve_2  base_c1, base_c2;
       base->split_2_object() (cv, p,
-			      base_c1, base_c2);
+			      c1, c2);
 
-      // Attach data to the split curve.
-      c1 = X_monotone_curve_2 (base_c1, cv.data_begin(), cv.data_end());
-      c2 = X_monotone_curve_2 (base_c2, cv.data_begin(), cv.data_end());
+      // Attach data to the split curves.
+      c1.clear_data();
+      c1.add_data (cv.data_begin(), cv.data_end());
+
+      c2.clear_data();
+      c2.add_data (cv.data_begin(), cv.data_end());
 
       return;
     }

@@ -57,8 +57,11 @@ private:
                                         // insert the curves.
   Traits_2              *traits;        // The arrangement traits.
 
-  const Vertex_handle    invalid_v;
-  const Halfedge_handle  invalid_he;
+  const Vertex_handle    invalid_v;     // An invalid vertex handle.
+  const Halfedge_handle  invalid_he;    // An invalid halfedge handle.
+
+  X_monotone_curve_2     sub_cv1;       // Auxiliary varibale (for splitting).
+  X_monotone_curve_2     sub_cv2;       // Auxiliary varibale (for splitting).
 
 public:
 
@@ -251,8 +254,6 @@ public:
     if (left_v == invalid_v)
     {
       // Split the curve associated with he at the left endpoint of cv.
-      X_monotone_curve_2   sub_cv1, sub_cv2;
-	
       traits->split_2_object() (he.curve(),
 				traits->construct_min_vertex_2_object() (cv),
 				sub_cv1, sub_cv2);
@@ -290,8 +291,6 @@ public:
       if (right_v == invalid_v)
       {
 	// Split the curve associated with he at the right endpoint of cv.
-	X_monotone_curve_2   sub_cv1, sub_cv2;
-	
 	traits->split_2_object() (he.curve(),
 				  traits->construct_max_vertex_2_object() (cv),
 				  sub_cv1, sub_cv2);
@@ -330,8 +329,6 @@ private:
 		    Arr_accessor<Arrangement_2>& arr_access)
   {
     // Split the curve at the split point.
-    X_monotone_curve_2   sub_cv1, sub_cv2;
-	
     traits->split_2_object() (he.curve(),
 			      p,
 			      sub_cv1, sub_cv2);

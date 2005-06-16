@@ -213,7 +213,9 @@ public:
     if(get_right_event() != (Event*)e)
     {
       X_monotone_curve_2 dummy;
-      traits()->split_2_object()(m_lastCurve, e->get_point(), dummy,m_lastCurve);
+      traits()->split_2_object() (m_lastCurve,
+				  e->get_point(),
+				  dummy, m_lastCurve);
 
       return this;
     }
@@ -243,23 +245,17 @@ public:
 
   unsigned int overlap_depth()
   {
-    if(! m_orig_subcurve1)
-      return 1;
+    if (! m_orig_subcurve1)
+      return (1);
+
+    if (m_orig_subcurve1->overlap_depth() >= m_orig_subcurve2->overlap_depth())
+      return (m_orig_subcurve1->overlap_depth() + 1);
     else
-      return 1 + max(m_orig_subcurve1->overlap_depth(),
-                     m_orig_subcurve2->overlap_depth());
+      return (m_orig_subcurve2->overlap_depth() + 1);
   }
-
-
-#ifndef NDEBUG
-  void Print() const;
-#endif
-
-
-
-  
  
-  protected:
+protected:
+
   /*! the portion of the curve to the right of the last event point 
       on the curve */
   X_monotone_curve_2 m_lastCurve;
@@ -280,17 +276,11 @@ public:
   Self *m_orig_subcurve2;
 
  
-  protected:
+protected:
 
   Traits* traits() const
   {
     return Sweep_line_traits<Traits>::get_traits();
-  }
-
-  private:
-  unsigned int max(unsigned int a, unsigned int b)
-  {
-    return (a >= b ? a : b);
   }
 
 };
@@ -304,19 +294,6 @@ Sweep_line_subcurve(const X_monotone_curve_2 &curve):
 { 
   m_lastCurve = curve;
 }
-
-#ifndef NDEBUG
-template<class SweepLineTraits_2>
-void 
-Sweep_line_subcurve<SweepLineTraits_2>::
-Print() const
-{
-  std::cout << "Curve " << this << "  (" << m_lastCurve << ") " << std::endl;
-}
-
-#endif
-
-
 
 CGAL_END_NAMESPACE
 
