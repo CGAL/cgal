@@ -254,6 +254,10 @@ public:
       return (m_orig_subcurve2->overlap_depth() + 1);
   }
  
+#ifndef NDEBUG
+  void Print() const;
+#endif
+
 protected:
 
   /*! the portion of the curve to the right of the last event point 
@@ -294,6 +298,16 @@ Sweep_line_subcurve(const X_monotone_curve_2 &curve):
 { 
   m_lastCurve = curve;
 }
+
+#ifndef NDEBUG
+template<class SweepLineTraits_2>
+void 
+Sweep_line_subcurve<SweepLineTraits_2>::Print() const
+{
+  std::cout << "Curve " << this << "  (" << m_lastCurve << ") " << std::endl;
+}
+
+#endif
 
 CGAL_END_NAMESPACE
 
