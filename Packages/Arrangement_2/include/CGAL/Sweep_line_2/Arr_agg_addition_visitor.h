@@ -53,9 +53,7 @@ protected:
 public:
 
   Arr_agg_addition_visitor(Arr *arr): Base(arr)
-  {
-    m_traits = arr->get_traits();
-  }
+  {}
 
   void before_handle_event(Event* event)
   {
@@ -219,10 +217,10 @@ public:
     //is on the left of the  halfedge
 
     CGAL_assertion
-      (m_traits->compare_xy_2_object()(he.source().point(),
+      (m_traits.compare_xy_2_object()(he.source().point(),
 				       he.target().point()) == LARGER);
 
-    m_traits->split_2_object()(he.curve(), pt, sub_cv2, sub_cv1)
+    m_traits.split_2_object()(he.curve(), pt, sub_cv2, sub_cv1);
       return (m_arr_access.split_edge_ex(he,pt, sub_cv1, sub_cv2));
   }
 
@@ -246,7 +244,7 @@ public:
 
  protected:
 
-  const Traits        *m_traits;
+  Traits               m_traits;
 
   X_monotone_curve_2   sub_cv1;         // Auxiliary variable (for splitting).
   X_monotone_curve_2   sub_cv2;         // Auxiliary variable (for splitting).
