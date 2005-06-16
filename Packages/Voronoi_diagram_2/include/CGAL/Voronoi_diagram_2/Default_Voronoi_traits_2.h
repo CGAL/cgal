@@ -95,30 +95,6 @@ class Default_Voronoi_traits_2
 
   typedef typename Dual_graph::Vertex_handle  Vertex_handle;
 
-  typedef CGAL::Object  Object;
-
-  struct Construct_object_object {
-    template<class T>
-    Object operator()(const T& t) const {
-      return CGAL::make_object(t);
-    }
-  };
-
-  struct Assign {
-    template<class T>
-    bool operator()(T& t, const Object& o) const {
-      return CGAL::assign(t, o);
-    }
-  };
-
-  Assign assign_object() const {
-    return Assign();
-  }
-
-  Construct_object_object construct_object_object() const {
-    return Construct_object_object();
-  }
-
   Point_locator point_locator_object() const {
     return Point_locator();
   }
@@ -147,8 +123,6 @@ class Default_Voronoi_traits_2<DG,ET,FT,Tag_false>
   typedef DG  Dual_graph;
   typedef ET  Edge_degeneracy_tester;
   typedef FT  Face_degeneracy_tester;
-
-  typedef CGAL::Object  Object;
 
   typedef Tag_false Has_point_locator;
 
