@@ -1,4 +1,4 @@
-17 June 2005 Menelaos Karavelas
+16 June 2005 Menelaos Karavelas
 - Regular triangulation: added arithmetic filtering support for the
   nearest_power_vertex predicate
 

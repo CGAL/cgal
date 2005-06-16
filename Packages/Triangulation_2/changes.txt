@@ -1,4 +1,4 @@
-17 June 2005 Menelaos Karavelas
+16 June 2005 Menelaos Karavelas
 - added nearest_power_vertex functionality in regular triangulation
 
 11 May 2005 Menelaos Karavelas
