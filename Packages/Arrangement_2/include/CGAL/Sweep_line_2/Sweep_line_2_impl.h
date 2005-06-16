@@ -34,7 +34,7 @@
 #include <CGAL/Sweep_line_2/Sweep_line_traits.h>
 #include <CGAL/Sweep_line_2/Sweep_line_subcurve.h>
 #include <CGAL/Sweep_line_2/Sweep_line_rb_tree.h>
-#include <CGAL/Timer.h>
+
 
 
 
@@ -156,7 +156,7 @@ public:
   typedef std::set<CurvesPair,CurvesPairLess>             CurvesTable;
 
   typedef random_access_input_iterator<std::vector<Object> > vector_inserter;
-  typedef CGAL::Timer Timer;
+
 
 
   /*!
@@ -910,9 +910,7 @@ protected:
   X_monotone_curve_2  sub_cv1;
   X_monotone_curve_2  sub_cv2;
 
-  //TODO: remove !!
-  Timer m_timer;
-
+ 
 
   Event* allocate_event(const Point_2& pt)
   {
@@ -955,7 +953,6 @@ Sweep_line_2_impl<SweepLineTraits_2,SweepEvent,CurveWrap,SweepVisitor,
     m_subCurveAlloc.deallocate(*itr, 1);
   }
   delete m_queue;
-  //std::cout<<"remove_at took: "<<m_timer.time()<<"\n";
 }
 
 /*! Given an x-monotone curve, create events for each end (if 
@@ -1063,9 +1060,7 @@ _remove_curve_from_status_line(Subcurve *leftCurve, bool remove_for_good)
 
   if(! remove_for_good)
   {
-    //m_timer.start();
     m_statusLine.remove_at(sliter);
-    //m_timer.stop();
     SL_DEBUG(std::cout << "remove_curve_from_status_line Done\n";)
     return;
   }
