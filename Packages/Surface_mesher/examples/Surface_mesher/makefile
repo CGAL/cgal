@@ -16,9 +16,11 @@ CGAL_CXX = g++
 #---------------------------------------------------------------------#
 
 CXXFLAGS = -I../../include \
+	   -I../../../Laurent/Mesh_3/include \
            $(CGAL_CXXFLAGS) \
-           $(LONG_NAME_PROBLEM_CXXFLAGS) 
-#	   -O2
+           $(LONG_NAME_PROBLEM_CXXFLAGS) \
+	   -O3 \
+	   -g
 #	   -pg
 #	   -g
 #           -I../../../Mesh_2/include \
