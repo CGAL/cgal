@@ -273,7 +273,8 @@ namespace CGAL {
     Zone conflicts_zone_impl(const Point& p, Facet f) const {
 	Zone zone;
 	
-       	zone.cell = triangulation_ref_impl().
+       	// TODO may be avoid the locate here
+	zone.cell = triangulation_ref_impl().
 	  locate (p, zone.locate_type, zone.i, zone.j, f.first);
 	
 	triangulation_ref_impl().

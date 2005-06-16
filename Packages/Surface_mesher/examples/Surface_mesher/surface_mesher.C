@@ -15,6 +15,7 @@
 #include <CGAL/Complex_2_in_triangulation_vertex_base_3.h>
 #include <CGAL/Complex_2_in_triangulation_surface_mesh_cell_base_3.h>
 #include <CGAL/Complex_2_in_triangulation_vertex_base_3.h>
+#include <CGAL/Robust_circumcenter_traits_3.h>
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Surface_mesher/Surface_mesher.h>
 #include <CGAL/Surface_mesher/Surface_mesher_regular_edges.h>
@@ -29,13 +30,17 @@
 #include <fstream>
 
 
+
+
 /////////////// Types /////////////// 
 
-struct K : public CGAL::Exact_predicates_inexact_constructions_kernel {};
+struct K2 : public CGAL::Exact_predicates_inexact_constructions_kernel {};
+typedef CGAL::Robust_circumcenter_traits_3<K2>  K;
 typedef CGAL::Triangulation_vertex_base_3<K> Vb;
 typedef CGAL::Complex_2_in_triangulation_vertex_base_3<K, Vb> Vb2;
 typedef CGAL::Complex_2_in_triangulation_surface_mesh_cell_base_3<K> Cb;
 typedef CGAL::Triangulation_data_structure_3<Vb2, Cb> Tds;
+
 typedef CGAL::Delaunay_triangulation_3<K, Tds> Del;
 typedef CGAL::Complex_2_in_triangulation_3_surface_mesh<Del> C2t3;
 typedef Function <K::FT> Func;
