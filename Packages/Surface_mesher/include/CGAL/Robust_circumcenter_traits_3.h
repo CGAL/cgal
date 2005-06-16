@@ -55,7 +55,15 @@ class Robust_construct_circumcenter_3
 		      const Point_3 & q,
 		      const Point_3 & r) const
     {
-      return K(). construct_circumcenter_3_object()(p,q,r);
+      Cartesian_converter<K,EK> to_exact;
+      Cartesian_converter<EK,K, To_double<EK::FT> > back_from_exact; 
+      EK::Construct_circumcenter_3 
+	exact_circumcenter = EK().construct_circumcenter_3_object();
+
+      return back_from_exact(exact_circumcenter( to_exact(p),
+						 to_exact(q),
+						 to_exact(r)));
+/*       return K(). construct_circumcenter_3_object()(p,q,r); */
     }
 };
 

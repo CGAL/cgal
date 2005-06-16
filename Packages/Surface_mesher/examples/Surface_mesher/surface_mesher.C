@@ -99,13 +99,13 @@ int main(int argc, char **argv) {
   T.insert (initial_point_sample.begin(), initial_point_sample.end());
   
   // Meshing criteria
-  CGAL::Surface_mesher::Curvature_size_criterion<Del> c_s_crit (1e-3);
+  CGAL::Surface_mesher::Curvature_size_criterion<Del> c_s_crit (0.01);
   CGAL::Surface_mesher::Uniform_size_criterion<Del> u_s_crit (10000);
   CGAL::Surface_mesher::Aspect_ratio_criterion<Del> a_r_crit (30);
   std::vector<Criterion*> crit_vect;
   crit_vect.push_back (&a_r_crit);
-  crit_vect.push_back (&c_s_crit);
   crit_vect.push_back (&u_s_crit);
+  crit_vect.push_back (&c_s_crit);
   //std::vector<Criterion*> crit_vect(1);
   //crit_vect[0] = &u_s_crit;
   //crit_vect[1] = &a_r_crit;

@@ -19,8 +19,8 @@ CXXFLAGS = -I../../include \
 	   -I../../../Laurent/Mesh_3/include \
            $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS) \
-	   -O3 \
-	   -g
+	   -g \
+	   -O3
 #	   -pg
 #	   -g
 #           -I../../../Mesh_2/include \
