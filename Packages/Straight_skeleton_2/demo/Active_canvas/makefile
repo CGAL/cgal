@@ -1,0 +1,55 @@
+# Created by the script create_makefile
+# This is the makefile for compiling a CGAL application.
+
+#---------------------------------------------------------------------#
+#                    include platform specific settings
+#---------------------------------------------------------------------#
+# Choose the right include file from the <cgalroot>/make directory.
+
+CGAL_MAKEFILE=/home/CGAL/make/makefile_i686_Linux-2.4.25-gentoo-r1_g++-3.3.2
+include $(CGAL_MAKEFILE)
+
+#---------------------------------------------------------------------#
+#                    compiler flags
+#---------------------------------------------------------------------#
+
+CXXFLAGS = -I../../include/ \
+           $(CGAL_CXXFLAGS) \
+           $(LONG_NAME_PROBLEM_CXXFLAGS) \
+           $(DEBUG_OPT)
+
+#---------------------------------------------------------------------#
+#                    linker flags
+#---------------------------------------------------------------------#
+
+LIBPATH = \
+          $(CGAL_LIBPATH)
+
+LDFLAGS = \
+          $(LONG_NAME_PROBLEM_LDFLAGS) \
+          $(CGAL_QT_LDFLAGS)
+
+
+#---------------------------------------------------------------------#
+#                    target entries
+#---------------------------------------------------------------------#
+
+all: active_canvas
+
+active_canvas.moc: active_canvas.C 
+	${QT_MOC} -o active_canvas.moc active_canvas.C
+
+active_canvas$(OBJ_EXT): active_canvas.C active_canvas.moc
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) active_canvas.C
+
+active_canvas$(EXE_EXT): active_canvas$(OBJ_EXT)
+	$(CGAL_CXX) $(EXE_OPT)active_canvas active_canvas$(OBJ_EXT) $(LDFLAGS)
+
+clean: active_canvas.clean 
+
+#---------------------------------------------------------------------#
+#                    suffix rules
+#---------------------------------------------------------------------#
+
+.C$(OBJ_EXT):
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
