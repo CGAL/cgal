@@ -60,12 +60,12 @@ CGAL::Surface_mesher::Surface_mesher_manifold_base <Del, Oracle, Criteria, SMREW
 > SMMWB;
 
 
-typedef SM Surface;  // basic mesher
-//typedef SMRE Surface;
-//typedef SMREWB Surface;
-// typedef SMM Surface;  // manifold with boundary
-//typedef SMMWB Surface;  // manifold without boundary
+//typedef SM Surface;  // basic mesher
+//typedef SMM Surface;  // manifold with boundary
+typedef SMMWB Surface;  // manifold without boundary
 
+//typedef SMRE Surface;  // only regular edges
+//typedef SMREWB Surface;  // only regular edges, without boundary
 
 
 /////////////// Main function /////////////// 
@@ -94,7 +94,7 @@ int main(int argc, char **argv) {
   // Initial point sample
   //Oracle::Points initial_point_sample = O.random_points (10);
   //  Oracle::Points initial_point_sample = O.random_points (20);
-  Oracle::Points initial_point_sample = O.random_points (50);
+  Oracle::Points initial_point_sample = O.random_points (4);
   typedef Del::Point Point;
   T.insert (initial_point_sample.begin(), initial_point_sample.end());
   
@@ -106,9 +106,7 @@ int main(int argc, char **argv) {
   crit_vect.push_back (&a_r_crit);
   crit_vect.push_back (&u_s_crit);
   crit_vect.push_back (&c_s_crit);
-  //std::vector<Criterion*> crit_vect(1);
-  //crit_vect[0] = &u_s_crit;
-  //crit_vect[1] = &a_r_crit;
+
   Criteria C (crit_vect);
 
   std::cout << "Initial number of points: " << T.number_of_vertices() 

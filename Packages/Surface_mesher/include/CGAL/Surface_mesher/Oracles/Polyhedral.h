@@ -105,6 +105,7 @@ public:
   }
 
 
+  // Basic intersection function for segments/rays/lines with the polyhedron 
   template <class Elt>
   CGAL::Object intersect_with_surface (Elt e) {
     typedef CGAL::Data_structure_using_octree_3<GT_3> Octree;
@@ -119,6 +120,15 @@ public:
 
   CGAL::Object intersect_segment_surface(Segment s)
     {      
+      // debug: test if segment is degenerate 
+      // (can happen, because of rounding in circumcenter computations)
+      if (s.vertex(0)==s.vertex(1)) {
+	std::cerr << "Warning: degenerate segment (" << s << ")\n";
+	return CGAL::Object();
+      }
+
+      // debug: for detecting whether Marie's code works
+      // (we compare with our basic intersection function)
       CGAL::Object oun, odeux;
       Point p;
       oun = data_struct.intersect(s.vertex(0), s.vertex(1));
@@ -132,8 +142,8 @@ public:
 
       return odeux;
 
-/*       return  intersect_with_surface (s); */
-/*       return data_struct.intersect (s.vertex(0), s.vertex(1)); */
+/*       return  intersect_with_surface (s);  // basic intersection function */
+/*       return data_struct.intersect (s.vertex(0), s.vertex(1));  // Marie */
     }
 
     
@@ -141,6 +151,8 @@ public:
 
   CGAL::Object intersect_ray_surface(Ray &r)
     {      
+      // debug: for detecting whether Marie's code works
+      // (we compare with our basic intersection function)
       CGAL::Object oun, odeux;
       Point p;
       oun = data_struct.intersect (r);
@@ -154,8 +166,8 @@ public:
 
       return odeux;
 
-/*       return intersect_with_surface (r); */
-/*       return data_struct.intersect (r); */
+/*       return intersect_with_surface (r);  // basic intersection function */
+/*       return data_struct.intersect (r);   // Marie's code */
     }
 
 
