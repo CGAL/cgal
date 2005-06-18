@@ -1,3 +1,7 @@
+18 June 2005:  Menelaos Karavelas
+- fixed the point_location example w.r.t. the changes made on June 16;
+  the Locate_type classes is now used in the example as well.
+
 16 June 2005:  Menelaos Karavelas
 - added some more data sets for testing with regular triangulation's point
   location

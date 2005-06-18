@@ -20,13 +20,11 @@ typedef CGAL::Segment_Voronoi_diagram_hierarchy_2<Gt>        SVD;
 typedef CGAL::Segment_Voronoi_diagram_Voronoi_traits_2<SVD>  VT;
 typedef CGAL::Voronoi_diagram_adaptor_2<SVD,VT>              VD;
 
-typedef VT::Assign                 Assign;
-typedef VT::Point_locator::Object  Object;
-
 typedef VD::Vertex_handle    Vertex_handle;
 typedef VD::Face_handle      Face_handle;
 typedef VD::Halfedge_handle  Halfedge_handle;
 
+typedef VD::Locate_type      Locate_type;
 
 
 int main()
@@ -61,22 +59,16 @@ int main()
   std::cout << "Query sites and location feature:" << std::endl;
   SVD::Point_2 p;
 
-  Assign assign = vd.voronoi_traits().assign_object();
-
   while ( ifq >> p ) {
     std::cout << p << "\t --> \t" << std::flush;
 
-    Object o = vd.locate(p);
+    Locate_type lt = vd.locate(p);
 
-    Vertex_handle      v;
-    Face_handle        f;
-    Halfedge_handle    e;
-
-    if ( assign(v, o) ) {
+    if ( lt.is_vertex() ) {
       std::cout << "VERTEX";
-    } else if ( assign(e, o) ) {
+    } else if ( lt.is_halfedge() ) {
       std::cout << "EDGE";
-    } else if ( assign(f, o) ) {
+    } else if ( lt.is_face() ) {
       std::cout << "FACE";
     }
     std::cout << std::endl;
