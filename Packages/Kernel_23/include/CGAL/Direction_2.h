@@ -29,34 +29,134 @@ CGAL_BEGIN_NAMESPACE
 template <class R_>
 class Direction_2 : public R_::Kernel_base::Direction_2
 {
+
   typedef typename R_::RT                    RT;
   typedef typename R_::Vector_2              Vector_2;
   typedef typename R_::Line_2                Line_2;
   typedef typename R_::Ray_2                 Ray_2;
   typedef typename R_::Segment_2             Segment_2;
   typedef typename R_::Kernel_base::Direction_2      RDirection_2;
+
 public:
+
+  typedef typename R_::Homogeneous_coordinate_type Homogeneous_coordinate_type;
+
+  typedef RDirection_2 Rep;
+
+  const Rep& rep() const
+  {
+    return *this;
+  }
+
+  Rep& rep()
+  {
+    return *this;
+  }
+
   typedef  R_   R;
 
-  Direction_2() {}
+  Direction_2()
+    : RDirection_2(typename R::Construct_direction_2()().rep())
+  {}
 
   Direction_2(const RDirection_2& d)
     : RDirection_2(d) {}
 
   Direction_2(const Vector_2& v)
-    : RDirection_2(v) {}
+    : RDirection_2(typename R::Construct_direction_2()(v).rep()) {}
 
   Direction_2(const Line_2& l)
-    : RDirection_2(l) {}
+    : RDirection_2(typename R::Construct_direction_2()(l).rep()) {}
 
   Direction_2(const Ray_2& r)
-    : RDirection_2(r) {}
+    : RDirection_2(typename R::Construct_direction_2()(r).rep()) {}
 
   Direction_2(const Segment_2& s)
-    : RDirection_2(s) {}
+    : RDirection_2(typename R::Construct_direction_2()(s).rep()) {}
 
   Direction_2(const RT &x, const RT &y)
-    :  RDirection_2(x,y) {}
+    :  RDirection_2(typename R::Construct_direction_2()(x,y).rep()) {}
+
+  bool
+  counterclockwise_in_between(const Direction_2 &d1,
+			      const Direction_2 &d2) const 
+  {
+    return R().counterclockwise_in_between_2_object()(*this, d1, d2);
+  }
+  
+  Direction_2 perpendicular(const Orientation &o) const
+  {
+    return R().construct_perpendicular_direction_2_object()(*this,o);
+  }
+
+  
+  Homogeneous_coordinate_type dx() const
+  {
+    return R().compute_dx_2_object()(*this);
+  }
+
+  Homogeneous_coordinate_type dy() const
+  {
+    return R().compute_dy_2_object()(*this);
+  }
+
+  Homogeneous_coordinate_type delta(int i) const
+  {
+    CGAL_kernel_precondition( ( i == 0 ) || ( i == 1 ) );
+    return (i==0) ? dx() : dy();
+  }
+  
+  bool
+  operator<(const Direction_2 &d) const
+  {
+    return R().compare_angle_with_x_axis_2_object()(*this, d) == SMALLER;
+  }
+
+
+  bool
+  operator>(const Direction_2 &d) const
+  {
+    return d < *this;
+  }
+
+
+  bool
+  operator>=(const Direction_2 &d) const
+  {
+    return R().compare_angle_with_x_axis_2_object()(*this, d) != SMALLER;
+  }
+  
+
+  bool
+  operator<=(const Direction_2 &d) const
+  {
+    return R().compare_angle_with_x_axis_2_object()(*this, d) != LARGER;
+  }
+  
+  Direction_2
+  operator-() const
+  {
+    return Direction_2(-dx(), -dy());
+  } 
+  
+  Vector_2 vector() const
+  {
+  return R().construct_vector_2_object()(*this);
+  }
+  
+  bool
+  operator==(const Direction_2& d) const
+  {
+    return R().equal_2_object()(*this, d);
+  }
+
+
+  bool
+  operator!=(const Direction_2& d) const
+  {
+    return !(*this == d);
+  }
+
 };
 
 #ifndef CGAL_NO_OSTREAM_INSERT_DIRECTION_2
@@ -64,18 +164,18 @@ template < class R >
 std::ostream &
 operator<<(std::ostream &os, const Direction_2<R> &d)
 {
-  typedef typename  R::Kernel_base::Direction_2  RDirection_2;
-  return os << static_cast<const RDirection_2&>(d);
+
+  return os << d.rep();
 }
 #endif // CGAL_NO_OSTREAM_INSERT_DIRECTION_2
 
 #ifndef CGAL_NO_ISTREAM_EXTRACT_DIRECTION_2
 template < class R >
 std::istream &
-operator>>(std::istream &is, Direction_2<R> &p)
+operator>>(std::istream &is, Direction_2<R> &d)
 {
-  typedef typename  R::Kernel_base::Direction_2  RDirection_2;
-  return is >> static_cast<RDirection_2&>(p);
+  return is >> d.rep();
+
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_DIRECTION_2
 

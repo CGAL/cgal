@@ -25,7 +25,6 @@
 
 #include "CGAL/Precise_numbers.h"
 #include "CGAL/_test_io.h"
-
 #include "CGAL/_test_2.C"
 #include "CGAL/_test_3.C"
 
@@ -84,5 +83,9 @@ main()
   std::cout << std::endl;
   _test_mf_plane_3_to_2d( Cls() );
   
+  std::cout << "All tests done" << std::endl;
   return 0;
 }
+
+
+

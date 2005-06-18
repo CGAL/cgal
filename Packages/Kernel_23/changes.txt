@@ -1,3 +1,6 @@
+18 June 2005 Andreas Fabri
+- Moved code from Kernel_class_2 to the functors
+
 12 June 2005 Sylvain Pion
 - Add function operator in Construct_{min|max}_vertex_[23] taking
   Segment_[23].

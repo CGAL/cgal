@@ -32,51 +32,209 @@ template <class R_>
 class Vector_2 : public R_::Kernel_base::Vector_2
 {
   typedef typename R_::RT             RT;
+  typedef typename R_::FT             FT;
   typedef typename R_::Segment_2      Segment_2;
   typedef typename R_::Ray_2          Ray_2;
   typedef typename R_::Line_2         Line_2;
   typedef typename R_::Point_2        Point_2;
+  typedef typename R_::Direction_2    Direction_2;
   typedef typename R_::Kernel_base::Vector_2  RVector_2;
+
 public:
+
+  typedef typename R_::Cartesian_coordinate_type Cartesian_coordinate_type;
+  typedef typename R_::Homogeneous_coordinate_type Homogeneous_coordinate_type;
+
+  typedef RVector_2 Rep;
+
+  const Rep& rep() const
+  {
+    return *this;
+  }
+
+  Rep& rep()
+  {
+    return *this;
+  }
+
   typedef  R_                        R;
 
-  Vector_2() {}
+  Vector_2()
+    :RVector_2(typename R::Construct_vector_2()().rep()) 
+  {}
 
   Vector_2(const Point_2& a, const Point_2& b)
-      : RVector_2(a, b) {}
+      : RVector_2(typename R::Construct_vector_2()(a, b).rep()) {}
 
   Vector_2(const RVector_2& v) : RVector_2(v) {}
 
-  Vector_2(const Segment_2 &s) : RVector_2(s) {}
+  Vector_2(const Segment_2 &s) : RVector_2(typename R::Construct_vector_2()(s).rep()) {}
 
-  Vector_2(const Ray_2 &r) : RVector_2(r) {}
+  Vector_2(const Ray_2 &r) : RVector_2(typename R::Construct_vector_2()(r).rep()) {}
 
-  Vector_2(const Line_2 &l) : RVector_2(l) {}
+  Vector_2(const Line_2 &l) : RVector_2(typename R::Construct_vector_2()(l).rep()) {}
 
-  Vector_2(const Null_vector &v) : RVector_2(v) {}
+  Vector_2(const Null_vector &v) : RVector_2(typename R::Construct_vector_2()(v).rep()) {}
 
-  Vector_2(const RT &x, const RT &y) : RVector_2(x,y) {}
+  Vector_2(const RT &x, const RT &y) 
+    : RVector_2(typename R::Construct_vector_2()(x,y).rep()) 
+  {}
 
-  Vector_2(const RT &x, const RT &y, const RT &w) : RVector_2(x,y,w) {}
+  Vector_2(const RT &x, const RT &y, const RT &w)
+    : RVector_2(typename R::Construct_vector_2()(x,y,w).rep()) 
+  {}
+
+
+  Cartesian_coordinate_type x() const
+  {
+    return R().compute_x_2_object()(*this);
+  }
+
+  Cartesian_coordinate_type y() const
+  {
+    return R().compute_y_2_object()(*this);
+  }
+
+   Cartesian_coordinate_type cartesian(int i) const
+  {
+    CGAL_kernel_precondition( (i == 0) || (i == 1) );
+    return (i==0) ?  x() : y();
+  }
+
+  Cartesian_coordinate_type 
+  operator[](int i) const
+  {
+      return cartesian(i);
+  }
+
+  Homogeneous_coordinate_type hx() const
+  {
+    return R().compute_hx_2_object()(*this);
+  }
+
+  Homogeneous_coordinate_type hy() const
+  {
+    return R().compute_hy_2_object()(*this);
+  }
+
+  Homogeneous_coordinate_type hw() const
+  {
+    return R().compute_hw_2_object()(*this);
+  }
+
+   Cartesian_coordinate_type homogeneous(int i) const
+  {
+    CGAL_kernel_precondition( (i >= 0) || (i <= 2) );
+    return (i==0) ?  hx() : (i==1)? hy() : hw();
+  }
+
+  int dimension() const
+  {
+      return 2;
+  }
+
+  Vector_2 operator-() const
+  {
+    return R().construct_opposite_vector_2_object()(*this);
+  }
+  
+  Vector_2 operator-(const Vector_2& v) const
+  {
+    return R().construct_difference_of_vectors_2_object()(*this,v);
+  }
+  
+  Vector_2 operator+(const Vector_2& v) const
+  {
+    return R().construct_sum_of_vectors_2_object()(*this,v);
+  }
+  
+  Vector_2 operator/(const RT& c)
+  {
+   return R().construct_divided_vector_2_object()(*this,c); 
+  }
+ 
+ FT squared_length() const
+  {
+    return R().compute_squared_length_2_object()(*this);
+  }
+
+
+  Direction_2 direction() const
+  {
+    return R().construct_direction_2_object()(*this);
+  }
+
+  Vector_2 perpendicular(const Orientation &o) const
+  {
+    return R().construct_perpendicular_vector_2_object()(*this,o);
+  }
+
+
+  bool
+  operator==(const Vector_2& v) const
+  {
+    return R().equal_2_object()(*this, v);
+  }
+
+
+  bool
+  operator!=(const Vector_2& v) const
+  {
+    return !(*this == v);
+  }
+
 };
+
+
+template < class R >
+inline
+bool
+operator==(const Vector_2<R> &v, const Null_vector &n)
+{
+  return R().equal_2_object()(v, n);
+}
+
+template < class R >
+inline
+bool
+operator==(const Null_vector &n, const Vector_2<R> &v)
+{
+  return v == n;
+}
+
+template < class R >
+inline
+bool
+operator!=(const Vector_2<R> &v, const Null_vector &n)
+{
+  return !(v == n);
+}
+
+template < class R >
+inline
+bool
+operator!=(const Null_vector &n, const Vector_2<R> &v)
+{
+  return !(v == n);
+}
+
+
 
 #ifndef CGAL_NO_OSTREAM_INSERT_VECTOR_2
 template < class R >
 std::ostream &
 operator<<(std::ostream &os, const Vector_2<R> &v)
 {
-  typedef typename  R::Kernel_base::Vector_2  RVector_2;
-  return os << static_cast<const RVector_2&>(v);
+  return os << v.rep();
 }
 #endif // CGAL_NO_OSTREAM_INSERT_VECTOR_2
 
 #ifndef CGAL_NO_ISTREAM_EXTRACT_VECTOR_2
 template < class R >
 std::istream &
-operator>>(std::istream &is, Vector_2<R> &p)
+operator>>(std::istream &is, Vector_2<R>& v)
 {
-  typedef typename  R::Kernel_base::Vector_2  RVector_2;
-  return is >> static_cast<RVector_2&>(p);
+  return is >> v.rep();
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_VECTOR_2
 

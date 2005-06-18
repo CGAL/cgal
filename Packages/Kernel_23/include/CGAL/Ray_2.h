@@ -34,26 +34,167 @@ class Ray_2 : public R_::Kernel_base::Ray_2
   typedef typename R_::Direction_2           Direction_2;
   typedef typename R_::Vector_2              Vector_2;
   typedef typename R_::Line_2                Line_2;
+  typedef typename R_::Aff_transformation_2  Aff_transformation_2;
+
   typedef typename R_::Kernel_base::Ray_2    RRay_2;
 public:
+
+  typedef RRay_2 Rep;
+
+  const Rep& rep() const
+  {
+    return *this;
+  }
+
+  Rep& rep()
+  {
+    return *this;
+  }
+
   typedef  R_   R;
 
-  Ray_2() {}
+  Ray_2() 
+    : RRay_2(typename R::Construct_ray_2()().rep())
+   {}
 
   Ray_2(const RRay_2& r)
     : RRay_2(r) {}
 
   Ray_2(const Point_2 &sp, const Point_2 &secondp)
-    : RRay_2(sp, secondp) {}
+    : RRay_2(typename R::Construct_ray_2()(sp, secondp).rep()) {}
 
   Ray_2(const Point_2 &sp, const Direction_2 &d)
-    : RRay_2(sp, d) {}
+    : RRay_2(typename R::Construct_ray_2()(sp, d).rep()) {}
 
   Ray_2(const Point_2 &sp, const Vector_2 &v)
-    : RRay_2(sp, v) {}
+    : RRay_2(typename R::Construct_ray_2()(sp, v).rep()) {}
 
   Ray_2(const Point_2 &sp, const Line_2 &l)
-    : RRay_2(sp, l) {}
+    : RRay_2(typename R::Construct_ray_2()(sp, l).rep()) {}
+
+
+  const Point_2 &     
+  source() const
+  {
+    return R().construct_source_2_object()(*this);
+  }
+
+
+  const Point_2 &
+  second_point() const
+  {
+    return R().construct_second_point_2_object()(*this);
+  }
+
+
+  Point_2
+  point(int i) const
+  {
+    CGAL_kernel_precondition( i >= 0 );
+    
+    typename R::Construct_vector_2 construct_vector;
+    typename R::Construct_scaled_vector_2 construct_scaled_vector;
+    typename R::Construct_translated_point_2 construct_translated_point;
+    if (i == 0) return source();
+    if (i == 1) return second_point();
+    return construct_translated_point(source(),
+				      construct_scaled_vector(construct_vector(source(), 
+									       second_point()),
+							      FT(i)));
+  }
+
+
+  const Point_2 &
+  start() const
+  {
+    return source();
+  }
+
+
+
+  bool is_horizontal() const
+  {
+    return R().equal_y_2_object()(source(), second_point());
+  }
+
+  bool is_vertical() const
+  {
+    return R().equal_x_2_object()(source(), second_point());
+  }
+
+  bool is_degenerate() const
+  {
+    return source() == second_point();
+  }
+
+  Direction_2
+  direction() const
+  {
+    typename R::Construct_vector_2 construct_vector;
+    typename R::Construct_direction_2 construct_direction;
+    return construct_direction( construct_vector(source(), second_point()) );
+  }
+
+
+  Vector_2
+  to_vector() const
+  {
+    typename R::Construct_vector_2 construct_vector;
+    return construct_vector(source(), second_point());
+  }
+
+  bool
+  has_on(const Point_2 &p) const
+  {
+    typename R::Construct_vector_2  construct_vector;
+    return p == source()
+      || R().collinear_2_object()(source(), p, second_point())
+      && Direction_2(construct_vector( source(), p)) == direction();
+  }
+
+
+
+  bool
+  collinear_has_on(const Point_2 &p) const
+  {
+    return R().collinear_has_on_2_object()(*this, p);
+  }
+
+  Ray_2
+  opposite() const
+  {
+    return Ray_2( source(), - direction() );
+  }
+
+
+  Line_2
+  supporting_line() const
+  {
+    return R().construct_line_2_object()(source(), second_point());
+  }
+  
+  
+
+  bool
+  operator==(const Ray_2& r) const
+  {
+    return R().equal_2_object()(*this, r);
+  }
+
+
+  bool
+  operator!=(const Ray_2& r) const
+  {
+    return !(*this == r);
+  }
+
+  Ray_2 
+  transform(const Aff_transformation_2 &t) const
+  {
+    return rep().transform(t);
+  }
+
+
 };
 
 #ifndef CGAL_NO_OSTREAM_INSERT_RAY_2
@@ -61,8 +202,7 @@ template < class R >
 std::ostream &
 operator<<(std::ostream &os, const Ray_2<R> &r)
 {
-  typedef typename  R::Kernel_base::Ray_2  RRay_2;
-  return os << static_cast<const RRay_2&>(r);
+  return os << r.rep();
 }
 #endif // CGAL_NO_OSTREAM_INSERT_RAY_2
 
@@ -71,10 +211,11 @@ template < class R >
 std::istream &
 operator>>(std::istream &is, Ray_2<R> &r)
 {
-  typedef typename  R::Kernel_base::Ray_2  RRay_2;
-  return is >> static_cast<RRay_2&>(r);
+  return is >> r.rep();
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_RAY_2
+
+
 
 CGAL_END_NAMESPACE
 
