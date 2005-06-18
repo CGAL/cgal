@@ -47,6 +47,8 @@ class PointH2
   Base base;
 
 public:
+  typedef FT Cartesian_coordinate_type;
+  typedef const RT& Homogeneous_coordinate_type;
   typedef Cartesian_coordinate_iterator_2<R_> Cartesian_const_iterator;
   typedef R_                                    R;
 
@@ -91,7 +93,6 @@ public:
     }
 
     int     dimension() const;
-    Bbox_2  bbox() const;
 
     Point_2 transform( const Aff_transformation_2 & t) const;
     Direction_2 direction() const;
@@ -155,21 +156,6 @@ typename PointH2<R>::Direction_2
 PointH2<R>::direction() const
 { return typename PointH2<R>::Direction_2(*this); }
 
-
-template < class R >
-CGAL_KERNEL_MEDIUM_INLINE
-Bbox_2
-PointH2<R>::bbox() const
-{
-   Interval_nt<> ihx = CGAL_NTS to_interval(hx());
-   Interval_nt<> ihy = CGAL_NTS to_interval(hy());
-   Interval_nt<> ihw = CGAL_NTS to_interval(hw());
-
-   Interval_nt<> ix = ihx/ihw;
-   Interval_nt<> iy = ihy/ihw;
-
-   return Bbox_2(ix.inf(), iy.inf(), ix.sup(), iy.sup());
-}
 
 
 template < class R >

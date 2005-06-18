@@ -31,6 +31,7 @@ CGAL_BEGIN_NAMESPACE
 template < class R_ >
 class DirectionH2
 {
+  typedef DirectionH2<R_>                   Self;
   typedef typename R_::FT                   FT;
   typedef typename R_::RT                   RT;
   typedef typename R_::Point_2              Point_2;
@@ -48,19 +49,15 @@ class DirectionH2
 public:
   typedef R_                                    R;
 
+  typedef const RT& Homogeneous_coordinate_type;
+
+  const Self&
+  rep() const
+  {
+    return static_cast<const Self& >(*this);
+  }
+  
    DirectionH2() {}
-
-   DirectionH2(const Vector_2 & v )
-   { *this = v.direction(); }
-
-   DirectionH2(const Line_2 & l )
-   { *this = l.direction(); }
-
-   DirectionH2(const Ray_2 & r )
-   { *this = r.direction(); }
-
-   DirectionH2(const Segment_2 & s )
-   { *this = s.direction(); }
 
    DirectionH2(const RT& x, const RT& y)
       : base (x, y, RT(1)) {}
@@ -77,13 +74,9 @@ public:
 
     bool    operator==( const DirectionH2<R>& d) const;
     bool    operator!=( const DirectionH2<R>& d) const;
-    bool    counterclockwise_in_between( const DirectionH2<R>& d1,
-                                         const DirectionH2<R>& d2 ) const;
 
-    DirectionH2<R> operator-() const;
 
     Vector_2       to_vector() const;
-    Vector_2       vector() const { return to_vector(); }
 
     const RT & x() const { return get(base).e0; };
     const RT & y() const { return get(base).e1; };
@@ -92,7 +85,6 @@ public:
     const RT & dx() const { return get(base).e0; };
     const RT & dy() const { return get(base).e1; };
 
-    DirectionH2<R> perpendicular(const Orientation &o) const;
     DirectionH2<R> transform(const Aff_transformation_2 &) const;
 };
 
@@ -112,54 +104,11 @@ bool
 DirectionH2<R>::operator!=( const DirectionH2<R>& d) const
 { return !(*this == d); }
 
-template <class R >
-inline
-DirectionH2<R>
-DirectionH2<R>::operator-() const
-{ return DirectionH2<R>( - x(), - y() ); }
-
-template <class R >
-CGAL_KERNEL_INLINE
-const typename DirectionH2<R>::RT &
-DirectionH2<R>::delta(int i) const
-{
-  CGAL_kernel_precondition( ( i == 0 ) || ( i == 1 ) );
-  if (i == 0)
-      return dx();
-  return dy();
-}
-
 CGAL_END_NAMESPACE
 
 #include <CGAL/Homogeneous/predicates_on_directionsH2.h>
 
 CGAL_BEGIN_NAMESPACE
-
-template <class R >
-CGAL_KERNEL_INLINE
-bool
-DirectionH2<R>::
-counterclockwise_in_between( const DirectionH2<R>& d1,
-                             const DirectionH2<R>& d2) const
-{
-  return R().counterclockwise_in_between_2_object()(*this, d1, d2);
-}
-
-template <class R >
-CGAL_KERNEL_INLINE
-DirectionH2<R>
-DirectionH2<R>::perpendicular(const Orientation& o) const
-{
-  CGAL_kernel_precondition(o != COLLINEAR);
-  if (o == COUNTERCLOCKWISE)
-  {
-      return DirectionH2<R>(-dy(), dx());
-  }
-  else
-  {
-      return DirectionH2<R>(dy(), -dx());
-  }
-}
 
 template <class R >
 inline

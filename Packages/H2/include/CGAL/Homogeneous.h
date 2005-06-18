@@ -33,7 +33,7 @@ CGAL_BEGIN_NAMESPACE
 
 template < typename RT_, typename FT_, typename Kernel >
 struct Homogeneous_base_ref_count
-  : public Homogeneous_base< Kernel >
+  : public Homogeneous_base<RT_, FT_, Kernel >
 {
     typedef RT_                                           RT;
     typedef FT_                                           FT;

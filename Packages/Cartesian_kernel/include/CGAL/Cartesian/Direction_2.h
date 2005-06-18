@@ -31,7 +31,9 @@ CGAL_BEGIN_NAMESPACE
 template < class R_ >
 class DirectionC2
 {
+  typedef DirectionC2<R_>                   Self;
   typedef typename R_::FT                   FT;
+  typedef FT                                RT;
   typedef typename R_::Point_2              Point_2;
   typedef typename R_::Vector_2             Vector_2;
   typedef typename R_::Line_2               Line_2;
@@ -46,51 +48,32 @@ class DirectionC2
   Base base;
 
 public:
+  typedef const FT& Cartesian_coordinate_type;
+  typedef const FT& Homogeneous_coordinate_type;
   typedef R_                                     R;
 
   DirectionC2() {}
-
-  DirectionC2(const Vector_2 &v)
-  { *this = v.direction(); }
-
-  DirectionC2(const Line_2 &l)
-  { *this = l.direction(); }
-
-  DirectionC2(const Ray_2 &r)
-  { *this = r.direction(); }
-
-  DirectionC2(const Segment_2 &s)
-  { *this = s.direction(); }
-
+ 
   DirectionC2(const FT &x, const FT &y)
     : base(x, y) {}
 
   bool operator==(const DirectionC2 &d) const;
   bool operator!=(const DirectionC2 &d) const;
-  bool operator>=(const DirectionC2 &d) const;
-  bool operator<=(const DirectionC2 &d) const;
-  bool operator>(const DirectionC2 &d) const;
-  bool operator<(const DirectionC2 &d) const;
-  bool counterclockwise_in_between( const Direction_2 &d1,
-	                            const Direction_2 &d2) const;
-  
-  Vector_2 to_vector() const;
-  Vector_2 vector() const { return to_vector(); }
 
-  Direction_2 perpendicular(const Orientation &o) const;
+  Vector_2 to_vector() const;
+
+
   Direction_2 transform(const Aff_transformation_2 &t) const
   {
     return t.transform(*this);
   }
 
-  Direction_2 operator-() const;
 
-  const FT & delta(int i) const;
-  const FT & dx() const
+  const RT & dx() const
   {
       return get(base).e0;
   }
-  const FT & dy() const
+  const RT & dy() const
   {
       return get(base).e1;
   }
@@ -114,53 +97,6 @@ DirectionC2<R>::operator!=(const DirectionC2<R> &d) const
   return !( *this == d );
 }
 
-template < class R >
-CGAL_KERNEL_MEDIUM_INLINE
-bool
-DirectionC2<R>::operator<(const DirectionC2<R> &d) const
-{
-  return compare_angle_with_x_axis(*this, d) == SMALLER;
-}
-
-template < class R >
-CGAL_KERNEL_INLINE
-bool
-DirectionC2<R>::operator>(const DirectionC2<R> &d) const
-{
-  return d < *this;
-}
-
-template < class R >
-CGAL_KERNEL_INLINE
-bool
-DirectionC2<R>::operator>=(const DirectionC2<R> &d) const
-{
-  return compare_angle_with_x_axis(*this, d) != SMALLER;
-}
-
-template < class R >
-CGAL_KERNEL_INLINE
-bool
-DirectionC2<R>::operator<=(const DirectionC2<R> &d) const
-{
-  return compare_angle_with_x_axis(*this, d) != LARGER;
-}
-
-template < class R >
-CGAL_KERNEL_INLINE
-bool
-DirectionC2<R>::
-counterclockwise_in_between(const typename DirectionC2<R>::Direction_2 &d1,
-		    const typename DirectionC2<R>::Direction_2 &d2) const
-// returns true, iff \ccVar\ is not equal to \ccc{d1}, and 
-// while rotating counterclockwise starting at \ccc{d1}, 
-// \ccVar\ is reached strictly before \ccc{d2} is reached.
-// Note that true is returned if \ccc{d1} == \ccc{d2}, unless
-//  also \ccVar\ == \ccc{d1}.
-{
-  return R().counterclockwise_in_between_2_object()
-               (static_cast<const typename R::Direction_2>(*this), d1, d2);
-}
 
 template < class R >
 inline
@@ -168,35 +104,6 @@ typename DirectionC2<R>::Vector_2
 DirectionC2<R>::to_vector() const
 {
   return Vector_2(dx(), dy());
-}
-
-template < class R >
-CGAL_KERNEL_MEDIUM_INLINE
-typename DirectionC2<R>::Direction_2
-DirectionC2<R>::perpendicular(const Orientation &o) const
-{
-  CGAL_kernel_precondition(o != COLLINEAR);
-  if (o == COUNTERCLOCKWISE)
-    return DirectionC2<R>(-dy(), dx());
-  else
-    return DirectionC2<R>(dy(), -dx());
-}
-
-template < class R >
-inline
-typename DirectionC2<R>::Direction_2
-DirectionC2<R>::operator-() const
-{
-  return DirectionC2<R>(-dx(), -dy());
-}
-
-template < class R >
-CGAL_KERNEL_INLINE
-const typename DirectionC2<R>::FT &
-DirectionC2<R>::delta(int i) const
-{
-  CGAL_kernel_precondition( ( i == 0 ) || ( i == 1 ) );
-  return (i==0) ? dx() : dy();
 }
 
 #ifndef CGAL_NO_OSTREAM_INSERT_DIRECTIONC2

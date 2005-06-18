@@ -30,9 +30,9 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template < typename FT_, typename Kernel >
+template < typename FT_, typename Kernel_ >
 struct Cartesian_base_ref_count
-  : public Cartesian_base< Kernel, FT_ >
+  : public Cartesian_base< Kernel_, FT_ >
 {
     typedef FT_                                           RT;
     typedef FT_                                           FT;
@@ -49,6 +49,14 @@ struct Cartesian_base_ref_count
     static   FT make_FT(const RT & num)                  { return num;}
     static   RT FT_numerator(const FT &r)                { return r;}
     static   RT FT_denominator(const FT &)               { return RT(1);}
+
+  // was in Cartesian_base
+  typedef Kernel_ K;
+#define CGAL_Kernel_pred(Y,Z) typedef CartesianKernelFunctors::Y<K> Y; \
+                              Y Z() const { return Y(); }
+#define CGAL_Kernel_cons(Y,Z) CGAL_Kernel_pred(Y,Z)
+
+#include <CGAL/Kernel/interface_macros.h>
 };
 
 template < typename FT_ >

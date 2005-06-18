@@ -30,12 +30,14 @@
 #include <CGAL/basic_classes.h>
 
 #include <CGAL/Homogeneous/Aff_transformationH2.h>
-#include <CGAL/Homogeneous/CircleH2.h>
+#include <CGAL/Cartesian/Circle_2.h>
+
+//#include <CGAL/Cartesian/Direction_2.h>
 #include <CGAL/Homogeneous/DirectionH2.h>
 #include <CGAL/Homogeneous/Iso_rectangleH2.h>
 #include <CGAL/Homogeneous/LineH2.h>
 #include <CGAL/Homogeneous/PointH2.h>
-#include <CGAL/Homogeneous/RayH2.h>
+#include <CGAL/Cartesian/Ray_2.h>
 #include <CGAL/Cartesian/Segment_2.h>
 #include <CGAL/Cartesian/Triangle_2.h>
 #include <CGAL/Homogeneous/VectorH2.h>
@@ -71,7 +73,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template < typename K_ >
+template <typename RT_, typename FT_, typename K_ >
 struct Homogeneous_base
 {
     typedef K_                                      Kernel;
@@ -87,8 +89,8 @@ struct Homogeneous_base
     typedef DirectionH2<Kernel>                     Direction_2;
     typedef SegmentC2<Kernel>                       Segment_2;
     typedef LineH2<Kernel>                          Line_2;
-    typedef RayH2<Kernel>                           Ray_2;
-    typedef CircleH2<Kernel>                        Circle_2;
+    typedef RayC2<Kernel>                           Ray_2;
+    typedef CircleC2<Kernel>                        Circle_2;
     typedef TriangleC2<Kernel>                      Triangle_2;
     typedef Iso_rectangleH2<Kernel>                 Iso_rectangle_2;
     typedef Aff_transformationH2<Kernel>            Aff_transformation_2;
@@ -111,6 +113,8 @@ struct Homogeneous_base
     typedef Cartesian_coordinate_iterator_3<Kernel>
                                  Cartesian_const_iterator_3;
 
+    typedef FT_                     Cartesian_coordinate_type;
+    typedef const RT_&             Homogeneous_coordinate_type;
     // Undocumented stuff.
     typedef Data_accessorH2<Kernel>                 Data_accessor_2;
     typedef ConicHPA2<Point_2, Data_accessor_2>     Conic_2; 

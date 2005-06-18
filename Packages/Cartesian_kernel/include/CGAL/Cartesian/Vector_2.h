@@ -46,26 +46,16 @@ class VectorC2
 
   Base base;
 
+  static FT one;
+
 public:
   typedef R_                                     R;
 
+  typedef const FT& Cartesian_coordinate_type;
+  typedef const FT& Homogeneous_coordinate_type;
+
   VectorC2() {}
-
-  VectorC2(const Null_vector &n)
-  { *this = R().construct_vector_2_object()(n); }
-
-  VectorC2(const Point_2 &a, const Point_2 &b)
-  { *this = R().construct_vector_2_object()(a, b); }
-
-  VectorC2(const Segment_2 &s)
-  { *this = R().construct_vector_2_object()(s); }
-
-  VectorC2(const Ray_2 &r)
-  { *this = R().construct_vector_2_object()(r); }
-
-  VectorC2(const Line_2 &l)
-  { *this = R().construct_vector_2_object()(l); }
-
+ 
   VectorC2(const FT &x, const FT &y)
     : base(x, y) {}
 
@@ -94,33 +84,21 @@ public:
   {
       return y();
   }
-  FT hw() const
+  const FT& hw() const
   {
-      return FT(1);
+    return one;
   }
+  
 
-  const FT & cartesian(int i) const;
-  const FT & operator[](int i) const;
-  FT homogeneous(int i) const;
 
-  int dimension() const
-  {
-      return 2;
-  }
-
-  Vector_2 operator+(const VectorC2 &w) const;
-  Vector_2 operator-(const VectorC2 &w) const;
-  Vector_2 operator-() const;
-  FT squared_length() const;
-  Vector_2 operator/(const FT &c) const;
-  Direction_2 direction() const;
-
-  Vector_2 perpendicular(const Orientation &o) const;
   Vector_2 transform(const Aff_transformation_2 &t) const
   {
     return t.transform(*this);
   }
 };
+
+template <class R >
+typename R::FT VectorC2<R>::one = 1;
 
 template < class R >
 CGAL_KERNEL_INLINE
@@ -170,91 +148,7 @@ operator!=(const Null_vector &n, const VectorC2<R> &v)
   return !(v == n);
 }
 
-template < class R >
-CGAL_KERNEL_INLINE
-const typename VectorC2<R>::FT &
-VectorC2<R>::cartesian(int i) const
-{
-  CGAL_kernel_precondition( (i == 0) || (i == 1) );
-  return (i == 0) ? x() : y();
-}
 
-template < class R >
-inline
-const typename VectorC2<R>::FT &
-VectorC2<R>::operator[](int i) const
-{
-  return cartesian(i);
-}
-
-template < class R >
-CGAL_KERNEL_INLINE
-typename VectorC2<R>::FT 
-VectorC2<R>::homogeneous(int i) const
-{
-  return (i == 2) ? FT(1) : cartesian(i);
-}
-
-template < class R >
-CGAL_KERNEL_INLINE
-typename VectorC2<R>::Vector_2
-VectorC2<R>::operator+(const VectorC2<R> &w) const
-{
-  return VectorC2<R>(x() + w.x(), y() + w.y());
-}
-
-template < class R >
-CGAL_KERNEL_INLINE
-typename VectorC2<R>::Vector_2
-VectorC2<R>::operator-(const VectorC2<R> &w) const
-{
-  return VectorC2<R>(x() - w.x(), y() - w.y());
-}
-
-template < class R >
-inline
-typename VectorC2<R>::Vector_2
-VectorC2<R>::operator-() const
-{
-  return R().construct_opposite_vector_2_object()(*this);
-}
-
-template < class R >
-CGAL_KERNEL_INLINE
-typename VectorC2<R>::FT
-VectorC2<R>::squared_length() const
-{
-  return CGAL_NTS square(x()) + CGAL_NTS square(y());
-}
-
-template < class R >
-CGAL_KERNEL_INLINE
-typename VectorC2<R>::Vector_2
-VectorC2<R>::
-operator/(const typename VectorC2<R>::FT &c) const
-{
-  return VectorC2<R>( x()/c, y()/c);
-}
-
-template < class R >
-inline
-typename VectorC2<R>::Direction_2
-VectorC2<R>::direction() const
-{
-  return Direction_2(x(), y());
-}
-
-template < class R >
-CGAL_KERNEL_MEDIUM_INLINE
-typename VectorC2<R>::Vector_2
-VectorC2<R>::perpendicular(const Orientation &o) const
-{
-  CGAL_kernel_precondition( o != COLLINEAR );
-  if (o == COUNTERCLOCKWISE)
-    return VectorC2<R>(-y(), x());
-  else
-    return VectorC2<R>(y(), -x());
-}
 
 #ifndef CGAL_NO_OSTREAM_INSERT_VECTORC2
 template < class R >
@@ -300,5 +194,4 @@ operator>>(std::istream &is, VectorC2<R> &p)
 #endif // CGAL_NO_ISTREAM_EXTRACT_VECTORC2
 
 CGAL_END_NAMESPACE
-
 #endif // CGAL_CARTESIAN_VECTOR_2_H

@@ -68,11 +68,13 @@
 
 CGAL_BEGIN_NAMESPACE
 
+
 template < typename K_, typename FT_>
 struct Cartesian_base
 {
     typedef K_                                          Kernel;
-
+    typedef FT_                                         FT;
+    typedef Cartesian_base<K_,FT_>                      Self;
     typedef Cartesian_tag                               Rep_tag;
     typedef Cartesian_tag                               Kernel_tag;
 
@@ -106,19 +108,26 @@ struct Cartesian_base
     typedef const FT_*                                  Cartesian_const_iterator_2;
     typedef const FT_*                                  Cartesian_const_iterator_3;
 
+    typedef const FT_&                                  Cartesian_coordinate_type;
+    typedef const FT_&                                  Homogeneous_coordinate_type;
     // Undocumented stuff.
     typedef Data_accessorC2<Kernel>                     Data_accessor_2;
     typedef ConicCPA2<Point_2,Data_accessor_2>          Conic_2;
 
-    // Functors types and access functions.
-#define CGAL_Kernel_pred(Y,Z) typedef CartesianKernelFunctors::Y<Kernel> Y; \
-                              Y Z() const { return Y(); }
-#define CGAL_Kernel_cons(Y,Z) CGAL_Kernel_pred(Y,Z)
 
-#include <CGAL/Kernel/interface_macros.h>
 
 };
 
 CGAL_END_NAMESPACE
 
 #endif // CGAL_CARTESIAN_BASE_H
+
+
+
+
+
+
+
+
+
+

@@ -34,6 +34,7 @@ template <class R_ >
 class CircleC2
 {
   typedef typename R_::FT                   FT;
+  typedef typename R_::RT                   RT;
   typedef typename R_::Circle_2             Circle_2;
   typedef typename R_::Point_2              Point_2;
   typedef typename R_::Aff_transformation_2 Aff_transformation_2;
@@ -56,40 +57,7 @@ public:
 
     base = Rep(center, squared_radius, orient);
   }
-
-  CircleC2(const Point_2 &center, const Orientation &orient) // Is this new?
-  {
-    CGAL_kernel_precondition( orient != COLLINEAR );
-
-    base = Rep(center, FT(0), orient);
-  }
-
-  CircleC2(const Point_2 &p, const Point_2 &q,
-           const Orientation &orient = COUNTERCLOCKWISE) // And this too?
-  { // FIXME : construction
-    CGAL_kernel_precondition( orient != COLLINEAR);
-
-    typename R::Compute_squared_distance_2 squared_distance;
-    typename R::Construct_midpoint_2 midpoint;
-    if (p != q) {
-      Point_2 center = midpoint(p, q);
-      base = Rep(center, squared_distance(p, center), orient);
-    } else
-      base = Rep(p, FT(0), orient);
-  }
-
-  CircleC2(const Point_2 &p, const Point_2 &q, const Point_2 &r)
-  { // FIXME : construction
-    typename R::Orientation_2 orientation;
-    typename R::Compute_squared_distance_2 squared_distance;
-    typename R::Construct_circumcenter_2 circumcenter;
-    Orientation orient = orientation(p, q, r);
-    CGAL_kernel_precondition( orient != COLLINEAR);
-
-    Point_2 center = circumcenter(p, q, r);
-    base = Rep(center, squared_distance(p, center), orient);
-  }
-
+ 
   bool           operator==(const CircleC2 &s) const;
   bool           operator!=(const CircleC2 &s) const;
 
@@ -108,152 +76,12 @@ public:
     return get(base).third;
   }
 
-  Circle_2           opposite() const;
+  Circle_2 orthogonal_transform(const Aff_transformation_2 &t) const;
 
-  Circle_2           orthogonal_transform(const Aff_transformation_2 &t) const;
-
-  Oriented_side  oriented_side(const Point_2 &p) const;
-  Bounded_side   bounded_side(const Point_2 &p) const;
-
-  bool           has_on_boundary(const Point_2 &p) const;
-  bool           has_on_negative_side(const Point_2 &p) const;
-  bool           has_on_positive_side(const Point_2 &p) const;
-
-  bool           has_on_bounded_side(const Point_2 &p) const;
-  bool           has_on_unbounded_side(const Point_2 &p) const;
-
-  bool           is_degenerate() const;
-
-  Bbox_2         bbox() const;
 };
 
-template < class R >
-CGAL_KERNEL_INLINE
-bool
-CircleC2<R>::operator==(const CircleC2<R> &c) const
-{ // FIXME : predicate
-  if (CGAL::identical(base, c.base))
-      return true;
-  return center() == c.center() &&
-         squared_radius() == c.squared_radius() &&
-         orientation() == c.orientation();
-}
 
-template < class R >
-inline
-bool
-CircleC2<R>::operator!=(const CircleC2<R> &c) const
-{
-  return !(*this == c);
-}
 
-template < class R >
-CGAL_KERNEL_MEDIUM_INLINE
-Oriented_side
-CircleC2<R>::
-oriented_side(const typename CircleC2<R>::Point_2 &p) const
-{
-  return Oriented_side(bounded_side(p) * orientation());
-}
-
-template < class R >
-CGAL_KERNEL_INLINE
-Bounded_side
-CircleC2<R>::
-bounded_side(const typename CircleC2<R>::Point_2 &p) const
-{
-  typename R::Compute_squared_distance_2 squared_distance;
-  return Bounded_side(CGAL_NTS compare(squared_radius(),
-                                       squared_distance(center(),p)));
-}
-
-template < class R >
-inline
-bool
-CircleC2<R>::
-has_on_boundary(const typename CircleC2<R>::Point_2 &p) const
-{
-  return bounded_side(p) == ON_BOUNDARY;
-}
-
-template < class R >
-inline
-bool
-CircleC2<R>::
-has_on_bounded_side(const typename CircleC2<R>::Point_2 &p) const
-{
-  return bounded_side(p) == ON_BOUNDED_SIDE;
-}
-
-template < class R >
-inline
-bool
-CircleC2<R>::
-has_on_unbounded_side(const typename CircleC2<R>::Point_2 &p) const
-{
-  return bounded_side(p) == ON_UNBOUNDED_SIDE;
-}
-
-template < class R >
-CGAL_KERNEL_INLINE
-bool
-CircleC2<R>::
-has_on_negative_side(const typename CircleC2<R>::Point_2 &p) const
-{
-  if (orientation() == COUNTERCLOCKWISE)
-    return has_on_unbounded_side(p);
-  return has_on_bounded_side(p);
-}
-
-template < class R >
-CGAL_KERNEL_INLINE
-bool
-CircleC2<R>::
-has_on_positive_side(const typename CircleC2<R>::Point_2 &p) const
-{
-  if (orientation() == COUNTERCLOCKWISE)
-    return has_on_bounded_side(p);
-  return has_on_unbounded_side(p);
-}
-
-template < class R >
-inline
-bool
-CircleC2<R>::is_degenerate() const
-{
-  return CGAL_NTS is_zero(squared_radius());
-}
-
-template < class R >
-inline
-typename CircleC2<R>::Circle_2
-CircleC2<R>::opposite() const
-{
-  return CircleC2<R>(center(),
-                               squared_radius(),
-                               CGAL::opposite(orientation()) );
-}
-
-template < class R >
-CGAL_KERNEL_INLINE
-Bbox_2
-CircleC2<R>::bbox() const
-{
-  typename R::Construct_bbox_2 construct_bbox_2;
-  Bbox_2 b = construct_bbox_2(center());
-
-  Interval_nt<> x (b.xmin(), b.xmax());
-  Interval_nt<> y (b.ymin(), b.ymax());
-
-  Interval_nt<> sqr = CGAL_NTS to_interval(squared_radius());
-  Interval_nt<> r = CGAL::sqrt(sqr);
-  Interval_nt<> minx = x-r;
-  Interval_nt<> maxx = x+r;
-  Interval_nt<> miny = y-r;
-  Interval_nt<> maxy = y+r;
-
-  return Bbox_2(minx.inf(), miny.inf(), maxx.sup(), maxy.sup());
-}
 
 template < class R >
 CGAL_KERNEL_INLINE
@@ -261,7 +89,7 @@ typename CircleC2<R>::Circle_2
 CircleC2<R>::orthogonal_transform
   (const typename CircleC2<R>::Aff_transformation_2 &t) const
 {
-  typename R::Vector_2 vec(FT(1), FT(0) );   // unit vector
+  typename R::Vector_2 vec(RT(1), RT(0) );   // unit vector // AF: was FT
   vec = vec.transform(t);             // transformed
   FT sq_scale = vec.squared_length();       // squared scaling factor
 
