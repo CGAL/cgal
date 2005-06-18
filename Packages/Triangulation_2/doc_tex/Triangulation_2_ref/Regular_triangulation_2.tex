@@ -302,6 +302,14 @@ The function returns the resulting output iterator.}
         {same as above except that only the vertices that would be hidden by  \ccc{p}
           are output. The function returns the resulting output iterator.}
 
+\ccMethod{Vertex_handle nearest_power_vertex(Bare_point p);}
+{Returns the vertex of the triangulation which is nearest to \ccc{p}
+  with respect to the power distance. This means that the power of the
+query point \ccc{p} with respect to the weighted point in the nearest
+vertex is smaller than the power of \ccc{p} with respect to the
+weighted point in any other vertex. Ties are broken arbitrarily. The
+default constructed handle is returned if the triangulation is empty.}
+
 \ccHeading{Access functions}
 \ccThree{Hidden_vertices_iterator}{t.finite_vertices_begin()x}{}
 

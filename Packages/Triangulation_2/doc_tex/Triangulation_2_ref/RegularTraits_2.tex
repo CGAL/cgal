@@ -74,6 +74,17 @@ the operators:\\
       \ccc{p} and \ccc{q} are identical.}
 }
 
+The following type/predicate is required if a call to
+\ccc{nearest_power_vertex} is issued:
+
+\ccNestedType{Compare_power_distance_2}{A predicate object type. Must
+  provide the operator:\\
+  \ccc{Comparison_result operator()(Bare_point p, Weighted_point_2 q,
+    Weighted_point_2 r)},
+  which compares the power distance between \ccc{p} and \ccc{q} to the
+  power distance between \ccc{p} and \ccc{r}.}
+
+
 \ccNestedType{Construct_weighted_circumcenter_2}{A constructor
 object which constructs the weighted circumcenter of  three
 weighted points. Provides the operator \\
@@ -102,6 +113,8 @@ the radical axis of two weighted points. Provides the operator~: \\
 \ccThree{Construct_weighted_circumcenter_2}
         { construct_weighted_circumcenter_2_object();}{}
 \ccMethod{Power_test_2 power_test_2_object();}{}
+\ccGlue
+\ccMethod{Compare_power_distance_2 compare_power_distance_2_object();}{}
 \ccGlue
 \ccMethod{Construct_weighted_circumcenter_2
   construct_weighted_circumcenter_2_object();}{}
