@@ -1,4 +1,4 @@
-%% Copyright (c) 2005  University of Crete (Greece).
+%% Copyright (c) 2005  Foundation for Research and Technology-Hellas (Greece).
 %% All rights reserved.
 %%
 %% This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -43,25 +43,25 @@ model of the \ccc{VoronoiTraits_2} concept.
 
 \ccTypes
 
-%\ccThree{typedef Dual_graph::size_type}{Edge_degeneracy_tester+}{}
-\ccThree{typedef VT::Edge_degeneracy_tester}{Edge_degeneracy_tester+}{}
+\ccThree{typedef Voronoi_traits::Point_2}{Voronoi_traits+}{}
 \ccThreeToTwo
+\ccTwo{Voronoi_diagram_adaptor_2<DG,VT>::Locate_type+}{}
 %
 \ccTypedef{typedef DG  Dual_graph;}{A type for the dual Delaunay graph.}
 \ccGlue
 \ccTypedef{typedef VT Voronoi_traits;}{A type for the traits needed by
   the Voronoi diagram adaptor.}
 \ccGlue
+\ccTypedef{typedef Voronoi_traits::Point_2 Point_2;}{A type a point.}
+\ccGlue
 \ccTypedef{typedef Dual_graph::size_type size_type;}{A type for sizes.}
 \ccGlue
 \ccTypedef{typedef size_type Size;}{A type for sizes in compliance
   with the arrangement package API.}
-\ccGlue
-\ccTypedef{typedef VT::Edge_degeneracy_tester Edge_degeneracy_tester;}
-{A type for the degeneracy tester of Voronoi edges as seen in the dual graph.}
-\ccGlue
-\ccTypedef{typedef VT::Face_degeneracy_tester Face_degeneracy_tester;}
-{A type for the degeneracy tester of Voronoi faces as seen in the dual graph.}
+%\ccGlue
+\ccNestedType{Locate_type}{The return type of the point location
+  queries. In must be a model of the \ccc{VoronoiDiagramLocateType_2}
+  concept.}
 %
 %
 
@@ -328,7 +328,12 @@ be destroyed).
 %% \ccc{Stream& operator<<(Stream&, Gt::Line_2)}.}
 %% }
 
-
+\ccHeading{Queries}
+\ccThree{Locate_type}{vda.locate(Point_2 p)+}{}
+\ccMethod{Locate_type locate(Point_2 p);}{Performs point location for
+  the query point \ccc{p}. In other words, the face, halfedge or
+  vertex of the Voronoi diagram is found on which the point \ccc{p}
+  lies.}
 
 \ccHeading{Validity check}
 \ccThree{bool}{vda.is_valid()+}{}

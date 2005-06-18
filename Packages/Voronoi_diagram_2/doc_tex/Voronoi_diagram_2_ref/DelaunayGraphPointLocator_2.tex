@@ -1,0 +1,103 @@
+%% Copyright (c) 2005  Foundation for Research and Technology-Hellas (Greece).
+%% All rights reserved.
+%%
+%% This file is part of CGAL (www.cgal.org); you may redistribute it under
+%% the terms of the Q Public License version 1.0.
+%% See the file LICENSE.QPL distributed with CGAL.
+%%
+%% Licensees holding a valid commercial license may use this file in
+%% accordance with the commercial license agreement provided with the software.
+%%
+%% This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+%% WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+%%
+%% $Source$
+%% $Revision$ $Date$
+%% $Name$
+%%
+%% Author(s)     : Menelaos Karavelas <mkaravel@tem.uoc.gr>
+
+\begin{ccRefFunctionObjectConcept}{DelaunayGraphPointLocator_2}
+
+The \ccc{DelaunayGraphPointLocator_2} concept defines the requirements
+for a functor that performs point location queries on a Delaunay
+graph. The functor returns an object of type \ccc{Locate_type}, which
+is a model of the \ccc{DelaunayGraphLocateType_2}
+concept. Semantically, the locate type is either a face, edge or
+vertex of the Delaunay graph. It is a face if the query point is
+equidistant to at least three vertices of the Delaunay graph, namely
+the three vertices of the returned face. It is an edge if the query
+point is equidistant to exactly two vertices of the Delaunay graph,
+which are the source and target vertices of the edge. In all other
+cases, the locate type is a vertex, namely, the unique vertex of the
+Delaunay graph closest to the query point. The
+\ccc{DelaunayGrapgLocateType_2} concept, as well as the
+\ccc{Locate_type} type, that is a model of the afore-mentioned concept,
+encapsulate the semantics described above.
+
+\ccRefines
+\ccc{DefaultConstructible}\\
+\ccc{CopyConstructible}\\
+\ccc{Assignable}\\
+\ccc{AdaptableFunctor} (with two arguments)
+
+\ccTypes
+
+In addition to the types required by the \ccc{AdaptableFunctor}
+concept, a model of this concept must provide the following types:
+
+
+%\ccTwo{EdgeDegeneractTester::Dual_graph+}{}
+\ccThree{typedef typename Dual_graph::Geom_traits::Point_2}{Vertex_handle+}{}
+\ccThreeToTwo
+\ccNestedType{Dual_graph}{A type for the Delaunay graph. It must be
+  model of the \ccc{DelaunayGraph_2} concept.}
+\ccGlue
+\ccNestedType{Locate_type}{A type for the result of the point
+  location. It must be a model of the \ccc{DelaunayGraphLocateType_2}
+  concept.}
+\ccGlue
+\ccTypedef{typedef typename Dual_graph::Vertex_handle Vertex_handle;}{}
+\ccGlue
+\ccTypedef{typedef typename Dual_graph::Face_handle Face_handle;}{}
+\ccGlue
+\ccTypedef{typedef typename Dual_graph::Edge Edge;}{}
+\ccGlue
+\ccTypedef{typedef typename Dual_graph::Geom_traits::Point_2 Point_2;}{}
+
+\ccCreationVariable{pl}
+
+%\ccCreation
+
+%In addition to the default and copy constructors and the assignment
+%operator, the following constructor must be defined:
+
+%\ccThree{EdgeDegeneracyTester et(Dual_graph* dg)+}{}
+%\ccThreeToTwo
+%\ccConstructor{EdgeDegeneracyTester(Dual_graph* dg);}{A constructor
+%  that is initialized by a pointer to a \ccc{Dual_graph} object.}
+
+\ccOperations
+It must also provide the following operations:
+
+\ccThree{Locate_type}{pl(Dual_graph dg, Point_2 p)+}{}
+\ccThreeToTwo
+\ccMemberFunction{Locate_type operator()(Dual_graph dg, Point_2 p);}
+{returns the feature of the Delaunay graph on which the point \ccc{p}
+  lies.}
+
+\ccHasModels
+\ccc{CGAL::Apollonius_graph_Voronoi_traits_2<DG>::Point_locator}\\
+\ccc{CGAL::Delaunay_triangulation_Voronoi_traits_2<DG>::Point_locator}\\
+\ccc{CGAL::Regular_triangulation_Voronoi_traits_2<DG>::Point_locator}\\
+\ccc{CGAL::Segment_Voronoi_diagram_Voronoi_traits_2<DG>::Point_locator}
+
+\ccSeeAlso
+\ccc{VoronoiTraits_2}\\
+\ccc{DelaunayGraphLocateType_2}\\
+\ccc{CGAL::Apollonius_graph_Voronoi_traits_2<DG>}\\
+\ccc{CGAL::Delaunay_triangulation_Voronoi_traits_2<DG>}\\
+\ccc{CGAL::Regular_triangulation_Voronoi_traits_2<DG>}\\
+\ccc{CGAL::Segment_Voronoi_diagram_Voronoi_traits_2<DG>}
+
+\end{ccRefFunctionObjectConcept}

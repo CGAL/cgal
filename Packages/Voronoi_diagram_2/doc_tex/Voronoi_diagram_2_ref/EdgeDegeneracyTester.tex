@@ -1,4 +1,4 @@
-%% Copyright (c) 2005  University of Crete (Greece).
+%% Copyright (c) 2005  Foundation for Research and Technology-Hellas (Greece).
 %% All rights reserved.
 %%
 %% This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -31,14 +31,16 @@ In addition to the types required by the \ccc{AdaptableFunctor}
 concept, a model of this concept must provide the following types:
 
 
-\ccTwo{EdgeDegeneractTester::Dual_graph+}{}
-\ccNestedType{Dual_graph}{A type for the Delaunay graph. It must be
-  model of the \ccc{DelaunayGraph_2} concept.}
+%\ccTwo{EdgeDegeneractTester::Dual_graph+}{}
 \ccThree{typedef typename Dual_graph::Finite_edges_iterator}
 {Finite_edges_iterator}{}
 \ccThreeToTwo
-%
+\ccNestedType{Dual_graph}{A type for the Delaunay graph. It must be
+  model of the \ccc{DelaunayGraph_2} concept.}
+\ccGlue
 \ccTypedef{typedef typename Dual_graph::Edge Edge;}{}
+\ccGlue
+\ccTypedef{typedef typename Dual_graph::Face_handle Face_handle;}{}
 \ccGlue
 \ccTypedef{typedef typename Dual_graph::Edge_circulator
   Edge_circulator;}{}
@@ -71,6 +73,11 @@ It must also provide the following operations:
   belongs to the dual Delaunay graph \ccc{dg}) is
   degenerate, i.e., it has zero length.}
 %
+\ccMemberFunction{bool operator()(Dual_graph dg, Face_hanfle f, int i);}
+{returns \ccStyle{true}, if the dual Voronoi edge of the edge
+  \ccc{(f,i)} (that belongs to the dual Delaunay graph \ccc{dg}) is
+  degenerate, i.e., it has zero length.}
+%
 \ccGlue
 \ccMemberFunction{bool operator()(Dual_graph dg, Edge_circulator ec);}
 {returns \ccStyle{true}, if the dual Voronoi edge of \ccc{*ec} (that
@@ -91,6 +98,7 @@ It must also provide the following operations:
 
 
 \ccSeeAlso
+\ccc{VoronoiTraits_2}\\
 \ccc{FaceDegeneracyTester}
 
 \end{ccRefFunctionObjectConcept}

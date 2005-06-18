@@ -1,4 +1,4 @@
-%% Copyright (c) 2005  University of Crete (Greece).
+%% Copyright (c) 2005  Foundation for Research and Technology-Hellas (Greece).
 %% All rights reserved.
 %%
 %% This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -23,31 +23,23 @@
 \ccc{DefaultConstructible}\\
 \ccc{CopyConstructible}\\
 \ccc{Assignable}\\
-\ccc{AdaptableFunctor} (with three arguments)
+\ccc{AdaptableFunctor} (with two arguments)
 
 \ccTypes
 
 In addition to the types required by the \ccc{AdaptableFunctor}
 concept, a model of this concept must provide the following types:
 
-\ccTwo{FaceDegeneracyTester::Dual_graph+}{}
+%\ccTwo{FaceDegeneracyTester::Dual_graph+}{}
 %
+\ccThree{typedef typename Dual_graph::Vertex_handle}{Vertex_handle+}{}
+\ccThreeToTwo
 \ccNestedType{Dual_graph}{A type for the Delaunay graph. It must be
   model of the \ccc{DelaunayGraph_2} concept.}
 %
-\ccThree{typedef typename Dual_graph::Finite_vertices_iterator}
-{Finite_vertices_iterator}{}
-\ccThreeToTwo
+\ccGlue
 \ccTypedef{typedef typename Dual_graph::Vertex_handle Vertex_handle;}{}
-\ccGlue
-\ccTypedef{typedef typename Dual_graph::Vertex_circulator
-  Vertex_circulator;}{}
-\ccGlue
-\ccTypedef{typedef typename Dual_graph::All_vertices_iterator
-  All_vertices_iterator;}{}
-\ccGlue
-\ccTypedef{typedef typename Dual_graph::Finite_vertices_iterator
-  Finite_vertices_iterator;}{}
+
 
 \ccCreationVariable{fdt}
 
@@ -62,36 +54,19 @@ concept, a model of this concept must provide the following types:
 %  that is initialized by a pointer to a \ccc{Dual_graph} object.}
 
 \ccOperations
-It must also provide the following operations:
+It must also provide the following operation:
 
-\ccThree{bool}{Dual_graph dg, fdt(Finite_vertices_iterator fvit)+}{}
+\ccThree{bool}{Dual_graph dg, fdt(Vertex_handle v)+}{}
 \ccThreeToTwo
 \ccMemberFunction{bool operator()(Dual_graph dg, Vertex_handle v);}
 {returns \ccStyle{true}, if the dual Voronoi face of \ccc{v} (that
   belongs to the dual Delaunay graph \ccc{dg}) is
   degenerate, i.e., it has zero area.}
 %
-\ccGlue
-\ccMemberFunction{bool operator()(Dual_graph dg, Vertex_circulator vc);}
-{returns \ccStyle{true}, if the dual Voronoi face of \ccc{*vc} (that
-  belongs to the dual Delaunay graph \ccc{dg}) is
-  degenerate, i.e., it has zero area.}
-%
-\ccGlue
-\ccMemberFunction{bool operator()(Dual_graph dg, All_vertices_iterator avit);}
-{returns \ccStyle{true}, if the dual Voronoi face of \ccc{*avit} (that
-  belongs to the dual Delaunay graph \ccc{dg}) is
-  degenerate, i.e., it has zero area.}
-%
-\ccGlue
-\ccMemberFunction{bool operator()(Dual_graph dg,
-  Finite_vertices_iterator fvit);}
-{returns \ccStyle{true}, if the dual Voronoi face of \ccc{*fvit} (that
-  belongs to the dual Delaunay graph \ccc{dg}) is
-  degenerate, i.e., it has zero area.}
 
 
 \ccSeeAlso
+\ccc{VoronoiTraits_2}\\
 \ccc{EdgeDegeneracyTester}
 
 \end{ccRefFunctionObjectConcept}

@@ -17,11 +17,19 @@
 %%
 %% Author(s)     : Menelaos Karavelas <mkaravel@tem.uoc.gr>
 
-\chapter{Voronoi diagram adaptors}
-\label{chapter-vda}
-\ccChapterAuthor{Menelaos Karavelas}
+\section{Examples}
+\label{sec:vda2-examples}
 
-\minitoc
+\subsection{First example}
 
-%\input{Apollonius_graph_2/Apollonius_2.tex}
-\input{Voronoi_diagram_adaptor_2/Voronoi_diagram_adaptor_2_examples.tex}
+The following example shows how we can compute the number of connected
+components of the Voronoi skeleton.
+
+\ccIncludeExampleCode{Voronoi_diagram_adaptor_2/connected_components.C}
+
+\subsection{Second example}
+
+The following example shows how we can perform point location using
+the Voronoi diagram adaptor.
+
+\ccIncludeExampleCode{Voronoi_diagram_adaptor_2/point_location.C}

@@ -1,4 +1,4 @@
-%% Copyright (c) 2005  University of Crete (Greece).
+%% Copyright (c) 2005  Foundation for Research and Technology-Hellas (Greece).
 %% All rights reserved.
 %%
 %% This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -65,9 +65,20 @@ constructing these objects.
 \ccNestedType{Face_degeneracy_tester}{A type for the predicate that
   tests whether a Voronoi face is degenerate, i.e., it has zero
   area. It must be a model of the \ccc{FaceDegeneracyTester} concept.}
+\ccGlue
+\ccNestedType{Has_point_locator}{A tag for determining if the Voronoi
+  traits can provide a functor for performing point location. This tag
+  is equal to either \ccc{CGAL::Tag_true} (a point location functor is
+  available) or \ccc{CGAL::Tag_false} (a point location functor is not
+  available).}
+\ccGlue
+\ccNestedType{Point_locator}{A type for a functor the performs point
+  location. It must be a model of the concept
+  \ccc{DelaunayGraphPointLocator_2}. This type is required only if
+  \ccc{Has_point_locator} is equal to \ccc{CGAL::Tag_true}.}
+
 \ccThree{typedef typename Dual_graph::Vertex_handle}{Vertex_handle+}{}
 \ccThreeToTwo
-
 \ccTypedef{typedef typename Dual_graph::Vertex_handle
   Vertex_handle;}{Handle to the vertices of the Delaunay graph.}
 \ccTypedef{typedef Voronoi_edge_2 Curve;}{This type is provided in
@@ -77,11 +88,14 @@ constructing these objects.
 
 \ccCreationVariable{vt}  %% choose variable name
 
-\ccHeading{Access to predicate objects}
+\ccHeading{Access to objects}
 \ccThree{Edge_degeneracy_tester}{vt.edge_degeneracy_tester_object()+}{}
 \ccMethod{Edge_degeneracy_tester edge_degeneracy_tester_object();}{}
 \ccGlue
 \ccMethod{Face_degeneracy_tester face_degeneracy_tester_object();}{}
+\ccGlue
+\ccMethod{Point_locator point_locator_object();}{This method is
+  required only if \ccc{Has_point_locator} is equal to \ccc{CGAL::Tag_true}.}
 
 %
 %
@@ -141,6 +155,7 @@ constructing these objects.
 \ccc{VoronoiEdge_2}\\
 \ccc{EdgeDegeneracyTester}\\
 \ccc{FaceDegeneracyTester}\\
+\ccc{DelaunayGraphPointLocator_2}\\
 \ccc{CGAL::Voronoi_diagram_adaptor_2<DG,VT>}
 \end{ccRefConcept}
 

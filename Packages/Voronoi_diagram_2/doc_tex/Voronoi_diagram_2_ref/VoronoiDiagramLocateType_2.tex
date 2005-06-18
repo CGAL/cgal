@@ -1,0 +1,111 @@
+%% Copyright (c) 2005  Foundation for Research and Technology-Hellas (Greece).
+%% All rights reserved.
+%%
+%% This file is part of CGAL (www.cgal.org); you may redistribute it under
+%% the terms of the Q Public License version 1.0.
+%% See the file LICENSE.QPL distributed with CGAL.
+%%
+%% Licensees holding a valid commercial license may use this file in
+%% accordance with the commercial license agreement provided with the software.
+%%
+%% This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+%% WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+%%
+%% $Source$
+%% $Revision$ $Date$
+%% $Name$
+%%
+%% Author(s)     : Menelaos Karavelas <mkaravel@tem.uoc.gr>
+
+
+
+\begin{ccRefConcept}{VoronoiDiagramLocateType_2}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+\ccDefinition
+
+The concept \ccc{VoronoiDiagramLocateType_2} defines the requirements of the
+\ccc{Locate_type} type defined in the \ccc{Voronoi_diagram_adaptor_2<DG,VT>}
+class. Essentially it provides the requirements for a class
+representing the return type of a point location query performed on a
+Voronoi diagram. Semantically, the locate type is either a vertex, edge or
+face of the Voronoi diagram. It is a vertex if the query point is
+equidistant to at least three generators of the Voronoi diagram.
+It is an edge if the query point is equidistant to exactly two
+generators of the Voronoi diagram. In all other cases, the locate type
+is a face, namely, the unique face of the Voronoi diagram that
+contains the query point in its interior; in this case there exists a
+unique generator closest to the query point. The
+\ccc{VoronoiDiagramLocateType_2} concept encapsulates the 
+semantics described above.
+
+\ccRefines
+\ccc{DefaultConstructible}\\
+\ccc{CopyConstructible}\\
+\ccc{Assignable}
+
+\ccTypes
+\ccThree{typedef Dual_graph::Vertex_handle}{Vertex_handle+}{}
+\ccThreeToTwo
+%
+\ccNestedType{Vertex_handle}{Handle for the vertices of the Voronoi diagram.}
+\ccGlue
+\ccNestedType{Face_handle}{Handle for the faces of the Voronoi diagram.}
+\ccGlue
+\ccNestedType{Halfedge_handle}{Handle for the halfedges of the Voronoi
+  diagram.}
+
+\ccCreationVariable{lt}  %% choose variable name
+
+\ccHeading{Predicate Methods}
+\ccThree{bool}{lt.is_vertex()+}{}
+\ccThreeToTwo
+%
+\ccMethod{bool is_vertex();}{Returns \ccStyle{true} iff the result of
+  the point location corresponds to a vertex of the Voronoi diagram.
+  i.e., iff the query point lies on a vertex of the Voronoi diagram.}
+\ccGlue
+\ccMethod{bool is_edge();}{Returns \ccStyle{true} iff the result of
+  the point location corresponds to an edge of the Voronoi diagram,
+  i.e., iff the query point lies on the interior of an edge of the
+  Voronoi diagram.}
+\ccGlue
+\ccMethod{bool is_face();}{Returns \ccStyle{true} iff the result of
+  the point location corresponds to a face of the Voronoi diagram,
+  i.e., iff the query point lies in the interior of a face of the
+  Voronoi diagram.}
+
+
+\ccHeading{Access Methods}
+\ccThree{Halfedge_handle}{lt.vertex()+}{}
+\ccThreeToTwo
+%
+\ccMethod{Vertex_handle vertex();}{Returns a handle to the vertex of
+  the Voronoi diagram which is the result of the point location query.
+\ccPrecond{\ccc{is_vertex()} must be \ccStyle{true}.}}
+%
+\ccGlue
+\ccMethod{Halfedge_handle edge();}{Returns the one of the two
+  halfedges representing the Voronoi edge that is the result of the
+  point location query.
+\ccPrecond{\ccc{is_edge()} must be \ccStyle{true}.}}
+%
+\ccGlue
+\ccMethod{Face_handle face();}{Returns a handle to the face of the
+  Voronoi diagram which is the result of the point location query.
+\ccPrecond{\ccc{is_face()} must be \ccStyle{true}.}}
+
+
+\ccHasModels
+\ccc{CGAL::Voronoi_diagram_adaptor_2<DG,VT>::Locate_type}
+
+\ccSeeAlso
+\ccc{CGAL::Voronoi_diagram_adaptor_2<DG,VT>}
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

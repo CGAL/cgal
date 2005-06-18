@@ -1,4 +1,4 @@
-%% Copyright (c) 2005  University of Crete (Greece).
+%% Copyright (c) 2005  Foundation for Research and Technology-Hellas (Greece).
 %% All rights reserved.
 %%
 %% This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -45,10 +45,10 @@ that the Voronoi diagram adaptor can use it.
 \ccNestedType{Geom_traits}{A type for the geometric traits associated
   with the Delaunay graph.}
 \ccGlue
-\ccNestedType{Point_2}{A type for a point.}
-\ccGlue
-\ccNestedType{Site_2}{A type for the generators of the Voronoi diagram.}
-\ccGlue
+%\ccNestedType{Point_2}{A type for a point.}
+%\ccGlue
+%\ccNestedType{Site_2}{A type for the generators of the Voronoi diagram.}
+%\ccGlue
 \ccNestedType{Triangulation_data_structure}{A type for the underlying
   triangulation data structure. It must be a model of the concept
   \ccc{TriangulationDataStructure_2.}}
@@ -98,21 +98,21 @@ that the Voronoi diagram adaptor can use it.
 
 \ccCreationVariable{dg}  %% choose variable name
 
-\ccThree{DelaunayGraph_2}{dg(It begin, It beyond, Geom_traits gt)+}{}
-\ccThreeToTwo
-
-\ccCreation
-In addition to the default and constructors, as well as the assignment
-operator, the following constructors are required.
-
-\ccConstructor{template<class It> DelaunayGraph_2(It begin, It beyond);}
-{Constructor that takes an iterator range. The value type of the
-  iterator must be \ccc{Site_2}.}
-\ccGlue
-\ccConstructor{template<class It> DelaunayGraph_2(It begin, It beyond,
-  Geom_traits gt);}
-{Constructor that takes an iterator range and an instance of the
-  geometric traits. The value type of the iterator must be \ccc{Site_2}.}
+%\ccThree{DelaunayGraph_2}{dg(It begin, It beyond, Geom_traits gt)+}{}
+%\ccThreeToTwo
+%
+%\ccCreation
+%In addition to the default and constructors, as well as the assignment
+%operator, the following constructors are required.
+%
+%\ccConstructor{template<class It> DelaunayGraph_2(It begin, It beyond);}
+%{Constructor that takes an iterator range. The value type of the
+%  iterator must be \ccc{Site_2}.}
+%\ccGlue
+%\ccConstructor{template<class It> DelaunayGraph_2(It begin, It beyond,
+%  Geom_traits gt);}
+%{Constructor that takes an iterator range and an instance of the
+%  geometric traits. The value type of the iterator must be \ccc{Site_2}.}
 
 
 \ccHeading{Access methods}
@@ -125,6 +125,9 @@ operator, the following constructors are required.
 \ccGlue
 \ccMethod{Vertex_handle infinite_vertex();}
 {Returns a handle to the infinite vertex.}
+\ccGlue
+\ccMethod{Vertex_handle finite_vertex();}
+{Returns a handle to a finite vertex, provided there exists one.}
 \ccGlue
 \ccMethod{Face_handle infinite_face();}
 {Returns a handle a face incident to the infinite vertex.}
@@ -270,23 +273,23 @@ the finite or infinite character of any feature.
 
 
 
-\ccHeading{Insertion}
-\ccThree{Vertex_handle }{dg.insert(Site_2 s)+}{}
+%\ccHeading{Insertion}
+%\ccThree{Vertex_handle }{dg.insert(Site_2 s)+}{}
 %%
-\ccMethod{Vertex_handle  insert(Site_2 s);}{Inserts the
-site \ccc{s} in the Delaunay graph.}
-%
+%\ccMethod{Vertex_handle  insert(Site_2 s);}{Inserts the
+%site \ccc{s} in the Delaunay graph.}
+%%
 
 
-\ccHeading{Nearest neighbor location}
-\ccThree{Vertex_handle }{dg.nearest_neighbor(Point_2 p)+}{}
-%
-\ccMethod{Vertex_handle  nearest_neighbor(Point_2 p);}
-{Finds the nearest neighbor of the point \ccc{p}. In other words it
-finds the site whose Voronoi cell contains \ccc{p}. Ties are broken
-arbitrarily and one of the nearest neighbors of \ccc{p} is
-returned. If the number of vertices of the Delaunay graph is zero
-\ccc{Vertex_handle(NULL)} should be returned.}
+%\ccHeading{Nearest neighbor location}
+%\ccThree{Vertex_handle }{dg.nearest_neighbor(Point_2 p)+}{}
+%%
+%\ccMethod{Vertex_handle  nearest_neighbor(Point_2 p);}
+%{Finds the nearest neighbor of the point \ccc{p}. In other words it
+%finds the site whose Voronoi cell contains \ccc{p}. Ties are broken
+%arbitrarily and one of the nearest neighbors of \ccc{p} is
+%returned. If the number of vertices of the Delaunay graph is zero
+%\ccc{Vertex_handle(NULL)} should be returned.}
 %\ccGlue
 %\ccMethod{Vertex_handle  nearest_neighbor(Point_2 p,
 %Vertex_handle vnear);}{Finds the nearest neighbor of the point
