@@ -25,9 +25,6 @@
 #include <CGAL/edge_list.h>
 #include <cstdlib>
 
-// this is included so that we now if CGAL_T2_USE_ITERATOR_AS_HANDLE
-// is defined
-#include <CGAL/Triangulation_2.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -131,15 +128,6 @@ class Cached_face_degeneracy_tester
   typedef typename Face_degeneracy_tester::Dual_graph     Dual_graph;
   typedef typename Face_degeneracy_tester::Vertex_handle  Vertex_handle;
 
-  typedef typename Face_degeneracy_tester::Vertex_circulator
-  Vertex_circulator;
-
-  typedef typename Face_degeneracy_tester::Finite_vertices_iterator
-  Finite_vertices_iterator;
-
-  typedef typename Face_degeneracy_tester::All_vertices_iterator
-  All_vertices_iterator;
-
   typedef typename Face_degeneracy_tester::result_type  result_type;
   typedef typename Face_degeneracy_tester::Arity        Arity;
 
@@ -153,22 +141,6 @@ class Cached_face_degeneracy_tester
     vmap[v] = b;
     return b;
   }
- 
-  bool operator()(const Dual_graph& dual, const Vertex_circulator& vc) const {
-    return operator()(dual, Vertex_handle(vc));
-  }
-
-  bool operator()(const Dual_graph& dual,
-		  const Finite_vertices_iterator& vit) const {
-    return operator()(dual, Vertex_handle(vit));
-  }
-
-#ifndef CGAL_T2_USE_ITERATOR_AS_HANDLE
-  bool operator()(const Dual_graph& dual,
-		  const All_vertices_iterator& vit) const {
-    return operator()(dual, Vertex_handle(vit));
-  }
-#endif
 
  private:
   Face_degeneracy_tester f_tester;

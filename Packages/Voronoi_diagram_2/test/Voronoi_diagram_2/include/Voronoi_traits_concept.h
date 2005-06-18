@@ -4,7 +4,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Voronoi_diagram_adaptor_2/Voronoi_vertex_base_2.h>
 #include <CGAL/Voronoi_diagram_adaptor_2/Voronoi_edge_base_2.h>
-
+#include <CGAL/Voronoi_diagram_adaptor_2/Default_Voronoi_traits_2.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -107,26 +107,8 @@ class Voronoi_traits_concept
     } 
   };
 
-  struct Face_degeneracy_tester
-  {
-    typedef DG  Dual_graph;
-
-    typedef typename DG::Vertex_handle             Vertex_handle;
-    typedef typename DG::Vertex_circulator         Vertex_circulator;
-    typedef typename DG::All_vertices_iterator     All_vertices_iterator;
-    typedef typename DG::Finite_vertices_iterator  Finite_vertices_iterator;
-
-    typedef bool           result_type;
-    typedef Arity_tag<2>   Arity;
-
-    bool operator()(const Dual_graph&, const Vertex_handle&) const {
-      return false;
-    }
-
-    bool operator()(const Dual_graph&, const Vertex_circulator&) const {
-      return false;
-    }
-  };
+  typedef CGAL_VORONOI_DIAGRAM_2_NS::Default_face_degeneracy_tester<DG>
+  Face_degeneracy_tester;
 
   const Edge_degeneracy_tester& edge_degeneracy_tester_object() const {
     return e_tester_;

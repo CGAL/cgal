@@ -63,6 +63,7 @@ void test_edt_concept(const EDT& edt)
 
   typedef typename EDT::Dual_graph                DG;
   typedef typename EDT::Edge                      Edge;
+  typedef typename EDT::Face_handle               Face_handle;
   typedef typename EDT::Edge_circulator           Edge_circulator;
   typedef typename EDT::All_edges_iterator        All_edges_iterator;
   typedef typename EDT::Finite_edges_iterator     Finite_edges_iterator;
@@ -76,9 +77,6 @@ void test_fdt_concept(const FDT& fdt)
 
   typedef typename FDT::Dual_graph                DG;
   typedef typename FDT::Vertex_handle             Vertex_handle;
-  typedef typename FDT::Vertex_circulator         Vertex_circulator;
-  typedef typename FDT::All_vertices_iterator     All_vertices_iterator;
-  typedef typename FDT::Finite_vertices_iterator  Finite_vertices_iterator;
 }
 
 

@@ -6,6 +6,9 @@
 #include <vector>
 
 
+template<class T>
+void kill_warning(const T&) {}
+
 template<class VDA, class Projector, class QStream, class OStream>
 void test_locate(const VDA& vda, const Projector& project,
 		 QStream& isq, OStream& os = std::cout)
@@ -58,10 +61,16 @@ void test_locate_dg(const VDA& vda, const Projector& project,
     pl_lt = locate(vda.dual(), vecp[i]);
     if ( pl_lt.is_vertex() ) {
       os << "FACE";
+      Vertex_handle v = pl_lt.vertex();
+      kill_warning( v );
     } else if ( pl_lt.is_edge() ) {
       os << "EDGE";
+      Edge e = pl_lt.edge();
+      kill_warning( e );
     } else if ( pl_lt.is_face() ) {
       os << "VERTEX";
+      Face_handle f = pl_lt.face();
+      kill_warning( f );
     } else {
       os << " *** NOT READY YET *** ";
     }
@@ -79,11 +88,17 @@ void test_locate_vd(const VDA& vda, const Point_vector& vecp, OStream& os)
   for (unsigned int i = 0; i < vecp.size(); ++i) {
     os << vecp[i] << "\t --> \t" << std::flush;
     lt = vda.locate(vecp[i]);
-    if ( lt.is_halfedge() ) {
-      os << "VORONOI EDGE"; 
+    if ( lt.is_edge() ) {
+      os << "VORONOI EDGE";
+      typename VDA::Halfedge_handle e = lt.edge();
+      kill_warning( e );
     } else if ( lt.is_vertex() ) {
       os << "VORONOI VERTEX";
+      typename VDA::Vertex_handle v = lt.vertex();
+      kill_warning( v );
     } else if ( lt.is_face() ) {
+      typename VDA::Face_handle f = lt.face();
+      kill_warning( f );
       os << "VORONOI FACE";
     } else {
       os << " *** NOT READY YET *** ";

@@ -47,6 +47,7 @@ class Locate_type_base
  public:
   bool is_vertex() const { return t == VERTEX; }
   bool is_face() const { return t == FACE; }
+  bool is_edge() const { return t == EDGE; }
 
   const Vertex_handle& vertex() const {
     CGAL_precondition( is_vertex() );
@@ -57,9 +58,6 @@ class Locate_type_base
     CGAL_precondition( is_face() );
     return f_;
   }
-
- protected:
-  bool is_edge() const { return t == EDGE; }
 
   const Edge_rep& edge() const {
     CGAL_precondition( is_edge() );
@@ -103,10 +101,6 @@ class Locate_type<VDA,true>
 
  public:
   Locate_type() : Base() {}
-
-  bool is_halfedge() const { return Base::is_edge(); }
-
-  const Halfedge_handle& halfedge() const { return Base::edge(); }
 };
 
 
@@ -119,6 +113,7 @@ class Locate_type<DG,false>
   friend class Locate_type_accessor<DG,false>;
 
  public:
+  typedef DG                          Dual_graph;
   typedef typename DG::Vertex_handle  Vertex_handle;
   typedef typename DG::Face_handle    Face_handle;
   typedef typename DG::Edge           Edge;
@@ -133,10 +128,6 @@ class Locate_type<DG,false>
 
  public:
   Locate_type() : Base() {}
-
-  bool is_edge() const { return Base::is_edge(); }
-
-  const Edge& edge() const { return Base::edge(); }
 };
 
 

@@ -66,7 +66,7 @@ int main()
 
     if ( lt.is_vertex() ) {
       std::cout << "VERTEX";
-    } else if ( lt.is_halfedge() ) {
+    } else if ( lt.is_edge() ) {
       std::cout << "EDGE";
     } else if ( lt.is_face() ) {
       std::cout << "FACE";
