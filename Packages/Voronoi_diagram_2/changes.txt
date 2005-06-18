@@ -1,6 +1,21 @@
 18 June 2005:  Menelaos Karavelas
 - fixed the point_location example w.r.t. the changes made on June 16;
   the Locate_type classes is now used in the example as well.
+- changed the spec for the face denegeracy tester: we do not require
+  any more operators that take iterators or circulators as arguments; since
+  iterators and circulators are convertible to handles, these operators are
+  not really required. In addition this should fix the bug with the VC 7.1
+  compiler.
+- changed the code to reflect the change in the spec discussed above.
+- introduced a Default_face_degeneracy_tester that always returns false; now
+  all Voronoi traits except that of the SVD use this default tester instead
+  of defining their own
+- modified the cached and ref counted Voronoi traits to define the point
+  locator as well
+- added concepts for locate types in the doc; added usage of locate types
+  in the various classes/concepts
+- modified copyright headers in doc
+- added the two examples in the doc
 
 16 June 2005:  Menelaos Karavelas
 - added some more data sets for testing with regular triangulation's point
