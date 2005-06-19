@@ -157,22 +157,30 @@ public:
 class Arr_face_base
 {
 public:
-  
-  typedef std::list<void*>                  Holes_container; 
-  typedef Holes_container::iterator         Holes_iterator; 
+
+  typedef std::list<void*>                  Holes_container;
+  typedef Holes_container::iterator         Holes_iterator;
   typedef Holes_container::const_iterator   Holes_const_iterator;
+
+  typedef std::list<void*>                  Isolated_vertices_container;
+  typedef Isolated_vertices_container::iterator
+                                            Isolated_vertices_iterator;
+  typedef Isolated_vertices_container::const_iterator
+                                            Isolated_vertices_const_iterator;
 
 protected:
 
   void           *p_he;        // An incident halfedge along the face boundary.
-  Holes_container holes;       // The holes inside the face.
+  Holes_container              holes;      // The holes inside the face.
+  Isolated_vertices_container  iso_verts;  // The isolated vertices inside
+                                           // the face.
 
 public:
 
   /*! Default constructor. */
-  Arr_face_base() : 
+  Arr_face_base() :
     p_he (NULL),
-    holes() 
+    holes()
   {}
 
   /*! Destructor. */
@@ -276,7 +284,7 @@ public:
 
   /*! Set the previous halfedge along the chain. */
   void set_previous (Halfedge* he)
-  { 
+  {
     p_prev = he;
     he->p_next = this;
   }
@@ -295,7 +303,7 @@ public:
 
   /*! Set the next halfedge along the chain. */
   void set_next (Halfedge* he)
-  { 
+  {
     p_next = he;
     he->p_prev = this;
   }
@@ -353,8 +361,8 @@ public:
 
   /*! Default constructor. */
   Arr_face()
-  {}  
-  
+  {}
+
   /*! Get an incident halfedge (const version). */
   const Halfedge * halfedge() const
   {
@@ -375,13 +383,13 @@ public:
 
   // Define the hole iterators:
   typedef I_HalfedgeDS_iterator<
-    typename F::Holes_iterator, 
-    Halfedge*, 
+    typename F::Holes_iterator,
+    Halfedge*,
     typename F::Holes_iterator::difference_type,
     typename F::Holes_iterator::iterator_category>       Holes_iterator;
 
   typedef I_HalfedgeDS_const_iterator<
-    typename F::Holes_const_iterator, 
+    typename F::Holes_const_iterator,
     typename F::Holes_iterator,
     const Halfedge*,
     typename F::Holes_const_iterator::difference_type,
@@ -400,7 +408,7 @@ public:
   }
 
   /*! Erase a range of holes from the face. */
-  void erase_holes (Holes_iterator first, Holes_iterator last) 
+  void erase_holes (Holes_iterator first, Holes_iterator last)
   {
     holes.erase (first.current_iterator(), last.current_iterator());
   }
@@ -427,6 +435,66 @@ public:
   Holes_const_iterator holes_end() const
   {
     return holes.end();
+  }
+
+  // Define the isloated vertices iterators:
+  typedef I_HalfedgeDS_iterator<
+    typename F::Isolated_vertices_iterator,
+    Vertex*,
+    typename F::Isolated_vertices_iterator::difference_type,
+    typename F::Isolated_vertices_iterator::iterator_category>
+                                                  Isolated_vertices_iterator;
+
+  typedef I_HalfedgeDS_const_iterator<
+    typename F::Isolated_vertices_const_iterator,
+    typename F::Isolated_vertices_iterator,
+    const Vertex*,
+    typename F::Isolated_vertices_const_iterator::difference_type,
+    typename F::Isolated_vertices_const_iterator::iterator_category>
+                                            Isolated_vertices_const_iterator;
+
+  /*! Add an isloated vertex inside the face. */
+  void add_isolated_vertex (Vertex* v)
+  {
+    iso_verts.push_back (v);
+  }
+
+  /*! Erase an isloated vertex from the face. */
+  void erase_isolated_vertex (Isolated_vertices_iterator ivit)
+  {
+    iso_verts.erase (ivit.current_iterator());
+  }
+
+  /*! Erase a range of isloated vertices from the face. */
+  void erase_isolated_vertices (Isolated_vertices_iterator first,
+                                Isolated_vertices_iterator last)
+  {
+    iso_verts.erase (first.current_iterator(), last.current_iterator());
+  }
+
+  /*! Get an iterator for the first isloated vertex inside the face. */
+  Isolated_vertices_iterator isolated_vertices_begin()
+  {
+    return iso_verts.begin();
+  }
+
+  /*! Get a past-the-end iterator for the isloated vertices inside the face. */
+  Isolated_vertices_iterator isolated_vertices_end()
+  {
+    return iso_verts.end();
+  }
+
+  /*! Get an const iterator for the first isloated vertex inside the face. */
+  Isolated_vertices_const_iterator isolated_vertices_begin() const
+  {
+    return iso_verts.begin();
+  }
+
+  /*! Get a const past-the-end iterator for the isloated vertices inside the
+   * face. */
+  Isolated_vertices_const_iterator isolated_vertices_end() const
+  {
+    return iso_verts.end();
   }
 };
 
@@ -680,7 +748,7 @@ public:
     typedef std::map<const Halfedge*, Halfedge*> Halfedge_map;
     typedef std::map<const Face*, Face*>         Face_map;
 
-    Vertex_map                vm;
+    Vertex_map                v_map;
     Vertex_const_iterator     vit;
     Vertex                   *dup_v;
 
@@ -688,10 +756,10 @@ public:
     {
       dup_v = new_vertex();
       dup_v->assign (*vit);
-      vm.insert (Vertex_map::value_type (&(*vit), dup_v));
+      v_map.insert (Vertex_map::value_type (&(*vit), dup_v));
     }
 
-    Halfedge_map              hm;
+    Halfedge_map              he_map;
     Halfedge_const_iterator   hit;
     Halfedge                 *dup_h;
 
@@ -699,10 +767,10 @@ public:
     {
       dup_h = _new_halfedge();
       dup_h->assign (*hit);
-      hm.insert (Halfedge_map::value_type(&(*hit), dup_h));
+      he_map.insert (Halfedge_map::value_type(&(*hit), dup_h));
     }
 
-    Face_map                  fm;
+    Face_map                  f_map;
     Face_const_iterator       fit;
     Face                     *dup_f;
 
@@ -710,7 +778,7 @@ public:
     {
       dup_f = new_face();
       dup_f->assign (*fit);
-      fm.insert (Face_map::value_type(&(*fit), dup_f));
+      f_map.insert (Face_map::value_type(&(*fit), dup_f));
     }
 
     // Update the vertex records.
@@ -723,8 +791,8 @@ public:
       v = &(*vit);
       h = v->halfedge();
 
-      dup_v = (vm.find (v))->second;
-      dup_h = (hm.find (h))->second;
+      dup_v = (v_map.find (v))->second;
+      dup_h = (he_map.find (h))->second;
 
       dup_v->set_halfedge (dup_h);
     }
@@ -742,12 +810,12 @@ public:
       prev = h->previous();
       next = h->next();
 
-      dup_h = (hm.find (h))->second;
-      dup_v = (vm.find (v))->second;
-      dup_f = (fm.find (f))->second;
-      dup_opp = (hm.find (opp))->second;
-      dup_prev = (hm.find (prev))->second;
-      dup_next = (hm.find (next))->second;
+      dup_h = (he_map.find (h))->second;
+      dup_v = (v_map.find (v))->second;
+      dup_f = (f_map.find (f))->second;
+      dup_opp = (he_map.find (opp))->second;
+      dup_prev = (he_map.find (prev))->second;
+      dup_next = (he_map.find (next))->second;
 
       dup_h->set_vertex (dup_v);
       dup_h->set_face (dup_f);
@@ -757,10 +825,13 @@ public:
     }
 
     // Update the face records.
-    typename Face::Holes_const_iterator  holes_it;
+    typename Face::Holes_const_iterator              holes_it;
+    typename Face::Isolated_vertices_const_iterator  iso_verts_it;
     const Halfedge                      *hole;
+    const Vertex                        *iso_vert;
     Halfedge                            *dup_hole;
-    
+    Vertex                              *dup_iso_vert;
+
     for (fit = dcel.faces_begin(); fit != dcel.faces_end(); ++fit)
     {
       f = &(*fit);
@@ -768,27 +839,37 @@ public:
 
       // Set the pointer to the outer boundary edge (may be NULL in case that
       // the current face f is the unbounded face).
-      dup_f = (fm.find (f))->second;
+      dup_f = (f_map.find (f))->second;
       if (h != NULL)
-        dup_h = (hm.find (h))->second;
+        dup_h = (he_map.find (h))->second;
       else
         dup_h = NULL;
-      
+
       dup_f->set_halfedge (dup_h);
 
       // Assign the holes.
-      for (holes_it = f->holes_begin(); 
+      for (holes_it = f->holes_begin();
            holes_it != f->holes_end(); ++holes_it)
       {
         hole = *holes_it;
 
-        dup_hole = (hm.find (hole))->second;
+        dup_hole = (he_map.find (hole))->second;
         dup_f->add_hole (dup_hole);
+      }
+
+      // Assign the isolated vertices.
+      for (iso_verts_it = f->isolated_vertices_begin();
+           iso_verts_it != f->isolated_vertices_end(); ++iso_verts_it)
+      {
+        iso_vert = *iso_verts_it;
+
+        dup_iso_vert = (v_map.find (iso_vert))->second;
+        dup_f->add_isolated_vertex (dup_iso_vert);
       }
     }
 
     // Return the unbounded face in the copied DCEL.
-    return ((fm.find (uf))->second);
+    return ((f_map.find (uf))->second);
   }
 
 protected:

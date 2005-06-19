@@ -104,7 +104,11 @@ public:
                                       Ccb_halfedge_const_circulator;
   typedef _Holes_iterator<Traits_2, Dcel>             Holes_iterator;
   typedef _Holes_const_iterator<Traits_2, Dcel>       Holes_const_iterator;
-  
+  typedef _Isolated_vertices_iterator<Traits_2, Dcel>
+                                      Isolated_vertices_iterator;
+  typedef _Isolated_vertices_const_iterator<Traits_2, Dcel>
+                                      Isolated_vertices_const_iterator;
+
 protected:
 
   /*!
@@ -154,9 +158,9 @@ protected:
 
   typedef Arr_observer<Self>                      Observer;
   typedef std::list<Observer*>                    Observers_container;
-  typedef typename Observers_container::iterator  Observers_iterater;
+  typedef typename Observers_container::iterator  Observers_iterator;
   typedef typename Observers_container::reverse_iterator  
-                                                  Observers_rev_iterater;
+                                                  Observers_rev_iterator;
 
   // Data members:
   Dcel                dcel;         // The DCEL representing the arrangement.
@@ -337,13 +341,55 @@ public:
   /*! Get the unbounded face (non-const version). */
   Face_handle unbounded_face ()
   {
-    return (Face_handle (un_face)); 
+    return (Face_handle (un_face));
   }
 
   /*! Get the unbounded face (const version). */
   Face_const_handle unbounded_face () const
   {
-    return (Face_const_handle (un_face)); 
+    return (Face_const_handle (un_face));
+  }
+
+  /*!
+   * Get the face containing the given isolated vertex (non-const version).
+   * \param The query vertex.
+   * \pre v is an isolated vertex (it has no incident halfedges).
+   * \return A handle to the face containing v.
+   */
+  Face_handle incident_face (Vertex_handle v)
+  {
+    CGAL_precondition (v.is_isolated());
+
+    // Get the fictitious incident halfedge of the vertex.
+    Halfedge  *p_he = v.p_v->halfedge();
+
+    // If this halfedge is vald, return it incident face. Otherwise, return
+    // the unbounded face.
+    if (p_he != NULL)
+      return (Face_handle (p_he->face()));
+    else
+      return (Face_handle (un_face));
+  }
+
+  /*!
+   * Get the face containing the given isolated vertex (const version).
+   * \param The query vertex.
+   * \pre v is an isolated vertex (it has no incident halfedges).
+   * \return A const handle to the face containing v.
+   */
+  Face_const_handle incident_face (Vertex_const_handle v) const
+  {
+    CGAL_precondition (v.is_isolated());
+
+    // Get the fictitious incident halfedge of the vertex.
+    const Halfedge  *p_he = v.p_v->halfedge();
+
+    // If this halfedge is vald, return it incident face. Otherwise, return
+    // the unbounded face.
+    if (p_he != NULL)
+      return (Face_const_handle (p_he->face()));
+    else
+      return (Face_const_handle (un_face));
   }
 
   /*! Get an iterator for the first face in the arrangement. */
@@ -392,11 +438,44 @@ public:
   }
   //@}
 
-  /// \name Specilaized insertion functions.
+  /// \name Vertex manipulation functions.
   //@{
 
   /*!
-   * Insert an x-monotone curve into the arrangement as a new hole (inner 
+   * Replace the point associated with the given vertex.
+   * \param v The vertex to modify.
+   * \param p The point that should be associated with the edge.
+   * \pre p is geometrically equivalent to the current point
+   *      associated with v.
+   * \return A handle for a the modified vertex (same as v).
+   */
+  Vertex_handle modify_vertex (Vertex_handle v,
+			       const Point_2& p);
+
+  /*!
+   * Insert an isolated vertex in the interior of a given face.
+   * \param p The isolated point.
+   * \param f The face into which we insert the new isolated vertex.
+   * \return A handle for the isolated vertex that has been created.
+   */
+  Vertex_handle insert_isolated_vertex (const Point_2& p,
+                                        Face_handle f);
+
+  /*!
+   * Remove an isolated vertex from the interior of a given face.
+   * \param v The vertex to remove.
+   * \pre v is an isolated vertex (it has no incident halfedges).
+   * \return A handle for the face containing v.
+   */
+  Face_handle remove_isolated_vertex (Vertex_handle v);
+  
+  ///@}
+
+  /// \name Specilaized insertion functions for x-monotone curves.
+  //@{
+
+  /*!
+   * Insert an x-monotone curve into the arrangement as a new hole (inner
    * component) inside the given face.
    * \param cv The given x-monotone curve.
    * \param f The face into which we insert the new hole.
@@ -418,7 +497,7 @@ public:
   Halfedge_handle insert_from_left_vertex (const X_monotone_curve_2& cv, 
 					   Vertex_handle v);
 
-  /*! 
+  /*!
    * Insert an x-monotone curve into the arrangement, such that its left
    * endpoints corresponds to a given arrangement vertex, given the exact
    * place for the curve in the circular list around this vertex.
@@ -457,7 +536,7 @@ public:
    */
   Halfedge_handle insert_from_right_vertex (const X_monotone_curve_2& cv,
 					    Halfedge_handle prev);
-
+  
   /*! 
    * Insert an x-monotone curve into the arrangement, such that both its
    * endpoints correspond to given arrangement vertices.
@@ -470,6 +549,21 @@ public:
    */
   Halfedge_handle insert_at_vertices (const X_monotone_curve_2& cv, 
                                       Vertex_handle v1, 
+                                      Vertex_handle v2);
+
+  /*! 
+   * Insert an x-monotone curve into the arrangement, such that both its
+   * endpoints correspond to given arrangement vertices, given the exact
+   * place for the curve in one of the circular lists around a vertex.
+   * \param cv The given x-monotone curve.
+   * \param prev1 The reference halfedge for the first vertex.
+   * \param v2 The second vertex.
+   * \pre The target vertex of prev1 and v2 corresponds to cv's endpoints.
+   * \return A handle for one of the halfedges corresponding to the inserted
+   *         curve directed from prev1 to v2.
+   */
+  Halfedge_handle insert_at_vertices (const X_monotone_curve_2& cv, 
+                                      Halfedge_handle h1, 
                                       Vertex_handle v2);
 
   /*!
@@ -491,17 +585,6 @@ public:
 
   /// \name Halfedge manipulation functions.
   //@{
-
-  /*!
-   * Replace the point associated with the given vertex.
-   * \param v The vertex to modify.
-   * \param p The point that should be associated with the edge.
-   * \pre p is geometrically equivalent to the current point
-   *      associated with v.
-   * \return A handle for a the modified vertex (same as v).
-   */
-  Vertex_handle modify_vertex (Vertex_handle v, 
-			       const Point_2& p);
 
   /*!
    * Replace the x-monotone curve associated with the given edge.
@@ -526,7 +609,7 @@ public:
    * \return A handle for the halfedge whose source is the source of the the
    *         original halfedge e, and whose target is the split point.
    */
-  Halfedge_handle split_edge (Halfedge_handle e, 
+  Halfedge_handle split_edge (Halfedge_handle e,
                               const X_monotone_curve_2& cv1, 
                               const X_monotone_curve_2& cv2);
 
@@ -640,6 +723,13 @@ protected:
   {
     return (it.holes_it);
   }
+
+  /*! Convert an isolated vertices iterator to a DCEL iterator. */
+  typename Dcel::Face::Isolated_vertices_iterator
+      _isolated_vertices_iterator (Isolated_vertices_iterator it)
+  {
+    return (it.iso_verts_it);
+  }
   //@}
 
   /// \name Converting pointers to handles (for the arrangement accessor).
@@ -746,6 +836,17 @@ protected:
                    typename Dcel::Face::Holes_iterator hole);
 
   /*!
+   * Move a given isolated vertex from one face to another.
+   * \param from_face The face currently containing the isolated vertex.
+   * \param to_face The face into which we should move the isolated vertex.
+   * \param vit A DCEL isolated vertices iterator pointing at the vertex.
+   */
+  void _move_isolated_vertex
+                        (Face *from_face,
+                         Face *to_face,
+                         typename Dcel::Face::Isolated_vertices_iterator vit);
+
+  /*!
    * Check whether the given halfedge lies on the outer boundary of the given
    * face.
    * \param f The given face.
@@ -766,30 +867,55 @@ protected:
   Halfedge* _is_on_inner_boundary (Face *f, Halfedge *e) const;
 
   /*!
-   * Find the holes represented by a given halfedge from the holes container
-   * of a given face and earse this holes once it is found.
+   * Find the hole represented by a given halfedge from the holes container
+   * of a given face and earse this hole once it is found.
    * \param f The given face.
    * \param e The given halfedge.
    * \return Whether the hole was found and erased or not.
    */
   bool _find_and_erase_hole (Face *f, Halfedge* e);
 
+  /*!
+   * Find the vertex in the isolated vertices container of a given face and
+   * earse this vertex once it is found.
+   * \param f The given face.
+   * \param v The isolated vertex.
+   * \return Whether the vertex was found and erased or not.
+   */
+  bool _find_and_erase_isolated_vertex (Face *f, Vertex* v);
+
+  /*!
+   * Insert an x-monotone curve into the arrangement, such that both its
+   * endpoints correspond to free arrangement vertices (newly created vertices
+   * or existing isolated vertices), so a new hole is formed in the face
+   * that contains the two vertices.
+   * \param cv The given x-monotone curve.
+   * \param f The face containing the two end vertices.
+   * \param v1 The free vertex that corresponds to the left endpoint of cv.
+   * \param v2 The free vertex that corresponds to the right endpoint of cv.
+   * \return A pointer to one of the halfedges corresponding to the inserted
+   *         curve, directed from v1 to v2.
+   */
+  Halfedge* _insert_in_face_interior (const X_monotone_curve_2& cv,
+				      Face *f,
+				      Vertex *v1, Vertex *v2);
+
   /*! 
    * Insert an x-monotone curve into the arrangement, such that one of its
    * endpoints corresponds to a given arrangement vertex, given the exact
-   * place for the curve in the circular list around this vertex.
+   * place for the curve in the circular list around this vertex. The other
+   * endpoint corrsponds to a free vertex (a newly created vertex or an
+   * isolated vertex).
    * \param cv The given x-monotone curve.
    * \param prev The reference halfedge. We should represent cv as a pair
    *             of edges, one of them should become prev's successor.
-   * \param left_exists If (true), prev related to the vertex associated with
-   *                    the left endpoint of cv. Otherwise it relates to its
-   *                    right endpoint.
+   * \param v The free vertex that corresponds to the other endpoint.
    * \return A pointer to one of the halfedges corresponding to the inserted
-   *         curve, whose target is the new vertex that was created.
+   *         curve, whose target is the vertex v.
    */
   Halfedge* _insert_from_vertex (const X_monotone_curve_2& cv,
-				 Halfedge* prev,
-				 bool left_exists);
+				 Halfedge *prev,
+				 Vertex *v);
 
   /*!
    * Insert an x-monotone curve into the arrangement, where the end vertices
@@ -876,8 +1002,8 @@ private:
    */
   bool _unregister_observer (Observer *p_obs)
   {
-    Observers_iterater   iter;
-    Observers_iterater   end = observers.end();
+    Observers_iterator   iter;
+    Observers_iterator   end = observers.end();
 
     for (iter = observers.begin(); iter != end; ++iter)
     {
@@ -897,8 +1023,8 @@ private:
 
   void _notify_before_assign (const Self& arr)
   {
-    Observers_iterater   iter;
-    Observers_iterater   end = observers.end();
+    Observers_iterator   iter;
+    Observers_iterator   end = observers.end();
 
     for (iter = observers.begin(); iter != end; ++iter)
       (*iter)->before_assign (arr);
@@ -906,8 +1032,8 @@ private:
 
   void _notify_after_assign ()
   {
-    Observers_rev_iterater   iter;
-    Observers_rev_iterater   end = observers.rend();
+    Observers_rev_iterator   iter;
+    Observers_rev_iterator   end = observers.rend();
 
     for (iter = observers.rbegin(); iter != end; ++iter)
       (*iter)->after_assign();
@@ -915,8 +1041,8 @@ private:
 
   void _notify_before_clear ()
   {
-    Observers_iterater   iter;
-    Observers_iterater   end = observers.end();
+    Observers_iterator   iter;
+    Observers_iterator   end = observers.end();
 
     for (iter = observers.begin(); iter != end; ++iter)
       (*iter)->before_clear();
@@ -924,8 +1050,8 @@ private:
 
   void _notify_after_clear (Face_handle u)
   {
-    Observers_rev_iterater   iter;
-    Observers_rev_iterater   end = observers.rend();
+    Observers_rev_iterator   iter;
+    Observers_rev_iterator   end = observers.rend();
 
     for (iter = observers.rbegin(); iter != end; ++iter)
       (*iter)->after_clear (u);
@@ -933,8 +1059,8 @@ private:
 
   void _notify_before_global_change ()
   {
-    Observers_iterater   iter;
-    Observers_iterater   end = observers.end();
+    Observers_iterator   iter;
+    Observers_iterator   end = observers.end();
 
     for (iter = observers.begin(); iter != end; ++iter)
       (*iter)->before_global_change();
@@ -942,8 +1068,8 @@ private:
 
   void _notify_after_global_change ()
   {
-    Observers_rev_iterater   iter;
-    Observers_rev_iterater   end = observers.rend();
+    Observers_rev_iterator   iter;
+    Observers_rev_iterator   end = observers.rend();
 
     for (iter = observers.rbegin(); iter != end; ++iter)
       (*iter)->after_global_change();
@@ -953,8 +1079,8 @@ private:
   
   void _notify_before_create_vertex (const Point_2& p)
   {
-    Observers_iterater   iter;
-    Observers_iterater   end = observers.end();
+    Observers_iterator   iter;
+    Observers_iterator   end = observers.end();
 
     for (iter = observers.begin(); iter != end; ++iter)
       (*iter)->before_create_vertex (p);
@@ -962,8 +1088,8 @@ private:
 
   void _notify_after_create_vertex (Vertex_handle v)
   {
-    Observers_rev_iterater   iter;
-    Observers_rev_iterater   end = observers.rend();
+    Observers_rev_iterator   iter;
+    Observers_rev_iterator   end = observers.rend();
 
     for (iter = observers.rbegin(); iter != end; ++iter)
       (*iter)->after_create_vertex (v);
@@ -972,8 +1098,8 @@ private:
   void _notify_before_create_edge (const X_monotone_curve_2& c,
 				   Vertex_handle v1, Vertex_handle v2)
   {
-    Observers_iterater   iter;
-    Observers_iterater   end = observers.end();
+    Observers_iterator   iter;
+    Observers_iterator   end = observers.end();
 
     for (iter = observers.begin(); iter != end; ++iter)
       (*iter)->before_create_edge (c, v1, v2);
@@ -981,8 +1107,8 @@ private:
 
   void _notify_after_create_edge (Halfedge_handle e)
   {
-    Observers_rev_iterater   iter;
-    Observers_rev_iterater   end = observers.rend();
+    Observers_rev_iterator   iter;
+    Observers_rev_iterator   end = observers.rend();
 
     for (iter = observers.rbegin(); iter != end; ++iter)
       (*iter)->after_create_edge (e);
@@ -991,8 +1117,8 @@ private:
   void _notify_before_modify_vertex (Vertex_handle v,
 				     const Point_2& p)
   {
-    Observers_iterater   iter;
-    Observers_iterater   end = observers.end();
+    Observers_iterator   iter;
+    Observers_iterator   end = observers.end();
 
     for (iter = observers.begin(); iter != end; ++iter)
       (*iter)->before_modify_vertex (v, p);
@@ -1000,8 +1126,8 @@ private:
 
   void _notify_after_modify_vertex (Vertex_handle v)
   {
-    Observers_rev_iterater   iter;
-    Observers_rev_iterater   end = observers.rend();
+    Observers_rev_iterator   iter;
+    Observers_rev_iterator   end = observers.rend();
 
     for (iter = observers.rbegin(); iter != end; ++iter)
       (*iter)->after_modify_vertex (v);
@@ -1010,8 +1136,8 @@ private:
   void _notify_before_modify_edge (Halfedge_handle e,
                                    const X_monotone_curve_2& c)
   {
-    Observers_iterater   iter;
-    Observers_iterater   end = observers.end();
+    Observers_iterator   iter;
+    Observers_iterator   end = observers.end();
 
     for (iter = observers.begin(); iter != end; ++iter)
       (*iter)->before_modify_edge (e, c);
@@ -1019,8 +1145,8 @@ private:
 
   void _notify_after_modify_edge (Halfedge_handle e)
   {
-    Observers_rev_iterater   iter;
-    Observers_rev_iterater   end = observers.rend();
+    Observers_rev_iterator   iter;
+    Observers_rev_iterator   end = observers.rend();
 
     for (iter = observers.rbegin(); iter != end; ++iter)
       (*iter)->after_modify_edge (e);
@@ -1030,8 +1156,8 @@ private:
                                   const X_monotone_curve_2& c1,
                                   const X_monotone_curve_2& c2)
   {
-    Observers_iterater   iter;
-    Observers_iterater   end = observers.end();
+    Observers_iterator   iter;
+    Observers_iterator   end = observers.end();
 
     for (iter = observers.begin(); iter != end; ++iter)
       (*iter)->before_split_edge (e, c1, c2);
@@ -1040,8 +1166,8 @@ private:
   void _notify_after_split_edge (Halfedge_handle e1,
                                  Halfedge_handle e2)
   {
-    Observers_rev_iterater   iter;
-    Observers_rev_iterater   end = observers.rend();
+    Observers_rev_iterator   iter;
+    Observers_rev_iterator   end = observers.rend();
 
     for (iter = observers.rbegin(); iter != end; ++iter)
       (*iter)->after_split_edge (e1, e2);
@@ -1050,8 +1176,8 @@ private:
   void _notify_before_split_face (Face_handle f,
                                   Halfedge_handle e)
   {
-    Observers_iterater   iter;
-    Observers_iterater   end = observers.end();
+    Observers_iterator   iter;
+    Observers_iterator   end = observers.end();
 
     for (iter = observers.begin(); iter != end; ++iter)
       (*iter)->before_split_face (f, e);
@@ -1061,8 +1187,8 @@ private:
                                  Face_handle new_f,
                                  bool is_hole)
   {
-    Observers_rev_iterater   iter;
-    Observers_rev_iterater   end = observers.rend();
+    Observers_rev_iterator   iter;
+    Observers_rev_iterator   end = observers.rend();
 
     for (iter = observers.rbegin(); iter != end; ++iter)
       (*iter)->after_split_face (f, new_f, is_hole);
@@ -1071,8 +1197,8 @@ private:
   void _notify_before_add_hole (Face_handle f,
                                 Halfedge_handle e)
   {
-    Observers_iterater   iter;
-    Observers_iterater   end = observers.end();
+    Observers_iterator   iter;
+    Observers_iterator   end = observers.end();
 
     for (iter = observers.begin(); iter != end; ++iter)
       (*iter)->before_add_hole (f, e);
@@ -1080,19 +1206,38 @@ private:
 
   void _notify_after_add_hole (Ccb_halfedge_circulator h)
   {
-    Observers_rev_iterater   iter;
-    Observers_rev_iterater   end = observers.rend();
+    Observers_rev_iterator   iter;
+    Observers_rev_iterator   end = observers.rend();
 
     for (iter = observers.rbegin(); iter != end; ++iter)
       (*iter)->after_add_hole (h);
+  }
+
+  void _notify_before_add_isolated_vertex (Face_handle f,
+					   Vertex_handle v)
+  {
+    Observers_iterator   iter;
+    Observers_iterator   end = observers.end();
+
+    for (iter = observers.begin(); iter != end; ++iter)
+      (*iter)->before_add_isolated_vertex (f, v);
+  }
+
+  void _notify_after_add_isolated_vertex (Vertex_handle v)
+  {
+    Observers_rev_iterator   iter;
+    Observers_rev_iterator   end = observers.rend();
+
+    for (iter = observers.rbegin(); iter != end; ++iter)
+      (*iter)->after_add_isolated_vertex (v);
   }
 
   void _notify_before_merge_edge (Halfedge_handle e1,
                                   Halfedge_handle e2,
                                   const X_monotone_curve_2& c)
   {
-    Observers_iterater   iter;
-    Observers_iterater   end = observers.end();
+    Observers_iterator   iter;
+    Observers_iterator   end = observers.end();
 
     for (iter = observers.begin(); iter != end; ++iter)
       (*iter)->before_merge_edge (e1, e2, c);
@@ -1100,8 +1245,8 @@ private:
 
   void _notify_after_merge_edge (Halfedge_handle e)
   {
-    Observers_rev_iterater   iter;
-    Observers_rev_iterater   end = observers.rend();
+    Observers_rev_iterator   iter;
+    Observers_rev_iterator   end = observers.rend();
 
     for (iter = observers.rbegin(); iter != end; ++iter)
       (*iter)->after_merge_edge (e);
@@ -1111,8 +1256,8 @@ private:
                                   Face_handle f2,
                                   Halfedge_handle e)
   {
-    Observers_iterater   iter;
-    Observers_iterater   end = observers.end();
+    Observers_iterator   iter;
+    Observers_iterator   end = observers.end();
 
     for (iter = observers.begin(); iter != end; ++iter)
       (*iter)->before_merge_face (f1, f2, e);
@@ -1120,8 +1265,8 @@ private:
 
   void _notify_after_merge_face (Face_handle f)
   {
-    Observers_rev_iterater   iter;
-    Observers_rev_iterater   end = observers.rend();
+    Observers_rev_iterator   iter;
+    Observers_rev_iterator   end = observers.rend();
 
     for (iter = observers.rbegin(); iter != end; ++iter)
       (*iter)->after_merge_face (f);
@@ -1131,8 +1276,8 @@ private:
                                  Face_handle to_f,
                                  Ccb_halfedge_circulator h)
   {
-    Observers_iterater   iter;
-    Observers_iterater   end = observers.end();
+    Observers_iterator   iter;
+    Observers_iterator   end = observers.end();
 
     for (iter = observers.begin(); iter != end; ++iter)
       (*iter)->before_move_hole (from_f, to_f, h);
@@ -1140,17 +1285,37 @@ private:
 
   void _notify_after_move_hole (Ccb_halfedge_circulator h)
   {
-    Observers_rev_iterater   iter;
-    Observers_rev_iterater   end = observers.rend();
+    Observers_rev_iterator   iter;
+    Observers_rev_iterator   end = observers.rend();
 
     for (iter = observers.rbegin(); iter != end; ++iter)
       (*iter)->after_move_hole (h);
   }
 
+  void _notify_before_move_isolated_vertex (Face_handle from_f,
+					    Face_handle to_f,
+					    Vertex_handle v)
+  {
+    Observers_iterator   iter;
+    Observers_iterator   end = observers.end();
+
+    for (iter = observers.begin(); iter != end; ++iter)
+      (*iter)->before_move_isolated_vertex (from_f, to_f, v);
+  }
+
+  void _notify_after_move_isolated_vertex (Vertex_handle v)
+  {
+    Observers_rev_iterator   iter;
+    Observers_rev_iterator   end = observers.rend();
+
+    for (iter = observers.rbegin(); iter != end; ++iter)
+      (*iter)->after_move_isolated_vertex (v);
+  }
+
   void _notify_before_remove_vertex (Vertex_handle v)
   {
-    Observers_iterater   iter;
-    Observers_iterater   end = observers.end();
+    Observers_iterator   iter;
+    Observers_iterator   end = observers.end();
 
     for (iter = observers.begin(); iter != end; ++iter)
       (*iter)->before_remove_vertex (v);
@@ -1158,8 +1323,8 @@ private:
 
   void _notify_after_remove_vertex ()
   {
-    Observers_rev_iterater   iter;
-    Observers_rev_iterater   end = observers.rend();
+    Observers_rev_iterator   iter;
+    Observers_rev_iterator   end = observers.rend();
 
     for (iter = observers.rbegin(); iter != end; ++iter)
       (*iter)->after_remove_vertex ();
@@ -1167,8 +1332,8 @@ private:
 
   void _notify_before_remove_edge (Halfedge_handle e)
   {
-    Observers_iterater   iter;
-    Observers_iterater   end = observers.end();
+    Observers_iterator   iter;
+    Observers_iterator   end = observers.end();
 
     for (iter = observers.begin(); iter != end; ++iter)
       (*iter)->before_remove_edge (e);
@@ -1176,8 +1341,8 @@ private:
 
   void _notify_after_remove_edge ()
   {
-    Observers_rev_iterater   iter;
-    Observers_rev_iterater   end = observers.rend();
+    Observers_rev_iterator   iter;
+    Observers_rev_iterator   end = observers.rend();
 
     for (iter = observers.rbegin(); iter != end; ++iter)
       (*iter)->after_remove_edge ();
@@ -1186,8 +1351,8 @@ private:
   void _notify_before_remove_hole (Face_handle f,
 				   Ccb_halfedge_circulator h)
   {
-    Observers_iterater   iter;
-    Observers_iterater   end = observers.end();
+    Observers_iterator   iter;
+    Observers_iterator   end = observers.end();
 
     for (iter = observers.begin(); iter != end; ++iter)
       (*iter)->before_remove_hole (f, h);
@@ -1195,8 +1360,8 @@ private:
 
   void _notify_after_remove_hole (Face_handle f)
   {
-    Observers_rev_iterater   iter;
-    Observers_rev_iterater   end = observers.rend();
+    Observers_rev_iterator   iter;
+    Observers_rev_iterator   end = observers.rend();
 
     for (iter = observers.rbegin(); iter != end; ++iter)
       (*iter)->after_remove_hole (f);

@@ -283,6 +283,22 @@ public:
   {}
 
   /*!
+   * Notification before the creation of a new isolated vertex inside a face.
+   * \param f A handle to the face containing the isolated vertex.
+   * \param v The isolated vertex.
+   */
+  virtual void before_add_isolated_vertex (Face_handle /* f */,
+					   Vertex_handle /* v */)
+  {}
+
+  /*!
+   * Notification after an isolated vertex was created inside a face.
+   * \param v The isolated vertex.
+   */
+  virtual void after_add_isolated_vertex (Vertex_handle /* v */)
+  {}
+
+  /*!
    * Notification before the merging of two edges.
    * \param e1 A handle to one of the halfedges forming the first edge.
    * \param e2 A handle to one of the halfedges forming the second edge.
@@ -334,6 +350,24 @@ public:
    * \param h A circulator representing the boundary of the hole.
    */
   virtual void after_move_hole (Ccb_halfedge_circulator /* h */)
+  {}
+
+  /*!
+   * Notification before an isolated vertex is moved from one face to another.
+   * \param from_f A handle to the face currently containing the vertex.
+   * \param to_f A handle to the face that should contain the vertex.
+   * \param v The isolated vertex.
+   */
+  virtual void before_move_isolated_vertex (Face_handle /* from_f */,
+					    Face_handle /* to_f */,
+					    Vertex_handle /* v */)
+  {}
+
+  /*!
+   * Notification after an isolated vertex is moved from one face to another.
+   * \param v The isolated vertex.
+   */
+  virtual void after_move_isolated_vertex (Vertex_handle /* v */)
   {}
 
   /*!

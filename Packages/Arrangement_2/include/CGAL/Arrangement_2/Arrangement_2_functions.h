@@ -209,11 +209,116 @@ void Arrangement_2<Traits,Dcel>::clear()
 }
 
 //-----------------------------------------------------------------------------
-// Insert an x-monotone curve into the arrangement as a new hole (inner 
+// Replace the point associated with the given vertex.
+//
+template<class Traits, class Dcel>
+typename Arrangement_2<Traits,Dcel>::Vertex_handle
+Arrangement_2<Traits,Dcel>::modify_vertex (Vertex_handle vh,
+					   const Point_2& p)
+{
+  CGAL_precondition_msg (traits->equal_2_object() (vh.point(), p),
+                         "The new point is different from the current one.");
+
+  // Modify the vertex.
+  _modify_vertex (vh.p_v, p);
+
+  // Return a handle to the modified vertex.
+  return (vh);
+}
+
+//-----------------------------------------------------------------------------
+// Insert an isolated vertex in the interior of a given face.
+//
+template<class Traits, class Dcel>
+typename Arrangement_2<Traits,Dcel>::Vertex_handle
+Arrangement_2<Traits,Dcel>::insert_isolated_vertex (const Point_2& p,
+                                                    Face_handle f)
+{
+  Face      *p_f = f.p_f;
+
+  // Create a new vertex associated with the given point.
+  Stored_point_2 *p_p = _new_point (p);
+
+  _notify_before_create_vertex (*p_p);
+
+  Vertex         *v = dcel.new_vertex();
+
+  v->set_point (p_p);
+
+  Vertex_handle   vh (v);
+  _notify_after_create_vertex (vh);
+
+  // Notify the observers that we are about to insert an isolated vertex
+  // inside f.
+  _notify_before_add_isolated_vertex (f, vh);
+
+  // Associate the incident haldefge of the vertex with a halfedge on the
+  // outer boundary of the face (or NULL if the face is unbounded).
+  v->set_halfedge (p_f->halfedge());
+
+  // Initiate a new hole inside the given face.
+  p_f->add_isolated_vertex (v);
+
+  // Notify the observers that we have formed a new hole.
+  _notify_after_add_isolated_vertex (vh);
+
+  // Return a handle to the new isolated vertex.
+  return (vh);
+}
+
+//-----------------------------------------------------------------------------
+// Remove an isolated vertex from the interior of a given face.
+//
+template<class Traits, class Dcel>
+typename Arrangement_2<Traits,Dcel>::Face_handle
+Arrangement_2<Traits,Dcel>::remove_isolated_vertex (Vertex_handle v)
+{
+  CGAL_precondition (v.is_isolated());
+
+  // Get the face containing v.
+  Vertex      *p_v = v.p_v;
+  Halfedge    *p_he = p_v->halfedge();
+  Face        *p_f = (p_he != NULL) ?  p_he->face() : un_face;
+  Face_handle  f = Face_handle (p_f);
+  
+  // Notify the observers that we are abount to remove a vertex.
+  _notify_before_remove_vertex (v);
+
+  // Locate the vertex in the isolated vertices container of the face and
+  // remove it.
+  typename Dcel::Face::Isolated_vertices_iterator   iso_verts_it;
+
+  for (iso_verts_it = p_f->isolated_vertices_begin();
+       iso_verts_it != p_f->isolated_vertices_end(); ++iso_verts_it)
+  {
+    if (*iso_verts_it == p_v)
+    {
+      // We have found the isolated vertex - erase it.
+      p_f->erase_isolated_vertex (iso_verts_it);
+      break;
+    }
+  }
+
+  CGAL_assertion_msg (iso_verts_it != p_f->isolated_vertices_end(),
+                      "Failed to locate the isolated vertex inside a face.");
+
+  // Delete the vertex.
+  _delete_point (p_v->point());
+  dcel.delete_vertex (p_v);
+
+  // Notify the observers that the vertex has been removed.
+  _notify_after_remove_vertex ();
+
+  // Return a handle for the face that used to contain the deleted vertex.
+  return (f);
+}
+
+//-----------------------------------------------------------------------------
+// Insert an x-monotone curve into the arrangement as a new hole (inner
 // component) inside the given face.
 //
 template<class Traits, class Dcel>
-typename Arrangement_2<Traits,Dcel>::Halfedge_handle 
+typename Arrangement_2<Traits,Dcel>::Halfedge_handle
 Arrangement_2<Traits,Dcel>::insert_in_face_interior
     (const X_monotone_curve_2& cv, 
      Face_handle f)
@@ -227,7 +332,7 @@ Arrangement_2<Traits,Dcel>::insert_in_face_interior
 
   _notify_before_create_vertex (*p1);
 
-  Vertex         *v1 = dcel.new_vertex(); 
+  Vertex         *v1 = dcel.new_vertex();
 
   v1->set_point (p1);
 
@@ -241,51 +346,16 @@ Arrangement_2<Traits,Dcel>::insert_in_face_interior
   _notify_before_create_vertex (*p2);
 
   Vertex         *v2 = dcel.new_vertex();
-  
+
   v2->set_point (p2);
 
   _notify_after_create_vertex (Vertex_handle (v2));
 
-  // Notify the observers that we are about to create a new edge.
-  _notify_before_create_edge (cv, Vertex_handle (v1), Vertex_handle (v2));
-
-  // Create a pair of twin halfedges connecting the two vertices,
-  // and link them together to form a new connected component.
-  Halfedge       *he1 = dcel.new_edge();
-  Halfedge       *he2 = he1->opposite(); 
-  Stored_curve_2 *dup_cv = _new_curve (cv);
-
-  he1->set_curve (dup_cv);
-  
-  he1->set_next (he2);
-  he1->set_vertex (v1);
-  he1->set_face (p_f);
-
-  he2->set_next (he1);
-  he2->set_vertex (v2);
-  he2->set_face (p_f);
-  
-  // Assign the incident halfedges of the two new vertices.
-  v1->set_halfedge (he1);
-  v2->set_halfedge (he2);
-
-  // Create a handle to the new halfedge pointing at the curve target.
-  Halfedge_handle   hh (he2);
-
-  // Notify the observers that we have created a new edge.
-  _notify_after_create_edge (hh);
-
-  // Notify the observers that we are about to form a new hole inside f.
-  _notify_before_add_hole (f, hh);
-
-  // Initiate a new hole inside the given face.  
-  p_f->add_hole (he2);
-
-  // Notify the observers that we have formed a new hole.
-  _notify_after_add_hole (Ccb_halfedge_circulator (he2));
+  // Create the edge connecting the two vertices.
+  Halfedge  *new_he = _insert_in_face_interior (cv, p_f, v1, v2);
 
   // Return a handle to the new halfedge directed from left to right.
-  return (hh);
+  return (Halfedge_handle (new_he));
 }
 
 //-----------------------------------------------------------------------------
@@ -303,17 +373,50 @@ Arrangement_2<Traits,Dcel>::insert_from_left_vertex
                                traits->construct_min_vertex_2_object()(cv)),
      "The input vertex should be the left curve endpoint.");
 
+  // Create a new vertex associated with the curve's right endpoint.
+  // We also notify the observers on the creation of this vertex.
+  Stored_point_2 *p2 =
+    _new_point (traits->construct_max_vertex_2_object()(cv));
+
+  _notify_before_create_vertex (*p2);
+
+  Vertex         *v2 = dcel.new_vertex();
+
+  v2->set_point (p2);
+
+  _notify_after_create_vertex (Vertex_handle (v2));
+
+  // Check if the given vertex is isolated.
+  if (v.is_isolated())
+  {
+    // The given vertex is an isolated one: We should in fact insert the curve
+    // in the interior of the face containing this vertex.
+    Vertex    *v1 = v.p_v;
+    Halfedge  *p_he = v1->halfedge();
+    Face      *p_f = (p_he != NULL) ?  p_he->face() : un_face;
+
+    // v1 will not be isolated any more - remove it from the isolated vertices
+    // container of its containing face. 
+    _find_and_erase_isolated_vertex (p_f, v1);
+
+    // Create the edge connecting the two vertices.
+    Halfedge  *new_he = _insert_in_face_interior (cv, p_f, v1, v2);
+
+    // Return a handle to the new halfedge directed from left to right.
+    return (Halfedge_handle (new_he));
+  }
+
   // Go over the incident halfedges around v and find the halfedge after
   // which the new curve should be inserted.
-  Halfedge  *prev = _locate_around_vertex (v.p_v, cv);
+  Halfedge  *prev1 = _locate_around_vertex (v.p_v, cv);
 
   CGAL_assertion_msg
-    (prev != NULL,
+    (prev1 != NULL,
      "The inserted curve should not exist in the arrangement.");
 
   // Perform the insertion.
-  Halfedge  *new_he = _insert_from_vertex (cv, prev,
-					   true);
+  Halfedge  *new_he = _insert_from_vertex (cv,
+					   prev1, v2);
 
   return (Halfedge_handle (new_he));
 }
@@ -335,16 +438,28 @@ Arrangement_2<Traits,Dcel>::insert_from_left_vertex
      "The input halfedge's target should be the left curve endpoint.");
   CGAL_precondition_msg
     (_locate_around_vertex(prev.target().p_v, cv) == prev.p_he,
-    "In the clockwise order of curves around the vertex,\
- cv must succeeds the curve of prev.");
+     "In the clockwise order of curves around the vertex, "
+     " cv must succeeds the curve of prev.");
+
+  // Create a new vertex associated with the curve's right endpoint.
+  // We also notify the observers on the creation of this vertex.
+  Stored_point_2 *p2 =
+    _new_point (traits->construct_max_vertex_2_object()(cv));
+
+  _notify_before_create_vertex (*p2);
+
+  Vertex         *v2 = dcel.new_vertex();
+
+  v2->set_point (p2);
+
+  _notify_after_create_vertex (Vertex_handle (v2));
 
   // Perform the insertion.
-  Halfedge  *new_he = _insert_from_vertex (cv, prev.p_he,
-					   true);
+  Halfedge  *new_he = _insert_from_vertex (cv,
+					   prev.p_he, v2);
 
   return (Halfedge_handle (new_he));
 }
-
 
 //-----------------------------------------------------------------------------
 // Insert an x-monotone curve into the arrangement, such that its right 
@@ -361,17 +476,50 @@ Arrangement_2<Traits,Dcel>::insert_from_right_vertex
                                traits->construct_max_vertex_2_object()(cv)),
      "The input vertex should be the right curve endpoint.");
 
+  // Create a new vertex associated with the curve's left endpoint.
+  // We also notify the observers on the creation of this vertex.
+  Stored_point_2 *p1 =
+    _new_point (traits->construct_min_vertex_2_object()(cv));
+
+  _notify_before_create_vertex (*p1);
+
+  Vertex         *v1 = dcel.new_vertex();
+
+  v1->set_point (p1);
+
+  _notify_after_create_vertex (Vertex_handle (v1));
+
+  // Check if the given vertex is isolated.
+  if (v.is_isolated())
+  {
+    // The given vertex is an isolated one: We should in fact insert the curve
+    // in the interior of the face containing this vertex.
+    Vertex    *v2 = v.p_v;
+    Halfedge  *p_he = v2->halfedge();
+    Face      *p_f = (p_he != NULL) ?  p_he->face() : un_face;
+
+    // v2 will not be isolated any more - remove it from the isolated vertices
+    // container of its containing face. 
+    _find_and_erase_isolated_vertex (p_f, v2);
+
+    // Create the edge connecting the two vertices.
+    Halfedge  *new_he = _insert_in_face_interior (cv, p_f, v1, v2);
+
+    // Return a handle to the new halfedge directed from left to right.
+    return (Halfedge_handle (new_he));
+  }
+
   // Go over the incident halfedges around v and find the halfedge after
   // which the new curve should be inserted.
-  Halfedge  *prev = _locate_around_vertex (v.p_v, cv);
+  Halfedge  *prev2 = _locate_around_vertex (v.p_v, cv);
 
   CGAL_assertion_msg
-    (prev != NULL,
+    (prev2 != NULL,
      "The inserted curve should not exist in the arrangement.");
 
   // Perform the insertion.
-  Halfedge  *new_he = _insert_from_vertex (cv, prev,
-					   false);
+  Halfedge  *new_he = _insert_from_vertex (cv,
+					   prev2, v1);
 
   return (Halfedge_handle (new_he));
 }
@@ -394,18 +542,31 @@ Arrangement_2<Traits,Dcel>::insert_from_right_vertex
   
   CGAL_precondition_msg
     (_locate_around_vertex(prev.target().p_v, cv) == prev.p_he,
-    "In the clockwise order of curves around the vertex,\
- cv must succeeds the curve of prev.");
+     "In the clockwise order of curves around the vertex, "
+     "cv must succeeds the curve of prev.");
+
+  // Create a new vertex associated with the curve's left endpoint.
+  // We also notify the observers on the creation of this vertex.
+  Stored_point_2 *p1 =
+    _new_point (traits->construct_min_vertex_2_object()(cv));
+
+  _notify_before_create_vertex (*p1);
+
+  Vertex         *v1 = dcel.new_vertex();
+
+  v1->set_point (p1);
+
+  _notify_after_create_vertex (Vertex_handle (v1));
 
   // Perform the insertion.
-  Halfedge  *new_he = _insert_from_vertex (cv, prev.p_he,
-					   false);
+  Halfedge  *new_he = _insert_from_vertex (cv,
+					   prev.p_he, v1);
 
   return (Halfedge_handle (new_he));
 }
 
 //-----------------------------------------------------------------------------
-// Insert an x-monotone curve into the arrangement, such that one of its 
+// Insert an x-monotone curve into the arrangement, such that both its 
 // endpoints corresponds to a given arrangement vertex.
 //
 template<class Traits, class Dcel>
@@ -425,6 +586,93 @@ Arrangement_2<Traits,Dcel>::insert_at_vertices (const X_monotone_curve_2& cv,
                                traits->construct_max_vertex_2_object()(cv))),
      "The input vertices should match the curve endpoints.");
 
+  // Check whether one of the vertices is isolated.
+  if (v1.is_isolated())
+  {
+    // Get the face containing the isolated vertex v1.
+    Vertex    *p_v1 = v1.p_v;
+    Halfedge  *he1 = p_v1->halfedge();
+    Face      *f1 = (he1 != NULL) ?  he1->face() : un_face;
+
+    // v1 will not be isolated any more - remove it from the isolated vertices
+    // container of its containing face. 
+    _find_and_erase_isolated_vertex (f1, p_v1);
+
+    if (v2.is_isolated())
+    {
+      // Both end-vertices are isolated. Make sure they are contained inside
+      // the same face.
+      Vertex    *p_v2 = v2.p_v;
+      
+      CGAL_assertion_code (
+	Halfedge  *he2 = p_v2->halfedge();
+	Face      *f2 = (he2 != NULL) ?  he2->face() : un_face;
+      );
+
+      CGAL_assertion_msg
+	(f1 == f2,
+	 "The inserted curve should not intersect the existing arrangement.");
+
+      // v2 will not be isolated any more - remove it from the isolated
+      // vertices container of its containing face. 
+      _find_and_erase_isolated_vertex (f1, p_v2);
+
+      // Perform the insertion.
+      Halfedge  *new_he = _insert_in_face_interior (cv, f1,
+						    p_v1, p_v2);
+
+      return (Halfedge_handle (new_he));	    
+    }
+
+    // Go over the incident halfedges around v2 and find the halfedge after
+    // which the new curve should be inserted.
+    Halfedge  *prev2 = _locate_around_vertex (v2.p_v, cv);
+
+    CGAL_assertion_msg
+      (prev2 != NULL,
+       "The inserted curve should not exist in the arrangement.");
+
+    CGAL_assertion_msg
+      (f1 == prev2->face(),
+       "The inserted curve should not intersect the existing arrangement.");
+
+    // Perform the insertion. Note that the returned halfedge is directed
+    // toward v1 (and not toward v2), so we return its twin.
+    Halfedge  *new_he = _insert_from_vertex (cv,
+					     prev2, p_v1);
+   
+    return (Halfedge_handle (new_he->opposite())); 
+  }
+  else if (v2.is_isolated())
+  {
+    // Get the face containing the isolated vertex v2.
+    Vertex    *p_v2 = v2.p_v;
+    Halfedge  *he2 = p_v2->halfedge();
+    Face      *f2 = (he2 != NULL) ?  he2->face() : un_face;
+
+    // v2 will not be isolated any more - remove it from the isolated vertices
+    // container of its containing face. 
+    _find_and_erase_isolated_vertex (f2, p_v2);
+
+    // Go over the incident halfedges around v1 and find the halfedge after
+    // which the new curve should be inserted.
+    Halfedge  *prev1 = _locate_around_vertex (v1.p_v, cv);
+
+    CGAL_assertion_msg
+      (prev1 != NULL,
+       "The inserted curve should not exist in the arrangement.");
+
+    CGAL_assertion_msg
+      (f2 == prev1->face(),
+       "The inserted curve should not intersect the existing arrangement.");
+
+    // Perform the insertion.
+    Halfedge  *new_he = _insert_from_vertex (cv,
+					     prev1, p_v2);
+   
+    return (Halfedge_handle (new_he)); 
+  }
+
   // Go over the incident halfedges around v1 and v2 and find the two
   // halfedges after which the new curve should be inserted, respectively.
   Halfedge  *prev1 = _locate_around_vertex (v1.p_v, cv);
@@ -443,7 +691,67 @@ Arrangement_2<Traits,Dcel>::insert_at_vertices (const X_monotone_curve_2& cv,
 //-----------------------------------------------------------------------------
 // Insert an x-monotone curve into the arrangement, such that both its
 // endpoints correspond to given arrangement vertices, given the exact
+// place for the curve in one of the circular lists around a vertex.
+//
+template<class Traits, class Dcel>
+typename Arrangement_2<Traits,Dcel>::Halfedge_handle 
+Arrangement_2<Traits,Dcel>::insert_at_vertices (const X_monotone_curve_2& cv, 
+                                                Halfedge_handle prev1, 
+                                                Vertex_handle v2)
+{
+  CGAL_precondition_msg
+    ((traits->equal_2_object()(prev1.target().point(), 
+                               traits->construct_min_vertex_2_object()(cv)) &&
+      traits->equal_2_object()(v2.point(), 
+                               traits->construct_max_vertex_2_object()(cv))) ||
+     (traits->equal_2_object()(prev2.target().point(), 
+                               traits->construct_min_vertex_2_object()(cv)) &&
+      traits->equal_2_object()(v2.point(), 
+                               traits->construct_max_vertex_2_object()(cv))),
+     "The input vertex and target point should match the curve endpoints.");
+
+  // Check whether v2 is an isolated vertex.
+  if (v2.is_isolated())
+  {
+    // Get the face containing the isolated vertex v2.
+    Vertex    *p_v2 = v2.p_v;
+    Halfedge  *he2 = p_v2->halfedge();
+    Face      *f2 = (he2 != NULL) ?  he2->face() : un_face;
+
+    CGAL_assertion_msg
+      (f2 == prev1.p_he->face(),
+       "The inserted curve should not intersect the existing arrangement.");
+
+    // v2 will not be isolated any more - remove it from the isolated vertices
+    // container of its containing face. 
+    _find_and_erase_isolated_vertex (f2, p_v2);
+
+    // Perform the insertion.
+    Halfedge  *new_he = _insert_from_vertex (cv,
+					     prev1.p_he, v2);
+   
+    return (Halfedge_handle (new_he)); 
+  }
+
+  // Go over the incident halfedges around v2 and find the halfedge after
+  // which the new curve should be inserted.
+  Halfedge  *prev2 = _locate_around_vertex (v2.p_v, cv);
+
+  CGAL_assertion_msg
+    (prev2 != NULL,
+     "The inserted curve should not exist in the arrangement.");
+
+  // Perform the insertion.
+  return (insert_at_vertices (cv, 
+                              prev1,
+                              Halfedge_handle(prev2)));
+}
+
+//-----------------------------------------------------------------------------
+// Insert an x-monotone curve into the arrangement, such that both its
+// endpoints correspond to given arrangement vertices, given the exact
 // place for the curve in both circular lists around these two vertices.
+//
 template<class Traits, class Dcel>
 typename Arrangement_2<Traits,Dcel>::Halfedge_handle 
 Arrangement_2<Traits,Dcel>::insert_at_vertices (const X_monotone_curve_2& cv, 
@@ -496,7 +804,7 @@ Arrangement_2<Traits,Dcel>::insert_at_vertices (const X_monotone_curve_2& cv,
     _insert_at_vertices (cv, p_prev2, p_prev1, new_face_created); 
   
   if (new_face_created)
-  {
+  { 
     // In case a new face has been created (pointed by the new halfedge we
     // obtained), we have to examine the holes in the existing face (pointed
     // be the twin halfedge) and move the relevant holes into the new face.
@@ -523,6 +831,31 @@ Arrangement_2<Traits,Dcel>::insert_at_vertices (const X_monotone_curve_2& cv,
         ++holes_it;
       }
     }
+
+    // Examine the isolated vertices inside the existing face and move the
+    // relevant ones into the new face.
+    typename Dcel::Face::Isolated_vertices_iterator  iso_verts_it;
+    typename Dcel::Face::Isolated_vertices_iterator  iso_vert_to_move;
+
+    iso_verts_it = old_face->isolated_vertices_begin();
+    while (iso_verts_it != old_face->isolated_vertices_end())
+    {
+      // Check whether the isolated vertex lies inside the new face.
+      if (_point_is_in((*iso_verts_it)->point(), new_he))
+      {
+	// We increment the isolated vertices itrator before moving the vertex,
+	// because this operation invalidates the iterator.
+	iso_vert_to_move  = iso_verts_it;
+	++iso_verts_it;
+
+	// Move the isolated vertex.
+	_move_isolated_vertex (old_face, new_face, iso_vert_to_move); 
+      }
+      else
+      {
+        ++iso_verts_it;
+      }
+    }
   }
 
   // Return a handle to the new halfedge directed from prev1's target to 
@@ -532,24 +865,6 @@ Arrangement_2<Traits,Dcel>::insert_at_vertices (const X_monotone_curve_2& cv,
     new_he = new_he->opposite();
 
   return (Halfedge_handle (new_he));
-}
-
-//-----------------------------------------------------------------------------
-// Replace the point associated with the given vertex.
-//
-template<class Traits, class Dcel>
-typename Arrangement_2<Traits,Dcel>::Vertex_handle
-Arrangement_2<Traits,Dcel>::modify_vertex (Vertex_handle vh, 
-					   const Point_2& p)
-{
-  CGAL_precondition_msg (traits->equal_2_object() (vh.point(), p),
-                         "The new point is different from the current one.");
-
-  // Modify the vertex.
-  _modify_vertex (vh.p_v, p);
-
-  // Return a handle to the modified vertex.
-  return (vh);
 }
 
 //-----------------------------------------------------------------------------
@@ -756,6 +1071,16 @@ Arrangement_2<Traits,Dcel>::merge_edge (Halfedge_handle e1,
   if (f1->halfedge() == he3) 
   {
     f1->set_halfedge (he1);
+
+    // Go over all isolated vertices inside f1 and update their fictitious
+    // incident face (which used to be he3) to be he1.
+    typename Dcel::Face::Isolated_vertices_iterator   iso_vert_it;
+
+    for (iso_vert_it = f1->isolated_vertices_begin();
+	 iso_vert_it != f1->isolated_vertices_end(); ++iso_vert_it)
+    {
+      (*iso_vert_it)->set_halfedge (he1);
+    }
   }
   else
   {
@@ -766,6 +1091,16 @@ Arrangement_2<Traits,Dcel>::merge_edge (Halfedge_handle e1,
   if (f2->halfedge() == he4)
   {
     f2->set_halfedge (he2);
+
+    // Go over all isolated vertices inside f2 and update their fictitious
+    // incident face (which used to be he4) to be he2.
+    typename Dcel::Face::Isolated_vertices_iterator   iso_vert_it;
+
+    for (iso_vert_it = f2->isolated_vertices_begin();
+	 iso_vert_it != f2->isolated_vertices_end(); ++iso_vert_it)
+    {
+      (*iso_vert_it)->set_halfedge (he2);
+    }
   }
   else
   {
@@ -849,7 +1184,7 @@ Arrangement_2<Traits,Dcel>::remove_edge (Halfedge_handle e)
   }
   else
   {
-    // In this case if a new hole will be created by the removal of he1 (and 
+    // In this case if a new hole will be created by the removal of he1 (and
     // its twin halfedge). We determine the halfedge (he1 or he2) that
     // points at the new hole in order to send it to _remove_hole().
     // We begin by locating the leftmost point along the path from he1 to he2
@@ -1212,13 +1547,45 @@ void Arrangement_2<Traits,Dcel>::_move_hole
     curr = curr->next();
 
   } while (curr != first);
-  
+
   // Move the hole from the first face to the other.
   to_face->add_hole (first);
   from_face->erase_hole (hole);
 
   // Notify the observers that we have moved the hole.
   _notify_after_move_hole (circ);
+
+  return;
+}
+
+//-----------------------------------------------------------------------------
+// Move a given isolated vertex from one face to another.
+//
+template<class Traits, class Dcel>
+void Arrangement_2<Traits,Dcel>::_move_isolated_vertex
+    (Face *from_face,
+     Face *to_face,
+     typename Dcel::Face::Isolated_vertices_iterator vit)
+{
+  // Get the vertex the iterator points to.
+  Vertex    *v = *vit;
+
+  // Notify the observers that we are about to move an isolated vertex.
+  Vertex_handle   vh (v);
+
+  _notify_before_move_isolated_vertex (Face_handle (from_face),
+                                       Face_handle (to_face),
+                                       vh);
+
+  // Set the new halfedge of the vertex (may be NULL if to_face is unbounded).
+  v->set_halfedge (to_face->halfedge());
+
+  // Move the isolated vertex from the first face to the other.
+  to_face->add_isolated_vertex (v);
+  from_face->erase_isolated_vertex (vit);
+
+  // Notify the observers that we have moved the isolated vertex.
+  _notify_after_move_isolated_vertex (vh);
 
   return;
 }
@@ -1291,8 +1658,8 @@ Arrangement_2<Traits,Dcel>::_is_on_inner_boundary (Face *f,
 }
 
 //-----------------------------------------------------------------------------
-// Find the holes represented by a given halfedge from the holes container
-// of a given face and earse this holes once it is found.
+// Find the hole represented by a given halfedge from the holes container
+// of a given face and earse this hole once it is found.
 //
 template<class Traits, class Dcel>
 bool Arrangement_2<Traits,Dcel>::_find_and_erase_hole (Face *f, Halfedge* e)
@@ -1308,44 +1675,111 @@ bool Arrangement_2<Traits,Dcel>::_find_and_erase_hole (Face *f, Halfedge* e)
       return (true);
     }
   }
-  
+
   // We have not located the hole in the given face.
   return (false);
 }
 
 //-----------------------------------------------------------------------------
+// Find the vertex in the isolated vertices container of a given face and
+// earse this vertex once it is found.
+//
+template<class Traits, class Dcel>
+bool Arrangement_2<Traits,Dcel>::_find_and_erase_isolated_vertex (Face *f,
+								  Vertex* v)
+{
+  typename Dcel::Face::Isolated_vertices_iterator   iso_vert_it;
+
+  for (iso_vert_it = f->isolated_vertices_begin();
+       iso_vert_it != f->isolated_vertices_end(); ++iso_vert_it)
+  {
+    if (*iso_vert_it == v)
+    {
+      // We have found the isolated vertex - erase it.
+      f->erase_isolated_vertex (iso_vert_it);
+      return (true);
+    }
+  }
+
+  // We have not located the isolated vertex in the given face.
+  return (false);
+}
+
+//-----------------------------------------------------------------------------
+// Insert an x-monotone curve into the arrangement, such that both its
+// endpoints correspond to free arrangement vertices (newly created vertices
+// or existing isolated vertices), so a new hole is formed in the face
+// that contains the two vertices.
+//
+template<class Traits, class Dcel>
+typename Arrangement_2<Traits,Dcel>::Halfedge*
+Arrangement_2<Traits,Dcel>::_insert_in_face_interior
+    (const X_monotone_curve_2& cv,
+     Face *f,
+     Vertex *v1, Vertex *v2)
+{
+  // Notify the observers that we are about to create a new edge.
+  _notify_before_create_edge (cv, Vertex_handle (v1), Vertex_handle (v2));
+
+  // Create a pair of twin halfedges connecting the two vertices,
+  // and link them together to form a new connected component.
+  Halfedge       *he1 = dcel.new_edge();
+  Halfedge       *he2 = he1->opposite();
+  Stored_curve_2 *dup_cv = _new_curve (cv);
+
+  he1->set_curve (dup_cv);
+
+  he1->set_next (he2);
+  he1->set_vertex (v1);
+  he1->set_face (f);
+
+  he2->set_next (he1);
+  he2->set_vertex (v2);
+  he2->set_face (f);
+
+  // Assign the incident halfedges of the two new vertices.
+  v1->set_halfedge (he1);
+  v2->set_halfedge (he2);
+
+  // Create a handle to the new halfedge pointing at the curve target.
+  Halfedge_handle   hh (he2);
+
+  // Notify the observers that we have created a new edge.
+  _notify_after_create_edge (hh);
+
+  // Notify the observers that we are about to form a new hole inside f.
+  _notify_before_add_hole (Face_handle (f), hh);
+
+  // Initiate a new hole inside the given face.
+  f->add_hole (he2);
+
+  // Notify the observers that we have formed a new hole.
+  _notify_after_add_hole (Ccb_halfedge_circulator (he2));
+
+  return (he2);
+}
+
+//-----------------------------------------------------------------------------
 // Insert an x-monotone curve into the arrangement, such that one of its
 // endpoints corresponds to a given arrangement vertex, given the exact
-// place for the curve in the circular list around this vertex.
+// place for the curve in the circular list around this vertex. The other
+// endpoint corrsponds to a free vertex (a newly created vertex or an
+// isolated vertex).
 //
 template<class Traits, class Dcel>
 typename Arrangement_2<Traits,Dcel>::Halfedge*
 Arrangement_2<Traits,Dcel>::_insert_from_vertex (const X_monotone_curve_2& cv,
-						 Halfedge* prev,
-						 bool left_exists)
+						 Halfedge *prev,
+						 Vertex *v)
 {
   // Get the incident face of the previous halfedge . Note that this will also
   // be the incident face of the two new halfedges we are about to create.
   Face      *p_f = prev->face();
 
   // The first vertex is the one that the prev halfedge points to.
-  // Create a new vertex and associate it with the unmatched endpoint.
-  // We also notify the observers on the creation of this vertex.
-  Stored_point_2 *new_p;
-
-  if (left_exists)
-    new_p = _new_point (traits->construct_max_vertex_2_object() (cv));
-  else
-    new_p = _new_point (traits->construct_min_vertex_2_object() (cv));
-
-  _notify_before_create_vertex (*new_p);
-
+  // The second vertex is given by v.
   Vertex         *v1 = prev->vertex();  
-  Vertex         *v2 = dcel.new_vertex();
-
-  v2->set_point (new_p);
-
-  _notify_after_create_vertex (Vertex_handle (v2));
+  Vertex         *v2 = v;
 
   // Notify the observers that we are about to create a new edge.
   _notify_before_create_edge (cv, Vertex_handle (v1), Vertex_handle (v2));
@@ -1376,7 +1810,7 @@ Arrangement_2<Traits,Dcel>::_insert_from_vertex (const X_monotone_curve_2& cv,
   // Notify the observers that we have created a new edge.
   _notify_after_create_edge (Halfedge_handle (he2));
 
-  // Return a pointer to the new halfedge whose target is the new vertex.
+  // Return a pointer to the new halfedge whose target is the free vertex v.
   return (he2);
 }
 
@@ -1783,6 +2217,16 @@ Arrangement_2<Traits,Dcel>::_remove_edge (Halfedge *e)
       if (f1->halfedge() == he1 || f1->halfedge() == he2)
       { 
         f1->set_halfedge (prev1);
+
+	// Go over all isolated vertices inside f1 and update their fictitious
+	// incident face (which used to be he1 or he2) to be prev1.
+	typename Dcel::Face::Isolated_vertices_iterator   iso_vert_it;
+	
+	for (iso_vert_it = f1->isolated_vertices_begin();
+	     iso_vert_it != f1->isolated_vertices_end(); ++iso_vert_it)
+	{
+	  (*iso_vert_it)->set_halfedge (prev1);
+	}
       }
       else
       {
@@ -1825,6 +2269,15 @@ Arrangement_2<Traits,Dcel>::_remove_edge (Halfedge *e)
     if (_is_on_outer_boundary (f1, prev1) != NULL)
     {
       // We have to create a new hole in the interior of the incident face.
+      //
+      //    +-----------------------------+
+      //    | prev1                       |
+      //    |         +----+              |
+      //    +.........+    |              |
+      //    |         +----+              |
+      //    |                             |
+      //    +-----------------------------+
+      //
       // Note that it is guaranteed that he1 points at this new hole, while
       // he2 points at the boundary of the face that contains this hole.
       // First notify the observers we are about to form a new hole inside f1.
@@ -1836,8 +2289,20 @@ Arrangement_2<Traits,Dcel>::_remove_edge (Halfedge *e)
 
       // Make sure that the outer boundary of f1 is not represented by
       // one of the halfedges to be removed.
-      if (f1->halfedge() == he1 || f1->halfedge() == he2) 
+      if (f1->halfedge() == he1 || f1->halfedge() == he2)
+      { 
         f1->set_halfedge (prev1);
+
+	// Go over all isolated vertices inside f1 and update their fictitious
+	// incident face (which used to be he1 or he2) to be prev1.
+	typename Dcel::Face::Isolated_vertices_iterator   iso_vert_it;
+
+	for (iso_vert_it = f1->isolated_vertices_begin();
+	     iso_vert_it != f1->isolated_vertices_end(); ++iso_vert_it)
+	{
+	  (*iso_vert_it)->set_halfedge (prev1);
+	}
+      }
 
       // Notify the observers that a new hole has been formed.
       _notify_after_add_hole (Ccb_halfedge_circulator (he1->next()));
@@ -1845,6 +2310,15 @@ Arrangement_2<Traits,Dcel>::_remove_edge (Halfedge *e)
     else
     {
       // We have to split an existing hole into two holes.
+      //
+      //    +-----------------------------+
+      //    |           prev1             |
+      //    |   +----+ /    +----+        |
+      //    |   |    +......+    |        |
+      //    |   +----+      +----+        |
+      //    |                             |
+      //    +-----------------------------+
+      //
       // We can view this as the creation of a new hole (because the other
       // one already exists), so we notify the observers accordingly.
       _notify_before_add_hole (Face_handle (f1),
@@ -1917,7 +2391,7 @@ Arrangement_2<Traits,Dcel>::_remove_edge (Halfedge *e)
   if (!he1_is_on_hole && !he2_is_on_hole)
   {
     // Both halfedges lie on the outer boundary of their incident faces.
-    // We First set the incident face of f2's boundary halfedges to be f1.
+    // We first set the incident face of f2's boundary halfedges to be f1.
     for (ccb = he2->next(); ccb != he2; ccb = ccb->next()) 
       ccb->set_face (f1);
       
@@ -1938,7 +2412,34 @@ Arrangement_2<Traits,Dcel>::_remove_edge (Halfedge *e)
     // In case he1, which is about to be deleted, is a representative 
     // halfedge of the face f1, we replace it by its predecessor.
     if (f1->halfedge() == he1) 
+    {
       f1->set_halfedge (prev1);
+
+      // Go over all isolated vertices inside f1 and update their fictitious
+      // incident face (which used to be he1) to be prev1.
+      typename Dcel::Face::Isolated_vertices_iterator   iso_vert_it;
+	
+      for (iso_vert_it = f1->isolated_vertices_begin();
+	   iso_vert_it != f1->isolated_vertices_end(); ++iso_vert_it)
+      {
+	(*iso_vert_it)->set_halfedge (prev1);
+      }
+    }
+
+    // Move the isolated vertices inside f2 to f1.
+    typename Dcel::Face::Isolated_vertices_iterator  iso_verts_it;
+    typename Dcel::Face::Isolated_vertices_iterator  iso_vert_to_move;
+
+    iso_verts_it = f2->isolated_vertices_begin();
+    while (iso_verts_it != f2->isolated_vertices_end())
+    {
+      // We increment the isolated vertices itrator before moving the vertex,
+      // because this operation invalidates the iterator.
+      iso_vert_to_move  = iso_verts_it;
+      ++iso_verts_it;
+
+      _move_isolated_vertex (f2, f1, iso_vert_to_move); 
+    }
 
     // If he1 or he2 are the incident halfedges to their target vertices,
     // we replace them by the appropriate predecessors.
@@ -2004,6 +2505,21 @@ Arrangement_2<Traits,Dcel>::_remove_edge (Halfedge *e)
 
     _move_hole (f2, f1, hole_to_move); 
   }
+
+  // Move the isolated vertices inside f2 to f1.
+  typename Dcel::Face::Isolated_vertices_iterator  iso_verts_it;
+  typename Dcel::Face::Isolated_vertices_iterator  iso_vert_to_move;
+
+  iso_verts_it = f2->isolated_vertices_begin();
+  while (iso_verts_it != f2->isolated_vertices_end())
+  {
+    // We increment the isolated vertices itrator before moving the vertex,
+    // because this operation invalidates the iterator.
+    iso_vert_to_move  = iso_verts_it;
+    ++iso_verts_it;
+
+    _move_isolated_vertex (f2, f1, iso_vert_to_move); 
+  }
         
   // Notice that f2 will be merged with f1, but its boundary will still be
   // a hole inside this face. In case he1 is a represantative of this hole,
@@ -2011,7 +2527,7 @@ Arrangement_2<Traits,Dcel>::_remove_edge (Halfedge *e)
   // Note that we do not have to notify the observers about this operation.
   if (_find_and_erase_hole (f1, he1))
     f1->add_hole (prev1);
-        
+  
   // If he1 or he2 are the incident halfedges to their target vertices,
   // we replace them by the appropriate predecessors.
   if (he1->vertex()->halfedge() == he1)

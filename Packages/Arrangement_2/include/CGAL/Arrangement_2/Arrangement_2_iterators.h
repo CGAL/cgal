@@ -51,6 +51,8 @@ template <class Traits, class Dcel> class _Ccb_halfedge_circulator;
 template <class Traits, class Dcel> class _Ccb_halfedge_const_circulator;
 template <class Traits, class Dcel> class _Holes_iterator;
 template <class Traits, class Dcel> class _Holes_const_iterator;
+template <class Traits, class Dcel> class _Isolated_vertices_iterator;
+template <class Traits, class Dcel> class _Isolated_vertices_const_iterator;
 
 template <class Traits, class Dcel>  class Arrangement_2;
 
@@ -416,8 +418,6 @@ protected:
 
 public:
 
-public:
-
   typedef unsigned int                            Size;
   typedef unsigned int                            size_type;
   typedef typename Holes_iter::difference_type    difference_type;
@@ -566,6 +566,184 @@ public:
   }
 };
 
+/*! \class
+ * Iterator for the isolated vertices inside a face.
+ */
+template <class Traits_, class Dcel_>
+class _Isolated_vertices_iterator
+{
+  friend class Arrangement_2<Traits_, Dcel_>;
+
+  friend class _Isolated_vertices_const_iterator<Traits_, Dcel_>;
+  friend class _Face_handle<Traits_, Dcel_>;
+
+protected:
+
+  typedef Dcel_                                            Dcel;
+  typedef _Isolated_vertices_iterator<Traits_, Dcel>       Self;
+  typedef typename Dcel::Face::Isolated_vertices_iterator  Iso_verts_iter;
+  typedef typename Dcel::Vertex                            Vertex;
+
+  Iso_verts_iter     iso_verts_it;           // The stored iterator.
+
+  /*! Constructor from a DCEL isolated vertices iterator. */
+  _Isolated_vertices_iterator (const Iso_verts_iter& it) :
+    iso_verts_it (it)
+  {}
+
+public:
+
+  typedef unsigned int                              Size;
+  typedef unsigned int                              size_type;
+  typedef typename Iso_verts_iter::difference_type  difference_type;
+  typedef typename Iso_verts_iter::difference_type  Difference;
+  typedef std::bidirectional_iterator_tag           iterator_category;
+
+  /*! Default constructor. */
+  _Isolated_vertices_iterator ()
+  {}
+
+  /*! Equality operator. */
+  bool operator== (const Self& iter) const
+  {
+    return (iso_verts_it == iter.iso_verts_it);
+  }
+
+  /*! Inequality operator. */
+  bool operator!= (const Self& iter) const
+  {
+    return (iso_verts_it != iter.iso_verts_it);
+  }
+
+  /*! Increment operator (prefix). */
+  Self& operator++ ()
+  {
+    ++iso_verts_it;
+    return (*this);
+  }
+
+  /*! Increment operator (postfix). */
+  Self operator++ (int )
+  {
+    Self    temp = *this;
+    ++iso_verts_it;
+    return (temp);
+  }
+
+  /*! Decrement operator (prefix). */
+  Self& operator-- ()
+  {
+    --iso_verts_it;
+    return (*this);
+  }
+
+  /*! Decrement operator (postfix). */
+  Self operator-- (int )
+  {
+    Self    temp = *this;
+    --iso_verts_it;
+    return (temp);
+  }
+
+  /*! Get the vertex pointer. */
+  Vertex* vertex () const
+  {
+    return (*iso_verts_it);
+  }
+};
+
+/*! \class
+ * Const iterator for the isolated vertices inside a face.
+ */
+template <class Traits_, class Dcel_>
+class _Isolated_vertices_const_iterator
+{
+  friend class Arrangement_2<Traits_, Dcel_>;
+
+  friend class _Face_const_handle<Traits_, Dcel_>;
+
+protected:
+
+  typedef Dcel_                                             Dcel;
+  typedef _Isolated_vertices_const_iterator<Traits_, Dcel>  Self;
+  typedef typename Dcel::Face::Isolated_vertices_const_iterator
+                                                         Iso_verts_const_iter;
+  typedef typename Dcel::Vertex                             Vertex;
+
+  Iso_verts_const_iter     iso_verts_it;           // The stored iterator.
+
+  /*! Constructor from a DCEL isolated vertices iterator. */
+  _Isolated_vertices_const_iterator (const Iso_verts_const_iter& it) :
+    iso_verts_it (it)
+  {}
+
+public:
+
+  typedef unsigned int                                    Size;
+  typedef unsigned int                                    size_type;
+  typedef typename Iso_verts_const_iter::difference_type  difference_type;
+  typedef typename Iso_verts_const_iter::difference_type  Difference;
+  typedef std::bidirectional_iterator_tag                 iterator_category;
+
+  /*! Default constructor. */
+  _Isolated_vertices_const_iterator ()
+  {}
+
+  /*! Constructor from a non-const iterator. */
+  _Isolated_vertices_const_iterator
+      (const _Holes_iterator<Traits_, Dcel>& iter) :
+    iso_verts_it (iter.iso_verts_it)
+  {}
+
+  /*! Equality operator. */
+  bool operator== (const Self& iter) const
+  {
+    return (iso_verts_it == iter.iso_verts_it);
+  }
+
+  /*! Inequality operator. */
+  bool operator!= (const Self& iter) const
+  {
+    return (iso_verts_it != iter.iso_verts_it);
+  }
+
+  /*! Increment operator (prefix). */
+  Self& operator++ ()
+  {
+    ++iso_verts_it;
+    return (*this);
+  }
+
+  /*! Increment operator (postfix). */
+  Self operator++ (int )
+  {
+    Self    temp = *this;
+    ++iso_verts_it;
+    return (temp);
+  }
+
+  /*! Decrement operator (prefix). */
+  Self& operator-- ()
+  {
+    --iso_verts_it;
+    return (*this);
+  }
+
+  /*! Decrement operator (postfix). */
+  Self operator-- (int )
+  {
+    Self    temp = *this;
+    --iso_verts_it;
+    return (temp);
+  }
+
+  /*! Get the vertex pointer. */
+  const Vertex* vertex () const
+  {
+    return (*iso_verts_it);
+  }
+};
+
 // --------------------------------------------------------------------------
 // Handles
 // --------------------------------------------------------------------------
@@ -581,6 +759,7 @@ class _Vertex_handle
   friend class _Vertex_const_handle<Traits_, Dcel_>;
   friend class _Halfedge_handle<Traits_, Dcel_>;
   friend class _Vertex_iterator<Traits_, Dcel_>;
+  friend class _Isolated_vertices_iterator<Traits_, Dcel_>;
 
 protected:
 
@@ -593,16 +772,16 @@ protected:
 
   Vertex        *p_v;     // The vertex associated with the handle.
 
-  /*! Constructor from a vertex pointer. */
-  _Vertex_handle (Vertex *v) :
-    p_v (v)
-  {}
-
 public:
 
   /*! Default constructor. */
   _Vertex_handle () :
     p_v (NULL)
+  {}
+
+  /*! Constructor from a vertex pointer. */
+  _Vertex_handle (Vertex *v) :
+    p_v (v)
   {}
 
   /*! Equality operator. */
@@ -640,16 +819,25 @@ public:
     p_v->point() = p;
   }
 
+  /*! Check whether the vertex is isolated (has no incident halfedges). */
+  bool is_isolated () const
+  {
+    // An isolated vertex do not have an incident halfedge, or points to
+    // a halfedge on the boundary of the face containing it (and this haldedge
+    // is not incident to it).
+    return (p_v->halfedge() == NULL || p_v->halfedge()->vertex() != p_v);
+  }
+
   /*! Get the vertex degree (the number of incident halfedges). */
   Size degree () const
   {
+    if (is_isolated())
+      return (0);
+
     // Go over all incident halfedges and count them.
     Halfedge   *first = p_v->halfedge();
     Halfedge   *curr = first;
     Size        deg = 0;
-
-    if (first == NULL)
-      return (deg);
 
     do
     {
@@ -660,12 +848,25 @@ public:
     return (deg);
   }
 
-  /*! Get a circulator for the incident halfedges. */
+  /*!
+   * Get a circulator for the incident halfedges.
+   * \pre The vertex is not isolated.
+   */
   _Halfedge_around_vertex_circulator<Traits, Dcel> incident_halfedges () const
   {
+    CGAL_precondition (! is_isolated());
+    
     return _Halfedge_around_vertex_circulator<Traits, Dcel> (p_v->halfedge());
-  } 
+  }
 };
+
+// Dereference operator:
+template <class Traits, class Dcel>
+_Vertex_handle<Traits, Dcel> operator*
+    (const _Isolated_vertices_iterator<Traits, Dcel>& iter)
+{
+  return _Vertex_handle<Traits, Dcel> (iter.vertex());
+}
 
 /*! \class
  * The vertex const handle class.
@@ -677,6 +878,7 @@ class _Vertex_const_handle
 
   friend class _Halfedge_const_handle<Traits_, Dcel_>;
   friend class _Vertex_const_iterator<Traits_, Dcel_>;
+  friend class _Isolated_vertices_const_iterator<Traits_, Dcel_>;
 
 protected:
 
@@ -689,16 +891,16 @@ protected:
 
   const Vertex        *p_v;     // The vertex associated with the handle.
 
-  /*! Constructor from a vertex pointer. */
-  _Vertex_const_handle (const Vertex *v) :
-    p_v (v)
-  {}
-
 public:
 
   /*! Default constructor. */
   _Vertex_const_handle () :
     p_v (NULL)
+  {}
+
+  /*! Constructor from a vertex pointer. */
+  _Vertex_const_handle (const Vertex *v) :
+    p_v (v)
   {}
 
   /* Constructor from a non-const handle. */
@@ -724,16 +926,25 @@ public:
     return (p_v->point());
   }
 
+  /*! Check whether the vertex is isolated (has no incident halfedges). */
+  bool is_isolated () const
+  {
+    // An isolated vertex do not have an incident halfedge, or points to
+    // a halfedge on the boundary of the face containing it (and this haldedge
+    // is not incident to it).
+    return (p_v->halfedge() == NULL || p_v->halfedge()->vertex() != p_v);
+  }
+
   /*! Get the vertex degree (the number of incident halfedges). */
   Size degree () const
   {
+    if (is_isolated())
+      return (0);
+
     // Go over all incident halfedges and count them.
     const Halfedge     *first = p_v->halfedge();
     const Halfedge     *curr = first;
     Size                deg = 0;
-
-    if (first == NULL)
-      return (deg);
 
     do
     {
@@ -744,14 +955,27 @@ public:
     return (deg);
   }
 
-  /*! Get a circulator for the incident halfedges. */
+  /*!
+   * Get a circulator for the incident halfedges.
+   * \pre The vertex is not isolated.
+   */
   _Halfedge_around_vertex_const_circulator<Traits, Dcel>
     incident_halfedges () const
   {
+    CGAL_precondition (! is_isolated());
+
     return _Halfedge_around_vertex_const_circulator<Traits, Dcel>
                                                              (p_v->halfedge());
-  } 
+  }
 };
+
+// Dereference operator:
+template <class Traits, class Dcel>
+_Vertex_const_handle<Traits, Dcel> operator*
+    (const _Isolated_vertices_const_iterator<Traits, Dcel>& iter)
+{
+  return _Vertex_const_handle<Traits, Dcel> (iter.vertex());
+}
 
 /*! \class
  * The face handle class.
@@ -816,10 +1040,24 @@ public:
     return _Holes_iterator<Traits_, Dcel> (p_f->holes_begin());
   }
 
-  /*! Get a past-the-end iterator for holes inside the face. */
+  /*! Get a past-the-end iterator for the holes inside the face. */
   _Holes_iterator<Traits_, Dcel> holes_end () const
   {
     return _Holes_iterator<Traits_, Dcel> (p_f->holes_end());
+  }
+
+  /*! Get an iterator for the first isolated vertex inside the face. */
+  _Isolated_vertices_iterator<Traits_, Dcel> isolated_vertices_begin () const
+  {
+    return _Isolated_vertices_iterator<Traits_, Dcel>
+                                            (p_f->isolated_vertices_begin());
+  }
+
+  /*! Get a past-the-end iterator for the isolated vertices inside the face. */
+  _Isolated_vertices_iterator<Traits_, Dcel> isolated_vertices_end () const
+  {
+    return _Isolated_vertices_iterator<Traits_, Dcel>
+                                            (p_f->isolated_vertices_end());
   }
 };
 
@@ -895,8 +1133,23 @@ public:
   {
     return _Holes_const_iterator<Traits_, Dcel> (p_f->holes_end());
   }
-};
 
+  /*! Get an iterator for the first isolated vertex inside the face. */
+  _Isolated_vertices_const_iterator<Traits_, Dcel>
+                                           isolated_vertices_begin () const
+  {
+    return _Isolated_vertices_const_iterator<Traits_, Dcel>
+                                            (p_f->isolated_vertices_begin());
+  }
+
+  /*! Get a past-the-end iterator for the isolated vertices inside the face. */
+  _Isolated_vertices_const_iterator<Traits_, Dcel>
+                                           isolated_vertices_end () const
+  {
+    return _Isolated_vertices_const_iterator<Traits_, Dcel>
+                                            (p_f->isolated_vertices_end());
+  }
+};
 
 /*! \class
  * The halfedge handle class.
@@ -1015,7 +1268,7 @@ _Halfedge_handle<Traits, Dcel> operator*
 }
 
 template <class Traits, class Dcel>
-_Halfedge_handle<Traits, Dcel> operator* 
+_Halfedge_handle<Traits, Dcel> operator*
     (const _Ccb_halfedge_circulator<Traits, Dcel>& circ)
 {
   return _Halfedge_handle<Traits, Dcel> (circ.halfedge());
