@@ -45,7 +45,7 @@ compare_power_distanceH2(const RT& phx, const RT& phy, const RT& phw,
 
   RT dh1 = CGAL_NTS square(dphx) + CGAL_NTS square(dphy) - pwt * dphw * drhw;
   RT dh2 = CGAL_NTS square(dqhx) + CGAL_NTS square(dqhy) - qwt * dqhw * drhw;
-  return CGAL_NTS compare(d1, d2);
+  return CGAL_NTS compare(dh1, dh2);
 }
 
 

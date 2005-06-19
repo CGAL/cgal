@@ -1,3 +1,6 @@
+19 June 2005 Menelaos Karavelas
+- fixed typo in predicates/Regular_triangulation_rtH2.h
+
 18 June 2005 Menelaos Karavelas
 - modified doc to reflect the addition of the nearest_power_vertex method
   and the Compare_power_distance_2 predicate.
