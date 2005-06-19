@@ -679,115 +679,54 @@ protected:
     //   to the status line and attempt to intersect them with their neighbors.
     // - We also check to see if the two intersect again to the right of the 
     //   point.
-    int numRightCurves = m_currentEvent->get_num_right_curves();
-    if(numRightCurves == 1)
-    {
-      SL_DEBUG(std::cout << " - beginning of curve " << std::endl;);
-      SL_DEBUG(
-        Subcurve *tmp1 = *(m_currentEvent->right_curves_begin());
-        PRINT_INSERT(tmp1);
-               );
 
-      StatusLineIter slIter = 
-        m_statusLine.insert_predecessor(m_status_line_insert_hint, 
-                                *(m_currentEvent->right_curves_begin()));
+    EventCurveIter currentOne = m_currentEvent->right_curves_begin();
+    EventCurveIter rightCurveEnd = m_currentEvent->right_curves_end();
+
+    PRINT_INSERT(*currentOne);
+
+    StatusLineIter slIter = m_statusLine.insert_predecessor
+      (m_status_line_insert_hint, *currentOne);
+    ((Subcurve*)(*currentOne))->set_hint(slIter);
       
-      (*(m_currentEvent->right_curves_begin()))->set_hint(slIter); 
-     
-      SL_DEBUG(PrintStatusLine(););
-     
-      // if this is the only curve on the status line, nothing else to do
-      if ( m_statusLine.size() == 1 )
-        return;
-
-      StatusLineIter prev = slIter;
-      StatusLineIter next = slIter;
-      ++next;
-      if ( slIter != m_statusLine.begin() )
-      {
-        --prev;
-        _intersect(static_cast<Subcurve*>(*prev),
-                   *(m_currentEvent->right_curves_begin()));
-      }
-      if ( next != m_statusLine.end() )
-      { 
-        _intersect(*(m_currentEvent->right_curves_begin()),
-                   static_cast<Subcurve*>(*next));
-      } 
+    SL_DEBUG(PrintStatusLine(););
+    if ( slIter != m_statusLine.begin() )
+    { 
+      //  get the previous curve in the y-str
+      StatusLineIter prev = slIter; --prev;
+      _intersect(static_cast<Subcurve*>(*prev),
+                 static_cast<Subcurve*>(*slIter));
     }
-    else  // numRightCurves > 1
+    
+    
+    EventCurveIter prevOne = currentOne;
+    ++currentOne;
+    while ( currentOne != rightCurveEnd )
     {
-
-      EventCurveIter firstOne = m_currentEvent->right_curves_begin();
-      //EventCurveIter lastOne = m_currentEvent->right_curves_end(); --lastOne;
-      EventCurveIter rightCurveEnd = m_currentEvent->right_curves_end();
-
-      //if( numRightCurves == 2)
-      //{
-      //  EventCurveIter lastOne = --rightCurveEnd;
-      //  m_statusLine.swap((*firstOne)->get_hint(),
-      //                    (*lastOne)->get_hint());
-      //  if ( (*firstOne)->get_hint() != m_statusLine.begin() )
-      //  { 
-      //    //  get the previous curve in the y-str
-      //    StatusLineIter prev =  (*firstOne)->get_hint(); --prev;
-      //    _intersect(static_cast<Subcurve*>(*prev),
-      //               static_cast<Subcurve*>(*((*firstOne)->get_hint())));
-      //  }
-
-      //  StatusLineIter next =  (*lastOne)->get_hint(); ++next;
-      //  if ( next != m_statusLine.end() )
-      //  {
-      //    
-      //    _intersect( static_cast<Subcurve*>(*((*lastOne)->get_hint())),
-      //                static_cast<Subcurve*>(*next));
-      //  }
-      //  return;
-      //}
-      PRINT_INSERT(*firstOne);
-
-      StatusLineIter slIter = m_statusLine.insert_predecessor
-	(m_status_line_insert_hint, *firstOne);
-      ((Subcurve*)(*firstOne))->set_hint(slIter);
+      PRINT_INSERT(*currentOne);
+      slIter = m_statusLine.insert_predecessor
+	(m_status_line_insert_hint, *currentOne);
+      ((Subcurve*)(*currentOne))->set_hint(slIter);
         
       SL_DEBUG(PrintStatusLine(););
-      if ( slIter != m_statusLine.begin() )
-      { 
-        //  get the previous curve in the y-str
-        StatusLineIter prev = slIter; --prev;
-        _intersect(static_cast<Subcurve*>(*prev),
-                   static_cast<Subcurve*>(*slIter));
-      }
+    
+      //BZBZ
+      if(reinterpret_cast<Event*>((*currentOne)->get_left_event()) ==
+          m_currentEvent ||
+          reinterpret_cast<Event*>((*prevOne)->get_left_event()) ==
+          m_currentEvent ) 
+          _intersect(*prevOne, *currentOne);
+      prevOne = currentOne;
+      ++currentOne;
+    }        
       
-      EventCurveIter currentOne = firstOne; ++currentOne;
-      EventCurveIter prevOne = firstOne;
-      while ( currentOne != rightCurveEnd )
-      {
-        PRINT_INSERT(*currentOne);
-        slIter = m_statusLine.insert_predecessor
-	  (m_status_line_insert_hint, *currentOne);
-        ((Subcurve*)(*currentOne))->set_hint(slIter);
-          
-        SL_DEBUG(PrintStatusLine(););
-      
-        //BZBZ
-        if(reinterpret_cast<Event*>((*currentOne)->get_left_event()) ==
-           m_currentEvent ||
-           reinterpret_cast<Event*>((*firstOne)->get_left_event()) ==
-           m_currentEvent ) 
-           _intersect(*prevOne, *currentOne);
-        prevOne = currentOne;
-        ++currentOne;
-      }        
-        
-      SL_DEBUG(PrintStatusLine(););
+    SL_DEBUG(PrintStatusLine(););
 
-      //the next Subcurve at the Y-str 
-      ++slIter;
-      if ( slIter != m_statusLine.end() )
-        _intersect( static_cast<Subcurve*>(*prevOne),
-                    static_cast<Subcurve*>(*slIter));
-    }
+    //the next Subcurve at the Y-str 
+    ++slIter;
+    if ( slIter != m_statusLine.end() )
+      _intersect( static_cast<Subcurve*>(*prevOne),
+                  static_cast<Subcurve*>(*slIter));
   }
 
   /*!
@@ -935,7 +874,6 @@ protected:
   SweepVisitor* m_visitor;
 
   /*! a lookup table of pairs of Subcurves that ahve been intersected */
-  //TODO: replace set with hash 
   CurvesPairSet m_curves_pair_set;
 
   /*! a vector holds the intersection objects */
@@ -1091,7 +1029,7 @@ _remove_curve_from_status_line(Subcurve *leftCurve, bool remove_for_good)
   SL_DEBUG(leftCurve->Print(););
 
   StatusLineIter sliter = leftCurve->get_hint(); 
-  m_status_line_insert_hint = sliter; ++m_status_line_insert_hint;
+  m_status_line_insert_hint = sliter; ++m_status_line_insert_hint; 
 
   if(! remove_for_good)
   {

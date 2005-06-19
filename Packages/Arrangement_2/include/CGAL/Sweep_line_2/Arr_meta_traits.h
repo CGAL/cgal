@@ -37,6 +37,14 @@ public:
   typedef typename Traits::Split_2                  Base_Split_2;
 
 
+
+  //Constructor
+  Arr_meta_traits()
+  {}
+
+  Arr_meta_traits(const Traits& tr): Traits(tr)
+  {}
+
   // nested class My_X_monotone_curve_2
   class My_X_monotone_curve_2 : public Base_X_monotone_curve_2 
   {

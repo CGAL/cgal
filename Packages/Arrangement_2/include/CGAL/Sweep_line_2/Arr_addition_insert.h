@@ -66,21 +66,13 @@ class Arr_addition_insert
 public:
 
   Arr_addition_insert(Arr *arr):
-      m_traits(static_cast<Traits*> (new Traits())),
-      m_traits_owner(true),
+      m_traits(new Traits(*(arr->get_traits()))),
       m_arr(arr),
       m_visitor(arr),
       m_sweep_line(m_traits, &m_visitor)
       {}
 
 
-  Arr_addition_insert(const Traits *traits, Arr *arr):
-      m_traits(static_cast<Traits*>(traits)),
-      m_traits_owner(false),
-      m_arr(arr),
-      m_visitor(arr),
-      m_sweep_line(m_traits, &m_visitor)
-      {}
 
   template<class CurveInputIterator>
   void insert_curves(CurveInputIterator begin, 
@@ -124,8 +116,7 @@ public:
 
   ~Arr_addition_insert()
   {
-    if(m_traits_owner)
-      delete m_traits;
+    delete m_traits;
   }
 
 
@@ -133,7 +124,6 @@ public:
 protected:
 
   const Traits*        m_traits;
-  bool                 m_traits_owner;
   Arr*                 m_arr;
   Visitor              m_visitor;
   Sweep_line           m_sweep_line;
