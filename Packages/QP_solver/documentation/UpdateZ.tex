@@ -2409,9 +2409,9 @@ Among other entities the Ratio Test Step~1 computes
 
 \subsection{Update $U_{Z_{1}}$}
 According to the Definitions~(\ref{def:zeta_Z1})
-and~(\ref{def:q_hat_nu_hat}) $\hat{v}$ of the 
+and~(\ref{def:q_hat_nu_hat}), $\hat{v}$ of the 
 Definitions~(\ref{def:update_Z1_entities}) can be expressed in terms
-of the entering column $\theta$ as
+of the entering column $\theta$ and $D$ as
 \begin{eqnarray*}
 \hat{v}
 &:=&
@@ -2431,9 +2431,9 @@ and~(\ref{def:q_hat_nu_hat})
 d\zeta_{\beta_{O}(i)}-\zeta^{T}\hat{\check{M}}_{B}^{-1}\zeta \\
 &=&
 2dD_{j,j}
--\left(\theta+2\left(D_{j,j}-D_{i,j}\right)\right)e_{\beta_{O}(i)}^{T}
+-\left(\theta+2\left(D_{j,j}-D_{i,j}\right)e_{\beta_{O}(i)}^{T}\right)
 \hat{\check{M}}_{B}^{-1}
-\left(\theta+2\left(D_{j,j}-D_{i,j}\right)\right)e_{\beta_{O}(i)} \\
+\left(\theta+2\left(D_{j,j}-D_{i,j}\right)e_{\beta_{O}(i)}\right) \\
 &=&
 2dD_{j,j}-\theta^{T}\hat{\check{M}}_{B}^{-1}\theta
 -4\left(D_{j,j}-D_{i,j}\right)^{2}
@@ -2453,7 +2453,7 @@ e_{\beta_{O}(i)}^{T}\hat{\check{M}}_{B}^{-1}\theta \\
 \hat{\nu}
 -4\left(D_{j,j}-D_{i,j}\right)\hat{q}_{\beta_{O}(i)}
 \end{eqnarray*}
-Using the above the entities used
+Using the above, the entities used
 in~(\ref{def:update_Z1_entities}) can be expressed as
 \begin{equation}
 \label{def:update_Z1_entities_prep}
@@ -2486,14 +2486,14 @@ d
 \end{equation}
 such that Update $U_{Z_{1}}$ can be outlined as
 \begin{tabbing}
-\texttt{z\_replace\_original\_by\_original($y,k_{2},k_{i}$) \{}
+\texttt{z\_replace\_original\_by\_original($y, s_{\Delta}, s_{\nu}, k_{i}$) \{}
 \\
 \texttt{  } \= // compute $\hat{v}, \hat{\rho}, \hat{k}_{1}, \hat{k}_{2}$ \\
 \> \texttt{$\hat{k}_{1}:=y_{k_{i}}$} \\
-\> \texttt{$\hat{v}:=y - de_{k_{i}}$} \\
 \> \texttt{$\hat{\rho}:=
   \left(\hat{\check{M}}_{B}^{-1}\right)_{\bullet, k_{i}}$} \\
-\> \texttt{$\hat{k}_{2}:=k_{2}$} \\
+\> \texttt{$\hat{v}:=y + 2s_{\Delta} \hat{\rho} - de_{k_{i}}$} \\
+\> \texttt{$\hat{k}_{2}:=s_{\nu} - 4s_{\Delta}\hat{k}_{1}$} \\
 \> \texttt{z\_update\_in\_place($\hat{\rho}, \hat{v}, \hat{k}_{1}^{2},
 -\hat{k}_{2}, -\hat{k}_{1}, d^{2}$)} \\
 \> // store new denominator $\hat{z}$ \\
@@ -2504,17 +2504,23 @@ The calling counterpart in the class \texttt{QP\_solver} can be outlined as
 \begin{tabbing}
 \texttt{z\_replace\_variable\_original\_by\_original() \{} \\
 \texttt{  } \= // compute $k_{i}, \hat{k}_{2}$ \\
+\> \texttt{$s_{\Delta}:= D_{j,j} - D_{i,j}$} \\
+\> \texttt{$s_{\nu}:= \nu$} \\
 \> \texttt{$k_{i}:=\beta_{O}(i)$} \\
-\> \texttt{$\hat{k}_{2}:=\hat{\nu} + 2d(D_{i,j}-D_{j,j})$} \\
 \> // update headings \\
+\> // ... \\
+\> // update basis inverse \\
 \> \texttt{inv\_M\_B.z\_replace\_original\_by\_original($\hat{q},
-\hat{k}_{2}, k_{i}$)} \\
+s_{\Delta}, s_{\nu}, k_{i}$)} \\
 \texttt{\}}
 \end{tabbing}
 
 \subsection{Update $U_{Z_{4}}$}
-Using Definitions~(\ref{def:q_hat_nu_hat}) the entities used
-in~(\ref{def:update_Z4_entities}) can be expressed as
+According to the Definitions~(\ref{def:zeta_Z4}),
+%and~(\ref{def:q_hat_nu_hat}),
+$\zeta=\vartheta$, such that the entities $\hat{v}$ and $\hat{k}_{1}$ used
+in Definitions~(\ref{def:update_Z4_entities}) can be expressed in terms
+of the entering column $\vartheta$ as
 \begin{equation}
 \label{def:update_Z4_entities_prep}
 \begin{array}{rclcrcl}
@@ -2544,14 +2550,17 @@ d
 \left|\det(\hat{\check{M}}_{B})\right|
 \end{array}
 \end{equation}
-such that Update $U_{Z_{4}}$ can be outlined as
+such that, by taking into account that according to
+Definition~(\ref{def:theta_vartheta}), $\vartheta_{C}=0$,
+Update $U_{Z_{4}}$ can be outlined as
 \begin{tabbing}
 \texttt{z\_replace\_slack\_by\_slack($u, k_{j}$) \{} \\
 \texttt{  } \= // compute $\hat{v}, \hat{\varrho}, \hat{k}_{1}, \hat{k}_{3}$ \\
-\> \texttt{$\hat{v}:=\hat{\check{M}}_{B}^{-1}u-de_{k_{j}}$} \\
+\> \texttt{$\hat{v}:=
+    \left(\hat{\check{M}}_{B}^{-1}\right)_{\bullet, B_{O}}u-de_{k_{j}}$} \\
 \> \texttt{$\hat{\varrho}^{T}:=
   \left(\hat{\check{M}}_{B}^{-1}\right)_{\bullet,k_{j}}$} \\
-\> \texttt{$\hat{k}_{1}:=\hat{\varrho}u$} \\
+\> \texttt{$\hat{k}_{1}:=\hat{\varrho}_{B_{O}}u$} \\
 \> \texttt{$\hat{k}_{3}:=
   \left(\hat{\check{M}}_{B}^{-1}\right)_{k_{j}, k_{j}}$} \\
 \> \texttt{z\_update\_in\_place($\hat{v}, \hat{\varrho}, \hat{k}_{1}^{2},
@@ -2567,6 +2576,8 @@ The calling counterpart in the class \texttt{QP\_solver} can be outlined as
 \> \texttt{$u:=\vartheta_{B_{O}}$} \\
 \> \texttt{$k_{j}:=\gamma_{C}(\sigma(j))$} \\
 \> // update headings \\
+\> // ... \\
+\> // update basis inverse \\
 \> \texttt{inv\_M\_B.z\_replace\_slack\_by\_slack($u, k_{j}$)}
 \\
 \texttt{\}}
@@ -2638,6 +2649,8 @@ The calling counterpart in the class \texttt{QP\_solver} can be outlined as
 \> \texttt{$k_{j}:=\gamma_{C}(\sigma(j))$} \\
 \> \texttt{$k_{i}:=\beta_{O}(i)$} \\
 \> // update headings \\
+\> // ... \\
+\> // update basis inverse \\
 \> \texttt{inv\_M\_B.z\_replace\_original\_by\_slack($k_{j}, k_{i}$)}
 \\
 \texttt{\}}
@@ -2656,9 +2669,9 @@ in~(\ref{def:update_Z3_entities}) can be expressed as
 &&
 \hat{\varphi}
 &:=&
-\left(\hat{\check{M}}_{B}^{-1}\right)_{\bullet, B_{O}}\vartheta_{B_{O}}^{T}
+\hat{\check{M}}_{B}^{-1}\vartheta^{T}
 \\
-\hat{\kappa} &:=& dA_{\sigma(i), j}-\vartheta_{B_{O}}\hat{q}_{B_{O}}
+\hat{\kappa} &:=& dA_{\sigma(i), j}-\vartheta\hat{q}
 &&
 \hat{\nu} &:=& 2dD_{j,j}-\theta^{T}\hat{\check{M}}_{B}^{-1}\theta
 \\
@@ -2667,7 +2680,9 @@ in~(\ref{def:update_Z3_entities}) can be expressed as
 d &:=& \left|\det(\hat{\check{M}}_{B})\right|
 \end{array}
 \end{equation}
-such that Update $U_{Z_{3}}$ can be outlined as
+such that, by taking into account that according to
+Definition~(\ref{def:theta_vartheta}), $\vartheta_{C}=0$,
+Update $U_{Z_{3}}$ can be outlined as
 \begin{tabbing}
 \texttt{z\_replace\_slack\_by\_original($y,u,\kappa,\nu$) \{}
 \\
@@ -2696,6 +2711,8 @@ The calling counterpart in the class \texttt{QP\_solver} can be outlined as
 \> \texttt{$\kappa:=dA_{\sigma(i), j}-\vartheta_{B_{O}}\hat{q}_{B_{O}}$} \\
 \> \texttt{$\nu:=\hat{\nu}$} \\
 \> // update headings \\
+\> // ... \\
+\> // update basis inverse \\
 \> \texttt{inv\_M\_B.z\_replace\_slack\_by\_original($y, u, \kappa, \nu$)}
 \\
 \texttt{\}}
