@@ -119,6 +119,9 @@ protected:
                                        // (or an overlap).
   X_monotone_curve_2  overlap_cv;      // The currently discovered overlap.
   bool                found_overlap;   // Have we found an overlap.
+  bool                found_iso_vert;  // Check if an isolated vertex induces
+                                       // the next intersection.
+  Vertex_handle       intersect_v;     // The vertex that intersects cv.
   Halfedge_handle     intersect_he;    // The halfedge that intersects cv
                                        // (or overlaps it).
 
@@ -194,15 +197,16 @@ private:
    * \param cv_ins The curve to be inserted, whose left endpoint coincides
    *               with the edge to be split.
    * \param cv_left_pt The left endpoint of cv_ins.
-   * \param split_he The edge that should be split.
+   * \param query_he The edge that intersects cv_ins.
    * \pre The left endpoint of cv_ins lies in the interior of the curve
-   *      associated with split_he.
+   *      associated with query_he.
    * \return The halfedge whose incident face contains cv_ins
-   *         (either split_he or its twin).
+   *         (either query_he or its twin).
    */
-  Halfedge_handle _direct_split_edge_to_right(const X_monotone_curve_2& cv_ins,
-					      const Point_2& cv_left_pt,
-					      Halfedge_handle split_he);
+  Halfedge_handle _direct_intersecting_edge_to_right
+                                            (const X_monotone_curve_2& cv_ins,
+					     const Point_2& cv_left_pt,
+					     Halfedge_handle query_he);
 
   /*!
    * Direct the halfedge for the location of the given subcurve around a split
@@ -210,14 +214,15 @@ private:
    * to the left of the split point.
    * \param cv_ins The curve to be inserted, whose right endpoint coincides
    *               with the edge to be split.
-   * \param split_he The edge that should be split.
+   * \param query_he The edge that intersects cv_ins.
    * \pre The right endpoint of cv_ins lies in the interior of the curve
-   *      associated with split_he.
+   *      associated with query_he.
    * \return The halfedge whose incident face contains cv_ins
-   *         (either split_he or its twin).
+   *         (either query_he or its twin).
    */
-  Halfedge_handle _direct_split_edge_to_left (const X_monotone_curve_2& cv_ins,
-					      Halfedge_handle split_he);
+  Halfedge_handle _direct_intersecting_edge_to_left
+                                            (const X_monotone_curve_2& cv_ins,
+					     Halfedge_handle query_he);
 
   /*!
    * Get the next intersection of cv with the given halfedge.

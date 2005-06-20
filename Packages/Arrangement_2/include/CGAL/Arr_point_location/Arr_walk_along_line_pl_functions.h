@@ -37,6 +37,7 @@ Object Arr_walk_along_line_point_location<Arrangement>::locate
 {
   // Start from the unbounded face, and an invalid halfedge representing
   // the closest edge to p from above it so far.
+  typename Traits_wrapper_2::Equal_2  equal = traits->equal_2_object();
   Holes_const_iterator   holes_it;
   Face_const_handle      face = p_arr->unbounded_face();
   Halfedge_const_handle  closest_he;
@@ -62,12 +63,12 @@ Object Arr_walk_along_line_point_location<Arrangement>::locate
       if (is_on_edge)
       {
 	// Check if the point is located on one of the edge endpoints.
-	if (traits->equal_2_object() (p, closest_he.source().point()))
+	if (equal (p, closest_he.source().point()))
 	{
 	  // The query point is located on the source vertex:
 	  return (make_object (closest_he.source()));
 	}
-	else if (traits->equal_2_object() (p, closest_he.target().point()))
+	else if (equal (p, closest_he.target().point()))
 	{
 	  // The query point is located on the target vertex:
 	  return (make_object (closest_he.target()));
@@ -103,12 +104,12 @@ Object Arr_walk_along_line_point_location<Arrangement>::locate
 	  if (is_on_edge)
 	  {
 	    // Check if the point is located on one of the edge endpoints.
-	    if (traits->equal_2_object() (p, closest_he.source().point()))
+	    if (equal (p, closest_he.source().point()))
 	    {
 	      // The query point is located on the source vertex:
 	      return (make_object (closest_he.source()));
 	    }
-	    else if (traits->equal_2_object() (p, closest_he.target().point()))
+	    else if (equal (p, closest_he.target().point()))
 	    {
 	      // The query point is located on the target vertex:
 	      return (make_object (closest_he.target()));
@@ -139,7 +140,19 @@ Object Arr_walk_along_line_point_location<Arrangement>::locate
   } while (found_containing_hole);
 
   // If we reached here, we did not locate the query point in any of the holes
-  // inside the current face, so we conclude it is contained in this face:
+  // inside the current face, so we conclude it is contained in this face.
+  // However, we first have to check whether the query point coincides with
+  // any of the isolated vertices contained inside this face.
+  Isolated_vertices_const_iterator   iso_verts_it;
+
+  for (iso_verts_it = face.isolated_vertices_begin();
+       iso_verts_it != face.isolated_vertices_end(); ++iso_verts_it)
+  {
+    if (equal (p, (*iso_verts_it).point()))
+      return (make_object (*iso_verts_it));
+  }
+
+  // The query point is contained in the face interior:
   return (make_object (face));
 }
 
@@ -154,6 +167,9 @@ _vertical_ray_shoot (const Point_2& p,
 {
   // Start from the unbounded face, and an invalid halfedge representing
   // the closest edge to p from above it so far.
+  typename Traits_wrapper_2::Is_vertical_2        is_vertical =
+                                            traits->is_vertical_2_object();
+
   Holes_const_iterator   holes_it;
   Face_const_handle      face = p_arr->unbounded_face();
   Halfedge_const_handle  closest_he;
@@ -179,7 +195,7 @@ _vertical_ray_shoot (const Point_2& p,
       // This can happen only if the edge is vertical.
       if (is_on_edge)
       {
-	CGAL_assertion (traits->is_vertical_2_object() (closest_he.curve()));
+	CGAL_assertion (is_vertical (closest_he.curve()));
 	return (make_object (closest_he));
       }
 
@@ -209,8 +225,7 @@ _vertical_ray_shoot (const Point_2& p,
 	  // This can happen only if the edge is vertical.
 	  if (is_on_edge)
 	  {
-	    CGAL_assertion (traits->is_vertical_2_object() 
-			    (closest_he.curve()));
+	    CGAL_assertion (is_vertical (closest_he.curve()));
 	    return (make_object (closest_he));
 	  }
 	  
@@ -228,17 +243,70 @@ _vertical_ray_shoot (const Point_2& p,
 	// We have located a face in the hole that contains the query point.
 	// This will break the internal loop on holes, and we shall proceed
 	// for another iteration of the external loop, trying to locate p in
-	// one of the hole of this new face.
+	// one of the holes of this new face.
 	found_containing_hole = true;
       }
     } // End loop on the current face's holes.
 
   } while (found_containing_hole);
 
+  // Check whether one of the isolated vertices in the face containing p lies
+  // above (or below) it, closer than the closest halfdge we have located.
+  typename Traits_wrapper_2::Compare_x_2          compare_x =
+                                             traits->compare_x_2_object();
+  typename Traits_wrapper_2::Compare_xy_2         compare_xy =
+                                             traits->compare_xy_2_object();
+  typename Traits_wrapper_2::Compare_y_at_x_2     compare_y_at_x =
+                                             traits->compare_y_at_x_2_object();
+
+  const Comparison_result point_above_under = (shoot_up ? SMALLER : LARGER);
+
+  Isolated_vertices_const_iterator   iso_verts_it;
+  Vertex_const_handle                closest_iso_v;
+  const Vertex_const_handle          invalid_v;
+  const Halfedge_const_handle        invalid_he;
+
+  for (iso_verts_it = face.isolated_vertices_begin();
+       iso_verts_it != face.isolated_vertices_end(); ++iso_verts_it)
+  {
+    // The current isolated vertex should have the same x-coordinate as the
+    // query point in order to be below or above it.
+    if (compare_x (p, (*iso_verts_it).point()) != EQUAL)
+      continue;
+
+    // Make sure the isolated vertex is above the query point (if we shoot up)
+    // or below it (if we shoot down).
+    if (compare_xy (p, (*iso_verts_it).point()) != point_above_under)
+      continue;
+
+    // Check if the current isolated vertex lies closer to the query point than
+    // the closest feature so far.
+    if (closest_iso_v == invalid_v)
+    {
+      // Compare the current isolated vertex with the closest halfedge.
+      if (closest_he == invalid_he ||
+          compare_y_at_x ((*iso_verts_it).point(),
+                          closest_he.curve()) == point_above_under)
+      {
+        closest_iso_v = *iso_verts_it;
+      }
+    }
+    else if (compare_xy ((*iso_verts_it).point(),
+                         closest_iso_v.point()) == point_above_under)
+    {
+      closest_iso_v = *iso_verts_it;
+    }
+  }
+
+  if (closest_iso_v != invalid_v)
+  {
+    // The first object we encounter when we shoot a vertical ray from p is
+    // an isolated vertex:
+    return (make_object (closest_iso_v));
+  }
+
   // If we reached here, closest_he is the closest edge from above (below)
   // the query point.
-  const Halfedge_const_handle  invalid_he;
-
   if (closest_he == invalid_he)
   {
     // We did not encounter any edge above (below) the query point:
@@ -246,8 +314,8 @@ _vertical_ray_shoot (const Point_2& p,
   }
 
   // Check if one of closest_he's end vertices lies directly above (below) the
-  //  query point, and if so, return this vertex.
-  if (! traits->is_vertical_2_object() (closest_he.curve()))
+  // query point, and if so, return this vertex.
+  if (! is_vertical (closest_he.curve()))
   {
     if (traits->compare_x_2_object() (closest_he.source().point(), p) == EQUAL)
       return (make_object (closest_he.source()));
@@ -259,7 +327,7 @@ _vertical_ray_shoot (const Point_2& p,
   {
     // The entire vertical segment is above (below) the query point: Return the
     // endpoint closest to it.
-    const bool    is_directed_up = 
+    const bool    is_directed_up =
       (traits->compare_xy_2_object() (closest_he.source().point(),
 				      closest_he.target().point()) == SMALLER);
 
@@ -303,11 +371,11 @@ _is_in_connected_component (const Point_2& p,
 
   typename Traits_wrapper_2::Equal_2              equal = 
                                             traits->equal_2_object();
-  typename Traits_wrapper_2::Is_vertical_2        is_vertical = 
+  typename Traits_wrapper_2::Is_vertical_2        is_vertical =
                                             traits->is_vertical_2_object();
-  typename Traits_wrapper_2::Compare_x_2          compare_x = 
+  typename Traits_wrapper_2::Compare_x_2          compare_x =
                                             traits->compare_x_2_object();
-  typename Traits_wrapper_2::Compare_y_at_x_2     compare_y_at_x = 
+  typename Traits_wrapper_2::Compare_y_at_x_2     compare_y_at_x =
                                             traits->compare_y_at_x_2_object();
   typename Traits_wrapper_2::Compare_y_position_2 compare_y_position =
                                         traits->compare_y_position_2_object();

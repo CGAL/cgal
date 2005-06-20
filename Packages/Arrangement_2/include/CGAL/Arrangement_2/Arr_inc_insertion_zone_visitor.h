@@ -135,7 +135,7 @@ public:
       // the vertex and we should locate cv around it.
       if (left_he != invalid_he)
 	prev_he_left = left_he;
-      else
+      else if (! left_v.is_isolated())
 	prev_he_left = arr_access.locate_around_vertex (left_v, cv);
 
       // In case the vertex does not exist, split left_he at cv's left endpoint
@@ -154,7 +154,7 @@ public:
       // the vertex and we should locate cv around it.
       if (right_he != invalid_he)
 	prev_he_right = right_he;
-      else
+      else if (! right_v.is_isolated())
 	prev_he_right = arr_access.locate_around_vertex (right_v, cv);
 
       // In case the vertex does not exist, split right_he at cv's right
@@ -188,10 +188,18 @@ public:
       else
       {
 	// The right endpoint is associated with an arrangement vertex.
-	// Use the previous halfedge for the right vertex.
-	inserted_he = p_arr->insert_from_right_vertex (cv,
-						       prev_he_right);
-       
+	// If possible, use the previous halfedge for the right vertex.
+	if (prev_he_right != invalid_he)
+	{
+	  inserted_he = p_arr->insert_from_right_vertex (cv,
+							 prev_he_right);
+	}
+	else
+	{
+	  inserted_he = p_arr->insert_from_right_vertex (cv,
+							 right_v);
+	}
+
 	// The returned halfedge is directed to the newly created vertex
 	// (the left one), so we take its twin.
 	inserted_he = inserted_he.twin();
@@ -202,16 +210,50 @@ public:
       // The left endpoint should be associated with a vertex:
       if (! vertex_for_right)
       {
-	// Use the previous halfedge for the left vertex.
-	inserted_he = p_arr->insert_from_left_vertex (cv,
-						      prev_he_left);
+	// If possible, use the previous halfedge for the left vertex.
+	if (prev_he_left != invalid_he)
+	{
+	  inserted_he = p_arr->insert_from_left_vertex (cv,
+							prev_he_left);
+	}
+	else
+	{
+	  inserted_he = p_arr->insert_from_left_vertex (cv,
+							left_v);
+	}
       }
       else
       {
 	// Both endpoints are associated with arrangement vertices.
-	// Use the previous halfedges for both end vertices.
-	inserted_he = p_arr->insert_at_vertices (cv,
-						 prev_he_left, prev_he_right);
+	// If possible, use the previous halfedges for both end vertices.
+	if (prev_he_left != invalid_he && prev_he_right != invalid_he)
+	{
+	  inserted_he = p_arr->insert_at_vertices (cv,
+						   prev_he_left,
+						   prev_he_right);
+	}
+	else if (prev_he_left != invalid_he)
+	{
+	  inserted_he = p_arr->insert_at_vertices (cv,
+						   prev_he_left,
+						   right_v);
+	}
+	else if (prev_he_right != invalid_he)
+	{
+	  inserted_he = p_arr->insert_at_vertices (cv,
+						   prev_he_right,
+						   left_v);
+
+	  // The returned halfedge is currently directed toward the left vertex
+	  // (instead of the right one), so we take its twin.
+	  inserted_he = inserted_he.twin();
+	}
+	else
+	{
+	  inserted_he = p_arr->insert_at_vertices (cv,
+						   left_v,
+						   right_v);
+	}
       }
     }
 

@@ -704,9 +704,9 @@ Arrangement_2<Traits,Dcel>::insert_at_vertices (const X_monotone_curve_2& cv,
                                traits->construct_min_vertex_2_object()(cv)) &&
       traits->equal_2_object()(v2.point(), 
                                traits->construct_max_vertex_2_object()(cv))) ||
-     (traits->equal_2_object()(prev2.target().point(), 
+     (traits->equal_2_object()(v2.point(), 
                                traits->construct_min_vertex_2_object()(cv)) &&
-      traits->equal_2_object()(v2.point(), 
+      traits->equal_2_object()(prev1.target().point(), 
                                traits->construct_max_vertex_2_object()(cv))),
      "The input vertex and target point should match the curve endpoints.");
 
@@ -728,7 +728,7 @@ Arrangement_2<Traits,Dcel>::insert_at_vertices (const X_monotone_curve_2& cv,
 
     // Perform the insertion.
     Halfedge  *new_he = _insert_from_vertex (cv,
-					     prev1.p_he, v2);
+					     prev1.p_he, p_v2);
    
     return (Halfedge_handle (new_he)); 
   }

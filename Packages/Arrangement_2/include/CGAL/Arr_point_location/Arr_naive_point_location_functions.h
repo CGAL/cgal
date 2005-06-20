@@ -63,7 +63,7 @@ Object Arr_naive_point_location<Arrangement>::locate (const Point_2& p) const
   }
 
   // Shoot a vertical ray from the query point.
-  Object   obj = _vertical_ray_shoot (p, true);
+  Object   obj = _base_vertical_ray_shoot (p, true);
 
   if (obj.is_empty())
   {
@@ -106,23 +106,23 @@ Object Arr_naive_point_location<Arrangement>::locate (const Point_2& p) const
 
 //-----------------------------------------------------------------------------
 // Locate the arrangement feature which a vertical ray emanating from the
-// given point hits.
+// given point hits (not inculding isolated vertices).
 //
 template <class Arrangement>
-Object Arr_naive_point_location<Arrangement>::_vertical_ray_shoot
+Object Arr_naive_point_location<Arrangement>::_base_vertical_ray_shoot
     (const Point_2& p,
      bool shoot_up) const
 {
-  // Set the results for comparison acording to the ray direction.
+  // Set the results for comparison according to the ray direction.
   const Comparison_result point_above_under = (shoot_up ? SMALLER : LARGER);
   const Comparison_result curve_above_under = (shoot_up ? LARGER : SMALLER);
 
   // Go over all halfedges in the arrangement.
-  typename Traits_wrapper_2::Is_in_x_range_2      is_in_x_range = 
+  typename Traits_wrapper_2::Is_in_x_range_2      is_in_x_range =
                                         traits->is_in_x_range_2_object();
-  typename Traits_wrapper_2::Compare_y_at_x_2     compare_y_at_x = 
+  typename Traits_wrapper_2::Compare_y_at_x_2     compare_y_at_x =
                                         traits->compare_y_at_x_2_object();
-  typename Traits_wrapper_2::Is_vertical_2        is_vertical = 
+  typename Traits_wrapper_2::Is_vertical_2        is_vertical =
                                         traits->is_vertical_2_object();
   typename Traits_wrapper_2::Compare_y_position_2 compare_y_position =
                                         traits->compare_y_position_2_object();
@@ -132,7 +132,7 @@ Object Arr_naive_point_location<Arrangement>::_vertical_ray_shoot
   Comparison_result                            res;
   bool                                         in_x_range;
   bool                                         found = false;
-  
+
   while (eit != p_arr->edges_end())
   {
     // Determine whether p is in the x-range of the curve and above or below it
@@ -141,7 +141,7 @@ Object Arr_naive_point_location<Arrangement>::_vertical_ray_shoot
     if (in_x_range)
       res = compare_y_at_x (p, (*eit).curve());
 
-    if (in_x_range && res == point_above_under) 
+    if (in_x_range && res == point_above_under)
     {
       if (!found)
       {
@@ -174,19 +174,19 @@ Object Arr_naive_point_location<Arrangement>::_vertical_ray_shoot
     // Move to the next edge.
     ++eit;
   }
-  
+
   // If we have not found any edge above p, we return an empty object.
   if (!found)
     return Object();
 
   // If one of the closest edge's end vertices has the same x-coordinate
   // as the query point, return this vertex.
-  if (traits->compare_x_2_object() (closest_edge.source().point(), 
+  if (traits->compare_x_2_object() (closest_edge.source().point(),
                                     p) == EQUAL)
   {
     return (make_object (closest_edge.source()));
   }
-  else if (traits->compare_x_2_object() (closest_edge.target().point(), 
+  else if (traits->compare_x_2_object() (closest_edge.target().point(),
                                          p) == EQUAL)
   {
     return (make_object (closest_edge.target()));
@@ -194,6 +194,90 @@ Object Arr_naive_point_location<Arrangement>::_vertical_ray_shoot
 
   // Otherwise, return the closest edge.
   return (make_object (closest_edge));
+}
+
+//-----------------------------------------------------------------------------
+// Locate the arrangement feature which a vertical ray emanating from the
+// given point hits, considering isolated vertices.
+//
+template <class Arrangement>
+Object Arr_naive_point_location<Arrangement>::_vertical_ray_shoot
+    (const Point_2& p,
+     bool shoot_up) const
+{
+  // Locate the arrangement feature which a vertical ray emanating from the
+  // given point hits, when not considering the isolated vertices.
+  // This feature may not exist, or be either a vertex of a halfedge.
+  Object                 obj = _base_vertical_ray_shoot (p, shoot_up);
+  Vertex_const_handle    closest_v;
+  Halfedge_const_handle  closest_he;
+
+  enum {NAIVE_PL_NONE, NAIVE_PL_VERTEX, NAIVE_PL_HALFEDGE}  type;
+
+  if (obj.is_empty())
+  {
+    type = NAIVE_PL_NONE;
+  }
+  else if (assign (closest_v, obj))
+  {
+    type = NAIVE_PL_VERTEX;
+  }
+  else
+  {
+    assign (closest_he, obj);
+    type = NAIVE_PL_HALFEDGE;
+  }
+
+  // Set the result for comparison according to the ray direction.
+  const Comparison_result point_above_under = (shoot_up ? SMALLER : LARGER);
+
+  // Go over all isolated vertices in the arrangement.
+  typename Traits_wrapper_2::Compare_x_2          compare_x =
+                                        traits->compare_x_2_object();
+  typename Traits_wrapper_2::Compare_xy_2         compare_xy =
+                                        traits->compare_xy_2_object();
+  typename Traits_wrapper_2::Compare_y_at_x_2     compare_y_at_x =
+                                        traits->compare_y_at_x_2_object();
+
+  typename Arrangement::Vertex_const_iterator  vit;
+  Vertex_const_handle                          vh;
+
+  for (vit = p_arr->vertices_begin(); vit != p_arr->vertices_end(); ++vit)
+  {
+    vh = *vit;
+    if (! vh.is_isolated())
+      continue;
+
+    // The current isolated vertex should have the same x-coordinate as the
+    // query point in order to be below or above it.
+    if (compare_x (p, vh.point()) != EQUAL)
+      continue;
+
+    // Make sure the isolated vertex is above the query point (if we shoot up)
+    // or below it (if we shoot down).
+    if (compare_xy (p, vh.point()) != point_above_under)
+      continue;
+
+    // Check if the isolated vertex is closer to p than the current closest
+    // object.
+    if ((type == NAIVE_PL_NONE) ||
+        (type == NAIVE_PL_VERTEX &&
+         compare_xy (vh.point(), closest_v.point()) == point_above_under) ||
+        (type == NAIVE_PL_HALFEDGE &&
+         compare_y_at_x (vh.point(), closest_he.curve()) == point_above_under))
+    {
+      closest_v = vh;
+      type = NAIVE_PL_VERTEX;
+    }
+  }
+
+  // Set back the result according to its type.
+  if (type == NAIVE_PL_NONE)
+    return Object();
+  else if (type == NAIVE_PL_VERTEX)
+    return (make_object (closest_v));
+  else
+    return (make_object (closest_he));
 }
 
 //-----------------------------------------------------------------------------

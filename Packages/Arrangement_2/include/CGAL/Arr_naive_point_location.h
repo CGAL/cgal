@@ -117,12 +117,23 @@ protected:
 
   /*!
    * Locate the arrangement feature which a vertical ray emanating from the
-   * given point hits.
+   * given point hits (not inculding isolated vertices).
    * \param p The query point.
    * \param shoot_up Indicates whether the ray is directed upward or downward.
    * \return An object representing the arrangement feature the ray hits.
-   *         This object is either a Face_const_handle or a
-   *         Halfedge_const_handle or a Vertex_const_handle.
+   *         This object is either a Halfedge_const_handle,
+   *         a Vertex_const_handle or an empty object.
+   */
+  Object _base_vertical_ray_shoot (const Point_2& p, bool shoot_up) const;
+
+  /*!
+   * Locate the arrangement feature which a vertical ray emanating from the
+   * given point hits, considering isolated vertices.
+   * \param p The query point.
+   * \param shoot_up Indicates whether the ray is directed upward or downward.
+   * \return An object representing the arrangement feature the ray hits.
+   *         This object is either a Halfedge_const_handle,
+   *         a Vertex_const_handle or an empty object.
    */
   Object _vertical_ray_shoot (const Point_2& p, bool shoot_up) const;
 

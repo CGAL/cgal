@@ -1376,7 +1376,8 @@ private:
 
 /*!
  * Insert a curve into the arrangement (incremental insertion).
- * The inserted x-monotone curve may intersect the existing arrangement.
+ * The inserted curve may not necessarily be x-monotone and may intersect the
+ * existing arrangement.
  * \param arr The arrangement.
  * \param pl A point-location object associated with the arrangement.
  * \param cv The curve to be inserted.
@@ -1467,6 +1468,30 @@ template <class Traits, class Dcel>
 typename Arrangement_2<Traits,Dcel>::Face_handle
 remove_edge (Arrangement_2<Traits,Dcel>& arr,
 	     typename Arrangement_2<Traits,Dcel>::Halfedge_handle e);
+
+/*!
+ * Insert a vertex that corresponds to a given point into the arrangement.
+ * The inserted point may lie on any existing arrangement feature.
+ * \param arr The arrangement.
+ * \param pl A point-location object associated with the arrangement.
+ * \param p The point to be inserted.
+ * \return A handle to the vertex that corresponds to the given point.
+ */
+template <class Traits, class Dcel, class PointLocation>
+typename Arrangement_2<Traits,Dcel>::Vertex_handle
+insert_vertex (Arrangement_2<Traits,Dcel>& arr,
+	       const PointLocation& pl,
+	       const typename Traits::Point_2& p);
+
+/*!
+ * Remove a vertex from the arrangement.
+ * \param arr The arrangement.
+ * \param v The vertex to remove.
+ * \return Whether the vertex has been removed or not.
+ */
+template <class Traits, class Dcel>
+bool remove_vertex (Arrangement_2<Traits,Dcel>& arr,
+		    typename Arrangement_2<Traits,Dcel>::Vertex_handle v);
 
 CGAL_END_NAMESPACE
 
