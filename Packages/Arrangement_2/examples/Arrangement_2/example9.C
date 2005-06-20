@@ -48,7 +48,7 @@ int main ()
   CGAL_assertion (arr.number_of_faces() == 2);
   Arrangement_2::Face_handle    uf = arr.unbounded_face();
   Arrangement_2::Holes_iterator hole = uf.holes_begin();
-  Arrangement_2::Face_handle    f = (**hole).face();
+  Arrangement_2::Face_handle    f = (**hole).twin().face();
 
   // Insert several vertices in the interior of this face.
   Vertex_handle  v1 = arr.insert_isolated_vertex (Point_2 (2, 4), f);
