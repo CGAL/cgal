@@ -15,7 +15,7 @@ include $(CGAL_MAKEFILE)
 
 # Turn on optimizer and extensive checking
 EXTRA_FLAGS = \
-           -O3 \
+           -g \
            -DCGAL_PARAMETERIZATION_CHECK_EXPENSIVE
 
 CXXFLAGS = \
@@ -40,6 +40,7 @@ LIBPATH = \
           -L$(TAUCSROOT)/external/lib/$(TAUCS_OSTYPE)
 
 LDFLAGS = \
+          -g\
           $(TESTSUITE_LDFLAGS) \
           $(LONG_NAME_PROBLEM_LDFLAGS) \
           $(CGAL_LDFLAGS) \
