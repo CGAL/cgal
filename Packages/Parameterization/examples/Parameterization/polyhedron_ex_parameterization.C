@@ -71,12 +71,14 @@
 #include <CGAL/Discrete_authalic_parametizer_3.h>
 #include <CGAL/Mean_value_coordinates_parametizer_3.h>
 #include <CGAL/LSCM_parametizer_3.h>
+#include <CGAL/Mesh_adaptor_feature_extractor.h>
+
+#include <OpenNL/linear_solver.h>
+#include <CGAL/Taucs_solver_traits.h>
 
 #include "options.h"
 #include "Polyhedron_ex.h"
-#include "Feature_skeleton.h"
 #include "Mesh_cutter.h"
-#include "Mesh_feature_extractor.h"
 #include "Mesh_adaptor_polyhedron_ex.h"
 
 #include <iostream>
@@ -90,16 +92,21 @@
 #include <Windows.h>
 #endif
 
-#include <OpenNL/linear_solver.h>
-#include <CGAL/Taucs_solver_traits.h>
-
 
 // ----------------------------------------------------------------------------
 // Private types
 // ----------------------------------------------------------------------------
 
+// Mesh true type and parameterization adaptors
+typedef Polyhedron_ex                                       Polyhedron;
+typedef Mesh_adaptor_polyhedron_ex                          Mesh_adaptor_polyhedron;
+typedef CGAL::Mesh_adaptor_patch_3<Mesh_adaptor_polyhedron> Mesh_patch_polyhedron;
+
+// Parametizer for this kind of mesh
+typedef CGAL::Parametizer_3<Mesh_patch_polyhedron>          Parametizer;
+
 // Type describing a border or seam as a vertex list
-typedef std::list<Mesh_adaptor_polyhedron_ex::Vertex_handle> Seam;
+typedef std::list<Mesh_adaptor_polyhedron::Vertex_handle>   Seam;
 
 
 // ----------------------------------------------------------------------------
@@ -113,77 +120,80 @@ typedef std::list<Mesh_adaptor_polyhedron_ex::Vertex_handle> Seam;
 // CAUTION:
 // This method is provided "as is". It is very buggy and simply part of this example.
 // Developers using this package should implement a more robust cut algorithm!
-static Seam cut_mesh(Polyhedron_ex* mesh)
+static Seam cut_mesh(Mesh_adaptor_polyhedron* mesh_adaptor)
 {
     // Type describing a border or seam as an halfedge list
-    typedef Feature_backbone<Polyhedron_ex::Vertex_handle,
-                            Polyhedron_ex::Halfedge_handle> Backbone;
-    typedef Backbone::Halfedge_list_iterator                Backbone_iterator;
-    typedef Backbone::Halfedge_list_const_iterator          Backbone_const_iterator;
+    typedef CGAL::Mesh_adaptor_feature_extractor<Mesh_adaptor_polyhedron_ex> 
+                                            Mesh_feature_extractor;
+    typedef Mesh_feature_extractor::Boundary Boundary;
+    typedef Mesh_cutter::Backbone           Backbone;
 
     Seam seam;              // returned list
 
-    // init
-    mesh->compute_facet_centers();
-    Backbone *pSeamingBackbone = mesh->get_seaming_backbone();
-    mesh->free_skeleton();
-    pSeamingBackbone->clear();
+    assert(mesh_adaptor != NULL);
+    Polyhedron* mesh = mesh_adaptor->get_adapted_mesh();
+    assert(mesh != NULL);
 
-    Mesh_cutter cutter(mesh);
-    Mesh_feature_extractor feature_extractor(mesh);
+    // Extract mesh boundaries and compute genus
+    Mesh_feature_extractor feature_extractor(mesh_adaptor);
+    int nb_boundaries = feature_extractor.get_nb_boundaries();
+    int genus = feature_extractor.get_genus();
 
-    // compute genus
-    int genus = mesh->genus();
-    if(genus == 0)
+    if (genus == 0 && nb_boundaries > 0)
     {
-        int nb_boundaries = feature_extractor.extract_boundaries(true);
+        // Pick the longest boundary
+        const Boundary* pBoundary = feature_extractor.get_longest_boundary();
+        seam = *pBoundary;
+    }
+    else 
+    {
+        Backbone seamingBackbone;			// result of cutting
 
-        // no boundary, we need to cut the mesh
-        if(nb_boundaries == 0)
-            cutter.cut(pSeamingBackbone); // simple cut
-        else
+        // Cut
+        mesh->compute_facet_centers();
+        Mesh_cutter cutter(mesh);
+        if (genus == 0)
         {
-            // must have one boundary, pick the first_file_arg
-            Backbone *pBackbone = (*mesh->get_skeleton()->backbones())[0];
-            pSeamingBackbone->copy_from(pBackbone);
-
-            // cleanup this one (has to be done later if has corners)
-            mesh->free_skeleton();
+            // no boundary, we need to cut the mesh
+            assert (nb_boundaries == 0);
+            cutter.cut(&seamingBackbone);   // simple cut
         }
-    }
-    else // genus > 0 -> cut the mesh
-    {
-        cutter.cut_genus(pSeamingBackbone);
-    }
+        else // genus > 0 -> cut the mesh
+        {
+            cutter.cut_genus(&seamingBackbone);
+        }
 
-    // The Mesh_cutter class is quite buggy
-    // => we check that pSeamingBackbone is valid
-    //
-    // 1) Check that pSeamingBackbone is not empty
-    if (pSeamingBackbone->halfedges()->begin() == pSeamingBackbone->halfedges()->end())
-        return seam;
-    // 2) Check that pSeamingBackbone is a loop
-    for (Backbone_iterator he = pSeamingBackbone->halfedges()->begin();
-         he != pSeamingBackbone->halfedges()->end();
-         he++)
-    {
-        // Get next halfedge iterator
-        Backbone_iterator next_he = he;
-        next_he++;
-        if (next_he == pSeamingBackbone->halfedges()->end())
-            next_he = pSeamingBackbone->halfedges()->begin();
-        // Check that end of current HE == start of next one
-        if ((*he)->vertex() != (*next_he)->opposite()->vertex())
-            return seam;
-    }
-    // 3) TO DO: check that the pSeamingBackbone is not self-intersecting
+        // The Mesh_cutter class is quite buggy
+        // => we check that seamingBackbone is valid
+        //
+        // 1) Check that seamingBackbone is not empty
+        if (seamingBackbone.begin() == seamingBackbone.end())
+            return seam;                    // return empty list
+        //
+        // 2) Check that seamingBackbone is a loop
+        for (Backbone::iterator he = seamingBackbone.begin();
+            he != seamingBackbone.end();
+            he++)
+        {
+            // Get next halfedge iterator (looping)
+            Backbone::iterator next_he = he;
+            next_he++;
+            if (next_he == seamingBackbone.end())
+                next_he = seamingBackbone.begin();
 
-    // Convert list of halfedges to a list of vertices
-    for (Backbone_const_iterator he = pSeamingBackbone->halfedges()->begin();
-         he != pSeamingBackbone->halfedges()->end();
-         he++)
-    {
-        seam.push_back((*he)->vertex());
+            // Check that end of current HE == start of next one
+            if ((*he)->vertex() != (*next_he)->opposite()->vertex())
+            return seam;                    // return empty list
+        }
+        // 3) TODO: check that the seamingBackbone is not self-intersecting
+
+        // Convert list of halfedges to a list of vertices
+        for (Backbone::const_iterator he = seamingBackbone.begin();
+            he != seamingBackbone.end();
+            he++)
+        {
+            seam.push_back((*he)->vertex());
+        }
     }
 
     return seam;
@@ -457,7 +467,7 @@ int main(int argc,char * argv[])
     }
 
     // read the mesh
-    Polyhedron_ex mesh;
+    Polyhedron mesh;
     fprintf(stderr, "ok\n  fill mesh...");
     stream >> mesh;
 
@@ -469,15 +479,15 @@ int main(int argc,char * argv[])
     // Create mesh adaptor
     //***************************************
 
-    // The parameterization package needs an adaptor to handle Polyhedrons
-    Mesh_adaptor_polyhedron_ex mesh_adaptor(&mesh);
+    // The parameterization package needs an adaptor to handle Polyhedron_ex meshes
+    Mesh_adaptor_polyhedron mesh_adaptor(&mesh);
 
     // The parameterization package supports only meshes that
     // are toplogical disks => we need to virtually "cut" the mesh
     // to make it homeomorphic to a disk
     //
     // 1) Cut the mesh
-    Seam seam = cut_mesh(&mesh);
+    Seam seam = cut_mesh(&mesh_adaptor);
     if (seam.empty())
     {
         fprintf(stderr, "\nFATAL ERROR: an unexpected error occurred while cutting the shape!\n\n");
@@ -485,70 +495,64 @@ int main(int argc,char * argv[])
     }
     //
     // 2) Create adaptor that virtually "cuts" a patch in a Polyhedron_ex mesh
-    typedef CGAL::Mesh_adaptor_patch_3<Mesh_adaptor_polyhedron_ex>
-                                                    Mesh_patch_polyhedron_ex;
-    Mesh_patch_polyhedron_ex   mesh_patch(&mesh_adaptor,
-                                          seam.begin(),
-                                          seam.end());
+    Mesh_patch_polyhedron   mesh_patch(&mesh_adaptor,
+                                       seam.begin(),
+                                       seam.end());
 
     //***************************************
     // switch parameterization
     //***************************************
 
-    CGAL::Parametizer_3<Mesh_patch_polyhedron_ex>::ErrorCode err;
+    Parametizer::ErrorCode err;
     if (strcmp(solver,"opennl") == 0)
     {
-        err = parameterize<Mesh_patch_polyhedron_ex,
+        err = parameterize<Mesh_patch_polyhedron,
                            OpenNL::DefaultLinearSolverTraits<double> >(&mesh_patch, type, boundary);
-        if (err != CGAL::Parametizer_3<Mesh_patch_polyhedron_ex>::OK)
+        if (err != Parametizer::OK)
             fprintf(stderr, "\nFATAL ERROR: parameterization error # %d\n", (int)err);
     }
     else if (strcmp(solver,"taucs") == 0)
     {
-        err = parameterize<Mesh_patch_polyhedron_ex,
+        err = parameterize<Mesh_patch_polyhedron,
                            CGAL::Taucs_solver_traits<double> >(&mesh_patch, type, boundary);
-        if (err != CGAL::Parametizer_3<Mesh_patch_polyhedron_ex>::OK)
+        if (err != Parametizer::OK)
             fprintf(stderr, "\nFATAL ERROR: parameterization error # %d\n", (int)err);
     }
     else
     {
         fprintf(stderr, "\nFATAL ERROR: invalid solver parameter %s\n", solver);
-        err = CGAL::Parametizer_3<Mesh_patch_polyhedron_ex>::ERROR_WRONG_PARAMETER;
+        err = Parametizer::ERROR_WRONG_PARAMETER;
     }
 
     //***************************************
     // output
     //***************************************
 
-    // On parameterization success
-    if (err == CGAL::Parametizer_3<Mesh_patch_polyhedron_ex>::OK)
+    // Save mesh
+    if (err == Parametizer::OK)
     {
-        if(strcmp(output,"eps") == 0)
+        if(strcmp(output,"") == 0)
         {
-            mesh.dump_eps(output_filename);           // write EPS file
+            // no output file
+        }
+        else if(strcmp(output,"eps") == 0)
+        {
+            mesh.dump_eps(output_filename);         // write EPS file
         }
         else if(strcmp(output,"obj") == 0)
         {
-            mesh.write_file_obj(output_filename);       // write Wavefront obj file
+            mesh.write_file_obj(output_filename);   // write Wavefront obj file
         }
         else
         {
             fprintf(stderr, "\nFATAL ERROR: cannot write to file %s\n", output);
-            err = CGAL::Parametizer_3<Mesh_patch_polyhedron_ex>::ERROR_WRONG_PARAMETER;
+            err = Parametizer::ERROR_WRONG_PARAMETER;
         }
     }
 
-    //***************************************
-    // cleanup
-    //***************************************
-
-    // Flush cout and cerr
-    cout << std::endl;
     cerr << std::endl;
 
-    return (err == CGAL::Parametizer_3<Mesh_patch_polyhedron_ex>::OK) ?
-           EXIT_SUCCESS :
-           EXIT_FAILURE;
+    return (err == Parametizer::OK) ? EXIT_SUCCESS : EXIT_FAILURE;
 }
 
 

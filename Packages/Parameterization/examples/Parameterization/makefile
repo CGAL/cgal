@@ -56,7 +56,6 @@ clean:	  polyhedron_ex_parameterization.clean
 
 polyhedron_ex_parameterization_objs = 	\
           Mesh_cutter$(OBJ_EXT) \
-          Mesh_feature_extractor$(OBJ_EXT) \
           options$(OBJ_EXT) \
           polyhedron_ex_parameterization$(OBJ_EXT)
 

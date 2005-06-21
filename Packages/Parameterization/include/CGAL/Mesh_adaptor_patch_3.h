@@ -116,14 +116,16 @@ public:
     // Clockwise circulator over the vertices incident to a vertex
     typedef Mesh_patch_vertex_around_vertex_cir<Mesh_adaptor_patch_3*,
                                                 Vertex_handle,
-                                                typename Adaptor::Vertex_around_vertex_circulator>
+                                                typename Adaptor::Vertex_around_vertex_circulator,
+                                                typename Adaptor::Vertex_handle>
                                             Vertex_around_vertex_circulator;
     typedef Mesh_patch_vertex_around_vertex_cir<const Mesh_adaptor_patch_3*,
                                                 Vertex_const_handle,
-                                                typename Adaptor::Vertex_around_vertex_const_circulator>
+                                                typename Adaptor::Vertex_around_vertex_const_circulator,
+                                                typename Adaptor::Vertex_const_handle>
                                             Vertex_around_vertex_const_circulator;
     // Seaming flag
-    enum Seaming_status  { OUTER = Adaptor::OUTER, INNER = Adaptor::INNER, BORDER = Adaptor::BORDER };
+    enum Seaming_status  { OUTER, INNER, BORDER };
 
     friend class Vertex;
     friend class Vertex_handle;
@@ -178,7 +180,7 @@ public:
              it != mesh->mesh_vertices_end();
              it++)
         {
-            if (m_mesh_adaptor->get_vertex_seaming(it) == Adaptor::INNER)
+            if (m_mesh_adaptor->get_vertex_seaming(it) == INNER)
                 m_inner_and_border_vertices.push_back( Vertex(it) );
         }
         // 2) add seam vertices, wrt outer seam/boundary order
@@ -190,7 +192,7 @@ public:
             // Get outer border vertex
             Vertex v;
             // if border vertex
-            if (m_mesh_adaptor->get_edge_seaming(*border_it, *prev_border_it) != Adaptor::BORDER)
+            if (m_mesh_adaptor->get_halfedge_seaming(*border_it, *prev_border_it) != BORDER)
                 v = Vertex(*border_it, *prev_border_it, *next_border_it);
             else // if seam vertex
                 v = Vertex(*border_it, *next_border_it, *prev_border_it);   // order inverted!
@@ -238,10 +240,14 @@ public:
 #endif
     }
 
+    // Get the decorated mesh
+    // Using this method is NOT recommended
+    Adaptor*       get_decorated_mesh()       { return m_mesh_adaptor; }
+    const Adaptor* get_decorated_mesh() const { return m_mesh_adaptor; }
+
     //******************************************************************
     // LEVEL 1 INTERFACE:
-    // for classes attempting to parameterize complete topological disks
-    // and compute 1 (u,v) pair per vertex
+    // for "normal" classes that do not deal with virtual seams
     // Example: all parameterization methods
     //******************************************************************
 
@@ -272,7 +278,7 @@ public:
     }
 
     // Index vertices of the mesh from 0 to count_mesh_vertices()-1
-    void  index_mesh_vertices()
+    void  index_mesh_vertices ()
     {
         fprintf(stderr,"  index Mesh_adaptor_patch_3 vertices:\n");
         int index = 0;
@@ -281,37 +287,13 @@ public:
 #ifdef DEBUG_TRACE
             fprintf(stderr, "    #%d = {%s,%s,%s}\n",
                             index,
-                            get_vertex_index_as_string(it->get_adaptor_vertex()).c_str(),
-                            get_vertex_index_as_string(it->get_prev_seam_vertex()).c_str(),
-                            get_vertex_index_as_string(it->get_next_seam_vertex()).c_str());
+                            get_vertex_index_as_string(it->vertex()).c_str(),
+                            get_vertex_index_as_string(it->last_cw_neighbor()).c_str(),
+                            get_vertex_index_as_string(it->first_cw_neighbor()).c_str());
 #endif
             set_vertex_index(it, index++);
         }
         fprintf(stderr,"    ok\n");
-    }
-
-    // Return true of all mesh's facets are triangles
-    bool  is_mesh_triangular() const {
-        for (Facet_const_iterator it = mesh_facets_begin(); it != mesh_facets_end(); it++)
-            if (count_facet_vertices(it) != 3)
-                return false;
-        return true;            // mesh is triangular if we reach this point
-    }
-
-    // Compute the genus of the mesh
-    int  get_mesh_genus() const
-    {
-        // We assume that cutting created a topological disk
-        // TODO: compute genus
-        return 0;
-    }
-
-    // Count the number of boundaries of the mesh
-    int  count_mesh_boundaries() const
-    {
-        // We have at least 1 boundary (the "main one")
-        // TODO: compute the number of boundaries
-        return 1;
     }
 
     // Get iterator over first vertex of mesh's main border (aka "seam")
@@ -329,6 +311,58 @@ public:
     Border_vertex_const_iterator  mesh_main_border_vertices_end() const {
         return mesh_vertices_end();
     }
+
+    // Return the boundary containing seed_vertex
+    // Return an empty list if not found
+    std::list<Vertex_handle> get_boundary(Vertex_handle seed_vertex)
+    {
+        std::list<Vertex_handle> boundary;  // returned list
+
+        // If seam vertex, return the seam
+        if (is_vertex_on_main_border(seed_vertex))
+        {
+            for (Border_vertex_iterator it = mesh_main_border_vertices_begin();
+                 it != mesh_main_border_vertices_end();
+                 it++)
+            {
+                boundary.push_back(it);
+            }
+        }
+        else // if vertex on the border of a hole
+        {
+            // Get list of vertices on this border
+            std::list<typename Adaptor::Vertex_handle> adaptor_boundary =
+                m_mesh_adaptor->get_boundary(seed_vertex->vertex());
+
+            // Copy them into 'boundary'
+            for (std::list<typename Adaptor::Vertex_handle>::iterator it = adaptor_boundary.begin();
+                 it != adaptor_boundary.end();
+                 it++)
+            {
+                // Check that vertex is inner
+                assert(m_mesh_adaptor->get_vertex_seaming(*it) == INNER);
+                boundary.push_back( Vertex_handle(*it) );
+            }
+        }
+
+        return boundary;
+    }
+
+    //// Compute the genus of the mesh
+    //int  get_mesh_genus() const
+    //{
+    //    // We assume that cutting created a topological disk
+    //    // TODO: compute genus
+    //    return 0;
+    //}
+
+    //// Count the number of boundaries of the mesh
+    //int  count_mesh_boundaries() const
+    //{
+    //    // We have at least 1 boundary (the "main one")
+    //    // TODO: compute the number of boundaries
+    //    return 1;
+    //}
 
     // Get iterator over first facet of mesh
     Facet_iterator  mesh_facets_begin() {
@@ -360,6 +394,28 @@ public:
         return index;
     }
 
+    // Return true of all mesh's facets are triangles
+    bool  is_mesh_triangular() const {
+        for (Facet_const_iterator it = mesh_facets_begin(); it != mesh_facets_end(); it++)
+            if (count_facet_vertices(it) != 3)
+                return false;
+        return true;            // mesh is triangular if we reach this point
+    }
+
+    // Count the number of halfedges of the mesh
+    int  count_mesh_halfedges() const {
+        int index = 0;
+        for (Vertex_const_iterator it=mesh_vertices_begin(); it!=mesh_vertices_end(); it++)
+        {
+            // Count each neighbor vertex
+            Vertex_around_vertex_const_circulator cir = vertices_around_vertex_begin(it);
+            Vertex_around_vertex_const_circulator cir_end = cir;
+            CGAL_For_all(cir, cir_end)
+                index++;
+        }
+        return index;
+    }
+
     // FACET INTERFACE
 
     // Get circulator over facet's vertices
@@ -388,66 +444,82 @@ public:
     // Get the 3D position of a vertex
     Point_3 get_vertex_position(Vertex_const_handle vertex) const {
         CGAL_parameterization_assertion(is_valid(vertex));
-        return m_mesh_adaptor->get_vertex_position(vertex->get_adaptor_vertex());
+        return m_mesh_adaptor->get_vertex_position(vertex->vertex());
     }
 
-    // Get/set the 2D position (u/v pair) of a vertex
+    // Get/set the 2D position (u/v pair) of a vertex. Default value is undefined.
     Point_2  get_vertex_uv(Vertex_const_handle vertex) const {
         CGAL_parameterization_assertion(is_valid(vertex));
-        return m_mesh_adaptor->get_corners_uv(vertex->get_adaptor_vertex(),
-                                              vertex->get_prev_seam_vertex(),
-                                              vertex->get_next_seam_vertex());
+        return m_mesh_adaptor->get_corners_uv(vertex->vertex(),
+                                              vertex->last_cw_neighbor(),
+                                              vertex->first_cw_neighbor());
     }
     void  set_vertex_uv(Vertex_handle vertex, const Point_2& uv)
     {
 #ifdef DEBUG_TRACE
-        std::cerr << "    #" << get_vertex_index(vertex) << "(" << vertex->get_adaptor_vertex()->index() << ") <- (" << uv.x() << "," << uv.y() << ")\n";
+        std::cerr << "    #" << get_vertex_index(vertex) << "(" << vertex->vertex()->index() << ") <- (" << uv.x() << "," << uv.y() << ")\n";
 #endif
         CGAL_parameterization_assertion(is_valid(vertex));
-        return m_mesh_adaptor->set_corners_uv(vertex->get_adaptor_vertex(),
-                                              vertex->get_prev_seam_vertex(),
-                                              vertex->get_next_seam_vertex(),
+        return m_mesh_adaptor->set_corners_uv(vertex->vertex(),
+                                              vertex->last_cw_neighbor(),
+                                              vertex->first_cw_neighbor(),
                                               uv);
     }
 
-    // Get/set "is parameterized" field of vertex
+    // Get/set "is parameterized" field of vertex. Default value is undefined.
     bool  is_vertex_parameterized(Vertex_const_handle vertex) const {
         CGAL_parameterization_assertion(is_valid(vertex));
-        return m_mesh_adaptor->are_corners_parameterized(vertex->get_adaptor_vertex(),
-                                                         vertex->get_prev_seam_vertex(),
-                                                         vertex->get_next_seam_vertex());
+        return m_mesh_adaptor->are_corners_parameterized(vertex->vertex(),
+                                                         vertex->last_cw_neighbor(),
+                                                         vertex->first_cw_neighbor());
     }
     void  set_vertex_parameterized(Vertex_handle vertex, bool parameterized)
     {
         CGAL_parameterization_assertion(is_valid(vertex));
-        return m_mesh_adaptor->set_corners_parameterized(vertex->get_adaptor_vertex(),
-                                                         vertex->get_prev_seam_vertex(),
-                                                         vertex->get_next_seam_vertex(),
+        return m_mesh_adaptor->set_corners_parameterized(vertex->vertex(),
+                                                         vertex->last_cw_neighbor(),
+                                                         vertex->first_cw_neighbor(),
                                                          parameterized);
     }
 
-    // Get/set vertex index
+    // Get/set vertex index. Default value is undefined.
     int  get_vertex_index(Vertex_const_handle vertex) const {
         CGAL_parameterization_assertion(is_valid(vertex));
-        return m_mesh_adaptor->get_corners_index(vertex->get_adaptor_vertex(),
-                                                 vertex->get_prev_seam_vertex(),
-                                                 vertex->get_next_seam_vertex());
+        return m_mesh_adaptor->get_corners_index(vertex->vertex(),
+                                                 vertex->last_cw_neighbor(),
+                                                 vertex->first_cw_neighbor());
     }
     void  set_vertex_index(Vertex_handle vertex, int index)  {
         CGAL_parameterization_assertion(is_valid(vertex));
-        return m_mesh_adaptor->set_corners_index(vertex->get_adaptor_vertex(),
-                                                 vertex->get_prev_seam_vertex(),
-                                                 vertex->get_next_seam_vertex(),
+        return m_mesh_adaptor->set_corners_index(vertex->vertex(),
+                                                 vertex->last_cw_neighbor(),
+                                                 vertex->first_cw_neighbor(),
                                                  index);
     }
 
-    //// Return true if a vertex belongs to ANY mesh's boundary
-    //bool  is_vertex_on_border(Vertex_const_handle vertex) const {
-    //    CGAL_parameterization_assertion(is_valid(vertex));
-    //    return m_mesh_adaptor->is_vertex_on_border(vertex->get_adaptor_vertex());
-    //}
+    // Get/set vertex' all purpose tag. Default value is undefined.
+    int  get_vertex_tag(Vertex_const_handle vertex) const {
+        CGAL_parameterization_assertion(is_valid(vertex));
+        return m_mesh_adaptor->get_corners_tag(vertex->vertex(),
+                                               vertex->last_cw_neighbor(),
+                                               vertex->first_cw_neighbor());
+    }
+    void set_vertex_tag(Vertex_handle vertex, int tag) {
+        return m_mesh_adaptor->set_corners_tag(vertex->vertex(),
+                                               vertex->last_cw_neighbor(),
+                                               vertex->first_cw_neighbor(),
+                                               tag);
+    }
+
+    // Return true if a vertex belongs to ANY mesh's boundary
+    bool  is_vertex_on_border(Vertex_const_handle vertex) const {
+        CGAL_parameterization_assertion(is_valid(vertex));
+        return is_vertex_on_main_border(vertex) ||
+               m_mesh_adaptor->is_vertex_on_border(vertex->vertex());
+    }
 
     // Return true if a vertex belongs to the UNIQUE mesh's main border
+    // set by the constructor
     bool  is_vertex_on_main_border(Vertex_const_handle vertex) const {
         CGAL_parameterization_assertion(is_valid(vertex));
         return get_vertex_seaming(vertex) == BORDER;
@@ -460,63 +532,63 @@ public:
                             Vertex_handle start_position = NULL)
     {
         CGAL_parameterization_assertion(is_valid(vertex));
+        CGAL_parameterization_assertion(start_position == NULL || 
+                                        is_valid(start_position));
 
-        // Construct an adaptor circulator over the vertices
-        // incident to vertex->get_adaptor_vertex()
-        typename Adaptor::Vertex_around_vertex_circulator adaptor_circulator;
-        if (start_position != NULL)
+        // If no start position provided, pick one
+        if (start_position == NULL)
         {
-            CGAL_parameterization_assertion(is_valid(start_position));
-            adaptor_circulator = m_mesh_adaptor->vertices_around_vertex_begin(
-                                            vertex->get_adaptor_vertex(),
-                                            start_position->get_adaptor_vertex());
-        }
-        else
-        {
-            // If 'vertex' is a seam vertex, then vertex->get_prev_seam_vertex()
-            // is a valid neighbor; else it is NULL, which is
-            // a valid parameter for Adaptor::vertices_around_vertex_begin()
-            adaptor_circulator = m_mesh_adaptor->vertices_around_vertex_begin(
-                                            vertex->get_adaptor_vertex(),
-                                            vertex->get_prev_seam_vertex());
+            // If 'vertex' is an inner vertex, pick any neighbor
+            if (vertex->last_cw_neighbor() == NULL) 
+            {
+                typename Adaptor::Vertex_around_vertex_circulator adaptor_circulator
+                    = m_mesh_adaptor->vertices_around_vertex_begin(vertex->vertex());
+                start_position = get_decorated_inner_vertex(adaptor_circulator, 
+                                                            vertex->vertex());
+            } 
+            else // If 'vertex' is a seam vertex, pick its last clockwise neighbor
+            { 
+                start_position = get_decorated_border_vertex(vertex->last_cw_neighbor(), 
+                                                             NULL,
+                                                             vertex->vertex());
+            }
         }
 
-        return Vertex_around_vertex_circulator(this, vertex, adaptor_circulator);
+        return Vertex_around_vertex_circulator(this, vertex, start_position);
     }
     Vertex_around_vertex_const_circulator vertices_around_vertex_begin(
                                     Vertex_const_handle vertex,
                                     Vertex_const_handle start_position = NULL) const
     {
         CGAL_parameterization_assertion(is_valid(vertex));
+        CGAL_parameterization_assertion(start_position == NULL || 
+                                        is_valid(start_position));
 
-        // Construct an adaptor circulator over the vertices
-        // incident to vertex->get_adaptor_vertex()
-        typename Adaptor::Vertex_around_vertex_const_circulator adaptor_circulator;
-        if (start_position != NULL)
+        // If no start position provided, pick one
+        if (start_position == NULL)
         {
-            CGAL_parameterization_assertion(is_valid(start_position));
-            adaptor_circulator = m_mesh_adaptor->vertices_around_vertex_begin(
-                                            vertex->get_adaptor_vertex(),
-                                            start_position->get_adaptor_vertex());
-        }
-        else
-        {
-            // If 'vertex' is a seam vertex, then vertex->get_prev_seam_vertex()
-            // is a valid neighbor; else it is NULL, which is
-            // a valid parameter for Adaptor::vertices_around_vertex_begin()
-            adaptor_circulator = m_mesh_adaptor->vertices_around_vertex_begin(
-                                            vertex->get_adaptor_vertex(),
-                                            vertex->get_prev_seam_vertex());
+            // If 'vertex' is an inner vertex, pick any neighbor
+            if (vertex->last_cw_neighbor() == NULL) 
+            {
+                typename Adaptor::Vertex_around_vertex_const_circulator adaptor_circulator
+                    = m_mesh_adaptor->vertices_around_vertex_begin(vertex->vertex());
+                start_position = get_decorated_inner_vertex(adaptor_circulator, 
+                                                            vertex->vertex());
+            } 
+            else // If 'vertex' is a seam vertex, pick its last clockwise neighbor
+            { 
+                start_position = get_decorated_border_vertex(vertex->last_cw_neighbor(), 
+                                                             NULL,
+                                                             vertex->vertex());
+            }
         }
 
-        return Vertex_around_vertex_const_circulator(this, vertex, adaptor_circulator);
+        return Vertex_around_vertex_const_circulator(this, vertex, start_position);
     }
 
     //******************************************************************
     // LEVEL 2 INTERFACE:
-    // for classes attempting to parameterize (part of) 3D surfaces
-    // of any genus and with any number of connected components.
-    // They compute 1 (u,v) pair per corner.
+    // for classes that deal with virtual seams
     // Example: Mesh_adaptor_patch_3
     //******************************************************************
 
@@ -544,10 +616,25 @@ private:
         fprintf(stderr, "  tag topological disc...");
 
         // Initialize the seaming flag of all vertices to OUTER
-        m_mesh_adaptor->set_vertices_seaming(Adaptor::OUTER);
+        for (Adaptor::Vertex_iterator it = m_mesh_adaptor->mesh_vertices_begin();
+             it != m_mesh_adaptor->mesh_vertices_end();
+             it++)
+        {
+             m_mesh_adaptor->set_vertex_seaming(it, OUTER);
+        }
 
-        // Initialize the seaming flag of all edges to OUTER
-        m_mesh_adaptor->set_edges_seaming(Adaptor::OUTER);
+        // Initialize the seaming flag of all halfedges to OUTER
+        for (Adaptor::Vertex_iterator it = m_mesh_adaptor->mesh_vertices_begin();
+             it != m_mesh_adaptor->mesh_vertices_end();
+             it++)
+        {
+            // For each neighbor vertex
+            Adaptor::Vertex_around_vertex_circulator cir, cir_end;
+            cir     = m_mesh_adaptor->vertices_around_vertex_begin(it);
+            cir_end = cir;
+            CGAL_For_all(cir, cir_end)
+                m_mesh_adaptor->set_halfedge_seaming(it, cir, OUTER);
+        }
 
         // Set seaming flag of seam vertices to BORDER.
         // Set seaming flag of outer seam edges to BORDER
@@ -558,7 +645,7 @@ private:
         {
             // Set vertex seaming flag
             m_mesh_adaptor->set_vertex_seaming(*border_it,
-                                               Adaptor::BORDER);
+                                               BORDER);
 
             // Get next iterator (looping)
             InputIterator next_border_it = border_it;
@@ -567,14 +654,14 @@ private:
                 next_border_it = first_seam_vertex;
 
             // Set outer seam edge to BORDER
-            m_mesh_adaptor->set_edge_seaming(*border_it, *next_border_it,
-                                             Adaptor::BORDER);
+            m_mesh_adaptor->set_halfedge_seaming(*border_it, *next_border_it,
+                                             BORDER);
 
             // Set inner seam edge to INNER (except if also BORDER)
-            if (m_mesh_adaptor->get_edge_seaming(*next_border_it,
-                                                 *border_it) != Adaptor::BORDER) {
-                m_mesh_adaptor->set_edge_seaming(*next_border_it, *border_it,
-                                                Adaptor::INNER);
+            if (m_mesh_adaptor->get_halfedge_seaming(*next_border_it,
+                                                 *border_it) != BORDER) {
+                m_mesh_adaptor->set_halfedge_seaming(*next_border_it, *border_it,
+                                                INNER);
             }
         }
 
@@ -597,7 +684,7 @@ private:
             cir--;
 
             // Fill topological disk
-            if (m_mesh_adaptor->get_vertex_seaming(cir) != Adaptor::BORDER)
+            if (m_mesh_adaptor->get_vertex_seaming(cir) != BORDER)
                 set_inner_region_seaming(cir);
         }
 
@@ -635,8 +722,8 @@ private:
             CGAL_parameterization_assertion(pVertex != NULL);
 
             // Flag this vertex as INNER
-            if (m_mesh_adaptor->get_vertex_seaming(pVertex) == Adaptor::OUTER)
-                m_mesh_adaptor->set_vertex_seaming(pVertex, Adaptor::INNER);
+            if (m_mesh_adaptor->get_vertex_seaming(pVertex) == OUTER)
+                m_mesh_adaptor->set_vertex_seaming(pVertex, INNER);
             else
                 continue;           // Skip this vertex if it is already done
 
@@ -647,11 +734,11 @@ private:
             CGAL_For_all(cir, cir_end)
             {
                 // Flag both oriented edges pVertex <-> cir
-                m_mesh_adaptor->set_edge_seaming(pVertex, cir, Adaptor::INNER);
-                m_mesh_adaptor->set_edge_seaming(cir, pVertex, Adaptor::INNER);
+                m_mesh_adaptor->set_halfedge_seaming(pVertex, cir, INNER);
+                m_mesh_adaptor->set_halfedge_seaming(cir, pVertex, INNER);
 
                 // Add surrounding vertices to list without crossing the border
-                if (m_mesh_adaptor->get_vertex_seaming(cir) == Adaptor::OUTER)
+                if (m_mesh_adaptor->get_vertex_seaming(cir) == OUTER)
                     vertices.push_front(cir);
             }
         }
@@ -666,7 +753,7 @@ private:
         typename Adaptor::Vertex_around_facet_const_circulator
                             cir = m_mesh_adaptor->facet_vertices_begin(facet);
         CGAL_parameterization_assertion(cir != NULL);
-        return (m_mesh_adaptor->get_vertex_seaming(cir) == Adaptor::OUTER) ?
+        return (m_mesh_adaptor->get_vertex_seaming(cir) == OUTER) ?
                OUTER :
                INNER;
     }
@@ -674,15 +761,12 @@ private:
     // Get/set vertex seaming flag,
     // ie position of the vertex wrt to the UNIQUE main boundary
     Seaming_status  get_vertex_seaming(Vertex_const_handle vertex) const {
-        // don't call is_valid() to avoid an infinite loop
-        CGAL_parameterization_assertion(vertex != NULL);
-
+        CGAL_parameterization_assertion(is_valid(vertex));
         return (Seaming_status) m_mesh_adaptor->get_vertex_seaming(
-                                                    vertex->get_adaptor_vertex());
+                                                    vertex->vertex());
     }
     void set_vertex_seaming(Vertex_handle vertex, Seaming_status seaming) {
-        m_mesh_adaptor->set_vertex_seaming(vertex->get_adaptor_vertex(),
-                                           (typename Adaptor::Seaming_status)seaming);
+        m_mesh_adaptor->set_vertex_seaming(vertex->vertex(), seaming);
     }
 
     // Create a patch vertex from an adaptor vertex + one of its neighbors
@@ -690,67 +774,127 @@ private:
     // Preconditions:
     // * adaptor_neighbor is a neighbor of adaptor_vertex
     // * (adaptor_vertex, adaptor_neighbor) must NOT be a seam (non-oriented) edge
-    Vertex_const_handle get_decorated_vertex(
-                    typename Adaptor::Vertex_const_handle adaptor_vertex,
-                    typename Adaptor::Vertex_const_handle adaptor_neighbor) const
+    Vertex_const_handle get_decorated_inner_vertex(
+                typename Adaptor::Vertex_const_handle adaptor_vertex,
+                typename Adaptor::Vertex_const_handle adaptor_neighbor) const
     {
-        Vertex vertex;                      // returned variable
-
         // We need at least an inner neighbor as input
-        assert(m_mesh_adaptor->get_edge_seaming(adaptor_vertex,
-                                                adaptor_neighbor) != Adaptor::BORDER
-            || m_mesh_adaptor->get_edge_seaming(adaptor_neighbor,
-                                                adaptor_vertex) != Adaptor::BORDER);
+        assert(m_mesh_adaptor->get_halfedge_seaming(adaptor_vertex,
+                                                    adaptor_neighbor) != BORDER
+            || m_mesh_adaptor->get_halfedge_seaming(adaptor_neighbor,
+                                                    adaptor_vertex) != BORDER);
 
         // if inner vertex
-        if ( ! m_mesh_adaptor->is_vertex_on_main_border(adaptor_vertex) )
+        if (m_mesh_adaptor->get_vertex_seaming(adaptor_vertex) != BORDER)
         {
             // No extra information needed if inner vertex
-            vertex = Vertex((typename Adaptor::Vertex*)&*adaptor_vertex);
+            return Vertex_const_handle(adaptor_vertex);
         }
         else // if seam vertex
         {
-            // find previous vertex on seam by a clockwise rotation
-            typename Adaptor::Vertex_around_vertex_const_circulator prev_seam_vertex_cir
+            // find last neighbor (on seam) for a clockwise rotation
+            typename Adaptor::Vertex_around_vertex_const_circulator last_cw_neighbor_cir
                 = m_mesh_adaptor->vertices_around_vertex_begin(adaptor_vertex,
                                                                adaptor_neighbor);
-            while (m_mesh_adaptor->get_edge_seaming(prev_seam_vertex_cir,
-                                                    adaptor_vertex) != Adaptor::BORDER)
+            while (m_mesh_adaptor->get_halfedge_seaming(last_cw_neighbor_cir,
+                                                        adaptor_vertex) != BORDER)
             {
-                prev_seam_vertex_cir++;
+                last_cw_neighbor_cir++;
             }
 
-            // find next vertex on seam by a counter-clockwise rotation
-            typename Adaptor::Vertex_around_vertex_const_circulator next_seam_vertex_cir
+            // find first clockwise neighbor (on seam) by a counter-clockwise rotation
+            typename Adaptor::Vertex_around_vertex_const_circulator first_cw_neighbor_cir
                 = m_mesh_adaptor->vertices_around_vertex_begin(adaptor_vertex,
                                                                adaptor_neighbor);
-            while (m_mesh_adaptor->get_edge_seaming(adaptor_vertex,
-                                                    next_seam_vertex_cir) != Adaptor::BORDER)
+            while (m_mesh_adaptor->get_halfedge_seaming(adaptor_vertex,
+                                                        first_cw_neighbor_cir) != BORDER)
             {
-                next_seam_vertex_cir--;
+                first_cw_neighbor_cir--;
             }
 
             // The decorated vertex is then:
-            vertex = Vertex((typename Adaptor::Vertex*)&*adaptor_vertex,
-                            (typename Adaptor::Vertex*)&*prev_seam_vertex_cir,
-                            (typename Adaptor::Vertex*)&*next_seam_vertex_cir);
+            return Vertex_const_handle(adaptor_vertex, 
+                                       last_cw_neighbor_cir, 
+                                       first_cw_neighbor_cir);
         }
-
-        // Implementation note:
-        // The next line seems to return a reference to a local Vertex variable.
-        // In fact, Vertex_[const_]handle constructor copies the Vertex object.
-        // The purpose is to save the time of searching the Vertex in
-        // m_inner_and_border_vertices list.
-        return &vertex;
     }
-    Vertex_handle get_decorated_vertex(
-                        typename Adaptor::Vertex_handle adaptor_vertex,
-                        typename Adaptor::Vertex_const_handle adaptor_neighbor)
+    Vertex_handle get_decorated_inner_vertex(
+                typename Adaptor::Vertex_handle adaptor_vertex,
+                typename Adaptor::Vertex_handle adaptor_neighbor)
     {
-        Vertex_const_handle vertex_hdl = get_decorated_vertex(
-                        (typename Adaptor::Vertex_const_handle) &*adaptor_vertex,
-                        adaptor_neighbor);
-        return (Vertex*) &*vertex_ref;
+        // Call the const version of get_decorated_inner_vertex()
+        Vertex_const_handle vertex_hdl = get_decorated_inner_vertex(
+                        (typename Adaptor::Vertex_const_handle)adaptor_vertex,
+                        (typename Adaptor::Vertex_const_handle)adaptor_neighbor);
+        return const_cast<Vertex*>(&*vertex_hdl);
+    }
+
+    // Create a patch vertex from a border/seam adaptor vertex
+    // + one of its neighbors on the seam
+    //
+    // Preconditions:
+    // * adaptor_vertex is a border/seam vertex
+    // * [first_cw_neighbor, last_cw_neighbor] defines the range 
+    //   of the valid neighbors of adaptor_vertex (included) or are NULL
+    // * either first_cw_neighbor or last_cw_neighbor are not NULL
+    Vertex_const_handle get_decorated_border_vertex(
+                typename Adaptor::Vertex_const_handle adaptor_vertex,
+                typename Adaptor::Vertex_const_handle last_cw_neighbor,
+                typename Adaptor::Vertex_const_handle first_cw_neighbor) const
+    {
+        assert(adaptor_vertex != NULL);
+        assert(last_cw_neighbor != NULL || first_cw_neighbor != NULL);
+
+        assert(last_cw_neighbor == NULL
+            || m_mesh_adaptor->get_halfedge_seaming(adaptor_vertex,
+                                                    last_cw_neighbor) == BORDER
+            || m_mesh_adaptor->get_halfedge_seaming(last_cw_neighbor,
+                                                    adaptor_vertex) == BORDER);
+        assert(first_cw_neighbor == NULL
+            || m_mesh_adaptor->get_halfedge_seaming(adaptor_vertex,
+                                                    first_cw_neighbor) == BORDER
+            || m_mesh_adaptor->get_halfedge_seaming(first_cw_neighbor,
+                                                    adaptor_vertex) == BORDER);
+
+        // If both first_cw_neighbor and last_cw_neighbor are provided
+        if (last_cw_neighbor != NULL && first_cw_neighbor != NULL)
+        {
+            // we're done (quick)
+            return Vertex_const_handle(adaptor_vertex,
+                                       last_cw_neighbor,
+                                       first_cw_neighbor);
+        }
+        else // if either first_cw_neighbor or last_cw_neighbor is missing
+        {
+            // search in border vertices list (slow)
+            for (Border_vertex_const_iterator it = mesh_main_border_vertices_begin();
+                 it != mesh_main_border_vertices_end();
+                 it++)
+            {
+                if (it->vertex() == adaptor_vertex
+                 && (last_cw_neighbor == NULL  || it->last_cw_neighbor() == last_cw_neighbor)
+                 && (first_cw_neighbor == NULL || it->first_cw_neighbor() == first_cw_neighbor))
+                {
+                    return it;
+                }
+            }
+
+            // we should not get here
+            assert(false);
+            return NULL;
+        }
+    }
+    Vertex_handle get_decorated_border_vertex(
+                        typename Adaptor::Vertex_handle adaptor_vertex,
+                        typename Adaptor::Vertex_handle last_cw_neighbor,
+                        typename Adaptor::Vertex_handle first_cw_neighbor)
+    {
+        // Call the const version of get_decorated_border_vertex()
+        Vertex_const_handle vertex_hdl = get_decorated_border_vertex(
+                        (typename Adaptor::Vertex_const_handle)adaptor_vertex,
+                        (typename Adaptor::Vertex_const_handle)last_cw_neighbor,
+                        (typename Adaptor::Vertex_const_handle)first_cw_neighbor);
+        return const_cast<Vertex*>(&*vertex_hdl);
     }
 
     // Debug utility: Check if a Mesh_adaptor_patch_3 facet is valid
@@ -766,12 +910,23 @@ private:
     }
 
     // Debug utility: Check if a Mesh_adaptor_patch_3 vertex is valid
+//#ifdef WIN32
+//    // LS 06/2005: sometimes, VC++ 7.1 code optimizer gets crazy when inlining!
+//    __declspec(noinline) 
+//#endif
     bool is_valid(Vertex_const_handle vertex) const
     {
         if (vertex == NULL)
             return false;
-        // outer halfedges are not exported
-        if (get_vertex_seaming(vertex) == OUTER)
+        // outer vertices are not exported
+        if (m_mesh_adaptor->get_vertex_seaming(vertex->vertex()) == OUTER)
+            return false;
+        // prev/next vertices must be on the main boundary
+        if (vertex->last_cw_neighbor() != NULL && 
+            m_mesh_adaptor->get_vertex_seaming(vertex->last_cw_neighbor()) != BORDER)
+            return false;
+        if (vertex->first_cw_neighbor() != NULL && 
+            m_mesh_adaptor->get_vertex_seaming(vertex->first_cw_neighbor()) != BORDER)
             return false;
         // eventually: ok
         return true;

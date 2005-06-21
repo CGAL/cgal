@@ -18,25 +18,26 @@
 #define MESH_CUTTER_H
 
 #include "Polyhedron_ex.h"
-#include "Feature_skeleton.h"
+
 #include <list>
 
 
 class Mesh_cutter
 {
-    // Private types
+// Public types
+public:
+
+    typedef std::list<Polyhedron_ex::Halfedge_handle> 
+                                            Backbone;
+
+// Private types
+private:
+
     typedef My_kernel::Vector_3 Vector_3;
     typedef My_kernel::Point_3  Point_3;
-    typedef Feature_backbone<Polyhedron_ex::Vertex_handle,
-                             Polyhedron_ex::Halfedge_handle> backbone;
     enum {FREE,DONE,FIXED};
 
-    // Fields
-    Polyhedron_ex *m_pPolyhedron;  // the model to cut
-    backbone *m_pBackbone;
-    Polyhedron_ex::Facet_handle m_pSeedFacet;
-    Polyhedron_ex::Vertex_handle m_pSeedVertex;
-
+// Public operations
 public:
 
     // life cycle
@@ -48,9 +49,10 @@ public:
     }
     ~Mesh_cutter() {}
 
-    void cut(backbone *pBackbone);
-    void cut_genus(backbone *pBackbone);
+    void cut(Backbone *pBackbone);
+    void cut_genus(Backbone *pBackbone);
 
+// Private operations
 private:
 
     // genus > 0
@@ -61,6 +63,14 @@ private:
     Polyhedron_ex::Halfedge_handle pick_best_halfedge(
                     std::list<Polyhedron_ex::Halfedge_handle>::iterator &pos);
     void recursive_tag(Polyhedron_ex::Facet_handle pFacet,int index);
+
+// Fields
+private:
+
+    Polyhedron_ex *m_pPolyhedron;   // the model to cut
+    Backbone *m_pBackbone;          // the backbone to fill
+    Polyhedron_ex::Facet_handle m_pSeedFacet;
+    Polyhedron_ex::Vertex_handle m_pSeedVertex;
 };
 
 

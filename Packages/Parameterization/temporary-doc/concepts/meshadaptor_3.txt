@@ -101,10 +101,10 @@ public:
     bool  is_mesh_triangular () const;
 
     // Compute the genus of the mesh
-    int  get_mesh_genus () const;
-
+    //int  get_mesh_genus () const;
+    //
     // Count the number of boundaries of the mesh
-    int  count_mesh_boundaries () const;
+    //int  count_mesh_boundaries () const;
 
     // Get iterator over first vertex of mesh's main border
     Border_vertex_iterator  mesh_main_border_vertices_begin ();
@@ -151,8 +151,8 @@ public:
     int  get_vertex_index (Vertex_const_handle vertex) const;
     void  set_vertex_index (Vertex_handle vertex, int index);
 
-    //// Return true if a vertex belongs to ANY mesh's boundary
-    //bool  is_vertex_on_border(Vertex_const_handle vertex) const;
+    // Return true if a vertex belongs to ANY mesh's boundary
+    bool  is_vertex_on_border(Vertex_const_handle vertex) const;
     
     // Return true if a vertex belongs to the UNIQUE mesh's main boundary
     bool  is_vertex_on_main_border(Vertex_const_handle vertex) const;

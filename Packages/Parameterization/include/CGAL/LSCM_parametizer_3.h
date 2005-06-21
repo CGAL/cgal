@@ -130,7 +130,7 @@ private:
     // Check parameterize() preconditions:
     // * 'mesh' must be a surface with 1 connected component and no hole
     // * 'mesh' must be a triangular mesh
-    virtual ErrorCode  check_parameterize_preconditions(const Adaptor& mesh);
+    virtual ErrorCode  check_parameterize_preconditions(Adaptor* mesh);
 
     // Initialize "A*X = B" linear system after
     // (at least 2) border vertices are parameterized
@@ -210,7 +210,7 @@ parameterize(Adaptor* mesh)
     CGAL_parameterization_assertion(mesh != NULL);
 
     // Check preconditions
-    ErrorCode status = check_parameterize_preconditions(*mesh);
+    ErrorCode status = check_parameterize_preconditions(mesh);
     if (status != OK)
         return status;
 
@@ -288,12 +288,16 @@ template<class Adaptor, class Border_param, class Sparse_LA>
 inline
 typename Parametizer_3<Adaptor>::ErrorCode
 LSCM_parametizer_3<Adaptor, Border_param, Sparse_LA>::
-check_parameterize_preconditions(const Adaptor& mesh)
+check_parameterize_preconditions(Adaptor* mesh)
 {
     ErrorCode status = OK;                  // returned value
 
+    typedef Mesh_adaptor_feature_extractor<Adaptor> 
+                                            Mesh_feature_extractor;
+    Mesh_feature_extractor feature_extractor(mesh);
+
     // Allways check that mesh is not empty
-    if (mesh.mesh_vertices_begin() == mesh.mesh_vertices_end())
+    if (mesh->mesh_vertices_begin() == mesh->mesh_vertices_end())
         status = ERROR_EMPTY_MESH;
     if (status != OK) {
         std::cerr << "  error ERROR_EMPTY_MESH!" << std::endl;
@@ -301,8 +305,8 @@ check_parameterize_preconditions(const Adaptor& mesh)
     }
 
     // The whole surface parameterization package is restricted to triangular meshes
-    CGAL_parameterization_expensive_precondition_code(                       \
-        status = mesh.is_mesh_triangular() ? OK : ERROR_NON_TRIANGULAR_MESH; \
+    CGAL_parameterization_expensive_precondition_code(                        \
+        status = mesh->is_mesh_triangular() ? OK : ERROR_NON_TRIANGULAR_MESH; \
     );
     if (status != OK) {
         std::cerr << "  error ERROR_NON_TRIANGULAR_MESH!" << std::endl;
@@ -310,15 +314,17 @@ check_parameterize_preconditions(const Adaptor& mesh)
     }
 
     // The whole package is restricted to surfaces
-    CGAL_parameterization_expensive_precondition_code(                      \
-        status = (mesh.get_mesh_genus()==0) ? OK : ERROR_NO_SURFACE_MESH;   \
+    CGAL_parameterization_expensive_precondition_code(          \
+        int genus = feature_extractor.get_genus();              \
+        status = (genus == 0) ? OK : ERROR_NO_SURFACE_MESH;     \
     );
     if (status != OK) {
         std::cerr << "  error ERROR_NO_SURFACE_MESH!" << std::endl;
         return status;
     }
-    CGAL_parameterization_expensive_precondition_code(                             \
-        status = (mesh.count_mesh_boundaries() >= 1) ? OK : ERROR_NO_SURFACE_MESH; \
+    CGAL_parameterization_expensive_precondition_code(              \
+        int nb_boundaries = feature_extractor.get_nb_boundaries();  \
+        status = (nb_boundaries >= 1) ? OK : ERROR_NO_SURFACE_MESH; \
     );
     if (status != OK) {
         std::cerr << "  error ERROR_NO_SURFACE_MESH!" << std::endl;

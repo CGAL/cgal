@@ -15,10 +15,11 @@
 
 #include "Mesh_cutter.h"
 
+
 //***************************************************
 // simple cut
 //***************************************************
-void Mesh_cutter::cut(backbone *pBackbone)
+void Mesh_cutter::cut(Backbone *pBackbone)
 {
     m_pBackbone = pBackbone;
     CGAL_assertion(pBackbone != NULL);
@@ -45,7 +46,7 @@ void Mesh_cutter::cut(backbone *pBackbone)
 //***************************************************
 // cut genus
 //***************************************************
-void Mesh_cutter::cut_genus(backbone *pBackbone)
+void Mesh_cutter::cut_genus(Backbone *pBackbone)
 {
     m_pBackbone = pBackbone;
     CGAL_assertion(pBackbone != NULL);
@@ -89,11 +90,10 @@ bool Mesh_cutter::init()
 
     Polyhedron_ex::Halfedge_handle he = m_pSeedFacet->halfedge();
     CGAL_assertion(he != NULL);
-    std::list<Polyhedron_ex::Halfedge_handle> *pHalfedges = m_pBackbone->halfedges();
-    CGAL_assertion(pHalfedges != NULL);
-    pHalfedges->push_back(he);
-    pHalfedges->push_back(he->next());
-    pHalfedges->push_back(he->next()->next());
+    CGAL_assertion(m_pBackbone != NULL);
+    m_pBackbone->push_back(he);
+    m_pBackbone->push_back(he->next());
+    m_pBackbone->push_back(he->next()->next());
 
     precompute_distances();
     m_pSeedFacet->tag(DONE);
@@ -116,11 +116,11 @@ bool Mesh_cutter::extend()
 
     // insert halfedge
     std::list<Polyhedron_ex::Halfedge_handle>::iterator tmp =
-    m_pBackbone->halfedges()->insert(pos,pHalfedge->opposite()->next()->next());
-    m_pBackbone->halfedges()->insert(tmp,pHalfedge->opposite()->next());
+    m_pBackbone->insert(pos,pHalfedge->opposite()->next()->next());
+    m_pBackbone->insert(tmp,pHalfedge->opposite()->next());
 
     // remove this one
-    m_pBackbone->halfedges()->remove(pHalfedge);
+    m_pBackbone->remove(pHalfedge);
 
     // simplify current backbone
     while(simplify());
@@ -134,8 +134,8 @@ bool Mesh_cutter::simplify()
 {
     // cleanup
     std::list<Polyhedron_ex::Halfedge_handle>::iterator iter;
-    for(iter  = m_pBackbone->halfedges()->begin();
-        iter != m_pBackbone->halfedges()->end();
+    for(iter  = m_pBackbone->begin();
+        iter != m_pBackbone->end();
         iter++)
     {
         Polyhedron_ex::Halfedge_handle pHalfedge = (*iter);
@@ -144,16 +144,16 @@ bool Mesh_cutter::simplify()
         // get next halfedge in the list
         iter++;
         Polyhedron_ex::Halfedge_handle pNext = NULL;
-        if(iter == m_pBackbone->halfedges()->end()) // loop
-            pNext = (*m_pBackbone->halfedges()->begin());
+        if(iter == m_pBackbone->end()) // loop
+            pNext = (*m_pBackbone->begin());
         else
             pNext = (*iter);
 
         if(pNext == opposite &&
             pHalfedge->vertex()->tag() == FREE)
         {
-            m_pBackbone->halfedges()->remove(pHalfedge);
-            m_pBackbone->halfedges()->remove(opposite);
+            m_pBackbone->remove(pHalfedge);
+            m_pBackbone->remove(opposite);
             return true;
         }
 
@@ -185,8 +185,8 @@ Polyhedron_ex::Halfedge_handle Mesh_cutter::pick_best_halfedge(
 
     // cleanup
     std::list<Polyhedron_ex::Halfedge_handle>::iterator iter;
-    for(iter  = m_pBackbone->halfedges()->begin();
-        iter != m_pBackbone->halfedges()->end();
+    for(iter  = m_pBackbone->begin();
+        iter != m_pBackbone->end();
         iter++)
     {
         Polyhedron_ex::Halfedge_handle pHalfedge = (*iter);

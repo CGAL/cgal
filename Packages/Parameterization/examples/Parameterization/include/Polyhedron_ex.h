@@ -29,8 +29,6 @@ email                : pierre.alliez@sophia.inria.fr
 #include <list>
 #include <stdio.h>
 
-#include "Feature_skeleton.h"
-
 
 // CGAL kernel
 typedef CGAL::Cartesian<double> My_kernel;
@@ -72,7 +70,7 @@ public:
     // default constructor mandatory
     My_facet()
     {
-        m_tag = 0;
+        m_tag = -1;             // uninitialized
     }
 
     // center
@@ -107,7 +105,7 @@ private:
 
     // parameterization
     bool m_is_parameterized;
-    int m_seaming;  			// seaming status
+    int m_seaming;              // seaming status
     double m_u;                 // texture coordinates
     double m_v;
     int m_index;                // for parameterization
@@ -121,10 +119,10 @@ public:
     // default constructor mandatory
     My_halfedge()
     {
-        m_tag = 0;
+        m_tag = -1;             // uninitialized
         m_u = 0.0;
         m_v = 0.0;
-        m_index = 0;
+        m_index = -1;           // uninitialized
         m_seaming = -1;         // uninitialized
         m_is_parameterized = false;
     }
@@ -144,20 +142,6 @@ public:
     // texture coordinates
     double u() const { return m_u; }
     double v() const { return m_v; }
-    void u(double u) 
-    { 
-#ifdef DEBUG_TRACE
-        std::cerr << "      H" << index() << "(" << opposite()->vertex()->index() << "->" << vertex()->index() << ") <- (u=" << u << ",-)\n";
-#endif
-        m_u = u; 
-    }
-    void v(double v) 
-    { 
-#ifdef DEBUG_TRACE
-        std::cerr << "      H" << index() << "(" << opposite()->vertex()->index() << "->" << vertex()->index() << ") <- (-,v=" << v << ")\n";
-#endif
-        m_v = v; 
-    }
     void uv(double u, double v) 
     { 
 #ifdef DEBUG_TRACE
@@ -202,6 +186,8 @@ public:
 
     void init()
     {
+        m_index = -1;           // uninitialized
+        m_tag = -1;             // uninitialized
         m_seaming = -1;         // uninitialized
     }
 
@@ -255,48 +241,18 @@ struct My_items : public CGAL::Polyhedron_items_3
 };
 
 
-typedef CGAL::Polyhedron_3<My_kernel,My_items> Polyhedron;
-
-class Polyhedron_ex : public Polyhedron
+class Polyhedron_ex : public CGAL::Polyhedron_3<My_kernel,My_items>
 {
 public:
 
     typedef My_kernel::Vector_3 Vector_3;
     typedef My_kernel::Point_3  Point_3;
 
-    // feature/boundary skeletons
-    typedef Feature_backbone<Vertex_handle,Halfedge_handle> backbone;
-    typedef Feature_skeleton<Vertex_handle,Halfedge_handle> skeleton;
-
- private:
-
-    // feature/boundary skeletons
-    skeleton m_skeleton;
-    backbone m_seaming_backbone;
-
   public:
 
-    // data access
-    skeleton* get_skeleton() { return &m_skeleton; }
-    const skeleton* get_skeleton() const { return &m_skeleton; }
-    backbone* get_seaming_backbone() { return &m_seaming_backbone; }
-    const backbone* get_seaming_backbone() const { return &m_seaming_backbone; }
-
     // life cycle
-    //********************************
-    Polyhedron_ex()
-    {
-    }
-    virtual ~Polyhedron_ex()
-    {
-        free_skeleton();
-    }
-
-    void free_skeleton()
-    {
-        m_skeleton.free();
-    }
-
+    Polyhedron_ex() {}
+    virtual ~Polyhedron_ex() {}
 
     // facet centers
     void compute_facet_centers()
@@ -314,18 +270,6 @@ public:
             pFace != facets_end();
             pFace++)
         pFace->tag(tag);
-    }
-
-    // get any facet with tag
-    Facet_handle get_any_facet_tag(int tag)
-    {
-        Facet_iterator pFace;
-        for(pFace = facets_begin();
-            pFace != facets_end();
-            pFace++)
-        if(pFace->tag() == tag)
-            return pFace;
-        return NULL;
     }
 
     // get closest inner facet
@@ -430,16 +374,6 @@ public:
             }
         }
         return pBest;
-    }
-
-    // tag all halfedges
-    void tag_halfedges(const int tag)
-    {
-        Halfedge_iterator pHalfedge;
-        for(pHalfedge = halfedges_begin();
-            pHalfedge != halfedges_end();
-            pHalfedge++)
-        pHalfedge->tag(tag);
     }
 
     // Index all mesh vertices following the order of the vertices_begin() iterator
@@ -645,173 +579,6 @@ public:
             if(pHalfedge->is_border())
             return true;
         return false;
-    }
-
-    // halfedge len
-    double len(Polyhedron::Halfedge_handle halfedge)
-    {
-        Vector_3 v = (halfedge->vertex()->point()-
-                    halfedge->prev()->vertex()->point());
-        return std::sqrt(v*v);
-    }
-
-    // get any border halfedge with tag
-    Halfedge_handle get_border_halfedge_tag(int tag)
-    {
-        // LS 06/2005: To ease comparison with Mesh_adaptor_feature_extractor, search by vertex
-        //
-        //Halfedge_iterator pHalfedge;
-        //for(pHalfedge = halfedges_begin();
-        //    pHalfedge != halfedges_end();
-        //    pHalfedge++)
-        //{
-        //    if(pHalfedge->is_border() &&
-        //        pHalfedge->tag() == tag)
-        //    return pHalfedge;
-        //}
-        //return NULL;
-        //
-        Vertex_iterator pVertex;
-        for(pVertex = vertices_begin();
-            pVertex != vertices_end();
-            pVertex++)
-        {
-            Halfedge_around_vertex_circulator pHalfedge = pVertex->vertex_begin();
-            Halfedge_around_vertex_circulator end = pHalfedge;
-            if(pHalfedge == NULL) // isolated vertex
-                continue;
-            CGAL_For_all(pHalfedge,end)
-            {
-                if(pHalfedge->is_border() &&
-                    pHalfedge->tag() == tag)
-                return pHalfedge;
-            }
-        }
-        return NULL;
-    }
-
-    // get index of the longest backbone
-    int get_index_longest_backbone()
-    {
-        int index = 0;
-        double max = 0.0;
-        // #backbones
-        int nb = (*m_skeleton.backbones()).size();
-        for(int i=0;i<nb;i++)
-        {
-            backbone *pBackbone = (*m_skeleton.backbones())[i];
-            double length = len(pBackbone);
-            if(length>max)
-            {
-            index = i;
-            max = length;
-            }
-        }
-        return index;
-    }
-
-    // count #boundaries
-    // return the number of boundary backbones
-    int nb_boundaries()
-    {
-        int nb = 0;
-        tag_halfedges(0);
-        Halfedge_handle seed_halfedge = NULL;
-        while((seed_halfedge = get_border_halfedge_tag(0)) != NULL)
-        {
-            nb++;
-            seed_halfedge->tag(1);
-            Vertex_handle seed_vertex = seed_halfedge->prev()->vertex();
-            Halfedge_handle current_halfedge = seed_halfedge;
-            Halfedge_handle next_halfedge;
-            do
-            {
-                next_halfedge = current_halfedge->next();
-                next_halfedge->tag(1);
-                current_halfedge = next_halfedge;
-            }
-            while(next_halfedge->prev()->vertex() != seed_vertex);
-        }
-        return nb;
-    }
-
-    // tag component
-    void tag_component(Facet_handle pSeedFacet,
-                       const int tag_free,
-                       const int tag_done)
-    {
-        pSeedFacet->tag(tag_done);
-        std::list<Facet_handle> facets;
-        facets.push_front(pSeedFacet);
-        while(!facets.empty())
-        {
-            Facet_handle pFacet = facets.front();
-            facets.pop_front();
-            pFacet->tag(tag_done);
-            Halfedge_around_facet_circulator pHalfedge = pFacet->facet_begin();
-            Halfedge_around_facet_circulator end = pHalfedge;
-            CGAL_For_all(pHalfedge,end)
-            {
-                Facet_handle pNFacet = pHalfedge->opposite()->facet();
-                if(pNFacet != NULL && pNFacet->tag() == tag_free)
-                {
-                    facets.push_front(pNFacet);
-                    pNFacet->tag(tag_done);
-                }
-            }
-        }
-    }
-
-    // count # of connected components
-    unsigned int nb_components()
-    {
-        unsigned int nb = 0;
-        tag_facets(0);
-        Facet_handle seed_facet = NULL;
-        while((seed_facet = get_any_facet_tag(0)) != NULL)
-        {
-            nb++;
-            tag_component(seed_facet,0,1);
-        }
-        return nb;
-    }
-
-    // compute the genus
-    // G = (2*C + E - B - F - V)/2 with
-    // G : genus
-    // C : # of connected components
-    // E : # of edges
-    // B : # of boundaries
-    // F : # of facets
-    // V : # of vertices
-    int genus()
-    {
-        int c = nb_components();
-        int b = nb_boundaries();
-        int v = size_of_vertices();
-        int e = size_of_halfedges()/2;
-        int f = size_of_facets();
-        int genus = (2*c+e-b-f-v)/2;
-        std::cerr << "  " << v << " vertices, " << f << " facets, ";
-        std::cerr << e << " edges, " << b << " boundary(ies), genus " << genus << std::endl;
-        return genus;
-    }
-
-    // compute  total len of a backbone
-    double len(backbone *pBackbone)
-    {
-        std::list<Polyhedron_ex::Halfedge_handle> *pHalfedges = pBackbone->halfedges();
-        std::list<Polyhedron_ex::Halfedge_handle>::iterator pHalfedge;
-        double len = 0.0;
-        for(pHalfedge = pHalfedges->begin();
-            pHalfedge != pHalfedges->end();
-            pHalfedge++)
-        {
-            Polyhedron_ex::Halfedge_handle he = (*pHalfedge);
-            Vector_3 v = (he->vertex()->point()-he->prev()->vertex()->point());
-            len += std::sqrt(v*v);
-        }
-        return len;
     }
 
     // compute distance from facet center to halfedge center

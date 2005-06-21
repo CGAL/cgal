@@ -38,12 +38,16 @@ template<class MeshAdaptor_3> class Mesh_adaptor_patch_vertex_const_handle;
 // Implementation note:
 // A Mesh_adaptor_patch_vertex object is basically a handle to a
 // MeshAdaptor_3::Vertex + its position / seam.
-// Mesh_adaptor_patch_vertex comparison methods basically compare
-// the address of the MeshAdaptor_3::Vertex that it points to.
+// Mesh_adaptor_patch_vertex comparison methods compare the pointers.
 //
 template<class MeshAdaptor_3>
 class Mesh_adaptor_patch_vertex
 {
+// Private types
+private:
+
+    typedef Mesh_adaptor_patch_vertex       Self;
+
 // Public types
 public:
 
@@ -56,77 +60,88 @@ public:
     // Default constructor
     Mesh_adaptor_patch_vertex()
     {
-        m_adaptor_vertex = NULL;
-        m_prev_seam_vertex = NULL;
-        m_next_seam_vertex = NULL;
+        m_vertex            = NULL;
+        m_last_cw_neighbor  = NULL;
+        m_first_cw_neighbor = NULL;
     }
 
-    // Constructor from an INNER adaptor vertex
-    Mesh_adaptor_patch_vertex(typename Adaptor::Vertex_handle adaptor_vertex)
+    // Constructor:
+    // - for an INNER adaptor vertex, last_cw_neighbor and first_cw_neighbor
+    //   must be NULL
+    // - for a SEAM/MAIN BORDER vertex, [first_cw_neighbor, last_cw_neighbor]
+    // defines the range of the valid neighbors of adaptor_vertex (included).
+    explicit Mesh_adaptor_patch_vertex(
+        typename Adaptor::Vertex_handle adaptor_vertex,
+        typename Adaptor::Vertex_handle last_cw_neighbor  = NULL,
+        typename Adaptor::Vertex_handle first_cw_neighbor = NULL)
     {
         CGAL_parameterization_assertion(adaptor_vertex != NULL);
+        CGAL_parameterization_assertion( (last_cw_neighbor == NULL) ==
+                                         (first_cw_neighbor == NULL) );
 
-        m_adaptor_vertex   = adaptor_vertex;
-        m_prev_seam_vertex = NULL;
-        m_next_seam_vertex = NULL;
+        m_vertex            = adaptor_vertex;
+        m_last_cw_neighbor  = last_cw_neighbor;
+        m_first_cw_neighbor = first_cw_neighbor;
     }
 
-    // Constructor from a SEAM/MAIN BORDER adaptor vertex
-    // prev_seam_vertex/next_seam_vertex are the previous/next
-    // vertices on the seam
-    Mesh_adaptor_patch_vertex(typename Adaptor::Vertex_handle adaptor_vertex,
-                              typename Adaptor::Vertex_handle prev_seam_vertex,
-                              typename Adaptor::Vertex_handle next_seam_vertex)
+    // Copy constructor
+    Mesh_adaptor_patch_vertex(const Self& hdl)
     {
-        CGAL_parameterization_assertion(adaptor_vertex != NULL);
-        CGAL_parameterization_assertion(prev_seam_vertex != NULL);
-        CGAL_parameterization_assertion(next_seam_vertex != NULL);
-
-        m_adaptor_vertex   = adaptor_vertex;
-        m_prev_seam_vertex = prev_seam_vertex;
-        m_next_seam_vertex = next_seam_vertex;
+        m_vertex            = hdl.m_vertex;
+        m_last_cw_neighbor  = hdl.m_last_cw_neighbor;
+        m_first_cw_neighbor = hdl.m_first_cw_neighbor;
     }
 
-    // Default copy constructor and operator =() are fine
+    // operator =()
+    Self& operator =(const Self& hdl)
+    {
+        m_vertex            = hdl.m_vertex;
+        m_last_cw_neighbor  = hdl.m_last_cw_neighbor;
+        m_first_cw_neighbor = hdl.m_first_cw_neighbor;
+
+        return *this;
+    }
 
     // Comparison
     bool operator==(const Mesh_adaptor_patch_vertex& vertex) const {
-        return m_adaptor_vertex   == vertex.m_adaptor_vertex
-            && m_prev_seam_vertex == vertex.m_prev_seam_vertex
-            && m_next_seam_vertex == vertex.m_next_seam_vertex;
+        return m_vertex            == vertex.m_vertex
+            && m_last_cw_neighbor  == vertex.m_last_cw_neighbor
+            && m_first_cw_neighbor == vertex.m_first_cw_neighbor;
     }
     bool operator!=(const Mesh_adaptor_patch_vertex& vertex) const {
         return ! (*this == vertex);
     }
 
     // Get content
-    typename Adaptor::Vertex_handle get_adaptor_vertex() {
-        return m_adaptor_vertex;
+    typename Adaptor::Vertex_handle vertex() {
+        return m_vertex;
     }
-    typename Adaptor::Vertex_const_handle get_adaptor_vertex() const {
-        return m_adaptor_vertex;
+    typename Adaptor::Vertex_const_handle vertex() const {
+        return m_vertex;
     }
-    typename Adaptor::Vertex_handle get_prev_seam_vertex() {
-        return m_prev_seam_vertex;
+    typename Adaptor::Vertex_handle last_cw_neighbor() {
+        return m_last_cw_neighbor;
     }
-    typename Adaptor::Vertex_const_handle get_prev_seam_vertex() const {
-        return m_prev_seam_vertex;
+    typename Adaptor::Vertex_const_handle last_cw_neighbor() const {
+        return m_last_cw_neighbor;
     }
-    typename Adaptor::Vertex_handle get_next_seam_vertex() {
-        return m_next_seam_vertex;
+    typename Adaptor::Vertex_handle first_cw_neighbor() {
+        return m_first_cw_neighbor;
     }
-    typename Adaptor::Vertex_const_handle get_next_seam_vertex() const {
-        return m_next_seam_vertex;
+    typename Adaptor::Vertex_const_handle first_cw_neighbor() const {
+        return m_first_cw_neighbor;
     }
 
 // Fields
 private:
     // The decorated vertex
-    typename Adaptor::Vertex_handle m_adaptor_vertex;
+    typename Adaptor::Vertex_handle m_vertex;
 
-    // Previous and next vertices on the main boundary/seam (NULL for inner vertex)
-    typename Adaptor::Vertex_handle m_prev_seam_vertex;
-    typename Adaptor::Vertex_handle m_next_seam_vertex;
+    // [m_first_cw_neighbor, m_last_cw_neighbor] defines the range of the valid 
+    // neighbors of m_vertex (included) if m_vertex is on the main boundary/seam 
+    // (NULL if inner vertex)
+    typename Adaptor::Vertex_handle m_last_cw_neighbor;
+    typename Adaptor::Vertex_handle m_first_cw_neighbor;
 
 }; // Mesh_adaptor_patch_vertex
 
@@ -152,8 +167,6 @@ class Mesh_adaptor_patch_vertex_handle
 private:
 
     typedef Mesh_adaptor_patch_vertex_handle Self;
-    typedef Mesh_adaptor_patch_vertex<MeshAdaptor_3>
-                                            Vertex;
 
 // Public types
 public:
@@ -162,6 +175,8 @@ public:
     typedef MeshAdaptor_3                   Adaptor;
 
     // Iterator types
+    typedef Mesh_adaptor_patch_vertex<MeshAdaptor_3>
+                                            Vertex;
     typedef Vertex                          value_type;
     typedef std::ptrdiff_t                  difference_type;
     typedef std::size_t                     size_type;
@@ -171,8 +186,8 @@ public:
 // Public operations
 public:
 
-    // Constructor
-    Mesh_adaptor_patch_vertex_handle(pointer ptr = NULL)
+    // Constructor from MeshAdaptor_3::Vertex pointer
+    Mesh_adaptor_patch_vertex_handle(Vertex* ptr = NULL)
     {
         if (ptr == NULL)
         {
@@ -184,6 +199,23 @@ public:
             m_vertex = *ptr;
             m_ptr = &m_vertex;
         }
+
+        assert(m_ptr == NULL || m_ptr == &m_vertex);
+    }
+
+    // Extra constructor that will create the MeshAdaptor_3::Vertex on the fly
+    // - for an INNER adaptor vertex, last_cw_neighbor and first_cw_neighbor
+    //   must be NULL
+    // - for a SEAM/MAIN BORDER vertex, [first_cw_neighbor, last_cw_neighbor]
+    // defines the range of the valid neighbors of adaptor_vertex (included).
+    explicit Mesh_adaptor_patch_vertex_handle(
+        typename Adaptor::Vertex_handle adaptor_vertex,
+        typename Adaptor::Vertex_handle last_cw_neighbor  = NULL,
+        typename Adaptor::Vertex_handle first_cw_neighbor = NULL)
+    {
+        CGAL_parameterization_assertion(adaptor_vertex != NULL);
+        m_vertex = Vertex(adaptor_vertex, last_cw_neighbor, first_cw_neighbor);
+        m_ptr = &m_vertex;
     }
 
     // Copy constructor
@@ -196,9 +228,11 @@ public:
         }
         else
         {
-            m_vertex = *hdl.m_ptr;
+            m_vertex = hdl.m_vertex; // *hdl.m_ptr;
             m_ptr = &m_vertex;
         }
+
+        assert(m_ptr == NULL || m_ptr == &m_vertex);
     }
 
     // operator =()
@@ -211,9 +245,11 @@ public:
         }
         else
         {
-            m_vertex = *hdl.m_ptr;
+            m_vertex = hdl.m_vertex; // *hdl.m_ptr;
             m_ptr = &m_vertex;
         }
+
+        assert(m_ptr == NULL || m_ptr == &m_vertex);
 
         return *this;
     }
@@ -275,8 +311,6 @@ private:
 
     typedef Mesh_adaptor_patch_vertex_const_handle
                                             Self;
-    typedef Mesh_adaptor_patch_vertex<MeshAdaptor_3>
-                                            Vertex;
 
 // Public types
 public:
@@ -285,6 +319,8 @@ public:
     typedef MeshAdaptor_3                   Adaptor;
 
     // Iterator types
+    typedef Mesh_adaptor_patch_vertex<MeshAdaptor_3>
+                                            Vertex;
     typedef Vertex                          value_type;
     typedef std::ptrdiff_t                  difference_type;
     typedef std::size_t                     size_type;
@@ -294,8 +330,8 @@ public:
 // Public operations
 public:
 
-    // Constructor
-    Mesh_adaptor_patch_vertex_const_handle(pointer ptr = NULL)
+    // Constructor from MeshAdaptor_3::Vertex pointer
+    Mesh_adaptor_patch_vertex_const_handle(const Vertex* ptr = NULL)
     {
         if (ptr == NULL)
         {
@@ -307,6 +343,25 @@ public:
             m_vertex = *ptr;
             m_ptr = &m_vertex;
         }
+
+        assert(m_ptr == NULL || m_ptr == &m_vertex);
+    }
+
+    // Extra constructor that will create the MeshAdaptor_3::Vertex on the fly
+    // - for an INNER adaptor vertex, last_cw_neighbor and first_cw_neighbor
+    //   must be NULL
+    // - for a SEAM/MAIN BORDER vertex, [first_cw_neighbor, last_cw_neighbor]
+    // defines the range of the valid neighbors of adaptor_vertex (included).
+    explicit Mesh_adaptor_patch_vertex_const_handle(
+        typename Adaptor::Vertex_const_handle adaptor_vertex,
+        typename Adaptor::Vertex_const_handle last_cw_neighbor  = NULL,
+        typename Adaptor::Vertex_const_handle first_cw_neighbor = NULL)
+    {
+        CGAL_parameterization_assertion(adaptor_vertex != NULL);
+        m_vertex = Vertex((typename Adaptor::Vertex*)&*adaptor_vertex,
+                          (typename Adaptor::Vertex*)&*last_cw_neighbor,
+                          (typename Adaptor::Vertex*)&*first_cw_neighbor);
+        m_ptr = &m_vertex;
     }
 
     // Copy constructor
@@ -319,9 +374,11 @@ public:
         }
         else
         {
-            m_vertex = *hdl.m_ptr;
+            m_vertex = hdl.m_vertex; // *hdl.m_ptr;
             m_ptr = &m_vertex;
         }
+
+        assert(m_ptr == NULL || m_ptr == &m_vertex);
     }
 
     // operator =()
@@ -337,6 +394,8 @@ public:
             m_vertex = *hdl.m_ptr;
             m_ptr = &m_vertex;
         }
+
+        assert(m_ptr == NULL || m_ptr == &m_vertex);
 
         return *this;
     }

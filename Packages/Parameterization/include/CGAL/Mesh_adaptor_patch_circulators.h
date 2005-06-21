@@ -35,40 +35,49 @@ CGAL_BEGIN_NAMESPACE
 
 
 // Class Mesh_patch_vertex_around_vertex_cir
-// Represents a (clockwise) circulator around a vertex
+// represents a (clockwise) circulator around a vertex
 // of a Mesh_adaptor_patch_3<MeshAdaptor_3> mesh
 template<class MeshPatchPtrType,    // = [const] Mesh_adaptor_patch_3*
          class VertexHandleType,    // = Mesh_adaptor_patch_3::Vertex_[const_]handle
-         class AdaptorVertexAroundVertexCirculatorType>
+         class AdaptorVertexAroundVertexCirculatorType,
                                     // = Adaptor::Vertex_around_vertex_[const_]circulator
+         class AdaptorVertexHandleType>
+                                    // = Adaptor::Vertex_[const_]handle
 class Mesh_patch_vertex_around_vertex_cir
     : public VertexHandleType
 {
+// PRIVATE TYPES
+// -------------
+
+    // Base and self classes
     typedef VertexHandleType                    Base;
     typedef Mesh_patch_vertex_around_vertex_cir Self;
+
+    // Mesh_patch types
     typedef typename std::iterator_traits<MeshPatchPtrType>::value_type
                                                 Mesh_patch;
     typedef typename Mesh_patch::Adaptor        Adaptor;
 
 public:
 
-// TYPES
-// -----
+// PUBLIC TYPES
+// ------------
 
     // Export template parameter types
-    typedef MeshPatchPtrType                    Mesh_patch_ptr_t;
-    typedef VertexHandleType                    Vertex_handle_t;
+    typedef MeshPatchPtrType                    Mesh_patch_c_ptr;
+    typedef VertexHandleType                    Vertex_c_handle;
     typedef AdaptorVertexAroundVertexCirculatorType
-                                                Adaptor_vertex_around_vertex_cir_t;
+                                                Adaptor_vertex_around_vertex_c_cir;
+    typedef AdaptorVertexHandleType             Adaptor_vertex_c_handle;
 
     // Iterator types
-    typedef typename Adaptor_vertex_around_vertex_cir_t::iterator_category
+    typedef typename Adaptor_vertex_around_vertex_c_cir::iterator_category
                                                 iterator_category;
-    typedef typename Vertex_handle_t::value_type value_type;
+    typedef typename Vertex_c_handle::value_type value_type;
     typedef std::ptrdiff_t                      difference_type;
     typedef std::size_t                         size_type;
-    typedef typename Vertex_handle_t::reference reference;
-    typedef typename Vertex_handle_t::pointer   pointer;
+    typedef typename Vertex_c_handle::reference reference;
+    typedef typename Vertex_c_handle::pointer   pointer;
 
 // CREATION
 // --------
@@ -77,46 +86,47 @@ public:
     Mesh_patch_vertex_around_vertex_cir() {}
 
     // Get circulator over the vertices incident to 'vertex'
-    //
-    // Implementation note:
-    // If m_center_vertex is a seam/main boundary vertex, then [get_prev_seam_vertex(),
-    // get_next_seam_vertex()] is the range of its inner neighbor vertices.
-    Mesh_patch_vertex_around_vertex_cir(Mesh_patch_ptr_t mesh,
-                                        Vertex_handle_t vertex,
-                                        Adaptor_vertex_around_vertex_cir_t adaptor_circulator)
-        : m_mesh_patch(mesh),
-          m_center_vertex(vertex),
-          m_adaptor_circulator(adaptor_circulator)
+    // 'start_position' defines the initial position of the circulator [required}
+    Mesh_patch_vertex_around_vertex_cir(Mesh_patch_c_ptr mesh,
+                                        Vertex_c_handle vertex,
+                                        Vertex_c_handle start_position)
+      : Base(start_position),
+        m_mesh_patch(mesh),
+        m_center(vertex)
     {
         CGAL_parameterization_assertion(m_mesh_patch != NULL);
+        CGAL_parameterization_assertion(m_mesh_patch->m_mesh_adaptor != NULL);
         CGAL_parameterization_assertion(m_mesh_patch->is_valid(vertex));
-        CGAL_parameterization_assertion(adaptor_circulator != NULL);
+        CGAL_parameterization_assertion(m_mesh_patch->is_valid(start_position));
 
-        // Update the inherited vertex handle
-        update_inherited_handle();
+//#ifdef DEBUG_TRACE
+//        std::cerr << "    Mesh_patch_vertex_around_vertex_cir(";
+//        std::cerr << "#" << m_mesh_patch->get_vertex_index(vertex) << ",";
+//        std::cerr << "#" << m_mesh_patch->get_vertex_index(start_position) << ")\n";
+//#endif
+
+        // Construct an adaptor circulator over the vertices
+        // incident to vertex->vertex()
+        m_adaptor_circulator = m_mesh_patch->m_mesh_adaptor->vertices_around_vertex_begin(
+            vertex->vertex(), start_position->vertex());
     }
 
     // Copy constructor
     Mesh_patch_vertex_around_vertex_cir(const Self& cir)
       : Base(cir),
         m_mesh_patch(cir.m_mesh_patch),
-        m_center_vertex(cir.m_center_vertex),
+        m_center(cir.m_center),
         m_adaptor_circulator(cir.m_adaptor_circulator)
     {
-        // Update the inherited vertex handle
-        update_inherited_handle();
     }
 
     // operator =()
     Self& operator =(const Self& cir)
     {
-        Base::operator=()(cir);
+        Base::operator=(cir);
         m_mesh_patch = cir.m_mesh_patch;
-        m_center_vertex = cir.m_center_vertex;
+        m_center = cir.m_center;
         m_adaptor_circulator = cir.m_adaptor_circulator;
-
-        // Update the inherited vertex handle
-        update_inherited_handle();
 
         return *this;
     }
@@ -134,36 +144,109 @@ public:
     // Clockwise rotation
     Self& operator++()
     {
-        // Increment m_adaptor_circulator
-        //
-        // If non seam vertex, m_adaptor_circulator simply
-        // circulates over m_center_vertex's vertices
-        if (m_center_vertex->get_next_seam_vertex() == NULL)
+//#ifdef DEBUG_TRACE
+//        std::cerr << "    Mesh_patch_vertex_around_vertex_cir ++\n";
+//#endif
+
+        // Check that the inherited vertex handle is valid
+        assert((*this)->vertex() == m_adaptor_circulator);
+
+        // If m_center is an inner vertex, m_adaptor_circulator 
+        // already circulates over m_center's vertices
+        if (m_center->first_cw_neighbor() == NULL)
         {
             m_adaptor_circulator++;
+
+            // Update the inherited vertex handle
+            update_inherited_handle();
+
+            return *this;
         }
-        else // if seam vertex, circulates only from get_next_seam_vertex()
-        {    //                 to get_prev_seam_vertex() (included)
 
-            // TODO: check circulator way
-            assert(false);
-
-            if (m_center_vertex->get_prev_seam_vertex() == m_adaptor_circulator)
+        // If m_center is a border/seam vertex (except a seam extremity), 
+        // *this must circulate only from
+        // first_cw_neighbor() to last_cw_neighbor() (included)
+        if (m_center->last_cw_neighbor() != m_center->first_cw_neighbor())
+        {
+            // if the previous position m_adaptor_circulator
+            // is m_center's last clockwise neighbor
+            if (m_center->last_cw_neighbor() == m_adaptor_circulator)
             {
-                do
+                // Skip the outer part of the seam
+                while (m_center->first_cw_neighbor() != m_adaptor_circulator)
                     m_adaptor_circulator++;
-                while (m_center_vertex->get_next_seam_vertex() != m_adaptor_circulator);
             }
-            else
-            {
+            else // if the previous position is inner,
+            {    // simply rotate the adaptor circulator
                 m_adaptor_circulator++;
             }
+
+            // Update the inherited vertex handle
+            update_inherited_handle();
+
+            return *this;
         }
 
-        // Update the inherited vertex handle
-        update_inherited_handle();
+        // Special case: m_center is the extremity of the seam.
+        // Its seam adaptor neighbor vertex is "virtually" duplicated.
+        assert(m_center->last_cw_neighbor() == m_center->first_cw_neighbor());
 
-        return *this;
+        // If the previous position is the last "virtual" clockwise neighbor, 
+        // move to first "virtual" clockwise neighbor 
+        // without rotating m_adaptor_circulator.
+        if (m_center->last_cw_neighbor() == m_adaptor_circulator
+         && (*this)->first_cw_neighbor() == m_center->vertex())
+        {   
+            // Update directly the inherited vertex handle
+            // because this case is ambiguous for update_inherited_handle()
+            Vertex_c_handle current_decorated_vertex((*this)->vertex(), 
+                                                     (*this)->first_cw_neighbor(),  // order...
+                                                     (*this)->last_cw_neighbor());  // ...inverted!
+//#ifdef DEBUG_TRACE
+//            std::cerr << "      Mesh_patch_vertex_around_vertex_cir = (";
+//            std::cerr << "#" << m_mesh_patch->get_vertex_index(m_center) << ",";
+//            std::cerr << "#" << m_mesh_patch->get_vertex_index(current_decorated_vertex);
+//            std::cerr << ")\n";
+//#endif
+            assert(m_mesh_patch->is_valid(current_decorated_vertex));
+            Base::operator=(current_decorated_vertex);
+
+            return *this;
+        }
+
+        // If the previous position is NOT the last "virtual" clockwise neighbor, 
+        // simply rotate the adaptor circulator
+        m_adaptor_circulator++;
+
+        // Update the inherited vertex handle
+        //
+        // If the new position is the last "virtual" clockwise neighbor, 
+        // update directly the inherited vertex handle
+        // because this case is ambiguous for update_inherited_handle()
+        if (m_center->last_cw_neighbor() == m_adaptor_circulator)
+        {   
+            Vertex_c_handle current_decorated_vertex
+                    = m_mesh_patch->get_decorated_border_vertex(m_adaptor_circulator,
+                                                                NULL,
+                                                                m_center->vertex());
+//#ifdef DEBUG_TRACE
+//            std::cerr << "      Mesh_patch_vertex_around_vertex_cir = (";
+//            std::cerr << "#" << m_mesh_patch->get_vertex_index(m_center) << ",";
+//            std::cerr << "#" << m_mesh_patch->get_vertex_index(current_decorated_vertex);
+//            std::cerr << ")\n";
+//#endif
+            assert(m_mesh_patch->is_valid(current_decorated_vertex));
+            Base::operator=(current_decorated_vertex);
+
+            return *this;
+        }
+        else
+        {
+            update_inherited_handle();
+
+            return *this;
+        }
+
     }
     //
     Self  operator++(int) {
@@ -175,39 +258,112 @@ public:
 // OPERATIONS Bidirectional Category
 // ---------------------------------
 
-    // Counterclockwise rotation
+    // Counter-clockwise rotation
     Self& operator--()
     {
-        // Decrement m_adaptor_circulator
-        //
-        // If non seam vertex, m_adaptor_circulator simply
-        // circulates over m_center_vertex's vertices
-        if (m_center_vertex->get_next_seam_vertex() == NULL)
+//#ifdef DEBUG_TRACE
+//        std::cerr << "    Mesh_patch_vertex_around_vertex_cir --\n";
+//#endif
+
+        // Check that the inherited vertex handle is valid
+        assert((*this)->vertex() == m_adaptor_circulator);
+
+        // If m_center is an inner vertex, m_adaptor_circulator 
+        // already circulates over m_center's vertices
+        if (m_center->first_cw_neighbor() == NULL)
         {
             m_adaptor_circulator--;
+
+            // Update the inherited vertex handle
+            update_inherited_handle();
+
+            return *this;
         }
-        else // if seam vertex, circulates only from get_prev_seam_vertex()
-        {    //                 to get_next_seam_vertex() (included)
 
-            // TODO: check circulator way
-            assert(false);
-
-            if (m_center_vertex->get_next_seam_vertex() == m_adaptor_circulator)
+        // If m_center is a border/seam vertex (except a seam extremity), 
+        // *this must circulate only from
+        // last_cw_neighbor() to first_cw_neighbor() (included)
+        if (m_center->last_cw_neighbor() != m_center->first_cw_neighbor())
+        {
+            // if the previous position m_adaptor_circulator
+            // is m_center's last counter-clockwise neighbor
+            if (m_center->first_cw_neighbor() == m_adaptor_circulator)
             {
-                do
+                // Skip the outer part of the seam
+                while (m_center->last_cw_neighbor() != m_adaptor_circulator)
                     m_adaptor_circulator--;
-                while (m_center_vertex->get_prev_seam_vertex() != m_adaptor_circulator);
             }
-            else
-            {
+            else // if the previous position is inner,
+            {    // simply rotate the adaptor circulator
                 m_adaptor_circulator--;
             }
+
+            // Update the inherited vertex handle
+            update_inherited_handle();
+
+            return *this;
         }
 
-        // Update the inherited vertex handle
-        update_inherited_handle();
+        // Special case: m_center is the extremity of the seam.
+        // Its seam adaptor neighbor vertex is "virtually" duplicated.
+        assert(m_center->last_cw_neighbor() == m_center->first_cw_neighbor());
 
-        return *this;
+        // If the previous position is on the last "virtual" counter-clockwise  
+        // neighbor, move to first "virtual" counter-clockwise neighbor 
+        // without rotating m_adaptor_circulator.
+        if (m_center->last_cw_neighbor() == m_adaptor_circulator
+         && (*this)->last_cw_neighbor() == m_center->vertex())
+        {   
+            // Update directly the inherited vertex handle
+            // because this case is ambiguous for update_inherited_handle()
+            Vertex_c_handle current_decorated_vertex((*this)->vertex(), 
+                                                     (*this)->first_cw_neighbor(),  // order...
+                                                     (*this)->last_cw_neighbor());  // ...inverted!
+//#ifdef DEBUG_TRACE
+//            std::cerr << "      Mesh_patch_vertex_around_vertex_cir = (";
+//            std::cerr << "#" << m_mesh_patch->get_vertex_index(m_center) << ",";
+//            std::cerr << "#" << m_mesh_patch->get_vertex_index(current_decorated_vertex);
+//            std::cerr << ")\n";
+//#endif
+            assert(m_mesh_patch->is_valid(current_decorated_vertex));
+            Base::operator=(current_decorated_vertex);
+
+            return *this;
+        }
+
+        // If the previous position is NOT the last "virtual" counter-clockwise 
+        //  neighbor, simply rotate the adaptor circulator
+        m_adaptor_circulator--;
+
+        // Update the inherited vertex handle
+        //
+        // If the new position is the last "virtual" counter-clockwise neighbor, 
+        // update directly the inherited vertex handle
+        // because this case is ambiguous for update_inherited_handle()
+        if (m_center->last_cw_neighbor() == m_adaptor_circulator)
+        {   
+            Vertex_c_handle current_decorated_vertex
+                    = m_mesh_patch->get_decorated_border_vertex(m_adaptor_circulator,
+                                                                m_center->vertex(),
+                                                                NULL);
+//#ifdef DEBUG_TRACE
+//            std::cerr << "      Mesh_patch_vertex_around_vertex_cir = (";
+//            std::cerr << "#" << m_mesh_patch->get_vertex_index(m_center) << ",";
+//            std::cerr << "#" << m_mesh_patch->get_vertex_index(current_decorated_vertex);
+//            std::cerr << ")\n";
+//#endif
+            assert(m_mesh_patch->is_valid(current_decorated_vertex));
+            Base::operator=(current_decorated_vertex);
+
+            return *this;
+        }
+        else
+        {
+            update_inherited_handle();
+
+            return *this;
+        }
+
     }
     Self  operator--(int) {
         Self tmp = *this;
@@ -218,43 +374,80 @@ public:
 private:
     // Update the inherited vertex handle
     //
-    // Precondition: m_adaptor_circulator is valid
+    // Precondition: m_adaptor_circulator and m_center are valid
     void update_inherited_handle()
     {
-        // TODO: Support the case where the current vertex m_adaptor_circulator
-        //       and the center vertex m_center_vertex are on the same (non-oriented) seam.
-        //       See Mesh_patch_vertex_around_facet_cir::update_inherited_handle()
-        //       which does it with 3 points. Use a rotation to get the 3rd point?
-        assert(m_mesh_patch->m_mesh_adaptor->get_edge_seaming(
-                m_adaptor_circulator, m_center_vertex->get_adaptor_vertex()) != Adaptor::BORDER
-            || m_mesh_patch->m_mesh_adaptor->get_edge_seaming(
-                m_center_vertex->get_adaptor_vertex(), m_adaptor_circulator) != Adaptor::BORDER);
+        Vertex_c_handle current_decorated_vertex = NULL;
 
-        // Get current decorated vertex
-        Vertex_handle_t current_decorated_vertex
-            = m_mesh_patch->get_decorated_vertex(m_adaptor_circulator,
-                                                 m_center_vertex->get_adaptor_vertex());
+        // Ambiguous case: m_center is the extremity of the seam
+        //                 and m_adaptor_circulator is on the seam
+        assert(m_center->last_cw_neighbor() != m_adaptor_circulator
+            || m_center->first_cw_neighbor() != m_adaptor_circulator);
+
+        // Get next vertex on facet
+        Adaptor_vertex_c_handle next_vertex = NULL;
+        Adaptor_vertex_around_vertex_c_cir ccw_neighbor = m_adaptor_circulator;
+        ccw_neighbor--;
+        if (m_center->first_cw_neighbor() == NULL) // if inner vertex
+        {
+            next_vertex = ccw_neighbor;
+        }
+        else // if border/seam vertex, circulates only from 
+        {    // first_cw_neighbor() to last_cw_neighbor() (included)
+            if (m_center->first_cw_neighbor() == m_adaptor_circulator)
+                next_vertex = m_center->vertex();
+            else
+                next_vertex = ccw_neighbor;
+        }
+
+        // If (m_adaptor_circulator, next_vertex) isn't a seam (non-oriented) edge
+        if (m_mesh_patch->m_mesh_adaptor->get_halfedge_seaming(
+                        m_adaptor_circulator, next_vertex) != Mesh_patch::BORDER
+         || m_mesh_patch->m_mesh_adaptor->get_halfedge_seaming(
+                        next_vertex, m_adaptor_circulator) != Mesh_patch::BORDER)
+        {
+            current_decorated_vertex
+                    = m_mesh_patch->get_decorated_inner_vertex(m_adaptor_circulator,
+                                                               next_vertex);
+        }
+        // Special case: both vertices belong to the seam
+        else 
+        {
+            current_decorated_vertex
+                    = m_mesh_patch->get_decorated_border_vertex(m_adaptor_circulator,
+                                                                next_vertex,
+                                                                NULL);
+        }
+
+//#ifdef DEBUG_TRACE
+//        std::cerr << "      Mesh_patch_vertex_around_vertex_cir = (";
+//        std::cerr << "#" << m_mesh_patch->get_vertex_index(m_center) << ",";
+//        std::cerr << "#" << m_mesh_patch->get_vertex_index(current_decorated_vertex);
+//        std::cerr << ")\n";
+//#endif
 
         // Update the inherited vertex handle
+        assert(m_mesh_patch->is_valid(current_decorated_vertex));
         Base::operator=(current_decorated_vertex);
     }
 
 private:
     // The mesh that we are circulating on:
-    Mesh_patch_ptr_t m_mesh_patch;
+    Mesh_patch_c_ptr m_mesh_patch;
 
     // Vertex center of the circulation (+ circulator range for a border vertex)
-    Vertex_handle_t m_center_vertex;
+    Vertex_c_handle m_center;
 
     // Internal circulator
-    Adaptor_vertex_around_vertex_cir_t m_adaptor_circulator;
+    Adaptor_vertex_around_vertex_c_cir m_adaptor_circulator;
 
 }; // Mesh_patch_vertex_around_vertex_cir
 
 
 // Class Mesh_patch_vertex_around_facet_cir
-// Represents a (clockwise) circulator around a facet
+// represents a (clockwise) circulator around a facet
 // of a Mesh_adaptor_patch_3<MeshAdaptor_3> mesh
+
 template<class MeshPatchPtrType,    // = [const] Mesh_adaptor_patch_3*
          class VertexHandleType,    // = Mesh_adaptor_patch_3::Vertex_[const_]handle
          class AdaptorVertexAroundFacetCirculatorType>
@@ -262,32 +455,37 @@ template<class MeshPatchPtrType,    // = [const] Mesh_adaptor_patch_3*
 class Mesh_patch_vertex_around_facet_cir
     : public VertexHandleType
 {
+// PRIVATE TYPES
+// -------------
+
+    // Base and self classes
     typedef VertexHandleType                    Base;
     typedef Mesh_patch_vertex_around_facet_cir  Self;
+
+    // Mesh_patch types
     typedef typename std::iterator_traits<MeshPatchPtrType>::value_type
                                                 Mesh_patch;
     typedef typename Mesh_patch::Adaptor        Adaptor;
-    typedef typename Mesh_patch::Vertex         Vertex;
 
 public:
 
-// TYPES
-// -----
+// PUBLIC TYPES
+// ------------
 
     // Export template parameter types
-    typedef MeshPatchPtrType                    Mesh_patch_ptr_t;
-    typedef VertexHandleType                    Vertex_handle_t;
+    typedef MeshPatchPtrType                    Mesh_patch_c_ptr;
+    typedef VertexHandleType                    Vertex_c_handle;
     typedef AdaptorVertexAroundFacetCirculatorType
-                                                Adaptor_vertex_around_facet_cir_t;
+                                                Adaptor_vertex_around_facet_c_cir;
 
     // Iterator types
-    typedef typename Adaptor_vertex_around_facet_cir_t::iterator_category
+    typedef typename Adaptor_vertex_around_facet_c_cir::iterator_category
                                                 iterator_category;
-    typedef typename Vertex_handle_t::value_type value_type;
+    typedef typename Vertex_c_handle::value_type value_type;
     typedef std::ptrdiff_t                      difference_type;
     typedef std::size_t                         size_type;
-    typedef typename Vertex_handle_t::reference reference;
-    typedef typename Vertex_handle_t::pointer   pointer;
+    typedef typename Vertex_c_handle::reference reference;
+    typedef typename Vertex_c_handle::pointer   pointer;
 
 // CREATION
 // --------
@@ -295,8 +493,8 @@ public:
     // Circulator pointing to NULL
     Mesh_patch_vertex_around_facet_cir() {}
 
-    Mesh_patch_vertex_around_facet_cir(Mesh_patch_ptr_t mesh,
-                                       Adaptor_vertex_around_facet_cir_t adaptor_circulator)
+    Mesh_patch_vertex_around_facet_cir(Mesh_patch_c_ptr mesh,
+                                       Adaptor_vertex_around_facet_c_cir adaptor_circulator)
         : m_mesh_patch(mesh),
           m_adaptor_circulator(adaptor_circulator)
     {
@@ -384,47 +582,29 @@ private:
     // Precondition: m_adaptor_circulator is valid
     void update_inherited_handle()
     {
-        Vertex_handle_t current_decorated_vertex = NULL;
+        Vertex_c_handle current_decorated_vertex = NULL;
 
-        // Get neighbor adaptor vertices on facet
-        Adaptor_vertex_around_facet_cir_t next_vertex = m_adaptor_circulator;
+        // Get next vertex on facet
+        Adaptor_vertex_around_facet_c_cir next_vertex = m_adaptor_circulator;
         next_vertex++;
-        Adaptor_vertex_around_facet_cir_t prev_vertex = m_adaptor_circulator;
-        prev_vertex--;
 
         // If (m_adaptor_circulator, next_vertex) isn't a seam (non-oriented) edge
-        if (m_mesh_patch->m_mesh_adaptor->get_edge_seaming(
-                        m_adaptor_circulator, next_vertex) != Adaptor::BORDER
-         || m_mesh_patch->m_mesh_adaptor->get_edge_seaming(
-                        next_vertex, m_adaptor_circulator) != Adaptor::BORDER)
+        if (m_mesh_patch->m_mesh_adaptor->get_halfedge_seaming(
+                        m_adaptor_circulator, next_vertex) != Mesh_patch::BORDER
+         || m_mesh_patch->m_mesh_adaptor->get_halfedge_seaming(
+                        next_vertex, m_adaptor_circulator) != Mesh_patch::BORDER)
         {
             current_decorated_vertex
-                    = m_mesh_patch->get_decorated_vertex(m_adaptor_circulator,
-                                                         next_vertex);
+                    = m_mesh_patch->get_decorated_inner_vertex(m_adaptor_circulator,
+                                                               next_vertex);
         }
-        // If (m_adaptor_circulator, prev_vertex) isn't a seam (non-oriented) edge
-        else if (m_mesh_patch->m_mesh_adaptor->get_edge_seaming(
-                        m_adaptor_circulator, prev_vertex) != Adaptor::BORDER
-         || m_mesh_patch->m_mesh_adaptor->get_edge_seaming(
-                        prev_vertex, m_adaptor_circulator) != Adaptor::BORDER)
+        // Special case: both vertices belong to the seam
+        else 
         {
             current_decorated_vertex
-                    = m_mesh_patch->get_decorated_vertex(m_adaptor_circulator,
-                                                         prev_vertex);
-        }
-        // Special case: Both edges belong to the seam
-        else
-        {
-            Vertex vertex((typename Adaptor::Vertex*)&*m_adaptor_circulator,
-                          (typename Adaptor::Vertex*)&*next_vertex,     // order...
-                          (typename Adaptor::Vertex*)&*prev_vertex);    // ...inverted!
-
-            // Implementation note:
-            // The next line seems to return a reference to a local Vertex variable.
-            // In fact, Vertex_[const_]handle constructor copies the Vertex object.
-            // The purpose is to save the time of searching the Vertex in
-            // m_inner_and_border_vertices list.
-            current_decorated_vertex = &vertex;
+                    = m_mesh_patch->get_decorated_border_vertex(m_adaptor_circulator,
+                                                                next_vertex,
+                                                                NULL);
         }
 
         // Update the inherited vertex handle
@@ -434,10 +614,10 @@ private:
 
 private:
     // The mesh that we are circulating on:
-    Mesh_patch_ptr_t m_mesh_patch;
+    Mesh_patch_c_ptr m_mesh_patch;
 
     // Internal circulator
-    Adaptor_vertex_around_facet_cir_t m_adaptor_circulator;
+    Adaptor_vertex_around_facet_c_cir m_adaptor_circulator;
 
 }; // Mesh_patch_vertex_around_facet_cir
 
