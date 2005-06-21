@@ -658,14 +658,34 @@ public:
     // get any border halfedge with tag
     Halfedge_handle get_border_halfedge_tag(int tag)
     {
-        Halfedge_iterator pHalfedge;
-        for(pHalfedge = halfedges_begin();
-            pHalfedge != halfedges_end();
-            pHalfedge++)
+        // LS 06/2005: To ease comparison with Mesh_adaptor_feature_extractor, search by vertex
+        //
+        //Halfedge_iterator pHalfedge;
+        //for(pHalfedge = halfedges_begin();
+        //    pHalfedge != halfedges_end();
+        //    pHalfedge++)
+        //{
+        //    if(pHalfedge->is_border() &&
+        //        pHalfedge->tag() == tag)
+        //    return pHalfedge;
+        //}
+        //return NULL;
+        //
+        Vertex_iterator pVertex;
+        for(pVertex = vertices_begin();
+            pVertex != vertices_end();
+            pVertex++)
         {
-            if(pHalfedge->is_border() &&
-                pHalfedge->tag() == tag)
-            return pHalfedge;
+            Halfedge_around_vertex_circulator pHalfedge = pVertex->vertex_begin();
+            Halfedge_around_vertex_circulator end = pHalfedge;
+            if(pHalfedge == NULL) // isolated vertex
+                continue;
+            CGAL_For_all(pHalfedge,end)
+            {
+                if(pHalfedge->is_border() &&
+                    pHalfedge->tag() == tag)
+                return pHalfedge;
+            }
         }
         return NULL;
     }
