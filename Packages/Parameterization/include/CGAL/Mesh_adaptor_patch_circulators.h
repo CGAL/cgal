@@ -151,7 +151,7 @@ public:
         // Check that the inherited vertex handle is valid
         assert((*this)->vertex() == m_adaptor_circulator);
 
-        // If m_center is an inner vertex, m_adaptor_circulator 
+        // If m_center is an inner vertex, m_adaptor_circulator
         // already circulates over m_center's vertices
         if (m_center->first_cw_neighbor() == NULL)
         {
@@ -163,7 +163,7 @@ public:
             return *this;
         }
 
-        // If m_center is a border/seam vertex (except a seam extremity), 
+        // If m_center is a border/seam vertex (except a seam extremity),
         // *this must circulate only from
         // first_cw_neighbor() to last_cw_neighbor() (included)
         if (m_center->last_cw_neighbor() != m_center->first_cw_neighbor())
@@ -191,15 +191,15 @@ public:
         // Its seam adaptor neighbor vertex is "virtually" duplicated.
         assert(m_center->last_cw_neighbor() == m_center->first_cw_neighbor());
 
-        // If the previous position is the last "virtual" clockwise neighbor, 
-        // move to first "virtual" clockwise neighbor 
+        // If the previous position is the last "virtual" clockwise neighbor,
+        // move to first "virtual" clockwise neighbor
         // without rotating m_adaptor_circulator.
         if (m_center->last_cw_neighbor() == m_adaptor_circulator
          && (*this)->first_cw_neighbor() == m_center->vertex())
-        {   
+        {
             // Update directly the inherited vertex handle
             // because this case is ambiguous for update_inherited_handle()
-            Vertex_c_handle current_decorated_vertex((*this)->vertex(), 
+            Vertex_c_handle current_decorated_vertex((*this)->vertex(),
                                                      (*this)->first_cw_neighbor(),  // order...
                                                      (*this)->last_cw_neighbor());  // ...inverted!
 //#ifdef DEBUG_TRACE
@@ -214,17 +214,17 @@ public:
             return *this;
         }
 
-        // If the previous position is NOT the last "virtual" clockwise neighbor, 
+        // If the previous position is NOT the last "virtual" clockwise neighbor,
         // simply rotate the adaptor circulator
         m_adaptor_circulator++;
 
         // Update the inherited vertex handle
         //
-        // If the new position is the last "virtual" clockwise neighbor, 
+        // If the new position is the last "virtual" clockwise neighbor,
         // update directly the inherited vertex handle
         // because this case is ambiguous for update_inherited_handle()
         if (m_center->last_cw_neighbor() == m_adaptor_circulator)
-        {   
+        {
             Vertex_c_handle current_decorated_vertex
                     = m_mesh_patch->get_decorated_border_vertex(m_adaptor_circulator,
                                                                 NULL,
@@ -268,7 +268,7 @@ public:
         // Check that the inherited vertex handle is valid
         assert((*this)->vertex() == m_adaptor_circulator);
 
-        // If m_center is an inner vertex, m_adaptor_circulator 
+        // If m_center is an inner vertex, m_adaptor_circulator
         // already circulates over m_center's vertices
         if (m_center->first_cw_neighbor() == NULL)
         {
@@ -280,7 +280,7 @@ public:
             return *this;
         }
 
-        // If m_center is a border/seam vertex (except a seam extremity), 
+        // If m_center is a border/seam vertex (except a seam extremity),
         // *this must circulate only from
         // last_cw_neighbor() to first_cw_neighbor() (included)
         if (m_center->last_cw_neighbor() != m_center->first_cw_neighbor())
@@ -308,15 +308,15 @@ public:
         // Its seam adaptor neighbor vertex is "virtually" duplicated.
         assert(m_center->last_cw_neighbor() == m_center->first_cw_neighbor());
 
-        // If the previous position is on the last "virtual" counter-clockwise  
-        // neighbor, move to first "virtual" counter-clockwise neighbor 
+        // If the previous position is on the last "virtual" counter-clockwise
+        // neighbor, move to first "virtual" counter-clockwise neighbor
         // without rotating m_adaptor_circulator.
         if (m_center->last_cw_neighbor() == m_adaptor_circulator
          && (*this)->last_cw_neighbor() == m_center->vertex())
-        {   
+        {
             // Update directly the inherited vertex handle
             // because this case is ambiguous for update_inherited_handle()
-            Vertex_c_handle current_decorated_vertex((*this)->vertex(), 
+            Vertex_c_handle current_decorated_vertex((*this)->vertex(),
                                                      (*this)->first_cw_neighbor(),  // order...
                                                      (*this)->last_cw_neighbor());  // ...inverted!
 //#ifdef DEBUG_TRACE
@@ -331,17 +331,17 @@ public:
             return *this;
         }
 
-        // If the previous position is NOT the last "virtual" counter-clockwise 
+        // If the previous position is NOT the last "virtual" counter-clockwise
         //  neighbor, simply rotate the adaptor circulator
         m_adaptor_circulator--;
 
         // Update the inherited vertex handle
         //
-        // If the new position is the last "virtual" counter-clockwise neighbor, 
+        // If the new position is the last "virtual" counter-clockwise neighbor,
         // update directly the inherited vertex handle
         // because this case is ambiguous for update_inherited_handle()
         if (m_center->last_cw_neighbor() == m_adaptor_circulator)
-        {   
+        {
             Vertex_c_handle current_decorated_vertex
                     = m_mesh_patch->get_decorated_border_vertex(m_adaptor_circulator,
                                                                 m_center->vertex(),
@@ -379,44 +379,54 @@ private:
     {
         Vertex_c_handle current_decorated_vertex = NULL;
 
-        // Ambiguous case: m_center is the extremity of the seam
-        //                 and m_adaptor_circulator is on the seam
-        assert(m_center->last_cw_neighbor() != m_adaptor_circulator
-            || m_center->first_cw_neighbor() != m_adaptor_circulator);
-
-        // Get next vertex on facet
-        Adaptor_vertex_c_handle next_vertex = NULL;
-        Adaptor_vertex_around_vertex_c_cir ccw_neighbor = m_adaptor_circulator;
-        ccw_neighbor--;
-        if (m_center->first_cw_neighbor() == NULL) // if inner vertex
+        // Easy case: if m_adaptor_circulator is an inner vertex
+        if (m_mesh_patch->m_mesh_adaptor->get_vertex_seaming(
+                                    m_adaptor_circulator) != Mesh_patch::BORDER)
         {
-            next_vertex = ccw_neighbor;
+            // No extra information needed if inner vertex
+            current_decorated_vertex = Vertex_c_handle(m_adaptor_circulator);
         }
-        else // if border/seam vertex, circulates only from 
-        {    // first_cw_neighbor() to last_cw_neighbor() (included)
-            if (m_center->first_cw_neighbor() == m_adaptor_circulator)
-                next_vertex = m_center->vertex();
-            else
+        else // if seam vertex
+        {
+            // Ambiguous case: m_center is the extremity of the seam
+            //                 and m_adaptor_circulator is on the seam
+            assert(m_center->last_cw_neighbor() != m_adaptor_circulator
+                || m_center->first_cw_neighbor() != m_adaptor_circulator);
+
+            // Get next vertex on facet
+            Adaptor_vertex_c_handle next_vertex = NULL;
+            Adaptor_vertex_around_vertex_c_cir ccw_neighbor = m_adaptor_circulator;
+            ccw_neighbor--;
+            if (m_center->first_cw_neighbor() == NULL) // if inner vertex
+            {
                 next_vertex = ccw_neighbor;
-        }
+            }
+            else // if border/seam vertex, circulates only from
+            {    // first_cw_neighbor() to last_cw_neighbor() (included)
+                if (m_center->first_cw_neighbor() == m_adaptor_circulator)
+                    next_vertex = m_center->vertex();
+                else
+                    next_vertex = ccw_neighbor;
+            }
 
-        // If (m_adaptor_circulator, next_vertex) isn't a seam (non-oriented) edge
-        if (m_mesh_patch->m_mesh_adaptor->get_halfedge_seaming(
-                        m_adaptor_circulator, next_vertex) != Mesh_patch::BORDER
-         || m_mesh_patch->m_mesh_adaptor->get_halfedge_seaming(
-                        next_vertex, m_adaptor_circulator) != Mesh_patch::BORDER)
-        {
-            current_decorated_vertex
-                    = m_mesh_patch->get_decorated_inner_vertex(m_adaptor_circulator,
-                                                               next_vertex);
-        }
-        // Special case: both vertices belong to the seam
-        else 
-        {
-            current_decorated_vertex
-                    = m_mesh_patch->get_decorated_border_vertex(m_adaptor_circulator,
-                                                                next_vertex,
-                                                                NULL);
+            // If (m_adaptor_circulator, next_vertex) isn't a seam (non-oriented) edge
+            if (m_mesh_patch->m_mesh_adaptor->get_halfedge_seaming(
+                            m_adaptor_circulator, next_vertex) != Mesh_patch::BORDER
+            || m_mesh_patch->m_mesh_adaptor->get_halfedge_seaming(
+                            next_vertex, m_adaptor_circulator) != Mesh_patch::BORDER)
+            {
+                current_decorated_vertex
+                        = m_mesh_patch->get_decorated_inner_vertex(m_adaptor_circulator,
+                                                                next_vertex);
+            }
+            // Special case: both vertices belong to the seam
+            else
+            {
+                current_decorated_vertex
+                        = m_mesh_patch->get_decorated_border_vertex(m_adaptor_circulator,
+                                                                    next_vertex,
+                                                                    NULL);
+            }
         }
 
 //#ifdef DEBUG_TRACE
@@ -599,7 +609,7 @@ private:
                                                                next_vertex);
         }
         // Special case: both vertices belong to the seam
-        else 
+        else
         {
             current_decorated_vertex
                     = m_mesh_patch->get_decorated_border_vertex(m_adaptor_circulator,
