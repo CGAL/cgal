@@ -71,8 +71,7 @@ namespace CircularFunctors {
     std::cout << " point : " << p << std::endl;
 
     assert (A1.is_x_monotone());
-    //    assert (point_in_range<CK>(A1, p)); 
-    // removed for DEBUG !!!
+    assert (point_in_range<CK>(A1, p)); 
 
     // Compare the ordinate of p with the ordinate of the center.
     Comparison_result sgn =
@@ -317,6 +316,22 @@ namespace CircularFunctors {
 	assert( !(p.circle(1) == A.supporting_circle()) );
 	ca1 = Circular_arc_2( A, true,  p.circle(1), p.is_left() );
 	ca2 = Circular_arc_2( A, false, p.circle(1), p.is_left() );
+
+	if (A.is_x_monotone()) {
+	  std::cout << " [Split_2]" << " cas 1"
+		    << std::endl << "[Curve #1 _1] " << ca1;
+	  std::cout << CGALi::print(std::cout, ca1) << std::endl;
+	  std::cout << "[Curve #2 _1] " << ca2;
+	  std::cout << CGALi::print(std::cout, ca2) << std::endl;
+
+	  //	  if (! A.begin().is_left()) 
+	  if ( ca1.right()!=ca2.left() )
+	    {
+	      std::cout << " SWAP " << std::endl;
+	      std::swap(ca1,ca2);
+	      assert(ca1.right()==ca2.left());
+	    }
+	};
 	return;
       };
 
@@ -325,6 +340,22 @@ namespace CircularFunctors {
 	assert( !(p.circle(0) == A.supporting_circle()) );
 	ca1 = Circular_arc_2( A, true,  p.circle(0), p.is_left() );
 	ca2 = Circular_arc_2( A, false, p.circle(0), p.is_left() );
+
+	if (A.is_x_monotone()) {
+	  std::cout << " [Split_2]" << " cas 2"
+		    << std::endl << "[Curve #1 _1] " << ca1;
+	  std::cout << CGALi::print(std::cout, ca1) << std::endl;
+	  std::cout << "[Curve #2 _1] " << ca2;
+	  std::cout << CGALi::print(std::cout, ca2) << std::endl;
+	  
+	  //	  if (! A.begin().is_left()) 
+	  if ( ca1.right()!=ca2.left() )
+	    {
+	      std::cout << " SWAP " << std::endl;
+	      std::swap(ca1,ca2);
+	      assert(ca1.right()==ca2.left());
+	    }
+	};
 	return;
       };
 
@@ -340,6 +371,23 @@ namespace CircularFunctors {
 
     ca1 = Circular_arc_2( A, true,  p.circle(0), b );
     ca2 = Circular_arc_2( A, false, p.circle(0), b );
+
+    if (A.is_x_monotone()) {
+      std::cout << " [Split_2]" << " cas 3"
+		<< std::endl << "[Curve #1 _1] " << ca1;
+      std::cout << CGALi::print(std::cout, ca1) << std::endl;
+      std::cout << "[Curve #2 _1] " << ca2;
+      std::cout << CGALi::print(std::cout, ca2) << std::endl;
+      
+      //	  if (! A.begin().is_left()) 
+      if ( ca1.right()!=ca2.left() )
+	{
+	  std::cout << " SWAP " << std::endl;
+	  std::swap(ca1,ca2);
+	  assert(ca1.right()==ca2.left());
+	}
+
+    };
     return;
   }
 
