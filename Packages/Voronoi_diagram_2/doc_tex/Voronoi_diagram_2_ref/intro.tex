@@ -1,0 +1,69 @@
+%% Copyright (c) 2005  Foundation for Research and Technology-Hellas (Greece).
+%% All rights reserved.
+%%
+%% This file is part of CGAL (www.cgal.org); you may redistribute it under
+%% the terms of the Q Public License version 1.0.
+%% See the file LICENSE.QPL distributed with CGAL.
+%%
+%% Licensees holding a valid commercial license may use this file in
+%% accordance with the commercial license agreement provided with the software.
+%%
+%% This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+%% WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+%%
+%% $Source$
+%% $Revision$ $Date$
+%% $Name$
+%%
+%% Author(s)     : Menelaos Karavelas <mkaravel@tem.uoc.gr>
+
+
+\chapter{2D Voronoi Diagram adaptor}
+\label{ref-chapter-vda2}
+\ccChapterAuthor{Menelaos Karavelas}
+
+\ccHeading{Definition}
+
+\cgal\ provides the class
+\ccc{CGAL::Voronoi_diagram_adaptor_2<DG,VT>} for
+adapting the various (triangulated) Delaunay graphs to Voronoi diagrams.
+In particular, the class \ccc{CGAL::Voronoi_diagram_adaptor_2<DG,VT>}
+provides an API for (triangulated) Delaunay graphs, that makes them
+look like planar subdivisions. In addition, it eliminates degenerate
+features in the Delaunay graph that are the result of the fact that
+Delaunay graphs are always triangulated and are due to degenerate
+configurations in the generating data.
+
+The two template parameters must be models of the
+\ccc{DelaunayGraph_2} and \ccc{VoronoiTraits_2} concepts. The first concept
+is related to the Delaunay graph that are to be adapted, whereas the
+second one refers to the necessary types and functors needed for
+performing the adaptation. 
+
+\ccHeading{Concepts}
+\ccRefConceptPage{DelaunayGraph_2}\\
+\ccRefConceptPage{VoronoiDiagramHalfedge_2}\\
+\ccRefConceptPage{VoronoiDiagramVertex_2}\\
+\ccRefConceptPage{VoronoiDiagramFace_2}\\
+\ccRefConceptPage{VoronoiDiagramLocateType_2}\\
+\ccRefConceptPage{VoronoiTraits_2}\\
+\ccRefConceptPage{VoronoiEdge_2}\\
+\ccRefConceptPage{VoronoiVertex_2}\\
+\ccRefConceptPage{EdgeDegeneracyTester}\\
+\ccRefConceptPage{FaceDegeneracyTester}\\
+\ccRefConceptPage{DelaunayGraphPointLocator_2}\\
+\ccRefConceptPage{DelaunayGraphLocateType_2}%
+
+\ccHeading{Classes}
+\ccRefIdfierPage{CGAL::Voronoi_diagram_adaptor_2<DG,VT>}\\
+\ccRefIdfierPage{CGAL::Apollonius_graph_Voronoi_traits_2<AG2>}\\
+\ccRefIdfierPage{CGAL::Delaunay_triangulation_Voronoi_traits_2<DT2>}\\
+\ccRefIdfierPage{CGAL::Regular_triangulation_Voronoi_traits_2<RT2>}\\
+\ccRefIdfierPage{CGAL::Segment_Voronoi_diagram_Voronoi_traits_2<SVD2>}
+
+\lcHtml{\ccHeading{Links to the Reference Sections}}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+

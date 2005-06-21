@@ -1,3 +1,8 @@
+21 June 2005:  Menelaos Karavelas
+- manual: added intro to the ref manual
+- manual: added models to various concepts
+- manual: changed names of some template paremeters
+
 18 June 2005:  Menelaos Karavelas
 - fixed the point_location example w.r.t. the changes made on June 16;
   the Locate_type classes is now used in the example as well.
