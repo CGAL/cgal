@@ -780,6 +780,7 @@ pivot_step( )
     // ----------------------------
     // initialize ratio test
     ratio_test_init();
+    
 
     // diagnostic output
     CGAL_qpe_debug {
@@ -805,6 +806,7 @@ pivot_step( )
                 vout1 << "  ";
                 vout << "problem is UNBOUNDED" << std::endl;
 		//nu should be zero in this case
+		// note: (-1)/hat{\nu} is stored instead of \hat{\nu}
 		nu = inv_M_B.inner_product(     A_Cj.begin(), two_D_Bj.begin(),
 		    q_lambda.begin(),    q_x_O.begin());
 	        if (is_QP) {
@@ -1582,6 +1584,7 @@ enter_variable( )
 	}
 	    
 	// update basis inverse
+	// note: (-1)/hat{\nu} is stored instead of \hat{\nu}
 	inv_M_B.enter_original( q_lambda.begin(), q_x_O.begin(), -nu);
 	
     } else {                                            // slack variable
@@ -1704,8 +1707,9 @@ z_replace_variable( )
     // replace variable
     z_replace_variable( Has_no_inequalities());
 
-    // pivot step done
-    i = j = -1;
+    // pivot step not yet completely done
+    i = -1;
+    j -= in_B.size();
 }
 
 
@@ -1764,12 +1768,14 @@ z_replace_variable_original_by_original( )
 	if ( vout2.verbose()) print_basis();
     }
 	
-    // compute \hat{k}_{2}
-    ET   k_2 = nu + et2 * d*(ET(qp_D[i][j]) - ET(qp_D[j][j]));
+    // compute s_delta
+    D_pairwise_accessor  d_accessor( qp_D, j);
+    ET                   s_delta =d_accessor(j)-d_accessor(i); 
     	    
     // update basis inverse
+    // note: (-1)/hat{\nu} is stored instead of \hat{\nu}
     inv_M_B.z_replace_original_by_original( q_lambda.begin(), q_x_O.begin(), 
-      k_2, k);
+        s_delta, -nu, k);
 
 }
 
@@ -1865,9 +1871,9 @@ z_replace_variable_slack_by_original( )
     ET  kappa = d * ET(qp_A[j][new_row]) 
                 - inv_M_B.inner_product_x( tmp_x.begin(), q_x_O.begin());
 		
-		 
+	// note: (-1)/hat{\nu} is stored instead of \hat{\nu}	 
     inv_M_B.z_replace_slack_by_original( q_lambda.begin(), q_x_O.begin(),
-                                          tmp_x.begin(), kappa, nu);    
+                                          tmp_x.begin(), kappa, -nu);    
 }
 
 
