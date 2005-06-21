@@ -198,8 +198,9 @@ class QPE_basis_inverse {
     // for phaseII                               (update type UZ_1)
     template < class ForwardIterator >
     void  z_replace_original_by_original(ForwardIterator y_l_it,
-                                         ForwardIterator y_x_it, const ET& k_2,
-					 unsigned int k_i);
+                                         ForwardIterator y_x_it,
+                                         const ET& s_delta, const ET& s_nu,
+					                     unsigned int k_i);
 
 
     // replacing of original by slack variable with precondition in QP-case
@@ -242,7 +243,7 @@ class QPE_basis_inverse {
   private:
     
     // constants
-    const ET                 et0, et1;
+    const ET                 et0, et1, et2;
                                         
     // data members
     Matrix                   M;         // basis inverse, stored row-wise
@@ -467,7 +468,7 @@ class QPE_basis_inverse {
         } else {
             row_it = M.insert( M.end(), Row( k, et0))->begin();
             x_x.push_back( et0);
-	    tmp_x.push_back( et0);
+	        tmp_x.push_back( et0);
         }
     
         // store entries in new row
@@ -1066,7 +1067,7 @@ class QPE_basis_inverse {
 template < class ET_, class Is_LP_ >  inline
 QPE_basis_inverse<ET_,Is_LP_>::
 QPE_basis_inverse( CGAL::Verbose_ostream&  verbose_ostream)
-    : et0( 0), et1( 1),
+    : et0( 0), et1( 1), et2( 2),
       is_LP( check_tag( Is_LP())), is_QP( ! is_LP),
       vout( verbose_ostream)
 { }
