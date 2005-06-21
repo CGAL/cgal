@@ -2484,7 +2484,8 @@ d
 \left|\det(\hat{\check{M}}_{B})\right|
 \end{array}
 \end{equation}
-such that Update $U_{Z_{1}}$ can be outlined as
+such that the part in the class \texttt{QPE\_basis\_inverse} of 
+Update $U_{Z_{1}}$ can be outlined as
 \begin{tabbing}
 \texttt{z\_replace\_original\_by\_original($y, s_{\Delta}, s_{\nu}, k_{i}$) \{}
 \\
@@ -2492,8 +2493,8 @@ such that Update $U_{Z_{1}}$ can be outlined as
 \> \texttt{$\hat{k}_{1}:=y_{k_{i}}$} \\
 \> \texttt{$\hat{\rho}:=
   \left(\hat{\check{M}}_{B}^{-1}\right)_{\bullet, k_{i}}$} \\
-\> \texttt{$\hat{v}:=y + 2s_{\Delta} \hat{\rho} - de_{k_{i}}$} \\
-\> \texttt{$\hat{k}_{2}:=s_{\nu} - 4s_{\Delta}\hat{k}_{1}$} \\
+\> \texttt{$\hat{v}:=y + s_{\Delta} \hat{\rho} - de_{k_{i}}$} \\
+\> \texttt{$\hat{k}_{2}:=s_{\nu} - 2s_{\Delta}\hat{k}_{1}$} \\
 \> \texttt{z\_update\_in\_place($\hat{\rho}, \hat{v}, \hat{k}_{1}^{2},
 -\hat{k}_{2}, -\hat{k}_{1}, d^{2}$)} \\
 \> // store new denominator $\hat{z}$ \\
@@ -2504,7 +2505,7 @@ The calling counterpart in the class \texttt{QP\_solver} can be outlined as
 \begin{tabbing}
 \texttt{z\_replace\_variable\_original\_by\_original() \{} \\
 \texttt{  } \= // compute $k_{i}, \hat{k}_{2}$ \\
-\> \texttt{$s_{\Delta}:= D_{j,j} - D_{i,j}$} \\
+\> \texttt{$s_{\Delta}:= 2\left(D_{j,j} - D_{i,j}\right)$} \\
 \> \texttt{$s_{\nu}:= \nu$} \\
 \> \texttt{$k_{i}:=\beta_{O}(i)$} \\
 \> // update headings \\
@@ -2552,6 +2553,7 @@ d
 \end{equation}
 such that, by taking into account that according to
 Definition~(\ref{def:theta_vartheta}), $\vartheta_{C}=0$,
+the part in the class \texttt{QPE\_basis\_inverse} of
 Update $U_{Z_{4}}$ can be outlined as
 \begin{tabbing}
 \texttt{z\_replace\_slack\_by\_slack($u, k_{j}$) \{} \\
@@ -2623,7 +2625,8 @@ d
 \left|\det(\hat{\check{M}}_{B})\right|
 \end{array}
 \end{equation}
-such that Update $U_{Z_{2}}$ can be outlined as
+such that the part in the class \texttt{QPE\_basis\_inverse} of
+Update $U_{Z_{2}}$ can be outlined as
 \begin{tabbing}
 \texttt{z\_replace\_original\_by\_slack($k_{j}, k_{i}$) \{} \\
 \texttt{  } \= // compute $\hat{\rho}, \hat{\varrho}, \hat{\kappa},
@@ -2682,6 +2685,7 @@ d &:=& \left|\det(\hat{\check{M}}_{B})\right|
 \end{equation}
 such that, by taking into account that according to
 Definition~(\ref{def:theta_vartheta}), $\vartheta_{C}=0$,
+the part in the class \texttt{QPE\_basis\_inverse} of
 Update $U_{Z_{3}}$ can be outlined as
 \begin{tabbing}
 \texttt{z\_replace\_slack\_by\_original($y,u,\kappa,\nu$) \{}
