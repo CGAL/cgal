@@ -28,7 +28,7 @@
 #include <iostream>
 #include <CGAL/IO/io_tags.h>
 #include <CGAL/IO/Color.h>
-#include <CGAL/Object.h>
+
 
 CGAL_BEGIN_NAMESPACE
 
@@ -69,7 +69,7 @@ inline
 void
 write(std::ostream& os, const T& t, const io_Read_write&)
 {
-    os.write(static_cast<char*>(&t), sizeof(t));
+    os.write(reinterpret_cast<const char*>(&t), sizeof(t));
 }
 
 
@@ -105,7 +105,7 @@ inline
 void
 read(std::istream& is, T& t, const io_Read_write&)
 {
-    is.read(static_cast<char*>(&t), sizeof(t));
+    is.read(reinterpret_cast<char*>(&t), sizeof(t));
 }
 
 

@@ -1,3 +1,6 @@
+21 June 2005 Andreas Fabri
+- Replaced static_cast with reinterpret_cast and removed include <CGAL/Object.h>
+
 29 March 2004 Radu Ursu
 - rolled back some changes in doc_tex/IOstream/main.tex and doc_tex/IOstream_ref/main.tex
 
