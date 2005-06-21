@@ -129,7 +129,7 @@ struct Predicate_checker {
 
 
 template < typename Traits >
-struct cmp
+struct cmp_less
 {
   typedef typename Traits::Point_2             Point_2;
   typedef typename Traits::X_monotone_curve_2  X_monotone_curve_2;
@@ -306,9 +306,9 @@ public:
       using std::swap;
       t->t1.split_2_object()(a.first, p.first, ca1.first, ca2.first);
       t->t2.split_2_object()(a.second, p.second, ca1.second, ca2.second);
-      if (cmp<Traits_1>()(ca1.first, ca2.first))
+      if (cmp_less<Traits_1>()(ca2.first, ca1.first))
 	swap(ca1.first, ca2.first);
-      if (cmp<Traits_2>()(ca1.second, ca2.second))
+      if (cmp_less<Traits_2>()(ca2.second, ca1.second))
 	swap(ca1.second, ca2.second);
 
       std::cout << " [Split_2]"
@@ -342,8 +342,8 @@ public:
 
 	assert(v1.size() == v2.size());
 
-	std::sort(v1.begin(), v1.end(), cmp<Traits_1>());
-	std::sort(v2.begin(), v2.end(), cmp<Traits_2>());
+	std::sort(v1.begin(), v1.end(), cmp_less<Traits_1>());
+	std::sort(v2.begin(), v2.end(), cmp_less<Traits_2>());
 
 	for(unsigned int i=0; i<v1.size(); ++i)
 	  *res++ = std::make_pair(v1[i], v2[i]);
@@ -414,10 +414,10 @@ public:
 	}
 
 
-	std::sort(vp1.begin(), vp1.end(), cmp<Traits_1>());
-	std::sort(vp2.begin(), vp2.end(), cmp<Traits_2>());
-	std::sort(vc1.begin(), vc1.end(), cmp<Traits_1>());
-	std::sort(vc2.begin(), vc2.end(), cmp<Traits_2>());
+	std::sort(vp1.begin(), vp1.end(), cmp_less<Traits_1>());
+	std::sort(vp2.begin(), vp2.end(), cmp_less<Traits_2>());
+	std::sort(vc1.begin(), vc1.end(), cmp_less<Traits_1>());
+	std::sort(vc2.begin(), vc2.end(), cmp_less<Traits_2>());
 
 	for(unsigned int i=0; i<vp1.size(); ++i) {
 	  std::cout << " [Intersect_2] "
