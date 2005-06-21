@@ -171,8 +171,8 @@ template < class ET_, class Is_LP_ >
 template < class ForwardIterator >
 void  QPE_basis_inverse<ET_,Is_LP_>::
 z_replace_original_by_original(ForwardIterator y_l_it,
-                               ForwardIterator y_x_it, const ET& k_2,
-			       unsigned int k_i)
+                               ForwardIterator y_x_it, const ET& s_delta,
+                               const ET& s_nu, unsigned int k_i)
 {
 
     // assert QP case and phaseII
@@ -181,25 +181,34 @@ z_replace_original_by_original(ForwardIterator y_l_it,
 
     // prepare \hat{k}_{1} -scalar
     ET  hat_k_1 = *(y_x_it + k_i);
-    
-    // prepare \hat{v} -vector in tmp_l, tmp_x
-    std::copy(y_l_it, (y_l_it+s), tmp_l.begin());
-    std::copy(y_x_it, (y_x_it+b), tmp_x.begin());
-    tmp_x[k_i] -= d;
-    
+
     // prepare \hat{\rho} -vector in x_l, x_x
     copy_row_in_B_O(x_l.begin(), x_x.begin(), k_i);
     
+    // prepare \hat{v} -vector in tmp_l, tmp_x
+    
+    // tmp_l -part
+    std::transform(y_l_it, (y_l_it+s), x_l.begin(), tmp_l.begin(),
+        compose2_2(std::plus<ET>(), Identity<ET>(),
+        std::bind1st(std::multiplies<ET>(), s_delta)));
+    
+    // tmp_x -part    
+    std::transform(y_x_it, (y_x_it+b), x_x.begin(), tmp_x.begin(),
+        compose2_2(std::plus<ET>(), Identity<ET>(),
+        std::bind1st(std::multiplies<ET>(), s_delta)));
+    tmp_x[k_i] -= d;
+    
+    // prepare \hat{k}_{2} -scalar
+    ET  hat_k_2 = s_nu - (et2 * s_delta * hat_k_1);
+    
     CGAL_qpe_precondition( d != et0);
-    
-    
+        
     // update matrix in place
     z_update_inplace(x_l.begin(), x_x.begin(), tmp_l.begin(), tmp_x.begin(),
-                      hat_k_1 * hat_k_1, -k_2, -hat_k_1, d*d);
+                      hat_k_1 * hat_k_1, -hat_k_2, -hat_k_1, d*d);
     
     // store new denominator
     d = hat_k_1 * hat_k_1 / d;
-
 
     CGAL_qpe_postcondition( d > et0);
 
@@ -502,10 +511,10 @@ z_update_inplace( ForIt psi1_l_it, ForIt psi1_x_it,
                 col < s;
               ++col, ++row_it,  ++y_it1_c,  ++y_it2_c     ){
     
-            u_elem = *y_it1_r * *y_it2_c + *y_it2_r * *y_it1_c;
-	    u_elem *= omega2;
-	    u_elem += omega1 * *y_it1_r * *y_it1_c; 
-	    update_entry( *row_it, omega0, u_elem, omega3);
+            u_elem = (*y_it1_r * *y_it2_c) + (*y_it2_r * *y_it1_c);
+	       u_elem *= omega2;
+	       u_elem += omega1 * *y_it1_r * *y_it1_c; 
+	       update_entry( *row_it, omega0, u_elem, omega3);
         }
     
         // columns: l..k-1  ( R )
@@ -514,9 +523,9 @@ z_update_inplace( ForIt psi1_l_it, ForIt psi1_x_it,
                row_it != matrix_it->end();
              ++row_it,  ++y_it1_c,  ++y_it2_c            ){
 		 
-            u_elem = *y_it1_r * *y_it2_c + *y_it2_r * *y_it1_c;
+            u_elem = (*y_it1_r * *y_it2_c) + (*y_it2_r * *y_it1_c);
             u_elem *= omega2;
-	    u_elem += omega1 * *y_it1_r * *y_it1_c;     
+	        u_elem += omega1 * *y_it1_r * *y_it1_c;     
             update_entry( *row_it, omega0, u_elem, omega3);
         }
 	    
