@@ -24,8 +24,8 @@ CXXFLAGS = \
            $(LONG_NAME_PROBLEM_CXXFLAGS) \
            -fmessage-length=0 \
 	   $(DEBUG_OPT) \
-	   -DCGAL_CURVED_KERNEL_DEBUG \
 	   -DHAVE_CONFIG_H
+#	   -DCGAL_CURVED_KERNEL_DEBUG \
 #           -O2 -DNDEBUG \
            # -I$(HOME)/CGAL/Interval_arithmetic.RootOf_2/include \
 

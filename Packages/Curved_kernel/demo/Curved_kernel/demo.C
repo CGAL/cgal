@@ -321,7 +321,7 @@ public slots:
   void get_arc()
   {
     arc_container().push_back(get_arc_layer->get_circular_arc());
-    arr_insert(pm(),pl(),arc_container().back());
+    insert(pm(),pl(),arc_container().back());
     //    pm().insert(arc_container().back());
 
     something_changed = true;
@@ -335,7 +335,7 @@ public slots:
       pm().clear();
       for (ArcContainer::const_iterator it=arc_container().begin();
 	   it != arc_container().end(); ++it) {
-	arr_insert(pm(),pl(),*it);
+	insert(pm(),pl(),*it);
       };
       //      pm().insert(arc_container().begin(), arc_container().end());
     }
