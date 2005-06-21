@@ -76,7 +76,7 @@
 			CharacterSet="0">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalOptions="/Ob0"
+				AdditionalOptions="/Og-"
 				Optimization="2"
 				GlobalOptimizations="TRUE"
 				EnableIntrinsicFunctions="TRUE"
