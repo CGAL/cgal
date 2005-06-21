@@ -1,3 +1,8 @@
+21 June 2005:  Menelaos Karavelas
+- removed unused code related to homogeneous coordinates/representations
+- changed code in traits to minimize function/method calls
+- renamed some methods
+
 15 June 2005:  Menelaos Karavelas
 - added layout widget in demo including a label; messages about the actions
   taken are now printed on the label.

@@ -61,7 +61,7 @@ ag2_orientation_test_C2(const RT &x1, const RT &y1, const RT &w1,
 template< class RT >
 inline
 bool
-ad_is_hidden_test_ring_C2(const RT &x1, const RT &y1, const RT &w1,
+ag_is_hidden_test_ring_C2(const RT &x1, const RT &y1, const RT &w1,
 			  const RT &x2, const RT &y2, const RT &w2)
 {
 #ifdef AG2_PROFILE_PREDICATES
@@ -80,7 +80,7 @@ ad_is_hidden_test_ring_C2(const RT &x1, const RT &y1, const RT &w1,
 template< class RT >
 inline
 bool
-ad_is_hidden_test_sqrtf_C2(const RT &x1, const RT &y1, const RT &w1,
+ag_is_hidden_test_sqrtf_C2(const RT &x1, const RT &y1, const RT &w1,
 			   const RT &x2, const RT &y2, const RT &w2)
 {
 #ifdef AG2_PROFILE_PREDICATES
@@ -99,7 +99,7 @@ ad_is_hidden_test_sqrtf_C2(const RT &x1, const RT &y1, const RT &w1,
 template< class RT >
 CGAL_MEDIUM_INLINE
 Comparison_result
-compare_ad_distances_test_ring_C2(const RT &x1, const RT &y1, const RT &w1,
+compare_ag_distances_test_ring_C2(const RT &x1, const RT &y1, const RT &w1,
 				  const RT &x2, const RT &y2, const RT &w2,
 				  const RT & x, const RT & y)
 {
@@ -141,7 +141,7 @@ compare_ad_distances_test_ring_C2(const RT &x1, const RT &y1, const RT &w1,
 template< class RT >
 CGAL_MEDIUM_INLINE
 Comparison_result
-compare_ad_distances_test_sqrtf_C2(const RT &x1, const RT &y1, const RT &w1,
+compare_ag_distances_test_sqrtf_C2(const RT &x1, const RT &y1, const RT &w1,
 				   const RT &x2, const RT &y2, const RT &w2,
 				   const RT & x, const RT & y)
 {
@@ -219,7 +219,7 @@ bounded_side_of_segment(const RT& x1, const RT& y1,
 
 template < class RT >
 Sign
-ad_incircle_test_sqrtf_C2(const RT &x1, const RT &y1,
+ag_incircle_test_sqrtf_C2(const RT &x1, const RT &y1,
 			  const RT &w1,
 			  const RT &x2, const RT &y2,
 			  const RT &w2,
@@ -244,7 +244,7 @@ ad_incircle_test_sqrtf_C2(const RT &x1, const RT &y1,
 
 template < class RT >
 Sign
-ad_incircle_test_ring_C2(const RT &x1, const RT &y1,
+ag_incircle_test_ring_C2(const RT &x1, const RT &y1,
 			 const RT &w1,
 			 const RT &x2, const RT &y2,
 			 const RT &w2,
@@ -273,7 +273,7 @@ ad_incircle_test_ring_C2(const RT &x1, const RT &y1,
 
 template < class RT >
 Sign
-ad_incircle_test_sqrtf_C2(const RT &x1, const RT &y1,
+ag_incircle_test_sqrtf_C2(const RT &x1, const RT &y1,
 			  const RT &w1,
 			  const RT &x2, const RT &y2,
 			  const RT &w2,
@@ -301,7 +301,7 @@ ad_incircle_test_sqrtf_C2(const RT &x1, const RT &y1,
 
 template < class RT >
 Sign
-ad_incircle_test_ring_C2(const RT &x1, const RT &y1,
+ag_incircle_test_ring_C2(const RT &x1, const RT &y1,
 			 const RT &w1,
 			 const RT &x2, const RT &y2,
 			 const RT &w2,
@@ -333,7 +333,7 @@ ad_incircle_test_ring_C2(const RT &x1, const RT &y1,
 
 template < class RT >
 bool
-ad_finite_edge_test_sqrtf_C2(const RT &x1, const RT &y1,
+ag_finite_edge_test_sqrtf_C2(const RT &x1, const RT &y1,
 			     const RT &w1,
 			     const RT &x2, const RT &y2,
 			     const RT &w2,
@@ -363,7 +363,7 @@ ad_finite_edge_test_sqrtf_C2(const RT &x1, const RT &y1,
 
 template < class RT >
 bool
-ad_finite_edge_test_ring_C2(const RT &x1, const RT &y1,
+ag_finite_edge_test_ring_C2(const RT &x1, const RT &y1,
 			    const RT &w1,
 			    const RT &x2, const RT &y2,
 			    const RT &w2,
@@ -396,7 +396,7 @@ ad_finite_edge_test_ring_C2(const RT &x1, const RT &y1,
 
 template < class RT >
 bool
-ad_finite_edge_test_degenerated_sqrtf_C2(const RT &x1, const RT &y1,
+ag_finite_edge_test_degenerated_sqrtf_C2(const RT &x1, const RT &y1,
 					 const RT &w1,
 					 const RT &x2, const RT &y2,
 					 const RT &w2,
@@ -420,7 +420,7 @@ ad_finite_edge_test_degenerated_sqrtf_C2(const RT &x1, const RT &y1,
 
 template < class RT >
 bool
-ad_finite_edge_test_degenerated_ring_C2(const RT &x1, const RT &y1,
+ag_finite_edge_test_degenerated_ring_C2(const RT &x1, const RT &y1,
 					const RT &w1,
 					const RT &x2, const RT &y2,
 					const RT &w2,
@@ -445,7 +445,7 @@ ad_finite_edge_test_degenerated_ring_C2(const RT &x1, const RT &y1,
 
 template < class RT >
 bool
-ad_finite_edge_test_degenerated_sqrtf_C2(const RT &x1, const RT &y1,
+ag_finite_edge_test_degenerated_sqrtf_C2(const RT &x1, const RT &y1,
 					 const RT &w1,
 					 const RT &x2, const RT &y2,
 					 const RT &w2,
@@ -473,7 +473,7 @@ ad_finite_edge_test_degenerated_sqrtf_C2(const RT &x1, const RT &y1,
 
 template < class RT >
 bool
-ad_finite_edge_test_degenerated_ring_C2(const RT &x1, const RT &y1,
+ag_finite_edge_test_degenerated_ring_C2(const RT &x1, const RT &y1,
 					const RT &w1,
 					const RT &x2, const RT &y2,
 					const RT &w2,
@@ -502,7 +502,7 @@ ad_finite_edge_test_degenerated_ring_C2(const RT &x1, const RT &y1,
 
 template < class RT >
 bool
-ad_infinite_edge_test_sqrtf_C2(const RT &x2, const RT &y2,
+ag_infinite_edge_test_sqrtf_C2(const RT &x2, const RT &y2,
 			       const RT &w2,
 			       const RT &x3, const RT &y3,
 			       const RT &w3,
@@ -529,7 +529,7 @@ ad_infinite_edge_test_sqrtf_C2(const RT &x2, const RT &y2,
 
 template < class RT >
 bool
-ad_infinite_edge_test_ring_C2(const RT &x2, const RT &y2,
+ag_infinite_edge_test_ring_C2(const RT &x2, const RT &y2,
 			      const RT &w2,
 			      const RT &x3, const RT &y3,
 			      const RT &w3,
@@ -560,7 +560,7 @@ ad_infinite_edge_test_ring_C2(const RT &x2, const RT &y2,
 
 template < class RT >
 bool
-ad_is_degenerate_edge_test_sqrtf_C2(const RT &x1, const RT &y1,
+ag_is_degenerate_edge_test_sqrtf_C2(const RT &x1, const RT &y1,
 				    const RT &w1,
 				    const RT &x2, const RT &y2,
 				    const RT &w2,
@@ -587,7 +587,7 @@ ad_is_degenerate_edge_test_sqrtf_C2(const RT &x1, const RT &y1,
 
 template < class RT >
 bool
-ad_is_degenerate_edge_test_ring_C2(const RT &x1, const RT &y1,
+ag_is_degenerate_edge_test_ring_C2(const RT &x1, const RT &y1,
 				   const RT &w1,
 				   const RT &x2, const RT &y2,
 				   const RT &w2,

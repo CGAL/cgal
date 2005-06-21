@@ -31,10 +31,6 @@
 #include <CGAL/predicates/Apollonius_graph_ftC2.h>
 #endif
 
-#if defined CGAL_HOMOGENEOUS_H || defined CGAL_SIMPLE_HOMOGENEOUS_H
-#include <CGAL/predicates/Apollonius_graph_rtH2.h>
-#endif
-
 #include <CGAL/Number_type_traits.h>
 #include <CGAL/Apollonius_graph_kernel_wrapper_2.h>
 
@@ -53,35 +49,10 @@ CGAL_BEGIN_NAMESPACE
 //                        Orientation
 //-----------------------------------------------------------------------
 
-template<class K>
-inline
-Orientation
-ag2_orientation_test_2(const typename K::Site_2& p,
-		       const typename K::Site_2& q,
-		       const typename K::Site_2& r,
-		       Cartesian_tag)
-{
-  return ag2_orientation_test_C2(p.x(), p.y(), p.weight(),
-				 q.x(), q.y(), q.weight(),
-				 r.x(), r.y(), r.weight());
-}
-
-template<class K>
-inline
-Orientation
-ag2_orientation_test_2(const typename K::Site_2& p,
-		       const typename K::Site_2& q,
-		       const typename K::Site_2& r,
-		       Homogeneous_tag)
-{
-  CGAL_assertion( false );
-  return COLLINEAR;
-}
-
 template< class K >
 class AG2_Orientation_test_2
 {
-public:
+ public:
   typedef typename K::Site_2   Site_2;
   typedef Orientation          result_type;
   typedef Arity_tag<3>         Arity;
@@ -89,8 +60,9 @@ public:
   inline Orientation operator()(const Site_2 &p, const Site_2 &q,
 				const Site_2 &r) const
   {
-    typedef typename K::Rep_tag Tag;
-    return ag2_orientation_test_2<K>(p, q, r, Tag());
+    return ag2_orientation_test_C2(p.x(), p.y(), p.weight(),
+				   q.x(), q.y(), q.weight(),
+				   r.x(), r.y(), r.weight());
   }
 };
 
@@ -98,70 +70,32 @@ public:
 //                        Is hidden
 //-----------------------------------------------------------------------
 
-template < class K >
-inline
-bool
-ad_is_hidden_test_2(const typename K::Site_2& p,
-		    const typename K::Site_2& q,
-		    Cartesian_tag, Sqrt_field_tag )
-{
-  return ad_is_hidden_test_sqrtf_C2(p.x(), p.y(), p.weight(),
-				    q.x(), q.y(), q.weight());
-}
-
-
-template < class K >
-inline
-bool
-ad_is_hidden_test_2(const typename K::Site_2& p,
-		    const typename K::Site_2& q,
-		    Cartesian_tag, Ring_tag )
-{
-  return ad_is_hidden_test_ring_C2(p.x(), p.y(), p.weight(),
-				   q.x(), q.y(), q.weight());
-}
-
-
-
-template < class K, class Method_tag >
-inline
-bool
-ad_is_hidden_test_2(const typename K::Site_2& p,
-		    const typename K::Site_2& q,
-		    Homogeneous_tag)
-{
-  Sign s = sign_of_ad_distance2_testH2(p.hx(), p.hy(), p.hw(), 
-				       p.weight(),
-				       q.hx(), q.hy(), q.hw(),
-				       q.weight());
-  if ( s == POSITIVE ) { return false; }
-  return (CGAL::compare(p.weight(), q.weight()) != SMALLER);
-}
-
-template < class K, class Method_tag >
-inline
-bool
-ad_is_hidden_test_2(const typename K::Site_2& p,
-		    const typename K::Site_2& q,
-		    Cartesian_tag tag)
-{
-  return ad_is_hidden_test_2< K >(p, q, tag, Method_tag());
-}
-
-
 template< class K, class Method_tag >
 class Is_hidden_2
 {
-public:
+ public:
   typedef typename K::Site_2   Site_2;
   typedef bool                 result_type;
   typedef Arity_tag<2>         Arity;
 
-  inline bool operator()(const Site_2 &p,
-			 const Site_2 &q) const
+ private:
+  bool is_hidden(const Site_2 &p, const Site_2 &q, Ring_tag) const
   {
-    typedef typename K::Rep_tag Tag;
-    return ad_is_hidden_test_2<K,Method_tag>(p, q, Tag());
+    return ag_is_hidden_test_ring_C2(p.x(), p.y(), p.weight(),
+				     q.x(), q.y(), q.weight());
+
+  }
+
+  bool is_hidden(const Site_2 &p, const Site_2 &q, Sqrt_field_tag) const
+  {
+    return ag_is_hidden_test_sqrtf_C2(p.x(), p.y(), p.weight(),
+				      q.x(), q.y(), q.weight());
+  }
+
+ public:
+  inline bool operator()(const Site_2 &p, const Site_2 &q) const
+  {
+    return is_hidden(p, q, Method_tag());
   }
 };
 
@@ -171,93 +105,43 @@ public:
 //-----------------------------------------------------------------------
 
 
-template < class K >
-inline
-Comparison_result
-ad_distances_test_2(const typename K::Site_2& p1,
-		    const typename K::Site_2& p2,
-		    const typename K::Point_2& p,
-		    Cartesian_tag, Sqrt_field_tag )
-{
-  return
-    compare_ad_distances_test_sqrtf_C2(p1.x(), p1.y(), p1.weight(),
-				       p2.x(), p2.y(), p2.weight(),
-				       p.x(),  p.y());
-}
-
-
-template < class K >
-inline
-Comparison_result
-ad_distances_test_2(const typename K::Site_2& p1,
-		    const typename K::Site_2& p2,
-		    const typename K::Point_2& p,
-		    Cartesian_tag, Ring_tag)
-{
-  return compare_ad_distances_test_ring_C2(p1.x(), p1.y(), p1.weight(),
-					   p2.x(), p2.y(), p2.weight(),
-					   p.x(),  p.y());
-}
-
-
-
-template < class K, class Method_tag >
-inline
-Comparison_result
-ad_distances_test_2(const typename K::Site_2& p1,
-		    const typename K::Site_2& p2,
-		    const typename K::Point_2& p, Cartesian_tag tag)
-{
-  return ad_distances_test_2< K >(p1, p2, p, tag, Method_tag());
-}
-
-
-
-template < class K, class Method_tag >
-inline
-Comparison_result
-ad_distances_test_2(const typename K::Site_2& p1,
-		    const typename K::Site_2& p2,
-		    const typename K::Point_2& p, Homogeneous_tag )
-{
-  return compare_ad_distances_testH2(p1.hx(), p1.hy(), p1.hw(),
-				     p1.weight(),
-				     p2.hx(), p2.hy(), p2.hw(),
-				     p2.weight(),
-				     p.hx(), p.hy(), p.hw());
-}
-
-
-
-
-
-template < class K, class Method_tag >
-inline
-Comparison_result
-ad_distances_test_2(const typename K::Site_2& p1,
-		    const typename K::Site_2& p2,
-		    const typename K::Point_2& p)
-{
-  typedef typename K::Rep_tag Tag;
-  return ad_distances_test_2<K,Method_tag>(p1, p2, p, Tag());
-}
-
-
-
 template< class K, class Method_tag >
 class Oriented_side_of_bisector_2
 {
-public:
+ public:
   typedef typename K::Point_2             Point_2;
   typedef typename K::Site_2              Site_2;
   typedef Oriented_side                   result_type;
   typedef Arity_tag<3>                    Arity;
 
+ private:
+  Comparison_result compare_distances(const Site_2& p1,
+				      const Site_2& p2,
+				      const Point_2 &p,
+				      Ring_tag) const
+  {
+    return compare_ag_distances_test_ring_C2(p1.x(), p1.y(), p1.weight(),
+					     p2.x(), p2.y(), p2.weight(),
+					     p.x(),  p.y());
+  }
+
+  Comparison_result compare_distances(const Site_2& p1,
+				      const Site_2& p2,
+				      const Point_2 &p,
+				      Sqrt_field_tag) const
+  {
+    return
+      compare_ag_distances_test_sqrtf_C2(p1.x(), p1.y(), p1.weight(),
+					 p2.x(), p2.y(), p2.weight(),
+					 p.x(),  p.y());
+  }
+
+ public:
   inline Oriented_side operator()(const Site_2& p1,
 				  const Site_2& p2,
 				  const Point_2 &p) const
   {
-    Comparison_result r = ad_distances_test_2<K,Method_tag>(p1, p2, p);
+    Comparison_result r = compare_distances(p1, p2, p, Method_tag());
 
     if ( r == EQUAL ) { return ON_ORIENTED_BOUNDARY; }
     return ( r == LARGER ) ? ON_NEGATIVE_SIDE : ON_POSITIVE_SIDE;
@@ -270,144 +154,60 @@ public:
 //                        Vertex conflict
 //-----------------------------------------------------------------------
 
-
-template < class K >
-inline
-Sign
-ad_incircle_test_2(const typename K::Site_2& p1,
-		   const typename K::Site_2& p2,
-		   const typename K::Site_2&  q,
-		   Cartesian_tag, Sqrt_field_tag )
-{
-  return ad_incircle_test_sqrtf_C2(p1.x(), p1.y(), p1.weight(),
-				   p2.x(), p2.y(), p2.weight(),
-				    q.x(),  q.y(),  q.weight());
-}
-
-
-template < class K >
-inline
-Sign
-ad_incircle_test_2(const typename K::Site_2& p1,
-		   const typename K::Site_2& p2,
-		   const typename K::Site_2&  q,
-		   Cartesian_tag, Ring_tag )
-{
-  return ad_incircle_test_ring_C2(p1.x(), p1.y(), p1.weight(),
-				  p2.x(), p2.y(), p2.weight(),
-				   q.x(),  q.y(),  q.weight());
-}
-
-
-template < class K, class Method_tag >
-inline
-Sign
-ad_incircle_test_2(const typename K::Site_2& p1,
-		   const typename K::Site_2& p2,
-		   const typename K::Site_2&  q,
-		   Cartesian_tag tag)
-{
-  return ad_incircle_test_2< K >(p1, p2, q, tag, Method_tag());
-}
-
-
-template < class K, class Method_tag >
-inline
-Sign
-ad_incircle_test_2(const typename K::Site_2& p1,
-		   const typename K::Site_2& p2,
-		   const typename K::Site_2& q,
-		   Homogeneous_tag )
-{
-  return 
-    ad_incircle_testH2(p1.hx(), p1.hy(), p1.hw(), p1.weight(),
-		       p2.hx(), p2.hy(), p2.hw(), p2.weight(),
-		        q.hx(),  q.hy(),  q.hw(),  q.weight());
-}
-
-
-//-----------------------------------------------------------------------
-
-
-template < class K >
-inline
-Sign
-ad_incircle_test_2(const typename K::Site_2& p1,
-		   const typename K::Site_2& p2,
-		   const typename K::Site_2& p3,
-		   const typename K::Site_2&  q,
-		   Cartesian_tag, Sqrt_field_tag )
-{
-  return ad_incircle_test_sqrtf_C2(p1.x(), p1.y(), p1.weight(),
-				   p2.x(), p2.y(), p2.weight(),
-				   p3.x(), p3.y(), p3.weight(),
-				    q.x(),  q.y(),  q.weight());
-}
-
-
-template < class K >
-inline
-Sign
-ad_incircle_test_2(const typename K::Site_2& p1,
-		   const typename K::Site_2& p2,
-		   const typename K::Site_2& p3,
-		   const typename K::Site_2&  q,
-		   Cartesian_tag, Ring_tag )
-{
-  return ad_incircle_test_ring_C2(p1.x(), p1.y(), p1.weight(),
-				  p2.x(), p2.y(), p2.weight(),
-				  p3.x(), p3.y(), p3.weight(),
-				  q.x(),  q.y(),   q.weight());
-}
-
-
-
-template < class K, class Method_tag >
-inline
-Sign
-ad_incircle_test_2(const typename K::Site_2& p1,
-		   const typename K::Site_2& p2,
-		   const typename K::Site_2& p3,
-		   const typename K::Site_2&  q,
-		   Cartesian_tag tag)
-{
-  return ad_incircle_test_2< K >(p1, p2, p3, q, tag, Method_tag());
-}
-
-
-template < class K, class Method_tag >
-inline
-Sign
-ad_incircle_test_2(const typename K::Site_2& p1,
-		   const typename K::Site_2& p2,
-		   const typename K::Site_2& p3,
-		   const typename K::Site_2& q,
-		   Homogeneous_tag )
-{
-  return 
-    ad_incircle_testH2(p1.hx(), p1.hy(), p1.hw(), p1.weight(),
-		       p2.hx(), p2.hy(), p2.hw(), p2.weight(),
-		       p3.hx(), p3.hy(), p3.hw(), p3.weight(),
-		        q.hx(),  q.hy(),  q.hw(),  q.weight());
-}
-
-
 template < class K, class Method_tag >
 class Vertex_conflict_2
 {
-public:
+ public:
   typedef typename K::Site_2      Site_2;
   typedef Sign                    result_type;
   struct Arity {};
 
+ private:
+  Sign incircle(const Site_2& p1, const Site_2& p2,
+		const Site_2& p3, const Site_2& q, 
+		Sqrt_field_tag) const
+  {
+    return ag_incircle_test_sqrtf_C2(p1.x(), p1.y(), p1.weight(),
+				     p2.x(), p2.y(), p2.weight(),
+				     p3.x(), p3.y(), p3.weight(),
+				      q.x(),  q.y(),  q.weight());
+  }
+
+  Sign incircle(const Site_2& p1, const Site_2& p2,
+		const Site_2& p3, const Site_2& q, 
+		Ring_tag) const
+  {
+    return ag_incircle_test_ring_C2(p1.x(), p1.y(), p1.weight(),
+				    p2.x(), p2.y(), p2.weight(),
+				    p3.x(), p3.y(), p3.weight(),
+				     q.x(),  q.y(),  q.weight());
+  }
+
+  Sign incircle(const Site_2& p1, const Site_2& p2,
+		const Site_2& q,
+		Sqrt_field_tag) const
+  {
+    return ag_incircle_test_sqrtf_C2(p1.x(), p1.y(), p1.weight(),
+				     p2.x(), p2.y(), p2.weight(),
+				      q.x(),  q.y(),  q.weight());
+  }
+
+  Sign incircle(const Site_2& p1, const Site_2& p2,
+		const Site_2& q, 
+		Ring_tag) const
+  {
+    return ag_incircle_test_ring_C2(p1.x(), p1.y(), p1.weight(),
+				    p2.x(), p2.y(), p2.weight(),
+				     q.x(),  q.y(),  q.weight());
+  }
+
+ public:
   inline
-  Sign operator()(const Site_2& p1,
-		  const Site_2& p2,
-		  const Site_2& p3,
-		  const Site_2& q) const
+  Sign operator()(const Site_2& p1, const Site_2& p2,
+		  const Site_2& p3, const Site_2& q) const
   {
     typedef typename K::Rep_tag Tag;
-    return ad_incircle_test_2<K,Method_tag>(p1, p2, p3, q, Tag());
+    return incircle(p1, p2, p3, q, Method_tag());
   }
 
 
@@ -417,302 +217,114 @@ public:
 		  const Site_2& q) const
   {
     typedef typename K::Rep_tag Tag;
-    return ad_incircle_test_2<K,Method_tag>(p1, p2, q, Tag());
+    return incircle(p1, p2, q, Method_tag());
   }
- 
-
-
 };
 
 //-----------------------------------------------------------------------
 //                    Finite edge interior conflict
 //-----------------------------------------------------------------------
 
-template < class K >
-inline
-bool
-ad_finite_edge_test_2(const typename K::Site_2& p1,
-		      const typename K::Site_2& p2,
-		      const typename K::Site_2& q,
-		      bool b, Cartesian_tag, Sqrt_field_tag)
-{
-  return
-    ad_finite_edge_test_degenerated_sqrtf_C2(p1.x(), p1.y(),
-					     p1.weight(),
-					     p2.x(), p2.y(),
-					     p2.weight(),
-					     q.x(),  q.y(),
-					     q.weight(), b);
-}
-
-template < class K >
-inline
-bool
-ad_finite_edge_test_2(const typename K::Site_2& p1,
-		      const typename K::Site_2& p2,
-		      const typename K::Site_2& q,
-		      bool b, Cartesian_tag, Ring_tag)
-{
-  return
-    ad_finite_edge_test_degenerated_ring_C2(p1.x(), p1.y(),
-					    p1.weight(),
-					    p2.x(), p2.y(),
-					    p2.weight(),
-					    q.x(),  q.y(),
-					    q.weight(), b);
-}
-
-
-template < class K, class Method_tag >
-inline
-bool
-ad_finite_edge_test_2(const typename K::Site_2& p1,
-		      const typename K::Site_2& p2,
-		      const typename K::Site_2& q,
-		      bool b, Cartesian_tag tag)
-{
-  return
-    ad_finite_edge_test_2< K >(p1, p2, q, b, tag, Method_tag());
-}
-
-template < class K, class Method_tag >
-inline
-bool
-ad_finite_edge_test_2(const typename K::Site_2& p1,
-		      const typename K::Site_2& p2,
-		      const typename K::Site_2& q,
-		      bool b, Homogeneous_tag)
-{
-  return
-    ad_finite_edge_test_degeneratedH2(p1.hx(), p1.hy(),
-				      p1.hw(),
-				      p1.weight(),
-				      p2.hx(), p2.hy(),
-				      p2.hw(),
-				      p2.weight(),
-				      q.hx(),  q.hy(),
-				      q.hw(),
-				      q.weight(), b);
-}
-
-template < class K, class Method_tag >
-inline
-bool
-ad_finite_edge_test_2(const typename K::Site_2& p1,
-		      const typename K::Site_2& p2,
-		      const typename K::Site_2& q, bool b)
-{
-  typedef typename K::Rep_tag Tag;
-  return ad_finite_edge_test_2<K,Method_tag>(p1, p2, q, b, Tag());
-}
-
-//-----------------------------------------------------------------------
-
-template < class K >
-inline
-bool
-ad_finite_edge_test_2(const typename K::Site_2& p1,
-		      const typename K::Site_2& p2,
-		      const typename K::Site_2& p3,
-		      const typename K::Site_2& q,
-		      bool b, Cartesian_tag, Sqrt_field_tag)
-{
-  return ad_finite_edge_test_degenerated_sqrtf_C2(p1.x(), p1.y(),
-						  p1.weight(),
-						  p2.x(), p2.y(),
-						  p2.weight(),
-						  p3.x(), p3.y(),
-						  p3.weight(),
-						  q.x(),  q.y(),
-						  q.weight(), b);
-}
-
-template < class K >
-inline
-bool
-ad_finite_edge_test_2(const typename K::Site_2& p1,
-		      const typename K::Site_2& p2,
-		      const typename K::Site_2& p3,
-		      const typename K::Site_2& q,
-		      bool b, Cartesian_tag, Ring_tag)
-{
-  return ad_finite_edge_test_degenerated_ring_C2(p1.x(), p1.y(),
-						 p1.weight(),
-						 p2.x(), p2.y(),
-						 p2.weight(),
-						 p3.x(), p3.y(),
-						 p3.weight(),
-						 q.x(),  q.y(),
-						 q.weight(), b);
-}
-
-
-template < class K, class Method_tag >
-inline
-bool
-ad_finite_edge_test_2(const typename K::Site_2& p1,
-		      const typename K::Site_2& p2,
-		      const typename K::Site_2& p3,
-		      const typename K::Site_2& q,
-		      bool b, Cartesian_tag tag)
-{
-  return
-    ad_finite_edge_test_2< K >(p1, p2, p3, q, b, tag, Method_tag());
-}
-
-template < class K, class Method_tag >
-inline
-bool
-ad_finite_edge_test_2(const typename K::Site_2& p1,
-		      const typename K::Site_2& p2,
-		      const typename K::Site_2& p3,
-		      const typename K::Site_2& q,
-		      bool b, Homogeneous_tag)
-{
-  return
-    ad_finite_edge_test_degeneratedH2(p1.hx(), p1.hy(),
-				      p1.hw(),
-				      p1.weight(),
-				      p2.hx(), p2.hy(),
-				      p2.hw(),
-				      p2.weight(),
-				      p3.hx(), p3.hy(),
-				      p3.hw(),
-				      p3.weight(),
-				      q.hx(),  q.hy(),
-				      q.hw(),
-				      q.weight(), b);
-}
-
-template < class K, class Method_tag >
-inline
-bool
-ad_finite_edge_test_2(const typename K::Site_2& p1,
-		      const typename K::Site_2& p2,
-		      const typename K::Site_2& p3,
-		      const typename K::Site_2& q, bool b)
-{
-  typedef typename K::Rep_tag Tag;
-  return ad_finite_edge_test_2<K,Method_tag>(p1, p2, p3, q, b, Tag());
-}
-
-//-----------------------------------------------------------------------
-
-
-template < class K >
-inline
-bool
-ad_finite_edge_test_2(const typename K::Site_2& p1,
-		      const typename K::Site_2& p2,
-		      const typename K::Site_2& p3,
-		      const typename K::Site_2& p4,
-		      const typename K::Site_2& q,
-		      bool b, Cartesian_tag, Sqrt_field_tag)
-{
-  return
-    ad_finite_edge_test_sqrtf_C2(p1.x(), p1.y(), p1.weight(),
-				 p2.x(), p2.y(), p2.weight(),
-				 p3.x(), p3.y(), p3.weight(),
-				 p4.x(), p4.y(), p4.weight(),
-				 q.x(),  q.y(), q.weight(), b);
-}
-
-template < class K >
-inline
-bool
-ad_finite_edge_test_2(const typename K::Site_2& p1,
-		      const typename K::Site_2& p2,
-		      const typename K::Site_2& p3,
-		      const typename K::Site_2& p4,
-		      const typename K::Site_2& q,
-		      bool b, Cartesian_tag, Ring_tag)
-{
-  return
-    ad_finite_edge_test_ring_C2(p1.x(), p1.y(), p1.weight(),
-				p2.x(), p2.y(), p2.weight(),
-				p3.x(), p3.y(), p3.weight(),
-				p4.x(), p4.y(), p4.weight(),
-				 q.x(),  q.y(),  q.weight(), b);
-}
-
-
-template < class K, class Method_tag >
-inline
-bool
-ad_finite_edge_test_2(const typename K::Site_2& p1,
-		      const typename K::Site_2& p2,
-		      const typename K::Site_2& p3,
-		      const typename K::Site_2& p4,
-		      const typename K::Site_2& q,
-		      bool b, Cartesian_tag tag)
-{
-  return ad_finite_edge_test_2< K >(p1, p2, p3, p4, q, b,
-				    tag, Method_tag());
-}
-
-template < class K, class Method_tag >
-inline
-bool
-ad_finite_edge_test_2(const typename K::Site_2& p1,
-		      const typename K::Site_2& p2,
-		      const typename K::Site_2& p3,
-		      const typename K::Site_2& p4,
-		      const typename K::Site_2& q,
-		      bool b, Homogeneous_tag)
-{
-  return
-    ad_Voronoi_diagram_finite_edge_testH2(p1.hx(), p1.hy(), p1.hw(),
-					  p1.weight(),
-					  p2.hx(), p2.hy(), p2.hw(),
-					  p2.weight(),
-					  p3.hx(), p3.hy(), p3.hw(),
-					  p3.weight(),
-					  p4.hx(), p4.hy(), p4.hw(),
-					  p4.weight(),
-					  q.hx(),  q.hy(), q.hw(),
-					  q.weight(), b);
-}
-
-template < class K, class Method_tag >
-inline
-bool
-ad_finite_edge_test_2(const typename K::Site_2& p1,
-		      const typename K::Site_2& p2,
-		      const typename K::Site_2& p3,
-		      const typename K::Site_2& p4,
-		      const typename K::Site_2& q,
-		      bool b)
-{
-  typedef typename K::Rep_tag Tag;
-  return ad_finite_edge_test_2<K,Method_tag>
-    (p1, p2, p3, p4, q, b, Tag());
-}
-
-
-
-
 template < class K, class Method_tag >
 class Finite_edge_interior_conflict_2
 {
-public:
+ public:
   typedef typename K::Site_2  Site_2;
   typedef bool                result_type;
   struct Arity {};
 
+ private:
+  bool finite_edge_test(const Site_2& p1, const Site_2& p2,
+			const Site_2& p3, const Site_2& p4,
+			const Site_2& q, bool b,
+			Sqrt_field_tag) const
+  {
+  return ag_finite_edge_test_sqrtf_C2(p1.x(), p1.y(), p1.weight(),
+				      p2.x(), p2.y(), p2.weight(),
+				      p3.x(), p3.y(), p3.weight(),
+				      p4.x(), p4.y(), p4.weight(),
+				       q.x(),  q.y(), q.weight(), b);
+  }
+
+  bool finite_edge_test(const Site_2& p1, const Site_2& p2,
+			const Site_2& p3, const Site_2& p4,
+			const Site_2& q, bool b,
+			Ring_tag) const
+  {
+    return ag_finite_edge_test_ring_C2(p1.x(), p1.y(), p1.weight(),
+				       p2.x(), p2.y(), p2.weight(),
+				       p3.x(), p3.y(), p3.weight(),
+				       p4.x(), p4.y(), p4.weight(),
+				        q.x(),  q.y(), q.weight(), b);
+  }
+
+  bool finite_edge_test(const Site_2& p1, const Site_2& p2,
+			const Site_2& p3, const Site_2& q, bool b,
+			Sqrt_field_tag) const
+  {
+    return ag_finite_edge_test_degenerated_sqrtf_C2(p1.x(), p1.y(),
+						    p1.weight(),
+						    p2.x(), p2.y(),
+						    p2.weight(),
+						    p3.x(), p3.y(),
+						    p3.weight(),
+						    q.x(),  q.y(),
+						    q.weight(), b);
+  }
+
+  bool finite_edge_test(const Site_2& p1, const Site_2& p2,
+			const Site_2& p3, const Site_2& q, bool b,
+			Ring_tag) const
+  {
+    return ag_finite_edge_test_degenerated_ring_C2(p1.x(), p1.y(),
+						   p1.weight(),
+						   p2.x(), p2.y(),
+						   p2.weight(),
+						   p3.x(), p3.y(),
+						   p3.weight(),
+						   q.x(),  q.y(),
+						   q.weight(), b);
+  }
+
+  bool finite_edge_test(const Site_2& p1, const Site_2& p2,
+			const Site_2& q, bool b,
+			Sqrt_field_tag) const
+  {
+    return ag_finite_edge_test_degenerated_sqrtf_C2(p1.x(), p1.y(),
+						    p1.weight(),
+						    p2.x(), p2.y(),
+						    p2.weight(),
+						    q.x(),  q.y(),
+						    q.weight(), b);
+  }
+
+  bool finite_edge_test(const Site_2& p1, const Site_2& p2,
+			const Site_2& q, bool b,
+			Ring_tag) const
+  {
+    return ag_finite_edge_test_degenerated_ring_C2(p1.x(), p1.y(),
+						   p1.weight(),
+						   p2.x(), p2.y(),
+						   p2.weight(),
+						   q.x(),  q.y(),
+						   q.weight(), b);
+  }
+  
+ public:
   inline
   bool operator()(const Site_2& p1,
 		  const Site_2& p2,
 		  const Site_2& p3,
 		  const Site_2& q, bool b) const
   {
-    return ad_finite_edge_test_2<K,Method_tag>(p1, p2, p3, q, b);
+    return finite_edge_test(p1, p2, p3, q, b, Method_tag());
   }
 
   bool operator()(const Site_2& p1,
 		  const Site_2& p2,
 		  const Site_2& q, bool b) const
   {
-    return ad_finite_edge_test_2<K,Method_tag>(p1, p2, q, b);
+    return finite_edge_test(p1, p2, q, b, Method_tag());
   }
 
 
@@ -725,111 +337,53 @@ public:
 		  const Site_2& q,
 		  bool b) const
   {
-    return ad_finite_edge_test_2<K,Method_tag>(p1, p2, p3, p4, q, b);
+    return finite_edge_test(p1, p2, p3, p4, q, b, Method_tag());
   }
 };
-
 
 //-----------------------------------------------------------------------
 //                   Infinite edge interior conflict
 //-----------------------------------------------------------------------
 
-template < class K >
-inline
-bool
-ad_infinite_edge_test_2(const typename K::Site_2& p2,
-			const typename K::Site_2& p3,
-			const typename K::Site_2& p4,
-			const typename K::Site_2& q,
-			bool b, Cartesian_tag, Sqrt_field_tag)
-{
-  return
-    ad_infinite_edge_test_sqrtf_C2(p2.x(), p2.y(), p2.weight(),
-				   p3.x(), p3.y(), p3.weight(),
-				   p4.x(), p4.y(), p4.weight(),
-				    q.x(),  q.y(),  q.weight(), b);
-}
-
-
-template < class K >
-inline
-bool
-ad_infinite_edge_test_2(const typename K::Site_2& p2,
-			const typename K::Site_2& p3,
-			const typename K::Site_2& p4,
-			const typename K::Site_2& q,
-			bool b, Cartesian_tag, Ring_tag)
-{
-  return
-    ad_infinite_edge_test_ring_C2(p2.x(), p2.y(), p2.weight(),
-				  p3.x(), p3.y(), p3.weight(),
-				  p4.x(), p4.y(), p4.weight(),
-				   q.x(),  q.y(),  q.weight(), b);
-}
-
-
-template < class K, class Method_tag >
-inline
-bool
-ad_infinite_edge_test_2(const typename K::Site_2& p2,
-			const typename K::Site_2& p3,
-			const typename K::Site_2& p4,
-			const typename K::Site_2& q,
-			bool b, Cartesian_tag tag)
-{
-  return
-    ad_infinite_edge_test_2<K>(p2, p3, p4, q, b, tag, Method_tag());
-}
-
-
-
-template < class K, class Method_tag >
-inline
-bool
-ad_infinite_edge_test_2(const typename K::Site_2& p2,
-			const typename K::Site_2& p3,
-			const typename K::Site_2& p4,
-			const typename K::Site_2& q,
-			bool b, Homogeneous_tag)
-{
-  return
-    ad_infinite_edge_testH2(p2.hx(), p2.hy(), p2.hw(),
-			    p2.weight(),
-			    p3.hx(), p3.hy(), p3.hw(),
-			    p3.weight(),
-			    p4.hx(), p4.hy(), p4.hw(),
-			    p4.weight(),
-			    q.hx(),  q.hy(), q.hw(),
-			    q.weight(), b);
-}
-
-template < class K, class Method_tag >
-inline
-bool
-ad_infinite_edge_test_2(const typename K::Site_2& p2,
-			const typename K::Site_2& p3,
-			const typename K::Site_2& p4,
-			const typename K::Site_2& q, bool b)
-{
-  typedef typename K::Rep_tag Tag;
-  return ad_infinite_edge_test_2<K,Method_tag>(p2, p3, p4, q, b, Tag());
-}
-
 
 template < class K, class Method_tag >
 class Infinite_edge_interior_conflict_2
 {
-public:
+ public:
   typedef typename K::Site_2   Site_2;
   typedef bool                 result_type;
   typedef Arity_tag<5>         Arity;
 
+ private:
+  bool infinite_edge_test(const Site_2& p2, const Site_2& p3,
+			  const Site_2& p4, const Site_2& q, bool b,
+			  Sqrt_field_tag) const
+  {
+    return
+      ag_infinite_edge_test_sqrtf_C2(p2.x(), p2.y(), p2.weight(),
+				     p3.x(), p3.y(), p3.weight(),
+				     p4.x(), p4.y(), p4.weight(),
+				      q.x(),  q.y(),  q.weight(), b);
+  }
+
+  bool infinite_edge_test(const Site_2& p2, const Site_2& p3,
+			  const Site_2& p4, const Site_2& q, bool b,
+			  Ring_tag) const
+  {
+    return
+      ag_infinite_edge_test_ring_C2(p2.x(), p2.y(), p2.weight(),
+				    p3.x(), p3.y(), p3.weight(),
+				    p4.x(), p4.y(), p4.weight(),
+				     q.x(),  q.y(),  q.weight(), b);
+  }
+
+ public:
   bool operator()(const Site_2& p2,
 		  const Site_2& p3,
 		  const Site_2& p4,
 		  const Site_2& q, bool b) const
   {
-    return ad_infinite_edge_test_2<K,Method_tag>(p2, p3, p4, q, b);
+    return infinite_edge_test(p2, p3, p4, q, b, Method_tag());
   }
 };
 
@@ -839,109 +393,46 @@ public:
 //-----------------------------------------------------------------------
 
 
-
-template < class K >
-inline
-bool
-ad_is_degenerate_edge_test_2(const typename K::Site_2& p1,
-			     const typename K::Site_2& p2,
-			     const typename K::Site_2& p3,
-			     const typename K::Site_2& p4,
-			     Cartesian_tag, Sqrt_field_tag)
-{
-  return
-    ad_is_degenerate_edge_test_sqrtf_C2(p1.x(), p1.y(), p1.weight(),
-					p2.x(), p2.y(), p2.weight(),
-					p3.x(), p3.y(), p3.weight(),
-					p4.x(), p4.y(), p4.weight());
-}
-
-template < class K >
-inline
-bool
-ad_is_degenerate_edge_test_2(const typename K::Site_2& p1,
-			     const typename K::Site_2& p2,
-			     const typename K::Site_2& p3,
-			     const typename K::Site_2& p4,
-			     Cartesian_tag, Ring_tag)
-{
-  return
-    ad_is_degenerate_edge_test_ring_C2(p1.x(), p1.y(), p1.weight(),
-				       p2.x(), p2.y(), p2.weight(),
-				       p3.x(), p3.y(), p3.weight(),
-				       p4.x(), p4.y(), p4.weight());
-}
-
-
-template < class K, class Method_tag >
-inline
-bool
-ad_is_degenerate_edge_test_2(const typename K::Site_2& p1,
-			     const typename K::Site_2& p2,
-			     const typename K::Site_2& p3,
-			     const typename K::Site_2& p4,
-			     Cartesian_tag tag)
-{
-  return
-    ad_is_degenerate_edge_test_2< K >(p1, p2, p3, p4, tag, Method_tag());
-}
-
-
-template < class K, class Method_tag >
-inline
-bool
-ad_is_degenerate_edge_test_2(const typename K::Site_2& p1,
-			     const typename K::Site_2& p2,
-			     const typename K::Site_2& p3,
-			     const typename K::Site_2& p4,
-			     Homogeneous_tag)
-{
-  return
-    ad_is_degenerate_edge_testH2(p1.hx(), p1.hy(), p1.hw(),
-				 p1.weight(),
-				 p2.hx(), p2.hy(), p2.hw(),
-				 p2.weight(),
-				 p3.hx(), p3.hy(), p3.hw(),
-				 p3.weight(),
-				 p4.hx(), p4.hy(), p4.hw(),
-				 p4.weight());
-}
-
-template < class K, class Method_tag >
-inline
-bool
-ad_is_degenerate_edge_test_2(const typename K::Site_2& p1,
-			     const typename K::Site_2& p2,
-			     const typename K::Site_2& p3,
-			     const typename K::Site_2& p4)
-{
-  typedef typename K::Rep_tag Tag;
-  return
-    ad_is_degenerate_edge_test_2<K,Method_tag>(p1, p2, p3, p4, Tag());
-}
-
-
-
 template < class K, class Method_tag >
 class Is_degenerate_edge_2
 {
-public:
+ public:
   typedef typename K::Site_2    Site_2;
   typedef bool                  result_type;
   typedef Arity_tag<4>          Arity;
 
-  inline
-  bool operator()(const Site_2& p1,
-		  const Site_2& p2,
-		  const Site_2& p3,
-		  const Site_2& p4) const
+ private:
+  bool is_degenerate_edge(const Site_2& p1, const Site_2& p2,
+			  const Site_2& p3, const Site_2& p4,
+			  Sqrt_field_tag) const
   {
     return
-      ad_is_degenerate_edge_test_2<K,Method_tag>(p1, p2, p3, p4);
+      ag_is_degenerate_edge_test_sqrtf_C2(p1.x(), p1.y(), p1.weight(),
+					  p2.x(), p2.y(), p2.weight(),
+					  p3.x(), p3.y(), p3.weight(),
+					  p4.x(), p4.y(), p4.weight());
+  }
+
+  bool is_degenerate_edge(const Site_2& p1, const Site_2& p2,
+			  const Site_2& p3, const Site_2& p4,
+			  Ring_tag) const
+  {
+    return
+      ag_is_degenerate_edge_test_ring_C2(p1.x(), p1.y(), p1.weight(),
+					 p2.x(), p2.y(), p2.weight(),
+					 p3.x(), p3.y(), p3.weight(),
+					 p4.x(), p4.y(), p4.weight());
+  }
+
+ public:
+  inline bool operator()(const Site_2& p1,
+			 const Site_2& p2,
+			 const Site_2& p3,
+			 const Site_2& p4) const
+  {
+    return is_degenerate_edge(p1, p2, p3, p4, Method_tag());
   }
 };
-
-
 
 
 //-----------------------------------------------------------------------
@@ -1097,8 +588,6 @@ public:
   }
 
 };
-
-
 
 CGAL_END_NAMESPACE
 
