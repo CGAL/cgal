@@ -26,6 +26,7 @@
 
 #include <CGAL/Parametizer_3.h>
 #include <CGAL/Circular_border_parametizer_3.h>
+#include <CGAL/Mesh_adaptor_feature_extractor.h>
 #include <CGAL/parameterization_assertions.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -135,7 +136,7 @@ protected:
     // * vertices must be indexed
     // * A, Bu and Bv must be allocated
     // * border vertices must be parameterized
-    void  initialize_system_from_mesh_border (Matrix* A, Vector* Bu, Vector* Bv, 
+    void  initialize_system_from_mesh_border (Matrix* A, Vector* Bu, Vector* Bv,
                                               const Adaptor& mesh);
 
     // compute wij = (i,j) coefficient of matrix A for j neighbor vertex of i
@@ -153,30 +154,30 @@ protected:
     // * vertices must be indexed
     // * vertex i musn't be already parameterized
     // * line i of A must contain only zeros
-    virtual ErrorCode setup_inner_vertex_relations(Matrix* A, 
-                                                   Vector* Bu, 
+    virtual ErrorCode setup_inner_vertex_relations(Matrix* A,
+                                                   Vector* Bu,
                                                    Vector* Bv,
                                                    const Adaptor& mesh,
                                                    Vertex_const_handle vertex);
 
     // Copy Xu and Xv coordinates into the (u,v) pair of each surface vertex
-    void  set_mesh_uv_from_system (Adaptor* mesh, 
+    void  set_mesh_uv_from_system (Adaptor* mesh,
                                    const Vector& Xu, const Vector& Xv);
 
     // Check parameterize() postconditions:
     // * "A*Xu = Bu" and "A*Xv = Bv" systems are solvable with a good conditioning
     // * 3D -> 2D mapping is 1 to 1
     virtual ErrorCode check_parameterize_postconditions(const Adaptor& mesh,
-                                                        const Matrix& A, 
-                                                        const Vector& Bu, 
+                                                        const Matrix& A,
+                                                        const Vector& Bu,
                                                         const Vector& Bv);
 
     // Check if 3D -> 2D mapping is 1 to 1
     //
     // The default implementation checks each normal
     virtual bool  is_one_to_one_mapping(const Adaptor& mesh,
-                                        const Matrix& A, 
-                                        const Vector& Bu, 
+                                        const Matrix& A,
+                                        const Vector& Bu,
                                         const Vector& Bv);
 
 // Protected accessors
@@ -251,7 +252,7 @@ parameterize(Adaptor* mesh)
     // Fill the border vertices' lines in both linear systems:
     // "u = constant" and "v = constant"
     //
-    // Implementation note: the current implementation does not remove 
+    // Implementation note: the current implementation does not remove
     // border vertices from the linear systems => A cannot be symmetric
     initialize_system_from_mesh_border (&A, &Bu, &Bv, *mesh);
 
@@ -282,7 +283,7 @@ parameterize(Adaptor* mesh)
     // Solve "A*Xv = Bv". On success, solution is (1/Dv) * Xv.
     std::cerr << "  solver..." << std::endl;
     NT Du, Dv;
-    if ( !get_linear_algebra_traits().linear_solver(A, Bu, Xu, Du) || 
+    if ( !get_linear_algebra_traits().linear_solver(A, Bu, Xu, Du) ||
          !get_linear_algebra_traits().linear_solver(A, Bv, Xv, Dv) )
     {
         std::cerr << "    error ERROR_CANNOT_SOLVE_LINEAR_SYSTEM!" << std::endl;
@@ -294,7 +295,7 @@ parameterize(Adaptor* mesh)
     std::cerr << "    solver ok" << std::endl;
 
     // Copy Xu and Xv coordinates into the (u,v) pair of each vertex
-    set_mesh_uv_from_system (mesh, Xu, Xv); 
+    set_mesh_uv_from_system (mesh, Xu, Xv);
 
     // Check postconditions
     status = check_parameterize_postconditions(*mesh, A, Bu, Bv);
@@ -317,7 +318,7 @@ check_parameterize_preconditions(Adaptor* mesh)
 {
     ErrorCode status = OK;                  // returned value
 
-    typedef Mesh_adaptor_feature_extractor<Adaptor> 
+    typedef Mesh_adaptor_feature_extractor<Adaptor>
                                             Mesh_feature_extractor;
     Mesh_feature_extractor feature_extractor(mesh);
 
@@ -381,7 +382,7 @@ check_parameterize_preconditions(Adaptor* mesh)
 template<class Adaptor, class Border_param, class Sparse_LA>
 inline
 void Fixed_border_parametizer_3<Adaptor, Border_param, Sparse_LA>::
-initialize_system_from_mesh_border (Matrix* A, Vector* Bu, Vector* Bv, 
+initialize_system_from_mesh_border (Matrix* A, Vector* Bu, Vector* Bv,
                                     const Adaptor& mesh)
 {
     CGAL_parameterization_assertion(A != NULL);
@@ -419,8 +420,8 @@ template<class Adaptor, class Border_param, class Sparse_LA>
 inline
 typename Parametizer_3<Adaptor>::ErrorCode
 Fixed_border_parametizer_3<Adaptor, Border_param, Sparse_LA>::
-setup_inner_vertex_relations(Matrix* A, 
-                             Vector* Bu, 
+setup_inner_vertex_relations(Matrix* A,
+                             Vector* Bu,
                              Vector* Bv,
                              const Adaptor& mesh,
                              Vertex_const_handle vertex)
@@ -479,7 +480,7 @@ setup_inner_vertex_relations(Matrix* A,
 template<class Adaptor, class Border_param, class Sparse_LA>
 inline
 void Fixed_border_parametizer_3<Adaptor, Border_param, Sparse_LA>::
-set_mesh_uv_from_system(Adaptor* mesh, 
+set_mesh_uv_from_system(Adaptor* mesh,
                         const Vector& Xu, const Vector& Xv)
 {
     fprintf(stderr,"  copy computed UVs to mesh\n");
@@ -508,13 +509,13 @@ inline
 typename Parametizer_3<Adaptor>::ErrorCode
 Fixed_border_parametizer_3<Adaptor, Border_param, Sparse_LA>::
 check_parameterize_postconditions(const Adaptor& mesh,
-                                  const Matrix& A, 
-                                  const Vector& Bu, 
+                                  const Matrix& A,
+                                  const Vector& Bu,
                                   const Vector& Bv)
 {
     ErrorCode status = OK;
 
-    // Check if "A*Xu = Bu" and "A*Xv = Bv" systems 
+    // Check if "A*Xu = Bu" and "A*Xv = Bv" systems
     // are solvable with a good conditioning
     CGAL_parameterization_expensive_postcondition_code(         \
         status = get_linear_algebra_traits().is_solvable(A, Bu) \
@@ -558,8 +559,8 @@ template<class Adaptor, class Border_param, class Sparse_LA>
 inline
 bool Fixed_border_parametizer_3<Adaptor, Border_param, Sparse_LA>::
 is_one_to_one_mapping(const Adaptor& mesh,
-                      const Matrix& A, 
-                      const Vector& Bu, 
+                      const Matrix& A,
+                      const Vector& Bu,
                       const Vector& Bv)
 {
     Vector_3    first_triangle_normal;

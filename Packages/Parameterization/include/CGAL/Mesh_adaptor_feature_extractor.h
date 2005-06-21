@@ -29,7 +29,7 @@ CGAL_BEGIN_NAMESPACE
 
 
 // Class Mesh_adaptor_feature_extractor
-// 
+//
 // This class computes features (genus, boundaries, ...)
 // of a 3D surface model of the MeshAdaptor_3 concept.
 
@@ -80,7 +80,7 @@ public:
 public:
 
     // Constructor
-    // 
+    //
     // CAUTION: Caller must NOT modify 'mesh' during the
     //          Mesh_adaptor_feature_extractor life cycle.
     Mesh_adaptor_feature_extractor(Adaptor *mesh)
@@ -95,38 +95,38 @@ public:
     }
     virtual ~Mesh_adaptor_feature_extractor() {}
 
-    // Get number of boundaries 
-    int get_nb_boundaries() 
-    { 
+    // Get number of boundaries
+    int get_nb_boundaries()
+    {
         // At first call, extract boundaries and put longest one first
         if (m_nb_boundaries == -1)
             extract_boundaries();
 
-        return m_nb_boundaries; 
+        return m_nb_boundaries;
     }
     // Get extracted boundaries
     // The longest boundary is the first one
-    const Skeleton& get_boundaries() 
-    { 
+    const Skeleton& get_boundaries()
+    {
         // At first call, extract boundaries and put longest one first
         if (m_nb_boundaries == -1)
             extract_boundaries();
 
-        return m_skeleton; 
+        return m_skeleton;
     }
-    // Get longest boundary 
-    const Boundary* get_longest_boundary() 
-    { 
+    // Get longest boundary
+    const Boundary* get_longest_boundary()
+    {
         // At first call, extract boundaries and put longest one first
         if (m_nb_boundaries == -1)
             extract_boundaries();
 
-        return m_skeleton[0]; 
+        return m_skeleton[0];
     }
 
     // Get # of connected components
-    int get_nb_connex_components() 
-    { 
+    int get_nb_connex_components()
+    {
         // At first call, count the number of connex components
         if (m_nb_connex_components == -1)
             count_connex_components();
@@ -135,8 +135,8 @@ public:
     }
 
     // Get the genus
-    int get_genus() 
-    { 
+    int get_genus()
+    {
         // At first call, compute the genus
         if (m_genus == -1)
             compute_genus();
@@ -156,8 +156,8 @@ private:
         // Tag all vertices as unprocessed
         const int tag_free = 0;
         const int tag_done = 1;
-        for (Vertex_iterator it = m_mesh_adaptor->mesh_vertices_begin(); 
-             it != m_mesh_adaptor->mesh_vertices_end(); 
+        for (Vertex_iterator it = m_mesh_adaptor->mesh_vertices_begin();
+             it != m_mesh_adaptor->mesh_vertices_end();
              it++)
         {
              m_mesh_adaptor->set_vertex_tag(it, tag_free);
@@ -210,8 +210,8 @@ private:
              pVertex != m_mesh_adaptor->mesh_vertices_end();
              pVertex++)
         {
-            if (m_mesh_adaptor->is_vertex_on_border(pVertex) && 
-                m_mesh_adaptor->get_vertex_tag(pVertex) == tag_free) 
+            if (m_mesh_adaptor->is_vertex_on_border(pVertex) &&
+                m_mesh_adaptor->get_vertex_tag(pVertex) == tag_free)
             {
                 seed_vertex = pVertex;
                 break;
@@ -224,7 +224,7 @@ private:
         boundary = m_mesh_adaptor->get_boundary(seed_vertex);
 
         // Tag boundary vertices as "processed"
-        std::list<Vertex_handle>::iterator it;
+        typename std::list<Vertex_handle>::iterator it;
         for(it = boundary.begin(); it != boundary.end(); it++)
             m_mesh_adaptor->set_vertex_tag(*it, tag_done);
 
@@ -258,11 +258,11 @@ private:
     double len(const Boundary* pBoundary) const
     {
         double len = 0.0;
-        std::list<Adaptor::Vertex_handle>::const_iterator it;
+        typename std::list<typename Adaptor::Vertex_handle>::const_iterator it;
         for(it = pBoundary->begin(); it != pBoundary->end(); it++)
         {
             // Get next iterator (looping)
-            std::list<Adaptor::Vertex_handle>::const_iterator next = it;
+            typename std::list<typename Adaptor::Vertex_handle>::const_iterator next = it;
             next++;
             if (next == pBoundary->end())
                 next = pBoundary->begin();
@@ -282,8 +282,8 @@ private:
 
         const int tag_free = 0;
         const int tag_done = 1;
-        for (Vertex_iterator it = m_mesh_adaptor->mesh_vertices_begin(); 
-             it != m_mesh_adaptor->mesh_vertices_end(); 
+        for (Vertex_iterator it = m_mesh_adaptor->mesh_vertices_begin();
+             it != m_mesh_adaptor->mesh_vertices_end();
              it++)
         {
              m_mesh_adaptor->set_vertex_tag(it, tag_free);
@@ -300,8 +300,8 @@ private:
     // get any vertex with tag
     Vertex_handle get_any_vertex_tag(int tag)
     {
-        for (Vertex_iterator it = m_mesh_adaptor->mesh_vertices_begin(); 
-             it != m_mesh_adaptor->mesh_vertices_end(); 
+        for (Vertex_iterator it = m_mesh_adaptor->mesh_vertices_begin();
+             it != m_mesh_adaptor->mesh_vertices_end();
              it++)
         {
             if (m_mesh_adaptor->get_vertex_tag(it) == tag)
@@ -359,7 +359,7 @@ private:
         int v = m_mesh_adaptor->count_mesh_vertices();
         int e = m_mesh_adaptor->count_mesh_halfedges()/2;
         int f = m_mesh_adaptor->count_mesh_facets();
-        
+
         m_genus = (2*c+e-b-f-v)/2;
         std::cerr << "  " << v << " vertices, " << f << " facets, ";
         std::cerr << e << " edges, " << b << " boundary(ies), genus " << m_genus << std::endl;
