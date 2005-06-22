@@ -57,36 +57,54 @@ void insert (Arrangement_2<Traits,Dcel>& arr,
   Zone_visitor                                     visitor;
   Arrangement_zone_2<Arrangement_2, Zone_visitor>  arr_zone (arr, &visitor);
 
-  // Break the input curve into x-monotone subcurves.
+  // Break the input curve into x-monotone subcurves and isolated points.
   typedef Arr_traits_wrapper_2<Traits>                   Traits_wrapper_2;
 
   const Traits_wrapper_2   *traits =
                         static_cast<const Traits_wrapper_2*>(arr.get_traits());
 
-  typedef std::list<typename Traits::X_monotone_curve_2> Curves_list;
-  Curves_list                             x_curves;
-  typename Curves_list::const_iterator    x_iter; 
-  Object                                  obj;
+  std::list<Object>                    x_objects;
+  std::list<Object>::const_iterator    obj_iter;
+  typename Traits::X_monotone_curve_2  x_curve;
+  typename Traits::Point_2             iso_p;
+  Object                               obj;
+  bool                                 assign_success;
 
   traits->make_x_monotone_2_object() (c,
-                                      std::back_inserter (x_curves));
+                                      std::back_inserter (x_objects));
 
   // Insert each x-monotone curve into the arrangement.
-  for (x_iter = x_curves.begin(); x_iter != x_curves.end(); ++x_iter)
+  for (obj_iter = x_objects.begin(); obj_iter != x_objects.end(); ++obj_iter)
   {
-    // Initialize the zone-computation object with the given curve.
-    arr_zone.init (*x_iter, pl);
+    // Act according to the type of the current object.
+    if (assign (x_curve, *obj_iter))
+    {
+      // Inserting an x-monotone curve:
+      // Initialize the zone-computation object with the given curve.
+      arr_zone.init (x_curve, pl);
 
-    // Notify the arrangement observers that a global operation is about to 
-    // take place.
-    arr_access.notify_before_global_change();
+      // Notify the arrangement observers that a global operation is about to 
+      // take place.
+      arr_access.notify_before_global_change();
 
-    // Insert the current x-monotone curve into the arrangement.
-    arr_zone.compute_zone();
+      // Insert the current x-monotone curve into the arrangement.
+      arr_zone.compute_zone();
 
-    // Notify the arrangement observers that the global operation has been
-    // completed.
-    arr_access.notify_after_global_change();
+      // Notify the arrangement observers that the global operation has been
+      // completed.
+      arr_access.notify_after_global_change();
+    }
+    else
+    {
+      assign_success = assign (iso_p, *obj_iter);
+
+      CGAL_assertion (assign_success);
+      if (! assign_success)
+	continue;
+
+      // Inserting a point into the arrangement:
+      insert_vertex (arr, pl, iso_p);
+    }
   }
 
   return;

@@ -306,24 +306,41 @@ public:
      * given output iterator. As segments are always x_monotone, only one
      * x-monotone curve will be contained in the iterator.
      * \param cv The curve.
-     * \param oi The output iterator, whose value-type is X_monotone_curve_2.
+     * \param oi The output iterator, whose value-type is Object. The output
+     *           may be either X_monotone_curve_2 objects or Point_2 objects
+     *           (in case the input curve contains isolated points).
      * \return The past-the-end iterator.
      */
     template<class OutputIterator>
     OutputIterator operator() (const Curve_2& cv, OutputIterator oi) const
     {
       // Make the original curve x-monotone.
-      std::list<Base_x_monotone_curve_2>  base_x_curves;
+      std::list<Object>   base_objects;
     
       base->make_x_monotone_2_object() (cv,
-					std::back_inserter (base_x_curves));
+					std::back_inserter (base_objects));
 
-      // Attach the data to each of the resulting x-monotone curves.
-      typename std::list<Base_x_monotone_curve_2>::const_iterator it;
+      // Go over the returned objects and attach the data to each of the
+      // resulting x-monotone curves.
+      typename std::list<Object>::const_iterator it;
+      Base_x_monotone_curve_2                    base_x_curve;
 
-      for (it = base_x_curves.begin(); it != base_x_curves.end(); ++it)
+      for (it = base_objects.begin(); it != base_objects.end(); ++it)
       { 
-	*oi = X_monotone_curve_2 (*it, cv.get_data());
+	if (assign (base_x_curve, *it))
+	{
+	  // The current object is a base x-monotone curve: Attach data to it.
+	  *oi = make_object (X_monotone_curve_2 (base_x_curve,
+						 cv.get_data()));
+	}
+	else
+	{
+	  CGAL_assertion_code (Point_2  p);
+	  CGAL_assertion (assign (p, *it));
+
+	  // The current object is an isolated point: Leave it as is.
+	  *oi = *it;
+	}
 	++oi;
       }
 

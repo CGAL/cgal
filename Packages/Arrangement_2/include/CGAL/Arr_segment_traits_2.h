@@ -582,14 +582,15 @@ public:
      * given output iterator. As segments are always x_monotone, only one
      * x-monotone curve will be contained in the iterator.
      * \param cv The curve.
-     * \param oi The output iterator, whose value-type is X_monotone_curve_2.
+     * \param oi The output iterator, whose value-type is Object. The output
+     *           object is a wrapper of an X_monotone_curve_2 object.
      * \return The past-the-end iterator.
      */
     template<class OutputIterator>
     OutputIterator operator() (const Curve_2& cv, OutputIterator oi) const
     {
-      *oi = cv;
-      oi++;
+      *oi = make_object (cv);
+      ++oi;
       return (oi);
     }
   };

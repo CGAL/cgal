@@ -446,7 +446,8 @@ public:
      * Cut the given conic curve (or conic arc) into x-monotone subcurves 
      * and insert them to the given output iterator.
      * \param cv The curve.
-     * \param oi The output iterator, whose value-type is X_monotone_curve_2.
+     * \param oi The output iterator, whose value-type is Object. The returned
+     *           objects are all wrappers X_monotone_curve_2 objects.
      * \return The past-the-end iterator.
      */
     template<class OutputIterator>
@@ -465,7 +466,7 @@ public:
       if (n_vtan_ps == 0)
       {    
         // In case the given curve is already x-monotone:
-        *oi = X_monotone_curve_2 (cv, _conic_id);
+        *oi = make_object (X_monotone_curve_2 (cv, _conic_id));
         ++oi;
         return (oi);
       }
@@ -479,9 +480,11 @@ public:
         // In case the curve is a full conic, split it into two x-monotone
         // arcs, one going from ps[0] to ps[1], and the other from ps[1] to
         // ps[0].
-        *oi = X_monotone_curve_2 (cv, vtan_ps[0], vtan_ps[1], _conic_id);
+        *oi = make_object (X_monotone_curve_2 (cv, vtan_ps[0], vtan_ps[1], 
+					       _conic_id));
         ++oi;
-        *oi = X_monotone_curve_2 (cv, vtan_ps[1], vtan_ps[0], _conic_id);
+        *oi = make_object (X_monotone_curve_2 (cv, vtan_ps[1], vtan_ps[0], 
+					       _conic_id));
         ++oi;
       }
       else
@@ -490,9 +493,11 @@ public:
         {
           // Split the arc into two x-monotone sub-curves: one going from the
           // arc source to ps[0], and the other from ps[0] to the target.
-          *oi = X_monotone_curve_2 (cv, cv.source(), vtan_ps[0], _conic_id);
+          *oi = make_object (X_monotone_curve_2 (cv, cv.source(), vtan_ps[0], 
+						 _conic_id));
           ++oi;
-          *oi = X_monotone_curve_2 (cv, vtan_ps[0], cv.target(), _conic_id);
+          *oi = make_object (X_monotone_curve_2 (cv, vtan_ps[0], cv.target(), 
+						 _conic_id));
           ++oi;
         }
         else
@@ -528,11 +533,11 @@ public:
                         sub_curve1, sub_curve2);
           }
 
-          *oi = sub_curve1;
+          *oi = make_object (sub_curve1);
           ++oi;
-          *oi = sub_curve2;
+          *oi = make_object (sub_curve2);
           ++oi;
-          *oi = sub_curve3;
+          *oi = make_object (sub_curve3);
           ++oi;
         }
       }
