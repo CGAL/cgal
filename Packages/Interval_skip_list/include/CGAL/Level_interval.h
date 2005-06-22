@@ -31,7 +31,7 @@ namespace CGAL {
   {
   public:
     typedef typename FaceHandle::value_type Face;
-    typedef typename Face::Vertex Vertex;
+    typedef typename Face::Vertex_handle::value_type Vertex;
     typedef typename Vertex::Point Point;
     typedef typename Kernel_traits<Point>::Kernel K;
     typedef typename K::FT Value;
