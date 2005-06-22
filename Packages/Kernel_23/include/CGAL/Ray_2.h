@@ -30,6 +30,7 @@ template <class R_>
 class Ray_2 : public R_::Kernel_base::Ray_2
 {
   typedef typename R_::RT                    RT;
+  typedef typename R_::FT                    FT;
   typedef typename R_::Point_2               Point_2;
   typedef typename R_::Direction_2           Direction_2;
   typedef typename R_::Vector_2              Vector_2;
