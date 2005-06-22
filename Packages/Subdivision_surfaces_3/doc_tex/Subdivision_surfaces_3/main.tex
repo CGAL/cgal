@@ -30,14 +30,18 @@
 \ccChapterRelease{\subdivisionRev. \ \subdivisionDate}
 \ccChapterAuthor{Le-Jeng Andy Shiue}
 
-%% \begin{ccTexOnly}
-%%     \setlength{\unitlength}{1mm}
-%%     \begin{picture}(0,0)(0.0,0.0)
-%%       \put (78,25){% textwidth = 156mm
-%%           \includegraphics[width=0.5\textwidth]{Polyhedron/fig/shark}
-%%       }
-%%     \end{picture}\vspace{-4mm}% compensate for some vspace added by picture
-%% \end{ccTexOnly}
+\begin{ccTexOnly}
+    \setlength{\unitlength}{1mm}
+    \begin{picture}(0,0)(0.0,0.0)
+      \put (78,25){% textwidth = 156mm
+          \includegraphics[width=0.1\textwidth]{\FIGDIR/rook_mesh.eps}
+          \includegraphics[width=0.1\textwidth]{\FIGDIR/rook_qt1.eps}
+          \includegraphics[width=0.1\textwidth]{\FIGDIR/rook_qt2.eps}
+          \includegraphics[width=0.1\textwidth]{\FIGDIR/rook_surf1.eps}
+          \includegraphics[width=0.1\textwidth]{\FIGDIR/rook_surf2.eps}
+      }
+    \end{picture}\vspace{-4mm}% compensate for some vspace added by picture
+\end{ccTexOnly}
 
 \minitoc
 
@@ -45,16 +49,16 @@
 \section{Introduction} \label{sectionSubIntro}
 % +------------------------------------------------------------------------+
 Subdivision algorithms (see e.g.\ \cite{Warren-2002-subdivision})
-recursively refine coarse meshes
-and generate ever closer approximations to a smooth surface.
+recursively refine coarse meshes and generate ever closer 
+approximations to a smooth surface.
 %for character animation, surface modeling, or physics simulation. 
-Setting aside the specific geometric placement strategy
-for the new points, subdivision algorithms can be classified according to
-the topological refinement of the underlying mesh.
-\SUB3, based on the highly flexible design 
-of the \ccc{CGAL::Polyhedron_3} (see Chapter~\ref{chapterPolyhedron}),
-take advantage of this separation of connectivity and 
-geometry and take a cue from the policy-based design.
+Setting aside the specific strategy of geometric averaging
+for the new points, subdivision algorithms can be classified 
+according to the topological refinement of the underlying mesh.
+\SUB3, based on the concept of the 
+\ccc{CGAL::Polyhedron_3} (see Chapter~\ref{chapterPolyhedron}),
+takes advantage of this separation of topology and geometry, 
+and take a cue from the policy-based design \cite{Shiue-2005-SESUB}.
 
  
 %% \begin{ccHtmlOnly}
@@ -78,26 +82,25 @@ of recursive refinement of a polyhedral mesh.
 %% primitives (i.e.~vertices, edges and facets)
 %% carry attribute information such as vertex 
 %% positions or facet colors. 
-The mesh is recursively refined and then 
-smoothed by averaging neighbors.
-The four major refinement patterns used in practice
-are shown in Figure \ref{fig:RefSchemes}.
+The mesh is recursively refined and then smoothed 
+by averaging neighbors. The four major refinement 
+patterns used in practice are shown in Figure \ref{fig:RefSchemes}.
 
 A graph, called \emph{stencil}, determines the source submesh 
-whose nodes contribute to the position of a target node.
+whose nodes contribute to the position of a target node on the
+refined mesh. Stencils are defined by the used refinement pattern.
 For example, as illustrated in Figure \ref{fig:RefMap},
-the PQQ scheme has a facet-node stencil,
-an edge-node stencil and a vertex-node stencil 
-while the DQQ scheme has only a corner-node stencil
-(Figure \ref{fig:RefMap} \IR).
-%% A stencil that includes only the vertices on facets that 
-%% all share one node is called a \emph{1-ring}.
+the PTQ scheme has a vertex-node stencil, which relates the 1-ring 
+of a source vertex to a target node, and an edge-node stencil,
+which relates the 1-ring of a source edge to a target node; 
+while the DQQ scheme has only a corner-node stencil, which 
+relates the facet of a corner to a target node.
 Stencils with weights are called \emph{geometry stencils}.
 The geometry stencils for \CC\ subdivision are
-shown in Figure \ref{fig:cc_gstencil}. The 
-averaging step then positions points of the
+shown in Figure \ref{fig:cc_gstencil}. 
+The averaging step positions points of the
 refined mesh as a linear combination
-of the points on the source submesh and the stencil weights.   
+of the points on the source submesh and the stencil weights.
 The averaging process can typically be factored into 
 simpler steps \cite{Oswald-2003-CSS}.
 %and this has
@@ -106,39 +109,42 @@ However, while stencil factoring simplifies the implementation,
 it is less efficient because it requires repeated visits 
 to all nodes.
 
-\SUB3\ supports 1-ring mesh refinement based on 
-half-edge data structures.
-Since only a fixed number of \emph{abstract subdivision}
-patterns (see Figure \ref{fig:RefSchemes}) are practical
+Since only a fixed number of refinement patterns are practical
 but a wide variety of geometry stencils,
-FSL provides abstract subdivisions (the hosts)
-and hands the definition of \emph{concrete subdivisions}
-(the policies) to the library user. A concrete 
-subdivision (e.g.~\CC) is obtained by 
-parameterizing the refinement host (PQQ refinement) 
-with a geometry policy (\CC\ stencil).
+\SUB3\ provides refinement patterns (the \emph{refinement hosts})
+and hands the definition of geometry stencils
+(the \emph{geometry policies}) to the package user.
+A subdivision scheme is obtained by parameterizing the refinement
+host with geometry policies. 
+For example, \CC\ subdivision is instanciated by parameterizing the 
+PQQ refinement with the \CC\ geometry stencils.
+%\SUB3\ supports 1-ring mesh refinement based on 
+%half-edge data structures.
+%A subdivision scheme of \ccc{CGAL::Subdivision_surfaces_3} is a 
+%refinement host parameterized with a geometry policy. 
 
-A subdivision scheme of \ccc{CGAL::Subdivision_surfaces_3} is a 
-refinement host parameterized with a geometry policy. The refinement
-host realizes the connectivity refinement and the corresponding
-stencils. The geometry policy consists a set of averaging rules
-of the geometry stencils.
+%The refinement host realizes the topological refinement and 
+%the stencils. The geometry policy consists a set of 
+%averaging rules of the geometry stencils.
 
 % +-------------------------------------------------------------+
 \subsection{Example: \CC\ Subdivision}
-\ccc{CGAL::Subdivision_surfaces_3::PQQ} is the refinement host of
-the primal quadrilateral quadrisection.
+\ccc{CGAL::Subdivision_surfaces_3::PQQ}, the refinement 
+host of the PQQ refinement (Figure \ref{fig:RefSchemes}),
+realizes the topological refinement and the three stencils
+of the PQQ scheme (Figure \ref{fig:RefMap}).
 
 \begin{ccExampleCode}
-  // _S is the stencil policy
+  // _S is the class implement the geometry policies
   template <template <typename> class _S>
   static void PQQ(Polyhedron& p, _S<Polyhedron> rule, int step)
 \end{ccExampleCode}
 
-\ccc{CGAL::CatmullClark_stencil} is the geometry policy of the
-Catmull-Clark subdivision \cite{cc}. To subdivide a polyhedral
-mesh, the \ccc{CGAL::Subdivision_surfaces_3::PQQ} is specialized
-by \ccc{CGAL::CatmullClark_stencil}.
+\SUB3\ provides \ccc{CGAL::CatmullClark_stencil} consisting of the 
+geometry policies of the \CC\ subdivision \cite{Catmull-sub-1978}. 
+The \CC\ subdivision is then realized by parameterizing 
+\ccc{CGAL::Subdivision_surfaces_3::PQQ} with 
+\ccc{CGAL::CatmullClark_stencil}.
 
 \begin{ccExampleCode}
   void CatmullClark_subdivision(Polyhedron& p, int step) {
@@ -146,16 +152,22 @@ by \ccc{CGAL::CatmullClark_stencil}.
   }
 \end{ccExampleCode}
 
-Catmull-Clark, Loop, Doo-Sabin and $\sqrt{3}$ subdivisions are supported
-in \ccc{CGAL::Subdivision_surfaces_3} as convenient functions.
+\ccc{Polyhedron} is the template parameter of the concept of
+\ccc{CGAL::Polyhedron_3}, and \ccc{step} specifies the
+depth of the subdivision.
+
+
+%Catmull-Clark, Loop, Doo-Sabin and $\sqrt{3}$ subdivisions are supported
+%in \ccc{CGAL::Subdivision_surfaces_3} as convenient functions.
 
 % +-------------------------------------------------------------+
 \section{Refinement Host}
-\SUB3\ provides refinement hosts for subdivisions based on
-primal quadrilateral quadrisection (PQQ), primal triangle 
-quadrisection (PTQ), dual quadrilateral quadrisection (DQQ) and 
-\SQRT3 triangulation, which are used by \CC, Loop, \DS\ and
-\SQRT3\ subdivision, respectively. The refined mesh is shown below 
+\SUB3\ current provides four refinement hosts of primal 
+quadrilateral quadrisection (PQQ), primal triangle 
+quadrisection (PTQ), dual quadrilateral 
+quadrisection (DQQ) and \SQRT3 triangulation, which 
+are used by \CC, Loop, \DS\ and \SQRT3\ subdivision, 
+respectively. The refined mesh is shown below 
 the initial mesh.
 
 \begin{ccTexOnly}
@@ -183,12 +195,15 @@ the initial mesh.
 %% the visited node.
 
 Each refinement host is realized as a static function of
-the refining polyhedron mesh and the geometry policy. 
+a refining polyhedron and a geometry policy. Refinement hosts
+are responsible to maintain the stencils by the ordering of 
+the new nodes. Interested users should refer to \cite{Shiue-2005-MREO} 
+for details of the ordering algorithm.
 
 \begin{ccExampleCode}
 template <class Polyhedron>
 class Subdivision_surfaces_3 {
-  // _S is the stencil policy
+  // _S is the class implement the geometry policies
   template <template <typename> class _S>
   static void PQQ(Polyhedron& p, _S<Polyhedron> rule, int step);
 
@@ -205,14 +220,21 @@ class Subdivision_surfaces_3 {
 
 % +-------------------------------------------------------------+
 \section{Geometry Policy}
-A geometry policy defines a set of functions of the geometry stencil.
-The policy interface is defined with the refinement host. Each policy 
-function receives a primitive handle of the source polyhedral mesh,
-and the target node as the reference of the \ccc{Point}.
-A concrete policy function is semantically required to assigned 
-the smoothed point based on the source mesh.
+A class of geometry policies defines a set of functions 
+of the geometry averaging rules to assign the new node 
+according to the source stencil..
+%The policy interface is defined with the refinement host. 
+Each function of the geometry rules receives a primitive handle 
+of the source mesh, and the target node as the reference of 
+the \ccc{Point}. Developers of the geometry policy collect the submesh
+of the primitive handle, and caculate the new node by averaging
+the weighted submesh. 
 
-A PQQ reinement host requires three policies for a closed surface.
+A PQQ reinement host requires three geometry policies for closed 
+surfaces (i.e.~surfaces without boundaries):  a vertex-node stencil 
+of a source vertex, an edge-node stencil of a source edge, and a 
+facet-node stencil of a source facet.
+
 \begin{ccTexOnly}
   \begin{center}
     \parbox{0.5\textwidth}{%
@@ -228,9 +250,10 @@ A PQQ reinement host requires three policies for a closed surface.
   </CENTER>
 \end{ccHtmlOnly}
 
-Following shows the realization of the \CC\ rules as the geometry policy.
-To support the border, an additional policy for border vertices is 
-required.
+Following shows the realization of the \CC\ rules as geometry policy class.
+To support meshes with boundary, an additional policy for 
+border vertices is required.
+
 \begin{ccExampleCode}
 template <class _Poly>
 class CatmullClark_stencil {
@@ -302,8 +325,8 @@ class CatmullClark_stencil {
 %% and \ccc{CCstencil} is a class template 
 %% realizing geometry policies of \CC\ subdivision.
 
-The geometry stencil of \CC\ subdivision (border rules is not included) 
-is shown below. 
+The geometry stencils of \CC\ subdivision (border stencils are 
+not included) are shown below. 
 
 \begin{ccTexOnly}
   \begin{center}
@@ -325,7 +348,7 @@ is shown below.
 \section{Bult-in subdivisions}
 % +------------------------------------------------------------------------+
 \CC , Loop, \DS\ and \SQRT3\ subdivisions are provided in \SUB3. Each of these 
-subdivision schemes is instantiated with the corresponding geometry policy.
+subdivision schemes is realized with the corresponding geometry policies.
 \begin{ccExampleCode}
   static void CatmullClark_subdivision(Polyhedron& p, int step) {
     PQQ(p, CatmullClark_stencil<Polyhedron>(), step);
@@ -345,9 +368,18 @@ Following shows an example of \DS\ subdivision on a polyhedral mesh.
 \ccIncludeExampleCode{Subdivision_surfaces_3/DooSabin_subdivision.C}
 
 % +------------------------------------------------------------------------+
-\section{Create your own subdivision surfaces}
+\section{Customize subdivision surfaces}
 % +------------------------------------------------------------------------+
-To create a user-defined subdivision, you need to choose a refinement host 
-(e.g.~\ccc{Subdivision_surfaces_3<Polyhedron>::PTQ}) and implement the
-geometry policy accordingly (e.g.~a subclass of \ccc{PTQ_stencil}). 
+To develop a customized subdivision scheme, users first choose a 
+refinement host for the topological refinement, and then implement 
+the geometry policies accordingly. 
+The following exmple develops a subdivsion scheme
+generating improved Loop subdivision surfaces based on the PTQ refinement 
+(i.e~\ccc{Subdivision_surfaces_3<Polyhedron>::PTQ}). The policy class of
+the user-defined geometry rules is deveoped as a subclass 
+of \ccc{PTQ_stencil}), which defines the interface of stencils
+of the PTQ refinement. A policy function for subdivision 
+surfaces is semantically required to assigned the smoothed point 
+based on the source mesh. 
+
 \ccIncludeExampleCode{Subdivision_surfaces_3/Customized_subdivision.C}

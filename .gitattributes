@@ -1716,6 +1716,13 @@ Packages/Subdivision_surfaces_3/doc_tex/Subdivision_surfaces_3/FIG/RefSchemes.ep
 Packages/Subdivision_surfaces_3/doc_tex/Subdivision_surfaces_3/FIG/RefSchemes.fig -text
 Packages/Subdivision_surfaces_3/doc_tex/Subdivision_surfaces_3/FIG/cc_mask.eps -text
 Packages/Subdivision_surfaces_3/doc_tex/Subdivision_surfaces_3/FIG/cc_mask.fig -text
+Packages/Subdivision_surfaces_3/doc_tex/Subdivision_surfaces_3/FIG/rook_mesh.eps -text
+Packages/Subdivision_surfaces_3/doc_tex/Subdivision_surfaces_3/FIG/rook_qt1.eps -text
+Packages/Subdivision_surfaces_3/doc_tex/Subdivision_surfaces_3/FIG/rook_qt2.eps -text
+Packages/Subdivision_surfaces_3/doc_tex/Subdivision_surfaces_3/FIG/rook_qt3.eps -text
+Packages/Subdivision_surfaces_3/doc_tex/Subdivision_surfaces_3/FIG/rook_qtsub.eps -text
+Packages/Subdivision_surfaces_3/doc_tex/Subdivision_surfaces_3/FIG/rook_surf1.eps -text
+Packages/Subdivision_surfaces_3/doc_tex/Subdivision_surfaces_3/FIG/rook_surf2.eps -text
 Packages/Subdivision_surfaces_3/examples/Subdivision_surfaces_3/data/corner.off -text
 Packages/Subdivision_surfaces_3/examples/Subdivision_surfaces_3/data/corner_tris_with_hole.off -text
 Packages/Subdivision_surfaces_3/examples/Subdivision_surfaces_3/data/corner_with_hole.off -text
