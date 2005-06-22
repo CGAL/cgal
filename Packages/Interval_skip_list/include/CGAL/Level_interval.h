@@ -1,4 +1,4 @@
-// Copyright (c) 2003 GeometryFactory
+// Copyright (c) 2003, 2005 GeometryFactory
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
