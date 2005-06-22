@@ -359,6 +359,9 @@ _is_in_connected_component (const Point_2& p,
 			    Halfedge_const_handle& closest_he,
 			    bool& is_on_edge) const
 {
+  // As far as we know, we are not on an edge.
+  is_on_edge = false;
+
   // Set the results for comparison acording to the ray direction.
   const Comparison_result point_above_under = (shoot_up ? SMALLER : LARGER);
   const Comparison_result curve_above_under = (shoot_up ? LARGER : SMALLER);
@@ -572,8 +575,7 @@ _is_in_connected_component (const Point_2& p,
   } while (curr != first);
 
   // The query point lies inside the connected components if and only if the
-  // ray we shoot from it intersects the boundary an odd number of time.
-  is_on_edge = false;
+  // ray we shoot from it intersects the boundary an odd number of times.
   return ((n_ray_intersections % 2) != 0);
 }
 
