@@ -158,7 +158,7 @@ public:
   Bbox_2
   bbox() const
   {
-    R().construct_bbox_2_object()(*this);
+    return R().construct_bbox_2_object()(*this);
   }
 
   bool
