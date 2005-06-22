@@ -156,7 +156,7 @@ void Arrangement_zone_2<Arrangement,ZoneVisitor>::compute_zone ()
       }
     }
 
-    if (! left_v.is_isolated())
+    if (left_v == invalid_v || ! left_v.is_isolated())
     {
       // At this point we can compute the zone of cv starting from the left_he
       // inside its incident face.
@@ -781,9 +781,9 @@ bool Arrangement_zone_2<Arrangement,ZoneVisitor>::_zone_in_face
      bool on_boundary)
 {
   CGAL_precondition ((! on_boundary && 
-		      ((left_v == invalid_v && left_he == invalid_he) ||
-		       left_v.is_isolated())) ||
-		     (on_boundary && left_he != invalid_he));
+  		      ((left_v == invalid_v && left_he == invalid_he) ||
+  		       left_v.is_isolated())) ||
+  		     (on_boundary && left_he != invalid_he));
 
   // Find the first intersection of the curve with the face boundary.
   _leftmost_intersection_with_face_boundary (face);
