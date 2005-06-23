@@ -30,11 +30,11 @@
 #include <CGAL/assertions.h>
 #include <CGAL/memory.h>
 #include <CGAL/Object.h>
-#include <CGAL/Sweep_line_2/Sweep_line_functors.h>
-#include <CGAL/Sweep_line_2/Sweep_line_traits.h>
-#include <CGAL/Sweep_line_2/Sweep_line_event.h>
-#include <CGAL/Sweep_line_2/Sweep_line_subcurve.h>
-#include <CGAL/Sweep_line_2/Sweep_line_rb_tree.h>
+#include <CGAL/Sweep_line_2_old/Sweep_line_functors.h>
+#include <CGAL/Sweep_line_2_old/Sweep_line_traits.h>
+#include <CGAL/Sweep_line_2_old/Sweep_line_event.h>
+#include <CGAL/Sweep_line_2_old/Sweep_line_subcurve.h>
+#include <CGAL/Sweep_line_2_old/Sweep_line_rb_tree.h>
 
 
 

@@ -21,9 +21,9 @@
 #define SWEEP_LINE_DO_CURVES_X_VISITOR
 
 
-#include <CGAL/Sweep_line_2/Sweep_line_event.h>
-#include <CGAL/Sweep_line_2/Sweep_line_subcurve.h>
-#include <CGAL/Sweep_line_2/Sweep_line_points_visitor.h>
+#include <CGAL/Sweep_line_2_old/Sweep_line_event.h>
+#include <CGAL/Sweep_line_2_old/Sweep_line_subcurve.h>
+#include <CGAL/Sweep_line_2_old/Sweep_line_points_visitor.h>
 
 CGAL_BEGIN_NAMESPACE
 

@@ -21,7 +21,7 @@
 #define SWEEP_LINE_2_IMPL_DEBUG_H
 
 
-#include <CGAL/Sweep_line_2/Sweep_line_2_impl.h>
+#include <CGAL/Sweep_line_2_old/Sweep_line_2_impl.h>
 
 
 ////////////////////////////////////////////////////////////////////////////
