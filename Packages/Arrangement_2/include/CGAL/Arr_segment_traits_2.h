@@ -275,6 +275,7 @@ public:
   typedef typename Kernel::Point_2        Point_2;
   typedef Arr_segment_2<Kernel>           X_monotone_curve_2;
   typedef Arr_segment_2<Kernel>           Curve_2;
+  typedef double                          Approximate_number_type;
 
 public:
 
@@ -818,6 +819,32 @@ public:
   {
     return Merge_2();
   }
+
+
+  class Approximate_2
+  {
+  public:
+    /*!
+     * Merge two given x-monotone curves into a single curve (segment).
+     * \param cv1 The first curve.
+     * \param cv2 The second curve.
+     * \param c Output: The merged curve.
+     * \pre The two curves are mergeable, that is they are supported by the
+     *      same line and share a common endpoint.
+     */
+    Approximate_number_type operator() (const Point_2& p,
+                                        int coord) const
+    {
+      return (coord == 0) ? CGAL::to_double(p.x()) : CGAL::to_double(p.y());
+    }
+  };
+
+  /*! Get a Merge_2 functor object. */
+  Approximate_2 approximate_2_object () const
+  {
+    return Approximate_2();
+  }
+
 
   ///@}
 };
