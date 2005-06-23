@@ -41,65 +41,52 @@ template <class Traits_>
 class Arr_landmarks_nearest_neighbor 
 {
 public:
-	typedef Traits_										Traits_2;
-	typedef typename Traits_2::Point_2					Point_2;
-	typedef Arr_landmarks_nearest_neighbor<Traits_2>	Self;
+	typedef Traits_										                    Traits_2;
+  typedef typename Traits_2::Approximate_number_type	  ANT;
+	typedef typename Traits_2::Point_2					          Point_2;
+	typedef Arr_landmarks_nearest_neighbor<Traits_2>	    Self;
 
 	class  NN_Point_2 {
 	public:
 		NN_Point_2() 
 		{ 
 			vec[0]= vec[1]  = 0; 
-			obj = Object(); 
-			p = Point_2(x,y);
 		}
-		NN_Point_2 (double x, double y)
+
+    NN_Point_2 (Point_2 &pnt)
 		{ 
-			vec[0]=x; 
-			vec[1]=y;  
-			obj = Object(); 
-			p = Point_2(x,y);
+			m_point = pnt;
+      Traits_2 traits; 
+			vec[0]= traits.approximate_2_object()(pnt, 0);
+      vec[1]= traits.approximate_2_object()(pnt, 1);
 		}
-		//NN_Point_2 (double x, double y,  Object &object) 
-		//	{ vec[0]=x; vec[1]=y;  obj = object; }
+
 		NN_Point_2 (Point_2 &pnt, Object &object) 
 		{ 
-			obj = object;
-			p = pnt;
-			vec[0]=CGAL::to_double(pnt.x()); 
-			vec[1]=CGAL::to_double(pnt.y()); 
+			m_object = object;
+			m_point = pnt;
+      Traits_2 traits; 
+			vec[0]= traits.approximate_2_object()(pnt, 0);
+      vec[1]= traits.approximate_2_object()(pnt, 1);
 		}
 
-		Object &object() { return obj; }
+		Object &object() { return m_object; }
 
-		Point_2 &point() { return p; }
+		Point_2 &point() { return m_point; }
 
-
-		//TODO: IXX try to eliminate these to functions
-		//double x() const
-		//{
-		//  return vec[ 0 ];
-		//}
-		//
-		//double y() const
-		//{
-	 //     return vec[ 1 ];
-		//}
-		//Object object() const { return obj; }
-
-		double& x()
+		ANT& x()
 		{
 		  return vec[ 0 ];
 		}
 		
-		double& y()
+		ANT& y()
 		{
 		  return vec[ 1 ];
 		}
 
 		bool operator==(const NN_Point_2& p) const 
 		{	
-			return (x() == p.x()) && (y() == p.y() && object() == p.object())  ;
+			return (x() == p.x()) && (y() == p.y())  ;
 		}
 
 		bool  operator!=(const NN_Point_2& p) const 
@@ -107,23 +94,24 @@ public:
 			return ! (*this == p); 
 		}
 
-		double		vec[2];
-		Object		obj;
-		Point_2		p;
+		ANT		    vec[2];
+		Object		m_object;
+		Point_2		m_point;
 	}; //end of class
 
 
 	class Construct_coord_iterator {
 	public:
-		const double* operator()(const NN_Point_2& p) const 
-		{ return static_cast<const double*>(p.vec); }
+		const ANT* operator()(const NN_Point_2& p) const 
+		{ return static_cast<const ANT*>(p.vec); }
 
-		const double* operator()(const NN_Point_2& p, int)  const
-		{ return static_cast<const double*>(p.vec+2); }
+		const ANT* operator()(const NN_Point_2& p, int)  const
+		{ return static_cast<const ANT*>(p.vec+2); }
 	};
 
 
-	typedef CGAL::Search_traits<double, NN_Point_2, const double*,Construct_coord_iterator>	 Traits;
+	typedef CGAL::Search_traits<ANT, NN_Point_2, const ANT*,
+								Construct_coord_iterator>	Traits;
 	typedef CGAL::Orthogonal_k_neighbor_search<Traits>      Neighbor_search;
 	typedef typename Neighbor_search::iterator              Neighbor_iterator;
 	typedef typename Neighbor_search::Tree                  Tree;
@@ -131,8 +119,8 @@ public:
 	typedef typename Point_list::const_iterator             Input_iterator;
 
 protected:
-	Tree        * tree;
-	bool          b_valid_tree;
+	Tree            * tree;
+	bool            b_valid_tree;
 
 private:
 
@@ -146,7 +134,7 @@ public:
 	  /*! Default constructor. */
 	  Arr_landmarks_nearest_neighbor () : 
 	      tree(0), 
-		  b_valid_tree(false)
+		    b_valid_tree(false) 
 	  {
 	  }
 
@@ -172,11 +160,9 @@ public:
 		  }
 
 		  if (begin != beyond) {
-			  //std::cout << "allocating a new tree" << std::endl;
 			  tree = new Tree(begin, beyond);
 			  b_valid_tree = true;
 		  }
-		  // else {std::cout << "empty list" << std::endl;}
 	  }
 
 	  /*! clean - deletes the tree in order to create a new one later
@@ -184,11 +170,8 @@ public:
 	  void clean() 
 	  {
 		  if (b_valid_tree && tree){
-			//std::cout << "~: deleting the tree. tree = " << tree ;
-			//std::cout << "size = " << tree->size() << std::endl;
 			  delete tree;
 		  }
-		  // else { std::cout << "no tree to clean" << std::endl }
 		  b_valid_tree = false;
 		  tree = 0;
 	  }
@@ -198,9 +181,7 @@ public:
 	  Point_2 & find_nearest_neighbor(Point_2 query, Object &obj) const
 	  {
 		  //create NN_Point_2 from Point_2 
-		  double qx = CGAL::to_double(query.x());
-		  double qy = CGAL::to_double(query.y());
-		  NN_Point_2 nn_query(qx, qy);
+		  NN_Point_2 nn_query(query);
 
 		  //use the tree to find nearest landmark
 		  CGAL_assertion (b_valid_tree);
@@ -212,32 +193,8 @@ public:
 		  //get the object 
 		  obj = nearest_p.object();
 		  
-		  //Point_2 p = nearest_p.point();			
-		  //create Point_2 from the result.
-		  //IXX: TODO: change this so that NN_Point_2 will save the given 
-		  //Point_2 and not create a new one. 
-		  //Point_2 res_p(nearest_p.x(), nearest_p.y());
-
 		  return (nearest_p.point());
 	  }
-
-protected:
-	  //NN_Point_2 _find_nearest_neighbor(const NN_Point_2 & query) const
-	  //{
-		 // //std::cout << "finding nearest neighbor of "<< query.x() <<' ' <<query.y();
-
-		 // // Initialize the search structure, and search all N points
-		 // Neighbor_search search(*tree, query, 1); 
-
-		 // // report the N nearest neighbors and their distance
-		 // // This should sort all N points by increasing distance from origin
-		 // //for (Neighbor_iterator it = search.begin(); it != search.end(); ++it)
-		 // //{
-		 // //  std::cout << "  is "<<(it->first).x()<<' '<<(it->first).y()<< std::endl;
-		 // //}
-
-		 // return (search.begin()->first);
-	  //}
 	 
 };
 
