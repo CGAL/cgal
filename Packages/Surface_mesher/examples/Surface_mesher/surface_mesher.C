@@ -24,8 +24,8 @@
 #include <CGAL/Surface_mesher/Criteria/Standard_criteria.h>
 #include <CGAL/IO/Complex_2_in_triangulation_3_file_writer.h>
 
-// #include <CGAL/Surface_mesher/Oracles/Implicit_oracle.h>
-// #include "implicit_function.h"
+#include <CGAL/Surface_mesher/Oracles/Implicit_oracle.h>
+#include "implicit_function.h"
 #include <CGAL/Surface_mesher/Oracles/Polyhedral.h>
 
 #include <fstream>
@@ -44,9 +44,12 @@ typedef CGAL::Triangulation_data_structure_3<Vb2, Cb> Tds;
 
 typedef CGAL::Delaunay_triangulation_3<K, Tds> Del;
 typedef CGAL::Complex_2_in_triangulation_3_surface_mesh<Del> C2t3;
-// typedef Function <K::FT> Func;
-// typedef CGAL::Surface_mesher::Implicit_oracle<K, Func> Oracle;
-typedef CGAL::Surface_mesher::Polyhedral <Del> Oracle;
+
+// Oracle
+typedef Function <K::FT> Func;
+typedef CGAL::Surface_mesher::Implicit_oracle<K, Func> Oracle;
+// typedef CGAL::Surface_mesher::Polyhedral <Del> Oracle;
+
 typedef CGAL::Surface_mesher::Refine_criterion<Del> Criterion;
 typedef CGAL::Surface_mesher::Standard_criteria <Criterion > Criteria;
 
@@ -79,13 +82,14 @@ int main(int argc, char **argv) {
 
 
   // Function
-//   Func F;
+  Func F;
 
-  // Oracle (NB: parity oracle is toggled)
-//   Oracle O (F, K::Point_3 (0,0,0), 4, 1e-6, true);  
-  std::ifstream is (argv[1]);
-  Oracle O (is);
-  is.close ();
+  // Oracle 
+  Oracle O (F, K::Point_3 (0,0,0), 4, 1e-6, true);  // parity oracle toggled
+//   std::ifstream is (argv[1]);
+//   Oracle O (is);
+//   is.close ();
+
 
   // 3D-Delaunay triangulation
   Del T;
@@ -94,7 +98,7 @@ int main(int argc, char **argv) {
   // Initial point sample
   //Oracle::Points initial_point_sample = O.random_points (10);
   //  Oracle::Points initial_point_sample = O.random_points (20);
-  Oracle::Points initial_point_sample = O.random_points (4);
+  Oracle::Points initial_point_sample = O.random_points (40);
   typedef Del::Point Point;
   T.insert (initial_point_sample.begin(), initial_point_sample.end());
   

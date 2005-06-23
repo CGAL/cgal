@@ -9,14 +9,14 @@
 # CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE
 include $(CGAL_MAKEFILE)
 
-CGAL_CXX = g++33
+#CGAL_CXX = g++33
 
 #---------------------------------------------------------------------#
 #                    compiler flags
 #---------------------------------------------------------------------#
 
 CXXFLAGS = -I../../include \
-	   -I../../../Laurent/Mesh_3/include \
+	   -I../../../Data_structure_for_queries_3/include \
            $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS) \
 	   -g \
@@ -26,6 +26,7 @@ CXXFLAGS = -I../../include \
 #           -I../../../Mesh_2/include \
 #           -I../../../Mesh_3/include \
 #	   -I../../../Triangulation_3/include \
+#	   -I../../../Laurent/Mesh_3/include \
 
 #---------------------------------------------------------------------#
 #                    linker flags
