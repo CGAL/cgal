@@ -16,7 +16,7 @@ int main()
 #include <CGAL/Pm_default_dcel.h>
 #include <CGAL/Planar_map_2.h>
 //#include <CGAL/Pm_with_intersections.h>
-#include <CGAL/Sweep_line_2.h>
+#include <CGAL/Sweep_line_2_old.h>
 #include <CGAL/Arr_conic_traits_2.h>
 
 #include <CGAL/IO/Color.h>

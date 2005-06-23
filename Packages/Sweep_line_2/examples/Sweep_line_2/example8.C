@@ -5,7 +5,7 @@
 #include <CGAL/Quotient.h>
 #include <CGAL/Arr_segment_cached_traits_2.h>
 #include <CGAL/Arr_curve_data_traits_2.h>
-#include <CGAL/Sweep_line_2.h>
+#include <CGAL/Sweep_line_2_old.h>
 #include <iostream>
 #include <vector>
 

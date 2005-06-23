@@ -78,7 +78,7 @@ int main()
 
 #include <list>
 #include <string>
-#include <CGAL/Sweep_line_2.h>
+#include <CGAL/Sweep_line_2_old.h>
 #include "CompareCurveList.h"
 
 #if CGAL_ARR_TEST_TRAITS==CGAL_SEGMENT_TRAITS 

@@ -11,7 +11,7 @@
 #include <CGAL/Planar_map_2.h>
 #include <CGAL/Pm_with_intersections.h>
 
-#include <CGAL/Sweep_line_2.h>
+#include <CGAL/Sweep_line_2_old.h>
 
 #define CGAL_SEGMENT_TRAITS         1
 #define CGAL_SEGMENT_LEDA_TRAITS    2

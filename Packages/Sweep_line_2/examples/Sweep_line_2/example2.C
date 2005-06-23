@@ -3,7 +3,7 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/MP_Float.h>
 #include <CGAL/Quotient.h> 
-#include <CGAL/Sweep_line_2.h> 
+#include <CGAL/Sweep_line_2_old.h> 
 #include <CGAL/Arr_segment_cached_traits_2.h>
 #include <CGAL/Arr_polyline_traits_2.h>
 #include <iostream>
