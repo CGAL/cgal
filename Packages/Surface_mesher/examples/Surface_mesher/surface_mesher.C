@@ -35,8 +35,8 @@
 
 /////////////// Types /////////////// 
 
-struct K2 : public CGAL::Exact_predicates_inexact_constructions_kernel {};
-typedef CGAL::Robust_circumcenter_traits_3<K2>  K;
+struct K : public CGAL::Exact_predicates_inexact_constructions_kernel {};
+// typedef CGAL::Robust_circumcenter_traits_3<K2>  K;
 typedef CGAL::Triangulation_vertex_base_3<K> Vb;
 typedef CGAL::Complex_2_in_triangulation_vertex_base_3<K, Vb> Vb2;
 typedef CGAL::Complex_2_in_triangulation_surface_mesh_cell_base_3<K> Cb;
@@ -63,11 +63,11 @@ CGAL::Surface_mesher::Surface_mesher_manifold_base <Del, Oracle, Criteria, SMREW
 > SMMWB;
 
 
-//typedef SM Surface;  // basic mesher
+//  typedef SM Surface;  // basic mesher
 //typedef SMM Surface;  // manifold with boundary
 typedef SMMWB Surface;  // manifold without boundary
 
-//typedef SMRE Surface;  // only regular edges
+// typedef SMRE Surface;  // only regular edges
 //typedef SMREWB Surface;  // only regular edges, without boundary
 
 
@@ -85,7 +85,7 @@ int main(int argc, char **argv) {
   Func F;
 
   // Oracle 
-  Oracle O (F, K::Point_3 (0,0,0), 4, 1e-6, true);  // parity oracle toggled
+  Oracle O (F, K::Point_3 (0,0,0), 6, 1e-6, true);  // parity oracle toggled
 //   std::ifstream is (argv[1]);
 //   Oracle O (is);
 //   is.close ();
@@ -96,15 +96,13 @@ int main(int argc, char **argv) {
 
 
   // Initial point sample
-  //Oracle::Points initial_point_sample = O.random_points (10);
-  //  Oracle::Points initial_point_sample = O.random_points (20);
-  Oracle::Points initial_point_sample = O.random_points (40);
+  Oracle::Points initial_point_sample = O.random_points (20);
   typedef Del::Point Point;
   T.insert (initial_point_sample.begin(), initial_point_sample.end());
   
   // Meshing criteria
-  CGAL::Surface_mesher::Curvature_size_criterion<Del> c_s_crit (0.01);
-  CGAL::Surface_mesher::Uniform_size_criterion<Del> u_s_crit (10000);
+  CGAL::Surface_mesher::Curvature_size_criterion<Del> c_s_crit (10000);
+  CGAL::Surface_mesher::Uniform_size_criterion<Del> u_s_crit (0.03);
   CGAL::Surface_mesher::Aspect_ratio_criterion<Del> a_r_crit (30);
   std::vector<Criterion*> crit_vect;
   crit_vect.push_back (&a_r_crit);

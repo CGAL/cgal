@@ -16,19 +16,23 @@ class Graph {
 
  private:
   Nodes_map nodes;
+  int nb_nodes;
 
  public:
   // Constructor
   Graph() {
     nodes = Nodes_map();
+    nb_nodes = 0;
   }
 
  public:
-  Nodes_map get_nodes() const {
+  Nodes_map& get_nodes() {
     return nodes;
   }
   
   void add_node(const E& e, const std::list<E>& loe) {
+    ++nb_nodes;
+
     Node<E>* n = new Node<E>(e);
     nodes.insert( std::make_pair(e, n) );
 
@@ -45,48 +49,56 @@ class Graph {
   }
 
   void remove_node(const E& e) {
+    --nb_nodes;
+
     Node<E>* n = ( *( nodes.find(e) ) ).second;
     delete(n);
 
     nodes.erase(e);
   }
 
-  // go all over the connected component where n is
-  void go_through_connected_component(Node<E>*& n) {
-    if ( ! n->is_visited() ) {
-      n->set_visited(true);
-      Nodes_map succ = n->get_succ();
+  // travels the connected component of n
+  int nb_visited;
+  void go_through_connected_component(Node<E>*& n, bool status) {
+      CGAL_assertion ( n->is_visited() != status );
+      ++nb_visited;
+      n->set_visited (status);
+      Nodes_map& succ = n->get_succ();
       for (Nodes_map_iterator nit = succ.begin();
 	   nit != succ.end();
-	   ++nit) {
-	go_through_connected_component( (*nit).second );
-      }
-    }
+	   ++nit)
+	if ((*nit).second->is_visited() != status )
+	  go_through_connected_component( (*nit).second, status );
+/*     } */
   }
 
-  // go over all the connected components and count them
-  int nb_connected_components() {
-    int count = 0;
-    for (Nodes_map_iterator nit = nodes.begin();
-	 nit != nodes.end();
-	 ++nit) {
-      Node<E>* n = (*nit).second;
-      if ( ! n->is_visited() ) {
-	count++;
-	go_through_connected_component(n);
-      }
-    }
-    for (Nodes_map_iterator nit = nodes.begin();
-	 nit != nodes.end();
-	 ++nit) {
-      Node<E>* n = (*nit).second;
-      n->set_visited(false);
-    }    
-    return count;
+  // says whether there is only one CC
+  bool is_graph_connected () {
+    CGAL_assertion (!nodes.empty ());
+    Node<E>* n = (*(nodes.begin())).second;
+
+    CGAL_assertion ( !n->is_visited ());
+    nb_visited = 0;
+    go_through_connected_component(n, true);
+
+    CGAL_assertion (nb_visited > 0);
+    CGAL_assertion (nb_visited <= size());
+    bool result = (nb_visited == size());
+
+    go_through_connected_component(n, false);
+/*     for (Nodes_map_iterator nit = nodes.begin(); */
+/* 	 nit != nodes.end(); */
+/* 	 ++nit) { */
+/*       Node<E>* n = (*nit).second; */
+/*       n->set_visited(false); */
+/*     } */
+
+    return result;
   }
   
   int size() const {
-    return nodes.size();
+/*     return nodes.size(); */
+    return nb_nodes;
   }
 
 }; // end Graph

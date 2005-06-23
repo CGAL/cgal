@@ -198,7 +198,7 @@ class Complex_2_in_triangulation_3 {
       lof.push_back(*it);
     }
 
-    assert(lof.size() > 0);
+    assert(!lof.empty());
     
     lof.remove(f);
     

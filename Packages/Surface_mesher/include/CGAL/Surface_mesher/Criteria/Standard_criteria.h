@@ -270,6 +270,62 @@ namespace CGAL {
   };  // end Uniform_size_criterion
 
 
+
+  // Edge size Criterion class
+  template <class Tr>
+  class Edge_size_criterion : public Refine_criterion <Tr> {
+  public:
+    typedef typename Refine_criterion <Tr>::Quality Quality;
+    
+  private:
+    typedef typename Refine_criterion <Tr>::Facet Facet;
+    typedef typename Tr::Point Point;
+
+    Quality B;
+    
+  public:
+    // Nb: the default bound of the criterion is such that the criterion 
+    // is always fulfilled
+    Edge_size_criterion(const Quality b = 1000) : B(b * b) {}
+    
+    inline
+    Quality bound() const { return std::sqrt (B); }
+    
+    inline 
+    void set_bound(const Quality b) { B = b * b; };
+    
+    
+    bool is_bad (const Facet& fh) const {
+      return (quality (fh) > B);
+    }
+    
+    
+    Quality quality (const Facet& fh) const {
+      
+      typedef typename Tr::Geom_traits Geom_traits;
+      Geom_traits gt;
+      
+      Point p1 = fh.first->vertex ((fh.second+1)&3)->point();
+      Point p2 = fh.first->vertex ((fh.second+2)&3)->point();
+      Point p3 = fh.first->vertex ((fh.second+3)&3)->point();
+      
+      double d12 = gt.compute_squared_distance_3_object() (p1, p2);
+      double d13 = gt.compute_squared_distance_3_object() (p1, p3);
+      double d23 = gt.compute_squared_distance_3_object() (p2, p3);
+
+      if (d12 > d13) {
+	if (d12 > d23)
+	  return d12;
+	else 
+	  return d23;
+      }
+      else
+	return d13;
+    }
+    
+  };  // end Edge_size_criterion
+
+
   }  // namespace Surface_mesher
 
 }  // namespace CGAL

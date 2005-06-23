@@ -61,13 +61,13 @@ public :
   // Queries
   bool empty() const
   {
-    CGAL_assertion(is_valid());
+/*     CGAL_assertion(is_valid()); */
     return(direct_func.empty());
   }
 
   size_type size() const
   {
-    CGAL_assertion(is_valid());
+/*     CGAL_assertion(is_valid()); */
     return direct_func.size();
   }
 

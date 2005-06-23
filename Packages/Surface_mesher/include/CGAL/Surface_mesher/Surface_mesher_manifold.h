@@ -79,8 +79,8 @@ namespace CGAL {
 
       Facet biggest_incident_facet_in_complex(const Vertex_handle sommet) 
       const {
-	Graph g = sommet->get_umbrellas_dual();
-	Nodes_map nodes = g.get_nodes();
+	Graph& g = sommet->get_umbrellas_dual();
+	Nodes_map& nodes = g.get_nodes();
 	Nodes_map_iterator nit = nodes.begin();
 	Facet first_facet = (*nit).first;
 	Facet biggest_facet = first_facet;

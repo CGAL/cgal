@@ -82,9 +82,9 @@ namespace CGAL {
       visited = false;
     }
     
-    Graph get_umbrellas_dual() const {
-      return umbrellas_dual;
-    }
+  Graph& get_umbrellas_dual() {
+    return umbrellas_dual;
+  }
 
     bool is_visited() const {
       return visited;
@@ -105,7 +105,7 @@ namespace CGAL {
     }
 
     bool is_graph_connected() {
-      return ( umbrellas_dual.nb_connected_components() == 1 );
+      return ( umbrellas_dual.is_graph_connected ());
     }
   
   };  // end Complex_2_in_triangulation_vertex_base_3
