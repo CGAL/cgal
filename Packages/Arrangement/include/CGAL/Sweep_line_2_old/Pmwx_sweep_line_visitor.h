@@ -67,7 +67,6 @@ public:
   void before_handle_event(Event* event)
   {
     m_currentEvent = event;
-	event->get_is_curve_in_arr().resize(event->get_num_right_curves(),false);
   }
 
   bool after_handle_event(Event* event, StatusLineIter iter, bool flag)
@@ -82,6 +81,7 @@ public:
     if(event->get_num_right_curves() == 0)
       return true;
 
+    event->get_is_curve_in_arr().resize(event->get_num_right_curves(),false);
     for(SubCurveIter itr = event->right_curves_begin();
       itr != event->right_curves_end();
       ++itr)
@@ -133,7 +133,7 @@ public:
       {
         CGAL_assertion(prev->face() == hhandle->face());
         res = m_arr->non_intersecting_insert_at_vertices(cv,hhandle,prev,
-          m_notif,true);
+          m_notif);
         res = res ->twin();
       }
       else
