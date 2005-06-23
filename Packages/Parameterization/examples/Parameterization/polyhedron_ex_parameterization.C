@@ -139,17 +139,19 @@ static Seam cut_mesh(Mesh_adaptor_polyhedron* mesh_adaptor)
     int nb_boundaries = feature_extractor.get_nb_boundaries();
     int genus = feature_extractor.get_genus();
 
+    // If mesh is a topological disk
     if (genus == 0 && nb_boundaries > 0)
     {
         // Pick the longest boundary
         const Boundary* pBoundary = feature_extractor.get_longest_boundary();
         seam = *pBoundary;
     }
-    else 
+    else // if mesh is NOT a topological disk
     {
-        Backbone seamingBackbone;			// result of cutting
+        Backbone seamingBackbone;           // result of cutting
+        Backbone::iterator he;
 
-        // Cut
+        // Virtually "cut" mesh to make it a topological disk
         mesh->compute_facet_centers();
         Mesh_cutter cutter(mesh);
         if (genus == 0)
@@ -166,14 +168,29 @@ static Seam cut_mesh(Mesh_adaptor_polyhedron* mesh_adaptor)
         // The Mesh_cutter class is quite buggy
         // => we check that seamingBackbone is valid
         //
+#ifdef DEBUG_TRACE
+        // Dump seam (for debug purpose)
+        mesh->precompute_halfedge_indices();
+        mesh->precompute_vertex_indices();
+        fprintf(stderr,"  HE seam is is: ");
+        for (he = seamingBackbone.begin(); he != seamingBackbone.end(); he++)
+        {
+          fprintf(stderr, "H%d=%d->%d ",
+                          (int)(*he)->index(),
+                          (int)(*he)->opposite()->vertex()->index(),
+                          (int)(*he)->vertex()->index());
+        }
+        fprintf(stderr,"ok\n");
+#endif
+        //
         // 1) Check that seamingBackbone is not empty
         if (seamingBackbone.begin() == seamingBackbone.end())
             return seam;                    // return empty list
         //
-        // 2) Check that seamingBackbone is a loop
-        for (Backbone::iterator he = seamingBackbone.begin();
-            he != seamingBackbone.end();
-            he++)
+        // 2) Check that seamingBackbone is a loop and
+        //    count occurences of seam halfedges 
+        mesh->tag_halfedges(0);             // Reset counters
+        for (he = seamingBackbone.begin(); he != seamingBackbone.end(); he++)
         {
             // Get next halfedge iterator (looping)
             Backbone::iterator next_he = he;
@@ -181,19 +198,26 @@ static Seam cut_mesh(Mesh_adaptor_polyhedron* mesh_adaptor)
             if (next_he == seamingBackbone.end())
                 next_he = seamingBackbone.begin();
 
-            // Check that end of current HE == start of next one
+            // Check that seamingBackbone is a loop: check that 
+            // end of current HE == start of next one
             if ((*he)->vertex() != (*next_he)->opposite()->vertex())
-            return seam;                    // return empty list
+                return seam;                // return empty list
+
+            // Increment counter (in "tag" field) of seam halfedges 
+            (*he)->tag( (*he)->tag()+1 );
         }
-        // 3) TODO: check that the seamingBackbone is not self-intersecting
+        //
+        // 3) check that the seamingBackbone is a 2-way list
+        for (he = seamingBackbone.begin(); he != seamingBackbone.end(); he++)
+        {
+            // Counter of halfedge and opposite halfedge must be 1
+            if ((*he)->tag() != 1 || (*he)->opposite()->tag() != 1)
+                return seam;                // return empty list
+        }
 
         // Convert list of halfedges to a list of vertices
-        for (Backbone::const_iterator he = seamingBackbone.begin();
-            he != seamingBackbone.end();
-            he++)
-        {
+        for (he = seamingBackbone.begin(); he != seamingBackbone.end(); he++)
             seam.push_back((*he)->vertex());
-        }
     }
 
     return seam;
@@ -203,12 +227,12 @@ static Seam cut_mesh(Mesh_adaptor_polyhedron* mesh_adaptor)
 template<class MeshAdaptor_3,       // 3D surface
          class SparseLinearAlgebraTraits_d>
                                     // Traits class to solve a sparse linear system
-typename CGAL::Parametizer_3<MeshAdaptor_3>::ErrorCode
+typename CGAL::Parametizer_3<MeshAdaptor_3>::Error_code
 parameterize(MeshAdaptor_3* mesh,   // Mesh parameterization adaptor
              const char *type,      // type of parameterization (see usage)
              const char *boundary)  // type of boundary parameterization (see usage)
 {
-    typename CGAL::Parametizer_3<MeshAdaptor_3>::ErrorCode err;
+    typename CGAL::Parametizer_3<MeshAdaptor_3>::Error_code err;
 
     if ( (strcmp(type,"floater") == 0) && (strcmp(boundary,"circle") == 0) )
     {
@@ -503,7 +527,7 @@ int main(int argc,char * argv[])
     // switch parameterization
     //***************************************
 
-    Parametizer::ErrorCode err;
+    Parametizer::Error_code err;
     if (strcmp(solver,"opennl") == 0)
     {
         err = parameterize<Mesh_patch_polyhedron,
