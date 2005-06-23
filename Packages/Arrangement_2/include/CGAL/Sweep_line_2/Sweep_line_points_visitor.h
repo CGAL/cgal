@@ -22,6 +22,9 @@
 
 #include <CGAL/Sweep_line_2/Sweep_line_event.h>
 #include <CGAL/Sweep_line_2/Sweep_line_subcurve.h>
+#include <CGAL/Sweep_line_2/Sweep_line_2_utils.h>
+#include <vector>
+#include <iterator>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -33,15 +36,16 @@ class Sweep_line_points_visitor
   typedef Sweep_line_event<Traits, Subcurve>            Event;
   typedef typename Event::SubCurveIter                  SubCurveIter;
 
-  typedef Sweep_line_2_impl<Traits,
-                            Event,
-                            Subcurve,
-                            Self,
-                            CGAL_ALLOCATOR(int)>           Sweep_line;
+  typedef Basic_sweep_line_2<Traits,
+                             Event,
+                             Subcurve,
+                             Self,
+                             CGAL_ALLOCATOR(int)>          Sweep_line;
   typedef typename Sweep_line::StatusLineIter              StatusLineIter;
 
    
-  typedef typename Traits::X_monotone_curve_2                 X_monotone_curve_2;
+  typedef typename Traits::X_monotone_curve_2              X_monotone_curve_2;
+  typedef typename Traits::Point_2                         Point_2;
 
 
 
@@ -49,8 +53,10 @@ public:
 
 
   Sweep_line_points_visitor(OutputIerator out,
-                            bool endpoints): m_out(out),
-                                             m_includeEndPoints(endpoints)
+                            bool endpoints,
+                            Traits* tr): m_traits(tr),
+                                         m_out(out),
+                                         m_includeEndPoints(endpoints)
   {}
 
   void attach(Sweep_line *sl)
@@ -58,12 +64,31 @@ public:
     m_sweep_line = sl;
   }
 
+  template <class CurveIterator>
+  void sweep(CurveIterator begin, CurveIterator end)
+  {
+    std::vector<X_monotone_curve_2> curves_vec;
+    std::vector<Point_2> points_vec;
+    curves_vec.reserve(std::distance(begin,end));
+    make_x_monotone(begin,
+                    end,
+                    std::back_inserter(curves_vec),
+                    std::back_inserter(points_vec),
+                    m_traits);
+   
+    //Perform the sweep
+    m_sweep_line -> sweep(curves_vec.begin(),
+                          curves_vec.end(),
+                          points_vec.begin(),
+                          points_vec.end());
+  }
+
        
   void before_handle_event(Event* event){}
 
   bool after_handle_event(Event* event,StatusLineIter iter, bool flag)
   {
-    if(m_includeEndPoints || is_internal_intersection_point(event))
+    if(m_includeEndPoints || event->is_intersection())
       *m_out++ = event->get_point();
     return true;
   }
@@ -75,11 +100,12 @@ public:
     return m_out;
   }
 
-  void init_subcurve(Subcurve* sc){}
+  void init_event(Event* e){}
+
 
   
 
-   static bool is_internal_intersection_point(Event* event)
+  /* static bool is_internal_intersection_point(Event* event)
     {
       for(SubCurveIter liter = event->left_curves_begin();
           liter != event->left_curves_end();
@@ -103,12 +129,13 @@ public:
         }
       }
       return false;
-    }
+    }*/
      protected:
 
-    OutputIerator m_out;
-    bool m_includeEndPoints;
-    Sweep_line* m_sweep_line;
+    Traits*          m_traits;
+    OutputIerator    m_out;
+    bool             m_includeEndPoints;
+    Sweep_line*      m_sweep_line;
 
   };
 

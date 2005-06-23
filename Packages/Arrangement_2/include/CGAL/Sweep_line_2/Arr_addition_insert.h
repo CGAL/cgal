@@ -47,6 +47,7 @@ class Arr_addition_insert
                                Subcurve,
                                Halfedge_handle>            Event;
   
+  typedef typename Traits::Curve_2                         Curve_2;
   typedef typename Traits::X_monotone_curve_2              X_monotone_curve_2;
   typedef Arr_agg_addition_visitor <Traits,
                                     Arr,
@@ -55,7 +56,7 @@ class Arr_addition_insert
 
   
  
-  typedef Sweep_line_2_impl<Traits,
+  typedef Sweep_line_2<Traits,
                             Event,
                             Subcurve,
                             Visitor,
@@ -93,8 +94,16 @@ public:
 
       xcurves_vec.push_back(X_monotone_curve_2(he.curve(), he));
     }
-    m_sweep_line.init(begin, end, xcurves_vec.begin(), xcurves_vec.end());
-    m_sweep_line.sweep();
+
+    typename Traits::Make_x_monotone_2 maxe_x =
+      m_traits->make_x_monotone_2_object();
+    for(CurveInputIterator cit = begin; cit != end; ++cit)
+    {
+      const Curve_2& cv = *cit;
+      maxe_x(cv, std::back_inserter(xcurves_vec));
+    }
+
+    m_sweep_line.sweep(xcurves_vec.begin(), xcurves_vec.end());
   }
 
   /*template<class XCurveInputIterator>

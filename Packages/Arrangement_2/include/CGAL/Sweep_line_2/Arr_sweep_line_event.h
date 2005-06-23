@@ -81,20 +81,15 @@ public:
   {}
 
 
-  // TODO - remove ?
-  void init(const Point_2 &point)
-  {
-    Base::init(point);
-  }
-
   Arr_insert_info *get_insert_info()
   {
     return &m_insertInfo;
   }
 
-  std::pair<bool, SubCurveIter> add_curve_to_right(SubCurve *curve)
+  std::pair<bool, SubCurveIter> add_curve_to_right(SubCurve *curve,
+                                                   const Traits* tr)
   {
-    std::pair<bool,SubCurveIter> res = Base::add_curve_to_right(curve);
+    std::pair<bool,SubCurveIter> res = Base::add_curve_to_right(curve, tr);
     if(res.second != m_rightCurves.end() && res.first == false )
       m_insertInfo.inc_right_curves_counter();
     return res;

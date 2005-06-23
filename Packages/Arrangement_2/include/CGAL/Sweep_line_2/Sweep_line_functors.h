@@ -22,7 +22,6 @@
 #define CGAL_SWEEP_LINE_FUNCTORS_H
 
 #include <CGAL/assertions.h>
-#include <CGAL/Sweep_line_2/Sweep_line_traits.h>
 #include <CGAL/enum.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -34,7 +33,7 @@ public:
   typedef SweepLineTraits_2           Traits;
   typedef typename Traits::Point_2    Point_2;
   
-  Point_less_functor(Traits * t) : m_traits(t)
+  Point_less_functor(const Traits * t) : m_traits(t)
   {}
   
   bool operator()(const Point_2& p1,const Point_2& p2) const  
@@ -45,7 +44,7 @@ public:
 private:
 
   /*! a pointer to a traits object */
-  Traits * m_traits;
+  const Traits * m_traits;
 };
 
 
@@ -60,13 +59,14 @@ public:
   typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
   
 
-  Status_line_curve_less_functor(Traits *t) : m_traits(t) 
+  Status_line_curve_less_functor(const Traits *t) : m_traits(t) 
   {}
 
   Comparison_result operator()(const Subcurve * c1, const Subcurve * c2) const 
   {
-    return m_traits->compare_y_at_x_2_object() (c1->get_left_end(),
-                                           c2->get_last_curve());
+    return m_traits->compare_y_at_x_2_object()
+      (m_traits->construct_min_vertex_2_object()(c1->get_last_curve()),
+       c2->get_last_curve());
   }
 
   Comparison_result operator()(const Point_2& pt, const Subcurve * c2) const 
@@ -74,12 +74,8 @@ public:
     return m_traits->compare_y_at_x_2_object()(pt,c2->get_last_curve());
   }
 
-     
-
-private:
-
   /*! a pointer to a traits object */
-  Traits * m_traits;
+  const Traits * m_traits;
 };
 
 

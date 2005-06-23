@@ -24,6 +24,7 @@
 #include <CGAL/Sweep_line_2/Arr_sweep_line_event.h>
 #include <CGAL/Sweep_line_2/Arr_sweep_line_curve.h>
 #include <CGAL/Sweep_line_2/Arr_sweep_line_visitor.h>
+#include <CGAL/Sweep_line_2/Sweep_line_2_utils.h>
 #include <CGAL/assertions.h>
 #include <list>
 #include <vector>
@@ -42,6 +43,7 @@ class Arr_aggregate_insert
                                Subcurve,
                                Halfedge_handle>              Event;
   typedef typename Traits::X_monotone_curve_2                X_monotone_curve_2;
+  typedef typename Traits::Point_2                           Point_2;
   typedef Arr_sweep_line_visitor<Traits,
                                  Arr,
                                  Event,
@@ -49,7 +51,7 @@ class Arr_aggregate_insert
 
   
  
-  typedef Sweep_line_2_impl<Traits,
+  typedef Sweep_line_2<Traits,
                             Event,
                             Subcurve,
                             Visitor,
@@ -80,28 +82,50 @@ public:
   void insert_curves(CurveInputIterator begin, 
                      CurveInputIterator end)
   {
-    std::vector<X_monotone_curve_2>      xcurves_vec;
-    for (Edge_iterator eit = m_arr->edges_begin(); eit != m_arr->edges_end(); ++eit) 
+    std::vector<X_monotone_curve_2>      curves_vec;
+    curves_vec.reserve(std::distance(begin, end) + m_arr->number_of_edges());
+
+    std::vector<Point_2> points_vec;
+    make_x_monotone(begin,
+                    end,
+                    std::back_inserter(curves_vec),
+                    std::back_inserter(points_vec),
+                    m_traits);
+   
+    for (Edge_iterator eit = m_arr->edges_begin();
+         eit != m_arr->edges_end();
+         ++eit) 
     {
-      xcurves_vec.push_back(eit->curve());
+      curves_vec.push_back(eit->curve());
     }
+
     m_arr->clear();
-    m_sweep_line.init(begin, end, xcurves_vec.begin(), xcurves_vec.end());
-    m_sweep_line.sweep();
+
+    //Perform the sweep
+    m_sweep_line.sweep(curves_vec.begin(),
+                       curves_vec.end(),
+                       points_vec.begin(),
+                       points_vec.end());
+   
   }
 
   template<class XCurveInputIterator>
   void insert_x_curves(XCurveInputIterator begin,
                        XCurveInputIterator end)
   {
-    std::vector<X_monotone_curve_2>      xcurves_vec;
-    for (Edge_iterator eit = m_arr->edges_begin(); eit != m_arr->edges_end(); ++eit) 
+    std::vector<X_monotone_curve_2>      curves_vec;
+    curves_vec.reserve(std::distance(begin, end) + m_arr->number_of_edges());
+    std::copy(begin, end, std::back_inserter(curves_vec));
+
+    for (Edge_iterator eit = m_arr->edges_begin();
+         eit != m_arr->edges_end();
+         ++eit) 
     {
-      xcurves_vec.push_back(eit->curve());
+      curves_vec.push_back(eit->curve());
     }
+
     m_arr->clear();
-    std::copy(begin, end, std::back_inserter(xcurves_vec));
-    m_sweep_line.init_x_curves(xcurves_vec.begin(),xcurves_vec.end());
+    m_sweep_line.init(curves_vec.begin(), curves_vec.end());
     m_sweep_line.sweep();
   }
 

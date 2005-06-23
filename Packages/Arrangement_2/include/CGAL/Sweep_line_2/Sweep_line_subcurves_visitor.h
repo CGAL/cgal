@@ -22,6 +22,9 @@
 
 #include <CGAL/Sweep_line_2/Sweep_line_event.h>
 #include <CGAL/Sweep_line_2/Sweep_line_subcurve.h>
+#include <CGAL/Sweep_line_2/Sweep_line_2_utils.h>
+#include <vector>
+#include <iterator>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -32,12 +35,13 @@ class Sweep_line_subcurves_visitor
   typedef Sweep_line_subcurve<Traits>                           Subcurve;
   typedef Sweep_line_event<Traits, Subcurve>                    Event;
   typedef typename Traits::X_monotone_curve_2                   X_monotone_curve_2;
+  typedef typename Traits::Point_2                              Point_2;
 
-  typedef Sweep_line_2_impl<Traits,
-                            Event,
-                            Subcurve,
-                            Self,
-                            CGAL_ALLOCATOR(int)>                Sweep_line;
+  typedef Basic_sweep_line_2<Traits,
+                             Event,
+                             Subcurve,
+                             Self,
+                             CGAL_ALLOCATOR(int)>                Sweep_line;
 
   typedef typename Sweep_line::StatusLineIter                   StatusLineIter;
 
@@ -47,13 +51,34 @@ public:
 
 
   Sweep_line_subcurves_visitor(OutputIerator out,
-                               bool overlapping): m_out(out),
-                                                  m_overlapping(overlapping)
+                               bool overlapping,
+                               Traits *tr): m_traits(tr),
+                                            m_out(out),
+                                            m_overlapping(overlapping)
   {}
 
   void attach(Sweep_line *sl)
   {
     m_sweep_line = sl;
+  }
+
+  template <class CurveIterator>
+  void sweep(CurveIterator begin, CurveIterator end)
+  {
+    std::vector<X_monotone_curve_2> curves_vec;
+    std::vector<Point_2> points_vec;
+    curves_vec.reserve(std::distance(begin,end));
+    make_x_monotone(begin,
+                    end,
+                    std::back_inserter(curves_vec),
+                    std::back_inserter(points_vec),
+                    m_traits);
+   
+    //Perform the sweep
+    m_sweep_line -> sweep(curves_vec.begin(),
+                          curves_vec.end(),
+                          points_vec.begin(),
+                          points_vec.end());
   }
        
   void before_handle_event(Event* event){}
@@ -76,6 +101,7 @@ public:
   }
 
   void init_subcurve(Subcurve* sc){}
+  void init_event(Event* e){}
 
   OutputIerator get_output_iterator()
   {
@@ -85,6 +111,8 @@ public:
 
 
   protected:
+
+    Traits *m_traits;
 
     OutputIerator m_out;
     bool m_overlapping;

@@ -38,7 +38,7 @@ protected:
   typedef typename Event::SubCurveRevIter                  SubCurveRevIter;
   typedef typename Traits::X_monotone_curve_2              X_monotone_curve_2;
   typedef typename Traits::Point_2                         Point_2;
-  typedef Sweep_line_2_impl<Traits,
+  typedef Sweep_line_2<Traits,
                             Event,
                             Subcurve,
                             Self,
@@ -187,7 +187,7 @@ public:
   {
     Halfedge_handle he_above;
     for(StatusLineIter iter = sc->get_hint();
-        iter != (static_cast<Sweep_line*>(m_sweep_line))->StatusLine_end();
+        iter != (static_cast<Sweep_line*>(m_sweep_line))->status_line_end();
         ++iter)
     {
       if((*iter)->get_last_curve().get_halfedge_handle() !=

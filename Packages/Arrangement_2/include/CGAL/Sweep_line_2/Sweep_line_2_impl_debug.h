@@ -21,7 +21,7 @@
 #define SWEEP_LINE_2_IMPL_DEBUG_H
 
 
-#include <CGAL/Sweep_line_2/Sweep_line_2_impl.h>
+#include <CGAL/Sweep_line_2/Basic_sweep_line_2.h>
 
 
 ////////////////////////////////////////////////////////////////////////////
@@ -35,7 +35,7 @@ template < class SweepLineTraits_2,
           class SweepEvent, class CurveWrap, class SweepNotif,
           typename Allocator>
 inline void 
-Sweep_line_2_impl<SweepLineTraits_2,SweepEvent,CurveWrap,SweepNotif,
+Basic_sweep_line_2<SweepLineTraits_2,SweepEvent,CurveWrap,SweepNotif,
                   Allocator>::
 PrintEventQueue()
 {
@@ -55,7 +55,7 @@ template < class SweepLineTraits_2,
           class SweepEvent, class CurveWrap, class SweepNotif,
           typename Allocator >
 inline void 
-Sweep_line_2_impl<SweepLineTraits_2,SweepEvent,CurveWrap,SweepNotif,
+Basic_sweep_line_2<SweepLineTraits_2,SweepEvent,CurveWrap,SweepNotif,
                   Allocator>::
 PrintSubCurves()
 {
@@ -70,7 +70,7 @@ template < class SweepLineTraits_2,
            class SweepEvent, class CurveWrap, class SweepNotif,
            typename Allocator >
 inline void 
-Sweep_line_2_impl<SweepLineTraits_2,SweepEvent,CurveWrap,SweepNotif,
+Basic_sweep_line_2<SweepLineTraits_2,SweepEvent,CurveWrap,SweepNotif,
                   Allocator>::
 PrintStatusLine()
 {

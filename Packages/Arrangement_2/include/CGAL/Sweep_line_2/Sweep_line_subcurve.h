@@ -24,7 +24,6 @@
 
 #include <CGAL/Sweep_line_2/Sweep_line_functors.h>
 #include <CGAL/Sweep_line_2/Sweep_line_event.h>
-#include <CGAL/Sweep_line_2/Sweep_line_traits.h>
 #include <CGAL/Sweep_line_2/Sweep_line_rb_tree.h>
 #include <CGAL/assertions.h>
 
@@ -88,9 +87,14 @@ public:
 
   Sweep_line_subcurve(const X_monotone_curve_2 &curve);
 
-  void init(const X_monotone_curve_2 &curve)
+  template <class SweepEvent>
+  void init(const X_monotone_curve_2 &curve,
+            SweepEvent* left,
+            SweepEvent* right)
   {
     m_lastCurve = curve;
+    m_left_event  = reinterpret_cast<Event*>(left);
+    m_right_event = reinterpret_cast<Event*>(right);
   }
 
   ~Sweep_line_subcurve() {}
@@ -121,14 +125,14 @@ public:
   }
  
 
-  Point_2 get_right_end() const {
+  /*Point_2 get_right_end() const {
    return traits()->construct_max_vertex_2_object()(m_lastCurve);
   }
 
   
   Point_2 get_left_end() const {
     return traits()->construct_min_vertex_2_object()(m_lastCurve);  
-  }
+  }*/
 
    Event* get_left_event() const
    {
@@ -212,10 +216,10 @@ public:
   {
     if(get_right_event() != (Event*)e)
     {
-      X_monotone_curve_2 dummy;
+      /*X_monotone_curve_2 dummy;
       traits()->split_2_object() (m_lastCurve,
 				  e->get_point(),
-				  dummy, m_lastCurve);
+				  dummy, m_lastCurve);*/
 
       return this;
     }
@@ -254,7 +258,7 @@ public:
       return (m_orig_subcurve2->overlap_depth() + 1);
   }
  
-#ifndef NDEBUG
+#ifdef VERBOSE
   void Print() const;
 #endif
 
@@ -280,12 +284,12 @@ protected:
   Self *m_orig_subcurve2;
 
  
-protected:
-
-  Traits* traits() const
-  {
-    return Sweep_line_traits<Traits>::get_traits();
-  }
+//protected:
+//
+//  Traits* traits() const
+//  {
+//    return Sweep_line_traits<Traits>::get_traits();
+//  }
 
 };
 
@@ -299,7 +303,7 @@ Sweep_line_subcurve(const X_monotone_curve_2 &curve):
   m_lastCurve = curve;
 }
 
-#ifndef NDEBUG
+#ifdef VERBOSE
 template<class SweepLineTraits_2>
 void 
 Sweep_line_subcurve<SweepLineTraits_2>::Print() const

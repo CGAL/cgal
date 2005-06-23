@@ -21,7 +21,6 @@
 #ifndef CGAL_SWEEP_LINE_EVENT_H
 #define CGAL_SWEEP_LINE_EVENT_H
 
-#include <CGAL/Sweep_line_2/Sweep_line_traits.h>
 #include <list>
 
  
@@ -66,13 +65,24 @@ public:
   typedef std::pair<bool, SubCurveIter>                    Pair;
 
 
+  /*! The type of the event */
+  typedef enum 
+  {
+    LEFT_END = 1,
+    RIGHT_END = 2,
+    ACTION = 4,
+    QUERY = 8,
+    INTERSECTION = 16,
+  }Attribute;
+
 
   Sweep_line_event(){}
 
   
-  void init(const Point_2 &point)
+  void init(const Point_2 &point, Attribute type)
   {
     m_point = point;
+    m_type = type;
   }
 
 
@@ -101,7 +111,7 @@ public:
 
 
 
-  std::pair<bool, SubCurveIter>  add_curve_to_right(SubCurve *curve) 
+  std::pair<bool, SubCurveIter>  add_curve_to_right(SubCurve *curve,const Traits* tr) 
   {
     if (m_rightCurves.empty()) {
       m_rightCurves.push_back(curve);
@@ -119,7 +129,7 @@ public:
 
     iter = m_rightCurves.begin();
     Comparison_result res;
-    while ((res = traits()->compare_y_at_x_right_2_object()
+    while ((res = tr->compare_y_at_x_right_2_object()
                     (curve->get_last_curve(),
                      (*iter)->get_last_curve(), 
                      m_point)) == LARGER)
@@ -269,6 +279,68 @@ public:
     return m_point;
   }
 
+  /*! change the point of the event. */
+  void set_point(const Point_2& pt)
+  {
+    m_point = pt;
+  }
+
+  bool is_left_end() const
+  {
+    return ((m_type & LEFT_END) != 0);
+  }
+
+  bool is_right_end() const
+  {
+    return ((m_type & RIGHT_END) != 0);
+  }
+
+  bool is_intersection() const
+  {
+    return ((m_type & INTERSECTION ) != 0);
+  }
+
+  bool is_action() const
+  {
+    return ((m_type & ACTION ) != 0);
+  }
+
+  bool is_query() const
+  {
+    return ((m_type & QUERY ) != 0);
+  }
+
+  void set_left_end()
+  {
+    m_type |= LEFT_END;
+  }
+
+  void set_right_end()
+  {
+    m_type |= RIGHT_END;
+  }
+
+  void set_intersection()
+  {
+    m_type |= INTERSECTION;
+  }
+
+  void set_action()
+  {
+    m_type |= ACTION;
+  }
+
+  void set_query()
+  {
+    m_type |= QUERY;
+  }
+
+  void set_attribute(Attribute type)
+  {
+    m_type |= type;
+  }
+
+
 
   template <class InputIterator>
   void replace_left_curves(InputIterator begin, InputIterator end)
@@ -286,10 +358,11 @@ public:
  
   
 
-#ifndef NDEBUG
+#ifdef VERBOSE
   void Print() ;
 #endif
  
+  
 
   protected:
 
@@ -304,34 +377,30 @@ public:
       sorted by their y value to the right of the point */
   SubcurveContainer m_rightCurves;
 
+  /*! */
+  char m_type;
+
  
-  protected:
+  /*protected:
 
 
   Traits* traits() const
   {
     return Sweep_line_traits<Traits>::get_traits();
-  }
-
-  
-#ifndef NDEBUG
-public:
-  int id;
-#endif
-
+  }*/
 };
 
 
 
 
 
-#ifndef NDEBUG
+#ifdef VERBOSE
 template<class SweepLineTraits_2, class CurveWrap>
 void 
 Sweep_line_event<SweepLineTraits_2, CurveWrap>::
 Print() 
 {
-  std::cout << "\tEvent id: " << id << "\n" ;
+  std::cout << "\tEvent info: "  << "\n" ;
   std::cout << "\t" << m_point << "\n" ;
   std::cout << "\tLeft curves: \n" ;
   for ( SubCurveIter iter = m_leftCurves.begin() ;

@@ -54,18 +54,25 @@ public:
   typedef void*                                    Event_ptr;
 
 
+
+
   Arr_sweep_line_curve(): Base(),
                           m_lastEvent(0)                         
   {}
 
   Arr_sweep_line_curve( X_monotone_curve_2 &curve): Base( curve),
-                                                     m_lastEvent(0)
+                                                    m_lastEvent(0)
   {}
 
   
-  void init(const X_monotone_curve_2 &curve)
+  template<class SweepEvent>
+  void init(const X_monotone_curve_2 &curve,
+            SweepEvent* left,
+            SweepEvent* right)
   {
-    Base::init(curve);
+    Base::init(curve, left, right);
+    m_lastEvent = left;
+    
   }
 
   void set_last_event(Event_ptr e) {

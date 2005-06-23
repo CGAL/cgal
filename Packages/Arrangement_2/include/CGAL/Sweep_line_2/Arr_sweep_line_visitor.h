@@ -42,7 +42,7 @@ protected:
   typedef typename Traits::X_monotone_curve_2                      X_monotone_curve_2;
   typedef typename Traits::Point_2                                 Point_2;
 
-  typedef Sweep_line_2_impl<Traits,
+  typedef Sweep_line_2<Traits,
                             Event,
                             Subcurve,
                             Self,
@@ -72,6 +72,7 @@ public:
   }
 
  
+  void init_event(Event *e) {}
 
   void before_handle_event(Event* event)
   {
@@ -80,6 +81,14 @@ public:
 
   bool after_handle_event(Event* event, StatusLineIter iter, bool flag)
   {
+    if(!event->has_left_curves() && !event->has_right_curves())
+    {
+      //isolated event (no curves)
+      m_arr ->insert_isolated_vertex(event->get_point(),
+                                     m_arr->unbounded_face());
+      return true;
+    }
+
     for(SubCurveIter itr = event->left_curves_begin();
         itr != event->left_curves_end();
         ++itr)
@@ -97,7 +106,7 @@ public:
     {
       (*itr)->set_last_event(event);
     }
-    return false;    
+    return false; 
   }
 
   void add_subcurve(const X_monotone_curve_2& cv,Subcurve* sc)
@@ -167,11 +176,6 @@ public:
     }
   }
 
-
-  void init_subcurve(Subcurve* sc)
-  {
-    sc -> set_last_event((Event*)(sc->get_left_event()));
-  }
 
   virtual Halfedge_handle insert_in_face_interior(const X_monotone_curve_2& cv,
                                           Subcurve* sc)
