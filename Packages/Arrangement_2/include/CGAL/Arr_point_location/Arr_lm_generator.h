@@ -32,7 +32,7 @@
 #include <CGAL/Arr_batched_point_location.h>
 
 
-#define CGAL_LM_DEBUG
+//#define CGAL_LM_DEBUG
 
 #ifdef CGAL_LM_DEBUG
 	#define PRINT_DEBUG(expr)   std::cout << expr << std::endl
@@ -73,24 +73,24 @@ public:
 	typedef typename Arrangement_2::Vertex_const_handle   Vertex_const_handle;
 	typedef typename Arrangement_2::Halfedge_const_handle Halfedge_const_handle;
 	typedef typename Arrangement_2::Face_const_handle     Face_const_handle;
-	typedef typename Arrangement_2::Vertex_handle		  Vertex_handle;
-	typedef typename Arrangement_2::Halfedge_handle		  Halfedge_handle;
-	typedef typename Arrangement_2::Face_handle			  Face_handle;
+	typedef typename Arrangement_2::Vertex_handle		      Vertex_handle;
+	typedef typename Arrangement_2::Halfedge_handle		    Halfedge_handle;
+	typedef typename Arrangement_2::Face_handle			      Face_handle;
 	typedef typename Arrangement_2::Vertex_const_iterator 
 													Vertex_const_iterator;
     typedef typename Arrangement_2::Ccb_halfedge_circulator 
 													Ccb_halfedge_circulator;
 
-	typedef typename Traits_2::Point_2					Point_2;
-	typedef typename Traits_2::X_monotone_curve_2		X_monotone_curve_2;	
+	typedef typename Traits_2::Point_2					      Point_2;
+	typedef typename Traits_2::X_monotone_curve_2		  X_monotone_curve_2;	
 
-	typedef Nearest_neighbor_							Nearest_neighbor;
+	typedef Nearest_neighbor_							            Nearest_neighbor;
 	typedef typename Nearest_neighbor_::NN_Point_2		NN_Point_2;
-	typedef std::list<NN_Point_2>						NN_Points_set;
+	typedef std::list<NN_Point_2>						          NN_Points_set;
 
-	typedef std::vector<Point_2>						Points_set;
-	typedef std::pair<Point_2,CGAL::Object>				PL_pair;
-	typedef std::vector<PL_pair>						Pairs_set;
+	typedef std::vector<Point_2>						          Points_set;
+	typedef std::pair<Point_2,CGAL::Object>				    PL_pair;
+	typedef std::vector<PL_pair>						          Pairs_set;
 	typedef typename std::vector<PL_pair>::iterator		Pairs_iterator;
 
 protected:

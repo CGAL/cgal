@@ -28,7 +28,7 @@
 #include <CGAL/Arrangement_2/Arr_traits_wrapper_2.h>
 #include <CGAL/Arr_point_location/Arr_lm_nearest_neighbor.h>
 
-#define CGAL_LM_DEBUG
+//#define CGAL_LM_DEBUG
 
 #ifdef CGAL_LM_DEBUG
 	#define PRINT_DEBUG(expr)   std::cout << expr << std::endl
@@ -139,7 +139,7 @@ public:
 			 //insert point into list
 			 plist.push_back(np); 
 
-			 PRINT_DEBUG("landmark = "<< p); 
+			 //PRINT_DEBUG("landmark = "<< p); 
 		 } 
 
 		 //the search structure is now updated
