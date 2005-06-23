@@ -27,8 +27,8 @@
 #endif
 #include <CGAL/Planar_map_2/Pm_change_notification.h>
 
-#include <CGAL/Sweep_line_2/Pmwx_aggregate_insert.h>
-#include <CGAL/Sweep_line_2/Pmwx_aggregate_insert_old.h>
+#include <CGAL/Sweep_line_2_old/Pmwx_aggregate_insert.h>
+#include <CGAL/Sweep_line_2_old/Pmwx_aggregate_insert_old.h>
 
 #ifndef CGAL_PM_COUNT_OPERATIONS_TIMES
 #define CGAL_PM_START_OP(x) 
