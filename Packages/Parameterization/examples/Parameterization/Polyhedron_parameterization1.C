@@ -116,7 +116,7 @@ int main(int argc,char * argv[])
     // Floater's mean value coordinates parameterization
     //***************************************
 
-    Parametizer::ErrorCode err = parameterize(&mesh_adaptor);
+    Parametizer::Error_code err = parameterize(&mesh_adaptor);
     if (err != Parametizer::OK)
         fprintf(stderr, "\nFATAL ERROR: parameterization error # %d\n", (int)err);
 

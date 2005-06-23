@@ -43,7 +43,7 @@ CGAL_BEGIN_NAMESPACE
 // * the mesh border must be mapped onto a convex polygon
 //
 template <class MeshAdaptor_3>
-typename Parametizer_3<MeshAdaptor_3>::ErrorCode
+typename Parametizer_3<MeshAdaptor_3>::Error_code
 parameterize(MeshAdaptor_3* mesh)   // 3D mesh, model of MeshAdaptor_3 concept
 {
     Mean_value_coordinates_parametizer_3<MeshAdaptor_3> parametizer;
@@ -65,7 +65,7 @@ parameterize(MeshAdaptor_3* mesh)   // 3D mesh, model of MeshAdaptor_3 concept
 // (for fixed border parameterizations)
 //
 template <class MeshAdaptor_3, class Parametizer_3_>
-typename Parametizer_3<MeshAdaptor_3>::ErrorCode
+typename Parametizer_3<MeshAdaptor_3>::Error_code
 parameterize(MeshAdaptor_3* mesh,       // 3D mesh, model of MeshAdaptor_3 concept
              Parametizer_3_ parametizer)// Parameterization class for MeshAdaptor_3 mesh
 {

@@ -55,8 +55,8 @@ class Square_border_parametizer_3
 public:
     // Export Mesh_Adaptor_3 type and subtypes
     typedef MeshAdaptor_3                   Adaptor;
-    typedef typename Parametizer_3<Adaptor>::ErrorCode
-                                            ErrorCode;
+    typedef typename Parametizer_3<Adaptor>::Error_code
+                                            Error_code;
     typedef typename Adaptor::NT            NT;
     typedef typename Adaptor::Facet_handle  Facet_handle;
     typedef typename Adaptor::Facet_const_handle
@@ -93,7 +93,7 @@ public:
 
     // Assign to mesh's border vertices a 2D position (ie a (u,v) pair)
     // on border's shape. Mark them as "parameterized".
-    ErrorCode parameterize_border (Adaptor* mesh);
+    Error_code parameterize_border (Adaptor* mesh);
 
     // Indicate if border's shape is convex
     bool  is_border_convex () { return true; }
@@ -150,7 +150,7 @@ double Square_border_parametizer_3<Adaptor>::compute_boundary_length(
 // on border's shape. Mark them as "parameterized".
 template<class Adaptor>
 inline
-typename Parametizer_3<Adaptor>::ErrorCode
+typename Parametizer_3<Adaptor>::Error_code
 Square_border_parametizer_3<Adaptor>::parameterize_border(Adaptor* mesh)
 {
     CGAL_parameterization_assertion(mesh != NULL);
@@ -291,8 +291,8 @@ class Square_border_uniform_parametizer_3
 public:
     // Export Mesh_Adaptor_3 type and subtypes
     typedef MeshAdaptor_3                   Adaptor;
-    typedef typename Parametizer_3<Adaptor>::ErrorCode
-                                            ErrorCode;
+    typedef typename Parametizer_3<Adaptor>::Error_code
+                                            Error_code;
     typedef typename Adaptor::NT            NT;
     typedef typename Adaptor::Facet_handle  Facet_handle;
     typedef typename Adaptor::Facet_const_handle
@@ -357,8 +357,8 @@ class Square_border_arc_length_parametizer_3
 public:
     // Export Mesh_Adaptor_3 type and subtypes
     typedef MeshAdaptor_3                   Adaptor;
-    typedef typename Parametizer_3<Adaptor>::ErrorCode
-                                            ErrorCode;
+    typedef typename Parametizer_3<Adaptor>::Error_code
+                                            Error_code;
     typedef typename Adaptor::NT            NT;
     typedef typename Adaptor::Facet_handle  Facet_handle;
     typedef typename Adaptor::Facet_const_handle

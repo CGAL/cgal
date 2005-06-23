@@ -34,7 +34,7 @@ class Parametizer_3
 // Public types
 public:
     // The various errors detected by this package
-    enum ErrorCode {
+    enum Error_code {
     OK,
     ERROR_EMPTY_MESH,               // input mesh is empty
     ERROR_NON_TRIANGULAR_MESH,      // input mesh is not triangular
@@ -91,7 +91,7 @@ public:
     // Preconditions:
     // * 'mesh' must be a surface with 1 connected component 
     // * 'mesh' must be a triangular mesh
-    virtual ErrorCode  parameterize (Adaptor* mesh) = 0;
+    virtual Error_code  parameterize (Adaptor* mesh) = 0;
 
 // Protected operations
 protected:

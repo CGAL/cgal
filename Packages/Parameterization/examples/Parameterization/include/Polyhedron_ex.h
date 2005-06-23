@@ -311,13 +311,16 @@ public:
     void tag_vertices(const int tag)
     {
         Vertex_iterator iter;
-        for(iter = vertices_begin();
-            iter != vertices_end();
-            iter++)
-        {
-            Vertex_handle hVertex = iter;
-            hVertex->tag(tag);
-        }
+        for(iter = vertices_begin(); iter != vertices_end(); iter++)
+            iter->tag(tag);
+    }
+
+    // tag all halfedges
+    void tag_halfedges(const int tag)
+    {
+        Halfedge_iterator iter;
+        for(iter = halfedges_begin(); iter != halfedges_end(); iter++)
+            iter->tag(tag);
     }
 
     // compute bounding interval

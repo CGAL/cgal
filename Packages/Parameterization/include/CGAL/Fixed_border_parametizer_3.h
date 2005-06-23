@@ -61,8 +61,8 @@ public:
     // Export Mesh_Adaptor_3, BorderParametizer_3
     // and SparseLinearAlgebraTraits_d types
     typedef MeshAdaptor_3                   Adaptor;
-    typedef typename Parametizer_3<Adaptor>::ErrorCode
-                                            ErrorCode;
+    typedef typename Parametizer_3<Adaptor>::Error_code
+                                            Error_code;
     typedef typename Adaptor::NT            NT;
     typedef typename Adaptor::Facet_handle  Facet_handle;
     typedef typename Adaptor::Facet_const_handle
@@ -118,7 +118,7 @@ public:
     // * 'mesh' must be a surface with 1 connected component and no hole
     // * 'mesh' must be a triangular mesh
     // * the mesh border must be mapped onto a convex polygon
-    virtual ErrorCode  parameterize(Adaptor* mesh);
+    virtual Error_code  parameterize(Adaptor* mesh);
 
 // Protected operations
 protected:
@@ -126,7 +126,7 @@ protected:
     // * 'mesh' must be a surface with 1 connected component and no hole
     // * 'mesh' must be a triangular mesh
     // * the mesh border must be mapped onto a convex polygon
-    virtual ErrorCode  check_parameterize_preconditions(Adaptor* mesh);
+    virtual Error_code  check_parameterize_preconditions(Adaptor* mesh);
 
     // Initialize A, Bu and Bv after boundary parameterization
     // Fill the border vertices' lines in both linear systems:
@@ -154,11 +154,11 @@ protected:
     // * vertices must be indexed
     // * vertex i musn't be already parameterized
     // * line i of A must contain only zeros
-    virtual ErrorCode setup_inner_vertex_relations(Matrix* A,
-                                                   Vector* Bu,
-                                                   Vector* Bv,
-                                                   const Adaptor& mesh,
-                                                   Vertex_const_handle vertex);
+    virtual Error_code setup_inner_vertex_relations(Matrix* A,
+                                                    Vector* Bu,
+                                                    Vector* Bv,
+                                                    const Adaptor& mesh,
+                                                    Vertex_const_handle vertex);
 
     // Copy Xu and Xv coordinates into the (u,v) pair of each surface vertex
     void  set_mesh_uv_from_system (Adaptor* mesh,
@@ -167,10 +167,10 @@ protected:
     // Check parameterize() postconditions:
     // * "A*Xu = Bu" and "A*Xv = Bv" systems are solvable with a good conditioning
     // * 3D -> 2D mapping is 1 to 1
-    virtual ErrorCode check_parameterize_postconditions(const Adaptor& mesh,
-                                                        const Matrix& A,
-                                                        const Vector& Bu,
-                                                        const Vector& Bv);
+    virtual Error_code check_parameterize_postconditions(const Adaptor& mesh,
+                                                         const Matrix& A,
+                                                         const Vector& Bu,
+                                                         const Vector& Bv);
 
     // Check if 3D -> 2D mapping is 1 to 1
     //
@@ -213,14 +213,14 @@ private:
 // * the mesh border must be mapped onto a convex polygon
 template<class Adaptor, class Border_param, class Sparse_LA>
 inline
-typename Parametizer_3<Adaptor>::ErrorCode
+typename Parametizer_3<Adaptor>::Error_code
 Fixed_border_parametizer_3<Adaptor, Border_param, Sparse_LA>::
 parameterize(Adaptor* mesh)
 {
     CGAL_parameterization_assertion(mesh != NULL);
 
     // Check preconditions
-    ErrorCode status = check_parameterize_preconditions(mesh);
+    Error_code status = check_parameterize_preconditions(mesh);
     if (status != OK)
         return status;
 
@@ -312,11 +312,11 @@ parameterize(Adaptor* mesh)
 // * the mesh border must be mapped onto a convex polygon
 template<class Adaptor, class Border_param, class Sparse_LA>
 inline
-typename Parametizer_3<Adaptor>::ErrorCode
+typename Parametizer_3<Adaptor>::Error_code
 Fixed_border_parametizer_3<Adaptor, Border_param, Sparse_LA>::
 check_parameterize_preconditions(Adaptor* mesh)
 {
-    ErrorCode status = OK;                  // returned value
+    Error_code status = OK;                 // returned value
 
     typedef Mesh_adaptor_feature_extractor<Adaptor>
                                             Mesh_feature_extractor;
@@ -418,7 +418,7 @@ initialize_system_from_mesh_border (Matrix* A, Vector* Bu, Vector* Bv,
 // * line i of A must contain only zeros
 template<class Adaptor, class Border_param, class Sparse_LA>
 inline
-typename Parametizer_3<Adaptor>::ErrorCode
+typename Parametizer_3<Adaptor>::Error_code
 Fixed_border_parametizer_3<Adaptor, Border_param, Sparse_LA>::
 setup_inner_vertex_relations(Matrix* A,
                              Vector* Bu,
@@ -506,14 +506,14 @@ set_mesh_uv_from_system(Adaptor* mesh,
 // * 3D -> 2D mapping is 1 to 1
 template<class Adaptor, class Border_param, class Sparse_LA>
 inline
-typename Parametizer_3<Adaptor>::ErrorCode
+typename Parametizer_3<Adaptor>::Error_code
 Fixed_border_parametizer_3<Adaptor, Border_param, Sparse_LA>::
 check_parameterize_postconditions(const Adaptor& mesh,
                                   const Matrix& A,
                                   const Vector& Bu,
                                   const Vector& Bv)
 {
-    ErrorCode status = OK;
+    Error_code status = OK;
 
     // Check if "A*Xu = Bu" and "A*Xv = Bv" systems
     // are solvable with a good conditioning

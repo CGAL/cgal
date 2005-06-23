@@ -55,8 +55,8 @@ class Two_vertices_parametizer_3
 public:
     // Export Mesh_Adaptor_3 type and subtypes
     typedef MeshAdaptor_3                   Adaptor;
-    typedef typename Parametizer_3<Adaptor>::ErrorCode
-                                            ErrorCode;
+    typedef typename Parametizer_3<Adaptor>::Error_code
+                                            Error_code;
     typedef typename Adaptor::NT            NT;
     typedef typename Adaptor::Facet_handle  Facet_handle;
     typedef typename Adaptor::Facet_const_handle
@@ -92,7 +92,7 @@ public:
     // Default constructor, copy constructor and operator =() are fine
 
     // Map 2 extreme vertices of the 3D mesh and mark them as "parameterized"
-    ErrorCode parameterize_border (Adaptor* mesh);
+    Error_code parameterize_border (Adaptor* mesh);
 
     // Indicate if border's shape is convex.
     // Meaningless for free border parameterization algorithms.
@@ -108,7 +108,7 @@ public:
 // Return false on error
 template<class Adaptor>
 inline
-typename Parametizer_3<Adaptor>::ErrorCode
+typename Parametizer_3<Adaptor>::Error_code
 Two_vertices_parametizer_3<Adaptor>::parameterize_border(Adaptor* mesh)
 {
     Vertex_iterator it;

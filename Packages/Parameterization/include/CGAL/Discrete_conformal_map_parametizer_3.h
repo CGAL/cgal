@@ -53,8 +53,8 @@ public:
     // Export Mesh_Adaptor_3, BorderParametizer_3
     // and SparseLinearAlgebraTraits_d types
     typedef MeshAdaptor_3                   Adaptor;
-    typedef typename Parametizer_3<Adaptor>::ErrorCode
-                                            ErrorCode;
+    typedef typename Parametizer_3<Adaptor>::Error_code
+                                            Error_code;
     typedef typename Adaptor::NT            NT;
     typedef typename Adaptor::Facet_handle  Facet_handle;
     typedef typename Adaptor::Facet_const_handle
