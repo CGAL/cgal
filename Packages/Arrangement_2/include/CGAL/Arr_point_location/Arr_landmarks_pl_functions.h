@@ -139,6 +139,23 @@ Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
 	}
 #endif
 
+  if (assign (f, out_obj))
+	{
+    // If we reached here, we did not locate the query point in any of the holes
+    // inside the current face, so we conclude it is contained in this face.
+    // However, we first have to check whether the query point coincides with
+    // any of the isolated vertices contained inside this face.
+    Isolated_vertices_const_iterator   iso_verts_it;
+    typename Traits_wrapper_2::Equal_2  equal = traits->equal_2_object();
+
+    for (iso_verts_it = f.isolated_vertices_begin();
+        iso_verts_it != f.isolated_vertices_end(); ++iso_verts_it)
+    {
+      if (equal (p, (*iso_verts_it).point()))
+        return (make_object (*iso_verts_it));
+    }		
+	}
+
 	return (out_obj) ;
 }
 

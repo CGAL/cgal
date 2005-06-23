@@ -53,27 +53,29 @@ public:
   typedef typename Arrangement_2::Face_const_handle     Face_const_handle;
 
   typedef typename Arrangement_2::Vertex_const_iterator	
-	  Vertex_const_iterator;
+	                                    Vertex_const_iterator;
   typedef typename Arrangement_2::Halfedge_const_iterator	
-	  Halfedge_const_iterator;
+	                                    Halfedge_const_iterator;
   typedef typename Arrangement_2::Halfedge_around_vertex_const_circulator 
-	  Halfedge_around_vertex_const_circulator;
+	                                    Halfedge_around_vertex_const_circulator;
   typedef typename Arrangement_2::Ccb_halfedge_const_circulator 
-	  Ccb_halfedge_const_circulator;
+	                                    Ccb_halfedge_const_circulator;
   typedef typename Arrangement_2::Holes_const_iterator	
-	  Holes_const_iterator;
+	                                    Holes_const_iterator;
+  typedef typename Arrangement_2::Isolated_vertices_const_iterator
+                                      Isolated_vertices_const_iterator;
 
-  typedef typename Traits_2::Point_2		    Point_2;
+  typedef typename Traits_2::Point_2		            Point_2;
   typedef typename Traits_2::X_monotone_curve_2	    X_monotone_curve_2;
 
-  typedef Arr_landmarks_generator_		    Arr_landmarks_generator;
+  typedef Arr_landmarks_generator_		              Arr_landmarks_generator;
 
   typedef std::list<Halfedge_const_handle>          Edge_list;
-  typedef typename Edge_list::iterator		    Std_edge_iterator;
+  typedef typename Edge_list::iterator		          Std_edge_iterator;
 
 protected:
 
-  typedef Arr_traits_basic_wrapper_2<Traits_2>  Traits_wrapper_2;
+  typedef Arr_traits_basic_wrapper_2<Traits_2>      Traits_wrapper_2;
 
   // Data members:
   const Arrangement_2     *p_arr;      // The associated arrangement.
