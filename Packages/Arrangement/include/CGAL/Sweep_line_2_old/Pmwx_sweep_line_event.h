@@ -22,7 +22,7 @@
 #define CGAL_PMWX_SWEEP_LINE_EVENT_H
 
 #include <CGAL/Sweep_line_2_old/Sweep_line_event.h>
-#include <CGAL/Sweep_line_2/Pmwx_insert_info.h>
+#include <CGAL/Sweep_line_2_old/Pmwx_insert_info.h>
 #include <CGAL/assertions.h>
 #include <vector>
 

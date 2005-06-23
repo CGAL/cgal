@@ -24,8 +24,8 @@
 #include <set>
 
 #include <CGAL/Sweep_line_2_old/Sweep_line_subcurve.h>
-#include <CGAL/Sweep_line_2/Pmwx_insert_info.h>
-#include <CGAL/Sweep_line_2/Pmwx_sweep_line_event.h>
+#include <CGAL/Sweep_line_2_old/Pmwx_insert_info.h>
+#include <CGAL/Sweep_line_2_old/Pmwx_sweep_line_event.h>
 #include <CGAL/Sweep_line_2_old/Sweep_line_rb_tree.h>
 
 CGAL_BEGIN_NAMESPACE

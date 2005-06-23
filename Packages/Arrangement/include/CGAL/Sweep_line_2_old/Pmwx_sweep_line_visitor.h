@@ -21,7 +21,7 @@
 #define PMWX_SWEEP_LINE_VISITOR_H
 
 
-#include <CGAL/Sweep_line_2/Pmwx_insert_info.h>
+#include <CGAL/Sweep_line_2_old/Pmwx_insert_info.h>
 
 CGAL_BEGIN_NAMESPACE
 

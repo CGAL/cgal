@@ -20,10 +20,10 @@
 #ifndef CGAL_PMWX_AGGREGATE_INSERT_H
 #define CGAL_PMWX_AGGREGATE_INSERT_H
 
-#include <CGAL/Sweep_line_2/Sweep_line_2_impl.h>
-#include <CGAL/Sweep_line_2/Pmwx_sweep_line_event.h>
-#include <CGAL/Sweep_line_2/Pmwx_sweep_line_curve.h>
-#include <CGAL/Sweep_line_2/Pmwx_sweep_line_visitor.h>
+#include <CGAL/Sweep_line_2_old/Sweep_line_2_impl.h>
+#include <CGAL/Sweep_line_2_old/Pmwx_sweep_line_event.h>
+#include <CGAL/Sweep_line_2_old/Pmwx_sweep_line_curve.h>
+#include <CGAL/Sweep_line_2_old/Pmwx_sweep_line_visitor.h>
 #include <CGAL/assertions.h>
 #include <list>
 #include <vector>
