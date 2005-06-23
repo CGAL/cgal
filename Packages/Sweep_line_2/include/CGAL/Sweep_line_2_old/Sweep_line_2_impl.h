@@ -1057,7 +1057,7 @@ intersect(Subcurve *c1, Subcurve *c2)
 
 //DEBUG UTILITIES
 #ifndef NDEBUG
-  #include<CGAL/Sweep_line_2/Sweep_line_2_impl_debug.C>
+  #include<CGAL/Sweep_line_2_old/Sweep_line_2_impl_debug.C>
 #endif
 
 CGAL_END_NAMESPACE
