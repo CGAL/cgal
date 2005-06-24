@@ -464,16 +464,16 @@ void Subdivision_surfaces_3<_P>::DQQ_1step(_P& p, _S<_P> rule) {
 		Halfedge_handle eh = eitr;
 		++eitr;
 		if (!eh->is_border_edge()) {
-			insert_edge(p, eh, eh->prev()->prev());
+			insert_edge(p, eh->prev()->prev(), eh);
 			eh = eh->opposite();
-			insert_edge(p, eh, eh->prev()->prev());
+			insert_edge(p, eh->prev()->prev(), eh);
 			p.join_facet(eh);
 		} else {
 			if (eh->is_border()) {
 				eh = eh->opposite();
 				insert_edge(p, eh, eh->prev()->prev());
 			} else 
-				insert_edge(p, eh, eh->prev()->prev());
+				insert_edge(p, eh->prev()->prev(), eh);
 		}
   }
 
