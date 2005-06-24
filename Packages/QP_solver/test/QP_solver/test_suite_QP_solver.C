@@ -718,27 +718,33 @@ void map_tags(std::ifstream& from, int verbose, int pricing_strategy_index,
 				CGAL::Tag_false>
 				(verbose, pricing_strategy_index, from);
 			break;
+	
 	case  1:	doIt<CGAL::Gmpq,CGAL::Tag_false,CGAL::Tag_false,
 				CGAL::Tag_true>
 				(verbose, pricing_strategy_index, from);
 			break;
+
 	case  2:	doIt<CGAL::Gmpq,CGAL::Tag_false,CGAL::Tag_true,
 				CGAL::Tag_false>
 				(verbose, pricing_strategy_index, from);
 			break;
+
 	case  3:	doIt<CGAL::Gmpq,CGAL::Tag_false,CGAL::Tag_true,
 				CGAL::Tag_true>
 				(verbose, pricing_strategy_index, from);
 			break;
+
+        // next 2 cases can be excluded by assuming is_Symmetric == 1 for
+	// LPs
+	//case  4:	doIt<CGAL::Gmpq,CGAL::Tag_true,CGAL::Tag_false,
+	//			CGAL::Tag_false>
+	//			(verbose, pricing_strategy_index, from);
+	//		break;
+	//case  5:	doIt<CGAL::Gmpq,CGAL::Tag_true,CGAL::Tag_false,
+	//			CGAL::Tag_true>
+	//			(verbose, pricing_strategy_index, from);
+	//		break;
         
-	case  4:	doIt<CGAL::Gmpq,CGAL::Tag_true,CGAL::Tag_false,
-				CGAL::Tag_false>
-				(verbose, pricing_strategy_index, from);
-			break;
-	case  5:	doIt<CGAL::Gmpq,CGAL::Tag_true,CGAL::Tag_false,
-				CGAL::Tag_true>
-				(verbose, pricing_strategy_index, from);
-			break;
 	case  6:	doIt<CGAL::Gmpq,CGAL::Tag_true,CGAL::Tag_true,
 				CGAL::Tag_false>
 				(verbose, pricing_strategy_index, from);
@@ -752,7 +758,7 @@ void map_tags(std::ifstream& from, int verbose, int pricing_strategy_index,
 				CGAL::Tag_false>
 				(verbose, pricing_strategy_index, from);
 			break;
-			
+	
 	case  9:	doIt<GMP::Double,CGAL::Tag_false,CGAL::Tag_false,
 				CGAL::Tag_true>
 				(verbose, pricing_strategy_index, from);
@@ -766,61 +772,69 @@ void map_tags(std::ifstream& from, int verbose, int pricing_strategy_index,
 				CGAL::Tag_true>
 				(verbose, pricing_strategy_index, from);
 			break;
-	
-	case 12:	doIt<GMP::Double,CGAL::Tag_true,CGAL::Tag_false,
-				CGAL::Tag_false>
-				(verbose, pricing_strategy_index, from);
-			break;
-	case 13:	doIt<GMP::Double,CGAL::Tag_true,CGAL::Tag_false,
-				CGAL::Tag_true>
-				(verbose, pricing_strategy_index, from);
-			break;
-			
+        // next 2 cases can be excluded by assuming is_Symmetric == 1 for
+	// LPs	
+	//case 12:	doIt<GMP::Double,CGAL::Tag_true,CGAL::Tag_false,
+	//			CGAL::Tag_false>
+	//			(verbose, pricing_strategy_index, from);
+	//		break;
+	//case 13:	doIt<GMP::Double,CGAL::Tag_true,CGAL::Tag_false,
+	//			CGAL::Tag_true>
+	//			(verbose, pricing_strategy_index, from);
+	//		break;
+	*/	
 	case 14:	doIt<GMP::Double,CGAL::Tag_true,CGAL::Tag_true,
 				CGAL::Tag_false>
 				(verbose, pricing_strategy_index, from);
 			break;
-	
+
 	case 15:	doIt<GMP::Double,CGAL::Tag_true,CGAL::Tag_true,
 				CGAL::Tag_true>
 				(verbose, pricing_strategy_index, from);
 			break;
+
 	case 16:	doIt<CGAL::Gmpz,CGAL::Tag_false,CGAL::Tag_false,
 				CGAL::Tag_false>
 				(verbose, pricing_strategy_index, from);
 			break;
-	
+
 	case 17:	doIt<CGAL::Gmpz,CGAL::Tag_false,CGAL::Tag_false,
 				CGAL::Tag_true>
 				(verbose, pricing_strategy_index, from);
 			break;
+
 	case 18:	doIt<CGAL::Gmpz,CGAL::Tag_false,CGAL::Tag_true,
 				CGAL::Tag_false>
 				(verbose, pricing_strategy_index, from);
 			break;
+
 	case 19:	doIt<CGAL::Gmpz,CGAL::Tag_false,CGAL::Tag_true,
 				CGAL::Tag_true>
 				(verbose, pricing_strategy_index, from);
 			break;
-	case 20:	doIt<CGAL::Gmpz,CGAL::Tag_true,CGAL::Tag_false,
-				CGAL::Tag_false>
-				(verbose, pricing_strategy_index, from);
-			break;
-	case 21:	doIt<CGAL::Gmpz,CGAL::Tag_true,CGAL::Tag_false,
-				CGAL::Tag_true>
-				(verbose, pricing_strategy_index, from);
-			break;
-	
+        // next 2 cases can be excluded by assuming is_Symmetric == 1 for
+	// LPs
+	//case 20:	doIt<CGAL::Gmpz,CGAL::Tag_true,CGAL::Tag_false,
+	//			CGAL::Tag_false>
+	//			(verbose, pricing_strategy_index, from);
+	//		break;
+	//case 21:	doIt<CGAL::Gmpz,CGAL::Tag_true,CGAL::Tag_false,
+	//			CGAL::Tag_true>
+	//			(verbose, pricing_strategy_index, from);
+	//		break;
+	*/
 	case 22:	doIt<CGAL::Gmpz,CGAL::Tag_true,CGAL::Tag_true,
 				CGAL::Tag_false>
 				(verbose, pricing_strategy_index, from);
 			break;
-	
+
 	case 23:	doIt<CGAL::Gmpz,CGAL::Tag_true,CGAL::Tag_true,
 				CGAL::Tag_true>
 				(verbose, pricing_strategy_index, from);
 			break;
+
 	default:	;
+
 	}
 }
 
