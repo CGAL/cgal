@@ -372,14 +372,14 @@ z_replace_slack_by_slack(ForwardIterator u_x_it, unsigned int k_j)
              Tag_false());
     x_l[k_j] -= d;
     
-    // prepare \varrho -vector in tmp_l, tmp_x
+    // prepare \hat{\varrho} -vector in tmp_l, tmp_x
     copy_row_in_C(tmp_l.begin(), tmp_x.begin(), k_j);
     
     // prepare \hat{k}_{1} -scalar
     ET  hat_k_1 = inner_product_x(tmp_x.begin(), u_x_it);
     
     // prepare \hat{k}_{3} -scalar
-    ET  hat_k_3 = M[k_j][k_j];
+    ET  hat_k_3 = -M[k_j][k_j];
     
     // update matrix in place
     z_update_inplace(x_l.begin(), x_x.begin(), tmp_l.begin(), tmp_x.begin(),
