@@ -1,3 +1,6 @@
+24 June 2005 Andreas Fabri
+- Removed  #ifndef CGAL_NO_DEPRECATED_CODE for Construct_vector_2 and Construct_direction_2
+
 18 June 2005 Andreas Fabri
 - Moved code from Kernel_class_2 to the functors
 

@@ -1984,11 +1984,9 @@ template <typename K>
     operator()() const
     { return Rep(); }
 
-#ifndef CGAL_NO_DEPRECATED_CODE
     Direction_2
     operator()(const RT& x, const RT& y) const
     { return Rep(x, y); }
-#endif // CGAL_NO_DEPRECATED_CODE
 
     Direction_2
     operator()(const Vector_2& v) const
@@ -2651,7 +2649,6 @@ template <typename K>
     operator()( Null_vector) const
     { return Rep(RT(0), RT(0), RT(1)); }
 
-// #ifndef CGAL_NO_DEPRECATED_CODE
     Vector_2
     operator()( const RT& x, const RT& y) const
     { return Rep(x, y); }
@@ -2659,7 +2656,6 @@ template <typename K>
     Vector_2
     operator()( const RT& x, const RT& y, const RT& w) const
     { return Rep(x, y, w); }
-// #endif // CGAL_NO_DEPRECATED_CODE
   };
 
   template <typename K>
