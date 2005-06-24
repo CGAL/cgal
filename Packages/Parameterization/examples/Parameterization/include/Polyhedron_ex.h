@@ -402,30 +402,19 @@ public:
     }
 
 
-    // dump the mesh to an eps file
+    // Dump parameterized mesh to an eps file
     //********************************
-    bool dump_eps(const char *pFilename)
+    bool dump_eps(const char *pFilename,
+                  double scale = 500.0)
     {
-        std::cerr << "  dump parameterization to " << pFilename << "..." << std::endl;
+        std::cerr << "  dump mesh to " << pFilename << "..." << std::endl;
         FILE *pFile = fopen(pFilename,"wt");
         if(pFile == NULL)
         {
             std::cerr << "  unable to open file " << pFilename <<  " for writing" << std::endl;
             return false;
         }
-        dump_eps(pFile);
-        fclose(pFile);
-        return true;
-    }
 
-    // dump the param to the stdout
-    //********************************
-    void dump_eps()  { dump_eps(stdout); }
-
-    // dump the param to an eps file
-    //********************************
-    void dump_eps(FILE *pFile, double scale = 500.0)
-    {
         // compute bounding box
         double xmin,xmax,ymin,ymax;
         xmin = ymin = xmax = ymax = 0;
@@ -449,7 +438,8 @@ public:
         }
 
         fprintf(pFile,"%%!PS-Adobe-2.0 EPSF-2.0\n");
-        fprintf(pFile,"%%%%BoundingBox: %g %g %g %g\n",xmin,ymin,xmax,ymax);
+        fprintf(pFile,"%%%%BoundingBox: %d %d %d %d\n", int(xmin+0.5), int(ymin+0.5), int(xmax+0.5), int(ymax+0.5));
+        fprintf(pFile,"%%%%HiResBoundingBox: %g %g %g %g\n",xmin,ymin,xmax,ymax);
         fprintf(pFile,"%%%%EndComments\n");
         fprintf(pFile,"gsave\n");
         fprintf(pFile,"0.1 setlinewidth\n");
@@ -480,9 +470,14 @@ public:
         /* Emit EPS trailer. */
         fputs("grestore\n\n",pFile);
         fputs("showpage\n",pFile);
+
+        fclose(pFile);
+        return true;
     }
 
-    // output to a Wavefront OBJ file
+	// Dump parameterized mesh to a Wavefront OBJ file
+    // v x y z
+    // f 1 2 3 4 (1-based)
     //********************************
     bool write_file_obj(const char *pFilename)
     {
@@ -493,32 +488,6 @@ public:
             std::cerr << "  unable to open file " << pFilename <<  " for writing" << std::endl;
             return false;
         }
-
-        bool ok = write_file_obj(pFile);
-
-        fclose(pFile);
-
-        return ok;
-    }
-
-    // Round number to ease files comparison
-    static float round(double x)
-    {
-        if (fabs(x) < 1E-7) {
-            return 0.0;
-        } else {
-            return x;                                   // Default implementation
-            //return float(int(x*100.0 + 0.5))/100.0;   // Round number to ease files comparison
-        }
-    }
-
-    // output to a Wavefront OBJ file
-    // v x y z
-    // f 1 2 3 4 (1-based)
-    //********************************
-    bool write_file_obj(FILE *pFile)
-    {
-        fprintf(stderr,"  write_file_obj()...");
 
         // Index all mesh vertices following the order of the vertices_begin() iterator
         precompute_vertex_indices();
@@ -541,9 +510,9 @@ public:
         for(pHalfedge = halfedges_begin(); pHalfedge != halfedges_end(); pHalfedge++)
         {
             if (!pHalfedge->is_border())
-                fprintf(pFile, "vt %f %f\n", round(pHalfedge->u()), round(pHalfedge->v()));
+                fprintf(pFile, "vt %f %f\n", pHalfedge->u(), pHalfedge->v());
             else
-                fprintf(pFile, "vt %f %f\n", round(0.0), round(0.0));
+                fprintf(pFile, "vt %f %f\n", 0.0, 0.0);
         }
 
         // Write facets using the unique material # 1
@@ -562,14 +531,9 @@ public:
             fprintf(pFile,"\n");
         }
 
-        fprintf(stderr,"ok\n");
-
+        fclose(pFile);
         return true;
     }
-
-    // dump Wavefront OBJ file to stdout
-    //********************************
-    bool write_file_obj()  { return write_file_obj(stdout); }
 
     // is vertex on border ?
     static bool is_border(Vertex_const_handle pVertex)
