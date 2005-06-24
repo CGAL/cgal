@@ -211,7 +211,7 @@ int main( int argc, char** argv) {
 	init_tag_names_table();
 	init_pricing_strat_abrev_table();
 	int verbose = 0;
-	int pricing_strategy_index = pricing_strat_abrev_table.size();
+	unsigned int pricing_strategy_index = pricing_strat_abrev_table.size();
 
 	if ( argc > 3) {
 		verbose = atoi( argv[ 1]);
