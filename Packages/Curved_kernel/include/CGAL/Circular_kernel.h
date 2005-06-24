@@ -97,6 +97,9 @@ struct Curved_kernel
                               Construct_intersections_2;
   typedef CircularFunctors::Split_2<Self>
                               Split_2;
+  // Construct_min_vertex_2 and Construct_max_vertex_2 should be added
+
+  // to be removed
   typedef CircularFunctors::Nearest_intersection_to_right_2<Self>
                               Nearest_intersection_to_right_2;
 
