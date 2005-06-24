@@ -936,7 +936,7 @@ k_{1}:=M_{i, \bullet}^{-1}\zeta,
 \quad
 k_{2}:=\zeta_{i} - \zeta^{T}M^{-1}\zeta,
 \quad
-k_{3}:=M_{i,i}^{-1}
+k_{3}:=-M_{i,i}^{-1}
 \end{equation}
 and
 \begin{equation}
@@ -1261,7 +1261,7 @@ where $\hat{z}$ is the new denominator and
 &&
 \hat{k}_{3}
 &:=&
-\left(\hat{\check{M}}_{B}^{-1}\right)_{\gamma_{C}(\sigma(j)),
+-\left(\hat{\check{M}}_{B}^{-1}\right)_{\gamma_{C}(\sigma(j)),
   \gamma_{C}(\sigma(j))}
 \\
 \hat{z}
@@ -2295,7 +2295,7 @@ B_{O}^{\prime}
 & -\left(
    d\zeta_{\beta_{O}(i)}-\zeta^{T}\hat{\check{M}}_{B}^{-1}\zeta
   \right) 
-& -\left(
+& \left(
    \hat{\check{M}}_{B}^{-1}
   \right)_{\gamma_{C}(\sigma(j)), \gamma_{C}(\sigma(j))} 
 \\
@@ -2539,7 +2539,7 @@ of the entering column $\vartheta$ as
 &&
 \hat{k}_{3}
 &:=&
-\left(\hat{\check{M}}_{B}^{-1}\right)_{\gamma_{C}(\sigma(j)),
+-\left(\hat{\check{M}}_{B}^{-1}\right)_{\gamma_{C}(\sigma(j)),
   \gamma_{C}(\sigma(j))}
 \\
 \hat{z}
@@ -2564,7 +2564,7 @@ Update $U_{Z_{4}}$ can be outlined as
   \left(\hat{\check{M}}_{B}^{-1}\right)_{\bullet,k_{j}}$} \\
 \> \texttt{$\hat{k}_{1}:=\hat{\varrho}_{B_{O}}u$} \\
 \> \texttt{$\hat{k}_{3}:=
-  \left(\hat{\check{M}}_{B}^{-1}\right)_{k_{j}, k_{j}}$} \\
+  -\left(\hat{\check{M}}_{B}^{-1}\right)_{k_{j}, k_{j}}$} \\
 \> \texttt{z\_update\_in\_place($\hat{v}, \hat{\varrho}, \hat{k}_{1}^{2},
 -\hat{k}_{3}, -\hat{k}_{1}, d^{2}$)} \\
 \> // store new denominator $\hat{z}$ \\
@@ -2575,7 +2575,7 @@ The calling counterpart in the class \texttt{QP\_solver} can be outlined as
 \begin{tabbing}
 \texttt{z\_replace\_variable\_slack\_by\_slack() \{} \\
 \texttt{  } \= // compute $u, k_{j}$ \\
-\> \texttt{$u:=\vartheta_{B_{O}}$} \\
+\> \texttt{$u:=\vartheta_{B_{O}}^{T}$} \\
 \> \texttt{$k_{j}:=\gamma_{C}(\sigma(j))$} \\
 \> // update headings \\
 \> // ... \\
