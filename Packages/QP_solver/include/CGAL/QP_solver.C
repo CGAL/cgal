@@ -2899,7 +2899,7 @@ is_solution_unbounded(Tag_false)		//QP case
        // nonbasic nonzero component of w_N corresponds to original variable
        if (j < qp_n) D_w[row] = -qp_D[row][j];
        for (i_it = B_O.begin(); i_it != B_O.end(); ++i_it, ++v_it) {
-           D_w[row] += qp_D[row][*i_it] * (*v_it);
+           D_w[row] += (*v_it) * qp_D[row][*i_it];
        }    
     }
     // w^T * D_w
@@ -2927,7 +2927,7 @@ is_solution_unbounded(Tag_false)		//QP case
         sum += (*v_it) * qp_c[*i_it];
     }
     // nonbasic nonzero component of w_N corresponds to original variable
-    if (j < qp_n) sum -= qp_c[j] * d;
+    if (j < qp_n) sum -= d * qp_c[j];
     unbounded = unbounded && (sum > et0);
     return unbounded;
 }
