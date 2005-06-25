@@ -384,7 +384,7 @@ class SVD_Face_degeneracy_tester
  public:
   bool operator()(const Dual_graph& dual, const Vertex_handle& v) const
   {
-    if ( dual.dimension() == 1 ) { return false; }
+    if ( dual.dimension() < 2 ) { return false; }
 
     if ( dual.is_infinite(v) ) { return false; }
 
