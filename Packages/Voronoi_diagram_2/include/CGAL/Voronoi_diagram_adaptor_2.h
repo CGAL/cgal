@@ -36,9 +36,11 @@
 #include <CGAL/Voronoi_diagram_adaptor_2/Validity_testers.h>
 #include <CGAL/Voronoi_diagram_adaptor_2/Dummy_iterator.h>
 #include <CGAL/Voronoi_diagram_adaptor_2/Unbounded_faces.h>
+#include <CGAL/Voronoi_diagram_adaptor_2/Unbounded_edges.h>
 #include <CGAL/Voronoi_diagram_adaptor_2/Degeneracy_tester_binders.h>
 #include <CGAL/Voronoi_diagram_adaptor_2/Cached_degeneracy_testers.h>
 #include <CGAL/Voronoi_diagram_adaptor_2/Locate_type.h>
+#include <CGAL/Voronoi_diagram_adaptor_2/Accessor.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -54,6 +56,7 @@ class Voronoi_diagram_adaptor_2
 
   typedef CGAL_VORONOI_DIAGRAM_2_NS::Locate_type_accessor<Self,true> Base;
 
+  friend struct CGAL_VORONOI_DIAGRAM_2_NS::Accessor<Self>;
  public:
   //-------
   // TYPES
@@ -129,11 +132,16 @@ class Voronoi_diagram_adaptor_2
   <Self,Edge_iterator_base>
   Edge_validity_tester;
 
- public:
   typedef Filter_iterator<Edge_iterator_base,Edge_validity_tester>
+  Valid_edges_iterator;
+
+ public:
+  typedef CGAL_VORONOI_DIAGRAM_2_NS::Edge_iterator_adaptor
+  <Self,Valid_edges_iterator,Tag_false>
   Edge_iterator;
 
-  typedef CGAL_VORONOI_DIAGRAM_2_NS::Halfedge_iterator_adaptor<Self>
+  typedef CGAL_VORONOI_DIAGRAM_2_NS::Halfedge_iterator_adaptor
+  <Self,Edge_iterator>
   Halfedge_iterator;
 
   // THE HALFEDGE
@@ -187,15 +195,61 @@ class Voronoi_diagram_adaptor_2
   typedef CGAL_VORONOI_DIAGRAM_2_NS::Dummy_iterator<Ccb_halfedge_circulator>
   Holes_iterator;
 
+  // THE BOUNDED AND UNBOUNDED FACES ITERATOR
  protected:
   typedef CGAL_VORONOI_DIAGRAM_2_NS::Bounded_face_tester
   <Self,Non_degenerate_faces_iterator>
   Bounded_face_tester;
 
- public:
+  typedef CGAL_VORONOI_DIAGRAM_2_NS::Unbounded_face_tester
+  <Self,Non_degenerate_faces_iterator>
+  Unbounded_face_tester;
+
+ protected:
   typedef
   Filter_iterator<Non_degenerate_faces_iterator,Bounded_face_tester>
+  Unbounded_faces_iterator_base;
+
+  typedef
+  Filter_iterator<Non_degenerate_faces_iterator,Unbounded_face_tester>
+  Bounded_faces_iterator_base;
+
+ public:
+  typedef CGAL_VORONOI_DIAGRAM_2_NS::Face_iterator_adaptor
+  <Self,Unbounded_faces_iterator_base>
   Unbounded_faces_iterator;
+
+  typedef CGAL_VORONOI_DIAGRAM_2_NS::Face_iterator_adaptor
+  <Self,Bounded_faces_iterator_base>
+  Bounded_faces_iterator;
+
+  // THE BOUNDED AND UNBOUNDED HALFEDGES ITERATOR
+ protected:
+  typedef CGAL_VORONOI_DIAGRAM_2_NS::Bounded_edge_tester
+  <Self,Edge_iterator>
+  Bounded_edge_tester;
+
+  typedef CGAL_VORONOI_DIAGRAM_2_NS::Unbounded_edge_tester
+  <Self,Edge_iterator>
+  Unbounded_edge_tester;
+
+ protected:
+  typedef
+  Filter_iterator<Edge_iterator,Bounded_edge_tester>
+  Unbounded_edges_iterator_base;
+
+  typedef
+  Filter_iterator<Edge_iterator,Unbounded_edge_tester>
+  Bounded_edges_iterator_base;
+
+ public:
+  typedef CGAL_VORONOI_DIAGRAM_2_NS::Halfedge_iterator_adaptor
+  <Self,Unbounded_edges_iterator_base>
+  Unbounded_halfedges_iterator;
+
+  typedef CGAL_VORONOI_DIAGRAM_2_NS::Halfedge_iterator_adaptor
+  <Self,Bounded_edges_iterator_base>
+  Bounded_halfedges_iterator;
 
  public:
   struct Face_circulator {}; // 1. circulates through the Voronoi cells
@@ -301,9 +355,34 @@ public:
   }
 #endif
 
-  // UNBOUNDED FACE
+  // UNBOUNDED/BOUNDED FACE
   Face_handle unbounded_face() const {
-    return Face_handle(*unbounded_faces_begin());
+    if ( unbounded_faces_begin() != unbounded_faces_end() ) {
+      return unbounded_faces_begin();
+    }
+    return Face_handle();
+  }
+
+  Face_handle bounded_face() const {
+    if ( bounded_faces_begin() != bounded_faces_end() ) {
+      return bounded_faces_begin();
+    }
+    return Face_handle();
+  }
+
+  // UNBOUNDED/BOUNDED EDGE
+  Halfedge_handle unbounded_halfedge() const {
+    if ( unbounded_halfedges_begin() != unbounded_halfedges_end() ) {
+      return unbounded_halfedges_begin();
+    }
+    return Halfedge_handle();
+  }
+
+  Halfedge_handle bounded_halfedge() const {
+    if ( bounded_halfedges_begin() != bounded_halfedges_end() ) {
+      return bounded_halfedges_begin();
+    }
+    return Halfedge_handle();
   }
 
   // FACE ITERATORS
@@ -328,15 +407,44 @@ public:
     return Face_iterator(this, non_degenerate_faces_end());
   }
 
-  Unbounded_faces_iterator unbounded_faces_begin() const {
+ private:
+  Unbounded_faces_iterator_base unbounded_faces_base_begin() const {
     return filter_iterator( non_degenerate_faces_end(),
 			    Bounded_face_tester(this),
 			    non_degenerate_faces_begin() );
   }
 
-  Unbounded_faces_iterator unbounded_faces_end() const {
+  Unbounded_faces_iterator_base unbounded_faces_base_end() const {
     return filter_iterator( non_degenerate_faces_end(),
 			    Bounded_face_tester(this) );
+  }
+
+  Bounded_faces_iterator_base bounded_faces_base_begin() const {
+    return filter_iterator( non_degenerate_faces_end(),
+			    Unbounded_face_tester(this),
+			    non_degenerate_faces_begin() );
+  }
+
+  Bounded_faces_iterator_base bounded_faces_base_end() const {
+    return filter_iterator( non_degenerate_faces_end(),
+			    Unbounded_face_tester(this) );
+  }
+
+ public:
+  Unbounded_faces_iterator unbounded_faces_begin() const {
+    return Unbounded_faces_iterator(this, unbounded_faces_base_begin());
+  }
+
+  Unbounded_faces_iterator unbounded_faces_end() const {
+    return Unbounded_faces_iterator(this, unbounded_faces_base_end());
+  }
+
+  Bounded_faces_iterator bounded_faces_begin() const {
+    return Bounded_faces_iterator(this, bounded_faces_base_begin());
+  }
+
+  Bounded_faces_iterator bounded_faces_end() const {
+    return Bounded_faces_iterator(this, bounded_faces_base_end());
   }
 
   // EDGE ITERATORS
@@ -361,24 +469,72 @@ public:
     return Edge_iterator_base(this, non_degenerate_edges_end());
   }
 
- public:
-  Edge_iterator edges_begin() const {
+  Valid_edges_iterator valid_edges_begin() const {
     return filter_iterator( edges_base_end(),
 			    Edge_validity_tester(this),
 			    edges_base_begin() );
   }
 
-  Edge_iterator edges_end() const {
+  Valid_edges_iterator valid_edges_end() const {
     return filter_iterator( edges_base_end(),
 			    Edge_validity_tester(this) );
   }
-  
+
+ public:
+  Edge_iterator edges_begin() const {
+    return Edge_iterator(this, valid_edges_begin());
+  }
+
+  Edge_iterator edges_end() const {
+    return Edge_iterator(this, valid_edges_end());
+  }
+
   Halfedge_iterator halfedges_begin() const {
     return Halfedge_iterator(this, edges_begin());
   }
 
   Halfedge_iterator halfedges_end() const {
     return Halfedge_iterator(this, edges_end());
+  }
+
+ protected:
+  Unbounded_edges_iterator_base unbounded_edges_base_begin() const {
+    return filter_iterator( edges_end(),
+			    Bounded_edge_tester(this),
+			    edges_begin() );
+  }
+
+  Unbounded_edges_iterator_base unbounded_edges_base_end() const {
+    return filter_iterator( edges_end(),
+			    Bounded_edge_tester(this) );
+  }
+
+  Bounded_edges_iterator_base bounded_edges_base_begin() const {
+    return filter_iterator( edges_end(),
+			    Unbounded_edge_tester(this),
+			    edges_begin() );
+  }
+
+  Bounded_edges_iterator_base bounded_edges_base_end() const {
+    return filter_iterator( edges_end(),
+			    Unbounded_edge_tester(this) );
+  }
+
+ public:
+  Unbounded_halfedges_iterator unbounded_halfedges_begin() const {
+    return Unbounded_halfedges_iterator(this, unbounded_edges_base_begin());
+  }
+
+  Unbounded_halfedges_iterator unbounded_halfedges_end() const {
+    return Unbounded_halfedges_iterator(this, unbounded_edges_base_end());
+  }
+
+  Bounded_halfedges_iterator bounded_halfedges_begin() const {
+    return Bounded_halfedges_iterator(this, bounded_edges_base_begin());
+  }
+
+  Bounded_halfedges_iterator bounded_halfedges_end() const {
+    return Bounded_halfedges_iterator(this, bounded_edges_base_end());
   }
 
   // VERTEX ITERATORS
@@ -410,7 +566,7 @@ public:
 
   Ccb_halfedge_circulator ccb_halfedges(const Face_handle& f,
 					const Halfedge_handle& he) const {
-    CGAL_precondition( he.face() == f );
+    CGAL_precondition( he->face() == f );
     return Ccb_halfedge_circulator(*he);
   }
 
@@ -422,7 +578,7 @@ public:
 
   Halfedge_around_vertex_circulator
   incident_halfedges(const Vertex_handle& v, const Halfedge_handle& he) const {
-    CGAL_precondition( he->vertex() == v );
+    CGAL_precondition( he->target() == v );
     return Halfedge_around_vertex_circulator(*he);
   }
 
@@ -462,6 +618,8 @@ public:
 
   Locate_type locate(const Point_2& p, const Tag_true&) const
   {
+    CGAL_precondition( dual_.number_of_vertices() > 0 );
+
     typedef typename Voronoi_traits::Point_locator     Point_locator;
     typedef typename Point_locator::Locate_type        PL_Locate_type;
 
