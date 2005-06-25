@@ -48,7 +48,7 @@
 % +------------------------------------------------------------------------+
 \section{Introduction} \label{sectionSubIntro}
 % +------------------------------------------------------------------------+
-Subdivision algorithms (see e.g.~\cite{Warren-2002-subdivision})
+Subdivision algorithms (see e.g.~\cite{cgal:warren-subdivision-02})
 recursively refine coarse meshes and generate ever closer 
 approximations to a smooth surface.
 %for character animation, surface modeling, or physics simulation. 
@@ -58,7 +58,7 @@ according to the topological refinement of the underlying mesh.
 \SUB3, working on the concept of the 
 \ccc{CGAL::Polyhedron_3} (see Chapter~\ref{chapterPolyhedron}),
 takes advantage of this separation of topology and geometry, 
-and take a cue from the policy-based design \cite{Shiue-2005-SESUB}.
+and take a cue from the policy-based design \cite{cgal:shiue-sesub-05}.
 
  
 %% \begin{ccHtmlOnly}
@@ -77,9 +77,10 @@ and take a cue from the policy-based design \cite{Shiue-2005-SESUB}.
 \section{Subdivision Algorithms}
 % +------------------------------------------------------------------------+
 Subdivision algorithms define surfaces as the limit
-of recursive refinement of a polyhedral mesh.
-Figure \ref{fig:RefSchemes} shows the four major refinement 
-patterns used in practice.
+of recursive refinement of a polyhedral mesh. The chapter teaser
+shows the sequence of a subdivision on a chess mesh.
+%Figure \ref{fig:RefSchemes} shows the four major refinement 
+%patterns used in practice.
 %% A mesh is a special graph whose
 %% primitives (i.e.~vertices, edges and facets)
 %% carry attribute information such as vertex 
@@ -171,7 +172,7 @@ PQQ scheme.
 \end{ccExampleCode}
 
 \SUB3\ provides \ccc{CGAL::CatmullClark_stencil} consisting of the 
-geometry masks of \CC\ subdivision \cite{Catmull-sub-1978}. 
+geometry masks of \CC\ subdivision \cite{cgal:cc-sub-78}. 
 The \CC\ subdivision is then constructed by parameterizing 
 \ccc{CGAL::Subdivision_surfaces_3::PQQ} with 
 \ccc{CGAL::CatmullClark_stencil}.
@@ -255,7 +256,7 @@ to be defined in the mesh type, but no flag of the mesh
 is required to maintain the stencils. The stencils are maintained
 by ordering new vertices to match the sequence of connectivity 
 operations of the refinement. Interested users should 
-refer to \cite{Shiue-2005-MREO} for details of the 
+refer to \cite{cgal:shiue-mreo-05} for details of the 
 ordering algorithm.
 
 % +-------------------------------------------------------------+
