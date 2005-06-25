@@ -26,22 +26,42 @@
 \ccDefinition
 
 The concept \ccc{VoronoiDiagramFace_2} defines the requirements of the
-face provided by the Voronoi diagram adaptor. It refines
-the \ccc{PlanapMapDcelFace_2} concept (the non-mutable part), by
-adding some additional requirements specific to Voronoi diagrams.
+face provided by the Voronoi diagram adaptor.
 
 \ccRefines
 \ccc{DefaultConstructible}\\
 \ccc{CopyConstructible}\\
 \ccc{Assignable}\\
-\ccc{PlanarMapDcelFace_2}
+\ccc{EqualityComparable}
 
 \ccTypes
-The \ccc{VoronoiDiagramFace_2} concept introduces the following
-types in addition to those of the \ccc{PlanarMapDcelFace_2} concept.
-
+%
+\ccTwo{VoronoiDiagramFace_2::Ccb_halfedge_circulator+}{}
+\ccNestedType{Vertex}{A type for the vertices of the Voronoi diagram.}
+\ccGlue
+\ccNestedType{Halfedge}{A type for the halfedges of the Voronoi diagram.}
+\ccGlue
+\ccNestedType{Vertex_handle}{Handle for the vertices of the Voronoi diagram.}
+\ccGlue
+\ccNestedType{Face_handle}{Handle for the faces of the Voronoi diagram.}
+\ccGlue
+\ccNestedType{Halfedge_handle}{Handle for the halfedges of the Voronoi
+  diagram.}
+\ccGlue
+\ccNestedType{Ccb_halfedge_circulator}{A type for a bidirectional
+  circulator over the halfedges of the connected components of the
+  boundary of the face. The value type of the circulator is
+  \ccc{Halfedge}.}
+\ccGlue
+\ccNestedType{Holes_iterator}{A type for a bidirectional iterator over
+  the holes in the face. Since we have a Voronoi diagram that is a
+  model of an abstract Voronoi diagram, such holes do not exist. The
+  value type of the iterator is \ccc{Halfedge}.
+  This iterator is simply added for similarity with arrangements.}
+%
 \ccThree{typedef typename Dual_graph::Vertex_handle}{Dual_vertex_handle;}{}
 \ccThreeToTwo
+%
 \ccNestedType{Dual_graph}{A type for the Delaunay graph. It must be a
   model of the \ccc{DelaunayGraph_2} concept.}
 \ccTypedef{typedef typename Dual_graph::Vertex_handle
@@ -49,16 +69,46 @@ types in addition to those of the \ccc{PlanarMapDcelFace_2} concept.
 
 \ccCreationVariable{f}  %% choose variable name
 
-\ccThree{Dual_vertex_handle}{f.dual_vertex()+}{}
-\ccThreeToTwo
 
 \ccHeading{Access Methods}
-\ccMethod{Dual_vertex_handle dual_vertex();}{returns the dual vertex, i.e., the
+\ccThree{Ccb_halfedge_circulator}{f.dual_vertex()+}{}
+%\ccThree{Dual_vertex_handle}{f.dual_vertex()+}{}
+%
+\ccMethod{Halfedge_handle halfedge();}{Returns an incident halfedge on
+  the (outer connected component of the) boundary of \ccc{f}.}
+%\ccGlue
+%\ccMethod{Halfedge_handle halfedge_on_outer_ccb();}{Same as
+%  \ccc{f.halfedge()}.}
+\ccGlue
+\ccMethod{Ccb_halfedge_circulator outer_ccb();}{Returns a circulator for
+  traversing the (outer) boundary of \ccc{f}.}
+\ccGlue
+\ccMethod{Holes_iterator holes_begin();}{Starts at an arbitrary halfedge
+  on the boundary of a hole inside \ccc{f}. Since the faces in
+  abstract Voronoi diagrams do not do not have holes, this method and
+  the one below have been added for compliance with arrangements.}
+\ccGlue
+\ccMethod{Holes_iterator holes_end();}{Past-the-end iterator.}
+%
+\ccMethod{Dual_vertex_handle dual_vertex();}{Returns the dual vertex, i.e., the
   corresponding dual vertex in the Delaunay graph.}
 
 \ccHeading{Predicate Methods}
-
-\ccMethod{bool is_valid();}{returns \ccStyle{true} if the following
+\ccThree{bool}{f.is_halfedge_on_inner_ccb(Halfedge e)+}{}
+\ccMethod{bool is_unbounded();}{Returns \ccStyle{true} if the face in
+  an unbounded face in the Voronoi diagram.}
+\ccGlue
+\ccMethod{bool is_halfedge_on_inner_ccb(Halfedge e);}{Returns
+  \ccStyle{true} if is \ccc{e} is a halfedge of an inner CCB of
+  \ccc{f}. Since in Voronoi diagrams, faces do not have holes, this
+  method is really not needed. It has been added for compliance with
+  arrangements.}
+\ccGlue
+\ccMethod{bool is_halfedge_on_outer_ccb(Halfedge e);}{Returns
+  \ccStyle{true} if \ccc{e} is a halfedge of the (outer) boundary of
+  \ccc{f}.}
+\ccGlue
+\ccMethod{bool is_valid();}{Returns \ccStyle{true} if the following
   conditions are met: the face does not have zero area; all its
   adjacent halfedges do not have zero length; all its adjacent
   halfedges return the face as their adjacent face.}

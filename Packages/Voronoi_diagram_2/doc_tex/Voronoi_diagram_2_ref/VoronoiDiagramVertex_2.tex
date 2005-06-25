@@ -21,44 +21,80 @@
 
 \begin{ccRefConcept}{VoronoiDiagramVertex_2}
 
-%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
-%% \ccHtmlIndexC[concept]{} %% add further index entries
 \ccDefinition
-
+%
 The concept \ccc{VoronoiDiagramVertex_2} defines the requirements of the
-vertex provided by the Voronoi diagram adaptor. It refines
-the \ccc{PlanapMapDcelVertex_2} concept (the non-mutable part), by
-adding some additional requirements specific to Voronoi diagrams.
+vertex provided by the Voronoi diagram adaptor.
 
 \ccRefines
 \ccc{DefaultConstructible}\\
 \ccc{CopyConstructible}\\
 \ccc{Assignable}\\
-\ccc{PlanarMapDcelVertex_2}
+\ccc{EqualityComparable}
 
 \ccTypes
-The \ccc{VoronoiDiagramVertex_2} concept introduces the following
-types in addition to those of the \ccc{PlanarMapDcelVertex_2} concept.
-
+%
+\ccTwo{VoronoiDiagramVertex_2::Halfedge_around_vertex+}{}
+\ccNestedType{Halfedge}{A type for the halfedges of the Voronoi diagram.}
+\ccGlue
+\ccNestedType{Face}{A type for the faces of the Voronoi diagram.}
+\ccGlue
+\ccNestedType{Vertex_handle}{Handle for the vertices of the Voronoi diagram.}
+\ccGlue
+\ccNestedType{Face_handle}{Handle for the faces of the Voronoi diagram.}
+\ccGlue
+\ccNestedType{Halfedge_handle}{Handle for the halfedges of the Voronoi
+  diagram.}
+\ccGlue
+\ccNestedType{Point_2}{A type for the point represented by the
+  vertex.}
+\ccGlue
+\ccNestedType{size_type}{A type for sizes.}
+\ccGlue
+\ccNestedType{Halfedge_around_vertex_circulator}{A type for a
+  circulator that allows to traverse all incident halfedges. The value
+  type of the circulator is \ccc{Halfedge}.}
+%
 \ccThree{typedef typename Dual_graph::Face_handle}{Dual_face_handle;}{}
 \ccThreeToTwo
 \ccNestedType{Dual_graph}{A type for the Delaunay graph. It must be a
   model of the \ccc{DelaunayGraph_2} concept.}
+\ccGlue
 \ccTypedef{typedef typename Dual_graph::Face_handle Dual_face_handle;}
 {A type for the handle of the dual face.}
 
 \ccCreationVariable{v}  %% choose variable name
 
-\ccThree{Dual_face_handle}{v.has_source()+}{}
-\ccThreeToTwo
-
 \ccHeading{Access Methods}
-\ccMethod{Dual_face_handle dual_face();}{returns the dual face, i.e., the
+%\ccThree{Dual_face_handle}{v.dual_face()+}{}
+\ccThree{Halfedge_around_vertex_circulator}{v.incident_halfedges()+}{}
+\ccMethod{Halfedge_handle halfedge();}{Returns an incident halfedge
+  that has \ccc{v} as its target.}
+\ccGlue
+\ccMethod{Halfedge_around_vertex_circulator incident_halfedges();}
+{Returns a circulator that allows the traversal of the halfedges that
+  have \ccc{v} as their target. The edges are traversed around \ccc{v}
+  in a order opposite to that of the \ccc{Ccb_halfedges_circulator}.}
+\ccGlue
+\ccMethod{size_type degree();}{Returns the degree of the vertex,
+  i.e. the number of incident halfedges.}
+\ccGlue
+\ccMethod{Point_2 point();}{Returns the point represented by the vertex.}
+\ccGlue
+\ccMethod{Dual_face_handle dual_face();}{Returns the dual face, i.e., the
   corresponding dual face in the Delaunay graph.}
 
 \ccHeading{Predicate Methods}
 
-\ccMethod{bool is_valid();}{returns \ccStyle{true} if the following
+\ccThree{bool}{e.is_incident_edge(Halfedge_handle e)+}{}
+%
+\ccMethod{bool is_incident_edge(Halfedge_handle e);}{Returns \ccStyle{true}
+  if the halfedge \ccc{*e} is incident to \ccc{v}.}
+\ccGlue
+\ccMethod{bool is_incident_face(Face_handle e);}{Returns \ccStyle{true}
+  if the face \ccc{*f} is incident to \ccc{v}.}
+\ccGlue
+\ccMethod{bool is_valid();}{Returns \ccStyle{true} if the following
   conditions are met: the dual face is not an infinite face; all
   incident halfedges have the vertex as their target.}
 

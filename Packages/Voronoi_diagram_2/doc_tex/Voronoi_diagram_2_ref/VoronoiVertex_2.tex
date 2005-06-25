@@ -33,7 +33,7 @@ representing the Voronoi vertices in the Voronoi diagram.
 In addition to the requirements listed below, a model of the
 \ccc{VoronoiVertex_2} concept must also be convertible to a
 point, or more precisely to an object of the type
-\ccc{VoronoiVertex_2::Point_2}.
+\ccc{VoronoiVertex_2::Dual_graph::Geom_traits::Point_2}.
 
 
 \ccRefines
@@ -47,9 +47,12 @@ point, or more precisely to an object of the type
 \ccNestedType{Dual_graph}{A type for the Delaunay graph. It must be a
   model of the \ccc{DelaunayGraph_2} concept.}
 \ccGlue
-\ccNestedType{Point_2}{A type for a point.}
-\ccGlue
 \ccNestedType{Site_2}{A type for the generators of the Voronoi diagram.}
+%\ccGlue
+\ccThree{typedef typename Dual_graph::Geom_traits::Point_2}{Point_2+}{}
+\ccTypedef{typedef typename Dual_graph::Geom_traits::Point_2 Point_2;}
+{A type for a point. The Voronoi vertex should be convertible to this
+  type.}
 
 
 \ccCreationVariable{v}  %% choose variable name
@@ -75,7 +78,7 @@ vertex:
 \ccMethod{Site_2 third();}{returns the third generating site of the
   Voronoi vertex.}
 \ccGlue
-\ccMethod{Site_2 site(unsigned int i);}{returns the $i+1$-th
+\ccMethod{Site_2 site(unsigned int i);}{returns the $(i+1)$-th
   generating site of the Voronoi vertex.
   \ccPrecond{\ccc{i} must be smaller or equal to 2.}}
 

@@ -121,6 +121,18 @@ corresponding handles.
 \ccNestedType{Unbounded_faces_iterator}{A type for an iterator over
   the unbounded faces of the Voronoi diagram. Its value type is
   \ccc{Face}.}
+\ccGlue
+\ccNestedType{Bounded_faces_iterator}{A type for an iterator over
+  the bounded faces of the Voronoi diagram. Its value type is
+  \ccc{Face}.}
+\ccGlue
+\ccNestedType{Unbounded_halfedges_iterator}{A type for an iterator over
+  the unbounded halfedges of the Voronoi diagram. Its value type is
+  \ccc{Halfedge}.}
+\ccGlue
+\ccNestedType{Bounded_halfedges_iterator}{A type for an iterator over
+  the bounded halfedges of the Voronoi diagram. Its value type is
+  \ccc{Halfedge}.}
 
 \ccCreationVariable{vda}
 
@@ -135,9 +147,10 @@ corresponding handles.
 %
 
 
-\ccAccessFunctions
+\ccHeading{Access Methods}
 %
-\ccThree{Voronoi_traits}{vda.number_of_halfedges()+}{}
+%\ccThree{Voronoi_traits}{vda.number_of_halfedges()+}{}
+\ccThree{Halfedge_handle}{vda.number_of_halfedges()+}{}
 %
 \ccMethod{Dual_graph dual();}
 {Returns a reference to the dual Delaunay graph.}
@@ -152,8 +165,8 @@ corresponding handles.
 {Returns the number of Voronoi faces (bounded and unbounded).}
 \ccGlue
 \ccMethod{size_type number_of_halfedges();}
-{Returns the number of halfedges in the Voronoi diagram. This is
-  always an even number.}
+{Returns the number of halfedges (bounded and unbounded) in the
+  Voronoi diagram. This is always an even number.}
 \ccGlue
 \ccMethod{size_type size_of_vertices();}
 {Same as \ccc{number_of_vertices()}.}
@@ -165,7 +178,20 @@ corresponding handles.
 {Same as \ccc{number_of_halfedges()}.}
 \ccGlue
 \ccMethod{Face_handle unbounded_face();}{Returns one of the unbounded
-  faces of the Voronoi diagram.}
+  faces of the Voronoi diagram. If no unbounded faces exist the
+  default constructed face handle is returned.}
+\ccGlue
+\ccMethod{Face_handle bounded_face();}{Returns one of the bounded
+  faces of the Voronoi diagram. If no bounded faces exist the default
+  constructed face handle is returned.}
+\ccGlue
+\ccMethod{Halfedge_handle unbounded_halfedge();}{Returns one of the unbounded
+  halfedges of the Voronoi diagram. If no unbounded halfedges exist the
+  default constructed halfedge handle is returned.}
+\ccGlue
+\ccMethod{Halfedge_handle bounded_halfedge();}{Returns one of the bounded
+  halfedges of the Voronoi diagram. If no bounded halfedges exist the
+  default constructed halfedge handle is returned.}
 %
 %% \ccThree{Edge_degeneracy_tester}{vda.edge_tester()+}{}
 %% \ccMethod{Edge_degeneracy_tester edge_tester();}{Returns a reference
@@ -188,7 +214,7 @@ and circulators that allow to traverse it.
 %\ccHeading{Face, Edge, Halfedge and Vertex Iterators}
 \ccHeading{Iterators}
 
-\ccThree{Unbounded_faces_iterator}{vda.unbounded_faces_begin()+}{}
+\ccThree{Unbounded_halfedges_iterator}{vda.unbounded_halfedges_begin()+}{}
 
 The following iterators allow respectively to visit the faces (all or
 only the unbounded ones), edges, halfedges and vertices of the Voronoi
@@ -209,6 +235,12 @@ Voronoi diagram adaptor has not be destroyed).
 \ccMethod{Unbounded_faces_iterator unbounded_faces_end();}
 {Past-the-end iterator.}
 
+\ccMethod{Bounded_faces_iterator bounded_faces_begin();}
+{Starts at an arbitrary bounded Voronoi face.}
+\ccGlue
+\ccMethod{Bounded_faces_iterator bounded_faces_end();}
+{Past-the-end iterator.}
+
 \ccMethod{Edge_iterator edges_begin();}{Starts at an arbitrary Voronoi edge.}
 \ccGlue
 \ccMethod{Edge_iterator edges_end();}{Past-the-end iterator.}
@@ -217,6 +249,18 @@ Voronoi diagram adaptor has not be destroyed).
 {Starts at an arbitrary Voronoi halfedge.}
 \ccGlue
 \ccMethod{Halfedge_iterator halfedges_end();}{Past-the-end iterator.}
+
+\ccMethod{Unbounded_halfedges_iterator unbounded_halfedges_begin();}
+{Starts at an arbitrary unbounded Voronoi edge.}
+\ccGlue
+\ccMethod{Unbounded_halfedges_iterator unbounded_halfedges_end();}
+{Past-the-end iterator.}
+
+\ccMethod{Bounded_halfedges_iterator bounded_halfedges_begin();}
+{Starts at an arbitrary bounded Voronoi edge.}
+\ccGlue
+\ccMethod{Bounded_halfedges_iterator bounded_halfedges_end();}
+{Past-the-end iterator.}
 
 \ccMethod{Vertex_iterator vertices_begin();}
 {Starts at an arbitrary Voronoi vertex.}
@@ -328,12 +372,16 @@ be destroyed).
 %% \ccc{Stream& operator<<(Stream&, Gt::Line_2)}.}
 %% }
 
+\begin{ccTexOnly}
+\newpage
+\end{ccTexOnly}
 \ccHeading{Queries}
 \ccThree{Locate_type}{vda.locate(Point_2 p)+}{}
 \ccMethod{Locate_type locate(Point_2 p);}{Performs point location for
   the query point \ccc{p}. In other words, the face, halfedge or
   vertex of the Voronoi diagram is found on which the point \ccc{p}
-  lies.}
+  lies.
+  \ccPrecond{The dual Delaunay graph must contain at least one vertex.}}
 
 \ccHeading{Validity check}
 \ccThree{bool}{vda.is_valid()+}{}

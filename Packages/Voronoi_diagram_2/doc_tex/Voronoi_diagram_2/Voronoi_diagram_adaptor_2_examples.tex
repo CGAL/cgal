@@ -20,10 +20,18 @@
 \section{Examples}
 \label{sec:vda2-examples}
 
+In this section we present two examples that show how to traverse the
+Voronoi diagram or how to perform point location queries.
+
 \subsection{First example}
 
 The following example shows how we can compute the number of connected
-components of the Voronoi skeleton.
+components of the Voronoi skeleton (this is the union of Voronoi edges
+and vertices), by appropriately traversing the edges and vertices of
+the Voronoi diagram using the Voronoi diagram adaptor. The algorithm
+applied is a simple DFS algorithm. In the same example, the number of
+bisecting arcs, bisecting half-bisectors (semi-unbounded arcs) and
+full bisectors are computed.
 
 \ccIncludeExampleCode{Voronoi_diagram_adaptor_2/connected_components.C}
 

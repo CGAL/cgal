@@ -1,0 +1,190 @@
+%% Copyright (c) 2005  Foundation for Research and Technology-Hellas (Greece).
+%% All rights reserved.
+%%
+%% This file is part of CGAL (www.cgal.org); you may redistribute it under
+%% the terms of the Q Public License version 1.0.
+%% See the file LICENSE.QPL distributed with CGAL.
+%%
+%% Licensees holding a valid commercial license may use this file in
+%% accordance with the commercial license agreement provided with the software.
+%%
+%% This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+%% WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+%%
+%% $Source$
+%% $Revision$ $Date$
+%% $Name$
+%%
+%% Author(s)     : Menelaos Karavelas <mkaravel@tem.uoc.gr>
+
+This chapter describes an adaptor that adapts two-dimensional Delaunay
+graphs to the corresponding Voronoi diagrams. We start with a few
+definitions and a description of the issues that this adaptor
+addresses in Section~\ref{sec:vda2-intro}. The software design
+of the Voronoi diagram adaptor package is described in
+Section~\ref{sec:vda2-design}. In Section~\ref{sec:vda2-traits} we
+discuss the traits required for performing the adaptation, and finally
+in Section~\ref{sec:vda2-examples} we present a few examples using
+this adaptor.
+
+\section{Introduction}
+\label{sec:vda2-intro}
+
+In this chapter when we refer to Voronoi diagrams (or their dual
+graphs) we actually refer to instances of abstract Voronoi diagrams \cite{}.
+A typical approach when we want to compute abstract Voronoi diagrams is to
+actually compute their dual graphs, which we will call {\em Delaunay
+graphs}. In general these graphs have faces with three or more
+edges. However, when the generators of the Voronoi diagram are in
+general position, the dual Delaunay graph is actually a graph with
+triangular faces, which is often referred to as a Delaunay
+triangulation if it can be embedded with straight line segments. In
+fact, in many applications it is desirable to have triangulations, so
+even in the cases where the actual Delaunay graph contains
+non-triangular faces, these faces are triangulated.
+
+One drawback of computing triangulated Delaunay graphs is that their
+dual graphs are not always the original Voronoi diagrams. If the
+original generating data contain subsets in degenerate positions, the
+Voronoi diagrams, that are duals of triangulated Delaunay graphs,
+contain certain degenerate features, namely edges with zero
+length or faces with zero area. Another drawback is that users
+typically want to view Voronoi diagrams as planar subdivisions,
+instead of graphs with triangular faces which is the typical API
+provided.
+
+The purpose of this package is to provide an adaptor that
+addresses the above-mentioned issues. Firstly, it adapts
+triangulated Delaunay graphs to look like planar subdivisions or
+arrangements, and secondly it removes the degenerate features that
+where artificially introduced by the requirement to produce
+triangulated Delaunay graphs.
+
+The adaptor that this package offers is a non-mutable one. Once
+the adaptor has been constructed using a Delaunay graph, the Delaunay
+graph stored internally cannot be modified any longer, nor its internals
+can be accessed in a modifiable way. Although this could be
+restrictive in some cases, it allows for optimizations that greatly
+enhance the performance of the adaptation. For example, when iterating
+over the edges of the dual Delaunay graph to get the dual edges of the
+Voronoi diagram we have to test whether the dual Voronoi edge has zero
+length or not. Instead of performing this geometric test every time,
+which is a test that can be very expensive when we have degenerate or
+near degenerate configurations, we can compute the result of this test
+once and cash it for future use. This is actually something that we do
+in this package.
+
+\section{Software design}
+\label{sec:vda2-design}
+
+The \ccc{Voronoi_diagram_adaptor_2<DG,VT>} class is parameterized by
+two template parameters. The first one must be a model of the
+\ccc{DelaunayGraph_2} concept. It corresponds to the API required by
+an object representing a Delaunay graph. All classes of \cgal that
+represent duals of Voronoi diagrams are models of this concept,
+namely, Delaunay triangulations, regular triangulations, Apollonius
+graphs and duals of segment Voronoi diagrams.
+%
+The second template parameter must be a model of the
+\ccc{VoronoiTraits_2} concept. We discuss this concept in detail in
+Section~\ref{sec:vda2-traits}.
+
+The \ccc{Voronoi_diagram_adaptor_2<DG,VT>} class has been
+intentionally designed to provide an API similar to the arrangements
+class in \cgal: Voronoi diagrams are special case of arrangements
+after all. The API of the two classes, however, could not be
+identical. The reason is that arrangements in \cgal do not yet support
+more than one unbounded faces, or equivalently, cannot handle
+unbounded curves. On the contrary, a Voronoi diagram defined over at
+least two generating sites, has at least two unbounded faces.
+
+On a more practical basis, arrangements in \cgal require as input a
+set of curves. In the case of Voronoi diagrams these curves lie on
+bisectors of generating sites, and can be bounded arcs, semi-bounded
+arcs or the bisectors themselves. Constructing the bisectors can be
+a complicated task, yielding a complicated outcome, which becomes even
+more complicated when we want to compute their endpoints, which are
+the vertices in the Voronoi diagram. Consider, for example, the
+Voronoi diagram of segments: if the segments' coordinates are represented
+by ring number type, computing the Voronoi bisectors and Voronoi
+vertices requires a field number type that also supports square roots
+on top of the field operations.
+
+On the other hand, we can fully determine the combinatorial structure
+of the Voronoi diagram using the dual Delaunay graph, modulo of course
+the degenerate features we discussed above. In other words, in order
+to compute the combinatorial representation of the Voronoi diagram we
+do not really need to know the bisecting curves or arcs, or the
+Voronoi vertices. Furthermore, not only can we determine the
+combinatorial structure without computing the Voronoi features, but
+can also determine whether a feature is degenerate or not without
+computing its geometry. More specifically, determining whether the dual
+Voronoi edge of an edge in the Delaunay graph is degenerate (of zero
+length) or not can be done without really computing the curve itself.
+For example, in the case of the Delaunay triangulation, determining
+whether the dual Delaunay edge has zero length amounts to performing
+an incircle test.
+
+On a more technical level, the \ccc{Voronoi_diagram_adaptor_2<DG,VT>}
+class imitates the representation of the Voronoi diagram (seen as a
+planar subdivision) by a DCEL (Doubly Connected Edge List) data
+structure. We have vertices (the Voronoi vertices), halfedges
+(oriented versions of the Voronoi edges) and faces (the Voronoi
+cells). In particular, we can basically perform every operation we can
+perform in a standard DCEL data structure:
+\begin{itemize}
+\item go from a halfedge to its next and previous in the face;
+\item go from one face to an adjacent one through a halfedge and its
+  opposite halfedge;
+\item walk around the boundary of a face;
+\item enumerate the halfedges adjacent to a vertex
+\item from a halfedge, access the adjacent face;
+\item from a face, access an adjacent halfedges;
+\item from a halfedges, access its source and target vertex;
+\item from a vertex, access an adjacent halfedge.
+\end{itemize}
+In addition to the above possibilities for traversal, we can also
+traverse the following features through iterators:
+\begin{itemize}
+\item the vertices of the Voronoi diagram;
+\item the edges or halfedges of the Voronoi diagram;
+\item the faces of the Voronoi diagram;
+\item the bounded faces of the Voronoi diagram.
+\item the bounded halfedges of the Voronoi diagram.
+\item the unbounded faces of the Voronoi diagram;
+\item the unbounded halfedges of the Voronoi diagram;
+\end{itemize}
+
+
+\section{The Voronoi traits}
+\label{sec:vda2-traits}
+
+The \ccc{VoronoiTraits_2} concept defines the types and
+predicates required by the adaptor in order to perform the
+adaptation.
+%
+Primarily, it provides functors for detecting whether the dual Voronoi
+edge (resp. face) of an edge (resp. vertex) in the triangulated
+Delaunay graph is degenerate, i.e., it has zero length (resp. zero
+area). Secondly, it provides types for representing the 
+geometric features of the Voronoi diagram, namely its edges and
+vertices. From the design point of view, the models of this concept
+complement the geometric traits required for computing the
+corresponding Delaunay graph.
+%
+Finally, it defines a tag that indicates whether point
+location queries are to be supported by the Voronoi diagram
+adaptor. If such queries are to be supported, a functor is
+required. Given a query point, this functor should return information
+related to how many and which generators of the Voronoi diagram are at
+equal and minimal distance from the query point. In particular, if the
+query point is closest to a single generator, the vertex handle of the
+Delaunay graph corresponding to this generator is returned. If the
+query point is closest to exactly two generators, the edge of the
+Delaunay graph connecting the two generators is returned. If three (or
+more) generators are closest to the query point, the face handle of
+the face in the Delaunay graph connecting these generators is
+returned. This way of abstracting the point location mechanism allows
+for multiple different point location strategies, which are passed to
+the Voronoi diagram adaptor through different models of the Voronoi
+traits concept.
