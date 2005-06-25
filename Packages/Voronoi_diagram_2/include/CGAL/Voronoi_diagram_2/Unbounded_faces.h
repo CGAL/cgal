@@ -43,7 +43,7 @@ class Bounded_face_tester
   Bounded_face_tester(const VDA* vda = NULL) : vda_(vda) {}
 
   bool operator()(const Base_iterator& it) const {
-    if ( vda_->dual().dimension() == 1 ) { return false; }
+    if ( vda_->dual().dimension() < 2 ) { return false; }
 
     Dual_vertex_handle v = it.base();
 
@@ -54,6 +54,40 @@ class Bounded_face_tester
       ++vc;
     } while ( vc != vc_start );
     return true;
+  }
+
+ private:
+  const VDA* vda_;
+};
+
+//=========================================================================
+
+template<class VDA, class Base_it>
+class Unbounded_face_tester
+{
+ private:
+  // this class returns true if the face is unbounded
+
+  // this is essentially VDA::Non_degenerate_faces_iterator
+  typedef Base_it                                      Base_iterator;
+  typedef typename VDA::Dual_graph::Vertex_circulator  Dual_vertex_circulator;
+  typedef typename VDA::Dual_graph::Vertex_handle      Dual_vertex_handle;
+
+ public:
+  Unbounded_face_tester(const VDA* vda = NULL) : vda_(vda) {}
+
+  bool operator()(const Base_iterator& it) const {
+    if ( vda_->dual().dimension() < 2 ) { return true; }
+
+    Dual_vertex_handle v = it.base();
+
+    Dual_vertex_circulator vc = vda_->dual().incident_vertices(v);
+    Dual_vertex_circulator vc_start = vc;
+    do {
+      if ( vda_->dual().is_infinite(vc) ) { return true; }
+      ++vc;
+    } while ( vc != vc_start );
+    return false;
   }
 
  private:
