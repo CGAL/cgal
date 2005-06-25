@@ -74,6 +74,7 @@ public:
 
   typedef typename VDA::Voronoi_traits::Curve    Curve;
 
+  typedef typename VDA::Dual_graph               Dual_graph;
   typedef typename VDA::Dual_graph::Edge         Dual_edge;
 
   Halfedge(const VDA* vda = NULL)
@@ -121,13 +122,15 @@ public:
     }
   }
 
-  Halfedge_handle twin() const {
+  inline Halfedge_handle twin() const {
     return opposite();
   }
 
+#if 0
   Halfedge_handle next_halfedge() const {
     return next();
   }
+#endif
 
   Halfedge_handle next() const {
     if ( vda_->dual().dimension() == 1 ) {
@@ -200,6 +203,10 @@ public:
     return !vda_->dual().is_infinite(f_);
   }
 
+  bool is_unbounded() const {
+    return !has_source() || !has_target();
+  }
+
   Vertex_handle source() const {
     CGAL_precondition( has_source() );
     return opposite()->vertex();
@@ -210,12 +217,14 @@ public:
     return vertex();
   }
 
+ private:
   Vertex_handle vertex() const {
     Dual_face_handle fvalid = Find_valid_vertex<VDA>()(vda_, f_);
     CGAL_assertion( !vda_->dual().is_infinite(fvalid) );
     return Vertex_handle( Vertex(vda_, fvalid) );
   }
 
+ public:
   Face_handle face() const {
     if ( vda_->dual().dimension() == 1 ) {
       return Face_handle( Face(vda_, v1_) );
