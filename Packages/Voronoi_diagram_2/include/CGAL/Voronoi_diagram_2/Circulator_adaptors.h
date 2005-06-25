@@ -22,6 +22,7 @@
 
 #include <CGAL/Voronoi_diagram_adaptor_2/basic.h>
 #include <CGAL/circulator_bases.h>
+#include <CGAL/Voronoi_diagram_adaptor_2/Handle_adaptor.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -37,10 +38,15 @@ class Circulator_from_halfedge_adaptor
  private:
   typedef Bidirectional_circulator_base<Arg>                Base;
   typedef Circulator_from_halfedge_adaptor<Arg,Circulator>  Self;
+  typedef Handle_adaptor<Arg>                               Handle;
 
  public:
   Circulator_from_halfedge_adaptor() : cur_() {}
   Circulator_from_halfedge_adaptor(const Arg& he) : cur_(he) {}
+
+  operator Handle() const {
+    return Handle(cur_);
+  }
 
   Circulator& operator++() {
     Circulator* ptr = static_cast<Circulator*>(this);
