@@ -1,24 +1,26 @@
-// file: connected_components.C
+// file: examples/Voronoi_diagram_adaptor_2/connected_components.C
 #include <CGAL/basic.h>
 
+// standard includes
 #include <iostream>
 #include <fstream>
 #include <cassert>
 
+// includes for the Apollonius graph and the Voronoi diagram adaptor
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Apollonius_graph_2.h>
 #include <CGAL/Apollonius_graph_filtered_traits_2.h>
-
 #include <CGAL/Voronoi_diagram_adaptor_2.h>
 #include <CGAL/Apollonius_graph_Voronoi_traits_2.h>
 
-typedef CGAL::Simple_cartesian<double>  K;
-
+// typedefs for defining the adaptor
+typedef CGAL::Simple_cartesian<double>                K;
 typedef CGAL::Apollonius_graph_filtered_traits_2<K>   Gt;
 typedef CGAL::Apollonius_graph_2<Gt>                  AG;
 typedef CGAL::Apollonius_graph_Voronoi_traits_2<AG>   VT;
 typedef CGAL::Voronoi_diagram_adaptor_2<AG,VT>        VD;
 
+// a generic functor that computes the connected components
 template<class VDA_t>
 class Connected_components
 {
@@ -31,13 +33,10 @@ class Connected_components
   typedef typename VDA::Vertex                             Vertex;
   typedef typename VDA::Halfedge_around_vertex_circulator  HAVC;
 
-  typedef HAVC Halfedge_around_vertex_circulator;
-
  public:
   typedef VDA  Voronoi_diagram_adaptor_2;
 
   typedef typename Voronoi_diagram_adaptor_2::size_type  size_type;
-
   typedef size_type                                      result_type;
   typedef Voronoi_diagram_adaptor_2                      argument_type;
 
@@ -56,46 +55,41 @@ class Connected_components
 
   typedef std::map<Halfedge,bool,Halfedge_less>  Halfedge_map;
 
-  void mark_edge(const Halfedge& e, Halfedge_map& e_map) const
-  {
+  void mark_edge(const Halfedge& e, Halfedge_map& e_map) const {
     e_map[e] = true;
     e_map[*e.opposite()] = true;
   }
 
-  bool is_unmarked(const Halfedge& e, const Halfedge_map& e_map) const
-  {
+  bool is_unmarked(const Halfedge& e, const Halfedge_map& e_map) const {
     return e_map.find(e) == e_map.end();
   }
 
   void dfs(const Voronoi_diagram_adaptor_2& vda, const Halfedge& e,
 	      Halfedge_map& e_map) const
   {
-    CGAL_precondition( !vda.dual().is_infinite(e.dual_edge()) );
-
     Halfedge e_opp = *e.opposite();
     mark_edge(e, e_map);
 
+    HAVC ec, ec_start;
     if ( e.has_source() ) {
-      HAVC ec =	vda.incident_halfedges(e.source());
-      HAVC ec_start = ec;
-
+      ec = vda.incident_halfedges(e.source());
+      ec_start = ec;
       do {
-	if ( *ec != e && *ec != e_opp && is_unmarked(*ec, e_map) ) {
-	  dfs(vda, *ec, e_map);
-	}
-	ec++;
+        if ( *ec != e && *ec != e_opp && is_unmarked(*ec, e_map) ) {
+          dfs(vda, *ec, e_map);
+        }
+        ec++;
       } while (ec != ec_start);
     }
 
     if ( e.has_target() ) {
-      HAVC ec = vda.incident_halfedges(e.target());
-      HAVC ec_start = ec;
-
+      ec = vda.incident_halfedges(e.target());
+      ec_start = ec;
       do {
-	if ( *ec != e && *ec != e_opp && is_unmarked(*ec, e_map) ) {
-	  dfs(vda, *ec, e_map);
-	}
-	ec++;
+        if ( *ec != e && *ec != e_opp && is_unmarked(*ec, e_map) ) {
+          dfs(vda, *ec, e_map);
+        }
+        ec++;
       } while (ec != ec_start);
     }
   }
@@ -106,11 +100,11 @@ class Connected_components
     Halfedge_map e_map;
 
     size_type n_components = 0;
-    for(Halfedge_iterator eit = vda.halfedges_begin();
-	eit != vda.halfedges_end(); ++eit) {
+    for (Halfedge_iterator eit = vda.halfedges_begin();
+         eit != vda.halfedges_end(); ++eit) {
       if ( is_unmarked(*eit, e_map) ) {
-	n_components++;
-	dfs(vda, *eit, e_map);
+        n_components++;
+        dfs(vda, *eit, e_map);
       }
     }
     return n_components;
@@ -118,14 +112,13 @@ class Connected_components
 };
 
 
-void eval_num_of_connected_components(char* fname)
-{
+void eval_num_of_connected_components(char* fname) {
   std::ifstream ifs(fname);
   assert( ifs );
 
-  AG ag;
-
   std::cout << std::endl << "Input sites:" << std::endl;
+
+  AG ag;
   AG::Site_2 s;
   while ( ifs >> s ) {
     std::cout << s << std::endl;
@@ -133,15 +126,10 @@ void eval_num_of_connected_components(char* fname)
   }
   ifs.close();
 
-  std::cout << std::endl;
-
   VD vd(ag);
 
-
-
-  std::cout << "# of connected components: "
-	    << Connected_components<VD>()(vd) << std::endl;
-  std::cout << std::endl;
+  std::cout << std::endl << "# of connected components: "
+	    << Connected_components<VD>()(vd) << std::endl << std::endl;
 
   // compute the number of bisectong segments, bisecting rays and
   // full bisectors in the Voronoi diagram
@@ -157,9 +145,7 @@ void eval_num_of_connected_components(char* fname)
   std::cout << "# of bisecting rays:     " << n_rays << std::endl;
   std::cout << "# of full bisectors:     " << n_bisectors << std::endl;
   std::cout << std::endl;
-
-  std::cout << "==========================================="
-	    << std::endl;
+  std::cout << "===========================================" << std::endl;
 }
 
 
