@@ -34,9 +34,11 @@ class Dummy_iterator : public Emptyset_iterator
   typedef Dummy_iterator<Value_t>  Self;
 
  public:
-  typedef Value_t      value_type;
-  typedef value_type&  reference;
-  typedef value_type*  pointer;
+  typedef Value_t            value_type;
+  typedef value_type&        reference;
+  typedef value_type*        pointer;
+  typedef const value_type&  const_reference;
+  typedef const value_type*  const_pointer;
 
   Dummy_iterator() {}
   Dummy_iterator(const Dummy_iterator&) {}
@@ -47,16 +49,30 @@ class Dummy_iterator : public Emptyset_iterator
   Self& operator++()        { return *this; }
   Self& operator++(int)     { return *this; }
 
-  reference operator*()              { return *dummy_handle(); }
-  pointer   operator->()             { return dummy_handle(); }
+  Self& operator--()        { return *this; }
+  Self& operator--(int)     { return *this; }
+
+  reference operator*()              { return *dummy_pointer(); }
+  pointer   operator->()             { return dummy_pointer(); }
+
+  const_reference operator*()  const { return *dummy_pointer(); }
+  const_pointer   operator->() const { return dummy_pointer(); }
 
   bool operator==(const Self&) const { return true; }
   bool operator!=(const Self&) const { return false; }
 
+  bool operator<(const Self& other) const {
+    return this < &other;
+  }
+
+  static const_reference dummy_reference() {
+    static value_type dummy_reference_static;
+    return dummy_reference_static;
+  }
  private:
-  static value_type* dummy_handle() {
-    static value_type dummy_handle_static;
-    return &dummy_handle_static;
+  static pointer dummy_pointer() {
+    static value_type dummy_pointer_static;
+    return &dummy_pointer_static;
   }
 };
 
