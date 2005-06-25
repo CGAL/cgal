@@ -21,6 +21,7 @@
 #define CGAL_VORONOI_DIAGRAM_2_FACE_H 1
 
 #include <CGAL/Voronoi_diagram_adaptor_2/basic.h>
+#include <CGAL/Voronoi_diagram_adaptor_2/Accessor.h>
 #include <cstdlib>
 #include <CGAL/Triangulation_utils_2.h>
 
@@ -31,6 +32,10 @@ CGAL_VORONOI_DIAGRAM_2_BEGIN_NAMESPACE
 template<class VDA>
 class Face
 {
+ private:
+  typedef typename Accessor<VDA>::Non_degenerate_faces_iterator
+  Non_degenerate_faces_iterator;
+
  private:
   typedef Face<VDA>                              Self;
   typedef typename VDA::Dual_edge_circulator     Dual_edge_circulator;
@@ -70,8 +75,14 @@ class Face
     //    CGAL_precondition( !vda_->face_tester()(v_) );
   }
 
+  Face(const VDA* vda, const Non_degenerate_faces_iterator& it)
+    : vda_(vda), v_(it.base())
+  {
+    //    CGAL_precondition( !vda_->face_tester()(v_) );
+  }
+
   bool is_unbounded() const {
-    if ( vda_->dual().dimension() == 1 ) { return true; }
+    if ( vda_->dual().dimension() < 2 ) { return true; }
 
     Dual_vertex_circulator vc = vda_->dual().incident_vertices(v_);
     Dual_vertex_circulator vc_start = vc;
@@ -82,12 +93,15 @@ class Face
     return false;
   }
 
+#if 0
   Halfedge_handle halfedge_on_outer_ccb() const {
     return halfedge();
   }
+#endif
 
   Halfedge_handle halfedge() const
   {
+    CGAL_precondition( vda_->dual().dimension() > 0 );
     if ( vda_->dual().dimension() == 1 ) {
       typename VDA::Dual_graph::Vertex_circulator vc;
       vc = vda_->dual().incident_vertices(v_);
@@ -159,6 +173,8 @@ class Face
 
   bool is_valid() const {
     if ( vda_ == NULL ) { return true; }
+
+    if ( vda_->dual().dimension() < 1 ) { return true; }
 
     bool valid = !vda_->face_tester()(vda_->dual(), v_);
 
