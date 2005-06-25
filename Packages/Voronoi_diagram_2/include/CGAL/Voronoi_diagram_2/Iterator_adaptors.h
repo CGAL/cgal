@@ -119,10 +119,10 @@ class Iterator_adaptor_base
 //=========================================================================
 
 
-template<class VDA, class Base_it>
+template<class VDA, class Base_it, class Tag = CGAL::Tag_true>
 class Edge_iterator_adaptor
   : public Iterator_adaptor_base<VDA,
-				 Edge_iterator_adaptor<VDA,Base_it>,
+				 Edge_iterator_adaptor<VDA,Base_it,Tag>,
 				 Base_it,
 				 typename VDA::Halfedge>
 {
@@ -130,7 +130,7 @@ class Edge_iterator_adaptor
   typedef Triangulation_cw_ccw_2   CW_CCW_2;
 
  private:
-  typedef Edge_iterator_adaptor<VDA,Base_it>            Self;
+  typedef Edge_iterator_adaptor<VDA,Base_it,Tag>        Self;
   // Base_it is essentially VDA::Non_degenerate_edges_iterator
   typedef Base_it                                       Base_iterator;
   typedef typename VDA::Halfedge                        Halfedge;
@@ -155,6 +155,14 @@ class Edge_iterator_adaptor
   Edge_iterator_adaptor(const Base& base) : Base(base) {}
 
   void eval_pointer() const {
+    eval_pointer(Tag());
+  }
+
+  void eval_pointer(const Tag_false&) const {
+    this->value_ = *this->cur_;
+  }
+
+  void eval_pointer(const Tag_true&) const {
     if ( this->vda_->dual().dimension() == 1 ) {
       int cw_i  = CW_CCW_2::cw( this->cur_->second );
       int ccw_i = CW_CCW_2::ccw( this->cur_->second );
@@ -194,21 +202,22 @@ class Edge_iterator_adaptor
 //=========================================================================
 //=========================================================================
 
-template<class VDA>
+template<class VDA, class Base_it>
 class Halfedge_iterator_adaptor
   : public Iterator_adaptor_base<VDA,
-				 Halfedge_iterator_adaptor<VDA>,
-				 typename VDA::Edge_iterator,
+				 Halfedge_iterator_adaptor<VDA,Base_it>,
+				 Base_it,
 				 typename VDA::Halfedge>
 {
 private:
-  typedef Halfedge_iterator_adaptor<VDA>   Self;
+  typedef Halfedge_iterator_adaptor<VDA,Base_it>   Self;
 
   typedef typename VDA::Halfedge_handle    Halfedge_handle;
   typedef typename VDA::Halfedge           Halfedge;
   typedef Halfedge                         Value;
-  typedef typename VDA::Edge_iterator      Base_iterator;
-  
+  // this is essentially VDA::Edge_iterator
+  typedef Base_it                          Base_iterator;
+
   typedef Iterator_adaptor_base<VDA,Self,Base_iterator,Value> Base;
 
   friend class Iterator_adaptor_base<VDA,Self,Base_iterator,Value>;
