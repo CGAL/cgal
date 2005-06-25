@@ -1,3 +1,50 @@
+25 June 2005:  Menelaos Karavelas
+Manual:
+- added user manual
+- added bounded faces iterator, unbounded/bounded halfedges iterator
+  in VDA interface
+- added more comments in examples
+- modified VoronoiDiagram{Halfedge,Vertex,Face}_2 concepts; the concepts are
+  no longer refinements of the planar map or topological map corresponding
+  concepts, but rather stand alone; as a result I had to add all needed types
+  and methods.
+- modified the VoronoiEdge_2 concept: the Point_2 is no longer required
+- modified the VoronoiVertex_2 concept: the Point_2 is required to be the
+  Point_2 type of the geometric traits of the dual graph
+Test:
+- added singleton data set for regular triangulation
+- collected various helper functions in single file
+- added very thourough testing for the various concepts and the adaptor itself;
+  much of the code in print_report has been moved to the test_vda function.
+- added testing of singleton data sets
+- added copyright headers
+- the Delaunay_graph_concept class now uses the dummy iterator in
+  include/CGAL/Voronoi_diagram_adaptor_2/Dummy_iterator.h
+- added missing access methods in Delaunay_graph_concept
+Examples:
+- stylistic changes so that they look nice in the manual
+Code:
+- fixed bug in face degeneracy tester of the segment Voronoi diagram traits:
+  the tester was not handling correctly the case where we have a single
+  generator (i.e., when the dimension of the Delaunay graph was 0).
+- added in Dummy_iterator: decrement operators,
+  const_pointer/const_reference types and corresponding operators,
+  operator<, access to default value
+- circulators are now convertible to handles
+- The base iterator in the halfedge iterator adaptor is no longer hardcoded;
+  also the edge iterator adaptor takes a true/false tag that helps adapting
+  how the value of the iterator is computed; all these are needed for fixes
+  in the various edge iterators and for the introduction of the
+  unbounded/bounded halfedge iterators
+- added the class Accessor which is a friend of the Voronoi_diagram_adaptor_2
+  class; this class is meant to be used as a way to access private types or
+  data from the Voronoi_diagram_adaptor class.
+- added testers for unbounded/bounded halfedges and bounded faces
+- added code for bounded faces iterator, unbounded/bounded halfedges
+  iterator
+- added support for Voronoi diagrams with a single generator
+- fixed minor bugs in the adaptor class
+
 21 June 2005:  Menelaos Karavelas
 - manual: added intro to the ref manual
 - manual: added models to various concepts
