@@ -35,14 +35,6 @@ class Vertex
   typedef Vertex<VDA>                     Self;
   typedef Triangulation_cw_ccw_2          CW_CCW_2;
 
-  typedef typename VDA::Dual_face_handle  Dual_face_handle;
-
- private:
-  Dual_face_handle find_valid_vertex(const Dual_face_handle& f) const
-  {
-    return Find_valid_vertex<VDA>()(vda_, f);
-  }
-
  public:
   typedef typename VDA::Halfedge          Halfedge;
   typedef typename VDA::Halfedge_handle   Halfedge_handle;
@@ -56,6 +48,15 @@ class Vertex
 
   typedef typename VDA::Voronoi_traits::Point_2           Point_2;
   typedef typename VDA::Voronoi_traits::Voronoi_vertex_2  Voronoi_vertex_2;
+
+  typedef typename VDA::Dual_graph        Dual_graph;
+  typedef typename VDA::Dual_face_handle  Dual_face_handle;
+
+ private:
+  Dual_face_handle find_valid_vertex(const Dual_face_handle& f) const
+  {
+    return Find_valid_vertex<VDA>()(vda_, f);
+  }
 
  public:
   Vertex(const VDA* vda = NULL) : vda_(vda) {}
