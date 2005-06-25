@@ -54,24 +54,6 @@ class Cached_edge_degeneracy_tester
   typedef typename Edge_degeneracy_tester::Arity        Arity;
 
  private:
-#if 0
-  class Edge_hash_function
-    : public Handle_hash_function
-  {
-  private:
-    typedef Handle_hash_function     Base;
-
-  public:
-    typedef Base::result_type        result_type;
-
-    template<class Edge>
-    result_type operator()(const Edge& e) const
-    {
-      return (Base::operator()(e.first)) << e.second;
-    }
-  };
-#endif
-
   // true if degenerate, false otherwise
   typedef Unique_hash_map<Edge,bool,CGALi::Edge_hash_function>  Edge_map;
 
