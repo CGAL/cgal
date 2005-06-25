@@ -1,12 +1,30 @@
+// Copyright (c) 2005 Foundation for Research and Technology-Hellas (Greece).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $Source$
+// $Revision$ $Date$
+// $Name$
+//
+// Author(s)     : Menelaos Karavelas <mkaravel@tem.uoc.gr>
+
 #ifndef VDA_PRINT_REPORT_H
 #define VDA_PRINT_REPORT_H 1
 
 #include <CGAL/basic.h>
 #include "vda_aux.h"
+#include "helper_functions.h"
 #include <iostream>
-
-template<class T>
-void kill_unused_variable_warning(const T&) {}
+#include <CGAL/Voronoi_diagram_adaptor_2/Accessor.h>
 
 template<class VDA, class Projector, class Dual_primal_projector,
 	 class Stream>
@@ -14,103 +32,30 @@ void print_report(const VDA& vda, const Projector& project,
 		  const Dual_primal_projector& dp_project,
 		  Stream& os = std::cout)
 {
+#if 1
+  typedef CGAL_VORONOI_DIAGRAM_2_NS::Accessor<VDA>  Accessor;
+  const typename Accessor::Cached_edge_degeneracy_tester& edge_tester =
+    Accessor::edge_tester(vda);
+
+  const typename Accessor::Cached_face_degeneracy_tester& face_tester =
+    Accessor::face_tester(vda);
+#else
   typename VDA::Edge_degeneracy_tester edge_tester =
     vda.voronoi_traits().edge_degeneracy_tester_object();
 
   typename VDA::Face_degeneracy_tester face_tester =
     vda.voronoi_traits().face_degeneracy_tester_object();
+#endif
 
   std::cout << std::endl;
   std::cout << "is Delaunay graph valid? "
 	    << (vda.dual().is_valid() ? "yes" : "no") << std::endl;
   std::cout << std::endl;
 
-
-  if ( vda.dual().number_of_vertices() == 1 ) {
-    std::cout << "The dual graph (Delaunay graph) has only 1 site."
-	      << std::endl;
-    std::cout << "This implies that the dual graph is 0-dimensional."
-	      << std::endl;
-    std::cout << "Cannot view the dual graph as an arrangement."
-	      << std::endl;
-    return;
-  }
-
-  typename VDA::Edge_iterator eit;
-  for (eit = vda.edges_begin(); eit != vda.edges_end(); ++eit) {
-    print_halfedge(vda, *eit, project, os);
-  }
-
-  os << std::endl << std::endl << std::endl;
-
-
-  typename VDA::Halfedge_iterator heit;
-  for (heit = vda.halfedges_begin(); heit != vda.halfedges_end(); ++heit) {
-    print_halfedge(vda, typename VDA::Halfedge_handle(heit), project, os);
-  }
-
-  os << std::endl << std::endl;
-  os << "=====================" << std::endl;
-  os << std::endl << std::endl;
-
-  typename VDA::Face_iterator fit = vda.faces_begin();
-  for (; fit != vda.faces_end(); ++fit) {
-    os << "Face of: ";
-    print_dual_vertex(vda, fit->dual_vertex(), project, os);
-
-    typename VDA::Ccb_halfedge_circulator ccb_start;
-    // the two lines below are equivalent since Face_iterator is
-    // convertible to Face_handle
-    //    ccb_start = vda.ccb_halfedges(typename VDA::Face_handle(fit));
-    ccb_start = vda.ccb_halfedges(fit);
-
-    typename VDA::Ccb_halfedge_circulator ccb = ccb_start;
-
-    
-    os << std::endl;
-    os << "TESTING INCREMENT OPERATORS" << std::endl;
-    os << std::endl;
-
-    print_halfedge(vda, *ccb, project, os);
-    do {
-      ++ccb;
-      print_halfedge(vda, *ccb, project, os);
-    } while ( ccb_start != ccb );
-    os << std::endl << std::endl;
-
-    print_halfedge(vda, *ccb, project, os);
-    do {
-      ccb++;
-      print_halfedge(vda, *ccb, project, os);
-    } while ( ccb_start != ccb );
-    os << std::endl << std::endl;
-
-    os << std::endl;
-    os << "TESTING DECREMENT OPERATORS" << std::endl;
-    os << std::endl;
-
-    print_halfedge(vda, *ccb, project, os);
-    do {
-      --ccb;
-      print_halfedge(vda, *ccb, project, os);
-    } while ( ccb_start != ccb );
-    os << std::endl << std::endl;
-
-    print_halfedge(vda, *ccb, project, os);
-    do {
-      ccb--;
-      print_halfedge(vda, *ccb, project, os);
-    } while ( ccb_start != ccb );
-    os << std::endl << std::endl;
-  }
-
-  os << std::endl << std::endl;
-  os << "=====================" << std::endl;
-  os << std::endl << std::endl;
-
   int n_all = 0, n_empty = 0, n_vert = 0;
-  for (fit = vda.faces_begin(); fit != vda.faces_end(); ++fit) {
-    CGAL_assertion( !face_tester(vda.dual(), fit->dual_vertex()) );
+  for (typename VDA::Face_iterator fit = vda.faces_begin();
+       fit != vda.faces_end(); ++fit) {
+    //    CGAL_assertion( !face_tester(vda.dual(), fit->dual_vertex()) );
     n_all++;
   }
 
@@ -193,15 +138,6 @@ void print_report(const VDA& vda, const Projector& project,
 
     typename VDA::Halfedge_iterator heit;
     for (heit = vda.halfedges_begin(); heit != vda.halfedges_end(); ++heit) {
-      typename VDA::Halfedge_handle hh(heit);
-      CGAL_assertion( heit->opposite()->opposite() == hh );
-      if ( heit->has_source() ) {
-	CGAL_assertion( heit->source() == heit->opposite()->target() );
-      }
-      if ( heit->has_target() ) {
-	CGAL_assertion( heit->target() == heit->opposite()->source() );
-	CGAL_assertion( heit->target() == heit->vertex() );
-      }
       n_hedges++;
     }
 
@@ -212,25 +148,13 @@ void print_report(const VDA& vda, const Projector& project,
 
     typename VDA::Vertex_iterator vit;
     for (vit = vda.vertices_begin(); vit != vda.vertices_end(); ++vit) {
-      typename VDA::Halfedge_around_vertex_circulator vc;
-      // the two lines below are equivalent since Vertex_iterator is
-      // convertible to Vertex_handle
-      //      vc = vda.incident_halfedges(typename VDA::Vertex_handle(vit));
-      vc = vda.incident_halfedges(vit);
+      os << "vertex (degree = " << vit->degree() << "): " << std::flush;
 
-      typename VDA::Halfedge_around_vertex_circulator vc_start = vc;
-      typename VDA::size_type deg = 0;
-      do {
-	deg++;
-	vc++;
-      } while ( vc != vc_start );
-
-      typename VDA::Dual_face_handle f = vit->dual_face();
-
-      os << "vertex (degree = " << deg << "): " << std::flush;
+      typedef CGAL_VORONOI_DIAGRAM_2_NS::Find_valid_vertex<VDA>
+	Find_valid_vertex;
 
       typename VDA::Dual_face_handle fvalid =
-	CGAL_VORONOI_DIAGRAM_2_NS::Find_valid_vertex<VDA>()(&vda,f);
+	Find_valid_vertex()(&vda,vit->dual_face());
       os << dp_project(vda, fvalid) << std::endl;
 
       n_vertices++;
@@ -240,44 +164,79 @@ void print_report(const VDA& vda, const Projector& project,
     // testing circulators
     for (typename VDA::Vertex_iterator vit = vda.vertices_begin();
 	 vit != vda.vertices_end(); ++vit) {
-      typename VDA::Halfedge_around_vertex_circulator hc, hc_start;
-      hc = vit->incident_halfedges();
-      hc_start = hc;
-      do {
-	hc++;
-	CGAL_assertion( vit->is_incident_edge(*hc) );
-	CGAL_assertion( vit->is_incident_face(hc->face()) );
-	CGAL_assertion( vit->is_incident_face(hc->opposite()->face()) );
-      } while ( hc != hc_start );
       sum_deg += vit->degree();
     }
 
-    for (typename VDA::Face_iterator fit = vda.faces_begin();
-	 fit != vda.faces_end(); ++fit) {
-      typename VDA::Halfedge_handle he = fit->halfedge();
-      typename VDA::Ccb_halfedge_circulator hc, hc_start;
-      hc = he->ccb();
-      hc_start = hc;
-      do {
-	hc++;
-	n_halfedges++;
-	CGAL_assertion( fit->is_halfedge_on_outer_ccb(*hc) );
-      } while ( hc != hc_start );
+    if ( vda.dual().dimension() > 0 ) {
+      for (typename VDA::Face_iterator fit = vda.faces_begin();
+	   fit != vda.faces_end(); ++fit) {
+	typename VDA::Halfedge_handle he = fit->halfedge();
+	typename VDA::Ccb_halfedge_circulator hc, hc_start;
+	hc = he->ccb();
+	hc_start = hc;
+	do {
+	  hc++;
+	  n_halfedges++;
+	  CGAL_assertion( fit->is_halfedge_on_outer_ccb(hc) );
+	} while ( hc != hc_start );
+      }
     }
 
     // computing number of unbounded faces
     typename VDA::Unbounded_faces_iterator ufit;
     for (ufit = vda.unbounded_faces_begin();
 	 ufit != vda.unbounded_faces_end(); ++ufit) {
+      CGAL_assertion( ufit->is_unbounded() );
       n_unbounded_faces++;
     }
 
     if ( vda.unbounded_faces_begin() != vda.unbounded_faces_end() ) {
       for (ufit = --vda.unbounded_faces_end();
 	   ufit != vda.unbounded_faces_begin(); --ufit) {
+	CGAL_assertion( ufit->is_unbounded() );
 	n_unbounded_faces2++;
       }
+      CGAL_assertion( ufit->is_unbounded() );
       n_unbounded_faces2++;
+    }
+
+    // testing calls to access unbounded/bounded faces/edges
+    {
+      typename VDA::Face_handle f;
+      f = vda.unbounded_face();
+      if ( vda.dual().dimension() < 0 ) {
+	CGAL_assertion( f == typename VDA::Face_handle() );
+      } else {
+	CGAL_assertion( f != typename VDA::Face_handle() );
+	CGAL_assertion( vda.unbounded_faces_begin() !=
+			vda.unbounded_faces_end() );
+      }
+      f = vda.bounded_face();
+      if ( f == typename VDA::Face_handle() ) {
+	CGAL_assertion( vda.bounded_faces_begin() ==
+			vda.bounded_faces_end() );
+      } else {
+	CGAL_assertion( vda.bounded_faces_begin() !=
+			vda.bounded_faces_end() );
+      }
+
+      typename VDA::Halfedge_handle e;
+      e = vda.unbounded_halfedge();
+      if ( e == typename VDA::Halfedge_handle() ) {
+	CGAL_assertion( vda.unbounded_halfedges_begin() ==
+			vda.unbounded_halfedges_end() );
+      } else {
+	CGAL_assertion( vda.unbounded_halfedges_begin() !=
+			vda.unbounded_halfedges_end() );
+      }
+      e = vda.bounded_halfedge();
+      if ( e == typename VDA::Halfedge_handle() ) {
+	CGAL_assertion( vda.bounded_halfedges_begin() ==
+			vda.bounded_halfedges_end() );
+      } else {
+	CGAL_assertion( vda.bounded_halfedges_begin() !=
+			vda.bounded_halfedges_end() );
+      }
     }
 
     // computing statistics on the Voronoi edges:
@@ -389,8 +348,8 @@ void print_report(const VDA& vda, const Projector& project,
 	 hit != fit->holes_end(); ++hit) {
       typename VDA::Ccb_halfedge_circulator hc = *hit;
       typename VDA::Halfedge_handle he_opp = (*hit)->opposite();
-      kill_unused_variable_warning(hc);
-      kill_unused_variable_warning(he_opp);
+      kill_warning(hc);
+      kill_warning(he_opp);
       n_holes++;
     }
   }

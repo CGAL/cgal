@@ -1,3 +1,22 @@
+// Copyright (c) 2005 Foundation for Research and Technology-Hellas (Greece).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $Source$
+// $Revision$ $Date$
+// $Name$
+//
+// Author(s)     : Menelaos Karavelas <mkaravel@tem.uoc.gr>
+
 #ifndef CGAL_DELAUNAY_GRAPH_CONCEPT_H
 #define CGAL_DELAUNAY_GRAPH_CONCEPT_H 1
 
@@ -5,6 +24,7 @@
 #include <CGAL/iterator.h>
 #include <iostream>
 #include <fstream>
+#include <CGAL/Voronoi_diagram_adaptor_2/Dummy_iterator.h>
 
 
 CGAL_BEGIN_NAMESPACE
@@ -20,83 +40,24 @@ class Delaunay_graph_concept
   typedef typename Geom_traits::Point_2  Site_2;
   typedef typename Geom_traits::Point_2  Point_2;
 
- private:
-  struct Dummy_iterator : public Emptyset_iterator
+  struct Vertex_handle
+    : public CGAL_VORONOI_DIAGRAM_2_NS::Dummy_iterator<Vertex_handle>
   {
-    typedef unsigned int size_type;
-
-    Dummy_iterator() {}
-    Dummy_iterator(const Dummy_iterator&) {}
-
-    template< class T >
-    Dummy_iterator& operator=(const T&) { return *this; }
-
-    Dummy_iterator& operator++()        { return *this; }
-    Dummy_iterator& operator++(int)     { return *this; }
-
-    Dummy_iterator& operator--()        { return *this; }
-    Dummy_iterator& operator--(int)     { return *this; }
-
-    Dummy_iterator& operator*()         { return *this; }
-    Dummy_iterator* operator->()        { return this; }
-
-    const Dummy_iterator& operator*() const   { return *this; }
-    const Dummy_iterator* operator->() const  { return this; }
-
-    bool operator==(const Dummy_iterator&) const {
-      return true;
-    }
-
-    bool operator!=(const Dummy_iterator&) const {
-      return false;
-    }
-
-    bool operator<(const Dummy_iterator& other) const {
-      return this < &other;
-    }
-
-  };
-
-  //  static Dummy_iterator dummy_iterator;
-  static const Dummy_iterator& dummy_it() {
-    static Dummy_iterator dummy_it_static;
-    return dummy_it_static;
-  }
-
- public:
-
-  //  struct Vertex_circulator {};
-
-  struct Vertex_handle : public Dummy_iterator {
-    typedef Vertex_handle   value_type;
-    typedef Vertex_handle&  reference;
-    typedef Vertex_handle*  pointer;
+    typedef CGAL_VORONOI_DIAGRAM_2_NS::Dummy_iterator<Vertex_handle>  Base;
 
     Vertex_handle() {}
-    Vertex_handle(const Dummy_iterator&) {}
-
-    Vertex_handle& operator*()         { return *this; }
-    Vertex_handle* operator->()        { return this; }
-
-    const Vertex_handle& operator*() const   { return *this; }
-    const Vertex_handle* operator->() const  { return this; }
+    Vertex_handle(const Base&) {}
 
     Site_2 site() const { return Site_2(); }
   };
 
-  struct Face_handle : public Dummy_iterator {
-    typedef Face_handle   value_type;
-    typedef Face_handle&  reference;
-    typedef Face_handle*  pointer;
+  struct Face_handle
+    : public CGAL_VORONOI_DIAGRAM_2_NS::Dummy_iterator<Face_handle>
+  {
+    typedef CGAL_VORONOI_DIAGRAM_2_NS::Dummy_iterator<Face_handle>  Base;
 
     Face_handle() {}
-    Face_handle(const Dummy_iterator&) {}
-
-    Face_handle& operator*()         { return *this; }
-    Face_handle* operator->()        { return this; }
-
-    const Face_handle& operator*() const   { return *this; }
-    const Face_handle* operator->() const  { return this; }
+    Face_handle(const Base&) {}
 
     Vertex_handle vertex(int) const { return Vertex_handle(); }
 
@@ -129,6 +90,16 @@ class Delaunay_graph_concept
     return inf_v;
   }
 
+  static const Vertex_handle finite_vertex() {
+    static Vertex_handle fin_v;
+    return fin_v;
+  }
+
+  static const Face_handle infinite_face() {
+    static Face_handle inf_f;
+    return inf_f;
+  }
+
   static const Data_structure& data_structure() {
     static Data_structure ds;
     return ds;
@@ -138,20 +109,27 @@ class Delaunay_graph_concept
     return data_structure();
   }
 
+  static const Geom_traits& geom_traits() {
+    static Geom_traits gt;
+    return gt;
+  }
+
   typedef std::pair<Face_handle,int>  Edge;
 
  private:
   class Dummy_edge_iterator : public Emptyset_iterator
   {
   public:
-    typedef unsigned int size_type;
-
-    typedef Edge   value_type;
-    typedef const Edge*  pointer;
-    typedef Edge&  reference;
+    typedef std::size_t   size_type;
+    typedef Edge          value_type;
+    typedef const Edge*   pointer;
+    typedef Edge&         reference;
+    typedef const Edge*   const_pointer;
+    typedef const Edge&   const_reference;
 
     Dummy_edge_iterator() {}
-    Dummy_edge_iterator(const Dummy_iterator&) {}
+    template<class T>
+    Dummy_edge_iterator(const T&) {}
 
     template< class T >
     Dummy_edge_iterator& operator=(const T&) { return *this; }
@@ -159,11 +137,14 @@ class Delaunay_graph_concept
     Dummy_edge_iterator& operator++()        { return *this; }
     Dummy_edge_iterator& operator++(int)     { return *this; }
 
-    Edge& operator*()         { return e; }
-    Edge* operator->()        { return &e; }
+    Dummy_edge_iterator& operator--()        { return *this; }
+    Dummy_edge_iterator& operator--(int)     { return *this; }
 
-    const Edge& operator*() const   { return e; }
-    const Edge* operator->() const  { return (&e); }
+    reference operator*()   { return e; }
+    pointer   operator->()  { return &e; }
+
+    const_reference operator*()  const  { return e; }
+    const_pointer   operator->() const  { return (&e); }
 
     bool operator==(const Dummy_edge_iterator&) const {
       return true;
@@ -193,17 +174,29 @@ class Delaunay_graph_concept
     Finite_edges_iterator(const Dummy_edge_iterator&) {}
   };
 
-  typedef Dummy_iterator  All_faces_iterator;
-  typedef Dummy_iterator  Finite_faces_iterator;
+#if 1
+  typedef CGAL_VORONOI_DIAGRAM_2_NS::Dummy_iterator<Face>
+  All_faces_iterator;
 
-  typedef Dummy_iterator  All_vertices_iterator;
-  struct Finite_vertices_iterator : public Dummy_iterator {
-    Finite_vertices_iterator() {}
-    Finite_vertices_iterator(const Dummy_iterator&) {}
-  };
+  typedef CGAL_VORONOI_DIAGRAM_2_NS::Dummy_iterator<Face>
+  Finite_faces_iterator;
 
-  typedef Dummy_iterator  Vertex_circulator;
-  typedef Dummy_iterator  Face_circulator;
+  typedef CGAL_VORONOI_DIAGRAM_2_NS::Dummy_iterator<Vertex>
+  All_vertices_iterator;
+  typedef CGAL_VORONOI_DIAGRAM_2_NS::Dummy_iterator<Vertex>
+  Finite_vertices_iterator;
+#else
+  typedef Face_handle All_faces_iterator;
+  typedef Face_handle Finite_faces_iterator;
+
+  typedef Vertex_handle All_vertices_iterator;
+  typedef Vertex_handle Finite_vertices_iterator;
+#endif
+
+  typedef CGAL_VORONOI_DIAGRAM_2_NS::Dummy_iterator<Vertex>
+  Vertex_circulator;
+  typedef CGAL_VORONOI_DIAGRAM_2_NS::Dummy_iterator<Face>
+  Face_circulator;
 
   struct Edge_circulator : public Dummy_edge_iterator
   {
@@ -249,12 +242,8 @@ class Delaunay_graph_concept
 
   int dimension() const { return -1; }
 
-  bool is_infinite(const Dummy_iterator&) const { return false; }
-  bool is_infinite(const Dummy_edge_iterator&) const { return false; }
-  bool is_infinite(const Vertex_handle&) const { return false; }
-  bool is_infinite(const Face_handle&) const { return false; }
-  bool is_infinite(const Edge&) const { return false; }
-  bool is_infinite(const Face_handle&,int) const { return false; }
+  template<class T> bool is_infinite(const T&) const { return false; }
+  template<class T> bool is_infinite(const T&,int) const { return false; }
 
   All_edges_iterator all_edges_begin() const {
     return dummy_edge_it();
@@ -273,52 +262,53 @@ class Delaunay_graph_concept
   }
 
   All_vertices_iterator all_vertices_begin() const {
-    return dummy_it();
+    return All_vertices_iterator::dummy_reference();
   }
 
   All_vertices_iterator all_vertices_end() const {
-    return dummy_it();
+    return All_vertices_iterator::dummy_reference();
   }
 
   Finite_vertices_iterator finite_vertices_begin() const {
-    return dummy_it();
+    return Finite_vertices_iterator::dummy_reference();
   }
 
   Finite_vertices_iterator finite_vertices_end() const {
-    return dummy_it();
+    return Finite_vertices_iterator::dummy_reference();
   }
 
   All_faces_iterator all_faces_begin() const {
-    return dummy_it();
+    return All_faces_iterator::dummy_reference();
   }
 
   All_faces_iterator all_faces_end() const {
-    return dummy_it();
+    return All_faces_iterator::dummy_reference();
   }
 
   Finite_faces_iterator finite_faces_begin() const {
-    return dummy_it();
+    return Finite_faces_iterator::dummy_reference();
   }
 
   Finite_faces_iterator finite_faces_end() const {
-    return dummy_it();
-  }
-
-  Edge_circulator incident_edges(const Vertex_handle&) const {
-    return dummy_edge_circulator();
+    return Finite_faces_iterator::dummy_reference();
   }
 
   Edge_circulator incident_edges(const Vertex_handle&,
-				 const Face_handle&) const {
+				 const Face_handle& = Face_handle()) const
+  {
     return dummy_edge_circulator();
   }
 
-  Vertex_circulator incident_vertices(const Vertex_handle&) const {
-    return dummy_it();
+  Vertex_circulator incident_vertices(const Vertex_handle&,
+				      const Face_handle& = Face_handle()) const
+  {
+    return Vertex_circulator::dummy_reference();
   }
 
-  Face_circulator incident_faces(const Vertex_handle&) const {
-    return dummy_it();
+  Face_circulator incident_faces(const Vertex_handle&,
+				 const Face_handle& = Face_handle()) const
+  {
+    return Face_circulator::dummy_reference();
   }
 
 

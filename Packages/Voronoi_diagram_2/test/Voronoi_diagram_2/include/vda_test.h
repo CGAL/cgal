@@ -1,3 +1,22 @@
+// Copyright (c) 2005 Foundation for Research and Technology-Hellas (Greece).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $Source$
+// $Revision$ $Date$
+// $Name$
+//
+// Author(s)     : Menelaos Karavelas <mkaravel@tem.uoc.gr>
+
 #ifndef VDA_TEST_H
 #define VDA_TEST_H 1
 
@@ -7,6 +26,7 @@
 #include <fstream>
 #include <cassert>
 #include "vda_print_report.h"
+#include "vda_test_vda.h"
 #include "vda_test_concept.h"
 #include "vda_test_locate.h"
 
@@ -34,10 +54,11 @@ class VDA_Tester
     VD vd(dg);
 
     test_dual_graph_concept( vd.dual() );
-    test_voronoi_traits_concept( vd.voronoi_traits() );
+    test_voronoi_traits_concept( vd.dual(), vd.voronoi_traits() );
 
     std::ofstream nos("");
 
+    test_vda(vd);
     print_report(vd, project_, dp_project_, nos);
   }
 
