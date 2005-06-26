@@ -70,7 +70,6 @@ class Voronoi_diagram_adaptor_2
   typedef Tr                                   Voronoi_traits;
 
   typedef typename Dual_graph::size_type       size_type;
-  typedef size_type                            Size;
 
   typedef typename Dual_graph::Vertex_handle   Dual_vertex_handle;
   typedef typename Dual_graph::Face_handle     Dual_face_handle;
@@ -301,30 +300,26 @@ public:
   const Voronoi_traits& voronoi_traits() const { return tr_; }
 
   // SIZE RELATED METHODS
-  size_type size_of_vertices() const {
+  size_type number_of_vertices() const {
     size_type num_v = 0;
     for (Vertex_iterator it = vertices_begin();	it != vertices_end();
 	 ++it, ++num_v) {}
     return num_v;
   }
 
-  size_type size_of_faces() const {
+  size_type number_of_faces() const {
     size_type num_f = 0;
     for (Face_iterator it = faces_begin(); it != faces_end();
 	 ++it, ++num_f) {}
     return num_f;
   }
 
-  size_type size_of_halfedges() const {
+  size_type number_of_halfedges() const {
     size_type num_h = 0;
     for (Halfedge_iterator it = halfedges_begin(); it != halfedges_end();
 	 ++it, ++num_h) {}
     return num_h;
   }
-
-  size_type number_of_vertices() const  { return size_of_vertices(); }
-  size_type number_of_faces() const     { return size_of_faces(); }
-  size_type number_of_halfedges() const { return size_of_halfedges(); }
 
   // DEGENERACY TESTERS
 #if 0

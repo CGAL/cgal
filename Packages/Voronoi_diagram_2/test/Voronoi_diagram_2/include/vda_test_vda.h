@@ -212,7 +212,6 @@ void test_vda(const VDA& vda)
   typedef typename VDA::Voronoi_traits                VT;
 
   typedef typename VDA::size_type                     size_type;
-  typedef typename VDA::Size                          Size;
 
   typedef typename VDA::Point_2                       Point_2;
   typedef typename VDA::Locate_type                   Locate_type;
@@ -250,10 +249,6 @@ void test_vda(const VDA& vda)
   t = vda.number_of_vertices();
   t = vda.number_of_faces();
   t = vda.number_of_halfedges();
-
-  t = vda.size_of_vertices();
-  t = vda.size_of_faces();
-  t = vda.size_of_halfedges();
   kill_warning(t);
 
   {

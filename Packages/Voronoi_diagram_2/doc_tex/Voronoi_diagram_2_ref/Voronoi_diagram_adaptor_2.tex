@@ -55,9 +55,6 @@ model of the \ccc{VoronoiTraits_2} concept.
 \ccTypedef{typedef Voronoi_traits::Point_2 Point_2;}{A type a point.}
 \ccGlue
 \ccTypedef{typedef Dual_graph::size_type size_type;}{A type for sizes.}
-\ccGlue
-\ccTypedef{typedef size_type Size;}{A type for sizes in compliance
-  with the arrangement package API.}
 %\ccGlue
 \ccNestedType{Locate_type}{The return type of the point location
   queries. In must be a model of the \ccc{VoronoiDiagramLocateType_2}
@@ -167,15 +164,6 @@ corresponding handles.
 \ccMethod{size_type number_of_halfedges();}
 {Returns the number of halfedges (bounded and unbounded) in the
   Voronoi diagram. This is always an even number.}
-\ccGlue
-\ccMethod{size_type size_of_vertices();}
-{Same as \ccc{number_of_vertices()}.}
-\ccGlue
-\ccMethod{size_type size_of_faces();}
-{Same as \ccc{number_of_faces()}.}
-\ccGlue
-\ccMethod{size_type size_of_halfedges();}
-{Same as \ccc{number_of_halfedges()}.}
 \ccGlue
 \ccMethod{Face_handle unbounded_face();}{Returns one of the unbounded
   faces of the Voronoi diagram. If no unbounded faces exist the

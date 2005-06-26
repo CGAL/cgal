@@ -1,3 +1,7 @@
+26 June 2005:  Menelaos Karavelas
+- removed the type Size and the size_of_* methods from the Voronoi diagram
+  adaptor; changed test suite and doc to reflect this change
+
 25 June 2005:  Menelaos Karavelas
 Manual:
 - added user manual
