@@ -67,6 +67,8 @@ public:
     Ccb_halfedge_const_circulator;
   typedef typename Arrangement_2::Ccb_halfedge_circulator 
     Ccb_halfedge_circulator;
+  typedef typename Arrangement_2::Isolated_vertices_const_iterator
+    Isolated_vertices_const_iterator;
 
   typedef typename Traits_2::Point_2                    Point_2;
   typedef typename Traits_2::X_monotone_curve_2         X_monotone_curve_2;

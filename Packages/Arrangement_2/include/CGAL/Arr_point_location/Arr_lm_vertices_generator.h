@@ -122,34 +122,34 @@ public:
 	  * the class that derives from this one)
 	  */
 	  void build_landmarks_set ()
-	  {
-		 PRINT_DEBUG("build_landmarks_set."); 
-		 NN_Point_list      plist; 
+    {
+      PRINT_DEBUG("build_landmarks_set."); 
+      NN_Point_list      plist; 
 
-		 //Go over planar map, and insert all vertices as landmarks
-		 Vertex_const_iterator   vit;
-		 for (vit=p_arr->vertices_begin(); vit != p_arr->vertices_end(); vit++)
-		 {
-			 //get point from vertex
-			 Point_2 p = vit->point() ;
-			 Vertex_const_handle vh = (*vit);
-			 Object obj = make_object (vh);
-			 NN_Point_2 np (p, obj); 
+      //Go over planar map, and insert all vertices as landmarks
+      Vertex_const_iterator   vit;
+      for (vit=p_arr->vertices_begin(); vit != p_arr->vertices_end(); vit++)
+      {
+        //get point from vertex
+        Point_2 p = vit->point() ;
+        Vertex_const_handle vh = (*vit);
+        Object obj = make_object (vh);
+        NN_Point_2 np (p, obj); 
 
-			 //insert point into list
-			 plist.push_back(np); 
+        //insert point into list
+        plist.push_back(np); 
 
-			 //PRINT_DEBUG("landmark = "<< p); 
-		 } 
+        //PRINT_DEBUG("landmark = "<< p); 
+      } 
 
-		 //the search structure is now updated
-		 nn.clean();
-		 nn.init(plist.begin(), plist.end());
+      //the search structure is now updated
+      nn.clean();
+      nn.init(plist.begin(), plist.end());
 
-		 // num_landmarks = ?
-		 num_small_not_updated_changes = 0;
-		 updated = true;
-	  }
+      // num_landmarks = ?
+      num_small_not_updated_changes = 0;
+      updated = true;
+    }
 
 	  /*!
 	  * clear the tree
@@ -186,7 +186,36 @@ public:
 	  { 
 		  clear_landmarks_set();
 		  build_landmarks_set();
+		  ignore_notifications = false;
 	  }
+
+    /*! 
+    * Notification before the observer is attached to an arrangement.
+    * \param arr The arrangement we are about to attach the observer to.
+    */
+    virtual void before_attach (const Arrangement_2& arr)
+    {
+		  clear_landmarks_set();
+		  p_arr = &arr; 
+		  traits = static_cast<const Traits_wrapper_2*> (p_arr->get_traits());
+		  ignore_notifications = false;
+    }
+
+    /*!
+    * Notification after the observer has been attached to an arrangement.
+    */
+    virtual void after_attach ()
+    {
+		  build_landmarks_set();
+    }
+
+    /*! 
+    * Notification before the observer is detached from the arrangement.
+    */
+    virtual void before_detach ()
+    {
+		  clear_landmarks_set();
+    }
 
 	  /*!
 	  * Notification after the arrangement is cleared.
@@ -220,8 +249,8 @@ public:
 	  {
 		  if (! ignore_notifications)
 		  {
-			PRINT_DEBUG("Arr_landmarks_vertices_generator::after_create_vertex");
-			_small_change();
+			  PRINT_DEBUG("Arr_landmarks_vertices_generator::after_create_vertex");
+			  _small_change();
 		  }
 	  }
 
@@ -233,8 +262,8 @@ public:
 	  {
 		  if (! ignore_notifications)
 		  {
-			clear_landmarks_set();
-			build_landmarks_set();
+			  clear_landmarks_set();
+			  build_landmarks_set();
 		  }
 	  }
 

@@ -174,16 +174,18 @@ Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
 
 	//inits
 	bool new_vertex = false;
-	//bool found_face = false;
-	//bool found_vertex_or_edge = false;
-	//Vertex_const_handle out_vertex;
 	Vertex_const_handle vh = nearest_vertex;
-	//Halfedge_const_handle out_edge;
 	Object obj;
 
 	Vertex_const_handle     v;
 	Halfedge_const_handle   h;
 	Face_const_handle       f;
+
+  if (vh.is_isolated())
+  {
+    f = p_arr->incident_face(vh);
+    return _walk_from_face(f, p, vh.point());
+  }
 
 	//find face
 	do {
@@ -255,25 +257,17 @@ template <class Arrangement_2, class Arr_landmarks_generator>
 Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
 ::_find_face (const Point_2 & p, 
 			  Vertex_const_handle vh,
-			  //bool & found_vertex_or_edge, 
-			  bool & new_vertex //, 
-			  //bool & found_face
-			  ) const
+			  bool & new_vertex 
+        ) const
 { 
 	LM_CLOCK_DEBUG( entries_to_find_face++ );
 	PRINT_DEBUG("inside find_face. p ="<< p <<" , vh = "<<vh.point() ); 
 
 	new_vertex = false;
-	//found_vertex_or_edge = false;
-	//found_face = false;	
 
 	// check if the point equals the vertex. 
 	if (traits->equal_2_object()(vh.point(), p))
 	{
-		//lt = Planar_map::VERTEX;
-		//out_edge =  vh->incident_halfedges();
-		//out_vertex = vh;
-		//found_vertex_or_edge = true;
 		return make_object (vh);
 	}
 
@@ -282,6 +276,7 @@ Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
 	X_monotone_curve_2 seg(v, p);
 
 	//get halfedges around vh
+  CGAL_assertion (vh.is_isolated());
 	Halfedge_around_vertex_const_circulator circ = vh.incident_halfedges(); 
 	Halfedge_around_vertex_const_circulator circ_done (circ);
 	Halfedge_around_vertex_const_circulator prev = circ;
@@ -289,7 +284,6 @@ Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
 	typename Traits_wrapper_2::Compare_xy_2           compare_xy = 
                                       traits->compare_xy_2_object();
 
-	///!!!!!!!!!! ??????????? Pay attention ! compare to left instead of cw
 	typename Traits_wrapper_2::Compare_y_at_x_cw_2 compare_y_at_x_cw =
                                       traits->compare_y_at_x_cw_2_object();
 

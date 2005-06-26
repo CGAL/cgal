@@ -180,220 +180,249 @@ public:
 	  //Observer functions that are relevant to overload
 	  //-------------------------------------------------
 
-	  /*!
-	  * Notification after the arrangement has been assigned with another
-	  * arrangement.
-	  * \param u A handle to the unbounded face.
-	  */
-	  virtual void after_assign ()
-	  { 
-		  clear_landmarks_set();
-		  build_landmarks_set();
-	  }
-
-	  /*!
-	  * Notification after the arrangement is cleared.
-	  * \param u A handle to the unbounded face.
-	  */
-	  virtual void after_clear (Face_handle /* u */)
-	  { 
-		  clear_landmarks_set();
-		  build_landmarks_set();
-	  }
-
-	  /*! Notification before a global operation modifies the arrangement. */
-	  virtual void before_global_change ()
-	  { 
-		  clear_landmarks_set();
-		  ignore_notifications = true;
-	  }
-
-	  /*! Notification after a global operation is completed. */
-	  virtual void after_global_change ()
-	  {
-		  build_landmarks_set();
+    /*!
+    * Notification after the arrangement has been assigned with another
+    * arrangement.
+    * \param u A handle to the unbounded face.
+    */
+    virtual void after_assign ()
+    { 
+      clear_landmarks_set();
+      build_landmarks_set();
 		  ignore_notifications = false;
-	  }
+    }
 
-	  /*!
-	  * Notification after the creation of a new vertex.
-	  * \param v A handle to the created vertex.
-	  */
-	  virtual void after_create_vertex (Vertex_handle /* v */)
-	  {
-		  if (! ignore_notifications)
-		  {
-			clear_landmarks_set();
-			build_landmarks_set();
-		  }
-	  }
+    /*! 
+    * Notification before the observer is attached to an arrangement.
+    * \param arr The arrangement we are about to attach the observer to.
+    */
+    virtual void before_attach (const Arrangement_2& arr)
+    {
+		  clear_landmarks_set();
+		  p_arr = &arr; 
+		  traits = static_cast<const Traits_wrapper_2*> (p_arr->get_traits());
+		  ignore_notifications = false;
+    }
 
-	  /*!
-	  * Notification after the creation of a new edge.
-	  * \param e A handle to one of the twin halfedges that were created.
-	  */
-	  virtual void after_create_edge (Halfedge_handle /* e */)
-	  {
-		  if (! ignore_notifications)
-		  {
-			clear_landmarks_set();
-			build_landmarks_set();
-		  }
-	  }
+    /*!
+    * Notification after the observer has been attached to an arrangement.
+    */
+    virtual void after_attach ()
+    {
+		  build_landmarks_set();
+    }
 
-	  /*!
-	  * Notification after an edge was split.
-	  * \param e1 A handle to one of the twin halfedges forming the first edge.
-	  * \param e2 A handle to one of the twin halfedges forming the second edge.
-	  */
-	  virtual void after_split_edge (Halfedge_handle /* e1 */,
-		  Halfedge_handle /* e2 */)
-	  {
-		  if (! ignore_notifications)
-		  {
-			clear_landmarks_set();
-			build_landmarks_set();
-		  }
-	  }
+    /*! 
+    * Notification before the observer is detached from the arrangement.
+    */
+    virtual void before_detach ()
+    {
+		  clear_landmarks_set();
+    }
 
-	  /*!
-	  * Notification after a face was split.
-	  * \param f A handle to the face we have just split.
-	  * \param new_f A handle to the new face that has been created.
-	  * \param is_hole Whether the new face forms a hole inside f.
-	  */
-	  virtual void after_split_face (Face_handle /* f */,
-		  Face_handle /* new_f */,
-		  bool /* is_hole */)
-	  {
-		  if (! ignore_notifications)
-		  {
-			clear_landmarks_set();
-			build_landmarks_set();
-		  }
-	  }
+    /*!
+    * Notification after the arrangement is cleared.
+    * \param u A handle to the unbounded face.
+    */
+    virtual void after_clear (Face_handle /* u */)
+    { 
+      clear_landmarks_set();
+      build_landmarks_set();
+    }
 
-	  /*!
-	  * Notification after a hole was created inside a face.
-	  * \param h A circulator representing the boundary of the new hole.
-	  */
-	  virtual void after_add_hole (Ccb_halfedge_circulator /* h */)
-	  {
-		  if (! ignore_notifications)
-		  {
-			clear_landmarks_set();
-			build_landmarks_set();
-		  }
-	  }
+    /*! Notification before a global operation modifies the arrangement. */
+    virtual void before_global_change ()
+    { 
+      clear_landmarks_set();
+      ignore_notifications = true;
+    }
 
-	  /*!
-	  * Notification after an edge was merged.
-	  * \param e A handle to one of the twin halfedges forming the merged edge.
-	  */
-	  virtual void after_merge_edge (Halfedge_handle /* e */)
-	  {
-		  if (! ignore_notifications)
-		  {
-			clear_landmarks_set();
-			build_landmarks_set();
-		  }
-	  }
+    /*! Notification after a global operation is completed. */
+    virtual void after_global_change ()
+    {
+      build_landmarks_set();
+      ignore_notifications = false;
+    }
 
-	  /*!
-	  * Notification after a face was merged.
-	  * \param f A handle to the merged face.
-	  */
-	  virtual void after_merge_face (Face_handle /* f */)
-	  {
-		  if (! ignore_notifications)
-		  {
-			clear_landmarks_set();
-			build_landmarks_set();
-		  }
-	  }
+    /*!
+    * Notification after the creation of a new vertex.
+    * \param v A handle to the created vertex.
+    */
+    virtual void after_create_vertex (Vertex_handle /* v */)
+    {
+      if (! ignore_notifications)
+      {
+        clear_landmarks_set();
+        build_landmarks_set();
+      }
+    }
 
-	  /*!
-	  * Notification after a hole is moved from one face to another.
-	  * \param h A circulator representing the boundary of the hole.
-	  */
-	  virtual void after_move_hole (Ccb_halfedge_circulator /* h */)
-	  {
-		  if (! ignore_notifications)
-		  {
-			clear_landmarks_set();
-			build_landmarks_set();
-		  }
-	  }
+    /*!
+    * Notification after the creation of a new edge.
+    * \param e A handle to one of the twin halfedges that were created.
+    */
+    virtual void after_create_edge (Halfedge_handle /* e */)
+    {
+      if (! ignore_notifications)
+      {
+        clear_landmarks_set();
+        build_landmarks_set();
+      }
+    }
 
-	  /*!
-	  * Notificaion before the removal of a vertex.
-	  * \param v A handle to the vertex to be deleted.
-	  */
-	  virtual void after_remove_vertex ()
-	  {
-		  if (! ignore_notifications)
-		  {
-			clear_landmarks_set();
-			build_landmarks_set();
-		  }
-	  }
+    /*!
+    * Notification after an edge was split.
+    * \param e1 A handle to one of the twin halfedges forming the first edge.
+    * \param e2 A handle to one of the twin halfedges forming the second edge.
+    */
+    virtual void after_split_edge (Halfedge_handle /* e1 */,
+      Halfedge_handle /* e2 */)
+    {
+      if (! ignore_notifications)
+      {
+        clear_landmarks_set();
+        build_landmarks_set();
+      }
+    }
 
-	  /*!
-	  * Notification before the removal of an edge.
-	  * \param e A handle to one of the twin halfedges to be deleted.
-	  */
-	  virtual void after_remove_edge ()
-	  {
-		  if (! ignore_notifications)
-		  {
-			clear_landmarks_set();
-			build_landmarks_set();
-		  }
-	  }
+    /*!
+    * Notification after a face was split.
+    * \param f A handle to the face we have just split.
+    * \param new_f A handle to the new face that has been created.
+    * \param is_hole Whether the new face forms a hole inside f.
+    */
+    virtual void after_split_face (Face_handle /* f */,
+      Face_handle /* new_f */,
+      bool /* is_hole */)
+    {
+      if (! ignore_notifications)
+      {
+        clear_landmarks_set();
+        build_landmarks_set();
+      }
+    }
 
-	  /*!
-	  * Notification before the removal of a hole.
-	  * \param h A circulator representing the boundary of the hole.
-	  */
-	  virtual void after_remove_hole ()
-	  {
-		  if (! ignore_notifications)
-		  {
-			clear_landmarks_set();
-			build_landmarks_set();
-		  }
-	  }
+    /*!
+    * Notification after a hole was created inside a face.
+    * \param h A circulator representing the boundary of the new hole.
+    */
+    virtual void after_add_hole (Ccb_halfedge_circulator /* h */)
+    {
+      if (! ignore_notifications)
+      {
+        clear_landmarks_set();
+        build_landmarks_set();
+      }
+    }
+
+    /*!
+    * Notification after an edge was merged.
+    * \param e A handle to one of the twin halfedges forming the merged edge.
+    */
+    virtual void after_merge_edge (Halfedge_handle /* e */)
+    {
+      if (! ignore_notifications)
+      {
+        clear_landmarks_set();
+        build_landmarks_set();
+      }
+    }
+
+    /*!
+    * Notification after a face was merged.
+    * \param f A handle to the merged face.
+    */
+    virtual void after_merge_face (Face_handle /* f */)
+    {
+      if (! ignore_notifications)
+      {
+        clear_landmarks_set();
+        build_landmarks_set();
+      }
+    }
+
+    /*!
+    * Notification after a hole is moved from one face to another.
+    * \param h A circulator representing the boundary of the hole.
+    */
+    virtual void after_move_hole (Ccb_halfedge_circulator /* h */)
+    {
+      if (! ignore_notifications)
+      {
+        clear_landmarks_set();
+        build_landmarks_set();
+      }
+    }
+
+    /*!
+    * Notificaion before the removal of a vertex.
+    * \param v A handle to the vertex to be deleted.
+    */
+    virtual void after_remove_vertex ()
+    {
+      if (! ignore_notifications)
+      {
+        clear_landmarks_set();
+        build_landmarks_set();
+      }
+    }
+
+    /*!
+    * Notification before the removal of an edge.
+    * \param e A handle to one of the twin halfedges to be deleted.
+    */
+    virtual void after_remove_edge ()
+    {
+      if (! ignore_notifications)
+      {
+        clear_landmarks_set();
+        build_landmarks_set();
+      }
+    }
+
+    /*!
+    * Notification before the removal of a hole.
+    * \param h A circulator representing the boundary of the hole.
+    */
+    virtual void after_remove_hole ()
+    {
+      if (! ignore_notifications)
+      {
+        clear_landmarks_set();
+        build_landmarks_set();
+      }
+    }
 
 protected:
   /*!
-   * This function creates the list of landmarks with their location.
-   * This is a pure virtual function, and the class that inherites from 
-   * this generator must implement it.
-   */
+  * This function creates the list of landmarks with their location.
+  * This is a pure virtual function, and the class that inherites from 
+  * this generator must implement it.
+  */
   virtual void _create_points_set (Points_set &) = 0;
 
   virtual void _create_nn_points_set (NN_Points_set &nn_points) 
   {
-	  Points_set		points;
-	  Pairs_set			pairs;
+    Points_set		points;
+    Pairs_set			pairs;
 
-	  //call the function that creates the landmarks 
-	  _create_points_set(points);
+    //call the function that creates the landmarks 
+    _create_points_set(points);
 
-	  //locate the landmarks in the arrangement using batched point location
-	  // global function.
-	  locate(*p_arr,points.begin(),points.end(),std::back_inserter(pairs));
+    //locate the landmarks in the arrangement using batched point location
+    // global function.
+    locate(*p_arr,points.begin(),points.end(),std::back_inserter(pairs));
 
-	  //random shuffle of the points since the batched p.l. sorts them
-	  std::random_shuffle ( pairs.begin (), pairs.end ());
+    //random shuffle of the points since the batched p.l. sorts them
+    std::random_shuffle ( pairs.begin (), pairs.end ());
 
-	  //create the nn set 
-	  Pairs_iterator itr;
-	  for(itr = pairs.begin(); itr != pairs.end(); ++itr)
-	  {
-		  NN_Point_2 np(itr->first, itr->second); 
-		  nn_points.push_back(np);
-	  }
+    //create the nn set 
+    Pairs_iterator itr;
+    for(itr = pairs.begin(); itr != pairs.end(); ++itr)
+    {
+      NN_Point_2 np(itr->first, itr->second); 
+      nn_points.push_back(np);
+    }
   }
 
 

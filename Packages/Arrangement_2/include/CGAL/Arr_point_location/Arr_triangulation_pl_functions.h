@@ -60,6 +60,19 @@ Object Arr_triangulation_point_location<Arrangement_2>
   case CDT::OUTSIDE_CONVEX_HULL:
     {
       TRG_PRINT_DEBUG("unbounded face" );
+
+      // we still have to check whether the query point coincides with
+      // any of the isolated vertices contained inside this face.
+      Isolated_vertices_const_iterator   iso_verts_it;
+      typename Traits_wrapper_2::Equal_2  equal = traits->equal_2_object();
+
+      for (iso_verts_it = face_found.isolated_vertices_begin();
+          iso_verts_it != face_found.isolated_vertices_end(); ++iso_verts_it)
+      {
+        if (equal (p, (*iso_verts_it).point()))
+          return (make_object (*iso_verts_it));
+      }
+
       return make_object(face_found);
     }
   case CDT::VERTEX:
@@ -115,6 +128,21 @@ Object Arr_triangulation_point_location<Arrangement_2>
   Vertex_const_handle v1 = fh->vertex(1)->info();
   Vertex_const_handle v2 = fh->vertex(2)->info();
 
+  //the vertices should not be isolated, since we do not insert the
+  //isolated vertices as points in the triangulation, only edges 
+  // (and thus vertices inceident to this edge). 
+  //in the future it is possible to add isolated vertices to the 
+  // triangulation, and then, when found, take its incident_face
+  CGAL_assertion(v0.is_isolated());
+  CGAL_assertion(v1.is_isolated());
+  CGAL_assertion(v2.is_isolated());
+  if (v0.is_isolated())
+    return make_object(p_arr->incident_face(v0));
+  if (v1.is_isolated())
+    return make_object(p_arr->incident_face(v1));
+  if (v2.is_isolated())
+    return make_object(p_arr->incident_face(v2));
+
   //find the face in the pm correspond to the 3 vertices
   Halfedge_around_vertex_const_circulator havc0 = v0.incident_halfedges(); 
   Halfedge_around_vertex_const_circulator havc0_done (havc0);
@@ -165,6 +193,18 @@ Object Arr_triangulation_point_location<Arrangement_2>
         <<", v2 = "<<v2.point() <<std::endl;
     }
   }
+
+  // we still have to check whether the query point coincides with
+  // any of the isolated vertices contained inside this face.
+  Isolated_vertices_const_iterator   iso_verts_it;
+  typename Traits_wrapper_2::Equal_2  equal = traits->equal_2_object();
+
+  for (iso_verts_it = face_found.isolated_vertices_begin();
+      iso_verts_it != face_found.isolated_vertices_end(); ++iso_verts_it)
+  {
+    if (equal (p, (*iso_verts_it).point()))
+      return (make_object (*iso_verts_it));
+  }		
 
   return make_object(face_found);
 }
