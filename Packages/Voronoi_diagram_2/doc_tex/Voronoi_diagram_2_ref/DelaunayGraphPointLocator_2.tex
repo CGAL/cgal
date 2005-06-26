@@ -21,18 +21,18 @@
 
 The \ccc{DelaunayGraphPointLocator_2} concept defines the requirements
 for a functor that performs point location queries on a Delaunay
-graph. The functor returns an object of type \ccc{Locate_type}, which
-is a model of the \ccc{DelaunayGraphLocateType_2}
-concept. Semantically, the locate type is either a face, edge or
+graph. The functor returns an object of type \ccc{Locate_result}, which
+is a model of the \ccc{DelaunayGraphLocateResult_2}
+concept. Semantically, the locate result is either a face, edge or
 vertex of the Delaunay graph. It is a face if the query point is
 equidistant to at least three vertices of the Delaunay graph, namely
 the three vertices of the returned face. It is an edge if the query
 point is equidistant to exactly two vertices of the Delaunay graph,
 which are the source and target vertices of the edge. In all other
-cases, the locate type is a vertex, namely, the unique vertex of the
+cases, the locate result is a vertex, namely, the unique vertex of the
 Delaunay graph closest to the query point. The
-\ccc{DelaunayGrapgLocateType_2} concept, as well as the
-\ccc{Locate_type} type, that is a model of the afore-mentioned concept,
+\ccc{DelaunayGraphLocateResult_2} concept, as well as the
+\ccc{Locate_result} type, that is a model of the afore-mentioned concept,
 encapsulate the semantics described above.
 
 \ccRefines
@@ -48,15 +48,16 @@ concept, a model of this concept must provide the following types:
 
 
 %\ccTwo{EdgeDegeneractTester::Dual_graph+}{}
-\ccThree{typedef typename Dual_graph::Geom_traits::Point_2}{Vertex_handle+}{}
-\ccThreeToTwo
+\ccTwo{DelaunayGraphLocatePointLocator_2::Locate_result+}{}
 \ccNestedType{Dual_graph}{A type for the Delaunay graph. It must be
   model of the \ccc{DelaunayGraph_2} concept.}
 \ccGlue
-\ccNestedType{Locate_type}{A type for the result of the point
-  location. It must be a model of the \ccc{DelaunayGraphLocateType_2}
+\ccNestedType{Locate_result}{A type for the result of the point
+  location. It must be a model of the \ccc{DelaunayGraphLocateResult_2}
   concept.}
-\ccGlue
+%\ccGlue
+\ccThree{typedef typename Dual_graph::Geom_traits::Point_2}{Vertex_handle+}{}
+\ccThreeToTwo
 \ccTypedef{typedef typename Dual_graph::Vertex_handle Vertex_handle;}{}
 \ccGlue
 \ccTypedef{typedef typename Dual_graph::Face_handle Face_handle;}{}
@@ -80,10 +81,10 @@ concept, a model of this concept must provide the following types:
 \ccOperations
 It must also provide the following operations:
 
-\ccThree{Locate_type}{pl(Dual_graph dg, Point_2 p)+}{}
+\ccThree{Locate_result}{pl(Dual_graph dg, Point_2 p)+}{}
 \ccThreeToTwo
-\ccMemberFunction{Locate_type operator()(Dual_graph dg, Point_2 p);}
-{returns the feature of the Delaunay graph on which the point \ccc{p}
+\ccMemberFunction{Locate_result operator()(Dual_graph dg, Point_2 p);}
+{Returns the feature of the Delaunay graph on which the point \ccc{p}
   lies.}
 
 \ccHasModels
@@ -94,7 +95,7 @@ It must also provide the following operations:
 
 \ccSeeAlso
 \ccc{VoronoiTraits_2}\\
-\ccc{DelaunayGraphLocateType_2}\\
+\ccc{DelaunayGraphLocateResult_2}\\
 \ccc{CGAL::Apollonius_graph_Voronoi_traits_2<AG2>}\\
 \ccc{CGAL::Delaunay_triangulation_Voronoi_traits_2<DT2>}\\
 \ccc{CGAL::Regular_triangulation_Voronoi_traits_2<RT2>}\\

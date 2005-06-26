@@ -45,7 +45,7 @@ model of the \ccc{VoronoiTraits_2} concept.
 
 \ccThree{typedef Voronoi_traits::Point_2}{Voronoi_traits+}{}
 \ccThreeToTwo
-\ccTwo{Voronoi_diagram_adaptor_2<DG,VT>::Locate_type+}{}
+\ccTwo{Voronoi_diagram_adaptor_2<DG,VT>::Locate_result+}{}
 %
 \ccTypedef{typedef DG  Dual_graph;}{A type for the dual Delaunay graph.}
 \ccGlue
@@ -56,8 +56,8 @@ model of the \ccc{VoronoiTraits_2} concept.
 \ccGlue
 \ccTypedef{typedef Dual_graph::size_type size_type;}{A type for sizes.}
 %\ccGlue
-\ccNestedType{Locate_type}{The return type of the point location
-  queries. In must be a model of the \ccc{VoronoiDiagramLocateType_2}
+\ccNestedType{Locate_result}{The result type of the point location
+  queries. In must be a model of the \ccc{VoronoiDiagramLocateResult_2}
   concept.}
 %
 %
@@ -364,8 +364,8 @@ be destroyed).
 \newpage
 \end{ccTexOnly}
 \ccHeading{Queries}
-\ccThree{Locate_type}{vda.locate(Point_2 p)+}{}
-\ccMethod{Locate_type locate(Point_2 p);}{Performs point location for
+\ccThree{Locate_result}{vda.locate(Point_2 p)+}{}
+\ccMethod{Locate_result locate(Point_2 p);}{Performs point location for
   the query point \ccc{p}. In other words, the face, halfedge or
   vertex of the Voronoi diagram is found on which the point \ccc{p}
   lies.
