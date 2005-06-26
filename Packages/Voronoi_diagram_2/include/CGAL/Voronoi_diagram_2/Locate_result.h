@@ -17,8 +17,8 @@
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@tem.uoc.gr>
 
-#ifndef CGAL_VORONOI_DIAGRAM_2_LOCATE_TYPE_H
-#define CGAL_VORONOI_DIAGRAM_2_LOCATE_TYPE_H 1
+#ifndef CGAL_VORONOI_DIAGRAM_2_LOCATE_RESULT_H
+#define CGAL_VORONOI_DIAGRAM_2_LOCATE_RESULT_H 1
 
 #include <CGAL/Voronoi_diagram_adaptor_2/basic.h>
 
@@ -30,7 +30,7 @@ CGAL_VORONOI_DIAGRAM_2_BEGIN_NAMESPACE
 //====================================================================
 
 template<class V, class F, class E>
-class Locate_type_base
+class Locate_result_base
 {
  protected:
   enum Type { UNDEFINED = -1, VERTEX, FACE, EDGE };
@@ -39,29 +39,51 @@ class Locate_type_base
   typedef F  Face_handle;
   typedef E  Edge_rep;
 
-  Locate_type_base() : t(UNDEFINED) {}
-  Locate_type_base(const Vertex_handle& v) : t(VERTEX), v_(v) {}
-  Locate_type_base(const Face_handle& f) : t(FACE), f_(f) {}
-  Locate_type_base(const Edge_rep& e) : t(EDGE), e_(e) {}
+  typedef Locate_result_base<Vertex_handle,Face_handle,Edge_rep>  Self;
+
+  Locate_result_base() : t(UNDEFINED) {}
+
+  void set(const Vertex_handle& v) { t = VERTEX;  v_ = v; }
+  void set(const Face_handle& f)   { t = FACE;    f_ = f; }
+  void set(const Edge_rep& e)      { t = EDGE;    e_ = e; }
 
  public:
   bool is_vertex() const { return t == VERTEX; }
   bool is_face() const { return t == FACE; }
   bool is_edge() const { return t == EDGE; }
 
-  const Vertex_handle& vertex() const {
+  operator const Vertex_handle&() const {
     CGAL_precondition( is_vertex() );
     return v_;
   }
 
-  const Face_handle& face() const {
+  operator const Face_handle&() const {
     CGAL_precondition( is_face() );
     return f_;
   }
 
-  const Edge_rep& edge() const {
+  operator const Edge_rep&() const {
     CGAL_precondition( is_edge() );
     return e_;
+  }
+
+  bool operator==(const Self& o) const {
+    if ( t != o.t ) { return false; }
+    switch (t) {
+    case VERTEX:
+      return v_ == o.v_;
+    case EDGE:
+      return f_ == o.f_;
+    case FACE:
+      return e_ == o.e_;
+    default:
+      CGAL_assertion( t == UNDEFINED && o.t == UNDEFINED );
+      return true;
+    }
+  }
+
+  bool operator!=(const Self& o) const {
+    return !((*this) == o);
   }
 
  protected:
@@ -75,16 +97,16 @@ class Locate_type_base
 //====================================================================
 
 
-template<class C, bool is_vd> class Locate_type;
-template<class C, bool is_vd> class Locate_type_accessor;
+template<class C, bool is_vd> class Locate_result;
+template<class C, bool is_vd> class Locate_result_accessor;
 
 template<class VDA>
-class Locate_type<VDA,true>
-  : public Locate_type_base<typename VDA::Vertex_handle,
-			    typename VDA::Face_handle,
-			    typename VDA::Halfedge_handle>
+class Locate_result<VDA,true>
+  : public Locate_result_base<typename VDA::Vertex_handle,
+			      typename VDA::Face_handle,
+			      typename VDA::Halfedge_handle>
 {
-  friend class Locate_type_accessor<VDA,true>;
+  friend class Locate_result_accessor<VDA,true>;
 
  public:
   typedef typename VDA::Vertex_handle    Vertex_handle;
@@ -92,25 +114,18 @@ class Locate_type<VDA,true>
   typedef typename VDA::Halfedge_handle  Halfedge_handle;
 
  protected:
-  typedef Locate_type_base<Vertex_handle,Face_handle,Halfedge_handle> Base;
-  typedef Locate_type<VDA,true> Self;
-
-  Locate_type(const Vertex_handle& v) : Base(v) {}
-  Locate_type(const Face_handle& f) : Base(f) {}
-  Locate_type(const Halfedge_handle& e) : Base(e) {}
-
- public:
-  Locate_type() : Base() {}
+  typedef Locate_result_base<Vertex_handle,Face_handle,Halfedge_handle> Base;
+  typedef Locate_result<VDA,true> Self;
 };
 
 
 template<class DG>
-class Locate_type<DG,false>
-  : public Locate_type_base<typename DG::Vertex_handle,
-			    typename DG::Face_handle,
-			    typename DG::Edge>
+class Locate_result<DG,false>
+  : public Locate_result_base<typename DG::Vertex_handle,
+			      typename DG::Face_handle,
+			      typename DG::Edge>
 {
-  friend class Locate_type_accessor<DG,false>;
+  friend class Locate_result_accessor<DG,false>;
 
  public:
   typedef DG                          Dual_graph;
@@ -119,15 +134,8 @@ class Locate_type<DG,false>
   typedef typename DG::Edge           Edge;
 
  protected:
-  typedef Locate_type_base<Vertex_handle,Face_handle,Edge> Base;
-  typedef Locate_type<DG,false> Self;
-
-  Locate_type(const Vertex_handle& v) : Base(v) {}
-  Locate_type(const Face_handle& f) : Base(f) {}
-  Locate_type(const Edge& e) : Base(e) {}
-
- public:
-  Locate_type() : Base() {}
+  typedef Locate_result_base<Vertex_handle,Face_handle,Edge> Base;
+  typedef Locate_result<DG,false> Self;
 };
 
 
@@ -135,13 +143,15 @@ class Locate_type<DG,false>
 //====================================================================
 
 template<class C, bool b>
-struct Locate_type_accessor
+struct Locate_result_accessor
 {
-  typedef Locate_type<C,b> Locate_type;
+  typedef Locate_result<C,b> Locate_result;
 
   template<class T>
-  Locate_type make_locate_type(const T& t) const {
-    return Locate_type(t);
+  static Locate_result make_locate_result(const T& t) {
+    Locate_result lr;
+    lr.set(t);
+    return lr;
   }
 };
 
@@ -152,4 +162,4 @@ CGAL_VORONOI_DIAGRAM_2_END_NAMESPACE
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_VORONOI_DIAGRAM_2_LOCATE_TYPE_H
+#endif // CGAL_VORONOI_DIAGRAM_2_LOCATE_RESULT_H
