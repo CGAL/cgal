@@ -21,8 +21,8 @@ typedef CGAL::Segment_Voronoi_diagram_hierarchy_2<Gt>        SVD;
 typedef CGAL::Segment_Voronoi_diagram_Voronoi_traits_2<SVD>  VT;
 typedef CGAL::Voronoi_diagram_adaptor_2<SVD,VT>              VD;
 
-// typedef for the return type of the point location
-typedef VD::Locate_type      Locate_type;
+// typedef for the result type of the point location
+typedef VD::Locate_result      Locate_result;
 
 
 int main()
@@ -60,12 +60,12 @@ int main()
   while ( ifq >> p ) {
     std::cout << p << "\t --> \t" << std::flush;
 
-    Locate_type lt = vd.locate(p);
-    if ( lt.is_vertex() ) {
+    Locate_result lr = vd.locate(p);
+    if ( lr.is_vertex() ) {
       std::cout << "VERTEX";
-    } else if ( lt.is_edge() ) {
+    } else if ( lr.is_edge() ) {
       std::cout << "EDGE";
-    } else if ( lt.is_face() ) {
+    } else if ( lr.is_face() ) {
       std::cout << "FACE";
     }
     std::cout << std::endl;
