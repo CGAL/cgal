@@ -316,8 +316,7 @@ void insert_non_intersecting (Arrangement_2<Traits,Dcel>& arr,
   arr_access.notify_before_global_change();
 
   // Perform the aggregated insertion.
-  Arr_non_x_aggregate_insert<Arrangement_2>  agg_insert_obj (arr.get_traits(), 
-							     &arr);
+  Arr_non_x_aggregate_insert<Arrangement_2>  agg_insert_obj (&arr);
   agg_insert_obj.insert_curves(begin, end);
 
   // Notify the arrangement observers that the global operation has been
