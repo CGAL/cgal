@@ -116,7 +116,7 @@ public:
   void detach ()
   {
     // Notify the concrete oberver (the sub-class) about the detachment.
-    before_detach (arr);
+    before_detach ();
 
     // Unregister the observer object from the current arrangement.
     if (p_arr != NULL)
