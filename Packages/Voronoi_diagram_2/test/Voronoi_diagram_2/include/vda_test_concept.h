@@ -358,10 +358,10 @@ void test_ve_concept(const VE& ve)
 
   VE ve_opp = ve.opposite();
 
-  Site_2 t = ve.north();
-  t = ve.south();
-  if ( ve.has_source() ) { t = ve.west(); }
-  if ( ve.has_target() ) { t = ve.east(); }
+  Site_2 t = ve.up();
+  t = ve.down();
+  if ( ve.has_source() ) { t = ve.left(); }
+  if ( ve.has_target() ) { t = ve.right(); }
   kill_warning(t);
 }
 

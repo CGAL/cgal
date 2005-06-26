@@ -6,6 +6,8 @@
 - renamed DelaunayGraphLocateType_2 to DelaunayGraphLocateResult_2.
 - made Locate_result convertible to vertex handle, face handle, halfedge
   handle or edge; made Locate_result equality comparable.
+- in VoronoiEdge_2: renamed north,south,west,east to up,down,left,right
+  respectively.
 
 25 June 2005:  Menelaos Karavelas
 Manual:

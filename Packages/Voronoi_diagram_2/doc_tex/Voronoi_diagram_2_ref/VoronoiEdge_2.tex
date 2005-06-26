@@ -69,39 +69,39 @@ A Voronoi edge is defined by four generators, either finite or the
 site at infinity. If we consider Voronoi edges locally, we can think
 of them as lying on the horizontal axis with orientation from minus to
 plus infinity. In this setting the four defining generators can be
-thought of as occupying the four major directions \ccStyle{north},
-\ccStyle{south}, \ccStyle{west} and \ccStyle{east}, where
-\ccStyle{north} means above the horizontal axis (on the positive
-side of the axis), \ccStyle{south} means below the horizontal axis (on the
-negative side of the axis), \ccStyle{west} means towards minus
-infinity and \ccStyle{east} means towards plus infinity. Notice that
+thought of as occupying the four major directions \ccStyle{up},
+\ccStyle{down}, \ccStyle{left} and \ccStyle{right}, where
+\ccStyle{up} means above the horizontal axis (on the positive
+side of the axis), \ccStyle{down} means below the horizontal axis (on the
+negative side of the axis), \ccStyle{left} means towards minus
+infinity and \ccStyle{right} means towards plus infinity. Notice that
 then the Voronoi vertices, that is the endpoints of the Voronoi edge,
-are defined by the generator triplets $\{$\ccStyle{south},
-\ccStyle{north}, \ccStyle{west}$\}$ (this is the source of the Voronoi
-edge) and $\{$\ccStyle{north}, \ccStyle{south}, \ccStyle{east}$\}$
-(this is the target  of the Voronoi edge). Notice that \ccStyle{north}
-and \ccStyle{south} can never correspond to the site at infinity. If
-either \ccStyle{west} or \ccStyle{east}, but not both, are the
+are defined by the generator triplets $\{$\ccStyle{down},
+\ccStyle{up}, \ccStyle{left}$\}$ (this is the source of the Voronoi
+edge) and $\{$\ccStyle{up}, \ccStyle{down}, \ccStyle{right}$\}$
+(this is the target  of the Voronoi edge). Notice that \ccStyle{up}
+and \ccStyle{down} can never correspond to the site at infinity. If
+either \ccStyle{left} or \ccStyle{right}, but not both, are the
 site an infinity, then the Voronoi edge is essentially a bisecting
-ray, whereas if both \ccStyle{west} and \ccStyle{east} are the site at
-infinity the Voronoi edge is the entire bisector of \ccStyle{north}
-and \ccStyle{south}. The following methods provide access to these
+ray, whereas if both \ccStyle{left} and \ccStyle{right} are the site at
+infinity the Voronoi edge is the entire bisector of \ccStyle{up}
+and \ccStyle{down}. The following methods provide access to these
 four defining sites:
 
-\ccThree{Site_2}{e.north()+}{}
+\ccThree{Site_2}{e.right()+}{}
 \ccThreeToTwo
 %
-\ccMethod{Site_2 north();}{return the defining site to the north of
+\ccMethod{Site_2 up();}{return the defining site above of
   the Voronoi edge.}
 \ccGlue
-\ccMethod{Site_2 south();}{return the defining site to the south of
+\ccMethod{Site_2 down();}{return the defining site below of
   the Voronoi edge.}
 \ccGlue
-\ccMethod{Site_2 west();}{return the defining site to the west of
+\ccMethod{Site_2 left();}{return the defining site to the left of
   the Voronoi edge.
 \ccPrecond{\ccc{has_source()} must be \ccStyle{true}.}}
 \ccGlue
-\ccMethod{Site_2 east();}{return the defining site to the east of
+\ccMethod{Site_2 right();}{return the defining site to the right of
   the Voronoi edge.
 \ccPrecond{\ccc{has_target()} must be \ccStyle{true}.}}
 

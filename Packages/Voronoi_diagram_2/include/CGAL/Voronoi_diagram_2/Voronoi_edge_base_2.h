@@ -114,14 +114,14 @@ class Voronoi_edge_base_2
     return vv;
   }
 
-  const Site_2& north() const { return north_; }
-  const Site_2& south() const { return south_; }
-  const Site_2& west() const {
+  const Site_2& up() const { return north_; }
+  const Site_2& down() const { return south_; }
+  const Site_2& left() const {
     CGAL_precondition( has_source() );
     return west_;
   }
 
-  const Site_2& east() const {
+  const Site_2& right() const {
     CGAL_precondition( has_target() );
     return east_;
   }
