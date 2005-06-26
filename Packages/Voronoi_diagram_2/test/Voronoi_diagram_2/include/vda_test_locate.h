@@ -70,23 +70,23 @@ void test_locate_dg(const VDA& vda, const Projector& project,
   typedef typename Point_locator::Edge                Edge;
 
   Point_locator locate = vda.voronoi_traits().point_locator_object();
-  typename Point_locator::Locate_type pl_lt;
+  typename Point_locator::Locate_result pl_lr;
 
   os << "Query sites and location feature in dual graph:" << std::endl;
   for (unsigned int i = 0; i < vecp.size(); ++i) {
     os << vecp[i] << "\t --> \t" << std::flush;
-    pl_lt = locate(vda.dual(), vecp[i]);
-    if ( pl_lt.is_vertex() ) {
+    pl_lr = locate(vda.dual(), vecp[i]);
+    if ( pl_lr.is_vertex() ) {
       os << "FACE";
-      Vertex_handle v = pl_lt.vertex();
+      Vertex_handle v = pl_lr;
       kill_warning( v );
-    } else if ( pl_lt.is_edge() ) {
+    } else if ( pl_lr.is_edge() ) {
       os << "EDGE";
-      Edge e = pl_lt.edge();
+      Edge e = pl_lr;
       kill_warning( e );
-    } else if ( pl_lt.is_face() ) {
+    } else if ( pl_lr.is_face() ) {
       os << "VERTEX";
-      Face_handle f = pl_lt.face();
+      Face_handle f = pl_lr;
       kill_warning( f );
     } else {
       os << " *** NOT READY YET *** ";
@@ -99,22 +99,22 @@ void test_locate_dg(const VDA& vda, const Projector& project,
 template<class VDA, class Point_vector, class OStream>
 void test_locate_vd(const VDA& vda, const Point_vector& vecp, OStream& os)
 {
-  typename VDA::Locate_type lt;
+  typename VDA::Locate_result lr;
 
   os << "Query sites and location feature in dual graph:" << std::endl;
   for (unsigned int i = 0; i < vecp.size(); ++i) {
     os << vecp[i] << "\t --> \t" << std::flush;
-    lt = vda.locate(vecp[i]);
-    if ( lt.is_edge() ) {
+    lr = vda.locate(vecp[i]);
+    if ( lr.is_edge() ) {
       os << "VORONOI EDGE";
-      typename VDA::Halfedge_handle e = lt.edge();
+      typename VDA::Halfedge_handle e = lr;
       kill_warning( e );
-    } else if ( lt.is_vertex() ) {
+    } else if ( lr.is_vertex() ) {
       os << "VORONOI VERTEX";
-      typename VDA::Vertex_handle v = lt.vertex();
+      typename VDA::Vertex_handle v = lr;
       kill_warning( v );
-    } else if ( lt.is_face() ) {
-      typename VDA::Face_handle f = lt.face();
+    } else if ( lr.is_face() ) {
+      typename VDA::Face_handle f = lr;
       kill_warning( f );
       os << "VORONOI FACE";
     } else {

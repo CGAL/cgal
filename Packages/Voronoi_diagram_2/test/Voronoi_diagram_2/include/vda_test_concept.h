@@ -475,37 +475,39 @@ void test_pl_concept(const DG& dg, const VT& vt, CGAL::Tag_true)
 {
   typedef typename VT::Point_locator             Point_locator;
   typedef typename Point_locator::Dual_graph     Dual_graph;
-  typedef typename Point_locator::Locate_type    Locate_type;
+  typedef typename Point_locator::Locate_result  Locate_result;
   typedef typename Point_locator::Vertex_handle  Vertex_handle;
   typedef typename Point_locator::Face_handle    Face_handle;
   typedef typename Point_locator::Edge           Edge;
   typedef typename Point_locator::Point_2        Point_2;
 
-  typedef typename Locate_type::Dual_graph       LT_Dual_graph;
-  typedef typename Locate_type::Vertex_handle    LT_Vertex_handle;
-  typedef typename Locate_type::Face_handle      LT_Face_handle;
-  typedef typename Locate_type::Edge             LT_Edge;
+  typedef typename Locate_result::Dual_graph     LT_Dual_graph;
+  typedef typename Locate_result::Vertex_handle  LT_Vertex_handle;
+  typedef typename Locate_result::Face_handle    LT_Face_handle;
+  typedef typename Locate_result::Edge           LT_Edge;
 
   if ( dg.dimension() < 0 ) { return; }
 
   Point_locator pl = vt.point_locator_object();
   Point_2 p(0,0);
 
-  Locate_type lt = pl(dg, p);
+  Locate_result lr = pl(dg, p);
 
-  if ( lt.is_face() ) {
-    LT_Face_handle lt_f = lt.face();
-    Face_handle f = lt_f;
+  if ( lr.is_face() ) {
+    Face_handle f = lr;
     kill_warning(f);
-  } else if ( lt.is_edge() ) {
-    LT_Edge lt_e = lt.edge();
-    Edge e = lt_e;
+  } else if ( lr.is_edge() ) {
+    Edge e = lr;
     kill_warning(e);
-  } else if ( lt.is_vertex() ) {
-    LT_Vertex_handle lt_v = lt.vertex();
-    Vertex_handle v = lt_v;
+  } else if ( lr.is_vertex() ) {
+    Vertex_handle v = lr;
     kill_warning(v);
   }
+
+  Locate_result lr1 = pl(dg, p);
+  bool b = (lr == lr1);
+  CGAL_assertion(b);
+  kill_warning(b);
 }
 
 //============================================================================

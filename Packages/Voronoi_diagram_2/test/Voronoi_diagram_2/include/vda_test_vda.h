@@ -120,11 +120,13 @@ void test_vd_vertex_concept(const typename VDA::Vertex_handle& v)
     bool b2 = v->is_incident_face(hc->face());
     bool b3 = v->is_incident_face(hc->opposite()->face());
     CGAL_assertion( b1 && b2 && b3 );
+    kill_warning( b1 && b2 && b3 );
     ++hc;
   } while ( hc != hc_start );
 
   size_type d = v->degree();
   CGAL_assertion( d == deg );
+  kill_warning( d );
 
   Point_2 p = v->point();
   Dual_face_handle f = v->dual_face();
@@ -195,6 +197,7 @@ void test_vd_halfedge_concept(const typename VDA::Halfedge_handle& e)
   CGAL_assertion( (bu && (!b1 || !b2)) || (!bu && (b1 && b2)) );
 
   CGAL_assertion( e->is_valid() );
+  kill_warning( b1 && b2 && bu );
 }
 
 //==========================================================================
@@ -214,7 +217,7 @@ void test_vda(const VDA& vda)
   typedef typename VDA::size_type                     size_type;
 
   typedef typename VDA::Point_2                       Point_2;
-  typedef typename VDA::Locate_type                   Locate_type;
+  typedef typename VDA::Locate_result                 Locate_result;
 
   typedef typename VDA::Halfedge                      Halfedge;
   typedef typename VDA::Face                          Face;
@@ -374,7 +377,7 @@ void test_vda(const VDA& vda)
     test_circulator( havc_e );
   }
 
-  test_vdlt_concept(vda);
+  test_vdlr_concept(vda);
 
   // testing validity
   assert( vda.is_valid() );
@@ -462,37 +465,37 @@ void test_vda(const VDA& vda)
 
 
 template<class VDA>
-void test_vdlt_concept(const VDA& vda)
+void test_vdlr_concept(const VDA& vda)
 {
-  test_vdlt_concept(vda, typename VDA::Voronoi_traits::Has_point_locator());
+  test_vdlr_concept(vda, typename VDA::Voronoi_traits::Has_point_locator());
 }
 
 template<class VDA>
-void test_vdlt_concept(const VDA&, const CGAL::Tag_false&) {}
+void test_vdlr_concept(const VDA&, const CGAL::Tag_false&) {}
 
 template<class VDA>
-void test_vdlt_concept(const VDA& vda, const CGAL::Tag_true&)
+void test_vdlr_concept(const VDA& vda, const CGAL::Tag_true&)
 {
-  typedef typename VDA::Locate_type              Locate_type;
-  typedef typename VDA::Point_2                  Point_2;
-  typedef typename Locate_type::Vertex_handle    Vertex_handle;
-  typedef typename Locate_type::Halfedge_handle  Halfedge_handle;
-  typedef typename Locate_type::Face_handle      Face_handle;
+  typedef typename VDA::Locate_result              Locate_result;
+  typedef typename VDA::Point_2                    Point_2;
+  typedef typename Locate_result::Vertex_handle    Vertex_handle;
+  typedef typename Locate_result::Halfedge_handle  Halfedge_handle;
+  typedef typename Locate_result::Face_handle      Face_handle;
 
   // nothing to do if the Voronoi diagram is empty
   if ( vda.dual().number_of_vertices() == 0 ) { return; }
 
   Point_2 p(0,0);
-  Locate_type lt = vda.locate(p);
+  Locate_result lr = vda.locate(p);
 
-  if ( lt.is_vertex() ) {
-    Vertex_handle v = lt.vertex();
+  if ( lr.is_vertex() ) {
+    Vertex_handle v = lr;
     kill_warning(v);
-  } else if ( lt.is_edge() ) {
-    Halfedge_handle e = lt.edge();
+  } else if ( lr.is_edge() ) {
+    Halfedge_handle e = lr;
     kill_warning(e);    
-  } else if ( lt.is_face() ) {
-    Face_handle f = lt.face();
+  } else if ( lr.is_face() ) {
+    Face_handle f = lr;
     kill_warning(f);
   }
 }
