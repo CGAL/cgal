@@ -24,7 +24,7 @@
 #include <CGAL/Voronoi_diagram_adaptor_2/Default_Voronoi_traits_2.h>
 #include <CGAL/Voronoi_diagram_adaptor_2/Voronoi_vertex_base_2.h>
 #include <CGAL/Voronoi_diagram_adaptor_2/Voronoi_edge_base_2.h>
-#include <CGAL/Voronoi_diagram_adaptor_2/Locate_type.h>
+#include <CGAL/Voronoi_diagram_adaptor_2/Locate_result.h>
 #include <cstdlib>
 #include <algorithm>
 
@@ -35,9 +35,8 @@ CGAL_BEGIN_NAMESPACE
 
 template<class DG>
 class RT_Point_locator
-  : public CGAL_VORONOI_DIAGRAM_2_NS::Locate_type_accessor<DG,false>
 {
-  typedef CGAL_VORONOI_DIAGRAM_2_NS::Locate_type_accessor<DG,false> Base;
+  typedef CGAL_VORONOI_DIAGRAM_2_NS::Locate_result_accessor<DG,false> Accessor;
 
  public:
   typedef DG                                          Dual_graph;
@@ -52,10 +51,10 @@ class RT_Point_locator
   typedef typename Geom_traits::Weighted_point_2      Weighted_point_2;
   typedef typename Geom_traits::Point_2               Point_2;
 
-  typedef CGAL_VORONOI_DIAGRAM_2_NS::Locate_type<DG,false> Locate_type;
+  typedef CGAL_VORONOI_DIAGRAM_2_NS::Locate_result<DG,false> Locate_result;
 
-  typedef Arity_tag<2>  Arity;
-  typedef Locate_type   return_type;
+  typedef Arity_tag<2>    Arity;
+  typedef Locate_result   return_type;
 
  private:
   typedef Triangulation_cw_ccw_2                      CW_CCW_2;
@@ -64,7 +63,7 @@ class RT_Point_locator
   typedef typename Dual_graph::Edge_circulator        Edge_circulator;
 
  public:
-  Locate_type operator()(const Dual_graph& dg, const Point_2& p) const {
+  Locate_result operator()(const Dual_graph& dg, const Point_2& p) const {
     CGAL_precondition( dg.dimension() >= 0 );
 
     typename DG::Geom_traits::Compare_power_distance_2 cmp_power_distance =
@@ -73,7 +72,7 @@ class RT_Point_locator
     Vertex_handle v = dg.nearest_power_vertex(p);
 
     if ( dg.dimension() == 0 ) {
-      return Base::make_locate_type(v);
+      return Accessor::make_locate_result(v);
     }
 
     if ( dg.dimension() == 1 ) {
@@ -91,7 +90,7 @@ class RT_Point_locator
 	    cr = cmp_power_distance(p, v2->point(), v->point());
 	    CGAL_assertion( cr != SMALLER );
 	    if ( cr == EQUAL ) {
-	      return Base::make_locate_type( e );
+	      return Accessor::make_locate_result( e );
 	    }
 	  }
 	} else {
@@ -100,14 +99,14 @@ class RT_Point_locator
 	    cr = cmp_power_distance(p, v1->point(), v->point());
 	    CGAL_assertion( cr != SMALLER );
 	    if ( cr == EQUAL ) {
-	      return Base::make_locate_type( e );
+	      return Accessor::make_locate_result( e );
 	    }
 	  }
 	}
 	++ec;
       } while ( ec != ec_start );
 
-      return Base::make_locate_type(v);
+      return Accessor::make_locate_result(v);
     }
 
     CGAL_assertion( dg.dimension() == 2 );
@@ -136,7 +135,7 @@ class RT_Point_locator
 
       if ( cr1 == EQUAL && cr2 == EQUAL ) {
 	Face_handle f(fc);
-	return Base::make_locate_type(f);
+	return Accessor::make_locate_result(f);
       }
 
       ++fc;
@@ -167,17 +166,17 @@ class RT_Point_locator
       if ( cr1 == EQUAL ) {
 	Face_handle f(fc);
 	Edge e(f, CW_CCW_2::cw(index));
-	return Base::make_locate_type(e);
+	return Accessor::make_locate_result(e);
       } else if ( cr2 == EQUAL ) {
 	Face_handle f(fc);
 	Edge e(f, CW_CCW_2::ccw(index));
-	return Base::make_locate_type(e);
+	return Accessor::make_locate_result(e);
       }
 
       ++fc;
     } while ( fc != fc_start );
 
-    return Base::make_locate_type(v);
+    return Accessor::make_locate_result(v);
   }
 };
 

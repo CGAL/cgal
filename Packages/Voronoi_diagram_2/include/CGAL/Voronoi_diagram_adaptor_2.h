@@ -39,7 +39,7 @@
 #include <CGAL/Voronoi_diagram_adaptor_2/Unbounded_edges.h>
 #include <CGAL/Voronoi_diagram_adaptor_2/Degeneracy_tester_binders.h>
 #include <CGAL/Voronoi_diagram_adaptor_2/Cached_degeneracy_testers.h>
-#include <CGAL/Voronoi_diagram_adaptor_2/Locate_type.h>
+#include <CGAL/Voronoi_diagram_adaptor_2/Locate_result.h>
 #include <CGAL/Voronoi_diagram_adaptor_2/Accessor.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -47,14 +47,13 @@ CGAL_BEGIN_NAMESPACE
 
 template<class DG, class Tr>
 class Voronoi_diagram_adaptor_2
-  : public CGAL_VORONOI_DIAGRAM_2_NS::Locate_type_accessor
-  < Voronoi_diagram_adaptor_2<DG,Tr>, true>
 {
  private:
   typedef Voronoi_diagram_adaptor_2<DG,Tr>   Self;
   typedef Triangulation_cw_ccw_2             CW_CCW_2;
 
-  typedef CGAL_VORONOI_DIAGRAM_2_NS::Locate_type_accessor<Self,true> Base;
+  typedef CGAL_VORONOI_DIAGRAM_2_NS::Locate_result_accessor<Self,true>
+  Locate_result_accessor;
 
   friend struct CGAL_VORONOI_DIAGRAM_2_NS::Accessor<Self>;
  public:
@@ -93,6 +92,8 @@ class Voronoi_diagram_adaptor_2
   // POINT LOCATION RELATED TYPES
   typedef typename Voronoi_traits::Has_point_locator  Has_point_locator;
   typedef typename Voronoi_traits::Point_2            Point_2;
+
+  typedef CGAL_VORONOI_DIAGRAM_2_NS::Locate_result<Self,true>  Locate_result;
 
   // TYPES FOR THE DEGENERACY TESTERS
   typedef typename Voronoi_traits::Edge_degeneracy_tester
@@ -595,11 +596,8 @@ public:
     return valid;
   }
 
-  // POINT LOCATION
-  typedef CGAL_VORONOI_DIAGRAM_2_NS::Locate_type<Self,true>  Locate_type;
-
  private:
-  Locate_type locate(const Point_2& p, const Tag_false&) const {
+  Locate_result locate(const Point_2& p, const Tag_false&) const {
     static unsigned int i = 0;
     if ( i == 0 ) {
       i++;
@@ -608,47 +606,47 @@ public:
 
     // to avoid warnings/errors...
     //    Face_handle f;
-    return Locate_type(Face_handle());
+    return Locate_result();
   }
 
-  Locate_type locate(const Point_2& p, const Tag_true&) const
+  Locate_result locate(const Point_2& p, const Tag_true&) const
   {
     CGAL_precondition( dual_.number_of_vertices() > 0 );
 
     typedef typename Voronoi_traits::Point_locator     Point_locator;
-    typedef typename Point_locator::Locate_type        PL_Locate_type;
+    typedef typename Point_locator::Locate_result      PL_Locate_result;
 
     Point_locator locate = tr_.point_locator_object();
-    PL_Locate_type pl_lt = locate(dual_, p);
+    PL_Locate_result pl_lr = locate(dual_, p);
 
-    if ( pl_lt.is_vertex() ) {
-      Face_handle f( Face(this, pl_lt.vertex()) );
-      return Base::make_locate_type(f);
-    } else if ( pl_lt.is_face() ) {
+    if ( pl_lr.is_vertex() ) {
+      Face_handle f( Face(this, pl_lr) );
+      return Locate_result_accessor::make_locate_result(f);
+    } else if ( pl_lr.is_face() ) {
       CGAL_VORONOI_DIAGRAM_2_NS::Find_valid_vertex<Self> vertex_finder;
-      Dual_face_handle dfvalid = vertex_finder(this, pl_lt.face());
+      Dual_face_handle dfvalid = vertex_finder(this, pl_lr);
       Vertex_handle v( Vertex(this, dfvalid) );
-      return Base::make_locate_type(v);
-    } else if ( pl_lt.is_edge() ) {
-      Dual_edge de = pl_lt.edge();
+      return Locate_result_accessor::make_locate_result(v);
+    } else if ( pl_lr.is_edge() ) {
+      Dual_edge de = pl_lr;
       CGAL_assertion(  !edge_tester()(dual_, de)  );
       if ( dual_.dimension() == 1 ) {
 	Dual_vertex_handle v1 = de.first->vertex(CW_CCW_2::ccw(de.second));
 	Dual_vertex_handle v2 =	de.first->vertex(CW_CCW_2::cw(de.second) );
 	Halfedge_handle e( Halfedge(this, v1, v2) );
-	return Base::make_locate_type(e);
+	return Locate_result_accessor::make_locate_result(e);
       }
       Halfedge_handle e( Halfedge(this, de.first, de.second) );
-      return Base::make_locate_type(e);
+      return Locate_result_accessor::make_locate_result(e);
     }
 
     // I should never have reached this line;
     CGAL_assertion( false );
-    return Base::make_locate_type(Face_handle());
+    return Locate_result();
   }
 
  public:
-  Locate_type locate(const Point_2& p) const {
+  Locate_result locate(const Point_2& p) const {
     return locate(p, Has_point_locator());
   }
 
