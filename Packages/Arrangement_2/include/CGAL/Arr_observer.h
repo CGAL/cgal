@@ -88,19 +88,24 @@ public:
   /// \name Modifying the associated arrangement.
   //@{
 
-  /*! Attach the observer to an arrangement. */
+  /*!
+   * Attach the observer to an arrangement. 
+   * \pre The observer is not already attached to an arrangement.
+   */
   void attach (Arrangement_2& arr)
   {
-    // Notify the concrete oberver (the sub-class) about the attachment.
-    before_attach (arr);
-
     // Do nothing if the associated arrangement is not changed.
     if (p_arr == &arr)
       return;
 
-    // Unregister the observer object from the current arrangement.
+    // The observer is not already attached to an arrangement.
+    CGAL_precondition (p_arr == NULL);
+
     if (p_arr != NULL)
-      p_arr->_unregister_observer (this);
+      return;
+
+    // Notify the concrete oberver (the sub-class) about the attachment.
+    before_attach (arr);
 
     // Register the observer object in the new arrangement.
     p_arr = &arr;
@@ -115,14 +120,15 @@ public:
   /*! Detach the observer to the arrangement. */
   void detach ()
   {
+    if (p_arr == NULL)
+      return;
+
     // Notify the concrete oberver (the sub-class) about the detachment.
     before_detach ();
 
-    // Unregister the observer object from the current arrangement.
-    if (p_arr != NULL)
-      p_arr->_unregister_observer (this);
-
-    // Mark that the oberver is not attached to an arrangement.
+    // Unregister the observer object from the current arrangement, and mark
+    // that the oberver is not attached to an arrangement.
+    p_arr->_unregister_observer (this);
     p_arr = NULL;
    
     // Notify the concrete oberver that the detachment took place.
