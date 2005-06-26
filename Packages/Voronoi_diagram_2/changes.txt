@@ -1,6 +1,11 @@
 26 June 2005:  Menelaos Karavelas
 - removed the type Size and the size_of_* methods from the Voronoi diagram
   adaptor; changed test suite and doc to reflect this change
+- renamed Locate_type to Locate_result.
+- renamed VoronoiDiagramLocateType_2 to VoronoiDiagramLocateResult_2.
+- renamed DelaunayGraphLocateType_2 to DelaunayGraphLocateResult_2.
+- made Locate_result convertible to vertex handle, face handle, halfedge
+  handle or edge; made Locate_result equality comparable.
 
 25 June 2005:  Menelaos Karavelas
 Manual:
