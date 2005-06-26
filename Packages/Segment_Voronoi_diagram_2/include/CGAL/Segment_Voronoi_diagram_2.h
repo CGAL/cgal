@@ -163,8 +163,8 @@ public:
   typedef typename DS::Edge                      Edge;
   typedef typename DS::Vertex_handle             Vertex_handle;
   typedef typename DS::Face_handle               Face_handle;
-  typedef typename DG::Vertex                    Vertex;
-  typedef typename DG::Face                      Face;
+  typedef typename DS::Vertex                    Vertex;
+  typedef typename DS::Face                      Face;
 
   typedef typename DS::Vertex_circulator         Vertex_circulator;
   typedef typename DS::Edge_circulator           Edge_circulator;

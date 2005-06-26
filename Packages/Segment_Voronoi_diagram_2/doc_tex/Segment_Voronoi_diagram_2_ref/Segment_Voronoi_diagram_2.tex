@@ -43,18 +43,24 @@ CGAL::Triangulation_face_base_2<Gt> >}.
 \ccInclude{CGAL/Segment_Voronoi_diagram_2.h}
 
 \ccIsModel
-\ccc{DefaultConstructible}\\
-\ccc{CopyConstructible}\\
-\ccc{Assignable}
+%\ccc{DefaultConstructible}\\
+%\ccc{CopyConstructible}\\
+%\ccc{Assignable}\\
+\ccc{DelaunayGraph_2}
 
 \ccTypes
 
 \ccThree{typedef typename Point_container::iterator}{Point_container+}{}
+\ccThreeToTwo
 %
 \ccTypedef{typedef Gt Geom_traits;}{A type for the geometric traits.}
 \ccGlue
 \ccTypedef{typedef DS  Data_structure;}{A type for the underlying
 data structure.}
+\ccGlue
+\ccTypedef{typedef Data_structure Triangulation_data_structure;}
+{This type has been added so that the \ccRefName\ class is a model of
+  the \ccc{DelaunayGraph_2} concept.}
 \ccGlue
 \ccTypedef{typedef typename DS::size_type size_type;}
 {Size type (an unsigned integral type)}
@@ -66,7 +72,9 @@ point defined in the geometric traits.}
 {A type for the segment Voronoi diagram site, defined in the geometric
   traits.}
 \ccGlue
-\ccTypedef{typedef std::set<Point_2> Point_container;}{A type for the container of points.}
+%\ccTypedef{typedef std::set<Point_2> Point_container;}{A type for the
+%container of points.}
+\ccNestedType{Point_container;}{A type for the container of points.}
 \ccGlue
 \ccTypedef{typedef typename Point_container::iterator Point_handle;}
 {A handle for points in the point container.}
@@ -102,6 +110,11 @@ The \ccc{Edge(f,i)} is the edge common to faces \ccc{f} and
 \ccc{vertex(cw(i))} and \ccc{vertex(ccw(i))} of \ccc{f}.
 \ccPrecond{\ccc{i} must be \ccc{0}, \ccc{1} or \ccc{2}.}}
 %
+\ccGlue
+\ccTypedef{typedef typename DS::Vertex Vertex;}
+{A type for a vertex.}
+\ccGlue
+\ccTypedef{typedef typename DS::Face Face;}{A type for a face.}
 \ccGlue
 \ccTypedef{typedef typename DS::Vertex_handle Vertex_handle;}
 {A type for a handle to a vertex.}
@@ -239,6 +252,9 @@ vertices in the dual of the segment Voronoi diagram.}
 \ccGlue
 \ccMethod{Data_structure data_structure();}{Returns a reference to the
   segment Voronoi diagram data structure object.}
+\ccGlue
+\ccMethod{Data_structure tds();}{Same as \ccc{data_structure()}. It
+  has been added for compliance to the \ccc{DelaunayGraph_2} concept.}
 \ccGlue
 \ccMethod{Point_container point_container();}{Returns a reference to
   the point container object.}
@@ -653,6 +669,7 @@ be preferred to \ccVar\ccc{ = other} or to \ccVar\ccc{(other)} if
 
 
 \ccSeeAlso
+\ccc{DelaunayGraph_2}\\
 \ccc{SegmentVoronoiDiagramTraits_2}\\
 \ccc{SegmentVoronoiDiagramDataStructure_2}\\
 \ccc{SegmentVoronoiDiagramVertexBase_2}\\
