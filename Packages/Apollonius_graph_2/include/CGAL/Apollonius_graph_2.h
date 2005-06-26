@@ -158,24 +158,25 @@ public:
   typedef typename Gt::Point_2                   Point_2;
   typedef typename Gt::Site_2                    Site_2;
 
-  typedef typename DG::Edge                      Edge;
-  typedef typename DG::Vertex_handle             Vertex_handle;
-  typedef typename DG::Face_handle               Face_handle;
-  typedef typename DG::Vertex                    Vertex;
-  typedef typename DG::Face                      Face;
+  typedef typename Agds::Edge                    Edge;
+  typedef typename Agds::Vertex_handle           Vertex_handle;
+  typedef typename Agds::Face_handle             Face_handle;
+  typedef typename Agds::Vertex                  Vertex;
+  typedef typename Agds::Face                    Face;
 
-  typedef typename DG::Vertex_circulator         Vertex_circulator;
-  typedef typename DG::Edge_circulator           Edge_circulator;
-  typedef typename DG::Face_circulator           Face_circulator;
+  typedef typename Agds::Vertex_circulator       Vertex_circulator;
+  typedef typename Agds::Edge_circulator         Edge_circulator;
+  typedef typename Agds::Face_circulator         Face_circulator;
 
-  typedef typename DG::All_faces_iterator        All_faces_iterator;
+  typedef typename Agds::Face_iterator           All_faces_iterator;
+  typedef typename Agds::Vertex_iterator         All_vertices_iterator;
+  typedef typename Agds::Edge_iterator           All_edges_iterator;
+
   typedef typename DG::Finite_faces_iterator     Finite_faces_iterator;
-  typedef typename DG::All_vertices_iterator     All_vertices_iterator;
   typedef typename DG::Finite_vertices_iterator  Finite_vertices_iterator;
-  typedef typename DG::All_edges_iterator        All_edges_iterator;
   typedef typename DG::Finite_edges_iterator     Finite_edges_iterator;
 
-  typedef typename DG::size_type                 size_type;
+  typedef typename Agds::size_type               size_type;
 
   // Auxiliary iterators for convenience
   // do not use default template argument to please VC++

@@ -1,6 +1,10 @@
 26 June 2005:  Menelaos Karavelas
 - doc: added Triangulation_data_structure type and tds() method; also added
   that the Apollonius_graph_2 class is a model of the DelaunayGraph_2 concept.
+- doc: added Vertex and Face types in the Apollonius_graph_2 class; fixed
+  some errors in the definition of the various iterators/circulators.
+- AG2 class: almost all combinatorial types are now defined through Agds and 
+  not the triangulation (except the Finite_*_iterator types).
 
 21 June 2005:  Menelaos Karavelas
 - removed unused code related to homogeneous coordinates/representations

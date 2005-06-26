@@ -78,7 +78,7 @@ infinite features while the others (the \ccc{Finite} iterators) visit only
 finite features. Circulators visit both infinite and finite features.
 
 \ccThree{typedef Data_structure::Vertex_circulator}
-{Vertex_circulator+}{}
+{All_vertices_iterator+}{}
 %
 % MK:: change the edge definition as follows?
 \ccTypedef{typedef Data_structure::Edge Edge;} {the edge type.
@@ -86,6 +86,12 @@ The \ccc{Edge(f,i)} is the edge common to faces \ccc{f} and
 \ccc{f.neighbor(i)}. It is also the edge joining the vertices
 \ccc{vertex(cw(i))} and \ccc{vertex(ccw(i))} of \ccc{f}.
 \ccPrecond{\ccc{i} must be \ccc{0}, \ccc{1} or \ccc{2}.}}
+\ccGlue
+\ccTypedef{typedef Data_structure::Vertex Vertex;}
+{A type for a vertex.}
+\ccGlue
+\ccTypedef{typedef Data_structure::Face Face;}
+{A type for a face.}
 \ccGlue
 \ccTypedef{typedef Data_structure::Vertex_handle Vertex_handle;}
 {A type for a handle to a vertex.}
@@ -101,35 +107,32 @@ The \ccc{Edge(f,i)} is the edge common to faces \ccc{f} and
 \ccGlue
 \ccTypedef{typedef Data_structure::Edge_circulator Edge_circulator;}
 {A type for a circulator over edges incident to a given vertex.}
-\ccThree{typedef Data_structure::Finite_vertices_iterator}
-{Finite_vertices_iterator+}{}
 \ccGlue
-\ccTypedef{typedef Data_structure::All_vertices_iterator
+\ccTypedef{typedef Data_structure::Vertex_iterator
   All_vertices_iterator;}
 {A type for an iterator over all vertices.}
 \ccGlue
-\ccTypedef{typedef Data_structure::Finite_vertices_iterator
-  Finite_vertices_iterator;}
-{A type for an iterator over finite vertices.}
-\ccGlue
-\ccTypedef{typedef Data_structure::All_faces_iterator
+\ccTypedef{typedef Data_structure::Face_iterator
   All_faces_iterator;}
 {A type for an iterator over all faces.}
 \ccGlue
-\ccTypedef{typedef Data_structure::Finite_faces_iterator
-  Finite_faces_iterator;}
-{A type for an iterator over finite faces.}
-\ccGlue
-\ccTypedef{typedef Data_structure::All_edges_iterator
+\ccTypedef{typedef Data_structure::Edge_iterator
   All_edges_iterator;}
 {A type for an iterator over all edges.}
 \ccGlue
-\ccTypedef{typedef Data_structure::Finite_edges_iterator
-  Finite_edges_iterator;}
-{A type for an iterator over finite edges.}
-\ccGlue
 \ccTypedef{typedef Data_structure::size_type size_type;}
 {An unsigned integral type.}
+%
+\ccTwo{Apollonius_graph_2<Gt,Agds>::Finite_vertices_iterator+}{}
+\ccNestedType{Finite_vertices_iterator;}
+{A type for an iterator over finite vertices.}
+\ccGlue
+\ccNestedType{Finite_faces_iterator;}
+{A type for an iterator over finite faces.}
+\ccGlue
+\ccNestedType{Finite_edges_iterator;}
+{A type for an iterator over finite edges.}
+%
 
 
 In addition to iterators and circulators for vertices and faces,
@@ -137,8 +140,7 @@ iterators for sites are provided. In particular there are iterators
 for the entire set of sites, the hidden sites and the visible sites of
 the Apollonius graph.
 
-\ccTwo{Apollonius_graph_2<Gt,Agds>::Visible_sites_iterator+}
-{}
+\ccTwo{Apollonius_graph_2<Gt,Agds>::Visible_sites_iterator+}{}
 
 \ccNestedType{Sites_iterator}
 {A type for an iterator over all sites.}
