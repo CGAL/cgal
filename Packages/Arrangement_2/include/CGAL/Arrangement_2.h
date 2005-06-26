@@ -223,7 +223,8 @@ public:
   /*! Check whether the arrangement is empty. */
   bool is_empty () const
   {
-    return (halfedges_begin() == halfedges_end());
+    return (vertices_begin() == vertices_end() &&
+	    halfedges_begin() == halfedges_end());
   }
 
   /*! Get the number of arrangement vertices. */

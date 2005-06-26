@@ -17,6 +17,10 @@
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
+/*! \file
+ * Definition of the Arr_aggregate_insert<Arrangement> class.
+ */
+
 #ifndef CGAL_ARR_AGGREGATE_INSERT_H
 #define CGAL_ARR_AGGREGATE_INSERT_H
 
@@ -27,125 +31,145 @@
 #include <CGAL/Sweep_line_2/Sweep_line_2_utils.h>
 #include <CGAL/assertions.h>
 #include <list>
-#include <vector>
 #include <algorithm>
 
 CGAL_BEGIN_NAMESPACE
 
-template <class Arr>
+/*! \class
+ * An auxiliray class for performing aggragated insertion of a range of curves
+ * into an arrangement using the sweep-line algorithm.
+ */
+template <class Arrangement_>
 class Arr_aggregate_insert 
 {
-  typedef typename Arr::Halfedge_handle                      Halfedge_handle;
-  typedef typename Arr::Edge_iterator                        Edge_iterator;
-  typedef typename Arr::Traits_2                             Traits;
-  typedef Arr_sweep_line_curve<Traits>                       Subcurve; 
-  typedef Arr_sweep_line_event<Traits,
+  typedef Arrangement_                              Arrangement_2;
+  typedef typename Arrangement_2::Halfedge_handle   Halfedge_handle;
+  typedef typename Arrangement_2::Edge_iterator     Edge_iterator;
+  typedef typename Arrangement_2::Vertex_handle     Vertex_handle;
+  typedef typename Arrangement_2::Vertex_iterator   Vertex_iterator;
+  typedef typename Arrangement_2::Traits_2          Traits_2;
+  typedef Arr_sweep_line_curve<Traits_2>            Subcurve; 
+  typedef Arr_sweep_line_event<Traits_2,
                                Subcurve,
-                               Halfedge_handle>              Event;
-  typedef typename Traits::X_monotone_curve_2                X_monotone_curve_2;
-  typedef typename Traits::Point_2                           Point_2;
-  typedef Arr_sweep_line_visitor<Traits,
-                                 Arr,
+                               Halfedge_handle>     Event;
+  typedef typename Traits_2::X_monotone_curve_2     X_monotone_curve_2;
+  typedef typename Traits_2::Point_2                Point_2;
+
+  typedef Arr_sweep_line_visitor<Traits_2,
+                                 Arrangement_2,
                                  Event,
-                                 Subcurve>                   Visitor;
+                                 Subcurve>          Visitor;
 
-  
+  typedef Sweep_line_2<Traits_2,
+		       Event,
+		       Subcurve,
+		       Visitor,
+		       CGAL_ALLOCATOR(int)>         Sweep_line_2;
  
-  typedef Sweep_line_2<Traits,
-                            Event,
-                            Subcurve,
-                            Visitor,
-                            CGAL_ALLOCATOR(int)>       Sweep_line;
- 
-
-
 public:
 
-  Arr_aggregate_insert(Arr *arr):
-      m_traits(new Traits()),
-      m_traits_owner(true),
-      m_arr(arr),
-      m_visitor(arr),
-      m_sweep_line(m_traits, &m_visitor)
-      {}
+  /*! Constructor. */
+  Arr_aggregate_insert (Arrangement_2& arr) :
+    m_arr (&arr),
+    m_traits (arr.get_traits()),
+    m_visitor (&arr),
+    m_sweep_line (m_traits, &m_visitor)
+  {}
 
-
-  Arr_aggregate_insert(const Traits *traits, Arr *arr):
-      m_traits(traits),
-      m_traits_owner(false),
-      m_arr(arr),
-      m_visitor(arr),
-      m_sweep_line(m_traits, &m_visitor)
-      {}
-
+  /*!
+   * Insert a range of curves (not necessarily x-monotone) into the
+   * arrangement.
+   * \param begin An iterator for the first curve in the range.
+   * \param end A past-the-end iterator for the range.
+   * \pre The value-type of the iterators should be Traits_2::Curve_2.
+   */
   template<class CurveInputIterator>
-  void insert_curves(CurveInputIterator begin, 
-                     CurveInputIterator end)
+  void insert_curves (CurveInputIterator begin, 
+		      CurveInputIterator end)
   {
-    std::vector<X_monotone_curve_2>      curves_vec;
-    curves_vec.reserve(std::distance(begin, end) + m_arr->number_of_edges());
+    // Seperate each curve in the range into x-monotone subcurves and isolated
+    // points.
+    std::list<X_monotone_curve_2>      x_curves;
+    std::list<Point_2>                 iso_points;
 
-    std::vector<Point_2> points_vec;
-    make_x_monotone(begin,
-                    end,
-                    std::back_inserter(curves_vec),
-                    std::back_inserter(points_vec),
-                    m_traits);
+    make_x_monotone (begin,
+		     end,
+		     std::back_inserter(x_curves),
+		     std::back_inserter(iso_points),
+		     m_traits);
    
-    for (Edge_iterator eit = m_arr->edges_begin();
-         eit != m_arr->edges_end();
-         ++eit) 
+    // Add the existing curves in the arrangement.
+    Edge_iterator                      eit;
+
+    for (eit = m_arr->edges_begin(); eit != m_arr->edges_end(); ++eit) 
+      x_curves.push_back ((*eit).curve());
+
+    // Add the existing isolated vertices in the arrangement.
+    Vertex_iterator                    vit;
+
+    for (vit = m_arr->vertices_begin(); vit != m_arr->vertices_end(); ++vit)
     {
-      curves_vec.push_back(eit->curve());
+      if ((*vit).is_isolated())
+	iso_points.push_back ((*vit).point());
     }
 
+    //Perform the sweep.
     m_arr->clear();
-
-    //Perform the sweep
-    m_sweep_line.sweep(curves_vec.begin(),
-                       curves_vec.end(),
-                       points_vec.begin(),
-                       points_vec.end());
+    m_sweep_line.sweep (x_curves.begin(),
+			x_curves.end(),
+			iso_points.begin(),
+			iso_points.end());
    
+    return;
   }
 
+  /*!
+   * Insert a range of x-monotone curves into the arrangement.
+   * \param begin An iterator for the first x-monotone curve in the range.
+   * \param end A past-the-end iterator for the range.
+   * \pre The value-type of the iterators should be X_monotone_curve_2.
+   */
   template<class XCurveInputIterator>
-  void insert_x_curves(XCurveInputIterator begin,
-                       XCurveInputIterator end)
+  void insert_x_curves (XCurveInputIterator begin,
+			XCurveInputIterator end)
   {
-    std::vector<X_monotone_curve_2>      curves_vec;
-    curves_vec.reserve(std::distance(begin, end) + m_arr->number_of_edges());
-    std::copy(begin, end, std::back_inserter(curves_vec));
+    // Copy the x-montone curves.
+    std::list<X_monotone_curve_2>      x_curves;
 
-    for (Edge_iterator eit = m_arr->edges_begin();
-         eit != m_arr->edges_end();
-         ++eit) 
+    std::copy (begin, end, std::back_inserter(x_curves));
+
+    // Add the existing curves in the arrangement.
+    Edge_iterator                      eit;
+
+    for (eit = m_arr->edges_begin(); eit != m_arr->edges_end(); ++eit) 
+      x_curves.push_back ((*eit).curve());
+
+    // Add the existing isolated vertices in the arrangement.
+    std::list<Point_2>                 iso_points;
+    Vertex_iterator                    vit;
+
+    for (vit = m_arr->vertices_begin(); vit != m_arr->vertices_end(); ++vit)
     {
-      curves_vec.push_back(eit->curve());
+      if ((*vit).is_isolated())
+	iso_points.push_back ((*vit).point());
     }
 
+    //Perform the sweep.
     m_arr->clear();
-    m_sweep_line.init(curves_vec.begin(), curves_vec.end());
-    m_sweep_line.sweep();
+    m_sweep_line.sweep (x_curves.begin(),
+			x_curves.end(),
+			iso_points.begin(),
+			iso_points.end());
+
+    return;
   }
-
- 
-
-  ~Arr_aggregate_insert()
-  {
-    if(m_traits_owner)
-      delete m_traits;
-  }
-
-
               
 protected:
 
-  const Traits*        m_traits;
-  bool                 m_traits_owner;
-  Arr*                 m_arr;
+  Arrangement_2*       m_arr;
+  const Traits_2*      m_traits;
   Visitor              m_visitor;
-  Sweep_line           m_sweep_line;
+  Sweep_line_2         m_sweep_line;
 };
 
 CGAL_END_NAMESPACE

@@ -91,6 +91,9 @@ public:
   /*! Attach the observer to an arrangement. */
   void attach (Arrangement_2& arr)
   {
+    // Notify the concrete oberver (the sub-class) about the attachment.
+    before_attach (arr);
+
     // Do nothing if the associated arrangement is not changed.
     if (p_arr == &arr)
       return;
@@ -103,12 +106,18 @@ public:
     p_arr = &arr;
     p_arr->_register_observer (this);
 
+    // Notify the concrete oberver that the attachment took place.
+    after_attach();
+
     return;
   }
 
   /*! Detach the observer to the arrangement. */
   void detach ()
   {
+    // Notify the concrete oberver (the sub-class) about the detachment.
+    before_detach (arr);
+
     // Unregister the observer object from the current arrangement.
     if (p_arr != NULL)
       p_arr->_unregister_observer (this);
@@ -116,6 +125,9 @@ public:
     // Mark that the oberver is not attached to an arrangement.
     p_arr = NULL;
    
+    // Notify the concrete oberver that the detachment took place.
+    after_detach();
+
     return;
   }
   //@}
@@ -134,7 +146,6 @@ public:
   /*!
    * Notification after the arrangement has been assigned with another
    * arrangement.
-   * \param u A handle to the unbounded face.
    */
   virtual void after_assign ()
   {}
@@ -156,6 +167,35 @@ public:
 
   /*! Notification after a global operation is completed. */
   virtual void after_global_change ()
+  {}
+  //@}
+
+  /// \name Notification functions on observer attachment or detachment.
+  //@{
+
+  /*! 
+   * Notification before the observer is attached to an arrangement.
+   * \param arr The arrangement we are about to attach the observer to.
+   */
+  virtual void before_attach (const Arrangement_2& /* arr */)
+  {}
+
+  /*!
+   * Notification after the observer has been attached to an arrangement.
+   */
+  virtual void after_attach ()
+  {}
+
+  /*! 
+   * Notification before the observer is detached from the arrangement.
+   */
+  virtual void before_detach ()
+  {}
+
+  /*!
+   * Notification after the observer has been detached to the arrangement.
+   */
+  virtual void after_detach ()
   {}
   //@}
 
