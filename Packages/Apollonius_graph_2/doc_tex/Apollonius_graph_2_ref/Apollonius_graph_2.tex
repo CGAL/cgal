@@ -31,12 +31,20 @@ CGAL::Triangulation_face_base_2<Gt> >}.
 
 \ccInclude{CGAL/Apollonius_graph_2.h}
 
+\ccIsModel
+\ccc{DelaunayGraph_2}
+
 \ccTypes
 
-\ccThree{typedef Gt::Point_2}{Data_structure+}{}
+\ccThree{typedef Data_structure}{Triangulation_data_structure+}{}
 %
 \ccTypedef{typedef Agds  Data_structure;}{A type for the underlying
 data structure.}
+\ccGlue
+\ccTypedef{typedef Data_structure Triangulation_data_structure;}
+{Same as the \ccc{Data_structure} type. This type has been introduced
+  in order for the \ccRefName\ class to be a
+  model of the \ccc{DelaunayGraph_2} concept.}
 \ccGlue
 \ccTypedef{typedef Gt Geom_traits;}{A type for the geometric traits.}
 \ccGlue
@@ -45,7 +53,6 @@ point defined in the geometric traits.}
 \ccGlue
 \ccTypedef{typedef Gt::Site_2  Site_2;}
 {A type for the Apollonius site, defined in the geometric traits.}
-\ccGlue
 %
 
 % MK:: in the following copy text from TDS
@@ -133,7 +140,6 @@ the Apollonius graph.
 \ccTwo{Apollonius_graph_2<Gt,Agds>::Visible_sites_iterator+}
 {}
 
-\ccGlue
 \ccNestedType{Sites_iterator}
 {A type for an iterator over all sites.}
 \ccGlue
@@ -180,10 +186,18 @@ operator=(const Apollonius_graph_2<Gt,Agds>& other);}
 
 \ccAccessFunctions
 % MK:: in the following copy text from TDS
-\ccThree{Vertex_handle}{ag.number_of_hidden_vertices()+}{}
+\ccThree{Data_structure}{ag.number_of_visible_sites()+}{}
+\ccThreeToTwo
 %
 \ccMethod{Geom_traits geom_traits();}
 {Returns a reference to the Apollonius graph traits object.}
+\ccGlue
+\ccMethod{Data_structure data_structure();}{Returns a reference to the
+underlying data structure.}
+\ccGlue
+\ccMethod{Data_structure tds();}{Same as \ccc{data_structure()}. This
+  method has been added in compliance with the \ccc{DelaunayGraph_2}
+  concept.}
 \ccGlue
 \ccMethod{int dimension();}
 {Returns the dimension of the Apollonius graph.}
@@ -590,6 +604,7 @@ be preferred to \ccVar\ccc{ = other} or to \ccVar\ccc{(other)} if
 
 
 \ccSeeAlso
+\ccc{DelaunayGraph_2}\\
 \ccc{ApolloniusGraphTraits_2}\\
 \ccc{ApolloniusGraphDataStructure_2}\\
 \ccc{ApolloniusGraphVertexBase_2}\\
