@@ -522,6 +522,7 @@ Arrangement_2<Traits,Dcel>::insert_from_right_vertex
 					   prev2, v1);
 
   return (Halfedge_handle (new_he));
+
 }
 
 //-----------------------------------------------------------------------------
@@ -677,7 +678,7 @@ Arrangement_2<Traits,Dcel>::insert_at_vertices (const X_monotone_curve_2& cv,
   // halfedges after which the new curve should be inserted, respectively.
   Halfedge  *prev1 = _locate_around_vertex (v1.p_v, cv);
   Halfedge  *prev2 = _locate_around_vertex (v2.p_v, cv);
-
+  
   CGAL_assertion_msg
     (prev1 != NULL && prev2 != NULL,
      "The inserted curve should not exist in the arrangement.");
@@ -697,6 +698,7 @@ template<class Traits, class Dcel>
 typename Arrangement_2<Traits,Dcel>::Halfedge_handle 
 Arrangement_2<Traits,Dcel>::insert_at_vertices (const X_monotone_curve_2& cv, 
                                                 Halfedge_handle prev1, 
+
                                                 Vertex_handle v2)
 {
   CGAL_precondition_msg
@@ -960,6 +962,7 @@ Arrangement_2<Traits,Dcel>::split_edge (Halfedge_handle e,
       CGAL_precondition (traits->equal_2_object() (source, cv1_right) && 
                          traits->equal_2_object() (target, cv2_left));
 
+
       p_cv1 = &cv1;
       p_cv2 = &cv2;
     }
@@ -994,7 +997,23 @@ Arrangement_2<Traits,Dcel>::merge_edge (Halfedge_handle e1,
      (traits->equal_2_object() (traits->construct_min_vertex_2_object() (cv),
                                 e1.target().point()) &&
       traits->equal_2_object() (traits->construct_max_vertex_2_object() (cv),
-                                e2.target().point())),
+                                e2.target().point())) ||
+     (traits->equal_2_object() (traits->construct_min_vertex_2_object() (cv),
+                                e2.source().point()) &&
+      traits->equal_2_object() (traits->construct_max_vertex_2_object() (cv),
+                                e1.source().point())) ||
+     (traits->equal_2_object() (traits->construct_min_vertex_2_object() (cv),
+                                e2.source().point()) &&
+      traits->equal_2_object() (traits->construct_max_vertex_2_object() (cv),
+                                e1.target().point())) ||
+     (traits->equal_2_object() (traits->construct_min_vertex_2_object() (cv),
+                                e2.target().point()) &&
+      traits->equal_2_object() (traits->construct_max_vertex_2_object() (cv),
+                                e1.source().point())) ||
+     (traits->equal_2_object() (traits->construct_min_vertex_2_object() (cv),
+                                e2.target().point()) &&
+      traits->equal_2_object() (traits->construct_max_vertex_2_object() (cv),
+                                e1.target().point())),                                
      "The curve endpoints do not match the merged edges.");
 
   // Assign pointers to the existing halfedges, such that we have:
@@ -1089,6 +1108,7 @@ Arrangement_2<Traits,Dcel>::merge_edge (Halfedge_handle e1,
   }
 
   if (f2->halfedge() == he4)
+
   {
     f2->set_halfedge (he2);
 
