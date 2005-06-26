@@ -858,6 +858,12 @@ public:
     
     return _Halfedge_around_vertex_circulator<Traits, Dcel> (p_v->halfedge());
   }
+
+  /*! Get a pointer to the current vertex. */
+  Vertex* operator-> () const
+  {
+    return (p_v);
+  }
 };
 
 // Dereference operator:
@@ -915,6 +921,7 @@ public:
   }
 
   /*! Inequality operator. */
+
   bool operator!= (const Self& vh) const
   {
     return (p_v != vh.p_v);
@@ -952,6 +959,7 @@ public:
       curr = curr->next()->opposite();
     } while (curr != first);
 
+
     return (deg);
   }
 
@@ -967,6 +975,13 @@ public:
     return _Halfedge_around_vertex_const_circulator<Traits, Dcel>
                                                              (p_v->halfedge());
   }
+
+  /*! Get a pointer to the current vertex. */
+  const Vertex* operator-> () const
+  {
+    return (p_v);
+  }
+
 };
 
 // Dereference operator:
@@ -1059,6 +1074,13 @@ public:
     return _Isolated_vertices_iterator<Traits_, Dcel>
                                             (p_f->isolated_vertices_end());
   }
+
+  /*! Get a pointer to the current face. */
+  Face* operator-> () const
+  {
+    return (p_f);
+  }
+
 };
 
 /*! \class
@@ -1149,6 +1171,13 @@ public:
     return _Isolated_vertices_const_iterator<Traits_, Dcel>
                                             (p_f->isolated_vertices_end());
   }
+
+  /*! Get a pointer to the current face. */
+  const Face* operator-> () const
+  {
+    return (p_f);
+  }
+
 };
 
 /*! \class
@@ -1257,6 +1286,12 @@ public:
   {
     return Self (p_he->next());
   }
+
+  /*! Get a pointer to the current halfedge. */
+  Halfedge* operator-> () const
+  {
+    return (p_he);
+  }
 };
 
 // Dereference operators:
@@ -1363,6 +1398,13 @@ public:
   {
     return Self (p_he->next());
   }
+
+  /*! Get a pointer to the current halfedge. */
+  const Halfedge* operator-> () const
+  {
+    return (p_he);
+  }
+
 };
 
 // Dereference operators:
@@ -1467,12 +1509,6 @@ public:
   {
     return _Vertex_handle<Traits_, Dcel> (&(*vit));
   }
-
-  /*! Get a pointer to the current vertex. */
-  Vertex* operator-> () const
-  {
-    return (&(*vit));
-  }
 };
 
 /*! \class
@@ -1561,12 +1597,6 @@ public:
   {
     return _Vertex_const_handle<Traits_, Dcel> (&(*vit));
   }
-
-  /*! Get a pointer to the current vertex. */
-  const Vertex* operator-> () const
-  {
-    return (&(*vit));
-  }
 };
 
 /*! \class
@@ -1652,12 +1682,6 @@ public:
   {
     return _Halfedge_handle<Traits_, Dcel> (&(*hit));
   }
-
-  /*! Get a pointer to the current halfedge. */
-  Halfedge* operator-> () const
-  {
-    return (&(*hit));
-  }
 };
 
 /*! \class
@@ -1687,6 +1711,7 @@ public:
   typedef typename Halfedge_const_iter::size_type       Size;
   typedef typename Halfedge_const_iter::size_type       size_type;
   typedef typename Halfedge_const_iter::difference_type difference_type;
+
   typedef typename Halfedge_const_iter::difference_type Difference;
   typedef std::bidirectional_iterator_tag               iterator_category;
 
@@ -1745,12 +1770,6 @@ public:
   _Halfedge_const_handle<Traits_, Dcel> operator* () const
   {
     return _Halfedge_const_handle<Traits_, Dcel> (&(*hit));  
-  }
-
-  /*! Get a pointer to the current halfedge. */
-  const Halfedge* operator-> () const
-  {
-    return (&(*hit));
   }
 };
 
@@ -1838,11 +1857,6 @@ public:
     return _Halfedge_handle<Traits_, Dcel> (&(*eit));
   }
 
-  /*! Get a pointer to the current halfedge. */
-  Halfedge* operator-> () const
-  {
-    return (&(*eit));
-  }
 };
 
 /*! \class
@@ -1931,12 +1945,6 @@ public:
   {
     return _Halfedge_const_handle<Traits_, Dcel> (&(*eit));
   }
-
-  /*! Get a pointer to the current halfedge. */
-  const Halfedge* operator-> () const
-  {
-    return (&(*eit));
-  }
 };
 
 /*! \class
@@ -2021,12 +2029,6 @@ public:
   _Face_handle<Traits_, Dcel> operator* () const
   {
     return _Face_handle<Traits_, Dcel> (&(*fit));  
-  }
-
-  /*! Get a pointer to the current face. */
-  Face* operator-> () const
-  {
-    return (&(*fit));
   }
 };
 
@@ -2115,12 +2117,6 @@ public:
   _Face_const_handle<Traits_, Dcel> operator* () const
   {
     return _Face_const_handle<Traits_, Dcel> (&(*fit));
-  }
-
-  /*! Get a pointer to the current face. */
-  const Face* operator-> () const
-  {
-    return (&(*fit));
   }
 };
 
