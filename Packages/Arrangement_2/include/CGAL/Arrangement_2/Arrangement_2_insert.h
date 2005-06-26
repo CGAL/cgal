@@ -316,7 +316,7 @@ void insert_non_intersecting (Arrangement_2<Traits,Dcel>& arr,
   arr_access.notify_before_global_change();
 
   // Perform the aggregated insertion.
-  Arr_non_x_aggregate_insert<Arrangement_2>  agg_insert_obj (&arr);
+  Arr_non_x_aggregate_insert<Arrangement_2>  agg_insert_obj (arr);
   agg_insert_obj.insert_curves(begin, end);
 
   // Notify the arrangement observers that the global operation has been
@@ -339,6 +339,7 @@ remove_edge (Arrangement_2<Traits,Dcel>& arr,
   // Notify the arrangement observers that a global operation is about to 
   // take place.
   typedef Arrangement_2<Traits,Dcel>                     Arrangement_2;
+
 
   Arr_accessor<Arrangement_2>                      arr_access (arr);
 
@@ -515,6 +516,7 @@ bool remove_vertex (Arrangement_2<Traits,Dcel>& arr,
       typename Traits::X_monotone_curve_2   cv;
       traits->merge_2_object() (e1.curve(), e2.curve(),
 				cv);
+
 
       // Merge the two edges in the arrangement.
       arr.merge_edge (e1, e2, cv);
