@@ -159,7 +159,7 @@ void insert_x_monotone (Arrangement_2<Traits,Dcel>& arr,
   Arrangement_zone_2<Arrangement_2, Zone_visitor>  arr_zone (arr, &visitor);
 
   // Initialize the zone-computation object with the given curve.
-  arr_zone.init (*x_iter, pl);
+  arr_zone.init (c, pl);
 
   // Notify the arrangement observers that a global operation is about to 
   // take place.
