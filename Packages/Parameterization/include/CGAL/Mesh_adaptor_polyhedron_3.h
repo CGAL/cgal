@@ -59,6 +59,8 @@ public:
     typedef Polyhedron_3_                   Polyhedron;
     struct                                  Halfedge_info;
     struct                                  Vertex_info;
+    typedef typename Polyhedron::Traits::Point_2
+                                            Point_2;
 
 private:
     struct                                  Less;
@@ -71,11 +73,11 @@ private:
 
     // Halfedge
     typedef typename Polyhedron::Halfedge   Halfedge;
-    typedef typename Polyhedron::Halfedge_handle     
+    typedef typename Polyhedron::Halfedge_handle
                                             Halfedge_handle;
-    typedef typename Polyhedron::Halfedge_const_handle 
+    typedef typename Polyhedron::Halfedge_const_handle
                                             Halfedge_const_handle;
-    typedef typename Polyhedron::Halfedge_iterator   
+    typedef typename Polyhedron::Halfedge_iterator
                                             Halfedge_iterator;
     typedef typename Polyhedron::Halfedge_const_iterator
                                             Halfedge_const_iterator;
@@ -88,12 +90,12 @@ private:
     typedef typename Polyhedron::Halfedge_around_facet_const_circulator
                                             Halfedge_around_facet_const_circulator;
     // Additional info attached to halfedges
-    typedef typename std::map<Halfedge_const_handle, 
-                              Halfedge_info, 
+    typedef typename std::map<Halfedge_const_handle,
+                              Halfedge_info,
                               Less>         Halfedge_info_map;
     // Additional info attached to vertices
-    typedef typename std::map<typename Polyhedron::Vertex_const_handle, 
-                              Vertex_info, 
+    typedef typename std::map<typename Polyhedron::Vertex_const_handle,
+                              Vertex_info,
                               Less>         Vertex_info_map;
 
 
@@ -152,7 +154,7 @@ public:
     };
 
     // Additional info attached to vertices
-    class Vertex_info 
+    class Vertex_info
     {
     private:
         int m_tag;                  // general purpose tag
@@ -192,36 +194,36 @@ public:
     // Number type
     typedef typename Polyhedron::Traits::FT NT;
     // Points and vectors
-    typedef typename Polyhedron::Traits::Point_2     
+    typedef typename Polyhedron::Traits::Point_2
                                             Point_2;
-    typedef typename Polyhedron::Traits::Point_3     
+    typedef typename Polyhedron::Traits::Point_3
                                             Point_3;
-    typedef typename Polyhedron::Traits::Vector_2    
+    typedef typename Polyhedron::Traits::Vector_2
                                             Vector_2;
-    typedef typename Polyhedron::Traits::Vector_3    
+    typedef typename Polyhedron::Traits::Vector_3
                                             Vector_3;
 
     // Facet
     typedef typename Polyhedron::Facet      Facet;
     typedef typename Polyhedron::Facet_handle Facet_handle;
-    typedef typename Polyhedron::Facet_const_handle  
+    typedef typename Polyhedron::Facet_const_handle
                                             Facet_const_handle;
     // Iterator over all mesh facets
-    typedef typename Polyhedron::Facet_iterator      
+    typedef typename Polyhedron::Facet_iterator
                                             Facet_iterator;
-    typedef typename Polyhedron::Facet_const_iterator 
+    typedef typename Polyhedron::Facet_const_iterator
                                             Facet_const_iterator;
 
     // Vertex
     typedef typename Polyhedron::Vertex     Vertex;
-    typedef typename Polyhedron::Vertex_handle       
+    typedef typename Polyhedron::Vertex_handle
                                             Vertex_handle;
-    typedef typename Polyhedron::Vertex_const_handle 
+    typedef typename Polyhedron::Vertex_const_handle
                                             Vertex_const_handle;
     // Iterator over all mesh vertices
-    typedef typename Polyhedron::Vertex_iterator     
+    typedef typename Polyhedron::Vertex_iterator
                                             Vertex_iterator;
-    typedef typename Polyhedron::Vertex_const_iterator 
+    typedef typename Polyhedron::Vertex_const_iterator
                                             Vertex_const_iterator;
     // Iterator over mesh boundary vertices
     typedef CGAL::Convertible_iterator_project<typename std::list<Vertex_handle>::iterator,
@@ -324,9 +326,9 @@ public:
                 return cir;
 
 #ifdef DEBUG_TRACE
-        fprintf(stderr, 
-                "      get_halfedge(%d->%d): error\n", 
-                info(source)->index(), 
+        fprintf(stderr,
+                "      get_halfedge(%d->%d): error\n",
+                info(source)->index(),
                 info(target)->index());
 #endif
         assert(false);              // error if we reach this point
@@ -340,30 +342,30 @@ public:
         return const_cast<Halfedge*>(&*halfedge);
     }
 
-    // Access to additional info attached to halfedges 
+    // Access to additional info attached to halfedges
     const Halfedge_info* info(Halfedge_const_handle halfedge) const
     {
-        Halfedge_info_map::const_iterator it = m_halfedge_info.find(halfedge);
+        typename Halfedge_info_map::const_iterator it = m_halfedge_info.find(halfedge);
         CGAL_parameterization_assertion(it != m_halfedge_info.end());
         return &it->second;
     }
     Halfedge_info* info(Halfedge_const_handle halfedge)
     {
-        Halfedge_info_map::iterator it = m_halfedge_info.find(halfedge);
+        typename Halfedge_info_map::iterator it = m_halfedge_info.find(halfedge);
         CGAL_parameterization_assertion(it != m_halfedge_info.end());
         return &it->second;
     }
 
-    // Access to additional info attached to vertices 
+    // Access to additional info attached to vertices
     const Vertex_info* info(Vertex_const_handle vertex) const
     {
-        Vertex_info_map::const_iterator it = m_vertex_info.find(vertex);
+        typename Vertex_info_map::const_iterator it = m_vertex_info.find(vertex);
         CGAL_parameterization_assertion(it != m_vertex_info.end());
         return &it->second;
     }
     Vertex_info* info(Vertex_const_handle vertex)
     {
-        Vertex_info_map::iterator it = m_vertex_info.find(vertex);
+        typename Vertex_info_map::iterator it = m_vertex_info.find(vertex);
         CGAL_parameterization_assertion(it != m_vertex_info.end());
         return &it->second;
     }
@@ -448,7 +450,7 @@ public:
         // if isolated vertex
         if (pHalfedge == NULL) {
             boundary.push_back(seed_vertex);
-            return boundary; 
+            return boundary;
         }
 
         // Get seed_vertex' border halfedge
@@ -614,7 +616,7 @@ public:
     }
 
     // Return true if a vertex belongs to ANY mesh's boundary
-    bool  is_vertex_on_border(Vertex_const_handle vertex) const 
+    bool  is_vertex_on_border(Vertex_const_handle vertex) const
     {
         Halfedge_around_vertex_const_circulator pHalfedge = vertex->vertex_begin();
         Halfedge_around_vertex_const_circulator end       = pHalfedge;
@@ -626,11 +628,11 @@ public:
         return false;
     }
 
-    // Return true if a vertex belongs to the UNIQUE mesh's main boundary, 
+    // Return true if a vertex belongs to the UNIQUE mesh's main boundary,
     // ie the mesh's LONGEST boundary
     bool  is_vertex_on_main_border(Vertex_const_handle vertex) const {
-        return std::find(m_main_border.begin(), 
-                         m_main_border.end(), 
+        return std::find(m_main_border.begin(),
+                         m_main_border.end(),
                          (Vertex*)&*vertex) != m_main_border.end();
     }
 
@@ -726,7 +728,7 @@ public:
                                               cir_end = cir;
             CGAL_For_all(cir, cir_end) {
 #ifdef DEBUG_TRACE
-                std::cerr << "      H" << info(cir)->index() 
+                std::cerr << "      H" << info(cir)->index()
                           << "(" << info(cir->opposite()->vertex())->index() << "->" << info(cir->vertex())->index() << ")"
                           << "<- (u=" << uv.x() << ",v=" << uv.y() << ")\n";
 #endif
@@ -750,7 +752,7 @@ public:
             // of the prev_vertex -> vertex -> next_vertex line
             CGAL_For_all(cir, cir_end) {
 #ifdef DEBUG_TRACE
-                std::cerr << "      H" << info(cir)->index() 
+                std::cerr << "      H" << info(cir)->index()
                           << "(" << info(cir->opposite()->vertex())->index() << "->" << info(cir->vertex())->index() << ")"
                           << "<- (u=" << uv.x() << ",v=" << uv.y() << ")\n";
 #endif
@@ -965,11 +967,11 @@ private:
 
             // compute  total len of 'boundary'
             double len = 0.0;
-            std::list<Vertex_handle>::const_iterator it;
+            typename std::list<Vertex_handle>::const_iterator it;
             for(it = boundary.begin(); it != boundary.end(); it++)
             {
                 // Get next iterator (looping)
-                std::list<Vertex_handle>::const_iterator next = it;
+                typename std::list<Vertex_handle>::const_iterator next = it;
                 next++;
                 if (next == boundary.end())
                     next = boundary.begin();
@@ -1017,7 +1019,7 @@ private:
         boundary = get_boundary(seed_vertex);
 
         // Tag boundary vertices as "processed"
-        std::list<Vertex_handle>::iterator it;
+        typename std::list<Vertex_handle>::iterator it;
         for(it = boundary.begin(); it != boundary.end(); it++)
             set_vertex_tag(*it, tag_done);
 
@@ -1045,19 +1047,19 @@ private:
 
     // Functor for operator< for classes lacking this operator
     struct Less
-    {	
+    {
         // functor for operator< on Polyhedron::Halfedge_const_handle items
-        bool operator()(const Halfedge_const_handle& _Left, 
+        bool operator()(const Halfedge_const_handle& _Left,
                         const Halfedge_const_handle& _Right) const
-        {   
+        {
             // apply operator< to pointers
             return (&*_Left < &*_Right);
         }
 
         // functor for operator< on Polyhedron::Vertex_const_handle items
-        bool operator()(const Vertex_const_handle& _Left, 
+        bool operator()(const Vertex_const_handle& _Left,
                         const Vertex_const_handle& _Right) const
-        {   
+        {
             // apply operator< to pointers
             return (&*_Left < &*_Right);
         }
@@ -1066,7 +1068,7 @@ private:
     // Utility class to generate the Vertex_around_facet_circulator type
     struct Project_halfedge_vertex {
         typedef Halfedge                            argument_type;
-        typedef typename Mesh_adaptor_polyhedron_3::Vertex   
+        typedef typename Mesh_adaptor_polyhedron_3::Vertex
                                                     Vertex;
         typedef Vertex                              result_type;
         typedef CGAL::Arity_tag<1>                  Arity;
@@ -1083,7 +1085,7 @@ private:
     // Utility class to generate the Border_vertex_iterator type
     struct Project_vertex_handle_vertex {
         typedef Vertex_handle                       argument_type;
-        typedef typename Mesh_adaptor_polyhedron_3::Vertex   
+        typedef typename Mesh_adaptor_polyhedron_3::Vertex
                                                     Vertex;
         typedef Vertex                              result_type;
         typedef CGAL::Arity_tag<1>                  Arity;
@@ -1096,7 +1098,7 @@ private:
     // This class is used to generate the Vertex_around_vertex_circulator type
     struct Project_opposite_halfedge_vertex {
         typedef Halfedge                            argument_type;
-        typedef typename Mesh_adaptor_polyhedron_3::Vertex   
+        typedef typename Mesh_adaptor_polyhedron_3::Vertex
                                                     Vertex;
         typedef Vertex                              result_type;
         typedef CGAL::Arity_tag<1>                  Arity;

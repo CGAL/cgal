@@ -40,7 +40,7 @@ LIBPATH = \
           -L$(TAUCSROOT)/external/lib/$(TAUCS_OSTYPE)
 
 LDFLAGS = \
-          -O3\
+          $(EXTRA_FLAGS) \
           $(TESTSUITE_LDFLAGS) \
           $(LONG_NAME_PROBLEM_LDFLAGS) \
           $(CGAL_LDFLAGS) \
@@ -51,9 +51,22 @@ LDFLAGS = \
 #                    target entries
 #---------------------------------------------------------------------#
 
-all:      polyhedron_ex_parameterization$(EXE_EXT)
+all:      polyhedron_ex_parameterization$(EXE_EXT) \
+          Polyhedron_parameterization1$(EXE_EXT) \
+          Polyhedron_parameterization2$(EXE_EXT) \
+          Polyhedron_parameterization3$(EXE_EXT) \
+          Polyhedron_parameterization4$(EXE_EXT) \
+          Polyhedron_parameterization5$(EXE_EXT) \
+          Polyhedron_parameterization6$(EXE_EXT)
 
-clean:	  polyhedron_ex_parameterization.clean
+clean:	  polyhedron_ex_parameterization.clean \
+          Polyhedron_parameterization1.clean \
+          Polyhedron_parameterization2.clean \
+          Polyhedron_parameterization3.clean \
+          Polyhedron_parameterization4.clean \
+          Polyhedron_parameterization5.clean \
+          Polyhedron_parameterization6.clean
+
 
 polyhedron_ex_parameterization_objs = 	\
           Mesh_cutter$(OBJ_EXT) \
@@ -65,6 +78,66 @@ polyhedron_ex_parameterization$(EXE_EXT): $(polyhedron_ex_parameterization_objs)
 
 polyhedron_ex_parameterization.clean:
 	rm polyhedron_ex_parameterization$(EXE_EXT) $(polyhedron_ex_parameterization_objs)
+
+
+Polyhedron_parameterization1_objs = 	\
+          Polyhedron_parameterization1$(OBJ_EXT)
+
+Polyhedron_parameterization1$(EXE_EXT): $(Polyhedron_parameterization1_objs)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Polyhedron_parameterization1$(EXE_EXT) $(Polyhedron_parameterization1_objs) $(LDFLAGS)
+
+Polyhedron_parameterization1.clean:
+	rm Polyhedron_parameterization1$(EXE_EXT) $(Polyhedron_parameterization1_objs)
+
+
+Polyhedron_parameterization2_objs = 	\
+          Polyhedron_parameterization2$(OBJ_EXT)
+
+Polyhedron_parameterization2$(EXE_EXT): $(Polyhedron_parameterization2_objs)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Polyhedron_parameterization2$(EXE_EXT) $(Polyhedron_parameterization2_objs) $(LDFLAGS)
+
+Polyhedron_parameterization2.clean:
+	rm Polyhedron_parameterization2$(EXE_EXT) $(Polyhedron_parameterization2_objs)
+
+
+Polyhedron_parameterization3_objs = 	\
+          Polyhedron_parameterization3$(OBJ_EXT)
+
+Polyhedron_parameterization3$(EXE_EXT): $(Polyhedron_parameterization3_objs)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Polyhedron_parameterization3$(EXE_EXT) $(Polyhedron_parameterization3_objs) $(LDFLAGS)
+
+Polyhedron_parameterization3.clean:
+	rm Polyhedron_parameterization3$(EXE_EXT) $(Polyhedron_parameterization3_objs)
+
+
+Polyhedron_parameterization4_objs = 	\
+          Polyhedron_parameterization4$(OBJ_EXT)
+
+Polyhedron_parameterization4$(EXE_EXT): $(Polyhedron_parameterization4_objs)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Polyhedron_parameterization4$(EXE_EXT) $(Polyhedron_parameterization4_objs) $(LDFLAGS)
+
+Polyhedron_parameterization4.clean:
+	rm Polyhedron_parameterization4$(EXE_EXT) $(Polyhedron_parameterization4_objs)
+
+
+Polyhedron_parameterization5_objs = 	\
+          Polyhedron_parameterization5$(OBJ_EXT)
+
+Polyhedron_parameterization5$(EXE_EXT): $(Polyhedron_parameterization5_objs)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Polyhedron_parameterization5$(EXE_EXT) $(Polyhedron_parameterization5_objs) $(LDFLAGS)
+
+Polyhedron_parameterization5.clean:
+	rm Polyhedron_parameterization5$(EXE_EXT) $(Polyhedron_parameterization5_objs)
+
+
+Polyhedron_parameterization6_objs = 	\
+          Polyhedron_parameterization6$(OBJ_EXT)
+
+Polyhedron_parameterization6$(EXE_EXT): $(Polyhedron_parameterization6_objs)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Polyhedron_parameterization6$(EXE_EXT) $(Polyhedron_parameterization6_objs) $(LDFLAGS)
+
+Polyhedron_parameterization6.clean:
+	rm Polyhedron_parameterization6$(EXE_EXT) $(Polyhedron_parameterization6_objs)
 
 #---------------------------------------------------------------------#
 #                    suffix rules
