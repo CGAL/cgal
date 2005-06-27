@@ -1,0 +1,21 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Polyhedron_parameterization2", "Polyhedron_parameterization2.vcproj", "{E2A5087B-4619-4EDD-A6BA-5655F62BA4FE}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Release = Release
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{E2A5087B-4619-4EDD-A6BA-5655F62BA4FE}.Debug.ActiveCfg = Debug|Win32
+		{E2A5087B-4619-4EDD-A6BA-5655F62BA4FE}.Debug.Build.0 = Debug|Win32
+		{E2A5087B-4619-4EDD-A6BA-5655F62BA4FE}.Release.ActiveCfg = Release|Win32
+		{E2A5087B-4619-4EDD-A6BA-5655F62BA4FE}.Release.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal

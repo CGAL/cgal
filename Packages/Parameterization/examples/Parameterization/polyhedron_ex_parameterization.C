@@ -26,7 +26,7 @@
 // conformal parameterization
 // circle boundary
 // OpenNL solver
-// output is a ps map
+// output is a eps map
 // input file is mesh.off
 //----------------------------------------------------------
 // polyhedron_ex_parameterization -t conformal -b circle -o eps mesh.off mesh.eps
@@ -35,7 +35,7 @@
 // floater parameterization
 // square boundary
 // TAUCS solver
-// output is a ps map
+// output is a eps map
 // input file is mesh.off
 //----------------------------------------------------------
 // polyhedron_ex_parameterization -t floater -b square -s taucs -o eps mesh.off mesh.eps
@@ -44,7 +44,7 @@
 // natural parameterization
 // no explicitly pinned vertices
 // OpenNL solver
-// output is a ps map
+// output is a eps map
 // input file is mesh.off
 //----------------------------------------------------------
 // polyhedron_ex_parameterization -t natural -s opennl -o eps mesh.off mesh.eps
@@ -59,7 +59,9 @@
 // polyhedron_ex_parameterization -t lscm -o obj mesh.off mesh.obj
 
 
-#include <CGAL/basic.h>
+#include "short_names.h"                    // must be included first
+
+#include <CGAL/basic.h>                     // must be included second
 
 #include <CGAL/parameterization.h>
 #include <CGAL/Mesh_adaptor_patch_3.h>
@@ -561,7 +563,7 @@ int main(int argc,char * argv[])
         }
         else if(strcmp(output,"eps") == 0)
         {
-            mesh.dump_eps(output_filename);         // write Postscript file
+            mesh.write_file_eps(output_filename);   // write Postscript file
         }
         else if(strcmp(output,"obj") == 0)
         {

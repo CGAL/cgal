@@ -405,8 +405,8 @@ public:
 
 
     // Dump parameterized mesh to an eps file
-    bool dump_eps(const char *pFilename,
-                  double scale = 500.0)
+    bool write_file_eps(const char *pFilename,
+                        double scale = 500.0)
     {
         std::cerr << "  dump mesh to " << pFilename << "..." << std::endl;
         FILE *pFile = fopen(pFilename,"wt");

@@ -457,7 +457,7 @@ public:
     void  set_vertex_uv(Vertex_handle vertex, const Point_2& uv)
     {
 #ifdef DEBUG_TRACE
-        std::cerr << "    #" << get_vertex_index(vertex) << "(" << vertex->vertex()->index() << ") <- (" << uv.x() << "," << uv.y() << ")\n";
+        std::cerr << "    #" << get_vertex_index(vertex) << " <- (" << uv.x() << "," << uv.y() << ")\n";
 #endif
         CGAL_parameterization_assertion(is_valid(vertex));
         return m_mesh_adaptor->set_corners_uv(vertex->vertex(),
@@ -910,10 +910,6 @@ private:
     }
 
     // Debug utility: Check if a Mesh_adaptor_patch_3 vertex is valid
-//#ifdef WIN32
-//    // LS 06/2005: sometimes, VC++ 7.1 code optimizer gets crazy when inlining!
-//    __declspec(noinline)
-//#endif
     bool is_valid(Vertex_const_handle vertex) const
     {
         if (vertex == NULL)

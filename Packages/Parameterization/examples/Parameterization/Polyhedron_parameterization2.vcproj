@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="7.10"
-	Name="Polyhedron_parameterization1"
+	Name="Polyhedron_parameterization2"
 	ProjectGUID="{E2A5087B-4619-4EDD-A6BA-5655F62BA4FE}"
 	Keyword="Win32Proj">
 	<Platforms>
@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="CGAL_debug.lib gmp.lib"
-				OutputFile="$(OutDir)/Polyhedron_parameterization1.exe"
+				OutputFile="$(OutDir)/Polyhedron_parameterization2.exe"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;$(CGALROOT)\lib\msvc7&quot;"
 				GenerateDebugInformation="TRUE"
@@ -99,7 +99,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="CGAL.lib gmp.lib"
-				OutputFile="$(OutDir)/Polyhedron_parameterization1.exe"
+				OutputFile="$(OutDir)/Polyhedron_parameterization2.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;$(CGALROOT)\lib\msvc7&quot;"
 				GenerateDebugInformation="FALSE"
@@ -137,7 +137,7 @@
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
 			<File
-				RelativePath=".\Polyhedron_parameterization1.C">
+				RelativePath=".\Polyhedron_parameterization2.C">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -167,10 +167,10 @@
 				RelativePath="..\..\include\Cgal\Circular_Border_parametizer_3.h">
 			</File>
 			<File
-				RelativePath="..\..\include\Cgal\Fixed_border_parametizer_3.h">
+				RelativePath="..\..\include\Cgal\Discrete_authalic_parametizer_3.h">
 			</File>
 			<File
-				RelativePath="..\..\include\Cgal\Mean_value_coordinates_parametizer_3.h">
+				RelativePath="..\..\include\Cgal\Fixed_border_parametizer_3.h">
 			</File>
 			<File
 				RelativePath="..\..\include\Cgal\Mesh_adaptor_feature_extractor.h">

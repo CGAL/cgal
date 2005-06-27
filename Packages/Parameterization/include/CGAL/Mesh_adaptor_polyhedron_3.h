@@ -23,10 +23,13 @@
 
 #include <CGAL/iterator.h>
 #include <CGAL/circulator.h>
-#include <CGAL/Convertible_iterator_project.h>
-#include <CGAL/Convertible_circulator_project.h>
 #include <CGAL/Polyhedron_3.h>
 
+#include <CGAL/parameterization_assertions.h>
+#include <CGAL/Convertible_iterator_project.h>
+#include <CGAL/Convertible_circulator_project.h>
+
+#include <list>
 #include <cassert>
 
 CGAL_BEGIN_NAMESPACE
@@ -50,17 +53,22 @@ CGAL_BEGIN_NAMESPACE
 template<class Polyhedron_3_>
 class Mesh_adaptor_polyhedron_3
 {
-// Private types
-private:
+// Forward references
+public:
 
-    // Forward references
     typedef Polyhedron_3_                   Polyhedron;
     struct                                  Halfedge_info;
     struct                                  Vertex_info;
+
+private:
     struct                                  Less;
     struct                                  Project_halfedge_vertex;
     struct                                  Project_vertex_handle_vertex;
     struct                                  Project_opposite_halfedge_vertex;
+
+// Private types
+private:
+
     // Halfedge
     typedef typename Polyhedron::Halfedge   Halfedge;
     typedef typename Polyhedron::Halfedge_handle     

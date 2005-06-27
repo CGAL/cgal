@@ -25,11 +25,11 @@
 //----------------------------------------------------------
 // Floater parameterization
 // circle boundary
-// OpenNL solver
+// TAUCS solver
 // output is a eps map
 // input file is mesh.off
 //----------------------------------------------------------
-// Polyhedron_parameterization1 mesh.off mesh.eps
+// Polyhedron_parameterization4 mesh.off mesh.eps
 
 
 #include "short_names.h"                    // must be included first
@@ -41,6 +41,8 @@
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/Mesh_adaptor_polyhedron_3.h>
 #include <CGAL/parameterization.h>
+
+#include <CGAL/Taucs_solver_traits.h>
 
 #include <iostream>
 #include <stdlib.h>
@@ -60,8 +62,17 @@ typedef CGAL::Cartesian<double>                         Kernel;
 typedef CGAL::Polyhedron_3<Kernel>                      Polyhedron;
 typedef CGAL::Mesh_adaptor_polyhedron_3<Polyhedron>     Mesh_adaptor_polyhedron;
 
-// Parametizers base class for this kind of mesh
-typedef CGAL::Parametizer_3<Mesh_adaptor_polyhedron>    Parametizer;
+// Circular border parametizer (the default)
+typedef CGAL::Circular_border_arc_length_parametizer_3<Mesh_adaptor_polyhedron>    
+                                                        Border_parametizer;
+// TAUCS solver
+typedef CGAL::Taucs_solver_traits<double>               Solver;
+
+// Floater's mean value coordinates parametizer with TAUCS
+typedef CGAL::Mean_value_coordinates_parametizer_3<Mesh_adaptor_polyhedron,
+                                                   Border_parametizer,
+                                                   Solver>    
+                                                        Parametizer;
 
 
 // ----------------------------------------------------------------------------
@@ -155,7 +166,7 @@ int main(int argc,char * argv[])
     std::cerr << "\nPARAMETERIZATION" << std::endl;
     std::cerr << "  Floater parameterization" << std::endl;
     std::cerr << "  circle boundary" << std::endl;
-    std::cerr << "  OpenNL solver" << std::endl;
+    std::cerr << "  TAUCS solver" << std::endl;
     std::cerr << "  output: EPS" << std::endl;
 
 
@@ -203,9 +214,10 @@ int main(int argc,char * argv[])
 
     //***************************************
     // Floater's mean value coordinates parameterization
+    // with TAUCS solver.
     //***************************************
 
-    Parametizer::Error_code err = CGAL::parameterize(&mesh_adaptor);
+    Parametizer::Error_code err = CGAL::parameterize(&mesh_adaptor, Parametizer());
     if (err != Parametizer::OK)
         fprintf(stderr, "\nFATAL ERROR: parameterization error # %d\n", (int)err);
 

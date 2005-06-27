@@ -25,7 +25,7 @@
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="0"
 				RuntimeLibrary="4"
-				BufferSecurityCheck="TRUE"
+				BufferSecurityCheck="FALSE"
 				DisableLanguageExtensions="FALSE"
 				ForceConformanceInForLoopScope="FALSE"
 				RuntimeTypeInfo="TRUE"
