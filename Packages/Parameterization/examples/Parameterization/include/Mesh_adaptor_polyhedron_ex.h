@@ -72,6 +72,7 @@ private:
     typedef Polyhedron_ex::Halfedge_around_facet_const_circulator
                                             Halfedge_around_facet_const_circulator;
 
+
 public:
 
     //******************************************************************
@@ -167,7 +168,7 @@ public:
 #endif
     }
 
-    // Default copy constructor and operator =() are fine
+    // Default destructor, copy constructor and operator =() are fine
 
     // Get the adapted mesh
     // Using this method is NOT recommended
@@ -209,7 +210,7 @@ public:
     // Index vertices of the mesh from 0 to count_mesh_vertices()-1
     void  index_mesh_vertices ()
     {
-        fprintf(stderr,"  index Mesh_adaptor_polyhedron_ex vertices:\n");
+        fprintf(stderr,"  index Mesh_adaptor_polyhedron vertices:\n");
         int index = 0;
         for (Vertex_iterator it=mesh_vertices_begin(); it!=mesh_vertices_end(); it++)
         {
@@ -399,7 +400,7 @@ public:
     }
 
     // Get/set vertex index. Default value is undefined.
-    // (stored in Polyhedron_ex vertex for debugging purpose)
+    // (stored in Polyhedron vertex for debugging purpose)
     int  get_vertex_index(Vertex_const_handle vertex) const {
         //return get_corners_index(vertex, NULL, NULL);
         return vertex->index();
@@ -470,7 +471,7 @@ public:
         return vertex->seaming();
     }
     void set_vertex_seaming(Vertex_handle vertex, int seaming) {
-        return vertex->seaming(seaming);
+        vertex->seaming(seaming);
     }
 
     // EDGE INTERFACE
@@ -481,7 +482,7 @@ public:
         return get_halfedge(source, target)->seaming();
     }
     void set_halfedge_seaming(Vertex_handle source, Vertex_handle target, int seaming) {
-        return get_halfedge(source, target)->seaming(seaming);
+        get_halfedge(source, target)->seaming(seaming);
     }
 
     // CORNER INTERFACE
@@ -760,8 +761,8 @@ private:
                 if (next == boundary.end())
                     next = boundary.begin();
 
-                Vector_3 v = get_vertex_position(*next) - get_vertex_position(*it);
-                len += std::sqrt(v*v);
+                Vector_3 vect = get_vertex_position(*next) - get_vertex_position(*it);
+                len += std::sqrt(vect*vect);
             }
 
             // Keep 'boundary' if longer
@@ -830,13 +831,13 @@ private:
         assert(false);              // error if we reach this point
         return NULL;
     }
-    inline Halfedge_handle get_halfedge(Vertex_handle source,
-                                        Vertex_handle target)
+    Halfedge_handle get_halfedge(Vertex_handle source, Vertex_handle target)
     {
-        Halfedge_const_handle halfedge =
-            get_halfedge((Vertex_const_handle)source, (Vertex_const_handle)target);
-        return (Halfedge*) (&*halfedge);
+        Halfedge_const_handle halfedge = get_halfedge((Vertex_const_handle)source,
+                                                      (Vertex_const_handle)target);
+        return const_cast<Halfedge*>(&*halfedge);
     }
+
 
 // Fields
 private:
@@ -846,6 +847,7 @@ private:
 
     // Main boundary of a topological disc inside m_polyhedron (may be empty)
     std::list<Vertex_handle>    m_main_border;
+
 
 // Private types
 private:

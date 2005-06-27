@@ -25,9 +25,9 @@
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="0"
 				RuntimeLibrary="5"
-				BufferSecurityCheck="TRUE"
+				BufferSecurityCheck="FALSE"
 				DisableLanguageExtensions="FALSE"
-				ForceConformanceInForLoopScope="TRUE"
+				ForceConformanceInForLoopScope="FALSE"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
 				BrowseInformation="1"
@@ -39,7 +39,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalOptions="CGAL.lib gmp.lib"
+				AdditionalOptions="CGAL_debug.lib gmp.lib"
 				OutputFile="$(OutDir)/Polyhedron_parameterization1.exe"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;$(CGALROOT)\lib\msvc7&quot;"
@@ -76,7 +76,7 @@
 			CharacterSet="0">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalOptions="/Ob0"
+				AdditionalOptions="/Og-"
 				Optimization="2"
 				GlobalOptimizations="TRUE"
 				EnableIntrinsicFunctions="TRUE"
@@ -156,9 +156,6 @@
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
-			<File
-				RelativePath=".\include\Mesh_adaptor_polyhedron_3.h">
-			</File>
 		</Filter>
 		<Filter
 			Name="Parameterization package"
@@ -207,6 +204,9 @@
 			</File>
 			<File
 				RelativePath="..\..\include\Cgal\Mesh_adaptor_patch_vertex.h">
+			</File>
+			<File
+				RelativePath="..\..\include\Cgal\Mesh_adaptor_polyhedron_3.h">
 			</File>
 			<File
 				RelativePath="..\..\include\Cgal\parameterization.h">

@@ -561,7 +561,7 @@ int main(int argc,char * argv[])
         }
         else if(strcmp(output,"eps") == 0)
         {
-            mesh.dump_eps(output_filename);         // write EPS file
+            mesh.dump_eps(output_filename);         // write Postscript file
         }
         else if(strcmp(output,"obj") == 0)
         {

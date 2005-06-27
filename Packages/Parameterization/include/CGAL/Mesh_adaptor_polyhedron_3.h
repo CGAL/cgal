@@ -25,10 +25,11 @@
 #include <CGAL/circulator.h>
 #include <CGAL/Convertible_iterator_project.h>
 #include <CGAL/Convertible_circulator_project.h>
-
 #include <CGAL/Polyhedron_3.h>
 
 #include <cassert>
+
+CGAL_BEGIN_NAMESPACE
 
 
 // Class Mesh_adaptor_polyhedron_3
@@ -45,7 +46,7 @@
 // Design pattern:
 // Mesh_adaptor_polyhedron_3 is an Adaptor (see [GOF95]): it changes the
 // Polyhedron interface to match the MeshAdaptor_3 concept.
-
+//
 template<class Polyhedron_3_>
 class Mesh_adaptor_polyhedron_3
 {
@@ -54,6 +55,9 @@ private:
 
     // Forward references
     typedef Polyhedron_3_                   Polyhedron;
+    struct                                  Halfedge_info;
+    struct                                  Vertex_info;
+    struct                                  Less;
     struct                                  Project_halfedge_vertex;
     struct                                  Project_vertex_handle_vertex;
     struct                                  Project_opposite_halfedge_vertex;
@@ -75,15 +79,108 @@ private:
                                             Halfedge_around_facet_circulator;
     typedef typename Polyhedron::Halfedge_around_facet_const_circulator
                                             Halfedge_around_facet_const_circulator;
+    // Additional info attached to halfedges
+    typedef typename std::map<Halfedge_const_handle, 
+                              Halfedge_info, 
+                              Less>         Halfedge_info_map;
+    // Additional info attached to vertices
+    typedef typename std::map<typename Polyhedron::Vertex_const_handle, 
+                              Vertex_info, 
+                              Less>         Vertex_info_map;
 
+
+// Public types
 public:
 
     //******************************************************************
-    // Public types
+    // INTERFACE SPECIFIC TO Polyhedron_3
     //******************************************************************
 
     // Export template parameter
     typedef Polyhedron_3_                  Polyhedron;
+
+    // Additional info attached to halfedges
+    class Halfedge_info
+    {
+    private:
+        int m_tag;                  // general purpose tag
+        bool m_is_parameterized;    // is parameterized?
+        int m_seaming;              // seaming status
+        Point_2 m_uv;               // texture coordinates
+        int m_index;                // unique index
+
+    public:
+        // life cycle
+        Halfedge_info()
+        {
+            m_tag = -1;             // uninitialized
+            m_uv = Point_2(0, 0);
+            m_index = -1;           // uninitialized
+            m_seaming = -1;         // uninitialized
+            m_is_parameterized = false;
+        }
+
+        // Default destructor, copy constructor and operator =() are fine
+
+        // general purpose tag
+        int tag() const { return m_tag; }
+        void tag(int tag) { m_tag = tag; }
+
+        // seaming status
+        int seaming() const { return m_seaming; }
+        void seaming(int seaming) { m_seaming = seaming; }
+
+        // texture coordinates
+        Point_2 uv() const { return m_uv; }
+        void uv(Point_2 uv) { m_uv = uv; }
+
+        // parameterized?
+        bool is_parameterized() const { return m_is_parameterized; }
+        void is_parameterized(bool is)  { m_is_parameterized = is; }
+
+        // index
+        int index() const { return m_index; }
+        void index(int i) { m_index = i; }
+    };
+
+    // Additional info attached to vertices
+    class Vertex_info 
+    {
+    private:
+        int m_tag;                  // general purpose tag
+        int m_seaming;              // seaming status
+        int m_index;                // unique index
+
+    public:
+        // life cycle
+        Vertex_info()
+        {
+            m_index = -1;           // uninitialized
+            m_tag = -1;             // uninitialized
+            m_seaming = -1;         // uninitialized
+        }
+
+        // Default destructor, copy constructor and operator =() are fine
+
+        // index
+        int index() const { return m_index; }
+        void index(int i) { m_index = i; }
+
+        // tag
+        int tag() const { return m_tag; }
+        void tag(int tag) { m_tag = tag; }
+
+        // seaming status
+        int seaming() const { return m_seaming; }
+        void seaming(int seaming) { m_seaming = seaming; }
+    };
+
+    //******************************************************************
+    // LEVEL 1 INTERFACE:
+    // for "normal" classes that do not deal with virtual seams
+    // Example: all parameterization methods
+    //******************************************************************
+
     // Number type
     typedef typename Polyhedron::Traits::FT NT;
     // Points and vectors
@@ -95,6 +192,7 @@ public:
                                             Vector_2;
     typedef typename Polyhedron::Traits::Vector_3    
                                             Vector_3;
+
     // Facet
     typedef typename Polyhedron::Facet      Facet;
     typedef typename Polyhedron::Facet_handle Facet_handle;
@@ -105,6 +203,7 @@ public:
                                             Facet_iterator;
     typedef typename Polyhedron::Facet_const_iterator 
                                             Facet_const_iterator;
+
     // Vertex
     typedef typename Polyhedron::Vertex     Vertex;
     typedef typename Polyhedron::Vertex_handle       
@@ -155,11 +254,12 @@ public:
                                                  Vertex_const_handle>
                                             Vertex_around_vertex_const_circulator;
 
+
 // Public operations
 public:
 
     //******************************************************************
-    // LIFE CYCLE
+    // INTERFACE SPECIFIC TO Polyhedron_3
     //******************************************************************
 
     // Create an adaptator for an existing Polyhedron_3 mesh.
@@ -168,10 +268,23 @@ public:
     // will be the mesh's longest boundary (if there is at least one boundary).
     Mesh_adaptor_polyhedron_3(Polyhedron* mesh)
     {
+        typedef typename Halfedge_info_map::value_type Halfedge_info_pair;
+        typedef typename Vertex_info_map::value_type Vertex_info_pair;
+
         assert(mesh != NULL);
 
         // Store adapted mesh pointer
         m_polyhedron = mesh;
+
+        // Allocate extra info for each halfedge
+        Halfedge_iterator he;
+        for (he = m_polyhedron->halfedges_begin(); he != m_polyhedron->halfedges_end(); he++)
+            m_halfedge_info.insert( Halfedge_info_pair(he, Halfedge_info()) );
+
+        // Allocate extra info for each vertex
+        Vertex_iterator vtx;
+        for (vtx = m_polyhedron->vertices_begin(); vtx != m_polyhedron->vertices_end(); vtx++)
+            m_vertex_info.insert( Vertex_info_pair(vtx, Vertex_info()) );
 
         // Extract mesh's longest boundary
         m_main_border = extract_longest_boundary(mesh);
@@ -182,12 +295,70 @@ public:
 #endif
     }
 
-    // Default copy constructor and operator =() are fine
+    // Default destructor, copy constructor and operator =() are fine
 
     // Get the adapted mesh
-    // Using this method is NOT recommended
     Polyhedron*       get_adapted_mesh()       { return m_polyhedron; }
     const Polyhedron* get_adapted_mesh() const { return m_polyhedron; }
+
+    // Get halfedge from source and target vertices
+    // Will assert if such an halfedge doesn't exist
+    typename Polyhedron::Halfedge_const_handle get_halfedge(
+        Vertex_const_handle source, Vertex_const_handle target) const
+    {
+        assert(source != NULL);
+        assert(target != NULL);
+
+        Halfedge_around_vertex_const_circulator cir     = target->vertex_begin(),
+                                                cir_end = cir;
+        CGAL_For_all(cir, cir_end)
+            if (cir->opposite()->vertex() == source)
+                return cir;
+
+#ifdef DEBUG_TRACE
+        fprintf(stderr, 
+                "      get_halfedge(%d->%d): error\n", 
+                info(source)->index(), 
+                info(target)->index());
+#endif
+        assert(false);              // error if we reach this point
+        return NULL;
+    }
+    typename Polyhedron::Halfedge_handle get_halfedge(
+        Vertex_handle source, Vertex_handle target)
+    {
+        Halfedge_const_handle halfedge = get_halfedge((Vertex_const_handle)source,
+                                                      (Vertex_const_handle)target);
+        return const_cast<Halfedge*>(&*halfedge);
+    }
+
+    // Access to additional info attached to halfedges 
+    const Halfedge_info* info(Halfedge_const_handle halfedge) const
+    {
+        Halfedge_info_map::const_iterator it = m_halfedge_info.find(halfedge);
+        CGAL_parameterization_assertion(it != m_halfedge_info.end());
+        return &it->second;
+    }
+    Halfedge_info* info(Halfedge_const_handle halfedge)
+    {
+        Halfedge_info_map::iterator it = m_halfedge_info.find(halfedge);
+        CGAL_parameterization_assertion(it != m_halfedge_info.end());
+        return &it->second;
+    }
+
+    // Access to additional info attached to vertices 
+    const Vertex_info* info(Vertex_const_handle vertex) const
+    {
+        Vertex_info_map::const_iterator it = m_vertex_info.find(vertex);
+        CGAL_parameterization_assertion(it != m_vertex_info.end());
+        return &it->second;
+    }
+    Vertex_info* info(Vertex_const_handle vertex)
+    {
+        Vertex_info_map::iterator it = m_vertex_info.find(vertex);
+        CGAL_parameterization_assertion(it != m_vertex_info.end());
+        return &it->second;
+    }
 
     //******************************************************************
     // LEVEL 1 INTERFACE:
@@ -224,7 +395,7 @@ public:
     // Index vertices of the mesh from 0 to count_mesh_vertices()-1
     void  index_mesh_vertices ()
     {
-        fprintf(stderr,"  index Mesh_adaptor_polyhedron_3 vertices:\n");
+        fprintf(stderr,"  index Mesh_adaptor_polyhedron vertices:\n");
         int index = 0;
         for (Vertex_iterator it=mesh_vertices_begin(); it!=mesh_vertices_end(); it++)
         {
@@ -417,12 +588,12 @@ public:
     // (stored in Polyhedron vertex for debugging purpose)
     int  get_vertex_index(Vertex_const_handle vertex) const {
         //return get_corners_index(vertex, NULL, NULL);
-        return vertex->index();
+        return info(vertex)->index();
     }
     void  set_vertex_index(Vertex_handle vertex, int index)
     {
         //set_corners_index(vertex, NULL, NULL, index);
-        vertex->index(index);
+        info(vertex)->index(index);
     }
 
     // Get/set vertex' all purpose tag. Default value is undefined.
@@ -435,8 +606,16 @@ public:
     }
 
     // Return true if a vertex belongs to ANY mesh's boundary
-    bool  is_vertex_on_border(Vertex_const_handle vertex) const {
-        return m_polyhedron->is_border(vertex);
+    bool  is_vertex_on_border(Vertex_const_handle vertex) const 
+    {
+        Halfedge_around_vertex_const_circulator pHalfedge = vertex->vertex_begin();
+        Halfedge_around_vertex_const_circulator end       = pHalfedge;
+        if(pHalfedge == NULL) // isolated vertex
+            return true;
+        CGAL_For_all(pHalfedge,end)
+            if(pHalfedge->is_border())
+                return true;
+        return false;
     }
 
     // Return true if a vertex belongs to the UNIQUE mesh's main boundary, 
@@ -482,10 +661,10 @@ public:
 
     // Get/set vertex seaming flag. Default value is undefined.
     int  get_vertex_seaming(Vertex_const_handle vertex) const {
-        return vertex->seaming();
+        return info(vertex)->seaming();
     }
     void set_vertex_seaming(Vertex_handle vertex, int seaming) {
-        return vertex->seaming(seaming);
+        info(vertex)->seaming(seaming);
     }
 
     // EDGE INTERFACE
@@ -493,10 +672,10 @@ public:
     // Get/set oriented edge's seaming flag, ie position of the oriented edge
     // wrt to the UNIQUE main boundary
     int  get_halfedge_seaming(Vertex_const_handle source, Vertex_const_handle target) const {
-        return get_halfedge(source, target)->seaming();
+        return info(get_halfedge(source, target))->seaming();
     }
     void set_halfedge_seaming(Vertex_handle source, Vertex_handle target, int seaming) {
-        return get_halfedge(source, target)->seaming(seaming);
+        info(get_halfedge(source, target))->seaming(seaming);
     }
 
     // CORNER INTERFACE
@@ -513,7 +692,7 @@ public:
         if (prev_vertex == NULL && next_vertex == NULL)
         {
             // get (u,v) pair from any incident halfedge
-            return Point_2(vertex->halfedge()->u(), vertex->halfedge()->v());
+            return info(vertex->halfedge())->uv();
         }
         else // if seam vertex
         {
@@ -523,7 +702,7 @@ public:
             // get (u,v) pair from first inner halfedge (clockwise)
             Halfedge_around_vertex_const_circulator cir(
                                 get_halfedge(next_vertex, vertex) );
-            return Point_2(cir->u(), cir->v());
+            return info(cir)->uv();
         }
     }
     void set_corners_uv(Vertex_handle vertex,
@@ -537,8 +716,14 @@ public:
             // Loop over all incident halfedges
             Halfedge_around_vertex_circulator cir     = vertex->vertex_begin(),
                                               cir_end = cir;
-            CGAL_For_all(cir, cir_end)
-                cir->uv(uv.x(), uv.y());
+            CGAL_For_all(cir, cir_end) {
+#ifdef DEBUG_TRACE
+                std::cerr << "      H" << info(cir)->index() 
+                          << "(" << info(cir->opposite()->vertex())->index() << "->" << info(cir->vertex())->index() << ")"
+                          << "<- (u=" << uv.x() << ",v=" << uv.y() << ")\n";
+#endif
+                info(cir)->uv(uv);
+            }
         }
         else // if seam vertex
         {
@@ -555,8 +740,14 @@ public:
 
             // Loop over incident halfedges at the "right"
             // of the prev_vertex -> vertex -> next_vertex line
-            CGAL_For_all(cir, cir_end)
-                cir->uv(uv.x(), uv.y());
+            CGAL_For_all(cir, cir_end) {
+#ifdef DEBUG_TRACE
+                std::cerr << "      H" << info(cir)->index() 
+                          << "(" << info(cir->opposite()->vertex())->index() << "->" << info(cir->vertex())->index() << ")"
+                          << "<- (u=" << uv.x() << ",v=" << uv.y() << ")\n";
+#endif
+                info(cir)->uv(uv);
+            }
         }
     }
 
@@ -572,7 +763,7 @@ public:
         if (prev_vertex == NULL && next_vertex == NULL)
         {
             // get "is parameterized" field from any incident halfedge
-            return vertex->halfedge()->is_parameterized();
+            return info(vertex->halfedge())->is_parameterized();
         }
         else // if seam vertex
         {
@@ -582,7 +773,7 @@ public:
             // get "is parameterized" field from first inner halfedge (clockwise)
             Halfedge_around_vertex_const_circulator cir(
                                 get_halfedge(next_vertex, vertex) );
-            return cir->is_parameterized();
+            return info(cir)->is_parameterized();
         }
     }
     void set_corners_parameterized(Vertex_handle vertex,
@@ -597,7 +788,7 @@ public:
             Halfedge_around_vertex_circulator cir     = vertex->vertex_begin(),
                                               cir_end = cir;
             CGAL_For_all(cir, cir_end)
-                cir->is_parameterized(parameterized);
+                info(cir)->is_parameterized(parameterized);
         }
         else // if seam vertex
         {
@@ -615,7 +806,7 @@ public:
             // Loop over incident halfedges at the "right"
             // of the prev_vertex -> vertex -> next_vertex line
             CGAL_For_all(cir, cir_end)
-                cir->is_parameterized(parameterized);
+                info(cir)->is_parameterized(parameterized);
         }
     }
 
@@ -631,7 +822,7 @@ public:
         if (prev_vertex == NULL && next_vertex == NULL)
         {
             // get index from any incident halfedge
-            return vertex->halfedge()->index();
+            return info(vertex->halfedge())->index();
         }
         else // if seam vertex
         {
@@ -641,7 +832,7 @@ public:
             // get index from first inner halfedge (clockwise)
             Halfedge_around_vertex_const_circulator cir(
                                 get_halfedge(next_vertex, vertex) );
-            return cir->index();
+            return info(cir)->index();
         }
     }
     void set_corners_index(Vertex_handle vertex,
@@ -656,7 +847,7 @@ public:
             Halfedge_around_vertex_circulator cir     = vertex->vertex_begin(),
                                               cir_end = cir;
             CGAL_For_all(cir, cir_end)
-                cir->index(index);
+                info(cir)->index(index);
         }
         else // if seam vertex
         {
@@ -674,7 +865,7 @@ public:
             // Loop over incident halfedges at the "right"
             // of the prev_vertex -> vertex -> next_vertex line
             CGAL_For_all(cir, cir_end)
-                cir->index(index);
+                info(cir)->index(index);
         }
     }
 
@@ -690,7 +881,7 @@ public:
         if (prev_vertex == NULL && next_vertex == NULL)
         {
             // get tag from any incident halfedge
-            return vertex->halfedge()->tag();
+            return info(vertex->halfedge())->tag();
         }
         else // if seam vertex
         {
@@ -700,7 +891,7 @@ public:
             // get tag from first inner halfedge (clockwise)
             Halfedge_around_vertex_const_circulator cir(
                                 get_halfedge(next_vertex, vertex) );
-            return cir->tag();
+            return info(cir)->tag();
         }
     }
     void set_corners_tag(Vertex_handle vertex,
@@ -715,7 +906,7 @@ public:
             Halfedge_around_vertex_circulator cir     = vertex->vertex_begin(),
                                               cir_end = cir;
             CGAL_For_all(cir, cir_end)
-                cir->tag(tag);
+                info(cir)->tag(tag);
         }
         else // if seam vertex
         {
@@ -733,7 +924,7 @@ public:
             // Loop over incident halfedges at the "right"
             // of the prev_vertex -> vertex -> next_vertex line
             CGAL_For_all(cir, cir_end)
-                cir->tag(tag);
+                info(cir)->tag(tag);
         }
     }
 
@@ -775,8 +966,8 @@ private:
                 if (next == boundary.end())
                     next = boundary.begin();
 
-                Vector_3 v = get_vertex_position(*next) - get_vertex_position(*it);
-                len += std::sqrt(v*v);
+                Vector_3 vect = get_vertex_position(*next) - get_vertex_position(*it);
+                len += std::sqrt(vect*vect);
             }
 
             // Keep 'boundary' if longer
@@ -825,34 +1016,6 @@ private:
         return boundary;
     }
 
-    // Get halfedge from source and target vertices
-    // Will assert if such an halfedge doesn't exist
-    Halfedge_const_handle get_halfedge(Vertex_const_handle source,
-                                       Vertex_const_handle target) const
-    {
-        assert(source != NULL);
-        assert(target != NULL);
-
-        Halfedge_around_vertex_const_circulator cir     = target->vertex_begin(),
-                                                cir_end = cir;
-        CGAL_For_all(cir, cir_end)
-            if (cir->opposite()->vertex() == source)
-                return cir;
-
-#ifdef DEBUG_TRACE
-        fprintf(stderr, "      get_halfedge(%d->%d): error\n", source->index(), target->index());
-#endif
-        assert(false);              // error if we reach this point
-        return NULL;
-    }
-    inline Halfedge_handle get_halfedge(Vertex_handle source,
-                                        Vertex_handle target)
-    {
-        Halfedge_const_handle halfedge =
-            get_halfedge((Vertex_const_handle)source, (Vertex_const_handle)target);
-        return (Halfedge*) (&*halfedge);
-    }
-
 
 // Fields
 private:
@@ -860,12 +1023,37 @@ private:
     // The adapted mesh (cannot be NULL)
     Polyhedron*                 m_polyhedron;
 
+    // Additional info attached to halfedges
+    Halfedge_info_map           m_halfedge_info;
+    // Additional info attached to vertices
+    Vertex_info_map             m_vertex_info;
+
     // Main boundary of a topological disc inside m_polyhedron (may be empty)
     std::list<Vertex_handle>    m_main_border;
 
 
 // Private types
 private:
+
+    // Functor for operator< for classes lacking this operator
+    struct Less
+    {	
+        // functor for operator< on Polyhedron::Halfedge_const_handle items
+        bool operator()(const Halfedge_const_handle& _Left, 
+                        const Halfedge_const_handle& _Right) const
+        {   
+            // apply operator< to pointers
+            return (&*_Left < &*_Right);
+        }
+
+        // functor for operator< on Polyhedron::Vertex_const_handle items
+        bool operator()(const Vertex_const_handle& _Left, 
+                        const Vertex_const_handle& _Right) const
+        {   
+            // apply operator< to pointers
+            return (&*_Left < &*_Right);
+        }
+    };
 
     // Utility class to generate the Vertex_around_facet_circulator type
     struct Project_halfedge_vertex {
@@ -916,6 +1104,8 @@ private:
 
 }; // Mesh_adaptor_polyhedron_3
 
+
+CGAL_END_NAMESPACE
 
 #endif //CGAL_MESHADAPTORPOLYHEDRON3_H
 

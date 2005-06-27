@@ -18,6 +18,20 @@
 // Author(s)     : Laurent Saboret, Pierre Alliez
 
 
+// ----------------------------------------------------------------------------
+// USAGE EXAMPLES
+// ----------------------------------------------------------------------------
+
+//----------------------------------------------------------
+// Floater parameterization
+// circle boundary
+// OpenNL solver
+// output is a ps map
+// input file is mesh.off
+//----------------------------------------------------------
+// Polyhedron_parameterization1 mesh.off mesh.eps
+
+
 #include <CGAL/basic.h>
 
 #include <CGAL/Cartesian.h>
@@ -33,10 +47,9 @@
 #include <CGAL/Discrete_authalic_parametizer_3.h>
 #include <CGAL/Mean_value_coordinates_parametizer_3.h>
 #include <CGAL/LSCM_parametizer_3.h>
+#include <CGAL/Mesh_adaptor_polyhedron_3.h>
 
 #include <OpenNL/linear_solver.h>
-
-#include "Mesh_adaptor_polyhedron_3.h"
 
 #include <iostream>
 #include <stdlib.h>
@@ -56,9 +69,92 @@ typedef CGAL::Cartesian<double>                         Kernel;
 
 // Mesh true type and parameterization adaptors
 typedef CGAL::Polyhedron_3<Kernel>                      Polyhedron;
-typedef Mesh_adaptor_polyhedron_3<Polyhedron>           Mesh_adaptor_polyhedron;
+typedef CGAL::Mesh_adaptor_polyhedron_3<Polyhedron>     Mesh_adaptor_polyhedron;
+
 // Parametizer for this kind of mesh
 typedef CGAL::Parametizer_3<Mesh_adaptor_polyhedron>    Parametizer;
+
+
+// ----------------------------------------------------------------------------
+// Private functions
+// ----------------------------------------------------------------------------
+
+// Dump parameterized mesh to an eps file
+static bool dump_eps(const Mesh_adaptor_polyhedron& mesh_adaptor, 
+                     const char *pFilename, 
+                     double scale = 500.0)
+{
+    const Polyhedron* mesh = mesh_adaptor.get_adapted_mesh();
+    assert(mesh != NULL);
+    assert(pFilename != NULL);
+
+    std::cerr << "  dump mesh to " << pFilename << "..." << std::endl;
+    FILE *pFile = fopen(pFilename,"wt");
+    if(pFile == NULL)
+    {
+        std::cerr << "  unable to open file " << pFilename <<  " for writing" << std::endl;
+        return false;
+    }
+
+    // compute bounding box
+    double xmin,xmax,ymin,ymax;
+    xmin = ymin = xmax = ymax = 0;
+    Polyhedron::Halfedge_const_iterator pHalfedge;
+    for (pHalfedge = mesh->halfedges_begin();
+         pHalfedge != mesh->halfedges_end();
+         pHalfedge++)
+    {
+        double x1 = scale * mesh_adaptor.info(pHalfedge->prev())->uv().x();
+        double y1 = scale * mesh_adaptor.info(pHalfedge->prev())->uv().y();
+        double x2 = scale * mesh_adaptor.info(pHalfedge)->uv().x();
+        double y2 = scale * mesh_adaptor.info(pHalfedge)->uv().y();
+        xmin = std::min(xmin,x1);
+        xmin = std::min(xmin,x2);
+        xmax = std::max(xmax,x1);
+        xmax = std::max(xmax,x2);
+        ymax = std::max(ymax,y1);
+        ymax = std::max(ymax,y2);
+        ymin = std::min(ymin,y1);
+        ymin = std::min(ymin,y2);
+    }
+
+    fprintf(pFile,"%%!PS-Adobe-2.0 EPSF-2.0\n");
+    fprintf(pFile,"%%%%BoundingBox: %d %d %d %d\n", int(xmin+0.5), int(ymin+0.5), int(xmax+0.5), int(ymax+0.5));
+    fprintf(pFile,"%%%%HiResBoundingBox: %g %g %g %g\n",xmin,ymin,xmax,ymax);
+    fprintf(pFile,"%%%%EndComments\n");
+    fprintf(pFile,"gsave\n");
+    fprintf(pFile,"0.1 setlinewidth\n");
+
+    // color macros
+    fprintf(pFile,"\n%% RGB color command - r g b C\n");
+    fprintf(pFile,"/C { setrgbcolor } bind def\n");
+    fprintf(pFile,"/white { 1 1 1 C } bind def\n");
+    fprintf(pFile,"/black { 0 0 0 C } bind def\n");
+
+    // edge macro -> E
+    fprintf(pFile,"\n%% Black stroke - x1 y1 x2 y2 E\n");
+    fprintf(pFile,"/E {moveto lineto stroke} bind def\n");
+    fprintf(pFile,"black\n\n");
+
+    // for each halfedge
+    for (pHalfedge = mesh->halfedges_begin();
+         pHalfedge != mesh->halfedges_end();
+         pHalfedge++)
+    {
+        double x1 = scale * mesh_adaptor.info(pHalfedge->prev())->uv().x();
+        double y1 = scale * mesh_adaptor.info(pHalfedge->prev())->uv().y();
+        double x2 = scale * mesh_adaptor.info(pHalfedge)->uv().x();
+        double y2 = scale * mesh_adaptor.info(pHalfedge)->uv().y();
+        fprintf(pFile,"%g %g %g %g E\n",x1,y1,x2,y2);
+    }
+
+    /* Emit EPS trailer. */
+    fputs("grestore\n\n",pFile);
+    fputs("showpage\n",pFile);
+
+    fclose(pFile);
+    return true;
+}
 
 
 // ----------------------------------------------------------------------------
@@ -68,6 +164,10 @@ typedef CGAL::Parametizer_3<Mesh_adaptor_polyhedron>    Parametizer;
 int main(int argc,char * argv[])
 {
     std::cerr << "\nPARAMETERIZATION" << std::endl;
+    std::cerr << "  Floater parameterization" << std::endl;
+    std::cerr << "  circle boundary" << std::endl;
+    std::cerr << "  OpenNL solver" << std::endl;
+    std::cerr << "  output: EPS" << std::endl;
 
 
     //***************************************
@@ -76,7 +176,7 @@ int main(int argc,char * argv[])
 
     if (argc-1 != 2)
     {
-        std::cerr << "Usage: " << argv[0] << " input_file.off output_file.obj" << std::endl;
+        std::cerr << "Usage: " << argv[0] << " input_file.off output_file.ps" << std::endl;
         return(EXIT_FAILURE);
     }
 
@@ -98,7 +198,7 @@ int main(int argc,char * argv[])
 
     // read the mesh
     Polyhedron mesh;
-    fprintf(stderr, "ok\n  fill mesh...");
+    fprintf(stderr, "ok\n  fill mesh\n");
     stream >> mesh;
 
 
@@ -125,11 +225,11 @@ int main(int argc,char * argv[])
     //// output
     ////***************************************
 
-    //// Write Wavefront obj file
-    //if (err == Parametizer::OK)
-    //    mesh.write_file_obj(output_filename);       
+    // Write Postscript file
+    if (err == Parametizer::OK)
+        dump_eps(mesh_adaptor, output_filename);       
 
-    cerr << std::endl;
+    fprintf(stderr, "\n");
 
     return (err == Parametizer::OK) ? EXIT_SUCCESS : EXIT_FAILURE;
 }

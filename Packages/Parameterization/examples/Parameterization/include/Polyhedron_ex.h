@@ -145,7 +145,9 @@ public:
     void uv(double u, double v) 
     { 
 #ifdef DEBUG_TRACE
-        std::cerr << "      H" << index() << "(" << opposite()->vertex()->index() << "->" << vertex()->index() << ") <- (u=" << u << ",v=" << v << ")\n";
+        std::cerr << "      H" << index() 
+                  << "(" << opposite()->vertex()->index() << "->" << vertex()->index() << ")"
+                  << "<- (u=" << u << ",v=" << v << ")\n";
 #endif
         m_u = u; 
         m_v = v; 
@@ -403,7 +405,6 @@ public:
 
 
     // Dump parameterized mesh to an eps file
-    //********************************
     bool dump_eps(const char *pFilename,
                   double scale = 500.0)
     {
@@ -475,23 +476,24 @@ public:
         return true;
     }
 
-	// Dump parameterized mesh to a Wavefront OBJ file
+    // Dump parameterized mesh to a Wavefront OBJ file
     // v x y z
     // f 1 2 3 4 (1-based)
-    //********************************
+    //
+    // Implementation note: the UV is meaningless for a NON parameterized halfedge
     bool write_file_obj(const char *pFilename)
     {
         std::cerr << "  dump mesh to " << pFilename << "..." << std::endl;
         FILE *pFile = fopen(pFilename,"wt");
         if(pFile == NULL)
         {
-            std::cerr << "  unable to open file " << pFilename <<  " for writing" << std::endl;
+            std::cerr << "  unable to open file " << pFilename <<  " for writing\n";
             return false;
         }
 
-        // Index all mesh vertices following the order of the vertices_begin() iterator
+        // Index all mesh vertices following the order of vertices_begin() iterator
         precompute_vertex_indices();
-        // Index all mesh half edges following the order of the halfedges_begin() iterator
+        // Index all mesh half edges following the order of halfedges_begin() iterator
         precompute_halfedge_indices();
 
         // write the name of material file
@@ -501,15 +503,17 @@ public:
         fprintf(pFile, "# vertices\n") ;
         Vertex_iterator pVertex;
         for(pVertex = vertices_begin(); pVertex != vertices_end(); pVertex++)
-            fprintf(pFile,"v %g %g %g\n", (double)pVertex->point().x(), (double)pVertex->point().y(), (double)pVertex->point().z());
+            fprintf(pFile,"v %g %g %g\n", 
+                    (double)pVertex->point().x(), 
+                    (double)pVertex->point().y(), 
+                    (double)pVertex->point().z());
 
         // Write UVs (1 UV / halfedge)
-        // Implementation note: the UV is meaningless for NON parameterized halfedges
         fprintf(pFile, "# uv coordinates\n") ;
         Halfedge_iterator pHalfedge;
         for(pHalfedge = halfedges_begin(); pHalfedge != halfedges_end(); pHalfedge++)
         {
-            if (!pHalfedge->is_border())
+            if (pHalfedge->is_parameterized())
                 fprintf(pFile, "vt %f %f\n", pHalfedge->u(), pHalfedge->v());
             else
                 fprintf(pFile, "vt %f %f\n", 0.0, 0.0);
