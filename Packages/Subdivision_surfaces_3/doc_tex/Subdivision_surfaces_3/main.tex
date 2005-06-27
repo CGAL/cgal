@@ -29,16 +29,16 @@
 \label{chapterSubdivision}
 \ccChapterRelease{\subdivisionRev. \ \subdivisionDate}
 \ccChapterAuthor{Le-Jeng Andy Shiue}
-\hspace{.3cm}
+\hspace{.4cm}
 \begin{ccTexOnly}
     \setlength{\unitlength}{1mm}
     \begin{picture}(0,0)(0.0,0.0)
       \put (78,25){% textwidth = 156mm
-          \includegraphics[width=0.1\textwidth]{\FIGDIR/rook_mesh.eps}
-          \includegraphics[width=0.1\textwidth]{\FIGDIR/rook_qt1.eps}
-          \includegraphics[width=0.1\textwidth]{\FIGDIR/rook_qt2.eps}
-          \includegraphics[width=0.1\textwidth]{\FIGDIR/rook_surf1.eps}
-          \includegraphics[width=0.1\textwidth]{\FIGDIR/rook_surf2.eps}
+          \includegraphics[width=0.095\textwidth]{\FIGDIR/rook_mesh.eps}
+          \includegraphics[width=0.095\textwidth]{\FIGDIR/rook_qt1.eps}
+          \includegraphics[width=0.095\textwidth]{\FIGDIR/rook_qt2.eps}
+          \includegraphics[width=0.095\textwidth]{\FIGDIR/rook_surf1.eps}
+          \includegraphics[width=0.095\textwidth]{\FIGDIR/rook_surf2.eps}
       }
     \end{picture}\vspace{-4mm}% compensate for some vspace added by picture
 \end{ccTexOnly}
@@ -58,7 +58,7 @@ according to the topological refinement of the underlying mesh.
 \SUB3, working on the concept of the 
 \ccc{CGAL::Polyhedron_3} (see Chapter~\ref{chapterPolyhedron}),
 takes advantage of this separation of topology and geometry, 
-and take a cue from the policy-based design \cite{cgal:shiue-sesub-05}.
+and takes a cue from the policy-based design \cite{cgal:shiue-sesub-05}.
 
  
 %% \begin{ccHtmlOnly}
@@ -78,7 +78,7 @@ and take a cue from the policy-based design \cite{cgal:shiue-sesub-05}.
 % +------------------------------------------------------------------------+
 Subdivision algorithms define surfaces as the limit
 of recursive refinement of a polyhedral mesh. The chapter teaser
-shows the sequence of a subdivision on a chess mesh.
+shows a sequence of a subdivision on the rook mesh.
 %Figure \ref{fig:RefSchemes} shows the four major refinement 
 %patterns used in practice.
 %% A mesh is a special graph whose
@@ -87,15 +87,15 @@ shows the sequence of a subdivision on a chess mesh.
 %% positions or facet colors. 
 
 Points on the refined mesh are smoothed by averaging
-neighbor points. A graph, called \emph{stencil}, 
-determines the source submesh whose points contribute to the 
+neighbor points on the input mesh. A graph, called \emph{stencil}, 
+determines the input submesh whose points contribute to the 
 position of a smoothed point. Stencils are defined at the time 
 the refinement pattern is chosen. For example, 
 %as illustrated in Figure \ref{fig:RefMap},
 the PQQ scheme has a vertex-node stencil, which defines 
-the 1-ring of a source vertex; an edge-node stencil, which 
-defines the 1-ring of a source edge; and a facet-node stencil,
-which defines a facet.
+the 1-ring of an input vertex; an edge-node stencil, which 
+defines the 1-ring of a input edge; and a facet-node stencil,
+which defines an input facet.
 
 \begin{ccTexOnly}
   \begin{center}
@@ -127,9 +127,8 @@ Geometry masks of \CC\ subdivision are shown below,
 
 The weights shown here are unnormalized, and $n$ is the valence 
 of the vertex. 
-The geometry averaging positions points of the refined mesh 
-as a linear combination of the points on the source submesh and 
-the mask.
+Points on the subdivided mesh are computed by a linear combination
+of the points on the source submesh (i.e.~the stencil) and the mask.
 %The averaging process can typically be factored into 
 %simpler steps \cite{Oswald-2003-CSS}.
 %and this has
@@ -148,6 +147,8 @@ refinement host with geometry policies.
 For example, \CC\ subdivision is constructed by 
 parameterizing the PQQ refinement with the \CC\ geometry 
 policies.
+%, which compute the smoothed points based on the
+%\CC\ geometry masks.
 
 %\SUB3\ supports 1-ring mesh refinement based on 
 %half-edge data structures.
@@ -162,16 +163,16 @@ policies.
 \subsection{Example: \CC\ Subdivision}
 \ccc{CGAL::Subdivision_surfaces_3::PQQ}, the refinement 
 host for the PQQ refinement, realizes the topological 
-refinement and maintains the three stencils of the 
-PQQ scheme.
+refinement, maintains three stencils of the 
+PQQ scheme, and calls policies to smooth the refined points.
 
 \begin{ccExampleCode}
-  // _S is the class implement the geometry masks
+  // _S is the geometry policy realizing the geometry masks
   template <template <typename> class _S>
   static void PQQ(Polyhedron& p, _S<Polyhedron> rule, int step)
 \end{ccExampleCode}
 
-\SUB3\ provides \ccc{CGAL::CatmullClark_stencil} consisting of the 
+\SUB3\ provides \ccc{CGAL::CatmullClark_stencil} realizing the 
 geometry masks of \CC\ subdivision \cite{cgal:cc-sub-78}. 
 The \CC\ subdivision is then constructed by parameterizing 
 \ccc{CGAL::Subdivision_surfaces_3::PQQ} with 
@@ -183,9 +184,8 @@ The \CC\ subdivision is then constructed by parameterizing
   }
 \end{ccExampleCode}
 
-\ccc{Polyhedron} is the template parameter of the concept of
-\ccc{CGAL::Polyhedron_3}, and \ccc{step} specifies the
-depth of the subdivision the caller intended.
+\ccc{Polyhedron} is a model of the \ccc{CGAL::Polyhedron_3}
+concept, and \ccc{step} specifies the subdivision depth.
 
 %Catmull-Clark, Loop, Doo-Sabin and $\sqrt{3}$ subdivisions are supported
 %in \ccc{CGAL::Subdivision_surfaces_3} as convenient functions.
@@ -199,7 +199,7 @@ quadrisection (DQQ) and \SQRT3 triangulation, which
 are used by \CC, Loop, \DS\ and \SQRT3\ subdivision, 
 respectively. 
 
-%The refined mesh is shown below the initial mesh.
+The refined mesh is shown below the input mesh.
 \begin{ccTexOnly}
   \begin{center}
     \parbox{0.6\textwidth}{%
@@ -219,7 +219,7 @@ respectively.
 \begin{ccExampleCode}
 template <class Polyhedron>
 class Subdivision_surfaces_3 {
-  // _S is the class implement the geometry policies
+  // _S is the geometry policy realizing the geometry masks
   template <template <typename> class _S>
   static void PQQ(Polyhedron& p, _S<Polyhedron> rule, int step);
 
@@ -246,7 +246,7 @@ class Subdivision_surfaces_3 {
 Each refinement host is a template function of
 a mesh type and a policy type. The mesh type is
 a model of the \ccc{CGAL::Polyhedron_3} concept, and the
-policy type is a class with functions implementing the 
+policy type is a class with functions realizing the 
 geometry masks of the subdivision scheme.
 Refinement hosts refine the mesh, maintain the stencils 
 (i.e.~the mapping between the source and the refined mesh), 
@@ -261,23 +261,23 @@ ordering algorithm.
 
 % +-------------------------------------------------------------+
 \section{Geometry Policy}
-A geometry policy is a class defining a set of geometry masks. 
-Each geometry mask is realized as a member function assigning
-the new point according to weights of the stencil.
+A geometry policy is a class that defines a set of geometry masks. 
+Each geometry mask is realized as a member function (i.e.~the policy) 
+assigning new points according to the stencil weights.
 %The policy interface is defined with the refinement host. 
-Each function receives a primitive handle 
-(e.g.~\ccc{Halfedge_handle}) of 
-the source mesh, and the target vertex as the reference of 
-the \ccc{Point}. The function collects the neighbors
-of the primitive handle, and calculates the new point by averaging
-the weighted neighbors. 
+Each policy receives a primitive handle 
+(e.g.~\ccc{Halfedge_handle}) of the input mesh, and the reference of 
+the \ccc{Point} to the refined vertex. The realization of the policy
+collects the neighbors of the primitive handle (i.e.~the stencil),
+and computes the new point by a linear combination of the stencil 
+points and the mask (i.e.~the stencil weights).
 
 The interfaces of a geometry policy need to match the stencils of 
 the refinement host. For example, a PQQ host requires three 
-policy functions for closed meshes (i.e.~meshes without open 
-boundaries): a vertex-node stencil, an edge-node stencil, and a 
-facet-node stencil. To support meshes with boundaries, a policy function
-for border vertices is also required.
+policy functions for meshes without open boundaries: a vertex-node 
+stencil, an edge-node stencil, and a facet-node stencil. 
+%To support meshes with boundaries, a policy function
+%for border vertices is also required.
 
 \begin{ccTexOnly}
   \begin{center}
@@ -295,12 +295,26 @@ for border vertices is also required.
 %\end{ccHtmlOnly}
 
 Following example shows an implementation of geometry masks 
-of the \CC\ subdivision.
+of \CC\ subdivision. \ccc{Point} is an alias to \ccc{Point_3}
+in \ccc{_Poly}.
 
 \begin{ccExampleCode}
 template <class _Poly>
 class CatmullClark_stencil {
-   void edge_node(Halfedge_handle edge, Point& pt) {
+  //
+  void facet_node(Facet_handle facet, Point& pt) {
+    Halfedge_around_facet_circulator hcir = facet->facet_begin();
+    int n = 0;
+    FT p[] = {0,0,0};
+    do {
+      Point t = hcir->vertex()->point();
+      p[0] += t[0], p[1] += t[1], p[2] += t[2]; 
+      ++n;
+    } while (++hcir != facet->facet_begin());
+    pt = Point(p[0]/n, p[1]/n, p[2]/n);
+  }
+  //
+  void edge_node(Halfedge_handle edge, Point& pt) {
     Point p1 = edge->vertex()->point();
     Point p2 = edge->opposite()->vertex()->point();
     Point f1, f2;
@@ -310,7 +324,7 @@ class CatmullClark_stencil {
                (p1[1]+p2[1]+f1[1]+f2[1])/4,
                (p1[2]+p2[2]+f1[2]+f2[2])/4 );
   }
- 
+  //
   void vertex_node(Vertex_handle vertex, Point& pt) {
     Halfedge_around_vertex_circulator vcir = vertex->vertex_begin();
     int n = circulator_size(vcir);    
@@ -336,22 +350,22 @@ class CatmullClark_stencil {
                (Q[1] + 2*R[1] + S[1]*(n-3))/n,
                (Q[2] + 2*R[2] + S[2]*(n-3))/n );
   }
-
-  void border_node(Halfedge_handle edge, Point& ept, Point& vpt) {
-    Point& ep1 = edge->vertex()->point();
-    Point& ep2 = edge->opposite()->vertex()->point();
-    ept = Point((ep1[0]+ep2[0])/2, (ep1[1]+ep2[1])/2, (ep1[2]+ep2[2])/2);
-
-    Halfedge_around_vertex_circulator vcir = edge->vertex_begin();
-    Point& vp1  = vcir->opposite()->vertex()->point();
-    Point& vp0  = vcir->vertex()->point();
-    Point& vp_1 = (--vcir)->opposite()->vertex()->point();
-    vpt = Point((vp_1[0] + 6*vp0[0] + vp1[0])/8,
-                (vp_1[1] + 6*vp0[1] + vp1[1])/8,
-                (vp_1[2] + 6*vp0[2] + vp1[2])/8 );
-  }
 }
 \end{ccExampleCode}
+%% Move these back when add the border support
+%%   void border_node(Halfedge_handle edge, Point& ept, Point& vpt) {
+%%     Point& ep1 = edge->vertex()->point();
+%%     Point& ep2 = edge->opposite()->vertex()->point();
+%%     ept = Point((ep1[0]+ep2[0])/2, (ep1[1]+ep2[1])/2, (ep1[2]+ep2[2])/2);
+
+%%     Halfedge_around_vertex_circulator vcir = edge->vertex_begin();
+%%     Point& vp1  = vcir->opposite()->vertex()->point();
+%%     Point& vp0  = vcir->vertex()->point();
+%%     Point& vp_1 = (--vcir)->opposite()->vertex()->point();
+%%     vpt = Point((vp_1[0] + 6*vp0[0] + vp1[0])/8,
+%%                 (vp_1[1] + 6*vp0[1] + vp1[1])/8,
+%%                 (vp_1[2] + 6*vp0[2] + vp1[2])/8 );
+%%   }
 
 %% \begin{ccExampleCode}
 %% PQQ<_M,CCstencil>(Mesh,CCstencil<_M>())
@@ -423,7 +437,7 @@ Following example develops a subdivision scheme
 generating improved Loop subdivision surfaces based on the PTQ 
 refinement (i.e~\ccc{Subdivision_surfaces_3<Polyhedron>::PTQ}). 
 The geometry policy is developed as a subclass 
-of \ccc{PQQ_stencil}), which defines a superset of PTQ stencils.
+of \ccc{PQQ_stencil}), which defines the superset of PTQ stencils.
 
 A policy function for subdivision surfaces is semantically
 required to assigned the smoothed point based on the source mesh.
