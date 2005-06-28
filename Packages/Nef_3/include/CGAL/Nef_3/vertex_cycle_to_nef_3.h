@@ -1,0 +1,364 @@
+// Copyright (c) 2005  Max-Planck-Institute Saarbruecken (Germany).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// Author(s)     : Ralf Osbild <osbild@mpi-sb.mpg.de>
+
+#ifndef VERTEX_CYCLE_TO_NEF_3_H
+#define VERTEX_CYCLE_TO_NEF_3_H
+
+#include <iostream>
+
+// triangulation
+#include <CGAL/Nef_3/Exact_triangulation_euclidean_traits_xy_3.h>
+#include <CGAL/Nef_3/Exact_triangulation_euclidean_traits_yz_3.h>
+#include <CGAL/Nef_3/Exact_triangulation_euclidean_traits_xz_3.h>
+#include <CGAL/Triangulation_data_structure_2.h>
+#include <CGAL/Constrained_triangulation_2.h>
+#include <CGAL/Constrained_triangulation_plus_2.h>
+
+// Nef polyhedra
+#include <CGAL/Nef_polyhedron_3.h>
+#include <CGAL/Nef_3/SNC_structure.h>
+#include <CGAL/Nef_3/SNC_constructor.h>
+#include <CGAL/Nef_3/SNC_point_locator.h>
+
+CGAL_BEGIN_NAMESPACE
+
+// return value reports success ("true" means nef contains result)
+// note: facets are considered to be compact
+// CTP - Constrained_triangulation_plus
+template <class CTP, class Nef_3, class II>
+bool projected_vertex_cycle_to_nef_3 (Nef_3 &nef,
+      II v_first, II v_last, bool verb=false)
+{
+   typedef typename CTP::Vertex           CTP_vertex;
+   typedef typename CTP::Vertex_handle    CTP_vertex_handle;
+   typedef typename CTP::Face             CTP_face;
+   typedef typename CTP::Face_handle      CTP_face_handle;
+   typedef typename CTP::Face_circulator  CTP_face_circulator;
+   typedef typename CTP::size_type        CTP_size_type;
+
+   typedef typename Nef_3::SNC_structure            SNC_structure;
+   typedef typename SNC_structure::SM_decorator       SM_decorator;
+   typedef typename SNC_structure::Vertex_handle      Vertex_handle;
+   typedef typename SNC_structure::Sphere_point       Sphere_point;
+   typedef typename SNC_structure::Sphere_circle      Sphere_circle;
+   typedef typename SNC_structure::SVertex_handle     SVertex_handle;
+   typedef typename SNC_structure::SHalfedge_handle   SHalfedge_handle;
+   typedef typename SNC_structure::SFace_handle       SFace_handle;
+
+   typedef CGAL::SNC_point_locator_by_spatial_subdivision
+           <CGAL::SNC_decorator<SNC_structure> >    Point_locator;
+
+   typedef CGAL::SNC_constructor<SNC_structure>     SNC_constructor;
+
+   // declarations and defaults
+   II v_it, v_pred_it;
+   CTP ctp;
+   SNC_structure snc;
+   bool cond;
+   CTP_size_type nov;
+
+   nef=Nef_3();
+
+   // insert projected points into triangulation
+   for (nov=0, v_it=v_first; v_it!=v_last; v_it++)
+   {  if ( *v_it != (ctp.insert (*v_it))->point() )
+      {  if (verb)
+         {  std::cerr << "\n" << __FILE__ << ", line " << __LINE__
+	       << ": assertion violation: different vertices "
+	       << "are projected to same location!" << std::endl;
+	 }
+	 return false;
+      }
+      ++nov;
+   }
+
+   // assertions
+   if ( ctp.number_of_vertices() != nov )
+   {  if (verb)
+      {  std::cerr << "\n" << __FILE__ << ", line " << __LINE__
+	    << ": assertion violation: vertex cycle is not simple!"
+	    << " (same vertex appears multiple)"
+	    << std::endl;
+      }
+      return false;
+   }
+   if ( nov < 3 )
+   {  if (verb)
+      {  std::cerr << "\n" << __FILE__ << ", line " << __LINE__
+            << ": assertion violation: not at least 3 vertices!"
+	    << std::endl;
+      }
+      return false;
+   }
+
+   // construct constrained triangulation
+   v_it = v_first;
+   while ( true )
+   {  // move iterators
+      v_pred_it = v_it;
+      ++v_it;
+
+      if ( v_it == v_last ) break; // while-end
+      if ( *v_pred_it == *v_it ) continue ; // no self-loops
+      ctp.insert_constraint (*v_pred_it, *v_it);
+      if ( ctp.number_of_vertices() != nov ) break; // error
+   }
+   if ( v_it == v_last && *v_pred_it != *v_first) // no self-loops
+   {  ctp.insert_constraint (*v_pred_it, *v_first);
+   }
+
+   // assertion
+   if ( ctp.number_of_vertices() != nov )
+   {  if (verb)
+      {  std::cerr << "\n" << __FILE__ << ", line " << __LINE__
+	    << ": assertion violation: vertex cycle is not simple!"
+	    << " (edges intersect)"
+	    << std::endl;
+      }
+      return false;
+   }
+   CGAL_assertion (ctp.is_valid());
+
+   // determine initial positions for the walk-around
+   CTP_vertex_handle t_vh, t_vh_0;
+   CTP_face_handle t_fh;
+   CTP_face_circulator t_fc, t_fc_0;
+   int idx;
+   {  // search a constrained edge from "outside"
+      t_fh = ctp.infinite_face ();
+      cond = t_fh->has_vertex(ctp.infinite_vertex(), idx);
+      CGAL_assertion ( cond );
+      idx = ctp.ccw(idx);
+      t_vh = t_fh->vertex(idx);
+      // now: *t_vh lies ccw from the infinite vertex
+
+      t_fc = t_fc_0 = ctp.incident_faces(t_vh, t_fh);
+      do
+      {  if (cond=t_fc->is_constrained(ctp.cw(t_fc->index(t_vh)))) break;
+      } while (--t_fc != t_fc_0)
+      ; CGAL_assertion ( cond ); // do-while ends with break
+      t_fh = t_fc->neighbor(ctp.cw(t_fc->index(t_vh)));
+      // note: if (not sure at this moment!) input is a simple
+      // polygon, *t_fh lies inside this polygon, *t_vh is a vertex
+      // of *t_fh and the edge of *t_fh starting clockwise at *t_vh
+      // is a constraint.
+   }
+
+   // walk along constraints and build sphere maps
+   t_vh_0 = t_vh;
+   do
+   {  // circulate faces beginning with *t_fh around *t_vh
+      idx = t_fh->index(t_vh);
+      CTP_vertex_handle t_target_vh = t_fh->vertex(ctp.cw(idx));
+
+      // create new vertex in SNC
+      Vertex_handle p_vh = snc.new_vertex (t_vh->point(), true);
+      SM_decorator p_dec (&*p_vh); // &*
+
+      // create new svertex in SM
+      Sphere_point dir ( CGAL::ORIGIN+
+         (t_target_vh->point() - t_vh->point()) ), dir_0 = dir;
+      SVertex_handle p_svh (p_dec.new_svertex (dir)), p_svh_pred=p_svh;
+      p_svh->mark() = true;
+
+      // consider triangles (implicit edges) that are incident to *t_vh
+      t_fc = t_fc_0 = ctp.incident_faces(t_vh, t_fh);
+      do
+      {  idx = t_fc->index(t_vh);
+	 t_target_vh = t_fc->vertex(ctp.ccw(idx));
+
+	 // assertion
+	 if ( ctp.is_infinite(t_target_vh) )
+         {  if (verb)
+            {  std::cerr << "\n" << __FILE__ << ", line " << __LINE__
+	         << ": assertion violation: vertex cycle is not simple!"
+		 << " (edges overlap)"
+	         << std::endl;
+            }
+            return false;
+	 }
+
+	 // create new svertex in SM
+         dir = Sphere_point ( CGAL::ORIGIN+
+	    (t_target_vh->point() - t_vh->point()) );
+
+	 // assertion
+	 if ( dir == dir_0 )
+         {  if (verb)
+            {  std::cerr << "\n" << __FILE__ << ", line " << __LINE__
+	         << ": assertion violation: vertex cycle is not simple!"
+		 << " (edges overlap)"
+	         << std::endl;
+            }
+            return false;
+	 }
+	 p_svh = SVertex_handle (p_dec.new_svertex(dir));
+	 p_svh->mark() = true;
+
+	 // create new sphere edges in SM
+         SHalfedge_handle p_seh =
+	    p_dec.new_shalfedge_pair (p_svh_pred, p_svh);
+         Sphere_circle p_scirc
+	    (p_seh->source()->point(), p_seh->target()->point());
+         p_seh->circle() = p_scirc;
+         p_seh->twin()->circle() = p_scirc.opposite();
+         p_seh->mark() = p_seh->twin()->mark() = true;
+
+	 // constrained edge detected?
+	 if ( cond = t_fc->is_constrained(ctp.cw(idx)) )
+	 {  // create new sface in SM
+	    SFace_handle p_fh = p_dec.new_sface ();
+	    p_fh->mark() = false;
+	    p_dec.link_as_face_cycle(p_seh,p_fh);
+	    break;
+	 }
+	 p_svh_pred = p_svh;
+      } while (--t_fc != t_fc_0)
+      ; CGAL_assertion ( cond ); // do-while ends with break
+
+      // check
+      p_dec.check_integrity_and_topological_planarity();
+
+      // prepare next iteration
+      t_fh = t_fc;
+
+      // assertion
+      --t_fc;
+      while (--t_fc != t_fc_0)
+      {  idx = t_fc->index(t_vh);
+	 if ( t_fc->is_constrained(ctp.ccw(idx)) )
+         {  if (verb)
+            {  std::cerr << "\n" << __FILE__ << ", line " << __LINE__
+                 << ": assertion violation: vertex cycle is not simple!"
+	         << " (edges overlap or edge contains vertex)"
+                 << std::endl;
+            }
+            return false;
+         }
+      }
+
+      // prepare next iteration
+      t_vh = t_fh->vertex(ctp.ccw(t_fh->index(t_vh)));
+   } while (t_vh != t_vh_0)
+   ; // do-while ends
+
+   // // test information
+   // if ( false )
+   // {  int count = 0;
+   //    for (typename CTP::Subconstraint_iterator scit = ctp.subconstraints_begin();
+   //        scit != ctp.subconstraints_end(); ++scit) ++count;
+   //    std::cerr << "The number of resulting constrained edges is  "
+   //           <<  count << std::endl
+   //           << "number of vertices= " << ctp.number_of_vertices()
+   //           <<  std::endl
+   //           << "number of faces= " << ctp.number_of_faces()
+   //           <<  std::endl;
+   // }
+
+   // built and return Nef_3 object
+   Point_locator pl;
+   SNC_constructor con (snc, &pl);
+   con.build_external_structure();
+   nef = Nef_3 (snc, &pl);
+   return true;
+}
+
+// II - input iterator; KN - kernel of normal
+// return value reports success ("true" means nef contains result)
+template <class Nef_3, class II, class KN>
+bool vertex_cycle_to_nef_3 (Nef_3 &nef, II v_first, II v_last,
+                const CGAL::Vector_3<KN> &normal, bool verb = false)
+{
+   // Constrained_triangulation_plus with Exact_intersections_tag
+   typedef typename Nef_3::Kernel          Kernel;
+   typedef CGAL::Exact_intersections_tag   Tri_itag;
+
+   // XY projection + triangulation
+typedef CGAL::Exact_triangulation_euclidean_traits_xy_3<Kernel>  XY_kernel;
+typedef CGAL::Triangulation_vertex_base_2<XY_kernel>             XY_vb;
+typedef CGAL::Constrained_triangulation_face_base_2<XY_kernel>   XY_fb;
+typedef CGAL::Triangulation_data_structure_2<XY_vb,XY_fb>        XY_ds;
+typedef CGAL::Constrained_triangulation_2<XY_kernel, XY_ds, Tri_itag> XY_tri;
+typedef CGAL::Constrained_triangulation_plus_2<XY_tri>     XY_tri_plus;
+
+   // XZ projection + triangulation
+typedef CGAL::Exact_triangulation_euclidean_traits_xz_3<Kernel>  XZ_kernel;
+typedef CGAL::Triangulation_vertex_base_2<XZ_kernel>             XZ_vb;
+typedef CGAL::Constrained_triangulation_face_base_2<XZ_kernel>   XZ_fb;
+typedef CGAL::Triangulation_data_structure_2<XZ_vb,XZ_fb>        XZ_ds;
+typedef CGAL::Constrained_triangulation_2<XZ_kernel, XZ_ds, Tri_itag> XZ_tri;
+typedef CGAL::Constrained_triangulation_plus_2<XZ_tri>     XZ_tri_plus;
+
+   // YZ projection + triangulation
+typedef CGAL::Exact_triangulation_euclidean_traits_yz_3<Kernel>  YZ_kernel;
+typedef CGAL::Triangulation_vertex_base_2<YZ_kernel>             YZ_vb;
+typedef CGAL::Constrained_triangulation_face_base_2<YZ_kernel>   YZ_fb;
+typedef CGAL::Triangulation_data_structure_2<YZ_vb,YZ_fb>        YZ_ds;
+typedef CGAL::Constrained_triangulation_2<YZ_kernel, YZ_ds, Tri_itag> YZ_tri;
+typedef CGAL::Constrained_triangulation_plus_2<YZ_tri>     YZ_tri_plus;
+
+   bool is_nef = false;
+   char direc='?';
+   if ( normal == NULL_VECTOR )
+   {  // assertion violation
+      // This case can occur if vertex cycle is not simple!
+      nef = Nef_3();
+      is_nef = false;
+      if ( verb )
+      {  std::cerr << "\n" << __FILE__ << ", line " << __LINE__
+	    << ": assertion violation: ( normal != NULL_VECTOR )."
+	    << std::endl;
+      }
+   }
+   else
+   {  // direction of projection?
+      direc='z';
+      if ( CGAL::abs(normal.x()) > CGAL::abs(normal.y()) )
+      {  if ( CGAL::abs(normal.x()) > CGAL::abs(normal.z()) ) direc='x';
+      }
+      else
+      {  if ( CGAL::abs(normal.y()) > CGAL::abs(normal.z()) ) direc='y';
+      }
+
+      // project and triangulate vertices,
+      // convert result to Nef polyhedron
+      if ( direc == 'x' )
+      {  is_nef = projected_vertex_cycle_to_nef_3<YZ_tri_plus> (
+                  nef, v_first, v_last, verb);
+      }
+      else if ( direc == 'y' )
+      {  is_nef = projected_vertex_cycle_to_nef_3<XZ_tri_plus> (
+                  nef, v_first, v_last, verb);
+      }
+      else
+      {  CGAL_assertion ( direc == 'z' );
+         is_nef = projected_vertex_cycle_to_nef_3<XY_tri_plus> (
+                  nef, v_first, v_last, verb);
+      }
+   }
+
+   // error occured?
+   CGAL_assertion ( is_nef || nef.is_empty() );
+   if ( !is_nef && verb )
+   {  std::cerr << __FILE__ << ", line " << __LINE__
+	 << ": empty Nef_polyhedron_3 constructed."
+	 << " [" << direc << "]" << std::endl;
+   }
+
+   return is_nef;
+}
+
+CGAL_END_NAMESPACE
+#endif // VERTEX_CYCLE_TO_NEF_3_H
