@@ -39,10 +39,10 @@ template < class Traits_,
            class ResDcel,
            class OverlayTraits >
 
-void arr_overlay (const Arrangement_2<Traits_, Dcel1>   & arr1,
-                  const Arrangement_2<Traits_, Dcel2>   & arr2,
-                  Arrangement_2<Traits_, ResDcel>       & res,
-                  OverlayTraits & traits)
+void overlay (const Arrangement_2<Traits_, Dcel1>   & arr1,
+              const Arrangement_2<Traits_, Dcel2>   & arr2,
+              Arrangement_2<Traits_, ResDcel>       & res,
+              OverlayTraits & traits)
 {
   typedef Traits_                                     Base_Traits;
   typedef typename Base_Traits::X_monotone_curve_2    Base_X_monotone_curve_2;
@@ -70,13 +70,15 @@ void arr_overlay (const Arrangement_2<Traits_, Dcel1>   & arr1,
   typedef typename Res_Arrangement::Face_handle       Res_Face_handle;
 
   typedef Overlay_meta_traits<Base_Traits,
-                              Halfedge_const_handle_1,
-                              Halfedge_const_handle_2> Traits;
+                              Arrangement1,
+                              Arrangement2>            Traits;
 
   typedef typename Traits::X_monotone_curve_2          X_monotone_curve_2;
 
   typedef Overlay_subcurve<Traits>  Subcurve;
-  typedef Arr_sweep_line_event<Traits, Subcurve,Halfedge_handle_res >         Event;
+  typedef Arr_sweep_line_event<Traits,
+                               Subcurve,
+                               Halfedge_handle_res >   Event;
   typedef Overlay_visitor<Traits,
                           Arrangement1,
                           Arrangement2,
@@ -85,7 +87,7 @@ void arr_overlay (const Arrangement_2<Traits_, Dcel1>   & arr1,
                           Subcurve,
                           OverlayTraits>                 Visitor;
 
-  typedef Sweep_line_2_impl<Traits,
+  typedef Sweep_line_2<Traits,
                             Event,
                             Subcurve,
                             Visitor>                     Sweep_line;
@@ -93,13 +95,9 @@ void arr_overlay (const Arrangement_2<Traits_, Dcel1>   & arr1,
 
                             
 
-  std::vector<X_monotone_curve_2>   arr1_curves;
-  std::vector<X_monotone_curve_2>   arr2_curves;
-
-  arr1_curves.resize(arr1.number_of_edges());
-  arr2_curves.resize(arr2.number_of_edges());
-
-    
+  std::vector<X_monotone_curve_2>   arr_curves;
+  arr_curves.resize(arr1.number_of_edges() + arr2.number_of_edges());
+  
   typename Base_Traits::Compare_xy_2    comp_xy =
     arr1.get_traits()->compare_xy_2_object();
     
@@ -118,12 +116,11 @@ void arr_overlay (const Arrangement_2<Traits_, Dcel1>   & arr1,
        he = he.twin();
     const Base_X_monotone_curve_2& base_cv = he.curve();
 
-    arr1_curves[i] =
+    arr_curves[i] =
       X_monotone_curve_2(base_cv, he, Halfedge_const_handle_2());
   }
 
   //iterate over arr2's edges and create X_monotone_curve_2 from each edge
-  i = 0;
   for(Edge_const_iterator_2 itr2 = arr2.edges_begin();
       itr2 != arr2.edges_end();
       ++itr2, ++i)
@@ -138,21 +135,13 @@ void arr_overlay (const Arrangement_2<Traits_, Dcel1>   & arr1,
 
     const Base_X_monotone_curve_2& base_cv = he.curve();
 
-    arr2_curves[i] =
+    arr_curves[i] =
       X_monotone_curve_2(base_cv, Halfedge_const_handle_1(), he);
   }
 
   Visitor visitor(arr1, arr2, res, traits);
   Sweep_line sweep_object(&visitor);
-
-  sweep_object.init_x_curves(arr1_curves.begin(), arr1_curves.end());
-  sweep_object.init_x_curves(arr2_curves.begin(), arr2_curves.end());
-  sweep_object.sweep();
-
-  //after sweep is finshed, merge the two unbouded_faces from each arrangment
-  traits.create_face(arr1.unbounded_face(),
-                     arr2.unbounded_face(),
-                     res .unbounded_face());
+  sweep_object.sweep(arr_curves.begin(), arr_curves.end());
 }
 
 

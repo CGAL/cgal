@@ -57,19 +57,16 @@ OutputIterator get_intersection_points (CurveInputIterator curves_begin,
   typedef Sweep_line_points_visitor<Traits,OutputIterator>  Visitor;
   typedef Sweep_line_subcurve<Traits>                       Subcurve;
   typedef Sweep_line_event<Traits, Subcurve>                Event;
-  typedef Sweep_line_2_impl< Traits,
+  typedef Sweep_line_2< Traits,
                              Event,
                              Subcurve,
                              Sweep_line_points_visitor<Traits,OutputIterator>,
                              CGAL_ALLOCATOR(int) >          Sweep_line;
 
   // Perform the sweep and obtain the intersection points.
-  Traits      traits;
-  Visitor     visitor (points, report_endpoints);
-  Sweep_line  sweep_line (&traits, &visitor);
-
-  sweep_line.init (curves_begin, curves_end);
-  sweep_line.sweep();
+  Visitor     visitor (points, report_endpoints, &tr);
+  Sweep_line  sweep_line (&tr, &visitor);
+  visitor.sweep(curves_begin, curves_end);
 
   return (visitor.get_output_iterator());
 }
@@ -98,7 +95,7 @@ OutputIterator get_subcurves (CurveInputIterator curves_begin,
   typedef Sweep_line_subcurves_visitor<Traits, OutputIterator>  Visitor;
   typedef Sweep_line_subcurve<Traits>                           Subcurve;
   typedef Sweep_line_event<Traits, Subcurve>                    Event;
-  typedef Sweep_line_2_impl<Traits,
+  typedef Sweep_line_2<Traits,
                             Event,
                             Subcurve,
                             Sweep_line_subcurves_visitor<Traits,
@@ -106,12 +103,9 @@ OutputIterator get_subcurves (CurveInputIterator curves_begin,
                             CGAL_ALLOCATOR(int) >               Sweep_line;
 
   // Perform the sweep and obtain the subcurves.
-  Traits      traits;
-  Visitor     visitor (subcurves, mult_overlaps);
-  Sweep_line  sweep_line (&traits, &visitor);
-
-  sweep_line.init (curves_begin, curves_end);
-  sweep_line.sweep();
+  Visitor     visitor (subcurves, mult_overlaps, &tr);
+  Sweep_line  sweep_line (&tr, &visitor);
+  visitor.sweep(curves_begin, curves_end);
 
   return (visitor.get_output_iterator());
 }
@@ -132,19 +126,16 @@ bool do_curves_intersect (CurveInputIterator curves_begin,
   typedef Sweep_line_do_curves_x_visitor<Traits>      Visitor;
   typedef Sweep_line_subcurve<Traits>                 Subcurve;
   typedef Sweep_line_event<Traits, Subcurve>          Event;
-  typedef Sweep_line_2_impl<Traits,
+  typedef Sweep_line_2<Traits,
                             Event,
                             Subcurve,
                             Sweep_line_do_curves_x_visitor<Traits>,
                             CGAL_ALLOCATOR(int) >     Sweep_line ;
   
   // Perform the sweep and obtain the subcurves.
-  Traits      traits;
-  Visitor     visitor;
-  Sweep_line  sweep_line (&traits, &visitor);
-  
-  sweep_line.init (curves_begin, curves_end);
-  sweep_line.sweep();
+  Visitor     visitor(&tr);
+  Sweep_line  sweep_line (&tr, &visitor);
+  visitor.sweep(curves_begin, curves_end);
   
   return (visitor.found_x());
 }

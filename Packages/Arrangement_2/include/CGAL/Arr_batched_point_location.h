@@ -22,7 +22,7 @@
 
 #include <CGAL/Sweep_line_2/Sweep_line_2_impl.h>
 #include <CGAL/Sweep_line_2/Sweep_line_subcurve.h>
-#include <CGAL/Arr_point_location/Arr_batched_point_location_event.h>
+#include <CGAL/Sweep_line_2/Sweep_line_event.h>
 #include <CGAL/Arr_point_location/Arr_batched_point_location_visitor.h>
 #include <CGAL/Arr_point_location/Arr_batched_point_location_meta_traits.h>
 #include <vector>
@@ -58,16 +58,16 @@ OutputIterator locate(const Arrangement& arr,
     <Traits_2, Halfedge_const_handle>                  Meta_traits_2;
 
   typedef typename Meta_traits_2::X_monotone_curve_2   X_monotone_curve_2;
+  typedef typename Meta_traits_2::Point_2              Point_2;
 
   // Define the sweep-line visitor:
   typedef Arr_batched_point_location_visitor<Meta_traits_2,
                                              OutputIterator,
                                              Arrangement>  Visitor;
   typedef Sweep_line_subcurve<Meta_traits_2>               Subcurve; 
-  typedef Arr_batched_point_location_event<Meta_traits_2,
-                                           Subcurve>       Event;
+  typedef Sweep_line_event<Meta_traits_2, Subcurve>        Event;
 
-  typedef Sweep_line_2_impl<Meta_traits_2,
+  typedef Sweep_line_2<Meta_traits_2,
                             Event,
                             Subcurve,
                             Visitor,
@@ -92,17 +92,33 @@ OutputIterator locate(const Arrangement& arr,
       xcurves_vec[i] = X_monotone_curve_2((*eit).curve(),(*eit).twin());
   }
   
+  Size num_of_points = std::distance(points_begin, points_end);
+  std::vector<Point_2> points_vec(num_of_points);
+
+  i = 0;
+  for(PointsIterator pit =  points_begin;
+      pit != points_end;
+      ++pit, ++i)
+  {
+    points_vec[i] = Point_2(*pit,Point_2::QUERY);
+  }
+
+
+
   // Perform the sweep, while initializing it with all query points as event
   // points.
   Visitor     visitor (oi, arr);
   Sweep_line  sweep_line (&visitor);
-
-  sweep_line.init (xcurves_vec.begin(),
-		   xcurves_vec.end(),
-		   points_begin, 
-		   points_end,
-		   false);
-  sweep_line.sweep();
+  /*sweep_line.init (xcurves_vec.begin(),
+		               xcurves_vec.end(),
+		               points_vec.begin(), 
+		               points_vec.end());
+  
+  sweep_line.sweep();*/
+  sweep_line.sweep(xcurves_vec.begin(),
+		               xcurves_vec.end(),
+		               points_vec.begin(), 
+		               points_vec.end());
   
   return visitor.get_output_iterator();  // return a past_end iterator
 }
