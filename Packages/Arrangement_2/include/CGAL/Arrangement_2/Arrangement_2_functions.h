@@ -62,7 +62,7 @@ Arrangement_2<Traits,Dcel>::Arrangement_2 (const Self& arr) :
 // Constructor given a traits object.
 //
 template<class Traits, class Dcel>
-Arrangement_2<Traits,Dcel>::Arrangement_2 (const Traits_2 *tr)
+Arrangement_2<Traits,Dcel>::Arrangement_2 (Traits_2 *tr)
 {
   // Set an empty unbounded face.
   un_face = dcel.new_face();
@@ -523,6 +523,7 @@ Arrangement_2<Traits,Dcel>::insert_from_right_vertex
 
   return (Halfedge_handle (new_he));
 
+
 }
 
 //-----------------------------------------------------------------------------
@@ -535,6 +536,7 @@ typename Arrangement_2<Traits,Dcel>::Halfedge_handle
 Arrangement_2<Traits,Dcel>::insert_from_right_vertex
     (const X_monotone_curve_2& cv,
      Halfedge_handle prev)
+
 {
   CGAL_precondition_msg
     (traits->equal_2_object() (prev.target().point(), 
@@ -922,6 +924,7 @@ Arrangement_2<Traits,Dcel>::split_edge (Halfedge_handle e,
 
   CGAL_precondition_msg (traits->equal_2_object() (cv1_right, cv2_left) ||
                          traits->equal_2_object() (cv2_right, cv1_left),
+
                          "Curves do not share a common endpoint.");
 
   if (traits->equal_2_object() (cv1_right, cv2_left))
@@ -1194,6 +1197,7 @@ Arrangement_2<Traits,Dcel>::remove_edge (Halfedge_handle e)
   Face      *f;
 
   if (he1->face() != he2->face() ||
+
       he1->next() == he2 || he2->next() == he1)
   {
     // Either the removal of he1 (and its twin halfedge) will cause the two 
@@ -1235,6 +1239,7 @@ Arrangement_2<Traits,Dcel>::remove_edge (Halfedge_handle e)
     } while (ccb2 != he1);
 
     // Compare the two leftmost points: p_min2 lies to the left of p_min1
+
     // if and only if he1 points at the hole we are about to create.
     if (traits->compare_x_2_object() (*p_min2, *p_min1) == SMALLER)
       f = _remove_edge (he1);
@@ -1342,6 +1347,7 @@ bool Arrangement_2<Traits,Dcel>::_is_inside_new_face
     (const Halfedge *prev1,
      const Halfedge *prev2,
      const X_monotone_curve_2& cv) const
+
 {
   // Go over all halfedges of along boundary of the new face which will
   // contain prev1: As the new face is not constructed yet, this traversal
@@ -1405,6 +1411,7 @@ bool Arrangement_2<Traits,Dcel>::_is_inside_new_face
   else
   {
     // In this case, the leftmost edge should be the one associated with the
+
     // new curve (which has not been created yet).
     cv_curr = &cv;
     cv_next = &(first->curve());
@@ -1455,6 +1462,7 @@ bool Arrangement_2<Traits,Dcel>::_point_is_in (const Point_2& p,
   }
 
   // Go over all curves of the boundary, starting from the non-vertical curve
+
   // we have located, and count those which are above p.
   const Halfedge  *first = curr;
 
@@ -1494,6 +1502,7 @@ bool Arrangement_2<Traits,Dcel>::_point_is_in (const Point_2& p,
 	  CGAL_assertion_msg (next_non_vert != curr,
 			      "Infinite loop in _point_is_in().");
 	  
+
 	} while (is_vertical (next_non_vert->curve()));
 	
 	// In case the source of the current curve and the target of

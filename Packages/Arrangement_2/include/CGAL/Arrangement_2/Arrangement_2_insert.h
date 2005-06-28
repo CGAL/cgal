@@ -60,8 +60,8 @@ void insert (Arrangement_2<Traits,Dcel>& arr,
   // Break the input curve into x-monotone subcurves and isolated points.
   typedef Arr_traits_wrapper_2<Traits>                   Traits_wrapper_2;
 
-  const Traits_wrapper_2   *traits =
-                        static_cast<const Traits_wrapper_2*>(arr.get_traits());
+  Traits_wrapper_2   *traits =
+                        static_cast<Traits_wrapper_2*> (arr.get_traits());
 
   std::list<Object>                    x_objects;
   std::list<Object>::const_iterator    obj_iter;
@@ -359,8 +359,8 @@ remove_edge (Arrangement_2<Traits,Dcel>& arr,
   // remove the vertex.
   typedef Arr_traits_wrapper_2<Traits>                   Traits_wrapper_2;
 
-  const Traits_wrapper_2                *traits =
-                        static_cast<const Traits_wrapper_2*>(arr.get_traits());
+  Traits_wrapper_2                *traits =
+                         static_cast<Traits_wrapper_2*>(arr.get_traits());
 
   typename Arrangement_2::Halfedge_around_vertex_circulator  circ;
   typename Arrangement_2::Halfedge_handle                    e1, e2;
@@ -455,6 +455,7 @@ insert_vertex (Arrangement_2<Traits,Dcel>& arr,
     // vertex.
     const bool   assign_success = assign (vh, obj);
 
+
     CGAL_assertion (assign_success);
     
     if (assign_success)
@@ -499,8 +500,8 @@ bool remove_vertex (Arrangement_2<Traits,Dcel>& arr,
     // If the vertex has now two incident edges, and the curves associated
     // with these edges can be merged, merge the two edges and remove the
     // vertex.
-    const Traits_wrapper_2                *traits =
-                        static_cast<const Traits_wrapper_2*>(arr.get_traits());
+    Traits_wrapper_2                *traits =
+                        static_cast<Traits_wrapper_2*>(arr.get_traits());
 
     typename Arrangement_2::Halfedge_around_vertex_circulator  circ;
     typename Arrangement_2::Halfedge_handle                    e1, e2;
