@@ -22,8 +22,9 @@
 
 CGAL_BEGIN_NAMESPACE
 
-#include <CGAL/Arr_point_location/Arr_batched_point_location_event.h>
+//#include <CGAL/Arr_point_location/Arr_batched_point_location_event.h>
 #include <CGAL/Sweep_line_2/Sweep_line_subcurve.h>
+#include <CGAL/Sweep_line_2/Sweep_line_event.h>
 #include <CGAL/Object.h>
 #include <utility>
 
@@ -36,14 +37,14 @@ class Arr_batched_point_location_visitor
                                              _Arrangement>        Self;   
   typedef _Arrangement                                            Arrangement;
   typedef Sweep_line_subcurve<Traits>                             Subcurve;
-  typedef Arr_batched_point_location_event<Traits, Subcurve>      Event;
+  typedef Sweep_line_event<Traits, Subcurve>                      Event;
   typedef typename Event::SubCurveIter                            SubCurveIter;
 
-  typedef Sweep_line_2_impl<Traits,
-                            Event,
-                            Subcurve,
-                            Self,
-                            CGAL_ALLOCATOR(int)>                Sweep_line;
+  typedef Basic_sweep_line_2<Traits,
+                             Event,
+                             Subcurve,
+                             Self,
+                             CGAL_ALLOCATOR(int)>                Sweep_line;
 
   typedef typename Sweep_line::StatusLineIter                   StatusLineIter;
 
@@ -52,7 +53,8 @@ class Arr_batched_point_location_visitor
   typedef typename Traits::Point_2                       Point_2;
   typedef typename Arrangement::Halfedge_const_handle    Halfedge_const_handle;
 
-  typedef std::pair<Point_2,Object>                      PL_Pair;
+  typedef typename Traits::Base_Point_2                  Base_Point_2;         
+  typedef std::pair<Base_Point_2,Object>                      PL_Pair;
 
 
   public:
@@ -76,11 +78,11 @@ class Arr_batched_point_location_visitor
   //(above_on_event is true iff 'above' subcurve is on the event
   bool after_handle_event(Event* event, StatusLineIter above, bool above_on_event)
   {
-    if(! event->is_query())
+    if(! event->get_point().is_query())
       return true;
 
     // VERTEX
-    if(event->has_curves())
+    if(event->has_right_curves() || event->has_left_curves())
     {
       Subcurve* sc = *(event->right_curves_begin());
       Halfedge_const_handle he = sc->get_last_curve().get_halfedge_handle();
@@ -95,7 +97,7 @@ class Arr_batched_point_location_visitor
     }
 
      //UNBOUNDED_FACE
-    if(above == m_sweep_line->StatusLine_end())
+    if(above == m_sweep_line->status_line_end())
     {
       *m_out++ = std::make_pair(event->get_point(),
                                 make_object(m_arr.unbounded_face()));
@@ -125,12 +127,29 @@ class Arr_batched_point_location_visitor
     return m_out;
   }
 
-  void init_subcurve(Subcurve* sc){}
 
   void init_event(Event* event)
   {
-    event->set_query();
+   // event->set_query();
   }
+
+  void after_sweep(){}
+  void after_init(){}
+  void update_event(Event* e,
+                    const Point_2& end_point,
+                    const X_monotone_curve_2& cv,
+                    bool is_left_end)
+  {}
+
+  void update_event(Event* e,
+                    Subcurve* sc1,
+                    Subcurve* sc2,
+                    bool created = false)
+  {}
+
+  void update_event(Event* e,
+                    Subcurve* sc1)
+  {}
 
 
 
