@@ -79,8 +79,8 @@ public:
    */
   template <class InputIterator, class OutputIterator>
   OutputIterator convert_coefficients (InputIterator q_begin,
-				       InputIterator q_end,
-				       OutputIterator zoi) const
+                                       InputIterator q_end,
+                                       OutputIterator zoi) const
   {
     // Compute the least common multiplicand (LCM) of the denominators,
     // denoted L, and the greatest common divisor (GCD) of the numerators,
@@ -89,7 +89,7 @@ public:
     Integer        denom_lcm, temp_lcm;
     Integer        numer_gcd, temp_gcd;
     Integer        numer, denom;
-    
+
     denom_lcm = CORE::denominator (*q_iter);
     numer_gcd = CORE::numerator (*q_iter);
 
@@ -100,15 +100,15 @@ public:
 
       if (CGAL::sign (numer) != ZERO)
       {
-	denom = CORE::denominator (*q_iter);
-      
-	temp_lcm = denom_lcm;
-	temp_gcd = numer_gcd;
+        denom = CORE::denominator (*q_iter);
 
-	denom_lcm *= denom;
-	denom_lcm /= CORE::gcd (temp_lcm, denom);
+        temp_lcm = denom_lcm;
+        temp_gcd = numer_gcd;
 
-	numer_gcd = CORE::gcd (temp_gcd, numer);
+        denom_lcm *= denom;
+        denom_lcm /= CORE::gcd (temp_lcm, denom);
+
+        numer_gcd = CORE::gcd (temp_gcd, numer);
       }
 
       ++q_iter;
@@ -117,9 +117,9 @@ public:
     // Generate the output coefficients (n(i)*L) / (d(i)*G).
     for (q_iter = q_begin; q_iter != q_end; ++q_iter)
     {
-      *zoi = (CORE::numerator (*q_iter) * denom_lcm) / 
-	     (numer_gcd * CORE::denominator (*q_iter));
-      
+      *zoi = (CORE::numerator (*q_iter) * denom_lcm) /
+             (numer_gcd * CORE::denominator (*q_iter));
+
       ++zoi;
     }
 
@@ -145,30 +145,31 @@ public:
    * \return A past-the-end iterator for the output container.
    * \pre The value type of oi is Algebraic.
    */
-  template <class OutputIterator>
-  OutputIterator solve_quadratic_equation (const Integer& a,
-					   const Integer& b,
-					   const Integer& c,
-					   OutputIterator oi) const
+  template <class NT, class OutputIterator>
+  OutputIterator solve_quadratic_equation (const NT& a,
+                                           const NT& b,
+                                           const NT& c,
+                                           OutputIterator oi) const
   {
     // Check if this is really a linear equation.
     const Sign     sign_a = CGAL::sign (a);
-    
+
     if (sign_a == ZERO)
     {
       // Solve a linear equation.
       if (CGAL::sign(b) != ZERO)
       {
-	*oi = -Algebraic (c) / Algebraic (b);
-	++oi;
+        *oi = -Algebraic (c) / Algebraic (b);
+        ++oi;
       }
 
       return (oi);
     }
 
     // Act according to the discriminant.
-    const Integer  disc = b*b - 4*a*c;
+    const NT       disc = b*b - 4*a*c;
     const Sign     sign_disc = CGAL::sign (disc);
+
 
     if (sign_disc == ZERO)
     {
@@ -182,20 +183,20 @@ public:
       const Algebraic      sqrt_disc = CGAL::sqrt (Algebraic (disc));
       const Algebraic      alg_b = b;
       const Algebraic      alg_2a = 2*a;
-      
+
       if (sign_a == POSITIVE)
       {
-	*oi = -(sqrt_disc + alg_b) / alg_2a;
-	++oi;
-	*oi = (sqrt_disc - alg_b) / alg_2a;
-	++oi;
+        *oi = -(sqrt_disc + alg_b) / alg_2a;
+        ++oi;
+        *oi = (sqrt_disc - alg_b) / alg_2a;
+        ++oi;
       }
       else
       {
-	*oi = (sqrt_disc - alg_b) / alg_2a;
-	++oi;
-	*oi = -(sqrt_disc + alg_b) / alg_2a;
-	++oi;
+        *oi = (sqrt_disc - alg_b) / alg_2a;
+        ++oi;
+        *oi = -(sqrt_disc + alg_b) / alg_2a;
+        ++oi;
       }
     }
 
@@ -214,8 +215,8 @@ public:
    */
   template <class OutputIterator>
   OutputIterator compute_polynomial_roots (const Integer *coeffs,
-					   unsigned int degree,
-					   OutputIterator oi) const
+                                           unsigned int degree,
+                                           OutputIterator oi) const
   {
     // Get the real degree of the polynomial.
     while (CGAL::sign (coeffs[degree]) == ZERO)
@@ -223,14 +224,14 @@ public:
       degree--;
 
       if (degree == 0)
-	return (oi);
+        return (oi);
     }
 
     // Check if we really have a simple quadratic equation.
     if (degree <= 2)
     {
       return (solve_quadratic_equation (coeffs[2], coeffs[1], coeffs[0],
-					oi));
+                                        oi));
     }
 
     // Create a CORE polynomial and compute it real-valued roots.
