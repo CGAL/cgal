@@ -96,9 +96,9 @@ public:
    *         subcurve into the arrangement.
    */
   Result found_subcurve (const X_monotone_curve_2& cv,
-			 Face_handle face,
-			 Vertex_handle left_v, Halfedge_handle left_he,
-			 Vertex_handle right_v, Halfedge_handle right_he)
+                         Face_handle face,
+                         Vertex_handle left_v, Halfedge_handle left_he,
+                         Vertex_handle right_v, Halfedge_handle right_he)
   {
 #ifdef ARR_INC_INSERT_DEBUG
     std::cout << "Found subcurve: " << cv << std::endl;
@@ -106,13 +106,13 @@ public:
       std::cout << "           v1 = " << left_v.point() << std::endl;
     if (left_he != invalid_he)
       std::cout << "           e1 = " << left_he.source().point()
-		<< "  -->  " << left_he.target().point() << std::endl;
+                << "  -->  " << left_he.target().point() << std::endl;
 
     if (right_v != invalid_v)
       std::cout << "           v2 = " << right_v.point() << std::endl;
     if (right_he != invalid_he)
       std::cout << "           e2 = " << right_he.source().point()
-		<< "  -->  " << right_he.target().point() << std::endl;
+                << "  -->  " << right_he.target().point() << std::endl;
 #endif
 
     // Create an arrangement accessor.
@@ -120,11 +120,11 @@ public:
 
     // Check if the left and the right endpoints of cv should be associated
     // with arrangement vertices.
-    const bool       vertex_for_left = 
+    const bool       vertex_for_left =
       (left_v != invalid_v) || (left_he != invalid_he);
-    const bool       vertex_for_right = 
+    const bool       vertex_for_right =
       (right_v != invalid_v) || (right_he != invalid_he);
-    
+
     // Found the previous halfedges for the left and right endpoints (if any).
     Halfedge_handle  prev_he_left;
     Halfedge_handle  prev_he_right;
@@ -134,17 +134,17 @@ public:
       // If we are given the previous halfedge, use it. Otherwise, we are given
       // the vertex and we should locate cv around it.
       if (left_he != invalid_he)
-	prev_he_left = left_he;
+        prev_he_left = left_he;
       else if (! left_v.is_isolated())
-	prev_he_left = arr_access.locate_around_vertex (left_v, cv);
+        prev_he_left = arr_access.locate_around_vertex (left_v, cv);
 
       // In case the vertex does not exist, split left_he at cv's left endpoint
       // and create the vertex.
       if (left_v == invalid_v)
       {
-	_split_edge (left_he,
-		     traits->construct_min_vertex_2_object() (cv),
-		     arr_access);
+        _split_edge (left_he,
+                     traits->construct_min_vertex_2_object() (cv),
+                     arr_access);
       }
     }
 
@@ -153,23 +153,23 @@ public:
       // If we are given the previous halfedge, use it. Otherwise, we are given
       // the vertex and we should locate cv around it.
       if (right_he != invalid_he)
-	prev_he_right = right_he;
+        prev_he_right = right_he;
       else if (! right_v.is_isolated())
-	prev_he_right = arr_access.locate_around_vertex (right_v, cv);
+        prev_he_right = arr_access.locate_around_vertex (right_v, cv);
 
       // In case the vertex does not exist, split right_he at cv's right
       // endpoint and create the vertex.
       if (right_v == invalid_v)
       {
-	_split_edge (right_he,
-		     traits->construct_max_vertex_2_object() (cv),
-		     arr_access);
+        _split_edge (right_he,
+                     traits->construct_max_vertex_2_object() (cv),
+                     arr_access);
 
-	// Check if we have just split the halfedge that left_he refers to.
-	// If so, prev_he_right's target is now the new vertex, and we have to
-	// proceed to the next halfedge (whose target is right_v).
-	if (right_he == prev_he_left)
-	  prev_he_left = prev_he_left.next();
+        // Check if we have just split the halfedge that left_he refers to.
+        // If so, prev_he_right's target is now the new vertex, and we have to
+        // proceed to the next halfedge (whose target is right_v).
+        if (right_he == prev_he_left)
+          prev_he_left = prev_he_left.next();
       }
     }
 
@@ -181,28 +181,28 @@ public:
       // The left endpoint should not be associated with a vertex:
       if (! vertex_for_right)
       {
-	// We should insert the curve in the interior of the face.
-	inserted_he = p_arr->insert_in_face_interior (cv,
-						      face);
+        // We should insert the curve in the interior of the face.
+        inserted_he = p_arr->insert_in_face_interior (cv,
+                                                      face);
       }
       else
       {
-	// The right endpoint is associated with an arrangement vertex.
-	// If possible, use the previous halfedge for the right vertex.
-	if (prev_he_right != invalid_he)
-	{
-	  inserted_he = p_arr->insert_from_right_vertex (cv,
-							 prev_he_right);
-	}
-	else
-	{
-	  inserted_he = p_arr->insert_from_right_vertex (cv,
-							 right_v);
-	}
+        // The right endpoint is associated with an arrangement vertex.
+        // If possible, use the previous halfedge for the right vertex.
+        if (prev_he_right != invalid_he)
+        {
+          inserted_he = p_arr->insert_from_right_vertex (cv,
+                                                         prev_he_right);
+        }
+        else
+        {
+          inserted_he = p_arr->insert_from_right_vertex (cv,
+                                                         right_v);
+        }
 
-	// The returned halfedge is directed to the newly created vertex
-	// (the left one), so we take its twin.
-	inserted_he = inserted_he.twin();
+        // The returned halfedge is directed to the newly created vertex
+        // (the left one), so we take its twin.
+        inserted_he = inserted_he.twin();
       }
     }
     else
@@ -210,50 +210,50 @@ public:
       // The left endpoint should be associated with a vertex:
       if (! vertex_for_right)
       {
-	// If possible, use the previous halfedge for the left vertex.
-	if (prev_he_left != invalid_he)
-	{
-	  inserted_he = p_arr->insert_from_left_vertex (cv,
-							prev_he_left);
-	}
-	else
-	{
-	  inserted_he = p_arr->insert_from_left_vertex (cv,
-							left_v);
-	}
+        // If possible, use the previous halfedge for the left vertex.
+        if (prev_he_left != invalid_he)
+        {
+          inserted_he = p_arr->insert_from_left_vertex (cv,
+                                                        prev_he_left);
+        }
+        else
+        {
+          inserted_he = p_arr->insert_from_left_vertex (cv,
+                                                        left_v);
+        }
       }
       else
       {
-	// Both endpoints are associated with arrangement vertices.
-	// If possible, use the previous halfedges for both end vertices.
-	if (prev_he_left != invalid_he && prev_he_right != invalid_he)
-	{
-	  inserted_he = p_arr->insert_at_vertices (cv,
-						   prev_he_left,
-						   prev_he_right);
-	}
-	else if (prev_he_left != invalid_he)
-	{
-	  inserted_he = p_arr->insert_at_vertices (cv,
-						   prev_he_left,
-						   right_v);
-	}
-	else if (prev_he_right != invalid_he)
-	{
-	  inserted_he = p_arr->insert_at_vertices (cv,
-						   prev_he_right,
-						   left_v);
+        // Both endpoints are associated with arrangement vertices.
+        // If possible, use the previous halfedges for both end vertices.
+        if (prev_he_left != invalid_he && prev_he_right != invalid_he)
+        {
+          inserted_he = p_arr->insert_at_vertices (cv,
+                                                   prev_he_left,
+                                                   prev_he_right);
+        }
+        else if (prev_he_left != invalid_he)
+        {
+          inserted_he = p_arr->insert_at_vertices (cv,
+                                                   prev_he_left,
+                                                   right_v);
+        }
+        else if (prev_he_right != invalid_he)
+        {
+          inserted_he = p_arr->insert_at_vertices (cv,
+                                                   prev_he_right,
+                                                   left_v);
 
-	  // The returned halfedge is currently directed toward the left vertex
-	  // (instead of the right one), so we take its twin.
-	  inserted_he = inserted_he.twin();
-	}
-	else
-	{
-	  inserted_he = p_arr->insert_at_vertices (cv,
-						   left_v,
-						   right_v);
-	}
+          // The returned halfedge is currently directed toward the left vertex
+          // (instead of the right one), so we take its twin.
+          inserted_he = inserted_he.twin();
+        }
+        else
+        {
+          inserted_he = p_arr->insert_at_vertices (cv,
+                                                   left_v,
+                                                   right_v);
+        }
       }
     }
 
@@ -276,12 +276,13 @@ public:
    *         overlapping subcurve into the arrangement.
    */
   Result found_overlap (const X_monotone_curve_2& cv,
-			Halfedge_handle he,
-			Vertex_handle left_v, Vertex_handle right_v)
+                        Halfedge_handle he,
+                        Vertex_handle left_v, Vertex_handle right_v)
   {
 #ifdef ARR_INC_INSERT_DEBUG
-    std::cout << "Found overlap: " << cv 
-	      << "  with: " << he.curve() << std::endl;
+
+    std::cout << "Found overlap: " << cv
+              << "  with: " << he.curve() << std::endl;
 
     if (left_v != invalid_v)
       std::cout << "           v1 = " << left_v.point() << std::endl;
@@ -297,58 +298,58 @@ public:
     {
       // Split the curve associated with he at the left endpoint of cv.
       traits->split_2_object() (he.curve(),
-				traits->construct_min_vertex_2_object() (cv),
-				sub_cv1, sub_cv2);
+                                traits->construct_min_vertex_2_object() (cv),
+                                sub_cv1, sub_cv2);
 
       if (right_v == invalid_v)
       {
-	// The overlapping curve is contained strictly in the interior of he:
-	// Split he as an intermediate step.
-	updated_he = p_arr->split_edge (he,
-					sub_cv1, sub_cv2);
-	updated_he = updated_he.next();
+        // The overlapping curve is contained strictly in the interior of he:
+        // Split he as an intermediate step.
+        updated_he = p_arr->split_edge (he,
+                                        sub_cv1, sub_cv2);
+        updated_he = updated_he.next();
 
-	// Split the left subcurve at the right endpoint of cv.
-	traits->split_2_object() (updated_he.curve(),
-				  traits->construct_max_vertex_2_object() (cv),
-				  sub_cv1, sub_cv2);
-	
-	// Split updated_he once again, so that the left portion corresponds
-	// to the overlapping curve and the right portion corresponds to
-	// sub_cv2.
-	updated_he = p_arr->split_edge (updated_he,
-					cv, sub_cv2);
+        // Split the left subcurve at the right endpoint of cv.
+        traits->split_2_object() (updated_he.curve(),
+                                  traits->construct_max_vertex_2_object() (cv),
+                                  sub_cv1, sub_cv2);
+
+        // Split updated_he once again, so that the left portion corresponds
+        // to the overlapping curve and the right portion corresponds to
+        // sub_cv2.
+        updated_he = p_arr->split_edge (updated_he,
+                                        cv, sub_cv2);
       }
       else
       {
-	// Split he, such that the left portion corresponds to sub_cv1 and the
-	// right portion corresponds to the overlapping curve.
-	updated_he = p_arr->split_edge (he,
-					sub_cv1, cv);
-	updated_he = updated_he.next();
+        // Split he, such that the left portion corresponds to sub_cv1 and the
+        // right portion corresponds to the overlapping curve.
+        updated_he = p_arr->split_edge (he,
+                                        sub_cv1, cv);
+        updated_he = updated_he.next();
       }
     }
     else
     {
       if (right_v == invalid_v)
       {
-	// Split the curve associated with he at the right endpoint of cv.
-	traits->split_2_object() (he.curve(),
-				  traits->construct_max_vertex_2_object() (cv),
-				  sub_cv1, sub_cv2);
+        // Split the curve associated with he at the right endpoint of cv.
+        traits->split_2_object() (he.curve(),
+                                  traits->construct_max_vertex_2_object() (cv),
+                                  sub_cv1, sub_cv2);
 
-	// Split he, such that the left portion corresponds to the overlapping
-	// curve and the right portion corresponds to sub_cv2.
-	updated_he = p_arr->split_edge (he,
-					cv, sub_cv2);
+        // Split he, such that the left portion corresponds to the overlapping
+        // curve and the right portion corresponds to sub_cv2.
+        updated_he = p_arr->split_edge (he,
+                                        cv, sub_cv2);
       }
       else
       {
-	// The entire edge is overlapped: Modify the curve associated with cv
-	// to be the overlapping curve.
-	updated_he = p_arr->modify_edge (he,
-					 cv);
-      }     
+        // The entire edge is overlapped: Modify the curve associated with cv
+        // to be the overlapping curve.
+        updated_he = p_arr->modify_edge (he,
+                                         cv);
+      }
     }
 
     // Return the updated halfedge, and indicate we should not halt the
@@ -367,30 +368,30 @@ private:
    * \param arr_access An arrangement accessor.
    */
   void _split_edge (Halfedge_handle he,
-		    const Point_2& p,
-		    Arr_accessor<Arrangement_2>& arr_access)
+                    const Point_2& p,
+                    Arr_accessor<Arrangement_2>& arr_access)
   {
     // Split the curve at the split point.
     traits->split_2_object() (he.curve(),
-			      p,
-			      sub_cv1, sub_cv2);
+                              p,
+                              sub_cv1, sub_cv2);
 
     // Determine the order we send the split curves to the split_edge function,
     // depending whether the left point of sub_cv1 equals he's source (if not,
     // it equals its target).
     if (traits->equal_2_object()
-	(he.source().point(),
-	 traits->construct_min_vertex_2_object() (sub_cv1)))
+        (he.source().point(),
+         traits->construct_min_vertex_2_object() (sub_cv1)))
     {
       arr_access.split_edge_ex (he,
-				p,
-				sub_cv1, sub_cv2);
+                                p,
+                                sub_cv1, sub_cv2);
     }
     else
     {
       arr_access.split_edge_ex (he,
-				p,
-				sub_cv2, sub_cv1);
+                                p,
+                                sub_cv2, sub_cv1);
     }
 
     return;
