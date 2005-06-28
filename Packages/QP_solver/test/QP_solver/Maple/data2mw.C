@@ -27,7 +27,7 @@ void bailout(bool assertion,char *msg)
   }
 }
 
-std::string unspacify(const std::string& s)
+std::string unspacify(const std::string& s,bool fromRight=true)
 {
   // find starting position:
   unsigned int i = 0;
@@ -36,8 +36,9 @@ std::string unspacify(const std::string& s)
   
   // find ending position:
   int j = s.length()-1;
-  while (j > 0 && s[j] == ' ')
-    --j;
+  if (fromRight)
+    while (j > 0 && s[j] == ' ')
+      --j;
   return s.substr(i,j-i+1);
 }
 
@@ -67,7 +68,7 @@ int main(int argn,char **argv)
     bailout(!(isInputGroupOpen == true && isTextGroupOpen == true),
 	    "Error: internal error");
     std::getline(inf,line);
-    line = unspacify(line);
+    line = unspacify(line,false);
     DEBUG(std::cout << "LINE IS: " << line << std::endl;);
     
     // empty lines end groups:
