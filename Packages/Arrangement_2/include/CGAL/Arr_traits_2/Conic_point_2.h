@@ -43,8 +43,62 @@ public:
     
   typedef typename Alg_kernel::FT           Algebraic;
 
-  typedef unsigned int                      Conic_id;
+  /*! \class
+   * Representation of an ID of a conic arc.
+   */
+  class Conic_id
+  {
+  private:
+    const void    *p_traits;        // The traits class that generated the arc.
+    unsigned int   index;           // The index of the conic arc.
 
+  public:
+
+    /*! Default constructor. */
+    Conic_id () :
+      p_traits (NULL),
+      index (0)
+    {}
+
+    /*! Constructor. */
+    Conic_id (const void *traits, unsigned int ind) :
+      p_traits (traits),
+      index (ind)
+    {}
+
+    /*! Check if the ID is valid. */
+    bool is_valid () const
+    {
+      return (p_traits != NULL && index > 0);
+    }
+    
+    /*! Equality operator. */
+    bool operator== (const Conic_id& id) const
+    {
+      return (p_traits == id.p_traits && index == id.index);
+    }
+
+    /*! Inequality operator. */
+    bool operator!= (const Conic_id& id) const
+    {
+      return (p_traits != id.p_traits || index != id.index);
+    }
+
+    /*! Less-than operator. */
+    bool operator< (const Conic_id& id) const
+    {
+      return (p_traits < id.p_traits ||
+              (p_traits == id.p_traits && index < id.index));
+    }
+
+    /*! Greater-than operator. */
+    bool operator> (const Conic_id& id) const
+    {
+      return (p_traits > id.p_traits ||
+              (p_traits == id.p_traits && index > id.index));
+    }
+  };
+        
 private:
 
   typedef std::list<Conic_id>                          Ids_container;

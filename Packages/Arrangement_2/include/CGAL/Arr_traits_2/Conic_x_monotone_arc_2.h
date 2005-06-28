@@ -25,6 +25,8 @@
  */
 
 #include <CGAL/Arr_traits_2/Conic_intersections_2.h>
+
+
 #include <map>
 #include <ostream>
 
@@ -77,11 +79,12 @@ public:
   typedef typename Intersection_map::iterator     Intersection_map_iterator;
 
 protected:
-
+  
   typedef Conic_arc_2                             Base;
 
   typedef typename Conic_arc_2::Integer           Integer;
   typedef typename Conic_arc_2::Nt_traits         Nt_traits;
+  typedef typename Conic_arc_2::Rat_kernel        Rat_kernel;
 
   // Bit masks for the _info field (the two least significant bits are already
   // used by the base class).
@@ -106,7 +109,7 @@ protected:
   Algebraic      alg_w;      //
 
   Conic_id      _id;         // The ID number of the supporting conic curve.
-
+    
 public:
 
   /// \name Constrcution methods.
@@ -117,7 +120,7 @@ public:
    */
   _Conic_x_monotone_arc_2 () :
     Base (),
-    _id (0)
+    _id ()
   {}
 
   /*!
@@ -128,7 +131,7 @@ public:
     Base (arc),
     _id (arc._id)
   {
-    if (_id > 0)
+    if (_id.is_valid())
       _set();
     else
       _info = 0;
@@ -144,11 +147,11 @@ public:
     Base (arc),
     _id (id)
   {
-    CGAL_precondition (arc.is_valid());
+    CGAL_precondition (arc.is_valid() && id.is_valid());
 
     _set ();
   }
-  
+
   /*!
    * Construct an x-monotone sub-arc from a conic arc.
    * \param arc The given (base) arc.
@@ -162,12 +165,12 @@ public:
     Base (arc),
     _id (id)
   {
-    CGAL_precondition (arc.is_valid());
+    CGAL_precondition (arc.is_valid() && id.is_valid());
 
     // Set the two endpoints.
     _source = source;
     _target = target;
-    
+
     _set();
   }
 
@@ -188,7 +191,7 @@ public:
     // Set the rest of the properties.
     _id = arc._id;
 
-    if (_id > 0)
+    if (_id.is_valid())
       _set();
     else
       _info = 0;
@@ -363,28 +366,29 @@ public:
 
       if (CGAL::sign(_s) == ZERO)
       {
-	// In this case A is 0 and we have a linear equation.
-	CGAL_assertion (CGAL::sign (B) != ZERO);
+        // In this case A is 0 and we have a linear equation.
+        CGAL_assertion (CGAL::sign (B) != ZERO);
 
-	y = -C / B;
+        y = -C / B;
       }
       else
       {
-	// Solve the quadratic equation.
-	Algebraic  disc = B*B - 4*A*C;
-    
-	CGAL_assertion (CGAL::sign (disc) != NEGATIVE);
+        // Solve the quadratic equation.
+        Algebraic  disc = B*B - 4*A*C;
 
-	// We take either the root involving -sqrt(disc) or +sqrt(disc)
-	// based on the information flags.
-	if ((_info & PLUS_SQRT_DISC_ROOT) != 0)
-	{
-	  y = (nt_traits.sqrt (disc) - B) / (2*A);
-	}
-	else
-	{
-	  y = -(B + nt_traits.sqrt (disc)) / (2*A);
-	}
+        CGAL_assertion (CGAL::sign (disc) != NEGATIVE);
+
+        // We take either the root involving -sqrt(disc) or +sqrt(disc)
+        // based on the information flags.
+        if ((_info & PLUS_SQRT_DISC_ROOT) != 0)
+        {
+          y = (nt_traits.sqrt (disc) - B) / (2*A);
+        }
+        else
+
+        {
+          y = -(B + nt_traits.sqrt (disc)) / (2*A);
+        }
       }
     }
 
@@ -438,7 +442,7 @@ public:
       // which arc is above the other (the one with a larger slope is below).
       Comparison_result slope_res = CGAL::compare (slope1_numer*slope2_denom,
                                                    slope2_numer*slope1_denom);
-      
+
       if (slope_res != EQUAL)
         return (slope_res);
 
@@ -446,7 +450,7 @@ public:
       _derive_by_x_at (p, 2, slope1_numer, slope1_denom);
       arc._derive_by_x_at (p, 2, slope2_numer, slope2_denom);
 
-      slope_res = CGAL::compare (slope1_numer*slope2_denom, 
+      slope_res = CGAL::compare (slope1_numer*slope2_denom,
                                  slope2_numer*slope1_denom);
 
       // \todo Handle higher-order derivatives:
@@ -478,7 +482,7 @@ public:
     }
     else
     {
-      // The two arcs have vertical slopes at p_int: 
+      // The two arcs have vertical slopes at p_int:
       // First check whether one is facing up and one down. In this case the
       // comparison result is trivial.
       if ((_info & FACING_UP) != 0 && (arc._info & FACING_DOWN) != 0)
@@ -490,7 +494,7 @@ public:
       _derive_by_y_at (p, 2, slope1_numer, slope1_denom);
       arc._derive_by_y_at (p, 2, slope2_numer, slope2_denom);
 
-      Comparison_result slope_res = CGAL::compare (slope1_numer*slope2_denom, 
+      Comparison_result slope_res = CGAL::compare (slope1_numer*slope2_denom,
                                                    slope2_numer*slope1_denom);
 
       // \todo Handle higher-order derivatives:
@@ -521,7 +525,7 @@ public:
    * \pre Both arcs we compare are not vertical segments.
    */
   Comparison_result compare_to_left (const Self& arc,
-				     const Conic_point_2& p) const
+                                     const Conic_point_2& p) const
   {
     CGAL_precondition ((_info & IS_VERTICAL_SEGMENT) == 0 &&
                        (arc._info & IS_VERTICAL_SEGMENT) == 0);
@@ -545,21 +549,22 @@ public:
     // partial derivatives.
     Algebraic      slope1_numer, slope1_denom;
     Algebraic      slope2_numer, slope2_denom;
-    
+
     _derive_by_x_at (p, 1, slope1_numer, slope1_denom);
     arc._derive_by_x_at (p, 1, slope2_numer, slope2_denom);
 
     // Check if any of the slopes is vertical.
     const bool     is_vertical_slope1 = (CGAL::sign (slope1_denom) == ZERO);
+
     const bool     is_vertical_slope2 = (CGAL::sign (slope2_denom) == ZERO);
-    
+
     if (!is_vertical_slope1 && !is_vertical_slope2)
     {
       // The two derivatives at p are well-defined: use them to determine
       // which arc is above the other (the one with a larger slope is below).
       Comparison_result  slope_res = CGAL::compare(slope2_numer*slope1_denom,
                                                    slope1_numer*slope2_denom);
-      
+
       if (slope_res != EQUAL)
         return (slope_res);
 
@@ -567,9 +572,9 @@ public:
       _derive_by_x_at (p, 2, slope1_numer, slope1_denom);
       arc._derive_by_x_at (p, 2, slope2_numer, slope2_denom);
 
-      slope_res = CGAL::compare (slope1_numer*slope2_denom, 
+      slope_res = CGAL::compare (slope1_numer*slope2_denom,
                                  slope2_numer*slope1_denom);
-      
+
       // \todo Handle higher-order derivatives:
       CGAL_assertion (slope_res != EQUAL);
 
@@ -599,7 +604,7 @@ public:
     }
     else
     {
-      // The two arcs have vertical slopes at p_int: 
+      // The two arcs have vertical slopes at p_int:
       // First check whether one is facing up and one down. In this case the
       // comparison result is trivial.
       if ((_info & FACING_UP) != 0 && (arc._info & FACING_DOWN) != 0)
@@ -611,7 +616,7 @@ public:
       _derive_by_y_at (p, 2, slope1_numer, slope1_denom);
       arc._derive_by_y_at (p, 2, slope2_numer, slope2_denom);
 
-      Comparison_result  slope_res = CGAL::compare(slope2_numer*slope1_denom, 
+      Comparison_result  slope_res = CGAL::compare(slope2_numer*slope1_denom,
                                                    slope1_numer*slope2_denom);
 
       // \todo Handle higher-order derivatives:
@@ -653,10 +658,10 @@ public:
 
       if (_compute_overlap (arc, overlap))
       {
-	// There can be just a single overlap between two x-monotone arcs:
-	*oi = make_object (overlap);
-	oi++;
-	return (oi);
+        // There can be just a single overlap between two x-monotone arcs:
+        *oi = make_object (overlap);
+        oi++;
+        return (oi);
       }
 
       // In case there is not overlap and the supporting conics are the same,
@@ -668,23 +673,23 @@ public:
 
       if (ker.equal_2_object() (left(), arc.left()))
       {
-	Intersection_point_2  ip (left(), 0);
-	
-	*oi = make_object (ip);
-	oi++;
+        Intersection_point_2  ip (left(), 0);
+
+        *oi = make_object (ip);
+        oi++;
       }
-      
+
       if (ker.equal_2_object() (right(), arc.right()))
       {
-	Intersection_point_2  ip (right(), 0);
-	
-	*oi = make_object (ip);
-	oi++;
+        Intersection_point_2  ip (right(), 0);
+
+        *oi = make_object (ip);
+        oi++;
       }
 
       return (oi);
     }
-    
+
     // Search for the pair of supporting conics in the map (the first conic
     // ID in the pair should be smaller than the second one, to guarantee
     // uniqueness).
@@ -851,19 +856,20 @@ public:
     {
       // Extend the arc to the right.
       if ((_info & IS_DIRECTED_RIGHT) != 0)
-	_target = arc.right();
+        _target = arc.right();
       else
-	_source = arc.right();
+        _source = arc.right();
     }
     else
     {
       CGAL_precondition (ker.equal_2_object() (left(), arc.right()));
-      
+
       // Extend the arc to the left.
       if ((_info & IS_DIRECTED_RIGHT) != 0)
-	_source = arc.left();
+        _source = arc.left();
       else
-	_target = arc.left();
+        _target = arc.left();
+
     }
 
     return;
@@ -876,7 +882,7 @@ private:
   //@{
 
   /*!
-   * Set the properties of the x-monotone conic arc (for the usage of the 
+   * Set the properties of the x-monotone conic arc (for the usage of the
    * constructors).
    */
   void _set ()
@@ -903,6 +909,7 @@ private:
     Alg_kernel         ker;
     Comparison_result  dir_res = ker.compare_xy_2_object() (_source, _target);
 
+
     CGAL_assertion (dir_res != EQUAL);
 
     if (dir_res == SMALLER)
@@ -913,7 +920,7 @@ private:
         CGAL::sign (_s) != ZERO ||
         CGAL::sign (_t) != ZERO)
     {
-      if (_orient == COLLINEAR && 
+      if (_orient == COLLINEAR &&
           ker.compare_x_2_object() (_source, _target) == EQUAL)
       {
         // The arc is a vertical segment:
@@ -929,6 +936,7 @@ private:
 
       if (CGAL::sign (_v) == ZERO)
       {
+
         // The supporting curve is of the form: _u*x + _w = 0
         _info = (_info | IS_VERTICAL_SEGMENT);
       }
@@ -944,6 +952,7 @@ private:
                                                                 _target);
     Algebraic        ys[2];
     int              n_ys;
+
 
     n_ys = _conic_get_y_coordinates (p_mid.x(), ys);
 
@@ -973,7 +982,7 @@ private:
       return;
 
     // Check whether the conic is facing up or facing down:
-    // Check whether the arc (which is x-monotone of degree 2) lies above or 
+    // Check whether the arc (which is x-monotone of degree 2) lies above or
     // below the segement that contects its two end-points (x1,y1) and (x2,y2).
     // To do that, we find the y coordinate of a point on the arc whose x
     // coordinate is (x1+x2)/2 and compare it to (y1+y2)/2.
@@ -989,7 +998,7 @@ private:
       // The arc is below the connecting segment, so it is facing downwards.
       _info = _info | FACING_DOWN;
     }
-    
+
     return;
   }
 
@@ -1021,7 +1030,7 @@ private:
     // Check if the two arcs originate from the same conic:
     if (_id == arc._id)
       return (true);
-    
+
     // Check whether the coefficients of the two supporting conics are equal
     // up to a constant factor.
     Integer        factor1 = 1;
@@ -1047,13 +1056,14 @@ private:
     else if (CGAL::sign (arc._t) != ZERO)
       factor2 = arc._t;
     else if (CGAL::sign (arc._u) != ZERO)
+
       factor2 = arc._u;
     else if (CGAL::sign (arc._v) != ZERO)
       factor2 = arc._v;
     else if (CGAL::sign (arc._w) != ZERO)
       factor2 = arc._w;
 
-    return (CGAL::compare  (_r * factor2, arc._r * factor1) == EQUAL && 
+    return (CGAL::compare  (_r * factor2, arc._r * factor1) == EQUAL &&
             CGAL::compare  (_s * factor2, arc._s * factor1) == EQUAL &&
             CGAL::compare  (_t * factor2, arc._t * factor1) == EQUAL &&
             CGAL::compare  (_u * factor2, arc._u * factor1) == EQUAL &&
@@ -1070,13 +1080,13 @@ private:
    * \todo Allow higher order derivatives.
    */
   void _derive_by_x_at (const Point_2& p, const unsigned int& i,
-			Algebraic& slope_numer, Algebraic& slope_denom) const
+                        Algebraic& slope_numer, Algebraic& slope_denom) const
   {
-    // The derivative by x of the conic 
+    // The derivative by x of the conic
     //   C: {r*x^2 + s*y^2 + t*xy + u*x + v*y + w = 0}
     // at the point p=(x,y) is given by:
     //
-    //           2r*x + t*y + u       alpha 
+    //           2r*x + t*y + u       alpha
     //   y' = - ---------------- = - -------
     //           2s*y + t*x + v       beta
     //
@@ -1143,13 +1153,13 @@ private:
    * \todo Allow higher order derivatives.
    */
   void _derive_by_y_at (const Point_2& p, const int& i,
-			Algebraic& slope_numer, Algebraic& slope_denom) const
+                        Algebraic& slope_numer, Algebraic& slope_denom) const
   {
-    // The derivative by y of the conic 
+    // The derivative by y of the conic
     //   C: {r*x^2 + s*y^2 + t*xy + u*x + v*y + w = 0}
     // at the point p=(x,y) is given by:
     //
-    //           2s*y + t*x + v     alpha 
+    //           2s*y + t*x + v     alpha
     //   x' = - ---------------- = -------
     //           2r*x + t*y + u      beta
     //
@@ -1171,6 +1181,7 @@ private:
         slope_denom = -sl_denom;
       }
 
+
       return;
     }
 
@@ -1187,6 +1198,7 @@ private:
 
     if (i == 2)
     {
+
       // Make sure that the denominator is always positive.
       if (CGAL::sign (sl_denom) != NEGATIVE)
       {
@@ -1227,35 +1239,35 @@ private:
     {
       if (_is_strictly_between_endpoints(arc.right()))
       {
-        // Case 1 - *this:     +----------->     
+        // Case 1 - *this:     +----------->
         //            arc:       +=====>
         overlap = arc;
         return (true);
       }
       else
       {
-        // Case 2 - *this:     +----------->     
+        // Case 2 - *this:     +----------->
         //            arc:               +=====>
-	overlap = *this;
+        overlap = *this;
 
-	if ((overlap._info & IS_DIRECTED_RIGHT) != 0)
-	  overlap._source = arc.left();
-	else
-	  overlap._target = arc.left();
-	  
+        if ((overlap._info & IS_DIRECTED_RIGHT) != 0)
+          overlap._source = arc.left();
+        else
+          overlap._target = arc.left();
+
         return (true);
       }
     }
     else if (_is_strictly_between_endpoints (arc.right()))
     {
-      // Case 3 - *this:     +----------->     
+      // Case 3 - *this:     +----------->
       //            arc:   +=====>
       overlap = *this;
 
       if ((overlap._info & IS_DIRECTED_RIGHT) != 0)
-	overlap._target = arc.right();
+        overlap._target = arc.right();
       else
-	overlap._source = arc.right();
+        overlap._source = arc.right();
 
       return (true);
     }
@@ -1264,12 +1276,12 @@ private:
              (arc._is_strictly_between_endpoints(_source) ||
               arc._is_strictly_between_endpoints(_target)))
     {
-      // Case 4 - *this:     +----------->     
+      // Case 4 - *this:     +----------->
       //            arc:   +================>
       overlap = *this;
       return (true);
     }
-    
+
     // If we reached here, there are no overlaps:
     return (false);
   }
@@ -1291,11 +1303,11 @@ private:
     int         n_xs;
 
     n_xs = _compute_resultant_roots (nt_traits,
-				     _r, _s, _t, _u, _v, _w,
-				     deg1,
+                                     _r, _s, _t, _u, _v, _w,
+                                     deg1,
                                      arc._r, arc._s, arc._t,
-				     arc._u, arc._v, arc._w,
-				     deg2,
+                                     arc._u, arc._v, arc._w,
+                                     deg2,
                                      xs);
 
     // Compute the y-coordinates of the intersection points.
@@ -1303,11 +1315,11 @@ private:
     int         n_ys;
 
     n_ys = _compute_resultant_roots (nt_traits,
-				     _s, _r, _t, _v, _u, _w,
-				     deg1,
+                                     _s, _r, _t, _v, _u, _w,
+                                     deg1,
                                      arc._s, arc._r, arc._t,
                                      arc._v, arc._u, arc._w,
-				     deg2,
+                                     deg2,
                                      ys);
 
     // Pair the coordinates of the intersection points. As the vectors of
@@ -1330,7 +1342,7 @@ private:
           ip.set_generating_conic (arc._id);
 
           // Compute the multiplicity of the intersection point.
-	  mult = _multiplicity_of_intersection_point (arc, ip);
+          mult = _multiplicity_of_intersection_point (arc, ip);
 
           // Insert the intersection point to the output list.
           inter_list.push_back (Intersection_point_2 (ip, mult));
@@ -1348,25 +1360,25 @@ private:
    * \return The multiplicity of the intersection point.
    */
   unsigned int _multiplicity_of_intersection_point (const Self& arc,
-						    const Point_2& p) const
+                                                    const Point_2& p) const
   {
     // Compare the slopes of the two arcs at p, using their first-order
     // partial derivatives.
     Algebraic      slope1_numer, slope1_denom;
     Algebraic      slope2_numer, slope2_denom;
-    
+
     _derive_by_x_at (p, 1, slope1_numer, slope1_denom);
     arc._derive_by_x_at (p, 1, slope2_numer, slope2_denom);
 
     if (CGAL::compare (slope1_numer*slope2_denom,
-		       slope2_numer*slope1_denom) != EQUAL)
+                       slope2_numer*slope1_denom) != EQUAL)
     {
       // Different slopes at p - the mutiplicity of p is 1:
       return (1);
     }
-    
+
     if (CGAL::sign (slope1_denom) != ZERO &&
-	CGAL::sign (slope2_denom) != ZERO)
+        CGAL::sign (slope2_denom) != ZERO)
     {
       // The curves do not have a vertical slope at p.
       // Compare their second-order derivative by x:
@@ -1382,7 +1394,7 @@ private:
     }
 
     if (CGAL::compare (slope1_numer*slope2_denom,
-		       slope2_numer*slope1_denom) != EQUAL)
+                       slope2_numer*slope1_denom) != EQUAL)
     {
       // Different curvatures at p - the mutiplicity of p is 2:
       return (2);
