@@ -99,7 +99,7 @@ public:
   typedef typename Event::SubCurveIter                   SubCurveIter;
   typedef typename Event::SubCurveRevIter                SubCurveRevIter;
 
-  typedef Sweep_line_2_impl<Traits,
+  typedef Sweep_line_2<Traits,
                             Event,
                             Subcurve,
                             Self,
@@ -150,15 +150,17 @@ public:
     Base::before_handle_event(event);
   }
 
-  bool after_handle_event(Event* event, StatusLineIter iter, bool flag)
+  bool after_handle_event(Event * event, StatusLineIter iter, bool flag)
   {
     bool res = Base::after_handle_event(event, iter, flag);
 
     SubCurveRevIter rev_iter = event->right_curves_rbegin();
-    Subcurve* sc_above = NULL;
-    if( iter != static_cast<Sweep_line*>(m_sweep_line) -> StatusLine_end())
-      sc_above = static_cast<Subcurve*>(*iter);
-    else
+    Subcurve *sc_above = NULL;
+    if(iter != (reinterpret_cast<Sweep_line*>(m_sweep_line))->status_line_end())
+      sc_above = reinterpret_cast<Subcurve*>(*iter);
+
+    
+    if(!sc_above)
     { 
       if(rev_iter != event->right_curves_rend())
       {
@@ -185,18 +187,69 @@ public:
     }
     return res;
   }
-
-  void init_subcurve(Subcurve* sc)
-  {
-    Base::init_subcurve(sc);
-  }
+ 
 
   void add_subcurve(const X_monotone_curve_2& cv,Subcurve* sc)
   {
     Base::add_subcurve(cv, sc);
   }
 
+    
 
+
+  void update_event(Event* e,
+                    const Point_2& end_point,
+                    const X_monotone_curve_2& cv,
+                    bool is_left_end)
+  {
+    Point_2& pt = e->get_point();
+    if(pt.is_red_object_null())
+    {
+      pt.set_red_object(end_point.get_red_object());
+    }
+    else
+      if(pt.is_blue_object_null())
+      {
+        pt.set_blue_object(end_point.get_blue_object());
+      }
+  }
+
+
+  void update_event(Event* e,
+                    Subcurve* c1,
+                    Subcurve* c2,
+                    bool created = false)
+  {
+    CGAL_assertion(created == true);
+  }
+
+
+  void update_event(Event *e,
+                    Subcurve* sc)
+  {
+    Point_2& pt = e->get_point();
+
+    if(pt.is_red_object_null())
+    {
+      CGAL_assertion(!pt.is_blue_object_null());
+      CGAL_assertion(sc->get_color() == Curve_info::RED);
+      Halfedge_handle_red red_he = sc->get_red_halfedge_handle();
+      pt.set_red_object(make_object(red_he));
+    }
+    else
+    {
+      CGAL_assertion(! pt.is_red_object_null() &&
+                       pt.is_blue_object_null());
+
+      CGAL_assertion(sc->get_color() == Curve_info::BLUE);
+      Halfedge_handle_blue blue_he = sc->get_blue_halfedge_handle();
+      pt.set_blue_object(make_object(blue_he));
+    }
+  }
+
+
+      
+                  
 
   virtual Halfedge_handle insert_in_face_interior
     (const X_monotone_curve_2& cv,
@@ -205,31 +258,64 @@ public:
     // res is directed from left to right
     Halfedge_handle res = Base::insert_in_face_interior(cv,sc);
     map_halfedge_and_twin(res, true, cv.get_curve_info());
+    Subcurve *sc_above = sc->get_above();
+    Vertex_handle res_v_left = res.source();
+    Vertex_handle res_v_right = res.target();
 
+    //create left vertex
+    Event *last_event = 
+      reinterpret_cast<Event*>(sc->get_last_event());
+    create_vertex(last_event, res_v_left, sc_above);
+
+    //create right vertex
+    create_vertex(m_currentEvent, res_v_right, sc_above);
+
+     //update the result edge
+    this ->create_edge(sc, res.twin());
     return res;
   }
 
 
+
   virtual Halfedge_handle insert_from_right_vertex
                           (const X_monotone_curve_2& cv,
-                           Halfedge_handle he)
+                           Halfedge_handle he,
+                           Subcurve* sc)
   {
     // res is directed from right to left
-    Halfedge_handle res = Base::insert_from_right_vertex(cv, he);
+    Halfedge_handle res = Base::insert_from_right_vertex(cv, he, sc);
     map_halfedge_and_twin(res, false, cv.get_curve_info());
+    Subcurve *sc_above = sc->get_above();
 
+    // the new vertex is the left one
+    Vertex_handle res_v = res.target();
+
+    Event *last_event = 
+      reinterpret_cast<Event*>(sc->get_last_event());
+    create_vertex(last_event, res_v, sc_above);
+
+     //update the result edge
+    this ->create_edge(sc, res);
     return res;
   }
 
 
   virtual Halfedge_handle insert_from_left_vertex
                           (const X_monotone_curve_2& cv,
-                           Halfedge_handle he)
+                           Halfedge_handle he,
+                           Subcurve* sc)
   {
     //res is directed from left to right
-    Halfedge_handle res = Base::insert_from_left_vertex(cv, he);
+    Halfedge_handle res = Base::insert_from_left_vertex(cv, he, sc);
     map_halfedge_and_twin(res, true, cv.get_curve_info());
+    Subcurve *sc_above = sc->get_above();
 
+     // the new vertex is the right one
+    Vertex_handle res_v = res.target();
+    create_vertex(m_currentEvent, res_v, sc_above);
+
+    //update the result edge
+    this ->create_edge(sc, res.twin());
     return res;
   }
 
@@ -333,6 +419,9 @@ public:
         }
       }
     }
+
+    //update the result edge
+    this ->create_edge(sc, res);
     return res;
   }
 
@@ -375,6 +464,143 @@ public:
   }
 
 
+ 
+
+
+  void create_vertex(Event *event, Vertex_handle res_v, Subcurve* sc_above)
+  {
+    const Point_2& pt = event->get_point();
+    CGAL_assertion( !pt.is_red_object_null() || !pt.is_blue_object_null());
+    const Object& red_obj  = pt.get_red_object();
+    const Object& blue_obj = pt.get_blue_object();
+    Vertex_handle_red red_v;
+    if(assign(red_v, red_obj))
+    {
+      Vertex_handle_blue    blue_v;
+      if(assign(blue_v, blue_obj))
+      {
+        // red vertex on blue vertex
+        m_overlay_traits ->create_vertex(red_v, blue_v, res_v);
+      }
+      else
+      {
+        Halfedge_handle_blue    blue_he;
+        if(assign(blue_he, blue_obj))
+        {
+          //red vertex on blue halfedge
+          m_overlay_traits->create_vertex(red_v, blue_he, res_v);
+        }
+        else
+        {
+          // red vertex inside blue face
+          CGAL_assertion(blue_obj.is_empty());
+          Face_handle_blue    blue_f;
+          if(!sc_above)
+            blue_f = m_blue_arr->unbounded_face();
+          else
+          {
+            blue_f = sc_above ->get_blue_halfedge_handle().face();
+          }
+          m_overlay_traits->create_vertex(red_v, blue_f, res_v);
+        }
+      }
+    }
+    else
+    {
+      Halfedge_handle_red    red_he;
+      if(assign(red_he, red_obj))
+      {
+        Halfedge_handle_blue   blue_he;
+        if(assign(blue_he, blue_obj))
+        {
+          //itersection red halfedge and blue halfedge
+          m_overlay_traits->create_vertex(red_he, blue_he, res_v);
+        }
+        else
+        {
+          Vertex_handle_blue    blue_v;
+          CGAL_assertion(assign(blue_v, blue_obj));
+
+          assign(blue_v, blue_obj);
+          // blue vertex on red halfedge
+          m_overlay_traits->create_vertex(red_he, blue_v, res_v);
+        }
+      }
+      else
+      {
+        // blue vertex inside red face
+        CGAL_assertion(red_obj.is_empty());
+        Vertex_handle_blue    blue_v;
+
+        CGAL_assertion(assign(blue_v, blue_obj));
+        Face_handle_red    red_f;
+        if(!sc_above)
+          red_f = m_red_arr->unbounded_face();
+        else
+        {
+          red_f = sc_above ->get_red_halfedge_handle().face();
+        }
+        m_overlay_traits->create_vertex(red_f, blue_v, res_v);
+      }
+    }
+  }
+
+
+
+
+  void create_edge(Subcurve *sc, Halfedge_handle res_he)
+  {
+    Halfedge_handle_red  red_he;
+    Halfedge_handle_blue blue_he;
+
+    // update the result halfedge
+    if(sc->get_color() == Curve_info::PURPLE)
+    {
+       // overlap edge
+      red_he = sc->get_red_halfedge_handle();
+      blue_he = sc->get_blue_halfedge_handle();
+      m_overlay_traits ->create_edge(red_he, blue_he, res_he);
+    }
+    else
+      if(sc->get_color() == Curve_info::RED)
+      {
+        // red edge on blue face
+        red_he = sc->get_red_halfedge_handle();
+        Face_handle_blue blue_f;
+        Subcurve* sc_above = sc->get_above();
+        if(!sc_above)
+          blue_f = m_blue_arr->unbounded_face();
+        else
+          blue_f = sc_above->get_blue_halfedge_handle().face();
+        m_overlay_traits ->create_edge(red_he, blue_f, res_he);
+      }
+      else
+      {
+        // blue edge on red face
+        CGAL_assertion(sc->get_color() == Curve_info::BLUE);
+
+        blue_he = sc->get_blue_halfedge_handle();
+        Face_handle_red red_f;
+        Subcurve* sc_above = sc->get_above();
+        if(!sc_above)
+          red_f = m_red_arr->unbounded_face();
+        else
+          red_f = sc_above->get_red_halfedge_handle().face();
+        m_overlay_traits ->create_edge(red_f, blue_he, res_he);
+      }
+  }
+
+
+  void after_sweep()
+  {
+    //after sweep is finshed, merge the two unbouded_faces from each arrangment
+    m_overlay_traits ->create_face(m_red_arr->unbounded_face(),
+                                   m_blue_arr->unbounded_face(),
+                                   m_arr->unbounded_face());
+  }
+  
+  void after_init(){}
+
 
 protected:
 
@@ -382,6 +608,7 @@ protected:
   const Arrangement2*       m_blue_arr;
   Hash_map                  m_halfedges_map;
   OverlayTraits*            m_overlay_traits;
+
 };
 
 

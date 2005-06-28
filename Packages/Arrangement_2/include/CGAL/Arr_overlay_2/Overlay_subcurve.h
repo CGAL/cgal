@@ -41,8 +41,12 @@ public:
   typedef typename Traits::Halfedge_handle_red           Halfedge_handle_red;
   typedef typename Traits::Halfedge_handle_blue          Halfedge_handle_blue;
 
+  typedef Sweep_line_event<Traits, Self>                 Event;
 
 
+
+  using Base::m_left_event;
+  using Base::m_right_event;
   using Base::m_lastCurve;
   using Base::m_lastEvent;
 
@@ -62,10 +66,10 @@ public:
                                                       m_above(NULL)
   {}
 
-  void init(const X_monotone_curve_2 &curve)
+  /*void init(const X_monotone_curve_2 &curve)
   {
     Base::init(curve);
-  }
+  }*/
 
   void set_above(Self* sc)
   {
@@ -97,6 +101,12 @@ public:
     return m_lastCurve.get_blue_halfedge_handle();
   }
 
+  template < class Event_ >
+  bool end_point(Event_* e)
+  {
+    return (e == reinterpret_cast<Event_*>(m_left_event) ||
+            e == reinterpret_cast<Event_*>(m_right_event));
+  }
 };
   
 CGAL_END_NAMESPACE
