@@ -89,6 +89,7 @@ private:
                                             Halfedge_around_facet_circulator;
     typedef typename Polyhedron::Halfedge_around_facet_const_circulator
                                             Halfedge_around_facet_const_circulator;
+
     // Additional info attached to halfedges
     typedef typename std::map<Halfedge_const_handle,
                               Halfedge_info,

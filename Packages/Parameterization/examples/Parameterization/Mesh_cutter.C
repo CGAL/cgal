@@ -13,6 +13,10 @@
  *                                                                         *
  ***************************************************************************/
 
+#include "short_names.h"                    // must be included first
+
+#include <CGAL/basic.h>                     // must be included second
+
 #include "Mesh_cutter.h"
 
 

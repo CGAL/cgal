@@ -157,14 +157,12 @@
 					Name="Debug|Win32">
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)/$(InputName)1.obj"
 						CompileAs="2"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release|Win32">
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)/$(InputName)1.obj"
 						CompileAs="2"/>
 				</FileConfiguration>
 			</File>
@@ -199,6 +197,9 @@
 			</File>
 			<File
 				RelativePath=".\include\Polyhedron_ex.h">
+			</File>
+			<File
+				RelativePath=".\include\short_names.h">
 			</File>
 		</Filter>
 		<Filter

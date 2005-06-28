@@ -28,6 +28,7 @@
 
 #include "Polyhedron_ex.h"
 
+#include <list>
 #include <cassert>
 
 
@@ -48,13 +49,16 @@
 
 class Mesh_adaptor_polyhedron_ex
 {
-// Private types
-private:
+// Forward references
 
-    // Forward references
+private:
     struct                                  Project_halfedge_vertex;
     struct                                  Project_vertex_handle_vertex;
     struct                                  Project_opposite_halfedge_vertex;
+
+// Private types
+private:
+
     // Halfedge
     typedef Polyhedron_ex::Halfedge         Halfedge;
     typedef Polyhedron_ex::Halfedge_handle  Halfedge_handle;
@@ -73,10 +77,13 @@ private:
                                             Halfedge_around_facet_const_circulator;
 
 
+// Public types
 public:
 
     //******************************************************************
-    // Public types
+    // LEVEL 1 INTERFACE:
+    // for "normal" classes that do not deal with virtual seams
+    // Example: all parameterization methods
     //******************************************************************
 
     // Number type
@@ -86,6 +93,7 @@ public:
     typedef Polyhedron_ex::Traits::Point_3  Point_3;
     typedef Polyhedron_ex::Traits::Vector_2 Vector_2;
     typedef Polyhedron_ex::Traits::Vector_3 Vector_3;
+
     // Facet
     typedef Polyhedron_ex::Facet            Facet;
     typedef Polyhedron_ex::Facet_handle     Facet_handle;
@@ -94,6 +102,7 @@ public:
     typedef Polyhedron_ex::Facet_iterator   Facet_iterator;
     typedef Polyhedron_ex::Facet_const_iterator
                                             Facet_const_iterator;
+
     // Vertex
     typedef Polyhedron_ex::Vertex           Vertex;
     typedef Polyhedron_ex::Vertex_handle    Vertex_handle;
@@ -141,11 +150,12 @@ public:
                                                  Vertex_const_handle>
                                             Vertex_around_vertex_const_circulator;
 
+
 // Public operations
 public:
 
     //******************************************************************
-    // LIFE CYCLE
+    // INTERFACE SPECIFIC TO Polyhedron_ex
     //******************************************************************
 
     // Create an adaptator for an existing Polyhedron_ex mesh.
@@ -171,9 +181,35 @@ public:
     // Default destructor, copy constructor and operator =() are fine
 
     // Get the adapted mesh
-    // Using this method is NOT recommended
     Polyhedron_ex*       get_adapted_mesh()       { return m_polyhedron; }
     const Polyhedron_ex* get_adapted_mesh() const { return m_polyhedron; }
+
+    // Get halfedge from source and target vertices
+    // Will assert if such an halfedge doesn't exist
+    Halfedge_const_handle get_halfedge(
+        Vertex_const_handle source, Vertex_const_handle target) const
+    {
+        assert(source != NULL);
+        assert(target != NULL);
+
+        Halfedge_around_vertex_const_circulator cir     = target->vertex_begin(),
+                                                cir_end = cir;
+        CGAL_For_all(cir, cir_end)
+            if (cir->opposite()->vertex() == source)
+                return cir;
+
+#ifdef DEBUG_TRACE
+        fprintf(stderr, "      get_halfedge(%d->%d): error\n", source->index(), target->index());
+#endif
+        assert(false);              // error if we reach this point
+        return NULL;
+    }
+    Halfedge_handle get_halfedge(Vertex_handle source, Vertex_handle target)
+    {
+        Halfedge_const_handle halfedge = get_halfedge((Vertex_const_handle)source,
+                                                      (Vertex_const_handle)target);
+        return const_cast<Halfedge*>(&*halfedge);
+    }
 
     //******************************************************************
     // LEVEL 1 INTERFACE:
@@ -255,7 +291,7 @@ public:
         // if isolated vertex
         if (pHalfedge == NULL) {
             boundary.push_back(seed_vertex);
-            return boundary; 
+            return boundary;
         }
 
         // Get seed_vertex' border halfedge
@@ -425,7 +461,7 @@ public:
         return m_polyhedron->is_border(vertex);
     }
 
-    // Return true if a vertex belongs to the UNIQUE mesh's main boundary, 
+    // Return true if a vertex belongs to the UNIQUE mesh's main boundary,
     // ie the mesh's LONGEST boundary
     bool  is_vertex_on_main_border(Vertex_const_handle vertex) const {
         return std::find(m_main_border.begin(), 
@@ -809,33 +845,6 @@ private:
             set_vertex_tag(*it, tag_done);
 
         return boundary;
-    }
-
-    // Get halfedge from source and target vertices
-    // Will assert if such an halfedge doesn't exist
-    Halfedge_const_handle get_halfedge(Vertex_const_handle source,
-                                       Vertex_const_handle target) const
-    {
-        assert(source != NULL);
-        assert(target != NULL);
-
-        Halfedge_around_vertex_const_circulator cir     = target->vertex_begin(),
-                                                cir_end = cir;
-        CGAL_For_all(cir, cir_end)
-            if (cir->opposite()->vertex() == source)
-                return cir;
-
-#ifdef DEBUG_TRACE
-        fprintf(stderr, "      get_halfedge(%d->%d): error\n", source->index(), target->index());
-#endif
-        assert(false);              // error if we reach this point
-        return NULL;
-    }
-    Halfedge_handle get_halfedge(Vertex_handle source, Vertex_handle target)
-    {
-        Halfedge_const_handle halfedge = get_halfedge((Vertex_const_handle)source,
-                                                      (Vertex_const_handle)target);
-        return const_cast<Halfedge*>(&*halfedge);
     }
 
 
