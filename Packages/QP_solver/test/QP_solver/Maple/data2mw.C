@@ -1,3 +1,11 @@
+// Synopsis: A small utility used to convert the data files from the directory
+// Maple/data/* to Maple 9.5 worksheets, thus allowing you to play around with
+// these examples.
+//
+// Usage: ./data2mw data/file.mema data/file.mw
+//
+// Author: Kaspar Fishcer <fischerk@inf.ethz.ch>
+
 #include <iostream>
 #include <fstream>
 #include <string>
