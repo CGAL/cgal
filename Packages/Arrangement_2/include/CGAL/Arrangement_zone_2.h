@@ -28,6 +28,7 @@
 #include <CGAL/Arrangement_2/Arr_traits_wrapper_2.h>
 #include <list>
 #include <map>
+#include <set>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -76,16 +77,20 @@ protected:
   typedef std::list<Object>                       Intersect_list;
   typedef std::map<const X_monotone_curve_2*,
                    Intersect_list>                Intersect_map;
-  typedef typename Intersect_map::value_type      Intersect_map_entry;
   typedef typename Intersect_map::iterator        Intersect_map_iterator;
+
+  typedef std::set<const X_monotone_curve_2*>     Curves_set;
+  typedef typename Curves_set::iterator           Curves_set_iterator;
 
   // Data members:
   Arrangement_2&          arr;         // The associated arrangement.
   const Traits_wrapper_2 *traits;      // Its associated traits object.
                                        
   Visitor                *visitor;     // The zone visitor.
-  
+
   Intersect_map           inter_map;   // Stores all computed intersections.
+  Curves_set              invalid_cvs; // Curves with whom the intersections
+                                       // are no longer valid.
 
   const Vertex_handle     invalid_v;   // An invalid vertex handle.
   const Halfedge_handle   invalid_he;  // An invalid halfedge handle.

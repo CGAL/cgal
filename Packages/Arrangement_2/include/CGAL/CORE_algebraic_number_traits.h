@@ -39,6 +39,7 @@ public:
 
   typedef CORE::BigInt                    Integer;
   typedef CORE::BigRat                    Rational;
+  typedef CORE::Polynomial<Integer>       Polynomial;
   typedef CORE::Expr                      Algebraic;
 
   /*!
@@ -204,46 +205,110 @@ public:
   }
 
   /*!
-   * Compute the real-valued roots of a polynomial with integer coefficients,
-   * sorted in ascending order.
+   * Construct a polynomial with integer coefficients.
    * \param coeffs The coefficients of the input polynomial.
    * \param degree The degree of the input polynomial.
+   * \return The polynomial.
+   */
+  Polynomial construct_polynomial (const Integer *coeffs,
+				   unsigned int degree) const
+  {
+    Polynomial   poly = Polynomial (degree, const_cast<Integer*> (coeffs));
+    poly.contract();
+
+    return (poly);
+  }
+
+  /*!
+   * Construct a polynomial with integer coefficients given rational
+   * coefficients.
+   * \param coeffs The coefficients of the input polynomial.
+   * \param degree The degree of the input polynomial.
+   * \return The polynomial.
+   */
+  Polynomial construct_polynomial (const Rational *coeffs,
+				   unsigned int degree) const
+  {
+    // Convert the rational coefficients to equivalent integer coefficients.
+    Integer                *z_coeffs = new Integer [degree + 1];
+
+    convert_coefficients (coeffs,
+			  coeffs + degree + 1,
+			  z_coeffs);
+
+    Polynomial   poly = Polynomial (degree, z_coeffs);
+    poly.contract();
+
+    delete[] z_coeffs;
+    return (poly);
+  }
+
+  /*!
+   * Compute the degree of a polynomial.
+   */
+  int degree (Polynomial& poly) const
+  {
+    return (poly.getTrueDegree());
+  }
+
+  /*!
+   * Evaluate a polynomial at a given x-value.
+   * \param x The value to evaluate at.
+   * \return The value of the polynomial at x.
+   */
+  template <class NT>
+  NT evaluate_at (const Polynomial& poly,
+		  NT& x) const
+  {
+    return (poly.eval (x));
+  }
+
+  /*!
+   * Compute the derivative of the given polynomial.
+   * \param poly The polynomial p(x).
+   * \return The derivative p'(x).
+   */
+  Polynomial derive (const Polynomial& poly) const
+  {
+    return (differentiate (poly));
+  }
+
+  /*!
+   * Compute the real-valued roots of a polynomial with integer coefficients,
+   * sorted in ascending order.
+   * \param poly The input polynomial.
    * \param oi An output iterator for the real-valued root of the polynomial.
    * \return A past-the-end iterator for the output container.
-   * \pre coeffs is a C-vector of size degree+1 at least.
-   *      The value type of oi is Algebraic.
+   * \pre The value type of oi is Algebraic.
    */
   template <class OutputIterator>
-  OutputIterator compute_polynomial_roots (const Integer *coeffs,
-                                           unsigned int degree,
-                                           OutputIterator oi) const
+  OutputIterator compute_polynomial_roots (Polynomial& poly,
+					   OutputIterator oi) const
   {
     // Get the real degree of the polynomial.
-    while (CGAL::sign (coeffs[degree]) == ZERO)
-    {
-      degree--;
+    int        degree = poly.getTrueDegree();
 
-      if (degree == 0)
-        return (oi);
-    }
+    if (degree <= 0)
+      return (oi);
 
     // Check if we really have a simple quadratic equation.
     if (degree <= 2)
     {
-      return (solve_quadratic_equation (coeffs[2], coeffs[1], coeffs[0],
-                                        oi));
+      return (solve_quadratic_equation (poly.getCoeff(2), 
+					poly.getCoeff(1),
+					poly.getCoeff(0),
+					oi));
     }
 
-    // Create a CORE polynomial and compute it real-valued roots.
-    CORE::Polynomial<Integer>  p (degree, const_cast<Integer*> (coeffs));
-    CORE::Sturm<Integer>       sturm (p);
+    // Compute the real-valued roots of the polynomial.
+    CORE::Sturm<Integer>       sturm (poly);
     const unsigned int         n_roots = sturm.numberOfRoots();
     unsigned int               i;
 
     for (i = 1; i <= n_roots; i++)
     {
       // Get the i'th real-valued root.
-      *oi = rootOf(p, i);
+      *oi = rootOf(poly, i);
       ++oi;
     }
 

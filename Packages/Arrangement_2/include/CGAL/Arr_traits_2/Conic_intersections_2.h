@@ -106,7 +106,7 @@ int _compute_resultant_roots (Nt_traits& nt_traits,
     c[0] = w1*w1*s2 - v1*w1*v2 + v1*v1*w2;
     
     xs_end = nt_traits.solve_quadratic_equation (c[2], c[1], c[0],
-						   xs);
+						 xs);
     return (xs_end - xs);
   }
 
@@ -160,7 +160,10 @@ int _compute_resultant_roots (Nt_traits& nt_traits,
   }
   
   // Compute the roots of the resultant polynomial.
-  xs_end = nt_traits.compute_polynomial_roots (c, degree,
+  typename Nt_traits::Polynomial  poly = 
+                                    nt_traits.construct_polynomial (c, degree);
+
+  xs_end = nt_traits.compute_polynomial_roots (poly,
 					       xs);
   return (xs_end - xs);
 }

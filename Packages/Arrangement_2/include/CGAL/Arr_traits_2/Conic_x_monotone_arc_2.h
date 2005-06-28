@@ -640,7 +640,7 @@ public:
   }
 
   /*!
-   * Compute the intersections between with the given arc.
+   * Compute the intersections with the given arc.
    * \param arc The given intersecting arc.
    * \param inter_map Maps conic pairs to lists of their intersection points.
    * \param oi The output iterator.
@@ -1093,7 +1093,7 @@ private:
     const Algebraic  _two = 2;
     const Algebraic  sl_numer = _two*alg_r*p.x() + alg_t*p.y() + alg_u;
     const Algebraic  sl_denom = _two*alg_s*p.y() + alg_t*p.x() + alg_v;
-
+    
     if (i == 1)
     {
       // Make sure that the denominator is always positive.
