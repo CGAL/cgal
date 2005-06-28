@@ -82,7 +82,7 @@ private:
                                                           Intersection_point_2;
   typedef typename X_monotone_curve_2::Intersection_map   Intersection_map;
 
-  Conic_id          conic_id;    // The serial number of the last conic
+  unsigned int      conic_index; // The serial number of the last conic
                                  // curve that was handled.
   Intersection_map  inter_map;   // Mapping conic pairs to their intersection
                                  // points.
@@ -93,7 +93,7 @@ public:
    * Default constructor.
    */
   Arr_conic_traits_2 () :
-    conic_id (0)
+    conic_index (0)
   {}
 
   /// \name Functor definitions.
@@ -433,13 +433,21 @@ public:
   {
   private:
 
-    Conic_id&      _conic_id;         // The current conic ID.
+    const Arr_conic_traits_2<Rat_kernel,
+                             Alg_kernel,
+                             Nt_traits>   *p_traits;
+                             
+    unsigned int       *p_conic_index;         // The current conic index.
 
   public:
 
     /*! Constructor. */
-    Make_x_monotone_2 (Conic_id& conic_id) :
-      _conic_id (conic_id)
+    Make_x_monotone_2 (const Arr_conic_traits_2<Rat_kernel,
+                                                Alg_kernel,
+                                                Nt_traits> *traits,
+                       unsigned int *index) :
+      p_traits (traits),
+      p_conic_index (index)
     {}
 
     /*!
@@ -455,8 +463,10 @@ public:
     {
       // Increment the serial number of the curve cv, which will serve as its
       // unique identifier.
-      _conic_id++;
-
+      (*p_conic_index)++;
+      
+      Conic_id      conic_id (p_traits, *p_conic_index);
+      
       // Find the points of vertical tangency to cv and act accordingly.
       typename Curve_2::Point_2  vtan_ps[2];
       int                        n_vtan_ps;
@@ -466,7 +476,7 @@ public:
       if (n_vtan_ps == 0)
       {    
         // In case the given curve is already x-monotone:
-        *oi = make_object (X_monotone_curve_2 (cv, _conic_id));
+        *oi = make_object (X_monotone_curve_2 (cv, conic_id));
         ++oi;
         return (oi);
       }
@@ -481,10 +491,10 @@ public:
         // arcs, one going from ps[0] to ps[1], and the other from ps[1] to
         // ps[0].
         *oi = make_object (X_monotone_curve_2 (cv, vtan_ps[0], vtan_ps[1], 
-					       _conic_id));
+                                               conic_id));
         ++oi;
         *oi = make_object (X_monotone_curve_2 (cv, vtan_ps[1], vtan_ps[0], 
-					       _conic_id));
+                                               conic_id));
         ++oi;
       }
       else
@@ -494,10 +504,10 @@ public:
           // Split the arc into two x-monotone sub-curves: one going from the
           // arc source to ps[0], and the other from ps[0] to the target.
           *oi = make_object (X_monotone_curve_2 (cv, cv.source(), vtan_ps[0], 
-						 _conic_id));
+                                                 conic_id));
           ++oi;
           *oi = make_object (X_monotone_curve_2 (cv, vtan_ps[0], cv.target(), 
-						 _conic_id));
+                                                 conic_id));
           ++oi;
         }
         else
@@ -509,12 +519,12 @@ public:
           // from ps[1] to the target.
           // Notice that ps[0] and ps[1] might switch places.
           X_monotone_curve_2    sub_curve1 (cv, cv.source(), vtan_ps[0], 
-                                            _conic_id);
+                                            conic_id);
           X_monotone_curve_2    sub_curve2 (cv, vtan_ps[0], cv.target(),
-                                            _conic_id);
+                                            conic_id);
           X_monotone_curve_2    sub_curve3;
           X_monotone_curve_2    temp;
-	  Point_2               vtan_p = Point_2(vtan_ps[1]);
+          Point_2               vtan_p = Point_2(vtan_ps[1]);
 
           if (sub_curve2.contains_point (vtan_p))
           {
@@ -547,9 +557,9 @@ public:
   };
 
   /*! Get a Make_x_monotone_2 functor object. */
-  Make_x_monotone_2 make_x_monotone_2_object () const
+  Make_x_monotone_2 make_x_monotone_2_object ()
   {
-    return (Make_x_monotone_2 (const_cast<Conic_id&> (conic_id)));
+    return (Make_x_monotone_2 (this, &conic_index));
   }
 
   class Split_2
@@ -609,9 +619,9 @@ public:
   };
 
   /*! Get an Intersect_2 functor object. */
-  Intersect_2 intersect_2_object () const
+  Intersect_2 intersect_2_object ()
   {
-    return (Intersect_2 (const_cast<Intersection_map&> (inter_map)));
+    return (Intersect_2 (inter_map));
   }
 
   class Are_mergeable_2
