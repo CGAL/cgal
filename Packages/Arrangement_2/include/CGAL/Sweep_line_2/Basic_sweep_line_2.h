@@ -160,7 +160,7 @@ public:
    * \param traits A pointer to a sweep-line traits object.
    * \param visitor A pointer to a sweep-line visitor object.
    */
-  Basic_sweep_line_2(const Traits *traits, SweepVisitor* visitor) :
+  Basic_sweep_line_2(Traits *traits, SweepVisitor* visitor) :
       m_traits(traits),
       m_traitsOwner(false),
       m_statusLineCurveLess(m_traits),
@@ -646,7 +646,7 @@ public:
 protected:
 
   /*! a  traits object */
-  const Traits *m_traits;
+  Traits *m_traits;
 
   /*! indicates if the traits object was allocated by the sweep */
   bool m_traitsOwner;

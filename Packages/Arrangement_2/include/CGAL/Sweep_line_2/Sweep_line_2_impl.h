@@ -137,7 +137,7 @@ public:
    * \param traits A pointer to a sweep-line traits object.
    * \param visitor A pointer to a sweep-line visitor object.
    */
-  Sweep_line_2(const Traits *traits, SweepVisitor* visitor) :
+  Sweep_line_2(Traits *traits, SweepVisitor* visitor) :
       Base(traits, visitor),
       m_curves_pair_set(0)
   {}

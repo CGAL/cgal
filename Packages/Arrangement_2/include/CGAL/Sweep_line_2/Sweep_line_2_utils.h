@@ -35,7 +35,7 @@ void  make_x_monotone(CurveInputIter begin,
                       CurveInputIter end,
                       XCurveOutIter xcurves_out,
                       PointOutIter points_out,
-                      const Traits* tr)
+                      Traits* tr)
 {
   unsigned int num_of_curves = std::distance(begin, end);
   std::vector<Object> object_vec;

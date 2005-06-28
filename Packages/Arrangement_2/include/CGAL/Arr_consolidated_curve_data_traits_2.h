@@ -260,6 +260,8 @@ public:
     }
   };
 
+
+
 public:
   
   /// \name Construction.
@@ -270,7 +272,7 @@ public:
   {}
   
   /*! Constructor from a base-traits class. */
-  Arr_consolidated_curve_data_traits_2 (const Base_traits& traits) :
+  Arr_consolidated_curve_data_traits_2 (Base_traits& traits) :
     Base_traits (traits)
   {}
   //@}
@@ -292,12 +294,12 @@ public:
   class Make_x_monotone_2
   {
   private:
-    const Base_traits    *base;
+    Base_traits    *base;
 
   public:
 
     /*! Constructor. */
-    Make_x_monotone_2 (const Base_traits *_base) :
+    Make_x_monotone_2 (Base_traits *_base) :
       base (_base)
     {}
     
@@ -349,7 +351,7 @@ public:
   };
 
   /*! Get a Make_x_monotone_2 functor object. */
-  Make_x_monotone_2 make_x_monotone_2_object () const
+  Make_x_monotone_2 make_x_monotone_2_object ()
   {
     return Make_x_monotone_2 (this);
   }
@@ -357,12 +359,12 @@ public:
   class Split_2
   {
   private:
-    const Base_traits    *base;
+    Base_traits    *base;
 
   public:
 
     /*! Constructor. */
-    Split_2 (const Base_traits *_base) :
+    Split_2 (Base_traits *_base) :
       base (_base)
     {}
 
@@ -393,20 +395,21 @@ public:
   };
 
   /*! Get a Split_2 functor object. */
-  Split_2 split_2_object () const
+  Split_2 split_2_object ()
   {
     return Split_2 (this);
+
   }
 
   class Intersect_2
   {
   private:
-    const Base_traits    *base;
+    Base_traits    *base;
 
   public:
 
     /*! Constructor. */
-    Intersect_2 (const Base_traits *_base) :
+    Intersect_2 (Base_traits *_base) :
       base (_base)
     {}
 
@@ -468,7 +471,7 @@ public:
   };
 
   /*! Get an Intersect_2 functor object. */
-  Intersect_2 intersect_2_object () const
+  Intersect_2 intersect_2_object () 
   {
     return Intersect_2 (this);
   }
@@ -476,12 +479,12 @@ public:
   class Are_mergeable_2
   {
   private:
-    const Base_traits    *base;
+    Base_traits    *base;
 
   public:
 
     /*! Constructor. */
-    Are_mergeable_2 (const Base_traits *_base) :
+    Are_mergeable_2 (Base_traits *_base) :
       base (_base)
     {}
 
@@ -531,7 +534,7 @@ public:
   };
   
   /*! Get an Are_mergeable_2 functor object. */
-  Are_mergeable_2 are_mergeable_2_object () const
+  Are_mergeable_2 are_mergeable_2_object () 
   {
     return Are_mergeable_2 (this);
   }
@@ -539,12 +542,12 @@ public:
   class Merge_2
   {
   private:
-    const Base_traits    *base;
+    Base_traits    *base;
 
   public:
 
     /*! Constructor. */
-    Merge_2 (const Base_traits *_base) :
+    Merge_2 (Base_traits *_base) :
       base (_base)
     {}
 
@@ -602,7 +605,7 @@ public:
   };
 
   /*! Get a Merge_2 functor object. */
-  Merge_2 merge_2_object () const
+  Merge_2 merge_2_object ()
   {
     return Merge_2 (this);
   }

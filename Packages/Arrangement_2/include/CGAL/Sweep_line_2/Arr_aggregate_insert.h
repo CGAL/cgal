@@ -167,7 +167,7 @@ public:
 protected:
 
   Arrangement_2*       m_arr;
-  const Traits_2*      m_traits;
+  Traits_2*            m_traits;
   Visitor              m_visitor;
   Sweep_line_2         m_sweep_line;
 };

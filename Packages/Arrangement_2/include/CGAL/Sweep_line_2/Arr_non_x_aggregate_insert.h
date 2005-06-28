@@ -121,8 +121,8 @@ public:
               
 protected:
 
-  const Traits_2      *m_traits;
   Arrangement_2       *m_arr;
+  Traits_2            *m_traits;
   Visitor              m_visitor;
   Basic_sweep_line_2   m_sweep_line;
 };

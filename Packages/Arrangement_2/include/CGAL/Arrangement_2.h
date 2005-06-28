@@ -188,7 +188,7 @@ public:
   Arrangement_2 (const Self& arr);
 
   /*! Constructor given a traits object. */
-  Arrangement_2 (const Traits_2 *tr);
+  Arrangement_2 (Traits_2 *tr);
   //@}
 
   /// \name Assignment functions.
@@ -211,7 +211,13 @@ public:
   void clear();
   //@}
 
-  /*! Access the traits object. */
+  /*! Access the traits object (non-const version). */
+  Traits_2* get_traits ()
+  {
+    return (traits);
+  }
+  
+  /*! Access the traits object (const version). */
   const Traits_2* get_traits () const
   {
     return (traits);
@@ -331,6 +337,7 @@ public:
   
   /*! Get a past-the-end const iterator for the arrangement edges. */
   Edge_const_iterator edges_end() const
+
   {
     return (Edge_const_iterator (dcel.edges_end())); 
   }
@@ -493,6 +500,7 @@ public:
    * \param v The given vertex.
    * \pre The left endpoint of cv is incident to the vertex v.
    * \return A handle for one of the halfedges corresponding to the inserted
+
    *         curve, whose target is the new vertex.
    */
   Halfedge_handle insert_from_left_vertex (const X_monotone_curve_2& cv, 
@@ -753,6 +761,7 @@ protected:
   {
     return (Halfedge_handle (he));
   }
+
 
   /*! Convert a pointer to a DCEL halfedge to a constant halfedge handle. */
   Halfedge_const_handle _const_handle_for (const Halfedge *he) const
@@ -1303,6 +1312,7 @@ private:
     for (iter = observers.begin(); iter != end; ++iter)
       (*iter)->before_move_isolated_vertex (from_f, to_f, v);
   }
+
 
   void _notify_after_move_isolated_vertex (Vertex_handle v)
   {

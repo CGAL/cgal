@@ -84,7 +84,7 @@ protected:
 
   // Data members:
   Arrangement_2&          arr;         // The associated arrangement.
-  const Traits_wrapper_2 *traits;      // Its associated traits object.
+  Traits_wrapper_2       *traits;      // Its associated traits object.
                                        
   Visitor                *visitor;     // The zone visitor.
 
@@ -147,7 +147,7 @@ public:
     invalid_v (),
     invalid_he ()
   {
-    traits = static_cast<const Traits_wrapper_2*> (arr.get_traits());
+    traits = static_cast<Traits_wrapper_2*> (arr.get_traits());
 
     CGAL_assertion (visitor != NULL);
 
