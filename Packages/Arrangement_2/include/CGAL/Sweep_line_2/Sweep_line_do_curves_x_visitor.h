@@ -83,7 +83,7 @@ class Sweep_line_do_curves_x_visitor
   void before_handle_event(Event* event){}
   bool after_handle_event(Event* event,StatusLineIter iter, bool flag)
   {
-    if(event->is_intersection())
+    if(event->is_intersection() || event->is_weak_intersection())
     {
       m_found_x = true;
       m_sweep_line -> stop_sweep();
@@ -94,6 +94,24 @@ class Sweep_line_do_curves_x_visitor
   void add_subcurve(const X_monotone_curve_2& cv,Subcurve* sc){}
 
   void init_event(Event* e){}
+
+  void after_sweep(){}
+  void after_init(){}
+  void update_event(Event* e,
+                    const Point_2& end_point,
+                    const X_monotone_curve_2& cv,
+                    bool is_left_end)
+  {}
+
+  void update_event(Event* e,
+                    Subcurve* sc1,
+                    Subcurve* sc2,
+                    bool created = false)
+  {}
+
+  void update_event(Event* e,
+                    Subcurve* sc1)
+  {}
 
 
   bool found_x()

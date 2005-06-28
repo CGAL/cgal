@@ -36,11 +36,11 @@ protected:
   typedef Arr_sweep_line_visitor< _Traits,
                                   Arr,
                                   Event,
-                                  Subcurve>                        Self;
+                                  Subcurve>                 Self;
 
-  typedef  _Traits                                                 Traits;
-  typedef typename Traits::X_monotone_curve_2                      X_monotone_curve_2;
-  typedef typename Traits::Point_2                                 Point_2;
+  typedef  _Traits                                          Traits;
+  typedef typename Traits::X_monotone_curve_2               X_monotone_curve_2;
+  typedef typename Traits::Point_2                          Point_2;
 
   typedef Sweep_line_2<Traits,
                             Event,
@@ -125,8 +125,7 @@ public:
       // we have a handle from the previous insert
       if ( hhandle != Halfedge_handle(NULL) )
       {
-        //res = m_arr->insert_from_right_vertex(cv, hhandle);
-        res = this->insert_from_right_vertex(cv, hhandle);
+        res = this->insert_from_right_vertex(cv, hhandle, sc);
         res = res.twin();
       }
       else
@@ -159,8 +158,7 @@ public:
       }
       else
       {
-        //res = m_arr->insert_from_left_vertex(cv, prev);
-        res = this->insert_from_left_vertex(cv, prev);
+        res = this->insert_from_left_vertex(cv, prev, sc);
       }
     }
     if ( lastEvent->get_num_left_curves() == 0 &&  
@@ -175,6 +173,22 @@ public:
       (static_cast<Sweep_line*>(m_sweep_line))->deallocate_event(lastEvent);
     }
   }
+
+  void update_event(Event* e,
+                    const Point_2& end_point,
+                    const X_monotone_curve_2& cv,
+                    bool is_left_end)
+  {}
+
+  void update_event(Event* e,
+                    Subcurve* sc1,
+                    Subcurve* sc2,
+                    bool created = false)
+  {}
+
+  void update_event(Event* e,
+                    Subcurve* sc1)
+  {}
 
 
   virtual Halfedge_handle insert_in_face_interior(const X_monotone_curve_2& cv,
@@ -229,18 +243,23 @@ public:
 
   virtual Halfedge_handle insert_from_right_vertex
                           (const X_monotone_curve_2& cv,
-                           Halfedge_handle he)
+                           Halfedge_handle he,
+                           Subcurve* sc)
   {
     return m_arr->insert_from_right_vertex(cv, he);
   }
 
   virtual Halfedge_handle insert_from_left_vertex
                           (const X_monotone_curve_2& cv,
-                           Halfedge_handle he)
+                           Halfedge_handle he,
+                           Subcurve* sc)
   {
     return m_arr->insert_from_left_vertex(cv, he);
   }
 
+
+  void after_sweep(){}
+  void after_init(){}
 
 
     

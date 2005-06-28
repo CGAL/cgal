@@ -242,6 +242,25 @@ public:
                       event));
   }
 
+
+  void after_sweep(){}
+  void after_init(){}
+  void update_event(Event* e,
+                    const Point_2& end_point,
+                    const X_monotone_curve_2& cv,
+                    bool is_left_end)
+  {}
+
+  void update_event(Event* e,
+                    Subcurve* sc1,
+                    Subcurve* sc2,
+                    bool created = false)
+  {}
+
+  void update_event(Event* e,
+                    Subcurve* sc1)
+  {}
+
  protected:
 
   Traits               m_traits;

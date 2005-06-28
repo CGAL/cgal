@@ -68,11 +68,22 @@ public:
   /*! The type of the event */
   typedef enum 
   {
-    LEFT_END = 1,
-    RIGHT_END = 2,
-    ACTION = 4,
-    QUERY = 8,
-    INTERSECTION = 16,
+    DEFAULT = 0,
+    
+    LEFT_END = 1, // a curve's left-end is on the event point
+    
+    RIGHT_END = 2, // a curve's right-end is on the event point
+    
+    ACTION = 4,   // action point 
+    
+    QUERY = 8,    //query point
+    
+    INTERSECTION = 16,     // two curves intersects at their interior 
+    
+    WEAK_INTERSECTION = 32, // when a curve's end-point is on the interior
+                           //of another curve (also may indicate overlap)
+    OVERLAP = 64 // end-point of an overlap subcurve
+
   }Attribute;
 
 
@@ -279,6 +290,12 @@ public:
     return m_point;
   }
 
+  /*! Returns the actual point of the event (non-const) */
+  Point_2& get_point()
+  {
+    return m_point;
+  }
+
   /*! change the point of the event. */
   void set_point(const Point_2& pt)
   {
@@ -310,6 +327,16 @@ public:
     return ((m_type & QUERY ) != 0);
   }
 
+  bool is_weak_intersection() const
+  {
+    return((m_type & WEAK_INTERSECTION) != 0);
+  }
+
+  bool is_overlap() const
+  {
+    return ((m_type & OVERLAP ) != 0);
+  }
+
   void set_left_end()
   {
     m_type |= LEFT_END;
@@ -335,10 +362,22 @@ public:
     m_type |= QUERY;
   }
 
+  void set_weak_intersection()
+  {
+    m_type |= WEAK_INTERSECTION;
+  }
+
+  void set_overlap()
+  {
+    m_type |= OVERLAP;
+  }
+
   void set_attribute(Attribute type)
   {
     m_type |= type;
   }
+
+  
 
 
 

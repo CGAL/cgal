@@ -195,8 +195,10 @@ public:
              CurveInputIterator curves_end)
   {
     _init_sweep(curves_begin, curves_end);
+    m_visitor ->after_init();
     _sweep();
     _complete_sweep();
+     m_visitor ->after_sweep();
   }
 
 
@@ -221,8 +223,10 @@ public:
   {
     _init_sweep(curves_begin, curves_end);
     _init_points(action_points_begin, action_points_end, Base_event::ACTION);
+    m_visitor ->after_init();
     _sweep();
     _complete_sweep();
+     m_visitor ->after_sweep();
   }
 
    /*!
@@ -250,8 +254,10 @@ public:
     _init_sweep(curves_begin, curves_end);
     _init_points(action_points_begin, action_points_end, Base_event::ACTION);
     _init_points(query_points_begin, query_points_end, Base_event::QUERY);
+    m_visitor ->after_init();
     _sweep();
     _complete_sweep();
+    m_visitor ->after_sweep();
   }
 
 
@@ -444,12 +450,20 @@ public:
       push_event(right_end, Base_event::RIGHT_END);
 
     Event* right_event = pair_res1.first;
+    if(pair_res1.second == false) // the event already exist
+    {
+      m_visitor ->update_event(right_event, right_end, curve , false); //new notification function!!
+    }
     
     // Handle the left endpoint of the curve.
     const std::pair<Event*, bool>& pair_res2 =
       push_event(left_end, Base_event::LEFT_END); 
 
     Event* left_event = pair_res2.first;
+    if(pair_res2.second == false) // the even already exist
+    {
+      m_visitor ->update_event(left_event, left_end, curve, true); //new notification function!!
+    }
     
     // construct a Subcurve object
     m_subCurveAlloc.construct(m_subCurves+index, m_masterSubcurve);

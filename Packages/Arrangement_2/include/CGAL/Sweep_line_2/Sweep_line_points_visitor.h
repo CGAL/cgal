@@ -88,7 +88,9 @@ public:
 
   bool after_handle_event(Event* event,StatusLineIter iter, bool flag)
   {
-    if(m_includeEndPoints || event->is_intersection())
+    if(m_includeEndPoints ||
+       event->is_intersection() ||
+       event->is_weak_intersection())
       *m_out++ = event->get_point();
     return true;
   }
@@ -102,35 +104,27 @@ public:
 
   void init_event(Event* e){}
 
+  void after_sweep(){}
+  void after_init(){}
+  void update_event(Event* e,
+                    const Point_2& end_point,
+                    const X_monotone_curve_2& cv,
+                    bool is_left_end)
+  {}
 
-  
+  void update_event(Event* e,
+                    Subcurve* sc1,
+                    Subcurve* sc2,
+                    bool created = false)
+  {}
 
-  /* static bool is_internal_intersection_point(Event* event)
-    {
-      for(SubCurveIter liter = event->left_curves_begin();
-          liter != event->left_curves_end();
-          ++liter)
-      {
-        if((Event*)((*liter)->get_right_event()) != event)
-          return true;
-      }
+  void update_event(Event* e,
+                    Subcurve* sc1)
+  {}
 
-      for(SubCurveIter riter = event->right_curves_begin();
-          riter != event->right_curves_end();
-          ++riter)
-      {
-        if((Event*)((*riter)->get_left_event()) != event )
-          return true;
-        if((*riter)->get_orig_subcurve1() != NULL)
-        {
-          if((Event*)((*riter)->get_orig_subcurve1()->get_left_event())!=event||
-             (Event*)((*riter)->get_orig_subcurve2()->get_left_event())!=event)
-             return true;
-        }
-      }
-      return false;
-    }*/
-     protected:
+
+
+protected:
 
     Traits*          m_traits;
     OutputIerator    m_out;
