@@ -67,4 +67,10 @@ touch $ERRORFILE
 #---------------------------------------------------------------------#
 
 compile_and_run polyhedron_ex_parameterization
+compile_and_run Polyhedron_parameterization1
+compile_and_run Polyhedron_parameterization2
+compile_and_run Polyhedron_parameterization3
+compile_and_run Polyhedron_parameterization4
+compile_and_run Polyhedron_parameterization5
+compile_and_run Polyhedron_parameterization6
 

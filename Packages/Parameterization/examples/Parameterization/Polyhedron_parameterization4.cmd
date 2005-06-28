@@ -1,0 +1,1 @@
+data/nefertiti.off nefertiti_floater_circle_taucs_parameterized.eps
