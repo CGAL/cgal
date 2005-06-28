@@ -1,4 +1,4 @@
-// Copyright (c) 1997-2002  Max-Planck-Institute Saarbruecken (Germany).
+// Copyright (c) 1997-2002,2005 Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -19,6 +19,7 @@
 //                 Miguel Granados <granados@mpi-sb.mpg.de>
 //                 Susan Hert      <hert@mpi-sb.mpg.de>
 //                 Lutz Kettner    <kettner@mpi-sb.mpg.de>
+//                 Ralf Osbild     <osbild@mpi-sb.mpg.de>
 #ifndef CGAL_NEF_POLYHEDRON_3_H
 #define CGAL_NEF_POLYHEDRON_3_H
 
@@ -54,6 +55,11 @@
 #include <CGAL/assertions.h>
 
 #include <list> // || (circulator_size(c) != 2 && !result));
+
+// RO: includes for "vertex cycle to Nef" constructor
+#include <CGAL/Nef_3/vertex_cycle_to_nef_3.h>
+#include <CGAL/Vector_3.h>
+#include <CGAL/normal_vector_newell_3.h>
 
 #undef CGAL_NEF_DEBUG
 #define CGAL_NEF_DEBUG 11
@@ -331,7 +337,37 @@ protected:
     CGAL_NEF_TRACEN("~Nef_polyhedron_3: destructor called for snc "<<&snc()<<
 	   ", pl "<<pl());
   }
-  
+
+   // RO: "vertex cycle to Nef" constructor (main part)
+   // II input iterator; KN kernel of normal (may differ from Nef kernel)
+   template <class II, class KN>
+   Nef_polyhedron_3 (II v_first, II v_last,
+                    const CGAL::Vector_3<KN> &normal, bool verb = false)
+   {  CGAL_NEF_TRACEN("construction from vertex cycle (main part)");
+
+      // project and triangulate vertices,
+      // convert result to Nef_polyhedron
+      CGAL_precondition (!CGAL::is_empty_range (v_first, v_last));
+      vertex_cycle_to_nef_3 (*this, v_first, v_last, normal, verb);
+      set_snc (snc());
+      CGAL_expensive_postcondition (is_valid());
+   }
+
+   // RO: "vertex cycle to Nef" constructor (normal computation)
+   template <class II>
+   Nef_polyhedron_3 (II v_first, II v_last, bool verb = false)
+   {  CGAL_NEF_TRACEN("construction from vertex cycle (normal computation)");
+
+      // compute normal vector
+      CGAL_precondition (!CGAL::is_empty_range (v_first, v_last));
+      CGAL::Vector_3<typename II::value_type::R> normal;
+      normal_vector_newell_3 (v_first, v_last, normal);
+
+      // call "main" constructor
+      *this = Nef_polyhedron_3 (v_first, v_last, normal, verb);
+      set_snc (snc());
+   }
+
   typedef Polyhedron_3< Kernel> Polyhedron;
   
  template <class T1, class T2,
@@ -449,7 +485,7 @@ protected:
    // calls the `operator()' of the `modifier'. Precondition: The
    // `modifier' returns a consistent representation.
    modifier(snc());
-   build_external_structure();
+   // build_external_structure(); // TO DO: conflict with CGAL::Mark_bounded_volumes
    simplify();
    CGAL_expensive_postcondition( is_valid());
  }
