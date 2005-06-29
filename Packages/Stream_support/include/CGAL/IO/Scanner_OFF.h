@@ -1,4 +1,4 @@
-// Copyright (c) 1997  Utrecht University (The Netherlands),
+// Copyright (c) 1997,2005  Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
 // INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
 // (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
@@ -20,6 +20,7 @@
 // $Name$
 //
 // Author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>
+//                 Ralf Osbild   <osbild@mpi-sb.mpg.de>
 
 #ifndef CGAL_IO_SCANNER_OFF_H
 #define CGAL_IO_SCANNER_OFF_H 1
@@ -178,6 +179,10 @@ private:
             m_cnt = m_scan->size_of_facets() + 1;
     }
 public:
+    value_type::size_type size_of_indices () const // RO
+       { return m_indices.size(); }
+    typedef value_type::size_type	  indices_size_type; // RO
+public:
     typedef File_scanner_OFF              Scanner;
     typedef I_Scanner_OFF_facet_iterator  Self;
     typedef value_type::iterator          iterator;
@@ -241,13 +246,14 @@ std::ptrdiff_t  distance( const I_Scanner_OFF_facet_iterator& first,
 }
 
 
-template <class Pt>
+template <class Kernel>
 class Scanner_OFF {
     File_scanner_OFF  m_scan;
 public:
-    typedef Pt                                     Point;
-    typedef typename Pt::Vector                    Normal;
-    typedef Scanner_OFF<Pt>                        Self;
+    typedef typename Kernel::Point_3               Point;
+    typedef Point                                  Pt;
+    typedef typename Kernel::Vector_3              Normal;
+    typedef Scanner_OFF<Kernel>                    Self;
     typedef I_Scanner_OFF_vertex_iterator<Pt>      Vertex_iterator;
     typedef I_Scanner_OFF_vertex_and_normals_iterator<Pt,Normal>
                                                    Vertex_and_normals_iterator;
