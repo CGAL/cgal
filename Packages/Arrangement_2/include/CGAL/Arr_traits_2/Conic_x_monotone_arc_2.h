@@ -453,6 +453,16 @@ public:
       slope_res = CGAL::compare (slope1_numer*slope2_denom,
                                  slope2_numer*slope1_denom);
 
+      if (slope_res != EQUAL)
+        return (slope_res);
+
+      // Use the third-order derivative.
+      _derive_by_x_at (p, 3, slope1_numer, slope1_denom);
+      arc._derive_by_x_at (p, 3, slope2_numer, slope2_denom);
+      
+      slope_res = CGAL::compare (slope1_numer*slope2_denom,
+				 slope2_numer*slope1_denom);
+
       // \todo Handle higher-order derivatives:
       CGAL_assertion (slope_res != EQUAL);
 
@@ -496,6 +506,17 @@ public:
 
       Comparison_result slope_res = CGAL::compare (slope1_numer*slope2_denom,
                                                    slope2_numer*slope1_denom);
+
+      // If necessary, use the third-order derivative by y.
+      if (slope_res == EQUAL)
+      {
+	// \todo Check this!
+	_derive_by_y_at (p, 3, slope1_numer, slope1_denom);
+	arc._derive_by_y_at (p, 3, slope2_numer, slope2_denom);
+
+	slope_res = CGAL::compare (slope2_numer*slope1_denom,
+				   slope1_numer*slope2_denom);
+      }
 
       // \todo Handle higher-order derivatives:
       CGAL_assertion(slope_res != EQUAL);
@@ -575,6 +596,16 @@ public:
       slope_res = CGAL::compare (slope1_numer*slope2_denom,
                                  slope2_numer*slope1_denom);
 
+      if (slope_res != EQUAL)
+        return (slope_res);
+
+      // Use the third-order derivative.
+      _derive_by_x_at (p, 3, slope1_numer, slope1_denom);
+      arc._derive_by_x_at (p, 3, slope2_numer, slope2_denom);
+      
+      slope_res = CGAL::compare (slope2_numer*slope1_denom,
+				 slope1_numer*slope2_denom);
+
       // \todo Handle higher-order derivatives:
       CGAL_assertion (slope_res != EQUAL);
 
@@ -618,6 +649,17 @@ public:
 
       Comparison_result  slope_res = CGAL::compare(slope2_numer*slope1_denom,
                                                    slope1_numer*slope2_denom);
+
+      // If necessary, use the third-order derivative by y.
+      if (slope_res == EQUAL)
+      {
+	// \todo Check this!
+	_derive_by_y_at (p, 3, slope1_numer, slope1_denom);
+	arc._derive_by_y_at (p, 3, slope2_numer, slope2_denom);
+
+	slope_res = CGAL::compare (slope2_numer*slope1_denom,
+				   slope1_numer*slope2_denom);
+      }
 
       // \todo Handle higher-order derivatives:
       CGAL_assertion(slope_res != EQUAL);
@@ -1074,7 +1116,7 @@ private:
   /*!
    * Get the i'th order derivative by x of the conic at the point p=(x,y).
    * \param p The point where we derive.
-   * \param i The order of the derivatives (either 1 or 2).
+   * \param i The order of the derivatives (either 1, 2 or 3).
    * \param slope_numer The numerator of the slope.
    * \param slope_denom The denominator of the slope.
    * \todo Allow higher order derivatives.
@@ -1111,11 +1153,11 @@ private:
       return;
     }
 
-    // The second derivative is given by:
+    // The second-order derivative is given by:
     //
-    //             s*alpha^2 - t*alpha*beta + r*beta^2
-    //   y'' = -2 -------------------------------------
-    //                           beta^3
+    //             s*alpha^2 - t*alpha*beta + r*beta^2     gamma
+    //   y'' = -2 ------------------------------------- = -------
+    //                           beta^3                    delta
     //
     const Algebraic  sl2_numer = alg_s * sl_numer*sl_numer -
                                  alg_t * sl_numer*sl_denom +
@@ -1139,6 +1181,33 @@ private:
       return;
     }
 
+    // The third-order derivative is given by:
+    //
+    //              (2s*alpha - t*beta) * gamma
+    //   y''' = -6 ------------------------------
+    //                    beta^2 * delta
+    //
+    const Algebraic  sl3_numer = (_two * alg_s * sl_numer -
+                                  alg_t * sl_denom) * sl2_numer;
+    const Algebraic  sl3_denom = sl_denom*sl_denom * sl2_denom;
+
+    if (i == 3)
+    {
+      // Make sure that the denominator is always positive.
+      if (CGAL::sign (sl_denom) != NEGATIVE)
+      {
+        slope_numer = -6 * sl3_numer;
+        slope_denom = sl3_denom;
+      }
+      else
+      {
+        slope_numer = 6 * sl3_numer;
+        slope_denom = -sl2_denom;
+      }
+
+      return;
+    }
+
     // \todo Handle higher-order derivatives as well.
     CGAL_assertion (false);
     return;
@@ -1147,7 +1216,7 @@ private:
   /*!
    * Get the i'th order derivative by y of the conic at the point p=(x,y).
    * \param p The point where we derive.
-   * \param i The order of the derivatives (either 1 or 2).
+   * \param i The order of the derivatives (either 1, 2 or 3).
    * \param slope_numer The numerator of the slope.
    * \param slope_denom The denominator of the slope.
    * \todo Allow higher order derivatives.
@@ -1185,7 +1254,7 @@ private:
       return;
     }
 
-    // The second derivative is given by:
+    // The second-order derivative is given by:
     //
     //             r*alpha^2 - t*alpha*beta + s*beta^2
     //   x'' = -2 -------------------------------------
@@ -1208,6 +1277,33 @@ private:
       else
       {
         slope_numer = _two *sl2_numer;
+        slope_denom = -sl2_denom;
+      }
+
+      return;
+    }
+
+    // The third-order derivative is given by:
+    //
+    //              (2t*alpha - t*beta) * gamma
+    //   y''' = -6 ------------------------------
+    //                    beta^2 * delta
+    //
+    const Algebraic  sl3_numer = (_two * alg_r * sl_numer -
+                                  alg_t * sl_denom) * sl2_numer;
+    const Algebraic  sl3_denom = sl_denom*sl_denom * sl2_denom;
+
+    if (i == 3)
+    {
+      // Make sure that the denominator is always positive.
+      if (CGAL::sign (sl_denom) != NEGATIVE)
+      {
+        slope_numer = -6 * sl3_numer;
+        slope_denom = sl3_denom;
+      }
+      else
+      {
+        slope_numer = 6 * sl3_numer;
         slope_denom = -sl2_denom;
       }
 
