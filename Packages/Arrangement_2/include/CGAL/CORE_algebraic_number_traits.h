@@ -224,23 +224,83 @@ public:
    * coefficients.
    * \param coeffs The coefficients of the input polynomial.
    * \param degree The degree of the input polynomial.
-   * \return The polynomial.
+   * \param poly Output: The resulting polynomial with integer coefficients.
+   * \param poly_denom Output: The denominator for the polynomial.
+   * \return Whether this polynomial is non-zero (false if the polynomial is 
+   *         zero).
    */
-  Polynomial construct_polynomial (const Rational *coeffs,
-				   unsigned int degree) const
+  bool construct_polynomial (const Rational *coeffs,
+			     unsigned int degree,
+			     Polynomial& poly, Integer& poly_denom) const
   {
-    // Convert the rational coefficients to equivalent integer coefficients.
+    // Compute the true degree for the polynomial.
+    while (CGAL::sign (coeffs[degree]) == ZERO)
+    {
+      if (degree == 0)
+	return (false);
+      degree--;
+    }
+
+    // Compute the least common multiplicand (LCM) of the denominators,
+    // denoted L, and the greatest common divisor (GCD) of the numerators,
+    // denoted G.
+    int            index = degree;
+    Integer        denom_lcm, temp_lcm;
+    Integer        numer_gcd, temp_gcd;
+    Integer        numer, denom;
+
+    denom_lcm = CORE::denominator (coeffs[index]);
+    numer_gcd = CORE::numerator (coeffs[index]);
+
+    index--;
+    while (index >= 0)
+    {
+      numer = CORE::numerator (coeffs[index]);
+
+      if (CGAL::sign (numer) != ZERO)
+      {
+        denom = CORE::denominator (coeffs[index]);
+
+        temp_lcm = denom_lcm;
+        temp_gcd = numer_gcd;
+
+        denom_lcm *= denom;
+        denom_lcm /= CORE::gcd (temp_lcm, denom);
+
+        numer_gcd = CORE::gcd (temp_gcd, numer);
+      }
+
+      index--;
+    }
+
+    // Generate the output coefficients (n(i)*L) / (d(i)*G).
     Integer                *z_coeffs = new Integer [degree + 1];
 
-    convert_coefficients (coeffs,
-			  coeffs + degree + 1,
-			  z_coeffs);
+    for (index = 0; index <= static_cast<int>(degree); index++)
+    {
+      z_coeffs[index] = (CORE::numerator (coeffs[index]) * denom_lcm) /
+                        (numer_gcd * CORE::denominator (coeffs[index]));
+    }
 
-    Polynomial   poly = Polynomial (degree, z_coeffs);
-    poly.contract();
+    // Set the output.
+    poly = Polynomial (degree, z_coeffs);
+    poly_denom = denom_lcm;
 
     delete[] z_coeffs;
-    return (poly);
+    return (true);
+  }
+
+  /*!
+   * Scale a polynomial by a given factor.
+   * \param poly Input: The polynomial.
+   *             Output: The scaled polynomial.
+   * \param factor The scaling factor.
+   * \return The scaled polynomial.
+   */
+  void scale (Polynomial& poly, const Integer& factor) const
+  {
+    poly.mulScalar (factor);
+    return;
   }
 
   /*!
@@ -294,7 +354,7 @@ public:
     // Check if we really have a simple quadratic equation.
     if (degree <= 2)
     {
-      return (solve_quadratic_equation (poly.getCoeff(2), 
+      return (solve_quadratic_equation ((degree == 2 ? poly.getCoeff(2) : 0), 
 					poly.getCoeff(1),
 					poly.getCoeff(0),
 					oi));
