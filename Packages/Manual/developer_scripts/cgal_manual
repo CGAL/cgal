@@ -701,7 +701,7 @@ testsuite_entry() {
 sort_ref_pages() {
     if [ -f $1.ref ]; then
         ${Sort} -f +2 -3 $1.ref > $1.ref_sorted
-        cp $1.ref_sorted $1.ref
+        mv $1.ref_sorted $1.ref
     fi
 }
 
