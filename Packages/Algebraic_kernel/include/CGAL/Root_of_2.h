@@ -165,7 +165,7 @@ public:
 
   Root_of_2 conjugate() const
   {
-    return Root_of_2(C2, C1, C0, !smaller);
+    return Root_of_2(C2, C1, C0, !_smaller);
   }
 }; // Root_of_2
 
