@@ -1712,17 +1712,27 @@ Packages/Spatial_searching/doc_tex/Spatial_searching/Fig1.ps -text
 Packages/Straight_skeleton_2/demo/Edg_to_regions/edg_to_regions -text svneol=unset#unset
 Packages/Subdivision_surfaces_3/doc_tex/Subdivision_surfaces_3/FIG/PQQStencil.eps -text
 Packages/Subdivision_surfaces_3/doc_tex/Subdivision_surfaces_3/FIG/PQQStencil.fig -text
+Packages/Subdivision_surfaces_3/doc_tex/Subdivision_surfaces_3/FIG/PQQStencil.pdf -text svneol=unset#unset
 Packages/Subdivision_surfaces_3/doc_tex/Subdivision_surfaces_3/FIG/RefSchemes.eps -text
 Packages/Subdivision_surfaces_3/doc_tex/Subdivision_surfaces_3/FIG/RefSchemes.fig -text
+Packages/Subdivision_surfaces_3/doc_tex/Subdivision_surfaces_3/FIG/RefSchemes.pdf -text svneol=unset#unset
 Packages/Subdivision_surfaces_3/doc_tex/Subdivision_surfaces_3/FIG/cc_mask.eps -text
 Packages/Subdivision_surfaces_3/doc_tex/Subdivision_surfaces_3/FIG/cc_mask.fig -text
+Packages/Subdivision_surfaces_3/doc_tex/Subdivision_surfaces_3/FIG/cc_mask.pdf -text svneol=unset#unset
 Packages/Subdivision_surfaces_3/doc_tex/Subdivision_surfaces_3/FIG/rook_mesh.eps -text
+Packages/Subdivision_surfaces_3/doc_tex/Subdivision_surfaces_3/FIG/rook_mesh.pdf -text svneol=unset#unset
 Packages/Subdivision_surfaces_3/doc_tex/Subdivision_surfaces_3/FIG/rook_qt1.eps -text
+Packages/Subdivision_surfaces_3/doc_tex/Subdivision_surfaces_3/FIG/rook_qt1.pdf -text svneol=unset#unset
 Packages/Subdivision_surfaces_3/doc_tex/Subdivision_surfaces_3/FIG/rook_qt2.eps -text
+Packages/Subdivision_surfaces_3/doc_tex/Subdivision_surfaces_3/FIG/rook_qt2.pdf -text svneol=unset#unset
 Packages/Subdivision_surfaces_3/doc_tex/Subdivision_surfaces_3/FIG/rook_qt3.eps -text
+Packages/Subdivision_surfaces_3/doc_tex/Subdivision_surfaces_3/FIG/rook_qt3.pdf -text svneol=unset#unset
 Packages/Subdivision_surfaces_3/doc_tex/Subdivision_surfaces_3/FIG/rook_qtsub.eps -text
+Packages/Subdivision_surfaces_3/doc_tex/Subdivision_surfaces_3/FIG/rook_qtsub.pdf -text svneol=unset#unset
 Packages/Subdivision_surfaces_3/doc_tex/Subdivision_surfaces_3/FIG/rook_surf1.eps -text
+Packages/Subdivision_surfaces_3/doc_tex/Subdivision_surfaces_3/FIG/rook_surf1.pdf -text svneol=unset#unset
 Packages/Subdivision_surfaces_3/doc_tex/Subdivision_surfaces_3/FIG/rook_surf2.eps -text
+Packages/Subdivision_surfaces_3/doc_tex/Subdivision_surfaces_3/FIG/rook_surf2.pdf -text svneol=unset#unset
 Packages/Subdivision_surfaces_3/examples/Subdivision_surfaces_3/data/corner.off -text
 Packages/Subdivision_surfaces_3/examples/Subdivision_surfaces_3/data/corner_tris_with_hole.off -text
 Packages/Subdivision_surfaces_3/examples/Subdivision_surfaces_3/data/corner_with_hole.off -text

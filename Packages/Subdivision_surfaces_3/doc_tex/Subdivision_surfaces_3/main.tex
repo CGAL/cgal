@@ -11,8 +11,6 @@
 
 \def\CC{Catmull-Clark}
 \def\DS{Doo-Sabin}
-\def\SQRT3{$\sqrt{3}$}
-\def\SUB3{\ccc{Subdivision_surfaces_3}}
 
 % ------------------------------------------------------------------------
 \def\FIGDIR{Subdivision_surfaces_3/FIG}
@@ -34,11 +32,11 @@
     \setlength{\unitlength}{1mm}
     \begin{picture}(0,0)(0.0,0.0)
       \put (78,25){% textwidth = 156mm
-          \includegraphics[width=0.095\textwidth]{\FIGDIR/rook_mesh.eps}
-          \includegraphics[width=0.095\textwidth]{\FIGDIR/rook_qt1.eps}
-          \includegraphics[width=0.095\textwidth]{\FIGDIR/rook_qt2.eps}
-          \includegraphics[width=0.095\textwidth]{\FIGDIR/rook_surf1.eps}
-          \includegraphics[width=0.095\textwidth]{\FIGDIR/rook_surf2.eps}
+          \includegraphics[width=0.095\textwidth]{\FIGDIR/rook_mesh}
+          \includegraphics[width=0.095\textwidth]{\FIGDIR/rook_qt1}
+          \includegraphics[width=0.095\textwidth]{\FIGDIR/rook_qt2}
+          \includegraphics[width=0.095\textwidth]{\FIGDIR/rook_surf1}
+          \includegraphics[width=0.095\textwidth]{\FIGDIR/rook_surf2}
       }
     \end{picture}\vspace{-4mm}% compensate for some vspace added by picture
 \end{ccTexOnly}
@@ -48,17 +46,17 @@
 % +------------------------------------------------------------------------+
 \section{Introduction} \label{sectionSubIntro}
 % +------------------------------------------------------------------------+
-Subdivision algorithms (see e.g.~\cite{cgal:warren-subdivision-02})
+Subdivision algorithms (see e.g.~\cite{cgal:ww-smgd-02})
 recursively refine coarse meshes and generate ever closer 
 approximations to a smooth surface.
 %for character animation, surface modeling, or physics simulation. 
 Setting aside the specific strategy of geometric averaging
 for the new points, subdivision algorithms can be classified 
 according to the topological refinement of the underlying mesh.
-\SUB3, working on the concept of the 
+\ccc{Subdivision_surfaces_3}, working on the concept of the 
 \ccc{CGAL::Polyhedron_3} (see Chapter~\ref{chapterPolyhedron}),
 takes advantage of this separation of topology and geometry, 
-and takes a cue from the policy-based design \cite{cgal:shiue-sesub-05}.
+and takes a cue from the policy-based design \cite{cgal:sp-mrlbg-05}.
 
  
 %% \begin{ccHtmlOnly}
@@ -100,7 +98,7 @@ which defines an input facet.
 \begin{ccTexOnly}
   \begin{center}
     \parbox{0.5\textwidth}{%
-      \includegraphics[width=0.5\textwidth]{\FIGDIR/PQQStencil.eps}%
+      \includegraphics[width=0.5\textwidth]{\FIGDIR/PQQStencil}%
     }
   \end{center}
 \end{ccTexOnly}
@@ -113,7 +111,7 @@ Geometry masks of \CC\ subdivision are shown below,
 \begin{ccTexOnly}
   \begin{center}
     \parbox{0.4\textwidth}{%
-      \includegraphics[width=0.4\textwidth]{\FIGDIR/cc_mask.eps}%
+      \includegraphics[width=0.4\textwidth]{\FIGDIR/cc_mask}%
     }
   \end{center}
 \end{ccTexOnly}
@@ -139,7 +137,8 @@ of the points on the source submesh (i.e.~the stencil) and the mask.
 
 Since only a fixed number of refinement patterns are 
 practical but a wide variety of geometry masks can be developed,
-\SUB3\ provides a set of refinement patterns (the \emph{refinement hosts})
+\ccc{Subdivision_surfaces_3} provides a set of refinement patterns 
+(the \emph{refinement hosts})
 and hands the definition of geometry masks
 (the \emph{geometry policies}) to the library user.
 A subdivision scheme is obtained by parameterizing the 
@@ -150,7 +149,7 @@ policies.
 %, which compute the smoothed points based on the
 %\CC\ geometry masks.
 
-%\SUB3\ supports 1-ring mesh refinement based on 
+%\ccc{Subdivision_surfaces_3} supports 1-ring mesh refinement based on 
 %half-edge data structures.
 %A subdivision scheme of \ccc{CGAL::Subdivision_surfaces_3} is a 
 %refinement host parameterized with a geometry policy. 
@@ -172,8 +171,8 @@ PQQ scheme, and calls policies to smooth the refined points.
   static void PQQ(Polyhedron& p, _S<Polyhedron> rule, int step)
 \end{ccExampleCode}
 
-\SUB3\ provides \ccc{CGAL::CatmullClark_stencil} realizing the 
-geometry masks of \CC\ subdivision \cite{cgal:cc-sub-78}. 
+\ccc{Subdivision_surfaces_3} provides \ccc{CGAL::CatmullClark_stencil} 
+realizing the geometry masks of \CC\ subdivision \cite{cgal:cc-rgbss-78}. 
 The \CC\ subdivision is then constructed by parameterizing 
 \ccc{CGAL::Subdivision_surfaces_3::PQQ} with 
 \ccc{CGAL::CatmullClark_stencil}.
@@ -192,18 +191,18 @@ concept, and \ccc{step} specifies the subdivision depth.
 
 % +-------------------------------------------------------------+
 \section{Refinement Host}
-\SUB3\ provides four refinement hosts of primal 
+\ccc{Subdivision_surfaces_3} provides four refinement hosts of primal 
 quadrilateral quadrisection (PQQ), primal triangle 
 quadrisection (PTQ), dual quadrilateral 
-quadrisection (DQQ) and \SQRT3 triangulation, which 
-are used by \CC, Loop, \DS\ and \SQRT3\ subdivision, 
+quadrisection (DQQ) and $\sqrt{3}$ triangulation, which 
+are used by \CC, Loop, \DS\ and $\sqrt{3}$ subdivision, 
 respectively. 
 
 The refined mesh is shown below the input mesh.
 \begin{ccTexOnly}
   \begin{center}
     \parbox{0.6\textwidth}{%
-      \includegraphics[width=0.6\textwidth]{\FIGDIR/RefSchemes.eps}%
+      \includegraphics[width=0.6\textwidth]{\FIGDIR/RefSchemes}%
     }
   \end{center}
 \end{ccTexOnly}
@@ -256,7 +255,7 @@ to be defined in the mesh type, but no flag of the mesh
 is required to maintain the stencils. The stencils are maintained
 by ordering new vertices to match the sequence of connectivity 
 operations of the refinement. Interested users should 
-refer to \cite{cgal:shiue-mreo-05} for details of the 
+refer to \cite{cgal:sp-mrbee-05} for details of the 
 ordering algorithm.
 
 % +-------------------------------------------------------------+
@@ -282,7 +281,7 @@ stencil, an edge-node stencil, and a facet-node stencil.
 \begin{ccTexOnly}
   \begin{center}
     \parbox{0.5\textwidth}{%
-      \includegraphics[width=0.5\textwidth]{\FIGDIR/PQQStencil.eps}%
+      \includegraphics[width=0.5\textwidth]{\FIGDIR/PQQStencil}%
     }
   \end{center}
 \end{ccTexOnly}
@@ -388,7 +387,7 @@ class CatmullClark_stencil {
 %\begin{ccTexOnly}
 %  \begin{center}
 %    \parbox{0.4\textwidth}{%
-%      \includegraphics[width=0.4\textwidth]{\FIGDIR/cc_mask.eps}%
+%      \includegraphics[width=0.4\textwidth]{\FIGDIR/cc_mask}%
 %    }
 %  \end{center}
 %\end{ccTexOnly}
@@ -404,8 +403,8 @@ class CatmullClark_stencil {
 % +------------------------------------------------------------------------+
 \section{Built-in subdivision schemes}
 % +------------------------------------------------------------------------+
-\CC , Loop, \DS\ and \SQRT3\ subdivisions are directly supported 
-by \SUB3. 
+\CC , Loop, \DS\ and $\sqrt{3}$ subdivisions are directly supported 
+by \ccc{Subdivision_surfaces_3}. 
 %Each of these subdivision schemes is realized by parameterizing 
 %the corresponding geometry policy to the .
 

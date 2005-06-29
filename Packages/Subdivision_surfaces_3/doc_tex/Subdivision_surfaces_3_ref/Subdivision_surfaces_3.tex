@@ -105,7 +105,7 @@ is defined.
 
 \ccThree{}{}{}
 \ccMethod{template <template <typename> class _S> 
-void PQQ(Polyhedron& p, _S<Polyhedron> rule, int step)}
+void PQQ(Polyhedron& p, _S<Polyhedron> rule, int step);}
 {refine the mesh \ccc{p} with the PQQ refinement
 \ccc{step} times, and smooth the refined \ccc{p} with the geometry 
 masks \ccc{rule}.}
@@ -124,19 +124,19 @@ masks \ccc{rule}.}
 %% \end{ccHtmlOnly}
 
 \ccMethod{template <template <typename> class _S> 
-void PTQ(Polyhedron& p, _S<Polyhedron> rule, int step)}
+void PTQ(Polyhedron& p, _S<Polyhedron> rule, int step);}
 {refine the mesh \ccc{p} with the PTQ refinement 
 \ccc{step} times, and smooth the refined \ccc{p} with the geometry 
 masks \ccc{rule}.}
 
 \ccMethod{template <template <typename> class _S> 
-void DQQ(Polyhedron& p, _S<Polyhedron> rule, int step)}
+void DQQ(Polyhedron& p, _S<Polyhedron> rule, int step);}
 {refine the mesh \ccc{p} with the DQQ refinement 
 \ccc{step} times, and smooth the refined \ccc{p} with the geometry 
 masks \ccc{rule}.}
 
 \ccMethod{template <template <typename> class _S> 
-void Sqrt3(Polyhedron& p, _S<Polyhedron> rule, int step)}
+void Sqrt3(Polyhedron& p, _S<Polyhedron> rule, int step);}
 {refine the mesh \ccc{p} with the $\sqrt{3}$ triangulation 
 \ccc{step} times, and smooth the refined \ccc{p} with the geometry 
 masks \ccc{rule}.}
@@ -146,17 +146,17 @@ masks \ccc{rule}.}
 \ccHeading{Subdivision Surfaces}
 \ccThree{}{}{}
 
-\ccMethod{void CatmullClark_subdivision(Polyhedron& p, int step)}
+\ccMethod{void CatmullClark_subdivision(Polyhedron& p, int step);}
 {apply Catmull-Clark subdivision \ccc{step} times on the mesh \ccc{p}.}
 
-\ccMethod{void Loop_subdivision(Polyhedron& p, int step)}
+\ccMethod{void Loop_subdivision(Polyhedron& p, int step);}
 {apply Loop subdivision \ccc{step} times on the mesh \ccc{p}. 
 The mesh \ccc{p} can only consist of triangle facets.}
 
-\ccMethod{void DooSabin_subdivision(Polyhedron& p, int step)}
+\ccMethod{void DooSabin_subdivision(Polyhedron& p, int step);}
 {apply Doo-Sabin subdivision \ccc{step} times on the mesh \ccc{p}.}
 
-\ccMethod{void Sqrt3_subdivision(Polyhedron& p, int step)}
+\ccMethod{void Sqrt3_subdivision(Polyhedron& p, int step);}
 {apply $\sqrt{3}$ subdivision \ccc{step} times on the mesh \ccc{p}.
 The mesh \ccc{p} can only consist of triangle facets.}
 
