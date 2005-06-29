@@ -13,7 +13,7 @@ include $(CGAL_MAKEFILE)
 #                    compiler flags
 #---------------------------------------------------------------------#
 
-MY_DIR = /KM/usr/hachenb/CGAL2
+MY_DIR = /home/hachenb/CGAL
 HOME = /KM/guests/granados
 POLY = $(MY_DIR)/Polynomial/include
 LOCAL = $(MY_DIR)/local/include
@@ -53,6 +53,7 @@ all:            \
                 mixed$(EXE_EXT) \
                 decompostion_test$(EXE_EXT) \
                 gausian_map_test$(EXE_EXT) \
+                gausian_map_viewer$(EXE_EXT) \
                 generate_convex$(EXE_EXT) \
                 minkowski_sum$(EXE_EXT)
 
@@ -69,6 +70,9 @@ decomposition_test$(EXE_EXT): decomposition_test$(OBJ_EXT)
 gausian_map_test$(EXE_EXT): gausian_map_test$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)gausian_map_test gausian_map_test$(OBJ_EXT) $(LDFLAGS)
 
+gausian_map_viewer$(EXE_EXT): gausian_map_viewer$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)gausian_map_viewer gausian_map_viewer$(OBJ_EXT) $(LDFLAGS)
+
 generate_convex$(EXE_EXT): generate_convex$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)generate_convex generate_convex$(OBJ_EXT) $(LDFLAGS)
 
@@ -80,6 +84,7 @@ clean: \
                    mixed.clean \
 	           decomposition_test.clean \
 	           gausian_map_test.clean \
+	           gausian_map_viewer.clean \
 	           generate_convex.clean \
 	           minkowski_sum.clean
 

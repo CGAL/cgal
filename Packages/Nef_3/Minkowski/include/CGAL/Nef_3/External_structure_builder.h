@@ -56,9 +56,11 @@ class External_structure_builder : public Modifier_base<typename Nef_::SNC_and_P
     SNC_structure* sncp(sncpl.sncp);
     SNC_point_locator* pl(sncpl.pl);
 
+    /*
     CGAL::SNC_io_parser<SNC_structure> O(std::cerr, *sncp, false);
     O.print();
-  
+    */
+
     Unique_hash_map<SHalfedge_handle, SFace_handle> sedge2sface;
     
     SFace_iterator sfi;
@@ -94,8 +96,10 @@ class External_structure_builder : public Modifier_base<typename Nef_::SNC_and_P
       }
     }
 
+    /*
     CGAL::SNC_io_parser<SNC_structure> O0(std::cerr, *sncp, false);
     O0.print();
+    */
 
     SNC_point_locator* old_pl = pl;
     pl = pl->clone();

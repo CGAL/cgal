@@ -6,6 +6,7 @@
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/Nef_S2/Gausian_map.h>
 #include <CGAL/Nef_S2/gausian_map_to_polyhedron_3.h>
+#include <CGAL/Nef_S2/gausian_map_to_nef_3.h>
 
 #include <CGAL/convexity_check_3.h>
 
@@ -19,7 +20,7 @@
 
 typedef leda_integer NT;
 typedef CGAL::Homogeneous<NT> Kernel;
-typedef CGAL::Nef_polyhedron_3<Kernel> Nef_polyhedron_3;
+typedef CGAL::Nef_polyhedron_3<Kernel> Nef_polyhedron;
 typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
 typedef CGAL::Gausian_map<Kernel> Gausian_map;
 
@@ -72,10 +73,19 @@ int main(int argc, char* argv[]) {
 
   t2 = t.time();
 
+  /*
   // conversion from gausian_map to Polyhedron_3
   gausian_map_to_polyhedron_3<Kernel, Polyhedron::HDS> Converter(G);
   Polyhedron P;
   P.delegate(Converter);
+  */
+
+  // conversion from gausian_map to Nef_3
+  CGAL::gausian_map_to_nef_3<Kernel, Nef_polyhedron::Items, Nef_polyhedron::Mark> Converter(G);
+  Nef_polyhedron N;
+  N.delegate(Converter,true);
+
+  std::cerr << N;
 
   t.stop();
   std::cerr << "Runtime Minkowski Sum: " << t0 << std::endl;
@@ -84,10 +94,10 @@ int main(int argc, char* argv[]) {
   std::cerr << "Runtime Minkowski Sum: " << t.time() << std::endl;
 
   // Visualization of result
-  Nef_polyhedron_3 N(P);  
+  //  Nef_polyhedron N(P);  
   QApplication a(argc, argv);
-  CGAL::Qt_widget_Nef_3<Nef_polyhedron_3>* w = 
-    new CGAL::Qt_widget_Nef_3<Nef_polyhedron_3>(N);
+  CGAL::Qt_widget_Nef_3<Nef_polyhedron>* w = 
+    new CGAL::Qt_widget_Nef_3<Nef_polyhedron>(N);
   a.setMainWidget(w);
   w->show();
   a.exec();

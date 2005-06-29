@@ -14,12 +14,36 @@
 CGAL_BEGIN_NAMESPACE
 
 template <class K>
+class PointMark : public K::Point_3 {
+
+  typedef typename K::Point_3 Point_3;
+  typedef PointMark<K> Self;
+
+ public:
+  PointMark() : Point_3(0,0,0) {}
+  PointMark(const Self& pm) : Point_3(pm) {}
+  PointMark(const Point_3& p) : Point_3(p) {}
+
+  Self operator=(const Self& pm) {
+    (Point_3) *this = (Point_3) pm;
+    return *this;
+  }
+
+  operator bool() const {
+    if((Point_3) *this != Point_3(0,0,0))
+      return true;
+    return false;
+  }
+
+};
+
+template <class K, class Mark_ = PointMark<K> >
 class Gausian_map : public CGAL::SM_decorator<CGAL::Sphere_map<CGAL::Sphere_geometry<K>,
-  CGAL::SM_items, 
-  typename K::Point_3> > {
+  CGAL::SM_items, Mark_> > {
 
   typedef CGAL::Sphere_geometry<K>                        Kernel;
-  typedef typename Kernel::Point_3                        Mark;
+  typedef typename K::Point_3                             Point_3;
+  typedef Mark_                                           Mark;
   typedef CGAL::Sphere_map<Kernel,CGAL::SM_items,Mark>    Sphere_map;
   typedef CGAL::SM_decorator<Sphere_map>                  SM_decorator;
   typedef SM_decorator                                    Base;
@@ -38,6 +62,8 @@ class Gausian_map : public CGAL::SM_decorator<CGAL::Sphere_map<CGAL::Sphere_geom
     SHalfedge_around_svertex_const_circulator;
   typedef typename Sphere_map::SHalfedge_around_sface_circulator
     SHalfedge_around_sface_circulator;
+  typedef typename Sphere_map::SHalfedge_around_sface_const_circulator
+    SHalfedge_around_sface_const_circulator;
 
 
   template<typename Nef_polyhedron_3>
@@ -58,17 +84,22 @@ class Gausian_map : public CGAL::SM_decorator<CGAL::Sphere_map<CGAL::Sphere_geom
     typedef typename Nef_polyhedron_3::Point_3                  Point_3;
 
     typedef CGAL::Unique_hash_map<Halffacet_const_handle, SVertex_handle> Facet2SVertex_hash;
+    typedef CGAL::Unique_hash_map<Halffacet_const_handle, bool> Facet2bool_hash;
     typedef CGAL::Unique_hash_map<Vertex_const_handle, bool> Vertex2bool_hash;
     typedef CGAL::Unique_hash_map<Halfedge_const_handle, bool> Edge2bool_hash;
+    typedef CGAL::Unique_hash_map<SHalfedge_const_handle, SHalfedge_const_handle> SEdge2SEdge_hash;
 
     SM_decorator SM;
     Facet2SVertex_hash& Facet2SVertex;
+    Facet2bool_hash& omit_facet;
+    SEdge2SEdge_hash& next;
     Vertex2bool_hash& omit_vertex;
     Edge2bool_hash& omit_edge;
 
+
   public:
-    SVertex_creator(Sphere_map* smap, Facet2SVertex_hash& F2SV, Vertex2bool_hash& V2b, Edge2bool_hash& E2b)
-      : SM(smap), Facet2SVertex(F2SV), omit_vertex(V2b), omit_edge(E2b) {}
+    SVertex_creator(Sphere_map* smap, Facet2SVertex_hash& F2SV, Facet2bool_hash& F2b, SEdge2SEdge_hash& SE2SE, Vertex2bool_hash& V2b, Edge2bool_hash& E2b)
+      : SM(smap), Facet2SVertex(F2SV), omit_facet(F2b), next(SE2SE), omit_vertex(V2b), omit_edge(E2b) {}
 
   private:
     bool svertex_exists(const Point_3& p, SVertex_handle& sv) {
@@ -90,25 +121,60 @@ class Gausian_map : public CGAL::SM_decorator<CGAL::Sphere_map<CGAL::Sphere_geom
       void visit(SFace_const_handle sf) {}
   
       void visit(Halffacet_const_handle f) {
+
+	std::cerr << "SVertex_creator " << f->plane() << std::endl;
+
 	Halffacet_cycle_const_iterator fc = f->twin()->facet_cycles_begin();
 	SHalfedge_const_handle se(fc);
 	SHalfedge_around_facet_const_circulator hc(se), hend(hc);
 
+	/*
 	CGAL_For_all(hc,hend) {
 	  std::cerr << "circles " << hc->circle() << " + " << hc->sprev()->circle() << std::endl;
 	  if(hc->sprev()->circle() == hc->circle()) {
-	    omit_vertex[hc->source()->source()] = omit_vertex[hc->source()->twin()->source()] = true;
-	    omit_edge[hc->source()] = omit_edge[hc->source()->twin()] = true;
+	    //	    omit_vertex[hc->source()->source()] = omit_vertex[hc->source()->twin()->source()] = true;
+	    //	    omit_edge[hc->source()] = omit_edge[hc->source()->twin()] = true;
+	    std::cerr << "omit edge1 " << hc->source()->source()->point() 
+		    << ":" << hc->source()->point() << std::endl;
+	  } else if(hc->snext()->snext() == hc) {
+	    //	    omit_vertex[hc->source()->source()] = true;
 	  }
-	  if(hc->source()->point() == hc->twin()->source()->point().antipode())
-	    omit_edge[hc->source()] = omit_edge[hc->source()->twin()] = true;
+	  if(hc->source()->point() == hc->twin()->source()->point().antipode() && 
+	     ((SHalfedge_const_handle) hc == (SHalfedge_const_handle) hc->incident_sface()->sface_cycles_begin() || 
+	      hc->snext()->snext() != hc)) {
+	    //	    omit_edge[hc->source()] = omit_edge[hc->source()->twin()] = true;
+	    std::cerr << "omit edge2 " << hc->source()->source()->point() 
+		      << ":" << hc->source()->point() << std::endl;
+	  }
+	}
+	*/
+	
+	CGAL_For_all(hc,hend) {
+	  if(hc->snext()->circle() == hc->circle()) {
+	    next[hc] = hc->snext();
+	    std::cerr << "set next " << hc->source()->source()->point() << ":"
+		      << hc->source()->point() << "->" << hc->twin()->source()->point() << " | " 
+		      << hc->snext()->source()->point() << "->" << hc->snext()->twin()->source()->point() << std::endl;
+	    omit_vertex[hc->twin()->source()->source()] = omit_vertex[hc->twin()->source()->twin()->source()] = true;
+	    omit_edge[hc->twin()->source()] = omit_edge[hc->twin()->source()->twin()] = true;
+	  } else if(hc->snext()->snext() == hc) {
+       	    omit_vertex[hc->source()->source()] = true;
+	  }
+	  /*
+	  if(hc->source()->point() == hc->twin()->source()->point().antipode() && 
+	     ((SHalfedge_const_handle) hc == (SHalfedge_const_handle) hc->incident_sface()->sface_cycles_begin() || 
+	      hc->snext()->snext() != hc)) {
+	    omit_edge[hc->twin()->source()] = omit_edge[hc->twin()->source()->twin()] = true;
+	  }
+	  */
 	}
 
-	std::cerr << "SVertex_creator " << f->plane() << std::endl;
 	SVertex_handle sv;
 	if(!svertex_exists(CGAL::ORIGIN + f->twin()->plane().orthogonal_vector(), sv)) {
 	  sv = SM.new_svertex(f->twin()->plane().orthogonal_vector());
-	  sv->mark() = Mark(0,0,0);
+	  sv->mark() = Mark(Point_3(0,0,0));
+	} else {
+	  omit_facet[f] = true;
 	}
 	Facet2SVertex[f] = sv;
       }
@@ -134,16 +200,20 @@ class Gausian_map : public CGAL::SM_decorator<CGAL::Sphere_map<CGAL::Sphere_geom
 
     typedef CGAL::Unique_hash_map<Halfedge_const_handle, SHalfedge_handle> Edge2SEdge_hash;
     typedef CGAL::Unique_hash_map<Halffacet_const_handle, SVertex_handle> Facet2SVertex_hash;
+    typedef CGAL::Unique_hash_map<Halffacet_const_handle, bool> Facet2bool_hash;
     typedef CGAL::Unique_hash_map<Halfedge_const_handle, bool> Edge2bool_hash;
+    typedef CGAL::Unique_hash_map<SHalfedge_const_handle, SHalfedge_const_handle> SEdge2SEdge_hash;
 
     SM_decorator SM;
     Edge2SEdge_hash& Edge2SEdge;
     Facet2SVertex_hash& Facet2SVertex;
+    SEdge2SEdge_hash& next;
+    Facet2bool_hash& omit_facet;
     Edge2bool_hash& omit_edge;
 
   public:
-    SEdge_creator(Sphere_map* smap, Edge2SEdge_hash& E2SE, Facet2SVertex_hash& F2SV,Edge2bool_hash& E2b) : 
-      SM(smap), Edge2SEdge(E2SE), Facet2SVertex(F2SV), omit_edge(E2b) {}
+    SEdge_creator(Sphere_map* smap, Edge2SEdge_hash& E2SE, Facet2SVertex_hash& F2SV, SEdge2SEdge_hash& SE2SE, Facet2bool_hash&  F2b, Edge2bool_hash& E2b)
+      : SM(smap), Edge2SEdge(E2SE), Facet2SVertex(F2SV), next(SE2SE), omit_facet(F2b), omit_edge(E2b) {}
       
   private:
     bool sedge_exists(SVertex_handle s, SVertex_handle t, SHalfedge_handle& se) {
@@ -164,13 +234,51 @@ class Gausian_map : public CGAL::SM_decorator<CGAL::Sphere_map<CGAL::Sphere_geom
     void visit(SFace_const_handle sf) {}
     
     void visit(Halffacet_const_handle f) {
+
+      if(omit_facet[f])
+	return;
+
       std::cerr << "SEdge_creator " << f->plane() << std::endl;
       Halffacet_cycle_const_iterator fc = f->twin()->facet_cycles_begin();
       SHalfedge_const_handle se(fc);
       SHalfedge_around_facet_const_circulator hc(se), hend(hc);
-      do{--hc;}
-      while(!omit_edge[hc->source()] && hc != hend);
+
+      while(omit_edge[hc->twin()->source()]) ++hc;
+
+      Halfedge_const_handle last = hc->twin()->source();
+      while(next[hc]!=SHalfedge_const_handle()) hc = next[hc];
+      while(hc->twin()->source()->point() == last->point()) {
+	last = hc->twin()->source();
+	++hc;
+	while(next[hc]!=SHalfedge_const_handle()) hc = next[hc];
+      }
       hend = hc;
+      
+      SHalfedge_handle thetwin;
+      do {
+	std::cerr << "edge " << hc->source()->source()->point() 
+		  << ":" << hc->source()->point() << std::endl;
+	Halfedge_const_handle e = hc->twin()->source();
+	if(e->point() != last->point()) {
+	  Edge2SEdge[hc->source()] = thetwin;
+	  SHalfedge_handle set = Edge2SEdge[e];
+	  if(set == SHalfedge_handle())
+	    thetwin = SM.new_shalfedge_pair_at_source(Facet2SVertex[f],1);
+	  else {	
+	    SM.link_as_target_and_append(Facet2SVertex[f], set);
+	    set->mark() = set->twin()->mark() = Mark(Point_3(0,0,0));
+	    set->circle() = Sphere_circle(set->source()->point(), set->twin()->source()->point());
+	    set->twin()->circle() = set->circle().opposite();
+	    thetwin = set->twin();
+	  } 
+	  last = hc->twin()->source();
+	} else std::cerr << "omit " << std::endl;
+	++hc;
+	while(next[hc]!=SHalfedge_const_handle()) hc = next[hc];
+      } while(hc!=hend);
+      Edge2SEdge[hc->source()] = thetwin;
+
+      /*
       do {
 	if(!omit_edge[hc->source()]) {
 	  std::cerr << "edge " << hc->source()->source()->point() 
@@ -182,17 +290,19 @@ class Gausian_map : public CGAL::SM_decorator<CGAL::Sphere_map<CGAL::Sphere_geom
 	    Edge2SEdge[e] = SM.new_shalfedge_pair_at_source(Facet2SVertex[f],1);
 	  else {
 	    SM.link_as_target_and_append(Facet2SVertex[f], set);
-	    set->mark() = set->twin()->mark() = Mark(0,0,0);
+	    set->mark() = set->twin()->mark() = Mark(Point_3(0,0,0));
 	    set->circle() = Sphere_circle(set->source()->point(), set->twin()->source()->point());
 	    set->twin()->circle() = set->circle().opposite();
 	    Edge2SEdge[e] = set->twin();
 	  }
-	  
-	  CGAL::SM_io_parser<SM_decorator> O(std::cerr,SM); 
-	  O.print();
+	} else {
+	  std::cerr << "omit edge " << hc->source()->source()->point() 
+		    << ":" << hc->source()->point() << std::endl;
 	}
 	++hc;
       } while(hc != hend);
+      */
+
     }
   };
   
@@ -227,6 +337,9 @@ class Gausian_map : public CGAL::SM_decorator<CGAL::Sphere_map<CGAL::Sphere_geom
 
       void visit(Vertex_const_handle v) {
 	std::cerr << "SFace_creator " << v->point() << std::endl;
+
+	CGAL::SM_io_parser<SM_decorator> O(std::cerr,SM); 
+	O.print();
 
 	if(omit_vertex[v]) {
 	  std::cerr << "omit " << v->point() << std::endl;
@@ -287,13 +400,15 @@ class Gausian_map : public CGAL::SM_decorator<CGAL::Sphere_map<CGAL::Sphere_geom
 
     Unique_hash_map<Halffacet_const_handle, SVertex_handle> Facet2SVertex;
     Unique_hash_map<Halfedge_const_handle, SHalfedge_handle> Edge2SEdge;
+    Unique_hash_map<Halffacet_const_handle, bool> Facet2bool;
     Unique_hash_map<Vertex_const_handle, bool> Vertex2bool(false);
     Unique_hash_map<Halfedge_const_handle, bool> Edge2bool(false);
+    Unique_hash_map<SHalfedge_const_handle, SHalfedge_const_handle> SEdge2SEdge;
 
     SFace_const_handle sf = c->shells_begin();
 
-    SVertex_creator<Nef_polyhedron_3> create_svertices(sphere_map(), Facet2SVertex, Vertex2bool, Edge2bool);
-    SEdge_creator<Nef_polyhedron_3>   create_sedges(sphere_map(), Edge2SEdge, Facet2SVertex, Edge2bool);
+    SVertex_creator<Nef_polyhedron_3> create_svertices(sphere_map(), Facet2SVertex, Facet2bool, SEdge2SEdge, Vertex2bool, Edge2bool);
+    SEdge_creator<Nef_polyhedron_3>   create_sedges(sphere_map(), Edge2SEdge, Facet2SVertex, SEdge2SEdge, Facet2bool, Edge2bool);
     SFace_creator<Nef_polyhedron_3>   create_sfaces(N3, sphere_map(), Edge2SEdge, Vertex2bool);
 
     N3.visit_shell_objects(sf, create_svertices);
@@ -334,7 +449,7 @@ class Gausian_map : public CGAL::SM_decorator<CGAL::Sphere_map<CGAL::Sphere_geom
     CGAL_forall_halffacets(f,N3) {
       if(f->incident_volume() != c) continue;
       SVertex_handle sv = new_svertex(f->twin()->plane().orthogonal_vector());
-      sv->mark() = Mark(0,0,0);
+      sv->mark() = Mark(Point_3(0,0,0));
       Facet2SVertex[f] = sv;
     }
     
@@ -350,7 +465,7 @@ class Gausian_map : public CGAL::SM_decorator<CGAL::Sphere_map<CGAL::Sphere_geom
 	  Edge2SEdge[e] = new_shalfedge_pair_at_source(Facet2SVertex[f],1);
 	else {
 	  link_as_target_and_append(Facet2SVertex[f], set);
-	  set->mark() = set->twin()->mark() = Mark(0,0,0);
+	  set->mark() = set->twin()->mark() = Mark(Point_3(0,0,0));
 	  set->circle() = Sphere_circle(set->source()->point(), set->twin()->source()->point());
 	  set->twin()->circle() = set->circle().opposite();
 	  Edge2SEdge[e] = set->twin();
@@ -395,7 +510,7 @@ class Gausian_map : public CGAL::SM_decorator<CGAL::Sphere_map<CGAL::Sphere_geom
     Facet_const_iterator f;
     for(f = P.facets_begin(); f != P.facets_end(); ++f) {
       SVertex_handle sv = new_svertex(f->plane().orthogonal_vector());
-      sv->mark() = Mark(0,0,0);
+      sv->mark() = Mark(Point_3(0,0,0));
       Facet2SVertex[f] = sv;
     }
 
@@ -408,7 +523,7 @@ class Gausian_map : public CGAL::SM_decorator<CGAL::Sphere_map<CGAL::Sphere_geom
 	  Edge2SEdge[e] = new_shalfedge_pair_at_source(Facet2SVertex[f],1);
 	else {
 	  link_as_target_and_append(Facet2SVertex[f], set,1);
-	  set->mark() = set->twin()->mark() = Mark(0,0,0);
+	  set->mark() = set->twin()->mark() = Mark(Point_3(0,0,0));
 	  set->circle() = Sphere_circle(set->source()->point(), set->twin()->source()->point());
 	  set->twin()->circle() = set->circle().opposite();
 	  Edge2SEdge[e] = set->twin();
@@ -492,10 +607,15 @@ class Gausian_map : public CGAL::SM_decorator<CGAL::Sphere_map<CGAL::Sphere_geom
     
     void minkowski_sum(const Gausian_map& G1, const Gausian_map& G2) {
       SM_overlayer O(sphere_map());
-      O.subdivide(G1.sphere_map(), G2.sphere_map());
+      O.subdivide(G1.sphere_map(), G2.sphere_map(),true);
       VECTOR_ADDITION va;
       O.select(va);
       simplify();
+
+      SM_decorator SM(sphere_map());
+      CGAL::SM_io_parser<SM_decorator> O1(std::cerr,SM); 
+      O1.print();
+
     }
 
     void dump() {
@@ -507,13 +627,12 @@ class Gausian_map : public CGAL::SM_decorator<CGAL::Sphere_map<CGAL::Sphere_geom
       char* argv[argc];
       argv[0] = "Gaussian Map Viewer";
 
-      typedef typename CGAL::Nef_polyhedron_S2<K,CGAL::SM_items,Mark> Nef_polyhedron_S2;
-      typedef typename Nef_polyhedron_S2::Const_decorator SM_const_decorator;
-      SM_const_decorator SMCD(sphere_map());
-
+      typedef typename CGAL::Nef_polyhedron_S2<K,CGAL::SM_items,Mark> Nef_polyhedron_S2;      
+      Nef_polyhedron_S2 NS2(*sphere_map());
+      
       QApplication a(argc, argv);
       CGAL::Qt_widget_Nef_S2<Nef_polyhedron_S2>* w = 
-	new CGAL::Qt_widget_Nef_S2<Nef_polyhedron_S2>(SMCD);
+	new CGAL::Qt_widget_Nef_S2<Nef_polyhedron_S2>(NS2);
       a.setMainWidget(w);
       w->show();
       a.exec();     
