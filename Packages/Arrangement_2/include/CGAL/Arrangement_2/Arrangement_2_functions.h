@@ -1148,17 +1148,14 @@ Arrangement_2<Traits,Dcel>::merge_edge (Halfedge_handle e1,
     he4->previous()->set_next (he2);      
   }
 
-  // Allocate a new curve for the merged edge.
-  Stored_curve_2  *dup_cv = _new_curve (cv);
-
-  // Destroy the curve currently associated with the merged edges.
-  _delete_curve (he1->curve());
+  // Note that he1 (and its twin) is going to represent the merged edge while 
+  // he3 (and its twin) is going to be removed. We therefore associate the
+  // merged curve with he1 and delete the curve associated with he3.
+  he1->curve() = cv;
   _delete_curve (he3->curve());
 
-  // Set the properties of the merged edge and associate it with the merged
-  // curve.
+  // Set the properties of the merged edge.
   he1->set_vertex (he3->vertex());
-  he1->set_curve (dup_cv);
 
   // Notify the observers that we are about to delete a vertex.
   _notify_before_remove_vertex (Vertex_handle (v));
@@ -2015,14 +2012,8 @@ void Arrangement_2<Traits,Dcel>::_modify_vertex (Vertex *v,
   Vertex_handle  vh (v);
   _notify_before_modify_vertex (v, p);
 
-  // Create a new point for the vertex.
-  Stored_point_2  *dup_p = _new_point (p);
-
-  // Destroy the point currently associated with the vertex.
-  _delete_point (v->point());
-
-  // Associate the vertex with the new point.
-  v->set_point (dup_p);
+  // Modify the point associated with the vertex.
+  v->point() = p;
 
   // Notify the observers that we have modified the vertex.
   _notify_after_modify_vertex (vh);
@@ -2041,17 +2032,8 @@ void Arrangement_2<Traits,Dcel>::_modify_edge (Halfedge *he,
   Halfedge_handle  e (he);
   _notify_before_modify_edge (e, cv);
 
-  // Allocate the updated curve.
-  // Note it is important to create this curve before deleting the old one,
-  // that the new curve will have a different memory address than the old one
-  // (crucial for intersection caching in the zone algorithm).
-  Stored_curve_2  *dup_cv = _new_curve (cv);
-
-  // Destroy the curve currently associated with the edge.
-  _delete_curve (he->curve());
-
-  // Associate the edge with the new curve.
-  he->set_curve (dup_cv);
+  // Modify the curve associated with the halfedge.
+  he->curve() = cv;
 
   // Notify the observers that we have modified the edge.
   _notify_after_modify_edge (e);
@@ -2131,19 +2113,11 @@ Arrangement_2<Traits,Dcel>::_split_edge (Halfedge *e,
   he1->set_next(he3);
   he1->set_vertex(v);
 
-  // Allocate two new curves that correspond to the split edges.
-  // Note it is important to create these curves before deleting the old
-  // redundant curve, so that the new curves will have a different memory
-  // address than the old one (crucial for intersection caching in the zone
-  // algorithm).
-  Stored_curve_2  *dup_cv1 = _new_curve (cv1);
+  // Associate cv1 with he1 (and its twin). We allocate a new curve for cv2
+  // and associate it with he3 (and its twin).
   Stored_curve_2  *dup_cv2 = _new_curve (cv2);
 
-  // Destroy the curve currently associated with he1 (and its twin he2).
-  _delete_curve (he1->curve());
-
-  // Associate cv1 and cv2 with the two pair of split halfedges.
-  he1->set_curve (dup_cv1);
+  he1->curve() = cv1;
   he3->set_curve (dup_cv2);
 
   // Notify the observers that we have split an edge into two.
