@@ -1,3 +1,9 @@
+30 June 2005 Mariette
+- added find_conflicts  and dual functions in Regular triangulation,
+  documented but not tested
+- added mirror_facet in Triangulation_3 and Triangulation_data_structure_3,
+  documented and tested
+
 8 April 2005 Sylvain Pion
 - Change "struct K : ... {};" to "typedef ... K;" since it can cause some
   problems (notably with Regular_[filtered]_traits) and we don't want to
