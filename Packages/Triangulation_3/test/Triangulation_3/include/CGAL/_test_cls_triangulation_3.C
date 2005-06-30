@@ -668,6 +668,17 @@ _test_cls_triangulation_3(const Triangulation &)
   Vertex_handle w;
   for (vit=T3_1.finite_vertices_begin();vit!=T3_1.finite_vertices_end();vit++)
     assert(T3_1.is_vertex(vit->point(), w));
+
+  // test mirrors
+  c = T0.infinite_cell();
+  for (i=0;i<4;i++) {
+    Cell_handle d = c->neighbor(i);
+    int j  = T0.mirror_index(c,i);
+    assert(d->vertex(j) == T0.mirror_vertex(c,i));
+    assert(Facet(d,j) == T0.mirror_facet(Facet(c,i)));
+  }
+	   
+    
          
        // geometric functions
   std::cout << "Geometric functions " << std::endl;

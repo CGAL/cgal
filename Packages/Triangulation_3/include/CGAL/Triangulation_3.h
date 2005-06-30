@@ -523,6 +523,9 @@ public:
   Vertex_handle mirror_vertex(Cell_handle c, int i) const
   { return _tds.mirror_vertex(c, i); }
 
+  Facet mirror_facet(Facet f) const
+  { return _tds.mirror_facet(f);}
+
   // MODIFIERS
   bool flip(const Facet &f)
   // returns false if the facet is not flippable

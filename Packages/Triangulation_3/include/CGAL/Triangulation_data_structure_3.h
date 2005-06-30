@@ -808,6 +808,13 @@ public:
       return c->neighbor(i)->vertex(mirror_index(c, i));
   }
 
+  Facet mirror_facet(Facet f) const
+  {
+    const Cell_handle& neighbor_cell = f.first->neighbor(f.second);
+    const int opposite_index = neighbor_cell->index(f.first);
+    return Facet(neighbor_cell, opposite_index);
+  }
+
 private:
 
   // Change the orientation of the cell by swapping indices 0 and 1.
