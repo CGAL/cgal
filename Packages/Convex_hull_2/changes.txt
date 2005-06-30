@@ -1,3 +1,8 @@
+30 June 2005 Sylvain Pion
+- prefix macros by CGAL_
+
+========================== CGAL 3.1 =========================
+
 4 September 2004 Menelaos Karavelas
 - re-wrote author names in copyright notices using 7-bit characters
 
