@@ -271,19 +271,19 @@ public:
   }
 
   /*! Get the previous halfedge along the chain (const version). */
-  const Halfedge* previous () const
+  const Halfedge* prev () const
   {
     return (reinterpret_cast<const Halfedge*>(p_prev));
   }
 
   /*! Get the previous halfedge along the chain (const version). */
-  Halfedge* previous ()
+  Halfedge* prev ()
   {
     return (reinterpret_cast<Halfedge*>(p_prev));
   }
 
   /*! Set the previous halfedge along the chain. */
-  void set_previous (Halfedge* he)
+  void set_prev (Halfedge* he)
   {
     p_prev = he;
     he->p_next = this;
@@ -807,7 +807,7 @@ public:
       v = h->vertex();
       f = h->face();
       opp = h->opposite();
-      prev = h->previous();
+      prev = h->prev();
       next = h->next();
 
       dup_h = (he_map.find (h))->second;
@@ -820,7 +820,7 @@ public:
       dup_h->set_vertex (dup_v);
       dup_h->set_face (dup_f);
       dup_h->set_opposite (dup_opp);
-      dup_h->set_previous (dup_prev);
+      dup_h->set_prev (dup_prev);
       dup_h->set_next (dup_next);
     }
 

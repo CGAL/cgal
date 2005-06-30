@@ -1147,7 +1147,7 @@ Arrangement_2<Traits,Dcel>::merge_edge (Halfedge_handle e1,
   else
   {
     he1->set_next (he3->next());
-    he4->previous()->set_next (he2);
+    he4->prev()->set_next (he2);
   }
 
   // Note that he1 (and its twin) is going to represent the merged edge while
@@ -2091,7 +2091,7 @@ Arrangement_2<Traits,Dcel>::_split_edge (Halfedge *e,
     he3->set_next (he1->next());
 
     // Insert he4 between he2 and its predecessor.
-    he2->previous()->set_next (he4);
+    he2->prev()->set_next (he4);
   }
   else
   {
@@ -2210,7 +2210,7 @@ Arrangement_2<Traits,Dcel>::_remove_edge (Halfedge *e)
 
       // Remove the two halfedges from the boundary chain by connecting
       // he1's predecessor with he2's successor.
-      prev1 = he1->previous();
+      prev1 = he1->prev();
 
       prev1->set_next (he2->next());
 
@@ -2266,8 +2266,8 @@ Arrangement_2<Traits,Dcel>::_remove_edge (Halfedge *e)
     }
 
     // In this case we have to create a new hole.
-    prev1 = he1->previous();
-    prev2 = he2->previous();
+    prev1 = he1->prev();
+    prev2 = he2->prev();
 
     // Determine whether the he1's predecessor lies of the outer or the inner
     // Boundary of the incident face.
@@ -2388,8 +2388,8 @@ Arrangement_2<Traits,Dcel>::_remove_edge (Halfedge *e)
   const bool  he2_is_on_hole = (_is_on_inner_boundary (f2, he2) != NULL);
   Halfedge   *ccb;
 
-  prev1 = he1->previous();
-  prev2 = he2->previous();
+  prev1 = he1->prev();
+  prev2 = he2->prev();
 
   CGAL_assertion (!he1_is_on_hole || !he2_is_on_hole);
 
@@ -2488,8 +2488,8 @@ Arrangement_2<Traits,Dcel>::_remove_edge (Halfedge *e)
     f1 = he1->face();
     f2 = he2->face();
     
-    prev1 = he1->previous();
-    prev2 = he2->previous();
+    prev1 = he1->prev();
+    prev2 = he2->prev();
   }
 
   // We wish to remove f2, so we set all the incident face of all
