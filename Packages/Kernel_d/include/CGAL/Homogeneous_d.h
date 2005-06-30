@@ -21,8 +21,8 @@
 //
 // Author(s)     : Michael Seel
 
-#ifndef HOMOGENEOUS_D_H
-#define HOMOGENEOUS_D_H
+#ifndef CGAL_HOMOGENEOUS_D_H
+#define CGAL_HOMOGENEOUS_D_H
 
 #ifndef NOCGALINCL
 #include <CGAL/basic.h>
@@ -403,5 +403,4 @@ CGAL_END_NAMESPACE
 #include <CGAL/Kernel_d/Line_d.C>
 #include <CGAL/intersections_d.h>
 
-#endif // HOMOGENEOUS_D_H
-
+#endif // CGAL_HOMOGENEOUS_D_H

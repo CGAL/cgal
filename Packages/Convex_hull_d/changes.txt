@@ -1,3 +1,8 @@
+30 June 2005 Sylvain Pion
+- prefix macro with CGAL_.
+
+============================== CGAL 3.1 ===========================
+
 25 September 2004 Sylvain Pion
 - Remove useless code causing g++ 3.4 to warn.
 
