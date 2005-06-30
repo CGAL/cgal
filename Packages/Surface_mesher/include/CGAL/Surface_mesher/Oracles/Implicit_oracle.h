@@ -89,6 +89,11 @@ namespace CGAL {
     
     // Predicates and Constructions
     
+    bool is_in_volume(const Point& p)
+    {
+      return surf_equation(p)<0.;
+    }
+
     Object intersect_segment_surface(Segment s) {      
       GT ker;
       Point p1,p2,mid;
@@ -261,8 +266,7 @@ namespace CGAL {
       }
     }
     
-  public: // I have made this one public for Mesh_3... -- Laurent Rineau,
-          //                                              2004/11/17
+  private:
     typename Function::SURFACE_LOCATION surf_equation (Point p) {
       return func(p.x(), p.y(), p.z());
     }

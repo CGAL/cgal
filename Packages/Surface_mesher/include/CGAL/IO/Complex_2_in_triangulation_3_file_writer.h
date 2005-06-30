@@ -78,7 +78,100 @@ output_surface_facets_to_off (std::ostream& os, const Tr & T) {
       }
 }
 
+// only if cells have is_in_domain() method.
+template < class Tr>
+void
+output_oriented_surface_facets_to_off (std::ostream& os, const Tr & T) {
+  typedef typename Tr::Finite_facets_iterator Finite_facets_iterator;
+  typedef typename Tr::Finite_vertices_iterator Finite_vertices_iterator;
+  typedef typename Tr::Vertex_handle Vertex_handle;
+  typedef typename Tr::Point Point;
 
+  // Header.
+
+
+  os << "OFF \n"
+     << T.number_of_vertices() << " " <<
+    number_of_facets_on_surface (T) << 
+    " " << 0 << "\n";
+
+  os << std::setprecision(20);
+ 
+  // Finite vertices coordinates.
+  std::map<Vertex_handle, int> V;
+  int inum = 0;
+  for( Finite_vertices_iterator
+      vit = T.finite_vertices_begin(); vit != T.finite_vertices_end(); ++vit) {
+    V[vit] = inum++;
+    Point p = static_cast<Point>(vit->point());
+    os << p.x() << " " << p.y() << " " << p.z() << "\n";
+  }
+  
+  // Finite facets indices.
+  for( Finite_facets_iterator fit = T.finite_facets_begin(); 
+       fit != T.finite_facets_end(); ++fit)
+    if ((*fit).first->is_facet_on_surface((*fit).second)==true)
+      {
+	typename Tr::Facet f = *fit;
+	typename Tr::Facet opposite = T.compute_opposite_facet(f);
+	CGAL_assertion (f.first->is_in_domain() !=
+			opposite.first->is_in_domain());
+	if(!f.first->is_in_domain())
+	  f = T.compute_opposite_facet(f);
+	os << "3 "
+	   << V[f.first->vertex(T.vertex_triple_index(f.second,0))] << " "
+	   << V[f.first->vertex(T.vertex_triple_index(f.second,1))] << " "
+	   << V[f.first->vertex(T.vertex_triple_index(f.second,2))] << " "	
+	   << "\n"; // without color.
+      }
+}
+
+// only if cells have is_in_domain() method.
+template < class Tr>
+void
+output_surface_facets_to_ghs   (std::ostream& os_points,
+				std::ostream& os_faces,
+				const Tr & T) {
+  typedef typename Tr::Finite_facets_iterator Finite_facets_iterator;
+  typedef typename Tr::Finite_vertices_iterator Finite_vertices_iterator;
+  typedef typename Tr::Vertex_handle Vertex_handle;
+  typedef typename Tr::Point Point;
+  typedef typename Tr::Facet Facet;
+
+  // Header.
+
+
+  os_points << T.number_of_vertices() << "\n";
+
+  os_points << std::setprecision(20);
+ 
+  // Finite vertices coordinates.
+  std::map<Vertex_handle, int> V;
+  int inum = 1;
+  for( Finite_vertices_iterator
+      vit = T.finite_vertices_begin(); vit != T.finite_vertices_end(); ++vit) {
+    V[vit] = inum++;
+    Point p = static_cast<Point>(vit->point());
+    os_points << p.x() << " " << p.y() << " " << p.z() << " 0\n";
+  }
+  
+  os_faces << number_of_facets_on_surface(T) << "\n";
+  // Finite facets indices.
+  for( Finite_facets_iterator fit = T.finite_facets_begin(); 
+       fit != T.finite_facets_end(); ++fit)
+    if ((*fit).first->is_facet_on_surface((*fit).second)==true)
+      {
+	Facet f = *fit;
+	if(!f.first->is_in_domain())
+	  f = T.compute_opposite_facet(f);
+	os_faces 
+	  << "3 "
+	  << V[f.first->vertex(T.vertex_triple_index(f.second,0))] << " "
+	  << V[f.first->vertex(T.vertex_triple_index(f.second,1))] << " "
+	  << V[f.first->vertex(T.vertex_triple_index(f.second,2))] << " "
+	  << "0 0 0 0\n";
+      }
+}
 
 template < class Tr>
 int number_of_facets_in_domain(const Tr& T) {

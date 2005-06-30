@@ -4,14 +4,14 @@
 all: examples
 
 examples:
-	${MAKE} -C examples/Chew_4_surfaces
+	${MAKE} -C examples/Surface_mesher
 
 doxygen:
 	doxygen
 
 # clean all object files
 clean: 
-	${MAKE} -C examples/Chew_4_surfaces clean
+	${MAKE} -C examples/Surface_mesher clean
 
 dist-clean: clean
 	find . -name '.#*' -exec rm \{\} \;

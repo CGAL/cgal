@@ -1,3 +1,7 @@
+30 June 2005 Laurent Rineau
+- attempt to merged trunk, sliver_branch and my local modifications...
+- may be correct, or not.
+
 12 may 2005 David Rey
 - create several surface meshers:
   - with no verification about manifoldness
@@ -12,9 +16,9 @@
     Surface_mesher_regular_edges_without_boundary
   - Chew_4_surfaces_manifold_simple_vertices -> Surface_mesher_manifold
 
-
-
-
+24 March 2005 Laurent Rineau
+- compatibility with new requirements of Mesher_level
+- code is still broken, since 2005/02/27.
 
 8 February 2005 Laurent Rineau
 - new changes.txt file

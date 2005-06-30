@@ -392,13 +392,6 @@ namespace CGAL {
        c2t3.reset_visits(f);
        c2t3.reset_visits (other_side);
 
-      // NB (de Steve): ATTENTION, j'ai modifie le code pour le rendre 
-      // plus coherent, mais du coup les infos de debug dans le 
-      // after_insertion n'ont pus de sens 
-      // DEBUG: on regarde si la facette etait dans le complexe
-      //if (c2t3.complex_subface_type (f) != C2t3::NOT_IN_COMPLEX)
-       //std::cout << "(b-)";
-
       // On retire la facette du complexe (car on doit etre
       // independant de l'implementation du complexe)
       c2t3.remove_from_complex (f);
@@ -425,14 +418,7 @@ namespace CGAL {
 
       Facet other_side ((f.first)->neighbor(f.second),
 			(f.first)->neighbor(f.second)->index(f.first));
-	  
-      // NB (de Steve): j'ai enleve le test_if_restricted_before, qui
-      // n'a plus lieu d'etre car la facette a ete retiree d'office 
-      // du complexe avant l'insertion du nouveau point
-//       // DEBUG
-//       bool test_if_restricted_before = 
-// 	(c2t3.complex_subface_type (other_side) != C2t3::NOT_IN_COMPLEX);
-      
+	        
       // NB: set_facet_visited() is implementation dependant
       // and each side of the real facet has to be considered
       // separately
@@ -444,12 +430,6 @@ namespace CGAL {
       Point center;
       if (is_facet_on_surface(f, center)) {
 
-
-	// NB (de Steve): cf plus haut
-// 	// DEBUG: on regarde si la facette n'etait pas dans le complexe
-// 	if (!test_if_restricted_before)
-// 	  std::cout << "(a+)";
-
 	// NB: set_in_complex() is implementation independant and
 	// consider both sides of the facet at once
 	c2t3.set_in_complex(f);
@@ -460,6 +440,13 @@ namespace CGAL {
 	c2t3.set_facet_center(f, center);
 	c2t3.set_facet_center(other_side, center);
 	    
+	// BEURK [Laurent 2005/02/09]
+	/// @todo Remove this
+	const Cell_handle& ch = f.first;
+	const int i = f.second;
+	const Vertex_handle& v1 = ch->vertex((i+1)&3);
+	const Vertex_handle& v2 = ch->vertex((i+2)&3);
+	const Vertex_handle& v3 = ch->vertex((i+3)&3);
 	// On regarde alors si la facette est bonne
 	if (criteria.is_bad (f)) {
 	  Quality a_r = criteria.quality (f);

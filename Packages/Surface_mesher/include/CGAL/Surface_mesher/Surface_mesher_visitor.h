@@ -15,40 +15,42 @@
 // $Revision$ $Date$
 // $Name$
 //
-// Author(s)     : Steve OUDOT
+// Author(s)     : Laurent RINEAU
 
 
 #ifndef CGAL_SURFACE_MESHER_VISITOR_H
 #define CGAL_SURFACE_MESHER_VISITOR_H
 
-#include <CGAL/Surface_mesher/Surface_mesher.h>
-
 namespace CGAL {
 
   namespace Surface_mesher {
 
-    template <typename Tr, typename Surface_mesher>
+    template <
+      typename Tr,
+      typename Surface_mesher,
+      typename Previous_level
+      >
     class Visitor {
       Surface_mesher* surface;
-      Null_mesh_visitor null_visitor;
+      Previous_level* previous;
 
     public:
       typedef typename Tr::Vertex_handle Vertex_handle;
-      typedef typename Tr::Cell_handle Cell_handle;
-      typedef typename Tr::Facet Facet;
       typedef ::CGAL::Triangulation_mesher_level_traits_3<Tr> Traits;
       typedef typename Traits::Zone Zone;
       typedef typename Traits::Point Point;
 
-      typedef Null_mesh_visitor Previous_visitor;
+      typedef Previous_level Previous_visitor;
 
-      Visitor(Surface_mesher* surface_)
-        : surface(surface_) {}
+      Visitor(Surface_mesher* surface_,
+	      Previous_visitor* p)
+        : surface(surface_), previous(p) {}
 
       template <typename E, typename P>
       void before_conflicts(E, P) const {}
 
-      void before_insertion(const Facet&,
+      template <class E>
+      void before_insertion(E,
                             const Point& p,
                             Zone& zone) 
       {
@@ -63,9 +65,9 @@ namespace CGAL {
       template <typename E, typename P, typename Z>
       void after_no_insertion(E, P, Z) const {}
 
-      Null_mesh_visitor& previous_level()
+      Previous_visitor& previous_level()
       {
-        return null_visitor;
+        return *previous;
       }
       
     }; // end class Visitor
