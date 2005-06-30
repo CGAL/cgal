@@ -247,6 +247,69 @@ that is nearest to $p$
 with respect to the power distance.
 }
 
+A  weighted point \ccc{p} is said to be in conflict 
+with a cell \ccc{c} in dimension 3
+(resp. with a facet \ccc{f} in dimension 2) 
+if it has a negative power distance 
+to the power sphere  of  \ccc{c} 
+(resp.  to the power circle of \ccc{f}).
+The set of cells (resp. facets in dimension 2) which are in conflict with
+\ccc{p} is connected.
+
+\ccMethod{template <class OutputIteratorBoundaryFacets,
+                    class OutputIteratorCells,
+                    class OutputIteratorInternalFacets>
+  Triple<OutputIteratorBoundaryFacets,
+         OutputIteratorCells,
+         OutputIteratorInternalFacets>
+  find_conflicts(const Weighted_point p, Cell_handle c,
+                 OutputIteratorBoundaryFacets bfit,
+                 OutputIteratorCells cit,
+                 OutputIteratorInternalFacets ifit);}
+{ Compute the conflicts with \ccc{p}.
+ The starting cell
+(resp.  facet) \ccc{c} must be in conflict with  \ccc{p}.  
+Then this function returns
+respectively in the output iterators:\\
+-- \ccc{cit}: the cells (resp. facets) in conflict  with  \ccc{p}.\\
+-- \ccc{bfit}: the facets (resp. edges) on the boundary of the
+conflict  zone, that is, the facets
+(resp. edges) \ccc{(t, i)} where the cell (resp. facet) \ccc{t} is in
+conflict, but \ccc{t->neighbor(i)} is not.\\
+-- \ccc{ifit}: the facets (resp. edges) inside the conflict zone, 
+that facets incident to two cells (resp facets) in conflict.\\
+Returns the \ccc{Triple} composed of the resulting output iterators.
+\ccPrecond{\ccVar.\ccc{dimension()} $\geq 2$, and \ccc{c} is in conflict
+with \ccc{p}.}
+}
+
+\ccHeading{Power diagram}
+\ccIndexMainItem{Power diagram}
+\cgal\ offers several functionalities to display the Power diagram of 
+a set of points in 3D.
+
+Note that the user should use a kernel with exact constructions in order
+to guarantee the computation of the Voronoi diagram (as opposed to computing
+the triangulation only, which requires only exact predicates).
+
+\ccMethod{Point dual(Cell_handle c) const;}
+{Returns the weighted circumcenter of the four vertices of c.
+\ccPrecond{\ccVar.\ccc{dimension()}$=3$ and \ccc{c} is not infinite.}}
+
+\ccMethod{Object dual(Facet f) const;}
+{Returns the dual of facet \ccc{f}, which is \\
+in dimension 3: either a segment, if the two cells incident to \ccc{f}  
+are finite, or a ray, if one of them is infinite;\\
+in dimension 2: a point.
+\ccPrecond{\ccVar.\ccc{dimension()} $\geq 2$ and \ccc{f} is not infinite.}}
+
+\ccMethod{Object dual(Cell_handle c, int i) const;}
+{same as the previous method for facet \ccc{(c,i)}.}
+
+\ccMethod{template <class Stream> Stream & draw_dual(Stream & os);}
+{Sends the set of duals to all the facets of \ccVar\ into \ccc{os}.}
+
+
 \begin{ccAdvanced}
 \ccHeading{Checking}
 \ccMethod{bool
