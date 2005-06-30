@@ -131,7 +131,7 @@ centroid(InputIterator begin,
 template < typename InputIterator, 
            typename K >
 inline
-typename K::Point_2
+typename std::iterator_traits<InputIterator>::value_type
 centroid(InputIterator begin,
          InputIterator end, 
          const K& k)
