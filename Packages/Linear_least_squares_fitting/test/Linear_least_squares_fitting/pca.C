@@ -18,66 +18,8 @@ typedef K::Triangle_2        Triangle_2;
 typedef K::Line_2            Line_2;
 typedef K::Point_3           Point_3;
 
+#include "pca_utils.h"
 
-// dump a point set and a line to a postscript file
-void dump_ps(char *pFilename,
-             std::vector<Point_2>& points,
-             Line_2& line)
-{
-  // try opening file
-  FILE *pFile = fopen(pFilename,"wt");
-  if(pFile == NULL)
-  {
-    std::cerr << "unable to open file " << pFilename << std::endl;
-    return;
-  }
-
-  // header
-  fprintf(pFile,"%%!PS-Adobe-2.0 EPSF-2.0\n");
-  fprintf(pFile,"%%%%BoundingBox: 0 0 500 500\n");
-  fprintf(pFile,"%%%%EndComments\n");
-  fprintf(pFile,"gsave\n");
-
-  // options
-  fprintf(pFile,"1 setlinewidth\n");
-  fprintf(pFile,"0 0 0 setrgbcolor\n");
-
-  // stroke macro -> S
-  fprintf(pFile,"\n%% stroke - x1 y1 x2 y2 S\n");
-  fprintf(pFile,"/S {moveto lineto stroke} bind def\n\n");
-
-  // disc macro -> D (dot)
-  fprintf(pFile,"\n%% disc macro - x y D\n");
-  fprintf(pFile,"/D {1 0 360 arc closepath fill} bind def\n");
-
-  for(std::vector<Point_2>::iterator it = points.begin();
-      it != points.end();
-      it++)
-  {
-    const Point_2& p = *it;
-    fprintf(pFile,"%9.3f %9.3f D\n",500.0f*p.x(),500.0f*p.y());
-  }
-
-  // output line segment
-  Point_2 a = line.point(-100);
-  Point_2 b = line.point(100);
-  fprintf(pFile,"%9.3f %9.3f %9.3f %9.3f S\n",
-          500.0f*a.x(),500.0f*a.y(),
-          500.0f*b.x(),500.0f*b.y());
-
-  // emit EPS trailer
-  fputs("grestore\n\n",pFile);
-  fputs("showpage\n",pFile);
-  fclose(pFile);
-}
-
-
-Point_2 random_point_2()
-{
-  FT x = rand() / (FT)RAND_MAX;
-  FT y = rand() / (FT)RAND_MAX;
-  return Point_2(x,y);
-}
 
 void test_2_point_set(const unsigned int nb_points,
                       const FT epsilon)
@@ -102,7 +44,7 @@ void test_2_point_set(const unsigned int nb_points,
 
   // dump to ps
   std::cout << "  dump to ps...";
-  dump_ps("test.ps",points,line);
+  dump_ps("test_2d_points.ps",points,line);
   std::cout << "done" << std::endl;
 
   std::vector<Triangle_2> triangles;
@@ -111,21 +53,35 @@ void test_2_point_set(const unsigned int nb_points,
 void test_2_triangle_set(const unsigned int nb_triangles,
                          const FT epsilon)
 {
-  std::cout << "2D: fit a line to a point set" << std::endl;
+  std::cout << "2D: fit a line to a triangle set" << std::endl;
 
-  // create random points nearby a segment
+  // create 2D triangles
   std::vector<Triangle_2> triangles;
+
+  std::cout << "  generate 2D triangles...";
+  Point_2 a(0.2,0.2);
+  Point_2 b(0.8,0.2);
+  Point_2 c(0.8,0.4);
+  Point_2 d(0.2,0.4);
+  triangles.push_back(Triangle_2(a,b,c));
+  triangles.push_back(Triangle_2(a,c,d));
+  std::cout << "done" << std::endl;
 
   // fit a line
   std::cout << "  fit a 2D line...";
   Line_2 line;
   FT quality = linear_least_squares_fitting_2(triangles.begin(),triangles.end(),line);
   std::cout << "done (quality: " << quality << ")" << std::endl;
+
+  // dump to ps
+  std::cout << "  dump to ps...";
+  dump_ps("test_2d_triangles.ps",triangles,line);
+  std::cout << "done" << std::endl;
 }
 
 int main()
 {
-  test_2_point_set(1000,0.01);
-  test_2_triangle_set(1000,0.01);
+  test_2_point_set(500,0.05);
+  test_2_triangle_set(100,0.01);
   return 0;
 }

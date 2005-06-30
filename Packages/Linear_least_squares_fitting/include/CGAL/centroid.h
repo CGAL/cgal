@@ -41,7 +41,7 @@ CGAL_BEGIN_NAMESPACE
 
 namespace CGALi {
 
-// computes the centroid of 2D point set
+// computes the centroid of a 2D point set
 // takes an iterator range over K::Point_2
 template < typename InputIterator, 
            typename K >
@@ -52,20 +52,21 @@ centroid(InputIterator begin,
          const typename K::Point_2*)
 {
   typedef typename K::Vector_2 Vector;
+  typedef typename K::FT FT;
 
   CGAL_precondition(begin != end);
 
   Vector v = NULL_VECTOR;
-  int nb_pts = 0;
+  unsigned int nb_pts = 0;
   while (begin != end) 
   {
     v = v + (*begin++ - ORIGIN);
-    ++nb_pts;
+    nb_pts++;
   }
-  return ORIGIN + v / nb_pts;
-}
+  return ORIGIN + v / (FT)nb_pts;
+}// end centroid of a 2D point set
 
-// computes the centroid of 3D point set
+// computes the centroid of a 3D point set
 // takes an iterator range over K::Point_3
 template < typename InputIterator, 
            typename K >
@@ -76,18 +77,19 @@ centroid(InputIterator begin,
          const typename K::Point_3*)
 {
   typedef typename K::Vector_3 Vector;
+  typedef typename K::FT FT;
 
   CGAL_precondition(begin != end);
 
   Vector v = NULL_VECTOR;
-  int nb_pts = 0;
+  unsigned int nb_pts = 0;
   while (begin != end) 
   {
     v = v + (*begin++ - ORIGIN);
-    ++nb_pts;
+    nb_pts++;
   }
-  return ORIGIN + v / nb_pts;
-}
+  return ORIGIN + v / (FT)nb_pts;
+}// end centroid of a 3D point set
 
 // computes the centroid of 2D triangle set
 // takes an iterator range over K::Triangle_2
@@ -111,7 +113,6 @@ centroid(InputIterator begin,
   for(InputIterator it = begin;
       it != end;
       it++)
-  while (begin != end) 
   {
     const Triangle& triangle = *it;
     FT area = std::abs(triangle.area());
@@ -119,8 +120,9 @@ centroid(InputIterator begin,
     v = v + area * (c - ORIGIN);
     sum_area += area;
   }
+  CGAL_assertion(sum_area != 0);
   return ORIGIN + v / sum_area;
-}
+} // end centroid of a 2D triangle set
 
 } // namespace CGALi
 
@@ -134,8 +136,7 @@ centroid(InputIterator begin,
          InputIterator end, 
          const K& k)
 {
-  typedef typename std::iterator_traits<InputIterator>::value_type
-    Value_type;
+  typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
   return CGALi::centroid(begin, end, k,(Value_type*) NULL);
 }
 
