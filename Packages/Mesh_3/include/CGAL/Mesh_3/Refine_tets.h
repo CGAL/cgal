@@ -239,7 +239,7 @@ public:
 	  const Point& r = (*cit)->vertex(2)->point();
 	  const Point& s = (*cit)->vertex(3)->point();
 
-	  (*cit)->set_in_domain(oracle.surf_equation(circumcenter(p,q,r,s))<0.);
+	  (*cit)->set_in_domain(oracle.is_in_volume(circumcenter(p,q,r,s)));
 	  test_if_cell_is_bad(*cit);
 	}
   }
@@ -249,52 +249,6 @@ private:
   Oracle& oracle;
 
 }; // end Refine_tets_with_oracle_base
-
-  namespace tets {
-
-    template <typename Tr, typename Refine_tets>
-    class Refine_facets_visitor {
-      Refine_tets* refine_tets;
-      Null_mesh_visitor null_visitor;
-
-    public:
-      typedef typename Tr::Vertex_handle Vertex_handle;
-      typedef typename Tr::Cell_handle Cell_handle;
-      typedef typename Tr::Facet Facet;
-      typedef ::CGAL::Triangulation_mesher_level_traits_3<Tr> Traits;
-      typedef typename Traits::Zone Zone;
-      typedef typename Traits::Point Point;
-
-      typedef Null_mesh_visitor Previous_visitor;
-
-      Refine_facets_visitor(Refine_tets* refine_tets_)
-        : refine_tets(refine_tets_) {}
-
-      template <typename E, typename P>
-      void before_conflicts(E, P) const {}
-
-      void before_insertion(const Facet&,
-                            const Point&,
-                            Zone& zone) 
-      {
-        refine_tets->remove_star_from_cells_queue(zone);
-      }
-
-      void after_insertion(const Vertex_handle& v)
-      {
-	refine_tets->scan_star(v);
-      }
-
-      template <typename E, typename P, typename Z>
-      void after_no_insertion(E, P, Z) const {}
-
-      Null_mesh_visitor& previous_level()
-      {
-        return null_visitor;
-      }
-      
-    }; // end Refine_facets_visitor
-  }; // end namespace Mesh_3::tets
 
 template <typename Tr,
           typename Criteria,

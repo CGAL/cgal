@@ -1,3 +1,27 @@
-SLiver_exuder.h should contain only functions, I think.
+Sliver_exuder.h should contain only functions, I think.
   -- Laurent Rineau, 2005/04/06
 
+include/CGAL/Mesh_3/ should only contain private files, but examples .C
+   files use some of them.
+Renommer Mesh_3::Complex_2_in_triangulation_cell_base_3 parce qu'il
+   est très moche!!
+Est-ce que les visiteurs doivent etre chaines par des pointeurs ou
+   des ref?
+  -- Laurent Rineau, 2050/05/10
+
+As for potential robustess problems, in Sliver_exuder...
+  Problems come from compute_critical_squared_radius, that is a constructor.
+  cricical radii are compared.
+
+  Perhaps should be templatize Sliver_exuder with two traits, like
+  Filtered_kernel: an exact one, and an inexact one, as well as a
+  converter.
+
+  With meta-programming, we could provide defaults:
+    - for Tr whose traits is a Filtered_kernel, use it
+    - defaults: use the same traits classes.
+
+  Then, in Slivers_exuder, the prestart could save exact
+  squared_radii.
+
+  -- Laurent Rineau, 2005/05/21

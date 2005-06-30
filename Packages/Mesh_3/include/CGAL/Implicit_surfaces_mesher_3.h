@@ -21,8 +21,11 @@
 #define CGAL_IMPLICIT_SURFACES_MESHER_3_H
 
 #include <CGAL/Mesh_3/Refine_tets.h>
-#include <CGAL/Chew_4_surfaces/Chew_4_surfaces.h>
-#include <CGAL/Chew_4_surfaces/Chew_4_surfaces_visitor.h>
+#include <CGAL/Surface_mesher/Surface_mesher_manifold.h>
+#include <CGAL/Surface_mesher/Surface_mesher.h>
+#include <CGAL/Surface_mesher/Surface_mesher_visitor.h>
+#include <CGAL/Mesh_3/Implicit_surface_mesher_visitor.h>
+#include <CGAL/Mesh_3/Refine_tets_visitor.h>
 
 namespace CGAL {
 
@@ -41,10 +44,13 @@ class Implicit_surfaces_mesher_3
 public:
   typedef typename Tr::Point Point;
   
+
+  // ** two mesher levels **/
+
   typedef typename
-     Chew_4_surfaces::Chew_4_surfaces<Tr,
-                                      Oracle,
-                                      Facets_criteria> Facets_level;
+  Surface_mesher::Surface_mesher<Tr,
+				 Oracle,
+				 Facets_criteria> Facets_level;
 
   typedef typename Mesh_3::Refine_tets<Tr,
                                        Tets_criteria,
@@ -53,16 +59,21 @@ public:
                                         Tets_criteria, Oracle>, Facets_level>
                                                      Tets_level;
 
+  // ** visitors **
   typedef typename Mesh_3::tets::Refine_facets_visitor<Tr,
-     Tets_level> Tets_facets_visitor;
-  typedef typename Chew_4_surfaces::Visitor<Tr, Facets_level>
-                 Chew_facets_visitor;
-  
-  typedef Combine_mesh_visitor<Chew_facets_visitor, Tets_facets_visitor>
-                 Facets_visitor;
+     Tets_level, Null_mesh_visitor> Tets_facets_visitor;
+  typedef typename Mesh_3::Visitor_for_surface <
+    Tr,
+    Null_mesh_visitor
+    > Surface_facets_visitor;
 
-  typedef Null_mesh_visitor_level<Facets_visitor> Tets_visitor;
+  typedef Combine_mesh_visitor<Surface_facets_visitor,
+    Tets_facets_visitor> Facets_visitor;
 
+  typedef Surface_mesher::Visitor<Tr, Facets_level, 
+    Facets_visitor> Tets_visitor;
+
+  // ** C2T3 **
   typedef Complex_2_in_triangulation_3_surface_mesh<Tr> C2t3;
 
 private:
@@ -74,8 +85,9 @@ private:
   Facets_level facets;
   Tets_level tets;
 
-  Chew_facets_visitor chew_facets_visitor;
+  Surface_facets_visitor surface_facets_visitor;
   Tets_facets_visitor tets_facets_visitor;
+  Facets_visitor facets_visitor;
   Tets_visitor tets_visitor;
 
   bool initialized;
@@ -86,10 +98,11 @@ public:
                              Tets_criteria tets_crit)
     : c2t3(t), oracle(o), 
       facets(t, c2t3, oracle, c), tets(t, tets_crit, oracle, facets),
-      chew_facets_visitor(&facets),
-      tets_facets_visitor(&tets),
-      tets_visitor(Facets_visitor(&chew_facets_visitor,
-				  &tets_facets_visitor)),
+      surface_facets_visitor(&null_visitor),
+      tets_facets_visitor(&tets, &null_visitor),
+      facets_visitor(Facets_visitor(&surface_facets_visitor,
+				    &tets_facets_visitor)),
+      tets_visitor(&facets, &facets_visitor),
       initialized(false)
   {}
 
@@ -110,11 +123,9 @@ public:
 	const Point& r = cit->vertex(2)->point();
 	const Point& s = cit->vertex(3)->point();
 
-	cit->set_in_domain(oracle.surf_equation(circumcenter(p,q,r,s))<0.);
+	cit->set_in_domain(oracle.is_in_volume(circumcenter(p,q,r,s)));
       }
     
-    facets.scan_triangulation();
-
     for(typename Tr::Finite_vertices_iterator vit = 
       tr.finite_vertices_begin();
       vit != tr.finite_vertices_end();
@@ -122,6 +133,7 @@ public:
       vit->info()=true;
     std::cerr << "Restore infos.\n";
 
+    facets.scan_triangulation();
     tets.scan_triangulation();
     initialized = true;
   }
@@ -137,7 +149,19 @@ public:
   {
     if(!initialized)
       init();
-    facets.refine(tets_visitor.previous_level());
+    std::cerr << "Starting refine_surface()\n";
+    
+    while( ! facets.is_algorithm_done() )
+      {
+	Tr& tr = tets.triangulation_ref_impl();
+	for(typename Tr::Finite_vertices_iterator vit = 
+	      tr.finite_vertices_begin();
+	    vit != tr.finite_vertices_end();
+	    ++vit)
+	  CGAL_assertion(vit->info()==true);
+	
+	facets.one_step(tets_visitor.previous_level());
+      }
   }
 
   void step_by_step()

@@ -1,6 +1,11 @@
+30 June 2005 Laurent Rineau
+- attempt to merged trunk, sliver_branch and my local modifications...
+- may be correct, or not.
+
 07 April 2005 Laurent Rineau
 - added skin implicit function
-- the option parser of examples/Mesh_3/implicite_surface_mesher_3.C now has string options
+- the option parser of examples/Mesh_3/implicite_surface_mesher_3.C now has
+string options
 - new options:
   --distribution_after_filename
   --mesh_after_filename

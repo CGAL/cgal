@@ -24,14 +24,14 @@
 #include <CGAL/Point_3.h>
 #include <CGAL/Tetrahedron_3.h>
 #include <CGAL/Double_map.h>
+#include <CGAL/iterator.h>
 #include <map>
 #include <vector>
+#include <set>
+#include <iomanip> // std::setprecision
+#include <iostream> // std::cerr/cout
 #include <boost/iterator/transform_iterator.hpp>
 // #include <boost/bind.hpp>
-
-#ifndef PI
-#define PI 3.1415926535897932
-#endif
 
 template <typename K>
 double
@@ -100,14 +100,14 @@ angle_rad(const CGAL::Vector_3<K> &u,
   if(cosine >= 0)
     return std::asin(fix_sine(AbsSine));
   else
-    return PI-std::asin(fix_sine(AbsSine));
+    return CGAL_PI-std::asin(fix_sine(AbsSine));
 }
 
 template <typename K>
 double angle_deg(const CGAL::Vector_3<K> &u,
                  const CGAL::Vector_3<K> &v)
 {
-  static const double conv = 1.0/PI*180.0;
+  static const double conv = 1.0/CGAL_PI*180.0;
 
   return conv*angle_rad(u,v);
 }
@@ -134,6 +134,23 @@ double dihedral_angle(const CGAL::Tetrahedron_3<K>& t,
                                       t[(j+2)&3],
                                       t[(j+3)&3]);
   return 180-angle_deg(vi,vj);
+}
+
+template <typename K>
+double min_dihedral_angle(const CGAL::Tetrahedron_3<K>& t)           
+{
+  double min = 180;
+  
+  for(int i = 0; i < 4; ++i)
+    for(int j = i + 1; j < 4; j++)
+      {
+	double a = dihedral_angle(t, i, j);
+	if( a < min )
+	  min = a;
+      }
+
+  std::cerr << min << "\n";
+  return min;
 }
 
 template <typename K>
@@ -217,13 +234,13 @@ namespace Mesh_3 {
     }; // end class Value_of
 
     template <typename Gt, typename Vertex_handle>
-    class Power_from_v :
+    class Distance_from_v :
       public std::unary_function<Vertex_handle, typename Gt::RT>
     {
       Vertex_handle * v;
       Gt gt;
     public:
-      Power_from_v(Vertex_handle& vh,
+      Distance_from_v(Vertex_handle& vh,
 		   Gt geom_traits = Gt()) 
 	: v(&vh), gt(geom_traits)
       {
@@ -232,14 +249,14 @@ namespace Mesh_3 {
       typename Gt::RT
       operator()(const Vertex_handle& vh) const
       {
-        typedef typename Gt::Compute_power_product_3
-            Compute_power_product_3;
-        Compute_power_product_3 product =
-            gt.compute_power_product_3_object();
+        typedef typename Gt::Compute_squared_distance_3
+            Compute_squared_distance_3;
+        Compute_squared_distance_3 distance =
+            gt.compute_squared_distance_3_object();
 
-	return product((*v)->point(), vh->point());
+	return distance((*v)->point(), vh->point());
       }
-    }; // end class Power_from_v
+    }; // end class Distance_from_v
 
   } // end namespace details
 
@@ -260,6 +277,11 @@ public: //types
   typedef typename Tr::Geom_traits Geom_traits;
   typedef typename Geom_traits::Tetrahedron_3 Tetrahedron_3;
   
+private: //types
+  // Umbrella will represent the link of the umbrella of a point in the
+  // restricted Delaunay.
+  typedef std::set<std::pair<Vertex_handle, Vertex_handle> > Umbrella;
+  
 public: // methods
   Slivers_exuder(Tr& t, double d = 0.45)
     : tr(t), sq_delta(d*d), num_of_pumped_vertices(0),
@@ -267,65 +289,126 @@ public: // methods
   {
   }
 
-  void init() 
+  template <typename Handle>
+  static
+  void order_two_handles(Handle& h1, Handle& h2)
   {
+    if( h2 < h1 )
+      std::swap(h1, h2);
   }
-  
+
+  static 
+  void find_the_two_other_indices(int i1, int i2,
+				  int& i3, int& i4)
+    // given i1 and i2 (i1<>i2), returns i3 and i4 so that
+    // i3 < i4 and i1+i2+i3+i4=6
+  {
+    CGAL_precondition( 0 <= i1 && i1 <= 3 );
+    CGAL_precondition( 0 <= i2 && i2 <= 3 );
+    CGAL_precondition( i1 != i2 );
+    
+    for(i3 = 0; i3 < 4; ++i3)
+      if( i3 != i1 && i3 != i2 )
+	break;
+    i4 = 6 - i1 - i2 - i3;
+
+    CGAL_postcondition( 0 <= i3 && i3 <= 3 );
+    CGAL_postcondition( i3 < i4 && i4 <= 3 );
+    CGAL_postcondition( i3 != i1 && i3 != i2 );
+    CGAL_postcondition( i4 != i1 && i4 != i2 );
+  }
+
+  static
+  bool check_umbrella(Umbrella& umbrella)
+  {
+    typedef std::map<Vertex_handle, int> My_map;
+    My_map my_map;
+
+    for(typename Umbrella::const_iterator p_it = umbrella.begin();
+	p_it != umbrella.end();
+	++p_it)
+    {
+      ++my_map[p_it->first];
+      ++my_map[p_it->second];
+    }
+    for(typename My_map::const_iterator it = my_map.begin();
+	it != my_map.end(); ++it)
+      if( it->second != 2 )
+	return false;
+
+    return true;
+  } // end check_umbrella
+
+
+  void init()
+  {
+    cell_queue.clear();
+    compute_aspect_ratio_priority_map();
+  }
+
+
   void pump_vertices()
   {
-    num_of_pumped_vertices = 0;
-    num_of_ignored_vertices = 0;
-    total_pumping = 0.0;
-    
-    for(typename Tr::Finite_vertices_iterator vit = tr.finite_vertices_begin();
-	vit != tr.finite_vertices_end();
-	++vit)
-      if(vit->info() != true)
-	pump_vertex(vit);
-    
-    std::cerr << "Pumped vertices:  " << num_of_pumped_vertices << std::endl;
-    std::cerr << "Ignored vertices: " << num_of_ignored_vertices << std::endl;
-    std::cerr << "Average pumping:  " << (total_pumping / num_of_pumped_vertices) << std::endl;
+    int failure_count = 0;
+
+    //     while(  front.first < 0.5 && !cell_queue.empty() )
+    while( !cell_queue.empty() )
+      {
+	  
+	std::pair<double, Cell_handle> front = *(cell_queue.front());
+	Cell_handle c = front.second;
+// 	std::cerr << "worst radius=" << front.first << std::endl;
+	
+	  
+	int i;
+	for( i = 0; i < 4; ++i )
+	  {
+	    if( pump_vertex(c->vertex(i)) )
+	      {
+		std::cout << "P";
+		break;
+	      }
+	    else
+	      std::cout << ".";
+	    // 	    if(i == 3)
+	    // 	      {
+	    // 		cell_queue.pop_front();
+	    // 		++failure_count;
+	    // 	      }
+	  }
+
+	// if the tet could not be deleted
+	if (i==4) {
+	  cell_queue.pop_front();
+	  ++failure_count;
+	}
+
+	else {
+// 	  front = *(cell_queue.front());
+	  // 	std::ofstream dump("dump.off");
+	  // 	output_surface_facets_to_off(dump, tr);
+	  // 	dump.close();
+	
+// 	std::cerr << "\n";
+// 	std::cerr << "Pumped vertices:  " 
+// 		  << num_of_pumped_vertices << std::endl;
+// 	std::cerr << "Ignored vertices: " 
+// 		  << num_of_ignored_vertices << std::endl;
+// 	std::cerr << "Average pumping:  " 
+// 		  << (total_pumping / num_of_pumped_vertices) 
+// 		  << std::endl;
+	}
+
+
+// 	std::cerr << std::endl 
+// 		  << "Size of queue = " << cell_queue.size()
+// 		  << std::endl;
+      }
   }
-//   void init()
-//   {
-//     cell_queue.clear();
-//     compute_aspect_ratio_priority_map();
-//   }
 
-//   void pump_vertices()
-//   {
-//     typename Cell_radius_priority_queue::iterator it = cell_queue.begin();
-//     while ( it != cell_queue.end() )
-//       {
-//         My_cell cell = it->second;
-//         int i;
-//         Cell_handle ch;
-//         if( tr.is_cell(cell.V[0],
-//                        cell.V[1],
-//                        cell.V[2],
-//                        cell.V[3],
-//                        ch, i, i, i, i) )
-//           {
-//             i = 0;
-//             while( (i < 4) && cell.V[i]->info() == true )
-//               ++i;
-//             if( i < 4 )
-//               {
-//                 std::cerr << ".";
-//                 pump_vertex(cell.V[i]);
-//               }
-//             else
-//               std::cerr << "!";
-//           }
-//         cell_queue.erase(it);
-//         it = cell_queue.begin();
-//       }
-//     std::cerr << "\n";
-//   }
-
-  void pump_vertex(Vertex_handle v)
+  bool pump_vertex(Vertex_handle v)
   {
+    CGAL_expensive_assertion(tr.is_valid());
     using boost::make_transform_iterator;
 
     std::vector<Cell_handle> incident_cells;
@@ -345,7 +428,7 @@ public: // methods
     double best_weight = 0;
     double worst_radius_ratio = 1;
 
-    details::Power_from_v<Geom_traits, Vertex_handle> 
+    details::Distance_from_v<Geom_traits, Vertex_handle> 
       distance_from_v(v, tr.geom_traits());
 
     const double sq_d_v = 
@@ -358,21 +441,17 @@ public: // methods
           incident_cells.begin();
         cit != incident_cells.end();
         ++cit)
-      {
-	const int index = (*cit)->index(v);
-	const Facet f = Facet(*cit, index);
-	const double r = radius_ratio(tr.tetrahedron(*cit));
-	ratios[f] = r;
-	if( r < worst_radius_ratio ) worst_radius_ratio = r;
-	const Facet opposite_facet = compute_opposite_facet(f);
-        if(opposite_facet.first->is_in_domain())
-        {
-          CGAL_assertion( ! f.first->is_facet_on_surface(f.second) );
-          CGAL_assertion( ! opposite_facet.first->is_facet_on_surface(opposite_facet.second) );
-          pre_star.insert(f, compute_critical_radius(v,
+      if( !tr.is_infinite(*cit) && (*cit)->is_in_domain() )
+	{
+	  const int index = (*cit)->index(v);
+	  const Facet f = Facet(*cit, index);
+	  const double r = radius_ratio(tr.tetrahedron(*cit));
+	  ratios[f] = r;
+	  if( r < worst_radius_ratio ) worst_radius_ratio = r;
+	  const Facet opposite_facet = compute_opposite_facet(f);
+	  pre_star.insert(f, compute_critical_radius(v,
 						     opposite_facet.first));
-        }
-      }
+	}
 
     double first_radius_ratio = worst_radius_ratio;
     
@@ -423,18 +502,26 @@ public: // methods
  
 	
 	int number_of_erased_facets = 0;
+	int number_of_new_facets = 0;
+	int index_of_new_facet = -1;
 
         for(int i = 0; i<4 ; ++i)
           {
-            CGAL_assertion( critical_r < power_product(v->point(), opposite_cell->vertex(i)->point()) );
+            CGAL_assertion(
+	      critical_r < power_product(v->point(),
+					 opposite_cell->vertex(i)->point())
+	    );
+
             const Facet new_facet = Facet(opposite_cell, i);
 	    const Facet temp_facet = compute_opposite_facet(new_facet);
             if(!pre_star.erase(temp_facet))
 	      {
+		// in this case temp_facet is a new link facet
+                // viewed from outside the prestar
                 CGAL_assertion( opposite_cell->neighbor(i) != link.first);
                 pre_star.insert(new_facet,
 				compute_critical_radius(v,
-							new_facet.first));
+							temp_facet.first));
 		const Cell_handle& c = new_facet.first;
 		const int& k = new_facet.second;
   
@@ -454,18 +541,32 @@ public: // methods
 					     c->vertex((k+1)&3)->point(),
 					     c->vertex((k+2)&3)->point(),
 					     c->vertex((k+3)&3)->point()));
+		++ number_of_new_facets;
+		index_of_new_facet = i;
 	      }
 	    else
 	      {
+		// in this case temp_facet is an old  link facet
+                // viewed from inside the prestar
                 ++number_of_erased_facets;
 // 		if(number_of_erased_facets > 1)
 //  		  std::cerr << "[3-2]";
 	      }
           }
-	
-	// 	std::cerr << "n(" << number_of_erased_facets << ")";
-	CGAL_assertion( number_of_erased_facets > 0 );
-	CGAL_assertion( number_of_erased_facets < 3 );
+
+// 	std::cerr << "n(" << number_of_erased_facets << ")";
+// 	std::cerr << &*(opposite_cell) << "\n";
+// 	    std::cerr << "Flip " << number_of_erased_facets 
+// 		      << "-" << number_of_new_facets << "\n"
+// 		      << "critical_r=" << critical_r << "\n"
+// 		      << "power_product=" 
+// 		      << power_product(
+//                            opposite_cell->vertex(index_of_new_facet)->point(),
+// 			   v->point().point()) << "\n";
+	CGAL_assertion((number_of_erased_facets == 1 && 
+			 number_of_new_facets == 3 ) ||
+		     (number_of_erased_facets == 2 && 
+		      number_of_new_facets == 2 ));
 
 	double min_of_pre_star = 
 	  *(std::min_element(make_transform_iterator(pre_star.begin(),
@@ -480,7 +581,10 @@ public: // methods
 	    if( !pre_star.empty() )
 	      best_weight = (critical_r + pre_star.front()->first) / 2;
 	    else
-	      best_weight = critical_r;
+	      {
+		CGAL_assertion(false);
+		best_weight = critical_r;
+	      }
 	  }
 
         facet = *(pre_star.front());
@@ -489,9 +593,8 @@ public: // methods
 // 	pre_star.pop_front();
       }
 
-/*    if( link.first->is_facet_on_surface(link.second) )
-      std::cerr << "X";
- */   
+//    if( link.first->is_facet_on_surface(link.second) )
+//       std::cerr << "X";   
     Bare_point p = v->point().point();
     //    tr.remove(v);
     if(best_weight > v->point().weight())
@@ -504,13 +607,237 @@ public: // methods
       total_pumping += (worst_radius_ratio - first_radius_ratio);
       
       Weighted_point wp = Weighted_point(p, best_weight);
+
+      std::vector<Cell_handle> deleted_cells;
+      std::vector<Facet> internal_facets;
+      deleted_cells.reserve(64);
+      internal_facets.reserve(64);
+      Facet one_boundary_facet;
+      
+      tr.find_conflicts(wp,
+			v->cell(),
+			Oneset_iterator<Facet>(one_boundary_facet) ,
+			std::back_inserter(deleted_cells),
+			std::back_inserter(internal_facets));
+     
+      
+
+      // delete cells from the list of bad cells
+      for(typename std::vector<Cell_handle>::iterator
+	    cit = deleted_cells.begin(); 
+	  cit != deleted_cells.end();
+	  ++cit)
+	cell_queue.erase(*cit);
+      
+
+      const Facet one_boundary_facet_from_outside =
+	compute_opposite_facet(one_boundary_facet);
+      // Here, one_boundary_facet_from_outside is a facet on the
+      // boundary of the conflicts zone, seen from outside the
+      // conflicts zone.
+
+      const bool seed_domain_marker = one_boundary_facet.first->is_in_domain();
+
+      CGAL_assertion(!tr.is_infinite(one_boundary_facet.first) ||
+		     !seed_domain_marker);
+      
+
+      Umbrella umbrella;
+
+      {
+	typename std::vector<Facet>::iterator ifit = internal_facets.begin();
+	for ( ; ifit != internal_facets.end() ; ++ifit) {
+	  if ( ifit->first->is_facet_on_surface(ifit->second) ) {
+	    CGAL_assertion_code(
+              if(!tr.has_vertex(*ifit,v))
+		{
+		  std::cerr << "Error: " << v->point() << std::endl;
+		  CGAL_assertion(false );
+		}
+	    )
+	    int iv;
+	    tr.has_vertex(*ifit,v, iv);
+	    int i1,i2;
+	    find_the_two_other_indices(ifit->second, iv, i1, i2);
+	    Vertex_handle v1 = ifit->first->vertex(i1);
+	    Vertex_handle v2 = ifit->first->vertex(i2);
+	    order_two_handles ( v1, v2 );
+	    CGAL_assertion( v1 < v2 );
+	    umbrella.insert(std::make_pair(v1, v2));
+	  }
+	}
+      }
+      CGAL_assertion( v->info() || umbrella.empty());
+      //DEBUG
+//       std::cerr << umbrella.size();
+
+      CGAL_assertion(check_umbrella(umbrella));
+
+     //  std::set<Facet> deja_vu_cells;
+//       for(typename std::vector<Cell_handle>::iterator
+// 	    cit = deleted_cells.begin();
+// 	  cit != deleted_cells.end();
+// 	  ++cit)
+// 	{
+// 	  cell_queue.erase(*cit);
+// 	  for(int i = 0; i < 4; ++i)
+// 	    if( boundary_facets_of_conflicts_zone.find(Facet(*cit, i)) ==
+//                   boundary_facets_of_conflicts_zone.end()
+//                   // (*cit,i) is not on the boundary of the zone
+//                 &&
+// 		deja_vu_cells.find(compute_opposite_facet(Facet(*cit, i))) ==
+// 		  deja_vu_cells.end() )
+// 	      {
+// 		deja_vu_cells.insert(Facet(*cit, i));
+// 		if( (*cit)->is_facet_on_surface(i) )
+// 		  {
+// 		    int index_of_v_in_cit = (*cit)->index(v);
+// 		    int i1;
+// 		    int i2;
+// 		    find_the_two_other_indices(i, index_of_v_in_cit,
+// 					       i1, i2);
+// 		    Vertex_handle v1 = (*cit)->vertex(i1);
+// 		    Vertex_handle v2 = (*cit)->vertex(i2);
+// 		    if( v2 < v1 ) std::swap(v1, v2);
+// 		    umbrella.insert(std::make_pair(v1, v2));
+// 		  }
+// 	      }
+// 	}
+//      }
+
+
+      const bool save_info = v->info(); 
       Vertex_handle new_vertex = tr.insert(wp);
-      restore_markers_around(new_vertex);
+      new_vertex->info() = save_info;
+
+
+      std::vector<Cell_handle> new_cells;
+      new_cells.reserve(64);
+
+      tr.incident_cells(new_vertex, std::back_inserter(new_cells));
+
+      /* Now we will restore markers in cells:     *
+       *    - the ones that mark in-domain cells   *
+       *    - the ones that mark on-surface facets *
+       *                                           */
+     //  // first, we start with the on-surface markers of the facets of
+//       // the boundary of the star
+//       for(typename std::vector<Cell_handle>::iterator cit = new_cells.begin();
+// 	  cit != new_cells.end();
+// 	  ++cit)
+// 	if( !tr.is_infinite(*cit) &&
+// 	    (*cit)->is_in_domain() )
+// 	{ // ** re-marks facets on the boundary of the star **
+// 	  const int index = (*cit)->index(new_vertex);
+// 	  const Facet f = Facet(*cit, index);
+// 	  const Facet opposite_facet = compute_opposite_facet(f);
+// 	  bool marker = 
+// 	    opposite_facet.first->is_facet_on_surface(opposite_facet.second);
+// 	  (*cit)->set_surface_facet(index, marker);
+// 	  // ** re-inserts cells of the star in cell_queue **
+// 	  cell_queue.insert(*cit, radius_ratio(tr.tetrahedron(*cit)));
+// 	}
+
+      // then we walk in the star, to check for internal facets that are on 
+      // the surface, using "umbrella".
+
+      // before the walk, restores the in_conflict_flag of cells
+      for(typename std::vector<Cell_handle>::iterator cit = new_cells.begin();
+	  cit != new_cells.end(); ++cit)
+	(*cit)->set_in_conflict_flag(0);
+
+      walk_on_the_boundary_of_the_star(
+        compute_opposite_facet(one_boundary_facet_from_outside),
+	seed_domain_marker,
+	umbrella,
+	new_vertex);
+
+      // after the walk, restores the in_conflict_flag of cells
+      for(typename std::vector<Cell_handle>::iterator cit = new_cells.begin();
+	  cit != new_cells.end(); ++cit)
+	{
+	  CGAL_assertion((*cit)->get_in_conflict_flag()==1);
+	  (*cit)->set_in_conflict_flag(0);
+	}
+
+      //CGAL_assertion (umbrella.empty());
+
+      return true; // The vertex v has been pumped into new_vertex.
     }
     else
-      ++num_of_ignored_vertices;
-    
+      {
+	++num_of_ignored_vertices;
+	return false;
+      }
   } // end pump_vertex
+
+  void walk_on_the_boundary_of_the_star(Facet f,
+					bool in_domain_marker,
+					Umbrella& umbrella,
+					Vertex_handle v)
+  {
+    Cell_handle& c = f.first;
+    const int& index = f.second;
+
+    CGAL_assertion(!tr.is_infinite(c) || !in_domain_marker);
+
+    CGAL_assertion(v == c->vertex(index));
+    
+    if (c->get_in_conflict_flag() != 0) 
+      return;
+
+    c->set_in_conflict_flag(1);
+    c->set_in_domain(in_domain_marker);
+
+    // ** re-inserts cells of the star in cell_queue **
+    if (in_domain_marker) 
+      cell_queue.insert(c, radius_ratio(tr.tetrahedron(c)));
+
+    for (int i=0; i<4; ++i) {
+      if (i == index) {
+	// ** re-marks facets on the boundary of the star **
+	const Facet f = Facet(c, i);
+	const Facet opposite_facet = compute_opposite_facet(f);
+	bool marker = 
+	  opposite_facet.first->is_facet_on_surface(opposite_facet.second);
+	c->set_surface_facet(i, marker);
+      }
+      else {
+
+	Cell_handle next_c = c->neighbor(i);
+
+	int next_index = next_c->index(v);
+      
+	int i1, i2;
+	find_the_two_other_indices(i, index, i1, i2);
+	Vertex_handle v1 = c->vertex(i1);
+	Vertex_handle v2 = c->vertex(i2);
+	order_two_handles(v1, v2);
+	CGAL_assertion(v1 < v2);
+	if( umbrella.find(std::make_pair(v1, v2)) !=
+	    umbrella.end() ) // the facet (c, i) is on the surface
+	  {
+	    // DEBUG
+// 	    std::cerr << "-";
+	    //CGAL_assertion (umbrella.erase(std::make_pair(v1, v2)));
+
+	    c->set_surface_facet(i, true);
+	    next_c->set_surface_facet(next_c->index(c), true);
+	    walk_on_the_boundary_of_the_star(Facet(next_c, next_index),
+					     !in_domain_marker,
+					     umbrella, v);
+	  }
+	else
+	  {
+	    CGAL_assertion(  umbrella.find(std::make_pair(v2, v1)) ==
+			     umbrella.end() );
+	    walk_on_the_boundary_of_the_star(Facet(next_c, next_index),
+					     in_domain_marker,
+					     umbrella, v);
+	  }
+      }
+    }
+  } // end walk_on_the_boundary_of_the_star
   
 private: // data
   Tr& tr;
@@ -519,24 +846,10 @@ private: // data
   int num_of_pumped_vertices;
   int num_of_ignored_vertices;
   double total_pumping;
-
-  struct My_cell
-  {
-    My_cell(const Vertex_handle& v0, const Vertex_handle& v1,
-            const Vertex_handle& v2, const Vertex_handle& v3)
-    {
-      V[0] = v0;
-      V[1] = v1;
-      V[2] = v2;
-      V[3] = v3;
-    }
     
-    Vertex_handle V[4];
-  }; // end struct My_cell
+  typedef CGAL::Double_map<Cell_handle, double> Radius_radius_priority_queue;
   
-  typedef std::map<double, My_cell> Cell_radius_priority_queue;
-  
-  Cell_radius_priority_queue cell_queue;
+  Radius_radius_priority_queue cell_queue;
 
 private: // methods
   void compute_aspect_ratio_priority_map()
@@ -545,11 +858,7 @@ private: // methods
         cit != tr.finite_cells_end();
         ++cit)
       if(cit->is_in_domain())
-        cell_queue.insert(std::make_pair(radius_ratio(tr.tetrahedron(cit)),
-                                         My_cell(cit->vertex(0),
-                                                 cit->vertex(1),
-                                                 cit->vertex(2),
-                                                 cit->vertex(3))));
+        cell_queue.insert(cit, radius_ratio(tr.tetrahedron(cit)));
 
     // DEBUG
 //     typename Cell_radius_priority_queue::iterator q_it = cell_queue.begin();
@@ -620,39 +929,40 @@ private: // methods
     return Facet(neighbor_cell, opposite_index);
   }
 
-  void restore_markers_around(Vertex_handle v)
-  {
-    std::vector<Cell_handle> incident_cells;
-    incident_cells.reserve(64);
-    tr.incident_cells(v, std::back_inserter(incident_cells));
+//   void restore_markers_around(Vertex_handle v)
+//   {
+//     std::vector<Cell_handle> incident_cells;
+//     incident_cells.reserve(64);
+//     tr.incident_cells(v, std::back_inserter(incident_cells));
 
-//     std::cerr << "S(" << incident_cells.size() << ")";
-    bool test = false;
+// //     std::cerr << "S(" << incident_cells.size() << ")";
+//     bool test = false;
 
-    for(typename std::vector<Cell_handle>::const_iterator cit = 
-          incident_cells.begin();
-        cit != incident_cells.end();
-        ++cit)
-      {	
-	const int index = (*cit)->index(v);
-	const Facet f = Facet(*cit, index);
-	const Facet opposite_facet = compute_opposite_facet(f);
-	bool marker = 
-	  opposite_facet.first->is_facet_on_surface(opposite_facet.second);
-	(*cit)->set_surface_facet(index, marker);
-	test = test || marker;
-	(*cit)->set_in_domain(true);
-      }
-//     if( test ) 
-//       std::cerr << "Y";
-  }
+//     for(typename std::vector<Cell_handle>::const_iterator cit = 
+//           incident_cells.begin();
+//         cit != incident_cells.end();
+//         ++cit)
+//       {	
+// 	const int index = (*cit)->index(v);
+// 	const Facet f = Facet(*cit, index);
+// 	const Facet opposite_facet = compute_opposite_facet(f);
+// 	bool marker = 
+// 	  opposite_facet.first->is_facet_on_surface(opposite_facet.second);
+// 	(*cit)->set_surface_facet(index, marker);
+// 	test = test || marker;
+// 	(*cit)->set_in_domain(true);
+//       }
+// //     if( test ) 
+// //       std::cerr << "Y";
+//   }
 }; // end class Slivers_exuder
 
 } // end namespace Mesh_3
 
 template < class Tr>
 void
-output_slivers_to_off (std::ostream& os, const Tr & T, const double sliver_bound = 0.25) 
+output_slivers_to_off (std::ostream& os, const Tr & T, 
+		       const double sliver_bound = 0.25) 
 {
   typedef typename Tr::Finite_cells_iterator Finite_cells_iterator;
   typedef typename Tr::Finite_vertices_iterator Finite_vertices_iterator;
@@ -667,7 +977,7 @@ output_slivers_to_off (std::ostream& os, const Tr & T, const double sliver_bound
        cit != T.finite_cells_end(); ++cit)
   {
     if( cit->is_in_domain() &&
-        radius_ratio(T.tetrahedron(cit)) < sliver_bound )
+	radius_ratio(T.tetrahedron(cit)) < sliver_bound )
       slivers.insert(cit);
   }
   

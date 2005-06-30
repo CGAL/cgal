@@ -54,6 +54,14 @@ int skull_function(double x, double y, double z)
   return image(x, y, z);
 }
 
+int cortex_function(double x, double y, double z)
+{
+  static CGAL::Inrimage_isosurface image
+    = CGAL::Inrimage_isosurface("./wmfull_iso27.inr.gz", 27);
+
+  return image(x, y, z);
+}
+
 int skin_function(double x, double y, double z)
 {
   static CGAL::Inrimage_isosurface image
@@ -495,4 +503,5 @@ void init_functions()
   functions["visiblehuman"] = &visiblehuman_function;
   functions["skull"] = &skull_function;
   functions["skin"] = &skin_function;
+  functions["cortex"] = &cortex_function;
 }

@@ -1,0 +1,1 @@
+./implicit_surfaces_mesher_3 -f chair --number_of_initial_points 50 --size_bound 0.1 --tets_aspect_ratio_bound 2 --tets_size_bound 0.01 -d chair-before.png --distribution_after_filename chair-after.png -s 400 400 --slivers_off chair-slivers.off --initial_surface_off chair-surface-initiale.off --mesh_after_filename chair-after.mesh chair.mesh

@@ -3,6 +3,7 @@
 
 #include <list>
 #include <CGAL/Mesher_level.h>
+#include <CGAL/Mesher_level_default_implementations.h>
 
 namespace CGAL {
 

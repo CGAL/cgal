@@ -4,12 +4,12 @@
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Triangulation_vertex_base_with_info_3.h>
 #include <CGAL/Implicit_surfaces_mesher_3.h>
-#include <CGAL/Chew_4_surfaces/Criteria/Standard_criteria.h>
+#include <CGAL/Surface_mesher/Criteria/Standard_criteria.h>
 #include <CGAL/IO/Complex_2_in_triangulation_3_file_writer.h>
 
 #include <CGAL/IO/File_medit.h>
 
-#include <CGAL/Chew_4_surfaces/Oracles/Implicit_oracle.h>
+#include <CGAL/Surface_mesher/Oracles/Implicit_oracle.h>
 
 #include <CGAL/Mesh_criteria_3.h>
 
@@ -32,9 +32,9 @@ typedef CGAL::Mesh_3::Complex_2_in_triangulation_cell_base_3<K, CCb> Cb;
 typedef CGAL::Triangulation_data_structure_3<Vb, Cb> Tds;
 typedef CGAL::Delaunay_triangulation_3<K, Tds> Del;
 typedef CGAL::Inrimage_isosurface<K::FT> Isosurface;
-typedef CGAL::Chew_4_surfaces::Implicit_oracle<K, Isosurface> Oracle;
-typedef CGAL::Chew_4_surfaces::Refine_criterion<Del> Criterion;
-typedef CGAL::Chew_4_surfaces::Standard_criteria <Criterion > Criteria;
+typedef CGAL::Surface_mesher::Implicit_oracle<K, Isosurface> Oracle;
+typedef CGAL::Surface_mesher::Refine_criterion<Del> Criterion;
+typedef CGAL::Surface_mesher::Standard_criteria <Criterion > Criteria;
 typedef CGAL::Mesh_criteria_3<Del> Tets_criteria;
 typedef CGAL::Implicit_surfaces_mesher_3<Del, Oracle,
                                          Criteria,
@@ -79,11 +79,11 @@ int main(int argc, char **argv) {
   T.insert (initial_point_sample.begin(), initial_point_sample.end());
   
   // Meshing criteria
-  CGAL::Chew_4_surfaces::Curvature_size_criterion<Del> 
+  CGAL::Surface_mesher::Curvature_size_criterion<Del> 
     c_s_crit (curvature_bound);
-//   CGAL::Chew_4_surfaces::Uniform_size_criterion<Del>
+//   CGAL::Surface_mesher::Uniform_size_criterion<Del>
 //     u_s_crit (size_bound);
-  CGAL::Chew_4_surfaces::Aspect_ratio_criterion<Del>
+  CGAL::Surface_mesher::Aspect_ratio_criterion<Del>
     a_r_crit (aspect_ratio_bound);
 
   std::vector<Criterion*> crit_vect;

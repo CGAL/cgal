@@ -3,3 +3,4 @@ depends
 GNUmakefile
 Doxyfile
 TODO
+tools
