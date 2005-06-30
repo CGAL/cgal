@@ -26,6 +26,8 @@
 #include <vector>
 #include <map>
 
+#include <boost/tuple/tuple.hpp>
+
 #include <CGAL/Apollonius_graph_short_names_2.h>
 
 #include <CGAL/Triangulation_2.h>
@@ -39,6 +41,7 @@
 
 #include <CGAL/Apollonius_graph_constructions_C2.h>
 
+#include <CGAL/iterator.h>
 #include <CGAL/Iterator_project.h>
 #include <CGAL/Nested_iterator.h>
 #include <CGAL/Concatenate_iterator.h>
@@ -977,9 +980,9 @@ protected:
   Vertex_handle  insert_third(const Site_2& p);
 
   // methods for insertion
-  void initialize_conflict_region(const Face_handle& f, List& l);
+  void initialize_conflict_region(const Face_handle& f, List& l) const;
   bool check_edge_for_hidden_sites(const Face_handle& f, int i,
-				   const Site_2& p, Vertex_map& vm);
+				   const Site_2& p, Vertex_map& vm) const;
   void expand_conflict_region(const Face_handle& f,
 			      const Site_2& p,
 			      List& l, Face_map& fm, Vertex_map& vm,
@@ -1022,6 +1025,295 @@ protected:
   {
     return geom_traits().assign_2_object()(t2, o2);
   }
+
+
+protected:
+  template<class OutputItFaces>
+  OutputItFaces find_conflicts(const Face_handle& f,
+			       const Site_2& p,
+			       List& l,
+			       Face_map& fm,
+			       Vertex_map& vm,
+			       OutputItFaces fit) const
+  {
+    // setting fm[f] to true means that the face has been reached and
+    // that the face is available for recycling. If we do not want the
+    // face to be available for recycling we must set this flag to
+    // false.
+    if ( fm.find(f) != fm.end() ) { return fit; }
+    fm[f] = true;
+    CGAL_assertion( incircle(f, p) == NEGATIVE );
+    *fit++ = f;
+
+    //  CGAL_assertion( fm.find(f) != fm.end() );
+    for (int i = 0; i < 3; i++) {
+      bool hidden_found = check_edge_for_hidden_sites(f, i, p, vm);
+
+      Face_handle n = f->neighbor(i);
+
+      if ( !hidden_found ) {
+	Sign s = incircle(n, p);
+	if ( s != NEGATIVE ) { continue; }
+
+	bool interior_in_conflict = edge_interior(f, i, p, true);
+
+	if ( !interior_in_conflict ) { continue; }
+      }
+
+      if ( fm.find(n) != fm.end() ) {
+	Edge e = sym_edge(f, i);
+	if ( l.is_in_list(e) ||
+	     l.is_in_list(sym_edge(e)) ) {
+	  l.remove(e);
+	  l.remove(sym_edge(e));
+	}
+	continue;
+      }
+
+      Edge e = sym_edge(f, i);
+
+      CGAL_assertion( l.is_in_list(e) );
+      int j = tds().mirror_index(f, i);
+      Edge e_before = sym_edge(n, ccw(j));
+      Edge e_after = sym_edge(n, cw(j));
+      if ( !l.is_in_list(e_before) ) {
+	l.insert_before(e, e_before);
+      }
+      if ( !l.is_in_list(e_after) ) {
+	l.insert_after(e, e_after);
+      }
+      l.remove(e);
+
+      fit = find_conflicts(n, p, l, fm, vm, fit);
+    } // for-loop
+    return fit;
+  } // find_conflicts
+
+  bool equal(const Edge& e1, const Edge& e2) const {
+    return e1.first == e2.first && e1.second == e2.second;
+  }
+
+
+protected:
+  template<class OutputItFaces, class OutputItBoundaryEdges,
+	   class OutputItHiddenVertices>
+  boost::tuples::tuple<OutputItFaces, OutputItBoundaryEdges,
+		       OutputItHiddenVertices>
+  get_all(const Site_2& p,
+	  OutputItFaces fit,
+	  OutputItBoundaryEdges eit,
+	  OutputItHiddenVertices vit,
+	  Vertex_handle start,
+	  bool find_nearest) const
+  {
+    CGAL_precondition( dimension() == 2 );
+
+    // first find the nearest neighbor
+    Vertex_handle vnearest = start;
+    if ( find_nearest ) {
+      vnearest = nearest_neighbor(p.point(), start);
+      CGAL_assertion( vnearest != Vertex_handle() );
+    }
+
+    // check if it is hidden
+    if ( is_hidden(vnearest->site(), p) ) {
+      return boost::tuples::make_tuple(fit, eit, vit);
+    }
+
+    // find the first conflict
+
+    // first look for conflict with vertex
+    Face_circulator fc_start = incident_faces(vnearest);
+    Face_circulator fc = fc_start;
+    Face_handle start_f;
+    Sign s;
+    do {
+      Face_handle f(fc);
+      s = incircle(f, p);
+
+      if ( s == NEGATIVE ) {
+	start_f = f;
+	break;
+      }
+      ++fc;
+    } while ( fc != fc_start );
+
+    // we are not in conflict with an Apollonius vertex, so we have to
+    // be in conflict with the interior of an Apollonius edge
+    if ( s != NEGATIVE ) {
+      Edge_circulator ec_start = incident_edges(vnearest);
+      Edge_circulator ec = ec_start;
+
+      bool interior_in_conflict(false);
+      Edge e;
+      do {
+	e = *ec;
+	interior_in_conflict = edge_interior(e, p, false);
+	
+	if ( interior_in_conflict ) { break; }
+	++ec;
+      } while ( ec != ec_start );
+
+      CGAL_assertion( interior_in_conflict );
+
+      *eit++ = e;
+      *eit++ = sym_edge(e);
+      return boost::tuples::make_tuple(fit, eit, vit);
+    }
+
+    // we are in conflict with an Apollonius vertex; start from that and 
+    // find the entire conflict region and then repair the diagram
+    List l;
+    Face_map fm;
+    Vertex_map vm;
+
+    //    *fit++ = start_f;
+    initialize_conflict_region(start_f, l);
+    fit = find_conflicts(start_f, p, l, fm, vm, fit);
+
+    // output the edges on the boundary of the conflict region
+    const Edge& e_front = l.front();
+    // here I should be able to write: const Edge& e = l.front();
+    // instead of what I have; but the compiler complains for the
+    // assignment: e = l.next(e);
+    Edge e = l.front();
+    do {
+      *eit++ = e;
+      e = l.next(e);
+    } while ( !equal(e, e_front) );
+
+    // output the hidden vertices
+    for (typename Vertex_map::iterator it = vm.begin(); it != vm.end(); ++it) {
+      *vit++ = it->first;
+    }
+
+    // clear containers
+    fm.clear();
+    vm.clear();
+    l.clear();
+
+    return boost::tuples::make_tuple(fit, eit, vit);
+  }
+
+public:
+  template<class OutputItFaces, class OutputItBoundaryEdges,
+	   class OutputItHiddenVertices>
+  boost::tuples::tuple<OutputItFaces, OutputItBoundaryEdges,
+		       OutputItHiddenVertices>
+  get_conflicts_and_boundary_and_hidden_vertices(const Site_2& p,
+						 OutputItFaces fit,
+						 OutputItBoundaryEdges eit,
+						 OutputItHiddenVertices vit,
+						 Vertex_handle start =
+						 Vertex_handle()) const
+  {
+    return get_all(p, fit, eit, vit, start, true);
+  }
+
+  template<class OutputItFaces, class OutputItBoundaryEdges>
+  std::pair<OutputItFaces, OutputItBoundaryEdges>
+  get_conflicts_and_boundary(const Site_2& p,
+			     OutputItFaces fit,
+			     OutputItBoundaryEdges eit,
+			     Vertex_handle start =
+			     Vertex_handle()) const {
+    boost::tuples::tuple<OutputItFaces,OutputItBoundaryEdges,Emptyset_iterator>
+      tup =
+      get_conflicts_and_boundary_and_hidden_vertices(p,
+						     fit,
+						     eit,
+						     Emptyset_iterator(),
+						     start);
+    return std::make_pair( boost::tuples::get<0>(tup),
+			   boost::tuples::get<1>(tup) );
+  }
+
+
+  template<class OutputItBoundaryEdges, class OutputItHiddenVertices>
+  std::pair<OutputItBoundaryEdges, OutputItHiddenVertices>
+  get_boundary_of_conflicts_and_hidden_vertices(const Site_2& p,
+						OutputItBoundaryEdges eit,
+						OutputItHiddenVertices vit,
+						Vertex_handle start =
+						Vertex_handle()) const {
+    boost::tuples::tuple<Emptyset_iterator,OutputItBoundaryEdges,
+      OutputItHiddenVertices>
+      tup =
+      get_conflicts_and_boundary_and_hidden_vertices(p,
+						     Emptyset_iterator(),
+						     eit,
+						     vit,
+						     start);
+    return std::make_pair( boost::tuples::get<1>(tup),
+			   boost::tuples::get<2>(tup) );
+  }
+
+
+  template<class OutputItFaces, class OutputItHiddenVertices>
+  std::pair<OutputItFaces, OutputItHiddenVertices>
+  get_conflicts_and_hidden_vertices(const Site_2& p,
+				    OutputItFaces fit,
+				    OutputItHiddenVertices vit,
+				    Vertex_handle start =
+				    Vertex_handle()) const {
+    boost::tuples::tuple<OutputItFaces,Emptyset_iterator,
+      OutputItHiddenVertices>
+      tup =
+      get_conflicts_and_boundary_and_hidden_vertices(p,
+						     fit,
+						     Emptyset_iterator(),
+						     vit,
+						     start);
+    return std::make_pair( boost::tuples::get<0>(tup),
+			   boost::tuples::get<2>(tup) );
+  }
+
+  template<class OutputItFaces>
+  OutputItFaces get_conflicts(const Site_2& p,
+			      OutputItFaces fit,
+			      Vertex_handle start = Vertex_handle()) const {
+    boost::tuples::tuple<OutputItFaces,Emptyset_iterator,Emptyset_iterator>
+      tup =
+      get_conflicts_and_boundary_and_hidden_vertices(p,
+						     fit,
+						     Emptyset_iterator(),
+						     Emptyset_iterator(),
+						     start);
+    return boost::tuples::get<0>(tup);
+  }
+
+  template<class OutputItBoundaryEdges>
+  OutputItBoundaryEdges
+  get_boundary_of_conflicts(const Site_2& p,
+			    OutputItBoundaryEdges eit,
+			    Vertex_handle start = Vertex_handle()) const {
+    boost::tuples::tuple<Emptyset_iterator,OutputItBoundaryEdges,
+      Emptyset_iterator>
+      tup =
+      get_conflicts_and_boundary_and_hidden_vertices(p,
+						     Emptyset_iterator(),
+						     eit,
+						     Emptyset_iterator(),
+						     start);
+    return boost::tuples::get<1>(tup);
+  }
+
+  template<class OutputItHiddenVertices>
+  OutputItHiddenVertices
+  get_hidden_vertices(const Site_2& p,
+		      OutputItHiddenVertices vit,
+		      Vertex_handle start = Vertex_handle()) const {
+    boost::tuples::tuple<Emptyset_iterator,Emptyset_iterator,
+      OutputItHiddenVertices>
+      tup =
+      get_conflicts_and_boundary_and_hidden_vertices(p,
+						     Emptyset_iterator(),
+						     Emptyset_iterator(),
+						     vit,
+						     start);
+    return boost::tuples::get<2>(tup);
+  }
+
 
 }; // Apollonius_graph_2
 

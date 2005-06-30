@@ -748,7 +748,7 @@ find_conflict_region_remove(const Vertex_handle& v,
 template<class Gt, class Agds, class LTag>
 void
 Apollonius_graph_2<Gt,Agds,LTag>::
-initialize_conflict_region(const Face_handle& f, List& l)
+initialize_conflict_region(const Face_handle& f, List& l) const
 {
   l.clear();
   for (int i = 0; i < 3; i++) {
@@ -760,7 +760,7 @@ template<class Gt, class Agds, class LTag>
 bool
 Apollonius_graph_2<Gt,Agds,LTag>::
 check_edge_for_hidden_sites(const Face_handle& f, int i,
-			    const Site_2& p, Vertex_map& vm)
+			    const Site_2& p, Vertex_map& vm) const
 {
   bool found(false);
 
