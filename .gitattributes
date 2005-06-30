@@ -1709,6 +1709,19 @@ Packages/Snap_rounding_2/doc_tex/Snap_rounding_2/sr1.ps -text
 Packages/Spatial_searching/demo/Spatial_searching/spatial_searching.vcproj -text
 Packages/Spatial_searching/doc_tex/Spatial_searching/Fig1.gif -text svneol=unset#unset
 Packages/Spatial_searching/doc_tex/Spatial_searching/Fig1.ps -text
+Packages/Straight_skeleton_2/demo/Straight_skeleton_2/data/closer_edge_event_0.poly -text
+Packages/Straight_skeleton_2/demo/Straight_skeleton_2/data/closer_edge_event_1.poly -text
+Packages/Straight_skeleton_2/demo/Straight_skeleton_2/data/double_split.poly -text
+Packages/Straight_skeleton_2/demo/Straight_skeleton_2/data/masked_double_split.poly -text
+Packages/Straight_skeleton_2/demo/Straight_skeleton_2/data/rectangle.poly -text
+Packages/Straight_skeleton_2/demo/Straight_skeleton_2/data/region_0.poly -text
+Packages/Straight_skeleton_2/demo/Straight_skeleton_2/data/region_1.poly -text
+Packages/Straight_skeleton_2/demo/Straight_skeleton_2/data/region_2.poly -text
+Packages/Straight_skeleton_2/demo/Straight_skeleton_2/data/region_3.poly -text
+Packages/Straight_skeleton_2/demo/Straight_skeleton_2/data/region_4.poly -text
+Packages/Straight_skeleton_2/demo/Straight_skeleton_2/data/single_split.poly -text
+Packages/Straight_skeleton_2/demo/Straight_skeleton_2/data/square.poly -text
+Packages/Straight_skeleton_2/demo/Straight_skeleton_2/data/triangle.poly -text
 Packages/Subdivision_surfaces_3/doc_tex/Subdivision_surfaces_3/FIG/PQQStencil.eps -text
 Packages/Subdivision_surfaces_3/doc_tex/Subdivision_surfaces_3/FIG/PQQStencil.fig -text
 Packages/Subdivision_surfaces_3/doc_tex/Subdivision_surfaces_3/FIG/PQQStencil.pdf -text svneol=unset#unset
