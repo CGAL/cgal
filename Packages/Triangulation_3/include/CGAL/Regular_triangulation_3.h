@@ -72,7 +72,12 @@ public:
   typedef typename Gt::Segment_3                   Segment;
   typedef typename Gt::Triangle_3                  Triangle;
   typedef typename Gt::Tetrahedron_3               Tetrahedron;
-  typedef typename Gt::Object_3                    Object;
+
+  // types for dual:
+  typedef typename Gt::Line_3        Line;
+  typedef typename Gt::Ray_3         Ray;
+  typedef typename Gt::Plane_3       Plane;
+  typedef typename Gt::Object_3      Object;
 
   //Tag to distinguish Delaunay from Regular triangulations
   typedef Tag_true   Weighted_tag; 
@@ -136,6 +141,68 @@ public:
 
   Vertex_handle insert(const Weighted_point & p, Locate_type lt,
 	               Cell_handle c, int li, int);
+
+  template <class OutputIteratorBoundaryFacets,
+            class OutputIteratorCells,
+            class OutputIteratorInternalFacets>
+  Triple<OutputIteratorBoundaryFacets,
+         OutputIteratorCells,
+         OutputIteratorInternalFacets>
+  find_conflicts(const Weighted_point &p, Cell_handle c,
+	         OutputIteratorBoundaryFacets bfit,
+                 OutputIteratorCells cit,
+		 OutputIteratorInternalFacets ifit) const
+  {
+      CGAL_triangulation_precondition(dimension() >= 2);
+
+      std::vector<Cell_handle> cells;
+      cells.reserve(32);
+      std::vector<Facet> facets;
+      facets.reserve(64);
+
+      if (dimension() == 2) {
+          Conflict_tester_for_find_conflicts_2 tester(p, this);
+	  ifit = find_conflicts_2(c, tester,
+                                  make_triple(std::back_inserter(facets),
+		                              std::back_inserter(cells),
+                                              ifit)).third;
+      }
+      else {
+          Conflict_tester_for_find_conflicts_3 tester(p, this);
+	  ifit = find_conflicts_3(c, tester,
+                                  make_triple(std::back_inserter(facets),
+		                              std::back_inserter(cells),
+                                              ifit)).third;
+      }
+
+      // Reset the conflict flag on the boundary.
+      for(typename std::vector<Facet>::iterator fit=facets.begin();
+          fit != facets.end(); ++fit) {
+        fit->first->neighbor(fit->second)->set_in_conflict_flag(0);
+	*bfit++ = *fit;
+      }
+
+      // Reset the conflict flag in the conflict cells.
+      for(typename std::vector<Cell_handle>::iterator ccit=cells.begin();
+        ccit != cells.end(); ++ccit) {
+        (*ccit)->set_in_conflict_flag(0);
+	*cit++ = *ccit;
+      }
+      return make_triple(bfit, cit, ifit);
+  }
+
+  template <class OutputIteratorBoundaryFacets, class OutputIteratorCells>
+  std::pair<OutputIteratorBoundaryFacets, OutputIteratorCells>
+  find_conflicts(const Weighted_point &p, Cell_handle c,
+	         OutputIteratorBoundaryFacets bfit,
+                 OutputIteratorCells cit) const
+  {
+      Triple<OutputIteratorBoundaryFacets,
+             OutputIteratorCells,
+	     Emptyset_iterator> t = find_conflicts(p, c, bfit, cit,
+		                                   Emptyset_iterator());
+      return std::make_pair(t.first, t.second);
+  }
 
   void remove (Vertex_handle v);
 
@@ -228,9 +295,10 @@ public:
   // Dual functions
   Bare_point dual(Cell_handle c) const;
 
-//   Object dual(const Facet & f) const
-//     { return dual( f.first, f.second ); }
-//   Object dual(Cell_handle c, int i) const;
+  Object dual(const Facet & f) const
+    { return dual( f.first, f.second ); }
+
+  Object dual(Cell_handle c, int i) const;
 
   template < class Stream> 		
   Stream& draw_dual(Stream & os)
@@ -269,6 +337,50 @@ private:
 				  const Weighted_point &s) const
   {
      return geom_traits().construct_weighted_circumcenter_3_object()(p,q,r,s);
+  }
+
+  Bare_point
+  construct_weighted_circumcenter(const Weighted_point &p, 
+				  const Weighted_point &q, 
+				  const Weighted_point &r) const
+  {
+     return geom_traits().construct_weighted_circumcenter_3_object()(p,q,r);
+  }
+
+  Line
+  construct_perpendicular_line(const Plane &pl, const Bare_point &p) const
+  {
+      return geom_traits().construct_perpendicular_line_3_object()(pl, p);
+  }
+
+  Plane
+  construct_plane(const Bare_point &p, const Bare_point &q, const Bare_point &r) const
+  {
+      return geom_traits().construct_plane_3_object()(p, q, r);
+  }
+
+  Ray
+  construct_ray(const Bare_point &p, const Line &l) const
+  {
+      return geom_traits().construct_ray_3_object()(p, l);
+  }
+
+  Object
+  construct_object(const Bare_point &p) const
+  {
+      return geom_traits().construct_object_3_object()(p);
+  }
+
+  Object
+  construct_object(const Segment &s) const
+  {
+      return geom_traits().construct_object_3_object()(s);
+  }
+
+  Object
+  construct_object(const Ray &r) const
+  {
+      return geom_traits().construct_object_3_object()(r);
   }
 
   Vertex_handle
@@ -333,6 +445,39 @@ private:
   {
       return power_test(c->vertex(0)->point(), p) == ON_POSITIVE_SIDE;
   }
+
+
+  // Conflict_tester_for_find_conflicts_2 and _3 are const
+  // while Conflict_tester_2 and _3 are not
+  class Conflict_tester_for_find_conflicts_3
+  {
+      const Weighted_point &p;
+      const Self *t;
+  public:
+
+      Conflict_tester_for_find_conflicts_3(const Weighted_point &pt, const Self *tr)
+	  : p(pt), t(tr) {}
+
+      bool operator()(const Cell_handle c) const
+      {
+	return (t->in_conflict_3(p, c));
+      }
+  };
+
+  class Conflict_tester_for_find_conflicts_2
+  {
+      const Weighted_point &p;
+      const Self *t;
+  public:
+
+      Conflict_tester_for_find_conflicts_2(const Weighted_point &pt, const Self *tr)
+	  : p(pt), t(tr) {}
+
+      bool operator()(const Cell_handle c) const
+      {
+	return (t->in_conflict_2(p, c, 3));
+      }
+  };
 
   class Conflict_tester_3
   {
@@ -405,6 +550,8 @@ private:
       }
   };
 
+  friend class Conflict_tester_for_find_conflicts_3;
+  friend class Conflict_tester_for_find_conflicts_2;
   friend class Conflict_tester_3;
   friend class Conflict_tester_2;
 };
@@ -487,7 +634,48 @@ dual(Cell_handle c) const
 					  c->vertex(3)->point() );
 }
 
+template < class Gt, class Tds >
+typename Regular_triangulation_3<Gt,Tds>::Object
+Regular_triangulation_3<Gt,Tds>::
+dual(Cell_handle c, int i) const
+{
+  CGAL_triangulation_precondition(dimension()>=2);
+  CGAL_triangulation_precondition( ! is_infinite(c,i) );
 
+  if ( dimension() == 2 ) {
+    CGAL_triangulation_precondition( i == 3 );
+    return construct_object( 
+       construct_weighted_circumcenter(c->vertex(0)->point(),
+				       c->vertex(1)->point(),
+				       c->vertex(2)->point()) );
+  }
+
+  // dimension() == 3
+  Cell_handle n = c->neighbor(i);
+  if ( ! is_infinite(c) && ! is_infinite(n) )
+    return construct_object(construct_segment( dual(c), dual(n) ));
+
+  // either n or c is infinite
+  int in;
+  if ( is_infinite(c) ) 
+    in = n->index(c);
+  else {
+    n = c;
+    in = i;
+  }
+  // n now denotes a finite cell, either c or c->neighbor(i)
+  unsigned char ind[3] = {(in+1)&3,(in+2)&3,(in+3)&3};
+  if ( (in&1) == 1 )
+      std::swap(ind[0], ind[1]);
+  const Weighted_point& p = n->vertex(ind[0])->point();
+  const Weighted_point& q = n->vertex(ind[1])->point();
+  const Weighted_point& r = n->vertex(ind[2])->point();
+  
+  Line l =
+    construct_perpendicular_line( construct_plane(p,q,r),
+				  construct_weighted_circumcenter(p,q,r) );
+  return construct_object(construct_ray( dual(n), l));
+}
 
 template < class Gt, class Tds >
 Bounded_side
