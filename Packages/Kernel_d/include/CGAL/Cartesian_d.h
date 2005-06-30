@@ -21,8 +21,8 @@
 //
 // Author(s)     : Michael Seel
 
-#ifndef CARTESIAN_D_H
-#define CARTESIAN_D_H
+#ifndef CGAL_CARTESIAN_D_H
+#define CGAL_CARTESIAN_D_H
 
 #ifndef NOCGALINCL
 #include <CGAL/basic.h>
@@ -400,5 +400,4 @@ CGAL_END_NAMESPACE
 #include <CGAL/Kernel_d/Line_d.C>
 #include <CGAL/intersections_d.h>
 
-#endif // CARTESIAN_D_H
-
+#endif // CGAL_CARTESIAN_D_H

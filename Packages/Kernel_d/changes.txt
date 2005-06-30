@@ -1,3 +1,6 @@
+30 June 2005 Sylvain Pion
+- Cartesian_d.h : prefix macro with CGAL_.
+
 26 May 2005 Sylvain Pion
 - Iso_box_d : Add missing "R" typedef needed by Kernel_traits<>.
 
