@@ -1,3 +1,8 @@
+30 june 2005 Pierre Alliez
+- Added best fit of 2D triangles
+- Updated centroid as well
+- Added one util file in test
+
 27 May 2005 Sylvain Pion
 - Add bounding_box().
 - Use Kernel dimension tools.
