@@ -20,7 +20,7 @@ namespace CircularFunctors {
   typename CK::Circle_2  
   construct_circle_2( const typename CK::Polynomial_for_circles_2_2 &eq )
   {
-    return typename CK::Circle_2( eq.a(), eq.b(), eq.r_sq() ); 
+    return typename CK::Circle_2( typename CK::Point_2(eq.a(), eq.b()), eq.r_sq() ); 
   }
   
   template< class CK, class OutputIterator>
