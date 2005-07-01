@@ -41,6 +41,7 @@ QPE_solver( )
       inv_M_B( vout4),
       d( inv_M_B.denominator()),
       m_phase( -1), is_phaseI( false), is_phaseII( false),
+      is_RTS_transition(false),
       is_LP( check_tag( Is_linear())), is_QP( ! is_LP),
       no_ineq( check_tag( Has_no_inequalities())), has_ineq( ! no_ineq)
 { }
@@ -853,7 +854,8 @@ pivot_step( )
 */
     // instead of the above piece of code we now have
     // diagnostic output
-    if (is_phaseII) {
+    if (is_RTS_transition) {
+        is_RTS_transition = false;
      
         CGAL_qpe_debug {
             vout2 << std::endl
@@ -1710,6 +1712,7 @@ z_replace_variable( )
     // pivot step not yet completely done
     i = -1;
     j -= in_B.size();
+    is_RTS_transition = true;
 }
 
 
@@ -1817,7 +1820,7 @@ z_replace_variable_original_by_slack( )
     // update basis inverse
     inv_M_B.swap_variable( k);
     inv_M_B.swap_constraint( l);
-    inv_M_B.z_replace_original_by_slack(l, k);
+    inv_M_B.z_replace_original_by_slack( );
 
 }
 
@@ -1903,7 +1906,7 @@ z_replace_variable_slack_by_slack( )
 
     // diagnostic output
     CGAL_qpe_debug {
-	if ( vout2.verbose()) print_basis();
+	    if ( vout2.verbose()) print_basis();
     }
 
     // update basis inverse
