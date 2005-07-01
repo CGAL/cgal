@@ -223,33 +223,35 @@ z_replace_original_by_original(ForwardIterator y_l_it,
 // for phaseII                               (update type UZ_2)
 template < class ET_, class Is_LP_ >
 void  QPE_basis_inverse<ET_,Is_LP_>::
-z_replace_original_by_slack(unsigned int k_j, unsigned int k_i)
+z_replace_original_by_slack( )
 {
 
     // assert QP case and phaseII
     CGAL_qpe_precondition(is_QP && is_phaseII);
 
+    // adapt s and b
+    --s; --b;
+
     // prepare \hat{\rho} -vector in x_l, x_x
-    copy_row_in_B_O(x_l.begin(), x_x.begin(), k_i);
+    copy_row_in_B_O(x_l.begin(), x_x.begin(), b);
     
     // prepare \hat{\varrho} -vector in tmp_l, tmp_x
-    copy_row_in_C(tmp_l.begin(), tmp_x.begin(), k_j);
+    copy_row_in_C(tmp_l.begin(), tmp_x.begin(), s);
     
     // prepare \hat{\kappa} -scalar
-    ET  hat_kappa = M[k_j][k_i];
+    ET  hat_kappa = M[l+b][s];
     
     // prepare \hat{\xi} -scalar
-    ET hat_xi = M[k_j][k_j];
+    ET hat_xi = M[s][s];
+        
+    CGAL_qpe_precondition( d != et0);
     
     // update matrix in place
     z_update_inplace(x_l.begin(), x_x.begin(), tmp_l.begin(), tmp_x.begin(),
-                     d * hat_kappa * hat_kappa, hat_xi, -hat_kappa, d * d);
-
-    // adapt s and b
-    --s; --b;
+                           hat_kappa * hat_kappa, hat_xi, -hat_kappa, d * d);
 		     
     // store new denominator
-    d = -(hat_kappa * hat_kappa);
+    d = (hat_kappa * hat_kappa) / d;
 
     CGAL_qpe_postcondition( d > et0);
 
@@ -267,8 +269,8 @@ template < class ForwardIterator >
 void  QPE_basis_inverse<ET_,Is_LP_>::
 z_replace_slack_by_original(ForwardIterator y_l_it,
                             ForwardIterator y_x_it,
-			    ForwardIterator u_x_it, const ET& kappa,
-		            const ET& nu)
+			                ForwardIterator u_x_it, const ET& hat_kappa,
+		                    const ET& hat_nu)
 {
 
     // assert QP case and phaseII
@@ -278,9 +280,10 @@ z_replace_slack_by_original(ForwardIterator y_l_it,
     ForwardIterator y_l_it_copy = y_l_it;
     ForwardIterator y_x_it_copy = y_x_it;
 
+    CGAL_qpe_precondition( d != et0);
+    
     // prepare \hat{\phi}
-    
-    
+     
     // prepare \hat{\varphi} -vector in x_l, x_x
     multiply(u_x_it, u_x_it, x_l.begin(), x_x.begin(), Tag_false(),
              Tag_false());
@@ -288,10 +291,10 @@ z_replace_slack_by_original(ForwardIterator y_l_it,
     // prepare \hat{\kappa} -scalar
     
     // prepare \hat{\nu} -scalar
-    
+   
     // update matrix in place
     z_update_inplace(x_l.begin(), x_x.begin(), y_l_it, y_x_it,
-                     d * kappa * kappa, -nu, kappa, d * d);
+                     hat_kappa * hat_kappa, -hat_nu, hat_kappa, d * d);    
     
     // append new rows and columns
     // ---------------------------
@@ -304,24 +307,25 @@ z_replace_slack_by_original(ForwardIterator y_l_it,
 	// row has to be filled first
         M[s].insert(M[s].end(), s+1, et0);
     }
+     
     
     // P-block: left of diagonal (including element on diagonal)
     y_l_it = y_l_it_copy;
     for (  row_it = M[s].begin(), x_l_it = x_l.begin();
-           row_it != M[s].end();
+           row_it != M[s].end() - 1;
 	 ++row_it,  ++x_l_it,  ++y_l_it                ) {
-        *row_it = ((nu * *x_l_it) - (kappa * *y_l_it)) / d;  
-    }
-    *row_it = -nu;
-    
+        *row_it = ((hat_nu * *x_l_it) - (hat_kappa * *y_l_it)) / d;  
+    } 
+    *row_it = -hat_nu;
+     
     // Q-block
     y_x_it = y_x_it_copy;
     for (  matrix_it = M.begin()+l, count = 0, x_x_it = x_x.begin();
            count < b;
 	 ++matrix_it,  ++count, ++x_x_it, ++y_x_it                  ) {
-        (*matrix_it)[s] = ((nu * *x_x_it) - (kappa * *y_x_it)) / d;
+        (*matrix_it)[s] = ((hat_nu * *x_x_it) - (hat_kappa * *y_x_it)) / d;
     }
-           
+          
     // insert new row and column at the end of blocks Q and R
     ensure_physical_row(l+b);
     
@@ -329,15 +333,15 @@ z_replace_slack_by_original(ForwardIterator y_l_it,
     for (  row_it = M[l+b].begin(), count = 0, x_l_it = x_l.begin();
            count < s;
 	 ++row_it,  ++count,  ++x_l_it                              ) {
-        *row_it = -kappa * *x_l_it / d;
+        *row_it = -hat_kappa * *x_l_it / d;
     }
-    *row_it = kappa;
+    *row_it = hat_kappa;
     
     // R-block
     for (  row_it = M[l+b].begin()+l, count = 0, x_x_it = x_x.begin();
            count < b;
 	 ++row_it,  ++count,  ++x_x_it                                ) {
-        *row_it = -kappa * *x_x_it / d;
+        *row_it = -hat_kappa * *x_x_it / d;
     }
     *row_it = et0;
     
@@ -345,7 +349,7 @@ z_replace_slack_by_original(ForwardIterator y_l_it,
     ++s; ++b; 
 
     // store new denominator
-    d = -(kappa * kappa);
+    d = (hat_kappa * hat_kappa)/d;
 
     CGAL_qpe_postcondition( d > et0);
 
@@ -380,6 +384,8 @@ z_replace_slack_by_slack(ForwardIterator u_x_it, unsigned int k_j)
     
     // prepare \hat{k}_{3} -scalar
     ET  hat_k_3 = -M[k_j][k_j];
+    
+    CGAL_qpe_precondition( d != et0);    
     
     // update matrix in place
     z_update_inplace(x_l.begin(), x_x.begin(), tmp_l.begin(), tmp_x.begin(),
@@ -470,8 +476,8 @@ template < class ForIt >
 void  QPE_basis_inverse<ET_,Is_LP_>::
 z_update_inplace( ForIt psi1_l_it, ForIt psi1_x_it,
                   ForIt psi2_l_it, ForIt psi2_x_it,
-	          const ET& omega0, const ET& omega1,
-		  const ET& omega2, const ET& omega3)
+	             const ET& omega0, const ET& omega1,
+		         const ET& omega2, const ET& omega3)
 {
     typename Matrix::      iterator  matrix_it;
     typename Row   ::      iterator     row_it;
