@@ -1401,6 +1401,7 @@ d:=\left|\det\left(M\right)\right|
 \end{equation}
 we first rewrite the $2 \times 2$-matrix $Z^{-1}$ in terms of $Z$
 \begin{equation}
+\label{eq:2_by_2_matrix_inverse}
 Z^{-1}=\frac{1}{\det\left(Z\right)}PZP^{T}, \quad
 P:=
 \left(
@@ -1442,12 +1443,17 @@ M_{>>}^{-1}=
 \end{array}
 \right)
 \end{equation}
+Note that 
+\begin{equation}
+\label{eq:det_hat_Z}
+\det(\hat{Z})=d^{2}\det\left(Z\right).
+\end{equation}
 Using Definitions~(\ref{def:rat_form}) and~(\ref{def:old_denom_Z3})
 and defining the new denominator $\hat{z}$ according to 
 Equation~(\ref{eq:det_id_Z2_Z3})
 \begin{equation}
 \label{def:new_denom_Z3}
-\hat{z}:=\det\left(Z\right) d = \det(\hat{Z})
+\hat{z}:=\det\left(Z\right) d = \det(\hat{Z}) /d
 \end{equation}
 we finally obtain from Equation~(\ref{eq:inv_expand_2_Z3})
 \begin{eqnarray}
@@ -1455,7 +1461,7 @@ M_{>>}^{-1}&=&
 \frac{sgn\left(\hat{z}\right)}{\left|\hat{z}\right|}
 \left(
 \begin{array}{c|c}
-(\det(\hat{Z})d\hat{M}^{-1}+\hat{X}P\hat{Z}P^{T}\hat{X}^{T})/d^{2} &
+(\det(\hat{Z})\hat{M}^{-1}+\hat{X}P\hat{Z}P^{T}\hat{X}^{T})/d^{2} &
 -\hat{X}P\hat{Z}P^{T}/d \\
 \hline
 -P\hat{Z}P^{T}\hat{X}^{T}/d & P\hat{Z}P^{T}
@@ -1488,6 +1494,7 @@ d\left(M^{-1}+XZ^{-1}X^{T}\right) & \hat{\chi}   \\
 \end{equation}
 where
 \begin{equation}
+\label{def:chi}
 \hat{\chi}:=-dXZ^{-1},
 \quad
 \hat{Z}^{-1}:=d Z^{-1}
@@ -1516,8 +1523,11 @@ dXZ^{-1}X^{T} & \vdots \\
 \right)
 \right]
 \end{equation}
-The relevant submatrix in the above can be expressed in terms of the leaving
-rows and columns of the basis inverse and their intersection
+The relevant submatrix $dXZ^{-1}X^{T}$ in the above Equation can be expressed
+in terms of the leaving rows and columns $\hat{\chi}$ of the basis inverse
+and their intersection $\hat{Z}^{-1}$ using
+Equations~(\ref{eq:2_by_2_matrix_inverse}), (\ref{def:chi})
+and~(\ref{eq:det_hat_Z})
 \begin{eqnarray}
 dXZ^{-1}X^{T}
 &=&
@@ -1526,10 +1536,10 @@ dXZ^{-1}X^{T}
 \frac{1}{\det(Z^{-1})d}
 \hat{\chi} PZ^{-1}P^{T}\hat{\chi}^{T} \\
 &=&
-\frac{1}{\det(\hat{Z}^{-1})d}
-\hat{\chi} P\hat{Z}^{-1}P^{T}\hat{\chi}^{T}
+\frac{1}{\det(\hat{Z}^{-1})}
+\hat{\chi} P\hat{Z}^{-1}P^{T}\hat{\chi}^{T}.
 \end{eqnarray}
-such that Equation~(\ref{eq:inv_shrink_by_2_Z}) becomes
+Equation~(\ref{eq:inv_shrink_by_2_Z}) then becomes
 \begin{equation}
 \label{eq:inv_shrink_by_2_Z2}
 \left(
@@ -1540,9 +1550,9 @@ M^{-1}  & \vdots \\
 \end{array}
 \right)
 =
-\frac{1}{\det(\hat{Z}^{-1})d^{2}}
+\frac{1}{\det(\hat{Z}^{-1})d}
 \left[
-\det(\hat{Z}^{-1})d\hat{M}_{>>}^{-1}
+\det(\hat{Z}^{-1})\hat{M}_{>>}^{-1}
 -
 \left(
 \begin{array}{c|c}
@@ -1558,7 +1568,7 @@ defining the new denominator $\hat{z}$ according to
 Equation~(\ref{eq:det_id_Z2_Z3})
 \begin{equation}
 \label{def:new_denom_Z2}
-\hat{z}:=\det(Z^{-1})d = \det(\hat{Z}^{-1})
+\hat{z}:=\det(Z^{-1})d = \det(\hat{Z}^{-1}) / d
 \end{equation}
 we finally obtain from Equation~(\ref{eq:inv_shrink_by_2_Z2})
 \begin{eqnarray}
@@ -1572,7 +1582,7 @@ M^{-1}  & \vdots \\
 &=&
 \frac{sgn(\hat{z})}{\left|\hat{z}\right|d^{2}}
 \left[
-\det(\hat{Z}^{-1})d\hat{M}_{>>}^{-1}
+\det(\hat{Z}^{-1})\hat{M}_{>>}^{-1}
 -
 \left(
 \begin{array}{c|c}
@@ -1875,14 +1885,14 @@ we may now express $\hat{X}P\hat{Z}P^{T}\hat{X}^{T}$ as
 \nonumber \\
 &=&
 \left(
-  \hat{\kappa}\hat{\phi}-\hat{\nu}\hat{\varphi}
+  \hat{\nu}\hat{\varphi}-\hat{\kappa}\hat{\phi}
 \right)
 \hat{\varphi}^{T}
-+\hat{\kappa}\hat{\varphi}\hat{\phi}^{T}
+-\hat{\kappa}\hat{\varphi}\hat{\phi}^{T}
 \nonumber \\
 &=&
--\hat{\nu}\hat{\varphi}\hat{\varphi}^{T}
-+\hat{\kappa}
+\hat{\nu}\hat{\varphi}\hat{\varphi}^{T}
+-\hat{\kappa}
  \left[
    \hat{\varphi}\hat{\phi}^{T}+\hat{\phi}\hat{\varphi}^{T}
  \right]
@@ -1897,9 +1907,9 @@ Subsuming we may finally write
 \left(
 \begin{array}{c|c|c}
 \left[
-  -\hat{\kappa}^{2}d\hat{\check{M}}_{B}^{-1}
-  -\hat{\nu}\hat{\varphi}\hat{\varphi}^{T}
-  +\hat{\kappa}
+  -\hat{\kappa}^{2}\hat{\check{M}}_{B}^{-1}
+  +\hat{\nu}\hat{\varphi}\hat{\varphi}^{T}
+  -\hat{\kappa}
   \left[
     \hat{\varphi}\hat{\phi}^{T}+\hat{\phi}\hat{\varphi}^{T}
   \right]
@@ -1933,9 +1943,9 @@ Subsuming we may finally write
 \left(
 \begin{array}{c|c|c}
 \left[
-  \hat{\kappa}^{2}d\hat{\check{M}}_{B}^{-1}
-  +\hat{\nu}\hat{\varphi}\hat{\varphi}^{T}
-  -\hat{\kappa}
+  \hat{\kappa}^{2}\hat{\check{M}}_{B}^{-1}
+  -\hat{\nu}\hat{\varphi}\hat{\varphi}^{T}
+  +\hat{\kappa}
   \left[
     \hat{\varphi}\hat{\phi}^{T}+\hat{\phi}\hat{\varphi}^{T}
   \right]
@@ -1977,7 +1987,7 @@ where $\hat{z}$ is the new denominator and
 &&
 \hat{\nu} &:=& 2dD_{j,j}-\theta^{T}\hat{\check{M}}_{B}^{-1}\theta
 \\
-\hat{z} &:=& -\hat{\kappa}^{2}
+\hat{z} &:=& \hat{\kappa}^{2} / d
 &&
 d &:=& \left|\det(\hat{\check{M}}_{B})\right|
 \end{array}
@@ -2153,7 +2163,7 @@ Subsuming this we may finally write
 \left(
 \begin{array}{c|c}
 \left[
-  -\hat{\kappa}^{2}d\hat{\check{M}}_{B}^{-1}
+  -\hat{\kappa}^{2}\hat{\check{M}}_{B}^{-1}
   -\hat{\xi}
   \hat{\rho}_{C^{\prime} \cup B_{O}^{\prime}}
   \hat{\rho}_{C^{\prime} \cup B_{O}^{\prime}}^{T}
@@ -2179,7 +2189,7 @@ Subsuming this we may finally write
 \left(
 \begin{array}{c|c}
 \left[
-  \hat{\kappa}^{2}d\hat{\check{M}}_{B}^{-1}
+  \hat{\kappa}^{2}\hat{\check{M}}_{B}^{-1}
   +\hat{\xi}
   \hat{\rho}_{C^{\prime} \cup B_{O}^{\prime}}
   \hat{\rho}_{C^{\prime} \cup B_{O}^{\prime}}^{T}
@@ -2231,7 +2241,7 @@ where $\hat{z}$ is the new denominator and
 \\
 \hat{z}
 &:=&
--\hat{\kappa}^{2}
+\hat{\kappa}^{2}/d
 &&
 d
 &:=&
@@ -2242,7 +2252,7 @@ d
 \section{Implementation Issues}
 Comparing the Updates for $U_{Z_{1}}$ to $U_{Z_{4}}$ we note that the Updates
 $U_{Z_{1}}$ and $U_{Z_{4}}$ are en-bloc replacement updates, that is, the to be
-replaced row and column need no special treatment, in contrast with the Updates
+replaced row and column need no special treatment, in contrast to the Updates
 $U_{Z_{2}}$ and $U_{Z_{3}}$, which change the dimensions of the reduced basis
 inverse by $2$. Nevertheless, all the Updates have a similar update
 formula in common for parts of the to be updated basis inverses,
@@ -2347,7 +2357,7 @@ B_{O}^{\prime}
 & \phi
 \\
 \omega_{0}
-& d\left(
+& \left(
    \hat{\check{M}}_{B}^{-1}
   \right)_{\gamma_{C}(\sigma(j)), \beta_{O}(i)}^{2}
 & \left(
@@ -2618,7 +2628,7 @@ in~(\ref{def:update_Z2_entities}) can be expressed as
 \\
 \hat{z}
 &:=&
--\hat{\kappa}^{2}
+\hat{\kappa}^{2}/d
 &&
 d
 &:=&
@@ -2628,7 +2638,7 @@ d
 such that the part in the class \texttt{QPE\_basis\_inverse} of
 Update $U_{Z_{2}}$ can be outlined as
 \begin{tabbing}
-\texttt{z\_replace\_original\_by\_slack($k_{j}, k_{i}$) \{} \\
+\texttt{z\_replace\_original\_by\_slack() \{} \\
 \texttt{  } \= // compute $\hat{\rho}, \hat{\varrho}, \hat{\kappa},
 \hat{\xi}$ \\
 \> \texttt{$\hat{\rho}:=
@@ -2640,9 +2650,9 @@ Update $U_{Z_{2}}$ can be outlined as
 \> \texttt{$\hat{\xi}:=
   \left(\hat{\check{M}}_{B}^{-1}\right)_{k_{j}, k_{j}}$} \\    
 \> \texttt{z\_update\_in\_place($\hat{\rho}, \hat{\varrho}^{T},
-d\hat{\kappa}^{2}, \hat{\xi}, -\hat{\kappa}, d^{2}$)} \\
+\hat{\kappa}^{2}, \hat{\xi}, -\hat{\kappa}, d^{2}$)} \\
 \> // store new denominator $\hat{z}$ \\
-\> \texttt{$d:=-\hat{\kappa}^{2}$} \\
+\> \texttt{$d:=\hat{\kappa}^{2}/d$} \\
 \texttt{\}}
 \end{tabbing}
 The calling counterpart in the class \texttt{QP\_solver} can be outlined as
@@ -2653,8 +2663,11 @@ The calling counterpart in the class \texttt{QP\_solver} can be outlined as
 \> \texttt{$k_{i}:=\beta_{O}(i)$} \\
 \> // update headings \\
 \> // ... \\
+\> // prepare basis inverse \\
+\> \texttt{inv\_M\_B.swap\_variable($k_{i}$)} \\
+\> \texttt{inv\_M\_B.swap\_constraint($k_{j}$)}\\
 \> // update basis inverse \\
-\> \texttt{inv\_M\_B.z\_replace\_original\_by\_slack($k_{j}, k_{i}$)}
+\> \texttt{inv\_M\_B.z\_replace\_original\_by\_slack()}
 \\
 \texttt{\}}
 \end{tabbing}
@@ -2678,7 +2691,7 @@ in~(\ref{def:update_Z3_entities}) can be expressed as
 &&
 \hat{\nu} &:=& 2dD_{j,j}-\theta^{T}\hat{\check{M}}_{B}^{-1}\theta
 \\
-\hat{z} &:=& -\hat{\kappa}^{2}
+\hat{z} &:=& \hat{\kappa}^{2}/d
 &&
 d &:=& \left|\det(\hat{\check{M}}_{B})\right|
 \end{array}
@@ -2698,12 +2711,24 @@ Update $U_{Z_{3}}$ can be outlined as
 \> \texttt{$\hat{\kappa}:=\kappa$} \\
 \> \texttt{$\hat{\nu}:=\nu$} \\
 \> \texttt{z\_update\_in\_place($\hat{\varphi}, \hat{\phi},
-d\hat{\kappa}^{2}, -\hat{\nu}, \hat{\kappa}, d^{2}$)} \\
+\hat{\kappa}^{2}, -\hat{\nu}, \hat{\kappa}, d^{2}$)} \\
 \> // append new rows and columns \\
-\> $\left(\hat{\check{M}}_{B}\right)_{s, \bullet}:=$ \\
-\> $\left(\hat{\check{M}}_{B}\right)_{l+b, \bullet}:=$ \\
+\> $\left(\hat{\check{M}}_{B^{\prime}}\right)_{s, \bullet}:=
+\left[
+  (\hat{\nu}\hat{\varphi}-\hat{\kappa}\hat{\phi})_{C}/d
+  \left|\right. -\hat{\nu}
+  \left|\right.(\hat{\nu}\hat{\varphi}-\hat{\kappa}\hat{\phi})_{B_{O}}/d 
+  \left|\right. \hat{\kappa}
+\right]$ \\
+\> $\left(\hat{\check{M}}_{B^{\prime}}\right)_{l+b, \bullet}:=
+\left[
+  -\hat{\kappa}\hat{\varphi}^{T}_{C}/d
+  \left|\right. \hat{\kappa}
+  \left|\right. -\hat{\kappa}\hat{\varphi}^{T}_{B_{O}}/d
+  \left|\right. 0
+\right]$ \\
 \> // store new denominator $\hat{z}$ \\
-\> \texttt{$d:=-\hat{\kappa}^{2}$} \\
+\> \texttt{$d:=\hat{\kappa}^{2}/d$} \\
 \texttt{\}}
 \end{tabbing}
 The calling counterpart in the class \texttt{QP\_solver} can be outlined as
