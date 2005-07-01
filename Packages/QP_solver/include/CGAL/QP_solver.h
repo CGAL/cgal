@@ -310,7 +310,9 @@ private:
     
     bool                     is_phaseI; // flag indicating phase I
     bool                     is_phaseII;// flag indicating phase II
-
+    bool                     is_RTS_transition; // flag indicating transition
+                                        // from Ratio Test Step1 to Ratio
+                                        // Test Step2                                           
     const bool               is_LP;     // flag indicating a linear    program
     const bool               is_QP;     // flag indicating a quadratic program
     const bool                no_ineq;  // flag indicating no ineq. constraits
@@ -1113,6 +1115,7 @@ ratio_test_2__p( Tag_true)
 {
     // get column index of entering variable in basis
     int  col = in_B[ j];
+ 
     CGAL_qpe_assertion( col >= 0);
     col += l;
 
