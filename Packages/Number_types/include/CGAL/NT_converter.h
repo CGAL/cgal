@@ -31,11 +31,26 @@ CGAL_BEGIN_NAMESPACE
 // A number type converter usable as default, using the conversion operator.
 
 template < class NT1, class NT2 >
-struct NT_converter : public CGAL_STD::unary_function< NT1, NT2 > {
+struct NT_converter
+  : public CGAL_STD::unary_function< NT1, NT2 >
+{
     NT2
     operator()(const NT1 &a) const
     {
         return NT2(a);
+    }
+};
+
+// ... and specialized for double to call to_double().
+
+template < class NT1 >
+struct NT_converter < NT1, double >
+  : public CGAL_STD::unary_function< NT1, double >
+{
+    double
+    operator()(const NT1 &a) const
+    {
+        return CGAL_NTS to_double(a);
     }
 };
 
