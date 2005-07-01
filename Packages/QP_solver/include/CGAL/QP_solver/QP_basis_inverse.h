@@ -205,7 +205,7 @@ class QPE_basis_inverse {
 
     // replacing of original by slack variable with precondition in QP-case
     // for phaseII                               (update type UZ_2)
-    void  z_replace_original_by_slack(unsigned int k_j, unsigned int k_i);
+    void  z_replace_original_by_slack( );
 
 
     // replacing of slack by original variable with precondition in QP-case
@@ -213,8 +213,8 @@ class QPE_basis_inverse {
     template < class ForwardIterator >
     void  z_replace_slack_by_original(ForwardIterator y_l_it,
                                       ForwardIterator y_x_it,
-				      ForwardIterator u_x_it, const ET& kappa,
-				      const ET& nu);
+				      ForwardIterator u_x_it, const ET& hat_kappa,
+				      const ET& hat_nu);
 
 
     // replacing of slack by slack variable with precondition in QP-case
