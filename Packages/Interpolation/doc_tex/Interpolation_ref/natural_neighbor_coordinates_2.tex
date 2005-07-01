@@ -8,10 +8,7 @@
 % |
 % +------------------------------------------------------------------------+
 
-%\renewcommand{\ccRefPageBegin}{\begin{ccAdvanced}}
-%\renewcommand{\ccRefPageEnd}{\end{ccAdvanced}}
-\begin{ccRefFunction}{natural_neighbor_coordinates_2}  %% add template arg's if necessary
-\ccIndexSubitemBegin{Interpolation}{natural_neighbor_coordinates_2}
+\begin{ccRefFunction}{natural_neighbor_coordinates_2}
 
 \ccDefinition
   
@@ -67,7 +64,6 @@ of the triangulation.
   \ccc{Delaunay_triangulation_2<Traits, Tds>}.
 \item The traits class \ccc{Traits} of \ccc{Dt} is a model of the
   concept \ccc{DelaunayTriangulationTraits_2}.
-                                %\ccIndexMainItem[c]{DelaunayTriangulationTraits_2}.
   Only the following members of this traits class are used:
   \begin{itemize}
   \item \ccc{Construct_circumcenter_2}
@@ -95,5 +91,4 @@ computed and returned by the function. If \ccc{p} lies outside the
 convex hull, the coordinate values cannot be computed and the third
 value of the result triple is set to \ccc{false}.
 
-\ccIndexSubitemEnd{Interpolation}{natural_neighbor_coordinates_2}
 \end{ccRefFunction}
