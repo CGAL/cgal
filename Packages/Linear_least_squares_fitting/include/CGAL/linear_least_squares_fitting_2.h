@@ -27,6 +27,7 @@
 #include <list>
 #include <string>
 #include <CGAL/eigen.h>
+#include <CGAL/eigen_2.h>
 #include <CGAL/centroid.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -60,13 +61,11 @@ linear_least_squares_fitting_2(InputIterator begin,
   // assemble covariance matrix as a
   // semi-definite matrix. 
   // Matrix numbering:
-  // 0          
+  // 0
   // 1 2
   FT covariance[3] = {0,0,0};
-  FT eigen_values[2] = {0,0};
-  // these should be typed Vector_2
-  // but it requires working more on eigen.h
-  FT eigen_vectors[4] = {0,0,0,0};
+  std::pair<FT,FT> eigen_values;
+  std::pair<Vector,Vector> eigen_vectors;
   for(InputIterator it = begin;
 		    it != end;
 		    it++)
@@ -82,18 +81,18 @@ linear_least_squares_fitting_2(InputIterator begin,
   // eigen values are sorted in descending order, 
   // eigen vectors are sorted in accordance.
   // TODO: use explicit formula instead.
-  eigen_semi_definite_symmetric(covariance,2,eigen_vectors,eigen_values);
+  eigen_symmetric_2<K>(covariance,eigen_vectors,eigen_values);
 
   // assert eigen values are positives
-  CGAL_assertion(eigen_values[0] >= 0 && 
-                       eigen_values[1] >= 0);
+  CGAL_assertion(eigen_values.first >= 0 && 
+                       eigen_values.second >= 0);
 
   // check unicity and build fitting line accordingly
-  if(eigen_values[0] != eigen_values[1])
+  if(eigen_values.first != eigen_values.second)
   {
     // regular case
-    line = Line(c,Vector(eigen_vectors[0],eigen_vectors[1]));
-    return (FT)1.0 - eigen_values[1] / eigen_values[0];
+    line = Line(c,eigen_vectors.first);
+    return (FT)1.0 - eigen_values.second / eigen_values.first;
   } // end regular case
   else
   {
