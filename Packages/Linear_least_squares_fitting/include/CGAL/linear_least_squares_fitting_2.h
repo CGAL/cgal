@@ -36,7 +36,7 @@ namespace CGALi {
 // fit a line to a 2D point set
 // return a fitting quality (1 - lambda_min/lambda_max):
 //  1 is best (zero variance orthogonally to the fitting line)
-//  0 is worst (isotropic case, return a line with default orientation)
+//  0 is worst (isotropic case, return a line with default direction)
 template < typename InputIterator, 
            typename K >
 typename K::FT
