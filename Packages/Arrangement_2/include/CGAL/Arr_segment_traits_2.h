@@ -69,6 +69,7 @@ public:
     bool      is_pt_max;        // Is the target (lexicographically) larger
                                 // than the source.
     bool      is_vert;          // Is this a vertical segment.
+    bool      is_degen;         // Is the segment degenerate (a single point).
 
   public:
 
@@ -76,7 +77,8 @@ public:
      * Default constructor.
      */
     _Segment_cached_2 () :
-      is_vert(false)
+      is_vert(false),
+      is_degen(true)
     {}
 
     /*!
@@ -87,9 +89,6 @@ public:
     {
       Kernel   kernel;
 
-      l = kernel.construct_line_2_object()(seg);
-      is_vert = kernel.is_vertical_2_object()(seg);
-
       typename Kernel_::Construct_vertex_2
         construct_vertex = kernel.construct_vertex_2_object();
 
@@ -97,8 +96,14 @@ public:
       pt = construct_vertex(seg, 1);
 
       Comparison_result  res = kernel.compare_xy_2_object()(ps, pt);
-      CGAL_precondition (res != EQUAL);
+      is_degen = (res == EQUAL);
       is_pt_max = (res == SMALLER);
+
+      if (! is_degen)
+      {
+        l = kernel.construct_line_2_object()(seg);
+        is_vert = kernel.is_vertical_2_object()(seg);
+      }
     }
 
     /*!
@@ -112,12 +117,15 @@ public:
     {
       Kernel   kernel;
 
-      l = kernel.construct_line_2_object()(source, target);
-      is_vert = kernel.is_vertical_2_object()(l);
-
       Comparison_result  res = kernel.compare_xy_2_object()(ps, pt);
-      CGAL_precondition (res != EQUAL);
+      is_degen = (res == EQUAL);
       is_pt_max = (res == SMALLER);
+
+      if (! is_degen)
+      {
+        l = kernel.construct_line_2_object()(source, target);
+        is_vert = kernel.is_vertical_2_object()(l);
+      }
     }
 
     /*!
@@ -125,9 +133,10 @@ public:
      * \param supp_line The supporting line.
      * \param source The source point.
      * \param target The target point.
+     * \pre The two endpoints are not the same and both lie on the given line.
      */
     _Segment_cached_2 (const Line_2& supp_line,
-                       const Point_2 & source, const Point_2 & target) :
+                       const Point_2& source, const Point_2& target) :
       l (supp_line),
       ps (source),
       pt (target)
@@ -141,6 +150,7 @@ public:
 
       Comparison_result  res = kernel.compare_xy_2_object()(ps, pt);
       CGAL_precondition (res != EQUAL);
+      is_degen = false;
       is_pt_max = (res == SMALLER);
     }
 
@@ -152,9 +162,6 @@ public:
     {
       Kernel   kernel;
 
-      l = kernel.construct_line_2_object()(seg);
-      is_vert = kernel.is_vertical_2_object()(seg);
-
       typename Kernel_::Construct_vertex_2
         construct_vertex = kernel.construct_vertex_2_object();
 
@@ -162,8 +169,14 @@ public:
       pt = construct_vertex(seg, 1);
 
       Comparison_result  res = kernel.compare_xy_2_object()(ps, pt);
-      CGAL_precondition (res != EQUAL);
+      is_degen = (res == EQUAL);
       is_pt_max = (res == SMALLER);
+
+      if (! is_degen)
+      {
+        l = kernel.construct_line_2_object()(seg);
+        is_vert = kernel.is_vertical_2_object()(seg);
+      }
 
       return (*this);
     }
@@ -183,6 +196,7 @@ public:
      */
     void set_left (const Point_2& p)
     {
+      CGAL_precondition (! is_degen);
       CGAL_precondition_code (
         Kernel    kernel;
       );
@@ -210,6 +224,7 @@ public:
      */
     void set_right (const Point_2& p)
     {
+      CGAL_precondition (! is_degen);
       CGAL_precondition_code (
         Kernel    kernel;
       );
@@ -227,6 +242,7 @@ public:
      */
     const Line_2& line () const
     {
+      CGAL_precondition (! is_degen);
       return (l);
     }
 
@@ -235,7 +251,16 @@ public:
      */
     bool is_vertical () const
     {
+      CGAL_precondition (! is_degen);
       return (is_vert);
+    }
+
+    /*!
+     * Check if the curve is degenerate.
+     */
+    bool is_degenerate () const
+    {
+      return (is_degen);
     }
 
     /*!
@@ -386,6 +411,7 @@ public:
      */
     bool operator() (const X_monotone_curve_2& cv) const
     {
+      CGAL_precondition (! cv.is_degenerate());
       return (cv.is_vertical());
     }
   };
@@ -411,6 +437,7 @@ public:
     Comparison_result operator() (const Point_2 & p,
                                   const X_monotone_curve_2 & cv) const
     {
+      CGAL_precondition (! cv.is_degenerate());
       CGAL_precondition (cv.is_in_x_range (p));
 
       Kernel    kernel;
@@ -459,6 +486,9 @@ public:
                                   const X_monotone_curve_2& cv2,
                                   const Point_2& p) const
     {
+      CGAL_precondition (! cv1.is_degenerate());
+      CGAL_precondition (! cv2.is_degenerate());
+
       Kernel                        kernel;
 
       // Make sure that p lies on both curves, and that both are defined to its
@@ -508,6 +538,9 @@ public:
                                   const X_monotone_curve_2& cv2,
                                   const Point_2& p) const
     {
+      CGAL_precondition (! cv1.is_degenerate());
+      CGAL_precondition (! cv2.is_degenerate());
+
       Kernel                        kernel;
 
       // Make sure that p lies on both curves, and that both are defined to its
@@ -581,16 +614,26 @@ public:
     /*!
      * Cut the given curve into x-monotone subcurves and insert them into the
      * given output iterator. As segments are always x_monotone, only one
-     * x-monotone curve will be contained in the iterator.
+     * object will be contained in the iterator.
      * \param cv The curve.
      * \param oi The output iterator, whose value-type is Object. The output
-     *           object is a wrapper of an X_monotone_curve_2 object.
+     *           object is a wrapper of either an X_monotone_curve_2, or - in
+     *           case the input segment is degenerate - a Point_2 object.
      * \return The past-the-end iterator.
      */
     template<class OutputIterator>
     OutputIterator operator() (const Curve_2& cv, OutputIterator oi) const
     {
-      *oi = make_object (cv);
+      if (! cv.is_degenerate())
+      {
+        // Wrap the segment with an object.
+        *oi = make_object (cv);
+      }
+      else
+      {
+        // The segment is a degenerate point - wrap it with an object.
+        *oi = make_object (cv.right());
+      }
       ++oi;
       return (oi);
     }
@@ -616,6 +659,8 @@ public:
     void operator() (const X_monotone_curve_2& cv, const Point_2 & p,
                      X_monotone_curve_2& c1, X_monotone_curve_2& c2) const
     {
+      CGAL_precondition (! cv.is_degenerate());
+
       // Make sure that p lies on the interior of the curve.
       CGAL_precondition_code (
         Kernel                        kernel;
@@ -662,6 +707,9 @@ public:
                                const X_monotone_curve_2& cv2,
                                OutputIterator oi) const
     {
+      CGAL_precondition (! cv1.is_degenerate());
+      CGAL_precondition (! cv2.is_degenerate());
+
       // Intersect the two supporting lines.
       Kernel    kernel;
       Object    obj = kernel.intersect_2_object()(cv1.line(), cv2.line());
@@ -754,6 +802,9 @@ public:
     bool operator() (const X_monotone_curve_2& cv1,
                      const X_monotone_curve_2& cv2) const
     {
+      CGAL_precondition (! cv1.is_degenerate());
+      CGAL_precondition (! cv2.is_degenerate());
+
       Kernel                    kernel;
       typename Kernel::Equal_2  equal = kernel.equal_2_object();
 
@@ -789,6 +840,9 @@ public:
                      const X_monotone_curve_2& cv2,
                      X_monotone_curve_2& c) const
     {
+      CGAL_precondition (! cv1.is_degenerate());
+      CGAL_precondition (! cv2.is_degenerate());
+
       Kernel                    kernel;
       typename Kernel::Equal_2  equal = kernel.equal_2_object();
 
