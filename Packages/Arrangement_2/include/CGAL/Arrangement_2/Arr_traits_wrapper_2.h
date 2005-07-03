@@ -569,89 +569,98 @@ public:
   {
     return Is_between_cw_2();
   }
-  //@}
 
-  class Compare_y_at_x_cw_2
+  class Compare_cw_around_point_2
   {
   public:
-	  /*!
-	  * Compare the y value of two x-monotone curves in cw order
-	  * of their intersection point.
-	  * \param cv1 The first curve.
-	  * \param cv2 The second curve.
-	  * \param p The intersection point.
-	  * \pre The point p lies on both curves, and both of them must be also be
-	  *      defined (lexicographically) to the same side (left or right).
-	  *      (you can't have one curve defined to the left and the other defined
-	  *       to the right)
-	  * \return The relative position of cv1 with respect to cv2 in cw order
-	  *         SMALLER, LARGER or EQUAL.
-	  * in particular:	
-	  * if both curves are defined to the left - curves_compare_y_at_x_left()
-	  * if both curves are defined to the right - OPPOSITE of curves_compare_y_at_x_right() 
-	  *   (because the lower one is larger cw) 
-	  * if both curves are vertical up or both vertical down - return equal
-	  */
-	  Comparison_result operator() (const X_monotone_curve_2& cv1,
-		  const X_monotone_curve_2& cv2,
-		  const Point_2& p
-		  //,bool intersecting = true
-		  ) const
-	  {
-		  Equal_2					equal;
-		  Compare_y_at_x_left_2		compare_y_at_x_left;
-		  Compare_y_at_x_right_2	compare_y_at_x_right;
+    
+    /*!
+     * Compare the two interior disjoint x-monotone curves in a clockwise
+     * order around their common endpoint.
+     * \param cv1 The first curve.
+     * \param cv2 The second curve.
+     * \param p The common endpoint.
+     * \param from_top (true) if we start from 12 o'clock, 
+     *                 (false) if we start from 6 o'clock.
+     * \pre The point p is an endpoint of both curves.
+     * \return SMALLER if we encounter cv1 before cv2;
+     *         LARGER if we encounter cv2 before cv1;
+     *         EQUAL otherwise.
+     */
+    Comparison_result operator() (const X_monotone_curve_2& cv1,
+                                  const X_monotone_curve_2& cv2,
+                                  const Point_2& p,
+                                  bool from_top = true) const
+    {`aw  q`
+      // Find to which side of p (left or right) do cv1 and cv2 lie.
+      Base                    tr;
+      Construct_min_vertex_2  min_vertex = tr.construct_min_vertex_2_object();
+      Construct_max_vertex_2  max_vertex = tr.construct_max_vertex_2_object();
+      Equal_2                 equal = tr.equal_2_object();
 
-		  bool cv1_left, cv2_left;
-		  if (equal(cv1.left(),p)) 
-		  {
-			  cv1_left = false;
-		  }
-		  else if (equal(cv1.right(),p)) 
-		  {
-			  cv1_left = true;
-		  }
-		  else 
-		  {
-			  CGAL_assertion (false);
-			  return EQUAL;
-		  }
+      bool                    cv1_left, cv2_left;
+      
+      if (equal (min_vertex (cv1), p)) 
+      {
+        cv1_left = false;
+      }
+      else
+      {
+        CGAL_assertion (equal(max_vertex (cv1), p));
+        cv1_left = true;
+      }
 
-		  if (equal(cv2.left(),p)) 
-		  {
-			  cv2_left = false;
-		  }
-		  else if (equal(cv2.right(),p))
-		  {
-			  cv2_left = true;
-		  }
-		  else 
-		  {
-			  CGAL_assertion (false);
-			  return EQUAL;
-		  }
+      if (equal (min_vertex (cv2), p)) 
+      {
+        cv2_left = false;
+      }
+      else 
+      {
+        CGAL_assertion (equal(max_vertex (cv2), p));
+        cv2_left = true;
+      }
 
-		  if (cv1_left != cv2_left)
-		  {
-			  CGAL_assertion (false);
-			  return EQUAL;
-		  }
-
-		  if (cv1_left)
-		  {
-			  return (compare_y_at_x_left(cv1,cv2,p));
-		  }
-
-		  return (compare_y_at_x_right(cv2,cv1,p));
-	  }
+      // Act according to where cv1 and cv2 lie.
+      if (cv1_left && cv2_left)
+      {
+        // Both are defined to the left of p, and we encounter cv1 before
+        // cv2 if it is below cv2:
+        return (tr.compare_y_at_x_left_2_object() (cv1, cv2, p));
+      }
+      else if (!cv1_left && !cv2_left)
+      {
+        // Both are defined to the right of p, and we encounter cv1 before
+        // cv2 if it is above cv2. We therefore reverse the order of the
+        // curves when we invoke compare_y_at_x_right:
+        return (tr.compare_y_at_x_right_2_object() (cv2, cv1, p));
+      }
+      else if (cv1_left && !cv2_left)
+      {
+        // If we start from the top, we encounter the right curve (which
+        // is cv2) first. If we start from the bottom, we encounter cv1 first.
+        if (from_top)
+          return (LARGER);
+        else
+          return (SMALLER);
+      }
+      else
+      {
+        // If we start from the top, we encounter the right curve (which
+        // is cv1) first. If we start from the bottom, we encounter cv2 first.
+        if (from_top)
+          return (SMALLER);
+        else
+          return (LARGER);
+      }
+    }
   };
 
-  /*! Get a Compare_y_at_x_cw_2 functor object. */
-  Compare_y_at_x_cw_2 compare_y_at_x_cw_2_object () const
+  /*! Get a Compare_cw_around_point_2 functor object. */
+  Compare_cw_around_point_2 compare_cw_around_point_2_object () const
   {
-    return Compare_y_at_x_cw_2();
+    return Compare_cw_around_point_2();
   }
-
+  //@}
 };
 
 /*! \class
@@ -730,8 +739,8 @@ public:
      * Implementation of the operator() in case the HasMerge tag is true.
      */
     bool _are_mergeable_imp (const X_monotone_curve_2& cv1,
-			     const X_monotone_curve_2& cv2,
-			     Tag_true) const
+           const X_monotone_curve_2& cv2,
+           Tag_true) const
     {
       Base                    tr;
       return (tr.are_mergeable_2_object() (cv1, cv2));      
@@ -741,8 +750,8 @@ public:
      * Implementation of the operator() in case the HasMerge tag is false.
      */
     bool _are_mergeable_imp (const X_monotone_curve_2& ,
-			     const X_monotone_curve_2& ,
-			     Tag_false) const
+           const X_monotone_curve_2& ,
+           Tag_false) const
     {
       // Curve merging is not supported:
       return (false);
