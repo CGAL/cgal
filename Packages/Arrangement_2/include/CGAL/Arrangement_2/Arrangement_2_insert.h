@@ -42,8 +42,8 @@ CGAL_BEGIN_NAMESPACE
 //
 template <class Traits, class Dcel, class PointLocation>
 void insert (Arrangement_2<Traits,Dcel>& arr, 
-	     const PointLocation& pl,
-	     const typename Traits::Curve_2& c)
+             const PointLocation& pl,
+             const typename Traits::Curve_2& c)
 {
   // Obtain an arrangement accessor.
   typedef Arrangement_2<Traits,Dcel>                     Arrangement_2;
@@ -100,7 +100,7 @@ void insert (Arrangement_2<Traits,Dcel>& arr,
 
       CGAL_assertion (assign_success);
       if (! assign_success)
-	continue;
+        continue;
 
       // Inserting a point into the arrangement:
       insert_vertex (arr, pl, iso_p);
@@ -117,7 +117,7 @@ void insert (Arrangement_2<Traits,Dcel>& arr,
 //
 template <class Traits, class Dcel, class InputIterator>
 void insert (Arrangement_2<Traits,Dcel>& arr,
-	     InputIterator begin, InputIterator end)
+             InputIterator begin, InputIterator end)
 {
   // Notify the arrangement observers that a global operation is about to 
   // take place.
@@ -144,8 +144,8 @@ void insert (Arrangement_2<Traits,Dcel>& arr,
 //
 template <class Traits, class Dcel, class PointLocation>
 void insert_x_monotone (Arrangement_2<Traits,Dcel>& arr,
-			const PointLocation& pl,
-			const typename Traits::X_monotone_curve_2& c)
+                        const PointLocation& pl,
+                        const typename Traits::X_monotone_curve_2& c)
 {
   // Obtain an arrangement accessor.
   typedef Arrangement_2<Traits,Dcel>                     Arrangement_2;
@@ -182,7 +182,7 @@ void insert_x_monotone (Arrangement_2<Traits,Dcel>& arr,
 //
 template <class Traits, class Dcel, class InputIterator>
 void insert_x_monotone (Arrangement_2<Traits,Dcel>& arr,
-			InputIterator begin, InputIterator end)
+                        InputIterator begin, InputIterator end)
 {
   // Notify the arrangement observers that a global operation is about to 
   // take place.
@@ -211,8 +211,8 @@ void insert_x_monotone (Arrangement_2<Traits,Dcel>& arr,
 template <class Traits, class Dcel, class PointLocation>
 typename Arrangement_2<Traits,Dcel>::Halfedge_handle
 insert_non_intersecting (Arrangement_2<Traits,Dcel>& arr,
-			 const PointLocation& pl,
-			 const typename Traits::X_monotone_curve_2& c)
+                         const PointLocation& pl,
+                         const typename Traits::X_monotone_curve_2& c)
 {
   // Locate the curve endpoints.
   Object   obj1 =
@@ -258,7 +258,7 @@ insert_non_intersecting (Arrangement_2<Traits,Dcel>& arr,
     {
       // Only the left endpoint is associated with an existing vertex.
       res = arr.insert_from_left_vertex (c,
-					 arr.non_const_handle (vh1));
+                                         arr.non_const_handle (vh1));
     }
   }
   else
@@ -267,7 +267,7 @@ insert_non_intersecting (Arrangement_2<Traits,Dcel>& arr,
     {
       // Only the right endpoint is associated with an existing vertex.
       res = arr.insert_from_right_vertex (c,
-					  arr.non_const_handle (vh2));
+                                          arr.non_const_handle (vh2));
     }
     else
     {
@@ -305,7 +305,7 @@ insert_non_intersecting (Arrangement_2<Traits,Dcel>& arr,
 //
 template <class Traits, class Dcel, class InputIterator>
 void insert_non_intersecting (Arrangement_2<Traits,Dcel>& arr,
-			      InputIterator begin, InputIterator end)
+                              InputIterator begin, InputIterator end)
 {
   // Notify the arrangement observers that a global operation is about to 
   // take place.
@@ -334,7 +334,7 @@ void insert_non_intersecting (Arrangement_2<Traits,Dcel>& arr,
 template <class Traits, class Dcel>
 typename Arrangement_2<Traits,Dcel>::Face_handle
 remove_edge (Arrangement_2<Traits,Dcel>& arr,
-	     typename Arrangement_2<Traits,Dcel>::Halfedge_handle e)
+             typename Arrangement_2<Traits,Dcel>::Halfedge_handle e)
 {
   // Notify the arrangement observers that a global operation is about to 
   // take place.
@@ -348,8 +348,8 @@ remove_edge (Arrangement_2<Traits,Dcel>& arr,
   // Keep track of the end-vertices of the edge we are about to remove.
   typename Arrangement_2::Vertex_handle  v_ends[2];
 
-  v_ends[0] = e.source();
-  v_ends[1] = e.target();
+  v_ends[0] = e->source();
+  v_ends[1] = e->target();
 
   // Remove the edge from the arrangement.
   typename Arrangement_2::Face_handle    face = arr.remove_edge (e);
@@ -368,20 +368,20 @@ remove_edge (Arrangement_2<Traits,Dcel>& arr,
 
   for (i = 0; i < 2; i++)
   {
-    if (v_ends[i].degree() == 2)
+    if (v_ends[i]->degree() == 2)
     {
       // Get the two edges incident to the end-vertex.
-      circ = v_ends[i].incident_halfedges();
-      e1 = *circ;
+      circ = v_ends[i]->incident_halfedges();
+      e1 = circ->handle();
       ++circ;
-      e2 = *circ;
+      e2 = circ->handle();
 
       // Check if it is possible to merge the two edges.
-      if (traits->are_mergeable_2_object() (e1.curve(), e2.curve()))
+      if (traits->are_mergeable_2_object() (e1->curve(), e2->curve()))
       {
         // Merge the two curves.
         typename Traits::X_monotone_curve_2   cv;
-        traits->merge_2_object() (e1.curve(), e2.curve(),
+        traits->merge_2_object() (e1->curve(), e2->curve(),
                                   cv);
 
         // Merge the two edges in the arrangement.
@@ -405,8 +405,8 @@ remove_edge (Arrangement_2<Traits,Dcel>& arr,
 template <class Traits, class Dcel, class PointLocation>
 typename Arrangement_2<Traits,Dcel>::Vertex_handle
 insert_vertex (Arrangement_2<Traits,Dcel>& arr,
-	       const PointLocation& pl,
-	       const typename Traits::Point_2& p)
+               const PointLocation& pl,
+               const typename Traits::Point_2& p)
 {
   // Obtain an arrangement accessor.
   typedef Arrangement_2<Traits,Dcel>                     Arrangement_2;
@@ -431,7 +431,7 @@ insert_vertex (Arrangement_2<Traits,Dcel>& arr,
     // p lies inside a face: Insert it as an isolated vertex it the interior of
     // this face.
     vh_for_p = arr.insert_isolated_vertex (p,
-					   arr.non_const_handle (fh));
+                                           arr.non_const_handle (fh));
   }
   else if (assign (hh, obj))
   {
@@ -440,21 +440,20 @@ insert_vertex (Arrangement_2<Traits,Dcel>& arr,
     typename Traits::X_monotone_curve_2                   sub_cv1, sub_cv2;
     typename Arrangement_2<Traits,Dcel>::Halfedge_handle  split_he;
    
-    arr.get_traits()->split_2_object() (hh.curve(), p,
-					sub_cv1, sub_cv2);
+    arr.get_traits()->split_2_object() (hh->curve(), p,
+                                        sub_cv1, sub_cv2);
 
     split_he = arr.split_edge (arr.non_const_handle (hh),
-			       sub_cv1, sub_cv2);
+                               sub_cv1, sub_cv2);
 
     // The new vertex is the target of the returned halfedge.
-    vh_for_p = split_he.target();
+    vh_for_p = split_he->target();
   }
   else
   {
     // In this case p lies on an existing vertex, so we just update this
     // vertex.
     const bool   assign_success = assign (vh, obj);
-
 
     CGAL_assertion (assign_success);
     
@@ -475,7 +474,7 @@ insert_vertex (Arrangement_2<Traits,Dcel>& arr,
 //
 template <class Traits, class Dcel>
 bool remove_vertex (Arrangement_2<Traits,Dcel>& arr,
-		    typename Arrangement_2<Traits,Dcel>::Vertex_handle v)
+                    typename Arrangement_2<Traits,Dcel>::Vertex_handle v)
 {
   // Notify the arrangement observers that a global operation is about to 
   // take place.
@@ -489,13 +488,13 @@ bool remove_vertex (Arrangement_2<Traits,Dcel>& arr,
   // Act according to the number of edges incident to v.
   bool      removed = false;
 
-  if (v.is_isolated())
+  if (v->is_isolated())
   {
     // In case v is an isolated vertex, simply remove it.
     arr.remove_isolated_vertex (v);
     removed = true;
   }
-  else if (v.degree() == 2)
+  else if (v->degree() == 2)
   {
     // If the vertex has now two incident edges, and the curves associated
     // with these edges can be merged, merge the two edges and remove the
@@ -506,18 +505,17 @@ bool remove_vertex (Arrangement_2<Traits,Dcel>& arr,
     typename Arrangement_2::Halfedge_around_vertex_circulator  circ;
     typename Arrangement_2::Halfedge_handle                    e1, e2;
 
-    circ = v.incident_halfedges();
-    e1 = *circ;
+    circ = v->incident_halfedges();
+    e1 = circ->handle();
     ++circ;
-    e2 = *circ;
+    e2 = circ->handle();
 
-    if (traits->are_mergeable_2_object() (e1.curve(), e2.curve()))
+    if (traits->are_mergeable_2_object() (e1->curve(), e2->curve()))
     {
       // Merge the two curves.
       typename Traits::X_monotone_curve_2   cv;
-      traits->merge_2_object() (e1.curve(), e2.curve(),
-				cv);
-
+      traits->merge_2_object() (e1->curve(), e2->curve(),
+                                cv);
 
       // Merge the two edges in the arrangement.
       arr.merge_edge (e1, e2, cv);

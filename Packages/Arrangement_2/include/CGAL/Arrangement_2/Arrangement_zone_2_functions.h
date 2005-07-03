@@ -87,7 +87,13 @@ void Arrangement_zone_2<Arrangement,ZoneVisitor>::compute_zone ()
   else
   {
     // The left endpoint lies inside a face.
-    assign (fh, obj);
+    bool     assign_success = assign (fh, obj);
+
+    CGAL_assertion_msg(assign_success,
+		       "Invalid object returned by the point-location query.");
+
+    if (! assign_success)
+      return;
 
     // Compute the zone of the curve at the interior of the face.
     done = _zone_in_face (arr.non_const_handle(fh),
@@ -109,7 +115,7 @@ void Arrangement_zone_2<Arrangement,ZoneVisitor>::compute_zone ()
       if (left_v != invalid_v)
       {
         // We know the vertex that coincides with the left endpoint of cv.
-        if (! left_v.is_isolated())
+        if (! left_v->is_isolated())
         {
           // Locate the curve around the left_v vertex - that is, find a
           // halfedge left_he such that cv should be placed between left_he
@@ -156,11 +162,11 @@ void Arrangement_zone_2<Arrangement,ZoneVisitor>::compute_zone ()
       }
     }
 
-    if (left_v == invalid_v || ! left_v.is_isolated())
+    if (left_v == invalid_v || ! left_v->is_isolated())
     {
       // At this point we can compute the zone of cv starting from the left_he
       // inside its incident face.
-      done = _zone_in_face (left_he.face(),
+      done = _zone_in_face (left_he->face(),
                             true);      // left_pt is on the face boundary.
     }
     else
@@ -207,7 +213,7 @@ bool Arrangement_zone_2<Arrangement,ZoneVisitor>::_find_prev_around_vertex
   bool                                                      cv_equals_next;
   bool                                                      is_between;
 
-  he_first = v.incident_halfedges();
+  he_first = v->incident_halfedges();
   he_curr = he_first;
   he_next = he_curr;
   ++he_next;
@@ -216,18 +222,18 @@ bool Arrangement_zone_2<Arrangement,ZoneVisitor>::_find_prev_around_vertex
   {
     // In case there is just a single incident halfedge around v,
     // we should insert cv right after this halfedge.
-    he = *he_curr;
+    he = he_curr->handle();
 
     // Note that cv extends to the right of v. In case the single
     // halfedge also extends to the right of v (its source is to
     // the right), check if an overlap occurs.
-    if ((traits->compare_xy_2_object()(v.point(),
-                                       he.source().point()) == SMALLER) &&
-        (traits->compare_y_at_x_right_2_object() (he.curve(), cv,
-                                                  v.point()) == EQUAL))
+    if ((traits->compare_xy_2_object()(v->point(),
+                                       he->source()->point()) == SMALLER) &&
+        (traits->compare_y_at_x_right_2_object() (he->curve(), cv,
+                                                  v->point()) == EQUAL))
     {
       // Mark that an overlap occurs:
-      intersect_he = *he_curr;
+      intersect_he = he_curr->handle();
       return (true);
     }
 
@@ -244,21 +250,21 @@ bool Arrangement_zone_2<Arrangement,ZoneVisitor>::_find_prev_around_vertex
     // Check if it is possible to insert cv in between the current curve
     // and the next curve, going in a clockwise direction around v.
     is_between = is_between_cw (cv,
-                                (*he_curr).curve(), (*he_next).curve(),
-                                v.point(),
+                                he_curr->curve(), he_next->curve(),
+                                v->point(),
                                 cv_equals_curr, cv_equals_next);
 
     // Check the case of overlaps:
     if (cv_equals_curr)
     {
       // cv overlaps with the curve of he_curr:
-      intersect_he = *he_curr;
+      intersect_he = he_curr->handle();
       return (true);
     }
     else if (cv_equals_next)
     {
       // cv overlaps with the curve of he_next:
-      intersect_he = *he_next;
+      intersect_he = he_next->handle();
       return (true);
     }
 
@@ -266,7 +272,7 @@ bool Arrangement_zone_2<Arrangement,ZoneVisitor>::_find_prev_around_vertex
     {
       // We can conclude that cv should be placed between he_curr and
       // he_next (in a clockwise order), and no overlap occurs.
-      he = *he_curr;
+      he = he_curr->handle();
       return (false);
     }
 
@@ -295,17 +301,17 @@ Arrangement_zone_2<Arrangement,ZoneVisitor>::_direct_intersecting_edge_to_right
 {
   // Make sure that the left endpoint of cv_ins lies on query_he.
   CGAL_assertion (traits->compare_y_at_x_2_object()
-                    (cv_left_pt, query_he.curve()) == EQUAL);
+                    (cv_left_pt, query_he->curve()) == EQUAL);
 
   // Check whether the given halfedge is directed to the right.
   const bool               query_he_directed_right =
-    (traits->compare_xy_2_object() (query_he.source().point(),
-                                    query_he.target().point()) == SMALLER);
+    (traits->compare_xy_2_object() (query_he->source()->point(),
+                                    query_he->target()->point()) == SMALLER);
 
   // Check whether the curve lies above of below the edge immediately to
   // the right of its left endpoint.
   const Comparison_result  pos_res =
-    traits->compare_y_at_x_right_2_object() (cv_ins, query_he.curve(),
+    traits->compare_y_at_x_right_2_object() (cv_ins, query_he->curve(),
                                              cv_left_pt);
 
   if (pos_res == SMALLER)
@@ -313,7 +319,7 @@ Arrangement_zone_2<Arrangement,ZoneVisitor>::_direct_intersecting_edge_to_right
     // If cv below the curve associated with query_he, the relevant halfedge
     // is the one directed from right to left.
     if (query_he_directed_right)
-      return (query_he.twin());
+      return (query_he->twin());
     else
       return (query_he);
   }
@@ -324,7 +330,7 @@ Arrangement_zone_2<Arrangement,ZoneVisitor>::_direct_intersecting_edge_to_right
     if (query_he_directed_right)
       return (query_he);
     else
-      return (query_he.twin());
+      return (query_he->twin());
   }
 
   // The two curves are equal to the right of the left endpoint, so we have
@@ -349,18 +355,18 @@ Arrangement_zone_2<Arrangement,ZoneVisitor>::_direct_intersecting_edge_to_left
   // Make sure that the right endpoint of cv_ins lies on query_he.
   CGAL_assertion (traits->compare_y_at_x_2_object()
                   (traits->construct_max_vertex_2_object() (cv_ins),
-                   query_he.curve()) == EQUAL);
+                   query_he->curve()) == EQUAL);
 
   // Check whether the given halfedge is directed to the right.
   const bool               query_he_directed_right =
-    (traits->compare_xy_2_object() (query_he.source().point(),
-                                    query_he.target().point()) == SMALLER);
+    (traits->compare_xy_2_object() (query_he->source()->point(),
+                                    query_he->target()->point()) == SMALLER);
 
   // Check whether the curve lies above of below the edge (we use the curve
   // position predicate, as we know they cruves do not overlap and intersect
   // only at the split point).
   const Comparison_result  pos_res =
-      traits->compare_y_position_2_object() (cv_ins, query_he.curve());
+      traits->compare_y_position_2_object() (cv_ins, query_he->curve());
 
   if (pos_res == SMALLER)
   {
@@ -368,7 +374,7 @@ Arrangement_zone_2<Arrangement,ZoneVisitor>::_direct_intersecting_edge_to_left
     // take the haldedge directed from right to left, so if query_he is
     // directed to the right, we return it twin.
     if (query_he_directed_right)
-      return (query_he.twin());
+      return (query_he->twin());
     else
       return (query_he);
   }
@@ -380,7 +386,7 @@ Arrangement_zone_2<Arrangement,ZoneVisitor>::_direct_intersecting_edge_to_left
     // take the haldedge directed from left to right, so if query_he is
     // directed to the left, we return it twin.
     if (! query_he_directed_right)
-      return (query_he.twin());
+      return (query_he->twin());
     else
       return (query_he);
   }
@@ -394,7 +400,7 @@ Object Arrangement_zone_2<Arrangement,ZoneVisitor>::_compute_next_intersection
     (Halfedge_handle he)
 {
   // Get a pointer to the curve associated with the halfedge.
-  const X_monotone_curve_2  *p_curve = &(he.curve());
+  const X_monotone_curve_2  *p_curve = &(he->curve());
 
   // Check if the curve belongs to the set of invalid curves, with whom the
   // previously computed intersections are no longer valid.
@@ -461,7 +467,7 @@ Object Arrangement_zone_2<Arrangement,ZoneVisitor>::_compute_next_intersection
   // have to compute them now.
   Intersect_list           inter_list;
 
-  traits->intersect_2_object() (cv, he.curve(),
+  traits->intersect_2_object() (cv, he->curve(),
                                 std::back_inserter(inter_list));
 
   // Discard all intersection lying to the left of left_pt.
@@ -517,7 +523,7 @@ void Arrangement_zone_2<Arrangement,ZoneVisitor>::_remove_next_intersection
     (Halfedge_handle he)
 {
   // Get a pointer to the curve associated with the halfedge.
-  const X_monotone_curve_2  *p_curve = &(he.curve());
+  const X_monotone_curve_2  *p_curve = &(he->curve());
 
   // Locate the intersections with this curve in the intersections map.
   Intersect_map_iterator     iter = inter_map.find (p_curve);
@@ -561,10 +567,10 @@ void Arrangement_zone_2<Arrangement,ZoneVisitor>::
   Intersect_point_2       int_p;
   Point_2                 ip;
 
-  if (! face.is_unbounded())
+  if (! face->is_unbounded())
   {
     // Get circulators for the outer boundary of the face.
-    he_first = face.outer_ccb();
+    he_first = face->outer_ccb();
     he_curr = he_first;
 
     do
@@ -573,8 +579,8 @@ void Arrangement_zone_2<Arrangement,ZoneVisitor>::
       // endpoints of the curve associated with the current halfedge,
       //  in order to filter unnecessary intersection computations.
       if (found_intersect &&
-          compare_xy ((*he_curr).source().point(), intersect_p) == LARGER &&
-          compare_xy ((*he_curr).target().point(), intersect_p) == LARGER)
+          compare_xy (he_curr->source()->point(), intersect_p) == LARGER &&
+          compare_xy (he_curr->target()->point(), intersect_p) == LARGER)
       {
         // The current x-monotone curve lies entirely to the right of
         // ip_left, so its intersection with cv (if any) cannot lie to
@@ -586,7 +592,7 @@ void Arrangement_zone_2<Arrangement,ZoneVisitor>::
 
       // Check whether the two curves overlap in their x-range (in order
       // to avoid unnecessary intersection computations).
-      if (! is_in_x_range (cv, (*he_curr).curve()))
+      if (! is_in_x_range (cv, he_curr->curve()))
       {
         // In case there is no overlap, the two x-monotone curve obviously
         // do not intersect.
@@ -595,7 +601,7 @@ void Arrangement_zone_2<Arrangement,ZoneVisitor>::
       }
 
       // Compute the next intersection of cv and the current halfedge.
-      obj = _compute_next_intersection ((*he_curr));
+      obj = _compute_next_intersection (he_curr);
 
       if (! obj.is_empty())
       {
@@ -613,7 +619,7 @@ void Arrangement_zone_2<Arrangement,ZoneVisitor>::
             // Store the leftmost intersection point and the halfedge handle.
             intersect_p = ip;
             ip_mult = int_p.second;
-            intersect_he = *he_curr;
+            intersect_he = he_curr->handle();
             found_overlap = false;
           }
         }
@@ -635,7 +641,7 @@ void Arrangement_zone_2<Arrangement,ZoneVisitor>::
             intersect_p = ip;
             ip_mult = 0;
             overlap_cv = icv;
-            intersect_he = *he_curr;
+            intersect_he = he_curr->handle();
             found_overlap = true;
           }
         }
@@ -649,14 +655,15 @@ void Arrangement_zone_2<Arrangement,ZoneVisitor>::
 
     } while (he_curr != he_first);
 
-  } // End: if (! face.is_unbounded())
+  } // End: if (! face->is_unbounded())
 
   // Go over the boundary of the holes inside the face (if there exist any),
   // and try to locate intersections of cv with the edges along the boundary
   // of each hole.
   typename Arrangement_2::Holes_iterator   holes_it;
 
-  for (holes_it = face.holes_begin(); holes_it != face.holes_end(); ++holes_it)
+  for (holes_it = face->holes_begin();
+       holes_it != face->holes_end(); ++holes_it)
   {
     // Get circulators for the boundary of the current hole.
     he_first = *holes_it;
@@ -668,8 +675,8 @@ void Arrangement_zone_2<Arrangement,ZoneVisitor>::
       // endpoints of the curve associated with the current halfedge,
       //  in order to filter unnecessary intersection computations.
       if (found_intersect &&
-          compare_xy ((*he_curr).source().point(), intersect_p) == LARGER &&
-          compare_xy ((*he_curr).target().point(), intersect_p) == LARGER)
+          compare_xy (he_curr->source()->point(), intersect_p) == LARGER &&
+          compare_xy (he_curr->target()->point(), intersect_p) == LARGER)
       {
         // The current x-monotone curve lies entirely to the right of
         // ip_left, so its intersection with cv (if any) cannot lie to
@@ -681,7 +688,7 @@ void Arrangement_zone_2<Arrangement,ZoneVisitor>::
 
       // Check whether the two curves overlap in their x-range (in order
       // to avoid unnecessary intersection computations).
-      if (! is_in_x_range (cv, (*he_curr).curve()))
+      if (! is_in_x_range (cv, he_curr->curve()))
       {
         // In case there is no overlap, the two x-monotone curve obviously
         // do not intersect.
@@ -690,7 +697,7 @@ void Arrangement_zone_2<Arrangement,ZoneVisitor>::
       }
 
       // Compute the next intersection of cv and the current halfedge.
-      obj = _compute_next_intersection ((*he_curr));
+      obj = _compute_next_intersection (he_curr);
 
       if (! obj.is_empty())
       {
@@ -709,7 +716,7 @@ void Arrangement_zone_2<Arrangement,ZoneVisitor>::
             // handle.
             intersect_p = ip;
             ip_mult = int_p.second;
-            intersect_he = *he_curr;
+            intersect_he = he_curr->handle();
             found_overlap = false;
           }
         }
@@ -732,7 +739,7 @@ void Arrangement_zone_2<Arrangement,ZoneVisitor>::
             intersect_p = ip;
             ip_mult = 0;
             overlap_cv = icv;
-            intersect_he = *he_curr;
+            intersect_he = he_curr->handle();
             found_overlap = true;
           }
         }
@@ -752,28 +759,28 @@ void Arrangement_zone_2<Arrangement,ZoneVisitor>::
   // exist any), and check whether an isolated vertex lies on the curve.
   typename Arrangement_2::Isolated_vertices_iterator   iso_verts_it;
 
-  for (iso_verts_it = face.isolated_vertices_begin();
-       iso_verts_it != face.isolated_vertices_end(); ++iso_verts_it)
+  for (iso_verts_it = face->isolated_vertices_begin();
+       iso_verts_it != face->isolated_vertices_end(); ++iso_verts_it)
   {
     // If the isolated vertex is not in the x-range of our curve, disregard it.
-    if (! is_in_x_range (cv, (*iso_verts_it).point()))
+    if (! is_in_x_range (cv, iso_verts_it->point()))
       continue;
 
     // If we already have an intersection point, compare it to the current
     // isolated vertex, in order to filter unnecessary computations.
     if (found_intersect &&
-        compare_xy ((*iso_verts_it).point(), intersect_p) == LARGER)
+        compare_xy (iso_verts_it->point(), intersect_p) == LARGER)
     {
       continue;
     }
 
     // In case the isolated vertex lies on the curve, update the intersection
     // point accordingly.
-    if (compare_y_at_x ((*iso_verts_it).point(), cv) == EQUAL &&
-        compare_xy ((*iso_verts_it).point(), left_pt) == LARGER)
+    if (compare_y_at_x (iso_verts_it->point(), cv) == EQUAL &&
+        compare_xy (iso_verts_it->point(), left_pt) == LARGER)
     {
-      intersect_v = *iso_verts_it;
-      intersect_p = intersect_v.point();
+      intersect_v = iso_verts_it->handle();
+      intersect_p = intersect_v->point();
       ip_mult = 0;
       found_intersect = true;
       found_iso_vert = true;
@@ -800,9 +807,9 @@ bool Arrangement_zone_2<Arrangement,ZoneVisitor>::_zone_in_face
      bool on_boundary)
 {
   CGAL_precondition ((! on_boundary &&
-                        ((left_v == invalid_v && left_he == invalid_he) ||
-                         left_v.is_isolated())) ||
-                       (on_boundary && left_he != invalid_he));
+                      ((left_v == invalid_v && left_he == invalid_he) ||
+                      left_v->is_isolated())) ||
+                     (on_boundary && left_he != invalid_he));
 
   // Find the first intersection of the curve with the face boundary.
   _leftmost_intersection_with_face_boundary (face);
@@ -854,17 +861,17 @@ bool Arrangement_zone_2<Arrangement,ZoneVisitor>::_zone_in_face
     // Check whether intersect_p coincides with one of the end-vertices of the
     // halfedge that cv intersects.
     if (traits->equal_2_object() (intersect_p,
-                                  intersect_he.source().point()))
+                                  intersect_he->source()->point()))
     {
       // We know that the right endpoint of sub_cv1 lies on the source vertex:
-      right_v = intersect_he.source();
+      right_v = intersect_he->source();
       right_he = invalid_he;
     }
     else if (traits->equal_2_object() (intersect_p,
-                                       intersect_he.target().point()))
+                                       intersect_he->target()->point()))
     {
       // We know that the right endpoint of sub_cv1 lies on the target vertex:
-      right_v = intersect_he.target();
+      right_v = intersect_he->target();
       right_he = invalid_he;
     }
     else
@@ -885,7 +892,7 @@ bool Arrangement_zone_2<Arrangement,ZoneVisitor>::_zone_in_face
   }
 
   // Store the curve currently associated with the intersecting halfedge.
-  const X_monotone_curve_2  *p_old_curve = &(intersect_he.curve());
+  const X_monotone_curve_2  *p_old_curve = &(intersect_he->curve());
 
   // Notify the visitor that the left endpoint of the first subcurve is
   // located within the current face and both its endpoint are located
@@ -916,9 +923,9 @@ bool Arrangement_zone_2<Arrangement,ZoneVisitor>::_zone_in_face
     // it into the arrangement. In this case, left_pt should be associated
     // with the target vertex of the new halfedge.
     CGAL_assertion (traits->equal_2_object() (left_pt,
-                                              inserted_he.target().point()));
+                                              inserted_he->target()->point()));
 
-    left_v = inserted_he.target();
+    left_v = inserted_he->target();
 
     // If right_he is known, it is possible to set left_he according to the
     // geometric information we have.
@@ -935,7 +942,7 @@ bool Arrangement_zone_2<Arrangement,ZoneVisitor>::_zone_in_face
         //                x                              .
         //   inserted_he / \                             .
         //              /   \                            .
-        left_he = inserted_he.next().twin();
+        left_he = inserted_he->next()->twin();
       }
       else if (ip_mult != 0)
       {
@@ -943,8 +950,8 @@ bool Arrangement_zone_2<Arrangement,ZoneVisitor>::_zone_in_face
         // right, we take the inserted halfedge to be left_he, otherwise
         // right_he itself becomes left_he:
         if (traits->compare_xy_2_object()
-            (right_he.source().point(),
-             right_he.target().point()) == SMALLER)
+            (right_he->source()->point(),
+             right_he->target()->point()) == SMALLER)
         {
           left_he = inserted_he;
         }
@@ -984,7 +991,7 @@ bool Arrangement_zone_2<Arrangement,ZoneVisitor>::_zone_in_face
       // If the multiplicity is known and is even, we stay with the same
       // halfedge.
       if ((ip_mult % 2) == 1)
-        left_he = right_he.twin();
+        left_he = right_he->twin();
       else if (ip_mult != 0)
         left_he = right_he;
       else
@@ -1014,20 +1021,20 @@ bool Arrangement_zone_2<Arrangement,ZoneVisitor>::_zone_in_overlap ()
     traits->construct_max_vertex_2_object() (overlap_cv);
   Vertex_handle   he_right_v;
 
-  if (traits->compare_xy_2_object() (intersect_he.source().point(),
-                                     intersect_he.target().point()) == SMALLER)
+  if (traits->compare_xy_2_object() (intersect_he->source()->point(),
+                                     intersect_he->target()->point()) == SMALLER)
   {
-    he_right_v = intersect_he.target();
+    he_right_v = intersect_he->target();
   }
   else
   {
-    he_right_v = intersect_he.source();
-    intersect_he = intersect_he.twin();
+    he_right_v = intersect_he->source();
+    intersect_he = intersect_he->twin();
   }
 
   // Compare the two right endpoints. Note that overlap_cv cannot extend to
   // the right longer than the halfedge it overlaps.
-  const Point_2&         he_right_pt = he_right_v.point();
+  const Point_2&         he_right_pt = he_right_v->point();
 
   Comparison_result      res = traits->compare_xy_2_object() (cv_right_pt,
                                                               he_right_pt);
@@ -1048,7 +1055,7 @@ bool Arrangement_zone_2<Arrangement,ZoneVisitor>::_zone_in_overlap ()
   }
 
   // Store the curve currently associated with the overlapping halfedge.
-  const X_monotone_curve_2  *p_old_curve = &(intersect_he.curve());
+  const X_monotone_curve_2  *p_old_curve = &(intersect_he->curve());
 
   // Notify the visitor on the overlapping zone.
   Visitor_result  visitor_res = visitor->found_overlap (overlap_cv,
@@ -1091,9 +1098,9 @@ bool Arrangement_zone_2<Arrangement,ZoneVisitor>::_zone_in_overlap ()
     // In this case, left_pt should be associated with the target vertex of
     // the updated halfedge.
     CGAL_assertion (traits->equal_2_object() (left_pt,
-                                              updated_he.target().point()));
+                                              updated_he->target()->point()));
  
-    left_v = updated_he.target();
+    left_v = updated_he->target();
   }
   else
   {

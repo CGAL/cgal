@@ -49,14 +49,12 @@ public:
   typedef typename Arrangement_2::Halfedge_const_handle Halfedge_const_handle;
   typedef typename Arrangement_2::Face_handle           Face_handle;
   typedef typename Arrangement_2::Face_const_handle     Face_const_handle;
-  typedef typename Arrangement_2::Holes_iterator        Holes_iterator;
-
 
 private:
 
-  typedef typename Arrangement_2::Vertex                Vertex;
-  typedef typename Arrangement_2::Halfedge              Halfedge;
-  typedef typename Arrangement_2::Face                  Face;
+  typedef typename Arrangement_2::DVertex               DVertex;
+  typedef typename Arrangement_2::DHalfedge             DHalfedge;
+  typedef typename Arrangement_2::DFace                 DFace;
 
   Arrangement_2  *p_arr;           // The associated arrangement.
 
@@ -98,7 +96,7 @@ public:
   Halfedge_handle locate_around_vertex (Vertex_handle vh,
                                         const X_monotone_curve_2& cv) const
   {
-    Halfedge*  he = p_arr->_locate_around_vertex (p_arr->_vertex (vh), cv);
+    DHalfedge*  he = p_arr->_locate_around_vertex (p_arr->_vertex (vh), cv);
 
     CGAL_assertion (he != NULL);
     return (p_arr->_handle_for (he));
@@ -156,19 +154,6 @@ public:
   }
 
   /*!
-   * Move a given hole from one face to another.
-   * \param from_face A handle for the face currently containing the hole.
-   * \param to_face A handle for the face into which we should move the hole.
-   * \param hole A holes iterator pointing at the hole.
-   */
-  void move_hole (Face_handle from_face, Face_handle to_face,
-                  Holes_iterator hole)
-  {
-    p_arr->_move_hole (p_arr->_face (from_face), p_arr->_face (to_face),
-                       p_arr->_holes_iterator (hole));
-  }
-
-  /*!
    * Check whether the given halfedge lies on the outer boundary of the given
    * face.
    * \param f A handle for the given face.
@@ -218,13 +203,28 @@ public:
                                          Halfedge_handle prev2,
                                          bool& new_face)
   {
-    Halfedge*  he = p_arr->_insert_at_vertices (cv,
-                                                p_arr->_halfedge (prev1),
-                                                p_arr->_halfedge (prev2),
-                                                new_face);
+    DHalfedge*  he = p_arr->_insert_at_vertices (cv,
+                                                 p_arr->_halfedge (prev1),
+                                                 p_arr->_halfedge (prev2),
+                                                 new_face);
 
     CGAL_assertion (he != NULL);
     return (p_arr->_handle_for (he));
+  }
+
+  /*!
+   * Relocate all holes and isolated vertices to their proper position,
+   * immediately after a face has split due to the insertion of a new halfedge.
+   * In case insert_at_vertices_ex() was invoked and indicated that a new face
+   * has been created, this function should be called with the halfedge
+   * returned by insert_at_vertices_ex().
+   * \param new_he The new halfedge that caused the split, such that the new
+   *               face lies to its left and the old face to its right.
+   */
+  void relocate_in_new_face (DHalfedge *new_he)
+  {
+    p_arr->_relocate_in_new_face (p_arr->_halfedge (new_he));
+    return;
   }
 
   /*!
@@ -235,14 +235,14 @@ public:
    * \return A handle for the modified vertex (same as v).
    */
   Vertex_handle modify_vertex_ex (Vertex_handle v,
-				  const Point_2& p)
+                                  const Point_2& p)
   {
     p_arr->_modify_vertex (p_arr->_vertex (v),
-			   p);
+                           p);
 
     return (v);
   }
-	
+        
   /*!
    * Modify the x-monotone curve associated with a given edge. The curve may be
    * geometrically different than the one currently associated with the edge.
@@ -251,14 +251,14 @@ public:
    * \return A handle for the modified edge (same as e).
    */
   Halfedge_handle modify_edge_ex (Halfedge_handle e,
-				  const X_monotone_curve_2& cv)
+                                  const X_monotone_curve_2& cv)
   {
     p_arr->_modify_edge (p_arr->_halfedge (e),
-			 cv);
+                         cv);
 
     return (e);
   }
-	  
+          
   /*!
    * Split a given edge into two at a given point, and associate the given
    * x-monotone curves with the split edges.
@@ -276,9 +276,9 @@ public:
                                  const X_monotone_curve_2& cv1, 
                                  const X_monotone_curve_2& cv2)
   {
-    Halfedge*  he = p_arr->_split_edge (p_arr->_halfedge (e),
-                                        p,
-                                        cv1, cv2);
+    DHalfedge*  he = p_arr->_split_edge (p_arr->_halfedge (e),
+                                         p,
+                                         cv1, cv2);
 
     CGAL_assertion (he != NULL);
     return (p_arr->_handle_for (he));
@@ -293,53 +293,12 @@ public:
    */
   Face_handle remove_edge_ex (Halfedge_handle e)
   {
-    Face*      f = p_arr->_remove_edge (p_arr->_halfedge (e));
+    DFace*      f = p_arr->_remove_edge (p_arr->_halfedge (e));
     
     CGAL_assertion (f != NULL);
     return (p_arr->_handle_for (f));
   }
   //@}
-
-  /// \name Obtaining pointers to DCEL features (for hashing purposes).
-  //@{
-
-  /*! Get a pointer to a DCEL vertex (non-const version). */
-  Vertex* vertex (Vertex_handle v) const
-  {
-    return (p_arr->_vertex (v));
-  }
-
-  /*! Get a pointer to a DCEL vertex (const version). */
-  const Vertex* vertex (Vertex_const_handle v) const
-  {
-    return (p_arr->_vertex (v));
-  }
-
-  /*! Get a pointer to a DCEL halfedge (non-const version). */
-  Halfedge* halfedge (Halfedge_handle e) const
-  {
-    return (p_arr->_halfedge (e));
-  }
-
-  /*! Get a pointer to a DCEL halfedge (const version). */
-  const Halfedge* halfedge (Halfedge_const_handle e) const
-  {
-    return (p_arr->_halfedge (e));
-  }
-
-  /*! Get a pointer to a DCEL face (non-const version). */
-  Face* face (Face_handle f) const
-  {
-    return (p_arr->_face (f));
-  }
-
-  /*! Get a pointer to a DCEL face (const version). */
-  const Face* face (Face_const_handle f) const
-  {
-    return (p_arr->_face (f));
-  }
-  //@}
-
 };
 
 CGAL_END_NAMESPACE

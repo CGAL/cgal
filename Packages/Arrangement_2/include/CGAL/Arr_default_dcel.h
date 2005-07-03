@@ -30,6 +30,7 @@
 #include <CGAL/N_step_adaptor.h>
 #include <CGAL/In_place_list.h>
 #include <CGAL/HalfedgeDS_iterator.h>
+#include <CGAL/Arrangement_2/Arrangement_2_iterators.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -438,20 +439,20 @@ public:
   }
 
   // Define the isloated vertices iterators:
-  typedef I_HalfedgeDS_iterator<
+  typedef I_Dereference_iterator<
     typename F::Isolated_vertices_iterator,
-    Vertex*,
+    Vertex,
     typename F::Isolated_vertices_iterator::difference_type,
     typename F::Isolated_vertices_iterator::iterator_category>
-                                                  Isolated_vertices_iterator;
-
-  typedef I_HalfedgeDS_const_iterator<
+                                              Isolated_vertices_iterator;
+  
+  typedef I_Dereference_const_iterator<
     typename F::Isolated_vertices_const_iterator,
     typename F::Isolated_vertices_iterator,
-    const Vertex*,
-    typename F::Isolated_vertices_const_iterator::difference_type,
-    typename F::Isolated_vertices_const_iterator::iterator_category>
-                                            Isolated_vertices_const_iterator;
+    Vertex,
+    typename F::Isolated_vertices_iterator::difference_type,
+    typename F::Isolated_vertices_iterator::iterator_category>
+                                              Isolated_vertices_const_iterator;
 
   /*! Add an isloated vertex inside the face. */
   void add_isolated_vertex (Vertex* v)

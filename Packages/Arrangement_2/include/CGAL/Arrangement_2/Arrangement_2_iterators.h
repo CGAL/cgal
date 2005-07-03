@@ -21,2103 +21,229 @@
 #define CGAL_ARRANGEMENT_2_ITERATORS_H
 
 /*! \file
- * Definitions of the arrangement iterator and circulators.
+ * Definitions of auxiliary iterator adaptors.
  */
 
 CGAL_BEGIN_NAMESPACE
 
-// Forward declerations.
-template <class Traits, class Dcel> class _Vertex_handle;
-template <class Traits, class Dcel> class _Vertex_const_handle;
-template <class Traits, class Dcel> class _Vertex_iterator;
-template <class Traits, class Dcel> class _Vertex_const_iterator;
-
-template <class Traits, class Dcel> class _Halfedge_handle;
-template <class Traits, class Dcel> class _Halfedge_const_handle;
-template <class Traits, class Dcel> class _Halfedge_iterator;
-template <class Traits, class Dcel> class _Halfedge_const_iterator;
-template <class Traits, class Dcel> class _Edge_iterator;
-template <class Traits, class Dcel> class _Edge_const_iterator;
-
-template <class Traits, class Dcel> class _Face_handle;
-template <class Traits, class Dcel> class _Face_const_handle;
-template <class Traits, class Dcel> class _Face_iterator;
-template <class Traits, class Dcel> class _Face_const_iterator;
-
-template <class Traits, class Dcel> class _Halfedge_around_vertex_circulator;
-template <class Traits, class Dcel> class 
-                                    _Halfedge_around_vertex_const_circulator;
-template <class Traits, class Dcel> class _Ccb_halfedge_circulator;
-template <class Traits, class Dcel> class _Ccb_halfedge_const_circulator;
-template <class Traits, class Dcel> class _Holes_iterator;
-template <class Traits, class Dcel> class _Holes_const_iterator;
-template <class Traits, class Dcel> class _Isolated_vertices_iterator;
-template <class Traits, class Dcel> class _Isolated_vertices_const_iterator;
-
-template <class Traits, class Dcel>  class Arrangement_2;
-
-// --------------------------------------------------------------------------
-// Circulators
-// --------------------------------------------------------------------------
-
-/*! \class
- * Circulator for the edges around a given vertex.
+/*!
+ * \class
+ * An iterator adaptor for dereferencing the value-type of the iterator class
+ * (given as Iterator_), which is supposed to be a pointer, and handle it as
+ * the value-type given by Value_.
  */
-template <class Traits_, class Dcel_> 
-class _Halfedge_around_vertex_circulator
+template <class Iterator_, class Value_, class Diff_, class Category_>
+class I_Dereference_iterator
 {
-  friend class Arrangement_2<Traits_, Dcel_>;
+public:
 
-  friend class _Halfedge_around_vertex_const_circulator<Traits_, Dcel_>;
-  friend class _Vertex_handle<Traits_, Dcel_>;
+  // Type definitions:
+  typedef Iterator_                               Iterator;
+  typedef I_Dereference_iterator<Iterator_,
+				 Value_,
+				 Diff_,
+				 Category_>       Self;
+
+  typedef Category_                               iterator_category;
+  typedef Value_                                  value_type;
+  typedef value_type&                             reference;
+  typedef value_type*                             pointer;
+  typedef Diff_                                   difference_type;
 
 protected:
 
-  typedef Dcel_                                             Dcel;
-  typedef _Halfedge_around_vertex_circulator<Traits_, Dcel> Self;
-  typedef typename Dcel::Halfedge                           Halfedge;
-
-  Halfedge    *p_he;           // The current halfedge.
-
-  /*! Constructor from a halfedge pointer. */
-  _Halfedge_around_vertex_circulator (Halfedge *e) :
-    p_he (e)
-  {}
+  Iterator        iter;           // The internal iterator.
 
 public:
 
-  /*! Default constructor. */
-  _Halfedge_around_vertex_circulator () :
-    p_he (NULL)
+  /// \name Construction
+  //@{
+  I_Dereference_iterator ()
   {}
 
-  /*! Equality operator. */
-  bool operator== (const Self& circ) const
-  {
-    return (p_he == circ.p_he);
-  }
-
-  /*! Inequality operator. */
-  bool operator!= (const Self& circ) const
-  {
-    return (p_he != circ.p_he);
-  }
-
-  /*! Increment operator (prefix). */
-  Self& operator++ ()
-  {
-    p_he = p_he->next()->opposite();
-    return (*this);
-  }
-
-  /*! Increment operator (postfix). */
-  Self operator++ (int )
-  {
-    Self    temp = *this;
-    p_he = p_he->next()->opposite();
-    return (temp);
-  }
-
-  /*! Decrement operator (prefix). */
-  Self& operator-- ()
-  {
-    p_he = p_he->opposite()->previous();
-    return (*this);
-  }
-
-  /*! Decrement operator (postfix). */
-  Self operator-- (int )
-  {
-    Self    temp = *this;
-    p_he = p_he->opposite()->previous();
-    return (temp);
-  }
-
-  /*! Get the halfedge pointer. */
-  Halfedge* halfedge () const
-  {
-    return (p_he);
-  }
-};
-
-/*! \class
- * Const circulator for the edges around a given vertex.
- */
-template <class Traits_, class Dcel_> 
-class _Halfedge_around_vertex_const_circulator
-{
-  friend class Arrangement_2<Traits_, Dcel_>;
-
-  friend class _Vertex_const_handle<Traits_, Dcel_>;
-
-protected:
-
-  typedef Dcel_                                                   Dcel;
-  typedef _Halfedge_around_vertex_const_circulator<Traits_, Dcel> Self;
-  typedef typename Dcel::Halfedge                                 Halfedge;
-
-  const Halfedge    *p_he;           // The current halfedge.
-
-  /*! Constructor from a halfedge pointer. */
-  _Halfedge_around_vertex_const_circulator (const Halfedge *e) :
-    p_he (e)
+  I_Dereference_iterator (Iterator it) :
+    iter(it)
   {}
+  //@}
 
-public:
-
-  /*! Default constructor. */
-  _Halfedge_around_vertex_const_circulator () :
-    p_he (NULL)
-  {}
-
-  /*! Constructor from a non-const circulator. */
-  _Halfedge_around_vertex_const_circulator
-      (const _Halfedge_around_vertex_circulator<Traits_, Dcel>& circ) :
-    p_he (circ.p_he)
-  {}
-
-  /*! Equality operator. */
-  bool operator== (const Self& circ) const
+  /// \name Basic operations.
+  //@{
+  bool operator== (const Self& it) const
   {
-    return (p_he == circ.p_he);
+    return (iter == it.iter);
   }
-
-  /*! Inequality operator. */
-  bool operator!= (const Self& circ) const
-  {
-    return (p_he != circ.p_he);
-  }
-
-  /*! Increment operator (prefix). */
-  Self& operator++ ()
-  {
-    p_he = p_he->next()->opposite();
-    return (*this);
-  }
-
-  /*! Increment operator (postfix). */
-  Self operator++ (int )
-  {
-    Self    temp = *this;
-    p_he = p_he->next()->opposite();
-    return (temp);
-  }
-
-  /*! Decrement operator (prefix). */
-  Self& operator-- ()
-  {
-    p_he = p_he->opposite()->previous();
-    return (*this);
-  }
-
-  /*! Decrement operator (postfix). */
-  Self operator-- (int )
-  {
-    Self    temp = *this;
-    p_he = p_he->opposite()->previous();
-    return (temp);
-  }
-
-  /*! Get the halfedge pointer. */
-  const Halfedge* halfedge () const
-  {
-    return (p_he);
-  }
-};
-
-/*! \class
- * Circulator for the edges around the boundary of a connected component.
- */
-template <class Traits_, class Dcel_> 
-class _Ccb_halfedge_circulator
-{
-  friend class Arrangement_2<Traits_, Dcel_>;
-
-  friend class _Ccb_halfedge_const_circulator<Traits_, Dcel_>;
-  friend class _Face_handle<Traits_, Dcel_>;
-  friend class _Holes_iterator<Traits_, Dcel_>;
-
-protected:
-
-  typedef Dcel_                                    Dcel;
-  typedef _Ccb_halfedge_circulator<Traits_, Dcel>  Self;
-  typedef typename Dcel::Halfedge                  Halfedge;
-
-  Halfedge    *p_he;           // The current halfedge.
-
-  /*! Constructor from a halfedge pointer. */
-  _Ccb_halfedge_circulator (Halfedge *e) :
-    p_he (e)
-  {}
-
-public:
-
-  /*! Default constructor. */
-  _Ccb_halfedge_circulator () :
-    p_he (NULL)
-  {}
-
-  /*! Equality operator. */
-  bool operator== (const Self& circ) const
-  {
-    return (p_he == circ.p_he);
-  }
-
-  /*! Inequality operator. */
-  bool operator!= (const Self& circ) const
-  {
-    return (p_he != circ.p_he);
-  }
-
-  /*! Increment operator (prefix). */
-  Self& operator++ ()
-  {
-    p_he = p_he->next();
-    return (*this);
-  }
-
-  /*! Increment operator (postfix). */
-  Self operator++ (int )
-  {
-    Self    temp = *this;
-    p_he = p_he->next();
-    return (temp);
-  }
-
-  /*! Decrement operator (prefix). */
-  Self& operator-- ()
-  {
-    p_he = p_he->previous();
-    return (*this);
-  }
-
-  /*! Decrement operator (postfix). */
-  Self operator-- (int )
-  {
-    Self    temp = *this;
-    p_he = p_he->previous();
-    return (temp);
-  }
-
-  /*! Get the halfedge pointer. */
-  Halfedge* halfedge () const
-  {
-    return (p_he);
-  }
-};
-
-/*! \class
- * Const circulator for the edges around the boundary of a connected component.
- */
-template <class Traits_, class Dcel_> 
-class _Ccb_halfedge_const_circulator
-{
-  friend class Arrangement_2<Traits_, Dcel_>;
-
-  friend class _Face_const_handle<Traits_, Dcel_>;
-  friend class _Holes_const_iterator<Traits_, Dcel_>;
-
-protected:
-
-  typedef Dcel_                                          Dcel;
-  typedef _Ccb_halfedge_const_circulator<Traits_, Dcel>  Self;
-  typedef typename Dcel::Halfedge                        Halfedge;
-
-  const Halfedge    *p_he;           // The current halfedge.
-
-  /*! Constructor from a halfedge pointer. */
-  _Ccb_halfedge_const_circulator (const Halfedge *e) :
-    p_he (e)
-  {}
-
-public:
-
-  /*! Default constructor. */
-  _Ccb_halfedge_const_circulator () :
-    p_he (NULL)
-  {}
-
-  /*! Constructor from a non-const circulator. */
-  _Ccb_halfedge_const_circulator
-      (const _Ccb_halfedge_circulator<Traits_, Dcel>& circ) :
-    p_he (circ.p_he)
-  {}
-
-  /*! Equality operator. */
-  bool operator== (const Self& circ) const
-  {
-    return (p_he == circ.p_he);
-  }
-
-  /*! Inequality operator. */
-  bool operator!= (const Self& circ) const
-  {
-    return (p_he != circ.p_he);
-  }
-
-  /*! Increment operator (prefix). */
-  Self& operator++ ()
-  {
-    p_he = p_he->next();
-    return (*this);
-  }
-
-  /*! Increment operator (postfix). */
-  Self operator++ (int )
-  {
-    Self    temp = *this;
-    p_he = p_he->next();
-    return (temp);
-  }
-
-  /*! Decrement operator (prefix). */
-  Self& operator-- ()
-  {
-    p_he = p_he->previous();
-    return (*this);
-  }
-
-  /*! Decrement operator (postfix). */
-  Self operator-- (int )
-  {
-    Self    temp = *this;
-    p_he = p_he->previous();
-    return (temp);
-  }
-
-  /*! Get the halfedge pointer. */
-  const Halfedge* halfedge () const
-  {
-    return (p_he);
-  }
-};
-
-/*! \class
- * Iterator for the holes inside a face.
- */
-template <class Traits_, class Dcel_> 
-class _Holes_iterator
-{
-  friend class Arrangement_2<Traits_, Dcel_>;
-
-  friend class _Holes_const_iterator<Traits_, Dcel_>;   
-  friend class _Face_handle<Traits_, Dcel_>;
-
-protected:
-
-  typedef Dcel_                                  Dcel;
-  typedef _Holes_iterator<Traits_, Dcel>         Self;
-  typedef typename Dcel::Face::Holes_iterator    Holes_iter;
-
-  Holes_iter     holes_it;           // The stored iterator.
-
-  /*! Constructor from a DCEL holes iterator. */
-  _Holes_iterator (const Holes_iter& it) :
-    holes_it (it)
-  {}
-
-public:
-
-  typedef unsigned int                            Size;
-  typedef unsigned int                            size_type;
-  typedef typename Holes_iter::difference_type    difference_type;
-  typedef typename Holes_iter::difference_type    Difference;
-  typedef std::bidirectional_iterator_tag         iterator_category;
-
-  /*! Default constructor. */
-  _Holes_iterator ()
-  {}
-
-  /*! Equality operator. */
-  bool operator== (const Self& iter) const
-  {
-    return (holes_it == iter.holes_it);
-  }
-
-  /*! Inequality operator. */
-  bool operator!= (const Self& iter) const
-  {
-    return (holes_it != iter.holes_it);
-  }
-
-  /*! Increment operator (prefix). */
-  Self& operator++ ()
-  {
-    ++holes_it;
-    return (*this);
-  }
-
-  /*! Increment operator (postfix). */
-  Self operator++ (int )
-  {
-    Self    temp = *this;
-    ++holes_it;
-    return (temp);
-  }
-
-  /*! Decrement operator (prefix). */
-  Self& operator-- ()
-  {
-    --holes_it;
-    return (*this);
-  }
-
-  /*! Decrement operator (postfix). */
-  Self operator-- (int )
-  {
-    Self    temp = *this;
-    --holes_it;
-    return (temp);
-  }
-
-  /*! Get a circulator for the boundary of the current hole. */
-  _Ccb_halfedge_circulator<Traits_, Dcel> operator* () const
-  {
-    return _Ccb_halfedge_circulator<Traits_, Dcel> (*holes_it);
-  }
-};
-
-/*! \class
- * Const iterator for the holes inside a face.
- */
-template <class Traits_, class Dcel_>
-class _Holes_const_iterator
-{
-  friend class Arrangement_2<Traits_, Dcel_>;
-
-  friend class _Face_const_handle<Traits_, Dcel_>;
-
-protected:
-
-  typedef Dcel_                                      Dcel;
-  typedef _Holes_const_iterator<Traits_, Dcel>       Self;
-  typedef typename Dcel::Face::Holes_const_iterator  Holes_const_iter;
-
-  Holes_const_iter     holes_it;           // The stored iterator.
-
-  /*! Constructor from a DCEL holes iterator. */
-  _Holes_const_iterator (const Holes_const_iter& it) :
-    holes_it (it)
-  {}
-
-public:
-
-  typedef unsigned int                               Size;
-  typedef unsigned int                               size_type;
-  typedef typename Holes_const_iter::difference_type difference_type;
-  typedef typename Holes_const_iter::difference_type Difference;
-  typedef std::bidirectional_iterator_tag            iterator_category;
-
-  /*! Default constructor. */
-  _Holes_const_iterator ()
-  {}
-
-  /*! Constructor from a non-const iterator. */
-  _Holes_const_iterator (const _Holes_iterator<Traits_, Dcel>& iter) :
-    holes_it (iter.holes_it)
-  {}
-
-  /*! Equality operator. */
-  bool operator== (const Self& iter) const
-  {
-    return (holes_it == iter.holes_it);
-  }
-
-  /*! Inequality operator. */
-  bool operator!= (const Self& iter) const
-  {
-    return (holes_it != iter.holes_it);
-  }
-
-  /*! Increment operator (prefix). */
-  Self& operator++ ()
-  {
-    ++holes_it;
-    return (*this);
-  }
-
-  /*! Increment operator (postfix). */
-  Self operator++ (int )
-  {
-    Self    temp = *this;
-    ++holes_it;
-    return (temp);
-  }
-
-  /*! Decrement operator (prefix). */
-  Self& operator-- ()
-  {
-    --holes_it;
-    return (*this);
-  }
-
-  /*! Decrement operator (postfix). */
-  Self operator-- (int )
-  {
-    Self    temp = *this;
-    --holes_it;
-    return (temp);
-  }
-
-  /*! Get a const circulator for the boundary of the current hole. */
-  _Ccb_halfedge_const_circulator<Traits_, Dcel> operator* () const
-  {
-    return _Ccb_halfedge_const_circulator<Traits_, Dcel> (*holes_it);  
-  }
-};
-
-/*! \class
- * Iterator for the isolated vertices inside a face.
- */
-template <class Traits_, class Dcel_>
-class _Isolated_vertices_iterator
-{
-  friend class Arrangement_2<Traits_, Dcel_>;
-
-  friend class _Isolated_vertices_const_iterator<Traits_, Dcel_>;
-  friend class _Face_handle<Traits_, Dcel_>;
-
-protected:
-
-  typedef Dcel_                                            Dcel;
-  typedef _Isolated_vertices_iterator<Traits_, Dcel>       Self;
-  typedef typename Dcel::Face::Isolated_vertices_iterator  Iso_verts_iter;
-  typedef typename Dcel::Vertex                            Vertex;
-
-  Iso_verts_iter     iso_verts_it;           // The stored iterator.
-
-  /*! Constructor from a DCEL isolated vertices iterator. */
-  _Isolated_vertices_iterator (const Iso_verts_iter& it) :
-    iso_verts_it (it)
-  {}
-
-public:
-
-  typedef unsigned int                              Size;
-  typedef unsigned int                              size_type;
-  typedef typename Iso_verts_iter::difference_type  difference_type;
-  typedef typename Iso_verts_iter::difference_type  Difference;
-  typedef std::bidirectional_iterator_tag           iterator_category;
-
-  /*! Default constructor. */
-  _Isolated_vertices_iterator ()
-  {}
-
-  /*! Equality operator. */
-  bool operator== (const Self& iter) const
-  {
-    return (iso_verts_it == iter.iso_verts_it);
-  }
-
-  /*! Inequality operator. */
-  bool operator!= (const Self& iter) const
-  {
-    return (iso_verts_it != iter.iso_verts_it);
-  }
-
-  /*! Increment operator (prefix). */
-  Self& operator++ ()
-  {
-    ++iso_verts_it;
-    return (*this);
-  }
-
-  /*! Increment operator (postfix). */
-  Self operator++ (int )
-  {
-    Self    temp = *this;
-    ++iso_verts_it;
-    return (temp);
-  }
-
-  /*! Decrement operator (prefix). */
-  Self& operator-- ()
-  {
-    --iso_verts_it;
-    return (*this);
-  }
-
-  /*! Decrement operator (postfix). */
-  Self operator-- (int )
-  {
-    Self    temp = *this;
-    --iso_verts_it;
-    return (temp);
-  }
-
-  /*! Get the vertex pointer. */
-  Vertex* vertex () const
-  {
-    return (*iso_verts_it);
-  }
-};
-
-/*! \class
- * Const iterator for the isolated vertices inside a face.
- */
-template <class Traits_, class Dcel_>
-class _Isolated_vertices_const_iterator
-{
-  friend class Arrangement_2<Traits_, Dcel_>;
-
-  friend class _Face_const_handle<Traits_, Dcel_>;
-
-protected:
-
-  typedef Dcel_                                             Dcel;
-  typedef _Isolated_vertices_const_iterator<Traits_, Dcel>  Self;
-  typedef typename Dcel::Face::Isolated_vertices_const_iterator
-                                                         Iso_verts_const_iter;
-  typedef typename Dcel::Vertex                             Vertex;
-
-  Iso_verts_const_iter     iso_verts_it;           // The stored iterator.
-
-  /*! Constructor from a DCEL isolated vertices iterator. */
-  _Isolated_vertices_const_iterator (const Iso_verts_const_iter& it) :
-    iso_verts_it (it)
-  {}
-
-public:
-
-  typedef unsigned int                                    Size;
-  typedef unsigned int                                    size_type;
-  typedef typename Iso_verts_const_iter::difference_type  difference_type;
-  typedef typename Iso_verts_const_iter::difference_type  Difference;
-  typedef std::bidirectional_iterator_tag                 iterator_category;
-
-  /*! Default constructor. */
-  _Isolated_vertices_const_iterator ()
-  {}
-
-  /*! Constructor from a non-const iterator. */
-  _Isolated_vertices_const_iterator
-      (const _Holes_iterator<Traits_, Dcel>& iter) :
-    iso_verts_it (iter.iso_verts_it)
-  {}
-
-  /*! Equality operator. */
-  bool operator== (const Self& iter) const
-  {
-    return (iso_verts_it == iter.iso_verts_it);
-  }
-
-  /*! Inequality operator. */
-  bool operator!= (const Self& iter) const
-  {
-    return (iso_verts_it != iter.iso_verts_it);
-  }
-
-  /*! Increment operator (prefix). */
-  Self& operator++ ()
-  {
-    ++iso_verts_it;
-    return (*this);
-  }
-
-  /*! Increment operator (postfix). */
-  Self operator++ (int )
-  {
-    Self    temp = *this;
-    ++iso_verts_it;
-    return (temp);
-  }
-
-  /*! Decrement operator (prefix). */
-  Self& operator-- ()
-  {
-    --iso_verts_it;
-    return (*this);
-  }
-
-  /*! Decrement operator (postfix). */
-  Self operator-- (int )
-  {
-    Self    temp = *this;
-    --iso_verts_it;
-    return (temp);
-  }
-
-  /*! Get the vertex pointer. */
-  const Vertex* vertex () const
-  {
-    return (*iso_verts_it);
-  }
-};
-
-// --------------------------------------------------------------------------
-// Handles
-// --------------------------------------------------------------------------
-
-/*! \class
- * The vertex handle class.
- */
-template <class Traits_, class Dcel_>
-class _Vertex_handle
-{
-  friend class Arrangement_2<Traits_, Dcel_>;
-
-  friend class _Vertex_const_handle<Traits_, Dcel_>;
-  friend class _Halfedge_handle<Traits_, Dcel_>;
-  friend class _Vertex_iterator<Traits_, Dcel_>;
-  friend class _Isolated_vertices_iterator<Traits_, Dcel_>;
-
-protected:
-
-  typedef Traits_                         Traits;
-  typedef Dcel_                           Dcel;
-  typedef _Vertex_handle<Traits, Dcel>    Self;
-  typedef typename Dcel::Size             Size;
-  typedef typename Dcel::Vertex           Vertex;
-  typedef typename Dcel::Halfedge         Halfedge;
-
-  Vertex        *p_v;     // The vertex associated with the handle.
-
-public:
-
-  /*! Default constructor. */
-  _Vertex_handle () :
-    p_v (NULL)
-  {}
-
-  /*! Constructor from a vertex pointer. */
-  _Vertex_handle (Vertex *v) :
-    p_v (v)
-  {}
-
-  /*! Equality operator. */
-  bool operator== (const Self& vh) const
-  {
-    return (p_v == vh.p_v);
-  }
-
-  /*! Inequality operator. */
-  bool operator!= (const Self& vh) const
-  {
-    return (p_v != vh.p_v);
-  }
-
-  /*! Get the point associated with the vertex. */
-  const typename Traits::Point_2& point () const
-  {
-    return (p_v->point());
-  }
-
-  /*!
-   * Set the point associated with the vertex.
-   * \param p The point.
-   * \pre p must be geometrically equal to the current point the
-   *      vertex stores.
-   */
-  void set_point (const typename Traits::Point_2& p)
-  {
-    CGAL_precondition_code(
-      Traits     traits;
-    );
-    CGAL_precondition (traits.points_equal (p_v->point(), p));
-
-    // Set the point (not that point() returns a Point_2 reference).
-    p_v->point() = p;
-  }
-
-  /*! Check whether the vertex is isolated (has no incident halfedges). */
-  bool is_isolated () const
-  {
-    // An isolated vertex do not have an incident halfedge, or points to
-    // a halfedge on the boundary of the face containing it (and this haldedge
-    // is not incident to it).
-    return (p_v->halfedge() == NULL || p_v->halfedge()->vertex() != p_v);
-  }
-
-  /*! Get the vertex degree (the number of incident halfedges). */
-  Size degree () const
-  {
-    if (is_isolated())
-      return (0);
-
-    // Go over all incident halfedges and count them.
-    Halfedge   *first = p_v->halfedge();
-    Halfedge   *curr = first;
-    Size        deg = 0;
-
-    do
-    {
-      deg++;
-      curr = curr->next()->opposite();
-    } while (curr != first);
-
-    return (deg);
-  }
-
-  /*!
-   * Get a circulator for the incident halfedges.
-   * \pre The vertex is not isolated.
-   */
-  _Halfedge_around_vertex_circulator<Traits, Dcel> incident_halfedges () const
-  {
-    CGAL_precondition (! is_isolated());
     
-    return _Halfedge_around_vertex_circulator<Traits, Dcel> (p_v->halfedge());
+  bool operator!= (const Self& it) const
+  {
+    return (!(iter == it.iter));
+  }
+    
+  Iterator current_iterator () const
+  {
+    return (iter);
+  }
+    
+  pointer ptr () const
+  {
+    return (reinterpret_cast<value_type *> (*iter));
   }
 
-  /*! Get a pointer to the current vertex. */
-  Vertex* operator-> () const
+  reference operator* () const
   {
-    return (p_v);
-  }
-};
-
-// Dereference operator:
-template <class Traits, class Dcel>
-_Vertex_handle<Traits, Dcel> operator*
-    (const _Isolated_vertices_iterator<Traits, Dcel>& iter)
-{
-  return _Vertex_handle<Traits, Dcel> (iter.vertex());
-}
-
-/*! \class
- * The vertex const handle class.
- */
-template <class Traits_, class Dcel_>
-class _Vertex_const_handle
-{
-  friend class Arrangement_2<Traits_, Dcel_>;
-
-  friend class _Halfedge_const_handle<Traits_, Dcel_>;
-  friend class _Vertex_const_iterator<Traits_, Dcel_>;
-  friend class _Isolated_vertices_const_iterator<Traits_, Dcel_>;
-
-protected:
-
-  typedef Traits_                             Traits;
-  typedef Dcel_                               Dcel;
-  typedef _Vertex_const_handle<Traits, Dcel>  Self;
-  typedef typename Dcel::Size                 Size;
-  typedef typename Dcel::Vertex               Vertex;
-  typedef typename Dcel::Halfedge             Halfedge;
-
-  const Vertex        *p_v;     // The vertex associated with the handle.
-
-public:
-
-  /*! Default constructor. */
-  _Vertex_const_handle () :
-    p_v (NULL)
-  {}
-
-  /*! Constructor from a vertex pointer. */
-  _Vertex_const_handle (const Vertex *v) :
-    p_v (v)
-  {}
-
-  /* Constructor from a non-const handle. */
-  _Vertex_const_handle (const _Vertex_handle<Traits, Dcel>& vh) :
-    p_v (vh.p_v)
-  {}
-
-  /*! Equality operator. */
-  bool operator== (const Self& vh) const
-  {
-    return (p_v == vh.p_v);
+    return (*(ptr()));
   }
 
-  /*! Inequality operator. */
-
-  bool operator!= (const Self& vh) const
+  pointer operator-> () const
   {
-    return (p_v != vh.p_v);
+    return (ptr());
   }
-
-  /*! Get the point associated with the vertex. */
-  const typename Traits::Point_2& point () const
+  //@}
+    
+  /// \name Incremernt operations (forward category).
+  //@{
+  Self& operator++()
   {
-    return (p_v->point());
-  }
-
-  /*! Check whether the vertex is isolated (has no incident halfedges). */
-  bool is_isolated () const
-  {
-    // An isolated vertex do not have an incident halfedge, or points to
-    // a halfedge on the boundary of the face containing it (and this haldedge
-    // is not incident to it).
-    return (p_v->halfedge() == NULL || p_v->halfedge()->vertex() != p_v);
-  }
-
-  /*! Get the vertex degree (the number of incident halfedges). */
-  Size degree () const
-  {
-    if (is_isolated())
-      return (0);
-
-    // Go over all incident halfedges and count them.
-    const Halfedge     *first = p_v->halfedge();
-    const Halfedge     *curr = first;
-    Size                deg = 0;
-
-    do
-    {
-      deg++;
-      curr = curr->next()->opposite();
-    } while (curr != first);
-
-
-    return (deg);
-  }
-
-  /*!
-   * Get a circulator for the incident halfedges.
-   * \pre The vertex is not isolated.
-   */
-  _Halfedge_around_vertex_const_circulator<Traits, Dcel>
-    incident_halfedges () const
-  {
-    CGAL_precondition (! is_isolated());
-
-    return _Halfedge_around_vertex_const_circulator<Traits, Dcel>
-                                                             (p_v->halfedge());
-  }
-
-  /*! Get a pointer to the current vertex. */
-  const Vertex* operator-> () const
-  {
-    return (p_v);
-  }
-
-};
-
-// Dereference operator:
-template <class Traits, class Dcel>
-_Vertex_const_handle<Traits, Dcel> operator*
-    (const _Isolated_vertices_const_iterator<Traits, Dcel>& iter)
-{
-  return _Vertex_const_handle<Traits, Dcel> (iter.vertex());
-}
-
-/*! \class
- * The face handle class.
- */
-template <class Traits_, class Dcel_>
-class _Face_handle
-{
-  friend class Arrangement_2<Traits_, Dcel_>;
-
-  friend class _Face_const_handle<Traits_, Dcel_>;
-  friend class _Halfedge_handle<Traits_, Dcel_>;
-  friend class _Face_iterator<Traits_, Dcel_>;
-
-protected:
-
-  typedef Dcel_                           Dcel;
-  typedef _Face_handle<Traits_, Dcel>     Self;
-  typedef typename Dcel::Face             Face;
-
-  Face          *p_f;     // The face associated with the handle.
-
-  /*! Constructor from a face pointer. */
-  _Face_handle (Face *f) :
-    p_f (f)
-  {}
-
-public:
-
-  /*! Default constructor. */
-  _Face_handle () :
-    p_f (NULL)
-  {}
-
-  /*! Equality operator. */
-  bool operator== (const Self& fh) const
-  {
-    return (p_f == fh.p_f);
-  }
-
-  /*! Inequality operator. */
-  bool operator!= (const Self& fh) const
-  {
-    return (p_f != fh.p_f);
-  }
-
-  /*! Check whether the face is unbounded. */
-  bool is_unbounded () const
-  {
-    // Check whether the outer-boundary edge exists or not.
-    return (p_f->halfedge() == NULL);
-  }
-
-  /*! Get a circulator for the outer boundary of the face. */
-  _Ccb_halfedge_circulator<Traits_, Dcel> outer_ccb () const
-  {
-    return _Ccb_halfedge_circulator<Traits_, Dcel> (p_f->halfedge());
-  }
-
-  /*! Get an iterator for the first hole inside the face. */
-  _Holes_iterator<Traits_, Dcel> holes_begin () const
-  {
-    return _Holes_iterator<Traits_, Dcel> (p_f->holes_begin());
-  }
-
-  /*! Get a past-the-end iterator for the holes inside the face. */
-  _Holes_iterator<Traits_, Dcel> holes_end () const
-  {
-    return _Holes_iterator<Traits_, Dcel> (p_f->holes_end());
-  }
-
-  /*! Get an iterator for the first isolated vertex inside the face. */
-  _Isolated_vertices_iterator<Traits_, Dcel> isolated_vertices_begin () const
-  {
-    return _Isolated_vertices_iterator<Traits_, Dcel>
-                                            (p_f->isolated_vertices_begin());
-  }
-
-  /*! Get a past-the-end iterator for the isolated vertices inside the face. */
-  _Isolated_vertices_iterator<Traits_, Dcel> isolated_vertices_end () const
-  {
-    return _Isolated_vertices_iterator<Traits_, Dcel>
-                                            (p_f->isolated_vertices_end());
-  }
-
-  /*! Get a pointer to the current face. */
-  Face* operator-> () const
-  {
-    return (p_f);
-  }
-
-};
-
-/*! \class
- * The face const handle class.
- */
-template <class Traits_, class Dcel_>
-class _Face_const_handle
-{
-  friend class Arrangement_2<Traits_, Dcel_>;
-
-  friend class _Halfedge_const_handle<Traits_, Dcel_>;
-  friend class _Face_const_iterator<Traits_, Dcel_>;
-
-protected:
-
-  typedef Dcel_                              Dcel;
-  typedef _Face_const_handle<Traits_, Dcel>  Self;
-  typedef typename Dcel::Face                Face;
-
-  const Face          *p_f;     // The face associated with the handle.
-
-  /*! Constructor from a face pointer. */
-  _Face_const_handle (const Face *f) :
-    p_f (f)
-  {}
-
-public:
-
-  /*! Default constructor. */
-  _Face_const_handle () :
-    p_f (NULL)
-  {}
-
-  /*! Constructor from a non-const handle. */
-  _Face_const_handle (const _Face_handle<Traits_, Dcel>& fh) :
-    p_f (fh.p_f)
-  {}
-
-  /*! Equality operator. */
-  bool operator== (const Self& fh) const
-  {
-    return (p_f == fh.p_f);
-  }
-
-  /*! Inequality operator. */
-  bool operator!= (const Self& fh) const
-  {
-    return (p_f != fh.p_f);
-  }
-
-  /*! Check whether the face is unbounded. */
-  bool is_unbounded () const
-  {
-    // Check whether the outer-boundary edge exists or not.
-    return (p_f->halfedge() == NULL);
-  }
-
-  /*! Get a circulator for the outer boundary of the face. */
-  _Ccb_halfedge_const_circulator<Traits_, Dcel> outer_ccb () const
-  {
-    return _Ccb_halfedge_const_circulator<Traits_, Dcel> (p_f->halfedge());
-  }
-
-  /*! Get an iterator for the first hole inside the face. */
-  _Holes_const_iterator<Traits_, Dcel> holes_begin () const
-  {
-    return _Holes_const_iterator<Traits_, Dcel> (p_f->holes_begin());
-  }
-
-  /*! Get a past-the-end iterator for holes inside the face. */
-  _Holes_const_iterator<Traits_, Dcel> holes_end () const
-  {
-    return _Holes_const_iterator<Traits_, Dcel> (p_f->holes_end());
-  }
-
-  /*! Get an iterator for the first isolated vertex inside the face. */
-  _Isolated_vertices_const_iterator<Traits_, Dcel>
-                                           isolated_vertices_begin () const
-  {
-    return _Isolated_vertices_const_iterator<Traits_, Dcel>
-                                            (p_f->isolated_vertices_begin());
-  }
-
-  /*! Get a past-the-end iterator for the isolated vertices inside the face. */
-  _Isolated_vertices_const_iterator<Traits_, Dcel>
-                                           isolated_vertices_end () const
-  {
-    return _Isolated_vertices_const_iterator<Traits_, Dcel>
-                                            (p_f->isolated_vertices_end());
-  }
-
-  /*! Get a pointer to the current face. */
-  const Face* operator-> () const
-  {
-    return (p_f);
-  }
-
-};
-
-/*! \class
- * The halfedge handle class.
- */
-template <class Traits_, class Dcel_>
-class _Halfedge_handle
-{
-  friend class Arrangement_2<Traits_, Dcel_>;
-
-  friend class _Halfedge_const_handle<Traits_, Dcel_>;
-
-protected:
-
-  typedef Traits_                         Traits;
-  typedef Dcel_                           Dcel;
-  typedef _Halfedge_handle<Traits, Dcel>  Self;
-  typedef typename Dcel::Halfedge         Halfedge;
-
-  Halfedge          *p_he;     // The halfedge associated with the handle.
-
-public:
-
-  /*! Default constructor. */
-  _Halfedge_handle () :
-    p_he (NULL)
-  {}
-
-  /*! Constructor from a halfedge pointer. */
-  _Halfedge_handle (Halfedge *e) :
-    p_he (e)
-  {}
-
-  /*! Equality operator. */
-  bool operator== (const Self& hh) const
-  {
-    return (p_he == hh.p_he);
-  }
-
-  /*! Inequality operator. */
-  bool operator!= (const Self& hh) const
-  {
-    return (p_he != hh.p_he);
-  }
-
-  /*! Get the curve associated with the halfedge. */
-  const typename Traits::X_monotone_curve_2& curve () const
-  {
-    return (p_he->curve());
-  }
-
-  /*!
-   * Set the curve associated with the halfedge.
-   * \param cv The x-monotone curve.
-   * \pre cv must be geometrically equal to the current curve the
-   *      halfedge stores.
-   */
-  void set_curve (const typename Traits::X_monotone_curve_2& cv)
-  {
-    CGAL_precondition_code(
-      Traits     traits;
-    );
-    CGAL_precondition (traits.curves_equal (p_he->curve(), cv));
-
-    // Set the curve (not that curve() returns an X_monotone_curve_2
-    // reference). Also notice it is not necessary to set the curve
-    // of the twin halfedge, as it stores a pointer to the same
-    // X_monotone_curve_2 object we have just modified.
-    p_v->curve() = cv;
-  }
-
-  /*! Get the source vertex. */
-  _Vertex_handle<Traits, Dcel> source () const
-  {
-    // Return the incident vertex of the opposite halfedge.
-    return _Vertex_handle<Traits, Dcel> (p_he->opposite()->vertex());
-  }
-
-  /*! Get the target vertex. */
-  _Vertex_handle<Traits, Dcel> target () const
-  {
-    // Return the incident vertex of this halfedge.
-    return _Vertex_handle<Traits, Dcel> (p_he->vertex());
-  }
-
-  /*! Get the incident face. */
-  _Face_handle<Traits, Dcel> face () const
-  {
-    return _Face_handle<Traits, Dcel> (p_he->face());
-  }
-
-  /*! Get the twin halfedge. */
-  Self twin () const
-  {
-    return Self (p_he->opposite());
-  }
-
-  /*! Get the previous halfedge along the component boundary. */
-  Self previous () const
-  {
-    return Self (p_he->previous());
-  }
-
-  /*! Get the next halfedge along the component boundary. */
-  Self next () const
-  {
-    return Self (p_he->next());
-  }
-
-  /*! Get a pointer to the current halfedge. */
-  Halfedge* operator-> () const
-  {
-    return (p_he);
-  }
-};
-
-// Dereference operators:
-template <class Traits, class Dcel>
-_Halfedge_handle<Traits, Dcel> operator*
-    (const _Halfedge_around_vertex_circulator<Traits, Dcel>& circ)
-{
-  return _Halfedge_handle<Traits, Dcel> (circ.halfedge());
-}
-
-template <class Traits, class Dcel>
-_Halfedge_handle<Traits, Dcel> operator*
-    (const _Ccb_halfedge_circulator<Traits, Dcel>& circ)
-{
-  return _Halfedge_handle<Traits, Dcel> (circ.halfedge());
-}
-
-/*! \class
- * The halfedge const handle class.
- */
-template <class Traits_, class Dcel_>
-class _Halfedge_const_handle
-{
-  friend class Arrangement_2<Traits_, Dcel_>;
-
-protected:
-
-  typedef Traits_                               Traits;
-  typedef Dcel_                                 Dcel;
-  typedef _Halfedge_const_handle<Traits, Dcel>  Self;
-  typedef typename Dcel::Halfedge               Halfedge;
-
-  const Halfedge     *p_he;     // The halfedge associated with the handle.
-
-public:
-
-  /*! Default constructor. */
-  _Halfedge_const_handle () :
-    p_he (NULL)
-  {}
-
-  /*! Constructor from a non-const handle. */
-  _Halfedge_const_handle (const _Halfedge_handle<Traits, Dcel>& hh) :
-    p_he (hh.p_he)
-  {}
-
-  /*! Constructor from a halfedge pointer. */
-  _Halfedge_const_handle (const Halfedge *e) :
-    p_he (e)
-  {}
-
-  /*! Equality operator. */
-  bool operator== (const Self& hh) const
-  {
-    return (p_he == hh.p_he);
-  }
-
-  /*! Inequality operator. */
-  bool operator!= (const Self& hh) const
-  {
-    return (p_he != hh.p_he);
-  }
-
-  /*! Get the curve associated with the halfedge. */
-  const typename Traits::X_monotone_curve_2& curve () const
-  {
-    return (p_he->curve());
-  }
-
-  /*! Get the source vertex. */
-  _Vertex_const_handle<Traits, Dcel> source () const
-  {
-    // Return the incident vertex of the opposite halfedge.
-    return _Vertex_const_handle<Traits, Dcel> (p_he->opposite()->vertex());
-  }
-
-  /*! Get the target vertex. */
-  _Vertex_const_handle<Traits, Dcel> target () const
-  {
-    // Return the incident vertex of this halfedge.
-    return _Vertex_const_handle<Traits, Dcel> (p_he->vertex());
-  }
-
-  /*! Get the incident face. */
-  _Face_const_handle<Traits, Dcel> face () const
-  {
-    return _Face_const_handle<Traits, Dcel> (p_he->face());
-  }
-
-  /*! Get the twin halfedge. */
-  Self twin () const
-  {
-    return Self (p_he->opposite());
-  }
-
-  /*! Get the previous halfedge along the component boundary. */
-  Self previous () const
-  {
-    return Self (p_he->previous());
-  }
-
-  /*! Get the next halfedge along the component boundary. */
-  Self next () const
-  {
-    return Self (p_he->next());
-  }
-
-  /*! Get a pointer to the current halfedge. */
-  const Halfedge* operator-> () const
-  {
-    return (p_he);
-  }
-
-};
-
-// Dereference operators:
-template <class Traits, class Dcel>
-_Halfedge_const_handle<Traits, Dcel> operator* 
-    (const _Halfedge_around_vertex_const_circulator<Traits, Dcel>& circ)
-{
-  return _Halfedge_const_handle<Traits, Dcel> (circ.halfedge());
-}
-
-template <class Traits, class Dcel>
-_Halfedge_const_handle<Traits, Dcel> operator*
-    (const _Ccb_halfedge_const_circulator<Traits, Dcel>& circ)
-{
-  return (_Halfedge_const_handle<Traits, Dcel> (circ.halfedge()));
-}
-
-// --------------------------------------------------------------------------
-// Iterators
-// --------------------------------------------------------------------------
-
-/*! \class
- * Iterator for the DCEL vertices.
- */
-template <class Traits_, class Dcel_> 
-class _Vertex_iterator
-{
-  friend class Arrangement_2<Traits_, Dcel_>;
-
-  friend class _Vertex_const_iterator<Traits_, Dcel_>;
-
-protected:
-
-  typedef Dcel_                                  Dcel;
-  typedef _Vertex_iterator<Traits_, Dcel>        Self;
-  typedef typename Dcel::Vertex                  Vertex;
-  typedef typename Dcel::Vertex_iterator         Vertex_iter;
-
-  Vertex_iter     vit;           // The stored iterator.
-
-  /*! Constructor from a DCEL vertex iterator. */
-  _Vertex_iterator (const Vertex_iter& it) :
-    vit (it)
-  {}
-
-public:
-
-  typedef typename Vertex_iter::size_type         Size;
-  typedef typename Vertex_iter::size_type         size_type;
-  typedef typename Vertex_iter::difference_type   difference_type;
-  typedef typename Vertex_iter::difference_type   Difference;
-  typedef std::bidirectional_iterator_tag         iterator_category;
-
-  /*! Default constructor. */
-  _Vertex_iterator ()
-  {}
-
-  /*! Equality operator. */
-  bool operator== (const Self& iter) const
-  {
-    return (vit == iter.vit);
-  }
-
-  /*! Inequality operator. */
-  bool operator!= (const Self& iter) const
-  {
-    return (vit != iter.vit);
-  }
-
-  /*! Increment operator (prefix). */
-  Self& operator++ ()
-  {
-    ++vit;
+    ++iter;
     return (*this);
   }
 
-  /*! Increment operator (postfix). */
   Self operator++ (int )
   {
-    Self    temp = *this;
-    ++vit;
-    return (temp);
+    Self tmp = *this;
+    ++iter;
+    return (tmp);
   }
+  //@}
 
-  /*! Decrement operator (prefix). */
+  /// \name Decremernt operations (bidirectional category).
+  //@{
   Self& operator-- ()
   {
-    --vit;
+    --iter;
     return (*this);
   }
 
-  /*! Decrement operator (postfix). */
   Self operator-- (int )
   {
-    Self    temp = *this;
-    --vit;
-    return (temp);
+    Self tmp = *this;
+    --iter;
+    return (tmp);
   }
-
-  /*! Get a handle to the current vertex. */
-  _Vertex_handle<Traits_, Dcel> operator* () const
-  {
-    return _Vertex_handle<Traits_, Dcel> (&(*vit));
-  }
+  //@}
 };
 
-/*! \class
- * Const iterator for the DCEL vertices.
+/*!
+ * \class
+ * An iterator adaptor for dereferencing the value-type of the const iterator
+ * class (given as CIterator_), which is supposed to be a pointer, and handle
+ * it as the value-type given by Value_.
  */
-template <class Traits_, class Dcel_>
-class _Vertex_const_iterator
+template <class CIterator_, class MIterator_, 
+	  class Value_, class Diff_, class Category_>
+class I_Dereference_const_iterator
 {
-  friend class Arrangement_2<Traits_, Dcel_>;
+public:
+
+  // Type definitions:
+  typedef CIterator_                              Const_iterator;
+  typedef MIterator_                              Mutable_iterator;
+  typedef I_Dereference_const_iterator<CIterator_,
+				       MIterator_,
+				       Value_,
+				       Diff_,
+				       Category_> Self;
+
+  typedef Category_                               iterator_category;
+  typedef Value_                                  value_type;
+  typedef const value_type&                       reference;
+  typedef const value_type*                       pointer;
+  typedef Diff_                                   difference_type;
 
 protected:
 
-  typedef Dcel_                                  Dcel;
-  typedef _Vertex_const_iterator<Traits_, Dcel>  Self;
-  typedef typename Dcel::Vertex                  Vertex;
-  typedef typename Dcel::Vertex_const_iterator   Vertex_const_iter;
-
-  Vertex_const_iter     vit;           // The stored iterator.
-
-  /*! Constructor from a DCEL vertex iterator. */
-  _Vertex_const_iterator (const Vertex_const_iter& it) :
-    vit (it)
-  {}
+  Const_iterator        iter;           // The internal iterator.
 
 public:
 
-  typedef typename Vertex_const_iter::size_type       Size;
-  typedef typename Vertex_const_iter::size_type       size_type;
-  typedef typename Vertex_const_iter::difference_type difference_type;
-  typedef typename Vertex_const_iter::difference_type Difference;
-  typedef std::bidirectional_iterator_tag             iterator_category;
-
-  /*! Default constructor. */
-  _Vertex_const_iterator ()
+  /// \name Construction
+  //@{
+  I_Dereference_const_iterator ()
   {}
 
-  /*! Constructor from a non-const iterator. */
-  _Vertex_const_iterator (const _Vertex_iterator<Traits_, Dcel>& iter) :
-    vit (iter.vit)
+  I_Dereference_const_iterator (Const_iterator it) :
+    iter(it)
   {}
 
-  /*! Equality operator. */
-  bool operator== (const Self& iter) const
+  I_Dereference_const_iterator (Mutable_iterator it) :
+    iter (Const_iterator (&(*it)))
+  {}
+
+  //@}
+
+  /// \name Basic operations.
+  //@{
+  bool operator== (const Self& it) const
   {
-    return (vit == iter.vit);
+    return (iter == it.iter);
+  }
+    
+  bool operator!= (const Self& it) const
+  {
+    return (!(iter == it.iter));
+  }
+    
+  Const_iterator current_iterator () const
+  {
+    return (iter);
+  }
+    
+  pointer ptr () const
+  {
+    return (reinterpret_cast<const value_type *> (*iter));
   }
 
-  /*! Inequality operator. */
-  bool operator!= (const Self& iter) const
+  reference operator* () const
   {
-    return (vit != iter.vit);
+    return (*(ptr()));
   }
 
-  /*! Increment operator (prefix). */
-  Self& operator++ ()
+  pointer operator-> () const
   {
-    ++vit;
+    return (ptr());
+  }
+  //@}
+    
+  /// \name Incremernt operations (forward category).
+  //@{
+  Self& operator++()
+  {
+    ++iter;
     return (*this);
   }
 
-  /*! Increment operator (postfix). */
   Self operator++ (int )
   {
-    Self    temp = *this;
-    ++vit;
-    return (temp);
+    Self tmp = *this;
+    ++iter;
+    return (tmp);
   }
+  //@}
 
-  /*! Decrement operator (prefix). */
+  /// \name Decremernt operations (bidirectional category).
+  //@{
   Self& operator-- ()
   {
-    --vit;
+    --iter;
     return (*this);
   }
 
-  /*! Decrement operator (postfix). */
   Self operator-- (int )
   {
-    Self    temp = *this;
-    --vit;
-    return (temp);
+    Self tmp = *this;
+    --iter;
+    return (tmp);
   }
-
-  /*! Get a handle to the current vertex. */
-  _Vertex_const_handle<Traits_, Dcel> operator* () const
-  {
-    return _Vertex_const_handle<Traits_, Dcel> (&(*vit));
-  }
-};
-
-/*! \class
- * Iterator for the DCEL halfedges.
- */
-template <class Traits_, class Dcel_> 
-class _Halfedge_iterator
-{
-  friend class Arrangement_2<Traits_, Dcel_>;
-
-  friend class _Halfedge_const_iterator<Traits_, Dcel_>;
-
-protected:
-
-  typedef Dcel_                                  Dcel;
-  typedef _Halfedge_iterator<Traits_, Dcel>      Self;
-  typedef typename Dcel::Halfedge                Halfedge;
-  typedef typename Dcel::Halfedge_iterator       Halfedge_iter;
-
-  Halfedge_iter     hit;           // The stored iterator.
-
-  /*! Constructor from a DCEL halfedge iterator. */
-  _Halfedge_iterator (const Halfedge_iter& it) :
-    hit (it)
-  {}
-
-public:
-
-  typedef typename Halfedge_iter::size_type       Size;
-  typedef typename Halfedge_iter::size_type       size_type;
-  typedef typename Halfedge_iter::difference_type difference_type;
-  typedef typename Halfedge_iter::difference_type Difference;
-  typedef std::bidirectional_iterator_tag         iterator_category;
-
-  /*! Default constructor. */
-  _Halfedge_iterator ()
-  {}
-
-  /*! Equality operator. */
-  bool operator== (const Self& iter) const
-  {
-    return (hit == iter.hit);
-  }
-
-  /*! Inequality operator. */
-  bool operator!= (const Self& iter) const
-  {
-    return (hit != iter.hit);
-  }
-
-  /*! Increment operator (prefix). */
-  Self& operator++ ()
-  {
-    ++hit;
-    return (*this);
-  }
-
-  /*! Increment operator (postfix). */
-  Self operator++ (int )
-  {
-    Self    temp = *this;
-    ++hit;
-    return (temp);
-  }
-
-  /*! Decrement operator (prefix). */
-  Self& operator-- ()
-  {
-    --hit;
-    return (*this);
-  }
-
-  /*! Decrement operator (postfix). */
-  Self operator-- (int )
-  {
-    Self    temp = *this;
-    --hit;
-    return (temp);
-  }
-
-  /*! Get a handle to the current halfedge. */
-  _Halfedge_handle<Traits_, Dcel> operator* () const
-  {
-    return _Halfedge_handle<Traits_, Dcel> (&(*hit));
-  }
-};
-
-/*! \class
- * Const iterator for the DCEL halfedges.
- */
-template <class Traits_, class Dcel_>
-class _Halfedge_const_iterator
-{
-  friend class Arrangement_2<Traits_, Dcel_>;
-
-protected:
-
-  typedef Dcel_                                    Dcel;
-  typedef _Halfedge_const_iterator<Traits_, Dcel>  Self;
-  typedef typename Dcel::Halfedge                  Halfedge;
-  typedef typename Dcel::Halfedge_const_iterator   Halfedge_const_iter;
-
-  Halfedge_const_iter     hit;           // The stored iterator.
-
-  /*! Constructor from a DCEL halfedge iterator. */
-  _Halfedge_const_iterator (const Halfedge_const_iter& it) :
-    hit (it)
-  {}
-
-public:
-
-  typedef typename Halfedge_const_iter::size_type       Size;
-  typedef typename Halfedge_const_iter::size_type       size_type;
-  typedef typename Halfedge_const_iter::difference_type difference_type;
-
-  typedef typename Halfedge_const_iter::difference_type Difference;
-  typedef std::bidirectional_iterator_tag               iterator_category;
-
-  /*! Default constructor. */
-  _Halfedge_const_iterator ()
-  {}
-
-  /*! Constructor from a non-const iterator. */
-  _Halfedge_const_iterator (const _Halfedge_iterator<Traits_, Dcel>& iter) :
-    hit (iter.hit)
-  {}
-
-  /*! Equality operator. */
-  bool operator== (const Self& iter) const
-  {
-    return (hit == iter.hit);
-  }
-
-  /*! Inequality operator. */
-  bool operator!= (const Self& iter) const
-  {
-    return (hit != iter.hit);
-  }
-
-  /*! Increment operator (prefix). */
-  Self& operator++ ()
-  {
-    ++hit;
-    return (*this);
-  }
-
-  /*! Increment operator (postfix). */
-  Self operator++ (int )
-  {
-    Self    temp = *this;
-    ++hit;
-    return (temp);
-  }
-
-  /*! Decrement operator (prefix). */
-  Self& operator-- ()
-  {
-    --hit;
-    return (*this);
-  }
-
-  /*! Decrement operator (postfix). */
-  Self operator-- (int )
-  {
-    Self    temp = *this;
-    --hit;
-    return (temp);
-  }
-
-  /*! Get a handle to the current halfedge. */
-  _Halfedge_const_handle<Traits_, Dcel> operator* () const
-  {
-    return _Halfedge_const_handle<Traits_, Dcel> (&(*hit));  
-  }
-};
-
-/*! \class
- * Iterator for the DCEL edges.
- */
-template <class Traits_, class Dcel_>
-class _Edge_iterator
-{
-  friend class Arrangement_2<Traits_, Dcel_>;
-
-  friend class _Edge_const_iterator<Traits_, Dcel_>;
-
-protected:
-
-  typedef Dcel_                                  Dcel;
-  typedef _Edge_iterator<Traits_, Dcel>          Self;
-  typedef typename Dcel::Halfedge                Halfedge;
-  typedef typename Dcel::Edge_iterator           Edge_iter;
-
-  Edge_iter     eit;           // The stored iterator.
-
-  /*! Constructor from a DCEL edge iterator. */
-  _Edge_iterator (const Edge_iter& it) :
-    eit (it)
-  {}
-
-public:
-
-  typedef typename Edge_iter::size_type           Size;
-  typedef typename Edge_iter::size_type           size_type;
-  typedef typename Edge_iter::difference_type     difference_type;
-  typedef typename Edge_iter::difference_type     Difference;
-  typedef std::bidirectional_iterator_tag         iterator_category;
-
-  /*! Default constructor. */
-  _Edge_iterator ()
-  {}
-
-  /*! Equality operator. */
-  bool operator== (const Self& iter) const
-  {
-    return (eit == iter.eit);
-  }
-
-  /*! Inequality operator. */
-  bool operator!= (const Self& iter) const
-  {
-    return (eit != iter.eit);
-  }
-
-  /*! Increment operator (prefix). */
-  Self& operator++ ()
-  {
-    ++eit;
-    return (*this);
-  }
-
-  /*! Increment operator (postfix). */
-  Self operator++ (int )
-  {
-    Self    temp = *this;
-    ++eit;
-    return (temp);
-  }
-
-  /*! Decrement operator (prefix). */
-  Self& operator-- ()
-  {
-    --eit;
-    return (*this);
-  }
-
-  /*! Decrement operator (postfix). */
-  Self operator-- (int )
-  {
-    Self    temp = *this;
-    --eit;
-    return (temp);
-  }
-
-  /*! Get a handle to the current halfedge. */
-  _Halfedge_handle<Traits_, Dcel> operator* () const
-  {
-    return _Halfedge_handle<Traits_, Dcel> (&(*eit));
-  }
-
-};
-
-/*! \class
- * Const iterator for the DCEL edges.
- */
-template <class Traits_, class Dcel_>
-class _Edge_const_iterator
-{
-  friend class Arrangement_2<Traits_, Dcel_>;
-
-protected:
-
-  typedef Dcel_                                  Dcel;
-  typedef _Edge_const_iterator<Traits_, Dcel>    Self;
-  typedef typename Dcel::Halfedge                Halfedge;
-  typedef typename Dcel::Edge_const_iterator     Edge_const_iter;
-
-  Edge_const_iter     eit;           // The stored iterator.
-
-  /*! Constructor from a DCEL edge iterator. */
-  _Edge_const_iterator (const Edge_const_iter& it) :
-    eit (it)
-  {}
-
-public:
-
-  typedef typename Edge_const_iter::size_type         Size;
-  typedef typename Edge_const_iter::size_type         size_type;
-  typedef typename Edge_const_iter::difference_type   difference_type;
-  typedef typename Edge_const_iter::difference_type   Difference;
-  typedef std::bidirectional_iterator_tag             iterator_category;
-
-  /*! Default constructor. */
-  _Edge_const_iterator ()
-  {}
-
-  /*! Constructor from a non-const iterator. */
-  _Edge_const_iterator (const _Edge_iterator<Traits_, Dcel>& iter) :
-    eit (iter.eit)
-  {}
-
-  /*! Equality operator. */
-  bool operator== (const Self& iter) const
-  {
-    return (eit == iter.eit);
-  }
-
-  /*! Inequality operator. */
-  bool operator!= (const Self& iter) const
-  {
-    return (eit != iter.eit);
-  }
-
-  /*! Increment operator (prefix). */
-  Self& operator++ ()
-  {
-    ++eit;
-    return (*this);
-  }
-
-  /*! Increment operator (postfix). */
-  Self operator++ (int )
-  {
-    Self    temp = *this;
-    ++eit;
-    return (temp);
-  }
-
-  /*! Decrement operator (prefix). */
-  Self& operator-- ()
-  {
-    --eit;
-    return (*this);
-  }
-
-  /*! Decrement operator (postfix). */
-  Self operator-- (int )
-  {
-    Self    temp = *this;
-    --eit;
-    return (temp);
-  }
-
-  /*! Get a handle to the current halfedge. */
-  _Halfedge_const_handle<Traits_, Dcel> operator* () const
-  {
-    return _Halfedge_const_handle<Traits_, Dcel> (&(*eit));
-  }
-};
-
-/*! \class
- * Iterator for the DCEL faces.
- */
-template <class Traits_, class Dcel_>
-class _Face_iterator
-{
-  friend class Arrangement_2<Traits_, Dcel_>;
-
-  friend class _Face_const_iterator<Traits_, Dcel_>;
-
-protected:
-
-  typedef Dcel_                                  Dcel;
-  typedef _Face_iterator<Traits_, Dcel>          Self;
-  typedef typename Dcel::Face                    Face;
-  typedef typename Dcel::Face_iterator           Face_iter;
-
-  Face_iter     fit;           // The stored iterator.
-
-  /*! Constructor from a DCEL face iterator. */
-  _Face_iterator (const Face_iter& it) :
-    fit (it)
-  {}
-
-public:
-
-  typedef typename Face_iter::size_type           Size;
-  typedef typename Face_iter::size_type           size_type;
-  typedef typename Face_iter::difference_type     difference_type;
-  typedef typename Face_iter::difference_type     Difference;
-  typedef std::bidirectional_iterator_tag         iterator_category;
-
-  /*! Default constructor. */
-  _Face_iterator ()
-  {}
-
-  /*! Equality operator. */
-  bool operator== (const Self& iter) const
-  {
-    return (fit == iter.fit);
-  }
-
-  /*! Inequality operator. */
-  bool operator!= (const Self& iter) const
-  {
-    return (fit != iter.fit);
-  }
-
-  /*! Increment operator (prefix). */
-  Self& operator++ ()
-  {
-    ++fit;
-    return (*this);
-  }
-
-  /*! Increment operator (postfix). */
-  Self operator++ (int )
-  {
-    Self    temp = *this;
-    ++fit;
-    return (temp);
-  }
-
-  /*! Decrement operator (prefix). */
-  Self& operator-- ()
-  {
-    --fit;
-    return (*this);
-  }
-
-  /*! Decrement operator (postfix). */
-  Self operator-- (int )
-  {
-    Self    temp = *this;
-    --fit;
-    return (temp);
-  }
-
-  /*! Get a handle to the current face. */
-  _Face_handle<Traits_, Dcel> operator* () const
-  {
-    return _Face_handle<Traits_, Dcel> (&(*fit));  
-  }
-};
-
-/*! \class
- * Const iterator for the DCEL faces.
- */
-template <class Traits_, class Dcel_>
-class _Face_const_iterator
-{
-  friend class Arrangement_2<Traits_, Dcel_>;
-
-protected:
-
-  typedef Dcel_                                  Dcel;
-  typedef _Face_const_iterator<Traits_, Dcel>    Self;
-  typedef typename Dcel::Face                    Face;
-  typedef typename Dcel::Face_const_iterator     Face_const_iter;
-
-  Face_const_iter     fit;           // The stored iterator.
-
-  /*! Constructor from a DCEL face iterator. */
-  _Face_const_iterator (const Face_const_iter& it) :
-    fit (it)
-  {}
-
-public:
-
-  typedef typename Face_const_iter::size_type         Size;
-  typedef typename Face_const_iter::size_type         size_type;
-  typedef typename Face_const_iter::difference_type   difference_type;
-  typedef typename Face_const_iter::difference_type   Difference;
-  typedef std::bidirectional_iterator_tag             iterator_category;
-
-  /*! Default constructor. */
-  _Face_const_iterator ()
-  {}
-
-  /*! Constructor from a non-const iterator. */
-  _Face_const_iterator (const _Face_iterator<Traits_, Dcel>& iter) :
-    fit (iter.fit)
-  {}
-
-  /*! Equality operator. */
-  bool operator== (const Self& iter) const
-  {
-    return (fit == iter.fit);
-  }
-
-  /*! Inequality operator. */
-  bool operator!= (const Self& iter) const
-  {
-    return (fit != iter.fit);
-  }
-
-  /*! Increment operator (prefix). */
-  Self& operator++ ()
-  {
-    ++fit;
-    return (*this);
-  }
-
-  /*! Increment operator (postfix). */
-  Self operator++ (int )
-  {
-    Self    temp = *this;
-    ++fit;
-    return (temp);
-  }
-
-  /*! Decrement operator (prefix). */
-  Self& operator-- ()
-  {
-    --fit;
-    return (*this);
-  }
-
-  /*! Decrement operator (postfix). */
-  Self operator-- (int )
-  {
-    Self    temp = *this;
-    --fit;
-    return (temp);
-  }
-
-  /*! Get a handle to the current vertex. */
-  _Face_const_handle<Traits_, Dcel> operator* () const
-  {
-    return _Face_const_handle<Traits_, Dcel> (&(*fit));
-  }
+  //@}
 };
 
 CGAL_END_NAMESPACE

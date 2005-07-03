@@ -103,16 +103,16 @@ public:
 #ifdef ARR_INC_INSERT_DEBUG
     std::cout << "Found subcurve: " << cv << std::endl;
     if (left_v != invalid_v)
-      std::cout << "           v1 = " << left_v.point() << std::endl;
+      std::cout << "           v1 = " << left_v->point() << std::endl;
     if (left_he != invalid_he)
-      std::cout << "           e1 = " << left_he.source().point()
-                << "  -->  " << left_he.target().point() << std::endl;
+      std::cout << "           e1 = " << left_he->source()->point()
+                << "  -->  " << left_he->target()->point() << std::endl;
 
     if (right_v != invalid_v)
-      std::cout << "           v2 = " << right_v.point() << std::endl;
+      std::cout << "           v2 = " << right_v->point() << std::endl;
     if (right_he != invalid_he)
-      std::cout << "           e2 = " << right_he.source().point()
-                << "  -->  " << right_he.target().point() << std::endl;
+      std::cout << "           e2 = " << right_he->source()->point()
+                << "  -->  " << right_he->target()->point() << std::endl;
 #endif
 
     // Create an arrangement accessor.
@@ -135,7 +135,7 @@ public:
       // the vertex and we should locate cv around it.
       if (left_he != invalid_he)
         prev_he_left = left_he;
-      else if (! left_v.is_isolated())
+      else if (! left_v->is_isolated())
         prev_he_left = arr_access.locate_around_vertex (left_v, cv);
 
       // In case the vertex does not exist, split left_he at cv's left endpoint
@@ -154,7 +154,7 @@ public:
       // the vertex and we should locate cv around it.
       if (right_he != invalid_he)
         prev_he_right = right_he;
-      else if (! right_v.is_isolated())
+      else if (! right_v->is_isolated())
         prev_he_right = arr_access.locate_around_vertex (right_v, cv);
 
       // In case the vertex does not exist, split right_he at cv's right
@@ -169,7 +169,7 @@ public:
         // If so, prev_he_right's target is now the new vertex, and we have to
         // proceed to the next halfedge (whose target is right_v).
         if (right_he == prev_he_left)
-          prev_he_left = prev_he_left.next();
+          prev_he_left = prev_he_left->next();
       }
     }
 
@@ -202,7 +202,7 @@ public:
 
         // The returned halfedge is directed to the newly created vertex
         // (the left one), so we take its twin.
-        inserted_he = inserted_he.twin();
+        inserted_he = inserted_he->twin();
       }
     }
     else
@@ -246,7 +246,7 @@ public:
 
           // The returned halfedge is currently directed toward the left vertex
           // (instead of the right one), so we take its twin.
-          inserted_he = inserted_he.twin();
+          inserted_he = inserted_he->twin();
         }
         else
         {
@@ -282,13 +282,13 @@ public:
 #ifdef ARR_INC_INSERT_DEBUG
 
     std::cout << "Found overlap: " << cv
-              << "  with: " << he.curve() << std::endl;
+              << "  with: " << he->curve() << std::endl;
 
     if (left_v != invalid_v)
-      std::cout << "           v1 = " << left_v.point() << std::endl;
+      std::cout << "           v1 = " << left_v->point() << std::endl;
 
     if (right_v != invalid_v)
-      std::cout << "           v2 = " << right_v.point() << std::endl;
+      std::cout << "           v2 = " << right_v->point() << std::endl;
 #endif
 
     // Modify (perhaps split) the overlapping arrangement edge.
@@ -297,7 +297,7 @@ public:
     if (left_v == invalid_v)
     {
       // Split the curve associated with he at the left endpoint of cv.
-      traits->split_2_object() (he.curve(),
+      traits->split_2_object() (he->curve(),
                                 traits->construct_min_vertex_2_object() (cv),
                                 sub_cv1, sub_cv2);
 
@@ -307,10 +307,10 @@ public:
         // Split he as an intermediate step.
         updated_he = p_arr->split_edge (he,
                                         sub_cv1, sub_cv2);
-        updated_he = updated_he.next();
+        updated_he = updated_he->next();
 
         // Split the left subcurve at the right endpoint of cv.
-        traits->split_2_object() (updated_he.curve(),
+        traits->split_2_object() (updated_he->curve(),
                                   traits->construct_max_vertex_2_object() (cv),
                                   sub_cv1, sub_cv2);
 
@@ -326,7 +326,7 @@ public:
         // right portion corresponds to the overlapping curve.
         updated_he = p_arr->split_edge (he,
                                         sub_cv1, cv);
-        updated_he = updated_he.next();
+        updated_he = updated_he->next();
       }
     }
     else
@@ -334,7 +334,7 @@ public:
       if (right_v == invalid_v)
       {
         // Split the curve associated with he at the right endpoint of cv.
-        traits->split_2_object() (he.curve(),
+        traits->split_2_object() (he->curve(),
                                   traits->construct_max_vertex_2_object() (cv),
                                   sub_cv1, sub_cv2);
 
@@ -372,7 +372,7 @@ private:
                     Arr_accessor<Arrangement_2>& arr_access)
   {
     // Split the curve at the split point.
-    traits->split_2_object() (he.curve(),
+    traits->split_2_object() (he->curve(),
                               p,
                               sub_cv1, sub_cv2);
 
@@ -380,7 +380,7 @@ private:
     // depending whether the left point of sub_cv1 equals he's source (if not,
     // it equals its target).
     if (traits->equal_2_object()
-        (he.source().point(),
+        (he->source()->point(),
          traits->construct_min_vertex_2_object() (sub_cv1)))
     {
       arr_access.split_edge_ex (he,

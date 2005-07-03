@@ -29,12 +29,12 @@
  * The header file for the Arrangement_2<Traits,Dcel> class.
  */
 
+#include <CGAL/HalfedgeDS_iterator.h>
+#include <CGAL/In_place_list.h>
 #include <CGAL/Arr_default_dcel.h>
 #include <CGAL/Arr_observer.h>
 #include <CGAL/Arrangement_2/Arr_accessor.h>
-#include <CGAL/Arrangement_2/Arrangement_2_iterators.h>
 #include <CGAL/Arrangement_2/Arr_traits_wrapper_2.h>
-#include <CGAL/In_place_list.h>
 #include <map>
 
 CGAL_BEGIN_NAMESPACE
@@ -70,44 +70,408 @@ protected:
 
   typedef Arr_traits_basic_wrapper_2<Traits_2>  Traits_wrapper_2;
 
-  typedef typename Dcel::Vertex                 Vertex;
-  typedef typename Dcel::Halfedge               Halfedge;
-  typedef typename Dcel::Face                   Face;
+  // Internal DCEL types:
+  typedef typename Dcel::Vertex                      DVertex;
+  typedef typename Dcel::Halfedge                    DHalfedge;
+  typedef typename Dcel::Face                        DFace;
+
+  typedef typename Dcel::difference_type             DDifference;  
+  typedef typename Dcel::iterator_category           DIterator_category;
+
+  typedef typename Dcel::Vertex_iterator             DVertex_iter;
+  typedef typename Dcel::Vertex_const_iterator       DVertex_const_iter;
+
+  typedef typename Dcel::Halfedge_iterator           DHalfedge_iter;
+  typedef typename Dcel::Halfedge_const_iterator     DHalfedge_const_iter;
+
+  typedef typename Dcel::Edge_iterator               DEdge_iter;
+  typedef typename Dcel::Edge_const_iterator         DEdge_const_iter;
+
+  typedef typename Dcel::Face_iterator               DFace_iter;
+  typedef typename Dcel::Face_const_iterator         DFace_const_iter;
+
+  typedef typename DFace::Holes_iterator             DHoles_iter;
+  typedef typename DFace::Holes_const_iterator       DHoles_const_iter;
+
+  typedef typename DFace::Isolated_vertices_iterator
+                                               DIsolated_vertices_iter;
+  typedef typename DFace::Isolated_vertices_const_iterator
+                                               DIsolated_vertices_const_iter;
 
 public:
 
-  // Handles, iterators and circulators.
-  typedef _Vertex_handle<Traits_2, Dcel>              Vertex_handle;
-  typedef _Vertex_const_handle<Traits_2, Dcel>        Vertex_const_handle;
-  typedef _Vertex_iterator<Traits_2, Dcel>            Vertex_iterator;
-  typedef _Vertex_const_iterator<Traits_2, Dcel>      Vertex_const_iterator;
+  // Forward declerations:
+  class Vertex;
+  class Halfedge;
+  class Face;
 
-  typedef _Halfedge_handle<Traits_2, Dcel>            Halfedge_handle;
-  typedef _Halfedge_const_handle<Traits_2, Dcel>      Halfedge_const_handle;
-  typedef _Halfedge_iterator<Traits_2, Dcel>          Halfedge_iterator;
-  typedef _Halfedge_const_iterator<Traits_2, Dcel>    Halfedge_const_iterator;
-  typedef _Edge_iterator<Traits_2, Dcel>              Edge_iterator;
-  typedef _Edge_const_iterator<Traits_2, Dcel>        Edge_const_iterator;
+  // Definition of the halfedge data-structure itereators and circulators:
+  typedef I_HalfedgeDS_iterator
+    <DVertex_iter, Vertex, DDifference,
+     DIterator_category>                          Vertex_iterator;
+  
+  typedef I_HalfedgeDS_const_iterator
+    <DVertex_const_iter, DVertex_iter, Vertex,
+     DDifference, DIterator_category>             Vertex_const_iterator;
+  
+  typedef I_HalfedgeDS_iterator
+    <DHalfedge_iter, Halfedge, DDifference,
+     DIterator_category>                          Halfedge_iterator;
+  
+  typedef I_HalfedgeDS_const_iterator
+    <DHalfedge_const_iter, DHalfedge_iter,
+     Halfedge, DDifference, DIterator_category>   Halfedge_const_iterator;
 
-  typedef _Face_handle<Traits_2, Dcel>                Face_handle;
-  typedef _Face_const_handle<Traits_2, Dcel>          Face_const_handle;
-  typedef _Face_iterator<Traits_2, Dcel>              Face_iterator;
-  typedef _Face_const_iterator<Traits_2, Dcel>        Face_const_iterator;
+  typedef I_HalfedgeDS_iterator
+    <DEdge_iter, Halfedge, DDifference,
+     DIterator_category>                          Edge_iterator;
+  
+  typedef I_HalfedgeDS_const_iterator
+    <DEdge_const_iter, DEdge_iter, Halfedge,
+     DDifference, DIterator_category>             Edge_const_iterator;
+  
+  typedef I_HalfedgeDS_iterator
+    <DFace_iter, Face, DDifference,
+     DIterator_category>                          Face_iterator;
+  
+  typedef I_HalfedgeDS_const_iterator
+    <DFace_const_iter, DFace_iter, Face,
+     DDifference, DIterator_category>             Face_const_iterator;
 
-  typedef _Halfedge_around_vertex_circulator<Traits_2, Dcel>
-                                      Halfedge_around_vertex_circulator;
-  typedef _Halfedge_around_vertex_const_circulator<Traits_2, Dcel>
-                                      Halfedge_around_vertex_const_circulator;
-  typedef _Ccb_halfedge_circulator<Traits_2, Dcel>        
-                                      Ccb_halfedge_circulator;
-  typedef _Ccb_halfedge_const_circulator<Traits_2, Dcel>  
-                                      Ccb_halfedge_const_circulator;
-  typedef _Holes_iterator<Traits_2, Dcel>             Holes_iterator;
-  typedef _Holes_const_iterator<Traits_2, Dcel>       Holes_const_iterator;
-  typedef _Isolated_vertices_iterator<Traits_2, Dcel>
-                                      Isolated_vertices_iterator;
-  typedef _Isolated_vertices_const_iterator<Traits_2, Dcel>
-                                      Isolated_vertices_const_iterator;
+  typedef _HalfedgeDS_vertex_circ
+    <Halfedge, Halfedge_iterator,
+     Bidirectional_circulator_tag>    Halfedge_around_vertex_circulator;
+
+  typedef _HalfedgeDS_vertex_const_circ
+    <Halfedge,
+     Halfedge_const_iterator,
+     Bidirectional_circulator_tag>    Halfedge_around_vertex_const_circulator;
+
+  typedef _HalfedgeDS_facet_circ
+    <Halfedge,
+     Halfedge_iterator,
+     Bidirectional_circulator_tag>    Ccb_halfedge_circulator;
+
+  typedef _HalfedgeDS_facet_const_circ
+    <Halfedge,
+     Halfedge_const_iterator,
+     Bidirectional_circulator_tag>    Ccb_halfedge_const_circulator;
+  
+  typedef I_HalfedgeDS_iterator
+    <DHoles_iter, Ccb_halfedge_circulator,
+     DDifference,
+     DIterator_category>              Holes_iterator;
+  
+  typedef I_HalfedgeDS_const_iterator
+    <DHoles_const_iter, DHoles_iter,
+     Ccb_halfedge_const_circulator,
+     DDifference,
+     DIterator_category>              Holes_const_iterator;
+
+  typedef I_HalfedgeDS_iterator
+    <DIsolated_vertices_iter,
+     Vertex, DDifference,
+     DIterator_category>              Isolated_vertices_iterator;
+  
+  typedef I_HalfedgeDS_const_iterator
+    <DIsolated_vertices_const_iter,
+     DIsolated_vertices_iter,
+     Vertex, DDifference,
+     DIterator_category>              Isolated_vertices_const_iterator;
+
+  // Definition of handles (equivalent to iterators):
+  typedef Vertex_iterator              Vertex_handle;
+  typedef Halfedge_iterator            Halfedge_handle;
+  typedef Face_iterator                Face_handle;
+
+  typedef Vertex_const_iterator        Vertex_const_handle;
+  typedef Halfedge_const_iterator      Halfedge_const_handle;
+  typedef Face_const_iterator          Face_const_handle;
+
+  /*!
+   * \class The arrangement vertex class.
+   */
+  class Vertex : public DVertex
+  {
+    typedef DVertex               Base;
+
+  public:
+
+    /*! Default constrcutor. */
+    Vertex()
+    {}
+
+    /*! Get a handle for the vertex (non-const version). */
+    Vertex_handle handle ()
+    {
+      return (DVertex_iter (this));
+    }
+
+    /*! Get a handle for the vertex (const version). */
+    Vertex_const_handle handle () const
+    {
+      return (DVertex_const_iter (this));
+    }
+
+    /*! Check whether the vertex is isolated (has no incident halfedges). */
+    bool is_isolated() const
+    {
+      const DHalfedge  *he = Base::halfedge();
+      return (he == NULL || he->vertex() != this);
+    }
+
+    /*! Get the vertex degree (number of incident edges). */
+    Size degree () const
+    {
+      if (is_isolated())
+        return (0);
+
+      // Go around the vertex and count the incident halfedges.
+      const DHalfedge  *he_first = Base::halfedge();
+      const DHalfedge  *he_curr = he_first;
+      Size              n = 0;
+
+      if (he_curr != NULL)
+      {
+        do
+        {
+          n++;
+          he_curr = he_curr->next()->opposite();
+        } while (he_curr != he_first);
+      }
+      return (n);
+    }
+
+    /*! Get the incident halfedges (non-const version). */
+    Halfedge_around_vertex_circulator incident_halfedges() 
+    {
+      CGAL_precondition (! is_isolated());
+
+      return Halfedge_around_vertex_circulator
+        (DHalfedge_iter (Base::halfedge()));
+    }
+
+    /*! Get the incident halfedges (const version). */
+    Halfedge_around_vertex_const_circulator incident_halfedges() const 
+    {
+      CGAL_precondition (! is_isolated());
+
+      return Halfedge_around_vertex_const_circulator
+        (DHalfedge_const_iter (Base::halfedge())); 
+    }
+  };
+
+  /*!
+   * \class The arrangement halfedge class.
+   */
+  class Halfedge : public DHalfedge
+  {
+    typedef DHalfedge             Base;
+
+  public:
+
+    /*! Default constrcutor. */
+    Halfedge ()
+    {}
+
+    /*! Get a handle for the halfedge (non-const version). */
+    Halfedge_handle handle ()
+    {
+      return (DHalfedge_iter (this));
+    }
+
+    /*! Get a handle for the halfedge (const version). */
+    Halfedge_const_handle handle () const
+    {
+      return (DHalfedge_const_iter (this));
+    }
+
+    /*! Get the source vertex (non-const version). */
+    Vertex_handle source ()
+    {
+      return (DVertex_iter (Base::opposite()->vertex()));
+    }
+
+    /*! Get the source vertex (const version). */
+    Vertex_const_handle source () const
+    {
+      return (DVertex_const_iter (Base::opposite()->vertex()));
+    }
+    
+    /*! Get the target vertex (non-const version). */
+    Vertex_handle target ()
+    {
+      return (DVertex_iter (Base::vertex()));
+    }
+
+    /*! Get the target vertex (const version). */
+    Vertex_const_handle target () const
+    {
+      return (DVertex_const_iter (Base::vertex()));
+    }
+    
+    /*! Get the incident face (non-const version). */
+    Face_handle face()
+    {
+      return (DFace_iter (Base::face()));
+    }
+
+    /*! Get the incident face (const version). */
+    Face_const_handle face() const
+    {
+      return (DFace_const_iter (Base::face()));
+    }
+
+    /*! Get the twin halfedge (non-const version). */
+    Halfedge_handle twin()
+    {
+      return (DHalfedge_iter (Base::opposite()));
+    }
+
+    /*! Get the twin halfedge (const version). */
+    Halfedge_const_handle twin() const 
+    {
+      return (DHalfedge_const_iter (Base::opposite()));
+    }
+
+   /*! Get the previous halfegde in the chain (non-const version). */
+    Halfedge_handle prev () 
+    { 
+      return (DHalfedge_iter (Base::prev()));
+    }
+
+    /*! Get the previous halfegde in the chain (const version). */
+    Halfedge_const_handle prev () const 
+    { 
+      return (DHalfedge_const_iter (Base::prev()));
+    }
+
+    /*! Get the next halfegde in the chain (non-const version). */
+    Halfedge_handle next () 
+    { 
+      return (DHalfedge_iter (Base::next()));
+    }
+
+    /*! Get the next halfegde in the chain (const version). */
+    Halfedge_const_handle next () const 
+    { 
+      return (DHalfedge_const_iter (Base::next()));
+    }
+    
+    /*! Get the connected component of the halfedge (non-const version). */
+    Ccb_halfedge_circulator ccb ()
+    { 
+      return Ccb_halfedge_circulator (DHalfedge_iter (this));
+    }
+
+    /*! Get the connected component of the halfedge (const version). */
+    Ccb_halfedge_const_circulator ccb () const
+    { 
+      return Ccb_halfedge_const_circulator (DHalfedge_const_iter (this));
+    }
+
+  };
+
+  /*!
+   * \class The arrangement face class.
+   */
+  class Face : public DFace
+  {
+    typedef DFace                 Base;
+
+  public:
+
+    /*! Default constrcutor. */
+    Face()
+    {}
+
+    /*! Get a handle for the face (non-const version). */
+    Face_handle handle ()
+    {
+      return (DFace_iter (this));
+    }
+
+    /*! Get a handle for the face (const version). */
+    Face_const_handle handle () const
+    {
+      return (DFace_const_iter (this));
+    }
+
+    /*! Check whether the face is unbounded. */
+    bool is_unbounded () const
+    {
+      // Check whether the outer-boundary edge exists or not.
+      return (Base::halfedge() == NULL);
+    }
+
+    /*! Get an iterator for the holes inside the face (non-const version). */
+    Holes_iterator holes_begin() 
+    {
+      return (DHoles_iter (Base::holes_begin()));
+    }
+
+    /*! Get an iterator for the holes inside the face (const version). */
+    Holes_const_iterator holes_begin() const
+    {
+      return (DHoles_const_iter (Base::holes_begin()));
+    }
+    
+    /*! Get a past-the-end iterator for the holes (non-const version). */
+    Holes_iterator holes_end() 
+    {
+      return (DHoles_iter (Base::holes_end()));
+    }
+
+    /*! Get a past-the-end iterator for the holes (const version). */
+    Holes_const_iterator holes_end() const 
+    {
+      return (DHoles_const_iter (Base::holes_end()));
+    }
+
+    /*! Get an iterator for the isolated_vertices inside the face
+     * (non-const version). */
+    Isolated_vertices_iterator isolated_vertices_begin ()
+    {
+      return (DIsolated_vertices_iter (Base::isolated_vertices_begin()));
+    }
+
+    /*! Get an iterator for the isolated_vertices inside the face
+     * (const version). */
+    Isolated_vertices_const_iterator isolated_vertices_begin () const
+    {
+      return (DIsolated_vertices_const_iter (Base::isolated_vertices_begin()));
+    }
+    
+    /*! Get a past-the-end iterator for the isolated_vertices 
+     * (non-const version). */
+    Isolated_vertices_iterator isolated_vertices_end () 
+    {
+      return (DIsolated_vertices_iter (Base::isolated_vertices_end()));
+    }
+
+    /*! Get a past-the-end iterator for the isolated_vertices
+     * (const version). */
+    Isolated_vertices_const_iterator isolated_vertices_end () const 
+    {
+      return (DIsolated_vertices_const_iter (Base::isolated_vertices_end()));
+    }
+
+    /*! Get a circulator for the outer boundary (non-const version). */
+    Ccb_halfedge_circulator outer_ccb () 
+    {
+      CGAL_precondition(Base::halfedge() != NULL); 
+      return Ccb_halfedge_circulator (DHalfedge_iter (Base::halfedge()));
+    }
+
+    /*! Get a circulator for the outer boundary (const version). */
+    Ccb_halfedge_const_circulator outer_ccb () const
+    {
+      CGAL_precondition(Base::halfedge() != NULL); 
+      return Ccb_halfedge_const_circulator
+        (DHalfedge_const_iter (Base::halfedge()));
+    }
+
+  };
 
 protected:
 
@@ -164,7 +528,7 @@ protected:
 
   // Data members:
   Dcel                dcel;         // The DCEL representing the arrangement.
-  Face               *un_face;      // The unbounded face of the DCEL.
+  DFace              *un_face;      // The unbounded face of the DCEL.
   Points_container    points;       // Container for the points that
                                     // correspond to the vertices.
   Points_alloc        points_alloc; // Allocator for the points.
@@ -230,7 +594,7 @@ public:
   bool is_empty () const
   {
     return (vertices_begin() == vertices_end() &&
-	    halfedges_begin() == halfedges_end());
+            halfedges_begin() == halfedges_end());
   }
 
   /*! Get the number of arrangement vertices. */
@@ -239,7 +603,7 @@ public:
     return (dcel.size_of_vertices());
   }
 
-  /*! Get the number of arrangement halfedges (then result is always even). */
+  /*! Get the number of arrangement halfedges (the result is always even). */
   Size number_of_halfedges () const
   {
     return (dcel.size_of_halfedges());
@@ -355,6 +719,7 @@ public:
   /*! Get the unbounded face (const version). */
   Face_const_handle unbounded_face () const
   {
+
     return (Face_const_handle (un_face));
   }
 
@@ -366,10 +731,11 @@ public:
    */
   Face_handle incident_face (Vertex_handle v)
   {
-    CGAL_precondition (v.is_isolated());
+    CGAL_precondition (v->is_isolated());
 
     // Get the fictitious incident halfedge of the vertex.
-    Halfedge  *p_he = v.p_v->halfedge();
+    DVertex    *p_v = _vertex (v);
+    DHalfedge  *p_he = p_v->halfedge();
 
     // If this halfedge is vald, return it incident face. Otherwise, return
     // the unbounded face.
@@ -390,7 +756,7 @@ public:
     CGAL_precondition (v.is_isolated());
 
     // Get the fictitious incident halfedge of the vertex.
-    const Halfedge  *p_he = v.p_v->halfedge();
+    const DHalfedge  *p_he = v.p_v->halfedge();
 
     // If this halfedge is vald, return it incident face. Otherwise, return
     // the unbounded face.
@@ -429,19 +795,19 @@ public:
   //@{
   Vertex_handle non_const_handle (Vertex_const_handle vh)
   {
-    Vertex    *p_v = const_cast<Vertex*> (vh.p_v);
+    DVertex    *p_v = (DVertex*) &(*vh);
     return (Vertex_handle (p_v));
   }
 
   Halfedge_handle non_const_handle (Halfedge_const_handle hh)
   {
-    Halfedge  *p_he = const_cast<Halfedge*> (hh.p_he);
+    DHalfedge  *p_he = (DHalfedge*) &(*hh);
     return (Halfedge_handle (p_he));
   }
 
   Face_handle non_const_handle (Face_const_handle fh)
   {
-    Face      *p_f = const_cast<Face*> (fh.p_f);
+    DFace      *p_f = (DFace*) &(*fh);
     return (Face_handle (p_f));
   }
   //@}
@@ -458,7 +824,7 @@ public:
    * \return A handle for a the modified vertex (same as v).
    */
   Vertex_handle modify_vertex (Vertex_handle v,
-			       const Point_2& p);
+                               const Point_2& p);
 
   /*!
    * Insert an isolated vertex in the interior of a given face.
@@ -504,7 +870,7 @@ public:
    *         curve, whose target is the new vertex.
    */
   Halfedge_handle insert_from_left_vertex (const X_monotone_curve_2& cv, 
-					   Vertex_handle v);
+                                           Vertex_handle v);
 
   /*!
    * Insert an x-monotone curve into the arrangement, such that its left
@@ -518,7 +884,7 @@ public:
    *         curve, whose target is the new vertex that was created.
    */
   Halfedge_handle insert_from_left_vertex (const X_monotone_curve_2& cv,
-					   Halfedge_handle prev);
+                                           Halfedge_handle prev);
 
   /*!
    * Insert an x-monotone curve into the arrangement, such that its right
@@ -530,7 +896,7 @@ public:
    *         curve, whose target is the new vertex.
    */
   Halfedge_handle insert_from_right_vertex (const X_monotone_curve_2& cv, 
-					    Vertex_handle v);
+                                            Vertex_handle v);
 
   /*! 
    * Insert an x-monotone curve into the arrangement, such that its right
@@ -544,7 +910,7 @@ public:
    *         curve, whose target is the new vertex that was created.
    */
   Halfedge_handle insert_from_right_vertex (const X_monotone_curve_2& cv,
-					    Halfedge_handle prev);
+                                            Halfedge_handle prev);
   
   /*! 
    * Insert an x-monotone curve into the arrangement, such that both its
@@ -692,52 +1058,40 @@ protected:
   //@{
 
   /*! Convert a vertex handle to a pointer to a DCEL vertex. */
-  Vertex* _vertex (Vertex_handle vh) const
+  /*! Convert a vertex handle to a pointer to a DCEL vertex. */
+  inline DVertex* _vertex (Vertex_handle vh) const
   {
-    return (vh.p_v);
+    return (&(*vh));
   }
 
   /*! Convert a constant vertex handle to a pointer to a DCEL vertex. */
-  const Vertex* _vertex (Vertex_const_handle vh) const
+  inline const DVertex* _vertex (Vertex_const_handle vh) const
   {
-    return (vh.p_v);
+    return (&(*vh));
   }
 
   /*! Convert a halfedge handle to a pointer to a DCEL halfedge. */
-  Halfedge* _halfedge (Halfedge_handle hh) const
+  inline DHalfedge* _halfedge (Halfedge_handle hh) const
   {
-    return (hh.p_he);
+    return (&(*hh));
   }
 
   /*! Convert a constant halfedge handle to a pointer to a DCEL halfedge. */
-  const Halfedge* _halfedge (Halfedge_const_handle hh) const
+  inline const DHalfedge* _halfedge (Halfedge_const_handle hh) const
   {
-    return (hh.p_he);
+    return (&(*hh));
   }
 
   /*! Convert a face handle to a pointer to a DCEL face. */
-  Face* _face (Face_handle fh) const
+  inline DFace* _face (Face_handle fh) const
   {
-    return (fh.p_f);
+    return (&(*fh));
   }
 
   /*! Convert a constant face handle to a pointer to a DCEL face. */
-  const Face* _face (Face_const_handle fh) const
+  inline const DFace* _face (Face_const_handle fh) const
   {
-    return (fh.p_f);
-  }
-
-  /*! Convert a holes iterator to a DCEL holes iterator. */
-  typename Dcel::Face::Holes_iterator _holes_iterator (Holes_iterator it)
-  {
-    return (it.holes_it);
-  }
-
-  /*! Convert an isolated vertices iterator to a DCEL iterator. */
-  typename Dcel::Face::Isolated_vertices_iterator
-      _isolated_vertices_iterator (Isolated_vertices_iterator it)
-  {
-    return (it.iso_verts_it);
+    return (&(*fh));
   }
   //@}
 
@@ -745,38 +1099,38 @@ protected:
   //@{
 
   /*! Convert a pointer to a DCEL vertex to a vertex handle. */
-  Vertex_handle _handle_for (Vertex *v)
+  Vertex_handle _handle_for (DVertex *v)
   {
     return (Vertex_handle (v));
   }
 
   /*! Convert a pointer to a DCEL vertex to a constant vertex handle. */
-  Vertex_const_handle _const_handle_for (const Vertex *v) const
+  Vertex_const_handle _const_handle_for (const DVertex *v) const
   {
     return (Vertex_const_handle (v));
   }
 
   /*! Convert a pointer to a DCEL halfedge to a halfedge handle. */
-  Halfedge_handle _handle_for (Halfedge *he)
+  Halfedge_handle _handle_for (DHalfedge *he)
   {
     return (Halfedge_handle (he));
   }
 
 
   /*! Convert a pointer to a DCEL halfedge to a constant halfedge handle. */
-  Halfedge_const_handle _const_handle_for (const Halfedge *he) const
+  Halfedge_const_handle _const_handle_for (const DHalfedge *he) const
   {
     return (Halfedge_const_handle (he));
   }
 
   /*! Convert a pointer to a DCEL face to a face handle. */
-  Face_handle _handle_for (Face *f)
+  Face_handle _handle_for (DFace *f)
   {
     return (Face_handle (f));
   }
 
   /*! Convert a pointer to a DCEL face to a constant face handle. */
-  Face_const_handle _const_handle_for (const Face *f) const
+  Face_const_handle _const_handle_for (const DFace *f) const
   {
     return (Face_const_handle (f));
   }
@@ -795,8 +1149,8 @@ protected:
    *         vertex (in a clockwise order).
    *         A NULL return value indicates a precondition violation.
    */
-  Halfedge* _locate_around_vertex (Vertex *v,
-                                   const X_monotone_curve_2& cv) const;
+  DHalfedge* _locate_around_vertex (DVertex *v,
+                                    const X_monotone_curve_2& cv) const;
 
   /*!
    * Compute the distance (in halfedges) between two halfedges.
@@ -806,7 +1160,7 @@ protected:
    *         function returns number of boundary halfedges between the two 
    *         halfedges. Otherwise, it returns (-1).
    */
-  int _halfedge_distance (const Halfedge *e1, const Halfedge *e2) const;
+  int _halfedge_distance (const DHalfedge *e1, const DHalfedge *e2) const;
 
   /*!
    * Determine whether a given query halfedge lies in the interior of a new
@@ -821,8 +1175,8 @@ protected:
    *         to create, (false) otherwise - in which case prev2 must lie
    *         inside this new face.
    */
-  bool _is_inside_new_face (const Halfedge *prev1,
-                            const Halfedge *prev2,
+  bool _is_inside_new_face (const DHalfedge *prev1,
+                            const DHalfedge *prev2,
                             const X_monotone_curve_2& cv) const;
 
   /*!
@@ -833,7 +1187,7 @@ protected:
    * \return (true) if the point lies within region, (false) otherwise.
    */
   bool _point_is_in (const Point_2& p, 
-                     const Halfedge* he) const;
+                     const DHalfedge* he) const;
 
   /*!
    * Move a given hole from one face to another.
@@ -841,9 +1195,9 @@ protected:
    * \param to_face The face into which we should move the hole.
    * \param hole A DCEL holes iterator pointing at the hole.
    */
-  void _move_hole (Face *from_face,
-                   Face *to_face,
-                   typename Dcel::Face::Holes_iterator hole);
+  void _move_hole (DFace *from_face,
+                   DFace *to_face,
+                   DHoles_iter hole);
 
   /*!
    * Move a given isolated vertex from one face to another.
@@ -852,9 +1206,9 @@ protected:
    * \param vit A DCEL isolated vertices iterator pointing at the vertex.
    */
   void _move_isolated_vertex
-                        (Face *from_face,
-                         Face *to_face,
-                         typename Dcel::Face::Isolated_vertices_iterator vit);
+                        (DFace *from_face,
+                         DFace *to_face,
+                         DIsolated_vertices_iter vit);
 
   /*!
    * Check whether the given halfedge lies on the outer boundary of the given
@@ -864,7 +1218,7 @@ protected:
    * \return A pointer to a halfedge on the outer boundary of f in case e lies
    *         on this outer boundary, or NULL if it does not.
    */
-  Halfedge* _is_on_outer_boundary (Face *f, Halfedge *e) const;
+  DHalfedge* _is_on_outer_boundary (DFace *f, DHalfedge *e) const;
 
   /*!
    * Check whether the given halfedge lies on the inner boundary of the given
@@ -874,7 +1228,7 @@ protected:
    * \return A pointer to a halfedge on the inner boundary of f in case e lies
    *         on this outer boundary, or NULL if it does not.
    */
-  Halfedge* _is_on_inner_boundary (Face *f, Halfedge *e) const;
+  DHalfedge* _is_on_inner_boundary (DFace *f, DHalfedge *e) const;
 
   /*!
    * Find the hole represented by a given halfedge from the holes container
@@ -883,7 +1237,7 @@ protected:
    * \param e The given halfedge.
    * \return Whether the hole was found and erased or not.
    */
-  bool _find_and_erase_hole (Face *f, Halfedge* e);
+  bool _find_and_erase_hole (DFace *f, DHalfedge* e);
 
   /*!
    * Find the vertex in the isolated vertices container of a given face and
@@ -892,7 +1246,7 @@ protected:
    * \param v The isolated vertex.
    * \return Whether the vertex was found and erased or not.
    */
-  bool _find_and_erase_isolated_vertex (Face *f, Vertex* v);
+  bool _find_and_erase_isolated_vertex (DFace *f, DVertex* v);
 
   /*!
    * Insert an x-monotone curve into the arrangement, such that both its
@@ -906,9 +1260,9 @@ protected:
    * \return A pointer to one of the halfedges corresponding to the inserted
    *         curve, directed from v1 to v2.
    */
-  Halfedge* _insert_in_face_interior (const X_monotone_curve_2& cv,
-				      Face *f,
-				      Vertex *v1, Vertex *v2);
+  DHalfedge* _insert_in_face_interior (const X_monotone_curve_2& cv,
+                                       DFace *f,
+                                       DVertex *v1, DVertex *v2);
 
   /*! 
    * Insert an x-monotone curve into the arrangement, such that one of its
@@ -923,9 +1277,9 @@ protected:
    * \return A pointer to one of the halfedges corresponding to the inserted
    *         curve, whose target is the vertex v.
    */
-  Halfedge* _insert_from_vertex (const X_monotone_curve_2& cv,
-				 Halfedge *prev,
-				 Vertex *v);
+  DHalfedge* _insert_from_vertex (const X_monotone_curve_2& cv,
+                                  DHalfedge *prev,
+                                  DVertex *v);
 
   /*!
    * Insert an x-monotone curve into the arrangement, where the end vertices
@@ -939,29 +1293,38 @@ protected:
    * \param new_face Output - whether a new face has been created.
    * \return A pointer to one of the halfedges corresponding to the inserted
    *         curve directed from prev1's target to prev2's target.
+
    *         In case a new face has been created, it is given as the incident
    *         face of this halfedge.
    */
-  Halfedge* _insert_at_vertices (const X_monotone_curve_2& cv,
-                                 Halfedge *prev1, 
-                                 Halfedge *prev2,
-                                 bool& new_face);
+  DHalfedge* _insert_at_vertices (const X_monotone_curve_2& cv,
+                                  DHalfedge *prev1, 
+                                  DHalfedge *prev2,
+                                  bool& new_face);
+
+  /*!
+   * Relocate all holes and isolated vertices to their proper position,
+   * immediately after a face has split due to the insertion of a new halfedge.
+   * \param new_he The new halfedge that caused the split, such that the new
+   *               face lies to its left and the old face to its right.
+   */
+  void _relocate_in_new_face (DHalfedge *new_he);
 
   /*!
    * Replace the point associated with the given vertex.
    * \param v The vertex to modify.
    * \param p The point that should be associated with the edge.
    */
-  void _modify_vertex (Vertex *v, 
-		       const Point_2& p);
+  void _modify_vertex (DVertex *v, 
+                       const Point_2& p);
 
   /*!
    * Replace the x-monotone curve associated with the given edge.
    * \param e The edge to modify.
    * \param cv The curve that should be associated with the edge.
    */
-  void _modify_edge (Halfedge *he, 
-		     const X_monotone_curve_2& cv);
+  void _modify_edge (DHalfedge *he, 
+                     const X_monotone_curve_2& cv);
 
   /*!
    * Split a given edge into two at a given point, and associate the given
@@ -975,10 +1338,10 @@ protected:
    * \return A pointer to the first split halfedge, whose source equals the
    *         source of e, and whose target is the split point.
    */
-  Halfedge* _split_edge (Halfedge *e,
-                         const Point_2& p,
-                         const X_monotone_curve_2& cv1, 
-                         const X_monotone_curve_2& cv2);
+  DHalfedge* _split_edge (DHalfedge *e,
+                          const Point_2& p,
+                          const X_monotone_curve_2& cv1, 
+                          const X_monotone_curve_2& cv2);
 
   /*!
    * Remove a pair of twin halfedges from the arrangement.
@@ -987,7 +1350,7 @@ protected:
    *      point at this hole.
    * \return A pointer to the remaining face.
    */
-  Face *_remove_edge (Halfedge *e);
+  DFace *_remove_edge (DHalfedge *e);
 
   //@}
 
@@ -1070,6 +1433,7 @@ private:
   void _notify_before_global_change ()
   {
     Observers_iterator   iter;
+
     Observers_iterator   end = observers.end();
 
     for (iter = observers.begin(); iter != end; ++iter)
@@ -1106,7 +1470,7 @@ private:
   }
 
   void _notify_before_create_edge (const X_monotone_curve_2& c,
-				   Vertex_handle v1, Vertex_handle v2)
+                                   Vertex_handle v1, Vertex_handle v2)
   {
     Observers_iterator   iter;
     Observers_iterator   end = observers.end();
@@ -1125,7 +1489,7 @@ private:
   }
 
   void _notify_before_modify_vertex (Vertex_handle v,
-				     const Point_2& p)
+                                     const Point_2& p)
   {
     Observers_iterator   iter;
     Observers_iterator   end = observers.end();
@@ -1224,7 +1588,7 @@ private:
   }
 
   void _notify_before_add_isolated_vertex (Face_handle f,
-					   Vertex_handle v)
+                                           Vertex_handle v)
   {
     Observers_iterator   iter;
     Observers_iterator   end = observers.end();
@@ -1303,8 +1667,8 @@ private:
   }
 
   void _notify_before_move_isolated_vertex (Face_handle from_f,
-					    Face_handle to_f,
-					    Vertex_handle v)
+                                            Face_handle to_f,
+                                            Vertex_handle v)
   {
     Observers_iterator   iter;
     Observers_iterator   end = observers.end();
@@ -1360,7 +1724,7 @@ private:
   }
 
   void _notify_before_remove_hole (Face_handle f,
-				   Ccb_halfedge_circulator h)
+                                   Ccb_halfedge_circulator h)
   {
     Observers_iterator   iter;
     Observers_iterator   end = observers.end();
@@ -1395,8 +1759,8 @@ private:
  */
 template <class Traits, class Dcel, class PointLocation>
 void insert (Arrangement_2<Traits,Dcel>& arr,
-	     const PointLocation& pl,
-	     const typename Traits::Curve_2& c);
+             const PointLocation& pl,
+             const typename Traits::Curve_2& c);
 
 /*!
  * Insert a range of curves into the arrangement (aggregated insertion). 
@@ -1409,7 +1773,7 @@ void insert (Arrangement_2<Traits,Dcel>& arr,
  */
 template <class Traits, class Dcel, class InputIterator>
 void insert (Arrangement_2<Traits,Dcel>& arr,
-	     InputIterator begin, InputIterator end);
+             InputIterator begin, InputIterator end);
 
 /*!
  * Insert an x-monotone curve into the arrangement (incremental insertion).
@@ -1420,8 +1784,8 @@ void insert (Arrangement_2<Traits,Dcel>& arr,
  */
 template <class Traits, class Dcel, class PointLocation>
 void insert_x_monotone (Arrangement_2<Traits,Dcel>& arr,
-			const PointLocation& pl,
-			const typename Traits::X_monotone_curve_2& c);
+                        const PointLocation& pl,
+                        const typename Traits::X_monotone_curve_2& c);
 
 /*!
  * Insert a range of x-monotone curves into the arrangement (aggregated
@@ -1434,7 +1798,7 @@ void insert_x_monotone (Arrangement_2<Traits,Dcel>& arr,
  */
 template <class Traits, class Dcel, class InputIterator>
 void insert_x_monotone (Arrangement_2<Traits,Dcel>& arr,
-			InputIterator begin, InputIterator end);
+                        InputIterator begin, InputIterator end);
 
 /*!
  * Insert an x-monotone curve into the arrangement, such that the curve
@@ -1449,8 +1813,8 @@ void insert_x_monotone (Arrangement_2<Traits,Dcel>& arr,
 template <class Traits, class Dcel, class PointLocation>
 typename Arrangement_2<Traits,Dcel>::Halfedge_handle
 insert_non_intersecting (Arrangement_2<Traits,Dcel>& arr,
-			 const PointLocation& pl,
-			 const typename Traits::X_monotone_curve_2& c);
+                         const PointLocation& pl,
+                         const typename Traits::X_monotone_curve_2& c);
 
 /*!
  * Insert a range of pairwise interior-disjoint x-monotone curves into
@@ -1465,7 +1829,7 @@ insert_non_intersecting (Arrangement_2<Traits,Dcel>& arr,
  */
 template <class Traits, class Dcel, class InputIterator>
 void insert_non_intersecting (Arrangement_2<Traits,Dcel>& arr,
-			      InputIterator begin, InputIterator end);
+                              InputIterator begin, InputIterator end);
 
 /*!
  * Remove an edge from the arrangement. In case it is possible to merge
@@ -1478,7 +1842,7 @@ void insert_non_intersecting (Arrangement_2<Traits,Dcel>& arr,
 template <class Traits, class Dcel>
 typename Arrangement_2<Traits,Dcel>::Face_handle
 remove_edge (Arrangement_2<Traits,Dcel>& arr,
-	     typename Arrangement_2<Traits,Dcel>::Halfedge_handle e);
+             typename Arrangement_2<Traits,Dcel>::Halfedge_handle e);
 
 /*!
  * Insert a vertex that corresponds to a given point into the arrangement.
@@ -1491,8 +1855,8 @@ remove_edge (Arrangement_2<Traits,Dcel>& arr,
 template <class Traits, class Dcel, class PointLocation>
 typename Arrangement_2<Traits,Dcel>::Vertex_handle
 insert_vertex (Arrangement_2<Traits,Dcel>& arr,
-	       const PointLocation& pl,
-	       const typename Traits::Point_2& p);
+               const PointLocation& pl,
+               const typename Traits::Point_2& p);
 
 /*!
  * Remove a vertex from the arrangement.
@@ -1502,7 +1866,7 @@ insert_vertex (Arrangement_2<Traits,Dcel>& arr,
  */
 template <class Traits, class Dcel>
 bool remove_vertex (Arrangement_2<Traits,Dcel>& arr,
-		    typename Arrangement_2<Traits,Dcel>::Vertex_handle v);
+                    typename Arrangement_2<Traits,Dcel>::Vertex_handle v);
 
 CGAL_END_NAMESPACE
 

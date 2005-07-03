@@ -38,11 +38,13 @@ Object Arr_naive_point_location<Arrangement>::locate (const Point_2& p) const
   typename Traits_wrapper_2::Equal_2            equal = 
                                             traits->equal_2_object();
   typename Arrangement::Vertex_const_iterator   vit;
+  typename Arrangement::Vertex_const_handle     vh;
 
   for (vit = p_arr->vertices_begin(); vit != p_arr->vertices_end(); ++vit)
   {
-    if (equal (p, (*vit).point()))
-      return (make_object (*vit));
+    vh = vit->handle();
+    if (equal (p, vh->point()))
+      return (make_object (vh));
   }
 
   // Go over arrangement halfedges and check whether one of them contains
@@ -52,13 +54,15 @@ Object Arr_naive_point_location<Arrangement>::locate (const Point_2& p) const
   typename Traits_wrapper_2::Compare_y_at_x_2   compare_y_at_x = 
                                             traits->compare_y_at_x_2_object();
   typename Arrangement::Edge_const_iterator     eit;
+  typename Arrangement::Halfedge_const_handle   hh;
 
   for (eit = p_arr->edges_begin(); eit != p_arr->edges_end(); ++eit)
   {
-    if (is_in_x_range ((*eit).curve(), p) &&
-        compare_y_at_x (p, (*eit).curve()) == EQUAL)
+    hh = eit->handle();
+    if (is_in_x_range (hh->curve(), p) &&
+        compare_y_at_x (p, hh->curve()) == EQUAL)
     {
-      return (make_object (*eit));
+      return (make_object (hh));
     }
   }
 
@@ -72,36 +76,32 @@ Object Arr_naive_point_location<Arrangement>::locate (const Point_2& p) const
   }
 
   // The ray shooting returned either a vertex of a halfedge.
-  typename Arrangement::Halfedge_const_handle   h;
-
-  if (assign (h, obj))
+  if (assign (hh, obj))
   {
     // Make sure that the edge is directed from right to left, so that p
     // (which lies below it) is contained in its incident face. If necessary,
     // we take the twin halfedge.
-    if (traits->compare_xy_2_object() (h.source().point(), 
-                                       h.target().point()) == SMALLER)
+    if (traits->compare_xy_2_object() (hh->source()->point(), 
+                                       hh->target()->point()) == SMALLER)
     {
-      h = h.twin();
+      hh = hh->twin();
     }
 
     // Return the incident face.
-    return (make_object (h.face()));
+    return (make_object (hh->face()));
   }
 
   // In case the ray-shooting returned a vertex, we have to locate the first
   // halfedge whose source vertex is v, rotating clockwise around the vertex
   // from "6 o'clock", and to return its incident face. 
-  typename Arrangement::Vertex_const_handle     v;
-
-  if (! assign (v, obj))
+  if (! assign (vh, obj))
   {
     CGAL_assertion (false);
     return Object();
   }
 
-  h = _first_around_vertex (v);
-  return (make_object (h.face()));
+  hh = _first_around_vertex (vh);
+  return (make_object (hh->face()));
 }
 
 //-----------------------------------------------------------------------------
@@ -137,9 +137,9 @@ Object Arr_naive_point_location<Arrangement>::_base_vertical_ray_shoot
   {
     // Determine whether p is in the x-range of the curve and above or below it
     // (according to the direction of the shoot).
-    in_x_range = is_in_x_range ((*eit).curve(), p);
+    in_x_range = is_in_x_range (eit->curve(), p);
     if (in_x_range)
-      res = compare_y_at_x (p, (*eit).curve());
+      res = compare_y_at_x (p, eit->curve());
 
     if (in_x_range && res == point_above_under)
     {
@@ -147,7 +147,7 @@ Object Arr_naive_point_location<Arrangement>::_base_vertical_ray_shoot
       {
         // If no other x-monotone curve containing p in its x-range has been
         // found yet, take the current one as the vertically closest to p.
-        closest_edge = *eit;
+        closest_edge = eit->handle();
         found = true;
       }
       else
@@ -155,20 +155,20 @@ Object Arr_naive_point_location<Arrangement>::_base_vertical_ray_shoot
         // Compare with the vertically closest cure so far and detemine the
         // curve closest to p. Note that the two curves do not intersect
         // in their interiors.
-        if (compare_y_position (closest_edge.curve(),
-                                (*eit).curve()) == curve_above_under)
+        if (compare_y_position (closest_edge->curve(),
+                                eit->curve()) == curve_above_under)
         {
-          closest_edge = *eit;
+          closest_edge = eit->handle();
         }
       }
     }
 
     if (in_x_range && res == EQUAL &&
-        is_vertical((*eit).curve()))
+        is_vertical(eit->curve()))
     {
       // The vertical ray overlaps an existing vertical edge containing p.
       // In this case simply return this edge.
-      return (make_object (*eit));
+      return (make_object (eit));
     }
 
     // Move to the next edge.
@@ -181,15 +181,15 @@ Object Arr_naive_point_location<Arrangement>::_base_vertical_ray_shoot
 
   // If one of the closest edge's end vertices has the same x-coordinate
   // as the query point, return this vertex.
-  if (traits->compare_x_2_object() (closest_edge.source().point(),
+  if (traits->compare_x_2_object() (closest_edge->source()->point(),
                                     p) == EQUAL)
   {
-    return (make_object (closest_edge.source()));
+    return (make_object (closest_edge->source()));
   }
-  else if (traits->compare_x_2_object() (closest_edge.target().point(),
+  else if (traits->compare_x_2_object() (closest_edge->target()->point(),
                                          p) == EQUAL)
   {
-    return (make_object (closest_edge.target()));
+    return (make_object (closest_edge->target()));
   }
 
   // Otherwise, return the closest edge.
@@ -244,27 +244,28 @@ Object Arr_naive_point_location<Arrangement>::_vertical_ray_shoot
 
   for (vit = p_arr->vertices_begin(); vit != p_arr->vertices_end(); ++vit)
   {
-    vh = *vit;
-    if (! vh.is_isolated())
+    vh = vit->handle();
+    if (! vh->is_isolated())
       continue;
 
     // The current isolated vertex should have the same x-coordinate as the
     // query point in order to be below or above it.
-    if (compare_x (p, vh.point()) != EQUAL)
+    if (compare_x (p, vh->point()) != EQUAL)
       continue;
 
     // Make sure the isolated vertex is above the query point (if we shoot up)
     // or below it (if we shoot down).
-    if (compare_xy (p, vh.point()) != point_above_under)
+    if (compare_xy (p, vh->point()) != point_above_under)
       continue;
 
     // Check if the isolated vertex is closer to p than the current closest
     // object.
     if ((type == NAIVE_PL_NONE) ||
         (type == NAIVE_PL_VERTEX &&
-         compare_xy (vh.point(), closest_v.point()) == point_above_under) ||
+         compare_xy (vh->point(), closest_v->point()) == point_above_under) ||
         (type == NAIVE_PL_HALFEDGE &&
-         compare_y_at_x (vh.point(), closest_he.curve()) == point_above_under))
+         compare_y_at_x (vh->point(), closest_he->curve()) == 
+                                                         point_above_under))
     {
       closest_v = vh;
       type = NAIVE_PL_VERTEX;
@@ -303,23 +304,23 @@ Arr_naive_point_location<Arrangement>::_first_around_vertex
   Halfedge_const_handle   top_right;
 
   typename Arrangement::Halfedge_around_vertex_const_circulator first = 
-    v.incident_halfedges();
+    v->incident_halfedges();
   typename Arrangement::Halfedge_around_vertex_const_circulator curr = first;
 
   do 
   {
     // Check whether the current halfedge is defined to the left or to the
     // right of the given vertex.
-    if (compare_xy ((*curr).source().point(), v.point()) == SMALLER)
+    if (compare_xy (curr->source()->point(), v->point()) == SMALLER)
     {
       // The curve associated with the current halfedge is defined to the left
       // of v.
       if (lowest_left == invalid_handle ||
-          compare_y_at_x_left ((*curr).curve(),
-                               lowest_left.curve(), 
-                               v.point()) == SMALLER)
+          compare_y_at_x_left (curr->curve(),
+                               lowest_left->curve(), 
+                               v->point()) == SMALLER)
       {
-        lowest_left = *curr;
+        lowest_left = curr->handle();
       }
     }
     else
@@ -327,11 +328,11 @@ Arr_naive_point_location<Arrangement>::_first_around_vertex
       // The curve associated with the current halfedge is defined to the right
       // of v.
       if (top_right == invalid_handle ||
-          compare_y_at_x_right ((*curr).curve(),
-                                top_right.curve(), 
-                                v.point()) == LARGER)
+          compare_y_at_x_right (curr->curve(),
+                                top_right->curve(), 
+                                v->point()) == LARGER)
       {
-        top_right = *curr;
+        top_right = curr->handle();
       }
     }
 
@@ -343,9 +344,9 @@ Arr_naive_point_location<Arrangement>::_first_around_vertex
   // right. Note that as the halfedge we located has v as its target, we now
   // have to return its twin.
   if (lowest_left != invalid_handle)
-    return (lowest_left.twin());
+    return (lowest_left->twin());
   else
-    return (top_right.twin());
+    return (top_right->twin());
 }
 
 CGAL_END_NAMESPACE
