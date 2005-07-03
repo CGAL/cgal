@@ -408,12 +408,6 @@ public:
     holes.erase (hit.current_iterator());
   }
 
-  /*! Erase a range of holes from the face. */
-  void erase_holes (Holes_iterator first, Holes_iterator last)
-  {
-    holes.erase (first.current_iterator(), last.current_iterator());
-  }
-
   /*! Get an iterator for the first hole inside the face. */
   Holes_iterator holes_begin()
   {
@@ -464,13 +458,6 @@ public:
   void erase_isolated_vertex (Isolated_vertices_iterator ivit)
   {
     iso_verts.erase (ivit.current_iterator());
-  }
-
-  /*! Erase a range of isloated vertices from the face. */
-  void erase_isolated_vertices (Isolated_vertices_iterator first,
-                                Isolated_vertices_iterator last)
-  {
-    iso_verts.erase (first.current_iterator(), last.current_iterator());
   }
 
   /*! Get an iterator for the first isloated vertex inside the face. */
@@ -862,7 +849,7 @@ public:
       for (iso_verts_it = f->isolated_vertices_begin();
            iso_verts_it != f->isolated_vertices_end(); ++iso_verts_it)
       {
-        iso_vert = *iso_verts_it;
+        iso_vert = &(*iso_verts_it);
 
         dup_iso_vert = (v_map.find (iso_vert))->second;
         dup_f->add_isolated_vertex (dup_iso_vert);

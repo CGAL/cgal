@@ -259,6 +259,15 @@ public:
       return Halfedge_around_vertex_const_circulator
         (DHalfedge_const_iter (Base::halfedge())); 
     }
+
+  private:
+
+    // Blocking access to inherited functions from the Dcel::Vertex.
+    void set_point (Point_2* );
+    const DHalfedge* halfedge () const;
+    DHalfedge* halfedge ();
+    void set_halfedge (DHalfedge* );
+
   };
 
   /*!
@@ -370,6 +379,19 @@ public:
       return Ccb_halfedge_const_circulator (DHalfedge_const_iter (this));
     }
 
+  private:
+
+    // Blocking access to inherited functions from the Dcel::Halfedge.
+    void set_curve (X_monotone_curve_2* );
+    const DHalfedge* opposite () const;
+    DHalfedge* opposite ();
+    void set_opposite (DHalfedge* );
+    void set_prev (DHalfedge* he);
+    void set_next (DHalfedge* he);
+    const DVertex* vertex () const ;
+    DVertex* vertex ();
+    void set_vertex (DVertex* v);
+    void set_face (DFace* f);
   };
 
   /*!
@@ -471,6 +493,16 @@ public:
         (DHalfedge_const_iter (Base::halfedge()));
     }
 
+  private:
+
+    // Blocking access to inherited functions from the Dcel::Face.
+    const DHalfedge* halfedge () const;
+    DHalfedge* halfedge ();
+    void set_halfedge (DHalfedge* );
+    void add_hole (DHalfedge* );
+    void erase_hole (DHoles_iter );
+    void add_isolated_vertex (DVertex* );
+    void erase_isolated_vertex (DIsolated_vertices_iter );
   };
 
 protected:
