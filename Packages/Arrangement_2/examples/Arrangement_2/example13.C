@@ -19,7 +19,6 @@ typedef Traits_2::X_monotone_curve_2                  Segment_2;
 typedef CGAL::Arrangement_2<Traits_2>                 Arrangement_2;
 typedef Arrangement_2::Halfedge_handle                Halfedge_handle;
 typedef Arrangement_2::Halfedge_const_handle          Halfedge_const_handle;
-//typedef CGAL::Arr_naive_point_location<Arrangement_2> Point_location;
 typedef CGAL::Arr_walk_along_line_point_location<Arrangement_2> Point_location;
 
 int main ()
@@ -46,17 +45,19 @@ int main ()
   insert(arr, pl, cv6);
   insert(arr, pl, cv7);
 
-  CGAL::Object obj = pl.locate(Point_2(Number_type(11, 2), Number_type(11, 2)));
+  CGAL::Object obj = pl.locate (Point_2 (Number_type (11, 2), 
+					 Number_type (11, 2)));
   Halfedge_const_handle h;
   if (CGAL::assign(h, obj))
   {
-    arr.remove_edge(arr.non_const_handle(h));
+    arr.remove_edge (arr.non_const_handle(h));
   }
 
-  obj = pl.locate(Point_2(Number_type(11, 2), Number_type(5, 2)));
+  obj = pl.locate (Point_2 (Number_type (11, 2), 
+			    Number_type (5, 2)));
   if (CGAL::assign(h, obj))
   {
-    arr.remove_edge(arr.non_const_handle(h));
+    arr.remove_edge (arr.non_const_handle(h));
   }
   
   // Print the arrangement vertices.
@@ -68,8 +69,8 @@ int main ()
   for (i = 1, vit = arr.vertices_begin();
        vit != arr.vertices_end(); vit++, i++)
   {
-    vh = *vit;
-    std::cout << '\t' << i << ": " << vh.point() << std::endl;
+    vh = vit;
+    std::cout << '\t' << i << ": " << vh->point() << std::endl;
   }
   std::cout << std::endl;
 
@@ -80,8 +81,8 @@ int main ()
   std::cout << arr.number_of_edges() << " edges:" << std::endl;
   for (i = 1, eit = arr.edges_begin(); eit != arr.edges_end(); eit++, i++)
   {
-    hh = *eit;
-    std::cout << '\t' << i << ": " << hh.curve() << std::endl;
+    hh = eit->handle();
+    std::cout << '\t' << i << ": " << hh->curve() << std::endl;
   }
   std::cout << std::endl;
 
@@ -95,33 +96,33 @@ int main ()
   for (i = 1, fit = arr.faces_begin(); fit != arr.faces_end(); fit++, i++)
   {
     // Print the outer boundary of the face.
-    fh = *fit;
+    fh = fit;
     std::cout << '\t' << i << ": ";
-    if (fh.is_unbounded())
+    if (fh->is_unbounded())
     {
       std::cout << "Unbounded face." << std::endl;
     }
     else
     {
-      ccb = fh.outer_ccb();
-      std::cout << (*ccb).source().point();
+      ccb = fh->outer_ccb();
+      std::cout << ccb->source()->point();
       do
       {
-        std::cout << " -> " << (*ccb).target().point();
+        std::cout << " -> " << ccb->target()->point();
         ccb++;
-      } while (ccb != fh.outer_ccb());
+      } while (ccb != fh->outer_ccb());
       std::cout << std::endl;
     }
 
     // Print the holes.
-    for (j = 1, hoit = fh.holes_begin(); hoit != fh.holes_end(); hoit++, j++)
+    for (j = 1, hoit = fh->holes_begin(); hoit != fh->holes_end(); hoit++, j++)
     {
       std::cout << "\t\tHole " << i << ": ";
       ccb = *hoit;
-      std::cout << (*ccb).source().point();
+      std::cout << ccb->source()->point();
       do
       {
-        std::cout << " -> " << (*ccb).target().point();
+        std::cout << " -> " << ccb->target()->point();
         ccb++;
       } while (ccb != *hoit);
       std::cout << std::endl;

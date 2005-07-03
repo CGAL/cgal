@@ -50,28 +50,26 @@ int main ()
   
   // Print the arrangement vertices.
   Arrangement_2::Vertex_const_iterator  vit;
-  Arrangement_2::Vertex_const_handle    vh;
   int                                   i;
 
   std::cout << arr.number_of_vertices() << " vertices:" << std::endl;
   for (i = 1, vit = arr.vertices_begin(); 
        vit != arr.vertices_end(); vit++, i++)
   {
-    vh = *vit;
-    std::cout << '\t' << i << ": " << vh.point() << std::endl;
+    std::cout << '\t' << i << ": " << vit->point() << std::endl;
   }
   std::cout << std::endl;
 
   // Print the arrangement edges.
   Arrangement_2::Edge_const_iterator    eit;
-  Arrangement_2::Halfedge_const_handle  hh;
 
   std::cout << arr.number_of_edges() << " edges:" << std::endl;
-  for (i = 1, eit = arr.edges_begin(); eit != arr.edges_end(); eit++, i++)
+  for (i = 1, eit = arr.edges_begin(); 
+       eit != arr.edges_end(); eit++, i++)
   {
-    hh = *eit;
-    std::cout << '\t' << i << ": " << hh.curve() << std::endl;
+    std::cout << '\t' << i << ": " << eit->curve() << std::endl;
   }
+
   std::cout << std::endl;
 
   std::cout << arr.number_of_faces() << " faces." << std::endl;

@@ -47,8 +47,8 @@ int main ()
   // face.
   CGAL_assertion (arr.number_of_faces() == 2);
   Arrangement_2::Face_handle    uf = arr.unbounded_face();
-  Arrangement_2::Holes_iterator hole = uf.holes_begin();
-  Arrangement_2::Face_handle    f = (**hole).twin().face();
+  Arrangement_2::Holes_iterator hole = uf->holes_begin();
+  Arrangement_2::Face_handle    f = (*hole)->twin()->face();
 
   // Insert several vertices in the interior of this face.
   Vertex_handle  v1 = arr.insert_isolated_vertex (Point_2 (2, 4), f);
@@ -64,10 +64,12 @@ int main ()
 
   Arrangement_2::Isolated_vertices_iterator   iv_iter;
 
-  std::cout << "Isolated vertices in the face: ";
-  for (iv_iter = f.isolated_vertices_begin();
-       iv_iter != f.isolated_vertices_end(); ++iv_iter)
-    std::cout << "(" << (*iv_iter).point() << ") ";
+  std::cout << "Isolated vertices in the face: " << std::flush;
+  for (iv_iter = f->isolated_vertices_begin();
+       iv_iter != f->isolated_vertices_end(); ++iv_iter)
+  {
+    std::cout << "(" << iv_iter->point() << ") " << std::flush;
+  }
   std::cout << std::endl;
 
   // Insert segments whose endpoints correspond to isolated vertices.
@@ -83,9 +85,9 @@ int main ()
 	    << ",  F = " << arr.number_of_faces() << std::endl;
 
   std::cout << "Isolated vertices in the face: ";
-  for (iv_iter = f.isolated_vertices_begin();
-       iv_iter != f.isolated_vertices_end(); ++iv_iter)
-    std::cout << "(" << (*iv_iter).point() << ") ";
+  for (iv_iter = f->isolated_vertices_begin();
+       iv_iter != f->isolated_vertices_end(); ++iv_iter)
+    std::cout << "(" << iv_iter->point() << ") ";
   std::cout << std::endl;
 
   // Split the face into two and print the remaining isolated vertices.
@@ -103,14 +105,14 @@ int main ()
 
   for (fit = arr.faces_begin(); fit != arr.faces_end(); ++fit, ++i)
   {
-    if ((*fit).isolated_vertices_begin() != (*fit).isolated_vertices_end())
+    if (fit->isolated_vertices_begin() != fit->isolated_vertices_end())
     {
       std::cout << "Isolated vertices in face no. " << i << ": ";
-      for (iv_iter = (*fit).isolated_vertices_begin();
-	   iv_iter != (*fit).isolated_vertices_end(); ++iv_iter)
+      for (iv_iter = fit->isolated_vertices_begin();
+	   iv_iter != fit->isolated_vertices_end(); ++iv_iter)
       {
-	std::cout << "(" << (*iv_iter).point() << ") ";
-	CGAL_assertion (arr.incident_face (*iv_iter) == *fit);
+	std::cout << "(" << iv_iter->point() << ") ";
+	CGAL_assertion (arr.incident_face (iv_iter->handle()) == fit);
       }
       std::cout << std::endl;
     }

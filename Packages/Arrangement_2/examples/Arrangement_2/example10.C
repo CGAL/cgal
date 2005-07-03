@@ -1,6 +1,5 @@
 // file: examples/Arrangement_2/example10.C
 
-
 //#include "short_names.h"
 
 #include <CGAL/Cartesian.h>
@@ -52,14 +51,14 @@ int main ()
 
   for (fcit = arr.faces_begin(); fcit != arr.faces_end(); ++fcit, ++k)
   {
-    if ((*fcit).isolated_vertices_begin() != (*fcit).isolated_vertices_end())
+    if (fcit->isolated_vertices_begin() != fcit->isolated_vertices_end())
     {
       std::cout << "Isolated vertices in face no. " << k << ": ";
-      for (iv_iter = (*fcit).isolated_vertices_begin();
-	   iv_iter != (*fcit).isolated_vertices_end(); ++iv_iter)
+      for (iv_iter = fcit->isolated_vertices_begin();
+	   iv_iter != fcit->isolated_vertices_end(); ++iv_iter)
       {
-	std::cout << "(" << (*iv_iter).point() << ") ";
-	CGAL_assertion (arr.incident_face (*iv_iter) == *fcit);
+	std::cout << "(" << iv_iter->point() << ") ";
+	CGAL_assertion (arr.incident_face (iv_iter->handle()) == fcit);
       }
       std::cout << std::endl;
     }
@@ -69,7 +68,9 @@ int main ()
   Segment_2      cv4 (Point_2 (3, 0), Point_2 (9, 6));
   Segment_2      cv5 (Point_2 (4, 5), Point_2 (6, 3));
 
+  std::cout << "cv4:"<< std::endl;
   insert (arr, pl, cv4);
+  std::cout << "cv5:"<< std::endl;
   insert (arr, pl, cv5);
   
   // Remove all removable vertices.
@@ -80,7 +81,7 @@ int main ()
     next = vtit;
     ++next;
 
-    remove_vertex (arr, *vtit);
+    remove_vertex (arr, vtit->handle());
   }
 
   std::cout << "V = " << arr.number_of_vertices()
@@ -96,8 +97,8 @@ int main ()
   for (i = 1, vit = arr.vertices_begin(); 
        vit != arr.vertices_end(); vit++, i++)
   {
-    vh = *vit;
-    std::cout << '\t' << i << ": " << vh.point() << std::endl;
+    vh = vit;
+    std::cout << '\t' << i << ": " << vh->point() << std::endl;
   }
   std::cout << std::endl;
 
@@ -108,8 +109,8 @@ int main ()
   std::cout << arr.number_of_edges() << " edges:" << std::endl;
   for (i = 1, eit = arr.edges_begin(); eit != arr.edges_end(); eit++, i++)
   {
-    hh = *eit;
-    std::cout << '\t' << i << ": " << hh.curve() << std::endl;
+    hh = eit->handle();
+    std::cout << '\t' << i << ": " << hh->curve() << std::endl;
   }
   std::cout << std::endl;
 
@@ -123,34 +124,34 @@ int main ()
   for (i = 1, fit = arr.faces_begin(); fit != arr.faces_end(); fit++, i++)
   {
     // Print the outer boundary of the face.
-    fh = *fit;
+    fh = fit;
     std::cout << '\t' << i << ": ";
-    if (fh.is_unbounded())
+    if (fh->is_unbounded())
     {
       std::cout << "Unbounded face." << std::endl;
     }
     else
     {
-      ccb = fh.outer_ccb();
-      std::cout << (*ccb).source().point();
+      ccb = fh->outer_ccb();
+      std::cout << ccb->source()->point();
       do
       {
-	std::cout << " -> " << (*ccb).target().point();
-	ccb++;
-      } while (ccb != fh.outer_ccb());
+	std::cout << " -> " << ccb->target()->point();
+	++ccb;
+      } while (ccb != fh->outer_ccb());
       std::cout << std::endl;
     }
 
     // Print the holes.
-    for (j = 1, hoit = fh.holes_begin(); hoit != fh.holes_end(); hoit++, j++)
+    for (j = 1, hoit = fh->holes_begin(); hoit != fh->holes_end(); ++hoit, j++)
     {
       std::cout << "\t\tHole " << i << ": ";
       ccb = *hoit;
-      std::cout << (*ccb).source().point();
+      std::cout << ccb->source()->point();
       do
       {
-	std::cout << " -> " << (*ccb).target().point();
-	ccb++;
+	std::cout << " -> " << ccb->target()->point();
+	++ccb;
       } while (ccb != *hoit);
       std::cout << std::endl;
     }

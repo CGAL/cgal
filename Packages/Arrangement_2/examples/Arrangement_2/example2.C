@@ -30,7 +30,7 @@ public:
                                   Face_handle,
                                   Halfedge_handle e)
   {
-    std::cout << "-> The removal of :  [ " << e.curve()
+    std::cout << "-> The removal of :  [ " << e->curve()
 	      << " ]  causes two faces to merge." << std::endl;
   }
 
@@ -38,8 +38,8 @@ public:
                                   Halfedge_handle e2,
                                   const X_monotone_curve_2& c)
   {
-    std::cout << "-> Merging  [ " << e1.curve()
-	      << " ]  and  [ " << e2.curve()
+    std::cout << "-> Merging  [ " << e1->curve()
+	      << " ]  and  [ " << e2->curve()
 	      << " ]  to form  [ " << c << " ]  ." << std::endl;
   }
 };
@@ -96,9 +96,9 @@ int main ()
 
   for (eit = arr.edges_begin(); eit != arr.edges_end(); eit++)
   {
-    if (traits.is_vertical_2_object() ((*eit).curve()))
+    if (traits.is_vertical_2_object() (eit->curve()))
     {
-      remove_edge (arr, *eit);
+      remove_edge (arr, eit->handle());
 
       std::cout << "V = " << arr.number_of_vertices()
 		<< ",  E = " << arr.number_of_edges() 

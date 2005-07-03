@@ -70,11 +70,11 @@ int main ()
 
     Arrangement_2::Halfedge_around_vertex_const_circulator  eit, first;
 
-    eit = first = (*vit).incident_halfedges();
+    eit = first = vit->incident_halfedges();
     do
     {
       // Get the color of the current half-edge.
-      color = (*eit).curve().get_data();
+      color = eit->curve().get_data();
 
       if (color == RED)
 	has_red = true;
@@ -98,10 +98,10 @@ int main ()
 
   for (eit = arr2.edges_begin(); eit != arr2.edges_end(); ++eit)
   {
-    if ((*eit).curve().get_data() == RED)
+    if (eit->curve().get_data() == RED)
     {
-      arr2.modify_edge (*eit,
-			Traits_2::X_monotone_curve_2 ((*eit).curve(), BLUE));
+      arr2.modify_edge (eit->handle(),
+			Traits_2::X_monotone_curve_2 (eit->curve(), BLUE));
     }
   }
 
@@ -117,11 +117,11 @@ int main ()
   std::cout << "Shoot up from (" << q << ") : ";
   if (CGAL::assign (hh, obj))
   {
-    std::cout << "Edge " << hh.curve() << std::endl;
+    std::cout << "Edge " << hh->curve() << std::endl;
   }
   else if (CGAL::assign (vh, obj))
   {
-    std::cout << "Vertex " << vh.point() << std::endl;
+    std::cout << "Vertex " << vh->point() << std::endl;
   }
   else
   {
@@ -133,11 +133,11 @@ int main ()
   std::cout << "Shoot down from (" << q << ") : ";
   if (CGAL::assign (hh, obj))
   {
-    std::cout << "Edge " << hh.curve() << std::endl;
+    std::cout << "Edge " << hh->curve() << std::endl;
   }
   else if (CGAL::assign (vh, obj))
   {
-    std::cout << "Vertex " << vh.point() << std::endl;
+    std::cout << "Vertex " << vh->point() << std::endl;
   }
   else
   {

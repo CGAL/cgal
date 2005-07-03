@@ -9,7 +9,6 @@
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Arr_naive_point_location.h>
-#include <CGAL/Arr_walk_along_line_point_location.h>
 #include <CGAL/Arr_observer.h>
 
 typedef CGAL::Quotient<CGAL::MP_Float>                Number_type;
@@ -19,8 +18,7 @@ typedef Traits_2::Point_2                             Point_2;
 typedef Traits_2::X_monotone_curve_2                  Segment_2;
 typedef CGAL::Arrangement_2<Traits_2>                 Arrangement_2;
 typedef Arrangement_2::Halfedge_handle                Halfedge_handle;
-//typedef CGAL::Arr_naive_point_location<Arrangement_2> Point_location;
-typedef CGAL::Arr_walk_along_line_point_location<Arrangement_2> Point_location;
+typedef CGAL::Arr_naive_point_location<Arrangement_2> Point_location;
 
 class My_observer : public CGAL::Arr_observer<Arrangement_2>
 {
@@ -33,12 +31,12 @@ public:
   virtual void before_split_face (Face_handle,
                                   Halfedge_handle e)
   {
-    std::cout << "-> New face, caused by: " << e.curve() << std::endl;
+    std::cout << "-> New face, caused by: " << e->curve() << std::endl;
   }
 
   virtual void after_modify_edge (Halfedge_handle e)
   {
-    std::cout << "-> Existing edge " << e.curve() 
+    std::cout << "-> Existing edge " << e->curve() 
 	      << " has just been modified." << std::endl;
   }
 
@@ -60,10 +58,10 @@ int main ()
 
   Halfedge_handle h1 = arr.insert_in_face_interior (cv1, arr.unbounded_face());
   Halfedge_handle h2 = arr.insert_in_face_interior (cv2, arr.unbounded_face());
-  Halfedge_handle h3 = arr.insert_at_vertices (cv3, h2, h1.twin());
-  Halfedge_handle h4 = arr.insert_from_left_vertex (cv4, h1.twin());
+  Halfedge_handle h3 = arr.insert_at_vertices (cv3, h2, h1->twin());
+  Halfedge_handle h4 = arr.insert_from_left_vertex (cv4, h1->twin());
   Halfedge_handle h5 = arr.insert_at_vertices (cv5, h1, h4);
-  Halfedge_handle h6 = arr.insert_from_left_vertex (cv6, h3.twin());
+  Halfedge_handle h6 = arr.insert_from_left_vertex (cv6, h3->twin());
   Halfedge_handle h7 = arr.insert_at_vertices(cv7, h5, h6);
 
   // Print the arrangement vertices.
@@ -75,8 +73,8 @@ int main ()
   for (i = 1, vit = arr.vertices_begin(); 
        vit != arr.vertices_end(); vit++, i++)
   {
-    vh = *vit;
-    std::cout << '\t' << i << ": " << vh.point() << std::endl;
+    vh = vit;
+    std::cout << '\t' << i << ": " << vh->point() << std::endl;
   }
   std::cout << std::endl;
 
@@ -87,8 +85,7 @@ int main ()
   std::cout << arr.number_of_edges() << " edges:" << std::endl;
   for (i = 1, eit = arr.edges_begin(); eit != arr.edges_end(); eit++, i++)
   {
-    hh = *eit;
-    std::cout << '\t' << i << ": " << hh.curve() << std::endl;
+    std::cout << '\t' << i << ": " << eit->curve() << std::endl;
   }
   std::cout << std::endl;
 
@@ -102,33 +99,33 @@ int main ()
   for (i = 1, fit = arr.faces_begin(); fit != arr.faces_end(); fit++, i++)
   {
     // Print the outer boundary of the face.
-    fh = *fit;
+    fh = fit;
     std::cout << '\t' << i << ": ";
-    if (fh.is_unbounded())
+    if (fh->is_unbounded())
     {
       std::cout << "Unbounded face." << std::endl;
     }
     else
     {
-      ccb = fh.outer_ccb();
-      std::cout << (*ccb).source().point();
+      ccb = fh->outer_ccb();
+      std::cout << ccb->source()->point();
       do
       {
-	std::cout << " -> " << (*ccb).target().point();
+	std::cout << " -> " << ccb->target()->point();
 	ccb++;
-      } while (ccb != fh.outer_ccb());
+      } while (ccb != fh->outer_ccb());
       std::cout << std::endl;
     }
 
     // Print the holes.
-    for (j = 1, hoit = fh.holes_begin(); hoit != fh.holes_end(); hoit++, j++)
+    for (j = 1, hoit = fh->holes_begin(); hoit != fh->holes_end(); hoit++, j++)
     {
       std::cout << "\t\tHole " << i << ": ";
       ccb = *hoit;
-      std::cout << (*ccb).source().point();
+      std::cout << ccb->source()->point();
       do
       {
-	std::cout << " -> " << (*ccb).target().point();
+	std::cout << " -> " << ccb->target()->point();
 	ccb++;
       } while (ccb != *hoit);
       std::cout << std::endl;
@@ -144,18 +141,18 @@ int main ()
   obj = pl.locate (q);
   if (CGAL::assign (fh, obj))
   {
-    if (fh.is_unbounded())
+    if (fh->is_unbounded())
       std::cout << "Inside unbounded face." << std::endl;
     else
       std::cout << "Inside face." << std::endl;
   }
   else if (CGAL::assign (hh, obj))
   {
-    std::cout << "On halfedge: " << hh.curve() << std::endl;
+    std::cout << "On halfedge: " << hh->curve() << std::endl;
   }
   else if (CGAL::assign (vh, obj))
   {
-    std::cout << "On vertex: " << vh.point() << std::endl;
+    std::cout << "On vertex: " << vh->point() << std::endl;
   }
   else
   {
@@ -177,18 +174,18 @@ int main ()
   obj = pl.locate (q);
   if (CGAL::assign (fh, obj))
   {
-    if (fh.is_unbounded())
+    if (fh->is_unbounded())
       std::cout << "Inside unbounded face." << std::endl;
     else
       std::cout << "Inside face." << std::endl;
   }
   else if (CGAL::assign (hh, obj))
   {
-    std::cout << "On halfedge: " << hh.curve() << std::endl;
+    std::cout << "On halfedge: " << hh->curve() << std::endl;
   }
   else if (CGAL::assign (vh, obj))
   {
-    std::cout << "On vertex: " << vh.point() << std::endl;
+    std::cout << "On vertex: " << vh->point() << std::endl;
   }
   else
   {
