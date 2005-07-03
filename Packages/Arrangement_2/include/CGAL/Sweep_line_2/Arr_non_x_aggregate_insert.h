@@ -96,7 +96,7 @@ public:
     Edge_iterator                      eit;
 
     for (eit = m_arr->edges_begin(); eit != m_arr->edges_end(); ++eit) 
-      x_curves.push_back ((*eit).curve());
+      x_curves.push_back (eit->curve());
 
     // Add the existing isolated vertices in the arrangement.
     std::list<Point_2>                 iso_points;
@@ -104,16 +104,16 @@ public:
 
     for (vit = m_arr->vertices_begin(); vit != m_arr->vertices_end(); ++vit)
     {
-      if ((*vit).is_isolated())
-	iso_points.push_back ((*vit).point());
+      if (vit->is_isolated())
+        iso_points.push_back (vit->point());
     }
 
     // Perform the sweep.
     m_arr->clear();
     m_sweep_line.sweep (x_curves.begin(),
-			x_curves.end(),
-			iso_points.begin(),
-			iso_points.end());
+			                  x_curves.end(),
+			                  iso_points.begin(),
+			                  iso_points.end());
 
     return;
   }
