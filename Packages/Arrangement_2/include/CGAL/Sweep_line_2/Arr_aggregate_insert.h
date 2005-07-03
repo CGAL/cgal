@@ -61,10 +61,9 @@ class Arr_aggregate_insert
                                  Subcurve>          Visitor;
 
   typedef Sweep_line_2<Traits_2,
-		       Event,
-		       Subcurve,
-		       Visitor,
-		       CGAL_ALLOCATOR(int)>         Sweep_line_2;
+		                   Visitor,
+                       Subcurve,
+                       Event>                       Sweep_line_2;
  
 public:
 

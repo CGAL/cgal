@@ -393,6 +393,21 @@ public:
   }
 
 
+  bool is_right_curve_bigger(SubCurve* c1, SubCurve* c2)
+  {
+    for(SubCurveIter iter = m_rightCurves.begin();
+        iter != m_rightCurves.end();
+        ++iter)
+    {
+      if(*iter == c1)
+        return false;
+      if(*iter == c2)
+        return true;
+    }
+    CGAL_assertion(false);
+    return true;
+  }
+
 
  
   

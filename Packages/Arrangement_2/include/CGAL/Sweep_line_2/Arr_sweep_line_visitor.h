@@ -23,34 +23,39 @@
 
 #include <CGAL/Sweep_line_2/Arr_insert_info.h>
 #include <CGAL/Arrangement_2/Arr_accessor.h>
+#include <CGAL/Sweep_line_2_empty_visitor.h>
 
 CGAL_BEGIN_NAMESPACE
 
-template <class _Traits, class Arr, class Event, class Subcurve>
-class Arr_sweep_line_visitor
+template <class _Traits, class Arr, class Event_, class Subcurve_> 
+class Arr_sweep_line_visitor : public Empty_visitor<_Traits,
+                                                    Subcurve_,
+                                                    Event_>
 {
 protected:
 
   typedef typename Arr::Halfedge_handle        Halfedge_handle;
+  typedef typename Arr::Vertex_handle          Vertex_handle;
   typedef typename Arr::Face_handle            Face_handle;
   typedef Arr_sweep_line_visitor< _Traits,
                                   Arr,
-                                  Event,
-                                  Subcurve>                 Self;
+                                  Event_,
+                                  Subcurve_>                 Self;
 
   typedef  _Traits                                          Traits;
   typedef typename Traits::X_monotone_curve_2               X_monotone_curve_2;
   typedef typename Traits::Point_2                          Point_2;
 
-  typedef Sweep_line_2<Traits,
-                            Event,
-                            Subcurve,
-                            Self,
-                            CGAL_ALLOCATOR(int)>           Sweep_line;
-  typedef typename Sweep_line::StatusLineIter              StatusLineIter;
+  typedef Event_ Event;
+  typedef Subcurve_ Subcurve;
+  typedef Empty_visitor<Traits, Subcurve, Event >         Base;
+   
+  typedef typename Base::SubCurveIter                  SubCurveIter;
+  typedef typename Base::SubCurveRevIter               SubCurveRevIter;
+  typedef typename Base::SL_iterator                   SL_iterator;
+
 
   typedef typename Event::Arr_insert_info                  Arr_insert_info;
-  typedef typename Event::SubCurveIter                     SubCurveIter;
 
 private:
 
@@ -66,26 +71,13 @@ public:
 
   virtual ~Arr_sweep_line_visitor(){}
 
-  void attach(void *sl)
-  {
-    m_sweep_line = sl;
-  }
 
- 
-  void init_event(Event *e) {}
-
-  void before_handle_event(Event* event)
-  {
-    m_currentEvent = event;
-  }
-
-  bool after_handle_event(Event* event, StatusLineIter iter, bool flag)
+  bool after_handle_event(Event* event, SL_iterator iter, bool flag)
   {
     if(!event->has_left_curves() && !event->has_right_curves())
     {
       //isolated event (no curves)
-      m_arr ->insert_isolated_vertex(event->get_point(),
-                                     m_arr->unbounded_face());
+      insert_isolated_vertex(event->get_point(), iter);
       return true;
     }
 
@@ -114,7 +106,7 @@ public:
     Event *lastEvent = reinterpret_cast<Event*>((sc)->get_last_event());
     Arr_insert_info *insertInfo = lastEvent->get_insert_info();
     Halfedge_handle res; 
-    Arr_insert_info *currentInfo = m_currentEvent -> get_insert_info();
+    Arr_insert_info *currentInfo = this ->current_event() ->get_insert_info();
     Halfedge_handle hhandle = currentInfo->get_halfedge_handle();
 
     int jump = lastEvent->get_halfedge_jump_count(sc);
@@ -126,7 +118,7 @@ public:
       if ( hhandle != Halfedge_handle(NULL) )
       {
         res = this->insert_from_right_vertex(cv, hhandle, sc);
-        res = res.twin();
+        res = res->twin();
       }
       else
       {
@@ -142,19 +134,19 @@ public:
      
       // skip to the right halfedge
       for ( int i = 0 ; i < jump ; i++ )
-        prev = (prev.next()).twin();
+        prev = (prev->next())->twin();
       
       // we have a handle from the previous insert
       if ( hhandle != Halfedge_handle(NULL) ) 
       {
-        CGAL_assertion(prev.face() == hhandle.face());
+        CGAL_assertion(prev->face() == hhandle->face());
        
         //res = m_arr->insert_at_vertices(cv,hhandle,prev);
         bool dummy;
         res = this->insert_at_vertices(cv,hhandle,prev,sc, dummy);
        
 
-        res = res.twin();
+        res = res->twin();
       }
       else
       {
@@ -164,31 +156,17 @@ public:
     if ( lastEvent->get_num_left_curves() == 0 &&  
       lastEvent->is_curve_largest((Subcurve*)sc) )
     {
-      insertInfo->set_halfedge_handle(res.twin());
+      insertInfo->set_halfedge_handle(res->twin());
     }
     currentInfo->set_halfedge_handle(res);
 
     if(lastEvent->get_insert_info()->dec_right_curves_counter() == 0)
     {
-      (static_cast<Sweep_line*>(m_sweep_line))->deallocate_event(lastEvent);
+      (this ->deallocate_event(lastEvent));
     }
   }
 
-  void update_event(Event* e,
-                    const Point_2& end_point,
-                    const X_monotone_curve_2& cv,
-                    bool is_left_end)
-  {}
-
-  void update_event(Event* e,
-                    Subcurve* sc1,
-                    Subcurve* sc2,
-                    bool created = false)
-  {}
-
-  void update_event(Event* e,
-                    Subcurve* sc1)
-  {}
+ 
 
 
   virtual Halfedge_handle insert_in_face_interior(const X_monotone_curve_2& cv,
@@ -203,42 +181,20 @@ public:
                                              Subcurve* sc,
                                              bool &new_face_created)
   {
-     //bool      new_face_created;
+    Halfedge_handle res = 
+      m_arr_access.insert_at_vertices_ex (cv, hhandle, prev,
+			                                    new_face_created);
 
-        Halfedge_handle res = m_arr_access.insert_at_vertices_ex (cv, hhandle, prev,
-					                                        new_face_created);
+    if (new_face_created)
+    {
+      // In case a new face has been created (pointed by the new halfedge
+      // we obtained), we have to examine the holes and isolated vertices
+      // in the existing face (pointed be the twin halfedge) and relocate
+      // the relevant features in the new face.
+      m_arr_access.relocate_in_new_face (res);
+    }
 
-        if (new_face_created)
-        {
-          // In case a new face has been created (pointed by the new halfedge
-          // we obtained), we have to examine the holes in the existing face
-          // (pointed be the twin halfedge) and move the relevant holes into
-          // the new face.
-          typename Arr::Face_handle     new_face = res.face();
-          typename Arr::Face_handle     old_face = res.twin().face();
-          typename Arr::Holes_iterator  holes_it = old_face.holes_begin();
-          typename Arr::Holes_iterator  hole_to_move;
-
-          while (holes_it != old_face.holes_end())
-          {
-            // Check whether the current hole is inside new face.
-            if (m_arr_access.point_is_in((*(*holes_it)).target().point(), res))
-            {
-              // We increment the holes itrator before moving the hole, because
-              // this operation invalidates the iterator.
-              hole_to_move  = holes_it;
-              ++holes_it;
-
-              // Move the hole.
-              m_arr_access.move_hole (old_face, new_face, hole_to_move);
-            }
-            else
-            {
-              ++holes_it;
-            }
-          }
-        }
-        return res;
+    return res;
   }
 
   virtual Halfedge_handle insert_from_right_vertex
@@ -258,6 +214,14 @@ public:
   }
 
 
+  virtual Vertex_handle insert_isolated_vertex(const Point_2& pt,
+                                               SL_iterator iter)
+  {
+    return (m_arr ->insert_isolated_vertex(pt, m_arr->unbounded_face()));
+  }
+
+
+
   void after_sweep(){}
   void after_init(){}
 
@@ -271,8 +235,6 @@ public:
      
   Arr               *m_arr;
   Arr_accessor<Arr>  m_arr_access;
-  void              *m_sweep_line;
-  Event             *m_currentEvent;
 };
 
 

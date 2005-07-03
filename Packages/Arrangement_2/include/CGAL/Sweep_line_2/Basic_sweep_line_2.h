@@ -96,9 +96,9 @@ CGAL_BEGIN_NAMESPACE
 
 */
 template < class SweepLineTraits_2,
-           class SweepEvent,
-           class CurveWrap,
            class SweepVisitor,
+           class CurveWrap = Sweep_line_subcurve<SweepLineTraits_2>,
+           class SweepEvent = Sweep_line_event<SweepLineTraits_2, CurveWrap>,
            typename Allocator = CGAL_ALLOCATOR(int) >
 class Basic_sweep_line_2
 {
@@ -110,7 +110,7 @@ public:
 
   typedef SweepEvent                                     Event;
   typedef Point_less_functor<Traits>                     PointLess;
-  typedef std::map< Point_2 , Event*, PointLess>         EventQueue; 
+  typedef std::map<Point_2 , Event*, PointLess>          EventQueue; 
   typedef typename EventQueue::iterator                  EventQueueIter;
   typedef typename EventQueue::value_type                EventQueueValueType;
 
@@ -126,7 +126,7 @@ public:
                                          Base_subcurve>  StatusLineCurveLess;
   typedef Red_black_tree<Base_subcurve*,
                          StatusLineCurveLess, 
-			                   CGAL_ALLOCATOR(int)>            StatusLine;
+			                   Allocator>                      StatusLine;
   typedef typename StatusLine::iterator                  StatusLineIter;
 
   typedef typename Allocator::template rebind<Event>     EventAlloc_rebind;
@@ -273,6 +273,18 @@ public:
     return m_statusLine.end();
   }
 
+  /*! Get the status line size */
+  unsigned int status_line_size() const
+  {
+    return m_statusLine.size();
+  }
+
+  /*! return bool iff m_statusLine is empty */
+  bool is_status_line_empty() const
+  {
+    return (!m_statusLine.size());
+  }
+
   /*! Stop the sweep by erasing the X-strucure (except for the current event)
    *  can be called by the visitor during 'arter_handle_event'.
    */
@@ -302,6 +314,18 @@ public:
   {
     m_eventAlloc.destroy(event);
     m_eventAlloc.deallocate(event,1);
+  }
+
+  /*! Get the current event */
+  Event* current_event()
+  {
+    return m_currentEvent;
+  }
+
+  /*! Get the traits object */
+  Traits* traits()
+  {
+    return m_traits;
   }
 
  
@@ -402,6 +426,7 @@ public:
   {
     CGAL_assertion(m_queue->empty() && (m_statusLine.size() == 0));
 
+    
      //allocate all of the Subcure objects as one block
     m_subCurves = m_subCurveAlloc.allocate(m_num_of_subCurves);
 
@@ -754,15 +779,15 @@ protected:
  * @return 
  */
 template <class SweepLineTraits_2,
-          class SweepEvent,
-          class CurveWrap,
           class SweepVisitor,
+          class CurveWrap,
+          class SweepEvent,
           typename Allocator>
 inline void Basic_sweep_line_2<SweepLineTraits_2,
-                         SweepEvent,
-                         CurveWrap,
-                         SweepVisitor,
-                         Allocator>::
+                               SweepVisitor,                               
+                               CurveWrap,
+                               SweepEvent,
+                               Allocator>::
 _remove_curve_from_status_line(Subcurve *leftCurve)
                               
 {

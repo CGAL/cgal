@@ -63,10 +63,9 @@ class Arr_non_x_aggregate_insert
   
  
   typedef Basic_sweep_line_2<Traits_2,
-                             Event,
-                             Subcurve,
                              Visitor,
-                             CGAL_ALLOCATOR(int)>   Basic_sweep_line_2;
+                             Subcurve,
+                             Event>                 Basic_sweep_line_2;
  
 public:
 

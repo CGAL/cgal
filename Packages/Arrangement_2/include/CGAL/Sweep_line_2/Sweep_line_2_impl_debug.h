@@ -31,12 +31,17 @@
 ////////////////////////////////////////////////////////////////////////////
 
 
-template < class SweepLineTraits_2,
-          class SweepEvent, class CurveWrap, class SweepNotif,
+template <class SweepLineTraits_2,
+          class SweepVisitor,
+          class CurveWrap,
+          class SweepEvent,
           typename Allocator>
 inline void 
-Basic_sweep_line_2<SweepLineTraits_2,SweepEvent,CurveWrap,SweepNotif,
-                  Allocator>::
+Basic_sweep_line_2<SweepLineTraits_2,
+                   SweepVisitor,
+                   CurveWrap,
+                   SweepEvent,
+                   Allocator>::
 PrintEventQueue()
 {
   SL_DEBUG(std::cout << std::endl << "Event queue: " << std::endl;)
@@ -51,12 +56,17 @@ PrintEventQueue()
   SL_DEBUG(std::cout << "--------------------------------" << std::endl;)
 }
 
-template < class SweepLineTraits_2,
-          class SweepEvent, class CurveWrap, class SweepNotif,
-          typename Allocator >
+template <class SweepLineTraits_2,
+          class SweepVisitor,
+          class CurveWrap,
+          class SweepEvent,
+          typename Allocator>
 inline void 
-Basic_sweep_line_2<SweepLineTraits_2,SweepEvent,CurveWrap,SweepNotif,
-                  Allocator>::
+Basic_sweep_line_2<SweepLineTraits_2,
+                   SweepVisitor,
+                   CurveWrap,
+                   SweepEvent,
+                   Allocator>::
 PrintSubCurves()
 {
   SL_DEBUG(std::cout << std::endl << "Sub curves: " << std::endl;)

@@ -23,31 +23,26 @@
 
 #include <CGAL/Sweep_line_2/Sweep_line_event.h>
 #include <CGAL/Sweep_line_2/Sweep_line_subcurve.h>
-#include <CGAL/Sweep_line_2/Sweep_line_points_visitor.h>
 #include <CGAL/Sweep_line_2/Sweep_line_2_utils.h>
+#include <CGAL/Sweep_line_2_empty_visitor.h>
 #include <vector>
 #include <iterator>
 
 CGAL_BEGIN_NAMESPACE
 
 template <class Traits>
-class Sweep_line_do_curves_x_visitor
+class Sweep_line_do_curves_x_visitor : public Empty_visitor<Traits>
 {
   typedef Sweep_line_do_curves_x_visitor<Traits>       Self;
-  typedef Sweep_line_subcurve<Traits>                  Subcurve;
-  typedef Sweep_line_event<Traits, Subcurve>           Event;
   typedef typename Traits::X_monotone_curve_2          X_monotone_curve_2;
   typedef typename Traits::Point_2                     Point_2;
 
-  typedef Basic_sweep_line_2<Traits,
-                             Event,
-                             Subcurve,
-                             Self,
-                             CGAL_ALLOCATOR(int)>       Sweep_line;
+  typedef Empty_visitor<Traits>                        Base;
+  typedef typename Base::Event                         Event;
+  typedef typename Base::Subcurve                      Subcurve;
+  typedef typename Base::SL_iterator                   SL_iterator;
 
-  typedef typename Sweep_line::StatusLineIter         StatusLineIter;
-
-  typedef Sweep_line_points_visitor<Traits,int>       PointsVisitor;
+  typedef Basic_sweep_line_2<Traits, Self>             Sweep_line;
 
   public:
 
@@ -56,10 +51,6 @@ class Sweep_line_do_curves_x_visitor
     {}
 
 
-  void attach(Sweep_line *sl)
-  {
-    m_sweep_line = sl;
-  }
 
   template <class CurveIterator>
   void sweep(CurveIterator begin, CurveIterator end)
@@ -74,44 +65,21 @@ class Sweep_line_do_curves_x_visitor
                     m_traits);
    
     //Perform the sweep
-    m_sweep_line -> sweep(curves_vec.begin(),
-                          curves_vec.end(),
-                          points_vec.begin(),
-                          points_vec.end());
+    reinterpret_cast<Sweep_line*>(m_sweep_line) -> sweep(curves_vec.begin(),
+                                                         curves_vec.end(),
+                                                         points_vec.begin(),
+                                                         points_vec.end());
   }
 
-  void before_handle_event(Event* event){}
-  bool after_handle_event(Event* event,StatusLineIter iter, bool flag)
+  bool after_handle_event(Event* event,SL_iterator iter, bool flag)
   {
     if(event->is_intersection() || event->is_weak_intersection())
     {
       m_found_x = true;
-      m_sweep_line -> stop_sweep();
+      reinterpret_cast<Sweep_line*>(m_sweep_line) -> stop_sweep();
     }
     return true;
   }
-
-  void add_subcurve(const X_monotone_curve_2& cv,Subcurve* sc){}
-
-  void init_event(Event* e){}
-
-  void after_sweep(){}
-  void after_init(){}
-  void update_event(Event* e,
-                    const Point_2& end_point,
-                    const X_monotone_curve_2& cv,
-                    bool is_left_end)
-  {}
-
-  void update_event(Event* e,
-                    Subcurve* sc1,
-                    Subcurve* sc2,
-                    bool created = false)
-  {}
-
-  void update_event(Event* e,
-                    Subcurve* sc1)
-  {}
 
 
   bool found_x()
@@ -127,7 +95,6 @@ protected:
 
   bool m_found_x;
 
-  Sweep_line* m_sweep_line;
 };
 
 CGAL_END_NAMESPACE
