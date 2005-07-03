@@ -21,6 +21,8 @@
 #define ARR_META_TRAITS_H
 
 #include <CGAL/Object.h> 
+#include <list>
+#include <iterator>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -33,8 +35,10 @@ public:
 
   typedef typename Traits::X_monotone_curve_2       Base_X_monotone_curve_2;
   typedef typename Traits::Point_2                  Point_2;
+  typedef typename Traits::Curve_2                  Curve_2;
   typedef typename Traits::Intersect_2              Base_Intersect_2;
   typedef typename Traits::Split_2                  Base_Split_2;
+  typedef typename Traits::Make_x_monotone_2        Base_Make_x_monotone_2;
 
 
 
@@ -42,7 +46,7 @@ public:
   Arr_meta_traits()
   {}
 
-  Arr_meta_traits(const Traits& tr): Traits(tr)
+  Arr_meta_traits(Traits& tr): Traits(tr)
   {}
 
   // nested class My_X_monotone_curve_2
@@ -136,7 +140,7 @@ public:
   };
 
   /*! Get an Intersect_2 functor object. */
-  Intersect_2 intersect_2_object () const
+  Intersect_2 intersect_2_object () 
   {
     return Intersect_2(Traits::intersect_2_object()); 
   }
@@ -164,9 +168,52 @@ public:
   };
 
   /*! Get a Split_2 functor object. */
-  Split_2 split_2_object () const
+  Split_2 split_2_object () 
   {
     return Split_2(Traits::split_2_object());
+  }
+
+
+
+  class Make_x_monotone_2
+  {
+  private:
+    Base_Make_x_monotone_2    m_base_make_x;
+    std::list<Object>         m_objects;
+
+  public:
+
+    /*! Constructor. */
+    Make_x_monotone_2 (const Base_Make_x_monotone_2& base) :
+        m_base_make_x (base)
+    {}
+
+    template<class OutputIterator>
+    OutputIterator operator() (const Curve_2& cv, OutputIterator oi) 
+    {
+      m_base_make_x(cv, std::back_inserter(m_objects));
+      for(std::list<Object>::iterator iter = m_objects.begin();
+          iter != m_objects.end();
+          ++iter)
+      {
+        Base_X_monotone_curve_2 cv;
+        if(assign(cv, *iter))
+        {
+          *oi++ = make_object(X_monotone_curve_2(cv));
+        }
+        else
+          *oi++ = *iter;
+      }
+      m_objects.clear();
+      return oi;
+    }
+
+  };
+
+  /*! Get a Make_x_monotone_2 functor object. */
+  Make_x_monotone_2 make_x_monotone_2_object () 
+  {
+    return Make_x_monotone_2(Traits::make_x_monotone_2_object());
   }
 
 

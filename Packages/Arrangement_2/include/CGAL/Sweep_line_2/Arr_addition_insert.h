@@ -21,6 +21,7 @@
 #define ARR_ADDITION_INSERT_H
 
 #include <CGAL/Sweep_line_2/Sweep_line_2_impl.h>
+#include <CGAL/Sweep_line_2/Sweep_line_2_utils.h>
 #include <CGAL/Sweep_line_2/Arr_sweep_line_event.h>
 #include <CGAL/Sweep_line_2/Arr_sweep_line_curve.h>
 #include <CGAL/Sweep_line_2/Arr_sweep_line_visitor.h>
@@ -49,6 +50,7 @@ class Arr_addition_insert
   
   typedef typename Traits::Curve_2                         Curve_2;
   typedef typename Traits::X_monotone_curve_2              X_monotone_curve_2;
+  typedef typename Traits::Point_2                         Point_2;
   typedef Arr_agg_addition_visitor <Traits,
                                     Arr,
                                     Event,
@@ -57,10 +59,9 @@ class Arr_addition_insert
   
  
   typedef Sweep_line_2<Traits,
-                            Event,
-                            Subcurve,
-                            Visitor,
-                            CGAL_ALLOCATOR(int)>          Sweep_line;
+                       Visitor,
+                       Subcurve,
+                       Event>                              Sweep_line;
  
 
 
@@ -80,30 +81,33 @@ public:
                      CurveInputIterator end)
   {
     std::vector<X_monotone_curve_2>      xcurves_vec;
+    std::vector<Point_2>                 iso_points;
+
+    make_x_monotone (begin,
+		                 end,
+		                 std::back_inserter(xcurves_vec),
+		                 std::back_inserter(iso_points),
+		                 m_traits);
+
     typename Traits::Compare_xy_2  comp_xy = m_traits->compare_xy_2_object();
     for (Edge_iterator eit = m_arr->edges_begin();
          eit != m_arr->edges_end();
          ++eit) 
     {
       Halfedge_handle he;
-      if(comp_xy((*eit).source().point(),
-	       (*eit).target().point()) == SMALLER)
-         he = (*eit).twin();
+      if(comp_xy(eit->source()->point(),
+	       eit->target()->point()) == SMALLER)
+         he = eit->handle()->twin();
       else
-        he = *eit;
+        he = eit->handle();
 
-      xcurves_vec.push_back(X_monotone_curve_2(he.curve(), he));
+      xcurves_vec.push_back(X_monotone_curve_2(he->curve(), he));
     }
 
-    typename Traits::Make_x_monotone_2 maxe_x =
-      m_traits->make_x_monotone_2_object();
-    for(CurveInputIterator cit = begin; cit != end; ++cit)
-    {
-      const Curve_2& cv = *cit;
-      maxe_x(cv, std::back_inserter(xcurves_vec));
-    }
-
-    m_sweep_line.sweep(xcurves_vec.begin(), xcurves_vec.end());
+    m_sweep_line.sweep(xcurves_vec.begin(),
+                       xcurves_vec.end(),
+                       iso_points.begin(),
+                       iso_points.end());
   }
 
   /*template<class XCurveInputIterator>
@@ -132,7 +136,7 @@ public:
               
 protected:
 
-  const Traits*        m_traits;
+  Traits*              m_traits;
   Arr*                 m_arr;
   Visitor              m_visitor;
   Sweep_line           m_sweep_line;

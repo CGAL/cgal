@@ -31,23 +31,16 @@ protected:
   typedef Arr_sweep_line_visitor<Traits,Arr,Event,Subcurve>    Base;
   typedef Arr_agg_addition_visitor<Traits,Arr,Event,Subcurve>  Self;
 
-  typedef typename Base::Sweep_line                        Sweep_line;
-  typedef typename Base::StatusLineIter                    StatusLineIter;
+  typedef typename Base::SL_iterator                       SL_iterator;
   typedef typename Base::Halfedge_handle                   Halfedge_handle;
-  typedef typename Event::SubCurveIter                     SubCurveIter;
-  typedef typename Event::SubCurveRevIter                  SubCurveRevIter;
+  typedef typename Base::SubCurveIter                      SubCurveIter;
+  typedef typename Base::SubCurveRevIter                   SubCurveRevIter;
   typedef typename Traits::X_monotone_curve_2              X_monotone_curve_2;
   typedef typename Traits::Point_2                         Point_2;
-  typedef Sweep_line_2<Traits,
-                            Event,
-                            Subcurve,
-                            Self,
-                            CGAL_ALLOCATOR(int)>           Sweep_line;
-
+  
   typedef typename Arr::Face_handle                        Face_handle;
   typedef typename Arr::Face_const_handle                  Face_const_handle;
   
-  using Base::m_currentEvent;
   using Base::m_arr;
 
 public:
@@ -71,7 +64,7 @@ public:
         if((he =(*iter)->get_last_curve().get_halfedge_handle()) !=
          Halfedge_handle(NULL))
         {
-          event->get_insert_info()->set_halfedge_handle(he.twin());
+          event->get_insert_info()->set_halfedge_handle(he->twin());
           return;
         }
       }
@@ -112,8 +105,6 @@ public:
       {
         exist_right_halfedge = true;
         event->get_is_curve_in_arr()[i] = true;
-        /*if(reinterpret_cast<Event*>((*iter)->get_left_event()) ==
-           m_currentEvent)*/
         if(!is_split_event(*iter, event))
           // halfedge will not be splitted 
           event->get_insert_info()->set_halfedge_handle(he);
@@ -149,7 +140,7 @@ public:
       if((he =(*iter)->get_last_curve().get_halfedge_handle()) !=
         Halfedge_handle(NULL))
       {
-        event->get_insert_info()->set_halfedge_handle(he.twin());
+        event->get_insert_info()->set_halfedge_handle(he->twin());
         return;
       }
     }
@@ -165,18 +156,18 @@ public:
       // sc is an overlap Subcurve of existing edge and new curve,
       // which means that the edeg will have to be modified
       if(sc -> get_orig_subcurve1())
-        m_arr -> modify_edge(
-          m_currentEvent->get_insert_info()->get_halfedge_handle().next().twin(),
+        m_arr -> 
+        modify_edge(this->current_event()->get_insert_info()->get_halfedge_handle()->next()->twin(),
           cv);
 
       Halfedge_handle next_ccw_he = 
-        m_currentEvent->get_insert_info()->get_halfedge_handle().next().twin();
+        this->current_event()->get_insert_info()->get_halfedge_handle()->next()->twin();
                                                                 
-      m_currentEvent->get_insert_info()->set_halfedge_handle(next_ccw_he);
+      this->current_event()->get_insert_info()->set_halfedge_handle(next_ccw_he);
     }
   }
 
-  bool after_handle_event(Event* event, StatusLineIter iter, bool flag)
+  bool after_handle_event(Event* event, SL_iterator iter, bool flag)
   {
     return (Base::after_handle_event(event,iter,flag));
   }
@@ -186,8 +177,8 @@ public:
                                           Subcurve* sc)
   {
     Halfedge_handle he_above;
-    for(StatusLineIter iter = sc->get_hint();
-        iter != (static_cast<Sweep_line*>(m_sweep_line))->status_line_end();
+    for(SL_iterator iter = this -> status_line_position(sc);
+        iter != this -> status_line_end();
         ++iter)
     {
       if((*iter)->get_last_curve().get_halfedge_handle() !=
@@ -199,7 +190,7 @@ public:
     }
     if(he_above == Halfedge_handle(NULL))
       return m_arr->insert_in_face_interior(cv,  m_arr->unbounded_face());
-    return m_arr->insert_in_face_interior(cv, he_above.face());
+    return m_arr->insert_in_face_interior(cv, he_above->face());
   }
 
   Halfedge_handle insert_at_vertices(const X_monotone_curve_2& cv,
@@ -216,12 +207,11 @@ public:
     // right to left , since we always 'look' above , and the incident face 
     //is on the left of the  halfedge
 
-    CGAL_assertion
-      (m_traits.compare_xy_2_object()(he.source().point(),
-				       he.target().point()) == LARGER);
+    CGAL_assertion(this->traits()->compare_xy_2_object()
+      (he->source()->point(), he->target()->point()) == LARGER);
 
-    m_traits.split_2_object()(he.curve(), pt, sub_cv2, sub_cv1);
-      return (m_arr_access.split_edge_ex(he,pt, sub_cv1, sub_cv2));
+    this->traits()->split_2_object()(he->curve(), pt, sub_cv2, sub_cv1);
+    return (m_arr_access.split_edge_ex(he,pt, sub_cv1, sub_cv2));
   }
 
   // check if the halfedge associated with 'sc' will be splitted at the given
@@ -233,7 +223,7 @@ public:
       return false;
     if(! sc->get_orig_subcurve1())
     {
-      return (reinterpret_cast<Event*>(sc->get_left_event())!=m_currentEvent);
+      return (reinterpret_cast<Event*>(sc->get_left_event())!= this->current_event());
     }
     return
       (is_split_event(reinterpret_cast<Subcurve*>(sc->get_orig_subcurve1()),
@@ -243,27 +233,8 @@ public:
   }
 
 
-  void after_sweep(){}
-  void after_init(){}
-  void update_event(Event* e,
-                    const Point_2& end_point,
-                    const X_monotone_curve_2& cv,
-                    bool is_left_end)
-  {}
-
-  void update_event(Event* e,
-                    Subcurve* sc1,
-                    Subcurve* sc2,
-                    bool created = false)
-  {}
-
-  void update_event(Event* e,
-                    Subcurve* sc1)
-  {}
 
  protected:
-
-  Traits               m_traits;
 
   X_monotone_curve_2   sub_cv1;         // Auxiliary variable (for splitting).
   X_monotone_curve_2   sub_cv2;         // Auxiliary variable (for splitting).

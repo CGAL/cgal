@@ -109,15 +109,15 @@ public:
     for (vit = m_arr->vertices_begin(); vit != m_arr->vertices_end(); ++vit)
     {
       if ((*vit).is_isolated())
-	iso_points.push_back ((*vit).point());
+        iso_points.push_back ((*vit).point());
     }
 
     //Perform the sweep.
     m_arr->clear();
     m_sweep_line.sweep (x_curves.begin(),
-			x_curves.end(),
-			iso_points.begin(),
-			iso_points.end());
+			                  x_curves.end(),
+			                  iso_points.begin(),
+			                  iso_points.end());
    
     return;
   }
