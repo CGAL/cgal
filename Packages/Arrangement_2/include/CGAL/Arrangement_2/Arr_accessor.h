@@ -221,7 +221,7 @@ public:
    * \param new_he The new halfedge that caused the split, such that the new
    *               face lies to its left and the old face to its right.
    */
-  void relocate_in_new_face (DHalfedge *new_he)
+  void relocate_in_new_face (Halfedge_handle new_he)
   {
     p_arr->_relocate_in_new_face (p_arr->_halfedge (new_he));
     return;

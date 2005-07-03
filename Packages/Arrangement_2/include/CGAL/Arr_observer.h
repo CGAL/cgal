@@ -313,6 +313,28 @@ public:
   {}
 
   /*!
+   * Notification before the splitting of a hole into two.
+   * \param f A handle to the face containing the hole.
+   * \param h A circulator representing the boundary of the hole.
+   * \param e The new edge whose removal causes the hole to split.
+   */
+  virtual void before_split_hole (Face_handle /* f */,
+				  Ccb_halfedge_circulator /* h */,
+                                  Halfedge_handle /* e */)
+  {}
+
+  /*!
+   * Notification after a hole was split.
+   * \param f A handle to the face containing the holes.
+   * \param h1 A circulator representing the boundary of the first hole.
+   * \param h2 A circulator representing the boundary of the second hole.
+   */
+  virtual void after_split_hole (Face_handle /* f */,
+                                 Ccb_halfedge_circulator /* h1 */,
+                                 Ccb_halfedge_circulator /* h2 */)
+  {}
+
+  /*!
    * Notification before the creation of a new hole inside a face.
    * \param f A handle to the face containing the hole.
    * \param e The new halfedge that forms the new hole.
@@ -378,6 +400,28 @@ public:
    * \param f A handle to the merged face.
    */
   virtual void after_merge_face (Face_handle /* f */)
+  {}
+
+  /*!
+   * Notification before the merging of two holes (conncected components).
+   * \param f A handle to the face that contains the holes.
+   * \param h1 A circulator representing the boundary of the first hole.
+   * \param h2 A circulator representing the boundary of the second hole.
+   * \param e The edge whose insertion causes the holes to merge.
+   */
+  virtual void before_merge_hole (Face_handle /* f */,
+				  Ccb_halfedge_circulator /* h1 */,
+                                  Ccb_halfedge_circulator /* h2 */,
+                                  Halfedge_handle /* e */)
+  {}
+
+  /*!
+   * Notification after a hole was merged.
+   * \param f A handle to the face that contains the holes.
+   * \param h A circulator representing the boundary of the merged hole.
+   */
+  virtual void after_merge_hole (Face_handle /* f */,
+				 Ccb_halfedge_circulator /* h */)
   {}
 
   /*!

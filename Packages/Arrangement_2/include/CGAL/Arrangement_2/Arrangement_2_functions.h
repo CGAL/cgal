@@ -700,7 +700,6 @@ template<class Traits, class Dcel>
 typename Arrangement_2<Traits,Dcel>::Halfedge_handle
 Arrangement_2<Traits,Dcel>::insert_at_vertices (const X_monotone_curve_2& cv,
                                                 Halfedge_handle prev1,
-
                                                 Vertex_handle v2)
 {
   CGAL_precondition_msg
@@ -1875,24 +1874,44 @@ Arrangement_2<Traits,Dcel>::_insert_at_vertices (const X_monotone_curve_2& cv,
 
     new_face = false;
 
-    // Remove one of the holes from the incident face (note that at least one
-    // of the connected components used to be a hole in the incident face)
-    if (ccb1_is_inner)
+    // Check whether both halfedges are inner components (hole) in the same
+    // face, or whether one is a hole and the other is on the outer boundary
+    // of the face. 
+    Face_handle       fh (f);
+
+    if (ccb1_is_inner && ccb2_is_inner)
     {
-      // Remove the hole ccb1 represents (note that ccb2 may also be a hole,
-      // in which case the two holes are merged into one).
+      // Notify the observers that we are about to merge two holes in the face.
+      _notify_before_merge_hole (fh,
+				 (Halfedge_handle(he1))->ccb(),
+				 (Halfedge_handle(he2))->ccb(),
+				 Halfedge_handle (he1));
+
+      // Remove the hole ccb1 represents. As ccb2 is also a hole, the two
+      // holes are merged into one.
       _find_and_erase_hole (f, ccb1);
-    }
-    else if (ccb2_is_inner)
-    {
-      // Remove the hole ccb2 represents. In this case we have connected this
-      // hole to the outer boundary of its incident face.
-      _find_and_erase_hole (f, ccb2);
+
+      // Notify the observers that we have merged the two holes.
+      _notify_after_merge_hole (fh,
+				(Halfedge_handle(he1))->ccb());
     }
     else
     {
-      CGAL_assertion_msg (false,
+      CGAL_assertion_msg (ccb1_is_inner || ccb2_is_inner,
                           "Cannot merge two outer components.");
+
+      DHalfedge  *ccb_to_remove = ccb1_is_inner ? ccb1 : ccb2;
+
+      // Notify the observers that we are about to remove a fole from the face.
+      _notify_before_remove_hole (fh,
+				  (Halfedge_handle(ccb_to_remove))->ccb());
+
+      // Remove the hole from the face, as we have just connected this hole to
+      // the outer boundary of its incident face.
+      _find_and_erase_hole (f, ccb_to_remove);
+
+      // Notify the observers that we have removed a hole.
+      _notify_after_remove_hole (fh);
     }
   }
   else
@@ -2346,16 +2365,16 @@ Arrangement_2<Traits,Dcel>::_remove_edge (DHalfedge *e)
       //    |                             |
       //    +-----------------------------+
       //
-      // We can view this as the creation of a new hole (because the other
-      // one already exists), so we notify the observers accordingly.
-      _notify_before_add_hole (Face_handle (f1),
-                               Halfedge_handle (prev2));
-
-      // We first remove the hole from the incident face.
       DHalfedge   *hole =  _is_on_inner_boundary (f1, prev1);
 
       CGAL_assertion (hole != NULL);
 
+      // Notify the observers we are about to split a hole.
+      _notify_before_split_hole (Face_handle (f1),
+				 (Halfedge_handle (hole))->ccb(),
+				 Halfedge_handle (he1));
+
+      // We first remove the existing hole from the incident face.
       if (! _find_and_erase_hole (f1, hole))
       {
         CGAL_assertion (false);
@@ -2367,10 +2386,10 @@ Arrangement_2<Traits,Dcel>::_remove_edge (DHalfedge *e)
       f1->add_hole (prev1);
       f1->add_hole (prev2);
 
-      // Notify the observers that a new hole has been formed.
-      Ccb_halfedge_circulator   hccb = (Halfedge_handle(prev2))->ccb();
-
-      _notify_after_add_hole (hccb);
+      // Notify the observers that the hole has been split.
+      _notify_after_split_hole (Face_handle (f1),
+				(Halfedge_handle (prev1))->ccb(),
+				(Halfedge_handle (prev2))->ccb());
     }
 
     // Disconnect the two halfedges we are about to delete from the edge list.

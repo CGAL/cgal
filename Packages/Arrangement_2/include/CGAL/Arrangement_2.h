@@ -1600,6 +1600,28 @@ private:
       (*iter)->after_split_face (f, new_f, is_hole);
   }
 
+  void _notify_before_split_hole (Face_handle f,
+				  Ccb_halfedge_circulator h,
+                                  Halfedge_handle e)
+  {
+    Observers_iterator   iter;
+    Observers_iterator   end = observers.end();
+
+    for (iter = observers.begin(); iter != end; ++iter)
+      (*iter)->before_split_hole (f, h, e);
+  }
+
+  void _notify_after_split_hole (Face_handle f,
+                                 Ccb_halfedge_circulator h1,
+                                 Ccb_halfedge_circulator h2)
+  {
+    Observers_rev_iterator   iter;
+    Observers_rev_iterator   end = observers.rend();
+
+    for (iter = observers.rbegin(); iter != end; ++iter)
+      (*iter)->after_split_hole (f, h1, h2);
+  }
+
   void _notify_before_add_hole (Face_handle f,
                                 Halfedge_handle e)
   {
@@ -1676,6 +1698,28 @@ private:
 
     for (iter = observers.rbegin(); iter != end; ++iter)
       (*iter)->after_merge_face (f);
+  }
+
+  void _notify_before_merge_hole (Face_handle f,
+				  Ccb_halfedge_circulator h1,
+                                  Ccb_halfedge_circulator h2,
+                                  Halfedge_handle e)
+  {
+    Observers_iterator   iter;
+    Observers_iterator   end = observers.end();
+
+    for (iter = observers.begin(); iter != end; ++iter)
+      (*iter)->before_merge_hole (f, h1, h2, e);
+  }
+
+  void _notify_after_merge_hole (Face_handle f,
+				 Ccb_halfedge_circulator h)
+  {
+    Observers_rev_iterator   iter;
+    Observers_rev_iterator   end = observers.rend();
+
+    for (iter = observers.rbegin(); iter != end; ++iter)
+      (*iter)->after_merge_hole (f, h);
   }
 
   void _notify_before_move_hole (Face_handle from_f,
