@@ -26,6 +26,7 @@
 #include <CGAL/Arr_overlay_2/Overlay_subcurve.h>
 #include <CGAL/Arr_overlay_2/Overlay_visitor.h>
 #include <CGAL/Arr_overlay_2/Overlay_meta_traits.h>
+#include <CGAL/Object.h>
 
 #include <vector>
 
@@ -67,13 +68,20 @@ void overlay (const Arrangement_2<Traits_, Dcel1>   & arr1,
                                                       Face_handle2;
 
   typedef typename Res_Arrangement::Halfedge_handle   Halfedge_handle_res;
-  typedef typename Res_Arrangement::Face_handle       Res_Face_handle;
+
+  // in order to iterate over isolated vertices
+  typedef typename Arrangement1::Vertex_const_iterator
+                                                      Vertex_const_iterator_1;
+
+  typedef typename Arrangement2::Vertex_const_iterator
+                                                      Vertex_const_iterator_2;
 
   typedef Overlay_meta_traits<Base_Traits,
                               Arrangement1,
                               Arrangement2>            Traits;
 
   typedef typename Traits::X_monotone_curve_2          X_monotone_curve_2;
+  typedef typename Traits::Point_2                     Point_2;
 
   typedef Overlay_subcurve<Traits>  Subcurve;
   typedef Arr_sweep_line_event<Traits,
@@ -88,14 +96,15 @@ void overlay (const Arrangement_2<Traits_, Dcel1>   & arr1,
                           OverlayTraits>                 Visitor;
 
   typedef Sweep_line_2<Traits,
-                            Event,
-                            Subcurve,
-                            Visitor>                     Sweep_line;
+                       Visitor,
+                       Subcurve,
+                       Event>                           Sweep_line;
 
 
                             
 
   std::vector<X_monotone_curve_2>   arr_curves;
+ // std::vector<Point_2>              arr_points;
   arr_curves.resize(arr1.number_of_edges() + arr2.number_of_edges());
   
   typename Base_Traits::Compare_xy_2    comp_xy =
@@ -107,14 +116,14 @@ void overlay (const Arrangement_2<Traits_, Dcel1>   & arr1,
       itr1 != arr1.edges_end();
       ++itr1, ++i)
   {
-    Halfedge_const_handle_1 he = *itr1;
+    Halfedge_const_handle_1 he = itr1->handle();
 
     // Associate each x-monotone curve with the halfedge that represent it
     // that is directed from right to left.
-    if(comp_xy(he.source().point(),
-	             he.target().point()) == SMALLER)
-       he = he.twin();
-    const Base_X_monotone_curve_2& base_cv = he.curve();
+    if(comp_xy(he->source()->point(),
+	             he->target()->point()) == SMALLER)
+       he = he->twin();
+    const Base_X_monotone_curve_2& base_cv = he->curve();
 
     arr_curves[i] =
       X_monotone_curve_2(base_cv, he, Halfedge_const_handle_2());
@@ -125,23 +134,55 @@ void overlay (const Arrangement_2<Traits_, Dcel1>   & arr1,
       itr2 != arr2.edges_end();
       ++itr2, ++i)
   {
-    Halfedge_const_handle_2 he = *itr2;
+    Halfedge_const_handle_2 he = itr2->handle();
 
     // Associate each x-monotone curve with the halfedge that represent it
     // that is directed from right to left.
-    if(comp_xy(he.source().point(),
-	             he.target().point()) == SMALLER)
-       he = he.twin();
+    if(comp_xy(he->source()->point(),
+	             he->target()->point()) == SMALLER)
+       he = he->twin();
 
-    const Base_X_monotone_curve_2& base_cv = he.curve();
+    const Base_X_monotone_curve_2& base_cv = he->curve();
 
     arr_curves[i] =
       X_monotone_curve_2(base_cv, Halfedge_const_handle_1(), he);
   }
 
+  //// iterate over arr1's vertices and associate each isolated point with
+  //// its vertex
+  //for(Vertex_const_iterator_1 v_itr1 = arr1.vertices_begin();
+  //    v_itr1 != arr1.vertices_end();
+  //    ++v_itr1)
+  //{
+  //  if(v_itr1->is_isolated())
+  //    arr_points.push_back(Point_2(v_itr1->point(),
+  //                         make_object(*v_itr1),
+  //                         Object()));
+  //}
+  //    
+
+  /////
+
+  //// iterate over arr2's vertices and associate each isolated point with
+  //// its vertex
+
+  //for(Vertex_const_iterator_2 v_itr2 = arr2.vertices_begin();
+  //    v_itr2 != arr2.vertices_end();
+  //    ++v_itr2)
+  //{
+  //  if(v_itr2->is_isolated())
+  //  arr_points.push_back(Point_2(v_itr2->point(),
+  //                       Object(),
+  //                       make_object(*v_itr2),
+  //                       ));
+  //}
+
+
+
   Visitor visitor(arr1, arr2, res, traits);
   Sweep_line sweep_object(&visitor);
-  sweep_object.sweep(arr_curves.begin(), arr_curves.end());
+  sweep_object.sweep(arr_curves.begin(),
+                     arr_curves.end());
 }
 
 

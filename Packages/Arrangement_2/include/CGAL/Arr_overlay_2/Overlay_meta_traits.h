@@ -123,13 +123,6 @@ public:
   {}
 
 
-
-  /*Point_info(Vertex_handle_red v1, Vertex_handle_blue v2) :
-    m_red_v(v1),
-    m_blue_v(v2)
-  {}*/
-
- 
   Object& get_red_object()  
   { 
     return m_red_obj;  
@@ -169,8 +162,6 @@ public:
   {
     m_blue_obj = obj;
   }
-
-
 
 };
 
@@ -264,6 +255,8 @@ public:
   
   typedef My_X_monotone_curve_2                     X_monotone_curve_2;
 
+
+
   class My_Point_2 : public Base_Point_2
   {
     typedef typename Traits::Point_2    Base;
@@ -330,10 +323,8 @@ public:
       m_info.set_blue_object(obj);
     }
 
-
-
-
   };
+
 
   typedef My_Point_2   Point_2;
  
@@ -486,18 +477,18 @@ public:
       Object red, blue;
       if(cv.get_color() == Curve_info::RED)
       {
-        red = make_object(cv.get_red_halfedge_handle().target());
+        red = make_object(cv.get_red_halfedge_handle()->target());
       }
       else
         if(cv.get_color() == Curve_info::BLUE)
         {
-          blue = make_object(cv.get_blue_halfedge_handle().target());
+          blue = make_object(cv.get_blue_halfedge_handle()->target());
         }
         else
         {
           CGAL_assertion(cv.get_color() == Curve_info::PURPLE);
-          red = make_object(cv.get_red_halfedge_handle().target());
-          blue = make_object(cv.get_blue_halfedge_handle().target());
+          red = make_object(cv.get_red_halfedge_handle()->target());
+          blue = make_object(cv.get_blue_halfedge_handle()->target());
         }
 
       return Point_2 (m_base_min_v(cv), red, blue);
@@ -534,18 +525,18 @@ public:
       Object red, blue;
       if(cv.get_color() == Curve_info::RED)
       {
-        red = make_object(cv.get_red_halfedge_handle().source());
+        red = make_object(cv.get_red_halfedge_handle()->source());
       }
       else
         if(cv.get_color() == Curve_info::BLUE)
         {
-          blue = make_object(cv.get_blue_halfedge_handle().source());
+          blue = make_object(cv.get_blue_halfedge_handle()->source());
         }
         else
         {
           CGAL_assertion(cv.get_color() == Curve_info::PURPLE);
-          red = make_object(cv.get_red_halfedge_handle().source());
-          blue = make_object(cv.get_blue_halfedge_handle().source());
+          red = make_object(cv.get_red_halfedge_handle()->source());
+          blue = make_object(cv.get_blue_halfedge_handle()->source());
         }
 
       return Point_2 (m_base_max_v(cv), red, blue);
