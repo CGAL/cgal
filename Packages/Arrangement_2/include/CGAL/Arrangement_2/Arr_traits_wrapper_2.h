@@ -591,7 +591,7 @@ public:
                                   const X_monotone_curve_2& cv2,
                                   const Point_2& p,
                                   bool from_top = true) const
-    {`aw  q`
+    {
       // Find to which side of p (left or right) do cv1 and cv2 lie.
       Base                    tr;
       Construct_min_vertex_2  min_vertex = tr.construct_min_vertex_2_object();
