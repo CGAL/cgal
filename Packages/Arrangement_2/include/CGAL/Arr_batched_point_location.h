@@ -64,14 +64,8 @@ OutputIterator locate(const Arrangement& arr,
   typedef Arr_batched_point_location_visitor<Meta_traits_2,
                                              OutputIterator,
                                              Arrangement>  Visitor;
-  typedef Sweep_line_subcurve<Meta_traits_2>               Subcurve; 
-  typedef Sweep_line_event<Meta_traits_2, Subcurve>        Event;
-
-  typedef Sweep_line_2<Meta_traits_2,
-                            Event,
-                            Subcurve,
-                            Visitor,
-                            CGAL_ALLOCATOR(int)>           Sweep_line;
+  
+  typedef Sweep_line_2<Meta_traits_2, Visitor>           Sweep_line;
 
   // Go over all arrangement edges.
   std::vector<X_monotone_curve_2>  xcurves_vec;
@@ -85,11 +79,11 @@ OutputIterator locate(const Arrangement& arr,
   {
     // Associate each x-monotone curve with the halfedge that represent it
     // that is directed from right to left.
-    if(comp_xy((*eit).source().point(),
-	       (*eit).target().point()) == LARGER)
-      xcurves_vec[i] = X_monotone_curve_2((*eit).curve(),*eit);
+    if(comp_xy(eit->source()->point(),
+	             eit->target()->point()) == LARGER)
+      xcurves_vec[i] = X_monotone_curve_2(eit->curve(),eit->handle());
     else
-      xcurves_vec[i] = X_monotone_curve_2((*eit).curve(),(*eit).twin());
+      xcurves_vec[i] = X_monotone_curve_2(eit->curve(),eit->handle()->twin());
   }
   
   Size num_of_points = std::distance(points_begin, points_end);
@@ -109,12 +103,7 @@ OutputIterator locate(const Arrangement& arr,
   // points.
   Visitor     visitor (oi, arr);
   Sweep_line  sweep_line (&visitor);
-  /*sweep_line.init (xcurves_vec.begin(),
-		               xcurves_vec.end(),
-		               points_vec.begin(), 
-		               points_vec.end());
   
-  sweep_line.sweep();*/
   sweep_line.sweep(xcurves_vec.begin(),
 		               xcurves_vec.end(),
 		               points_vec.begin(), 

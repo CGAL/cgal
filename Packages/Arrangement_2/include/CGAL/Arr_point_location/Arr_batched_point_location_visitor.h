@@ -22,31 +22,26 @@
 
 CGAL_BEGIN_NAMESPACE
 
-//#include <CGAL/Arr_point_location/Arr_batched_point_location_event.h>
-#include <CGAL/Sweep_line_2/Sweep_line_subcurve.h>
-#include <CGAL/Sweep_line_2/Sweep_line_event.h>
+
+#include <CGAL/Sweep_line_2_empty_visitor.h>
 #include <CGAL/Object.h>
 #include <utility>
 
 
-template<class Traits, class OutputIerator, class _Arrangement>
-class Arr_batched_point_location_visitor
+template< class Traits_, class OutputIerator, class Arrangement_ >
+class Arr_batched_point_location_visitor : public Empty_visitor< Traits_ >
 {
-  typedef Arr_batched_point_location_visitor<Traits,
+  typedef Arr_batched_point_location_visitor<Traits_,
                                              OutputIerator,
-                                             _Arrangement>        Self;   
-  typedef _Arrangement                                            Arrangement;
-  typedef Sweep_line_subcurve<Traits>                             Subcurve;
-  typedef Sweep_line_event<Traits, Subcurve>                      Event;
-  typedef typename Event::SubCurveIter                            SubCurveIter;
+                                             Arrangement_>        Self;   
+  typedef Arrangement_                                            Arrangement;
+  typedef Traits_                                                 Traits;
+  
 
-  typedef Basic_sweep_line_2<Traits,
-                             Event,
-                             Subcurve,
-                             Self,
-                             CGAL_ALLOCATOR(int)>                Sweep_line;
-
-  typedef typename Sweep_line::StatusLineIter                   StatusLineIter;
+  typedef Empty_visitor<Traits>                        Base;
+  typedef typename Base::Event                         Event;
+  typedef typename Base::Subcurve                      Subcurve;
+  typedef typename Base::SL_iterator                   SL_iterator;
 
    
   typedef typename Traits::X_monotone_curve_2            X_monotone_curve_2;
@@ -66,17 +61,11 @@ class Arr_batched_point_location_visitor
                                      m_arr(arr)
   {}
 
-  void attach(Sweep_line *sl)
-  {
-    m_sweep_line = sl;
-  }
-
-
-  void before_handle_event(Event* event){}
+  
 
   //after_handle_event
   //(above_on_event is true iff 'above' subcurve is on the event
-  bool after_handle_event(Event* event, StatusLineIter above, bool above_on_event)
+  bool after_handle_event(Event* event, SL_iterator above, bool above_on_event)
   {
     if(! event->get_point().is_query())
       return true;
@@ -89,15 +78,15 @@ class Arr_batched_point_location_visitor
 
       if(event->has_right_curves())
       {
-        *m_out++ = std::make_pair(event->get_point(), make_object(he.target()));
+        *m_out++ = std::make_pair(event->get_point(), make_object(he->target()));
         return true;
       }
-      *m_out++ = std::make_pair(event->get_point(),make_object(he.source()));
+      *m_out++ = std::make_pair(event->get_point(),make_object(he->source()));
       return true;
     }
 
      //UNBOUNDED_FACE
-    if(above == m_sweep_line->status_line_end())
+    if(above == this ->status_line_end())
     {
       *m_out++ = std::make_pair(event->get_point(),
                                 make_object(m_arr.unbounded_face()));
@@ -115,12 +104,10 @@ class Arr_batched_point_location_visitor
     //FACE or UNBOUNDED_FACE
     Halfedge_const_handle he = (*above)->get_last_curve().get_halfedge_handle();
     *m_out++ = std::make_pair(event->get_point(),
-                                make_object(he.face()));
+                                make_object(he->face()));
     return true;
   }
 
-
- void add_subcurve(X_monotone_curve_2 cv,Subcurve* sc){}
 
   OutputIerator get_output_iterator()
   {
@@ -128,36 +115,9 @@ class Arr_batched_point_location_visitor
   }
 
 
-  void init_event(Event* event)
-  {
-   // event->set_query();
-  }
-
-  void after_sweep(){}
-  void after_init(){}
-  void update_event(Event* e,
-                    const Point_2& end_point,
-                    const X_monotone_curve_2& cv,
-                    bool is_left_end)
-  {}
-
-  void update_event(Event* e,
-                    Subcurve* sc1,
-                    Subcurve* sc2,
-                    bool created = false)
-  {}
-
-  void update_event(Event* e,
-                    Subcurve* sc1)
-  {}
-
-
-
 protected:
 
   OutputIerator m_out;
-
-  Sweep_line* m_sweep_line;
 
   const Arrangement& m_arr;
 };
