@@ -69,16 +69,16 @@ Object Arr_walk_along_line_point_location<Arrangement>::locate
         if (equal (p, closest_he->source()->point()))
         {
           // The query point is located on the source vertex:
-          return (make_object (closest_he->source()));
+          return (CGAL::make_object (closest_he->source()));
         }
         else if (equal (p, closest_he->target()->point()))
         {
           // The query point is located on the target vertex:
-          return (make_object (closest_he->target()));
+          return (CGAL::make_object (closest_he->target()));
         }
 
         // The query point is located in the edge interior:
-        return (make_object (closest_he));
+        return (CGAL::make_object (closest_he));
       }
 
       // Check if the point is contained in the interior of the current hole.
@@ -134,16 +134,16 @@ Object Arr_walk_along_line_point_location<Arrangement>::locate
             if (equal (p, closest_he->source()->point()))
             {
               // The query point is located on the source vertex:
-              return (make_object (closest_he->source()));
+              return (CGAL::make_object (closest_he->source()));
             }
             else if (equal (p, closest_he->target()->point()))
             {
               // The query point is located on the target vertex:
-              return (make_object (closest_he->target()));
+              return (CGAL::make_object (closest_he->target()));
             }
 
             // The query point is located in the edge iterior:
-            return (make_object (closest_he));
+            return (CGAL::make_object (closest_he));
           }
           
           // If the point is not contained in the face, move to the neighboring
@@ -186,11 +186,11 @@ Object Arr_walk_along_line_point_location<Arrangement>::locate
        iso_verts_it != face->isolated_vertices_end(); ++iso_verts_it)
   {
     if (equal (p, iso_verts_it->point()))
-      return (make_object (iso_verts_it->handle()));
+      return (CGAL::make_object (iso_verts_it->handle()));
   }
 
   // The query point is contained in the face interior:
-  return (make_object (face));
+  return (CGAL::make_object (face));
 }
 
 //-----------------------------------------------------------------------------

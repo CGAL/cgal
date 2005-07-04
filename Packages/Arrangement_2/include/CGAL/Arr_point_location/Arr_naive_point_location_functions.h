@@ -44,7 +44,7 @@ Object Arr_naive_point_location<Arrangement>::locate (const Point_2& p) const
   {
     vh = vit->handle();
     if (equal (p, vh->point()))
-      return (make_object (vh));
+      return (CGAL::make_object (vh));
   }
 
   // Go over arrangement halfedges and check whether one of them contains
@@ -62,7 +62,7 @@ Object Arr_naive_point_location<Arrangement>::locate (const Point_2& p) const
     if (is_in_x_range (hh->curve(), p) &&
         compare_y_at_x (p, hh->curve()) == EQUAL)
     {
-      return (make_object (hh));
+      return (CGAL::make_object (hh));
     }
   }
 
@@ -72,7 +72,7 @@ Object Arr_naive_point_location<Arrangement>::locate (const Point_2& p) const
   if (obj.is_empty())
   {
     // Return the unbounded face.
-    return (make_object (p_arr->unbounded_face()));
+    return (CGAL::make_object (p_arr->unbounded_face()));
   }
 
   // The ray shooting returned either a vertex of a halfedge.
@@ -88,7 +88,7 @@ Object Arr_naive_point_location<Arrangement>::locate (const Point_2& p) const
     }
 
     // Return the incident face.
-    return (make_object (hh->face()));
+    return (CGAL::make_object (hh->face()));
   }
 
   // In case the ray-shooting returned a vertex, we have to locate the first
@@ -101,7 +101,7 @@ Object Arr_naive_point_location<Arrangement>::locate (const Point_2& p) const
   }
 
   hh = _first_around_vertex (vh);
-  return (make_object (hh->face()));
+  return (CGAL::make_object (hh->face()));
 }
 
 //-----------------------------------------------------------------------------
@@ -168,7 +168,7 @@ Object Arr_naive_point_location<Arrangement>::_base_vertical_ray_shoot
     {
       // The vertical ray overlaps an existing vertical edge containing p.
       // In this case simply return this edge.
-      return (make_object (eit));
+      return (CGAL::make_object (eit));
     }
 
     // Move to the next edge.
@@ -184,16 +184,16 @@ Object Arr_naive_point_location<Arrangement>::_base_vertical_ray_shoot
   if (traits->compare_x_2_object() (closest_edge->source()->point(),
                                     p) == EQUAL)
   {
-    return (make_object (closest_edge->source()));
+    return (CGAL::make_object (closest_edge->source()));
   }
   else if (traits->compare_x_2_object() (closest_edge->target()->point(),
                                          p) == EQUAL)
   {
-    return (make_object (closest_edge->target()));
+    return (CGAL::make_object (closest_edge->target()));
   }
 
   // Otherwise, return the closest edge.
-  return (make_object (closest_edge));
+  return (CGAL::make_object (closest_edge));
 }
 
 //-----------------------------------------------------------------------------
@@ -276,9 +276,9 @@ Object Arr_naive_point_location<Arrangement>::_vertical_ray_shoot
   if (type == NAIVE_PL_NONE)
     return Object();
   else if (type == NAIVE_PL_VERTEX)
-    return (make_object (closest_v));
+    return (CGAL::make_object (closest_v));
   else
-    return (make_object (closest_he));
+    return (CGAL::make_object (closest_he));
 }
 
 //-----------------------------------------------------------------------------
