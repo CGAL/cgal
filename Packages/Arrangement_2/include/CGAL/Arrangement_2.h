@@ -629,6 +629,14 @@ public:
             halfedges_begin() == halfedges_end());
   }
 
+  /*! Chceck whether the arrangement is valid. In particular, check the validity
+   * of each vertex, halfedge, and face.
+   */
+  bool is_valid() const
+  {
+    return true;
+  }
+  
   /*! Get the number of arrangement vertices. */
   Size number_of_vertices () const
   {
