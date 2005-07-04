@@ -74,7 +74,11 @@ number_type_converter_nef_3<CGAL::Cartesian<CGAL::Gmpq> > (const CGAL::Cartesian
 }
 
 #ifdef CGAL_USE_LEDA
-   // TO DO
+template <>
+CGAL::Cartesian<leda_rational>::Point_3
+number_type_converter_nef_3<CGAL::Cartesian<leda_rational> > (const CGAL::Cartesian<double>::Point_3 &d)
+{  return CGAL::Cartesian<leda_rational>::Point_3 (d.x(), d.y(), d.z());
+}
 #endif // CGAL_USE_LEDA
 
 CGAL_END_NAMESPACE
@@ -88,10 +92,13 @@ CGAL_END_NAMESPACE
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Nef_3/Mark_bounded_volumes.h>
-#include <CGAL/Nef_TO_DO_3/Scanner_OFF.h>
+#include <CGAL/IO/Scanner_OFF.h>
 #include <CGAL/normal_vector_newell_3.h>
 
+#define CGAL_NEF_OFF_TO_NEF_TIMER
+#ifdef CGAL_NEF_OFF_TO_NEF_TIMER
 #include <CGAL/Timer.h>
+#endif
 
 CGAL_BEGIN_NAMESPACE
 
@@ -122,7 +129,10 @@ OFF_to_nef_3 (std::istream &i_st, Nef_3 &nef_union, bool verb=false)
    std::size_t discarded_facets=0;
    long idx;
    Nef_map nef_map; // priority queue
+
+#ifdef CGAL_NEF_OFF_TO_NEF_TIMER
    CGAL::Timer t_convert, t_union;
+#endif
 
    // input: description of polyhedron in object file format (OFF)
    // with cartesian double coordinates
@@ -135,7 +145,9 @@ OFF_to_nef_3 (std::istream &i_st, Nef_3 &nef_union, bool verb=false)
    Point_set V;
    V.reserve (NOV);
 
-   t_convert.start(); // Time
+#ifdef CGAL_NEF_OFF_TO_NEF_TIMER
+   t_convert.start();
+#endif
 
    Scan_vertex_it v_it = scan.vertices_begin();
    for (idx=0; v_it != scan.vertices_end(); ++v_it, ++idx)
@@ -157,9 +169,8 @@ OFF_to_nef_3 (std::istream &i_st, Nef_3 &nef_union, bool verb=false)
 
       Scan_index_it ind_it = f_it->begin();
       for (jdx=0; ind_it != f_it->end(); ++ind_it, ++jdx)
-      {  // assertion: some indices are out of range?
+      {  // assertion: index out of range?
          CGAL_assertion ( 0 <= *ind_it && *ind_it < NOV );
-	 // TO DO: what to do without assertions?
          V_f_scan.push_back (V_scan[*ind_it]);
          V_f.push_back (V[*ind_it]);
       }
@@ -182,7 +193,7 @@ OFF_to_nef_3 (std::istream &i_st, Nef_3 &nef_union, bool verb=false)
       else
       {  if (verb)
 	 {  std::cerr << "\n" << __FILE__ << ", line " << __LINE__
-	       << ": assertion violation: empty vertex cycle."
+	       << ": error: -> Empty vertex cycle."
 	       << std::endl;
 	 }
       }
@@ -190,17 +201,25 @@ OFF_to_nef_3 (std::istream &i_st, Nef_3 &nef_union, bool verb=false)
       if ( !is_nef )
       {  ++discarded_facets;
          if (verb)
-	 {  std::cerr << __FILE__ << ", line " << __LINE__
-	       << ": discard input facet number " << (idx+1)
+	 {  std::cerr << "(Within context:)"
+	       << " Discard input facet " << (idx+1)
 	       << " (numbered from 1)."
 	       << " Check semantics!\n" << std::endl;
 	 }
       }
    }
-   t_convert.stop(); // Time
+
+#ifdef CGAL_NEF_OFF_TO_NEF_TIMER
+   t_convert.stop();
+   std::cout << "time conversion: " << t_convert.time()<< std::endl;
+#endif
 
    // union of queue entries
-   t_union.start(); // Time
+
+#ifdef CGAL_NEF_OFF_TO_NEF_TIMER
+   t_union.start();
+#endif
+
    while ( nef_map.size() > 1 )
    {  Nef_map_iter nm=nef_map.begin(), nm2=nef_map.begin();
       ++nm2;
@@ -209,15 +228,11 @@ OFF_to_nef_3 (std::istream &i_st, Nef_3 &nef_union, bool verb=false)
       nef_map.erase(nm);
       nef_map.erase(nm2);
    }
-   t_union.stop(); // Time
 
-   if (verb) // TO DO
-   {
-      std::cerr << "time conversion: " // Time
-                << t_convert.time()<< std::endl; // Time
-      std::cerr << "time union: " // Time
-                << t_union.time() << "\n" << std::endl; // Time
-   }
+#ifdef CGAL_NEF_OFF_TO_NEF_TIMER
+   t_union.stop();
+   std::cout << "time union: " << t_union.time() << "\n" << std::endl;
+#endif
 
    // return values
    if ( nef_map.size() == 0 ) nef_union = Nef_3 ();
