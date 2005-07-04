@@ -575,6 +575,7 @@ public:
         Vertex_handle_blue    blue_v;
 
         CGAL_assertion(assign(blue_v, blue_obj));
+        assign(blue_v, blue_obj);
         Face_handle_red    red_f;
         if(!sc_above)
           red_f = m_red_arr->unbounded_face();
