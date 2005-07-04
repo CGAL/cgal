@@ -28,14 +28,11 @@
 #include <CGAL/Arrangement_2/Arr_traits_wrapper_2.h>
 #include <CGAL/Arr_point_location/Arr_lm_nearest_neighbor.h>
 
-//#define CGAL_LM_DEBUG
-
-#ifdef CGAL_LM_DEBUG
-	#define PRINT_DEBUG(expr)   std::cout << expr << std::endl
-	#define LM_DEBUG(cmd)   cmd
+//#define CGAL_LM_VERTICES_DEBUG
+#ifdef CGAL_LM_VERTICES_DEBUG
+	#define PRINT_V_DEBUG(expr)   std::cout << expr << std::endl
 #else
-	#define PRINT_DEBUG(expr)
-	#define LM_DEBUG(cmd) 
+	#define PRINT_V_DEBUG(expr)
 #endif
 
 
@@ -56,27 +53,27 @@ class Arr_landmarks_vertices_generator
 {
 public:
 
-  typedef Arrangement_							Arrangement_2;
-  typedef typename Arrangement_2::Traits_2		Traits_2;
-  
-  typedef Arr_landmarks_vertices_generator<Arrangement_2, Nearest_neighbor_>  
-  Self;
+	typedef Arrangement_							Arrangement_2;
+	typedef typename Arrangement_2::Traits_2		Traits_2;
 
-  typedef typename Arrangement_2::Vertex_const_handle   Vertex_const_handle;
-  typedef typename Arrangement_2::Halfedge_const_handle Halfedge_const_handle;
-  typedef typename Arrangement_2::Face_const_handle     Face_const_handle;
-  typedef typename Arrangement_2::Vertex_handle		  Vertex_handle;
-  typedef typename Arrangement_2::Halfedge_handle		  Halfedge_handle;
-  typedef typename Arrangement_2::Face_handle			  Face_handle;
-  typedef typename Arrangement_2::Vertex_const_iterator Vertex_const_iterator;
-  
-  typedef typename Traits_2::Point_2				Point_2;
-  typedef typename Traits_2::X_monotone_curve_2	X_monotone_curve_2;	
+	typedef Arr_landmarks_vertices_generator<Arrangement_2, Nearest_neighbor_>  
+		Self;
 
-  typedef Nearest_neighbor_						Nearest_neighbor;
-  typedef typename Nearest_neighbor_::NN_Point_2	NN_Point_2;
-  typedef std::list<NN_Point_2>                   NN_Point_list;
-  typedef typename NN_Point_list::iterator		NN_Point_list_iterator;
+	typedef typename Arrangement_2::Vertex_const_handle   Vertex_const_handle;
+	typedef typename Arrangement_2::Halfedge_const_handle Halfedge_const_handle;
+	typedef typename Arrangement_2::Face_const_handle     Face_const_handle;
+	typedef typename Arrangement_2::Vertex_handle		  Vertex_handle;
+	typedef typename Arrangement_2::Halfedge_handle		  Halfedge_handle;
+	typedef typename Arrangement_2::Face_handle			  Face_handle;
+	typedef typename Arrangement_2::Vertex_const_iterator Vertex_const_iterator;
+
+	typedef typename Traits_2::Point_2				Point_2;
+	typedef typename Traits_2::X_monotone_curve_2	X_monotone_curve_2;	
+
+	typedef Nearest_neighbor_						Nearest_neighbor;
+	typedef typename Nearest_neighbor_::NN_Point_2	NN_Point_2;
+	typedef std::list<NN_Point_2>                   NN_Point_list;
+	typedef typename NN_Point_list::iterator		NN_Point_list_iterator;
 
 protected:
 
@@ -110,7 +107,7 @@ public:
 		  num_small_not_updated_changes(0), 
 		  num_landmarks(0)
 	  {
-		  PRINT_DEBUG("Arr_landmarks_vertices_generator constructor"); 
+		  PRINT_V_DEBUG("Arr_landmarks_vertices_generator constructor"); 
 		  traits = static_cast<const Traits_wrapper_2*> (p_arr->get_traits());
 		  build_landmarks_set();
 	  }
@@ -123,7 +120,7 @@ public:
 	  */
 	  void build_landmarks_set ()
     {
-      PRINT_DEBUG("build_landmarks_set."); 
+      PRINT_V_DEBUG("build_landmarks_set."); 
       NN_Point_list      plist; 
 
       //Go over planar map, and insert all vertices as landmarks
@@ -131,15 +128,15 @@ public:
       for (vit=p_arr->vertices_begin(); vit != p_arr->vertices_end(); vit++)
       {
         //get point from vertex
-        Point_2 p = (*vit).point() ;
-        Vertex_const_handle vh = (*vit);
+        Point_2 p = vit->point() ;
+        Vertex_const_handle vh = vit;
         Object obj = make_object (vh);
         NN_Point_2 np (p, obj); 
 
         //insert point into list
         plist.push_back(np); 
 
-        //PRINT_DEBUG("landmark = "<< p); 
+        //PRINT_V_DEBUG("landmark = "<< p); 
       } 
 
       //the search structure is now updated
@@ -156,7 +153,7 @@ public:
 	  */
 	  void clear_landmarks_set ()
 	  {
-		  PRINT_DEBUG("clear_landmarks_set.");
+		  PRINT_V_DEBUG("clear_landmarks_set.");
 
 		  nn.clean();
 
@@ -195,10 +192,10 @@ public:
     */
     virtual void before_attach (const Arrangement_2& arr)
     {
-      clear_landmarks_set();
-      p_arr = &arr; 
-      traits = static_cast<const Traits_wrapper_2*> (p_arr->get_traits());
-      ignore_notifications = false;
+		  clear_landmarks_set();
+		  p_arr = &arr; 
+		  traits = static_cast<const Traits_wrapper_2*> (p_arr->get_traits());
+		  ignore_notifications = false;
     }
 
     /*!
@@ -249,7 +246,7 @@ public:
 	  {
 		  if (! ignore_notifications)
 		  {
-			  PRINT_DEBUG("Arr_landmarks_vertices_generator::after_create_vertex");
+			  PRINT_V_DEBUG("Arr_landmarks_vertices_generator::after_create_vertex");
 			  _small_change();
 		  }
 	  }
@@ -273,17 +270,16 @@ protected:
    */
   void _small_change ()
   {
-    PRINT_DEBUG("small change. num_small_not_updated_changes =" 
-		<<num_small_not_updated_changes);
-    num_small_not_updated_changes++;
-    if ((num_landmarks < 10) ||
-	(num_small_not_updated_changes >= 
-	 static_cast<int>(::sqrt(num_landmarks))) )
-    {
-      PRINT_DEBUG("updating ...");
-      clear_landmarks_set();
-      build_landmarks_set();
-    }
+	  PRINT_V_DEBUG("small change. num_small_not_updated_changes =" 
+		  <<num_small_not_updated_changes);
+	  num_small_not_updated_changes++;
+	  if ((num_landmarks < 10) ||
+		  (num_small_not_updated_changes >= sqrt(num_landmarks)) )
+	  {
+		  PRINT_V_DEBUG("updating ...");
+		  clear_landmarks_set();
+		  build_landmarks_set();
+	  }
   }
 
 };

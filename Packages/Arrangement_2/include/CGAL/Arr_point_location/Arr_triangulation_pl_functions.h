@@ -66,8 +66,8 @@ Object Arr_triangulation_point_location<Arrangement_2>
       Isolated_vertices_const_iterator   iso_verts_it;
       typename Traits_wrapper_2::Equal_2  equal = traits->equal_2_object();
 
-      for (iso_verts_it = face_found.isolated_vertices_begin();
-          iso_verts_it != face_found.isolated_vertices_end(); ++iso_verts_it)
+      for (iso_verts_it = face_found->isolated_vertices_begin();
+          iso_verts_it != face_found->isolated_vertices_end(); ++iso_verts_it)
       {
         if (equal (p, (*iso_verts_it).point()))
           return (make_object (*iso_verts_it));
@@ -79,7 +79,7 @@ Object Arr_triangulation_point_location<Arrangement_2>
     {
       //get the vertex from li, which is the index of the vertex
       Vertex_const_handle vertex_found = fh->vertex(li)->info();
-      TRG_PRINT_DEBUG("vertex: "<< vertex_found.point());
+      TRG_PRINT_DEBUG("vertex: "<< vertex_found->point());
       return make_object(vertex_found);
     }
   case CDT::EDGE:
@@ -95,7 +95,8 @@ Object Arr_triangulation_point_location<Arrangement_2>
         Vertex_const_handle v1_of_edge = fh->vertex(v1_index)->info();       
         Vertex_const_handle v2_of_edge = fh->vertex(v2_index)->info();
         //go over all halfedges incident to v1, and check if v2 is their source
-        Halfedge_around_vertex_const_circulator circ1 = v1_of_edge.incident_halfedges(); 
+        Halfedge_around_vertex_const_circulator circ1 = 
+            v1_of_edge->incident_halfedges(); 
         Halfedge_around_vertex_const_circulator circ1_done (circ1);
         
         Halfedge_const_handle edeg_found;
@@ -103,9 +104,9 @@ Object Arr_triangulation_point_location<Arrangement_2>
         do {
           if (v2_of_edge == (*circ1).source())
           {
-            edeg_found = (*circ1);
-            TRG_PRINT_DEBUG("edeg_found = "<< edeg_found.source().point()
-              <<" towards "<< edeg_found.target().point());
+            edeg_found = circ1;
+            TRG_PRINT_DEBUG("edeg_found = "<< edeg_found->source()->point()
+              <<" towards "<< edeg_found->target()->point());
           }
         } while (++circ1 != circ1_done);
 
@@ -133,24 +134,24 @@ Object Arr_triangulation_point_location<Arrangement_2>
   // (and thus vertices inceident to this edge). 
   //in the future it is possible to add isolated vertices to the 
   // triangulation, and then, when found, take its incident_face
-  CGAL_assertion(v0.is_isolated());
-  CGAL_assertion(v1.is_isolated());
-  CGAL_assertion(v2.is_isolated());
-  if (v0.is_isolated())
+  CGAL_assertion(!v0->is_isolated());
+  CGAL_assertion(!v1->is_isolated());
+  CGAL_assertion(!v2->is_isolated());
+  if (v0->is_isolated())
     return make_object(p_arr->incident_face(v0));
-  if (v1.is_isolated())
+  if (v1->is_isolated())
     return make_object(p_arr->incident_face(v1));
-  if (v2.is_isolated())
+  if (v2->is_isolated())
     return make_object(p_arr->incident_face(v2));
 
   //find the face in the pm correspond to the 3 vertices
-  Halfedge_around_vertex_const_circulator havc0 = v0.incident_halfedges(); 
+  Halfedge_around_vertex_const_circulator havc0 = v0->incident_halfedges(); 
   Halfedge_around_vertex_const_circulator havc0_done (havc0);
 
-  Halfedge_around_vertex_const_circulator havc1 = v1.incident_halfedges(); 
+  Halfedge_around_vertex_const_circulator havc1 = v1->incident_halfedges(); 
   Halfedge_around_vertex_const_circulator havc1_done (havc1);
 
-  Halfedge_around_vertex_const_circulator havc2 = v2.incident_halfedges(); 
+  Halfedge_around_vertex_const_circulator havc2 = v2->incident_halfedges(); 
   Halfedge_around_vertex_const_circulator havc2_done (havc2);
 
   //loop to find face
@@ -188,9 +189,9 @@ Object Arr_triangulation_point_location<Arrangement_2>
       std::cerr<< "NOT GOOD - face not found" << std::endl;
       //debug - print some more info
       std::cout << "p = "<< p <<std::endl;
-      std::cout << "v0 = "<< v0.point() 
-        <<", v1 = "<< v1.point()
-        <<", v2 = "<<v2.point() <<std::endl;
+      std::cout << "v0 = "<< v0->point() 
+        <<", v1 = "<< v1->point()
+        <<", v2 = "<<v2->point() <<std::endl;
     }
   }
 
@@ -199,8 +200,8 @@ Object Arr_triangulation_point_location<Arrangement_2>
   Isolated_vertices_const_iterator   iso_verts_it;
   typename Traits_wrapper_2::Equal_2  equal = traits->equal_2_object();
 
-  for (iso_verts_it = face_found.isolated_vertices_begin();
-      iso_verts_it != face_found.isolated_vertices_end(); ++iso_verts_it)
+  for (iso_verts_it = face_found->isolated_vertices_begin();
+      iso_verts_it != face_found->isolated_vertices_end(); ++iso_verts_it)
   {
     if (equal (p, (*iso_verts_it).point()))
       return (make_object (*iso_verts_it));
@@ -246,8 +247,8 @@ void Arr_triangulation_point_location<Arrangement_2>
     X_monotone_curve_2 cv = (*eit).curve();
 
     //get points from vertices
-    Point_2 pm_p1 = pm_vh1.point() ;
-    Point_2 pm_p2 = pm_vh2.point() ;
+    Point_2 pm_p1 = pm_vh1->point() ;
+    Point_2 pm_p2 = pm_vh2->point() ;
 
     //cast the points to be CDT points
     CDT_Point cdt_p1 = static_cast <CDT_Point> (pm_p1);
