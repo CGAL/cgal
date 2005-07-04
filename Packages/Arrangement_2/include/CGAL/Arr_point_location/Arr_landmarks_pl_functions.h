@@ -30,7 +30,7 @@
 	#define LM_CLOCK_DEBUG(cmd)
 #endif
 
-//#define CGAL_LM_DEBUG
+#define CGAL_LM_DEBUG
 
 #ifdef CGAL_LM_DEBUG
 	#define PRINT_DEBUG(expr)   std::cout << expr << std::endl
@@ -95,7 +95,7 @@ Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
 	}
 	else if (assign (v, landmark_location_obj))
 	{
-		PRINT_DEBUG( "landmark_location_obj is a vertex: "<< v.point());
+		PRINT_DEBUG( "landmark_location_obj is a vertex: "<< v->point());
 		out_obj = _walk_from_vertex( v , p);
 	}
 	else if (assign (f, landmark_location_obj))
@@ -105,7 +105,7 @@ Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
 	}
 	else if (assign (h, landmark_location_obj))
 	{
-		PRINT_DEBUG( "landmark_location_obj is a halfedge: "<< h.curve());
+		PRINT_DEBUG( "landmark_location_obj is a halfedge: "<< h->curve());
 		out_obj = _walk_from_edge( h, p, landmark_point);
 	}
 	else 
@@ -127,11 +127,11 @@ Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
 	}
 	else if (assign (h, out_obj))
 	{
-		PRINT_DEBUG( "object is a halfedge: "<< h.curve());
+		PRINT_DEBUG( "object is a halfedge: "<< h->curve());
 	}
 	else if (assign (v, out_obj))
 	{
-		PRINT_DEBUG( "object is a vertex: "<< v.point());
+		PRINT_DEBUG( "object is a vertex: "<< v->point());
 	}
 	else if (assign (f, out_obj))
 	{
@@ -148,11 +148,11 @@ Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
     Isolated_vertices_const_iterator   iso_verts_it;
     typename Traits_wrapper_2::Equal_2  equal = traits->equal_2_object();
 
-    for (iso_verts_it = f.isolated_vertices_begin();
-        iso_verts_it != f.isolated_vertices_end(); ++iso_verts_it)
+    for (iso_verts_it = f->isolated_vertices_begin();
+        iso_verts_it != f->isolated_vertices_end(); ++iso_verts_it)
     {
       if (equal (p, (*iso_verts_it).point()))
-        return (make_object (*iso_verts_it));
+        return (make_object (iso_verts_it));
     }		
 	}
 
@@ -170,7 +170,7 @@ Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
 					const Point_2 & p)   const
 { 
 	PRINT_DEBUG("inside walk_from_vertex. p= "<< p	<< 
-				 ", nearest_vertex = "<<nearest_vertex.point() );
+				 ", nearest_vertex = "<<nearest_vertex->point() );
 
 	//inits
 	bool new_vertex = false;
@@ -181,10 +181,10 @@ Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
 	Halfedge_const_handle   h;
 	Face_const_handle       f;
 
-  if (vh.is_isolated())
+  if (vh->is_isolated())
   {
     f = p_arr->incident_face(vh);
-    return _walk_from_face(f, p, vh.point());
+    return _walk_from_face(f, p, vh->point());
   }
 
 	//find face
@@ -194,6 +194,7 @@ Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
 
 		flipped_edges.clear();  //clear the curves that were flipped
 
+    new_vertex = false;
 		LM_CLOCK_DEBUG(clock_t ff_time_start = clock());
 		obj = _find_face (p, vh, new_vertex);
 		LM_CLOCK_DEBUG(clock_t ff_time_end = clock() );
@@ -224,18 +225,18 @@ Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
 		}
 		else if (assign (h, obj))
 		{
-			PRINT_DEBUG( "_find_face found a halfedge: "<< h.curve());
+			PRINT_DEBUG( "_find_face found a halfedge: "<< h->curve());
 			return (obj);
 		}
 		else if (assign (v, obj))
 		{
-				PRINT_DEBUG( "_find_face found a vertex: "<< v.point());
+				PRINT_DEBUG( "_find_face found a vertex: "<< v->point());
 				return (obj);
 		}
 		else if (assign (f, obj))
 		{
 			PRINT_DEBUG("face that was a face ");
-			return _walk_from_face (f, p, vh.point());
+			return _walk_from_face (f, p, vh->point());
 		}
 
 	} while (new_vertex);	
@@ -261,35 +262,35 @@ Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
         ) const
 { 
 	LM_CLOCK_DEBUG( entries_to_find_face++ );
-	PRINT_DEBUG("inside find_face. p ="<< p <<" , vh = "<<vh.point() ); 
+	PRINT_DEBUG("inside find_face. p ="<< p <<" , vh = "<<vh->point() ); 
 
 	new_vertex = false;
 
 	// check if the point equals the vertex. 
-	if (traits->equal_2_object()(vh.point(), p))
+	if (traits->equal_2_object()(vh->point(), p))
 	{
 		return make_object (vh);
 	}
 
 	//create a segment vh--p. 
-	Point_2 v = vh.point();
+	Point_2 v = vh->point();
 	X_monotone_curve_2 seg(v, p);
 
 	//get halfedges around vh
-  CGAL_assertion (vh.is_isolated());
-	Halfedge_around_vertex_const_circulator circ = vh.incident_halfedges(); 
+  CGAL_assertion (!vh->is_isolated());
+	Halfedge_around_vertex_const_circulator circ = vh->incident_halfedges(); 
 	Halfedge_around_vertex_const_circulator circ_done (circ);
 	Halfedge_around_vertex_const_circulator prev = circ;
 
 	typename Traits_wrapper_2::Compare_xy_2           compare_xy = 
                                       traits->compare_xy_2_object();
 
-	typename Traits_wrapper_2::Compare_y_at_x_cw_2 compare_y_at_x_cw =
-                                      traits->compare_y_at_x_cw_2_object();
+	typename Traits_wrapper_2::Compare_cw_around_point_2 compare_cw_around_point =
+                                      traits->compare_cw_around_point_2_object();
 
 	//check if cv_other_point is to the left of v,  to the right, 
 	//or if the curve is vertical
-	Comparison_result cv_orient = compare_xy(v, (*circ).source().point());
+	Comparison_result cv_orient = compare_xy(v, (*circ).source()->point());
 
 	//check if p is to the left of v,  to the right, or if the segment is vertical
 	Comparison_result seg_orient = compare_xy(v,p);
@@ -311,7 +312,7 @@ Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
 		//find a curve that is on the same side as seg
 		do {
 			circ++;
-			cv_orient = compare_xy(v,(*circ).source().point());
+			cv_orient = compare_xy(v,(*circ).source()->point());
 		} while (seg_orient != cv_orient && circ!=circ_done);
 
 		//if exists - go on from next "if" 
@@ -321,11 +322,12 @@ Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
 		{
 			//seg is on one side (right/left) and all curves are on the 
 			//other side (left/right)
-			//circ == circ_dome
+			//circ == circ_done
 			do {
 				prev = circ;
 				circ++;
-				res1 =  compare_y_at_x_cw((*circ).curve(), (*prev).curve(), v);//TODO, false);
+				res1 =  compare_cw_around_point((*circ).curve(), 
+                                        (*prev).curve(), v);//TODO, false);
 				PRINT_DEBUG("circ = " << (*circ).curve() << "  res1= " << res1 ); 
 			} while (res1==LARGER && circ!=circ_done);
 
@@ -340,7 +342,7 @@ Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
 	if (seg_orient == cv_orient) 
 	{
 		PRINT_DEBUG("seg_orient == cv_orient : "); 
-		res1 = compare_y_at_x_cw(seg, (*circ).curve(), v);
+		res1 = compare_cw_around_point(seg, (*circ).curve(), v);
 		if (res1 == LARGER) 
 		{
 			//if the segment is larger than the curve cw, we will go ++ 
@@ -351,10 +353,10 @@ Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
 				prev = circ;
 				circ++;
 				PRINT_DEBUG("circ++ = " << (*circ).curve() ); 
-				cv_orient = compare_xy(v,(*circ).source().point());
+				cv_orient = compare_xy(v,(*circ).source()->point());
 				if (seg_orient == cv_orient) 
 				{
-					res1 =  compare_y_at_x_cw(seg, (*circ).curve(), v);
+					res1 =  compare_cw_around_point(seg, (*circ).curve(), v);
 					PRINT_DEBUG("circ = "<<(*circ).curve()<<" res1= "<<res1); 
 				}
 			} while (res1 == LARGER && seg_orient == cv_orient 
@@ -374,7 +376,8 @@ Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
 				do {
 					prev = circ;
 					circ++;
-					res1 =  compare_y_at_x_cw((*circ).curve(), (*prev).curve(), v);//IXX TODO, false);
+					res1 =  compare_cw_around_point((*circ).curve(), 
+                                          (*prev).curve(), v);//TODO: false);
 					PRINT_DEBUG("circ = "<<(*circ).curve()<<" res1= "<<res1); 
 				} while (res1 == LARGER && circ!=circ_done);
 				//if circ == circ_done, then prev is the largest
@@ -398,7 +401,7 @@ Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
 			do {
 				prev = circ; 
 				circ++;
-				cv_orient = compare_xy(v,(*circ).source().point());
+				cv_orient = compare_xy(v,(*circ).source()->point());
 			} while (circ!=circ_done  && seg_orient == cv_orient); 
 
 			if (seg_orient != cv_orient) 
@@ -407,22 +410,22 @@ Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
 				do {
 					prev = circ; 
 					circ++;
-					cv_orient = compare_xy(v,(*circ).source().point());
+					cv_orient = compare_xy(v,(*circ).source()->point());
 				}	while (seg_orient != cv_orient) ;
 
 				//prev is the last edge from the other side, 
 				//and curve is the first curve in this side
-				res1 =  compare_y_at_x_cw(seg, (*circ).curve(), v);
+				res1 =  compare_cw_around_point(seg, (*circ).curve(), v);
 
 				//loop 3 - until find curve > seg cw.
 				while (res1 == LARGER && seg_orient==cv_orient) 
 				{
 					prev = circ; 
 					circ++;
-					cv_orient = compare_xy(v,(*circ).source().point());
+					cv_orient = compare_xy(v,(*circ).source()->point());
 					if (seg_orient == cv_orient) 
 					{
-                        res1 =  compare_y_at_x_cw(seg, (*circ).curve(), v);
+            res1 =  compare_cw_around_point(seg, (*circ).curve(), v);
 						PRINT_DEBUG("circ = "<<(*circ).curve()<<" res1= "<<res1);
 					}
 				}
@@ -440,20 +443,20 @@ Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
 			do {
 					prev = circ;
 					circ++;
-					res1 =  compare_y_at_x_cw((*circ).curve(), (*prev).curve(),v);//IXX, false);
+					res1 =  compare_cw_around_point((*circ).curve(), (*prev).curve(),v);//IXX, false);
 					PRINT_DEBUG("circ = "<<(*circ).curve()<<" res1= "<< res1); 
 			} while (res1 == LARGER && circ!=circ_done);
 			//now circ < prev ==> circ is the smallest
 
 			//if seg > smallest, smallest++,
 			// otherwise, out_edge  = smallest->twin();
-			res1 =  compare_y_at_x_cw(seg, (*circ).curve(), v);
+			res1 =  compare_cw_around_point(seg, (*circ).curve(), v);
 			if (res1 == SMALLER) 
 			{
 				//out_edge = circ->twin();
 				//found_face = true;
 				PRINT_DEBUG ( "new_find_face return " << (*circ).curve() );
-				return make_object ((*circ).twin().face());
+				return make_object ((*circ).twin()->face());
 			}
 
 			//else: seg > smallest
@@ -462,7 +465,7 @@ Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
 			{
 				prev = circ;
 				circ++;
-				res1 =  compare_y_at_x_cw(seg, (*circ).curve(), v);
+				res1 =  compare_cw_around_point(seg, (*circ).curve(), v);
 			} while (res1 == LARGER && circ!= circ_done);
 
 			//out_edge = prev;
@@ -475,7 +478,7 @@ Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
 			//TODO: specail case - new vertex or on edge ot something
 			PRINT_DEBUG ( "specail case: seg is equal cw to circ " 
 				<< (*circ).curve() );
-			if (traits->equal_2_object()(p,(*circ).source().point())) 
+			if (traits->equal_2_object()(p,(*circ).source()->point())) 
 			{
 				PRINT_DEBUG ( "p is on a vertex ");
 				//out_edge = circ;
@@ -490,10 +493,11 @@ Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
 			{
 				// p lies on cv1  
 				PRINT_DEBUG ( "p is on an edge ");
+        Halfedge_const_handle temp_he = circ;
 				//out_edge = circ;
 				//lt = Planar_map::EDGE;
 				//found_vertex_or_edge = true;
-				return make_object (*circ); 
+				return make_object (temp_he); 
 			}
 	
 			//p does not lie on cv1 ==> 
@@ -502,7 +506,7 @@ Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
 			// out_vertex is the closer vertex
 			//out_vertex = circ->source();
 			new_vertex = true;
-			PRINT_DEBUG( "The new vertex is: "<< (*circ).source().point() );
+			PRINT_DEBUG( "The new vertex is: "<< (*circ).source()->point() );
 			// check validity (the new vertex is vetween them on a line) @@@@
 			return make_object((*circ).source());		
 		}
@@ -527,10 +531,10 @@ Object Arr_landmarks_point_location<Arrangement, Arr_landmarks_generator>
 
 { 
 	PRINT_DEBUG("inside walk_from_edge. p= "<< p << ", eh = "
-		<<eh.source().point() << "-->"  <<eh.target().point());
-	X_monotone_curve_2 cv = eh.curve() ;
-	Point_2 src = eh.source().point();
-	Point_2 trg = eh.target().point();
+		<<eh->source()->point() << "-->"  <<eh->target()->point());
+	X_monotone_curve_2 cv = eh->curve() ;
+	Point_2 src = eh->source()->point();
+	Point_2 trg = eh->target()->point();
 	Comparison_result res;
 
 	LM_DEBUG( 
@@ -542,8 +546,8 @@ Object Arr_landmarks_point_location<Arrangement, Arr_landmarks_generator>
 			<<std::endl; 
 	);
 	PRINT_DEBUG("inside walk_from_edge. p= "<< p	<< 
-								 ", eh = "<<eh.source().point() << "-->"  
-								 <<eh.target().point());
+								 ", eh = "<<eh->source()->point() << "-->"  
+								 <<eh->target()->point());
 
 	// I deleted the special case: if cv is vertical: 
 	// If p ON cv - o.k
@@ -554,12 +558,12 @@ Object Arr_landmarks_point_location<Arrangement, Arr_landmarks_generator>
 	//check if p equals one of the edge's end points
 	if (traits->equal_2_object()(p, src))
 	{
-		Vertex_const_handle vh = eh.source();
+		Vertex_const_handle vh = eh->source();
 		return make_object(vh);
 	}
 	if (traits->equal_2_object()(p, trg))
 	{
-		Vertex_const_handle vh = eh.target();
+		Vertex_const_handle vh = eh->target();
 		return make_object(vh);
 	}
 
@@ -578,18 +582,18 @@ Object Arr_landmarks_point_location<Arrangement, Arr_landmarks_generator>
 			case LARGER:  //p is above cv
 				//orient e from left to right
 				if (traits->compare_x_2_object()(src,trg) == LARGER) 
-					eh = eh.twin();//it is oriented from right to left
+					eh = eh->twin();//it is oriented from right to left
 				break;
 			case SMALLER: //p is below cv
 				//orient e from right to left
 				if (traits->compare_x_2_object()(src,trg) == SMALLER ) 
-					eh = eh.twin();//it is oriented from right to left
+					eh = eh->twin();//it is oriented from right to left
 				break;
 		}	
 		PRINT_DEBUG("call from walk_from_edge to walk_from face: eh= "
-									<<eh.source().point() << "-->"  
-									<<eh.target().point());
-		return _walk_from_face (eh.face(), p, np);
+									<<eh->source()->point() << "-->"  
+									<<eh->target()->point());
+		return _walk_from_face (eh->face(), p, np);
 	}
 
 	//if p is in NOT in eh's x_range,
@@ -597,14 +601,14 @@ Object Arr_landmarks_point_location<Arrangement, Arr_landmarks_generator>
 	// and take this vertex to start with.
 	else 
 	{
-		Vertex_const_handle vh = eh.source();
+		Vertex_const_handle vh = eh->source();
 		if (traits->compare_xy_2_object()(src, trg) != 
 			traits->compare_xy_2_object()(p, src)) 
 		{
-			vh = eh.target();
+			vh = eh->target();
 		}
 		PRINT_DEBUG("call from walk_from_edge to walk_from_vertex: vh= "
-					<<vh.point());
+					<<vh->point());
 		return _walk_from_vertex(vh, p);
 	}
 
@@ -656,12 +660,12 @@ Object Arr_landmarks_point_location<Arrangement, Arr_landmarks_generator>
 	do {
 		PRINT_DEBUG(std::endl << "inside loop on face ");
 		p_in_face = false;
-		if (face.is_unbounded())  {
+		if (face->is_unbounded())  {
 			p_in_face = true;
 			PRINT_DEBUG("unbounded face ");
 		}
 		else {		
-			h_circ = face.outer_ccb();
+			h_circ = face->outer_ccb();
 			LM_CLOCK_DEBUG(clock_t is_point_ts = clock());
 			p_in_face = _is_point_in_face(p, h_circ, found_edge, 
 				found_vertex, out_edge); 
@@ -674,7 +678,7 @@ Object Arr_landmarks_point_location<Arrangement, Arr_landmarks_generator>
 		if (found_vertex)
 		{
 			LM_CLOCK_DEBUG( if (first_hit) number_of_hits++ );
-			Vertex_const_handle v = out_edge.target(); 
+			Vertex_const_handle v = out_edge->target(); 
 			return make_object(v); //is it really the target?
 		}
 		else if (found_edge) 
@@ -686,8 +690,8 @@ Object Arr_landmarks_point_location<Arrangement, Arr_landmarks_generator>
 		else if (p_in_face){
 			//check holes
 			PRINT_DEBUG(" p in face. go over holes" );
-			Holes_const_iterator hole_it  = face.holes_begin();
-			Holes_const_iterator hole_end = face.holes_end();	
+			Holes_const_iterator hole_it  = face->holes_begin();
+			Holes_const_iterator hole_end = face->holes_end();	
 			bool p_in_hole;
 			while (hole_it != hole_end) 
 			{
@@ -701,7 +705,7 @@ Object Arr_landmarks_point_location<Arrangement, Arr_landmarks_generator>
 				if (found_vertex)
 				{
 					LM_CLOCK_DEBUG( if (first_hit) number_of_hits++ );
-					return make_object(out_edge.target()); 
+					return make_object(out_edge->target()); 
 					//is it really the target?
 				}
 				else if (found_edge) 
@@ -719,8 +723,8 @@ Object Arr_landmarks_point_location<Arrangement, Arr_landmarks_generator>
 						LM_CLOCK_DEBUG(clock_t find_edge_time_end = clock() );
 						LM_CLOCK_DEBUG(clock_find_edge += 
 							(double) (find_edge_time_end - find_edge_time_start));
-						out_edge = out_edge.twin();
-						face = out_edge.face();
+						out_edge = out_edge->twin();
+						face = out_edge->face();
 					}
 					else {
 						LM_CLOCK_DEBUG(clock_t find_edge_time_end = clock() );
@@ -742,15 +746,15 @@ Object Arr_landmarks_point_location<Arrangement, Arr_landmarks_generator>
 		else {
 			//find edge to switch face to (face is never unbounded)
 			LM_CLOCK_DEBUG(clock_t find_edge_time_start = clock());
-			if ( _find_edge_to_flip (p, np, face.outer_ccb() , out_edge) ) {
+			if ( _find_edge_to_flip (p, np, face->outer_ccb() , out_edge) ) {
 				LM_CLOCK_DEBUG(clock_t find_edge_time_end = clock() );
 				LM_CLOCK_DEBUG(clock_find_edge += 
 					(double) (find_edge_time_end - find_edge_time_start));
-				out_edge = out_edge.twin();				
-				face = out_edge.face();
+				out_edge = out_edge->twin();				
+				face = out_edge->face();
 				PRINT_DEBUG("after find_edge_to_flip. changed to twin @ " );
-				PRINT_DEBUG("out_edge  =  "<< out_edge.source().point() 
-					        <<" -->"<< out_edge.target().point() );
+				PRINT_DEBUG("out_edge  =  "<< out_edge->source()->point() 
+					        <<" -->"<< out_edge->target()->point() );
 			}
 			else {
 				LM_CLOCK_DEBUG(clock_t find_edge_time_end = clock() );
@@ -800,8 +804,8 @@ bool Arr_landmarks_point_location<Arrangement, Arr_landmarks_generator>
 					 Halfedge_const_handle  & out_edge) const  //output if on curve				
 {
 	LM_CLOCK_DEBUG( entries_is_point_in_face ++) ;
-	PRINT_DEBUG("inside is_point_in_face. face = " << (*face).source().point()
-								<<"-->" << (*face).target().point());
+	PRINT_DEBUG("inside is_point_in_face. face = " << (*face).source()->point()
+								<<"-->" << (*face).target()->point());
 
 	found_edge = false;
 	found_vertex = false;
@@ -820,24 +824,24 @@ bool Arr_landmarks_point_location<Arrangement, Arr_landmarks_generator>
 
 	do  {
 		X_monotone_curve_2 cv = (*curr).curve();
-		Point_2 p1 = (*curr).source().point();
-		Point_2 p2 = (*curr).target().point();
+		Point_2 p1 = (*curr).source()->point();
+		Point_2 p2 = (*curr).target()->point();
 
 		//check if p equals one of the endpoints of e
 		if (equal(p, p1))   {
 			found_vertex = true;
 			out_edge = (*curr).twin() ;
 			PRINT_DEBUG("p is "<< p );
-			PRINT_DEBUG("out_edge is "<< out_edge.curve() );
-			PRINT_DEBUG("target is "<< out_edge.target().point() );
+			PRINT_DEBUG("out_edge is "<< out_edge->curve() );
+			PRINT_DEBUG("target is "<< out_edge->target()->point() );
 			return (true); 
 		}
 		if (equal(p, p2))   {
 			found_vertex = true;
-			out_edge = *curr;
+			out_edge = curr;
 			PRINT_DEBUG("p is "<< p );
-			PRINT_DEBUG("out_edge is "<< out_edge.curve() );
-			PRINT_DEBUG("target is "<< out_edge.target().point() );
+			PRINT_DEBUG("out_edge is "<< out_edge->curve() );
+			PRINT_DEBUG("target is "<< out_edge->target()->point() );
 			return (true); 
 		}
 
@@ -852,7 +856,7 @@ bool Arr_landmarks_point_location<Arrangement, Arr_landmarks_generator>
 			{
 			case EQUAL:
 				found_edge = true;
-				out_edge = *curr;
+				out_edge = curr;
 				return (true); 
 			case SMALLER: //p is below cv
 				//count cv
@@ -919,13 +923,13 @@ bool Arr_landmarks_point_location<Arrangement, Arr_landmarks_generator>
 
 	do  {
 		X_monotone_curve_2 cv = (*curr).curve();
-		Point_2 p1 = (*curr).source().point();
-		Point_2 p2 = (*curr).target().point();
+		Point_2 p1 = (*curr).source()->point();
+		Point_2 p2 = (*curr).target()->point();
 
 		// check if the curve was already flipped - in this case, 
 		//    don't check it at all.
 		Std_edge_iterator found1 = std::find (flipped_edges.begin(), 
-			flipped_edges.end(), *curr);
+			flipped_edges.end(), curr);
 		Std_edge_iterator found2 = std::find (flipped_edges.begin(), 
 			flipped_edges.end(), (*curr).twin());
 		if (found1 != flipped_edges.end() || found2 != flipped_edges.end()) {
@@ -958,7 +962,7 @@ bool Arr_landmarks_point_location<Arrangement, Arr_landmarks_generator>
 				if (check_res) 
 				{
 					if (intersect) {
-						out_edge = *curr;
+						out_edge = curr;
 						flipped_edges.push_back(out_edge);
 						return (true);
 					}
