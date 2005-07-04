@@ -50,7 +50,6 @@ void test_2_point_set(const unsigned int nb_points,
   std::vector<Triangle_2> triangles;
 }
 
-/*
 void test_2_triangle_set(const unsigned int nb_triangles,
                          const FT epsilon)
 {
@@ -79,11 +78,10 @@ void test_2_triangle_set(const unsigned int nb_triangles,
   dump_ps("test_2d_triangles.ps",triangles,line);
   std::cout << "done" << std::endl;
 }
-*/
 
 int main()
 {
   test_2_point_set(500,0.05);
-  //test_2_triangle_set(100,0.01);
+  test_2_triangle_set(100,0.01);
   return 0;
 }

@@ -91,7 +91,7 @@ centroid(InputIterator begin,
   return ORIGIN + v / (FT)nb_pts;
 }// end centroid of a 3D point set
 
-// computes the centroid of 2D triangle set
+// computes the centroid of a 2D triangle set
 // takes an iterator range over K::Triangle_2
 template < typename InputIterator, 
            typename K >
@@ -116,7 +116,7 @@ centroid(InputIterator begin,
   {
     const Triangle& triangle = *it;
     FT area = std::abs(triangle.area());
-    Point c = centroid(triangle[0],triangle[1],triangle[2]);
+    Point c = K().construct_centroid_2_object()(triangle[0],triangle[1],triangle[2]);
     v = v + area * (c - ORIGIN);
     sum_area += area;
   }
@@ -128,10 +128,14 @@ centroid(InputIterator begin,
 
 
 
+// computes the centroid of a set of kernel objects
+// takes an iterator range over kernel objects
 template < typename InputIterator, 
            typename K >
 inline
-typename std::iterator_traits<InputIterator>::value_type
+typename Point<Dimension<typename std::iterator_traits<InputIterator>::value_type, K>::value,
+               K
+              >::type
 centroid(InputIterator begin,
          InputIterator end, 
          const K& k)
@@ -140,11 +144,15 @@ centroid(InputIterator begin,
   return CGALi::centroid(begin, end, k,(Value_type*) NULL);
 }
 
-// This one takes an iterator range over K::Point_[23]
-// And it uses Kernel_traits<> to find out its kernel.
+// this one takes an iterator range over kernel objects
+// and uses Kernel_traits<> to find out its kernel.
 template < typename InputIterator >
 inline
-typename std::iterator_traits<InputIterator>::value_type
+typename Point<Dimension<
+                 typename std::iterator_traits<InputIterator>::value_type,
+                 typename Kernel_traits<typename std::iterator_traits<InputIterator>::value_type>::Kernel >::value,
+               typename Kernel_traits<typename std::iterator_traits<InputIterator>::value_type>::Kernel
+              >::type
 centroid(InputIterator begin, InputIterator end)
 {
   typedef typename std::iterator_traits<InputIterator>::value_type  Point;
