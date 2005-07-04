@@ -180,6 +180,18 @@ public:
 	  //Observer functions that are relevant to overload
 	  //-------------------------------------------------
 
+    /*! 
+    * Notification before the arrangement is assigned with another
+    * arrangement.
+    * \param arr The arrangement to be copied.
+    */
+    virtual void before_assign (const Arrangement_2& arr)
+    {
+      clear_landmarks_set();
+      p_arr = &arr;
+      traits = static_cast<const Traits_wrapper_2*> (p_arr->get_traits());
+		  ignore_notifications = true;   
+    }
     /*!
     * Notification after the arrangement has been assigned with another
     * arrangement.
@@ -187,7 +199,6 @@ public:
     */
     virtual void after_assign ()
     { 
-      clear_landmarks_set();
       build_landmarks_set();
 		  ignore_notifications = false;
     }
@@ -201,7 +212,7 @@ public:
 		  clear_landmarks_set();
 		  p_arr = &arr; 
 		  traits = static_cast<const Traits_wrapper_2*> (p_arr->get_traits());
-		  ignore_notifications = false;
+		  ignore_notifications = true;
     }
 
     /*!
@@ -210,6 +221,7 @@ public:
     virtual void after_attach ()
     {
 		  build_landmarks_set();
+		  ignore_notifications = false;
     }
 
     /*! 
