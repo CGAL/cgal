@@ -93,18 +93,18 @@ void overlay (const Arrangement_2<Traits_, Dcel1>   & arr1,
                           Res_Arrangement,
                           Event,
                           Subcurve,
-                          OverlayTraits>                 Visitor;
+                          OverlayTraits>               Visitor;
 
   typedef Sweep_line_2<Traits,
                        Visitor,
                        Subcurve,
-                       Event>                           Sweep_line;
+                       Event>                          Sweep_line;
 
 
                             
 
   std::vector<X_monotone_curve_2>   arr_curves;
- // std::vector<Point_2>              arr_points;
+  std::list<Point_2>                iso_points;
   arr_curves.resize(arr1.number_of_edges() + arr2.number_of_edges());
   
   typename Base_Traits::Compare_xy_2    comp_xy =
@@ -148,41 +148,38 @@ void overlay (const Arrangement_2<Traits_, Dcel1>   & arr1,
       X_monotone_curve_2(base_cv, Halfedge_const_handle_1(), he);
   }
 
-  //// iterate over arr1's vertices and associate each isolated point with
-  //// its vertex
-  //for(Vertex_const_iterator_1 v_itr1 = arr1.vertices_begin();
-  //    v_itr1 != arr1.vertices_end();
-  //    ++v_itr1)
-  //{
-  //  if(v_itr1->is_isolated())
-  //    arr_points.push_back(Point_2(v_itr1->point(),
-  //                         make_object(*v_itr1),
-  //                         Object()));
-  //}
-  //    
-
-  /////
-
-  //// iterate over arr2's vertices and associate each isolated point with
-  //// its vertex
-
-  //for(Vertex_const_iterator_2 v_itr2 = arr2.vertices_begin();
-  //    v_itr2 != arr2.vertices_end();
-  //    ++v_itr2)
-  //{
-  //  if(v_itr2->is_isolated())
-  //  arr_points.push_back(Point_2(v_itr2->point(),
-  //                       Object(),
-  //                       make_object(*v_itr2),
-  //                       ));
-  //}
+  // iterate over arr1's vertices and associate each isolated point with
+  // its vertex
+  for(Vertex_const_iterator_1 v_itr1 = arr1.vertices_begin();
+      v_itr1 != arr1.vertices_end();
+      ++v_itr1)
+  {
+    if(v_itr1->is_isolated())
+      iso_points.push_back(Point_2(v_itr1->point(),
+                           make_object(v_itr1),
+                           Object()));
+  }
+      
+  // iterate over arr2's vertices and associate each isolated point with
+  // its vertex
+  for(Vertex_const_iterator_2 v_itr2 = arr2.vertices_begin();
+      v_itr2 != arr2.vertices_end();
+      ++v_itr2)
+  {
+    if(v_itr2->is_isolated())
+    iso_points.push_back(Point_2(v_itr2->point(),
+                         Object(),
+                         make_object(v_itr2)));
+  }
 
 
 
   Visitor visitor(arr1, arr2, res, traits);
   Sweep_line sweep_object(&visitor);
   sweep_object.sweep(arr_curves.begin(),
-                     arr_curves.end());
+                     arr_curves.end(),
+                     iso_points.begin(),
+                     iso_points.end());
 }
 
 

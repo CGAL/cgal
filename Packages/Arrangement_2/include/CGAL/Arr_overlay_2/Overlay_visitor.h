@@ -84,8 +84,7 @@ public:
   typedef typename Base::SubCurveRevIter                SubCurveRevIter;
   typedef typename Base::SL_iterator                    SL_iterator;
 
-  typedef Unique_hash_map< Halfedge_handle,
-                           Curve_info >                 Hash_map;
+  typedef Unique_hash_map<Halfedge_handle,Curve_info>   Hash_map;
   using Base::m_arr;
   using Base::m_arr_access;
 
@@ -392,7 +391,85 @@ public:
 
 
 
+  virtual Vertex_handle insert_isolated_vertex(const Point_2& pt,
+                                               SL_iterator iter)
+  {
+    Vertex_handle v = Base::insert_isolated_vertex(pt, iter);
+    Object red = pt.get_red_object();
+    Object blue = pt.get_blue_object();
+    Vertex_handle_red     red_v;
+    Vertex_handle_blue    blue_v;
+    assign(red_v, red);
+    assign(blue_v, blue);
 
+    if(!red.is_empty() && !blue.is_empty())
+    {
+      m_overlay_traits->create_vertex(red_v, blue_v, v);
+      return v;
+    }
+    
+    CGAL_assertion(!red.is_empty() || !blue.is_empty());
+
+    Subcurve* sc_above; 
+    if(red.is_empty())
+    {
+      // isolated blue vertex inside red face
+      Face_handle_red red_f ;
+      if( iter == this ->status_line_end())
+      {
+        m_overlay_traits->create_vertex(m_red_arr->unbounded_face(),blue_v,v);
+        return v;
+      }
+      sc_above = *iter;
+      if(! sc_above)
+        red_f = m_red_arr->unbounded_face();
+      else
+      {
+        if(sc_above->get_color() == Curve_info::RED)
+          red_f = sc_above->get_red_halfedge_handle()->face();
+        else
+        {
+          sc_above = sc_above->get_above();
+          if(!sc_above)
+            red_f = m_red_arr->unbounded_face();
+          else
+            red_f = sc_above->get_red_halfedge_handle()->face();
+        }
+      }
+      m_overlay_traits->create_vertex(red_f, blue_v, v);
+      return v;
+    }
+    
+    CGAL_assertion(blue.is_empty());
+    // isolated red vertex inside blue face
+
+    Face_handle_blue    blue_f;
+    if( iter == this ->status_line_end())
+    {
+      m_overlay_traits->create_vertex(red_v,m_blue_arr->unbounded_face(),v);
+      return v;
+    }
+    sc_above = *iter;
+    if(! sc_above)
+      blue_f = m_blue_arr->unbounded_face();
+    else
+    {
+      if(sc_above->get_color() == Curve_info::BLUE)
+        blue_f = sc_above->get_blue_halfedge_handle()->face();
+      else
+      {
+        sc_above = sc_above->get_above();
+          if(!sc_above)
+          blue_f = m_blue_arr->unbounded_face();
+        else
+          blue_f = sc_above->get_blue_halfedge_handle()->face();
+      }
+    }
+    m_overlay_traits->create_vertex(red_v, blue_f, v);
+    return v;
+  }
+   
+      
 
   // maps halfedge and his twin, right_dir is true iff he is directed from
   // left to right
@@ -577,8 +654,6 @@ protected:
 
 
 
-
 CGAL_END_NAMESPACE
-
 
 #endif
