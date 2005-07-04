@@ -785,10 +785,11 @@ public:
    */
   Face_const_handle incident_face (Vertex_const_handle v) const
   {
-    CGAL_precondition (v.is_isolated());
+    CGAL_precondition (v->is_isolated());
 
     // Get the fictitious incident halfedge of the vertex.
-    const DHalfedge  *p_he = v.p_v->halfedge();
+    const DVertex    *p_v = _vertex (v);
+    const DHalfedge  *p_he = p_v->halfedge();
 
     // If this halfedge is vald, return it incident face. Otherwise, return
     // the unbounded face.
