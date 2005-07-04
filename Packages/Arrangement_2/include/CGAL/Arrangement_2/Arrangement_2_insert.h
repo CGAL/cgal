@@ -250,6 +250,8 @@ insert_non_intersecting (Arrangement_2<Traits,Dcel>& arr,
     if (assign (vh2, obj2))
     {
       // Both endpoints are associated with a existing vertices.
+      // In this case insert_at_vertices() already returns a halfedge directed
+      // from left to right.
       res = arr.insert_at_vertices (c,
                                     arr.non_const_handle (vh1),
                                     arr.non_const_handle (vh2));
@@ -257,6 +259,9 @@ insert_non_intersecting (Arrangement_2<Traits,Dcel>& arr,
     else
     {
       // Only the left endpoint is associated with an existing vertex.
+      // In this case insert_from_left_vertex() returns a halfedge directed to 
+      // the new vertex it creates, so it is already directed from left to
+      // right.
       res = arr.insert_from_left_vertex (c,
                                          arr.non_const_handle (vh1));
     }
@@ -266,14 +271,20 @@ insert_non_intersecting (Arrangement_2<Traits,Dcel>& arr,
     if (assign (vh2, obj2))
     {
       // Only the right endpoint is associated with an existing vertex.
+      // In this case insert_from_left_vertex() returns a halfedge directed to
+      // the new vertex it creates, so it is directed from right to left and
+      // we take its twin halfedge instead.
       res = arr.insert_from_right_vertex (c,
                                           arr.non_const_handle (vh2));
+      res = res->twin();
     }
     else
     {
       // Both endpoints are not associated with existing vertices, so
       // we must insert the curve in the interior of a face.
-      typename Arrangement_2::Face_const_handle  fh1;
+      // In this case insert_in_face_interior() already returns a halfedge
+      // directed from left to right.
+       typename Arrangement_2::Face_const_handle  fh1;
       typename Arrangement_2::Face_const_handle  fh2;
 
       bool    succ1 = assign (fh1, obj1); 

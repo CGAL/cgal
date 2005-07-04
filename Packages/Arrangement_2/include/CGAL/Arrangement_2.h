@@ -887,7 +887,7 @@ public:
    * \param cv The given x-monotone curve.
    * \param f The face into which we insert the new hole.
    * \return A handle for one of the halfedges corresponding to the inserted
-   *         curve, whose target equals the curve target.
+   *         curve, directed (lexicographically) from left to right.
    */
   Halfedge_handle insert_in_face_interior (const X_monotone_curve_2& cv, 
                                            Face_handle f);
@@ -899,7 +899,6 @@ public:
    * \param v The given vertex.
    * \pre The left endpoint of cv is incident to the vertex v.
    * \return A handle for one of the halfedges corresponding to the inserted
-
    *         curve, whose target is the new vertex.
    */
   Halfedge_handle insert_from_left_vertex (const X_monotone_curve_2& cv, 
@@ -1885,7 +1884,8 @@ void insert_x_monotone (Arrangement_2<Traits,Dcel>& arr,
  * \param pl A point-location object associated with the arrangement.
  * \param c The x-monotone curve to be inserted.
  * \pre The interior of c does not intersect any existing edge or vertex.
- * \return A handle for one of the new halfedges created by the insertion. 
+ * \return A handle for one of the new halfedges corresponding to the inserted
+ *         curve, directed (lexicographically) from left to right.
  */
 template <class Traits, class Dcel, class PointLocation>
 typename Arrangement_2<Traits,Dcel>::Halfedge_handle
