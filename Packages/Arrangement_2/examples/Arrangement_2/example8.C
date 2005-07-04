@@ -13,6 +13,7 @@
 #include <CGAL/Arr_walk_along_line_point_location.h>
 #include <CGAL/Arr_landmarks_point_location.h>
 #include <CGAL/Arr_triangulation_point_location.h>
+//#include <CGAL/Arr_trapezoid_ric_point_location.h>
 //#include <CGAL/Arr_point_location/Arr_lm_random_generator.h>
 //#include <CGAL/Arr_point_location/Arr_lm_grid_generator.h>
 //#include <CGAL/Arr_point_location/Arr_lm_halton_generator.h>
@@ -30,6 +31,9 @@ typedef CGAL::Arr_walk_along_line_point_location<Arrangement_2>
                                                           Walk_point_location;
 typedef CGAL::Arr_triangulation_point_location<Arrangement_2> 
                                                           Trg_point_location;
+//typedef CGAL::Arr_trapezoid_ric_point_location<Arrangement_2> 
+  //                                                        Trg_point_location;
+
 
 //typedef CGAL::Arr_random_landmarks_generator<Arrangement_2>
 //                                                          Landmarks_generator;
@@ -52,12 +56,12 @@ public:
   virtual void before_split_face (Face_handle,
                                   Halfedge_handle e)
   {
-    std::cout << "-> New face, caused by: " << e.curve() << std::endl;
+    std::cout << "-> New face, caused by: " << e->curve() << std::endl;
   }
   
   virtual void after_modify_edge (Halfedge_handle e)
   {
-    std::cout << "-> Existing edge " << e.curve() 
+    std::cout << "-> Existing edge " << e->curve() 
               << " has just been modified." << std::endl;
   }
 
@@ -95,7 +99,7 @@ int check_point_location (Arrangement_2 &arr, Points_list &plist)
     
     if (CGAL::assign (lm_fh, lm_obj))
     {    
-      if (lm_fh.is_unbounded())
+      if (lm_fh->is_unbounded())
         std::cout << "Inside unbounded face." << std::endl;
       else
         std::cout << "Inside face." << std::endl;
@@ -115,8 +119,10 @@ int check_point_location (Arrangement_2 &arr, Points_list &plist)
             else if ((naive_fh == walk_fh) && (naive_fh == trg_fh))
             {
               std::cout << "Error in Lm pl - face." << std::endl;
-              //Arrangement_2::Halfedge_const_handle e = naive_fh.incident_hanfedges();
-              //std::cout << "naive face =" << naive_fh.incident_hanfedges.source() << std::endl;            
+              //Arrangement_2::Halfedge_const_handle e 
+              //= naive_fh->incident_hanfedges();
+              //std::cout << "naive face =" 
+              //<< naive_fh->incident_hanfedges->source() << std::endl;            
               return (-1);
             }
             else if ((naive_fh == lm_fh) && (naive_fh == trg_fh))
@@ -158,16 +164,16 @@ int check_point_location (Arrangement_2 &arr, Points_list &plist)
     }
     else if (CGAL::assign (lm_hh, lm_obj))
     {
-      std::cout << "On halfedge: " << lm_hh.curve() << std::endl;
+      std::cout << "On halfedge: " << lm_hh->curve() << std::endl;
       if (CGAL::assign (walk_hh, walk_obj))
       {
         if (CGAL::assign (naive_hh, naive_obj))
         {
           if (CGAL::assign (trg_hh, trg_obj))
           {
-            if ((lm_hh == naive_hh || lm_hh == naive_hh.twin()) && 
-                (lm_hh == walk_hh || lm_hh == walk_hh.twin() ) && 
-                (lm_hh == trg_hh || lm_hh == trg_hh.twin() ))
+            if ((lm_hh == naive_hh || lm_hh == naive_hh->twin()) && 
+                (lm_hh == walk_hh || lm_hh == walk_hh->twin() ) && 
+                (lm_hh == trg_hh || lm_hh == trg_hh->twin() ))
             {
               std::cout 
                 << "All point locations returned the same edge. "
@@ -176,19 +182,19 @@ int check_point_location (Arrangement_2 &arr, Points_list &plist)
             else if (naive_hh == walk_hh)
             {
               std::cout << "Error in Lm pl - halfedge." << count << std::endl;
-              std::cout << "walk halfedge: " << walk_hh.curve() << std::endl;
-              std::cout << "naive halfedge: " << naive_hh.curve() << std::endl;
+              std::cout << "walk halfedge: " << walk_hh->curve() << std::endl;
+              std::cout << "naive halfedge: " << naive_hh->curve() << std::endl;
               return (-1);
             }
-            else if ((naive_hh == lm_hh || naive_hh.twin() == lm_hh) &&
-                     (trg_hh == lm_hh || trg_hh.twin() == lm_hh))
+            else if ((naive_hh == lm_hh || naive_hh->twin() == lm_hh) &&
+                     (trg_hh == lm_hh || trg_hh->twin() == lm_hh))
             {
               std::cout << "Error in walk pl - halfedge." << count<<std::endl;
               return (-1);
             }
 
-            else if ((walk_hh == lm_hh || walk_hh.twin() == lm_hh) && 
-                     (trg_hh == lm_hh || trg_hh.twin() == lm_hh))
+            else if ((walk_hh == lm_hh || walk_hh->twin() == lm_hh) && 
+                     (trg_hh == lm_hh || trg_hh->twin() == lm_hh))
             {
               std::cout << "Error in naive pl - halfedge."<< count <<std::endl;
               return (-1);
@@ -223,7 +229,7 @@ int check_point_location (Arrangement_2 &arr, Points_list &plist)
     }
     else if (CGAL::assign (lm_vh, lm_obj))
     {
-      std::cout << "On vertex: " << lm_vh.point() << std::endl;
+      std::cout << "On vertex: " << lm_vh->point() << std::endl;
       if (CGAL::assign (walk_vh, walk_obj))
       {
         if (CGAL::assign (naive_vh, naive_obj))
@@ -234,7 +240,7 @@ int check_point_location (Arrangement_2 &arr, Points_list &plist)
             {
               std::cout 
                 << "All point locations returned the same vertex: "
-                << lm_vh.point() << std::endl;
+                << lm_vh->point() << std::endl;
             } 
             else if ((naive_vh == walk_vh) && (naive_vh == trg_vh))
             {
@@ -304,10 +310,10 @@ int main ()
 
   Halfedge_handle h1 = arr.insert_in_face_interior (cv1, arr.unbounded_face());
   Halfedge_handle h2 = arr.insert_in_face_interior (cv2, arr.unbounded_face());
-  Halfedge_handle h3 = arr.insert_at_vertices (cv3, h2, h1.twin());
-  Halfedge_handle h4 = arr.insert_from_left_vertex (cv4, h1.twin());
+  Halfedge_handle h3 = arr.insert_at_vertices (cv3, h2, h1->twin());
+  Halfedge_handle h4 = arr.insert_from_left_vertex (cv4, h1->twin());
   Halfedge_handle h5 = arr.insert_at_vertices (cv5, h1, h4);
-  Halfedge_handle h6 = arr.insert_from_left_vertex (cv6, h3.twin());
+  Halfedge_handle h6 = arr.insert_from_left_vertex (cv6, h3->twin());
   Halfedge_handle h7 = arr.insert_at_vertices(cv7, h5, h6);
 
   // Print the arrangement vertices.
@@ -319,8 +325,8 @@ int main ()
   for (i = 1, vit = arr.vertices_begin(); 
        vit != arr.vertices_end(); vit++, i++)
   {
-    vh = *vit;
-    std::cout << '\t' << i << ": " << vh.point() << std::endl;
+    vh = vit;
+    std::cout << '\t' << i << ": " << vh->point() << std::endl;
   }
   std::cout << std::endl;
   
@@ -331,8 +337,7 @@ int main ()
   std::cout << arr.number_of_edges() << " edges:" << std::endl;
   for (i = 1, eit = arr.edges_begin(); eit != arr.edges_end(); eit++, i++)
   {
-    hh = *eit;
-    std::cout << '\t' << i << ": " << hh.curve() << std::endl;
+    std::cout << '\t' << i << ": " << eit->curve() << std::endl;
   }
   std::cout << std::endl;
   
@@ -346,33 +351,33 @@ int main ()
   for (i = 1, fit = arr.faces_begin(); fit != arr.faces_end(); fit++, i++)
   {
     // Print the outer boundary of the face.
-    fh = *fit;
+    fh = fit;
     std::cout << '\t' << i << ": ";
-    if (fh.is_unbounded())
+    if (fh->is_unbounded())
     {
       std::cout << "Unbounded face." << std::endl;
     }
     else
     {
-      ccb = fh.outer_ccb();
-      std::cout << (*ccb).source().point();
+      ccb = fh->outer_ccb();
+      std::cout << (*ccb).source()->point();
       do
       {
-        std::cout << " -> " << (*ccb).target().point();
+        std::cout << " -> " << (*ccb).target()->point();
         ccb++;
-      } while (ccb != fh.outer_ccb());
+      } while (ccb != fh->outer_ccb());
       std::cout << std::endl;
     }
     
     // Print the holes.
-    for (j = 1, hoit = fh.holes_begin(); hoit != fh.holes_end(); hoit++, j++)
+    for (j = 1, hoit = fh->holes_begin(); hoit != fh->holes_end(); hoit++, j++)
     {
       std::cout << "\t\tHole " << i << ": ";
       ccb = *hoit;
-      std::cout << (*ccb).source().point();
+      std::cout << (*ccb).source()->point();
       do
       {
-        std::cout << " -> " << (*ccb).target().point();
+        std::cout << " -> " << (*ccb).target()->point();
         ccb++;
       } while (ccb != *hoit);
       std::cout << std::endl;
