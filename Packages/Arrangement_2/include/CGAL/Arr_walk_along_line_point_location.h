@@ -149,6 +149,9 @@ protected:
    * \param closest_he Input: The closest halfedge to p so far.
    *                   Output: The updated closest halfedge.
    * \param is_on_edge Output: Is the query point located on closest_he.
+   * \param closest_to_target Output: Whether the closest point to p in
+   *                                  closest_he to p is its target (in case
+   *                                  p is not located on closest_he). 
    * \return (true) if p is contained in the connected component;
    *         (false) otherwise.
    */
@@ -157,7 +160,21 @@ protected:
 				   bool shoot_up,
 				   bool inclusive,
 				   Halfedge_const_handle& closest_he,
-				   bool& is_on_edge) const;
+				   bool& is_on_edge,
+				   bool& closest_to_target) const;
+
+  /*!
+   * Find the first halfedge around a given target vertex, when going clockwise
+   * from "6 o'clock" around this vertex (when shooting up) or starting from
+   * "12 o'clock (when shooting down).
+   * \param v The given vertex.
+   * \param shoot_up If (true) we should start from "6 o'clock",
+   *                 if (false) we should start from "12 o'clock".
+   * \return The first halfedge we encounter.
+   */
+  Halfedge_const_handle _first_around_vertex (Vertex_const_handle v,
+					      bool shoot_up) const;
+
 };
 
 CGAL_END_NAMESPACE
