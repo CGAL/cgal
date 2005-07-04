@@ -348,7 +348,24 @@ protected:
       // project and triangulate vertices,
       // convert result to Nef_polyhedron
       CGAL_precondition (!CGAL::is_empty_range (v_first, v_last));
-      vertex_cycle_to_nef_3 (*this, v_first, v_last, normal, verb);
+      bool is_nef = vertex_cycle_to_nef_3<Nef_polyhedron> (snc(),
+         v_first, v_last, normal, verb);
+      if (is_nef)
+      {
+	 // TO DO:
+	 // Wie kann der eigene point_locator pl() eingebunden werden?
+	 // Wie kann der Konstruktor umgangen werden?
+         typedef CGAL::SNC_point_locator_by_spatial_subdivision
+            <CGAL::SNC_decorator<SNC_structure> >    Point_locator;
+
+         Point_locator Pl;
+         CGAL::SNC_constructor<SNC_structure> con (snc(), &Pl);
+         con.build_external_structure();
+         *this = Nef_polyhedron(snc(), &Pl);
+      }
+      else
+      {  *this = Nef_polyhedron();
+      }
       set_snc (snc());
       CGAL_expensive_postcondition (is_valid());
    }

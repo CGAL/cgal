@@ -17,6 +17,7 @@
 #define VERTEX_CYCLE_TO_NEF_3_H
 
 #include <iostream>
+#include <sstream>
 
 // triangulation
 #include <CGAL/Nef_3/Exact_triangulation_euclidean_traits_xy_3.h>
@@ -38,8 +39,8 @@ CGAL_BEGIN_NAMESPACE
 // note: facets are considered to be compact
 // CTP - Constrained_triangulation_plus
 template <class CTP, class Nef_3, class II>
-bool projected_vertex_cycle_to_nef_3 (Nef_3 &nef,
-      II v_first, II v_last, bool verb=false)
+bool projected_vertex_cycle_to_nef_3 (typename Nef_3::SNC_structure &snc,
+      II v_first, II v_last, std::ostringstream &ostr)
 {
    typedef typename CTP::Vertex           CTP_vertex;
    typedef typename CTP::Vertex_handle    CTP_vertex_handle;
@@ -65,20 +66,15 @@ bool projected_vertex_cycle_to_nef_3 (Nef_3 &nef,
    // declarations and defaults
    II v_it, v_pred_it;
    CTP ctp;
-   SNC_structure snc;
    bool cond;
    CTP_size_type nov;
 
-   nef=Nef_3();
+   snc.clear();
 
    // insert projected points into triangulation
    for (nov=0, v_it=v_first; v_it!=v_last; v_it++)
    {  if ( *v_it != (ctp.insert (*v_it))->point() )
-      {  if (verb)
-         {  std::cerr << "\n" << __FILE__ << ", line " << __LINE__
-	       << ": assertion violation: different vertices "
-	       << "are projected to same location!" << std::endl;
-	 }
+      {  ostr << " -> Different vertices are projected to same location!";
 	 return false;
       }
       ++nov;
@@ -86,20 +82,11 @@ bool projected_vertex_cycle_to_nef_3 (Nef_3 &nef,
 
    // assertions
    if ( ctp.number_of_vertices() != nov )
-   {  if (verb)
-      {  std::cerr << "\n" << __FILE__ << ", line " << __LINE__
-	    << ": assertion violation: vertex cycle is not simple!"
-	    << " (same vertex appears multiple)"
-	    << std::endl;
-      }
+   {  ostr << " -> Same vertex appears multiple in cycle.";
       return false;
    }
    if ( nov < 3 )
-   {  if (verb)
-      {  std::cerr << "\n" << __FILE__ << ", line " << __LINE__
-            << ": assertion violation: not at least 3 vertices!"
-	    << std::endl;
-      }
+   {  ostr << " -> Not at least 3 vertices.";
       return false;
    }
 
@@ -121,12 +108,15 @@ bool projected_vertex_cycle_to_nef_3 (Nef_3 &nef,
 
    // assertion
    if ( ctp.number_of_vertices() != nov )
-   {  if (verb)
+   {  ostr << " -> Vertex cycle is not simple; edges intersect.";
+      /* old
+      if (verb)
       {  std::cerr << "\n" << __FILE__ << ", line " << __LINE__
 	    << ": assertion violation: vertex cycle is not simple!"
 	    << " (edges intersect)"
 	    << std::endl;
       }
+      */
       return false;
    }
    CGAL_assertion (ctp.is_valid());
@@ -181,12 +171,7 @@ bool projected_vertex_cycle_to_nef_3 (Nef_3 &nef,
 
 	 // assertion
 	 if ( ctp.is_infinite(t_target_vh) )
-         {  if (verb)
-            {  std::cerr << "\n" << __FILE__ << ", line " << __LINE__
-	         << ": assertion violation: vertex cycle is not simple!"
-		 << " (edges overlap)"
-	         << std::endl;
-            }
+         {  ostr << " -> Vertex cycle is not simple; edges overlap.";
             return false;
 	 }
 
@@ -196,12 +181,7 @@ bool projected_vertex_cycle_to_nef_3 (Nef_3 &nef,
 
 	 // assertion
 	 if ( dir == dir_0 )
-         {  if (verb)
-            {  std::cerr << "\n" << __FILE__ << ", line " << __LINE__
-	         << ": assertion violation: vertex cycle is not simple!"
-		 << " (edges overlap)"
-	         << std::endl;
-            }
+         {  ostr << " -> Vertex cycle is not simple; edges overlap.";
             return false;
 	 }
 	 p_svh = SVertex_handle (p_dec.new_svertex(dir));
@@ -239,12 +219,7 @@ bool projected_vertex_cycle_to_nef_3 (Nef_3 &nef,
       while (--t_fc != t_fc_0)
       {  idx = t_fc->index(t_vh);
 	 if ( t_fc->is_constrained(ctp.ccw(idx)) )
-         {  if (verb)
-            {  std::cerr << "\n" << __FILE__ << ", line " << __LINE__
-                 << ": assertion violation: vertex cycle is not simple!"
-	         << " (edges overlap or edge contains vertex)"
-                 << std::endl;
-            }
+         {  ostr << " -> Vertex cycle is not simple; edge contains vertex.";
             return false;
          }
       }
@@ -254,32 +229,27 @@ bool projected_vertex_cycle_to_nef_3 (Nef_3 &nef,
    } while (t_vh != t_vh_0)
    ; // do-while ends
 
-   // // test information
-   // if ( false )
-   // {  int count = 0;
-   //    for (typename CTP::Subconstraint_iterator scit = ctp.subconstraints_begin();
-   //        scit != ctp.subconstraints_end(); ++scit) ++count;
-   //    std::cerr << "The number of resulting constrained edges is  "
-   //           <<  count << std::endl
-   //           << "number of vertices= " << ctp.number_of_vertices()
-   //           <<  std::endl
-   //           << "number of faces= " << ctp.number_of_faces()
-   //           <<  std::endl;
-   // }
+#ifdef CGAL_NEF_VERTEX_CYCLE_INFO
+   {  // test information
+      int count = 0;
+      for (typename CTP::Subconstraint_iterator scit = ctp.subconstraints_begin();
+          scit != ctp.subconstraints_end(); ++scit) ++count;
+      std::cout << "The number of resulting constrained edges is  "
+         <<  count << "\n"
+         << "number of vertices= " << ctp.number_of_vertices() << "\n"
+         << "number of faces= " << ctp.number_of_faces() <<  "\n";
+   }
+#endif
 
-   // built and return Nef_3 object
-   Point_locator pl;
-   SNC_constructor con (snc, &pl);
-   con.build_external_structure();
-   nef = Nef_3 (snc, &pl);
    return true;
 }
 
 // II - input iterator; KN - kernel of normal
-// return value reports success ("true" means nef contains result)
+// return value reports success ("true" means snc contains result)
 template <class Nef_3, class II, class KN>
-bool vertex_cycle_to_nef_3 (Nef_3 &nef, II v_first, II v_last,
-                const CGAL::Vector_3<KN> &normal, bool verb = false)
+bool vertex_cycle_to_nef_3 (
+   typename Nef_3::SNC_structure &snc, II v_first, II v_last,
+   const CGAL::Vector_3<KN> &normal, bool verb = false)
 {
    // Constrained_triangulation_plus with Exact_intersections_tag
    typedef typename Nef_3::Kernel          Kernel;
@@ -309,18 +279,17 @@ typedef CGAL::Triangulation_data_structure_2<YZ_vb,YZ_fb>        YZ_ds;
 typedef CGAL::Constrained_triangulation_2<YZ_kernel, YZ_ds, Tri_itag> YZ_tri;
 typedef CGAL::Constrained_triangulation_plus_2<YZ_tri>     YZ_tri_plus;
 
+   // defaults
    bool is_nef = false;
    char direc='?';
+   snc.clear();
+   std::ostringstream ostr;
+
    if ( normal == NULL_VECTOR )
    {  // assertion violation
       // This case can occur if vertex cycle is not simple!
-      nef = Nef_3();
       is_nef = false;
-      if ( verb )
-      {  std::cerr << "\n" << __FILE__ << ", line " << __LINE__
-	    << ": assertion violation: ( normal != NULL_VECTOR )."
-	    << std::endl;
-      }
+      ostr << " -> normal == NULL_VECTOR.";
    }
    else
    {  // direction of projection?
@@ -335,26 +304,41 @@ typedef CGAL::Constrained_triangulation_plus_2<YZ_tri>     YZ_tri_plus;
       // project and triangulate vertices,
       // convert result to Nef polyhedron
       if ( direc == 'x' )
-      {  is_nef = projected_vertex_cycle_to_nef_3<YZ_tri_plus> (
-                  nef, v_first, v_last, verb);
+      {  is_nef = projected_vertex_cycle_to_nef_3<YZ_tri_plus,Nef_3> (
+                  snc, v_first, v_last, ostr);
       }
       else if ( direc == 'y' )
-      {  is_nef = projected_vertex_cycle_to_nef_3<XZ_tri_plus> (
-                  nef, v_first, v_last, verb);
+      {  is_nef = projected_vertex_cycle_to_nef_3<XZ_tri_plus,Nef_3> (
+                  snc, v_first, v_last, ostr);
       }
       else
       {  CGAL_assertion ( direc == 'z' );
-         is_nef = projected_vertex_cycle_to_nef_3<XY_tri_plus> (
-                  nef, v_first, v_last, verb);
+         is_nef = projected_vertex_cycle_to_nef_3<XY_tri_plus,Nef_3> (
+                  snc, v_first, v_last, ostr);
+      }
+
+      // if input data is corrupted, try again
+      if ( !is_nef && direc != 'x' && normal.x() != 0 )
+      {  is_nef = projected_vertex_cycle_to_nef_3<YZ_tri_plus,Nef_3> (
+                  snc, v_first, v_last, ostr);
+      }
+      if ( !is_nef && direc != 'y' && normal.y() != 0 )
+      {  is_nef = projected_vertex_cycle_to_nef_3<XZ_tri_plus,Nef_3> (
+                  snc, v_first, v_last, ostr);
+      }
+      if ( !is_nef && direc != 'z' && normal.z() != 0 )
+      {  is_nef = projected_vertex_cycle_to_nef_3<XY_tri_plus,Nef_3> (
+                  snc, v_first, v_last, ostr);
       }
    }
 
-   // error occured?
-   CGAL_assertion ( is_nef || nef.is_empty() );
+   // convertion impossible?
    if ( !is_nef && verb )
-   {  std::cerr << __FILE__ << ", line " << __LINE__
-	 << ": empty Nef_polyhedron_3 constructed."
-	 << " [" << direc << "]" << std::endl;
+   {  // TO DO + Fehlermeldungsstring
+      std::cerr << "\n" << __FILE__ << ", line " << __LINE__
+	 << ": error history:"
+         << ostr.str().c_str()
+	 << " -> Empty Nef_polyhedron_3 constructed." << std::endl;
    }
 
    return is_nef;
