@@ -156,7 +156,7 @@ void overlay (const Arrangement_2<Traits_, Dcel1>   & arr1,
   {
     if(v_itr1->is_isolated())
       iso_points.push_back(Point_2(v_itr1->point(),
-                           make_object(v_itr1),
+                           CGAL::make_object(v_itr1),
                            Object()));
   }
       
@@ -169,7 +169,7 @@ void overlay (const Arrangement_2<Traits_, Dcel1>   & arr1,
     if(v_itr2->is_isolated())
     iso_points.push_back(Point_2(v_itr2->point(),
                          Object(),
-                         make_object(v_itr2)));
+                         CGAL::make_object(v_itr2)));
   }
 
 

@@ -369,20 +369,20 @@ public:
           if(cv1.get_color() == Curve_info::RED)
           {
             CGAL_assertion(cv2.get_color() == Curve_info::BLUE);
-            red_obj = make_object(cv1.get_red_halfedge_handle());
-            blue_obj = make_object(cv2.get_blue_halfedge_handle());
+            red_obj = CGAL::make_object(cv1.get_red_halfedge_handle());
+            blue_obj = CGAL::make_object(cv2.get_blue_halfedge_handle());
           }
           else
           {
             CGAL_assertion(cv2.get_color() == Curve_info::RED &&
                            cv1.get_color() == Curve_info::BLUE);
-            red_obj = make_object(cv2.get_red_halfedge_handle());
-            blue_obj = make_object(cv1.get_blue_halfedge_handle());
+            red_obj = CGAL::make_object(cv2.get_red_halfedge_handle());
+            blue_obj = CGAL::make_object(cv1.get_blue_halfedge_handle());
           }
 
 
           Point_2 point_plus( base_pt.first, red_obj, blue_obj); // the extended point
-          *oi = make_object(std::make_pair(point_plus, base_pt.second));
+          *oi = CGAL::make_object(std::make_pair(point_plus, base_pt.second));
         }
         else
         {
@@ -410,7 +410,7 @@ public:
             }
 
             X_monotone_curve_2 new_overlap_cv(overlap_cv, red_he, blue_he);
-            *oi = make_object(new_overlap_cv);
+            *oi = CGAL::make_object(new_overlap_cv);
           }
         }
       }
@@ -477,18 +477,18 @@ public:
       Object red, blue;
       if(cv.get_color() == Curve_info::RED)
       {
-        red = make_object(cv.get_red_halfedge_handle()->target());
+        red = CGAL::make_object(cv.get_red_halfedge_handle()->target());
       }
       else
         if(cv.get_color() == Curve_info::BLUE)
         {
-          blue = make_object(cv.get_blue_halfedge_handle()->target());
+          blue = CGAL::make_object(cv.get_blue_halfedge_handle()->target());
         }
         else
         {
           CGAL_assertion(cv.get_color() == Curve_info::PURPLE);
-          red = make_object(cv.get_red_halfedge_handle()->target());
-          blue = make_object(cv.get_blue_halfedge_handle()->target());
+          red = CGAL::make_object(cv.get_red_halfedge_handle()->target());
+          blue = CGAL::make_object(cv.get_blue_halfedge_handle()->target());
         }
 
       return Point_2 (m_base_min_v(cv), red, blue);
@@ -525,18 +525,18 @@ public:
       Object red, blue;
       if(cv.get_color() == Curve_info::RED)
       {
-        red = make_object(cv.get_red_halfedge_handle()->source());
+        red = CGAL::make_object(cv.get_red_halfedge_handle()->source());
       }
       else
         if(cv.get_color() == Curve_info::BLUE)
         {
-          blue = make_object(cv.get_blue_halfedge_handle()->source());
+          blue = CGAL::make_object(cv.get_blue_halfedge_handle()->source());
         }
         else
         {
           CGAL_assertion(cv.get_color() == Curve_info::PURPLE);
-          red = make_object(cv.get_red_halfedge_handle()->source());
-          blue = make_object(cv.get_blue_halfedge_handle()->source());
+          red = CGAL::make_object(cv.get_red_halfedge_handle()->source());
+          blue = CGAL::make_object(cv.get_blue_halfedge_handle()->source());
         }
 
       return Point_2 (m_base_max_v(cv), red, blue);

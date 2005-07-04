@@ -201,13 +201,13 @@ public:
       CGAL_assertion(!pt.is_blue_object_null());
       CGAL_assertion(sc->get_color() == Curve_info::RED);
       Halfedge_handle_red red_he = sc->get_red_halfedge_handle();
-      pt.set_red_object(make_object(red_he));
+      pt.set_red_object(CGAL::make_object(red_he));
     }
     else
       if(pt.is_blue_object_null())
       {
         Halfedge_handle_blue blue_he = sc->get_blue_halfedge_handle();
-        pt.set_blue_object(make_object(blue_he));
+        pt.set_blue_object(CGAL::make_object(blue_he));
     }
   }
 
