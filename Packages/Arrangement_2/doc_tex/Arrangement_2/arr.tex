@@ -1,28 +1,87 @@
-\renewcommand{\Re}{{\rm I\!\hspace{-0.025em} R}}
 
-\def\C{{\cal C}}
-\def\G{{\cal G}}
-\def\F{{\cal F}}
-\def\I{{\cal I}}
-\def\U{{\cal U}}
-\def\M{{\cal M}}
-\def\eps{{\varepsilon}}
-\def\bd{{\partial}}
-\def\dm{{\cal D}}
+\newcommand{\reals}{{\rm I\!\hspace{-0.025em} R}}
+\newcommand{\C}{{\cal C}}
+\newcommand{\A}{{\cal A}}
+\newcommand{\eps}{{\varepsilon}}
+\newcommand{\dcel}{{\sc Dcel}}
+
 
 % ===============================================================
 \section{Introduction}
 \label{arr_sec:intro}
 % ===================
-Given a set $\mathcal{C}$ of planar curves, the {\em arrangement}
-${\mathcal A}({\mathcal C})$ is the subdivision of the plane induced
-by the curves in $\mathcal{C}$ into maximally connected cells. The cells
-can be $0$-dimensional ({\em vertices}), $1$-dimensional ({\em edges})
-or $2$-dimensional ({\em faces}). The {\em planar map} of ${\mathcal
-A}({\mathcal C})$ is the embedding of the arrangement as a planar
-graph, such that each arrangement vertex corresponds to a planar
-point, and each edge corresponds to a planar subcurve of one of the
-curves in ${\mathcal C}$.
-The class \ccc{Arrangement_2<Traits,Dcel>} is a data structure that maintains
-arrangements in the plane. In particular, the data structure maintains a
-planar map perhaps with its features exsented with additional information.
+
+Given a set $\C$ of planar curves, their {\em arrangement} $\A(\C)$ is the subdivision they induce on the plane into zero-dimensional, one-dimensional and two-dimensional cells, called {\em vertices}, {\em edges} and {\em faces}, respectively. 
+
+As the curves in $\C$ can intersect and are not necessarily $x$-monotone, we construct a collection $\C''$ in two steps. We first decompose each curve in $\C$ into maximal $x$-monotone curves (and possible isolated points), thus obtaining the collection $\C'$. Then we decompose each curve in $\C'$ into maximal connected pieces not intersecting any other curve (or point) in $\C'$. This way we obtain the collection $\C''$ of $x$-monotone subcurves that pairwise disjoint in their interiors. This collection may also contain isolated points, if the curves of $\C$ contain such points. The collection $\C''$ can be conviniently embedded as a planar graph, whose vertices are associated with curve endpoints or with isolated points and whose edges are associated with subcurves. This graph can repesented using a {\em doubly-connected edge list} data-structure (\dcel\ for short), which consists of containers of vertices, edges and faces and maintains the incidence relations among these objects.
+
+The main idea behind the \dcel\ data-structure is to represent each edge using a pair of directed {\em halfedges}, one going from the (lexicographically) left endpoint of the curve to its right endpoint, and the other --- known as its {\em twin} halfedge --- going in the opposite direction. Halfedges are used to separate faces and to connect vertices (with the exception of {\em isolated vertices}, which are not connected).
+
+If a vertex $v$ is the target of a halfedge $e$, we say that $v$ and $e$ are {\em incident} to each other. The halfedges incident to a vertex $v$ form a circular list oriented in a clockwise order around this vertex (we assume $v$ is not an isolated vertex, as isolated vertices have no incident halfedges).
+
+Each halfedge $e$ stores a pointer to its {\it incident face}, which is the face lying to its left. Moreover, every halfedge is followed by another halfedge sharing the same incident face, such that the target vertex of the halfedge is the same as the source vertex of the next halfedge. The halfedges are therefore connected in circular lists and form chains, such that all edges of a chain are incident to the same face and wind along its boundary. We call such chains a {\em connected component of the boundary} (or {\em CCB} for short).
+
+A bounded face has a unique CCB of halfedges winding is a counterclockwise orientation along its boundary, that is defined to be its {\em outer CCB}, while the unbounded face does not have an outer boundary (as the arrangement module supports only bounded curves, we always have exactly one unbounded face in the arrangement). Any other connected component of the boundary of the face is called a {\em hole} (or {\em inner CCB}), and can be represented as a circular chain of halfedges winding in a clockwise orientation around its outer boundary. Note that a hole is not necessarily a single face --- it may have no area, or alternatively it may consist of several connected faces.  Every face can have several holes contained in its interior (or there may be no holes). In addition, every face may contain isolated vertices in its interior. See Fgiure~\ref{arr_sec:seg_dcel} for an illustration of the various \dcel\ features. 
+
+\begin{figure}[t]
+\begin{ccTexOnly}
+\begin{center}
+\input{Arrangement_2/arr_segs.pstex_t}
+\end{center}
+\end{ccTexOnly}
+
+\caption{An arrangement of interior-disjoint line segment, which consists of a single connected component inside the unbounded face $\tilde{f}$, with some of the \dcel\ records that represent it. The half-edge $e$ (and its twin $e'$) correspond to a line segment that connects the vertices $v_1$ and $v_2$ and separates the face $f_1$ from $f_2$. The predecessor $e_{\rm prev}$ and successor $e_{\rm next}$ of $e$ are part of the chain that form the outer boundary of the face $f_2$. The face $f_1$ has a more complicated structure as it contains two holes in its interior: One hole consists of two adjacent faces $f_3$ and $f_4$, while the other hole is comprised of two edges. $f_1$ also contains two isolated vertices $u_1$ and $u_2$ in its interior.}
+\label{arr_sec:seg_dcel}
+
+%\begin{ccHtmlOnly}
+%<P>
+%<center>
+%  <img src="arr_segs.gif"  border=0 alt="An arrangement of line segments">
+%</center>
+%\end{ccHtmlOnly}
+\end{figure}
+
+\section{The Main Arrangement Class}
+\label{arr_sec:arr_class}
+%===================================
+
+The main guideline behind the design of the arrangement package is the separation of the representation of the planar arrangement from the various algorithms that operate on it. Another important guideline is the separation between geometry an topology in the arrangement representation.
+
+The class \ccc{Arrangement_2<Traits,Dcel>} is a the main class in the arrangement package. It is used to represent planar arrangements and provides the interface needed to traverse them and to maintain them. The arrangement is represented using the \dcel\ class, which captures the {\em topological structure} of the planar subdivision, and a geometric {\em traits} class that defines the family of planar curves that form the arrangement and supplies a range of geometric predicates (and constructions) needed to construct and maintain the arrangement.
+
+The separation between topology and geometry is defined by the two template parameters of the \ccc{Arrangement_2} template:
+\begin{itemize}
+\item The \ccc{Traits} template-parameter should be instantiated with a model of the \ccc{ArrangementBasicTraits} concept. The traits class defines the types of $x$-monotone curves and two-dimensional points --- \ccc{X_monotone_curve_2} and \ccc{Point_2}, respectively --- and supports basic geometric predicates on them.
+
+In the first sections of this chapter we will always use \ccc{Arr_segment_traits_2}, which enables the construction of arrangements of line segments, as our traits class. However, the arrangement package is shipped with several other traits classes that can handle also poly-lines (continuous piecewise-linear curves), conic arcs and arcs of rational functions. We will exemplify the usage of these traits classes in Section~\ref{arr_sec:traits}.
+
+\item The \ccc{Dcel} template-parameter should be instantiated with a class that is a model of the \ccc{ArranagementDcel} concept. The value of this parameter is by default \ccc{Arr_default_dcel<Traits>}, and it is recommended for most users to stick to this default implementation of a \dcel\ class. However, in some applications it is necessary to extend the \dcel\ features --- see Section~\ref{arr_sec:ex_dcel} for further explanations and examples.
+\end{itemize}
+
+
+\section{Traits Classes}
+\label{arr_sec:traits}
+%=======================
+
+\section{Extending the \dcel}
+\label{arr_sec:ex_dcel}
+%============================
+
+\section*{Design and Implementation History}
+%===========================================
+
+The code of this package is the result of a long development process.
+Initially (and until version~3.1), the code was spread among several
+packages, namely \ccc{Topological_map}, \ccc{Planar_map_2},
+\ccc{Planar_map_with_intersections_2} and \ccc{Arrangement_2}, that were
+developed by~: \newline
+Ester Ezra, Eyal Flato, Efi Fogel, Dan Halperin, Iddo Hanniel, Idit Haran,
+Sariel Har-Peled, Shai Hirsch, Eugene Lipovetsky, Oren Nechushtan, Ron Wein,
+Baruch Zukerman and Tali Zvi.
+
+In version~3.2, as part of the ACS project, the packages have done through
+a major re-design, resulting in an improved \ccc{Arrangement_2} package.
+The code of the new package was restructured and developed by~: \newline
+Efi Fogel, Idit Haran, Ron Wein and Baruch Zukerman.
+
+
