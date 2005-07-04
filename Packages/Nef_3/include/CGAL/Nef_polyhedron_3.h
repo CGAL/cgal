@@ -237,6 +237,8 @@ protected:
                                   SHalfedge_around_sface_const_circulator;
   typedef typename SNC_structure::Halffacet_cycle_const_iterator     
                                   Halffacet_cycle_const_iterator;
+  typedef typename SNC_structure::Halffacet_cycle_iterator     
+                                  Halffacet_cycle_iterator;
   typedef typename SNC_structure::Infi_box                     Infi_box;
   typedef typename SNC_structure::Size_type Size_type;
   typedef Size_type                         size_type;
@@ -498,11 +500,15 @@ protected:
   };
 
  public:
- void delegate( Modifier_base<SNC_structure>& modifier) {
+ void delegate( Modifier_base<SNC_structure>& modifier, bool compute_external = false) {
    // calls the `operator()' of the `modifier'. Precondition: The
    // `modifier' returns a consistent representation.
    modifier(snc());
-   // build_external_structure(); // TO DO: conflict with CGAL::Mark_bounded_volumes
+   if(compute_external) {
+     SNC_constructor C(snc());
+     C.clear_external_structure();
+     build_external_structure();
+   }
    simplify();
    CGAL_expensive_postcondition( is_valid());
  }
@@ -1087,13 +1093,91 @@ protected:
    return true;
  }
 
+ void change_orientation(bool full = false) {
+
+   Halffacet_handle ftemp;
+   Volume_handle vtemp;
+   SVertex_handle svtemp;
+   SHalfedge_handle setemp;
+   SFace_handle sftemp;
+
+   SVertex_iterator sv;
+   CGAL_forall_svertices(sv, snc()) {
+     sv->out_sedge() = sv->out_sedge()->twin();
+   }
+
+   SHalfedge_iterator se;
+   CGAL_forall_shalfedges(se, snc()) {
+     if(se->is_twin()) {
+       svtemp = se->source();
+       se->source() = se->twin()->source();
+       se->twin()->source() = svtemp;
+
+       if(full) {
+	 ftemp = se->facet();
+	 se->facet() = se->twin()->facet();
+	 se->twin()->facet() = ftemp;
+       }
+       //       sftemp = se->incident_sface();
+       //       se->incident_sface() = se->twin()->incident_sface();
+       //       se->twin()->incident_sface() = sftemp;
+     }
+       
+     setemp = se->sprev();
+     se->sprev() = se->snext();
+     se->snext() = setemp;
+
+     se->circle() = se->circle().opposite();
+
+     if(full) {
+       setemp = se->prev();
+       se->prev() = se->next();
+       se->next() = setemp;
+     }
+   }
+
+   if(full) {
+     Halffacet_iterator f;
+     CGAL_forall_facets(f, snc()) {
+       vtemp  = f->incident_volume();
+       f->incident_volume() = f->twin()->incident_volume();
+       f->twin()->incident_volume() = vtemp;
+       Halffacet_cycle_iterator fc(f->facet_cycles_begin()),
+	 fct(f->twin()->facet_cycles_begin());
+       while(fc!=f->facet_cycles_end()) {
+	 CGAL_assertion(fct!=f->twin()->facet_cycles_end());
+	 if(fc.is_shalfedge()) {
+	   CGAL_assertion(fct.is_shalfedge());
+	   setemp = fc;
+	   *fc = *fct;
+	   *fct = setemp;
+	 }
+	 ++fc;
+	 ++fct;
+       }
+     }
+   
+     CGAL_forall_halffacets(f, snc()) {
+       Halffacet_cycle_iterator fc(f->facet_cycles_begin());
+       for(;fc!=f->facet_cycles_end();++fc) {
+	 if(fc.is_shalfedge()) {
+	   setemp = fc;
+	   SHalfedge_around_facet_circulator hfc(setemp),hend(hfc);
+	   ++hfc;
+	   CGAL_For_all(hfc,hend) {
+	     if ( CGAL::lexicographically_xyz_smaller(hfc->source()->source()->point(),
+						      setemp->source()->source()->point()))
+	       setemp = hfc;
+	   }
+	   *fc = setemp;
+	 }
+       }
+     }
+   }
+ }
+
   void transform( const Aff_transformation_3& aff) {
     
-    CGAL_precondition(aff.is_even());
-
-    // precondition: the polyhedron as a bounded boundary
-    // (needs to be explicitly tested at some time)
-
     if( this->is_shared())
       clone_rep();
     // only linear transform for the origin-centered sphere maps
@@ -1228,6 +1312,9 @@ protected:
       for(li = delete_list.begin(); li != delete_list.end(); ++li)
 	snc().delete_vertex(*li);
 
+      if(!aff.is_even())
+	change_orientation();
+
       while(cstr.erase_redundant_vertices());
       cstr.correct_infibox_sedge_marks();
 
@@ -1246,6 +1333,9 @@ protected:
 	  fi->plane() = fi->plane().transform( aff);
       }    
 
+      if(!aff.is_even())
+	change_orientation(true);
+
       if(aff.homogeneous(0,1) != 0 ||
 	 aff.homogeneous(0,2) != 0 ||
 	 aff.homogeneous(1,0) != 0 ||
@@ -1262,6 +1352,7 @@ protected:
 	 }
       else pl()->transform(aff); 
     }
+
   }
   
   /*{\Mtext \headerline{Exploration}
@@ -1318,6 +1409,7 @@ protected:
   |\Mvar.contains(h)| is true.}*/ {
     CGAL_NEF_TRACEN( "locating point...");
     CGAL_assertion( pl() != NULL);
+
     Object_handle o = pl()->locate(p);
     
     Vertex_handle v;
@@ -1328,6 +1420,7 @@ protected:
     if(assign(e,o)) return Halfedge_const_handle(e);
     if(assign(f,o)) return Halffacet_const_handle(f);
     if(assign(c,o)) return Volume_const_handle(c);
+
     return Object_handle();
   }
 
