@@ -25,6 +25,11 @@
 #include <CGAL/Nef_S2/Sphere_circle.h>
 #include <CGAL/Nef_S2/Sphere_direction.h>
 
+#ifdef CGAL_USE_LEDA
+#include <CGAL/Cartesian.h>
+#include <CGAL/leda_rational.h>
+#endif
+
 #undef CGAL_NEF_DEBUG
 #define CGAL_NEF_DEBUG 307
 #include <CGAL/Nef_2/debug.h>
@@ -253,6 +258,52 @@ class Normalizing<Cartesian_tag> {
     return c;
   }
 };
+
+#ifdef CGAL_USE_LEDA
+// specialization: Point_3 < Cartesian < leda_rational > >
+/*
+template <>
+CGAL::Point_3<CGAL::Cartesian<leda_rational> >
+Normalizing<Cartesian_tag>::normalized<CGAL::Cartesian<leda_rational> >
+ (const CGAL::Point_3<CGAL::Cartesian<leda_rational> >& p)
+{ 
+  leda_rational qx (p.x()), qy (p.y()), qz (p.z());
+  return CGAL::Point_3<CGAL::Cartesian<leda_rational> > (
+    qx.normalize(), qy.normalize(), qz.normalize() );
+}
+*/
+
+// specialization: Plane_3 < Cartesian < leda_rational > >
+template <>
+CGAL::Plane_3<CGAL::Cartesian<leda_rational> >
+Normalizing<Cartesian_tag>::normalized<CGAL::Cartesian<leda_rational> >
+ (CGAL::Plane_3<CGAL::Cartesian<leda_rational> >& h)
+{ 
+  CGAL_assertion(!(h.a()==0 && h.b()==0 && h.c()==0 && h.d()==0));
+    
+  typedef leda_rational     FT;
+    
+  FT x = (h.a()==0) ? ((h.b()==0) ? ((h.c()==0) ? ((h.d()==0) ? 1 
+                                                   : h.d())
+                                     : h.c())
+                       : h.b())
+         : h.a();
+  x = CGAL_NTS abs(x);
+    
+  FT pa = h.a()/x;
+  FT pb = h.b()/x;
+  FT pc = h.c()/x;
+  FT pd = h.d()/x;
+
+  pa.normalize();
+  pb.normalize();
+  pc.normalize();
+  pd.normalize();
+    
+  CGAL_NEF_TRACEN("  after normalizing "  << CGAL::Plane_3<CGAL::Cartesian<leda_rational> >(pa,pb,pc,pd));
+  return CGAL::Plane_3<CGAL::Cartesian<leda_rational> >(pa,pb,pc,pd);
+}
+#endif // CGAL_USE_LEDA
 
 template <typename R>
 CGAL::Point_3<R> normalized(const CGAL::Point_3<R>& p) { 
