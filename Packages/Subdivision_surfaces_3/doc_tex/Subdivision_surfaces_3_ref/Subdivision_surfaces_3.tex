@@ -58,15 +58,15 @@ The full template declaration of \ccClassTemplateName\ states one
 template parameters:
 
 \begin{tabbing}
-\ccc{template <} \=\ccc{class  _Poly>} \ccc{class Subdivision_surfaces_3;}
+\ccc{template <} \=\ccc{class Polyhedron_3>} \ccc{class Subdivision_surfaces_3;}
 \end{tabbing}
    
-The \ccc{_Poly} parameter requires a model of 
+The parameter \ccc{Polyhedron_3} requires a model of 
 the \ccc{Polyhedron_3} concept as argument. The storage structure
-of \ccc{_Poly} is required to be a FIFO structure (e.g.~vector or list).
+of \ccc{Polyhedron_3} is required to be a FIFO structure (e.g.~vector or list).
 Refined vertices are generated in a specific order that
 is used to maintain the stencils, hence no explicit flag is required
-to maintain the stencils. To support the geometry smoothing, \ccc{_Poly}
+to maintain the stencils. To support the geometry smoothing, \ccc{Polyhedron_3}
 is required to define \ccc{Point_3} as the position holder.
 
 %% \ccTypes
@@ -104,8 +104,8 @@ is defined.
 \ccHeading{Refinement hosts}
 
 \ccThree{}{}{}
-\ccMethod{template <template <typename> class _S> 
-void PQQ(Polyhedron& p, _S<Polyhedron> rule, int step);}
+\ccMethod{template <template <typename> class Stencil> 
+void PQQ(Polyhedron& p, Stencil<Polyhedron> rule, int step);}
 {refine the mesh \ccc{p} with the PQQ refinement
 \ccc{step} times, and smooth the refined \ccc{p} with the geometry 
 masks \ccc{rule}.}
@@ -123,20 +123,20 @@ masks \ccc{rule}.}
 %%     </CENTER>
 %% \end{ccHtmlOnly}
 
-\ccMethod{template <template <typename> class _S> 
-void PTQ(Polyhedron& p, _S<Polyhedron> rule, int step);}
+\ccMethod{template <template <typename> class Stencil> 
+void PTQ(Polyhedron& p, Stencil<Polyhedron> rule, int step);}
 {refine the mesh \ccc{p} with the PTQ refinement 
 \ccc{step} times, and smooth the refined \ccc{p} with the geometry 
 masks \ccc{rule}.}
 
-\ccMethod{template <template <typename> class _S> 
-void DQQ(Polyhedron& p, _S<Polyhedron> rule, int step);}
+\ccMethod{template <template <typename> class Stencil> 
+void DQQ(Polyhedron& p, Stencil<Polyhedron> rule, int step);}
 {refine the mesh \ccc{p} with the DQQ refinement 
 \ccc{step} times, and smooth the refined \ccc{p} with the geometry 
 masks \ccc{rule}.}
 
-\ccMethod{template <template <typename> class _S> 
-void Sqrt3(Polyhedron& p, _S<Polyhedron> rule, int step);}
+\ccMethod{template <template <typename> class Stencil> 
+void Sqrt3(Polyhedron& p, Stencil<Polyhedron> rule, int step);}
 {refine the mesh \ccc{p} with the $\sqrt{3}$ triangulation 
 \ccc{step} times, and smooth the refined \ccc{p} with the geometry 
 masks \ccc{rule}.}

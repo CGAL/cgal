@@ -9,16 +9,16 @@
 \RCSdefDate{\subdivisionDate}{$Date$}
 % +------------------------------------------------------------------------+
 
-\def\CC{Catmull-Clark}
-\def\DS{Doo-Sabin}
+\newcommand\CC{Catmull-Clark}
+\newcommand\DS{Doo-Sabin}
 
 % ------------------------------------------------------------------------
-\def\FIGDIR{Subdivision_surfaces_3/FIG}
-\def\IL{{\itshape left}}
-\def\IR{{\itshape right}}
-\def\IM{{\itshape middle}}
-\def\IT{{\itshape top}}
-\def\IB{{\itshape bottom}}
+\newcommand\FIGDIR{Subdivision_surfaces_3/FIG}
+\newcommand\IL{{\itshape left}}
+\newcommand\IR{{\itshape right}}
+\newcommand\IM{{\itshape middle}}
+\newcommand\IT{{\itshape top}}
+\newcommand\IB{{\itshape bottom}}
 % ------------------------------------------------------------------------
 
 \ccParDims
@@ -166,9 +166,9 @@ refinement, maintains three stencils of the
 PQQ scheme, and calls policies to smooth the refined points.
 
 \begin{ccExampleCode}
-  // _S is the geometry policy realizing the geometry masks
-  template <template <typename> class _S>
-  static void PQQ(Polyhedron& p, _S<Polyhedron> rule, int step)
+  // S is the geometry policy realizing the geometry masks
+  template <template <typename> class S>
+  static void PQQ(Polyhedron& p, S<Polyhedron> rule, int step)
 \end{ccExampleCode}
 
 \ccc{Subdivision_surfaces_3} provides \ccc{CGAL::CatmullClark_stencil} 
@@ -218,18 +218,18 @@ The refined mesh is shown below the input mesh.
 \begin{ccExampleCode}
 template <class Polyhedron>
 class Subdivision_surfaces_3 {
-  // _S is the geometry policy realizing the geometry masks
-  template <template <typename> class _S>
-  static void PQQ(Polyhedron& p, _S<Polyhedron> rule, int step);
+  // S is the geometry policy realizing the geometry masks
+  template <template <typename> class S>
+  static void PQQ(Polyhedron& p, S<Polyhedron> rule, int step);
 
-  template <template <typename> class _S>
-  static void PTQ(Polyhedron& p, _S<Polyhedron> rule, int step);
+  template <template <typename> class S>
+  static void PTQ(Polyhedron& p, S<Polyhedron> rule, int step);
 
-  template <template <typename> class _S>
-  static void DQQ(Polyhedron& p, _S<Polyhedron> rule, int step);
+  template <template <typename> class S>
+  static void DQQ(Polyhedron& p, S<Polyhedron> rule, int step);
 
-  template <template <typename> class _S>
-  static void Sqrt3(Polyhedron& p, _S<Polyhedron> rule, int step);
+  template <template <typename> class S>
+  static void Sqrt3(Polyhedron& p, S<Polyhedron> rule, int step);
 }
 \end{ccExampleCode}
 
@@ -298,7 +298,7 @@ of \CC\ subdivision. \ccc{Point} is an alias to \ccc{Point_3}
 in \ccc{_Poly}.
 
 \begin{ccExampleCode}
-template <class _Poly>
+template <class P>
 class CatmullClark_stencil {
   //
   void facet_node(Facet_handle facet, Point& pt) {
