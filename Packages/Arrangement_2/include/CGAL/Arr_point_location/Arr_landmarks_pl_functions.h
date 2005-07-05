@@ -30,7 +30,7 @@
 	#define LM_CLOCK_DEBUG(cmd)
 #endif
 
-#define CGAL_LM_DEBUG
+//#define CGAL_LM_DEBUG
 
 #ifdef CGAL_LM_DEBUG
 	#define PRINT_DEBUG(expr)   std::cout << expr << std::endl
