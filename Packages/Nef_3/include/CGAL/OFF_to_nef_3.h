@@ -95,7 +95,6 @@ CGAL_END_NAMESPACE
 #include <CGAL/IO/Scanner_OFF.h>
 #include <CGAL/normal_vector_newell_3.h>
 
-#define CGAL_NEF_OFF_TO_NEF_TIMER
 #ifdef CGAL_NEF_OFF_TO_NEF_TIMER
 #include <CGAL/Timer.h>
 #endif
