@@ -222,14 +222,6 @@ public:
 
 
 
-  void after_sweep(){}
-  void after_init(){}
-
-
-    
- 
-
- 
    protected:
      
      
@@ -242,7 +234,3 @@ public:
 CGAL_END_NAMESPACE
 
 #endif
-
-
-
-

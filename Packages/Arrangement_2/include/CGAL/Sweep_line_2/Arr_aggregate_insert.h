@@ -24,7 +24,7 @@
 #ifndef CGAL_ARR_AGGREGATE_INSERT_H
 #define CGAL_ARR_AGGREGATE_INSERT_H
 
-#include <CGAL/Sweep_line_2/Sweep_line_2_impl.h>
+#include <CGAL/Sweep_line_2.h>
 #include <CGAL/Sweep_line_2/Arr_sweep_line_event.h>
 #include <CGAL/Sweep_line_2/Arr_sweep_line_curve.h>
 #include <CGAL/Sweep_line_2/Arr_sweep_line_visitor.h>
