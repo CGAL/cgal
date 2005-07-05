@@ -21,7 +21,7 @@
 #define ARR_OVERLAY_H
 
 #include <CGAL/Arrangement_2.h>
-#include <CGAL/Sweep_line_2/Sweep_line_2_impl.h>
+#include <CGAL/Sweep_line_2.h>
 #include <CGAL/Sweep_line_2/Arr_sweep_line_event.h>
 #include <CGAL/Arr_overlay_2/Overlay_subcurve.h>
 #include <CGAL/Arr_overlay_2/Overlay_visitor.h>
