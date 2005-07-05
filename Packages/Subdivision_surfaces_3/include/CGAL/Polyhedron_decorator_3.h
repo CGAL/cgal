@@ -26,9 +26,9 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template <class _Poly>
+template <class Poly>
 class Polyhedron_decorator_3 {
-  typedef _Poly                                        Polyhedron;
+  typedef Poly                                        Polyhedron;
 
   typedef typename Polyhedron::Traits                  Traits;
   typedef typename Traits::Kernel                      Kernel;
@@ -151,9 +151,9 @@ public:
 
 // ======================================================================
 //
-template <class _Poly> 
-typename Polyhedron_decorator_3<_Poly>::Halfedge_handle 
-Polyhedron_decorator_3<_Poly>::insert_vertex_return_edge(Polyhedron& p,
+template <class Poly> 
+typename Polyhedron_decorator_3<Poly>::Halfedge_handle 
+Polyhedron_decorator_3<Poly>::insert_vertex_return_edge(Polyhedron& p,
 						    Halfedge_handle h) {
   Halfedge_handle hopp = h->opposite();
   Halfedge_handle r = p.split_vertex(hopp->prev(), h);
@@ -166,9 +166,9 @@ Polyhedron_decorator_3<_Poly>::insert_vertex_return_edge(Polyhedron& p,
 
 // ======================================================================
 //
-template <class _Poly> 
-typename Polyhedron_decorator_3<_Poly>::Halfedge_handle 
-Polyhedron_decorator_3<_Poly>::insert_vertex_return_edge(Polyhedron& p,
+template <class Poly> 
+typename Polyhedron_decorator_3<Poly>::Halfedge_handle 
+Polyhedron_decorator_3<Poly>::insert_vertex_return_edge(Polyhedron& p,
 						    Vertex_handle a, 
 						    Vertex_handle b) {
   Halfedge_around_vertex_circulator a_cir_begin = a->vertex_begin();
@@ -183,9 +183,9 @@ Polyhedron_decorator_3<_Poly>::insert_vertex_return_edge(Polyhedron& p,
 
 // ======================================================================
 //
-template <class _Poly> 
-typename Polyhedron_decorator_3<_Poly>::Halfedge_handle 
-Polyhedron_decorator_3<_Poly>::insert_edge(Polyhedron& p,
+template <class Poly> 
+typename Polyhedron_decorator_3<Poly>::Halfedge_handle 
+Polyhedron_decorator_3<Poly>::insert_edge(Polyhedron& p,
 				      Vertex_handle a, 
 				      Vertex_handle b) {
   Halfedge_around_vertex_circulator a_cir_begin = a->vertex_begin();

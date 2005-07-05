@@ -33,10 +33,10 @@ CGAL_BEGIN_NAMESPACE
 
 // ======================================================================
 //
-template <class _Poly>
+template <class Poly>
 class PQQ_stencil {
 public:
-  typedef _Poly                                        Polyhedron;
+  typedef Poly                                        Polyhedron;
 
   typedef typename Polyhedron::Vertex_handle           Vertex_handle;
   typedef typename Polyhedron::Halfedge_handle         Halfedge_handle;
@@ -60,10 +60,10 @@ public:
 
 // ======================================================================
 //
-template <class _Poly>
-class Linear_stencil : public PQQ_stencil<_Poly> {
+template <class Poly>
+class Linear_stencil : public PQQ_stencil<Poly> {
 public:
-  typedef _Poly                                        Polyhedron;
+  typedef Poly                                        Polyhedron;
 
   typedef typename Polyhedron::Vertex_handle           Vertex_handle;
   typedef typename Polyhedron::Halfedge_handle         Halfedge_handle;
@@ -112,10 +112,10 @@ public:
 
 // ======================================================================
 //
-template <class _Poly>
-class CatmullClark_stencil : public Linear_stencil<_Poly> {
+template <class Poly>
+class CatmullClark_stencil : public Linear_stencil<Poly> {
 public:
-  typedef _Poly                                        Polyhedron;
+  typedef Poly                                        Polyhedron;
 
   typedef typename Polyhedron::Vertex_handle           Vertex_handle;
   typedef typename Polyhedron::Halfedge_handle         Halfedge_handle;
@@ -190,10 +190,10 @@ public:
 
 // ======================================================================
 //
-template <class _Poly>
-class Loop_stencil : public PQQ_stencil<_Poly> {
+template <class Poly>
+class Loop_stencil : public PQQ_stencil<Poly> {
 public:
-  typedef _Poly                                        Polyhedron;
+  typedef Poly                                        Polyhedron;
 
   typedef typename Polyhedron::Vertex_handle           Vertex_handle;
   typedef typename Polyhedron::Halfedge_handle         Halfedge_handle;
@@ -265,10 +265,10 @@ public:
 
 //==========================================================================
 //
-template <class _Poly>
+template <class Poly>
 class DQQ_stencil {
 public:
-  typedef _Poly                                        Polyhedron;
+  typedef Poly                                        Polyhedron;
   typedef typename Polyhedron::Halfedge_handle         Halfedge_handle;
 
   typedef typename Polyhedron::Traits                  Traits;
@@ -286,10 +286,10 @@ public:
 
 // ======================================================================
 ///
-template <class _Poly>
-class DooSabin_stencil : public DQQ_stencil<_Poly> {
+template <class Poly>
+class DooSabin_stencil : public DQQ_stencil<Poly> {
 public:
-  typedef _Poly                                        Polyhedron;
+  typedef Poly                                        Polyhedron;
   
   typedef typename Polyhedron::Halfedge_handle         Halfedge_handle;
   typedef typename Polyhedron::Halfedge_around_facet_circulator  
@@ -329,10 +329,10 @@ public:
 
 // ======================================================================
 //
-template <class _Poly>
-class Sqrt3_stencil : public Linear_stencil<_Poly> {
+template <class Poly>
+class Sqrt3_stencil : public Linear_stencil<Poly> {
 public:
-  typedef _Poly                                        Polyhedron;
+  typedef Poly                                        Polyhedron;
   
   typedef typename Polyhedron::Traits                  Traits;
   typedef typename Traits::Kernel                      Kernel;

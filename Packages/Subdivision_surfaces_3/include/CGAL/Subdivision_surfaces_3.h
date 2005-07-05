@@ -37,9 +37,9 @@ CGAL_BEGIN_NAMESPACE
 
 // ======================================================================
 //
-template <class _Poly>
-class Subdivision_surfaces_3 : public Polyhedron_decorator_3<_Poly> {
-  typedef _Poly                                        Polyhedron;
+template <class Poly>
+class Subdivision_surfaces_3 : public Polyhedron_decorator_3<Poly> {
+  typedef Poly                                        Polyhedron;
 
   typedef typename Polyhedron::Halfedge_data_structure HDS;
   typedef typename Polyhedron::Vertex                  Vertex;
@@ -95,49 +95,49 @@ public:
   }
 
 public:
-  // _S is the stencil policy
-  template <template <typename> class _S>
-  static void PQQ(Polyhedron& p, _S<Polyhedron> rule, int step = 1) {
+  // Stencil is the stencil policy
+  template <template <typename> class Stencil>
+  static void PQQ(Polyhedron& p, Stencil<Polyhedron> rule, int step = 1) {
     for (int i = 0; i < step; i++) PQQ_1step(p, rule);
   }
-  // _S is the stencil policy
-  template <template <typename> class _S>
-  static void PTQ(Polyhedron& p, _S<Polyhedron> rule, int step = 1) {
+  // Stencil is the stencil policy
+  template <template <typename> class Stencil>
+  static void PTQ(Polyhedron& p, Stencil<Polyhedron> rule, int step = 1) {
     for (int i = 0; i < step; i++) PTQ_1step(p, rule);
   }
 
-  // _S is the stencil policy
-  template <template <typename> class _S>
-  static void DQQ(Polyhedron& p, _S<Polyhedron> rule, int step = 1) {
+  // Stencil is the stencil policy
+  template <template <typename> class Stencil>
+  static void DQQ(Polyhedron& p, Stencil<Polyhedron> rule, int step = 1) {
     for (int i = 0; i < step; ++i) DQQ_1step(p, rule);
   }
 
-  // _S is the stencil policy
-  template <template <typename> class _S>
-  static void Sqrt3(Polyhedron& p, _S<Polyhedron> rule, int step = 1) {
+  // Stencil is the stencil policy
+  template <template <typename> class Stencil>
+  static void Sqrt3(Polyhedron& p, Stencil<Polyhedron> rule, int step = 1) {
     for (int i = 0; i < step; i++) Sqrt3_1step(p, rule);
   }
 
 protected:
   //
-  template <template <typename> class _S>
-  static void PQQ_1step(Polyhedron& p, _S<Polyhedron> rule);
+  template <template <typename> class Stencil>
+  static void PQQ_1step(Polyhedron& p, Stencil<Polyhedron> rule);
   //
-  template <template <typename> class _S>
-  static void PTQ_1step(Polyhedron& p, _S<Polyhedron> rule);
+  template <template <typename> class Stencil>
+  static void PTQ_1step(Polyhedron& p, Stencil<Polyhedron> rule);
   //
-  template <template <typename> class _S>
-  static void DQQ_1step(Polyhedron& p, _S<Polyhedron> rule);
+  template <template <typename> class Stencil>
+  static void DQQ_1step(Polyhedron& p, Stencil<Polyhedron> rule);
   //
-  template <template <typename> class _S>
-  static void Sqrt3_1step(Polyhedron& p, _S<Polyhedron> rule);
+  template <template <typename> class Stencil>
+  static void Sqrt3_1step(Polyhedron& p, Stencil<Polyhedron> rule);
 };
 
 
 // ======================================================================
 //
-template <class _P> template <template <typename> class _S>
-void Subdivision_surfaces_3<_P>::PQQ_1step(_P& p, _S<_P> rule) {
+template <class Poly> template <template <typename> class Stencil>
+void Subdivision_surfaces_3<Poly>::PQQ_1step(Poly& p, Stencil<Poly> rule) {
   p.normalize_border();
 
   // Build a new vertices buffer has the following structure
@@ -237,8 +237,8 @@ void Subdivision_surfaces_3<_P>::PQQ_1step(_P& p, _S<_P> rule) {
 
 // ======================================================================
 //
-template <class _P> template <template <typename> class _S>
-void Subdivision_surfaces_3<_P>::PTQ_1step(_P& p, _S<_P> rule) {
+template <class Poly> template <template <typename> class Stencil>
+void Subdivision_surfaces_3<Poly>::PTQ_1step(Poly& p, Stencil<Poly> rule) {
   p.normalize_border();
 
   // Build a new vertices buffer has the following structure
@@ -322,8 +322,8 @@ void Subdivision_surfaces_3<_P>::PTQ_1step(_P& p, _S<_P> rule) {
 //
 //#define _EULER_DQQ_SPLITTING
 #define _EULER_DQQ_TILTING   // Tilting is faster
-template <class _P> template <template <typename> class _S>
-void Subdivision_surfaces_3<_P>::DQQ_1step(_P& p, _S<_P> rule) {
+template <class Poly> template <template <typename> class Stencil>
+void Subdivision_surfaces_3<Poly>::DQQ_1step(Poly& p, Stencil<Poly> rule) {
   p.normalize_border();
 
   size_t num_v = p.size_of_vertices();
@@ -508,8 +508,8 @@ void Subdivision_surfaces_3<_P>::DQQ_1step(_P& p, _S<_P> rule) {
 
 // ======================================================================
 //
-template <class _P> template <template <typename> class _S>
-void Subdivision_surfaces_3<_P>::Sqrt3_1step(_P& p, _S<_P> rule) {
+template <class Poly> template <template <typename> class Stencil>
+void Subdivision_surfaces_3<Poly>::Sqrt3_1step(Poly& p, Stencil<Poly> rule) {
   //
   p.normalize_border();
 
