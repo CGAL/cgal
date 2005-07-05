@@ -340,9 +340,7 @@ lemma.
 \label{lem:main}
 If $M_{B}$ is regular with entering variable $x_{j}$, $j \not \in B$, and
 leaving variable $x_{i}$, $i \in B$, then if $M_{B \setminus \{i\}}$ 
-is singular or $M_{B \cup \{j\}}$ is
-singular and $D_{i,j}=D_{j,j}$
-then $M_{B \setminus \{i\} \cup \{j\}}$ is regular.
+is singular $M_{B \setminus \{i\} \cup \{j\}}$ is regular.
 \end{lemma}
 
 \begin{proof}
@@ -382,7 +380,7 @@ q_{x_{i}}
 \neq
 0
 \end{equation}
-If on the one hand the assumption $\det(M_{B\setminus \{i\}})=0$ holds true
+If the assumption $\det(M_{B\setminus \{i\}})=0$ holds true
 we have, according to Lemma~(\ref{lem:Jacobi_det_id}) for $M_{B}$ and
 the regularity of $M_{B}$, 
 \begin{equation}
@@ -394,26 +392,26 @@ the regularity of $M_{B}$,
 such that by Equations~(\ref{def:ks}), (\ref{precond:pivot_proof})
 and~(\ref{precond:leaving_proof}) $\det(Q) \neq 0$ in
 Equation~(\ref{def:det_Q_k_proof}).
-If on the other hand the assumptions $\det(M_{B \cup \{j\}})=0$ and
-$D_{j,j}=D_{i,j}$ hold true, we have according to \cite{Sven},
-Equation (6.7),
-\begin{equation*}
-\det(M_{B \cup \{j\}}) = 0
-\Longleftrightarrow
-2D_{j,j} -\zeta^{T}M_{B}^{-1}\zeta = 0
-\end{equation*}
-which together with the assumption $D_{i,j}=D_{j,j}$ and
-the fact $\zeta_{\beta(i)}=2D_{i,j}$ is equivalent to
-\begin{equation}
-\label{precond:entering_proof}
-\det(M_{B \cup \{j\}}) = 0
-\Longleftrightarrow
-\zeta_{\beta(i)} -\zeta^{T}M_{B}^{-1}\zeta = 0
-\end{equation}
-such that by Equations~(\ref{def:ks}), (\ref{precond:pivot_proof})
-and~(\ref{precond:entering_proof}) again $\det(Q) \neq 0$
-in Equation~(\ref{def:det_Q_k_proof}).
-For both cases (\ref{eq:det_Q_eq_det_M_B_replaced}) implies the lemma.
+%If on the other hand the assumptions $\det(M_{B \cup \{j\}})=0$ and
+%$D_{j,j}=D_{i,j}$ hold true, we have according to \cite{Sven},
+%Equation (6.7),
+%\begin{equation*}
+%\det(M_{B \cup \{j\}}) = 0
+%\Longleftrightarrow
+%2D_{j,j} -\zeta^{T}M_{B}^{-1}\zeta = 0
+%\end{equation*}
+%which together with the assumption $D_{i,j}=D_{j,j}$ and
+%the fact $\zeta_{\beta(i)}=2D_{i,j}$ is equivalent to
+%\begin{equation}
+%\label{precond:entering_proof}
+%\det(M_{B \cup \{j\}}) = 0
+%\Longleftrightarrow
+%\zeta_{\beta(i)} -\zeta^{T}M_{B}^{-1}\zeta = 0
+%\end{equation}
+%such that by Equations~(\ref{def:ks}), (\ref{precond:pivot_proof})
+%and~(\ref{precond:entering_proof}) again $\det(Q) \neq 0$
+%in Equation~(\ref{def:det_Q_k_proof}).
+%For both cases (\ref{eq:det_Q_eq_det_M_B_replaced}) implies the lemma.
 \end{proof}
 
 \section{Update type z in the context of reduced bases}
@@ -1513,7 +1511,6 @@ M^{-1} & \vdots \\
 \frac{1}{d}
 \left[
 \hat{M}_{>>}^{-1}
--
 \left(
 \begin{array}{c|c}
 dXZ^{-1}X^{T} & \vdots \\
