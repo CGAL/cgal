@@ -64,8 +64,8 @@ public:
   typedef typename Arrangement::Ccb_halfedge_circulator 
     Ccb_halfedge_circulator;
 
-  typedef Event_                                        Event;
-  typedef Subcurve_                                     Subcurve;
+  typedef Event_                                         Event;
+  typedef Subcurve_                                      Subcurve;
   
   typedef Overlay_visitor< Traits,
                            Arrangement1,
@@ -73,18 +73,18 @@ public:
                            Arrangement,
                            Event,
                            Subcurve,
-                           OverlayTraits >              Self;
+                           OverlayTraits >               Self;
   
   typedef Arr_sweep_line_visitor< Traits,
                                   Arrangement,
                                   Event,
-                                  Subcurve >            Base;
+                                  Subcurve >             Base;
   
-  typedef typename Base::SubCurveIter                   SubCurveIter;
-  typedef typename Base::SubCurveRevIter                SubCurveRevIter;
-  typedef typename Base::SL_iterator                    SL_iterator;
+  typedef typename Base::SubCurveIter                    SubCurveIter;
+  typedef typename Base::SubCurveRevIter                 SubCurveRevIter;
+  typedef typename Base::SL_iterator                     SL_iterator;
 
-  typedef Unique_hash_map<Halfedge_handle,Curve_info>   Hash_map;
+  typedef Unique_hash_map<Halfedge_handle,Curve_info>    Hash_map;
   using Base::m_arr;
   using Base::m_arr_access;
 
@@ -636,7 +636,7 @@ public:
 
   void after_sweep()
   {
-    //after sweep is finshed, merge the two unbouded_faces from each arrangment
+    //after sweep finshed, merge the two unbouded_faces from each arrangment
     m_overlay_traits ->create_face(m_red_arr->unbounded_face(),
                                    m_blue_arr->unbounded_face(),
                                    m_arr->unbounded_face());
