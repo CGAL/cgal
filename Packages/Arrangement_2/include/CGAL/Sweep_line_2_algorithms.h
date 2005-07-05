@@ -25,9 +25,7 @@
  */
 
 #include <CGAL/Sweep_line_2.h>
-#include <CGAL/Sweep_line_2/Sweep_line_points_visitor.h>
-#include <CGAL/Sweep_line_2/Sweep_line_subcurves_visitor.h>
-#include <CGAL/Sweep_line_2/Sweep_line_do_curves_x_visitor.h>
+#include <CGAL/Sweep_line_2/Sweep_line_2_visitors.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -59,7 +57,7 @@ OutputIterator get_intersection_points (CurveInputIterator curves_begin,
                                                             Sweep_line;
 
   // Perform the sweep and obtain the intersection points.
-  Visitor     visitor (points, report_endpoints, &tr);
+  Visitor     visitor (points, report_endpoints);
   Sweep_line  sweep_line (&tr, &visitor);
   visitor.sweep(curves_begin, curves_end);
 
@@ -94,7 +92,7 @@ OutputIterator get_subcurves (CurveInputIterator curves_begin,
                                                                 Sweep_line;
 
   // Perform the sweep and obtain the subcurves.
-  Visitor     visitor (subcurves, mult_overlaps, &tr);
+  Visitor     visitor (subcurves, mult_overlaps);
   Sweep_line  sweep_line (&tr, &visitor);
   visitor.sweep(curves_begin, curves_end);
 
@@ -120,7 +118,7 @@ bool do_curves_intersect (CurveInputIterator curves_begin,
                                                       Sweep_line ;
   
   // Perform the sweep and obtain the subcurves.
-  Visitor     visitor(&tr);
+  Visitor     visitor;
   Sweep_line  sweep_line (&tr, &visitor);
   visitor.sweep(curves_begin, curves_end);
   
