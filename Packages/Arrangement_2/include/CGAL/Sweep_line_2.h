@@ -771,6 +771,9 @@ _handle_overlap(Event* event, Subcurve* curve, EventCurveIter iter)
 					   (*iter)->get_last_curve(),
 					   vi);
     
+    //BZBZ 06/07/05
+    if(vi == vi_end)
+      return;
     CGAL::assign(overlap_cv, *vi);
     
     // Get the right end of overlap_cv
