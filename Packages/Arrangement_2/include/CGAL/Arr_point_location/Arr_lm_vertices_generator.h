@@ -130,7 +130,7 @@ public:
         //get point from vertex
         Point_2 p = vit->point() ;
         Vertex_const_handle vh = vit;
-        Object obj = make_object (vh);
+        Object obj = CGAL::make_object (vh);
         NN_Point_2 np (p, obj); 
 
         //insert point into list

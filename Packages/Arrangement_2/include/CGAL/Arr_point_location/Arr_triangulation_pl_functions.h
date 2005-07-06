@@ -70,17 +70,17 @@ Object Arr_triangulation_point_location<Arrangement_2>
           iso_verts_it != face_found->isolated_vertices_end(); ++iso_verts_it)
       {
         if (equal (p, (*iso_verts_it).point()))
-          return (make_object (*iso_verts_it));
+          return (CGAL::make_object (*iso_verts_it));
       }
 
-      return make_object(face_found);
+      return (CGAL::make_object(face_found));
     }
   case CDT::VERTEX:
     {
       //get the vertex from li, which is the index of the vertex
       Vertex_const_handle vertex_found = fh->vertex(li)->info();
       TRG_PRINT_DEBUG("vertex: "<< vertex_found->point());
-      return make_object(vertex_found);
+      return (CGAL::make_object(vertex_found));
     }
   case CDT::EDGE:
     {
@@ -110,7 +110,7 @@ Object Arr_triangulation_point_location<Arrangement_2>
           }
         } while (++circ1 != circ1_done);
 
-        return make_object(edeg_found); 
+        return (CGAL::make_object(edeg_found)); 
       }
       //if the edge is not a constrained - its not an edge of the 
       //plannar map, which means we're inside of a pm face -
@@ -138,11 +138,11 @@ Object Arr_triangulation_point_location<Arrangement_2>
   CGAL_assertion(!v1->is_isolated());
   CGAL_assertion(!v2->is_isolated());
   if (v0->is_isolated())
-    return make_object(p_arr->incident_face(v0));
+    return (CGAL::make_object(p_arr->incident_face(v0)));
   if (v1->is_isolated())
-    return make_object(p_arr->incident_face(v1));
+    return (CGAL::make_object(p_arr->incident_face(v1)));
   if (v2->is_isolated())
-    return make_object(p_arr->incident_face(v2));
+    return (CGAL::make_object(p_arr->incident_face(v2)));
 
   //find the face in the pm correspond to the 3 vertices
   Halfedge_around_vertex_const_circulator havc0 = v0->incident_halfedges(); 
@@ -204,10 +204,10 @@ Object Arr_triangulation_point_location<Arrangement_2>
       iso_verts_it != face_found->isolated_vertices_end(); ++iso_verts_it)
   {
     if (equal (p, (*iso_verts_it).point()))
-      return (make_object (*iso_verts_it));
+      return (CGAL::make_object (*iso_verts_it));
   }		
 
-  return make_object(face_found);
+  return (CGAL::make_object(face_found));
 }
 
 

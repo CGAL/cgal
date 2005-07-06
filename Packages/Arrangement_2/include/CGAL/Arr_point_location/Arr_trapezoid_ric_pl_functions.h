@@ -56,7 +56,7 @@ Object Arr_trapezoid_ric_point_location<Arrangement_2>
   if (td_lt==TD::UNBOUNDED_TRAPEZOID)
   {
     TRAP_PRINT_DEBUG("UNBOUNDED_TRAPEZOID");
-    return make_object (p_arr->unbounded_face());
+    return (CGAL::make_object (p_arr->unbounded_face()));
   }
 
   Halfedge_const_handle h = cv.get_parent();
@@ -69,12 +69,12 @@ Object Arr_trapezoid_ric_point_location<Arrangement_2>
       if (traits->equal_2_object()(h->target()->point(), p))
       {
         Vertex_const_handle vh = h->target();
-        return make_object (vh);
+        return (CGAL::make_object (vh));
       }
       if (traits->equal_2_object()(h->source()->point(), p))
       {
         Vertex_const_handle vh = h->source();
-        return make_object (vh);
+        return (CGAL::make_object (vh));
       }
       else
         CGAL_assertion(false);
@@ -86,7 +86,7 @@ Object Arr_trapezoid_ric_point_location<Arrangement_2>
       TRAP_PRINT_DEBUG("CURVE");
       if ( traits->is_in_x_range_2_object()(cv,p) && 
            traits->compare_y_at_x_2_object()(p,cv) == EQUAL)
-        return make_object(h);
+        return (CGAL::make_object(h));
       else
       {
         //ixx
@@ -106,7 +106,7 @@ Object Arr_trapezoid_ric_point_location<Arrangement_2>
         ))
         h = h->twin();
       Face_const_handle fh = h->face();
-      return make_object(fh);
+      return (CGAL::make_object(fh));
     }
   default:
     TRAP_PRINT_DEBUG("DEFAULT");
@@ -135,7 +135,7 @@ Object Arr_trapezoid_ric_point_location<Arrangement>
   //	for then get_parent() is not defined
   if (td_lt==TD::UNBOUNDED_TRAPEZOID)
   {
-    return make_object (p_arr->unbounded_face());
+    return (CGAL::make_object (p_arr->unbounded_face()));
   }
 
   Halfedge_const_handle h=cv.get_parent();
@@ -146,12 +146,12 @@ Object Arr_trapezoid_ric_point_location<Arrangement>
     if (traits->equal_2_object()(h->target()->point(), p))
     {
       Vertex_const_handle vh = h->target();
-      return make_object (vh);
+      return (CGAL::make_object (vh));
     }
     if (traits->equal_2_object()(h->source()->point(), p))
     {
       Vertex_const_handle vh = h->source();
-      return make_object (vh);
+      return (CGAL::make_object (vh));
     }
     else
       CGAL_assertion(false);
@@ -167,7 +167,7 @@ Object Arr_trapezoid_ric_point_location<Arrangement>
     if (shoot_up == traits->compare_x_2_object()(h->source()->point(),
                                                  h->target()->point()))
       h=h->twin();
-    return make_object(h);
+    return (CGAL::make_object(h));
 
   case TD::TRAPEZOID:
     if (!(((traits->is_in_x_range_2_object()(h->curve(),p)) &&
@@ -176,7 +176,7 @@ Object Arr_trapezoid_ric_point_location<Arrangement>
                                         h->target()->point()) == SMALLER)
         ))
         h = h->twin();
-    return make_object(h);
+    return (CGAL::make_object(h));
 
   default:
     CGAL_assertion(false);

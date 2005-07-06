@@ -66,7 +66,7 @@ Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
 
 	//if this is an empty map - return the unbounded face
 	if (p_arr->number_of_vertices() == 0) 
-		return make_object (p_arr->unbounded_face());
+		return (CGAL::make_object (p_arr->unbounded_face()));
 
 	Object  landmark_location_obj; 
 	Point_2 landmark_point = lm_gen->get_closest_landmark (p, 
@@ -152,7 +152,7 @@ Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
         iso_verts_it != f->isolated_vertices_end(); ++iso_verts_it)
     {
       if (equal (p, (*iso_verts_it).point()))
-        return (make_object (iso_verts_it));
+        return (CGAL::make_object (iso_verts_it));
     }		
 	}
 
@@ -269,7 +269,7 @@ Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
 	// check if the point equals the vertex. 
 	if (traits->equal_2_object()(vh->point(), p))
 	{
-		return make_object (vh);
+		return (CGAL::make_object (vh));
 	}
 
 	//create a segment vh--p. 
@@ -334,7 +334,7 @@ Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
 			//out_edge = prev;
 			//found_face = true;
 			PRINT_DEBUG ( "new_find_face return face = " << (*prev).curve() );
-			return make_object ((*prev).face());
+			return (CGAL::make_object ((*prev).face()));
 		}
 	}
 
@@ -388,7 +388,7 @@ Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
 			//out_edge = prev;
 			//found_face = true;
 			PRINT_DEBUG ( "new_find_face return " << (*prev).curve() );
-			return make_object ((*prev).face());
+			return (CGAL::make_object ((*prev).face()));
 		}
 		else if (res1 ==SMALLER) 
 		{
@@ -434,7 +434,7 @@ Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
 				//out_edge = prev;
 				//found_face = true;
 				PRINT_DEBUG ( "new_find_face return " << (*prev).curve() );
-				return make_object ((*prev).face());
+				return (CGAL::make_object ((*prev).face()));
 			}
 	
 			// else - (circ == circ_done)
@@ -456,7 +456,7 @@ Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
 				//out_edge = circ->twin();
 				//found_face = true;
 				PRINT_DEBUG ( "new_find_face return " << (*circ).curve() );
-				return make_object ((*circ).twin()->face());
+				return (CGAL::make_object ((*circ).twin()->face()));
 			}
 
 			//else: seg > smallest
@@ -471,7 +471,7 @@ Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
 			//out_edge = prev;
 			//found_face = true;
 			PRINT_DEBUG ( "new_find_face return " << (*prev).curve() );
-			return make_object ((*prev).face());
+			return (CGAL::make_object ((*prev).face()));
 		}
 		else //EQUAL
 		{
@@ -485,7 +485,7 @@ Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
 				//out_vertex = circ->source();
 				//lt = Planar_map::VERTEX;
 				//found_vertex_or_edge = true;
-				return make_object ((*circ).source());
+				return (CGAL::make_object ((*circ).source()));
 			}
 
 			if (traits->is_in_x_range_2_object()((*circ).curve(),p) && 
@@ -497,7 +497,7 @@ Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
 				//out_edge = circ;
 				//lt = Planar_map::EDGE;
 				//found_vertex_or_edge = true;
-				return make_object (temp_he); 
+        return (CGAL::make_object (temp_he)); 
 			}
 	
 			//p does not lie on cv1 ==> 
@@ -508,7 +508,7 @@ Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
 			new_vertex = true;
 			PRINT_DEBUG( "The new vertex is: "<< (*circ).source()->point() );
 			// check validity (the new vertex is vetween them on a line) @@@@
-			return make_object((*circ).source());		
+			return (CGAL::make_object((*circ).source()));		
 		}
 	}
 
@@ -559,12 +559,12 @@ Object Arr_landmarks_point_location<Arrangement, Arr_landmarks_generator>
 	if (traits->equal_2_object()(p, src))
 	{
 		Vertex_const_handle vh = eh->source();
-		return make_object(vh);
+		return (CGAL::make_object(vh));
 	}
 	if (traits->equal_2_object()(p, trg))
 	{
 		Vertex_const_handle vh = eh->target();
-		return make_object(vh);
+		return (CGAL::make_object(vh));
 	}
 
 	//if p is in eh's x_range, then we need to check if it is above/below eh
@@ -578,7 +578,7 @@ Object Arr_landmarks_point_location<Arrangement, Arr_landmarks_generator>
 					<<", res = "<<res);
 		switch (res) { 
 			case EQUAL://p is on cv - found !
-				return make_object(eh);
+				return (CGAL::make_object(eh));
 			case LARGER:  //p is above cv
 				//orient e from left to right
 				if (traits->compare_x_2_object()(src,trg) == LARGER) 
@@ -679,13 +679,13 @@ Object Arr_landmarks_point_location<Arrangement, Arr_landmarks_generator>
 		{
 			LM_CLOCK_DEBUG( if (first_hit) number_of_hits++ );
 			Vertex_const_handle v = out_edge->target(); 
-			return make_object(v); //is it really the target?
+			return (CGAL::make_object(v)); //is it really the target?
 		}
 		else if (found_edge) 
 		{
 			LM_CLOCK_DEBUG( if (first_hit) number_of_hits++ );
 			Halfedge_const_handle h = out_edge; 
-			return make_object(h);
+			return (CGAL::make_object(h));
 		}
 		else if (p_in_face){
 			//check holes
@@ -705,13 +705,13 @@ Object Arr_landmarks_point_location<Arrangement, Arr_landmarks_generator>
 				if (found_vertex)
 				{
 					LM_CLOCK_DEBUG( if (first_hit) number_of_hits++ );
-					return make_object(out_edge->target()); 
+					return (CGAL::make_object(out_edge->target())); 
 					//is it really the target?
 				}
 				else if (found_edge) 
 				{
 					LM_CLOCK_DEBUG( if (first_hit) number_of_hits++ );
-					return make_object(out_edge);
+					return (CGAL::make_object(out_edge));
 				}
 				else if (p_in_hole) {
 					LM_CLOCK_DEBUG( first_hit = false );
@@ -732,7 +732,7 @@ Object Arr_landmarks_point_location<Arrangement, Arr_landmarks_generator>
 							(double) (find_edge_time_end - find_edge_time_start));
 						PRINT_ERROR( "ERROR 10:  intersection not found");
 						LM_DEBUG(getchar());
-						return make_object (p_arr->unbounded_face());
+						return (CGAL::make_object (p_arr->unbounded_face()));
 					}
 
 					hole_it = hole_end; //to get out of the loop
@@ -765,7 +765,7 @@ Object Arr_landmarks_point_location<Arrangement, Arr_landmarks_generator>
 				//e = p_arr->halfedges_end();
 				//lt = Planar_map::UNBOUNDED_FACE;
 				LM_CLOCK_DEBUG( if (first_hit) number_of_hits++ );
-				return make_object (p_arr->unbounded_face());
+				return (CGAL::make_object (p_arr->unbounded_face()));
 			}
 		}
 	}while (!p_in_face); 
@@ -777,12 +777,12 @@ Object Arr_landmarks_point_location<Arrangement, Arr_landmarks_generator>
 	{
 		PRINT_DEBUG("before return from walk from face. unbounded face.");
 		LM_CLOCK_DEBUG( if (first_hit) number_of_hits++ );
-		return make_object (p_arr->unbounded_face());
+		return (CGAL::make_object (p_arr->unbounded_face()));
 	}
 
 	PRINT_DEBUG("before return from walk from face. ");
 	LM_CLOCK_DEBUG( if (first_hit) number_of_hits++ );
-	return make_object (face);
+	return (CGAL::make_object (face));
 }
 
 //----------------------------------------------------

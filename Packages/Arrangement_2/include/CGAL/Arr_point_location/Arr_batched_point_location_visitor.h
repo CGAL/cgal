@@ -78,7 +78,7 @@ class Arr_batched_point_location_visitor : public Empty_visitor< Traits_ >
 
       if(event->has_right_curves())
       {
-        *m_out++ = std::make_pair(event->get_point(), make_object(he->target()));
+        *m_out++ = std::make_pair(event->get_point(), CGAL::make_object(he->target()));
         return true;
       }
       *m_out++ = std::make_pair(event->get_point(),make_object(he->source()));
@@ -89,7 +89,7 @@ class Arr_batched_point_location_visitor : public Empty_visitor< Traits_ >
     if(above == this ->status_line_end())
     {
       *m_out++ = std::make_pair(event->get_point(),
-                                make_object(m_arr.unbounded_face()));
+                                CGAL::make_object(m_arr.unbounded_face()));
       return true;
     }
 
@@ -104,7 +104,7 @@ class Arr_batched_point_location_visitor : public Empty_visitor< Traits_ >
     //FACE or UNBOUNDED_FACE
     Halfedge_const_handle he = (*above)->get_last_curve().get_halfedge_handle();
     *m_out++ = std::make_pair(event->get_point(),
-                                make_object(he->face()));
+                                CGAL::make_object(he->face()));
     return true;
   }
 

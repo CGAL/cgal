@@ -236,7 +236,7 @@ _vertical_ray_shoot (const Point_2& p,
       if (is_on_edge)
       {
         CGAL_assertion (is_vertical (closest_he->curve()));
-        return (make_object (closest_he));
+        return (CGAL::make_object (closest_he));
       }
 
       // Check if the point is contained in the interior of the current hole.
@@ -279,7 +279,7 @@ _vertical_ray_shoot (const Point_2& p,
           if (is_on_edge)
           {
             CGAL_assertion (is_vertical (closest_he->curve()));
-            return (make_object (closest_he));
+            return (CGAL::make_object (closest_he));
           }
           
           // If the point is not contained in the face, move to the neighboring
@@ -367,7 +367,7 @@ _vertical_ray_shoot (const Point_2& p,
   {
     // The first object we encounter when we shoot a vertical ray from p is
     // an isolated vertex:
-    return (make_object (closest_iso_v));
+    return (CGAL::make_object (closest_iso_v));
   }
 
   // If we reached here, closest_he is the closest edge from above (below)
@@ -384,11 +384,11 @@ _vertical_ray_shoot (const Point_2& p,
   {
     if (traits->compare_x_2_object() (closest_he->source()->point(), 
                                       p) == EQUAL)
-      return (make_object (closest_he->source()));
+      return (CGAL::make_object (closest_he->source()));
 
     if (traits->compare_x_2_object() (closest_he->target()->point(), 
                                       p) == EQUAL)
-      return (make_object (closest_he->target()));
+      return (CGAL::make_object (closest_he->target()));
   }
   else
   {
@@ -401,16 +401,16 @@ _vertical_ray_shoot (const Point_2& p,
     if ((shoot_up && is_directed_up) ||
         (! shoot_up && ! is_directed_up))
     {
-      return (make_object (closest_he->source()));
+      return (CGAL::make_object (closest_he->source()));
     }
     else
     {
-      return (make_object (closest_he->target()));
+      return (CGAL::make_object (closest_he->target()));
     }
   }
 
   // The interior of the edge is closest to the query point:
-  return (make_object (closest_he));
+  return (CGAL::make_object (closest_he));
 }
 
 //-----------------------------------------------------------------------------
