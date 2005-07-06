@@ -31,77 +31,54 @@
 
 CGAL_BEGIN_NAMESPACE
 
-//----------------------------------------
-// This class maps a curve to a halfedge
-// This should be changed to use the data traits.
-//----------------------------------------
+/*!
+ * \class
+ * Mapping of an x-monotone curve to the halfedge associated with it.
+ */
 template <class Arrangement_>
 class PL_X_curve_plus: public Arrangement_::Traits_2::X_monotone_curve_2
 {
+protected:
+
+  Halfedge_handle       parent;    // The halfedge associated with the curve.
+
 public:
+
   typedef Arrangement_                                  Arrangement_2;
   typedef typename Arrangement_2::Traits_2              Traits_2;
   typedef typename Arrangement_2::Halfedge_handle       Halfedge_handle;
   typedef typename Traits_2::X_monotone_curve_2         X_monotone_curve_2;
 
-  //default constructor
+  /*! Default constructor. */
   PL_X_curve_plus() : 
     X_monotone_curve_2(),
     parent() 
-    {
-    };
+  {}
 
-  //constructor with curve and halfedge
-  PL_X_curve_plus(const X_monotone_curve_2 &cv, const Halfedge_handle& p) : 
+  /*! Constructor from a curve and a halfedge. */
+  PL_X_curve_plus (const X_monotone_curve_2& cv,
+		   const Halfedge_handle& p) : 
     X_monotone_curve_2(cv), 
     parent(p) 
-    {
-    }
+  {}
 
-  //constrtuctore with halfedge only
+  /*! Constrtuctor from a halfedge only. */
   PL_X_curve_plus(const Halfedge_handle& p) : 
     X_monotone_curve_2(p->curve()),
     parent(p)
-    {
-    }
+  {}
 
-  //constructor used when no Halfedge_handle is supplied.
+  /*! Constrtuctor from a curve only. */
   PL_X_curve_plus(const X_monotone_curve_2 &cv) : 
     X_monotone_curve_2(cv),
     parent() 
-    {
-    };
+  {}
 
-  //copy constructor
-  PL_X_curve_plus(const PL_X_curve_plus &cv) : 
-    X_monotone_curve_2(cv),
-    parent(cv.parent)
-    {
-    }
-
-  //destructor
-  ~PL_X_curve_plus(){}
-  PL_X_curve_plus& operator=(const PL_X_curve_plus &cv)
-  {
-    // Workaround a bug in the Irix compiler
-#if ((SGI == _sgi) && (_COMPILER_VERSION <= 730))
-    static_cast<X_monotone_curve_2&>(*this) = cv;
-#else
-    X_monotone_curve_2::operator=(cv);
-#endif
-    parent=cv.get_parent();
-    return *this;
-  }
-
-  //get parent (i.e. halfedge) function
+  /*! Get the parent halfedge. */
   Halfedge_handle get_parent() const
   {
-    return parent;
+    return (parent);
   }
-
-protected:
-  //Data Memebers
-  Halfedge_handle parent;
 };
 
 
@@ -122,24 +99,24 @@ public:
   typedef typename Arrangement_2::Vertex_const_handle   Vertex_const_handle;
   typedef typename Arrangement_2::Halfedge_const_handle Halfedge_const_handle;
   typedef typename Arrangement_2::Face_const_handle     Face_const_handle;
-	typedef typename Arrangement_2::Vertex_handle		      Vertex_handle;
-	typedef typename Arrangement_2::Halfedge_handle		    Halfedge_handle;
-	typedef typename Arrangement_2::Face_handle			      Face_handle;
-  typedef typename Arrangement_2::Halfedge_iterator		  Halfedge_iterator;
+  typedef typename Arrangement_2::Vertex_handle		Vertex_handle;
+  typedef typename Arrangement_2::Halfedge_handle	Halfedge_handle;
+  typedef typename Arrangement_2::Face_handle		Face_handle;
+  typedef typename Arrangement_2::Halfedge_iterator	Halfedge_iterator;
 
   typedef typename Arrangement_2::Vertex_const_iterator Vertex_const_iterator;
   typedef typename Arrangement_2::Edge_const_iterator   Edge_const_iterator;
   typedef typename Arrangement_2::Holes_const_iterator  Holes_const_iterator;
   typedef typename Arrangement_2::Halfedge_const_iterator  
-    Halfedge_const_iterator;
+                                       Halfedge_const_iterator;
   typedef typename Arrangement_2::Halfedge_around_vertex_const_circulator 
-    Halfedge_around_vertex_const_circulator;
+                                       Halfedge_around_vertex_const_circulator;
   typedef typename Arrangement_2::Ccb_halfedge_const_circulator 
-    Ccb_halfedge_const_circulator;
+                                       Ccb_halfedge_const_circulator;
   typedef typename Arrangement_2::Ccb_halfedge_circulator 
-    Ccb_halfedge_circulator;
+                                       Ccb_halfedge_circulator;
   typedef typename Arrangement_2::Isolated_vertices_const_iterator
-    Isolated_vertices_const_iterator;
+                                       Isolated_vertices_const_iterator;
 
   typedef typename Traits_2::Point_2                      Point_2;
   typedef typename Traits_2::X_monotone_curve_2           X_monotone_curve_2;
@@ -156,23 +133,8 @@ public:
   typedef typename Halfedge_handle_container::iterator 
                                                     Halfedge_handle_iterator;
  
-  //typedef const Planar_map* const_Planar_map_ptr;
-  //typedef Pm_trapezoid_ric_point_location<Planar_map> Self;
-  //typedef const Self & const_Self_ref;
-  //typedef const Self * const_Self_ptr;
-  //typedef typename Planar_map::Traits Pm_traits;
-  //typedef typename Planar_map::Traits_wrap Pm_traits_wrap;
-  // SunPro gets confused (a bug) because of the two Td_traits in the same
-  // class scope. We add the CGAL namespace as a workaround.
-  //typedef Pm_bounding_box_base<Planar_map> Bounding_box;
-  //typedef typename Pm_traits::Point Point;
-  //typedef typename Pm_traits::X_curve X_curve;
-  //typedef typename Base::Token Token;
-
- 
 protected:
 
-  //typedef Arr_traits_basic_wrapper_2<Traits_2>  Traits_wrapper_2;
   typedef Trapezoidal_decomposition             TD;
 
   // Data members:
@@ -188,62 +150,6 @@ protected:
 
 
 public:
-
-/******************************************/ 
-  //void remove_edge(const Halfedge_handle_iterator& begin,
-  //                 const Halfedge_handle_iterator& end)
-  //{
-  //  std::vector<X_curve_plus> c;
-  //  Halfedge_handle_iterator it=begin;
-  //  while (it!=end) { c.push_back((*it)->curve());++it;}
-  //  td.remove(c.begin(),c.end());
-  //}
-  
-//  inline void update(const Halfedge_handle_iterator& begin,
-//                     const Halfedge_handle_iterator& end,
-//                     const Token& token)
-//    // Shuffle curves, remove them from the map and reinsert them afterwards.
-//  {
-//
-//#ifdef CGAL_PMBB_DEBUG
-//    std::cout << "\nPL::update called with traits = "; 
-//    traits->debug();
-//#endif
-//
-//    if (begin!=end)
-//    {
-//      Halfedge_handle_container c;
-//      Halfedge_handle_iterator it=begin;
-//      while (it!=end)
-//      {
-//        c.push_back(Halfedge_handle(*it));
-//        ++it;
-//      }
-//      remove_edge(begin,end);
-//      Halfedge_handle_iterator cend=c.end();
-//      it=c.begin();
-//      token.rebuild_bounding_box(this);
-//
-//      while(it!=cend)
-//      {
-//        insert(*it,(*it)->curve());
-//        ++it;
-//      }
-//    }
-//    else
-//    {
-//      token.rebuild_bounding_box(this);
-//    }
-//#ifdef CGAL_PMBB_DEBUG
-//    std::cout << "\nPL::update exited with traits = "; 
-//    traits->debug();
-//#endif
-//  }  
-
-//private:
-//  const_Planar_map_ptr pm;
-//  const_Td_traits_ptr traits;
-/*********************************************/
 
   /*! Default constructor. */
   Arr_trapezoid_ric_point_location (bool rebuild = true) : 
@@ -323,8 +229,9 @@ public:
     return (_vertical_ray_shoot (p, false));
   }
 
-   //Observer functions that are relevant to overload
-   //-------------------------------------------------
+  /// \name Notification functions, inherited and overloaded from the
+  //        base observer.
+  //@{
 
   virtual void before_assign (const Arrangement_2& arr)
   {
@@ -383,7 +290,6 @@ public:
   virtual void after_split_edge (Halfedge_handle e1,
                                  Halfedge_handle e2)
   {
-    //td.split_edge(X_curve_plus(cv),X_curve_plus(cv1,e1),X_curve_plus(cv2,e2));
     td.split_edge(X_curve_plus(m_curve_before_split),
                   X_curve_plus(e1),
                   X_curve_plus(e2));
@@ -409,50 +315,10 @@ public:
     //called before combinatoric deletion
     td.remove(X_curve_plus(e));
   }
-
-  //functions that are not implemented:
-  //----------------------------------
-  //virtual void before_global_change () {}
-  //virtual void after_global_change () {}
-  //virtual void before_create_vertex (const Point_2& /* p */) {}
-  //virtual void after_create_vertex (Vertex_handle /* v */) {}
-  //virtual void before_create_edge (const X_monotone_curve_2& /* c */,
-  //      Vertex_handle /* v1 */, Vertex_handle /* v2 */) {}
-  //virtual void before_modify_vertex (Vertex_handle /* v */,
-	//			     const Point_2& /* p */) {}
-  //virtual void after_modify_vertex (Vertex_handle /* v */) {}
-  //virtual void before_modify_edge (Halfedge_handle /* e */,
-  //      const X_monotone_curve_2& /* c */) {}
-  //virtual void after_modify_edge (Halfedge_handle /* e */)  {}
-  //virtual void before_split_face (Face_handle /* f */,
-  //      Halfedge_handle /* e */) {}
-  //virtual void after_split_face (Face_handle /* f */,
-  //      Face_handle /* new_f */, bool /* is_hole */) {}
-  //virtual void before_add_hole (Face_handle /* f */,
-  //      Halfedge_handle /* e */) {}
-  //virtual void after_add_hole (Ccb_halfedge_circulator /* h */) {}
-  //virtual void before_add_isolated_vertex (Face_handle /* f */,
-  //      Vertex_handle /* v */) {}
-  //virtual void after_add_isolated_vertex (Vertex_handle /* v */) {}
-  //virtual void before_merge_face (Face_handle /* f1 */, 
-  //      Face_handle /* f2 */,Halfedge_handle /* e */) {}
-  //virtual void after_merge_face (Face_handle /* f */) {}
-  //virtual void before_move_hole (Face_handle /* from_f */,
-  //      Face_handle /* to_f */,Ccb_halfedge_circulator /* h */) {}
-  //virtual void after_move_hole (Ccb_halfedge_circulator /* h */) {}
-  //virtual void before_move_isolated_vertex (Face_handle /* from_f */,
-	//	    Face_handle /* to_f */, Vertex_handle /* v */) {}
-  //virtual void after_move_isolated_vertex (Vertex_handle /* v */) {}
-  //virtual void before_remove_vertex (Vertex_handle /* v */) {}
-  //virtual void after_remove_vertex () {}
-  //virtual void before_remove_hole (Face_handle /* f */,
-	// 	   Ccb_halfedge_circulator /* h */) {}
-  //virtual void after_remove_hole (Face_handle /* f */) {}
-  //virtual void after_remove_edge () {}
-  //virtual void after_detach () {}
-
+  //@}
 
 public:
+
 #ifdef CGAL_TD_DEBUG
   void debug()
   {
@@ -462,38 +328,32 @@ public:
 
 protected:
 
-  //clear and build functions (instead of clear/update functions)
+  /*! Clear the trapezoidal decomposition. */
   inline void clear_trapezoid_ric ()
   { 
     td.clear();
   }
 
-  inline void build_trapezoid_ric(bool to_shuffle = true)
+  /*! Construct the trapezoidal decomposition. */
+  void build_trapezoid_ric (bool to_shuffle = true)
   {
-    //std::cout << "build_trapezoid_ric" <<std::endl;
-
     td.clear();
 
     Halfedge_handle_container c; 
     Halfedge_const_iterator hit;
 
-    for (hit = p_arr->halfedges_begin(); hit != p_arr->halfedges_end(); hit++)
-    { 
+    for (hit = p_arr->halfedges_begin(); hit != p_arr->halfedges_end(); ++hit)
       c.push_back(hit);
-      //hh = hit;
-      //he = (const_cast<Arrangement_2 *>(p_arr))->non_const_handle(hh);
-      //td.insert(X_curve_plus(he));
-    }
 
-    //random shuffle of the halfedges
+    // Random shuffle of the halfedges.
     if (to_shuffle)
     {
       std::random_shuffle (c.begin (), c.end ());
     }
 
     Halfedge_handle_iterator cit;
-    Halfedge_const_handle hh;
-    Halfedge_handle he;
+    Halfedge_const_handle    hh;
+    Halfedge_handle          he;
 
     for (cit = c.begin(); cit < c.end(); cit++)
     {
