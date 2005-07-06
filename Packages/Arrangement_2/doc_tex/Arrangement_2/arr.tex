@@ -70,7 +70,7 @@ is not necessarily a single face --- it may have no area, or
 alternatively it may consist of several connected faces.  Every
 face can have several holes contained in its interior (or there
 may be no holes). In addition, every face may contain isolated
-vertices in its interior. See Figure~\ref{arr_sec:seg_dcel} for an
+vertices in its interior. See Figure~\ref{arr_fig:seg_dcel} for an
 illustration of the various \dcel\ features.
 
 \begin{figure}[t]
@@ -79,7 +79,6 @@ illustration of the various \dcel\ features.
 \input{Arrangement_2/arr_segs.pstex_t}
 \end{center}
 \end{ccTexOnly}
-
 \caption{An arrangement of interior-disjoint line segment, which
 consists of a single connected component inside the unbounded face
 $\tilde{f}$, with some of the \dcel\ records that represent it.
@@ -92,8 +91,7 @@ structure as it contains two holes in its interior: One hole
 consists of two adjacent faces $f_3$ and $f_4$, while the other
 hole is comprised of two edges. $f_1$ also contains two isolated
 vertices $u_1$ and $u_2$ in its interior.}
-\label{arr_sec:seg_dcel}
-
+\label{arr_fig:seg_dcel}
 %\begin{ccHtmlOnly}
 %<P>
 %<center>
@@ -237,6 +235,7 @@ void print_neighboring_vertices (Vertex_const_handle v)
     u = curr->source();
     std::cout << " (" << u->point() << ")";
 
+    ++curr;
   \} while (curr != first);
   std::cout << std::endl;
 
@@ -292,13 +291,14 @@ void print_ccb (Ccb_halfedge_const_circulator circ)
   Ccb_halfedge_const_circulator  curr = circ;
   Halfedge_const_handle          he;
 
-  std::cout << "(" << curr->source()->point() << ")"
+  std::cout << "(" << curr->source()->point() << ")";
   do
   \{
     he = curr->handle();
     std::cout << "   [" << he->curve() << "]   "
               << "(" << he->target()->point() << ")";
 
+    ++curr;
   \} while (curr != circ);
   std::cout << std::endl;
 
@@ -348,14 +348,14 @@ introduced in the previous subsection:
 void print_face (Face_const_handle f)
 \{
   // Print the outer boundary.
-  if (f.is_unbounded())
+  if (f->is_unbounded())
   \{
     std::cout << "Unbounded face. " << std::endl;
   \}
   else
   \{
     std::cout << "Outer boundary: ";
-    print_ccb (f.outer_ccb());
+    print_ccb (f->outer_ccb());
   \}
 
   // Print the boundary of each of the holes.
@@ -431,6 +431,239 @@ void print_arrangement (const Arrangement_2& arr)
   return;
 \}
 \end{alltt}
+
+\subsection{Modifying the Arrangement}
+\label{arr_ssec:modify}
+%-------------------------------------
+
+\subsubsection{Inserting Non-Intersecting Curves}
+\label{arr_sssec:mf_insert_cv}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Alongside with the traversal methods, the arrangement class also
+supports several methods that modify the arrangement, the most
+important ones being the specialized insertion functions of
+$x$-monotone curves whose interior is disjoint from any other
+curve in the existing arrangement and does not contain any vertex
+of the arrangement. We will also assume that the location of the
+curve in the arrangement is known.
+
+The reason for these rather harsh restrictions on the nature of
+the inserted curves is the decoupling of the topological
+arrangement representation from the various algorithms that
+operate on it. While the insertion of an $x$-monotone curve whose
+interior is disjoint from all existing arrangement features is
+quite straightforward (as we see next), inserting curves that
+intersect with the arrangement is much more complicated and
+requires the application of non-trivial algorithms. These insertion
+operations are therefore implemented as global functions that
+operate on the arrangement and the inserted curve(s) --- see
+Section~\ref{arr_sec:gl_funs} for more details and ample examples.
+
+
+\begin{figure}[t]
+\begin{ccTexOnly}
+\begin{center}
+    \begin{tabular}{ccc}
+        \input{Arrangement_2/insert_in_face.pstex_t} &
+        \input{Arrangement_2/insert_from_vertex.pstex_t} &
+        \input{Arrangement_2/insert_at_vertices.pstex_t} \\
+    {\small (a)} & {\small (b)} & {\small (c)}\\
+    \end{tabular}
+\end{center}
+\end{ccTexOnly}
+\caption{The various specialized insertion
+procedures. The inserted $x$-monotone curve is drawn with a light
+dashed line, surrounded by two solid arrows that represent the
+pair of twin half-edges added to the \dcel. Existing vertices are
+shown as black dots while new vertices are shown as light dots.
+Existing half-edges that are affected by the insertion operations
+are drawn as dashed arrows. (a) Inserting a curve as a new hole
+inside the face $f$. (b) Inserting a curve from an existing
+vertex $u$ that corresponds to one of its endpoints. (c) Inserting
+a whose endpoints are already represented by the vertices
+$u_1$ and $u_2$. In our case, the new pair of half-edges close a
+new face $f'$, where the hole $h_1$, which used to belong to $f$,
+now becomes an enclave in this new face.}
+\label{arr_fig:insert}
+%\begin{ccHtmlOnly}
+%<P>
+%<center>
+%  <img src="insert_funcs.gif"  border=0 alt="The various specialized insertion procedures.">
+%</center>
+%\end{ccHtmlOnly}
+\end{figure}
+
+It is not difficult to see that when we insert an $x$-monotone curve
+into an existing arrangement, such that the interior of this curve is
+disjoint from any arrangement feature, only the following three
+scenarios are possible, depending on the status of the endpoints
+of the inserted subcurve:
+\begin{enumerate}
+
+\item In case both curve endpoints do not correspond to any existing 
+arrangement vertex we use we have to create two new vertices
+corresponding to the curve endpoints and connect them using a pair of
+twin halfedges. This halfedge pair initiates a new hole inside the
+face that contains the curve in its interior.
+
+\item If exactly one endpoint corresponds to an existing arrangement
+vertex (we distinguish between a vertex that corresponds to the left
+endpoint of the inserted curve and a vertex corresponding to its right
+endpoint), we have to create a new vertex that corresponds to the other
+endpoint of the curve and to connect the two vertices by a pair of
+twin halfedges that form an ``antenna'' emanating from the boundary
+of an existing connected component (note that if the existing vertex
+used to be isolated, this operation is actually equivalent to forming
+a new hole inside the face that contains this vertex).
+
+\item Otherwise, if both endpoints correspond to existing arrangement
+vertices we connect these vertices using a pair of twin halfedges.
+Let us assume the two vertices are not isolated (otherwise the
+operation is equivalent to one of the two previous cases). The two
+following cases may occur:
+\begin{itemize}
+\item Two disconnected components are merged into a single connected
+component.
+
+\item A new face is created --- actually, it is split from an existing
+arrangement face. In this case we also have to examine the holes and
+isolated vertices in the existing face and move the relevant ones
+inside the new face.
+\end{itemize}
+\end{enumerate}
+
+The \ccc{Arrangement_2} class offers insertion functions named
+\ccc{insert_in_face_interior()}, \ccc{insert_from_left_vertex()},
+\ccc{insert_from_right_vertex()} and \ccc{insert_at_vertices()} that
+perform the special insertion procedures listed above. The first
+function accepts an $x$-monotone curve and an arrangement face that
+contains this curve in its interior, while the other function accept
+an $x$-monotone and handles to the existing vertices that correspond
+to the curve endpoints. Each of the four functions return a handle to
+one of the twin halfedges that have been created, where:
+\begin{itemize}
+\item \ccc{insert_in_face_interior(cv, f)} returns a halfedge directed
+from the vertex corresponding to the left endpoint of \ccc{cv} toward
+the vertex corresponding to its right endpoint.
+
+\item \ccc{insert_from_left_vertex(cv, v)} and
+\ccc{insert_from_right_vertex(cv, v)} return a halfedge whose source
+is the vertex $v$ that and whose target is the new vertex that has just
+been created.
+
+\item \ccc{insert_at_vertices(cv, v1, v2)} returns a halfedge directed
+from $v_1$ to $v_2$.
+\end{itemize}
+
+\begin{figure}[t]
+\begin{ccTexOnly}
+\begin{center}
+\input{Arrangement_2/ex_1.pstex_t}
+\end{center}
+\end{ccTexOnly}
+\caption{The arrangement of the line segments $s_1, \ldots, s_5$ constructed in \ccc{example1.C}. The arrows mark the direction of the halfedges returned from the various insertion functions.}
+\label{arr_fig:ex_1}
+%\begin{ccHtmlOnly}
+%<P>
+%<center>
+%  <img src="ex_1.gif"  border=0 alt="The segment arrangement constructed in \ccc{example1.C}.">
+%</center>
+%\end{ccHtmlOnly}
+\end{figure}
+
+The following program demonstrates the usage of the four insertion
+functions. It creates an arrangement of five line segments, as depicted
+in Figure~\ref{arr_fig:ex_1}. As the arrangment is very simple, we use
+the simple cartesian kernel of \cgal\ with integer coordinates for the
+segment endpoints. We used the built-in \ccc{Arr_segment_traits_2} class
+that enables the efficient maintenance of arrangements of line segments
+--- see more details on this traits class in Section~\ref{arr_sec:traits}:
+
+\ccIncludeExampleCode{../examples/Arrangement_2/example1.C}
+
+Note that the first line segment is inserted in the interior of the
+unbounded face, while for the insertion of the rest of the line segments
+are inserted using the vertices created by the insertion of previous
+segments. The resulting arrangement consists of three faces, while the
+two bounded faces form together a hole in the unbounded face.
+
+\subsubsection{Manipulating Isolated Vertices}
+\label{arr_sssec:mf_iso_verts}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Isolated points are in general simpler geomteric entities than curves
+and indeed the member functions that manipulate them are easier to
+understand.
+
+The function \ccc{insert_isolated_vertex(p, f)} inserts an isolated point
+$p$ located in the interior of a given face $f$ into the arrangement and
+returns a handle to the arrangement vertex associated with $p$. Naturally,
+the precondition that $p$ is really an isolated point, namely it does not
+coincide with any existing arrangement vertex and does not lie on any
+edge.
+
+As we have already mentioned in Section~\ref{arr_ssec:traverse}, it is
+possible to obtain the face surrounding an isolated vertex by calling
+\ccc{incident_face(v)} (with the precondition that $v$ is an isolated
+vertex --- other vertices may not necessarily have a unique incident face).
+
+The function \ccc{remove_isolated_vertex(v)} receives a handle to an
+isolated vertex and removes it from the arrangement.
+
+\begin{figure}[t]
+\begin{ccTexOnly}
+\begin{center}
+\input{Arrangement_2/ex_2.pstex_t}
+\end{center}
+\end{ccTexOnly}
+\caption{An arrangement of line segments containing three isolated vertices, as constructed in \ccc{example2.C}. The vertices $u_2$ and $u_3$ are eventually deleted from the arrangement.}
+\label{arr_fig:ex_2}
+%\begin{ccHtmlOnly}
+%<P>
+%<center>
+%  <img src="ex_2.gif"  border=0 alt="The segment arrangement constructed in \ccc{example2.C}.">
+%</center>
+%\end{ccHtmlOnly}
+\end{figure}
+
+The following program demonstrates the usage of the arrangement
+member-functions for manipulating isolated vertices. It first
+inserts three isolated vertices inside the unbounded face, then
+inserts four line segments that form a rectangular hole inside
+the unbounded face (see Figure~\ref{arr_fig:ex_2} for an 
+illustration). It finally goes over the vertices and removes
+those isolated vertices that are still contained in the unbounded
+face ($u_2$ and $u_3$ in this case):
+
+\ccIncludeExampleCode{../examples/Arrangement_2/example2.C}
+
+\subsubsection{Manipulating Halfedges}
+\label{arr_sssec:mf_halfedges}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+In the previous subsection we showed how to introduce new isolated
+vertices in the arrangement. But how do we create a vertex that lies
+on an existing arrangement edge (more precisely, on an $x$-monotone
+curve that is associated with an arrangement edge)?
+
+It should be noted that such an operation involves the splitting
+of a curve at a given point in its interior, while the traits class
+used by \ccc{Arrangement_2} does not necessarily have the ability
+to perform such a split operation. However, if users know how to
+split an $x$-monotone curve into two as a given point $p$, they
+can use the \ccc{split_edge(e, p, c1, c2)} function, were $c_1$ and
+$c_2$ are the two subcurves resulting for splitting the $x$-monotone
+curve associated with the halfedge $e$ at a point $p$ in its interior.
+The function splits the halfegde pair into two pairs, both incident
+to a new vertex $v$ associated with $p$, and returns a handle to a
+halfedge whose source equals $e$'s source vertex and whose target is
+the new vertex $v$.
+
+
+\section{Global Arrangement Functions}
+\label{arr_sec:gl_funs}
+%=====================================
 
 \section{Traits Classes}
 \label{arr_sec:traits}
