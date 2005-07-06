@@ -39,7 +39,6 @@ namespace CGALi {
 
   public: // fixme ?
     typedef typename CGAL::Simple_cartesian<Root_of_2>::Point_2
-    // typedef typename CGAL::Cartesian<Root_of_2>::Point_2
                                                  Numeric_point_2;
 
 #if 0
@@ -61,7 +60,7 @@ namespace CGALi {
     Numeric_point_2
     intersect(const Circle_2 & c1, const Circle_2 & c2, const bool b)
     {
-      typedef std::vector< std::pair<Numeric_point_2, int> > 
+      typedef std::vector< std::pair<Circular_arc_endpoint_2, int> >
 	solutions_container;
       solutions_container solutions;
       CGAL::construct_intersections_2<CK>
@@ -71,13 +70,13 @@ namespace CGALi {
       assert( it != solutions.end() ); // the circles intersect
 
       if ( it->second == 2 ) // double solution
-	  return it->first;
+	  return it->first._p;
 
       if (b) 
-	return it->first;
+	return it->first._p;
 
       ++it;
-      return it->first;
+      return it->first._p;
 
  //       FT dx = c2.center().x() - c1.center().x();
 //       FT dy = c2.center().y() - c1.center().y();
@@ -132,6 +131,10 @@ namespace CGALi {
     Circular_arc_endpoint_2(const Circle_2 & c1, const Circle_2 & c2, 
 			    const bool b)
       : _c0(c1), _c1(c2), _b(b), _p(intersect(c1, c2, b)) {}
+
+    Circular_arc_endpoint_2(const Circle_2 & c1, const Circle_2 & c2,
+			    const bool b, const Numeric_point_2 & np)
+      : _c0(c1), _c1(c2), _b(b), _p(np){}
 
     const Root_of_2 & x() const { return _p.x(); }
     const Root_of_2 & y() const { return _p.y(); }
