@@ -4,9 +4,9 @@
 //#include "short_names.h"
 
 #include <CGAL/Cartesian.h>
-#include <CGAL/Gmpq.h>
-//#include <CGAL/MP_Float.h>
-//#include <CGAL/Quotient.h>
+//#include <CGAL/Gmpq.h>
+#include <CGAL/MP_Float.h>
+#include <CGAL/Quotient.h>
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Arr_naive_point_location.h>
@@ -16,8 +16,8 @@
 #include <fstream>
 
 //typedef double                                        Number_type;
-typedef CGAL::Gmpq                                    Number_type;
-//typedef CGAL::Quotient<CGAL::MP_Float>                Number_type;
+//typedef CGAL::Gmpq                                    Number_type;
+typedef CGAL::Quotient<CGAL::MP_Float>                Number_type;
 
 typedef CGAL::Cartesian<Number_type>                  Kernel;
 typedef CGAL::Arr_segment_traits_2<Kernel>            Traits_2;

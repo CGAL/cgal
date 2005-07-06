@@ -1,112 +1,62 @@
 // file: examples/Arrangement_2/example2.C
 
-
-//#include "short_names.h"
-
-#include <CGAL/Cartesian.h>
-#include <CGAL/Quotient.h>
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arrangement_2.h>
-#include <CGAL/Arr_naive_point_location.h>
-#include <CGAL/Arr_observer.h>
 
-typedef CGAL::Quotient<int>                           Number_type;
-typedef CGAL::Cartesian<Number_type>                  Kernel;
+#include "arr_print.h"
+
+typedef int                                           Number_type;
+typedef CGAL::Simple_cartesian<Number_type>           Kernel;
 typedef CGAL::Arr_segment_traits_2<Kernel>            Traits_2;
 typedef Traits_2::Point_2                             Point_2;
 typedef Traits_2::X_monotone_curve_2                  Segment_2;
 typedef CGAL::Arrangement_2<Traits_2>                 Arrangement_2;
-typedef CGAL::Arr_naive_point_location<Arrangement_2> Point_location;
-
-class My_observer : public CGAL::Arr_observer<Arrangement_2>
-{
-public:
-
-  My_observer (Arrangement_2& arr) :
-    CGAL::Arr_observer<Arrangement_2> (arr)
-  {}
-
-  virtual void before_merge_face (Face_handle,
-                                  Face_handle,
-                                  Halfedge_handle e)
-  {
-    std::cout << "-> The removal of :  [ " << e->curve()
-	      << " ]  causes two faces to merge." << std::endl;
-  }
-
-  virtual void before_merge_edge (Halfedge_handle e1,
-                                  Halfedge_handle e2,
-                                  const X_monotone_curve_2& c)
-  {
-    std::cout << "-> Merging  [ " << e1->curve()
-	      << " ]  and  [ " << e2->curve()
-	      << " ]  to form  [ " << c << " ]  ." << std::endl;
-  }
-};
+typedef Arrangement_2::Vertex_handle                  Vertex_handle;
+typedef Arrangement_2::Halfedge_handle                Halfedge_handle;
+typedef Arrangement_2::Face_handle                    Face_handle;
 
 int main ()
 {
-  // Construct the arrangement containing one diamond-shaped face.
-  Arrangement_2  arr;
-  My_observer    obs (arr);
-  Point_location pl (arr);
+  Arrangement_2   arr;
 
-  Segment_2      cv1 (Point_2(-1, 0), Point_2(0, 1));
-  Segment_2      cv2 (Point_2(0, 1), Point_2(1, 0));
-  Segment_2      cv3 (Point_2(1, 0), Point_2(0, -1));
-  Segment_2      cv4 (Point_2(0, -1), Point_2(-1, 0));
+  // Insert some isolated points:
+  Face_handle     uf = arr.unbounded_face();
+  Vertex_handle   u1 = arr.insert_isolated_vertex (Point_2 (3, 3), uf);
+  Vertex_handle   u2 = arr.insert_isolated_vertex (Point_2 (1, 5), uf);
+  Vertex_handle   u3 = arr.insert_isolated_vertex (Point_2 (5, 5), uf);
 
-  insert_non_intersecting (arr, pl, cv1);
-  insert_non_intersecting (arr, pl, cv2);
-  insert_non_intersecting (arr, pl, cv3);
-  insert_non_intersecting (arr, pl, cv4);
+  // Insert four segments that form a rectangular face:
+  Segment_2       s1 (Point_2 (1, 3), Point_2 (3, 5));
+  Segment_2       s2 (Point_2 (3, 5), Point_2 (5, 3));
+  Segment_2       s3 (Point_2 (5, 3), Point_2 (3, 1));
+  Segment_2       s4 (Point_2 (3, 1), Point_2 (1, 3));
 
-  std::cout << "V = " << arr.number_of_vertices()
-	    << ",  E = " << arr.number_of_edges() 
-	    << ",  F = " << arr.number_of_faces() << std::endl;
+  Halfedge_handle e1 = arr.insert_in_face_interior (s1, uf);
+  Vertex_handle   v1 = e1->source();
+  Vertex_handle   v2 = e1->target();
+  Halfedge_handle e2 = arr.insert_from_left_vertex (s2, v2);
+  Vertex_handle   v3 = e2->target();
+  Halfedge_handle e3 = arr.insert_from_right_vertex (s3, v3);
+  Vertex_handle   v4 = e3->target();
+  Halfedge_handle e4 = arr.insert_at_vertices (s4, v4, v1);
 
-  // Insert a vertical segment dividing the diamond into two:
-  Segment_2      cv_vert (Point_2(0, -1), Point_2(0, 1));
-  Arrangement_2::Halfedge_handle
-                 he_vert = insert_non_intersecting (arr, pl, cv_vert);
+  // Remove the isolated vertices located in the unbounded face.
+  Arrangement_2::Vertex_iterator        curr_v, next_v;
 
-  std::cout << "V = " << arr.number_of_vertices()
-	    << ",  E = " << arr.number_of_edges() 
-	    << ",  F = " << arr.number_of_faces() << std::endl;
-
-  // Insert a horizontal segment dividing the diamond into four:
-  Segment_2      cv_horiz (Point_2(-1, 0), Point_2(1, 0));
-
-  insert (arr, pl, cv_horiz);
-
-  std::cout << "V = " << arr.number_of_vertices()
-	    << ",  E = " << arr.number_of_edges() 
-	    << ",  F = " << arr.number_of_faces() << std::endl;
-
-  // Now remove a portion of the vertical segment.
-  remove_edge (arr, he_vert);
- 
-  std::cout << "V = " << arr.number_of_vertices()
-	    << ",  E = " << arr.number_of_edges() 
-	    << ",  F = " << arr.number_of_faces() << std::endl;
-
-  // Remove the other vertical segment.
-  Arrangement_2::Edge_iterator    eit;
-  Arrangement_2::Traits_2         traits;
-
-  for (eit = arr.edges_begin(); eit != arr.edges_end(); eit++)
+  for (curr_v = arr.vertices_begin();
+       curr_v != arr.vertices_end(); curr_v = next_v)
   {
-    if (traits.is_vertical_2_object() (eit->curve()))
-    {
-      remove_edge (arr, eit->handle());
+    // Store an iterator to the next vertex (as we may delete curr_v and
+    // invalidate the iterator).
+    next_v = curr_v;
+    ++next_v;
 
-      std::cout << "V = " << arr.number_of_vertices()
-		<< ",  E = " << arr.number_of_edges() 
-		<< ",  F = " << arr.number_of_faces() << std::endl;
-      break;
-    }
+    if (curr_v->is_isolated() && arr.incident_face(curr_v) == uf)
+      arr.remove_isolated_vertex (curr_v);      
   }
 
+  print_arrangement (arr);
   return (0);
 }
 
