@@ -13,7 +13,6 @@
 
 #ifndef CGAL_CIRCULAR_ARC_ENDPOINT_2_H
 #define CGAL_CIRCULAR_ARC_ENDPOINT_2_H
-
 namespace CGAL {
 
 template < typename CurvedKernel >
@@ -24,7 +23,11 @@ class Circular_arc_endpoint_2
                                            RCircular_arc_endpoint_2;
   typedef typename CurvedKernel::Circle_2                  Circle_2;
 
+  typedef typename CurvedKernel::Root_of_2               Root_of_2;
+
 public:
+ typedef typename CGAL::Simple_cartesian<Root_of_2>::Point_2
+                                                 Numeric_point_2;
   typedef CurvedKernel   R; 
   
   Circular_arc_endpoint_2() {}
@@ -32,6 +35,10 @@ public:
   Circular_arc_endpoint_2(const Circle_2 & c, const Circle_2 & c1, 
 			  const bool b)
     : RCircular_arc_endpoint_2(c, c1, b) {}
+
+  Circular_arc_endpoint_2(const Circle_2 & c, const Circle_2 & c1,
+  			  const bool b, const Numeric_point_2 & np)
+    : RCircular_arc_endpoint_2(c, c1, b, np){}
 };
 
 template < typename CurvedKernel >
