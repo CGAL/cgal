@@ -11,17 +11,67 @@
 \label{arr_sec:intro}
 % ===================
 
-Given a set $\C$ of planar curves, their {\em arrangement} $\A(\C)$ is the subdivision they induce on the plane into zero-dimensional, one-dimensional and two-dimensional cells, called {\em vertices}, {\em edges} and {\em faces}, respectively. 
+Given a set $\C$ of planar curves, their {\em arrangement}
+$\A(\C)$ is the subdivision they induce on the plane into
+zero-dimensional, one-dimensional and two-dimensional cells,
+called {\em vertices}, {\em edges} and {\em faces}, respectively.
 
-As the curves in $\C$ can intersect and are not necessarily $x$-monotone, we construct a collection $\C''$ in two steps. We first decompose each curve in $\C$ into maximal $x$-monotone curves (and possible isolated points), thus obtaining the collection $\C'$. Then we decompose each curve in $\C'$ into maximal connected pieces not intersecting any other curve (or point) in $\C'$. This way we obtain the collection $\C''$ of $x$-monotone subcurves that pairwise disjoint in their interiors. This collection may also contain isolated points, if the curves of $\C$ contain such points. The collection $\C''$ can be conviniently embedded as a planar graph, whose vertices are associated with curve endpoints or with isolated points and whose edges are associated with subcurves. This graph can repesented using a {\em doubly-connected edge list} data-structure (\dcel\ for short), which consists of containers of vertices, edges and faces and maintains the incidence relations among these objects.
+As the curves in $\C$ can intersect and are not necessarily
+$x$-monotone, we construct a collection $\C''$ in two steps. We
+first decompose each curve in $\C$ into maximal $x$-monotone
+curves (and possible isolated points), thus obtaining the
+collection $\C'$. Then we decompose each curve in $\C'$ into
+maximal connected pieces not intersecting any other curve (or
+point) in $\C'$. This way we obtain the collection $\C''$ of
+$x$-monotone subcurves that pairwise disjoint in their interiors.
+This collection may also contain isolated points, if the curves of
+$\C$ contain such points. The collection $\C''$ can be
+conveniently embedded as a planar graph, whose vertices are
+associated with curve endpoints or with isolated points and whose
+edges are associated with subcurves. This graph can represented
+using a {\em doubly-connected edge list} data-structure (\dcel\
+for short), which consists of containers of vertices, edges and
+faces and maintains the incidence relations among these objects.
 
-The main idea behind the \dcel\ data-structure is to represent each edge using a pair of directed {\em halfedges}, one going from the (lexicographically) left endpoint of the curve to its right endpoint, and the other --- known as its {\em twin} halfedge --- going in the opposite direction. Halfedges are used to separate faces and to connect vertices (with the exception of {\em isolated vertices}, which are not connected).
+The main idea behind the \dcel\ data-structure is to represent
+each edge using a pair of directed {\em halfedges}, one going from
+the (lexicographically) left endpoint of the curve to its right
+endpoint, and the other --- known as its {\em twin} halfedge ---
+going in the opposite direction. Halfedges are used to separate
+faces and to connect vertices (with the exception of {\em isolated
+vertices}, which are not connected).
 
-If a vertex $v$ is the target of a halfedge $e$, we say that $v$ and $e$ are {\em incident} to each other. The halfedges incident to a vertex $v$ form a circular list oriented in a clockwise order around this vertex (we assume $v$ is not an isolated vertex, as isolated vertices have no incident halfedges).
+If a vertex $v$ is the target of a halfedge $e$, we say that $v$
+and $e$ are {\em incident} to each other. The halfedges incident
+to a vertex $v$ form a circular list oriented in a clockwise order
+around this vertex (we assume $v$ is not an isolated vertex, as
+isolated vertices have no incident halfedges).
 
-Each halfedge $e$ stores a pointer to its {\it incident face}, which is the face lying to its left. Moreover, every halfedge is followed by another halfedge sharing the same incident face, such that the target vertex of the halfedge is the same as the source vertex of the next halfedge. The halfedges are therefore connected in circular lists and form chains, such that all edges of a chain are incident to the same face and wind along its boundary. We call such chains a {\em connected component of the boundary} (or {\em CCB} for short).
+Each halfedge $e$ stores a pointer to its {\it incident face},
+which is the face lying to its left. Moreover, every halfedge is
+followed by another halfedge sharing the same incident face, such
+that the target vertex of the halfedge is the same as the source
+vertex of the next halfedge. The halfedges are therefore connected
+in circular lists and form chains, such that all edges of a chain
+are incident to the same face and wind along its boundary. We call
+such chains a {\em connected component of the boundary} (or {\em
+CCB} for short).
 
-A bounded face has a unique CCB of halfedges winding is a counterclockwise orientation along its boundary, that is defined to be its {\em outer CCB}, while the unbounded face does not have an outer boundary (as the arrangement module supports only bounded curves, we always have exactly one unbounded face in the arrangement). Any other connected component of the boundary of the face is called a {\em hole} (or {\em inner CCB}), and can be represented as a circular chain of halfedges winding in a clockwise orientation around its outer boundary. Note that a hole is not necessarily a single face --- it may have no area, or alternatively it may consist of several connected faces.  Every face can have several holes contained in its interior (or there may be no holes). In addition, every face may contain isolated vertices in its interior. See Fgiure~\ref{arr_sec:seg_dcel} for an illustration of the various \dcel\ features. 
+A bounded face has a unique CCB of halfedges winding is a
+counterclockwise orientation along its boundary, that is defined
+to be its {\em outer CCB}, while the unbounded face does not have
+an outer boundary (as the arrangement module supports only bounded
+curves, we always have exactly one unbounded face in the
+arrangement). Any other connected component of the boundary of the
+face is called a {\em hole} (or {\em inner CCB}), and can be
+represented as a circular chain of halfedges winding in a
+clockwise orientation around its outer boundary. Note that a hole
+is not necessarily a single face --- it may have no area, or
+alternatively it may consist of several connected faces.  Every
+face can have several holes contained in its interior (or there
+may be no holes). In addition, every face may contain isolated
+vertices in its interior. See Figure~\ref{arr_sec:seg_dcel} for an
+illustration of the various \dcel\ features.
 
 \begin{figure}[t]
 \begin{ccTexOnly}
@@ -30,7 +80,18 @@ A bounded face has a unique CCB of halfedges winding is a counterclockwise orien
 \end{center}
 \end{ccTexOnly}
 
-\caption{An arrangement of interior-disjoint line segment, which consists of a single connected component inside the unbounded face $\tilde{f}$, with some of the \dcel\ records that represent it. The half-edge $e$ (and its twin $e'$) correspond to a line segment that connects the vertices $v_1$ and $v_2$ and separates the face $f_1$ from $f_2$. The predecessor $e_{\rm prev}$ and successor $e_{\rm next}$ of $e$ are part of the chain that form the outer boundary of the face $f_2$. The face $f_1$ has a more complicated structure as it contains two holes in its interior: One hole consists of two adjacent faces $f_3$ and $f_4$, while the other hole is comprised of two edges. $f_1$ also contains two isolated vertices $u_1$ and $u_2$ in its interior.}
+\caption{An arrangement of interior-disjoint line segment, which
+consists of a single connected component inside the unbounded face
+$\tilde{f}$, with some of the \dcel\ records that represent it.
+The half-edge $e$ (and its twin $e'$) correspond to a line segment
+that connects the vertices $v_1$ and $v_2$ and separates the face
+$f_1$ from $f_2$. The predecessor $e_{\rm prev}$ and successor
+$e_{\rm next}$ of $e$ are part of the chain that form the outer
+boundary of the face $f_2$. The face $f_1$ has a more complicated
+structure as it contains two holes in its interior: One hole
+consists of two adjacent faces $f_3$ and $f_4$, while the other
+hole is comprised of two edges. $f_1$ also contains two isolated
+vertices $u_1$ and $u_2$ in its interior.}
 \label{arr_sec:seg_dcel}
 
 %\begin{ccHtmlOnly}
@@ -45,19 +106,331 @@ A bounded face has a unique CCB of halfedges winding is a counterclockwise orien
 \label{arr_sec:arr_class}
 %===================================
 
-The main guideline behind the design of the arrangement package is the separation of the representation of the planar arrangement from the various algorithms that operate on it. Another important guideline is the separation between geometry an topology in the arrangement representation.
+The main guideline behind the design of the arrangement package is
+the separation of the representation of the planar arrangement
+from the various algorithms that operate on it. Another important
+guideline is the separation between geometry an topology in the
+arrangement representation.
 
-The class \ccc{Arrangement_2<Traits,Dcel>} is a the main class in the arrangement package. It is used to represent planar arrangements and provides the interface needed to traverse them and to maintain them. The arrangement is represented using the \dcel\ class, which captures the {\em topological structure} of the planar subdivision, and a geometric {\em traits} class that defines the family of planar curves that form the arrangement and supplies a range of geometric predicates (and constructions) needed to construct and maintain the arrangement.
+The class \ccc{Arrangement_2<Traits,Dcel>} is a the main class in
+the arrangement package. It is used to represent planar
+arrangements and provides the interface needed to traverse them
+and to maintain them. The arrangement is represented using the
+\dcel\ class, which captures the {\em topological structure} of
+the planar subdivision, and a geometric {\em traits} class that
+defines the family of planar curves that form the arrangement and
+supplies a range of geometric predicates (and constructions)
+needed to construct and maintain the arrangement.
 
-The separation between topology and geometry is defined by the two template parameters of the \ccc{Arrangement_2} template:
+The separation between topology and geometry is defined by the two
+template parameters of the \ccc{Arrangement_2} template:
 \begin{itemize}
-\item The \ccc{Traits} template-parameter should be instantiated with a model of the \ccc{ArrangementBasicTraits} concept. The traits class defines the types of $x$-monotone curves and two-dimensional points --- \ccc{X_monotone_curve_2} and \ccc{Point_2}, respectively --- and supports basic geometric predicates on them.
+\item The \ccc{Traits} template-parameter should be instantiated with a
+model of the \ccc{ArrangementBasicTraits} concept. The traits
+class defines the types of $x$-monotone curves and two-dimensional
+points --- \ccc{X_monotone_curve_2} and \ccc{Point_2},
+respectively --- and supports basic geometric predicates on them.
 
-In the first sections of this chapter we will always use \ccc{Arr_segment_traits_2}, which enables the construction of arrangements of line segments, as our traits class. However, the arrangement package is shipped with several other traits classes that can handle also poly-lines (continuous piecewise-linear curves), conic arcs and arcs of rational functions. We will exemplify the usage of these traits classes in Section~\ref{arr_sec:traits}.
+In the first sections of this chapter we will always use
+\ccc{Arr_segment_traits_2}, which enables the construction of
+arrangements of line segments, as our traits class. However, the
+arrangement package is shipped with several other traits classes
+that can handle also poly-lines (continuous piecewise-linear
+curves), conic arcs and arcs of rational functions. We will
+exemplify the usage of these traits classes in
+Section~\ref{arr_sec:traits}.
 
-\item The \ccc{Dcel} template-parameter should be instantiated with a class that is a model of the \ccc{ArranagementDcel} concept. The value of this parameter is by default \ccc{Arr_default_dcel<Traits>}, and it is recommended for most users to stick to this default implementation of a \dcel\ class. However, in some applications it is necessary to extend the \dcel\ features --- see Section~\ref{arr_sec:ex_dcel} for further explanations and examples.
+\item The \ccc{Dcel} template-parameter should be instantiated with a
+class that is a model of the \ccc{ArranagementDcel} concept. The
+value of this parameter is by default
+\ccc{Arr_default_dcel<Traits>}, and it is recommended for most
+users to stick to this default implementation of a \dcel\ class.
+However, in some applications it is necessary to extend the \dcel\
+features --- see Section~\ref{arr_sec:ex_dcel} for further
+explanations and examples.
 \end{itemize}
 
+\subsection{Traversing the Arrangement}
+\label{arr_ssec:traverse}
+%--------------------------------------
+
+The simplest and most fundamental arrangement operations are the
+various traversal methods, that allow users to systematically go
+over the relevant features of the arrangement at hand.
+
+As mentioned before, the arrangement is represented as a \dcel,
+and therefore stores three containers of vertices, halfedges and
+faces. The \ccc{Arrangement_2} class therefore supplies iterators
+for these containers. For example, the methods
+\ccc{vertices_begin()} and \ccc{vertices_end()} return
+\ccc{Arrangement_2::Vertex_iterator} objects that define the valid
+range of arrangement vertices. The value type of this iterator is
+\ccc{Arrangement_2::Vertex}. Moreover, the vertex-iterator type is
+equivalent to \ccc{Arrangement_2::Vertex_handle}, which serves as
+a pointer to a vertex. As we see next, all function related to
+arrangement features accept handle types as input parameters and
+return handle types as their output. Each of the three nested
+classes support a \ccc{handle()} method that returns a handle to
+the object at hand.
+
+In addition to the iterators for arrangement vertices, halfedges
+and faces, the arrangement class also support \ccc{edges_begin()}
+and \ccc{edges_end()} that return
+\ccc{Arrangement_2::Edge_iterator} objects for traversing the
+arrangement edges. Note that the value type of this iterator is
+\ccc{Arrangement_2::Halfedge}, representing one of the twin
+halfedge that form the edge. In fact, as twin halfedges always are
+always contiguous in the halfedge container, using this iterator
+is equivalent to going over all halfedges and taking every second
+halfedge.
+
+All iterator, circulator and handle types also have non-mutable
+(a.k.a. {\em const}) counterparts. For example, the arrangement
+has a non-constant member function called \ccc{vertices_begin()}
+that returns a \ccc{Vertex_iterator} object and another const
+member function that returns a a \ccc{Vertex_const_iterator}
+object. In fact, all methods listed in this section that return an
+iterator, a circulator or a handle have non-mutable counterparts.
+It should be noted that, for example, \ccc{Vertex_handle} can be
+readily converted to a \ccc{Vertex_const_handle}, but not
+vice-versa.
+
+\subsubsection{Traversal Methods for an Arrangement Vertex}
+\label{arr_sssec:tr_vertex}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+A vertex is always associated with a geometric entity, namely with
+a \ccc{Point_2} object, which can be retrieved by calling the
+\ccc{point()} method of the nested \ccc{Vertex} class.
+
+The \ccc{is_isolated()} method is used to determine whether a
+vertex is isolated or not. Recall that the incident halfedges
+incident to a regular (non-isolated) vertex form a circular list
+around this vertex. The \ccc{incident_halfedges()} method returns
+a circulator of type
+\ccc{Arrangement_2::Halfedge_around_vertex_circulator} that
+enables the traversal of this circular list in a clockwise
+direction. The value type of this circulator is \ccc{Halfedge}.
+
+The following function prints all the neighbors of a given
+arrangement vertex (assuming the \ccc{Point_2} type can be
+exported to the standard output using the \ccc{<<} operator). For
+simplicity, we assume that the arrangement type and its nested
+type are properly defined (see next for more complete examples):
+\begin{alltt}
+void print_neighboring_vertices (Vertex_const_handle v)
+\{
+  if (v->is_isolated())
+  \{
+    std::cout << "The vertex (" << v->point() << ") is isloated" << std::endl;
+    return;
+  \}
+
+  Halfedge_around_vertex_const_circulator  first, curr;
+  Vertex_const_handle                      u;
+
+  std::cout << "The neighbors of the vertex (" << v->point() << ") are:";
+  first = curr = v->incident_halfedges();
+  do
+  \{
+    // Note that the current halfedge is (u -> v):
+    u = curr->source();
+    std::cout << " (" << u->point() << ")";
+
+  \} while (curr != first);
+  std::cout << std::endl;
+
+  return;
+\}
+\end{alltt}
+
+In case of an isolated vertex, it is possible to obtain the face
+that contains this vertex. However, this is done via a method of
+the \ccc{Arrangement_2} class, called \ccc{incident_face
+(Vertex_handle v)}, and not using one of the methods of the nested
+\ccc{Vertex} class.
+
+\subsubsection{Traversal Methods for an Arrangement Halfedge}
+\label{arr_sssec:tr_halfedge}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Each pair of twin halfedge is associated with an
+\ccc{X_monotone_curve_2} object, which can be retrieved by calling
+the \ccc{curve()} method of the nested \ccc{Halfedge} class.
+
+The \ccc{source()} and \ccc{target()} methods return handles to
+the halfedge source and target vertices, respectively. One can
+obtain a handle to the twin halfedge using the \ccc{twin()}
+method. From the definition of halfedges, it follows that if
+\ccc{he} is a halfedge handle, then:
+\begin{itemize}
+\item \ccc{he->curve()} is equivalent to \ccc{he->twin()->curve()}.
+\item \ccc{he->source()} is equivalent to \ccc{he->twin()->target()}.
+\item \ccc{he->target()} is equivalent to \ccc{he->twin()->source()}.
+\end{itemize}
+
+Every halfedge has an incident face that lies to its left, which
+can be obtained by using the \ccc{face()} method. Recall that a
+halfedge is always one link in a connected chains of halfedges
+that share the same incident face, known as a {\em CCB}. The
+\ccc{prev()} and \ccc{next()} methods return handles to the
+previous and next halfedges in the CCB (note that \ccc{he->prev()}
+is not necessarily equivalent to \ccc{he->twin()->next()}).
+
+As the CCB is actually a circular list, it is natural to traverse
+it using a circulator. The \ccc{ccb()} method returns a
+\ccc{Arrangement_2::Ccb_halfedge_circulator} object for the
+halfedges along the CCB.
+
+The following function prints all $x$-monotone curves and points
+along a CCB (assuming that the \ccc{Point_2} and the
+\ccc{X_monotone_curve_2} types can be exported to the standard
+output using the \ccc{<<} operator):
+\begin{alltt}
+void print_ccb (Ccb_halfedge_const_circulator circ)
+\{
+  Ccb_halfedge_const_circulator  curr = circ;
+  Halfedge_const_handle          he;
+
+  std::cout << "(" << curr->source()->point() << ")"
+  do
+  \{
+    he = curr->handle();
+    std::cout << "   [" << he->curve() << "]   "
+              << "(" << he->target()->point() << ")";
+
+  \} while (curr != circ);
+  std::cout << std::endl;
+
+  return;
+\}
+\end{alltt}
+
+
+\subsubsection{Traversal Methods for an Arrangement Face}
+\label{arr_sssec:tr_face}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+As the \ccc{Arrangement_2} class supports only finite curves, the
+arrangement always has a single unbounded face, where all other
+arrangement features form holes (or isolated vertices) inside this
+face. (Note that an empty arrangement contains no other feature
+{\em but} the unbounded face.) The function \ccc{unbounded_face()}
+returns a handle to this face.
+
+Given a \ccc{Face} object, we can use the \ccc{is_unbounded()}
+method to determine whether it is unbounded. Bounded face have an
+outer CCB, and the \ccc{outer_ccb()} method returns a circulator
+for the halfedges along this CCB. Note that the halfedges along
+this CCB wind in a counterclockwise orientation around the outer
+boundary of the face.
+
+A face can also contain disconnected components in its interior,
+namely holes and isolated vertices:
+\begin{itemize}
+\item The \ccc{holes_begin()} and \ccc{holes_end()} methods return
+\ccc{Arrangement_2::Holes_iterator} objects that define the range
+of holes inside the face. The value type of this iterator is
+\ccc{Ccb_halfedge_circulator}, defining the CCB that winds in a
+clockwise orientation around a hole.
+
+\item The \ccc{isolated_vertices_begin()} and
+\ccc{isolated_vertices_end()} methods return
+\ccc{Arrangement_2::Isolated_vertices_iterator} objects that
+define the range of isolated vertices inside the face. The value
+type of this iterator is \ccc{Vertex}.
+\end{itemize}
+
+The following function prints the outer and inner boundaries of a
+given face, using the function \ccc{print_ccb()} that was
+introduced in the previous subsection:
+\begin{alltt}
+void print_face (Face_const_handle f)
+\{
+  // Print the outer boundary.
+  if (f.is_unbounded())
+  \{
+    std::cout << "Unbounded face. " << std::endl;
+  \}
+  else
+  \{
+    std::cout << "Outer boundary: ";
+    print_ccb (f.outer_ccb());
+  \}
+
+  // Print the boundary of each of the holes.
+  Holes_const_iterator              hole;
+  int                               index = 1;
+
+  for (hole = f->holes_begin(); hole != f->holes_end(); ++hole, ++index)
+  \{
+    std::cout << "    Hole #" << index << ": ";
+    print_ccb (*hole);
+  \}
+
+  // Print the isolated vertices.
+  Isolated_vertices_const_iterator  iv;
+
+  for (iv = f->isolated_vertices_begin(), index = 1;
+       iv != f->isolated_vertices_end(); ++iv, ++index)
+  \{
+    std::cout << "    Isolated vertex #" << index << ": "
+              << "(" << iv->point() << ")" << std::endl;
+  \}
+
+  return;
+\}
+\end{alltt}
+
+\subsubsection{Additional Example}
+\label{arr_sssec:tr_ex}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+To conclude the review of the various traversal methods, we bring
+the following function that prints the current setting of the
+arrangement:\footnote{To simplify the code, we assume that the
+\ccc{Arrangement_2} type is defined as a proper instantiation of
+the \ccc{Arrangement_2<Traits,Dcel>} template and all its nested
+types are also defined. In the file \ccc{arr_print.h} that can be
+found under the examples folder this function (and the rest of the
+functions listed in this section) are brought in a more general
+setting, where the arrangement type serves as a template parameter
+for these functions, so different instantiations of the
+\ccc{Arrangement_2<Traits,Dcel>} template can be provided to the
+same function templates.}
+\begin{alltt}
+void print_arrangement (const Arrangement_2& arr)
+\{
+  // Print the arrangement vertices.
+  Vertex_const_iterator      vit;
+
+  std::cout << arr.number_of_vertices() << " vertices:" << std::endl;
+  for (vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit)
+  \{
+    std::cout << "(" << vit->point() << ")";
+    if (vit->is_isolated())
+      std::cout << " - Isolated." << std::endl;
+    else
+      std::cout << " - degree " << vit->degree() << std::endl;
+  \}
+
+  // Print the arrangement edges.
+  Edge_const_iterator        eit;
+
+  std::cout << arr.number_of_edges() << " edges:" << std::endl;
+  for (eit = arr.edges_begin(); eit != arr.edges_end(); ++eit)
+    std::cout << "[" << eit->curve() << "]" << std::endl;
+
+  // Print the arrangement faces.
+  Face_const_iterator        fit;
+
+  std::cout << arr.number_of_faces() << " faces:" << std::endl;
+  for (fit = arr.faces_begin(); fit != arr.faces_end(); ++fit)
+    print_face (fit);
+
+  return;
+\}
+\end{alltt}
 
 \section{Traits Classes}
 \label{arr_sec:traits}
@@ -83,5 +456,3 @@ In version~3.2, as part of the ACS project, the packages have done through
 a major re-design, resulting in an improved \ccc{Arrangement_2} package.
 The code of the new package was restructured and developed by~: \newline
 Efi Fogel, Idit Haran, Ron Wein and Baruch Zukerman.
-
-
