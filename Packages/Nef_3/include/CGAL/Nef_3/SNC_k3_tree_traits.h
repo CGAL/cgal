@@ -448,7 +448,7 @@ Bounding_box_3<typename SNC_decorator::Kernel::Kernel_tag,
 	       typename SNC_decorator::Kernel>
 Objects_bbox<SNC_decorator>::operator()
   (Vertex_handle v) const {
-  Point_3 p(D.point(v));
+  Point_3 p(v->point());
   return Bounding_box_3(p, p);
 }
 

@@ -698,7 +698,7 @@ for( typename Objects_around_segment::Iterator oar = objects.begin();
       for( o = n->objects().begin(); o != n->objects().end(); ++o) {
         Vertex_handle v;
         if( CGAL::assign( v, *o)) {
-	  Point_3 p(D.point(v));
+	  Point_3 p(v->point());
           b = b + Bounding_box_3(p,p);
         }
       }
@@ -751,7 +751,7 @@ std::string dump_object_list( const Object_list& O, int level = 0) {
     Halfedge_handle e;
     Halffacet_handle f;
     if( CGAL::assign( v, *o)) {
-      if( level) os << D.point(v) << std::endl;
+      if( level) os << v->point() << std::endl;
       v_count++;
     }
     else if( CGAL::assign( e, *o)) {

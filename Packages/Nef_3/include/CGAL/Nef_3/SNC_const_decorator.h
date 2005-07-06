@@ -131,66 +131,6 @@ public:
  public:
   const SNC_structure* sncp() const { return sncp_; }
   
-  /*
-  static Vertex_const_handle vertex( Halfedge_const_handle e)
-  { return e->center_vertex(); }
-  static Halfedge_const_handle twin( Halfedge_const_handle e)
-  { return e->twin(); }
-  static Vertex_const_handle source( Halfedge_const_handle e)
-  { return e->center_vertex(); }
-  static Vertex_const_handle target( Halfedge_const_handle e)
-  { return source(twin(e)); }  
-  static SFace_const_handle sface( Halfedge_const_handle e)
-  { return e->incident_sface(); }
-  // SVertex queries
-
-  static Vertex_const_handle vertex(SHalfedge_const_handle e)
-  { return vertex(e->source()); }
-  static SHalfedge_const_handle twin(SHalfedge_const_handle e)
-  { return e->twin(); }
-  static Vertex_const_handle source(SHalfedge_const_handle e)
-  { return e->source()->center_vertex(); }
-  static Vertex_const_handle source(SHalfedge e)
-  { return e.source()->center_vertex(); }
-  static Vertex_const_handle target(SHalfedge_const_handle e)
-  { return e->twin()->source()->twin()->center_vertex(); }
-  static SHalfedge_const_handle previous(SHalfedge_const_handle e)
-  { return e->prev(); }
-  static SHalfedge_const_handle next(SHalfedge_const_handle e)
-  { return e->next(); }
-  static Halffacet_const_handle facet(SHalfedge_const_handle e)
-  { return e->facet(); }
-  static SFace_const_handle sface(SHalfedge_const_handle e)
-  { return e->incident_sface(); }
-  static Halfedge_const_handle ssource(SHalfedge_const_handle e)
-  { return e->source(); }
-  static Halfedge_const_handle starget(SHalfedge_const_handle e)
-  { return e->twin()->source(); }
-  // SHalfedge queries
-
-  static SHalfloop_const_handle twin( SHalfloop_const_handle l)
-  { return l->twin(); }
-  static Halffacet_const_handle facet( SHalfloop_const_handle l)
-  { return l->facet(); }
-  static Vertex_const_handle vertex( SHalfloop_const_handle l)
-  { return l->incident_sface()->center_vertex(); }
-  static SFace_const_handle sface( SHalfloop_const_handle l)
-  { return l->incident_sface(); }
-  // SHalfloop queries
-
-  static Vertex_const_handle vertex(SFace_const_handle f)
-  { return f->center_vertex(); }
-  static Volume_const_handle volume(SFace_const_handle f)
-  { return f->volume(); }
-  // SFace queries 
-
-  static Halffacet_const_handle twin(Halffacet_const_handle f)
-  { return f->twin(); }
-  static Volume_const_handle volume(Halffacet_const_handle f)
-    { return f->incident_volume(); }
-  // Halffacet queries
-*/
-
   SFace_const_handle adjacent_sface(Halffacet_const_handle f) const {
     Halffacet_cycle_const_iterator fc(f->facet_cycles_begin());
     CGAL_assertion( fc != f->facet_cycles_end());
@@ -208,8 +148,8 @@ public:
     return SFace_const_handle(); // never reached
   }
 
-  static const Point_3& point(Vertex_const_handle v)
-  { return v->point(); }
+  //  static const Point_3& point(Vertex_const_handle v)
+  //  { return v->point(); }
 
   static Vector_3 vector(Halfedge_const_handle e)
   { return Vector_3(e->point()-CGAL::ORIGIN); }
@@ -217,18 +157,6 @@ public:
   static Segment_3 segment(Halfedge_const_handle e)
   { return Segment_3(e->source()->point(),
 		     e->twin()->source()->point()); }
-
-  static const Plane_3 plane(Halffacet_const_handle f)
-  { return f->plane(); }
-
-  static const Mark& mark(Vertex_const_handle v)
-  { return v->mark(); }
-  static const Mark& mark(Halfedge_const_handle e)
-  { return e->mark(); }
-  static const Mark& mark(Halffacet_const_handle f)
-  { return f->mark(); }
-  static const Mark& mark(Volume_const_handle c)
-  { return c->mark(); }
 
   template <typename Visitor>
   void visit_shell_objects(SFace_const_handle f, Visitor& V) const;
@@ -276,7 +204,7 @@ public:
     int i = 0;
     Halffacet_const_handle hf;
     CGAL_forall_facets(hf, *sncp()) {
-      if(!Infi_box::is_standard(plane(hf)))
+      if(!Infi_box::is_standard(hf->plane()))
 	++i;
     }
     CGAL_assertion(i>=6);
@@ -320,16 +248,16 @@ public:
       |ray| and the 2-skeleton incident to v is empty. }*/ {
 
     Halffacet_const_handle f_visible;
-    CGAL_assertion( ray.source() != point(v));
-    CGAL_assertion( ray.has_on(point(v)));
-    Sphere_point sp(ray.source() - point(v));
-    CGAL_NEF_TRACEN( "Locating "<<sp <<" in "<<point(v));
+    CGAL_assertion( ray.source() != v->point());
+    CGAL_assertion( ray.has_on(v->point()));
+    Sphere_point sp(ray.source() - v->point());
+    CGAL_NEF_TRACEN( "Locating "<<sp <<" in "<<v->point());
     CGAL_assertion(Infi_box::degree(sp.hx()) < 2 && 
 		   Infi_box::degree(sp.hy()) < 2 && 
 		   Infi_box::degree(sp.hz()) < 2 && 
 		   Infi_box::degree(sp.hw()) == 0);
     sp = Infi_box::simplify(sp);
-    CGAL_NEF_TRACEN( "Locating "<<sp <<" in "<<point(v));
+    CGAL_NEF_TRACEN( "Locating "<<sp <<" in "<<v->point());
     SM_point_locator L(&*v);
     Object_handle o = L.locate(sp);
 
@@ -361,7 +289,7 @@ public:
 	       se->snext()->facet()->plane()  <<"/"<< 
 	       se->snext()->snext()->facet()->plane());
 	f_visible = se->twin()->facet();
-	CGAL_NEF_TRACEN("f_visible"<<plane(f_visible));
+	CGAL_NEF_TRACEN("f_visible"<< f_visible->plane());
       }
       else if (fc.is_shalfloop()) {
 	SHalfloop_const_handle sl(fc);
@@ -409,8 +337,8 @@ public:
     Vector_3 vec0(cross_product(ev,res->plane().orthogonal_vector()));
     /* // probably incorrect assertion
     CGAL_assertion_code
-      (Sphere_segment _ess( SD.point(SD.source(sh)), 
-			    SD.point(SD.source(next(sh))),
+      (Sphere_segment _ess( SD.source(sh)->point(), 
+			    SD.source(next(sh))->point(),
 			    SD.circle(sh)));
     CGAL_assertion( _ess.has_on(vec0));
     */
@@ -423,7 +351,7 @@ public:
 
     sh++;
     CGAL_For_all(sh,send) {
-      Vector_3 vec1(cross_product(ev,plane(sh->facet()).orthogonal_vector()));
+      Vector_3 vec1(cross_product(ev,sh->facet()->plane().orthogonal_vector()));
       CGAL_NEF_TRACEN("test face candidate "<< sh->facet()->plane()<<" with vector  "<<vec1);
       FT sk0(rv*vec0),  sk1(rv*vec1);
       if(sk0<=FT(0) && sk1>=FT(0))
@@ -460,7 +388,7 @@ public:
     if(rv*res->plane().orthogonal_vector() > FT(0))
       res = res->twin();
 
-    CGAL_NEF_TRACEN("return "<<plane(res));
+    CGAL_NEF_TRACEN("return "<<res->plane());
     return res; // never reached
   }
   
@@ -492,16 +420,16 @@ public:
       |ray| and the 2-skeleton incident to v is empty. }*/ {
 
     Halffacet_const_handle f_visible;
-    CGAL_assertion( ray.source() != point(v));
-    CGAL_assertion( ray.has_on(point(v)));
-    Sphere_point sp(ray.source() - point(v));
-    CGAL_NEF_TRACEN( "Locating "<<sp <<" in "<<point(v));
+    CGAL_assertion( ray.source() != v->point());
+    CGAL_assertion( ray.has_on(v->point()));
+    Sphere_point sp(ray.source() - v->point());
+    CGAL_NEF_TRACEN( "Locating "<<sp <<" in "<<v->point());
     CGAL_assertion(Infi_box::degree(sp.hx()) < 2 && 
 		   Infi_box::degree(sp.hy()) < 2 && 
 		   Infi_box::degree(sp.hz()) < 2 && 
 		   Infi_box::degree(sp.hw()) == 0);
     sp = Infi_box::simplify(sp);
-    CGAL_NEF_TRACEN( "Locating "<<sp <<" in "<<point(v));
+    CGAL_NEF_TRACEN( "Locating "<<sp <<" in "<<v->point());
     SM_point_locator L(v);
     Object_handle o = L.locate(sp);
 
@@ -558,12 +486,12 @@ public:
     Vector_3 ed(segment(e).to_vector());
     Vector_3 ev(segment(e).to_vector()), rv(ray.to_vector());
     SHalfedge_around_svertex_const_circulator sh(SD.first_out_edge(e)), send(sh);
-    Vector_3 vec0(cross_product(ev,plane(res).orthogonal_vector()));
-    CGAL_NEF_TRACEN("initial face candidate "<< plane(res));
+    Vector_3 vec0(cross_product(ev,res->plane().orthogonal_vector()));
+    CGAL_NEF_TRACEN("initial face candidate "<< res->plane());
    
     sh++;
     CGAL_For_all(sh,send) {
-    Vector_3 vec1(cross_product(ev,plane(sh).orthogonal_vector()));
+    Vector_3 vec1(cross_product(ev,sh->plane().orthogonal_vector()));
       RT sk0(rv*vec0),  sk1(rv*vec1);
       if(sk0<0 && sk1>0)
         continue;
@@ -596,10 +524,10 @@ public:
     //  |ray| and is not coplanar with |f|. } 
     {
       Halffacet_const_handle f_visible = f;
-      CGAL_assertion( !plane(f_visible).has_on(ray.source()));
-      if( plane(f_visible).has_on_negative_side(ray.source()))
+      CGAL_assertion( !f_visible->plane().has_on(ray.source()));
+      if( f_visible->plane().has_on_negative_side(ray.source()))
 	f_visible = f->twin();
-      CGAL_assertion( plane(f_visible).has_on_positive_side(ray.source()));
+      CGAL_assertion( f_visible->plane().has_on_positive_side(ray.source()));
       return f_visible;
     }
 };

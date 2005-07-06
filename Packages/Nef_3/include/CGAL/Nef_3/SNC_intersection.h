@@ -85,7 +85,7 @@ class SNC_intersection : public SNC_const_decorator<SNC_structure_> {
 
   bool does_contain_internally( Halffacet_const_handle f, 
 				const Point_3& p) const {
-    if( !plane(f).has_on(p))
+    if( !f->plane().has_on(p))
       return false;
     return (locate_point_in_halffacet( p, f) == CGAL::ON_BOUNDED_SIDE); 
   }
@@ -270,7 +270,7 @@ class SNC_intersection : public SNC_const_decorator<SNC_structure_> {
 				  Halffacet_const_handle f,
 				  Point_3& p) const { 
     CGAL_NEF_TRACEN("-> Intersection facet - segment");
-    Plane_3 h( plane(f));
+    Plane_3 h( f->plane());
     CGAL_NEF_TRACEN("-> facet's plane: " << h);
     CGAL_NEF_TRACEN("-> a point on the plane: " << h.point());
     CGAL_NEF_TRACEN("-> segment: " << seg);
@@ -297,7 +297,7 @@ class SNC_intersection : public SNC_const_decorator<SNC_structure_> {
       const Point_3&, const Point_3*> Circulator;
     typedef Container_from_circulator<Circulator> Container;
 
-    Plane_3 h(plane(f));
+    Plane_3 h(f->plane());
     CGAL_assertion(h.has_on(p));
     Halffacet_cycle_const_iterator fc = f->facet_cycles_begin();
     Bounded_side outer_bound_pos(CGAL::ON_BOUNDARY);
