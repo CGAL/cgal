@@ -24,7 +24,22 @@ predicates and constructions on these objects.
 In addition to the requirements described for the traits class of
 \ccc{Triangulation_3}, the geometric traits class of
 \ccc{Regular_triangulation_3} must fulfill the following requirements.
-It must provide definitions for the \textit{power tests}.
+%It must provide definitions for the \textit{power tests}.
+
+
+\ccTypes
+\ccTwo{DelaunayTriangulationTraits_3::Object_3_xxxxx}{}
+
+\ccNestedType{Line_3}{The line type.}
+\ccGlue
+\ccNestedType{Object_3}{The object type.}
+\ccGlue
+\ccNestedType{Plane_3}{The plane type.}
+\ccGlue
+\ccNestedType{Ray_3}{The ray type.}
+
+
+
 
 We use here the same notation as in
 Section~\ref{Triangulation3-sec-class-Regulartriangulation}. 
@@ -112,6 +127,46 @@ which compares the power distance between \ccc{p} and \ccc{q}
 to the power distance
 between \ccc{p} and \ccc{r}.}
 
+In addition, only when the dual operations are used, the traits class
+must provide the following constructor objects: 
+
+\ccTwo{DelaunayTriangulationTraits_3}{}
+\ccNestedType{Construct_weighted_circumcenter_3}
+{A constructor type. The operator()  constructs the bare point
+ which is the center of the smallest orthogonal sphere to the input
+weighted points. \\
+\ccc{Bare_point operator() ( Weighted_point_3  p,
+			   Weighted_point_3  q,
+			   Weighted_point_3  r,
+			   Weighted_point_3  s);}
+}
+\ccGlue
+\ccNestedType{Construct_object_3}
+{A constructor object that must provide the function operators\\
+\ccc{Object_3 operator()(Point_3 p)},\\
+\ccc{Object_3 operator()(Segment_3 s)} and\\
+\ccc{Object_3 operator()(Ray_3 r)}\\
+that construct an object respectively from a point, a segment and a ray.}
+\ccGlue
+\ccNestedType{Construct_perpendicular_line_3}
+{A constructor object that must provide the function operator\\
+\ccc{Line_3 operator()(Plane_3 pl, Point_3 p)},\\
+which constructs the line perpendicular to \ccc{pl} passing through \ccc{p}.}
+\ccGlue
+\ccNestedType{Construct_plane_3}
+{A constructor object that must provide the function operator\\
+\ccc{Plane_3 operator()(Point_3 p, Point_3 q, Point_3 r)},\\
+which constructs the plane passing through \ccc{p}, \ccc{q} and \ccc{r}.
+\ccPrecond{\ccc{p}, \ccc{q} and \ccc{r} are non collinear.}}
+\ccGlue
+\ccNestedType{Construct_ray_3}
+{A constructor object that must provide the function operator\\
+\ccc{Ray_3 operator()(Point_3 p, Line_3 l)},\\
+which constructs the ray starting at \ccc{p} with direction given by \ccc{l}.}
+
+
+
+
 
 \ccOperations
 
@@ -121,6 +176,19 @@ The following function gives access to the predicate object:
 
 \ccMethod{Power_test_3 power_test_3_object();}{}
 
+The following functions must be provided only if the member functions
+ of  \ccc{Regular_triangulation_3} returning elements of the dual diagram 
+are called:
+
+\ccMethod{Construct_weighted_circumcenter_3 construct_weighted_circumcenter_3_object();}{}
+\ccGlue
+\ccMethod{Construct_object_3 construct_object_3_object();}{}
+\ccGlue
+\ccMethod{Construct_perpendicular_line_3 construct_perpendicular_line_object();}{}
+\ccGlue
+\ccMethod{Construct_plane_3 construct_plane_3_object();}{}
+\ccGlue
+\ccMethod{Construct_ray_3 construct_ray_3_object();}{}
 
 \ccHasModels
 
