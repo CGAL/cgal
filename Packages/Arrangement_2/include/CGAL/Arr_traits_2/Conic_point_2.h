@@ -140,7 +140,8 @@ private:
   /*! Add a generating conic ID. */
   void set_generating_conic (const Conic_id& id)
   {
-    conic_ids.push_back (id);
+    if (id.is_valid())
+      conic_ids.push_back (id);
 
     return;
   }
@@ -148,6 +149,9 @@ private:
   /*! Check if the given conic generates the point. */
   bool is_generating_conic (const Conic_id& id) const
   {
+    if (! id.is_valid())
+      return (false);
+
     Ids_iterator       it;
 
     for (it = conic_ids.begin(); it != conic_ids.end(); ++it)

@@ -92,10 +92,15 @@ protected:
   Conic_point_2  _source;  // The source of the arc (if not a full curve).
   Conic_point_2  _target;  // The target of the arc (if not a full curve).
 
-  // For arcs whose base is a hyperbola we store the axis (a*x + b*y + c = 0)
-  // which separates the two bracnes of the hyperbola. We also store the side
-  // (-1 or 1) that the arc occupies.
-  struct Hyperbolic_arc_data
+  /*! \struct
+   * For arcs whose base is a hyperbola we store the axis (a*x + b*y + c = 0)
+   * which separates the two bracnes of the hyperbola. We also store the side
+   * (NEGATIVE or POSITIVE) that the arc occupies.
+   * In case of line segments connecting two algebraic endpoints, we use this
+   * structure two store the coefficients of the line supporting this segment.
+   * In this case we set the side field to be ZERO.
+   */   
+  struct Extra_data
   {
     Algebraic     a;
     Algebraic     b;
@@ -103,9 +108,10 @@ protected:
     Sign          side;
   };
 
-  Hyperbolic_arc_data *_hyper_data_P;
+  Extra_data    *_extra_data_P;  // The extra data stored with the arc
+                                 // (may be NULL).
 
- public:
+public:
 
   /// \name Construction and destruction fucntions.
   //@{
@@ -117,7 +123,7 @@ protected:
     _r(0), _s(0), _t(0), _u(0), _v(0), _w(0),
     _orient (COLLINEAR),
     _info (0),
-    _hyper_data_P (NULL)
+    _extra_data_P (NULL)
   {}
 
   /*!
@@ -131,10 +137,10 @@ protected:
     _source(arc._source),
     _target(arc._target)
   {
-    if (arc._hyper_data_P != NULL)
-      _hyper_data_P = new Hyperbolic_arc_data (*(arc._hyper_data_P));
+    if (arc._extra_data_P != NULL)
+      _extra_data_P = new Extra_data (*(arc._extra_data_P));
     else
-      _hyper_data_P = NULL;
+      _extra_data_P = NULL;
   }
 
   /*! 
@@ -735,8 +741,8 @@ protected:
    */
   virtual ~_Conic_arc_2 ()
   {
-    if (_hyper_data_P != NULL)
-      delete _hyper_data_P;
+    if (_extra_data_P != NULL)
+      delete _extra_data_P;
   }
 
   /*!
@@ -749,8 +755,8 @@ protected:
       return (*this);
 
     // Free any existing data.
-    if (_hyper_data_P != NULL)
-      delete _hyper_data_P;
+    if (_extra_data_P != NULL)
+      delete _extra_data_P;
 
     // Copy the arc's attributes.
     _r = arc._r;
@@ -765,11 +771,11 @@ protected:
     _source = arc._source;
     _target = arc._target;
 
-    // Duplicate the data for hyperbolic or circular arcs.
-    if (arc._hyper_data_P != NULL)
-      _hyper_data_P = new Hyperbolic_arc_data (*(arc._hyper_data_P));
+    // Duplicate the extra data, if necessary.
+    if (arc._extra_data_P != NULL)
+      _extra_data_P = new Extra_data (*(arc._extra_data_P));
     else
-      _hyper_data_P = NULL;
+      _extra_data_P = NULL;
 
     return (*this);
   }
@@ -1149,12 +1155,12 @@ private:
       return;
     }
 
-    // In case the base conic is a hyperbola, build the hyperbolic data
+    // In case the base conic is a hyperbola, build the extra hyperbolic data
     // (this happens when (4rs - t^2) < 0).
     if (CGAL::sign (4*_r*_s - _t*_t) == NEGATIVE)
       _build_hyperbolic_arc_data ();
     else
-      _hyper_data_P = NULL;
+      _extra_data_P = NULL;
 
     // In case of a non-degenerate parabola or a hyperbola, make sure 
     // the arc is not infinite.
@@ -1236,7 +1242,8 @@ private:
     const bool  is_ellipse = (CGAL::sign (4*_r*_s - _t*_t) == POSITIVE);
     CGAL_assertion (is_ellipse);
 
-    _hyper_data_P = NULL;
+    // We do not have to store any extra data with the arc.
+    _extra_data_P = NULL;
 
     // Mark that this arc is a full conic curve.
     if (is_ellipse)
@@ -1332,17 +1339,21 @@ private:
     // 
     //  cos(phi)*x + sin(phi)*y - (cos(phi)*x0 + sin(phi)*y0) = 0
     //
-    _hyper_data_P = new Hyperbolic_arc_data;
+    // We store the equation of this line in the extra data structure and also
+    // the sign (side of half-plane) our arc occupies with respect to the line.
+    _extra_data_P = new Extra_data;
 
-    _hyper_data_P->a = cos_phi;
-    _hyper_data_P->b = sin_phi;
-    _hyper_data_P->c = - (cos_phi*x0 + sin_phi*y0);
+    _extra_data_P->a = cos_phi;
+    _extra_data_P->b = sin_phi;
+    _extra_data_P->c = - (cos_phi*x0 + sin_phi*y0);
 
     // Make sure that the two endpoints are located on the same branch
     // of the hyperbola.
-    _hyper_data_P->side = _hyperbolic_arc_side(_source);
+    _extra_data_P->side = _sign_of_extra_data (_source.x(), _source.y());
 
-    CGAL_assertion (_hyper_data_P->side = _hyperbolic_arc_side(_target));
+    CGAL_assertion (_extra_data_P->side != ZERO);
+    CGAL_assertion (_extra_data_P->side = _sign_of_extra_data(_target.x(),
+							      _target.y()));
 
     return;
   }
@@ -1354,22 +1365,24 @@ protected:
   //@{
 
   /*!
-   * Find on which branch of the hyperbola is the given point located.
-   * The point is assumed to be on the hyperbola.
-   * \param p The query point.
-   * \return The branch ID (either NEGATIVE or POSITIVE).
+   * Evaluate the sign of (a*x + b*y + c) stored with the extra data field
+   * at a given point.
+   * \param px The x-coordinate of query point.
+   * \param py The y-coordinate of query point.
+   * \return The sign of (a*x + b*y + c).
    */
-  Sign _hyperbolic_arc_side (const Point_2& p) const
+  Sign _sign_of_extra_data (const Algebraic& px,
+			    const Algebraic& py) const
   {
-    if (_hyper_data_P == NULL)
+    CGAL_assertion (_extra_data_P != NULL);
+
+    if (_extra_data_P == NULL)
       return (ZERO);
 
-    Algebraic         val = (_hyper_data_P->a*p.x() + _hyper_data_P->b*p.y() + 
-                             _hyper_data_P->c);
-    Sign              sign_val = CGAL::sign (val);
+    Algebraic         val = (_extra_data_P->a*px + _extra_data_P->b*py + 
+                             _extra_data_P->c);
 
-    CGAL_assertion (sign_val != ZERO);
-    return (sign_val);
+    return (CGAL::sign (val));
   }
 
   /*!
@@ -1434,9 +1447,9 @@ protected:
 
     // In case of a hyperbolic arc, make sure the point is located on the
     // same branch as the arc.
-    if (_hyper_data_P != NULL)
+    if (_extra_data_P != NULL && _extra_data_P->side != ZERO)
     {
-      if (_hyperbolic_arc_side(p) != _hyper_data_P->side)
+      if (_sign_of_extra_data(p.x(), p.y()) != _extra_data_P->side)
         return (false);
     }
 

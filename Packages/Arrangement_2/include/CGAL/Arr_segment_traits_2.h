@@ -300,7 +300,6 @@ public:
   typedef typename Kernel::Point_2        Point_2;
   typedef Arr_segment_2<Kernel>           X_monotone_curve_2;
   typedef Arr_segment_2<Kernel>           Curve_2;
-  typedef double                          Approximate_number_type;
 
 public:
 
@@ -310,7 +309,7 @@ public:
   Arr_segment_traits_2 ()
   {}
 
-  /// \name Functor definitions.
+  /// \name Basic functor definitions.
   //@{
 
   class Compare_x_2
@@ -607,6 +606,10 @@ public:
   {
     return Equal_2();
   }
+  //@}
+
+  /// \name Functor definitions for supporting intersections.
+  //@{
 
   class Make_x_monotone_2
   {
@@ -873,34 +876,66 @@ public:
   {
     return Merge_2();
   }
+  //@}
 
+  /// \name Functor definitions for the landmarks point-location strategy.
+  //@{
+  typedef double                          Approximate_number_type;
 
   class Approximate_2
   {
   public:
+
     /*!
-     * Merge two given x-monotone curves into a single curve (segment).
-     * \param cv1 The first curve.
-     * \param cv2 The second curve.
-     * \param c Output: The merged curve.
-     * \pre The two curves are mergeable, that is they are supported by the
-     *      same line and share a common endpoint.
+     * Return an approximation of a point coordinate.
+     * \param p The exact point.
+     * \param i The coordinate index (either 0 or 1).
+     * \pre i is either 0 or 1.
+     * \return An approximation of p's x-coordinate (if i == 0), or an 
+     *         approximation of p's y-coordinate (if i == 1).
      */
     Approximate_number_type operator() (const Point_2& p,
-                                        int coord) const
+                                        int i) const
     {
-      return (coord == 0) ? CGAL::to_double(p.x()) : CGAL::to_double(p.y());
+      CGAL_precondition (i == 0 || i == 1);
+
+      if (i == 0)
+	return (CGAL::to_double(p.x()));
+      else
+	return (CGAL::to_double(p.y()));
     }
   };
 
-  /*! Get a Merge_2 functor object. */
+  /*! Get an Approximate_2 functor object. */
   Approximate_2 approximate_2_object () const
   {
     return Approximate_2();
   }
 
+  class Construct_x_monotone_curve_2
+  {
+  public:
 
-  ///@}
+    /*!
+     * Return an x-monotone curve connecting the two given endpoints.
+     * \param p The first point.
+     * \param q The second point.
+     * \pre p and q must not be the same.
+     * \return A segment connecting p and q.
+     */
+    X_monotone_curve_2 operator() (const Point_2& p,
+                                   const Point_2& q) const
+    {
+      return (X_monotone_curve_2 (p, q));
+    }
+  };
+
+  /*! Get a Construct_x_monotone_curve_2 functor object. */
+  Construct_x_monotone_curve_2 construct_x_monotone_curve_2_object () const
+  {
+    return Construct_x_monotone_curve_2();
+  }
+  //@}
 };
 
 /*!

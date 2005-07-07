@@ -96,7 +96,7 @@ public:
     conic_index (0)
   {}
 
-  /// \name Functor definitions.
+  /// \name Basic functor definitions.
   //@{
 
   class Compare_x_2
@@ -434,6 +434,10 @@ public:
   {
     return Equal_2();
   }
+  //@}
+
+  /// \name Functor definitions for supporting intersections.
+  //@{
 
   class Make_x_monotone_2
   {
@@ -681,6 +685,65 @@ public:
     return Merge_2();
   }
 
+  //@}
+
+  /// \name Functor definitions for the landmarks point-location strategy.
+  //@{
+  typedef double                          Approximate_number_type;
+
+  class Approximate_2
+  {
+  public:
+
+    /*!
+     * Return an approximation of a point coordinate.
+     * \param p The exact point.
+     * \param i The coordinate index (either 0 or 1).
+     * \pre i is either 0 or 1.
+     * \return An approximation of p's x-coordinate (if i == 0), or an 
+     *         approximation of p's y-coordinate (if i == 1).
+     */
+    Approximate_number_type operator() (const Point_2& p,
+                                        int i) const
+    {
+      CGAL_precondition (i == 0 || i == 1);
+
+      if (i == 0)
+	return (CGAL::to_double(p.x()));
+      else
+	return (CGAL::to_double(p.y()));
+    }
+  };
+
+  /*! Get an Approximate_2 functor object. */
+  Approximate_2 approximate_2_object () const
+  {
+    return Approximate_2();
+  }
+
+  class Construct_x_monotone_curve_2
+  {
+  public:
+
+    /*!
+     * Return an x-monotone curve connecting the two given endpoints.
+     * \param p The first point.
+     * \param q The second point.
+     * \pre p and q must not be the same.
+     * \return A segment connecting p and q.
+     */
+    X_monotone_curve_2 operator() (const Point_2& p,
+                                   const Point_2& q) const
+    {
+      return (X_monotone_curve_2 (p, q));
+    }
+  };
+
+  /*! Get a Construct_x_monotone_curve_2 functor object. */
+  Construct_x_monotone_curve_2 construct_x_monotone_curve_2_object () const
+  {
+    return Construct_x_monotone_curve_2();
+  }
   //@}
 };
 
