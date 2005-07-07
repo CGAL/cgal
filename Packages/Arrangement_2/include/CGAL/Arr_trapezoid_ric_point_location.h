@@ -38,16 +38,18 @@ CGAL_BEGIN_NAMESPACE
 template <class Arrangement_>
 class PL_X_curve_plus: public Arrangement_::Traits_2::X_monotone_curve_2
 {
-protected:
-
-  Halfedge_handle       parent;    // The halfedge associated with the curve.
-
 public:
 
   typedef Arrangement_                                  Arrangement_2;
   typedef typename Arrangement_2::Traits_2              Traits_2;
   typedef typename Arrangement_2::Halfedge_handle       Halfedge_handle;
   typedef typename Traits_2::X_monotone_curve_2         X_monotone_curve_2;
+
+protected:
+  //Data members
+  Halfedge_handle       parent;    // The halfedge associated with the curve.
+
+public:
 
   /*! Default constructor. */
   PL_X_curve_plus() : 
