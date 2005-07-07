@@ -220,7 +220,7 @@ void print_neighboring_vertices (Vertex_const_handle v)
 \{
   if (v->is_isolated())
   \{
-    std::cout << "The vertex (" << v->point() << ") is isloated" << std::endl;
+    std::cout << "The vertex (" << v->point() << ") is isolated" << std::endl;
     return;
   \}
 
@@ -501,7 +501,7 @@ scenarios are possible, depending on the status of the endpoints
 of the inserted subcurve:
 \begin{enumerate}
 
-\item In case both curve endpoints do not correspond to any existing 
+\item In case both curve endpoints do not correspond to any existing
 arrangement vertex we use we have to create two new vertices
 corresponding to the curve endpoints and connect them using a pair of
 twin halfedges. This halfedge pair initiates a new hole inside the
@@ -562,7 +562,9 @@ from $v_1$ to $v_2$.
 \input{Arrangement_2/ex_1.pstex_t}
 \end{center}
 \end{ccTexOnly}
-\caption{The arrangement of the line segments $s_1, \ldots, s_5$ constructed in \ccc{example1.C}. The arrows mark the direction of the halfedges returned from the various insertion functions.}
+\caption{The arrangement of the line segments $s_1, \ldots, s_5$
+constructed in \ccc{example1.C}. The arrows mark the direction of
+the halfedges returned from the various insertion functions.}
 \label{arr_fig:ex_1}
 %\begin{ccHtmlOnly}
 %<P>
@@ -573,11 +575,12 @@ from $v_1$ to $v_2$.
 \end{figure}
 
 The following program demonstrates the usage of the four insertion
-functions. It creates an arrangement of five line segments, as depicted
-in Figure~\ref{arr_fig:ex_1}. As the arrangment is very simple, we use
-the simple cartesian kernel of \cgal\ with integer coordinates for the
-segment endpoints. We used the built-in \ccc{Arr_segment_traits_2} class
-that enables the efficient maintenance of arrangements of line segments
+functions. It creates an arrangement of five line segments, as
+depicted in Figure~\ref{arr_fig:ex_1}. As the arrangement is very
+simple, we use the simple Cartesian kernel of \cgal\ with integer
+coordinates for the segment endpoints. We used the built-in
+\ccc{Arr_segment_traits_2} class that enables the efficient
+maintenance of arrangements of line segments
 --- see more details on this traits class in Section~\ref{arr_sec:traits}:
 
 \ccIncludeExampleCode{../examples/Arrangement_2/example1.C}
@@ -617,7 +620,9 @@ isolated vertex and removes it from the arrangement.
 \input{Arrangement_2/ex_2.pstex_t}
 \end{center}
 \end{ccTexOnly}
-\caption{An arrangement of line segments containing three isolated vertices, as constructed in \ccc{example2.C}. The vertices $u_2$ and $u_3$ are eventually deleted from the arrangement.}
+\caption{An arrangement of line segments containing three isolated
+vertices, as constructed in \ccc{example2.C}. The vertices $u_2$
+and $u_3$ are eventually deleted from the arrangement.}
 \label{arr_fig:ex_2}
 %\begin{ccHtmlOnly}
 %<P>
@@ -631,7 +636,7 @@ The following program demonstrates the usage of the arrangement
 member-functions for manipulating isolated vertices. It first
 inserts three isolated vertices inside the unbounded face, then
 inserts four line segments that form a rectangular hole inside
-the unbounded face (see Figure~\ref{arr_fig:ex_2} for an 
+the unbounded face (see Figure~\ref{arr_fig:ex_2} for an
 illustration). It finally goes over the vertices and removes
 those isolated vertices that are still contained in the unbounded
 face ($u_2$ and $u_3$ in this case):
@@ -643,23 +648,96 @@ face ($u_2$ and $u_3$ in this case):
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 In the previous subsection we showed how to introduce new isolated
-vertices in the arrangement. But how do we create a vertex that lies
-on an existing arrangement edge (more precisely, on an $x$-monotone
-curve that is associated with an arrangement edge)?
+vertices in the arrangement. But how do we create a vertex that
+lies on an existing arrangement edge (more precisely, on an
+$x$-monotone curve that is associated with an arrangement edge)?
 
 It should be noted that such an operation involves the splitting
-of a curve at a given point in its interior, while the traits class
-used by \ccc{Arrangement_2} does not necessarily have the ability
-to perform such a split operation. However, if users know how to
-split an $x$-monotone curve into two as a given point $p$, they
-can use the \ccc{split_edge(e, p, c1, c2)} function, were $c_1$ and
-$c_2$ are the two subcurves resulting for splitting the $x$-monotone
-curve associated with the halfedge $e$ at a point $p$ in its interior.
-The function splits the halfegde pair into two pairs, both incident
-to a new vertex $v$ associated with $p$, and returns a handle to a
-halfedge whose source equals $e$'s source vertex and whose target is
-the new vertex $v$.
+of a curve at a given point in its interior, while the traits
+class used by \ccc{Arrangement_2} does not necessarily have the
+ability to perform such a split operation. However, if users know
+how to split an $x$-monotone curve into two as a given point $p$,
+they can use the \ccc{split_edge(e, p, c1, c2)} function, were
+$c_1$ and $c_2$ are the two subcurves resulting for splitting the
+$x$-monotone curve associated with the halfedge $e$ at a point $p$
+in its interior. The function splits the halfedge pair into two
+pairs, both incident to a new vertex $v$ associated with $p$, and
+returns a handle to a halfedge whose source equals $e$'s source
+vertex and whose target is the new vertex $v$.
 
+The reverse operation is also possible. Suppose that we have a
+vertex $v$ of degree $2$, whose two incident halfedges, $e_1$ and
+$e_2$, are associated with the curves $c_1$ and $c_2$. Suppose
+further that we know how to merge these two curves into a single
+continuous $x$-monotone curve $c$ --- then calling
+\ccc{merge_edge(e1, e2, c)} will merge the two edges into a single
+edge associated with the curve $c$, resulting the removal of the
+vertex $v$ from the arrangement.
+
+Finally, the function \ccc{remove_edge(e)} removes the edge $e$
+from the arrangement. Note that this operation is the reverse of
+\ccc{insert_at_vertices()}, so it may cause a connected component
+two split into two, or two face to merge into one.
+
+\begin{figure}[t]
+\begin{ccTexOnly}
+\begin{center}
+    \begin{tabular}{ccc}
+        \input{Arrangement_2/ex_3a.pstex_t} &
+        \input{Arrangement_2/ex_3b.pstex_t} &
+        \input{Arrangement_2/ex_3c.pstex_t} \\
+    {\small (a)} & {\small (b)} & {\small (c)}\\
+    \end{tabular}
+\end{center}
+\end{ccTexOnly}
+\caption{An arrangement of line segments containing as constructed
+in \ccc{example3.C}. Note that the edges $e_7$ and $e_8$ and the
+vertices $w_1$ and $w_2$, introduced in step~(b) are eventually
+removed in step~(c).} \label{arr_fig:ex_3}
+%\begin{ccHtmlOnly}
+%<P>
+%<center>
+%  <img src="ex_3.gif"  border=0 alt="The segment arrangement constructed in \ccc{example3.C}.">
+%</center>
+%\end{ccHtmlOnly}
+\end{figure}
+
+In the following example program we show how the edge-manipulation
+functions can be used. Not that here we still stick to integer
+coordinates, but as we work on a larger scale we use an unbounded
+integer number-type (in this case, the \ccc{Gmpz} type taken from
+the {\sc Gmp} library) instead of the built-in \ccc{int}
+type.\footnote{As a rule of thumb, one can use a bounded integer
+type containing for representing line segments whose coordinates
+are bounded by $\lfloor\sqrt[3]{M}\rfloor$, where $M$ is the
+maximal representable integer value.} We also use the standard
+Cartesian kernel of \cgal\ as our kernel --- this is recommended
+when the kernel is instantiated with a more complex number type:
+
+\ccIncludeExampleCode{../examples/Arrangement_2/example3.C}
+
+Note how we use the halfedge handles returned from
+\ccc{split_edge()} and \ccc{merge_edge()}. Also note the insertion
+of the isolated vertex $v_6$ inside the triangular face (the
+incident face of $e_7$). This vertex is eventually connected to
+other vertices, so it stops being isolated.
+
+In this context, we should mention the two member functions
+\ccc{modify_vertex(v, p)}, which sets $p$ to be the point
+associated with the vertex $v$, and \ccc{modify_edge(e, c)}, which
+sets $c$ to be the $x$-monotone curve associated with the halfedge
+$e$. To avoid the invalidation of the geometric structure of the
+arrangement, these functions have preconditions that $p$ is
+geometrically equivalent to \ccc{v->point()} and $c$ is equivalent
+to \ccc{e->curve()} (i.e., the two curves have the same graph),
+respectively. It therefore seems that these two functions are of
+little use. However, we should keep in mind that there may be
+extraneous data (probably non-geometric) associated with the point
+objects or with the curve objects, as defined by the traits class,
+so we are thus able to modify this data. In addition, we may
+replace a geometric object with an equivalent object that has a
+more compact representation. See more details in
+Section~\ref{arr_sec:traits}.
 
 \section{Global Arrangement Functions}
 \label{arr_sec:gl_funs}
