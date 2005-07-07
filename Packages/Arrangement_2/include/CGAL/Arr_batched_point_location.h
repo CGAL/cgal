@@ -20,12 +20,13 @@
 #ifndef CGAL_ARR_BATCHED_POINT_LOCATION_H
 #define CGAL_ARR_BATCHED_POINT_LOCATION_H
 
-#include <CGAL/Sweep_line_2.h>
+#include <CGAL/Basic_sweep_line_2.h>
 #include <CGAL/Sweep_line_2/Sweep_line_subcurve.h>
 #include <CGAL/Sweep_line_2/Sweep_line_event.h>
 #include <CGAL/Arr_point_location/Arr_batched_point_location_visitor.h>
 #include <CGAL/Arr_point_location/Arr_batched_point_location_meta_traits.h>
 #include <vector>
+#include <iostream>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -49,6 +50,7 @@ OutputIterator locate(const Arrangement& arr,
   typedef typename Arrangement::Traits_2               Traits_2;
   typedef typename Traits_2::X_monotone_curve_2        Base_X_monotone_curve_2;
   typedef typename Arrangement::Halfedge_const_handle  Halfedge_const_handle;
+  typedef typename Arrangement::Vertex_const_iterator  Vertex_const_iterator;
   typedef typename Arrangement::Edge_const_iterator    Edge_const_iterator;
   typedef typename Arrangement::Size                   Size;
 
@@ -65,7 +67,7 @@ OutputIterator locate(const Arrangement& arr,
                                              OutputIterator,
                                              Arrangement>  Visitor;
   
-  typedef Sweep_line_2<Meta_traits_2, Visitor>           Sweep_line;
+  typedef Basic_sweep_line_2<Meta_traits_2, Visitor>       Sweep_line;
 
   // Go over all arrangement edges.
   std::vector<X_monotone_curve_2>  xcurves_vec;
@@ -85,20 +87,16 @@ OutputIterator locate(const Arrangement& arr,
     else
       xcurves_vec[i] = X_monotone_curve_2(eit->curve(),eit->handle()->twin());
   }
-  
-  Size num_of_points = std::distance(points_begin, points_end);
-  std::vector<Point_2> points_vec(num_of_points);
 
-  i = 0;
-  for(PointsIterator pit =  points_begin;
-      pit != points_end;
-      ++pit, ++i)
+  std::vector<Point_2>    iso_points;
+  for(Vertex_const_iterator v_itr = arr.vertices_begin();
+      v_itr != arr.vertices_end();
+      ++v_itr)
   {
-    points_vec[i] = Point_2(*pit,Point_2::QUERY);
+    if(v_itr->is_isolated())
+    iso_points.push_back(v_itr->point());
   }
-
-
-
+  
   // Perform the sweep, while initializing it with all query points as event
   // points.
   Visitor     visitor (oi, arr);
@@ -106,8 +104,10 @@ OutputIterator locate(const Arrangement& arr,
   
   sweep_line.sweep(xcurves_vec.begin(),
 		               xcurves_vec.end(),
-		               points_vec.begin(), 
-		               points_vec.end());
+                   iso_points.begin(),  
+                   iso_points.end(), 
+		               points_begin, 
+		               points_end);
   
   return visitor.get_output_iterator();  // return a past_end iterator
 }

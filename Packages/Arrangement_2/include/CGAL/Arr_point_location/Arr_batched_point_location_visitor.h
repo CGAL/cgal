@@ -47,9 +47,7 @@ class Arr_batched_point_location_visitor : public Empty_visitor< Traits_ >
   typedef typename Traits::X_monotone_curve_2            X_monotone_curve_2;
   typedef typename Traits::Point_2                       Point_2;
   typedef typename Arrangement::Halfedge_const_handle    Halfedge_const_handle;
-
-  typedef typename Traits::Base_Point_2                  Base_Point_2;         
-  typedef std::pair<Base_Point_2,Object>                      PL_Pair;
+  typedef std::pair<Point_2,Object>                      PL_Pair;
 
 
   public:
@@ -67,8 +65,9 @@ class Arr_batched_point_location_visitor : public Empty_visitor< Traits_ >
   //(above_on_event is true iff 'above' subcurve is on the event
   bool after_handle_event(Event* event, SL_iterator above, bool above_on_event)
   {
-    if(! event->get_point().is_query())
+    if(! event->is_query())
       return true;
+
 
     // VERTEX
     if(event->has_right_curves() || event->has_left_curves())
