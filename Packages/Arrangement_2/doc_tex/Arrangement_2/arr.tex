@@ -4,6 +4,8 @@
 \newcommand{\A}{{\cal A}}
 \newcommand{\eps}{{\varepsilon}}
 \newcommand{\dcel}{{\sc Dcel}}
+\newcommand{\naive}{na\"{\i}ve}
+\newcommand{\kdtree}{{\sc Kd}-tree}
 
 
 % ===============================================================
@@ -436,17 +438,32 @@ void print_arrangement (const Arrangement_2& arr)
 \label{arr_ssec:modify}
 %-------------------------------------
 
+In this section we review the various member functions of the
+\ccc{Arrangement_2} class that allows users to modify the
+topological structure of the arrangement by introducing new
+edges and vertices, modifying them and removing them.
+
+Please note that the arrangement member-functions that insert
+new curves into the arrangement, thus enabling the construction
+of planar subdivision, are rather specialized, in the sense that
+the user has to have a large amount of a-priori knowledge on the
+location of the inserted curve. Indeed, for most purposes it is
+more convinient to construct an arrangement using the global
+insertion functions. Readers may therefore skip to
+Section~\ref{arr_sec:gl_funs} and go over it before reading this
+section.
+
 \subsubsection{Inserting Non-Intersecting Curves}
 \label{arr_sssec:mf_insert_cv}
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Alongside with the traversal methods, the arrangement class also
-supports several methods that modify the arrangement, the most
-important ones being the specialized insertion functions of
-$x$-monotone curves whose interior is disjoint from any other
-curve in the existing arrangement and does not contain any vertex
-of the arrangement. We will also assume that the location of the
-curve in the arrangement is known.
+The most important functions that allow users to modify the
+arrangement, and the most frequently used ones, are the
+specialized insertion functions of $x$-monotone curves whose
+interior is disjoint from any other curve in the existing
+arrangement and does not contain any vertex of the arrangement.
+We will also assume that the location of the curve in the
+arrangement is known.
 
 The reason for these rather harsh restrictions on the nature of
 the inserted curves is the decoupling of the topological
@@ -738,6 +755,76 @@ so we are thus able to modify this data. In addition, we may
 replace a geometric object with an equivalent object that has a
 more compact representation. See more details in
 Section~\ref{arr_sec:traits}.
+
+\section{Point-Location and Related Queries}
+\label{arr_sec:queries}
+%===========================================
+
+One of the most important query types defined on arrangements is
+the {\em point-location} query: Given a point, find the arrangement
+cell that contains it. Typically, the result of a point-location
+query is one of the arrangement faces, but in degenerate
+situations the query point can be located on an edge or coincide
+with a vertex.
+
+Point-location queries are not only common in many applications,
+they also play an important role in the global insertion functions
+(see Section~\ref{arr_sec:gl_funs}). It is therefore crucial to
+have the ability of effectively answering such queries for any
+arrangement instance.
+
+\subsection{Point-Location Strategies}
+\label{arr_ssec:pl_strat}
+%-------------------------------------
+
+The arrangement package comes with several classes that model
+the \ccc{ArrPointLocation} concept --- namely, they all have a
+member functions called \ccc{locate()} that accepts a query
+point and outputs a \cgal \ccc{Object} that wraps a handle to
+the arrangement cell containing the query point. This object
+can be assigned to either a \ccc{Face_const_handle},
+\ccc{Halfedge_const_handle} or a \ccc{Vertex_const_handle}.
+
+An instance of any point-location class is always attached to
+an \ccc{Arrangement_2} instance. This attachment can be
+performed when the point-location instance is constructed,
+or at a later time, using the \ccc{init(arr)} method, where
+\ccc{arr} is the attached \ccc{Arrangement_2} instance.
+
+Each of the various point-location classes employs a different
+algorithm or {\em strategy} for answering queries.
+\begin{itemize}
+\item {\tt Arr\_naive\_point\_location} locate the query point
+\naive ly, by exhaustively scanning all arrangement cells.
+
+\item {\tt Arr\_walk\_along\_a\_line\_point\_location}
+simulates a traversal along an imaginary vertical ray emanating
+from the query point: It starts from the unbounded face of the
+arrangement and moves downward toward the query point until
+locating the arrangement cell containing it.
+
+\item {\tt Arr\_landmarks\_point\_location} uses a set of
+``landmark'' points whose location in the arrangement is known.
+Given a query point, it uses a \kdtree\ to find the nearest
+landmark and then traverses the straight line segment connecting
+this landmark to the query point.
+
+There are various strategies to select the landmark set in the
+arrangement. By default, the arrangement vertices are used as
+landmarks, but other landmark-generating strategies, such as
+sampling random points or choosing points on a grid are also
+available.
+
+\item {\tt Arr\_trapezoidal\_ric\_point\_location} implements
+Mulmuley's algorithm, which is based on the vertical decomposition
+of the arrangement into pseudo-trapezoids~\cite{m-fppa-90}.
+\end{itemize}
+
+The main advantage of the first two strategies is that they do not
+require any extra data, so the respective classes just store a
+pointer to an arrangement object and operate directly on it. The
+remaining strategies need to maintain auxiliary data-structures in
+order to answer queries efficiently.
 
 \section{Global Arrangement Functions}
 \label{arr_sec:gl_funs}
