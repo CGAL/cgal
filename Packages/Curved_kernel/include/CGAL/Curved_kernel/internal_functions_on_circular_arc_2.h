@@ -407,6 +407,7 @@ namespace CircularFunctors {
 
     // Overlapping curves.
     if (a1.supporting_circle() == a2.supporting_circle()) {
+
       // The ranges need to overlap in order for the curves to overlap.
       if (compare_x<CK>(a1.left(), a2.right()) > 0 ||
           compare_x<CK>(a2.left(), a1.right()) > 0)
@@ -414,15 +415,15 @@ namespace CircularFunctors {
 
       // They both need to be on the same upper/lower part.
       if (a1.on_upper_part() != a2.on_upper_part()) {
-        // But they could share the right vertical tangent point.
-        if (a1.right() == a2.right()) {
-            *res++ = make_object
-	      (std::make_pair(a1.right(),static_cast<unsigned>(0)));
-        }
-        // Or they could share the left vertical tangent point.
+        // But they could share the left vertical tangent point.
         if (a1.left() == a2.left()) {
-            *res++ = make_object
-	      (std::make_pair(a1.left(),static_cast<unsigned>(0)));
+	  *res++ =make_object
+	    ( std::make_pair(a1.left(),static_cast<unsigned>(0)));
+        }
+        // Or they could share the right vertical tangent point.
+	if (a1.right() == a2.right()) {
+	  *res++ = make_object
+	    (std::make_pair(a1.right(),static_cast<unsigned>(0)));
         }
         return res;
       };
@@ -437,47 +438,34 @@ namespace CircularFunctors {
 
       if ( compare_x<CK>(a1.left(), a2.left()) > 0 ) //? a1.left() : a2.left();
 	{ //the left endpoint is a1's
-	  if (a1.left().circle(0) == arctmp.supporting_circle()) {
+	  assert(a1.left().circle(0) == arctmp.supporting_circle());
+	  if(compare_x<CK>(a1.left(), a2.right()) < 0){
 	    const Circular_arc_2 & arc =
-	      Circular_arc_2(arctmp.supporting_circle(), false,
-			     a1.left().circle(1), a1.left().is_left());
-	    assert(arc.left()==a1.left());
-	    assert(arc.right()==arctmp.right());
+	    Circular_arc_2(arctmp, false,
+	  		   a1.left().circle(1), a1.left().is_left());
 	    assert(arc.is_x_monotone());
 	    *res++ = make_object(arc);
 	  }
-	  else {
-	    assert(a1.left().circle(1) == arctmp.supporting_circle());
-	    const Circular_arc_2 & arc =
-	      Circular_arc_2(arctmp.supporting_circle(), false,
-			     a1.left().circle(0), a1.left().is_left());
-	    assert(arc.left()==a1.left());
-	    assert(arc.right()==arctmp.right());
-	    assert(arc.is_x_monotone());
-	    *res++ = make_object(arc);
-	  };
+
+	  else{
+	  *res++ = make_object
+	    (std::make_pair(arctmp.right(),static_cast<unsigned>(0)));
+	  }
 	}
       else { //the left endpoint is a2's
-	if (a2.left().circle(0) == arctmp.supporting_circle()) {
-	    const Circular_arc_2 & arc =
-	      Circular_arc_2(arctmp.supporting_circle(), false,
-			     a2.left().circle(1), a2.left().is_left());
-	    assert(arc.left()==a2.left());
-	    assert(arc.right()==arctmp.right());
-	    assert(arc.is_x_monotone());
-	    *res++ = make_object(arc);
+	assert(a2.left().circle(0) == arctmp.supporting_circle());
+	if(compare_x<CK>(a1.right(), a2.left()) > 0){
+	   const Circular_arc_2 & arc =
+	    Circular_arc_2(arctmp, false,
+	  		   a2.left().circle(1), a2.left().is_left() );
+	   assert(arc.is_x_monotone());
+	  *res++ = make_object(arc);
 	  }
-	  else {
-	    assert(a2.left().circle(1) == arctmp.supporting_circle());
-	    const Circular_arc_2 & arc =
-	      Circular_arc_2(arctmp.supporting_circle(), false,
-			     a2.left().circle(0), a2.left().is_left());
-	    assert(arc.left()==a2.left());
-	    assert(arc.right()==arctmp.right());
-	    assert(arc.is_x_monotone());
-	    *res++ = make_object(arc);
-	  };
-      };
+	else{
+	*res++ = make_object
+	  (std::make_pair(arctmp.right(),static_cast<unsigned>(0)));
+	}
+      }
 
       return res;
     }
@@ -610,6 +598,7 @@ namespace CircularFunctors {
     typedef typename CK::FT                       FT;
     typedef typename CK::Linear_kernel::Point_2   Point_2;
 
+
     int cmp_begin = CGAL::compare(A.begin().y(), A.center().y());
     int cmp_end   = CGAL::compare(A.end().y(),   A.center().y());
 
@@ -619,13 +608,13 @@ namespace CircularFunctors {
     if (cmp_begin != opposite(cmp_end) &&
         (((cmp_begin > 0 || cmp_end > 0) && cmp_x > 0) ||
           (cmp_begin < 0 || cmp_end < 0) && cmp_x < 0) ) {
-      *res++ = A;
+      *res++ = make_object(A);
       return res; 
     }
 
     // Half circles
     if (cmp_begin == 0 && cmp_end == 0 && cmp_x != 0) {
-      *res++ = A;
+      *res++ = make_object(A);
       return res; 
     }
 
@@ -638,59 +627,59 @@ namespace CircularFunctors {
                 A.squared_radius()+1);
 
     if (cmp_begin > 0) {
-      *res++ = Circular_arc_2 (A.supporting_circle(),
+      *res++ = make_object(Circular_arc_2 (A.supporting_circle(),
                                A.begin().circle(1), A.begin().is_left(),
-                               c, true);
+					   c, true));
       if (cmp_end > 0) {
         // We must cut in 3 parts.
-        *res++ = Circular_arc_2 (A.supporting_circle(),
-                                 c, true, c, false);
-        *res++ = Circular_arc_2 (A.supporting_circle(),
+        *res++ = make_object(Circular_arc_2 (A.supporting_circle(),
+					     c, true, c, false));
+        *res++ = make_object(Circular_arc_2 (A.supporting_circle(),
                                  c, false,
-                                 A.end().circle(1), A.end().is_left());
+					     A.end().circle(1), A.end().is_left()));
       } else {
-        *res++ = Circular_arc_2 (A.supporting_circle(),
+        *res++ = make_object(Circular_arc_2 (A.supporting_circle(),
                                  c, true,
-                                 A.end().circle(1), A.end().is_left());
+					     A.end().circle(1), A.end().is_left()));
       }
     }
     else if (cmp_begin < 0) {
       // Very similar to the previous case.
-      *res++ = Circular_arc_2 (A.supporting_circle(),
-                               A.begin().circle(1), A.begin().is_left(),
-                               c, false);
+      *res++ = make_object(Circular_arc_2 (A.supporting_circle(),
+					   A.begin().circle(1), A.begin().is_left(),
+					   c, false));
       if (cmp_end < 0) {
         // We must cut in 3 parts.
-        *res++ = Circular_arc_2 (A.supporting_circle(),
-                                 c, false, c, true);
-        *res++ = Circular_arc_2 (A.supporting_circle(),
+        *res++ = make_object(Circular_arc_2 (A.supporting_circle(),
+					     c, false, c, true));
+        *res++ = make_object(Circular_arc_2 (A.supporting_circle(),
                                  c, true,
-                                 A.end().circle(1), A.end().is_left());
+					     A.end().circle(1), A.end().is_left()));
       } else {
-        *res++ = Circular_arc_2 (A.supporting_circle(),
+        *res++ = make_object(Circular_arc_2 (A.supporting_circle(),
                                  c, false,
-                                 A.end().circle(1), A.end().is_left());
+					     A.end().circle(1), A.end().is_left()));
       }
     }
     else { // cmp_begin == 0
       if (CGAL::compare(A.begin().x(), A.center().x()) < 0) {
         assert (cmp_end >= 0);
-        *res++ = Circular_arc_2 (A.supporting_circle(),
+        *res++ = make_object(Circular_arc_2 (A.supporting_circle(),
                                  A.begin().circle(1), A.begin().is_left(),
-                                 c, false);
-        *res++ = Circular_arc_2 (A.supporting_circle(),
+					     c, false));
+        *res++ = make_object(Circular_arc_2 (A.supporting_circle(),
                                  c, false,
-                                 A.end().circle(1), A.end().is_left());
+					     A.end().circle(1), A.end().is_left()));
       }
       else {
         assert (CGAL::compare(A.begin().x(), A.center().x()) > 0);
         assert (cmp_end != LARGER);
-        *res++ = Circular_arc_2 (A.supporting_circle(),
-                                 A.begin().circle(1), A.begin().is_left(),
-                                 c, true);
-        *res++ = Circular_arc_2 (A.supporting_circle(),
+        *res++ = make_object(Circular_arc_2 (A.supporting_circle(),
+					     A.begin().circle(1), A.begin().is_left(),
+					     c, true));
+        *res++ = make_object(Circular_arc_2 (A.supporting_circle(),
                                  c, true,
-                                 A.end().circle(1), A.end().is_left());
+					     A.end().circle(1), A.end().is_left()));
       }
     }
 
