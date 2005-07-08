@@ -1,3 +1,11 @@
+8 july 2005 Mariette
+- added the doc for is_Gabriel() member functions in
+  Delaunay and regular triangulations
+
+7 july 2005 Mariette
+- added  the docs for predicates and constructors on weighted points
+  in Regular_triangulation_euclidean_traits
+
 30 June 2005 Mariette
 - added find_conflicts  and dual functions in Regular triangulation,
   documented but not tested

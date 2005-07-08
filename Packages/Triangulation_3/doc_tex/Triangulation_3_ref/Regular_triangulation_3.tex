@@ -283,6 +283,27 @@ Returns the \ccc{Triple} composed of the resulting output iterators.
 with \ccc{p}.}
 }
 
+In the weighted setting, a face (cell, facet, edge or vertex) 
+is said to be a Gabriel face iff
+the  smallest sphere  orthogonal to the weighted 
+points associated to its vertices,
+has a positive power product with the weighted point
+of any other vertex of the triangulation.
+Any weighted Gabriel face belongs to the
+regular triangulation, but the reciprocal is not true.
+The following member functions test the Gabriel property of the
+faces of the regular triangulation.
+\ccMethod{bool is_Gabriel(Cell_handle c, int i);}{}
+\ccGlue 
+\ccMethod{bool is_Gabriel(Cell_handle c, int i, int j);}{}
+\ccGlue 
+\ccMethod{bool is_Gabriel(const Facet& f);}{}
+\ccGlue
+\ccMethod{bool is_Gabriel(const Edge& e);} {}
+\ccGlue
+\ccMethod{bool is_Gabriel(Vertex_handle v);}{}
+
+
 \ccHeading{Power diagram}
 \ccIndexMainItem{Power diagram}
 \cgal\ offers several functionalities to display the Power diagram of 

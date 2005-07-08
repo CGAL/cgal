@@ -270,6 +270,19 @@ Returns the resulting output iterator.
 with \ccc{p}.}
 }
 
+A face (cell, facet or edge) is said to be a Gabriel face iff
+its   smallest circumscribing sphere do not enclose
+any vertex of the triangulation.  Any Gabriel face belongs to the
+Delaunay triangulation, but the reciprocal is not true.
+The following member functions test the Gabriel property of
+Delaunay faces.
+\ccMethod{bool is_Gabriel(Cell_handle c, int i);}{}
+\ccGlue 
+\ccMethod{bool is_Gabriel(Cell_handle c, int i, int j);}{}
+\ccGlue 
+\ccMethod{bool is_Gabriel(const Facet& f);}{}
+\ccGlue
+\ccMethod{bool is_Gabriel(const Edge& e);} {}
 
 
 \ccHeading{Voronoi diagram}
