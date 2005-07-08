@@ -322,8 +322,7 @@ public slots:
   {
     arc_container().push_back(get_arc_layer->get_circular_arc());
     insert(pm(),pl(),arc_container().back());
-    //    pm().insert(arc_container().back());
-
+    //    pm().arr_insert(arc_container().back());
     something_changed = true;
     widget->redraw();
   }
@@ -337,7 +336,7 @@ public slots:
 	   it != arc_container().end(); ++it) {
 	insert(pm(),pl(),*it);
       };
-      //      pm().insert(arc_container().begin(), arc_container().end());
+      //      pm().arr_insert(arc_container().begin(), arc_container().end());
     }
     something_changed = true;
     widget->redraw();
