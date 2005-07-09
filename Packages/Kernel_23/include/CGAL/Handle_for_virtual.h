@@ -26,6 +26,7 @@
 #define CGAL_HANDLE_FOR_VIRTUAL_H
 
 #include <CGAL/basic.h>
+#include <typeinfo>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -37,8 +38,14 @@ class Ref_counted_virtual
 
     void  add_reference() { ++count; }
     void  remove_reference() { --count; }
-    bool  is_referenced() { return (count != 0); }
-    bool  is_shared() { return (count > 1); }
+    bool  is_referenced() const { return (count != 0); }
+    bool  is_shared() const { return (count > 1); }
+
+    virtual const std::type_info & type() const
+    { return typeid(void); }
+
+    virtual const void * object_ptr() const
+    { return NULL; }
 
     virtual ~Ref_counted_virtual() {}
 
@@ -51,8 +58,8 @@ template <class RefCounted>
 // RefCounted must provide
 // add_reference()
 // remove_reference()
-// bool is_referenced()
-// bool is_shared()
+// bool is_referenced() const
+// bool is_shared() const
 // and initialize count to 1 in default and copy constructor
 class Handle_for_virtual
 {
@@ -113,6 +120,11 @@ class Handle_for_virtual
     const RefCounted *
     Ptr() const
     { return ptr; }
+
+    const void * object_ptr() const
+    {
+      return ptr->object_ptr();
+    }
 
     /*
     T *

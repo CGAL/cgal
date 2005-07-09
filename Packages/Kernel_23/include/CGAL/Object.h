@@ -31,6 +31,8 @@
 #include <CGAL/basic.h>
 #include <CGAL/Handle_for_virtual.h>
 
+#include <typeinfo>
+
 CGAL_BEGIN_NAMESPACE
 
 template <class T>
@@ -45,6 +47,16 @@ class Wrapper : public Ref_counted_virtual
 
     ~Wrapper() {}
 
+    virtual const std::type_info & type() const
+    {
+        return typeid(T);
+    }
+
+    virtual const void * object_ptr() const
+    {
+        return & _object;
+    }
+
   private:
     T         _object;
 };
@@ -52,7 +64,7 @@ class Wrapper : public Ref_counted_virtual
 class Object
   : public Handle_for_virtual<Ref_counted_virtual>
 {
-    struct empty{};
+    struct empty {};
     typedef Handle_for_virtual<Ref_counted_virtual> base;
 
   public:
@@ -96,6 +108,12 @@ class Object
 	empty E;
 	return assign(E);
     }
+
+    const std::type_info & type() const
+    {
+        return is_empty() ? typeid(void) : Ptr()->type();
+    }
+
 };
 
 
@@ -113,6 +131,49 @@ bool
 assign(T& t, const Object& o)
 {
     return o.assign(t);
+}
+
+
+struct Bad_object_cast
+  : public std::bad_cast
+{
+    virtual const char * what() const throw()
+    {
+        return "CGAL::bad_object_cast: "
+               "failed conversion using CGAL::object_cast";
+    }
+};
+
+/*
+template <class T>
+inline
+T * object_cast(Object * o)
+{
+    return o && o->type() == typeid(T) ? o->object_ptr() : NULL;
+}
+*/
+
+template <class T>
+inline
+const T * object_cast(const Object * o)
+{
+    const Wrapper<T> *wp = dynamic_cast<const Wrapper<T> *>(o->Ptr());
+    if (wp == NULL)
+        return NULL;
+    return static_cast<const T*>(wp->object_ptr());
+//    return o && o->type() == typeid(T)
+//         ? static_cast<const T*>(o->object_ptr())
+//         : NULL;
+}
+
+template <class T>
+inline
+T object_cast(const Object & o)
+{
+    const T * result = object_cast<T>(&o);
+    if (!result)
+        throw Bad_object_cast();
+    return *result;
 }
 
 CGAL_END_NAMESPACE

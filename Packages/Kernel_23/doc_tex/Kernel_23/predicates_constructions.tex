@@ -75,8 +75,8 @@ or arrays. Note that \ccc{Object} is NOT a common base class for the
 elementary classes. Therefore, there is no 
 automatic conversion from these classes to \ccc{Object}. Rather 
 this is done with the global function \ccc{make_object()}. This 
-encapsulation mechanism requires the use of \ccc{assign} to use 
-the functionality of the encapsulated class.
+encapsulation mechanism requires the use of \ccc{assign} or
+\ccc{object_cast} to access the encapsulated class.
 
 \ccExample
 In the following example, the object class is used as return value for the 
@@ -84,8 +84,12 @@ In the following example, the object class is used as return value for the
 
 \begin{cprog}
 {
-    Point_2< Cartesian<double> > point;
-    Segment_2< Cartesian<double> > segment,  segment_1, segment_2;
+    typedef Cartesian<double>  K;
+    typedef K::Point_2         Point_2;
+    typedef K::Segment_2       Segment_2;
+
+    Point_2 point;
+    Segment_2 segment, segment_1, segment_2;
 
     std::cin >> segment_1 >> segment_2;
 
@@ -103,6 +107,35 @@ In the following example, the object class is used as return value for the
 }
 \end{cprog}
 \ccHtmlLinksOn%
+
+\medskip
+A more efficient way is to use \ccc{object_cast} :
+
+\begin{cprog}
+{
+    typedef Cartesian<double>  K;
+    typedef K::Point_2         Point_2;
+    typedef K::Segment_2       Segment_2;
+
+    Segment_2 segment_1, segment_2;
+
+    std::cin >> segment_1 >> segment_2;
+
+    Object obj = intersection(segment_1, segment_2);
+
+    if (const Point_2 *point = object_cast<Point_2>(&obj)) {
+        /* do something with *point */
+    } else if (const Segment_2 *segment = object_cast<Segment_2>(&obj)) {
+        /* do something with *segment*/
+    }
+\end{cprog}
+\ccHtmlLinksOff%
+\begin{cprog}
+    /*  there was no intersection */
+}
+\end{cprog}
+\ccHtmlLinksOn%
+
 
 \medskip
 The \ccHtmlNoLinksFrom{intersection} routine itself looks roughly as follows:
@@ -150,7 +183,7 @@ In {\cgal}, we provide predicates in which such
 geometric decisions are made directly with a reference to the input points
 $p$, $q$, $r$, $s$, without an intermediary object like a plane. 
 For the above test, the recommended way to get the result is to use
-\ccc{orientation(p,q,r,s)}. For exact number types like \ccc{leda_real},
-the situation is different. If several tests are to be made with the same
+\ccc{orientation(p,q,r,s)}. For exact number types, the situation is different.
+If several tests are to be made with the same
 plane, it pays off to construct the plane and to use \ccc{oriented_side(p)}.
 

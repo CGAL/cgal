@@ -22,6 +22,10 @@
 #ifndef CGAL__TEST_CLS_OBJECT_H
 #define CGAL__TEST_CLS_OBJECT_H
 
+#include <CGAL/use.h>
+
+using CGAL::use;
+
 // Test that we can derive from Object.
  
 class Object_handle
@@ -96,10 +100,37 @@ _test_cls_object(const R&)
   assert( ! CGAL::assign( p32, o3 ) );
 
   // Test that deriving from Object works.
-  Object_handle o;
-  o = return_obj();
+  Object_handle o4;
+  o4 = return_obj();
+
+  // Test .type().
+  CGAL::Object o5;
+  std::cout << o5.type().name() << std::endl;
+  assert( o5.type() == typeid(void) );
+
+  CGAL::Object o6 = CGAL::make_object(2);
+  std::cout << o6.type().name() << std::endl;
+  assert( o6.type() == typeid(int) );
+
+  // Test object_cast<>().
+  const int *i = CGAL::object_cast<int>(&o6);
+  assert( i != NULL );
+  int j = CGAL::object_cast<int>(o6);
+  use(j);
+
+  const double *d = CGAL::object_cast<double>(&o6);
+  assert( d == NULL );
+  try {
+    // This case must throw.
+    double k = CGAL::object_cast<double>(o6);
+    use(k);
+    assert(false);
+  }
+  catch (CGAL::Bad_object_cast) {}
+
 
   std::cout << "done" << std::endl;
   return true;
 }
+
 #endif // CGAL__TEST_CLS_OBJECT_H
