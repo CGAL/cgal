@@ -32,6 +32,9 @@
 #include "_test_cls_iso_rectangle_new_2.h"
 #include "_test_cls_circle_new_2.h"
 
+#include <CGAL/use.h>
+
+using CGAL::use;
 
 template <class R>
 bool
@@ -47,10 +50,6 @@ _test_cls_new_2(const R& r)
    ;
 }
 
-
-// To kill "unused" warnings.
-template < typename T >
-void use(const T&) {}
 
 template <class R>
 bool

@@ -26,11 +26,9 @@
 #include <CGAL/intersections.h>
 #include <CGAL/squared_distance_3.h>
 
-#ifndef CGAL__TEST_NEW_2_H
-// To kill "unused" warnings.
-template < typename T >
-void use(const T&) {}
-#endif
+#include <CGAL/use.h>
+
+using CGAL::use;
 
 // Accessory function testing functions that require sqrt().
 // Doesn't instantiate anything if RT doesn't support sqrt().
