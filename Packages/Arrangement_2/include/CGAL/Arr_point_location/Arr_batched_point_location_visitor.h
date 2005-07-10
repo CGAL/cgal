@@ -72,14 +72,15 @@ class Arr_batched_point_location_visitor : public Empty_visitor< Traits_ >
     // VERTEX
     if(event->has_right_curves() || event->has_left_curves())
     {
-      Subcurve* sc = *(event->right_curves_begin());
-      Halfedge_const_handle he = sc->get_last_curve().get_halfedge_handle();
-
       if(event->has_right_curves())
       {
+        Subcurve* sc = *(event->right_curves_begin());
+        Halfedge_const_handle he = sc->get_last_curve().get_halfedge_handle();
         *m_out++ = std::make_pair(event->get_point(), CGAL::make_object(he->target()));
         return true;
       }
+      Subcurve* sc = *(event->left_curves_begin());
+      Halfedge_const_handle he = sc->get_last_curve().get_halfedge_handle();
       *m_out++ = std::make_pair(event->get_point(),make_object(he->source()));
       return true;
     }
