@@ -721,6 +721,7 @@ _fix_overlap_subcurves()
                             				   m_currentEvent->get_point(),
                                        sub_cv1, sub_cv2);
             res->set_last_curve(sub_cv2);
+            res->set_overlap_subcurve(NULL); //BZBZ
 
             _add_curve_to_right(m_currentEvent, res);
             m_currentEvent->set_weak_intersection();
@@ -735,6 +736,7 @@ _fix_overlap_subcurves()
                             				   m_currentEvent->get_point(),
                                        sub_cv1, sub_cv2);
             res->set_last_curve(sub_cv2);
+            res->set_overlap_subcurve(NULL); //BZBZ
             _add_curve_to_right(m_currentEvent, res);
             m_currentEvent->set_weak_intersection();
             m_visitor ->update_event(m_currentEvent, res);
