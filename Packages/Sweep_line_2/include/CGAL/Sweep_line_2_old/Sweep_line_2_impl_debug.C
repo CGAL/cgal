@@ -74,7 +74,7 @@ Sweep_line_2_impl<SweepLineTraits_2,SweepEvent,CurveWrap,SweepNotif,
                   Allocator>::
 PrintStatusLine()
 {
-  if ( m_statusL.size() == 0) {
+  if ( m_statusLine.size() == 0) {
     std::cout << std::endl << "Status line: empty" << std::endl;
     return;
   }

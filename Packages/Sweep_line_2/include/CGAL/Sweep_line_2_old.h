@@ -19,12 +19,12 @@
 #ifndef CGAL_SWEEP_2_H
 #define CGAL_SWEEP_2_H
 
-#include <CGAL/Sweep_line_2/Sweep_line_2_impl.h>
-#include <CGAL/Sweep_line_2/Sweep_line_event.h>
-#include <CGAL/Sweep_line_2/Sweep_line_subcurve.h>
-#include <CGAL/Sweep_line_2/Sweep_line_points_visitor.h>
-#include <CGAL/Sweep_line_2/Sweep_line_subcurves_visitor.h>
-#include <CGAL/Sweep_line_2/Sweep_line_do_curves_x_visitor.h>
+#include <CGAL/Sweep_line_2_old/Sweep_line_2_impl.h>
+#include <CGAL/Sweep_line_2_old/Sweep_line_event.h>
+#include <CGAL/Sweep_line_2_old/Sweep_line_subcurve.h>
+#include <CGAL/Sweep_line_2_old/Sweep_line_points_visitor.h>
+#include <CGAL/Sweep_line_2_old/Sweep_line_subcurves_visitor.h>
+#include <CGAL/Sweep_line_2_old/Sweep_line_do_curves_x_visitor.h>
 
 
 
