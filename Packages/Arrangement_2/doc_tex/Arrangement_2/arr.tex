@@ -872,7 +872,7 @@ void point_location_query
 
   // Print the result.
   typedef typename PointLocation::Arrangement_2  Arrangement_2;
-  
+
   typename Arrangement_2::Vertex_const_handle    v;
   typename Arrangement_2::Halfedge_const_handle  e;
   typename Arrangement_2::Face_const_handle      f;
@@ -1003,14 +1003,14 @@ selected point-location strategy.
 \end{center}
 \end{ccTexOnly}
 \caption{The arrangement of line segments, as constructed in
-\ccc{example5.C} and \ccc{example6.C}. The arrangement vertices
-are drawn in light dots, while the query points $q_1, \ldots, q_6$
-are marked with crosses.}
+\ccc{example5.C}, \ccc{example6.C} and \ccc{example7.C}. The
+arrangement vertices are drawn in light dots, while the query
+points $q_1, \ldots, q_6$ are marked with crosses.}
 \label{arr_fig:ex_5}
 %\begin{ccHtmlOnly}
 %<P>
 %<center>
-%  <img src="ex_5.gif"  border=0 alt="The segment arrangement constructed in \ccc{example5.C} and \ccc{example6.C}.">
+%  <img src="ex_5.gif"  border=0 alt="The segment arrangement constructed in \ccc{example5.C}, \ccc{example6.C} and \ccc{example7.C}.">
 %</center>
 %\end{ccHtmlOnly}
 \end{figure}
@@ -1070,7 +1070,7 @@ void vertical_ray_shooting_query
 
   // Print the result.
   typedef typename VerticalRayShoot::Arrangement_2  Arrangement_2;
-  
+
   typename Arrangement_2::Vertex_const_handle    v;
   typename Arrangement_2::Halfedge_const_handle  e;
 
@@ -1091,8 +1091,8 @@ void vertical_ray_shooting_query
   \{
     // We did not hit anything:
     CGAL_assertion_msg (obj.is_empty(), "Invalid object.");
-    
-    std::cout << "Hit nothing." << std::endl; 
+
+    std::cout << "Hit nothing." << std::endl;
   \}
 
   return;
@@ -1111,6 +1111,44 @@ The number type we use in this example is \cgal's built-in
 unbounded mantissa. It supports construction from an integer
 or from a machine \ccc{float} or \ccc{double} and performs
 additions, subtractions and multiplications in an exact number.
+
+\subsection{Batched Point-Location}
+\label{arr_ssec:batched_pl}
+%----------------------------------
+
+Suppose that at a given moment we have our application has to
+issue a relatively large number $m$ of point-location queries on a
+specific arrangement instance. It is possible of course to define
+a point-location object and to issue separate queries on the
+arrangement. However, as explained in Section~\ref{arr_ssec:pl},
+choosing a simple point-location strategy (the \naive\ or the walk
+strategy) means inefficient queries, while the more sophisticated
+strategies need to construct auxiliary structures that incur extra
+running times.
+
+On the other hand, the arrangement package included a global
+\ccc{locate()} function that accepts an arrangement a range of
+query points as its input and sweeps through the arrangement to
+locate the points simultaneously. The function outputs the query
+results as pairs, where each pair is comprised of a query point
+and a \cgal\ \ccc{Object} that represents the cell containing the
+point (see also Section~\ref{arr_ssec:pl}). The output pairs are
+sorted in increasing $xy$-lexicographical order.
+
+The batched point-location operation can be performed in
+$O\left((m+n)\log{(m+n)}\right)$ time, where $n$ is the size of
+the arrangement. This means that when the number $m$ of
+point-location queries is of the same order of magnitude as $n$,
+this operation is more efficient than issuing separate queries.
+Experimental results also backup the theoretical time bounds.
+Moreover, the batched point-location operation does not have to
+construct and maintain additional data structures.
+
+In the following program issued a batched point-location query,
+which is essentially equivalent to the six separate queries
+performed in \ccc{example5.C} (see Section~\ref{arr_ssec:pl}):
+
+\ccIncludeExampleCode{../examples/Arrangement_2/example7.C}
 
 \section{Global Arrangement Functions}
 \label{arr_sec:gl_funs}
