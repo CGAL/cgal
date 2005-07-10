@@ -1,6 +1,7 @@
 // A macro which helps removing "unused variable" warnings.
 
 #ifndef CGAL_USE_H
+#define CGAL_USE_H
 
 namespace CGAL {
 
