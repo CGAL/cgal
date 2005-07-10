@@ -1,79 +1,46 @@
 // file: examples/Arrangement_2/example4.C
 
-
-//#include "short_names.h"
-
-#include <CGAL/Cartesian.h>
-#include <CGAL/CORE_algebraic_number_traits.h>
-#include <CGAL/Arr_conic_traits_2.h>
+#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arrangement_2.h>
-#include <CGAL/Arr_naive_point_location.h>
 
-typedef CGAL::CORE_algebraic_number_traits            Nt_traits;
-typedef Nt_traits::Rational                           Rational;
-typedef Nt_traits::Algebraic                          Algebraic;
-typedef CGAL::Cartesian<Rational>                     Rat_kernel;
-typedef Rat_kernel::Point_2                           Rat_point_2;
-typedef Rat_kernel::Circle_2                          Rat_circle_2;
-typedef CGAL::Cartesian<Algebraic>                    Alg_kernel;
-typedef CGAL::Arr_conic_traits_2<Rat_kernel, 
-				 Alg_kernel,
-				 Nt_traits>           Traits_2;
+#include "arr_print.h"
+
+typedef int                                           Number_type;
+typedef CGAL::Simple_cartesian<Number_type>           Kernel;
+typedef CGAL::Arr_segment_traits_2<Kernel>            Traits_2;
 typedef Traits_2::Point_2                             Point_2;
-typedef Traits_2::Curve_2                             Conic_arc_2;
+typedef Traits_2::X_monotone_curve_2                  Segment_2;
 typedef CGAL::Arrangement_2<Traits_2>                 Arrangement_2;
-typedef CGAL::Arr_naive_point_location<Arrangement_2> Point_location;
+typedef Arrangement_2::Vertex_handle                  Vertex_handle;
+typedef Arrangement_2::Halfedge_handle                Halfedge_handle;
 
 int main ()
 {
-  Arrangement_2    arr;
-  Point_location   pl (arr);
+  Arrangement_2   arr;
 
-  Rat_point_2      c1 = Rat_point_2 (0, 0);
-  Rational         sqr_r1 = Rational (25);       // = 5^2
-  Rat_circle_2     circ1 = Rat_circle_2 (c1, sqr_r1, CGAL::CLOCKWISE);
-  Conic_arc_2      cv1 = Conic_arc_2 (circ1);
+  Point_2         p0 (3, 3);
+  Point_2         p1 (1, 3), p2 (3, 5), p3 (5, 3), p4 (3, 1);
+  Segment_2       s1 (p1, p2);
+  Segment_2       s2 (p2, p3);
+  Segment_2       s3 (p3, p4);
+  Segment_2       s4 (p4, p1);
+  Segment_2       s5 (p1, p0);
+  Segment_2       s6 (p0, p3);
+  Segment_2       s7 (p4, p0);
+  Segment_2       s8 (p0, p2);
 
-  Rat_point_2      c2 = Rat_point_2 (7, 7);
-  Rational         sqr_r2 = Rational (25);       // = 5^2
-  Rat_circle_2     circ2 = Rat_circle_2 (c2, sqr_r2, CGAL::CLOCKWISE);
-  Conic_arc_2      cv2 = Conic_arc_2 (circ2);
+  Vertex_handle   v0 = arr.insert_isolated_vertex (p0, arr.unbounded_face());
+  Halfedge_handle e1 = arr.insert_in_face_interior (s1, arr.unbounded_face());
+  Halfedge_handle e2 = arr.insert_from_left_vertex (s2, e1);
+  Halfedge_handle e3 = arr.insert_from_right_vertex (s3, e2);
+  Halfedge_handle e4 = arr.insert_at_vertices (s4, e3, e1->twin());
+  Halfedge_handle e5 = arr.insert_at_vertices (s5, e1->twin(), v0);
+  Halfedge_handle e6 = arr.insert_at_vertices (s6, e5, e3->twin());
+  Halfedge_handle e7 = arr.insert_at_vertices (s7, e4->twin(), e6->twin());
+  Halfedge_handle e8 = arr.insert_at_vertices (s8, e5, e2->twin());
 
-  Rat_point_2      c3 = Rat_point_2 (4, Rational (-1,2));
-  Rational         sqr_r3 = Rational (49, 4);    // = 3.5^2
-  Rat_circle_2     circ3 = Rat_circle_2 (c3, sqr_r3, CGAL::CLOCKWISE);
-  Conic_arc_2      cv3 = Conic_arc_2 (circ3);
-
-  insert (arr, pl, cv1);
-  insert (arr, pl, cv2);
-  insert (arr, pl, cv3);
-  
-  // Print the arrangement vertices.
-  Arrangement_2::Vertex_const_iterator  vit;
-  int                                   i;
-
-  std::cout << arr.number_of_vertices() << " vertices:" << std::endl;
-  for (i = 1, vit = arr.vertices_begin(); 
-       vit != arr.vertices_end(); vit++, i++)
-  {
-    std::cout << '\t' << i << ": " << vit->point() << std::endl;
-  }
-  std::cout << std::endl;
-
-  // Print the arrangement edges.
-  Arrangement_2::Edge_const_iterator    eit;
-
-  std::cout << arr.number_of_edges() << " edges:" << std::endl;
-  for (i = 1, eit = arr.edges_begin(); 
-       eit != arr.edges_end(); eit++, i++)
-  {
-    std::cout << '\t' << i << ": " << eit->curve() << std::endl;
-  }
-
-  std::cout << std::endl;
-
-  std::cout << arr.number_of_faces() << " faces." << std::endl;
-
+  print_arrangement (arr);
   return (0);
 }
 
