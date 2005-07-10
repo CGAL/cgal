@@ -56,8 +56,8 @@ OutputIterator locate(const Arrangement& arr,
 
 
   // Define meta-traits class for the batched point location:
-  typedef Arr_batched_point_location_meta_traits
-    <Traits_2, Halfedge_const_handle>                  Meta_traits_2;
+  typedef Arr_batched_point_location_meta_traits<Traits_2, Arrangement>
+                                                       Meta_traits_2;
 
   typedef typename Meta_traits_2::X_monotone_curve_2   X_monotone_curve_2;
   typedef typename Meta_traits_2::Point_2              Point_2;
@@ -94,7 +94,7 @@ OutputIterator locate(const Arrangement& arr,
       ++v_itr)
   {
     if(v_itr->is_isolated())
-    iso_points.push_back(v_itr->point());
+    iso_points.push_back(Point_2(v_itr->point(), v_itr->handle()));
   }
   
   // Perform the sweep, while initializing it with all query points as event

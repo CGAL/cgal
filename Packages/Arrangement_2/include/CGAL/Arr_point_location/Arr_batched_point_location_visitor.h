@@ -46,8 +46,10 @@ class Arr_batched_point_location_visitor : public Empty_visitor< Traits_ >
    
   typedef typename Traits::X_monotone_curve_2            X_monotone_curve_2;
   typedef typename Traits::Point_2                       Point_2;
+  typedef typename Traits::Base_Point_2                  Base_Point_2;
   typedef typename Arrangement::Halfedge_const_handle    Halfedge_const_handle;
-  typedef std::pair<Point_2,Object>                      PL_Pair;
+  typedef typename Arrangement::Vertex_const_handle      Vertex_const_handle;
+  typedef std::pair<Base_Point_2,Object>                 PL_Pair;
 
 
   public:
@@ -68,6 +70,14 @@ class Arr_batched_point_location_visitor : public Empty_visitor< Traits_ >
     if(! event->is_query())
       return true;
 
+
+    // ISOLATED VERTEX
+    if(event->is_action())
+    {
+      Vertex_const_handle vh = event->get_point().get_vertex_handle();
+      *m_out++ = std::make_pair(event->get_point(), CGAL::make_object(vh));
+      return true;
+    }
 
     // VERTEX
     if(event->has_right_curves() || event->has_left_curves())
