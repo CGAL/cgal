@@ -817,9 +817,9 @@ insertion functions that accept predecessor halfedges:
 \ccIncludeExampleCode{../examples/Arrangement_2/example4.C}
 \end{ccAdvanced}
 
-\section{Point-Location and Related Queries}
+\section{Issuing Queries on an Arrangement}
 \label{arr_sec:queries}
-%===========================================
+%==========================================
 
 One of the most important query types defined on arrangements is
 the {\em point-location} query: Given a point, find the arrangement
@@ -834,9 +834,9 @@ they also play an important role in the global insertion functions
 have the ability of effectively answering such queries for any
 arrangement instance.
 
-\subsection{Point-Location Strategies}
-\label{arr_ssec:pl_strat}
-%-------------------------------------
+\subsection{Point-Location Queries}
+\label{arr_ssec:pl}
+%----------------------------------
 
 The arrangement package comes with several classes (more
 precisely, class templates parameterized by an arrangement class)
@@ -853,6 +853,63 @@ An instance of any point-location class is always attached to an
 when the point-location instance is constructed, or at a later
 time, using the \ccc{init(arr)} method, where \ccc{arr} is the
 attached \ccc{Arrangement_2} instance.
+
+The following function template, which can be found in the example
+file \ccc{point_location_utils.h} accepts a point-location object,
+whose type can be any of the models to the \ccc{ArrPointLocation}
+concept, and a point and prints out the result of the point-location
+query for the given point. The point-location object \ccc{pl} is
+assumed to be already associated with an arrangement:
+
+\begin{alltt}
+template <class PointLocation>
+void point_location_query
+        (const PointLocation& pl,
+         const typename PointLocation::Arrangement_2::Point_2& q)
+\{
+  // Perform the point-location query.
+  CGAL::Object    obj = pl.locate (q);
+
+  // Print the result.
+  typedef typename PointLocation::Arrangement_2  Arrangement_2;
+  
+  typename Arrangement_2::Vertex_const_handle    v;
+  typename Arrangement_2::Halfedge_const_handle  e;
+  typename Arrangement_2::Face_const_handle      f;
+
+  if (CGAL::assign (f, obj))
+  \{
+    // q is located inside a face:
+    if (f->is_unbounded())
+      std::cout << "Inside the unbounded face." << std::endl;
+    else
+      std::cout << "Inside a bounded face." << std::endl;
+  \}
+  else if (CGAL::assign (e, obj))
+  \{
+    // q is located on an edge:
+    std::cout << "On an edge: " << e->curve() << std::endl;
+  \}
+  else if (CGAL::assign (v, obj))
+  \{
+    // q is located on a vertex:
+    if (v->is_isolated())
+      std::cout << "On an isolated vertex: " << v->point() << std::endl;
+    else
+      std::cout << "On a vertex: " << v->point() << std::endl;
+  \}
+  else
+  \{
+    CGAL_assertion_msg (false, "Invalid object.");
+  \}
+
+  return;
+\}
+\end{alltt}
+
+\subsubsection{Point-Location Strategies}
+\label{arr_sssec:pl_strat}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Each of the various point-location classes employs a different
 algorithm or {\em strategy} for answering queries.
@@ -901,7 +958,7 @@ performance is linear). Using these strategies are therefore
 recommended only when a relatively small number of point-location
 queries are issued by the application.
 
-On the other hand, the landmarks an the trapezoid RIC strategies
+On the other hand, the landmarks and the trapezoid RIC strategies
 require auxiliary data structures on top of the arrangement, which
 they need to construct once they are attached to arrangement
 object and need to keep up-to-date as this arrangement changes.
@@ -935,7 +992,41 @@ dynamic and is frequently going through changes, the
 \ccc{Arr_trapezoid_ric_point_location} class should be the
 selected point-location strategy.
 
-% RWRW: Here should come an example.
+\subsubsection{An Example}
+\label{arr_sssec:pl_ex}
+%~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\begin{figure}[t]
+\begin{ccTexOnly}
+\begin{center}
+\input{Arrangement_2/ex_5.pstex_t}
+\end{center}
+\end{ccTexOnly}
+\caption{The arrangement of line segments, as constructed in
+\ccc{example5.C} and \ccc{example6.C}. The arrangement vertices
+are drawn in light dots, while the query points $q_1, \ldots, q_6$
+are marked with crosses.}
+\label{arr_fig:ex_5}
+%\begin{ccHtmlOnly}
+%<P>
+%<center>
+%  <img src="ex_5.gif"  border=0 alt="The segment arrangement constructed in \ccc{example5.C} and \ccc{example6.C}.">
+%</center>
+%\end{ccHtmlOnly}
+\end{figure}
+
+The following program constructs a simple arrangement of five line
+segments that form a pentagonal face, with a single isolated vertex
+in its interior, as depicted in Figure~\ref{arr_fig:ex_5} (the
+details of the arrangement construction are omitted from the main
+program, and can be found in \ccc{point_location_utils.h}). It then
+employs the \naive\ and the landmark strategies to issue several
+point-location queries on this arrangement:
+
+\ccIncludeExampleCode{../examples/Arrangement_2/example5.C}
+
+Note that the program uses the auxiliary \ccc{point_location_query()}
+function template to nicely print the result of each query.
 
 \subsection{Vertical Ray Shooting}
 \label{arr_ssec:ray_shoot}
@@ -960,7 +1051,66 @@ a \cgal\ \ccc{Object}. This can be assigned to either a
 Alternatively, the returned value is an empty object if there is
 no edge or vertex lying directly above (or below) $q$.
 
-% RWRW: Here should come an example.
+The following function template, also located in the example
+file \ccc{point_location_utils.h} accepts a vertical ray-shooting
+object, whose type can be any of the models to the
+\ccc{ArrVerticalRayShoot} concept and prints out the result of
+the upward vertical ray-shooting operations from a given query
+point. The ray-shooting object \ccc{vrs} is assumed to be already
+associated with an arrangement:
+
+\begin{alltt}
+template <class VerticalRayShoot>
+void vertical_ray_shooting_query
+    (const VerticalRayShoot& vrs,
+     const typename VerticalRayShoot::Arrangement_2::Point_2& q)
+\{
+  // Perform the point-location query.
+  CGAL::Object    obj = vrs.ray_shoot_up (q);
+
+  // Print the result.
+  typedef typename VerticalRayShoot::Arrangement_2  Arrangement_2;
+  
+  typename Arrangement_2::Vertex_const_handle    v;
+  typename Arrangement_2::Halfedge_const_handle  e;
+
+  if (CGAL::assign (e, obj))
+  \{
+    // We hit an edge:
+    std::cout << "Hit an edge: " << e->curve() << std::endl;
+  \}
+  else if (CGAL::assign (v, obj))
+  \{
+    // We hit a vertex:
+    if (v->is_isolated())
+      std::cout << "Hit an isolated vertex: " << v->point() << std::endl;
+    else
+      std::cout << "Hit a vertex: " << v->point() << std::endl;
+  \}
+  else
+  \{
+    // We did not hit anything:
+    CGAL_assertion_msg (obj.is_empty(), "Invalid object.");
+    
+    std::cout << "Hit nothing." << std::endl; 
+  \}
+
+  return;
+\}
+\end{alltt}
+
+The following program uses the auxiliary function listed above
+to perform vertical ray-shooting queries on an arrangement. Note
+that the arrangement and the query points are exactly the same
+as in \ccc{example5.C} --- see Figure~\ref{arr_fig:ex_5}:
+
+\ccIncludeExampleCode{../examples/Arrangement_2/example6.C}
+
+The number type we use in this example is \cgal's built-in
+\ccc{MP_Float} type which is a floating-point number with an
+unbounded mantissa. It supports construction from an integer
+or from a machine \ccc{float} or \ccc{double} and performs
+additions, subtractions and multiplications in an exact number.
 
 \section{Global Arrangement Functions}
 \label{arr_sec:gl_funs}
