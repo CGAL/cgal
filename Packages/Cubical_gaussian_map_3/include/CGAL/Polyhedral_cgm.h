@@ -815,7 +815,6 @@ public:
     Polyhedral_cgm * gm2 = *begin;
 
     for (unsigned int i = 0; i < NUM_FACES; ++i) {
-      std::cout << "overlay " << i << std::endl;
       Arr & arr = m_arrangements[i];
       Arr & arr1 = gm1->m_arrangements[i];
       Arr & arr2 = gm2->m_arrangements[i];
