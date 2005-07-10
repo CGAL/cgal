@@ -126,7 +126,7 @@ The separation between topology and geometry is defined by the two
 template parameters of the \ccc{Arrangement_2} template:
 \begin{itemize}
 \item The \ccc{Traits} template-parameter should be instantiated with a
-model of the \ccc{ArrangementBasicTraits} concept. The traits
+model of the \ccc{ArrangementBasicTraits_2} concept. The traits
 class defines the types of $x$-monotone curves and two-dimensional
 points --- \ccc{X_monotone_curve_2} and \ccc{Point_2},
 respectively --- and supports basic geometric predicates on them.
@@ -980,9 +980,11 @@ related to the trapezoidal decomposition is done very efficiently,
 the \kdtree\ maintained by the landmarks algorithm needs to be
 frequently rebuilt as the arrangement changes. In addition, using
 the landmarks point-location class adds some extra requirement
-from the traits class --- see Section~\ref{arr_sec:traits} for the
-details. However, most built-in traits classes that come with the
-\cgal\ public release support these extra operations.
+from the traits class (that is, the traits class should be a model
+of a refined concept \ccc{ArrangementLandmarkTraits_2} --- see
+Section~\ref{arr_sec:traits} for the details). However, most
+built-in traits classes that come with the \cgal\ public release
+support these extra operations.
 
 It is therefore recommended to use the
 \ccc{Arr_landmarks_point_location} class when the application
@@ -1165,6 +1167,152 @@ arrangements, implementing operations that require non-trivial
 geometric algorithms or loading some extra requirements on the
 traits class.
 
+\subsection{Incremental Insertion Functions}
+\label{arr_ssec:inc_insert}
+%-------------------------------------------
+
+\subsubsection{Inserting Non-Intersecting Curves}
+\label{arr_sssec:insert_non_x}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+In Section~\ref{arr_sec:arr_class} we explained how to construct
+arrangements of $x$-monotone curves that are pairwise disjoint in
+their interior, when the location of the segment endpoints in the
+arrangement is known. We now relax this assumption and assume that
+we wish to insert a $x$-monotone curve $c$ into an existing
+arrangement such that it is disjoint from all existing arrangement
+edges, but its location is unknown.
+
+The global function \ccc{insert_non_intersecting(arr, pl, c)}
+performs this exact operation: It insert the $x$-monotone curve
+\ccc{c} into the arrangement \ccc{arr}. The second argument
+\ccc{pl} is a point-location object attached to the arrangement,
+which is used for performing the insertion: It locates both curve
+endpoints in the arrangement, where each endpoint is expected to
+either coincide with an existing vertex or lie inside a face.
+Based on the query results, it is possible to invoke one of the
+specializes insertion function (see
+Section~\ref{arr_sec:arr_class}) and insert $c$ at its proper
+position.\footnote{The \ccc{insert_non_intersecting()} function,
+as all other functions reviewed in this section, is thus a
+function template, parameterized by an arrangement class and a
+point-location class (a model of the \ccc{ArrPointLocation}
+concept).} The insertion operation thus requires hardly any
+geometric operations on top on the ones needed to answer the
+point-location queries. Moreover, it is sufficient that the
+arrangement class is instantiated with a traits class that models
+the \ccc{ArrangementBasicTraits_2} concept (or the
+\ccc{ArrangementLandmarkTraits_2} concept, if the landmarks
+point-location strategy is used), which does not have to support
+the computation of intersection points between curves.
+
+\subsubsection{Inserting $x$-Monotone Curves}
+\label{arr_sssec:insert_x_mon}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The \ccc{insert_non_intersecting()} function is indeed very
+efficient, but its preconditions on the input curves are still
+rather restricting. Let us assume that the arrangement is
+instantiated with a traits class that models the refined
+\ccc{ArrangementXMonotoneTraits_2} concept and supports
+intersection computations (see Section~\ref{arr_sec:traits} for
+the exact details). Given an $x$-monotone curve, it is sufficient
+to locate its left endpoint in the arrangement and to trace its
+{\em zone}
+--- namely the set of arrangement features it crosses --- until
+reaching the right endpoint. Each time the new curve $c$ traverses
+an existing vertex or an edge we have to split it into subcurves
+(in the latter case, we have to split the curve associated with
+the existing halfedge as well) and associated new edges with these
+subcurves.
+
+The global function \ccc{insert_x_monotone(arr, pl, c)} performs
+this exact operation: It receives an $x$-monotone curve \ccc{c}
+which may intersect the arrangement \ccc{arr} and inserts it into
+the arrangement by computing its zone. The running-time cost is
+proportional to the complexity of the curve's zone.
+
+\subsubsection{Inserting General Curves}
+\label{arr_sssec:insert_gen}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+So far all our examples were of arrangement of line segments,
+where the \ccc{Arrangement_2} template was instantiated with the
+\ccc{Arr_segment_traits_2} class. Line segments are always
+$x$-monotone, so the fact that \ccc{insert_x_monotone()} accepts
+an $x$-monotone curve does not seem to be a restriction, as all
+line segments are $x$-monotone (we even consider vertical line
+segments to be {\em weakly} $x$-monotone).
+
+Suppose that we construct an arrangement of circles. A circle is
+obviously not $x$-monotone, so we cannot use
+\ccc{insert_x_monotone()} in this case.\footnote{Note that a key
+operation when inserting an $x$-monotone curve is to locate its
+left endpoint in the arrangement. A circle, however, does not have
+any endpoints!} However, it is possible to subdivide each circle
+into two $x$-monotone circular arcs (its upper half and its lower
+half) and to insert each $x$-monotone arc separately.
+
+The function \ccc{insert(arr, pl, c)} requires that the traits
+class used by the arrangement \ccc{arr} is a model of the concept
+\ccc{ArrangementTraits_2}, which refines the
+\ccc{ArrangementXMonotoneTraits_2} concept: It has to define an
+additional \ccc{Curve_2} type (which may differ from the
+\ccc{X_monotone_curve_2} type and support its separation into
+$x$-monotone curves (see the exact details in
+Section~\ref{arr_sec:traits}). It performs the insertion of the
+curve $c$, which need not be $x$-monotone, into the arrangement by
+subdividing it into $x$-monotone subcurves and inserting each one
+separately.
+
+\subsubsection{An Example}
+\label{arr_sssec:insert_ex}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\begin{figure}[t]
+\begin{ccTexOnly}
+\begin{center}
+\input{Arrangement_2/ex_8.pstex_t}
+\end{center}
+\end{ccTexOnly}
+\caption{An arrangement of five intersecting line segments, as
+constructed in \ccc{example8.C} and \ccc{example9.C}. The segment
+endpoint are marked with dark dots and the arrangement vertices
+that correspond to intersection points are marked by white dots.
+The query point $q$ is marked with a cross and the face that
+contains it is lightly shaded.}
+\label{arr_fig:ex_8}
+%\begin{ccHtmlOnly}
+%<P>
+%<center>
+%  <img src="ex_8.gif"  border=0 alt="The segment arrangement constructed in \ccc{example8.C} and \ccc{example9.C}.">
+%</center>
+%\end{ccHtmlOnly}
+\end{figure}
+
+The following program constructs an arrangement of intersecting
+line segments. We know that $s_1$ and $s_2$ do not intersect, so
+we use \ccc{insert_non_intersecting()} to insert them into the
+empty arrangement. The rest of the segments are inserted using
+\ccc{insert_x_monotone()} or \ccc{insert()}, which are equivalent
+in case of line segments. The resulting arrangement consists of
+$13$ vertices, $16$ edges and $5$ faces.
+
+In the previous examples, all arrangement vertices corresponded to
+segment endpoints. In this case we have additional vertices that
+correspond to intersection points between two segments. The
+coordinates of these intersection points are rational numbers if
+the input coordinates are rational (or integer) --- we therefore
+use the \ccc{Quotient<int>} number type to represent the
+coordinates:
+
+\ccIncludeExampleCode{../examples/Arrangement_2/example8.C}
+
+\subsection{Aggregated Insertion Functions}
+\label{arr_ssec:agg_insert}
+%------------------------------------------
+
+\ccIncludeExampleCode{../examples/Arrangement_2/example9.C}
 
 \section{Traits Classes}
 \label{arr_sec:traits}
