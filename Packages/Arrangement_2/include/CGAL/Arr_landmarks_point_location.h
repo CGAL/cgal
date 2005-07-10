@@ -92,15 +92,15 @@ public:
   Arr_landmarks_point_location () : 
     p_arr (NULL),
     traits (NULL),
-	lm_gen(NULL), 
-  delete_generator(false)
+    lm_gen(NULL),
+    delete_generator (false)
   {}
 
   /*! Constructor given an arrangement only. */
   Arr_landmarks_point_location (const Arrangement_2& arr) :
     p_arr (&arr)
   {
-	  lm_gen = new Arr_landmarks_generator(arr);
+    lm_gen = new Arr_landmarks_generator(arr);
     delete_generator = true;
   }
 
@@ -108,8 +108,8 @@ public:
   Arr_landmarks_point_location (const Arrangement_2& arr, 
 				Arr_landmarks_generator *gen) :
     p_arr (&arr), 
-    lm_gen (gen), 
-    delete_generator(false)
+    lm_gen (gen),
+    delete_generator (false)
   {
     traits = static_cast<const Traits_wrapper_2*> (p_arr->get_traits());
   }
@@ -122,10 +122,21 @@ public:
   }
         
   /*! Attach an arrangement object. */
-  void init (const Arrangement_2& arr, Arr_landmarks_generator *gen) 
+  void init (const Arrangement_2& arr, Arr_landmarks_generator *gen = NULL) 
   {
     p_arr = &arr;
-    lm_gen = gen;
+
+    if (gen != NULL)
+    {
+      lm_gen = gen;
+      delete_generator = false;
+    }
+    else
+    {
+      lm_gen = new Arr_landmarks_generator(arr);
+      delete_generator = true;
+    }
+
     traits = static_cast<const Traits_wrapper_2*> (p_arr->get_traits());
   }
   

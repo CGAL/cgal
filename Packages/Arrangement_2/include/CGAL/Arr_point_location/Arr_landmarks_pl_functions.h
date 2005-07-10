@@ -20,8 +20,8 @@
 #define CGAL_ARR_LANDMARKS_POINT_LOCATION_FUNCTIONS_H
 
 /*! \file
- * Member-function definitions for the Arr_landmarks_point_location<Arrangement>
- * class.
+ * Member-function definitions for the 
+ * Arr_landmarks_point_location<Arrangement> class.
  */
 
 #ifdef LANDMARKS_CLOCK_DEBUG
@@ -62,101 +62,102 @@ template <class Arrangement_2, class Arr_landmarks_generator>
 Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
 ::locate (const Point_2& p) const
 {
-	PRINT_DEBUG("------ locate point "<< p) ;
+  PRINT_DEBUG("------ locate point "<< p) ;
 
-	//if this is an empty map - return the unbounded face
-	if (p_arr->number_of_vertices() == 0) 
-		return (CGAL::make_object (p_arr->unbounded_face()));
-
-	Object  landmark_location_obj; 
-	Point_2 landmark_point = lm_gen->get_closest_landmark (p, 
-								landmark_location_obj);
-	//NN_Point_2 nearest_landmark = lm_gen->find_closest_landmark(p);
-	//Point_2 landmark_point = nearest_landmarks.get_point();
-	//Object  landmark_location_obj = nearest_landmarks.get_obj() ;
-	PRINT_DEBUG("nearest neighbor of point "<< p << " is " << landmark_point);
-
-	//walk from the nearest_vertex to the point p, using walk algorithm, 
-	//and find the location of p.	
-	LM_CLOCK_DEBUG(clock_t w_time_start = clock());
-
-	Object	out_obj; //the output object
-
-	//if the landmark s not found in the arangement
-	Vertex_const_handle     v;
-	Halfedge_const_handle   h;
-	Face_const_handle       f;
-
-	if (landmark_location_obj.is_empty())
-	{
-		PRINT_ERROR( "landmark_location_obj is empty" );
-		CGAL_assertion (false);
-		return out_obj;
-	}
-	else if (assign (v, landmark_location_obj))
-	{
-		PRINT_DEBUG( "landmark_location_obj is a vertex: "<< v->point());
-		out_obj = _walk_from_vertex( v , p);
-	}
-	else if (assign (f, landmark_location_obj))
-	{
-		PRINT_DEBUG( "landmark_location_obj is a face. ");
-		out_obj = _walk_from_face( f, p, landmark_point);
-	}
-	else if (assign (h, landmark_location_obj))
-	{
-		PRINT_DEBUG( "landmark_location_obj is a halfedge: "<< h->curve());
-		out_obj = _walk_from_edge( h, p, landmark_point);
-	}
-	else 
-	{
-		PRINT_ERROR( "unknown object");
-		CGAL_assertion (false);
-		return out_obj;
-	}
-
-	LM_CLOCK_DEBUG(clock_t w_time_end = clock() );
-	LM_CLOCK_DEBUG(clock_for_walk += (double) (w_time_end - w_time_start) );
-	PRINT_DEBUG( "return from walk" << std::endl);
-
+  //if this is an empty map - return the unbounded face
+  if (p_arr->number_of_vertices() == 0) 
+    return (CGAL::make_object (p_arr->unbounded_face()));
+  
+  Object  landmark_location_obj; 
+  Point_2 landmark_point = lm_gen->get_closest_landmark (p, 
+							 landmark_location_obj);
+  //NN_Point_2 nearest_landmark = lm_gen->find_closest_landmark(p);
+  //Point_2 landmark_point = nearest_landmarks.get_point();
+  //Object  landmark_location_obj = nearest_landmarks.get_obj() ;
+  PRINT_DEBUG("nearest neighbor of point "<< p << " is " << landmark_point);
+  
+  //walk from the nearest_vertex to the point p, using walk algorithm, 
+  //and find the location of p.	
+  LM_CLOCK_DEBUG(clock_t w_time_start = clock());
+  
+  Object	out_obj; //the output object
+  
+  //if the landmark s not found in the arangement
+  Vertex_const_handle     v;
+  Halfedge_const_handle   h;
+  Face_const_handle       f;
+  
+  if (landmark_location_obj.is_empty())
+  {
+    PRINT_ERROR( "landmark_location_obj is empty" );
+    CGAL_assertion (false);
+    return out_obj;
+  }
+  else if (assign (v, landmark_location_obj))
+  {
+    PRINT_DEBUG( "landmark_location_obj is a vertex: "<< v->point());
+    out_obj = _walk_from_vertex( v , p);
+  }
+  else if (assign (f, landmark_location_obj))
+  {
+    PRINT_DEBUG( "landmark_location_obj is a face. ");
+    out_obj = _walk_from_face( f, p, landmark_point);
+  }
+  else if (assign (h, landmark_location_obj))
+  {
+    PRINT_DEBUG( "landmark_location_obj is a halfedge: "<< h->curve());
+    out_obj = _walk_from_edge( h, p, landmark_point);
+  }
+  else 
+  {
+    PRINT_ERROR( "unknown object");
+    CGAL_assertion (false);
+    return out_obj;
+  }
+  
+  LM_CLOCK_DEBUG(clock_t w_time_end = clock() );
+  LM_CLOCK_DEBUG(clock_for_walk += (double) (w_time_end - w_time_start) );
+  PRINT_DEBUG( "return from walk" << std::endl);
+  
 #ifdef CGAL_LM_DEBUG
-	if (out_obj.is_empty())
-	{
-		PRINT_ERROR( "object is empty" );
-		CGAL_assertion (false);
-	}
-	else if (assign (h, out_obj))
-	{
-		PRINT_DEBUG( "object is a halfedge: "<< h->curve());
-	}
-	else if (assign (v, out_obj))
-	{
-		PRINT_DEBUG( "object is a vertex: "<< v->point());
-	}
-	else if (assign (f, out_obj))
-	{
-		PRINT_DEBUG( "object is a face. ");
-	}
+  if (out_obj.is_empty())
+  {
+    PRINT_ERROR( "object is empty" );
+    CGAL_assertion (false);
+  }
+  else if (assign (h, out_obj))
+  {
+    PRINT_DEBUG( "object is a halfedge: "<< h->curve());
+  }
+  else if (assign (v, out_obj))
+  {
+    PRINT_DEBUG( "object is a vertex: "<< v->point());
+  }
+  else if (assign (f, out_obj))
+  {
+    PRINT_DEBUG( "object is a face. ");
+  }
 #endif
-
+  
   if (assign (f, out_obj))
-	{
-    // If we reached here, we did not locate the query point in any of the holes
-    // inside the current face, so we conclude it is contained in this face.
+  {
+    // If we reached here, we did not locate the query point in any of the
+    // holes inside the current face, so we conclude it is contained in this
+    // face.
     // However, we first have to check whether the query point coincides with
     // any of the isolated vertices contained inside this face.
     Isolated_vertices_const_iterator   iso_verts_it;
-    typename Traits_wrapper_2::Equal_2  equal = traits->equal_2_object();
+    typename Traits_wrapper_2::Equal_2 equal = traits->equal_2_object();
 
     for (iso_verts_it = f->isolated_vertices_begin();
         iso_verts_it != f->isolated_vertices_end(); ++iso_verts_it)
     {
-      if (equal (p, (*iso_verts_it).point()))
-        return (CGAL::make_object (iso_verts_it));
+      if (equal (p, iso_verts_it->point()))
+        return (CGAL::make_object (iso_verts_it->handle()));
     }		
-	}
+  }
 
-	return (out_obj) ;
+  return (out_obj) ;
 }
 
 //----------------------------------------------------
@@ -169,17 +170,17 @@ Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
 ::_walk_from_vertex(Vertex_const_handle nearest_vertex,
 					const Point_2 & p)   const
 { 
-	PRINT_DEBUG("inside walk_from_vertex. p= "<< p	<< 
-				 ", nearest_vertex = "<<nearest_vertex->point() );
-
-	//inits
-	bool new_vertex = false;
-	Vertex_const_handle vh = nearest_vertex;
-	Object obj;
-
-	Vertex_const_handle     v;
-	Halfedge_const_handle   h;
-	Face_const_handle       f;
+  PRINT_DEBUG("inside walk_from_vertex. p= "<< p	<< 
+	      ", nearest_vertex = "<<nearest_vertex->point() );
+  
+  //inits
+  bool new_vertex = false;
+  Vertex_const_handle vh = nearest_vertex;
+  Object obj;
+  
+  Vertex_const_handle     v;
+  Halfedge_const_handle   h;
+  Face_const_handle       f;
 
   if (vh->is_isolated())
   {
@@ -187,62 +188,62 @@ Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
     return _walk_from_face(f, p, vh->point());
   }
 
-	//find face
-	do {
-		//find the edge out_edge which is the best possibly 
-		//pointing to the face containing p
+  //find face
+  do {
+    //find the edge out_edge which is the best possibly 
+    //pointing to the face containing p
 
-		flipped_edges.clear();  //clear the curves that were flipped
-
+    flipped_edges.clear();  //clear the curves that were flipped
+    
     new_vertex = false;
-		LM_CLOCK_DEBUG(clock_t ff_time_start = clock());
-		obj = _find_face (p, vh, new_vertex);
-		LM_CLOCK_DEBUG(clock_t ff_time_end = clock() );
-		LM_CLOCK_DEBUG(clock_ff += (double) (ff_time_end - ff_time_start) );
+    LM_CLOCK_DEBUG(clock_t ff_time_start = clock());
+    obj = _find_face (p, vh, new_vertex);
+    LM_CLOCK_DEBUG(clock_t ff_time_end = clock() );
+    LM_CLOCK_DEBUG(clock_ff += (double) (ff_time_end - ff_time_start) );
 
-		if (new_vertex) {
-			PRINT_DEBUG( "NEW vertex 1 " );
-			//check if the new vertex is really closer 
-			// I removed the check if the vertex is closer since there is no 
-			// compare distance 
-			//if (traits->compare_distance(p, out_vertex->point(), vh->point())  
-			//	!= SMALLER) {PRINT_DEBUG("Error 2: new vertex"); return; } 
-			if (assign (v, obj))
-			{
-				vh = v;
-			}
-			else
-			{
-				CGAL_assertion (false);	
-				return Object();
-			}
-		}
-		else if (obj.is_empty())
-		{
-			PRINT_ERROR( "object is empty" );
-			CGAL_assertion (false);
-			return obj;
-		}
-		else if (assign (h, obj))
-		{
-			PRINT_DEBUG( "_find_face found a halfedge: "<< h->curve());
-			return (obj);
-		}
-		else if (assign (v, obj))
-		{
-				PRINT_DEBUG( "_find_face found a vertex: "<< v->point());
-				return (obj);
-		}
-		else if (assign (f, obj))
-		{
-			PRINT_DEBUG("face that was a face ");
-			return _walk_from_face (f, p, vh->point());
-		}
-
-	} while (new_vertex);	
-			
-	CGAL_assertion (false);
+    if (new_vertex) {
+      PRINT_DEBUG( "NEW vertex 1 " );
+      //check if the new vertex is really closer 
+      // I removed the check if the vertex is closer since there is no 
+      // compare distance 
+      //if (traits->compare_distance(p, out_vertex->point(), vh->point())  
+      //	!= SMALLER) {PRINT_DEBUG("Error 2: new vertex"); return; } 
+      if (assign (v, obj))
+      {
+	vh = v;
+      }
+      else
+      {
+	CGAL_assertion (false);	
 	return Object();
+      }
+    }
+    else if (obj.is_empty())
+    {
+      PRINT_ERROR( "object is empty" );
+      CGAL_assertion (false);
+      return obj;
+    }
+    else if (assign (h, obj))
+    {
+      PRINT_DEBUG( "_find_face found a halfedge: "<< h->curve());
+      return (obj);
+    }
+    else if (assign (v, obj))
+    {
+      PRINT_DEBUG( "_find_face found a vertex: "<< v->point());
+      return (obj);
+    }
+    else if (assign (f, obj))
+    {
+      PRINT_DEBUG("face that was a face ");
+      return _walk_from_face (f, p, vh->point());
+    }
+    
+  } while (new_vertex);	
+  
+  CGAL_assertion (false);
+  return Object();
 }
 
 //----------------------------------------------------
@@ -257,264 +258,263 @@ Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
 template <class Arrangement_2, class Arr_landmarks_generator>
 Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
 ::_find_face (const Point_2 & p, 
-			  Vertex_const_handle vh,
-			  bool & new_vertex 
-        ) const
+	      Vertex_const_handle vh,
+	      bool & new_vertex) const
 { 
-	LM_CLOCK_DEBUG( entries_to_find_face++ );
-	PRINT_DEBUG("inside find_face. p ="<< p <<" , vh = "<<vh->point() ); 
+  LM_CLOCK_DEBUG( entries_to_find_face++ );
+  PRINT_DEBUG("inside find_face. p ="<< p <<" , vh = "<<vh->point() ); 
+  
+  new_vertex = false;
+  
+  // check if the point equals the vertex. 
+  if (traits->equal_2_object()(vh->point(), p))
+  {
+    return (CGAL::make_object (vh));
+  }
 
-	new_vertex = false;
-
-	// check if the point equals the vertex. 
-	if (traits->equal_2_object()(vh->point(), p))
-	{
-		return (CGAL::make_object (vh));
-	}
-
-	//create a segment vh--p. 
-	const Point_2&     v = vh->point();
-	X_monotone_curve_2 seg = traits->construct_x_monotone_curve_2_object()(v, p);
-
-	//get halfedges around vh
+  //create a segment vh--p. 
+  const Point_2&     v = vh->point();
+  X_monotone_curve_2 seg = traits->construct_x_monotone_curve_2_object()(v, p);
+  
+  //get halfedges around vh
   CGAL_assertion (!vh->is_isolated());
-	Halfedge_around_vertex_const_circulator circ = vh->incident_halfedges(); 
-	Halfedge_around_vertex_const_circulator circ_done (circ);
-	Halfedge_around_vertex_const_circulator prev = circ;
+  Halfedge_around_vertex_const_circulator circ = vh->incident_halfedges(); 
+  Halfedge_around_vertex_const_circulator circ_done (circ);
+  Halfedge_around_vertex_const_circulator prev = circ;
+  
+  typename Traits_wrapper_2::Compare_xy_2           compare_xy = 
+    traits->compare_xy_2_object();
+  
+  typename Traits_wrapper_2::Compare_cw_around_point_2 compare_cw_around_point =
+    traits->compare_cw_around_point_2_object();
+  
+  //check if cv_other_point is to the left of v,  to the right, 
+  //or if the curve is vertical
+  Comparison_result cv_orient = compare_xy(v, (*circ).source()->point());
+  
+  //check if p is to the left of v,  to the right, or if the segment is vertical
+  Comparison_result seg_orient = compare_xy(v,p);
+  
+  //save results 
+  Comparison_result res1;
+  
+  PRINT_DEBUG("seg_orient ="<< seg_orient ); 
+  PRINT_DEBUG("cv_orient ="<< cv_orient << " , circ ="<< (*circ).curve());
 
-	typename Traits_wrapper_2::Compare_xy_2           compare_xy = 
-                                      traits->compare_xy_2_object();
-
-	typename Traits_wrapper_2::Compare_cw_around_point_2 compare_cw_around_point =
-                                      traits->compare_cw_around_point_2_object();
-
-	//check if cv_other_point is to the left of v,  to the right, 
-	//or if the curve is vertical
-	Comparison_result cv_orient = compare_xy(v, (*circ).source()->point());
-
-	//check if p is to the left of v,  to the right, or if the segment is vertical
-	Comparison_result seg_orient = compare_xy(v,p);
-
-	//save results 
-	Comparison_result res1;
-
-	PRINT_DEBUG("seg_orient ="<< seg_orient ); 
-	PRINT_DEBUG("cv_orient ="<< cv_orient << " , circ ="<< (*circ).curve());
-
-	/////////////////////////////////// 6.12 - wrapper	
-	//TODO: what if both seg and curve are verticals ? @@@@
-	//what if one is vertical ?
-
-	//curves are to different sides
-	if (cv_orient != seg_orient)  
-	{
-		PRINT_DEBUG("seg_orient != cv_orient : "); 
-		//find a curve that is on the same side as seg
-		do {
-			circ++;
-			cv_orient = compare_xy(v,(*circ).source()->point());
-		} while (seg_orient != cv_orient && circ!=circ_done);
-
-		//if exists - go on from next "if" 
-		//if not exist - find the curve that is the largest (cw) 
-		//in this side, and this is the edge we're looking for
-		if (seg_orient != cv_orient) 
-		{
-			//seg is on one side (right/left) and all curves are on the 
-			//other side (left/right)
-			//circ == circ_done
-			do {
-				prev = circ;
-				circ++;
-				res1 =  compare_cw_around_point((*circ).curve(), 
-                                        (*prev).curve(), v);//TODO, false);
-				PRINT_DEBUG("circ = " << (*circ).curve() << "  res1= " << res1 ); 
-			} while (res1==LARGER && circ!=circ_done);
-
-			//out_edge = prev;
-			//found_face = true;
-			PRINT_DEBUG ( "new_find_face return face = " << (*prev).curve() );
-			return (CGAL::make_object ((*prev).face()));
-		}
+  /////////////////////////////////// 6.12 - wrapper	
+    //TODO: what if both seg and curve are verticals ? @@@@
+    //what if one is vertical ?
+    
+    //curves are to different sides
+    if (cv_orient != seg_orient)  
+    {
+      PRINT_DEBUG("seg_orient != cv_orient : "); 
+      //find a curve that is on the same side as seg
+      do {
+	circ++;
+	cv_orient = compare_xy(v,(*circ).source()->point());
+      } while (seg_orient != cv_orient && circ!=circ_done);
+      
+      //if exists - go on from next "if" 
+      //if not exist - find the curve that is the largest (cw) 
+      //in this side, and this is the edge we're looking for
+      if (seg_orient != cv_orient) 
+      {
+	//seg is on one side (right/left) and all curves are on the 
+	//other side (left/right)
+	//circ == circ_done
+	do {
+	  prev = circ;
+	  circ++;
+	  res1 =  compare_cw_around_point((*circ).curve(), 
+					  (*prev).curve(), v);//TODO, false);
+	  PRINT_DEBUG("circ = " << (*circ).curve() << "  res1= " << res1 ); 
+	} while (res1==LARGER && circ!=circ_done);
+	
+	//out_edge = prev;
+	//found_face = true;
+	PRINT_DEBUG ( "new_find_face return face = " << (*prev).curve() );
+	return (CGAL::make_object ((*prev).face()));
+      }
+    }
+    
+    //both curves are to the same side
+    if (seg_orient == cv_orient) 
+    {
+      PRINT_DEBUG("seg_orient == cv_orient : "); 
+      res1 = compare_cw_around_point(seg, (*circ).curve(), v);
+      if (res1 == LARGER) 
+      {
+	//if the segment is larger than the curve cw, we will go ++ 
+	//cw with the circ and find a curve that is larger than seg. 
+	//then we will take the curve that was just before that. 
+	PRINT_DEBUG("res1 == LARGER : "); 
+	do {
+	  prev = circ;
+	  circ++;
+	  PRINT_DEBUG("circ++ = " << (*circ).curve() ); 
+	  cv_orient = compare_xy(v,(*circ).source()->point());
+	  if (seg_orient == cv_orient) 
+	  {
+	    res1 =  compare_cw_around_point(seg, (*circ).curve(), v);
+	    PRINT_DEBUG("circ = "<<(*circ).curve()<<" res1= "<<res1); 
+	  }
+	} while (res1 == LARGER && seg_orient == cv_orient 
+		 && circ!=circ_done);
+	
+	//if res1 is not larger => seg is between prev and circ,return prev
+	//if seg_orient != cv_orient, then we changes side and the 
+	//other side is larger than seg.
+	// then also seg is between prev & circ and we have to return prev
+	
+	if (res1 == LARGER && seg_orient == cv_orient)  
+	{//we 're only out the while because the circ end
+	  //in this case the seg is larger than ALL curves and all 
+	  //curves are to the same side 
+	  //we need to find the largest of all curves.
+	  PRINT_DEBUG("circ == circ_done : "); 
+	  do {
+	    prev = circ;
+	    circ++;
+	    res1 =  compare_cw_around_point((*circ).curve(), 
+					    (*prev).curve(), v);//TODO: false);
+	    PRINT_DEBUG("circ = "<<(*circ).curve()<<" res1= "<<res1); 
+	  } while (res1 == LARGER && circ!=circ_done);
+	  //if circ == circ_done, then prev is the largest
+	  //else if circ is not larger than prev, than prev is 
+	  //the largest. anyway, prev is the largest - return it
 	}
-
-	//both curves are to the same side
-	if (seg_orient == cv_orient) 
+	
+	//out_edge = prev;
+	//found_face = true;
+	PRINT_DEBUG ( "new_find_face return " << (*prev).curve() );
+	return (CGAL::make_object ((*prev).face()));
+      }
+      else if (res1 ==SMALLER) 
+      {
+	//if the segment is smaller (cw) than the curve, we need to find 
+	//ccw (--) the curve that seg is larger than. 
+	//since we can't go --, we will go ++ few times (if necessary). 
+	PRINT_DEBUG("res1 == SMALLER : "); 
+	
+	//loop 1 - until reach a curve on the other side, if exists
+	do {
+	  prev = circ; 
+	  circ++;
+	  cv_orient = compare_xy(v,(*circ).source()->point());
+	} while (circ!=circ_done  && seg_orient == cv_orient); 
+	
+	if (seg_orient != cv_orient) 
 	{
-		PRINT_DEBUG("seg_orient == cv_orient : "); 
-		res1 = compare_cw_around_point(seg, (*circ).curve(), v);
-		if (res1 == LARGER) 
-		{
-			//if the segment is larger than the curve cw, we will go ++ 
-			//cw with the circ and find a curve that is larger than seg. 
-			//then we will take the curve that was just before that. 
-			PRINT_DEBUG("res1 == LARGER : "); 
-			do {
-				prev = circ;
-				circ++;
-				PRINT_DEBUG("circ++ = " << (*circ).curve() ); 
-				cv_orient = compare_xy(v,(*circ).source()->point());
-				if (seg_orient == cv_orient) 
-				{
-					res1 =  compare_cw_around_point(seg, (*circ).curve(), v);
-					PRINT_DEBUG("circ = "<<(*circ).curve()<<" res1= "<<res1); 
-				}
-			} while (res1 == LARGER && seg_orient == cv_orient 
-				     && circ!=circ_done);
-
-			//if res1 is not larger => seg is between prev and circ,return prev
-			//if seg_orient != cv_orient, then we changes side and the 
-			//other side is larger than seg.
-			// then also seg is between prev & circ and we have to return prev
-
-			if (res1 == LARGER && seg_orient == cv_orient)  
-			{//we 're only out the while because the circ end
-				//in this case the seg is larger than ALL curves and all 
-				//curves are to the same side 
-				//we need to find the largest of all curves.
-				PRINT_DEBUG("circ == circ_done : "); 
-				do {
-					prev = circ;
-					circ++;
-					res1 =  compare_cw_around_point((*circ).curve(), 
-                                          (*prev).curve(), v);//TODO: false);
-					PRINT_DEBUG("circ = "<<(*circ).curve()<<" res1= "<<res1); 
-				} while (res1 == LARGER && circ!=circ_done);
-				//if circ == circ_done, then prev is the largest
-				//else if circ is not larger than prev, than prev is 
-				//the largest. anyway, prev is the largest - return it
-			}
-
-			//out_edge = prev;
-			//found_face = true;
-			PRINT_DEBUG ( "new_find_face return " << (*prev).curve() );
-			return (CGAL::make_object ((*prev).face()));
-		}
-		else if (res1 ==SMALLER) 
-		{
-			//if the segment is smaller (cw) than the curve, we need to find 
-			//ccw (--) the curve that seg is larger than. 
-			//since we can't go --, we will go ++ few times (if necessary). 
-			PRINT_DEBUG("res1 == SMALLER : "); 
-
-			//loop 1 - until reach a curve on the other side, if exists
-			do {
-				prev = circ; 
-				circ++;
-				cv_orient = compare_xy(v,(*circ).source()->point());
-			} while (circ!=circ_done  && seg_orient == cv_orient); 
-
-			if (seg_orient != cv_orient) 
-			{
-				//loop 2 - until reach the same side again 
-				do {
-					prev = circ; 
-					circ++;
-					cv_orient = compare_xy(v,(*circ).source()->point());
-				}	while (seg_orient != cv_orient) ;
-
-				//prev is the last edge from the other side, 
-				//and curve is the first curve in this side
-				res1 =  compare_cw_around_point(seg, (*circ).curve(), v);
-
-				//loop 3 - until find curve > seg cw.
-				while (res1 == LARGER && seg_orient==cv_orient) 
-				{
-					prev = circ; 
-					circ++;
-					cv_orient = compare_xy(v,(*circ).source()->point());
-					if (seg_orient == cv_orient) 
-					{
-            res1 =  compare_cw_around_point(seg, (*circ).curve(), v);
-						PRINT_DEBUG("circ = "<<(*circ).curve()<<" res1= "<<res1);
-					}
-				}
+	  //loop 2 - until reach the same side again 
+	  do {
+	    prev = circ; 
+	    circ++;
+	    cv_orient = compare_xy(v,(*circ).source()->point());
+	  }	while (seg_orient != cv_orient) ;
+	  
+	  //prev is the last edge from the other side, 
+	  //and curve is the first curve in this side
+	  res1 =  compare_cw_around_point(seg, (*circ).curve(), v);
+	  
+	  //loop 3 - until find curve > seg cw.
+	  while (res1 == LARGER && seg_orient==cv_orient) 
+	  {
+	    prev = circ; 
+	    circ++;
+	    cv_orient = compare_xy(v,(*circ).source()->point());
+	    if (seg_orient == cv_orient) 
+	    {
+	      res1 =  compare_cw_around_point(seg, (*circ).curve(), v);
+	      PRINT_DEBUG("circ = "<<(*circ).curve()<<" res1= "<<res1);
+	    }
+	  }
                 
-				//now we can say that the output edge is prev
-				//out_edge = prev;
-				//found_face = true;
-				PRINT_DEBUG ( "new_find_face return " << (*prev).curve() );
-				return (CGAL::make_object ((*prev).face()));
-			}
-	
-			// else - (circ == circ_done)
-			//there are no curves on the other side, 
-			//find the smallest (cw) on this side
-			do {
-					prev = circ;
-					circ++;
-					res1 =  compare_cw_around_point((*circ).curve(), (*prev).curve(),v);//IXX, false);
-					PRINT_DEBUG("circ = "<<(*circ).curve()<<" res1= "<< res1); 
-			} while (res1 == LARGER && circ!=circ_done);
-			//now circ < prev ==> circ is the smallest
-
-			//if seg > smallest, smallest++,
-			// otherwise, out_edge  = smallest->twin();
-			res1 =  compare_cw_around_point(seg, (*circ).curve(), v);
-			if (res1 == SMALLER) 
-			{
-				//out_edge = circ->twin();
-				//found_face = true;
-				PRINT_DEBUG ( "new_find_face return " << (*circ).curve() );
-				return (CGAL::make_object ((*circ).twin()->face()));
-			}
-
-			//else: seg > smallest
-			circ_done = circ; 
-			do  
-			{
-				prev = circ;
-				circ++;
-				res1 =  compare_cw_around_point(seg, (*circ).curve(), v);
-			} while (res1 == LARGER && circ!= circ_done);
-
-			//out_edge = prev;
-			//found_face = true;
-			PRINT_DEBUG ( "new_find_face return " << (*prev).curve() );
-			return (CGAL::make_object ((*prev).face()));
-		}
-		else //EQUAL
-		{
-			//TODO: specail case - new vertex or on edge ot something
-			PRINT_DEBUG ( "specail case: seg is equal cw to circ " 
-				<< (*circ).curve() );
-			if (traits->equal_2_object()(p,(*circ).source()->point())) 
-			{
-				PRINT_DEBUG ( "p is on a vertex ");
-				//out_edge = circ;
-				//out_vertex = circ->source();
-				//lt = Planar_map::VERTEX;
-				//found_vertex_or_edge = true;
-				return (CGAL::make_object ((*circ).source()));
-			}
-
-			if (traits->is_in_x_range_2_object()((*circ).curve(),p) && 
-				traits->compare_y_at_x_2_object()(p,(*circ).curve()) == EQUAL) 
-			{
-				// p lies on cv1  
-				PRINT_DEBUG ( "p is on an edge ");
-        Halfedge_const_handle temp_he = circ;
-				//out_edge = circ;
-				//lt = Planar_map::EDGE;
-				//found_vertex_or_edge = true;
-        return (CGAL::make_object (temp_he)); 
-			}
-	
-			//p does not lie on cv1 ==> 
-			// the target of the equal curve is a better vertex to p 
-			PRINT_ERROR("WARNING 11: found closer vertex during new_find_face");
-			// out_vertex is the closer vertex
-			//out_vertex = circ->source();
-			new_vertex = true;
-			PRINT_DEBUG( "The new vertex is: "<< (*circ).source()->point() );
-			// check validity (the new vertex is vetween them on a line) @@@@
-			return (CGAL::make_object((*circ).source()));		
-		}
+	  //now we can say that the output edge is prev
+	  //out_edge = prev;
+	  //found_face = true;
+	  PRINT_DEBUG ( "new_find_face return " << (*prev).curve() );
+	  return (CGAL::make_object ((*prev).face()));
 	}
-
-	PRINT_ERROR("ERROR 13: new_find_face did not find the face !");
-	LM_DEBUG(getchar());
-	return Object();
+	
+	// else - (circ == circ_done)
+	//there are no curves on the other side, 
+	//find the smallest (cw) on this side
+	do {
+	  prev = circ;
+	  circ++;
+	  res1 =  compare_cw_around_point((*circ).curve(), (*prev).curve(),v);//IXX, false);
+	  PRINT_DEBUG("circ = "<<(*circ).curve()<<" res1= "<< res1); 
+	} while (res1 == LARGER && circ!=circ_done);
+	//now circ < prev ==> circ is the smallest
+	
+	//if seg > smallest, smallest++,
+	// otherwise, out_edge  = smallest->twin();
+	res1 =  compare_cw_around_point(seg, (*circ).curve(), v);
+	if (res1 == SMALLER) 
+	{
+	  //out_edge = circ->twin();
+	  //found_face = true;
+	  PRINT_DEBUG ( "new_find_face return " << (*circ).curve() );
+	  return (CGAL::make_object ((*circ).twin()->face()));
+	}
+	
+	//else: seg > smallest
+	circ_done = circ; 
+	do  
+	{
+	  prev = circ;
+	  circ++;
+	  res1 =  compare_cw_around_point(seg, (*circ).curve(), v);
+	} while (res1 == LARGER && circ!= circ_done);
+	
+	//out_edge = prev;
+	//found_face = true;
+	PRINT_DEBUG ( "new_find_face return " << (*prev).curve() );
+	return (CGAL::make_object ((*prev).face()));
+      }
+      else //EQUAL
+      {
+	//TODO: specail case - new vertex or on edge ot something
+	PRINT_DEBUG ( "specail case: seg is equal cw to circ " 
+		      << (*circ).curve() );
+	if (traits->equal_2_object()(p,(*circ).source()->point())) 
+	{
+	  PRINT_DEBUG ( "p is on a vertex ");
+	  //out_edge = circ;
+	  //out_vertex = circ->source();
+	  //lt = Planar_map::VERTEX;
+	  //found_vertex_or_edge = true;
+	  return (CGAL::make_object ((*circ).source()));
+	}
+	
+	if (traits->is_in_x_range_2_object()((*circ).curve(),p) && 
+	    traits->compare_y_at_x_2_object()(p,(*circ).curve()) == EQUAL) 
+	{
+	  // p lies on cv1  
+	  PRINT_DEBUG ( "p is on an edge ");
+	  Halfedge_const_handle temp_he = circ;
+	  //out_edge = circ;
+	  //lt = Planar_map::EDGE;
+	  //found_vertex_or_edge = true;
+	  return (CGAL::make_object (temp_he)); 
+	}
+	
+	//p does not lie on cv1 ==> 
+	// the target of the equal curve is a better vertex to p 
+	PRINT_ERROR("WARNING 11: found closer vertex during new_find_face");
+	// out_vertex is the closer vertex
+	//out_vertex = circ->source();
+	new_vertex = true;
+	PRINT_DEBUG( "The new vertex is: "<< (*circ).source()->point() );
+	// check validity (the new vertex is vetween them on a line) @@@@
+	return (CGAL::make_object((*circ).source()));		
+      }
+    }
+    
+    PRINT_ERROR("ERROR 13: new_find_face did not find the face !");
+    LM_DEBUG(getchar());
+    return Object();
 }		
 
 //----------------------------------------------------
