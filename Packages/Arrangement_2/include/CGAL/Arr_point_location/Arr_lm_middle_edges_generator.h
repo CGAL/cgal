@@ -43,16 +43,27 @@ class Arr_middle_edges_landmarks_generator
 	: public Arr_landmarks_generator <Arrangement_, Nearest_neighbor_>
 {
 public:
-	typedef Arrangement_								Arrangement_2;
-	typedef typename Arrangement_2::Traits_2			Traits_2;
+	typedef Arrangement_								          Arrangement_2;
 	typedef Arr_middle_edges_landmarks_generator<Arrangement_2, Nearest_neighbor_> 	
-														Self;
-	typedef typename Traits_2::Point_2					Point_2;
-	typedef std::vector<Point_2>						Points_set;
-	typedef typename Arrangement_2::Edge_const_iterator	
-													Edge_const_iterator;
-	typedef typename Arrangement_2::Halfedge_const_handle	
-													Halfedge_const_handle;
+														                            Self;
+	typedef Arr_landmarks_generator<Arrangement_2, Nearest_neighbor_> 	
+                                                        Base;
+	typedef typename Arrangement_2::Traits_2			Traits_2;
+	typedef typename Arrangement_2::Edge_const_iterator	  Edge_const_iterator;
+	typedef typename Arrangement_2::Vertex_const_handle   Vertex_const_handle;
+	typedef typename Arrangement_2::Halfedge_const_handle Halfedge_const_handle;
+	typedef typename Arrangement_2::Face_const_handle     Face_const_handle;
+	typedef typename Arrangement_2::Vertex_handle		      Vertex_handle;
+	typedef typename Arrangement_2::Halfedge_handle		    Halfedge_handle;
+	typedef typename Arrangement_2::Face_handle			      Face_handle;
+	typedef typename Arrangement_2::Vertex_const_iterator Vertex_const_iterator;
+  typedef typename Arrangement_2::Ccb_halfedge_circulator 
+													                            Ccb_halfedge_circulator;
+  typedef typename Base::NN_Points_set                NN_Points_set;
+  typedef typename Base::NN_Point_2                   NN_Point_2;
+
+	typedef typename Traits_2::Point_2					  Point_2;
+	typedef std::vector<Point_2>						      Points_set;
 
 private:
 
@@ -74,13 +85,27 @@ public:
 		  build_landmarks_set();
 	  }
 
+    //Observer functions that should be empty, because they
+    // got nothing to do with middle edges
+	  //-------------------------------------------------
+    virtual void after_create_vertex (Vertex_handle /* v */){}
+    virtual void after_split_face (Face_handle /* f */,
+      Face_handle /* new_f */, bool /* is_hole */) {}
+    virtual void after_add_hole (Ccb_halfedge_circulator /* h */) {}
+   
+    virtual void after_merge_face (Face_handle /* f */){}
+    virtual void after_move_hole (Ccb_halfedge_circulator /* h */){}
+    virtual void after_remove_vertex () {}
+    virtual void after_remove_hole () {}
+  
+
 protected:
    /*!
    * create a set of middle_edges points 
    * the number of points is equal to the number of edges in the arrangement.
    */
-	virtual void _create_points_set (Points_set & points)
-	{
+  virtual void _create_nn_points_set (NN_Points_set &nn_points) 
+  {
 		PRINT_DEBUG("create_middle_edges_points_list");
 
 		Edge_const_iterator    eit;
@@ -88,23 +113,27 @@ protected:
 		for (eit=p_arr->edges_begin(); eit != p_arr->edges_end(); eit++)
 		{
 			//get 2 endpoints of edge
-			hh = *eit;
-			Point_2 p1 = hh.source().point();
-			Point_2 p2 = hh.target().point();
+			hh = eit->handle();
+			const Point_2& p1 = hh->source()->point();
+			const Point_2& p2 = hh->target()->point();
 			Point_2 p ((p1.x()+p2.x())/2, (p1.y()+p2.y())/2);
 	
-			//put in a list 
-			points.push_back(p); 
-
 			PRINT_DEBUG("mid point is= " << p);
+
+      CGAL::Object obj = CGAL::make_object(hh); 
+      NN_Point_2 np(p, obj); 
+      nn_points.push_back(np);
 		} 
+  }
 
-		PRINT_DEBUG("end create_middle_edges_points_list");
+	virtual void _create_points_set (Points_set & points)
+	{
+    std::cerr << "should not reach here!"<< std::endl;
+    CGAL_assertion(false);
 	}
-
 };
 
 CGAL_END_NAMESPACE
 
-
 #endif
+

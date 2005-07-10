@@ -34,13 +34,13 @@
 
 //#define CGAL_LM_DEBUG
 
-#ifdef CGAL_LM_DEBUG
-	#define PRINT_DEBUG(expr)   std::cout << expr << std::endl
-	#define LM_DEBUG(cmd)   cmd
-#else
-	#define PRINT_DEBUG(expr)
-	#define LM_DEBUG(cmd) 
-#endif
+//#ifdef CGAL_LM_DEBUG
+//	#define PRINT_DEBUG(expr)   std::cout << expr << std::endl
+//	#define LM_DEBUG(cmd)   cmd
+//#else
+//	#define PRINT_DEBUG(expr)
+//	#define LM_DEBUG(cmd) 
+//#endif
 
 
 CGAL_BEGIN_NAMESPACE
@@ -146,6 +146,7 @@ public:
 		 _create_nn_points_set(nn_points);
 
 		 //the search structure is now updated
+		 PRINT_DEBUG("call to initialize the nearest neighbor search."); 
 		 nn.clean();
 		 nn.init(nn_points.begin(), nn_points.end());
 
@@ -421,12 +422,16 @@ protected:
     //call the function that creates the landmarks 
     _create_points_set(points);
 
+		PRINT_DEBUG("before batched point location."); 
+
     //locate the landmarks in the arrangement using batched point location
     // global function.
     locate(*p_arr,points.begin(),points.end(),std::back_inserter(pairs));
 
     //random shuffle of the points since the batched p.l. sorts them
     std::random_shuffle ( pairs.begin (), pairs.end ());
+
+		PRINT_DEBUG("after batched point location + shuffle."); 
 
     //create the nn set 
     Pairs_iterator itr;

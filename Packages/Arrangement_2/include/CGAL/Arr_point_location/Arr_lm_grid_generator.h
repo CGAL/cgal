@@ -36,27 +36,26 @@ CGAL_BEGIN_NAMESPACE
 * the size of the grid is determined by the number of landmarks. 
 */
 template <class Arrangement_, 
-		  class Nearest_neighbor_ 
-			  = Arr_landmarks_nearest_neighbor <typename Arrangement_::Traits_2> >
+      class Nearest_neighbor_ 
+        = Arr_landmarks_nearest_neighbor <typename Arrangement_::Traits_2> >
 class Arr_grid_landmarks_generator 
-	: public Arr_landmarks_generator <Arrangement_, Nearest_neighbor_>
+  : public Arr_landmarks_generator <Arrangement_, Nearest_neighbor_>
 {
 public:
-	typedef Arrangement_								Arrangement_2;
-	typedef typename Arrangement_2::Traits_2			Traits_2;
-	typedef Arr_grid_landmarks_generator<Arrangement_2, Nearest_neighbor_> 	
-														Self;
-	typedef typename Traits_2::Point_2					Point_2;
-	typedef std::vector<Point_2>						Points_set;
-	typedef typename Arrangement_2::Vertex_const_iterator	
-														Vertex_const_iterator;
+  typedef Arrangement_                                  Arrangement_2;
+  typedef typename Arrangement_2::Traits_2              Traits_2;
+  typedef Arr_grid_landmarks_generator<Arrangement_2, Nearest_neighbor_>   
+                                                        Self;
+  typedef typename Traits_2::Point_2                    Point_2;
+  typedef std::vector<Point_2>                          Points_set;
+  typedef typename Arrangement_2::Vertex_const_iterator Vertex_const_iterator;
 
 
 
 protected:
 
-	// Data members:
-	int number_of_landmarks; 
+  // Data members:
+  int number_of_landmarks; 
 
 private:
 
@@ -66,19 +65,19 @@ private:
   /*! Assignment operator - not supported. */
   Self& operator= (const Self& );
 
-	
+  
 public: 
-	  /*! Constructor. */
-	  Arr_grid_landmarks_generator 
-		  (const Arrangement_2& arr, int lm_num = -1) : 
-	      Arr_landmarks_generator<Arrangement_2, Nearest_neighbor_> (arr), 
-		  number_of_landmarks (lm_num)
-	  {
-		  PRINT_DEBUG("Arr_grid_landmarks_generator constructor. "
-			  <<"number_of_landmarks = "<< number_of_landmarks); 
+    /*! Constructor. */
+    Arr_grid_landmarks_generator 
+      (const Arrangement_2& arr, int lm_num = -1) : 
+        Arr_landmarks_generator<Arrangement_2, Nearest_neighbor_> (arr), 
+      number_of_landmarks (lm_num)
+    {
+      PRINT_DEBUG("Arr_grid_landmarks_generator constructor. "
+        <<"number_of_landmarks = "<< number_of_landmarks); 
 
-		  build_landmarks_set();
-	  }
+      build_landmarks_set();
+    }
 
 protected:
    /*!
@@ -89,60 +88,60 @@ protected:
    * then, we divide the size of each rectangle edge (corresponding to x and y
    * axis) with the number of landmarks, to get the step in x and in y.
    */
-	virtual void _create_points_set (Points_set & points)
-	{
-		PRINT_DEBUG("create_grid_points_list");
+  virtual void _create_points_set (Points_set & points)
+  {
+    PRINT_DEBUG("create_grid_points_list");
 
-		//find bounding box
-		double x_min=0, x_max=0, y_min=0, y_max=0;
-		double x,y;
-		Vertex_const_iterator vit; 
-		for (vit=p_arr->vertices_begin(); vit != p_arr->vertices_end(); vit++)
-		{
-			x = CGAL::to_double(vit->point().x());
-			y = CGAL::to_double(vit->point().y());
-			if (x < x_min) x_min = x;
-			if (x > x_max) x_max = x;
-			if (y < y_min) y_min = y;
-			if (y > y_max) y_max = y;
-		}
+    //find bounding box
+    double x_min=0, x_max=0, y_min=0, y_max=0;
+    double x,y;
+    Vertex_const_iterator vit; 
+    for (vit=p_arr->vertices_begin(); vit != p_arr->vertices_end(); vit++)
+    {
+      x = CGAL::to_double(vit->point().x());
+      y = CGAL::to_double(vit->point().y());
+      if (x < x_min) x_min = x;
+      if (x > x_max) x_max = x;
+      if (y < y_min) y_min = y;
+      if (y > y_max) y_max = y;
+    }
 
-		// n is the number of grid points.
-		//if n is not given in the constructor then this number
-		//is set to be the number of vertices in the arrangement.
-		int n; 
-		if (number_of_landmarks > 0)
-			n = number_of_landmarks;
-		else
-			n= p_arr->number_of_vertices();
+    // n is the number of grid points.
+    //if n is not given in the constructor then this number
+    //is set to be the number of vertices in the arrangement.
+    int n; 
+    if (number_of_landmarks > 0)
+      n = number_of_landmarks;
+    else
+      n= p_arr->number_of_vertices();
 
-		//calculate the step size
-		int sqrt_n = (int)(CGAL::sqrt(n) + 1);
-		PRINT_DEBUG("n= " << n <<" sqrt_n = "<< sqrt_n );
-		double step_x = (x_max - x_min)/sqrt_n;
-		double step_y = (y_max - y_min)/sqrt_n;
-		PRINT_DEBUG( "step_x= " << step_x <<" step_y = "<< step_y );
-		PRINT_DEBUG( "x_max= " << x_max <<" x_min = "<< x_min );
-		PRINT_DEBUG( "y_max= " << y_max <<" y_min = "<< y_min );
-		double px,py;
-		int count; count = 0;
+    //calculate the step size
+    int sqrt_n = static_cast<int>(CGAL::sqrt(n) + 1);
+    PRINT_DEBUG("n= " << n <<" sqrt_n = "<< sqrt_n );
+    double step_x = (x_max - x_min)/sqrt_n;
+    double step_y = (y_max - y_min)/sqrt_n;
+    PRINT_DEBUG( "step_x= " << step_x <<" step_y = "<< step_y );
+    PRINT_DEBUG( "x_max= " << x_max <<" x_min = "<< x_min );
+    PRINT_DEBUG( "y_max= " << y_max <<" y_min = "<< y_min );
+    double px,py;
+    int count; count = 0;
 
-		// create the grid points.
-		for (px = x_min; px < x_max; px += step_x) 
-		{
-			for (py = y_min; py < y_max; py += step_y) 
-			{
-				Point_2 p(px, py);
+    // create the grid points.
+    for (px = x_min; px < x_max; px += step_x) 
+    {
+      for (py = y_min; py < y_max; py += step_y) 
+      {
+        Point_2 p(px, py);
 
-				//put in a list 
-				points.push_back(p); 
+        //put in a list 
+        points.push_back(p); 
 
-				PRINT_DEBUG("grid point "<< count++ <<" is= " << p);				
-			}
-		}
+        PRINT_DEBUG("grid point "<< count++ <<" is= " << p);        
+      }
+    }
 
-		PRINT_DEBUG("end create_grid_points_list");
-	}
+    PRINT_DEBUG("end create_grid_points_list");
+  }
 
 };
 

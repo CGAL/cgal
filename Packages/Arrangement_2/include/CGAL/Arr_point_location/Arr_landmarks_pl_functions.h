@@ -273,8 +273,8 @@ Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
 	}
 
 	//create a segment vh--p. 
-	Point_2 v = vh->point();
-	X_monotone_curve_2 seg(v, p);
+	const Point_2&     v = vh->point();
+	X_monotone_curve_2 seg = traits->construct_x_monotone_curve_2_object()(v, p);
 
 	//get halfedges around vh
   CGAL_assertion (!vh->is_isolated());
@@ -532,9 +532,9 @@ Object Arr_landmarks_point_location<Arrangement, Arr_landmarks_generator>
 { 
 	PRINT_DEBUG("inside walk_from_edge. p= "<< p << ", eh = "
 		<<eh->source()->point() << "-->"  <<eh->target()->point());
-	X_monotone_curve_2 cv = eh->curve() ;
-	Point_2 src = eh->source()->point();
-	Point_2 trg = eh->target()->point();
+	const X_monotone_curve_2& cv = eh->curve() ;
+	const Point_2&            src = eh->source()->point();
+	const Point_2&            trg = eh->target()->point();
 	Comparison_result res;
 
 	LM_DEBUG( 
@@ -823,9 +823,9 @@ bool Arr_landmarks_point_location<Arrangement, Arr_landmarks_generator>
 
 
 	do  {
-		X_monotone_curve_2 cv = (*curr).curve();
-		Point_2 p1 = (*curr).source()->point();
-		Point_2 p2 = (*curr).target()->point();
+		const X_monotone_curve_2& cv = (*curr).curve();
+		const Point_2&            p1 = (*curr).source()->point();
+		const Point_2&            p2 = (*curr).target()->point();
 
 		//check if p equals one of the endpoints of e
 		if (equal(p, p1))   {
@@ -909,8 +909,9 @@ bool Arr_landmarks_point_location<Arrangement, Arr_landmarks_generator>
 	LM_CLOCK_DEBUG( entries_find_edge++ );
 	PRINT_DEBUG("inside find_edge_to_flip.   " );
 
-	Point_2 vp = np;
-	X_monotone_curve_2 seg(vp, p);   //create a segment vp--p. 
+  //create a segment vp--p. 
+	const Point_2&     vp = np;
+	X_monotone_curve_2 seg = traits->construct_x_monotone_curve_2_object()(vp, p);
 
 	//loop on all edges in this face
 	Ccb_halfedge_const_circulator curr = face;
@@ -922,9 +923,9 @@ bool Arr_landmarks_point_location<Arrangement, Arr_landmarks_generator>
 
 
 	do  {
-		X_monotone_curve_2 cv = (*curr).curve();
-		Point_2 p1 = (*curr).source()->point();
-		Point_2 p2 = (*curr).target()->point();
+		const X_monotone_curve_2& cv = (*curr).curve();
+		const Point_2&            p1 = (*curr).source()->point();
+		const Point_2&            p2 = (*curr).target()->point();
 
 		// check if the curve was already flipped - in this case, 
 		//    don't check it at all.
@@ -1011,10 +1012,10 @@ bool Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
 	typename Traits_wrapper_2::Compare_y_at_x_left_2 compare_y_at_x_left = 
                                       traits->compare_y_at_x_left_2_object();
 
-	Point_2 seg_right = traits->construct_max_vertex_2_object()(seg);
-	Point_2 seg_left = traits->construct_min_vertex_2_object()(seg);
-	Point_2 cv_right = traits->construct_max_vertex_2_object()(cv);
-	Point_2 cv_left = traits->construct_min_vertex_2_object()(cv);
+	const Point_2& seg_right = traits->construct_max_vertex_2_object()(seg);
+	const Point_2& seg_left = traits->construct_min_vertex_2_object()(seg);
+	const Point_2& cv_right = traits->construct_max_vertex_2_object()(cv);
+	const Point_2& cv_left = traits->construct_min_vertex_2_object()(cv);
 	intersect = false;
 
 	PRINT_DEBUG("seg_right =  " << seg_right << " , seg_left = " << seg_left);
