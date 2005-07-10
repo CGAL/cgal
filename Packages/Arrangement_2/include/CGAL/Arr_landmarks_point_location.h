@@ -92,7 +92,8 @@ public:
   Arr_landmarks_point_location () : 
     p_arr (NULL),
     traits (NULL),
-	lm_gen(NULL)
+	lm_gen(NULL), 
+  delete_generator(false)
   {}
 
   /*! Constructor given an arrangement only. */
@@ -100,13 +101,15 @@ public:
     p_arr (&arr)
   {
 	  lm_gen = new Arr_landmarks_generator(arr);
+    delete_generator = true;
   }
 
   /*! Constructor given an arrangement, and landmarks generator. */
   Arr_landmarks_point_location (const Arrangement_2& arr, 
 				Arr_landmarks_generator *gen) :
     p_arr (&arr), 
-    lm_gen (gen)
+    lm_gen (gen), 
+    delete_generator(false)
   {
     traits = static_cast<const Traits_wrapper_2*> (p_arr->get_traits());
   }
