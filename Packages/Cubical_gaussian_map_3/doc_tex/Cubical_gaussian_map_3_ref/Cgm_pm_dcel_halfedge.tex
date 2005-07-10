@@ -1,0 +1,21 @@
+\ccRefPageBegin
+
+\begin{ccRefConcept}{CgmPmDcelHalfedge}
+\ccRefLabel{Cgm_Pm_Dcel_Halfedge}
+\ccCreationVariable{h}
+
+The \ccRefName concept is a refinement of the \ccc{PlanarMapDcelHalfedge_2}
+concept and inherits all its types and operations. In addition to the
+requirements of the \ccc{PlanarMapDcelVertex_2} concept, it must provide the
+types and operations listed below. . 
+
+\ccOperations
+  \ccMethod{bool get_is_real() const;}
+  {returns true if the halfedge is real, and false otherwise.}
+
+\ccOperations
+  \ccMethod{void set_is_real(bool flag);}
+  {sets the flag that indicates whether the halfedge is real.}
+
+\end{ccRefConcept}
+\ccRefPageEnd

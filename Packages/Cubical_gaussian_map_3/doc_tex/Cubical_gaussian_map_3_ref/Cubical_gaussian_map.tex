@@ -1,0 +1,214 @@
+\ccRefPageBegin
+
+\begin{ccRefClass}{Cubical_gaussian_map_3<Kernel,Dcel>}
+\ccCreationVariable{cgm}
+
+\ccDefinition
+An instance \ccVar\ of the parameterized data type \ccClassTemplateName\
+represents a Gaussian map mapped onto a unit cube (an axes parallel cube
+centered at the origin whose edges are of length two).
+
+\ccInclude{CGAL/Cubical_gaussian_map_3.h}
+
+% \ccThree{Cubical_gaussian_map_3<Kernel,Dcel> :: Traits}{}{\hspace*{6cm}}
+% \ccThreeToTwo
+
+\ccTypes
+
+\ccNestedType{Traits}{the traits type.}
+\ccGlue
+\ccNestedType{Dcel}{the {\sc Dcel} type.}
+\ccGlue
+\ccNestedType{Planar_map}{the planar map type.}
+\ccGlue
+\ccNestedType{Projected_normal}{the type that represents a normal projected onto the unit cube.}
+\ccGlue
+\ccNestedType{Corner_id}{the identier of a corner vertex. (A pair that consists
+of the face index and the corner index within the face.)}
+
+The following handles, iterators, and circulators have appropriate
+constant\footnote{This means that for every \ccc{iterator} or \ccc{circulator}
+there is a \ccc{const_iterator} and \ccc{const_circulator} counterpart.
+See~\cite{cgal:ms-strg-96} for a discussion of constant versus mutable
+iterator types.} counterparts.
+The mutable types are assignable to their constant counterparts. All
+circulators are assignable to the \ccStyle{Halfedge_iterator}. The iterators
+are assignable to the respective handle types. Wherever the handles appear in
+function parameter lists, the appropriate iterator can be used as well.
+
+\ccNestedType{Pm_vertex_handle}{the handle to a vertex of the internal planar maps}
+\ccGlue
+\ccNestedType{Pm_halfedge_handle}{the handle of a halfedge of the internal planar maps}
+\ccGlue
+\ccNestedType{Halfedge_around_vertex_circulator}{the forward circulator
+over the real halfedges that have the vertex as their target.
+Its value-type is \ccStyle{Halfedge}.}
+
+\ccHtmlNoLinksFrom{The \ccc{Vertex}, \ccc{Halfedge} and \ccc{Face}
+types of the planar map are defined as part of the CGM planar-map extended
+{\sc dcel}.} See concepts \ccc{CgmPmDcel_2}\lcTex{ (\ccRefPage{CgmPmDcel_2})},
+\ccc{CgmPmDcelVertex_2} \lcTex{(\ccRefPage{CgmPmDcelVertex_2})}
+and \ccc{CgmPmDcelHalfedge_2} \lcTex{(\ccRefPage{CgmPmDcelHalfedge_2})}.
+
+  \ccHtmlNoLinksFrom{
+  \ccNestedType{Vertex}{represents a vertex of the planar map.}}
+  \ccGlue
+  \ccHtmlNoLinksFrom{
+  \ccNestedType{Halfedge}{represents a halfedge of the topological map.}}
+  \ccGlue
+  \ccHtmlNoLinksFrom{
+  \ccNestedType{Face}{represents a face of the topological map.}}
+
+\ccConstants
+\ccEnum{enum {MINX = 0, MINY, MINZ, MAXX, MAXY, MAXZ, NUM_FACES};}    
+{an enumeration of the unit-cube faces.}
+
+\ccCreation
+\ccCreationVariable{cgm}
+
+\ccConstructor{Cubical_gaussian_map_3<Kernel,Dcel>();} {constructs an
+uninitialized cgm containing six empty planar maps.}
+    
+\ccConstructor{Cubical_gaussian_map_3<Kernel,Dcel>(const Self & cgm);}
+{copy constructor.}
+
+\ccModifiers
+
+\ccMethod{void insert(Projected_normal & proj_normal1,
+                      Projected_normal & proj_normal2);}
+{inserts a projection of a great arc represented by two projected normals
+ into the CGM. Each projected normal is the projection of the normal vector
+ that defines an end point of the greate arc. The projected arc is divided
+ into segments, which are inserted into the corresponding planar maps.
+ First, find the two unit-cube faces that the normals project onto. Then,
+ insert a segment or a sequence of segments that connect the projection of
+ the 2 normals.
+ \ccc{proj_normal1} represents the source projected normal, and
+ \ccc{proj_normal2} represents the target projected normal.}
+
+ \ccMethod{void clear();}
+ {clears the internal representation. In particular, clears the internal planar
+  maps.}
+ 
+\ccMethod{void init_planar_maps();}
+{initializes the internal planar maps with the boundary curves. There
+  are 6 planar maps, one for each face of the axis-parallel unit cube. The 3D
+  unit cube is defined by the 2 opposite corners:
+  $(-1, -1, -1)$ and $(1, 1, 1)$.
+  Each 2D planar map is initialized to consist of a single axis-parallel square
+  face (beyond the unbounded face) defined by the 2 opposite corners:
+  $(-1,-1)$ and $(1, 1)$.
+}
+ 
+\ccMethod{void init_corners();}
+{initializes the corners. Typically the \ccc{init_planar_maps()} method
+  initializes each planar map, introducing 4 corner points and 4 boundary
+  segments in each planar map, and also initializes the global corner-
+  vertex data structure respectively. However, if the CGM is generated in a
+  different way, as in the case of overlay computation, where
+  \ccc{init_planar_map()} is not utilized. The global corner-vertex structire
+  must be initialized separately.
+}
+
+\ccMethod{void init_corner_incidences();}
+{Initialize the incidence relations between the corners. Each boundary
+  vertex contains a pointer to a vertex handle on an adjacent unit-cube face.
+  For corner vertices this forms a cyclic chain of 3 vertices. For non-corner
+  boundary vertices this forms a cyclic chain of 2 vertices. This method
+  forms the 12 corner cyclic chains. Recall that the corner vertices are
+  created once (in \ccc{init_planar_maps()}) or obtained once (in
+  \ccc{init_corners()}), and they are retained through out the lifetime of the
+  CGM (along with their cyclic chains.)
+}
+ 
+\ccQueryFunctions
+
+\ccMethod{unsigned int degree(Pm_vertex_const_handle vh) const;}
+{returns the degree of a real vertex. \ccc{vh} is the vertex handle.
+\ccPrecond{vh} is a handle of a real vertex.}
+ 
+\ccPredicates
+
+\ccMethod{bool is_empty() const;}
+{returns true if the representation is empty, and false otherwise.}
+ 
+\ccAccessFunctions
+
+\ccMethod{Planar_map & get_planar_map(unsigned int id);}
+{Obtain the planar map associated with a unit-cube face identified by \ccc{id}.
+(a \ccc{const} version is also available.)
+}
+
+\ccMethod{Pm_halfedge_handle get_adjacent_halfedge_handle(Pm_halfedge_handle he);}
+{returns the handle of a halfedge that represents the same segment of a
+  unit-cube edge on the adjacent unit-cube face.
+  \ccc{he} is the halfedge handle that represents a segment of an edge.
+  (a \ccc{const} version is also available.)
+}
+
+\ccMethod{Pm_vertex_handle get_corner_vertex_handle(Corner_id corner_id);}
+{obtains the handle of a corner vertex identified by \ccc{id}.
+}
+
+\ccMethod{Kernel::Vector_3 calculate_normal(unsigned int id, Traits::Point_2 & p) const;}
+{Calculate the normal vector that projects onto the given point \ccc{p} of a
+  unit-cube face identified by \ccc{id}.
+}
+
+\ccMethod{static unsigned int get_mask(unsigned int id);}
+{returns the mask of a face itentified by \ccc{id}.
+}
+
+\ccMethod{static const Kernel::FT & get_extreme_coordinate(unsigned int i);}
+{returns an extreme (1 or -1) coordinate of the unit cube in the user
+  defined field number-type depending on whether \ccc{i} is equal to 0 or 1
+  respectively.
+}
+
+\ccMethod{static const Traits::Point_2 & get_corner_point(unsigned int index);}
+{generates and returns the corner point given by its index according to the
+  table below.\\
+  \begin{tabular}{l|l}
+    Index & Coordinates\\
+    \hline
+    0 & (-1,-1)\\
+    1 & (-1,1)\\
+    2 & (1,-1)\\
+    3 & (1,1)
+  \end{tabular}
+}
+
+\ccMethod{static Corner_id get_next_corner_id(unsigned int face_id,
+                                              unsigned int corner_index);}
+{obtains the corner id of the next corner vertex in the cyclic chain of corner
+  vertices. \ccc{face_id} is the id of the unit-cube face associated with the
+  planar map containing the vertex, and \ccc{corner_index} is the index of the
+  corner within the cube face.
+}
+
+\ccMethod{static Corner_id get_incident_corner_id(unsigned int edge_index,
+                                                  unsigned int index);}
+{obtains the corner id of one of the two corner vertices that are the target
+  vertices of 2 boundary halfedges that represent the same unit-cube edge.
+  Each edge is associated with two halfedges on the (outer) connected
+  component boundary (CCB) of two adjacent unit-cube faces respectively.
+  The corner vertex whose id is returned is the target vertex of such a
+  halfedge.
+  \ccc{edge_index} is the index of one of the dozen edges of the unit-cube, and
+  \ccc{index} is the (arbitrary) index that indicates which one of the two
+  incident vertices is seeked (0 and 1 indicate first and second respectively).
+}
+
+\ccOperations
+
+\ccMethod{Vertex::Vertex_location num_faces_2_vertex_location(unsigned int num_faces);}
+{converts the number of incident faces to vertex location.
+}
+
+\ccSeeAlso
+     \ccc{Planar_map<Dcel,Traits>}\lcTex{ 
+     (\ccRefPage{CGAL::Planar_map<Dcel,Traits>})}\\
+     \ccc{PlanarMapDcel_2}\lcTex{ 
+     (\ccRefPage{PlanarMapDcel_2})}
+
+\end{ccRefClass}

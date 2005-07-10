@@ -1,0 +1,44 @@
+\ccRefPageBegin
+
+\begin{ccRefConcept}{CgmPmDcelVertex}
+\ccRefLabel{Cgm_Pm_Dcel_Vertex}
+
+\ccCreationVariable{v}
+
+The \ccRefName\ concpet is a refinement of the \ccc{PlanarMapMapDcelVertex_2}
+concept and inherits all its types and operations. In addition to the
+requirements of the \ccc{PlanarMapDcelVertex_2} concept, it must provide the
+types and operations listed below.
+
+\ccConstants
+  \ccEnum{enum Vertex_location {None, Interior, Edge, Corner};}
+  {an enumeration of vertex locations.}
+  
+\ccOperations
+  \ccMethod{Vertex_location get_location() const;}{the vertex location.}
+  
+  \ccMethod{void set_location(Vertex_location loc);}
+  {sets the location to \ccc{loc}.}
+
+  \ccMethod{bool get_is_real() const;}
+  {returns true if the vertex is real, and false otherwise.}
+
+  \ccMethod{void set_is_real(bool value);}
+  {sets the flag that indicates whether the vertex is real.}
+
+  \ccMethod{unsigned int get_face_id() const;}
+  {obtains the index of the containing unit-cube face.}
+
+  \ccMethod{void set_face_id(unsigned int face_id);}
+  {sets the index of the containing unit-cube face.}
+
+  \ccMethod{void * get_incident_vertex() const;}
+  {obtains the incident vertex in a planar map associated with an adjacent
+  unit-cube face.}
+          
+  \ccMethod{void set_incident_vertex(void * vertex);}
+  {sets the incident vertex in a planar map associated with an adjacent
+  unit-cube face.}
+
+\end{ccRefConcept}
+\ccRefPageEnd

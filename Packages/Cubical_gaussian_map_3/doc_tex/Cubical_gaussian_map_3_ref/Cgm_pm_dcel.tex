@@ -1,0 +1,31 @@
+\ccRefPageBegin
+
+\begin{ccRefConcept}{CgmPmDcel}
+
+A model for the \ccRefName\ concept defines the underlying combinatorial data
+structure (halfedge data structure) used in the internal planar map data
+structure of the \ccc{Cubical_gaussian_map_3<Kernel,Dcel>}.
+
+Note that the concept \ccRefName\ refines the concept \ccc{PlanarMapDcel_2}
+and inherits all its types and operations. In addition to the requirements of
+the \ccc{PlanarMapDcel_2} concept, it must provide the types and operations
+listed below.
+
+\ccTypes
+  \ccNestedType{Vertex}{
+  the vertex type. Should be a model of the
+  \ccc{CgmPmDcelVertex} concept.}
+
+  \ccNestedType{Halfedge}{
+  the halfedge type. Should be a model of the
+  \ccc{CgmPmDcelHalfedge} concept.}
+
+  \ccNestedType{Face}{
+  the face type. Should be a model of the
+  \ccc{CgmPmDcelFace} concept.}
+  
+\ccHasModels
+  \ccc{Cgm_pm_dcel<Traits>}
+
+\end{ccRefConcept}
+\ccRefPageEnd

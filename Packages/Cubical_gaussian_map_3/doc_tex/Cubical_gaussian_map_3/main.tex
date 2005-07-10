@@ -1,0 +1,22 @@
+\def\my_axis#1#2#3#4#5#6{%
+  \rput{#1}(0,0){
+    \psline[linewidth=2pt]{->}(0,0)(#2,0)
+    \uput[0]{-#1}(#2,0){{\large $X$}}
+  }
+  \rput{#3}(0,0){
+    \psline[linewidth=2pt]{->}(0,0)(#4,0)
+    \uput[0]{-#3}(#4,0){{\large $Y$}}
+  }
+  \rput{#5}(0,0){
+    \psline[linewidth=2pt]{->}(0,0)(#6,0)
+    \uput[0]{-#5}(#6,0){{\large $Z$}}
+  }
+}
+
+\chapter{Cubical Gaussian Maps}
+\label{I1_ChapterCubicalGaussianMap_3}
+\ccChapterAuthor{Efi Fogel}
+
+\minitoc
+
+\input{Cubical_gaussian_map_3/cgm}

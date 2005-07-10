@@ -1,0 +1,482 @@
+\newlength{\displacement}\setlength{\displacement}{0.4cm}
+\newlength{\ndisplacement}\setlength{\ndisplacement}{-0.4cm}
+\newlength{\hdisplacement}\setlength{\hdisplacement}{0.2cm}
+  \begin{tabular}{cc}
+    \pspicture[](-3,-2.5)(5,4.5)
+    \psset{unit=1cm,subgriddiv=0,arrowsize=3pt 3,linewidth=1pt,
+      viewpoint=1 -1 1
+    }
+    \cnode*(-2,-2){2pt}{0}
+    \cnode*(-2, 2){2pt}{1}
+    \cnode*( 2, 2){2pt}{2}
+    \cnode*( 2,-2){2pt}{3}
+    \rput{30}(0,0){
+      \rput{-30}(2,0){
+	\cnode(-2,-2){2pt}{4}
+	\cnode*(-2, 2){2pt}{5}
+	\cnode*( 2, 2){2pt}{6}
+	\cnode*( 2,-2){2pt}{7}
+      }
+    }
+    \rput{30}(2,-2){
+      \rput{0}(2,0){
+	\rput{-30}(-\hdisplacement,0){
+	  \rput{0}(0,\displacement){
+	    \pnode(0,0){a1}
+	    \pnode(0,5){b1}
+	    \uput[90]{0}(0,5){$X$}
+	    \rput{30}(0,0){
+	      \pnode(-3,0){c1}
+	      \uput[180]{-30}(-3,0){$Y$}
+	    }
+	  }
+	}
+      }
+    }
+    \rput{30}(-2,2){
+      \rput{0}(2,0){
+	\rput{-30}(-\hdisplacement,0){
+	  \rput{0}(\displacement,0){
+	    \pnode(0,0){a2}
+	    \pnode(5,0){b2}
+	    \uput[0]{0}(5,0){$Y$}
+	    \rput{30}(0,0){
+	      \pnode(-3,0){c2}
+	      \uput[180]{-30}(-3,0){$X$}
+	    }
+	  }
+	}
+      }
+    }
+    \ncline{0}{1}
+    \ncline{1}{2}
+    \ncline{2}{3}
+    \ncline{3}{0}
+    \ncline[linecolor=gray,linestyle=dashed]{4}{5}
+    \ncline{5}{6}
+    \ncline{6}{7}
+    \ncline[linecolor=gray,linestyle=dashed]{7}{4}
+    \ncline[linecolor=gray,linestyle=dashed]{0}{4}
+    \ncline{1}{5}
+    \ncline{2}{6}
+    \ncline{3}{7}
+    \ncline[linecolor=blue]{->}{a1}{b1}
+    \ncline[linecolor=blue]{->}{a1}{c1}
+    \ncline[linecolor=green]{->}{a2}{b2}
+    \ncline[linecolor=green]{->}{a2}{c2}
+    \rput{0}(\displacement,\displacement){
+      \psline[linecolor=red]{->}(-2,-2)(3,-2)
+      \psline[linecolor=red]{->}(-2,-2)(-2,3)
+      \uput[0]{0}(3,-2){$X$}
+      \uput[90]{0}(-2,3){$Y$}
+    }
+    \rput{30}(0,0){
+      \rput{-30}(1,0){
+	\my_axis{0}{1}{90}{1}{210}{0.7}
+      }
+    }
+    \rput{0}(1,-0.5){\psframebox*[framearc=.3]{\red \Huge 5}}
+    \rput{30}(2,0){
+      \rput{-30}(1,0){
+	\ThreeDput[normal=1 .0 .0](0,0,0){
+	  \psframebox*[framearc=.3]{\blue \Huge 3}
+	}
+      }
+    }
+    \rput{0}(2,2){
+      \rput{30}(0,-\displacement){
+	\rput{0}(2,0){
+	  \rput{-30}(-\hdisplacement,0){
+	    \ThreeDput[normal=1 .0 .0](0,0,0){
+	      \psframebox*[framearc=.3]{\blue \Large 2}
+	    }
+	  }
+	}
+      }
+    }
+    \rput{0}(2,-2){
+      \rput{30}(0,\displacement){
+	\rput{-30}(\hdisplacement,0){
+	  \ThreeDput[normal=1 .0 .0](0,0,0){
+	    \psframebox*[framearc=.3]{\blue \Large 1}
+	  }
+	}
+      }
+    }
+    \rput{0}(2,-2){
+      \rput{30}(0,\displacement){
+	\rput{0}(2,0){
+	  \rput{-30}(-\hdisplacement,0){
+	    \ThreeDput[normal=1 .0 .0](0,0,0){
+	      \psframebox*[framearc=.3]{\blue \Large 0}
+	    }
+	  }
+	}
+      }
+    }
+    \rput{0}(2,2){
+      \rput{30}(0,-\displacement){
+	\rput{-30}(\hdisplacement,0){
+	  \ThreeDput[normal=1 .0 .0](0,0,0){
+	    \psframebox*[framearc=.3]{\blue \Large 3}
+	  }
+	}
+      }
+    }
+    \rput{30}(0,2){
+      \rput{-30}(1,0){
+	\ThreeDput[normal=.0 .0 1](0,0,0){
+	  \psframebox*[framearc=.3]{\green \Huge 4}
+	}
+      }
+    }
+    \rput{0}(2,2){
+      \ThreeDput[normal=.0 .0 1](0,0,0){
+	\rput{0}(-0.4,0.2){
+	  \psframebox*[framearc=.3]{\green \Large 3}
+	}
+      }
+    }
+    \rput{0}(-2,2){
+      \ThreeDput[normal=.0 .0 1](0,0,0){
+	\rput{0}(0.4,1){
+	  \psframebox*[framearc=.3]{\green \Large 2}
+	}
+      }
+    }
+    \rput{30}(2,2){
+      \rput{-30}(2,0){
+	\ThreeDput[normal=.0 .0 1](0,0,0){
+	  \rput{0}(-0.3,-0.8){
+	    \psframebox*[framearc=.3]{\green \Large 1}
+	  }
+	}
+      }
+    }
+    \rput{30}(-2,2){
+      \rput{-30}(2,0){
+	\ThreeDput[normal=.0 .0 1](0,0,0){
+	  \rput{0}(0.4,-0.2){
+	    \psframebox*[framearc=.3]{\green \Large 0}
+	  }
+	}
+      }
+    }
+    \uput[45]{0}(-2,-2){\psframebox*[framearc=.3]{\red \Large 0}}
+    \uput[-45]{0}(-2, 2){\psframebox*[framearc=.3]{\red \Large 1}}
+    \uput[-135]{0}( 2, 2){\psframebox*[framearc=.3]{\red \Large 3}}
+    \uput[135]{0}( 2,-2){\psframebox*[framearc=.3]{\red \Large 2}}
+    \endpspicture &
+%
+    \pspicture[](-3,-2.5)(5,4.5)
+    \psset{unit=1cm,subgriddiv=0,arrowsize=3pt 3,linewidth=1pt,
+      viewpoint=-1 -1 -1
+    }
+    \cnode*(-2,-2){2pt}{0}
+    \cnode*(-2, 2){2pt}{1}
+    \cnode*( 2, 2){2pt}{2}
+    \cnode*( 2,-2){2pt}{3}
+    \rput{30}(0,0){
+      \rput{-30}(2,0){
+	\cnode(-2,-2){2pt}{4}
+	\cnode*(-2, 2){2pt}{5}
+	\cnode*( 2, 2){2pt}{6}
+	\cnode*( 2,-2){2pt}{7}
+      }
+    }
+    \rput{30}(2,-2){
+      \rput{-30}(\hdisplacement,0){
+	\rput{0}(0,\displacement){
+	  \pnode(0,0){a1}
+	  \pnode(0,5){b1}
+	  \uput[90]{0}(0,5){$Y$}
+	  \rput{30}(0,0){
+	    \pnode(3,0){c1}
+	    \uput[0]{-30}(3,0){$X$}
+	  }
+	}
+      }
+    }
+    \rput{0}(2,2){
+      \rput{30}(-\displacement,0){
+	\rput{-30}(\hdisplacement,0){
+	  \pnode(0,0){a2}
+	  \pnode(-5,0){b2}
+	  \uput[180]{0}(-5,0){$Y$}
+	  \rput{30}(0,0){
+	    \pnode(3,0){c2}
+	    \uput[0]{-30}(3,0){$X$}
+	  }
+	}
+      }
+    }
+    \ncline{0}{1}
+    \ncline{1}{2}
+    \ncline{2}{3}
+    \ncline{3}{0}
+    \ncline[linecolor=gray,linestyle=dashed]{4}{5}
+    \ncline{5}{6}
+    \ncline{6}{7}
+    \ncline[linecolor=gray,linestyle=dashed]{7}{4}
+    \ncline[linecolor=gray,linestyle=dashed]{0}{4}
+    \ncline{1}{5}
+    \ncline{2}{6}
+    \ncline{3}{7}
+    \ncline[linecolor=cyan]{->}{a1}{b1}
+    \ncline[linecolor=cyan]{->}{a1}{c1}
+    \ncline[linecolor=green]{->}{a2}{b2}
+    \ncline[linecolor=green]{->}{a2}{c2}
+    \rput{0}(2,-2){
+      \rput{0}(-\displacement,\displacement){
+	\psline[linecolor=magenta]{->}(0,0)(-5,0)
+	\psline[linecolor=magenta]{->}(0,0)(0,5)
+	\uput[180]{0}(-5,0){$Y$}
+	\uput[90]{0}(0,5){$X$}
+      }
+    }
+    \rput{30}(0,0){
+      \rput{-30}(1,0){
+	\my_axis{180}{1}{90}{1}{30}{0.7}
+      }
+    }
+    \rput{0}(0,0){\psframebox*[framearc=.3]{\magenta \Huge 2}}
+    \rput{30}(2,0){
+      \rput{-30}(1,0){
+	\ThreeDput[normal=-1 .0 .0](0,0,0){
+	  \psframebox*[framearc=.3]{\cyan \Huge 0}
+	}
+      }
+    }
+    \rput{0}(2,-2){
+      \rput{30}(0,\displacement){
+	\rput{-30}(\hdisplacement,0){
+	  \ThreeDput[normal=-1 .0 .0](0,0,0){
+	    \psframebox*[framearc=.3]{\cyan \Large 0}
+	  }
+	}
+      }
+    }
+    \rput{0}(2,-2){
+      \rput{30}(0,\displacement){
+	\rput{0}(2,0){
+	  \rput{-30}(-\hdisplacement,0){
+	    \ThreeDput[normal=-1 .0 .0](0,0,0){
+	      \psframebox*[framearc=.3]{\cyan \Large 2}
+	    }
+	  }
+	}
+      }
+    }
+    \rput{0}(2,2){
+      \rput{30}(0,-\displacement){
+	\rput{-30}(\hdisplacement,0){
+	  \ThreeDput[normal=-1 .0 .0](0,0,0){
+	    \psframebox*[framearc=.3]{\cyan \Large 1}
+	  }
+	}
+      }
+    }
+    \rput{0}(2,2){
+      \rput{30}(0,-\displacement){
+	\rput{0}(2,0){
+	  \rput{-30}(-\hdisplacement,0){
+	    \ThreeDput[normal=-1 .0 .0](0,0,0){
+	      \psframebox*[framearc=.3]{\cyan \Large 3}
+	    }
+	  }
+	}
+      }
+    }
+    \rput{30}(0,2){
+      \rput{-30}(1,0){
+	\ThreeDput[normal=.0 .0 -1](0,0,0){
+	  \psframebox*[framearc=.3]{\green \Huge 4}
+	}
+      }
+    }
+    \uput[45]{0}(-2,-2){\psframebox*[framearc=.3]{\magenta \Large 1}}
+    \uput[-45]{0}(-2, 2){\psframebox*[framearc=.3]{\magenta \Large 3}}
+    \uput[-135]{0}( 2, 2){\psframebox*[framearc=.3]{\magenta \Large 2}}
+    \uput[135]{0}( 2,-2){\psframebox*[framearc=.3]{\magenta \Large 0}}
+    \endpspicture \\
+%
+    \pspicture[](-3,-3.5)(4.5,4)
+    \psset{unit=1cm,subgriddiv=0,arrowsize=3pt 3,linewidth=1pt,
+      viewpoint=-1 1 -1
+    }
+    \cnode*(-2,-2){2pt}{0}
+    \cnode*(-2, 2){2pt}{1}
+    \cnode*( 2, 2){2pt}{2}
+    \cnode*( 2,-2){2pt}{3}
+    \rput{210}(0,0){
+      \rput{-210}(2,0){
+	\cnode(-2,-2){2pt}{4}
+	\cnode*(-2, 2){2pt}{5}
+	\cnode*( 2, 2){2pt}{6}
+	\cnode*( 2,-2){2pt}{7}
+      }
+    }
+    \rput{210}(-2,-2){
+      \rput{0}(2,0){
+	\rput{-210}(-\hdisplacement,0){
+	  \rput{0}(0,\displacement){
+	    \pnode(0,0){a1}
+	    \pnode(0,5){b1}
+	    \uput[90]{0}(0,5){$Y$}
+	    \rput{210}(0,0){
+	      \pnode(-3,0){c1}
+	      \uput[180]{-210}(-3,0){$X$}
+	    }
+	  }
+	}
+      }
+    }
+    \rput{0}(-2,-2){
+      \rput{210}(\displacement,0){
+	\rput{0}(2,0){
+	  \rput{-210}(-\hdisplacement,0){
+	    \pnode(0,0){a2}
+	    \pnode(5,0){b2}
+	    \uput[0]{0}(5,0){$X$}
+	    \rput{210}(0,0){
+	      \pnode(-3,0){c2}
+	      \uput[180]{-210}(-3,0){$Y$}
+	    }
+	  }
+	}
+      }
+    }
+    \ncline{0}{1}
+    \ncline{1}{2}
+    \ncline{2}{3}
+    \ncline{3}{0}
+    \ncline{4}{5}
+    \ncline[linecolor=gray,linestyle=dashed]{5}{6}
+    \ncline[linecolor=gray,linestyle=dashed]{6}{7}
+    \ncline{7}{4}
+    \ncline{0}{4}
+    \ncline{1}{5}
+    \ncline[linecolor=gray,linestyle=dashed]{2}{6}
+    \ncline{3}{7}
+    \ncline[linecolor=cyan]{->}{a1}{b1}
+    \ncline[linecolor=cyan]{->}{a1}{c1}
+    \ncline[linecolor=yellow]{->}{a2}{b2}
+    \ncline[linecolor=yellow]{->}{a2}{c2}
+    \rput{0}(\displacement,\displacement){
+      \psline[linecolor=red]{->}(-2,-2)(3,-2)
+      \psline[linecolor=red]{->}(-2,-2)(-2,3)
+      \uput[0]{0}(3,-2){$X$}
+      \uput[90]{0}(-2,3){$Y$}
+    }
+    \rput{210}(0,0){
+      \rput{-210}(1,0){
+	\my_axis{0}{1}{90}{1}{30}{0.7}
+      }
+    }
+    \rput{0}(1,0.5){\psframebox*[framearc=.3]{\red \Huge 5}}
+    \rput{210}(-2,0){
+      \rput{-210}(1,0){
+	\ThreeDput[normal=-1 .0 .0](0,0,0){
+	  \psframebox*[framearc=.3]{\cyan \Huge 0}
+	}
+      }
+    }
+    \rput{210}(0,-2){
+      \rput{-210}(1,0){
+	\psframebox*[framearc=.3]{\yellow \Huge 1}
+      }
+    }
+    \uput[45]{0}(-2,-2){\psframebox*[framearc=.3]{\red \Large 0}}
+    \uput[-45]{0}(-2, 2){\psframebox*[framearc=.3]{\red \Large 1}}
+    \uput[-135]{0}( 2, 2){\psframebox*[framearc=.3]{\red \Large 3}}
+    \uput[135]{0}( 2,-2){\psframebox*[framearc=.3]{\red \Large 2}}
+    \endpspicture &
+%
+    \pspicture[](-3,-3.5)(4.5,4)
+    \psset{unit=1cm,subgriddiv=0,arrowsize=3pt 3,linewidth=1pt,
+      viewpoint=1 1 -1
+    }
+    \cnode*(-2,-2){2pt}{0}
+    \cnode*(-2, 2){2pt}{1}
+    \cnode*( 2, 2){2pt}{2}
+    \cnode*( 2,-2){2pt}{3}
+    \rput{210}(0,0){
+      \rput{-210}(2,0){
+	\cnode(-2,-2){2pt}{4}
+	\cnode*(-2, 2){2pt}{5}
+	\cnode*( 2, 2){2pt}{6}
+	\cnode*( 2,-2){2pt}{7}
+      }
+    }
+    \rput{0}(-2,-2){
+      \rput{210}(0,\displacement){
+	\rput{-210}(\hdisplacement,0){
+	  \pnode(0,0){a1}
+	  \pnode(0,5){b1}
+	  \uput[90]{0}(0,5){$X$}
+	  \rput{210}(0,0){
+	    \pnode(3,0){c1}
+	    \uput[0]{-210}(3,0){$Y$}
+	  }
+	}
+      }
+    }
+    \rput{0}(2,-2){
+      \rput{210}(-\displacement,0){
+	\rput{-210}(\hdisplacement,0){
+	  \pnode(0,0){a2}
+	  \pnode(-5,0){b2}
+	  \uput[180]{0}(-5,0){$X$}
+	  \rput{210}(0,0){
+	    \pnode(3,0){c2}
+	    \uput[0]{-210}(3,0){$Y$}
+	  }
+	}
+      }
+    }
+    \ncline{0}{1}
+    \ncline{1}{2}
+    \ncline{2}{3}
+    \ncline{3}{0}
+    \ncline{4}{5}
+    \ncline[linecolor=gray,linestyle=dashed]{5}{6}
+    \ncline[linecolor=gray,linestyle=dashed]{6}{7}
+    \ncline{7}{4}
+    \ncline{0}{4}
+    \ncline{1}{5}
+    \ncline[linecolor=gray,linestyle=dashed]{2}{6}
+    \ncline{3}{7}
+    \ncline[linecolor=blue]{->}{a1}{b1}
+    \ncline[linecolor=blue]{->}{a1}{c1}
+    \ncline[linecolor=yellow]{->}{a2}{b2}
+    \ncline[linecolor=yellow]{->}{a2}{c2}
+    \rput{0}(-\displacement,\displacement){
+      \psline[linecolor=magenta]{->}(2,-2)(-3,-2)
+      \psline[linecolor=magenta]{->}(2,-2)(2,3)
+      \uput[180]{0}(-3,-2){$Y$}
+      \uput[90]{0}(2,3){$X$}
+    }
+    \rput{210}(0,0){
+      \rput{-210}(1,0){
+	\my_axis{180}{1}{90}{1}{210}{0.7}
+      }
+    }
+    \rput{0}(.0,.0){\psframebox*[framearc=.3]{\magenta \Huge 2}}
+    \rput{210}(-2,0){
+      \rput{-210}(1,0){
+	\ThreeDput[normal=1 .0 .0](0,0,0){
+	  \psframebox*[framearc=.3]{\blue \Huge 3}
+	}
+      }
+    }
+    \rput{210}(0,-2){
+      \rput{-210}(1,0){
+	\psframebox*[framearc=.3]{\yellow \Huge 1}
+      }
+    }
+   \uput[45]{0}(-2,-2){\psframebox*[framearc=.3]{\magenta \Large 1}}
+    \uput[-45]{0}(-2, 2){\psframebox*[framearc=.3]{\magenta \Large 3}}
+    \uput[-135]{0}( 2, 2){\psframebox*[framearc=.3]{\magenta \Large 2}}
+    \uput[135]{0}( 2,-2){\psframebox*[framearc=.3]{\magenta \Large 0}}
+    \endpspicture
+  \end{tabular}
