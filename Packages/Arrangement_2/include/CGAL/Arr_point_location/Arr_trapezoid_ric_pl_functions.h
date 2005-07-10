@@ -126,10 +126,10 @@ template <class Arrangement>
 Object Arr_trapezoid_ric_point_location<Arrangement>
 ::_vertical_ray_shoot (const Point_2& p, bool shoot_up) const
 {
-    //trying to workaround internal compiler error
+  //trying to workaround internal compiler error
   typename TD::Locate_type td_lt;
   
-  X_curve_plus cv = td.vertical_ray_shoot(p,td_lt,up);
+  X_curve_plus cv = td.vertical_ray_shoot(p, td_lt, shoot_up);
 
   // treat special case, where trapezoid is unbounded.
   //	for then get_parent() is not defined
