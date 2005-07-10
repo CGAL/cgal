@@ -243,13 +243,13 @@ public:
     *      X_monotone_curve_2, and the value-type of PointInputIterator is the 
     *      traits' Point_2.
     */
-  template<class CurveInputIterator, class PointInputIterator>
+  template<class CurveInputIterator, class ActionPointItr,class QueryPointItr>
   void sweep (CurveInputIterator curves_begin,
               CurveInputIterator curves_end,
-	            PointInputIterator action_points_begin,
-              PointInputIterator action_points_end,
-              PointInputIterator query_points_begin,
-              PointInputIterator query_points_end)
+	            ActionPointItr action_points_begin,
+              ActionPointItr action_points_end,
+              QueryPointItr query_points_begin,
+              QueryPointItr query_points_end)
   {
     _init_sweep(curves_begin, curves_end);
     _init_points(action_points_begin, action_points_end, Base_event::ACTION);
