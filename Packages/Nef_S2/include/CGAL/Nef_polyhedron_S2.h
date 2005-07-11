@@ -199,7 +199,7 @@ public:
     set_sm(&sphere_map());
     Decorator D(&sphere_map());
     SFace_handle sf=D.new_sface();
-    D.mark(sf) = bool(sphere);
+    sf->mark() = bool(sphere);
   }
 
 
@@ -215,9 +215,9 @@ public:
     Overlayer O(&sphere_map()); 
     O.create(c);
     SHalfloop_handle h = D.shalfloop();
-    if ( D.circle(h) != c ) h = D.twin(h);
-    D.mark(D.face(h)) = true;
-    D.mark(h) = bool(circle);
+    if ( h->circle() != c ) h = h->twin();
+    h->incident_sface()->mark() = true;
+    h->mark() = h->twin()->mark() = bool(circle);
   }
 
 
@@ -240,15 +240,15 @@ public:
     D.create_from_segments(first,beyond);
     SHalfedge_iterator e;
     CGAL_forall_shalfedges(e,D) {
-      Sphere_circle c(D.circle(e));
+      Sphere_circle c(e->circle());
       if ( c == s.sphere_circle() ) break;
     }
     if ( e != SHalfedge_iterator() ) {
-      if ( D.circle(e) != s.sphere_circle() ) e = D.twin(e);
-      CGAL_assertion( D.circle(e) == s.sphere_circle() );
+      if ( e->circle() != s.sphere_circle() ) e = e->twin();
+      CGAL_assertion( e->circle() == s.sphere_circle() );
       D.set_marks_in_face_cycle(e,bool(b));
-      if ( D.number_of_sfaces() > 2 ) D.mark(D.face(e)) = true;
-      else                            D.mark(D.face(e)) = !bool(b);
+      if ( D.number_of_sfaces() > 2 ) e->incident_sface()->mark() = true;
+      else                            e->incident_sface()->mark() = !bool(b);
       return;
     }
     D.simplify();
@@ -275,11 +275,11 @@ public:
     D.create_from_circles(first, beyond); D.simplify();
     SVertex_iterator v; SHalfedge_iterator e; SFace_iterator f;
     CGAL_forall_svertices(v,D)
-      D.mark(v) = ( default_random.get_double() < p ? true : false );
+      v->mark() = ( default_random.get_double() < p ? true : false );
     CGAL_forall_shalfedges(e,D)
-      D.mark(e) = ( default_random.get_double() < p ? true : false );
+      e->mark() = ( default_random.get_double() < p ? true : false );
     CGAL_forall_sfaces(f,D)
-      D.mark(f) = ( default_random.get_double() < p ? true : false );
+      f->mark() = ( default_random.get_double() < p ? true : false );
     D.simplify();
   }
 
@@ -319,7 +319,7 @@ protected:
             D.number_of_sedges()==0 &&
             D.number_of_sloops()==0 &&
             D.number_of_sfaces()==1 &&
-            D.mark(f) == false);
+            f->mark() == false);
   }
 
   bool is_plane() const
@@ -330,7 +330,7 @@ protected:
             D.number_of_sedges()==0 &&
             D.number_of_sloops()==0 &&
             D.number_of_sfaces()==1 &&
-            D.mark(f) == true);
+            f->mark() == true);
   }
 
   void extract_complement()
@@ -340,12 +340,14 @@ protected:
     SVertex_iterator v;
     SHalfedge_iterator e;
     SFace_iterator f;
-    CGAL_forall_svertices(v,D) D.mark(v) = !D.mark(v);
-    CGAL_forall_sedges(e,D) D.mark(e) = !D.mark(e);
-    CGAL_forall_sfaces(f,D) D.mark(f) = !D.mark(f);
-
-    if ( D.has_shalfloop() ) 
-      D.mark(D.shalfloop()) = !D.mark(D.shalfloop());
+    CGAL_forall_svertices(v,D) v->mark() = !v->mark();
+    CGAL_forall_sedges(e,D) e->mark() = !e->mark();
+    CGAL_forall_sfaces(f,D) f->mark() = !f->mark();
+    
+    if ( D.has_shalfloop() )
+      D.shalfloop()->mark() = 
+	D.shalfloop()->twin()->mark() = 
+	!D.shalfloop()->mark();
   }
 
   void extract_interior()
@@ -354,9 +356,9 @@ protected:
     Overlayer D(&sphere_map());
     SVertex_iterator v;
     SHalfedge_iterator e;
-    CGAL_forall_svertices(v,D) D.mark(v) = false;
-    CGAL_forall_sedges(e,D) D.mark(e) = false;
-    if ( D.has_sloop() ) D.mark(D.shalfloop()) = false;
+    CGAL_forall_svertices(v,D) v->mark() = false;
+    CGAL_forall_sedges(e,D) e->mark() = false;
+    if ( D.has_sloop() ) D.shalfloop()->mark() = false;
     D.simplify();
   }
 
@@ -368,10 +370,10 @@ protected:
     SVertex_iterator v;
     SHalfedge_iterator e;
     SFace_iterator f;
-    CGAL_forall_svertices(v,D) D.mark(v) = true;
-    CGAL_forall_sedges(e,D)    D.mark(e) = true;
-    CGAL_forall_sfaces(f,D)    D.mark(f) = false;
-    if ( D.has_sloop() ) D.mark(D.shalfloop()) = true;
+    CGAL_forall_svertices(v,D) v->mark() = true;
+    CGAL_forall_sedges(e,D)    e->mark() = true;
+    CGAL_forall_sfaces(f,D)    f->mark() = false;
+    if ( D.has_sloop() )       D.shalfloop()->mark() = D.shalfoop()->twin() = true;
     D.simplify();
   }
 
@@ -581,10 +583,10 @@ protected:
   struct INSET {
     const Const_decorator& D;
     INSET(const Const_decorator& Di) : D(Di) {}
-    bool operator()(SVertex_const_handle v) const { return D.mark(v); }
-    bool operator()(SHalfedge_const_handle e) const { return D.mark(e); }
-    bool operator()(SHalfloop_const_handle l) const { return D.mark(l); }
-    bool operator()(SFace_const_handle f) const { return D.mark(f); }
+    bool operator()(SVertex_const_handle v) const { return v->mark(); }
+    bool operator()(SHalfedge_const_handle e) const { return e->mark(); }
+    bool operator()(SHalfloop_const_handle l) const { return l->mark(); }
+    bool operator()(SFace_const_handle f) const { return f->mark(); }
   };
 
   Object_handle ray_shoot(const Sphere_point& p, 

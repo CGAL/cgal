@@ -68,19 +68,19 @@ struct SMO_from_segs {
   }
 
   void supporting_segment(Halfedge_handle e, I it) const
-  { if ( M[it] ) G.mark(e) = true; }
+  { if ( M[it] ) e->mark() = true; }
 
   void trivial_segment(Vertex_handle v, I it) const
-  { if ( M[it] ) G.mark(v) = true; }
+  { if ( M[it] ) v->mark() = true; }
 
   void starting_segment(Vertex_handle v, I it) const
-  { if ( M[it] ) G.mark(v) = true; }
+  { if ( M[it] ) v->mark() = true; }
 
   void passing_segment(Vertex_handle v, I it) const
-  { if ( M[it] ) G.mark(v) = true; }
+  { if ( M[it] ) v->mark() = true; }
 
   void ending_segment(Vertex_handle v, I it) const
-  { if ( M[it] ) G.mark(v) = true; }
+  { if ( M[it] ) v->mark() = true; }
 
   void halfedge_below(Vertex_handle v, Halfedge_handle e) const
   { geninfo<Halfedge_handle>::access(G.info(v)) = e; }
@@ -89,13 +89,13 @@ struct SMO_from_segs {
   { return geninfo<Halfedge_handle>::access(G.info(v)); }
 
   void assert_equal_marks(Vertex_handle v1, Vertex_handle v2) const 
-  { CGAL_assertion(G.mark(v1)==G.mark(v2)); }
+  { CGAL_assertion(v1->mark()==v2->mark()); }
 
   void discard_info(Vertex_handle v) const 
   { geninfo<Halfedge_handle>::clear(G.info(v)); }
 
   void assert_equal_marks(Halfedge_handle e1, Halfedge_handle e2) const
-  { CGAL_assertion(G.mark(e1)==G.mark(e2)); }
+  { CGAL_assertion(e1->mark()==e2->mark()); }
 
   void discard_info(Halfedge_handle e) const {}
 
@@ -423,11 +423,11 @@ public:
 
   void assoc_info(SHalfedge_handle e)  const
   { geninfo<edge_info>::create(info(e)); 
-    geninfo<edge_info>::create(info(twin(e))); }
+    geninfo<edge_info>::create(info(e->twin())); }
 
   void discard_info(SHalfedge_handle e)  const
   { geninfo<edge_info>::clear(info(e)); 
-    geninfo<edge_info>::clear(info(twin(e))); }
+    geninfo<edge_info>::clear(info(e->twin())); }
 
   edge_info& ginfo(SHalfedge_handle e)  const
   { return geninfo<edge_info>::access(info(e)); }
@@ -437,8 +437,8 @@ public:
 
   Object_handle& supp_object(SHalfedge_handle e, int i) const
   // uedge information we store in the smaller one 
-  { if (&*e < &*(twin(e))) return ginfo(e).o_supp[i]; 
-    else                   return ginfo(twin(e)).o_supp[i]; }
+  { if (&*e < &*(e->twin())) return ginfo(e).o_supp[i]; 
+    else                   return ginfo(e->twin()).o_supp[i]; }
 
   Mark& incident_mark(SHalfedge_handle e, int i)  const
   // biedge information we store in the edge
@@ -478,10 +478,10 @@ public:
   { CGAL_NEF_TRACEN("determine_face "<<PH(e));
     int fc = SFaceCycle[e];
     SHalfedge_handle e_min = MinimalSHalfedge[fc];
-    SHalfedge_handle e_below = D.halfedge_below(target(e_min));
+    SHalfedge_handle e_below = D.halfedge_below(e_min->target());
     if(e_below == SHalfedge_handle())
       return SFace_handle();
-    SFace_handle f = face(e_below);
+    SFace_handle f = e_below->incident_sface();
     if ( f != SFace_handle() ) return f; // has already a face 
     // e_below also has no face
     f = determine_face(e_below, MinimalSHalfedge, SFaceCycle,D);
@@ -492,32 +492,23 @@ public:
 
   Sphere_segment segment(SM_const_decorator N, 
                          SHalfedge_const_handle e) const
-  { return K.construct_segment(
-      N.point(N.source(e)),N.point(N.target(e)),N.circle(e)); }
+  { return K.construct_segment(e->source()->point(),
+			       e->target()->point(),
+			       e->circle()); }
 
   Sphere_segment trivial_segment(SM_const_decorator N, 
                                  SVertex_const_handle v) const
-  { Sphere_point p = N.point(v); 
+  { Sphere_point p = v->point(); 
     return K.construct_segment(p,p); }
 
   Seg_pair two_segments(SM_const_decorator N, 
                         SHalfedge_const_handle e) const
-  // we know that source(e)==target(e)
-  { return N.circle(e).split_at(N.point(N.source(e))); }
+  // we know that e->source()==e->target()
+  { return e->circle().split_at(e->source()->point()); }
 
   Seg_pair two_segments(SM_const_decorator N, 
                         SHalfloop_const_handle l) const
-  { return N.circle(l).split_at_xy_plane(); }
-
-
-  Mark& mark(SVertex_handle h) const
-  { return Base::mark(h); }
-  Mark& mark(SHalfedge_handle h) const
-  { return Base::mark(h); }
-  Mark& mark(SHalfloop_handle h) const
-  { return Base::mark(h); }
-  Mark& mark(SFace_handle h) const
-  { return Base::mark(h); }
+  { return l->circle().split_at_xy_plane(); }
 
 
   // ---------------------------------------------------------------
@@ -556,8 +547,8 @@ public:
   \emph{enriched} by the marks of the supporting objects of the two
   input structures: e.g. let |v| be a vertex supported by a node |v0| in
   |M0| and by a face |f1| in |M1| and |D0|, |D1| be decorators of
-  type |SM_decorator| on |M0|,|M1|. Then |\Mvar.mark(v,0) = D0.mark(v0)|
-  and |\Mvar.mark(v,1) = D1.mark(f1)|.}*/
+  type |SM_decorator| on |M0|,|M1|. Then |\Mvar.mark(v,0) = D0.v0->mark()|
+  and |\Mvar.mark(v,1) = D1.f1->mark()|.}*/
 
   template <typename Selection> 
   void select(const Selection& SP) const;
@@ -567,17 +558,17 @@ public:
   [[Mark operator()(Mark m0, Mark m1) const]]\\
   For each object |u| of |M| enriched by the marks of the supporting
   objects according to the previous procedure |subdivide|, after this
-  operation |\Mvar.mark(u) = SP ( \Mvar.mark(u,0),\Mvar.mark(u,1)
+  operation |\Mvar.u->mark() = SP ( \Mvar.mark(u,0),\Mvar.mark(u,1)
   )|. The additional marks are invalidated afterwards.
   \precond subdivide() was called before.}*/
 
   void simplify();
   /*{\Mop simplifies the structure of |M| according to the marks of
   its objects. An edge |e| separating two faces |f1| and |f2| and equal
-  marks |mark(e) == mark(f1) == mark(f2)| is removed and the faces are
-  unified.  An isolated vertex |v| in a face |f| with |mark(v)==mark(f)|
+  marks |e->mark() == f1->mark() == f2->mark()| is removed and the faces are
+  unified.  An isolated vertex |v| in a face |f| with |v->mark()==f->mark()|
   is removed.  A vertex |v| with outdegree two, two collinear out-edges
-  |e1|,|e2| and equal marks |mark(v) == mark(e1) == mark(e2)| is removed
+  |e1|,|e2| and equal marks |v->mark() == e1->mark() == e2->mark()| is removed
   and the edges are unified.}*/
 
   int check_sphere(const Seg_list& L, bool compute_halfsphere[3][2]) const;
@@ -671,9 +662,9 @@ create_from_segments(Forward_iterator start, Forward_iterator end)
 
   SHalfedge_iterator u;
   CGAL_forall_sedges(u,*this) {
-    Sphere_segment s(point(source(u)),point(target(u)));
-    circle(u) = s.sphere_circle();
-    circle(twin(u)) = s.sphere_circle().opposite();
+    Sphere_segment s(u->source()->point(),u->target()->point());
+    u->circle() = s.sphere_circle();
+    u->twin()->circle() = s.sphere_circle().opposite();
   }
 
   merge_halfsphere_maps(this->svertices_begin(),v,O);
@@ -743,9 +734,9 @@ create_from_circles(Forward_iterator start, Forward_iterator end)
 
   SHalfedge_iterator u;
   CGAL_forall_sedges(u,*this) {
-    Sphere_segment s(point(source(u)),point(target(u)));
-    circle(u) = s.sphere_circle();
-    circle(twin(u)) = s.sphere_circle().opposite();
+    Sphere_segment s(u->source()->point(),u->target()->point());
+    u->circle() = s.sphere_circle();
+    u->twin()->circle() = s.sphere_circle().opposite();
   }
 
   merge_halfsphere_maps(this->svertices_begin(),v,O);
@@ -894,8 +885,8 @@ template <typename Map>
 void SM_overlayer<Map>::
 create(const Sphere_circle& c)
 { SHalfloop_handle l1 = this->new_shalfloop_pair();
-  SHalfloop_handle l2 = this->twin(l1);
-  circle(l1) = c; circle(l2) = c.opposite();
+  SHalfloop_handle l2 = l1->twin();
+  l1->circle() = c; l2->circle() = c.opposite();
   SFace_handle f1 = this->new_sface();
   SFace_handle f2 = this->new_sface();
   link_as_loop(l1,f1);
@@ -920,7 +911,7 @@ subdivide(const Map* M0, const Map* M1)
     }
     SHalfedge_const_iterator e;
     CGAL_forall_sedges(e,PI[i]) {
-      if ( source(e) == target(e) ) {
+      if ( e->source() == e->target() ) {
         Seg_pair p = two_segments(PI[i],e);
         L.push_back(p.first); 
         L.push_back(p.second);
@@ -1091,7 +1082,7 @@ subdivide(const Map* M0, const Map* M1)
   CGAL_assertion_code(SVertex_iterator svi);
   CGAL_assertion_code(
     for(svi=this->svertices_begin(); svi!=this->svertices_end(); svi++) {
-      CGAL_NEF_TRACEN("vertex "<<point(svi)<<" info "<<info(svi)<<
+      CGAL_NEF_TRACEN("vertex "<<svi->point()<<" info "<<info(svi)<<
 	     " marks "<<mark(svi,0)<<" "<<mark(svi,1));
     }
   )
@@ -1117,13 +1108,13 @@ set_outer_face_mark(int offset, const std::vector<Mark>& mohs) {
 
   SHalfedge_iterator e;
   CGAL_forall_shalfedges(e, *this) {
-    if ( face(e) != SFace_handle() ) continue;
+    if ( e->incident_sface() != SFace_handle() ) continue;
     link_as_face_cycle(e,sf); 
   }
   
   SVertex_handle v;
   CGAL_forall_svertices(v, *this) {
-    if(!is_isolated(v) || face(v) != SFace_handle()) continue;
+    if(!is_isolated(v) || v->incident_sface() != SFace_handle()) continue;
     link_as_isolated_vertex(v,sf);
   }
 }
@@ -1241,7 +1232,7 @@ create_face_objects(SHalfedge_iterator e_start, SHalfedge_iterator e_end,
     SHalfedge_around_sface_circulator hfc(last_out_edge(v_start)),hend(hfc);
     CGAL_NEF_TRACEN("equator cycle "<<PH(hfc));
     CGAL_For_all(hfc,hend) SFaceCycle[hfc]=0; // outer face cycle = 0
-    MinimalSHalfedge.push_back(twin(first_out_edge(v_start)));
+    MinimalSHalfedge.push_back(first_out_edge(v_start)->twin());
     int i=1; 
     for (SHalfedge_iterator e = e_start; e != e_end; ++e) {
       if ( SFaceCycle[e] >= 0 ) continue; // already assigned
@@ -1251,7 +1242,7 @@ create_face_objects(SHalfedge_iterator e_start, SHalfedge_iterator e_end,
       CGAL_NEF_TRACEN("  face cycle numbering "<<i);
       CGAL_For_all(hfc,hend) {
 	SFaceCycle[hfc]=i; // assign face cycle number
-	if ( SG.compare_xy(point(target(hfc)), point(target(e_min))) < 0 )
+	if ( SG.compare_xy(hfc->twin()->source()->point(), e_min->twin()->source()->point()) < 0 )
 	  e_min = hfc;      
 	CGAL_NEF_TRACEN(PH(hfc));
       } CGAL_NEF_TRACEN("");
@@ -1262,9 +1253,9 @@ create_face_objects(SHalfedge_iterator e_start, SHalfedge_iterator e_end,
     for (int j=1; j<i; ++j) {
       SHalfedge_handle e = MinimalSHalfedge[j];
       CGAL_NEF_TRACEN("  face cycle "<<j<<" minimal halfedge "<<PH(e));
-      Sphere_point p1 = point(source(e)), 
-	p2 = point(target(e)), 
-	p3 = point(target(next(e)));
+      Sphere_point p1 = e->source()->point(), 
+	p2 = e->twin()->source()->point(), 
+	p3 = e->snext()->twin()->source()->point();
       if ( SG.orientation(p1,p2,p3) > 0 ) { // left_turn => outer face cycle
 	SFace_handle f = this->new_sface();
 	link_as_face_cycle(e,f);
@@ -1273,7 +1264,7 @@ create_face_objects(SHalfedge_iterator e_start, SHalfedge_iterator e_end,
     }
     
     for (SHalfedge_iterator e = e_start; e != e_end; ++e) {
-      if ( face(e) != SFace_handle() ) continue;
+      if ( e->incident_sface() != SFace_handle() ) continue;
       if ( SFaceCycle[e] == 0 ) continue;
       CGAL_NEF_TRACEN("linking hole "<<PH(e));
       SFace_handle f = determine_face(e,MinimalSHalfedge,SFaceCycle,D);
@@ -1287,7 +1278,7 @@ create_face_objects(SHalfedge_iterator e_start, SHalfedge_iterator e_end,
     SHalfedge_handle e_below = D.halfedge_below(v);
     CGAL_assertion( e_below != SHalfedge_handle() || e_start == e_end );
     if(e_below != SHalfedge_handle())
-      link_as_isolated_vertex(v,face(e_below));
+      link_as_isolated_vertex(v,e_below->incident_sface());
   }
 
 }
@@ -1312,8 +1303,8 @@ complete_face_support(SVertex_iterator v_start, SVertex_iterator v_end,
 	m_buffer[i] = incident_mark(e_below,i);
       }
     } else { // e_below does not exist
-      //      CGAL_assertion( point(v).hz() == 0 && 
-      //		   ( offset == 0 ? (point(v).hx() >= 0) : (point(v).hx()<=0)) );
+      //      CGAL_assertion( v->point().hz() == 0 && 
+      //		   ( offset == 0 ? (v->point().hx() >= 0) : (v->point().hx()<=0)) );
       if(!is_isolated(v)) {
 	if(!both) {
 	  for (int i=0; i<2; ++i)
@@ -1321,7 +1312,7 @@ complete_face_support(SVertex_iterator v_start, SVertex_iterator v_end,
 	  CGAL_NEF_TRACEN("no edge below ");
 	} else {
 	  for (int i=0; i<2; ++i) 
-	    m_buffer[i] = incident_mark(previous(first_out_edge(v)),i);
+	    m_buffer[i] = incident_mark(first_out_edge(v)->sprev(),i);
 	}
       }
     } CGAL_NEF_TRACEN(" faces right-below "<<m_buffer[0]<<" "<<m_buffer[1]);
@@ -1335,17 +1326,17 @@ complete_face_support(SVertex_iterator v_start, SVertex_iterator v_end,
       SVertex_const_handle vs;
       SHalfedge_const_handle es;
       SHalfloop_const_handle ls;
-      if ( CGAL::assign(vs,o) ) { mark(v,i) = PI[i].mark(vs); continue; }
+      if ( CGAL::assign(vs,o) ) { mark(v,i) = vs->mark(); continue; }
       if ( CGAL::assign(es,supp_object(v,i)) ) {
-        if ( point(source(es)) == point(v) ) 
-        { mark(v,i) = PI[i].mark(source(es)); continue; }
-        if ( point(target(es)) == point(v) ) 
-        { mark(v,i) = PI[i].mark(target(es)); continue; }
-        mark(v,i) = PI[i].mark(es); continue;
+        if ( es->source()->point() == v->point() ) 
+	  { mark(v,i) = es->source()->mark(); continue; }
+        if ( es->target()->point() == v->point() ) 
+	  { mark(v,i) = es->target()->mark(); continue; }
+        mark(v,i) = es->mark(); continue;
       }
       if ( CGAL::assign(ls,o) ) { 
-	mark(v,i) = PI[i].mark(ls); 
-	CGAL_NEF_TRACEN("loop " << PI[i].circle(ls)); continue; }
+	mark(v,i) = ls->mark(); 
+	CGAL_NEF_TRACEN("loop " << ls->circle()); continue; }
       CGAL_assertion_msg(0,"wrong handle");
     } CGAL_NEF_TRACEN(" vertex marks "<<mark(v,0)<<" "<<mark(v,1));
 
@@ -1358,28 +1349,28 @@ complete_face_support(SVertex_iterator v_start, SVertex_iterator v_end,
         if ( supp_object(e,i) != NULL ) {
           SHalfedge_const_handle ei; 
           if ( CGAL::assign(ei,supp_object(e,i)) ) { 
-            if ( PI[i].circle(ei) != circle(e) ) { ei = PI[i].twin(ei); }
-            CGAL_assertion( PI[i].circle(ei) == circle(e) ); 
+            if ( ei->circle() != e->circle() ) { ei = ei->twin(); }
+            CGAL_assertion( ei->circle() == e->circle() ); 
             CGAL_NEF_TRACEN("  supporting edge "<<i<<" "<<PH(ei));
-            incident_mark(twin(e),i) =
-              PI[i].mark(PI[i].face(PI[i].twin(ei)));
-            mark(e,i) = mark(twin(e),i) = PI[i].mark(ei);
+            incident_mark(e->twin(),i) =
+              ei->twin()->incident_sface()->mark();
+            mark(e,i) = mark(e->twin(),i) = ei->mark();
             incident_mark(e,i) = m_buffer[i] =
-              PI[i].mark(PI[i].face(ei)); 
+              ei->incident_sface()->mark(); 
           }
           SHalfloop_const_handle li;
           if ( CGAL::assign(li,supp_object(e,i)) ) { 
-            if ( PI[i].circle(li) != circle(e) ) { li = PI[i].twin(li); }
-            CGAL_assertion( PI[i].circle(li) == circle(e) ); 
+            if ( li->circle() != e->circle() ) { li = li->twin(); }
+            CGAL_assertion( li->circle() == e->circle() ); 
             CGAL_NEF_TRACEN("  supporting loop "<<i<<" "<<PH(li));
-            incident_mark(twin(e),i) =
-              PI[i].mark(PI[i].face(PI[i].twin(li)));
-            mark(e,i) = mark(twin(e),i) = PI[i].mark(li);
+            incident_mark(e->twin(),i) =
+              li->twin()->incident_sface()->mark();
+            mark(e,i) = mark(e->twin(),i) = li->mark();
             incident_mark(e,i) = m_buffer[i] =
-              PI[i].mark(PI[i].face(li)); 
+              li->incident_sface()->mark(); 
           }
         } else { CGAL_NEF_TRACEN("  support from face below "<<i);
-	  incident_mark(twin(e),i) = mark(e,i) = mark(twin(e),i) =
+	  incident_mark(e->twin(),i) = mark(e,i) = mark(e->twin(),i) =
           incident_mark(e,i) = m_buffer[i];
         }
       } CGAL_NEF_TRACEN("  face marks "<<m_buffer[0]<<" "<<m_buffer[1]);
@@ -1405,10 +1396,10 @@ void SM_overlayer<Map>::
 merge_nodes(SHalfedge_handle e1, SHalfedge_handle e2,
   const Mark_accessor& D)
 {
-  SVertex_handle v1 = source(e1), v2 = target(e2);
+  SVertex_handle v1 = e1->source(), v2 = e2->target();
   CGAL_NEF_TRACEN("merge_nodes "<<PH(v1)<<PH(v2));
-  CGAL_assertion(point(v1)==point(v2));
-  SHalfedge_handle ep1 = previous(e1), en2 = next(e2);
+  CGAL_assertion(v1->point()==v2->point());
+  SHalfedge_handle ep1 = e1->sprev(), en2 = e2->snext();
   SHalfedge_around_svertex_circulator eav(out_edges(v2)),ee(eav);
   CGAL_For_all(eav,ee) { set_source(eav,v1); }
   link_as_prev_next_pair(e2,e1);  
@@ -1424,30 +1415,30 @@ void SM_overlayer<Map>::
 merge_halfsphere_maps(SVertex_handle v1, SVertex_handle v2,
   const Mark_accessor& D)
 { CGAL_NEF_TRACEN("merging halfspheres "<<PH(v1)<<PH(v2));
-  CGAL_assertion(point(v1)==point(v2));
+  CGAL_assertion(v1->point()==v2->point());
   std::list<SHalfedge_pair> L_equator;
   SHalfedge_around_sface_circulator 
-    ep(last_out_edge(v1)), en(twin(first_out_edge(v2)));
+    ep(last_out_edge(v1)), en(first_out_edge(v2)->twin());
   do { 
    L_equator.push_back(SHalfedge_pair(ep,en));
    merge_nodes(ep,en,D); ++ep; --en; 
-  } while ( source(ep) != v1 );
+  } while ( ep->source() != v1 );
   
   typename std::list<SHalfedge_pair>::iterator it;
   CGAL_forall_iterators(it,L_equator) { 
     SHalfedge_handle e1 = it->first, e2 = it->second;
-    SHalfedge_handle e1t = twin(e1), e2t = twin(e2);
+    SHalfedge_handle e1t = e1->twin(), e2t = e2->twin();
     CGAL_NEF_TRACEV(PH(e1));CGAL_NEF_TRACEV(PH(e2));
-    SHalfedge_handle e2tp = previous(e2t);
-    SHalfedge_handle e2tn = next(e2t);
+    SHalfedge_handle e2tp = e2t->sprev();
+    SHalfedge_handle e2tn = e2t->snext();
     link_as_prev_next_pair(e2tp,e1);
     link_as_prev_next_pair(e1,e2tn);
-    SFace_handle f = face(e2t);
+    SFace_handle f = e2t->incident_sface();
     if ( is_sm_boundary_object(e2t) )
     { undo_sm_boundary_object(e2t,f); store_sm_boundary_object(e1,f); }
     set_face(e1,f);
-    if ( e2 == first_out_edge(source(e2)) )
-      set_first_out_edge(source(e2),e1t);
+    if ( e2 == first_out_edge(e2->source()) )
+      set_first_out_edge(e2->source(),e1t);
     D.discard_info(e2);
     delete_edge_pair_only(e2);
   }
@@ -1460,19 +1451,19 @@ select(const Selection& SP) const
 { 
   SVertex_iterator v;
   CGAL_forall_svertices(v,*this) {
-    mark(v) = SP(mark(v,0),mark(v,1));
+    v->mark() = SP(mark(v,0),mark(v,1));
     discard_info(v); 
   }
   SHalfedge_iterator e;
   CGAL_forall_sedges(e,*this) {
-    mark(e) = SP(mark(e,0),mark(e,1));
-    mark(twin(e)) = SP(mark(twin(e),0),mark(twin(e),1));
-    CGAL_assertion(mark(e) == mark(twin(e)));
+    e->mark() = SP(mark(e,0),mark(e,1));
+    e->twin()->mark() = SP(mark(e->twin(),0),mark(e->twin(),1));
+    CGAL_assertion(e->mark() == e->twin()->mark());
     discard_info(e);
   }
   SFace_iterator f;
   CGAL_forall_sfaces(f,*this) {
-    mark(f) = SP(mark(f,0),mark(f,1));
+    f->mark() = SP(mark(f,0),mark(f,1));
     discard_info(f);
   }
 }
@@ -1495,35 +1486,38 @@ void SM_overlayer<Map>::simplify()
 
   if ( this->has_shalfloop() ) {
     SHalfloop_handle l = this->shalfloop();
-    SFace_handle f = *(UF.find(Pitem[face(l)]));
+    SFace_handle f = *(UF.find(Pitem[l->incident_sface()]));
     link_as_loop(l,f);
-    f = *(UF.find(Pitem[face(twin(l))]));
-    link_as_loop(twin(l),f);
+    f = *(UF.find(Pitem[l->twin()->incident_sface()]));
+    link_as_loop(l->twin(),f);
   }
 
   SHalfedge_iterator e, en;
   for(e = this->shalfedges_begin(); e != this->shalfedges_end(); e = en) { 
-    en = e; ++en; if ( en==twin(e) ) ++en;
+    en = e; ++en; if ( en==e->twin() ) ++en;
     CGAL_NEF_TRACEN("can simplify ? " << PH(e));
-    CGAL_NEF_TRACEN(mark(e) << " " << mark(face(e)) << " " << mark(face(twin(e))));
-    if (( mark(e) == mark(face(e)) && mark(e) == mark(face(twin(e))))){
+    CGAL_NEF_TRACEN(e->mark() << " " << 
+		    e->incident_sface()->mark() << " " << 
+		    e->twin()->incident_sface()->mark());
+    if (( e->mark() == e->incident_sface()->mark() && 
+	  e->mark() == e->twin()->incident_sface()->mark())){
       CGAL_NEF_TRACEN("deleting "<<PH(e));
-      if ( !UF.same_set(Pitem[face(e)],
-			Pitem[face(twin(e))]) ) {
+      if ( !UF.same_set(Pitem[e->incident_sface()],
+			Pitem[e->twin()->incident_sface()]) ) {
 	
-	UF.unify_sets( Pitem[face(e)],
-		       Pitem[face(twin(e))] );
+	UF.unify_sets( Pitem[e->incident_sface()],
+		       Pitem[e->twin()->incident_sface()] );
 	CGAL_NEF_TRACEN("unioning disjoint faces");
       }
       
       CGAL_NEF_TRACEN("is_closed_at_source " << is_closed_at_source(e) << 
-	     " " << is_closed_at_source(twin(e)));
+	     " " << is_closed_at_source(e->twin()));
       
       if ( is_closed_at_source(e) )
-	Vitem[source(e)] = Pitem[face(e)];
+	Vitem[e->source()] = Pitem[e->incident_sface()];
       
-      if ( is_closed_at_source(twin(e)))
-	Vitem[target(e)] = Pitem[face(e)];
+      if ( is_closed_at_source(e->twin()))
+	Vitem[e->target()] = Pitem[e->incident_sface()];
       
       delete_edge_pair(e);
     }
@@ -1533,7 +1527,7 @@ void SM_overlayer<Map>::simplify()
   for (e = this->shalfedges_begin(); e != this->shalfedges_end(); ++e) {
     if ( linked[e] ) continue;
     SHalfedge_around_sface_circulator hfc(e),hend(hfc);
-    SFace_handle f = *(UF.find( Pitem[face(e)]));
+    SFace_handle f = *(UF.find( Pitem[e->incident_sface()]));
     CGAL_For_all(hfc,hend) {  set_face(hfc,f); linked[hfc]=true; }
     store_sm_boundary_object(e,f);
   }
@@ -1545,25 +1539,25 @@ void SM_overlayer<Map>::simplify()
     
       if(Vitem[v] != NULL) {
 	set_face(v,*(UF.find(Vitem[v])));
-	CGAL_NEF_TRACEN("incident face of " << PH(v) << " set to " << &*(face(v)));
+	CGAL_NEF_TRACEN("incident face of " << PH(v) << " set to " << &*(v->incident_sface()));
       }
       else {
-	set_face(v, *(UF.find(Pitem[face(v)])));
+	set_face(v, *(UF.find(Pitem[v->incident_sface()])));
 	CGAL_NEF_TRACEN("isolated svertex " << PH(v) << 
-	       " already has incident face " << &*(face(v)));
+	       " already has incident face " << &*(v->incident_sface()));
       }
 
-      if ( mark(v) == mark(face(v)) ) {
+      if ( v->mark() == v->incident_sface()->mark() ) {
         CGAL_NEF_TRACEN("removing isolated vertex"<<PH(v));
         delete_vertex_only(v);  
       } 
       else 
-        store_sm_boundary_object(v,face(v)); // isolated, but should stay
+        store_sm_boundary_object(v,v->incident_sface()); // isolated, but should stay
     } else { // v not isolated
-      SHalfedge_handle e2 = first_out_edge(v), e1 = previous(e2);
+      SHalfedge_handle e2 = first_out_edge(v), e1 = e2->sprev();
       if ( has_outdeg_two(v) &&
-           mark(v) == mark(e1) && mark(v) == mark(e2) &&
-           circle(e1) == circle(e2) ) {
+           v->mark() == e1->mark() && v->mark() == e2->mark() &&
+           e1->circle() == e2->circle() ) {
         CGAL_NEF_TRACEN("collinear at "<<PH(v)<<PH(e1)<<PH(e2));
         if ( e1 == e2 ){ CGAL_NEF_TRACEN("edge_to_loop"); convert_edge_to_loop(e1);}
         else {CGAL_NEF_TRACEN("merge_edge_pairs"); merge_edge_pairs_at_target(e1); } 

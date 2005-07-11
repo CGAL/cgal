@@ -44,11 +44,14 @@ public:
   class SVertex
   { 
     typedef void* GenPtr;
-    typedef typename Refs::Mark             Mark;
-    typedef typename Refs::Sphere_point     Sphere_point;
-    typedef typename Refs::SVertex_handle   SVertex_handle;
-    typedef typename Refs::SHalfedge_handle SHalfedge_handle;
-    typedef typename Refs::SFace_handle     SFace_handle;
+    typedef typename Refs::Mark                    Mark;
+    typedef typename Refs::Sphere_point            Sphere_point;
+    typedef typename Refs::SVertex_handle          SVertex_handle;
+    typedef typename Refs::SVertex_const_handle    SVertex_const_handle;
+    typedef typename Refs::SHalfedge_handle        SHalfedge_handle;    
+    typedef typename Refs::SHalfedge_const_handle  SHalfedge_const_handle;
+    typedef typename Refs::SFace_handle            SFace_handle;
+    typedef typename Refs::SFace_const_handle      SFace_const_handle;
 
     Sphere_point    point_; 
     Mark            mark_;
@@ -91,10 +94,10 @@ public:
     const Sphere_point& point() const { return point_; }
 
     SHalfedge_handle& out_sedge() { return out_sedge_; }
-    SHalfedge_handle out_sedge() const { return out_sedge_; }
+    SHalfedge_const_handle out_sedge() const { return out_sedge_; }
 
     SFace_handle& incident_sface() { return incident_sface_; } 
-    SFace_handle incident_sface() const { return incident_sface_; } 
+    SFace_const_handle incident_sface() const { return incident_sface_; } 
 
     bool is_isolated() const { return (out_sedge() == SHalfedge_handle()); }
 
@@ -117,10 +120,12 @@ public:
     typedef void* GenPtr;
     typedef typename Refs::Mark             Mark;
     typedef typename Refs::Sphere_circle    Sphere_circle;
-    typedef typename Refs::SVertex_handle   SVertex_handle;
-    typedef typename Refs::SHalfedge_handle SHalfedge_handle;
-    typedef typename Refs::SHalfedge_const_handle SHalfedge_const_handle;
-    typedef typename Refs::SFace_handle     SFace_handle;
+    typedef typename Refs::SVertex_handle          SVertex_handle;
+    typedef typename Refs::SVertex_const_handle    SVertex_const_handle;
+    typedef typename Refs::SHalfedge_handle        SHalfedge_handle;    
+    typedef typename Refs::SHalfedge_const_handle  SHalfedge_const_handle;
+    typedef typename Refs::SFace_handle            SFace_handle;
+    typedef typename Refs::SFace_const_handle      SFace_const_handle;
 
     // Role within local graph:
     Sphere_circle      circle_;
@@ -170,25 +175,25 @@ public:
     }
 
     SHalfedge_handle& twin() { return twin_; }
-    SHalfedge_handle twin() const { return twin_; }
+    SHalfedge_const_handle twin() const { return twin_; }
 
     SVertex_handle& source() { return source_; }
-    SVertex_handle source() const { return source_; }
+    SVertex_const_handle source() const { return source_; }
 
     SVertex_handle& target() { return twin()->source(); }
-    SVertex_handle target() const { return twin()->source(); }
+    SVertex_const_handle target() const { return twin()->source(); }
 
     SHalfedge_handle& sprev() { return sprev_; }
-    SHalfedge_handle sprev() const { return sprev_; }
+    SHalfedge_const_handle sprev() const { return sprev_; }
 
     SHalfedge_handle& snext() { return snext_; }
-    SHalfedge_handle snext() const { return snext_; }
+    SHalfedge_const_handle snext() const { return snext_; }
 
     Sphere_circle& circle() { return circle_; }
     const Sphere_circle& circle() const { return circle_; }
     
     SFace_handle& incident_sface() { return incident_sface_; }
-    SFace_handle incident_sface() const { return incident_sface_; }
+    SFace_const_handle incident_sface() const { return incident_sface_; }
 
     GenPtr& info() { return info_; }
     const GenPtr& info() const { return info_; }
@@ -208,8 +213,11 @@ public:
     typedef void* GenPtr;
     typedef typename Refs::Mark             Mark;
     typedef typename Refs::Sphere_circle    Sphere_circle;
-    typedef typename Refs::SHalfloop_handle SHalfloop_handle;
-    typedef typename Refs::SFace_handle     SFace_handle;
+    typedef typename Refs::SHalfloop_handle        SHalfloop_handle;    
+    typedef typename Refs::SHalfloop_const_handle  SHalfloop_const_handle;
+    typedef typename Refs::SFace_handle            SFace_handle;
+    typedef typename Refs::SFace_const_handle      SFace_const_handle;
+
 
     Sphere_circle   circle_;
     Mark            mark_;
@@ -250,13 +258,13 @@ public:
     }
 
     SHalfloop_handle& twin() { return twin_; }
-    SHalfloop_handle twin() const { return twin_; }
+    SHalfloop_const_handle twin() const { return twin_; }
 
     Sphere_circle& circle() { return circle_; }
     const Sphere_circle& circle() const { return circle_; }
 
     SFace_handle& incident_sface() { return incident_sface_; }
-    SFace_handle incident_sface() const { return incident_sface_; }
+    SFace_const_handle incident_sface() const { return incident_sface_; }
 
     GenPtr& info() { return info_; }
     const GenPtr& info() const { return info_; }

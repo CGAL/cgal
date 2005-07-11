@@ -128,22 +128,6 @@ SM_const_decorator(const Map* M) : psm_(M) {}
 
 const Map* sphere_map() const { return psm_; }
 
-SVertex_const_handle source(SHalfedge_const_handle e) const
-/*{\Mop returns the source of |e|.}*/
-{ return e->source(); }
-
-SVertex_const_handle target(SHalfedge_const_handle e) const
-/*{\Mop returns the target of |e|.}*/
-{ return e->twin()->source(); }
-
-SHalfedge_const_handle twin(SHalfedge_const_handle e) const
-/*{\Mop returns the twin of |e|.}*/
-{ return e->twin(); }
-
-SHalfloop_const_handle twin(SHalfloop_const_handle l) const 
-/*{\Mop returns the twin of |l|.}*/
-{ return l->twin(); }
-
 bool is_isolated(SVertex_const_handle v) const
 /*{\Mop returns |true| when |v| is linked to the interior of a face.}*/
 { return (SHalfedge_const_handle(v->out_sedge()) == SHalfedge_const_handle()); }
@@ -160,35 +144,14 @@ SHalfedge_const_handle last_out_edge(SVertex_const_handle v) const
 
 SHalfedge_const_handle cyclic_adj_succ(SHalfedge_const_handle e) const
 /*{\Mop returns the edge after |e| in the cyclic ordered adjacency list of
-  |source(e)|.}*/
+  |e->source()|.}*/
 { return e->sprev()->twin(); }
 
 SHalfedge_const_handle cyclic_adj_pred(SHalfedge_const_handle e) const
 /*{\Mop returns the edge before |e| in the cyclic ordered adjacency list of
-  |source(e)|.}*/
+  |e->source()|.}*/
 { return e->twin()->snext(); }
 
-
-SHalfedge_const_handle next(SHalfedge_const_handle e) const
-/*{\Mop returns the next edge in the face cycle containing |e|.}*/
-{ return e->snext(); }
-
-SHalfedge_const_handle previous(SHalfedge_const_handle e) const
-/*{\Mop returns the previous edge in the face cycle containing |e|.}*/
-{ return e->sprev(); }
-
-SFace_const_handle face(SHalfedge_const_handle e) const
-/*{\Mop returns the face incident to |e|.}*/
-{ return e->incident_sface(); }
-
-SFace_const_handle face(SHalfloop_const_handle l) const
-/*{\Mop returns the face incident to |l|.}*/
-{ return l->incident_sface(); }
-
-SFace_const_handle face(SVertex_const_handle v) const
-/*{\Mop returns the face incident to |v|.
-   \precond |is_isolated(v)|.}*/
-{ return v->incident_sface(); }
 
 /*{\Mtext \headerline{Iteration} \setopdims{3.3cm}{0cm}}*/
   
@@ -292,34 +255,6 @@ bool is_sm_boundary_object(H h) const
 
 /*{\Mtext \headerline{Associated Information}\restoreopdims}*/
 
-const Sphere_point& point(SVertex_const_handle v) const
-/*{\Mop returns the embedding of |v|.}*/
-{ return v->point(); }
-
-const Sphere_circle& circle(SHalfedge_const_handle e) const
-/*{\Mop returns the circle supporting |e|.}*/
-{ return e->circle(); }
-
-const Sphere_circle& circle(SHalfloop_const_handle l) const
-/*{\Mop returns the circle supporting |l|.}*/
-{ return l->circle(); }
-
-const Mark& mark(SVertex_const_handle v) const
-/*{\Mop returns the mark of |v|.}*/
-{ return v->mark(); }
-
-const Mark& mark(SHalfedge_const_handle e) const
-/*{\Mop returns the mark of |e|.}*/
-{ return e->mark(); }
-
-const Mark& mark(SHalfloop_const_handle l) const
-/*{\Mop returns the mark of |l|.}*/
-{ return ( &*l < &*twin(l) ) ? l->mark() : twin(l)->mark(); }
-
-const Mark& mark(SFace_const_handle f) const
-/*{\Mop returns the mark of |f|.}*/
-{ return f->mark(); }
-
 /*{\Mtext \headerline{Iteration}}*/
 /*{\Mtext The list of all objects can be accessed via iterator ranges.
 For comfortable iteration we also provide iterations macros. 
@@ -358,13 +293,13 @@ check_integrity_and_topological_planarity(bool faces) const
   CGAL_forall_svertices(v,*this) {
     if ( is_isolated(v) ) {
       if ( faces )
-        CGAL_assertion_msg(face(v) != SFace_const_handle(), VI(v).c_str());
+        CGAL_assertion_msg(v->incident_sface() != SFace_const_handle(), VI(v).c_str());
       ++iso_vert_num;
     } else {
       CGAL_assertion_msg(first_out_edge(v) != SHalfedge_const_handle(),
       VI(v).c_str());
-      CGAL_NEF_TRACEN(point(v)<<" "<<EI(first_out_edge(v)));
-      CGAL_assertion_msg(source(first_out_edge(v)) == v,
+      CGAL_NEF_TRACEN(v->point()<<" "<<EI(first_out_edge(v)));
+      CGAL_assertion_msg(first_out_edge(v)->source() == v,
 			 VI(v).c_str());
     }
   }
@@ -372,18 +307,18 @@ check_integrity_and_topological_planarity(bool faces) const
   /* check the bidirected links and the face pointer init */
   SHalfedge_const_iterator e;
   CGAL_forall_shalfedges(e,*this) {
-    CGAL_assertion( twin(twin(e)) == e );
-    CGAL_assertion( source(e) != SVertex_const_handle() );
-    CGAL_assertion( next(e) != SHalfedge_const_handle() );
-    CGAL_assertion( previous(next(e)) == e );
-    CGAL_assertion( target(e) == source(next(e)) );
-    CGAL_assertion( previous(e) != SHalfedge_const_handle() );
-    CGAL_assertion( next(previous(e)) == e );
-    CGAL_assertion( target(previous(e)) == source(e) );
+    CGAL_assertion( e->twin()->twin() == e );
+    CGAL_assertion( e->source() != SVertex_const_handle() );
+    CGAL_assertion( e->snext() != SHalfedge_const_handle() );
+    CGAL_assertion( e->snext()->sprev() == e );
+    CGAL_assertion( e->target() == e->snext()->source() );
+    CGAL_assertion( e->sprev() != SHalfedge_const_handle() );
+    CGAL_assertion( e->sprev()->snext() == e );
+    CGAL_assertion( e->sprev()->twin()->source() == e->source() );
     if ( !faces ) continue;
-    CGAL_assertion( face(e) != SFace_const_handle() );
-    CGAL_assertion( face(next(e)) == face(e) );
-    CGAL_assertion( face(previous(e)) == face(e) );
+    CGAL_assertion( e->incident_sface() != SFace_const_handle() );
+    CGAL_assertion( e->snext()->incident_sface() == e->incident_sface() );
+    CGAL_assertion( e->sprev()->incident_sface() == e->incident_sface() );
   }
 
   int fc_num(0),iv_num(0);
@@ -392,13 +327,13 @@ check_integrity_and_topological_planarity(bool faces) const
   CGAL_forall_sfaces(f,*this) {
     CGAL_forall_sface_cycles_of(fci,f) {
       if ( fci.is_shalfedge() ) {
-        CGAL_assertion( face(SHalfedge_const_handle(fci)) == f ); 
+        CGAL_assertion( SHalfedge_const_handle(fci)->incident_sface() == f ); 
 	++fc_num;
       } else if ( fci.is_svertex() ) {
-        CGAL_assertion( face(SVertex_const_handle(fci)) == f ); 
+        CGAL_assertion( SVertex_const_handle(fci)->incident_sface() == f ); 
 	++iv_num;
       } else if( fci.is_shalfloop() ) {
-        CGAL_assertion( face(SHalfloop_const_handle(fci)) == f );
+        CGAL_assertion( SHalfloop_const_handle(fci)->incident_sface() == f );
 	++fc_num;
       } else CGAL_assertion_msg(0,"damn generic handle.");
     }
@@ -466,8 +401,8 @@ number_of_connected_components() const
       SHalfedge_around_svertex_const_circulator 
 	havc(first_out_edge(vc)), hend(havc);
       CGAL_For_all(havc,hend) {
-        if (!visited[target(havc)]) {
-          L.push_back(target(havc)); visited[target(havc)]=true; 
+        if (!visited[havc->target()]) {
+          L.push_back(havc->target()); visited[havc->target()]=true; 
         }
       }
     }
