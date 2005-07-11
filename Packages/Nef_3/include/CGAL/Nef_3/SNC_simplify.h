@@ -162,7 +162,7 @@ class SNC_simplify : public SNC_decorator<SNC_structure> {
 	  merge_sets( fu, ftu, hash, uf);
 	  SM_decorator SD(&*u->source()->source());
 	  CGAL_NEF_TRACEN("removing "<<IO->index(u)<<" & "<<IO->index(u->twin()));
-	  Halfedge_handle src(u->source()), tgt(SD.target(u));
+	  Halfedge_handle src(u->source()), tgt(u->target());
 	  if ( SD.is_closed_at_source(u) ) 
 	    SD.set_face( src, fu);
 	  if ( SD.is_closed_at_source( u->twin()) ) 
@@ -397,7 +397,7 @@ class SNC_simplify : public SNC_decorator<SNC_structure> {
 	if( D.has_outdeg_two(e)) {
 	  SHalfedge_handle e1(SD.first_out_edge(e)); 
 	  SHalfedge_handle e2(SD.cyclic_adj_succ(e1));
-	  if( SD.circle(e1)==SD.circle(e2->twin()) &&
+	  if( e1->circle()==e2->twin()->circle() &&
 	      e1->mark()==e->mark() && e->mark()==e2->mark()) {
 	    Halffacet_handle f1(e1->facet()); 
 	    Halffacet_handle f2(e2->facet());
@@ -451,9 +451,9 @@ class SNC_simplify : public SNC_decorator<SNC_structure> {
 						   SVertex_handle v) {
      SNC_decorator D(*this->sncp());
      SM_decorator SD(&*v->source());
-     CGAL_assertion( SD.target(s1) == v);
+     CGAL_assertion( s1->twin()->source() == v);
      SHalfedge_handle s2(s1->snext());
-     CGAL_assertion( SD.source(s2) == v);
+     CGAL_assertion( s2->source() == v);
      CGAL_NEF_TRACEN("s1 = " << IO->index(s1));
      CGAL_NEF_TRACEN("s2 = " << IO->index(s2));
      if( s1 == s2) {
@@ -568,7 +568,7 @@ class SNC_simplify : public SNC_decorator<SNC_structure> {
     CGAL_forall_svertices(sv, *this->sncp()) {
       SM_decorator SD(&*sv->source());
       if( SD.is_isolated(sv)) {
-	SFace_handle sf = *(uf.find(hash[SD.face(sv)])); 
+	SFace_handle sf = *(uf.find(hash[sv->incident_sface()])); 
 	CGAL_assertion( sf != SFace_handle());
 	SD.set_face( sv, sf);
 	SD.store_sm_boundary_object( sv, sf);
@@ -578,7 +578,7 @@ class SNC_simplify : public SNC_decorator<SNC_structure> {
     SHalfloop_handle sl;
     CGAL_forall_shalfloops(sl, *this->sncp()) {
       SM_decorator SD(&*sl->incident_sface()->center_vertex());
-      SD.store_sm_boundary_object( sl, SD.face(sl));
+      SD.store_sm_boundary_object( sl, sl->incident_sface());
     }
   }
 

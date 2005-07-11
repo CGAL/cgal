@@ -575,7 +575,7 @@ protected:
       SHalfedge_around_sface_circulator estart(sf->sface_cycles_begin()), 
 	                                eend(estart);
       CGAL_For_all(estart,eend) {
-	Sphere_circle c(SD.circle(estart));
+	Sphere_circle c(estart->circle());
 	CGAL_NEF_TRACEN("  circle " << c); 
 	double delta_z = CGAL::to_double(c.orthogonal_vector().hz());
 	CGAL_NEF_TRACEN("  delta_z " << delta_z);

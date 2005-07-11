@@ -308,7 +308,7 @@ class sort_sface_cycle_entries : public SNC_decorator<T> {
       if(ssource(se1) != ssource(se2))
 	return SORT(se1->source()->twin()->source(), se2->source()->twin()->source());
       else
-	return SORT(target(se1), target(se2));
+	return SORT(se1->target(), se2->target());
       */
     }
 
@@ -378,7 +378,7 @@ class sort_sfaces : public SNC_decorator<T> {
 	SHalfedge_handle se(fc);
 	SHalfedge_around_sface_circulator ec(se),ee(se);
 	CGAL_For_all(ec,ee) {
-	  CGAL_NEF_TRACEN("     " << SD.point(ec->source()) << 
+	  CGAL_NEF_TRACEN("     " << ec->source()->point() << 
 		 " | " << ec->circle().orthogonal_vector());
 	  if(ml(ec, se1) == -1)
 	    se1 = ec;
@@ -399,7 +399,7 @@ class sort_sfaces : public SNC_decorator<T> {
 	SHalfedge_handle se(fc);
 	SHalfedge_around_sface_circulator ec(se),ee(se);
 	CGAL_For_all(ec,ee) { 
-	  CGAL_NEF_TRACEN("     " << SD.point(ec->source()) << 
+	  CGAL_NEF_TRACEN("     " << ec->source()->point() << 
 		 " | " << ec->circle().orthogonal_vector());
 	  if(ml(ec, se2) == -1)
 	    se2 = ec;
@@ -433,9 +433,9 @@ class sort_sfaces : public SNC_decorator<T> {
     
     CGAL_assertion(se1 != SHalfedge_handle() && se2 != SHalfedge_handle());
 
-    CGAL_NEF_TRACEN("  minimal sedge in sface 1:" << SD.point(se1->source()) << 
+    CGAL_NEF_TRACEN("  minimal sedge in sface 1:" << se1->source()->point() << 
 	   " , " << se1->circle().orthogonal_vector());
-    CGAL_NEF_TRACEN("  minimal sedge in sface 2:" << SD.point(se2->source()) << 
+    CGAL_NEF_TRACEN("  minimal sedge in sface 2:" << se2->source()->point() << 
 	   " , " << se2->circle().orthogonal_vector());
     CGAL_NEF_TRACEN("result " << ml(se1,se2));
     switch(ml(se1, se2)) {
@@ -816,25 +816,6 @@ SNC_io_parser<EW>::SNC_io_parser(std::ostream& os, SNC_structure& W,
       CGAL_For_all(cb,ce) {
 	if(cb != new_outedge && sortSE(cb,new_outedge))
 	  new_outedge = cb;
-	/*
-	if(source(cb) == target(cb) && source(cb) == target(new_outedge)) {
-	  Plane_3 c(cb->circle());
-	  if(c.a() != 0) {
-	    if(c.a() < 0)
-	      new_outedge = cb;
-	  }
-	  else if(c.b() != 0) {
-	    if(c.b() < 0)
-	      new_outedge = cb;
-	  }
-	  else if(c.c() != 0) {
-	    if(c.c() < 0)
-	      new_outedge = cb;
-	  }
-	} else
-	  if(lexicographically_xyz_smaller(point(target(cb)), point(target(new_outedge))))													
-	    new_outedge = cb;
-	*/
       }
       ei->out_sedge() = new_outedge;
     }
@@ -1307,7 +1288,7 @@ void SNC_io_parser<EW>::print_edge(Halfedge_handle e) const
   SM_decorator D(&*e->source());
   out << index(e) << " { " << index(e->twin()) << ", "
       << index(e->source()) << ", ";
-  if ( D.is_isolated(e) ) out << "1 " << index(D.face(e));
+  if ( D.is_isolated(e) ) out << "1 " << index(e->incident_sface());
   else out << "0 " << index(D.first_out_edge(e));
   out << " | ";
   if(reduce) {
