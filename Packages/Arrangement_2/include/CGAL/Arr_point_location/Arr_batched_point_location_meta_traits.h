@@ -28,17 +28,19 @@ CGAL_BEGIN_NAMESPACE
 template <class Traits, class Arrangement_>
 class Arr_batched_point_location_meta_traits : public Traits
 {
-
+public:
   typedef Arrangement_    Arrangement;
   typedef typename Arrangement::Halfedge_const_handle   Halfedge_const_handle;
   typedef typename Arrangement::Vertex_const_handle     Vertex_const_handle;
 
+  typedef typename Traits::X_monotone_curve_2       Base_X_monotone_curve_2;
+  typedef typename Traits::Point_2                  Base_Point_2;
+
   // nested class My_X_monotone_curve_2
-  class My_X_monotone_curve_2 : public Traits::X_monotone_curve_2 
+  class My_X_monotone_curve_2 : public Base_X_monotone_curve_2 
   {
   public:
-    typedef typename Traits::X_monotone_curve_2 Base;
-    typedef typename Traits::Point_2            Point_2;
+    typedef  Base_X_monotone_curve_2    Base;
 
     friend class Arr_batched_point_location_meta_traits<Traits,
                                                         Halfedge_const_handle>;
@@ -69,11 +71,10 @@ class Arr_batched_point_location_meta_traits : public Traits
 
 
 
-  class My_Point_2 : public Traits::Point_2 
+  class My_Point_2 : public Base_Point_2 
   {
   public:
-    typedef typename Traits::Point_2            Base;
-    typedef typename Traits::Point_2            Point_2;
+    typedef  Base_Point_2            Base;
 
     friend class Arr_batched_point_location_meta_traits<Traits,
                                                         Halfedge_const_handle>;
@@ -105,9 +106,7 @@ class Arr_batched_point_location_meta_traits : public Traits
 
 public:
 
-  typedef typename Traits::X_monotone_curve_2       Base_X_monotone_curve_2;
-  typedef My_X_monotone_curve_2                     X_monotone_curve_2;
-  typedef typename Traits::Point_2                  Base_Point_2;
+  typedef My_X_monotone_curve_2                     X_monotone_curve_2; 
   typedef My_Point_2                                Point_2; 
 };
 
