@@ -3,6 +3,7 @@
 ## equality constraint
 
 with(LinearAlgebra):
+is_part_of_CGAL_testsuite:= true:
 
 desc:="Example with row rank less than m for removing an arificial variable and its equality constraint":
 

@@ -4,6 +4,7 @@
 ## procedure to pivot the artificial variables out of the basis
 
 with(LinearAlgebra):
+is_part_of_CGAL_testsuite:= true:
 
 desc:="Example with full row rank and optimal initial basic feasible solution having all artificial variables in the basis, thus forcing the expel procedure to pivot the artificial variables out of the basis":
 

@@ -2,6 +2,7 @@
 ## 4-dim KleeMinty example
 
 with(LinearAlgebra):
+is_part_of_CGAL_testsuite:= true:
 
 desc:="4-dim KleeMinty example":
 

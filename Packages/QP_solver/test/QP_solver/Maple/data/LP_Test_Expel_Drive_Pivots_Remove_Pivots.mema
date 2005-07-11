@@ -5,6 +5,7 @@
 ## remove the remaining ones together with their corresponding constraints
 
 with(LinearAlgebra):
+is_part_of_CGAL_testsuite:= true:
 
 desc:="Example not having full row rank and optimal initial basic feasible solution having all artificial variables in the basis, thus forcing the expel procedure to pivot some of the artificial variables out of the basis and remove the remaining ones together with their corresponding constraints":
 

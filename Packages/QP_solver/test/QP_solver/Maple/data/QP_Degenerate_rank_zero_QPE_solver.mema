@@ -3,6 +3,7 @@
 ## set of active constraints is empty
 
 with(LinearAlgebra):
+is_part_of_CGAL_testsuite:= true:
 
 desc:="Example with zero matrix, that is row rank=0, at beginning of phaseII the set of active constraints is empty":
 

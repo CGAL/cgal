@@ -2,6 +2,7 @@
 ## Example with zero objective function vector
 
 with(LinearAlgebra):
+is_part_of_CGAL_testsuite:= true:
 
 desc:="Example with zero objective function vector":
 

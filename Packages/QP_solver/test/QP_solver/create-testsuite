@@ -1,5 +1,6 @@
 #!/bin/bash
 maple="/Applications/Maple 9.5/Maple 9.5.app/Contents/MacOS/bin/maple"
+level=4
 
 # create list of all mema's in directory data/:
 cd Maple
@@ -28,6 +29,22 @@ do
 	    echo "File '$mfile' is up-to-date."
 	fi
 done
+
+# construct input file for test_suite_QPE_solver:
+cd ..
+TESTFILES=`grep -l 'is_part_of_CGAL_testsuite:= true' Maple/data/*`
+LIST=""
+for file in $TESTFILES
+  do
+  tmp=`basename "$file"`
+  mfile=${tmp%.*}
+  DATAFILES=`find data -name ${mfile}*.data_*`
+  for f in $DATAFILES
+    do
+    LIST="${LIST} $level fe $f $level pe $f $level ff $f $level pf $f"
+  done
+done
+echo $LIST > test_suite_QPE_solver.cin
 
 # finish:
 echo "Done."

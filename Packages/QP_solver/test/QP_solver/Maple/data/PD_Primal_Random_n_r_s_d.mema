@@ -4,6 +4,7 @@
 ## r and s, r+s=n, in d-dimensional space. 
 
 with(LinearAlgebra):
+is_part_of_CGAL_testsuite:= true:
 
 desc:="Polytope distance primal. Two randomly chosen sets of points with cardinality r and s, r+s=n, in d-dimensional space.":
 

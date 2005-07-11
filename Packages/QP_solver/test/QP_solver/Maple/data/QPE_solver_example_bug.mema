@@ -2,6 +2,7 @@
 ## Comment
 
 with(LinearAlgebra):
+is_part_of_CGAL_testsuite:= true:
 
 desc:="Original example where the omission first occured. Forces an Z1 update":
 

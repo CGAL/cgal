@@ -2,6 +2,7 @@
 ## LP with no constraints and two variables
 
 with(LinearAlgebra):
+is_part_of_CGAL_testsuite:= true:
 
 desc:="LP with no constraints and two variables":
 

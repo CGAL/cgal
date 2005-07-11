@@ -2,6 +2,7 @@
 ## Some simple QP example that is unbounded
 
 with(LinearAlgebra):
+is_part_of_CGAL_testsuite:= true:
 
 desc:="Some simple QP example that is unbounded":
 

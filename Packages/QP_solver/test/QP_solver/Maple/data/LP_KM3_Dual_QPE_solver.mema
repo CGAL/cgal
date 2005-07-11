@@ -2,6 +2,7 @@
 ## Dual of 3-dimensional Klee-Minty example
 
 with(LinearAlgebra):
+is_part_of_CGAL_testsuite:= true:
 
 desc:="Dual of 3-dimensional Klee-Minty example":
 

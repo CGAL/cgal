@@ -2,6 +2,7 @@
 ## Example for primal of polytope distance
 
 with(LinearAlgebra):
+is_part_of_CGAL_testsuite:= true:
 
 desc:="Example for primal of polytope distance":
 

@@ -2,6 +2,7 @@
 ## Example that forces an U6 update
 
 with(LinearAlgebra):
+is_part_of_CGAL_testsuite:= true:
 
 desc:="Example that forces an U6 update":
 

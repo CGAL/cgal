@@ -2,6 +2,7 @@
 ## Some simple polytope distance example whose constraints are permuted for each instance
 
 with(LinearAlgebra):
+is_part_of_CGAL_testsuite:= false:
 
 desc:="Some simple polytope distance example whose constraints are permuted for each instance":
 

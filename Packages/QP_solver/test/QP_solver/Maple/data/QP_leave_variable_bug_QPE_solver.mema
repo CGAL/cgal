@@ -2,6 +2,7 @@
 ## Test example for bug in leave_variable, in the update of in_B
 
 with(LinearAlgebra):
+is_part_of_CGAL_testsuite:= true:
 
 desc:="Test example for bug in leave_variable, in the update of in_B":
 

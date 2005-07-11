@@ -2,6 +2,7 @@
 ## Computes center of gravity of n-dim simplex, creates large bases
 
 with(LinearAlgebra):
+is_part_of_CGAL_testsuite:= true:
 
 desc:="Computes center of gravity of n-dim simplex, creates large bases":
 

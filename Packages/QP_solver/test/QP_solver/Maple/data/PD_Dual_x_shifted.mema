@@ -3,6 +3,7 @@
 ## Example that brings about an update of type Z3
 
 with(LinearAlgebra):
+is_part_of_CGAL_testsuite:= true:
 
 desc:="Polytope distance dual form, forces an Z3 update":
 

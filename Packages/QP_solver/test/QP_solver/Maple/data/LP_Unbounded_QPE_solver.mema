@@ -2,6 +2,7 @@
 ## Example for an unbounded LP
 
 with(LinearAlgebra):
+is_part_of_CGAL_testsuite:= true:
 
 desc:="Example for an unbounded LP":
 
