@@ -1,5 +1,5 @@
 encodeQpRatProblem:=proc(a::Matrix, rel::Matrix, b::Matrix, c::Matrix,
-				d::Matrix, desc::string, fpath::string)
+				d::Matrix, desc::string, gen_desc::string, fpath::string)
 	local m, n, i, j, fd, Dimensions;
 
 	Dimensions := LinearAlgebra[Dimensions];
@@ -11,6 +11,7 @@ encodeQpRatProblem:=proc(a::Matrix, rel::Matrix, b::Matrix, c::Matrix,
 	n := Dimensions(a)[2];
 	
 	writeDescription(fd, desc);
+	writeDescription(fd, gen_desc);
    
 	writeTags(fd, "r", 0, isSymmetric(d),
 		hasNoInequalities(a, rel, m));
@@ -57,7 +58,7 @@ encodeQpRatProblem:=proc(a::Matrix, rel::Matrix, b::Matrix, c::Matrix,
 end proc;
 
 encodeLpRatProblem:=proc(a::Matrix, rel::Matrix, b::Matrix, c::Matrix, 
-				desc::string, fpath::string)
+				desc::string, gen_desc::string, fpath::string)
 	local m, n, i, j, fd, Dimensions;
 
 	Dimensions := LinearAlgebra[Dimensions];
@@ -69,6 +70,7 @@ encodeLpRatProblem:=proc(a::Matrix, rel::Matrix, b::Matrix, c::Matrix,
 	n := Dimensions(a)[2];
 	
 	writeDescription(fd, desc);
+	writeDescription(fd, gen_desc);
 	    
 	writeTags(fd, "r", 1, 1,
 		hasNoInequalities(a, rel, m));
@@ -109,7 +111,7 @@ end proc;
 
 
 encodeQpFloatProblem:=proc(a::Matrix, rel::Matrix, b::Matrix, c::Matrix,
-				d::Matrix, desc::string, fpath::string)
+				d::Matrix, desc::string, gen_desc::string, fpath::string)
 	local m, n, i, j, fd, Dimensions;
 
 	Dimensions := LinearAlgebra[Dimensions];
@@ -120,6 +122,7 @@ encodeQpFloatProblem:=proc(a::Matrix, rel::Matrix, b::Matrix, c::Matrix,
 	m:= Dimensions(a)[1]; n := Dimensions(a)[2];
 	
 	writeDescription(fd, desc);
+	writeDescription(fd, gen_desc);
 	    
 	writeTags(fd, "f", 0, isSymmetric(d),
 		hasNoInequalities(a, rel, m));
@@ -166,13 +169,15 @@ encodeQpFloatProblem:=proc(a::Matrix, rel::Matrix, b::Matrix, c::Matrix,
 end proc;
 
 encodeLpFloatProblem:=proc(a::Matrix, rel::Matrix, b::Matrix, c::Matrix,
-				desc::string, fpath::string)
+				desc::string, gen_desc::string, fpath::string)
 	local m, n, i, j, fd, Dimensions;
 
 	Dimensions := LinearAlgebra[Dimensions];
 	 
 	fd:= fopen(cat(fpath, ".data_f"), WRITE);
 	
+	writeDescription(fd, desc);
+	writeDescription(fd, gen_desc);
 
 	m:= Dimensions(a)[1]; n := Dimensions(a)[2];
 	    
@@ -215,7 +220,7 @@ end proc;
 
 
 encodeQpIntProblem:=proc(a::Matrix, rel::Matrix, b::Matrix, c::Matrix,
-				d::Matrix, desc::string, fpath::string)
+				d::Matrix, desc::string, gen_desc::string, fpath::string)
 	local m, n, i, j, fd, Dimensions;
 
 	Dimensions := LinearAlgebra[Dimensions];
@@ -226,6 +231,7 @@ encodeQpIntProblem:=proc(a::Matrix, rel::Matrix, b::Matrix, c::Matrix,
 	m:= Dimensions(a)[1]; n := Dimensions(a)[2];
 	
 	writeDescription(fd, desc);
+	writeDescription(fd, gen_desc);
 	    
 	writeTags(fd, "i", 0, isSymmetric(d),
 		hasNoInequalities(a, rel, m));
@@ -272,7 +278,7 @@ encodeQpIntProblem:=proc(a::Matrix, rel::Matrix, b::Matrix, c::Matrix,
 end proc;
 
 encodeLpIntProblem:=proc(a::Matrix, rel::Matrix, b::Matrix, c::Matrix,
-				desc::string, fpath::string)
+				desc::string, gen_desc::string, fpath::string)
 	local m, n, i, j, fd, Dimensions;
 
 	Dimensions := LinearAlgebra[Dimensions];
@@ -282,6 +288,7 @@ encodeLpIntProblem:=proc(a::Matrix, rel::Matrix, b::Matrix, c::Matrix,
 
 	m:= Dimensions(a)[1]; n := Dimensions(a)[2];
 	
+	writeDescription(fd, desc);
 	writeDescription(fd, desc);
 	    
 	writeTags(fd, "i", 1, 1,
