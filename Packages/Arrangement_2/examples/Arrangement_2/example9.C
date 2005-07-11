@@ -1,15 +1,12 @@
 // file: examples/Arrangement_2/example9.C
 
 #include <CGAL/Cartesian.h>
-#include <CGAL/MP_Float.h>
 #include <CGAL/Quotient.h>
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arrangement_2.h>
 #include <list>
 
-#include "arr_print.h"
-
-typedef CGAL::Quotient<CGAL::MP_Float>                Number_type;
+typedef CGAL::Quotient<int>                           Number_type;
 typedef CGAL::Cartesian<Number_type>                  Kernel;
 typedef CGAL::Arr_segment_traits_2<Kernel>            Traits_2;
 typedef Traits_2::Point_2                             Point_2;
