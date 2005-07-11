@@ -1,0 +1,28 @@
+#!/bin/bash
+
+# create list of all mema's in directory data/:
+FILES=`find data -name '*.mema'`
+
+# check that data2mw binary is available
+if [ ! -e data2mw ]; then
+	echo "Binary 'data2mw' has not yet been compiled."
+	exit -2;
+fi
+
+# process each file:
+for file in $FILES
+do
+	tmp=`basename "$file"`
+	mfile=${tmp%.*}
+	mfile="${mfile}.mw"
+	if [ ! -e $mfile ] || [ $mfile -ot $file ]; then
+		echo "Creating file '$mfile' ..."
+		./data2mw "$file" "$mfile"
+	else
+		echo "File '$mfile' is up-to-date."
+	fi
+done
+
+# finish:
+echo "Done."
+exit 0

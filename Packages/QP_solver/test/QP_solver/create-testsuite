@@ -1,0 +1,34 @@
+#!/bin/bash
+maple="/Applications/Maple 9.5/Maple 9.5.app/Contents/MacOS/bin/maple"
+
+# create list of all mema's in directory data/:
+cd Maple
+FILES=`find data -name '*.mema'`
+
+# process each file:
+for file in $FILES
+do
+	tmp=`basename "$file"`
+	mfile=${tmp%.*}
+	DATAFILES=`find ../data/ -name ${mfile}*.data_*`
+	doit=0
+	if [ "x$DATAFILES" == "x" ]; then
+	    doit=1
+	fi
+	for f in $DATAFILES
+	do
+	  if [ $f -ot $file ]; then
+	      doit=1
+	  fi
+	done
+	if [ $doit == 1 ]; then
+	    echo "Converting '$mfile' ..."
+	    "${maple}" $file
+	else
+	    echo "File '$mfile' is up-to-date."
+	fi
+done
+
+# finish:
+echo "Done."
+exit 0
