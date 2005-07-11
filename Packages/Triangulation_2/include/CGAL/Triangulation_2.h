@@ -1146,7 +1146,7 @@ test_dim_down(Vertex_handle v)
   //upon removing of vertex v
   //it goes down to 1 iff
   // 1) any finite face is incident to v
-  // 2) all vertices are colinear
+  // 2) all vertices are collinear
   CGAL_triangulation_precondition(dimension() == 2);
   bool  dim1 = true; 
   Finite_faces_iterator fit = finite_faces_begin();

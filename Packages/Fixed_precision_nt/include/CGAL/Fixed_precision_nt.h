@@ -377,7 +377,7 @@ inline Oriented_side side_of_oriented_circleC2 (
       if (det>0) return ON_NEGATIVE_SIDE;
       if (det<0) return ON_POSITIVE_SIDE;
     }
-    // points are colinear
+    // points are collinear
     return ON_ORIENTED_BOUNDARY;
   }
 }
