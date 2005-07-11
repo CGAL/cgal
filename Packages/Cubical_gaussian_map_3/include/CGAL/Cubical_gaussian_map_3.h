@@ -184,6 +184,27 @@
 
 CGAL_BEGIN_NAMESPACE
 
+template <class FT, class Point_2>
+class Cgm_normalize {
+public:
+  void operator()(Point_2 & p) {}
+};
+
+#if defined(CGAL_USE_LEDA)
+template <class Point_2>
+class Cgm_normalize<leda::rational, Point_2> {
+public:
+  void operator()(Point_2 & p)
+  {
+    leda::rational x = p.x();
+    x.normalize();
+    leda::rational y = p.y();
+    y.normalize();
+    p = Point_2(x, y);
+  }
+};
+#endif
+
 template <class T_Kernel,
 #ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
           template <class T>
@@ -228,8 +249,8 @@ public:
   typedef typename Arr_traits::Curve_2                  Curve_2;
   typedef typename Arr_traits::X_monotone_curve_2       X_monotone_curve_2;
 
-#define NUM_CORNERS     4
-#define NUM_EDGES       12
+  enum {NUM_CORNERS = 4};
+  enum {NUM_EDGES = 12};
   
   /*! The indices of the 6 faces */
   enum {MINX = 0, MINY, MINZ, MAXX, MAXY, MAXZ, NUM_FACES};
@@ -446,7 +467,7 @@ public:
     }
     return Vector_3();
   }
-
+  
   /*! Calculate the 2D point, which is the projection of a normal, and is
    * contained in the arrangement associated with a given unit-cube face
    * \param projected_normat the projected normal
@@ -458,16 +479,11 @@ public:
     unsigned int k = (id + 2) % 3;    
 
     Point_2 p2 = (id < 3) ? Point_2(p3[k], p3[j]) : Point_2(p3[j], p3[k]);
-#if SCGAL_NT == LEDA_RAT_NT
-    FT x = p2.x();
-    x.normalize();
-    FT y = p2.y();
-    y.normalize();
-    p2 = Point_2(x, y);
-#endif
+    Cgm_normalize<FT, Point_2> normalize;
+    normalize(p2);
     return p2;
   }
-  
+
   /*! A circulator over the real halfedges incident to a real vertex.
    * This is an adapter that traverses the incident arrangement halfedges
    * incident to a given vertex, skipping the non-real halfedges, and jumping
@@ -1341,6 +1357,7 @@ protected:
     }
   }
 
+#if 0
   /*! Return the vertex handle that is the projection of a normal and that the
    * normal projects onto the point nearest to the the given point
    * \param point a point on the unit-cube representing a normal.
@@ -1349,7 +1366,6 @@ protected:
                                              const Point_2 & point)
   {
     Arr_vertex_handle vh;
-#if 0
     Arr & arr = m_arrangements[arr_id];
     Arr_locate_type lt;
     Arr_halfedge_handle edge = arr.locate(point);
@@ -1374,10 +1390,10 @@ protected:
       edge = edge->next();
     } while (edge != edge_start);
 
-#endif
     CGAL_assertion(0);
     return vh;
   }
+#endif
   
   /*! Find the planar map on the adjacent cube face given a halfedge
    * \pre The given halfedge is on the boundary of the arrangement
