@@ -1,4 +1,3 @@
-
 \newcommand{\reals}{{\rm I\!\hspace{-0.025em} R}}
 \newcommand{\C}{{\cal C}}
 \newcommand{\A}{{\cal A}}
@@ -135,7 +134,7 @@ In the first sections of this chapter we will always use
 \ccc{Arr_segment_traits_2}, which enables the construction of
 arrangements of line segments, as our traits class. However, the
 arrangement package is shipped with several other traits classes
-that can handle also poly-lines (continuous piecewise-linear
+that can handle also polylines (continuous piecewise-linear
 curves), conic arcs and arcs of rational functions. We will
 exemplify the usage of these traits classes in
 Section~\ref{arr_sec:traits}.
@@ -450,7 +449,7 @@ user has to have a large amount of a-priori knowledge on the
 location of the inserted curve. Indeed, for most purposes it is
 more convenient to construct an arrangement using the global
 insertion functions. Readers may therefore skip to
-Section~\ref{arr_sec:gl_funs} and go over it before reading this
+Section~\ref{arr_sec:gl_funcs} and go over it before reading this
 section.
 
 \subsubsection{Inserting Non-Intersecting Curves}
@@ -472,10 +471,11 @@ operate on it. While the insertion of an $x$-monotone curve whose
 interior is disjoint from all existing arrangement features is
 quite straightforward (as we see next), inserting curves that
 intersect with the arrangement is much more complicated and
-requires the application of non-trivial algorithms. These insertion
-operations are therefore implemented as global functions that
-operate on the arrangement and the inserted curve(s) --- see
-Section~\ref{arr_sec:gl_funs} for more details and ample examples.
+requires the application of non-trivial algorithms. These
+insertion operations are therefore implemented as global functions
+that operate on the arrangement and the inserted curve(s) --- see
+Section~\ref{arr_sec:gl_funcs} for more details and ample
+examples.
 
 
 \begin{figure}[t]
@@ -830,7 +830,7 @@ with a vertex.
 
 Point-location queries are not only common in many applications,
 they also play an important role in the global insertion functions
-(see Section~\ref{arr_sec:gl_funs}). It is therefore crucial to
+(see Section~\ref{arr_sec:gl_funcs}). It is therefore crucial to
 have the ability of effectively answering such queries for any
 arrangement instance.
 
@@ -1153,7 +1153,7 @@ performed in \ccc{example5.C} (see Section~\ref{arr_ssec:pl}):
 \ccIncludeExampleCode{../examples/Arrangement_2/example7.C}
 
 \section{Global Arrangement Functions}
-\label{arr_sec:gl_funs}
+\label{arr_sec:gl_funcs}
 %=====================================
 
 In Section~\ref{arr_sec:arr_class} we reviewed in detail the
@@ -1265,6 +1265,31 @@ curve $c$, which need not be $x$-monotone, into the arrangement by
 subdividing it into $x$-monotone subcurves and inserting each one
 separately.
 
+\subsubsection{Inserting Points}
+\label{arr_sssec:insert_point}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+While the arrangement class enables us to insert a point as an
+isolated vertex in a given face. The global functions
+\ccc{insert_vertex(arr, pl, p)} inserts a vertex to \ccc{arr} that
+corresponds to the point \ccc{p}. It uses the point-location
+object \ccc{pl} to locate the point in the arrangement and acts
+according to the result:
+\begin{itemize}
+\item If \ccc{p} is located inside a face, it inserts it as an
+isolated vertex inside this face.
+\item If \ccc{p} lies on an edge, the edge is split to create a
+vertex associated with \ccc{p}.
+\item Otherwise, \ccc{p} coincides with an existing vertex and
+we are done.
+\end{itemize}
+In all cases, the function returns a handle to the vertex
+associated with \ccc{p}.
+
+As the insertion operation may involve splitting curves, the
+arrangement \ccc{arr} should be instantiated with a traits class
+that models the \ccc{ArrangementXMonotoneTraits_2} concept.
+
 \subsubsection{An Example}
 \label{arr_sssec:insert_ex}
 %~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1312,11 +1337,333 @@ coordinates:
 \label{arr_ssec:agg_insert}
 %------------------------------------------
 
+Let us assume we have to insert a set of $m$ input curves into an
+arrangement. It is possible of course to do this incrementally,
+inserting curves one by one as shown in the previous section.
+However, the arrangement package provides three global functions
+\ccc{insert_non_intersecting(arr, begin, end)},
+\ccc{insert_x_monotone(arr, begin, end)} and \ccc{insert(arr,
+begin, end)} that insert a range of curves, given by the input
+iterators \ccc{[begin, end)} into an arrangement \ccc{arr}. The
+different functions accept a set of pairwise interior-disjoint
+$x$-monotone curves, a set of $x$-monotone curves that may
+intersect one another, or a set of general (not necessarily
+$x$-monotone) \ccc{Curve_2} objects --- exactly as their
+incremental counterparts.
+
+We make a distinction between two cases: (i) The given arrangement
+\ccc{arr} is empty (has only an unbounded face), so we have to
+construct it. (ii) We have to insert $m$ input curves to a
+non-empty arrangement \ccc{arr}.
+
+In the first case, we have to sweep over the input curves, compute
+their intersection points and construct the \dcel\ that represents
+their planar arrangement. This process can be performed in
+$O\left((m + k)\log m\right)$ time, where $k$ is the total number
+of intersection points. The running bound is asymptotically better
+than the time needed for incremental insertion if the arrangement
+is relatively sparse (when $k$ is bounded by $\frac{m^2}{\log
+m}$), but in practice it is recommended to use this aggregated
+construction process even for dense arrangements, since the
+sweep-line algorithm needs less geometric operations compared to
+the incremental insertion algorithms.
+
+Another important advantage the aggregated insertion functions
+have is that they require no point-location queries, thus no
+point-location object needs to be attached to the arrangement. As
+explained in Section~\ref{arr_ssec:pl}, there is a tradeoff
+between construction time and query time in each of the
+point-location strategy, which affects the running times of the
+incremental insertion process. This tradeoff plays no role in case
+of aggregated insertion.
+
+The following example shows how to construct the arrangement of
+line segments depicted in Figure~\ref{arr_fig:ex_8} and built
+incrementally in the example in the previous section. We use the
+\ccc{insert_x_monotone()} function as we are dealing with line
+segments. Note that no point-location object is defined and
+attached to the arrangement:
+
 \ccIncludeExampleCode{../examples/Arrangement_2/example9.C}
+
+In case we have to insert a set of $m$ curves into an existing
+arrangement, we should consider the size of the arrangement $n$.
+As a rule of thumb, if $m = o(\sqrt{n})$ it is usually more
+efficient to insert the curves one by one. For larger input sets,
+it is recommended to use the aggregated insertion procedures.
+
+\begin{figure}[t]
+\begin{ccTexOnly}
+\begin{center}
+\input{Arrangement_2/ex_10.pstex_t}
+\end{center}
+\end{ccTexOnly}
+\caption{An arrangement of eleven intersecting line segments, as
+constructed in \ccc{example10.C}. The segments of ${\mathcal S}_1$
+are drawn in solid lines and the segments of ${\mathcal S}_2$ are
+drawn in dark dashed lines. Note that the segment $s$ (light
+dashed line) overlaps one of the ${\mathcal S}_1$ segments.}
+\label{arr_fig:ex_10}
+%\begin{ccHtmlOnly}
+%<P>
+%<center>
+%  <img src="ex_10.gif"  border=0 alt="The segment arrangement constructed in \ccc{example10.C}.">
+%</center>
+%\end{ccHtmlOnly}
+\end{figure}
+
+In following example we aggregately construct an arrangement of a
+set ${\mathcal S}_1$ containing 5 line segments, then insert a
+single segment incrementally and add a set ${\mathcal S}_2$ with 5
+more line segments in an aggregated fashion. Note that the line
+segments of ${\mathcal S}_1$ are pairwise interior-disjoint, so we
+use \ccc{insert_non_intersecting()}. ${\mathcal S}_2$ also contain
+pairwise interior-disjoint segments, but as they intersect the
+existing arrangement, we have to use \ccc{insert_x_monotone()} to
+insert them. Also note that the single segment $s$ we insert
+incrementally overlaps an existing arrangement edge:
+
+\ccIncludeExampleCode{../examples/Arrangement_2/example10.C}
+
+The number type used in the example above,
+\ccc{Quotient<MP_Float>}, which is capable of exactly computing
+the intersection points as long as the segment endpoints are given
+as floating-point numbers.
+
+\subsection{Removing Vertices and Edges}
+\label{arr_ssec:gl_remove}
+%---------------------------------------
+
+The two following global functions handle the removal of vertices
+and edges from an arrangement. The difference between them and the
+member functions of the \ccc{Arrangement_2} template is that they
+require that the traits class that instantiates the arrangement
+instance is a model of the refined
+\ccc{ArrangementXMonotoneTraits_2} concept, as they allow the
+merger of two curves associated with adjacent edges to form a
+single edge.
+
+The function \ccc{remove_vertex(arr, v)} removes the vertex
+\ccc{v} from the given arrangement \ccc{arr}, where \ccc{v} is
+either an isolated vertex or if it is a {\em redundant} vertex
+--- namely, it has exactly two incident edges associated with two curves
+that can be merged to form a single $x$-monotone curve. If neither
+of the two cases apply, the function returns an indication that it
+has failed to remove the vertex.
+
+The function \ccc{remove_vertex(arr, e)} removes the edge \ccc{e}
+from the arrangement by simply calling \ccc{arr.remove_edge(e)}
+(see Section~\ref{arr_ssec:modify}). In addition, if either of the
+end vertices of \ccc{e} becomes redundant after the removal of the
+edge, it is removed as well.
+
+The following example demonstrates the usage of the global removal
+functions. In creates an arrangement of four line segment forming
+an H-shape with a double horizonal line. Then it removes the two
+horizontal edges and clears all redundant vertices, such that the
+final arrangement consists of just two edges associated with the
+vertical line segments:
+
+\ccIncludeExampleCode{../examples/Arrangement_2/example11.C}
 
 \section{Traits Classes}
 \label{arr_sec:traits}
 %=======================
+
+As mentioned in the introduction od this chapter, the traits class
+encapsulates the definitions of the geometric entities and
+implements the geometric predicates and constructions needed by
+the \ccc{Arrangement_2} and by its peripheral algorithms. We have
+also mentioned throughout the chapter that there are different
+levels of requirements from the traits class, namely the traits
+class can be a model of different concepts.
+
+A model of the basic concept, \ccc{ArranagementBasicTraits_2},
+needs to define the types \ccc{Point_2} and
+\ccc{X_monotone_curve_2}, where objects of the first type are
+associated with arrangement vertices and objects of the latter
+type are associated with edges. In addition, it has to support the
+following set of predicates:
+\begin{itemize}
+\item Compare the $x$-coordinates of two points $p$ and $q$.
+\item Compare two points $p$ and $q$ lexicographically, by their
+$x$-coordinates then by their $y$-coordinates.
+\item Return the left endpoint (similarly, the right endpoint) of
+an $x$-monotone curve $c$.
+\item Given an $x$-monotone curve $c$ and a point $p$ that lies in its
+$x$-range, determine whether $p$ lies below, above or on $c$.
+\item Given two $x$-monotone curves $c_1$ and $c_2$ that share a
+common left endpoint (similarly, right endpoint) $p$, determine
+whether $c_1$ lies above or under $c_2$ immediately to the right
+(to the left) of $p$, or whether the two curves coincide there.
+\item Check two curves for equality (two curves are equal if their
+graph is the same).
+\end{itemize}
+This basic set of predicates is sufficient for constructing
+arrangements of $x$-monotone curves and points that are pairwise
+disjoint in their interiors and for performing point-location
+queries and vertical ray-shooting queries.
+
+The landmarks point-location strategy (see
+Section~\ref{arr_ssec:pl}) needs its associated arrangement to be
+instantiated with a model of the refined
+\ccc{ArranagementLandmarkTraits_2}. A model of this concept must
+define an approximated number type (typically \ccc{double}) and
+support the additional operations:
+\begin{itemize}
+\item Given a point \ccc{p}, approximate the coordinates of
+\ccc{p} using the approximated number type.
+\item Given two points \ccc{p_1} and \ccc{p_2}, construct an
+$x$-monotone curve connecting \ccc{p_1} and \ccc{p_2}.
+\end{itemize}
+
+If the traits class models the \ccc{ArranagementXMonotoneTraits_2}
+concept, which refines the \ccc{ArranagementBasicTraits_2}
+concept, it has to support the following functions:
+\begin{itemize}
+\item Compute all intersection points and overlapping sections of
+two given $x$-monotone curves. If possible, compute also the
+multiplicity of each intersection point.\footnote{If the two
+curves intersect at a point $p$ but have different tangents, $p$
+is of multiplicity 1. If the tangents are also equal but the their
+curvatures are not the same, $p$ is of multiplicity 2, etc.}
+Knowing the multiplicity of an intersection point is not required,
+but it can speed up the arrangement construction.
+\item Split an $x$-monotone curve $c$ to two subcurves at a point
+$p$ lying in its interior.
+\item Given two $x$-monotone curve $c_1$ and $c_2$ that share a
+common endpoint, determine whether $c_1$ and $c_2$ are {\em
+mergeable} --- that is, whether they can be merged to form a
+single continuous $x$-monotone curve.
+\item Merge two mergeable $x$-monotone curve $c_1$ and $c_2$.
+\end{itemize}
+Using a model of the \ccc{ArranagementXMonotoneTraits_2}, it is
+possible to construct arrangements of sets of $x$-monotone curves
+(and points) in general settings.
+
+The refined concept \ccc{ArranagementTraits_2} refines the
+\ccc{ArranagementXMonotoneTraits_2} concept by adding the notion
+of a general, not necessarily $x$-monotone (and not necessarily
+connected) curve. A model of this concept must define the
+\ccc{Curve_2} type and support the separation of an curve into a
+set of continuous $x$-monotone curves and isolated points. For
+example, the curve $C:\ (x^2 + y^2)(x^2 + y^2 - 1) = 0$ is the
+unit circle (the loci of all points for which $x^2 + y^2  = 1$)
+with the origin $(0,0)$ as a singular point in its interior. $C$
+should therefore be separated into two circular arcs (the upper
+part and the lower part of the unit circle) and a single isolated
+point.
+
+Note that the refined model \ccc{ArranagementTraits_2} is required
+only when using the global \ccc{insert()} functions (see
+Section~\ref{arr_sec:gl_funcs}), which accept a \ccc{Curve_2}
+object (in the incremental version) or a range of \ccc{Curve_2}
+objects (in the aggregated version).
+
+In the rest of this section we will review the traits classes
+included in the public distribution of \cgal, that handle line
+segments, polylines and conic arcs. The last subsection overviews
+the meta-traits classes distributed with \cgal.
+
+\section{Traits Classes for Line Segments}
+\label{arr_ssec:tr_segs}
+%-----------------------------------------
+
+The \ccc{Arr_segment_traits_2<Kernel>} class has been used
+throughout this chapter. It is parameterized by a geometric kernel
+and uses the \ccc{Kernel::Point_2} type as it point type. However,
+it is important to note that the \ccc{X_monotone_curve_2} type
+(and the \ccc{Curve_2} type) is {\em not} identical to the
+\ccc{Kernel::Segment_2} type. The reason is that a kernel segment
+is typically represented by its two endpoints, and these may have
+a complicated representation if the segment has been intersected
+several times (in comparison with the representation of its
+original endpoints), and this fact may significantly slow down the
+application. The \ccc{Arr_segment_traits_2} therefore represents a
+segment using its supporting line and two endpoints, such that
+most computations are performed on the supporting line, which
+never changes as the segment is split. It also caches some
+additional information with the segment to speed up the various
+predicates.
+
+However, it is important to note that an \ccc{X_monotone_curve_2}
+instance can be constructed from two endpoints or from a kernel
+segment. Moreover, an \ccc{X_monotone_curve_2} can also be casted
+or assigned to a \ccc{Kernel::Segment_2} object. The two types are
+thus fully convertible to one another.
+
+\cgal also offers a simpler alternative segment-traits class. The
+traits class \ccc{Arr_non_caching_segment_basic_traits<Kernel>} is
+a model of the \ccc{ArrangementBasicTraits_2} concept. It uses
+\ccc{Kernel::Point_2} as its point type and
+\ccc{Kernel::Segment_2} as its $x$-monotone curve type. As this
+traits class does not support intersecting and splitting segments,
+the kernel representation is efficient enough. It is still less
+efficient than \ccc{Arr_segment_traits_2} for constructing
+arrangements of pairwise disjoint line segments, but using this
+traits class may be preferable as it reduces the memory
+consumption a bit, since no extra data is stored with the line
+segments.
+
+\section{The Polyline Traits Class}
+\label{arr_ssec:tr_polylines}
+%-----------------------------------
+
+The \ccc{Arr_polyline_traits_2<Segment_traits>} class can be used
+to maintain arrangements of polylines (a.k.a. poly-segments),
+which are continuous piecewise linear curves. A polyline can be
+created from any range of points, where the $i$th and $(i+1)$st
+points in the range represent the endpoints of the $i$th segment
+of the polyline. The polyline traits class is templated with a
+segment-traits traits class that supports the basic operations on
+segments.
+
+Polylines are the simplest form of a curve that is not necessarily
+$x$-monotone. They can be used to approximate more complicated
+curves in a convenient manner, as the algebra needed to handle
+them is elementary --- rational arithmetic is sufficient to
+construct an arrangement of polylines is an exact and robust
+manner. Note, however, that a single polyline can be split to an
+unbounded number of $x$-monotone polylines, and that the number of
+intersection points (or overlapping sections) between two
+polylines is also unbounded.
+
+The polyline-traits class is a model of the
+\ccc{ArrangementTraits_2} concept and of the
+\ccc{ArrangementLandmarkTraits_2} concept. Its \ccc{Curve_2} and
+\ccc{X_monotone_curve_2} types are identical.
+
+\begin{figure}[t]
+\begin{ccTexOnly}
+\begin{center}
+\input{Arrangement_2/ex_12.pstex_t}
+\end{center}
+\end{ccTexOnly}
+\caption{An arrangement of three polylines, as constructed in
+\ccc{example12.C}. Dark dots mark vertices associated with
+polyline endpoints while white dots mark vertices that correspond
+to intersection points. Note that $\pi_2$ is split into three
+$x$-monotone polylines and that $\pi_1$ and $\pi_3$ have two
+overlapping sections.}
+\label{arr_fig:ex_12}
+%\begin{ccHtmlOnly}
+%<P>
+%<center>
+%  <img src="ex_12.gif"  border=0 alt="The polyline arrangement constructed in \ccc{example12.C}.">
+%</center>
+%\end{ccHtmlOnly}
+\end{figure}
+
+%Note that a polyline point is not necessarily a vertex of the
+%arrangement (that is, of the underlying Planar Map) and an edge of
+%the Planar Map need not be a segment. The edges are only required
+%to be x-monotone and pairwise disjoint. In the example below point
+%(150, 50) is not a vertex of the planar map. The polyline to which
+%it belongs is an edge of the planar map.
+
+\section{The Conic Traits Class}
+\label{arr_ssec:tr_conic}
+%-------------------------------
 
 \section{The Notification Mechanism}
 \label{arr_sec:notif}
