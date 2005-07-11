@@ -60,23 +60,27 @@ namespace CGALi {
     Numeric_point_2
     intersect(const Circle_2 & c1, const Circle_2 & c2, const bool b)
     {
-      typedef std::vector< std::pair<Circular_arc_endpoint_2, int> >
+
+      typedef std::vector<CGAL::Object >
 	solutions_container;
+
       solutions_container solutions;
       CGAL::construct_intersections_2<CK>
 	( c1, c2, std::back_inserter(solutions) );
       typename solutions_container::iterator it = solutions.begin();
 
       assert( it != solutions.end() ); // the circles intersect
-
-      if ( it->second == 2 ) // double solution
-	  return it->first._p;
-
-      if (b) 
-	return it->first._p;
-
+      std::pair<typename CK::Circular_arc_endpoint_2, uint> result;
+      std::cout << assign(result, *it) << std::endl;
+      if ( result.second == 2 ) // double solution
+	return result.first._p;
+      if (b) {
+	return result.first._p;
+      }
       ++it;
-      return it->first._p;
+      bool tmp = assign(result, *it);
+      assert(tmp);
+      return result.first._p;
 
  //       FT dx = c2.center().x() - c1.center().x();
 //       FT dy = c2.center().y() - c1.center().y();
@@ -124,7 +128,7 @@ namespace CGALi {
       typedef typename CK::Linear_kernel::Point_2       Pt_2;
       static const Circular_arc_endpoint_2 def = 
 	Circular_arc_endpoint_2(Circle_2(Pt_2(0, 1), 1),
-				Circle_2(Pt_2(1, 0), 1), true);
+				Circle_2(Pt_2(1, 0), 1), true, Numeric_point_2());
       *this = def;
     }
 
