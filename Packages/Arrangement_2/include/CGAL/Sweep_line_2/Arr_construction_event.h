@@ -18,17 +18,16 @@
 // Author(s)     : Tali Zvi <talizvi@post.tau.ac.il>
 //                 Baruch Zukerman <baruchzu@post.tau.ac.il>
 
-#ifndef CGAL_ARR_SWEEP_LINE_EVENT_H
-#define CGAL_ARR_SWEEP_LINE_EVENT_H
+#ifndef CGAL_ARR_CONSTRUCTION_EVENT_H
+#define CGAL_ARR_CONSTRUCTION_EVENT_H
 
 #include <CGAL/Sweep_line_2/Sweep_line_event.h>
-#include <CGAL/Sweep_line_2/Arr_insert_info.h>
 #include <CGAL/assertions.h>
 #include <vector>
 
 CGAL_BEGIN_NAMESPACE
 
-/*! @class Arr_sweep_line_event
+/*! @class Arr_construction_event
  *
  * Stores the data associated with an event.
  * In addition to the information stored in Sweep_line_event, when 
@@ -43,20 +42,21 @@ CGAL_BEGIN_NAMESPACE
  * \sa Sweep_line_event
  */
 
-template<class SweepLineTraits_2, class CurveWrap, class HalfedgeHandle>
-class Arr_sweep_line_event : 
+template<class SweepLineTraits_2, class CurveWrap, class Halfedge_handle_>
+class Arr_construction_event : 
   public Sweep_line_event<SweepLineTraits_2, CurveWrap>
 {
 public:
-  typedef SweepLineTraits_2 Traits;
+  typedef SweepLineTraits_2                               Traits;
+  typedef Halfedge_handle_                                Halfedge_handle;
   typedef typename Traits::X_monotone_curve_2             X_monotone_curve_2;
   typedef typename Traits::Point_2                        Point_2;
 
   typedef Sweep_line_event<SweepLineTraits_2,
                            CurveWrap>                     Base;
-  typedef Arr_sweep_line_event<Traits,
-                               CurveWrap,
-                               HalfedgeHandle>            Self;
+  typedef Arr_construction_event<Traits,
+                                 CurveWrap,
+                                 Halfedge_handle>         Self;
 
   typedef CurveWrap                                       SubCurve;
   typedef typename Base::template SC_container<SubCurve*> SC_container_rebind;
@@ -64,34 +64,28 @@ public:
   typedef typename SubcurveContainer::iterator            SubCurveIter;
   typedef typename SubcurveContainer::reverse_iterator    SubCurveRevIter;
    
-  typedef Arr_insert_info<HalfedgeHandle>                 Arr_insert_info;
-
-  typedef std::vector<bool>       BitVector;
-  typedef BitVector::iterator     BitVectorIter;
+  typedef std::vector<bool>                               BitVector;
+  typedef BitVector::iterator                             BitVectorIter;
 
   using Base::m_rightCurves;
 
 
-  Arr_sweep_line_event()
+  Arr_construction_event():m_halfedge(Halfedge_handle(NULL)),
+                           m_right_curves_counter(0)
   {}
 
 
   /*! destructor */
-  ~Arr_sweep_line_event()
+  ~Arr_construction_event()
   {}
 
-
-  Arr_insert_info *get_insert_info()
-  {
-    return &m_insertInfo;
-  }
 
   std::pair<bool, SubCurveIter> add_curve_to_right(SubCurve *curve,
                                                    const Traits* tr)
   {
     std::pair<bool,SubCurveIter> res = Base::add_curve_to_right(curve, tr);
     if(res.second != m_rightCurves.end() && res.first == false )
-      m_insertInfo.inc_right_curves_counter();
+      this->inc_right_curves_counter();
     return res;
   }
 
@@ -99,8 +93,8 @@ public:
     (SubCurve *sc1, SubCurve *sc2)
   {
     //increment twice the counter of right curves
-    m_insertInfo.inc_right_curves_counter();
-    m_insertInfo.inc_right_curves_counter();
+    this->inc_right_curves_counter();
+    this->inc_right_curves_counter();
     return Base::add_pair_curves_to_right(sc1, sc2);
   }
 
@@ -171,14 +165,39 @@ public:
   {
     return m_isCurveInArr;
   }
+
+   void set_halfedge_handle(Halfedge_handle h) {
+    m_halfedge = h;
+  }
+
+  Halfedge_handle get_halfedge_handle() const {
+    return m_halfedge;
+  }
+
+  unsigned int dec_right_curves_counter()
+  {
+     return --m_right_curves_counter;
+  }
+
+  void inc_right_curves_counter()
+  {
+    ++m_right_curves_counter;
+  }
+
+  unsigned int get_right_curves_counter() const
+  {
+    return m_right_curves_counter;
+  }
   
 
 protected:
-  Arr_insert_info m_insertInfo;
+
   BitVector m_isCurveInArr;
+  Halfedge_handle m_halfedge;
+  unsigned int m_right_curves_counter;
 
 };
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_ARR_SWEEP_LINE_EVENT_H
+#endif // CGAL_ARR_CONSTRUCTION_EVENT_H

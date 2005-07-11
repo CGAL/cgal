@@ -17,8 +17,8 @@
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
-#ifndef ARR_META_TRAITS_H
-#define ARR_META_TRAITS_H
+#ifndef ARR_ADDITION_TRAITS_H
+#define ARR_ADDITION_TRAITS_H
 
 #include <CGAL/Object.h> 
 #include <list>
@@ -28,13 +28,17 @@ CGAL_BEGIN_NAMESPACE
 
 
 
-template <class Traits, class Halfedge_handle>
-class Arr_meta_traits : public Traits
+template <class Traits, class Arrangement_>
+class Arr_addition_traits : public Traits
 {
 public:
 
+  typedef Arrangement_                              Arrangement;
+
+  typedef typename Arrangement::Halfedge_handle     Halfedge_handle;
+  typedef typename Arrangement::Vertex_handle       Vertex_handle;
   typedef typename Traits::X_monotone_curve_2       Base_X_monotone_curve_2;
-  typedef typename Traits::Point_2                  Point_2;
+  typedef typename Traits::Point_2                  Base_Point_2;
   typedef typename Traits::Curve_2                  Curve_2;
   typedef typename Traits::Intersect_2              Base_Intersect_2;
   typedef typename Traits::Split_2                  Base_Split_2;
@@ -43,10 +47,10 @@ public:
 
 
   //Constructor
-  Arr_meta_traits()
+  Arr_addition_traits()
   {}
 
-  Arr_meta_traits(Traits& tr): Traits(tr)
+  Arr_addition_traits(Traits& tr): Traits(tr)
   {}
 
   // nested class My_X_monotone_curve_2
@@ -56,7 +60,7 @@ public:
     typedef typename Traits::X_monotone_curve_2 Base;
     typedef typename Traits::Point_2            Point_2;
 
-    friend class Arr_meta_traits<Traits, Halfedge_handle>;
+    friend class Arr_addition_traits<Traits, Halfedge_handle>;
     friend class Intersect_2;
 
     My_X_monotone_curve_2():Base(),
@@ -88,8 +92,38 @@ public:
      Halfedge_handle m_he_handle;
   }; // nested class My_X_monotone_curve_2 - END
 
+
+  class My_Point_2 : public Base_Point_2 
+  {
+  public:
+    typedef  Base_Point_2            Base;
+
+    My_Point_2(): Base(),
+                  m_v(NULL)
+    {}
+
+    My_Point_2(const Base& pt): Base(pt),
+                                m_v(NULL)
+    {}
+
+    My_Point_2(const Base& pt, Vertex_handle v): Base(pt),
+                                                 m_v(v)
+    {}
+
+
+    Vertex_handle get_vertex_handle() const
+    {
+      return m_v;
+    }
+
+   
+    protected:
+    Vertex_handle    m_v;
+  }; // nested class My_Point_2 - END
+
   
   typedef My_X_monotone_curve_2                     X_monotone_curve_2;
+  typedef My_Point_2                                Point_2;
 
  
   class Intersect_2
@@ -132,6 +166,13 @@ public:
               he = cv2.m_he_handle;
           X_monotone_curve_2 new_overlap_cv(overlap_cv, he);
           *oi = make_object(new_overlap_cv);
+        }
+        else
+        {
+          std::pair<Base_Point_2, unsigned int>  pt;
+          CGAL_assertion(CGAL::assign(pt, *oi));
+          CGAL::assign(pt, *oi);
+          *oi = make_object(std::make_pair(Point_2(pt.first), pt.second));
         }
       }
       //return past-end iterator
@@ -202,7 +243,13 @@ public:
           *oi++ = make_object(X_monotone_curve_2(cv));
         }
         else
-          *oi++ = *iter;
+        {
+          Base_Point_2  pt;
+          CGAL_assertion(assign(pt, *iter));
+          assign(pt,*iter);
+
+          *oi++ = make_object(Point_2(pt));
+        }
       }
       m_objects.clear();
       return oi;
@@ -215,7 +262,6 @@ public:
   {
     return Make_x_monotone_2(Traits::make_x_monotone_2_object());
   }
-
 
 };
 

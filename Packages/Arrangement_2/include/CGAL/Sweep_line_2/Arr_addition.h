@@ -17,16 +17,16 @@
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
-#ifndef ARR_ADDITION_INSERT_H
-#define ARR_ADDITION_INSERT_H
+#ifndef ARR_ADDITION_H
+#define ARR_ADDITION_H
 
 #include <CGAL/Sweep_line_2.h>
 #include <CGAL/Sweep_line_2/Sweep_line_2_utils.h>
-#include <CGAL/Sweep_line_2/Arr_sweep_line_event.h>
-#include <CGAL/Sweep_line_2/Arr_sweep_line_curve.h>
-#include <CGAL/Sweep_line_2/Arr_sweep_line_visitor.h>
-#include <CGAL/Sweep_line_2/Arr_agg_addition_visitor.h>
-#include <CGAL/Sweep_line_2/Arr_meta_traits.h>
+#include <CGAL/Sweep_line_2/Arr_construction_event.h>
+#include <CGAL/Sweep_line_2/Arr_construction_curve.h>
+#include <CGAL/Sweep_line_2/Arr_construction_visitor.h>
+#include <CGAL/Sweep_line_2/Arr_addition_visitor.h>
+#include <CGAL/Sweep_line_2/Arr_addition_traits.h>
 
 #include <CGAL/assertions.h>
 #include <list>
@@ -35,26 +35,29 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template <class Arr>
-class Arr_addition_insert 
+template <class Arrangement_>
+class Arr_addition 
 {
-  typedef typename Arr::Halfedge_handle                    Halfedge_handle;
-  typedef typename Arr::Edge_iterator                      Edge_iterator;
-  typedef typename Arr::Face_handle                        Face_handle;
-  typedef typename Arr::Traits_2                           Base_traits;
-  typedef Arr_meta_traits<Base_traits, Halfedge_handle>    Traits;
-  typedef Arr_sweep_line_curve<Traits>                     Subcurve; 
-  typedef Arr_sweep_line_event<Traits,
-                               Subcurve,
-                               Halfedge_handle>            Event;
+  typedef Arrangement_                                     Arrangement;
+  typedef typename Arrangement::Halfedge_handle            Halfedge_handle;
+  typedef typename Arrangement::Edge_iterator              Edge_iterator;
+  typedef typename Arrangement::Vertex_iterator            Vertex_iterator;
+  typedef typename Arrangement::Face_handle                Face_handle;
+  typedef typename Arrangement::Traits_2                   Base_traits;
+
+  typedef Arr_addition_traits<Base_traits, Arrangement>    Traits;
+  typedef Arr_construction_curve<Traits>                   Subcurve; 
+  typedef Arr_construction_event<Traits,
+                                 Subcurve,
+                                 Halfedge_handle>          Event;
   
   typedef typename Traits::Curve_2                         Curve_2;
   typedef typename Traits::X_monotone_curve_2              X_monotone_curve_2;
   typedef typename Traits::Point_2                         Point_2;
-  typedef Arr_agg_addition_visitor <Traits,
-                                    Arr,
-                                    Event,
-                                    Subcurve>              Visitor;
+  typedef Arr_addition_visitor <Traits,
+                                Arrangement,
+                                Event,
+                                Subcurve>                  Visitor;
 
   
  
@@ -67,7 +70,7 @@ class Arr_addition_insert
 
 public:
 
-  Arr_addition_insert(Arr *arr):
+  Arr_addition(Arrangement *arr):
       m_traits(new Traits(*(arr->get_traits()))),
       m_arr(arr),
       m_visitor(arr),
@@ -104,6 +107,15 @@ public:
       xcurves_vec.push_back(X_monotone_curve_2(he->curve(), he));
     }
 
+    for(Vertex_iterator v_itr = m_arr->vertices_begin();
+        v_itr != m_arr->vertices_end();
+        ++v_itr)
+    {
+      if(v_itr->is_isolated())
+        iso_points.push_back(Point_2(v_itr->point(), v_itr->handle()));
+    }
+
+
     m_sweep_line.sweep(xcurves_vec.begin(),
                        xcurves_vec.end(),
                        iso_points.begin(),
@@ -127,7 +139,7 @@ public:
 
  
 
-  ~Arr_addition_insert()
+  ~Arr_addition()
   {
     delete m_traits;
   }
@@ -137,7 +149,7 @@ public:
 protected:
 
   Traits*              m_traits;
-  Arr*                 m_arr;
+  Arrangement*         m_arr;
   Visitor              m_visitor;
   Sweep_line           m_sweep_line;
 };

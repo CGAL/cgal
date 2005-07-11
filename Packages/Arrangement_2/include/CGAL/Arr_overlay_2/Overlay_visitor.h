@@ -20,7 +20,7 @@
 #ifndef OVERLAY_VISITOR_H
 #define OVERLAY_VISITOR_H
 
-#include <CGAL/Sweep_line_2/Arr_sweep_line_visitor.h>
+#include <CGAL/Sweep_line_2/Arr_construction_visitor.h>
 #include <CGAL/Arrangement_2/Arr_accessor.h>
 #include <CGAL/Unique_hash_map.h> 
 
@@ -36,7 +36,7 @@ template < class Traits_,
            class Subcurve_,
            class OverlayTraits >
 class Overlay_visitor : 
-  public Arr_sweep_line_visitor<Traits_, Arrangement_, Event_, Subcurve_>
+  public Arr_construction_visitor<Traits_, Arrangement_, Event_, Subcurve_>
 {
 public:
 
@@ -75,7 +75,7 @@ public:
                            Subcurve,
                            OverlayTraits >               Self;
   
-  typedef Arr_sweep_line_visitor< Traits,
+  typedef Arr_construction_visitor< Traits,
                                   Arrangement,
                                   Event,
                                   Subcurve >             Base;

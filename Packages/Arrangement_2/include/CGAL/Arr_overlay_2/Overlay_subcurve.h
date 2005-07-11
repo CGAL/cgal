@@ -20,19 +20,19 @@
 #ifndef OVERLAY_SUBCURVE_H
 #define OVERLAY_SUBCURVE_H
 
-#include <CGAL/Sweep_line_2/Arr_sweep_line_curve.h>
+#include <CGAL/Sweep_line_2/Arr_construction_curve.h>
 
 CGAL_BEGIN_NAMESPACE
 
 template<class _Traits>
-class Overlay_subcurve : public Arr_sweep_line_curve<_Traits>
+class Overlay_subcurve : public Arr_construction_curve<_Traits>
 {
 public:
   typedef _Traits                                        Traits;
   typedef typename Traits::Point_2                       Point_2;
   typedef typename Traits::X_monotone_curve_2            X_monotone_curve_2;
 
-  typedef Arr_sweep_line_curve<Traits>                   Base;
+  typedef Arr_construction_curve<Traits>                 Base;
   typedef Overlay_subcurve<Traits>                       Self;
 
   typedef typename Base::StatusLineIter                  StatusLineIter;

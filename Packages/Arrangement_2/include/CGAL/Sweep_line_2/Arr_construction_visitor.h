@@ -17,18 +17,17 @@
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
-#ifndef ARR_SWEEP_LINE_VISITOR_H
-#define ARR_SWEEP_LINE_VISITOR_H
+#ifndef ARR_CONSTRUCTION_VISITOR_H
+#define ARR_CONSTRUCTION_VISITOR_H
 
 
-#include <CGAL/Sweep_line_2/Arr_insert_info.h>
 #include <CGAL/Arrangement_2/Arr_accessor.h>
 #include <CGAL/Sweep_line_2_empty_visitor.h>
 
 CGAL_BEGIN_NAMESPACE
 
 template <class _Traits, class Arr, class Event_, class Subcurve_> 
-class Arr_sweep_line_visitor : public Empty_visitor<_Traits,
+class Arr_construction_visitor : public Empty_visitor<_Traits,
                                                     Subcurve_,
                                                     Event_>
 {
@@ -37,7 +36,7 @@ protected:
   typedef typename Arr::Halfedge_handle        Halfedge_handle;
   typedef typename Arr::Vertex_handle          Vertex_handle;
   typedef typename Arr::Face_handle            Face_handle;
-  typedef Arr_sweep_line_visitor< _Traits,
+  typedef Arr_construction_visitor< _Traits,
                                   Arr,
                                   Event_,
                                   Subcurve_>                 Self;
@@ -55,21 +54,19 @@ protected:
   typedef typename Base::SL_iterator                   SL_iterator;
 
 
-  typedef typename Event::Arr_insert_info                  Arr_insert_info;
-
 private:
 
-  Arr_sweep_line_visitor (const Self& );
+  Arr_construction_visitor (const Self& );
   Self& operator= (const Self& );
 
 public:
 
-  Arr_sweep_line_visitor(Arr *arr):
+  Arr_construction_visitor(Arr *arr):
       m_arr(arr),
       m_arr_access (*arr)
   {}
 
-  virtual ~Arr_sweep_line_visitor(){}
+  virtual ~Arr_construction_visitor(){}
 
 
   bool after_handle_event(Event* event, SL_iterator iter, bool flag)
@@ -104,15 +101,13 @@ public:
   void add_subcurve(const X_monotone_curve_2& cv,Subcurve* sc)
   {
     Event *lastEvent = reinterpret_cast<Event*>((sc)->get_last_event());
-    Arr_insert_info *insertInfo = lastEvent->get_insert_info();
     Halfedge_handle res; 
-    Arr_insert_info *currentInfo = this ->current_event() ->get_insert_info();
-    Halfedge_handle hhandle = currentInfo->get_halfedge_handle();
+    Halfedge_handle hhandle = this ->current_event()->get_halfedge_handle();
 
     int jump = lastEvent->get_halfedge_jump_count(sc);
    
     // if the previous event on the curve is not in the planar map yet
-    if ( insertInfo->get_halfedge_handle() == Halfedge_handle(NULL) ) 
+    if ( lastEvent->get_halfedge_handle() == Halfedge_handle(NULL) ) 
     {
       // we have a handle from the previous insert
       if ( hhandle != Halfedge_handle(NULL) )
@@ -130,7 +125,7 @@ public:
       // the previous event on the curve is already in the planar map. 
       // Let's use it.
     {
-      Halfedge_handle prev = insertInfo->get_halfedge_handle();
+      Halfedge_handle prev = lastEvent->get_halfedge_handle();
      
       // skip to the right halfedge
       for ( int i = 0 ; i < jump ; i++ )
@@ -141,7 +136,6 @@ public:
       {
         CGAL_assertion(prev->face() == hhandle->face());
        
-        //res = m_arr->insert_at_vertices(cv,hhandle,prev);
         bool dummy;
         res = this->insert_at_vertices(cv,hhandle,prev,sc, dummy);
        
@@ -156,11 +150,11 @@ public:
     if ( lastEvent->get_num_left_curves() == 0 &&  
       lastEvent->is_curve_largest((Subcurve*)sc) )
     {
-      insertInfo->set_halfedge_handle(res->twin());
+      lastEvent->set_halfedge_handle(res->twin());
     }
-    currentInfo->set_halfedge_handle(res);
+    this->current_event()->set_halfedge_handle(res);
 
-    if(lastEvent->get_insert_info()->dec_right_curves_counter() == 0)
+    if(lastEvent->dec_right_curves_counter() == 0)
     {
       (this ->deallocate_event(lastEvent));
     }

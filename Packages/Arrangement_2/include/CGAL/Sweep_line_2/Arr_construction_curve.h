@@ -18,20 +18,20 @@
 // Author(s)     : Tali Zvi <talizvi@post.tau.ac.il>
 //                 Baruch Zukerman <baruchzu@post.tau.ac.il>
 
-#ifndef CGAL_ARR_SWEEP_LINE_CURVE_H
-#define CGAL_ARR_SWEEP_LINE_CURVE_H
+#ifndef CGAL_ARR_CONSTRUCTION_CURVE_H
+#define CGAL_ARR_CONSTRUCTION_CURVE_H
 
 #include <CGAL/Sweep_line_2/Sweep_line_subcurve.h>
 
 CGAL_BEGIN_NAMESPACE
 
-/*! @class Arr_sweep_line_curve 
+/*! @class Arr_construction_curve 
  *  
  * a class that holds information about a curve that is added to 
- * the planar map.
+ * the arrangement.
  * In addition to the information that is contained in Sweep_line_subcurve,
- * when a planar map is constructed, a reference to an event that was 
- * handled last on the curve is stored. This information is used to retrieve
+ * when an arrangement is constructed, a pointer to the last handled event  
+ * on the curve is stored. This information is used to retrieve
  * hints when a subcurve of this curve is inserted into the planar map.
  *
  * Inherits from Sweep_line_subcurve
@@ -39,7 +39,7 @@ CGAL_BEGIN_NAMESPACE
  */
 
 template<class SweepLineTraits_2>
-class Arr_sweep_line_curve : public Sweep_line_subcurve<SweepLineTraits_2>
+class Arr_construction_curve : public Sweep_line_subcurve<SweepLineTraits_2>
 {
 public:
   typedef SweepLineTraits_2                        Traits;
@@ -47,21 +47,18 @@ public:
   typedef typename Traits::X_monotone_curve_2      X_monotone_curve_2;
 
   typedef Sweep_line_subcurve<SweepLineTraits_2>   Base;
-  typedef Arr_sweep_line_curve<Traits>             Self;
+  typedef Arr_construction_curve<Traits>           Self;
 
-  
   typedef typename Base::StatusLineIter            StatusLineIter;
   typedef void*                                    Event_ptr;
 
 
-
-
-  Arr_sweep_line_curve(): Base(),
-                          m_lastEvent(0)                         
+  Arr_construction_curve(): Base(),
+                            m_lastEvent(0)                         
   {}
 
-  Arr_sweep_line_curve( X_monotone_curve_2 &curve): Base( curve),
-                                                    m_lastEvent(0)
+  Arr_construction_curve(X_monotone_curve_2 &curve): Base( curve),
+                                                     m_lastEvent(0)
   {}
 
   
@@ -94,5 +91,4 @@ protected:
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_ARR_SWEEP_LINE_CURVE_H
-
+#endif 

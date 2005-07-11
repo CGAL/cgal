@@ -17,35 +17,45 @@
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
-#ifndef ARR_AGG_ADDITION_VISITOR_H
-#define ARR_AGG_ADDITION_VISITOR_H
+#ifndef ARR_ADDITION_VISITOR_H
+#define ARR_ADDITION_VISITOR_H
 
 CGAL_BEGIN_NAMESPACE
 
-template<class Traits, class Arr, class Event,class Subcurve>
-class Arr_agg_addition_visitor : 
-  public Arr_sweep_line_visitor<Traits,Arr,Event,Subcurve>
+template<class Traits, class Arrangement_, class Event,class Subcurve>
+class Arr_addition_visitor : 
+  public Arr_construction_visitor<Traits,Arrangement_,Event,Subcurve>
 {
 protected:
 
-  typedef Arr_sweep_line_visitor<Traits,Arr,Event,Subcurve>    Base;
-  typedef Arr_agg_addition_visitor<Traits,Arr,Event,Subcurve>  Self;
+  typedef Arrangement_                                     Arrangement;
+  
+  typedef Arr_construction_visitor<Traits,
+                                   Arrangement,
+                                   Event,
+                                   Subcurve>               Base;
+
+  typedef Arr_addition_visitor<Traits,
+                               Arrangement,
+                               Event,
+                               Subcurve>                   Self;
 
   typedef typename Base::SL_iterator                       SL_iterator;
   typedef typename Base::Halfedge_handle                   Halfedge_handle;
+  typedef typename Base::Vertex_handle                     Vertex_handle;
   typedef typename Base::SubCurveIter                      SubCurveIter;
   typedef typename Base::SubCurveRevIter                   SubCurveRevIter;
   typedef typename Traits::X_monotone_curve_2              X_monotone_curve_2;
   typedef typename Traits::Point_2                         Point_2;
   
-  typedef typename Arr::Face_handle                        Face_handle;
-  typedef typename Arr::Face_const_handle                  Face_const_handle;
+  typedef typename Arrangement::Face_handle                Face_handle;
+  typedef typename Arrangement::Face_const_handle          Face_const_handle;
   
   using Base::m_arr;
 
 public:
 
-  Arr_agg_addition_visitor(Arr *arr): Base(arr)
+  Arr_addition_visitor(Arrangement *arr): Base(arr)
   {}
 
   void before_handle_event(Event* event)
@@ -64,7 +74,7 @@ public:
         if((he =(*iter)->get_last_curve().get_halfedge_handle()) !=
          Halfedge_handle(NULL))
         {
-          event->get_insert_info()->set_halfedge_handle(he->twin());
+          event->set_halfedge_handle(he->twin());
           return;
         }
       }
@@ -84,9 +94,9 @@ public:
            Halfedge_handle(NULL))
         {
           event->get_is_curve_in_arr()[i] = true;
-          if(event->get_insert_info()->get_halfedge_handle() ==
+          if(event->get_halfedge_handle() ==
              Halfedge_handle(NULL))
-            event->get_insert_info()->set_halfedge_handle(he);
+            event->set_halfedge_handle(he);
         }
       }
       return;
@@ -107,14 +117,14 @@ public:
         event->get_is_curve_in_arr()[i] = true;
         if(!is_split_event(*iter, event))
           // halfedge will not be splitted 
-          event->get_insert_info()->set_halfedge_handle(he);
+          event->set_halfedge_handle(he);
         else
         {
           he = split_edge((*iter)->get_last_curve().get_halfedge_handle(),
                            event->get_point());
           
           // 'he' has the same source as the splitted halfedge
-          event->get_insert_info()->set_halfedge_handle(he);
+          event->set_halfedge_handle(he);
           X_monotone_curve_2& last_curve =
             const_cast<X_monotone_curve_2&>((*iter)->get_last_curve());
           last_curve.set_halfedge_handle(he);
@@ -140,7 +150,7 @@ public:
       if((he =(*iter)->get_last_curve().get_halfedge_handle()) !=
         Halfedge_handle(NULL))
       {
-        event->get_insert_info()->set_halfedge_handle(he->twin());
+        event->set_halfedge_handle(he->twin());
         return;
       }
     }
@@ -157,13 +167,13 @@ public:
       // which means that the edeg will have to be modified
       if(sc -> get_orig_subcurve1())
         m_arr -> 
-        modify_edge(this->current_event()->get_insert_info()->get_halfedge_handle()->next()->twin(),
+        modify_edge(this->current_event()->get_halfedge_handle()->next()->twin(),
           cv);
 
       Halfedge_handle next_ccw_he = 
-        this->current_event()->get_insert_info()->get_halfedge_handle()->next()->twin();
+        this->current_event()->get_halfedge_handle()->next()->twin();
                                                                 
-      this->current_event()->get_insert_info()->set_halfedge_handle(next_ccw_he);
+      this->current_event()->set_halfedge_handle(next_ccw_he);
     }
   }
 
@@ -176,18 +186,7 @@ public:
    Halfedge_handle insert_in_face_interior(const X_monotone_curve_2& cv,
                                           Subcurve* sc)
   {
-    Halfedge_handle he_above;
-    for(SL_iterator iter = this -> status_line_position(sc);
-        iter != this -> status_line_end();
-        ++iter)
-    {
-      if((*iter)->get_last_curve().get_halfedge_handle() !=
-         Halfedge_handle(NULL))
-      {
-        he_above = (*iter)->get_last_curve().get_halfedge_handle();
-        break;
-      }
-    }
+    Halfedge_handle he_above = ray_shoot_up(sc);
     if(he_above == Halfedge_handle(NULL))
       return m_arr->insert_in_face_interior(cv,  m_arr->unbounded_face());
     return m_arr->insert_in_face_interior(cv, he_above->face());
@@ -230,6 +229,43 @@ public:
                       event) || 
        is_split_event(reinterpret_cast<Subcurve*>(sc->get_orig_subcurve2()),
                       event));
+  }
+
+
+  virtual Vertex_handle insert_isolated_vertex(const Point_2& pt,
+                                               SL_iterator iter)
+  {
+    Vertex_handle res(NULL);
+    //the isolated vertex is already at the arrangement
+    if(pt.get_vertex_handle() != Vertex_handle(NULL))
+      return res;
+    
+    Halfedge_handle he = ray_shoot_up(*iter);
+    if(he == Halfedge_handle(NULL))
+      res = m_arr->insert_isolated_vertex(pt, m_arr->unbounded_face());
+    else
+      res = m_arr->insert_isolated_vertex(pt, he->face());
+
+    return (res);
+  }
+
+
+  Halfedge_handle ray_shoot_up(Subcurve* sc)
+  {
+    Halfedge_handle he_above;
+    for(SL_iterator iter = this -> status_line_position(sc);
+        iter != this -> status_line_end();
+        ++iter)
+    {
+      if((*iter)->get_last_curve().get_halfedge_handle() !=
+         Halfedge_handle(NULL))
+      {
+        he_above = (*iter)->get_last_curve().get_halfedge_handle();
+        return (he_above);
+      }
+    }
+
+    return (he_above);
   }
 
 

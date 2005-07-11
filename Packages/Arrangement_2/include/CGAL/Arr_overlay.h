@@ -22,7 +22,7 @@
 
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Sweep_line_2.h>
-#include <CGAL/Sweep_line_2/Arr_sweep_line_event.h>
+#include <CGAL/Sweep_line_2/Arr_construction_event.h>
 #include <CGAL/Arr_overlay_2/Overlay_subcurve.h>
 #include <CGAL/Arr_overlay_2/Overlay_visitor.h>
 #include <CGAL/Arr_overlay_2/Overlay_meta_traits.h>
@@ -84,9 +84,9 @@ void overlay (const Arrangement_2<Traits_, Dcel1>   & arr1,
   typedef typename Traits::Point_2                     Point_2;
 
   typedef Overlay_subcurve<Traits>  Subcurve;
-  typedef Arr_sweep_line_event<Traits,
-                               Subcurve,
-                               Halfedge_handle_res >   Event;
+  typedef Arr_construction_event<Traits,
+                                 Subcurve,
+                                 Halfedge_handle_res > Event;
   typedef Overlay_visitor<Traits,
                           Arrangement1,
                           Arrangement2,
