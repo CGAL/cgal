@@ -157,7 +157,7 @@ public:
      *         EQUAL if p lies on the curve.
      */
     Comparison_result operator()(const Point_2 & p,
-                                  const X_monotone_curve_2 & cv) const
+                                 const X_monotone_curve_2 & cv) const
     {
     }
   };
@@ -411,8 +411,7 @@ public:
      * \return An approximation of p's x-coordinate(if i == 0), or an 
      *         approximation of p's y-coordinate(if i == 1).
      */
-    Approximate_number_type operator()(const Point_2 & p,
-                                       int i) const
+    Approximate_number_type operator()(const Point_2 & p, unsigned int i) const
     {
     }
   };
@@ -546,7 +545,7 @@ public:
    *         or else(if p is on the curve) EQUAL.
    */
   Comparison_result curve_compare_y_at_x(const Point_2 & p,
-                                          const X_monotone_curve_2 & cv) const
+                                         const X_monotone_curve_2 & cv) const
   {
     // Get the indices of the segments in cv containing p.
     int    i = _locate_point(cv, p);
@@ -692,7 +691,7 @@ public:
 
     for (i = 0; i < n; i++) {
       curr_res = seg_traits.compare_x(seg_traits.curve_source(curve[i]),
-				       seg_traits.curve_target(curve[i]));
+                                      seg_traits.curve_target(curve[i]));
 
       // In case of a vertical segment, it must be the only segment in the 
       // polyline to be considered x-monotone.
@@ -754,8 +753,8 @@ public:
    * \pre p lies on cv but is not one of its end-points.
    */
   void curve_split(const X_monotone_curve_2 & cv, 
-		    X_monotone_curve_2 & c1, X_monotone_curve_2& c2, 
-		    const Point_2 & p) const
+                   X_monotone_curve_2 & c1, X_monotone_curve_2& c2, 
+                   const Point_2 & p) const
   {
     // Locate the segment on the polyline cv that contains p.
     int    i = _locate_point(cv, p);
@@ -872,9 +871,9 @@ public:
    *         An object wrapping a Point_2 in case of a simple intersection.
    *         An object wrapping an X_monotone_curve_2 in case of an overlap.
    */
-  Object nearest_intersection_to_left(const X_monotone_curve_2& cv1,
-				       const X_monotone_curve_2& cv2,
-				       const Point_2& p) const
+  Object nearest_intersection_to_left(const X_monotone_curve_2 & cv1,
+                                      const X_monotone_curve_2 & cv2,
+                                      const Point_2 & p) const
   {
     Point_2   ps [2];
     int       res;
@@ -904,8 +903,8 @@ public:
    *(i.e., not in a finite number of points). Otherwise, if they have a finite
    * number of intersection points, or none at all, return(false).
    */
-  bool curves_overlap(const X_monotone_curve_2& cv1,
-                      const X_monotone_curve_2& cv2) const
+  bool curves_overlap(const X_monotone_curve_2 & cv1,
+                      const X_monotone_curve_2 & cv2) const
   {
     // Get the leftmost point of cv1 and of cv2.
     const Point_2& left1 = _is_curve_to_right(cv1) ? curve_source(cv1) : 
@@ -1015,7 +1014,7 @@ private:
    *         right) of q, or(-1) if no such segment exists.
    */
   int _locate_point_side(const X_monotone_curve_2 & cv, const Point_2 & q,
-			  const bool & to_right) const
+                         const bool & to_right) const
   {
     // First locate a segment cv[i] that contains q in its x-range.
     int i = _locate_point(cv, q);
@@ -1079,7 +1078,7 @@ private:
    * \return(true) if the curve target is lexicographically larger than its
    *         source;(false) otherwise.
    */
-  bool _is_curve_to_right(const X_monotone_curve_2& cv) const
+  bool _is_curve_to_right(const X_monotone_curve_2 & cv) const
   {
     const Point_2&    ps = seg_traits.curve_source(cv[0]);
     const Point_2&    pt = seg_traits.curve_target(cv[0]);
@@ -1111,10 +1110,10 @@ private:
    *         2 if they overlap, where p1, p2 are the endpoints of the overlap.
    */
   int _nearest_intersection_to_side(const X_monotone_curve_2 & cv1,
-                                     const X_monotone_curve_2 & cv2,
-                                     const Point_2 & p,
-                                     const bool & to_right,
-                                     Point_2 & p1, Point_2& p2) const
+                                    const X_monotone_curve_2 & cv2,
+                                    const Point_2 & p,
+                                    const bool & to_right,
+                                    Point_2 & p1, Point_2& p2) const
   {
     // Get the indices of the segments in cv1 and cv2 containing p.
     int i1 = _locate_point(cv1, p);
@@ -1198,25 +1197,21 @@ private:
     }
 
     // Try to locate the intersection point.
-    Object             obj;
-    Segment_2          seg;
-    Comparison_result  res;
+    Object obj;
+    Segment_2 seg;
+    Comparison_result res;
      
     while (i1 >= 0 && i1 < n1 && i2 >= 0 && i2 < n2)
     {      
       // Check if the two current segment intersect to the right(left) of p.
       if (to_right)
-	obj = seg_traits.nearest_intersection_to_right(cv1[i1], cv2[i2],
-							p);
+	obj = seg_traits.nearest_intersection_to_right(cv1[i1], cv2[i2], p);
       else
-	obj = seg_traits.nearest_intersection_to_left(cv1[i1], cv2[i2],
-						       p);
+	obj = seg_traits.nearest_intersection_to_left(cv1[i1], cv2[i2], p);
 
-      if (! obj.is_empty())
-      {
+      if (! obj.is_empty()) {
 	// In case an overlap was detected, stop here:
-	if (CGAL::assign(seg, obj))
-	{
+	if (CGAL::assign(seg, obj)) {
 	  p1 = seg_traits.curve_source(seg);
 	  p2 = seg_traits.curve_target(seg);
 
@@ -1228,34 +1223,31 @@ private:
 
 	// In case we found a single intersection point, check whether it
 	// is the next end-point of cv1[i1] or of cv2[i2].
-	bool    eq1, eq2;
+	bool eq1, eq2;
 
 	eq1 = seg_traits.point_equal(p1, 
 				     (inc1 == 1) ? 
-				      seg_traits.curve_target(cv1[i1]) :
-				      seg_traits.curve_source(cv1[i1]));
+                                     seg_traits.curve_target(cv1[i1]) :
+                                     seg_traits.curve_source(cv1[i1]));
 
 	eq2 = seg_traits.point_equal(p1,
 				     (inc2 == 1) ? 
-				      seg_traits.curve_target(cv2[i2]) :
-				      seg_traits.curve_source(cv2[i2]));
+                                     seg_traits.curve_target(cv2[i2]) :
+                                     seg_traits.curve_source(cv2[i2]));
  	       
-	if (!eq1 && !eq2)
-	{
+	if (!eq1 && !eq2) {
 	  return 1;
 	}
         
         // In case p1 equals one of the endpoints, simply assign this
         // endpoint to be p1.
-        if (eq1)
-        {
+        if (eq1) {
           p1 =(inc1 == 1) ? seg_traits.curve_target(cv1[i1]) :
-                             seg_traits.curve_source(cv1[i1]);
+            seg_traits.curve_source(cv1[i1]);
         }
-        else // if (eq2)
-        {
+        else { // if (eq2)
           p1 =(inc2 == 1) ? seg_traits.curve_target(cv2[i2]) :
-                             seg_traits.curve_source(cv2[i2]);
+            seg_traits.curve_source(cv2[i2]);
         }
         
 	// Proceed to the next curves.
@@ -1272,25 +1264,20 @@ private:
 	Object   _obj;
 
 	if (to_right)
-	  _obj = seg_traits.nearest_intersection_to_right(cv1[i1], cv2[i2],
-							   p);
+	  _obj = seg_traits.nearest_intersection_to_right(cv1[i1], cv2[i2], p);
 	else
-	  _obj = seg_traits.nearest_intersection_to_left(cv1[i1], cv2[i2],
-							  p);
+	  _obj = seg_traits.nearest_intersection_to_left(cv1[i1], cv2[i2], p);
 
 	if (CGAL::assign(seg, _obj))
 	{	
-	  Point_2  q1 = seg_traits.curve_source(seg);
-	  Point_2  q2 = seg_traits.curve_target(seg);
+	  Point_2 q1 = seg_traits.curve_source(seg);
+	  Point_2 q2 = seg_traits.curve_target(seg);
 
-	  if (seg_traits.point_equal(p1, q1))
-	  {
+	  if (seg_traits.point_equal(p1, q1)) {
 	    // Now p1(== q1) --> q2 is an overlapping segment.
 	    p2 = q2;
 	    return 2;
-	  }
-          else if (seg_traits.point_equal(p1, q2))
-	  {
+	  } else if (seg_traits.point_equal(p1, q2)) {
 	    // Now p1(== q2) --> q1 is an overlapping segment.
 	    p2 = q1;
 	    return 2;
@@ -1311,16 +1298,11 @@ private:
                                  seg_traits.curve_target(cv2[i2]) :
                                  seg_traits.curve_source(cv2[i2]));
 
-      if (res == d_res)
-      {
+      if (res == d_res) {
 	i1 += inc1;
-      }
-      else if (res == i_res)
-      {
+      } else if (res == i_res) {
 	i2 += inc2;
-      }
-      else
-      {
+      } else {
 	i1 += inc1;
 	i2 += inc2;
       }
@@ -1337,24 +1319,20 @@ private:
  * traits class.
  */
 template <class T_Segment_traits>
-class Polyline_2
-{
+class Polyline_2 {
   friend class Arr_polyline_traits_2<T_Segment_traits>;
 
 public:
-
   typedef T_Segment_traits                          Segment_traits_2;
   typedef typename Segment_traits_2::Point_2        Point_2;
   typedef typename Segment_traits_2::Curve_2        Segment_2;
   typedef ::std::vector<Segment_2>                  Base;
 
 private:
-  
   // The segments that comprise the poyline:
   ::std::vector<Segment_2>                          segments;
 
 public:
-
   /*! Default constructor. */
   Polyline_2() : segments() {}
 
@@ -1366,8 +1344,7 @@ public:
    *      In other cases, an empty polyline will be created.
    */
   template <class InputIterator>
-  Polyline_2(const InputIterator & pts_begin,
-             const InputIterator & pts_end) :
+  Polyline_2(const InputIterator & pts_begin, const InputIterator & pts_end) :
     segments()
   {
     // Check if there are no points in the range:
@@ -1535,8 +1512,7 @@ public:
     friend class Polyline_2<T_Segment_traits>;
   };
 
-  /*!
-   * Get an iterator for the polyline points.
+  /*! Get an iterator for the polyline points.
    * \return An iterator that points on the first point.
    */
   const_iterator begin() const
@@ -1545,8 +1521,7 @@ public:
       const_iterator(this, 0, true);
   }
 
-  /*!
-   * Get a past-the-end iterator for the polyline points.
+  /*! Get a past-the-end iterator for the polyline points.
    * \return A past-the-end iterator.
    */
   const_iterator end() const
@@ -1555,8 +1530,7 @@ public:
       const_iterator(this, _size() + 1, true);
   }
 
-  /*!
-   * Get an reverse iterator for the polyline points.
+  /*! Get an reverse iterator for the polyline points.
    * \return An iterator that points on the last point.
    */
   const_iterator rbegin() const
@@ -1565,8 +1539,7 @@ public:
       const_iterator(this, _size(), false);
   }
 
-  /*!
-   * Get a reverse past-the-end iterator for the polyline points.
+  /*! Get a reverse past-the-end iterator for the polyline points.
    * \return A reverse past-the-end iterator.
    */
   const_iterator rend() const
@@ -1575,8 +1548,7 @@ public:
       const_iterator(this, -1, false);
   }
 
-  /*!
-   * Get the number of points contained in the polyline.
+  /*! Get the number of points contained in the polyline.
    * \return The number of points.
    */
   unsigned int points() const
@@ -1590,7 +1562,7 @@ private:
   /*! Append a segment to the polyline.
    * \param seg The new segment to be appended to the polyline.
    * \pre If the polyline is not empty, the segment source must be the
-   *      same as the target point of the last segment in the polyline.
+   * same as the target point of the last segment in the polyline.
    */
   inline void _push_back(const Segment_2 & seg)
   {
