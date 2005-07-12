@@ -77,7 +77,7 @@ public:
   void init (Arrangement_2 *arr)
   {
     p_arr = arr;
-    traits - arr->get_traits();
+    traits = arr->get_traits();
   }
 
   /*!
