@@ -1,6 +1,31 @@
 #!/bin/bash
 maple="/Applications/Maple 9.5/Maple 9.5.app/Contents/MacOS/bin/maple"
-level=4
+level=4 # verbosity level for the solver
+
+# check arguments
+if [ "x$1" == "xCGAL" ]; then
+    echo "Generating CGAL testsuite."
+elif [ "x$1" == "xall" ]; then
+    echo "Generating all of the internal testsuite."
+else
+    echo "Usage: $0 CGAL|all"
+    echo ""
+    echo "$0 all:  creates the internal testsuite consisting of all tests"
+    echo "$0 CGAL: creates the CGAL testsuite (a subset of all tests)"
+    echo ""
+    echo "This program calls Maple to convert the mema-files in Maple/data"
+    echo "to input files for the program test_suite_QPE_solver.  In addition,"
+    echo "the program writes the file test_suite_QPE_solver.cin so that"
+    echo "all/some of the tests are run during the CGAL testsuite: If a"
+    echo "mema-file constains the string 'is_part_of_CGAL_testsuite:= true'"
+    echo "the file is part of the CGAL testsuite; otherwise it is only"
+    echo "part of the internal testsuite."
+    echo ""
+    echo "Warning: Be aware that all (data_*-) files that go into the CGAL"
+    echo "testsuite should be checked into the repository (because Maple"
+    echo "may not be present on the client platform)."
+    exit 1;
+fi
 
 # create list of all mema's in directory data/:
 cd Maple
@@ -30,9 +55,27 @@ do
 	fi
 done
 
-# construct input file for test_suite_QPE_solver:
+# check that all memas contain 'is_part_of_CGAL_testsuite':
 cd ..
-TESTFILES=`grep -l 'is_part_of_CGAL_testsuite:= true' Maple/data/*`
+CHECKFILES=`grep -L 'is_part_of_CGAL_testsuite' Maple/data/*.mema`
+if [ ! "x$CHECKFILES" == "x" ]; then
+    echo ""
+    echo "WARNING: Some mema-files do not contain the string"
+    echo "'is_part_of_CGAL_testsuite'. Every mema-file should either contain"
+    echo "  'is_part_of_CGAL_testsuite:= true'"
+    echo "or"
+    echo "  'is_part_of_CGAL_testsuite:= false'."
+    echo "The following files are corrupt in this sense: $CHECKFILES"
+    echo ""
+fi
+
+# construct input file for test_suite_QPE_solver:
+echo "Constructing file 'test_suite_QPE_solver.cin'; this may take a while ..."
+if [ "x$1" == "xCGAL" ]; then
+    TESTFILES=`grep -l 'is_part_of_CGAL_testsuite:= true' Maple/data/*.mema`
+elif [ "x$1" == "xall" ]; then
+    TESTFILES=`grep -l 'is_part_of_CGAL_testsuite' Maple/data/*.mema`
+fi
 LIST=""
 for file in $TESTFILES
   do

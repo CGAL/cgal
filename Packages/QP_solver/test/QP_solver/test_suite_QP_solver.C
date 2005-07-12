@@ -211,73 +211,52 @@ int main( int argc, char** argv) {
 	init_tag_names_table();
 	init_pricing_strat_abrev_table();
 	int verbose = 0;
-	unsigned int pricing_strategy_index = pricing_strat_abrev_table.size();
-
-	if ( argc > 3) {
-		verbose = atoi( argv[ 1]);
-		pricing_strategy_index = map_pricing_strategy_abrev(argv[ 2]);
-		if (pricing_strategy_index==pricing_strat_abrev_table.size()) {
-			return 1;
-		}
-	} else {
-		return 1;
-	}
+	unsigned int pricing_strategy_index;
 	std::map<std::string, char> read_names_table;
-	
-	for (int i = 3; i < argc; ++i) {
-		std::ifstream from(argv[i]);
-		if (!from) {
-			std::cout << "could not open file: " << argv[i] << "\n";
-		} else {
-			std::cout << "processing file: " << argv[i] << "\n";
-			read_tags(from, read_names_table);
-			map_tags(from, verbose, pricing_strategy_index,
-				read_names_table);
-			from.close();
-		}
+
+	const bool readFromStdIn = argc <= 3;
+	if (readFromStdIn)
+	  std::cout << "reading from standard in..." << std::endl;
+	else {
+	  verbose = atoi(argv[1]);
+	  pricing_strategy_index = map_pricing_strategy_abrev(argv[2]);
+	  if (pricing_strategy_index == pricing_strat_abrev_table.size()) {
+	    std::cout << "unidentified pricing strategy" << std::endl;
+	    return 1;
+	  }
 	}
-
 	
-     /*
-     Rep::Row_type*  row_types = new Rep::Row_type[ 1];
-      row_types[ 0] = Rep::EQUAL;
+	for(int i=3; i<argc || (readFromStdIn && !std::cin.eof()); ++i) {
 
-      CGAL::QPE_solver<Rep>              solver;
-      solver.set_verbosity( verbose);
-      solver.set( 2, 1,
-		  Vector_iterator( A.begin(), Begin()), b.begin(),
-		  c.begin(), Vector_iterator( D.begin(), Begin()),
-		  row_types);
-      {
-	CGAL::QPE_full_exact_pricing<Rep>  strategy;
-	solver.set_pricing_strategy( strategy);
-	solver.init();
-	solver.solve();
-	std::cerr << "-----------------------------------------------------\n";
-      }
-      {
-	CGAL::QPE_partial_exact_pricing<Rep>  strategy;
-	solver.set_pricing_strategy( strategy);
-	solver.init();
-	solver.solve();
-	std::cerr << "-----------------------------------------------------\n";
-      }
-      {
-	CGAL::QPE_full_filtered_pricing<Rep>  strategy;
-	solver.set_pricing_strategy( strategy);
-	solver.init();
-	solver.solve();
-	std::cerr << "-----------------------------------------------------\n";
-      }
-      {
-	CGAL::QPE_partial_filtered_pricing<Rep>  strategy;
-	solver.set_pricing_strategy( strategy);
-	solver.init();
-	solver.solve();
-	std::cerr << "-----------------------------------------------------\n";
-      }
-      */
-    
+	  // read verbosity and pricing-strategy
+	  if (readFromStdIn) {
+	    std::cin >> verbose;
+	    std::string strategy;
+	    std::cin >> strategy;
+	    pricing_strategy_index = map_pricing_strategy_abrev(strategy);
+	    if (pricing_strategy_index == pricing_strat_abrev_table.size()) {
+	      std::cout << "unidentified pricing strategy" << std::endl;
+	      return 1;
+	    }
+	  }
+	  
+	  std::string fileName;
+	  if (readFromStdIn)
+	    std::cin >> fileName;
+	  else
+	    fileName = std::string(argv[i]);
+	  std::ifstream from(fileName.c_str());
+	  if (!from) {
+	    std::cout << "could not open file: " << fileName << "\n";
+	  } else {
+	    std::cout << "processing file: " << fileName << "\n";
+	    read_tags(from, read_names_table);
+	    map_tags(from, verbose, pricing_strategy_index,
+		     read_names_table);
+	    from.close();
+	  }
+	}
+	
     return 0;
 }
 
