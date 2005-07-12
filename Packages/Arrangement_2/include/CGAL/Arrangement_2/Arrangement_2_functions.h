@@ -504,9 +504,9 @@ Arrangement_2<Traits,Dcel>::insert_from_right_vertex
 
     // Create the edge connecting the two vertices.
     DHalfedge  *new_he = _insert_in_face_interior (cv, p_f, v1, v2);
-
-    // Return a handle to the new halfedge directed from left to right.
-    return (Halfedge_handle (new_he));
+    
+    // Return a handle to the new halfedge whose target is the new vertex
+    return (Halfedge_handle (new_he->opposite()));
   }
 
   // Go over the incident halfedges around v and find the halfedge after
