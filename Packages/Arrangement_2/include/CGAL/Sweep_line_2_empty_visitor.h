@@ -29,7 +29,7 @@ CGAL_BEGIN_NAMESPACE
 
 template <class Traits_,
           class Subcurve_  =  Sweep_line_subcurve<Traits_>,
-          class Event_     =  Sweep_line_event<Traits_, Subcurve_>,
+          typename Event_  =  Sweep_line_event<Traits_, Subcurve_>,
           class Allocator_ =  CGAL_ALLOCATOR(int)>
 class Empty_visitor
 {
@@ -44,8 +44,8 @@ public:
   typedef typename Traits::Point_2                         Point_2; 
 
   typedef Empty_visitor<Traits,
-                        Event,
                         Subcurve,
+                        Event,
                         Allocator>                         Self;
 
 private:
@@ -80,7 +80,7 @@ private:
     //override operator*
     reference operator* ()
     {
-      return (reinterpret_cast<reference>(StatusLineIter::operator*()));
+      return (reinterpret_cast<reference>(((StatusLineIter*)this)->operator*()));
     }
 
     //override operator->

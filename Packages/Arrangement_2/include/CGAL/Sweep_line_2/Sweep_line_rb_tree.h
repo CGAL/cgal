@@ -249,12 +249,12 @@ public:
     /*!
      * Get the object pointed by the handle.
      */
-    const TYPE& operator* () const
+    /*const TYPE& operator* () const
     {
       CGAL_precondition(nodeP != NULL);
 
       return (nodeP->object);
-    }
+    }*/
 
     TYPE& operator* () 
     {

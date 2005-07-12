@@ -95,16 +95,16 @@ CGAL_BEGIN_NAMESPACE
     slIter - an iterator to the status line, always points to a curve.
 
 */
-template < class SweepLineTraits_2,
+template < class Traits_,
            class SweepVisitor,
-           class CurveWrap = Sweep_line_subcurve<SweepLineTraits_2>,
-           class SweepEvent = Sweep_line_event<SweepLineTraits_2, CurveWrap>,
+           class CurveWrap = Sweep_line_subcurve<Traits_>,
+           typename SweepEvent = Sweep_line_event<Traits_, CurveWrap>,
            typename Allocator = CGAL_ALLOCATOR(int) >
 class Basic_sweep_line_2
 {
 public:
 
-  typedef SweepLineTraits_2                              Traits;
+  typedef Traits_                                        Traits;
   typedef typename Traits::Point_2                       Point_2;
   typedef typename Traits::X_monotone_curve_2            X_monotone_curve_2;
 
@@ -781,12 +781,12 @@ protected:
  * @param leftCurve a pointer to the curve that is about to be deleted
  * @return 
  */
-template <class SweepLineTraits_2,
+template <class Traits_,
           class SweepVisitor,
           class CurveWrap,
           class SweepEvent,
           typename Allocator>
-inline void Basic_sweep_line_2<SweepLineTraits_2,
+inline void Basic_sweep_line_2<Traits_,
                                SweepVisitor,                               
                                CurveWrap,
                                SweepEvent,

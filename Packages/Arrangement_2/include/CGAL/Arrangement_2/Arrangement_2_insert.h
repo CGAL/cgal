@@ -25,6 +25,7 @@
  * Global insertion functions for the Arrangement_2 class.
  */
 
+#include <CGAL/Arrangement_2.h>
 #include <CGAL/Arrangement_2/Arr_traits_wrapper_2.h>
 #include <CGAL/Arrangement_2/Arr_accessor.h>
 #include <CGAL/Arrangement_zone_2.h>
@@ -37,6 +38,7 @@
 #include <map>
 
 CGAL_BEGIN_NAMESPACE
+
 
 //-----------------------------------------------------------------------------
 // Insert a curve into the arrangement (incremental insertion).
@@ -449,6 +451,11 @@ insert_vertex (Arrangement_2<Traits,Dcel>& arr,
 {
   // Obtain an arrangement accessor.
   typedef Arrangement_2<Traits,Dcel>                     Arrangement_2;
+  // Act according to the type of arrangement feature that contains the point.
+  typename Arrangement_2::Face_const_handle      fh;
+  typename Arrangement_2::Halfedge_const_handle  hh;
+  typename Arrangement_2::Vertex_const_handle    vh;
+  typename Arrangement_2::Vertex_handle          vh_for_p;
 
   Arr_accessor<Arrangement_2>                      arr_access (arr);
 
@@ -459,11 +466,7 @@ insert_vertex (Arrangement_2<Traits,Dcel>& arr,
   // take place.
   arr_access.notify_before_global_change();
 
-  // Act according to the type of arrangement feature that contains the point.
-  typename Arrangement_2<Traits,Dcel>::Face_const_handle      fh;
-  typename Arrangement_2<Traits,Dcel>::Halfedge_const_handle  hh;
-  typename Arrangement_2<Traits,Dcel>::Vertex_const_handle    vh;
-  typename Arrangement_2<Traits,Dcel>::Vertex_handle          vh_for_p;
+  
   
   if (assign (fh, obj))
   {
@@ -477,7 +480,7 @@ insert_vertex (Arrangement_2<Traits,Dcel>& arr,
     // p lies in the interior of an edge: Split this edge to create a new
     // vertex associated with p.
     typename Traits::X_monotone_curve_2                   sub_cv1, sub_cv2;
-    typename Arrangement_2<Traits,Dcel>::Halfedge_handle  split_he;
+    typename Arrangement_2::Halfedge_handle  split_he;
    
     arr.get_traits()->split_2_object() (hh->curve(), p,
                                         sub_cv1, sub_cv2);

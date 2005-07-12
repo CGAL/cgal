@@ -69,12 +69,12 @@ CGAL_BEGIN_NAMESPACE
     slIter - an iterator to the status line, always points to a curve.
 
 */
-template < class SweepLineTraits_2,
+template < class Traits_,
            class SweepVisitor,
-           class CurveWrap = Sweep_line_subcurve<SweepLineTraits_2>,
-           class SweepEvent = Sweep_line_event<SweepLineTraits_2, CurveWrap>,
+           class CurveWrap = Sweep_line_subcurve<Traits_>,
+           class SweepEvent = Sweep_line_event<Traits_, CurveWrap>,
            typename Allocator = CGAL_ALLOCATOR(int) >
-class Sweep_line_2 : public Basic_sweep_line_2<SweepLineTraits_2,
+class Sweep_line_2 : public Basic_sweep_line_2<Traits_,
                                                SweepVisitor,
                                                CurveWrap,
                                                SweepEvent,
@@ -82,11 +82,11 @@ class Sweep_line_2 : public Basic_sweep_line_2<SweepLineTraits_2,
 {
 public:
 
-  typedef SweepLineTraits_2                       Traits;
+  typedef Traits_                                 Traits;
   typedef typename Traits::Point_2                Point_2;
   typedef typename Traits::X_monotone_curve_2     X_monotone_curve_2;
 
-  typedef Basic_sweep_line_2<SweepLineTraits_2,
+  typedef Basic_sweep_line_2<Traits,
                              SweepVisitor,
                              CurveWrap,
                              SweepEvent,
@@ -452,12 +452,12 @@ protected:
  * @param leftCurve a pointer to the curve that is about to be deleted
  * @return an iterator to the position where the curve will be removed from.
  */
-template <class SweepLineTraits_2,
+template <class Traits_,
           class SweepVisitor,
           class CurveWrap,
           class SweepEvent,
           typename Allocator>
-inline void Sweep_line_2<SweepLineTraits_2,
+inline void Sweep_line_2<Traits_,
                          SweepVisitor,
                          CurveWrap,
                          SweepEvent,
@@ -506,12 +506,12 @@ _remove_curve_from_status_line(Subcurve *leftCurve, bool remove_for_good)
  * @return true if the two curves overlap.
 */
 
-template <class SweepLineTraits_2,
+template <class Traits_,
           class SweepVisitor,
           class CurveWrap,
           class SweepEvent,
           typename Allocator>
-void Sweep_line_2<SweepLineTraits_2,
+void Sweep_line_2<Traits_,
                   SweepVisitor,
                   CurveWrap,
                   SweepEvent,
@@ -680,12 +680,12 @@ void Sweep_line_2<SweepLineTraits_2,
 }
 
 
-template <class SweepLineTraits_2,
+template <class Traits_,
           class SweepVisitor,
           class CurveWrap,
           class SweepEvent,
           typename Allocator>
-void Sweep_line_2<SweepLineTraits_2,
+void Sweep_line_2<Traits_,
                   SweepVisitor,
                   CurveWrap,
                   SweepEvent,
@@ -748,12 +748,12 @@ _fix_overlap_subcurves()
 }
 
 
-template <class SweepLineTraits_2,
+template <class Traits_,
           class SweepVisitor,
           class CurveWrap,
           class SweepEvent,
           typename Allocator>
-void Sweep_line_2<SweepLineTraits_2,
+void Sweep_line_2<Traits_,
                   SweepVisitor,
                   CurveWrap,
                   SweepEvent,

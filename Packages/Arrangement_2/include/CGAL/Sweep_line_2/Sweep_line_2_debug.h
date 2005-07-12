@@ -31,13 +31,13 @@
 ////////////////////////////////////////////////////////////////////////////
 
 
-template <class SweepLineTraits_2,
+template <class Traits_,
           class SweepVisitor,
           class CurveWrap,
           class SweepEvent,
           typename Allocator>
 inline void 
-Basic_sweep_line_2<SweepLineTraits_2,
+Basic_sweep_line_2<Traits_,
                    SweepVisitor,
                    CurveWrap,
                    SweepEvent,
@@ -56,13 +56,13 @@ PrintEventQueue()
   SL_DEBUG(std::cout << "--------------------------------" << std::endl;)
 }
 
-template <class SweepLineTraits_2,
+template <class Traits_,
           class SweepVisitor,
           class CurveWrap,
           class SweepEvent,
           typename Allocator>
 inline void 
-Basic_sweep_line_2<SweepLineTraits_2,
+Basic_sweep_line_2<Traits_,
                    SweepVisitor,
                    CurveWrap,
                    SweepEvent,
