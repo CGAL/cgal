@@ -92,8 +92,8 @@ private:
 
       fileSave = new QAction(tr("Save to file"), saveIcon, tr("&Save"),
 			     0, this);
-      fileSave->setStatusTip(tr("Saves the output sites to a file"));
-      str = "Save to file\n\nSaves the output sites to a file";
+      fileSave->setStatusTip(tr("Saves the input sites to a file"));
+      str = "Save to file\n\nSaves the input sites to a file";
       fileSave->setWhatsThis(tr(str));
       connect(fileSave, SIGNAL(activated()), this, SLOT(slotFileSave()));
 
