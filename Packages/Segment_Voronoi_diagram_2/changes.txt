@@ -1,3 +1,25 @@
+12 July 2005:  Menelaos Karavelas
+- fixed wrong message for one of the buttons in the file toolbar (demo)
+- the segment Voronoi diagram in the demo now inserts segments in the upper
+  levels as well
+- added find and remove methods in the simple container wrapper
+- in demo:
+  * all messages to std::cout are now sent to std::cerr
+  * added support for site removal
+  * removed unused code
+  * input data are saved in files with .cin extension; the full description of
+    the segment Voronoi diagram is saved in files with .svd extension and
+    .hsvd extension (the latter is used for the hierarchy).
+  * added data/ directory with sample input data
+- Code:
+  * moved some methods from .h to .C
+  * the input sites container is now an std::set instead of an std::list; this
+    was done because we want to efficiently insert/remove/search elements
+  * added remove method: works only with sites that are input sites and not
+    subsegments or points of intersection of inout sites; removal works in
+    the hierarchy as well; the computation of the vertex map is still unstable
+    and prone to numerical errors
+
 26 June 2005:  Menelaos Karavelas
 - doc: added Triangulation_data_structure, Vertex and Face types and tds()
   method; also added that the Segment_Voronoi_diagram_2 class is a model of
