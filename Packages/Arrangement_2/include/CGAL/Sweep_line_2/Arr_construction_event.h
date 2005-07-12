@@ -192,12 +192,12 @@ public:
 
 protected:
 
-  BitVector m_isCurveInArr;
-  Halfedge_handle m_halfedge;
-  unsigned int m_right_curves_counter;
+  BitVector          m_isCurveInArr;
+  Halfedge_handle    m_halfedge;
+  unsigned int       m_right_curves_counter;
 
 };
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_ARR_CONSTRUCTION_EVENT_H
+#endif

@@ -26,28 +26,31 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template <class _Traits, class Arr, class Event_, class Subcurve_> 
-class Arr_construction_visitor : public Empty_visitor<_Traits,
-                                                    Subcurve_,
-                                                    Event_>
+template <class Traits_, class Arrangement, class Event_, class Subcurve_> 
+class Arr_construction_visitor : public Empty_visitor<Traits_,
+                                                      Subcurve_,
+                                                      Event_>
 {
 protected:
 
-  typedef typename Arr::Halfedge_handle        Halfedge_handle;
-  typedef typename Arr::Vertex_handle          Vertex_handle;
-  typedef typename Arr::Face_handle            Face_handle;
-  typedef Arr_construction_visitor< _Traits,
-                                  Arr,
-                                  Event_,
-                                  Subcurve_>                 Self;
+  typedef typename Arrangement::Halfedge_handle        Halfedge_handle;
+  typedef typename Arrangement::Vertex_handle          Vertex_handle;
+  typedef typename Arrangement::Face_handle            Face_handle;
+  typedef Arr_construction_visitor<Traits_,
+                                   Arrangement,
+                                   Event_,
+                                   Subcurve_>          Self;
 
-  typedef  _Traits                                          Traits;
-  typedef typename Traits::X_monotone_curve_2               X_monotone_curve_2;
-  typedef typename Traits::Point_2                          Point_2;
+  typedef Traits_                                      Traits;
+  typedef Event_                                       Event;
+  typedef Subcurve_                                    Subcurve;
 
-  typedef Event_ Event;
-  typedef Subcurve_ Subcurve;
-  typedef Empty_visitor<Traits, Subcurve, Event >         Base;
+  typedef typename Traits::X_monotone_curve_2          X_monotone_curve_2;
+  typedef typename Traits::Point_2                     Point_2;
+ 
+  typedef Empty_visitor<Traits,
+                        Subcurve,
+                        Event >                        Base;
    
   typedef typename Base::SubCurveIter                  SubCurveIter;
   typedef typename Base::SubCurveRevIter               SubCurveRevIter;
@@ -61,7 +64,7 @@ private:
 
 public:
 
-  Arr_construction_visitor(Arr *arr):
+  Arr_construction_visitor(Arrangement *arr):
       m_arr(arr),
       m_arr_access (*arr)
   {}
@@ -138,8 +141,6 @@ public:
        
         bool dummy;
         res = this->insert_at_vertices(cv,hhandle,prev,sc, dummy);
-       
-
         res = res->twin();
       }
       else
@@ -215,12 +216,11 @@ public:
   }
 
 
-
    protected:
      
      
-  Arr               *m_arr;
-  Arr_accessor<Arr>  m_arr_access;
+  Arrangement*               m_arr;
+  Arr_accessor<Arrangement>  m_arr_access;
 };
 
 

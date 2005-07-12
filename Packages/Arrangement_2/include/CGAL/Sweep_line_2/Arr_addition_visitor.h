@@ -183,8 +183,8 @@ public:
   }
 
 
-   Halfedge_handle insert_in_face_interior(const X_monotone_curve_2& cv,
-                                          Subcurve* sc)
+   Halfedge_handle _insert_in_face_interior(const X_monotone_curve_2& cv,
+                                            Subcurve* sc)
   {
     Halfedge_handle he_above = ray_shoot_up(sc);
     if(he_above == Halfedge_handle(NULL))
@@ -264,10 +264,91 @@ public:
         return (he_above);
       }
     }
-
+  
     return (he_above);
   }
 
+
+
+
+   void update_event(){}
+
+   void update_event(Event* e,
+                    const Point_2& end_point,
+                    const X_monotone_curve_2& cv,
+                    bool is_left_end)
+  {}
+
+  void update_event(Event* e,
+                    Subcurve* sc1,
+                    Subcurve* sc2,
+                    bool created = false)
+  {}
+
+  void update_event(Event* e,
+                    Subcurve* sc1)
+  {}
+
+
+  void update_event(Event* e, const Point_2& pt)
+  {
+    Vertex_handle vh;
+    if(e->get_point().get_vertex_handle() == vh)
+      e->get_point().set_vertex_handle(pt.get_vertex_handle());
+  }
+
+  virtual Halfedge_handle insert_in_face_interior(const X_monotone_curve_2& cv,
+                                          Subcurve* sc)
+  {
+    Event *lastEvent = reinterpret_cast<Event*>((sc)->get_last_event());
+    Vertex_handle last_v = lastEvent->get_point().get_vertex_handle();
+    Vertex_handle curr_v =
+      this->current_event()->get_point().get_vertex_handle();
+    Vertex_handle null_v;
+
+    if(last_v == null_v && curr_v == null_v)
+      return (this->_insert_in_face_interior(cv, sc));
+    if(last_v == null_v && curr_v != null_v)
+    {
+      Halfedge_handle he = m_arr->insert_from_right_vertex(cv, curr_v);
+      return (he->twin());
+    }
+    if(last_v != null_v && curr_v == null_v)
+      return (m_arr->insert_from_left_vertex(cv, last_v));
+
+    CGAL_assertion(last_v != null_v && curr_v != null_v);
+    return (m_arr->insert_at_vertices(cv,last_v,curr_v));
+
+  }
+
+
+  virtual Halfedge_handle insert_from_right_vertex
+                          (const X_monotone_curve_2& cv,
+                           Halfedge_handle he,
+                           Subcurve* sc)
+  {
+    Event *lastEvent = reinterpret_cast<Event*>((sc)->get_last_event());
+    Vertex_handle last_v = lastEvent->get_point().get_vertex_handle();
+
+    if(last_v != Vertex_handle())
+      return (m_arr->insert_at_vertices(cv,he, last_v));
+    
+    return (m_arr->insert_from_right_vertex(cv, he));
+  }
+
+  virtual Halfedge_handle insert_from_left_vertex
+                          (const X_monotone_curve_2& cv,
+                           Halfedge_handle he,
+                           Subcurve* sc)
+  {
+    Vertex_handle curr_v =
+      this->current_event()->get_point().get_vertex_handle();
+
+     if(curr_v != Vertex_handle())
+       return (m_arr->insert_at_vertices(cv,he, curr_v));
+
+    return m_arr->insert_from_left_vertex(cv, he);
+  }
 
 
  protected:

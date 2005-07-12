@@ -30,7 +30,9 @@
 #include <CGAL/Arrangement_zone_2.h>
 #include <CGAL/Arrangement_2/Arr_inc_insertion_zone_visitor.h>
 #include <CGAL/Sweep_line_2/Arr_construction.h>
+#include <CGAL/Sweep_line_2/Arr_addition.h>
 #include <CGAL/Sweep_line_2/Arr_non_x_construction.h>
+#include <CGAL/Sweep_line_2/Arr_non_x_addition.h>
 #include <list>
 #include <map>
 
@@ -127,9 +129,17 @@ void insert (Arrangement_2<Traits,Dcel>& arr,
 
   arr_access.notify_before_global_change();
 
-  // Perform the aggregated insertion.
-  Arr_construction<Arrangement_2>              arr_construct (arr);
-  arr_construct.insert_curves (begin, end);
+  if(arr.is_empty())
+  {
+    // Perform the aggregated insertion.
+    Arr_construction<Arrangement_2>              arr_construct (arr);
+    arr_construct.insert_curves (begin, end);
+  }
+  else
+  {
+    Arr_addition<Arrangement_2>                  arr_adder(arr);
+    arr_adder.insert_curves (begin, end);
+  }
 
   // Notify the arrangement observers that the global operation has been
   // completed.
@@ -193,9 +203,18 @@ void insert_x_monotone (Arrangement_2<Traits,Dcel>& arr,
   arr_access.notify_before_global_change();
 
   // Perform the aggregated insertion.
-  Arr_construction<Arrangement_2>              arr_construct (arr);
-  arr_construct.insert_x_curves (begin, end);
-
+  if(arr.is_empty())
+  {
+    // Perform the aggregated insertion.
+    Arr_construction<Arrangement_2>              arr_construct (arr);
+    arr_construct.insert_x_curves (begin, end);
+  }
+  else
+  {
+    Arr_addition<Arrangement_2>                  arr_adder(arr);
+    arr_adder.insert_x_curves (begin, end);
+  }
+ 
   // Notify the arrangement observers that the global operation has been
   // completed.
   arr_access.notify_after_global_change();
@@ -327,9 +346,18 @@ void insert_non_intersecting (Arrangement_2<Traits,Dcel>& arr,
   arr_access.notify_before_global_change();
 
   // Perform the aggregated insertion.
-  Arr_non_x_construction<Arrangement_2>  non_x_construct (arr);
-  non_x_construct.insert_curves(begin, end);
-
+  if(arr.is_empty())
+  {
+    // Perform the aggregated insertion.
+    Arr_non_x_construction<Arrangement_2>  non_x_construct (arr);
+    non_x_construct.insert_curves(begin, end);
+  }
+  else
+  {
+    Arr_non_x_addition<Arrangement_2>      non_x_adder(arr);
+    non_x_adder.insert_curves (begin, end);
+  }
+  
   // Notify the arrangement observers that the global operation has been
   // completed.
   arr_access.notify_after_global_change();

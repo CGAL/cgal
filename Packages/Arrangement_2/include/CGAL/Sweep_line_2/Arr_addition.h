@@ -24,7 +24,6 @@
 #include <CGAL/Sweep_line_2/Sweep_line_2_utils.h>
 #include <CGAL/Sweep_line_2/Arr_construction_event.h>
 #include <CGAL/Sweep_line_2/Arr_construction_curve.h>
-#include <CGAL/Sweep_line_2/Arr_construction_visitor.h>
 #include <CGAL/Sweep_line_2/Arr_addition_visitor.h>
 #include <CGAL/Sweep_line_2/Arr_addition_traits.h>
 
@@ -70,10 +69,10 @@ class Arr_addition
 
 public:
 
-  Arr_addition(Arrangement *arr):
-      m_traits(new Traits(*(arr->get_traits()))),
-      m_arr(arr),
-      m_visitor(arr),
+  Arr_addition(Arrangement &arr):
+      m_traits(new Traits(*(arr.get_traits()))),
+      m_arr(&arr),
+      m_visitor(&arr),
       m_sweep_line(m_traits, &m_visitor)
       {}
 
@@ -122,20 +121,43 @@ public:
                        iso_points.end());
   }
 
-  /*template<class XCurveInputIterator>
+
+
+  template<class XCurveInputIterator>
   void insert_x_curves(XCurveInputIterator begin,
                        XCurveInputIterator end)
   {
     std::vector<X_monotone_curve_2>      xcurves_vec;
-    for (Edge_iterator eit = m_arr->edges_begin(); eit != m_arr->edges_end(); ++eit) 
+    std::vector<Point_2>                 iso_points;
+
+    typename Traits::Compare_xy_2  comp_xy = m_traits->compare_xy_2_object();
+    for (Edge_iterator eit = m_arr->edges_begin();
+         eit != m_arr->edges_end();
+         ++eit) 
     {
-      xcurves_vec.push_back(eit->curve());
+      Halfedge_handle he;
+      if(comp_xy(eit->source()->point(),
+	       eit->target()->point()) == SMALLER)
+         he = eit->handle()->twin();
+      else
+        he = eit->handle();
+
+      xcurves_vec.push_back(X_monotone_curve_2(he->curve(), he));
     }
-    m_arr->clear();
+
+    for(Vertex_iterator v_itr = m_arr->vertices_begin();
+        v_itr != m_arr->vertices_end();
+        ++v_itr)
+    {
+      if(v_itr->is_isolated())
+        iso_points.push_back(Point_2(v_itr->point(), v_itr->handle()));
+    }
     std::copy(begin, end, std::back_inserter(xcurves_vec));
-    m_sweep_line.init_x_curves(xcurves_vec.begin(),xcurves_vec.end());
-    m_sweep_line.sweep();
-  }*/
+    m_sweep_line.sweep(xcurves_vec.begin(),
+                       xcurves_vec.end(),
+                       iso_points.begin(),
+                       iso_points.end());
+  }
 
  
 

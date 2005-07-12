@@ -48,17 +48,17 @@ class Arr_non_x_construction
   typedef typename Arrangement_2::Vertex_handle     Vertex_handle;
   typedef typename Arrangement_2::Vertex_iterator   Vertex_iterator;
   typedef typename Arrangement_2::Traits_2          Traits_2;
-  typedef Arr_construction_curve<Traits_2>            Subcurve; 
+  typedef Arr_construction_curve<Traits_2>          Subcurve; 
   typedef Arr_construction_event<Traits_2,
-                               Subcurve,
-                               Halfedge_handle>     Event;
+                                 Subcurve,
+                                 Halfedge_handle>   Event;
   typedef typename Traits_2::X_monotone_curve_2     X_monotone_curve_2;
   typedef typename Traits_2::Point_2                Point_2;
  
   typedef Arr_construction_visitor<Traits_2,
-                                 Arrangement_2,
-                                 Event,
-                                 Subcurve>          Visitor;
+                                   Arrangement_2,
+                                   Event,
+                                   Subcurve>        Visitor;
 
   
  

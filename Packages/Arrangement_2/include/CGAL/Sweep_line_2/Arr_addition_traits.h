@@ -71,9 +71,18 @@ public:
                                           m_he_handle(NULL)
     {}
 
-    My_X_monotone_curve_2(const Base&cv, Halfedge_handle he):Base(cv),
-                                                             m_he_handle(he)
+    My_X_monotone_curve_2(const Base& cv, Halfedge_handle he):Base(cv),
+                                                              m_he_handle(he)
     {}
+
+    My_X_monotone_curve_2& operator=(const Base& cv)
+    {
+      Base::operator=(cv);
+      m_he_handle = Halfedge_handle();
+      return (*this);
+    }
+
+
 
 
     Halfedge_handle get_halfedge_handle() const
@@ -114,6 +123,11 @@ public:
     Vertex_handle get_vertex_handle() const
     {
       return m_v;
+    }
+
+    void set_vertex_handle(Vertex_handle v)
+    {
+      m_v = v;
     }
 
    
