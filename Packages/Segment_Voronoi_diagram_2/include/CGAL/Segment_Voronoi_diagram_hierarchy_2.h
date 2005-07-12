@@ -327,6 +327,11 @@ protected:
 				       Tag_true itag, Tag_true stag);
 
 public:
+  // REMOVAL METHODS
+  //----------------
+  bool remove(const Vertex_handle& v);
+
+public:
   // NEAREST NEIGHBOR LOCATION
   //--------------------------
   Vertex_handle  nearest_neighbor(const Point_2& p,

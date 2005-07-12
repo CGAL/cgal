@@ -191,7 +191,23 @@ protected:
   typedef boost::tuples::tuple<PH,PH,bool>       Site_rep_2;
   //  typedef Triple<PH,PH,bool>                     Site_rep_2;
 
-  typedef std::list<Site_rep_2>                    Input_sites_container;
+  struct Site_rep_less_than {
+    // less than for site reps
+    bool operator()(const Site_rep_2& x, const Site_rep_2& y) const {
+      PH x1 = boost::tuples::get<0>(x);
+      PH y1 = boost::tuples::get<0>(y);
+
+      if ( &(*x1) < &(*y1) ) { return true; }
+      if ( &(*y1) < &(*x1) ) { return false; }
+
+      PH x2 = boost::tuples::get<1>(x);
+      PH y2 = boost::tuples::get<1>(y);
+
+      return &(*x2) < &(*y2);
+    }
+  };
+
+  typedef std::set<Site_rep_2,Site_rep_less_than>  Input_sites_container;
   typedef typename Input_sites_container::const_iterator
   All_inputs_iterator;
 
@@ -248,6 +264,9 @@ protected:
 
   typedef Triple<Vertex_handle,Vertex_handle,Vertex_handle>
   Vertex_triple;
+
+  typedef Vertex_handle                         Vh_triple[3];
+  typedef std::map<Face_handle,Sign>            Sign_map;
 
   typedef std::pair<Face_handle,Face_handle>    Face_pair;
 
@@ -532,15 +551,133 @@ public:
     }
   }
 
+  // REMOVAL METHODS
+  //----------------
+protected:
+  Point_2 midpoint(const typename Geom_traits::Segment_2& seg) const {
+    return Point_2((seg.source().x() + seg.target().x()) / 2,
+		   (seg.source().y() + seg.target().y()) / 2);
+  }
+
+  bool is_star(const Vertex_handle& v) const;
+  bool is_linear_chain(const Vertex_handle& v0, const Vertex_handle& v1,
+		       const Vertex_handle& v2) const;
+  bool is_flippable(const Face_handle& f, int i) const;
+
+  void minimize_degree(const Vertex_handle& v);
+
+  void expand_conflict_region_remove(const Face_handle& f,
+				     const Site_2& t,
+				     const Storage_site_2& ss,
+				     List& l, Face_map& fm,
+				     Sign_map& sign_map);
+
+  void find_conflict_region_remove(const Vertex_handle& v,
+				   const Vertex_handle& vnearest,
+				   List& l, Face_map& fm, Sign_map& vm);
+
+  template<class OutputItFaces>
+  OutputItFaces get_faces(const List& l, OutputItFaces fit) const
+  {
+    // map that determines if a face has been visited
+    std::map<Face_handle,bool> fmap;
+
+    // compute the initial face
+    Edge e_front = l.front();
+    Face_handle fstart = e_front.first->neighbor(e_front.second);
+
+    // do the recursion
+    return get_faces(l, fstart, fmap, fit);
+  }
+
+  template<class OutputItFaces>
+  OutputItFaces get_faces(const List& l, Face_handle f,
+			  std::map<Face_handle,bool>& fmap,
+			  OutputItFaces fit) const
+  {
+    // if the face has been visited return
+    if ( fmap.find(f) != fmap.end() ) { return fit; }
+
+    // mark the face as visited
+    fmap[f] = true;
+
+    // output the face
+    *fit++ = f;
+
+    // recursively go to neighbors
+    for (int i = 0; i < 3; i++) {
+      Face_handle n = f->neighbor(i);
+      Edge ee(n, n->index( this->_tds.mirror_vertex(f,i) ));
+      if ( !l.is_in_list(ee) ) {
+	fit = get_faces(l, n, fmap, fit);
+      }
+    }
+    return fit;
+  }
+
+  size_type count_faces(const List& l) const;
+
+  void fill_hole(const Segment_Voronoi_diagram_2<Gt,DS,LTag>& small,
+		 const Vertex_handle& v, const List& l,
+		 std::map<Vertex_handle,Vertex_handle>& vmap);
+
+  bool remove_first(const Vertex_handle& v);
+  bool remove_second(const Vertex_handle& v);
+  bool remove_third(const Vertex_handle& v);
+
+  void compute_small_diagram(const Vertex_handle& v, Self& small) const;
+  void compute_vertex_map(const Vertex_handle& v, const Self& small,
+			  std::map<Vertex_handle,Vertex_handle>& vmap) const;
+  void remove_degree_d_vertex(const Vertex_handle& v);
+
+  bool remove_base(const Vertex_handle& v);
+
+public:
+  bool remove(const Vertex_handle& v);
 
 protected:
+  inline void unregister_input_site(const Point_2& p)
+  {
+    Point_handle h = pc_.find(p);
+    CGAL_assertion( h != pc_.end() );
+
+    Site_rep_2 rep(h, h, true);
+    typename Input_sites_container::iterator it = isc_.find(rep);
+    CGAL_assertion( it != isc_.end() );
+
+    pc_.remove(h);
+    isc_.erase(it);
+  }
+
+  inline void unregister_input_site(const Point_2& p1, const Point_2& p2)
+  {
+    Point_handle h1 = pc_.find(p1);
+    Point_handle h2 = pc_.find(p2);
+    CGAL_assertion( h1 != pc_.end() );
+    CGAL_assertion( h2 != pc_.end() );
+
+    Site_rep_2 rep(h1, h2, false);
+    typename Input_sites_container::iterator it = isc_.find(rep);
+    if ( it != isc_.end() ) { isc_.erase(it); }
+    
+    Site_rep_2 sym_rep(h2, h1, false);
+    typename Input_sites_container::iterator sym_it = isc_.find(sym_rep);
+    if ( sym_it != isc_.end() ) { isc_.erase(sym_it); }
+
+    CGAL_assertion( it != isc_.end() || sym_it != isc_.end() );
+
+    Site_rep_2 r1(h1, h1, true);
+    if ( isc_.find(r1) == isc_.end() ) { isc_.insert(r1); }
+
+    Site_rep_2 r2(h2, h2, true);
+    if ( isc_.find(r2) == isc_.end() ) { isc_.insert(r2); }
+  }
+
   inline Point_handle register_input_site(const Point_2& p)
   {
     std::pair<PH,bool> it = pc_.insert(p);
     Site_rep_2 rep(it.first, it.first, true);
-    //    isc_.insert( rep );
-    isc_.push_back( rep );
-    //    isc_.insert( Site_rep_2(it.first, it.first, true) );
+    isc_.insert( rep );
     return it.first;
   }
 
@@ -550,8 +687,7 @@ protected:
     std::pair<PH,bool> it1 = pc_.insert(p0);
     std::pair<PH,bool> it2 = pc_.insert(p1);
     Site_rep_2 rep(it1.first, it2.first, false);
-    //    isc_.insert( rep );
-    isc_.push_back( rep );
+    isc_.insert( rep );
     return Point_handle_pair(it1.first, it2.first);
   }
 
@@ -821,6 +957,11 @@ protected:
     this->_tds.remove_degree_2(v);
   }
 
+  inline void remove_degree_3(Vertex_handle v) {
+    CGAL_precondition( degree(v) == 3 );
+    this->_tds.remove_degree_3(v, Face_handle());
+  }
+
   inline Vertex_handle create_vertex(const Storage_site_2& ss) {
     Vertex_handle v = this->_tds.create_vertex();
     v->set_site(ss);
@@ -855,7 +996,7 @@ protected:
 				    unsigned int i, const Tag_false&)
   {
     // Split the first storage site which is a segment using the
-    // second storage site which is a exact point
+    // second storage site which is an exact point
     // i denotes whether the first or second half is to be created
     CGAL_precondition( ss0.is_segment() && ss1.is_point() );
     CGAL_precondition( ss1.is_input() );
@@ -872,100 +1013,7 @@ protected:
 
   Storage_site_2 split_storage_site(const Storage_site_2& ss0,
 				    const Storage_site_2& ss1,
-				    unsigned int i, const Tag_true&)
-  {
-    // Split the first storage site which is a segment using the
-    // second storage site which is a exact point
-    // i denotes whether the first or second half is to be created
-    CGAL_precondition( ss0.is_segment() && ss1.is_point() );
-    //    CGAL_precondition( ss1.is_input() );
-    CGAL_precondition( i < 2 );
-
-    if ( i == 0 ) {
-      if ( ss0.is_input(0) ) {
-	if ( ss1.is_input() ) {
-	  return Storage_site_2::construct_storage_site_2
-	    (ss0.source_of_supporting_site(), ss1.point());
-	} else {
-	  Storage_site_2 supp0 = ss0.supporting_site();
-	  Storage_site_2 supp1 = ss1.supporting_site(0);
-
-	  if ( are_parallel(supp0.site(), supp1.site()) ) {
-	    supp1 = ss1.supporting_site(1);
-	  }
-	  return Storage_site_2::construct_storage_site_2
-	    ( supp0.source_of_supporting_site(),
-	      supp0.target_of_supporting_site(),
-	      supp1.source_of_supporting_site(),
-	      supp1.target_of_supporting_site(),
-	      true );
-	}
-      } else {
-	if ( ss1.is_input() ) {
-	  return Storage_site_2::construct_storage_site_2
-	    ( ss0.source_of_supporting_site(), ss1.point(),
-	      ss0.source_of_crossing_site(0), ss0.target_of_crossing_site(0),
-	      false );
-	} else {
-	  Storage_site_2 supp0 = ss0.supporting_site();
-	  Storage_site_2 supp1 = ss1.supporting_site(0);
-
-	  if ( are_parallel(supp0.site(), supp1.site()) ) {
-	    supp1 = ss1.supporting_site(1);
-	  }
-	  return Storage_site_2::construct_storage_site_2
-	    ( supp0.source_of_supporting_site(),
-	      supp0.target_of_supporting_site(),
-	      ss0.source_of_crossing_site(0),
-	      ss0.target_of_crossing_site(0),
-	      supp1.source_of_supporting_site(),
-	      supp1.target_of_supporting_site() );
-	}
-      }
-    } else { // i == 1
-      if ( ss0.is_input(1) ) {
-	if ( ss1.is_input() ) {
-	  return Storage_site_2::construct_storage_site_2
-	    ( ss1.point(), ss0.target_of_supporting_site() );
-	} else {
-	  Storage_site_2 supp0 = ss0.supporting_site();
-	  Storage_site_2 supp1 = ss1.supporting_site(0);
-
-	  if ( are_parallel(supp0.site(), supp1.site()) ) {
-	    supp1 = ss1.supporting_site(1);
-	  }
-	  return Storage_site_2::construct_storage_site_2
-	    ( supp0.source_of_supporting_site(),
-	      supp0.target_of_supporting_site(),
-	      supp1.source_of_supporting_site(),
-	      supp1.target_of_supporting_site(),
-	      false );
-	}
-      } else {
-	if ( ss1.is_input() ) {
-	  return Storage_site_2::construct_storage_site_2
-	    ( ss1.point(), ss0.target_of_supporting_site(),
-	      ss0.source_of_crossing_site(1),
-	      ss0.target_of_crossing_site(1),
-	      true );
-	} else {
-	  Storage_site_2 supp0 = ss0.supporting_site();
-	  Storage_site_2 supp1 = ss1.supporting_site(0);
-
-	  if ( are_parallel(supp0.site(), supp1.site()) ) {
-	    supp1 = ss1.supporting_site(1);
-	  }
-	  return Storage_site_2::construct_storage_site_2
-	    ( supp0.source_of_supporting_site(),
-	      supp0.target_of_supporting_site(),
-	      supp1.source_of_supporting_site(),
-	      supp1.target_of_supporting_site(),
-	      ss0.source_of_crossing_site(1),
-	      ss0.target_of_crossing_site(1) );
-	}
-      }
-    }
-  }
+				    unsigned int i, const Tag_true&);
 
   inline
   Storage_site_2 create_storage_site(const Storage_site_2& ss0,
@@ -1505,45 +1553,40 @@ protected:
     return geom_traits().oriented_side_2_object()(s1, s2, s3, supp, p);
   }
 
-  Vertex_handle first_endpoint_of_segment(const Vertex_handle& v) const {
-    CGAL_assertion( v->is_segment() );
-    Site_2 fe = v->site().source_site();
-    Vertex_circulator vc_start = incident_vertices(v);
-    Vertex_circulator vc = vc_start;
-    do {
-      // Vertex_handle vv(vc);
-      if ( !is_infinite(vc) && vc->is_point() ) {
-	if ( same_points(fe, vc->site()) ) {
-	  return Vertex_handle(vc);
-	}
-      }
-      vc++;
-    } while ( vc != vc_start );
-
-    // we should never reach this point
-    CGAL_assertion( false );
-    return Vertex_handle();
+  bool is_degenerate_edge(const Site_2& p1,
+			  const Site_2& p2,
+			  const Site_2& p3,
+			  const Site_2& p4) const {
+    return geom_traits().is_degenerate_edge_2_object()
+      (p1, p2, p3, p4);
   }
 
-  Vertex_handle second_endpoint_of_segment(const Vertex_handle& v) const {
-    CGAL_assertion( v->is_segment() );
-    Site_2 fe = v->site().target_site();
-    Vertex_circulator vc_start = incident_vertices(v);
-    Vertex_circulator vc = vc_start;
-    do {
-      //      Vertex_handle vv(vc);
-      if ( !is_infinite(vc) && vc->is_point() ) {
-	if ( same_points(fe, vc->site()) ) {
-	  return Vertex_handle(vc);
-	}
-      }
-      vc++;
-    } while ( vc != vc_start );
+  bool is_degenerate_edge(const Vertex_handle& v1,
+			  const Vertex_handle& v2,
+			  const Vertex_handle& v3,
+			  const Vertex_handle& v4) const {
+    CGAL_precondition( !is_infinite(v1) && !is_infinite(v2) &&
+		       !is_infinite(v3) && !is_infinite(v4) );
 
-    // we should never reach this point
-    CGAL_assertion( false );
-    return Vertex_handle();
+    return is_degenerate_edge(v1->site(), v2->site(),
+			      v3->site(), v4->site());
   }
+
+  bool is_degenerate_edge(const Face_handle& f, int i) const {
+    Vertex_handle v1 = f->vertex( ccw(i) );
+    Vertex_handle v2 = f->vertex(  cw(i) );
+    Vertex_handle v3 = f->vertex(     i  );
+    Vertex_handle v4 = this->_tds.mirror_vertex(f, i);
+
+    return is_degenerate_edge(v1, v2, v3, v4);
+  }
+
+  bool is_degenerate_edge(const Edge& e) const {
+    return is_degenerate_edge(e.first, e.second);
+  }
+
+  Vertex_handle first_endpoint_of_segment(const Vertex_handle& v) const;
+  Vertex_handle second_endpoint_of_segment(const Vertex_handle& v) const;
 
 }; // Segment_Voronoi_diagram_2
 

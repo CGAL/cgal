@@ -18,8 +18,6 @@
 // Author(s)     : Menelaos Karavelas <mkaravel@cse.nd.edu>
 
 
-
-
 // class implementation continued
 //=================================
 
@@ -918,8 +916,7 @@ expand_conflict_region(const Face_handle& f, const Site_2& t,
 		       const Storage_site_2& ss,
 		       List& l, Face_map& fm,
 		       std::map<Face_handle,Sign>& sign_map,
-		       Triple<bool,Vertex_handle,Arrangement_type>&
-		       vcross)
+		       Triple<bool,Vertex_handle,Arrangement_type>& vcross)
 {
   if ( fm.find(f) != fm.end() ) { return; }
 
@@ -1041,6 +1038,7 @@ add_bogus_vertex(Edge e, List& l)
   Face_handle g2 = esym.first;
 
   Vertex_handle v = insert_degree_2(e);
+
   Face_circulator fc(v);
   Face_handle f1(fc);
   Face_handle f2(++fc);
@@ -1163,6 +1161,709 @@ retriangulate_conflict_region(Vertex_handle v, List& l,
   fm.clear();
 
   // 7. DONE!!!!
+}
+
+//====================================================================
+//====================================================================
+//                   METHODS FOR REMOVAL
+//====================================================================
+//====================================================================
+
+template<class Gt, class DS, class LTag>
+bool
+Segment_Voronoi_diagram_2<Gt,DS,LTag>::
+is_star(const Vertex_handle& v) const
+{
+  CGAL_precondition( v->storage_site().is_point() );
+
+  Vertex_circulator vc_start = incident_vertices(v);
+  Vertex_circulator vc = vc_start;
+  Storage_site_2 p = v->storage_site();
+
+  size_type count = 0;
+  do {
+    Storage_site_2 ss = vc->storage_site();
+    if ( ss.is_segment() && is_endpoint_of_segment(p, ss) ) {
+      ++count;
+      //      if ( count == 3 ) { break; }
+      if ( count == 3 ) { return true; }
+    }
+    ++vc;
+  } while ( vc != vc_start );
+
+  return false;
+}
+
+
+template<class Gt, class DS, class LTag>
+bool
+Segment_Voronoi_diagram_2<Gt,DS,LTag>::
+is_linear_chain(const Vertex_handle& v0, const Vertex_handle& v1,
+		const Vertex_handle& v2) const
+{
+  Site_2 tt[3] = { v0->site(), v1->site(), v2->site() };
+
+  if ( tt[1].is_point() &&
+       tt[0].is_segment() &&
+       tt[2].is_segment() &&
+       is_endpoint_of_segment(tt[1], tt[0]) &&
+       is_endpoint_of_segment(tt[1], tt[2]) ) {
+    typename Geom_traits::Equal_2 are_equal = geom_traits().equal_2_object();
+    Site_2 s_end[2];
+    if (  are_equal( tt[1], tt[0].source_site() )  ) {
+      s_end[0] = tt[0].target_site();
+    } else {
+      s_end[0] = tt[0].source_site();
+    }
+
+    if (  are_equal( tt[1], tt[2].source_site() )  ) {
+      s_end[1] = tt[2].target_site();
+    } else {
+      s_end[1] = tt[2].source_site();
+    }
+
+    typename Geom_traits::Orientation_2 orientation =
+      geom_traits().orientation_2_object();
+
+    return orientation(s_end[0], s_end[1], tt[1]) == COLLINEAR;
+  }
+  return false;
+}
+
+
+template<class Gt, class DS, class LTag>
+bool
+Segment_Voronoi_diagram_2<Gt,DS,LTag>::
+is_flippable(const Face_handle& f, int i) const
+{
+  CGAL_assertion( !is_infinite(f->vertex( cw(i) )) );
+
+  Vertex_handle v_other = f->vertex( ccw(i) );
+  Vertex_handle v0 = f->vertex( i );
+  Vertex_handle v1 = this->_tds.mirror_vertex( f, i );
+
+  if ( is_infinite(v_other) || is_infinite(v0) || is_infinite(v1) ) {
+    return false;
+  }
+
+  Vertex_handle v = f->vertex( cw(i) );
+
+  Storage_site_2 ss = v->storage_site();
+  Storage_site_2 ss_other = v_other->storage_site();
+  if ( ss_other.is_point() && ss.is_segment() &&
+       is_endpoint_of_segment(ss_other,	ss) && is_star(v_other) ) {
+    return false;
+  }
+
+  if ( is_linear_chain(v0, v_other, v1) ) { return false; }
+
+  return (v0 != v1) && is_degenerate_edge(f, i);
+}
+
+
+template<class Gt, class DS, class LTag>
+void
+Segment_Voronoi_diagram_2<Gt,DS,LTag>::
+minimize_degree(const Vertex_handle& v)
+{
+  CGAL_precondition ( degree(v) > 3 );
+
+  Face_circulator fc_start = incident_faces(v);
+  Face_circulator fc = incident_faces(v);
+  bool found(false);
+  do {
+    Face_handle f = Face_handle(fc);
+    int i = ccw( f->index(v) );
+
+    CGAL_assertion( f->vertex( cw(i) ) == v );
+
+    if ( is_flippable(f,i) ) {
+      Edge e = flip(f, i);
+      f = e.first;
+
+      if ( !f->has_vertex(v) ) {
+	f = e.first->neighbor(e.second);
+	CGAL_assertion( f->has_vertex(v) );
+      }
+
+      fc = --( incident_faces(v,f) );
+      fc_start = fc;
+      found = true;
+    } else {
+      ++fc;
+      found = false;
+    }
+  } while ( found || fc != fc_start );
+}
+
+
+template<class Gt, class DS, class LTag>
+void
+Segment_Voronoi_diagram_2<Gt,DS,LTag>::
+expand_conflict_region_remove(const Face_handle& f, const Site_2& t,
+			      const Storage_site_2& ss,
+			      List& l, Face_map& fm, Sign_map& sign_map)
+{
+  if ( fm.find(f) != fm.end() ) { return; }
+
+  // setting fm[f] to true means that the face has been reached and
+  // that the face is available for recycling. If we do not want the
+  // face to be available for recycling we must set this flag to
+  // false.
+  fm[f] = true;
+
+  //  CGAL_assertion( fm.find(f) != fm.end() );
+
+  for (int i = 0; i < 3; i++) {
+    Face_handle n = f->neighbor(i);
+
+    bool face_registered = (fm.find(n) != fm.end());
+
+    Sign s = incircle(n, t);
+
+    sign_map[n] = s;
+
+    Sign s_f = sign_map[f];
+
+    if ( s == POSITIVE ) { continue; }
+    if ( s != s_f ) { continue; }
+
+    bool interior_in_conflict = edge_interior(f, i, t, s);
+
+    if ( !interior_in_conflict ) { continue; }
+
+    if ( face_registered ) { continue; }
+
+    Edge e = sym_edge(f, i);
+
+    CGAL_assertion( l.is_in_list(e) );
+    int j = this->_tds.mirror_index(f, i);
+    Edge e_before = sym_edge(n, ccw(j));
+    Edge e_after = sym_edge(n, cw(j));
+    if ( !l.is_in_list(e_before) ) {
+      l.insert_before(e, e_before);
+    }
+    if ( !l.is_in_list(e_after) ) {
+      l.insert_after(e, e_after);
+    }
+    l.remove(e);
+
+    expand_conflict_region_remove(n, t, ss, l, fm, sign_map);
+  } // for-loop
+}
+
+
+template<class Gt, class DS, class LTag>
+void
+Segment_Voronoi_diagram_2<Gt,DS,LTag>::
+find_conflict_region_remove(const Vertex_handle& v,
+			    const Vertex_handle& vnearest,
+			    List& l, Face_map& fm, Sign_map& vm)
+{
+  CGAL_precondition( vnearest != Vertex_handle() );
+  Storage_site_2 ss = v->storage_site();
+  Site_2 t = ss.site();
+
+  // find the first conflict
+
+  // first look for conflict with vertex
+  Face_circulator fc_start = incident_faces(vnearest);
+  Face_circulator fc = fc_start;
+  Face_handle start_f;
+  Sign s;
+
+  Sign_map sign_map;
+
+  do {
+    Face_handle f(fc);
+
+    s = incircle(f, t);
+
+    sign_map[f] = s;
+
+    if ( s == NEGATIVE ) {
+      start_f = f;
+      break;
+    }
+    ++fc;
+  } while ( fc != fc_start );
+
+  CGAL_assertion( s == NEGATIVE );
+
+  // we are not in conflict with a Voronoi vertex, so we have to
+  // be in conflict with the interior of a Voronoi edge
+  if ( s != NEGATIVE ) {
+    Edge_circulator ec_start = incident_edges(vnearest);
+    Edge_circulator ec = ec_start;
+
+    bool interior_in_conflict(false);
+    Edge e;
+    do {
+      e = *ec;
+
+      Sign s1 = sign_map[e.first];
+      Sign s2 = sign_map[e.first->neighbor(e.second)];
+
+      if ( s1 == s2 ) {
+	interior_in_conflict = edge_interior(e, t, s1);
+      } else {
+	// It seems that there was a problem here when one of the
+	// signs was positive and the other zero. In this case we
+	// still check pretending that both signs where positive
+	interior_in_conflict = edge_interior(e, t, POSITIVE);
+      }
+
+      if ( interior_in_conflict ) { break; }
+      ++ec;
+    } while ( ec != ec_start );
+
+    sign_map.clear();
+
+    CGAL_assertion( interior_in_conflict );
+
+    l.push_back(e);
+    l.push_back(sym_edge(e));
+    return;
+  }
+
+  initialize_conflict_region(start_f, l);
+  expand_conflict_region_remove(start_f, t, ss,	l, fm, sign_map);
+}
+
+
+//--------------------------------------------------------------------
+//--------------------------------------------------------------------
+
+template<class Gt, class DS, class LTag>
+typename Segment_Voronoi_diagram_2<Gt,DS,LTag>::size_type
+Segment_Voronoi_diagram_2<Gt,DS,LTag>::
+count_faces(const List& l) const
+{
+  std::vector<Face_handle> flist;
+  get_faces(l, std::back_inserter(flist));
+  return flist.size();
+}
+
+//--------------------------------------------------------------------
+//--------------------------------------------------------------------
+
+template<class Gt, class DS, class LTag>
+void
+Segment_Voronoi_diagram_2<Gt,DS,LTag>::
+fill_hole(const Segment_Voronoi_diagram_2<Gt,DS,LTag>& small,
+	  const Vertex_handle& v, const List& l,
+	  std::map<Vertex_handle,Vertex_handle>& vmap)
+{
+#if 0
+  std::cerr << "size of l  : " << l.size() << std::endl;
+  std::cerr << "degree of v: " << degree(v) << std::endl;
+#endif
+
+  typedef std::map<Edge,Edge>  Edge_map;
+  // maps edges on the boundary of the conflict region from the small
+  // diagram to edges of the star of v in the small diagram
+  Edge_map emap;
+
+  Edge e_sml_sym = sym_edge(l.front());
+
+  Vertex_handle v_sml_src = e_sml_sym.first->vertex(ccw(e_sml_sym.second));
+  Vertex_handle v_sml_trg = e_sml_sym.first->vertex(cw(e_sml_sym.second));
+
+  // first we find a first edge in common
+  Face_circulator fc_start = incident_faces(v);
+  Face_circulator fc = fc_start;
+  Face_circulator fc_begin;
+  bool found = false;
+  do {
+    int id = fc->index(v);
+    Vertex_handle v_lrg_src = fc->vertex(ccw(id));
+    Vertex_handle v_lrg_trg = fc->vertex(cw(id));
+    if ( vmap[v_sml_src] == v_lrg_src && vmap[v_sml_trg] == v_lrg_trg ) {
+      found = true;
+      fc_begin = fc;
+      break;
+    }
+  } while ( ++fc != fc_start );
+  CGAL_assertion( found );
+
+  // container of faces to delete
+  std::list<Face_handle> to_delete;
+
+  // next we go around the boundary of the conflict region and map all edges
+  Edge e_small = l.front();
+  fc_start = incident_faces(v, fc_begin);
+  fc = fc_start;
+  do {
+    int id = fc->index(v);
+#if !defined(CGAL_NO_ASSERTIONS) && !defined(NDEBUG)
+    Vertex_handle vsml_src = e_small.first->vertex(cw(e_small.second));
+    Vertex_handle vsml_trg = e_small.first->vertex(ccw(e_small.second));
+    Vertex_handle vlrg_src = fc->vertex(ccw(id));
+    Vertex_handle vlrg_trg = fc->vertex(cw(id));
+    CGAL_assertion(vmap[vsml_src] == vlrg_src && vmap[vsml_trg] == vlrg_trg );
+#endif
+    // set mapping
+    emap[e_small] = sym_edge(fc, id);
+    // keep face for deletion
+    to_delete.push_back(fc);
+    // go to next edge
+    e_small = l.next(e_small);
+  } while ( ++fc != fc_start );
+
+
+  // map the faces of the small diagram with the new faces of the
+  // large diagram
+  std::map<Face_handle,Face_handle> fmap;
+  std::vector<Face_handle> f_small, f_large;
+
+  small.get_faces(l, std::back_inserter(f_small));
+  for (unsigned int i = 0; i < f_small.size(); i++) {
+    Face_handle f = this->_tds.create_face();
+    fmap[ f_small[i] ] = f;
+    f_large.push_back(f);
+  }
+
+  CGAL_assertion( l.size() == degree(v) );
+  CGAL_assertion( f_small.size() == f_large.size() );
+  CGAL_assertion( f_small.size() == l.size() - 2 );
+  CGAL_assertion( f_small.size() == count_faces(l) );
+
+  // set the vertices for the new faces; also set the face for each
+  // vertex
+  for (typename std::vector<Face_handle>::iterator fit = f_small.begin();
+       fit != f_small.end(); ++fit) {
+    Face_handle ff_small = *fit;
+    Face_handle f = fmap[ff_small];
+
+    for (int i = 0; i < 3; ++i) {
+      CGAL_assertion( vmap.find(ff_small->vertex(i)) != vmap.end() );
+      f->set_vertex(i, vmap[ff_small->vertex(i)]);
+      // we are setting the face for each vertex a lot of times; we
+      // could possibly do it faster if we use the edges on the
+      // boundary of the conflict region
+      // in fact we may not even need it since the make_hole method
+      // updates the faces of the vertices of the boundary of the
+      // hole, and we do not introduce any new vertices
+      f->vertex(i)->set_face(f);
+    }
+  }
+
+  // set the neighbors for each face
+  for (typename std::vector<Face_handle>::iterator fit = f_small.begin();
+       fit != f_small.end(); ++fit) {
+    Face_handle ff_small = *fit;
+
+    for (int i = 0; i < 3; i++) {
+      Face_handle f = fmap[ff_small];
+      Face_handle n_small = ff_small->neighbor(i);
+      if ( fmap.find(n_small) != fmap.end() ) {
+	// this is one of the new faces
+	f->set_neighbor(i, fmap[n_small]);
+      } else {
+	// otherwise it is one of the old faces outside the conflict
+	// region; we have to use the edge map in this case
+	Edge e_small_sym = small.sym_edge(ff_small, i);
+	CGAL_assertion(emap.find(e_small_sym) != emap.end());
+
+	Edge e_large = emap[e_small_sym];
+	f->set_neighbor(i, e_large.first);
+	e_large.first->set_neighbor(e_large.second, f);
+      }
+    }
+  }
+
+  // delete the unused faces and the vertex
+  while ( !to_delete.empty() ) {
+    delete_face(to_delete.front());
+    to_delete.pop_front();
+  }
+  delete_vertex(v);
+}
+
+//--------------------------------------------------------------------
+//--------------------------------------------------------------------
+
+template<class Gt, class DS, class LTag>
+bool
+Segment_Voronoi_diagram_2<Gt,DS,LTag>::
+remove_first(const Vertex_handle& v)
+{
+  // unregister site
+  Delaunay_graph::remove_first(v);
+  return true;
+}
+
+template<class Gt, class DS, class LTag>
+bool
+Segment_Voronoi_diagram_2<Gt,DS,LTag>::
+remove_second(const Vertex_handle& v)
+{
+  // unregister site
+  Delaunay_graph::remove_second(v);
+  return true;
+}
+
+template<class Gt, class DS, class LTag>
+bool
+Segment_Voronoi_diagram_2<Gt,DS,LTag>::
+remove_third(const Vertex_handle& v)
+{
+  // unregister site
+  if ( is_degree_2(v) ) {
+    CGAL_assertion( v->storage_site().is_point() );
+    Face_handle fh( incident_faces(v) );
+    int i = fh->index(v);
+    flip(fh, i);
+  } else if ( degree(v) == 4 ) {
+    Edge_circulator ec = incident_edges(v);
+    for (int i = 0; i < 4; i++) {
+      Edge e = *ec;
+      Edge sym = sym_edge(e);
+      if ( e.first->vertex(e.second) !=	sym.first->vertex(sym.second) ) {
+	flip(e);
+	break;
+      }
+      ++ec;
+    }
+  }
+
+  this->_tds.remove_dim_down( v );
+  return true;
+}
+
+//--------------------------------------------------------------------
+//--------------------------------------------------------------------
+
+template<class Gt, class DS, class LTag>
+void
+Segment_Voronoi_diagram_2<Gt,DS,LTag>::
+compute_small_diagram(const Vertex_handle& v, Self& small) const
+{
+  Vertex_circulator vc_start = incident_vertices(v);
+  Vertex_circulator vc = vc_start;
+
+  // insert all neighboring sites
+  do {
+    if ( !is_infinite(vc) ) {
+      Site_2 t = vc->site();
+      if ( t.is_input() ) {
+	small.insert(t);
+      } else if ( t.is_point() ) {
+	small.insert(t.supporting_site(0));
+	/*Vertex_handle vnear =*/ small.insert(t.supporting_site(1));
+	//	vh_small = svd_small.nearest_neighbor(t, vnear);
+      } else {
+	CGAL_assertion( t.is_segment() );
+	/*Vertex_handle vnear =*/ small.insert(t.supporting_site());
+	//	vh_small = svd_small.nearest_neighbor(t, vnear);
+      }
+      //      CGAL_assertion( vh_small != Vertex_handle() );
+      //      vmap[vh_small] = vh_large;
+    }
+    ++vc;
+  } while ( vc != vc_start );
+}
+
+//--------------------------------------------------------------------
+//--------------------------------------------------------------------
+
+template<class Gt, class DS, class LTag>
+void
+Segment_Voronoi_diagram_2<Gt,DS,LTag>::
+compute_vertex_map(const Vertex_handle& v, const Self& small,
+		   std::map<Vertex_handle,Vertex_handle>& vmap) const
+{
+  Vertex_circulator vc_start = incident_vertices(v);
+  Vertex_circulator vc = vc_start;
+  Vertex_handle vh_large, vh_small;
+
+  do {
+    vh_large = Vertex_handle(vc);
+    if ( is_infinite(vh_large) ) {
+      vh_small = small.infinite_vertex();
+      vmap[vh_small] = vh_large;
+    } else { 
+      Site_2 t = vc->site();
+      if ( t.is_segment() ) {
+	//***************************************************
+	//***************************************************
+	//***************************************************
+	//***************************************************
+	// this is very unstable and numerically wrong
+	//***************************************************
+	//***************************************************
+	//***************************************************
+	//***************************************************
+	vh_small = small.nearest_neighbor( midpoint(t.segment()) );
+      } else {
+	//***************************************************
+	//***************************************************
+	//***************************************************
+	//***************************************************
+	// I need to make sure that nearest_neighbor works
+	// for points of intersection
+	//***************************************************
+	//***************************************************
+	//***************************************************
+	//***************************************************
+	vh_small = small.nearest_neighbor(t, Vertex_handle());
+      }
+      CGAL_assertion( vh_small != Vertex_handle() );
+      vmap[vh_small] = vh_large;
+    }
+    ++vc;
+  } while ( vc != vc_start );
+}
+
+
+//--------------------------------------------------------------------
+//--------------------------------------------------------------------
+
+template<class Gt, class DS, class LTag>
+void
+Segment_Voronoi_diagram_2<Gt,DS,LTag>::
+remove_degree_d_vertex(const Vertex_handle& v)
+{
+  minimize_degree(v);
+  int deg = degree(v);
+  if ( deg == 3 ) {
+    remove_degree_3(v);
+    return;
+  }
+  if ( deg == 2 ) {
+    remove_degree_2(v);
+    return;
+  }
+  
+  Segment_Voronoi_diagram_2<Gt,DS,LTag> svd_small;
+  compute_small_diagram(v, svd_small);
+
+  if ( svd_small.number_of_vertices() <= 2 ) {
+    CGAL_assertion( svd_small.number_of_vertices() == 2 );
+    CGAL_assertion( deg == 4 );
+    Edge_circulator ec_start = incident_edges(v);
+    Edge_circulator ec = ec_start;
+    do {
+      if ( is_infinite(*ec) ) { break; }
+      ++ec;
+    } while ( ec != ec_start );
+    CGAL_assertion( is_infinite(ec) );
+    flip(*ec);
+    remove_degree_3(v);
+    return;
+  }
+
+  std::map<Vertex_handle,Vertex_handle> vmap;
+  compute_vertex_map(v, svd_small, vmap);
+
+  // find nearest neighbor of v in small diagram
+  Site_2 t = v->site();
+  Vertex_handle vn;
+
+  CGAL_assertion( t.is_input() );
+
+  // here we find a site in the small diagram that serves as a
+  // starting point for finding all conflicts.
+  // To do that we find the nearest neighbor of t if t is a point;
+  // t is guarranteed to have a conflict with its nearest neighbor
+  // If t is a segment, then one endpoint of t is enough; t is
+  // guarranteed to have a conflict with the Voronoi edges around
+  // this endpoint
+  if ( t.is_point() ) {
+    vn = svd_small.nearest_neighbor( t.point() );
+  } else {
+    vn = svd_small.nearest_neighbor( t.source() );
+  }
+  CGAL_assertion( vn != Vertex_handle() );
+
+  List l;
+  Face_map fm;
+  Sign_map sign_map;
+
+  svd_small.find_conflict_region_remove(v, vn, l, fm, sign_map);
+
+  fill_hole(svd_small, v, l, vmap);
+
+  l.clear();
+  fm.clear();
+  sign_map.clear();
+}
+
+//--------------------------------------------------------------------
+//--------------------------------------------------------------------
+
+template<class Gt, class DS, class LTag>
+bool
+Segment_Voronoi_diagram_2<Gt,DS,LTag>::
+remove_base(const Vertex_handle& v)
+{
+  Storage_site_2 ssv = v->storage_site();
+  CGAL_precondition( ssv.is_input() );
+
+  // first consider the case where we have up to 2 points
+  size_type n = number_of_vertices();
+
+  if ( n == 1 ) {
+    return remove_first(v);
+  } else if ( n == 2 ) {
+    return remove_second(v);
+  } 
+
+  // secondly check if the point to be deleted is adjacent to a segment
+  if ( ssv.is_point() ) {
+    Vertex_circulator vc_start = incident_vertices(v);
+    Vertex_circulator vc = vc_start;
+
+    do {
+      Storage_site_2 ss = vc->storage_site();
+      if ( ss.is_segment() && is_endpoint_of_segment(ssv, ss) ) {
+	return false;
+      }
+      ++vc;
+    } while ( vc != vc_start );
+  }
+
+  // now do the deletion
+  if ( n == 3 ) {
+    return remove_third(v);
+  }
+
+  int deg = degree(v);
+  if ( deg == 2 ) {
+    remove_degree_2(v);
+  } else if ( deg == 3 ) {
+    remove_degree_3(v);
+  } else {
+    remove_degree_d_vertex(v);
+  }
+
+  return true;
+}
+
+//--------------------------------------------------------------------
+//--------------------------------------------------------------------
+
+template<class Gt, class DS, class LTag>
+bool
+Segment_Voronoi_diagram_2<Gt,DS,LTag>::
+remove(const Vertex_handle& v)
+{
+  CGAL_precondition( !is_infinite(v) );
+  Site_2 t = v->site();
+  if ( !t.is_input() ) { return false; }
+
+  bool success = remove_base(v);
+
+  if ( success ) {
+    // unregister the input site
+    if ( t.is_point() ) {
+      unregister_input_site( t.point() );
+    } else {
+      CGAL_assertion( t.is_segment() );
+      unregister_input_site( t.source(), t.target() );
+    }
+  }
+  return success;
 }
 
 //--------------------------------------------------------------------
@@ -1579,8 +2280,8 @@ primal(const Edge e) const
 		    )
 		  );
 
-  CGAL_assertion(  is_infinite( e.first->vertex(e.second) ) ||
-		   is_infinite(	tds().mirror_vertex(e.first, e.second) )  );
+  CGAL_assertion( is_infinite(e.first->vertex(e.second)) ||
+		  is_infinite(this->_tds.mirror_vertex(e.first, e.second)) );
 
   Edge ee = e;
   if ( is_infinite( e.first->vertex(e.second) )  ) {
@@ -1823,6 +2524,167 @@ copy(Segment_Voronoi_diagram_2& other, Handle_map& hm)
     Storage_site_2 new_ss_this = copy_storage_site(ss_other, hm, itag);
     vit_this->set_site( new_ss_this );
   }
+}
+
+//--------------------------------------------------------------------
+//--------------------------------------------------------------------
+// methods for creating storage sites
+//--------------------------------------------------------------------
+//--------------------------------------------------------------------
+
+template<class Gt, class DS, class LTag>
+typename Segment_Voronoi_diagram_2<Gt,DS,LTag>::Storage_site_2
+Segment_Voronoi_diagram_2<Gt,DS,LTag>::
+split_storage_site(const Storage_site_2& ss0,
+		   const Storage_site_2& ss1,
+		   unsigned int i, const Tag_true&)
+{
+  // Split the first storage site which is a segment using the
+  // second storage site which is an exact point
+  // i denotes whether the first or second half is to be created
+  CGAL_precondition( ss0.is_segment() && ss1.is_point() );
+  //    CGAL_precondition( ss1.is_input() );
+  CGAL_precondition( i < 2 );
+
+  if ( i == 0 ) {
+    if ( ss0.is_input(0) ) {
+      if ( ss1.is_input() ) {
+	return Storage_site_2::construct_storage_site_2
+	  (ss0.source_of_supporting_site(), ss1.point());
+      } else {
+	Storage_site_2 supp0 = ss0.supporting_site();
+	Storage_site_2 supp1 = ss1.supporting_site(0);
+
+	if ( are_parallel(supp0.site(), supp1.site()) ) {
+	  supp1 = ss1.supporting_site(1);
+	}
+	return Storage_site_2::construct_storage_site_2
+	  ( supp0.source_of_supporting_site(),
+	    supp0.target_of_supporting_site(),
+	    supp1.source_of_supporting_site(),
+	    supp1.target_of_supporting_site(),
+	    true );
+      }
+    } else {
+      if ( ss1.is_input() ) {
+	return Storage_site_2::construct_storage_site_2
+	  ( ss0.source_of_supporting_site(), ss1.point(),
+	    ss0.source_of_crossing_site(0), ss0.target_of_crossing_site(0),
+	    false );
+      } else {
+	Storage_site_2 supp0 = ss0.supporting_site();
+	Storage_site_2 supp1 = ss1.supporting_site(0);
+
+	if ( are_parallel(supp0.site(), supp1.site()) ) {
+	  supp1 = ss1.supporting_site(1);
+	}
+	return Storage_site_2::construct_storage_site_2
+	  ( supp0.source_of_supporting_site(),
+	    supp0.target_of_supporting_site(),
+	    ss0.source_of_crossing_site(0),
+	    ss0.target_of_crossing_site(0),
+	    supp1.source_of_supporting_site(),
+	    supp1.target_of_supporting_site() );
+      }
+    }
+  } else { // i == 1
+    if ( ss0.is_input(1) ) {
+      if ( ss1.is_input() ) {
+	return Storage_site_2::construct_storage_site_2
+	  ( ss1.point(), ss0.target_of_supporting_site() );
+      } else {
+	Storage_site_2 supp0 = ss0.supporting_site();
+	Storage_site_2 supp1 = ss1.supporting_site(0);
+
+	if ( are_parallel(supp0.site(), supp1.site()) ) {
+	  supp1 = ss1.supporting_site(1);
+	}
+	return Storage_site_2::construct_storage_site_2
+	  ( supp0.source_of_supporting_site(),
+	    supp0.target_of_supporting_site(),
+	    supp1.source_of_supporting_site(),
+	    supp1.target_of_supporting_site(),
+	    false );
+      }
+    } else {
+      if ( ss1.is_input() ) {
+	return Storage_site_2::construct_storage_site_2
+	  ( ss1.point(), ss0.target_of_supporting_site(),
+	    ss0.source_of_crossing_site(1),
+	    ss0.target_of_crossing_site(1),
+	    true );
+      } else {
+	Storage_site_2 supp0 = ss0.supporting_site();
+	Storage_site_2 supp1 = ss1.supporting_site(0);
+
+	if ( are_parallel(supp0.site(), supp1.site()) ) {
+	  supp1 = ss1.supporting_site(1);
+	}
+	return Storage_site_2::construct_storage_site_2
+	  ( supp0.source_of_supporting_site(),
+	    supp0.target_of_supporting_site(),
+	    supp1.source_of_supporting_site(),
+	    supp1.target_of_supporting_site(),
+	    ss0.source_of_crossing_site(1),
+	    ss0.target_of_crossing_site(1) );
+      }
+    }
+  }
+}
+
+
+//--------------------------------------------------------------------
+//--------------------------------------------------------------------
+// getting endpoints of segments
+//--------------------------------------------------------------------
+//--------------------------------------------------------------------
+
+template<class Gt, class DS, class LTag>
+typename Segment_Voronoi_diagram_2<Gt,DS,LTag>::Vertex_handle
+Segment_Voronoi_diagram_2<Gt,DS,LTag>::
+first_endpoint_of_segment(const Vertex_handle& v) const
+{
+  CGAL_assertion( v->is_segment() );
+  Site_2 fe = v->site().source_site();
+  Vertex_circulator vc_start = incident_vertices(v);
+  Vertex_circulator vc = vc_start;
+  do {
+    // Vertex_handle vv(vc);
+    if ( !is_infinite(vc) && vc->is_point() ) {
+      if ( same_points(fe, vc->site()) ) {
+	return Vertex_handle(vc);
+      }
+    }
+    vc++;
+  } while ( vc != vc_start );
+
+  // we should never reach this point
+  CGAL_assertion( false );
+  return Vertex_handle();
+}
+
+template<class Gt, class DS, class LTag>
+typename Segment_Voronoi_diagram_2<Gt,DS,LTag>::Vertex_handle
+Segment_Voronoi_diagram_2<Gt,DS,LTag>::
+second_endpoint_of_segment(const Vertex_handle& v) const
+{
+  CGAL_assertion( v->is_segment() );
+  Site_2 fe = v->site().target_site();
+  Vertex_circulator vc_start = incident_vertices(v);
+  Vertex_circulator vc = vc_start;
+  do {
+    //      Vertex_handle vv(vc);
+    if ( !is_infinite(vc) && vc->is_point() ) {
+      if ( same_points(fe, vc->site()) ) {
+	return Vertex_handle(vc);
+      }
+    }
+    vc++;
+  } while ( vc != vc_start );
+
+  // we should never reach this point
+  CGAL_assertion( false );
+  return Vertex_handle();
 }
 
 //--------------------------------------------------------------------
@@ -2115,7 +2977,7 @@ file_input(std::istream& is, bool read_handle_vector,
     int id1, id2;
     for (i = 0; i < nisc; i++) {
       is >> id1 >> id2;
-      isc_.push_back( Site_rep_2(P[id1], P[id2], id1 == id2) );
+      isc_.insert( Site_rep_2(P[id1], P[id2], id1 == id2) );
     }
   }
 

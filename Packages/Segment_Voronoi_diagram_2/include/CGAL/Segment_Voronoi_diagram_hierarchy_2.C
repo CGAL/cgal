@@ -783,6 +783,36 @@ insert_intersecting_segment_with_tag(const Storage_site_2& ss,
 }
 
 
+//====================================================================
+//====================================================================
+//                   METHODS FOR REMOVAL
+//====================================================================
+//====================================================================
+
+template<class Gt, class STag, class DS, class LTag>
+bool
+Segment_Voronoi_diagram_hierarchy_2<Gt,STag,DS,LTag>::
+remove(const Vertex_handle& v)
+{
+  // remove at level 0
+  Vertex_handle u = v->up();
+  bool success = hierarchy[0]->remove(v);
+  if ( !success ) { return false; }
+
+  // remove at higher levels
+  unsigned int l = 1;
+  Vertex_handle vv = u;
+  while ( u != Vertex_handle() ) {
+    if ( l >= svd_hierarchy_2__maxlevel) { break; }
+    vv = u;
+    u = vv->up();
+    success = hierarchy[l++]->remove_base(vv);
+    CGAL_assertion( success );
+  }
+
+  return true;
+}
+
 //===========================================================================
 //===========================================================================
 
