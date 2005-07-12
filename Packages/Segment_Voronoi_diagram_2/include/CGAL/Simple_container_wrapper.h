@@ -62,6 +62,18 @@ public:
 #endif
   }
 
+  iterator find(const value_type& t) const {
+    return c.find(t);
+  }
+
+  bool remove(const value_type& t)
+  {
+    iterator it = c.find(t);
+    if ( it == c.end() ) { return false; }
+    c.erase(it);
+    return true;
+  }
+
   void remove(iterator it)
   {
     c.erase(it);
