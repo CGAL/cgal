@@ -157,7 +157,7 @@ public slots:
   void slotFileSaveAs()
     {
       QString fileName =
-	QFileDialog::getSaveFileName(tr("data.out"), QString::null,
+	QFileDialog::getSaveFileName(tr("data.cin"), QString::null,
 				     window, "Save data as...");
 						      
       if ( !fileName.isNull() ) {
