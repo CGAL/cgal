@@ -211,6 +211,20 @@ public:
     }
   }
 
+  void update_event(Event* e, const Point_2& p)
+  {
+    Point_2& pt = e->get_point();
+    if(pt.is_red_object_null())
+    {
+      pt.set_red_object(p.get_red_object());
+    }
+    else
+      if(pt.is_blue_object_null())
+      {
+        pt.set_blue_object(p.get_blue_object());
+      }
+  }
+
 
       
                   
