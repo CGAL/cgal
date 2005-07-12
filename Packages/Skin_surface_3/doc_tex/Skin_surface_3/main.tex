@@ -18,8 +18,73 @@
 \section{Introduction}
 \label{sectionSkinSurfaceIntro}
 
-Bla bla bla ...
+Skin surfaces, introduced by Edelsbrunner in \cite{e-dssd-99} (TODO: was
+\cite{e-dssd-98}), have a rich and simple combinatorial and geometric
+structure that makes them suitable for modeling large molecules in
+biological computing.  Meshing such surfaces is often required for
+further processing of their geometry, like in numerical simulation and
+visualization.
 
+A skin surface is parameterized by a set of weighted points (input
+balls) and a shrink factor. If the shrink factor is equal to one, the
+surface is just the boundary of the union of the input balls.  If the
+shrink factor decreases, the skin surface becomes tangent continuous,
+due to the appearance of patches of spheres and hyperboloids
+connecting the balls.
+
+This package constructs an isotopic mesh from a set of balls and a
+shrink factor. An optimized algorithm is implemented for meshing the
+union of a set of balls.
+
+\section{Definition}
+A skin surface is defined as the boundary of an infinite set of balls.
+Let ${S}^{(w)}$ be a set of weighted points in $\R^3$. A weighted
+point ${p}^{(w)}=(p,w_p)$ can also be seen as a ball with center $p$
+and squared radius $w_p$. A vector space of weighted points is
+inherited from the bijective map
+\[\Pi({p}^{(w)}) = ({p, \|{p}\|^2-w_p})\]
+where $\|{p}\|$ is the two-norm. Addition of two weighted points and
+the multiplication of a weighted point by a scalar are defined in the
+vector space structure inherited under $\Pi$.
+
+A shrunk weighted point ${p}^{(w)}_{s}$ is obtained by multiplying the
+weight of the weighted point ${p}^{(w)}$ with the scalar $s$:
+${p}^{(w)}_{s}= (p,s w_p)$. A set of weighted points is shrunk by
+shrinking each weighted point seperately.
+
+The skin surface of ${S}^{(w)}$ with shrink factor $s$ is the boundary
+of the weighted points in the convex hull of ${S}^{(w)}$ shrunk by a
+factor $s$:
+\[{\tt skn}_s({S}^{(w)}) =
+\partial({\tt conv}({S}^{(w)}))_s\]
+
+A polyhedral complex called the mixed complex subdivides the skin
+surface into quadric patches (spheres and hyperboloids). A mixed cell
+exists for every simplex in the Regular triangulation. Adding alpha to
+the weight of each weighted point in $S^{(w)}$, does not change the
+mixed complex. For a shrink factor of one, the mixed complex
+degenerates into the Voronoi diagram.
+
+\section{Skin surface mesh}
+The mesh is constructed in several steps:
+\begin{enumerate}
+\item Triangulate the mixed complex
+\item Extract the mesh from the constructed triangulation
+\item Apply modifications to the mesh
+\end{enumerate}
+Each of these steps is of independent interest and we describe them in
+more detail.
+
+\subsection{Triangulation of the mixed complex.}
+
+\subsubsection{Union of balls}
+
+\subsection{Marching tetrahedra}
+\subsection{Modifications to the mesh}
+
+\section{Software Design}
+Back references
+\section{Example programs}
 % EOF
 
 
