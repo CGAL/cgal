@@ -453,6 +453,9 @@ public:
   void _init_point(const Point_2& pt, Attribute type)
   {
     const std::pair<Event*, bool>& pair_res = push_event(pt, type);
+    if(! pair_res.second)
+      m_visitor-> update_event(pair_res.first, pt);
+
     m_visitor -> init_event(pair_res.first);
   }
   

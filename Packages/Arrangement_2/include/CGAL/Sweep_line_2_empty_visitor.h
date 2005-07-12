@@ -137,6 +137,11 @@ public:
 
   void after_sweep(){}
   void after_init(){}
+
+  //// ioslated point falls on existing event
+  //void update_event(Event* e, const Point_2& pt)
+  //{}
+
   void update_event(Event* e,
                     const Point_2& end_point,
                     const X_monotone_curve_2& cv,
@@ -151,6 +156,9 @@ public:
 
   void update_event(Event* e,
                     Subcurve* sc1)
+  {}
+
+  void update_event(Event* e, const Point_2& pt)
   {}
 
 
