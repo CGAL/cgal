@@ -4,6 +4,8 @@
 #include <qlayout.h>
 #include <qlabel.h>
 
+#include "Which_diagram.h"
+
 //************************************
 // Layout_widget
 //************************************
@@ -220,26 +222,51 @@ private:
 
   void get_object_remove_mode(CGAL::Object obj)
   {
-    std::cout << "in remove mode" << std::endl;
-#if 1
+    if ( svd.number_of_vertices() == 0 ) { return; }
+
+    if ( !is_snap_mode ) {
+      Point_2 q;
+
+      if ( CGAL::assign(q, obj) ) {
+	CGAL::Timer timer;
+	SVD_2::Vertex_handle v = svd.nearest_neighbor(q);
+	//      svd.remove(v, is_snap_mode);
+	timer.start();
+	bool success = svd.remove(v);
+	timer.stop();
+	CGAL_CLIB_STD::sprintf(msg, "Removal time: %f", timer.time());
+	if ( success ) {
+	  set_msg(QString("Removal was successful") + " - " + msg);
+	} else {
+	  set_msg("Removal was unsuccessful");
+	}
+	if ( success ) {
+	  svd.is_valid(true, 1);
+	  std::cerr << std::endl;
+	  widget->redraw();
+	}
+      }
+      return;
+    }
+
     if ( svd.number_of_vertices() == 0 ) { return; }
 
     Point_2 p;
     if ( CGAL::assign(p, obj) ) {
       SVD_2::Vertex_handle v = svd.nearest_neighbor(p);
-#if 1
-      std::cout << "degree: " << svd.data_structure().degree(v) << std::endl;
+
+      std::cerr << "degree: " << svd.data_structure().degree(v) << std::endl;
       if ( v->site().is_segment() &&
 	   !v->site().is_input() ) {
-	std::cout << "site: " << v->site() << std::endl;
-	std::cout << "supporting segment: "
+	std::cerr << "site: " << v->site() << std::endl;
+	std::cerr << "supporting segment: "
 		  << v->site().supporting_site().segment() << std::endl;
 	if ( !v->site().is_input(0) ) {
-	  std::cout << "crossing segment for source: "
+	  std::cerr << "crossing segment for source: "
 		    << v->site().crossing_site(0).segment() << std::endl;
 	}
 	if ( !v->site().is_input(1) ) {
-	  std::cout << "crossing segment for target: "
+	  std::cerr << "crossing segment for target: "
 		    << v->site().crossing_site(1).segment() << std::endl;
 	}
 	SVD_2::Vertex_circulator vc = svd.incident_vertices(v);
@@ -250,7 +277,7 @@ private:
 	       vv->site().is_point() &&
 	       (vv->site().point() == v->site().source() ||
 		vv->site().point() == v->site().target()) ) {
-	    std::cout << "degree of endpoint " << vv->site()
+	    std::cerr << "degree of endpoint " << vv->site()
 		      << " : " << svd.data_structure().degree(vv)
 		      << std::endl;
 	  }
@@ -275,28 +302,8 @@ private:
 	}
 	++vc;
       } while ( vc_start != vc );
-#else
-      *widget << CGAL::BLACK;
-      if ( v->is_point() ) {
-	std::cout << v->point() << std::endl;
-	*widget << v->point();
-      } else {
-	std::cout << v->segment() << std::endl;
-	*widget << v->segment();
-      }
-#endif
     }
-#else
-    if ( svd.number_of_vertices() == 0 ) { return; }
 
-    Point_2 q;
-
-    if ( CGAL::assign(q, obj) ) {
-      SVD_2::Vertex_handle v = svd.nearest_neighbor(q);
-      svd.remove(v, is_snap_mode);
-      widget->redraw();
-    }
-#endif
   }
 
 private slots:
@@ -372,7 +379,7 @@ private slots:
     }
 
     //    svd.is_valid(true,1);
-    //    std::cout << std::endl;
+    //    std::cerr << std::endl;
     widget->redraw();
   }
 
@@ -492,6 +499,7 @@ private slots:
     set_msg(qmsg);
 
     svd.is_valid(true, 1);
+    std::cerr << std::endl;
 
     qmsg = qmsg + " done!";
     set_msg(qmsg);
@@ -539,7 +547,7 @@ private slots:
   {
     set_msg("");
     QString fileName =
-      QFileDialog::getSaveFileName(tr("data.out"), QString::null,
+      QFileDialog::getSaveFileName(tr("data.cin"), QString::null,
 				   this, "Save as...");
 
     if ( !fileName.isNull() ) {
@@ -580,11 +588,17 @@ private slots:
     }
   }
 
+  QString extension(CGAL::Tag_true)  const { return "hsvd"; }
+  QString extension(CGAL::Tag_false) const { return "svd"; }
+
   void save_to_file()
   {
     set_msg("");
+
+    QString ext = extension(CGAL::Which_diagram<SVD_2>::Is_hierarchy());
     QString fileName =
-      QFileDialog::getSaveFileName(tr("data.out"), QString::null,
+      QFileDialog::getSaveFileName(QString("data.") + ext,
+				   QString::null,
 				   this, "Save as...");
 
     if ( !fileName.isNull() ) {
