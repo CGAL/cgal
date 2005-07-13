@@ -20,6 +20,8 @@
 #ifndef CGAL_MESHER_LEVEL_DEFAULT_IMPLEMENTATIONS_H
 #define CGAL_MESHER_LEVEL_DEFAULT_IMPLEMENTATIONS_H
 
+#include <CGAL/Mesher_level.h>
+
 namespace CGAL {
 
 /** This class implements the two get_triangulation_ref() functions.
