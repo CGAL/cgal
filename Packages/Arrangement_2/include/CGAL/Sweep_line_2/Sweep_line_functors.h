@@ -188,6 +188,12 @@ class random_access_input_iterator
     return temp;
   }
 
+  random_access_input_iterator& operator--()
+  {
+    --m_index;
+    return *this;
+  }
+
   bool operator==(const random_access_input_iterator& raii)
   {
     CGAL_precondition(m_container == raii.m_container);

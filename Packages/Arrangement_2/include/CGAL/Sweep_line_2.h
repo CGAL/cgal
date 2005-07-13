@@ -560,6 +560,15 @@ void Sweep_line_2<Traits_,
      ++vi;
   }
 
+  //BZBZ
+  // if the two subcurves have a common right-event, 
+  // we can ignore last intersection (re-computing the intersection point
+  // can crash the sweep later with inexact number types
+
+  if(reinterpret_cast<SweepEvent*>(c1->get_right_event()) ==
+     reinterpret_cast<SweepEvent*>(c2->get_right_event()))
+     --vi_end; 
+     
 
   if(after_remove)
   {
