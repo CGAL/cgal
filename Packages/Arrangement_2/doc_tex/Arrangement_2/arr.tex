@@ -1661,13 +1661,451 @@ overlapping sections.}
 %(150, 50) is not a vertex of the planar map. The polyline to which
 %it belongs is an edge of the planar map.
 
+\ccIncludeExampleCode{../examples/Arrangement_2/example12.C}
+
 \section{The Conic Traits Class}
 \label{arr_ssec:tr_conic}
 %-------------------------------
 
+A {\em conic curve} is an algebraic curve of degree 2, namely it
+is the locus of all points $(x,y)$ satisfying the equation $C:\ r
+x^2 + s y^2 + t xy + u x + v y + w = 0$, where the coefficients
+$\langle r, s, t, u, v, w \rangle$ completely characterize the
+curve. The sign of the expression $\Delta_{C} = 4 r s - t^2$
+determines the type of curve:
+\begin{itemize}
+\item If $\Delta_{C} > 0$ the curve is an ellipse. A circle is a
+special case of an ellipse, where $r = s$ and $t = 0$.
+
+\item If $\Delta_{C} = 0$ the curve is a parabola --- an unbounded
+conic curve with a single connected branch. When $r = s = t = 0$
+we have a line, which can be considered as a type of a degenerate
+parabola.
+
+\item If $\Delta_{C} < 0$ the curve is a hyperbola --- that is, it
+is comprised of two disconnected unbounded branches.
+\end{itemize}
+
+As the arrangement package is suitable for bounded curves, we
+consider bounded segments of conic curves, referred to as {\em
+conic arcs}. A conic arc $a$ may be either (i) a full ellipse, or
+(ii) defined by the tuple $\langle C, p_s, p_t, o \rangle$, where
+$C$ is a conic curve and $p_s$ and $p_t$ are two points on $C$
+(namely $C(p_s) = C(p_t) = 0$) that define the {\em source} and
+{\em target} of the arc, respectively. The arc is formed by
+traversing $C$ from the source to the target going in the
+orientation specified by $o$, which is typically clockwise or
+counterclockwise orientation (but may also be collinear in case of
+degenerate conic curves).
+
+We will always assume that the conic coefficients $\langle r, s,
+t, u, v, w \rangle$ are rational. When dealing with linear
+curves(line segments and polylines), similar assumptions guarantee
+that all intersection points also have rational coordinates, such
+that the arrangement of such curves can be constructed and
+maintained using only rational arithmetic. Unfortunately, this
+does not hold for conic curves, as the coordinates of intersection
+points of two conic curves with rational coefficients are in
+general algebraic numbers of degree $4$.\footnote{Namely, they are
+roots of polynomials with integer coefficients of degree $4$.
+However, in some special cases, for example when handling only
+circles and circular arcs, the coordinates of the intersection
+points are only of degree $2$, namely they are solutions of
+quadratic equations.} In addition, conic arcs may not necessarily
+be $x$-monotone, and must be split at points where the tangent to
+the arc is vertical. Such points typically have coordinates that
+are algebraic numbers of degree $2$.
+
+It is therefore clear that we have to use different number types
+to represent the conic coefficients and the point coordinates.
+Note that as arrangement vertices induced by intersection points
+and point with vertical tangents are likely to have algebraic
+coordinates, we also let the original endpoints of the input arcs
+$p_s$ and $p_t$ have algebraic coordinates.
+
+The \ccc{Arr_conic_traits_2<RatKernel, AlgKernel, NtTraits>} class
+template is designed for efficient handling of arrangements of
+bounded conic arcs. The template has three parameters, defined as
+follows:
+\begin{itemize}
+\item The \ccc{RatKernel} class is a geometric kernel whose field
+type is an exact rational type. It is used to define basic
+geometric entities (e.g. a line segment or a circle) with rational
+coefficients. Typically it is one of the standard \cgal\ kernels,
+instantiated with the number type \ccc{NtTraits::Rational} (see
+below).
+
+\item The \ccc{AlgKernel} class is a geometric kernel whose field
+type is an exact algebraic type. It is used to define points with
+algebraic coordinates. Typically it is one of the standard \cgal\
+kernels, instantiated with the number type
+\ccc{NtTraits::Algebraic} (see below).
+
+\item The \ccc{NtTraits} class (the number-type traits class)
+encapsulates all the numeric operations needed for performing the
+geometric computation carried out by the geometric traits class.
+It defines the \ccc{Integer}, \ccc{Rational} and \ccc{Algebraic}
+number-types, and supports several operations on these types, such
+as conversion between number types, solving quadratic equations
+and extracting the real roots of a polynomial with integer
+coefficients. It is highly recommended to use the
+\ccc{CORE_algebraic_number_traits} class, which is included in the
+arrangement package. It relies on the exact number types
+implemented in the {\sc Core} library and performs exact
+computations on the number types it defines.
+\end{itemize}
+
+The \ccc{Arr_conic_traits_2} is a model of the
+\ccc{ArrangementTraits_2} concept and of the the
+\ccc{ArrangementLandmarkTraits_2} concept (that is, it supports
+the landmarks point-location strategy). Its \ccc{Point_2} type is
+derived from \ccc{AlgKernel::Point_2}, while the \ccc{Curve_2}
+type represents a bounded, not necessarily $x$-monotone conic arc.
+The \ccc{X_monotone_curve_2} type is derived from \ccc{Curve_2},
+but its constructors are to be used only by the traits class.
+Users should therefore construct only \ccc{Curve_2} objects and
+insert them into the arrangement using the \ccc{insert()}
+functions.
+
+Conic arcs can be constructed from full ellipses or by specifying
+a supporting curve, two endpoints and an orientation. However,
+several constructors of \ccc{Curve_2} are available to allow some
+special cases, such as circular arcs or line segments. The
+\ccc{Curve_2} (and the derived \ccc{X_monotone_curve_2}) classes
+also support basic accessor functions such as \ccc{source()},
+\ccc{target()} and \ccc{orientation()}.
+
+\subsubsection{Examples}
+%~~~~~~~~~~~~~~~~~~~~~~~
+
+\begin{figure}[t]
+\begin{ccTexOnly}
+\begin{center}
+\input{Arrangement_2/ex_13.pstex_t}
+\end{center}
+\end{ccTexOnly}
+\caption{An arrangement of three circles, as constructed in
+\ccc{example13.C}. Each circle is split into two $x$-monotone
+circular arcs, whose endpoints are drawn as dark dots. White dots
+mark vertices that correspond to intersection points. The vertex
+$v_{\rm max}$ is a common intersection point of all three
+circles.}
+\label{arr_fig:ex_13}
+%\begin{ccHtmlOnly}
+%<P>
+%<center>
+%  <img src="ex_13.gif"  border=0 alt="The circle arrangement constructed in \ccc{example13.C}.">
+%</center>
+%\end{ccHtmlOnly}
+\end{figure}
+
+In the following example we construct an arrangement of three full
+circles. We then look for the vertex of maximal degree, which is
+the vertex associated with the point $(4,3)$, as all three circles
+intersect at this point and it has six incident edges:
+
+\ccIncludeExampleCode{../examples/Arrangement_2/example13.C}
+
+\begin{figure}[t]
+\begin{ccTexOnly}
+\begin{center}
+\input{Arrangement_2/ex_14.pstex_t}
+\end{center}
+\end{ccTexOnly}
+\caption{An arrangement of mixed conic arcs, as constructed in
+\ccc{example14.C}.}
+\label{arr_fig:ex_14}
+%\begin{ccHtmlOnly}
+%<P>
+%<center>
+%  <img src="ex_14.gif"  border=0 alt="The conic arc arrangement constructed in \ccc{example14.C}.">
+%</center>
+%\end{ccHtmlOnly}
+\end{figure}
+
+The following example demonstrates the usage of the various
+constructors for conic arcs. Especially note the constructor of a
+circular arc that accepts three points and the constructor that
+allows specifying endpoints as intersections of the supporting
+conic with two other conic curves. Note that as the preconditions
+required by some of these constructors are rather complicated (see
+the reference manual for the details), a precondition violation
+does not cause the program to terminate --- instead, an {\em
+invalid} arc is created. We can verify the validity of an arc by
+using the \ccc{is_valid()} method. Needless to say, inserting
+invalid arcs into an arrangement is not allowed.
+
+\ccIncludeExampleCode{../examples/Arrangement_2/example14.C}
+
+% RWRW: From Here ...
+
+The last example in this section demonstrates how the conic-traits
+class can handle intersection points with multiplicity. The
+supporting curves of the two arcs, the unit circle $x^2 + y^2 =
+1$, and the hyperbola $y = \frac{x^2}{1+x}$ (RWRW: Check this)
+intersect at the origin such that the intersection point has
+multiplicity $3$ (note that they both have the same horizontal
+tangent at $(0,0)$ and the same curvature $1$). In addtion, they
+have another intersection point at $RWRW: (x?,y?)$ of multiplicity
+$1$:
+
+% RWRW: Here comes example15. (the former example6.C)
+
+\subsection{Traits Class for Arcs of Rational Functions}
+\label{arr_ssec:tr_ratfunc}
+%-------------------------------------------------------
+
+A {\em rational function} is given by the equation $y =
+\frac{P(x)}{Q(x)}$, where $P$ and $Q$ are polynomials of arbitrary
+degrees. In particual, if $Q(x) = 1$ then the function is a simple
+polynomial function. A bounded {\em rational arc} is defined by
+the graph of a rational function over some internal $[x_{\rm min},
+x_{\rm max}]$, where $Q$ does not have any real roots in this
+interval (thus the arc does not contain any poles). Rational
+functions, and polynomial functions in particular, are not only
+interesting in their own right, they are also very useful for
+approximating or interpolating more complicated curves --- see,
+e.g.,~\cite[Chapeter~3]{XXX} (chap. 3 of Numerical Recipes in
+C++).
+
+In order to allow robust and exact computations with rational
+arcs, we require that the coefficient of the polynomials $P$ and
+$Q$ are rational numbers. The $x$-values that determine the
+interval over which the arc is defined can however be arbitrary
+algebraic numbers.
+
+Using the \ccc{Arr_rational_traits_2<RatKernel, AlgKernel,
+NtTraits>} class template it is possible to construct and maintain
+arrangement of rational arcs. The template parameters are very
+similar to the ones used by the \ccc{Arr_conic_traits_2} class
+template --- see the previous section. Also in this case it is
+recommended to use the \ccc{CORE_number_type_traits} class, with a
+kernels templated by its \ccc{Rational} and \ccc{Algberaic} types.
+
+The \ccc{Arr_rational_traits_2} is a model of the
+\ccc{ArrangementTraits_2} concept (but not of the
+\ccc{ArrangementLandmarkTraits_2} concept, so it is not possible
+to use the landmarks point-location strategy for arrangements of
+rational arcs). Its \ccc{Point_2} type is derived from
+\ccc{AlgKernel::Point_2}, while the \ccc{Curve_2} and
+\ccc{X_monotone_curve_2} types refer to the same class (note that
+a rational arc is always $x$-monotone). A rational arc can be
+constructed from a single vector of coefficients, specifying the
+polynomial $P$ alone (and $Q(x) = 1$), or from two vectors of
+coefficients, specifying both $P$ and $Q$.
+
+The following example demonstrates the constrcution of an
+arrangement of rational arcs:
+
+% RWRW: Here comes example16. (the former example10.C ??)
+
+\subsection{Meta-Traits Classes}
+\label{arr_ssec:meta_tr}
+%-------------------------------
+
+Meta-traits classes serve as {\em decorators} of other geometric
+traits classes. They allow attaching user-defined data to curves
+(and to points), and automatically manipulate this data,
+distributing it to the geometric entities that are constructed. We
+note that additional information can also be maintained by
+extending the vertex, halfedge, or face types provided of the
+\dcel\ class used by the arrangement --- see the details in
+Section~\ref{arr_sec:???}.
+
+The two meta-traits classes
+\ccc{Arr_consolidated_curve_data_traits_2<BaseTraits, Data>} and
+the \ccc{Arr_merged_curve_data_traits_2<BaseTraits, Data,
+MergeFunc>} are used to attach a data field to curves. Both
+classes are templated by a base-traits class, which is one of the
+geometric traits classes described in the previous subsections, or
+a user-defined traits class. The meta-traits classes derive
+themselves from the base-traits class and in particular inherit it
+\ccc{Point_2} type. In addition:
+\begin{itemize}
+\item \ccc{Cruve_2} is derived from the basic \ccc{BaseTraits::Curve_2}
+class, adding an extra field of type \ccc{Data} to it.
+
+\item \ccc{X_monotone_cruve_2} is derived from the basic
+\ccc{BaseTraits::X_monotone_cruve_2} class, adding a container of
+\ccc{Data} objects in case of the consolidated curve-data traits
+class, or a single field of type \ccc{Data} in case of the merged
+curve-data traits class.
+\end{itemize}
+Note that the \ccc{Cruve_2} and \ccc{X_monotone_cruve_2} are not
+the same, even if the \ccc{BaseTraits::Curve_2} and
+\ccc{BaseTraits::X_monotone_cruve_2} are identical (e.g., in case
+of the segment-traits class). The extended curve types support the
+additional methods \ccc{get_data()} and \ccc{set_data()} for
+accessing and modifying the data field. In case of multiple data
+fields, the functions \ccc{data_begin()} and \ccc{data_end()}
+return \ccc{Data_iterator} objects for accessing the data fields,
+while \ccc{add_data()} and \ccc{clear_data()} can be used to
+manipulate the data fields.
+
+Users can create a curve (or an $x$-monotone curve) from a basic
+curve and a data object. When curves are inserted to an
+arrangement, they may be split, and the meta-traits class handles
+their data fields automatically:
+\begin{itemize}
+\item When a curve is subdivided into $x$-monotone subcurves, its
+data field is automatically copied to each of the resulting
+subcurves.
+
+\item When an $x$-monotone curve is split into two, the meta-traits
+class automatically copies its data field(s) to both resulting
+subcurves.
+
+\item When intersecting two $x$-monotone curves $c_1$ and $c_2$, the
+result may include overlapping sections, represented as
+$x$-monotone curves. The only difference between the two
+curve-data traits classes is the way they handle this overlapping
+curves:
+\begin{itemize}
+\item \ccc{Arr_consolidated_curve_data_traits_2} simply associates the
+overlapping curves with a container of data objects which
+consolidates the data fields stored in $c_1$ and $c_2$.
+
+\item \ccc{Arr_merged_curve_data_traits_2} takes the two data fields of
+$c_1$ and $c_2$ and merges them into a single \ccc{Data} object,
+using the \ccc{MergeFunc} functor, which is supplied as a
+parameter to the traits class-template. The resulting object is
+assigned to the data field of the overlapping subcurves.
+\end{itemize}
+\end{itemize}
+
+In the following example, we use \ccc{Arr_segment_traits_2} as our
+base-traits class, attaching an additional {\em color} field to
+the segments using the consolidated curve-data traits class. A
+color may be either {\em blue} or {\em red}. Having constructed
+the arrangement of colored segments, we detect the vertices that
+have both incident blue edges and incident red edges, thus they
+correspond to red--blue intersection points. We also locate the
+edges that correspond to overlaps between red and blue line
+segments:
+
+% RWRW: Here comes example17.  (the former example8.C ??)
+
+In the following example, we use \ccc{Arr_polyline_traits_2} as
+our base-traits class, attaching an additional {\em name} field to
+each polyline using the merged curve-data traits class. In case of
+overlaps, we simply concatenate the names of the overlapping
+polylines. Also notice how we replace the curve associated with
+one of the edges with a geometrically equivalent curve with a
+different data field:
+
+% RWRW: Here comes example18.
+
 \section{The Notification Mechanism}
 \label{arr_sec:notif}
 %===================================
+
+It is highly important for some applications to know exactly what
+happens inside an arrangement instance. For example, when we
+insert a new curve into an arrangement we may want to keep track
+of the faces that are split due to this insertion operation. The
+various point-location strategies that require auxiliary data
+structures (see Section~\ref{arr_ssec:pl}) must be notifies on
+various local changes in the arrangement in order to keep their
+data structures up-to-date. The arrangement package offers a
+mechanism that uses {\em observers} that can be attached to an
+arrangement instance and receive notifications about the changes
+this arrangement goes through.
+
+The \ccc{Arr_observer<Arrangement>} class-template is
+parameterized with an arrangement class. It stores a pointer to an
+arrangement object, and is capable of receiving notifications {\em
+just before} a structural change occurs in the arrangement and
+{\em immediately after} such a change takes place.
+\ccc{Arr_observer} serves as a base class for other observer
+classes and defines a set of virtual notification functions,
+giving them all a default empty implementation.
+
+The set of functions can be divided into three categories, as
+follows:
+\begin{enumerate}
+\item Notifiers of changes that affect the entire topological structure
+of the arrangement. This category consists of two pairs that
+notify the observer of the following changes:
+\begin{itemize}
+\item The arrangement is cleared.
+\item The arrangement is assigned with the contents of another
+arrangement.
+\end{itemize}
+\item Pairs of notifiers of a local change that occurs in the
+topological structure. Most notifier functions belong to this
+category, were the relevant local changes include:
+\begin{itemize}
+\item A new vertex is constructed and associated with a point.
+\item A edge\footnote{The term ``edge'' refers to a pair of twin
+half-edges.} is constructed and associated with an $x$-monotone
+curve.
+\item An edge is split into two.
+\item An existing face is split into two, following the insertion of a
+new edge.
+\item A hole is created in the interior of a face.
+\item Two holes are merged to form a single hole, following the
+insertion of a new edge.
+\item A hole is moved from one face to another (following a face split).
+\item Two edges are merged into one.
+\item Two faces are merged into one, following the deletion of an edge
+that used to separate them.
+\item One hole is split into two, following the deletion of an edge that
+used to connect the two components.
+\item A vertex is deleted.
+\item An edge is deleted.
+\item A hole is deleted from the interior of a face.
+\end{itemize}
+\item Notifiers about a global change initiated by a global function.
+This category consists of a single pair of notifiers, neither of
+them is called by methods of the \ccc{Arrangement_2} class, but
+are invoked by the global functions themselves. It is implied that
+no point-location queries (or any other queries for that matter)
+are issued between the calls to the \ccc{before_global_change()}
+and \ccc{after_global_change()} notification functions.
+\end{enumerate}
+See the reference manual for a detailed specification of the
+\ccc{Arr_observer} class, along with the exact prototypes of all
+notification functions.
+
+Each arrangement object stores a list of pointers to
+\ccc{Arr_observer} objects, and whenever one of the structural
+changes listed in the first two categories above is about to take
+place, the arrangement object performs a {\em forward} traversal
+of this list and invokes the appropriate function of each
+observer. After the change takes place the observer list is
+traversed in a {\em backward} manner (from tail to head) and the
+appropriate notification function is invoked for each observer.
+This allows the nesting of observer objects.
+
+Concrete arrangement observer classes should inherit from the
+\ccc{Arr_observer}. A pointer to a valid arrangement object should
+be supplied at the observer construction, or alternatively the
+observer can be attached to a valid arrangement at a later time.
+When this happens, the observer instance adds itself to the
+observer list of the associated arrangement and starts receiving
+notifications whenever the this arrangement changes. Naturally,
+the observer object unregisters itself by removing itself from
+this list just before it is destroyed.
+
+The trapezoidal RIC and the landmarks point-location strategies
+both use observer to keep their auxiliary data structures
+up-to-date. Besides them, users can define their own observer
+classes, by inheriting from the base observer class and overriding
+the relevant notification functions, as required by their
+applications.
+
+The following example shows how to define and use an observer
+class. In this case, the observer keeps track of the arrangement
+faces, and prints a message whenever a face is split into two due
+to the insertion of an edge, and whenever two face merge into one
+due to the deletion of an edge:
+
+% RWRW: Here comes example19. (the former example2.C)
+
+Observers are especially useful when the \dcel\ records are
+extended and store additional data, as they help updating this
+data on-line. See Section~\ref{arr_sec:???} for more details and
+examples.
 
 \section{Extending the \dcel}
 \label{arr_sec:ex_dcel}
