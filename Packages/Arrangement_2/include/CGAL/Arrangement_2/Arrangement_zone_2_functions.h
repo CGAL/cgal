@@ -181,9 +181,6 @@ void Arrangement_zone_2<Arrangement,ZoneVisitor>::compute_zone ()
     // zone as well.
     if (! done && found_overlap)
     {
-      // Remove the overlap from the map.
-      _remove_next_intersection (intersect_he);
-
       done = _zone_in_overlap();
     }
   }

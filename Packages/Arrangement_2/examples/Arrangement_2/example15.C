@@ -6,6 +6,8 @@
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Arr_naive_point_location.h>
 
+#include "arr_print.h"
+
 typedef CGAL::CORE_algebraic_number_traits            Nt_traits;
 typedef Nt_traits::Rational                           Rational;
 typedef Nt_traits::Algebraic                          Algebraic;
@@ -45,10 +47,8 @@ int main ()
   
   insert (arr, pl, cv2);
 
-  // Print out the number of vertices, edges and faces in the arrangement.
-  std::cout << "V = " << arr.number_of_vertices()
-            << ",  E = " << arr.number_of_edges() 
-            << ",  F = " << arr.number_of_faces() << std::endl;
+  // Print the resulting arrangement.
+  print_arrangement (arr);
 
   return (0);
 }
