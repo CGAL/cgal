@@ -14,8 +14,8 @@ typedef Rat_kernel::Point_2                           Rat_point_2;
 typedef Rat_kernel::Circle_2                          Rat_circle_2;
 typedef CGAL::Cartesian<Algebraic>                    Alg_kernel;
 typedef CGAL::Arr_conic_traits_2<Rat_kernel, 
-				 Alg_kernel,
-				 Nt_traits>           Traits_2;
+                                 Alg_kernel,
+                                 Nt_traits>           Traits_2;
 typedef Traits_2::Point_2                             Point_2;
 typedef Traits_2::Curve_2                             Conic_arc_2;
 typedef CGAL::Arrangement_2<Traits_2>                 Arrangement_2;

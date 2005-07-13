@@ -1,173 +1,86 @@
 // file: examples/Arrangement_2/example19.C
 
-
-//#include "short_names.h"
-
 #include <CGAL/Cartesian.h>
-#include <CGAL/CORE_algebraic_number_traits.h>
-#include <CGAL/Arr_conic_traits_2.h>
+#include <CGAL/Quotient.h>
+#include <CGAL/MP_Float.h>
+#include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Arr_naive_point_location.h>
-#include <CGAL/Arr_walk_along_line_point_location.h>
-#include <CGAL/Timer.h>
+#include <CGAL/Arr_observer.h>
 
-typedef CGAL::CORE_algebraic_number_traits            Nt_traits;
-typedef Nt_traits::Rational                           Rational;
-typedef Nt_traits::Algebraic                          Algebraic;
-typedef CGAL::Cartesian<Rational>                     Rat_kernel;
-typedef CGAL::Cartesian<Algebraic>                    Alg_kernel;
-typedef CGAL::Arr_conic_traits_2<Rat_kernel, 
-				 Alg_kernel,
-				 Nt_traits>           Traits_2;
+typedef CGAL::Quotient<CGAL::MP_Float>                Number_type;
+typedef CGAL::Cartesian<Number_type>                  Kernel;
+typedef CGAL::Arr_segment_traits_2<Kernel>            Traits_2;
 typedef Traits_2::Point_2                             Point_2;
-typedef Traits_2::Curve_2                             Conic_arc_2;
-typedef std::list<Conic_arc_2>                        Conic_arcs_list;
+typedef Traits_2::X_monotone_curve_2                  Segment_2;
 typedef CGAL::Arrangement_2<Traits_2>                 Arrangement_2;
-typedef CGAL::Arr_naive_point_location<Arrangement_2>           Naive_pl;
-typedef CGAL::Arr_walk_along_line_point_location<Arrangement_2> Walk_pl;
+typedef CGAL::Arr_naive_point_location<Arrangement_2> Point_location;
 
-int main (int argc, char **argv)
+// An arrangement observer, used to receive notifications of face splits and
+// face mergers.
+class My_observer : public CGAL::Arr_observer<Arrangement_2>
 {
-  // Check the number of program arguments.
-  if (argc < 3)
-  {
-    std::cerr << "Usage: " << argv[0] << " <file name> <method>"
-	      << std::endl
-	      << "method is either:" << std::endl
-	      << "    -a for aggragated insertion;" << std::endl
-	      << "    -n for incremental insertion with naive point-location;"
-	      << std::endl
-	      << "    -w for incremental insertion with walk point-location." 
-	      << std::endl;
+public:
 
-    return (1);
+  My_observer (Arrangement_2& arr) :
+    CGAL::Arr_observer<Arrangement_2> (arr)
+  {}
+
+  virtual void before_split_face (Face_handle,
+                                  Halfedge_handle e)
+  {
+    std::cout << "-> The insertion of :  [ " << e->curve()
+              << " ]  causes a face to split." << std::endl;
   }
 
-  // Decide on the operation.
-  bool       inc_insert = true;
-  bool       use_naive_pl = true;
-
-  if ((strcmp (argv[2], "-A") == 0) || (strcmp (argv[2], "-a") == 0))
+  virtual void before_merge_face (Face_handle,
+                                  Face_handle,
+                                  Halfedge_handle e)
   {
-    inc_insert = false;
-  }
-  else if ((strcmp (argv[2], "-W") == 0) || (strcmp (argv[2], "-w") == 0))
-  {
-    use_naive_pl = false;
-  }
-  else if ((strcmp (argv[2], "-N") != 0) && (strcmp (argv[2], "-n") != 0))
-  {
-    std::cerr << "Invalid insertion method: " << argv[2] << std::endl;
-    return (1);
+    std::cout << "-> The removal of :  [ " << e->curve()
+              << " ]  causes two faces to merge." << std::endl;
   }
 
-  // Open the input file.
-  std::ifstream     in_file (argv[1]);
+};
 
-  if (! in_file.is_open())
-  {
-    std::cerr << "Failed to open " << argv[1] << " ..." << std::endl;
-    return (1);
-  }
+int main ()
+{
+  // Construct the arrangement containing one diamond-shaped face.
+  Arrangement_2  arr;
+  My_observer    obs (arr);
+  Point_location pl (arr);
 
-  // Read the ellipses from the file.
-  // The input file format should be:
-  // <n>                                 // number of ellipses.
-  // f <r1_1> <r2_1>  <x0_1> <y0_1>      // raddi and center of ellipse #1.
-  // f <r1_2> <r2_2>  <x0_2> <y0_2>      // raddi and center of ellipse #2.
-  //   :      :       :      :
-  // f <r1_n> <r2_n>  <x0_n> <y0_n>      // raddi and center of ellipse #n.
-  int                n;
-  Conic_arcs_list    ellipses;
-  int                x0, y0, r1, r2;
-  Rational           sqr_r1, sqr_r2;
-  Rational           R, S, T, U, V, W;
-  char               c;
-  int                i;
+  Segment_2      s1 (Point_2(-1, 0), Point_2(0, 1));
+  Segment_2      s2 (Point_2(0, 1), Point_2(1, 0));
+  Segment_2      s3 (Point_2(1, 0), Point_2(0, -1));
+  Segment_2      s4 (Point_2(0, -1), Point_2(-1, 0));
 
-  in_file >> n;
-  for (i = 0; i < n; i++)
-  {
-    do
-    {
-      in_file >> c;
-    } while (c != 'f' && c != 'F');
+  insert_non_intersecting (arr, pl, s1);
+  insert_non_intersecting (arr, pl, s2);
+  insert_non_intersecting (arr, pl, s3);
+  insert_non_intersecting (arr, pl, s4);
 
-    in_file >> r1 >> r2 >> x0 >> y0;
+  // Insert a vertical segment dividing the diamond into two, and a
+  // a horizontal segment dividing the diamond into four:
+  Segment_2      s_vert (Point_2(0, -1), Point_2(0, 1));
+  Arrangement_2::Halfedge_handle
+                 e_vert = insert_non_intersecting (arr, pl, s_vert);
 
-    sqr_r1 = Rational (r1*r1);
-    sqr_r2 = Rational (r2*r2);
-    R = sqr_r2;
-    S = sqr_r1;
-    T = 0;
-    U = -2 * sqr_r2 * x0;
-    V = -2 * sqr_r1 * y0;
-    W = sqr_r2*x0*x0 + sqr_r1*y0*y0 - sqr_r1*sqr_r2;
+  Segment_2      s_horiz (Point_2(-1, 0), Point_2(1, 0));
 
-    ellipses.push_back (Conic_arc_2 (R, S, T, U, V, W));
-  }
+  insert (arr, pl, s_horiz);
 
-  // Close the input file.
-  in_file.close();
-
-  // Construct the arrangement.
-  Arrangement_2                    arr;
-  CGAL::Timer                      timer;
-
-  if (inc_insert)
-  {
-    if (use_naive_pl)
-    {
-      // Perform incremental insertion with the naive point-location strategy.
-      Naive_pl                         pl (arr);
-      Conic_arcs_list::const_iterator  iter;
-
-      std::cout << "Performing incremental insertion (with naive PL) of " 
-		<< n << " ellipses." << std::endl;
-
-      timer.start();
-      for (iter = ellipses.begin(); iter != ellipses.end(); ++iter)
-      {
-	insert (arr, pl, *iter);
-      }
-      timer.stop();
-    }
-    else
-    {
-      // Perform incremental insertion with the walk point-location strategy.
-      Walk_pl                          pl (arr);
-      Conic_arcs_list::const_iterator  iter;
-
-      std::cout << "Performing incremental insertion (with walk PL) of " 
-		<< n << " ellipses." << std::endl;
-
-      timer.start();
-      for (iter = ellipses.begin(); iter != ellipses.end(); ++iter)
-      {
-	insert (arr, pl, *iter);
-      }
-      timer.stop();
-    }
-  }
-  else
-  {
-    // Perform aggregated insertion.
-    std::cout << "Performing aggregated insertion of " 
-	      << n << " ellipses." << std::endl;
-
-    timer.start();
-    insert (arr, ellipses.begin(), ellipses.end());
-    timer.stop();
-  }
-
-  // Print the arrangement dimensions.
   std::cout << "V = " << arr.number_of_vertices()
-	    << ",  E = " << arr.number_of_edges() 
-	    << ",  F = " << arr.number_of_faces() << std::endl << std::endl;
+            << ",  E = " << arr.number_of_edges() 
+            << ",  F = " << arr.number_of_faces() << std::endl;
 
-  std::cout << "Construction took " << timer.time() 
-	    << " seconds." << std::endl;
+  // Now remove a portion of the vertical segment.
+  remove_edge (arr, e_vert);
+ 
+  std::cout << "V = " << arr.number_of_vertices()
+            << ",  E = " << arr.number_of_edges() 
+            << ",  F = " << arr.number_of_faces() << std::endl;
 
-  return 0;
+  return (0);
 }
 

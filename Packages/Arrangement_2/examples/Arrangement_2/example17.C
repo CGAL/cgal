@@ -1,138 +1,120 @@
-// file: examples/Arrangement_2/example1.C
-
-
-//#include "short_names.h"
+// file: examples/Arrangement_2/example17.C
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Gmpq.h>
 #include <CGAL/Arr_segment_traits_2.h>
+#include <CGAL/Arr_consolidated_curve_data_traits_2.h>
 #include <CGAL/Arrangement_2.h>
-#include <CGAL/Arr_naive_point_location.h>
-#include <CGAL/Arr_walk_along_line_point_location.h>
-#include <CGAL/Arr_observer.h>
+#include <CGAL/Arr_landmarks_point_location.h>
 
-typedef CGAL::Gmpq                                    Number_type;
-typedef CGAL::Cartesian<Number_type>                  Kernel;
-typedef CGAL::Arr_segment_traits_2<Kernel>            Traits_2;
-typedef Traits_2::Point_2                             Point_2;
-typedef Traits_2::X_monotone_curve_2                  Segment_2;
-typedef CGAL::Arrangement_2<Traits_2>                 Arrangement_2;
-typedef Arrangement_2::Halfedge_handle                Halfedge_handle;
-typedef Arrangement_2::Halfedge_const_handle          Halfedge_const_handle;
-typedef CGAL::Arr_walk_along_line_point_location<Arrangement_2> Point_location;
+enum Segment_color
+{
+  RED,
+  BLUE
+};
+
+typedef CGAL::Gmpq                                        Number_type;
+typedef CGAL::Cartesian<Number_type>                      Kernel;
+typedef CGAL::Arr_segment_traits_2<Kernel>                Segment_traits_2;
+typedef Segment_traits_2::Curve_2                         Segment_2;
+typedef CGAL::Arr_consolidated_curve_data_traits_2
+                   <Segment_traits_2, Segment_color>      Traits_2;
+typedef Traits_2::Point_2                                 Point_2;
+typedef Traits_2::Curve_2                                 Colored_segment_2;
+typedef CGAL::Arrangement_2<Traits_2>                     Arrangement_2;
+typedef CGAL::Arr_landmarks_point_location<Arrangement_2> Landmarks_pl;
 
 int main ()
 {
-  // Construct the arrangement using the specialized insertion functions.
-  Arrangement_2  arr;
-  Point_location pl(arr);
-  
-  Segment_2       cv1 (Point_2(0, 1), Point_2(6, 9));
-  Segment_2       cv2 (Point_2(6, 9), Point_2(6, 1));
-  Segment_2       cv3 (Point_2(0, 1), Point_2(6, 1));
-  
-  Segment_2       cv4 (Point_2(4, 4), Point_2(7, 7));
-  Segment_2       cv5 (Point_2(7, 7), Point_2(8, 0));
-  Segment_2       cv6 (Point_2(8, 0), Point_2(4, 4));
-  
-  Segment_2       cv7 (Point_2(5, 3), Point_2(5, 5));
+  // Construct an arrangement containing three RED line segments.
+  Arrangement_2     arr;
+  Landmarks_pl      pl (arr);
 
-  insert(arr, pl, cv1);
-  insert(arr, pl, cv2);
-  insert(arr, pl, cv3);
-  insert(arr, pl, cv4);
-  insert(arr, pl, cv5);
-  insert(arr, pl, cv6);
-  insert(arr, pl, cv7);
+  Segment_2         s1 (Point_2(-1, -1), Point_2(1, 3));
+  Segment_2         s2 (Point_2(2, 0), Point_2(3, 3));
+  Segment_2         s3 (Point_2(0, 3), Point_2(2, 5));
 
-  CGAL::Object obj = pl.locate (Point_2 (Number_type (11, 2), 
-					 Number_type (11, 2)));
-  Halfedge_const_handle h;
-  if (CGAL::assign(h, obj))
+  insert (arr, pl, Colored_segment_2 (s1, RED));
+  insert (arr, pl, Colored_segment_2 (s2, RED));
+  insert (arr, pl, Colored_segment_2 (s3, RED));
+
+  // Insert three BLUE line segments.
+  Segment_2         s4 (Point_2(-1, 3), Point_2(4, 1));
+  Segment_2         s5 (Point_2(-1, 0), Point_2(4, 1));
+  Segment_2         s6 (Point_2(-2, 1), Point_2(1, 4));
+
+  insert (arr, pl, Colored_segment_2 (s4, BLUE));
+  insert (arr, pl, Colored_segment_2 (s5, BLUE));
+  insert (arr, pl, Colored_segment_2 (s6, BLUE));
+
+  // Go over all vertices and print just the ones corresponding to intersection
+  // points between RED segments and BLUE segments. Note that we skip endpoints
+  // of overlapping sections.
+  Arrangement_2::Vertex_const_iterator   vit;
+  Segment_color                          color;
+
+  for (vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit)
   {
-    arr.remove_edge (arr.non_const_handle(h));
-  }
+    // Go over the incident edges of the current vertex and examine their
+    // colors.
+    bool       has_red = false;
+    bool       has_blue = false;
 
-  obj = pl.locate (Point_2 (Number_type (11, 2), 
-			    Number_type (5, 2)));
-  if (CGAL::assign(h, obj))
-  {
-    arr.remove_edge (arr.non_const_handle(h));
-  }
-  
-  // Print the arrangement vertices.
-  Arrangement_2::Vertex_const_iterator  vit;
-  Arrangement_2::Vertex_const_handle    vh;
-  int                                   i, j;
+    Arrangement_2::Halfedge_around_vertex_const_circulator  eit, first;
 
-  std::cout << arr.number_of_vertices() << " vertices:" << std::endl;
-  for (i = 1, vit = arr.vertices_begin();
-       vit != arr.vertices_end(); vit++, i++)
-  {
-    vh = vit;
-    std::cout << '\t' << i << ": " << vh->point() << std::endl;
-  }
-  std::cout << std::endl;
-
-  // Print the arrangement edges.
-  Arrangement_2::Edge_const_iterator    eit;
-  Arrangement_2::Halfedge_const_handle  hh;
-
-  std::cout << arr.number_of_edges() << " edges:" << std::endl;
-  for (i = 1, eit = arr.edges_begin(); eit != arr.edges_end(); eit++, i++)
-  {
-    hh = eit->handle();
-    std::cout << '\t' << i << ": " << hh->curve() << std::endl;
-  }
-  std::cout << std::endl;
-
-  // Print the arrangement faces.
-  Arrangement_2::Face_const_iterator           fit;
-  Arrangement_2::Face_const_handle             fh;
-  Arrangement_2::Ccb_halfedge_const_circulator ccb;
-  Arrangement_2::Holes_const_iterator          hoit;
-
-  std::cout << arr.number_of_faces() << " faces." << std::endl;
-  for (i = 1, fit = arr.faces_begin(); fit != arr.faces_end(); fit++, i++)
-  {
-    // Print the outer boundary of the face.
-    fh = fit;
-    std::cout << '\t' << i << ": ";
-    if (fh->is_unbounded())
+    eit = first = vit->incident_halfedges();
+    do
     {
-      std::cout << "Unbounded face." << std::endl;
-    }
-    else
-    {
-      ccb = fh->outer_ccb();
-      std::cout << ccb->source()->point();
-      do
+      // Get the color of the current half-edge.
+      if (eit->curve().number_of_data_objects() == 1)
       {
-        std::cout << " -> " << ccb->target()->point();
-        ccb++;
-      } while (ccb != fh->outer_ccb());
-      std::cout << std::endl;
-    }
+        color = eit->curve().get_data();
 
-    // Print the holes.
-    for (j = 1, hoit = fh->holes_begin(); hoit != fh->holes_end(); hoit++, j++)
+        if (color == RED)
+          has_red = true;
+        else if (color == BLUE)
+          has_blue = true;
+      }
+
+      ++eit;
+    } while (eit != first);
+
+    // Print the vertex only if incident RED and BLUE edges were found.
+    if (has_red && has_blue)
     {
-      std::cout << "\t\tHole " << i << ": ";
-      ccb = *hoit;
-      std::cout << ccb->source()->point();
-      do
-      {
-        std::cout << " -> " << ccb->target()->point();
-        ccb++;
-      } while (ccb != *hoit);
-      std::cout << std::endl;
+      std::cout << "Red-blue intersection at (" << vit->point() << ")" 
+                << std::endl;
     }
   }
-  std::cout << std::endl;
 
+  // Locate the edges that corrspond to a red-blue overlap.
+  Arrangement_2::Edge_iterator   eit;
 
-  
-  
+  for (eit = arr.edges_begin(); eit != arr.edges_end(); ++eit)
+  {
+    // Go over the incident edges of the current vertex and examine their
+    // colors.
+    bool       has_red = false;
+    bool       has_blue = false;
+
+    Traits_2::X_monotone_curve_2::Data_const_iterator       dit;
+
+    for (dit = eit->curve().data_begin();
+         dit != eit->curve().data_end(); ++dit)
+    {
+      if (*dit == RED)
+        has_red = true;
+      else if (*dit == BLUE)
+        has_blue = true;	
+    }
+
+    // Print the edge only if it corresponds to a red-blue overlap.
+    if (has_red && has_blue)
+    {
+      std::cout << "Red-blue overlap at [" << eit->curve() << "]" 
+                << std::endl;
+    }
+  }
+
   return (0);
 }
-
