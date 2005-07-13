@@ -34,8 +34,9 @@ int main ()
   // Perform an incremental insertion of a single overlapping segment.
   Naive_pl          pl (arr);
   
-  insert_x_monotone (arr, pl,
-                     Segment_2 (Point_2 (0, 2.5), Point_2 (4, 2.5)));
+  insert_x_monotone (arr, 
+                     Segment_2 (Point_2 (0, 2.5), Point_2 (4, 2.5)),
+                     pl);
 
   // Aggregately insert an additional set of five segments.
   Segment_2         S2 [5];

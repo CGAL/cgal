@@ -36,7 +36,7 @@ int main ()
   Point_2        pt1 (Rational(1,2), Rational(1,2));
   Conic_arc_2    cv1 (1, 0, 1, 0, -1, 0, CGAL::COUNTERCLOCKWISE, ps1, pt1);
 
-  insert (arr, pl, cv1);
+  insert (arr, cv1, pl);
 
   // Insert the bottom half of the circle centered at (0, 1/2) whose radius
   // is 1/2 (therefore its squared radius is 1/4).
@@ -45,7 +45,7 @@ int main ()
   Point_2        pt2 (Rational(1,2), Rational(1,2));
   Conic_arc_2    cv2 (circ2, CGAL::COUNTERCLOCKWISE, ps2, pt2);
   
-  insert (arr, pl, cv2);
+  insert (arr, cv2, pl);
 
   // Print the resulting arrangement.
   print_arrangement (arr);

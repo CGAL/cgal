@@ -28,11 +28,11 @@ int main ()
   Segment_2      s4 (Point_2(0, 2), Point_2(6, 0));
   Segment_2      s5 (Point_2(3, 0), Point_2(5, 5));
 
-  insert_non_intersecting (arr, pl, s1);
-  insert_non_intersecting (arr, pl, s2);
-  insert_x_monotone (arr, pl, s3);
-  insert_x_monotone (arr, pl, s4);
-  insert (arr, pl, s5);
+  insert_non_intersecting (arr, s1, pl);
+  insert_non_intersecting (arr, s2, pl);
+  insert_x_monotone (arr, s3, pl);
+  insert_x_monotone (arr, s4, pl);
+  insert (arr, s5, pl);
 
   // Print the size of the arrangement.
   std::cout << "V = " << arr.number_of_vertices()

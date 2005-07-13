@@ -4,7 +4,6 @@
 #include <CGAL/CORE_algebraic_number_traits.h>
 #include <CGAL/Arr_conic_traits_2.h>
 #include <CGAL/Arrangement_2.h>
-#include <CGAL/Arr_walk_along_line_point_location.h>
 
 typedef CGAL::CORE_algebraic_number_traits            Nt_traits;
 typedef Nt_traits::Rational                           Rational;
@@ -19,7 +18,6 @@ typedef CGAL::Arr_conic_traits_2<Rat_kernel,
 typedef Traits_2::Point_2                             Point_2;
 typedef Traits_2::Curve_2                             Conic_arc_2;
 typedef CGAL::Arrangement_2<Traits_2>                 Arrangement_2;
-typedef CGAL::Arr_walk_along_line_point_location<Arrangement_2>  Walk_pl;
 
 int main ()
 {
@@ -43,11 +41,10 @@ int main ()
 
   // Construct the arrangement of the three circles.
   Arrangement_2    arr;
-  Walk_pl          pl (arr);
 
-  insert (arr, pl, cv1);
-  insert (arr, pl, cv2);
-  insert (arr, pl, cv3);
+  insert (arr, cv1);
+  insert (arr, cv2);
+  insert (arr, cv3);
   
   // Locate the vertex with maximal degree.
   Arrangement_2::Vertex_const_iterator  vit;
