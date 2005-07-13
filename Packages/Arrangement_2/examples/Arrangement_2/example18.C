@@ -1,107 +1,222 @@
-// file: examples/Arrangement_2/example18.C
+// file: examples/Arrangement_2/example14.C
 
 
 //#include "short_names.h"
 
 #include <CGAL/Cartesian.h>
-#include <CGAL/CORE_algebraic_number_traits.h>
-#include <CGAL/Arr_conic_traits_2.h>
+#include <CGAL/MP_Float.h>
+#include <CGAL/Quotient.h>
+#include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Arr_naive_point_location.h>
+#include <CGAL/Arr_observer.h>
 
-typedef CGAL::CORE_algebraic_number_traits            Nt_traits;
-typedef Nt_traits::Rational                           Rational;
-typedef Nt_traits::Algebraic                          Algebraic;
-typedef CGAL::Cartesian<Rational>                     Rat_kernel;
-typedef Rat_kernel::Point_2                           Rat_point_2;
-typedef Rat_kernel::Segment_2                         Rat_segment_2;
-typedef Rat_kernel::Circle_2                          Rat_circle_2;
-typedef CGAL::Cartesian<Algebraic>                    Alg_kernel;
-typedef CGAL::Arr_conic_traits_2<Rat_kernel, 
-				 Alg_kernel,
-				 Nt_traits>           Traits_2;
+typedef CGAL::Quotient<CGAL::MP_Float>                Number_type;
+typedef CGAL::Cartesian<Number_type>                  Kernel;
+typedef CGAL::Arr_segment_traits_2<Kernel>            Traits_2;
 typedef Traits_2::Point_2                             Point_2;
-typedef Traits_2::Curve_2                             Conic_arc_2;
+typedef Traits_2::X_monotone_curve_2                  Segment_2;
 typedef CGAL::Arrangement_2<Traits_2>                 Arrangement_2;
+typedef Arrangement_2::Halfedge_handle                Halfedge_handle;
 typedef CGAL::Arr_naive_point_location<Arrangement_2> Point_location;
+
+class My_observer : public CGAL::Arr_observer<Arrangement_2>
+{
+public:
+
+  My_observer (Arrangement_2& arr) :
+    CGAL::Arr_observer<Arrangement_2> (arr)
+  {}
+
+  virtual void before_split_face (Face_handle,
+                                  Halfedge_handle e)
+  {
+    std::cout << "-> New face, caused by: " << e->curve() << std::endl;
+  }
+
+  virtual void after_modify_edge (Halfedge_handle e)
+  {
+    std::cout << "-> Existing edge " << e->curve() 
+	      << " has just been modified." << std::endl;
+  }
+
+};
 
 int main ()
 {
-  Arrangement_2    arr;
+  // Construct the arrangement using the specialized insertion functions.
+  Arrangement_2  arr;
+  My_observer    obs (arr);
+
+  Segment_2       cv1 (Point_2(1.0, 0.0), Point_2(3.0, 2.0));
+  Segment_2       cv2 (Point_2(4.0, -1.0), Point_2(3.0, -2.0));
+  Segment_2       cv3 (Point_2(4.0, -1.0), Point_2(1.0, 0.0));
+  Segment_2       cv4 (Point_2(1.0, 0.0), Point_2(4.0, 1.0));
+  Segment_2       cv5 (Point_2(3.0, 2.0), Point_2(4.0, 1.0));
+  Segment_2       cv6 (Point_2(6.0, 0.0), Point_2(4.0, -1.0));
+  Segment_2       cv7 (Point_2(4.0, 1.0), Point_2(6.0, 0.0));
+
+  Halfedge_handle h1 = arr.insert_in_face_interior (cv1, arr.unbounded_face());
+  Halfedge_handle h2 = arr.insert_in_face_interior (cv2, arr.unbounded_face());
+  Halfedge_handle h3 = arr.insert_at_vertices (cv3, h2, h1->twin());
+  Halfedge_handle h4 = arr.insert_from_left_vertex (cv4, h1->twin());
+  Halfedge_handle h5 = arr.insert_at_vertices (cv5, h1, h4);
+  Halfedge_handle h6 = arr.insert_from_left_vertex (cv6, h3->twin());
+  Halfedge_handle h7 = arr.insert_at_vertices(cv7, h5, h6);
+
+  // Print the arrangement vertices.
+  Arrangement_2::Vertex_const_iterator  vit;
+  Arrangement_2::Vertex_const_handle    vh;
+  int                                   i, j;
+
+  std::cout << arr.number_of_vertices() << " vertices:" << std::endl;
+  for (i = 1, vit = arr.vertices_begin(); 
+       vit != arr.vertices_end(); vit++, i++)
+  {
+    vh = vit;
+    std::cout << '\t' << i << ": " << vh->point() << std::endl;
+  }
+  std::cout << std::endl;
+
+  // Print the arrangement edges.
+  Arrangement_2::Edge_const_iterator    eit;
+  Arrangement_2::Halfedge_const_handle  hh;
+
+  std::cout << arr.number_of_edges() << " edges:" << std::endl;
+  for (i = 1, eit = arr.edges_begin(); eit != arr.edges_end(); eit++, i++)
+  {
+    std::cout << '\t' << i << ": " << eit->curve() << std::endl;
+  }
+  std::cout << std::endl;
+
+  // Print the arrangement faces.
+  Arrangement_2::Face_const_iterator           fit;
+  Arrangement_2::Face_const_handle             fh;
+  Arrangement_2::Ccb_halfedge_const_circulator ccb;
+  Arrangement_2::Holes_const_iterator          hoit;
+
+  std::cout << arr.number_of_faces() << " faces." << std::endl;
+  for (i = 1, fit = arr.faces_begin(); fit != arr.faces_end(); fit++, i++)
+  {
+    // Print the outer boundary of the face.
+    fh = fit;
+    std::cout << '\t' << i << ": ";
+    if (fh->is_unbounded())
+    {
+      std::cout << "Unbounded face." << std::endl;
+    }
+    else
+    {
+      ccb = fh->outer_ccb();
+      std::cout << ccb->source()->point();
+      do
+      {
+	std::cout << " -> " << ccb->target()->point();
+	ccb++;
+      } while (ccb != fh->outer_ccb());
+      std::cout << std::endl;
+    }
+
+    // Print the holes.
+    for (j = 1, hoit = fh->holes_begin(); hoit != fh->holes_end(); hoit++, j++)
+    {
+      std::cout << "\t\tHole " << i << ": ";
+      ccb = *hoit;
+      std::cout << ccb->source()->point();
+      do
+      {
+	std::cout << " -> " << ccb->target()->point();
+	ccb++;
+      } while (ccb != *hoit);
+      std::cout << std::endl;
+    }
+  }
+  std::cout << std::endl;
+
+  // Perform point location.
   Point_location   pl (arr);
+  Point_2          q (0, 0);
+  CGAL::Object     obj;
 
-  // Insert a hyperbolic arc, supported by the hyperbola y = 1/x
-  // (or: xy - 1 = 0) with the end-points (1/5, 4) and (2, 1/2).
-  // Note that the arc is counterclockwise oriented.
-  Point_2       ps1 (Rational(1,4), 4);
-  Point_2       pt1 (2, Rational(1,2));
-  Conic_arc_2   cv1 (0, 0, 1, 0, 0, -1, CGAL::COUNTERCLOCKWISE, ps1, pt1);
+  obj = pl.locate (q);
+  if (CGAL::assign (fh, obj))
+  {
+    if (fh->is_unbounded())
+      std::cout << "Inside unbounded face." << std::endl;
+    else
+      std::cout << "Inside face." << std::endl;
+  }
+  else if (CGAL::assign (hh, obj))
+  {
+    std::cout << "On halfedge: " << hh->curve() << std::endl;
+  }
+  else if (CGAL::assign (vh, obj))
+  {
+    std::cout << "On vertex: " << vh->point() << std::endl;
+  }
+  else
+  {
+    std::cout << "Illegal point-location result." << std::endl;    
+  }
 
-  insert (arr, pl, cv1);
+  // Insert additional segments.
+  Segment_2       s1 (Point_2(-1.0, 0.0), Point_2(0.0, 2.0));
+  Segment_2       s2 (Point_2(-1.0, 0.0), Point_2(-1.0, -2.0));
+  Segment_2       s3 (Point_2(0.0, 2.0), Point_2(1.0, 0.0));
+  Segment_2       s4 (Point_2(-1.0, -2.0), Point_2(3.0, -2.0));
 
-  // Insert a full ellipse, which is (x/4)^2 + (y/2)^2 = 0 rotated by
-  // phi=36.87 degree (such that sin(phi) = 0.6, cos(phi) = 0.8),
-  // yielding: 58x^2 + 72y^2 - 48xy - 360 = 0.
-  Conic_arc_2   cv2 (58, 72, -48, 0, 0, -360);
+  insert_non_intersecting (arr, pl, s1);
+  insert_non_intersecting (arr, pl, s2);
+  insert_non_intersecting (arr, pl, s3);
+  insert_non_intersecting (arr, pl, s4);
+
+  // Perform point location again.
+  obj = pl.locate (q);
+  if (CGAL::assign (fh, obj))
+  {
+    if (fh->is_unbounded())
+      std::cout << "Inside unbounded face." << std::endl;
+    else
+      std::cout << "Inside face." << std::endl;
+  }
+  else if (CGAL::assign (hh, obj))
+  {
+    std::cout << "On halfedge: " << hh->curve() << std::endl;
+  }
+  else if (CGAL::assign (vh, obj))
+  {
+    std::cout << "On vertex: " << vh->point() << std::endl;
+  }
+  else
+  {
+    std::cout << "Illegal point-location result." << std::endl;    
+  }
+
+  // Test the insertion function (iis2 and iis3 cause some overlaps).
+  Segment_2       iis1 (Point_2(0.0, -3.0), Point_2(5.0, 2.0));
+
+  insert (arr, pl, iis1);
+
+  std::cout << "V = " << arr.number_of_vertices()
+	    << ",  E = " << arr.number_of_edges() 
+	    << ",  F = " << arr.number_of_faces() << std::endl;
   
-  insert (arr, pl, cv2);
+  Segment_2       iis2 (Point_2(-0.0, -2.0), Point_2(5.0, -2.0));
 
-  // Insert the segment (1, 1) -- (0, -3).
-  Rat_point_2   ps3 (1, 1);
-  Rat_point_2   pt3 (0, -3);
-  Conic_arc_2   cv3 (Rat_segment_2 (ps3, pt3));
+  insert (arr, pl, iis2);
 
-  insert (arr, pl, cv3);
+  std::cout << "V = " << arr.number_of_vertices()
+	    << ",  E = " << arr.number_of_edges() 
+	    << ",  F = " << arr.number_of_faces() << std::endl;
 
-  // Insert a circular arc supported by the circle x^2 + y^2 = 5^2,
-  // with (-3, 4) and (4, 3) as its endpoints. We want the arc to be
-  // clockwise oriented, so it passes through (0, 5) as well.
-  Rat_point_2   ps4 (-3, 4);
-  Rat_point_2   pm4 (0, 5);
-  Rat_point_2   pt4 (4, 3);
-  Conic_arc_2   cv4 (ps4, pm4, pt4);
+  Segment_2       iis3 (Point_2(2.0, 2.0), Point_2(5.0, 0.5));
 
-  insert (arr, pl, cv4);
+  insert (arr, pl, iis3);
 
-  // Insert a full unit circle that is centered at (0, 4).
-  Rat_circle_2  circ5 (Rat_point_2(0,4), 1);
-  Conic_arc_2   cv5 (circ5);
-  
-  insert (arr, pl, cv5);
-
-  // Insert a parabolic arc that is supported by a parabola y = -x^2
-  // (or: x^2 + y = 0) and whose end-points are (-sqrt(3), -3) ~ (-1.73, -3)
-  // and (sqrt(2), -2) ~ (1.41, -2). Notice that since the x-coordinates 
-  // of the end-points cannot be acccurately represented, we specify them
-  // as the intersections of the parabola with the lines y = -3 and y = -2.
-  // Note that the arc is clockwise oriented.
-  Conic_arc_2   cv6 =
-    Conic_arc_2 (1, 0, 0, 0, 1, 0,       // The parabola.
-		 CGAL::CLOCKWISE,
-		 Point_2 (-1.73, -3),    // Approximation of the source.
-		 0, 0, 0, 0, 1, 3,       // The line: y = -3.
-		 Point_2 (1.41, -2),     // Approximation of the target.
-		 0, 0, 0, 0, 1, 2);      // The line: y = -2.
-
-  insert (arr, pl, cv6);
-
-  // Insert the right half of the circle centered at (4, 2.5) whose radius
-  // is 1/2 (therefore its squared radius is 1/4).
-  Rat_circle_2  circ7 (Rat_point_2(4, Rational(5,2)), Rational(1,4));
-  Point_2       ps7 (4, 3);
-  Point_2       pt7 (4, 2);
-  Conic_arc_2   cv7 (circ7, CGAL::CLOCKWISE, ps7, pt7);
-  
-  insert (arr, pl, cv7);
-
-  // Print out the number of vertices, edges and faces in the arrangement.
-  std::cout << "Number of vertices: " 
-	    << arr.number_of_vertices() << std::endl;
-  std::cout << "Number of edges: " 
-	    << arr.number_of_edges() << std::endl;
-  std::cout << "Number of faces: " 
-	    << arr.number_of_faces() << std::endl;
-
+  std::cout << "V = " << arr.number_of_vertices()
+	    << ",  E = " << arr.number_of_edges() 
+	    << ",  F = " << arr.number_of_faces() << std::endl;
+ 
   return (0);
 }
 
