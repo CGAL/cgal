@@ -1,9 +1,9 @@
 %!PS-Adobe-2.0 EPSF-2.0
 %%Title: ex_14.fig
 %%Creator: fig2dev Version 3.2 Patchlevel 5-alpha5
-%%CreationDate: Wed Jul 13 09:23:11 2005
-%%For: wein@plab-30 (Ron Wein,,09-576985,)
-%%BoundingBox: 0 0 200 205
+%%CreationDate: Wed Jul 13 10:14:57 2005
+%%For: wein@cgal (Ron Wein,,09-576985,)
+%%BoundingBox: 0 0 200 164
 %Magnification: 0.5000
 %%EndComments
 /$F2psDict 200 dict def
@@ -45,7 +45,7 @@ $F2psDict /mtrx matrix put
 
 end
 save
-newpath 0 205 moveto 0 0 lineto 200 0 lineto 200 205 lineto closepath clip newpath
+newpath 0 164 moveto 0 0 lineto 200 0 lineto 200 164 lineto closepath clip newpath
 -63.4 234.2 translate
 1 -1 scale
 

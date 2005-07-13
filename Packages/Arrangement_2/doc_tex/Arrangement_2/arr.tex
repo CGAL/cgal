@@ -16,6 +16,9 @@ Given a set $\C$ of planar curves, their {\em arrangement}
 $\A(\C)$ is the subdivision they induce on the plane into
 zero-dimensional, one-dimensional and two-dimensional cells,
 called {\em vertices}, {\em edges} and {\em faces}, respectively.
+Arrangements are ubiquitous in the computational-geometry
+literature and have many applications in a range of fields ---
+see, e.g.,~\cite{as-aa-00,h-a-04}.
 
 As the curves in $\C$ can intersect and are not necessarily
 $x$-monotone, we construct a collection $\C''$ in two steps. We
@@ -72,7 +75,8 @@ alternatively it may consist of several connected faces.  Every
 face can have several holes contained in its interior (or there
 may be no holes). In addition, every face may contain isolated
 vertices in its interior. See Figure~\ref{arr_fig:seg_dcel} for an
-illustration of the various \dcel\ features.
+illustration of the various \dcel\ features. For more details on
+the \dcel\ data structure see~\cite[Chapter~2]{bkos-cgaa-00}.
 
 \begin{figure}[t]
 \begin{ccTexOnly}
@@ -1800,9 +1804,10 @@ circles.}
 \end{figure}
 
 In the following example we construct an arrangement of three full
-circles. We then look for the vertex of maximal degree, which is
-the vertex associated with the point $(4,3)$, as all three circles
-intersect at this point and it has six incident edges:
+circles, as shown in Figure~\ref{arr_fig:ex_13}. We then look for
+the vertex of maximal degree, which is the vertex associated with
+the point $(4,3)$, as all three circles intersect at this point
+and it has six incident edges:
 
 \ccIncludeExampleCode{../examples/Arrangement_2/example13.C}
 
@@ -1824,7 +1829,8 @@ intersect at this point and it has six incident edges:
 \end{figure}
 
 The following example demonstrates the usage of the various
-constructors for conic arcs. Especially note the constructor of a
+constructors for conic arcs. The resulting arrangement is drawn in
+Figure~\ref{arr_fig:ex_14}. Especially note the constructor of a
 circular arc that accepts three points and the constructor that
 allows specifying endpoints as intersections of the supporting
 conic with two other conic curves. Note that as the preconditions
@@ -1837,19 +1843,17 @@ invalid arcs into an arrangement is not allowed.
 
 \ccIncludeExampleCode{../examples/Arrangement_2/example14.C}
 
-% RWRW: From Here ...
-
 The last example in this section demonstrates how the conic-traits
 class can handle intersection points with multiplicity. The
-supporting curves of the two arcs, the unit circle $x^2 + y^2 =
-1$, and the hyperbola $y = \frac{x^2}{1+x}$ (RWRW: Check this)
-intersect at the origin such that the intersection point has
-multiplicity $3$ (note that they both have the same horizontal
-tangent at $(0,0)$ and the same curvature $1$). In addtion, they
-have another intersection point at $RWRW: (x?,y?)$ of multiplicity
-$1$:
+supporting curves of the two arcs, a circle centered at
+$(0,\frac{1}{2})$ with radius $\frac{1}{2}$, and the hyperbola $y
+= \frac{x^2}{1-x}$, intersect at the origin such that the
+intersection point has multiplicity $3$ (note that they both have
+the same horizontal tangent at $(0,0)$ and the same curvature
+$1$). In addition, they have another intersection point at
+$(\frac{1}{2},\frac{1}{2})$ of multiplicity $1$:
 
-% RWRW: Here comes example15. (the former example6.C)
+\ccIncludeExampleCode{../examples/Arrangement_2/example15.C}
 
 \subsection{Traits Class for Arcs of Rational Functions}
 \label{arr_ssec:tr_ratfunc}
@@ -1857,16 +1861,15 @@ $1$:
 
 A {\em rational function} is given by the equation $y =
 \frac{P(x)}{Q(x)}$, where $P$ and $Q$ are polynomials of arbitrary
-degrees. In particual, if $Q(x) = 1$ then the function is a simple
-polynomial function. A bounded {\em rational arc} is defined by
-the graph of a rational function over some internal $[x_{\rm min},
-x_{\rm max}]$, where $Q$ does not have any real roots in this
-interval (thus the arc does not contain any poles). Rational
-functions, and polynomial functions in particular, are not only
-interesting in their own right, they are also very useful for
-approximating or interpolating more complicated curves --- see,
-e.g.,~\cite[Chapeter~3]{XXX} (chap. 3 of Numerical Recipes in
-C++).
+degrees. In particular, if $Q(x) = 1$ then the function is a
+simple polynomial function. A bounded {\em rational arc} is
+defined by the graph of a rational function over some internal
+$[x_{\rm min}, x_{\rm max}]$, where $Q$ does not have any real
+roots in this interval (thus the arc does not contain any poles).
+Rational functions, and polynomial functions in particular, are
+not only interesting in their own right, they are also very useful
+for approximating or interpolating more complicated curves ---
+see, e.g.,~\cite[Chapeter~3]{ptvf-nrcpp-02}.
 
 In order to allow robust and exact computations with rational
 arcs, we require that the coefficient of the polynomials $P$ and
@@ -1874,13 +1877,14 @@ $Q$ are rational numbers. The $x$-values that determine the
 interval over which the arc is defined can however be arbitrary
 algebraic numbers.
 
-Using the \ccc{Arr_rational_traits_2<RatKernel, AlgKernel,
-NtTraits>} class template it is possible to construct and maintain
-arrangement of rational arcs. The template parameters are very
-similar to the ones used by the \ccc{Arr_conic_traits_2} class
-template --- see the previous section. Also in this case it is
-recommended to use the \ccc{CORE_number_type_traits} class, with a
-kernels templated by its \ccc{Rational} and \ccc{Algberaic} types.
+Using the \ccc{Arr_rational_traits_2<AlgKernel, NtTraits>} class
+template it is possible to construct and maintain arrangement of
+rational arcs. The template parameters are very similar to the
+ones used by the \ccc{Arr_conic_traits_2} class template --- see
+the previous section, but no rational kernel is needed. Also in
+this case it is recommended to use the
+\ccc{CORE_algebraic_number_traits} class, with a kernel templated
+by its \ccc{Algebraic} type.
 
 The \ccc{Arr_rational_traits_2} is a model of the
 \ccc{ArrangementTraits_2} concept (but not of the
@@ -1889,15 +1893,36 @@ to use the landmarks point-location strategy for arrangements of
 rational arcs). Its \ccc{Point_2} type is derived from
 \ccc{AlgKernel::Point_2}, while the \ccc{Curve_2} and
 \ccc{X_monotone_curve_2} types refer to the same class (note that
-a rational arc is always $x$-monotone). A rational arc can be
-constructed from a single vector of coefficients, specifying the
-polynomial $P$ alone (and $Q(x) = 1$), or from two vectors of
-coefficients, specifying both $P$ and $Q$.
+a rational arc is always $x$-monotone). The traits class also
+defined the \ccc{Rat_vector} type, representing a vector of
+rational coefficients (whose type is \ccc{NtTraits::Rational}). A
+rational arc can be constructed from a single vector of
+coefficients, specifying the polynomial $P$ alone (and $Q(x) =
+1$), or from two vectors of coefficients, specifying both $P$ and
+$Q$.
 
-The following example demonstrates the constrcution of an
-arrangement of rational arcs:
+\begin{figure}[t]
+\begin{ccTexOnly}
+\begin{center}
+\input{Arrangement_2/ex_16.pstex_t}
+\end{center}
+\end{ccTexOnly}
+\caption{An arrangement of four arcs of rational functions, as
+constructed in \ccc{example16.C}.}
+\label{arr_fig:ex_16}
+%\begin{ccHtmlOnly}
+%<P>
+%<center>
+%  <img src="ex_16.gif"  border=0 alt="The rational arc arrangement constructed in \ccc{example16.C}.">
+%</center>
+%\end{ccHtmlOnly}
+\end{figure}
 
-% RWRW: Here comes example16. (the former example10.C ??)
+The following example demonstrates the construction of an
+arrangement of rational arcs. Note the usage of the two
+constructors, for polynomial arcs and for rational arcs:
+
+\ccIncludeExampleCode{../examples/Arrangement_2/example16.C}
 
 \subsection{Meta-Traits Classes}
 \label{arr_ssec:meta_tr}
@@ -1910,7 +1935,7 @@ distributing it to the geometric entities that are constructed. We
 note that additional information can also be maintained by
 extending the vertex, halfedge, or face types provided of the
 \dcel\ class used by the arrangement --- see the details in
-Section~\ref{arr_sec:???}.
+Section~\ref{arr_sec:ex_dcel}.
 
 The two meta-traits classes
 \ccc{Arr_consolidated_curve_data_traits_2<BaseTraits, Data>} and
@@ -2104,8 +2129,8 @@ due to the deletion of an edge:
 
 Observers are especially useful when the \dcel\ records are
 extended and store additional data, as they help updating this
-data on-line. See Section~\ref{arr_sec:???} for more details and
-examples.
+data on-line. See Section~\ref{arr_sec:ex_dcel} for more details
+and examples.
 
 \section{Extending the \dcel}
 \label{arr_sec:ex_dcel}
