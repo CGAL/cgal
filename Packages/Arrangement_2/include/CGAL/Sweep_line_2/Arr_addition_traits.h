@@ -57,8 +57,8 @@ public:
   class My_X_monotone_curve_2 : public Base_X_monotone_curve_2 
   {
   public:
-    typedef typename Traits::X_monotone_curve_2 Base;
-    typedef typename Traits::Point_2            Point_2;
+    typedef  Base_X_monotone_curve_2 Base;
+    typedef  Base_Point_2            Point_2;
 
     friend class Arr_addition_traits<Traits, Halfedge_handle>;
     friend class Intersect_2;

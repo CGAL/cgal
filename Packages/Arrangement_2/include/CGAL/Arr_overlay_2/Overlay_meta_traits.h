@@ -204,8 +204,8 @@ public:
   class My_X_monotone_curve_2 : public Base_X_monotone_curve_2 
   {
   public:
-    typedef typename Traits::X_monotone_curve_2     Base;
-    typedef typename Traits::Point_2                Point_2;
+    typedef  Base_X_monotone_curve_2     Base;
+    typedef  Base_Point_2                Point_2;
 
     friend class Overlay_meta_traits<Traits,
                                      Arrangement1, 
