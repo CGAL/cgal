@@ -1838,12 +1838,23 @@ private:
  * The inserted curve may not necessarily be x-monotone and may intersect the
  * existing arrangement.
  * \param arr The arrangement.
+ * \param cv The curve to be inserted.
  * \param pl A point-location object associated with the arrangement.
+ */
+template <class Traits, class Dcel, class PointLocation>
+void insert (Arrangement_2<Traits,Dcel>& arr,
+             const typename Traits::Curve_2& c,
+             const PointLocation& pl);
+
+/*!
+ * Insert a curve into the arrangement (incremental insertion).
+ * The inserted curve may not necessarily be x-monotone and may intersect the
+ * existing arrangement.
+ * \param arr The arrangement.
  * \param cv The curve to be inserted.
  */
 template <class Traits, class Dcel, class PointLocation>
 void insert (Arrangement_2<Traits,Dcel>& arr,
-             const PointLocation& pl,
              const typename Traits::Curve_2& c);
 
 /*!
@@ -1863,12 +1874,22 @@ void insert (Arrangement_2<Traits,Dcel>& arr,
  * Insert an x-monotone curve into the arrangement (incremental insertion).
  * The inserted x-monotone curve may intersect the existing arrangement.
  * \param arr The arrangement.
- * \param pl A point-location object associated with the arrangement.
  * \param cv The x-monotone curve to be inserted.
+ * \param pl A point-location object associated with the arrangement.
  */
 template <class Traits, class Dcel, class PointLocation>
 void insert_x_monotone (Arrangement_2<Traits,Dcel>& arr,
-                        const PointLocation& pl,
+                        const typename Traits::X_monotone_curve_2& c,
+                        const PointLocation& pl);
+
+/*!
+ * Insert an x-monotone curve into the arrangement (incremental insertion).
+ * The inserted x-monotone curve may intersect the existing arrangement.
+ * \param arr The arrangement.
+ * \param cv The x-monotone curve to be inserted.
+ */
+template <class Traits, class Dcel>
+void insert_x_monotone (Arrangement_2<Traits,Dcel>& arr,
                         const typename Traits::X_monotone_curve_2& c);
 
 /*!
@@ -1889,8 +1910,8 @@ void insert_x_monotone (Arrangement_2<Traits,Dcel>& arr,
  * interior does not intersect with any existing edge or vertex in the
  * arragement (incremental insertion).
  * \param arr The arrangement.
- * \param pl A point-location object associated with the arrangement.
  * \param c The x-monotone curve to be inserted.
+ * \param pl A point-location object associated with the arrangement.
  * \pre The interior of c does not intersect any existing edge or vertex.
  * \return A handle for one of the new halfedges corresponding to the inserted
  *         curve, directed (lexicographically) from left to right.
@@ -1898,7 +1919,22 @@ void insert_x_monotone (Arrangement_2<Traits,Dcel>& arr,
 template <class Traits, class Dcel, class PointLocation>
 typename Arrangement_2<Traits,Dcel>::Halfedge_handle
 insert_non_intersecting (Arrangement_2<Traits,Dcel>& arr,
-                         const PointLocation& pl,
+                         const typename Traits::X_monotone_curve_2& c,
+                         const PointLocation& pl);
+
+/*!
+ * Insert an x-monotone curve into the arrangement, such that the curve
+ * interior does not intersect with any existing edge or vertex in the
+ * arragement (incremental insertion).
+ * \param arr The arrangement.
+ * \param c The x-monotone curve to be inserted.
+ * \pre The interior of c does not intersect any existing edge or vertex.
+ * \return A handle for one of the new halfedges corresponding to the inserted
+ *         curve, directed (lexicographically) from left to right.
+ */
+template <class Traits, class Dcel>
+typename Arrangement_2<Traits,Dcel>::Halfedge_handle
+insert_non_intersecting (Arrangement_2<Traits,Dcel>& arr,
                          const typename Traits::X_monotone_curve_2& c);
 
 /*!
@@ -1933,14 +1969,26 @@ remove_edge (Arrangement_2<Traits,Dcel>& arr,
  * Insert a vertex that corresponds to a given point into the arrangement.
  * The inserted point may lie on any existing arrangement feature.
  * \param arr The arrangement.
- * \param pl A point-location object associated with the arrangement.
  * \param p The point to be inserted.
+ * \param pl A point-location object associated with the arrangement.
  * \return A handle to the vertex that corresponds to the given point.
  */
 template <class Traits, class Dcel, class PointLocation>
 typename Arrangement_2<Traits,Dcel>::Vertex_handle
 insert_vertex (Arrangement_2<Traits,Dcel>& arr,
-               const PointLocation& pl,
+               const typename Traits::Point_2& p,
+               const PointLocation& pl);
+
+/*!
+ * Insert a vertex that corresponds to a given point into the arrangement.
+ * The inserted point may lie on any existing arrangement feature.
+ * \param arr The arrangement.
+ * \param p The point to be inserted.
+ * \return A handle to the vertex that corresponds to the given point.
+ */
+template <class Traits, class Dcel>
+typename Arrangement_2<Traits,Dcel>::Vertex_handle
+insert_vertex (Arrangement_2<Traits,Dcel>& arr,
                const typename Traits::Point_2& p);
 
 /*!

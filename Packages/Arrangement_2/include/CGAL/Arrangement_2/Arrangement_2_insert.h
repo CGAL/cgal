@@ -30,6 +30,7 @@
 #include <CGAL/Arrangement_2/Arr_accessor.h>
 #include <CGAL/Arrangement_zone_2.h>
 #include <CGAL/Arrangement_2/Arr_inc_insertion_zone_visitor.h>
+#include <CGAL/Arr_walk_along_line_point_location.h>
 #include <CGAL/Sweep_line_2/Arr_construction.h>
 #include <CGAL/Sweep_line_2/Arr_addition.h>
 #include <CGAL/Sweep_line_2/Arr_non_x_construction.h>
@@ -46,8 +47,8 @@ CGAL_BEGIN_NAMESPACE
 //
 template <class Traits, class Dcel, class PointLocation>
 void insert (Arrangement_2<Traits,Dcel>& arr, 
-             const PointLocation& pl,
-             const typename Traits::Curve_2& c)
+             const typename Traits::Curve_2& c,
+             const PointLocation& pl)
 {
   // Obtain an arrangement accessor.
   typedef Arrangement_2<Traits,Dcel>                     Arrangement_2;
@@ -107,11 +108,29 @@ void insert (Arrangement_2<Traits,Dcel>& arr,
         continue;
 
       // Inserting a point into the arrangement:
-      insert_vertex (arr, pl, iso_p);
+      insert_vertex (arr, iso_p, pl);
     }
   }
 
   return;
+}
+
+//-----------------------------------------------------------------------------
+// Insert a curve into the arrangement (incremental insertion).
+// The inserted x-monotone curve may intersect the existing arrangement.
+// (overladed version with no point location object)
+template <class Traits, class Dcel>
+void insert (Arrangement_2<Traits,Dcel>& arr,
+             const typename Traits::Curve_2& c)
+{
+  typedef Arrangement_2<Traits, Dcel>                          Arrangement_2;
+  typedef Arr_walk_along_line_point_location<Arrangement_2>    Walk_pl;
+  
+  // create walk point location object
+  Walk_pl    walk_pl(arr);
+
+  //insert the curve using the walk point location
+  insert(arr, c, walk_pl);
 }
 
 //-----------------------------------------------------------------------------
@@ -156,8 +175,8 @@ void insert (Arrangement_2<Traits,Dcel>& arr,
 //
 template <class Traits, class Dcel, class PointLocation>
 void insert_x_monotone (Arrangement_2<Traits,Dcel>& arr,
-                        const PointLocation& pl,
-                        const typename Traits::X_monotone_curve_2& c)
+                        const typename Traits::X_monotone_curve_2& c,
+                        const PointLocation& pl)
 {
   // Obtain an arrangement accessor.
   typedef Arrangement_2<Traits,Dcel>                     Arrangement_2;
@@ -185,6 +204,23 @@ void insert_x_monotone (Arrangement_2<Traits,Dcel>& arr,
   arr_access.notify_after_global_change();
 
   return;
+}
+
+//-----------------------------------------------------------------------------
+// Insert an x-monotone curve into the arrangement (incremental insertion).
+// The inserted x-monotone curve may intersect the existing arrangement.
+//
+template <class Traits, class Dcel, class PointLocation>
+void insert_x_monotone (Arrangement_2<Traits,Dcel>& arr,
+                        const typename Traits::X_monotone_curve_2& c)
+{
+  typedef Arrangement_2<Traits, Dcel>                          Arrangement_2;
+  typedef Arr_walk_along_line_point_location<Arrangement_2>    Walk_pl;
+  
+  // create walk point location object
+  Walk_pl    walk_pl(arr);
+
+  insert_x_monotone(arr, c, walk_pl);
 }
 
 //-----------------------------------------------------------------------------
@@ -232,8 +268,8 @@ void insert_x_monotone (Arrangement_2<Traits,Dcel>& arr,
 template <class Traits, class Dcel, class PointLocation>
 typename Arrangement_2<Traits,Dcel>::Halfedge_handle
 insert_non_intersecting (Arrangement_2<Traits,Dcel>& arr,
-                         const PointLocation& pl,
-                         const typename Traits::X_monotone_curve_2& c)
+                         const typename Traits::X_monotone_curve_2& c,
+                         const PointLocation& pl)
 {
   // Locate the curve endpoints.
   Object   obj1 =
@@ -328,6 +364,25 @@ insert_non_intersecting (Arrangement_2<Traits,Dcel>& arr,
 
   // Return the resulting halfedge from the insertion operation.
   return (res);
+}
+
+//-----------------------------------------------------------------------------
+// Insert an x-monotone curve into the arrangement, such that the curve
+// interior does not intersect with any existing edge or vertex in the
+// arragement (incremental insertion).
+//
+template <class Traits, class Dcel>
+typename Arrangement_2<Traits,Dcel>::Halfedge_handle
+insert_non_intersecting (Arrangement_2<Traits,Dcel>& arr,
+                         const typename Traits::X_monotone_curve_2& c)
+{
+  typedef Arrangement_2<Traits, Dcel>                          Arrangement_2;
+  typedef Arr_walk_along_line_point_location<Arrangement_2>    Walk_pl;
+  
+  // create walk point location object
+  Walk_pl    walk_pl(arr);
+
+  insert_non_intersecting(arr, c, walk_pl);
 }
 
 //-----------------------------------------------------------------------------
@@ -446,8 +501,8 @@ remove_edge (Arrangement_2<Traits,Dcel>& arr,
 template <class Traits, class Dcel, class PointLocation>
 typename Arrangement_2<Traits,Dcel>::Vertex_handle
 insert_vertex (Arrangement_2<Traits,Dcel>& arr,
-               const PointLocation& pl,
-               const typename Traits::Point_2& p)
+               const typename Traits::Point_2& p,
+               const PointLocation& pl)
 {
   // Obtain an arrangement accessor.
   typedef Arrangement_2<Traits,Dcel>                     Arrangement_2;
@@ -509,6 +564,24 @@ insert_vertex (Arrangement_2<Traits,Dcel>& arr,
 
   // Return a handle for the vertex associated with p. 
   return (vh_for_p);
+}
+
+//-----------------------------------------------------------------------------
+// Insert a vertex that corresponds to a given point into the arrangement.
+// The inserted point may lie on any existing arrangement feature.
+//
+template <class Traits, class Dcel>
+typename Arrangement_2<Traits,Dcel>::Vertex_handle
+insert_vertex (Arrangement_2<Traits,Dcel>& arr,
+               const typename Traits::Point_2& p)
+{
+  typedef Arrangement_2<Traits, Dcel>                          Arrangement_2;
+  typedef Arr_walk_along_line_point_location<Arrangement_2>    Walk_pl;
+  
+  // create walk point location object
+  Walk_pl    walk_pl(arr);
+
+  insert_vertex(arr, p, walk_pl);
 }
 
 //-----------------------------------------------------------------------------
