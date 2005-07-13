@@ -1665,6 +1665,7 @@ overlapping sections.}
 %(150, 50) is not a vertex of the planar map. The polyline to which
 %it belongs is an edge of the planar map.
 
+% RWRW: To be done ...
 \ccIncludeExampleCode{../examples/Arrangement_2/example12.C}
 
 \section{The Conic Traits Class}
@@ -1996,19 +1997,45 @@ using the \ccc{MergeFunc} functor, which is supplied as a
 parameter to the traits class-template. The resulting object is
 assigned to the data field of the overlapping subcurves.
 \end{itemize}
+
+\item Merging to $x$-monotone is allowed only if they are geometrically
+mergeable (that is, the base-traits class allows to merge them)
+and store the same data field(s).
 \end{itemize}
+
+\subsubsection{Examples}
+%~~~~~~~~~~~~~~~~~~~~~~~
+
+\begin{figure}[t]
+\begin{ccTexOnly}
+\begin{center}
+\input{Arrangement_2/ex_17.pstex_t}
+\end{center}
+\end{ccTexOnly}
+\caption{An arrangement of six red and blue segments, as
+constructed in \ccc{example17.C}. Dark dots correspond to
+red--blue intersection points, while white dots mark the endpoints
+of red--blue overlaps.}
+\label{arr_fig:ex_17}
+%\begin{ccHtmlOnly}
+%<P>
+%<center>
+%  <img src="ex_17.gif"  border=0 alt="The red-blue segment arrangement constructed in \ccc{example17.C}.">
+%</center>
+%\end{ccHtmlOnly}
+\end{figure}
 
 In the following example, we use \ccc{Arr_segment_traits_2} as our
 base-traits class, attaching an additional {\em color} field to
 the segments using the consolidated curve-data traits class. A
 color may be either {\em blue} or {\em red}. Having constructed
-the arrangement of colored segments, we detect the vertices that
-have both incident blue edges and incident red edges, thus they
-correspond to red--blue intersection points. We also locate the
-edges that correspond to overlaps between red and blue line
-segments:
+the arrangement of colored segments, as illustrated in
+Figure~\ref{arr_fig:ex_17}, we detect the vertices that have both
+incident blue edges and incident red edges, thus they correspond
+to red--blue intersection points. We also locate the edge that
+corresponds to overlaps between red and blue line segments:
 
-% RWRW: Here comes example17.  (the former example8.C ??)
+\ccIncludeExampleCode{../examples/Arrangement_2/example17.C}
 
 In the following example, we use \ccc{Arr_polyline_traits_2} as
 our base-traits class, attaching an additional {\em name} field to
@@ -2018,7 +2045,8 @@ polylines. Also notice how we replace the curve associated with
 one of the edges with a geometrically equivalent curve with a
 different data field:
 
-% RWRW: Here comes example18.
+% RWRW: To be done ...
+\ccIncludeExampleCode{../examples/Arrangement_2/example18.C}
 
 \section{The Notification Mechanism}
 \label{arr_sec:notif}
@@ -2119,13 +2147,33 @@ classes, by inheriting from the base observer class and overriding
 the relevant notification functions, as required by their
 applications.
 
+\begin{figure}[t]
+\begin{ccTexOnly}
+\begin{center}
+\input{Arrangement_2/ex_19.pstex_t}
+\end{center}
+\end{ccTexOnly}
+\caption{An arrangement of five line segments, as constructed in
+\ccc{example19.C}. The halfedge $e_v$ (dashed) is eventually
+removed, so that the final arrangement consists of four faces (one
+unbounded and three bounded ones).}
+\label{arr_fig:ex_19}
+%\begin{ccHtmlOnly}
+%<P>
+%<center>
+%  <img src="ex_19.gif"  border=0 alt="The segment arrangement constructed in \ccc{example19.C}.">
+%</center>
+%\end{ccHtmlOnly}
+\end{figure}
+
 The following example shows how to define and use an observer
 class. In this case, the observer keeps track of the arrangement
 faces, and prints a message whenever a face is split into two due
-to the insertion of an edge, and whenever two face merge into one
-due to the deletion of an edge:
+to the insertion of an edge, and whenever two faces merge into one
+due to the deletion of an edge. The layout of the arrangement is
+depicted in Figure~\ref{arr_fig:ex_19}:
 
-% RWRW: Here comes example19. (the former example2.C)
+\ccIncludeExampleCode{../examples/Arrangement_2/example19.C}
 
 Observers are especially useful when the \dcel\ records are
 extended and store additional data, as they help updating this
@@ -2139,6 +2187,10 @@ and examples.
 \section{Overlaying Arrangements}
 \label{arr_sec:overlay}
 %================================
+
+\section{Storing the Curve History}
+\label{arr_sec:arr_with_hist}
+%==================================
 
 \section*{Design and Implementation History}
 %===========================================
