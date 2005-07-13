@@ -1,7 +1,7 @@
 %!PS-Adobe-2.0 EPSF-2.0
 %%Title: arr_segs.fig
 %%Creator: fig2dev Version 3.2 Patchlevel 5-alpha5
-%%CreationDate: Mon Jul  4 10:11:06 2005
+%%CreationDate: Wed Jul 13 18:58:15 2005
 %%For: wein@cgal (Ron Wein,,09-576985,)
 %%BoundingBox: 0 0 299 207
 %Magnification: 0.5000
@@ -108,23 +108,6 @@ $F2psBegin
 % Polyline
 0 slj
 0 slc
-15.000 slw
-n 3150 3150 m 4500 1800 l 6795 2250 l 7875 4050 l 6750 5400 l 5850 4950 l
- 6525 6075 l 4770 6750 l 2925 5625 l 3375 4500 l
- 3150 3150 l  cp gs col8 s gr 
-% Polyline
-n 4680 3150 m 5220 2700 l 5850 3150 l 5400 3600 l
- 4680 3150 l  cp gs col8 s gr 
-% Polyline
-n 4680 3150 m 4320 3600 l 4770 4050 l
- 5400 3600 l gs col8 s gr 
-% Polyline
-n 6750 5355 m 7605 6525 l 4725 7200 l
- 4725 6750 l gs col8 s gr 
-% Polyline
-n 7605 6525 m
- 9855 4230 l gs col8 s gr 
-% Polyline
 7.500 slw
 gs  clippath
 3371 3020 m 3253 3139 l 3295 3181 l 3414 3063 l 3414 3063 l 3308 3127 l 3371 3020 l cp
@@ -347,20 +330,34 @@ n 8190 1755 m
 % arrowhead
 n 7148 2162 m 7050 2237 l 7172 2217 l 7148 2162 l  cp gs 0.00 setgray ef gr  col0 s
 % Polyline
-15.000 slw
-n 6795 2250 m 8325 1575 l 9900 4230 l
- 6750 5400 l gs col8 s gr 
-% Polyline
-n 7875 4050 m
- 9900 4230 l gs col8 s gr 
-% Polyline
-7.500 slw
 n 1800 1125 m 11250 1125 l 11250 7650 l 1800 7650 l
  cp gs col0 s gr 
 % Polyline
-15.000 slw
+30.000 slw
+n 3150 3150 m 4500 1800 l 6795 2250 l 7875 4050 l 6750 5400 l 5850 4950 l
+ 6525 6075 l 4770 6750 l 2925 5625 l 3375 4500 l
+ 3150 3150 l  cp gs col8 s gr 
+% Polyline
+n 6795 2250 m 8325 1575 l 9900 4230 l
+ 6750 5400 l gs col8 s gr 
+% Polyline
+n 6750 5355 m 7605 6525 l 4725 7200 l
+ 4725 6750 l gs col8 s gr 
+% Polyline
+n 7605 6525 m
+ 9855 4230 l gs col8 s gr 
+% Polyline
 n 7605 6525 m 9000 6975 l 9900 5625 l 10575 6525 l
  9000 6975 l gs col8 s gr 
+% Polyline
+n 4680 3150 m 5220 2700 l 5850 3150 l 5400 3600 l
+ 4680 3150 l  cp gs col8 s gr 
+% Polyline
+n 4680 3150 m 4320 3600 l 4770 4050 l
+ 5400 3600 l gs col8 s gr 
+% Polyline
+n 7875 4050 m
+ 9900 4230 l gs col8 s gr 
 % here ends figure;
 % 
 % here starts figure with depth 40
@@ -378,16 +375,10 @@ n 8325 1575 50 50 0 360 DrawEllipse gs col4 1.00 shd ef gr gs col0 s gr
 n 7875 4050 50 50 0 360 DrawEllipse gs col4 1.00 shd ef gr gs col0 s gr
 
 % Ellipse
-n 6750 5355 50 50 0 360 DrawEllipse gs col4 1.00 shd ef gr gs col0 s gr
-
-% Ellipse
 n 7605 6525 50 50 0 360 DrawEllipse gs col4 1.00 shd ef gr gs col0 s gr
 
 % Ellipse
 n 6525 6075 50 50 0 360 DrawEllipse gs col4 1.00 shd ef gr gs col0 s gr
-
-% Ellipse
-n 4725 6705 50 50 0 360 DrawEllipse gs col4 1.00 shd ef gr gs col0 s gr
 
 % Ellipse
 n 4725 7200 50 50 0 360 DrawEllipse gs col4 1.00 shd ef gr gs col0 s gr
@@ -400,9 +391,6 @@ n 3375 4455 50 50 0 360 DrawEllipse gs col4 1.00 shd ef gr gs col0 s gr
 
 % Ellipse
 n 3150 3150 50 50 0 360 DrawEllipse gs col4 1.00 shd ef gr gs col0 s gr
-
-% Ellipse
-n 4680 3105 50 50 0 360 DrawEllipse gs col4 1.00 shd ef gr gs col0 s gr
 
 % Ellipse
 n 5220 2700 50 50 0 360 DrawEllipse gs col4 1.00 shd ef gr gs col0 s gr
@@ -438,9 +426,6 @@ n 6300 4275 50 50 0 360 DrawEllipse gs col11 1.00 shd ef gr gs col0 s gr
 n 3825 3150 50 50 0 360 DrawEllipse gs col11 1.00 shd ef gr gs col0 s gr
 
 % Ellipse
-n 9900 4230 50 50 0 360 DrawEllipse gs col4 1.00 shd ef gr gs col0 s gr
-
-% Ellipse
 n 9000 6975 50 50 0 360 DrawEllipse gs col4 1.00 shd ef gr gs col0 s gr
 
 % Ellipse
@@ -448,6 +433,18 @@ n 9900 5625 50 50 0 360 DrawEllipse gs col4 1.00 shd ef gr gs col0 s gr
 
 % Ellipse
 n 10575 6525 50 50 0 360 DrawEllipse gs col4 1.00 shd ef gr gs col0 s gr
+
+% Ellipse
+n 4682 3162 50 50 0 360 DrawEllipse gs col4 1.00 shd ef gr gs col0 s gr
+
+% Ellipse
+n 6782 5392 50 50 0 360 DrawEllipse gs col4 1.00 shd ef gr gs col0 s gr
+
+% Ellipse
+n 4722 6732 50 50 0 360 DrawEllipse gs col4 1.00 shd ef gr gs col0 s gr
+
+% Ellipse
+n 9882 4222 50 50 0 360 DrawEllipse gs col4 1.00 shd ef gr gs col0 s gr
 
 % here ends figure;
 $F2psEnd
