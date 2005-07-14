@@ -177,8 +177,8 @@ void Arrangement_zone_2<Arrangement,ZoneVisitor>::compute_zone ()
     }
   }
 
-  // Clear the intersections map and the list of halfedges that originated
-  // from cv.
+  // Clear the intersections map and the list of curves for which the
+  // precomputed intersections is invalid.
   inter_map.clear();
   invalid_cvs.clear();
 
@@ -546,6 +546,8 @@ void Arrangement_zone_2<Arrangement,ZoneVisitor>::
                                       traits->is_in_x_range_2_object();
   typename Traits_wrapper_2::Construct_min_vertex_2  min_vertex =
                                       traits->construct_min_vertex_2_object();
+  typename Traits_wrapper_2::Construct_max_vertex_2  max_vertex =
+                                      traits->construct_max_vertex_2_object();
   typename Traits_wrapper_2::Compare_y_at_x_2        compare_y_at_x =
                                       traits->compare_y_at_x_2_object();
 
@@ -582,7 +584,8 @@ void Arrangement_zone_2<Arrangement,ZoneVisitor>::
 
       // Check whether the two curves overlap in their x-range (in order
       // to avoid unnecessary intersection computations).
-      if (! is_in_x_range (cv, he_curr->curve()))
+      if (compare_xy (max_vertex (he_curr->curve()), left_pt) != LARGER ||
+	  ! is_in_x_range (cv, he_curr->curve()))
       {
         // In case there is no overlap, the two x-monotone curve obviously
         // do not intersect.
@@ -679,7 +682,8 @@ void Arrangement_zone_2<Arrangement,ZoneVisitor>::
 
       // Check whether the two curves overlap in their x-range (in order
       // to avoid unnecessary intersection computations).
-      if (! is_in_x_range (cv, he_curr->curve()))
+      if (compare_xy (max_vertex (he_curr->curve()), left_pt) != LARGER ||
+	  ! is_in_x_range (cv, he_curr->curve()))
       {
         // In case there is no overlap, the two x-monotone curve obviously
         // do not intersect.
