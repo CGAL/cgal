@@ -355,15 +355,17 @@ public:
          cv2.get_color() == Curve_info::PURPLE)
          return (oi);
 
+      const std::pair<Base_Point_2, unsigned int>   *base_pt;
+      const Base_X_monotone_curve_2                 *overlap_cv;
       OutputIterator oi_end = m_base_intersect(cv1, cv2, oi);
 
       // convert objects that are associated with Base_X_monotone_curve_2 to
       // the extenede X_monotone_curve_2 
       for(; oi != oi_end; ++oi)
       {
+	base_pt = object_cast<std::pair<Base_Point_2, unsigned int> >(&(*oi));
 
-        std::pair<Base_Point_2, unsigned int>   base_pt; //the base point
-        if(CGAL::assign(base_pt, *oi))
+        if (base_pt != NULL)
         {
           Object red_obj , blue_obj;
           if(cv1.get_color() == Curve_info::RED)
@@ -380,14 +382,16 @@ public:
             blue_obj = CGAL::make_object(cv1.get_blue_halfedge_handle());
           }
 
-
-          Point_2 point_plus( base_pt.first, red_obj, blue_obj); // the extended point
-          *oi = CGAL::make_object(std::make_pair(point_plus, base_pt.second));
+          Point_2 point_plus (base_pt->first,
+			      red_obj, blue_obj); // the extended point
+          *oi = CGAL::make_object(std::make_pair(point_plus, 
+						 base_pt->second));
         }
         else
         {
-          Base_X_monotone_curve_2 overlap_cv;
-          if(CGAL::assign(overlap_cv, *oi))
+          overlap_cv = object_cast<Base_X_monotone_curve_2> (&(*oi));
+
+          if (overlap_cv != NULL)
           {
             Halfedge_handle_red        red_he;
             Halfedge_handle_blue       blue_he;
@@ -409,8 +413,8 @@ public:
               blue_he = cv1.get_blue_halfedge_handle();
             }
 
-            X_monotone_curve_2 new_overlap_cv(overlap_cv, red_he, blue_he);
-            *oi = CGAL::make_object(new_overlap_cv);
+            *oi = CGAL::make_object (X_monotone_curve_2 (*overlap_cv,
+							 red_he, blue_he));
           }
         }
       }

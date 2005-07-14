@@ -194,37 +194,38 @@ public:
                               const X_monotone_curve_2 & cv2,
                               OutputIterator oi) const
     {
-      Base base;
+      Base   base;
       Object res = base.intersect_2_object()(cv1, cv2);
     
       // There is no intersection:
       if (res.is_empty())
-        return oi;
-
-      typename Base::Assign_2 assign_f = base.assign_2_object();
+        return (oi);
 
       // Chack if the intersection is a point:
-      Point_2 p;
-      if (assign_f(p, res)) {
+      const Point_2             *ip;
+
+      if ((ip = object_cast<Point_2> (&res)) != NULL)
+      {
         // Create a pair representing the point with its multiplicity,
         // which is always 1 for line segments for all practical purposes.
         // If the two segments intersect at their endpoints, then the
         // multiplicity is undefined, but we deliberately ignore it for
         // efficieny reasons.
-        std::pair<Point_2, unsigned int> ip_mult(p, 1);
-        *oi++ = make_object(ip_mult);
-        return oi;
+        std::pair<Point_2, unsigned int> ip_mult(*ip, 1);
+        *oi = make_object (ip_mult);
+        ++oi;
       }
-    
-      // The intersection is a segment:
-      X_monotone_curve_2  seg;
-      if (assign_f(seg, res)) {
-        *oi++ = make_object(seg);
-        return oi;
+      else
+      {
+	// The intersection is a segment:
+	const X_monotone_curve_2  *icv = object_cast<X_monotone_curve_2>(&res);
+	
+	CGAL_assertion (icv != NULL);
+        *oi = make_object (*icv);
+        ++oi;
       }
 
-      // This cannot be reached:
-      return oi;
+      return (oi);
     }
   };
 

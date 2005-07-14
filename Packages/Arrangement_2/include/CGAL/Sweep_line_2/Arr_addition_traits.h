@@ -26,8 +26,6 @@
 
 CGAL_BEGIN_NAMESPACE
 
-
-
 template <class Traits, class Arrangement_>
 class Arr_addition_traits : public Traits
 {
@@ -43,8 +41,6 @@ public:
   typedef typename Traits::Intersect_2              Base_Intersect_2;
   typedef typename Traits::Split_2                  Base_Split_2;
   typedef typename Traits::Make_x_monotone_2        Base_Make_x_monotone_2;
-
-
 
   //Constructor
   Arr_addition_traits()
@@ -82,9 +78,6 @@ public:
       return (*this);
     }
 
-
-
-
     Halfedge_handle get_halfedge_handle() const
     {
       return m_he_handle;
@@ -102,7 +95,7 @@ public:
   }; // nested class My_X_monotone_curve_2 - END
 
 
-  class My_Point_2 : public Base_Point_2 
+  class My_Point_2 : public Base_Point_2
   {
   public:
     typedef  Base_Point_2            Base;
@@ -119,7 +112,6 @@ public:
                                                  m_v(v)
     {}
 
-
     Vertex_handle get_vertex_handle() const
     {
       return m_v;
@@ -130,7 +122,6 @@ public:
       m_v = v;
     }
 
-   
     protected:
     Vertex_handle    m_v;
   }; // nested class My_Point_2 - END
@@ -156,37 +147,43 @@ public:
     template<class OutputIterator>
     OutputIterator operator() (const X_monotone_curve_2& cv1,
                                const X_monotone_curve_2& cv2,
-                               OutputIterator oi) const
+                               OutputIterator oi)
     {
       if(cv1.get_halfedge_handle() != Halfedge_handle(NULL) &&
          cv2.get_halfedge_handle() != Halfedge_handle(NULL) )
         return (oi); // the curves are disjoint-interior because they
                      // are already at the Arrangement
 
-      OutputIterator oi_end = m_base_intersect(cv1, cv2, oi);
+      OutputIterator           oi_end = m_base_intersect(cv1, cv2, oi);
+      const Base_X_monotone_curve_2                *overlap_cv;
+      const std::pair<Base_Point_2, unsigned int>  *intersect_p;
 
       // convert objects that are associated with Base_X_monotone_curve_2 to
       // X_monotone_curve_2 
       for(; oi != oi_end; ++oi)
       {
-        Base_X_monotone_curve_2 overlap_cv;
-        if(CGAL::assign(overlap_cv, *oi))
+        overlap_cv = object_cast<Base_X_monotone_curve_2> (&(*oi));
+        if (overlap_cv != NULL)
         {
-          Halfedge_handle he(NULL);
-          if(cv1.m_he_handle != Halfedge_handle(NULL))
+	  // Add halfedge handles to the resulting curve.
+          Halfedge_handle  he;
+
+          if(cv1.m_he_handle != Halfedge_handle())
             he = cv1.m_he_handle;
-          else
-            if(cv2.m_he_handle != Halfedge_handle(NULL))
+          else if(cv2.m_he_handle != Halfedge_handle())
               he = cv2.m_he_handle;
-          X_monotone_curve_2 new_overlap_cv(overlap_cv, he);
-          *oi = make_object(new_overlap_cv);
+
+          *oi = make_object (X_monotone_curve_2 (*overlap_cv, he));
         }
         else
         {
-          std::pair<Base_Point_2, unsigned int>  pt;
-          CGAL_assertion(CGAL::assign(pt, *oi));
-          CGAL::assign(pt, *oi);
-          *oi = make_object(std::make_pair(Point_2(pt.first), pt.second));
+	  intersect_p = 
+	    object_cast<std::pair<Base_Point_2, unsigned int> > (&(*oi));
+
+          CGAL_assertion (intersect_p != NULL);
+
+          *oi = make_object (std::make_pair (Point_2(intersect_p->first),
+					     intersect_p->second));
         }
       }
       //return past-end iterator
@@ -246,24 +243,26 @@ public:
     template<class OutputIterator>
     OutputIterator operator() (const Curve_2& cv, OutputIterator oi) 
     {
+      const Base_X_monotone_curve_2   *xcv;
+      const Base_Point_2              *pt;
+
       m_base_make_x(cv, std::back_inserter(m_objects));
       for(std::list<Object>::iterator iter = m_objects.begin();
           iter != m_objects.end();
           ++iter)
       {
-        Base_X_monotone_curve_2 cv;
-        if(assign(cv, *iter))
+        if ((xcv = object_cast<Base_X_monotone_curve_2> (&(*iter))) != NULL)
         {
-          *oi++ = make_object(X_monotone_curve_2(cv));
+          *oi = make_object (X_monotone_curve_2 (*xcv));
         }
         else
         {
-          Base_Point_2  pt;
-          CGAL_assertion(assign(pt, *iter));
-          assign(pt,*iter);
+	  pt = object_cast<Base_Point_2> (&(*iter));
+          CGAL_assertion (pt != NULL);
 
-          *oi++ = make_object(Point_2(pt));
+          *oi = make_object (Point_2 (*pt));
         }
+	++oi;
       }
       m_objects.clear();
       return oi;

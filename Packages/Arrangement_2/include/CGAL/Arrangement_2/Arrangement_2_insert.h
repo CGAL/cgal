@@ -40,7 +40,6 @@
 
 CGAL_BEGIN_NAMESPACE
 
-
 //-----------------------------------------------------------------------------
 // Insert a curve into the arrangement (incremental insertion).
 // The inserted x-monotone curve may intersect the existing arrangement.
@@ -68,12 +67,10 @@ void insert (Arrangement_2<Traits,Dcel>& arr,
   Traits_wrapper_2   *traits =
                         static_cast<Traits_wrapper_2*> (arr.get_traits());
 
-  std::list<Object>                    x_objects;
-  std::list<Object>::const_iterator    obj_iter;
-  typename Traits::X_monotone_curve_2  x_curve;
-  typename Traits::Point_2             iso_p;
-  Object                               obj;
-  bool                                 assign_success;
+  std::list<CGAL::Object>                     x_objects;
+  std::list<CGAL::Object>::const_iterator     obj_iter;
+  const typename Traits::X_monotone_curve_2  *x_curve;
+  const typename Traits::Point_2             *iso_p;
 
   traits->make_x_monotone_2_object() (c,
                                       std::back_inserter (x_objects));
@@ -82,11 +79,12 @@ void insert (Arrangement_2<Traits,Dcel>& arr,
   for (obj_iter = x_objects.begin(); obj_iter != x_objects.end(); ++obj_iter)
   {
     // Act according to the type of the current object.
-    if (assign (x_curve, *obj_iter))
+    x_curve = object_cast<typename Traits::X_monotone_curve_2> (&(*obj_iter));
+    if (x_curve != NULL)
     {
       // Inserting an x-monotone curve:
       // Initialize the zone-computation object with the given curve.
-      arr_zone.init (x_curve, pl);
+      arr_zone.init (*x_curve, pl);
 
       // Notify the arrangement observers that a global operation is about to 
       // take place.
@@ -101,14 +99,11 @@ void insert (Arrangement_2<Traits,Dcel>& arr,
     }
     else
     {
-      assign_success = assign (iso_p, *obj_iter);
-
-      CGAL_assertion (assign_success);
-      if (! assign_success)
-        continue;
+      iso_p = object_cast<typename Traits::Point_2> (&(*obj_iter));
+      CGAL_assertion (iso_p != NULL);
 
       // Inserting a point into the arrangement:
-      insert_vertex (arr, iso_p, pl);
+      insert_vertex (arr, *iso_p, pl);
     }
   }
 
@@ -118,7 +113,9 @@ void insert (Arrangement_2<Traits,Dcel>& arr,
 //-----------------------------------------------------------------------------
 // Insert a curve into the arrangement (incremental insertion).
 // The inserted x-monotone curve may intersect the existing arrangement.
-// (overladed version with no point location object)
+// Overloaded version with no point location object - the walk point-location
+// strategy is used as default.
+//
 template <class Traits, class Dcel>
 void insert (Arrangement_2<Traits,Dcel>& arr,
              const typename Traits::Curve_2& c)
@@ -209,6 +206,8 @@ void insert_x_monotone (Arrangement_2<Traits,Dcel>& arr,
 //-----------------------------------------------------------------------------
 // Insert an x-monotone curve into the arrangement (incremental insertion).
 // The inserted x-monotone curve may intersect the existing arrangement.
+// Overloaded version with no point location object - the walk point-location
+// strategy is used as default.
 //
 template <class Traits, class Dcel, class PointLocation>
 void insert_x_monotone (Arrangement_2<Traits,Dcel>& arr,
@@ -272,10 +271,10 @@ insert_non_intersecting (Arrangement_2<Traits,Dcel>& arr,
                          const PointLocation& pl)
 {
   // Locate the curve endpoints.
-  Object   obj1 =
-            pl.locate (arr.get_traits()->construct_min_vertex_2_object() (c));
-  Object   obj2 =
-            pl.locate (arr.get_traits()->construct_max_vertex_2_object() (c));
+  CGAL::Object   obj1 =
+    pl.locate (arr.get_traits()->construct_min_vertex_2_object() (c));
+  CGAL::Object   obj2 =
+    pl.locate (arr.get_traits()->construct_max_vertex_2_object() (c));
 
   // Notify the arrangement observers that a global operation is about to 
   // take place.
@@ -292,26 +291,32 @@ insert_non_intersecting (Arrangement_2<Traits,Dcel>& arr,
     typename Arrangement_2::Halfedge_const_handle  hh;
   );
   
-  CGAL_precondition_msg (!(assign (hh, obj1)) && !(assign (hh, obj2)),
-                      "The curve intersects the interior of existing edges.");
+  CGAL_precondition_msg
+    (object_cast<typename Arrangement_2::Halfedge_const_handle>(&obj1) == NULL
+     &&
+     object_cast<typename Arrangement_2::Halfedge_const_handle>(&obj2) == NULL,
+     "The curve intersects the interior of existing edges.");
   
   // Check whether the located features containing the curve endpoints
   // are vertices or faces, and use the proper specialized insertion function
   // accordingly.
-  typename Arrangement_2::Vertex_const_handle  vh1;
-  typename Arrangement_2::Vertex_const_handle  vh2;
-  typename Arrangement_2::Halfedge_handle      res;
+  const typename Arrangement_2::Vertex_const_handle  *vh1;
+  const typename Arrangement_2::Vertex_const_handle  *vh2;
+  typename Arrangement_2::Halfedge_handle             res;
 
-  if (assign (vh1, obj1))
+  vh1 = object_cast<typename Arrangement_2::Vertex_const_handle> (&obj1);
+  vh2 = object_cast<typename Arrangement_2::Vertex_const_handle> (&obj2);
+
+  if (vh1 != NULL)
   {
-    if (assign (vh2, obj2))
+    if (vh2 != NULL)
     {
       // Both endpoints are associated with a existing vertices.
       // In this case insert_at_vertices() already returns a halfedge directed
       // from left to right.
       res = arr.insert_at_vertices (c,
-                                    arr.non_const_handle (vh1),
-                                    arr.non_const_handle (vh2));
+                                    arr.non_const_handle (*vh1),
+                                    arr.non_const_handle (*vh2));
     }
     else
     {
@@ -320,19 +325,19 @@ insert_non_intersecting (Arrangement_2<Traits,Dcel>& arr,
       // the new vertex it creates, so it is already directed from left to
       // right.
       res = arr.insert_from_left_vertex (c,
-                                         arr.non_const_handle (vh1));
+                                         arr.non_const_handle (*vh1));
     }
   }
   else
   {
-    if (assign (vh2, obj2))
+    if (vh2 != NULL)
     {
       // Only the right endpoint is associated with an existing vertex.
       // In this case insert_from_left_vertex() returns a halfedge directed to
       // the new vertex it creates, so it is directed from right to left and
       // we take its twin halfedge instead.
       res = arr.insert_from_right_vertex (c,
-                                          arr.non_const_handle (vh2));
+                                          arr.non_const_handle (*vh2));
       res = res->twin();
     }
     else
@@ -341,19 +346,19 @@ insert_non_intersecting (Arrangement_2<Traits,Dcel>& arr,
       // we must insert the curve in the interior of a face.
       // In this case insert_in_face_interior() already returns a halfedge
       // directed from left to right.
-       typename Arrangement_2::Face_const_handle  fh1;
-      typename Arrangement_2::Face_const_handle  fh2;
+      const typename Arrangement_2::Face_const_handle  *fh1;
+      const typename Arrangement_2::Face_const_handle  *fh2;
 
-      bool    succ1 = assign (fh1, obj1); 
-      bool    succ2 = assign (fh2, obj2);
+      fh1 = object_cast<typename Arrangement_2::Face_const_handle> (&obj1);
+      fh2 = object_cast<typename Arrangement_2::Face_const_handle> (&obj2);
 
-      CGAL_precondition_msg (succ1 && succ2 && fh1 == fh2,
+      CGAL_assertion_msg (fh1 != NULL && fh2 != NULL && *fh1 == *fh2,
                       "The curve intersects the interior of existing edges.");
 
-      if (succ1 && succ2 && fh1 == fh2)
+      if (fh1 != NULL && fh2 != NULL && *fh1 == *fh2)
       {
-        res = arr.insert_in_face_interior (c,
-                                           arr.non_const_handle (fh1));
+	res = arr.insert_in_face_interior (c,
+					   arr.non_const_handle (*fh1));
       }
     }
   }
@@ -370,6 +375,8 @@ insert_non_intersecting (Arrangement_2<Traits,Dcel>& arr,
 // Insert an x-monotone curve into the arrangement, such that the curve
 // interior does not intersect with any existing edge or vertex in the
 // arragement (incremental insertion).
+// Overloaded version with no point location object - the walk point-location
+// strategy is used as default.
 //
 template <class Traits, class Dcel>
 typename Arrangement_2<Traits,Dcel>::Halfedge_handle
@@ -382,7 +389,7 @@ insert_non_intersecting (Arrangement_2<Traits,Dcel>& arr,
   // create walk point location object
   Walk_pl    walk_pl(arr);
 
-  insert_non_intersecting(arr, c, walk_pl);
+  return (insert_non_intersecting(arr, c, walk_pl));
 }
 
 //-----------------------------------------------------------------------------
@@ -507,40 +514,41 @@ insert_vertex (Arrangement_2<Traits,Dcel>& arr,
   // Obtain an arrangement accessor.
   typedef Arrangement_2<Traits,Dcel>                     Arrangement_2;
   // Act according to the type of arrangement feature that contains the point.
-  typename Arrangement_2::Face_const_handle      fh;
-  typename Arrangement_2::Halfedge_const_handle  hh;
-  typename Arrangement_2::Vertex_const_handle    vh;
-  typename Arrangement_2::Vertex_handle          vh_for_p;
+  const typename Arrangement_2::Face_const_handle      *fh;
+  const typename Arrangement_2::Halfedge_const_handle  *hh;
+  const typename Arrangement_2::Vertex_const_handle    *vh;
+  typename Arrangement_2::Vertex_handle                 vh_for_p;
 
-  Arr_accessor<Arrangement_2>                      arr_access (arr);
+  Arr_accessor<Arrangement_2>                           arr_access (arr);
 
   // Locate the given point in the arrangement.
-  Object        obj = pl.locate (p);
+  CGAL::Object        obj = pl.locate (p);
 
   // Notify the arrangement observers that a global operation is about to 
   // take place.
   arr_access.notify_before_global_change();
 
-  
-  
-  if (assign (fh, obj))
+  if ((fh = object_cast<typename Arrangement_2::Face_const_handle>(&obj)) 
+      != NULL) 
   {
     // p lies inside a face: Insert it as an isolated vertex it the interior of
     // this face.
     vh_for_p = arr.insert_isolated_vertex (p,
-                                           arr.non_const_handle (fh));
+                                           arr.non_const_handle (*fh));
   }
-  else if (assign (hh, obj))
+  else if ((hh = 
+	    object_cast<typename Arrangement_2::Halfedge_const_handle>(&obj)) 
+	   != NULL) 
   {
     // p lies in the interior of an edge: Split this edge to create a new
     // vertex associated with p.
     typename Traits::X_monotone_curve_2                   sub_cv1, sub_cv2;
     typename Arrangement_2::Halfedge_handle  split_he;
    
-    arr.get_traits()->split_2_object() (hh->curve(), p,
+    arr.get_traits()->split_2_object() ((*hh)->curve(), p,
                                         sub_cv1, sub_cv2);
 
-    split_he = arr.split_edge (arr.non_const_handle (hh),
+    split_he = arr.split_edge (arr.non_const_handle (*hh),
                                sub_cv1, sub_cv2);
 
     // The new vertex is the target of the returned halfedge.
@@ -550,12 +558,10 @@ insert_vertex (Arrangement_2<Traits,Dcel>& arr,
   {
     // In this case p lies on an existing vertex, so we just update this
     // vertex.
-    const bool   assign_success = assign (vh, obj);
-
-    CGAL_assertion (assign_success);
+    vh = object_cast<typename Arrangement_2::Vertex_const_handle>(&obj);
+    CGAL_assertion (vh != NULL);
     
-    if (assign_success)
-      vh_for_p = arr.modify_vertex (arr.non_const_handle (vh), p);
+    vh_for_p = arr.modify_vertex (arr.non_const_handle (*vh), p);
   }
 
   // Notify the arrangement observers that the global operation has been
@@ -581,7 +587,7 @@ insert_vertex (Arrangement_2<Traits,Dcel>& arr,
   // create walk point location object
   Walk_pl    walk_pl(arr);
 
-  insert_vertex(arr, p, walk_pl);
+  return (insert_vertex(arr, p, walk_pl));
 }
 
 //-----------------------------------------------------------------------------

@@ -459,6 +459,7 @@ public:
 	Point_2    p (*x_iter, nt_traits.evaluate_at (pnum, *x_iter) /
                                nt_traits.evaluate_at (pden, *x_iter));
 
+
 	this->compare_slopes (arc, p, mult);
 
 	// Output the intersection point:

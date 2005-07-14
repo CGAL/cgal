@@ -76,15 +76,23 @@ Object Arr_naive_point_location<Arrangement>::locate (const Point_2& p) const
   }
 
   // The ray shooting returned either a vertex of a halfedge.
-  if (assign (hh, obj))
+  const typename Arrangement::Vertex_const_handle    *p_vh;
+  const typename Arrangement::Halfedge_const_handle  *p_hh;
+
+  p_hh = object_cast<typename Arrangement::Halfedge_const_handle> (&obj);
+  if (p_hh != NULL)
   {
     // Make sure that the edge is directed from right to left, so that p
     // (which lies below it) is contained in its incident face. If necessary,
     // we take the twin halfedge.
-    if (traits->compare_xy_2_object() (hh->source()->point(), 
-                                       hh->target()->point()) == SMALLER)
+    if (traits->compare_xy_2_object() ((*p_hh)->source()->point(), 
+                                       (*p_hh)->target()->point()) == SMALLER)
     {
-      hh = hh->twin();
+      hh = (*p_hh)->twin();
+    }
+    else
+    {
+      hh = *p_hh;
     }
 
     // Return the incident face.
@@ -94,13 +102,10 @@ Object Arr_naive_point_location<Arrangement>::locate (const Point_2& p) const
   // In case the ray-shooting returned a vertex, we have to locate the first
   // halfedge whose source vertex is v, rotating clockwise around the vertex
   // from "6 o'clock", and to return its incident face. 
-  if (! assign (vh, obj))
-  {
-    CGAL_assertion (false);
-    return Object();
-  }
+  p_vh = object_cast<typename Arrangement::Vertex_const_handle> (&obj);
+  CGAL_assertion (p_vh != NULL);
 
-  hh = _first_around_vertex (vh);
+  hh = _first_around_vertex (*p_vh);
   return (CGAL::make_object (hh->face()));
 }
 
@@ -218,14 +223,20 @@ Object Arr_naive_point_location<Arrangement>::_vertical_ray_shoot
   {
     type = NAIVE_PL_NONE;
   }
-  else if (assign (closest_v, obj))
-  {
-    type = NAIVE_PL_VERTEX;
-  }
   else
   {
-    assign (closest_he, obj);
-    type = NAIVE_PL_HALFEDGE;
+    const Vertex_const_handle *p_vh = object_cast<Vertex_const_handle> (&obj);
+    
+    if (p_vh != NULL)
+    {
+      closest_v = *p_vh;
+      type = NAIVE_PL_VERTEX;
+    }
+    else
+    {
+      closest_he = object_cast<Halfedge_const_handle> (obj);
+      type = NAIVE_PL_HALFEDGE;
+    }
   }
 
   // Set the result for comparison according to the ray direction.

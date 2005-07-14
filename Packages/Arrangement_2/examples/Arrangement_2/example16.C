@@ -4,7 +4,6 @@
 #include <CGAL/CORE_algebraic_number_traits.h>
 #include <CGAL/Arr_rational_arc_traits_2.h>
 #include <CGAL/Arrangement_2.h>
-#include <CGAL/Arr_walk_along_line_point_location.h>
 
 typedef CGAL::CORE_algebraic_number_traits            Nt_traits;
 typedef Nt_traits::Rational                           Rational;
@@ -17,7 +16,6 @@ typedef Traits_2::Curve_2                             Rational_arc_2;
 typedef Traits_2::Rat_vector                          Rat_vector;
 typedef std::list<Rational_arc_2>                     Rat_arcs_list;
 typedef CGAL::Arrangement_2<Traits_2>                 Arrangement_2;
-typedef CGAL::Arr_walk_along_line_point_location<Arrangement_2> Walk_pl;
 
 int main ()
 {
@@ -53,13 +51,15 @@ int main ()
   Rational_arc_2    a4 (P4, Algebraic(-2), Algebraic(0));
 
   // Construct the arrangement of the four arcs.
-  Arrangement_2    arr;
-  Walk_pl          pl (arr);
+  Arrangement_2              arr;
+  std::list<Rational_arc_2>  arcs;
+  
+  arcs.push_back (a1);
+  arcs.push_back (a2);
+  //arcs.push_back (a3);
+  arcs.push_back (a4);
+  insert (arr, arcs.begin(), arcs.end());
 
-  insert (arr, pl, a1);
-  insert (arr, pl, a2);
-  insert (arr, pl, a3);
-  insert (arr, pl, a4);
 
   // Print the arrangement size.
   std::cout << "V = " << arr.number_of_vertices()

@@ -232,19 +232,20 @@ public:
 
       // Attach the data to each of the resulting x-monotone curves.
       typename std::list<CGAL::Object>::const_iterator  it;
-      const Base_x_monotone_curve_2                    *xcv_p;
+      const Base_x_monotone_curve_2                    *base_x_curve;
 
       for (it = base_objects.begin(); it != base_objects.end(); ++it)
       {
-        xcv_p = object_cast<const Base_x_monotone_curve_2*> (&(*it));
-        if (xcv_p != NULL)
+	base_x_curve = object_cast<Base_x_monotone_curve_2> (&(*it));
+        if (base_x_curve != NULL)
         {
           // Current object is an x-monotone curve: Attach data to it.
-          *oi = X_monotone_curve_2 (*cv_p, cv.get_data());
+          *oi = X_monotone_curve_2 (*base_x_curve, cv.get_data());
         }
         else
         {
           // Current object is an isolated point: Leave it as is.
+	  CGAL_assertion (object_cast<Point_2> (&(*it)) != NULL);
           *oi = *it;
         }
         ++oi;
@@ -339,17 +340,16 @@ public:
 
       // Go over all intersection objects and prepare the output.
       typename std::list<CGAL::Object>::const_iterator  it;
-      const Base_x_monotone_curve_2                    *xcv_p;
+      const Base_x_monotone_curve_2                    *base_cv;
 
       for (it = base_objects.begin(); it != base_objects.end(); ++it)
       {
-        xcv_p = object_cast<const Base_x_monotone_curve_2*> (&(*it));
-        if (xcv_p != NULL)
+        if ((base_cv = object_cast<Base_x_monotone_curve_2> (&(*it))) != NULL)
         {
           // The current intersection object is an overlapping x-monotone
           // curve: Merge the data fields of both intersecting curves and
           // associate the result with the overlapping curve.
-          X_monotone_curve_2  cv (*xcv_p,
+          X_monotone_curve_2  cv (*base_cv,
                                   Merge_functor() (cv1.get_data(),
                                                    cv2.get_data()));
 

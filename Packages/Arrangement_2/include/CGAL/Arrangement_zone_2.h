@@ -74,7 +74,7 @@ protected:
 
   // Types used for caching intersection points:
   typedef std::pair<Point_2, unsigned int>        Intersect_point_2;
-  typedef std::list<Object>                       Intersect_list;
+  typedef std::list<CGAL::Object>                 Intersect_list;
   typedef std::map<const X_monotone_curve_2*,
                    Intersect_list>                Intersect_map;
   typedef typename Intersect_map::iterator        Intersect_map_iterator;
@@ -97,7 +97,7 @@ protected:
 
   X_monotone_curve_2  cv;              // The current portion of the
                                        // inserted curve.
-  Object              obj;             // The location of the left endpoint.
+  CGAL::Object        obj;             // The location of the left endpoint.
   Point_2             left_pt;         // Its current left endpoint.
   Point_2             right_pt;        // Its right endpoint.
 
@@ -237,7 +237,7 @@ private:
    *         case of an overlap, and an empty object if there is no
    *         intersection.
    */
-  Object _compute_next_intersection (Halfedge_handle he);
+  CGAL::Object _compute_next_intersection (Halfedge_handle he);
 
   /*!
    * Remove the next intersection of cv with the given halfedge from the map.

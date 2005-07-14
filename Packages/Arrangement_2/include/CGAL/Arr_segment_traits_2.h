@@ -714,8 +714,8 @@ public:
       CGAL_precondition (! cv2.is_degenerate());
 
       // Intersect the two supporting lines.
-      Kernel    kernel;
-      Object    obj = kernel.intersect_2_object()(cv1.line(), cv2.line());
+      Kernel       kernel;
+      CGAL::Object obj = kernel.intersect_2_object()(cv1.line(), cv2.line());
 
       if (obj.is_empty())
       {
@@ -724,21 +724,21 @@ public:
       }
 
       // Check if we have a single intersection point.
-      Point_2   ip;
+      const Point_2  *ip = object_cast<Point_2> (&obj);
 
-      if (assign(ip, obj))
+      if (ip != NULL)
       {
         // Check if the intersection point ip lies on both segments.
-        const bool    ip_on_cv1 = cv1.is_vertical() ? cv1.is_in_y_range(ip) :
-                                                      cv1.is_in_x_range(ip);
-        const bool    ip_on_cv2 = cv2.is_vertical() ? cv2.is_in_y_range(ip) :
-                                                      cv2.is_in_x_range(ip);
+        const bool    ip_on_cv1 = cv1.is_vertical() ? cv1.is_in_y_range(*ip) :
+                                                      cv1.is_in_x_range(*ip);
+        const bool    ip_on_cv2 = cv2.is_vertical() ? cv2.is_in_y_range(*ip) :
+                                                      cv2.is_in_x_range(*ip);
 
         if (ip_on_cv1 && ip_on_cv2)
         {
           // Create a pair representing the point with its multiplicity,
           // which is always 1 for line segments.
-          std::pair<Point_2, unsigned int>   ip_mult (ip, 1);
+          std::pair<Point_2, unsigned int>   ip_mult (*ip, 1);
           *oi = make_object (ip_mult);
           oi++;
         }

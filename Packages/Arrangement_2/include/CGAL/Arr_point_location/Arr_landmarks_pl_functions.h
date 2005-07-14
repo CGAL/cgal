@@ -68,12 +68,13 @@ Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
   if (p_arr->number_of_vertices() == 0) 
     return (CGAL::make_object (p_arr->unbounded_face()));
   
-  Object  landmark_location_obj; 
+  Object  lm_location_obj; 
   Point_2 landmark_point = lm_gen->get_closest_landmark (p, 
-							 landmark_location_obj);
+							 lm_location_obj);
+
   //NN_Point_2 nearest_landmark = lm_gen->find_closest_landmark(p);
   //Point_2 landmark_point = nearest_landmarks.get_point();
-  //Object  landmark_location_obj = nearest_landmarks.get_obj() ;
+  //Object  lm_location_obj = nearest_landmarks.get_obj() ;
   PRINT_DEBUG("nearest neighbor of point "<< p << " is " << landmark_point);
   
   //walk from the nearest_vertex to the point p, using walk algorithm, 
@@ -83,30 +84,30 @@ Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
   Object	out_obj; //the output object
   
   //if the landmark s not found in the arangement
-  Vertex_const_handle     v;
-  Halfedge_const_handle   h;
-  Face_const_handle       f;
+  const Vertex_const_handle     *vh;
+  const Halfedge_const_handle   *hh;
+  const Face_const_handle       *fh;
   
-  if (landmark_location_obj.is_empty())
+  if (lm_location_obj.is_empty())
   {
-    PRINT_ERROR( "landmark_location_obj is empty" );
+    PRINT_ERROR( "lm_location_obj is empty" );
     CGAL_assertion (false);
     return out_obj;
   }
-  else if (assign (v, landmark_location_obj))
+  else if ((vh = object_cast<Vertex_const_handle>(&lm_location_obj)) != NULL)
   {
-    PRINT_DEBUG( "landmark_location_obj is a vertex: "<< v->point());
-    out_obj = _walk_from_vertex( v , p);
+    PRINT_DEBUG( "lm_location_obj is a vertex: "<< (*vh)->point());
+    out_obj = _walk_from_vertex (*vh, p);
   }
-  else if (assign (f, landmark_location_obj))
+  else if ((fh = object_cast<Face_const_handle>(&lm_location_obj)) != NULL)
   {
-    PRINT_DEBUG( "landmark_location_obj is a face. ");
-    out_obj = _walk_from_face( f, p, landmark_point);
+    PRINT_DEBUG( "lm_location_obj is a face. ");
+    out_obj = _walk_from_face (*fh, p, landmark_point);
   }
-  else if (assign (h, landmark_location_obj))
+  else if ((hh = object_cast<Halfedge_const_handle>(&lm_location_obj)) != NULL)
   {
-    PRINT_DEBUG( "landmark_location_obj is a halfedge: "<< h->curve());
-    out_obj = _walk_from_edge( h, p, landmark_point);
+    PRINT_DEBUG( "lm_location_obj is a halfedge: "<< (*hh)->curve());
+    out_obj = _walk_from_edge (*hh, p, landmark_point);
   }
   else 
   {
@@ -125,21 +126,21 @@ Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
     PRINT_ERROR( "object is empty" );
     CGAL_assertion (false);
   }
-  else if (assign (h, out_obj))
+  else if ((hh = object_cast<Halfedge_const_handle>(&out_obj)) != NULL)
   {
-    PRINT_DEBUG( "object is a halfedge: "<< h->curve());
+    PRINT_DEBUG( "object is a halfedge: "<< (*hh)->curve());
   }
-  else if (assign (v, out_obj))
+  else if ((vh = object_cast<Vertex_const_handle>(&out_obj)) != NULL)
   {
-    PRINT_DEBUG( "object is a vertex: "<< v->point());
+    PRINT_DEBUG( "object is a vertex: "<< *(vh)->point());
   }
-  else if (assign (f, out_obj))
+  else if ((fh = object_cast<Face_const_handle>(&out_obj)) != NULL)
   {
     PRINT_DEBUG( "object is a face. ");
   }
 #endif
   
-  if (assign (f, out_obj))
+  if ((fh = object_cast<Face_const_handle>(&out_obj)) != NULL)
   {
     // If we reached here, we did not locate the query point in any of the
     // holes inside the current face, so we conclude it is contained in this
@@ -149,15 +150,15 @@ Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
     Isolated_vertices_const_iterator   iso_verts_it;
     typename Traits_wrapper_2::Equal_2 equal = traits->equal_2_object();
 
-    for (iso_verts_it = f->isolated_vertices_begin();
-        iso_verts_it != f->isolated_vertices_end(); ++iso_verts_it)
+    for (iso_verts_it = (*fh)->isolated_vertices_begin();
+	 iso_verts_it != (*fh)->isolated_vertices_end(); ++iso_verts_it)
     {
       if (equal (p, iso_verts_it->point()))
         return (CGAL::make_object (iso_verts_it->handle()));
     }		
   }
 
-  return (out_obj) ;
+  return (out_obj);
 }
 
 //----------------------------------------------------
@@ -178,18 +179,19 @@ Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
   Vertex_const_handle vh = nearest_vertex;
   Object obj;
   
-  Vertex_const_handle     v;
-  Halfedge_const_handle   h;
-  Face_const_handle       f;
+  const Vertex_const_handle     *p_vh;
+  const Halfedge_const_handle   *p_hh;
+  const Face_const_handle       *p_fh;
 
   if (vh->is_isolated())
   {
-    f = p_arr->incident_face(vh);
+    Face_const_handle f = p_arr->incident_face(vh);
     return _walk_from_face(f, p, vh->point());
   }
 
   //find face
-  do {
+  do
+  {
     //find the edge out_edge which is the best possibly 
     //pointing to the face containing p
 
@@ -201,22 +203,15 @@ Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
     LM_CLOCK_DEBUG(clock_t ff_time_end = clock() );
     LM_CLOCK_DEBUG(clock_ff += (double) (ff_time_end - ff_time_start) );
 
-    if (new_vertex) {
+    if (new_vertex)
+    {
       PRINT_DEBUG( "NEW vertex 1 " );
       //check if the new vertex is really closer 
       // I removed the check if the vertex is closer since there is no 
       // compare distance 
       //if (traits->compare_distance(p, out_vertex->point(), vh->point())  
-      //	!= SMALLER) {PRINT_DEBUG("Error 2: new vertex"); return; } 
-      if (assign (v, obj))
-      {
-	vh = v;
-      }
-      else
-      {
-	CGAL_assertion (false);	
-	return Object();
-      }
+      //	!= SMALLER) {PRINT_DEBUG("Error 2: new vertex"); return; }
+      vh = object_cast<Vertex_const_handle> (obj);
     }
     else if (obj.is_empty())
     {
@@ -224,24 +219,25 @@ Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
       CGAL_assertion (false);
       return obj;
     }
-    else if (assign (h, obj))
+    else if ((p_hh = object_cast<Halfedge_const_handle>(&obj)) != NULL)
     {
-      PRINT_DEBUG( "_find_face found a halfedge: "<< h->curve());
+      PRINT_DEBUG( "_find_face found a halfedge: "<< (*p_hh)->curve());
       return (obj);
     }
-    else if (assign (v, obj))
+    else if ((p_vh = object_cast<Vertex_const_handle>(&obj)) != NULL)
     {
-      PRINT_DEBUG( "_find_face found a vertex: "<< v->point());
+      PRINT_DEBUG( "_find_face found a vertex: "<< (*p_vh)->point());
       return (obj);
     }
-    else if (assign (f, obj))
+    else if ((p_fh = object_cast<Face_const_handle>(&obj)) != NULL)
     {
       PRINT_DEBUG("face that was a face ");
-      return _walk_from_face (f, p, vh->point());
+      return _walk_from_face (*p_fh, p, vh->point());
     }
     
   } while (new_vertex);	
   
+  // We should never reach here:
   CGAL_assertion (false);
   return Object();
 }

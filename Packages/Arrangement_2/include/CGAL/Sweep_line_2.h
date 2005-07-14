@@ -565,47 +565,49 @@ void Sweep_line_2<Traits_,
   // we can ignore last intersection (re-computing the intersection point
   // can crash the sweep later with inexact number types
 
-  if(reinterpret_cast<SweepEvent*>(c1->get_right_event()) ==
-     reinterpret_cast<SweepEvent*>(c2->get_right_event()))
-     --vi_end; 
-     
+  if (reinterpret_cast<SweepEvent*>(c1->get_right_event()) ==
+      reinterpret_cast<SweepEvent*>(c2->get_right_event()))
+  {
+    --vi_end; 
+  }  
 
-  if(after_remove)
+  const std::pair<Point_2,unsigned int>  *xp_point;
+
+  if (after_remove)
   {
     for( ; vi != vi_end ; ++vi)
     {
-      std::pair<Point_2,unsigned int> xp_point;
-      CGAL::assign(xp_point, *vi); // TODO: add an assertion
-      if(m_traits->compare_xy_2_object()(m_currentEvent->get_point(),
-                                      xp_point.first) ==  SMALLER)
+      xp_point = object_cast<std::pair<Point_2,unsigned int> > (&(*vi));
+      CGAL_assertion (xp_point != NULL);
+
+      if(m_traits->compare_xy_2_object() (m_currentEvent->get_point(),
+					  xp_point->first) ==  SMALLER)
         break;
     }
   }
 
   for( ; vi != vi_end ; ++vi)
   {
-    Object                          xp_object = *vi;
-    std::pair<Point_2,unsigned int> xp_point;
-    Point_2                         xp;
-    unsigned int                    multiplicity = 0;
+    const X_monotone_curve_2 *icv;
+    Point_2                   xp;
+    unsigned int              multiplicity = 0;
 
-    if(!CGAL::assign(xp_point, xp_object))
+    xp_point = object_cast<std::pair<Point_2,unsigned int> > (&(*vi));
+    if (xp_point != NULL)
     {
-      X_monotone_curve_2 cv;
-      // TODO : add some assetions to make sure its X_monotone_curve_2
-      CGAL::assign(cv, xp_object);
-      xp = m_traits->construct_max_vertex_2_object()(cv);
+      xp = xp_point->first;
+      multiplicity = xp_point->second;
+      PRINT("found an intersection point: " << xp << "\n";);
     }
     else
     {
-      xp = xp_point.first;
-      multiplicity = xp_point.second;
-      PRINT("found an intersection point: " << xp << "\n";);
-    }
+      icv = object_cast<X_monotone_curve_2> (&(*vi));
+      CGAL_assertion (icv != NULL);
 
+      xp = m_traits->construct_max_vertex_2_object()(*icv);
+    }
   
-    // insert the event and check if an event at this point already exists
-   
+    // insert the event and check if an event at this point already exists.   
     const std::pair<Event*, bool>& pair_res = 
       push_event(xp, Base_event::DEFAULT);
     
@@ -773,19 +775,18 @@ _handle_overlap(Event* event, Subcurve* curve, EventCurveIter iter)
     // TODO: take care of polylines in which overlap can happen anywhere
     PRINT("Overlap detected at right insertion...\n";);
     //EventCurveIter iter = pair_res.second;
-      
-    X_monotone_curve_2 overlap_cv;
-    
+       
     vector_inserter vi(m_x_objects);
     vector_inserter vi_end(m_x_objects);
     vi_end = m_traits->intersect_2_object()(curve->get_last_curve(),
-					   (*iter)->get_last_curve(),
-					   vi);
+					    (*iter)->get_last_curve(),
+					    vi);
     
     //BZBZ 06/07/05
     if(vi == vi_end)
       return;
-    CGAL::assign(overlap_cv, *vi);
+   
+    X_monotone_curve_2 overlap_cv = object_cast<X_monotone_curve_2> (*vi);
     
     // Get the right end of overlap_cv
     Point_2 end_overlap =

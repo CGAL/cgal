@@ -48,21 +48,24 @@ void Arrangement_zone_2<Arrangement,ZoneVisitor>::compute_zone ()
 
   // Locate the arrangement feature containing the left endpoint of the
   // curve (currently obj stores the object containing it).
-  typename Arrangement_2::Vertex_const_handle    vh;
-  typename Arrangement_2::Halfedge_const_handle  hh;
-  typename Arrangement_2::Face_const_handle      fh;
+  const typename Arrangement_2::Vertex_const_handle    *vh;
+  const typename Arrangement_2::Halfedge_const_handle  *hh;
+  const typename Arrangement_2::Face_const_handle      *fh;
 
-  if (assign (vh, obj))
+  if ((vh = object_cast<typename Arrangement_2::Vertex_const_handle>(&obj))
+      != NULL)
   {
     // The left endpoint coincides with an existing vertex:
-    left_v = arr.non_const_handle (vh);
+    left_v = arr.non_const_handle (*vh);
   }
-  else if (assign (hh, obj))
+  else if ((hh =
+	    object_cast<typename Arrangement_2::Halfedge_const_handle>(&obj))
+	   != NULL)
   {
     // Obtain the right halfedge from the halfedge-pair containing left_pt
     // in their interior.
     left_he = _direct_intersecting_edge_to_right (cv, left_pt,
-                                                  arr.non_const_handle (hh));
+                                                  arr.non_const_handle (*hh));
 
     // Handle overlaps.
     if (found_overlap)
@@ -71,32 +74,25 @@ void Arrangement_zone_2<Arrangement,ZoneVisitor>::compute_zone ()
       // Compute the overlapping subcurve to the right of curr_v.
       obj = _compute_next_intersection (intersect_he);
 
-      bool  assign_success = assign (overlap_cv, obj);
+      overlap_cv = object_cast<X_monotone_curve_2> (obj);
 
-      CGAL_assertion (assign_success);
-      if (assign_success)
-      {
-        // Remove the overlap from the map.
-        _remove_next_intersection (intersect_he);
+      // Remove the overlap from the map.
+      _remove_next_intersection (intersect_he);
 
-        // Compute the overlap zone and continue to the end of the loop.
-        done = _zone_in_overlap ();
-      }
+      // Compute the overlap zone and continue to the end of the loop.
+      done = _zone_in_overlap ();
     }
   }
   else
   {
     // The left endpoint lies inside a face.
-    bool     assign_success = assign (fh, obj);
+    fh = object_cast<typename Arrangement_2::Face_const_handle>(&obj);
 
-    CGAL_assertion_msg(assign_success,
+    CGAL_assertion_msg(fh != NULL,
 		       "Invalid object returned by the point-location query.");
 
-    if (! assign_success)
-      return;
-
     // Compute the zone of the curve at the interior of the face.
-    done = _zone_in_face (arr.non_const_handle(fh),
+    done = _zone_in_face (arr.non_const_handle(*fh),
                           false);      // left_pt is not on the face boundary.
 
     // In case we have just discovered an overlap, compute the overlapping
@@ -147,18 +143,14 @@ void Arrangement_zone_2<Arrangement,ZoneVisitor>::compute_zone ()
         // Compute the overlapping subcurve to the right of curr_v.
         obj = _compute_next_intersection (intersect_he);
 
-        bool  assign_success = assign (overlap_cv, obj);
+	overlap_cv = object_cast<X_monotone_curve_2> (obj);
 
-        CGAL_assertion (assign_success);
-        if (assign_success)
-        {
-          // Remove the overlap from the map.
-          _remove_next_intersection (intersect_he);
+	// Remove the overlap from the map.
+	_remove_next_intersection (intersect_he);
 
-          // Compute the overlap zone and continue to the end of the loop.
-          done = _zone_in_overlap ();
-          continue;
-        }
+	// Compute the overlap zone and continue to the end of the loop.
+	done = _zone_in_overlap ();
+	continue;
       }
     }
 
@@ -393,7 +385,8 @@ Arrangement_zone_2<Arrangement,ZoneVisitor>::_direct_intersecting_edge_to_left
 // Get the next intersection of cv with the given halfedge.
 //
 template<class Arrangement, class ZoneVisitor>
-Object Arrangement_zone_2<Arrangement,ZoneVisitor>::_compute_next_intersection
+CGAL::Object
+Arrangement_zone_2<Arrangement,ZoneVisitor>::_compute_next_intersection
     (Halfedge_handle he)
 {
   // Get a pointer to the curve associated with the halfedge.
@@ -410,7 +403,10 @@ Object Arrangement_zone_2<Arrangement,ZoneVisitor>::_compute_next_intersection
   }
 
   // Try to locate the intersections with this curve in the intersections map.
-  Intersect_map_iterator     iter;
+  Intersect_map_iterator    iter;
+  const Intersect_point_2  *ip;
+  const X_monotone_curve_2 *icv;
+  bool                      valid_intersection;
 
   if (! invalid_intersections_with_curve)
     iter = inter_map.find (p_curve);
@@ -424,27 +420,25 @@ Object Arrangement_zone_2<Arrangement,ZoneVisitor>::_compute_next_intersection
     Intersect_list&          inter_list = iter->second;
 
     if (inter_list.empty())
-      return Object();
+      return CGAL::Object();
 
     // Locate the first intersection that lies to the right of left_pt.
-    Intersect_point_2        ip;
-    bool                     valid_intersection;
-
     while (! inter_list.empty())
     {
       // Compare that current object with left_pt.
-      if (assign (ip, inter_list.front()))
+      ip = object_cast<Intersect_point_2> (&(inter_list.front()));
+      if (ip != NULL)
       {
         valid_intersection =
-          (traits->compare_xy_2_object() (ip.first, left_pt) == LARGER);
+          (traits->compare_xy_2_object() (ip->first, left_pt) == LARGER);
       }
       else
       {
-        X_monotone_curve_2   icv;
+	icv = object_cast<X_monotone_curve_2> (&(inter_list.front()));
+	CGAL_assertion (icv != NULL);
 
-        assign (icv, inter_list.front());
         valid_intersection = (traits->compare_xy_2_object()
-                              (traits->construct_min_vertex_2_object()(icv),
+                              (traits->construct_min_vertex_2_object()(*icv),
                                left_pt) != SMALLER);
       }
 
@@ -457,7 +451,7 @@ Object Arrangement_zone_2<Arrangement,ZoneVisitor>::_compute_next_intersection
     }
 
     // If we reached here, the list of intersections is empty:
-    return Object();
+    return CGAL::Object();
   }
 
   // The intersections with the curve have not been computed yet, so we
@@ -468,24 +462,22 @@ Object Arrangement_zone_2<Arrangement,ZoneVisitor>::_compute_next_intersection
                                 std::back_inserter(inter_list));
 
   // Discard all intersection lying to the left of left_pt.
-  Intersect_point_2        ip;
-  bool                     valid_intersection;
-
   while (! inter_list.empty())
   {
     // Compare that current object with left_pt.
-    if (assign (ip, inter_list.front()))
+    ip = object_cast<Intersect_point_2> (&(inter_list.front()));
+    if (ip != NULL)
     {
       valid_intersection =
-        (traits->compare_xy_2_object() (ip.first, left_pt) == LARGER);
+        (traits->compare_xy_2_object() (ip->first, left_pt) == LARGER);
     }
     else
     {
-      X_monotone_curve_2   icv;
+      icv = object_cast<X_monotone_curve_2> (&(inter_list.front()));
+      CGAL_assertion (icv != NULL);
 
-      assign (icv, inter_list.front());
       valid_intersection = (traits->compare_xy_2_object()
-                            (traits->construct_min_vertex_2_object() (icv),
+                            (traits->construct_min_vertex_2_object() (*icv),
                              left_pt) != SMALLER);
     }
 
@@ -507,7 +499,7 @@ Object Arrangement_zone_2<Arrangement,ZoneVisitor>::_compute_next_intersection
 
   // Return the first intersection object computed (may be empty).
   if (inter_list.empty())
-    return Object();
+    return CGAL::Object();
   else
     return (inter_list.front());
 }
@@ -560,9 +552,10 @@ void Arrangement_zone_2<Arrangement,ZoneVisitor>::
   typename Arrangement_2::Ccb_halfedge_circulator  he_first;
   typename Arrangement_2::Ccb_halfedge_circulator  he_curr;
 
-  Object                  obj;
-  Intersect_point_2       int_p;
-  Point_2                 ip;
+  CGAL::Object               obj;
+  const Intersect_point_2   *int_p;
+  const X_monotone_curve_2  *icv;
+  Point_2                    ip;
 
   if (! face->is_unbounded())
   {
@@ -604,9 +597,10 @@ void Arrangement_zone_2<Arrangement,ZoneVisitor>::
       {
         // We have found an intersection (either a simple point or an
         // overlapping x-monotone curve).
-        if (assign (int_p, obj))
+	int_p = object_cast<Intersect_point_2> (&obj);
+        if (int_p != NULL)
         {
-          ip = int_p.first;
+          ip = int_p->first;
 
           // Found a simple intersection point. Check if it is the leftmost
           // intersection point so far.
@@ -615,7 +609,7 @@ void Arrangement_zone_2<Arrangement,ZoneVisitor>::
           {
             // Store the leftmost intersection point and the halfedge handle.
             intersect_p = ip;
-            ip_mult = int_p.second;
+            ip_mult = int_p->second;
             intersect_he = he_curr->handle();
             found_overlap = false;
           }
@@ -624,10 +618,10 @@ void Arrangement_zone_2<Arrangement,ZoneVisitor>::
         {
           // We have located an overlapping curve. Assign ip as its left
           // endpoint.
-          X_monotone_curve_2   icv;
+	  icv = object_cast<X_monotone_curve_2> (&obj);
+	  CGAL_assertion (icv != NULL);
 
-          assign (icv, obj);
-          ip = min_vertex (icv);
+          ip = min_vertex (*icv);
 
           // Check if this endpoint it is the leftmost intersection point so
           // far.
@@ -637,7 +631,7 @@ void Arrangement_zone_2<Arrangement,ZoneVisitor>::
             // Store the leftmost intersection point and the halfedge handle.
             intersect_p = ip;
             ip_mult = 0;
-            overlap_cv = icv;
+            overlap_cv = *icv;
             intersect_he = he_curr->handle();
             found_overlap = true;
           }
@@ -700,9 +694,10 @@ void Arrangement_zone_2<Arrangement,ZoneVisitor>::
       {
         // We have found an intersection (either a simple point or an
         // overlapping x-monotone curve).
-        if (assign (int_p, obj))
+	int_p = object_cast<Intersect_point_2> (&obj);
+        if (int_p != NULL)
         {
-          ip = int_p.first;
+          ip = int_p->first;
 
           // Found a simple intersection point. Check if it is the leftmost
           // intersection point so far.
@@ -712,7 +707,7 @@ void Arrangement_zone_2<Arrangement,ZoneVisitor>::
             // Store the leftmost intersection point and the halfedge
             // handle.
             intersect_p = ip;
-            ip_mult = int_p.second;
+            ip_mult = int_p->second;
             intersect_he = he_curr->handle();
             found_overlap = false;
           }
@@ -721,10 +716,10 @@ void Arrangement_zone_2<Arrangement,ZoneVisitor>::
         {
           // We have located an overlapping curve. Assign ip as its left
           // endpoint.
-          X_monotone_curve_2   icv;
+	  icv = object_cast<X_monotone_curve_2> (&obj);
+	  CGAL_assertion (icv != NULL);
 
-          assign (icv, obj);
-          ip = min_vertex (icv);
+          ip = min_vertex (*icv);
 
           // Check if this endpoint it is the leftmost intersection point
           // so far.
@@ -735,7 +730,7 @@ void Arrangement_zone_2<Arrangement,ZoneVisitor>::
             // handle.
             intersect_p = ip;
             ip_mult = 0;
-            overlap_cv = icv;
+            overlap_cv = *icv;
             intersect_he = he_curr->handle();
             found_overlap = true;
           }
@@ -1018,8 +1013,9 @@ bool Arrangement_zone_2<Arrangement,ZoneVisitor>::_zone_in_overlap ()
     traits->construct_max_vertex_2_object() (overlap_cv);
   Vertex_handle   he_right_v;
 
-  if (traits->compare_xy_2_object() (intersect_he->source()->point(),
-                                     intersect_he->target()->point()) == SMALLER)
+  if (traits->
+      compare_xy_2_object()(intersect_he->source()->point(),
+			    intersect_he->target()->point()) == SMALLER)
   {
     he_right_v = intersect_he->target();
   }

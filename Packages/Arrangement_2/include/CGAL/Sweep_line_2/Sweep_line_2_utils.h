@@ -48,19 +48,26 @@ void  make_x_monotone(CurveInputIter begin,
   typedef typename Traits::X_monotone_curve_2    X_monotone_curve_2;
   typedef typename Traits::Point_2               Point_2;
 
-  X_monotone_curve_2 xcurve;
+  const X_monotone_curve_2 *xcv;
+  const Point_2            *pt;
+  unsigned int              i;
 
-  for(unsigned int i = 0 ; i < object_vec.size() ; ++i)
+  for (i = 0 ; i < object_vec.size() ; ++i)
   {
-    Object& obj = object_vec[i];
-    if(assign(xcurve, obj))
-      *xcurves_out++ = xcurve;
+    xcv = object_cast<X_monotone_curve_2> (&(object_vec[i]));
+
+    if (xcv != NULL)
+    {
+      *xcurves_out = *xcv;
+      ++xcurves_out;
+    }
     else
     {
-      Point_2            pt;
-      CGAL_assertion(assign(pt, obj));
-      assign(pt,obj);
-      *points_out++ = pt;
+      pt = object_cast<Point_2> (&(object_vec[i]));
+      CGAL_assertion (pt != NULL);
+      
+      *points_out = *pt;
+      ++points_out;
     }
   }
 }
