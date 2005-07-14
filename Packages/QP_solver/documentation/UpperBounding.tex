@@ -1,0 +1,221 @@
+\documentclass[a4paper]{article}
+%\usepackage{html}
+\usepackage[dvips]{graphics,color,epsfig}
+\usepackage{path}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{psfrag}
+\newcommand{\N}{\ensuremath{\mathbb{N}}}
+\newcommand{\F}{\ensuremath{\mathbb{F}}}
+\newcommand{\Z}{\ensuremath{\mathbb{Z}}}
+\newcommand{\R}{\ensuremath{\mathbb{R}}}
+\newcommand{\Q}{\ensuremath{\mathbb{Q}}}
+\newcommand{\C}{\ensuremath{\mathbb{C}}}
+
+\newtheorem{lemma}{Lemma}
+\newtheorem{assumption}{Assumption}
+\newtheorem{definition}{Definition}
+
+
+\title{Upper Bounding}
+\author{Frans Wessendorp}
+\begin{document}
+\maketitle
+\section{General Remarks}
+The lower and upper bounds, in the finite case,  will be stored in the vectors
+$l$ and $u$, $l \leq u$, both of size $\left|O\right|$, where $O$ denotes the set of original variables. The absence or presence of finite bounds will be indicated by means of two 0,1 valued vectors $f^{l}$ and $f^{u}$. Thus if 
+$f_{j}^{l}=0$, for some $j \in O$, then the lower bound for the variable $x_{j}$ is $-\infty$, on the other hand, if $f_{j}^{l}=1$ for some $j \in O$ then the lower bound for variable $x_{j}$ is $l_{j}$. The upper bounds are described 
+likewise. Thus a variable $x_{k}$ is \emph{free}, if $f_{k}^{u}=0$ and
+$f_{k}^{l}=0$, and $x_{k}$ is \emph{fixed}, if $u_{k}=l_{k}$ as well as
+$f_{k}^{l}=1$ and $f_{k}^{u}=1$ hold. The set of fixed variables will be denoted by $F$.
+
+Extending the vectors $f^{l}, f^{u}$ and $l, u$ for the set of slack variables $S$ and artificial variables $art$ comes naturally, such that we can introduce  
+a function $b: O \cup S \cup art \rightarrow \{-1, 0, 1\}$ indicating which of the three possible values a nonbasic variable may take on with respect to its bounds,
+\begin{equation}
+b(k):= \left\{
+\begin{array}{ll}
+-1
+&
+\mbox{if $x_{k}=l_{k} \wedge f_{k}^{l}=1$ for $k \in N \setminus F$} \\
+0
+&
+\mbox{if $\left(f_{k}^{l}=1 \Rightarrow x_{k} > l_{k}\right) \wedge
+          \left(f_{k}^{u}=1 \Rightarrow x_{k} < u_{k}\right)$
+          for $k \in N \setminus F$} \\
+1
+&
+\mbox{if $x_{k}=u_{k} \wedge f_{k}^{u}=1$ for $k \in N \setminus F$} \\
+\end{array}
+\right.
+\end{equation}
+where $N$ denotes the set of nonbasic variables. Note that by the very definition of slack and artificial variables $b(k)=-1$ for
+$k \in (S \cup art) \cap N$.   
+\section{Initialization}
+Since the original variables for the initial feasible solution to the auxiliary problem are all nonbasic we have to assign initial values to them. Since for the free or unrestricted variables there is no finite bound to initialize the variables with we will initialize them with the value zero. Due to the amount of computation involved for the initialization of the auxiliary problem we extend the set of original variables that are initialized with zero, $Z$, in the following sense, 
+\begin{equation}
+\label{def:Z}
+Z:=\{ k \in O \left|\right. 0 \in \left[l_{k}, u_{k}\right]\} 
+\end{equation}
+that is all the original variables that contain zero in their intervall are initialized with zero. For the remaining variables $x_{k}$,
+$k \in O \setminus Z$ we initialize the variable with the finite lower bound whenever there is choice,
+\begin{equation}
+x_{k}^{(0)}:=\left\{
+\begin{array}{ll}
+0
+&
+\mbox{for $k \in Z \cap O$} \\
+l_{k}
+&
+\mbox{if $f_{k}^{l}=1, f_{k}^{u}=1$ for $k \in O \setminus Z$} \\
+l_{k}
+&
+\mbox{if $f_{k}^{l}=1, f_{k}^{u}=0$ for $k \in O \setminus Z$} \\
+u_{k}
+&
+\mbox{if $f_{k}^{l}=0, f_{k}^{u}=1$ for $k \in O \setminus Z$}
+\end{array}
+\right.
+\end{equation}
+
+
+\subsection{The auxiliary problem}
+For each of the equality constraints $\sum_{j=0}^{n-1}a_{ij}x_{j}$, $i \in E$,
+the original constraint matrix $A$ is augmented by an artificial column 
+\begin{equation}
+a= \left\{
+\begin{array}{ll}
+-e_{i}
+&
+\mbox{if $b_{i}-\sum_{k \in O \setminus Z}x_{k}^{(0)}$} \\
+e_{i}
+&
+\mbox{otherwise}
+\end{array}
+\right.
+\end{equation}
+where $e_{i}$ denotes the $i$-th column of the $m \times m$ identity matrix. If the set of inequality constraints with infeasible origin, 
+\begin{equation}
+I_{inf}:=\left\{
+  i \in I^{\leq}\left|\right. b_{i}-\sum_{k \in O \setminus Z}x_{k}^{(0)}
+  \right\}
+  \cup
+  \left\{
+    i \in I^{\geq} \left|\right. b_{i}-\sum_{k \in O \setminus Z}x_{k}^{(0)}
+  \right\}
+\end{equation}
+is nonempty, the original constraint matrix $A$ is augmented by a special artificial column $a_{i}^{s}$
+\begin{equation}
+a_{i}^{s}= \left\{
+\begin{array}{ll}
+-1
+&
+\mbox{if $i \in I^{\leq}, b_{i}-\sum_{k \in O \setminus Z}x_{k}^{(0)}<0$} \\
+1
+&
+\mbox{if $i \in I^{\geq}, b_{i}-\sum_{k \in O \setminus Z}x_{k}^{(0)}>0$} \\
+0
+&
+\mbox{otherwise}
+\end{array}
+\right.
+\end{equation}
+
+
+\subsection{The initialization of the auxiliary problem}
+Let $i_{0} \in I_{inf}$ be the index of a constraint that has a most infeasible
+origin, that is 
+\begin{equation}
+  \left| b_{i_{0}}-\sum_{k \in O \setminus Z}x_{k}^{(0)} \right|
+  \geq 
+  \left|b_{i}-\sum_{k \in O \setminus Z}x_{k}^{(0)}\right|, \quad i \in I_{inf}
+\end{equation}
+then $B_{O}$, $B_{S}$ and the initial set of basic and nonbasic constraints
+$S_{B}$ and $S_{N}$are initialized as
+\begin{equation}
+\begin{array}{ccccccc}
+  \label{def:headings_init_io}
+B_{O}^{(0)} &:=& art && B_{S}^{(0)} &:=& S \setminus
+  \{\sigma^{-1}\left(i_{0}\right)\} \\
+S_{B}^{(0)} &:=& I \setminus \{i_{0}\} && S_{N}^{(0)} & := & \{ i_{0} \} 
+\end{array}
+\end{equation}
+If on the other hand, $I_{inf}=\emptyset$ then $B_{O}$, $B_{S}$, $S_{B}$ and
+$S_{N}$ are initialized as
+\begin{equation}
+\begin{array}{ccccccc}
+\label{def:headings_init_fo}
+B_{O}^{(0)} &:=& art && B_{S}^{(0)} &:=& S \\
+S_{B}^{(0)} &:=&I && S_{N}^{(0)}&:=& \emptyset
+\end{array}
+\end{equation}
+where $art$ does not contain a special artificial variable.
+
+
+\section{Ratio Test Step~1 and Ratio Test Step~2}
+\section{Pricing Strategies}
+Note: a mere index will not be sufficient, we will need a direction as well
+\subsection{Full exact pricing}
+Generalizing the full exact pricing algorithm we introduce the following subsets of the set of nonbasic variables $N$
+\begin{eqnarray}
+N_{l}&:=&\{k \in N\left|\right. b\left(k\right)=-1\} \\
+N_{0}&:=&\{k \in N\left|\right. b\left(k\right)=0\} \\
+N_{u}&:=&\{k \in N\left|\right. b\left(k\right)=1\}
+\end{eqnarray}
+
+
+\subsection{Partial exact pricing}
+Generalizing the partial pricing algorithm given in \cite{Sven}, section 6.4.1 for explicit bounds we introduce the following subsets of the active set $\mathcal{A}$ 
+\begin{eqnarray}
+\mathcal{A}_{l}&:=&\{k \in \mathcal{A}\left|\right. b\left(k\right)=-1\} \\
+\mathcal{A}_{0}&:=&\{k \in \mathcal{A}\left|\right. b\left(k\right)=0\} \\
+\mathcal{A}_{u}&:=&\{k \in \mathcal{A}\left|\right. b\left(k\right)=1\}
+\end{eqnarray}
+\paragraph{Partial pricing with explicit bounds}
+\begin{tabbing}
+\texttt{PARTIALPRICING$(\mathcal{A})$} \\
+\texttt{IF} \= \kill
+\> \texttt{$j_{l}:=\arg\min_{k \in \mathcal{A}_{l} \cup
+                               \mathcal{A}_{0}}\mu_{k}$}  \\
+\> \texttt{$j_{u}:=\arg\max_{k \in \mathcal{A}_{u} \cup
+                               \mathcal{A}_{0}}\mu_{k}$}  \\
+\> \texttt{$j:=\arg\max_{k \in \{j_{l}, j_{u}\}}\left|\mu_{k}\right|$}  \\
+\> \texttt{IF $\left(\mu_{j} < 0 \wedge b\left(j\right) \leq 0 \right)
+   \vee \left(\mu_{j} > 0 \wedge b\left(j\right) \geq 0 \right)$} \\
+\texttt{IFIF} \= \kill
+\> \texttt{RETURN $j$} \\
+\texttt{IF} \= \kill
+\> \texttt{ELSE} \\
+\texttt{IFIF} \= \kill
+\> \texttt{$V:=\{k \in N \setminus \mathcal{A} \left|\right.
+    \mu_{k} < 0 \wedge b\left(k\right) \leq 0 \vee
+    \mu_{k} > 0 \wedge b\left(k\right) \geq 0\}$} \\
+\> \texttt{IF $V=0$ THEN} \\
+\texttt{IFIFIF} \= \kill  
+\> \texttt{RETURN \emph{optimal}} \\
+\texttt{IFIF} \= \kill
+\> \texttt{ELSE} \\
+\texttt{IFIFIF} \= \kill
+\> \texttt{$\mathcal{A}:=\mathcal{A} \cup V$} \\
+\> \texttt{RETURN $\arg\max_{j \in V}\left|\mu_{j}\right|$} \\
+\texttt{IFIF} \= \kill
+\> \texttt{END} \\
+\texttt{IF} \= \kill
+\> \texttt{END}
+
+\end{tabbing}
+\subsection{Full filtered pricing}
+\subsection{Partial filtered pricing}
+\begin{thebibliography}{99}
+\bibitem{Sven} Sven Sch\"{o}nherr. Quadratic Programming in Geometric Optimization:
+Theory, Implementation, and Applications, Dissertation, Diss. ETH No 14738, ETH
+Z\"{u}rich, Institute of Theoretical Computer Science, 2002.
+\bibitem{Chvatal} Va\v{s}ek Chv\'{a}tal. \textit{Linear Programming}. W. H. Freeman and Company,
+New York, Chapter 8, 1983 
+\bibitem{Zielke} Gerhard Zielke. Inversion of Modified Symmetric Matrices. 
+\textit{Journal of the Association for Computing Machinery}, Vol. 15, No. 3,
+July 1968, pp. 402-408
+\bibitem{Frans_Deg} Degeneracy
+\end{thebibliography}
+\end{document}
