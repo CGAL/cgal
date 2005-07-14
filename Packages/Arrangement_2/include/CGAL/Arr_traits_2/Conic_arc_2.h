@@ -507,7 +507,6 @@ public:
     // (going counterclockwise).
     // Otherwise, it is negative (going clockwise).
     const Orientation                  turn = orient_f(p1, p2, p5);
-    bool                               same_turn;
 
     if (turn == LEFT_TURN)
     {
@@ -1615,7 +1614,7 @@ protected:
       // Having computed y, x is the simgle solution to the quadratic equation
       // above, and since its discriminant is 0, x is simply given by:
       x = -(nt_traits.convert(_t)*ys[i] + nt_traits.convert(_u)) / 
-        nt_traits.cnvert(_two*_r);
+        nt_traits.convert(_two*_r);
 
       ps[i] = Point_2 (x, ys[i]);
     }
