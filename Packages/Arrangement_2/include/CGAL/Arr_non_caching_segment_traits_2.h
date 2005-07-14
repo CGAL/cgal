@@ -217,11 +217,10 @@ public:
       }
       else
       {
-	// The intersection is a segment:
-	const X_monotone_curve_2  *icv = object_cast<X_monotone_curve_2>(&res);
-	
-	CGAL_assertion (icv != NULL);
-        *oi = make_object (*icv);
+	// The intersection is a segment - return it as is.
+	CGAL_assertion (object_cast<X_monotone_curve_2>(&res) != NULL);
+
+        *oi = res;
         ++oi;
       }
 
