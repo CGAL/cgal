@@ -53,7 +53,7 @@ template<class VDA, class Point_t>
 struct Project_dual
 {
   typedef Point_t Point_2;
-  typedef typename VDA::Dual_face_handle Face_handle;
+  typedef typename VDA::Delaunay_graph::Face_handle Face_handle;
 
   Point_2 operator()(const VDA& vda, const Face_handle& f) const
   {
@@ -65,7 +65,7 @@ template<class VDA, class Point_t>
 struct Project_primal
 {
   typedef Point_t Point_2;
-  typedef typename VDA::Dual_face_handle Face_handle;
+  typedef typename VDA::Delaunay_graph::Face_handle Face_handle;
 
   Point_2 operator()(const VDA& vda, const Face_handle& f) const
   {
@@ -78,7 +78,7 @@ struct Project_ag_dual
 {
   typedef Site_t Site_2;
   typedef typename Site_2::Point_2 Point_2;
-  typedef typename VDA::Dual_face_handle Face_handle;
+  typedef typename VDA::Delaunay_graph::Face_handle Face_handle;
 
   Point_2 operator()(const VDA& vda, const Face_handle& f) const
   {
@@ -104,7 +104,7 @@ void print_halfedge(const VDA& vda,
 		    const typename VDA::Halfedge_handle& he,
 		    const Projector& project,
 		    std::ostream& os = std::cout) {
-  typename VDA::Dual_edge e = he->dual_edge();
+  typename VDA::Delaunay_graph::Edge e = he->dual_edge();
   print_dual_edge(vda, e, project, os);
 }
 
@@ -113,14 +113,14 @@ void print_halfedge(const VDA& vda,
 		    const typename VDA::Halfedge& he,
 		    const Projector& project,
 		    std::ostream& os = std::cout) {
-  typename VDA::Dual_edge e = he.dual_edge();
+  typename VDA::Delaunay_graph::Edge e = he.dual_edge();
   print_dual_edge(vda, e, project, os);
 }
 
 
 template<class VDA, class Projector>
 void print_dual_edge(const VDA& vda,
-		     const typename VDA::Dual_edge& e,
+		     const typename VDA::Delaunay_graph::Edge& e,
 		     const Projector& project,
 		     std::ostream& os = std::cout) {
   typedef CGAL::Triangulation_cw_ccw_2  CW_CCW_2;
@@ -135,8 +135,8 @@ void print_dual_edge(const VDA& vda,
 
 template<class VDA, class Projector>
 void print_dual_edge(const VDA& vda,
-		     const typename VDA::Dual_vertex_handle& v_src,
-		     const typename VDA::Dual_vertex_handle& v_trg,
+		     const typename VDA::Delaunay_graph::Vertex_handle& v_src,
+		     const typename VDA::Delaunay_graph::Vertex_handle& v_trg,
 		     const Projector& project,
 		     std::ostream& os = std::cout)
 {
@@ -159,7 +159,7 @@ void print_dual_edge(const VDA& vda,
 
 template<class VDA, class Projector>
 void print_dual_vertex(const VDA& vda,
-		       const typename VDA::Dual_vertex_handle& v,
+		       const typename VDA::Delaunay_graph::Vertex_handle& v,
 		       const Projector& project,
 		       std::ostream& os = std::cout) {
    if ( vda.dual().is_infinite(v) ) {

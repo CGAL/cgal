@@ -21,6 +21,7 @@
 #define VDA_TEST_H 1
 
 #include <CGAL/basic.h>
+#include <CGAL/tags.h>
 #include <CGAL/Timer.h>
 #include <iostream>
 #include <fstream>
@@ -34,25 +35,94 @@ template<class VD, class Projector, class Dual_primal_projector>
 class VDA_Tester
 {
  private:
-  typedef typename VD::Dual_graph   DG;
+  typedef typename VD::Delaunay_graph   DG;
 
-  void compute_dg(char* fname, DG& dg) const
-  {
+  template<class OutputIt>
+  OutputIt read_from_file(char* fname, OutputIt it) const {
     std::ifstream ifs(fname);
     assert( fname );
 
     typename Projector::Site_2  s;
 
-    while ( ifs >> s ) { dg.insert(s); }
+    while ( ifs >> s ) {
+      *it++ = s;
+    }
 
-    ifs.close();
+    ifs.close();    
+    return it;
   }
 
-  void test_vd(const DG& dg) const
+  template<class Iterator>
+  void compute_dg(DG& dg, Iterator first, Iterator beyond) const
   {
-    
-    VD vd(dg);
+#ifdef BENCHMARKING
+    typename DG::All_edges_iterator eit;
+    typename DG::All_vertices_iterator vit;
+    for (Iterator it = first; it != beyond; ++it) {
+      dg.insert(*it);
+      for (eit = dg.all_edges_begin(); eit != dg.all_edges_end(); ++eit) {}
+      for (vit = dg.all_vertices_begin();
+	   vit != dg.all_vertices_end(); ++vit) {}
+    }
 
+    typename DG::size_type counter = 0;
+    for (eit = dg.all_edges_begin(); eit != dg.all_edges_end(); ++eit) {
+      counter++;
+    }
+    std::cout << "# of vertices: " << dg.number_of_vertices() << std::endl;
+    std::cout << "# of faces   : " << dg.number_of_faces() << std::endl;
+    std::cout << "# of edges   : " << counter << std::endl;
+#else
+    for (Iterator it = first; it != beyond; ++it) {
+      dg.insert(*it);
+    }
+#endif
+  }
+
+  template<class Iterator>
+  void compute_vd(VD& vd, Iterator first, Iterator beyond) const
+  {
+#ifdef BENCHMARKING
+    typename VD::Halfedge_iterator hit;
+    typename VD::Face_iterator fit;
+    for (Iterator it = first; it != beyond; ++it) {
+      vd.insert(*it);
+      for (hit = vd.halfedges_begin(); hit != vd.halfedges_end(); ++hit) {}
+      for (fit = vd.faces_begin(); fit != vd.faces_end(); ++fit) {}
+    }
+
+    CGAL_assertion( vd.is_valid() );
+
+    std::cout << "# of vertices: " << vd.number_of_vertices() << std::endl;
+    std::cout << "# of faces   : " << vd.number_of_faces() << std::endl;
+    std::cout << "# of h/edges : " << vd.number_of_halfedges() << std::endl;
+#else
+    for (Iterator it = first; it != beyond; ++it) {
+      vd.insert(*it);
+    }
+#endif
+  }
+
+  template<class Iterator>
+  VD* compute_vd(const DG& dg, Iterator first, Iterator beyond,
+		 CGAL::Tag_true) const
+  {
+    // insertion is supported
+    VD* vd = new VD();
+    compute_vd(*vd, first, beyond);
+    return vd;
+  }
+
+  template<class Iterator>
+  VD* compute_vd(const DG& dg, Iterator, Iterator, CGAL::Tag_false) const
+  {
+    // insertion is not supported
+    VD* vd = new VD(dg);
+    return vd;
+  }
+
+  void test_vd(const VD& vd) const
+  {
     test_dual_graph_concept( vd.dual() );
     test_voronoi_traits_concept( vd.dual(), vd.voronoi_traits() );
 
@@ -81,9 +151,12 @@ class VDA_Tester
     std::cout << "*** Testing data file (for point location): "
 	      << fname << std::endl << std::endl;
 
+    std::vector<typename VD::Voronoi_traits::Site_2> vec_s;
+    read_from_file(fname, std::back_inserter(vec_s));
+
     dg_timer_.start();
     DG dg;
-    compute_dg(fname, dg);
+    compute_dg(dg, vec_s.begin(), vec_s.end());
     dg_timer_.stop();
 
     VD vd(dg);
@@ -115,46 +188,54 @@ class VDA_Tester
   {
     std::cout << "*** Testing data file: " << fname << std::endl
 	      << std::endl;
+
+    std::vector<typename VD::Voronoi_traits::Site_2> vec_s;
+    read_from_file(fname, std::back_inserter(vec_s));
+
     dg_timer_.start();
     DG dg;
-    compute_dg(fname, dg);
+    compute_dg(dg, vec_s.begin(), vec_s.end());
     dg_timer_.stop();
 
+#ifdef BENCHMARKING
+    std::cout << std::endl;
+
     vda_timer_.start();
-    test_vd(dg);
+    VD* vd = compute_vd(dg, vec_s.begin(), vec_s.end(),
+			typename VD::Voronoi_traits::Has_insert());
     vda_timer_.stop();
+
+    std::cout << std::endl << std::endl;
+
+    bool b_dg(false), b_vd(false);
+    std::cout << "Is Delaunay graph valid? " << std::flush;
+    std::cout << ((b_dg = dg.is_valid()) ? "yes" : "no") << std::endl;
+
+    std::cout << "Is Voronoi diagram valid? " << std::flush;
+    std::cout << ((b_vd = vd->is_valid()) ? "yes" : "no") << std::endl;
+
+    CGAL_assertion( b_dg );
+    CGAL_assertion( b_vd );
+#else
+    vda_timer_.start();
+    
+    VD* vd = compute_vd(dg, vec_s.begin(), vec_s.end(),
+			typename VD::Voronoi_traits::Has_insert());
+    vda_timer_.stop();
+
+    test_vd(*vd);
+#endif
+
+    delete vd;
+
     print_separators();
   }
 
   void operator()(char* fname, char* qfname) const
   {
-    typename VD::Voronoi_traits::Has_point_locator has_pl;
-    test_loc(fname, qfname, has_pl);
+    typename VD::Voronoi_traits::Has_nearest_site_2 has_ns;
+    test_loc(fname, qfname, has_ns);
   }
-
-#if 0
-  template<class P>
-  void operator()(char* fname, const P& p) const
-  {
-    std::cout << "*** Testing data file: " << fname << std::endl
-	      << std::endl;
-
-    // if the predicate p is true on the Delaunay graph we do not
-    // test further...
-    dg_timer_.start();
-    DG dg;
-    compute_dg(fname, dg);
-    dg_timer_.stop();
-
-    vda_timer_.start();
-    if ( !p(dg) ) {
-      test_vd(dg);
-    }
-
-    vda_timer_.stop();
-    print_separators();
-  }
-#endif
 
   double dg_time() const { return dg_timer_.time(); }
   double loc_time() const { return loc_timer_.time(); }

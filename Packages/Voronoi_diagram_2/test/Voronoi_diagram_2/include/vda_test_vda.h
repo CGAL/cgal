@@ -21,7 +21,7 @@
 #define VDA_TEST_VDA_H 1
 
 #include <CGAL/basic.h>
-#include <CGAL/Voronoi_diagram_adaptor_2/Accessor.h>
+#include <CGAL/Voronoi_diagram_2/Accessor.h>
 #include <cassert>
 #include "helper_functions.h"
 
@@ -32,7 +32,7 @@
 template<class VDA>
 void test_vd_face_concept(const typename VDA::Face_handle& f)
 {
-  typedef typename VDA::Face                Face;
+  typedef typename VDA::Face                 Face;
 
   // types  
   typedef typename Face::Halfedge            Halfedge;
@@ -44,7 +44,7 @@ void test_vd_face_concept(const typename VDA::Face_handle& f)
   typedef typename Face::size_type           size_type;
   typedef typename Face::Point_2             Point_2;
 
-  typedef typename Face::Dual_graph          Dual_graph;
+  typedef typename Face::Delaunay_graph      Delaunay_graph;
   typedef typename Face::Dual_vertex_handle  Dual_vertex_handle;
 
   typedef typename Face::Holes_iterator      Holes_iterator;
@@ -88,7 +88,7 @@ void test_vd_face_concept(const typename VDA::Face_handle& f)
 template<class VDA>
 void test_vd_vertex_concept(const typename VDA::Vertex_handle& v)
 {
-  typedef typename VDA::Vertex                Vertex;
+  typedef typename VDA::Vertex              Vertex;
 
   // types  
   typedef typename Vertex::Halfedge         Halfedge;
@@ -100,7 +100,7 @@ void test_vd_vertex_concept(const typename VDA::Vertex_handle& v)
   typedef typename Vertex::size_type        size_type;
   typedef typename Vertex::Point_2          Point_2;
 
-  typedef typename Vertex::Dual_graph       Dual_graph;
+  typedef typename Vertex::Delaunay_graph   Delaunay_graph;
   typedef typename Vertex::Dual_face_handle Dual_face_handle;
 
   typedef typename Vertex::Halfedge_around_vertex_circulator HAVC;
@@ -154,7 +154,7 @@ void test_vd_halfedge_concept(const typename VDA::Halfedge_handle& e)
 
   typedef typename Halfedge::Curve            Curve;
 
-  typedef typename Halfedge::Dual_graph       Dual_graph;
+  typedef typename Halfedge::Delaunay_graph   Delaunay_graph;
   typedef typename Halfedge::Dual_edge        Dual_edge;
 
   typedef typename Halfedge::Ccb_halfedge_circulator CCBHC;
@@ -196,8 +196,14 @@ void test_vd_halfedge_concept(const typename VDA::Halfedge_handle& e)
   bool bu = e->is_unbounded();
   CGAL_assertion( (bu && (!b1 || !b2)) || (!bu && (b1 && b2)) );
 
+  bool bs = e->is_segment();
+  bool br = e->is_ray();
+  bool bb = e->is_bisector();
+  CGAL_assertion( (bs && (b1 && b2)) || (bb && (!b1 && !b2)) ||
+		  (br && ((!b1 && b2) || (b1 && !b2))) );
+
   CGAL_assertion( e->is_valid() );
-  kill_warning( b1 && b2 && bu );
+  kill_warning( b1 && b2 && bu && bs && br && bb );
 }
 
 //==========================================================================
@@ -211,7 +217,7 @@ void test_vda(const VDA& vda)
 
   // testing types
   //--------------
-  typedef typename VDA::Dual_graph                    DG;
+  typedef typename VDA::Delaunay_graph                DG;
   typedef typename VDA::Voronoi_traits                VT;
 
   typedef typename VDA::size_type                     size_type;
@@ -377,7 +383,7 @@ void test_vda(const VDA& vda)
     test_circulator( havc_e );
   }
 
-  test_vdlr_concept(vda);
+  test_vdqr_concept(vda);
 
   // testing validity
   assert( vda.is_valid() );
@@ -465,16 +471,16 @@ void test_vda(const VDA& vda)
 
 
 template<class VDA>
-void test_vdlr_concept(const VDA& vda)
+void test_vdqr_concept(const VDA& vda)
 {
-  test_vdlr_concept(vda, typename VDA::Voronoi_traits::Has_point_locator());
+  test_vdqr_concept(vda, typename VDA::Voronoi_traits::Has_nearest_site_2());
 }
 
 template<class VDA>
-void test_vdlr_concept(const VDA&, const CGAL::Tag_false&) {}
+void test_vdqr_concept(const VDA&, const CGAL::Tag_false&) {}
 
 template<class VDA>
-void test_vdlr_concept(const VDA& vda, const CGAL::Tag_true&)
+void test_vdqr_concept(const VDA& vda, const CGAL::Tag_true&)
 {
   typedef typename VDA::Locate_result              Locate_result;
   typedef typename VDA::Point_2                    Point_2;

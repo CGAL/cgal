@@ -162,13 +162,13 @@ void test_voronoi_traits_concept(const DG& dg, const VT& vt)
   typedef typename VT::Point_2                 Point_2;
   typedef typename VT::Site_2                  Site_2;
 
-  typedef typename VT::Dual_graph              Dual_graph;
+  typedef typename VT::Delaunay_graph          Delaunay_graph;
   typedef typename VT::Voronoi_vertex_2        VV2;
   typedef typename VT::Voronoi_edge_2          VE2;
 
   typedef typename VT::Edge_degeneracy_tester  EDT;
   typedef typename VT::Face_degeneracy_tester  FDT;
-  typedef typename VT::Has_point_locator       Has_pl;
+  typedef typename VT::Has_nearest_site_2      Has_ns;
 
   typedef typename VT::Vertex_handle           Vertex_handle;
 
@@ -200,7 +200,7 @@ void test_voronoi_traits_concept(const DG& dg, const VT& vt)
   // test nested concepts
   test_edt_concept( dg, vt.edge_degeneracy_tester_object() );
   test_fdt_concept( dg, vt.face_degeneracy_tester_object() );
-  test_pl_concept( dg, vt, Has_pl() );
+  test_ns_concept( dg, vt, Has_ns() );
 
   if ( dg.dimension() < 2 ) { return; }
 
@@ -334,7 +334,7 @@ void test_bisector_ve(const DG& dg, const VT& vt)
 template<class VE>
 void test_ve_concept(const VE& ve)
 {
-  typedef typename VE::Dual_graph         Dual_graph;
+  typedef typename VE::Delaunay_graph     Delaunay_graph;
   typedef typename VE::Site_2             Site_2;
   typedef typename VE::Voronoi_vertex_2   VV2;
 
@@ -385,10 +385,10 @@ void test_vv_concept(const DG& dg, const VT& vt)
 template<class VV>
 void test_vv_concept(const VV& vv)
 {
-  typedef typename VV::Dual_graph         Dual_graph;
+  typedef typename VV::Delaunay_graph     Delaunay_graph;
   typedef typename VV::Site_2             Site_2;
 
-  typedef typename Dual_graph::Geom_traits::Point_2   Point_2;
+  typedef typename Delaunay_graph::Geom_traits::Point_2   Point_2;
 
   Site_2 t;
   t = vv.first();
@@ -416,7 +416,7 @@ void test_edt_concept(const DG& dg, const EDT& edt)
   typedef typename EDT::Arity                     Arity;
 
 
-  typedef typename EDT::Dual_graph                Dual_graph;
+  typedef typename EDT::Delaunay_graph            Delaunay_graph;
   typedef typename EDT::Edge                      Edge;
   typedef typename EDT::Face_handle               Face_handle;
   typedef typename EDT::Edge_circulator           Edge_circulator;
@@ -454,7 +454,7 @@ void test_fdt_concept(const DG& dg, const FDT& fdt)
   typedef typename FDT::result_type               result_type;
   typedef typename FDT::Arity                     Arity;
 
-  typedef typename FDT::Dual_graph                Dual_graph;
+  typedef typename FDT::Delaunay_graph            Delaunay_graph;
   typedef typename FDT::Vertex_handle             Vertex_handle;
 
   if ( dg.dimension() < 1 ) { return; }
@@ -468,44 +468,44 @@ void test_fdt_concept(const DG& dg, const FDT& fdt)
 //============================================================================
 
 template<class DG, class VT>
-void test_pl_concept(const DG&, const VT&, CGAL::Tag_false) {}
+void test_ns_concept(const DG&, const VT&, CGAL::Tag_false) {}
 
 template<class DG, class VT>
-void test_pl_concept(const DG& dg, const VT& vt, CGAL::Tag_true)
+void test_ns_concept(const DG& dg, const VT& vt, CGAL::Tag_true)
 {
-  typedef typename VT::Point_locator             Point_locator;
-  typedef typename Point_locator::Dual_graph     Dual_graph;
-  typedef typename Point_locator::Locate_result  Locate_result;
-  typedef typename Point_locator::Vertex_handle  Vertex_handle;
-  typedef typename Point_locator::Face_handle    Face_handle;
-  typedef typename Point_locator::Edge           Edge;
-  typedef typename Point_locator::Point_2        Point_2;
+  typedef typename VT::Nearest_site_2             Nearest_site_2;
+  typedef typename Nearest_site_2::Delaunay_graph Delaunay_graph;
+  typedef typename Nearest_site_2::Query_result   Query_result;
+  typedef typename Nearest_site_2::Vertex_handle  Vertex_handle;
+  typedef typename Nearest_site_2::Face_handle    Face_handle;
+  typedef typename Nearest_site_2::Edge           Edge;
+  typedef typename Nearest_site_2::Point_2        Point_2;
 
-  typedef typename Locate_result::Dual_graph     LT_Dual_graph;
-  typedef typename Locate_result::Vertex_handle  LT_Vertex_handle;
-  typedef typename Locate_result::Face_handle    LT_Face_handle;
-  typedef typename Locate_result::Edge           LT_Edge;
+  typedef typename Query_result::Delaunay_graph   QR_Delaunay_graph;
+  typedef typename Query_result::Vertex_handle    QR_Vertex_handle;
+  typedef typename Query_result::Face_handle      QR_Face_handle;
+  typedef typename Query_result::Edge             QR_Edge;
 
   if ( dg.dimension() < 0 ) { return; }
 
-  Point_locator pl = vt.point_locator_object();
+  Nearest_site_2 ns = vt.nearest_site_2_object();
   Point_2 p(0,0);
 
-  Locate_result lr = pl(dg, p);
+  Query_result qr = ns(dg, p);
 
-  if ( lr.is_face() ) {
-    Face_handle f = lr;
+  if ( qr.is_face() ) {
+    Face_handle f = qr;
     kill_warning(f);
-  } else if ( lr.is_edge() ) {
-    Edge e = lr;
+  } else if ( qr.is_edge() ) {
+    Edge e = qr;
     kill_warning(e);
-  } else if ( lr.is_vertex() ) {
-    Vertex_handle v = lr;
+  } else if ( qr.is_vertex() ) {
+    Vertex_handle v = qr;
     kill_warning(v);
   }
 
-  Locate_result lr1 = pl(dg, p);
-  bool b = (lr == lr1);
+  Query_result qr1 = ns(dg, p);
+  bool b = (qr == qr1);
   CGAL_assertion(b);
   kill_warning(b);
 }

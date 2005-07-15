@@ -19,7 +19,7 @@
 
 #include <CGAL/basic.h>
 
-#include <CGAL/Voronoi_diagram_adaptor_2.h>
+#include <CGAL/Voronoi_diagram_2.h>
 #include "vda_test.h"
 
 #include <CGAL/MP_Float.h>
@@ -49,7 +49,7 @@ typedef CGAL::Segment_Voronoi_diagram_2<Gt>                           SVD;
 #endif
 typedef CGAL::Segment_Voronoi_diagram_Voronoi_traits_2<SVD>           VT;
 //typedef CGAL::Segment_Voronoi_diagram_cached_Voronoi_traits_2<SVD>    VT;
-typedef CGAL::Voronoi_diagram_adaptor_2<SVD,VT>                       VDA;
+typedef CGAL::Voronoi_diagram_2<SVD,VT>                               VDA;
 
 
 int main()

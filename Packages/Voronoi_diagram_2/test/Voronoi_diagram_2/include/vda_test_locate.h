@@ -39,7 +39,7 @@ void test_locate(const VDA& vda, const Projector& project,
      << std::endl << std::endl;
 
   os << "Vertices of the Delaunay graph:" << std::endl;
-  typename VDA::Dual_graph::Finite_vertices_iterator vit;
+  typename VDA::Delaunay_graph::Finite_vertices_iterator vit;
   for (vit = vda.dual().finite_vertices_begin();
        vit != vda.dual().finite_vertices_end(); ++vit) {
     os << project(vit) << std::endl;
@@ -63,30 +63,30 @@ void test_locate_dg(const VDA& vda, const Projector& project,
 		    const Point_vector& vecp, OStream& os)
 {
   typedef typename VDA::Voronoi_traits                Voronoi_traits;
-  typedef typename Voronoi_traits::Point_locator      Point_locator;
+  typedef typename Voronoi_traits::Nearest_site_2     Nearest_site_2;
   
-  typedef typename Point_locator::Vertex_handle       Vertex_handle;
-  typedef typename Point_locator::Face_handle         Face_handle;
-  typedef typename Point_locator::Edge                Edge;
+  typedef typename Nearest_site_2::Vertex_handle      Vertex_handle;
+  typedef typename Nearest_site_2::Face_handle        Face_handle;
+  typedef typename Nearest_site_2::Edge               Edge;
 
-  Point_locator locate = vda.voronoi_traits().point_locator_object();
-  typename Point_locator::Locate_result pl_lr;
+  Nearest_site_2 nearest_site = vda.voronoi_traits().nearest_site_2_object();
+  typename Nearest_site_2::Query_result ns_qr;
 
   os << "Query sites and location feature in dual graph:" << std::endl;
   for (unsigned int i = 0; i < vecp.size(); ++i) {
     os << vecp[i] << "\t --> \t" << std::flush;
-    pl_lr = locate(vda.dual(), vecp[i]);
-    if ( pl_lr.is_vertex() ) {
+    ns_qr = nearest_site(vda.dual(), vecp[i]);
+    if ( ns_qr.is_vertex() ) {
       os << "FACE";
-      Vertex_handle v = pl_lr;
+      Vertex_handle v = ns_qr;
       kill_warning( v );
-    } else if ( pl_lr.is_edge() ) {
+    } else if ( ns_qr.is_edge() ) {
       os << "EDGE";
-      Edge e = pl_lr;
+      Edge e = ns_qr;
       kill_warning( e );
-    } else if ( pl_lr.is_face() ) {
+    } else if ( ns_qr.is_face() ) {
       os << "VERTEX";
-      Face_handle f = pl_lr;
+      Face_handle f = ns_qr;
       kill_warning( f );
     } else {
       os << " *** NOT READY YET *** ";

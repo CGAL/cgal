@@ -19,7 +19,7 @@
 
 #include <CGAL/basic.h>
 
-#include <CGAL/Voronoi_diagram_adaptor_2.h>
+#include <CGAL/Voronoi_diagram_2.h>
 #include "vda_test.h"
 
 #include <CGAL/Simple_cartesian.h>
@@ -41,7 +41,7 @@ typedef CGAL::Apollonius_graph_2<K>                           AG;
 #endif
 typedef CGAL::Apollonius_graph_Voronoi_traits_2<AG>           VT;
 //typedef CGAL::Apollonius_graph_cached_Voronoi_traits_2<AG>    VT;
-typedef CGAL::Voronoi_diagram_adaptor_2<AG,VT>                VDA;
+typedef CGAL::Voronoi_diagram_2<AG,VT>                        VDA;
 
 
 int main()

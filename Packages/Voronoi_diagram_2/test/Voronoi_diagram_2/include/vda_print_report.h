@@ -24,7 +24,7 @@
 #include "vda_aux.h"
 #include "helper_functions.h"
 #include <iostream>
-#include <CGAL/Voronoi_diagram_adaptor_2/Accessor.h>
+#include <CGAL/Voronoi_diagram_2/Accessor.h>
 
 template<class VDA, class Projector, class Dual_primal_projector,
 	 class Stream>
@@ -59,11 +59,11 @@ void print_report(const VDA& vda, const Projector& project,
     n_all++;
   }
 
-  typename VDA::Dual_vertices_iterator vit;
+  typename VDA::Delaunay_graph::Finite_vertices_iterator vit;
   for ( vit = vda.dual().finite_vertices_begin();
 	vit != vda.dual().finite_vertices_end(); ++vit) {
     n_vert++;
-    typename VDA::Dual_vertex_handle v(vit);
+    typename VDA::Delaunay_graph::Vertex_handle v(vit);
     if ( face_tester(vda.dual(), v) ) {
       n_empty++;
     }    
@@ -88,7 +88,7 @@ void print_report(const VDA& vda, const Projector& project,
     unsigned int n_unbounded_faces2 = 0;
 
     // computing statistics in the dual (Delaunay graph)
-    typename VDA::Dual_graph::All_edges_iterator deit;
+    typename VDA::Delaunay_graph::All_edges_iterator deit;
     for (deit = vda.dual().all_edges_begin();
 	 deit != vda.dual().all_edges_end(); ++deit) {
       n_dual_edges++;
@@ -102,21 +102,21 @@ void print_report(const VDA& vda, const Projector& project,
     }
     os << std::endl;
 
-    typename VDA::Dual_faces_iterator dfit;
+    typename VDA::Delaunay_graph::Finite_faces_iterator dfit;
     for (dfit = vda.dual().finite_faces_begin();
 	 dfit != vda.dual().finite_faces_end(); ++dfit) {
       n_dual_fin_faces++;
     }
     os << std::endl;
 
-    typename VDA::Dual_graph::All_faces_iterator dafit;
+    typename VDA::Delaunay_graph::All_faces_iterator dafit;
     for (dafit = vda.dual().all_faces_begin();
 	 dafit != vda.dual().all_faces_end(); ++dafit) {
       n_dual_faces++;
     }
     os << std::endl;
 
-    typename VDA::Dual_vertices_iterator dvit;
+    typename VDA::Delaunay_graph::Finite_vertices_iterator dvit;
     for ( dvit = vda.dual().finite_vertices_begin();
 	  dvit != vda.dual().finite_vertices_end(); ++dvit) {
       if ( face_tester(vda.dual(),dvit) ) {
@@ -127,7 +127,7 @@ void print_report(const VDA& vda, const Projector& project,
     // computing statistics in the primal (Voronoi diagram)
     typename VDA::Edge_iterator eit;
     for (eit = vda.edges_begin(); eit != vda.edges_end(); ++eit) {
-      typename VDA::Dual_edge e = eit->dual_edge();
+      typename VDA::Halfedge::Dual_edge e = eit->dual_edge();
       if ( vda.dual().is_infinite(e) ) {
 	n_edge_inf++;
       } else {
@@ -153,7 +153,7 @@ void print_report(const VDA& vda, const Projector& project,
       typedef CGAL_VORONOI_DIAGRAM_2_NS::Find_valid_vertex<VDA>
 	Find_valid_vertex;
 
-      typename VDA::Dual_face_handle fvalid =
+      typename VDA::Delaunay_graph::Face_handle fvalid =
 	Find_valid_vertex()(&vda,vit->dual_face());
       os << dp_project(vda, fvalid) << std::endl;
 

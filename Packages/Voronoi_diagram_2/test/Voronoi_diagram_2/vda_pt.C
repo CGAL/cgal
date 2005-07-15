@@ -19,7 +19,7 @@
 
 #include <CGAL/basic.h>
 
-#include <CGAL/Voronoi_diagram_adaptor_2.h>
+#include <CGAL/Voronoi_diagram_2.h>
 #include "vda_test.h"
 
 #include <CGAL/Simple_cartesian.h>
@@ -30,7 +30,7 @@
 typedef CGAL::Simple_cartesian<double>              K;
 typedef CGAL::Delaunay_graph_concept<K>             DG;
 typedef CGAL::Voronoi_traits_concept<DG>            VT;
-typedef CGAL::Voronoi_diagram_adaptor_2<DG,VT>      VDA;
+typedef CGAL::Voronoi_diagram_2<DG,VT>              VDA;
 
 
 int main()

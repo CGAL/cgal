@@ -77,6 +77,8 @@ class Delaunay_graph_concept
     Vertex_handle mirror_vertex(Face_handle, int) const {
       return Vertex_handle();
     }
+
+    bool is_edge(Face_handle, int) const { return false; }
   };
 
   typedef Data_structure_t<Vertex_handle,Face_handle> Data_structure;

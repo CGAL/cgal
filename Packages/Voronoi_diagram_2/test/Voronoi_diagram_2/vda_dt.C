@@ -19,7 +19,7 @@
 
 #include <CGAL/basic.h>
 
-#include <CGAL/Voronoi_diagram_adaptor_2.h>
+#include <CGAL/Voronoi_diagram_2.h>
 #include "vda_test.h"
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
@@ -43,7 +43,7 @@ typedef CGAL::Delaunay_triangulation_2<K>                         DT;
 #endif
 //typedef CGAL::Delaunay_triangulation_cached_Voronoi_traits_2<DT>  VT;
 typedef CGAL::Delaunay_triangulation_Voronoi_traits_2<DT>         VT;
-typedef CGAL::Voronoi_diagram_adaptor_2<DT,VT>                    VDA;
+typedef CGAL::Voronoi_diagram_2<DT,VT>                            VDA;
 
 
 struct DT_Predicate

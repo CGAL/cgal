@@ -21,9 +21,9 @@
 #define CGAL_VORONOI_TRAITS_CONCEPT_H 1
 
 #include <CGAL/basic.h>
-#include <CGAL/Voronoi_diagram_adaptor_2/Voronoi_vertex_base_2.h>
-#include <CGAL/Voronoi_diagram_adaptor_2/Voronoi_edge_base_2.h>
-#include <CGAL/Voronoi_diagram_adaptor_2/Default_Voronoi_traits_2.h>
+#include <CGAL/Voronoi_diagram_2/Voronoi_vertex_base_2.h>
+#include <CGAL/Voronoi_diagram_2/Voronoi_edge_base_2.h>
+#include <CGAL/Voronoi_diagram_2/Default_Voronoi_traits_2.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -91,14 +91,16 @@ template<class DG>
 class Voronoi_traits_concept
 {
  public:
-  typedef DG                               Dual_graph;
+  typedef DG                               Delaunay_graph;
 
   typedef CGAL::Object    Object;
-  typedef Tag_false       Has_point_locator;
+  typedef Tag_false       Has_nearest_site_2;
+  typedef Tag_false       Has_insert;
+  typedef Tag_false       Has_get_conflicts;
 
   struct Edge_degeneracy_tester
   {
-    typedef DG  Dual_graph;
+    typedef DG  Delaunay_graph;
 
     typedef typename DG::Edge                   Edge;
     typedef typename DG::Face_handle            Face_handle;
@@ -109,19 +111,19 @@ class Voronoi_traits_concept
     typedef bool           result_type;
     typedef Arity_tag<2>   Arity;
 
-    bool operator()(const Dual_graph&, const Edge&) const {
+    bool operator()(const Delaunay_graph&, const Edge&) const {
       return false;
     }
 
-    bool operator()(const Dual_graph&, const Face_handle&, int) const {
+    bool operator()(const Delaunay_graph&, const Face_handle&, int) const {
       return false;
     }
 
-    bool operator()(const Dual_graph&, const Edge_circulator&) const {
+    bool operator()(const Delaunay_graph&, const Edge_circulator&) const {
       return false;
     }
 
-    bool operator()(const Dual_graph&, const All_edges_iterator&) const {
+    bool operator()(const Delaunay_graph&, const All_edges_iterator&) const {
       return false;
     } 
   };
