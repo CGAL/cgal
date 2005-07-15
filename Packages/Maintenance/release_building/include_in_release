@@ -82,7 +82,7 @@ Trapezoidal_decomposition
 Triangulation_2
 Triangulation_3
 Union_find
-Voronoi_diagram_adaptor_2
+Voronoi_diagram_2
 Width_3
 _QP_solver
 iostream
