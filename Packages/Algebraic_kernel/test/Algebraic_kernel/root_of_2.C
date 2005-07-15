@@ -368,10 +368,10 @@ test_root_of()
     assert(test_compare(r1, r3));
     assert(test_compare(r1, r4));
     assert(test_compare(r1, r5));
-    assert(compare(r1, r2) ==   (int) sign(r));
-    assert(compare(r1, r3) == - (int) sign(r));
-    assert(compare(r1, r5) == - (int) sign(r));
-    assert(compare(r, r4)  == (int) sign(r1));
+    assert(CGAL_NTS compare(r1, r2) ==   (int) CGAL_NTS sign(r));
+    assert(CGAL_NTS compare(r1, r3) == - (int) CGAL_NTS sign(r));
+    assert(CGAL_NTS compare(r1, r5) == - (int) CGAL_NTS sign(r));
+    assert(CGAL_NTS compare(r, r4)  == (int) CGAL_NTS sign(r1));
   }
 
   std::cout << "  Testing multiplication of Root_of_2<NT> with NT" << std::endl;
