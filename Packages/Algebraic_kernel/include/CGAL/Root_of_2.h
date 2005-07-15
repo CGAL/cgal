@@ -17,13 +17,13 @@
 
 #include <iostream>
 #include <cassert>
+
 #include <CGAL/enum.h>
+#include <CGAL/tags.h>
 #include <CGAL/NT_extensions_Root_of/Root_of_utils.h>
 //#include <CGAL/Root_of/Root_of_1.h>
 #include <CGAL/Algebraic_kernel/internal_functions_comparison_root_of_2.h>
 #include <CGAL/Interval_arithmetic.h>
-
-#include <cassert>
 #include <CGAL/Quotient.h>
 
 namespace CGAL {
@@ -203,7 +203,7 @@ public:
     make_root_of_2_sqrt(const NT &a, const NT &b, const NT &c, bool smaller)
     {
       assert( a != 0 );
-      NT discriminant = CGAL::square(b) - a*c*4;
+      NT discriminant = CGAL_NTS square(b) - a*c*4;
       assert( discriminant >= 0 );
       NT d = sqrt(discriminant);
       if ((smaller && a>0) || (!smaller && a<0))
@@ -251,15 +251,15 @@ sign(const Root_of_2<RT> &a)
   // First, we compare 0 to the root of the derivative of a.
   // (which is equivalent to a[1])
 
-  int sgn = sign(a[1]);
+  int sgn = CGAL_NTS sign(a[1]);
 
   if (sgn > 0)
-    return a.is_smaller() ? NEGATIVE : opposite(sign(a[0]));
+    return a.is_smaller() ? NEGATIVE : opposite(CGAL_NTS sign(a[0]));
 
   if (sgn < 0)
-    return a.is_smaller() ? sign(a[0]) : POSITIVE;
+    return a.is_smaller() ? CGAL_NTS sign(a[0]) : POSITIVE;
 
-  if (is_zero(a[0]))
+  if (CGAL_NTS is_zero(a[0]))
     return ZERO;
   return a.is_smaller() ? NEGATIVE : POSITIVE;
 }
@@ -883,9 +883,9 @@ to_double(const Root_of_2<RT> &x)
 {
   assert(is_valid(x));
 
-  double a = to_double(x[2]);
-  double b = to_double(x[1]);
-  double d = std::sqrt(to_double(x.discriminant()));
+  double a = CGAL::to_double(x[2]);
+  double b = CGAL::to_double(x[1]);
+  double d = std::sqrt(CGAL_NTS to_double(x.discriminant()));
 
   assert(a > 0);
   if (x.is_smaller())
@@ -900,22 +900,15 @@ to_interval(const Root_of_2<RT> &x)
 {
   assert(is_valid(x));
 
-  CGAL::Interval_nt<> a = to_interval(x[2]);
-  CGAL::Interval_nt<> b = to_interval(x[1]);
-  CGAL::Interval_nt<> disc = to_interval(x.discriminant());
-  CGAL::Interval_nt<> d = sqrt(disc);
+  Interval_nt<> a = to_interval(x[2]);
+  Interval_nt<> b = to_interval(x[1]);
+  Interval_nt<> disc = to_interval(x.discriminant());
+  Interval_nt<> d = sqrt(disc);
 
   if (x.is_smaller())
     d = -d;
 
   return ((d-b)/(a*2)).pair();
-}
-
-template < typename RT >
-bool
-is_valid(const Root_of_2<RT> &r)
-{
-  return r.is_valid();
 }
 
 template < typename RT >
@@ -936,25 +929,16 @@ print(std::ostream &os, const Root_of_2<RT> &r)
        << (r.is_smaller() ? "smaller" : "larger") << " )";
 }
 
+template < typename RT >
+bool
+is_valid(const Root_of_2<RT> &r)
+{
+  return r.is_valid();
+}
 
-} // namespace CGAL
-
-
-// CGAL requirements for number types.
-
-#include <CGAL/tags.h>
-
-namespace CGAL {
-
-using CGAL::is_valid;
-using CGAL::to_double;
-using CGAL::to_interval;
-using CGAL::compare;
-using CGAL::sign;
-using CGAL::square;
 
 template < class RT >
-struct Number_type_traits < CGAL::Root_of_2<RT> > {
+struct Number_type_traits < Root_of_2<RT> > {
   typedef Tag_false      Has_gcd;
   typedef Tag_false      Has_division;
   typedef Tag_false      Has_sqrt;
@@ -963,7 +947,7 @@ struct Number_type_traits < CGAL::Root_of_2<RT> > {
 template < typename RT >
 inline
 io_Operator
-io_tag(const CGAL::Root_of_2<RT>&)
+io_tag(const Root_of_2<RT>&)
 {
   return io_Operator();
 }
