@@ -16,7 +16,6 @@
 #define CGAL_ROOT_OF_ROOT_OF_2_H
 
 #include <iostream>
-#include <cassert>
 
 #include <CGAL/enum.h>
 #include <CGAL/tags.h>
@@ -25,6 +24,7 @@
 #include <CGAL/Algebraic_kernel/internal_functions_comparison_root_of_2.h>
 #include <CGAL/Interval_arithmetic.h>
 #include <CGAL/Quotient.h>
+#include <CGAL/assertions.h>
 
 namespace CGAL {
 
@@ -58,12 +58,7 @@ namespace CGAL {
 // - make_root_of_2()
 //
 // TODO :
-// - Find a number type concept which is independent on namespace CGAL.
-//   We already partially do this by only requiring the return type of
-//   sign() and compare() to be convertible and comparable to int
-//   (and not force it to be some particular enum).
-// - replace the duplicated operators by boost's operators.hpp
-//   (we should really start planning Boost's integration with CGAL)
+// - use Boost.Operators.
 // - add inverse(), and division of/by an RT.
 // - add subtraction/addition with a degree 2 Root_of of the same field ?
 // - add sqrt() (when it's degree 1), or a make_sqrt<RT>(const RT &r) ?
@@ -93,32 +88,32 @@ public:
   Root_of_2()
     : C0(0), C1(0), C2(1)
   {
-    assert(is_valid());
+    CGAL_assertion(is_valid());
   }
 
   Root_of_2(const RT& c0)
     : C0(- square(c0)), C1(0), C2(1), _smaller(c0<0)
   {
-    assert(is_valid());
+    CGAL_assertion(is_valid());
   }
 
   Root_of_2(const RT& c1, const RT& c0)
     : C0( - square(c0)), C1(0), C2(square(c1)),
       _smaller( sign(c1) == sign(c0) )
   {
-    assert(is_valid());
+    CGAL_assertion(is_valid());
   }
 
   Root_of_2(const RT& a, const RT& b, const RT& c, const bool s)
     : C0(c), C1(b), C2(a), _smaller(s)
   {
-    assert(a != 0);
+    CGAL_assertion(a != 0);
     if (a < 0) {
       C0 = -c;
       C1 = -b;
       C2 = -a;
     }
-    assert(is_valid());
+    CGAL_assertion(is_valid());
   }
 
   Root_of_2 operator-() const
@@ -141,7 +136,7 @@ public:
 
   const RT & operator[](int i) const
   {
-    assert(i<3);
+    CGAL_assertion(i<3);
     return (&C0)[i];
   }
 
@@ -170,29 +165,29 @@ public:
 }; // Root_of_2
 
 
-    template < typename RT >  class Root_of_2;
-    template < typename RT >  class Root_of_3;
-    template < typename RT >  class Root_of_4;
+template < typename RT >  class Root_of_2;
+template < typename RT >  class Root_of_3;
+template < typename RT >  class Root_of_4;
 
-    // Template default version generating a Root_of_2<>.
-    template < typename RT >
-    inline
-    Root_of_2<RT>
-    make_root_of_2(const RT &a, const RT &b, const RT &c, bool smaller)
-    {
-      assert( a != 0 );
-      return Root_of_2<RT>(a, b, c, smaller);
-    }
+// Template default version generating a Root_of_2<>.
+template < typename RT >
+inline
+Root_of_2<RT>
+make_root_of_2(const RT &a, const RT &b, const RT &c, bool smaller)
+{
+  CGAL_assertion( a != 0 );
+  return Root_of_2<RT>(a, b, c, smaller);
+}
 
-    //Default Traits class for RT types
-    template < typename RT >
-    struct Root_of_traits
-    {
-      typedef Quotient< RT >   RootOf_1;
-      typedef Root_of_2< RT >  RootOf_2;
-      typedef Root_of_3< RT >  RootOf_3;
-      typedef Root_of_4< RT >  RootOf_4;
-    };
+//Default Traits class for RT types
+template < typename RT >
+struct Root_of_traits
+{
+  typedef Quotient< RT >   RootOf_1;
+  typedef Root_of_2< RT >  RootOf_2;
+  typedef Root_of_3< RT >  RootOf_3;
+  typedef Root_of_4< RT >  RootOf_4;
+};
 
   namespace CGALi {
 
@@ -202,9 +197,9 @@ public:
     NT
     make_root_of_2_sqrt(const NT &a, const NT &b, const NT &c, bool smaller)
     {
-      assert( a != 0 );
+      CGAL_assertion( a != 0 );
       NT discriminant = CGAL_NTS square(b) - a*c*4;
-      assert( discriminant >= 0 );
+      CGAL_assertion( discriminant >= 0 );
       NT d = sqrt(discriminant);
       if ((smaller && a>0) || (!smaller && a<0))
         d = -d;
@@ -220,9 +215,9 @@ public:
       typedef CGAL::Rational_traits< FT > Rational;
 
       Rational r;
-      assert( r.denominator(a) > 0 );
-      assert( r.denominator(b) > 0 );
-      assert( r.denominator(c) > 0 );
+      CGAL_assertion( r.denominator(a) > 0 );
+      CGAL_assertion( r.denominator(b) > 0 );
+      CGAL_assertion( r.denominator(c) > 0 );
 
 /*   const RT lcm = ( r.denominator(a) * r.denominator(b) * r.denominator(c)          )/
                ( gcd( r.denominator(a), gcd(r.denominator(b), r.denominator(c)) ) );
@@ -247,7 +242,7 @@ sign(const Root_of_2<RT> &a)
   // We use an optimized version of the equivalent to :
   // return static_cast<Sign>((int) compare(a, 0));
 
-  assert(is_valid(a));
+  CGAL_assertion(is_valid(a));
   // First, we compare 0 to the root of the derivative of a.
   // (which is equivalent to a[1])
 
@@ -269,7 +264,7 @@ template < typename RT >
 Comparison_result
 compare(const Root_of_2<RT> &a, const Root_of_2<RT> &b)
 {
-  assert(is_valid(a) && is_valid(b));
+  CGAL_assertion(is_valid(a) && is_valid(b));
 
   // Now a and b are both of degree 2.
   if (a.is_smaller())
@@ -292,7 +287,7 @@ compare(const Root_of_2<RT> &a,
 {
   typedef typename Root_of_traits< RT >::RootOf_1 RootOf_1;
   
-  assert(is_valid(a) && is_valid(b));
+  CGAL_assertion(is_valid(a) && is_valid(b));
 
   RootOf_1 d_a(-a[1],2*a[2]);
 
@@ -325,7 +320,7 @@ template < typename RT >
 Comparison_result
 compare(const Root_of_2<RT> &a, const RT &b)
 {
-  assert(is_valid(a));
+  CGAL_assertion(is_valid(a));
 
   // First, we compare b to the root of the derivative of a.
   int cmp = compare(2*a[2]*b, -a[1]);
@@ -722,7 +717,7 @@ template < typename RT >
 Root_of_2<RT>
 square(const Root_of_2<RT> &a)
 {
-  assert(is_valid(a));
+  CGAL_assertion(is_valid(a));
 
   // It's easy to get the explicit formulas for the square of the two roots.
   // Then it's easy to compute their sum and their product, which gives the
@@ -743,10 +738,10 @@ operator-(const Root_of_2<RT> &a,
   //RT should be the same as Rational::RT
 
   Rational r;
-  assert(is_valid(a) && is_valid(b));
+  CGAL_assertion(is_valid(a) && is_valid(b));
   const RT &b1 = r.denominator(b);
   const RT &b0 = r.numerator(b);
-  //assert(b1>0);
+  //CGAL_assertion(b1>0);
 
   RT sqb1 = square(b1);
   RT sqb0 = square(b0);
@@ -771,7 +766,7 @@ template < typename RT >
 Root_of_2<RT>
 operator-(const Root_of_2<RT> &a, const RT& b)
 {
-  assert(is_valid(a) && is_valid(b));
+  CGAL_assertion(is_valid(a) && is_valid(b));
 
   // It's easy to see it using the formula (X^2 - sum X + prod).
 
@@ -838,10 +833,10 @@ operator*(const Root_of_2<RT> &a,
   //RT should be the same as Rational::RT
 
   Rational r;
-  assert(is_valid(a) && is_valid(b));
+  CGAL_assertion(is_valid(a) && is_valid(b));
   const RT &b1 = r.denominator(b);
   const RT &b0 = r.numerator(b);
-  assert(b1>0);
+  CGAL_assertion(b1>0);
 
   return Root_of_2<RT>(a[2] * square(b1), a[1] * b1 * b0,
                        a[0] * square(b0),
@@ -862,7 +857,7 @@ template < typename RT >
 Root_of_2<RT>
 operator*(const Root_of_2<RT> &a, const RT& b)
 {
-  assert(is_valid(a));
+  CGAL_assertion(is_valid(a));
 
   return Root_of_2<RT>(a[2], a[1] * b, a[0] * square(b),
                          b < 0 ? !a.is_smaller() : a.is_smaller());
@@ -881,13 +876,13 @@ template < typename RT >
 double
 to_double(const Root_of_2<RT> &x)
 {
-  assert(is_valid(x));
+  CGAL_assertion(is_valid(x));
 
   double a = CGAL::to_double(x[2]);
   double b = CGAL::to_double(x[1]);
   double d = std::sqrt(CGAL_NTS to_double(x.discriminant()));
 
-  assert(a > 0);
+  CGAL_assertion(a > 0);
   if (x.is_smaller())
     d = -d;
 
@@ -898,7 +893,7 @@ template < typename RT >
 std::pair<double, double>
 to_interval(const Root_of_2<RT> &x)
 {
-  assert(is_valid(x));
+  CGAL_assertion(is_valid(x));
 
   Interval_nt<> a = to_interval(x[2]);
   Interval_nt<> b = to_interval(x[1]);
