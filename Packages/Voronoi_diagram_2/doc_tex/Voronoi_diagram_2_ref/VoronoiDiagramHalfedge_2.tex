@@ -117,6 +117,16 @@ halfedge provided by the Voronoi diagram adaptor.
   the target of the halfedge does not exist, i.e., if either of
   \ccc{has_source()} or \ccc{has_target()} return \ccStyle{false}.}
 \ccGlue
+\ccMethod{bool is_bisector();}{Returns \ccStyle{true} iff the Voronoi
+  edge is an entire bisector.}
+\ccGlue
+\ccMethod{bool is_segment();}{Returns \ccStyle{true} iff the Voronoi
+  edge has both a source and a target Voronoi vertex.}
+\ccGlue
+\ccMethod{bool is_ray();}{Returns \ccStyle{true} iff the Voronoi
+  edge has either a source and a target Voronoi vertex, but not both;
+  in other words it is a bisecting ray.}
+\ccGlue
 \ccMethod{bool is_valid();}{Returns \ccStyle{true} if the following
   conditions are met: the halfedge does not have zero length; the
   twin edge of its twin edge is itself; its adjacent face does not

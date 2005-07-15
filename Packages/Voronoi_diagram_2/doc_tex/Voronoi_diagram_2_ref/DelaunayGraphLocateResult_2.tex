@@ -19,25 +19,26 @@
 
 
 
-\begin{ccRefConcept}{DelaunayGraphLocateResult_2}
+\begin{ccRefConcept}{DelaunayGraphNearestSiteQueryResult_2}
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[concept]{} %% add further index entries
 \ccDefinition
 
-The concept \ccc{DelaunayGraphLocateResult_2} defines the requirements of the
-\ccc{Locate_result} type defined in the \ccc{DelaunayGraphPointLocator_2}
+The concept \ccc{DelaunayGraphNearestSiteQueryResult_2} defines the
+requirements of the \ccc{Query_result} type defined in the
+\ccc{DelaunayGraphNearestSite_2} 
 concept. Essentially it provides the requirements for a class
-representing the result type of a point location query performed on a
-Delaunay graph. Semantically, the locate result is either a face, edge or
+representing the result type of a nearest site query performed on a
+Delaunay graph. Semantically, the query result is either a face, edge or
 vertex of the Delaunay graph. It is a face if the query point is
 equidistant to at least three vertices of the Delaunay graph, namely
 the three vertices of the returned face. It is an edge if the query
 point is equidistant to exactly two vertices of the Delaunay graph,
 which are the source and target vertices of the edge. In all other
-cases, the locate type is a vertex, namely, the unique vertex of the
+cases, the query result is a vertex, namely, the unique vertex of the
 Delaunay graph closest to the query point. The
-\ccc{DelaunayGraphLocateResult_2} concept encapsulates the semantics
+\ccc{DelaunayGraphNearestSiteQueryResult_2} concept encapsulates the semantics
 described above.
 
 \ccRefines
@@ -47,26 +48,27 @@ described above.
 \ccc{EqualityComparable}
 
 \ccTypes
-\ccThree{typedef Dual_graph::Vertex_handle}{Vertex_handle+}{}
-\ccThreeToTwo
+\ccThree{typedef Delaunay_graph::Vertex_handle}{Vertex_handle+}{}
+\ccTwo{DelaunayGraphNearestSiteQueryResult_2::Delaunay_graph+}{}
+%\ccThreeToTwo
 %
-\ccNestedType{Dual_graph}{A type for the Delaunay graph. It must be a
+\ccNestedType{Delaunay_graph}{A type for the Delaunay graph. It must be a
   model of the \ccc{DelaunayGraph_2} concept.}
-\ccGlue
-\ccTypedef{typedef Dual_graph::Vertex_handle Vertex_handle;}{Handle
+%\ccGlue
+\ccTypedef{typedef Delaunay_graph::Vertex_handle Vertex_handle;}{Handle
   for the vertices of the Delaunay graph.}
 \ccGlue
-\ccTypedef{typedef Dual_graph::Face_handle Face_handle;}{Handle
+\ccTypedef{typedef Delaunay_graph::Face_handle Face_handle;}{Handle
   for the faces of the Delaunay graph.}
 \ccGlue
-\ccTypedef{typedef Dual_graph::Edge Edge;}{Type for the edges of the
+\ccTypedef{typedef Delaunay_graph::Edge Edge;}{Type for the edges of the
   Delaunay graph.}
 
-\ccCreationVariable{lr}  %% choose variable name
+\ccCreationVariable{qr}  %% choose variable name
 
 
 \ccHeading{Predicate Methods}
-\ccThree{bool}{lr.is_vertex()+}{}
+\ccThree{bool}{qr.is_vertex()+}{}
 \ccThreeToTwo
 %
 \ccMethod{bool is_vertex();}{Returns \ccStyle{true} iff the result of
@@ -107,10 +109,10 @@ described above.
 
 
 \ccHasModels
-\ccc{CGAL::Apollonius_graph_Voronoi_traits_2<AG2>::Point_locator::Locate_result}\\
-\ccc{CGAL::Delaunay_triangulation_Voronoi_traits_2<DT2>::Point_locator::Locate_result}\\
-\ccc{CGAL::Regular_triangulation_Voronoi_traits_2<RT2>::Point_locator::Locate_result}\\
-\ccc{CGAL::Segment_Voronoi_diagram_Voronoi_traits_2<SVD2>::Point_locator::Locate_result}
+\ccc{CGAL::Apollonius_graph_Voronoi_traits_2<AG2>::Nearest_site_2::Query_result}\\
+\ccc{CGAL::Delaunay_triangulation_Voronoi_traits_2<DT2>::Nearest_site_2::Query_result}\\
+\ccc{CGAL::Regular_triangulation_Voronoi_traits_2<RT2>::Nearest_site_2::Query_result}\\
+\ccc{CGAL::Segment_Voronoi_diagram_Voronoi_traits_2<SVD2>::Nearest_site_2::Query_result}
 
 \ccSeeAlso
 \ccc{VoronoiTraits_2}\\

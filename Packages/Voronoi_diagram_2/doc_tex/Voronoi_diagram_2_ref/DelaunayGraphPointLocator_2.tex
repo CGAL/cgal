@@ -17,22 +17,22 @@
 %%
 %% Author(s)     : Menelaos Karavelas <mkaravel@tem.uoc.gr>
 
-\begin{ccRefFunctionObjectConcept}{DelaunayGraphPointLocator_2}
+\begin{ccRefFunctionObjectConcept}{DelaunayGraphNearestSite_2}
 
-The \ccc{DelaunayGraphPointLocator_2} concept defines the requirements
-for a functor that performs point location queries on a Delaunay
-graph. The functor returns an object of type \ccc{Locate_result}, which
-is a model of the \ccc{DelaunayGraphLocateResult_2}
-concept. Semantically, the locate result is either a face, edge or
-vertex of the Delaunay graph. It is a face if the query point is
-equidistant to at least three vertices of the Delaunay graph, namely
-the three vertices of the returned face. It is an edge if the query
+The \ccc{DelaunayGraphNearestSite_2} concept defines the requirements
+for a functor that performs nearest site queries on a Delaunay
+graph. The functor returns an object of type \ccc{Query_result}, which
+is a model of the \ccc{DelaunayGraphNearestSiteQueryResult_2}
+concept. Semantically, the result of the query is either a face, edge or
+vertex of the Delaunay graph. It is a face if the query point has at
+least three closest sites; the returned face has closest sites as
+vertices. It is an edge if the query
 point is equidistant to exactly two vertices of the Delaunay graph,
 which are the source and target vertices of the edge. In all other
-cases, the locate result is a vertex, namely, the unique vertex of the
+cases, the search result is a vertex, namely, the unique vertex of the
 Delaunay graph closest to the query point. The
-\ccc{DelaunayGraphLocateResult_2} concept, as well as the
-\ccc{Locate_result} type, that is a model of the afore-mentioned concept,
+\ccc{DelaunayGraphNearestSiteQueryResult_2} concept, as well as the
+\ccc{Query_result} type, that is a model of the afore-mentioned concept,
 encapsulate the semantics described above.
 
 \ccRefines
@@ -48,25 +48,26 @@ concept, a model of this concept must provide the following types:
 
 
 %\ccTwo{EdgeDegeneractTester::Dual_graph+}{}
-\ccTwo{DelaunayGraphLocatePointLocator_2::Locate_result+}{}
-\ccNestedType{Dual_graph}{A type for the Delaunay graph. It must be
+\ccTwo{DelaunayGraphNearestSite_2::Delaunay_graph+}{}
+\ccNestedType{Delaunay_graph}{A type for the Delaunay graph. It must be
   model of the \ccc{DelaunayGraph_2} concept.}
 \ccGlue
-\ccNestedType{Locate_result}{A type for the result of the point
-  location. It must be a model of the \ccc{DelaunayGraphLocateResult_2}
-  concept.}
+\ccNestedType{Query_result}{A type for the result of the point
+  location. It must be a model of the
+  \ccc{DelaunayGraphNearestSiteQueryResult_2} concept.}
 %\ccGlue
-\ccThree{typedef typename Dual_graph::Geom_traits::Point_2}{Vertex_handle+}{}
+\ccThree{typedef typename Delaunay_graph::Geom_traits::Point_2}
+{Vertex_handle+}{}
 \ccThreeToTwo
-\ccTypedef{typedef typename Dual_graph::Vertex_handle Vertex_handle;}{}
+\ccTypedef{typedef typename Delaunay_graph::Vertex_handle Vertex_handle;}{}
 \ccGlue
-\ccTypedef{typedef typename Dual_graph::Face_handle Face_handle;}{}
+\ccTypedef{typedef typename Delaunay_graph::Face_handle Face_handle;}{}
 \ccGlue
-\ccTypedef{typedef typename Dual_graph::Edge Edge;}{}
+\ccTypedef{typedef typename Delaunay_graph::Edge Edge;}{}
 \ccGlue
-\ccTypedef{typedef typename Dual_graph::Geom_traits::Point_2 Point_2;}{}
+\ccTypedef{typedef typename Delaunay_graph::Geom_traits::Point_2 Point_2;}{}
 
-\ccCreationVariable{pl}
+\ccCreationVariable{ns}
 
 %\ccCreation
 
@@ -81,21 +82,21 @@ concept, a model of this concept must provide the following types:
 \ccOperations
 It must also provide the following operations:
 
-\ccThree{Locate_result}{pl(Dual_graph dg, Point_2 p)+}{}
+\ccThree{Query_result}{ns(Delaunay_graph dg, Point_2 p)+}{}
 \ccThreeToTwo
-\ccMemberFunction{Locate_result operator()(Dual_graph dg, Point_2 p);}
-{Returns the feature of the Delaunay graph on which the point \ccc{p}
-  lies.}
+\ccMemberFunction{Query_result operator()(Delaunay_graph dg, Point_2 p);}
+{Returns the feature of the Delaunay graph that is dual to the feature
+  of the Voronoi diagram on which the point \ccc{p} lies.}
 
 \ccHasModels
-\ccc{CGAL::Apollonius_graph_Voronoi_traits_2<AG2>::Point_locator}\\
-\ccc{CGAL::Delaunay_triangulation_Voronoi_traits_2<DT2>::Point_locator}\\
-\ccc{CGAL::Regular_triangulation_Voronoi_traits_2<RT2>::Point_locator}\\
-\ccc{CGAL::Segment_Voronoi_diagram_Voronoi_traits_2<SVD2>::Point_locator}
+\ccc{CGAL::Apollonius_graph_Voronoi_traits_2<AG2>::Nearest_site_2}\\
+\ccc{CGAL::Delaunay_triangulation_Voronoi_traits_2<DT2>::Nearest_site_2}\\
+\ccc{CGAL::Regular_triangulation_Voronoi_traits_2<RT2>::Nearest_site_2}\\
+\ccc{CGAL::Segment_Voronoi_diagram_Voronoi_traits_2<SVD2>::Nearest_site_2}
 
 \ccSeeAlso
 \ccc{VoronoiTraits_2}\\
-\ccc{DelaunayGraphLocateResult_2}\\
+\ccc{DelaunayGraphNearestSiteQueryResult_2}\\
 \ccc{CGAL::Apollonius_graph_Voronoi_traits_2<AG2>}\\
 \ccc{CGAL::Delaunay_triangulation_Voronoi_traits_2<DT2>}\\
 \ccc{CGAL::Regular_triangulation_Voronoi_traits_2<RT2>}\\

@@ -66,16 +66,16 @@ constructing these objects.
   tests whether a Voronoi face is degenerate, i.e., it has zero
   area. It must be a model of the \ccc{FaceDegeneracyTester} concept.}
 \ccGlue
-\ccNestedType{Has_point_locator}{A tag for determining if the Voronoi
-  traits can provide a functor for performing point location. This tag
-  is equal to either \ccc{CGAL::Tag_true} (a point location functor is
-  available) or \ccc{CGAL::Tag_false} (a point location functor is not
-  available).}
+\ccNestedType{Has_nearest_site_2}{A tag for determining if the Voronoi
+  traits can provide a functor for performing nearest site queries.
+  This tag is equal to either \ccc{CGAL::Tag_true} (a nearest site
+  query functor is available) or \ccc{CGAL::Tag_false} (a nearest site
+  query functor is not available).}
 \ccGlue
-\ccNestedType{Point_locator}{A type for a functor the performs point
-  location. It must be a model of the concept
-  \ccc{DelaunayGraphPointLocator_2}. This type is required only if
-  \ccc{Has_point_locator} is equal to \ccc{CGAL::Tag_true}.}
+\ccNestedType{Nearest_site_2}{A type for a functor the performs
+  nearest site queries. It must be a model of the concept
+  \ccc{DelaunayGraphNearestSite_2}. This type is required only if
+  \ccc{Has_nearest_site_2} is equal to \ccc{CGAL::Tag_true}.}
 
 \ccThree{typedef typename Dual_graph::Vertex_handle}{Vertex_handle+}{}
 \ccThreeToTwo
