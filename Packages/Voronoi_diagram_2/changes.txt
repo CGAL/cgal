@@ -1,3 +1,17 @@
+15 July 2005:  Menelaos Karavelas
+- renamed Dual_graph to Delaunay_graph all over the package files (code)
+- made Dual_* types in the adaptor private
+- renamed DelaunayGraphPointLocator_2 concept to DelaunayGraphNearestSite_2
+- renamed DelaunayGraphLocateResult_2 concept to
+  DelaunayGraphNearestSiteQueryResult_2
+- renamed the Delaunay graph Point_locator to Nearest_site_2; the result
+  type of this functor was renamed from Locate_result to Query_result
+- added some predicate methods in Halfedge that already existed in
+  VoronoiEdge_2
+- added some support for the incremental construction of the diagram
+- added output operators towards the Qt_widget for the various Voronoi edges
+- replaced Voronoi_diagram_adaptor_2.h by Voronoi_diagram_2.h
+
 26 June 2005:  Menelaos Karavelas
 - removed the type Size and the size_of_* methods from the Voronoi diagram
   adaptor; changed test suite and doc to reflect this change
