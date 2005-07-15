@@ -20,8 +20,8 @@
 #ifndef CGAL_VORONOI_DIAGRAM_2_HALFEDGE_2_H
 #define CGAL_VORONOI_DIAGRAM_2_HALFEDGE_2_H 1
 
-#include <CGAL/Voronoi_diagram_adaptor_2/basic.h>
-#include <CGAL/Voronoi_diagram_adaptor_2/Finder_classes.h>
+#include <CGAL/Voronoi_diagram_2/basic.h>
+#include <CGAL/Voronoi_diagram_2/Finder_classes.h>
 #include <CGAL/Triangulation_utils_2.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -35,9 +35,11 @@ class Halfedge
   typedef Halfedge<VDA>                         Self;
   typedef Triangulation_cw_ccw_2                CW_CCW_2;
 
-  typedef typename VDA::Dual_face_handle        Dual_face_handle;
-  typedef typename VDA::Dual_vertex_handle      Dual_vertex_handle;
-  typedef typename VDA::Dual_vertex_circulator  Dual_vertex_circulator;
+  typedef typename VDA::Delaunay_graph          DG;
+  typedef typename DG::Face_handle              Dual_face_handle;
+  typedef typename DG::Vertex_handle            Dual_vertex_handle;
+  typedef typename DG::Vertex_circulator        Dual_vertex_circulator;
+  typedef typename DG::Edge_circulator          Dual_edge_circulator;
   typedef typename VDA::Edge_degeneracy_tester  Edge_degeneracy_tester;
   typedef typename VDA::Face_degeneracy_tester  Face_degeneracy_tester;
 
@@ -74,8 +76,8 @@ public:
 
   typedef typename VDA::Voronoi_traits::Curve    Curve;
 
-  typedef typename VDA::Dual_graph               Dual_graph;
-  typedef typename VDA::Dual_graph::Edge         Dual_edge;
+  typedef typename VDA::Delaunay_graph           Delaunay_graph;
+  typedef typename Delaunay_graph::Edge          Dual_edge;
 
   Halfedge(const VDA* vda = NULL)
     : vda_(vda), f_(Dual_face_handle()), i_(-1),
@@ -207,6 +209,20 @@ public:
     return !has_source() || !has_target();
   }
 
+  bool is_bisector() const {
+    return !has_source() && !has_target();
+  }
+
+  bool is_segment() const {
+    return has_source() && has_target();
+  }
+
+  bool is_ray() const {
+    return
+      ( has_source() && !has_target() ) ||
+      ( !has_source() && has_target() );
+  }
+
   Vertex_handle source() const {
     CGAL_precondition( has_source() );
     return opposite()->vertex();
@@ -263,7 +279,7 @@ public:
 
   Dual_edge dual_edge() const {
     if ( vda_->dual().dimension() == 1 ) {
-      typename VDA::Dual_graph::Edge_circulator ec;
+      Dual_edge_circulator ec;
       if ( vda_->dual().is_infinite(v1_) ) {
 	CGAL_assertion( !vda_->dual().is_infinite(v2_) );
 	ec = vda_->dual().incident_edges(v2_);

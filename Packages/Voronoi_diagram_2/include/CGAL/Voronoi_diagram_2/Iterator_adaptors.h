@@ -20,7 +20,7 @@
 #ifndef CGAL_VORONOI_DIAGRAM_2_ITERATOR_ADAPTORS_H
 #define CGAL_VORONOI_DIAGRAM_2_ITERATOR_ADAPTORS_H 1
 
-#include <CGAL/Voronoi_diagram_adaptor_2/basic.h>
+#include <CGAL/Voronoi_diagram_2/basic.h>
 #include <cstdlib>
 #include <iterator>
 #include <CGAL/Unique_hash_map.h>
@@ -175,10 +175,10 @@ class Edge_iterator_adaptor
     this->value_ =
       Halfedge(this->vda_, this->cur_->first, this->cur_->second);
 
-    typename VDA::Dual_edge e = this->value_.dual_edge();
+    typename VDA::Delaunay_graph::Edge e = this->value_.dual_edge();
 
     int j = CW_CCW_2::ccw( e.second );
-    typename VDA::Dual_vertex_handle v = e.first->vertex(j);
+    typename VDA::Delaunay_graph::Vertex_handle v = e.first->vertex(j);
 
     if ( this->vda_->face_tester()(this->vda_->dual(), v) ) {
       this->value_ = *this->value_.opposite();

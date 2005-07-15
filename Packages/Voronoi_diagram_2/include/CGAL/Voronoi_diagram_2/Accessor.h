@@ -20,7 +20,7 @@
 #ifndef CGAL_VORONOI_DIAGRAM_2_ACCESSOR_H
 #define CGAL_VORONOI_DIAGRAM_2_ACCESSOR_H 1
 
-#include <CGAL/Voronoi_diagram_adaptor_2/basic.h>
+#include <CGAL/Voronoi_diagram_2/basic.h>
 
 CGAL_BEGIN_NAMESPACE
 

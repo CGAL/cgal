@@ -20,7 +20,7 @@
 #ifndef CGAL_VORONOI_DIAGRAM_2_UNBOUNDED_EDGES_H
 #define CGAL_VORONOI_DIAGRAM_2_UNBOUNDED_EDGES_H 1
 
-#include <CGAL/Voronoi_diagram_adaptor_2/basic.h>
+#include <CGAL/Voronoi_diagram_2/basic.h>
 //#include <CGAL/Triangulation_utils_2.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -36,11 +36,9 @@ class Bounded_edge_tester
   // this class returns true if the edge is bounded
 
   // this is essentially VDA::Non_degenerate_edges_iterator
-  typedef Base_it                                 Base_iterator;
-  typedef typename VDA::Dual_graph::Edge          Dual_edge;
-  typedef typename VDA::Dual_graph::Face_handle   Dual_face_handle;
-
-  //  typedef Triangulation_cw_ccw_2    CW_CCW_2;
+  typedef Base_it                                     Base_iterator;
+  typedef typename VDA::Delaunay_graph::Edge          Dual_edge;
+  typedef typename VDA::Delaunay_graph::Face_handle   Dual_face_handle;
 
  public:
   Bounded_edge_tester(const VDA* vda = NULL) : vda_(vda) {}
@@ -69,9 +67,9 @@ class Unbounded_edge_tester
   // this class returns true if the edge is unbounded
 
   // this is essentially VDA::Non_degenerate_edges_iterator
-  typedef Base_it                                 Base_iterator;
-  typedef typename VDA::Dual_graph::Edge          Dual_edge;
-  typedef typename VDA::Dual_graph::Face_handle   Dual_face_handle;
+  typedef Base_it                                     Base_iterator;
+  typedef typename VDA::Delaunay_graph::Edge          Dual_edge;
+  typedef typename VDA::Delaunay_graph::Face_handle   Dual_face_handle;
 
  public:
   Unbounded_edge_tester(const VDA* vda = NULL) : vda_(vda) {}

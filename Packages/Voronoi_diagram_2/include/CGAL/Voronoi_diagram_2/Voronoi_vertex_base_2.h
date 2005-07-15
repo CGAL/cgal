@@ -21,7 +21,7 @@
 #ifndef CGAL_VORONOI_DIAGRAM_2_VORONOI_VERTEX_BASE_2_H
 #define CGAL_VORONOI_DIAGRAM_2_VORONOI_VERTEX_BASE_2_H 1
 
-#include <CGAL/Voronoi_diagram_adaptor_2/basic.h>
+#include <CGAL/Voronoi_diagram_2/basic.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -34,12 +34,11 @@ class Voronoi_vertex_base_2
   typedef Voronoi_vertex_base_2<DG,P,S,Voronoi_vertex>   Self;
 
  public:
-  typedef DG                                   Dual_graph;
-  typedef typename Dual_graph::Geom_traits     Geom_traits;
-  //  typedef typename Dual_graph::Vertex_handle   Vertex_handle;
-  typedef P                                    Point_2;
-  typedef S                                    Site_2;
-  typedef Voronoi_vertex                       Voronoi_vertex_2;
+  typedef DG                                     Delaunay_graph;
+  typedef typename Delaunay_graph::Geom_traits   Geom_traits;
+  typedef P                                      Point_2;
+  typedef S                                      Site_2;
+  typedef Voronoi_vertex                         Voronoi_vertex_2;
 
 
   const Site_2& first() const { return s_[0]; }

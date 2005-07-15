@@ -21,7 +21,7 @@
 #ifndef CGAL_VORONOI_DIAGRAM_2_VORONOI_EDGE_BASE_2_H
 #define CGAL_VORONOI_DIAGRAM_2_VORONOI_EDGE_BASE_2_H 1
 
-#include <CGAL/Voronoi_diagram_adaptor_2/basic.h>
+#include <CGAL/Voronoi_diagram_2/basic.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -81,8 +81,8 @@ class Voronoi_edge_base_2
 #endif
 
  public:
-  typedef DG                                    Dual_graph;
-  typedef typename Dual_graph::Geom_traits      Geom_traits;
+  typedef DG                                    Delaunay_graph;
+  typedef typename Delaunay_graph::Geom_traits  Geom_traits;
   typedef P                                     Point_2;
   typedef S                                     Site_2;
   typedef Voronoi_vertex                        Voronoi_vertex_2;

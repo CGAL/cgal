@@ -20,7 +20,7 @@
 #ifndef CGAL_VORONOI_DIAGRAM_2_LOCATE_RESULT_H
 #define CGAL_VORONOI_DIAGRAM_2_LOCATE_RESULT_H 1
 
-#include <CGAL/Voronoi_diagram_adaptor_2/basic.h>
+#include <CGAL/Voronoi_diagram_2/basic.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -128,7 +128,7 @@ class Locate_result<DG,false>
   friend class Locate_result_accessor<DG,false>;
 
  public:
-  typedef DG                          Dual_graph;
+  typedef DG                          Delaunay_graph;
   typedef typename DG::Vertex_handle  Vertex_handle;
   typedef typename DG::Face_handle    Face_handle;
   typedef typename DG::Edge           Edge;

@@ -20,8 +20,8 @@
 #ifndef CGAL_VORONOI_DIAGRAM_2_VERTEX_H
 #define CGAL_VORONOI_DIAGRAM_2_VERTEX_H 1
 
-#include <CGAL/Voronoi_diagram_adaptor_2/basic.h>
-#include <CGAL/Voronoi_diagram_adaptor_2/Finder_classes.h>
+#include <CGAL/Voronoi_diagram_2/basic.h>
+#include <CGAL/Voronoi_diagram_2/Finder_classes.h>
 
 
 CGAL_BEGIN_NAMESPACE
@@ -49,8 +49,8 @@ class Vertex
   typedef typename VDA::Voronoi_traits::Point_2           Point_2;
   typedef typename VDA::Voronoi_traits::Voronoi_vertex_2  Voronoi_vertex_2;
 
-  typedef typename VDA::Dual_graph        Dual_graph;
-  typedef typename VDA::Dual_face_handle  Dual_face_handle;
+  typedef typename VDA::Delaunay_graph               Delaunay_graph;
+  typedef typename VDA::Delaunay_graph::Face_handle  Dual_face_handle;
 
  private:
   Dual_face_handle find_valid_vertex(const Dual_face_handle& f) const

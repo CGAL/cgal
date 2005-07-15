@@ -20,8 +20,8 @@
 #ifndef CGAL_VORONOI_DIAGRAM_2_FACE_H
 #define CGAL_VORONOI_DIAGRAM_2_FACE_H 1
 
-#include <CGAL/Voronoi_diagram_adaptor_2/basic.h>
-#include <CGAL/Voronoi_diagram_adaptor_2/Accessor.h>
+#include <CGAL/Voronoi_diagram_2/basic.h>
+#include <CGAL/Voronoi_diagram_2/Accessor.h>
 #include <cstdlib>
 #include <CGAL/Triangulation_utils_2.h>
 
@@ -38,9 +38,10 @@ class Face
 
  private:
   typedef Face<VDA>                              Self;
-  typedef typename VDA::Dual_edge_circulator     Dual_edge_circulator;
-  typedef typename VDA::Dual_vertex_circulator   Dual_vertex_circulator;
-  typedef typename VDA::Dual_vertex_handle       Dual_vertex_handle;
+  typedef typename VDA::Delaunay_graph           DG;
+  typedef typename DG::Edge_circulator           Dual_edge_circulator;
+  typedef typename DG::Vertex_circulator         Dual_vertex_circulator;
+  typedef typename DG::Vertex_handle             Dual_vertex_handle;
 
   typedef Triangulation_cw_ccw_2                 CW_CCW_2;
 
@@ -103,7 +104,7 @@ class Face
   {
     CGAL_precondition( vda_->dual().dimension() > 0 );
     if ( vda_->dual().dimension() == 1 ) {
-      typename VDA::Dual_graph::Vertex_circulator vc;
+      Dual_vertex_circulator vc;
       vc = vda_->dual().incident_vertices(v_);
       while ( vda_->dual().is_infinite(vc) ) { ++vc; }
       Dual_vertex_handle vv(vc);

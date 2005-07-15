@@ -20,8 +20,8 @@
 #ifndef CGAL_VORONOI_DIAGRAM_2_DEFAULT_VORONOI_TRAITS_2_H
 #define CGAL_VORONOI_DIAGRAM_2_DEFAULT_VORONOI_TRAITS_2_H 1
 
-#include <CGAL/Voronoi_diagram_adaptor_2/basic.h>
-#include <CGAL/Voronoi_diagram_adaptor_2/Cached_degeneracy_testers.h>
+#include <CGAL/Voronoi_diagram_2/basic.h>
+#include <CGAL/Voronoi_diagram_2/Cached_degeneracy_testers.h>
 #include <CGAL/Handle_for_virtual.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -83,37 +83,37 @@ template<class DG>
 struct Default_face_degeneracy_tester
 {
   // tests whether a face has zero area
-  typedef DG                                      Dual_graph;
-  typedef typename Dual_graph::Vertex_handle      Vertex_handle;
+  typedef DG                                      Delaunay_graph;
+  typedef typename Delaunay_graph::Vertex_handle  Vertex_handle;
 
   typedef bool           result_type;
   typedef Arity_tag<2>   Arity;
 
-  bool operator()(const Dual_graph&, const Vertex_handle&) const {
+  bool operator()(const Delaunay_graph&, const Vertex_handle&) const {
     return false;
   }
 };
 
 //=========================================================================
 
-template<class DG, class ET, class FT, class PL>
+template<class DG, class ET, class FT, class NS>
 class Default_Voronoi_traits_2
 {
  private:
-  typedef Default_Voronoi_traits_2<DG,ET,FT,PL>   Self;
+  typedef Default_Voronoi_traits_2<DG,ET,FT,NS>   Self;
 
  public:
-  typedef DG  Dual_graph;
+  typedef DG  Delaunay_graph;
   typedef ET  Edge_degeneracy_tester;
   typedef FT  Face_degeneracy_tester;
-  typedef PL  Point_locator;
+  typedef NS  Nearest_site_2;
 
-  typedef Tag_true Has_point_locator;
+  typedef Tag_true Has_nearest_site_2;
 
-  typedef typename Dual_graph::Vertex_handle  Vertex_handle;
+  typedef typename Delaunay_graph::Vertex_handle  Vertex_handle;
 
-  Point_locator point_locator_object() const {
-    return Point_locator();
+  Nearest_site_2 nearest_site_2_object() const {
+    return Nearest_site_2();
   }
 
   const Edge_degeneracy_tester& edge_degeneracy_tester_object() const {
@@ -137,13 +137,13 @@ class Default_Voronoi_traits_2<DG,ET,FT,Tag_false>
   typedef Default_Voronoi_traits_2<DG,ET,FT,Tag_false>   Self;
 
  public:
-  typedef DG  Dual_graph;
+  typedef DG  Delaunay_graph;
   typedef ET  Edge_degeneracy_tester;
   typedef FT  Face_degeneracy_tester;
 
-  typedef Tag_false Has_point_locator;
+  typedef Tag_false Has_nearest_site_2;
 
-  typedef typename Dual_graph::Vertex_handle  Vertex_handle;
+  typedef typename Delaunay_graph::Vertex_handle  Vertex_handle;
 
   const Edge_degeneracy_tester& edge_degeneracy_tester_object() const {
     return e_tester_;
@@ -164,18 +164,18 @@ class Default_Voronoi_traits_2<DG,ET,FT,Tag_false>
 //=========================================================================
 //=========================================================================
 
-template<class DG, class ET, class FT, class PL>
+template<class DG, class ET, class FT, class NS>
 class Default_cached_Voronoi_traits_2
 {
  private:
   typedef ET  Edge_degeneracy_tester_base;
   typedef FT  Face_degeneracy_tester_base;
 
-  typedef Default_cached_Voronoi_traits_2<DG,ET,FT,PL>  Self;
+  typedef Default_cached_Voronoi_traits_2<DG,ET,FT,NS>  Self;
 
  public:
-  typedef DG           Dual_graph;
-  typedef PL           Point_locator;
+  typedef DG           Delaunay_graph;
+  typedef NS           Nearest_site_2;
 
   typedef Cached_edge_degeneracy_tester<Edge_degeneracy_tester_base>
   Edge_degeneracy_tester;
@@ -195,8 +195,8 @@ class Default_cached_Voronoi_traits_2
     return f_tester_;
   }
 
-  Point_locator point_locator_object() const {
-    return Point_locator();
+  Nearest_site_2 nearest_site_2_object() const {
+    return Nearest_site_2();
   }
 
  protected:
@@ -209,18 +209,18 @@ class Default_cached_Voronoi_traits_2
 //=========================================================================
 
 
-template<class DG, class ET, class FT, class PL>
+template<class DG, class ET, class FT, class NS>
 class Default_ref_counted_Voronoi_traits_2
 {
  private:
   typedef ET  Edge_degeneracy_tester_base;
   typedef FT  Face_degeneracy_tester_base;
 
-  typedef Default_ref_counted_Voronoi_traits_2<DG,ET,FT,PL>  Self;
+  typedef Default_ref_counted_Voronoi_traits_2<DG,ET,FT,NS>  Self;
 
  public:
-  typedef DG           Dual_graph;
-  typedef PL           Point_locator;
+  typedef DG           Delaunay_graph;
+  typedef NS           Nearest_site_2;
 
   typedef Ref_counted_edge_degeneracy_tester<Edge_degeneracy_tester_base>
   Edge_degeneracy_tester;
@@ -239,8 +239,8 @@ class Default_ref_counted_Voronoi_traits_2
     return f_tester_;
   }
 
-  Point_locator point_locator_object() const {
-    return Point_locator();
+  Nearest_site_2 nearest_site_2_object() const {
+    return Nearest_site_2();
   }
 
  protected:

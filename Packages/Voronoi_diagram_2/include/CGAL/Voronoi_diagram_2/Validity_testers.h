@@ -20,11 +20,11 @@
 #ifndef CGAL_VORONOI_DIAGRAM_2_VALIDITY_TESTERS_H
 #define CGAL_VORONOI_DIAGRAM_2_VALIDITY_TESTERS_H 1
 
-#include <CGAL/Voronoi_diagram_adaptor_2/basic.h>
+#include <CGAL/Voronoi_diagram_2/basic.h>
 #include <cstdlib>
 #include <algorithm>
 #include <CGAL/Triangulation_utils_2.h>
-#include <CGAL/Voronoi_diagram_adaptor_2/Finder_classes.h>
+#include <CGAL/Voronoi_diagram_2/Finder_classes.h>
 
 
 CGAL_BEGIN_NAMESPACE
@@ -43,11 +43,11 @@ class Edge_validity_tester
   const VDA* vda_;
 
  private:
-  typedef Triangulation_cw_ccw_2                   CW_CCW_2;
+  typedef Triangulation_cw_ccw_2                       CW_CCW_2;
   // Base_it is essentially VDA::Edges_iterator_base
-  typedef Base_it                                  Edges_iterator_base;
-  typedef typename VDA::Halfedge_handle            Halfedge_handle;
-  typedef typename VDA::Dual_graph::Vertex_handle  Dual_vertex_handle;
+  typedef Base_it                                      Edges_iterator_base;
+  typedef typename VDA::Halfedge_handle                Halfedge_handle;
+  typedef typename VDA::Delaunay_graph::Vertex_handle  Dual_vertex_handle;
 
  public:
   Edge_validity_tester(const VDA* vda = NULL) : vda_(vda) {}
@@ -87,8 +87,9 @@ class Vertex_validity_tester
   const VDA* vda_;
 
  private:
-  typedef typename VDA::Dual_face_handle     Dual_face_handle;
-  typedef typename VDA::Dual_faces_iterator  Dual_faces_iterator;
+  typedef typename VDA::Delaunay_graph::Face_handle     Dual_face_handle;
+  typedef typename VDA::Delaunay_graph::Finite_faces_iterator
+  Dual_faces_iterator;
 
  public:
   Vertex_validity_tester(const VDA* vda = NULL) : vda_(vda) {}

@@ -20,7 +20,7 @@
 #ifndef CGAL_VORONOI_DIAGRAM_2_FINDER_CLASSES_H
 #define CGAL_VORONOI_DIAGRAM_2_FINDER_CLASSES_H 1
 
-#include <CGAL/Voronoi_diagram_adaptor_2/basic.h>
+#include <CGAL/Voronoi_diagram_2/basic.h>
 #include <map>
 #include <CGAL/Triangulation_utils_2.h>
 
@@ -36,8 +36,8 @@ struct Find_next_halfedge
 {
   typedef Triangulation_cw_ccw_2  CW_CCW_2;
 
-  typedef typename VDA::Dual_face_handle         Dual_face_handle;
-  typedef typename VDA::Edge_degeneracy_tester   Edge_tester;
+  typedef typename VDA::Delaunay_graph::Face_handle   Dual_face_handle;
+  typedef typename VDA::Edge_degeneracy_tester        Edge_tester;
 
   void operator()(const VDA* vda, const Dual_face_handle& f, int i,
 		  Dual_face_handle& fnext, int& inext) const
@@ -59,8 +59,8 @@ struct Find_next_halfedge
 template<class VDA>
 struct Find_opposite_halfedge
 {
-  typedef typename VDA::Dual_face_handle     Dual_face_handle;
-  typedef Find_next_halfedge<VDA>            Find_next_halfedge;
+  typedef typename VDA::Delaunay_graph::Face_handle   Dual_face_handle;
+  typedef Find_next_halfedge<VDA>                     Find_next_halfedge;
 
   void operator()(const VDA* vda, const Dual_face_handle& f, int i,
 		  Dual_face_handle& fopp, int& iopp) const 
@@ -82,8 +82,8 @@ template<class VDA>
 class Find_valid_vertex
 {
  public:
-  typedef typename VDA::Dual_face_handle  Dual_face_handle;
-  typedef std::map<Dual_face_handle,bool> Dual_face_map;
+  typedef typename VDA::Delaunay_graph::Face_handle  Dual_face_handle;
+  typedef std::map<Dual_face_handle,bool>            Dual_face_map;
 
   Dual_face_handle operator()(const VDA* vda,
 			      const Dual_face_handle& f) const

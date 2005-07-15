@@ -20,7 +20,7 @@
 #ifndef CGAL_VORONOI_DIAGRAM_2_DUMMY_ITERATOR_H
 #define CGAL_VORONOI_DIAGRAM_2_DUMMY_ITERATOR_H 1
 
-#include <CGAL/Voronoi_diagram_adaptor_2/basic.h>
+#include <CGAL/Voronoi_diagram_2/basic.h>
 #include <CGAL/iterator.h>
 
 CGAL_BEGIN_NAMESPACE
