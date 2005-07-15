@@ -20,11 +20,11 @@
 #ifndef CGAL_SEGMENT_VORONOI_DIAGRAM_VORONOI_TRAITS_2_H
 #define CGAL_SEGMENT_VORONOI_DIAGRAM_VORONOI_TRAITS_2_H 1
 
-#include <CGAL/Voronoi_diagram_adaptor_2/basic.h>
-#include <CGAL/Voronoi_diagram_adaptor_2/Default_Voronoi_traits_2.h>
-#include <CGAL/Voronoi_diagram_adaptor_2/Voronoi_vertex_base_2.h>
-#include <CGAL/Voronoi_diagram_adaptor_2/Voronoi_edge_base_2.h>
-#include <CGAL/Voronoi_diagram_adaptor_2/Locate_result.h>
+#include <CGAL/Voronoi_diagram_2/basic.h>
+#include <CGAL/Voronoi_diagram_2/Default_Voronoi_traits_2.h>
+#include <CGAL/Voronoi_diagram_2/Voronoi_vertex_base_2.h>
+#include <CGAL/Voronoi_diagram_2/Voronoi_edge_base_2.h>
+#include <CGAL/Voronoi_diagram_2/Locate_result.h>
 #include <cstdlib>
 #include <algorithm>
 
@@ -35,28 +35,28 @@ CGAL_BEGIN_NAMESPACE
 //=========================================================================
 
 template<class DG>
-class SVD_Point_locator
+class SVD_Nearest_site_2
 {
   typedef CGAL_VORONOI_DIAGRAM_2_NS::Locate_result_accessor<DG,false> Accessor;
 
  public:
-  typedef DG                                          Dual_graph;
-  typedef typename Dual_graph::Vertex_handle          Vertex_handle;
-  typedef typename Dual_graph::Face_handle            Face_handle;
-  typedef typename Dual_graph::Edge                   Edge;
-  typedef typename Dual_graph::Point_2                Point_2;
+  typedef DG                                          Delaunay_graph;
+  typedef typename Delaunay_graph::Vertex_handle      Vertex_handle;
+  typedef typename Delaunay_graph::Face_handle        Face_handle;
+  typedef typename Delaunay_graph::Edge               Edge;
+  typedef typename Delaunay_graph::Point_2            Point_2;
 
-  typedef CGAL_VORONOI_DIAGRAM_2_NS::Locate_result<DG,false> Locate_result;
+  typedef CGAL_VORONOI_DIAGRAM_2_NS::Locate_result<DG,false> Query_result;
 
   typedef Arity_tag<2>    Arity;
-  typedef Locate_result   return_type;
+  typedef Query_result    return_type;
 
  private:
   typedef Triangulation_cw_ccw_2                      CW_CCW_2;
-  typedef typename Dual_graph::Site_2                 Site_2;
+  typedef typename Delaunay_graph::Site_2             Site_2;
 
  public:
-  Locate_result operator()(const Dual_graph& dg, const Point_2& p) const {
+  Query_result operator()(const Delaunay_graph& dg, const Point_2& p) const {
     CGAL_precondition( dg.dimension() >= 0 );
 
     typename DG::Geom_traits::Oriented_side_of_bisector_2 side_of_bisector =
@@ -242,32 +242,32 @@ class SVD_Edge_degeneracy_tester
 {
   // tests whether a dual edge has zero length
  public:
-  typedef DG                                       Dual_graph;
+  typedef DG                                           Delaunay_graph;
 
-  typedef typename Dual_graph::Edge                Edge;
-  typedef typename Dual_graph::Face_handle         Face_handle;
-  typedef typename Dual_graph::Edge_circulator     Edge_circulator;
-  typedef typename Dual_graph::All_edges_iterator  All_edges_iterator;
+  typedef typename Delaunay_graph::Edge                Edge;
+  typedef typename Delaunay_graph::Face_handle         Face_handle;
+  typedef typename Delaunay_graph::Edge_circulator     Edge_circulator;
+  typedef typename Delaunay_graph::All_edges_iterator  All_edges_iterator;
 
-  typedef typename Dual_graph::Finite_edges_iterator
+  typedef typename Delaunay_graph::Finite_edges_iterator
   Finite_edges_iterator;
 
   typedef bool           result_type;
   typedef Arity_tag<2>   Arity;
 
  private:
-  typedef SVD_Edge_degeneracy_tester<Dual_graph>   Self;
+  typedef SVD_Edge_degeneracy_tester<Delaunay_graph>   Self;
 
-  typedef typename Dual_graph::Geom_traits         Geom_traits;
+  typedef typename Delaunay_graph::Geom_traits         Geom_traits;
 
-  typedef typename Dual_graph::Vertex_handle       Vertex_handle;
+  typedef typename Delaunay_graph::Vertex_handle       Vertex_handle;
 
-  typedef typename Dual_graph::Site_2              Site_2;
+  typedef typename Delaunay_graph::Site_2              Site_2;
 
-  typedef typename Geom_traits::Equal_2            Equal_2;
+  typedef typename Geom_traits::Equal_2                Equal_2;
 
  private:
-  bool is_degenerate_infinite_edge(const Dual_graph& dual,
+  bool is_degenerate_infinite_edge(const Delaunay_graph& dual,
 				   const Face_handle& f, int i) const
   {
     CGAL_precondition( dual.is_infinite(f, i) );
@@ -311,7 +311,8 @@ class SVD_Edge_degeneracy_tester
   }
 
  public:
-  bool operator()(const Dual_graph& dual, const Face_handle& f, int i) const
+  bool operator()(const Delaunay_graph& dual,
+		  const Face_handle& f, int i) const
   {
     if ( dual.dimension() == 1 ) { return false; }
 
@@ -336,21 +337,22 @@ class SVD_Edge_degeneracy_tester
     return dual.geom_traits().is_degenerate_edge_2_object()(s1,s2,s3,s4);
   }
 
-  bool operator()(const Dual_graph& dual, const Edge& e) const {
+  bool operator()(const Delaunay_graph& dual, const Edge& e) const {
     return operator()(dual, e.first, e.second);
   }
 
-  bool operator()(const Dual_graph& dual,
+  bool operator()(const Delaunay_graph& dual,
 		  const All_edges_iterator& eit) const {
     return operator()(dual, *eit);
   }
 
-  bool operator()(const Dual_graph& dual,
+  bool operator()(const Delaunay_graph& dual,
 		  const Finite_edges_iterator& eit) const {
     return operator()(dual, *eit);
   }
 
-  bool operator()(const Dual_graph& dual, const Edge_circulator& ec) const {
+  bool operator()(const Delaunay_graph& dual,
+		  const Edge_circulator& ec) const {
     return operator()(dual, *ec);
   }
 };
@@ -363,25 +365,25 @@ class SVD_Face_degeneracy_tester
 {
   // tests whether a face has zero area
  public:
-  typedef DG                                      Dual_graph;
-  typedef typename Dual_graph::Vertex_handle      Vertex_handle;
+  typedef DG                                       Delaunay_graph;
+  typedef typename Delaunay_graph::Vertex_handle   Vertex_handle;
 
   typedef bool           result_type;
   typedef Arity_tag<2>   Arity;
 
  private:
-  typedef SVD_Face_degeneracy_tester<Dual_graph>  Self;
-  typedef SVD_Edge_degeneracy_tester<Dual_graph>  Edge_tester;
+  typedef SVD_Face_degeneracy_tester<Delaunay_graph>  Self;
+  typedef SVD_Edge_degeneracy_tester<Delaunay_graph>  Edge_tester;
 
-  typedef typename Dual_graph::Geom_traits      Geom_traits;
-  typedef typename Dual_graph::Edge             Edge;
-  typedef typename Dual_graph::Edge_circulator  Edge_circulator;
-  typedef typename Dual_graph::Face_handle      Face_handle;
-  typedef typename Dual_graph::size_type        size_type;
-  typedef typename Dual_graph::Site_2           Site_2;
+  typedef typename Delaunay_graph::Geom_traits      Geom_traits;
+  typedef typename Delaunay_graph::Edge             Edge;
+  typedef typename Delaunay_graph::Edge_circulator  Edge_circulator;
+  typedef typename Delaunay_graph::Face_handle      Face_handle;
+  typedef typename Delaunay_graph::size_type        size_type;
+  typedef typename Delaunay_graph::Site_2           Site_2;
 
  public:
-  bool operator()(const Dual_graph& dual, const Vertex_handle& v) const
+  bool operator()(const Delaunay_graph& dual, const Vertex_handle& v) const
   {
     if ( dual.dimension() < 2 ) { return false; }
 
@@ -521,15 +523,15 @@ template<class SVD2>
 class Segment_Voronoi_diagram_Voronoi_traits_2
   : public CGAL_VORONOI_DIAGRAM_2_NS::Default_Voronoi_traits_2
   <SVD2, SVD_Edge_degeneracy_tester<SVD2>, SVD_Face_degeneracy_tester<SVD2>,
-   SVD_Point_locator<SVD2> >
+   SVD_Nearest_site_2<SVD2> >
 {
  private:
   typedef SVD_Edge_degeneracy_tester<SVD2>              Edge_tester;
   typedef SVD_Face_degeneracy_tester<SVD2>              Face_tester;
-  typedef SVD_Point_locator<SVD2>                       SVD_Point_locator;
+  typedef SVD_Nearest_site_2<SVD2>                      SVD_Nearest_site_2;
 
   typedef CGAL_VORONOI_DIAGRAM_2_NS::Default_Voronoi_traits_2
-  <SVD2,Edge_tester,Face_tester,SVD_Point_locator>
+  <SVD2,Edge_tester,Face_tester,SVD_Nearest_site_2>
   Base;
 
   typedef Segment_Voronoi_diagram_Voronoi_traits_2<SVD2>  Self;
@@ -542,6 +544,13 @@ class Segment_Voronoi_diagram_Voronoi_traits_2
   typedef SVD_Voronoi_vertex_2<SVD2>               Voronoi_vertex_2;
   typedef SVD_Voronoi_edge_2<SVD2>                 Voronoi_edge_2;
   typedef Voronoi_edge_2                           Curve;
+
+  typedef Tag_false                                Has_get_conflicts;
+  typedef Tag_false                                Has_insert;
+
+  static Site_2 site(const Vertex_handle& v) {
+    return v->site();
+  }
 
   static Voronoi_vertex_2 make_vertex(const Vertex_handle& v1,
 				      const Vertex_handle& v2,
@@ -586,15 +595,15 @@ template<class SVD2>
 class Segment_Voronoi_diagram_cached_Voronoi_traits_2
   : public CGAL_VORONOI_DIAGRAM_2_NS::Default_cached_Voronoi_traits_2
   <SVD2, SVD_Edge_degeneracy_tester<SVD2>, SVD_Face_degeneracy_tester<SVD2>,
-   SVD_Point_locator<SVD2> >
+   SVD_Nearest_site_2<SVD2> >
 {
  private:
   typedef SVD_Edge_degeneracy_tester<SVD2>            Edge_tester;
   typedef SVD_Face_degeneracy_tester<SVD2>            Face_tester;
-  typedef SVD_Point_locator<SVD2>                     SVD_Point_locator;
+  typedef SVD_Nearest_site_2<SVD2>                    SVD_Nearest_site_2;
 
   typedef CGAL_VORONOI_DIAGRAM_2_NS::Default_cached_Voronoi_traits_2
-  <SVD2,Edge_tester,Face_tester,SVD_Point_locator>
+  <SVD2,Edge_tester,Face_tester,SVD_Nearest_site_2>
   Base;
 
   typedef Segment_Voronoi_diagram_cached_Voronoi_traits_2<SVD2>  Self;
@@ -608,16 +617,16 @@ template<class SVD2>
 class Segment_Voronoi_diagram_ref_counted_Voronoi_traits_2
   : public CGAL_VORONOI_DIAGRAM_2_NS::Default_ref_counted_Voronoi_traits_2
   <SVD2, SVD_Edge_degeneracy_tester<SVD2>, SVD_Face_degeneracy_tester<SVD2>,
-   SVD_Point_locator<SVD2> >
+   SVD_Nearest_site_2<SVD2> >
 {
  private:
   typedef SVD_Edge_degeneracy_tester<SVD2>             Edge_tester;
   typedef SVD_Face_degeneracy_tester<SVD2>             Face_tester;
-  typedef SVD_Point_locator<SVD2>                     SVD_Point_locator;
+  typedef SVD_Nearest_site_2<SVD2>                     SVD_Nearest_site_2;
 
   typedef
   CGAL_VORONOI_DIAGRAM_2_NS::Default_ref_counted_Voronoi_traits_2
-  <SVD2,Edge_tester,Face_tester,SVD_Point_locator>
+  <SVD2,Edge_tester,Face_tester,SVD_Nearest_site_2>
   Base;
 
   typedef Segment_Voronoi_diagram_cached_Voronoi_traits_2<SVD2>  Self;
