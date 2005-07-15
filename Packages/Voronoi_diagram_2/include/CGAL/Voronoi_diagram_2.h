@@ -17,39 +17,83 @@
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@tem.uoc.gr>
 
-#ifndef CGAL_VORONOI_DIAGRAM_ADAPTOR_2_H
-#define CGAL_VORONOI_DIAGRAM_ADAPTOR_2_H 1
+#ifndef CGAL_VORONOI_DIAGRAM_2_H
+#define CGAL_VORONOI_DIAGRAM_2_H 1
 
-#include <CGAL/Voronoi_diagram_adaptor_2/basic.h>
+#include <CGAL/Voronoi_diagram_2/basic.h>
 #include <CGAL/iterator.h>
+#include <CGAL/Iterator_project.h>
 #include <CGAL/circulator.h>
+#include <CGAL/tags.h>
 
 #include <iterator>
 #include <vector>
 
-#include <CGAL/Voronoi_diagram_adaptor_2/Halfedge.h>
-#include <CGAL/Voronoi_diagram_adaptor_2/Face.h>
-#include <CGAL/Voronoi_diagram_adaptor_2/Vertex.h>
-#include <CGAL/Voronoi_diagram_adaptor_2/Circulator_adaptors.h>
-#include <CGAL/Voronoi_diagram_adaptor_2/Iterator_adaptors.h>
-#include <CGAL/Voronoi_diagram_adaptor_2/Handle_adaptor.h>
-#include <CGAL/Voronoi_diagram_adaptor_2/Validity_testers.h>
-#include <CGAL/Voronoi_diagram_adaptor_2/Dummy_iterator.h>
-#include <CGAL/Voronoi_diagram_adaptor_2/Unbounded_faces.h>
-#include <CGAL/Voronoi_diagram_adaptor_2/Unbounded_edges.h>
-#include <CGAL/Voronoi_diagram_adaptor_2/Degeneracy_tester_binders.h>
-#include <CGAL/Voronoi_diagram_adaptor_2/Cached_degeneracy_testers.h>
-#include <CGAL/Voronoi_diagram_adaptor_2/Locate_result.h>
-#include <CGAL/Voronoi_diagram_adaptor_2/Accessor.h>
+#include <CGAL/Voronoi_diagram_2/Halfedge.h>
+#include <CGAL/Voronoi_diagram_2/Face.h>
+#include <CGAL/Voronoi_diagram_2/Vertex.h>
+#include <CGAL/Voronoi_diagram_2/Circulator_adaptors.h>
+#include <CGAL/Voronoi_diagram_2/Iterator_adaptors.h>
+#include <CGAL/Voronoi_diagram_2/Handle_adaptor.h>
+#include <CGAL/Voronoi_diagram_2/Validity_testers.h>
+#include <CGAL/Voronoi_diagram_2/Dummy_iterator.h>
+#include <CGAL/Voronoi_diagram_2/Unbounded_faces.h>
+#include <CGAL/Voronoi_diagram_2/Unbounded_edges.h>
+#include <CGAL/Voronoi_diagram_2/Degeneracy_tester_binders.h>
+#include <CGAL/Voronoi_diagram_2/Cached_degeneracy_testers.h>
+#include <CGAL/Voronoi_diagram_2/Locate_result.h>
+#include <CGAL/Voronoi_diagram_2/Accessor.h>
 
 CGAL_BEGIN_NAMESPACE
 
+CGAL_VORONOI_DIAGRAM_2_BEGIN_NAMESPACE
+template<class VT, class Has_insert_tag, class Has_get_conflicts_tag>
+class Degeneracy_tester_chooser;
 
-template<class DG, class Tr>
-class Voronoi_diagram_adaptor_2
+// get_conflicts() exists; in this case we can use the cached testers
+template<class VT, class Has_insert_tag>
+class Degeneracy_tester_chooser<VT,Has_insert_tag,Tag_true>
 {
  private:
-  typedef Voronoi_diagram_adaptor_2<DG,Tr>   Self;
+  typedef typename VT::Edge_degeneracy_tester  Edge_tester_base;
+  typedef typename VT::Face_degeneracy_tester  Face_tester_base;
+
+ public:
+  typedef Cached_edge_degeneracy_tester<Edge_tester_base>
+  Edge_degeneracy_tester;
+
+  typedef Cached_face_degeneracy_tester<Face_tester_base>
+  Face_degeneracy_tester;
+};
+
+// get_conflicts() does not exist and insert() does not exist;
+// we can use the cached testers
+template<class VT>
+struct Degeneracy_tester_chooser<VT,Tag_false,Tag_false>
+  : public Degeneracy_tester_chooser<VT,Tag_false,Tag_true>
+{};
+
+// get_conflicts() does not exist and insert exists;
+// we have to use the usual testers
+template<class VT>
+struct Degeneracy_tester_chooser<VT,Tag_true,Tag_false>
+{
+  typedef typename VT::Edge_degeneracy_tester  Edge_degeneracy_tester;
+  typedef typename VT::Face_degeneracy_tester  Face_degeneracy_tester;
+};
+
+CGAL_VORONOI_DIAGRAM_2_END_NAMESPACE
+
+
+//=========================================================================
+//=========================================================================
+//=========================================================================
+
+template<class DG, class Tr>
+class Voronoi_diagram_2
+{
+ private:
+  typedef Voronoi_diagram_2<DG,Tr>           Self;
   typedef Triangulation_cw_ccw_2             CW_CCW_2;
 
   typedef CGAL_VORONOI_DIAGRAM_2_NS::Locate_result_accessor<Self,true>
@@ -64,37 +108,55 @@ class Voronoi_diagram_adaptor_2
   // TYPES FOR THE DUAL GRAPH
 
   // the (triangulated) dual graph
-  typedef DG                                   Dual_graph;
-  typedef typename Dual_graph::Geom_traits     Geom_traits;  
-  typedef Tr                                   Voronoi_traits;
+  typedef DG                                          Delaunay_graph;
+  typedef typename Delaunay_graph::Geom_traits        Geom_traits;  
+  typedef Tr                                          Voronoi_traits;
 
-  typedef typename Dual_graph::size_type       size_type;
+  typedef typename Delaunay_graph::size_type          size_type;
 
-  typedef typename Dual_graph::Vertex_handle   Dual_vertex_handle;
-  typedef typename Dual_graph::Face_handle     Dual_face_handle;
-  typedef typename Dual_graph::Edge            Dual_edge;
+ protected:
+  typedef typename Delaunay_graph::Vertex_handle      Dual_vertex_handle;
+  typedef typename Delaunay_graph::Face_handle        Dual_face_handle;
+  typedef typename Delaunay_graph::Edge               Dual_edge;
 
-  typedef typename Dual_graph::Edge_circulator    Dual_edge_circulator;
-  typedef typename Dual_graph::Vertex_circulator  Dual_vertex_circulator;
-  typedef typename Dual_graph::Face_circulator    Dual_face_circulator;
+  typedef typename Delaunay_graph::Edge_circulator    Dual_edge_circulator;
+  typedef typename Delaunay_graph::Vertex_circulator  Dual_vertex_circulator;
+  typedef typename Delaunay_graph::Face_circulator    Dual_face_circulator;
 
-  typedef typename Dual_graph::Finite_vertices_iterator 
+  typedef typename Delaunay_graph::Finite_vertices_iterator 
   Dual_vertices_iterator;
 
-  typedef typename Dual_graph::Finite_faces_iterator
+  typedef typename Delaunay_graph::Finite_faces_iterator
   Dual_faces_iterator;
 
-  typedef typename Dual_graph::Finite_edges_iterator
+  typedef typename Delaunay_graph::Finite_edges_iterator
   Dual_edges_iterator;
-  typedef typename Dual_graph::All_edges_iterator
+  typedef typename Delaunay_graph::All_edges_iterator
   All_dual_edges_iterator;
 
+ public:
   // POINT LOCATION RELATED TYPES
-  typedef typename Voronoi_traits::Has_point_locator  Has_point_locator;
-  typedef typename Voronoi_traits::Point_2            Point_2;
+  typedef typename Voronoi_traits::Has_nearest_site_2  Has_nearest_site_2;
+  typedef typename Voronoi_traits::Point_2             Point_2;
 
   typedef CGAL_VORONOI_DIAGRAM_2_NS::Locate_result<Self,true>  Locate_result;
 
+#if 1
+  typedef typename Voronoi_traits::Has_insert          Has_insert;
+  typedef typename Voronoi_traits::Has_get_conflicts   Has_get_conflicts;
+
+  typedef
+  CGAL_VORONOI_DIAGRAM_2_NS::Degeneracy_tester_chooser<Voronoi_traits,
+						       Has_insert,
+						       Has_get_conflicts>
+  Chooser;
+
+  typedef typename Chooser::Edge_degeneracy_tester   Edge_degeneracy_tester;
+  typedef typename Chooser::Face_degeneracy_tester   Face_degeneracy_tester;
+
+  typedef Edge_degeneracy_tester   Cached_edge_degeneracy_tester;
+  typedef Face_degeneracy_tester   Cached_face_degeneracy_tester;
+#else
   // TYPES FOR THE DEGENERACY TESTERS
   typedef typename Voronoi_traits::Edge_degeneracy_tester
   Edge_degeneracy_tester;
@@ -110,6 +172,7 @@ class Voronoi_diagram_adaptor_2
   typedef CGAL_VORONOI_DIAGRAM_2_NS::Cached_face_degeneracy_tester
   <Face_degeneracy_tester>
   Cached_face_degeneracy_tester;
+#endif
 #endif
 
  protected:
@@ -251,6 +314,25 @@ class Voronoi_diagram_adaptor_2
   <Self,Bounded_edges_iterator_base>
   Bounded_halfedges_iterator;
 
+  // GENERATOR ITERATOR
+ protected:
+  struct Project_site_2
+  {
+    typedef typename Voronoi_traits::Site_2  Site_2;
+    typedef Face                             argument_type;
+    typedef Site_2                           result_type;
+
+    Site_2& operator()(const Face& f) const {
+      static Site_2 s;
+      s = Voronoi_traits::site(f.dual_vertex());
+      return s;
+    }
+  };
+
+ public:
+  typedef Iterator_project<Face_iterator,Project_site_2>
+  Generator_iterator;
+
  public:
   struct Face_circulator {}; // 1. circulates through the Voronoi cells
 			     //    that are neighbors of the given
@@ -277,12 +359,12 @@ public:
   // CONSTRUCTORS
   //--------------
 #if 0
-  Voronoi_diagram_adaptor_2(const Voronoi_traits& tr = Voronoi_traits())
+  Voronoi_diagram_2(const Voronoi_traits& tr = Voronoi_traits())
     : dual_(), tr_(tr) {}
 #endif
 
-  Voronoi_diagram_adaptor_2(const Dual_graph& dg,
-			    const Voronoi_traits& tr = Voronoi_traits())
+  Voronoi_diagram_2(const Delaunay_graph& dg,
+		    const Voronoi_traits& tr = Voronoi_traits())
 #ifndef VDA_NO_CACHED_TESTERS
     : dual_(dg), tr_(tr), cached_e_tester_(), cached_f_tester_() {}
 #else
@@ -295,7 +377,7 @@ public:
   //------------------
 
   // DUAL
-  const Dual_graph& dual() const { return dual_; }
+  const Delaunay_graph& dual() const { return dual_; }
 
   // VORONOI TRAITS
   const Voronoi_traits& voronoi_traits() const { return tr_; }
@@ -555,6 +637,15 @@ public:
     return Vertex_iterator(this, non_degenerate_vertices_end());
   }
 
+  // GENERATOR ITERATOR
+  Generator_iterator generators_begin() const {
+    return Generator_iterator(faces_begin());    
+  }
+
+  Generator_iterator generators_end() const {
+    return Generator_iterator(faces_end());
+  }
+
   // CIRCULATORS
   Ccb_halfedge_circulator ccb_halfedges(const Face_handle& f) const {
     return Ccb_halfedge_circulator(*f->halfedge());
@@ -578,6 +669,34 @@ public:
     return Halfedge_around_vertex_circulator(*he);
   }
 
+ private:
+  template<class Has_insert_tag>
+  bool validate_degeneracy_testers(const Has_insert_tag&,
+				   const Tag_true&) const {
+#ifndef VDA_NO_CACHED_TESTERS
+    return
+      cached_e_tester_.is_valid(dual_) &&
+      cached_f_tester_.is_valid(dual_);
+#endif
+  }
+
+  bool validate_degeneracy_testers(const Tag_false&,
+				   const Tag_false&) const {
+    // we do not have insertion and we do not have get_conflicts
+#ifndef VDA_NO_CACHED_TESTERS
+    return
+      cached_e_tester_.is_valid(dual_) &&
+      cached_f_tester_.is_valid(dual_);
+#endif
+  }
+
+  bool validate_degeneracy_testers(const Tag_true&,
+				   const Tag_false&) const {
+    // we have insertion but no get_conflicts
+    return true;
+  }
+
+ public:
   // VALIDITY TESTING
   bool is_valid() const {
     bool valid = dual_.is_valid();
@@ -593,6 +712,10 @@ public:
 	 ++it) {
       valid = valid && it->is_valid();
     }
+
+    valid = valid && validate_degeneracy_testers(Has_insert(),
+						 Has_get_conflicts());
+
     return valid;
   }
 
@@ -613,22 +736,22 @@ public:
   {
     CGAL_precondition( dual_.number_of_vertices() > 0 );
 
-    typedef typename Voronoi_traits::Point_locator     Point_locator;
-    typedef typename Point_locator::Locate_result      PL_Locate_result;
+    typedef typename Voronoi_traits::Nearest_site_2    Nearest_site_2;
+    typedef typename Nearest_site_2::Query_result      Query_result;
 
-    Point_locator locate = tr_.point_locator_object();
-    PL_Locate_result pl_lr = locate(dual_, p);
+    Nearest_site_2 nearest_site = tr_.nearest_site_2_object();
+    Query_result ns_qr = nearest_site(dual_, p);
 
-    if ( pl_lr.is_vertex() ) {
-      Face_handle f( Face(this, pl_lr) );
+    if ( ns_qr.is_vertex() ) {
+      Face_handle f( Face(this, ns_qr) );
       return Locate_result_accessor::make_locate_result(f);
-    } else if ( pl_lr.is_face() ) {
+    } else if ( ns_qr.is_face() ) {
       CGAL_VORONOI_DIAGRAM_2_NS::Find_valid_vertex<Self> vertex_finder;
-      Dual_face_handle dfvalid = vertex_finder(this, pl_lr);
+      Dual_face_handle dfvalid = vertex_finder(this, ns_qr);
       Vertex_handle v( Vertex(this, dfvalid) );
       return Locate_result_accessor::make_locate_result(v);
-    } else if ( pl_lr.is_edge() ) {
-      Dual_edge de = pl_lr;
+    } else if ( ns_qr.is_edge() ) {
+      Dual_edge de = ns_qr;
       CGAL_assertion(  !edge_tester()(dual_, de)  );
       if ( dual_.dimension() == 1 ) {
 	Dual_vertex_handle v1 = de.first->vertex(CW_CCW_2::ccw(de.second));
@@ -647,17 +770,114 @@ public:
 
  public:
   Locate_result locate(const Point_2& p) const {
-    return locate(p, Has_point_locator());
+    return locate(p, Has_nearest_site_2());
   }
 
 
-private:
-  Dual_graph  dual_;
+ private:
+  Delaunay_graph  dual_;
   Voronoi_traits tr_;
 #ifndef VDA_NO_CACHED_TESTERS
   Cached_edge_degeneracy_tester cached_e_tester_;
   Cached_face_degeneracy_tester cached_f_tester_;
 #endif
+
+ protected:
+  Dual_edge opposite(const Dual_edge& e) const {
+    int i_mirror = dual_.tds().mirror_index(e.first, e.second);
+    return Dual_edge( e.first->neighbor(e.second), i_mirror );
+  }
+
+
+ public:
+  Voronoi_diagram_2(const Voronoi_traits& tr = Voronoi_traits())
+    : dual_(), tr_(tr) {}
+
+  template<class Iterator>
+  Voronoi_diagram_2(Iterator first, Iterator beyond,
+		    const Voronoi_traits& tr = Voronoi_traits())
+    : dual_(first, beyond), tr_(tr) {}
+
+  typedef typename Voronoi_traits::Site_2     Site_2;
+
+ protected:
+  // insertion when get_conflicts() is defined
+  Face_handle true_insert(const Site_2& t, const Tag_true&)
+  {
+    if ( dual_.dimension() == 2 ) {
+      std::vector<Dual_edge>        vec_e;
+      std::vector<Dual_face_handle> vec_f;
+      dual_.get_conflicts_and_boundary(t,
+				       std::back_inserter(vec_f),
+				       std::back_inserter(vec_e));
+      for (unsigned int i = 0; i < vec_e.size(); i++) {
+	cached_e_tester_.erase(vec_e[i]);
+      }
+      for (unsigned int i = 0; i < vec_f.size(); i++) {
+	for (int j = 0; j < 3; j++) {
+	  Dual_edge e(vec_f[i], j);
+	  cached_e_tester_.erase(e);
+	}
+      }
+    }
+
+    return true_insert(t, Tag_false());
+  }
+
+  // do insertion when get_conflicts() is defined
+  inline Face_handle true_insert(const Site_2& t, const Tag_false&) {
+    Dual_vertex_handle v = dual_.insert(t);
+    if ( v == Dual_vertex_handle() ) { return Face_handle(); }
+    return Face_handle( Face(this, v) );
+  }
+
+  // insert is supported...
+  inline Face_handle insert(const Site_2& t, const Tag_true&) {
+    return true_insert(t, Has_get_conflicts());
+  }
+
+  // insert is not really supported...
+  inline Face_handle insert(const Site_2& t, const Tag_false&) {
+    INSERT_IS_NOT_SUPPORTED(t);
+  }
+
+ public:
+  inline Face_handle insert(const Site_2& t) {
+    return insert(t, Has_insert());
+  }
+
+  template<class Iterator>
+  inline size_type insert(Iterator first, Iterator beyond) {
+    size_type counter = 0;
+    for (Iterator it = first; it != beyond; ++it, ++counter) {
+      insert(*it);
+    }
+    return counter;
+  }
+
+ protected:
+  template<class Has_insertion_tag>
+  void clear_testers(const Has_insertion_tag&, const Tag_true&) {
+#ifndef VDA_NO_CACHED_TESTERS
+    cached_e_tester_.clear();
+    cached_f_tester_.clear();
+#endif
+  }
+
+  void clear_testers(const Tag_false&, const Tag_false&) {
+#ifndef VDA_NO_CACHED_TESTERS
+    cached_e_tester_.clear();
+    cached_f_tester_.clear();
+#endif
+  }
+
+  void clear_testers(const Tag_true&, const Tag_false&) {}
+
+ public:
+  void clear() {
+    dual_.clear();
+    clear_testers(Has_insert(), Has_get_conflicts());
+  }
 };
 
 
@@ -668,4 +888,4 @@ CGAL_END_NAMESPACE
 // * write code for vertices iterator; they need to return Vertex as type
 // * decide whether infinite halfedges are indeed halfedges...
 
-#endif // CGAL_VORONOI_DIAGRAM_ADAPTOR_2_H
+#endif // CGAL_VORONOI_DIAGRAM_2_H
