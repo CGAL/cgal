@@ -2197,6 +2197,10 @@ Packages/Visibility_complex/doc_tex/fig/points.gif -text svneol=unset#unset
 Packages/Visibility_complex/doc_tex/fig/vis-complex.eps -text
 Packages/Visibility_complex/doc_tex/fig/vis-complex.fig -text
 Packages/Visibility_complex/doc_tex/fig/vis-complex.gif -text svneol=unset#unset
+Packages/Voronoi_diagram_2/demo/Voronoi_diagram_2/filenew.xpm -text
+Packages/Voronoi_diagram_2/demo/Voronoi_diagram_2/fileopen.xpm -text
+Packages/Voronoi_diagram_2/demo/Voronoi_diagram_2/fileprint.xpm -text
+Packages/Voronoi_diagram_2/demo/Voronoi_diagram_2/filesave.xpm -text
 Packages/cgal_window/include/CGAL/LEDA/bitmaps/button21/a_annulus_21.xbm -text
 Packages/cgal_window/include/CGAL/LEDA/bitmaps/button21/circle_21.xbm -text
 Packages/cgal_window/include/CGAL/LEDA/bitmaps/button21/dice_21.xbm -text
