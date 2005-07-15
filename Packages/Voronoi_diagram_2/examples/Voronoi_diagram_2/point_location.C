@@ -11,7 +11,7 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Segment_Voronoi_diagram_hierarchy_2.h>
 #include <CGAL/Segment_Voronoi_diagram_filtered_traits_2.h>
-#include <CGAL/Voronoi_diagram_adaptor_2.h>
+#include <CGAL/Voronoi_diagram_2.h>
 #include <CGAL/Segment_Voronoi_diagram_Voronoi_traits_2.h>
 
 // typedefs for defining the adaptor
@@ -19,7 +19,7 @@ typedef CGAL::Simple_cartesian<double>                       K;
 typedef CGAL::Segment_Voronoi_diagram_filtered_traits_2<K>   Gt;
 typedef CGAL::Segment_Voronoi_diagram_hierarchy_2<Gt>        SVD;
 typedef CGAL::Segment_Voronoi_diagram_Voronoi_traits_2<SVD>  VT;
-typedef CGAL::Voronoi_diagram_adaptor_2<SVD,VT>              VD;
+typedef CGAL::Voronoi_diagram_2<SVD,VT>                      VD;
 
 // typedef for the result type of the point location
 typedef VD::Locate_result      Locate_result;

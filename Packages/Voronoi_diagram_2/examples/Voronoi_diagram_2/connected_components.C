@@ -10,7 +10,7 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Apollonius_graph_2.h>
 #include <CGAL/Apollonius_graph_filtered_traits_2.h>
-#include <CGAL/Voronoi_diagram_adaptor_2.h>
+#include <CGAL/Voronoi_diagram_2.h>
 #include <CGAL/Apollonius_graph_Voronoi_traits_2.h>
 
 // typedefs for defining the adaptor
@@ -18,35 +18,35 @@ typedef CGAL::Simple_cartesian<double>                K;
 typedef CGAL::Apollonius_graph_filtered_traits_2<K>   Gt;
 typedef CGAL::Apollonius_graph_2<Gt>                  AG;
 typedef CGAL::Apollonius_graph_Voronoi_traits_2<AG>   VT;
-typedef CGAL::Voronoi_diagram_adaptor_2<AG,VT>        VD;
+typedef CGAL::Voronoi_diagram_2<AG,VT>                VD;
 
 // a generic functor that computes the connected components
-template<class VDA_t>
+template<class VD_t>
 class Connected_components
 {
  private:
-  typedef VDA_t                                            VDA;
-  typedef typename VDA::Halfedge_iterator                  Halfedge_iterator;
-  typedef typename VDA::Halfedge_handle                    Halfedge_handle;
-  typedef typename VDA::Vertex_handle                      Vertex_handle;
-  typedef typename VDA::Halfedge                           Halfedge;
-  typedef typename VDA::Vertex                             Vertex;
-  typedef typename VDA::Halfedge_around_vertex_circulator  HAVC;
+  typedef VD_t                                            VD;
+  typedef typename VD::Halfedge_iterator                  Halfedge_iterator;
+  typedef typename VD::Halfedge_handle                    Halfedge_handle;
+  typedef typename VD::Vertex_handle                      Vertex_handle;
+  typedef typename VD::Halfedge                           Halfedge;
+  typedef typename VD::Vertex                             Vertex;
+  typedef typename VD::Halfedge_around_vertex_circulator  HAVC;
 
  public:
-  typedef VDA  Voronoi_diagram_adaptor_2;
+  typedef VD  Voronoi_diagram_2;
 
-  typedef typename Voronoi_diagram_adaptor_2::size_type  size_type;
+  typedef typename Voronoi_diagram_2::size_type          size_type;
   typedef size_type                                      result_type;
-  typedef Voronoi_diagram_adaptor_2                      argument_type;
+  typedef Voronoi_diagram_2                              argument_type;
 
   struct Arity { enum { arity = 1 }; };
 
  private:
   struct Halfedge_less {
     bool operator()(const Halfedge& h1,	const Halfedge& h2) const {
-      typename Voronoi_diagram_adaptor_2::Dual_edge e1 = h1.dual_edge();
-      typename Voronoi_diagram_adaptor_2::Dual_edge e2 = h2.dual_edge();
+      typename Halfedge::Dual_edge e1 = h1.dual_edge();
+      typename Halfedge::Dual_edge e2 = h2.dual_edge();
 
       if ( e1.first != e2.first ) { return e1.first < e2.first; }
       return e1.second < e2.second;
@@ -64,30 +64,30 @@ class Connected_components
     return e_map.find(e) == e_map.end();
   }
 
-  void dfs(const Voronoi_diagram_adaptor_2& vda, const Halfedge& e,
-	      Halfedge_map& e_map) const
+  void dfs(const Voronoi_diagram_2& vd, const Halfedge& e,
+	   Halfedge_map& e_map) const
   {
     Halfedge e_opp = *e.opposite();
     mark_edge(e, e_map);
 
     HAVC ec, ec_start;
     if ( e.has_source() ) {
-      ec = vda.incident_halfedges(e.source());
+      ec = vd.incident_halfedges(e.source());
       ec_start = ec;
       do {
         if ( *ec != e && *ec != e_opp && is_unmarked(*ec, e_map) ) {
-          dfs(vda, *ec, e_map);
+          dfs(vd, *ec, e_map);
         }
         ec++;
       } while (ec != ec_start);
     }
 
     if ( e.has_target() ) {
-      ec = vda.incident_halfedges(e.target());
+      ec = vd.incident_halfedges(e.target());
       ec_start = ec;
       do {
         if ( *ec != e && *ec != e_opp && is_unmarked(*ec, e_map) ) {
-          dfs(vda, *ec, e_map);
+          dfs(vd, *ec, e_map);
         }
         ec++;
       } while (ec != ec_start);
@@ -95,16 +95,16 @@ class Connected_components
   }
 
  public:
-  size_type operator()(const Voronoi_diagram_adaptor_2& vda) const
+  size_type operator()(const Voronoi_diagram_2& vd) const
   {
     Halfedge_map e_map;
 
     size_type n_components = 0;
-    for (Halfedge_iterator eit = vda.halfedges_begin();
-         eit != vda.halfedges_end(); ++eit) {
+    for (Halfedge_iterator eit = vd.halfedges_begin();
+         eit != vd.halfedges_end(); ++eit) {
       if ( is_unmarked(*eit, e_map) ) {
         n_components++;
-        dfs(vda, *eit, e_map);
+        dfs(vd, *eit, e_map);
       }
     }
     return n_components;
