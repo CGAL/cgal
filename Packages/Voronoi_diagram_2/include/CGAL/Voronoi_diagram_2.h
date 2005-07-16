@@ -26,6 +26,7 @@
 #include <CGAL/circulator.h>
 #include <CGAL/tags.h>
 
+#include <iostream>
 #include <iterator>
 #include <vector>
 
@@ -42,6 +43,7 @@
 #include <CGAL/Voronoi_diagram_2/Degeneracy_tester_binders.h>
 #include <CGAL/Voronoi_diagram_2/Cached_degeneracy_testers.h>
 #include <CGAL/Voronoi_diagram_2/Locate_result.h>
+#include <CGAL/Voronoi_diagram_2/Connected_components.h>
 #include <CGAL/Voronoi_diagram_2/Accessor.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -404,6 +406,10 @@ public:
     return num_h;
   }
 
+  size_type number_of_connected_components() const {
+    return CGAL_VORONOI_DIAGRAM_2_NS::Connected_components<Self>()(*this);
+  }
+
   // DEGENERACY TESTERS
 #if 0
   const Edge_degeneracy_tester& edge_degeneracy_tester() const {
@@ -669,56 +675,8 @@ public:
     return Halfedge_around_vertex_circulator(*he);
   }
 
- private:
-  template<class Has_insert_tag>
-  bool validate_degeneracy_testers(const Has_insert_tag&,
-				   const Tag_true&) const {
-#ifndef VDA_NO_CACHED_TESTERS
-    return
-      cached_e_tester_.is_valid(dual_) &&
-      cached_f_tester_.is_valid(dual_);
-#endif
-  }
-
-  bool validate_degeneracy_testers(const Tag_false&,
-				   const Tag_false&) const {
-    // we do not have insertion and we do not have get_conflicts
-#ifndef VDA_NO_CACHED_TESTERS
-    return
-      cached_e_tester_.is_valid(dual_) &&
-      cached_f_tester_.is_valid(dual_);
-#endif
-  }
-
-  bool validate_degeneracy_testers(const Tag_true&,
-				   const Tag_false&) const {
-    // we have insertion but no get_conflicts
-    return true;
-  }
-
- public:
-  // VALIDITY TESTING
-  bool is_valid() const {
-    bool valid = dual_.is_valid();
-    for (Vertex_iterator it = vertices_begin(); it != vertices_end(); ++it) {
-      valid = valid && it->is_valid();
-    }
-
-    for (Face_iterator it = faces_begin(); it != faces_end(); ++it) {
-      valid = valid && it->is_valid();
-    }
-
-    for (Halfedge_iterator it = halfedges_begin(); it != halfedges_end();
-	 ++it) {
-      valid = valid && it->is_valid();
-    }
-
-    valid = valid && validate_degeneracy_testers(Has_insert(),
-						 Has_get_conflicts());
-
-    return valid;
-  }
-
+  // POINT LOCATION
+  //---------------
  private:
   Locate_result locate(const Point_2& p, const Tag_false&) const {
     static unsigned int i = 0;
@@ -774,6 +732,97 @@ public:
   }
 
 
+  // VALIDITY TESTING
+  //-----------------
+ private:
+  template<class Has_insert_tag>
+  bool validate_degeneracy_testers(const Has_insert_tag&,
+				   const Tag_true&) const {
+#ifndef VDA_NO_CACHED_TESTERS
+    return
+      cached_e_tester_.is_valid(dual_) &&
+      cached_f_tester_.is_valid(dual_);
+#endif
+  }
+
+  bool validate_degeneracy_testers(const Tag_false&,
+				   const Tag_false&) const {
+    // we do not have insertion and we do not have get_conflicts
+#ifndef VDA_NO_CACHED_TESTERS
+    return
+      cached_e_tester_.is_valid(dual_) &&
+      cached_f_tester_.is_valid(dual_);
+#endif
+  }
+
+  bool validate_degeneracy_testers(const Tag_true&,
+				   const Tag_false&) const {
+    // we have insertion but no get_conflicts
+    return true;
+  }
+
+
+ public:
+  bool is_valid() const {
+    bool valid = dual_.is_valid();
+    for (Vertex_iterator it = vertices_begin(); it != vertices_end(); ++it) {
+      valid = valid && it->is_valid();
+    }
+
+    for (Face_iterator it = faces_begin(); it != faces_end(); ++it) {
+      valid = valid && it->is_valid();
+    }
+
+    for (Halfedge_iterator it = halfedges_begin(); it != halfedges_end();
+	 ++it) {
+      valid = valid && it->is_valid();
+    }
+
+    valid = valid && validate_degeneracy_testers(Has_insert(),
+						 Has_get_conflicts());
+
+    return valid;
+  }
+  
+  // I/O
+  //----
+ public:
+  void file_output(std::ostream& os) const { os << dual_; }
+  void file_input(std::istream& is) { is >> dual_; }
+
+  // MISCALLANEOUS
+  //--------------
+ protected:
+  template<class Has_insertion_tag>
+  void clear_testers(const Has_insertion_tag&, const Tag_true&) {
+#ifndef VDA_NO_CACHED_TESTERS
+    cached_e_tester_.clear();
+    cached_f_tester_.clear();
+#endif
+  }
+
+  void clear_testers(const Tag_false&, const Tag_false&) {
+#ifndef VDA_NO_CACHED_TESTERS
+    cached_e_tester_.clear();
+    cached_f_tester_.clear();
+#endif
+  }
+
+  void clear_testers(const Tag_true&, const Tag_false&) {}
+
+ public:
+  void clear() {
+    dual_.clear();
+    clear_testers(Has_insert(), Has_get_conflicts());
+  }
+
+  void swap(Self& other) {
+    clear_testers(Has_insert(), Has_get_conflicts());
+    other.clear_testers(Has_insert(), Has_get_conflicts());
+    dual_.swap(other.dual_);
+    std::swap(tr_, other.tr_);
+  }
+
  private:
   Delaunay_graph  dual_;
   Voronoi_traits tr_;
@@ -799,6 +848,16 @@ public:
     : dual_(first, beyond), tr_(tr) {}
 
   typedef typename Voronoi_traits::Site_2     Site_2;
+
+  Voronoi_diagram_2(const Voronoi_diagram_2& other)
+    : dual_(other.dual_), tr_(other.tr_) {}
+
+  Self& operator=(const Self& other) {
+    clear_testers(Has_insert(), Has_get_conflicts());
+    dual_ = other.dual_;
+    tr_ = other.tr_;
+    return *this;
+  }
 
  protected:
   // insertion when get_conflicts() is defined
@@ -855,30 +914,27 @@ public:
     return counter;
   }
 
- protected:
-  template<class Has_insertion_tag>
-  void clear_testers(const Has_insertion_tag&, const Tag_true&) {
-#ifndef VDA_NO_CACHED_TESTERS
-    cached_e_tester_.clear();
-    cached_f_tester_.clear();
-#endif
-  }
-
-  void clear_testers(const Tag_false&, const Tag_false&) {
-#ifndef VDA_NO_CACHED_TESTERS
-    cached_e_tester_.clear();
-    cached_f_tester_.clear();
-#endif
-  }
-
-  void clear_testers(const Tag_true&, const Tag_false&) {}
-
- public:
-  void clear() {
-    dual_.clear();
-    clear_testers(Has_insert(), Has_get_conflicts());
-  }
 };
+
+
+// I/O OPERATORS
+//--------------
+template<class DG, class VT>
+std::ostream& operator<<(std::ostream& os,
+			 const Voronoi_diagram_2<DG,VT>& vd)
+{
+  vd.file_output(os);
+  return os;
+}
+
+
+template<class DG, class VT>
+std::istream& operator>>(std::istream& is,
+			 Voronoi_diagram_2<DG,VT>& vd)
+{
+  vd.file_input(is);
+  return is;
+}
 
 
 CGAL_END_NAMESPACE
