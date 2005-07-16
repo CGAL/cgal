@@ -1,4 +1,4 @@
-// Copyright (c) 2003  Tel-Aviv University (Israel).
+,// Copyright (c) 2003  Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -44,7 +44,7 @@ public:
   typedef Tag_true                                      Has_left_category;
   typedef Tag_true                                      Has_reflect_category;  
   typedef Tag_true                                      Has_merge_category;
-    
+  
   typedef T_Segment_traits                              Segment_traits_2;
   typedef typename Segment_traits_2::Kernel             Kernel;
 
@@ -96,6 +96,7 @@ public:
      */
     const Point_2 & operator()(const X_monotone_curve_2 & cv) const
     {
+      // std::cout << "Construct_min_vertex_2 " << cv << std::endl;
       CGAL_assertion(cv.size() > 0);
       Segment_traits_2 seg_traits;
       return seg_traits.construct_min_vertex_2_object()(cv[0]);
@@ -116,6 +117,7 @@ public:
      */
     const Point_2 & operator()(const X_monotone_curve_2 & cv) const
     {
+      // std::cout << "Construct_max_vertex_2 " << cv << std::endl;
       CGAL_assertion(cv.size() > 0);
       Segment_traits_2 seg_traits;
       return seg_traits.construct_max_vertex_2_object()(cv[cv.size() - 1]);
@@ -136,10 +138,14 @@ public:
      */
     bool operator()(const X_monotone_curve_2 & cv) const
     {
+      std::cout << "Is_vertical_2 " << cv;
       // An x-monotone polyline can represent a vertical segment only if it
       // is comprised of a single vertical segment.
       Segment_traits_2 seg_traits;
-      return (cv.size() == 1 && seg_traits.is_vertical_object()(cv[0]));
+      std::cout << ", Result: "
+                << (cv.size() == 1 && seg_traits.is_vertical_2_object()(cv[0]))
+                << std::endl;
+      return (cv.size() == 1 && seg_traits.is_vertical_2_object()(cv[0]));
     }
   };
   
@@ -162,12 +168,17 @@ public:
     Comparison_result operator()(const Point_2 & p,
                                  const X_monotone_curve_2 & cv) const
     {
+      std::cout << "Compare_y_at_x_2 " << p << ", " << cv;
       // Get the index of the segment in cv containing p.
-      unsigned int i = cv.locate(p);
+      Self self;
+      unsigned int i = self.locate(cv, p);
       CGAL_precondition(i != 0xffffffff);
 
       // Compare the segment cv[i] and p.
       Segment_traits_2 seg_traits;
+      std::cout << ", Result: "
+                << seg_traits.compare_y_at_x_2_object()(p, cv[i])
+                << std::endl;
       return seg_traits.compare_y_at_x_2_object()(p, cv[i]);
     }
   };
@@ -187,7 +198,10 @@ public:
      */
     bool operator()(const Point_2 & p1, const Point_2 & p2) const
     {
+      std::cout << "Equal_2 (points) " << p1 << ", " << p2;
       Segment_traits_2 seg_traits;
+      std::cout << ", Result: " << seg_traits.equal_2_object()(p1, p2)
+                << std::endl;
       return seg_traits.equal_2_object()(p1, p2);
     }
 
@@ -199,6 +213,8 @@ public:
     bool operator()(const X_monotone_curve_2 & cv1,
                     const X_monotone_curve_2 & cv2) const
     {
+      std::cout << "Equal_2 (curves) " << cv1 << ", " << cv2;
+
       // The two curves must contain the same number of segments.
       unsigned int n1 = cv1.size();
       unsigned int n2 = cv2.size();
@@ -206,7 +222,7 @@ public:
 
       // Check the pairwise equality of the contained segments. 
       Segment_traits_2 seg_traits;
-      Equal_2 equal = seg_traits.equal_2_object();
+      typename Segment_traits_2::Equal_2 equal = seg_traits.equal_2_object();
       for (unsigned int i = 0; i < n1; ++i)
         if (!equal(cv1[i], cv2[i])) return false;
       return true;
@@ -235,17 +251,24 @@ public:
                                  const X_monotone_curve_2 & cv2,
                                  const Point_2 & p) const
     {
+      std::cout << "Compare_y_at_x_left_2 " << cv1 << ", " << cv2 << ", " << p;
       // Get the indices of the segments in cv1 and cv2 containing q and
       // defined to its left.
-      unsigned int i1 = cv1.locate_side(q, false);
-      unsigned int i2 = cv2.locate_side(q, false);
+      Self self;
+      unsigned int i1 = self.locate_side(cv1, p, false);
+      unsigned int i2 = self.locate_side(cv2, p, false);
 
       CGAL_precondition(i1 != 0xffffffff);
       CGAL_precondition(i2 != 0xffffffff);
 
       // Compare cv1[i1] and cv2[i2] at q's left.
       Segment_traits_2 seg_traits;
-      return seg_traits.compare_y_at_x_left_object()(cv1[i1], cv2[i2], q);
+      std::cout << ", Result: "
+                << seg_traits.compare_y_at_x_left_2_object()(cv1[i1], cv2[i2],
+                                                             p)
+                << std::endl;
+
+      return seg_traits.compare_y_at_x_left_2_object()(cv1[i1], cv2[i2], p);
     }
   };
   
@@ -271,17 +294,20 @@ public:
                                  const X_monotone_curve_2 & cv2,
                                  const Point_2 & p) const
     {
+      std::cout << "Compare_y_at_x_right_2 " << cv1 << ", " << cv2 << ", " << p
+                << std::endl;
       // Get the indices of the segments in cv1 and cv2 containing q and
       // defined to its right.
-      unsigned int i1 = cv1.locate_side(q, true);
-      unsigned int i2 = cv2.locate_side(q, true);
+      Self self;
+      unsigned int i1 = self.locate_side(cv1, p, true);
+      unsigned int i2 = self.locate_side(cv2, p, true);
 
       CGAL_precondition(i1 != 0xffffffff);
       CGAL_precondition(i2 != 0xffffffff);
 
-      // Compare cv1[i1] and cv2[i2] at q's right.
+      // Compare cv1[i1] and cv2[i2] at p's right.
       Segment_traits_2 seg_traits;
-      return seg_traits.compare_y_at_x_right_2_object()(cv1[i1], cv2[i2], q);
+      return seg_traits.compare_y_at_x_right_2_object()(cv1[i1], cv2[i2], p);
     }
   };
   
@@ -311,7 +337,8 @@ public:
     {
       Segment_traits_2 seg_traits;
       Reflect_xy_2 reflect = seg_traits.reflect_xy_2_object();
-      for (unsigned int i = 0; i < cv.size(); ++i) reflect(cv[i]);
+      unsigned int n = cv.size();
+      for (unsigned int i = 0; i < n; ++i) reflect(cv[i]);
       cv.reverse();
     }
   };
@@ -341,53 +368,71 @@ public:
     template<class OutputIterator>
     OutputIterator operator()(const Curve_2 & cv, OutputIterator oi) const
     {
+      std::cout << "Make_x_monotone_2 " << cv << std::endl;
+      
       Segment_traits_2 seg_traits;
-      Construct_min_vertex_2 min_ver =
+      typename Segment_traits_2::Construct_min_vertex_2 min_ver =
         seg_traits.construct_min_vertex_2_object();
-      Construct_max_vertex_2 max_ver =
+      typename Segment_traits_2::Construct_max_vertex_2 max_ver =
         seg_traits.construct_max_vertex_2_object();
-      Is_vertical_2 is_vertical = seg_traits.is_vertical_2_object();
-      Equal_2 equal = seg_traits.equal_2_object();
+      typename Segment_traits_2::Is_vertical_2 is_vertical =
+        seg_traits.is_vertical_2_object();
+      typename Segment_traits_2::Equal_2 equal = seg_traits.equal_2_object();
 
-      unsigned int n = curve.size();
+      unsigned int n = cv.size();
       X_monotone_curve_2 x_cv;
 
       // Go over all curve segments.
       for (unsigned int i = 0; i < n; ++i) {
-        if (is_vertical(curve[i])) {
+        if (is_vertical(cv[i])) {
           // The segment is vertical:
           if (x_cv.size() != 0) {
             // Cut the previous chain.
-            *o++ = x_cv;
+            std::cout << "  " << x_cv << std::endl;
+            *oi++ = make_object(x_cv);
             x_cv.clear();
           }
           // Insert the vertical segment as a singleton polyline.
-          x_cv.push_back(curve[i]);
-          *o++ = x_cv;
+          x_cv.push_back(cv[i]);
+          std::cout << "  " << x_cv << std::endl;
+          *oi++ = make_object(x_cv);
           x_cv.clear();
           continue;
         }
 
-        if (x_cv.size() == 0) {
-          // There is no previous curve:
-          // Just append the current curve to the current chain.
-          x_cv.push_back(curve[i]);
-          continue;
-        }
+        if (x_cv.size() > 0) {
+          if (equal(min_ver(cv[i-1]), min_ver(cv[i]))) {
+            // The previous min is identical to the current min:
+            // Reverse and cut the previous chain.
+            x_cv.reverse();
+            std::cout << "  " << x_cv << std::endl;
+            *oi++ = make_object(x_cv);
+            x_cv.clear();
+            x_cv.push_back(cv[i]);
+            continue;
+          }
 
-        const Segment_traits_2::Point_2 & prev_max_vertex = max_ver(curve[i]-1);
-        const Segment_traits_2::Point_2 & min_vertex = min_ver(curve[i]);
-        if (!equal(prev_min_vertex, min_vertex)) {
-          // The previous max is not identical to the current min:
-          // Cut the previous chain.
-          *o++ = x_cv;
-          x_cv.clear();
-          x_cv.push_back(curve[i]);
-          continue;
+          if (equal(max_ver(cv[i-1]), max_ver(cv[i]))) {
+            // The previous max is identical to the current max:
+            // cut the previous chain.
+            std::cout << "  " << x_cv << std::endl;
+            *oi++ = make_object(x_cv);
+            x_cv.clear();
+            x_cv.push_back(cv[i]);
+            continue;
+          }
         }
+          
+        x_cv.push_back(cv[i]);
       }
 
-      return o;
+      if (x_cv.size() > 0) {
+        std::cout << "  " << x_cv << std::endl;
+        *oi++ = make_object(x_cv);
+        x_cv.clear();
+      }
+      std::cout << "make_x_monotone done" << std::endl;
+      return oi;
     }
   };
   
@@ -409,19 +454,22 @@ public:
     void operator()(const X_monotone_curve_2 & cv, const Point_2 & p,
                     X_monotone_curve_2 & c1, X_monotone_curve_2 & c2) const
     {
-      // Locate the segment on the polyline cv that contains p.
-      unsigned int i = cv.locate(p);
-      CGAL_precondition(i != 0xffffffff);
+      std::cout << "Split_2 " << cv << ", " << p;
+      Segment_traits_2 seg_traits;
+      typename Segment_traits_2::Construct_min_vertex_2 min_ver =
+        seg_traits.construct_min_vertex_2_object();
+      typename Segment_traits_2::Construct_max_vertex_2 max_ver =
+        seg_traits.construct_max_vertex_2_object();
+      typename Segment_traits_2::Equal_2 equal = seg_traits.equal_2_object();
 
       // Check preconditions.
-      Segment_traits_2 seg_traits;
-      Construct_min_vertex_2 min_ver =
-        seg_traits.construct_min_vertex_2_object();
-      Construct_max_vertex_2 max_ver =
-        seg_traits.construct_max_vertex_2_object();
-      Equal_2 equal = seg_traits.equal_2_object();
-      CGAL_precondition(!equal(min_ver(cv), p));
-      CGAL_precondition(!equal(max_ver(cv), p));
+      CGAL_precondition(!equal(min_ver(cv[0]), p));
+      CGAL_precondition(!equal(max_ver(cv[cv.size()-1]), p));
+
+      // Locate the segment on the polyline cv that contains p.
+      Self self;
+      unsigned int i = self.locate(cv, p);
+      CGAL_precondition(i != 0xffffffff);
 
       // Clear the output curves.
       c1.clear(); 
@@ -437,7 +485,7 @@ public:
       else {
         // cv[i] should be split.
         Segment_2 cvi_1, cvi_2;
-        seg_traits.split_2_object()(cv[i], cvi_1, cvi_2, p);
+        seg_traits.split_2_object()(cv[i], p, cvi_1, cvi_2);
 
         // The first part should go into c1 and the second into c2.
         c1.push_back(cvi_1);
@@ -447,6 +495,8 @@ public:
       // Push all segments labeled(i+1, i+2, ... , n-1) into cv1.
       unsigned int n = cv.size();
       for (j = i+1; j < n; ++j) c2.push_back(cv[j]);
+
+      std::cout << ", c1: " << c1 << ", c2: " << c2 << std::endl;
       return;
     }
   };
@@ -472,15 +522,19 @@ public:
                               const X_monotone_curve_2 & cv2,
                               OutputIterator oi) const
     {
+      std::cout << "Intersect_2 " << cv1 << ", " << cv2 << std::endl;
       Segment_traits_2 seg_traits;
-      Construct_min_vertex_2 min_ver =
+      typename Segment_traits_2::Construct_min_vertex_2 min_ver =
         seg_traits.construct_min_vertex_2_object();
-      Construct_max_vertex_2 max_ver =
+      typename Segment_traits_2::Construct_max_vertex_2 max_ver =
         seg_traits.construct_max_vertex_2_object();
-      Equal_2 equal = seg_traits.equal_2_object();
-      Compare_xy_2 cmp_xy = seg_traits.compare_xy_2_object();
-      Intersect_2 intersect = seg_traits.intersect_2_object();
-      Compare_y_at_x_2 cmp_y_at_x = seg_traits.compare_y_at_x_2_object();
+      typename Segment_traits_2::Equal_2 equal = seg_traits.equal_2_object();
+      typename Segment_traits_2::Compare_xy_2 cmp_xy =
+        seg_traits.compare_xy_2_object();
+      typename Segment_traits_2::Intersect_2 intersect =
+        seg_traits.intersect_2_object();
+      typename Segment_traits_2::Compare_y_at_x_2 cmp_y_at_x =
+        seg_traits.compare_y_at_x_2_object();
       
       unsigned int n1 = cv1.size();
       unsigned int n2 = cv2.size();
@@ -488,50 +542,123 @@ public:
       unsigned int i1 = 0;
       unsigned int i2 = 0;
 
-      Comparison_result res = cmp_xy(min_ver(cv1[i1]), min_ver(cv2[i2]));
-      if (res == SMALLER) {
-        i1 = cv1.locate(min_ver(cv2[i2]));
+      X_monotone_curve_2 cv;
+
+      Self self;
+
+      Comparison_result left_res = cmp_xy(min_ver(cv1[i1]), min_ver(cv2[i2]));
+      if (left_res == SMALLER) {
+        i1 = self.locate(cv1, min_ver(cv2[i2]));
         if (equal(max_ver(cv1[i1]), min_ver(cv2[i2]))) {
           i1++;
-          res = EQUAL;
+          left_res = EQUAL;
         }
-      } else if (res == LARGER) {
-        i2 = cv2.locate(min_ver(cv1[i1]));
+      } else if (left_res == LARGER) {
+        i2 = self.locate(cv2, min_ver(cv1[i1]));
         if (equal(max_ver(cv2[i2]), min_ver(cv1[i1]))) {
           i2++;
-          res = EQUAL;
+          left_res = EQUAL;
         }
       }
 
-      bool done = false;
+      bool left_coincides = (left_res == EQUAL);
+      if (left_res == SMALLER) {
+        left_coincides = (cmp_y_at_x(min_ver(cv2[i2]), cv1[i1]) == EQUAL);
+      } else if (left_res == LARGER) {
+        left_coincides = (cmp_y_at_x(min_ver(cv1[i1]), cv2[i2]) == EQUAL);
+      }
+
+      bool left_overlap = false;
+      
       while (i1 < n1 && i2 < n2) {
-        bool min_overlaps = (res == EQUAL);
-        if (res == SMALLER)
-          min_overlaps = (cmp_y_at_x(min_ver(cv2[i2]), cv1[i1]) == EQUAL);
-        else if (res == LARGER)
-          min_overlaps = (cmp_y_at_x(min_ver(cv1[i1]), cv2[i2]) == EQUAL);
+        Comparison_result right_res =
+          cmp_xy(max_ver(cv1[i1]), max_ver(cv2[i2]));
+        bool right_coincides = (right_res == EQUAL);
+        if (right_res == SMALLER)
+          right_coincides = (cmp_y_at_x(max_ver(cv1[i1]), cv2[i2]) == EQUAL);
+        else if (right_res == LARGER)
+          right_coincides = (cmp_y_at_x(max_ver(cv2[i2]), cv1[i1]) == EQUAL);
 
-        res = cmp_xy(max_ver(cv1[i1]), min_ver(cv2[i2]));
-        bool max_overlaps = (res == EQUAL);
-        if (res == SMALLER)
-          max_overlaps = (cmp_y_at_x(max_ver(cv2[i2]), cv1[i1]) == EQUAL);
-        else if (res == LARGER)
-          max_overlaps = (cmp_y_at_x(max_ver(cv1[i1]), cv2[i2]) == EQUAL);
-
-        if (min_overlaps || !max_overlaps) {
-          /* There is an overlap between cv1[i1] and cv2[i2], or the largest
-           * vertex of the smaller curve is non on the largest curve =>
-           * compute the overlapping curve, and advance in the 2 polylines
+        bool right_overlap = false;
+        if (!right_coincides && !left_coincides) {
+          /* Non of the endpoints of the current segment of one polyline
+           * coincide with the curent segment of the other polyline =>
+           * Output the intersection if exists.
            */
+          std::cout << "  Intersection " << cv1[i1] << ", " << cv2[i2]
+                    << std::endl;
           oi = intersect(cv1[i1], cv2[i2], oi);
+        } else if (right_coincides && left_coincides) {
+          /* An overlap exists between the current segments of the polylines =>
+           * Output the overlapping segment.
+           */
+          right_overlap = true;
+          if (left_res == SMALLER) {
+            if (right_res == SMALLER) {
+              Segment_2 seg(min_ver(cv2[i2]), max_ver(cv1[i1]));
+              cv.push_back(seg);
+            } else {
+              Segment_2 seg(min_ver(cv2[i2]), max_ver(cv2[i2]));
+              cv.push_back(seg);
+            }
+          } else {
+           if (right_res == SMALLER) {
+              Segment_2 seg(min_ver(cv1[i1]), max_ver(cv1[i1]));
+              cv.push_back(seg);
+            } else {
+              Segment_2 seg(min_ver(cv1[i1]), max_ver(cv2[i2]));
+              cv.push_back(seg);
+            }
+          }
+        } else if (left_coincides && !right_coincides) {
+          /*! The left point of the current segment of one polyline
+           * coincides with the current segment of the other polyline
+           */
+          if (left_overlap) {
+            /* An overlap occured at the previous iteration =>
+             * Output the overlapping polyline.
+             */
+            CGAL_assertion(cv.size() > 0);
+            std::cout << "  Curve: " << cv << std::endl;
+            *oi++ = make_object(cv);
+            cv.clear();
+          } else {
+            /*! The left point of the current segment of one polyline
+             * coincides with the current segment of the other polyline, and
+             * no overlap occured at the previous iteration =>
+             * Output the intersection point.
+             */
+            if (left_res == SMALLER) {
+              Point_2 point(min_ver(cv2[i2]));
+              std::cout << "  Point: " << point << std::endl;
+              std::pair<Point_2, unsigned int> item(point, 0);
+              *oi++ = make_object(item);
+            } else {
+              Point_2 point(min_ver(cv1[i1]));
+              std::cout << "  Point: " << point << std::endl;
+              std::pair<Point_2, unsigned int> item(point, 0);
+              *oi++ = make_object(item);            
+            }
+          }
         }
 
-        if (res != SMALLER) ++i2;
-        if (res != LARGER) ++i1;
+        if (right_res != SMALLER) ++i2;
+        if (right_res != LARGER) ++i1;
 
-        if (res == SMALLER) res = LARGER;
-        else if (res == LARGER) res = SMALLER;
+        if (right_res == SMALLER) left_res = LARGER;
+        else if (right_res == LARGER) left_res = SMALLER;
+
+        left_coincides = right_coincides;
+        left_overlap = right_overlap;
       }
+
+      // Output the remaining overlapping polyline:
+      if (cv.size() > 0) {
+        std::cout << "  " << cv << std::endl;
+        oi++ = make_object(cv);
+        cv.clear();
+      }
+      std::cout << "Intersect_2 done" << std::endl;
       return oi;
     }
   };
@@ -553,13 +680,15 @@ public:
     bool operator()(const X_monotone_curve_2 & cv1,
                     const X_monotone_curve_2 & cv2) const
     {
+      std::cout << "Are_mergeable_2 " << cv1 << ", " << cv2 << std::endl;
       Segment_traits_2 seg_traits;
-      Construct_min_vertex_2 min_ver =
+      typename Segment_traits_2::Construct_min_vertex_2 min_ver =
         seg_traits.construct_min_vertex_2_object();
-      Construct_max_vertex_2 max_ver =
+      typename Segment_traits_2::Construct_max_vertex_2 max_ver =
         seg_traits.construct_max_vertex_2_object();
-      return seg_traits.equal_2_object()(max_ver(cv1), min_ver(cv2)) ||
-        seg_traits.equal_2_object()(max_ver(cv2), min_ver(cv1));
+      typename Segment_traits_2::Equal_2 equal = seg_traits.equal_2_object();
+      return equal(max_ver(cv1), min_ver(cv2)) ||
+        equal(max_ver(cv2), min_ver(cv1));
     }
   };
   
@@ -581,6 +710,7 @@ public:
                     const X_monotone_curve_2 & cv2,
                     X_monotone_curve_2 & c) const
     {
+      std::cout << "Merge_2 " << cv1 << ", " << cv2 << std::endl;
       CGAL_precondition(are_mergeable_2_object()(cv1, cv2));
 
       unsigned int n1 = cv1.size();
@@ -602,8 +732,9 @@ public:
   
   /// \name functors required for the landmark point location
 
-  typedef Segment_traits_2::Approximate_number_type     Approximate_number_type;
-  typedef Segment_traits_2::Approximate_2               Approximate_2;
+  typedef typename Segment_traits_2::Approximate_number_type
+    Approximate_number_type;
+  typedef typename Segment_traits_2::Approximate_2              Approximate_2;
   
   /*! Get an Approximate_2 functor object. */
   Approximate_2 approximate_2_object() const
@@ -612,6 +743,110 @@ public:
   }
 
   ///@}
+
+private:
+  /*! Return the index of the segment in the polyline that contains the
+   * point q in its x-range. The function performs a binary search, so if the
+   * point q is in the x-range of the polyline with n segments, the segment
+   * containing it can be located in O(log n) operations.
+   * \param cv The polyline curve.
+   * \param q The point.
+   * \return An index i such that q is in the x-range of cv[i].
+   *         If q is not in the x-range of cv, returns(0xffffffff).
+   */
+  unsigned int locate(const X_monotone_curve_2 & cv, const Point_2 & q) const
+  {
+    // First check whether the polyline curve really contains q in its x-range.
+    unsigned int from = 0;
+    Comparison_result res_from;
+    unsigned int to = cv.size() - 1;
+    Comparison_result res_to;
+
+    Segment_traits_2 seg_traits;
+    typename Segment_traits_2::Compare_x_2 cmp_x =
+      seg_traits.compare_x_2_object();
+    typename Segment_traits_2::Construct_min_vertex_2 min_ver =
+      seg_traits.construct_min_vertex_2_object();
+    typename Segment_traits_2::Construct_max_vertex_2 max_ver =
+      seg_traits.construct_max_vertex_2_object();
+
+    res_from = cmp_x(min_ver(cv[from]), q);
+    if (res_from == EQUAL) return from;
+    
+    res_to = cmp_x(max_ver(cv[to]), q);
+    if (res_to == EQUAL) return to;
+    
+    if (res_from == res_to) return 0xffffffff;
+
+    // Perform a binary search and locate the segment that contains q in its
+    // x-range.
+    unsigned int mid;
+    Comparison_result res_mid_s, res_mid_t;
+
+    while (to > from) {
+      mid = (from + to) / 2;
+
+      if (mid > from) {
+	res_mid_s = cmp_x(min_ver(cv[mid]), q);
+
+	if (res_mid_s == EQUAL) return mid;
+	
+	if (res_mid_s == res_from) from = mid;
+	else to = mid - 1;
+      } else {
+	CGAL_assertion(mid < to);
+	res_mid_t = cmp_x(max_ver(cv[mid]), q);
+
+	if (res_mid_t == EQUAL) return mid;
+	
+	if (res_mid_t == res_to) to = mid;
+	else from = mid + 1;
+      }
+    }
+
+    // In case(from == to), and we know that the polyline contains the q:
+    CGAL_assertion(from == to);
+    return from;
+  }
+
+  /*! Find the index of the segment in the polyline that is defined to the
+   * left (or to the right) of the point q.
+   * \param cv The polyline curve.
+   * \param q The point.
+   * \param to_right (true) if we wish to locate a segment to the right of q,
+   *                (false) if we wish to locate a segment to its right.
+   * \return An index i such that segments[i] is defined to the left (or to the
+   *         right) of q, or(0xffffffff) if no such segment exists.
+   */
+  unsigned int locate_side(const X_monotone_curve_2 & cv,
+                           const Point_2 & q, const bool & to_right) const
+  {
+    // First locate a segment segments[i] that contains q in its x-range.
+    unsigned int i = locate(cv, q);
+    if (i == 0xffffffff) return 0xffffffff;
+   
+    Segment_traits_2 seg_traits;
+    typename Segment_traits_2::Construct_min_vertex_2 min_ver =
+      seg_traits.construct_min_vertex_2_object();
+    typename Segment_traits_2::Construct_max_vertex_2 max_ver =
+      seg_traits.construct_max_vertex_2_object();
+    typename Segment_traits_2::Equal_2 equal = seg_traits.equal_2_object();
+
+    if (equal(min_ver(cv[i]), q)) {
+      if (to_right) return i;
+      else if (i == 0) return 0xffffffff;
+      else return i - 1;
+    }
+
+    if (equal(max_ver(cv[i]), q)) {
+      if (!to_right) return i;
+      else if (i == cv.size() - 1) return 0xffffffff;
+      else return i + 1;
+    }    
+    
+    // In case q is in cv[i]'s interior:
+    return i;
+  }
 };
 
 /*! A representation of a polyline, as used by the Arr_polyline_traits_2
@@ -619,13 +854,11 @@ public:
  */
 template <class T_Segment_traits>
 class Polyline_2 {
-  friend class Arr_polyline_traits_2<T_Segment_traits>;
-
 public:
   typedef T_Segment_traits                      Segment_traits_2;
   typedef typename Segment_traits_2::Point_2    Point_2;
   typedef typename Segment_traits_2::Curve_2    Segment_2;
-  typedef ::std::vector<Segment_2>              Base;
+  typedef std::vector<Segment_2>                Base;
 
 private:
   // The segments that comprise the poyline:
@@ -717,7 +950,7 @@ public:
     /*! Decrement the index.*/
     void decrement()
     {
-      if (m_cvP != NULL && i >= 0) --m_index;
+      if (m_cvP != NULL && m_index >= 0) --m_index;
     }
 
   public:
@@ -737,12 +970,15 @@ public:
       CGAL_assertion(m_cvP != NULL);
       CGAL_assertion(m_index >= 0 && m_index < m_num_pts);
 
+      Segment_traits_2 seg_traits;
+      
       if (m_index == 0)
         // First point is the source of the first segment.
-        return seg_traits.curve_source((*m_cvP)[0]);
+        return seg_traits.construct_min_vertex_2_object()((*m_cvP)[0]);
       else
         // Return the target of the(i-1)'st segment
-        return seg_traits.curve_target((*m_cvP)[m_index - 1]);
+        return
+          seg_traits.construct_max_vertex_2_object()((*m_cvP)[m_index - 1]);
     }
 
     /*! Increment operators. */
@@ -829,17 +1065,6 @@ public:
     return (size() == 0) ? 0 : size() + 1;
   }
 
-private:
-  /*! Append a segment to the polyline.
-   * \param seg The new segment to be appended to the polyline.
-   * \pre If the polyline is not empty, the segment source must be the
-   * same as the target point of the last segment in the polyline.
-   */
-  inline void push_back(const Segment_2 & seg)
-  {
-    segments.push_back(seg);
-  }
-
   /*! Get the number of segments that comprise the poyline.
    * \return The number of segments.
    */
@@ -857,6 +1082,16 @@ private:
     return segments[i];
   }
 
+  /*! Append a segment to the polyline.
+   * \param seg The new segment to be appended to the polyline.
+   * \pre If the polyline is not empty, the segment source must be the
+   * same as the target point of the last segment in the polyline.
+   */
+  inline void push_back(const Segment_2 & seg)
+  {
+    segments.push_back(seg);
+  }
+
   /*! Clear the polyline. */
   inline void clear()
   {
@@ -866,107 +1101,9 @@ private:
   /*! Reverse the polyline. */
   inline void reverse()
   {
-    segments.reverse();
-  }
-
-  /*! Return the index of the segment in the polyline that contains the
-   * point q in its x-range. The function performs a binary search, so if the
-   * point q is in the x-range of the polyline with n segments, the segment
-   * containing it can be located in O(log n) operations.
-   * \param cv The polyline curve.
-   * \param q The point.
-   * \return An index i such that q is in the x-range of cv[i].
-   *         If q is not in the x-range of cv, returns(0xffffffff).
-   */
-  unsigned int locate(const Point_2 & q) const
-  {
-    // First check whether the polyline curve really contains q in its x-range.
-    unsigned int from = 0;
-    Comparison_result res_from;
-    unsigned int to = size() - 1;
-    Comparison_result res_to;
-
-    Segment_traits_2 seg_traits;
-    Compare_x_2 cmp_x = seg_traits.compare_x_2_object();
-    Construct_min_vertex_2 min_ver = seg_traits.construct_min_vertex_2_object();
-    Construct_max_vertex_2 max_ver = seg_traits.construct_max_vertex_2_object();
-
-    res_from = cmp_x(min_ver(segments[from]), q);
-    if (res_from == EQUAL) return from;
-    
-    res_to = cmp_x(max_ver(segments[to]), q);
-    if (res_to == EQUAL) return to;
-    
-    if (res_from == res_to) return 0xffffffff;
-
-    // Perform a binary search and locate the segment that contains q in its
-    // x-range.
-    unsigned int mid;
-    Comparison_result res_mid_s, res_mid_t;
-
-    while (to > from) {
-      mid = (from + to) / 2;
-
-      if (mid > from) {
-	res_mid_s = cmp_x(min_ver(segments[mid]), q);
-
-	if (res_mid_s == EQUAL) return mid;
-	
-	if (res_mid_s == res_from) from = mid;
-	else to = mid - 1;
-      } else {
-	CGAL_assertion(mid < to);
-	res_mid_t = cmp_x(max_ver(segments[mid]), q);
-
-	if (res_mid_t == EQUAL) return mid;
-	
-	if (res_mid_t == res_to) to = mid;
-	else from = mid + 1;
-      }
-    }
-
-    // In case(from == to), and we know that the polyline contains the q:
-    CGAL_assertion(from == to);
-    return from;
-  }
-
-  /*! Find the index of the segment in the polyline that is defined to the
-   * left (or to the right) of the point q.
-   * \param q The point.
-   * \param to_right (true) if we wish to locate a segment to the right of q,
-   *                (false) if we wish to locate a segment to its right.
-   * \return An index i such that segments[i] is defined to the left (or to the
-   *         right) of q, or(0xffffffff) if no such segment exists.
-   */
-  unsigned int locate_side(const Point_2 & q, const bool & to_right) const
-  {
-    // First locate a segment segments[i] that contains q in its x-range.
-    unsigned int i = cv.locate(q);
-    if (i == 0xffffffff) return 0xffffffff;
-   
-    // If we seek an end-point to the right of q, q must be smaller than it.
-    // If we seek an end-point to its left, q must be larger.
-    const Comparison_result cres = (to_right) ? SMALLER : LARGER;
-
-    Segment_traits_2 seg_traits;
-    Construct_min_vertex_2 min_ver = seg_traits.construct_min_vertex_2_object();
-    Construct_max_vertex_2 max_ver = seg_traits.construct_max_vertex_2_object();
-    Equal_2 equal = seg_traits.equal_2_object();
-
-    if (equal(min_ver(segments[i], q))) {
-      if (to_right) return i;
-      else if (i == 0) return 0xffffffff;
-      else return i - 1;
-    }
-
-    if (equal(max_ver(segments[i], q))) {
-      if (!to_right) return i;
-      else if (i == size() - 1) return 0xffffffff;
-      else return i + 1;
-    }    
-    
-    // In case q is in cv[i]'s interior:
-    return i;
+    unsigned int n = size();
+    for (unsigned int i = 0; i < n / 2; ++i)
+      std::swap(segments[i], segments[n-i-1]);
   }
 
   /*! Check whether the given point is in the x-range of the polyline curve.
@@ -975,7 +1112,7 @@ private:
    */
   bool is_in_x_range(const Point_2 & point) const
   {
-    return (locate(point) != 0xffffffff);
+    return (locate(*this, point) != 0xffffffff);
   }
 };
 
