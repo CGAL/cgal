@@ -307,6 +307,17 @@ the finite or infinite character of any feature.
 {Checks the validity of the Delaunay graph. If \ccc{verbose} is
 \ccc{true} a short message is sent to \ccc{std::cerr}.}
 
+\ccHeading{Miscellaneous}
+\ccThree{bool}{dg.swap(other)+}{}
+%
+\ccMethod{void clear();}{Clears all contents of the Delaunay graph.}
+\ccGlue
+\ccMethod{void swap(DelaunayGraph_2 other);}{The Delaunay graphs
+  \ccc{other} and \ccVar\ are swapped. \ccVar.\ccc{swap(other)}
+  should be preferred to \ccVar\ccc{ = other} or to
+  \ccVar\ccc{(other)} if \ccc{other} is deleted afterwards.}
+
+
 \ccHasModels
 \ccc{CGAL::Delaunay_triangulation_2<Traits,Tds>}\\
 \ccc{CGAL::Regular_triangulation_2<Traits,Tds>}\\
