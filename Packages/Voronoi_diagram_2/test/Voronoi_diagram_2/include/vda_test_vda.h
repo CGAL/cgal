@@ -258,6 +258,7 @@ void test_vda(const VDA& vda)
   t = vda.number_of_vertices();
   t = vda.number_of_faces();
   t = vda.number_of_halfedges();
+  t = vda.number_of_connected_components();
   kill_warning(t);
 
   {
@@ -386,7 +387,64 @@ void test_vda(const VDA& vda)
   test_vdqr_concept(vda);
 
   // testing validity
-  assert( vda.is_valid() );
+  CGAL_assertion( vda.is_valid() );
+
+  // testing copy constructor
+  VDA vda_copy(vda);
+  size_type nv = vda.number_of_vertices();
+  size_type ne = vda.number_of_halfedges();
+  size_type nf = vda.number_of_faces();
+  CGAL_assertion( vda_copy.number_of_vertices() == nv );
+  CGAL_assertion( vda_copy.number_of_halfedges() == ne );
+  CGAL_assertion( vda_copy.number_of_faces() == nf );
+  CGAL_assertion( vda_copy.is_valid() );
+  kill_warning( nv + ne + nf );
+
+  // testing assignment operator
+  vda_copy.clear();
+  vda_copy = vda;
+  VDA vda_copy_2 = vda;
+  CGAL_assertion( vda_copy.number_of_vertices() == nv );
+  CGAL_assertion( vda_copy.number_of_halfedges() == ne );
+  CGAL_assertion( vda_copy.number_of_faces() == nf );
+  CGAL_assertion( vda_copy.is_valid() );  
+
+  // testing clear
+  vda_copy_2.clear();
+  CGAL_assertion( vda_copy_2.number_of_vertices() == 0 );
+  CGAL_assertion( vda_copy_2.number_of_halfedges() == 0 );
+  CGAL_assertion( vda_copy_2.number_of_faces() == 0 );
+  CGAL_assertion( vda_copy_2.is_valid() );
+
+  // testing swap
+  vda_copy_2.swap(vda_copy);
+  CGAL_assertion( vda_copy_2.number_of_vertices() == nv );
+  CGAL_assertion( vda_copy_2.number_of_halfedges() == ne );
+  CGAL_assertion( vda_copy_2.number_of_faces() == nf );
+
+  CGAL_assertion( vda_copy.number_of_vertices() == 0 );
+  CGAL_assertion( vda_copy.number_of_halfedges() == 0 );
+  CGAL_assertion( vda_copy.number_of_faces() == 0 );
+
+  CGAL_assertion( vda_copy.is_valid() );
+  CGAL_assertion( vda_copy_2.is_valid() );
+
+  // testing file I/O
+  std::ofstream ofs("tmp.vd.cgal");
+  assert( ofs );
+  ofs << vda;
+  ofs.close();
+
+  std::ifstream ifs("tmp.vd.cgal");
+  assert( ifs );
+  ifs >> vda_copy;
+  ifs.close();
+
+  CGAL_assertion( vda_copy.number_of_vertices() == nv );
+  CGAL_assertion( vda_copy.number_of_halfedges() == ne );
+  CGAL_assertion( vda_copy.number_of_faces() == nf );
+
+  CGAL_assertion( vda_copy.is_valid() );
 
   // sanity tests
   //-------------

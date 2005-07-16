@@ -293,6 +293,9 @@ void print_report(const VDA& vda, const Projector& project,
 	      << n_edge_fin << std::endl;
     std::cout << "# of infinite Voronoi edges: " << n_edge_inf << std::endl;
     std::cout << std::endl;
+    std::cout << "# of connected components: "
+	      << vda.number_of_connected_components() << std::endl;
+    std::cout << std::endl;
     std::cout << "# of bisecting segments: " << n_segments << std::endl;
     std::cout << "# of bisecting rays:     " << n_rays << std::endl;
     std::cout << "# of full bisectors:     " << n_bisectors << std::endl;
