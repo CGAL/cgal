@@ -1,3 +1,16 @@
+16 July 2005:  Menelaos Karavelas
+- added swap and clear in requirements of DelaunayGraph_2 concept
+- renamed Voronoi_diagram_adaptor_2 to Voronoi_diagram_2 and Dual_graph to
+  Delaunay_graph in
+  doc_tex/Voronoi_diagram_2_ref/Voronoi_diagram_adaptor_2.tex
+- renamed Voronoi_diagram_adaptor_2 to Voronoi_diagram_2 in
+  doc_tex/Voronoi_diagram_2_ref/intro.tex
+- added various constructors, including copy constructor and assignment
+  operator in Voronoi_diagram_2 class
+- added file I/O methods and operators in Voronoi_diagram_2 class
+- added number_of_connected_components() method in Voronoi_diagram_2 class
+- added testing for the above-mentioned added features
+
 15 July 2005:  Menelaos Karavelas
 - renamed Dual_graph to Delaunay_graph all over the package files (code)
 - made Dual_* types in the adaptor private
