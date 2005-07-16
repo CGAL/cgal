@@ -36,9 +36,7 @@ class Connected_components
   typedef VD_t                                            VD;
   typedef typename VD::Halfedge_iterator                  Halfedge_iterator;
   typedef typename VD::Halfedge_handle                    Halfedge_handle;
-  typedef typename VD::Vertex_handle                      Vertex_handle;
   typedef typename VD::Halfedge                           Halfedge;
-  typedef typename VD::Vertex                             Vertex;
   typedef typename VD::Halfedge_around_vertex_circulator  HAVC;
 
   typedef HAVC Halfedge_around_vertex_circulator;
@@ -49,60 +47,62 @@ class Connected_components
   typedef typename Voronoi_diagram_2::size_type          size_type;
   typedef size_type                                      result_type;
   typedef Voronoi_diagram_2                              argument_type;
-
-  struct Arity { enum { arity = 1 }; };
+  typedef Arity_tag<1>                                   Arity;
 
  private:
-  struct Halfedge_less {
-    bool operator()(const Halfedge& h1,	const Halfedge& h2) const {
-      typename Voronoi_diagram_2::Dual_edge e1 = h1.dual_edge();
-      typename Voronoi_diagram_2::Dual_edge e2 = h2.dual_edge();
+  struct Halfedge_handle_less {
+    bool operator()(const Halfedge_handle& e1,
+		    const Halfedge_handle& e2) const {
+      typename Halfedge::Dual_edge de1 = e1->dual_edge();
+      typename Halfedge::Dual_edge de2 = e2->dual_edge();
 
-      if ( e1.first != e2.first ) { return e1.first < e2.first; }
-      return e1.second < e2.second;
+      if ( de1.first != de2.first ) { return de1.first < de2.first; }
+      return de1.second < de2.second;
     }
   };
 
-  typedef std::map<Halfedge,bool,Halfedge_less>  Halfedge_map;
+  typedef std::map<Halfedge_handle,bool,Halfedge_handle_less>
+  Halfedge_handle_map;
 
-  void mark_edge(const Halfedge& e, Halfedge_map& e_map) const
+  void mark(const Halfedge_handle& e, Halfedge_handle_map& e_map) const
   {
     e_map[e] = true;
-    e_map[*e.opposite()] = true;
+    e_map[e->opposite()] = true;
   }
 
-  bool is_unmarked(const Halfedge& e, const Halfedge_map& e_map) const
+  bool is_unmarked(const Halfedge_handle& e,
+		   const Halfedge_handle_map& e_map) const
   {
     return e_map.find(e) == e_map.end();
   }
 
-  void dfs(const Voronoi_diagram_2& vd, const Halfedge& e,
-	   Halfedge_map& e_map) const
+  void dfs(const Voronoi_diagram_2& vd, const Halfedge_handle& e,
+	   Halfedge_handle_map& e_map) const
   {
-    CGAL_precondition( !vd.dual().is_infinite(e.dual_edge()) );
+    CGAL_precondition( !vd.dual().is_infinite(e->dual_edge()) );
 
-    Halfedge e_opp = *e.opposite();
-    mark_edge(e, e_map);
+    Halfedge_handle e_opp = e->opposite();
+    mark(e, e_map);
 
-    if ( e.has_source() ) {
-      HAVC ec =	vd.incident_halfedges(e.source());
+    if ( e->has_source() ) {
+      HAVC ec =	vd.incident_halfedges(e->source());
       HAVC ec_start = ec;
 
       do {
-	if ( *ec != e && *ec != e_opp && is_unmarked(*ec, e_map) ) {
-	  dfs(vd, *ec, e_map);
+	if ( e != ec && e_opp != ec && is_unmarked(ec, e_map) ) {
+	  dfs(vd, ec, e_map);
 	}
 	ec++;
       } while (ec != ec_start);
     }
 
-    if ( e.has_target() ) {
-      HAVC ec = vd.incident_halfedges(e.target());
+    if ( e->has_target() ) {
+      HAVC ec = vd.incident_halfedges(e->target());
       HAVC ec_start = ec;
 
       do {
-	if ( *ec != e && *ec != e_opp && is_unmarked(*ec, e_map) ) {
-	  dfs(vd, *ec, e_map);
+	if ( e != ec && e_opp != ec && is_unmarked(ec, e_map) ) {
+	  dfs(vd, ec, e_map);
 	}
 	ec++;
       } while (ec != ec_start);
@@ -112,14 +112,14 @@ class Connected_components
  public:
   size_type operator()(const Voronoi_diagram_2& vd) const
   {
-    Halfedge_map e_map;
+    Halfedge_handle_map e_map;
 
     size_type n_components = 0;
     for(Halfedge_iterator eit = vd.halfedges_begin();
 	eit != vd.halfedges_end(); ++eit) {
-      if ( is_unmarked(*eit, e_map) ) {
+      if ( is_unmarked(eit, e_map) ) {
 	n_components++;
-	dfs(vd, *eit, e_map);
+	dfs(vd, eit, e_map);
       }
     }
     return n_components;
