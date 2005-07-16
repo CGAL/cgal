@@ -770,7 +770,7 @@ protected:
       return he;
     }
     CGAL_assertion_msg(0, "Failed to locate an edge!");
-    return arr.non_const_handle(const_edge);
+    return arr.non_const_handle(Arr_halfedge_const_handle());
   }
 
   /*! Inserts a curve (segment) into a arrangement between 2 projected normals.
@@ -785,7 +785,7 @@ protected:
    * recursion should stop.
    */
   void insert(Projected_normal & proj_normal1, Projected_normal & proj_normal2,
-              unsigned int id)
+              unsigned int id, bool unique = false)
   {
     unsigned int i = (id + 0) % 3;
     
@@ -930,11 +930,34 @@ protected:
       return;
     }
 
+    /* If the projected normals are not uniqe, we need to locate the vertices
+     * in case they already exists.
+     */
+    if (!unique) {
+      Arr & arr = m_arrangements[id];
+      Point_location pl(arr);
+      if (!proj_normal1.is_vertex_set(i)) {
+        CGAL::Object obj = pl.locate(p1);
+        Arr_vertex_const_handle const_vertex;
+        if (CGAL::assign(const_vertex, obj)) {
+          Arr_vertex_handle vertex = arr.non_const_handle(const_vertex);
+          proj_normal1.set_vertex(vertex, i);
+        }
+      }
+      if (!proj_normal2.is_vertex_set(i)) {
+        CGAL::Object obj = pl.locate(p2);
+        Arr_vertex_const_handle const_vertex;
+        if (CGAL::assign(const_vertex, obj)) {
+          Arr_vertex_handle vertex = arr.non_const_handle(const_vertex);
+          proj_normal2.set_vertex(vertex, i);
+        }
+      }
+    }
+
     /* Insert a curve to the arrangement that corresponds to the unit-cube face
      * with index 'id':
      */  
     X_monotone_curve_2 cv(p1, p2);
-    
     Arr_halfedge_handle edge;
     if (proj_normal1.is_vertex_set(i) && proj_normal2.is_vertex_set(i)) {
       const Arr_vertex_handle & v1 = proj_normal1.get_vertex(i);
@@ -993,8 +1016,7 @@ protected:
       if (proj_normal2.get_is_real()) v2->set_is_real(true);     
     } else {
       //! \todo use a default point location
-      Point_location pl(m_arrangements[id]);
-      edge = insert_non_intersecting(m_arrangements[id], pl, cv);
+      edge = insert_non_intersecting(m_arrangements[id], cv);
       const Arr_vertex_handle & v1 = edge->source();
       const Arr_vertex_handle & v2 = edge->target();
 
@@ -1029,10 +1051,13 @@ protected:
    * \param id2 the index of the unit-cube face the target normal project onto
    * \param proj_normal1 represents the source projected normal
    * \param proj_normal2 represents the target projected normal
+   * \param unique indicates whether projected normals are unique. If true,
+   * then two different projected normals that are passed as parameters since
+   * the last clear, must represents two different normals.
    */
   void connect(Projected_normal & proj_normal1, unsigned int id1,
                Projected_normal & proj_normal2, unsigned int id2,
-               const Cgm_plane_3 & plane)
+               const Cgm_plane_3 & plane, bool unique)
   {
 #if 0
     std::cout << "connect from " << id1 << " to " << id2 << std::endl;
@@ -1043,7 +1068,7 @@ protected:
      * arrangement that corresponds to the box f:
      */
     if (id1 == id2) {
-      insert(proj_normal1, proj_normal2, id1);
+      insert(proj_normal1, proj_normal2, id1, unique);
       return;
     }
 
@@ -1054,7 +1079,7 @@ protected:
       unsigned int id;
       for (id = 0; id < NUM_FACES; id++)
         if (faces_mask & get_mask(id)) break;
-      insert(proj_normal1, proj_normal2, id);
+      insert(proj_normal1, proj_normal2, id, unique);
       return;
     }
 
@@ -1171,8 +1196,8 @@ protected:
 
     CGAL_assertion(is_set);
     Projected_normal proj_normal(point, faces_mask, num_faces);
-    insert(proj_normal1, proj_normal, id1);
-    connect(proj_normal, id, proj_normal2, id2, plane);
+    insert(proj_normal1, proj_normal, id1, unique);
+    connect(proj_normal, id, proj_normal2, id2, plane, unique);
   }
   
   /*! \brief returns true if two vertices given by their masks are on the same
@@ -1498,8 +1523,7 @@ public:
       Arr_halfedge_handle boundary_edges[NUM_CORNERS];
 
       //! \todo use a default point location
-      Point_location pl(m_arrangements[i]);
-      boundary_edges[0] = insert_non_intersecting(m_arrangements[i], pl, cv0);
+      boundary_edges[0] = insert_non_intersecting(m_arrangements[i], cv0);
       boundary_edges[1] =
         m_arrangements[i].insert_from_left_vertex(cv1,
                                                   boundary_edges[0]->target());
@@ -1607,8 +1631,12 @@ public:
    * the 2 normals.
    * \param proj_normal1 represents the source projected normal
    * \param proj_normal2 represents the target projected normal
+   * \param unique indicates whether projected normals are unique. If true,
+   * then two different projected normals that are passed as parameters since
+   * the last clear, must represents two different normals.
    */
-  void insert(Projected_normal & proj_normal1, Projected_normal & proj_normal2)
+  void insert(Projected_normal & proj_normal1, Projected_normal & proj_normal2,
+              bool unique)
   {
     unsigned int faces_mask1 = proj_normal1.get_faces_mask();
     unsigned int faces_mask2 = proj_normal2.get_faces_mask();
@@ -1622,7 +1650,7 @@ public:
       unsigned int id;
       for (id = 0; id < NUM_FACES; id++)
         if (faces_mask & get_mask(id)) break;
-      insert(proj_normal1, proj_normal2, id);
+      insert(proj_normal1, proj_normal2, id, unique);
       return;
     }
 
@@ -1675,7 +1703,7 @@ public:
     const Point_3 & point1 = proj_normal1.get_projected_normal();
     const Point_3 & point2 = proj_normal2.get_projected_normal();
     Cgm_plane_3 plane(CGAL::ORIGIN, point1, point2);
-    connect(proj_normal1, id1, proj_normal2, id2, plane);
+    connect(proj_normal1, id1, proj_normal2, id2, plane, unique);
   }
 
   /* Virtual Functions */

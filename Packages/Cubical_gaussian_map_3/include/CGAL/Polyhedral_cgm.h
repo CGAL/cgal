@@ -614,7 +614,7 @@ private:
           m_src_vertex = src;
           m_trg_vertex = next_hec->opposite()->vertex();
           m_halfedge = next_hec;
-          insert(dual1, dual2);
+          insert(dual1, dual2, true);
           next_hec->m_flag = true;
           next_hec->opposite()->m_flag = true;
 
