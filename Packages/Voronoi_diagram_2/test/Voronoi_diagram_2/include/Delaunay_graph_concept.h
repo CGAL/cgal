@@ -33,6 +33,8 @@ CGAL_BEGIN_NAMESPACE
 template<class K>
 class Delaunay_graph_concept
 {
+  typedef Delaunay_graph_concept<K>  Self;
+
  public:
   typedef unsigned int   size_type;
   typedef K              Geom_traits;
@@ -317,7 +319,25 @@ class Delaunay_graph_concept
   Point_2 dual(const Face_handle&) const { return Point_2(); }
 
   bool is_valid(bool = true,int = 0) const { return true; }
+
+  void swap(Self& other) {}
+  void clear() {}
 };
+
+
+template<class K>
+std::istream&
+operator>>(std::istream& is, Delaunay_graph_concept<K>&)
+{
+  return is;
+}
+
+template<class K>
+std::ostream&
+operator<<(std::ostream& os, const Delaunay_graph_concept<K>&)
+{
+  return os;
+}
 
 
 template<class K>
