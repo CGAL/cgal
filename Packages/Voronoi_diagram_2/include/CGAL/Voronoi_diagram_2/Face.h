@@ -70,6 +70,9 @@ class Face
   const Holes_const_iterator& holes_end() const   { return null_iterator(); }
 
  public:
+
+  // CONSTRUCTORS
+  //-------------
   Face(const VDA* vda = NULL) : vda_(vda) {}
   Face(const VDA* vda, Dual_vertex_handle v) : vda_(vda), v_(v)
   {
@@ -82,24 +85,8 @@ class Face
     //    CGAL_precondition( !vda_->face_tester()(v_) );
   }
 
-  bool is_unbounded() const {
-    if ( vda_->dual().dimension() < 2 ) { return true; }
-
-    Dual_vertex_circulator vc = vda_->dual().incident_vertices(v_);
-    Dual_vertex_circulator vc_start = vc;
-    do {
-      if ( vda_->dual().is_infinite(vc) ) { return true; }
-      ++vc;
-    } while ( vc != vc_start );
-    return false;
-  }
-
-#if 0
-  Halfedge_handle halfedge_on_outer_ccb() const {
-    return halfedge();
-  }
-#endif
-
+  // ACCESS TO NEIGHBORING OBJECTS
+  //------------------------------
   Halfedge_handle halfedge() const
   {
     CGAL_precondition( vda_->dual().dimension() > 0 );
@@ -144,6 +131,20 @@ class Face
     return Ccb_halfedge_circulator( *halfedge() );
   }
 
+  // PREDICATES
+  //-----------
+  bool is_unbounded() const {
+    if ( vda_->dual().dimension() < 2 ) { return true; }
+
+    Dual_vertex_circulator vc = vda_->dual().incident_vertices(v_);
+    Dual_vertex_circulator vc_start = vc;
+    do {
+      if ( vda_->dual().is_infinite(vc) ) { return true; }
+      ++vc;
+    } while ( vc != vc_start );
+    return false;
+  }
+
   bool is_halfedge_on_inner_ccb(const Halfedge_handle&) const {
     // MOST PROBABLY WHAT I NEED TO DO HERE IS TO RETURN false, SINCE
     // THERE ARE NO INNER CCBs.
@@ -160,18 +161,12 @@ class Face
     return false;
   }
 
-  bool operator==(const Self& other) const {
-    if ( vda_ == NULL ) { return other.vda_ == NULL; }
-    if ( other.vda_ == NULL ) { return vda_ == NULL; }
-    return ( vda_ == other.vda_ && v_ == other.v_ );
-  }
-
-  bool operator!=(const Self& other) const {
-    return !((*this) == other);
-  }
-
+  // DUAL FEATURE
+  //-------------
   const Dual_vertex_handle& dual_vertex() const { return v_; }
 
+  // VALIDITY TESTING
+  //-----------------
   bool is_valid() const {
     if ( vda_ == NULL ) { return true; }
 
@@ -193,6 +188,25 @@ class Face
     } while ( hc != hc_start );
 
     return valid;
+  }
+
+  // COMPARISON OPERATORS
+  //---------------------
+  bool operator==(const Self& other) const {
+    if ( vda_ == NULL ) { return other.vda_ == NULL; }
+    if ( other.vda_ == NULL ) { return vda_ == NULL; }
+    return ( vda_ == other.vda_ && v_ == other.v_ );
+  }
+
+  bool operator!=(const Self& other) const {
+    return !((*this) == other);
+  }
+
+  bool operator<(const Self& other) const {
+    if ( vda_ == NULL ) { return other.vda_ != NULL; }
+    if ( other.vda_ == NULL ) { return false; }
+    if ( vda_ != other.vda_ ) { return vda_ < other.vda_; }
+    return v_ < other.v_;
   }
 
 private:

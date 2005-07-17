@@ -55,14 +55,12 @@ class Halfedge
   }
 
   void find_next(const Dual_face_handle& f, int i,
-		 Dual_face_handle& fnext, int& inext) const
-  {
+		 Dual_face_handle& fnext, int& inext) const {
     Find_next_halfedge<VDA>()(vda_, f, i, fnext, inext);
   }
 
   void find_opposite(const Dual_face_handle& f, int i,
-		     Dual_face_handle& fopp, int& iopp) const 
-  {
+		     Dual_face_handle& fopp, int& iopp) const {
     Find_opposite_halfedge<VDA>()(vda_, f, i, fopp, iopp);
   }
 
@@ -79,6 +77,8 @@ public:
   typedef typename VDA::Delaunay_graph           Delaunay_graph;
   typedef typename Delaunay_graph::Edge          Dual_edge;
 
+  // CONSTRUCTORS
+  //-------------
   Halfedge(const VDA* vda = NULL)
     : vda_(vda), f_(Dual_face_handle()), i_(-1),
       v1_(Dual_vertex_handle()), v2_(Dual_vertex_handle()) {}
@@ -106,6 +106,8 @@ public:
     CGAL_precondition( !vda_->dual().is_infinite(v1_) );
   }
 
+  // ACCESS TO NEIGHBORING HALFEDGES
+  //--------------------------------
   Halfedge_handle opposite() const {
     if ( vda_->dual().dimension() == 1 ) {
       return Halfedge_handle( Self(vda_, v2_, v1_) );
@@ -127,12 +129,6 @@ public:
   inline Halfedge_handle twin() const {
     return opposite();
   }
-
-#if 0
-  Halfedge_handle next_halfedge() const {
-    return next();
-  }
-#endif
 
   Halfedge_handle next() const {
     if ( vda_->dual().dimension() == 1 ) {
@@ -177,25 +173,34 @@ public:
     return Halfedge_handle( Self(vda_, f, i) );
   }
 
+  Vertex_handle source() const {
+    CGAL_precondition( has_source() );
+    return opposite()->target();
+  }
+
+  Vertex_handle target() const {
+    CGAL_precondition( has_target() );
+
+    Dual_face_handle fvalid = Find_valid_vertex<VDA>()(vda_, f_);
+    CGAL_assertion( !vda_->dual().is_infinite(fvalid) );
+    return Vertex_handle( Vertex(vda_, fvalid) );
+  }
+
+  Face_handle face() const {
+    if ( vda_->dual().dimension() == 1 ) {
+      return Face_handle( Face(vda_, v1_) );
+    }
+    Face f(vda_, f_->vertex( CW_CCW_2::ccw(i_) ));
+    return Face_handle(f);
+    //      Face_handle(   Face(vda_, f_->vertex( CW_CCW_2::ccw(i_) ))   );
+  }
+
   Ccb_halfedge_circulator ccb() const {
     return Ccb_halfedge_circulator( *this );
   }
 
-  bool operator==(const Self& other) const {
-    if ( vda_ == NULL ) { return other.vda_ == NULL; }
-    if ( other.vda_ == NULL ) { return vda_ == NULL; }
-
-    if ( vda_->dual().dimension() == 1 ) {
-      return ( vda_ == other.vda_ && v1_ == other.v1_ && v2_ == other.v2_ );
-    } else {
-      return ( vda_ == other.vda_ && f_ == other.f_ && i_ == other.i_ );
-    }
-  }
-  
-  bool operator!=(const Self& other) const {
-    return !((*this) == other);
-  }
-
+  // PREDICATES
+  //-----------
   bool has_source() const {
     return opposite()->has_target();
   }
@@ -223,33 +228,8 @@ public:
       ( !has_source() && has_target() );
   }
 
-  Vertex_handle source() const {
-    CGAL_precondition( has_source() );
-    return opposite()->vertex();
-  }
-
-  Vertex_handle target() const {
-    CGAL_precondition( has_target() );
-    return vertex();
-  }
-
- private:
-  Vertex_handle vertex() const {
-    Dual_face_handle fvalid = Find_valid_vertex<VDA>()(vda_, f_);
-    CGAL_assertion( !vda_->dual().is_infinite(fvalid) );
-    return Vertex_handle( Vertex(vda_, fvalid) );
-  }
-
- public:
-  Face_handle face() const {
-    if ( vda_->dual().dimension() == 1 ) {
-      return Face_handle( Face(vda_, v1_) );
-    }
-    Face f(vda_, f_->vertex( CW_CCW_2::ccw(i_) ));
-    return Face_handle(f);
-    //      Face_handle(   Face(vda_, f_->vertex( CW_CCW_2::ccw(i_) ))   );
-  }
-
+  // ACCESS TO GEOMETRIC OBJECTS
+  //----------------------------
   Curve curve() const {
     if ( vda_->dual().dimension() == 1 ) {
       return VDA::Voronoi_traits::make_edge(v1_, v2_);
@@ -277,6 +257,8 @@ public:
     }
   }
 
+  // DUAL FEATURE
+  //-------------
   Dual_edge dual_edge() const {
     if ( vda_->dual().dimension() == 1 ) {
       Dual_edge_circulator ec;
@@ -299,6 +281,8 @@ public:
     }
   }
 
+  // VALIDITY TESTING
+  //-----------------
   bool is_valid() const {
     if ( vda_ == NULL ) { return true; }
 
@@ -332,6 +316,37 @@ public:
     valid = valid && next()->previous() == h_this;
     valid = valid && previous()->next() == h_this;
     return valid;
+  }
+
+  // COMPARISON OPERATORS
+  //---------------------
+  bool operator==(const Self& other) const {
+    if ( vda_ == NULL ) { return other.vda_ == NULL; }
+    if ( other.vda_ == NULL ) { return vda_ == NULL; }
+
+    if ( vda_->dual().dimension() == 1 ) {
+      return ( vda_ == other.vda_ && v1_ == other.v1_ && v2_ == other.v2_ );
+    } else {
+      return ( vda_ == other.vda_ && f_ == other.f_ && i_ == other.i_ );
+    }
+  }
+  
+  bool operator!=(const Self& other) const {
+    return !((*this) == other);
+  }
+
+  bool operator<(const Self& other) const {
+    if ( vda_ == NULL ) { return other.vda_ != NULL; }
+    if ( other.vda_ == NULL ) { return false; }
+
+    if ( vda_ != other.vda_ ) { return vda_ < other.vda_; }
+    if ( vda_->dual().dimension() == 1 ) {
+      if ( v1_ != other.v1_ ) { return v1_ < other.v1_; }
+      return v2_ < other.v2_;
+    } else {
+      if ( f_ != other.f_ ) { return f_ < other.f_; }
+      return i_ < other.i_;
+    }
   }
 
  private:

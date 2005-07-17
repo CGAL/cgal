@@ -59,11 +59,16 @@ class Vertex
   }
 
  public:
+
+  // CONSTRUCTORS
+  //-------------
   Vertex(const VDA* vda = NULL) : vda_(vda) {}
   Vertex(const VDA* vda, Dual_face_handle f) : vda_(vda), f_(f) {
     CGAL_precondition( !vda_->dual().is_infinite(f_) );
   }
 
+  // ACCESS TO NEIGHBORING OBJECTS
+  //------------------------------
   Halfedge_handle halfedge() const {
     Dual_face_handle fvalid = find_valid_vertex(f_);
     for (int i = 0; i < 3; i++) {
@@ -113,6 +118,8 @@ class Vertex
     return Halfedge_around_vertex_circulator( *halfedge() );
   }
 
+  // PREDICATES
+  //-----------
   bool is_incident_edge(const Halfedge_handle& he) const {
     bool res = false;
     if ( he->has_target() ) {
@@ -134,6 +141,9 @@ class Vertex
     return false;
   }
 
+
+  // COMBINATORIAL INFO
+  //-------------------
   size_type degree() const {
     Halfedge_around_vertex_circulator hc = incident_halfedges();
     Halfedge_around_vertex_circulator hc_start = hc;
@@ -145,18 +155,8 @@ class Vertex
     return deg;
   }
 
-  bool operator==(const Self& other) const {
-    if ( vda_ == NULL ) { return other.vda_ == NULL; }
-    if ( other.vda_ == NULL ) { return vda_ == NULL; }
-    return ( vda_ == other.vda_ && f_ == other.f_ );
-  }
-
-  bool operator!=(const Self& other) const {
-    return !((*this) == other);
-  }
-
-  const Dual_face_handle& dual_face() const { return f_; }
-
+  // ACCESS TO GEOMETRIC OBJECTS
+  //----------------------------
   Point_2 point() const {
     Dual_face_handle fvalid = find_valid_vertex(f_);
     CGAL_assertion( !vda_->dual().is_infinite(fvalid) );
@@ -166,6 +166,12 @@ class Vertex
 					    fvalid->vertex(2));
   }
 
+  // DUAL FEATURE
+  //-------------
+  const Dual_face_handle& dual_face() const { return f_; }
+
+  // VALIDITY TESTING
+  //-----------------
   bool is_valid() const {
     if ( vda_ == NULL ) { return true; }
 
@@ -197,6 +203,25 @@ class Vertex
     } while ( hhc != hhc_start );
 
     return valid;
+  }
+
+  // COMPARISON OPERATORS
+  //---------------------
+  bool operator==(const Self& other) const {
+    if ( vda_ == NULL ) { return other.vda_ == NULL; }
+    if ( other.vda_ == NULL ) { return vda_ == NULL; }
+    return ( vda_ == other.vda_ && f_ == other.f_ );
+  }
+
+  bool operator!=(const Self& other) const {
+    return !((*this) == other);
+  }
+
+  bool operator<(const Self& other) const {
+    if ( vda_ == NULL ) { return other.vda_ != NULL; }
+    if ( other.vda_ == NULL ) { return false; }
+    if ( vda_ != other.vda_ ) { return vda_ < other.vda_; }
+    return f_ < other.f_;
   }
 
  private:

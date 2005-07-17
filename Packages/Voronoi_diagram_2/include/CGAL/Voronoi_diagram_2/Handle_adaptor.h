@@ -56,6 +56,10 @@ class Handle_adaptor
     return t != other.t;
   }
 
+  bool operator<(const Self& other) const {
+    return t < other.t;
+  }
+
  private:
   T t;
 };
