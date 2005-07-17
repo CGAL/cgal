@@ -915,6 +915,14 @@ bool Arrangement_zone_2<Arrangement,ZoneVisitor>::_zone_in_face
 
   if (inserted_he != invalid_he)
   {
+    if (found_overlap)
+    {
+      // In case of an overlap, we may have split intersect_he, so it refers
+      // to the wrong halfedge. However, as inserted_he is directed to the
+      // right, the overlapping halfedge is the next one in the chain.
+      intersect_he = inserted_he->next();
+    }
+
     // The visitor has created an edge that corresponds to sub_cv1 and instered
     // it into the arrangement. In this case, left_pt should be associated
     // with the target vertex of the new halfedge.
@@ -1035,6 +1043,11 @@ bool Arrangement_zone_2<Arrangement,ZoneVisitor>::_zone_in_overlap ()
 
   Comparison_result      res = traits->compare_xy_2_object() (cv_right_pt,
                                                               he_right_pt);
+
+  if (res == LARGER)
+    std::cout << "curve: " << overlap_cv << std::endl
+	      << "overlaps: " << intersect_he->curve() << std::endl
+	      <<  cv_right_pt << " <-> " << he_right_pt << std::endl;
 
   CGAL_assertion (res != LARGER);
 
