@@ -341,25 +341,6 @@ void print_report(const VDA& vda, const Projector& project,
     std::cout << std::endl;  
   }
 
-
-  // now we instantiate the iterators for holes in each one of the
-  // faces...
-  unsigned int n_holes(0);
-  for (typename VDA::Face_iterator fit = vda.faces_begin();
-       fit != vda.faces_end(); ++fit) {
-    for (typename VDA::Face::Holes_iterator hit = fit->holes_begin();
-	 hit != fit->holes_end(); ++hit) {
-      typename VDA::Ccb_halfedge_circulator hc = *hit;
-      typename VDA::Halfedge_handle he_opp = (*hit)->opposite();
-      kill_warning(hc);
-      kill_warning(he_opp);
-      n_holes++;
-    }
-  }
-  std::cout << "# of holes inside the Voronoi faces: "
-	      << n_holes << std::endl;
-  std::cout << std::endl;  
-
 #if 0
   std::cout << "# of dual vertices: " << n_vert << std::endl;
   std::cout << "# of Voronoi cells: " << n_all << std::endl;

@@ -54,22 +54,6 @@ class Face
   typedef typename VDA::Ccb_halfedge_circulator  Ccb_halfedge_circulator;
   typedef typename Delaunay_graph::Vertex_handle Delaunay_vertex_handle;
 
-  typedef typename VDA::Holes_iterator           Holes_iterator;
-  typedef Holes_iterator                         Holes_const_iterator;
-
- private:
-  static const Holes_iterator& null_iterator() {
-    static Holes_iterator null_it;
-    return null_it;
-  }
-
- public:
-  const Holes_iterator& holes_begin() { return null_iterator(); }
-  const Holes_iterator& holes_end()   { return null_iterator(); }
-
-  const Holes_const_iterator& holes_begin() const { return null_iterator(); }
-  const Holes_const_iterator& holes_end() const   { return null_iterator(); }
-
  public:
 
   // CONSTRUCTORS

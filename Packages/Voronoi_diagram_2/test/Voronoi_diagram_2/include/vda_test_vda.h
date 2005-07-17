@@ -44,8 +44,6 @@ void test_vd_face_concept(const typename VDA::Face_handle& f, int dim)
   typedef typename Face::Delaunay_graph          Delaunay_graph;
   typedef typename Face::Delaunay_vertex_handle  Delaunay_vertex_handle;
 
-  typedef typename Face::Holes_iterator      Holes_iterator;
-
   typedef typename Face::Ccb_halfedge_circulator CCBHC;
 
   if ( dim > 0 ) {
@@ -68,10 +66,6 @@ void test_vd_face_concept(const typename VDA::Face_handle& f, int dim)
 
   bool b = f->is_unbounded();
   kill_warning(b);
-
-  //  test_iterator(f->holes_begin(), f->holes_end());
-  //  test_is_convertible_to<Halfedge_handle>(f->holes_begin());
-  //  test_is_convertible_to<Halfedge>(*f->holes_begin());
 
   Delaunay_vertex_handle v = f->dual();
   kill_warning(v);
@@ -235,7 +229,6 @@ void test_vda(const VDA& vda)
   typedef typename VDA::Halfedge_iterator             Halfedge_iterator;
   typedef typename VDA::Face_iterator                 Face_iterator;
   typedef typename VDA::Vertex_iterator               Vertex_iterator;
-  typedef typename VDA::Holes_iterator                Holes_iterator;
   typedef typename VDA::Unbounded_faces_iterator      Unbounded_faces_iterator;
   typedef typename VDA::Bounded_faces_iterator        Bounded_faces_iterator;
   typedef typename VDA::Unbounded_halfedges_iterator  UH_iterator;
@@ -345,11 +338,6 @@ void test_vda(const VDA& vda)
     test_is_convertible_to<Vertex_handle>(vda.vertices_begin());
     test_is_convertible_to<Vertex>(*vda.vertices_begin());
   }
-
-  // holes iterator
-  //  test_iterator(vda.holes_begin(), vda.holes_end());
-  //  test_is_convertible_to<Halfedge_handle>(vda.holes_begin());
-  //  test_is_convertible_to<Halfedge>(*vda.holes_begin());
 
   // Ccb_halfedge_circulator
   if ( vda.faces_begin() != vda.faces_end()

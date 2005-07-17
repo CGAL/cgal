@@ -256,10 +256,6 @@ class Voronoi_diagram_2
   <Halfedge>
   Ccb_halfedge_circulator;
 
-  // THE HOLES ITERATOR
-  typedef CGAL_VORONOI_DIAGRAM_2_NS::Dummy_iterator<Ccb_halfedge_circulator>
-  Holes_iterator;
-
   // THE BOUNDED AND UNBOUNDED FACES ITERATOR
  protected:
   typedef CGAL_VORONOI_DIAGRAM_2_NS::Bounded_face_tester
