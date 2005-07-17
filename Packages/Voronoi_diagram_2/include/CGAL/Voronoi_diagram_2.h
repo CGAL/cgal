@@ -322,7 +322,7 @@ class Voronoi_diagram_2
 
     Site_2& operator()(const Face& f) const {
       static Site_2 s;
-      s = Voronoi_traits::site(f.dual_vertex());
+      s = Voronoi_traits::site(f.dual());
       return s;
     }
   };
