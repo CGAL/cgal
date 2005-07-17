@@ -1,8 +1,8 @@
 %!PS-Adobe-2.0 EPSF-2.0
 %%Title: ex_12.fig
 %%Creator: fig2dev Version 3.2 Patchlevel 5-alpha5
-%%CreationDate: Mon Jul 11 16:58:13 2005
-%%For: wein@cgal (Ron Wein,,09-576985,)
+%%CreationDate: Sun Jul 17 17:01:32 2005
+%%For: wein@lens (Ron Wein,,09-576985,)
 %%BoundingBox: 0 0 200 186
 %Magnification: 0.5000
 %%EndComments
@@ -182,8 +182,7 @@ n 3150 5400 m
 n 3150 5400 m 3825 5400 l 5175 2700 l
  6525 5400 l gs col17 s gr  [] 0 sd
 % Polyline
-15.000 slw
- [60] 0 sd
+ [15 30] 30 sd
 n 3825 4725 m 3132 5409 l 3807 6759 l 4482 6084 l 5157 6759 l 5832 6084 l
  6507 6759 l 7182 5409 l 6525 4725 l
  5850 5400 l gs col0 s gr  [] 0 sd
@@ -229,9 +228,6 @@ n 5852 4052 50 50 0 360 DrawEllipse gs col7 1.00 shd ef gr gs col0 s gr
 
 % Ellipse
 n 5850 5400 50 50 0 360 DrawEllipse gs col4 1.00 shd ef gr gs col0 s gr
-
-% Ellipse
-n 4050 4945 50 50 0 360 DrawEllipse gs col7 1.00 shd ef gr gs col0 s gr
 
 % Ellipse
 n 6300 4945 50 50 0 360 DrawEllipse gs col7 1.00 shd ef gr gs col0 s gr
