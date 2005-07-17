@@ -27,7 +27,7 @@
 
 The concept \ccc{VoronoiTraits_2} defines the combinatorial and
 geometric predicate requirements for the
-\ccc{Voronoi_diagram_adaptor_2<DG,VT>} class. The
+\ccc{Voronoi_diagram_2<DG,VT>} class. The
 \ccc{VoronoiTraits_2} concept essentially defines the requirements on
 the predicates that determine whether a feature of the triangulated
 Delaunay graph has a degenerate dual feature in the Voronoi diagram
@@ -48,8 +48,8 @@ constructing these objects.
 \ccNestedType{Site_2}{A type for the generators of the Voronoi
   diagram.}
 \ccGlue
-\ccNestedType{Dual_graph}{A type for the triangulated Delaunay
-  graph. The type \ccc{Dual_graph} must be a model of the
+\ccNestedType{Delaunay_graph}{A type for the triangulated Delaunay
+  graph. The type \ccc{Delaunay_graph} must be a model of the
   \ccc{DelaunayGraph_2} concept.}
 \ccGlue
 \ccNestedType{Voronoi_vertex_2}{A type for Voronoi vertices. It must
@@ -77,9 +77,9 @@ constructing these objects.
   \ccc{DelaunayGraphNearestSite_2}. This type is required only if
   \ccc{Has_nearest_site_2} is equal to \ccc{CGAL::Tag_true}.}
 
-\ccThree{typedef typename Dual_graph::Vertex_handle}{Vertex_handle+}{}
+\ccThree{typedef typename Delaunay_graph::Vertex_handle}{Vertex_handle+}{}
 \ccThreeToTwo
-\ccTypedef{typedef typename Dual_graph::Vertex_handle
+\ccTypedef{typedef typename Delaunay_graph::Vertex_handle
   Vertex_handle;}{Handle to the vertices of the Delaunay graph.}
 \ccTypedef{typedef Voronoi_edge_2 Curve;}{This type is provided in
   order to comply with the
@@ -94,8 +94,14 @@ constructing these objects.
 \ccGlue
 \ccMethod{Face_degeneracy_tester face_degeneracy_tester_object();}{}
 \ccGlue
-\ccMethod{Point_locator point_locator_object();}{This method is
-  required only if \ccc{Has_point_locator} is equal to \ccc{CGAL::Tag_true}.}
+\ccMethod{Nearest_site_2 nearest_site_2_object();}{This method is
+  required only if \ccc{Has_nearest_site_2} is equal to \ccc{CGAL::Tag_true}.}
+
+\ccHeading{Access methods}
+\ccThree{Site_2}{vt.site(Vertex_handle v);}{}
+\ccMethod{Site_2 site(Vertex_handle v);}{Returns the site associated
+  with the vertex of the Delaunay graph represented by \ccc{v}.
+  \ccPrecond{\ccc{v} must not be the infinite vertex.}}
 
 %
 %
@@ -156,7 +162,7 @@ constructing these objects.
 \ccc{EdgeDegeneracyTester}\\
 \ccc{FaceDegeneracyTester}\\
 \ccc{DelaunayGraphPointLocator_2}\\
-\ccc{CGAL::Voronoi_diagram_adaptor_2<DG,VT>}
+\ccc{CGAL::Voronoi_diagram_2<DG,VT>}
 \end{ccRefConcept}
 
 % +------------------------------------------------------------------------+

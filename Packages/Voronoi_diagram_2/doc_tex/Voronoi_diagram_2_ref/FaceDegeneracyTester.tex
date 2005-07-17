@@ -32,13 +32,13 @@ concept, a model of this concept must provide the following types:
 
 %\ccTwo{FaceDegeneracyTester::Dual_graph+}{}
 %
-\ccThree{typedef typename Dual_graph::Vertex_handle}{Vertex_handle+}{}
+\ccThree{typedef typename Delaunay_graph::Vertex_handle}{Vertex_handle+}{}
 \ccThreeToTwo
-\ccNestedType{Dual_graph}{A type for the Delaunay graph. It must be
+\ccNestedType{Delaunay_graph}{A type for the Delaunay graph. It must be
   model of the \ccc{DelaunayGraph_2} concept.}
 %
 \ccGlue
-\ccTypedef{typedef typename Dual_graph::Vertex_handle Vertex_handle;}{}
+\ccTypedef{typedef typename Delaunay_graph::Vertex_handle Vertex_handle;}{}
 
 
 \ccCreationVariable{fdt}
@@ -56,11 +56,11 @@ concept, a model of this concept must provide the following types:
 \ccOperations
 It must also provide the following operation:
 
-\ccThree{bool}{Dual_graph dg, fdt(Vertex_handle v)+}{}
+\ccThree{bool}{Delaunay_graph dg, fdt(Vertex_handle v)+}{}
 \ccThreeToTwo
-\ccMemberFunction{bool operator()(Dual_graph dg, Vertex_handle v);}
-{returns \ccStyle{true}, if the dual Voronoi face of \ccc{v} (that
-  belongs to the dual Delaunay graph \ccc{dg}) is
+\ccMemberFunction{bool operator()(Delaunay_graph dg, Vertex_handle v);}
+{returns \ccStyle{true}, if the dual face of \ccc{v} (that
+  belongs to the Delaunay graph \ccc{dg}) is
   degenerate, i.e., it has zero area.}
 %
 

@@ -23,13 +23,14 @@
 
 \ccDefinition
 The concept \ccc{VoronoiDiagramHalfedge_2} defines the requirements of the
-halfedge provided by the Voronoi diagram adaptor.
+halfedge provided by the \ccc{Voronoi_diagram_2} class.
 
 \ccRefines
 \ccc{DefaultConstructible}\\
 \ccc{CopyConstructible}\\
 \ccc{Assignable}\\
-\ccc{EqualityComparable}
+\ccc{EqualityComparable}\\
+\ccc{LessThanComparable}
 
 \ccTypes
 %
@@ -53,21 +54,21 @@ halfedge provided by the Voronoi diagram adaptor.
   Voronoi face. The value type of the circulator is
   \ccc{VoronoiDiagramHalfedge_2}.}
 %
-\ccThree{typedef typename Dual_graph::Edge}{Dual_edge;}{}
+\ccThree{typedef typename Delaunay_graph::Edge}{Delaunay_edge;}{}
 \ccThreeToTwo
-\ccNestedType{Dual_graph}{A type for the Delaunay graph. It must be a
+\ccNestedType{Delaunay_graph}{A type for the Delaunay graph. It must be a
   model of the \ccc{DelaunayGraph_2} concept.}
 \ccGlue
-\ccTypedef{typedef typename Dual_graph::Edge Dual_edge;}{A type for
-  the dual edge.}
+\ccTypedef{typedef typename Delaunay_graph::Edge Delaunay_edge;}{A type for
+  the dual edge in the Delaunay graph.}
 
 \ccCreationVariable{e}  %% choose variable name
 
-\ccThree{Dual_edge}{e.has_source()+}{}
+\ccThree{Delaunay_edge}{e.has_source()+}{}
 \ccThreeToTwo
 
 \ccHeading{Access Methods}
-\ccThree{Ccb_halfedge_circulator}{e.dual_edge()+}{}
+\ccThree{Ccb_halfedge_circulator}{e.Delaunay_edge()+}{}
 %
 \ccMethod{Halfedge_handle opposite();}{Returns the twin halfedge.}
 \ccGlue
@@ -99,7 +100,7 @@ halfedge provided by the Voronoi diagram adaptor.
 \ccGlue
 \ccMethod{Curve curve();}{Returns the curve represented by the halfedge.}
 \ccGlue
-\ccMethod{Dual_edge dual_edge();}{Returns the dual edge, i.e., the
+\ccMethod{Delaunay_edge Delaunay_edge();}{Returns the dual edge, i.e., the
   corresponding dual edge in the Delaunay graph.}
 
 \ccHeading{Predicate Methods}
@@ -135,12 +136,12 @@ halfedge provided by the Voronoi diagram adaptor.
   and the next of its previous halfedge is itself.}
 
 \ccHasModels
-\ccc{CGAL::Voronoi_diagram_adaptor_2<DG,VT>::Halfedge}\\
+\ccc{CGAL::Voronoi_diagram_2<DG,VT>::Halfedge}\\
 
 \ccSeeAlso
 \ccc{VoronoiDiagramVertex_2}\\
 \ccc{VoronoiDiagramFace_2}\\
-\ccc{CGAL::Voronoi_diagram_adaptor_2<DG,VT>}
+\ccc{CGAL::Voronoi_diagram_2<DG,VT>}
 \end{ccRefConcept}
 
 % +------------------------------------------------------------------------+

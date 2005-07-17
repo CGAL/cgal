@@ -33,7 +33,7 @@ representing the Voronoi vertices in the Voronoi diagram.
 In addition to the requirements listed below, a model of the
 \ccc{VoronoiVertex_2} concept must also be convertible to a
 point, or more precisely to an object of the type
-\ccc{VoronoiVertex_2::Dual_graph::Geom_traits::Point_2}.
+\ccc{VoronoiVertex_2::Delaunay_graph::Geom_traits::Point_2}.
 
 
 \ccRefines
@@ -42,17 +42,17 @@ point, or more precisely to an object of the type
 \ccc{Assignable}
 
 \ccTypes
-\ccTwo{VoronoiVertex_2::Dual_graph+}{}
+\ccTwo{VoronoiVertex_2::Delaunay_graph+}{}
 %
-\ccNestedType{Dual_graph}{A type for the Delaunay graph. It must be a
+\ccNestedType{Delaunay_graph}{A type for the Delaunay graph. It must be a
   model of the \ccc{DelaunayGraph_2} concept.}
 \ccGlue
 \ccNestedType{Site_2}{A type for the generators of the Voronoi diagram.}
 %\ccGlue
-\ccThree{typedef typename Dual_graph::Geom_traits::Point_2}{Point_2+}{}
-\ccTypedef{typedef typename Dual_graph::Geom_traits::Point_2 Point_2;}
-{A type for a point. The Voronoi vertex should be convertible to this
-  type.}
+\ccThree{typedef typename Delaunay_graph::Geom_traits::Point_2}{Point_2+}{}
+\ccTypedef{typedef typename Delaunay_graph::Geom_traits::Point_2 Point_2;}
+{A type for a point.}
+% The Voronoi vertex should be convertible to this type.}
 
 
 \ccCreationVariable{v}  %% choose variable name
