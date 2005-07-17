@@ -36,13 +36,13 @@ struct Find_next_halfedge
 {
   typedef Triangulation_cw_ccw_2  CW_CCW_2;
 
-  typedef typename VDA::Delaunay_graph::Face_handle   Dual_face_handle;
+  typedef typename VDA::Delaunay_graph::Face_handle   Delaunay_face_handle;
   typedef typename VDA::Edge_degeneracy_tester        Edge_tester;
 
-  void operator()(const VDA* vda, const Dual_face_handle& f, int i,
-		  Dual_face_handle& fnext, int& inext) const
+  void operator()(const VDA* vda, const Delaunay_face_handle& f, int i,
+		  Delaunay_face_handle& fnext, int& inext) const
   {
-    Dual_face_handle fcur = f;
+    Delaunay_face_handle fcur = f;
     int icur = i, cw_i;
     do {
       cw_i = CW_CCW_2::cw(icur);
@@ -59,13 +59,13 @@ struct Find_next_halfedge
 template<class VDA>
 struct Find_opposite_halfedge
 {
-  typedef typename VDA::Delaunay_graph::Face_handle   Dual_face_handle;
+  typedef typename VDA::Delaunay_graph::Face_handle   Delaunay_face_handle;
   typedef Find_next_halfedge<VDA>                     Find_next_halfedge;
 
-  void operator()(const VDA* vda, const Dual_face_handle& f, int i,
-		  Dual_face_handle& fopp, int& iopp) const 
+  void operator()(const VDA* vda, const Delaunay_face_handle& f, int i,
+		  Delaunay_face_handle& fopp, int& iopp) const 
   {
-    Dual_face_handle f1;
+    Delaunay_face_handle f1;
     int i1;
     int i_mirror = vda->dual().tds().mirror_index(f, i);
 
@@ -82,26 +82,26 @@ template<class VDA>
 class Find_valid_vertex
 {
  public:
-  typedef typename VDA::Delaunay_graph::Face_handle  Dual_face_handle;
-  typedef std::map<Dual_face_handle,bool>            Dual_face_map;
+  typedef typename VDA::Delaunay_graph::Face_handle  Delaunay_face_handle;
+  typedef std::map<Delaunay_face_handle,bool>        Delaunay_face_map;
 
-  Dual_face_handle operator()(const VDA* vda,
-			      const Dual_face_handle& f) const
+  Delaunay_face_handle operator()(const VDA* vda,
+				  const Delaunay_face_handle& f) const
   {
     CGAL_precondition( !vda->dual().is_infinite(f) );
-    Dual_face_map fmap;
-    Dual_face_handle fvalid;
+    Delaunay_face_map fmap;
+    Delaunay_face_handle fvalid;
     find_valid_vertex(vda, f, fvalid, fmap);
-    CGAL_assertion( fvalid != Dual_face_handle() );
+    CGAL_assertion( fvalid != Delaunay_face_handle() );
     CGAL_assertion( !vda->dual().is_infinite(fvalid) );
     fmap.clear();
     return fvalid;
   }
 
  private:
-  void find_valid_vertex(const VDA* vda, const Dual_face_handle& cur,
-			 Dual_face_handle& fvalid,
-			 Dual_face_map& fmap) const
+  void find_valid_vertex(const VDA* vda, const Delaunay_face_handle& cur,
+			 Delaunay_face_handle& fvalid,
+			 Delaunay_face_map& fmap) const
   {
     if ( fmap.find(cur) != fmap.end() ) { return; }
     fmap[cur] = true;
@@ -113,7 +113,7 @@ class Find_valid_vertex
     }
 
     if ( b[0] || b[1] || b[2] ) {
-      if ( fvalid == Dual_face_handle() || cur < fvalid ) {
+      if ( fvalid == Delaunay_face_handle() || cur < fvalid ) {
 #if 1
 	if ( !vda->dual().is_infinite(cur) ) {
 	  fvalid = cur;

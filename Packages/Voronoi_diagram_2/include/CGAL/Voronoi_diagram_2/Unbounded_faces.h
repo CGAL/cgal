@@ -37,8 +37,9 @@ class Bounded_face_tester
   // this is essentially VDA::Non_degenerate_faces_iterator
   typedef Base_it                                      Base_iterator;
   typedef typename VDA::Delaunay_graph                 Delaunay_graph;
-  typedef typename Delaunay_graph::Vertex_circulator   Dual_vertex_circulator;
-  typedef typename Delaunay_graph::Vertex_handle       Dual_vertex_handle;
+  typedef typename Delaunay_graph::Vertex_handle       Delaunay_vertex_handle;
+  typedef typename Delaunay_graph::Vertex_circulator
+  Delaunay_vertex_circulator;
 
  public:
   Bounded_face_tester(const VDA* vda = NULL) : vda_(vda) {}
@@ -46,10 +47,10 @@ class Bounded_face_tester
   bool operator()(const Base_iterator& it) const {
     if ( vda_->dual().dimension() < 2 ) { return false; }
 
-    Dual_vertex_handle v = it.base();
+    Delaunay_vertex_handle v = it.base();
 
-    Dual_vertex_circulator vc = vda_->dual().incident_vertices(v);
-    Dual_vertex_circulator vc_start = vc;
+    Delaunay_vertex_circulator vc = vda_->dual().incident_vertices(v);
+    Delaunay_vertex_circulator vc_start = vc;
     do {
       if ( vda_->dual().is_infinite(vc) ) { return false; }
       ++vc;
@@ -72,8 +73,9 @@ class Unbounded_face_tester
   // this is essentially VDA::Non_degenerate_faces_iterator
   typedef Base_it                                      Base_iterator;
   typedef typename VDA::Delaunay_graph                 Delaunay_graph;
-  typedef typename Delaunay_graph::Vertex_circulator   Dual_vertex_circulator;
-  typedef typename Delaunay_graph::Vertex_handle       Dual_vertex_handle;
+  typedef typename Delaunay_graph::Vertex_handle       Delaunay_vertex_handle;
+  typedef typename Delaunay_graph::Vertex_circulator
+  Delaunay_vertex_circulator;
 
  public:
   Unbounded_face_tester(const VDA* vda = NULL) : vda_(vda) {}
@@ -81,10 +83,10 @@ class Unbounded_face_tester
   bool operator()(const Base_iterator& it) const {
     if ( vda_->dual().dimension() < 2 ) { return true; }
 
-    Dual_vertex_handle v = it.base();
+    Delaunay_vertex_handle v = it.base();
 
-    Dual_vertex_circulator vc = vda_->dual().incident_vertices(v);
-    Dual_vertex_circulator vc_start = vc;
+    Delaunay_vertex_circulator vc = vda_->dual().incident_vertices(v);
+    Delaunay_vertex_circulator vc_start = vc;
     do {
       if ( vda_->dual().is_infinite(vc) ) { return true; }
       ++vc;

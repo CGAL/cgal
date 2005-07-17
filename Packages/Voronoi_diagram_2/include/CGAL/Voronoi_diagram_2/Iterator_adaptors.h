@@ -311,7 +311,7 @@ class Face_iterator_adaptor
  private:
   typedef Face_iterator_adaptor<VDA,Base_it>    Self;
 
-  // Base_it is essentially VDA::Dual_vertices_iterator
+  // Base_it is essentially VDA::Delaunay_vertices_iterator
   typedef Base_it                              Base_iterator;
   typedef typename VDA::Face                   Face;
   typedef typename VDA::Face_handle            Face_handle;

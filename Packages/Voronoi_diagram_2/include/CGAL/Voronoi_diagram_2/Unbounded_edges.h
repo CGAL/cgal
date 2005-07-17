@@ -37,8 +37,8 @@ class Bounded_edge_tester
 
   // this is essentially VDA::Non_degenerate_edges_iterator
   typedef Base_it                                     Base_iterator;
-  typedef typename VDA::Delaunay_graph::Edge          Dual_edge;
-  typedef typename VDA::Delaunay_graph::Face_handle   Dual_face_handle;
+  typedef typename VDA::Delaunay_graph::Edge          Delaunay_edge;
+  typedef typename VDA::Delaunay_graph::Face_handle   Delaunay_face_handle;
 
  public:
   Bounded_edge_tester(const VDA* vda = NULL) : vda_(vda) {}
@@ -46,10 +46,10 @@ class Bounded_edge_tester
   bool operator()(const Base_iterator& it) const {
     if ( vda_->dual().dimension() < 2 ) { return false; }
 
-    Dual_edge e = it->dual_edge();
+    Delaunay_edge e = it->dual_edge();
 
-    Dual_face_handle df1 = e.first;
-    Dual_face_handle df2 = e.first->neighbor(e.second);
+    Delaunay_face_handle df1 = e.first;
+    Delaunay_face_handle df2 = e.first->neighbor(e.second);
 
     return !vda_->dual().is_infinite(df1) && !vda_->dual().is_infinite(df2);
   }
@@ -68,8 +68,8 @@ class Unbounded_edge_tester
 
   // this is essentially VDA::Non_degenerate_edges_iterator
   typedef Base_it                                     Base_iterator;
-  typedef typename VDA::Delaunay_graph::Edge          Dual_edge;
-  typedef typename VDA::Delaunay_graph::Face_handle   Dual_face_handle;
+  typedef typename VDA::Delaunay_graph::Edge          Delaunay_edge;
+  typedef typename VDA::Delaunay_graph::Face_handle   Delaunay_face_handle;
 
  public:
   Unbounded_edge_tester(const VDA* vda = NULL) : vda_(vda) {}
@@ -77,10 +77,10 @@ class Unbounded_edge_tester
   bool operator()(const Base_iterator& it) const {
     if ( vda_->dual().dimension() < 2 ) { return true; }
 
-    Dual_edge e = it->dual_edge();
+    Delaunay_edge e = it->dual_edge();
 
-    Dual_face_handle df1 = e.first;
-    Dual_face_handle df2 = e.first->neighbor(e.second);
+    Delaunay_face_handle df1 = e.first;
+    Delaunay_face_handle df2 = e.first->neighbor(e.second);
 
     return vda_->dual().is_infinite(df1) || vda_->dual().is_infinite(df2);
   }
