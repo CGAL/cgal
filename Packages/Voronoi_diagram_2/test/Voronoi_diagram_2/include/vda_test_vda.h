@@ -415,6 +415,7 @@ void test_vda(const VDA& vda)
   CGAL_assertion( vda_copy.is_valid() );
   CGAL_assertion( vda_copy_2.is_valid() );
 
+#ifndef VDA_TEST_RT
   // testing file I/O
   std::ofstream ofs("tmp.vd.cgal");
   assert( ofs );
@@ -431,6 +432,7 @@ void test_vda(const VDA& vda)
   CGAL_assertion( vda_copy.number_of_faces() == nf );
 
   CGAL_assertion( vda_copy.is_valid() );
+#endif // VDA_TEST_RT
 
   // sanity tests
   //-------------
