@@ -1,3 +1,19 @@
+17 July 2005:  Menelaos Karavelas
+- in various doc files renamed:
+  * Voronoi_diagram_adaptor_2 to Voronoi_diagram_2
+  * Dual_graph to Delaunay_graph
+  * Dual_face_handle to Delaunay_face_handle
+  * Dual_edge to Delaunay_edge
+  * Dual_vertex_handle to Delaunay_vertex_handle
+- the halfedges, vertices and faces of the Voronoi diagram as well as the
+  corresponding handles are now models of LessThanComparable
+- the dual feature of halfedges, vertices and faces is now accessed through
+  a method called simply dual().
+- removed references to holes in both doc and code
+- removed example connected_components.C; point location example now uses the
+  Delaunay triangulation.
+- added demo files
+
 16 July 2005:  Menelaos Karavelas
 - added swap and clear in requirements of DelaunayGraph_2 concept
 - renamed Voronoi_diagram_adaptor_2 to Voronoi_diagram_2 and Dual_graph to
