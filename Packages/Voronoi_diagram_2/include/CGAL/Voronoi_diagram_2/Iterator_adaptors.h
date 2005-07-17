@@ -175,7 +175,7 @@ class Edge_iterator_adaptor
     this->value_ =
       Halfedge(this->vda_, this->cur_->first, this->cur_->second);
 
-    typename VDA::Delaunay_graph::Edge e = this->value_.dual_edge();
+    typename VDA::Delaunay_graph::Edge e = this->value_.dual();
 
     int j = CW_CCW_2::ccw( e.second );
     typename VDA::Delaunay_graph::Vertex_handle v = e.first->vertex(j);

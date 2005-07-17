@@ -50,10 +50,10 @@ class Vertex
   typedef typename VDA::Voronoi_traits::Voronoi_vertex_2  Voronoi_vertex_2;
 
   typedef typename VDA::Delaunay_graph               Delaunay_graph;
-  typedef typename VDA::Delaunay_graph::Face_handle  Dual_face_handle;
+  typedef typename VDA::Delaunay_graph::Face_handle  Delaunay_face_handle;
 
  private:
-  Dual_face_handle find_valid_vertex(const Dual_face_handle& f) const
+  Delaunay_face_handle find_valid_vertex(const Delaunay_face_handle& f) const
   {
     return Find_valid_vertex<VDA>()(vda_, f);
   }
@@ -63,14 +63,14 @@ class Vertex
   // CONSTRUCTORS
   //-------------
   Vertex(const VDA* vda = NULL) : vda_(vda) {}
-  Vertex(const VDA* vda, Dual_face_handle f) : vda_(vda), f_(f) {
+  Vertex(const VDA* vda, Delaunay_face_handle f) : vda_(vda), f_(f) {
     CGAL_precondition( !vda_->dual().is_infinite(f_) );
   }
 
   // ACCESS TO NEIGHBORING OBJECTS
   //------------------------------
   Halfedge_handle halfedge() const {
-    Dual_face_handle fvalid = find_valid_vertex(f_);
+    Delaunay_face_handle fvalid = find_valid_vertex(f_);
     for (int i = 0; i < 3; i++) {
       int ccw_i = CW_CCW_2::ccw(i);
       
@@ -81,7 +81,7 @@ class Vertex
       if ( !vda_->edge_tester()(vda_->dual(), fvalid, i) &&
 	   !vda_->dual().is_infinite(fvalid, i) ) {
 	if ( vda_->face_tester()(vda_->dual(), fvalid->vertex(ccw_i)) ) {
-	  Dual_face_handle fopp;
+	  Delaunay_face_handle fopp;
 	  int iopp, i_mirror = vda_->dual().tds().mirror_index(fvalid, i);
 
 	  Find_opposite_halfedge<VDA>()(vda_,
@@ -158,7 +158,7 @@ class Vertex
   // ACCESS TO GEOMETRIC OBJECTS
   //----------------------------
   Point_2 point() const {
-    Dual_face_handle fvalid = find_valid_vertex(f_);
+    Delaunay_face_handle fvalid = find_valid_vertex(f_);
     CGAL_assertion( !vda_->dual().is_infinite(fvalid) );
 
     return VDA::Voronoi_traits::make_vertex(fvalid->vertex(0),
@@ -168,7 +168,7 @@ class Vertex
 
   // DUAL FEATURE
   //-------------
-  const Dual_face_handle& dual_face() const { return f_; }
+  const Delaunay_face_handle& dual() const { return f_; }
 
   // VALIDITY TESTING
   //-----------------
@@ -226,7 +226,7 @@ class Vertex
 
  private:
   const VDA* vda_;
-  Dual_face_handle f_;
+  Delaunay_face_handle f_;
 };
 
 

@@ -39,8 +39,8 @@ class Face
  private:
   typedef Face<VDA>                              Self;
   typedef typename VDA::Delaunay_graph           DG;
-  typedef typename DG::Edge_circulator           Dual_edge_circulator;
-  typedef typename DG::Vertex_circulator         Dual_vertex_circulator;
+  typedef typename DG::Edge_circulator           Delaunay_edge_circulator;
+  typedef typename DG::Vertex_circulator         Delaunay_vertex_circulator;
 
   typedef Triangulation_cw_ccw_2                 CW_CCW_2;
 
@@ -52,7 +52,7 @@ class Face
   typedef typename VDA::Vertex_handle            Vertex_handle;
   typedef typename VDA::Face_handle              Face_handle;
   typedef typename VDA::Ccb_halfedge_circulator  Ccb_halfedge_circulator;
-  typedef typename Delaunay_graph::Vertex_handle Dual_vertex_handle;
+  typedef typename Delaunay_graph::Vertex_handle Delaunay_vertex_handle;
 
   typedef typename VDA::Holes_iterator           Holes_iterator;
   typedef Holes_iterator                         Holes_const_iterator;
@@ -75,7 +75,7 @@ class Face
   // CONSTRUCTORS
   //-------------
   Face(const VDA* vda = NULL) : vda_(vda) {}
-  Face(const VDA* vda, Dual_vertex_handle v) : vda_(vda), v_(v)
+  Face(const VDA* vda, Delaunay_vertex_handle v) : vda_(vda), v_(v)
   {
     //    CGAL_precondition( !vda_->face_tester()(v_) );
   }
@@ -92,16 +92,16 @@ class Face
   {
     CGAL_precondition( vda_->dual().dimension() > 0 );
     if ( vda_->dual().dimension() == 1 ) {
-      Dual_vertex_circulator vc;
+      Delaunay_vertex_circulator vc;
       vc = vda_->dual().incident_vertices(v_);
       while ( vda_->dual().is_infinite(vc) ) { ++vc; }
-      Dual_vertex_handle vv(vc);
+      Delaunay_vertex_handle vv(vc);
       return Halfedge_handle( Halfedge(vda_, v_, vv) );
     }
 
     // the edge circulator gives edges that have v_ as their target
-    Dual_edge_circulator ec = vda_->dual().incident_edges(v_);
-    Dual_edge_circulator ec_start = ec;
+    Delaunay_edge_circulator ec = vda_->dual().incident_edges(v_);
+    Delaunay_edge_circulator ec_start = ec;
 
     // if I want to return also infinite edges replace the test in
     // the while loop by the following test (i.e., should omit the
@@ -137,8 +137,8 @@ class Face
   bool is_unbounded() const {
     if ( vda_->dual().dimension() < 2 ) { return true; }
 
-    Dual_vertex_circulator vc = vda_->dual().incident_vertices(v_);
-    Dual_vertex_circulator vc_start = vc;
+    Delaunay_vertex_circulator vc = vda_->dual().incident_vertices(v_);
+    Delaunay_vertex_circulator vc_start = vc;
     do {
       if ( vda_->dual().is_infinite(vc) ) { return true; }
       ++vc;
@@ -164,7 +164,7 @@ class Face
 
   // DUAL FEATURE
   //-------------
-  const Dual_vertex_handle& dual_vertex() const { return v_; }
+  const Delaunay_vertex_handle& dual() const { return v_; }
 
   // VALIDITY TESTING
   //-----------------
@@ -175,16 +175,14 @@ class Face
 
     bool valid = !vda_->face_tester()(vda_->dual(), v_);
 
-    valid = valid && !vda_->edge_tester()( vda_->dual(),
-					   halfedge()->dual_edge() );
+    valid = valid && !vda_->edge_tester()( vda_->dual(), halfedge()->dual() );
 
     Ccb_halfedge_circulator hc = outer_ccb();
     Ccb_halfedge_circulator hc_start = hc;
     Face_handle f_this(*this);
     do {
       valid = valid && hc->face() == f_this;
-      valid = valid && !vda_->edge_tester()( vda_->dual(),
-					     hc->dual_edge() );
+      valid = valid && !vda_->edge_tester()( vda_->dual(), hc->dual() );
       hc++;
     } while ( hc != hc_start );
 
@@ -212,7 +210,7 @@ class Face
 
 private:
   const VDA* vda_;
-  Dual_vertex_handle v_;
+  Delaunay_vertex_handle v_;
 };
 
 CGAL_VORONOI_DIAGRAM_2_END_NAMESPACE

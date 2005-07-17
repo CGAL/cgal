@@ -53,15 +53,15 @@ class Edge_validity_tester
   Edge_validity_tester(const VDA* vda = NULL) : vda_(vda) {}
 
   bool operator()(const Edges_iterator_base& eit) const {
-    CGAL_assertion( !vda_->edge_tester()(vda_->dual(), eit->dual_edge()) );
+    CGAL_assertion( !vda_->edge_tester()(vda_->dual(), eit->dual()) );
 
-    int cw_i = CW_CCW_2::cw( eit->dual_edge().second );
-    int ccw_i = CW_CCW_2::ccw( eit->dual_edge().second );
+    int cw_i = CW_CCW_2::cw( eit->dual().second );
+    int ccw_i = CW_CCW_2::ccw( eit->dual().second );
 
-    Delaunay_vertex_handle v_ccw_i = eit->dual_edge().first->vertex(ccw_i);
+    Delaunay_vertex_handle v_ccw_i = eit->dual().first->vertex(ccw_i);
     CGAL_assertion(  !vda_->face_tester()(vda_->dual(), v_ccw_i)  );
 
-    Delaunay_vertex_handle v_cw_i = eit->dual_edge().first->vertex(cw_i);
+    Delaunay_vertex_handle v_cw_i = eit->dual().first->vertex(cw_i);
     if (  !vda_->face_tester()(vda_->dual(), v_cw_i)  ) {
       return false;
     }
@@ -71,7 +71,7 @@ class Edge_validity_tester
 
     CGAL_assertion( he_opp->opposite() == he );
 
-    return he->face()->dual_vertex() < he_opp->face()->dual_vertex();
+    return he->face()->dual() < he_opp->face()->dual();
   }
 };
 

@@ -46,7 +46,7 @@ class Bounded_edge_tester
   bool operator()(const Base_iterator& it) const {
     if ( vda_->dual().dimension() < 2 ) { return false; }
 
-    Delaunay_edge e = it->dual_edge();
+    Delaunay_edge e = it->dual();
 
     Delaunay_face_handle df1 = e.first;
     Delaunay_face_handle df2 = e.first->neighbor(e.second);
@@ -77,7 +77,7 @@ class Unbounded_edge_tester
   bool operator()(const Base_iterator& it) const {
     if ( vda_->dual().dimension() < 2 ) { return true; }
 
-    Delaunay_edge e = it->dual_edge();
+    Delaunay_edge e = it->dual();
 
     Delaunay_face_handle df1 = e.first;
     Delaunay_face_handle df2 = e.first->neighbor(e.second);

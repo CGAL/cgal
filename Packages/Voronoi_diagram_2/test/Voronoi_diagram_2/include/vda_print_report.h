@@ -127,7 +127,7 @@ void print_report(const VDA& vda, const Projector& project,
     // computing statistics in the primal (Voronoi diagram)
     typename VDA::Edge_iterator eit;
     for (eit = vda.edges_begin(); eit != vda.edges_end(); ++eit) {
-      typename VDA::Halfedge::Dual_edge e = eit->dual_edge();
+      typename VDA::Halfedge::Delaunay_edge e = eit->dual();
       if ( vda.dual().is_infinite(e) ) {
 	n_edge_inf++;
       } else {
@@ -154,7 +154,7 @@ void print_report(const VDA& vda, const Projector& project,
 	Find_valid_vertex;
 
       typename VDA::Delaunay_graph::Face_handle fvalid =
-	Find_valid_vertex()(&vda,vit->dual_face());
+	Find_valid_vertex()(&vda,vit->dual());
       os << dp_project(vda, fvalid) << std::endl;
 
       n_vertices++;

@@ -53,8 +53,8 @@ class Connected_components
   struct Halfedge_handle_less {
     bool operator()(const Halfedge_handle& e1,
 		    const Halfedge_handle& e2) const {
-      typename Halfedge::Dual_edge de1 = e1->dual_edge();
-      typename Halfedge::Dual_edge de2 = e2->dual_edge();
+      typename Halfedge::Delaunay_edge de1 = e1->dual();
+      typename Halfedge::Delaunay_edge de2 = e2->dual();
 
       if ( de1.first != de2.first ) { return de1.first < de2.first; }
       return de1.second < de2.second;
@@ -79,7 +79,7 @@ class Connected_components
   void dfs(const Voronoi_diagram_2& vd, const Halfedge_handle& e,
 	   Halfedge_handle_map& e_map) const
   {
-    CGAL_precondition( !vd.dual().is_infinite(e->dual_edge()) );
+    CGAL_precondition( !vd.dual().is_infinite(e->dual()) );
 
     Halfedge_handle e_opp = e->opposite();
     mark(e, e_map);
