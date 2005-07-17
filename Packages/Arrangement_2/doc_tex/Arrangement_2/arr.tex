@@ -1715,9 +1715,13 @@ The polyline-traits class is a model of the
 \ccc{ArrangementTraits_2} concept and of the
 \ccc{ArrangementLandmarkTraits_2} concept. It inherits its point
 type from the segment-traits class, and define the polyline type,
-which serves as its \ccc{Curve_2} and \ccc{X_monotone_curve_2}
-types (the two are identical). Polyline curve objects can be
-constructed from any range of points.
+which serves as its \ccc{Curve_2}. Polyline curve objects can be
+constructed from any range of points. They also support the
+traversal methods \ccc{begin()} and \ccc{end()} which return
+\ccc{const_iterator} objects for going over the points defining
+the polyline. The nested \ccc{X_monotone_curve_2} type inherits
+from \ccc{Curve_2}. The points in an $x$-monotone curve are
+always stored by an increasing order of their $x$-coordinates.
 
 \begin{figure}[t]
 \begin{ccTexOnly}
@@ -1740,14 +1744,11 @@ overlapping sections.}
 %\end{ccHtmlOnly}
 \end{figure}
 
-%Note that a polyline point is not necessarily a vertex of the
-%arrangement (that is, of the underlying Planar Map) and an edge of
-%the Planar Map need not be a segment. The edges are only required
-%to be x-monotone and pairwise disjoint. In the example below point
-%(150, 50) is not a vertex of the planar map. The polyline to which
-%it belongs is an edge of the planar map.
+The following example program constructs an arrangement of three
+polylines, as drawn in Figure~\ref{arr_fig:ex_12}. Note that most
+points defining the polylines are not associated with arrangement
+vertices:
 
-% RWRW: To be done ...
 \ccIncludeExampleCode{../examples/Arrangement_2/example12.C}
 
 \subsection{The Conic Traits Class}
@@ -2122,15 +2123,31 @@ corresponds to overlaps between red and blue line segments:
 
 \ccIncludeExampleCode{../examples/Arrangement_2/example17.C}
 
+\begin{figure}[t]
+\begin{ccTexOnly}
+\begin{center}
+\input{Arrangement_2/ex_18.pstex_t}
+\end{center}
+\end{ccTexOnly}
+\caption{An arrangement of four polylines, named A--D, as
+constructed in \ccc{example18.C}.}
+\label{arr_fig:ex_18}
+%\begin{ccHtmlOnly}
+%<P>
+%<center>
+%  <img src="ex_18.gif"  border=0 alt="The polyline arrangement constructed in \ccc{example18.C}.">
+%</center>
+%\end{ccHtmlOnly}
+\end{figure}
+
 In the following example, we use \ccc{Arr_polyline_traits_2} as
 our base-traits class, attaching an additional {\em name} field to
 each polyline using the merged curve-data traits class. In case of
 overlaps, we simply concatenate the names of the overlapping
 polylines. Also notice how we replace the curve associated with
-one of the edges with a geometrically equivalent curve, but with a
-different data field:
+the edges that correspond to overlapping polylines with 
+geometrically equivalent curves, but with a different data fields:
 
-% RWRW: To be done ...
 \ccIncludeExampleCode{../examples/Arrangement_2/example18.C}
 
 \section{The Notification Mechanism}
