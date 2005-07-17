@@ -1,0 +1,28 @@
+\ccRefPageBegin
+\begin{ccRefClass}{Arr_non_caching_segment_traits_2<Kernel>}
+    
+\ccDefinition 
+  The traits class \ccStyle{Arr_non_caching_segment_traits_2<Kernel>} is a
+  model of the \ccc{ArrangementTraits_2} concept. It is provided as part of
+  the package and can be used as reference for resolving ambiguities. 
+  It is templated with a CGAL-Kernel model, and it is derived from it. This
+  class is a thin layer above the parameterized kernel. It inherits the kernel
+  types and functionality and it complements it with the necessary functors that
+  are not provided by the kernel. It's implementation is simple, yet may lead to
+  a cascaded representation of intersection points with exponentially long
+  bit-length. The \ccStyle{Arr_segment_traits_2} traits class avoids this
+  cascading problem. The kernel is parameterized with a number type, which
+  should be exact to avoid robustness problems, although other number types
+  could be used at the user's own risk. The \ccc{Quotient<MP_Float>} number
+  type represents floating-point numbers with an unbounded mantissa, but with a
+  bounded exponent. In some cases the exponent may overflow when used with
+  \ccStyle{Arr_non_caching_segment_traits_2<Kernel>}. Examples of exact
+  kernels are \ccStyle{Cartesian<Gmpq>} and \ccStyle{Homogeneous<leda_integer>}.
+    
+\ccInclude{CGAL/Arr_segment_traits_2.h}
+ 
+\ccIsModel
+    \ccc{ArrangementTraits_2}
+
+\end{ccRefClass}
+\ccRefPageEnd

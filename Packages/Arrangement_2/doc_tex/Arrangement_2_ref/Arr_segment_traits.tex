@@ -1,0 +1,28 @@
+\ccRefPageBegin
+\begin{ccRefClass}{Arr_segment_traits_2<Kernel>}
+    
+\ccDefinition 
+  The traits class \ccStyle{Arr_segment_traits_2<Kernel>} is a model of the
+  \ccc{ArrangementTraits_2} concept. It should be templated with a CGAL-Kernel
+  model that is templated in turn with a number type. The number type should be
+  exact to avoid robustness problems, although other number types could be used
+  at the user's own risk. For example, \ccStyle{Cartesian<Quotient<MP_Float> >},
+  \ccStyle{Homogeneous<leda_integer>}, \ccStyle{Cartesian<double>}.
+
+  It achieves faster running times than the
+  \ccStyle{Arr_non_caching_segment_traits_2} traits-class, when arrangements
+  with relatively many intersection points are constructed. It also allows for
+  working with less accurate, yet computationally efficient number types, such
+  as \ccStyle{Quotient<MP_Float>}, which represents floating-point numbers with
+  an unbounded mantissa, but with a bounded exponent. On the other hand, it
+  uses more space and stores extra data with each segment, so constructing
+  sparse arrangements could be more efficient with the
+  \ccStyle{Arr_non_caching_segment_traits_2} traits-class.
+
+\ccInclude{CGAL/Arr_segment_traits_2.h}
+ 
+\ccIsModel
+    \ccc{ArrangementTraits_2}
+
+\end{ccRefClass}
+\ccRefPageEnd
