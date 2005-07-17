@@ -1,3 +1,8 @@
+17 July 2005:  Menelaos Karavelas
+- fixed bug in copy method: the bug was introduced by the change in the
+  representation of the input sites container from an std::list to an
+  std::set.
+
 12 July 2005:  Menelaos Karavelas
 - fixed wrong message for one of the buttons in the file toolbar (demo)
 - the segment Voronoi diagram in the demo now inserts segments in the upper

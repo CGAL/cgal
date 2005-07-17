@@ -2479,7 +2479,7 @@ copy(Segment_Voronoi_diagram_2& other, Handle_map& hm)
     Site_rep_2 new_srep( hm[boost::tuples::get<0>(old_srep)],
 			 hm[boost::tuples::get<1>(old_srep)],
 			 boost::tuples::get<2>(old_srep) );
-    isc_.push_back( new_srep );
+    isc_.insert( new_srep );
   }
   
   CGAL_assertion( pc_.size() == other.pc_.size() );
