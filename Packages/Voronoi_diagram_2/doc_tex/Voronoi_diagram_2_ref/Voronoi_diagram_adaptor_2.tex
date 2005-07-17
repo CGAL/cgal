@@ -102,13 +102,13 @@ corresponding handles.
 \ccGlue
 \ccNestedType{Vertex_iterator}{A type for an iterator over Voronoi
   vertices. Its value type is \ccc{Vertex}.}
-%\ccGlue
-%\ccNestedType{Holes_iterator}{A type for an iterator to traverse all
-%  holes (i.e., inner connected components of the boundary) of a
-%  Voronoi face. Its value type is \ccc{Ccb_halfedge_circulator}. Since
-%  Voronoi diagrams supported by the \ccRefName\ class do not have
-%  holes in their faces, this iterator is solely defined for compliance
-%  with the arrangement package API.}
+%% \ccGlue
+%% \ccNestedType{Holes_iterator}{A type for an iterator to traverse all
+%%   holes (i.e., inner connected components of the boundary) of a
+%%   Voronoi face. Its value type is \ccc{Ccb_halfedge_circulator}. Since
+%%   Voronoi diagrams supported by the \ccRefName\ class do not have
+%%   holes in their faces, this iterator is solely defined for compliance
+%%   with the arrangement package API.}
 \ccGlue
 \ccNestedType{Halfedge_around_vertex_circulator}{A type for a
   circulator over the halfedges that have a common vertex as their
@@ -330,7 +330,7 @@ be destroyed).
 
 
 \ccHeading{I/O}
-\ccThree{void}{vd.file_output(std::ostream& os)}{}
+\ccThree{void}{vd.file_output(std::ostream& os)+}{}
 %
 \ccMethod{void file_output(std::ostream& os);}
 {Writes the current state of the Voronoi diagram to an output
