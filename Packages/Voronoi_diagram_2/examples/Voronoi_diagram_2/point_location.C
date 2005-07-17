@@ -29,21 +29,14 @@ typedef VD::Face_handle               Face_handle;
 typedef VD::Halfedge_handle           Halfedge_handle;
 typedef VD::Ccb_halfedge_circulator   Ccb_halfedge_circulator;
 
-void print_endpoint(Halfedge_handle e, bool is_src)
-{
+void print_endpoint(Halfedge_handle e, bool is_src) {
   std::cout << "\t";
   if ( is_src ) {
-    if ( e->has_source() ) {
-      std::cout << e->source()->point() << std::endl;
-    } else {
-      std::cout << "point at infinity" << std::endl;
-    }
+    if ( e->has_source() )  std::cout << e->source()->point() << std::endl;
+    else  std::cout << "point at infinity" << std::endl;
   } else {
-    if ( e->has_target() ) {
-      std::cout << e->target()->point() << std::endl;
-    } else {
-      std::cout << "point at infinity" << std::endl;
-    }
+    if ( e->has_target() )  std::cout << e->target()->point() << std::endl;
+    else  std::cout << "point at infinity" << std::endl;
   }
 }
 
