@@ -72,7 +72,7 @@ face provided by the class \ccc{Voronoi_diagram_2}.
 
 
 \ccHeading{Access Methods}
-\ccThree{Ccb_halfedge_circulator}{f.Delaunay_vertex()+}{}
+\ccThree{Ccb_halfedge_circulator}{f.outer_ccb()+}{}
 %\ccThree{Dual_vertex_handle}{f.dual_vertex()+}{}
 %
 \ccMethod{Halfedge_handle halfedge();}{Returns an incident halfedge on
@@ -91,8 +91,8 @@ face provided by the class \ccc{Voronoi_diagram_2}.
 \ccGlue
 \ccMethod{Holes_iterator holes_end();}{Past-the-end iterator.}
 %
-\ccMethod{Delaunay_vertex_handle Delaunay_vertex();}
-{Returns the dual vertex, i.e., the
+\ccMethod{Delaunay_vertex_handle dual();}
+{Returns a handle to the dual vertex, i.e., the
   corresponding dual vertex in the Delaunay graph.}
 
 \ccHeading{Predicate Methods}

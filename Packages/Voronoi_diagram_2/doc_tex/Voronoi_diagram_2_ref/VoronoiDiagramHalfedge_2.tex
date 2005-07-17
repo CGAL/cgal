@@ -68,7 +68,7 @@ halfedge provided by the \ccc{Voronoi_diagram_2} class.
 \ccThreeToTwo
 
 \ccHeading{Access Methods}
-\ccThree{Ccb_halfedge_circulator}{e.Delaunay_edge()+}{}
+\ccThree{Ccb_halfedge_circulator}{e.opposite()+}{}
 %
 \ccMethod{Halfedge_handle opposite();}{Returns the twin halfedge.}
 \ccGlue
@@ -100,7 +100,7 @@ halfedge provided by the \ccc{Voronoi_diagram_2} class.
 \ccGlue
 \ccMethod{Curve curve();}{Returns the curve represented by the halfedge.}
 \ccGlue
-\ccMethod{Delaunay_edge Delaunay_edge();}{Returns the dual edge, i.e., the
+\ccMethod{Delaunay_edge dual();}{Returns the dual edge, i.e., the
   corresponding dual edge in the Delaunay graph.}
 
 \ccHeading{Predicate Methods}
