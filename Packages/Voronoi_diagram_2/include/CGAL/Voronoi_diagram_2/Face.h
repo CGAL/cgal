@@ -41,17 +41,18 @@ class Face
   typedef typename VDA::Delaunay_graph           DG;
   typedef typename DG::Edge_circulator           Dual_edge_circulator;
   typedef typename DG::Vertex_circulator         Dual_vertex_circulator;
-  typedef typename DG::Vertex_handle             Dual_vertex_handle;
 
   typedef Triangulation_cw_ccw_2                 CW_CCW_2;
 
  public:
+  typedef typename VDA::Delaunay_graph           Delaunay_graph;
   typedef typename VDA::Halfedge                 Halfedge;
   typedef typename VDA::Vertex                   Vertex;
   typedef typename VDA::Halfedge_handle          Halfedge_handle;
   typedef typename VDA::Vertex_handle            Vertex_handle;
   typedef typename VDA::Face_handle              Face_handle;
   typedef typename VDA::Ccb_halfedge_circulator  Ccb_halfedge_circulator;
+  typedef typename Delaunay_graph::Vertex_handle Dual_vertex_handle;
 
   typedef typename VDA::Holes_iterator           Holes_iterator;
   typedef Holes_iterator                         Holes_const_iterator;
