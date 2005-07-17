@@ -125,7 +125,7 @@ public:
     X_monotone_curve_2 (const Base_x_monotone_curve_2& cv,
                         const Data& data) :
       Base_x_monotone_curve_2(cv),
-      m_data(cv)
+      m_data(data)
     {}
 
     /*!
@@ -134,9 +134,7 @@ public:
      */
     const Data& get_data () const
     {
-      CGAL_precondition (m_data_list.size() > 0);
-
-      return (m_data_list.front());
+      return (m_data);
     }
 
     /*!
@@ -157,30 +155,6 @@ public:
       return;
     }
 
-    /*!
-     * Add a range of data objects to the curve.
-     * \param begin A begin iterator for the data range.
-     * \param end A past-the-end iterator for the data range.
-     */
-    template <class InputIterator>
-    void add_data (const InputIterator& begin, const InputIterator& end)
-    {
-      InputIterator    it;
-
-      for (it = begin; it != end; it++)
-        m_data_list.push_back(*it);
-
-      return;
-    }
-
-    /*!
-     * Clear the data objects.
-     */
-    void clear_data ()
-    {
-      m_data_list.clear();
-      return;
-    }
   };
 
 public:
@@ -240,7 +214,8 @@ public:
         if (base_x_curve != NULL)
         {
           // Current object is an x-monotone curve: Attach data to it.
-          *oi = X_monotone_curve_2 (*base_x_curve, cv.get_data());
+          *oi = make_object (X_monotone_curve_2 (*base_x_curve,
+						 cv.get_data()));
         }
         else
         {
@@ -335,7 +310,7 @@ public:
                                   std::back_inserter (base_objects));
 
       // Stop if the list is empty:
-      if (base_list.empty())
+      if (base_objects.empty())
         return (oi);
 
       // Go over all intersection objects and prepare the output.

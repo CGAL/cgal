@@ -211,7 +211,7 @@ public:
     {}
 
     void operator() (const X_monotone_curve_2& cv, const Point_2 & p,
-                     X_monotone_curve_2& c1, X_monotone_curve_2& c2) const
+                     X_monotone_curve_2& c1, X_monotone_curve_2& c2)
     {
       m_base_split(cv,p,c1,c2);
       c1.set_halfedge_handle(cv.get_halfedge_handle());
