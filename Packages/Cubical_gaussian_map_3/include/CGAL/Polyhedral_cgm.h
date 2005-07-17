@@ -915,11 +915,9 @@ public:
     const Plane_3 & plane = vh->get_plane();
     T_Kernel kernel;
     CGAL::Object res = kernel.intersect_2_object()(plane, ray);
-    T_Kernel::Assign_2 assign_f = kernel.assign_2_object();
-    Point_3 q3;
-    bool rc = assign_f(q3, res);
-    CGAL_assertion(rc);
-    Point_2 q2 = plane.to_2d(q3);
+    const Point_3 * q3_ptr = CGAL::object_cast<Point_3>(&res));
+    CGAL_assertion(q3_ptr != NULL);
+    Point_2 q2 = plane.to_2d(*q3_ptr);
     Point_2 poly[deg];
     for (unsigned int l = 0; l < deg; ++l) {
       poly[l] = plane.to_2d(hecs[l]->face()->get_point());

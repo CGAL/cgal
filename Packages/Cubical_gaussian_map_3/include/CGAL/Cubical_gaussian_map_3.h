@@ -738,26 +738,16 @@ protected:
     Arr & arr = m_arrangements[id];
     Point_location pl(arr);
     CGAL::Object obj = pl.locate(p);
-#if 1
-    Arr_vertex_const_handle const_vertex;
-    if (CGAL::assign(const_vertex, obj))
-#else
-    if (Arr_vertex_const_handle * const_vertex_ptr =
+    if (const Arr_vertex_const_handle * const_vertex_ptr =
         CGAL::object_cast<Arr_vertex_const_handle>(&obj))
-#endif
     {
-      Arr_vertex_handle vertex = arr.non_const_handle(const_vertex);
+      Arr_vertex_handle vertex = arr.non_const_handle(*const_vertex_ptr);
       return vertex->incident_halfedges();
     }
-#if 1
-    Arr_halfedge_const_handle const_edge;
-    if (CGAL::assign(const_edge, obj))
-#else
-    else if (Arr_halfedge_const_handle * const_edge_ptr =
+    else if (const Arr_halfedge_const_handle * const_edge_ptr =
              CGAL::object_cast<Arr_halfedge_const_handle>(&obj))
-#endif
     {
-      Arr_halfedge_handle edge = arr.non_const_handle(const_edge);
+      Arr_halfedge_handle edge = arr.non_const_handle(*const_edge_ptr);
       const X_monotone_curve_2 & curve = edge->curve();
       X_monotone_curve_2 cv1, cv2;
       Arr_traits traits;
@@ -938,17 +928,17 @@ protected:
       Point_location pl(arr);
       if (!proj_normal1.is_vertex_set(i)) {
         CGAL::Object obj = pl.locate(p1);
-        Arr_vertex_const_handle const_vertex;
-        if (CGAL::assign(const_vertex, obj)) {
-          Arr_vertex_handle vertex = arr.non_const_handle(const_vertex);
+        if (const Arr_vertex_const_handle * const_vertex_ptr =
+            CGAL::object_cast<Arr_vertex_const_handle>(&obj)) {
+          Arr_vertex_handle vertex = arr.non_const_handle(*const_vertex_ptr);
           proj_normal1.set_vertex(vertex, i);
         }
       }
       if (!proj_normal2.is_vertex_set(i)) {
         CGAL::Object obj = pl.locate(p2);
-        Arr_vertex_const_handle const_vertex;
-        if (CGAL::assign(const_vertex, obj)) {
-          Arr_vertex_handle vertex = arr.non_const_handle(const_vertex);
+        if (const Arr_vertex_const_handle * const_vertex_ptr =
+            CGAL::object_cast<Arr_vertex_const_handle>(&obj)) {
+          Arr_vertex_handle vertex = arr.non_const_handle(*const_vertex_ptr);
           proj_normal2.set_vertex(vertex, i);
         }
       }
