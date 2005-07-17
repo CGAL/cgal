@@ -30,7 +30,7 @@
 //==========================================================================
 
 template<class VDA>
-void test_vd_face_concept(const typename VDA::Face_handle& f)
+void test_vd_face_concept(const typename VDA::Face_handle& f, int dim)
 {
   typedef typename VDA::Face                 Face;
 
@@ -41,9 +41,6 @@ void test_vd_face_concept(const typename VDA::Face_handle& f)
   typedef typename Face::Vertex_handle       Vertex_handle;
   typedef typename Face::Face_handle         Face_handle;
 
-  typedef typename Face::size_type           size_type;
-  typedef typename Face::Point_2             Point_2;
-
   typedef typename Face::Delaunay_graph      Delaunay_graph;
   typedef typename Face::Dual_vertex_handle  Dual_vertex_handle;
 
@@ -51,29 +48,30 @@ void test_vd_face_concept(const typename VDA::Face_handle& f)
 
   typedef typename Face::Ccb_halfedge_circulator CCBHC;
 
+  if ( dim > 0 ) {
+    // access methods
+    Halfedge_handle e = f->halfedge();
+    CGAL_assertion( e->face() == f );
 
-  // access methods
-  Halfedge_handle e = f->halfedge();
-  CGAL_assertion( e->face() == f );
+    CCBHC hc_start = f->outer_ccb();
+    CCBHC hc = hc_start;
+    test_circulator(hc);
 
-  CCBHC hc_start = f->outer_ccb();
-  CCBHC hc = hc_start;
-  test_circulator(hc);
-
-  hc = hc_start;
-  do {
-    bool b1 = f->is_halfedge_on_outer_ccb(hc);
-    bool b2 = f->is_halfedge_on_inner_ccb(hc);
-    CGAL_assertion( b1 && !b2 );
-    hc++;
-  } while ( hc != hc_start );
+    hc = hc_start;
+    do {
+      bool b1 = f->is_halfedge_on_outer_ccb(hc);
+      bool b2 = f->is_halfedge_on_inner_ccb(hc);
+      CGAL_assertion( b1 && !b2 );
+      ++hc;
+    } while ( hc != hc_start );
+  }
 
   bool b = f->is_unbounded();
   kill_warning(b);
 
-  test_iterator(f->holes_begin(), f->holes_end());
-  test_is_convertible_to<Halfedge_handle>(f->holes_begin());
-  test_is_convertible_to<Halfedge>(*f->holes_begin());
+  //  test_iterator(f->holes_begin(), f->holes_end());
+  //  test_is_convertible_to<Halfedge_handle>(f->holes_begin());
+  //  test_is_convertible_to<Halfedge>(*f->holes_begin());
 
   Dual_vertex_handle v = f->dual_vertex();
   kill_warning(v);
@@ -460,10 +458,10 @@ void test_vda(const VDA& vda)
     test_vd_vertex_concept<VDA>(it);
   }
 
-  // testing vertex concept
+  // testing face concept
   for (Face_iterator it = vda.faces_begin();
        it != vda.faces_end(); ++it) {
-    //    test_vd_face_concept<VDA>(it);
+    test_vd_face_concept<VDA>(it, vda.dual().dimension());
   }
 
   // testing bounded/unbounded iterators
