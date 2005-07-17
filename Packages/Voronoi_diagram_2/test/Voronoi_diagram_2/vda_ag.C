@@ -17,6 +17,8 @@
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@tem.uoc.gr>
 
+#define VDA_TEST_AG
+
 #include <CGAL/basic.h>
 
 #include <CGAL/Voronoi_diagram_2.h>
