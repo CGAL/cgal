@@ -17,8 +17,8 @@
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@cse.nd.edu>
 
-#ifndef SVD_ARE_PARALLEL_C2_H
-#define SVD_ARE_PARALLEL_C2_H
+#ifndef CGAL_SVD_ARE_PARALLEL_C2_H
+#define CGAL_SVD_ARE_PARALLEL_C2_H
 
 
 #include <CGAL/determinant.h>
@@ -75,4 +75,4 @@ public:
 CGAL_END_NAMESPACE
 
 
-#endif // SVD_ARE_PARALLEL_C2_H
+#endif // CGAL_SVD_ARE_PARALLEL_C2_H

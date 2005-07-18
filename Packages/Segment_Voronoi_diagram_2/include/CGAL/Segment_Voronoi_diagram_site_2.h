@@ -19,8 +19,8 @@
 
 
 
-#ifndef SEGMENT_VORONOI_DIAGRAM_SITE_H
-#define SEGMENT_VORONOI_DIAGRAM_SITE_H
+#ifndef CGAL_SEGMENT_VORONOI_DIAGRAM_SITE_H
+#define CGAL_SEGMENT_VORONOI_DIAGRAM_SITE_H
 
 #include <iostream>
 #include <CGAL/assertions.h>
@@ -353,4 +353,4 @@ operator<<(Stream& str, Segment_Voronoi_diagram_site_2<R>& t)
 
 CGAL_END_NAMESPACE
 
-#endif // SEGMENT_VORONOI_DIAGRAM_SITE_H
+#endif // CGAL_SEGMENT_VORONOI_DIAGRAM_SITE_H

@@ -1,3 +1,6 @@
+18 July 2005:  Menelaos Karavelas
+- prefixed macros with CGAL_
+
 17 July 2005:  Menelaos Karavelas
 - fixed bug in copy method: the bug was introduced by the change in the
   representation of the input sites container from an std::list to an
