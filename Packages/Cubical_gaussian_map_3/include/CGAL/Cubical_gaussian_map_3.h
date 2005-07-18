@@ -1047,7 +1047,7 @@ protected:
    */
   void connect(Projected_normal & proj_normal1, unsigned int id1,
                Projected_normal & proj_normal2, unsigned int id2,
-               const Cgm_plane_3 & plane, bool unique)
+               const Cgm_plane_3 & plane, bool unique = false)
   {
 #if 0
     std::cout << "connect from " << id1 << " to " << id2 << std::endl;
@@ -1626,7 +1626,7 @@ public:
    * the last clear, must represents two different normals.
    */
   void insert(Projected_normal & proj_normal1, Projected_normal & proj_normal2,
-              bool unique)
+              bool unique = false)
   {
     unsigned int faces_mask1 = proj_normal1.get_faces_mask();
     unsigned int faces_mask2 = proj_normal2.get_faces_mask();
