@@ -451,7 +451,9 @@ _is_in_connected_component (const Point_2& p,
                                             traits->compare_y_at_x_2_object();
   typename Traits_wrapper_2::Compare_y_position_2 compare_y_position =
                                         traits->compare_y_position_2_object();
-
+  typename Traits_wrapper_2::Compare_xy_2         compare_xy =
+                                            traits->compare_xy_2_object();
+  
   // Start from the first non-vertical segment in the connected component.
   Ccb_halfedge_const_circulator  first = circ;
   bool                           found_non_vertical = false;
