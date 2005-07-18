@@ -17,6 +17,22 @@ enum MaxFilesNumber {
 #endif
 #undef POSTSCRIPT_SUPPORTED
 
+// Landmark point-location supported:
+#if BENCH_TRAITS != LEDA_CONIC_TRAITS && BENCH_TRAITS != CORE_CONIC_TRAITS && \
+    BENCH_TRAITS != POLYLINE_TRAITS && \
+    BENCH_TRAITS != NON_CACHING_POLYLINE_TRAITS
+#define LANDMARK_SUPPORTED 1
+#endif
+#undef LANDMARK_SUPPORTED
+
+// Triangle point-location supported:
+#if BENCH_TRAITS != LEDA_CONIC_TRAITS && BENCH_TRAITS != CORE_CONIC_TRAITS && \
+    BENCH_TRAITS != POLYLINE_TRAITS && \
+    BENCH_TRAITS != NON_CACHING_POLYLINE_TRAITS
+#define TRIANGLE_SUPPORTED 1
+#endif
+#undef TRIANGLE_SUPPORTED
+
 // Kernel:
 #if BENCH_KERNEL == LEDA_KERNEL
 #include <CEP/Leda_rat_kernel/leda_rat_kernel_traits.h>
@@ -153,11 +169,12 @@ enum MaxFilesNumber {
 #include <CGAL/Arr_walk_along_line_point_location.h>
 #include <CGAL/Arr_naive_point_location.h>
 
-#if BENCH_TRAITS != LEDA_CONIC_TRAITS && BENCH_TRAITS != CORE_CONIC_TRAITS && \
-    BENCH_TRAITS != POLYLINE_TRAITS && \
-    BENCH_TRAITS != NON_CACHING_POLYLINE_TRAITS
+#if defined(LANDMARK_SUPPORTED)
 #include <CGAL/Arr_nearest_neighbor.h>
 #include <CGAL/Arr_landmarks_point_location.h>
+#endif
+
+#if defined(TRIANGLE_SUPPORTED)
 #include <CGAL/Arr_triangle_point_location.h>
 #endif
 
@@ -290,12 +307,14 @@ typedef Arr::Halfedge_iterator                          Arr_halfedge_iterator;
 typedef CGAL::Arr_trapezoid_ric_point_location<Arr>     Trap_point_location;
 typedef CGAL::Arr_naive_point_location<Arr>             Naive_point_location;
 typedef CGAL::Arr_walk_along_line_point_location<Arr>   Walk_point_location;
-#if BENCH_TRAITS != LEDA_CONIC_TRAITS && BENCH_TRAITS != CORE_CONIC_TRAITS && \
-    BENCH_TRAITS != POLYLINE_TRAITS && \
-    BENCH_TRAITS != NON_CACHING_POLYLINE_TRAITS
+
+#if defined(LANDMARK_SUPPORTED)
 typedef CGAL::Arr_nearest_neighbor<Arr>                 Nearest_neighbor;
 typedef CGAL::Arr_landmarks_point_location<Arr,Nearest_neighbor>
   Landmarks_point_location;
+#endif
+
+#if defined(TRIANGLE_SUPPORTED)
 typedef CGAL::Arr_triangle_point_location<Arr>          Triangle_point_location;
 #endif
 
@@ -445,12 +464,12 @@ typedef CGAL::Bench<Naive_inc_arr>              Naive_inc_arr_bench;
 typedef Increment_arr<Walk_point_location>      Walk_inc_arr;
 typedef CGAL::Bench<Walk_inc_arr>               Walk_inc_arr_bench;
 
-#if BENCH_TRAITS != LEDA_CONIC_TRAITS && BENCH_TRAITS != CORE_CONIC_TRAITS && \
-    BENCH_TRAITS != POLYLINE_TRAITS && \
-    BENCH_TRAITS != NON_CACHING_POLYLINE_TRAITS
+#if defined(LANDMARK_SUPPORTED)
 typedef Increment_arr<Landmarks_point_location> Landmarks_inc_arr;
 typedef CGAL::Bench<Landmarks_inc_arr>          Landmarks_inc_arr_bench;
+#endif
 
+#if defined(TRIANGLE_SUPPORTED)
 typedef Increment_arr<Triangle_point_location>  Triangle_inc_arr;
 typedef CGAL::Bench<Triangle_inc_arr>           Triangle_inc_arr_bench;
 #endif
@@ -737,9 +756,7 @@ int main(int argc, char * argv[])
                                                  verbose, postscript);
     }
 
-#if BENCH_TRAITS != CONIC_TRAITS && BENCH_TRAITS != CORE_CONIC_TRAITS && \
-    BENCH_TRAITS != POLYLINE_TRAITS && BENCH_TRAITS != NON_CACHING_POLYLINE_TRAITS
-
+#if defined(LANDMARK_SUPPORTED)
     // Landmarks point location:
     strategy_id = CGAL::Bench_parse_args::STRATEGY_LANDMARKS;
     if (strategy_mask & (0x1 << strategy_id)) {
@@ -755,7 +772,9 @@ int main(int argc, char * argv[])
                                                            samples, iterations,
                                                            verbose, postscript);
     }
-
+#endif
+    
+#if defined(TRIANGLE_SUPPORTED)
     // Triangle point location:
     strategy_id = CGAL::Bench_parse_args::STRATEGY_TRIANGLE;
     if (strategy_mask & (0x1 << strategy_id)) {

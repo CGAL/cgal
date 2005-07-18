@@ -7,10 +7,10 @@
 #define MY_KERNEL                       3
 
 #define SEGMENT_TRAITS                  0
-#define SEGMENT_CACHED_TRAITS           1
+#define NON_CACHING_SEGMENT_TRAITS      1
 #define LEDA_SEGMENT_TRAITS             2
 #define POLYLINE_TRAITS                 3
-#define POLYLINE_CACHED_TRAITS          4
+#define NON_CACHING_POLYLINE_TRAITS     4
 #define LEDA_CONIC_TRAITS               5
 #define EXACUS_CONIC_TRAITS             6
 #define CK_CONIC_TRAITS                 7

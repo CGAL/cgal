@@ -14,10 +14,10 @@ LEDA_KERNEL =                   2
 MY_KERNEL =                     3
 
 SEGMENT_TRAITS =                0
-SEGMENT_CACHED_TRAITS =         1
+NON_CACHING_SEGMENT_TRAITS =    1
 LEDA_SEGMENT_TRAITS =           2
 POLYLINE_TRAITS =               3
-POLYLINE_CACHED_TRAITS =        4
+NON_CACHING_POLYLINE_TRAITS =   4
 LEDA_CONIC_TRAITS =             5
 EXACUS_CONIC_TRAITS =           6
 CK_CONIC_TRAITS =               7
@@ -267,9 +267,9 @@ ifeq ($(BENCH_TRAITS), $(SEGMENT_TRAITS))
 TARGET0 := $(TARGET0)Segment
 LOBJDIR :=$(LOBJDIR)_segment
 else
-ifeq ($(BENCH_TRAITS), $(SEGMENT_CACHED_TRAITS))
-TARGET0 := $(TARGET0)SegmentCached
-LOBJDIR :=$(LOBJDIR)_segment_cached
+ifeq ($(BENCH_TRAITS), $(NON_CACHING_SEGMENT_TRAITS))
+TARGET0 := $(TARGET0)NonCachingSegment
+LOBJDIR :=$(LOBJDIR)_non_caching_segment
 else
 ifeq ($(BENCH_TRAITS), $(LEDA_SEGMENT_TRAITS))
 TARGET0 := $(TARGET0)LedaSegment
@@ -279,9 +279,9 @@ ifeq ($(BENCH_TRAITS), $(POLYLINE_TRAITS))
 TARGET0 := $(TARGET0)Polyline
 LOBJDIR :=$(LOBJDIR)_polyline
 else
-ifeq ($(BENCH_TRAITS), $(POLYLINE_CACHED_TRAITS))
-TARGET0 := $(TARGET0)PolylineCached
-LOBJDIR :=$(LOBJDIR)_polyline_cached
+ifeq ($(BENCH_TRAITS), $(NON_CACHING_POLYLINE_TRAITS))
+TARGET0 := $(TARGET0)NonCachingPolyline
+LOBJDIR :=$(LOBJDIR)_non_caching_polyline
 else 
 ifeq ($(BENCH_TRAITS), $(LEDA_CONIC_TRAITS))
 TARGET0 := $(TARGET0)Conic
