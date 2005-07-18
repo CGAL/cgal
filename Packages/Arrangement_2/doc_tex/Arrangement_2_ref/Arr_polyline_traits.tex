@@ -1,0 +1,93 @@
+\ccRefPageBegin
+\begin{ccRefClass}{Arr_polyline_traits_2<Segment_traits>}
+
+\ccDefinition
+
+  The traits class \ccRefName\ is a model of the \ccc{ArrangementTraits_2}
+  concept. It handles piecewise linear curves, commonly referred to polylines.
+  Each polyline is a chain of segments, where each two neighboring segments
+  in the chain share a common endpoint. The traits class exploits the
+  functionality of the \ccc{Segment_traits} template parameter to handle the
+  segments that comprise the polyline curve.
+
+  The class instantiated for the template parameter \ccc{Segment_traits} must
+  also be a model of the \ccc{ArrangementTraits_2} concept that handles line
+  segments (e.g., \ccc{Arr_segment_traits_2<Kernel>} or 
+  \ccc{Arr_segment_cached_traits_2<Kernel>}).
+
+  The number type used by the injected segment traits should be exact to avoid
+  robustness problems, although other number types could be used at the user's
+  own risk.
+
+\ccInclude{CGAL/Arr_polyline_traits_2.h}
+
+\ccIsModel
+  \ccc{ArrangementTraits_2} \lcTex{(\ccRefPage{ArrangementTraits_2}).}
+
+\subsection*{Class \ccc{Arr_polyline_traits_2<Segment_traits>::Curve_2}}
+
+The \ccc{Curve_2} class nested within the polyline traits is used to
+represent (general) piecewise linear curves and support their construction
+from any range of points. The copy and default constructor as well as 
+the assignment operator are provided for polyline curves. In addition, 
+an \ccc{operator<<} for the curves is defined for standard output streams.
+
+\begin{ccClass}{Arr_polyline_traits_2<Segment_traits>::Curve_2}
+
+\ccTypes
+
+  \ccNestedType{const_iterator}{A reversible iterator for traversing the
+    points that comprise the polyline curves. Supports the increment 
+    (\ccc{operator++}), decrement (\ccc{operator--}), dereference 
+    (\ccc{operator*}) and equality (\ccc{operator==} and \ccc{operator!=}) 
+    operators.}
+
+  \ccCreation
+  \ccCreationVariable{cv}
+
+  \ccStyle{template <class Iterator>} \\
+  \ccConstructor{Curve_2 (const Iterator& begin, const Iterator& end);}
+  {constructs a polyline defined by the given range of points.
+   The \ccc{Iterator} type must be \ccc{Segment_traits::Point_2}.
+   If the range contains $n$ points labeled $(p_{0},p_{1},\ldots,p_{n-1})$,
+   the generated polyline consists of $n-1$ segments, where the $k$th segment 
+   is defined by the endpoints $[p_{k-1},p_{k}]$. The first point in the 
+   range is considered as the source point of the polyline while the last 
+   point is considered as its target.
+   \ccPrecond{There are at least two points in the range}.}
+
+\ccOperations
+
+\ccMethod{const_iterator begin() const;}
+  {returns a \ccc{const_iterator} pointing at the source point of the 
+   polyline.}
+
+\ccMethod{const_iterator end() const;}
+  {returns a \ccc{const_iterator} pointing after the end of the polyline.}
+
+\ccMethod{const_iterator rbegin() const;}
+  {returns a \ccc{const_iterator} pointing at the target point of the 
+   polyline.}
+
+\ccMethod{const_iterator rend() const;}
+  {returns a \ccc{const_iterator} pointing before the beginning of the 
+   polyline.}
+
+\ccMethod{int points() const;}
+  {returns the number of points that comprise the polyline. Note that if there
+   are $n$ points in the polyline, it is comprised of $n-1$ segments.}
+
+\end{ccClass}
+
+\subsection*{Class \ccc{Arr_polyline_traits_2<Segment_traits>::X_monotone_curve_2}}
+
+The \ccc{X_monotone_curve_2} class nested within the polyline traits is used
+to represent $X$-monotone piecewise linear curves. It inherits from the
+\ccc{Curve_2} type. The chain of segments that comprise the $X$-monotone
+curve are ordered lexigoraphically.
+
+\begin{ccClass}{Arr_polyline_traits_2<Segment_traits>::X_monotone_curve_2}
+\end{ccClass}
+
+\end{ccRefClass}
+\ccRefPageEnd
