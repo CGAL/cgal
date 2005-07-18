@@ -231,6 +231,37 @@ namespace CGALi {
 
       return cmp_x != 0; // full circle or half circle.
     }
+    
+    
+    bool is_y_monotone() const
+    {
+      int cmp_begin = CGAL::compare(_begin.x(), center().x());
+      int cmp_end   = CGAL::compare(_end.x(),   center().x());
+
+      // XXX : be careful, this may be surprising if the return value
+      // is not -1/1 but some random int...
+      if (cmp_begin == opposite(cmp_end) && cmp_begin != 0)
+        return false;
+
+      int cmp_y = compare_y(_begin, _end);
+
+      // Is the arc on the upper part ?
+      if (cmp_begin > 0 || cmp_end > 0)
+        return cmp_y < 0;
+
+      // Is the arc on the lower part ?
+      if (cmp_begin < 0 || cmp_end < 0)
+        return cmp_y > 0;
+
+      // There remains the case :
+      assert(cmp_begin == 0 && cmp_end == 0);
+
+      return cmp_y != 0; // full circle or half circle.
+    }
+    
+    
+    
+    
 
     bool on_upper_part() const
       // check whether the endpoints are above or below the center
