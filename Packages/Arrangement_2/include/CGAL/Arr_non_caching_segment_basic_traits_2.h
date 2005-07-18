@@ -42,11 +42,11 @@ CGAL_BEGIN_NAMESPACE
 /*! A model of the ArrangementBasicTraits_2 concept that handles x-monotone
  * non-intersecting segments
  */
-template <class Kernel_>
-class Arr_non_caching_segment_basic_traits_2 : public Kernel_
+template <class T_Kernel>
+class Arr_non_caching_segment_basic_traits_2 : public T_Kernel
 {
 public:
-  typedef Kernel_                               Kernel;
+  typedef T_Kernel                              Kernel;
 
   // Categories:
   //#define HAS_LEFT_NOT

@@ -36,12 +36,12 @@
 CGAL_BEGIN_NAMESPACE
 
 /*! A model of the ArrangementTraits_2 concept that handles general segments */
-template <class Kernel_>
+template <class T_Kernel>
 class Arr_non_caching_segment_traits_2 :
-  public Arr_non_caching_segment_basic_traits_2<Kernel_>
+  public Arr_non_caching_segment_basic_traits_2<T_Kernel>
 {
 public:
-  typedef Kernel_                               Kernel;
+  typedef T_Kernel                              Kernel;
   
   typedef Arr_non_caching_segment_basic_traits_2<Kernel>        Base;
 
