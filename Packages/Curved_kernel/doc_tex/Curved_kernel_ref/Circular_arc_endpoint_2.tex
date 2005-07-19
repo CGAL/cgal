@@ -39,6 +39,9 @@ order given by the $x$-coordinates) of the two circles \ccc{c1} and \ccc{c2}.}
 \ccGlue
 \ccMethod{const CircularKernel::Root_of_2 & y();}{$y$-coordinate of the endpoint.}
 
+\ccMethod{Bbox_2 bbox() const;}
+{Returns a bounding box around the point.}
+
 \footnote{The next 2 methods should be removed. They were implemented 
 in the prototype because corresponding methods were not available in 
 the arrangements (?) to access edges from vertices. To be discussed.}

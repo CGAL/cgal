@@ -49,7 +49,8 @@ When the methods \ccc{begin} and \ccc{end} return the same point, then
 the arc is in fact a full circle. \footnote{arcs of zero length are
 points, not arcs}
 
-When an arc is monotone, its left and right endpoints can be accessed directly:
+When an arc is x-monotone, its left and right endpoints can be accessed
+directly:
 
 \ccMethod{CircularKernel::Circular_arc_endpoint_2 left();}{\ccPrecond{\ccVar.\ccc{is_x_monotone()}}.}
 \ccGlue
@@ -59,7 +60,9 @@ When an arc is monotone, its left and right endpoints can be accessed directly:
 
 \ccQueryFunctions
 
-\ccMethod{bool is_x_monotone();}{Tests whether the arc is monotone.}
+\ccMethod{bool is_x_monotone();}{Tests whether the arc is x-monotone.}
+\ccGlue
+\ccMethod{bool is_y_monotone();}{Tests whether the arc is y-monotone.}
 
 \ccHeading{I/O}
 
