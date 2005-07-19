@@ -14,7 +14,6 @@
 #ifndef CGAL_CURVED_KERNEL_PREDICATES_ON_CIRCULAR_ARC_2_H
 #define CGAL_CURVED_KERNEL_PREDICATES_ON_CIRCULAR_ARC_2_H
 
-//#include <CGAL/Curved_kernel/enum.h>
 
 namespace CGAL {
 namespace CircularFunctors {
@@ -53,10 +52,10 @@ namespace CircularFunctors {
   point_in_range(const typename CK::Circular_arc_2 &A,
                  const typename CK::Circular_arc_endpoint_2 &p) 
   {
-    assert (A.is_x_monotone());
+    CGAL_kernel_precondition (A.is_x_monotone());
     // range includes endpoints here
-    return compare_x<CK>(p, A.begin()) !=
-           compare_x<CK>(p, A.end());
+    return compare_x<CK>(p, A.source()) !=
+           compare_x<CK>(p, A.target());
   }
 
   template < class CK >
@@ -70,8 +69,8 @@ namespace CircularFunctors {
     std::cout << CGALi::print(std::cout, A1) << std::endl;
     std::cout << " point : " << p << std::endl;
 
-    assert (A1.is_x_monotone());
-    assert (point_in_range<CK>(A1, p)); 
+    CGAL_kernel_precondition (A1.is_x_monotone());
+    CGAL_kernel_precondition (point_in_range<CK>(A1, p)); 
 
     // Compare the ordinate of p with the ordinate of the center.
     Comparison_result sgn =
@@ -109,8 +108,8 @@ namespace CircularFunctors {
   {
     // FIXME : add preconditions to check that the 2 arcs are defined at
     // the right of the intersection.
-    assert (A1.is_x_monotone());
-    assert (A2.is_x_monotone());
+    CGAL_kernel_precondition (A1.is_x_monotone());
+    CGAL_kernel_precondition (A2.is_x_monotone());
 
     const typename CK::Circle_2 & C1 = A1.supporting_circle();
     const typename CK::Circle_2 & C2 = A2.supporting_circle();
@@ -124,7 +123,7 @@ namespace CircularFunctors {
         return EQUAL;
       if (b1 == true && b2 == false)
         return LARGER;
-      assert (b1 == false && b2 == true);
+      CGAL_kernel_assertion (b1 == false && b2 == true);
       return SMALLER;
     }
 
@@ -146,7 +145,7 @@ namespace CircularFunctors {
                   : compare_x(C2.center(), C1.center());
       if (b1 == true && b2 == false)
         return LARGER;
-      assert (b1 == false && b2 == true);
+      CGAL_kernel_assertion (b1 == false && b2 == true);
       return SMALLER;
     }
     if (s_b2_y == 0) {
@@ -155,8 +154,8 @@ namespace CircularFunctors {
     }
 
     // No more vertical tangent points.
-    assert(s_b1_y != 0);
-    assert(s_b2_y != 0);
+    CGAL_kernel_assertion(s_b1_y != 0);
+    CGAL_kernel_assertion(s_b2_y != 0);
 
     typename CK::Root_of_2 b1_x = p.x() - C1.center().x();
     typename CK::Root_of_2 b2_x = p.x() - C2.center().x();
@@ -193,7 +192,7 @@ namespace CircularFunctors {
       return compare_y(C2.center(), C1.center());
 
     // The tangent is horizontal.
-    assert(s_b1_x == 0 && s_b2_x == 0);
+    CGAL_kernel_assertion(s_b1_x == 0 && s_b2_x == 0);
     if (s_b1_y == s_b2_y)
       // The 2 circles are both below or both above the tangent
       return compare_y(C2.center(), C1.center());
@@ -249,14 +248,14 @@ namespace CircularFunctors {
   equal(const typename CK::Circular_arc_2 &A1,
         const typename CK::Circular_arc_2 &A2)
   {
-    assert (A1.is_x_monotone());
-    assert (A2.is_x_monotone());
+    CGAL_kernel_precondition (A1.is_x_monotone());
+    CGAL_kernel_precondition (A2.is_x_monotone());
 
     if ( A1.supporting_circle() != A2.supporting_circle() )
       return false;
 
-    return equal<CK>( A1.begin(), A2.begin() ) &&
-           equal<CK>( A1.end(), A2.end() );
+    return equal<CK>( A1.source(), A2.source() ) &&
+           equal<CK>( A1.target(), A2.target() );
   }
 
   template < class CK >
@@ -264,8 +263,8 @@ namespace CircularFunctors {
   do_overlap(const typename CK::Circular_arc_2 &A1,
 	     const typename CK::Circular_arc_2 &A2)
   {
-    assert (A1.is_x_monotone());
-    assert (A2.is_x_monotone());
+    CGAL_kernel_precondition (A1.is_x_monotone());
+    CGAL_kernel_precondition (A2.is_x_monotone());
 
     if ( A1.supporting_circle() != A2.supporting_circle() ) return false;
     if ( A1.on_upper_part() != A2.on_upper_part() ) return false;
@@ -282,8 +281,8 @@ namespace CircularFunctors {
   is_on_arc(const typename CK::Circular_arc_2 &a,
 	    const typename CK::Circular_arc_endpoint_2 &p)
   {
-    assert(a.is_x_monotone());
-    assert(a.supporting_circle() == p.circle(0) ||
+    CGAL_kernel_precondition(a.is_x_monotone());
+    CGAL_kernel_precondition(a.supporting_circle() == p.circle(0) ||
            a.supporting_circle() == p.circle(1) );
 
     if (! point_in_range<CK>(a, p) )
@@ -302,18 +301,17 @@ namespace CircularFunctors {
 	typename CK::Circular_arc_2 &ca1,
 	typename CK::Circular_arc_2 &ca2)
   {
-    assert( A.is_x_monotone() );
-    assert( point_in_range<CK>( A, p ) );
-    assert( A.on_upper_part() == (p.y() >
+    CGAL_kernel_precondition( A.is_x_monotone() );
+    CGAL_kernel_precondition( point_in_range<CK>( A, p ) );
+    CGAL_kernel_precondition( A.on_upper_part() == (p.y() >
 				  A.supporting_circle().center().y()));
-    assert( is_on_arc<CK>(A,p) );
-
+   
     typedef typename CK::Circular_arc_2  Circular_arc_2;
     typedef typename CK::Circular_arc_endpoint_2      Circular_arc_endpoint_2;
 
     if ( p.circle(0) == A.supporting_circle() )
       {
-	assert( !(p.circle(1) == A.supporting_circle()) );
+	CGAL_kernel_assertion( !(p.circle(1) == A.supporting_circle()) );
 	ca1 = Circular_arc_2( A, true,  p.circle(1), p.is_left() );
 	ca2 = Circular_arc_2( A, false, p.circle(1), p.is_left() );
 
@@ -329,7 +327,7 @@ namespace CircularFunctors {
 	    {
 	      std::cout << " SWAP " << std::endl;
 	      std::swap(ca1,ca2);
-	      assert(ca1.right()==ca2.left());
+	      CGAL_kernel_assertion(ca1.right()==ca2.left());
 	    }
 	};
 	return;
@@ -337,7 +335,7 @@ namespace CircularFunctors {
 
     if ( p.circle(1) == A.supporting_circle() )
       {
-	assert( !(p.circle(0) == A.supporting_circle()) );
+	CGAL_kernel_assertion( !(p.circle(0) == A.supporting_circle()) );
 	ca1 = Circular_arc_2( A, true,  p.circle(0), p.is_left() );
 	ca2 = Circular_arc_2( A, false, p.circle(0), p.is_left() );
 
@@ -353,20 +351,20 @@ namespace CircularFunctors {
 	    {
 	      std::cout << " SWAP " << std::endl;
 	      std::swap(ca1,ca2);
-	      assert(ca1.right()==ca2.left());
+	      CGAL_kernel_assertion(ca1.right()==ca2.left());
 	    }
 	};
 	return;
       };
 
-    assert( !(p.circle(0) == A.supporting_circle()) );
-    assert( !(p.circle(1) == A.supporting_circle()) );
+    CGAL_kernel_assertion( !(p.circle(0) == A.supporting_circle()) );
+    CGAL_kernel_assertion( !(p.circle(1) == A.supporting_circle()) );
  
     // p is defined by another pair of circles.
     // Then we must determine which intersection it is of the supporting
     // circle of A, with one of p's circles (whichever is ok).
     bool b = (p == Circular_arc_endpoint_2 (A.supporting_circle(), p.circle(0), true));
-    assert( b ||
+    CGAL_kernel_assertion( b ||
              (p == Circular_arc_endpoint_2 (A.supporting_circle(), p.circle(0), false)));
 
     ca1 = Circular_arc_2( A, true,  p.circle(0), b );
@@ -384,7 +382,7 @@ namespace CircularFunctors {
 	{
 	  std::cout << " SWAP " << std::endl;
 	  std::swap(ca1,ca2);
-	  assert(ca1.right()==ca2.left());
+	  CGAL_kernel_assertion(ca1.right()==ca2.left());
 	}
 
     };
@@ -401,109 +399,318 @@ namespace CircularFunctors {
     typedef typename CK::Circular_arc_endpoint_2  Circular_arc_endpoint_2;
     typedef typename CK::Circular_arc_2           Circular_arc_2;
 
-    assert(a1.is_x_monotone());
-    assert(a2.is_x_monotone());
-    // todo : implement for general arcs
 
-    // Overlapping curves.
-    if (a1.supporting_circle() == a2.supporting_circle()) {
-
-      // The ranges need to overlap in order for the curves to overlap.
-      if (compare_x<CK>(a1.left(), a2.right()) > 0 ||
-          compare_x<CK>(a2.left(), a1.right()) > 0)
+    if(a1.is_x_monotone() && a2.is_x_monotone()){
+      
+      // Overlapping curves.
+      if (a1.supporting_circle() == a2.supporting_circle()) {
+	
+	// The ranges need to overlap in order for the curves to overlap.
+	if (compare_x<CK>(a1.left(), a2.right()) > 0 ||
+	    compare_x<CK>(a2.left(), a1.right()) > 0)
+	  return res;
+	
+	// They both need to be on the same upper/lower part.
+	if (a1.on_upper_part() != a2.on_upper_part()) {
+	  // But they could share the left vertical tangent point.
+	  if (a1.left() == a2.left()) {
+	    *res++ =make_object
+	      ( std::make_pair(a1.left(),0u));
+	  }
+	  // Or they could share the right vertical tangent point.
+	  if (a1.right() == a2.right()) {
+	    *res++ = make_object
+	    (std::make_pair(a1.right(),0u));
+	  }
         return res;
-
-      // They both need to be on the same upper/lower part.
-      if (a1.on_upper_part() != a2.on_upper_part()) {
-        // But they could share the left vertical tangent point.
-        if (a1.left() == a2.left()) {
-	  *res++ =make_object
-	    ( std::make_pair(a1.left(),static_cast<unsigned>(0)));
-        }
-        // Or they could share the right vertical tangent point.
-	if (a1.right() == a2.right()) {
-	  *res++ = make_object
-	    (std::make_pair(a1.right(),static_cast<unsigned>(0)));
-        }
-        return res;
-      };
-
-      // We know they overlap, determine the extremities of the common subcurve
-      // TODO : We should use std::max and std::min, but they require less_x_2.
-      const Circular_arc_2 & arctmp = 
-	compare_x<CK>(a1.right(), a2.right()) < 0 ? a1 : a2;
-      // we know that the right endpoint is correct, let us look for
-      // the left now:
-
-
-      if ( compare_x<CK>(a1.left(), a2.left()) > 0 ) //? a1.left() : a2.left();
-	{ //the left endpoint is a1's
-	  assert(a1.left().circle(0) == arctmp.supporting_circle());
-	  if(compare_x<CK>(a1.left(), a2.right()) < 0){
-	    const Circular_arc_2 & arc =
-	    Circular_arc_2(arctmp, false,
-	  		   a1.left().circle(1), a1.left().is_left());
-	    assert(arc.is_x_monotone());
-	    *res++ = make_object(arc);
+	};
+	
+	// We know they overlap, determine the extremities of the common subcurve
+	// TODO : We should use std::max and std::min, but they require less_x_2.
+	const Circular_arc_2 & arctmp = 
+	  compare_x<CK>(a1.right(), a2.right()) < 0 ? a1 : a2;
+	// we know that the right endpoint is correct, let us look for
+	// the left now:
+	
+	
+	if ( compare_x<CK>(a1.left(), a2.left()) > 0 ) //? a1.left() : a2.left();
+	  { //the left endpoint is a1's
+	    CGAL_kernel_assertion(a1.left().circle(0) == arctmp.supporting_circle());
+	    if(compare_x<CK>(a1.left(), a2.right()) < 0){
+	      const Circular_arc_2 & arc =
+		Circular_arc_2(arctmp, a1.on_upper_part(),
+			       a1.left().circle(1), a1.left().is_left());
+	      CGAL_kernel_assertion(arc.is_x_monotone());
+	      *res++ = make_object(arc);
+	    }
+	    
+	    else{
+	      *res++ = make_object
+		(std::make_pair(arctmp.right(),0u));
+	    }
 	  }
-
-	  else{
-	  *res++ = make_object
-	    (std::make_pair(arctmp.right(),static_cast<unsigned>(0)));
+	else if( compare_x<CK>(a1.left(), a2.left()) < 0 ) //the left endpoint is a2's
+	  {
+	    CGAL_kernel_assertion(a2.left().circle(0) == arctmp.supporting_circle());
+	    if(compare_x<CK>(a1.right(), a2.left()) > 0){
+	      const Circular_arc_2 & arc =
+		Circular_arc_2(arctmp, a1.on_upper_part(),
+			       a2.left().circle(1), a2.left().is_left() );
+	      CGAL_kernel_assertion(arc.is_x_monotone());
+	      *res++ = make_object(arc);
+	    }
+	    else{
+	      *res++ = make_object
+		(std::make_pair(arctmp.right(),0u));
+	    }
 	  }
+	else {
+	  CGAL_kernel_assertion(a2.left().circle(0) == arctmp.supporting_circle());
+	    if(compare_x<CK>(a1.right(), a2.right()) >= 0){
+	      if (a1.on_upper_part()){
+	      const Circular_arc_2 & arc =
+		Circular_arc_2(arctmp.supporting_circle(),
+			       a2.right().circle(1),a2.right().is_left(),
+			       a1.left().circle(1), a1.left().is_left());
+	      CGAL_kernel_assertion(arc.is_x_monotone());
+	      *res++ = make_object(arc);
+	      }
+	      else {
+		const Circular_arc_2 & arc =
+		Circular_arc_2(arctmp.supporting_circle(),
+			       a1.left().circle(1), a1.left().is_left(),
+			       a2.right().circle(1),a2.right().is_left());
+	      CGAL_kernel_assertion(arc.is_x_monotone());
+	      *res++ = make_object(arc);
+	      }
+	    }
+	    else if(compare_x<CK>(a1.right(), a2.right()) < 0){
+	      if (a1.on_upper_part()){
+	      const Circular_arc_2 & arc =
+		Circular_arc_2(arctmp.supporting_circle(),
+			       a1.right().circle(1), a1.right().is_left(),
+			       a2.left().circle(1), a2.left().is_left());
+	      CGAL_kernel_assertion(arc.is_x_monotone());
+	      *res++ = make_object(arc);
+	      }
+	      else{
+		const Circular_arc_2 & arc =
+		Circular_arc_2(arctmp.supporting_circle(),
+			       a2.left().circle(1), a2.left().is_left(),
+			       a1.right().circle(1), a1.right().is_left());
+	      CGAL_kernel_assertion(arc.is_x_monotone());
+	      *res++ = make_object(arc);
+	      }
+	    }
+	    else{
+	      *res++ = make_object
+		(std::make_pair(arctmp.right(),0u));
+	    }
 	}
-      else { //the left endpoint is a2's
-	assert(a2.left().circle(0) == arctmp.supporting_circle());
-	if(compare_x<CK>(a1.right(), a2.left()) > 0){
-	   const Circular_arc_2 & arc =
-	    Circular_arc_2(arctmp, false,
-	  		   a2.left().circle(1), a2.left().is_left() );
-	   assert(arc.is_x_monotone());
-	  *res++ = make_object(arc);
-	  }
-	else{
-	*res++ = make_object
-	  (std::make_pair(arctmp.right(),static_cast<unsigned>(0)));
-	}
+	
+	return res;
       }
+     
 
+      // SHOULD USE INTERSECTIONS ON CIRCLES INSTEAD
+      // OR AT LEAST SOLVE...
+      
+      // We need to check that the supporting circles
+      // do intersect before going further.
+      if (! do_intersect(a1.supporting_circle(), a2.supporting_circle())) 
+	{ return res; }
+      
+      // Get the two intersection points of the supporting circles.
+      Circular_arc_endpoint_2 
+	left (a1.supporting_circle(), a2.supporting_circle(), true);
+      Circular_arc_endpoint_2 
+	right(a1.supporting_circle(), a2.supporting_circle(), false);
+      
+      if ( left != right ) // multiplicity 1
+	{
+	  // We also need to check that these intersection points are on the arc.
+	  if (is_on_arc<CK>(a1, left) && is_on_arc<CK>(a2, left)) {
+	    *res++ = make_object(std::make_pair(left,1u));
+	  }
+	  if (is_on_arc<CK>(a1, right) && is_on_arc<CK>(a2, right)) {
+	    *res++ = make_object(std::make_pair(right,1u));
+	  }
+	}
+      else // multiplicity 2
+	{
+	  if (is_on_arc<CK>(a1, left) && is_on_arc<CK>(a2, left)) 
+	    { *res++ = make_object
+		(std::make_pair(left,2u)); }
+	}
       return res;
     }
-
-    // SHOULD USE INTERSECTIONS ON CIRCLES INSTEAD
-    // OR AT LEAST SOLVE...
-
-    // We need to check that the supporting circles
-    // do intersect before going further.
-    if (! do_intersect(a1.supporting_circle(), a2.supporting_circle())) 
-      { return res; }
-
-    // Get the two intersection points of the supporting circles.
-    Circular_arc_endpoint_2 
-      left (a1.supporting_circle(), a2.supporting_circle(), true);
-    Circular_arc_endpoint_2 
-      right(a1.supporting_circle(), a2.supporting_circle(), false);
-
-    if ( left != right ) // multiplicity 1
-      {
-	// We also need to check that these intersection points are on the arc.
-	if (is_on_arc<CK>(a1, left) && is_on_arc<CK>(a2, left)) {
-	  *res++ = make_object(std::make_pair(left,static_cast<unsigned>(1)));
+    else {//a1 or a2 are not x_monotone
+      std::vector< CGAL::Object > arcs_a1_x_monotone;
+      make_x_monotone( a1, std::back_inserter(arcs_a1_x_monotone));
+      std::vector< CGAL::Object > arcs_a2_x_monotone;
+      make_x_monotone( a2, std::back_inserter(arcs_a2_x_monotone));
+      std::vector< Circular_arc_2 > circle_arcs;
+      std::vector< Circular_arc_endpoint_2 > circle_arc_endpoints;
+     
+      Circular_arc_2 a1_aux;
+      Circular_arc_2 a2_aux;
+      for ( std::vector< CGAL::Object >::iterator it1 = arcs_a1_x_monotone.begin(); 
+	    it1 != arcs_a1_x_monotone.end(); ++it1 )
+	{
+	    CGAL_kernel_assertion(assign( a1_aux, *it1));
+	  for ( std::vector< CGAL::Object >::iterator it2 = arcs_a2_x_monotone.begin(); 
+	    it2 != arcs_a2_x_monotone.end(); ++it2 )
+	    {
+	      CGAL_kernel_assertion(assign( a2_aux, *it2));
+	      std::vector< CGAL::Object > res_aux;
+	      construct_intersections_2<CK>( a1_aux, a2_aux,
+					     std::back_inserter(res_aux));
+	      if(res_aux.size() == 2){
+		//it can't be a circular_arc_2
+		std::pair<Circular_arc_endpoint_2, std::size_t> the_pair;
+		CGAL_kernel_assertion(assign(the_pair, res_aux[0]));
+		Circular_arc_endpoint_2 arc_end1 = the_pair.first;
+		assign(the_pair, res_aux[1]);
+		Circular_arc_endpoint_2 arc_end2 = the_pair.first;
+		bool exist = false;
+		for (typename std::vector< Circular_arc_endpoint_2 >::iterator it 
+		       = circle_arc_endpoints.begin(); 
+		      it != circle_arc_endpoints.end(); ++it )
+		  {
+		    if (arc_end1 == *it) {
+		      exist = true;
+		      break;
+		    }
+		  }
+		if (!exist) {
+		  circle_arc_endpoints.push_back(arc_end1);
+		}
+		else exist = false;
+		for ( typename std::vector< Circular_arc_endpoint_2 >::iterator it
+			= circle_arc_endpoints.begin(); 
+		      it != circle_arc_endpoints.end(); ++it )
+		  {
+		    if (arc_end2 == *it) {
+		      exist = true;
+		      break;
+		    }
+		  }
+		if (!exist) {
+		  circle_arc_endpoints.push_back(arc_end2);
+		}
+	      }
+	      else if( res_aux.size() == 1){
+		//it can be a Circular_arc_endpoint_2 or a Circular_arc_2
+		Circular_arc_2 arc;
+		if(assign(arc, res_aux[0])){
+		  circle_arcs.push_back(arc);
+		  
+		}
+		else{
+		  std::pair<Circular_arc_endpoint_2, std::size_t> the_pair;
+		  CGAL_kernel_assertion(assign(the_pair, res_aux[0]));
+		  Circular_arc_endpoint_2 arc_end = the_pair.first;
+		  if (the_pair.second == 2u) {//there are only one tangent point
+		    *res++ = res_aux[0];
+		    return res;
+		  }
+		  bool exist = false;
+		  for (typename std::vector< Circular_arc_endpoint_2 >::iterator it 
+			 = circle_arc_endpoints.begin(); 
+		       it != circle_arc_endpoints.end(); ++it )
+		    {
+		      if (arc_end == *it) {
+			exist = true;
+			break;
+		      }
+		    }
+		  if (!exist) {
+		    circle_arc_endpoints.push_back(arc_end);
+		  }
+		}
+	      }
+	    }
 	}
-	if (is_on_arc<CK>(a1, right) && is_on_arc<CK>(a2, right)) {
-	  *res++ = make_object(std::make_pair(right,static_cast<unsigned>(1)));
+      //there are not double
+      if (circle_arcs.size() > 0){
+	std::size_t i = 1;
+	while((i < circle_arcs.size()) && 
+	      (circle_arcs[i-1].target().x() == circle_arcs[i].source().x()) &&
+	      (circle_arcs[i-1].target().y() == circle_arcs[i].source().y())
+	      ) {i++;}
+
+	
+	*res++ = make_object
+	  (Circular_arc_2(circle_arcs[0].supporting_circle(),
+			  (circle_arcs[0].source().circle(0) == 
+			   circle_arcs[0].supporting_circle())
+			  ? circle_arcs[0].source().circle(1) :
+			  circle_arcs[0].source().circle(0),
+			  circle_arcs[0].source().is_left(),
+			  (circle_arcs[i-1].target().circle(0) ==
+			   circle_arcs[0].supporting_circle())
+			  ? circle_arcs[i-1].target().circle(1) :
+			  circle_arcs[i-1].target().circle(0),
+			  circle_arcs[i-1].target().is_left()
+			  ));
+	if (i < circle_arcs.size()) {//there are 2 circle arcs
+	  std::size_t j = i;
+	  i++;
+	  while((i < circle_arcs.size()) 
+		&& (circle_arcs[i-1].target() == circle_arcs[i].source()))
+	    i++;
+	  *res++ = make_object
+	    (Circular_arc_2(circle_arcs[j].supporting_circle(),
+			    (circle_arcs[j].source().circle(0) ==
+			     circle_arcs[j].supporting_circle())
+			    ? circle_arcs[j].source().circle(1) :
+			    circle_arcs[j].source().circle(0),
+			    circle_arcs[j].source().is_left()
+			    ,
+			    (circle_arcs[i-1].target().circle(0) ==
+			     circle_arcs[j].supporting_circle())
+			    ? circle_arcs[i-1].target().circle(1) :
+			    circle_arcs[i-1].target().circle(0),
+			    circle_arcs[i-1].target().is_left()
+			    ));
+	  return res;
+	}
+	else{//There are one circle arc and there can be maximum one endpoint
+	   for (typename std::vector< Circular_arc_endpoint_2 >::iterator it1 
+		 = circle_arc_endpoints.begin(); 
+	       it1 != circle_arc_endpoints.end(); ++it1 )
+	    {
+	      bool other_point = true;
+	      for (typename std::vector< Circular_arc_2 >::iterator it2 
+		     = circle_arcs.begin(); 
+		   it2 != circle_arcs.end(); ++it2 )
+		{
+		  if (is_on_arc<CK>(*it2, *it1)) {
+		    other_point = false;
+		    break;
+		  }
+		}
+	      if (other_point) {
+		*res++ = make_object(std::make_pair(*it1,1u));
+		break;
+	      }
+	    }
+	  return res;
 	}
       }
-    else // multiplicity 2
-      {
-	if (is_on_arc<CK>(a1, left) && is_on_arc<CK>(a2, left)) 
-	  { *res++ = make_object
-	      (std::make_pair(left,static_cast<unsigned>(2))); }
+      else{//there are one or two endpoint
+	if (circle_arc_endpoints.size() > 1){
+	  *res++ = make_object(std::make_pair(circle_arc_endpoints[0],1u));
+	  *res++ = make_object(std::make_pair(circle_arc_endpoints[1],1u));
+	}
+	else if (circle_arc_endpoints.size() == 1) 
+	  *res++ = make_object(std::make_pair(circle_arc_endpoints[0],1u));
+	return res;
       }
-    return res;
+    }
   }
-
-
+  
+  
   template < class CK >
   bool
   nearest_intersection_to_right(const typename CK::Circular_arc_2 &a1,
@@ -514,8 +721,8 @@ namespace CircularFunctors {
   {
     typedef typename CK::Circular_arc_endpoint_2  Circular_arc_endpoint_2;
 
-    assert(a1.is_x_monotone());
-    assert(a2.is_x_monotone());
+    CGAL_kernel_precondition(a1.is_x_monotone());
+    CGAL_kernel_precondition(a2.is_x_monotone());
 
     // Overlapping curves.
     if (a1.supporting_circle() == a2.supporting_circle()) {
@@ -599,10 +806,10 @@ namespace CircularFunctors {
     typedef typename CK::Linear_kernel::Point_2   Point_2;
 
 
-    int cmp_begin = CGAL::compare(A.begin().y(), A.center().y());
-    int cmp_end   = CGAL::compare(A.end().y(),   A.center().y());
+    int cmp_begin = CGAL::compare(A.source().y(), A.center().y());
+    int cmp_end   = CGAL::compare(A.target().y(),   A.center().y());
 
-    int cmp_x = compare_x(A.begin(), A.end());
+    int cmp_x = compare_x(A.source(), A.target());
 
     // We don't need to split
     if (cmp_begin != opposite(cmp_end) &&
@@ -619,7 +826,7 @@ namespace CircularFunctors {
     }
 
     // We need to split
-    assert(!A.is_x_monotone());
+    CGAL_kernel_assertion(!A.is_x_monotone());
 
     // Define a circle intersecting the supporting circle of A
     // in the 2 vertical tangent points.
@@ -628,7 +835,7 @@ namespace CircularFunctors {
 
     if (cmp_begin > 0) {
       *res++ = make_object(Circular_arc_2 (A.supporting_circle(),
-                               A.begin().circle(1), A.begin().is_left(),
+                               A.source().circle(1), A.source().is_left(),
 					   c, true));
       if (cmp_end > 0) {
         // We must cut in 3 parts.
@@ -636,17 +843,17 @@ namespace CircularFunctors {
 					     c, true, c, false));
         *res++ = make_object(Circular_arc_2 (A.supporting_circle(),
                                  c, false,
-					     A.end().circle(1), A.end().is_left()));
+					     A.target().circle(1), A.target().is_left()));
       } else {
         *res++ = make_object(Circular_arc_2 (A.supporting_circle(),
                                  c, true,
-					     A.end().circle(1), A.end().is_left()));
+					     A.target().circle(1), A.target().is_left()));
       }
     }
     else if (cmp_begin < 0) {
       // Very similar to the previous case.
       *res++ = make_object(Circular_arc_2 (A.supporting_circle(),
-					   A.begin().circle(1), A.begin().is_left(),
+					   A.source().circle(1), A.source().is_left(),
 					   c, false));
       if (cmp_end < 0) {
         // We must cut in 3 parts.
@@ -654,32 +861,32 @@ namespace CircularFunctors {
 					     c, false, c, true));
         *res++ = make_object(Circular_arc_2 (A.supporting_circle(),
                                  c, true,
-					     A.end().circle(1), A.end().is_left()));
+					     A.target().circle(1), A.target().is_left()));
       } else {
         *res++ = make_object(Circular_arc_2 (A.supporting_circle(),
                                  c, false,
-					     A.end().circle(1), A.end().is_left()));
+					     A.target().circle(1), A.target().is_left()));
       }
     }
     else { // cmp_begin == 0
-      if (CGAL::compare(A.begin().x(), A.center().x()) < 0) {
-        assert (cmp_end >= 0);
+      if (CGAL::compare(A.source().x(), A.center().x()) < 0) {
+        CGAL_kernel_assertion (cmp_end >= 0);
         *res++ = make_object(Circular_arc_2 (A.supporting_circle(),
-                                 A.begin().circle(1), A.begin().is_left(),
+                                 A.source().circle(1), A.source().is_left(),
 					     c, false));
         *res++ = make_object(Circular_arc_2 (A.supporting_circle(),
                                  c, false,
-					     A.end().circle(1), A.end().is_left()));
+					     A.target().circle(1), A.target().is_left()));
       }
       else {
-        assert (CGAL::compare(A.begin().x(), A.center().x()) > 0);
-        assert (cmp_end != LARGER);
+        CGAL_kernel_assertion (CGAL::compare(A.source().x(), A.center().x()) > 0);
+        CGAL_kernel_assertion (cmp_end != LARGER);
         *res++ = make_object(Circular_arc_2 (A.supporting_circle(),
-					     A.begin().circle(1), A.begin().is_left(),
+					     A.source().circle(1), A.source().is_left(),
 					     c, true));
         *res++ = make_object(Circular_arc_2 (A.supporting_circle(),
                                  c, true,
-					     A.end().circle(1), A.end().is_left()));
+					     A.target().circle(1), A.target().is_left()));
       }
     }
 
