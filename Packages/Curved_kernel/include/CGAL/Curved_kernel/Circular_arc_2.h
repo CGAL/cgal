@@ -39,7 +39,6 @@ namespace CGALi {
 
     // Full circle
     Circular_arc_2(const Circle_2 &c)
-      : _swap_source(false)
     {
        // Define a circle intersecting c in the 2 vertical tangent
        // points.
@@ -53,7 +52,6 @@ namespace CGALi {
     Circular_arc_2(const Circle_2 &support,
                    const Line_2 &l1, bool b1,
                    const Line_2 &l2, bool b2)
-      : _swap_source(false)
     {
       Point_2 center1 (support.center().x() + l1.a()/2,
                        support.center().y() + l1.b()/2);
@@ -79,14 +77,14 @@ namespace CGALi {
 
       *this = Circular_arc_2(support, c1, b1, c2, b2);
 
-      assert(do_intersect(support, c1));
-      assert(do_intersect(support, c2));
+      CGAL_kernel_assertion(do_intersect(support, c1));
+      CGAL_kernel_assertion(do_intersect(support, c2));
     }
 
     Circular_arc_2(const Circle_2 &c, 
 		   const Circle_2 &c1, const bool b_1,
 		   const Circle_2 &c2, const bool b_2)
-      : _begin(c, c1, b_1), _end(c, c2, b_2), _swap_source(false) {}
+      : _begin(c, c1, b_1), _end(c, c2, b_2) {}
 
 
     // constructs a circular arc that is the arc included in A
@@ -95,15 +93,14 @@ namespace CGALi {
     // by b_cut
     Circular_arc_2(const Circular_arc_2 &A, const bool b,
 		   const Circle_2 &ccut, const bool b_cut)
-      : _swap_source(A._swap_source)
     {
-        assert(A.is_x_monotone());
-        assert(do_intersect(A.supporting_circle(), ccut));
+        CGAL_kernel_precondition(A.is_x_monotone());
+        CGAL_kernel_precondition(do_intersect(A.supporting_circle(), ccut));
 
         Circular_arc_endpoint_2 new_p (A.supporting_circle(), ccut, b_cut);
 
-        // assert(point_in_range(A, new_p));
-        assert(A.on_upper_part() ==
+        // CGAL_kernel_assertion(point_in_range(A, new_p));
+        CGAL_kernel_assertion(A.on_upper_part() ==
               (CGAL::compare(new_p.y(), A.center().y()) >= 0));
 
         if (b) {
@@ -122,9 +119,8 @@ namespace CGALi {
     Circular_arc_2(const Point_2 &begin,
                    const Point_2 &middle,
                    const Point_2 &end)
-      : _swap_source(false)
     {
-      assert(!collinear(begin, middle, end));
+      CGAL_kernel_precondition(!collinear(begin, middle, end));
 
       Circle_2 c  (begin, middle, end);
       Line_2   l1 (begin, middle);
@@ -138,11 +134,10 @@ namespace CGALi {
     Circular_arc_2(const Circle_2 &support,
                    const Point_2 &source,
                    const Point_2 &target)
-      : _swap_source(false)
     {
       
-      assert(support.has_on_boundary(source));
-      assert(support.has_on_boundary(target));
+      CGAL_kernel_precondition(support.has_on_boundary(source));
+      CGAL_kernel_precondition(support.has_on_boundary(target));
         
       Line_2   l (source, target);
       bool source_is_left =  (compare_xy(source, target) < 0) ;
@@ -154,54 +149,32 @@ namespace CGALi {
     // The arc goes from _begin to _end in the positive order
     // If _begin == _end, then it's the full circle
     Circular_arc_endpoint_2  _begin, _end;
-    // If swap_source is false, then source == _begin and target == _end.
-    // Otherwise it's the reverse.
-    bool        _swap_source;
+   
 
   public:
-
-    bool swap_source() const
-    {
-      return _swap_source;
-    }
-
-    void swap_source_and_target()
-    {
-      _swap_source = !_swap_source;
-    }
-
-    const Circular_arc_endpoint_2 & source() const
-    {
-      return _swap_source ? _end : _begin;
-    }
-
-    const Circular_arc_endpoint_2 & target() const
-    {
-      return _swap_source ? _begin : _end;
-    }
-
+ 
     const Circular_arc_endpoint_2 & left() const
     {
-      assert(is_x_monotone());
-      assert(on_upper_part() ? compare_xy(_end,_begin)<0
+      CGAL_kernel_precondition(is_x_monotone());
+      CGAL_kernel_precondition(on_upper_part() ? compare_xy(_end,_begin)<0
 	     : compare_xy(_begin,_end)<0);
       return on_upper_part() ? _end : _begin;
     }
 
     const Circular_arc_endpoint_2 & right() const
     {
-      assert(is_x_monotone());
-      assert(on_upper_part() ? compare_xy(_end,_begin)<0
+      CGAL_kernel_precondition(is_x_monotone());
+      CGAL_kernel_precondition(on_upper_part() ? compare_xy(_end,_begin)<0
 	     : compare_xy(_begin,_end)<0);
       return on_upper_part() ? _begin : _end;
     }
 
-    const Circular_arc_endpoint_2 & begin() const
+    const Circular_arc_endpoint_2 & source() const
     {
       return _begin;
     }
 
-    const Circular_arc_endpoint_2 & end() const
+    const Circular_arc_endpoint_2 & target() const
     {
       return _end;
     }
@@ -227,7 +200,7 @@ namespace CGALi {
         return cmp_x < 0;
 
       // There remains the case :
-      assert(cmp_begin == 0 && cmp_end == 0);
+      CGAL_kernel_assertion(cmp_begin == 0 && cmp_end == 0);
 
       return cmp_x != 0; // full circle or half circle.
     }
@@ -266,7 +239,7 @@ namespace CGALi {
     bool on_upper_part() const
       // check whether the endpoints are above or below the center
     { 
-      assert(is_x_monotone());
+      CGAL_kernel_precondition(is_x_monotone());
 
       int begin_y = CGAL::compare(_begin.y(), supporting_circle().center().y());
       int end_y   = CGAL::compare(_end.y(),   supporting_circle().center().y());
@@ -279,7 +252,7 @@ namespace CGALi {
 
     const Circle_2 & supporting_circle() const           
     {
-       assert(_begin.circle(0) == _end.circle(0));
+       CGAL_kernel_precondition(_begin.circle(0) == _end.circle(0));
        return _begin.circle(0);
     }
 
@@ -296,7 +269,7 @@ namespace CGALi {
     // Until curves_compare_y_at_x() is fixed in PM.
     double approximate_y_at(const Circular_arc_endpoint_2 &p) const
     {
-      assert(is_x_monotone());
+      CGAL_kernel_precondition(is_x_monotone());
       double x = CGAL::to_double(p.x());
       double tmp = std::sqrt(CGAL::to_double(supporting_circle()
                                                 .squared_radius())
@@ -320,8 +293,8 @@ namespace CGALi {
     // - circle c2
     // - bool b2
     return os << a.supporting_circle() << " "
-	      << a.begin().circle(1) << " " << a.begin().is_left() << " "
-	      << a.end().circle(1)   << " " << a.end().is_left() << " ";
+	      << a.source().circle(1) << " " << a.source().is_left() << " "
+	      << a.target().circle(1)   << " " << a.target().is_left() << " ";
   }
 
   template < typename CK >
