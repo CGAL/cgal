@@ -340,7 +340,7 @@ public:
 	t->t1.make_x_monotone_2_object()(a.first, std::back_inserter(v1));
 	t->t2.make_x_monotone_2_object()(a.second, std::back_inserter(v2));
 
-	assert(v1.size() == v2.size());
+	CGAL_kernel_assertion(v1.size() == v2.size());
 
 	std::sort(v1.begin(), v1.end(), cmp_less<Traits_1>());
 	std::sort(v2.begin(), v2.end(), cmp_less<Traits_2>());
@@ -441,9 +441,9 @@ public:
 	  *res++ = CGAL::make_object(X_monotone_curve_2(vc1[i], vc2[i]));
 	}
 
-	assert(vp1.size() == vp2.size());
-	assert(vc1.size() == vc2.size());
-	assert(v1.size()  == v2.size());
+	CGAL_kernel_assertion(vp1.size() == vp2.size());
+	CGAL_kernel_assertion(vc1.size() == vc2.size());
+	CGAL_kernel_assertion(v1.size()  == v2.size());
 
 	return res;
       }
@@ -451,7 +451,6 @@ public:
 
   Intersect_2 intersect_2_object() const
   { return Intersect_2(this); }
-
 
 };
 
