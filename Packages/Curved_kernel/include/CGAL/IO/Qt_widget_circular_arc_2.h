@@ -34,10 +34,10 @@ operator<<(CGAL::Qt_widget & widget, const CGAL::Circular_arc_2<CK> &arc)
     int x_screen_b = widget.x_pixel(CGAL::to_double(circ.center().x()) + rad);
     int radius     = x_screen_b - x_screen;
 
-    double a   = std::atan2( to_double(arc.begin().y() - circ.center().y()),
-		             to_double(arc.begin().x() - circ.center().x())); 
-    double a2p = std::atan2( to_double(arc.end().y() - circ.center().y()),
-		             to_double(arc.end().x() - circ.center().x()));
+    double a   = std::atan2( to_double(arc.source().y() - circ.center().y()),
+		             to_double(arc.source().x() - circ.center().x())); 
+    double a2p = std::atan2( to_double(arc.target().y() - circ.center().y()),
+		             to_double(arc.target().x() - circ.center().x()));
 
     if (a2p < a)
         a2p += 2 * CGAL_PI;
