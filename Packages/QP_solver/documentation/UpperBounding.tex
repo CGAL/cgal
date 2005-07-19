@@ -24,12 +24,25 @@
 \begin{document}
 \maketitle
 \section{General Remarks}
+\begin{eqnarray}
+\label{def:QP_UB}
+(QP)\quad minimize&  c^{T}x + x^{T} D x      	&  \nonumber \\
+s.t.	 & \sum_{j=0}^{n-1}a_{ij}x_{j} = b_{i}	& i \in E  \nonumber \\
+	 & \sum_{j=0}^{n-1}a_{ij}x_{j} \leq b_{i} & i \in I^{\leq} \\
+	 & \sum_{j=0}^{n-1}a_{ij}x_{j} \geq b_{i} & i \in I^{\geq}  \nonumber \\
+ 	 & \mathit{l}_{j} \leq x_{j} \leq u_{j}	  & j \in \{0 \ldots n-1 \}
+	 \nonumber
+\end{eqnarray}
+%\end{equation}
+with $D$ positive semi definite, where $I:= I^{\leq} \cup I^{\geq}$ and
+$\left| E \right| + \left| I \right| = m$,
+
 The lower and upper bounds, in the finite case,  will be stored in the vectors
-$l$ and $u$, $l \leq u$, both of size $\left|O\right|$, where $O$ denotes the set of original variables. The absence or presence of finite bounds will be indicated by means of two 0,1 valued vectors $f^{l}$ and $f^{u}$. Thus if 
+$\mathbf{l}$ and $\mathbf{u}$, $l \leq u$, both of size $\left|O\right|$, where $O$ denotes the set of original variables. The absence or presence of finite bounds will be indicated by means of two 0,1 valued vectors $f^{l}$ and $f^{u}$. Thus if 
 $f_{j}^{l}=0$, for some $j \in O$, then the lower bound for the variable $x_{j}$ is $-\infty$, on the other hand, if $f_{j}^{l}=1$ for some $j \in O$ then the lower bound for variable $x_{j}$ is $l_{j}$. The upper bounds are described 
 likewise. Thus a variable $x_{k}$ is \emph{free}, if $f_{k}^{u}=0$ and
 $f_{k}^{l}=0$, and $x_{k}$ is \emph{fixed}, if $u_{k}=l_{k}$ as well as
-$f_{k}^{l}=1$ and $f_{k}^{u}=1$ hold. The set of fixed variables will be denoted by $F$.
+$f_{k}^{l}=1$ and $f_{k}^{u}=1$ hold. The set of unrestricted original variables will be denoted by $U$ and the set of fixed original variables will be denoted by $F$.
 
 Extending the vectors $f^{l}, f^{u}$ and $l, u$ for the set of slack variables $S$ and artificial variables $art$ comes naturally, such that we can introduce  
 a function $b: O \cup S \cup art \rightarrow \{-1, 0, 1\}$ indicating which of the three possible values a nonbasic variable may take on with respect to its bounds,
@@ -155,7 +168,83 @@ where $art$ does not contain a special artificial variable.
 
 \section{Ratio Test Step~1 and Ratio Test Step~2}
 \section{Pricing Strategies}
-Note: a mere index will not be sufficient, we will need a direction as well
+By the KKT conditions for optimality a feasible solution $x^{*}$ to the
+QP~(\ref{def:QP_UB}) is optimal, if there exists an $\left|E\right|$-vector
+$\lambda$ and an $\left|I\right|+2n$-vector $\mu \geq 0$,
+$\mu=\left({\mu^{\leq}}^{T}\left|\right. {\mu^{\geq}}^{T} \left|\right.
+{\mu^{l}}^{T} \left|\right. {\mu^{u}}^{T}\right)^{T}$, such that
+\begin{eqnarray*}
+c + Dx^{*} +A_{E, \bullet}^{T}\lambda
+&=&
+-A_{I^{\leq}, \bullet}^{T}\mu^{\leq} + A_{I^{\geq}, \bullet}^{T}\mu^{\geq}
++I\mu^{l} -I\mu^{u}  \\
+\mu_{i}^{\leq}\left(A_{i, \bullet}x^{*}-b_{i}\right)
+&=&
+0 \quad\quad\quad i \in I^{\leq}\\
+\mu_{i}^{\geq}\left(b_{i}-A_{i, \bullet}x^{*}\right)
+&=&
+0 \quad\quad\quad i \in I^{\geq}\\
+\mu_{i}^{l}\left(l_{i}-x_{i}^{*}\right)
+&=& 
+0 \quad\quad\quad i= 1 \dots n\\
+\mu_{i}^{u}\left(x_{i}^{*}-u_{i}\right)
+&=&
+0 \quad\quad\quad i=1 \dots n
+\end{eqnarray*}
+Extending $\lambda$ appropriately and disposing of $\mu^{\leq}$ and $\mu^{\geq}$ in the above conditions we obtain
+the following equivalent conditions:
+A feasible solution $x^{*}$ to the QP~(\ref{def:QP_UB}) is optimal if there exists an $m$-vector $\lambda$, $\lambda_{i} \geq 0$ for $i \in I^{\leq}$,
+$\lambda_{i} \leq 0$ for $i \in I^{\geq}$, and two $n$-vectors $\mu^{l}$ and
+$\mu^{u}$, $\mu^{l} \geq 0$, $\mu^{u} \geq 0$ such that
+\begin{eqnarray*}
+c + Dx^{*} +A^{T}\lambda
+&=&
+I\left(\mu^{l} -\mu^{u}\right)  \\
+\lambda^{T}\left(Ax^{*}-b\right)
+&=&
+0 \\
+\mu_{i}^{l}\left(l_{i}-x_{i}^{*}\right)
+&=& 
+0 \quad\quad\quad i= 1 \dots n\\
+\mu_{i}^{u}\left(x_{i}^{*}-u_{i}\right)
+&=&
+0 \quad\quad\quad i=1 \dots n
+\end{eqnarray*}
+Replacing $\mu^{l}-\mu^{u}$ by $\mu$ we obtain
+\begin{lemma}
+A feasible solution $x^{*}$ to QP~(\ref{def:QP_UB}) is optimal, if there exists an $m$-vector $\lambda$ and an $n$-vector $\mu$ such that 
+\begin{eqnarray}
+c + Dx^{*} +A^{T}\lambda
+&=&
+\mu  \\
+\lambda^{T}\left(Ax^{*}-b\right)
+&=&
+0
+\end{eqnarray}
+and
+\begin{eqnarray}
+\lambda_{i} \left\{
+\begin{array}{ll}
+\geq 0, & \text{for $i \in I^{\leq}$} \\
+\leq 0, & \text{for $i \in I^{\geq}$}
+\end{array}
+\right.
+&&
+\mu_{j} \left\{
+\begin{array}{ll}
+\geq 0, & \text{if $x_{j}^{*}=l_{j}$} \\
+= 0,    & \text{if $l_{j} < x_{j}^{*} < u_{j}$} \\
+\leq 0, & \text{if $x_{j}^{*}=u_{j}$}
+\end{array}
+\right.
+\end{eqnarray}
+\end{lemma}
+In contrast to pricing with the standard form, where all nonbasic variables have zero values and can only be increased, nonbasic original variables may 
+\begin{equation}
+\mathcal{E}:=\{k \in N \left|\right. b(k)=-1 \wedge \mu_{k} < 0 \vee
+  b(k)=0 \wedge \mu_{k} \neq 0 \vee b(k)=1 \wedge \mu_{k} > 0 \}
+\end{equation}
+
 \subsection{Full exact pricing}
 Generalizing the full exact pricing algorithm we introduce the following subsets of the set of nonbasic variables $N$
 \begin{eqnarray}
@@ -163,6 +252,35 @@ N_{l}&:=&\{k \in N\left|\right. b\left(k\right)=-1\} \\
 N_{0}&:=&\{k \in N\left|\right. b\left(k\right)=0\} \\
 N_{u}&:=&\{k \in N\left|\right. b\left(k\right)=1\}
 \end{eqnarray}
+\paragraph{Full exact pricing with explicit bounds}
+\begin{tabbing}
+\texttt{FULL\_EXACT\_PRICING$(N)$} \\
+\texttt{IF} \= \kill
+\> \texttt{$j_{l}:=\arg\min_{k \in N_{l} \cup
+                               N_{0}}\mu_{k}$}  \\
+\> \texttt{$j_{u}:=\arg\max_{k \in N_{u} \cup
+                               N_{0}}\mu_{k}$}  \\
+\> \texttt{$j:=\arg\max_{k \in \{j_{l}, j_{u}\}}\left|\mu_{k}\right|$}  \\
+\> \texttt{IF $\mu_{j} \neq 0$ THEN} \\
+\texttt{IFIF} \= \kill
+\> \texttt{IF $j = j_{l}$ THEN $dir:=1$ ELSE $dir:=-1$ END} \\
+%\texttt{IFIFIF} \= \kill
+%\> \texttt{dir:=1} \\
+%\texttt{IFIF} \= \kill
+%\> \texttt{ELSE} \\
+%\texttt{IFIFIF} \= \kill
+%\> \texttt{dir=-1} \\
+%\texttt{IFIF} \= \kill
+%\> \texttt{END} \\
+\> \texttt{RETURN $(j, dir)$} \\
+\texttt{IF} \= \kill
+\> \texttt{ELSE} \\
+\texttt{IFIF} \= \kill
+\> \texttt{RETURN \emph{optimal}} \\
+\texttt{IF} \= \kill
+\> \texttt{END} \\
+\texttt{END}
+\end{tabbing}
 
 
 \subsection{Partial exact pricing}
@@ -172,9 +290,9 @@ Generalizing the partial pricing algorithm given in \cite{Sven}, section 6.4.1 f
 \mathcal{A}_{0}&:=&\{k \in \mathcal{A}\left|\right. b\left(k\right)=0\} \\
 \mathcal{A}_{u}&:=&\{k \in \mathcal{A}\left|\right. b\left(k\right)=1\}
 \end{eqnarray}
-\paragraph{Partial pricing with explicit bounds}
+\paragraph{Partial exact pricing with explicit bounds}
 \begin{tabbing}
-\texttt{PARTIALPRICING$(\mathcal{A})$} \\
+\texttt{PARTIAL\_EXACT\_PRICING$(\mathcal{A})$} \\
 \texttt{IF} \= \kill
 \> \texttt{$j_{l}:=\arg\min_{k \in \mathcal{A}_{l} \cup
                                \mathcal{A}_{0}}\mu_{k}$}  \\
@@ -184,7 +302,8 @@ Generalizing the partial pricing algorithm given in \cite{Sven}, section 6.4.1 f
 \> \texttt{IF $\left(\mu_{j} < 0 \wedge b\left(j\right) \leq 0 \right)
    \vee \left(\mu_{j} > 0 \wedge b\left(j\right) \geq 0 \right)$} \\
 \texttt{IFIF} \= \kill
-\> \texttt{RETURN $j$} \\
+\> \texttt{IF $j=j_{l}$ THEN $dir:=1$ ELSE $dir:=-1$ END} \\
+\> \texttt{RETURN $(j, dir)$} \\
 \texttt{IF} \= \kill
 \> \texttt{ELSE} \\
 \texttt{IFIF} \= \kill
