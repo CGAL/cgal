@@ -113,11 +113,11 @@ output_oriented_surface_facets_to_off (std::ostream& os, const Tr & T) {
     if ((*fit).first->is_facet_on_surface((*fit).second)==true)
       {
 	typename Tr::Facet f = *fit;
-	typename Tr::Facet opposite = T.compute_opposite_facet(f);
+	typename Tr::Facet opposite = T.mirror_facet(f);
 	CGAL_assertion (f.first->is_in_domain() !=
 			opposite.first->is_in_domain());
 	if(!f.first->is_in_domain())
-	  f = T.compute_opposite_facet(f);
+	  f = T.mirror_facet(f);
 	os << "3 "
 	   << V[f.first->vertex(T.vertex_triple_index(f.second,0))] << " "
 	   << V[f.first->vertex(T.vertex_triple_index(f.second,1))] << " "
@@ -163,7 +163,7 @@ output_surface_facets_to_ghs   (std::ostream& os_points,
       {
 	Facet f = *fit;
 	if(!f.first->is_in_domain())
-	  f = T.compute_opposite_facet(f);
+	  f = T.mirror_facet(f);
 	os_faces 
 	  << "3 "
 	  << V[f.first->vertex(T.vertex_triple_index(f.second,0))] << " "

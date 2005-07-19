@@ -78,7 +78,7 @@ namespace CGAL {
     }
     
     FT get_radius() {
-    return radius;
+      return radius;
     }
     
     FT get_precision() {

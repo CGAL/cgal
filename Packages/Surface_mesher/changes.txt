@@ -1,3 +1,8 @@
+19 July 2005 Laurent Rineau
+Minor changes:
+- use mirror_facet, from Triangulation_3. Introduced in CGAL_3_2_I_146.
+
+
 30 June 2005 Laurent Rineau
 - attempt to merged trunk, sliver_branch and my local modifications...
 - may be correct, or not.

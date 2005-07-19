@@ -440,13 +440,6 @@ namespace CGAL {
 	c2t3.set_facet_center(f, center);
 	c2t3.set_facet_center(other_side, center);
 	    
-	// BEURK [Laurent 2005/02/09]
-	/// @todo Remove this
-	const Cell_handle& ch = f.first;
-	const int i = f.second;
-	const Vertex_handle& v1 = ch->vertex((i+1)&3);
-	const Vertex_handle& v2 = ch->vertex((i+2)&3);
-	const Vertex_handle& v3 = ch->vertex((i+3)&3);
 	// On regarde alors si la facette est bonne
 	if (criteria.is_bad (f)) {
 	  Quality a_r = criteria.quality (f);
