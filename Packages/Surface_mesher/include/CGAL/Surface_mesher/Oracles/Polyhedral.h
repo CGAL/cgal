@@ -86,7 +86,7 @@ public:
   }
 
 
-
+  // @todo random_points is ad hoc for the implicit oracle only
   Points random_points (int n) {
     Points res;
 
