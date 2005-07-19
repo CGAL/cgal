@@ -473,7 +473,7 @@ public:
    * \param projected_normat the projected normal
    * \param id the id of the unit-cube face
    */
-  Point_2 construct_point(const Point_3 & p3, unsigned int id)
+  Point_2 construct_point(const Point_3 & p3, unsigned int id) const
   {
     unsigned int j = (id + 1) % 3;
     unsigned int k = (id + 2) % 3;    
@@ -568,9 +568,6 @@ public:
     }
   };
   
-protected:
-  typedef unsigned int *            Coord_index_iter;
-
   /*! Return the mask of a face given by the face id
    */
   static unsigned int get_mask(unsigned int id)
@@ -582,6 +579,9 @@ protected:
     };
     return s_mask[id];
   }
+
+protected:
+  typedef unsigned int *            Coord_index_iter;
 
   /*! Return an extreme (1 or -1) coordinate of the unit cube in the user
    * defined number-type.
