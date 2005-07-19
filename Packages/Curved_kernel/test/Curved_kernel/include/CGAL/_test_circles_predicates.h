@@ -136,6 +136,26 @@ void _test_circle_predicat(CK ck)
     theCompare_y_at_x_2(circ1_arc_end_p4,circ1_arc_low);
   assert(theComparison_result_y_at_x_2 == CGAL::EQUAL);
   
+  //Comparison between the superior arc and a point 
+  //on this arc but create with two others arcs
+  Point_2 center1_1(center1_x - circ1_r, center1_y + circ1_r); 
+  Circle_2 circ1_1(center1_1, circ1_r * circ1_r);
+  Point_2 center1_2(center1_x + circ1_r, center1_y + circ1_r); 
+  Circle_2 circ1_2(center1_2, circ1_r * circ1_r);
+  Circular_arc_endpoint_2 circ1_arc_end_1_1_1_2(circ1_1, circ1_2, true);
+  theComparison_result_y_at_x_2 = 
+    theCompare_y_at_x_2(circ1_arc_end_1_1_1_2,circ1_arc_high);
+  assert(theComparison_result_y_at_x_2 == CGAL::EQUAL);
+
+  //Comparison between an inferior arc and a point in top create with 2 others circles (p1) 
+  Circle_2 circ1_big(center1, circ1_r * circ1_r * 4);
+  Circular_arc_2 circ1_big_arc_low(circ1_big,
+			       theLine_2_horizontal,true,
+			       theLine_2_horizontal, false);
+  theComparison_result_y_at_x_2 = 
+    theCompare_y_at_x_2(circ1_arc_end_p1,circ1_big_arc_low);
+  assert(theComparison_result_y_at_x_2 == CGAL::LARGER);
+  
 
   
   //Comparison between 2 arc at right of one of their intersection's point
@@ -168,6 +188,37 @@ void _test_circle_predicat(CK ck)
 			    circ_high_arc_low, 
 			    circ1_arc_end_p3);
   assert(theComparison_result_y_to_right_2 == CGAL::EQUAL);
+
+  Circular_arc_endpoint_2 circ1_big_arc_end(circ1_big, circ1_high, true);
+  Circular_arc_2 circ1_big_arc_high(circ1_big,
+				   theLine_2_horizontal,false,
+				   theLine_2_horizontal, true);
+  Circular_arc_2 circ_high_arc_high(circ1_high,
+				   theLine_2_horizontal_circ_high, false,
+				   theLine_2_horizontal_circ_high, true);
+  theComparison_result_y_to_right_2 = 
+    theCompare_y_to_right_2(circ1_big_arc_high, 
+			    circ_high_arc_high, 
+			    circ1_big_arc_end);
+  assert(theComparison_result_y_to_right_2 == CGAL::LARGER);
+
+  Point_2 center1_very_high(center1_x, center1_y + 2*circ1_r);
+  Circle_2 circ1_very_high(center1_very_high, circ1_r * circ1_r);
+  Point_2 point_left_circ1_very_high(center1_x - circ1_r,
+				     center1_y + 2*circ1_r);
+  Line_2 theLine_2_horizontal_circ_very_high(center1_very_high,
+					     point_left_circ1_very_high);
+  Circular_arc_2 circ_very_high_arc_low(circ1_very_high,
+				   theLine_2_horizontal_circ_very_high, true,
+				   theLine_2_horizontal_circ_very_high, false);
+  Circular_arc_endpoint_2 circ1_arc_end_tangent(circ1, 
+						circ1_very_high, true);
+  theComparison_result_y_to_right_2 = 
+    theCompare_y_to_right_2(circ1_arc_high, 
+			    circ_very_high_arc_low, 
+			    circ1_arc_end_tangent);
+  assert(theComparison_result_y_to_right_2 == CGAL::SMALLER);
+  
 
 
     
@@ -237,5 +288,67 @@ void _test_circle_predicat(CK ck)
   std::cout << std::endl;
 
 
-  
+  //////////////////////IS_Y_MONOTONE///////////////////////
+  std::cout << "is_y_monotone" << std::endl;
+  Line_2 theLine_low_right(center1, Point_2(center1_x + circ1_r,
+					    center1_y - circ1_r));
+  Line_2 theLine_low_left(center1, Point_2(center1_x - circ1_r,
+					   center1_y - circ1_r));
+  Circular_arc_2 arc_y_monotone_1(circ1,
+				  theLine_2_vertical, true,
+				  theLine_2_horizontal, false);
+  Circular_arc_2 arc_y_monotone_2(circ1,
+				  theLine_2_vertical, true,
+				  theLine_2_vertical, false);
+  Circular_arc_2 arc_y_monotone_3(circ1,
+				  theLine_2_vertical, false,
+				  theLine_2_horizontal, true);
+  Circular_arc_2 arc_y_monotone_4(circ1,
+				  theLine_low_right, true,
+				  theLine_low_left, true);
+  Circular_arc_2 arc_no_y_monotone_1(circ1,
+				     theLine_2_horizontal, true,
+				     theLine_2_horizontal, false);
+  Circular_arc_2 arc_no_y_monotone_2(circ1,
+				     theLine_2_horizontal, false,
+				     theLine_2_horizontal, true);
+  Circular_arc_2 arc_no_y_monotone_3(circ1,
+				     theLine_2_horizontal, true,
+				     theLine_2_horizontal, true);
+  assert(arc_y_monotone_1.is_y_monotone());
+  assert(arc_y_monotone_2.is_y_monotone());
+  assert(arc_y_monotone_3.is_y_monotone());
+  assert(arc_y_monotone_4.is_y_monotone());
+  assert(!arc_no_y_monotone_1.is_y_monotone());
+  assert(!arc_no_y_monotone_2.is_y_monotone());
+  assert(!arc_no_y_monotone_3.is_y_monotone());
+
+  //////////////////////Bbox of an endpoint////////////////////////////
+  for(int i = 0; i < 100; i++){
+  Point_2 center_random(theRandom.get_int(random_min, random_max),
+			theRandom.get_int(random_min, random_max));
+  Circle_2 circle_random(center_random, 
+			 theRandom.get_int(1, random_max));
+  Line_2 line_random_1(center_random, Point_2(center_random.x() +
+					      theRandom.get_int(random_min, random_max),
+					      center_random.y() + 
+					      theRandom.get_int(random_min, random_max)));
+  Line_2 line_random_2(center_random, Point_2(center_random.x() +
+					      theRandom.get_int(random_min, random_max),
+					      center_random.y() + 
+					      theRandom.get_int(random_min, random_max)));
+  Circular_arc_2 arc_random(circle_random,
+			    line_random_1, theRandom.get_bool(),
+			    line_random_2, theRandom.get_bool());
+  CGAL::Bbox_2 bb = arc_random.source().bbox();
+  assert(typename CK::FT(bb.xmin()) <= arc_random.source().x());
+  assert(typename CK::FT(bb.xmax()) >= arc_random.source().x());
+  assert(typename CK::FT(bb.ymin()) <= arc_random.source().y());
+  assert(typename CK::FT(bb.ymax()) >= arc_random.source().y());
+  bb = arc_random.target().bbox();
+  assert(typename CK::FT(bb.xmin()) <= arc_random.target().x());
+  assert(typename CK::FT(bb.xmax()) >= arc_random.target().x());
+  assert(typename CK::FT(bb.ymin()) <= arc_random.target().y());
+  assert(typename CK::FT(bb.ymax()) >= arc_random.target().y());
+  }
 }
