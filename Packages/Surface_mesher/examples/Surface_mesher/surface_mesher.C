@@ -24,9 +24,12 @@
 #include <CGAL/Surface_mesher/Criteria/Standard_criteria.h>
 #include <CGAL/IO/Complex_2_in_triangulation_3_file_writer.h>
 
+#ifndef SURFACE_MESHER_POLYHEDRAL
 #include <CGAL/Surface_mesher/Oracles/Implicit_oracle.h>
 #include "implicit_function.h"
+#else
 #include <CGAL/Surface_mesher/Oracles/Polyhedral.h>
+#endif
 
 #include <fstream>
 
@@ -46,9 +49,12 @@ typedef CGAL::Delaunay_triangulation_3<K, Tds> Del;
 typedef CGAL::Complex_2_in_triangulation_3_surface_mesh<Del> C2t3;
 
 // Oracle
+#ifndef SURFACE_MESHER_POLYHEDRAL
 typedef Function <K::FT> Func;
 typedef CGAL::Surface_mesher::Implicit_oracle<K, Func> Oracle;
-// typedef CGAL::Surface_mesher::Polyhedral <Del> Oracle;
+#else
+typedef CGAL::Surface_mesher::Polyhedral <Del> Oracle;
+#endif
 
 typedef CGAL::Surface_mesher::Refine_criterion<Del> Criterion;
 typedef CGAL::Surface_mesher::Standard_criteria <Criterion > Criteria;
@@ -75,28 +81,31 @@ typedef SMMWB Surface;  // manifold without boundary
 
 int main(int argc, char **argv) {
 
+#ifdef SURFACE_MESHER_POLYHEDRAL
   if (argc < 2) {
     std::cout << "Usage : " << argv[0] << " <off_file>" << std::endl;
     exit(0);
   }
-
-
-  // Function
-  Func F;
+#endif
 
   // Oracle 
-  Oracle O (F, K::Point_3 (0,0,0), 6, 1e-6, true);  // parity oracle toggled
-//   std::ifstream is (argv[1]);
-//   Oracle O (is);
-//   is.close ();
-
+#ifndef SURFACE_MESHER_POLYHEDRAL
+  Func F;
+  Oracle O (F, K::Point_3 (0,0,0), 6, 1e-6, true);  // parity oracle
+                                                    // toggled
+#else
+  std::ifstream is (argv[1]);
+  Oracle O (is);
+  is.close ();
+#endif
 
   // 3D-Delaunay triangulation
   Del T;
 
-
   // Initial point sample
   Oracle::Points initial_point_sample = O.random_points (20);
+  // @todo random_points is ad hoc for the implicit oracle only
+
   typedef Del::Point Point;
   T.insert (initial_point_sample.begin(), initial_point_sample.end());
   
@@ -125,9 +134,15 @@ int main(int argc, char **argv) {
             << std::endl;
 
   // Output
-  if (argc >= 3) {
-    std::cout << "Writing output to file " << argv[2] << "...";
-    std::ofstream os(argv[2]);
+#ifdef SURFACE_MESHER_POLYHEDRAL
+  const int out_filename_position_in_argv = 2;
+#else
+  const int out_filename_position_in_argv = 1;
+#endif
+
+  if (argc >= out_filename_position_in_argv + 1) {
+    std::cout << "Writing output to file " << argv[out_filename_position_in_argv] << "...";
+    std::ofstream os(argv[out_filename_position_in_argv]);
     output_surface_facets_to_off (os, T);
     os.close();
     std::cout << " done\n";

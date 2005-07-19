@@ -36,25 +36,39 @@ LDFLAGS = \
 OBJECTS = \
 	implicit_function$(OBJ_EXT)
 
+SURFACE_MESHER_POLYHEDRAL_OPT = -DSURFACE_MESHER_POLYHEDRAL
+
 #---------------------------------------------------------------------#
 #                    target entries
 #---------------------------------------------------------------------#
 
 all:            \
-                surface_mesher$(EXE_EXT)
+                implicit_surface_mesher$(EXE_EXT) \
+		polyhedral_surface_mesher$(EXE_EXT)
 #		test$(EXE_EXT)	
 #                surface_mesher_ellipsoid$(EXE_EXT) \
 #		surface_mesher_with_hierarchy$(EXE_EXT)
 
-surface_mesher$(EXE_EXT): surface_mesher$(OBJ_EXT) $(OBJECTS)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)surface_mesher surface_mesher$(OBJ_EXT) $(LDFLAGS) $(OBJECTS)
+implicit_surface_mesher$(OBJ_EXT): surface_mesher.C
+	$(CGAL_CXX) $(CXXFLAGS) $(EXE_OPT) implicit_surface_mesher$(OBJ_EXT) $(OBJ_OPT) surface_mesher.C
 
-clean: \
-                   surface_mesher.clean \
-		   implicit_function.clean
+implicit_surface_mesher$(EXE_EXT): implicit_surface_mesher$(OBJ_EXT) $(OBJECTS)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)implicit_surface_mesher implicit_surface_mesher$(OBJ_EXT) $(OBJECTS) $(LDFLAGS)
 
-run: all
-	./surface_mesher
+polyhedral_surface_mesher$(OBJ_EXT): surface_mesher.C
+	$(CGAL_CXX) $(CXXFLAGS) $(SURFACE_MESHER_POLYHEDRAL_OPT) $(EXE_OPT) polyhedral_surface_mesher$(OBJ_EXT) $(OBJ_OPT) surface_mesher.C
+
+polyhedral_surface_mesher$(EXE_EXT): polyhedral_surface_mesher$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)polyhedral_surface_mesher polyhedral_surface_mesher$(OBJ_EXT) $(LDFLAGS)
+
+clean: implicit_function.clean
+	rm -f polyhedral_surface_mesher$(OBJ_EXT)
+	rm -f polyhedral_surface_mesher$(EXE_EXT)
+	rm -f implicit_surface_mesher$(OBJ_EXT)
+	rm -f implicit_surface_mesher$(EXE_EXT)
+
+run: implicit_surface_mesher$(EXE_EXT)
+	./implicit_surface_mesher$(EXE_EXT)
 
 
 #---------------------------------------------------------------------#

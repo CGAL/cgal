@@ -1,4 +1,12 @@
 19 July 2005 Laurent Rineau
+Change in examples/Surface_mesher/surface_mesher.C :
+- added a macro SURFACE_MESHER_POLYHEDRAL. If defined, the polyhedral
+version is compiled.
+- change of makefile (and .cvsignore), so that two versions
+implicit_surface_mesher and polyhedral_surface_mesher are built by make
+all.
+
+19 July 2005 Laurent Rineau
 Minor changes:
 - use mirror_facet, from Triangulation_3. Introduced in CGAL_3_2_I_146.
 
