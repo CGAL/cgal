@@ -960,7 +960,7 @@ namespace CartesianKernelFunctors {
 
 
   template <typename K>
-  class Compute_x_2
+  class Compute_x_2 : Has_qrt
   {
     typedef typename K::FT             FT;
     typedef typename K::Point_2        Point_2;
@@ -969,21 +969,47 @@ namespace CartesianKernelFunctors {
 
   public:
     typedef  FT result_type;
+    typedef const result_type &  qualified_result_type;
     typedef Arity_tag< 1 >   Arity;
 
-    const FT&
+    qualified_result_type
     operator()(const Point_2& p) const
     {
       return p.rep().x();
     }
 
-    const FT&
+    qualified_result_type
     operator()(const Vector_2& v) const
     {
       return v.rep().x();
     }
   };
 
+
+  template <typename K>
+  class Compute_y_2 : Has_qrt
+  {
+    typedef typename K::FT             FT;
+    typedef typename K::Point_2        Point_2;
+    typedef typename K::Vector_2        Vector_2;
+
+  public:
+    typedef FT               result_type;
+    typedef const result_type &  qualified_result_type;
+    typedef Arity_tag< 1 >   Arity;
+
+    qualified_result_type
+    operator()(const Point_2& p) const
+    {
+      return p.rep().y();
+    }
+
+    qualified_result_type
+    operator()(const Vector_2& v)
+    {
+      return v.rep().y();
+    }
+  };
 
 
   template <typename K>
@@ -2135,6 +2161,28 @@ template <typename K>
     }
       
   };
+
+
+} //namespace CartesianKernelFunctors
+
+template < typename K>
+struct Qualified_result_of<CartesianKernelFunctors::Construct_vertex_2<K>, typename K::Segment_2, int >
+{
+  typedef typename K::Point_2 const &   type;
+};
+
+template < typename K>
+struct Qualified_result_of<CartesianKernelFunctors::Construct_vertex_2<K>, typename K::Triangle_2, int >
+{
+  typedef typename K::Point_2 const &   type;
+};
+
+// For Iso_rectangle the non specialized template will do the right thing, namely return a copy of a point
+
+namespace CartesianKernelFunctors {
+
+
+
 
   template <typename K>
   class Coplanar_orientation_3

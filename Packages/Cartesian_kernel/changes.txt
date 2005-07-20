@@ -1,3 +1,7 @@
+20 July 2005 Andreas Fabri
+- Moved Compute_y_2 from Kernel_23 to Cartesian_kernel
+- Added qualified_result_type to some functors
+
 24 June 2005 Andreas Fabri
 - Removed  #ifndef CGAL_NO_DEPRECATED_CODE for Construct_vector_2 and Construct_direction_2
 
