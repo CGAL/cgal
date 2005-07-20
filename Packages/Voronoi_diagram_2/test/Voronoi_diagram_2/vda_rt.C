@@ -52,8 +52,11 @@ typedef CGAL::Regular_triangulation_2<Gt>                        RT;
 #endif
 typedef CGAL::Regular_triangulation_Voronoi_traits_2<RT>         VT;
 //typedef CGAL::Regular_triangulation_cached_Voronoi_traits_2<RT>  VT;
+#ifdef VDA_USE_IDENTITY_VORONOI_TRAITS
+typedef CGAL::Voronoi_diagram_2<RT>                              VDA;
+#else
 typedef CGAL::Voronoi_diagram_2<RT,VT>                           VDA;
-
+#endif
 
 struct RT_Predicate
 {

@@ -43,8 +43,11 @@ typedef CGAL::Apollonius_graph_2<K>                           AG;
 #endif
 typedef CGAL::Apollonius_graph_Voronoi_traits_2<AG>           VT;
 //typedef CGAL::Apollonius_graph_cached_Voronoi_traits_2<AG>    VT;
+#ifdef VDA_USE_IDENTITY_VORONOI_TRAITS
+typedef CGAL::Voronoi_diagram_2<AG>                           VDA;
+#else
 typedef CGAL::Voronoi_diagram_2<AG,VT>                        VDA;
-
+#endif
 
 int main()
 {

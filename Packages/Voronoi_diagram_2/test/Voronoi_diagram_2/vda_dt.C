@@ -45,8 +45,11 @@ typedef CGAL::Delaunay_triangulation_2<K>                         DT;
 #endif
 //typedef CGAL::Delaunay_triangulation_cached_Voronoi_traits_2<DT>  VT;
 typedef CGAL::Delaunay_triangulation_Voronoi_traits_2<DT>         VT;
+#ifdef VDA_USE_IDENTITY_VORONOI_TRAITS
+typedef CGAL::Voronoi_diagram_2<DT>                               VDA;
+#else
 typedef CGAL::Voronoi_diagram_2<DT,VT>                            VDA;
-
+#endif
 
 struct DT_Predicate
 {
