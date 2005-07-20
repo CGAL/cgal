@@ -37,8 +37,10 @@
 #  define CGAL_KERNEL_LARGE_INLINE
 #endif
 
+#include <CGAL/Qualified_result_of.h>
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/functional_base.h>
 #include <CGAL/Kernel/global_functions.h>
+
 
 #endif // CGAL_KERNEL_BASIC_H
