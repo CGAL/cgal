@@ -46,11 +46,14 @@ class Vertex
   typedef typename VDA::Halfedge_around_vertex_circulator
   Halfedge_around_vertex_circulator;
 
-  typedef typename VDA::Voronoi_traits::Point_2           Point_2;
-  typedef typename VDA::Voronoi_traits::Voronoi_vertex_2  Voronoi_vertex_2;
-
   typedef typename VDA::Delaunay_graph               Delaunay_graph;
-  typedef typename VDA::Delaunay_graph::Face_handle  Delaunay_face_handle;
+  typedef typename VDA::Voronoi_traits::Point_2      Point_2;
+  typedef typename Delaunay_graph::Face_handle       Delaunay_face_handle;
+  typedef typename Delaunay_graph::Vertex_handle     Delaunay_vertex_handle;
+
+ private:
+  typedef typename VDA::Voronoi_traits::Get_site_2::result_type
+  Get_site_2_site;
 
  private:
   Delaunay_face_handle find_valid_vertex(const Delaunay_face_handle& f) const
@@ -155,15 +158,37 @@ class Vertex
     return deg;
   }
 
+  // ACCESS TO DUAL DEFINING VERTICES
+  //---------------------------------
+  Delaunay_vertex_handle first()  const { return (*this)[0]; }
+  Delaunay_vertex_handle second() const { return (*this)[1]; }
+  Delaunay_vertex_handle third()  const { return (*this)[2]; }
+
+  Delaunay_vertex_handle operator[](unsigned int i) const {
+    CGAL_precondition( i <= 2 );
+    CGAL_precondition( vda_->dual().dimension() == 2 );
+#if 0
+    Delaunay_face_handle fvalid = find_valid_vertex(f_);
+    CGAL_assertion( !vda_->dual().is_infinite(fvalid) );
+    return fvalid->vertex(i);
+#else
+    return f_->vertex(i);
+#endif
+  }
+
   // ACCESS TO GEOMETRIC OBJECTS
   //----------------------------
   Point_2 point() const {
     Delaunay_face_handle fvalid = find_valid_vertex(f_);
     CGAL_assertion( !vda_->dual().is_infinite(fvalid) );
 
+#if 1
+    return vda_->voronoi_traits().get_point_2_object()(fvalid);
+#else
     return VDA::Voronoi_traits::make_vertex(fvalid->vertex(0),
 					    fvalid->vertex(1),
 					    fvalid->vertex(2));
+#endif
   }
 
   // DUAL FEATURE

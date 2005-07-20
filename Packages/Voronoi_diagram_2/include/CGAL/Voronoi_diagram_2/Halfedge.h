@@ -37,7 +37,6 @@ class Halfedge
 
   typedef typename VDA::Delaunay_graph          DG;
   typedef typename DG::Face_handle              Delaunay_face_handle;
-  typedef typename DG::Vertex_handle            Delaunay_vertex_handle;
   typedef typename DG::Vertex_circulator        Delaunay_vertex_circulator;
   typedef typename DG::Edge_circulator          Delaunay_edge_circulator;
   typedef typename VDA::Edge_degeneracy_tester  Edge_degeneracy_tester;
@@ -65,17 +64,16 @@ class Halfedge
   }
 
 public:
-  typedef typename VDA::Vertex                   Vertex;
-  typedef typename VDA::Face                     Face;
-  typedef typename VDA::Vertex_handle            Vertex_handle;
-  typedef typename VDA::Face_handle              Face_handle;
-  typedef typename VDA::Halfedge_handle          Halfedge_handle;
-  typedef typename VDA::Ccb_halfedge_circulator  Ccb_halfedge_circulator;
+  typedef typename VDA::Vertex                    Vertex;
+  typedef typename VDA::Face                      Face;
+  typedef typename VDA::Vertex_handle             Vertex_handle;
+  typedef typename VDA::Face_handle               Face_handle;
+  typedef typename VDA::Halfedge_handle           Halfedge_handle;
+  typedef typename VDA::Ccb_halfedge_circulator   Ccb_halfedge_circulator;
+  typedef typename VDA::Delaunay_graph            Delaunay_graph;
+  typedef typename Delaunay_graph::Edge           Delaunay_edge;
+  typedef typename Delaunay_graph::Vertex_handle  Delaunay_vertex_handle;
 
-  typedef typename VDA::Voronoi_traits::Curve    Curve;
-
-  typedef typename VDA::Delaunay_graph           Delaunay_graph;
-  typedef typename Delaunay_graph::Edge          Delaunay_edge;
 
   // CONSTRUCTORS
   //-------------
@@ -229,34 +227,28 @@ public:
       ( !has_source() && has_target() );
   }
 
-  // ACCESS TO GEOMETRIC OBJECTS
-  //----------------------------
-  Curve curve() const {
-    if ( vda_->dual().dimension() == 1 ) {
-      return VDA::Voronoi_traits::make_edge(v1_, v2_);
-    }
-
-    Delaunay_vertex_handle v1 = f_->vertex( CW_CCW_2::cw(i_) ); // north
-    Delaunay_vertex_handle v2 = f_->vertex( CW_CCW_2::ccw(i_) ); // south
-    Delaunay_vertex_handle v3 = f_->vertex( i_ ); // west
-    Delaunay_vertex_handle v4 = vda_->dual().tds().mirror_vertex(f_,i_);// east
-
-    CGAL_precondition( !vda_->dual().is_infinite(v1) );
-    CGAL_precondition( !vda_->dual().is_infinite(v2) );
-
-    bool is_inf3 = vda_->dual().is_infinite(v3);
-    bool is_inf4 = vda_->dual().is_infinite(v4);
-
-    if ( is_inf3 && is_inf4 ) {
-      return VDA::Voronoi_traits::make_edge(v1, v2);
-    } else if ( is_inf3 ) {
-      return VDA::Voronoi_traits::make_edge(v1, v2, v4, false);
-    } else if ( is_inf4 ) {
-      return VDA::Voronoi_traits::make_edge(v1, v2, v3, true);
-    } else {
-      return VDA::Voronoi_traits::make_edge(v1, v2, v3, v4);
-    }
+  // ACCESS TO DUAL DEFINING VERTICES
+  //---------------------------------
+  Delaunay_vertex_handle up() const {
+    if ( vda_->dual().dimension() == 1 ) { return v1_; }
+    return f_->vertex( CW_CCW_2::ccw(i_) );
   }
+
+  Delaunay_vertex_handle down() const {
+    if ( vda_->dual().dimension() == 1 ) { return v2_; }
+    return f_->vertex( CW_CCW_2::cw(i_) );
+  }
+
+  Delaunay_vertex_handle left() const {
+    CGAL_precondition( has_source() );
+    return vda_->dual().tds().mirror_vertex(f_,i_);
+  }
+
+  Delaunay_vertex_handle right() const {
+    CGAL_precondition( has_target() );
+    return f_->vertex( i_ );
+  }
+
 
   // DUAL FEATURE
   //-------------
@@ -357,8 +349,36 @@ public:
   Delaunay_vertex_handle v1_, v2_;
 };
 
+
 CGAL_VORONOI_DIAGRAM_2_END_NAMESPACE
 
 CGAL_END_NAMESPACE
+
+//=========================================================================
+//=========================================================================
+#if 0
+
+#ifdef CGAL_USE_QT
+
+#include <CGAL/IO/Qt_widget.h>
+
+CGAL_BEGIN_NAMESPACE
+
+CGAL_VORONOI_DIAGRAM_2_BEGIN_NAMESPACE
+
+template<class VDA>
+Qt_widget& operator<<(Qt_widget& qt_w, const Halfedge<VDA>& e)
+{
+  qt_w << e.curve();
+  return qt_w;
+}
+
+CGAL_VORONOI_DIAGRAM_2_END_NAMESPACE
+
+CGAL_END_NAMESPACE
+
+#endif // CGAL_USE_QT
+
+#endif
 
 #endif // CGAL_VORONOI_DIAGRAM_2_HALFEDGE_2_H
