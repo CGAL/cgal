@@ -1,3 +1,6 @@
+20 July 2005:  Menelaos Karavelas
+- added copyright headers in demo files
+
 18 July 2005:  Menelaos Karavelas
 - prefixed macros with CGAL_
 
