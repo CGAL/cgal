@@ -6,7 +6,7 @@
 #---------------------------------------------------------------------#
 # Choose the right include file from the <cgalroot>/make directory.
 
-# CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE
+CGAL_MAKEFILE=/proj/geometrica/home/CGAL/CGAL-3.2-I-164/make/makefile_i686_Linux-2.4.28-pre3_g++-3.4.4
 include $(CGAL_MAKEFILE)
 
 #---------------------------------------------------------------------#
@@ -15,12 +15,13 @@ include $(CGAL_MAKEFILE)
 
 CXXFLAGS = -I../../include \
 	   -I../../../Data_structure_for_queries_3/include \
-           -I../../../Mesh_2/include \
-           -I../../../Mesh_3/include \
-           -I../../../Triangulation_3/include \
            $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS) \
            $(OTHER_CXXFLAGS)
+
+#           -I../../../Mesh_2/include \
+ #          -I../../../Mesh_3/include \
+  #         -I../../../Triangulation_3/include \
 
 #---------------------------------------------------------------------#
 #                    linker flags

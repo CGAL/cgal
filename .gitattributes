@@ -1801,6 +1801,10 @@ Packages/Subdivision_surfaces_3/examples/Subdivision_surfaces_3/data/cross.off -
 Packages/Subdivision_surfaces_3/examples/Subdivision_surfaces_3/data/quint_tris.off -text
 Packages/Surface_mesher/doc/scheme.fig -text
 Packages/Surface_mesher/doc/scheme.ps -text
+Packages/Surface_mesher/examples/Surface_mesher/inputs/ALSTOM_TEST4.off -text
+Packages/Surface_mesher/examples/Surface_mesher/inputs/boeing.off -text
+Packages/Surface_mesher/examples/Surface_mesher/inputs/geosphere.off -text
+Packages/Surface_mesher/examples/Surface_mesher/inputs/triceratops.off -text
 Packages/Sweep_line_2/doc_tex/Sweep_line_2/sl_simple.gif -text svneol=unset#unset
 Packages/Sweep_line_2/doc_tex/Sweep_line_2/sl_simple.pdf -text svneol=unset#unset
 Packages/Sweep_line_2/doc_tex/Sweep_line_2/sl_simple.ps -text
