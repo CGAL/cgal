@@ -557,13 +557,19 @@ public:
             CGAL::Oneset_iterator<CGAL::Object> oi(res);
 
             m_traits.intersect_2_object()(c1, c2, oi);
-            Point_2 p1;
+            std::pair<Point_2, unsigned int> p1;
             if (CGAL::assign(p1, res))
             {
               Coord_type y1 =
-                CGAL::to_double(p1.y()) / m_tab_traits.COORD_SCALE;
+                CGAL::to_double(p1.first.y())/ m_tab_traits.COORD_SCALE;
               up = Coord_point(pl_draw.x(), y1);
             }
+            else
+            {
+              // doesnt supoose to reach here at all !!!
+              CGAL_assertion(false);
+            }
+            setColor(Qt::red);
             m_tab_traits.draw_xcurve(this , he->curve() );
           }
           else
@@ -571,16 +577,17 @@ public:
             Vertex_const_handle v;
             CGAL_assertion(CGAL::assign(v, obj));
             CGAL::assign(v, obj);
-            Coord_point p(CGAL::to_double(v->point().x()) /
+            up = Coord_point(CGAL::to_double(v->point().x()) /
                        m_tab_traits.COORD_SCALE, 
                           CGAL::to_double(v->point().y()) /
                        m_tab_traits.COORD_SCALE); 
-            static_cast<CGAL::Qt_widget&>(*this) << p;
+            setColor(Qt::red);
+            static_cast<CGAL::Qt_widget&>(*this) << up;
           }
         }
   
-        setColor(Qt::black);
-        static_cast<CGAL::Qt_widget&>(*this) << CGAL::LineWidth(1);
+        setColor(Qt::yellow);
+        static_cast<CGAL::Qt_widget&>(*this) << CGAL::LineWidth(2);
         static_cast<CGAL::Qt_widget&>(*this) << Coord_segment(pl_draw,up);
         
         // draw an arrow that points to 'up' point
@@ -614,13 +621,14 @@ public:
             CGAL::Oneset_iterator<CGAL::Object> oi(res);
 
             m_traits.intersect_2_object()(c1, c2, oi);
-            Point_2 p1;
+            std::pair<Point_2,unsigned int> p1;
             if (CGAL::assign(p1, res))
             {
               Coord_type y1 =
-                CGAL::to_double(p1.y()) / m_tab_traits.COORD_SCALE;
+                CGAL::to_double(p1.first.y()) / m_tab_traits.COORD_SCALE;
               down = Coord_point(pl_draw.x(),y1);
-            m_tab_traits.draw_xcurve(this , he->curve() );
+              setColor(Qt::red);
+              m_tab_traits.draw_xcurve(this , he->curve() );
             }
           }
           else
@@ -628,14 +636,17 @@ public:
             Vertex_const_handle v;
             CGAL_assertion(CGAL::assign(v, obj));
             CGAL::assign(v, obj);
-            Coord_point p(CGAL::to_double(v->point().x()) /
+            down = Coord_point(CGAL::to_double(v->point().x()) /
                           m_tab_traits.COORD_SCALE, 
                           CGAL::to_double(v->point().y()) /
                           m_tab_traits.COORD_SCALE); 
-            static_cast<CGAL::Qt_widget&>(*this) << p;
+            setColor(Qt::red);
+            static_cast<CGAL::Qt_widget&>(*this) << down;
           }
         }
        
+        setColor(Qt::yellow);
+        static_cast<CGAL::Qt_widget&>(*this) << CGAL::LineWidth(2);
         static_cast<CGAL::Qt_widget&>(*this) << Coord_segment(pl_draw,down);
         // draw an arrow that points to 'down' point
         int x = this->x_pixel(CGAL::to_double(down.x()));
@@ -645,8 +656,9 @@ public:
         this->get_painter().drawLine(x+7 , y-7 , x , y);
       }
       static_cast<CGAL::Qt_widget&>(*this) << CGAL::LineWidth(m_line_width);
-      setCursor(old);
+      
       }
+      setCursor(old);
   }
 
   /*!
@@ -662,7 +674,7 @@ public:
   void set_face_color(Face_handle f ,QColor& c)
   {  
     f->set_info(c);
-    if( ! f->is_unbounded() || empty)
+    if( f->is_unbounded() || empty)
       set_unbounded_face_color(c); 
   }
 
@@ -946,7 +958,7 @@ public:
                      p.y() * m_tab_traits.COORD_SCALE);
         const X_monotone_curve_2 split_curve = 
           m_tab_traits.curve_make_x_monotone(split_point , split_point2);
-        Point_2 p1;
+        std::pair<Point_2, unsigned int> p1;
         Point_2 p_right;
         if (split_point.x() < split_point2.x())
           p_right = split_point;
@@ -974,7 +986,7 @@ public:
              vit != m_curves_arr->vertices_end(); vit++)
         {
           Point_2 temp = (*vit).point();
-          if (p1 == temp)
+          if (p1.first == temp)
             is_already_vertex = true;
         }
         m_tab_traits.draw_xcurve(this, hei->curve());
