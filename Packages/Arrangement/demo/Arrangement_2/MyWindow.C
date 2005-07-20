@@ -40,10 +40,10 @@
 #include "icons/demo_fill.xpm"
 #include "icons/demo_colors.xpm"
 
-#if (!defined _MSC_VER)
-#include <stdlib.h>
-#include <getopt.h>
-#endif
+
+
+
+
 
 //////////////////////////////////////////////////////////////////////////////
 /*! MyWindow constructor
@@ -264,7 +264,7 @@ MyWindow::MyWindow(int w, int h)
   options->insertItem("Planar Map Color...", this, SLOT(changePmColor()));
   options->insertSeparator();
   options->insertItem("Ray-Shooting Direction...", this, 
-	                                       SLOT(rayShootingDirection()));
+                                               SLOT(rayShootingDirection()));
   options->insertItem("Point-Locaiton Strategy....", this ,
                                          SLOT(pointLocationStrategy()));
                                           
@@ -336,7 +336,7 @@ MyWindow::MyWindow(int w, int h)
        this, SLOT( zoomin() ) );
 
   connect (color_dialog_bt , SIGNAL( activated()) , 
-	  this , SLOT(openColorDialog() ) );
+          this , SLOT(openColorDialog() ) );
   
   // connect mode group
   connect( modeGroup, SIGNAL( selected(QAction*) ), 
@@ -374,72 +374,13 @@ MyWindow::~MyWindow()
 
 #include "MyWindow.moc"
 
-static unsigned int window_width = 700;
-static unsigned int window_height = 700;
-
-static unsigned int verbose_level = 0;
-
-static char * str_options = "hv:w:";
-
-/*! Print a help message to the standard output */
-void print_help(void)
-{
-  std::cout << "options:" << std::endl
-            << "  -h\t\t\tprint this help message" << std::endl
-            << "  -v <level>\t\tset verbose level" << std::endl
-            << "  -w width x height\t\tset input options ("
-            << window_width << "x" << window_height << ")" << std::endl;
-}
-
-/*! Obtain the window width and height */
-int get_window_size(char * optarg)
-{
-  int rc = sscanf(optarg,"%dx%d", &window_width, &window_height);
-  if (rc != 2) {
-    std::cerr << "Failed to parse '-w " << optarg << " option!"
-              << std::endl;
-    return -1;
-  }
-  
-  return 0;
-}
-
-/*! Parse command line arguments */
-int parse_args(int argc, char * argv[])
-{
-#if (!defined _MSC_VER)
-  const char * prog_name = argv[0];
-  optind = 1;
-  opterr = 0;
-  int c;
-  while ((c = getopt(argc, argv, str_options)) != EOF) {
-    switch (c) {
-     case 'h': print_help(); return 1;
-     case 'v': verbose_level = atoi(optarg); break;
-     case 'w': if (get_window_size(optarg)) return -1; break;
-
-     case '?':
-     default:
-      std::cerr << prog_name << ": invalid option -- "
-                << (char) optopt << std::endl;
-      std::cerr << "Try `" << prog_name << " -h' for more information."
-                << std::endl;
-      return -1;
-    }
-  }
-#endif
-  return 0;
-}
 
 /*! main */
-int main(int argc, char * argv[])
+int main(int argc, char **argv)
 {
-  int rc = parse_args(argc, argv);
-  if (rc < 0) return(rc);
-  else if (rc > 0) return 0;
   const QString my_title_string("Arrangement Demo with CGAL Qt_widget");
   QApplication app( argc, argv );
-  MyWindow widget(window_width, window_height);
+  MyWindow widget(700,700); // physical window size
   app.setMainWidget(&widget);
   widget.setCaption(my_title_string);
   widget.setMouseTracking(TRUE);
@@ -464,3 +405,4 @@ int main(int, char*)
 
 
 #endif // CGAL_USE_QT
+

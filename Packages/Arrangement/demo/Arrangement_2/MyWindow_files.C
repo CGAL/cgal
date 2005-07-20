@@ -225,7 +225,7 @@ void MyWindow::fileOpenPm()
       Qt_widget_demo_tab<Segment_tab_traits> *w_demo_p = 
        static_cast<Qt_widget_demo_tab<Segment_tab_traits> *> 
        (myBar->currentPage());
-      w_demo_p->m_curves_arr->read(inputFile);
+      //w_demo_p->m_curves_arr->read(inputFile);
 	  if( w_demo_p->m_curves_arr->number_of_vertices() == 0 )
     	w_demo_p->empty = true;
       else 
@@ -237,7 +237,7 @@ void MyWindow::fileOpenPm()
       Qt_widget_demo_tab<Polyline_tab_traits> *w_demo_p =
        static_cast<Qt_widget_demo_tab<Polyline_tab_traits> *> 
        (myBar->currentPage());
-       w_demo_p->m_curves_arr->read(inputFile);
+       //w_demo_p->m_curves_arr->read(inputFile);
 
 	   if( w_demo_p->m_curves_arr->number_of_vertices() == 0 )
 	     w_demo_p->empty = false;
@@ -296,21 +296,20 @@ void MyWindow::load( const QString& filename , bool clear_flag )
     if (clear_flag)
         w_demo_p->m_curves_arr->clear();
     char dummy[256];
-    Pm_base_conic_2* cv;
+    Arr_base_conic_2* cv;
     int count;
     inputFile >> count;
     inputFile.getline(dummy, sizeof(dummy));
     for (int i = 0; i < count; i++) 
     {
-      cv = new Pm_base_conic_2();
+      cv = new Arr_base_conic_2();
       ReadCurve(inputFile, *cv);
       
       Curve_conic_data cd;
       cd.m_type = Curve_conic_data::LEAF;
       cd.m_index = w_demo_p->index;
       cd.m_ptr.m_curve = cv;
-      Conic_notification conic_notif;
-      w_demo_p->m_curves_arr->insert(Pm_conic_2( *cv , cd) , & conic_notif);
+      CGAL::insert(*(w_demo_p->m_curves_arr), Arr_conic_2( *cv , cd));
       
       CGAL::Bbox_2 curve_bbox = cv->bbox();
       if (i == 0)
@@ -334,11 +333,11 @@ void MyWindow::load( const QString& filename , bool clear_flag )
     
     int num_polylines, num_segments;
     int ix, iy;
-    std::vector<Pm_pol_point_2> points;
+    std::vector<Arr_pol_point_2> points;
     int i, j;
     
     inputFile >> num_polylines; 
-    std::list<Pm_pol_2> pol_list;
+    std::list<Arr_pol_2> pol_list;
 
     for (i = 0; i < num_polylines; i++) 
     {
@@ -347,11 +346,11 @@ void MyWindow::load( const QString& filename , bool clear_flag )
       for (j = 0; j < num_segments; j++)
       {
         inputFile >> ix >> iy;
-        points.push_back (Pm_pol_point_2(NT(ix),NT(iy)));
+        points.push_back (Arr_pol_point_2(NT(ix),NT(iy)));
       }
 
-      Pm_base_pol_2 *base_polyline = 
-        new Pm_base_pol_2(points.begin(), points.end());
+      Arr_base_pol_2 *base_polyline = 
+        new Arr_base_pol_2(points.begin(), points.end());
  	
       CGAL::Bbox_2 curve_bbox = base_polyline->bbox();
       if (i == 0)
@@ -364,13 +363,12 @@ void MyWindow::load( const QString& filename , bool clear_flag )
       cd.m_index = w_demo_p->index;
       cd.m_ptr.m_curve = base_polyline;
       
-	  Pm_pol_2 curve(*base_polyline, cd);
+	  Arr_pol_2 curve(*base_polyline, cd);
       pol_list.push_back(curve);
-      //w_demo_p->m_curves_arr->insert(Pm_pol_2( *base_polyline , cd));
+      //w_demo_p->m_curves_arr->insert(Arr_pol_2( *base_polyline , cd));
     }
-    Pol_notification pol_notif;
     std::cout << "insert polylines fron file\n";
-	  w_demo_p->m_curves_arr->insert(pol_list.begin(),pol_list.end(), &pol_notif);
+    CGAL::insert(*(w_demo_p->m_curves_arr), pol_list.begin(), pol_list.end());
     std::cout << "finish insert polylines fron file\n";
     if( w_demo_p->m_curves_arr->number_of_vertices() == 0 )
       w_demo_p->empty = true;
@@ -388,18 +386,17 @@ void MyWindow::load( const QString& filename , bool clear_flag )
     
     int count;
     inputFile >> count;
-    Seg_notification  seg_notif;
     int i;
-    std::list<Pm_seg_2> seg_list;
+    std::list<Arr_seg_2> seg_list;
     for (i = 0; i < count; i++) {
       NT x0, y0, x1, y1;
       inputFile >> x0 >> y0 >> x1 >> y1;
     
-      Pm_seg_point_2 p1(x0, y0);
-      Pm_seg_point_2 p2(x1, y1);
+      Arr_seg_point_2 p1(x0, y0);
+      Arr_seg_point_2 p2(x1, y1);
 
-	  Pm_base_seg_2 *base_seg =
-		  new Pm_base_seg_2(p1, p2);
+	  Arr_base_seg_2 *base_seg =
+		  new Arr_base_seg_2(p1, p2);
 	
       CGAL::Bbox_2 curve_bbox = base_seg->bbox();
       if (i == 0)
@@ -412,12 +409,12 @@ void MyWindow::load( const QString& filename , bool clear_flag )
       cd.m_index = w_demo_p->index;
       cd.m_ptr.m_curve = base_seg;
       
-	  Pm_seg_2 curve(*base_seg, cd);
+	  Arr_seg_2 curve(*base_seg, cd);
       seg_list.push_back(curve);
-      //w_demo_p->m_curves_arr->insert(Pm_seg_2( *base_seg , cd), &seg_notif);
+      //w_demo_p->m_curves_arr->insert(Arr_seg_2( *base_seg , cd), &seg_notif);
     }
     
-	w_demo_p->m_curves_arr->insert(seg_list.begin(),seg_list.end(), &seg_notif);
+    CGAL::insert(*(w_demo_p->m_curves_arr), seg_list.begin(), seg_list.end());
 
 	if( w_demo_p->m_curves_arr->number_of_vertices() == 0 )
 	  w_demo_p->empty = true;
@@ -438,7 +435,7 @@ void MyWindow::load( const QString& filename , bool clear_flag )
  * \param is - input file stream
  * \param cv - will hold the reading curve
  */
-void MyWindow::ReadCurve(std::ifstream & is, Pm_base_conic_2 & cv)
+void MyWindow::ReadCurve(std::ifstream & is, Arr_base_conic_2 & cv)
 {
   // Read a line from the input file.
   char one_line[128];
@@ -456,14 +453,14 @@ void MyWindow::ReadCurve(std::ifstream & is, Pm_base_conic_2 & cv)
     // Construct a line segment. The line should have the format:
     //   s <x1> <y1> <x2> <y2>
     // where (x1, y1), (x2, y2) are the endpoints of a segment.
-    CfNT    x1, y1, x2, y2;
+    Rational    x1, y1, x2, y2;
     
     str_line >> x1 >> y1 >> x2 >> y2;
     
-    Int_point_2   p1(x1, y1), p2(x2, y2);
-    Int_segment_2 seg (p1, p2);
+    Rat_point_2   p1(x1, y1), p2(x2, y2);
+    Rat_segment_2 seg (p1, p2);
     
-    cv = Pm_base_conic_2 (seg);
+    cv = Arr_base_conic_2 (seg);
   }
   else if (type == 'c' || type == 'C')
   {
@@ -471,38 +468,38 @@ void MyWindow::ReadCurve(std::ifstream & is, Pm_base_conic_2 & cv)
     //   c <x0> <y0> <R_sq>
     // where (x0, y0) is the center of the circle and R_sq is its squared
     // radius.
-    CfNT    x0, y0, R_sq;
+    Rational    x0, y0, R_sq;
     
     str_line >> x0 >> y0 >> R_sq;
     
-    Int_point_2   p0(x0, y0);
-    Int_circle_2  circ(p0, R_sq);
+    Rat_point_2   p0(x0, y0);
+    Rat_circle_2  circ(p0, R_sq);
     
-    cv = Pm_base_conic_2 (circ);
+    cv = Arr_base_conic_2 (circ);
   }
   else if (type == 't' || type == 'T')
   {
     // Construct a circular arc. The line should have the format:
     //   t <x1> <y1> <x2> <y2> <x3> <y3>
     // where (x1, y1), (x2, y2) and (x3, y3) define the arc.
-    CfNT    x1, y1, x2, y2, x3, y3;
+    Rational    x1, y1, x2, y2, x3, y3;
     
     str_line >> x1 >> y1 >> x2 >> y2 >> x3 >> y3;
     
-    Int_point_2   p1(x1, y1), p2(x2, y2), p3(x3, y3);
+    Rat_point_2   p1(x1, y1), p2(x2, y2), p3(x3, y3);
 
-    cv = Pm_base_conic_2 (p1, p2, p3);
+    cv = Arr_base_conic_2 (p1, p2, p3);
   }
   else if (type == 'f' || type == 'F')
   {
     // Construct a full conic curve. The line should have the format:
     //   c <r> <s> <t> <u> <v> <w>
     // where r, s, t, u, v, w define the conic equation.
-    CfNT    r, s, t, u, v, w;
+    Rational    r, s, t, u, v, w;
 
     str_line >> r >> s >> t >> u >> v >> w;
     
-    cv = Pm_base_conic_2 (r, s, t, u, v, w);
+    cv = Arr_base_conic_2 (r, s, t, u, v, w);
   }
   else if (type == 'a' || type == 'A')
   {
@@ -510,7 +507,7 @@ void MyWindow::ReadCurve(std::ifstream & is, Pm_base_conic_2 & cv)
     //   c <r> <s> <t> <u> <v> <w> <orient> <x1> <y1> <x2> <y2>
     // where r, s, t, u, v, w define the conic equation, while (x1, y1)
     // and (x2, y2) are the arc's endpoints.
-    CfNT    r, s, t, u, v, w;
+    Rational    r, s, t, u, v, w;
     
     str_line >> r >> s >> t >> u >> v >> w;
 
@@ -528,24 +525,24 @@ void MyWindow::ReadCurve(std::ifstream & is, Pm_base_conic_2 & cv)
 
     // Read the end points of the arc and create it.
     // Notice we read the coordinates as strings, then we convert them to 
-    // the CoNT type, as we do not want to initialize CoNT from a double.
+    // the Algebraic type, as we do not want to initialize Algebraic from a double.
     char    num[50];
-    CoNT    x1, y1, x2, y2;
+    Algebraic    x1, y1, x2, y2;
       
     str_line >> num;
-    x1 = CoNT(num);
+    x1 = Algebraic(num);
     str_line >> num;
-    y1 = CoNT(num);
+    y1 = Algebraic(num);
     
     str_line >> num;
-    x2 = CoNT(num);
+    x2 = Algebraic(num);
     str_line >> num;
-    y2 = CoNT(num);
+    y2 = Algebraic(num);
     
-    Pm_conic_point_2 ps (x1, y1);
-    Pm_conic_point_2 pt (x2, y2);
+    Arr_conic_point_2 ps (x1, y1);
+    Arr_conic_point_2 pt (x2, y2);
 
-    cv = Pm_base_conic_2 (r, s, t, u, v, w, orient, ps ,pt);
+    cv = Arr_base_conic_2 (r, s, t, u, v, w, orient, ps ,pt);
   }
   else if (type == 'l' || type == 'L')
   {
@@ -553,14 +550,14 @@ void MyWindow::ReadCurve(std::ifstream & is, Pm_base_conic_2 & cv)
     //   c <r> <s> <t> <u> <v> <w> <a> <b> <c>
     // where r, s, t, u, v, w define the conic equation and a, b, c define
     // a line that intersects it.
-    CfNT    r, s, t, u, v, w;
-    CfNT    a, b, c;
+    Rational    r, s, t, u, v, w;
+    Rational    a, b, c;
     
     str_line >> r >> s >> t >> u >> v >> w >> a >> b >> c;
     
-    Int_line_2    line (a, b, c);
+    Rat_line_2    line (a, b, c);
 
-    cv = Pm_base_conic_2 (r, s, t, u, v, w, line);
+    //cv = Arr_base_conic_2 (r, s, t, u, v, w, line);
   }
   else if (type == 'q' || type == 'Q')
   {
@@ -568,13 +565,13 @@ void MyWindow::ReadCurve(std::ifstream & is, Pm_base_conic_2 & cv)
     //   t <x1> <y1> <x2> <y2> <x3> <y3> <x4> <y4> <x5> <y5>
     // where (x1, y1), (x2, y2), (x3, y3), (x4, y4) and (x5, y5) define the 
     // arc.
-    CfNT    x1, y1, x2, y2, x3, y3, x4, y4, x5, y5;
+    Rational    x1, y1, x2, y2, x3, y3, x4, y4, x5, y5;
 
     str_line >> x1 >> y1 >> x2 >> y2 >> x3 >> y3 >> x4 >> y4 >> x5 >> y5;
 
-    Int_point_2   p1(x1, y1), p2(x2, y2), p3(x3, y3), p4(x4, y4), p5(x5, y5);
+    Rat_point_2   p1(x1, y1), p2(x2, y2), p3(x3, y3), p4(x4, y4), p5(x5, y5);
     
-    cv = Pm_base_conic_2 (p1, p2, p3, p4, p5);
+    cv = Arr_base_conic_2 (p1, p2, p3, p4, p5);
   }
   else
   {
@@ -650,7 +647,7 @@ void MyWindow::fileSave()
      Qt_widget_demo_tab<Segment_tab_traits> *w_demo_p = 
        static_cast<Qt_widget_demo_tab<Segment_tab_traits> *> 
        (myBar->currentPage());
-     outFile << w_demo_p->m_curves_arr;
+     //outFile << w_demo_p->m_curves_arr;
      break;
     }
    case POLYLINE_TRAITS:
@@ -658,7 +655,7 @@ void MyWindow::fileSave()
      Qt_widget_demo_tab<Polyline_tab_traits> *w_demo_p = 
        static_cast<Qt_widget_demo_tab<Polyline_tab_traits> *> 
        (myBar->currentPage());
-     outFile << w_demo_p->m_curves_arr;
+     //outFile << w_demo_p->m_curves_arr;
      break;
     }
    case CONIC_TRAITS:
@@ -666,7 +663,7 @@ void MyWindow::fileSave()
      Qt_widget_demo_tab<Conic_tab_traits> *w_demo_p = 
        static_cast<Qt_widget_demo_tab<Conic_tab_traits> *> 
        (myBar->currentPage());
-     outFile << w_demo_p->m_curves_arr;
+     //outFile << w_demo_p->m_curves_arr;
      break;
     }
   }  
@@ -696,7 +693,7 @@ void MyWindow::fileSave_ps()
      CGAL::Postscript_file_stream  LPF(m_width, m_height ,"pm.ps");
      LPF.init(-3,3,-3);
      LPF.set_line_width(1);
-     LPF << w_demo_p->m_curves_arr;
+     //LPF << w_demo_p->m_curves_arr;
      break;
     }
    case POLYLINE_TRAITS:
