@@ -22,12 +22,14 @@
 
 #include <CGAL/Voronoi_diagram_2/basic.h>
 #include <CGAL/Voronoi_diagram_2/Default_Voronoi_traits_2.h>
-#include <CGAL/Voronoi_diagram_2/Voronoi_vertex_base_2.h>
-#include <CGAL/Voronoi_diagram_2/Voronoi_edge_base_2.h>
 #include <CGAL/Voronoi_diagram_2/Locate_result.h>
 #include <cstdlib>
 #include <algorithm>
 #include <CGAL/Triangulation_utils_2.h>
+
+#ifdef VDA_USE_IDENTITY_VORONOI_TRAITS
+#include <CGAL/Voronoi_diagram_2/Identity_Voronoi_traits_2.h>
+#endif
 
 CGAL_BEGIN_NAMESPACE
 
@@ -232,62 +234,6 @@ class AG_Edge_degeneracy_tester
 //=========================================================================
 //=========================================================================
 
-template<class DG> class Apollonius_graph_Voronoi_traits_2;
-template<class DG> class AG_Voronoi_edge_2;
-
-template<class DG>
-class AG_Voronoi_vertex_2
-  : public CGAL_VORONOI_DIAGRAM_2_NS::Voronoi_vertex_base_2
-  <DG, typename DG::Point_2, typename DG::Site_2,
-   AG_Voronoi_vertex_2<DG> >
-{
-  friend class Apollonius_graph_Voronoi_traits_2<DG>;
-  friend class AG_Voronoi_edge_2<DG>;
-#ifndef CGAL_CFG_NESTED_CLASS_FRIEND_DECLARATION_BUG
-  friend class AG_Voronoi_edge_2<DG>::Base;
-#else
-  friend class
-  CGAL_VORONOI_DIAGRAM_2_NS::Voronoi_edge_base_2<DG,
-						 typename DG::Point_2,
-						 typename DG::Site_2,
-						 AG_Voronoi_edge_2<DG>,
-						 AG_Voronoi_vertex_2<DG> >;
-#endif
-
- private:
-  typedef CGAL_VORONOI_DIAGRAM_2_NS::Voronoi_vertex_base_2
-  <DG, typename DG::Point_2, typename DG::Site_2, AG_Voronoi_vertex_2<DG> >
-  Base;
-
- public:
-  operator typename Base::Point_2() const {
-    return typename Base::Geom_traits().construct_Apollonius_vertex_2_object()
-      (this->s_[0], this->s_[1], this->s_[2]);
-  }
-};
-
-//=========================================================================
-  
-template<class DG>
-class AG_Voronoi_edge_2
-  : public CGAL_VORONOI_DIAGRAM_2_NS::Voronoi_edge_base_2
-  <DG, typename DG::Point_2, typename DG::Site_2, AG_Voronoi_edge_2<DG>,
-   AG_Voronoi_vertex_2<DG> >
-{
-  friend class Apollonius_graph_Voronoi_traits_2<DG>;
-  friend class AG_Voronoi_vertex_2<DG>;
-
- private:
-  typedef CGAL_VORONOI_DIAGRAM_2_NS::Voronoi_edge_base_2
-  <DG,typename DG::Point_2,typename DG::Site_2, AG_Voronoi_edge_2<DG>,
-   AG_Voronoi_vertex_2<DG> >
-  Base;
-};
-
-
-//=========================================================================
-
-
 template<class AG2>
 class Apollonius_graph_Voronoi_traits_2
   : public CGAL_VORONOI_DIAGRAM_2_NS::Default_Voronoi_traits_2
@@ -312,50 +258,37 @@ class Apollonius_graph_Voronoi_traits_2
   typedef typename AG2::Point_2                   Point_2;
   typedef typename AG2::Site_2                    Site_2;
   typedef typename Base::Vertex_handle            Vertex_handle;
-
-  typedef AG_Voronoi_vertex_2<AG2>                Voronoi_vertex_2;
-  typedef AG_Voronoi_edge_2<AG2>                  Voronoi_edge_2;
-  typedef Voronoi_edge_2                          Curve;
+  typedef typename Base::Face_handle              Face_handle;
 
   typedef Tag_true                                Has_get_conflicts;
   typedef Tag_true                                Has_insert;
 
-  static const Site_2& site(const Vertex_handle& v) {
-    return v->site();
-  }
+  struct Get_site_2 {
+    typedef const Site_2&   result_type;
+    typedef Vertex_handle   value_type;
+    typedef Arity_tag<1>    Arity;
 
-  static Voronoi_vertex_2 make_vertex(const Vertex_handle& v1,
-				      const Vertex_handle& v2,
-				      const Vertex_handle& v3) {
-    Voronoi_vertex_2 vv;
-    vv.set_sites(v1->site(), v2->site(), v3->site());
-    return vv;
-  }
+    result_type operator()(const Vertex_handle& v) const {
+      return v->site();
+    }
+  };
 
-  static Voronoi_edge_2 make_edge(const Vertex_handle& v1,
-				  const Vertex_handle& v2) {
-    Voronoi_edge_2 ve;
-    ve.set_sites(v1->site(), v2->site());
-    return ve;
-  }
+  Get_site_2 get_site_2_object() const { return Get_site_2(); }
 
-  static Voronoi_edge_2 make_edge(const Vertex_handle& v1,
-				  const Vertex_handle& v2,
-				  const Vertex_handle& v3,
-				  bool is_src) {
-    Voronoi_edge_2 ve;
-    ve.set_sites(v1->site(), v2->site(), v3->site(), is_src);
-    return ve;
-  }
+  struct Get_point_2 {
+    typedef Point_2       result_type;
+    typedef Face_handle   value_type;
+    typedef Arity_tag<1>  Arity;
 
-  static Voronoi_edge_2 make_edge(const Vertex_handle& v1,
-				  const Vertex_handle& v2,
-				  const Vertex_handle& v3,
-				  const Vertex_handle& v4) {
-    Voronoi_edge_2 ve;
-    ve.set_sites(v1->site(), v2->site(), v3->site(), v4->site());
-    return ve;
-  }
+    Point_2 operator()(const Face_handle& f) const {
+      typedef typename Base::Delaunay_graph::Geom_traits Geom_traits;
+
+      return Geom_traits().construct_Apollonius_vertex_2_object()
+	(f->vertex(0)->site(), f->vertex(1)->site(), f->vertex(2)->site());
+    }
+  };
+
+  Get_point_2 get_point_2_object() const { return Get_point_2(); }
 };
 
 
@@ -408,75 +341,34 @@ class Apollonius_graph_ref_counted_Voronoi_traits_2
   typedef Apollonius_graph_ref_counted_Voronoi_traits_2<AG2>  Self;
 };
 
-CGAL_END_NAMESPACE
-
-
 //=========================================================================
 //=========================================================================
 
-#ifdef CGAL_USE_QT
+#ifdef VDA_USE_IDENTITY_VORONOI_TRAITS
 
-#include <CGAL/IO/Qt_widget.h>
-#include <CGAL/Apollonius_graph_constructions_C2.h>
-#include <CGAL/Hyperbola_segment_2.h>
-#include <CGAL/Hyperbola_ray_2.h>
-#include <CGAL/Hyperbola_2.h>
+template<class Gt,class Agds,class LTag> class Apollonius_graph_2;
+template<class Gt,class Agds,class LTag> class Apollonius_graph_hierarchy_2;
 
-CGAL_BEGIN_NAMESPACE
+template<class Gt, class Agds, class LTag>
+class Identity_Voronoi_traits_2< Apollonius_graph_2<Gt,Agds,LTag> >
+  : public CGAL_VORONOI_DIAGRAM_2_NS::Identity_Voronoi_traits_2_base
+  < Apollonius_graph_2<Gt,Agds,LTag>,
+    Apollonius_graph_Voronoi_traits_2< Apollonius_graph_2<Gt,Agds,LTag> >
+  >
+{};
 
-template<class AG2>
-Qt_widget& operator<<(Qt_widget& qt_w,
-		      const AG_Voronoi_edge_2<AG2>& ve)
-{
-  typedef typename AG2::Geom_traits          Geom_traits;
-  typedef typename Geom_traits::Assign_2     Assign_2;
-  typedef typename Geom_traits::Segment_2    Segment_2;
-  typedef typename Geom_traits::Ray_2        Ray_2;
-  typedef typename Geom_traits::Line_2       Line_2;
-  typedef Hyperbola_segment_2<Geom_traits>   Hyperbola_segment_2;
-  typedef Hyperbola_ray_2<Geom_traits>       Hyperbola_ray_2;
-  typedef Hyperbola_2<Geom_traits>           Hyperbola_2;
-
-  Assign_2 assign = Geom_traits().assign_2_object();
-  Hyperbola_segment_2 hs;
-  Hyperbola_ray_2 hr;
-  Hyperbola_2 h;
-  Segment_2 s;
-  Ray_2 r;
-  Line_2 l;
-
-  Object o;
-  if ( ve.has_source() && ve.has_target() ) {
-    Construct_Apollonius_bisector_segment_2<Geom_traits> c_seg;
-    o = c_seg(ve.down(), ve.up(), ve.left(), ve.right());
-  } else if ( ve.has_source() && !ve.has_target() ) {
-    Construct_Apollonius_bisector_ray_2<Geom_traits> c_ray;
-    o = c_ray(ve.down(), ve.up(), ve.left());
-  } else if ( !ve.has_source() && ve.has_target() ) {
-    Construct_Apollonius_bisector_ray_2<Geom_traits> c_ray;
-    o = c_ray(ve.up(), ve.down(), ve.right());
-  } else {
-    CGAL_assertion( !ve.has_source() && !ve.has_target() );
-    Construct_Apollonius_bisector_2<Geom_traits> c_bis;
-    o = c_bis(ve.up(), ve.down());
-  }
-
-  // fix this and use the output operators...
-  if      ( assign(hs,o) )   hs.draw(qt_w);
-  else if ( assign(hr,o) )   hr.draw(qt_w);
-  else if ( assign(h, o) )   h.draw(qt_w);
-  else if ( assign(s, o) )   qt_w << s;
-  else if ( assign(r, o) )   qt_w << r;
-  else if ( assign(l, o) )   qt_w << l;
-
-  return qt_w;
-}
+template<class Gt, class Agds, class LTag>
+class Identity_Voronoi_traits_2< Apollonius_graph_hierarchy_2<Gt,Agds,LTag> >
+  : public CGAL_VORONOI_DIAGRAM_2_NS::Identity_Voronoi_traits_2_base
+  < Apollonius_graph_hierarchy_2<Gt,Agds,LTag>,
+    Apollonius_graph_Voronoi_traits_2
+    < Apollonius_graph_hierarchy_2<Gt,Agds,LTag> >
+  >
+{};
 
 
+#endif // VDA_USE_IDENTITY_VORONOI_TRAITS
 
 CGAL_END_NAMESPACE
-
-#endif
-
 
 #endif // CGAL_APOLLONIUS_GRAPH_VORONOI_TRAITS_2_H

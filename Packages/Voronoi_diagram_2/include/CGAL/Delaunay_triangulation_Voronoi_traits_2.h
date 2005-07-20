@@ -22,8 +22,6 @@
 
 #include <CGAL/Voronoi_diagram_2/basic.h>
 #include <CGAL/Voronoi_diagram_2/Default_Voronoi_traits_2.h>
-#include <CGAL/Voronoi_diagram_2/Voronoi_vertex_base_2.h>
-#include <CGAL/Voronoi_diagram_2/Voronoi_edge_base_2.h>
 #include <CGAL/Voronoi_diagram_2/Locate_result.h>
 #include <cstdlib>
 #include <algorithm>
@@ -254,67 +252,6 @@ class DT_Edge_degeneracy_tester
 //=========================================================================
 //=========================================================================
 
-template<class DG> class Delaunay_triangulation_Voronoi_traits_2;
-template<class DG> class DT_Voronoi_edge_2;
-
-template<class DG>
-class DT_Voronoi_vertex_2
-  : public CGAL_VORONOI_DIAGRAM_2_NS::Voronoi_vertex_base_2
-  <DG, typename DG::Geom_traits::Point_2, typename DG::Geom_traits::Point_2,
-   DT_Voronoi_vertex_2<DG> >
-{
-  friend class Delaunay_triangulation_Voronoi_traits_2<DG>;
-  friend class DT_Voronoi_edge_2<DG>;
-#ifndef CGAL_CFG_NESTED_CLASS_FRIEND_DECLARATION_BUG
-  friend class DT_Voronoi_edge_2<DG>::Base;
-#else
-  friend class
-  CGAL_VORONOI_DIAGRAM_2_NS::Voronoi_edge_base_2
-  <DG,
-   typename DG::Geom_traits::Point_2,
-   typename DG::Geom_traits::Point_2,
-   DT_Voronoi_edge_2<DG>,
-   DT_Voronoi_vertex_2<DG> >;
-#endif
-
- private:
-  typedef typename DG::Geom_traits::Point_2  Point_2;
-
-  typedef CGAL_VORONOI_DIAGRAM_2_NS::Voronoi_vertex_base_2
-  <DG, Point_2, Point_2, DT_Voronoi_vertex_2<DG> >
-  Base;
-
- public:
-  operator typename Base::Point_2() const {
-    return typename Base::Geom_traits().construct_circumcenter_2_object()
-      (this->s_[0], this->s_[1], this->s_[2]);
-  }
-};
-
-//=========================================================================
-  
-template<class DG>
-class DT_Voronoi_edge_2
-  : public CGAL_VORONOI_DIAGRAM_2_NS::Voronoi_edge_base_2
-  <DG, typename DG::Geom_traits::Point_2, typename DG::Geom_traits::Point_2,
-   DT_Voronoi_edge_2<DG>, DT_Voronoi_vertex_2<DG> >
-{
-  friend class Delaunay_triangulation_Voronoi_traits_2<DG>;
-  friend class DT_Voronoi_vertex_2<DG>;
-
- private:
-  typedef typename DG::Geom_traits::Point_2  Point_2;
-
-  typedef CGAL_VORONOI_DIAGRAM_2_NS::Voronoi_edge_base_2
-  <DG,Point_2,Point_2,DT_Voronoi_edge_2<DG>,DT_Voronoi_vertex_2<DG> >
-  Base;
-};
-
-
-//=========================================================================
-
-
-
 template<class DT2>
 class Delaunay_triangulation_Voronoi_traits_2
   : public CGAL_VORONOI_DIAGRAM_2_NS::Default_Voronoi_traits_2
@@ -340,50 +277,37 @@ class Delaunay_triangulation_Voronoi_traits_2
   typedef typename DT2::Geom_traits::Point_2      Point_2;
   typedef Point_2                                 Site_2;
   typedef typename Base::Vertex_handle            Vertex_handle;
-
-  typedef DT_Voronoi_vertex_2<DT2>                Voronoi_vertex_2;
-  typedef DT_Voronoi_edge_2<DT2>                  Voronoi_edge_2;
-  typedef Voronoi_edge_2                          Curve;
+  typedef typename Base::Face_handle              Face_handle;
 
   typedef Tag_true                                Has_get_conflicts;
   typedef Tag_true                                Has_insert;
 
-  static const Site_2& site(const Vertex_handle& v) {
-    return v->point();
-  }
+  struct Get_site_2 {
+    typedef const Site_2&   result_type;
+    typedef Vertex_handle   value_type;
+    typedef Arity_tag<1>    Arity;
 
-  static Voronoi_vertex_2 make_vertex(const Vertex_handle& v1,
-				      const Vertex_handle& v2,
-				      const Vertex_handle& v3) {
-    Voronoi_vertex_2 vv;
-    vv.set_sites(v1->point(), v2->point(), v3->point());
-    return vv;
-  }
+    result_type operator()(const Vertex_handle& v) const {
+      return v->point();
+    }
+  };
 
-  static Voronoi_edge_2 make_edge(const Vertex_handle& v1,
-				  const Vertex_handle& v2) {
-    Voronoi_edge_2 ve;
-    ve.set_sites(v1->point(), v2->point());
-    return ve;
-  }
+  Get_site_2 get_site_2_object() const { return Get_site_2(); }
 
-  static Voronoi_edge_2 make_edge(const Vertex_handle& v1,
-				  const Vertex_handle& v2,
-				  const Vertex_handle& v3,
-				  bool is_src) {
-    Voronoi_edge_2 ve;
-    ve.set_sites(v1->point(), v2->point(), v3->point(), is_src);
-    return ve;
-  }
+  struct Get_point_2 {
+    typedef Point_2       result_type;
+    typedef Face_handle   value_type;
+    typedef Arity_tag<1>  Arity;
 
-  static Voronoi_edge_2 make_edge(const Vertex_handle& v1,
-				  const Vertex_handle& v2,
-				  const Vertex_handle& v3,
-				  const Vertex_handle& v4) {
-    Voronoi_edge_2 ve;
-    ve.set_sites(v1->point(), v2->point(), v3->point(), v4->point());
-    return ve;
-  }
+    Point_2 operator()(const Face_handle& f) const {
+      typedef typename Base::Delaunay_graph::Geom_traits Geom_traits;
+
+      return Geom_traits().construct_circumcenter_2_object()
+	(f->vertex(0)->point(), f->vertex(1)->point(), f->vertex(2)->point());
+    }
+  };
+
+  Get_point_2 get_point_2_object() const { return Get_point_2(); }
 };
 
 
@@ -438,69 +362,31 @@ class Delaunay_triangulation_ref_counted_Voronoi_traits_2
   typedef Delaunay_triangulation_ref_counted_Voronoi_traits_2<DT2>  Self;
 };
 
-CGAL_END_NAMESPACE
-
 //=========================================================================
 //=========================================================================
 
+template<class Gt,class TDS> class Delaunay_triangulation_2;
 
-#ifdef CGAL_USE_QT
+template<class Gt, class TDS>
+class Identity_Voronoi_traits_2< Delaunay_triangulation_2<Gt,TDS> >
+  : public CGAL_VORONOI_DIAGRAM_2_NS::Identity_Voronoi_traits_2_base
+  < Delaunay_triangulation_2<Gt,TDS>,
+    Delaunay_triangulation_Voronoi_traits_2
+    < Delaunay_triangulation_2<Gt,TDS> >
+  >
+{};
 
-#include <CGAL/IO/Qt_widget.h>
-
-CGAL_BEGIN_NAMESPACE
-
-template<class DT2>
-Qt_widget& operator<<(Qt_widget& qt_w,
-		      const DT_Voronoi_edge_2<DT2>& ve)
-{
-  typedef typename DT2::Geom_traits          Geom_traits;
-  //  typedef typename Geom_traits::Assign_2     Assign_2;
-  typedef typename Geom_traits::Point_2      Point_2;
-  typedef typename Geom_traits::Segment_2    Segment_2;
-  //  typedef typename Geom_traits::Ray_2        Ray_2;
-  typedef typename Geom_traits::Line_2       Line_2;
-
-  //  Assign_2 assign = Geom_traits().assign_2_object();
-  //  Segment_2 s;
-  //  Ray_2 r;
-  //  Line_2 l;
-
-  if ( ve.has_source() && ve.has_target() ) {
-    typename Geom_traits::Construct_circumcenter_2 circumcenter;
-    Point_2 c1 = circumcenter(ve.down(), ve.up(), ve.left());
-    Point_2 c2 = circumcenter(ve.up(), ve.down(), ve.right());
-    qt_w << Segment_2(c1, c2);
-  } else if ( ve.has_source() && !ve.has_target() ) {
-    typename Geom_traits::Construct_circumcenter_2 circumcenter;
-    typename Geom_traits::Construct_bisector_2     c_bis;
-    typename Geom_traits::Construct_ray_2          c_ray;
-    Point_2 c = circumcenter(ve.down(), ve.up(), ve.left());
-    Line_2 l = c_bis(ve.up(), ve.down());
-    qt_w << c_ray(c, l);
-  } else if ( !ve.has_source() && ve.has_target() ) {
-    typename Geom_traits::Construct_circumcenter_2 circumcenter;
-    typename Geom_traits::Construct_bisector_2     c_bis;
-    typename Geom_traits::Construct_ray_2          c_ray;
-    Point_2 c = circumcenter(ve.up(), ve.down(), ve.right());
-    Line_2 l = c_bis(ve.down(), ve.up());
-    qt_w << c_ray(c, l);
-  } else {
-    CGAL_assertion( !ve.has_source() && !ve.has_target() );
-    typename Geom_traits::Construct_bisector_2 c_bis;
-    qt_w << c_bis(ve.up(), ve.down());
-  }
-
-  return qt_w;
-}
-
+template<class Gt, class TDS>
+class Identity_Voronoi_traits_2
+<  Triangulation_hierarchy_2< Delaunay_triangulation_2<Gt,TDS> >  >
+  : public CGAL_VORONOI_DIAGRAM_2_NS::Identity_Voronoi_traits_2_base
+  < Triangulation_hierarchy_2< Delaunay_triangulation_2<Gt,TDS> >,
+    Delaunay_triangulation_Voronoi_traits_2
+    <  Triangulation_hierarchy_2< Delaunay_triangulation_2<Gt,TDS> >  >
+  >
+{};
 
 
 CGAL_END_NAMESPACE
-
-#endif
-
-
-
 
 #endif // CGAL_DELAUNAY_TRIANGULATION_VORONOI_TRAITS_2_H

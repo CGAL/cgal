@@ -22,11 +22,13 @@
 
 #include <CGAL/Voronoi_diagram_2/basic.h>
 #include <CGAL/Voronoi_diagram_2/Default_Voronoi_traits_2.h>
-#include <CGAL/Voronoi_diagram_2/Voronoi_vertex_base_2.h>
-#include <CGAL/Voronoi_diagram_2/Voronoi_edge_base_2.h>
 #include <CGAL/Voronoi_diagram_2/Locate_result.h>
 #include <cstdlib>
 #include <algorithm>
+
+#ifdef VDA_USE_IDENTITY_VORONOI_TRAITS
+#include <CGAL/Voronoi_diagram_2/Identity_Voronoi_traits_2.h>
+#endif
 
 CGAL_BEGIN_NAMESPACE
 
@@ -463,62 +465,6 @@ class SVD_Face_degeneracy_tester
 //=========================================================================
 //=========================================================================
 
-
-template<class DG> class Segment_Voronoi_diagram_Voronoi_traits_2;
-template<class DG> class SVD_Voronoi_edge_2;
-
-template<class DG>
-class SVD_Voronoi_vertex_2
-  : public CGAL_VORONOI_DIAGRAM_2_NS::Voronoi_vertex_base_2
-  <DG, typename DG::Point_2, typename DG::Site_2,
-   SVD_Voronoi_vertex_2<DG> >
-{
-  friend class Segment_Voronoi_diagram_Voronoi_traits_2<DG>;
-  friend class SVD_Voronoi_edge_2<DG>;
-#ifndef CGAL_CFG_NESTED_CLASS_FRIEND_DECLARATION_BUG
-  friend class SVD_Voronoi_edge_2<DG>::Base;
-#else
-  friend class
-  CGAL_VORONOI_DIAGRAM_2_NS::Voronoi_edge_base_2<DG,
-						 typename DG::Point_2,
-						 typename DG::Site_2,
-						 SVD_Voronoi_edge_2<DG>,
-						 SVD_Voronoi_vertex_2<DG>,
-						 Tag_true>;
-#endif
-
- private:
-  typedef CGAL_VORONOI_DIAGRAM_2_NS::Voronoi_vertex_base_2
-  <DG, typename DG::Point_2, typename DG::Site_2, SVD_Voronoi_vertex_2<DG> >
-  Base;
-
- public:
-  operator typename Base::Point_2() const {
-    return typename Base::Geom_traits().construct_svd_vertex_2_object()
-      (this->s_[0], this->s_[1], this->s_[2]);
-  }
-};
-
-//=========================================================================
-  
-template<class DG>
-class SVD_Voronoi_edge_2
-  : public CGAL_VORONOI_DIAGRAM_2_NS::Voronoi_edge_base_2
-  <DG,typename DG::Point_2,typename DG::Site_2,
-   SVD_Voronoi_edge_2<DG>,SVD_Voronoi_vertex_2<DG>, Tag_true>
-{
-  friend class Segment_Voronoi_diagram_Voronoi_traits_2<DG>;
-  friend class SVD_Voronoi_vertex_2<DG>;
-
- private:
-  typedef CGAL_VORONOI_DIAGRAM_2_NS::Voronoi_edge_base_2
-  <DG,typename DG::Point_2,typename DG::Site_2,
-   SVD_Voronoi_edge_2<DG>,SVD_Voronoi_vertex_2<DG>, Tag_true>
-  Base;
-};
-
-//=========================================================================
-
 template<class SVD2>
 class Segment_Voronoi_diagram_Voronoi_traits_2
   : public CGAL_VORONOI_DIAGRAM_2_NS::Default_Voronoi_traits_2
@@ -540,50 +486,37 @@ class Segment_Voronoi_diagram_Voronoi_traits_2
   typedef typename SVD2::Point_2                   Point_2;
   typedef typename SVD2::Site_2                    Site_2;
   typedef typename SVD2::Vertex_handle             Vertex_handle;
-
-  typedef SVD_Voronoi_vertex_2<SVD2>               Voronoi_vertex_2;
-  typedef SVD_Voronoi_edge_2<SVD2>                 Voronoi_edge_2;
-  typedef Voronoi_edge_2                           Curve;
+  typedef typename SVD2::Face_handle               Face_handle;
 
   typedef Tag_false                                Has_get_conflicts;
   typedef Tag_false                                Has_insert;
 
-  static Site_2 site(const Vertex_handle& v) {
-    return v->site();
-  }
+  struct Get_site_2 {
+    typedef Site_2          result_type;
+    typedef Vertex_handle   value_type;
+    typedef Arity_tag<1>    Arity;
 
-  static Voronoi_vertex_2 make_vertex(const Vertex_handle& v1,
-				      const Vertex_handle& v2,
-				      const Vertex_handle& v3) {
-    Voronoi_vertex_2 vv;
-    vv.set_sites(v1->site(), v2->site(), v3->site());
-    return vv;
-  }
+    result_type operator()(const Vertex_handle& v) const {
+      return v->site();
+    }
+  };
 
-  static Voronoi_edge_2 make_edge(const Vertex_handle& v1,
-				  const Vertex_handle& v2) {
-    Voronoi_edge_2 ve;
-    ve.set_sites(v1->site(), v2->site());
-    return ve;
-  }
+  Get_site_2 get_site_2_object() const { return Get_site_2(); }
 
-  static Voronoi_edge_2 make_edge(const Vertex_handle& v1,
-				  const Vertex_handle& v2,
-				  const Vertex_handle& v3,
-				  bool is_src) {
-    Voronoi_edge_2 ve;
-    ve.set_sites(v1->site(), v2->site(), v3->site(), is_src);
-    return ve;
-  }
+  struct Get_point_2 {
+    typedef Point_2       result_type;
+    typedef Face_handle   value_type;
+    typedef Arity_tag<1>  Arity;
 
-  static Voronoi_edge_2 make_edge(const Vertex_handle& v1,
-				  const Vertex_handle& v2,
-				  const Vertex_handle& v3,
-				  const Vertex_handle& v4) {
-    Voronoi_edge_2 ve;
-    ve.set_sites(v1->site(), v2->site(), v3->site(), v4->site());
-    return ve;
-  }
+    Point_2 operator()(const Face_handle& f) const {
+      typedef typename Base::Delaunay_graph::Geom_traits Geom_traits;
+
+      return Geom_traits().construct_svd_vertex_2_object()
+	(f->vertex(0)->site(), f->vertex(1)->site(), f->vertex(2)->site());
+    }
+  };
+
+  Get_point_2 get_point_2_object() const { return Get_point_2(); }
 };
 
 
@@ -635,6 +568,39 @@ class Segment_Voronoi_diagram_ref_counted_Voronoi_traits_2
 //=========================================================================
 //=========================================================================
 
+
+//=========================================================================
+//=========================================================================
+
+#ifdef VDA_USE_IDENTITY_VORONOI_TRAITS
+
+template<class Gt, class STag, class DS, class LTag >
+class Segment_Voronoi_diagram_hierarchy_2;
+
+template<class Gt, class DS, class LTag>
+class Segment_Voronoi_diagram_2;
+
+
+template<class Gt, class DS, class LTag>
+class Identity_Voronoi_traits_2< Segment_Voronoi_diagram_2<Gt,DS,LTag> >
+  : public CGAL_VORONOI_DIAGRAM_2_NS::Identity_Voronoi_traits_2_base
+  < Segment_Voronoi_diagram_2<Gt,DS,LTag>,
+    Segment_Voronoi_diagram_Voronoi_traits_2
+    < Segment_Voronoi_diagram_2<Gt,DS,LTag> >
+  >
+{};
+
+template<class Gt, class STag, class DS, class LTag>
+class Identity_Voronoi_traits_2<
+  Segment_Voronoi_diagram_hierarchy_2<Gt,STag,DS,LTag> >
+  : public CGAL_VORONOI_DIAGRAM_2_NS::Identity_Voronoi_traits_2_base
+  < Segment_Voronoi_diagram_hierarchy_2<Gt,STag,DS,LTag>,
+    Segment_Voronoi_diagram_Voronoi_traits_2
+    < Segment_Voronoi_diagram_hierarchy_2<Gt,STag,DS,LTag> >
+  >
+{};
+
+#endif // VDA_USE_IDENTITY_VORONOI_TRAITS
 
 CGAL_END_NAMESPACE
 
