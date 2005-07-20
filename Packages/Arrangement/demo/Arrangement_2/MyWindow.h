@@ -67,7 +67,7 @@ private:
     /*! skip_comments in input file */
     void skip_comments( std::ifstream& is, char* one_line );
     /*! read conic curve from input file */
-    void ReadCurve(std::ifstream & is, Arr_base_conic_2 & cv);
+    void ReadCurve(std::ifstream & is, Pm_base_conic_2 & cv);
     /*! read from file */
     void load( const QString& filename , bool clear_flag = false);
     /*! find the actual widget tab index of a tab */
@@ -160,8 +160,8 @@ private slots:
        void updateConicType( QAction *action );
     /*! update the window buttons according to change in conic type */
     void setConicType( ConicType t );
-        /*! open the color dialog */
-        void openColorDialog();
+	/*! open the color dialog */
+	void openColorDialog();
 
 private:
     /*! myBar - hold the tab widgets */
@@ -242,8 +242,8 @@ private:
     QAction *setHyperbola;
     /*! conic type tool bar */
     QToolBar *conicTypeTool;
-    /*! color dialog action (for filling faces) */
-    QAction *color_dialog_bt;
+	  /*! color dialog action (for filling faces) */
+  	QAction *color_dialog_bt;
     /* strategy for point location*/
     Strategy strategy;
 };
