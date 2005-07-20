@@ -822,6 +822,54 @@ Packages/Arrangement/doc_tex/Arrangement_2/arr_hier.fig -text
 Packages/Arrangement/doc_tex/Arrangement_2/arr_hier.gif -text svneol=unset#unset
 Packages/Arrangement/doc_tex/Arrangement_2/arr_hier.pdf -text svneol=unset#unset
 Packages/Arrangement/doc_tex/Arrangement_2/arr_hier.ps -text
+Packages/Arrangement_2/demo/Arrangement_2/icons/conic.xpm -text
+Packages/Arrangement_2/demo/Arrangement_2/icons/conic_types.xpm -text
+Packages/Arrangement_2/demo/Arrangement_2/icons/delete.xpm -text
+Packages/Arrangement_2/demo/Arrangement_2/icons/demo_arrow_down.xpm -text
+Packages/Arrangement_2/demo/Arrangement_2/icons/demo_arrow_up.xpm -text
+Packages/Arrangement_2/demo/Arrangement_2/icons/demo_colors.xpm -text
+Packages/Arrangement_2/demo/Arrangement_2/icons/demo_conic_3points.xpm -text
+Packages/Arrangement_2/demo/Arrangement_2/icons/demo_conic_5points.xpm -text
+Packages/Arrangement_2/demo/Arrangement_2/icons/demo_conic_circle.xpm -text
+Packages/Arrangement_2/demo/Arrangement_2/icons/demo_conic_ellipse.xpm -text
+Packages/Arrangement_2/demo/Arrangement_2/icons/demo_conic_segment.xpm -text
+Packages/Arrangement_2/demo/Arrangement_2/icons/demo_delete.bmp -text svneol=unset#unset
+Packages/Arrangement_2/demo/Arrangement_2/icons/demo_delete.xpm -text
+Packages/Arrangement_2/demo/Arrangement_2/icons/demo_fill.xpm -text
+Packages/Arrangement_2/demo/Arrangement_2/icons/demo_insert.bmp -text svneol=unset#unset
+Packages/Arrangement_2/demo/Arrangement_2/icons/demo_insert.xpm -text
+Packages/Arrangement_2/demo/Arrangement_2/icons/demo_merge.bmp -text svneol=unset#unset
+Packages/Arrangement_2/demo/Arrangement_2/icons/demo_merge.xpm -text
+Packages/Arrangement_2/demo/Arrangement_2/icons/demo_pointlocation.bmp -text svneol=unset#unset
+Packages/Arrangement_2/demo/Arrangement_2/icons/demo_pointlocation.xpm -text
+Packages/Arrangement_2/demo/Arrangement_2/icons/demo_rayshoot.bmp -text svneol=unset#unset
+Packages/Arrangement_2/demo/Arrangement_2/icons/demo_rayshoot.xpm -text
+Packages/Arrangement_2/demo/Arrangement_2/icons/demo_rayshoot_down.xpm -text
+Packages/Arrangement_2/demo/Arrangement_2/icons/demo_rayshoot_up.xpm -text
+Packages/Arrangement_2/demo/Arrangement_2/icons/demo_snapgrid.bmp -text svneol=unset#unset
+Packages/Arrangement_2/demo/Arrangement_2/icons/demo_snapgrid.xpm -text
+Packages/Arrangement_2/demo/Arrangement_2/icons/demo_snapvertex.bmp -text svneol=unset#unset
+Packages/Arrangement_2/demo/Arrangement_2/icons/demo_snapvertex.xpm -text
+Packages/Arrangement_2/demo/Arrangement_2/icons/demo_split.bmp -text svneol=unset#unset
+Packages/Arrangement_2/demo/Arrangement_2/icons/demo_split.xpm -text
+Packages/Arrangement_2/demo/Arrangement_2/icons/demo_zoomin.bmp -text svneol=unset#unset
+Packages/Arrangement_2/demo/Arrangement_2/icons/demo_zoomin.xpm -text
+Packages/Arrangement_2/demo/Arrangement_2/icons/demo_zoomout.bmp -text svneol=unset#unset
+Packages/Arrangement_2/demo/Arrangement_2/icons/demo_zoomout.xpm -text
+Packages/Arrangement_2/demo/Arrangement_2/icons/draw.xpm -text
+Packages/Arrangement_2/demo/Arrangement_2/icons/grid.xpm -text
+Packages/Arrangement_2/demo/Arrangement_2/icons/hand.xpm -text
+Packages/Arrangement_2/demo/Arrangement_2/icons/insert.xpm -text
+Packages/Arrangement_2/demo/Arrangement_2/icons/merge.xpm -text
+Packages/Arrangement_2/demo/Arrangement_2/icons/none.xpm -text
+Packages/Arrangement_2/demo/Arrangement_2/icons/po.xpm -text
+Packages/Arrangement_2/demo/Arrangement_2/icons/points.xpm -text
+Packages/Arrangement_2/demo/Arrangement_2/icons/polyline.xpm -text
+Packages/Arrangement_2/demo/Arrangement_2/icons/ray_shooting.xpm -text
+Packages/Arrangement_2/demo/Arrangement_2/icons/ray_shooting2.xpm -text
+Packages/Arrangement_2/demo/Arrangement_2/icons/snap.xpm -text
+Packages/Arrangement_2/demo/Arrangement_2/icons/split.xpm -text
+Packages/Arrangement_2/demo/Arrangement_2/icons/voronoi.xpm -text
 Packages/Auxiliary/auxiliary/cgal_app.icns -text svneol=unset#unset
 Packages/Auxiliary/auxiliary/gmp-4.1.3.tar.gz -text svneol=unset#unset
 Packages/Auxiliary/auxiliary/wingmp/gmp-4.1.3/gcc/libgmp.a -text svneol=unset#unset
