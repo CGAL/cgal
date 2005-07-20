@@ -1,3 +1,6 @@
+20 July 2005:  Menelaos Karavelas
+- added copyright headers in demo files
+
 30 June 2005:  Menelaos Karavelas
 - added get_conflicts() methods (similar to those in regular and Delaunay
   triangulations); need to update the doc and the testsuite also.
