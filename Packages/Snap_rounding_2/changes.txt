@@ -1,3 +1,8 @@
+20 July 2005 Sylvain Pion
+- Resurect the content of Snap_rounding_2_mine.h .
+
+================================== CGAL 3.1 =========================
+
 25 September 2004 Sylvain Pion
 - Missing this-> needed by g++ 3.4.
 
