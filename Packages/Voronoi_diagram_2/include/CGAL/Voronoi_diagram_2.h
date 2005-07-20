@@ -45,6 +45,7 @@
 #include <CGAL/Voronoi_diagram_2/Locate_result.h>
 #include <CGAL/Voronoi_diagram_2/Connected_components.h>
 #include <CGAL/Voronoi_diagram_2/Accessor.h>
+#include <CGAL/Voronoi_diagram_2/Identity_Voronoi_traits_2.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -91,7 +92,7 @@ CGAL_VORONOI_DIAGRAM_2_END_NAMESPACE
 //=========================================================================
 //=========================================================================
 
-template<class DG, class Tr>
+template<class DG, class Tr = Identity_Voronoi_traits_2<DG> >
 class Voronoi_diagram_2
 {
  private:
@@ -322,7 +323,7 @@ class Voronoi_diagram_2
 
     Site_2& operator()(const Face& f) const {
       static Site_2 s;
-      s = Voronoi_traits::site(f.dual());
+      s = Voronoi_traits().get_site_2_object()(f.dual());
       return s;
     }
   };
