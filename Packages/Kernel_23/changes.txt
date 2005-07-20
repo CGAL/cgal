@@ -1,3 +1,6 @@
+20 July 2005 Andreas Fabri
+- Added qualified_result_type
+
 9 July 2005 Sylvain Pion
 - Object : add object_cast<>() and .type().
 - Doc : merge assign.tex and make_object.tex in Object.tex.

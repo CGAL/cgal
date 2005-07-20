@@ -37,7 +37,10 @@
 
 CGAL_BEGIN_NAMESPACE
 
+
+
 namespace CommonKernelFunctors {
+
 
   template <typename K>
   class Are_ordered_along_line_2
@@ -359,31 +362,6 @@ namespace CommonKernelFunctors {
 
   };
 
-
-  template <typename K>
-  class Compute_y_2
-  {
-    typedef typename K::FT             FT;
-    typedef typename K::Point_2        Point_2;
-    typedef typename K::Vector_2        Vector_2;
-    typedef typename K::Cartesian_coordinate_type  Cartesian_coordinate_type;
-
-  public:
-    typedef FT               result_type;
-    typedef Arity_tag< 1 >   Arity;
-
-    Cartesian_coordinate_type
-    operator()(const Point_2& p) const
-    {
-      return p.rep().y();
-    }
-
-    Cartesian_coordinate_type
-    operator()(const Vector_2& v)
-    {
-      return v.rep().y();
-    }
-  };
 
   template <typename K>
   class Compute_dx_2
@@ -1273,33 +1251,39 @@ namespace CommonKernelFunctors {
     {  return Segment_3(p, q); }
   };
 
+
+
+
   template <typename K>
-  class Construct_source_2
+  class Construct_source_2 : Has_qrt
   {
     typedef typename K::Segment_2  Segment_2;
     typedef typename K::Ray_2  Ray_2;
     typedef typename K::Point_2    Point_2;
   public:
     typedef Point_2        result_type;
+    typedef const result_type &  qualified_result_type;
     typedef Arity_tag< 1 >   Arity;
+
 
     const result_type&
     operator()(const Segment_2& s) const
     {  return s.rep().source(); }
-  
 
     const result_type&
     operator()(const Ray_2& r) const
     {  return r.rep().source(); }
   };
 
+
   template <typename K>
-  class Construct_target_2
+  class Construct_target_2 : Has_qrt
   {
     typedef typename K::Segment_2  Segment_2;
     typedef typename K::Point_2    Point_2;
   public:
     typedef Point_2        result_type;
+    typedef const result_type &  qualified_result_type;
     typedef Arity_tag< 1 >   Arity;
 
     const result_type&

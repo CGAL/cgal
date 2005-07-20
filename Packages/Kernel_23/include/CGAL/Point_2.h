@@ -78,8 +78,8 @@ public:
     : RPoint_2(typename R::Construct_point_2()(hx, hy, hw).rep())
   {}
 
-
-  Cartesian_coordinate_type x() const
+  typename Qualified_result_of<typename R::Compute_x_2,Point_2>::type
+  x() const
   {
     return typename R::Compute_x_2()(*this);
   }

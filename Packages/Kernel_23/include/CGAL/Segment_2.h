@@ -65,12 +65,14 @@ public:
   Segment_2(const RSegment_2& s)
     : RSegment_2(s) {}
 
-  const Point_2&     source() const
-  {
+  typename Qualified_result_of<typename R::Construct_source_2, Segment_2>::type
+  source() const
+  { 
     return R_().construct_source_2_object()(*this);
   }
 
-  const Point_2&     target() const
+  typename Qualified_result_of<typename R::Construct_source_2, Segment_2>::type
+  target() const
   {
     return R_().construct_target_2_object()(*this);
   }

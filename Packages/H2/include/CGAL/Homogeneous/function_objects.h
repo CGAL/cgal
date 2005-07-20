@@ -1442,6 +1442,31 @@ namespace HomogeneousKernelFunctors {
   };
 
   template <typename K>
+  class Compute_y_2
+  {
+    typedef typename K::FT             FT;
+    typedef typename K::Point_2        Point_2;
+    typedef typename K::Vector_2        Vector_2;
+
+
+  public:
+    typedef  FT result_type;
+    typedef Arity_tag< 1 >   Arity;
+
+    FT
+    operator()(const Point_2& p) const
+    {
+      return p.rep().y();
+    }
+
+    FT
+    operator()(const Vector_2& v) const
+    {
+      return v.rep().y();
+    }
+  };
+
+  template <typename K>
   class Construct_base_vector_3
   {
     typedef typename K::Vector_3   Vector_3;

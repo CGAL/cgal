@@ -1,3 +1,6 @@
+20 July 2005 Andreas Fabri
+- Added qualified_result_type
+
 24 June 2005 Andreas Fabri
 - Removed  #ifndef CGAL_NO_DEPRECATED_CODE for Construct_vector_2 and Construct_direction_2
 
