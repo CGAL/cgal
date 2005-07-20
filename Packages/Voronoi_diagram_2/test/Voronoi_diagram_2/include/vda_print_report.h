@@ -243,8 +243,8 @@ void print_report(const VDA& vda, const Projector& project,
     typename VDA::size_type n_bisectors = 0, n_rays = 0, n_segments = 0;
     for (typename VDA::Edge_iterator eit = vda.edges_begin();
 	 eit != vda.edges_end(); ++eit) {
-      if ( eit->curve().is_bisector() ) { n_bisectors++; }
-      else if ( eit->curve().is_ray() ) { n_rays++; }
+      if ( eit->is_bisector() ) { n_bisectors++; }
+      else if ( eit->is_ray() ) { n_rays++; }
       else { n_segments++; }
     }
 
@@ -263,20 +263,20 @@ void print_report(const VDA& vda, const Projector& project,
     for (typename VDA::Edge_iterator eit = vda.edges_begin();
 	 eit != vda.edges_end(); ++eit) {
       typename VDA::Voronoi_traits::Point_2 p_src, p_trg;
-      if ( eit->curve().is_bisector() ) {
+      if ( eit->is_bisector() ) {
 	os << "inf - inf" << std::endl;
-      } else if ( eit->curve().is_ray() ) {
-	if ( eit->curve().has_source() ) {
-	  p_src = eit->curve().source();
+      } else if ( eit->is_ray() ) {
+	if ( eit->has_source() ) {
+	  p_src = eit->source()->point();
 	  os << p_src << " - inf" << std::endl;
 	} else {
-	  CGAL_assertion( eit->curve().has_target() );
-	  p_trg = eit->curve().target();
+	  CGAL_assertion( eit->has_target() );
+	  p_trg = eit->target()->point();
 	  os << "inf - " << p_trg << std::endl;
 	}
       } else {
-	p_src = eit->curve().source();
-	p_trg = eit->curve().target();
+	p_src = eit->source()->point();
+	p_trg = eit->target()->point();
 	os << p_src << " - " << p_trg << std::endl;
       }
     }

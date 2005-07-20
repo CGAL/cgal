@@ -92,8 +92,9 @@ void test_vd_vertex_concept(const typename VDA::Vertex_handle& v)
   typedef typename Vertex::size_type        size_type;
   typedef typename Vertex::Point_2          Point_2;
 
-  typedef typename Vertex::Delaunay_graph       Delaunay_graph;
-  typedef typename Vertex::Delaunay_face_handle Delaunay_face_handle;
+  typedef typename Vertex::Delaunay_graph         Delaunay_graph;
+  typedef typename Vertex::Delaunay_face_handle   Delaunay_face_handle;
+  typedef typename Vertex::Delaunay_vertex_handle Delaunay_vertex_handle;
 
   typedef typename Vertex::Halfedge_around_vertex_circulator HAVC;
 
@@ -120,6 +121,14 @@ void test_vd_vertex_concept(const typename VDA::Vertex_handle& v)
   CGAL_assertion( d == deg );
   kill_warning( d );
 
+  Delaunay_vertex_handle vv = v->first();
+  vv = v->second();
+  vv = v->third();
+  Vertex vertex = *v;
+  for (unsigned int i = 0; i < 3; i++) { vv = vertex[i]; }
+  kill_warning(vv);
+  kill_warning(vertex);
+
   Point_2 p = v->point();
   Delaunay_face_handle f = v->dual();
   kill_warning(p);
@@ -144,12 +153,11 @@ void test_vd_halfedge_concept(const typename VDA::Halfedge_handle& e)
   typedef typename Halfedge::Vertex_handle    Vertex_handle;
   typedef typename Halfedge::Face_handle      Face_handle;
 
-  typedef typename Halfedge::Curve            Curve;
-
   typedef typename Halfedge::Delaunay_graph   Delaunay_graph;
   typedef typename Halfedge::Delaunay_edge    Delaunay_edge;
 
-  typedef typename Halfedge::Ccb_halfedge_circulator CCBHC;
+  typedef typename Halfedge::Delaunay_vertex_handle    Delaunay_vertex_handle;
+  typedef typename Halfedge::Ccb_halfedge_circulator   CCBHC;
 
   // access methods
   Halfedge_handle e_opp = e->opposite();
@@ -178,9 +186,13 @@ void test_vd_halfedge_concept(const typename VDA::Halfedge_handle& e)
   CCBHC hc = e->ccb();
   test_circulator(hc);
 
-  Curve c = e->curve();
+  Delaunay_vertex_handle v;
+  v = e->up();
+  v = e->down();
+  if ( e->has_source() ) { v = e->left(); }
+  if ( e->has_target() ) { v = e->right(); }
   Delaunay_edge de = e->dual();
-  kill_warning(c);
+  kill_warning(v);
   kill_warning(de);
 
   bool b1 = e->has_source();
