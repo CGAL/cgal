@@ -7,6 +7,8 @@
 \usepackage{amsmath}
 \usepackage{amsthm}
 \usepackage{psfrag}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
 \newcommand{\N}{\ensuremath{\mathbb{N}}}
 \newcommand{\F}{\ensuremath{\mathbb{F}}}
 \newcommand{\Z}{\ensuremath{\mathbb{Z}}}
@@ -166,7 +168,77 @@ S_{B}^{(0)} &:=&I && S_{N}^{(0)}&:=& \emptyset
 where $art$ does not contain a special artificial variable.
 
 
-\section{Ratio Test Step~1 and Ratio Test Step~2}
+\section{Ratio Test Step~1}
+%\begin{algorithm}
+%\caption{Ratio Test Step~1 with upper bounding}
+%\label{alg:ratio_test_step_1_0}
+\begin{algorithmic}
+\Function{ratio\_test\_1\_\_t\_i}{$B_{O}, B_{S}, dir$}
+\State $i_{min} \gets -1, \quad     d_{min} \gets 1, \quad  q_{min} \gets 0$
+\If{$dir=1$}
+    \ForAll{$i \gets 0,  \left|B_{O}\right| - 1$}
+        \If{$q_{B_{O}}[i] > 0 \wedge f_{i}^{l}=1$}
+            \If{$d_{min}*q_{B_{O}}[i] > (x_{B_{O}}[i]-l_{i})*q_{min}$}
+                \State $i_{min} \gets B_{O}[i],
+                    \quad d_{min} \gets x_{B_{O}}[i]-l_{i},
+                    \quad q_{min} \gets q_{B_{O}}[i]$
+            \EndIf
+        \ElsIf{$q_{B_{O}}[i] < 0 \wedge f_{i}^{u}=1$}
+            \If{$d_{min}*-q_{B_{O}}[i] > (u_{i}-x_{B_{O}}[i])*q_{min}$}
+                \State $i_{min} \gets B_{O}[i],
+                        \quad d_{min} \gets u_{i}-x_{B_{O}}[i],
+                        \quad q_{min} \gets -q_{B_{O}}[i]$
+            \EndIf
+        \EndIf
+    \EndFor
+    \ForAll{$i \gets 0, \left|B_{S}\right| - 1$}
+        \If{$q_{B_{S}}[i] > 0$}
+            \If{$d_{min}*q_{B_{S}}[i] < x_{B_{S}}[i]*q_{min}$}
+                \State $i_{min} \gets n+B_{S}[j],
+                    \quad d_{min} \gets x_{B_{S}}[i],
+                    \quad q_{min} \gets q_{B_{S}}[i]$
+            \EndIf	
+        \EndIf 
+    \EndFor
+\Else
+    \ForAll{$i \gets 0,  \left|B_{O}\right| - 1$}
+        \If{$q_{B_{O}}[i] > 0 \wedge f_{i}^{u}=1$}
+            \If{$d_{min}*q_{B_{O}}[i] > (u_{i}-x_{B_{O}}[i])*q_{min}$}
+                \State $i_{min} \gets B_{O}[i],
+                    \quad d_{min} \gets u_{i}-x_{B_{O}}[i],
+                    \quad q_{min} \gets q_{B_{O}}[i]$
+            \EndIf
+        \ElsIf{$q_{B_{O}}[i] < 0 \wedge f_{i}^{l}=1$}
+            \If{$d_{min}*-q_{B_{O}}[i] > (x_{B_{O}}[i]-l_{i})*q_{min}$}
+                \State $i_{min} \gets B_{O}[i],
+                    \quad d_{min} \gets x_{B_{O}}[i]-l_{i},
+                    \quad q_{min} \gets -q_{B_{O}}[i]$
+            \EndIf
+        \EndIf
+    \EndFor
+    \ForAll{$i \gets 0, \left|B_{S}\right| - 1$}
+        \If{$q_{B_{S}}[i] < 0$}
+            \If{$d_{min}*-q_{B_{S}}[i] < x_{B_{S}}[i]*q_{min}$}
+                \State $i_{min} \gets n+B_{S}[j],
+                    \quad d_{min} \gets x_{B_{S}}[i],
+                    \quad q_{min} \gets -q_{B_{S}}[i]$
+            \EndIf	
+        \EndIf 
+    \EndFor
+\EndIf
+\State \textbf{return} $(i_{min}, d_{min}, q_{min})$
+\EndFunction
+\end{algorithmic}
+%\end{algorithm}
+In contrast to the Ratio Test Step~1 for the standard form we can distinguish three differences: 
+\begin{itemize}
+\item entering variables are no longer only increased
+\item basic vars may have lower as well as upper bounds
+\item the entering variable itself may run into a bound
+\end{itemize}
+
+\section{Ratio Test Step~2}
+
 \section{Pricing Strategies}
 By the KKT conditions for optimality a feasible solution $x^{*}$ to the
 QP~(\ref{def:QP_UB}) is optimal, if there exists an $\left|E\right|$-vector
@@ -210,7 +282,7 @@ I\left(\mu^{l} -\mu^{u}\right)  \\
 &=&
 0 \quad\quad\quad i=1 \dots n
 \end{eqnarray*}
-Replacing $\mu^{l}-\mu^{u}$ by $\mu$ we obtain
+Replacing $\mu^{l}-\mu^{u}$ by $\mu$ we finally obtain
 \begin{lemma}
 A feasible solution $x^{*}$ to QP~(\ref{def:QP_UB}) is optimal, if there exists an $m$-vector $\lambda$ and an $n$-vector $\mu$ such that 
 \begin{eqnarray}
