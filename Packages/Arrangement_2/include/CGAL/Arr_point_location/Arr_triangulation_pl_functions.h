@@ -41,7 +41,6 @@ template <class Arrangement_2>
 Object Arr_triangulation_point_location<Arrangement_2>
 ::locate (const Point_2& p) const
 {
-  TRG_PRINT_DEBUG(std::endl << "LOCATE NUMBER "<< point_number );
   TRG_PRINT_DEBUG("------ locate point "<< p);
 
   //init output
@@ -284,7 +283,7 @@ void Arr_triangulation_point_location<Arrangement_2>
 
   // --- printing and debugging of CDT
   CGAL_assertion(cdt.is_valid());
-
+  TRG_PRINT_DEBUG("finished updating the CDT " );
 }
 
 

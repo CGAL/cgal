@@ -165,8 +165,10 @@ public:
   /*!
    * get the nearest neighbor (landmark) to the given point
    */
-  Point_2 & get_closest_landmark (Point_2 p, Object &obj)
+  Point_2 get_closest_landmark (Point_2 p, Object &obj)
   {
+    PRINT_V_DEBUG("get_closest_landmark.");
+
     CGAL_assertion(updated);
     return nn.find_nearest_neighbor(p, obj);
   }
@@ -270,15 +272,16 @@ protected:
    */
   void _small_change ()
   {
-    PRINT_V_DEBUG("small change. num_small_not_updated_changes =" 
-		  <<num_small_not_updated_changes);
+    PRINT_V_DEBUG("small change. num_small_not_updated_changes = " 
+      << num_small_not_updated_changes);
 
+    double nl = static_cast<double> (num_landmarks);
     const int sqrt_num_landmarks = 
-                                static_cast<int> (::sqrt(num_landmarks) + 0.5);
+      static_cast<int> (CGAL::sqrt(nl) + 0.5);
 
     num_small_not_updated_changes++;
     if ((num_landmarks < 10) ||
-	(num_small_not_updated_changes >=  sqrt_num_landmarks))
+      (num_small_not_updated_changes >=  sqrt_num_landmarks))
     {
       PRINT_V_DEBUG("updating ...");
       clear_landmarks_set();
@@ -289,6 +292,5 @@ protected:
 };
 
 CGAL_END_NAMESPACE
-
 
 #endif

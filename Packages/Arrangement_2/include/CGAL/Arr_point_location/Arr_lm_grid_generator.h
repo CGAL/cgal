@@ -116,7 +116,7 @@ protected:
       n= p_arr->number_of_vertices();
 
     //calculate the step size
-    int sqrt_n = static_cast<int>(CGAL::sqrt(n) + 1);
+    const int sqrt_n =  static_cast<int> (::sqrt(n) + 0.5);
     PRINT_DEBUG("n= " << n <<" sqrt_n = "<< sqrt_n );
     double step_x = (x_max - x_min)/sqrt_n;
     double step_y = (y_max - y_min)/sqrt_n;

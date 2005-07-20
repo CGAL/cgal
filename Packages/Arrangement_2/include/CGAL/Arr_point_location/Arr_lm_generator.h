@@ -172,7 +172,7 @@ public:
 	  /*!
 	  * get the nearest neighbor (landmark) to the given point
 	  */
-	  virtual Point_2 & get_closest_landmark (Point_2 p, Object &obj)
+	  virtual Point_2 get_closest_landmark (Point_2 p, Object &obj)
 	  {
 		  CGAL_assertion(updated);
 		  return nn.find_nearest_neighbor(p, obj);

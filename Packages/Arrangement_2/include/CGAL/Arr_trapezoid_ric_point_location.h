@@ -96,7 +96,6 @@ public:
 
   typedef Arrangement_                                  Arrangement_2;
   typedef typename Arrangement_2::Traits_2              Traits_2;
-  typedef typename Traits_2::Kernel                     Kernel;
 
   typedef typename Arrangement_2::Vertex_const_handle   Vertex_const_handle;
   typedef typename Arrangement_2::Halfedge_const_handle Halfedge_const_handle;
@@ -281,6 +280,11 @@ public:
     td.insert(X_curve_plus(e));
   }
 
+  //TODO IDIT OREN: what can be done in order to avoid the need 
+  //to save the original curve is to find the common endpoint of the 
+  //two new halfedges, locate it in the trapezoid in order to find the 
+  //curve it lies on, which is the curve that was split, and then remove 
+  //this curve.
   virtual void before_split_edge (Halfedge_handle e,
                                   const X_monotone_curve_2& c1,
                                   const X_monotone_curve_2& c2)
@@ -297,10 +301,14 @@ public:
                   X_curve_plus(e2));
   }
 
+  //TODO IDIT OREN: create a merged X_curve_plus withput a halfedge,
+  // and in the "after" function update the halfedge.
+  // think ...
   virtual void before_merge_edge (Halfedge_handle e1,
                                   Halfedge_handle e2,
                                   const X_monotone_curve_2& c)
   {
+    //save the curves for the "after" function.
     m_curve_before_merge1 = e1->curve();
     m_curve_before_merge2 = e2->curve();
   }
@@ -337,24 +345,24 @@ protected:
   }
 
   /*! Construct the trapezoidal decomposition. */
-  void build_trapezoid_ric (bool to_shuffle = true)
+  void build_trapezoid_ric ()
   {
     td.clear();
 
     Halfedge_handle_container c; 
-    Halfedge_const_iterator hit;
+    Edge_const_iterator         eit;
+    Halfedge_const_handle    hh;
 
-    for (hit = p_arr->halfedges_begin(); hit != p_arr->halfedges_end(); ++hit)
-      c.push_back(hit);
-
-    // Random shuffle of the halfedges.
-    if (to_shuffle)
+    for (eit = p_arr->edges_begin(); eit != p_arr->edges_end(); ++eit)
     {
-      std::random_shuffle (c.begin (), c.end ());
+      hh = eit->handle();
+      c.push_back(hh);
     }
 
+    // Random shuffle of the halfedges.
+    std::random_shuffle (c.begin (), c.end ());
+
     Halfedge_handle_iterator cit;
-    Halfedge_const_handle    hh;
     Halfedge_handle          he;
 
     for (cit = c.begin(); cit < c.end(); cit++)

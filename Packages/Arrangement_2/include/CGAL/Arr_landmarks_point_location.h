@@ -81,9 +81,10 @@ protected:
   const Arrangement_2     *p_arr;      // The associated arrangement.
   const Traits_wrapper_2  *traits;     // Its associated traits object.
   Arr_landmarks_generator *lm_gen;     // The associated generator of landmarks
-  mutable Edge_list	   flipped_edges; // The list of edges that were
-                                          // flipped during this point location
-  bool	delete_generator;	       // Indicates whether the generator was
+  mutable Edge_list	   m_flipped_edges;// The list of edges that were
+                                       // flipped during this point location
+  mutable Halfedge_const_handle *m_start_edge; //edge the landmark is on
+  bool	delete_generator;	             // Indicates whether the generator was
                                        // locally allocated.
 
 public:
@@ -92,14 +93,17 @@ public:
   Arr_landmarks_point_location () : 
     p_arr (NULL),
     traits (NULL),
-    lm_gen(NULL),
+    lm_gen(NULL), 
+    m_start_edge(NULL),
     delete_generator (false)
   {}
 
   /*! Constructor given an arrangement only. */
   Arr_landmarks_point_location (const Arrangement_2& arr) :
-    p_arr (&arr)
+    p_arr (&arr), 
+    m_start_edge(NULL)
   {
+    traits = static_cast<const Traits_wrapper_2*> (p_arr->get_traits());
     lm_gen = new Arr_landmarks_generator(arr);
     delete_generator = true;
   }
@@ -108,7 +112,8 @@ public:
   Arr_landmarks_point_location (const Arrangement_2& arr, 
 				Arr_landmarks_generator *gen) :
     p_arr (&arr), 
-    lm_gen (gen),
+    lm_gen (gen), 
+    m_start_edge(NULL),
     delete_generator (false)
   {
     traits = static_cast<const Traits_wrapper_2*> (p_arr->get_traits());

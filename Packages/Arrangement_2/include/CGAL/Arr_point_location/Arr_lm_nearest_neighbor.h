@@ -27,9 +27,6 @@
 #include <CGAL/Orthogonal_k_neighbor_search.h>
 #include <CGAL/Arrangement_2/Arr_traits_wrapper_2.h>
 
-//#include <iostream>
-//#include <stdio.h>
-
 CGAL_BEGIN_NAMESPACE
 
 /*! \class
@@ -178,7 +175,7 @@ public:
 
 	  /*! find the nearest point to the query (and its location object)
 	  */
-	  Point_2 & find_nearest_neighbor(Point_2 query, Object &obj) const
+	  Point_2 find_nearest_neighbor(Point_2 query, Object &obj) const
 	  {
 		  //create NN_Point_2 from Point_2 
 		  NN_Point_2 nn_query(query);
