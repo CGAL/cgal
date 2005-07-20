@@ -1,3 +1,15 @@
+20 July 2005:  Menelaos Karavelas
+- demo: added halfedge classes that derive from the halfedge class of the
+  adaptor, that are used for drawing to Qt_widget
+- code:
+  * removed the Voronoi_edge_2 and Voronoi_vertex_2 classes from the
+    Voronoi traits; their functionality has been moved in the halfedge and
+    vertex classes of the adaptor.
+  * added first attempt for implementation of identity Voronoi traits
+- testing: removed testing for Voronoi_edge_2 and Voronoi_vertex_2 concepts;
+  added testing for the corresponding functionality added in Halfedge and
+  Vertex.
+
 17 July 2005:  Menelaos Karavelas
 - in various doc files renamed:
   * Voronoi_diagram_adaptor_2 to Voronoi_diagram_2
