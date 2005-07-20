@@ -9,6 +9,9 @@
 #include <CGAL/IO/Qt_widget.h>
 #endif
 
+#include <CGAL/IO/Qt_widget_Apollonius_diagram_halfedge_2.h>
+#include <CGAL/IO/Qt_widget_Voronoi_diagram_halfedge_2.h>
+#include <CGAL/IO/Qt_widget_power_diagram_halfedge_2.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -38,7 +41,7 @@ struct Virtual_Voronoi_diagram_2
 
 //=========================================================================
 
-template<class VD>
+template<class VD, class Halfedge_with_draw_t>
 class Virtual_Voronoi_diagram_base_2
   : public VD, public Virtual_Voronoi_diagram_2
 {
@@ -50,6 +53,15 @@ class Virtual_Voronoi_diagram_base_2
   typedef typename VBase::Point_2      Point_2;
   typedef typename VBase::Circle_2     Circle_2;
 
+  typedef typename Base::Locate_result            Locate_result;
+  typedef typename Base::Halfedge                 Halfedge;
+  typedef typename Base::Face_handle              Face_handle;
+  typedef typename Base::Ccb_halfedge_circulator  Ccb_halfedge_circulator;
+  typedef typename Base::Edge_iterator            Edge_iterator;
+  typedef typename Base::Generator_iterator       Generator_iterator;
+
+  typedef Halfedge_with_draw_t                    Halfedge_with_draw;
+
   Virtual_Voronoi_diagram_base_2() {}
   virtual ~Virtual_Voronoi_diagram_base_2() {}
 
@@ -58,17 +70,21 @@ class Virtual_Voronoi_diagram_base_2
 
  public:
 #ifdef CGAL_USE_QT
+  void draw_edge(const Halfedge& e, Qt_widget& widget) const {
+    Halfedge_with_draw ee(e);
+    widget << ee;
+  }
+
   virtual void draw_feature(const Object& o, Qt_widget& widget) const {
-    typename Base::Locate_result lr;
+    Locate_result lr;
     if ( !assign(lr, o) ) { return; }
 
     if ( lr.is_face() ) {
-      typename Base::Face_handle f = lr;
-      typename Base::Ccb_halfedge_circulator ccb_start = f->outer_ccb();
-      typename Base::Ccb_halfedge_circulator ccb = ccb_start;
+      Face_handle f = lr;
+      Ccb_halfedge_circulator ccb_start = f->outer_ccb();
+      Ccb_halfedge_circulator ccb = ccb_start;
       do {
-	typename Base::Voronoi_traits::Voronoi_edge_2 ve = ccb->curve();
-	widget << ve;
+	draw_edge(*ccb, widget);
 	++ccb;
       } while ( ccb != ccb_start );
     }
@@ -76,7 +92,7 @@ class Virtual_Voronoi_diagram_base_2
 
   virtual void draw_sites(Qt_widget& widget) const
   {
-    for (typename Base::Generator_iterator git = this->generators_begin();
+    for (Generator_iterator git = this->generators_begin();
 	 git != this->generators_end(); ++git) {
       widget << *git;
     }
@@ -84,17 +100,16 @@ class Virtual_Voronoi_diagram_base_2
 
   virtual void draw_diagram(Qt_widget& widget) const
   {
-    typename Base::Edge_iterator it;
+    Edge_iterator it;
     for (it = this->edges_begin(); it != this->edges_end(); ++it) {
-      typename Base::Voronoi_traits::Voronoi_edge_2 ve2 = it->curve();
-      widget << ve2;
+      draw_edge(*it, widget);
     }
   }
-#endif  
+#endif // CGAL_USE_QT
 
   virtual Object locate(const Point_2& q) const {
     typename Base::Voronoi_traits::Point_2 p(q.x(), q.y());
-    typename Base::Locate_result lr = Base::locate(p);
+    Locate_result lr = Base::locate(p);
     return CGAL::make_object(lr);
   }
 
@@ -108,10 +123,12 @@ class Virtual_Voronoi_diagram_base_2
 //=========================================================================
 
 class Concrete_Voronoi_diagram_2
-  : public Virtual_Voronoi_diagram_base_2<VD2>
+  : public Virtual_Voronoi_diagram_base_2
+  <VD2,Voronoi_diagram_halfedge_2<VD2> >
 {
  protected:
-  typedef Virtual_Voronoi_diagram_base_2<VD2> VBase;
+  typedef Voronoi_diagram_halfedge_2<VD2>                   VD2_Halfedge;
+  typedef Virtual_Voronoi_diagram_base_2<VD2,VD2_Halfedge>  VBase;
 
   typedef VBase::Object   Object;
   typedef VBase::Base     Base;
@@ -132,10 +149,12 @@ class Concrete_Voronoi_diagram_2
 //=========================================================================
 
 class Concrete_power_diagram_2
-  : public Virtual_Voronoi_diagram_base_2<PD2>
+  : public Virtual_Voronoi_diagram_base_2
+  <PD2,Power_diagram_halfedge_2<PD2> >
 {
  protected:
-  typedef Virtual_Voronoi_diagram_base_2<PD2> VBase;
+  typedef Power_diagram_halfedge_2<PD2>                     PD2_Halfedge;
+  typedef Virtual_Voronoi_diagram_base_2<PD2,PD2_Halfedge>  VBase;
 
   typedef VBase::Object    Object;
   typedef VBase::Base      Base;
@@ -182,10 +201,12 @@ class Concrete_power_diagram_2
 //=========================================================================
 
 class Concrete_Apollonius_diagram_2
-  : public Virtual_Voronoi_diagram_base_2<AD2>
+  : public Virtual_Voronoi_diagram_base_2
+  <AD2,Apollonius_diagram_halfedge_2<AD2> >
 {
  protected:
-  typedef Virtual_Voronoi_diagram_base_2<AD2> VBase;
+  typedef Apollonius_diagram_halfedge_2<AD2>                AD2_Halfedge;
+  typedef Virtual_Voronoi_diagram_base_2<AD2,AD2_Halfedge>  VBase;
 
   typedef VBase::Object    Object;
   typedef VBase::Base      Base;
