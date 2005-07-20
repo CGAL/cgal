@@ -132,7 +132,8 @@ public:
       CGAL::Object oun, odeux;
       Point p;
       oun = data_struct.intersect(s.vertex(0), s.vertex(1));
-      odeux = intersect_with_surface (s);
+      //odeux = intersect_with_surface (s);
+      odeux = oun;
 
       if ((assign(p, oun) && !assign(p,odeux)) ||
 	  !assign(p, oun) && assign(p,odeux))
@@ -156,7 +157,8 @@ public:
       CGAL::Object oun, odeux;
       Point p;
       oun = data_struct.intersect (r);
-      odeux = intersect_with_surface (r);
+      //      odeux = intersect_with_surface (r);
+      odeux = oun;
 
       if ((assign(p, oun) && !assign(p,odeux)) ||
 	  !assign(p, oun) && assign(p,odeux))
