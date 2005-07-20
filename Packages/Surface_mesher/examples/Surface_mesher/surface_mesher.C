@@ -38,8 +38,12 @@
 
 /////////////// Types /////////////// 
 
-struct K : public CGAL::Exact_predicates_inexact_constructions_kernel {};
-// typedef CGAL::Robust_circumcenter_traits_3<K2>  K;
+struct K2 : public CGAL::Exact_predicates_inexact_constructions_kernel {};
+#ifdef SURFACE_MESHER_POLYHEDRAL
+typedef CGAL::Robust_circumcenter_traits_3<K2>  K;
+#else
+typedef K2 K;
+#endif
 typedef CGAL::Triangulation_vertex_base_3<K> Vb;
 typedef CGAL::Complex_2_in_triangulation_vertex_base_3<K, Vb> Vb2;
 typedef CGAL::Complex_2_in_triangulation_surface_mesh_cell_base_3<K> Cb;
@@ -103,16 +107,22 @@ int main(int argc, char **argv) {
   Del T;
 
   // Initial point sample
-  Oracle::Points initial_point_sample = O.random_points (20);
+  Oracle::Points initial_point_sample = O.random_points (30);
   // @todo random_points is ad hoc for the implicit oracle only
 
   typedef Del::Point Point;
   T.insert (initial_point_sample.begin(), initial_point_sample.end());
   
   // Meshing criteria
-  CGAL::Surface_mesher::Curvature_size_criterion<Del> c_s_crit (10000);
-  CGAL::Surface_mesher::Uniform_size_criterion<Del> u_s_crit (0.03);
-  CGAL::Surface_mesher::Aspect_ratio_criterion<Del> a_r_crit (30);
+  CGAL::Surface_mesher::Curvature_size_criterion<Del> c_s_crit (10000); 
+                                         // bound on Hausdorff distance
+                                         // does not play any role if
+                                         // bigger than the square of
+                                         // the Uniform_size_criterion
+  CGAL::Surface_mesher::Uniform_size_criterion<Del> u_s_crit (0.1); 
+                           // bound on radii of surface Delaunay balls
+  CGAL::Surface_mesher::Aspect_ratio_criterion<Del> a_r_crit (30); 
+                          // lower bound on minimum angle in degrees
   std::vector<Criterion*> crit_vect;
   crit_vect.push_back (&a_r_crit);
   crit_vect.push_back (&u_s_crit);
