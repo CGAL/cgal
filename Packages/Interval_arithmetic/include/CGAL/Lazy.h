@@ -310,7 +310,7 @@ public:
   void
   print(std::ostream& os, int level) const
   {
-    print_at_et(os, level);
+    this->print_at_et(os, level);
   }
 };
 
@@ -328,7 +328,7 @@ struct Lazy_exact_Int_Cst : public Lazy_exact_rep<ET,E2A>
   void
   print(std::ostream& os, int level) const
   {
-    print_at_et(os, level);
+    this->print_at_et(os, level);
   }
 };
 
@@ -346,7 +346,7 @@ struct Lazy_exact_Cst : public Lazy_exact_rep<ET,E2A>
   void
   print(std::ostream& os, int level) const
   {
-    print_at_et(os, level);
+    this->print_at_et(os, level);
   }
 };
 
@@ -366,7 +366,7 @@ struct Lazy_exact_Ex_Cst : public Lazy_exact_rep<ET,E2A>
   void
   print(std::ostream& os, int level) const
   {
-    print_at_et(os, level);
+    this->print_at_et(os, level);
   }
 };
 
@@ -402,8 +402,8 @@ struct Lazy_exact_unary : public Lazy_exact_rep<typename EK::FT,E2A>
   void
   print(std::ostream& os, int level) const 
   {
-    print_at_et(os, level);
-    if(is_lazy()){
+    this->print_at_et(os, level);
+    if(this->is_lazy()){
       CGAL::msg(os, level, "One child node:");
       op1.print(os, level+1);
     }
@@ -426,10 +426,10 @@ struct Lazy_exact_binary : public Lazy_exact_unary<AK,EK,E2A>
   void
   print(std::ostream& os, int level) const 
   {
-    print_at_et(os, level);
-    if(is_lazy()){
+    this->print_at_et(os, level);
+    if(this->is_lazy()){
       CGAL::msg(os, level, "Two child nodes:");
-      op1.print(os, level+1);
+      this->op1.print(os, level+1);
       op2.print(os, level+1);
     }
   }
@@ -452,10 +452,10 @@ struct NAME : public Lazy_exact_unary<AK,EK,E2A>                      \
   void                                                                \
   print(std::ostream& os, int level) const                           \
   {                                                                  \
-    print_at_et(os, level);                                      \
-    if(is_lazy()){                                                   \
+    this->print_at_et(os, level);                                      \
+    if(this->is_lazy()){                                                   \
       CGAL::msg(os, level, "One child node:");                 \
-      op1.print(os, level+1);                                 \
+      this->op1.print(os, level+1);                                 \
     }                                                                \
   }                                                                   \
   void update_exact()  { this->et = new typename EK::FT(OP(this->op1.exact())); } \
@@ -482,11 +482,11 @@ struct NAME : public Lazy_exact_binary<AK,EK,E2A>                            \
   void                                                                \
   print(std::ostream& os, int level) const                           \
   {                                                                  \
-    print_at_et(os, level);                                      \
-    if(is_lazy()){                                                   \
+    this->print_at_et(os, level);                                      \
+    if(this->is_lazy()){                                                   \
      CGAL::msg(os, level, "Two child node:");                 \
-      op1.print(os, level+1);                                 \
-      op2.print(os, level+1);                                 \
+      this->op1.print(os, level+1);                                 \
+      this->op2.print(os, level+1);                                 \
     }                                                                \
   }                                                                   \
   void update_exact()                                                 \
@@ -563,13 +563,13 @@ public:
     : Lazy_construct_rep<AT,ET,E2A>(AT(), e)
   {
     E2A e2a;
-    at = e2a(e); 
+    this->at = e2a(e); 
   }
 
   void
   print(std::ostream& os, int level) const
   {
-    print_at_et(os, level);
+    this->print_at_et(os, level);
   }
 };
 
@@ -604,8 +604,8 @@ public:
   void
   print(std::ostream& os, int level) const 
   {
-    print_at_et(os, level);
-    if(is_lazy()){
+    this->print_at_et(os, level);
+    if(this->is_lazy()){
       CGAL::msg(os, level, "One child node:");
       CGAL::print(l1_, os, level+1);
     }
@@ -646,8 +646,8 @@ public:
   void
   print(std::ostream& os, int level) const
   {
-    print_at_et(os, level);
-    if(is_lazy()){
+    this->print_at_et(os, level);
+    if(this->is_lazy()){
       CGAL::msg(os, level, "Two child nodes:");
       CGAL::print(l1_, os, level+1);
       CGAL::print(l2_, os, level+1);
@@ -691,8 +691,8 @@ public:
   void
   print(std::ostream& os, int level) const
   {
-    print_at_et(os, level);
-    if(is_lazy()){
+    this->print_at_et(os, level);
+    if(this->is_lazy()){
       CGAL::msg(os, level, "Three child nodes:");
       CGAL::print(l1_, os, level+1);
       CGAL::print(l2_, os, level+1);
@@ -738,9 +738,9 @@ public:
   void
   print(std::ostream& os, int level) const
   {
-    print_at_et(os, level);
+    this->print_at_et(os, level);
     
-    if(is_lazy()){
+    if(this->is_lazy()){
       CGAL::msg(os, level, "Four child nodes:");
       CGAL::print(l1_, os, level+1);
       CGAL::print(l2_, os, level+1);
@@ -788,9 +788,9 @@ public:
   void
   print(std::ostream& os, int level) const
   {
-    print_at_et(os, level);
+    this->print_at_et(os, level);
     
-    if(is_lazy()){
+    if(this->is_lazy()){
       CGAL::msg(os, level, "Five child nodes:");
       CGAL::print(l1_, os, level+1);
       CGAL::print(l2_, os, level+1);
