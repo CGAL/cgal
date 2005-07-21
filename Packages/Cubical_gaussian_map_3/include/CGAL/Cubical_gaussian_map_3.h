@@ -526,6 +526,9 @@ public:
     }
   
   public:
+    /*! Default constructor */
+    Halfedge_around_vertex_const_circulator() : Base() {}
+
     /*! Constructor */
     Halfedge_around_vertex_const_circulator(Base base) : Base(base)
     {
@@ -545,7 +548,7 @@ public:
       return *this;
     }
 
-    /*! \brief */
+    /*! Post increment */
     Self operator++(int)
     {
       Self tmp = *this;
@@ -553,23 +556,30 @@ public:
       return tmp;
     }
 
-    /*! \brief */
+    /*! Equality */
     bool operator==(const Self & circulator)
     {
       Base * base_p = this;
       return (*base_p == circulator);;
     }
 
-    /*! \brief */
+    /*! Inequality */
     bool operator!=(const Self & circulator)
     {
       Base * base_p = this;
       return (*base_p != circulator);;
     }
+
+    /*! Assignment operator from Base */
+    Self & operator=(Base & other_base)
+    {
+      Base * base = this;
+      *base = other_base;
+      advance();
+    }
   };
   
-  /*! Return the mask of a face given by the face id
-   */
+  /*! Return the mask of a face given by the face id */
   static unsigned int get_mask(unsigned int id)
   {
     /*! A mask for each face */
@@ -581,7 +591,7 @@ public:
   }
 
 protected:
-  typedef unsigned int *            Coord_index_iter;
+  typedef unsigned int * Coord_index_iter;
 
   /*! Return an extreme (1 or -1) coordinate of the unit cube in the user
    * defined number-type.
@@ -625,6 +635,17 @@ protected:
     return s_corners[index];
   }
 
+  /*! Obtain the index of a given corner point
+   * \param point the corner point
+   */
+  static unsigned int get_corner_index(Point_2 & point)
+  {
+    for (unsigned int i = 0; i < NUM_CORNERS; ++i)
+      if (get_corner_point(i) == point) return i;
+    CGAL_assertion(0);
+    return static_cast<unsigned int>(-1);
+  }
+  
   /*! A specific corner-vertex is identified by the id of the unit-cube face
    * associated with the arrangement containing the vertex, and the id of the
    * corner within that face.
@@ -639,6 +660,14 @@ protected:
   {
     return m_corner_vertices[corner_id.first][corner_id.second];
   }
+  
+  /*! Obtain the id of the next corner vertex in the cyclic chain of corner
+   * vertices.
+   * \param face_id the id of the unit-cube face (projection)
+   * \param corner_index the index of the corner within the cube face
+   */
+  static Corner_id get_next_corner_id(Corner_id & corner_id)
+  { return get_next_corner_id(corner_id.first, corner_id.second); }
   
   /*! Obtain the id of the next corner vertex in the cyclic chain of corner
    * vertices.
@@ -799,6 +828,95 @@ protected:
     const Point_3 & point1 = proj_normal1.get_projected_normal();
     Point_2 p1 = construct_point(point1, id);
 
+    // Construct the 2d point that is the projection of normal onto the face:
+    const Point_3 & point2 = proj_normal2.get_projected_normal();
+    Point_2 p2 = construct_point(point2, id);
+
+    /* If the projected normals are not uniqe, we need to locate the vertices
+     * in case they already exists.
+     */
+    if (!unique) {
+      Arr & arr = m_arrangements[id];
+      Point_location pl(arr);
+      if (!proj_normal1.is_vertex_set(i)) {
+        if (proj_normal1.get_num_faces() == 3) {
+          // Set 1st:
+          Corner_id corner_id(id, get_corner_index(p1));
+          proj_normal1.set_vertex(get_corner_vertex_handle(corner_id),
+                                  corner_id.first % 3);
+          // Set 2nd:
+          corner_id = get_next_corner_id(corner_id);
+          proj_normal1.set_vertex(get_corner_vertex_handle(corner_id),
+                                  corner_id.first % 3);
+          // Set 3rd:
+          corner_id = get_next_corner_id(corner_id);
+          proj_normal1.set_vertex(get_corner_vertex_handle(corner_id),
+                                  corner_id.first % 3);
+        } else if (proj_normal1.get_num_faces() == 2) {
+          CGAL::Object obj = pl.locate(p1);
+          if (const Arr_vertex_const_handle * const_vertex_ptr =
+              CGAL::object_cast<Arr_vertex_const_handle>(&obj))
+          {
+            Arr_vertex_handle vertex = arr.non_const_handle(*const_vertex_ptr);
+            proj_normal1.set_vertex(vertex, i);
+            // Adjacent face:
+            unsigned int adj_id =
+              face_mask_2_face_index(faces_mask1 & !get_mask(id));
+            void * tmp = vertex->get_adjacent_vertex();
+            Arr_vertex_handle adj_vertex = *((Arr_vertex_handle *) (&tmp));
+            proj_normal1.set_vertex(adj_vertex, adj_id % 3);
+          }
+        } else {
+          CGAL::Object obj = pl.locate(p1);
+          if (const Arr_vertex_const_handle * const_vertex_ptr =
+              CGAL::object_cast<Arr_vertex_const_handle>(&obj))
+          {
+            Arr_vertex_handle vertex = arr.non_const_handle(*const_vertex_ptr);
+            proj_normal1.set_vertex(vertex, i);
+          }
+        }
+      }
+
+      if (!proj_normal2.is_vertex_set(i)) {
+        if (proj_normal2.get_num_faces() == 3) {
+          // Set 1st:
+          Corner_id corner_id(id, get_corner_index(p2));
+          proj_normal2.set_vertex(get_corner_vertex_handle(corner_id),
+                                  corner_id.first % 3);
+          // Set 2nd:
+          corner_id = get_next_corner_id(corner_id);
+          proj_normal2.set_vertex(get_corner_vertex_handle(corner_id),
+                                  corner_id.first % 3);
+          // Set 3rd:
+          corner_id = get_next_corner_id(corner_id);
+          proj_normal2.set_vertex(get_corner_vertex_handle(corner_id),
+                                  corner_id.first % 3);
+        } else if (proj_normal2.get_num_faces() == 2) {
+          CGAL::Object obj = pl.locate(p2);
+          if (const Arr_vertex_const_handle * const_vertex_ptr =
+              CGAL::object_cast<Arr_vertex_const_handle>(&obj))
+          {
+            Arr_vertex_handle vertex = arr.non_const_handle(*const_vertex_ptr);
+            proj_normal2.set_vertex(vertex, i);
+            // Adjacent face:
+            unsigned int adj_id =
+              face_mask_2_face_index(faces_mask2 & !get_mask(id));
+            void * tmp = vertex->get_adjacent_vertex();
+            Arr_vertex_handle adj_vertex = *((Arr_vertex_handle *) (&tmp));
+            proj_normal2.set_vertex(adj_vertex, adj_id % 3);
+          }
+        } else {
+          CGAL::Object obj = pl.locate(p2);
+          if (const Arr_vertex_const_handle * const_vertex_ptr =
+              CGAL::object_cast<Arr_vertex_const_handle>(&obj))
+          {
+            Arr_vertex_handle vertex = arr.non_const_handle(*const_vertex_ptr);
+            proj_normal2.set_vertex(vertex, i);
+          }
+        }
+      }
+    }
+
     /* If the computed point is on the boundary of the box face, but not a
      * corner point, locate it. If the locate returns an edge, split it at the
      * point:
@@ -840,10 +958,6 @@ protected:
       Arr_halfedge_handle edge = v->incident_halfedges();
       if (!proj_normal1.is_vertex_set(i)) proj_normal1.set_vertex(v, i);
     }
-
-    // Construct the 2d point that is the projection of normal onto the face:
-    const Point_3 & point2 = proj_normal2.get_projected_normal();
-    Point_2 p2 = construct_point(point2, id);
 
     /* If the computed point is on the boundary of the box face, but not a
      * corner point, locate it. If the locate returns an edge, split it at the
@@ -918,30 +1032,6 @@ protected:
       adjacent_edge->twin()->set_is_real(true);
       
       return;
-    }
-
-    /* If the projected normals are not uniqe, we need to locate the vertices
-     * in case they already exists.
-     */
-    if (!unique) {
-      Arr & arr = m_arrangements[id];
-      Point_location pl(arr);
-      if (!proj_normal1.is_vertex_set(i)) {
-        CGAL::Object obj = pl.locate(p1);
-        if (const Arr_vertex_const_handle * const_vertex_ptr =
-            CGAL::object_cast<Arr_vertex_const_handle>(&obj)) {
-          Arr_vertex_handle vertex = arr.non_const_handle(*const_vertex_ptr);
-          proj_normal1.set_vertex(vertex, i);
-        }
-      }
-      if (!proj_normal2.is_vertex_set(i)) {
-        CGAL::Object obj = pl.locate(p2);
-        if (const Arr_vertex_const_handle * const_vertex_ptr =
-            CGAL::object_cast<Arr_vertex_const_handle>(&obj)) {
-          Arr_vertex_handle vertex = arr.non_const_handle(*const_vertex_ptr);
-          proj_normal2.set_vertex(vertex, i);
-        }
-      }
     }
 
     /* Insert a curve to the arrangement that corresponds to the unit-cube face
