@@ -407,15 +407,12 @@ public:
       }
     }
 
-    std::cout<<"drawing arrangement...\n";
     // draw all faces (fill them with their color)
     visit_faces(FillFace(this));  
 
-    std::cout<<"finished drawing faces\n";
     if (snap_mode == GRID || grid)
       draw_grid();
 
-    std::cout<<"drawing edges\n";
     for (Edge_iterator ei = m_curves_arr->edges_begin(); 
          ei != m_curves_arr->edges_end(); ++ei) 
     {
@@ -428,7 +425,6 @@ public:
       }
       m_tab_traits.draw_xcurve(this , ei->curve() );
     }
-    std::cout<<"finished drawing edges\n";
     // Go over all vertices and for each vertex check the 
     // index numbers of the base curves that go through 
     // it and paint the point if they are different (beacuse ew want to
@@ -437,7 +433,6 @@ public:
     *this << CGAL::DISC;
     static_cast<CGAL::Qt_widget&>(*this) << CGAL::LineWidth(m_vertex_width);
 
-    std::cout<<" drawing vertices\n";
     Vertex_iterator   vit;
     for (vit = m_curves_arr->vertices_begin(); 
          vit != m_curves_arr->vertices_end(); vit++)
@@ -493,7 +488,6 @@ public:
         }
       } while (eit != first);
     }
-    std::cout<<"finished drawing arrangement\n";
     if (mode == POINT_LOCATION)
     {
       static_cast<CGAL::Qt_widget&>(*this) << CGAL::LineWidth(3);
@@ -691,7 +685,6 @@ public:
     for( ; fi != m_curves_arr->faces_end() ; ++fi )
       fi->set_visited(false);
     Face_handle ub = m_curves_arr->unbounded_face();
-    std::cout<<"visit_face_rec - ub\n";
     visit_face_rec (ub,func) ;
 }
 
@@ -713,10 +706,8 @@ public:
     if (! f->visited())
     {
       Holes_iterator hit; // holes iterator
-      std::cout<<"ff\n";
       func(f);
       f->set_visited(true);
-      std::cout<<"iterating holes\n";
       for(hit= f->holes_begin() ; hit!=f->holes_end() ; ++hit)
       {
         Ccb_halfedge_circulator cc = *hit;
@@ -870,21 +861,14 @@ public:
       RasterOp old_rasterop=rasterOp();
       get_painter().setRasterOp(XorROP);
       
-      std::cout<<"666\n";
       insert( e , p);
-      std::cout<<"777\n";
       
       setRasterOp(old_rasterop);
-      std::cout<<"888\n";
       setColor(old_color);
-      std::cout<<"999\n";
       unlock();
-      std::cout<<"1010\n";
       if( m_curves_arr->number_of_vertices() > 0 )
         empty = false;
-      std::cout<<"1111\n";
       setCursor(old);
-      std::cout<<"1212\n";
       return;
     }
     if (mode == DRAG)
@@ -2004,16 +1988,15 @@ public:
   void draw_xcurve(Qt_widget_demo_tab<Polyline_tab_traits> * w , X_monotone_curve_2 pol )
   {
     Curve_2::const_iterator ps = pol.begin();
-    Curve_2::const_iterator pt = ps; pt++;
+    Curve_2::const_iterator pt = ps; ++pt;
     
     while (pt != pol.end()) {
       const Point_2 & source = *ps;
       const Point_2 & target = *pt;
       Coord_segment coord_seg = convert(source , target);
       *w << coord_seg;
-      ps++; pt++;
+      ++ps; ++pt;
     }
-    
   }
   
   /*! first_point - a first point of inserted polyline or a splitter
@@ -2195,8 +2178,8 @@ public:
     CGAL::Object             res;
     CGAL::Oneset_iterator<CGAL::Object> oi(res);
     m_traits.make_x_monotone_2_object()(cv, oi);
-    const X_monotone_curve_2 c1 ;
-    CGAL::assign(cv, res);
+    X_monotone_curve_2 c1 ;
+    CGAL::assign(c1, res);
     return c1;
   }
  
@@ -2503,31 +2486,24 @@ public:
        */
       Ccb_halfedge_circulator cc=f->outer_ccb();
       do {
-        std::cout<<"antenna\n";
         if(w->antenna(cc->handle()))
           continue;
-         std::cout<<"antenna- END\n";
          
         Halfedge_handle he = cc->handle();
         X_monotone_curve_2 c = he->curve();
-        std::cout<<"SSSSSSS\n";
         // Get the co-ordinates of the curve's source and target.
         double sx = CGAL::to_double(he->source()->point().x()),
                sy = CGAL::to_double(he->source()->point().y()),
                tx = CGAL::to_double(he->target()->point().x()),
                ty = CGAL::to_double(he->target()->point().y());
-        std::cout<<"LLLLLLLLL\n";
         
         Coord_point coord_source(sx / COORD_SCALE, sy / COORD_SCALE);
         Coord_point coord_target(tx / COORD_SCALE, ty / COORD_SCALE);
-
-        std::cout<<"WWWWWWWWWWWWWW\n";
 
         if (c.orientation() == CGAL::COLLINEAR)
             pts.push_back(coord_source ); 
         else
         {
-          std::cout<<"OOOOOOOOOOOO\n";
           // If the curve is monotone, than its source and its target has the
           // extreme x co-ordinates on this curve.
             bool     is_source_left = (sx < tx);
@@ -2548,56 +2524,38 @@ public:
                 //= COORD_SCALE)
               {
                 curr_x = (*w).x_real(x);
-                std::cout<<"get_points_at_x1\n";
                 Alg_kernel   ker;
                 Arr_conic_point_2 curr_p(curr_x, 0);
                 if(!(ker.compare_x_2_object() (curr_p, c.left()) != CGAL::SMALLER &&
                      ker.compare_x_2_object() (curr_p, c.right()) != CGAL::LARGER))
                      continue;
                 px = c.get_point_at_x (curr_p);
-
-                std::cout<<"get_points_at_x1-END\n";
-                std::cout<<"to_double...\n";
                 curr_y = CGAL::to_double(px.y());
-                std::cout<<"push_back\n";
                 pts.push_back(Coord_point(curr_x / COORD_SCALE,
                                           curr_y / COORD_SCALE));
-                std::cout<<"END\n";
               }// for 
-              std::cout<<"finished for\n";
             }
             else
             {    
-              std::cout<<"@@@@@@\n";
               for (x = x_max; x > x_min; x-=DRAW_FACTOR)
               {
                 curr_x = (*w).x_real(x);
-                std::cout<<"get_points_at_x2\n";
                 Alg_kernel   ker;
                 Arr_conic_point_2 curr_p(curr_x, 0);
                 if(!(ker.compare_x_2_object() (curr_p, c.left()) != CGAL::SMALLER &&
                      ker.compare_x_2_object() (curr_p, c.right()) != CGAL::LARGER))
                      continue;
                 px = c.get_point_at_x (Arr_conic_point_2(curr_x, 0));
-                std::cout<<"get_points_at_x2-END\n";
                 curr_y = CGAL::to_double(px.y());
                 pts.push_back(Coord_point(curr_x / COORD_SCALE,
                                           curr_y / COORD_SCALE));
               }// for       
             }// else
-            std::cout<<"push_back(coord_target )\n";
             pts.push_back(coord_target ); 
-            std::cout<<"push_back(coord_target )-END\n";
         }
-        std::cout<<"%%%%%%%%%%%%%\n";
-        std::cout.flush();
-        std::cout<<"+++++++++++++\n";
-        std::cout.flush();
-
         //created from the outer boundary of the face
       } while (++cc != f->outer_ccb());
 
-      std::cout<<"finished ccb\n";
        // make polygon from the outer ccb of the face 'f'
       Polygon pgn (pts.begin() , pts.end());
       QPen old_penstyle = w->get_painter().pen();
@@ -2670,10 +2628,8 @@ public:
         
         Arr_conic_point_2 px;
         
-        std::cout<<"$$$\n";
         for (x = x_min + DRAW_FACTOR; x < x_max; x+=DRAW_FACTOR)
         {
-          std::cout<<"#####\n";
           curr_x = (*w).x_real(x);
           Alg_kernel   ker;
           Arr_conic_point_2 curr_p(curr_x, 0);
@@ -2746,7 +2702,6 @@ public:
        case CIRCLE:
         sq_rad = CGAL::square(x - x1) + CGAL::square(y - y1);
         cv = new Arr_base_conic_2(Rat_circle_2 (Rat_point_2(x1, y1), sq_rad)); 
-        std::cout << "Created circle: " << *cv << std::endl;
         break;
 
        case SEGMENT:
@@ -2777,7 +2732,6 @@ public:
         ww = x0*x0*b_sq + y0*y0*a_sq - a_sq*b_sq;
 
         cv = new Arr_base_conic_2(r, s, t, u, v, ww);
-        std::cout << "Created ellipse: " << cv << std::endl;
         break;
 
         // RWRW: Do nothing ...
@@ -2855,25 +2809,15 @@ public:
         }
         break;
       }
-      std::cout<<"a\n";
       Curve_conic_data cd;
-      std::cout<<"a\n";
       cd.m_type = Curve_conic_data::LEAF;
-      std::cout<<"a\n";
       cd.m_index = w->index;
-      std::cout<<"a\n";
       cd.m_ptr.m_curve = cv;
-      std::cout<<"a\n";
       CGAL::insert(*(w->m_curves_arr), Arr_conic_2( *cv , cd));
-      std::cout<<"EE\n";
       CGAL::Bbox_2 curve_bbox = cv->bbox();
-      std::cout<<"a\n";
       w->bbox = w->bbox + curve_bbox;
-      std::cout<<"a\n";
       w->active = false;
-      std::cout<<"1*\n";
       w->new_object(make_object(Coord_segment(m_p1 , p)));
-      std::cout<<"a\n";
     } 
   }
   
