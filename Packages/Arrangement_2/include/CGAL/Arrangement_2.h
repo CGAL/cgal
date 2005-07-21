@@ -577,7 +577,7 @@ public:
   /// \name Constructors.
   //@{
 
-  /*! Default constructor */
+  /*! Default constructor. */
   Arrangement_2 ();
 
   /*! Copy constructor. */
@@ -597,7 +597,7 @@ public:
   void assign (const Self& arr);
   //@}
 
-  /// \name Destruction functions..
+  /// \name Destruction functions.
   //@{
 
   /*! Destructor. */
@@ -629,8 +629,9 @@ public:
             halfedges_begin() == halfedges_end());
   }
 
-  /*! Chceck whether the arrangement is valid. In particular, check the validity
-   * of each vertex, halfedge, and face.
+  /*!
+   * Check whether the arrangement is valid. In particular, check the
+   * validity of each vertex, halfedge, and face.
    */
   bool is_valid() const
   {
@@ -769,7 +770,7 @@ public:
    * \pre v is an isolated vertex (it has no incident halfedges).
    * \return A handle to the face containing v.
    */
-  Face_handle incident_face (Vertex_handle v)
+  inline Face_handle incident_face (Vertex_handle v)
   {
     CGAL_precondition (v->is_isolated());
 
@@ -791,7 +792,7 @@ public:
    * \pre v is an isolated vertex (it has no incident halfedges).
    * \return A const handle to the face containing v.
    */
-  Face_const_handle incident_face (Vertex_const_handle v) const
+  inline Face_const_handle incident_face (Vertex_const_handle v) const
   {
     CGAL_precondition (v->is_isolated());
 

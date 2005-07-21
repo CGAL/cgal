@@ -235,6 +235,16 @@ public:
     }
 
     /*!
+     * Remove a data object from the curve.
+     * \param data The data object to be removed.
+     */
+    void remove_data (const Data& data)
+    {
+      m_data_list.remove (data);
+      return;
+    }
+
+    /*!
      * Set a data object to the curve.
      * \param data The data object to set.
      */

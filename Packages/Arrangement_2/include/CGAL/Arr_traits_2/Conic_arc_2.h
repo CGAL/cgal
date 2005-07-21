@@ -850,8 +850,8 @@ public:
   {
     CGAL_precondition (is_valid());
 
-    double    x_min, y_min;
-    double    x_max, y_max;
+    double    x_min = 0, y_min = 0;
+    double    x_max = 0, y_max = 0;
 
     if (is_full_conic())
     {
@@ -893,15 +893,16 @@ public:
       // Use the source and target to initialize the exterme points.
       bool   source_left = 
         CGAL::to_double(_source.x()) < CGAL::to_double(_target.x());
-      double x_min = source_left ?
+      x_min = source_left ?
         CGAL::to_double(_source.x()) : CGAL::to_double(_target.x());
-      double x_max = source_left ?
+      x_max = source_left ?
         CGAL::to_double(_target.x()) : CGAL::to_double(_source.x());
+      
       bool   source_down = 
         CGAL::to_double(_source.y()) < CGAL::to_double(_target.y());
-      double y_min = source_down ?
+      y_min = source_down ?
         CGAL::to_double(_source.y()) : CGAL::to_double(_target.y());
-      double y_max = source_down ?
+      y_max = source_down ?
         CGAL::to_double(_target.y()) : CGAL::to_double(_source.y());
 
       // Go over the vertical tangency points and try to update the x-points.

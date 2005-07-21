@@ -1123,7 +1123,7 @@ private:
     else if (res == SMALLER)
     {
       // The arc is below the connecting segment, so it is facing downwards.
-      _info = _info | FACING_DOWN;
+      _info = (_info | FACING_DOWN);
     }
 
     return;
