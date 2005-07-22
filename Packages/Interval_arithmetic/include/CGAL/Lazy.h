@@ -27,11 +27,12 @@
 #include <CGAL/basic.h>
 #include <CGAL/Handle.h>
 #include <CGAL/Object.h>
-
+#include <CGAL/Lazy_exact_nt.h>
+#include <boost/static_assert.hpp>
 CGAL_BEGIN_NAMESPACE
 
 template <typename AT, typename ET, typename EFT, typename E2A> class Lazy;
-template <typename AK, typename EK, typename E2A> class Lazy_exact_nt;
+template <typename ET> class Lazy_exact_nt;
 
 
 template <typename AT, typename ET, typename EFT, typename E2A>
@@ -42,10 +43,10 @@ approx(const Lazy<AT,ET, EFT, E2A>& l)
   return l.approx();
 }
 
-template <typename AK, typename EK, typename E2A>
+template <typename ET>
 inline
-typename AK::FT
-approx(const Lazy_exact_nt<AK,EK, E2A>& l)
+const Interval_nt<true>&
+approx(const Lazy_exact_nt<ET>& l)
 {
   return l.approx();
 }
@@ -129,10 +130,10 @@ exact(const Lazy<AT,ET,EFT,E2A>& l)
   return l.exact();
 }
 
-template <typename AK, typename EK, typename E2A>
+template <typename ET>
 inline
-typename EK::FT
-exact(const Lazy_exact_nt<AK,EK,E2A>& l)
+ET
+exact(const Lazy_exact_nt<ET>& l)
 {
   return l.exact();
 }
@@ -174,11 +175,12 @@ print(const Lazy<AT,ET,EFT,E2A>& l, std::ostream& os, int level)
   l.print(os, level);
 }
 
-template <typename AK, typename EK, typename E2A>
+template <typename ET>
 inline
 void
-print(const Lazy_exact_nt<AK,EK,E2A>& l, std::ostream& os, int level)
+print(const Lazy_exact_nt<ET>& l, std::ostream& os, int level)
 {
+  //os << "TBD" << std::endl;
   l.print(os, level);
 }
 
@@ -222,312 +224,7 @@ print(const Origin& nv, std::ostream& os, int level)
   }
   os << "Origin" << std::endl;
 }
-// Abstract base class
-template <typename AT, typename ET, typename E2A>
-struct Lazy_construct_rep : public Rep
-{
-  AT at;
-  ET *et;
 
-  Lazy_construct_rep ()
-      : at(), et(NULL) {}
-
-  Lazy_construct_rep (const AT& a)
-      : at(a), et(NULL) 
-  {}
-
-  Lazy_construct_rep (const AT& a, const ET& e)
-      : at(a), et(new ET(e)) 
-  {}
-
-
-private:
-  Lazy_construct_rep (const Lazy_construct_rep&) { abort(); } // cannot be copied.
-public:
-
-  AT& approx() //  This is not const AT&, because otherwise K::Assign_2::operator(T& t, const Object& o) does not compile 
-  {
-      return at;
-  }
-
-  ET & exact()
-  {
-      if (et==NULL) {
-          update_exact();
-	  E2A e2a;
-	  e2a(*et); // improve approximation
-      }
-      return *et;
-  }
-
-  bool is_lazy() const
-  {
-    return et == NULL;
-  }
-
-
-  virtual
-  void
-  print(std::ostream& os, int level) const = 0;
-
-  void
-  print_at_et(std::ostream& os, int level) const
-  {
-    int i;
-    for(i = 0; i < level; i++){
-      os << "    ";
-    }
-    os << "Approximation: " << at << std::endl;
-    if(et!= NULL){
-      for(i = 0; i < level; i++){
-	os << "    ";
-      }
-      os << "Exact        : " << *et << std::endl;
-    }
-  }
-
-  virtual void update_exact() = 0;
-  virtual ~Lazy_construct_rep () { delete et; };
-};
-
-
-//_____________________________________________________________
-// the base class for lazy numbers
-template <typename ET, typename E2A>
-struct Lazy_exact_rep : public Lazy_construct_rep<Interval_nt<true>, ET, E2A >
-{
-  typedef Lazy_construct_rep<Interval_nt<true>, ET, E2A > Base;
-
-  Lazy_exact_rep (const Interval_nt<true> & i)
-      : Base(i) {}
-
-private:
-  Lazy_exact_rep (const Lazy_exact_rep&) { abort(); } // cannot be copied.
-public:
-
-  virtual void update_exact(){}
-
-  void
-  print(std::ostream& os, int level) const
-  {
-    this->print_at_et(os, level);
-  }
-};
-
-// int constant
-template <typename ET, typename E2A>
-struct Lazy_exact_Int_Cst : public Lazy_exact_rep<ET,E2A>
-{
-  typedef Lazy_exact_rep<ET,E2A> Base;
-
-  Lazy_exact_Int_Cst (int i)
-      : Lazy_exact_rep<ET,E2A>(double(i)) {}
-
-  void update_exact()  { this->et = new ET((int)this->at.inf()); }
-
-  void
-  print(std::ostream& os, int level) const
-  {
-    this->print_at_et(os, level);
-  }
-};
-
-// double constant
-template <typename ET, typename E2A>
-struct Lazy_exact_Cst : public Lazy_exact_rep<ET,E2A>
-{
-  typedef Lazy_exact_rep<ET,E2A> Base;
-
-  Lazy_exact_Cst (double d)
-      : Lazy_exact_rep<ET,E2A>(d) {}
-
-  void update_exact()  { this->et = new ET(this->at.inf()); }
-
-  void
-  print(std::ostream& os, int level) const
-  {
-    this->print_at_et(os, level);
-  }
-};
-
-// Exact constant
-template <typename ET, typename E2A>
-struct Lazy_exact_Ex_Cst : public Lazy_exact_rep<ET,E2A>
-{
-  typedef Lazy_exact_rep<ET,E2A> Base;
-  Lazy_exact_Ex_Cst (const ET & e)
-      : Lazy_exact_rep<ET,E2A>(to_interval(e))
-  {
-    this->et = new ET(e);
-  }
-
-  void update_exact()  { CGAL_assertion(false); }
-
-  void
-  print(std::ostream& os, int level) const
-  {
-    this->print_at_et(os, level);
-  }
-};
-
-/*
-// Construction from a Lazy_exact_nt<ET1> (which keeps the lazyness).
-template <typename ET, typename ET1>
-struct Lazy_lazy_exact_Cst : public Lazy_exact_rep<ET>
-{
-  Lazy_lazy_exact_Cst (const Lazy_exact_nt<ET1> &x)
-      : Lazy_exact_rep<ET>(x.approx()), l(x) {}
-
-  void update_exact()  { this->et = new ET(l.exact()); }
-
-  Lazy_exact_nt<ET1> l;
-};
-*/
-// Unary  operations: abs, sqrt, square.
-// Binary operations: +, -, *, /, min, max.
-
-// Base unary operation
-template <typename AK, typename EK, typename E2A>
-struct Lazy_exact_unary : public Lazy_exact_rep<typename EK::FT,E2A>
-{
-  typedef Lazy_exact_rep<typename EK::FT,E2A> Base;
-  typedef Lazy_exact_nt<AK,EK,E2A> L;
-  const  L op1;
-
-
-  Lazy_exact_unary (const Interval_nt<true> &i, const L  &a)
-      : Lazy_exact_rep<typename EK::FT,E2A>(i), op1(a) 
-  {}
-
-  void
-  print(std::ostream& os, int level) const 
-  {
-    this->print_at_et(os, level);
-    if(this->is_lazy()){
-      CGAL::msg(os, level, "One child node:");
-      op1.print(os, level+1);
-    }
-  }
-};
-
-// Base binary operation
-template <typename AK, typename EK, typename E2A>
-struct Lazy_exact_binary : public Lazy_exact_unary<AK,EK,E2A>
-{
-  typedef Lazy_exact_rep<typename EK::FT,E2A> BaseBase;
-  typedef Lazy_exact_nt<AK,EK,E2A> L;
-  const L op2;
-
-  Lazy_exact_binary (const Interval_nt<true> &i,
-		     const L &a, const L &b)
-      : Lazy_exact_unary<AK,EK,E2A>(i, a), op2(b) 
-  {}
-
-  void
-  print(std::ostream& os, int level) const 
-  {
-    this->print_at_et(os, level);
-    if(this->is_lazy()){
-      CGAL::msg(os, level, "Two child nodes:");
-      this->op1.print(os, level+1);
-      op2.print(os, level+1);
-    }
-  }
-};
-
-// Here we could use a template class for all operations (STL provides
-// function objects plus, minus, multiplies, divides...).  But it would require
-// a template template parameter, and GCC 2.95 seems to crash easily with them.
-
-// Macro for unary operations
-#define CGAL_LAZY_UNARY_OP(OP, NAME)                                  \
-template <typename AK, typename EK, typename E2A>                     \
-struct NAME : public Lazy_exact_unary<AK,EK,E2A>                      \
-{                                                                     \
-  typedef Lazy_exact_rep<typename EK::FT,E2A> BaseBase;               \
-  typedef Lazy_exact_nt<AK,EK,E2A> L;                                 \
-  NAME (const L &a)                                                  \
-      : Lazy_exact_unary<AK,EK,E2A>(OP(a.approx()), a) {}              \
-                                                                     \
-  void                                                                \
-  print(std::ostream& os, int level) const                           \
-  {                                                                  \
-    this->print_at_et(os, level);                                      \
-    if(this->is_lazy()){                                                   \
-      CGAL::msg(os, level, "One child node:");                 \
-      this->op1.print(os, level+1);                                 \
-    }                                                                \
-  }                                                                   \
-  void update_exact()  { this->et = new typename EK::FT(OP(this->op1.exact())); } \
-};
-
-
-
-CGAL_LAZY_UNARY_OP(CGAL::opposite,  Lazy_exact_Opp)
-CGAL_LAZY_UNARY_OP(CGAL_NTS abs,    Lazy_exact_Abs)
-CGAL_LAZY_UNARY_OP(CGAL_NTS square, Lazy_exact_Square)
-CGAL_LAZY_UNARY_OP(CGAL::sqrt,      Lazy_exact_Sqrt)
-
-// A macro for +, -, * and /
-#define CGAL_LAZY_BINARY_OP(OP, NAME)                                 \
-template <typename AK, typename EK, typename E2A>                                                \
-struct NAME : public Lazy_exact_binary<AK,EK,E2A>                            \
-{                                                                     \
-  typedef Lazy_exact_rep<typename EK::FT,E2A> BaseBase;               \
-  typedef Lazy_exact_nt<AK,EK,E2A> L;          \
-  NAME (const L &a, const L &b)                                       \
-    : Lazy_exact_binary<AK,EK,E2A>(a.approx() OP b.approx(), a, b) {}        \
-                                                                      \
-                                                                     \
-  void                                                                \
-  print(std::ostream& os, int level) const                           \
-  {                                                                  \
-    this->print_at_et(os, level);                                      \
-    if(this->is_lazy()){                                                   \
-     CGAL::msg(os, level, "Two child node:");                 \
-      this->op1.print(os, level+1);                                 \
-      this->op2.print(os, level+1);                                 \
-    }                                                                \
-  }                                                                   \
-  void update_exact()                                                 \
-  {                                                                   \
-    this->et = new typename EK::FT(this->op1.exact() OP this->op2.exact());        \
-  }                                                                   \
-};
-
-CGAL_LAZY_BINARY_OP(+, Lazy_exact_Add)
-CGAL_LAZY_BINARY_OP(-, Lazy_exact_Sub)
-CGAL_LAZY_BINARY_OP(*, Lazy_exact_Mul)
-CGAL_LAZY_BINARY_OP(/, Lazy_exact_Div)
-
-// Minimum
-template <typename AK, typename EK, typename E2A>
-struct Lazy_exact_Min : public Lazy_exact_binary<AK,EK,E2A>
-{
-  typedef Lazy_exact_nt<AK,EK,E2A> L;
-  Lazy_exact_Min (const L &a, const L &b)
-    : Lazy_exact_binary<AK,EK,E2A>(min(a.approx(), b.approx()), a, b) {}
-
-  void update_exact()
-  {
-    this->et = new typename EK::FT(min(this->op1.exact(), this->op2.exact()));
-  }
-};
-
-// Maximum
-template <typename AK, typename EK, typename E2A>
-struct Lazy_exact_Max : public Lazy_exact_binary<AK,EK,E2A>
-{
-  typedef Lazy_exact_nt<AK,EK,E2A> L;
-  Lazy_exact_Max (const L &a, const L &b)
-    : Lazy_exact_binary<AK,EK,E2A>(max(a.approx(), b.approx()), a, b) {}
-
-  void update_exact()
-  {
-    this->et = new typename EK::FT(max(this->op1.exact(), this->op2.exact()));
-
-  }
-};
 
 
 
@@ -902,498 +599,6 @@ operator!=(const Lazy<AT,ET,EFT,E2A>& a, const Lazy<AT,ET,EFT,E2A>& b)
   return ! (a == b);
 }
 
-///_______________________________________________________________
-
-template <typename AK, typename EK, typename E2A>
-class Lazy_exact_nt : public Handle
-{
-public :
-  typedef typename AK::FT AT;
-  typedef typename EK::FT ET;
-  typedef typename Number_type_traits<ET>::Has_gcd      Has_gcd;
-  typedef typename Number_type_traits<ET>::Has_division Has_division;
-  typedef typename Number_type_traits<ET>::Has_sqrt     Has_sqrt;
-
-  typedef Lazy_exact_nt<AK,EK,E2A> Self;
-  typedef Lazy_construct_rep<AT, ET, E2A> Self_rep;
-
-  // Lazy_exact_nt () {} // Handle is not such a nice stuff...  at the moment.
-
-  Lazy_exact_nt (Self_rep *r)
-  { PTR = r; }
-
-  // Operations
-  Lazy_exact_nt (double d)
-  { PTR = new Lazy_exact_Cst<ET,E2A>(d); }
-
-  Lazy_exact_nt (int i = 0)
-  { PTR = new Lazy_exact_Int_Cst<ET,E2A>(i); }
-
-  Lazy_exact_nt (const ET & e)
-  { PTR = new Lazy_exact_Ex_Cst<ET,E2A>(e); }
-
-  /*
-  template <class ET1>
-  Lazy_exact_nt (const Lazy_exact_nt<ET1> &x)
-  { PTR = new Lazy_lazy_exact_Cst<ET, ET1>(x); }
-  */
-  Self operator- () const
-  { return new Lazy_exact_Opp<AK,EK,E2A>(*this); }
-
-  const Interval_nt<true>& approx() const
-  { return ptr()->approx(); }
-
-  Interval_nt<false> interval() const
-  { 
-    const Interval_nt<true>& i = ptr()->approx();
-    return Interval_nt<false>(i.inf(), i.sup());
-  }
-
-  Interval_nt_advanced approx_adv() const
-  { return ptr()->approx(); }
-
-  const ET & exact() const
-  { return ptr()->exact(); }
-
-  static const double & get_relative_precision_of_to_double()
-  {
-      return relative_precision_of_to_double;
-  }
-
-  static void set_relative_precision_of_to_double(const double & d)
-  {
-      CGAL_assertion(d > 0 && d < 1);
-      relative_precision_of_to_double = d;
-  }
-
-  void
-  print(std::ostream& os, int level) const
-  {
-    ptr()->print(os, level);
-  }
-
-private:
-  Self_rep * ptr() const { return (Self_rep*) PTR; }
-
-  static double relative_precision_of_to_double;
-};
-
-template <typename AK, typename EK, typename E2A >
-double Lazy_exact_nt<AK,EK,E2A>::relative_precision_of_to_double = 0.00001;
-
-
-template <typename AK, typename EK, typename E2A>
-bool
-operator<(const Lazy_exact_nt<AK,EK,E2A>& a, const Lazy_exact_nt<AK,EK,E2A>& b)
-{
-  try
-  {
-    return a.approx() < b.approx();
-  }
-  catch (Interval_nt<false>::unsafe_comparison)
-  {
-    // std::cerr << "Interval filter failure (<)" << std::endl;
-    return a.exact() < b.exact();
-  }
-}
-
-template <typename AK, typename EK, typename E2A>
-bool
-operator==(const Lazy_exact_nt<AK,EK,E2A>& a, const Lazy_exact_nt<AK,EK,E2A>& b)
-{
-  try
-  {
-    return a.approx() == b.approx();
-  }
-  catch (Interval_nt<false>::unsafe_comparison)
-  {
-    // std::cerr << "Interval filter failure (==)" << std::endl;
-    return a.exact() == b.exact();
-  }
-}
-
-template <typename AK, typename EK, typename E2A>
-inline
-bool
-operator>(const Lazy_exact_nt<AK,EK,E2A>& a, const Lazy_exact_nt<AK,EK,E2A>& b)
-{ return b < a; }
-
-template <typename AK, typename EK, typename E2A>
-inline
-bool
-operator<=(const Lazy_exact_nt<AK,EK,E2A>& a, const Lazy_exact_nt<AK,EK,E2A>& b)
-{ return ! (b < a); }
-
-template <typename AK, typename EK, typename E2A>
-inline
-bool
-operator>=(const Lazy_exact_nt<AK,EK,E2A>& a, const Lazy_exact_nt<AK,EK,E2A>& b)
-{ return ! (a < b); }
-
-template <typename AK, typename EK, typename E2A>
-inline
-bool
-operator!=(const Lazy_exact_nt<AK,EK,E2A>& a, const Lazy_exact_nt<AK,EK,E2A>& b)
-{ return ! (a == b); }
-
-
-// Mixed operators with int.
-template <typename AK, typename EK, typename E2A>
-bool
-operator<(int a, const Lazy_exact_nt<AK,EK,E2A>& b)
-{
-  try {
-    return a < b.approx();
-  }
-  catch (Interval_nt<false>::unsafe_comparison) {
-    return a < b.exact();
-  }
-}
-
-template <typename AK, typename EK, typename E2A>
-bool
-operator<(const Lazy_exact_nt<AK,EK,E2A>& a, int b)
-{
-  try {
-    return a.approx() < b;
-  }
-  catch (Interval_nt<false>::unsafe_comparison) {
-    return a.exact() < b;
-  }
-}
-
-template <typename AK, typename EK, typename E2A>
-bool
-operator==(int a, const Lazy_exact_nt<AK,EK,E2A>& b)
-{
-  try {
-    return a == b.approx();
-  }
-  catch (Interval_nt<false>::unsafe_comparison) {
-    return a == b.exact();
-  }
-}
-
-template <typename AK, typename EK, typename E2A>
-inline
-bool
-operator==(const Lazy_exact_nt<AK,EK,E2A>& a, int b)
-{ return b == a; }
-
-template <typename AK, typename EK, typename E2A>
-inline
-bool
-operator>(int a, const Lazy_exact_nt<AK,EK,E2A>& b)
-{ return b < a; }
-
-template <typename AK, typename EK, typename E2A>
-inline
-bool
-operator>(const Lazy_exact_nt<AK,EK,E2A>& a, int b)
-{ return b < a; }
-
-template <typename AK, typename EK, typename E2A>
-inline
-bool
-operator<=(int a, const Lazy_exact_nt<AK,EK,E2A>& b)
-{ return ! (b < a); }
-
-template <typename AK, typename EK, typename E2A>
-inline
-bool
-operator<=(const Lazy_exact_nt<AK,EK,E2A>& a, int b)
-{ return ! (b < a); }
-
-template <typename AK, typename EK, typename E2A>
-inline
-bool
-operator>=(int a, const Lazy_exact_nt<AK,EK,E2A>& b)
-{ return ! (a < b); }
-
-template <typename AK, typename EK, typename E2A>
-inline
-bool
-operator>=(const Lazy_exact_nt<AK,EK,E2A>& a, int b)
-{ return ! (a < b); }
-
-template <typename AK, typename EK, typename E2A>
-inline
-bool
-operator!=(int a, const Lazy_exact_nt<AK,EK,E2A>& b)
-{ return ! (a == b); }
-
-template <typename AK, typename EK, typename E2A>
-inline
-bool
-operator!=(const Lazy_exact_nt<AK,EK,E2A>& a, int b)
-{ return ! (b == a); }
-
-
-template <typename AK, typename EK, typename E2A>
-Lazy_exact_nt<AK,EK,E2A>
-operator+(const Lazy_exact_nt<AK,EK,E2A>& a, const Lazy_exact_nt<AK,EK,E2A>& b)
-{ return new Lazy_exact_Add<AK,EK,E2A>(a, b); }
-
-template <typename AK, typename EK, typename E2A>
-Lazy_exact_nt<AK,EK,E2A>
-operator-(const Lazy_exact_nt<AK,EK,E2A>& a, const Lazy_exact_nt<AK,EK,E2A>& b)
-{ return new Lazy_exact_Sub<AK,EK,E2A>(a, b); }
-
-template <typename AK, typename EK, typename E2A>
-Lazy_exact_nt<AK,EK,E2A>
-operator*(const Lazy_exact_nt<AK,EK,E2A>& a, const Lazy_exact_nt<AK,EK,E2A>& b)
-{ return new Lazy_exact_Mul<AK,EK,E2A>(a, b); }
-
-template <typename AK, typename EK, typename E2A>
-Lazy_exact_nt<AK,EK,E2A>
-operator/(const Lazy_exact_nt<AK,EK,E2A>& a, const Lazy_exact_nt<AK,EK,E2A>& b)
-{ return new Lazy_exact_Div<AK,EK,E2A>(a, b); }
-
-// mixed operators
-template <typename AK, typename EK, typename E2A>
-Lazy_exact_nt<AK,EK,E2A>
-operator+(const Lazy_exact_nt<AK,EK,E2A>& a, int b)
-{ return new Lazy_exact_Add<AK,EK,E2A>(a, b); }
-
-template <typename AK, typename EK, typename E2A>
-Lazy_exact_nt<AK,EK,E2A>
-operator-(const Lazy_exact_nt<AK,EK,E2A>& a, int b)
-{ return new Lazy_exact_Sub<AK,EK,E2A>(a, b); }
-
-template <typename AK, typename EK, typename E2A>
-Lazy_exact_nt<AK,EK,E2A>
-operator*(const Lazy_exact_nt<AK,EK,E2A>& a, int b)
-{ return new Lazy_exact_Mul<AK,EK,E2A>(a, b); }
-
-template <typename AK, typename EK, typename E2A>
-Lazy_exact_nt<AK,EK,E2A>
-operator/(const Lazy_exact_nt<AK,EK,E2A>& a, int b)
-{ return new Lazy_exact_Div<AK,EK,E2A>(a, b); }
-
-template <typename AK, typename EK, typename E2A>
-Lazy_exact_nt<AK,EK,E2A>
-operator+(int a, const Lazy_exact_nt<AK,EK,E2A>& b)
-{ return new Lazy_exact_Add<AK,EK,E2A>(a, b); }
-
-template <typename AK, typename EK, typename E2A>
-Lazy_exact_nt<AK,EK,E2A>
-operator-(int a, const Lazy_exact_nt<AK,EK,E2A>& b)
-{ return new Lazy_exact_Sub<AK,EK,E2A>(a, b); }
-
-template <typename AK, typename EK, typename E2A>
-Lazy_exact_nt<AK,EK,E2A>
-operator*(int a, const Lazy_exact_nt<AK,EK,E2A>& b)
-{ return new Lazy_exact_Mul<AK,EK,E2A>(a, b); }
-
-template <typename AK, typename EK, typename E2A>
-Lazy_exact_nt<AK,EK,E2A>
-operator/(int a, const Lazy_exact_nt<AK,EK,E2A>& b)
-{ return new Lazy_exact_Div<AK,EK,E2A>(a, b); }
-
-
-
-
-
-template <typename AK, typename EK, typename E2A>
-double
-to_double(const Lazy_exact_nt<AK,EK,E2A> & a)
-{
-    const Interval_nt<true>& app = a.approx();
-    if (app.sup() == app.inf())
-	return app.sup();
-
-    // If it's precise enough, then OK.
-    if ((app.sup() - app.inf())
-	    < Lazy_exact_nt<AK,EK,E2A>::get_relative_precision_of_to_double()
-	      * std::max(std::fabs(app.inf()), std::fabs(app.sup())) )
-        return CGAL::to_double(app);
-
-    // Otherwise we trigger exact computation first,
-    // which will refine the approximation.
-    a.exact();
-    return CGAL::to_double(a.approx());
-}
-
-
-template <typename AK, typename EK, typename E2A>
-inline
-std::pair<double,double>
-to_interval(const Lazy_exact_nt<AK,EK,E2A> & a)
-{
-    return a.approx().pair();
-}
-
-template <typename AK, typename EK, typename E2A>
-inline
-Sign
-sign(const Lazy_exact_nt<AK,EK,E2A> & a)
-{
-  try
-  {
-    return CGAL_NTS sign(a.approx());
-  }
-  catch (Interval_nt<false>::unsafe_comparison)
-  {
-    // std::cerr << "Interval filter failure (sign)" << std::endl;
-    return CGAL_NTS sign(a.exact());
-  }
-}
-
-template <typename AK, typename EK, typename E2A>
-inline
-Comparison_result
-compare(const Lazy_exact_nt<AK,EK,E2A> & a, const Lazy_exact_nt<AK,EK,E2A> & b)
-{
-  try
-  {
-    return CGAL_NTS compare(a.approx(), b.approx());
-  }
-  catch (Interval_nt<false>::unsafe_comparison)
-  {
-    // std::cerr << "Interval filter failure (compare)" << std::endl;
-    return CGAL_NTS compare(a.exact(), b.exact());
-  }
-}
-
-template <typename AK, typename EK, typename E2A>
-inline
-Lazy_exact_nt<AK,EK,E2A>
-abs(const Lazy_exact_nt<AK,EK,E2A> & a)
-{ return new Lazy_exact_Abs<AK,EK,E2A>(a); }
-
-template <typename AK, typename EK, typename E2A>
-inline
-Lazy_exact_nt<AK,EK,E2A>
-square(const Lazy_exact_nt<AK,EK,E2A> & a)
-{ return new Lazy_exact_Square<AK,EK,E2A>(a); }
-
-template <typename AK, typename EK, typename E2A>
-inline
-Lazy_exact_nt<AK,EK,E2A>
-sqrt(const Lazy_exact_nt<AK,EK,E2A> & a)
-{ return new Lazy_exact_Sqrt<AK,EK,E2A>(a); }
-
-template <typename AK, typename EK, typename E2A>
-inline
-Lazy_exact_nt<AK,EK,E2A>
-min(const Lazy_exact_nt<AK,EK,E2A> & a, const Lazy_exact_nt<AK,EK,E2A> & b)
-{ return new Lazy_exact_Min<AK,EK,E2A>(a, b); }
-
-template <typename AK, typename EK, typename E2A>
-inline
-Lazy_exact_nt<AK,EK,E2A>
-max(const Lazy_exact_nt<AK,EK,E2A> & a, const Lazy_exact_nt<AK,EK,E2A> & b)
-{ return new Lazy_exact_Max<AK,EK,E2A>(a, b); }
-
-
-template <typename AK, typename EK, typename E2A>
-std::ostream &
-operator<< (std::ostream & os, const Lazy_exact_nt<AK,EK,E2A> & a)
-{ 
-  if(is_pretty(os)){
-    a.print(os, 0);
-  }   else {
-    os << CGAL::to_double(a); 
-  }
-  return os;
-}
-
-
-
-
-
-template <typename AK, typename EK, typename E2A>
-std::istream &
-operator>> (std::istream & is, Lazy_exact_nt<AK,EK,E2A> & a)
-{
-  typename EK::FT e;
-  is >> e;
-  a = e;
-  return is;
-}
-
-template <typename AK, typename EK, typename E2A>
-inline
-Lazy_exact_nt<AK,EK,E2A> &
-operator+=(Lazy_exact_nt<AK,EK,E2A> & a, const Lazy_exact_nt<AK,EK,E2A> & b)
-{ return a = a + b; }
-
-template <typename AK, typename EK, typename E2A>
-inline
-Lazy_exact_nt<AK,EK,E2A> &
-operator-=(Lazy_exact_nt<AK,EK,E2A> & a, const Lazy_exact_nt<AK,EK,E2A> & b)
-{ return a = a - b; }
-
-template <typename AK, typename EK, typename E2A>
-inline
-Lazy_exact_nt<AK,EK,E2A> &
-operator*=(Lazy_exact_nt<AK,EK,E2A> & a, const Lazy_exact_nt<AK,EK,E2A> & b)
-{ return a = a * b; }
-
-template <typename AK, typename EK, typename E2A>
-inline
-Lazy_exact_nt<AK,EK,E2A> &
-operator/=(Lazy_exact_nt<AK,EK,E2A> & a, const Lazy_exact_nt<AK,EK,E2A> & b)
-{ return a = a / b; }
-
-template <typename AK, typename EK, typename E2A>
-inline
-Lazy_exact_nt<AK,EK,E2A> &
-operator+=(Lazy_exact_nt<AK,EK,E2A> & a, int b)
-{ return a = a + b; }
-
-template <typename AK, typename EK, typename E2A>
-inline
-Lazy_exact_nt<AK,EK,E2A> &
-operator-=(Lazy_exact_nt<AK,EK,E2A> & a, int b)
-{ return a = a - b; }
-
-template <typename AK, typename EK, typename E2A>
-inline
-Lazy_exact_nt<AK,EK,E2A> &
-operator*=(Lazy_exact_nt<AK,EK,E2A> & a, int b)
-{ return a = a * b; }
-
-template <typename AK, typename EK, typename E2A>
-inline
-Lazy_exact_nt<AK,EK,E2A> &
-operator/=(Lazy_exact_nt<AK,EK,E2A> & a, int b)
-{ return a = a / b; }
-
-template <typename AK, typename EK, typename E2A>
-inline
-bool
-is_finite(const Lazy_exact_nt<AK,EK,E2A> & a)
-{
-  return is_finite(a.approx()) || is_finite(a.exact());
-}
-
-template <typename AK, typename EK, typename E2A>
-inline
-bool
-is_valid(const Lazy_exact_nt<AK,EK,E2A> & a)
-{
-  return is_valid(a.approx()) || is_valid(a.exact());
-}
-
-template <typename AK, typename EK, typename E2A>
-inline
-io_Operator
-io_tag (const Lazy_exact_nt<AK,EK,E2A>&)
-{ return io_Operator(); }
-
-/* TODO  
-template <typename ET, typename AK, typename EK, typename E2A>
-struct converter<ET, Lazy_exact_nt<AK,EK,E2A> >
-{
-    static inline typename ET do_it (const Lazy_exact_nt<AK,EK,E2A> & z)
-    {
-        return z.exact();
-    }
-};
-*/
-
-
 
 
 
@@ -1408,17 +613,7 @@ struct Lazy_construction_return_type {
   typedef Lazy<AT, ET, EFT, E2A> result_type;
 };
 
-template <typename AK, typename EK, typename ET, typename EFT, typename E2A>
-struct Lazy_construction_return_type<AK,EK,Interval_nt<>, ET,EFT,E2A>  {
-  typedef Lazy_exact_nt<AK,EK,E2A>  result_type;
-};
 
-
-// Bboxes remain Bboxes and do not become lazy.
-template <typename AK, typename EK, typename ET, typename EFT, typename E2A>
-struct Lazy_construction_return_type<AK,EK,Bbox_2, ET,EFT,E2A>  {
-  typedef Bbox_2  result_type;
-};
 
 
 // As people will write bool b = lazy_assign(..) 
@@ -1430,7 +625,7 @@ struct Lazy_construction_return_type<AK,EK,bool, ET,EFT,E2A>  {
 
 
 template <typename AK, typename EK, typename AC, typename EC, typename EFT, typename E2A >
-struct Lazy_construction_bbox_2 {
+struct Lazy_construction_bbox {
   typedef typename AC::result_type result_type;
 
   AC ac;
@@ -1447,11 +642,31 @@ struct Lazy_construction_bbox_2 {
 };
 
 
+template <typename AK, typename EK, typename AC, typename EC, typename EFT, typename E2A >
+struct Lazy_construction_nt {
+
+  typedef typename AC::result_type AT;
+  typedef typename EC::result_type ET;
+  typedef Lazy_exact_nt<ET> result_type;
+
+  AC ac;
+  EC ec;
+  template <typename L1>
+  result_type operator()(const L1& l1) const
+  {
+    try {
+      return new Lazy_construct_rep_1<AC, EC, To_interval<ET>, L1>(ac, ec, l1);
+    } catch (Interval_nt_advanced::unsafe_comparison) {
+      return new Lazy_construct_rep_0<AT,ET,To_interval<ET> >(ec(CGAL::exact(l1)));
+    }
+  }
+};
+
 
 
 
 //____________________________________________________________
-// The magic functor
+// The functor that creates all kinds of Lazy<T>
 
 template <typename AK, typename EK, typename AC, typename EC, typename EFT, typename E2A>
 struct Lazy_construction {
@@ -1478,7 +693,7 @@ public:
   operator()(const L1& l1) const
   {
     try {
-      return new Lazy_construct_rep_1<AC, EC, E2A, L1>(ac, ec, l1);
+      return  new Lazy_construct_rep_1<AC, EC, E2A, L1>(ac, ec, l1);
     } catch (Interval_nt_advanced::unsafe_comparison) {
       return new Lazy_construct_rep_0<AT,ET,E2A>(ec(CGAL::exact(l1)));
     }
