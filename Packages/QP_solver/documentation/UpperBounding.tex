@@ -47,7 +47,7 @@ $f_{k}^{l}=0$, and $x_{k}$ is \emph{fixed}, if $u_{k}=l_{k}$ as well as
 $f_{k}^{l}=1$ and $f_{k}^{u}=1$ hold. The set of unrestricted original variables will be denoted by $U$ and the set of fixed original variables will be denoted by $F$.
 
 Extending the vectors $f^{l}, f^{u}$ and $l, u$ for the set of slack variables $S$ and artificial variables $art$ comes naturally, such that we can introduce  
-a function $b: O \cup S \cup art \rightarrow \{-1, 0, 1\}$ indicating which of the three possible values a nonbasic variable may take on with respect to its bounds,
+a function $b: O \cup S \cup art \rightarrow \{-1, 0, 1\}$ indicating which of the three possible values a nonbasic variable may take with respect to its bounds,
 \begin{equation}
 b(k):= \left\{
 \begin{array}{ll}
@@ -73,7 +73,7 @@ Since the original variables for the initial feasible solution to the auxiliary 
 \label{def:Z}
 Z:=\{ k \in O \left|\right. 0 \in \left[l_{k}, u_{k}\right]\} 
 \end{equation}
-that is all the original variables that contain zero in their intervall are initialized with zero. For the remaining variables $x_{k}$,
+that is all the original variables that contain zero in their feasible intervall are initialized with zero. For the remaining variables $x_{k}$,
 $k \in O \setminus Z$ we initialize the variable with the finite lower bound whenever there is choice,
 \begin{equation}
 x_{k}^{(0)}:=\left\{
@@ -167,79 +167,7 @@ S_{B}^{(0)} &:=&I && S_{N}^{(0)}&:=& \emptyset
 \end{equation}
 where $art$ does not contain a special artificial variable.
 
-
-\section{Ratio Test Step~1}
-%\begin{algorithm}
-%\caption{Ratio Test Step~1 with upper bounding}
-%\label{alg:ratio_test_step_1_0}
-\begin{algorithmic}
-\Function{ratio\_test\_1\_\_t\_i}{$B_{O}, B_{S}, dir$}
-\State $i_{min} \gets -1, \quad     d_{min} \gets 1, \quad  q_{min} \gets 0$
-\If{$dir=1$}
-    \ForAll{$i \gets 0,  \left|B_{O}\right| - 1$}
-        \If{$q_{B_{O}}[i] > 0 \wedge f_{i}^{l}=1$}
-            \If{$d_{min}*q_{B_{O}}[i] > (x_{B_{O}}[i]-l_{i})*q_{min}$}
-                \State $i_{min} \gets B_{O}[i],
-                    \quad d_{min} \gets x_{B_{O}}[i]-l_{i},
-                    \quad q_{min} \gets q_{B_{O}}[i]$
-            \EndIf
-        \ElsIf{$q_{B_{O}}[i] < 0 \wedge f_{i}^{u}=1$}
-            \If{$d_{min}*-q_{B_{O}}[i] > (u_{i}-x_{B_{O}}[i])*q_{min}$}
-                \State $i_{min} \gets B_{O}[i],
-                        \quad d_{min} \gets u_{i}-x_{B_{O}}[i],
-                        \quad q_{min} \gets -q_{B_{O}}[i]$
-            \EndIf
-        \EndIf
-    \EndFor
-    \ForAll{$i \gets 0, \left|B_{S}\right| - 1$}
-        \If{$q_{B_{S}}[i] > 0$}
-            \If{$d_{min}*q_{B_{S}}[i] < x_{B_{S}}[i]*q_{min}$}
-                \State $i_{min} \gets n+B_{S}[j],
-                    \quad d_{min} \gets x_{B_{S}}[i],
-                    \quad q_{min} \gets q_{B_{S}}[i]$
-            \EndIf	
-        \EndIf 
-    \EndFor
-\Else
-    \ForAll{$i \gets 0,  \left|B_{O}\right| - 1$}
-        \If{$q_{B_{O}}[i] > 0 \wedge f_{i}^{u}=1$}
-            \If{$d_{min}*q_{B_{O}}[i] > (u_{i}-x_{B_{O}}[i])*q_{min}$}
-                \State $i_{min} \gets B_{O}[i],
-                    \quad d_{min} \gets u_{i}-x_{B_{O}}[i],
-                    \quad q_{min} \gets q_{B_{O}}[i]$
-            \EndIf
-        \ElsIf{$q_{B_{O}}[i] < 0 \wedge f_{i}^{l}=1$}
-            \If{$d_{min}*-q_{B_{O}}[i] > (x_{B_{O}}[i]-l_{i})*q_{min}$}
-                \State $i_{min} \gets B_{O}[i],
-                    \quad d_{min} \gets x_{B_{O}}[i]-l_{i},
-                    \quad q_{min} \gets -q_{B_{O}}[i]$
-            \EndIf
-        \EndIf
-    \EndFor
-    \ForAll{$i \gets 0, \left|B_{S}\right| - 1$}
-        \If{$q_{B_{S}}[i] < 0$}
-            \If{$d_{min}*-q_{B_{S}}[i] < x_{B_{S}}[i]*q_{min}$}
-                \State $i_{min} \gets n+B_{S}[j],
-                    \quad d_{min} \gets x_{B_{S}}[i],
-                    \quad q_{min} \gets -q_{B_{S}}[i]$
-            \EndIf	
-        \EndIf 
-    \EndFor
-\EndIf
-\State \textbf{return} $(i_{min}, d_{min}, q_{min})$
-\EndFunction
-\end{algorithmic}
-%\end{algorithm}
-In contrast to the Ratio Test Step~1 for the standard form we can distinguish three differences: 
-\begin{itemize}
-\item entering variables are no longer only increased
-\item basic vars may have lower as well as upper bounds
-\item the entering variable itself may run into a bound
-\end{itemize}
-
-\section{Ratio Test Step~2}
-
-\section{Pricing Strategies}
+\section{Optimality conditions}
 By the KKT conditions for optimality a feasible solution $x^{*}$ to the
 QP~(\ref{def:QP_UB}) is optimal, if there exists an $\left|E\right|$-vector
 $\lambda$ and an $\left|I\right|+2n$-vector $\mu \geq 0$,
@@ -295,6 +223,7 @@ c + Dx^{*} +A^{T}\lambda
 \end{eqnarray}
 and
 \begin{eqnarray}
+\label{def:mu_opt_cond}
 \lambda_{i} \left\{
 \begin{array}{ll}
 \geq 0, & \text{for $i \in I^{\leq}$} \\
@@ -311,11 +240,9 @@ and
 \right.
 \end{eqnarray}
 \end{lemma}
-In contrast to pricing with the standard form, where all nonbasic variables have zero values and can only be increased, nonbasic original variables may 
-\begin{equation}
-\mathcal{E}:=\{k \in N \left|\right. b(k)=-1 \wedge \mu_{k} < 0 \vee
-  b(k)=0 \wedge \mu_{k} \neq 0 \vee b(k)=1 \wedge \mu_{k} > 0 \}
-\end{equation}
+
+\section{Pricing}
+Due to the fact that original nonbasic variables may assume several different values and according to Equations~(\ref{def:mu_opt_cond}) the pricing step not only has to deliver an entering variable $x_{j}$, $j \in N$, if the current solution is suboptimal, but a direction $d_{t} \in \{-1,1\}$ indicating whether the entering variable $x_{j}$ is to be increased or decreased. So if $d_{t}=1$ the entering variable is to be increased, otherwise it is to be decreased.
 
 \subsection{Full exact pricing}
 Generalizing the full exact pricing algorithm we introduce the following subsets of the set of nonbasic variables $N$
@@ -394,10 +321,150 @@ Generalizing the partial pricing algorithm given in \cite{Sven}, section 6.4.1 f
 \> \texttt{END} \\
 \texttt{IF} \= \kill
 \> \texttt{END}
-
 \end{tabbing}
 \subsection{Full filtered pricing}
 \subsection{Partial filtered pricing}
+
+\section{Ratio Test Step~1}
+According to (\ref{def:mu_opt_cond}) the value of an entering nonbasic variable may be increased or decreased.
+The Ratio Test Step~1 determines the minimum positive increment or decrement for the entering variable $x_{j}$ with respect to the finite upper and lower bounds of the basic variables, the finite upper and lower bounds of the entering variable as well as $\mu_{j}$ becoming zero. We distinguish three events:
+\begin{enumerate}
+\item The entering variable $x_{j}$ takes the value of its finite upper,
+$u_{j}$, or lower bound, $l_{j}$.
+\item A basic variable takes the value of its finite upper or lower bound.
+\item $\mu_{j}(x_{j})$ becomes zero.
+\end{enumerate}
+\marginpar{include artificial vars as well}  
+%\begin{algorithm}
+%\caption{Ratio Test Step~1 with upper bounding}
+%\label{alg:ratio_test_step_1_0}
+\begin{algorithmic}
+\Function{ratio\_test\_1\_\_t\_i}{$B_{O}, B_{S}, d_{t}$}
+\State $i_{min} \gets -1, \quad     d_{min} \gets 1, \quad  q_{min} \gets 0$
+\If{$d_{t}=1$}
+    \ForAll{$i \gets 0,  \left|B_{O}\right| - 1$}
+        \If{$q_{B_{O}}[i] > 0 \wedge f_{B_{O}}^{l}[i]=1$}
+            \If{$d_{min}*q_{B_{O}}[i] > (x_{B_{O}}[i]-l_{B_{O}}[i])*q_{min}$}
+                \State $i_{min} \gets B_{O}[i],
+                    \quad d_{min} \gets x_{B_{O}}[i]-l_{B_{O}}[i],
+                    \quad q_{min} \gets q_{B_{O}}[i]$
+            \EndIf
+        \ElsIf{$q_{B_{O}}[i] < 0 \wedge f_{B_{O}}^{u}[i]=1$}
+            \If{$d_{min}*-q_{B_{O}}[i] > (u_{B_{O}}[i]-x_{B_{O}}[i])*q_{min}$}
+                \State $i_{min} \gets B_{O}[i],
+                        \quad d_{min} \gets u_{B_{O}}[i]-x_{B_{O}}[i],
+                        \quad q_{min} \gets -q_{B_{O}}[i]$
+            \EndIf
+        \EndIf
+    \EndFor
+    \ForAll{$i \gets 0, \left|B_{S}\right| - 1$}
+        \If{$q_{B_{S}}[i] > 0$}
+            \If{$d_{min}*q_{B_{S}}[i] < x_{B_{S}}[i]*q_{min}$}
+                \State $i_{min} \gets B_{S}[i],
+                    \quad d_{min} \gets x_{B_{S}}[i],
+                    \quad q_{min} \gets q_{B_{S}}[i]$
+            \EndIf	
+        \EndIf 
+    \EndFor
+\Else
+    \ForAll{$i \gets 0,  \left|B_{O}\right| - 1$}
+        \If{$q_{B_{O}}[i] > 0 \wedge f_{B_{O}}^{u}[i]=1$}
+            \If{$d_{min}*q_{B_{O}}[i] > (u_{B_{O}}[i]-x_{B_{O}}[i])*q_{min}$}
+                \State $i_{min} \gets B_{O}[i],
+                    \quad d_{min} \gets u_{B_{O}}[i]-x_{B_{O}}[i],
+                    \quad q_{min} \gets q_{B_{O}}[i]$
+            \EndIf
+        \ElsIf{$q_{B_{O}}[i] < 0 \wedge f_{B_{O}}^{l}[i]=1$}
+            \If{$d_{min}*-q_{B_{O}}[i] > (x_{B_{O}}[i]-l_{B_{O}}[i])*q_{min}$}
+                \State $i_{min} \gets B_{O}[i],
+                    \quad d_{min} \gets x_{B_{O}}[i]-l_{B_{O}}[i],
+                    \quad q_{min} \gets -q_{B_{O}}[i]$
+            \EndIf
+        \EndIf
+    \EndFor
+    \ForAll{$i \gets 0, \left|B_{S}\right| - 1$}
+        \If{$q_{B_{S}}[i] < 0$}
+            \If{$d_{min}*-q_{B_{S}}[i] < x_{B_{S}}[i]*q_{min}$}
+                \State $i_{min} \gets B_{S}[i],
+                    \quad d_{min} \gets x_{B_{S}}[i],
+                    \quad q_{min} \gets -q_{B_{S}}[i]$
+            \EndIf	
+        \EndIf 
+    \EndFor
+\EndIf
+\State \textbf{return} $(i_{min}, d_{min}, q_{min})$
+\EndFunction
+\end{algorithmic}
+%\end{algorithm}
+
+\section{Ratio Test Step~2}
+Since according to (\ref{def:mu_opt_cond}) $d_{t}=1 \Rightarrow \mu_{j}<0$ and $d_{t}=-1 \Rightarrow \mu_{j}>0$ for an entering variable, we distinguish these two cases and for each basic variable $x_{i}$ we distinguish whether  
+%\begin{algorithm}
+%\caption{Ratio Test Step~2 with upper bounding}
+%\label{alg:ratio_test_step_2_0}
+\begin{algorithmic}
+\Function{ratio\_test\_2\_0\_\_mu\_i}{$B_{O},B_{S}, d_{t}$}
+\State $i_{min} \gets -1, \quad d_{min} \gets 0, \quad  p_{min} \gets 1$
+\If{$d_{t}=1$}
+\Comment $\mu_{j} \leq 0$
+    \ForAll{$i \gets 0,  \left|B_{O}\right| - 1$}
+        \If{$p_{B_{O}}[i] < 0 \wedge f_{B_{O}}^{l}[i]=1$}
+            \If{$d_{min}*p_{B_{O}}[i] > (x_{B_{O}}[i]-l_{B_{O}}[i])*p_{min}$}
+                \State $i_{min} \gets B_{O}[i],
+                            \quad d_{min} \gets x_{B_{O}}[i]-l_{B_{O}}[i],
+                            \quad p_{min} \gets p_{B_{O}}[i]$
+            \EndIf
+        \EndIf 
+        \If{$p_{B_{O}}[i] > 0 \wedge f_{B_{O}}^{u}[i]=1$}
+            \If{$d_{min}*p_{B_{O}}[i] < (u_{B_{O}}[i]-x_{B_{O}}[i])*p_{min}$}
+                \State $i_{min} \gets B_{O}[i],
+                            \quad d_{min} \gets u_{B_{O}}[i]-x_{B_{O}}[i],
+                            \quad p_{min} \gets -p_{B_{O}}[i]$
+            \EndIf
+        \EndIf 
+    \EndFor
+    \ForAll{$i \gets 0, \left|B_{S}\right| - 1$}
+        \If{$p_{B_{S}}[i] < 0$}
+            \If{$d_{min}*p_{B_{S}}[i] > x_{B_{S}}[i]*p_{min}$}
+                \State $i_{min} \gets B_{S}[i],
+                            \quad d_{min} \gets x_{B_{S}}[i],
+                            \quad p_{min} \gets p_{B_{S}}[i]$
+            \EndIf	
+        \EndIf 
+    \EndFor
+\Else
+\Comment $\mu_{j} \geq 0$
+    \ForAll{$i \gets 0,  \left|B_{O}\right| - 1$}
+        \If{$p_{B_{O}}[i] > 0 \wedge f_{B_{O}}^{l}[i]=1$}
+            \If{$d_{min}*p_{B_{O}}[i] < (x_{B_{O}}[i]-l_{B_{O}}[i])*p_{min}$}
+                \State $i_{min} \gets B_{O}[i],
+                            \quad d_{min} \gets x_{B_{O}}[i]-l_{B_{O}}[i],
+                            \quad p_{min} \gets p_{B_{O}}[i]$
+            \EndIf
+        \EndIf
+        \If{$p_{B_{O}}[i] < 0 \wedge f_{B_{O}}^{u}[i]=1$}
+            \If{$d_{min}*p_{B_{O}}[i] > (u_{B_{O}}[i]-x_{B_{O}}[i])*p_{min}$}
+                \State $i_{min} \gets B_{O}[i],
+                            \quad d_{min} \gets u_{B_{O}}[i]-x_{B_{O}}[i],
+                            \quad p_{min} \gets -p_{B_{O}}[i]$
+            \EndIf
+        \EndIf 
+    \EndFor
+    \ForAll{$i \gets 0, \left|B_{S}\right| - 1$}
+        \If{$p_{B_{S}}[i] > 0$}
+            \If{$d_{min}*p_{B_{S}}[i] < x_{B_{S}}[i]*p_{min}$}
+                \State $i_{min} \gets B_{S}[i],
+                            \quad d_{min} \gets u_{B_{O}}[i]-x_{B_{S}}[i],
+                            \quad p_{min} \gets p_{B_{S}}[i]$
+            \EndIf	
+        \EndIf 
+    \EndFor
+\EndIf
+\State \textbf{return} $(i_{min}, x_{min}, p_{min})$
+\EndFunction
+\end{algorithmic}
+%\end{algorithm}
+
 \begin{thebibliography}{99}
 \bibitem{Sven} Sven Sch\"{o}nherr. Quadratic Programming in Geometric Optimization:
 Theory, Implementation, and Applications, Dissertation, Diss. ETH No 14738, ETH
