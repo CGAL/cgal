@@ -125,7 +125,11 @@ CGAL_VORONOI_DIAGRAM_2_END_NAMESPACE
 //=========================================================================
 //=========================================================================
 
+#ifdef VDA_USE_IDENTITY_VORONOI_TRAITS
 template<class DG, class Tr = Identity_Voronoi_traits_2<DG> >
+#else
+template<class DG, class Tr>
+#endif
 class Voronoi_diagram_2
 {
  private:

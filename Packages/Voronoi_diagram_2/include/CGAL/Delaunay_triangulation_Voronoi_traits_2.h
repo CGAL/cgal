@@ -366,6 +366,8 @@ class Delaunay_triangulation_ref_counted_Voronoi_traits_2
 //=========================================================================
 //=========================================================================
 
+#ifdef VDA_USE_IDENTITY_VORONOI_TRAITS
+
 template<class Gt,class TDS> class Delaunay_triangulation_2;
 
 template<class Gt, class TDS>
@@ -387,6 +389,7 @@ class Identity_Voronoi_traits_2
   >
 {};
 
+#endif // VDA_USE_IDENTITY_VORONOI_TRAITS
 
 CGAL_END_NAMESPACE
 

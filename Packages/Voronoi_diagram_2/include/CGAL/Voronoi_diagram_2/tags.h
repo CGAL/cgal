@@ -75,6 +75,7 @@ struct Boolean_tag {
   static const bool value = b;
 };
 
+//====================================================================
 
 template<bool b1, bool b2>
 Boolean_tag<b1 && b2> operator&&(const Boolean_tag<b1>&,
@@ -90,8 +91,11 @@ Boolean_tag<b1 || b2> operator||(const Boolean_tag<b1>&,
 }
 
 template<bool b>
-Boolean_tag<!b> operator!(const Boolean_tag<b>&) { return Boolean_tag<!b>(); }
+Boolean_tag<!b> operator!(const Boolean_tag<b>&) {
+  return Boolean_tag<!b>();
+}
 
+//====================================================================
 
 template<class Tag_t> struct To_boolean_tag;
 
@@ -104,6 +108,20 @@ template<>
 struct To_boolean_tag<Tag_false> {
   typedef Boolean_tag<false> Tag;
 };
+
+template<class Tag_t> struct To_tag_true_false;
+
+template<>
+struct To_tag_true_false< Boolean_tag<true> > {
+  typedef Tag_true Tag;
+};
+
+template<>
+struct To_tag_true_false< Boolean_tag<false> > {
+  typedef Tag_false Tag;
+};
+
+//====================================================================
 
 template<class Tag_t>
 struct Not {
@@ -120,6 +138,8 @@ struct Or {
   typedef Boolean_tag<Tag1_t::value || Tag2_t::value> Tag;
 };
 
+//====================================================================
+
 struct Tag_converter
 {
   Boolean_tag<true> operator()(const Tag_true&) const {
@@ -128,6 +148,14 @@ struct Tag_converter
 
   Boolean_tag<false> operator()(const Tag_false&) const {
     return Boolean_tag<false>();
+  }
+
+  Tag_true operator()(const Boolean_tag<true>&) const {
+    return Tag_true();
+  }
+
+  Tag_false operator()(const Boolean_tag<false>&) const {
+    return Tag_false();
   }
 };
 
