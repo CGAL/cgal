@@ -78,8 +78,8 @@ public:
   Circle_2(const Point_2 & center)
     : RCircle_2(typename R::Construct_circle_2()(center,FT(0),COUNTERCLOCKWISE).rep()) {}
 
-  
-  const Point_2 & center() const
+  typename Qualified_result_of<typename R::Construct_center_2,Circle_2>::type
+  center() const
   {
     return R().construct_center_2_object()(*this);
   }
