@@ -290,7 +290,7 @@ public:
    //   CGAL_expensive_postcondition( is_valid());
  }
 
-protected:
+//protected:
   Nef_polyhedron_S2(const Sphere_map& H, bool clone=true) : Base(Nef_rep()) 
   /*{\Xcreate makes |\Mvar| a new object.  If |clone==true| then the
   underlying structure of |H| is copied into |\Mvar|.}*/

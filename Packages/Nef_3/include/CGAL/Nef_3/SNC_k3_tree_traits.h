@@ -224,7 +224,9 @@ Side_of_plane<SNC_decorator>::operator()
         break;
       default: CGAL_assertion_msg(false, "wrong value");
       }
-    CGAL_NEF_TRACEN("Side_of_plane " << pl << "( " << pop << ")" << pop << ":" 
+     std::cerr << "Side_of_plane " << pl << "( " << pop << ")" << pop << ":" 
+	  << OnSideMap[v] << "," << pl.oriented_side(v->point()) << std::endl;  
+     CGAL_NEF_TRACEN("Side_of_plane " << pl << "( " << pop << ")" << pop << ":" 
 	  << OnSideMap[v] << "," << pl.oriented_side(v->point()));  
     CGAL_assertion(OnSideMap[v] == pl.oriented_side(v->point()));
     return OnSideMap[v];

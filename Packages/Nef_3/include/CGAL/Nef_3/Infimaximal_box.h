@@ -168,6 +168,7 @@ class Infimaximal_box {
     create_vertices_on_infibox(SNC_constructor& C, 
 			       const Plane_3& h, const std::list<Point_3>& points, 
 			       const Mark& bnd, const Mark& inside, const Mark& outside) {
+    // TODO: warning oder assertion einbauen
     return std::list<typename SNC_constructor::Vertex_handle>();
   }
 

@@ -550,18 +550,18 @@ namespace OGL {
     
     static void draw(Vertex_const_handle v, const Nef_polyhedron& N, 
 		     CGAL::OGL::Polyhedron& P) { 
-      Point_3 bp = N.point(v);
+      Point_3 bp = v->point();
       //    CGAL_NEF_TRACEN("vertex " << bp);
-      P.push_back(double_point(bp), N.mark(v)); 
+      P.push_back(double_point(bp), v->mark()); 
     }
     
     static void draw(Halfedge_const_handle e, const Nef_polyhedron& N,
 		     CGAL::OGL::Polyhedron& P) { 
       Vertex_const_handle s = e->source();
       Vertex_const_handle t = e->twin()->source();
-      Segment_3 seg(N.point(s),N.point(t));
+      Segment_3 seg(s->point(),t->point());
       //    CGAL_NEF_TRACEN("edge " << seg);
-      P.push_back(double_segment(seg), N.mark(e)); 
+      P.push_back(double_segment(seg), e->mark()); 
     }
     
     static void draw(Halffacet_const_handle f, const Nef_polyhedron& N,
@@ -579,11 +579,11 @@ namespace OGL {
 	    g.push_back_vertex(double_point(sp));
 	  }
 	}
-      Vector_3 v = N.plane(f).orthogonal_vector();
+      Vector_3 v = f->plane().orthogonal_vector();
       g.set_normal(CGAL::to_double(v.x()), 
 		   CGAL::to_double(v.y()), 
 		   CGAL::to_double(v.z()), 
-		   N.mark(f));
+		   f->mark());
       P.push_back(g);
     }
     
