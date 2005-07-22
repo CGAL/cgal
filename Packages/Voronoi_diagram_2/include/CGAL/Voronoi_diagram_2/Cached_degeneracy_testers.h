@@ -203,7 +203,8 @@ class Cached_face_degeneracy_tester
 #ifdef USE_STD_MAP
   typedef std::map<Vertex_handle,bool>  Vertex_map;
 #else
-  typedef Unique_hash_map<Vertex_handle,bool>   Vertex_map;
+  enum Three_valued { UNDEFINED = -1, False, True };
+  typedef Unique_hash_map<Vertex_handle,Three_valued>   Vertex_map;
 #endif
 
  public:
@@ -213,13 +214,14 @@ class Cached_face_degeneracy_tester
     typename Vertex_map::iterator it = vmap.find(v);
     if ( it != vmap.end() ) { return it->second; }
 #else
-    if ( vmap.is_defined(v) ) { return vmap[v]; }
+    if ( vmap.is_defined(v) && vmap[v] != UNDEFINED ) { return vmap[v]; }
 #endif
     bool b = f_tester(dual, v);
 #ifdef USE_STD_MAP
     vmap.insert( std::make_pair(v,b) );
 #else
-    vmap[v] = b;
+    Three_valued b3 = (b ? True : False);
+    vmap[v] = b3;
 #endif
     return b;
   }
@@ -233,7 +235,8 @@ class Cached_face_degeneracy_tester
     vmap.erase(it);
     return true;
 #else
-    return false;
+    if ( vmap.is_defined(v) ) { vmap[v] = UNDEFINED; }
+    return true;
 #endif
   }
 
@@ -252,7 +255,14 @@ class Cached_face_degeneracy_tester
     }
     return valid;
 #else
-    return true;
+    bool valid = true;
+    typename Delaunay_graph::All_vertices_iterator vit;
+    for (vit = dual.all_vertices_begin();
+	 vit != dual.all_vertices_end(); ++vit) {
+      bool b = !vmap.is_defined(vit) || (vmap[vit] != UNDEFINED);
+      valid = valid && b;
+    }
+    return valid;
 #endif
   }
 

@@ -30,6 +30,7 @@
 #include <iterator>
 #include <vector>
 
+#include <CGAL/Voronoi_diagram_2/tags.h>
 #include <CGAL/Voronoi_diagram_2/Halfedge.h>
 #include <CGAL/Voronoi_diagram_2/Face.h>
 #include <CGAL/Voronoi_diagram_2/Vertex.h>
@@ -45,11 +46,16 @@
 #include <CGAL/Voronoi_diagram_2/Locate_result.h>
 #include <CGAL/Voronoi_diagram_2/Connected_components.h>
 #include <CGAL/Voronoi_diagram_2/Accessor.h>
+
+#ifdef VDA_USE_IDENTITY_VORONOI_TRAITS
 #include <CGAL/Voronoi_diagram_2/Identity_Voronoi_traits_2.h>
+#endif
 
 CGAL_BEGIN_NAMESPACE
 
 CGAL_VORONOI_DIAGRAM_2_BEGIN_NAMESPACE
+
+#if 0
 template<class VT, class Has_insert_tag, class Has_get_conflicts_tag>
 class Degeneracy_tester_chooser;
 
@@ -84,6 +90,33 @@ struct Degeneracy_tester_chooser<VT,Tag_true,Tag_false>
   typedef typename VT::Edge_degeneracy_tester  Edge_degeneracy_tester;
   typedef typename VT::Face_degeneracy_tester  Face_degeneracy_tester;
 };
+#else
+
+template<class VT, bool> class Degeneracy_tester_chooser;
+
+template<class VT>
+class Degeneracy_tester_chooser<VT,true>
+{
+ private:
+  typedef typename VT::Edge_degeneracy_tester  Edge_tester_base;
+  typedef typename VT::Face_degeneracy_tester  Face_tester_base;
+
+ public:
+  typedef Cached_edge_degeneracy_tester<Edge_tester_base>
+  Edge_degeneracy_tester;
+
+  typedef Cached_face_degeneracy_tester<Face_tester_base>
+  Face_degeneracy_tester;
+};
+
+template<class VT>
+struct Degeneracy_tester_chooser<VT,false>
+{
+  typedef typename VT::Edge_degeneracy_tester  Edge_degeneracy_tester;
+  typedef typename VT::Face_degeneracy_tester  Face_degeneracy_tester;
+};
+
+#endif
 
 CGAL_VORONOI_DIAGRAM_2_END_NAMESPACE
 
@@ -146,13 +179,24 @@ class Voronoi_diagram_2
 
 #if 1
   typedef typename Voronoi_traits::Has_insert          Has_insert;
+  typedef typename Voronoi_traits::Has_remove          Has_remove;
   typedef typename Voronoi_traits::Has_get_conflicts   Has_get_conflicts;
 
+#if 0
   typedef
   CGAL_VORONOI_DIAGRAM_2_NS::Degeneracy_tester_chooser<Voronoi_traits,
 						       Has_insert,
 						       Has_get_conflicts>
   Chooser;
+#else
+  typedef
+  CGAL_VORONOI_DIAGRAM_2_NS::Degeneracy_tester_chooser
+  <Voronoi_traits,
+   Or< typename Not<typename To_boolean_tag<Has_insert>::Tag>::Tag,
+       typename To_boolean_tag<Has_get_conflicts>::Tag>::Tag::value
+  >
+  Chooser;
+#endif
 
   typedef typename Chooser::Edge_degeneracy_tester   Edge_degeneracy_tester;
   typedef typename Chooser::Face_degeneracy_tester   Face_degeneracy_tester;
@@ -357,18 +401,28 @@ public:
   //--------------
   // CONSTRUCTORS
   //--------------
-#if 0
   Voronoi_diagram_2(const Voronoi_traits& tr = Voronoi_traits())
     : dual_(), tr_(tr) {}
-#endif
 
   Voronoi_diagram_2(const Delaunay_graph& dg,
 		    const Voronoi_traits& tr = Voronoi_traits())
-#ifndef VDA_NO_CACHED_TESTERS
-    : dual_(dg), tr_(tr), cached_e_tester_(), cached_f_tester_() {}
-#else
     : dual_(dg), tr_(tr) {}
-#endif
+
+  template<class Iterator>
+  Voronoi_diagram_2(Iterator first, Iterator beyond,
+		    const Voronoi_traits& tr = Voronoi_traits())
+    : dual_(first, beyond), tr_(tr) {}
+
+  Voronoi_diagram_2(const Voronoi_diagram_2& other)
+    : dual_(other.dual_), tr_(other.tr_) {}
+
+  Self& operator=(const Self& other) {
+    //    clear_testers(Has_insert(), Has_get_conflicts());
+    clear_testers(!Has_insert() || Has_get_conflicts());
+    dual_ = other.dual_;
+    tr_ = other.tr_;
+    return *this;
+  }
 
 public:
   //------------------
@@ -732,9 +786,8 @@ public:
   // VALIDITY TESTING
   //-----------------
  private:
-  template<class Has_insert_tag>
-  bool validate_degeneracy_testers(const Has_insert_tag&,
-				   const Tag_true&) const {
+  bool validate_degeneracy_testers(const Tag_true&) const {
+    // we do have cached degeneracy testers
 #ifndef VDA_NO_CACHED_TESTERS
     return
       cached_e_tester_.is_valid(dual_) &&
@@ -742,19 +795,8 @@ public:
 #endif
   }
 
-  bool validate_degeneracy_testers(const Tag_false&,
-				   const Tag_false&) const {
-    // we do not have insertion and we do not have get_conflicts
-#ifndef VDA_NO_CACHED_TESTERS
-    return
-      cached_e_tester_.is_valid(dual_) &&
-      cached_f_tester_.is_valid(dual_);
-#endif
-  }
-
-  bool validate_degeneracy_testers(const Tag_true&,
-				   const Tag_false&) const {
-    // we have insertion but no get_conflicts
+  bool validate_degeneracy_testers(const Tag_false&) const {
+    // we do not have cached degeneracy testers
     return true;
   }
 
@@ -775,8 +817,8 @@ public:
       valid = valid && it->is_valid();
     }
 
-    valid = valid && validate_degeneracy_testers(Has_insert(),
-						 Has_get_conflicts());
+    valid = valid &&
+      validate_degeneracy_testers(!Has_insert() && Has_get_conflicts());
 
     return valid;
   }
@@ -790,32 +832,26 @@ public:
   // MISCALLANEOUS
   //--------------
  protected:
-  template<class Has_insertion_tag>
-  void clear_testers(const Has_insertion_tag&, const Tag_true&) {
+  // we do have cached degeneracy testers
+  void clear_testers(const Tag_true&) {
 #ifndef VDA_NO_CACHED_TESTERS
     cached_e_tester_.clear();
     cached_f_tester_.clear();
 #endif
   }
 
-  void clear_testers(const Tag_false&, const Tag_false&) {
-#ifndef VDA_NO_CACHED_TESTERS
-    cached_e_tester_.clear();
-    cached_f_tester_.clear();
-#endif
-  }
-
-  void clear_testers(const Tag_true&, const Tag_false&) {}
+  // we do not have cached degeneracy testers
+  void clear_testers(const Tag_false&) {}
 
  public:
   void clear() {
     dual_.clear();
-    clear_testers(Has_insert(), Has_get_conflicts());
+    clear_testers(!Has_insert() || Has_get_conflicts());
   }
 
   void swap(Self& other) {
-    clear_testers(Has_insert(), Has_get_conflicts());
-    other.clear_testers(Has_insert(), Has_get_conflicts());
+    clear_testers(!Has_insert() || Has_get_conflicts());
+    other.clear_testers(!Has_insert() || Has_get_conflicts());
     dual_.swap(other.dual_);
     std::swap(tr_, other.tr_);
   }
@@ -834,31 +870,12 @@ public:
     return Dual_edge( e.first->neighbor(e.second), i_mirror );
   }
 
-
  public:
-  Voronoi_diagram_2(const Voronoi_traits& tr = Voronoi_traits())
-    : dual_(), tr_(tr) {}
-
-  template<class Iterator>
-  Voronoi_diagram_2(Iterator first, Iterator beyond,
-		    const Voronoi_traits& tr = Voronoi_traits())
-    : dual_(first, beyond), tr_(tr) {}
-
   typedef typename Voronoi_traits::Site_2     Site_2;
-
-  Voronoi_diagram_2(const Voronoi_diagram_2& other)
-    : dual_(other.dual_), tr_(other.tr_) {}
-
-  Self& operator=(const Self& other) {
-    clear_testers(Has_insert(), Has_get_conflicts());
-    dual_ = other.dual_;
-    tr_ = other.tr_;
-    return *this;
-  }
 
  protected:
   // insertion when get_conflicts() is defined
-  Face_handle true_insert(const Site_2& t, const Tag_true&)
+  void update_cached_testers(const Site_2& t, const Tag_true&)
   {
     if ( dual_.dimension() == 2 ) {
       std::vector<Dual_edge>        vec_e;
@@ -876,20 +893,18 @@ public:
 	}
       }
     }
-
-    return true_insert(t, Tag_false());
   }
 
-  // do insertion when get_conflicts() is defined
-  inline Face_handle true_insert(const Site_2& t, const Tag_false&) {
-    Dual_vertex_handle v = dual_.insert(t);
-    if ( v == Dual_vertex_handle() ) { return Face_handle(); }
-    return Face_handle( Face(this, v) );
-  }
+  // do insertion when get_conflicts() is not defined
+  void update_cached_testers(const Site_2& t, const Tag_false&) {}
 
   // insert is supported...
   inline Face_handle insert(const Site_2& t, const Tag_true&) {
-    return true_insert(t, Has_get_conflicts());
+    update_cached_testers(t, Has_get_conflicts());
+
+    Dual_vertex_handle v = dual_.insert(t);
+    if ( v == Dual_vertex_handle() ) { return Face_handle(); }
+    return Face_handle( Face(this, v) );
   }
 
   // insert is not really supported...
@@ -899,6 +914,7 @@ public:
 
  public:
   inline Face_handle insert(const Site_2& t) {
+    for (Halfedge_iterator it=halfedges_begin();it!=halfedges_end();++it) ;
     return insert(t, Has_insert());
   }
 
@@ -909,6 +925,35 @@ public:
       insert(*it);
     }
     return counter;
+  }
+
+ protected:
+  void update_cached_testers(const Face_handle& f, const Tag_true&)
+  {
+    Dual_vertex_handle v = f->dual();
+    Dual_edge_circulator ec_start = dual_.incident_edges(v);
+    Dual_edge_circulator ec = ec_start;
+    do {
+      cached_e_tester_.erase(*ec);
+    } while ( ++ec != ec_start );
+    
+  }
+
+  void update_cached_testers(const Face_handle& f, const Tag_false&) {}
+
+  void remove(const Face_handle& f, const Tag_true&) {
+    if ( f == Face_handle() ) { return; }
+    update_cached_testers(f, !Has_insert() && Has_get_conflicts());
+    dual_.remove(f->dual());
+  }
+
+  void remove(const Face_handle& f, const Tag_false&) {
+    REMOVE_IS_NOT_SUPPORTED(f);
+  }
+
+ public:
+  inline void remove(const Face_handle& f) {
+    return remove(f, Has_remove());
   }
 
 };
@@ -935,10 +980,5 @@ std::istream& operator>>(std::istream& is,
 
 
 CGAL_END_NAMESPACE
-
-// TO-DO-LIST
-// ----------
-// * write code for vertices iterator; they need to return Vertex as type
-// * decide whether infinite halfedges are indeed halfedges...
 
 #endif // CGAL_VORONOI_DIAGRAM_2_H

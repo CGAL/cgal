@@ -490,6 +490,7 @@ class Segment_Voronoi_diagram_Voronoi_traits_2
 
   typedef Tag_false                                Has_get_conflicts;
   typedef Tag_false                                Has_insert;
+  typedef Tag_false                                Has_remove;
 
   struct Get_site_2 {
     typedef Site_2          result_type;

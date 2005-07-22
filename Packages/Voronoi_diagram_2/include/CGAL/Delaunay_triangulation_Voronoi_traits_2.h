@@ -281,6 +281,7 @@ class Delaunay_triangulation_Voronoi_traits_2
 
   typedef Tag_true                                Has_get_conflicts;
   typedef Tag_true                                Has_insert;
+  typedef Tag_true                                Has_remove;
 
   struct Get_site_2 {
     typedef const Site_2&   result_type;
