@@ -118,6 +118,7 @@ class My_Window : public QMainWindow
   CGAL::Qt_widget_get_point<Rep> get_point;
   Input_mode input_mode;
   bool is_locate_mode;
+  bool is_remove_mode;
   bool is_snap_mode;
   QString title_;
   char msg[400];
@@ -142,6 +143,7 @@ class My_Window : public QMainWindow
     is_locate_mode = false;
     input_mode = VD_POINT;
     is_snap_mode = false;
+    is_remove_mode = false;
 
     //    widget = new CGAL::Qt_widget(this);
     widget = new Layout_widget(this);
@@ -175,10 +177,10 @@ class My_Window : public QMainWindow
     	    SLOT(get_input_mode(Input_mode)));
 
     connect(layers_toolbar, SIGNAL(insertModeChanged(bool)), this,
-    	    SLOT(get_locate_mode(bool)));
+    	    SLOT(get_insert_mode(bool)));
 
-    //    connect(layers_toolbar, SIGNAL(snapModeChanged(bool)), this,
-    //    	    SLOT(get_snap_mode(bool)));
+    connect(layers_toolbar, SIGNAL(locateModeChanged(bool)), this,
+	    SLOT(get_locate_mode(bool)));
 
     connect(file_toolbar, SIGNAL(fileToRead(const QString&)), this,
 	    SLOT(read_from_file(const QString&)));
@@ -291,6 +293,23 @@ private slots:
       return;
     }
 
+    if ( is_remove_mode ) {
+      Rep::Point_2 q;
+
+      if ( CGAL::assign(q, obj) ) {
+	CGAL::Object o = vvd->locate(q);
+	vvd->remove(o);
+      }
+      bool b = vvd->is_valid();
+      if ( b ) {
+	widget->get_label()->setText("Voronoi diagram is valid.");
+      } else {
+	widget->get_label()->setText("Voronoi diagram is NOT valid.");
+      }
+      widget->redraw();
+      return;
+    }
+
     CGAL::Timer timer;
 
     if ( input_mode == VD_POINT ) {
@@ -300,8 +319,16 @@ private slots:
 	vvd->insert(p);
 	timer.stop();
 
+	bool b = vvd->is_valid();
+	QString msg_valid;
+	if ( b ) {
+	  msg_valid = "Voronoi diagram is valid.";
+	} else {
+	  msg_valid = "Voronoi diagram is NOT valid.";
+	}
+
 	CGAL_CLIB_STD::sprintf(msg, "Insertion time: %f", timer.time());
-	widget->get_label()->setText(msg);
+	widget->get_label()->setText(msg_valid + " " + msg);
       }
     } else if ( input_mode == VD_CIRCLE ) {
       Circle_2 c;
@@ -311,8 +338,16 @@ private slots:
 	vvd->insert(c);
 	timer.stop();
 
+	bool b = vvd->is_valid();
+	QString msg_valid;
+	if ( b ) {
+	  msg_valid = "Voronoi diagram is valid.";
+	} else {
+	  msg_valid = "Voronoi diagram is NOT valid.";
+	}
+
 	CGAL_CLIB_STD::sprintf(msg,	"Insertion time: %f", timer.time());
-	widget->get_label()->setText(msg);
+	widget->get_label()->setText(msg_valid + " " + msg);
       }
     }
 
@@ -326,6 +361,21 @@ private slots:
     is_locate_mode = b;
 
     if ( is_locate_mode ) {
+      get_point.activate();
+      get_circle.deactivate();
+    } else {
+      if ( input_mode == VD_CIRCLE ) {
+	get_point.deactivate();
+	get_circle.activate();
+      }
+    }
+  }
+
+  void get_insert_mode(bool b)
+  {
+    is_remove_mode = b;
+
+    if ( is_remove_mode ) {
       get_point.activate();
       get_circle.deactivate();
     } else {
@@ -360,33 +410,31 @@ private slots:
     int counter = 0;
     timer.start();
 
-    Site_2 p;
+    Rep::Point_2 p;
     while (f >> p) {
-      //      insert_point(vvd, p);
+      vvd->insert(p);
       counter++;
 
       if ( counter % 500 == 0 ) {
-	std::cout << "\r" << counter
-		  << " sites haved been inserted..." << std::flush;
-
 	sprintf(msg, "%d sites have been inserted...", counter);
 	widget->get_label()->setText(msg);
       }
-    }//endwhile
-
-    std::cout << "\r" << counter
-	      << " sites haved been inserted... Done!" << std::endl;
+    } // endwhile
 
     timer.stop();
-    std::cout << "Insertion time: " << timer.time() << std::endl;
 
-    //    vd.is_valid(true, 1);
-    std::cerr << std::endl;
+    bool b = vvd->is_valid();
+    QString msg_valid;
+    if ( b ) {
+      msg_valid = "Voronoi diagram is valid.";
+    } else {
+      msg_valid = "Voronoi diagram is NOT valid.";
+    }
 
     CGAL_CLIB_STD::sprintf(msg,
 			   "%d sites inserted. Insertion time: %f",
 			   counter, timer.time());
-    widget->get_label()->setText(msg);
+    widget->get_label()->setText(msg_valid + " " + msg);
 
     widget->redraw();
   }

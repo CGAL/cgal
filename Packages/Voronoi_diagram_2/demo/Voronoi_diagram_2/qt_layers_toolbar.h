@@ -19,6 +19,7 @@
 #include <CGAL/IO/pixmaps/voronoi.xpm>
 #include <CGAL/IO/pixmaps/mouse_coord.xpm>
 #include <CGAL/IO/pixmaps/notool.xpm>
+#include <CGAL/IO/pixmaps/holddown.xpm>
 //#include "remove.xpm"
 
 typedef enum { VD_POINT, VD_CIRCLE } Input_mode;
@@ -95,8 +96,15 @@ public:
 			     this, 
 			     "Remove site");
 #endif
+    but[5] = new QToolButton(QPixmap( (const char**)holddown_xpm ),
+			     "Locate mode", 
+			     0, 
+			     this, 
+			     SLOT(locate_mode()), 
+			     this, 
+			     "Locate mode");
 
-    nr_of_buttons = 5;
+    nr_of_buttons = 6;
     for(int i = 0; i < nr_of_buttons; i++){
       but[i]->setToggleButton(TRUE);
     }
@@ -122,6 +130,7 @@ signals:
   void new_object(CGAL::Object);
   void inputModeChanged(Input_mode);
   void insertModeChanged(bool);
+  void locateModeChanged(bool);
   void snapModeChanged(bool);
   
 private slots:
@@ -168,6 +177,10 @@ private slots:
 
   void remove_mode() {
     emit insertModeChanged( but[4]->isOn() );
+  }
+
+  void locate_mode() {
+    emit locateModeChanged( but[5]->isOn() );
   }
 
 private:

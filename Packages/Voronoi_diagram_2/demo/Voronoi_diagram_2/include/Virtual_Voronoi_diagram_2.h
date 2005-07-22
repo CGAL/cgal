@@ -26,6 +26,9 @@ struct Virtual_Voronoi_diagram_2
   virtual void insert(const Point_2&) = 0;
   virtual void insert(const Circle_2&) = 0;
 
+  // remove a site
+  virtual void remove(const Object&) = 0;
+
 #ifdef CGAL_USE_QT
   virtual void draw_feature(const Object&, Qt_widget&) const = 0;
   virtual void draw_diagram(Qt_widget&) const = 0;
@@ -35,6 +38,8 @@ struct Virtual_Voronoi_diagram_2
   virtual Object locate(const Point_2&) const = 0;
 
   virtual Object ptr() = 0;
+
+  virtual bool is_valid() const = 0;
 
   virtual void clear() = 0;
 };
@@ -59,6 +64,7 @@ class Virtual_Voronoi_diagram_base_2
   typedef typename Base::Ccb_halfedge_circulator  Ccb_halfedge_circulator;
   typedef typename Base::Edge_iterator            Edge_iterator;
   typedef typename Base::Generator_iterator       Generator_iterator;
+  typedef typename Base::Locate_result            Locate_result;
 
   typedef Halfedge_with_draw_t                    Halfedge_with_draw;
 
@@ -67,6 +73,14 @@ class Virtual_Voronoi_diagram_base_2
 
   virtual void insert(const Point_2&) {}
   virtual void insert(const Circle_2&) {}
+
+  virtual void remove(const Object& o) {
+    Locate_result lr;
+    if ( CGAL::assign(lr, o) && lr.is_face() ) {
+      Face_handle f = lr;
+      Base::remove(f);
+    }
+  }
 
  public:
 #ifdef CGAL_USE_QT
@@ -108,12 +122,19 @@ class Virtual_Voronoi_diagram_base_2
 #endif // CGAL_USE_QT
 
   virtual Object locate(const Point_2& q) const {
+    if ( Base::number_of_faces() == 0 ) {
+      return CGAL::make_object(int(0));
+    }
     typename Base::Voronoi_traits::Point_2 p(q.x(), q.y());
     Locate_result lr = Base::locate(p);
     return CGAL::make_object(lr);
   }
 
   virtual Object ptr() = 0;
+
+  virtual bool is_valid() const {
+    return Base::is_valid();
+  }
 
   virtual void clear() {
     Base::clear();
