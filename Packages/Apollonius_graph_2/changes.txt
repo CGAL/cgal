@@ -1,3 +1,6 @@
+22 July 2005:  Menelaos Karavelas
+- fixed problems created with wrong insertion of copyright headers in demo
+
 20 July 2005:  Menelaos Karavelas
 - added copyright headers in demo files
 
