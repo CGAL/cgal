@@ -62,7 +62,7 @@ public:
 #endif
   }
 
-  iterator find(const value_type& t) const {
+  const_iterator find(const value_type& t) const {
     return c.find(t);
   }
 
