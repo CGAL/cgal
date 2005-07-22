@@ -253,7 +253,7 @@ public:
     }
 
     Side_of_plane sop;
-    Oriented_side side = sop(splitting_plane, point_on_plane, f, depth);
+    Oriented_side side = sop(splitting_plane, splitting_plane.point(), f, depth);
     if( side == ON_NEGATIVE_SIDE || side == ON_ORIENTED_BOUNDARY)
       left_node->add_facet(f, depth+1);
     if( side == ON_POSITIVE_SIDE || side == ON_ORIENTED_BOUNDARY)
@@ -268,7 +268,7 @@ public:
     }
 
     Side_of_plane sop;
-    Oriented_side side = sop(splitting_plane, point_on_plane, e, depth);
+    Oriented_side side = sop(splitting_plane, splitting_plane.point(), e, depth);
     if( side == ON_NEGATIVE_SIDE || side == ON_ORIENTED_BOUNDARY)
       left_node->add_edge(e, depth+1);
     if( side == ON_POSITIVE_SIDE || side == ON_ORIENTED_BOUNDARY)
@@ -283,7 +283,7 @@ public:
     }
 
     Side_of_plane sop;
-    Oriented_side side = sop(splitting_plane, point_on_plane, v, depth);
+    Oriented_side side = sop(splitting_plane, splitting_plane.point(), v, depth);
     if( side == ON_NEGATIVE_SIDE || side == ON_ORIENTED_BOUNDARY)
       left_node->add_vertex(v, depth+1);
     if( side == ON_POSITIVE_SIDE || side == ON_ORIENTED_BOUNDARY)
