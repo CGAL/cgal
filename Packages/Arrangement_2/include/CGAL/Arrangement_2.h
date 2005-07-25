@@ -604,7 +604,7 @@ public:
   virtual ~Arrangement_2 ();
 
   /*! Clear the arrangement. */
-  void clear();
+  virtual void clear();
   //@}
 
   /*! Access the traits object (non-const version). */
@@ -1395,7 +1395,7 @@ protected:
 
   //@}
 
-private:
+protected:
 
   /// \name Managing and notifying the arrangement observers.
   //@{
@@ -1432,6 +1432,8 @@ private:
     // If we reached here, the observer was not registered.
     return (false);
   }
+
+private:
 
   /* Notify the observers on global arrangement operations: */
 

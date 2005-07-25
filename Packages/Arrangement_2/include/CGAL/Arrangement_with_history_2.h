@@ -15,8 +15,9 @@
 // $Revision$ $Date$
 // $Name$
 //
-// Author(s)     : Ron Wein          <wein@post.tau.ac.il>
-//                 Efi Fogel         <efif@post.tau.ac.il>
+// Author(s)     : Ron Wein         <wein@post.tau.ac.il>
+//                 Efi Fogel        <efif@post.tau.ac.il>
+//                 Baruch Zukerman  <baruchzu@post.tau.ac.il>
 
 #ifndef CGAL_ARRANGEMENT_WITH_HISTORY_2_H
 #define CGAL_ARRANGEMENT_WITH_HISTORY_2_H
@@ -50,7 +51,13 @@ CGAL_BEGIN_NAMESPACE
  */
 template <class Traits_, 
           class Dcel_ = Arr_default_dcel<Traits_> > 
-class Arrangement_with_history_2
+class Arrangement_with_history_2 :
+  public Arrangement_2 
+  <Arr_consolidated_curve_data_traits_2<Traits_,
+					typename Traits_::Curve_2 *>,
+   typename Dcel_::template rebind
+   <Arr_consolidated_curve_data_traits_2<Traits_,
+					 typename Traits_::Curve_2 *> >::other>
 {
 public:
 
@@ -64,12 +71,24 @@ public:
 
 protected:
 
+  friend class Arr_observer<Self>;
+  friend class Arr_accessor<Self>;
+
+  // Define the data-traits class based on Traits_2.
   typedef Arr_consolidated_curve_data_traits_2<Traits_2,Curve_2*>
-                                                      Data_traits;
-  typedef typename Data_traits::Curve_2               Data_curve_2;
-  typedef typename Data_traits::X_monotone_curve_2    Data_x_curve_2;
-  typedef typename Data_x_curve_2::Data_iterator      Data_iterator;
-  typedef Arrangement_2<Data_traits,Dcel>             Base_arr_2;
+                                                        Data_traits_2;
+  typedef typename Data_traits_2::Curve_2               Data_curve_2;
+  typedef typename Data_traits_2::X_monotone_curve_2    Data_x_curve_2;
+  typedef typename Data_x_curve_2::Data_iterator        Data_iterator;
+
+  // Rebind the DCEL to the data-traits class.
+  typedef typename Dcel::template rebind<Data_traits_2> Dcel_rebind;
+  typedef typename Dcel_rebind::other                   Data_dcel;
+
+  // The arrangement with history is based on the representation of an
+  // arrangement, templated by the data-traits class and the rebound DCEL.
+  typedef Arrangement_2<Data_traits_2, Data_dcel>       Base_arr_2;
+  typedef Arr_traits_wrapper_2<Data_traits_2>           Traits_wrapper_2;
  
 public:
 
@@ -341,7 +360,6 @@ protected:
   };
 
   // Data members:
-  Base_arr_2                m_arr;
   Curves_alloc              m_curves_alloc;
   Curve_halfedges_list      m_curves;
   Curve_halfedges_observer  m_observer;
@@ -357,17 +375,14 @@ public:
   typedef typename Curve_halfedges::iterator         Curve_edge_iterator;
   typedef typename Curve_halfedges::const_iterator   Curve_edge_const_iterator;
 
-  typedef typename Data_x_curve_2::Data_iterator         Origin_iterator;
-  typedef typename Data_x_curve_2::Data_const_iterator   Origin_const_iterator;
-
   /// \name Constructors.
   //@{
 
   /*! Default constructor. */
   Arrangement_with_history_2 () :
-    m_arr ()
+    Base_arr_2 ()
   {
-    m_observer.attach (m_arr);
+    m_observer.attach (*this);
   }
 
   /*!
@@ -378,9 +393,9 @@ public:
 
   /*! Constructor given a traits object. */
   Arrangement_with_history_2 (Traits_2 *tr) :
-    m_arr (static_cast<Data_traits*> (tr))
+    Base_arr_2 (static_cast<Data_traits_2*> (tr))
   {
-    m_observer.attach (m_arr);
+    m_observer.attach (this);
   }
   //@}
 
@@ -410,7 +425,7 @@ public:
   }
 
   /*! Clear the arrangement. */
-  void clear ()
+  virtual void clear ()
   {
     // Free all stored curves.
     Curve_iterator         cit = m_curves.begin();
@@ -427,240 +442,65 @@ public:
     }
     m_curves.destroy();
 
-    // Clear the arrangement.
-    m_arr.clear();
+    // Clear the base arrangement.
+    Base_arr_2::clear();
 
     return;
   }
   //@}
 
-  /// \name Access the arrangement dimensions.
-  //@{
-
-  /*! Check whether the arrangement is empty. */
-  bool is_empty () const
+  /*! Access the traits object (non-const version). */
+  Traits_2* get_traits ()
   {
-    return (m_arr.is_empty());
-  }
-   
-  /*! Get the number of arrangement vertices. */
-  Size number_of_vertices () const
-  {
-    return (m_arr.number_of_vertices());
-  }
-
-  /*! Get the number of arrangement halfedges (the result is always even). */
-  Size number_of_halfedges () const
-  {
-    return (m_arr.number_of_halfedges());
-  }
-
-  /*! Get the number of arrangement edges. */
-  Size number_of_edges () const
-  {
-    return (m_arr.number_of_edges());
-  }
-
-  /*! Get the number of arrangement faces. */
-  Size number_of_faces () const
-  {
-    return (m_arr.number_of_faces());
-  }
-  //@}
-
-  /// \name Traversal functions for the arrangement vertices.
-  //@{
-
-  /*! Get an iterator for the first vertex in the arrangement. */
-  Vertex_iterator vertices_begin() 
-  { 
-    return (m_arr.vertices_begin());
-  }
-
-  /*! Get a past-the-end iterator for the arrangement vertices. */
-  Vertex_iterator vertices_end()
-  {
-    return (m_arr.vertices_end());
-  }
-
-  /*! Get a const iterator for the first vertex in the arrangement. */
-  Vertex_const_iterator vertices_begin() const
-  { 
-    return (m_arr.vertices_begin());
+    return (traits);
   }
   
-  /*! Get a past-the-end const iterator for the arrangement vertices. */
-  Vertex_const_iterator vertices_end() const
+  /*! Access the traits object (const version). */
+  const Traits_2* get_traits () const
   {
-    return (m_arr.vertices_end());
-  }
-  //@}
-
-  /// \name Traversal functions for the arrangement halfedges.
-  //@{
-
-  /*! Get an iterator for the first halfedge in the arrangement. */
-  Halfedge_iterator halfedges_begin() 
-  { 
-    return (m_arr.halfedges_begin());
+    return (traits);
   }
 
-  /*! Get a past-the-end iterator for the arrangement halfedges. */
-  Halfedge_iterator halfedges_end()
-  {
-    return (m_arr.halfedges_end());
-  }
-
-  /*! Get a const iterator for the first halfedge in the arrangement. */
-  Halfedge_const_iterator halfedges_begin() const
-  { 
-    return (m_arr.halfedges_begin());
-  }
+  // Define iterators for the origin curves of an edge:
+  typedef I_Dereference_iterator<
+    typename Data_x_curve_2::Data_iterator,
+    Curve_halfedges,
+    typename Data_x_curve_2::Data_iterator::difference_type,
+    typename Data_x_curve_2::Data_iterator::iterator_category>
+                                              Origin_curve_iterator;
   
-  /*! Get a past-the-end const iterator for the arrangement halfedges. */
-  Halfedge_const_iterator halfedges_end() const
-  {
-    return (m_arr.halfedges_end());
-  }
-  //@}
-
-  /// \name Traversal functions for the arrangement edges.
-  //@{
-
-  /*! Get an iterator for the first edge in the arrangement. */
-  Edge_iterator edges_begin() 
-  { 
-    return (m_arr.edges_begin());
-  }
-
-  /*! Get a past-the-end iterator for the arrangement edges. */
-  Edge_iterator edges_end()
-  {
-    return (m_arr.edges_end());
-  }
-
-  /*! Get a const iterator for the first edge in the arrangement. */
-  Edge_const_iterator edges_begin() const
-  { 
-    return (m_arr.edges_begin());
-  }
+  typedef I_Dereference_const_iterator<
+    typename Data_x_curve_2::Data_const_iterator,
+    typename Data_x_curve_2::Data_iterator,
+    Curve_halfedges,
+    typename Data_x_curve_2::Data_iterator::difference_type,
+    typename Data_x_curve_2::Data_iterator::iterator_category>
+                                              Origin_curve_const_iterator;
   
-  /*! Get a past-the-end const iterator for the arrangement edges. */
-  Edge_const_iterator edges_end() const
-
-  {
-    return (m_arr.edges_end());
-  }
-  //@}
-
-  /// \name Traversal functions for the arrangement faces.
+  /// \name Traversal of the origin curves of an edge.
   //@{
-
-  /*! Get the unbounded face (non-const version). */
-  Face_handle unbounded_face ()
+  Origin_curve_iterator origin_curves_begin (Halfedge_handle e)
   {
-    return (m_arr.unbounded_face());
+    return Origin_curve_iterator (e->curve().data_begin());
   }
 
-  /*! Get the unbounded face (const version). */
-  Face_const_handle unbounded_face () const
+  Origin_curve_iterator origin_curves_end (Halfedge_handle e)
   {
-    return (m_arr.unbounded_face());
+    return Origin_curve_iterator (e->curve().data_end());
   }
 
-  /*!
-   * Get the face containing the given isolated vertex (non-const version).
-   * \param The query vertex.
-   * \pre v is an isolated vertex (it has no incident halfedges).
-   * \return A handle to the face containing v.
-   */
-  Face_handle incident_face (Vertex_handle v)
+  Origin_curve_const_iterator
+  origin_curves_begin (Halfedge_const_handle e) const
   {
-    return (m_arr.incident_face (v));
+    return Origin_curve_const_iterator (e->curve().data_begin());
   }
 
-  /*!
-   * Get the face containing the given isolated vertex (const version).
-   * \param The query vertex.
-   * \pre v is an isolated vertex (it has no incident halfedges).
-   * \return A const handle to the face containing v.
-   */
-  inline Face_const_handle incident_face (Vertex_const_handle v) const
+  Origin_curve_const_iterator origin_curves_end (Halfedge_const_handle e) const
   {
-    return (m_arr.incident_face (v));
-  }
-
-  /*! Get an iterator for the first face in the arrangement. */
-  Face_iterator faces_begin() 
-  { 
-    return (m_arr.faces_begin());
-  }
-
-  /*! Get a past-the-end iterator for the arrangement faces. */
-  Face_iterator faces_end()
-  {
-    return (m_arr.faces_end());
-  }
-
-  /*! Get a const iterator for the first face in the arrangement. */
-  Face_const_iterator faces_begin() const
-  { 
-    return (m_arr.faces_begin());
-  }
-  
-  /*! Get a past-the-end const iterator for the arrangement faces. */
-  Face_const_iterator faces_end() const
-  {
-    return (m_arr.faces_end());
+    return Origin_curve_const_iterator (e->curve().data_end());
   }
   //@}
 
-  /// \name Traversal functions for the arrangement curves.
-  //@{
-
-  /*! Get an iterator for the first curve in the arrangement. */
-  Curve_iterator curves_begin () 
-  { 
-    return (m_curves.begin()); 
-  }
-
-  /*! Get a past-the-end iterator for the arrangement curves. */
-  Curve_iterator curves_end ()
-  {
-    return (m_curves.end()); 
-  }
-
-  /*! Get a const iterator for the first curve in the arrangement. */
-  Curve_const_iterator curves_begin () const 
-  { 
-    return (m_curves.begin()); 
-  }
-
-  /*! Get a const past-the-end iterator for the arrangement curves. */
-  Curve_const_iterator curves_end () const
-  {
-    return (m_curves.end()); 
-  }
-  //@}
-
-  /// \name Casting away constness for handle types.
-  //@{
-  Vertex_handle non_const_handle (Vertex_const_handle vh)
-  {
-    return (m_arr.non_const_handle (vh));
-  }
-
-  Halfedge_handle non_const_handle (Halfedge_const_handle hh)
-  {
-    return (m_arr.non_const_handle (hh));
-  }
-
-  Face_handle non_const_handle (Face_const_handle fh)
-  {
-    return (m_arr.non_const_handle (fh));
-  }
-  //@}
-  
   /// \name Curve insertion and deletion.
   //@{
 
@@ -684,7 +524,7 @@ public:
     // observer will take care of updating the edges' set.
     Data_curve_2       data_curve (cv, p_cv);
 
-    CGAL::insert (m_arr, data_curve);
+    CGAL::insert (*this, data_curve);
     
     // Return a handle to the inserted curve (the last in the list).
     Curve_handle       ch = m_curves.end();
@@ -715,32 +555,36 @@ public:
     }
 
     // Perform an aggregated insertion operation into the base arrangement.
-    CGAL::insert (m_arr, data_curves.begin(), data_curves.end());
+    CGAL::insert (*this, data_curves.begin(), data_curves.end());
     return;
   }
 
   /*!
    * Remove a curve from the arrangement (remove all the edges it induces).
+   * \param ch A handle to the curve to be removed.
    * \return The number of removed edges.
    */
   size_t remove (Curve_handle& ch)
   {
     // Go over all edges the given curve induces.
     Curve_halfedges                     *p_cv = &(*ch); 
-    typename Curve_halfedges::iterator   it;
+    typename Curve_halfedges::iterator   it = ch->edges_begin();
     Halfedge_handle                      he;
     size_t                               n_removed = 0;
 
-    for (it = ch->begin(); it != ch->end(); ++it)
+    while (it != ch->edges_end())
     {
       // Check how many curves have originated the current edge.
+      // Note we increment the iterator now, as the edge may be removed.
       he = *it;
+      ++it;
+
       if (he->curve().number_of_data_objects() == 1)
       {
 	// The edge is induced only by out curve - remove it.
 	CGAL_assertion (he->curve().get_data() == p_cv);
 
-	m_arr.remove_edge (he);
+	Base_arr_2::remove_edge (he);
 	n_removed++;
       }
       else
@@ -756,9 +600,113 @@ public:
     m_curves_alloc.destroy (p_cv);
     m_curves_alloc.deallocate (p_cv, 1);
 
-    return;
+    return (n_removed);
   }
   //@}
+
+  /// \name Manipulating vertices and edges.
+  //@{
+
+  /*!
+   * Split a given edge into two at the given split point.
+   * \param e The edge to split (one of the pair of twin halfedges).
+   * \param p The split point.
+   * \pre p lies in the interior of the curve associated with e.
+   * \return A handle for the halfedge whose source is the source of the the
+   *         original halfedge e, and whose target is the split point.
+   */
+  Halfedge_handle split_edge (Halfedge_handle e,
+                              const Point_2& p)
+  {
+    // Split the curve associated with the halfedge e at the given point p.
+    Data_x_curve_2       cv1, cv2;
+
+    traits->split_2_object() (e->curve(), p,
+			      cv1, cv2);
+
+    // cv1 always lies to the left of cv2. If e is directed from left to right,
+    // we should split and return the halfedge associated with cv1, and
+    // otherwise we should return the halfedge associated with cv2 after the
+    // split.
+    if (traits->compare_xy_2_object() (e->source()->point(),
+				       e->target()->point()) == SMALLER)
+    {
+      return (Base_arr_2::split_edge (e, cv1, cv2));
+    }
+    else
+    {
+      return (Base_arr_2::split_edge (e, cv2, cv1));
+    }
+  }
+
+  /*!
+   * Merge two edges to form a single edge.
+   * \param e1 The first edge to merge (one of the pair of twin halfedges).
+   * \param e2 The second edge to merge (one of the pair of twin halfedges).
+   * \pre e1 and e2 must have a common end-vertex of degree 2 and must
+   *      be mergeable.
+   * \return A handle for the merged halfedge.
+   */
+  Halfedge_handle merge_edge (Halfedge_handle e1, 
+                              Halfedge_handle e2)
+  {
+    Vertex_handle      vh;
+
+    if (e1->target() == e2->source() || e1->target() == e2->target())
+    {
+      vh = e1->target();
+    }
+    else
+    {
+      CGAL_precondition_msg(e1->source() == e2->source() || 
+			    e1->source() == e2->target(),
+			    "The two edges do not share a common end-vertex.");
+      vh = e1->source();
+    }
+
+    size_t             degree = vh->degree();
+    CGAL_precondition_msg (degree == 2,
+			   "Cannot remove the common end-vertex.");
+
+    CGAL_precondition_msg (traits->are_mergeable_2_object() (e1->curve(),
+							     e2->curve()),
+			   "Curves are not mergeable.");
+
+    // Merge the two curves.
+    Data_x_curve_2       cv;
+    
+    traits->merge_2_object() (e1->curve(), e2->curve(),
+			      cv);
+
+    return (Base_arr_2::merge_edge (e1, e2, cv));
+  }
+  //@}
+
+protected:
+
+  /// \name Managing and notifying the arrangement observers.
+  //@{
+
+  /*!
+   * Register a new observer (so it starts receiving notifications).
+   * \param p_obs A pointer to the observer object.
+   */
+  void _register_observer (Arr_observer<Self> *p_obs)
+  {
+    Base_arr_2::_register_observer
+      (reinterpret_cast<Arr_observer<Base_arr_2>*>(p_obs));
+  }
+
+  /*!
+   * Unregister a new observer (so it stops receiving notifications).
+   * \param p_obs A pointer to the observer object.
+   * \return Whether the observer was successfully unregistered.
+   */
+  bool _unregister_observer (Arr_observer<Self> *p_obs)
+  {
+    return (Base_arr_2::_unregister_observer 
+	    (reinterpret_cast<Arr_observer<Base_arr_2>*>(p_obs)));
+  }
 
 };
 

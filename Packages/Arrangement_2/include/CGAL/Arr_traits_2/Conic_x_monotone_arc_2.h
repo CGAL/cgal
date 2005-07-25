@@ -26,7 +26,6 @@
 
 #include <CGAL/Arr_traits_2/Conic_intersections_2.h>
 
-
 #include <map>
 #include <ostream>
 
@@ -457,6 +456,93 @@ public:
 
     // Return the computed point.
     return (Point_2 (p.x(), y));
+  }
+
+  /*!
+   * Get a polyline approximating the conic arc.
+   * \param n The maximal number of sample points.
+   * \param oi An output iterator, whose value-type is pair<double,double>
+   *           (representing an approximated point).
+   *           In case the arc is a line segment, there are 2 output points,
+   *           otherwise the arc is approximated by the polyline defined by
+   *           (p_0, p_1, ..., p_n), where p_0 and p_n are the left and right
+   *           endpoints of the arc, respectively.
+   */
+  template <class OutputIterator>
+  OutputIterator polyline_approximation (size_t n,
+					 OutputIterator oi) const
+  {
+    CGAL_precondition (n != 0);
+
+    const double  x_left = CGAL::to_double (left().x());
+    const double  y_left = CGAL::to_double (left().y());
+    const double  x_right = CGAL::to_double (right().x());
+    const double  y_right = CGAL::to_double (right().y());
+
+    if (_orient == COLLINEAR)
+    {
+      // In case of a line segment, return the two endpoints.
+      *oi = std::pair<double, double> (x_left, y_left);
+      ++oi;
+      *oi = std::pair<double, double> (x_right, y_right);
+      ++oi;
+      return (oi);
+    }
+    
+    // Otherwise, sample (n - 1) equally-spaced points in between.
+    const double  app_r = CGAL::to_double (_r);
+    const double  app_s = CGAL::to_double (_s);
+    const double  app_t = CGAL::to_double (_t);
+    const double  app_u = CGAL::to_double (_u);
+    const double  app_v = CGAL::to_double (_v);
+    const double  app_w = CGAL::to_double (_w);
+    const double  x_jump = (x_right - x_left) / n;
+    double        x, y;
+    const bool    A_is_zero = (CGAL::sign(_s) == ZERO);
+    double        A = app_s, B, C;
+    double        disc;
+    size_t        i;
+
+    *oi = std::pair<double, double> (x_left, y_left);   // The left point.
+    ++oi;
+    for (i = 1; i < n; i++)
+    {
+      x = x_left + x_jump*i;
+
+      // Solve the quadratic equation: A*x^2 + B*x + C = 0:
+      B = app_t*x + app_v;
+      C = (app_r*x + app_u)*x + app_w;
+
+      if (A_is_zero)
+      {
+        y = -C / B;
+      }
+      else
+      {
+	disc = B*B - 4*A*C;
+
+	if (disc < 0)
+	  disc = 0;
+
+	// We take either the root involving -sqrt(disc) or +sqrt(disc)
+	// based on the information flags.
+	if ((_info & PLUS_SQRT_DISC_ROOT) != 0)
+	{
+	  y = (::sqrt(disc) - B) / (2*A);
+	}
+	else
+	{
+	  y = -(B + ::sqrt (disc)) / (2*A);
+	}
+      }
+
+      *oi = std::pair<double, double> (x, y);
+      ++oi;
+    }
+    *oi = std::pair<double, double> (x_right, y_right);   // The right point.
+    ++oi;
+
+    return (oi);
   }
 
   /*!
@@ -1281,6 +1367,8 @@ private:
         slope_numer = 0;
         slope_denom = 1;
       }
+
+      return;
     }
 
     // The derivative by x of the conic
@@ -1406,6 +1494,8 @@ private:
         slope_numer = 0;
         slope_denom = 1;
       }
+
+      return;
     }
 
     // The derivative by y of the conic

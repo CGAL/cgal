@@ -193,7 +193,7 @@ public:
     /*!
      * Get the data iterators (const version).
      */
-    Data_const_iterator  data_begin () const
+    Data_const_iterator data_begin () const
     {
       return (m_data_list.begin());
     }
@@ -206,12 +206,12 @@ public:
     /*!
      * Get the data iterators (non-const version).
      */
-    Data_iterator  data_begin ()
+    Data_iterator data_begin ()
     {
       return (m_data_list.begin());
     }
 
-    Data_iterator  data_end ()
+    Data_iterator data_end ()
     {
       return (m_data_list.end());
     }
@@ -265,7 +265,7 @@ public:
     {
       InputIterator    it;
 
-      for (it = begin; it != end; it++)
+      for (it = begin; it != end; ++it)
 	m_data_list.push_back(*it);
 
       return;

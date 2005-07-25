@@ -396,6 +396,12 @@ public:
     typename F::Holes_const_iterator::difference_type,
     typename F::Holes_const_iterator::iterator_category> Holes_const_iterator;
 
+  /*! Get the number of holes inside the face. */
+  unsigned int number_of_holes() const
+  {
+    return (holes.size());
+  }
+
   /*! Add a hole inside the face. */
   void add_hole (Halfedge* h)
   {
@@ -447,6 +453,12 @@ public:
     typename F::Isolated_vertices_iterator::difference_type,
     typename F::Isolated_vertices_iterator::iterator_category>
                                               Isolated_vertices_const_iterator;
+
+  /*! Get the number of isloated vertices inside the face. */
+  unsigned int number_of_isolated_vertices() const
+  {
+    return (iso_verts.size());
+  }
 
   /*! Add an isloated vertex inside the face. */
   void add_isolated_vertex (Vertex* v)
@@ -893,6 +905,15 @@ class Arr_default_dcel :
                   Arr_face_base>
 {
 public:
+
+  /*! \struct
+   * An auxiliary structure for rebinding the DCEL with a new traits class.
+   */
+  template<typename T>
+  struct rebind
+  {
+    typedef Arr_default_dcel<T> other;
+  };
 
   /*! Default constructor. */
   Arr_default_dcel()
