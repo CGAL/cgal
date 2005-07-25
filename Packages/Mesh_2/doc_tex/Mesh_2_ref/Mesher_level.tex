@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Mesher_level<Tr, Derived, Element, Previous,
+\begin{ccRefClass}{Mesher_level_base<Tr, Mesher_level, Element, Lower,
 Tr_traits >}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
@@ -44,34 +44,38 @@ of mesher levels, deferring the  detailed implementation
 of elememtary operations to its derived classes.
 
 
-\ccInclude{Mesher_level.h}
+\ccInclude{CGAL/Mesher_level_base.h}
 
 \ccParameters
 The class \ccRefName\ has five template parameters: \\
 - The parameter \ccc{Tr} is the type of the triangulation underlying
- the refinement process. It must be a model od the concept \ccc{xxxxx}.\\
-- The parameter \ccc{Derived} stands for the derived class
+ the refinement process. It must be a model of the concept 
+ \ccc{MeshTriangulation}.\\
+- The parameter \ccc{Mesher_level} stands for the derived class
 in the CRTP pattern. This classes provides the implementation
 of basic operation in  the refinement pocess and will be the actual
 mesher level used by the meshing application. 
-It must be a model of the concept \ccc{xxxxx} \\
+It must be a model of the concept \ccc{MesherLevel} \\
 - The parameter \ccc{Element} is the type of mesh elements 
 refined at  this level refines. It is a model of the concept
-\ccc{xxx}.
-- The parameter \ccc{Previous} stands for the  previous mesher level
- in the cascafde, handling refinement of lower dimensional mesh
+\ccc{MeshElement} for which there is no requirements..
+- The parameter \ccc{Lower} stands for the  next lower  mesher level
+ in the cascade, handling refinement of lower dimensional mesh
 elements.  It is a model of the concept
-\ccc{xxx}.\\
+\ccc{LowerMesherLevel} which is just a subconcept of
+\ccc{MesherLevel}.\\
 - The parameter \ccc{Tr_traits} provides some types related
 to the triangulation and in particular the type \ccc{Zone} 
- It is a model of the concept
-\ccc{xxx}.
+ It is a model of the concept \ccc{xxx}.
 
 %\ccIsModel
 
 %Concept
 
-\ccTypes
+
+\ccTypedef{typedef Tr       Triangulation;}
+{The type of the underlying triangulation.}
+\ccGlue
 \ccTypedef{typedef Tr::Point Point;}
 {The type of points inserted into the triangulation.}
 \ccGlue
@@ -80,15 +84,24 @@ to the triangulation and in particular the type \ccc{Zone}
 \ccGlue
 \ccTypedef{typedef Tr_traits::Zone Zone;}
 {A type describing the conflict zone of a query point in the triangulation,
-i.e. the set of elements that would disappear if the query point is inserted.}
+i.e. the set of elements that would disappear if the query point is
+inserted.
+}
 
+XXXXXXXXXX
+Suggestion: Having a templated \ccc{Triangulation_traits}
+ \ccc{template< class Tr>
+Triangulation_traits}
+with a default parameter \ccc{Triangulation_traits<Tr>} 
+for the fifth parameter of \ccc{Mesher_level}  
+xxxxxxxxxxxxxxxxxxxxxxx
 
 %\ccNestedType{TYPE}{some nested types}
 
 \ccCreation
 \ccCreationVariable{ml}  %% choose variable name
 
-\ccConstructor{Mesher_level(Previous_level& previous);}
+\ccConstructor{Mesher_level(Lower& lower);}
 {Construct a mesher level with \ccc{previous} as previous 
 (lower dimensional) mesher level.}
 
@@ -102,79 +115,89 @@ the derived classes.
 	{ Called before the first refinement, to initialized the queue of
       	elements that should be refined.}
 
-\ccMethod{ bool no_longer_element_to_refine();}
-        { Tells if, as regards the elements of type \ccc{Element}, 
-          the refinement is  done.}
 
-\ccMethod { bool is_algorithm_done();}
-{Tells if the refinement process is over
-taking into account this level and previous levels.}
  
 
 \ccMethod {  template <class Mesh_visitor>
   void refine(Mesh_visitor& visitor);}
 { Performs the refinement;}
 
-\ccMethod {  template <class Mesh_visitor>
-  bool process_one_element(Mesh_visitor& visitor);}
-{ Get the next elements from the queue of to be refined elements
-and try to refine it. Returns \ccc{true} if one point has been inserted.}
+
+%All these commented function should appear
+%under their impl form in the concept for ``Mesher level''
+
+
+%\ccMethod{ bool no_longer_element_to_refine();}
+%        { Returns \ccc{true} when there is no  \ccc{Element}
+%          to be refined in this level.}
+
+%\ccMethod {  template <class Mesh_visitor>
+%  bool process_one_element(Mesh_visitor& visitor);}
+%{ Get the next elements from the queue of to be refined elements
+%and try to refine it. Returns \ccc{true} if one point has been inserted.}
  
-\ccMethod {
-  template <class Mesh_visitor>
-  Mesher_level_conflict_status
-  try_to_refine_element(Element e, Mesh_visitor& visitor);}
- {Try to refine element \ccc{e}.}
+%\ccMethod {
+%  template <class Mesh_visitor>
+%  Mesher_level_conflict_status
+%  try_to_refine_element(Element e, Mesh_visitor& visitor);}
+% {Try to refine element \ccc{e}.}
 
 
-\ccMethod {  Element get_next_element();}
-{ Retrieves the next element that could be refined.}
+%\ccMethod {  Element get_next_element();}
+%{ Retrieves the next element that could be refined.}
   
-\ccMethod {  void pop_next_element();}
-{Remove from the list of to be refined elements
-the next element that could be refined.}
+%\ccMethod {  void pop_next_element();}
+%{Remove from the list of to be refined elements
+%the next element that could be refined.}
 
 
-\ccMethod {  Point refinement_point(const Element& e);}
-{Compute the point that should be inserted to refine the element \ccc{e}}
+%\ccMethod {  Point refinement_point(const Element& e);}
+%{Compute the point that should be inserted to refine the element \ccc{e}}
 
-XXXXXX  il y a trop de conflits et ils devraient etre definis.
-Les conflits de " \ccc{conflicts_zone} " ne sont pas les memes que celles des
-\ccc{test_point_conflict} XXXXXXXXXXXXX
+%XXXXXX  il y a trop de conflits et ils devraient etre definis.
+%Les conflits de " \ccc{conflicts_zone} " ne sont pas les memes que celles des
+%\ccc{test_point_conflict} XXXXXXXXXXXXX
 
 
-\ccMethod{ Zone conflicts_zone(const Point& p, Element e);}
-	{Returns the conflict zone of \ccc{p} starting from the
-	mesh element \ccc{e}.
-       \ccPrecond{ \ccc{e} is assumed to be in conflict with \ccc{p}.}}
+%\ccMethod{ Zone conflicts_zone(const Point& p, Element e);}
+%	{Returns the conflict zone of \ccc{p} starting from the
+%	mesh element \ccc{e}.
+%       \ccPrecond{ \ccc{e} is assumed to be in conflict with \ccc{p}.}}
 
-\ccMethod {  Mesher_level_conflict_status 
-	private_test_point_conflict(const Point& p, Zone& zone);}
-{ Tells if, as regards this level of the refinement process, the
-  point \ccc{p} with conflict zone \ccc{zone} may be inserted.
-  The return   type is made of two booleans:
-        - the first one tells if the point can be inserted,
-        - in case of, the first one is \c false, the second one tells if
-        the tested element should be reconsidered latter..}
+%\ccMethod {  Mesher_level_conflict_status 
+%	private_test_point_conflict(const Point& p, Zone& zone);}
+%{ Tells if, as regards this level of the refinement process, the
+%  point \ccc{p} with conflict zone \ccc{zone} may be inserted.
+%  The return   type is made of two booleans:
+%        - the first one tells if the point can be inserted,
+%        - in case of, the first one is \ccc{false}, the second one tells if
+%        the tested element should be reconsidered latter..}
  
 
-\ccMethod {
-  Mesher_level_conflict_status
-  test_point_conflict_from_superior(const Point& p,
-				    Zone& zone);}
-{ Tells if, as regards this level of the refinement process, if the
-      point  \ccc{p} with conflict zone \ccc{zone} may be inserted
-The return   type is made of two booleans:
-        - the first one tells if the point can be inserted,
-        - in case of, the first one is \c false, the second one tells if
-        the tested element should be reconsidered latter.
-      This function is called by the superior level, if any.}
+%\ccMethod {
+%  Mesher_level_conflict_status
+%  test_conflict_from_higher(const Point& p,
+%				    Zone& zone);}
+%{ Tells if, as regards this level of the refinement process, the
+%      point  \ccc{p}, 
+% constructed as the refinement point of an element of
+% higher dimension,  may be inserted.  
+%  \ccPrecond{The argument  \ccc{zone} 
+% is the connflict zone of \ccc{p}.}}
+% The return   type is  a 
+% \ccc{Mesher_level_conflict_status}
+% telling if 
+%        - the point can be inserted,
+%        - the point cannot be inserted but the element
+%           that would be refined by this point has to  be reconsidered latter.
+%        -  the point cannot be inserted and  the element
+%           that would be refined by this point has to  be dropped.
 
 
-\ccMethod{ Vertex_handle insert(Point p, Zone& z);}
-        { Insertion of point \ccc{p} as a new vertex.
-	\ccc{z} is assumed to be the precomputed conflict zone of
-	\ccc{p}.}	
+%\ccMethod{ Vertex_handle insert(Point p, Zone& z);}
+%        { Insertion of point \ccc{p} as a new vertex.
+%	\ccc{z} is assumed to be the precomputed conflict zone of
+%	\ccc{p}.}	
 	
 
  
@@ -234,8 +257,13 @@ and \ccc{false} is returned.}
   \ccMethod{template <class Mesh_visitor>
   bool one_step(Mesh_visitor& visitor);}
  {Applies one step of the algorithm, i. e.tries to refine one element of
-   previous level or one element of this level. Returns \c false iff 
+   lower levels or one element of this level. Returns \c false iff 
    \ccc{is_algorithm_done()==true}. }
+
+\ccMethod { bool is_algorithm_done();}
+{Returns \ccc{true} when there is no more elements to refine
+in this mesher level and in all the cascaded previous levels.}
+
 \end{ccAdvanced}
 
 
