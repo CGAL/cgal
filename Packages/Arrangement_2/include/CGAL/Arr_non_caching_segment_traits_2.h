@@ -1,4 +1,4 @@
-// Copyright (c) 1997  Tel-Aviv University (Israel).
+// Copyright (c) 2005  Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -14,9 +14,9 @@
 // $Source$
 // $Revision$
 //
-// Author(s)     : Iddo Hanniel <hanniel@math.tau.ac.il>
-//                 Efi Fogel    <efif@post.tau.ac.il>
+// Author(s)     : Efi Fogel    <efif@post.tau.ac.il>
 //                 Ron Wein     <wein@post.tau.ac.il>
+//                 (base on old version by: Iddo Hanniel)
 
 #ifndef CGAL_ARR_NON_CACHING_SEGMENT_EXACT_TRAITS_H
 #define CGAL_ARR_NON_CACHING_SEGMENT_EXACT_TRAITS_H
@@ -35,15 +35,18 @@
 
 CGAL_BEGIN_NAMESPACE
 
-/*! A model of the ArrangementTraits_2 concept that handles general segments */
+/*! \class 
+ * A model of the ArrangementTraits_2 concept that handles general 
+ * line segments.
+ */
 template <class T_Kernel>
 class Arr_non_caching_segment_traits_2 :
   public Arr_non_caching_segment_basic_traits_2<T_Kernel>
 {
 public:
-  typedef T_Kernel                              Kernel;
+  typedef T_Kernel                                         Kernel;
   
-  typedef Arr_non_caching_segment_basic_traits_2<Kernel>        Base;
+  typedef Arr_non_caching_segment_basic_traits_2<Kernel>   Base;
 
   /*! Default constructor */
   Arr_non_caching_segment_traits_2() : Base() {}
@@ -53,7 +56,6 @@ public:
 
   // Traits types:
   typedef typename Base::Has_left_category      Has_left_category;
-  typedef typename Base::Has_reflect_category   Has_reflect_category;
   
   typedef typename Base::Point_2                Point_2;
   typedef typename Base::X_monotone_curve_2     X_monotone_curve_2;
@@ -79,22 +81,17 @@ public:
   /*! Check if two segments or if two points are identical */
   typedef typename Base::Equal_2                Equal_2;
 
-#if !defined(HAS_LEFT_NOT)
   /*! Compare the y value of two segments immediately to the left of their
    * intersection point
    */
   typedef typename Base::Compare_y_at_x_left_2  Compare_y_at_x_left_2;
-#else
-  /*! Reflects the given point or segment through the origin */
-  typedef typename Base::Reflect_xy_2           Reflect_xy_2;
-#endif
 
   /*! Compare the y value of two segments immediately to the right of their
    * intersection point
    */
   typedef typename Base::Compare_y_at_x_right_2 Compare_y_at_x_right_2;
   
-  ///@}
+  //@}
 
   /// \name Types and functors introduced here (based on the kernel)
   //@{
@@ -105,11 +102,15 @@ public:
   // Traits types:
   typedef X_monotone_curve_2                    Curve_2;
 
-  /*! A functor for splitting curves into x-monotone pieces */
+  /*! \class
+   * A functor for splitting curves into x-monotone pieces.
+   */
   class Make_x_monotone_2
   {
   public:
-    /*! Cut the given segment into x-monotone subcurves and insert them into
+   
+    /*! 
+     * Cut the given segment into x-monotone subcurves and insert them into
      * the given output iterator. As segments are always x_monotone, only one
      * x-monotone curve is inserted into the output iterator.
      * \param cv The segment.
@@ -132,10 +133,13 @@ public:
     return Make_x_monotone_2();
   }
 
-  /*! A functor for splitting a segment into two segements */
+  /*! \class
+   * A functor for splitting a segment into two segements.
+   */
   class Split_2
   {
   public:
+    
     /*!
      * Split a given x-monotone curve at a given point into two sub-curves.
      * \param cv The curve to split
@@ -177,7 +181,9 @@ public:
     return Split_2();
   }
 
-  /*! A functor for computing intersections */
+  /*! \class
+   * A functor for computing intersections. 
+   */
   class Intersect_2
   {
   public:
@@ -234,27 +240,13 @@ public:
     return Intersect_2();
   }
 
-  /*! Return the location of the given point with respect to the two query
-   * points.
-   * \param p - the refernce point.
-   * \param q - first query point
-   * \param r - second query point
-   * \pre p is in the x-range of cv.
-   * \return SMALLER if q is closer to p than r
-   *         LARGER if r is closer to p
-   *         or else (if q and r are in equal distance from p) EQUAL.
+  /*! \class
+   * A functor for testing whether two segments are mergeable.
    */
-  Comparison_result compare_distance(const Point_2 & p,
-                                     const Point_2 & q, const Point_2 & r) const
-  {
-    Base base;
-    return (base.compare_distance_2_object()(p, q, r)); 
-  }
-
-  /*! A functor for testing whether two segments are mergeable */
   class Are_mergeable_2
   {
   public:
+   
     /*!
      * Check whether it is possible to merge two given x-monotone curves.
      * \param cv1 The first curve.
@@ -287,7 +279,9 @@ public:
     return Are_mergeable_2();
   }
 
-  /*! A functor for merging two segments into one */
+  /*! \class
+   * A functor for merging two segments into one.
+   */
   class Merge_2
   {
   public:
@@ -296,8 +290,8 @@ public:
      * \param cv1 The first curve.
      * \param cv2 The second curve.
      * \param c Output: The merged curve.
-     * \pre The two curves are mergeable, that is they are supported by the same
-     *      line and share a common endpoint.
+     * \pre The two curves are mergeable, that is they are supported by the 
+     *      same line and share a common endpoint.
      */
     void operator()(const X_monotone_curve_2 & cv1,
                     const X_monotone_curve_2 & cv2,
@@ -331,8 +325,7 @@ public:
   {
     return Merge_2();
   }
-
-  ///@}
+  //@}
 };
 
 CGAL_END_NAMESPACE

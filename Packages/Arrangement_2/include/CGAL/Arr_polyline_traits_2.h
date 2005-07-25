@@ -818,18 +818,47 @@ public:
   }
   ///@}
   
-  /// \name functors required for the landmark point location
+  /// \name Functor definitions for the landmarks point-location strategy.
+  //@{
+  typedef typename Segment_traits_2::Approximate_number_type  
+                                                      Approximate_number_type;
+  typedef typename Segment_traits_2::Approximate_2    Approximate_2;
 
-  //typedef typename Segment_traits_2::Approximate_number_type
-  //  Approximate_number_type;
-  //typedef typename Segment_traits_2::Approximate_2            Approximate_2;
-  
+
   /*! Get an Approximate_2 functor object. */
-  //Approximate_2 approximate_2_object() const
-  //{
-  //  return Approximate_2();
-  //}
-  ///@}
+  Approximate_2 approximate_2_object () const
+  {
+    return seg_traits.approximate_2_object();
+  }
+
+  class Construct_x_monotone_curve_2
+  {
+  public:
+
+    /*!
+     * Return an x-monotone curve connecting the two given endpoints.
+     * \param p The first point.
+     * \param q The second point.
+     * \pre p and q must not be the same.
+     * \return A segment connecting p and q.
+     */
+    X_monotone_curve_2 operator() (const Point_2& p,
+                                   const Point_2& q) const
+    {
+      // Construct a polyline containing just two points:
+      Point_2   pts[2];
+
+      pts[0] = p; pts[1] = q;
+      return (X_monotone_curve_2 (pts + 0, pts + 2));
+    }
+  };
+
+  /*! Get a Construct_x_monotone_curve_2 functor object. */
+  Construct_x_monotone_curve_2 construct_x_monotone_curve_2_object () const
+  {
+    return Construct_x_monotone_curve_2();
+  }
+  //@}
 
 private:
   /*!

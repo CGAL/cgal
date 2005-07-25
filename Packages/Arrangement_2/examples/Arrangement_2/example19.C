@@ -5,7 +5,6 @@
 #include <CGAL/MP_Float.h>
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arrangement_2.h>
-#include <CGAL/Arr_naive_point_location.h>
 #include <CGAL/Arr_observer.h>
 
 typedef CGAL::Quotient<CGAL::MP_Float>                Number_type;
@@ -14,7 +13,6 @@ typedef CGAL::Arr_segment_traits_2<Kernel>            Traits_2;
 typedef Traits_2::Point_2                             Point_2;
 typedef Traits_2::X_monotone_curve_2                  Segment_2;
 typedef CGAL::Arrangement_2<Traits_2>                 Arrangement_2;
-typedef CGAL::Arr_naive_point_location<Arrangement_2> Point_location;
 
 // An arrangement observer, used to receive notifications of face splits and
 // face mergers.
@@ -48,27 +46,26 @@ int main ()
   // Construct the arrangement containing one diamond-shaped face.
   Arrangement_2  arr;
   My_observer    obs (arr);
-  Point_location pl (arr);
 
   Segment_2      s1 (Point_2(-1, 0), Point_2(0, 1));
   Segment_2      s2 (Point_2(0, 1), Point_2(1, 0));
   Segment_2      s3 (Point_2(1, 0), Point_2(0, -1));
   Segment_2      s4 (Point_2(0, -1), Point_2(-1, 0));
 
-  insert_non_intersecting (arr, s1, pl);
-  insert_non_intersecting (arr, s2, pl);
-  insert_non_intersecting (arr, s3, pl);
-  insert_non_intersecting (arr, s4, pl);
+  insert_non_intersecting (arr, s1);
+  insert_non_intersecting (arr, s2);
+  insert_non_intersecting (arr, s3);
+  insert_non_intersecting (arr, s4);
 
   // Insert a vertical segment dividing the diamond into two, and a
   // a horizontal segment dividing the diamond into four:
   Segment_2      s_vert (Point_2(0, -1), Point_2(0, 1));
   Arrangement_2::Halfedge_handle
-                 e_vert = insert_non_intersecting (arr, s_vert, pl);
+                 e_vert = insert_non_intersecting (arr, s_vert);
 
   Segment_2      s_horiz (Point_2(-1, 0), Point_2(1, 0));
 
-  insert (arr, s_horiz, pl);
+  insert (arr, s_horiz);
 
   std::cout << "V = " << arr.number_of_vertices()
             << ",  E = " << arr.number_of_edges() 
@@ -83,4 +80,3 @@ int main ()
 
   return (0);
 }
-
