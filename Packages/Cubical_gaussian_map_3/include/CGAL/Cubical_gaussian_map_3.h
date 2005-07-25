@@ -861,7 +861,7 @@ protected:
             proj_normal1.set_vertex(vertex, i);
             // Adjacent face:
             unsigned int adj_id =
-              face_mask_2_face_index(faces_mask1 & !get_mask(id));
+              face_mask_2_face_index(faces_mask1 & ~get_mask(id));
             void * tmp = vertex->get_adjacent_vertex();
             Arr_vertex_handle adj_vertex = *((Arr_vertex_handle *) (&tmp));
             proj_normal1.set_vertex(adj_vertex, adj_id % 3);
@@ -900,7 +900,7 @@ protected:
             proj_normal2.set_vertex(vertex, i);
             // Adjacent face:
             unsigned int adj_id =
-              face_mask_2_face_index(faces_mask2 & !get_mask(id));
+              face_mask_2_face_index(faces_mask2 & ~get_mask(id));
             void * tmp = vertex->get_adjacent_vertex();
             Arr_vertex_handle adj_vertex = *((Arr_vertex_handle *) (&tmp));
             proj_normal2.set_vertex(adj_vertex, adj_id % 3);
