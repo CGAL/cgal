@@ -1684,29 +1684,20 @@ compute_vertex_map(const Vertex_handle& v, const Self& small,
       vmap[vh_small] = vh_large;
     } else { 
       Site_2 t = vc->site();
+      CGAL_assertion( t.is_input() );
       if ( t.is_segment() ) {
-	//***************************************************
-	//***************************************************
-	//***************************************************
-	//***************************************************
-	// this is very unstable and numerically wrong
-	//***************************************************
-	//***************************************************
-	//***************************************************
-	//***************************************************
-	vh_small = small.nearest_neighbor( midpoint(t.segment()) );
+	Vertex_handle vv = small.nearest_neighbor( t.source() );
+	Vertex_circulator vvc_start = small.incident_vertices(vv);
+	Vertex_circulator vvc = vvc_start;
+	do {
+	  if ( small.same_segments(t, vvc) ) {
+	    vh_small = vvc;
+	    break;
+	  }
+	} while ( ++vvc != vvc_start );
+	CGAL_assertion( small.same_segments(t, vh_small) );
       } else {
-	//***************************************************
-	//***************************************************
-	//***************************************************
-	//***************************************************
-	// I need to make sure that nearest_neighbor works
-	// for points of intersection
-	//***************************************************
-	//***************************************************
-	//***************************************************
-	//***************************************************
-	vh_small = small.nearest_neighbor(t, Vertex_handle());
+	vh_small = small.nearest_neighbor( t.point() );
       }
       CGAL_assertion( vh_small != Vertex_handle() );
       vmap[vh_small] = vh_large;

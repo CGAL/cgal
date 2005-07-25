@@ -554,11 +554,6 @@ public:
   // REMOVAL METHODS
   //----------------
 protected:
-  Point_2 midpoint(const typename Geom_traits::Segment_2& seg) const {
-    return Point_2((seg.source().x() + seg.target().x()) / 2,
-		   (seg.source().y() + seg.target().y()) / 2);
-  }
-
   bool is_star(const Vertex_handle& v) const;
   bool is_linear_chain(const Vertex_handle& v0, const Vertex_handle& v1,
 		       const Vertex_handle& v2) const;

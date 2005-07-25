@@ -1,3 +1,6 @@
+25 July 2005:  Menelaos Karavelas
+- fixed numerical bug in computation of vertex map (removal procedure)
+
 22 July 2005:  Menelaos Karavelas
 - in Simple_container_wrapper: changed return type of find method from
   iterator to const_iterator
