@@ -28,7 +28,7 @@ public:
     : Vb(p, c) {}
 
 protected:
-  std::set<Vertex_handle> form_constraint_with_vertices;
+  int surface_number;
 
 public:
   bool is_adjacent_by_constraint(const Vertex_handle v)

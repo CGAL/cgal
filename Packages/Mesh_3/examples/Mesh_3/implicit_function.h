@@ -15,11 +15,13 @@
 #define _IMPLICIT_FUNCTION_H
 
 #include <CGAL/basic.h>
-
+#include "Isosurface.h"
 #include <map>
 
 // type "pointer to implicit function"
 typedef int (*Implicit_function) (double, double, double);
+
+extern CGAL::Inrimage_isosurface* isosurface;
 
 int sphere_function(double, double, double);
 

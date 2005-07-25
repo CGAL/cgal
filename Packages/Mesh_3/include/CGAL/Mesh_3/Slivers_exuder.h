@@ -448,7 +448,7 @@ public: // methods
 	  const double r = radius_ratio(tr.tetrahedron(*cit));
 	  ratios[f] = r;
 	  if( r < worst_radius_ratio ) worst_radius_ratio = r;
-	  const Facet opposite_facet = compute_opposite_facet(f);
+	  const Facet opposite_facet = tr.mirror_facet(f);
 	  pre_star.insert(f, compute_critical_radius(v,
 						     opposite_facet.first));
 	}
@@ -491,7 +491,7 @@ public: // methods
 	CGAL_assertion( ! link.first->
 			is_facet_on_surface(link.second) );
  
-        Facet opposite_facet = compute_opposite_facet(link);
+        Facet opposite_facet = tr.mirror_facet(link);
         const Cell_handle& opposite_cell = opposite_facet.first;
         const int& opposite_index = opposite_facet.second;
         
@@ -513,7 +513,7 @@ public: // methods
 	    );
 
             const Facet new_facet = Facet(opposite_cell, i);
-	    const Facet temp_facet = compute_opposite_facet(new_facet);
+	    const Facet temp_facet = tr.mirror_facet(new_facet);
             if(!pre_star.erase(temp_facet))
 	      {
 		// in this case temp_facet is a new link facet
@@ -631,7 +631,7 @@ public: // methods
       
 
       const Facet one_boundary_facet_from_outside =
-	compute_opposite_facet(one_boundary_facet);
+	tr.mirror_facet(one_boundary_facet);
       // Here, one_boundary_facet_from_outside is a facet on the
       // boundary of the conflicts zone, seen from outside the
       // conflicts zone.
@@ -685,7 +685,7 @@ public: // methods
 //                   boundary_facets_of_conflicts_zone.end()
 //                   // (*cit,i) is not on the boundary of the zone
 //                 &&
-// 		deja_vu_cells.find(compute_opposite_facet(Facet(*cit, i))) ==
+// 		deja_vu_cells.find(tr.mirror_facet(Facet(*cit, i))) ==
 // 		  deja_vu_cells.end() )
 // 	      {
 // 		deja_vu_cells.insert(Facet(*cit, i));
@@ -730,7 +730,7 @@ public: // methods
 // 	{ // ** re-marks facets on the boundary of the star **
 // 	  const int index = (*cit)->index(new_vertex);
 // 	  const Facet f = Facet(*cit, index);
-// 	  const Facet opposite_facet = compute_opposite_facet(f);
+// 	  const Facet opposite_facet = tr.mirror_facet(f);
 // 	  bool marker = 
 // 	    opposite_facet.first->is_facet_on_surface(opposite_facet.second);
 // 	  (*cit)->set_surface_facet(index, marker);
@@ -747,7 +747,7 @@ public: // methods
 	(*cit)->set_in_conflict_flag(0);
 
       walk_on_the_boundary_of_the_star(
-        compute_opposite_facet(one_boundary_facet_from_outside),
+        tr.mirror_facet(one_boundary_facet_from_outside),
 	seed_domain_marker,
 	umbrella,
 	new_vertex);
@@ -797,7 +797,7 @@ public: // methods
       if (i == index) {
 	// ** re-marks facets on the boundary of the star **
 	const Facet f = Facet(c, i);
-	const Facet opposite_facet = compute_opposite_facet(f);
+	const Facet opposite_facet = tr.mirror_facet(f);
 	bool marker = 
 	  opposite_facet.first->is_facet_on_surface(opposite_facet.second);
 	c->set_surface_facet(i, marker);
@@ -922,13 +922,6 @@ private: // methods
     return result;
   }
 
-  static Facet compute_opposite_facet(Facet f)
-  {
-    const Cell_handle& neighbor_cell = f.first->neighbor(f.second);
-    const int opposite_index = neighbor_cell->index(f.first);
-    return Facet(neighbor_cell, opposite_index);
-  }
-
 //   void restore_markers_around(Vertex_handle v)
 //   {
 //     std::vector<Cell_handle> incident_cells;
@@ -945,7 +938,7 @@ private: // methods
 //       {	
 // 	const int index = (*cit)->index(v);
 // 	const Facet f = Facet(*cit, index);
-// 	const Facet opposite_facet = compute_opposite_facet(f);
+// 	const Facet opposite_facet = tr.mirror_facet(f);
 // 	bool marker = 
 // 	  opposite_facet.first->is_facet_on_surface(opposite_facet.second);
 // 	(*cit)->set_surface_facet(index, marker);

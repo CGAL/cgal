@@ -252,7 +252,7 @@ private:
 
 template <typename Tr,
           typename Criteria,
-          typename Oracle,
+          typename Oracle, // BEURK
           typename Base = 
             Refine_tets_with_oracle_base<Tr, Criteria, Oracle>,
           typename Facets_level = Refine_facets<Tr>

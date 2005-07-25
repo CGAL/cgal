@@ -12,7 +12,7 @@ class Inrimage_isosurface
   float max_x, max_y, max_z;
 
 public:
-  Inrimage_isosurface(char* file, float isoval=0)
+  Inrimage_isosurface(const char* file, float isoval=0)
   {
     image = ::_readImage(file);
     ::convertImageTypeToFloat(image);

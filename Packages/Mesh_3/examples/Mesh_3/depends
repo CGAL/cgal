@@ -1,44 +1,8 @@
 
 
 essai.o: \
-  ../../../Triangulation_3/include/CGAL/Regular_triangulation_3.h \
-  ../../../Triangulation_3/include/CGAL/Triangulation_short_names_3.h \
-  ../../../Triangulation_3/include/CGAL/Triangulation_3.h \
-  ../../../Triangulation_2/include/CGAL/triangulation_assertions.h \
-  ../../../Triangulation_3/include/CGAL/Triangulation_utils_3.h \
-  ../../../Triangulation_2/include/CGAL/Triangulation_utils_2.h \
-  ../../../Triangulation_3/include/CGAL/Triangulation_data_structure_3.h \
-  ../../../Triangulation_3/include/CGAL/Triangulation_ds_cell_base_3.h \
-  ../../../Triangulation_3/include/CGAL/Dummy_tds_3.h \
-  ../../../Triangulation_3/include/CGAL/Triangulation_ds_vertex_base_3.h \
-  ../../../Triangulation_3/include/CGAL/Triangulation_ds_iterators_3.h \
-  ../../../Triangulation_3/include/CGAL/Triangulation_ds_circulators_3.h \
-  ../../../Triangulation_3/include/CGAL/Triangulation_cell_base_3.h \
-  ../../../Triangulation_3/include/CGAL/Triangulation_vertex_base_3.h \
-  ../../../Triangulation_3/include/CGAL/Regular_triangulation_cell_base_3.h \
-  ../../../Triangulation_3/include/CGAL/Regular_triangulation_euclidean_traits_3.h \
-  ../../../Triangulation_2/include/CGAL/Weighted_point.h \
-  ../../../Triangulation_3/include/CGAL/predicates/Regular_triangulation_ftC3.h \
-  ../../../Triangulation_3/include/CGAL/predicates/Regular_triangulation_rtH3.h \
-  ../../../Triangulation_3/include/CGAL/predicates/predicates_on_weighted_points_cartesian_3.h \
-  ../../../Triangulation_3/include/CGAL/constructions/constructions_on_weighted_points_cartesian_3.h \
-  ../../../Triangulation_3/include/CGAL/Regular_triangulation_filtered_traits_3.h \
   ../../include/CGAL/Constrained_regular_triangulation_3.h \
-  ../../../Triangulation_2/include/CGAL/Constraint_hierarchy_2.h \
-  ../../../Mesh_2/include/CGAL/Delaunay_mesher_2.h \
-  ../../../Mesh_2/include/CGAL/Mesh_2/Refine_edges_with_clusters.h \
-  ../../../Mesh_2/include/CGAL/Mesh_2/Refine_edges.h \
-  ../../../Mesh_2/include/CGAL/Mesher_level.h \
-  ../../../Mesh_2/include/CGAL/Mesher_level_visitors.h \
-  ../../../Mesh_2/include/CGAL/Mesher_level_default_implementations.h \
-  ../../../Mesh_2/include/CGAL/Mesh_2/Triangulation_mesher_level_traits_2.h \
-  ../../../Mesh_2/include/CGAL/Mesh_2/Filtered_queue_container.h \
-  ../../../Mesh_2/include/CGAL/Mesh_2/Clusters.h \
-  ../../../Mesh_2/include/CGAL/Filter_circulator.h \
-  ../../../Mesh_2/include/CGAL/Mesh_2/Refine_edges_visitor.h \
-  ../../../Mesh_2/include/CGAL/Mesh_2/Refine_faces.h \
-  ../../../Mesh_2/include/CGAL/Mesh_2/Face_badness.h \
-  ../../../Mesh_2/include/CGAL/Double_map.h \
+  ../../../Surface_mesher/include/CGAL/Double_map.h \
   ../../include/CGAL/Constrained_triangulation_vertex_base_3.h \
   ../../include/CGAL/Constrained_triangulation_cell_base_3.h \
   ../../include/CGAL/Triangulation_mesher_3.h \
@@ -48,24 +12,7 @@ essai.o: \
   ../../include/CGAL/Mesh_3/Refine_facets.h \
   ../../../Surface_mesher/include/CGAL/Complex_2_in_triangulation_3.h \
   ../../include/CGAL/Mesh_3/Simple_set_container.h \
-  ../../../Triangulation_2/include/CGAL/Triangulation_2_traits_3.h \
-  ../../../Triangulation_2/include/CGAL/Constrained_Delaunay_triangulation_2.h \
-  ../../../Triangulation_2/include/CGAL/Triangulation_short_names_2.h \
-  ../../../Triangulation_2/include/CGAL/Constrained_triangulation_2.h \
-  ../../../Triangulation_2/include/CGAL/Triangulation_2.h \
-  ../../../Triangulation_2/include/CGAL/Triangulation_data_structure_2.h \
-  ../../../Triangulation_2/include/CGAL/Triangulation_ds_face_base_2.h \
-  ../../../Triangulation_2/include/CGAL/Dummy_tds_2.h \
-  ../../../Triangulation_2/include/CGAL/Triangulation_ds_vertex_base_2.h \
-  ../../../Triangulation_2/include/CGAL/Triangulation_ds_iterators_2.h \
-  ../../../Triangulation_2/include/CGAL/Triangulation_ds_circulators_2.h \
-  ../../../Triangulation_2/include/CGAL/Triangulation_vertex_base_2.h \
-  ../../../Triangulation_2/include/CGAL/Triangulation_face_base_2.h \
-  ../../../Triangulation_2/include/CGAL/Triangulation_line_face_circulator_2.h \
-  ../../../Triangulation_2/include/CGAL/Constrained_triangulation_face_base_2.h \
-  ../../../Triangulation_2/include/CGAL/Constrained_triangulation_plus_2.h \
   ../../include/CGAL/Conforming_Delaunay_triangulation_2_traits_3.h \
-  ../../../Mesh_2/include/CGAL/Delaunay_mesh_face_base_2.h
 
 
 implicit_function.o: \
@@ -73,42 +20,16 @@ implicit_function.o: \
 
 implicit_surfaces_mesher_3.o: \
   ../../../Surface_mesher/include/CGAL/Complex_2_in_triangulation_vertex_base_3.h \
-  ../../../Triangulation_3/include/CGAL/Triangulation_vertex_base_3.h \
-  ../../../Triangulation_3/include/CGAL/Triangulation_short_names_3.h \
-  ../../../Triangulation_3/include/CGAL/Triangulation_ds_vertex_base_3.h \
-  ../../../Triangulation_3/include/CGAL/Dummy_tds_3.h \
   ../../../Surface_mesher/include/CGAL/Node.h /usr/include/c++/3.3/list \
   ../../../Surface_mesher/include/CGAL/Graph.h \
   ../../../Surface_mesher/include/CGAL/Complex_2_in_triangulation_surface_mesh_cell_base_3.h \
   ../../../Surface_mesher/include/CGAL/Complex_2_in_triangulation_cell_base_3.h \
-  ../../../Triangulation_3/include/CGAL/Triangulation_ds_cell_base_3.h \
-  ../../../Triangulation_2/include/CGAL/triangulation_assertions.h \
   ../../include/CGAL/Mesh_3/Complex_2_in_triangulation_cell_base_3.h \
-  ../../../Triangulation_3/include/CGAL/Regular_triangulation_3.h \
-  ../../../Triangulation_3/include/CGAL/Triangulation_3.h \
-  ../../../Triangulation_3/include/CGAL/Triangulation_utils_3.h \
-  ../../../Triangulation_2/include/CGAL/Triangulation_utils_2.h \
-  ../../../Triangulation_3/include/CGAL/Triangulation_data_structure_3.h \
-  ../../../Triangulation_3/include/CGAL/Triangulation_ds_iterators_3.h \
-  ../../../Triangulation_3/include/CGAL/Triangulation_ds_circulators_3.h \
-  ../../../Triangulation_3/include/CGAL/Triangulation_cell_base_3.h \
-  ../../../Triangulation_3/include/CGAL/Regular_triangulation_cell_base_3.h \
-  ../../../Triangulation_3/include/CGAL/Regular_triangulation_euclidean_traits_3.h \
-  ../../../Triangulation_2/include/CGAL/Weighted_point.h \
-  ../../../Triangulation_3/include/CGAL/predicates/Regular_triangulation_ftC3.h \
-  ../../../Triangulation_3/include/CGAL/predicates/Regular_triangulation_rtH3.h \
-  ../../../Triangulation_3/include/CGAL/predicates/predicates_on_weighted_points_cartesian_3.h \
-  ../../../Triangulation_3/include/CGAL/constructions/constructions_on_weighted_points_cartesian_3.h \
-  ../../../Triangulation_3/include/CGAL/Regular_triangulation_filtered_traits_3.h \
-  ../../../Triangulation_3/include/CGAL/Triangulation_vertex_base_with_info_3.h \
   ../../include/CGAL/Implicit_surfaces_mesher_3.h \
   ../../include/CGAL/Mesh_3/Refine_tets.h \
-  ../../../Mesh_2/include/CGAL/Mesher_level.h \
-  ../../../Mesh_2/include/CGAL/Mesher_level_visitors.h \
-  ../../../Mesh_2/include/CGAL/Mesher_level_default_implementations.h \
   ../../include/CGAL/Mesh_3/Triangulation_mesher_level_traits_3.h \
   ../../include/CGAL/Mesh_3/Double_map_container.h \
-  ../../../Mesh_2/include/CGAL/Double_map.h \
+  ../../../Surface_mesher/include/CGAL/Double_map.h \
   ../../../Surface_mesher/include/CGAL/Surface_mesher/Surface_mesher_manifold.h \
   ../../../Surface_mesher/include/CGAL/Complex_2_in_triangulation_3.h \
   ../../../Surface_mesher/include/CGAL/Complex_2_in_triangulation_3_surface_mesh.h \
@@ -123,44 +44,19 @@ implicit_surfaces_mesher_3.o: \
   ../../../Surface_mesher/include/CGAL/IO/Complex_2_in_triangulation_3_file_writer.h \
   ../../include/CGAL/IO/File_medit.h \
   ../../../Surface_mesher/include/CGAL/Surface_mesher/Oracles/Implicit_oracle.h \
-  ../../include/CGAL/Mesh_criteria_3.h implicit_function.h parameters.h \
+  ../../include/CGAL/Point_traits.h ../../include/CGAL/Mesh_criteria_3.h \
+  ../../../Surface_mesher/include/CGAL/Point_with_surface_index.h \
 
 
 isosurface_mesher.o: \
   ../../../Surface_mesher/include/CGAL/Complex_2_in_triangulation_surface_mesh_cell_base_3.h \
   ../../../Surface_mesher/include/CGAL/Complex_2_in_triangulation_cell_base_3.h \
-  ../../../Triangulation_3/include/CGAL/Triangulation_ds_cell_base_3.h \
-  ../../../Triangulation_2/include/CGAL/triangulation_assertions.h \
-  ../../../Triangulation_3/include/CGAL/Triangulation_short_names_3.h \
-  ../../../Triangulation_3/include/CGAL/Dummy_tds_3.h \
   ../../include/CGAL/Mesh_3/Complex_2_in_triangulation_cell_base_3.h \
-  ../../../Triangulation_3/include/CGAL/Delaunay_triangulation_3.h \
-  ../../../Triangulation_3/include/CGAL/Triangulation_3.h \
-  ../../../Triangulation_3/include/CGAL/Triangulation_utils_3.h \
-  ../../../Triangulation_2/include/CGAL/Triangulation_utils_2.h \
-  ../../../Triangulation_3/include/CGAL/Triangulation_data_structure_3.h \
-  ../../../Triangulation_3/include/CGAL/Triangulation_ds_vertex_base_3.h \
-  ../../../Triangulation_3/include/CGAL/Triangulation_ds_iterators_3.h \
-  ../../../Triangulation_3/include/CGAL/Triangulation_ds_circulators_3.h \
-  ../../../Triangulation_3/include/CGAL/Triangulation_cell_base_3.h \
-  ../../../Triangulation_3/include/CGAL/Triangulation_vertex_base_3.h \
-  ../../../Triangulation_3/include/CGAL/Delaunay_remove_tds_3.h \
-  ../../../Triangulation_2/include/CGAL/Triangulation_ds_face_base_2.h \
-  ../../../Triangulation_2/include/CGAL/Triangulation_short_names_2.h \
-  ../../../Triangulation_2/include/CGAL/Dummy_tds_2.h \
-  ../../../Triangulation_2/include/CGAL/Triangulation_ds_vertex_base_2.h \
-  ../../../Triangulation_2/include/CGAL/Triangulation_data_structure_2.h \
-  ../../../Triangulation_2/include/CGAL/Triangulation_ds_iterators_2.h \
-  ../../../Triangulation_2/include/CGAL/Triangulation_ds_circulators_2.h \
-  ../../../Triangulation_3/include/CGAL/Triangulation_vertex_base_with_info_3.h \
   ../../include/CGAL/Implicit_surfaces_mesher_3.h \
   ../../include/CGAL/Mesh_3/Refine_tets.h \
-  ../../../Mesh_2/include/CGAL/Mesher_level.h \
-  ../../../Mesh_2/include/CGAL/Mesher_level_visitors.h \
-  ../../../Mesh_2/include/CGAL/Mesher_level_default_implementations.h \
   ../../include/CGAL/Mesh_3/Triangulation_mesher_level_traits_3.h \
   ../../include/CGAL/Mesh_3/Double_map_container.h \
-  ../../../Mesh_2/include/CGAL/Double_map.h \
+  ../../../Surface_mesher/include/CGAL/Double_map.h \
   ../../../Surface_mesher/include/CGAL/Surface_mesher/Surface_mesher_manifold.h \
   ../../../Surface_mesher/include/CGAL/Complex_2_in_triangulation_3.h \
   ../../../Surface_mesher/include/CGAL/Complex_2_in_triangulation_3_surface_mesh.h \
@@ -175,6 +71,7 @@ isosurface_mesher.o: \
   ../../../Surface_mesher/include/CGAL/IO/Complex_2_in_triangulation_3_file_writer.h \
   ../../include/CGAL/IO/File_medit.h \
   ../../../Surface_mesher/include/CGAL/Surface_mesher/Oracles/Implicit_oracle.h \
+  ../../include/CGAL/Point_traits.h \
   ../../include/CGAL/Mesh_criteria_3.h debug.h Isosurface.h \
 
 
@@ -184,47 +81,12 @@ parameters.o: \
 polyhedral_surface_mesher.o: \
   ../../../Surface_mesher/include/CGAL/Complex_2_in_triangulation_surface_mesh_cell_base_3.h \
   ../../../Surface_mesher/include/CGAL/Complex_2_in_triangulation_cell_base_3.h \
-  ../../../Triangulation_3/include/CGAL/Triangulation_ds_cell_base_3.h \
-  ../../../Triangulation_2/include/CGAL/triangulation_assertions.h \
-  ../../../Triangulation_3/include/CGAL/Triangulation_short_names_3.h \
-  ../../../Triangulation_3/include/CGAL/Dummy_tds_3.h \
   ../../include/CGAL/Mesh_3/Complex_2_in_triangulation_cell_base_3.h \
-  ../../../Triangulation_3/include/CGAL/Regular_triangulation_3.h \
-  ../../../Triangulation_3/include/CGAL/Triangulation_3.h \
-  ../../../Triangulation_3/include/CGAL/Triangulation_utils_3.h \
-  ../../../Triangulation_2/include/CGAL/Triangulation_utils_2.h \
-  ../../../Triangulation_3/include/CGAL/Triangulation_data_structure_3.h \
-  ../../../Triangulation_3/include/CGAL/Triangulation_ds_vertex_base_3.h \
-  ../../../Triangulation_3/include/CGAL/Triangulation_ds_iterators_3.h \
-  ../../../Triangulation_3/include/CGAL/Triangulation_ds_circulators_3.h \
-  ../../../Triangulation_3/include/CGAL/Triangulation_cell_base_3.h \
-  ../../../Triangulation_3/include/CGAL/Triangulation_vertex_base_3.h \
-  ../../../Triangulation_3/include/CGAL/Regular_triangulation_cell_base_3.h \
-  ../../../Triangulation_3/include/CGAL/Delaunay_triangulation_3.h \
-  ../../../Triangulation_3/include/CGAL/Delaunay_remove_tds_3.h \
-  ../../../Triangulation_2/include/CGAL/Triangulation_ds_face_base_2.h \
-  ../../../Triangulation_2/include/CGAL/Triangulation_short_names_2.h \
-  ../../../Triangulation_2/include/CGAL/Dummy_tds_2.h \
-  ../../../Triangulation_2/include/CGAL/Triangulation_ds_vertex_base_2.h \
-  ../../../Triangulation_2/include/CGAL/Triangulation_data_structure_2.h \
-  ../../../Triangulation_2/include/CGAL/Triangulation_ds_iterators_2.h \
-  ../../../Triangulation_2/include/CGAL/Triangulation_ds_circulators_2.h \
-  ../../../Triangulation_3/include/CGAL/Regular_triangulation_euclidean_traits_3.h \
-  ../../../Triangulation_2/include/CGAL/Weighted_point.h \
-  ../../../Triangulation_3/include/CGAL/predicates/Regular_triangulation_ftC3.h \
-  ../../../Triangulation_3/include/CGAL/predicates/Regular_triangulation_rtH3.h \
-  ../../../Triangulation_3/include/CGAL/predicates/predicates_on_weighted_points_cartesian_3.h \
-  ../../../Triangulation_3/include/CGAL/constructions/constructions_on_weighted_points_cartesian_3.h \
-  ../../../Triangulation_3/include/CGAL/Regular_triangulation_filtered_traits_3.h \
-  ../../../Triangulation_3/include/CGAL/Triangulation_vertex_base_with_info_3.h \
   ../../include/CGAL/Implicit_surfaces_mesher_3.h \
   ../../include/CGAL/Mesh_3/Refine_tets.h \
-  ../../../Mesh_2/include/CGAL/Mesher_level.h \
-  ../../../Mesh_2/include/CGAL/Mesher_level_visitors.h \
-  ../../../Mesh_2/include/CGAL/Mesher_level_default_implementations.h \
   ../../include/CGAL/Mesh_3/Triangulation_mesher_level_traits_3.h \
   ../../include/CGAL/Mesh_3/Double_map_container.h \
-  ../../../Mesh_2/include/CGAL/Double_map.h \
+  ../../../Surface_mesher/include/CGAL/Double_map.h \
   ../../../Surface_mesher/include/CGAL/Surface_mesher/Surface_mesher_manifold.h \
   ../../../Surface_mesher/include/CGAL/Complex_2_in_triangulation_3.h \
   ../../../Surface_mesher/include/CGAL/Complex_2_in_triangulation_3_surface_mesh.h \

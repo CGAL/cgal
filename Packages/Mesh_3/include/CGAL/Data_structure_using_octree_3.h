@@ -57,23 +57,23 @@
 //dans les tableau indice 1 = indice du cube , indice 2 = direction
 //Pierre utilise des char au lieu de int --> pourquoi ??
 static const unsigned int PSI[8][6] = {{4,4,2,2,1,1},
-5,5,3,3,0,0,
-6,6,0,0,3,3,
-7,7,1,1,2,2,
-0,0,6,6,5,5,
-1,1,7,7,4,4,
-2,2,4,4,7,7,
-3,3,5,5,6,6};
+				       {5,5,3,3,0,0},
+				       {6,6,0,0,3,3},
+				       {7,7,1,1,2,2},
+				       {0,0,6,6,5,5},
+				       {1,1,7,7,4,4},
+				       {2,2,4,4,7,7},
+				       {3,3,5,5,6,6}};
 
 // F B U D L R
-static const bool NU[8][6] = {false, true,  false, true,  false, true,
-false, true,  false, true,  true,  false,
-false, true,  true,  false, false, true,
-false, true,  true,  false, true,  false,
-true,  false, false, true,  false, true,
-true,  false, false, true,  true,  false,
-true,  false, true,  false, false, true,
-true,  false, true,  false, true,  false};
+static const bool NU[8][6] = {{false, true,  false, true,  false, true },
+			      {false, true,  false, true,  true,  false},
+			      {false, true,  true,  false, false, true },
+			      {false, true,  true,  false, true,  false},
+			      {true,  false, false, true,  false, true },
+			      {true,  false, false, true,  true,  false},
+			      {true,  false, true,  false, false, true },
+			      {true,  false, true,  false, true,  false}};
 
 
 CGAL_BEGIN_NAMESPACE
@@ -326,19 +326,19 @@ Data_structure_using_octree_3 <Gt> ::visited( Segment  s)
 
   typename Geom_traits::Equal_3 equal_3 =  gt.equal_3_object();
 
-  if (se.empty())
+  if (ls.empty())
     return false;
   else {
 
     typename std::list<Segment>::iterator 
-      seit  = se.begin(),
-      seend = se.end();
+      lsit  = ls.begin(),
+      lsend = ls.end();
 
-    while ( seit != seend ){
-      if (equal(s,(*seit)))
+    while ( lsit != lsend ){
+      if (equal(s,(*lsit)))
         return true;
 
-      seit++; 
+      lsit++; 
     }
 
     return false;

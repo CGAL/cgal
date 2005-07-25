@@ -26,5 +26,6 @@ void init_parameters()
   double_options["number_of_pump"] = 1;
   double_options["pumping_bound"] = 0.45;
   double_options["sliver_test"] = 0.15;
+  double_options["iso_value"] = 0.;
   bipolar_oracle = true;
 }

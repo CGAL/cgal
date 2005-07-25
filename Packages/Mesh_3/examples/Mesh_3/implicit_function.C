@@ -12,7 +12,6 @@
 
 #include <cmath>
 #include "implicit_function.h"
-#include "Isosurface.h"
 
 ///////////////// Definitions of several famous surfaces /////////////////
 int sphere_function (double, double, double);  // (c=(0,0,0), r=1)
@@ -29,6 +28,15 @@ int knot1_function (double, double, double);  // (c=(0,0,0), r=4)
 int knot2_function (double, double, double);  // (c=(0,0,0), r=4)
 int knot3_function (double, double, double);  // (c=(0,0,0), r=4)
 int peanut_function (double, double, double);  // (c=(0,0,0), r=2)
+
+CGAL::Inrimage_isosurface* isosurface = 0;
+
+int generic_inrimage_function(double x, double y, double z)
+{
+  CGAL_assertion(isosurface != 0);
+
+  return (*isosurface)(x, y, z);
+}
 
 int ventricules_0_function(double x, double y, double z)
 {
@@ -482,6 +490,7 @@ Implicit_function_map functions;
 
 void init_functions()
 {
+  functions["generic_inrimage"] = &generic_inrimage_function;
   functions["chair"] = &chair_function;
   functions["ellipsoid"] = &ellipsoid_function;
   functions["false_knot"] = &false_knot_function;

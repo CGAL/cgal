@@ -19,6 +19,9 @@
 
 #include <CGAL/Mesh_criteria_3.h>
 
+#include <CGAL/Point_traits.h>
+#include <CGAL/Point_with_surface_index.h>
+
 #include "implicit_function.h"
 #include "parameters.h"
 
@@ -41,20 +44,21 @@
 
 struct K : public CGAL::Exact_predicates_inexact_constructions_kernel {};
 typedef CGAL::Regular_triangulation_euclidean_traits_3<K> Regular_traits;
-typedef CGAL::Triangulation_vertex_base_with_info_3<bool, Regular_traits> Vb1;
-typedef CGAL::Complex_2_in_triangulation_vertex_base_3<Regular_traits, Vb1> Vb;
-typedef CGAL::Regular_triangulation_cell_base_3<Regular_traits> Cb1;
-typedef CGAL::Complex_2_in_triangulation_cell_base_3<Regular_traits, Cb1> Cb2;
-typedef CGAL::Complex_2_in_triangulation_surface_mesh_cell_base_3<Regular_traits, Cb2> Cb3;
-typedef CGAL::Mesh_3::Complex_2_in_triangulation_cell_base_3<Regular_traits, Cb3> Cb;
+typedef CGAL::Point_with_surface_index_geom_traits<Regular_traits> My_traits;
+typedef CGAL::Triangulation_vertex_base_with_info_3<bool, My_traits> Vb1;
+typedef CGAL::Complex_2_in_triangulation_vertex_base_3<My_traits, Vb1> Vb;
+typedef CGAL::Regular_triangulation_cell_base_3<My_traits> Cb1;
+typedef CGAL::Complex_2_in_triangulation_cell_base_3<My_traits, Cb1> Cb2;
+typedef CGAL::Complex_2_in_triangulation_surface_mesh_cell_base_3<My_traits, Cb2> Cb3;
+typedef CGAL::Mesh_3::Complex_2_in_triangulation_cell_base_3<My_traits, Cb3> Cb;
 typedef CGAL::Triangulation_data_structure_3<Vb, Cb> Tds;
-typedef CGAL::Regular_triangulation_3<Regular_traits, Tds> Del;
+typedef CGAL::Regular_triangulation_3<My_traits, Tds> Tr;
 typedef Function <K::FT> Func;
-typedef CGAL::Surface_mesher::Implicit_oracle<Regular_traits, Func> Impl_oracle;
-typedef CGAL::Surface_mesher::Refine_criterion<Del> Criterion;
+typedef CGAL::Surface_mesher::Implicit_oracle<My_traits, Func> Impl_oracle;
+typedef CGAL::Surface_mesher::Refine_criterion<Tr> Criterion;
 typedef CGAL::Surface_mesher::Standard_criteria <Criterion > Criteria;
-typedef CGAL::Mesh_criteria_3<Del> Tets_criteria;
-typedef CGAL::Implicit_surfaces_mesher_3<Del, Impl_oracle,
+typedef CGAL::Mesh_criteria_3<Tr> Tets_criteria;
+typedef CGAL::Implicit_surfaces_mesher_3<Tr, Impl_oracle,
                                          Criteria,
                                          Tets_criteria> Mesher;
 
@@ -63,7 +67,10 @@ typedef Simple_kernel::Iso_rectangle_2 Rectangle_2;
 typedef Simple_kernel::Segment_2 Segment_2;
 typedef Simple_kernel::Point_2 Point_2;
 
-typedef Regular_traits::Point_3 Point_3;
+typedef My_traits::Point_3 Point_3;
+
+typedef CGAL::Point_traits<Point_3> Point_traits;
+typedef Point_traits::Bare_point Bare_point_3;
 
 typedef enum { RADIUS_RATIO, ANGLE, MIN_ANGLE} Distribution_type;
 
@@ -92,6 +99,7 @@ void init_string_options()
   string_options["surface_ghs"] = "";
   string_options["slivers_off"] = "";
   string_options["read_initial_points"] = "";
+  string_options["inrimage"] = "";
 }
 
 void usage(char *argv0, std::string error = "")
@@ -356,20 +364,29 @@ int main(int argc, char **argv) {
 
   init_functions();
   
+  std::string inrimage = string_options["inrimage"];
+  if( inrimage != "")
+    {
+      function_name = "generic_inrimage";
+      isosurface = new CGAL::Inrimage_isosurface(inrimage.c_str(),
+                                                 double_options["isovalue"]);
+    }
+  
   // Function
   Func F(functions[function_name]);
 
   // Impl_oracle (NB: parity oracle is toggled)
   Impl_oracle O (F, 
-		 Regular_traits::Point_3 (double_options["center_x"],
-					  double_options["center_y"],
-					  double_options["center_z"]),
+		 Point_traits().point(
+                   Bare_point_3(double_options["center_x"],
+                                double_options["center_y"],
+                                double_options["center_z"])),
 		 double_options["enclosing_sphere_radius"],
 		 double_options["precision"],
 		 bipolar_oracle);
 
   // 2D-complex in 3D-Delaunay triangulation
-  Del T;
+  Tr T;
 
   // Initial point sample
   std::string read_initial_points = string_options["read_initial_points"];
@@ -412,13 +429,13 @@ int main(int argc, char **argv) {
 
 
   // Meshing criteria
-  CGAL::Surface_mesher::Curvature_size_criterion<Del> 
+  CGAL::Surface_mesher::Curvature_size_criterion<Tr> 
     c_s_crit (double_options["curvature_bound"]);
-  CGAL::Surface_mesher::Uniform_size_criterion<Del>
+  CGAL::Surface_mesher::Uniform_size_criterion<Tr>
     u_s_crit (double_options["size_bound"]);
-  CGAL::Surface_mesher::Aspect_ratio_criterion<Del>
+  CGAL::Surface_mesher::Aspect_ratio_criterion<Tr>
     a_r_crit (double_options["facets_aspect_ratio_bound"]);
-  CGAL::Mesh_3::Facet_on_surface_criterion<Del>
+  CGAL::Mesh_3::Facet_on_surface_criterion<Tr>
     facet_on_surf;
 
   std::vector<Criterion*> crit_vect;
@@ -518,7 +535,7 @@ int main(int argc, char **argv) {
 			       distribution_filename, distribution_type);
 #endif
   
-  CGAL::Mesh_3::Slivers_exuder<Del> exuder(T, double_options["pumping_bound"]);
+  CGAL::Mesh_3::Slivers_exuder<Tr> exuder(T, double_options["pumping_bound"]);
   int number_of_pump = static_cast<int>(double_options["number_of_pump"]);
   for(int i = 0; i < number_of_pump; ++i)
   {
