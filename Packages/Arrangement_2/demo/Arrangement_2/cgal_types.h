@@ -44,9 +44,8 @@
 
 #include <CGAL/Arr_trapezoid_ric_point_location.h>
 #include <CGAL/Arr_naive_point_location.h>
-//#include <CGAL/Arr_simple_point_location.h>
 #include <CGAL/Arr_walk_along_line_point_location.h>
-//#include <CGAL/Arr_lenmarks_point_location.h>
+#include <CGAL/Arr_landmarks_point_location.h>
 
 #ifdef CGAL_USE_LEDA
 #include <CGAL/IO/Postscript_file_stream.h> 
@@ -61,13 +60,15 @@
 
 #include <vector>
 
+#include <CGAL/Arr_observer.h>
+
 
 enum TraitsType { SEGMENT_TRAITS, POLYLINE_TRAITS , CONIC_TRAITS};
 enum SnapMode   { NONE , GRID , POINT};
-enum Mode       { INSERT , DELETE , POINT_LOCATION , RAY_SHOOTING ,
-                  DRAG , MERGE , SPLIT,FILLFACE};
+enum Mode       { INSERT , DELETE , POINT_LOCATION , RAY_SHOOTING_UP ,
+                  RAY_SHOOTING_DOWN, DRAG , MERGE , SPLIT,FILLFACE};
 enum ConicType  { CIRCLE , SEGMENT ,ELLIPSE , PARABOLA , HYPERBOLA};
-enum Strategy   { NAIVE , SIMPLE , TRAP , WALK };
+enum Strategy   { NAIVE , TRAP , WALK, LANDMARKS };
 
 // default background color
 const QColor def_bg_color(0,0,0);
@@ -101,7 +102,7 @@ public:
   Face_with_info() : CGAL::Arr_face_base(), data(),_visited(false),
                      _index(0) , overlay_info(20) {}
 
-  Info info() { return data; }
+  Info info() const { return data; }
   void set_info(Info i) { data = i; }
   bool visited() { return _visited; }
   void set_visited(bool b) { _visited = b; }
@@ -159,14 +160,12 @@ typedef CGAL::Arr_trapezoid_ric_point_location<Seg_arr>
   Seg_trap_point_location;
 typedef CGAL::Arr_naive_point_location<Seg_arr>
   Seg_naive_point_location;
-//typedef CGAL::Arr_simple_point_location<Seg_arr>
-//  Seg_simple_point_location;
 typedef CGAL::Arr_walk_along_line_point_location<Seg_arr>
   Seg_walk_point_location;
-//typedef CGAL::Arr_nearest_neighbor<Seg_arr>
-// Seg_nearest_neighbor;
-//typedef CGAL::Arr_lenmarks_point_location<Seg_arr,Nearest_neighbor>
-//  Seg_lenmarks_point_location;
+typedef CGAL::Arr_landmarks_point_location<Seg_arr>
+  Seg_lanmarks_point_location;
+
+
 
 class Curve_data { 
 public:
@@ -178,6 +177,11 @@ public:
     Arr_base_seg_2    *m_curve; 
     Arr_xseg_2        *m_x_motonote_curve; 
   }m_ptr; 
+
+   bool operator== (const Curve_data& ccd) const
+  {
+    return (m_index == ccd.m_index && m_type == ccd.m_type);
+  }
 }; 
 
 // Polyline
@@ -214,14 +218,11 @@ typedef CGAL::Arr_trapezoid_ric_point_location<Pol_arr>
   Pol_trap_point_location;
 typedef CGAL::Arr_naive_point_location<Pol_arr>
   Pol_naive_point_location;
-//typedef CGAL::Arr_simple_point_location<Pol_pm>
-//  Pol_simple_point_location;
 typedef CGAL::Arr_walk_along_line_point_location<Pol_arr>
   Pol_walk_point_location;
-//typedef CGAL::Arr_nearest_neighbor<Pol_pm>
-// Pol_nearest_neighbor;
-//typedef CGAL::Arr_lenmarks_point_location<Pol_pm,Nearest_neighbor>
-// Pol_lenmarks_point_location;
+typedef CGAL::Arr_landmarks_point_location<Pol_arr>
+  Pol_lanmarks_point_location;
+
 
 class Curve_pol_data { 
 public:
@@ -233,6 +234,12 @@ public:
     Arr_base_pol_2 * m_curve; 
     Arr_xpol_2* m_x_motonote_curve; 
   } m_ptr;
+
+   bool operator== (const Curve_pol_data& ccd) const
+  {
+    return (m_index == ccd.m_index && m_type == ccd.m_type &&
+            halfedge_handle == ccd.halfedge_handle);
+  }
 };
 
 // Conics
@@ -280,14 +287,10 @@ typedef CGAL::Arr_trapezoid_ric_point_location<Conic_arr>
   Conic_trap_point_location;
 typedef CGAL::Arr_naive_point_location<Conic_arr>
   Conic_naive_point_location;
-//typedef CGAL::Arr_simple_point_location<Conic_arr>
-//  Conic_simple_point_location;
 typedef CGAL::Arr_walk_along_line_point_location<Conic_arr>
   Conic_walk_point_location;
-//typedef CGAL::Arr_nearest_neighbor<Conic_arr>
-// Conic_nearest_neighbor;
-//typedef CGAL::Arr_lenmarks_point_location<Conic_arr,Nearest_neighbor>
-// Conic_lenmarks_point_location;
+typedef CGAL::Arr_landmarks_point_location<Conic_arr>
+ Conic_lanmarks_point_location;
 
 
 class Curve_conic_data { 
@@ -301,6 +304,35 @@ public:
     Arr_base_conic_2 * m_curve; 
     Arr_xconic_2 * m_x_motonote_curve; 
   } m_ptr; 
+
+  bool operator== (const Curve_conic_data& ccd) const
+  {
+    return (m_index == ccd.m_index && m_type == ccd.m_type &&
+            m_ct == ccd.m_ct && halfedge_handle == ccd.halfedge_handle);
+  }
 };
+
+template <class Arrangement_>
+class My_observer : public CGAL::Arr_observer<Arrangement_>
+{
+public:
+
+  typedef Arrangement_                        Arrangement;
+  typedef CGAL::Arr_observer<Arrangement>     Arr_observer;
+  typedef typename Arrangement::Face_handle   Face_handle;
+
+  My_observer (Arrangement& arr) : Arr_observer (arr)
+  {}
+
+   virtual void after_split_face (Face_handle  f ,
+                                  Face_handle  new_f ,
+                                  bool         is_hole)
+  {
+    new_f ->set_info(f->info());
+  }
+
+};
+
+
 
 #endif

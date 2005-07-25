@@ -95,7 +95,7 @@ class PropertiesForm : public QDialog
 public:
   PropertiesForm( QTabWidget * bar = 0 , QWidget* parent = 0 ,
                   int number_of_tabs = 0 , Qt_widget_base_tab *w_demo_p = 0, 
-				  double scale = 0 , bool colors_flag = true);
+                                  double scale = 0 , bool colors_flag = true);
   ~PropertiesForm() {}
   
   QLabel *textLabel1;
@@ -258,26 +258,6 @@ protected:
   
 }; 
 
-/*! class RayShootingOptionsForm used for choosing the rayshoot diraction */ 
-class RayShootingOptionsForm : public QDialog
-{
-  Q_OBJECT
-public:
-  RayShootingOptionsForm( QWidget* parent = 0 ,int number_of_tabs = 0 ,
-	  const char* name = "options form", bool modal = FALSE, WFlags f = 0);
-  ~RayShootingOptionsForm() {}
-  
-  QLabel *textLabel1;
-  QComboBox *arrComboBox1;
-  QPushButton *okPushButton;
-  QPushButton *cancelPushButton;
-  
-protected:
-  QVBoxLayout *optionsFormLayout;
-  QHBoxLayout *arrLayout1;
-  QHBoxLayout *buttonsLayout;
-  
-}; 
 
 
 /*! class PointLocationStrategyForm used for choosing strategy for point location*/
@@ -286,7 +266,7 @@ class PointLocationStrategyForm : public QDialog
   Q_OBJECT
 public:
   PointLocationStrategyForm(QWidget* parent = 0 ,int number_of_tabs = 0 ,
-	  const char* name = "options form", bool modal = FALSE, WFlags f = 0);
+  const char* name = "options form", bool modal = FALSE, WFlags f = 0);
   ~PointLocationStrategyForm() {}
 
   QLabel *textLabel1;
@@ -307,4 +287,3 @@ protected:
 
 
 #endif // FORMS_H
-

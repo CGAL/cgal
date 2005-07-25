@@ -29,7 +29,7 @@
 /*! constructor - build the properties dialog form */
 PropertiesForm::PropertiesForm(  QTabWidget * bar, QWidget* parent ,
                                  int number_of_tabs , Qt_widget_base_tab 
-								 *w_demo_p, double scale, bool colors_flag): 
+                                                                 *w_demo_p, double scale, bool colors_flag): 
   QDialog( parent),
   myBar(bar)
 {
@@ -250,7 +250,7 @@ OverlayForm::OverlayForm(  QTabWidget * bar, QWidget* parent ,int tab_number ,
 }
 //////////////////////////////////////////////////////////////////////////////// 
 //CheckItem::CheckItem(  QListBox * listbox, const QPixmap & pix,
-//					                       const QString & text ): 
+//                                                               const QString & text ): 
 //  QListBoxPixmap( listbox, pix, text )
 //{ 
 //  check_box = new QCheckBox(listbox);
@@ -404,14 +404,14 @@ CheckForm::CheckForm( OverlayForm *overlay_form , QWidget* parent ):
   optionsFormLayout = new QVBoxLayout( this, 11, 6 );
   layout = new QHBoxLayout( 0, 0, 6 );
   button_group = 
-	  new QVButtonGroup("Check to paint Planar Maps intersections", this);
+          new QVButtonGroup("Check to paint Planar Maps intersections", this);
 
   for (unsigned int i = 0; i < overlay_form->listBox2->count(); i++)
   {
     overlay_form->listBox2->setCurrentItem(i);
     QCheckBox *b = new QCheckBox(overlay_form->listBox2->currentText() , button_group);
-	b->setChecked( true );
-	button_group->insert( b , i ); 
+        b->setChecked( true );
+        button_group->insert( b , i ); 
   }
 
   layout->addWidget( button_group );
@@ -472,49 +472,10 @@ FileOpenOptionsForm::FileOpenOptionsForm( bool flag ,QWidget* parent ,
     
 }
 
-/*! RayShootingOptionsForm constructor */
-RayShootingOptionsForm::RayShootingOptionsForm( QWidget* parent ,
-			int number_of_tabs ,const char* name, bool modal, WFlags f): 
-  QDialog( parent, name, modal, f )
-{
-  setCaption( "Ray Shooting - Direction" );
-  resize( 320, 290 );
-  
-  optionsFormLayout = new QVBoxLayout( this, 11, 6 );
-  
-  arrLayout1 = new QHBoxLayout( 0, 0, 6 );
-  
-  textLabel1 = new QLabel( "Direction", this );
-  arrLayout1->addWidget( textLabel1 );
-  
-  arrComboBox1 = new QComboBox( FALSE, this );
-  
-  arrComboBox1->insertItem( "Up" );
-  arrComboBox1->insertItem( "Down" );
-  
-  arrLayout1->addWidget( arrComboBox1 );
-  optionsFormLayout->addLayout( arrLayout1 );
-  
-  buttonsLayout = new QHBoxLayout( 0, 0, 6 );
-  okPushButton = new QPushButton( "OK", this );
-  okPushButton->setDefault( TRUE );
-  buttonsLayout->addWidget( okPushButton );
-  cancelPushButton = new QPushButton( "Cancel", this );
-  buttonsLayout->addWidget( cancelPushButton );
-  optionsFormLayout->addLayout( buttonsLayout );
-  
-  connect( okPushButton, SIGNAL( clicked() ), this, SLOT( accept() ) );
-  connect( cancelPushButton, SIGNAL( clicked() ), this, SLOT( reject() ) );
-  
-  textLabel1->setBuddy( arrComboBox1 );
-  
-}
-
-
 
 /*! PointLocationStrategyForm constructor */
 PointLocationStrategyForm::PointLocationStrategyForm(QWidget* parent ,
-			int number_of_tabs ,const char* name, bool modal, WFlags f): 
+                        int number_of_tabs ,const char* name, bool modal, WFlags f): 
 QDialog( parent, name, modal, f )
 {
   setCaption( "Point Location - Strategy" );
@@ -527,7 +488,7 @@ QDialog( parent, name, modal, f )
   arrComboBox1 = new QComboBox( FALSE, this );
 
   arrComboBox1->insertItem( "Naive" );
-  arrComboBox1->insertItem( "Simple" );
+  arrComboBox1->insertItem( "Land marks" );
   arrComboBox1->insertItem( "Trapezoiedal" );
   arrComboBox1->insertItem( "Walk" );
   
@@ -548,16 +509,6 @@ QDialog( parent, name, modal, f )
   textLabel1->setBuddy( arrComboBox1 );
   
 }
-
-
-
-
-
-
-
-
-
-
 
 
 #include "forms.moc"

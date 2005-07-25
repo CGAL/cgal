@@ -225,60 +225,29 @@ void MyWindow::changePmColor()
   something_changed();
 }
 
-/*! a dialog form to set the rayShooting Diraction. */
-void MyWindow::rayShootingDirection()
-{
-  // We peform downcasting from QWigdet* to Qt_widget_base_tab*, 
-  // as we know that only
-  // Qt_widget_base_tab objects are stored in the tab pages.
-  Qt_widget_base_tab * w_demo_p = 
-    dynamic_cast<Qt_widget_base_tab  *> (myBar->currentPage());
-  RayShootingOptionsForm *form = new RayShootingOptionsForm();
-  if ( form->exec() ) 
-  {
-    QString type = form->arrComboBox1->currentText();
-    if (strcmp(type,"Up") == 0)
-        {
-      w_demo_p->ray_shooting_direction = true;
-      rayShootingMode->setIconSet(QPixmap((const char**)demo_rayshoot_up_xpm ));
-          if (w_demo_p->mode == RAY_SHOOTING)
-            w_demo_p->setCursor(
-            QCursor(QPixmap((const char**)demo_arrow_up_xpm)));
-        }
-    else if (strcmp(type,"Down") == 0)
-        {
-      w_demo_p->ray_shooting_direction = false;
-      rayShootingMode->setIconSet( 
-                  QPixmap((const char**)demo_rayshoot_down_xpm ));
-          if (w_demo_p->mode == RAY_SHOOTING)
-            w_demo_p->setCursor(
-            QCursor(QPixmap((const char**)demo_arrow_down_xpm)));
-        }
-  }
-}
 
 /*! a dialog form to set the pointLocationStrategy */
 void MyWindow::pointLocationStrategy()
 {
-  //TODO - implement
-  /* Qt_widget_base_tab * w_demo_p = 
-    dynamic_cast<Qt_widget_base_tab  *> (myBar->currentPage());*/
-   PointLocationStrategyForm *form = new PointLocationStrategyForm();
-   if ( form->exec() )
-   {
-     QString type = form->arrComboBox1->currentText();
-     if(! strcmp(type,"Naive"))
-       strategy = NAIVE ;
-     else 
-       if(!strcmp(type,"Simple"))
-         strategy = SIMPLE;  
-       else
-         if(!strcmp(type,"Trapezoiedal"))
-           strategy = TRAP;
-         else
-           if(!strcmp(type,"Walk"))
-             strategy = WALK;
-   }
+  Qt_widget_base_tab * w_demo_p = 
+    dynamic_cast<Qt_widget_base_tab*> (myBar->currentPage());
+  PointLocationStrategyForm form;
+  if ( form.exec() )
+  { 
+    QString type = form.arrComboBox1->currentText();
+    if(! strcmp(type,"Naive"))
+      w_demo_p -> change_strategy(NAIVE);
+    else
+      if(!strcmp(type,"Trapezoiedal"))
+        w_demo_p -> change_strategy(TRAP);
+      else
+        if(!strcmp(type,"Walk"))
+          w_demo_p -> change_strategy(WALK);
+        else
+          if(!strcmp(type,"Land marks"))
+            w_demo_p -> change_strategy(LANDMARKS);
+
+  }
 }
 
 
@@ -291,7 +260,8 @@ void MyWindow::init(Qt_widget_base_tab *widget)
           this, SLOT(get_new_object(CGAL::Object)));
   widget->attach(testlayer);
   widget->setCursor(QCursor( QPixmap( (const char**)small_draw_xpm)));
-  rayShootingMode->setIconSet(QPixmap((const char**)demo_rayshoot_up_xpm ));
+  rayShootingUpMode->setIconSet(QPixmap((const char**)demo_rayshoot_up_xpm ));
+  rayShootingDownMode->setIconSet(QPixmap((const char**)demo_rayshoot_down_xpm ));
   widget->setBackgroundColor(def_bg_color);
   tab_number++;
   number_of_tabs++;
@@ -387,18 +357,20 @@ void MyWindow::updateTraitsType( QAction *action )
       (CONIC_TRAITS , this);
   }
   
-  if( !old_widget->empty ) // pm is not empty
+  if(! old_widget->is_empty())
   {
     switch( QMessageBox::warning( this, "Update Traits Type",
-        "This action will destroy the current planar map.\n"
+        "This action will destroy the current arrangement.\n"
         "Do you want to continue ?",
         "Yes",
-        "No", 0, 0, 1 ) ) {
+        "No", 0, 0, 1 ) ) 
+    {
       case 0: 
           // continue
           break;
       case 1: // The user clicked the Quit or pressed Escape
-                  update();
+          delete widget;
+          update();
           something_changed();
           return;
           break;
@@ -421,7 +393,8 @@ void MyWindow::updateTraitsType( QAction *action )
   widget->index = old_index;
   widget->pm_color = widget->colors[old_index];
   widget->setCursor(QCursor( QPixmap( (const char**)small_draw_xpm)));
-  rayShootingMode->setIconSet(QPixmap((const char**)demo_rayshoot_up_xpm ));
+  rayShootingUpMode->setIconSet(QPixmap((const char**)demo_rayshoot_up_xpm ));
+  rayShootingDownMode->setIconSet(QPixmap((const char**)demo_rayshoot_down_xpm ));
 
   // add the new widget to myBar
   myBar->insertTab( widget, label , index );
@@ -593,18 +566,17 @@ void MyWindow::updateMode( QAction *action )
   {
     w_demo_p->mode = POINT_LOCATION;
     w_demo_p->setCursor(Qt::CrossCursor);
-    //w_demo_p->setCursor(QCursor( QPixmap( (const char**)point_xpm)));
     current_label = point_location_label;
   }
-  else if ( action == rayShootingMode ) 
+  else if ( action == rayShootingUpMode ) 
   {
-    w_demo_p->mode = RAY_SHOOTING;
-        if (w_demo_p->ray_shooting_direction)
-      w_demo_p->setCursor(
-          QCursor(QPixmap((const char**)demo_arrow_up_xpm)));
-        else
-      w_demo_p->setCursor(
-          QCursor(QPixmap((const char**)demo_arrow_down_xpm)));
+    w_demo_p->mode = RAY_SHOOTING_UP;
+    w_demo_p->setCursor(QCursor(QPixmap((const char**)demo_arrow_up_xpm)));
+  }
+  else if( action == rayShootingDownMode )
+  {
+    w_demo_p->mode = RAY_SHOOTING_DOWN;
+    w_demo_p->setCursor(QCursor(QPixmap((const char**)demo_arrow_down_xpm)));
   }
   else if ( action == dragMode ) 
   {
@@ -646,7 +618,8 @@ void MyWindow::setMode( Mode m )
    case INSERT: insertMode->setOn( TRUE ); break;
    case DELETE: deleteMode->setOn( TRUE ); break;
    case POINT_LOCATION: pointLocationMode->setOn( TRUE ); break;
-   case RAY_SHOOTING: rayShootingMode->setOn( TRUE ); break;
+   case RAY_SHOOTING_UP: rayShootingUpMode->setOn( TRUE ); break;
+   case RAY_SHOOTING_DOWN: rayShootingDownMode->setOn( TRUE ); break;
    case DRAG: dragMode->setOn( TRUE ); break;
    case MERGE: mergeMode->setOn( TRUE ); break;
    case SPLIT: splitMode->setOn( TRUE ); break;

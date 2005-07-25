@@ -53,7 +53,7 @@
 #include "icons/demo_conic_circle.xpm"
 #include "icons/demo_conic_ellipse.xpm"
 #include "icons/demo_conic_segment.xpm"
-//#include "icons/demo_rayshoot_down.xpm"
+#include "icons/demo_rayshoot_down.xpm"
 #include "icons/demo_rayshoot_up.xpm"
 //#include "icons/demo_arrow_down.xpm"
 //#include "icons/demo_arrow_up.xpm"
@@ -81,7 +81,6 @@ MyWindow::MyWindow(int w, int h)
   testlayer = new Qt_layer( myBar );
   colors_flag = true;
   statusBar();
-  strategy = WALK;  // the first tab will be created with 'walk' point location
 
   m_scailing_factor = 2;
   
@@ -137,11 +136,17 @@ MyWindow::MyWindow(int w, int h)
                                   "Point Location" );
   pointLocationMode->setToggleAction( TRUE );
   
-  rayShootingMode = new QAction("RayShooting",
+  rayShootingUpMode = new QAction("RayShootingUp",
                                 QPixmap( (const char**)demo_rayshoot_up_xpm ),
-                                "&Ray Shooting", 0 , modeGroup,
-                                "Ray Shooting" );
-  rayShootingMode->setToggleAction( TRUE );
+                                "&Ray Shooting Up", 0 , modeGroup,
+                                "Ray Shooting Up" );
+  rayShootingUpMode->setToggleAction( TRUE );
+
+  rayShootingDownMode = new QAction("RayShootingDown",
+                                QPixmap( (const char**)demo_rayshoot_down_xpm ),
+                                "&Ray Shooting Down", 0 , modeGroup,
+                                "Ray Shooting Down" );
+  rayShootingDownMode->setToggleAction( TRUE );
 
   dragMode = new QAction("Drag", QPixmap( (const char**)hand_xpm ),
                          "&Drag", 0 , modeGroup, "Drag" );
@@ -245,7 +250,8 @@ MyWindow::MyWindow(int w, int h)
   insertMode->addTo( mode );
   deleteMode->addTo( mode );
   pointLocationMode->addTo( mode );
-  rayShootingMode->addTo( mode );
+  rayShootingUpMode->addTo( mode );
+  rayShootingDownMode->addTo( mode );
   dragMode->addTo( mode );
   mergeMode->addTo( mode );
   splitMode->addTo( mode );
@@ -283,8 +289,6 @@ MyWindow::MyWindow(int w, int h)
   options->insertSeparator(); 
   options->insertItem("Planar Map Color...", this, SLOT(changePmColor()));
   options->insertSeparator();
-  options->insertItem("Ray-Shooting Direction...", this, 
-                                               SLOT(rayShootingDirection()));
   options->insertItem("Point-Locaiton Strategy....", this ,
                                          SLOT(pointLocationStrategy()));
                                           
@@ -303,7 +307,8 @@ MyWindow::MyWindow(int w, int h)
   deleteMode->addTo( modeTools );
   dragMode->addTo( modeTools );
   pointLocationMode->addTo( modeTools );
-  rayShootingMode->addTo( modeTools );
+  rayShootingUpMode->addTo( modeTools );
+  rayShootingDownMode->addTo( modeTools );
   mergeMode->addTo( modeTools );
   splitMode->addTo( modeTools );
   fillfaceMode->addTo( modeTools );
@@ -425,4 +430,3 @@ int main(int, char*)
 
 
 #endif // CGAL_USE_QT
-

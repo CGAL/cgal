@@ -172,16 +172,14 @@ private slots:
     void backGroundColor();
     /*! set vertexColor Color */
     void changePmColor();    
-    /*! choose the ray shoot diraction */
-    void rayShootingDirection();
     /*! choose the point location strategy */
     void pointLocationStrategy();
     /*! change the conic type of current tab */
-       void updateConicType( QAction *action );
+    void updateConicType( QAction *action );
     /*! update the window buttons according to change in conic type */
     void setConicType( ConicType t );
-        /*! open the color dialog */
-        void openColorDialog();
+    /*! open the color dialog */
+    void openColorDialog();
 
 private:
     /*! myBar - hold the tab widgets */
@@ -212,8 +210,10 @@ private:
     QAction *deleteMode;
     /*! point location mode action */
     QAction *pointLocationMode;
-    /*! ray shooting mode action */
-    QAction *rayShootingMode;
+    /*! ray shooting up mode action */
+    QAction *rayShootingUpMode;
+    /*! ray shooting down mode action */
+    QAction *rayShootingDownMode;
     /*! drag mode action */
     QAction *dragMode;
     /*! merge mode action */
@@ -264,8 +264,6 @@ private:
     QToolBar *conicTypeTool;
     /*! color dialog action (for filling faces) */
     QAction *color_dialog_bt;
-    /* strategy for point location*/
-    Strategy strategy;
 };
 
 

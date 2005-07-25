@@ -35,7 +35,7 @@ void MyWindow::fileOpenSegment()
   Qt_widget_base_tab *w_demo_p = 
     static_cast<Qt_widget_base_tab *> (myBar->currentPage());
   bool flag = (w_demo_p->traits_type == SEGMENT_TRAITS);
-  if( w_demo_p->empty ) // pm is empty
+  if( w_demo_p->is_empty() ) // pm is empty
   {
     updateTraitsType( setSegmentTraits );
     fileOpen(true);
@@ -70,7 +70,7 @@ void MyWindow::fileOpenSegmentPm()
 {
   Qt_widget_base_tab *w_demo_p = 
     static_cast<Qt_widget_base_tab *> (myBar->currentPage());
-  if( w_demo_p->empty ) // pm is empty
+  if( w_demo_p->is_empty() ) // pm is empty
   {    
     updateTraitsType( setSegmentTraits );
     fileOpenPm();
@@ -103,7 +103,7 @@ void MyWindow::fileOpenPolyline()
   Qt_widget_base_tab *w_demo_p = 
     static_cast<Qt_widget_base_tab *> (myBar->currentPage());
   bool flag = (w_demo_p->traits_type == POLYLINE_TRAITS);
-  if( w_demo_p->empty ) // pm is empty
+  if( w_demo_p->is_empty() ) // pm is empty
   {    
     updateTraitsType( setPolylineTraits );
     fileOpen(true);	
@@ -137,7 +137,7 @@ void MyWindow::fileOpenPolylinePm()
 {
   Qt_widget_base_tab *w_demo_p = 
     static_cast<Qt_widget_base_tab *> (myBar->currentPage());
-  if( w_demo_p->empty ) // pm is empty
+  if( w_demo_p->is_empty() ) // pm is empty
   {
     updateTraitsType( setPolylineTraits );
     fileOpenPm();
@@ -169,7 +169,7 @@ void MyWindow::fileOpenConic()
   Qt_widget_base_tab *w_demo_p = 
     static_cast<Qt_widget_base_tab *> (myBar->currentPage());
   bool flag = (w_demo_p->traits_type == CONIC_TRAITS);
-  if( w_demo_p->empty ) // pm is empty
+  if( w_demo_p->is_empty() ) // pm is empty
   {
     updateTraitsType( setConicTraits );
     fileOpen(true);
@@ -246,10 +246,10 @@ void MyWindow::fileOpenPm()
        static_cast<Qt_widget_demo_tab<Segment_tab_traits> *> 
        (myBar->currentPage());
       //w_demo_p->m_curves_arr->read(inputFile);
-	  if( w_demo_p->m_curves_arr->number_of_vertices() == 0 )
+	  /*if( w_demo_p->m_curves_arr->number_of_vertices() == 0 )
     	w_demo_p->empty = true;
       else 
-        w_demo_p->empty = false;
+        w_demo_p->empty = false;*/
      break;
     }
    case POLYLINE_TRAITS: // dosen't work !!
@@ -259,10 +259,10 @@ void MyWindow::fileOpenPm()
        (myBar->currentPage());
        //w_demo_p->m_curves_arr->read(inputFile);
 
-	   if( w_demo_p->m_curves_arr->number_of_vertices() == 0 )
+	   /*if( w_demo_p->m_curves_arr->number_of_vertices() == 0 )
 	     w_demo_p->empty = false;
        else 
-         w_demo_p->empty = true;
+         w_demo_p->empty = true;*/
 	   break;
     }
    case CONIC_TRAITS: // dosen't work !!
@@ -337,10 +337,10 @@ void MyWindow::load( const QString& filename , bool clear_flag )
       else
         w_demo->bbox = w_demo->bbox + curve_bbox;
 	}
-	if( w_demo_p->m_curves_arr->number_of_vertices() == 0 )
+	/*if( w_demo_p->m_curves_arr->number_of_vertices() == 0 )
 	  w_demo_p->empty = true;
     else 
-      w_demo_p->empty = false;    
+      w_demo_p->empty = false;    */
   }
   
   else if (w_demo->traits_type == POLYLINE_TRAITS)
@@ -390,10 +390,10 @@ void MyWindow::load( const QString& filename , bool clear_flag )
     std::cout << "insert polylines fron file\n";
     CGAL::insert(*(w_demo_p->m_curves_arr), pol_list.begin(), pol_list.end());
     std::cout << "finish insert polylines fron file\n";
-    if( w_demo_p->m_curves_arr->number_of_vertices() == 0 )
+   /* if( w_demo_p->m_curves_arr->number_of_vertices() == 0 )
       w_demo_p->empty = true;
     else 
-      w_demo_p->empty = false;
+      w_demo_p->empty = false;*/
   }
   
   else if (w_demo->traits_type == SEGMENT_TRAITS)
@@ -436,10 +436,10 @@ void MyWindow::load( const QString& filename , bool clear_flag )
     
     CGAL::insert(*(w_demo_p->m_curves_arr), seg_list.begin(), seg_list.end());
 
-	if( w_demo_p->m_curves_arr->number_of_vertices() == 0 )
+	/*if( w_demo_p->m_curves_arr->number_of_vertices() == 0 )
 	  w_demo_p->empty = true;
     else 
-      w_demo_p->empty = false;
+      w_demo_p->empty = false;*/
       
   }
   w_demo->set_window(w_demo->bbox.xmin() , w_demo->bbox.xmax() , 

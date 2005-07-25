@@ -78,14 +78,14 @@ public:
     ray_shooting_direction(true),
     remove_org_curve(true),
     read_from_file(false),
-    empty(true),
+   // empty(true),
     first_time_merge(true),
     draw_vertex(true),
     fill_face_color(def_bg_color)
   {
     static_cast<CGAL::Qt_widget&>(*this) << CGAL::LineWidth(2) <<
       CGAL::BackgroundColor (CGAL::BLACK);
-    set_window(0, 700, 0, 700);
+    set_window(-10, 10, -10, 10);
    
     setMouseTracking(TRUE);
     
@@ -176,9 +176,6 @@ public:
   /*! pm read from file - need a spcial treatment */
   bool read_from_file;
 
-  /*! true if pm is empty */
-  bool empty;
-
   /*! true when it is the first time in merge mode */
   bool first_time_merge;
 
@@ -189,9 +186,6 @@ public:
 
   /*! the color for filling faces ( obtained by fill button) */
   QColor fill_face_color;
-
-  /*! point location strategy */
-  Strategy strategy;
 
   /*! get the color of the unbounded face (its the same as the background
    * color of the tab)
@@ -206,66 +200,11 @@ public:
   /*! increment current_state to inidicate that something has changed
    */
   void something_changed(){ current_state++ ; }
+
+  virtual void change_strategy(Strategy /* s */){}
+
+  virtual bool is_empty(){return true;}
 };
-
-
-///*! check if  two segemnts are mergeable
-// */
-//template<class Point_2>
-//bool merge_segments_precondition(Point_2 s, Point_2 t, Point_2 s1,
-//                                 Point_2 t1 ,int s_degree , int t_degree)
-//{
-//  return
-//    //  cannot be the same curve as closest_curve
-//    (!((s1 == s && t1 == t) || (s1 == t && t1 == s)) && 
-//     // must be one shared point
-//     (s1 == s || t1 == t || s1 == t || t1 == s) && 
-//     (!(((s == s1 || s == t1) && s_degree != 2) ||
-//        // vertex degree must be exactly 2
-//        ((t == s1 || t == t1) && t_degree != 2))) && 
-//     ((s == s1 && ((t.x() < s.x() && t1.x() > s.x()) ||
-//                   (t.x() > s.x() && t1.x() < s.x()))) ||
-//      (s == t1 && ((t.x() < s.x() && s1.x() > s.x()) ||
-//                   (t.x() > s.x() && s1.x() < s.x()))) ||
-//      (t == s1 && ((t.x() < s.x() && t1.x() < t.x()) ||
-//                   (t.x() > s.x() && t1.x() > t.x()))) ||
-//      (t == t1 && ((t.x() < s.x() && s1.x() < t.x()) ||
-//                   // checking x-monotone
-//                   (t.x() > s.x() && s1.x() > t.x()))) || 
-//      // dealing with vertical curves
-//      ((s.x() == s1.x())&&( t.x() == t1.x()) && (s.x()==t.x()))));  
-//}
-
-/*!
- */
-template<class ColorsIterator>
-QColor blend_colors(ColorsIterator begin_colors , ColorsIterator  end_colors)
-{
-  ColorsIterator clr_itr;
-  int red = 0,
-    green = 0,
-    blue = 0,
-    counter = 0; 
-
-  QColor avg_color = def_bg_color; // the average color
-
-  for(clr_itr = begin_colors ; clr_itr!= end_colors ; ++clr_itr)
-  {
-    QColor curr_color = *clr_itr;
-    if( curr_color.isValid() && curr_color != def_bg_color)
-    {
-      red += curr_color.red();
-      green += curr_color.green();
-      blue += curr_color.blue();
-      counter++;
-    }
-  }
-
-  if( counter)  // make sure counter is not equal zero
-    avg_color = QColor(red / counter , green / counter , blue / counter);
-
-  return avg_color ; 
-}
 
 
 /*! template class Qt_widget_demo_tab gets a Tab_traits class as 
@@ -313,8 +252,10 @@ private:
   typedef typename Tab_traits::Face_iterator           Face_iterator;
   typedef typename Tab_traits::Trap_point_location     Trap_point_location;
   typedef typename Tab_traits::Naive_point_location    Naive_point_location;
-  //typedef typename Tab_traits::Simple_point_location   Simple_point_location;
   typedef typename Tab_traits::Walk_point_location     Walk_point_location;
+  typedef typename Tab_traits::Lanmarks_point_location Lanmarks_point_location;
+
+  typedef My_observer<Arrangement_2>                   Observer;
 
 private:
   // function object - FillFace
@@ -340,13 +281,17 @@ private:
 
 public:
   /*! m_tab_traits - the traits object */
-  Tab_traits    m_tab_traits;
+  Tab_traits       m_tab_traits;
 
   /*! m_curves_arr - pointer for the tab planar map */
   Arrangement_2*   m_curves_arr;
 
+  Observer         m_observer;
+
+  CGAL::Object     m_point_location;
+
   /*! Original Traits */
-  Traits        m_traits;
+  Traits           m_traits;
 
   /*! the curve to be merged */
   Halfedge_iterator closest_curve;
@@ -370,11 +315,13 @@ public:
    *\ param tab_number - widget program index
    */
   Qt_widget_demo_tab(TraitsType t, QWidget * parent = 0, int tab_number = 1):
-    Qt_widget_base_tab(t , parent, tab_number)
+    Qt_widget_base_tab(t , parent, tab_number),
+    m_curves_arr (new Arrangement_2()),
+    m_observer(*m_curves_arr)
   {
-    m_curves_arr = new Arrangement_2();
     // set the unbounded face initial color
-    m_curves_arr->unbounded_face()->set_info(def_bg_color);   
+    m_curves_arr->unbounded_face()->set_info(def_bg_color); 
+    m_point_location = CGAL::make_object(new Walk_point_location(*m_curves_arr));
   }
   
   /*! destructor - delete the planar map and the point location pointer
@@ -396,8 +343,7 @@ public:
     if ( mode == FILLFACE ) 
     {
       Point_2 temp_p (pl_point.x(), pl_point.y());
-      Walk_point_location walk_pl(*m_curves_arr);
-      CGAL::Object obj = walk_pl.locate(temp_p);
+      CGAL::Object obj = locate(temp_p);
 
       Face_const_handle f;
       if(CGAL::assign (f, obj))
@@ -493,9 +439,9 @@ public:
       static_cast<CGAL::Qt_widget&>(*this) << CGAL::LineWidth(3);
       setColor(Qt::yellow);
       
-      Walk_point_location walk_pl(*m_curves_arr);
       Point_2 temp_p (pl_point.x(), pl_point.y());
-      CGAL::Object obj = walk_pl.locate(temp_p);
+      CGAL::Object obj = locate(temp_p);
+
       Face_const_handle f = get_face(obj);
       
       if (!f->is_unbounded()) // its an inside face
@@ -524,155 +470,149 @@ public:
       static_cast<CGAL::Qt_widget&>(*this) << CGAL::LineWidth(m_line_width);
     }
     
-    if (mode == RAY_SHOOTING)
+    if (mode == RAY_SHOOTING_UP)
     {
       Coord_point up;
       Point_2 temp_p (pl_point.x(), pl_point.y());
-      Walk_point_location walk_pl(*m_curves_arr);
       Coord_point pl_draw(pl_point.x() / m_tab_traits.COORD_SCALE , 
                           pl_point.y() / m_tab_traits.COORD_SCALE);
-
-      if (ray_shooting_direction)
+      CGAL::Object    obj = ray_shoot_up (temp_p);
+      if(obj.is_empty())
       {
-        CGAL::Object    obj = walk_pl.ray_shoot_up (temp_p);
-        if(obj.is_empty())
+        up = Coord_point(pl_draw.x() , y_max());
+        static_cast<CGAL::Qt_widget&>(*this) << Coord_segment(pl_draw, up);
+      }
+      // we shoot something
+      else 
+      {
+        Halfedge_const_handle he;
+        if(CGAL::assign(he, obj))
         {
-          up = Coord_point(pl_draw.x() , y_max());
-          static_cast<CGAL::Qt_widget&>(*this) << Coord_segment(pl_draw, up);
-        }
-        // we shoot something
-        else 
-        {
-          Halfedge_const_handle he;
-          if(CGAL::assign(he, obj))
-          {
-            Point_2 p1c1(pl_point.x() , y_max() * m_tab_traits.COORD_SCALE);
-            Point_2 p2c1(pl_point.x() , pl_point.y());
-            const X_monotone_curve_2 c1 = m_tab_traits.curve_make_x_monotone(p1c1 , p2c1);
-            const X_monotone_curve_2 c2 = he->curve();
+          Point_2 p1c1(pl_point.x() , y_max() * m_tab_traits.COORD_SCALE);
+          Point_2 p2c1(pl_point.x() , pl_point.y());
+          const X_monotone_curve_2 c1 = m_tab_traits.curve_make_x_monotone(p1c1 , p2c1);
+          const X_monotone_curve_2 c2 = he->curve();
            
-            CGAL::Object             res;
-            CGAL::Oneset_iterator<CGAL::Object> oi(res);
+          CGAL::Object             res;
+          CGAL::Oneset_iterator<CGAL::Object> oi(res);
 
-            m_traits.intersect_2_object()(c1, c2, oi);
-            std::pair<Point_2, unsigned int> p1;
-            if (CGAL::assign(p1, res))
-            {
-              Coord_type y1 =
-                CGAL::to_double(p1.first.y())/ m_tab_traits.COORD_SCALE;
-              up = Coord_point(pl_draw.x(), y1);
-            }
-            else
-            {
-              // doesnt supoose to reach here at all !!!
-              CGAL_assertion(false);
-            }
-            setColor(Qt::red);
-            m_tab_traits.draw_xcurve(this , he->curve() );
+          m_traits.intersect_2_object()(c1, c2, oi);
+          std::pair<Point_2, unsigned int> p1;
+          if (CGAL::assign(p1, res))
+          {
+            Coord_type y1 =
+              CGAL::to_double(p1.first.y())/ m_tab_traits.COORD_SCALE;
+            up = Coord_point(pl_draw.x(), y1);
           }
           else
           {
-            Vertex_const_handle v;
-            CGAL_assertion(CGAL::assign(v, obj));
-            CGAL::assign(v, obj);
-            up = Coord_point(CGAL::to_double(v->point().x()) /
+            // doesnt supoose to reach here at all !!!
+            CGAL_assertion(false);
+          }
+          setColor(Qt::red);
+          m_tab_traits.draw_xcurve(this , he->curve() );
+        }
+        else
+        {
+          Vertex_const_handle v;
+          CGAL_assertion(CGAL::assign(v, obj));
+          CGAL::assign(v, obj);
+          up = Coord_point(CGAL::to_double(v->point().x()) /
                        m_tab_traits.COORD_SCALE, 
                           CGAL::to_double(v->point().y()) /
                        m_tab_traits.COORD_SCALE); 
-            setColor(Qt::red);
-            static_cast<CGAL::Qt_widget&>(*this) << up;
-          }
+          setColor(Qt::red);
+          static_cast<CGAL::Qt_widget&>(*this) << up;
         }
+      }
   
-        setColor(Qt::yellow);
-        static_cast<CGAL::Qt_widget&>(*this) << CGAL::LineWidth(2);
-        static_cast<CGAL::Qt_widget&>(*this) << Coord_segment(pl_draw,up);
-        
-        // draw an arrow that points to 'up' point
-        int x = this->x_pixel(CGAL::to_double(up.x()));
-        int y = this->y_pixel(CGAL::to_double(up.y()));
-
-        this->get_painter().drawLine(x-7 , y+7 , x , y);
-        this->get_painter().drawLine(x+7 , y+7 , x , y);
-      }
-      else // down ray shooting
-      {
-        CGAL::Object    obj = walk_pl.ray_shoot_down (temp_p);
-        Coord_point down;
-        if(obj.is_empty())
-        {
-          down = Coord_point(pl_draw.x() , y_min());
-          static_cast<CGAL::Qt_widget&>(*this) << Coord_segment(pl_draw, down);
-        }
-        // we shoot something
-        else 
-        {
-          Halfedge_const_handle he;
-          if(CGAL::assign(he, obj))
-          {
-            Point_2 p1c1(pl_point.x() , y_min() * m_tab_traits.COORD_SCALE);
-            Point_2 p2c1(pl_point.x() , pl_point.y());
-            const X_monotone_curve_2 c1 = m_tab_traits.curve_make_x_monotone(p1c1 , p2c1);
-            const X_monotone_curve_2 c2 = he->curve();
-           
-            CGAL::Object             res;
-            CGAL::Oneset_iterator<CGAL::Object> oi(res);
-
-            m_traits.intersect_2_object()(c1, c2, oi);
-            std::pair<Point_2,unsigned int> p1;
-            if (CGAL::assign(p1, res))
-            {
-              Coord_type y1 =
-                CGAL::to_double(p1.first.y()) / m_tab_traits.COORD_SCALE;
-              down = Coord_point(pl_draw.x(),y1);
-              setColor(Qt::red);
-              m_tab_traits.draw_xcurve(this , he->curve() );
-            }
-          }
-          else
-          {
-            Vertex_const_handle v;
-            CGAL_assertion(CGAL::assign(v, obj));
-            CGAL::assign(v, obj);
-            down = Coord_point(CGAL::to_double(v->point().x()) /
-                          m_tab_traits.COORD_SCALE, 
-                          CGAL::to_double(v->point().y()) /
-                          m_tab_traits.COORD_SCALE); 
-            setColor(Qt::red);
-            static_cast<CGAL::Qt_widget&>(*this) << down;
-          }
-        }
-       
-        setColor(Qt::yellow);
-        static_cast<CGAL::Qt_widget&>(*this) << CGAL::LineWidth(2);
-        static_cast<CGAL::Qt_widget&>(*this) << Coord_segment(pl_draw,down);
-        // draw an arrow that points to 'down' point
-        int x = this->x_pixel(CGAL::to_double(down.x()));
-        int y = this->y_pixel(CGAL::to_double(down.y()));
-
-        this->get_painter().drawLine(x-7 , y-7 , x , y);
-        this->get_painter().drawLine(x+7 , y-7 , x , y);
-      }
-      static_cast<CGAL::Qt_widget&>(*this) << CGAL::LineWidth(m_line_width);
+      setColor(Qt::yellow);
+      static_cast<CGAL::Qt_widget&>(*this) << CGAL::LineWidth(2);
+      static_cast<CGAL::Qt_widget&>(*this) << Coord_segment(pl_draw,up);
       
+      // draw an arrow that points to 'up' point
+      int x = this->x_pixel(CGAL::to_double(up.x()));
+      int y = this->y_pixel(CGAL::to_double(up.y()));
+
+      this->get_painter().drawLine(x-7 , y+7 , x , y);
+      this->get_painter().drawLine(x+7 , y+7 , x , y);
+      static_cast<CGAL::Qt_widget&>(*this) << CGAL::LineWidth(m_line_width);
+    }
+    if (mode == RAY_SHOOTING_DOWN)
+    {
+      Coord_point up;
+      Point_2 temp_p (pl_point.x(), pl_point.y());
+      Coord_point pl_draw(pl_point.x() / m_tab_traits.COORD_SCALE , 
+                          pl_point.y() / m_tab_traits.COORD_SCALE);
+
+      CGAL::Object    obj = ray_shoot_down (temp_p);
+      Coord_point down;
+      if(obj.is_empty())
+      {
+        down = Coord_point(pl_draw.x() , y_min());
+        static_cast<CGAL::Qt_widget&>(*this) << Coord_segment(pl_draw, down);
       }
-      setCursor(old);
+      // we shoot something
+      else 
+      {
+        Halfedge_const_handle he;
+        if(CGAL::assign(he, obj))
+        {
+          Point_2 p1c1(pl_point.x() , y_min() * m_tab_traits.COORD_SCALE);
+          Point_2 p2c1(pl_point.x() , pl_point.y());
+          const X_monotone_curve_2 c1 = m_tab_traits.curve_make_x_monotone(p1c1 , p2c1);
+          const X_monotone_curve_2 c2 = he->curve();
+          
+          CGAL::Object             res;
+          CGAL::Oneset_iterator<CGAL::Object> oi(res);
+
+          m_traits.intersect_2_object()(c1, c2, oi);
+          std::pair<Point_2,unsigned int> p1;
+          if (CGAL::assign(p1, res))
+          {
+            Coord_type y1 =
+              CGAL::to_double(p1.first.y()) / m_tab_traits.COORD_SCALE;
+            down = Coord_point(pl_draw.x(),y1);
+            setColor(Qt::red);
+            m_tab_traits.draw_xcurve(this , he->curve() );
+          }
+        }
+        else
+        {
+          Vertex_const_handle v;
+          CGAL_assertion(CGAL::assign(v, obj));
+          CGAL::assign(v, obj);
+          down = Coord_point(CGAL::to_double(v->point().x()) /
+                        m_tab_traits.COORD_SCALE, 
+                        CGAL::to_double(v->point().y()) /
+                        m_tab_traits.COORD_SCALE); 
+          setColor(Qt::red);
+          static_cast<CGAL::Qt_widget&>(*this) << down;
+        }
+      }
+      
+      setColor(Qt::yellow);
+      static_cast<CGAL::Qt_widget&>(*this) << CGAL::LineWidth(2);
+      static_cast<CGAL::Qt_widget&>(*this) << Coord_segment(pl_draw,down);
+      // draw an arrow that points to 'down' point
+      int x = this->x_pixel(CGAL::to_double(down.x()));
+      int y = this->y_pixel(CGAL::to_double(down.y()));
+
+      this->get_painter().drawLine(x-7 , y-7 , x , y);
+      this->get_painter().drawLine(x+7 , y-7 , x , y);
+      static_cast<CGAL::Qt_widget&>(*this) << CGAL::LineWidth(m_line_width);
+    }
+    setCursor(old);
   }
 
-  /*!
-   */
- /* void update_colors(std::vector<QColor> colors)
-  {
-    OverLay overlay_ob(this, colors);
-    visit_faces(overlay_ob);
-  }*/
+ 
   
   /*!
    */
   void set_face_color(Face_handle f ,QColor& c)
   {  
     f->set_info(c);
-    if( f->is_unbounded() || empty)
+    if( f->is_unbounded())
       set_unbounded_face_color(c); 
   }
 
@@ -826,7 +766,8 @@ public:
     QCursor old = cursor();
     setCursor(Qt::WaitCursor);
 
-    if (mode == POINT_LOCATION || mode == RAY_SHOOTING || mode == FILLFACE)
+    if (mode == POINT_LOCATION || mode == RAY_SHOOTING_UP ||
+        mode == RAY_SHOOTING_DOWN || mode == FILLFACE)
     {
       mousePressEvent_point_location( e );
       setCursor(old);
@@ -843,8 +784,8 @@ public:
       removable_halfedges.clear(); // clear the list which is now irrelevant
       redraw();
 
-      if( m_curves_arr->number_of_vertices() == 0 )
-        empty = true;
+      /*if( m_curves_arr->number_of_vertices() == 0 )
+        empty = true;*/
       setCursor(old);
       return;
     }
@@ -866,8 +807,8 @@ public:
       setRasterOp(old_rasterop);
       setColor(old_color);
       unlock();
-      if( m_curves_arr->number_of_vertices() > 0 )
-        empty = false;
+      /*if( m_curves_arr->number_of_vertices() > 0 )
+        empty = false;*/
       setCursor(old);
       return;
     }
@@ -1383,6 +1324,132 @@ public:
     }
   }
 
+  CGAL::Object locate(const Point_2& pt)
+  {
+    Walk_point_location* walk_pl;
+    if(CGAL::assign(walk_pl, m_point_location))
+      return walk_pl->locate(pt);
+
+    Naive_point_location* naive_pl;
+    if(CGAL::assign(naive_pl, m_point_location))
+      return naive_pl->locate(pt);
+
+    Trap_point_location* trap_pl;
+    if(CGAL::assign(trap_pl, m_point_location))
+      return trap_pl->locate(pt);
+
+    /*Lanmarks_point_location* lm_pl;
+    if(CGAL::assign(lm_pl, m_point_location))
+      return lm_pl->locate(pt);*/
+
+    return CGAL::Object();
+  }
+
+  CGAL::Object ray_shoot_up(const Point_2& pt)
+  {
+    Walk_point_location* walk_pl;
+    if(CGAL::assign(walk_pl, m_point_location))
+      return walk_pl->ray_shoot_up(pt);
+
+    Naive_point_location* naive_pl;
+    if(CGAL::assign(naive_pl, m_point_location))
+      return naive_pl->ray_shoot_up(pt);
+
+    Trap_point_location* trap_pl;
+    if(CGAL::assign(trap_pl, m_point_location))
+      return trap_pl->ray_shoot_up(pt);
+
+    /*Lanmarks_point_location* lm_pl;
+    if(CGAL::assign(lm_pl, m_point_location))
+      return lm_pl->ray_shoot_up(pt);*/
+
+    return CGAL::Object();
+  }
+
+  CGAL::Object ray_shoot_down(const Point_2& pt)
+  {
+    Walk_point_location* walk_pl;
+    if(CGAL::assign(walk_pl, m_point_location))
+      return walk_pl->ray_shoot_down(pt);
+
+    Naive_point_location* naive_pl;
+    if(CGAL::assign(naive_pl, m_point_location))
+      return naive_pl->ray_shoot_down(pt);
+
+    Trap_point_location* trap_pl;
+    if(CGAL::assign(trap_pl, m_point_location))
+      return trap_pl->ray_shoot_down(pt);
+
+   /* Lanmarks_point_location* lm_pl;
+    if(CGAL::assign(lm_pl, m_point_location))
+      return lm_pl->ray_shoot_down(pt);*/
+
+    return CGAL::Object();
+  }
+
+  virtual void change_strategy(Strategy s)
+  {
+    Walk_point_location* walk_pl;
+    if(CGAL::assign(walk_pl, m_point_location))
+      delete walk_pl;
+    else
+    {
+      Naive_point_location* naive_pl;
+      if(CGAL::assign(naive_pl, m_point_location))
+        delete naive_pl;
+      else
+      {
+        Trap_point_location* trap_pl;
+        if(CGAL::assign(trap_pl, m_point_location))
+          delete trap_pl;
+        else
+        {
+          Lanmarks_point_location* lm_pl;
+          if(CGAL::assign(lm_pl, m_point_location));
+            //delete lm_pl;
+        }
+      }
+    }
+
+    if(s == WALK)
+    {
+      m_point_location =
+        CGAL::make_object(new Walk_point_location(*m_curves_arr));
+      return;
+    }
+    if(s == NAIVE)
+    {
+      m_point_location =
+        CGAL::make_object(new Naive_point_location(*m_curves_arr));
+      return;
+    }
+    if(s == TRAP)
+    {
+      QCursor old = cursor();
+      setCursor(Qt::WaitCursor);
+      m_point_location =
+        CGAL::make_object(new Trap_point_location(*m_curves_arr));
+      setCursor(old);
+      return;
+    }
+    if(s == LANDMARKS)
+    {
+     /*
+     QCursor old = cursor();
+      setCursor(Qt::WaitCursor);
+      m_point_location =
+        CGAL::make_object(new Lanmarks_point_location(*m_curves_arr));
+        setCursor(old);
+        */
+      return;
+    }
+  }
+
+  virtual bool is_empty()
+  {
+    return m_curves_arr->is_empty();
+  }
+
   private:
 
     Face_const_handle get_face(const CGAL::Object& obj)
@@ -1411,6 +1478,7 @@ public:
 class Segment_tab_traits 
 {
 public:
+  typedef Kernel::FT                                FT;
   typedef Arr_seg_list                              Curves_list;
   typedef Seg_arr                                   Arrangement_2;
   typedef Arrangement_2::Face_const_handle          Face_const_handle;
@@ -1445,9 +1513,8 @@ public:
   //point location
   typedef Seg_trap_point_location                   Trap_point_location;
   typedef Seg_naive_point_location                  Naive_point_location;
-  //typedef Seg_simple_point_location               Simple_point_location;
   typedef Seg_walk_point_location                   Walk_point_location;
-  //typedef Seg_lenmarks_point_location             Lenmarks_point_location;
+  typedef Seg_lanmarks_point_location               Lanmarks_point_location;
  
  
 public:
@@ -1528,7 +1595,7 @@ public:
       points[3] = (Coord_point(w->x_max(),w->y_min()));
      
       w->setFilled(true);
-      w->setFillColor(w->unbounded_face_color());
+      w->setFillColor(f->info());
       
       QPen old_penstyle = w->get_painter().pen();
       w->get_painter().setPen(Qt::NoPen);
@@ -1836,6 +1903,7 @@ public:
 class Polyline_tab_traits  
 {
 public:
+  typedef Kernel::FT                                FT;
   typedef Arr_pol_list                              Curves_list;
   typedef Pol_arr                                   Arrangement_2;
   typedef Arrangement_2::Face_const_handle          Face_const_handle;
@@ -1868,9 +1936,8 @@ public:
   //point location
   typedef Pol_trap_point_location                  Trap_point_location;
   typedef Pol_naive_point_location                 Naive_point_location;
-  //typedef Pol_simple_point_location              Simple_point_location;
   typedef Pol_walk_point_location                  Walk_point_location;
-  //typedef Pol_lenmarks_point_location            Lenmarks_point_location;
+  typedef Pol_lanmarks_point_location              Lanmarks_point_location;
  
 
   /*! coordinate scale - used in conics*/
@@ -2410,6 +2477,7 @@ private:
 class Conic_tab_traits
 {
 public:
+  typedef Alg_kernel::FT                            FT;
   typedef Arr_xconic_list                           Curves_list;
   typedef Conic_arr                                 Arrangement_2;
   typedef Arrangement_2::Face_const_handle          Face_const_handle;
@@ -2440,9 +2508,8 @@ public:
   //point location
   typedef Conic_trap_point_location      Trap_point_location;
   typedef Conic_naive_point_location     Naive_point_location;
-  //typedef Conic_simple_point_location    Simple_point_location;
   typedef Conic_walk_point_location      Walk_point_location;
-  //typedef Conic_lenmarks_point_location  Lenmarks_point_location;
+  typedef Conic_lanmarks_point_location  Lanmarks_point_location;
  
   /*! coordinate scale - used in conics*/
   int COORD_SCALE;
@@ -2596,62 +2663,46 @@ public:
    */
   void draw_xcurve(Qt_widget_demo_tab<Conic_tab_traits> * w , X_monotone_curve_2 c )
   {
-    // Get the co-ordinates of the curve's source and target.
-    double sx = CGAL::to_double(c.source().x()),
-      sy = CGAL::to_double(c.source().y()),
-      tx = CGAL::to_double(c.target().x()),
-      ty = CGAL::to_double(c.target().y());
-    
-    if (c.orientation() == CGAL::COLLINEAR)
+    // Get a polyline approximation of the curve.
+    const Point_2&  p_min = m_traits.construct_min_vertex_2_object() (c);
+    const Point_2&  p_max = m_traits.construct_max_vertex_2_object() (c);
+    const double    x_min = CGAL::to_double (p_min.x());
+    const double    x_max = CGAL::to_double (p_max.x());
+    const int       ix_min = (*w).x_pixel(x_min);
+    const int       ix_max = (*w).x_pixel(x_max);
+    unsigned int    n = static_cast<unsigned int> (ix_max - ix_min);
+
+    if (w->x_min() > x_max || w->x_max() < x_min)
+      return;
+
+    if(n == 0)
+      return;
+
+    CGAL::Bbox_2    c_bbox = c.bbox();
+
+    if (w->y_min() > c_bbox.ymax() || w->y_max() < c_bbox.ymin())
+      return;
+
+    std::pair<double, double>  *app_pts = new std::pair<double, double> [n + 1];
+    std::pair<double, double>  *end_pts = c.polyline_approximation (n, app_pts);
+    std::pair<double, double>  *p_curr = app_pts; 
+    std::pair<double, double>  *p_next = p_curr + 1;
+    Coord_point     ps (p_curr->first, p_curr->second);
+
+    p_curr = app_pts;
+    p_next = p_curr + 1;
+    do
     {
-      Coord_point coord_source(sx / COORD_SCALE, sy / COORD_SCALE);
-      Coord_point coord_target(tx / COORD_SCALE, ty / COORD_SCALE);
-      Coord_segment coord_seg(coord_source, coord_target);
-      
-      *w << coord_seg;
-    }
-    else
-    {
-      // If the curve is monotone, than its source and its target has the
-      // extreme x co-ordinates on this curve.
-        bool     is_source_left = (sx < tx);
-        int      x_min = is_source_left ? (*w).x_pixel(sx) : 
-          (*w).x_pixel(tx);
-        int      x_max = is_source_left ? (*w).x_pixel(tx) :
-          (*w).x_pixel(sx);
-        double   prev_x = is_source_left ? sx : tx;
-        double   prev_y = is_source_left ? sy : ty;
-        double   end_x = is_source_left ? tx : sx;
-        double   end_y = is_source_left ? ty : sy;
-        double   curr_x, curr_y;
-        int      x;
-        
-        Arr_conic_point_2 px;
-        
-        for (x = x_min + DRAW_FACTOR; x < x_max; x+=DRAW_FACTOR)
-        {
-          curr_x = (*w).x_real(x);
-          Alg_kernel   ker;
-          Arr_conic_point_2 curr_p(curr_x, 0);
-          if(!(ker.compare_x_2_object() (curr_p, c.left()) != CGAL::SMALLER &&
-               ker.compare_x_2_object() (curr_p, c.right()) != CGAL::LARGER))
-               continue;
-          px = c.get_point_at_x(curr_p);
-          
-          curr_y = CGAL::to_double(px.y());
-          (*w) << Coord_segment (Coord_point(prev_x / COORD_SCALE,
-                                             prev_y / COORD_SCALE),
-                                 Coord_point(curr_x / COORD_SCALE,
-                                             curr_y / COORD_SCALE));
-          prev_x = curr_x;
-          prev_y = curr_y;
-        }
-        
-        (*w) << Coord_segment (Coord_point(prev_x / COORD_SCALE,
-                                           prev_y / COORD_SCALE),
-                               Coord_point(end_x / COORD_SCALE,
-                                           end_y / COORD_SCALE));
-    }
+      Coord_point     pt (p_next->first, p_next->second);
+
+      *w << Coord_segment(ps, pt);
+      ps = pt;
+      p_curr++;
+      p_next++;
+    } while (p_next != end_pts);
+
+    delete[] app_pts;
+    return;
   }
   
   /*! get_origin_curve - return the origin base curve
@@ -2688,10 +2739,10 @@ public:
     Rational x, y, x1, y1, x0, y0, temp;
     Rational sq_rad;
 
-    x1 = Rational(static_cast<int>(COORD_SCALE * m_p1.x()));
-    y1 = Rational(static_cast<int>(COORD_SCALE * m_p1.y()));
-    x = Rational(static_cast<int>(COORD_SCALE * p.x()));
-    y = Rational(static_cast<int>(COORD_SCALE * p.y()));
+    x1 = Rational(static_cast<int>(1000 * m_p1.x() + 0.5), 1000);
+    y1 = Rational(static_cast<int>(1000 * m_p1.y() + 0.5), 1000);
+    x = Rational(static_cast<int>(1000 * p.x() + 0.5), 1000);
+    y = Rational(static_cast<int>(1000 * p.y() + 0.5), 1000);
 
     if(x != x1 || y != y1) 
     {      
@@ -2746,8 +2797,8 @@ public:
         }
         if (num_points == 2)
         {
-          Rational x2 = Rational(static_cast<int>(COORD_SCALE * m_p2.x()));
-          Rational y2 = Rational(static_cast<int>(COORD_SCALE * m_p2.y()));
+          Rational x2 = Rational(static_cast<int>(1000 * m_p2.x() + 0.5), 1000);
+          Rational y2 = Rational(static_cast<int>(1000 * m_p2.y() + 0.5), 1000);
           Rat_kernel ker;
           // the three points of the parabola cannot be collinear (
           if (ker.collinear_2_object()(Rat_point_2(x1,y1),
@@ -2789,15 +2840,15 @@ public:
         if (num_points == 4)
         { 
           *w << p;
-          Rational x2 = Rational(static_cast<int>(COORD_SCALE * m_p2.x()));
-          Rational y2 = Rational(static_cast<int>(COORD_SCALE * m_p2.y()));
-          Rational x3 = Rational(static_cast<int>(COORD_SCALE * m_p3.x()));
-          Rational y3 = Rational(static_cast<int>(COORD_SCALE * m_p3.y()));
-          Rational x4 = Rational(static_cast<int>(COORD_SCALE * m_p4.x()));
-          Rational y4 = Rational(static_cast<int>(COORD_SCALE * m_p4.y()));
+          Rational x2 = Rational(static_cast<int>(1000 * m_p2.x() + 0.5), 1000);
+          Rational y2 = Rational(static_cast<int>(1000 * m_p2.y() + 0.5), 1000);
+          Rational x3 = Rational(static_cast<int>(1000 * m_p3.x() + 0.5), 1000);
+          Rational y3 = Rational(static_cast<int>(1000 * m_p3.y() + 0.5), 1000);
+          Rational x4 = Rational(static_cast<int>(1000 * m_p4.x() + 0.5), 1000);
+          Rational y4 = Rational(static_cast<int>(1000 * m_p4.y() + 0.5), 1000);
           cv = new Arr_base_conic_2 (Rat_point_2(x1,y1),Rat_point_2(x2,y2),
-                                    Rat_point_2(x3,y3),Rat_point_2(x4,y4),
-                                    Rat_point_2(x,y));
+                                     Rat_point_2(x3,y3),Rat_point_2(x4,y4),
+                                     Rat_point_2(x,y));
           if (! cv->is_valid())
           {
             QMessageBox::information( w, "Insert Conic", "Invalid Conic");
@@ -3053,10 +3104,14 @@ public:
     Data d;
 
     // RWRW:
-    Rat_point_2          my_p1 (static_cast<int> (CGAL::to_double(p1.x())),
-                                static_cast<int> (CGAL::to_double(p1.y())));
-    Rat_point_2          my_p2 (static_cast<int> (CGAL::to_double(p2.x())),
-                                static_cast<int> (CGAL::to_double(p2.y())));
+    Rational x1 (static_cast<int> (1000 * CGAL::to_double(p1.x())+ 0.5), 1000);
+    Rational y1 (static_cast<int> (1000 * CGAL::to_double(p1.y())+ 0.5), 1000);
+
+    Rational x2 (static_cast<int> (1000 * CGAL::to_double(p2.x())+ 0.5), 1000);
+    Rational y2 (static_cast<int> (1000 * CGAL::to_double(p2.y())+ 0.5), 1000);
+
+    Rat_point_2      my_p1 (x1, y1);
+    Rat_point_2      my_p2 (x2, y2);
     Arr_base_conic_2 base (Rat_segment_2 (my_p1, my_p2));
     // Arr_base_conic_2 base(Arr_conic_segment_2(p1 , p2));
 

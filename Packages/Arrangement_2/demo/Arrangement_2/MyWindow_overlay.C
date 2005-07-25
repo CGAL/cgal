@@ -26,6 +26,9 @@
 #include "forms.h"
 #include "qt_layer.h"
 #include "demo_tab.h"
+#include "overlay_fucntor.h"
+
+#include <CGAL/Arr_overlay.h>
 
 /*! open the overlay dialog form and read its output */
 void MyWindow::overlay_pm()
@@ -37,7 +40,7 @@ void MyWindow::overlay_pm()
     if (form->listBox2->count() < i)
     {
       QMessageBox::information( this, "Overlay",
-          "Please!!! you need more than one planar map to make an overlay...");
+          "You need more than one planar map to make an overlay...");
       return;
     }
     i = 12;
@@ -105,7 +108,162 @@ void MyWindow::overlay_pm()
  */
 void MyWindow::make_overlay( std::list<int> indexes ,
                std::list<int> paint_flags ,TraitsType t , bool new_tab)
-{}
+{
+  switch ( t ) 
+  {
+    case SEGMENT_TRAITS:
+    {
+       if(new_tab)
+         add_segment_tab();
+       else
+         updateTraitsType( setSegmentTraits );
+        Qt_widget_demo_tab<Segment_tab_traits> *w_demo_p_new = 
+         static_cast<Qt_widget_demo_tab<Segment_tab_traits> *> 
+       (myBar->currentPage());
+     
+	 QCursor old = w_demo_p_new->cursor();
+     w_demo_p_new->setCursor(Qt::WaitCursor);
+     
+	 Qt_widget_demo_tab<Segment_tab_traits> *w_demo_p1, *w_demo_p2;
+     
+     int ind1, ind2;
+    
+     ind1 = indexes.front();
+     ind2 = indexes.back();
+	  
+     w_demo_p1 = 
+       static_cast<Qt_widget_demo_tab<Segment_tab_traits> *> 
+       (myBar->page( ind1 ));
+
+     w_demo_p2 = 
+       static_cast<Qt_widget_demo_tab<Segment_tab_traits> *> 
+       (myBar->page( ind2 ));
+       
+     w_demo_p_new->bbox = w_demo_p1->bbox + w_demo_p2->bbox;
+       
+	   // update the vector of colors of unbounded faces
+
+     typedef  Segment_tab_traits::Arrangement_2    Arrangement_2;
+     Overlay_functor<Arrangement_2> func;
+     CGAL::overlay(*(w_demo_p1->m_curves_arr),
+                   *(w_demo_p2->m_curves_arr),
+                   *(w_demo_p_new->m_curves_arr),
+                   func);
+	   
+	 w_demo_p_new->set_window(w_demo_p_new->bbox.xmin(), 
+                            w_demo_p_new->bbox.xmax(),
+                            w_demo_p_new->bbox.ymin() , 
+	                          w_demo_p_new->bbox.ymax());
+	 
+     w_demo_p_new->setCursor(old);     
+     break;
+     }
+
+    case POLYLINE_TRAITS:
+    {
+      if(new_tab)
+        add_polyline_tab();
+      else
+        updateTraitsType( setPolylineTraits );
+
+      
+       Qt_widget_demo_tab<Polyline_tab_traits> *w_demo_p_new = 
+         static_cast<Qt_widget_demo_tab<Polyline_tab_traits> *> 
+       (myBar->currentPage());
+     
+	 QCursor old = w_demo_p_new->cursor();
+     w_demo_p_new->setCursor(Qt::WaitCursor);
+     
+	 Qt_widget_demo_tab<Polyline_tab_traits> *w_demo_p1, *w_demo_p2;
+     
+     int ind1, ind2;
+    
+     ind1 = indexes.front();
+     ind2 = indexes.back();
+	  
+     w_demo_p1 = 
+       static_cast<Qt_widget_demo_tab<Polyline_tab_traits> *> 
+       (myBar->page( ind1 ));
+
+     w_demo_p2 = 
+       static_cast<Qt_widget_demo_tab<Polyline_tab_traits> *> 
+       (myBar->page( ind2 ));
+       
+     w_demo_p_new->bbox = w_demo_p1->bbox + w_demo_p2->bbox;
+       
+	   // update the vector of colors of unbounded faces
+
+     typedef  Polyline_tab_traits::Arrangement_2    Arrangement_2;
+     Overlay_functor<Arrangement_2> func;
+     CGAL::overlay(*(w_demo_p1->m_curves_arr),
+                   *(w_demo_p2->m_curves_arr),
+                   *(w_demo_p_new->m_curves_arr),
+                   func);
+	   
+	 w_demo_p_new->set_window(w_demo_p_new->bbox.xmin(), 
+                            w_demo_p_new->bbox.xmax(),
+                            w_demo_p_new->bbox.ymin() , 
+	                          w_demo_p_new->bbox.ymax());
+	 
+     w_demo_p_new->setCursor(old);     
+     break;
+    }
+
+    case CONIC_TRAITS:
+    {
+      if(new_tab)
+        add_conic_tab();
+      else
+        updateTraitsType( setConicTraits );
+      
+       Qt_widget_demo_tab<Conic_tab_traits> *w_demo_p_new = 
+         static_cast<Qt_widget_demo_tab<Conic_tab_traits> *> 
+       (myBar->currentPage());
+     
+	 QCursor old = w_demo_p_new->cursor();
+     w_demo_p_new->setCursor(Qt::WaitCursor);
+     
+	 Qt_widget_demo_tab<Conic_tab_traits> *w_demo_p1, *w_demo_p2;
+     
+     int ind1, ind2;
+    
+     ind1 = indexes.front();
+     ind2 = indexes.back();
+	  
+     w_demo_p1 = 
+       static_cast<Qt_widget_demo_tab<Conic_tab_traits> *> 
+       (myBar->page( ind1 ));
+
+     w_demo_p2 = 
+       static_cast<Qt_widget_demo_tab<Conic_tab_traits> *> 
+       (myBar->page( ind2 ));
+       
+     w_demo_p_new->bbox = w_demo_p1->bbox + w_demo_p2->bbox;
+       
+	   // update the vector of colors of unbounded faces
+
+     typedef  Conic_tab_traits::Arrangement_2    Arrangement_2;
+     Overlay_functor<Arrangement_2> func;
+     CGAL::overlay(*(w_demo_p1->m_curves_arr),
+                   *(w_demo_p2->m_curves_arr),
+                   *(w_demo_p_new->m_curves_arr),
+                   func);
+
+
+	   
+	 w_demo_p_new->set_window(w_demo_p_new->bbox.xmin(), 
+                            w_demo_p_new->bbox.xmax(),
+                            w_demo_p_new->bbox.ymin() , 
+	                          w_demo_p_new->bbox.ymax());
+	 
+     w_demo_p_new->setCursor(old);     
+     break;
+
+    } 
+  }
+}
+  
+
 
 /*! real index - finds the tab bar index of a tab
  * \param index - the tab index (the same one it was 
