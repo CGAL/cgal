@@ -84,7 +84,8 @@ public:
     return R().construct_center_2_object()(*this);
   }
 
-  FT  squared_radius() const
+  typename Qualified_result_of<typename R::Compute_squared_radius_2,Circle_2>::type
+  squared_radius() const
   {
     return R().compute_squared_radius_2_object()(*this);
   }
