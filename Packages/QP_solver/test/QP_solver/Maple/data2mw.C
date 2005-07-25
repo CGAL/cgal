@@ -73,7 +73,7 @@ int main(int argn,char **argv)
   std::ofstream outf;
 
   // check input:
-  bailout(argn == 3,"Error: usage is 'data2mw input-file output-file");
+  bailout(argn == 3,"Error: usage is 'data2mw input-file output-file'");
   inf.open(argv[1]);
   bailout(!(!inf),"Error: could not open input file");
   outf.open(argv[2]);

@@ -1,0 +1,88 @@
+OVERVIEW
+
+This file explains the structure of the testsuite directory of package
+QP_engine.
+
+
+THE CGAL TESTSUITE PROCESS
+
+The CGAL testsuite calls the QP_engine testsuite via
+
+  ./test_suite_QPE_solver < test_suite_QPE_solver.cin
+
+The latter file contains the filenames of individual test cases to be
+solved (so test_suite_QPE_solver.cin does NOT contain the test data
+itself).  The executable ./test_suite_QPE_solver reads these filenames
+(and some further options that specifying what pricing strategy
+etc. is to be used for each test case) and processes them one after
+the other.  All these test data files are contained in the directory
+data/ and end in ".data_f", ".data_i", or ".data_r".
+
+
+WHERE THE .data_* FILES COME FROM
+
+The above .data_* files could be written by hand, but we generate them
+from Maple worksheets.  (This makes it easier to play around with the
+data and to verify results in Maple if need be.)  Thus, every .data_*
+file is in fact produced by some Maple worksheet and all these Maple
+worksheets are stored in the directory Maple/data/ and end in ".mema".
+If you open one of these mema-files, you can see that this is a simple
+ASCII file consisting of Maple commands.  Executing a mema-file via
+
+  maple mema-file-name
+
+creates the corresponding .data_* files in the data/ directory.
+Notice that every .data_* file has a corresponding mema-file and that
+some mema-files produce multiple .data_* files.
+
+
+THE CGAL TESTSUITE AND THE COMPLETE TESTSUITE
+
+In order to create the .data_* files from the mema-files, you can use
+the script ./create-testsuite which you either invoke as
+
+  ./create-testsuite CGAL
+
+or as
+
+  ./create-testsuite all
+
+We make this distinction because we have a very large testsuite and do
+not want to put all tests contained in it into the CGAL testsuite (it
+would take hours to run this testsuite).  Thus, the former of the
+above commands only converts a small subset of all the mema-files to
+.data_* files and produces the file test_suide_QPE_solver.cin (see
+above) with the corresponding commands to execute these tests.
+
+If you wand that the command "./test_suite_QPE_solver <
+test_suite_QPE_solver.cin" executes all tests contained in our
+testsuite then you need to do a "./create-testsuite all".
+
+How does the ./create-testsuite script know which test case is part of
+the CGAL testsuite (i.e., which test case to convert if you pass
+"CGAL" as its argument)?  The script looks into the mema-file and if
+there is a command
+
+  is_part_of_CGAL_testsuite:= true
+
+in it, it considers the test as part of the CGAL testsuite.  Observe
+here that all .data_* files originating from such mema-files NEED TO
+BE PRESENT IN THE REPOSITORY (the script ./create-testsuite will warn
+you if such a file is missing in the repository).
+
+
+VIEWING mema-FILES IN MAPLE
+
+If you want to play around with a specific mema-file in Maple then you
+can use the script Maple/data2mw which converts a mema-file to a
+"pretty" Maple worksheet.  For instance, do a 
+
+  g++ data2mw.C -o data2mw
+  ./data2mw data/QP_Bounded_QPE_solver.mema QP_Bounded_QPE_solver.mw
+
+in the Maple/ directory.  Even simpler, call the script
+
+  ./generate-worksheets
+
+which converts all mema-files in Maple/data/ to nicely formatted Maple
+worksheets (which you can then find in Maple/).

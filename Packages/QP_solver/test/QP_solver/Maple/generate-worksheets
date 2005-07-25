@@ -11,7 +11,13 @@ FILES=`find data -name '*.mema'`
 # check that data2mw binary is available
 if [ ! -e data2mw ]; then
     echo "Binary 'data2mw' is not available in the current working directory."
-    exit -2;
+    echo "Trying to build it now..."
+    g++ data2mw.C -o data2mw
+    if [ ! -e data2mw ]; then
+	echo "Building failed, bailing out."
+	echo "ERROR: 'data2mw' not available in the current working directory."
+	exit -2;
+    fi
 fi
 
 # process each file:
