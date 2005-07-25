@@ -1,3 +1,6 @@
+25 July 2005 Andreas Fabri
+- Added Qualified_result_of<CartesianKernelFunctors::Compute_squared_radius_2<K>, typename K::Circle_2, int >
+
 20 July 2005 Andreas Fabri
 - Moved Compute_y_2 from Kernel_23 to Cartesian_kernel
 - Added qualified_result_type to some functors
