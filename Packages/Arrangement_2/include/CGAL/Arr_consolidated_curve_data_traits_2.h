@@ -144,7 +144,7 @@ public:
      * \param data The data object.
      */ 
     X_monotone_curve_2 (const Base_x_monotone_curve_2& cv,
-			const Data& data) :
+                        const Data& data) :
       Base_x_monotone_curve_2(cv),
       m_data_list()
     {
@@ -160,7 +160,7 @@ public:
      */
     template <class InputIterator>
     X_monotone_curve_2 (const Base_x_monotone_curve_2& cv, 
-			const InputIterator& begin,
+                        const InputIterator& begin,
                         const InputIterator& end) :
       Base_x_monotone_curve_2(cv),
       m_data_list()
@@ -168,7 +168,7 @@ public:
       InputIterator    it;
 
       for (it = begin; it != end; it++)
-	m_data_list.push_back(*it);
+        m_data_list.push_back(*it);
     }
 
     /*!
@@ -266,7 +266,7 @@ public:
       InputIterator    it;
 
       for (it = begin; it != end; ++it)
-	m_data_list.push_back(*it);
+        m_data_list.push_back(*it);
 
       return;
     }
@@ -330,7 +330,7 @@ public:
       std::list<Object>   base_objects;
     
       base->make_x_monotone_2_object() (cv,
-					std::back_inserter (base_objects));
+                                        std::back_inserter (base_objects));
 
       // Go over the returned objects and attach the data to each of the
       // resulting x-monotone curves.
@@ -339,21 +339,21 @@ public:
 
       for (it = base_objects.begin(); it != base_objects.end(); ++it)
       { 
-	base_x_curve = object_cast<Base_x_monotone_curve_2> (&(*it));
-	if (base_x_curve != NULL)
-	{
-	  // The current object is a base x-monotone curve: Attach data to it.
-	  *oi = make_object (X_monotone_curve_2 (*base_x_curve,
-						 cv.get_data()));
-	}
-	else
-	{
-	  CGAL_assertion (object_cast<Point_2> (&(*it)) != NULL);
+        base_x_curve = object_cast<Base_x_monotone_curve_2> (&(*it));
+        if (base_x_curve != NULL)
+        {
+          // The current object is a base x-monotone curve: Attach data to it.
+          *oi = make_object (X_monotone_curve_2 (*base_x_curve,
+                                                 cv.get_data()));
+        }
+        else
+        {
+          CGAL_assertion (object_cast<Point_2> (&(*it)) != NULL);
 
-	  // The current object is an isolated point: Leave it as is.
-	  *oi = *it;
-	}
-	++oi;
+          // The current object is an isolated point: Leave it as is.
+          *oi = *it;
+        }
+        ++oi;
       }
 
       return (oi);
@@ -391,7 +391,7 @@ public:
     {
       // Split the original curve.
       base->split_2_object() (cv, p,
-			      c1, c2);
+                              c1, c2);
 
       // Attach data to the split curves.
       c1.clear_data();
@@ -441,11 +441,11 @@ public:
       std::list<Object>                      base_list;
 
       base->intersect_2_object() (cv1, cv2,
-				  std::back_inserter (base_list));
+                                  std::back_inserter (base_list));
 
       // Stop if the list is empty:
       if (base_list.empty())
-	return (oi);
+        return (oi);
 
       // Go over all intersection objects and prepare the output.
       typename std::list<Object>::iterator   curr;
@@ -453,27 +453,27 @@ public:
 
       for (curr = base_list.begin(); curr != base_list.end(); ++curr)
       {
-	if ((base_cv = object_cast<Base_x_monotone_curve_2>(&(*curr))) != NULL)
-	{
-	  // The current intersection object is an overlapping x-monotone
-	  // curve: First attach data from the first curve.
-	  X_monotone_curve_2  cv (*base_cv,
-				  cv1.data_begin(), cv1.data_end());
+        if ((base_cv = object_cast<Base_x_monotone_curve_2>(&(*curr))) != NULL)
+        {
+          // The current intersection object is an overlapping x-monotone
+          // curve: First attach data from the first curve.
+          X_monotone_curve_2  cv (*base_cv,
+                                  cv1.data_begin(), cv1.data_end());
 
-	  // Add data from the second curve.
-	  cv.add_data (cv2.data_begin(), cv2.data_end());
+          // Add data from the second curve.
+          cv.add_data (cv2.data_begin(), cv2.data_end());
 
-	  // Output the curve:
-	  *oi = make_object (cv);
-	}
-	else
-	{
-	  // The current intersection object is an intersection point:
-	  // Copy it as is.
-	  *oi = *curr;
-	}
+          // Output the curve:
+          *oi = make_object (cv);
+        }
+        else
+        {
+          // The current intersection object is an intersection point:
+          // Copy it as is.
+          *oi = *curr;
+        }
 
-	++oi;
+        ++oi;
       }
 
       return (oi);
@@ -489,12 +489,12 @@ public:
   class Are_mergeable_2
   {
   private:
-    Base_traits    *base;
+    const Base_traits    *base;
 
   public:
 
     /*! Constructor. */
-    Are_mergeable_2 (Base_traits *_base) :
+    Are_mergeable_2 (const Base_traits *_base) :
       base (_base)
     {}
 
@@ -510,9 +510,9 @@ public:
       // In case the two base curves are not mergeable, the extended curves
       // are not mergeable as well.
       if (!_are_mergeable_base_imp (cv1, cv2,
-				    Base_has_merge_category()))
+                                    Base_has_merge_category()))
       {
-	return (false);
+        return (false);
       }
 
       // Make sure that the data attached to both curves is the same.
@@ -525,8 +525,8 @@ public:
      * Implementation of the base predicate in case the HasMerge tag is true.
      */
     bool _are_mergeable_base_imp (const X_monotone_curve_2& cv1,
-				  const X_monotone_curve_2& cv2,
-				  Tag_true) const
+                                  const X_monotone_curve_2& cv2,
+                                  Tag_true) const
     {
       return (base->are_mergeable_2_object() (cv1, cv2));      
     }
@@ -535,8 +535,8 @@ public:
      * Implementation of the base predicate in case the HasMerge tag is false.
      */
     bool _are_mergeable_base_imp (const X_monotone_curve_2& ,
-				  const X_monotone_curve_2& ,
-				  Tag_false) const
+                                  const X_monotone_curve_2& ,
+                                  Tag_false) const
     {
       // Curve merging is not supported:
       return (false);
@@ -544,7 +544,7 @@ public:
   };
   
   /*! Get an Are_mergeable_2 functor object. */
-  Are_mergeable_2 are_mergeable_2_object () 
+  Are_mergeable_2 are_mergeable_2_object () const
   {
     return Are_mergeable_2 (this);
   }
@@ -590,13 +590,13 @@ public:
       Base_x_monotone_curve_2  base_cv;
 
       base->merge_2_object() (cv1, cv2,
-			      base_cv);
+                              base_cv);
 
       // Attach data from one of the curves.
       CGAL_precondition (cv1.has_same_data (cv2));
 
       c = X_monotone_curve_2 (base_cv,
-			      cv1.data_begin(), cv1.data_end());
+                              cv1.data_begin(), cv1.data_end());
       return;
     }
 
@@ -643,7 +643,7 @@ public:
                                    const Point_2& q) const
     {
       Base_x_monotone_curve_2  base_cv =
-	base->construct_x_monotone_curve_2_object() (p, q);
+        base->construct_x_monotone_curve_2_object() (p, q);
 
       return (X_monotone_curve_2 (base_cv));
     }

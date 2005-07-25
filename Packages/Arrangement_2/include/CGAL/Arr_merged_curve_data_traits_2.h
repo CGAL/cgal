@@ -210,17 +210,17 @@ public:
 
       for (it = base_objects.begin(); it != base_objects.end(); ++it)
       {
-	base_x_curve = object_cast<Base_x_monotone_curve_2> (&(*it));
+        base_x_curve = object_cast<Base_x_monotone_curve_2> (&(*it));
         if (base_x_curve != NULL)
         {
           // Current object is an x-monotone curve: Attach data to it.
           *oi = make_object (X_monotone_curve_2 (*base_x_curve,
-						 cv.get_data()));
+                                                 cv.get_data()));
         }
         else
         {
           // Current object is an isolated point: Leave it as is.
-	  CGAL_assertion (object_cast<Point_2> (&(*it)) != NULL);
+          CGAL_assertion (object_cast<Point_2> (&(*it)) != NULL);
           *oi = *it;
         }
         ++oi;
@@ -352,12 +352,12 @@ public:
   class Are_mergeable_2
   {
   private:
-    Base_traits    *base;
+    const Base_traits    *base;
 
   public:
 
     /*! Constructor. */
-    Are_mergeable_2 (Base_traits *_base) :
+    Are_mergeable_2 (const Base_traits *_base) :
       base (_base)
     {}
 
@@ -368,7 +368,7 @@ public:
      * \return (true) if the two curves are mergeable; (false) otherwise.
      */
     bool operator() (const X_monotone_curve_2& cv1,
-                     const X_monotone_curve_2& cv2)
+                     const X_monotone_curve_2& cv2) const
     {
       // In case the two base curves are not mergeable, the extended curves
       // are not mergeable as well.
@@ -389,7 +389,7 @@ public:
      */
     bool _are_mergeable_base_imp (const X_monotone_curve_2& cv1,
                                   const X_monotone_curve_2& cv2,
-                                  Tag_true)
+                                  Tag_true) const
     {
       return (base->are_mergeable_2_object() (cv1, cv2));
     }
@@ -399,7 +399,7 @@ public:
      */
     bool _are_mergeable_base_imp (const X_monotone_curve_2& ,
                                   const X_monotone_curve_2& ,
-                                  Tag_false)
+                                  Tag_false) const
     {
       // Curve merging is not supported:
       return (false);
@@ -407,7 +407,7 @@ public:
   };
   
   /*! Get an Are_mergeable_2 functor object. */
-  Are_mergeable_2 are_mergeable_2_object ()
+  Are_mergeable_2 are_mergeable_2_object () const
   {
     return Are_mergeable_2 (this);
   }
@@ -505,7 +505,7 @@ public:
                                    const Point_2& q) const
     {
       Base_x_monotone_curve_2  base_cv =
-	base->construct_x_monotone_curve_2_object() (p, q);
+        base->construct_x_monotone_curve_2_object() (p, q);
 
       return (X_monotone_curve_2 (base_cv, Data()));
     }
