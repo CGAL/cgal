@@ -54,10 +54,10 @@ template <class Traits_,
 class Arrangement_with_history_2 :
   public Arrangement_2 
   <Arr_consolidated_curve_data_traits_2<Traits_,
-					typename Traits_::Curve_2 *>,
+                                        typename Traits_::Curve_2 *>,
    typename Dcel_::template rebind
    <Arr_consolidated_curve_data_traits_2<Traits_,
-					 typename Traits_::Curve_2 *> >::other>
+                                         typename Traits_::Curve_2 *> >::other>
 {
 public:
 
@@ -462,9 +462,25 @@ public:
   }
 
   // Define iterators for the origin curves of an edge:
+  class Curve_halfedges_ex : public Curve_halfedges
+  {
+  public:
+    /* Get a hndle to the curve (non-const version). */
+    Curve_handle handle ()
+    {
+      return Curve_handle(this);
+    }
+
+    /* Get a hndle to the curve (const version). */
+    Curve_const_handle handle () const
+    {
+      return Curve_const_handle(this);
+    }
+  };
+
   typedef I_Dereference_iterator<
     typename Data_x_curve_2::Data_iterator,
-    Curve_halfedges,
+    Curve_halfedges_ex,
     typename Data_x_curve_2::Data_iterator::difference_type,
     typename Data_x_curve_2::Data_iterator::iterator_category>
                                               Origin_curve_iterator;
@@ -472,7 +488,7 @@ public:
   typedef I_Dereference_const_iterator<
     typename Data_x_curve_2::Data_const_iterator,
     typename Data_x_curve_2::Data_iterator,
-    Curve_halfedges,
+    Curve_halfedges_ex,
     typename Data_x_curve_2::Data_iterator::difference_type,
     typename Data_x_curve_2::Data_iterator::iterator_category>
                                               Origin_curve_const_iterator;
@@ -503,6 +519,36 @@ public:
 
   /// \name Curve insertion and deletion.
   //@{
+
+  /*!
+   * Insert a curve into the arrangement.
+   * \param cv The curve to be inserted.
+   * \param pl a point-location object.
+   * \return A handle to the inserted curve.
+   */
+  template <class PointLocation>
+  Curve_handle insert (const Curve_2& cv,
+                       const PointLocation& pl)
+  {
+    // Allocate an extended curve (with an initially empty set of edges)
+    // and store it in the curves' list.
+    Curve_halfedges   *p_cv = m_curves_alloc.allocate (1);
+    
+    m_curves_alloc.construct (p_cv, cv);
+    m_curves.push_back (*p_cv);
+
+    // Create a data-traits Curve_2 object, which is comprised of cv and
+    // a pointer to the extended curve we have just created.
+    // Insert this curve into the base arrangement. Note that the attached
+    // observer will take care of updating the edges' set.
+    Data_curve_2       data_curve (cv, p_cv);
+
+    CGAL::insert (*this, data_curve, pl);
+    
+    // Return a handle to the inserted curve (the last in the list).
+    Curve_handle       ch = m_curves.end();
+    return (--ch);
+  }
 
   /*!
    * Insert a curve into the arrangement.
@@ -564,7 +610,7 @@ public:
    * \param ch A handle to the curve to be removed.
    * \return The number of removed edges.
    */
-  size_t remove (Curve_handle& ch)
+  size_t remove (Curve_handle ch)
   {
     // Go over all edges the given curve induces.
     Curve_halfedges                     *p_cv = &(*ch); 
@@ -581,17 +627,17 @@ public:
 
       if (he->curve().number_of_data_objects() == 1)
       {
-	// The edge is induced only by out curve - remove it.
-	CGAL_assertion (he->curve().get_data() == p_cv);
+        // The edge is induced only by out curve - remove it.
+        CGAL_assertion (he->curve().get_data() == p_cv);
 
-	Base_arr_2::remove_edge (he);
-	n_removed++;
+        Base_arr_2::remove_edge (he);
+        n_removed++;
       }
       else
       {
-	// The edge is induced by other curves as well, so we just remove
-	// the pointer to out curve from its data container.
-	he->curve().remove_data (p_cv);
+        // The edge is induced by other curves as well, so we just remove
+        // the pointer to out curve from its data container.
+        he->curve().remove_data (p_cv);
       }
     }
 
@@ -622,14 +668,14 @@ public:
     Data_x_curve_2       cv1, cv2;
 
     traits->split_2_object() (e->curve(), p,
-			      cv1, cv2);
+                              cv1, cv2);
 
     // cv1 always lies to the left of cv2. If e is directed from left to right,
     // we should split and return the halfedge associated with cv1, and
     // otherwise we should return the halfedge associated with cv2 after the
     // split.
     if (traits->compare_xy_2_object() (e->source()->point(),
-				       e->target()->point()) == SMALLER)
+                                       e->target()->point()) == SMALLER)
     {
       return (Base_arr_2::split_edge (e, cv1, cv2));
     }
@@ -659,24 +705,24 @@ public:
     else
     {
       CGAL_precondition_msg(e1->source() == e2->source() || 
-			    e1->source() == e2->target(),
-			    "The two edges do not share a common end-vertex.");
+                            e1->source() == e2->target(),
+                            "The two edges do not share a common end-vertex.");
       vh = e1->source();
     }
 
     size_t             degree = vh->degree();
     CGAL_precondition_msg (degree == 2,
-			   "Cannot remove the common end-vertex.");
+                           "Cannot remove the common end-vertex.");
 
     CGAL_precondition_msg (traits->are_mergeable_2_object() (e1->curve(),
-							     e2->curve()),
-			   "Curves are not mergeable.");
+                                                             e2->curve()),
+                           "Curves are not mergeable.");
 
     // Merge the two curves.
     Data_x_curve_2       cv;
     
     traits->merge_2_object() (e1->curve(), e2->curve(),
-			      cv);
+                              cv);
 
     return (Base_arr_2::merge_edge (e1, e2, cv));
   }
@@ -705,7 +751,7 @@ protected:
   bool _unregister_observer (Arr_observer<Self> *p_obs)
   {
     return (Base_arr_2::_unregister_observer 
-	    (reinterpret_cast<Arr_observer<Base_arr_2>*>(p_obs)));
+            (reinterpret_cast<Arr_observer<Base_arr_2>*>(p_obs)));
   }
 
 };
