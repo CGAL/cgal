@@ -664,6 +664,18 @@ operator>=(const Point_2<K>& p, const Point_2<K>& q)
 
 template < class K >
 inline
+bool
+operator==(const Vector_2<K>& v, const Vector_2<K>& w)
+{ return K().equal_2_object()(v, w); }
+
+template < class K >
+inline
+bool
+operator!=(const Vector_2<K>& v, const Vector_2<K>& w)
+{ return ! (v == w); }
+
+template < class K >
+inline
 typename K::Vector_2
 operator*(const typename CGAL_WRAP(K)::FT &c, const Vector_2<K> &w)
 {

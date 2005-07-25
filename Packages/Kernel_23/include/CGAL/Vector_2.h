@@ -169,20 +169,6 @@ public:
     return R().construct_perpendicular_vector_2_object()(*this,o);
   }
 
-
-  bool
-  operator==(const Vector_2& v) const
-  {
-    return R().equal_2_object()(*this, v);
-  }
-
-
-  bool
-  operator!=(const Vector_2& v) const
-  {
-    return !(*this == v);
-  }
-
 };
 
 

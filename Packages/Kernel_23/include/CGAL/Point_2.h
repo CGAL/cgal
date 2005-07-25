@@ -84,18 +84,20 @@ public:
     return typename R::Compute_x_2()(*this);
   }
 
-  Cartesian_coordinate_type y() const
+  typename Qualified_result_of<typename R::Compute_y_2,Point_2>::type
+  y() const
   {
     return typename R::Compute_y_2()(*this);
   }
 
-   Cartesian_coordinate_type cartesian(int i) const
+  typename Qualified_result_of<typename R::Compute_x_2,Point_2>::type
+  cartesian(int i) const
   {
     CGAL_kernel_precondition( (i == 0) || (i == 1) );
     return (i==0) ?  x() : y();
   }
 
-  Cartesian_coordinate_type 
+  typename Qualified_result_of<typename R::Compute_x_2,Point_2>::type
   operator[](int i) const
   {
       return cartesian(i);
@@ -143,20 +145,6 @@ public:
   {
     return R().construct_bbox_2_object()(*this);
   }
-  
-  bool
-  operator==(const Point_2& p) const
-  {
-    return R().equal_2_object()(*this, p);
-  }
-
-
-  bool
-  operator!=(const Point_2& p) const
-  {
-    return !(*this == p);
-  }
-
 
 };
 
