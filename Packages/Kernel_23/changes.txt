@@ -1,4 +1,7 @@
 25 July 2005 Andreas Fabri
+- doc : Fix Kernel_traits<T> which mentioned T::Kernel instead of T::R.
+
+25 July 2005 Andreas Fabri
 - Added qualified result type to Circle_2::compute_squared_radius
 
 22 July 2005 Andreas Fabri
