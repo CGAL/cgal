@@ -118,9 +118,9 @@ which allows to skip a default construction and assignment :
 
     Object obj = intersection(segment_1, segment_2);
 
-    if (const Point_2 * point = object_cast<Point_2>(obj)) {
+    if (const Point_2 * point = object_cast<Point_2>(&obj)) {
         /* do something with *point */
-    } else if (const Segment_2 * segment = object_cast<Segment_2>(obj)) {
+    } else if (const Segment_2 * segment = object_cast<Segment_2>(&obj)) {
         /* do something with *segment*/
     }
 \end{cprog}
