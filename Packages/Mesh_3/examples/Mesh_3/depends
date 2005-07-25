@@ -12,6 +12,7 @@ essai.o: \
   ../../include/CGAL/Mesh_3/Refine_facets.h \
   ../../../Surface_mesher/include/CGAL/Complex_2_in_triangulation_3.h \
   ../../include/CGAL/Mesh_3/Simple_set_container.h \
+  ../../../Data_structure_for_queries_3/include/CGAL/Triangulation_2_traits_3.h \
   ../../include/CGAL/Conforming_Delaunay_triangulation_2_traits_3.h \
 
 
@@ -20,7 +21,7 @@ implicit_function.o: \
 
 implicit_surfaces_mesher_3.o: \
   ../../../Surface_mesher/include/CGAL/Complex_2_in_triangulation_vertex_base_3.h \
-  ../../../Surface_mesher/include/CGAL/Node.h /usr/include/c++/3.3/list \
+  ../../../Surface_mesher/include/CGAL/Node.h \
   ../../../Surface_mesher/include/CGAL/Graph.h \
   ../../../Surface_mesher/include/CGAL/Complex_2_in_triangulation_surface_mesh_cell_base_3.h \
   ../../../Surface_mesher/include/CGAL/Complex_2_in_triangulation_cell_base_3.h \
@@ -102,9 +103,9 @@ polyhedral_surface_mesher.o: \
   ../../../Surface_mesher/include/CGAL/IO/Complex_2_in_triangulation_3_file_writer.h \
   ../../include/CGAL/IO/File_medit.h \
   ../../../Surface_mesher/include/CGAL/Surface_mesher/Oracles/Polyhedral.h \
-  ../../include/CGAL/Data_structure_using_octree_3.h \
-  ../../include/CGAL/Constrained_Element.h \
-  ../../include/CGAL/Constrained_Vertex.h \
-  ../../include/CGAL/Constrained_Facet.h \
-  ../../include/CGAL/Constrained_Edge.h \
+  ../../../Data_structure_for_queries_3/include/CGAL/Data_structure_using_octree_3.h \
+  ../../../Data_structure_for_queries_3/include/CGAL/Constrained_Element.h \
+  ../../../Data_structure_for_queries_3/include/CGAL/Constrained_Vertex.h \
+  ../../../Data_structure_for_queries_3/include/CGAL/Constrained_Facet.h \
+  ../../../Data_structure_for_queries_3/include/CGAL/Constrained_Edge.h \
   ../../include/CGAL/Mesh_criteria_3.h parameters.h debug.h \
