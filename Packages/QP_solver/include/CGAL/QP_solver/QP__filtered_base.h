@@ -34,16 +34,11 @@
 
 CGAL_BEGIN_NAMESPACE
 
-// use CGAL function?
-struct To_Double {
-    template < class NT >
-    double  operator ( ) ( const NT& x) { return CGAL_NTS to_double( x); }
-};
-
 // ==================
 // class declarations
 // ==================
-template < class Rep_, class NT_ = double, class ET2NT_ = To_Double >
+template < class Rep_, class NT_ = double, class ET2NT_ =
+    To_double<typename Rep_::ET> >
 class QPE__filtered_base;
 
 // ===============

@@ -36,7 +36,8 @@ CGAL_BEGIN_NAMESPACE
 // =================
 // class declaration
 // =================
-template < class Rep_, class NT_ = double, class ET2NT_ = To_Double >
+template < class Rep_, class NT_ = double, class ET2NT_ =
+    To_double<typename Rep_::ET> >
 class QPE_partial_filtered_pricing;
 
 // ===============
