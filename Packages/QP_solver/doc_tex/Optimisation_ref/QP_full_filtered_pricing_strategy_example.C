@@ -1,0 +1,85 @@
+
+#include <CGAL/QPE_solver.h>
+#include <CGAL/QPE_full_exact_pricing.h>
+#include <CGAL/QPE_partial_exact_pricing.h>
+#include <CGAL/QPE_full_filtered_pricing.h>
+#include <CGAL/QPE_partial_filtered_pricing.h>
+#include <CGAL/_QP_solver/Double.h>
+#include <iostream>
+
+typedef  double               IT;
+typedef  std::vector<IT>  Vector;
+typedef  std::vector<Vector>  Matrix;
+
+typedef  CGAL::QPE_transform_iterator_1< Matrix::const_iterator>  Vector_iterator;
+
+struct QPESolverTraits {
+    typedef  GMP::Double  ET;
+    typedef  Vector_iterator  A_iterator;
+    typedef  CGAL::QPE_const_value_iterator<IT>  B_iterator;
+    typedef  CGAL::QPE_const_value_iterator<IT>  C_iterator;
+    typedef  Vector_iterator  D_iterator;
+
+    enum Row_type { LESS_EQUAL, EQUAL, GREATER_EQUAL};
+    typedef  CGAL::QPE_const_value_iterator<Row_type> Row_type_iterator;
+    
+    typedef  CGAL::Tag_false  Is_linear;
+    typedef  CGAL::Tag_true   Is_symmetric;
+    typedef  CGAL::Tag_true   Has_full_row_rank;
+    typedef  CGAL::Tag_false  Use_perturbation;
+};
+
+typedef CGAL::QPE_solver<QPESolverTraits>     Solver;
+
+int main( int argc, char** argv)
+{
+  Matrix  A( 6);
+  Matrix  D( 6);
+  
+  // constraint matrix A,  column by column
+  A[ 0].push_back( 1); A[ 1].push_back( 1); A[ 2].push_back( 1); 
+  A[ 0].push_back( 0); A[ 1].push_back( 0); A[ 2].push_back( 0);
+   
+  A[ 3].push_back( 0); A[ 4].push_back( 0); A[ 5].push_back( 0); 
+  A[ 3].push_back( 1); A[ 4].push_back( 1); A[ 5].push_back( 1);
+  
+  // quadratic part of objective function, matrix D=C^T * C, row by row    
+  D[ 0].push_back(   8); D[ 0].push_back(  14); D[ 0].push_back(  20);
+  D[ 0].push_back( -22); D[ 0].push_back( -32); D[ 0].push_back( -26);
+   
+  D[ 1].push_back(  14); D[ 1].push_back(  37); D[ 1].push_back(  35);
+  D[ 1].push_back( -46); D[ 1].push_back( -61); D[ 1].push_back( -43);
+  
+  D[ 2].push_back(  20); D[ 2].push_back(  35); D[ 2].push_back(  50);
+  D[ 2].push_back( -55); D[ 2].push_back( -80); D[ 2].push_back( -65);
+  
+  D[ 3].push_back( -22); D[ 3].push_back( -46); D[ 3].push_back( -55);
+  D[ 3].push_back(  65); D[ 3].push_back(  91); D[ 3].push_back(  70);
+  
+  D[ 4].push_back( -32); D[ 4].push_back( -61); D[ 4].push_back( -80);
+  D[ 4].push_back(  91); D[ 4].push_back( 130); D[ 4].push_back( 103);
+  
+  D[ 5].push_back( -26); D[ 5].push_back( -43); D[ 5].push_back( -65);
+  D[ 5].push_back(  70); D[ 5].push_back( 103); D[ 5].push_back(  85); 
+  
+  // configure full filtered pricing strategy    
+  CGAL::QPE_full_filtered_pricing<QPESolverTraits, IT,
+    CGAL::To_double<QPESolverTraits::ET> >     strategy;
+  
+  // solve qp with (explicit) full filtered pricing strategy as pricing strategy 
+  Solver    qp ( 6, 2, Vector_iterator( A.begin()),
+                 QPESolverTraits::B_iterator(1.0),
+                 QPESolverTraits::C_iterator(0.0), Vector_iterator( D.begin()),
+                 QPESolverTraits::Row_type_iterator(QPESolverTraits::EQUAL),
+                 strategy);
+
+  // query solution, if qp is optimal				     
+  if (qp.status() == Solver::OPTIMAL) {
+    Solver::Variable_value_iterator v_it;
+    Solver::Variable_value_iterator e_it = qp.variables_value_end(); 
+    for (int i = 0, v_it = qp.variables_value_begin(); v_it != e_it; ++v_it, ++i) {
+      std::cout << "x[" << i << "]= " << *v_it << std::endl;
+    }
+  }
+  return 0;
+}

@@ -1,0 +1,102 @@
+% =============================================================================
+% The CGAL Reference Manual
+% Chapter: Geometric Optimisation
+% Section: Smallest Enclosing Sphere
+% =============================================================================
+
+\begin{ccRefClass}{QPE_full_exact_pricing<Traits>}
+\ccIndexSubitem[t]{sphere}{smallest enclosing sphere of spheres}
+\ccIndexSubitem[t]{smallest enclosing}{sphere of spheres}
+\ccIndexSubitem[t]{bounding volumes}{smallest enclosing sphere of spheres}
+\ccIndexSubitemSeeAlso[t]{circle}{smallest enclosing sphere of spheres}
+
+% -----------------------------------------------------------------------------
+\ccDefinition
+%The pricing step of the solvers algorithm consists of determining  whether the
+%current solution is optimal, if not the pricing step then determines the next
+%entering variable.
+%The pricing
+%strategy is the part of the solvers pricing step that selects a variable among the
+%nonbasic variables that qualify as entering variable. A nonbasic variable
+%$x_{j}$ qualifies as an entering variable if its associated $\mu_{j}$, which
+%coincides with the notion of reduced cost in the linear case, is strictly
+%negative.
+With \emph{full exact pricing} the $\mu_{j}$, $j \in N$, where $N$ denotes the
+set of currently nonbasic variables, are evaluated using the
+internal exact number type \ccc{ET}. The entering variable is the variable
+whose associated $\mu_{j}$ is most negative.
+
+\ccInclude{CGAL/QPE_full_exact_pricing.h}
+
+\ccInheritsFrom
+\ccc{QPE_pricing_strategy<Traits>}
+
+\ccRequirements
+\ccIndexRequirements
+
+The class \ccRefName\ expects a model of the concept
+\ccc{QPESolverTraits} as its template argument. 
+
+\ccTypes \ccIndexClassTypes
+
+
+\ccCreation
+\ccIndexClassCreation
+\ccCreationVariable{feps}
+
+\ccConstructor{ ( );}
+{creates a variable of type \ccRefName\ .}
+
+
+\ccUnchecked
+
+\ccAccessFunctions
+\begin{ccIndexMemberFunctions}
+\ccIndexMemberFunctionGroup{access}
+
+
+% -----------------------------------------------------------------------------
+\ccPredicates
+\ccIndexMemberFunctionGroup{predicates}
+
+
+% -----------------------------------------------------------------------------
+\ccModifiers
+\ccIndexMemberFunctionGroup{modifiers}
+
+%\ccMemberFunction{int pricing();}{determines the index of the entering
+%variable according to the full exact pricing strategy, if the current solution
+%is not optimal, returns $-1$ if the current solution is optimal.}
+
+
+% -----------------------------------------------------------------------------
+\ccHeading{Validity Check}
+\ccIndexMemberFunctionGroup{validity check}
+
+% -----------------------------------------------------------------------------
+\ccHeading{Miscellaneous}
+\ccIndexMemberFunctionGroup{miscellaneous}
+
+\end{ccIndexMemberFunctions}
+
+
+% -----------------------------------------------------------------------------
+\ccSeeAlso
+%
+%    \ccRefIdfierPage{CGAL::Min_sphere_d<Traits>}\\
+%    \ccRefIdfierPage{CGAL::Min_circle_2<Traits>}\\
+% -----------------------------------------------------------------------------
+
+\ccImplementation
+\ccIndexImplementation
+%\ccIndexSubitem[t]{incremental algorithm}{\ccc{Min_sphere_of_spheres_d}}
+%\ccIndexSubitem[t]{farthest-first heuristic}{\ccc{Min_sphere_of_spheres_d}}
+
+
+\ccExample
+%\ccIncludeVerbatim{Min_sphere_of_spheres_d/min_sphere_of_spheres_d_example_d.C}
+
+\end{ccRefClass}
+
+% ===== EOF ===================================================================
+

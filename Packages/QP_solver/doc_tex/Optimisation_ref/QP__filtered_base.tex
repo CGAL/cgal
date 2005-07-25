@@ -1,0 +1,148 @@
+% =============================================================================
+% The CGAL Reference Manual
+% Chapter: Geometric Optimisation
+% Section: Smallest Enclosing Sphere
+% =============================================================================
+
+\begin{ccRefClass}{QPE__filtered_base<Traits, NT, ET2NT>}
+\ccIndexSubitem[t]{sphere}{smallest enclosing sphere of spheres}
+\ccIndexSubitem[t]{smallest enclosing}{sphere of spheres}
+\ccIndexSubitem[t]{bounding volumes}{smallest enclosing sphere of spheres}
+\ccIndexSubitemSeeAlso[t]{circle}{smallest enclosing sphere of spheres}
+
+% -----------------------------------------------------------------------------
+\ccDefinition
+Abstract base class for filtered pricing strategies.   
+
+\ccInclude{CGAL/QPE_solver.h}
+
+\ccInheritsFrom
+\ccc{QPE_pricing_strategy<Traits>}
+
+\ccRequirements
+\ccIndexRequirements
+
+The class \ccRefName\ expects a model of the concept
+\ccc{QPESolverTraits} as its template argument for the first template parameter,
+a floating point number type for the second parameter and a functor type
+providing conversion from the exact number type \ccc{Traits::ET}. 
+
+% We provide the model \ccc{Min_sphere_of_spheres_d_traits_d} in
+% order to facilitate working with $d$-dimensional spheres of type
+% \ccc{CGAL::Weighted_point<Pt,Wt>}, where \ccc{Pt} is \ccc{Point_d}.
+% the models \ccc{MinSphereOfSpheres_d_traits_2},
+% \ccc{MinSphereOfSpheres_d_traits_3} and
+% \ccc{MinSphereOfSpheres_d_traits_d} for two-, three-, and
+% $d$-dimensional spheres respectively.
+
+\ccTypes \ccIndexClassTypes
+
+\ccNestedType{Base}{a typedef to \ccc{QPE_pricing_strategy<Traits>}, the virtual
+base class}
+
+\ccNestedType{NT}{inexact number type used to evaluate approximations of
+$\mu_{j}$.}
+
+\ccNestedType{ET}{a typedef to \ccc{Base::ET}, the exact number type.}
+
+\ccNestedType{ET2NT}{a functor type providing conversion from \ccc{ET}
+to \ccc{NT}.}
+
+
+\ccCreation
+\ccIndexClassCreation
+\ccCreationVariable{fps}
+
+\ccConstructor{( const std::string& strategy_name);}
+{creates a variable of type \ccRefName\ and sets the strategy name.}
+
+\ccUnchecked
+
+\ccAccessFunctions
+\begin{ccIndexMemberFunctions}
+\ccIndexMemberFunctionGroup{access}
+
+\ccMemberFunction{NT mu_j_NT(int j) const;}{ evaluates $\tilde{\mu}_{j}$}
+
+\ccMemberFunction{bool certify_mu_j_NT(int j) const;}{certifies $\tilde{\mu}_{j}$;
+if the first bound which is independent of $j$ fails to certify
+$\mu_{j} \geq 0$ the second bound depending on $j$ is tried,
+if this fails to certify $\mu_{j} \geq 0$ again,
+exact arithmetic is used to evaluate $\mu_{j}$.
+Returns true if $\mu_{j} \geq 0$.}
+
+
+% -----------------------------------------------------------------------------
+%\ccPredicates
+%\ccIndexMemberFunctionGroup{predicates}
+
+
+% -----------------------------------------------------------------------------
+\ccModifiers
+\ccIndexMemberFunctionGroup{modifiers}
+
+\ccMemberFunction{ virtual void init();}{initializes the bounds for the floating
+point filter.}
+
+\ccMemberFunction{ virtual void set();}{reserves memory for the inexact
+\ccc{NT} number type version of the current solution.}
+
+\ccMemberFunction{void init_NT();}{to do}
+
+\ccMemberFunction{void update_maxima();}{to do}
+
+\ccMemberFunction{ virtual void transition();}{is called by the ambient solver
+and notifies the pricing strategy if the solver switches from phaseI to
+phaseII.}
+
+
+% -----------------------------------------------------------------------------
+\ccHeading{Validity Check}
+\ccIndexMemberFunctionGroup{validity check}
+
+% -----------------------------------------------------------------------------
+\ccHeading{Miscellaneous}
+\ccIndexMemberFunctionGroup{miscellaneous}
+
+\end{ccIndexMemberFunctions}
+
+% -----------------------------------------------------------------------------
+%\ccHeading{I/O}
+%\begin{ccIndexGlobalFunctions}
+%
+%\ccIndexGlobalFunctionGroup{output}
+%\ccFunction{ std::ostream& operator << ( std::ostream& os,
+%                                    const Min_sphere_d<Traits>&
+%                                        min_sphere);}{
+%        writes \ccVar\ to output stream \ccc{os}.
+%        \ccRequire The output operator is defined for \ccc{Point}.}
+%
+%\ccIndexGlobalFunctionGroup{input}
+%
+%\ccFunction{ std::istream& operator >> ( std::istream& is,
+%                                    Min_sphere_d<Traits> min_sphere&);}{
+%        reads \ccVar\ from input stream \ccc{is}.
+%          \ccRequire The input operator is defined for \ccc{Point}.}
+%
+%\end{ccIndexGlobalFunctions}
+
+% -----------------------------------------------------------------------------
+\ccSeeAlso
+%
+    \ccRefIdfierPage{CGAL::Min_sphere_d<Traits>}\\
+    \ccRefIdfierPage{CGAL::Min_circle_2<Traits>}\\
+% -----------------------------------------------------------------------------
+
+\ccImplementation
+\ccIndexImplementation
+%\ccIndexSubitem[t]{incremental algorithm}{\ccc{Min_sphere_of_spheres_d}}
+%\ccIndexSubitem[t]{farthest-first heuristic}{\ccc{Min_sphere_of_spheres_d}}
+
+
+\ccExample
+%\ccIncludeVerbatim{Min_sphere_of_spheres_d/min_sphere_of_spheres_d_example_d.C}
+
+\end{ccRefClass}
+
+% ===== EOF ===================================================================
+

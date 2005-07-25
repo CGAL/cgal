@@ -1,0 +1,162 @@
+% =============================================================================
+% The CGAL Reference Manual
+% Chapter: Geometric Optimisation
+% Section: Smallest Enclosing Sphere
+% =============================================================================
+
+\begin{ccRefClass}{QPE_full_filtered_pricing<Traits, NT, ET2NT>}
+\ccIndexSubitem[t]{sphere}{smallest enclosing sphere of spheres}
+\ccIndexSubitem[t]{smallest enclosing}{sphere of spheres}
+\ccIndexSubitem[t]{bounding volumes}{smallest enclosing sphere of spheres}
+\ccIndexSubitemSeeAlso[t]{circle}{smallest enclosing sphere of spheres}
+
+% -----------------------------------------------------------------------------
+\ccDefinition
+%The pricing step of the solvers algorithm consists of determining  whether the
+%current solution is optimal, if not the pricing step then determines the next
+%entering variable.
+%The pricing
+%strategy is the part of the solvers pricing step that selects a variable among the
+%nonbasic variables that qualify as entering variable. A nonbasic variable
+%$x_{j}$ qualifies as an entering variable if its associated $\mu_{j}$, which
+%coincides with the notion of reduced cost in the linear case, is strictly
+%negative.
+
+With \emph{full filtered pricing} the $\mu_{j}$, $j \in N$, where $N$ denotes
+the set of currently nonbasic variables, are approximated by
+$\tilde{\mu}_{j}$, $j \in N$ with a fast (compared to \ccc{ET})
+floating point number type \ccc{NT} at the beginning of the pricing step.
+If the exact check of the nonbasic variable with the smallest
+approximated $\tilde{\mu}_{j}$ succeeds, that is if $\mu_{j_{N}} < 0$, where 
+$j_{N} =\arg\min_{j \in N}\tilde{\mu}_{j}$, then $x_{j_{N}}$ is the
+entering variable. Otherwise the nonnegativity for a part of the
+nonbasic variables is \emph{certified} by the use of an error bound $b$ on
+$\left|\tilde{\mu}_{j} - \mu_{j}\right|$:
+if $\tilde{\mu}_{j} \geq b$ then $\mu_{j}$ is known to
+be nonnegative. The $\tilde{\mu}_{j}$, $j \in N$ whose exact $\mu_{j}$ values  
+cannot be certified to be nonnegative by this \emph{floating point filter}
+are then evaluated
+using exact arithmetic. The error bound actually consists of two bounds, one
+that does not depend on $j \in N$ and one that does depend on $j$. Note that
+the bounds themselves can be evaluated with floating point arithmetic. 
+
+Full filtered pricing improves performance for quadratic programs
+where the floating point
+number type \ccc{NT} is faster than the internal exact number type \ccc{ET}.
+The floating point number type \ccc{NT} and a functor providing conversion from
+the exact number type \ccc{ET} to the floating point type \ccc{NT} can be
+configured by template parameters for the class \ccRefName\ .
+
+\ccInclude{CGAL/QPE_full_filtered_pricing.h}
+
+\ccInheritsFrom
+\ccc{QPE__filtered_base<Traits, NT, ET2NT>}
+
+\ccRequirements
+\ccIndexRequirements
+
+The class \ccRefName\ expects a model of the concept
+\ccc{QPESolverTraits} as its template argument for the first template parameter,
+a model of the \cgal \ concept \ccc{Ring number type} for the second template
+parameter and a functor type
+providing conversion from the exact number type \ccc{Traits::ET} to \ccc{NT}
+for the third template parameter. The second template parameter defaults to
+\ccc{double} and the third template parameter defaults to a functor providing
+conversion from \ccc{Traits::ET} to \ccc{double}. Furthermore the element types
+of $A$, $b$, $c$, and $D$ are required to provide implicit lossless conversion
+to \ccc{NT}. Currently the number type $NT$ is supported for \ccc{double} only.  
+
+
+\ccTypes \ccIndexClassTypes
+
+
+\ccCreation
+\ccIndexClassCreation
+\ccCreationVariable{ffps}
+
+\ccConstructor{ (ET2NT et2nt = ET2NT());}
+{creates a variable of type \ccRefName\ .}
+
+
+\ccUnchecked
+
+\ccAccessFunctions
+\begin{ccIndexMemberFunctions}
+\ccIndexMemberFunctionGroup{access}
+
+
+% -----------------------------------------------------------------------------
+%\ccPredicates
+%\ccIndexMemberFunctionGroup{predicates}
+
+
+% -----------------------------------------------------------------------------
+\ccModifiers
+\ccIndexMemberFunctionGroup{modifiers}
+
+%\ccMemberFunction{int pricing();}{determines the index of the entering
+%variable, returns $-1$ if the current solution is optimal.}
+
+
+% -----------------------------------------------------------------------------
+\ccHeading{Validity Check}
+\ccIndexMemberFunctionGroup{validity check}
+
+% -----------------------------------------------------------------------------
+\ccHeading{Miscellaneous}
+\ccIndexMemberFunctionGroup{miscellaneous}
+
+\end{ccIndexMemberFunctions}
+
+% -----------------------------------------------------------------------------
+\ccSeeAlso
+%
+%    \ccRefIdfierPage{CGAL::Min_sphere_d<Traits>}\\
+%    \ccRefIdfierPage{CGAL::Min_circle_2<Traits>}\\
+% -----------------------------------------------------------------------------
+
+\ccImplementation
+\ccIndexImplementation
+%\ccIndexSubitem[t]{incremental algorithm}{\ccc{Min_sphere_of_spheres_d}}
+%\ccIndexSubitem[t]{farthest-first heuristic}{\ccc{Min_sphere_of_spheres_d}}
+
+
+\ccExample
+In the following example we demonstrate how the problem of finding the
+smallest distance between two polytopes, each given as the convex hull of a
+set of points in
+$d$-dimensional space, can be mapped to a quadratic program. Furthermore,
+the explicit configuration of the pricing strategy as well as
+the use of the class \ccc{QPE_const_value_iterator<T>} is shown.  
+
+\ccHeading{Polytope Distance}
+Consider two point sets $P=\{p_{1}, \ldots, p_{r} \}$ and
+$Q=\{q_{1}, \ldots, q_{s} \}$ with $r+s=n$ in $d$-dimensional space. The
+\emph{polytope distance} problem consists of minimizing $\|p-q\|$ such that
+$p=\sum_{i=1}^{r}\lambda_{i}p_{i}$ and $q=\sum_{i=1}^{s}\mu_{i}q_{i}$. The
+$\lambda_{i}$ and $\mu_{i}$ are in $\left[0, 1\right]$ and sum up to one.
+This can be written as a quadratic program in $n$ variables and two constraints,
+\begin{eqnarray*}
+(PD) & minimize & x^{T}C^{T}Cx  \\
+     & s.t.     & \sum_{i=1}^{r}x_{i} = 1 \\
+     &          & \sum_{i=r+1}^{n}x_{i} = 1 \\
+     &          & x \geq 0,
+\end{eqnarray*}
+where $C=(p_{1}, \ldots , p_{r}, -q_{1}, \ldots, -q_{s})$. Here, $D=C^{T}C$ is an
+$n \times n$-matrix, but its rank is only $d$. The example solves the quadratic
+program for $d=2$, $r=3$ and $s=3$ with the following $C$-matrix:
+\[
+C:=
+\left(\begin{array}{cccccc}
+        2 & 6 & 5 & -7 & -9 & -6 \\
+	2 & 1 & 5 & -4 & -7 & -7
+      \end{array}
+\right).
+\]
+
+\ccIncludeVerbatim{Optimisation_ref/QPE_full_filtered_pricing_strategy_example.C}
+
+\end{ccRefClass}
+
+% ===== EOF ===================================================================
+

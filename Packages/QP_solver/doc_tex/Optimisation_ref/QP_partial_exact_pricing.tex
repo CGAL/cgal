@@ -1,0 +1,144 @@
+% =============================================================================
+% The CGAL Reference Manual
+% Chapter: Geometric Optimisation
+% Section: Smallest Enclosing Sphere
+% =============================================================================
+
+\begin{ccRefClass}{QPE_partial_exact_pricing<Traits>}
+\ccIndexSubitem[t]{sphere}{smallest enclosing sphere of spheres}
+\ccIndexSubitem[t]{smallest enclosing}{sphere of spheres}
+\ccIndexSubitem[t]{bounding volumes}{smallest enclosing sphere of spheres}
+\ccIndexSubitemSeeAlso[t]{circle}{smallest enclosing sphere of spheres}
+
+% -----------------------------------------------------------------------------
+\ccDefinition
+%The pricing step of the solvers algorithm consists of determining  whether the
+%current solution is optimal, if not the pricing step then determines the next
+%entering variable.
+%The pricing
+%strategy is the part of the solvers pricing step that selects a variable among the
+%nonbasic variables that qualify as entering variable. A nonbasic variable
+%$x_{j}$ qualifies as an entering variable if its associated $\mu_{j}$, which
+%coincides with the notion of reduced cost in the linear case, is strictly
+%negative.
+
+With \emph{partial exact pricing} a set of \emph{active variables},
+$S \subseteq N$, is kept and an entering variable is chosen among the
+variables in $S$ that qualify as entering variable. If none of the variables
+in $S$ qualifies as entering variable the set of active variables is enlarged by
+nonactive nonbasic variables that qualify as entering variables,
+$V:=\{k \in N \setminus S \left|\right. \mu_{k} < 0\}$, that is,
+$S:=S \cup V$. When the current set $B$
+is updated the entering variable $x_{j}$ is removed from $S$, any variable
+$x_{i}$ leaving the set $B$ is inserted into the set $S$.
+
+Partial exact pricing improves performance for quadratic programs
+with high \emph{variables-to-constraints} ratios.
+The intuition behind partial pricing is that the sets $S$ and $V$ are always
+small and that $S$ is augmented only a few times. In this case most pricing
+steps are cheap, because they operate on a small set of active variables and
+only a few runs through the whole set $N$ of nonbasic variables to find the set
+$V$ are needed.
+
+The initial size of the set $S$ is $\min\{m\sqrt{n/2}, n\}$, the elements of
+the initial set $S$ may be configured to be chosen randomly out of the nonbasic
+variables determined by the initial feasible solution or
+deterministically as the first $\min\{m\sqrt{n/2}, n\}$ nonbasic
+variables determined by the initial feasible solution, if the variables are
+considered in the user defined order.   
+   
+\ccInclude{CGAL/QPE_partial_exact_pricing.h}
+
+\ccInheritsFrom
+\ccc{QPE__partial_base<Traits>}
+
+\ccRequirements
+\ccIndexRequirements
+
+The class \ccRefName\ expects a model of the concept
+\ccc{QPESolverTraits} as its template argument. 
+
+
+\ccTypes \ccIndexClassTypes
+
+
+\ccCreation
+\ccIndexClassCreation
+\ccCreationVariable{peps}
+
+\ccConstructor{ (bool randomize = false, Random& random = default_random);}
+{creates a variable of type \ccRefName\ . \ccc{randomize} specifies
+whether the initial set $S$ is chosen randomly or deterministically.
+\ccc{random} is of type \ccc{CGAL::Random}.}
+
+
+\ccUnchecked
+
+\ccAccessFunctions
+\begin{ccIndexMemberFunctions}
+\ccIndexMemberFunctionGroup{access}
+
+
+% -----------------------------------------------------------------------------
+%\ccPredicates
+%\ccIndexMemberFunctionGroup{predicates}
+
+
+% -----------------------------------------------------------------------------
+\ccModifiers
+\ccIndexMemberFunctionGroup{modifiers}
+
+%\ccMemberFunction{int pricing();}{determines the index of the entering
+%variable, returns $-1$ if the current solution is optimal.}
+
+
+% -----------------------------------------------------------------------------
+\ccHeading{Validity Check}
+\ccIndexMemberFunctionGroup{validity check}
+
+% -----------------------------------------------------------------------------
+\ccHeading{Miscellaneous}
+\ccIndexMemberFunctionGroup{miscellaneous}
+
+\end{ccIndexMemberFunctions}
+
+% -----------------------------------------------------------------------------
+%\ccHeading{I/O}
+%\begin{ccIndexGlobalFunctions}
+%
+%\ccIndexGlobalFunctionGroup{output}
+%\ccFunction{ std::ostream& operator << ( std::ostream& os,
+%                                    const Min_sphere_d<Traits>&
+%                                        min_sphere);}{
+%        writes \ccVar\ to output stream \ccc{os}.
+%        \ccRequire The output operator is defined for \ccc{Point}.}
+%
+%\ccIndexGlobalFunctionGroup{input}
+%
+%\ccFunction{ std::istream& operator >> ( std::istream& is,
+%                                    Min_sphere_d<Traits> min_sphere&);}{
+%        reads \ccVar\ from input stream \ccc{is}.
+%          \ccRequire The input operator is defined for \ccc{Point}.}
+%
+%\end{ccIndexGlobalFunctions}
+
+% -----------------------------------------------------------------------------
+\ccSeeAlso
+%
+%    \ccRefIdfierPage{CGAL::Min_sphere_d<Traits>}\\
+%    \ccRefIdfierPage{CGAL::Min_circle_2<Traits>}\\
+% -----------------------------------------------------------------------------
+
+\ccImplementation
+\ccIndexImplementation
+%\ccIndexSubitem[t]{incremental algorithm}{\ccc{Min_sphere_of_spheres_d}}
+%\ccIndexSubitem[t]{farthest-first heuristic}{\ccc{Min_sphere_of_spheres_d}}
+
+
+\ccExample
+%\ccIncludeVerbatim{Min_sphere_of_spheres_d/min_sphere_of_spheres_d_example_d.C}
+
+\end{ccRefClass}
+
+% ===== EOF ===================================================================
+

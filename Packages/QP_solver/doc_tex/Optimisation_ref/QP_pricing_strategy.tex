@@ -1,0 +1,169 @@
+% =============================================================================
+% The CGAL Reference Manual
+% Chapter: Geometric Optimisation
+% Section: Smallest Enclosing Sphere
+% =============================================================================
+
+\begin{ccRefClass}{QPE_pricing_strategy<Traits>}
+\ccIndexSubitem[t]{sphere}{smallest enclosing sphere of spheres}
+\ccIndexSubitem[t]{smallest enclosing}{sphere of spheres}
+\ccIndexSubitem[t]{bounding volumes}{smallest enclosing sphere of spheres}
+\ccIndexSubitemSeeAlso[t]{circle}{smallest enclosing sphere of spheres}
+
+% -----------------------------------------------------------------------------
+\ccDefinition
+The class \ccRefName\ is the base class for the pricing strategies.
+The pricing step of the solvers algorithm consists of determining  whether the
+current solution is optimal, if not the pricing step then determines the an
+\emph{entering variable}.
+The pricing
+strategy is the part of the solvers pricing step that selects a variable among
+the nonbasic variables, denoted by $N$, 
+that qualify as entering variable. A nonbasic variable
+$x_{j}$ qualifies as an entering variable if its associated $\mu_{j}$, which
+coincides with the notion of reduced cost in the linear case, is strictly
+negative.
+
+%Two basic strategies are \emph{filtered pricing} and \emph{partial pricing}. 
+%With filtered pricing the $\mu_{j}$, $j \in N$, where $N$ denotes the set of
+%currently nonbasic variables, are approximated by $\tilde{\mu}_{j}$, $j \in N$
+%with a fast (compared to \ccc{ET}) floating point number type at the beginning
+%of the pricing step.
+%If the exact check of the nonbasic variable with the smallest
+%approximated $\tilde{\mu}_{j}$ succeeds, that is if $\mu_{j_{0}} < 0$, where 
+%$j_{0} =\arg\min_{j \in N}\tilde{\mu}_{j}$, then $x_{j_{0}}$ is the
+%entering variable. Otherwise the nonnegativity for a part of the
+%nonbasic variables is assured by the use of an error bound $b$ on
+%$\left|\tilde{\mu}_{j} - \mu_{j}\right|$.
+%If $\tilde{\mu}_{j} \geq b$ then $\mu_{j}$ is known to
+%be nonnegative. The $\tilde{\mu}_{j}$, $j \in N$ whose exact $\mu_{j}$ values  
+%cannot be determined to be nonnegative by this \emph{floating point filter}
+%are then evaluated
+%using exact arithmetic. The error bound actually consists of two bounds, one
+%that does not depend on $j \in N$ and one that does depend on $j$. Note that
+%the bounds themselves can be evaluated with floating point arithmetic. 
+
+User provided pricing strategies may use \ccRefName\ as a base class directly
+or inherit from the the class \ccc{QPE__filtered_base} or from the class
+\ccc{QPE__partial_base} or both.   
+   
+
+\ccInclude{CGAL/QPE_solver.h}
+
+
+\ccRequirements
+\ccIndexRequirements
+
+The class \ccRefName\ expects a model of the concept
+\ccc{QPESolverTraits} as its template argument.
+
+
+\ccTypes \ccIndexClassTypes
+
+%\ccNestedType{ET}{a typedef to \ccc{Traits::ET}. \ccc{ET} is a model for the
+%CGAL concept \ccc{RingNumberType} and has to support addition, subtraction and
+%multiplication. Division is only required in cases where the remainder is zero.}
+
+%\ccNestedType{QP_solver}{a typedef to \ccc{CGAL::QPE_solver<Traits>}.}
+
+
+\ccCreation
+\ccIndexClassCreation
+\ccCreationVariable{ps}
+
+%\ccConstructor{( const std::string& strategy_name);}
+%{creates a variable of type \ccRefName\ and solves the quadratic program.
+%\ccRequire $(m,n)$ is the dimension of the constraint matrix $A$.
+%}
+
+\ccUnchecked
+
+\ccAccessFunctions
+\begin{ccIndexMemberFunctions}
+\ccIndexMemberFunctionGroup{access}
+
+%\ccMemberFunction{virtual int pricing() const =0;}{performs the actual pricing
+%step and is called by the ambient solver. Returns either the index of the
+%entering variable or $-1$ to indicate optimality. Has to be reimplemented by
+%derived pricing strategy classes.}
+
+%\ccMemberFunction{const QPE_solver& solver() const;}{returns a reference to the
+%ambient solver.}
+
+%\ccMemberFunction{ET mu_j(int j) const;}{returns exact value of $\mu_{j}$.}
+
+
+
+% -----------------------------------------------------------------------------
+%\ccPredicates
+%\ccIndexMemberFunctionGroup{predicates}
+
+
+% -----------------------------------------------------------------------------
+\ccModifiers
+\ccIndexMemberFunctionGroup{modifiers}
+
+%\ccMemberFunction{ void init(int dummy);}{may be used for initialization
+%of this class.}
+
+%\ccMemberFunction{ void set(const QP_solver& solver);}{sets the reference to
+%the ambient solver.}
+
+%\ccMemberFunction{ virtual void init();}{may be used for initialization of
+%derived classes.}
+
+%\ccMemberFunction{ virtual void set();}{may be used for initialization of
+%derived classes.}
+
+%\ccMemberFunction{virtual int pricing() const =0;}{performs the actual pricing
+%step and is called by the ambient solver. Returns either the index of the
+%entering variable or $-1$ to indicate optimality. Has to be reimplemented by
+%derived pricing strategy classes.}
+
+
+%\ccMemberFunction{ virtual void transition();}{is called by the ambient solver
+%and notifies the pricing strategy if the solver switches from phaseI to
+%phaseII.}
+
+%\ccMemberFunction{ virtual void leave_basis( int i );}{is called by the ambient
+%solver and notifies the pricing strategy if a basic varaible is leaving the
+%basis.}
+
+
+% -----------------------------------------------------------------------------
+%\ccHeading{Validity Check}
+%\ccIndexMemberFunctionGroup{validity check}
+
+% -----------------------------------------------------------------------------
+\ccHeading{Miscellaneous}
+\ccIndexMemberFunctionGroup{miscellaneous}
+
+%\def\ccTagRmConstRefPair{\ccFalse}
+%\ccMemberFunction{ const Traits&  traits( ) const;}{
+%        returns a const reference to the traits class object.}
+%        \def\ccTagRmConstRefPair{\ccTrue}
+\end{ccIndexMemberFunctions}
+
+
+% -----------------------------------------------------------------------------
+\ccSeeAlso
+%
+    \ccRefIdfierPage{CGAL::QPE_full_exact_pricing<Traits>}\\
+    \ccRefIdfierPage{CGAL::QPE_full_filtered_pricing<Traits>}\\
+    \ccRefIdfierPage{CGAL::QPE_partial_exact_pricing<Traits>}\\
+    \ccRefIdfierPage{CGAL::QPE_partial_filtered_pricing<Traits>}\\
+% -----------------------------------------------------------------------------
+
+\ccImplementation
+\ccIndexImplementation
+%\ccIndexSubitem[t]{incremental algorithm}{\ccc{Min_sphere_of_spheres_d}}
+%\ccIndexSubitem[t]{farthest-first heuristic}{\ccc{Min_sphere_of_spheres_d}}
+
+
+\ccExample
+%\ccIncludeVerbatim{Min_sphere_of_spheres_d/min_sphere_of_spheres_d_example_d.C}
+
+\end{ccRefClass}
+
+% ===== EOF ===================================================================
+

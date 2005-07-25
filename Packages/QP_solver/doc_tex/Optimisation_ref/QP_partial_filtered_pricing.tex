@@ -1,0 +1,161 @@
+% =============================================================================
+% The CGAL Reference Manual
+% Chapter: Geometric Optimisation
+% Section: Smallest Enclosing Sphere
+% =============================================================================
+
+\begin{ccRefClass}{QPE_partial_filtered_pricing<Traits, NT, ET2NT>}
+\ccIndexSubitem[t]{sphere}{smallest enclosing sphere of spheres}
+\ccIndexSubitem[t]{smallest enclosing}{sphere of spheres}
+\ccIndexSubitem[t]{bounding volumes}{smallest enclosing sphere of spheres}
+\ccIndexSubitemSeeAlso[t]{circle}{smallest enclosing sphere of spheres}
+
+% -----------------------------------------------------------------------------
+\ccDefinition
+%The pricing step of the solvers algorithm consists of determining  whether the
+%current solution is optimal, if not the pricing step then determines the next
+%entering variable.
+%The pricing
+%strategy is the part of the solvers pricing step that selects a variable among the
+%nonbasic variables that qualify as entering variable. A nonbasic variable
+%$x_{j}$ qualifies as an entering variable if its associated $\mu_{j}$, which
+%coincides with the notion of reduced cost in the linear case, is strictly
+%negative.
+
+\emph{partial filtered pricing} is the combination of \emph{filtered pricing}
+and \emph{partial pricing}. As with partial exact pricing a set $S \subseteq N$
+of \emph{active variables} is kept and as with filtered pricing
+the nonnegativity of some $\mu_{j}$ is \emph{certified} by comparing
+$\tilde{\mu}_{j}$, evaluated with the (fast) floating point number type
+\ccc{NT}, and the error bound $b$ on
+$\left|\tilde{\mu}_{j} - \mu_{j}\right|$: if $\tilde{\mu}_{j} \geq b$,
+$\mu_{j}$ is known to be nonnegative.
+
+The pricing step starts with finding the smallest approximated
+$\mu_{j}$ in the active set. If the exact value $\mu_{j_{S}}$,
+$j_{S}:=\arg\min_{j \in S}\tilde{\mu}_{j}$, is negative, $x_{j_{S}}$ is the
+entering variable. Otherwise, a set $V$ of nonactive and nonbasic variables
+whose approximated $\mu_{j}$ is strictly negative is determined,
+$V:=\{k \in N \setminus S \left|\right. \tilde{\mu}_{k} < 0 \}$. If $V$ is
+nonempty, the variable $x_{j_{V}}$ with the smallest approximated
+$\mu_{j}$ in $V$ is determined, that is
+$j_{V}:=\arg\min_{j \in V}\tilde{\mu}_{j}$. If $\mu_{j_{V}} < 0$, the set of active variables is
+augmented and $x_{j_{V}}$ is the entering variable. If on the other hand $V$ is
+empty, that is $\tilde{\mu}_{k} \geq 0$ for $k \in N \setminus S$, the
+nonnegativity of $\mu_{j}$ for $j \in N \setminus S$ is either certified by the
+use of the floating point filter's error bound, that is
+$\tilde{\mu}_{j} \geq b$, or the exact value $\mu_{j}$ is evaluated. If
+$\mu_{j} <0$, $x_{j}$ is the entering variable, otherwise if none of
+the variables $x_{j}$, $j \in N \setminus S$ qualifies as entering variable the
+current feasible solution is optimal.
+
+Partial filtered pricing substantially improves performance for
+quadratic programs with high \emph{variables to constraints} ratios
+and number types \ccc{NT} that are fast compared
+to the internal number type \ccc{ET}. The floating point number type \ccc{NT}
+and a functor type providing conversion from the exact number type \ccc{ET} to
+the floating point type \ccc{NT} can be configured by means of template
+parameters.   
+
+\ccInclude{CGAL/QPE_partial_filtered_pricing.h}
+
+\ccInheritsFrom
+\ccc{QPE__filtered_base<Traits, NT, ET2NT>, QPE__partial_base<Traits>}
+
+\ccRequirements
+\ccIndexRequirements
+
+The class \ccRefName\ expects a model of the concept
+\ccc{QPESolverTraits} as its template argument for the first template parameter,
+a model of the \cgal \ concept \ccc{Ring number type} for the second template
+parameter and a functor type
+providing conversion from the exact number type \ccc{Traits::ET} to \ccc{NT}
+for the third template parameter. The second template parameter defaults to
+\ccc{double} and the third template parameter defaults to a functor providing
+conversion from \ccc{Traits::ET} to \ccc{double}.  
+Furthermore, as with \emph{full filtered} pricing, the element types
+of $A$, $b$, $c$, and $D$ are required to provide implicit lossless conversion
+to \ccc{NT}. Currently the number type $NT$ is supported for \ccc{double} only.
+
+\ccTypes \ccIndexClassTypes
+
+
+\ccCreation
+\ccIndexClassCreation
+\ccCreationVariable{pfps}
+
+\ccConstructor{ (ET2NT et2nt = ET2NT());}
+{creates a variable of type \ccRefName\ .}
+
+
+\ccUnchecked
+
+\ccAccessFunctions
+\begin{ccIndexMemberFunctions}
+\ccIndexMemberFunctionGroup{access}
+
+
+% -----------------------------------------------------------------------------
+%\ccPredicates
+%\ccIndexMemberFunctionGroup{predicates}
+
+
+% -----------------------------------------------------------------------------
+\ccModifiers
+\ccIndexMemberFunctionGroup{modifiers}
+
+%\ccMemberFunction{int pricing();}{determines the index of the entering
+%variable, returns $-1$ if the current solution is optimal.}
+
+
+% -----------------------------------------------------------------------------
+\ccHeading{Validity Check}
+\ccIndexMemberFunctionGroup{validity check}
+
+% -----------------------------------------------------------------------------
+\ccHeading{Miscellaneous}
+\ccIndexMemberFunctionGroup{miscellaneous}
+
+\end{ccIndexMemberFunctions}
+
+
+% -----------------------------------------------------------------------------
+\ccSeeAlso
+%
+    \ccRefIdfierPage{CGAL::QPE_full_filtered_pricing<Traits, NT, ET2NT>}\\
+    \ccRefIdfierPage{CGAL::QPE_partial_exact_pricing<Traits>}\\
+% -----------------------------------------------------------------------------
+
+\ccImplementation
+\ccIndexImplementation
+%\ccIndexSubitem[t]{incremental algorithm}{\ccc{Min_sphere_of_spheres_d}}
+%\ccIndexSubitem[t]{farthest-first heuristic}{\ccc{Min_sphere_of_spheres_d}}
+
+
+\ccExample
+In the following example we demonstrate how an implicitly defined matrix may be
+represented.
+In the \emph{polytope distance} example given earlier the quadratic part of the
+objective function is defined as $D=C^{T}C$, where $C$ is given by the point
+sets $P$ and $Q$. We may represent $D$ as follows: if $D_{i,j}$ is accessed,
+$C_{\bullet, i}^{T}C_{\bullet, j}$ is computed `on-the-fly' and the result is
+returned. 
+
+The matrix $D$ is implicitly represented by the classes
+\ccc{PD_D_iterator<T>} and \ccc{PD_D_row_iterator<T>}.
+The class \ccc{PD_D_iterator<T>} is initialized with the iterator
+\ccc{C.begin()} referring to the first point of $C$. When dereferenced at
+position $i$, it returns an object of type \ccc{PD_D_row_iterator<T>}
+initialized with the index $i$ and the iterator \ccc{C.begin()}. This object is
+another iterator implicitly representing the $i$-th row of $D$. When
+dereferenced at position $j$, it accesses the points at positions $i$ and $j$,
+computes their inner product, and returns the result. The example is sketched
+below.
+
+\ccHeading{Polytope Distance (continued)}
+\ccIncludeVerbatim{Optimisation_ref/QPE_partial_filtered_pricing_strategy_example.C}
+
+\end{ccRefClass}
+
+% ===== EOF ===================================================================
+

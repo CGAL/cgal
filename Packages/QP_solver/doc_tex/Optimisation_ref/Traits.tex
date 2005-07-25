@@ -1,0 +1,114 @@
+% =============================================================================
+% The CGAL Reference Manual
+% Chapter: Geometric Optimisation
+% Section: Smallest Enclosing Sphere of Spheres
+% -----------------------------------------------------------------------------
+% file  : doc_tex/basic/Optimisation/Optimisation_ref/Traits.tex
+% author: Kaspar Fischer (fischerk@inf.ethz.ch)
+% -----------------------------------------------------------------------------
+% $Revision$
+% $Date$
+% $CGAL_Package$
+% =============================================================================
+
+\begin{ccRefConcept}{QPESolverTraits}
+
+% -----------------------------------------------------------------------------
+\ccDefinition
+
+A model of concept \ccc{QPESolverTraits} must provide the
+following constants, types, predicates and operations.
+
+\ccHasModels
+%\ccc{CGAL::Min_sphere_of_spheres_d_traits_2<K,FT,UseSqrt,Algorithm>} \\
+%\ccc{CGAL::Min_sphere_of_spheres_d_traits_3<K,FT,UseSqrt,Algorithm>} \\
+%\ccc{CGAL::Min_sphere_of_spheres_d_traits_d<K,FT,Dim,UseSqrt,Algorithm>}
+
+\ccConstants 
+\ccEnum{enum Row_type {LESS_EQUAL, EQUAL, GREATER_EQUAL};}{constants indicating
+inequality and equality constraints.}
+
+\ccTypes
+
+\ccNestedType{ET}{a model for the CGAL concept \ccc{RingNumberType}
+that has to support addition, subtraction and multiplication.
+Division is only required in cases where the remainder is zero.}
+
+\ccNestedType{A_iterator}{model of the \stl \ concept \ccc{RandomAccessIterator}
+referring to an iterator, which in turn refers to the elements
+of a column of the matrix $A$.
+The \ccc{value_type} of \ccc{A_iterator} is a model of the \stl \ concept
+\ccc{RandomAccessIterator} that refers to the elements of a
+column of the matrix $A$.
+The element type of the matrix $A$ must provide implicit conversions to
+\ccc{QPESolverTraits::ET}
+}
+
+\ccNestedType{B_iterator}{model of the \stl \ concept
+\ccc{RandomAccessIterator} referring to the entries of the vector $b$.
+The element type of the vector $b$, that is
+\ccc{B_iterator}'s \ccc{value_type},
+must provide implicit conversions to \ccc{QPESolverTraits::ET}.}
+
+\ccNestedType{C_iterator}{model of the \stl \ concept
+\ccc{RandomAccessIterator} referring to the entries of the vector $c$.
+The element type of the vector $c$, that is
+\ccc{C_iterator}'s \ccc{value_type},
+must provide implicit conversions to \ccc{QPESolverTraits::ET}.}
+
+\ccNestedType{D_iterator}{model of the \stl \ concept \ccc{RandomAccessIterator}
+referring to an iterator, which in turn refers to the elements
+of a row of the matrix $D$.
+The \ccc{value_type} of \ccc{D_iterator} is a model of the \stl \ concept
+\ccc{RandomAccessIterator} that refers to the elements of a
+row of the matrix $D$.
+The element type of the matrix $D$ must provide implicit conversions to
+\ccc{QPESolverTraits::ET}
+}
+
+\ccNestedType{Row_type}{enumeration type providing the three constants
+\ccc{LESS_EQUAL}, \ccc{EQUAL}, \ccc{GREATER_EQUAL} used to describe the
+constraint type.}
+
+\ccNestedType{Row_type_iterator}{model of the STL concept
+\ccc{RandomAccessIterator}. The value type of \ccc{Row_type_iterator} is
+\ccc{QPESolverTraits::Row_type}.}
+
+\ccNestedType{Is_linear}{
+Is either \ccc{CGAL::Tag_true} or \ccc{CGAL::Tag_false}, if \ccc{Is_linear}
+is of type \ccc{CGAL::Tag_true} the solver assumes $D=0$, otherwise
+$D\neq0$ is assumed.}
+
+\ccNestedType{Is_symmetric}{
+Is either \ccc{CGAL::Tag_true} or \ccc{CGAL::Tag_false}, if \ccc{Is_symmetric}
+is of type \ccc{CGAL::Tag_true} the solver assumes the matrix $D$ to be
+symmetric and the number of accesses to entries of $D$ are halfed.}
+
+\ccNestedType{Has_full_row_rank}{
+Is either \ccc{CGAL::Tag_true} or \ccc{CGAL::Tag_false}, enhances
+performance if it is of type \ccc{CGAL::Tag_true}, requiring the
+constraint matrix $A$ to have full row rank. If
+\ccc{Has_full_row_rank_and_equalities_only} is of type \ccc{CGAL::Tag_false}
+no such requirement must be met by the constraint matrix $A$.}
+
+\ccNestedType{Use_perturbation}{
+Is either \ccc{CGAL::Tag_true} or \ccc{CGAL::Tag_false}, if
+\ccc{Use_perturbation} is of type \ccc{CGAL::Tag_true} symbolic perturbation
+is used and cycling is avoided, such that the algorithm always terminates.
+With symbolic perturbation a small performance penalty is incurred.}
+
+\ccAccessFunctions
+
+\ccCreationVariable{traits}
+
+%\ccMemberFunction{ FT radius(const
+%Sphere& s);}{ returns the radius of sphere \ccc{s}.
+%\ccPostcond The returned number is
+% greater or equal to~$0$.}
+
+%\ccMemberFunction{ Cartesian_const_iterator center_cartesian_begin(const Sphere& s);}{
+%  returns an iterator referring to the first of the \ccc{D} Cartesian
+%  coordinates of the center of \ccc{s}.}
+
+\end{ccRefConcept}
+
