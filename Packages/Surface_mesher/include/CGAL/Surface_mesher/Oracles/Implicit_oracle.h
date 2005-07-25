@@ -21,6 +21,11 @@
 #ifndef _IMPLICIT_ORACLE_H
 #define _IMPLICIT_ORACLE_H
 
+#include <vector>
+#include <iterator>
+#include <algorithm>
+#include <CGAL/Point_traits.h>
+
 
 // NB: this oracle requires that the user provide a function that can 
 // compute the value of the potential in any point of space
@@ -34,11 +39,14 @@ namespace CGAL {
     // Public types
     
     typedef typename GT::Point_3 Point;
+    typedef Point_traits<Point> Point_traits;
+    typedef typename Point_traits::Bare_point Bare_point_3;
     typedef typename GT::Segment_3 Segment;
     typedef typename GT::Ray_3 Ray;
     typedef typename GT::Line_3 Line;
     typedef typename GT::Triangle_3 Triangle;
     typedef typename GT::FT FT;
+
 
     typedef typename std::list<Point> Points;
     
@@ -46,14 +54,29 @@ namespace CGAL {
   private:
     // Private members
     
-    Function& func;
+    const int number_of_functions;
+
+    typedef std::vector<Function*> Functions;
+    typedef typename Functions::const_iterator Functions_iterator;
+
+    Functions funcs;
+
     Point center;  // center of bounding ball
     FT radius;  // radius of bounding ball
     FT min_squared_length;  // minimal length of a segment for 
     // detecting intersections with surface
     bool parity_oracle;  // flag that tells whether the surface has no boundary
     bool debug;  // flag for debug mode
+
+    int apply(Functions_iterator fit, const Point& p)
+    {
+      return (**fit)(p.x(), p.y(), p.z());
+    }
     
+    int apply(const int i, const Point& p)
+    {
+      return (*(funcs[i]))(p.x(), p.y(), p.z());
+    }
     
   public:
     
@@ -61,16 +84,30 @@ namespace CGAL {
     Implicit_oracle (Function& f, Point emb_center, FT emb_radius,
 		     FT precision, 
 		     bool parity = false, bool dbg = false) :
-      func (f),
+      number_of_functions(1),
       center (emb_center),
       radius (emb_radius),
       min_squared_length (precision * precision),
       parity_oracle (parity),
       debug (dbg)
-      {}
-    
-    
-    
+      {
+        funcs.push_back(&f);
+      }
+
+    template <class It>
+    Implicit_oracle (It first, It end, Point emb_center, FT emb_radius,
+		     FT precision, 
+		     bool parity = false, bool dbg = false) :
+      center (emb_center),
+      radius (emb_radius),
+      min_squared_length (precision * precision),
+      parity_oracle (parity),
+      debug (dbg)
+      {
+        std::copy(first, end, std::back_inserter(funcs));
+        number_of_functions = funcs.size();
+      }
+
     //Public Queries
     
     Point get_center() {
@@ -91,7 +128,12 @@ namespace CGAL {
     
     bool is_in_volume(const Point& p)
     {
-      return surf_equation(p)<0.;
+      for(Functions_iterator fit = funcs.begin();
+          fit != funcs.end();
+          ++fit)
+        if(apply(fit, p)<0.)
+          return true;
+      return false;
     }
 
     Object intersect_segment_surface(Segment s) {      
@@ -107,42 +149,54 @@ namespace CGAL {
       // ATTENTION: optimization for closed surfaces: if both
       // extremities are on the same side of the surface, return no
       // intersection
-      if(parity_oracle && 
-	 surf_equation(s.vertex(0)) * surf_equation(s.vertex(1))>0)
-	return Object();
-      
+      if(parity_oracle)
+        {
+          bool no_intersection = true;
+          for(Functions_iterator fit = funcs.begin();
+              fit != funcs.end();
+              ++fit)
+            if(apply(fit, s.vertex(0)) * apply(fit, s.vertex(1)) <= 0)
+              no_intersection = false;
+          if(no_intersection)
+            return Object();
+        }
       
       // Code for surfaces with boundaries
       
       std::list<Segment> f;
       f.push_back(s);
       
-      bool diff=false;
-      while(!f.empty()) {
+      int intersected_surface_index = 0;
+      while(intersected_surface_index == 0 && !f.empty()) {
 	s=f.front();
 	f.pop_front();
 	p1=s.vertex(0);
 	p2=s.vertex(1);
-	
-	if (surf_equation(p1) * surf_equation(p2) < 0) {
-	  diff=true;
-	  break;
-	}
-	
-	if (ker.compute_squared_distance_3_object()
-	    (p1,p2) < min_squared_length)
-	  continue;
-	
-	mid=ker.construct_midpoint_3_object()(p1,p2);
-	f.push_back(Segment(p1,mid));
-	f.push_back(Segment(mid,p2));
+
+	for(int i = 0; i < number_of_functions; ++i)
+          if (apply(i, p1) * apply(i, p2) < 0)
+            {
+              intersected_surface_index = i;
+              break;
+            }
+
+        if(intersected_surface_index == 0);
+        {
+          if (ker.compute_squared_distance_3_object()
+              (p1,p2) >= min_squared_length)
+            {
+              mid=ker.construct_midpoint_3_object()(p1,p2);
+              f.push_back(Segment(p1,mid));
+              f.push_back(Segment(mid,p2));
+            }
+        }
       }
       
-      if (!diff)
+      if (intersected_surface_index == 0)
 	return Object();
       else
-	return intersect_segment_surface_rec(p1,p2);
-    }      
+	return intersect_segment_surface_rec(p1,p2,intersected_surface_index);
+    }
 
 
 
@@ -219,12 +273,12 @@ namespace CGAL {
 
       Points result;
       while (n>0) {
-	Point p1(2*radius*rand()/INT_MAX-radius+center.x(),
-		 2*radius*rand()/INT_MAX-radius+center.y(),
-		 2*radius*rand()/INT_MAX-radius+center.z());
-	Point p2(2*radius*rand()/INT_MAX-radius+center.x(),
-		 2*radius*rand()/INT_MAX-radius+center.y(),
-		 2*radius*rand()/INT_MAX-radius+center.z());
+	Bare_point_3 p1(2*radius*rand()/INT_MAX-radius+center.x(),
+                        2*radius*rand()/INT_MAX-radius+center.y(),
+                        2*radius*rand()/INT_MAX-radius+center.z());
+	Bare_point_3 p2(2*radius*rand()/INT_MAX-radius+center.x(),
+                        2*radius*rand()/INT_MAX-radius+center.y(),
+                        2*radius*rand()/INT_MAX-radius+center.z());
 	
 	Object o = intersect_line_surface (Line (p1,p2));
 	Point p;
@@ -247,7 +301,8 @@ namespace CGAL {
     // Private functions
     
     
-    Object intersect_segment_surface_rec(Point& p1, Point& p2) {      
+    Object intersect_segment_surface_rec(Point& p1, Point& p2,
+                                         const int surface_index) {
       GT ker;
       Point mid=ker.construct_midpoint_3_object()(p1,p2);
       
@@ -255,23 +310,20 @@ namespace CGAL {
       // If the two points are close, then we must decide
       if (ker.compute_squared_distance_3_object()
 	  (p1,p2) < min_squared_length)
-	return make_object(mid);
-      
+        {
+          mid.set_surface_index(surface_index);
+          return make_object(mid);
+        }
+
       // Else we must go on
       else {
-	if (surf_equation(p1) * surf_equation(mid) < 0)
-	  return intersect_segment_surface_rec (p1,mid);
-	else
-	  return intersect_segment_surface_rec (mid, p2);
+        if (apply(surface_index, p1) * apply(surface_index, mid) < 0)
+          return intersect_segment_surface_rec (p1, mid, surface_index);
+        else
+          return intersect_segment_surface_rec (mid, p2, surface_index);
       }
     }
-    
-  private:
-    typename Function::SURFACE_LOCATION surf_equation (Point p) {
-      return func(p.x(), p.y(), p.z());
-    }
-    
-    
+
   private:
     // Rescale segment according to bounding sphere
     Object rescale_seg_bounding_sphere(Segment s)

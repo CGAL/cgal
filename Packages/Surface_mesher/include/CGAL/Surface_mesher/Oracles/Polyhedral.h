@@ -173,7 +173,7 @@ public:
     }
 
 
-  CGAL::Object intersect_line_surface(Line &l)
+  CGAL::Object intersect_line_surface(Line &)
     {      
       CGAL_assertion(false);
       return CGAL::Object();
