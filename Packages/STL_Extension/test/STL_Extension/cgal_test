@@ -78,5 +78,6 @@ else
   compile_and_run test_new_binders1
   compile_and_run test_stl_extension
   compile_and_run test_vector
+  compile_and_run test_multiset
 fi
 

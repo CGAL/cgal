@@ -47,7 +47,8 @@ all:            \
                 test_composition$(EXE_EXT) \
                 test_new_binders1$(EXE_EXT) \
                 test_stl_extension$(EXE_EXT) \
-                test_vector$(EXE_EXT) 
+                test_vector$(EXE_EXT) \
+                test_multiset$(EXE_EXT) 
 
 test_Compact_container$(EXE_EXT): test_Compact_container$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_Compact_container test_Compact_container$(OBJ_EXT) $(LDFLAGS)
@@ -73,6 +74,9 @@ test_stl_extension$(EXE_EXT): test_stl_extension$(OBJ_EXT)
 test_vector$(EXE_EXT): test_vector$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_vector test_vector$(OBJ_EXT) $(LDFLAGS)
 
+test_multiset$(EXE_EXT): test_multiset$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_multiset test_multiset$(OBJ_EXT) $(LDFLAGS)
+
 clean: \
                    test_Compact_container.clean \
                    test_Concatenate_iterator.clean \
@@ -81,7 +85,8 @@ clean: \
                    test_composition.clean \
                    test_new_binders1.clean \
                    test_stl_extension.clean \
-                   test_vector.clean 
+                   test_vector.clean \
+                   test_multiset.clean 
 
 #---------------------------------------------------------------------#
 #                    suffix rules
