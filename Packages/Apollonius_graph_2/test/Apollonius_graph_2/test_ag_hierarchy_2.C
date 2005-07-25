@@ -5,11 +5,20 @@
 #include <cassert>
 
 // choose number type
-#include <CGAL/MP_Float.h>
+#ifdef CGAL_USE_GMP
+#  include <CGAL/Gmpq.h>
+#else
+#  include <CGAL/MP_Float.h>
+#endif
+
 #include <CGAL/Filtered_exact.h>
 
 typedef double         inexact_type;
+#ifdef CGAL_USE_GMP
+typedef CGAL::Gmpq     exact_type;
+#else
 typedef CGAL::MP_Float exact_type;
+#endif
 
 typedef CGAL::Filtered_exact<inexact_type,exact_type>  number_t;
 
@@ -25,7 +34,7 @@ typedef CGAL::Ring_tag Method_tag;
 
 
 struct CK : public CGAL::Simple_cartesian<double> {};
-struct EK : public CGAL::Simple_cartesian<CGAL::MP_Float> {};
+struct EK : public CGAL::Simple_cartesian<exact_type> {};
 
 
 int main(int argc, char* argv[])
