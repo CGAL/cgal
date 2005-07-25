@@ -343,11 +343,19 @@ $u_{j}$, or lower bound, $l_{j}$.
 \State $i_{min} \gets -1, \quad     d_{min} \gets 1, \quad  q_{min} \gets 0$
 \If{$d_{t}=1$}
     \ForAll{$i \gets 0,  \left|B_{O}\right| - 1$}
-        \If{$q_{B_{O}}[i] > 0 \wedge f_{B_{O}}^{l}[i]=1$}
-            \If{$d_{min}*q_{B_{O}}[i] > (x_{B_{O}}[i]-l_{B_{O}}[i])*q_{min}$}
-                \State $i_{min} \gets B_{O}[i],
-                    \quad d_{min} \gets x_{B_{O}}[i]-l_{B_{O}}[i],
-                    \quad q_{min} \gets q_{B_{O}}[i]$
+        \If{$q_{B_{O}}[i] > 0$}
+            \If{$B_{O}[i] < n \wedge f_{B_{O}}^{l}[i]=1$}
+                \If{$d_{min}*q_{B_{O}}[i] > (x_{B_{O}}[i]-l_{B_{O}}[i])*q_{min}$}
+                    \State $i_{min} \gets B_{O}[i],
+                        \quad d_{min} \gets x_{B_{O}}[i]-l_{B_{O}}[i],
+                        \quad q_{min} \gets q_{B_{O}}[i]$
+                \EndIf
+            \Else
+                \If{$d_{min}*q_{B_{O}}[i] > x_{B_{O}}[i]*q_{min}$}
+                    \State $i_{min} \gets B_{O}[i],
+                        \quad d_{min} \gets x_{B_{O}}[i],
+                        \quad q_{min} \gets q_{B_{O}}[i]$
+                \EndIf
             \EndIf
         \ElsIf{$q_{B_{O}}[i] < 0 \wedge f_{B_{O}}^{u}[i]=1$}
             \If{$d_{min}*-q_{B_{O}}[i] > (u_{B_{O}}[i]-x_{B_{O}}[i])*q_{min}$}
@@ -359,7 +367,7 @@ $u_{j}$, or lower bound, $l_{j}$.
     \EndFor
     \ForAll{$i \gets 0, \left|B_{S}\right| - 1$}
         \If{$q_{B_{S}}[i] > 0$}
-            \If{$d_{min}*q_{B_{S}}[i] < x_{B_{S}}[i]*q_{min}$}
+            \If{$d_{min}*q_{B_{S}}[i] > x_{B_{S}}[i]*q_{min}$}
                 \State $i_{min} \gets B_{S}[i],
                     \quad d_{min} \gets x_{B_{S}}[i],
                     \quad q_{min} \gets q_{B_{S}}[i]$
@@ -374,17 +382,25 @@ $u_{j}$, or lower bound, $l_{j}$.
                     \quad d_{min} \gets u_{B_{O}}[i]-x_{B_{O}}[i],
                     \quad q_{min} \gets q_{B_{O}}[i]$
             \EndIf
-        \ElsIf{$q_{B_{O}}[i] < 0 \wedge f_{B_{O}}^{l}[i]=1$}
-            \If{$d_{min}*-q_{B_{O}}[i] > (x_{B_{O}}[i]-l_{B_{O}}[i])*q_{min}$}
-                \State $i_{min} \gets B_{O}[i],
-                    \quad d_{min} \gets x_{B_{O}}[i]-l_{B_{O}}[i],
-                    \quad q_{min} \gets -q_{B_{O}}[i]$
+        \ElsIf{$q_{B_{O}}[i] < 0$}
+            \If{$B_{O}[i] < n \wedge f_{B_{O}}^{l}[i]=1$}
+                \If{$d_{min}*-q_{B_{O}}[i] > (x_{B_{O}}[i]-l_{B_{O}}[i])*q_{min}$}
+                    \State $i_{min} \gets B_{O}[i],
+                        \quad d_{min} \gets x_{B_{O}}[i]-l_{B_{O}}[i],
+                        \quad q_{min} \gets -q_{B_{O}}[i]$
+                \EndIf
+            \Else
+                \If{$d_{min}*-q_{B_{O}}[i] > x_{B_{O}}[i]*q_{min}$}
+                    \State $i_{min} \gets B_{O}[i],
+                        \quad d_{min} \gets x_{B_{O}}[i],
+                        \quad q_{min} \gets -q_{B_{O}}[i]$
+                \EndIf
             \EndIf
         \EndIf
     \EndFor
     \ForAll{$i \gets 0, \left|B_{S}\right| - 1$}
         \If{$q_{B_{S}}[i] < 0$}
-            \If{$d_{min}*-q_{B_{S}}[i] < x_{B_{S}}[i]*q_{min}$}
+            \If{$d_{min}*-q_{B_{S}}[i] > x_{B_{S}}[i]*q_{min}$}
                 \State $i_{min} \gets B_{S}[i],
                     \quad d_{min} \gets x_{B_{S}}[i],
                     \quad q_{min} \gets -q_{B_{S}}[i]$
