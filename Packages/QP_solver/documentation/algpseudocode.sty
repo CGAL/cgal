@@ -1,0 +1,110 @@
+% PSEUDOCODE ALGORITHMIC STYLE -- Released 18 MAR 2004
+%    for LaTeX version 2e
+%
+% Copyright Szasz Janos
+% E-mail szaszjanos@users.sourceforge.net
+% Based on Peter Williams's algorithmic.sty
+%
+\NeedsTeXFormat{LaTeX2e}%
+\ProvidesPackage{algpseudocode}%
+\RequirePackage{ifthen}%
+\RequirePackage{algorithmicx}%
+\typeout{Document Style - pseudocode environments for use with the `algorithmicx' style}%
+%
+\def\ALG@setpseudocode{t}%
+\newboolean{ALG@noend}%
+\setboolean{ALG@noend}{false}%
+\newboolean{ALG@compatible}%
+\setboolean{ALG@compatible}{false}%
+%
+\DeclareOption{noset}{\def\ALG@setpseudocode{}}%
+\DeclareOption{set}{\def\ALG@setpseudocode{t}}%
+\DeclareOption{noend}{\setboolean{ALG@noend}{true}}%
+\DeclareOption{end}{\setboolean{ALG@noend}{false}}%
+\DeclareOption{compatible}{\setboolean{ALG@compatible}{true}}%
+\DeclareOption{noncompatible}{\setboolean{ALG@noncompatible}{false}}%
+\ProcessOptions%
+%
+%      ***      DECLARATIONS      ***
+%
+\ALG@deflanguage{pseudocode}{\ALG@setpseudocode}%
+{%
+%
+%      ***      KEYWORDS      ***
+%
+\newcommand\algorithmicend{\textbf{end}}
+\newcommand\algorithmicdo{\textbf{do}}
+\newcommand\algorithmicwhile{\textbf{while}}
+\newcommand\algorithmicfor{\textbf{for}}
+\newcommand\algorithmicforall{\textbf{for all}}
+\newcommand\algorithmicloop{\textbf{loop}}
+\newcommand\algorithmicrepeat{\textbf{repeat}}
+\newcommand\algorithmicuntil{\textbf{until}}
+\newcommand\algorithmicprocedure{\textbf{procedure}}
+\newcommand\algorithmicfunction{\textbf{function}}
+\newcommand\algorithmicif{\textbf{if}}
+\newcommand\algorithmicthen{\textbf{then}}
+\newcommand\algorithmicelse{\textbf{else}}
+\newcommand\algorithmicrequire{\textbf{Require:}}
+\newcommand\algorithmicensure{\textbf{Ensure:}}
+\newcommand{\algorithmicreturn}{\textbf{return}}
+\newcommand\textproc{\textsc}
+%
+%      ***      DECLARED LOOPS      ***
+%
+\algdef{SE}[WHILE]{While}{EndWhile}[1]{\algorithmicwhile\ ##1\ \algorithmicdo}{\algorithmicend\ \algorithmicwhile}%
+\algdef{SE}[FOR]{For}{EndFor}[1]{\algorithmicfor\ ##1\ \algorithmicdo}{\algorithmicend\ \algorithmicfor}%
+\algdef{S}[FOR]{ForAll}[1]{\algorithmicforall\ ##1\ \algorithmicdo}%
+\algdef{SE}[LOOP]{Loop}{EndLoop}{\algorithmicloop}{\algorithmicend\ \algorithmicloop}%
+\algdef{SE}[REPEAT]{Repeat}{Until}{\algorithmicrepeat}[1]{\algorithmicuntil\ ##1}%
+\algdef{SE}[IF]{If}{EndIf}[1]{\algorithmicif\ ##1\ \algorithmicthen}{\algorithmicend\ \algorithmicif}%
+\algdef{C}[IF]{IF}{ElsIf}[1]{\algorithmicelse\ \algorithmicif\ ##1\ \algorithmicthen}%
+\algdef{Ce}[ELSE]{IF}{Else}{EndIf}{\algorithmicelse}%
+\algdef{SE}[PROCEDURE]{Procedure}{EndProcedure}%
+   [2]{\algorithmicprocedure\ \textproc{##1}\ifthenelse{\equal{##2}{}}{}{(##2)}}%
+   {\algorithmicend\ \algorithmicprocedure}%
+\algdef{SE}[FUNCTION]{Function}{EndFunction}%
+   [2]{\algorithmicfunction\ \textproc{##1}\ifthenelse{\equal{##2}{}}{}{(##2)}}%
+   {\algorithmicend\ \algorithmicfunction}%
+%
+\ifthenelse{\boolean{ALG@noend}}%
+   {%
+   \algtext*{EndWhile}%
+   \algtext*{EndFor}%
+   \algtext*{EndLoop}%
+   \algtext*{EndIf}%
+   \algtext*{EndProcedure}%
+   \algtext*{EndFunction}%
+   }{}%
+%
+%      ***      OTHER DECLARATIONS      ***
+%
+\def\Require{\item[\algorithmicrequire]}
+\def\Ensure{\item[\algorithmicensure]}
+\def\Return{\algorithmicreturn{} }%
+%
+%
+%
+\ifthenelse{\boolean{ALG@compatible}}%
+   {%
+   \let\WHILE\While\let\ENDWHILE\EndWhile%
+   \let\FOR\For\let\FORALL\ForAll\let\ENDFOR\EndFor%
+   \let\LOOP\Loop\let\ENDLOOP\EndLoop%
+   \let\REPEAT\Repeat\let\UNTIL\Until%
+   \let\PROCEDURE\Procedure\let\ENDPROCEDURE\EndProcedure%
+   \let\FUNCTION\Function\let\ENDFUNCTION\EndFunction%
+   \let\IF\If\let\ELSIF\ElsIf\let\ELSE\Else\let\ENDIF\EndIf%
+   \let\REQUIRE\Require\let\ENSURE\Ensure%
+   \let\STATE\State\let\STATEx\Statex%
+   \let\COMMENT\Comment%
+   }%
+   {}%
+%
+%
+%
+}%
+%
+%
+%
+\let\ALG@setpseudocode\relax%
+%
