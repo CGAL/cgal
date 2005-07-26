@@ -437,12 +437,6 @@ Comparison_result compare(const CORE::Expr&, const CORE::Expr&);
 std::pair<double,double> to_interval (const CORE::Expr &);
 #endif // CGAL_USE_CORE
 
-// Integer and Double from _QP_solver
-
-CGAL_END_NAMESPACE
-#include <CGAL/_QP_solver/Double.h>
-CGAL_BEGIN_NAMESPACE
-
 
 // specializations for Quotient
 

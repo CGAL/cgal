@@ -1,3 +1,6 @@
+26 July 2005 Sylvain Pion
+- Remove #include <CGAL/_QP_solver/Double.h> from CGAL/number_type_basic.h .
+
 1 July 2005 Sylvain Pion
 - Specialize NT_converter for double so that it calls to_double() instead of
   attempting a conversion.
