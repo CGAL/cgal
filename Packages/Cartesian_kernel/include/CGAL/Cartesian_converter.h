@@ -36,6 +36,7 @@
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Origin.h>
+#include <vector>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -115,6 +116,63 @@ public:
     {
         return c(a);
     }
+
+    typename K2::Object_2
+    operator()(const typename K1::Object_2 &obj) const
+    {
+      if (const typename K1::Point_2 * ptr = object_cast<typename K1::Point_2>(&obj)) {
+	std::cout << "Point" << std::endl;
+        return make_object(operator()(*ptr));
+      } else if (const typename K1::Vector_2 * ptr = object_cast<typename K1::Vector_2>(&obj)) {
+        return make_object(operator()(*ptr));
+      } else if (const typename K1::Direction_2 * ptr = object_cast<typename K1::Direction_2>(&obj)) {
+        return make_object(operator()(*ptr));
+      } else if (const typename K1::Segment_2 * ptr = object_cast<typename K1::Segment_2>(&obj)) {
+        return make_object(operator()(*ptr));
+      } else if (const typename K1::Ray_2 * ptr = object_cast<typename K1::Ray_2>(&obj)) {
+        return make_object(operator()(*ptr));
+      } else if (const typename K1::Line_2 * ptr = object_cast<typename K1::Line_2>(&obj)) {
+        return make_object(operator()(*ptr));
+      } else if (const typename K1::Triangle_2 * ptr = object_cast<typename K1::Triangle_2>(&obj)) {
+        return make_object(operator()(*ptr));
+      } else if (const typename K1::Iso_rectangle_2 * ptr = object_cast<typename K1::Iso_rectangle_2>(&obj)) {
+        return make_object(operator()(*ptr));
+      } else if (const typename K1::Circle_2 * ptr = object_cast<typename K1::Circle_2>(&obj)) {
+        return make_object(operator()(*ptr));
+      } else if (const typename K1::Point_3 * ptr = object_cast<typename K1::Point_3>(&obj)) {
+        return make_object(operator()(*ptr));
+      } else if (const typename K1::Vector_3 * ptr = object_cast<typename K1::Vector_3>(&obj)) {
+        return make_object(operator()(*ptr));
+      } else if (const typename K1::Direction_3 * ptr = object_cast<typename K1::Direction_3>(&obj)) {
+        return make_object(operator()(*ptr));
+      } else if (const typename K1::Segment_3 * ptr = object_cast<typename K1::Segment_3>(&obj)) {
+        return make_object(operator()(*ptr));
+      } else if (const typename K1::Ray_3 * ptr = object_cast<typename K1::Ray_3>(&obj)) {
+        return make_object(operator()(*ptr));
+      } else if (const typename K1::Line_3 * ptr = object_cast<typename K1::Line_3>(&obj)) {
+        return make_object(operator()(*ptr));
+      } else if (const typename K1::Triangle_3 * ptr = object_cast<typename K1::Triangle_3>(&obj)) {
+        return make_object(operator()(*ptr));
+      } else if (const typename K1::Tetrahedron_3 * ptr = object_cast<typename K1::Tetrahedron_3>(&obj)) {
+        return make_object(operator()(*ptr));
+      } else if (const typename K1::Iso_cuboid_3 * ptr = object_cast<typename K1::Iso_cuboid_3>(&obj)) {
+        return make_object(operator()(*ptr));
+      } else if (const typename K1::Sphere_3 * ptr = object_cast<typename K1::Sphere_3>(&obj)) {
+        return make_object(operator()(*ptr));
+      }else if (const typename K1::Plane_3 * ptr = object_cast<typename K1::Plane_3>(&obj)) {
+        return make_object(operator()(*ptr));
+      }else if (const std::vector<typename K1::Point_2> * ptr = object_cast<std::vector<typename K1::Point_2> >(&obj)) {
+	std::vector<typename K2::Point_2> res((*ptr).size());
+	for(int i=0; i < (*ptr).size(); i++){
+	  res[i] = operator()((*ptr)[i]);
+	}
+	return make_object(res);
+      }
+      CGAL_assertion_msg(false,"Cartesian_converter is unable to determine what is wrapped in the Object");
+      return Object();
+	
+    }
+
 
     typename K2::Point_2
     operator()(const typename K1::Point_2 &a) const
