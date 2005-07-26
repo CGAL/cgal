@@ -17,12 +17,21 @@
 //
 // Author(s)     : Laurent RINEAU
 
-#ifndef CGAL_POINT_TRAITS_H_H
-#define CGAL_POINT_TRAITS_H_H
+#ifndef CGAL_POINT_TRAITS_H
+#define CGAL_POINT_TRAITS_H
 
 #include <CGAL/Weighted_point.h>
 
 namespace CGAL {
+
+
+
+    template <class P>
+    struct Is_weighted : public ::boost::mpl::true_ {}
+    {
+    }
+
+  template <class P>
 
   namespace details {
 
@@ -41,7 +50,7 @@ namespace CGAL {
 
       Weighted_point weighted_point(const Point& bp)
       {
-        return weighted_point(bp);
+        return Weighted_point(bp);
       }
 
       const Point& point(const Bare_point& bp)
@@ -95,4 +104,4 @@ class Point_traits :
 
 } // end namespace CGAL
 
-#endif // CGAL_POINT_TRAITS_H_H
+#endif // CGAL_POINT_TRAITS_H
