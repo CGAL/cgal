@@ -110,8 +110,8 @@ public:
     typedef CGAL::Rational_traits< FT > Rational;
 
     Rational r;
-    CGAL_assertion( r.denominator(c0) > 0 );
-    *this = Root_of_2(c0.numerator(), c0.denominator());
+    CGAL_assertion( r.denominator(c0) != 0 );
+    *this = Root_of_2(r.denominator(c0), - r.numerator(c0));
 
     CGAL_assertion(is_valid());
   }
