@@ -889,12 +889,14 @@ namespace CartesianKernelFunctors {
 } //namespace CartesianKernelFunctors
 
 template < typename K>
-struct Qualified_result_of<CartesianKernelFunctors::Compute_squared_radius_2<K>, typename K::Circle_2, int >
+struct Qualified_result_of<CartesianKernelFunctors::Compute_squared_radius_2<K>,
+                           typename K::Circle_2>
 {
   typedef typename K::FT const &   type;
 };
 
-// For the non specialized template will do the right thing, namely return a copy of an FT
+// For the non specialized template will do the right thing,
+// namely return a copy of an FT
 
 namespace CartesianKernelFunctors {
 

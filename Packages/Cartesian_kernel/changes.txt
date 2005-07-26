@@ -1,3 +1,7 @@
+26 July 2005 Sylvain Pion
+- Fix Qualified_result_of<CartesianKernelFunctors::Compute_squared_radius_2<K>,
+  typename K::Circle_2 >
+
 26 July 2005 Andreas Fabri
 - Added conversion in Cartesian_converter for CGAL::Object with a kernel object inside 
 
