@@ -162,7 +162,7 @@ public:
         return make_object(operator()(*ptr));
       }else if (const std::vector<typename K1::Point_2> * ptr = object_cast<std::vector<typename K1::Point_2> >(&obj)) {
 	std::vector<typename K2::Point_2> res((*ptr).size());
-	for(int i=0; i < (*ptr).size(); i++){
+	for(unsigned int i=0; i < (*ptr).size(); i++){
 	  res[i] = operator()((*ptr)[i]);
 	}
 	return make_object(res);
