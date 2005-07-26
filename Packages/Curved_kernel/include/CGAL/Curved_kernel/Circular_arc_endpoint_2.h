@@ -72,16 +72,18 @@ namespace CGALi {
 	( c1, c2, std::back_inserter(solutions) );
       typename solutions_container::iterator it = solutions.begin();
 
-      CGAL_kernel_precondition( it != solutions.end() ); // the circles intersect
+      CGAL_kernel_precondition( it != solutions.end() ); 
+      // the circles intersect
+
       const std::pair<typename CK::Circular_arc_endpoint_2, uint> *result;
-      result = CGAL::object_cast< std::pair<typename CK::Circular_arc_endpoint_2, uint> >(&(*it));
+      result = CGAL::object_cast< 
+        std::pair<typename CK::Circular_arc_endpoint_2, uint> >(&(*it));
       if ( result->second == 2 ) // double solution
 	return result->first._p;
-      if (b) {
-	return result->first._p;
-      }
+      if (b) return result->first._p;
       ++it;
-      result = CGAL::object_cast< std::pair<typename CK::Circular_arc_endpoint_2, uint> >(&(*it));
+      result = CGAL::object_cast< 
+        std::pair<typename CK::Circular_arc_endpoint_2, uint> >(&(*it));
       return result->first._p;
 
  //       FT dx = c2.center().x() - c1.center().x();
