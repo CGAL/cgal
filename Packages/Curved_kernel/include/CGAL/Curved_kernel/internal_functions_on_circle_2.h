@@ -48,15 +48,13 @@ namespace CircularFunctors {
                                                     Numeric_point_2;
 
     typedef typename CK::Circular_arc_endpoint_2 Circular_arc_endpoint_2;
-    bool first = true;
 
     for ( typename solutions_container::iterator it = solutions.begin(); 
 	    it != solutions.end(); ++it )
       {
 	*res++ = make_object
-	  (std::make_pair(Circular_arc_endpoint_2(c1, c2, first, Numeric_point_2( it->first.first, it->first.second ))
+	  (std::make_pair(Circular_arc_endpoint_2(Numeric_point_2( it->first.first, it->first.second ))
 			  , it->second ));
-	first = false;
       }
 
     return res;

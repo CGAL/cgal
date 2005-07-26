@@ -65,6 +65,12 @@ public:
                  const Point_2 &begin,
                  const Point_2 &end)
     : RCircular_arc_2(support, begin, end) {}
+  
+  Circular_arc_2(const Circle_2 &support,
+                 const Circular_arc_endpoint_2 &begin,
+                 const Circular_arc_endpoint_2 &end)
+    : RCircular_arc_2(support, begin, end) {}
+  
 
   CGAL::Bbox_2 bbox(void) const { return supporting_circle().bbox(); }
 };

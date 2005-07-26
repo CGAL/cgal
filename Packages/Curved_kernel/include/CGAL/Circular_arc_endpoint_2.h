@@ -36,9 +36,8 @@ public:
 			  const bool b)
     : RCircular_arc_endpoint_2(c, c1, b) {}
 
-  Circular_arc_endpoint_2(const Circle_2 & c, const Circle_2 & c1,
-  			  const bool b, const Numeric_point_2 & np)
-    : RCircular_arc_endpoint_2(c, c1, b, np){}
+  Circular_arc_endpoint_2(const Numeric_point_2 & np)
+    : RCircular_arc_endpoint_2( np){}
 };
 
 template < typename CurvedKernel >

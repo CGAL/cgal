@@ -73,17 +73,16 @@ namespace CGALi {
       typename solutions_container::iterator it = solutions.begin();
 
       CGAL_kernel_precondition( it != solutions.end() ); // the circles intersect
-      std::pair<typename CK::Circular_arc_endpoint_2, uint> result;
-      std::cout << assign(result, *it) << std::endl;
-      if ( result.second == 2 ) // double solution
-	return result.first._p;
+      const std::pair<typename CK::Circular_arc_endpoint_2, uint> *result;
+      result = CGAL::object_cast< std::pair<typename CK::Circular_arc_endpoint_2, uint> >(&(*it));
+      if ( result->second == 2 ) // double solution
+	return result->first._p;
       if (b) {
-	return result.first._p;
+	return result->first._p;
       }
       ++it;
-      bool tmp = assign(result, *it);
-      CGAL_kernel_assertion(tmp);
-      return result.first._p;
+      result = CGAL::object_cast< std::pair<typename CK::Circular_arc_endpoint_2, uint> >(&(*it));
+      return result->first._p;
 
  //       FT dx = c2.center().x() - c1.center().x();
 //       FT dy = c2.center().y() - c1.center().y();
@@ -130,25 +129,20 @@ namespace CGALi {
       // let's try with a static instance here instead.
       typedef typename CK::Linear_kernel::Point_2       Pt_2;
       static const Circular_arc_endpoint_2 def = 
-	Circular_arc_endpoint_2(Circle_2(Pt_2(0, 1), 1),
-				Circle_2(Pt_2(1, 0), 1), true, Numeric_point_2());
+	Circular_arc_endpoint_2( Numeric_point_2());
       *this = def;
     }
 
     Circular_arc_endpoint_2(const Circle_2 & c1, const Circle_2 & c2, 
 			    const bool b)
-      : _c0(c1), _c1(c2), _b(b), _p(intersect(c1, c2, b)) {}
+      : _p(intersect(c1, c2, b)) {}
 
-    Circular_arc_endpoint_2(const Circle_2 & c1, const Circle_2 & c2,
-			    const bool b, const Numeric_point_2 & np)
-      : _c0(c1), _c1(c2), _b(b), _p(np){}
+    Circular_arc_endpoint_2(const Numeric_point_2 & np)
+      :  _p(np){}
 
     const Root_of_2 & x() const { return _p.x(); }
     const Root_of_2 & y() const { return _p.y(); }
 
-    const Circle_2 & circle(int i) const { return i==0 ? _c0 : _c1; }
-
-    bool is_left() const { return _b; }
 
     Bbox_2 bbox() const
     {
@@ -160,8 +154,6 @@ namespace CGALi {
     }
 
   private:
-    Circle_2  _c0, _c1;
-    bool      _b;
     Numeric_point_2 _p;
   };
 
@@ -172,10 +164,38 @@ namespace CGALi {
   std::ostream&
   operator<<(std::ostream &os, const Circular_arc_endpoint_2<CK> &p)
   {
-    return os << "CirclArcEndPoint_2(" << p.id() << std::endl
-              << p.circle(0) << " ," << std::endl
-              << p.circle(1) << " ," << std::endl
-              << p.is_left() << " , " << p.x() << ", " << p.y() << ')';
+    return os << p.x()[0] << " " 
+	      << p.x()[1] << " " 
+	      << p.x()[2] << " " 
+	      << p.x().is_smaller() << " "
+	      << p.y()[0] << " " 
+	      << p.y()[1] << " " 
+	      << p.y()[2] << " "
+	      << p.y().is_smaller() << " "; 
+  }
+  
+  template < typename CK >
+  std::istream &
+  operator>>(std::istream & is, Circular_arc_endpoint_2<CK> &p)
+  {
+    typedef typename CK::Root_of_2               Root_of_2;
+    typedef typename CGAL::Simple_cartesian<Root_of_2>::Point_2
+      Numeric_point_2;
+    typename Root_of_2::RT x1, x2, x3;
+    typename Root_of_2::RT y1, y2, y3;
+    bool b1, b2;
+    is >> x1 >> x2 >> x3 >> b1 >> y1 >> y2 >> y3 >> b2 ;
+    if (is)
+      p = Circular_arc_endpoint_2<CK>(Numeric_point_2(Root_of_2(x3, x2, x1, b1), Root_of_2(y3, y2, y1, b2)));
+    return is;
+  }
+
+ template < typename CK >
+  std::ostream &
+  print(std::ostream & os, const Circular_arc_endpoint_2<CK> &p)
+  {
+   return os << "CirclArcEndPoint_2(" << p.id() << std::endl
+	      << p.x() << ", " << p.y() << ')';
   }
 
 } // namespace CGALi

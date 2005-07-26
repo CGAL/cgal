@@ -187,18 +187,18 @@ public:
 	{
 	  std::cout << "         returns : ";
           for(int i=0; i<ret.size(); ++i) {
-	    Point_2 p;
-	    Circular_arc c;
-	    std::pair<Point_2, int> pp;
-	    if (assign(ret[i], p)) {
-	      std::cout << p << "  ";
+	    //Point_2 p;
+	    //Circular_arc c;
+	    //std::pair<Point_2, int> pp;
+	    if (const Point_2 *p = CGAL::object_cast<Point_2>(&ret[i])) {
+	      std::cout << *p << "  ";
 	    }
-	    else if (assign(ret[i], c)) {
-	      std::cout << c << "  ";
+	    else if (const Circular_arc *c = CGAL::object_cast<Circular_arc>(&ret[i])) {
+	      std::cout << *c << "  ";
 	    }
-	    else if (assign(ret[i], pp)) {
-	      std::cout << " pair ( " << pp.first << " ; " <<
-		pp.second << " )  ";
+	    else if (const std::pair<Point_2, int> *pp = CGAL::object_cast<std::pair<Point_2, int> >(&ret[i])) {
+	      std::cout << " pair ( " << pp->first << " ; " <<
+		pp->second << " )  ";
 	    }
 	    else {
 	      std::cout << " [ something else ? ] ";
@@ -228,18 +228,18 @@ public:
 	{
 	  std::cout << "         returns : ";
           for(unsigned i=0; i<ret.size(); ++i) {
-	    Point_2 p;
-	    Circular_arc c;
-	    std::pair<Point_2, unsigned> pp;
-	    if (assign(p, ret[i])) {
-	      std::cout << p << "  ";
+	   // Point_2 p;
+	   // Circular_arc c;
+	   // std::pair<Point_2, unsigned> pp;
+	    if (const Point_2 *p = CGAL::object_cast<Point_2>(&ret[i])) {
+	      std::cout << *p << "  ";
 	    }
-	    else if (assign(c, ret[i])) {
-	      std::cout << c << "  ";
+	    else if (const Circular_arc *c = CGAL::object_cast<Circular_arc>(&ret[i])) {
+	      std::cout << *c << "  ";
 	    }
-	    else if (assign(pp, ret[i])) {
-	      std::cout << " pair ( " << pp.first << " ; " <<
-		pp.second << " )  ";
+	    else if (const std::pair<Point_2, unsigned> *pp = CGAL::object_cast<std::pair<Point_2, unsigned> > (&ret[i])) {
+	      std::cout << " pair ( " << pp->first << " ; " <<
+		pp->second << " )  ";
 	    }
 	    else {
 	      std::cout << " [ something else ? ] ";

@@ -386,28 +386,28 @@ public:
 	t->t2.intersect_2_object()(a.second, b.second, std::back_inserter(v2));
 
 	for(unsigned i=0; i<v1.size(); ++i) {
-	  typename Traits_1::X_monotone_curve_2 c1;
-	  std::pair<typename Traits_1::Point_2, unsigned int> pp1;
+	  //typename Traits_1::X_monotone_curve_2 c1;
+	  //std::pair<typename Traits_1::Point_2, unsigned int> pp1;
 	  
-	  if (assign(c1, v1[i])) {
-	    vc1.push_back(c1);
+	  if (const typename Traits_1::X_monotone_curve_2 *c1 = CGAL::object_cast<typename Traits_1::X_monotone_curve_2>(&v1[i])) {
+	    vc1.push_back(*c1);
 	  }
-	  else if (assign(pp1, v1[i])) {
-	    vp1.push_back(pp1);
+	  else if (const std::pair<typename Traits_1::Point_2, unsigned int> *pp1 = CGAL::object_cast<std::pair<typename Traits_1::Point_2, unsigned int> >(&v1[i])) {
+	    vp1.push_back(*pp1);
 	  }
 	  else
 	    abort();
 	}
 
 	for(unsigned i=0; i<v2.size(); ++i) {
-	  typename Traits_2::X_monotone_curve_2 c2;
-	  std::pair<typename Traits_2::Point_2, unsigned int> pp2;
+	  //typename Traits_2::X_monotone_curve_2 c2;
+	  //std::pair<typename Traits_2::Point_2, unsigned int> pp2;
 	  
-	  if (assign(c2, v2[i])) {
-	    vc2.push_back(c2);
+	  if (const typename Traits_2::X_monotone_curve_2 *c2 = CGAL::object_cast< typename Traits_2::X_monotone_curve_2>(&v2[i])) {
+	    vc2.push_back(*c2);
 	  }
-	  else if (assign(pp2, v2[i])) {
-	    vp2.push_back(pp2);
+	  else if ( std::pair<typename Traits_2::Point_2, unsigned int> *pp2 = CGAL::object_cast< std::pair<typename Traits_2::Point_2, unsigned int> >(&v2[i])) {
+	    vp2.push_back(*pp2);
 	  }
 	  else
 	    abort();

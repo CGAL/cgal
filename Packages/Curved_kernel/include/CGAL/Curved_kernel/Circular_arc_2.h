@@ -47,6 +47,7 @@ namespace CGALi {
 
        _begin = Circular_arc_endpoint_2(c, c1, true);
        _end   = Circular_arc_endpoint_2(c, c1, true);
+       _support = c;
     }
 
     Circular_arc_2(const Circle_2 &support,
@@ -84,7 +85,7 @@ namespace CGALi {
     Circular_arc_2(const Circle_2 &c, 
 		   const Circle_2 &c1, const bool b_1,
 		   const Circle_2 &c2, const bool b_2)
-      : _begin(c, c1, b_1), _end(c, c2, b_2) {}
+      : _begin(c, c1, b_1), _end(c, c2, b_2), _support(c) {}
 
 
     // constructs a circular arc that is the arc included in A
@@ -93,6 +94,7 @@ namespace CGALi {
     // by b_cut
     Circular_arc_2(const Circular_arc_2 &A, const bool b,
 		   const Circle_2 &ccut, const bool b_cut)
+      : _support(A.supporting_circle())
     {
         CGAL_kernel_precondition(A.is_x_monotone());
         CGAL_kernel_precondition(do_intersect(A.supporting_circle(), ccut));
@@ -144,11 +146,34 @@ namespace CGALi {
       *this = Circular_arc_2(support, l, source_is_left ,l, !source_is_left);
     }
 
+    Circular_arc_2(const Circle_2 &support,
+		   const Circular_arc_endpoint_2 &source,
+		   const Circular_arc_endpoint_2 &target)
+    {
+      typedef typename CK::Polynomial_for_circles_2_2 Polynomial_for_circles_2_2;
+      Polynomial_for_circles_2_2 equation = get_equation<CK>(support);
+      CGAL_kernel_precondition(square(source.x() - equation.a()) ==
+			       equation.r_sq() - square(source.y() - equation.b()));
+      CGAL_kernel_precondition(square(target.x() - equation.a()) ==
+			       equation.r_sq() - square(target.y() - equation.b()));
+      
+      _support = support;
+      _begin = source;
+      _end = target;
+      //C'est pas fini il faut verifier que les point sont sur le cercle
+    }
+
+
+
+
+
+
   private:
 
     // The arc goes from _begin to _end in the positive order
     // If _begin == _end, then it's the full circle
     Circular_arc_endpoint_2  _begin, _end;
+    Circle_2 _support;
    
 
   public:
@@ -252,8 +277,7 @@ namespace CGALi {
 
     const Circle_2 & supporting_circle() const           
     {
-       CGAL_kernel_precondition(_begin.circle(0) == _end.circle(0));
-       return _begin.circle(0);
+       return _support;
     }
 
     const Point_2 & center() const           
@@ -293,19 +317,20 @@ namespace CGALi {
     // - circle c2
     // - bool b2
     return os << a.supporting_circle() << " "
-	      << a.source().circle(1) << " " << a.source().is_left() << " "
-	      << a.target().circle(1)   << " " << a.target().is_left() << " ";
+	      << a.source() << " "
+	      << a.target() << " ";
   }
 
   template < typename CK >
   std::istream &
   operator>>(std::istream & is, Circular_arc_2<CK> &a)
   {
-    typename CK::Circle_2 s, c1, c2;
-    bool b1, b2;
-    is >> s >> c1 >> b1 >> c2 >> b2;
+    typename CK::Circle_2 s;
+    typename CK::Circular_arc_endpoint_2 p1;
+    typename CK::Circular_arc_endpoint_2 p2;
+    is >> s >> p1 >> p2 ;
     if (is)
-      a = Circular_arc_2<CK>(s, c1, b1, c2, b2);
+      a = Circular_arc_2<CK>(s, p1, p2);
     return is;
   }
 
