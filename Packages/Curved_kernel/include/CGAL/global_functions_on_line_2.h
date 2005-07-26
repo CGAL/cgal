@@ -5,7 +5,7 @@ namespace CGAL {
 
 template< class CK >
 inline
-typename CK::Algebraic_1_curve_2
+typename CK::Polynomial_1_2
 get_equation(const typename CK::Line_2 & l)
 {
   return CK().get_equation_object()(l);
@@ -14,7 +14,7 @@ get_equation(const typename CK::Line_2 & l)
 template< class CK >
 inline
 typename CK::Line_2
-construct_line_2(const typename CK::Algebraic_1_curve_2 & eq)
+construct_line_2(const typename CK::Polynomial_1_2 & eq)
 {
   return CK().construct_line_2_object()(eq);
 }

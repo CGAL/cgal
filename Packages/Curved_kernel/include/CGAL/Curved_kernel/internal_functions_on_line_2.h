@@ -5,18 +5,18 @@ namespace CGAL {
 namespace LinearFunctors {
 
   template < class CK >
-  typename CK::Algebraic_1_curve_2
+  typename CK::Polynomial_1_2
   get_equation( const typename CK::Line_2 & L )
   {
     typedef typename CK::RT RT;
  
-    return typename CK::Algebraic_1_curve_2(RT(0),RT(0),RT(0),
+    return typename CK::Polynomial_1_2(RT(0),RT(0),RT(0),
 					    L.a(),L.b(),L.c());
   }
   
   template < class CK >
   typename CK::Line_2  
-  construct_line_2 ( const typename CK::Algebraic_1_curve_2 &eq )
+  construct_line_2 ( const typename CK::Polynomial_1_2 &eq )
   {
     return typename CK::Line_2(eq[2],eq[1],eq[0]); 
   }
