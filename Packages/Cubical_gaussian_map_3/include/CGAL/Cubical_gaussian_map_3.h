@@ -168,6 +168,10 @@
 #include <CGAL/intersections.h>
 #include <CGAL/Polygon_2_algorithms.h>
 
+#if defined(CGAL_USE_LEDA)
+#include <LEDA/rational.h>
+#endif
+
 #include <string>
 #include <vector>
 #include <list>
@@ -746,8 +750,8 @@ protected:
   unsigned int face_mask_2_face_index(unsigned int mask)
   {
     unsigned int id;
-    for (id = 0; id < NUM_FACES; id++)
-    if (mask & get_mask(id)) return id;
+    for (id = 0; id < NUM_FACES; ++id)
+      if (mask & get_mask(id)) return id;
     return (unsigned int) -1;
   }
   
