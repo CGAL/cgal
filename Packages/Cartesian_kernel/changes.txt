@@ -1,5 +1,6 @@
 26 July 2005 Andreas Fabri
 - Removed debug printout in Cartesian_converter.h
+- Replaced int with unsigned int in a for loop in Cartesian_converter.h
 
 26 July 2005 Sylvain Pion
 - Fix Qualified_result_of<CartesianKernelFunctors::Compute_squared_radius_2<K>,
