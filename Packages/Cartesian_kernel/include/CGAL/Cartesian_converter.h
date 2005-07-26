@@ -121,7 +121,6 @@ public:
     operator()(const typename K1::Object_2 &obj) const
     {
       if (const typename K1::Point_2 * ptr = object_cast<typename K1::Point_2>(&obj)) {
-	std::cout << "Point" << std::endl;
         return make_object(operator()(*ptr));
       } else if (const typename K1::Vector_2 * ptr = object_cast<typename K1::Vector_2>(&obj)) {
         return make_object(operator()(*ptr));
@@ -324,6 +323,12 @@ public:
     {
         typedef typename K2::Iso_cuboid_3 Iso_cuboid_3;
 	return Iso_cuboid_3(operator()(a.min()), operator()(a.max()));
+    }
+
+    std::pair<typename K2::Point_2, typename K2::Point_2>
+    operator() (const std::pair<typename K1::Point_2, typename K1::Point_2>& pp) const
+    {
+      return std::make_pair(operator()(pp.first), operator()(pp.second));
     }
 
 private:
