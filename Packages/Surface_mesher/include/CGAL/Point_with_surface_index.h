@@ -29,10 +29,13 @@ class Point_with_surface_index : public Point
 {
   typedef Point_traits<Point> Point_traits;
   typedef typename Point_traits::Bare_point Bare_point;
+
 public:
   Point_with_surface_index() : Point(), index(0) {}
 
   Point_with_surface_index(const Point& p) : Point(p), index(0) {}
+
+  Point_with_surface_index(const Bare_point& bp) : Point(bp), index(0) {}
 
   Point_with_surface_index(const Point_with_surface_index& pi)
     : Point(pi), index(pi.surface_index()) {}
