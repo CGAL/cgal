@@ -70,6 +70,7 @@ namespace CGAL {
 //   polynomial class which performed this task (and others)...
 // - overloaded versions of make_root_of_2<>() for Lazy_exact_nt<> and others.
 
+template < typename RT >  struct Root_of_traits;
 
 template < typename RT_ >
 class Root_of_2 {
@@ -84,6 +85,7 @@ class Root_of_2 {
 public:
 
   typedef RT_    RT;
+  typedef typename Root_of_traits<RT>::RootOf_1  FT;
 
   Root_of_2()
     : C0(0), C1(0), C2(1)
@@ -94,6 +96,23 @@ public:
   Root_of_2(const RT& c0)
     : C0(- square(c0)), C1(0), C2(1), _smaller(c0<0)
   {
+    CGAL_assertion(is_valid());
+  }
+
+  Root_of_2(const typename First_if_different<int, RT>::Type & c0)
+    : C0(- square(RT(c0))), C1(0), C2(1), _smaller(c0<0)
+  {
+    CGAL_assertion(is_valid());
+  }
+
+  Root_of_2(const typename First_if_different<FT, RT>::Type & c0)
+  {
+    typedef CGAL::Rational_traits< FT > Rational;
+
+    Rational r;
+    CGAL_assertion( r.denominator(c0) > 0 );
+    *this = Root_of_2(c0.numerator(), c0.denominator());
+
     CGAL_assertion(is_valid());
   }
 
