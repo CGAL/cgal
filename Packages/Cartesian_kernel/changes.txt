@@ -1,3 +1,6 @@
+26 July 2005 Andreas Fabri
+- Added conversion in Cartesian_converter for CGAL::Object with a kernel object inside 
+
 25 July 2005 Andreas Fabri
 - Added Qualified_result_of<CartesianKernelFunctors::Compute_squared_radius_2<K>, typename K::Circle_2, int >
 - Moved equality test from Vector_2, Point_2 to global_functions
