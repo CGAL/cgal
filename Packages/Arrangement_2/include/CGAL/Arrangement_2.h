@@ -1833,7 +1833,7 @@ private:
 };
 
 //-----------------------------------------------------------------------------
-// Declarations of the various global insertion (and deletion) functions.
+// Declarations of the various global insertion and removal functions.
 //-----------------------------------------------------------------------------
 
 /*!
@@ -1852,11 +1852,12 @@ void insert (Arrangement_2<Traits,Dcel>& arr,
 /*!
  * Insert a curve into the arrangement (incremental insertion).
  * The inserted curve may not necessarily be x-monotone and may intersect the
- * existing arrangement.
+ * existing arrangement. The default "walk" point-location strategy is used
+ * for the curve insertion.
  * \param arr The arrangement.
  * \param cv The curve to be inserted.
  */
-template <class Traits, class Dcel, class PointLocation>
+template <class Traits, class Dcel>
 void insert (Arrangement_2<Traits,Dcel>& arr,
              const typename Traits::Curve_2& c);
 
@@ -1888,6 +1889,7 @@ void insert_x_monotone (Arrangement_2<Traits,Dcel>& arr,
 /*!
  * Insert an x-monotone curve into the arrangement (incremental insertion).
  * The inserted x-monotone curve may intersect the existing arrangement.
+ * The default "walk" point-location strategy is used for the curve insertion.
  * \param arr The arrangement.
  * \param cv The x-monotone curve to be inserted.
  */
@@ -1928,7 +1930,8 @@ insert_non_intersecting (Arrangement_2<Traits,Dcel>& arr,
 /*!
  * Insert an x-monotone curve into the arrangement, such that the curve
  * interior does not intersect with any existing edge or vertex in the
- * arragement (incremental insertion).
+ * arragement (incremental insertion). The default "walk" point-location
+ * strategy is used for the curve insertion.
  * \param arr The arrangement.
  * \param c The x-monotone curve to be inserted.
  * \pre The interior of c does not intersect any existing edge or vertex.

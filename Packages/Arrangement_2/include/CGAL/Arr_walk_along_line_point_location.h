@@ -79,14 +79,21 @@ public:
   {
     traits = static_cast<const Traits_wrapper_2*> (p_arr->get_traits());
   }
-        
+ 
   /*! Attach an arrangement object. */
-  void init (const Arrangement_2& arr) 
+  void attach (const Arrangement_2& arr) 
   {
     p_arr = &arr;
     traits = static_cast<const Traits_wrapper_2*> (p_arr->get_traits());
   }
-        
+
+  /*! Detach from the current arrangement object. */
+  void detach ()
+  {
+    p_arr = NULL;
+    traits = NULL;
+  }
+ 
   /*!
    * Locate the arrangement feature containing the given point.
    * \param p The query point.

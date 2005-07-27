@@ -23,20 +23,20 @@ int main ()
   Arr_with_hist_2   arr;
 
   Segment_2         s1 (Point_2 (0, 3), Point_2 (4, 3));
-  Curve_handle      c1 = arr.insert (s1);
+  Curve_handle      c1 = insert (arr, s1);
   Segment_2         s2 (Point_2 (3, 1), Point_2 (3, 5));
-  Curve_handle      c2 = arr.insert (s2);
+  Curve_handle      c2 = insert (arr, s2);
   Segment_2         s3 (Point_2 (2, 3), Point_2 (5, 3));
-  Curve_handle      c3 = arr.insert (s3);
+  Curve_handle      c3 = insert (arr, s3);
   Segment_2         segs[3];
 
   segs[0] = Segment_2 (Point_2 (2, 6), Point_2 (7, 1));
   segs[1] = Segment_2 (Point_2 (0, 0), Point_2 (2, 6));
   segs[2] = Segment_2 (Point_2 (3, 4), Point_2 (3, 6));
-  arr.insert (segs, segs + 3);
+  insert (arr, segs, segs + 3);
 
   std::cout << "Removing [" << s1 << "] : ";
-  std::cout << arr.remove (c1) << " edges have been removed." << std::endl;
+  std::cout << remove (arr, c1) << " edges have been removed." << std::endl;
 
   // Print the arrangement.
   Arr_with_hist_2::Vertex_iterator  vit;
@@ -62,8 +62,9 @@ int main ()
   }
 
   // Test the split and merge functions:
+  Point_location    pl (arr);
   Segment_2         s4 (Point_2 (5, 6), Point_2 (7, 4));
-  Curve_handle      c4 = arr.insert (s4);
+  Curve_handle      c4 = insert (arr, s4, pl);
   Arr_with_hist_2::Halfedge_handle   h = arr.split_edge (*(c4->edges_begin()), 
 							 Point_2 (6, 5));
 
@@ -76,9 +77,7 @@ int main ()
             << ",  E = " << arr.number_of_edges() 
             << ",  F = " << arr.number_of_faces() << std::endl;
 
-
-  Point_location  pl (arr);
-
+  // Perform some point-location queries:
   point_location_query (pl, Point_2 (Number_type (7, 2), 4));
   point_location_query (pl, Point_2 (6, 2));
   point_location_query (pl, Point_2 (2, 4));

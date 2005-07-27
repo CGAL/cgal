@@ -27,9 +27,11 @@
  */
 
 #include <CGAL/Arrangement_2.h>
+#include <CGAL/Arr_overlay.h>
 #include <CGAL/Arr_consolidated_curve_data_traits_2.h>
 #include <CGAL/Arr_observer.h>
 #include <CGAL/In_place_list.h>
+#include <CGAL/Arrangement_2/Arr_with_history_accessor.h>
 
 #include <set>
 
@@ -61,9 +63,9 @@ class Arrangement_with_history_2 :
 {
 public:
 
-  typedef Traits_                                     Traits_2;
-  typedef Dcel_                                       Dcel;
-  typedef Arrangement_with_history_2<Traits_2, Dcel>  Self;
+  typedef Traits_                                          Traits_2;
+  typedef Dcel_                                            Base_dcel;
+  typedef Arrangement_with_history_2<Traits_2, Base_dcel>  Self;
 
   typedef typename Traits_2::Point_2                  Point_2;
   typedef typename Traits_2::Curve_2                  Curve_2;
@@ -73,6 +75,7 @@ protected:
 
   friend class Arr_observer<Self>;
   friend class Arr_accessor<Self>;
+  friend class Arr_with_history_accessor<Self>;
 
   // Define the data-traits class based on Traits_2.
   typedef Arr_consolidated_curve_data_traits_2<Traits_2,Curve_2*>
@@ -82,7 +85,8 @@ protected:
   typedef typename Data_x_curve_2::Data_iterator        Data_iterator;
 
   // Rebind the DCEL to the data-traits class.
-  typedef typename Dcel::template rebind<Data_traits_2> Dcel_rebind;
+  typedef typename Base_dcel::template rebind<Data_traits_2>
+                                                        Dcel_rebind;
   typedef typename Dcel_rebind::other                   Data_dcel;
 
   // The arrangement with history is based on the representation of an
@@ -91,6 +95,9 @@ protected:
   typedef Arr_traits_wrapper_2<Data_traits_2>           Traits_wrapper_2;
  
 public:
+
+  typedef Data_dcel                                     Dcel;
+  typedef Base_arr_2                                    Arrangement_2;
 
   // Types inherited from the base arrangement class:
   typedef typename Base_arr_2::Size                    Size;
@@ -153,6 +160,7 @@ protected:
                           public In_place_list_base<Curve_halfedges>
   {
     friend class Curve_halfedges_observer;
+    friend class Self;
 
   private:
 
@@ -174,6 +182,12 @@ protected:
 
     typedef typename Halfedges_set::iterator             iterator;
     typedef typename Halfedges_set::const_iterator       const_iterator;
+
+    /*! Get the number of edges induced by the curve. */
+    Size number_of_edges () const
+    {
+      return (m_halfedges.size());
+    }
 
     /*! Get an iterator for the first edge in the set (non-const version). */
     iterator edges_begin ()
@@ -217,14 +231,21 @@ protected:
     }
     
     /*! Erase an edge from the set. */
-    void _erase(Halfedge_handle he)
+    void _erase (Halfedge_handle he)
     {
       size_t res = m_halfedges.erase(he);
-      if (res == 0) res = m_halfedges.erase(he->twin());
+      if (res == 0)
+        res = m_halfedges.erase(he->twin());
       CGAL_assertion(res != 0);
       return;
     }
 
+    /*! Cleat the edges set. */
+    void _clear ()
+    {
+      m_halfedges.clear();
+      return;
+    }
   };
 
   typedef CGAL_ALLOCATOR(Curve_halfedges)               Curves_alloc;
@@ -385,11 +406,13 @@ public:
     m_observer.attach (*this);
   }
 
-  /*!
-   * Copy constructor.
-   * \todo not implemented yet.
-   */
-  Arrangement_with_history_2 (const Self& arr);
+  /*! Copy constructor. */
+  Arrangement_with_history_2 (const Self& arr) :
+    Base_arr_2 ()
+  {
+    assign (arr);
+    m_observer.attach (*this);
+  }
 
   /*! Constructor given a traits object. */
   Arrangement_with_history_2 (Traits_2 *tr) :
@@ -402,17 +425,73 @@ public:
   /// \name Assignment functions.
   //@{
 
-  /*! 
-   * Assignment operator.
-   * \todo not implemented yet.
-   */
-  Self& operator= (const Self& arr);
+  /*! Assignment operator. */
+  Self& operator= (const Self& arr)
+  {
+    // Check for self-assignment.
+    if (this == &arr)
+      return (*this);
 
-  /*!
-   * Assign an arrangement with history.
-   * \todo not implemented yet.
-   */
-  void assign (const Self& arr);
+    assign (arr);
+    return;
+  }
+
+  /*! Assign an arrangement with history. */
+  void assign (const Self& arr)
+  {
+    // Clear the current contents of the arrangement.
+    clear();
+
+    // Assign the base arrangement.
+    Base_arr_2::assign (arr);
+
+    // Create duplicates of the stored curves and map the curves of the
+    // original arrangement to their corresponding duplicates.
+    typedef std::map<const Curve_halfedges*, Curve_halfedges*>  Curve_map;
+
+    Curve_map                 cv_map;
+    Curve_const_iterator      ocit;
+    const Curve_2            *p_cv;
+    Curve_halfedges          *dup_c;
+
+    for (ocit = arr.curves_begin(); ocit != arr.curves_end(); ++ocit)
+    {
+      // Create a duplicate of the current curve.
+      dup_c = m_curves_alloc.allocate (1);
+    
+      p_cv = &(*ocit);
+      m_curves_alloc.construct (dup_c, *p_cv);
+      m_curves.push_back (*dup_c);
+
+      // Assign a map entry.
+      cv_map.insert (Curve_map::value_type (&(*ocit), dup_c));
+    }
+
+    // Go over the list of halfedges in our arrangement. The curves associated
+    // with these edges sotre pointers to the curves in the original
+    // arrangement, so we now have to modify these pointers, according to the
+    // mapping we have just created. While doing so, we also construct the set
+    // of edges associated with each (duplicated) curve in our arrangement.
+    typename Data_x_curve_2::Data_iterator  dit;
+    Edge_iterator                           eit;
+    Halfedge_handle                         e;
+    const Curve_halfedges                  *org_c;
+
+    for (eit = edges_begin(); eit != edges_end(); ++eit)
+    {
+      e = eit->handle();
+      for (dit = e->curve().data_begin(); dit != e->curve().data_end(); ++dit)
+      {
+        org_c = static_cast<Curve_halfedges*>(*dit);
+        dup_c = (cv_map.find (org_c))->second;
+
+        *dit = dup_c;
+        dup_c->_insert (e->handle());
+      }
+    }
+
+    return;
+  }
   //@}
 
   /// \name Destruction functions.
@@ -461,8 +540,36 @@ public:
     return (traits);
   }
 
+  /// \name Traversal of the arrangement curves.
+  //@{
+  Size number_of_curves ()
+  {
+    return (m_curves.size());
+  }
+
+  Curve_iterator curves_begin ()
+  {
+    return (m_curves.begin());
+  }
+
+  Curve_iterator curves_end ()
+  {
+    return (m_curves.end());
+  }
+
+  Curve_const_iterator curves_begin () const
+  {
+    return (m_curves.begin());
+  }
+
+  Curve_const_iterator curves_end () const
+  {
+    return (m_curves.end());
+  }
+  //@}
+
   // Define iterators for the origin curves of an edge:
-  class Curve_halfedges_ex : public Curve_halfedges
+  class Curve_extended_2 : public Curve_halfedges
   {
   public:
     /* Get a hndle to the curve (non-const version). */
@@ -480,7 +587,7 @@ public:
 
   typedef I_Dereference_iterator<
     typename Data_x_curve_2::Data_iterator,
-    Curve_halfedges_ex,
+    Curve_extended_2,
     typename Data_x_curve_2::Data_iterator::difference_type,
     typename Data_x_curve_2::Data_iterator::iterator_category>
                                               Origin_curve_iterator;
@@ -488,13 +595,18 @@ public:
   typedef I_Dereference_const_iterator<
     typename Data_x_curve_2::Data_const_iterator,
     typename Data_x_curve_2::Data_iterator,
-    Curve_halfedges_ex,
+    Curve_extended_2,
     typename Data_x_curve_2::Data_iterator::difference_type,
     typename Data_x_curve_2::Data_iterator::iterator_category>
                                               Origin_curve_const_iterator;
   
   /// \name Traversal of the origin curves of an edge.
   //@{
+  Size number_of_origin_curves (Halfedge_handle e) const
+  {
+    return (e->curve().number_of_data_objects());
+  }
+
   Origin_curve_iterator origin_curves_begin (Halfedge_handle e)
   {
     return Origin_curve_iterator (e->curve().data_begin());
@@ -517,140 +629,7 @@ public:
   }
   //@}
 
-  /// \name Curve insertion and deletion.
-  //@{
-
-  /*!
-   * Insert a curve into the arrangement.
-   * \param cv The curve to be inserted.
-   * \param pl a point-location object.
-   * \return A handle to the inserted curve.
-   */
-  template <class PointLocation>
-  Curve_handle insert (const Curve_2& cv,
-                       const PointLocation& pl)
-  {
-    // Allocate an extended curve (with an initially empty set of edges)
-    // and store it in the curves' list.
-    Curve_halfedges   *p_cv = m_curves_alloc.allocate (1);
-    
-    m_curves_alloc.construct (p_cv, cv);
-    m_curves.push_back (*p_cv);
-
-    // Create a data-traits Curve_2 object, which is comprised of cv and
-    // a pointer to the extended curve we have just created.
-    // Insert this curve into the base arrangement. Note that the attached
-    // observer will take care of updating the edges' set.
-    Data_curve_2       data_curve (cv, p_cv);
-
-    CGAL::insert (*this, data_curve, pl);
-    
-    // Return a handle to the inserted curve (the last in the list).
-    Curve_handle       ch = m_curves.end();
-    return (--ch);
-  }
-
-  /*!
-   * Insert a curve into the arrangement.
-   * \param cv The curve to be inserted.
-   * \return A handle to the inserted curve.
-   */
-  Curve_handle insert (const Curve_2& cv)
-  {
-    // Allocate an extended curve (with an initially empty set of edges)
-    // and store it in the curves' list.
-    Curve_halfedges   *p_cv = m_curves_alloc.allocate (1);
-    
-    m_curves_alloc.construct (p_cv, cv);
-    m_curves.push_back (*p_cv);
-
-    // Create a data-traits Curve_2 object, which is comprised of cv and
-    // a pointer to the extended curve we have just created.
-    // Insert this curve into the base arrangement. Note that the attached
-    // observer will take care of updating the edges' set.
-    Data_curve_2       data_curve (cv, p_cv);
-
-    CGAL::insert (*this, data_curve);
-    
-    // Return a handle to the inserted curve (the last in the list).
-    Curve_handle       ch = m_curves.end();
-    return (--ch);
-  }
-  
-  /*!
-   * Insert a range of curve into the arrangement.
-   * \param begin An iterator pointing to the first curve in the range.
-   * \param end A past-the-end iterator for the last curve in the range.
-   */
-  template <class InputIterator>
-  void insert (InputIterator begin, InputIterator end)
-  {
-    // Create a list of extended curves (with an initially empty sets of edges)
-    std::list<Data_curve_2>   data_curves;
-
-    while (begin != end)
-    {
-      Curve_halfedges   *p_cv = m_curves_alloc.allocate (1);
-    
-      m_curves_alloc.construct (p_cv, *begin);
-      m_curves.push_back (*p_cv);
-
-      data_curves.push_back (Data_curve_2 (*begin, p_cv));
-
-      ++begin;
-    }
-
-    // Perform an aggregated insertion operation into the base arrangement.
-    CGAL::insert (*this, data_curves.begin(), data_curves.end());
-    return;
-  }
-
-  /*!
-   * Remove a curve from the arrangement (remove all the edges it induces).
-   * \param ch A handle to the curve to be removed.
-   * \return The number of removed edges.
-   */
-  size_t remove (Curve_handle ch)
-  {
-    // Go over all edges the given curve induces.
-    Curve_halfedges                     *p_cv = &(*ch); 
-    typename Curve_halfedges::iterator   it = ch->edges_begin();
-    Halfedge_handle                      he;
-    size_t                               n_removed = 0;
-
-    while (it != ch->edges_end())
-    {
-      // Check how many curves have originated the current edge.
-      // Note we increment the iterator now, as the edge may be removed.
-      he = *it;
-      ++it;
-
-      if (he->curve().number_of_data_objects() == 1)
-      {
-        // The edge is induced only by out curve - remove it.
-        CGAL_assertion (he->curve().get_data() == p_cv);
-
-        Base_arr_2::remove_edge (he);
-        n_removed++;
-      }
-      else
-      {
-        // The edge is induced by other curves as well, so we just remove
-        // the pointer to out curve from its data container.
-        he->curve().remove_data (p_cv);
-      }
-    }
-
-    // Remove the extended curve object from the list and de-allocate it.
-    m_curves.erase (p_cv);
-    m_curves_alloc.destroy (p_cv);
-    m_curves_alloc.deallocate (p_cv, 1);
-
-    return (n_removed);
-  }
-  //@}
-
-  /// \name Manipulating vertices and edges.
+  /// \name Manipulating edges.
   //@{
 
   /*!
@@ -753,8 +732,360 @@ protected:
     return (Base_arr_2::_unregister_observer 
             (reinterpret_cast<Arr_observer<Base_arr_2>*>(p_obs)));
   }
+  //@}
 
+  /// \name Curve insertion and deletion.
+  //@{
+
+  /*!
+   * Insert a curve into the arrangement.
+   * \param cv The curve to be inserted.
+   * \param pl a point-location object.
+   * \return A handle to the inserted curve.
+   */
+  template <class PointLocation>
+  Curve_handle _insert (const Curve_2& cv,
+                        const PointLocation& pl)
+  {
+    // Allocate an extended curve (with an initially empty set of edges)
+    // and store it in the curves' list.
+    Curve_halfedges   *p_cv = m_curves_alloc.allocate (1);
+    
+    m_curves_alloc.construct (p_cv, cv);
+    m_curves.push_back (*p_cv);
+
+    // Create a data-traits Curve_2 object, which is comprised of cv and
+    // a pointer to the extended curve we have just created.
+    // Insert this curve into the base arrangement. Note that the attached
+    // observer will take care of updating the edges' set.
+    Data_curve_2       data_curve (cv, p_cv);
+    Base_arr_2&        base_arr = *this;
+
+    CGAL::insert (base_arr, data_curve, pl);
+    
+    // Return a handle to the inserted curve (the last in the list).
+    Curve_handle       ch = m_curves.end();
+    return (--ch);
+  }
+
+  /*!
+   * Insert a curve into the arrangement, using the default "walk"
+   * point-location strategy.
+   * \param cv The curve to be inserted.
+   * \return A handle to the inserted curve.
+   */
+  Curve_handle _insert (const Curve_2& cv)
+  {
+    // Allocate an extended curve (with an initially empty set of edges)
+    // and store it in the curves' list.
+    Curve_halfedges   *p_cv = m_curves_alloc.allocate (1);
+    
+    m_curves_alloc.construct (p_cv, cv);
+    m_curves.push_back (*p_cv);
+
+    // Create a data-traits Curve_2 object, which is comprised of cv and
+    // a pointer to the extended curve we have just created.
+    // Insert this curve into the base arrangement. Note that the attached
+    // observer will take care of updating the edges' set.
+    Data_curve_2       data_curve (cv, p_cv);
+    Base_arr_2&        base_arr = *this;
+
+    CGAL::insert (base_arr, data_curve);
+    
+    // Return a handle to the inserted curve (the last in the list).
+    Curve_handle       ch = m_curves.end();
+    return (--ch);
+  }
+  
+  /*!
+   * Insert a range of curves into the arrangement.
+   * \param begin An iterator pointing to the first curve in the range.
+   * \param end A past-the-end iterator for the last curve in the range.
+   */
+  template <class InputIterator>
+  void _insert (InputIterator begin, InputIterator end)
+  {
+    // Create a list of extended curves (with an initially empty sets of edges)
+    std::list<Data_curve_2>   data_curves;
+
+    while (begin != end)
+    {
+      Curve_halfedges   *p_cv = m_curves_alloc.allocate (1);
+    
+      m_curves_alloc.construct (p_cv, *begin);
+      m_curves.push_back (*p_cv);
+
+      data_curves.push_back (Data_curve_2 (*begin, p_cv));
+
+      ++begin;
+    }
+
+    // Perform an aggregated insertion operation into the base arrangement.
+    Base_arr_2&        base_arr = *this;
+
+    CGAL::insert (base_arr, data_curves.begin(), data_curves.end());
+    return;
+  }
+
+  /*!
+   * Remove a curve from the arrangement (remove all the edges it induces).
+   * \param ch A handle to the curve to be removed.
+   * \return The number of removed edges.
+   */
+  Size _remove (Curve_handle ch)
+  {
+    // Go over all edges the given curve induces.
+    Curve_halfedges                     *p_cv = &(*ch); 
+    typename Curve_halfedges::iterator   it = ch->edges_begin();
+    Halfedge_handle                      he;
+    Size                                 n_removed = 0;
+
+    while (it != ch->edges_end())
+    {
+      // Check how many curves have originated the current edge.
+      // Note we increment the iterator now, as the edge may be removed.
+      he = *it;
+      ++it;
+
+      if (he->curve().number_of_data_objects() == 1)
+      {
+        // The edge is induced only by out curve - remove it.
+        CGAL_assertion (he->curve().get_data() == p_cv);
+
+        Base_arr_2::remove_edge (he);
+        n_removed++;
+      }
+      else
+      {
+        // The edge is induced by other curves as well, so we just remove
+        // the pointer to out curve from its data container.
+        he->curve().remove_data (p_cv);
+      }
+    }
+
+    // Remove the extended curve object from the list and de-allocate it.
+    m_curves.erase (p_cv);
+    m_curves_alloc.destroy (p_cv);
+    m_curves_alloc.deallocate (p_cv, 1);
+
+    return (n_removed);
+  }
+
+public:
+
+  /*!
+   * Set our arrangement to be the overlay the two given arrangements.
+   * \param arr1 The first arrangement.
+   * \param arr2 The second arrangement.
+   * \param overlay_tr An overlay-traits class.
+   */
+  template <class Dcel1, class Dcel2, class OverlayTraits>
+  void _overlay (const Arrangement_with_history_2<Traits_2, Dcel1>& arr1,
+                 const Arrangement_with_history_2<Traits_2, Dcel2>& arr2,
+                 OverlayTraits& overlay_tr)
+  {
+    // Clear the current contents of the arrangement.
+    clear();
+
+    // Detach the observer from the arrangement, as we do not want to update
+    // cross-pointers between the halfedges and the curves during the
+    // construction of overlay.
+    m_observer.detach();
+
+    // Perform overlay of the base arrnagements.
+    typedef Arrangement_with_history_2<Traits_2, Dcel1>  Arr_with_hist1;
+    typedef typename Arr_with_hist1::Arrangement_2       T_base_arr1;
+    typedef Arrangement_with_history_2<Traits_2, Dcel2>  Arr_with_hist2;
+    typedef typename Arr_with_hist2::Arrangement_2       T_base_arr2;
+
+    const T_base_arr1&   base_arr1 = arr1;
+    const T_base_arr2&   base_arr2 = arr2;
+    Base_arr_2&          base_res = *this;
+
+    CGAL::overlay (base_arr1, base_arr2, base_res, overlay_tr);
+
+    // Create duplicates of the curves stored in both input arrangements
+    // and map the curves of the original arrangement to their
+    // corresponding duplicates.
+    typedef std::map<const Curve_halfedges*, Curve_halfedges*>  Curve_map;
+
+    Curve_map                 cv_map;
+    const Curve_2            *p_cv;
+    Curve_halfedges          *dup_c;
+
+    // Duplicate the curves from the first arrangement.
+    typename Arr_with_hist1::Curve_const_iterator      ocit1;
+
+    for (ocit1 = arr1.curves_begin(); ocit1 != arr1.curves_end(); ++ocit1)
+    {
+      // Create a duplicate of the current curve.
+      dup_c = m_curves_alloc.allocate (1);
+    
+      p_cv = &(*ocit1);
+      m_curves_alloc.construct (dup_c, *p_cv);
+      m_curves.push_back (*dup_c);
+
+      // Assign a map entry.
+      cv_map.insert (Curve_map::value_type (&(*ocit1), dup_c));
+    }
+
+    // Duplicate the curves from the second arrangement.
+    typename Arr_with_hist2::Curve_const_iterator      ocit2;
+
+    for (ocit2 = arr2.curves_begin(); ocit2 != arr2.curves_end(); ++ocit2)
+    {
+      // Create a duplicate of the current curve.
+      dup_c = m_curves_alloc.allocate (1);
+    
+      p_cv = &(*ocit2);
+      m_curves_alloc.construct (dup_c, *p_cv);
+      m_curves.push_back (*dup_c);
+
+      // Assign a map entry.
+      cv_map.insert (Curve_map::value_type (&(*ocit2), dup_c));
+    }
+
+    // Go over the list of halfedges in our arrangement. The curves associated
+    // with these edges sotre pointers to the curves in the original
+    // arrangement, so we now have to modify these pointers, according to the
+    // mapping we have just created. While doing so, we also construct the set
+    // of edges associated with each (duplicated) curve in our arrangement.
+    typename Data_x_curve_2::Data_iterator  dit;
+    Edge_iterator                           eit;
+    Halfedge_handle                         e;
+    const Curve_halfedges                  *org_c;
+
+    for (eit = edges_begin(); eit != edges_end(); ++eit)
+    {
+      e = eit->handle();
+      for (dit = e->curve().data_begin(); dit != e->curve().data_end(); ++dit)
+      {
+        org_c = static_cast<Curve_halfedges*>(*dit);
+        dup_c = (cv_map.find (org_c))->second;
+
+        *dit = dup_c;
+        dup_c->_insert (e->handle());
+      }
+    }
+
+    // Re-attach the observer to the arrangement.
+    m_observer.attach (*this);
+
+    return;
+  }
+  //@}
 };
+
+//-----------------------------------------------------------------------------
+// Global insertion, removal and overlay functions.
+//-----------------------------------------------------------------------------
+
+/*!
+ * Insert a curve into the arrangement (incremental insertion).
+ * The inserted curve may not necessarily be x-monotone and may intersect the
+ * existing arrangement.
+ * \param arr The arrangement-with-history object.
+ * \param cv The curve to be inserted.
+ * \param pl A point-location object associated with the arrangement.
+ */
+template <class Traits, class Dcel, class PointLocation>
+typename Arrangement_with_history_2<Traits,Dcel>::Curve_handle
+insert (Arrangement_with_history_2<Traits,Dcel>& arr,
+        const typename Traits::Curve_2& c,
+        const PointLocation& pl)
+{
+  // Obtain an arrangement accessor and perform the insertion.
+  typedef Arrangement_with_history_2<Traits,Dcel>     Arr_with_hist_2;
+  Arr_with_history_accessor<Arr_with_hist_2>   arr_access (arr);
+
+  return (arr_access.insert (c, pl));
+}
+
+/*!
+ * Insert a curve into the arrangement (incremental insertion).
+ * The inserted curve may not necessarily be x-monotone and may intersect the
+ * existing arrangement. The default "walk" point-location strategy is used
+ * for inserting the curve.
+ * \param arr The arrangement-with-history object.
+ * \param cv The curve to be inserted.
+ */
+template <class Traits, class Dcel>
+typename Arrangement_with_history_2<Traits,Dcel>::Curve_handle
+insert (Arrangement_with_history_2<Traits,Dcel>& arr,
+        const typename Traits::Curve_2& c)
+{
+  // Obtain an arrangement accessor and perform the insertion.
+  typedef Arrangement_with_history_2<Traits,Dcel>     Arr_with_hist_2;
+  Arr_with_history_accessor<Arr_with_hist_2>   arr_access (arr);
+
+  return (arr_access.insert (c));
+}
+
+
+/*!
+ * Insert a range of curves into the arrangement (aggregated insertion). 
+ * The inserted curves may intersect one another and may also intersect the 
+ * existing arrangement.
+ * \param arr The arrangement-with-history object.
+ * \param begin An iterator for the first curve in the range.
+ * \param end A past-the-end iterator for the curve range.
+ * \pre The value type of the iterators must be Curve_2.
+ */
+template <class Traits, class Dcel, class InputIterator>
+void insert (Arrangement_with_history_2<Traits,Dcel>& arr,
+             InputIterator begin, InputIterator end)
+{
+  // Obtain an arrangement accessor and perform the insertion.
+  typedef Arrangement_with_history_2<Traits,Dcel>     Arr_with_hist_2;
+  Arr_with_history_accessor<Arr_with_hist_2>   arr_access (arr);
+
+  arr_access.insert (begin, end);
+  return;
+}
+
+/*!
+ * Remove a curve from the arrangement (remove all the edges it induces).
+ * \param ch A handle to the curve to be removed.
+ * \return The number of removed edges.
+ */
+template <class Traits, class Dcel>
+typename Arrangement_with_history_2<Traits,Dcel>::Size
+remove (Arrangement_with_history_2<Traits,Dcel>& arr,
+        typename Arrangement_with_history_2<Traits,Dcel>::Curve_handle ch)
+{
+  // Obtain an arrangement accessor and perform the removal.
+  typedef Arrangement_with_history_2<Traits,Dcel>     Arr_with_hist_2;
+  Arr_with_history_accessor<Arr_with_hist_2>   arr_access (arr);
+
+  return (arr_access.remove (ch));
+}
+
+/*!
+ * Compute the overlay of two input arrangement.
+ * \param arr1 The first arrangement.
+ * \param arr2 The second arrangement.
+ * \param res Output: The resulting arrangement.
+ * \param traits An overlay-traits class. As arr1, arr2 and res are all
+ *               templated with the same arrangement-traits class but with
+ *               different DCELs, the overlay-traits class defines the
+ *               various overlay operations of pairs of DCEL features from
+ *               Dcel1 and Dcel2 to the resulting ResDcel.
+ */
+template <class Traits,
+          class Dcel1, class Dcel2,
+          class ResDcel, class OverlayTraits>
+void overlay (const Arrangement_with_history_2<Traits, Dcel1>& arr1,
+              const Arrangement_with_history_2<Traits, Dcel2>& arr2,
+              Arrangement_with_history_2<Traits, ResDcel>& res,
+              OverlayTraits& traits)
+{
+  // Obtain an arrangement accessor and perform the overlay.
+  res._overlay (arr1, arr2, traits);
+  //Arr_accessor<Arrangement_with_history_2<Traits,Dcel> >  arr_access (res);
+
+  //arr_access.overlay (arr1, arr2, traits);
+  return;
+}
 
 CGAL_END_NAMESPACE
 

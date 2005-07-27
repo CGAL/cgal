@@ -1,4 +1,4 @@
-// Copyright (c) 1997  Tel-Aviv University (Israel).
+// Copyright (c) 2005  Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -32,18 +32,26 @@
 
 CGAL_BEGIN_NAMESPACE
 
-
-/*! */
-template < class Traits_,
-           class Dcel1,
-           class Dcel2,
-           class ResDcel,
-           class OverlayTraits >
-
-void overlay (const Arrangement_2<Traits_, Dcel1>   & arr1,
-              const Arrangement_2<Traits_, Dcel2>   & arr2,
-              Arrangement_2<Traits_, ResDcel>       & res,
-              OverlayTraits & traits)
+/*!
+ * Compute the overlay of two input arrangements.
+ * \param arr1 The first arrangement.
+ * \param arr2 The second arrangement.
+ * \param res Output: The resulting arrangement.
+ * \param traits An overlay-traits class. As arr1, arr2 and res are all
+ *               templated with the same arrangement-traits class but with
+ *               different DCELs, the overlay-traits class defines the
+ *               various overlay operations of pairs of DCEL features from
+ *               Dcel1 and Dcel2 to the resulting ResDcel.
+ */
+template <class Traits_,
+          class Dcel1,
+          class Dcel2,
+          class ResDcel,
+          class OverlayTraits >
+void overlay (const Arrangement_2<Traits_, Dcel1>& arr1,
+              const Arrangement_2<Traits_, Dcel2>& arr2,
+              Arrangement_2<Traits_, ResDcel>& res,
+              OverlayTraits& traits)
 {
   typedef Traits_                                     Base_Traits;
   typedef typename Base_Traits::X_monotone_curve_2    Base_X_monotone_curve_2;
