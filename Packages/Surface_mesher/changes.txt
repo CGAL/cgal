@@ -1,4 +1,9 @@
 27 July 2005 LR MY
+- fixed return type of apply in Multi_implicit_oracle.h 
+- remove the const of const int number_of_functions 
+
+
+27 July 2005 LR MY
 - changed some named
 - multi_implicit_oracle added
 

@@ -52,15 +52,13 @@ namespace CGAL {
     
     
   private:
-    // Private members
-    
-    const int number_of_functions;
-
     typedef std::vector<Function*> Functions;
     typedef typename Functions::const_iterator Functions_iterator;
 
+    // Private members
+    
+    int number_of_functions;
     Functions functions;
-
     Point center;  // center of bounding ball
     FT radius;  // radius of bounding ball
     FT min_squared_length;  // minimal length of a segment for 
@@ -68,12 +66,12 @@ namespace CGAL {
     bool parity_oracle;  // flag that tells whether the surface has no boundary
     bool debug;  // flag for debug mode
 
-    int apply(Functions_iterator fit, const Point& p)
+    FT apply(Functions_iterator fit, const Point& p)
     {
       return (**fit)(p.x(), p.y(), p.z());
     }
     
-    int apply(const int i, const Point& p)
+    FT apply(const int i, const Point& p)
     { // warning: surface indices start from 1, not 0, hence "i-1"!
       return (*(functions[i-1]))(p.x(), p.y(), p.z());
     }

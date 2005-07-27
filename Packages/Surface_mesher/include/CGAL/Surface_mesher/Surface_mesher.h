@@ -246,7 +246,6 @@ namespace CGAL {
 	  if( distance(center, p) <
 	      distance(center, c->vertex((index+1)&3)->point()) )
 	    {
-	      std::cerr << "\nATTENTION: conflict (Surface Delaunay)!!!\n";
 	      Quality q = criteria.quality(f);
 	      facets_to_refine.insert(f, q);
 	      return true;
@@ -259,7 +258,6 @@ namespace CGAL {
 	  if( distance(center, p) <
 	      distance(center, c->vertex((index+1)&3)->point()) )
 	    {
-	      std::cerr << "\nATTENTION: conflict (Gabriel)!!!\n";
 	      Quality q = criteria.quality(f);
 	      facets_to_refine.insert(f, q);
 	      return true;
