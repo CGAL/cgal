@@ -1,3 +1,7 @@
+26 July 2005 Sylvain Pion
+- Filtered_kernel : No need to explicitely mention To_interval as argument
+  to Cartesian_converter anymore, the default argument handles it.
+
 16 June 2005 Menelaos Karavelas
 - Regular triangulation: added arithmetic filtering support for the
   nearest_power_vertex predicate

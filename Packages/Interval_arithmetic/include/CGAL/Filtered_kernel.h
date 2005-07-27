@@ -62,7 +62,7 @@ struct Filtered_kernel_base
     typedef Simple_cartesian<Exact_nt>               EK;
     typedef Simple_cartesian<Interval_nt_advanced>   FK;
     typedef Cartesian_converter<CK, EK>              C2E;
-    typedef Cartesian_converter<CK, FK, To_interval<typename CK::RT> > C2F;
+    typedef Cartesian_converter<CK, FK>              C2F;
 
     template < typename Kernel2 >
     struct Base {
