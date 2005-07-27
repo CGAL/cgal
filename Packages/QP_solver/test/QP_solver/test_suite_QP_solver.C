@@ -18,6 +18,7 @@
 // revision_date : 2000/08/21
 //
 // author(s)     : Sven Schönherr <sven@inf.ethz.ch>
+//                 Frans Wessendorp <fransw@inf.ethz.ch>
 // coordinator   : ETH Zürich (Bernd Gärtner <gaertner@inf.ethz.ch>)
 //
 // implementation: test program for the QP solver
@@ -38,16 +39,19 @@
 #include <fstream>
 #include <sstream>
 #include <string>
+#include <vector>
 #include <locale>
 
+// We first define two template classes, Vector<ET> and Matrix<ET>, to 
+// hold the input matrices and vector.
 template<typename ET_>
 class Vector : public std::vector<ET_>
 {
-	typedef std::vector<ET_> base;
-	
-	public:
-		Vector(typename base::size_type i) : base(i) {}
-		Vector() : base() {}
+  typedef std::vector<ET_> base;
+  
+public:
+  Vector(typename base::size_type i) : base(i) {}
+  Vector() : base() {}
 };
 
 template<typename ET_>
@@ -55,26 +59,28 @@ class Matrix : public std::vector< Vector<ET_> >
 {
 };
 
-
+// Next, we need a functor that
 template<typename T_>
 struct Begin
-    : public CGAL_STD::unary_function< Vector<T_>, typename Vector<T_>::const_iterator > {
-    typedef typename Vector<T_>::const_iterator result_type;
-	result_type operator () ( const Vector<T_>& v) const { return v.begin(); }
+  : public CGAL_STD::unary_function< Vector<T_>,
+				     typename Vector<T_>::const_iterator > {
+  typedef typename Vector<T_>::const_iterator result_type;
+  result_type operator () ( const Vector<T_>& v) const { return v.begin(); }
 };
 
 template<typename ET_,
-	typename IT_,
-	typename Is_linear_,
- 	typename Is_symmetric_,
-	typename Has_no_inequalities_>
+	 typename IT_,
+	 typename Is_linear_,
+	 typename Is_symmetric_,
+	 typename Has_no_inequalities_>
 struct Rep {
-	typedef typename CGAL::QPE_transform_iterator_1< typename Matrix<IT_>::const_iterator, Begin<IT_> > Vector_iterator;
-	typedef typename Vector<IT_>::const_iterator Entry_iterator;
-	typedef IT_ Input_type;
-
-
-    typedef  Vector_iterator  A_iterator;
+  typedef typename CGAL::Join_input_iterator_1< 
+    typename Matrix<IT_>::const_iterator, Begin<IT_> > Vector_iterator;
+  typedef typename Vector<IT_>::const_iterator Entry_iterator;
+  typedef IT_ Input_type;
+  
+  
+  typedef  Vector_iterator  A_iterator;
     typedef   Entry_iterator  B_iterator;
     typedef   Entry_iterator  C_iterator;
     typedef  Vector_iterator  D_iterator;
@@ -89,27 +95,6 @@ struct Rep {
     typedef  Is_symmetric_  Is_symmetric;
     typedef  Has_no_inequalities_  Has_no_inequalities;
 };
-
-
-//struct Rep {
-    //typedef  GMP::Double  ET;
-//    typedef CGAL::Gmpq  ET;
-//    typedef  Vector_iterator  A_iterator;
-//    typedef   Entry_iterator  B_iterator;
-//    typedef   Entry_iterator  C_iterator;
-//    typedef  Vector_iterator  D_iterator;
-
-//    enum Row_type { LESS_EQUAL = -1, EQUAL, GREATER_EQUAL};
-//    typedef  Row_type*  Row_type_iterator;
-    //    typedef  CGAL::QPE_const_value_iterator<Row_type>  Row_type_iterator;
-    
-
-//    typedef  CGAL::Tag_false  Is_linear;
-//    typedef  CGAL::Tag_true  Is_symmetric;
-//    typedef  CGAL::Tag_true  Has_no_inequalities;
-//};
-
-//typedef std::map<std::string, char> tag_names_values_map;
 
 template<typename Rep>
 void init_row_types(std::vector<int>& rel,typename Rep::Row_type*& row_types);
@@ -285,9 +270,9 @@ bool doIt(int verbose, int pricing_strategy_index, std::ifstream& from) {
 		init_row_types<Repr>(rel, row_types);
 		solver.set_verbosity( verbose);
 		solver.set( A.size(), rel.size(),
-			typename Repr::Vector_iterator( A.begin(), Begin<Input_type>()),
+			typename Repr::Vector_iterator( A.begin()),
 			b.begin(), c.begin(),
-			typename Repr::Vector_iterator( D.begin(), Begin<Input_type>()),
+			typename Repr::Vector_iterator( D.begin()),
 			row_types);
 		set_pricing_strategy<Repr>(strat, pricing_strategy_index);	
 		//CGAL::QPE_full_exact_pricing<Repr>  strategy;
@@ -723,7 +708,7 @@ void map_tags(std::ifstream& from, int verbose, int pricing_strategy_index,
 	//			CGAL::Tag_true>
 	//			(verbose, pricing_strategy_index, from);
 	//		break;
-        
+			/* kf        
 	case  6:	doIt<CGAL::Gmpq,CGAL::Tag_true,CGAL::Tag_true,
 				CGAL::Tag_false>
 				(verbose, pricing_strategy_index, from);
@@ -785,6 +770,7 @@ void map_tags(std::ifstream& from, int verbose, int pricing_strategy_index,
 				CGAL::Tag_false>
 				(verbose, pricing_strategy_index, from);
 			break;
+		kf	*/
 
 	case 19:	doIt<CGAL::Gmpz,CGAL::Tag_false,CGAL::Tag_true,
 				CGAL::Tag_true>
